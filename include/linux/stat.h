@@ -1,7 +1,7 @@
 macro_line|#ifndef _LINUX_STAT_H
 DECL|macro|_LINUX_STAT_H
 mdefine_line|#define _LINUX_STAT_H
-macro_line|#ifndef __NOT_KERNEL
+macro_line|#ifdef __KERNEL__
 DECL|struct|old_stat
 r_struct
 id|old_stat
@@ -230,5 +230,17 @@ DECL|macro|S_IWOTH
 mdefine_line|#define S_IWOTH 00002
 DECL|macro|S_IXOTH
 mdefine_line|#define S_IXOTH 00001
+macro_line|#ifdef __KERNEL__
+DECL|macro|S_IRWXUGO
+mdefine_line|#define S_IRWXUGO&t;(S_IRWXU|S_IRWXG|S_IRWXO)
+DECL|macro|S_IALLUGO
+mdefine_line|#define S_IALLUGO&t;(S_ISUID|S_ISGID|S_ISVTX|S_IRWXUGO)
+DECL|macro|S_IRUGO
+mdefine_line|#define S_IRUGO&t;&t;(S_IRUSR|S_IRGRP|S_IROTH)
+DECL|macro|S_IWUGO
+mdefine_line|#define S_IWUGO&t;&t;(S_IWUSR|S_IWGRP|S_IWOTH)
+DECL|macro|S_IXUGO
+mdefine_line|#define S_IXUGO&t;&t;(S_IXUSR|S_IXGRP|S_IXOTH)
+macro_line|#endif
 macro_line|#endif
 eof

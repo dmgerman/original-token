@@ -15,7 +15,6 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &quot;inet.h&quot;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;eth.h&quot;
-macro_line|#include &quot;timer.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;route.h&quot;
 macro_line|#include &quot;protocol.h&quot;
@@ -861,9 +860,6 @@ id|dev_check
 c_func
 (paren
 r_int
-id|which
-comma
-r_int
 r_int
 id|addr
 )paren
@@ -881,14 +877,11 @@ op_assign
 id|dev_base
 suffix:semicolon
 id|dev
-op_ne
-l_int|NULL
 suffix:semicolon
 id|dev
 op_assign
 id|dev-&gt;next
 )paren
-(brace
 r_if
 c_cond
 (paren
@@ -897,97 +890,71 @@ id|dev-&gt;flags
 op_amp
 id|IFF_UP
 )paren
-op_eq
-l_int|0
-)paren
-r_continue
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|which
-)paren
-(brace
-r_case
-l_int|0
-suffix:colon
-multiline_comment|/* local address */
-r_if
-c_cond
-(paren
-id|ip_addr_match
-c_func
-(paren
-id|addr
-op_amp
-id|dev-&gt;pa_mask
-comma
-id|dev-&gt;pa_addr
-)paren
-)paren
-r_return
-id|dev
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|1
-suffix:colon
-multiline_comment|/* p-p destination address */
-r_if
-c_cond
-(paren
+op_logical_and
 (paren
 id|dev-&gt;flags
 op_amp
 id|IFF_POINTOPOINT
 )paren
 op_logical_and
-id|ip_addr_match
-c_func
 (paren
 id|addr
-op_amp
-id|dev-&gt;pa_mask
-comma
+op_eq
 id|dev-&gt;pa_dstaddr
 )paren
 )paren
 r_return
 id|dev
 suffix:semicolon
-r_break
+r_for
+c_loop
+(paren
+id|dev
+op_assign
+id|dev_base
 suffix:semicolon
-r_case
-l_int|2
-suffix:colon
-multiline_comment|/* broadcast address */
+id|dev
+suffix:semicolon
+id|dev
+op_assign
+id|dev-&gt;next
+)paren
 r_if
 c_cond
 (paren
 (paren
 id|dev-&gt;flags
 op_amp
-id|IFF_BROADCAST
+id|IFF_UP
 )paren
 op_logical_and
-id|ip_addr_match
-c_func
+op_logical_neg
 (paren
+id|dev-&gt;flags
+op_amp
+id|IFF_POINTOPOINT
+)paren
+op_logical_and
 id|addr
-comma
-id|dev-&gt;pa_brdaddr
+op_eq
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_LOOPBACK
+ques
+c_cond
+id|dev-&gt;pa_addr
+suffix:colon
+id|dev-&gt;pa_addr
+op_amp
+id|dev-&gt;pa_mask
 )paren
 )paren
-r_return
-id|dev
-suffix:semicolon
 r_break
 suffix:semicolon
-)brace
-)brace
+multiline_comment|/* no need to check broadcast addresses */
 r_return
-l_int|NULL
+id|dev
 suffix:semicolon
 )brace
 multiline_comment|/* Prepare an interface for use. */

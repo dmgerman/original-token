@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;auto_irq.c:v0.01 1993 Donald Becker (becker@super.org)&quot;
+l_string|&quot;auto_irq.c:v0.02 1993 Donald Becker (becker@super.org)&quot;
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*#include &lt;linux/config.h&gt;*/
@@ -15,7 +15,25 @@ multiline_comment|/*#include &lt;linux/kernel.h&gt;*/
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &quot;dev.h&quot;
 multiline_comment|/*#include &lt;asm/system.h&gt;*/
+DECL|variable|irq2dev_map
+r_struct
+id|device
+op_star
+id|irq2dev_map
+(braket
+l_int|16
+)braket
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* ... zeroed */
+)brace
+suffix:semicolon
 DECL|variable|irqs_busy
 r_int
 id|irqs_busy

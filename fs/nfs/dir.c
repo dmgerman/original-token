@@ -2578,7 +2578,7 @@ id|sattr.mode
 op_assign
 id|S_IFLNK
 op_or
-l_int|0777
+id|S_IRWXUGO
 suffix:semicolon
 multiline_comment|/* SunOS 4.1.2 crashes without this! */
 id|sattr.uid

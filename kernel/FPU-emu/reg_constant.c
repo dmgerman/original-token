@@ -177,6 +177,25 @@ comma
 l_int|0xb17217f7
 )brace
 suffix:semicolon
+multiline_comment|/* Extra bits to take pi/2 to more than 128 bits precision. */
+DECL|variable|CONST_PI2extra
+id|FPU_REG
+id|CONST_PI2extra
+op_assign
+(brace
+id|SIGN_NEG
+comma
+id|TW_Valid
+comma
+id|EXP_BIAS
+op_minus
+l_int|66
+comma
+l_int|0xfc8f8cbb
+comma
+l_int|0xece675d1
+)brace
+suffix:semicolon
 multiline_comment|/* Only the sign (and tag) is used in internal zeroes */
 DECL|variable|CONST_Z
 id|FPU_REG
@@ -187,7 +206,7 @@ id|SIGN_POS
 comma
 id|TW_Zero
 comma
-l_int|0
+id|EXP_UNDER
 comma
 l_int|0x0
 comma
@@ -272,11 +291,14 @@ comma
 id|FPU_st0_ptr
 )paren
 suffix:semicolon
-id|status_word
-op_and_assign
-op_complement
-id|SW_C1
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
 suffix:semicolon
+macro_line|#endif PECULIAR_486
 )brace
 DECL|function|fld1
 r_static

@@ -1809,7 +1809,7 @@ id|fname
 comma
 id|S_IFSOCK
 op_or
-l_int|0777
+id|S_IRWXUGO
 comma
 l_int|0
 )paren

@@ -305,7 +305,7 @@ op_star
 (paren
 id|p
 op_minus
-l_int|4096
+id|PAGE_SIZE
 )paren
 comma
 id|count

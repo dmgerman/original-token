@@ -6,7 +6,7 @@ macro_line|#include &quot;fpu_emu.h&quot;
 macro_line|#include &quot;control_w.h&quot;
 macro_line|#include &quot;fpu_system.h&quot;
 DECL|function|reg_add
-r_void
+r_int
 id|reg_add
 c_func
 (paren
@@ -26,6 +26,11 @@ r_int
 id|control_w
 )paren
 (brace
+r_char
+id|saved_sign
+op_assign
+id|dest-&gt;sign
+suffix:semicolon
 r_int
 id|diff
 suffix:semicolon
@@ -53,6 +58,13 @@ id|b-&gt;sign
 )paren
 (brace
 multiline_comment|/* signs are the same */
+id|dest-&gt;sign
+op_assign
+id|a-&gt;sign
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|reg_u_add
 c_func
 (paren
@@ -64,12 +76,18 @@ id|dest
 comma
 id|control_w
 )paren
-suffix:semicolon
+)paren
+(brace
 id|dest-&gt;sign
 op_assign
-id|a-&gt;sign
+id|saved_sign
 suffix:semicolon
 r_return
+l_int|1
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* The signs are different, so do a subtraction */
@@ -131,6 +149,13 @@ OG
 l_int|0
 )paren
 (brace
+id|dest-&gt;sign
+op_assign
+id|a-&gt;sign
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|reg_u_sub
 c_func
 (paren
@@ -142,11 +167,16 @@ id|dest
 comma
 id|control_w
 )paren
-suffix:semicolon
+)paren
+(brace
 id|dest-&gt;sign
 op_assign
-id|a-&gt;sign
+id|saved_sign
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 )brace
 r_else
 r_if
@@ -157,6 +187,31 @@ op_eq
 l_int|0
 )paren
 (brace
+macro_line|#ifdef DENORM_OPERAND
+r_if
+c_cond
+(paren
+(paren
+id|b-&gt;tag
+op_eq
+id|TW_Valid
+)paren
+op_logical_and
+(paren
+id|b-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+op_logical_and
+id|denormal_operand
+c_func
+(paren
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+macro_line|#endif DENORM_OPERAND
 id|reg_move
 c_func
 (paren
@@ -187,6 +242,13 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|dest-&gt;sign
+op_assign
+id|b-&gt;sign
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|reg_u_sub
 c_func
 (paren
@@ -198,13 +260,19 @@ id|dest
 comma
 id|control_w
 )paren
-suffix:semicolon
+)paren
+(brace
 id|dest-&gt;sign
 op_assign
-id|b-&gt;sign
+id|saved_sign
+suffix:semicolon
+r_return
+l_int|1
 suffix:semicolon
 )brace
+)brace
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -225,6 +293,7 @@ id|TW_NaN
 )paren
 )paren
 (brace
+r_return
 id|real_2op_NaN
 c_func
 (paren
@@ -234,8 +303,6 @@ id|b
 comma
 id|dest
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 r_else
@@ -322,6 +389,7 @@ c_func
 )paren
 )paren
 r_return
+l_int|1
 suffix:semicolon
 macro_line|#endif DENORM_OPERAND
 id|reg_move
@@ -334,6 +402,7 @@ id|dest
 suffix:semicolon
 )brace
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -367,6 +436,7 @@ c_func
 )paren
 )paren
 r_return
+l_int|1
 suffix:semicolon
 macro_line|#endif DENORM_OPERAND
 id|reg_move
@@ -378,6 +448,7 @@ id|dest
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -419,6 +490,7 @@ c_func
 )paren
 )paren
 r_return
+l_int|1
 suffix:semicolon
 macro_line|#endif DENORM_OPERAND
 id|reg_move
@@ -430,6 +502,7 @@ id|dest
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -450,8 +523,10 @@ id|dest
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
+r_return
 id|arith_invalid
 c_func
 (paren
@@ -459,8 +534,6 @@ id|dest
 )paren
 suffix:semicolon
 multiline_comment|/* Infinity-Infinity is undefined. */
-r_return
-suffix:semicolon
 )brace
 r_else
 r_if
@@ -493,6 +566,7 @@ c_func
 )paren
 )paren
 r_return
+l_int|1
 suffix:semicolon
 macro_line|#endif DENORM_OPERAND
 id|reg_move
@@ -504,6 +578,7 @@ id|dest
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 )brace
@@ -517,10 +592,13 @@ l_int|0x101
 )paren
 suffix:semicolon
 macro_line|#endif
+r_return
+l_int|1
+suffix:semicolon
 )brace
 multiline_comment|/* Subtract b from a.  (a-b) -&gt; dest */
 DECL|function|reg_sub
-r_void
+r_int
 id|reg_sub
 c_func
 (paren
@@ -540,6 +618,11 @@ r_int
 id|control_w
 )paren
 (brace
+r_char
+id|saved_sign
+op_assign
+id|dest-&gt;sign
+suffix:semicolon
 r_int
 id|diff
 suffix:semicolon
@@ -631,6 +714,14 @@ OG
 l_int|0
 )paren
 (brace
+multiline_comment|/* |a| &gt; |b| */
+id|dest-&gt;sign
+op_assign
+id|a-&gt;sign
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|reg_u_sub
 c_func
 (paren
@@ -642,10 +733,18 @@ id|dest
 comma
 id|control_w
 )paren
-suffix:semicolon
+)paren
+(brace
 id|dest-&gt;sign
 op_assign
-id|a-&gt;sign
+id|saved_sign
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -679,6 +778,7 @@ c_func
 )paren
 )paren
 r_return
+l_int|1
 suffix:semicolon
 macro_line|#endif DENORM_OPERAND
 id|reg_move
@@ -711,6 +811,17 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|dest-&gt;sign
+op_assign
+id|a-&gt;sign
+op_xor
+id|SIGN_POS
+op_xor
+id|SIGN_NEG
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|reg_u_sub
 c_func
 (paren
@@ -722,22 +833,30 @@ id|dest
 comma
 id|control_w
 )paren
-suffix:semicolon
+)paren
+(brace
 id|dest-&gt;sign
 op_assign
-id|a-&gt;sign
-op_xor
-id|SIGN_POS
-op_xor
-id|SIGN_NEG
+id|saved_sign
+suffix:semicolon
+r_return
+l_int|1
 suffix:semicolon
 )brace
-r_return
+)brace
+r_break
 suffix:semicolon
 r_case
 l_int|1
 suffix:colon
 multiline_comment|/* P - N */
+id|dest-&gt;sign
+op_assign
+id|SIGN_POS
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|reg_u_add
 c_func
 (paren
@@ -749,17 +868,29 @@ id|dest
 comma
 id|control_w
 )paren
-suffix:semicolon
+)paren
+(brace
 id|dest-&gt;sign
 op_assign
-id|SIGN_POS
+id|saved_sign
 suffix:semicolon
 r_return
+l_int|1
+suffix:semicolon
+)brace
+r_break
 suffix:semicolon
 r_case
 l_int|2
 suffix:colon
 multiline_comment|/* N - P */
+id|dest-&gt;sign
+op_assign
+id|SIGN_NEG
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|reg_u_add
 c_func
 (paren
@@ -771,14 +902,22 @@ id|dest
 comma
 id|control_w
 )paren
-suffix:semicolon
+)paren
+(brace
 id|dest-&gt;sign
 op_assign
-id|SIGN_NEG
+id|saved_sign
 suffix:semicolon
 r_return
+l_int|1
 suffix:semicolon
 )brace
+r_break
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -798,17 +937,16 @@ id|TW_NaN
 )paren
 )paren
 (brace
+r_return
 id|real_2op_NaN
 c_func
 (paren
-id|a
-comma
 id|b
+comma
+id|a
 comma
 id|dest
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 r_else
@@ -898,6 +1036,7 @@ c_func
 )paren
 )paren
 r_return
+l_int|1
 suffix:semicolon
 macro_line|#endif DENORM_OPERAND
 id|reg_move
@@ -910,6 +1049,7 @@ id|dest
 suffix:semicolon
 )brace
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -943,6 +1083,7 @@ c_func
 )paren
 )paren
 r_return
+l_int|1
 suffix:semicolon
 macro_line|#endif DENORM_OPERAND
 id|reg_move
@@ -960,6 +1101,7 @@ op_xor
 id|SIGN_NEG
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -1001,6 +1143,7 @@ c_func
 )paren
 )paren
 r_return
+l_int|1
 suffix:semicolon
 macro_line|#endif DENORM_OPERAND
 id|reg_move
@@ -1012,6 +1155,7 @@ id|dest
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Both args are Infinity */
@@ -1023,14 +1167,13 @@ op_eq
 id|b-&gt;sign
 )paren
 (brace
+multiline_comment|/* Infinity-Infinity is undefined. */
+r_return
 id|arith_invalid
 c_func
 (paren
 id|dest
 )paren
-suffix:semicolon
-multiline_comment|/* Infinity-Infinity is undefined. */
-r_return
 suffix:semicolon
 )brace
 id|reg_move
@@ -1042,6 +1185,7 @@ id|dest
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -1075,6 +1219,7 @@ c_func
 )paren
 )paren
 r_return
+l_int|1
 suffix:semicolon
 macro_line|#endif DENORM_OPERAND
 id|reg_move
@@ -1092,6 +1237,7 @@ op_xor
 id|SIGN_NEG
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 )brace
@@ -1105,5 +1251,8 @@ l_int|0x110
 )paren
 suffix:semicolon
 macro_line|#endif
+r_return
+l_int|1
+suffix:semicolon
 )brace
 eof

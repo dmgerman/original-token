@@ -16,9 +16,9 @@ DECL|macro|EXT2FS_DEBUG_CACHE
 macro_line|#undef EXT2FS_DEBUG_CACHE
 multiline_comment|/*&n; * The second extended file system version&n; */
 DECL|macro|EXT2FS_DATE
-mdefine_line|#define EXT2FS_DATE&t;&quot;93/06/06&quot;
+mdefine_line|#define EXT2FS_DATE&t;&t;&quot;93/08/05&quot;
 DECL|macro|EXT2FS_VERSION
-mdefine_line|#define EXT2FS_VERSION&t;&quot;0.3a&quot;
+mdefine_line|#define EXT2FS_VERSION&t;&t;&quot;0.3c&quot;
 multiline_comment|/*&n; * Special inodes numbers&n; */
 DECL|macro|EXT2_BAD_INO
 mdefine_line|#define&t;EXT2_BAD_INO&t;&t; 1&t;/* Bad blocks inode */
@@ -28,6 +28,8 @@ DECL|macro|EXT2_ACL_IDX_INO
 mdefine_line|#define EXT2_ACL_IDX_INO&t; 3&t;/* ACL inode */
 DECL|macro|EXT2_ACL_DATA_INO
 mdefine_line|#define EXT2_ACL_DATA_INO&t; 4&t;/* ACL inode */
+DECL|macro|EXT2_BOOT_LOADER_INO
+mdefine_line|#define EXT2_BOOT_LOADER_INO&t; 5&t;/* Boot loader inode */
 DECL|macro|EXT2_FIRST_INO
 mdefine_line|#define EXT2_FIRST_INO&t;&t;11&t;/* First non reserved inode */
 multiline_comment|/*&n; * The second extended file system magic number&n; */
@@ -58,7 +60,7 @@ DECL|macro|EXT2_ADDR_PER_BLOCK
 mdefine_line|#define&t;EXT2_ADDR_PER_BLOCK(s)&t;&t;(EXT2_BLOCK_SIZE(s) / sizeof (unsigned long))
 macro_line|#ifdef __KERNEL__
 DECL|macro|EXT2_BLOCK_SIZE_BITS
-macro_line|# define EXT2_BLOCK_SIZE_BITS(s)&t;((s)-&gt;u.ext2_sb.s_log_block_size + 10)
+macro_line|# define EXT2_BLOCK_SIZE_BITS(s)&t;((s)-&gt;u.ext2_sb.s_es-&gt;s_log_block_size + 10)
 macro_line|#else
 DECL|macro|EXT2_BLOCK_SIZE_BITS
 macro_line|# define EXT2_BLOCK_SIZE_BITS(s)&t;((s)-&gt;s_log_block_size + 10)
@@ -263,15 +265,15 @@ macro_line|# define EXT2_INODES_PER_GROUP(s)&t;((s)-&gt;s_inodes_per_group)
 macro_line|#endif
 multiline_comment|/*&n; * Constants relative to the data blocks&n; */
 DECL|macro|EXT2_NDIR_BLOCKS
-mdefine_line|#define&t;EXT2_NDIR_BLOCKS&t;12
+mdefine_line|#define&t;EXT2_NDIR_BLOCKS&t;&t;12
 DECL|macro|EXT2_IND_BLOCK
-mdefine_line|#define&t;EXT2_IND_BLOCK&t;&t;EXT2_NDIR_BLOCKS
+mdefine_line|#define&t;EXT2_IND_BLOCK&t;&t;&t;EXT2_NDIR_BLOCKS
 DECL|macro|EXT2_DIND_BLOCK
-mdefine_line|#define&t;EXT2_DIND_BLOCK&t;&t;(EXT2_IND_BLOCK + 1)
+mdefine_line|#define&t;EXT2_DIND_BLOCK&t;&t;&t;(EXT2_IND_BLOCK + 1)
 DECL|macro|EXT2_TIND_BLOCK
-mdefine_line|#define&t;EXT2_TIND_BLOCK&t;&t;(EXT2_DIND_BLOCK + 1)
+mdefine_line|#define&t;EXT2_TIND_BLOCK&t;&t;&t;(EXT2_DIND_BLOCK + 1)
 DECL|macro|EXT2_N_BLOCKS
-mdefine_line|#define&t;EXT2_N_BLOCKS&t;&t;(EXT2_TIND_BLOCK + 1)
+mdefine_line|#define&t;EXT2_N_BLOCKS&t;&t;&t;(EXT2_TIND_BLOCK + 1)
 multiline_comment|/*&n; * Structure of an inode on the disk&n; */
 DECL|struct|ext2_inode
 r_struct
@@ -563,6 +565,7 @@ DECL|macro|EXT2_DIR_ROUND
 mdefine_line|#define EXT2_DIR_ROUND &t;&t;&t;(EXT2_DIR_PAD - 1)
 DECL|macro|EXT2_DIR_REC_LEN
 mdefine_line|#define EXT2_DIR_REC_LEN(name_len)&t;(((name_len) + 8 + EXT2_DIR_ROUND) &amp; &bslash;&n;&t;&t;&t;&t;&t; ~EXT2_DIR_ROUND)
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Function prototypes&n; */
 multiline_comment|/* acl.c */
 r_extern
@@ -752,7 +755,6 @@ multiline_comment|/* fsync.c */
 r_extern
 r_int
 id|ext2_sync_file
-c_func
 (paren
 r_struct
 id|inode
@@ -1188,5 +1190,6 @@ r_struct
 id|inode_operations
 id|ext2_symlink_inode_operations
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 eof

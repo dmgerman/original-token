@@ -10,7 +10,6 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;timer.h&quot;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;eth.h&quot;
 macro_line|#include &quot;ip.h&quot;
@@ -21,6 +20,8 @@ macro_line|#include &quot;skbuff.h&quot;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;arp.h&quot;
 macro_line|#include &quot;icmp.h&quot;
+DECL|macro|CONFIG_IP_FORWARD
+mdefine_line|#define CONFIG_IP_FORWARD
 r_extern
 r_int
 id|last_retran
@@ -2659,6 +2660,7 @@ op_eq
 l_int|0
 )paren
 (brace
+macro_line|#ifdef CONFIG_IP_FORWARD
 id|ip_forward
 c_func
 (paren
@@ -2667,6 +2669,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
+macro_line|#endif
 id|skb-&gt;sk
 op_assign
 l_int|NULL
@@ -3227,8 +3230,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|sk-&gt;time_wait.len
-op_assign
+id|reset_timer
+c_func
+(paren
+id|sk
+comma
+id|TIME_WRITE
+comma
 id|backoff
 c_func
 (paren
@@ -3242,20 +3250,6 @@ id|sk-&gt;mdev
 op_plus
 id|sk-&gt;rtt
 )paren
-suffix:semicolon
-id|sk-&gt;timeout
-op_assign
-id|TIME_WRITE
-suffix:semicolon
-id|reset_timer
-(paren
-(paren
-r_struct
-id|timer
-op_star
-)paren
-op_amp
-id|sk-&gt;time_wait
 )paren
 suffix:semicolon
 )brace
@@ -3516,8 +3510,13 @@ multiline_comment|/*&n;   * Double the RTT time every time we retransmit. &n;   
 id|sk-&gt;backoff
 op_increment
 suffix:semicolon
-id|sk-&gt;time_wait.len
-op_assign
+id|reset_timer
+c_func
+(paren
+id|sk
+comma
+id|TIME_WRITE
+comma
 id|backoff
 c_func
 (paren
@@ -3531,21 +3530,6 @@ id|sk-&gt;mdev
 op_plus
 id|sk-&gt;rtt
 )paren
-suffix:semicolon
-id|sk-&gt;timeout
-op_assign
-id|TIME_WRITE
-suffix:semicolon
-id|reset_timer
-c_func
-(paren
-(paren
-r_struct
-id|timer
-op_star
-)paren
-op_amp
-id|sk-&gt;time_wait
 )paren
 suffix:semicolon
 )brace

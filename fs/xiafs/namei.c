@@ -1973,7 +1973,7 @@ op_or
 (paren
 id|mode
 op_amp
-l_int|0777
+id|S_IRWXUGO
 op_amp
 op_complement
 id|current-&gt;umask
@@ -3185,7 +3185,7 @@ id|inode-&gt;i_mode
 op_assign
 id|S_IFLNK
 op_or
-l_int|0777
+id|S_IRWXUGO
 suffix:semicolon
 id|inode-&gt;i_op
 op_assign

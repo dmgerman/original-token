@@ -198,8 +198,7 @@ DECL|macro|SEGMENT_SIZE
 mdefine_line|#define SEGMENT_SIZE PAGE_SIZE
 macro_line|#endif
 macro_line|#ifdef linux
-DECL|macro|PAGE_SIZE
-mdefine_line|#define PAGE_SIZE&t;4096
+macro_line|#include &lt;linux/page.h&gt;
 DECL|macro|SEGMENT_SIZE
 mdefine_line|#define SEGMENT_SIZE&t;1024
 macro_line|#endif

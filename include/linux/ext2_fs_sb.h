@@ -10,41 +10,6 @@ DECL|struct|ext2_sb_info
 r_struct
 id|ext2_sb_info
 (brace
-DECL|member|s_inodes_count
-r_int
-r_int
-id|s_inodes_count
-suffix:semicolon
-multiline_comment|/* Inodes count */
-DECL|member|s_blocks_count
-r_int
-r_int
-id|s_blocks_count
-suffix:semicolon
-multiline_comment|/* Blocks count */
-DECL|member|s_r_blocks_count
-r_int
-r_int
-id|s_r_blocks_count
-suffix:semicolon
-multiline_comment|/* Reserved blocks count */
-DECL|member|s_first_data_block
-r_int
-r_int
-id|s_first_data_block
-suffix:semicolon
-multiline_comment|/* First data block */
-DECL|member|s_log_block_size
-r_int
-r_int
-id|s_log_block_size
-suffix:semicolon
-multiline_comment|/* Log of block size */
-DECL|member|s_log_frag_size
-r_int
-id|s_log_frag_size
-suffix:semicolon
-multiline_comment|/* Log of fragment size */
 DECL|member|s_frag_size
 r_int
 r_int
@@ -100,6 +65,13 @@ op_star
 id|s_sbh
 suffix:semicolon
 multiline_comment|/* Buffer containing the super block */
+DECL|member|s_es
+r_struct
+id|ext2_super_block
+op_star
+id|s_es
+suffix:semicolon
+multiline_comment|/* Pointer to the super block in the buffer */
 DECL|member|s_group_desc
 r_struct
 id|buffer_head

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *&t;seagate.c Copyright (C) 1992 Drew Eckhardt &n; *&t;low level scsi driver for ST01/ST02 by&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; */
-multiline_comment|/*&n; * Configuration : &n; * To use without BIOS -DOVERRIDE=base_address -DCONTROLLER=FD or SEAGATE&n; * -DIRQ will overide the default of 5.&n; * &n; * -DFAST or -DFAST32 will use blind transfers where possible&n; *&n; */
+multiline_comment|/*&n; *&t;seagate.c Copyright (C) 1992, 1993 Drew Eckhardt &n; *&t;low level scsi driver for ST01/ST02, Future Domain TMC-885, &n; *&t;TMC-950  by&n; *&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; * &t;Note : TMC-880 boards don&squot;t work because they have two bits in &n; *&t;&t;the status register flipped, I&squot;ll fix this &quot;RSN&quot;&n; *&n; */
+multiline_comment|/*&n; * Configuration : &n; * To use without BIOS -DOVERRIDE=base_address -DCONTROLLER=FD or SEAGATE&n; * -DIRQ will overide the default of 5.&n; * &n; * -DFAST or -DFAST32 will use blind transfers where possible&n; *&n; * -DARBITRATE will cause the host adapter to arbitrate for the &n; *&t;bus for better SCSI-II compatability, rather than just &n; *&t;waiting for BUS FREE and then doing it&squot;s thing.  Should&n; *&t;let us do one command per Lun when I integrate my &n; *&t;reorganization changes into the distribution sources.&n; *&n; * -DSLOW_HANDSHAKE will allow compatability with broken devices that don&squot;t &n; *&t;handshake fast enough (ie, some CD ROM&squot;s) for the Seagate&n; * &t;code.&n; *&n; * -DSLOW_RATE=x, x some number will let you specify a default &n; *&t;transfer rate if handshaking isn&squot;t working correctly.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_SCSI_SEAGATE) || defined(CONFIG_SCSI_FD_88x) 
 macro_line|#include &lt;asm/io.h&gt;
@@ -10,6 +10,7 @@ macro_line|#include &quot;../blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;seagate.h&quot;
+macro_line|#include &quot;constants.h&quot;
 macro_line|#ifndef IRQ
 DECL|macro|IRQ
 mdefine_line|#define IRQ 5
@@ -17,6 +18,14 @@ macro_line|#endif
 macro_line|#if (defined(FAST32) &amp;&amp; !defined(FAST))
 DECL|macro|FAST
 mdefine_line|#define FAST
+macro_line|#endif
+macro_line|#if defined(SLOW_RATE) &amp;&amp; !defined(SLOW_HANDSHAKE)
+DECL|macro|SLOW_HANDSHAKE
+mdefine_line|#define SLOW_HANDSHAKE
+macro_line|#endif
+macro_line|#if defined(SLOW_HANDSHAKE) &amp;&amp; !defined(SLOW_RATE)
+DECL|macro|SLOW_RATE
+mdefine_line|#define SLOW_RATE 50
 macro_line|#endif
 macro_line|#if defined(LINKED)
 DECL|macro|LINKED
@@ -324,7 +333,6 @@ c_func
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* &n; * We try to autodetect the 0ws jumper.  If we get an over / under run,&n; * then we assume that the the handshaking done by 0ws to synchronize the &n; * SCSI and ISA busses failed, and disable fast transfers.  &n; */
 macro_line|#ifdef FAST
 DECL|variable|fast
 r_static
@@ -334,6 +342,154 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif 
+macro_line|#ifdef SLOW_HANDSHAKE
+multiline_comment|/* &n; * Support for broken devices : &n; * The Seagate board has a handshaking problem.  Namely, a lack &n; * thereof for slow devices.  You can blast 600K/second through &n; * it if you are polling for each byte, more if you do a blind &n; * transfer.  In the first case, with a fast device, REQ will &n; * transition high-low or high-low-high before your loop restarts &n; * and you&squot;ll have no problems.  In the second case, the board &n; * will insert wait states for up to 13.2 usecs for REQ to &n; * transition low-&gt;high, and everything will work.&n; *&n; * However, there&squot;s nothing in the state machine that says &n; * you *HAVE* to see a high-low-high set of transitions before&n; * sending the next byte, and slow things like the Trantor CD ROMS&n; * will break because of this.&n; * &n; * So, we need to slow things down, which isn&squot;t as simple as it &n; * seems.  We can&squot;t slow things down period, because then people&n; * who don&squot;t recompile their kernels will shoot me for ruining &n; * their performance.  We need to do it on a case per case basis.&n; *&n; * The best for performance will be to, only for borken devices &n; * (this is stored on a per-target basis in the scsi_devices array)&n; * &n; * Wait for a low-&gt;high transition before continuing with that &n; * transfer.  If we timeout, continue anyways.  We don&squot;t need &n; * a long timeout, because REQ should only be asserted until the &n; * corresponding ACK is recieved and processed.&n; *&n; * Note that we can&squot;t use the system timer for this, because of &n; * resolution, and we *really* can&squot;t use the timer chip since &n; * gettimeofday() and the beeper routines use that.  So,&n; * the best thing for us to do will be to calibrate a timing&n; * loop in the initialization code using the timer chip before&n; * gettimeofday() can screw with it.&n; */
+DECL|variable|borken_calibration
+r_static
+r_int
+id|borken_calibration
+op_assign
+l_int|0
+suffix:semicolon
+DECL|function|borken_init
+r_static
+r_void
+id|borken_init
+(paren
+r_void
+)paren
+(brace
+r_register
+r_int
+id|count
+op_assign
+l_int|0
+comma
+id|start
+op_assign
+id|jiffies
+op_plus
+l_int|1
+comma
+id|stop
+op_assign
+id|start
+op_plus
+l_int|25
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|jiffies
+OL
+id|start
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|jiffies
+OL
+id|stop
+suffix:semicolon
+op_increment
+id|count
+)paren
+suffix:semicolon
+multiline_comment|/* &n; * Ok, we now have a count for .25 seconds.  Convert to a &n; * count per second and divide by transer rate in K.&n; */
+id|borken_calibration
+op_assign
+(paren
+id|count
+op_star
+l_int|4
+)paren
+op_div
+(paren
+id|SLOW_RATE
+op_star
+l_int|1024
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|borken_calibration
+OL
+l_int|1
+)paren
+id|borken_calibration
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#if (DEBUG &amp; DEBUG_BORKEN)
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : borken calibrated to %dK/sec, %d cycles per transfer&bslash;n&quot;
+comma
+id|hostno
+comma
+id|BORKEN_RATE
+comma
+id|borken_calibration
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+DECL|function|borken_wait
+r_static
+r_inline
+r_void
+id|borken_wait
+c_func
+(paren
+r_void
+)paren
+(brace
+r_register
+r_int
+id|count
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|count
+op_assign
+id|borken_calibration
+suffix:semicolon
+id|count
+op_logical_and
+(paren
+id|STATUS
+op_amp
+id|STAT_REQ
+)paren
+suffix:semicolon
+op_decrement
+id|count
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|count
+)paren
+macro_line|#if (DEBUG &amp; DEBUG_BORKEN) 
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : borken timeout&bslash;n&quot;
+comma
+id|hostno
+)paren
+suffix:semicolon
+macro_line|#else
+suffix:semicolon
+macro_line|#endif 
+)brace
+macro_line|#endif /* def SLOW_HANDSHAKE */
 DECL|function|seagate_st0x_detect
 r_int
 id|seagate_st0x_detect
@@ -434,7 +590,7 @@ l_string|&quot;FD&quot;
 suffix:semicolon
 macro_line|#endif 
 macro_line|#else /* OVERIDE */&t;
-multiline_comment|/*&n; *&t;To detect this card, we simply look for the signature&n; *&t;from the BIOS version notice in all the possible locations&n; *&t;of the ROM&squot;s.  This has a nice sideeffect of not trashing&n; * &t;any register locations that might be used by something else.&n; */
+multiline_comment|/*&n; *&t;To detect this card, we simply look for the signature&n; *&t;from the BIOS version notice in all the possible locations&n; *&t;of the ROM&squot;s.  This has a nice sideeffect of not trashing&n; * &t;any register locations that might be used by something else.&n; *&n; * XXX - note that we probably should be probing the address&n; * space for the on-board RAM instead.&n; */
 r_for
 c_loop
 (paren
@@ -669,6 +825,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef SLOW_HANDSHAKE
+id|borken_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 op_minus
 l_int|1
@@ -712,6 +875,12 @@ c_func
 id|buffer
 comma
 l_string|&quot;scsi%d : %s at irq %d address %p options :&quot;
+macro_line|#ifdef ARBITRATE
+l_string|&quot; ARBITRATE&quot;
+macro_line|#endif
+macro_line|#ifdef SLOW_HANDSHAKE
+l_string|&quot; SLOW_HANDSHAKE&quot;
+macro_line|#endif
 macro_line|#ifdef FAST
 macro_line|#ifdef FAST32
 l_string|&quot; FAST32&quot;
@@ -1325,12 +1494,25 @@ suffix:semicolon
 r_int
 id|temp
 suffix:semicolon
-macro_line|#if ((DEBUG &amp; PHASE_ETC) || (DEBUG &amp; PRINT_COMMAND) || (DEBUG &amp; PHASE_EXIT))&t;
+macro_line|#ifdef SLOW_HANDSHAKE
+r_int
+id|borken
+suffix:semicolon
+multiline_comment|/* Does the current target require Very Slow I/O ? */
+macro_line|#endif
+macro_line|#if (DEBUG &amp; PHASE_DATAIN) || (DEBUG &amp; PHASE_DATOUT) 
+r_int
+id|transfered
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+macro_line|#if (((DEBUG &amp; PHASE_ETC) == PHASE_ETC) || (DEBUG &amp; PRINT_COMMAND) || &bslash;&n;&t;(DEBUG &amp; PHASE_EXIT))&t;
 r_int
 id|i
 suffix:semicolon
 macro_line|#endif
-macro_line|#if (DEBUG &amp; PHASE_ETC)
+macro_line|#if ((DEBUG &amp; PHASE_ETC) == PHASE_ETC)
 r_int
 id|phase
 op_assign
@@ -1378,6 +1560,20 @@ id|st0x_aborted
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef SLOW_HANDSHAKE
+id|borken
+op_assign
+(paren
+r_int
+)paren
+id|scsi_devices
+(braket
+id|SCint-&gt;index
+)braket
+dot
+id|borken
+suffix:semicolon
+macro_line|#endif
 macro_line|#if (DEBUG &amp; PRINT_COMMAND)
 id|printk
 (paren
@@ -1388,18 +1584,8 @@ comma
 id|target
 )paren
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|COMMAND_SIZE
+id|print_command
 c_func
-(paren
 (paren
 (paren
 r_int
@@ -1407,31 +1593,6 @@ r_char
 op_star
 )paren
 id|cmnd
-)paren
-(braket
-l_int|0
-)braket
-)paren
-suffix:semicolon
-op_increment
-id|i
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%02x &quot;
-comma
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|cmnd
-)paren
-(braket
-id|i
-)braket
 )paren
 suffix:semicolon
 id|printk
@@ -1711,6 +1872,7 @@ op_assign
 id|current_nobuffs
 suffix:semicolon
 multiline_comment|/*&n; * &t;We have determined that we have been selected.  At this point, &n; *&t;we must respond to the reselection by asserting BSY ourselves&n; */
+macro_line|#if 1
 id|CONTROL
 op_assign
 (paren
@@ -1721,6 +1883,16 @@ op_or
 id|CMD_BSY
 )paren
 suffix:semicolon
+macro_line|#else
+id|CONTROL
+op_assign
+(paren
+id|BASE_CMD
+op_or
+id|CMD_BSY
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; *&t;The target will drop SEL, and raise BSY, at which time we must drop&n; *&t;BSY.&n; */
 r_for
 c_loop
@@ -1810,6 +1982,7 @@ id|jiffies
 op_plus
 id|ST0X_BUS_FREE_DELAY
 suffix:semicolon
+macro_line|#if !defined (ARBITRATE) 
 r_while
 c_loop
 (paren
@@ -1868,8 +2041,7 @@ c_func
 id|st0x_aborted
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;Bus free has been detected, within BUS settle.  I used to &n; *&t;support an arbitration phase - however, on the Seagate, this &n; *&t;degraded performance by a factor &gt; 10 - so it is no more.&n; */
-multiline_comment|/*&n; *&t;SELECTION PHASE&n; *&n; *&t;Now, we select the disk, giving it the SCSI ID at data&n; *&t;and a command of PARITY if necessary, and we raise SEL.&n; */
+macro_line|#endif
 macro_line|#if (DEBUG &amp; PHASE_SELECTION)
 id|printk
 c_func
@@ -1886,21 +2058,151 @@ id|jiffies
 op_plus
 id|ST0X_SELECTION_DELAY
 suffix:semicolon
-multiline_comment|/*&n; *&t;If we wish to disconnect, we should request a MESSAGE OUT&n; *&t;at this point.  Technically, ATTN should be raised before &n; *&t;SEL = true and BSY = false (from arbitration), but I think this &n; *&t;should do.&n; */
+multiline_comment|/*&n; * Arbitration/selection procedure : &n; * 1.  Disable drivers&n; * 2.  Write HOST adapter address bit&n; * 3.  Set start arbitration.&n; * 4.  We get either ARBITRATION COMPLETE or SELECT at this&n; *     point.&n; * 5.  OR our ID and targets on bus.&n; * 6.  Enable SCSI drivers and asserted SEL and ATTN&n; */
+macro_line|#if defined(ARBITRATE)&t;
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|CONTROL
+op_assign
+l_int|0
+suffix:semicolon
+id|DATA
+op_assign
+(paren
+id|controller_type
+op_eq
+id|SEAGATE
+)paren
+ques
+c_cond
+l_int|0x80
+suffix:colon
+l_int|0x40
+suffix:semicolon
+id|CONTROL
+op_assign
+id|CMD_START_ARB
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+(paren
+id|status_read
+op_assign
+id|STATUS
+)paren
+op_amp
+(paren
+id|STAT_ARB_CMPL
+op_or
+id|STAT_SEL
+)paren
+)paren
+op_logical_and
+(paren
+id|jiffies
+OL
+id|clock
+)paren
+op_logical_and
+op_logical_neg
+id|st0x_aborted
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|reselect
+op_logical_neg
+(paren
+id|status_read
+op_amp
+id|STAT_ARB_CMPL
 )paren
+)paren
+(brace
+macro_line|#if (DEBUG &amp; PHASE_SELECTION)
+r_if
+c_cond
+(paren
+id|status_read
+op_amp
+id|STAT_SEL
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : arbitration lost&bslash;n&quot;
+comma
+id|hostno
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : arbitration timeout.&bslash;n&quot;
+comma
+id|hostno
+)paren
+suffix:semicolon
+macro_line|#endif
+id|CONTROL
+op_assign
+id|BASE_CMD
+suffix:semicolon
+r_return
+id|retcode
+c_func
+(paren
+id|DID_NO_CONNECT
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#if (DEBUG &amp; PHASE_SELECTION)
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : arbitration complete&bslash;n&quot;
+comma
+id|hostno
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
+multiline_comment|/*&n; *&t;When the SCSI device decides that we&squot;re gawking at it, it will &n; *&t;respond by asserting BUSY on the bus.&n; *&n; * &t;Note : the Seagate ST-01/02 product manual says that we should &n; * &t;twiddle the DATA register before the control register.  However,&n; *&t;this does not work reliably so we do it the other way arround.&n; *&n; *&t;Probably could be a problem with arbitration too, we really should&n; *&t;try this with a SCSI protocol or logic analyzer to see what is &n; *&t;going on.&n; */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|CONTROL
 op_assign
 id|BASE_CMD
 op_or
 id|CMD_DRVR_ENABLE
 op_or
+id|CMD_SEL
+op_or
+(paren
+id|reselect
+ques
+c_cond
 id|CMD_ATTN
+suffix:colon
+l_int|0
+)paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;We must assert both our ID and our target&squot;s ID on the bus.&n; */
 id|DATA
 op_assign
 (paren
@@ -1926,25 +2228,11 @@ l_int|0x40
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;If we are allowing ourselves to reconnect, then I will keep &n; *&t;ATTN raised so we get MSG OUT. &n; */
-id|CONTROL
-op_assign
-id|BASE_CMD
-op_or
-id|CMD_DRVR_ENABLE
-op_or
-id|CMD_SEL
-op_or
+id|sti
+c_func
 (paren
-id|reselect
-ques
-c_cond
-id|CMD_ATTN
-suffix:colon
-l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;When the SCSI device decides that we&squot;re gawking at it, it will &n; *&t;respond by asserting BUSY on the bus.&n; */
 r_while
 c_loop
 (paren
@@ -1968,7 +2256,7 @@ op_logical_and
 op_logical_neg
 id|st0x_aborted
 )paren
-macro_line|#if (DEBUG &amp; PHASE_SELECTION)
+macro_line|#if 0 &amp;&amp; (DEBUG &amp; PHASE_SELECTION)
 (brace
 id|temp
 op_assign
@@ -2023,13 +2311,9 @@ c_cond
 (paren
 (paren
 id|jiffies
-OG
+op_ge
 id|clock
 )paren
-op_logical_or
-(paren
-op_logical_neg
-id|st0x_aborted
 op_logical_and
 op_logical_neg
 (paren
@@ -2038,9 +2322,8 @@ op_amp
 id|STAT_BSY
 )paren
 )paren
-)paren
 (brace
-macro_line|#if (DEBUG &amp; PHASE_SELECT)
+macro_line|#if (DEBUG &amp; PHASE_SELECTION)
 id|printk
 (paren
 l_string|&quot;scsi%d : NO CONNECT with target %d, status = %x &bslash;n&quot;
@@ -2080,6 +2363,14 @@ op_amp
 id|STAT_BSY
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : BST asserted after we&squot;ve been aborted.&bslash;n&quot;
+comma
+id|hostno
+)paren
+suffix:semicolon
 id|seagate_st0x_reset
 c_func
 (paren
@@ -2220,6 +2511,18 @@ op_star
 id|SCint-&gt;request_buffer
 suffix:semicolon
 )brace
+macro_line|#if (DEBUG &amp; (PHASE_DATAIN | PHASE_DATAOUT))
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : len = %d&bslash;n&quot;
+comma
+id|hostno
+comma
+id|len
+)paren
+suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 macro_line|#ifdef LINKED
@@ -2266,7 +2569,7 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * &t;INFORMATION TRANSFER PHASE&n; *&n; *&t;The nasty looking read / write inline assembler loops we use for &n; *&t;DATAIN and DATAOUT phases are approximately 4-5 times as fast as &n; *&t;the &squot;C&squot; versions - since we&squot;re moving 1024 bytes of data, this&n; *&t;really adds up.&n; */
-macro_line|#if (DEBUG &amp; PHASE_ETC)
+macro_line|#if ((DEBUG &amp; PHASE_ETC) == PHASE_ETC)
 id|printk
 c_func
 (paren
@@ -2318,9 +2621,13 @@ op_amp
 id|STAT_PARITY
 )paren
 (brace
-id|done
-op_assign
-l_int|1
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : got parity error&bslash;n&quot;
+comma
+id|hostno
+)paren
 suffix:semicolon
 id|st0x_aborted
 op_assign
@@ -2336,7 +2643,7 @@ op_amp
 id|STAT_REQ
 )paren
 (brace
-macro_line|#if (DEBUG &amp; PHASE_ETC)
+macro_line|#if ((DEBUG &amp; PHASE_ETC) == PHASE_ETC)
 r_if
 c_cond
 (paren
@@ -2453,11 +2760,7 @@ id|hostno
 suffix:semicolon
 id|st0x_aborted
 op_assign
-l_int|1
-suffix:semicolon
-id|done
-op_assign
-l_int|1
+id|DID_ERROR
 suffix:semicolon
 )brace
 )brace
@@ -2562,14 +2865,6 @@ c_func
 "&quot;"
 id|cld
 suffix:semicolon
-id|movl
-op_mod
-l_int|0
-comma
-op_mod
-op_mod
-id|edi
-suffix:semicolon
 "&quot;"
 macro_line|#ifdef FAST32
 "&quot;"
@@ -2620,7 +2915,7 @@ l_string|&quot;&t;loop 1b;&quot;
 suffix:colon
 suffix:colon
 multiline_comment|/* input */
-l_string|&quot;r&quot;
+l_string|&quot;D&quot;
 (paren
 id|st0x_dr
 )paren
@@ -2638,11 +2933,9 @@ suffix:colon
 multiline_comment|/* clobbered */
 l_string|&quot;eax&quot;
 comma
-l_string|&quot;esi&quot;
-comma
 l_string|&quot;ecx&quot;
 comma
-l_string|&quot;edi&quot;
+l_string|&quot;esi&quot;
 )paren
 suffix:semicolon
 id|len
@@ -2675,10 +2968,6 @@ multiline_comment|/*&n; * &t;We loop as long as we are in a data out phase, ther
 id|__asm__
 (paren
 multiline_comment|/*&n;&t;Local variables : &n;&t;len = ecx&n;&t;data = esi&n;&t;st0x_cr_sr = ebx&n;&t;st0x_dr =  edi&n;&n;&t;Test for any data here at all.&n;*/
-l_string|&quot;movl %0, %%esi&bslash;n&quot;
-multiline_comment|/* local value of data */
-l_string|&quot;&bslash;tmovl %1, %%ecx&bslash;n&quot;
-multiline_comment|/* local value of len */
 "&quot;&bslash;"
 id|torl
 op_mod
@@ -2774,29 +3063,15 @@ l_int|1
 id|b
 l_int|2
 suffix:colon
-id|movl
-op_mod
-op_mod
-id|esi
-comma
-op_mod
-l_int|2
-id|movl
-op_mod
-op_mod
-id|ecx
-comma
-op_mod
-l_int|3
 "&quot;"
 suffix:colon
 multiline_comment|/* output */
-l_string|&quot;=r&quot;
+l_string|&quot;=S&quot;
 (paren
 id|data
 )paren
 comma
-l_string|&quot;=r&quot;
+l_string|&quot;=c&quot;
 (paren
 id|len
 )paren
@@ -2813,13 +3088,11 @@ id|len
 )paren
 suffix:colon
 multiline_comment|/* clobbered */
+l_string|&quot;eax&quot;
+comma
 l_string|&quot;ebx&quot;
 comma
-l_string|&quot;ecx&quot;
-comma
 l_string|&quot;edi&quot;
-comma
-l_string|&quot;esi&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2871,39 +3144,67 @@ suffix:semicolon
 r_case
 id|REQ_DATAIN
 suffix:colon
-macro_line|#ifdef FAST
+macro_line|#ifdef SLOW_HANDSHAKE
 r_if
 c_cond
 (paren
-op_logical_neg
+id|borken
+)paren
+(brace
+macro_line|#if (DEBUG &amp; (PHASE_DATAIN))
+id|transfered
+op_add_assign
+id|len
+suffix:semicolon
+macro_line|#endif
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|len
+op_logical_and
+(paren
+id|STATUS
+op_amp
+(paren
+id|REQ_MASK
+op_or
+id|STAT_REQ
+)paren
+)paren
+op_eq
+(paren
+id|REQ_DATAIN
+op_or
+id|STAT_REQ
+)paren
+suffix:semicolon
+op_decrement
 id|len
 )paren
 (brace
-macro_line|#if 0
-id|printk
+op_star
+id|data
+op_increment
+op_assign
+id|DATA
+suffix:semicolon
+id|borken_wait
 c_func
 (paren
-l_string|&quot;scsi%d: overflow from target %d lun %d &bslash;n&quot;
-comma
-id|hostno
-comma
-id|target
-comma
-id|lun
 )paren
 suffix:semicolon
-id|st0x_aborted
-op_assign
-id|DID_ERROR
-suffix:semicolon
-id|fast
-op_assign
-l_int|0
+)brace
+macro_line|#if (DEBUG &amp; (PHASE_DATAIN))
+id|transfered
+op_sub_assign
+id|len
 suffix:semicolon
 macro_line|#endif
-r_break
-suffix:semicolon
 )brace
+r_else
+macro_line|#endif
+macro_line|#ifdef FAST
 r_if
 c_cond
 (paren
@@ -2959,14 +3260,6 @@ c_func
 "&quot;"
 id|cld
 suffix:semicolon
-id|movl
-op_mod
-l_int|0
-comma
-op_mod
-op_mod
-id|esi
-suffix:semicolon
 "&quot;"
 macro_line|#ifdef FAST32
 "&quot;"
@@ -3017,7 +3310,7 @@ l_string|&quot;&t;loop 1b;&quot;
 suffix:colon
 suffix:colon
 multiline_comment|/* input */
-l_string|&quot;r&quot;
+l_string|&quot;S&quot;
 (paren
 id|st0x_dr
 )paren
@@ -3038,8 +3331,6 @@ comma
 l_string|&quot;ecx&quot;
 comma
 l_string|&quot;edi&quot;
-comma
-l_string|&quot;esi&quot;
 )paren
 suffix:semicolon
 id|len
@@ -3050,6 +3341,22 @@ id|data
 op_add_assign
 id|transfersize
 suffix:semicolon
+macro_line|#if (DEBUG &amp; PHASE_DATAIN)
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d: transfered += %d&bslash;n&quot;
+comma
+id|hostno
+comma
+id|transfersize
+)paren
+suffix:semicolon
+id|transfered
+op_add_assign
+id|transfersize
+suffix:semicolon
+macro_line|#endif
 macro_line|#if (DEBUG &amp; DEBUG_FAST)
 id|printk
 c_func
@@ -3068,14 +3375,27 @@ macro_line|#endif
 r_else
 macro_line|#endif
 (brace
+macro_line|#if (DEBUG &amp; PHASE_DATAIN)
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d: transfered += %d&bslash;n&quot;
+comma
+id|hostno
+comma
+id|len
+)paren
+suffix:semicolon
+id|transfered
+op_add_assign
+id|len
+suffix:semicolon
+multiline_comment|/* Assume we&squot;ll transfer it all, then&n;&t;&t;&t;&t;   subtract what we *didn&squot;t* transfer */
+macro_line|#endif
 multiline_comment|/*&n; * &t;We loop as long as we are in a data in phase, there is room to read, &n; * &t;and BSY is still active&n; */
 id|__asm__
 (paren
 multiline_comment|/*&n;&t;Local variables : &n;&t;ecx = len&n;&t;edi = data&n;&t;esi = st0x_cr_sr&n;&t;ebx = st0x_dr&n;&n;&t;Test for room to read&n;*/
-l_string|&quot;movl %0, %%edi&bslash;n&quot;
-multiline_comment|/* data */
-l_string|&quot;&bslash;tmovl %1, %%ecx&bslash;n&quot;
-multiline_comment|/* len */
 "&quot;&bslash;"
 id|torl
 op_mod
@@ -3184,29 +3504,18 @@ id|stosb
 id|loop
 l_int|1
 id|b
-l_int|2
-suffix:colon
-id|movl
-op_mod
-op_mod
-id|edi
-comma
-op_mod
-l_int|2
 "&bslash;"
 id|n
 "&quot;"
-multiline_comment|/* data */
-l_string|&quot;&bslash;tmovl %%ecx, %3&bslash;n&quot;
-multiline_comment|/* len */
+l_string|&quot;2:&bslash;n&quot;
 suffix:colon
 multiline_comment|/* output */
-l_string|&quot;=r&quot;
+l_string|&quot;=D&quot;
 (paren
 id|data
 )paren
 comma
-l_string|&quot;=r&quot;
+l_string|&quot;=c&quot;
 (paren
 id|len
 )paren
@@ -3223,15 +3532,30 @@ id|len
 )paren
 suffix:colon
 multiline_comment|/* clobbered */
+l_string|&quot;eax&quot;
+comma
 l_string|&quot;ebx&quot;
-comma
-l_string|&quot;ecx&quot;
-comma
-l_string|&quot;edi&quot;
 comma
 l_string|&quot;esi&quot;
 )paren
 suffix:semicolon
+macro_line|#if (DEBUG &amp; PHASE_DATAIN)
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d: transfered -= %d&bslash;n&quot;
+comma
+id|hostno
+comma
+id|len
+)paren
+suffix:semicolon
+id|transfered
+op_sub_assign
+id|len
+suffix:semicolon
+multiline_comment|/* Since we assumed all of Len got &n;&t;&t;&t;&t;&t; * transfered, correct our mistake */
+macro_line|#endif
 )brace
 r_if
 c_cond
@@ -3333,6 +3657,18 @@ op_star
 )paren
 id|cmnd
 suffix:semicolon
+macro_line|#ifdef SLOW_HANDSHAKE
+r_if
+c_cond
+(paren
+id|borken
+)paren
+id|borken_wait
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 r_break
 suffix:semicolon
@@ -3431,16 +3767,16 @@ id|DATA
 op_assign
 id|NOP
 suffix:semicolon
-macro_line|#if (DEBUG &amp; PHASE_MSGOUT)
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : sent NOP message.&bslash;n&quot;
+l_string|&quot;scsi%d : target %d requested MSGOUT, sent NOP message.&bslash;n&quot;
 comma
 id|hostno
+comma
+id|target
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_break
 suffix:semicolon
@@ -3684,27 +4020,37 @@ op_assign
 id|DID_ERROR
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/* while ends */
+macro_line|#ifdef SLOW_HANDSHAKE
+multiline_comment|/*&n; * I really don&squot;t care to deal with borken devices in each single &n; * byte transfer case (ie, message in, message out, status), so&n; * I&squot;ll do the wait here if necessary.&n; */
+r_if
+c_cond
+(paren
+id|borken
+)paren
+id|borken_wait
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/* if ends */
+)brace
+multiline_comment|/* while ends */
 macro_line|#if (DEBUG &amp; (PHASE_DATAIN | PHASE_DATAOUT | PHASE_EXIT))
 id|printk
 c_func
 (paren
-l_string|&quot;Transfered %d bytes, allowed %d additional bytes&bslash;n&quot;
+l_string|&quot;scsi%d : Transfered %d bytes&bslash;n&quot;
 comma
-(paren
-id|bufflen
-op_minus
-id|len
-)paren
+id|hostno
 comma
-id|len
+id|transfered
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#if (DEBUG &amp; PHASE_EXIT)
+macro_line|#if 0&t;&t;/* Doesn&squot;t work for scatter / gather */
 id|printk
 c_func
 (paren
@@ -3749,17 +4095,32 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
-l_string|&quot;Status = %02x, message = %02x&bslash;n&quot;
+l_string|&quot;scsi%d : status = &quot;
 comma
+id|hostno
+)paren
+suffix:semicolon
+id|print_status
+c_func
+(paren
 id|status
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;message = %02x&bslash;n&quot;
 comma
 id|message
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* We shouldn&squot;t reach this until *after* BSY has been deasserted */
+macro_line|#ifdef notyet
 r_if
 c_cond
 (paren
@@ -3789,6 +4150,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#ifdef LINKED
 r_else
 (brace
@@ -4062,10 +4424,6 @@ id|heads
 comma
 id|sectors
 suffix:semicolon
-r_int
-r_int
-id|oldfs
-suffix:semicolon
 id|Scsi_Device
 op_star
 id|disk
@@ -4116,23 +4474,6 @@ op_star
 id|sizes
 op_plus
 l_int|2
-)paren
-suffix:semicolon
-multiline_comment|/*&n; * Point fs, which normally points to user space, at kernel space so that &n; * we can do a syscall with the data coming from kernel space.  &n; */
-id|oldfs
-op_assign
-id|get_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-id|set_fs
-c_func
-(paren
-id|get_ds
-c_func
-(paren
-)paren
 )paren
 suffix:semicolon
 id|cmd
@@ -4215,7 +4556,7 @@ op_logical_neg
 (paren
 id|result
 op_assign
-id|scsi_ioctl
+id|kernel_scsi_ioctl
 (paren
 id|disk
 comma
@@ -4301,7 +4642,7 @@ op_logical_neg
 (paren
 id|result
 op_assign
-id|scsi_ioctl
+id|kernel_scsi_ioctl
 (paren
 id|disk
 comma
@@ -4404,6 +4745,20 @@ comma
 id|formatted_sectors
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|heads
+op_logical_or
+op_logical_neg
+id|sectors
+)paren
+id|cylinders
+op_assign
+l_int|1025
+suffix:semicolon
+r_else
 id|cylinders
 op_sub_assign
 (paren
@@ -4468,12 +4823,6 @@ suffix:semicolon
 multiline_comment|/* &n; * There should be an alternate mapping for things the seagate doesn&squot;t&n; * understand, but I couldn&squot;t say what it is with reasonable certainty.&n; */
 )brace
 )brace
-id|set_fs
-c_func
-(paren
-id|oldfs
-)paren
-suffix:semicolon
 r_return
 id|result
 suffix:semicolon

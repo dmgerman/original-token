@@ -6,9 +6,9 @@ multiline_comment|/*&n; * Definition of struct rusage taken from BSD 4.3 Reno&n;
 DECL|macro|RUSAGE_SELF
 mdefine_line|#define&t;RUSAGE_SELF&t;0
 DECL|macro|RUSAGE_CHILDREN
-mdefine_line|#define&t;RUSAGE_CHILDREN&t;-1
+mdefine_line|#define&t;RUSAGE_CHILDREN&t;(-1)
 DECL|macro|RUSAGE_BOTH
-mdefine_line|#define RUSAGE_BOTH&t;-2&t;&t;/* sys_wait4() uses this */
+mdefine_line|#define RUSAGE_BOTH&t;(-2)&t;&t;/* sys_wait4() uses this */
 DECL|struct|rusage
 r_struct
 id|rusage
@@ -121,7 +121,7 @@ macro_line|#endif
 DECL|macro|RLIM_NLIMITS
 mdefine_line|#define RLIM_NLIMITS&t;6
 DECL|macro|RLIM_INFINITY
-mdefine_line|#define RLIM_INFINITY&t;0x7fffffff
+mdefine_line|#define RLIM_INFINITY&t;LONG_MAX
 DECL|struct|rlimit
 r_struct
 id|rlimit
@@ -137,7 +137,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|PRIO_MIN
-mdefine_line|#define&t;PRIO_MIN&t;-99
+mdefine_line|#define&t;PRIO_MIN&t;(-99)
 DECL|macro|PRIO_MAX
 mdefine_line|#define&t;PRIO_MAX&t;14
 DECL|macro|PRIO_PROCESS

@@ -64,6 +64,9 @@ DECL|macro|MTSEEK
 mdefine_line|#define MTSEEK&t;22&t;/* seek to block (Tandberg, etc.) */
 DECL|macro|MTTELL
 mdefine_line|#define MTTELL&t;23&t;/* tell block (Tandber, etc.) */
+DECL|macro|MTSETDRVBUFFER
+mdefine_line|#define MTSETDRVBUFFER 24 /* set the drive buffering according to SCSI-2 */
+multiline_comment|/* ordinary buffered operation with code 1 */
 multiline_comment|/* structure for MTIOCGET - mag tape get status command */
 DECL|struct|mtget
 r_struct

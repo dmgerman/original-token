@@ -14,12 +14,10 @@ macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &quot;inet.h&quot;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;eth.h&quot;
-macro_line|#include &quot;timer.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
-macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;arp.h&quot;
 multiline_comment|/* Display an IP address in readable format. */
 DECL|function|in_ntoa

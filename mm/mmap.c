@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -10,7 +11,7 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * description of effects of mapping type and prot in current implementation.&n; * this is due to the current handling of page faults in memory.c. the expected&n; * behavior is in parens:&n; *&n; * map_type&t;prot&n; *&t;&t;PROT_NONE&t;PROT_READ&t;PROT_WRITE&t;PROT_EXEC&n; * MAP_SHARED&t;r: (no) yes&t;r: (yes) yes&t;r: (no) yes&t;r: (no) no&n; *&t;&t;w: (no) yes&t;w: (no) copy&t;w: (yes) yes&t;w: (no) no&n; *&t;&t;x: (no) no&t;x: (no) no&t;x: (no) no&t;x: (yes) no&n; *&t;&t;&n; * MAP_PRIVATE&t;r: (no) yes&t;r: (yes) yes&t;r: (no) yes&t;r: (no) no&n; *&t;&t;w: (no) copy&t;w: (no) copy&t;w: (copy) copy&t;w: (no) no&n; *&t;&t;x: (no) no&t;x: (no) no&t;x: (no) no&t;x: (yes) no&n; *&n; */
 DECL|macro|CODE_SPACE
-mdefine_line|#define CODE_SPACE(addr) ((((addr)+4095)&amp;~4095) &lt; &bslash;&n;&t;&t;&t;  current-&gt;start_code + current-&gt;end_code)
+mdefine_line|#define CODE_SPACE(addr)&t;&bslash;&n; (PAGE_ALIGN(addr) &lt; current-&gt;start_code + current-&gt;end_code)
 DECL|function|do_mmap
 r_int
 id|do_mmap
@@ -139,15 +140,10 @@ id|MAP_FIXED
 r_if
 c_cond
 (paren
-(paren
 id|addr
 op_amp
-l_int|0xfff
-)paren
-op_logical_or
-id|addr
-op_eq
-l_int|0
+op_complement
+id|PAGE_MASK
 )paren
 r_return
 op_minus
@@ -181,7 +177,7 @@ suffix:semicolon
 multiline_comment|/* Maybe this works.. Ugly it is. */
 id|addr
 op_assign
-l_int|0x40000000
+id|SHM_RANGE_START
 suffix:semicolon
 r_while
 c_loop
@@ -190,7 +186,7 @@ id|addr
 op_plus
 id|len
 OL
-l_int|0x60000000
+id|SHM_RANGE_END
 )paren
 (brace
 r_for
@@ -229,13 +225,11 @@ r_continue
 suffix:semicolon
 id|addr
 op_assign
+id|PAGE_ALIGN
+c_func
 (paren
 id|vmm-&gt;vm_end
-op_plus
-l_int|0xfff
 )paren
-op_amp
-l_int|0xfffff000
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -256,7 +250,7 @@ id|addr
 op_plus
 id|len
 op_ge
-l_int|0x60000000
+id|SHM_RANGE_END
 )paren
 r_return
 op_minus
@@ -510,12 +504,13 @@ c_cond
 (paren
 id|addr
 op_amp
-l_int|0xfff
+op_complement
+id|PAGE_MASK
 )paren
 op_logical_or
 id|addr
 OG
-l_int|0x7fffffff
+id|LONG_MAX
 op_logical_or
 id|addr
 op_eq
@@ -806,28 +801,11 @@ c_func
 (paren
 id|inode-&gt;i_mode
 )paren
-op_logical_or
-op_logical_neg
-id|permission
-c_func
-(paren
-id|inode
-comma
-id|MAY_READ
 )paren
-)paren
-(brace
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EACCES
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -837,18 +815,10 @@ op_logical_or
 op_logical_neg
 id|inode-&gt;i_op-&gt;bmap
 )paren
-(brace
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ENOEXEC
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -873,18 +843,10 @@ id|inode-&gt;i_sb-&gt;s_blocksize
 )paren
 )paren
 )paren
-(brace
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EACCES
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -936,18 +898,10 @@ c_cond
 op_logical_neg
 id|mpnt
 )paren
-(brace
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-)brace
 id|unmap_page_range
 c_func
 (paren

@@ -11,6 +11,24 @@ macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;control_w.h&quot;
 macro_line|#include &quot;status_w.h&quot;
 macro_line|#include &lt;asm/segment.h&gt;
+DECL|macro|FWAIT_OPCODE
+mdefine_line|#define FWAIT_OPCODE 0x9b
+DECL|macro|OP_SIZE_PREFIX
+mdefine_line|#define OP_SIZE_PREFIX 0x66
+DECL|macro|ADDR_SIZE_PREFIX
+mdefine_line|#define ADDR_SIZE_PREFIX 0x67
+DECL|macro|PREFIX_CS
+mdefine_line|#define PREFIX_CS 0x2e
+DECL|macro|PREFIX_DS
+mdefine_line|#define PREFIX_DS 0x3e
+DECL|macro|PREFIX_ES
+mdefine_line|#define PREFIX_ES 0x26
+DECL|macro|PREFIX_SS
+mdefine_line|#define PREFIX_SS 0x36
+DECL|macro|PREFIX_FS
+mdefine_line|#define PREFIX_FS 0x64
+DECL|macro|PREFIX_GS
+mdefine_line|#define PREFIX_GS 0x65
 DECL|macro|__BAD__
 mdefine_line|#define __BAD__ Un_impl   /* Not implemented */
 macro_line|#ifndef NO_UNDOC_CODE    /* Un-documented FPU op-codes supported by default. */
@@ -631,6 +649,17 @@ id|FPU_REG
 op_star
 id|FPU_st0_ptr
 suffix:semicolon
+multiline_comment|/* ######## To be shifted */
+DECL|variable|FPU_entry_op_cs
+r_int
+r_int
+id|FPU_entry_op_cs
+suffix:semicolon
+DECL|variable|FPU_data_selector
+r_int
+r_int
+id|FPU_data_selector
+suffix:semicolon
 macro_line|#ifdef PARANOID
 DECL|variable|emulating
 r_char
@@ -641,6 +670,16 @@ suffix:semicolon
 macro_line|#endif PARANOID
 DECL|macro|bswapw
 mdefine_line|#define bswapw(x) __asm__(&quot;xchgb %%al,%%ah&quot;:&quot;=a&quot; (x):&quot;0&quot; ((short)x))
+r_static
+r_int
+id|valid_prefix
+c_func
+(paren
+r_int
+r_char
+id|byte
+)paren
+suffix:semicolon
 DECL|function|math_emulate
 r_extern
 l_string|&quot;C&quot;
@@ -660,6 +699,9 @@ r_int
 r_int
 id|code
 suffix:semicolon
+r_int
+id|unmasked
+suffix:semicolon
 macro_line|#ifdef PARANOID
 r_if
 c_cond
@@ -675,6 +717,7 @@ l_string|&quot;ERROR: wm-FPU-emu is not RE-ENTRANT!&bslash;n&quot;
 suffix:semicolon
 )brace
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 macro_line|#endif PARANOID
 r_if
 c_cond
@@ -683,6 +726,44 @@ op_logical_neg
 id|current-&gt;used_math
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|8
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+multiline_comment|/* Make sure that the registers are compatible&n;&t;     with the assumptions of the emulator. */
+id|regs
+(braket
+id|i
+)braket
+dot
+id|exp
+op_assign
+l_int|0
+suffix:semicolon
+id|regs
+(braket
+id|i
+)braket
+dot
+id|sigh
+op_assign
+l_int|0x80000000
+suffix:semicolon
+)brace
 id|finit
 c_func
 (paren
@@ -769,6 +850,7 @@ suffix:semicolon
 id|do_another_FPU_instruction
 suffix:colon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
 id|code
 op_assign
 id|get_fs_word
@@ -783,6 +865,26 @@ id|FPU_EIP
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* It would be more logical to do this only in get_address(),&n;     but although it is supposed to be undefined for many fpu&n;     instructions, an 80486 behaves as if this were done here: */
+id|FPU_data_selector
+op_assign
+id|FPU_DS
+suffix:semicolon
+macro_line|#endif PECULIAR_486
+r_if
+c_cond
+(paren
+(paren
+id|code
+op_amp
+l_int|0xf8
+)paren
+op_ne
+l_int|0xd8
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -792,14 +894,13 @@ op_amp
 l_int|0xff
 )paren
 op_eq
-l_int|0x9b
+id|FWAIT_OPCODE
 )paren
-multiline_comment|/* fwait */
 (brace
 r_if
 c_cond
 (paren
-id|status_word
+id|partial_status
 op_amp
 id|SW_Summary
 )paren
@@ -812,14 +913,62 @@ id|FPU_EIP
 op_increment
 suffix:semicolon
 r_goto
-id|FPU_instruction_done
+id|FPU_fwait_done
 suffix:semicolon
 )brace
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|valid_prefix
+c_func
+(paren
+id|code
+op_amp
+l_int|0xff
+)paren
+)paren
+(brace
+r_goto
+id|do_another_FPU_instruction
+suffix:semicolon
+)brace
+macro_line|#ifdef PARANOID
+id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;FPU emulator: Unknown prefix byte 0x%02x&bslash;n&quot;
+comma
+id|code
+op_amp
+l_int|0xff
+)paren
+suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
+id|EXCEPTION
+c_func
+(paren
+id|EX_INTERNAL
+op_or
+l_int|0x126
+)paren
+suffix:semicolon
+id|FPU_EIP
+op_increment
+suffix:semicolon
+r_goto
+id|do_the_FPU_interrupt
+suffix:semicolon
+macro_line|#endif PARANOID
 )brace
 r_if
 c_cond
 (paren
-id|status_word
+id|partial_status
 op_amp
 id|SW_Summary
 )paren
@@ -869,8 +1018,6 @@ l_int|0xc000
 )paren
 )paren
 (brace
-multiline_comment|/* This is a guess about what a real FPU might do to this bit: */
-multiline_comment|/*&t;  status_word &amp;= ~SW_Summary; ****/
 multiline_comment|/*&n;&t;   *  We need to simulate the action of the kernel to FPU&n;&t;   *  interrupts here.&n;&t;   *  Currently, the &quot;real FPU&quot; part of the kernel (0.99.10)&n;&t;   *  clears the exception flags, sets the registers to empty,&n;&t;   *  and passes information back to the interrupted process&n;&t;   *  via the cs selector and operand selector, so we do the same.&n;&t;   */
 id|do_the_FPU_interrupt
 suffix:colon
@@ -880,21 +1027,9 @@ l_int|0xffff0000
 suffix:semicolon
 id|cs_selector
 op_or_assign
-(paren
 id|status_word
-op_amp
-op_complement
-id|SW_Top
-)paren
-op_or
+c_func
 (paren
-(paren
-id|top
-op_amp
-l_int|7
-)paren
-op_lshift
-id|SW_Top_Shift
 )paren
 suffix:semicolon
 id|operand_selector
@@ -904,7 +1039,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|status_word
+id|partial_status
 op_assign
 l_int|0
 suffix:semicolon
@@ -943,6 +1078,7 @@ suffix:semicolon
 )brace
 )brace
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
 id|send_sig
 c_func
 (paren
@@ -963,6 +1099,34 @@ id|FPU_ORIG_EIP
 op_assign
 id|FPU_EIP
 suffix:semicolon
+(brace
+r_int
+r_int
+id|swapped_code
+op_assign
+id|code
+suffix:semicolon
+id|bswapw
+c_func
+(paren
+id|swapped_code
+)paren
+suffix:semicolon
+id|FPU_entry_op_cs
+op_assign
+(paren
+id|swapped_code
+op_lshift
+l_int|16
+)paren
+op_or
+(paren
+id|FPU_CS
+op_amp
+l_int|0xffff
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -972,14 +1136,14 @@ op_amp
 l_int|0xff
 )paren
 op_eq
-l_int|0x66
+id|OP_SIZE_PREFIX
 )paren
-multiline_comment|/* size prefix */
 (brace
 id|FPU_EIP
 op_increment
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
 id|code
 op_assign
 id|get_fs_word
@@ -994,6 +1158,7 @@ id|FPU_EIP
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 )brace
 id|FPU_EIP
 op_add_assign
@@ -1041,7 +1206,7 @@ r_int
 r_int
 id|status1
 op_assign
-id|status_word
+id|partial_status
 suffix:semicolon
 id|FPU_st0_ptr
 op_assign
@@ -1063,6 +1228,11 @@ c_cond
 id|NOT_EMPTY_0
 )paren
 (brace
+id|unmasked
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Do this here to stop compiler warnings. */
 r_switch
 c_cond
 (paren
@@ -1078,6 +1248,8 @@ l_int|3
 r_case
 l_int|0
 suffix:colon
+id|unmasked
+op_assign
 id|reg_load_single
 c_func
 (paren
@@ -1098,6 +1270,8 @@ suffix:semicolon
 r_case
 l_int|2
 suffix:colon
+id|unmasked
+op_assign
 id|reg_load_double
 c_func
 (paren
@@ -1149,7 +1323,7 @@ id|TW_NaN
 )paren
 (brace
 multiline_comment|/* Restore the status word; we might have loaded a&n;&t;&t;     denormal. */
-id|status_word
+id|partial_status
 op_assign
 id|status1
 suffix:semicolon
@@ -1185,18 +1359,55 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|FPU_modrm
 op_amp
 l_int|0x08
+)paren
+op_logical_and
+(paren
+id|control_word
+op_amp
+id|CW_Invalid
+)paren
 )paren
 id|pop
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* fcomp, so we pop. */
+multiline_comment|/* fcomp, masked, so we pop. */
 )brace
 r_else
+(brace
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* This is not really needed, but gives behaviour&n;&t;&t;&t; identical to an 80486 */
+r_if
+c_cond
+(paren
+(paren
+id|FPU_modrm
+op_amp
+l_int|0x28
+)paren
+op_eq
+l_int|0x20
+)paren
+multiline_comment|/* fdiv or fsub */
+id|real_2op_NaN
+c_func
+(paren
+op_amp
+id|FPU_loaded_data
+comma
+id|FPU_st0_ptr
+comma
+id|FPU_st0_ptr
+)paren
+suffix:semicolon
+r_else
+macro_line|#endif PECULIAR_486
+multiline_comment|/* fadd, fdivr, fmul, or fsubr */
 id|real_2op_NaN
 c_func
 (paren
@@ -1208,6 +1419,86 @@ comma
 id|FPU_st0_ptr
 )paren
 suffix:semicolon
+)brace
+r_goto
+id|reg_mem_instr_done
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|unmasked
+op_logical_and
+op_logical_neg
+(paren
+(paren
+id|FPU_modrm
+op_amp
+l_int|0x30
+)paren
+op_eq
+l_int|0x10
+)paren
+)paren
+(brace
+multiline_comment|/* Is not a comparison instruction. */
+r_if
+c_cond
+(paren
+(paren
+id|FPU_modrm
+op_amp
+l_int|0x38
+)paren
+op_eq
+l_int|0x38
+)paren
+(brace
+multiline_comment|/* fdivr */
+r_if
+c_cond
+(paren
+(paren
+id|FPU_st0_tag
+op_eq
+id|TW_Zero
+)paren
+op_logical_and
+(paren
+id|FPU_loaded_data.tag
+op_eq
+id|TW_Valid
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|divide_by_zero
+c_func
+(paren
+id|FPU_loaded_data.sign
+comma
+id|FPU_st0_ptr
+)paren
+)paren
+(brace
+multiline_comment|/* We use the fact here that the unmasked&n;&t;&t;&t;&t; exception in the loaded data was for a&n;&t;&t;&t;&t; denormal operand */
+multiline_comment|/* Restore the state of the denormal op bit */
+id|partial_status
+op_and_assign
+op_complement
+id|SW_Denorm_Op
+suffix:semicolon
+id|partial_status
+op_or_assign
+id|status1
+op_amp
+id|SW_Denorm_Op
+suffix:semicolon
+)brace
+)brace
+)brace
 r_goto
 id|reg_mem_instr_done
 suffix:semicolon
@@ -1228,6 +1519,14 @@ r_case
 l_int|0
 suffix:colon
 multiline_comment|/* fadd */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information,&n;&t;&t;     but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|reg_add
 c_func
 (paren
@@ -1247,6 +1546,14 @@ r_case
 l_int|1
 suffix:colon
 multiline_comment|/* fmul */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information,&n;&t;&t;     but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|reg_mul
 c_func
 (paren
@@ -1277,11 +1584,18 @@ r_case
 l_int|3
 suffix:colon
 multiline_comment|/* fcomp */
+r_if
+c_cond
+(paren
+op_logical_neg
 id|compare_st_data
 c_func
 (paren
 )paren
-suffix:semicolon
+op_logical_and
+op_logical_neg
+id|unmasked
+)paren
 id|pop
 c_func
 (paren
@@ -1293,6 +1607,14 @@ r_case
 l_int|4
 suffix:colon
 multiline_comment|/* fsub */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information,&n;&t;&t;     but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|reg_sub
 c_func
 (paren
@@ -1312,6 +1634,14 @@ r_case
 l_int|5
 suffix:colon
 multiline_comment|/* fsubr */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information,&n;&t;&t;     but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|reg_sub
 c_func
 (paren
@@ -1331,6 +1661,14 @@ r_case
 l_int|6
 suffix:colon
 multiline_comment|/* fdiv */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information,&n;&t;&t;     but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|reg_div
 c_func
 (paren
@@ -1350,6 +1688,14 @@ r_case
 l_int|7
 suffix:colon
 multiline_comment|/* fdivr */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information,&n;&t;&t;     but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -1357,7 +1703,7 @@ id|FPU_st0_tag
 op_eq
 id|TW_Zero
 )paren
-id|status_word
+id|partial_status
 op_assign
 id|status1
 suffix:semicolon
@@ -1413,16 +1759,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|FPU_modrm
 op_amp
 l_int|0x08
+)paren
+op_logical_and
+(paren
+id|control_word
+op_amp
+id|CW_Invalid
+)paren
 )paren
 id|pop
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* fcomp, Empty or not, we pop. */
+multiline_comment|/* fcomp */
 )brace
 r_else
 id|stack_underflow
@@ -1457,13 +1811,19 @@ suffix:semicolon
 )brace
 id|reg_mem_instr_done
 suffix:colon
-id|data_operand_offset
-op_assign
+macro_line|#ifndef PECULIAR_486
+op_star
 (paren
 r_int
 r_int
+op_star
 )paren
-id|FPU_data_address
+op_amp
+id|operand_selector
+op_assign
+id|FPU_data_selector
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 suffix:semicolon
 )brace
 r_else
@@ -1485,6 +1845,13 @@ op_amp
 l_int|7
 )paren
 suffix:semicolon
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* This is supposed to be undefined, but a real 80486 seems&n;&t; to do this: */
+id|FPU_data_address
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|FPU_st0_ptr
 op_assign
 op_amp
@@ -1583,15 +1950,10 @@ id|FPU_rm
 )paren
 )paren
 (brace
-id|stack_underflow_i
+id|stack_underflow_pop
 c_func
 (paren
 id|FPU_rm
-)paren
-suffix:semicolon
-id|pop
-c_func
-(paren
 )paren
 suffix:semicolon
 r_goto
@@ -1679,37 +2041,43 @@ id|ip_offset
 op_assign
 id|FPU_entry_eip
 suffix:semicolon
-id|bswapw
-c_func
-(paren
-id|code
-)paren
-suffix:semicolon
-op_star
-(paren
-l_int|1
-op_plus
-(paren
-r_int
-r_int
-op_star
-)paren
-op_amp
 id|cs_selector
-)paren
 op_assign
-id|code
-op_amp
-l_int|0x7ff
+id|FPU_entry_op_cs
 suffix:semicolon
+id|data_operand_offset
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|FPU_data_address
+suffix:semicolon
+macro_line|#ifdef PECULIAR_486
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|operand_selector
+op_assign
+id|FPU_data_selector
+suffix:semicolon
+macro_line|#endif PECULIAR_486
+id|FPU_fwait_done
+suffix:colon
 macro_line|#ifdef DEBUG
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
 id|emu_printall
 c_func
 (paren
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
 macro_line|#endif DEBUG
 r_if
 c_cond
@@ -1724,65 +2092,98 @@ r_int
 r_char
 id|next
 suffix:semicolon
-multiline_comment|/* (This test should generate no machine code) */
+id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+id|next
+op_assign
+id|get_fs_byte
+c_func
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|FPU_EIP
+)paren
+suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|valid_prefix
+c_func
+(paren
+id|next
+)paren
+)paren
+r_goto
+id|do_another_FPU_instruction
+suffix:semicolon
+)brace
+id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
+)brace
+multiline_comment|/* This function is not yet complete. To properly handle all prefix&n;   bytes, it will be necessary to change all emulator code which&n;   accesses user address space. Access to separate segments is&n;   important for msdos emulation. */
+DECL|function|valid_prefix
+r_static
+r_int
+id|valid_prefix
+c_func
+(paren
+r_int
+r_char
+id|byte
+)paren
+(brace
+r_int
+r_int
+id|ip
+op_assign
+id|FPU_EIP
+suffix:semicolon
 r_while
 c_loop
 (paren
 l_int|1
 )paren
 (brace
-id|RE_ENTRANT_CHECK_OFF
-id|next
-op_assign
-id|get_fs_byte
-c_func
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|FPU_EIP
-)paren
-suffix:semicolon
-id|RE_ENTRANT_CHECK_ON
-r_if
+r_switch
 c_cond
 (paren
-(paren
-(paren
-id|next
-op_amp
-l_int|0xf8
+id|byte
 )paren
-op_eq
-l_int|0xd8
-)paren
-op_logical_or
-(paren
-id|next
-op_eq
-l_int|0x9b
-)paren
-)paren
-multiline_comment|/* fwait */
 (brace
-r_goto
-id|do_another_FPU_instruction
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|next
-op_eq
-l_int|0x66
-)paren
-multiline_comment|/* size prefix */
-(brace
+r_case
+id|ADDR_SIZE_PREFIX
+suffix:colon
+r_case
+id|PREFIX_DS
+suffix:colon
+multiline_comment|/* Redundant */
+r_case
+id|PREFIX_CS
+suffix:colon
+r_case
+id|PREFIX_ES
+suffix:colon
+r_case
+id|PREFIX_SS
+suffix:colon
+r_case
+id|PREFIX_FS
+suffix:colon
+r_case
+id|PREFIX_GS
+suffix:colon
+r_case
+id|OP_SIZE_PREFIX
+suffix:colon
+multiline_comment|/* Used often by gcc, but has no effect. */
 id|RE_ENTRANT_CHECK_OFF
-id|next
+suffix:semicolon
+id|byte
 op_assign
 id|get_fs_byte
 c_func
@@ -1793,38 +2194,51 @@ r_char
 op_star
 )paren
 (paren
-id|FPU_EIP
-op_plus
-l_int|1
-)paren
-)paren
-suffix:semicolon
-id|RE_ENTRANT_CHECK_ON
-r_if
-c_cond
-(paren
-(paren
-id|next
-op_amp
-l_int|0xf8
-)paren
-op_eq
-l_int|0xd8
-)paren
-(brace
-id|FPU_EIP
 op_increment
+id|FPU_EIP
+)paren
+)paren
 suffix:semicolon
-r_goto
-id|do_another_FPU_instruction
+id|RE_ENTRANT_CHECK_ON
 suffix:semicolon
-)brace
-)brace
 r_break
 suffix:semicolon
+r_case
+id|FWAIT_OPCODE
+suffix:colon
+r_return
+l_int|1
+suffix:semicolon
+r_default
+suffix:colon
+(brace
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|byte
+op_amp
+l_int|0xf8
+)paren
+op_eq
+l_int|0xd8
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_else
+(brace
+id|FPU_EIP
+op_assign
+id|ip
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 )brace
-id|RE_ENTRANT_CHECK_OFF
+)brace
 )brace
 DECL|function|__math_abort
 r_void
@@ -1856,6 +2270,7 @@ l_int|1
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
 id|__asm__
 c_func
 (paren
@@ -1901,7 +2316,7 @@ id|arg
 id|printk
 c_func
 (paren
-l_string|&quot;math-meulation not enabled and no coprocessor found.&bslash;n&quot;
+l_string|&quot;math-emulation not enabled and no coprocessor found.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk

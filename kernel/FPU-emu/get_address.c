@@ -80,11 +80,6 @@ id|___edi
 suffix:semicolon
 DECL|macro|REG_
 mdefine_line|#define REG_(x) (*(long *)(reg_offset[(x)]+(char *) FPU_info))
-DECL|variable|FPU_data_address
-r_void
-op_star
-id|FPU_data_address
-suffix:semicolon
 multiline_comment|/* Decode the SIB byte. This function assumes mod != 0 */
 DECL|function|sib
 r_static
@@ -314,6 +309,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Initialized just to stop compiler warnings. */
+macro_line|#ifndef PECULIAR_486
+multiline_comment|/* This is a reasonable place to do this */
+id|FPU_data_selector
+op_assign
+id|FPU_DS
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|mod
 op_assign
 (paren

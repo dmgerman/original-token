@@ -77,7 +77,7 @@ comma
 multiline_comment|/* select - default */
 id|ext2_ioctl
 comma
-multiline_comment|/* ioctl - default */
+multiline_comment|/* ioctl */
 id|generic_mmap
 comma
 multiline_comment|/* mmap */
@@ -934,13 +934,6 @@ op_logical_neg
 id|bh
 )paren
 (brace
-macro_line|#ifdef EXT2FS_DEBUG
-id|printk
-(paren
-l_string|&quot;ext2_file_write: ext2_getblk returned NULL&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

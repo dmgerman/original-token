@@ -52,28 +52,8 @@ op_eq
 id|TW_Valid
 )paren
 (brace
-macro_line|#ifdef DENORM_OPERAND
-r_if
-c_cond
-(paren
-(paren
-id|b-&gt;exp
-op_le
-id|EXP_UNDER
-)paren
-op_logical_and
-(paren
-id|denormal_operand
-c_func
-(paren
-)paren
-)paren
-)paren
 r_return
-id|COMP_Denormal
-suffix:semicolon
-macro_line|#endif DENORM_OPERAND
-r_return
+(paren
 (paren
 id|b-&gt;sign
 op_eq
@@ -84,6 +64,22 @@ c_cond
 id|COMP_A_lt_B
 suffix:colon
 id|COMP_A_gt_B
+)paren
+macro_line|#ifdef DENORM_OPERAND
+op_or
+(paren
+(paren
+id|b-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+ques
+c_cond
+id|COMP_Denormal
+suffix:colon
+l_int|0
+)paren
+macro_line|#endif DENORM_OPERAND
 suffix:semicolon
 )brace
 )brace
@@ -104,28 +100,8 @@ op_eq
 id|TW_Valid
 )paren
 (brace
-macro_line|#ifdef DENORM_OPERAND
-r_if
-c_cond
-(paren
-(paren
-id|FPU_st0_ptr-&gt;exp
-op_le
-id|EXP_UNDER
-)paren
-op_logical_and
-(paren
-id|denormal_operand
-c_func
-(paren
-)paren
-)paren
-)paren
 r_return
-id|COMP_Denormal
-suffix:semicolon
-macro_line|#endif DENORM_OPERAND
-r_return
+(paren
 (paren
 id|FPU_st0_ptr-&gt;sign
 op_eq
@@ -136,6 +112,22 @@ c_cond
 id|COMP_A_gt_B
 suffix:colon
 id|COMP_A_lt_B
+)paren
+macro_line|#ifdef DENORM_OPERAND
+op_or
+(paren
+(paren
+id|FPU_st0_ptr-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+ques
+c_cond
+id|COMP_Denormal
+suffix:colon
+l_int|0
+)paren
+macro_line|#endif DENORM_OPERAND
 suffix:semicolon
 )brace
 )brace
@@ -163,9 +155,22 @@ id|TW_Zero
 )paren
 )paren
 (brace
-macro_line|#ifdef DENORM_OPERAND
-r_if
+r_return
+(paren
+(paren
+id|FPU_st0_ptr-&gt;sign
+op_eq
+id|SIGN_POS
+)paren
+ques
 c_cond
+id|COMP_A_gt_B
+suffix:colon
+id|COMP_A_lt_B
+)paren
+macro_line|#ifdef DENORM_OPERAND
+op_or
+(paren
 (paren
 (paren
 id|b-&gt;tag
@@ -178,29 +183,14 @@ id|b-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
-op_logical_and
-(paren
-id|denormal_operand
-c_func
-(paren
-)paren
-)paren
-)paren
-r_return
-id|COMP_Denormal
-suffix:semicolon
-macro_line|#endif DENORM_OPERAND
-r_return
-(paren
-id|FPU_st0_ptr-&gt;sign
-op_eq
-id|SIGN_POS
 )paren
 ques
 c_cond
-id|COMP_A_gt_B
+id|COMP_Denormal
 suffix:colon
-id|COMP_A_lt_B
+l_int|0
+)paren
+macro_line|#endif DENORM_OPERAND
 suffix:semicolon
 )brace
 r_else
@@ -264,9 +254,22 @@ id|TW_Zero
 )paren
 )paren
 (brace
-macro_line|#ifdef DENORM_OPERAND
-r_if
+r_return
+(paren
+(paren
+id|b-&gt;sign
+op_eq
+id|SIGN_POS
+)paren
+ques
 c_cond
+id|COMP_A_lt_B
+suffix:colon
+id|COMP_A_gt_B
+)paren
+macro_line|#ifdef DENORM_OPERAND
+op_or
+(paren
 (paren
 (paren
 id|FPU_st0_ptr-&gt;tag
@@ -279,29 +282,14 @@ id|FPU_st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
-op_logical_and
-(paren
-id|denormal_operand
-c_func
-(paren
-)paren
-)paren
-)paren
-r_return
-id|COMP_Denormal
-suffix:semicolon
-macro_line|#endif DENORM_OPERAND
-r_return
-(paren
-id|b-&gt;sign
-op_eq
-id|SIGN_POS
 )paren
 ques
 c_cond
-id|COMP_A_lt_B
+id|COMP_Denormal
 suffix:colon
-id|COMP_A_gt_B
+l_int|0
+)paren
+macro_line|#endif DENORM_OPERAND
 suffix:semicolon
 )brace
 multiline_comment|/* Fall through to the NaN code */
@@ -413,9 +401,29 @@ id|EX_Invalid
 )paren
 suffix:semicolon
 macro_line|#endif PARANOID
-macro_line|#ifdef DENORM_OPERAND
 r_if
 c_cond
+(paren
+id|FPU_st0_ptr-&gt;sign
+op_ne
+id|b-&gt;sign
+)paren
+(brace
+r_return
+(paren
+(paren
+id|FPU_st0_ptr-&gt;sign
+op_eq
+id|SIGN_POS
+)paren
+ques
+c_cond
+id|COMP_A_gt_B
+suffix:colon
+id|COMP_A_lt_B
+)paren
+macro_line|#ifdef DENORM_OPERAND
+op_or
 (paren
 (paren
 (paren
@@ -430,37 +438,15 @@ op_le
 id|EXP_UNDER
 )paren
 )paren
-op_logical_and
-(paren
-id|denormal_operand
-c_func
-(paren
-)paren
-)paren
-)paren
-r_return
-id|COMP_Denormal
-suffix:semicolon
-macro_line|#endif DENORM_OPERAND
-r_if
-c_cond
-(paren
-id|FPU_st0_ptr-&gt;sign
-op_ne
-id|b-&gt;sign
-)paren
-r_return
-(paren
-id|FPU_st0_ptr-&gt;sign
-op_eq
-id|SIGN_POS
-)paren
 ques
 c_cond
-id|COMP_A_gt_B
+id|COMP_Denormal
 suffix:colon
-id|COMP_A_lt_B
+l_int|0
+)paren
+macro_line|#endif DENORM_OPERAND
 suffix:semicolon
+)brace
 id|diff
 op_assign
 id|FPU_st0_ptr-&gt;exp
@@ -521,7 +507,9 @@ id|diff
 OG
 l_int|0
 )paren
+(brace
 r_return
+(paren
 (paren
 id|FPU_st0_ptr-&gt;sign
 op_eq
@@ -532,7 +520,32 @@ c_cond
 id|COMP_A_gt_B
 suffix:colon
 id|COMP_A_lt_B
+)paren
+macro_line|#ifdef DENORM_OPERAND
+op_or
+(paren
+(paren
+(paren
+id|FPU_st0_ptr-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+op_logical_or
+(paren
+id|b-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+)paren
+ques
+c_cond
+id|COMP_Denormal
+suffix:colon
+l_int|0
+)paren
+macro_line|#endif DENORM_OPERAND
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -540,7 +553,9 @@ id|diff
 OL
 l_int|0
 )paren
+(brace
 r_return
+(paren
 (paren
 id|FPU_st0_ptr-&gt;sign
 op_eq
@@ -551,9 +566,57 @@ c_cond
 id|COMP_A_lt_B
 suffix:colon
 id|COMP_A_gt_B
+)paren
+macro_line|#ifdef DENORM_OPERAND
+op_or
+(paren
+(paren
+(paren
+id|FPU_st0_ptr-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+op_logical_or
+(paren
+id|b-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+)paren
+ques
+c_cond
+id|COMP_Denormal
+suffix:colon
+l_int|0
+)paren
+macro_line|#endif DENORM_OPERAND
 suffix:semicolon
+)brace
 r_return
 id|COMP_A_eq_B
+macro_line|#ifdef DENORM_OPERAND
+op_or
+(paren
+(paren
+(paren
+id|FPU_st0_ptr-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+op_logical_or
+(paren
+id|b-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+)paren
+ques
+c_cond
+id|COMP_Denormal
+suffix:colon
+l_int|0
+)paren
+macro_line|#endif DENORM_OPERAND
 suffix:semicolon
 )brace
 multiline_comment|/* This function requires that st(0) is not empty */
@@ -584,18 +647,6 @@ c_cond
 (paren
 id|c
 op_amp
-(paren
-id|COMP_NaN
-op_or
-id|COMP_Denormal
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|c
-op_amp
 id|COMP_NaN
 )paren
 (brace
@@ -615,18 +666,12 @@ id|SW_C0
 suffix:semicolon
 )brace
 r_else
-(brace
-multiline_comment|/* One of the operands is a de-normal */
-r_return
-l_int|0
-suffix:semicolon
-)brace
-)brace
-r_else
 r_switch
 c_cond
 (paren
 id|c
+op_amp
+l_int|7
 )paren
 (brace
 r_case
@@ -698,8 +743,23 @@ c_func
 id|f
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|c
+op_amp
+id|COMP_Denormal
+)paren
+(brace
 r_return
-l_int|1
+id|denormal_operand
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|compare_st_st
@@ -749,9 +809,12 @@ id|EX_StackUnder
 )paren
 suffix:semicolon
 r_return
+op_logical_neg
+(paren
 id|control_word
 op_amp
 id|CW_Invalid
+)paren
 suffix:semicolon
 )brace
 id|c
@@ -767,18 +830,6 @@ id|nr
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|c
-op_amp
-(paren
-id|COMP_NaN
-op_or
-id|COMP_Denormal
-)paren
-)paren
-(brace
 r_if
 c_cond
 (paren
@@ -804,26 +855,21 @@ id|EX_Invalid
 )paren
 suffix:semicolon
 r_return
+op_logical_neg
+(paren
 id|control_word
 op_amp
 id|CW_Invalid
+)paren
 suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* One of the operands is a de-normal */
-r_return
-id|control_word
-op_amp
-id|CW_Denormal
-suffix:semicolon
-)brace
 )brace
 r_else
 r_switch
 c_cond
 (paren
 id|c
+op_amp
+l_int|7
 )paren
 (brace
 r_case
@@ -895,8 +941,23 @@ c_func
 id|f
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|c
+op_amp
+id|COMP_Denormal
+)paren
+(brace
 r_return
-l_int|1
+id|denormal_operand
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|compare_u_st_st
@@ -946,9 +1007,12 @@ id|EX_StackUnder
 )paren
 suffix:semicolon
 r_return
+op_logical_neg
+(paren
 id|control_word
 op_amp
 id|CW_Invalid
+)paren
 suffix:semicolon
 )brace
 id|c
@@ -964,18 +1028,6 @@ id|nr
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|c
-op_amp
-(paren
-id|COMP_NaN
-op_or
-id|COMP_Denormal
-)paren
-)paren
-(brace
 r_if
 c_cond
 (paren
@@ -1001,7 +1053,7 @@ id|c
 op_amp
 id|COMP_SNaN
 )paren
-multiline_comment|/* This is the only difference between&n;&t;&t;&t;&t;      un-ordered and ordinary comparisons */
+multiline_comment|/* This is the only difference between&n;&t;&t;&t;&t;  un-ordered and ordinary comparisons */
 (brace
 id|EXCEPTION
 c_func
@@ -1010,30 +1062,25 @@ id|EX_Invalid
 )paren
 suffix:semicolon
 r_return
+op_logical_neg
+(paren
 id|control_word
 op_amp
 id|CW_Invalid
+)paren
 suffix:semicolon
 )brace
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* One of the operands is a de-normal */
-r_return
-id|control_word
-op_amp
-id|CW_Denormal
-suffix:semicolon
-)brace
 )brace
 r_else
 r_switch
 c_cond
 (paren
 id|c
+op_amp
+l_int|7
 )paren
 (brace
 r_case
@@ -1105,8 +1152,23 @@ c_func
 id|f
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|c
+op_amp
+id|COMP_Denormal
+)paren
+(brace
 r_return
-l_int|1
+id|denormal_operand
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*---------------------------------------------------------------------------*/
@@ -1115,7 +1177,6 @@ r_void
 id|fcom_st
 c_func
 (paren
-r_void
 )paren
 (brace
 multiline_comment|/* fcom st(i) */
@@ -1131,13 +1192,13 @@ r_void
 id|fcompst
 c_func
 (paren
-r_void
 )paren
 (brace
 multiline_comment|/* fcomp st(i) */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|compare_st_st
 c_func
 (paren
@@ -1155,7 +1216,6 @@ r_void
 id|fcompp
 c_func
 (paren
-r_void
 )paren
 (brace
 multiline_comment|/* fcompp */
@@ -1178,6 +1238,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|compare_st_st
 c_func
 (paren
@@ -1211,7 +1272,6 @@ r_void
 id|fucom_
 c_func
 (paren
-r_void
 )paren
 (brace
 multiline_comment|/* fucom st(i) */
@@ -1227,13 +1287,13 @@ r_void
 id|fucomp
 c_func
 (paren
-r_void
 )paren
 (brace
 multiline_comment|/* fucomp st(i) */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|compare_u_st_st
 c_func
 (paren
@@ -1251,7 +1311,6 @@ r_void
 id|fucompp
 c_func
 (paren
-r_void
 )paren
 (brace
 multiline_comment|/* fucompp */
@@ -1266,6 +1325,7 @@ l_int|1
 r_if
 c_cond
 (paren
+op_logical_neg
 id|compare_u_st_st
 c_func
 (paren

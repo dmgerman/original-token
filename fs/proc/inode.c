@@ -196,7 +196,12 @@ suffix:semicolon
 id|put_fs_long
 c_func
 (paren
-l_int|1024
+id|PAGE_SIZE
+op_div
+r_sizeof
+(paren
+r_int
+)paren
 comma
 op_amp
 id|buf-&gt;f_bsize
@@ -396,7 +401,9 @@ id|inode-&gt;i_mode
 op_assign
 id|S_IFDIR
 op_or
-l_int|0555
+id|S_IRUGO
+op_or
+id|S_IXUGO
 suffix:semicolon
 id|inode-&gt;i_nlink
 op_assign
@@ -456,7 +463,7 @@ id|inode-&gt;i_mode
 op_assign
 id|S_IFREG
 op_or
-l_int|0444
+id|S_IRUGO
 suffix:semicolon
 id|inode-&gt;i_op
 op_assign
@@ -486,7 +493,7 @@ id|inode-&gt;i_mode
 op_assign
 id|S_IFREG
 op_or
-l_int|0444
+id|S_IRUGO
 suffix:semicolon
 id|inode-&gt;i_op
 op_assign
@@ -503,7 +510,9 @@ id|inode-&gt;i_mode
 op_assign
 id|S_IFDIR
 op_or
-l_int|0555
+id|S_IRUGO
+op_or
+id|S_IXUGO
 suffix:semicolon
 id|inode-&gt;i_nlink
 op_assign
@@ -522,7 +531,7 @@ id|inode-&gt;i_mode
 op_assign
 id|S_IFREG
 op_or
-l_int|0444
+id|S_IRUGO
 suffix:semicolon
 id|inode-&gt;i_op
 op_assign
@@ -564,7 +573,9 @@ id|inode-&gt;i_mode
 op_assign
 id|S_IFDIR
 op_or
-l_int|0555
+id|S_IRUGO
+op_or
+id|S_IXUGO
 suffix:semicolon
 id|inode-&gt;i_op
 op_assign
@@ -585,7 +596,9 @@ id|inode-&gt;i_mode
 op_assign
 id|S_IFREG
 op_or
-l_int|0600
+id|S_IRUSR
+op_or
+id|S_IWUSR
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -611,7 +624,7 @@ id|inode-&gt;i_mode
 op_assign
 id|S_IFLNK
 op_or
-l_int|0700
+id|S_IRWXU
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -625,7 +638,9 @@ id|inode-&gt;i_mode
 op_assign
 id|S_IFDIR
 op_or
-l_int|0500
+id|S_IRUSR
+op_or
+id|S_IXUSR
 suffix:semicolon
 id|inode-&gt;i_op
 op_assign
@@ -654,7 +669,7 @@ id|inode-&gt;i_mode
 op_assign
 id|S_IFREG
 op_or
-l_int|0444
+id|S_IRUGO
 suffix:semicolon
 id|inode-&gt;i_op
 op_assign
@@ -707,7 +722,7 @@ id|inode-&gt;i_mode
 op_assign
 id|S_IFLNK
 op_or
-l_int|0700
+id|S_IRWXU
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -775,7 +790,7 @@ id|inode-&gt;i_mode
 op_assign
 id|S_IFLNK
 op_or
-l_int|0700
+id|S_IRWXU
 suffix:semicolon
 r_return
 suffix:semicolon

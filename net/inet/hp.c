@@ -1,30 +1,24 @@
 multiline_comment|/* hp.c: A HP LAN ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1993 by Donald Becker. This is alpha test code.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is a driver for the HP LAN adaptors.&n;&n;    The Author may be reached as becker@super.org or&n;    C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;*/
+multiline_comment|/*&n;    Written 1993 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is a driver for the HP LAN adaptors.&n;&n;    The Author may be reached as becker@super.org or&n;    C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;hp.c:v0.99-10 5/28/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;hp.c:v0.99.12+ 8/12/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#ifndef port_read
+macro_line|#include &quot;iow.h&quot;
+macro_line|#endif
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;8390.h&quot;
-multiline_comment|/* These should be in &lt;asm/io.h&gt; someday, borrowed from blk_drv/hd.c. */
-DECL|macro|port_read
-mdefine_line|#define port_read(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;insw&quot;: :&quot;d&quot; (port),&quot;D&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;di&quot;)
-DECL|macro|port_write
-mdefine_line|#define port_write(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;outsw&quot;: :&quot;d&quot; (port),&quot;S&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;si&quot;)
-DECL|macro|port_read_b
-mdefine_line|#define port_read_b(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;insb&quot;: :&quot;d&quot; (port),&quot;D&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;di&quot;)
-DECL|macro|port_write_b
-mdefine_line|#define port_write_b(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;outsb&quot;: :&quot;d&quot; (port),&quot;S&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;si&quot;)
 DECL|macro|HP_DATAPORT
 mdefine_line|#define HP_DATAPORT&t;0x0c&t;/* &quot;Remote DMA&quot; data port. */
 DECL|macro|HP_ID
@@ -45,29 +39,6 @@ DECL|macro|HP_8BSTOP_PG
 mdefine_line|#define HP_8BSTOP_PG&t;0x80&t;/* Last page +1 of RX ring */
 DECL|macro|HP_16BSTOP_PG
 mdefine_line|#define HP_16BSTOP_PG&t;0xFF&t;/* Last page +1 of RX ring */
-r_extern
-r_void
-id|NS8390_init
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|startp
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ei_debug
-suffix:semicolon
-r_extern
-r_struct
-id|sigaction
-id|ei_sigaction
-suffix:semicolon
 r_int
 id|hpprobe
 c_func
@@ -332,159 +303,50 @@ op_assign
 id|dev-&gt;dev_addr
 suffix:semicolon
 r_int
-r_char
-id|SA_prom
-(braket
-l_int|6
-)braket
-suffix:semicolon
-r_int
 id|tmp
 suffix:semicolon
-r_int
-id|hplan
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;HP-LAN ethercard probe at %#3x:&quot;
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-id|tmp
-op_assign
-id|inb_p
-c_func
-(paren
-id|ioaddr
-)paren
-suffix:semicolon
+multiline_comment|/* Check for the HP physical address, 08 00 09 xx xx xx. */
 r_if
 c_cond
 (paren
-id|tmp
-op_eq
-l_int|0xFF
-)paren
-(brace
-id|printk
+id|inb
 c_func
 (paren
-l_string|&quot; not found (nothing there).&bslash;n&quot;
+id|ioaddr
 )paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-r_sizeof
-(paren
-id|SA_prom
-)paren
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|SA_prom
-(braket
-id|i
-)braket
-op_assign
+op_ne
+l_int|0x08
+op_logical_or
 id|inb
 c_func
 (paren
 id|ioaddr
 op_plus
-id|i
+l_int|1
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-OL
-id|ETHER_ADDR_LEN
-op_logical_and
-id|station_addr
-)paren
-(brace
-id|printk
+op_ne
+l_int|0x00
+op_logical_or
+id|inb
 c_func
 (paren
-l_string|&quot; %2.2x&quot;
-comma
-id|SA_prom
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-id|station_addr
-(braket
-id|i
-)braket
-op_assign
-id|SA_prom
-(braket
-id|i
-)braket
-suffix:semicolon
-)brace
-)brace
-id|hplan
-op_assign
-(paren
-id|SA_prom
-(braket
-l_int|0
-)braket
-op_eq
-l_int|0x08
-op_logical_and
-id|SA_prom
-(braket
-l_int|1
-)braket
-op_eq
-l_int|0x00
-op_logical_and
-id|SA_prom
-(braket
+id|ioaddr
+op_plus
 l_int|2
-)braket
-op_eq
+)paren
+op_ne
 l_int|0x09
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|hplan
-op_eq
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot; not found (invalid station address prefix).&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-)brace
+multiline_comment|/* Good enough, we will assume everything works. */
+id|ethdev_init
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|ei_status.tx_start_page
 op_assign
 id|HP_START_PG
@@ -502,7 +364,7 @@ c_cond
 (paren
 id|tmp
 op_assign
-id|inb_p
+id|inb
 c_func
 (paren
 id|ioaddr
@@ -526,7 +388,7 @@ id|ei_status.stop_page
 op_assign
 id|HP_16BSTOP_PG
 suffix:semicolon
-multiline_comment|/* Safe for now */
+multiline_comment|/* Safe (if small) value */
 )brace
 r_else
 (brace
@@ -542,16 +404,62 @@ id|ei_status.stop_page
 op_assign
 id|HP_8BSTOP_PG
 suffix:semicolon
-multiline_comment|/* Safe for now */
 )brace
-multiline_comment|/* Set the base address to point to the NIC! */
+id|printk
+c_func
+(paren
+l_string|&quot;%s: %s at %#3x,&quot;
+comma
+id|dev-&gt;name
+comma
+id|ei_status.name
+comma
+id|ioaddr
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|ETHER_ADDR_LEN
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; %2.2x&quot;
+comma
+id|station_addr
+(braket
+id|i
+)braket
+op_assign
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|i
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Set the base address to point to the NIC, not the &quot;real&quot; base! */
 id|dev-&gt;base_addr
 op_assign
 id|ioaddr
 op_plus
 id|NIC_OFFSET
 suffix:semicolon
-multiline_comment|/* Snarf the interrupt now.  There&squot;s no point in waiting since we cannot&n;     share and the board will usually be enabled. */
+multiline_comment|/* Snarf the interrupt now.  Someday this could be moved to open(). */
 r_if
 c_cond
 (paren
@@ -692,7 +600,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot; got IRQ %d&quot;
+l_string|&quot; selecting IRQ %d.&bslash;n&quot;
 comma
 id|dev-&gt;irq
 )paren
@@ -700,15 +608,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot; IRQ%d busy..&quot;
-comma
-id|dev-&gt;irq
-)paren
-suffix:semicolon
 )brace
 )brace
 r_while
@@ -731,7 +630,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot; unable to find an free IRQ line.&bslash;n&quot;
+l_string|&quot; no free IRQ lines.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -777,18 +676,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n%s: %s using IRQ %d.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|ei_status.name
-comma
-id|dev-&gt;irq
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

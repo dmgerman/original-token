@@ -1002,7 +1002,10 @@ c_cond
 (paren
 id|bufflen
 op_ne
-l_int|16
+r_sizeof
+(paren
+id|SCpnt-&gt;sense_buffer
+)paren
 )paren
 (brace
 id|printk

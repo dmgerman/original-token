@@ -36,6 +36,10 @@ DECL|macro|EX_Denormal
 mdefine_line|#define EX_Denormal&t;Const_(0x0002)&t;/* denormalized operand */
 DECL|macro|EX_Invalid
 mdefine_line|#define EX_Invalid&t;Const_(0x0001)&t;/* invalid operation */
+DECL|macro|PRECISION_LOST_UP
+mdefine_line|#define PRECISION_LOST_UP    Const_((EX_Precision | SW_C1))
+DECL|macro|PRECISION_LOST_DOWN
+mdefine_line|#define PRECISION_LOST_DOWN  Const_(EX_Precision)
 macro_line|#ifndef __ASSEMBLER__
 macro_line|#ifdef DEBUG
 DECL|macro|EXCEPTION

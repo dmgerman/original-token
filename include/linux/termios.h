@@ -90,6 +90,10 @@ DECL|macro|TIOCSERGWILD
 mdefine_line|#define TIOCSERGWILD&t;0x5454
 DECL|macro|TIOCSERSWILD
 mdefine_line|#define TIOCSERSWILD&t;0x5455
+DECL|macro|TIOCGLCKTRMIOS
+mdefine_line|#define TIOCGLCKTRMIOS&t;0x5456
+DECL|macro|TIOCSLCKTRMIOS
+mdefine_line|#define TIOCSLCKTRMIOS&t;0x5457
 multiline_comment|/* Used for packet mode */
 DECL|macro|TIOCPKT_FLUSHREAD
 mdefine_line|#define TIOCPKT_FLUSHREAD&t; 1

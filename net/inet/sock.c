@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;SOCK - AF_INET protocol family socket handler.&n; *&n; * Version:&t;@(#)sock.c&t;1.0.17&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;SOCK - AF_INET protocol family socket handler.&n; *&n; * Version:&t;@(#)sock.c&t;1.0.17&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -11,7 +11,6 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;timer.h&quot;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
@@ -37,8 +36,6 @@ suffix:semicolon
 multiline_comment|/* INET module debug flag&t;*/
 DECL|macro|min
 mdefine_line|#define min(a,b)&t;((a)&lt;(b)?(a):(b))
-DECL|macro|swap
-mdefine_line|#define swap(a,b)&t;{unsigned long c; c=a; a=b; b=c;}
 r_extern
 r_struct
 id|proto
@@ -1283,13 +1280,7 @@ multiline_comment|/* Now we can no longer get new packets. */
 id|delete_timer
 c_func
 (paren
-(paren
-r_struct
-id|timer
-op_star
-)paren
-op_amp
-id|sk-&gt;time_wait
+id|sk
 )paren
 suffix:semicolon
 r_if
@@ -1949,24 +1940,14 @@ id|sk-&gt;inuse
 op_assign
 l_int|0
 suffix:semicolon
-id|sk-&gt;time_wait.len
-op_assign
-id|SOCK_DESTROY_TIME
-suffix:semicolon
-id|sk-&gt;timeout
-op_assign
-id|TIME_DESTROY
-suffix:semicolon
 id|reset_timer
 c_func
 (paren
-(paren
-r_struct
-id|timer
-op_star
-)paren
-op_amp
-id|sk-&gt;time_wait
+id|sk
+comma
+id|TIME_DESTROY
+comma
+id|SOCK_DESTROY_TIME
 )paren
 suffix:semicolon
 )brace
@@ -3272,25 +3253,22 @@ id|sk-&gt;send_head
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sk-&gt;time_wait.len
-op_assign
-id|TCP_CONNECT_TIME
-suffix:semicolon
-id|sk-&gt;time_wait.when
-op_assign
-l_int|0
-suffix:semicolon
-id|sk-&gt;time_wait.sk
-op_assign
-id|sk
-suffix:semicolon
-id|sk-&gt;time_wait.next
-op_assign
-l_int|NULL
-suffix:semicolon
 id|sk-&gt;timeout
 op_assign
 l_int|0
+suffix:semicolon
+id|sk-&gt;timer.data
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|sk
+suffix:semicolon
+id|sk-&gt;timer.function
+op_assign
+op_amp
+id|net_timer
 suffix:semicolon
 id|sk-&gt;back_log
 op_assign
@@ -6632,13 +6610,7 @@ suffix:semicolon
 id|delete_timer
 c_func
 (paren
-(paren
-r_struct
-id|timer
-op_star
-)paren
-op_amp
-id|sk-&gt;time_wait
+id|sk
 )paren
 suffix:semicolon
 id|kfree_s
@@ -6732,13 +6704,7 @@ l_int|0
 id|delete_timer
 c_func
 (paren
-(paren
-r_struct
-id|timer
-op_star
-)paren
-op_amp
-id|sk-&gt;time_wait
+id|sk
 )paren
 suffix:semicolon
 id|kfree_s
@@ -7148,8 +7114,13 @@ id|TCP_CLOSE
 )paren
 (brace
 multiline_comment|/* Should be about 2 rtt&squot;s */
-id|sk-&gt;time_wait.len
-op_assign
+id|reset_timer
+c_func
+(paren
+id|sk
+comma
+id|TIME_DONE
+comma
 id|min
 c_func
 (paren
@@ -7159,21 +7130,6 @@ l_int|2
 comma
 id|TCP_DONE_TIME
 )paren
-suffix:semicolon
-id|sk-&gt;timeout
-op_assign
-id|TIME_DONE
-suffix:semicolon
-id|reset_timer
-c_func
-(paren
-(paren
-r_struct
-id|timer
-op_star
-)paren
-op_amp
-id|sk-&gt;time_wait
 )paren
 suffix:semicolon
 )brace
@@ -7425,6 +7381,12 @@ id|inet_fcntl
 comma
 )brace
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|seq_offset
+suffix:semicolon
+multiline_comment|/* Called by ddi.c on kernel startup.  */
 DECL|function|inet_proto_init
 r_void
 id|inet_proto_init
@@ -7465,7 +7427,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;5s: cannot register major device %d!&bslash;n&quot;
+l_string|&quot;%s: cannot register major device %d!&bslash;n&quot;
 comma
 id|pro-&gt;name
 comma
@@ -7585,15 +7547,6 @@ dot
 id|routine
 op_assign
 id|inet_bh
-suffix:semicolon
-id|timer_table
-(braket
-id|NET_TIMER
-)braket
-dot
-id|fn
-op_assign
-id|net_timer
 suffix:semicolon
 )brace
 eof

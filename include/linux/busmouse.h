@@ -76,10 +76,12 @@ r_struct
 id|mouse_status
 (brace
 DECL|member|buttons
+r_int
 r_char
 id|buttons
 suffix:semicolon
 DECL|member|latch_buttons
+r_int
 r_char
 id|latch_buttons
 suffix:semicolon

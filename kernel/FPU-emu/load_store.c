@@ -5,6 +5,7 @@ macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
 macro_line|#include &quot;status_w.h&quot;
+macro_line|#include &quot;control_w.h&quot;
 DECL|macro|_NONE_
 mdefine_line|#define _NONE_ 0   /* FPU_st0_ptr etc not needed */
 DECL|macro|_REG0_
@@ -103,7 +104,7 @@ id|FPU_REG
 op_star
 id|pop_ptr
 suffix:semicolon
-multiline_comment|/* We need a version of FPU_st0_ptr which won&squot;t change. */
+multiline_comment|/* We need a version of FPU_st0_ptr which won&squot;t&n;&t;&t;&t;change if the emulator is re-entered. */
 id|pop_ptr
 op_assign
 l_int|NULL
@@ -222,18 +223,48 @@ r_case
 l_int|000
 suffix:colon
 multiline_comment|/* fld m32real */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|reg_load_single
 c_func
 (paren
 )paren
 suffix:semicolon
-id|setcc
+r_if
+c_cond
+(paren
+(paren
+id|FPU_loaded_data.tag
+op_eq
+id|TW_NaN
+)paren
+op_logical_and
+id|real_2op_NaN
 c_func
 (paren
-l_int|0
+op_amp
+id|FPU_loaded_data
+comma
+op_amp
+id|FPU_loaded_data
+comma
+op_amp
+id|FPU_loaded_data
 )paren
+)paren
+(brace
+id|top
+op_increment
 suffix:semicolon
-multiline_comment|/* Clear the SW_C1 bit, &quot;other bits undefined&quot; */
+r_break
+suffix:semicolon
+)brace
 id|reg_move
 c_func
 (paren
@@ -249,18 +280,19 @@ r_case
 l_int|001
 suffix:colon
 multiline_comment|/* fild m32int */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|reg_load_int32
 c_func
 (paren
 )paren
 suffix:semicolon
-id|setcc
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Clear the SW_C1 bit, &quot;other bits undefined&quot; */
 id|reg_move
 c_func
 (paren
@@ -276,18 +308,48 @@ r_case
 l_int|002
 suffix:colon
 multiline_comment|/* fld m64real */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|reg_load_double
 c_func
 (paren
 )paren
 suffix:semicolon
-id|setcc
+r_if
+c_cond
+(paren
+(paren
+id|FPU_loaded_data.tag
+op_eq
+id|TW_NaN
+)paren
+op_logical_and
+id|real_2op_NaN
 c_func
 (paren
-l_int|0
+op_amp
+id|FPU_loaded_data
+comma
+op_amp
+id|FPU_loaded_data
+comma
+op_amp
+id|FPU_loaded_data
 )paren
+)paren
+(brace
+id|top
+op_increment
 suffix:semicolon
-multiline_comment|/* Clear the SW_C1 bit, &quot;other bits undefined&quot; */
+r_break
+suffix:semicolon
+)brace
 id|reg_move
 c_func
 (paren
@@ -303,18 +365,19 @@ r_case
 l_int|003
 suffix:colon
 multiline_comment|/* fild m16int */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|reg_load_int16
 c_func
 (paren
 )paren
 suffix:semicolon
-id|setcc
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Clear the SW_C1 bit, &quot;other bits undefined&quot; */
 id|reg_move
 c_func
 (paren
@@ -330,6 +393,14 @@ r_case
 l_int|010
 suffix:colon
 multiline_comment|/* fst m32real */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|reg_store_single
 c_func
 (paren
@@ -341,6 +412,14 @@ r_case
 l_int|011
 suffix:colon
 multiline_comment|/* fist m32int */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|reg_store_int32
 c_func
 (paren
@@ -352,6 +431,14 @@ r_case
 l_int|012
 suffix:colon
 multiline_comment|/* fst m64real */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|reg_store_double
 c_func
 (paren
@@ -363,6 +450,14 @@ r_case
 l_int|013
 suffix:colon
 multiline_comment|/* fist m16int */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|reg_store_int16
 c_func
 (paren
@@ -374,6 +469,14 @@ r_case
 l_int|014
 suffix:colon
 multiline_comment|/* fstp m32real */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -394,6 +497,14 @@ r_case
 l_int|015
 suffix:colon
 multiline_comment|/* fistp m32int */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -414,6 +525,14 @@ r_case
 l_int|016
 suffix:colon
 multiline_comment|/* fstp m64real */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -434,6 +553,14 @@ r_case
 l_int|017
 suffix:colon
 multiline_comment|/* fistp m16int */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -476,18 +603,19 @@ r_case
 l_int|023
 suffix:colon
 multiline_comment|/* fbld m80dec */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|reg_load_bcd
 c_func
 (paren
 )paren
 suffix:semicolon
-id|setcc
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Clear the SW_C1 bit, &quot;other bits undefined&quot; */
 id|reg_move
 c_func
 (paren
@@ -504,6 +632,7 @@ l_int|024
 suffix:colon
 multiline_comment|/* fldcw */
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
 id|control_word
 op_assign
 id|get_fs_word
@@ -518,56 +647,65 @@ id|FPU_data_address
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
-macro_line|#ifdef NO_UNDERFLOW_TRAP
+suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
+id|partial_status
+op_amp
+op_complement
 id|control_word
 op_amp
-id|EX_Underflow
+id|CW_Exceptions
 )paren
+id|partial_status
+op_or_assign
+(paren
+id|SW_Summary
+op_or
+id|SW_Backward
 )paren
-(brace
+suffix:semicolon
+r_else
+id|partial_status
+op_and_assign
+op_complement
+(paren
+id|SW_Summary
+op_or
+id|SW_Backward
+)paren
+suffix:semicolon
+macro_line|#ifdef PECULIAR_486
 id|control_word
 op_or_assign
-id|EX_Underflow
+l_int|0x40
 suffix:semicolon
-)brace
-macro_line|#endif
-id|FPU_data_address
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|data_operand_offset
+multiline_comment|/* An 80486 appears to always set this bit */
+macro_line|#endif PECULIAR_486
+id|NO_NET_DATA_EFFECT
 suffix:semicolon
-multiline_comment|/* We want no net effect */
-id|FPU_entry_eip
-op_assign
-id|ip_offset
+id|NO_NET_INSTR_EFFECT
 suffix:semicolon
-multiline_comment|/* We want no net effect */
 r_break
 suffix:semicolon
 r_case
 l_int|025
 suffix:colon
 multiline_comment|/* fld m80real */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|reg_load_extended
 c_func
 (paren
 )paren
 suffix:semicolon
-id|setcc
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Clear the SW_C1 bit, &quot;other bits undefined&quot; */
 id|reg_move
 c_func
 (paren
@@ -583,18 +721,19 @@ r_case
 l_int|027
 suffix:colon
 multiline_comment|/* fild m64int */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|reg_load_int64
 c_func
 (paren
 )paren
 suffix:semicolon
-id|setcc
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Clear the SW_C1 bit, &quot;other bits undefined&quot; */
 id|reg_move
 c_func
 (paren
@@ -615,20 +754,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|FPU_data_address
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|data_operand_offset
+id|NO_NET_DATA_EFFECT
 suffix:semicolon
-multiline_comment|/* We want no net effect */
-id|FPU_entry_eip
-op_assign
-id|ip_offset
-suffix:semicolon
-multiline_comment|/* We want no net effect */
 r_break
 suffix:semicolon
 r_case
@@ -640,26 +767,22 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|FPU_data_address
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|data_operand_offset
+id|NO_NET_DATA_EFFECT
 suffix:semicolon
-multiline_comment|/* We want no net effect */
-id|FPU_entry_eip
-op_assign
-id|ip_offset
-suffix:semicolon
-multiline_comment|/* We want no net effect */
 r_break
 suffix:semicolon
 r_case
 l_int|033
 suffix:colon
 multiline_comment|/* fbstp m80dec */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -681,6 +804,7 @@ l_int|034
 suffix:colon
 multiline_comment|/* fstcw m16int */
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
 id|verify_area
 c_func
 (paren
@@ -704,26 +828,25 @@ id|FPU_data_address
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
-id|FPU_data_address
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|data_operand_offset
 suffix:semicolon
-multiline_comment|/* We want no net effect */
-id|FPU_entry_eip
-op_assign
-id|ip_offset
+id|NO_NET_DATA_EFFECT
 suffix:semicolon
-multiline_comment|/* We want no net effect */
+id|NO_NET_INSTR_EFFECT
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 l_int|035
 suffix:colon
 multiline_comment|/* fstp m80real */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -744,22 +867,8 @@ r_case
 l_int|036
 suffix:colon
 multiline_comment|/* fstsw m2byte */
-id|status_word
-op_and_assign
-op_complement
-id|SW_Top
-suffix:semicolon
-id|status_word
-op_or_assign
-(paren
-id|top
-op_amp
-l_int|7
-)paren
-op_lshift
-id|SW_Top_Shift
-suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
+suffix:semicolon
 id|verify_area
 c_func
 (paren
@@ -774,6 +883,9 @@ id|put_fs_word
 c_func
 (paren
 id|status_word
+c_func
+(paren
+)paren
 comma
 (paren
 r_int
@@ -783,26 +895,25 @@ id|FPU_data_address
 )paren
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
-id|FPU_data_address
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|data_operand_offset
 suffix:semicolon
-multiline_comment|/* We want no net effect */
-id|FPU_entry_eip
-op_assign
-id|ip_offset
+id|NO_NET_DATA_EFFECT
 suffix:semicolon
-multiline_comment|/* We want no net effect */
+id|NO_NET_INSTR_EFFECT
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 l_int|037
 suffix:colon
 multiline_comment|/* fistp m64int */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren

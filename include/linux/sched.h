@@ -1,6 +1,8 @@
 macro_line|#ifndef _LINUX_SCHED_H
 DECL|macro|_LINUX_SCHED_H
 mdefine_line|#define _LINUX_SCHED_H
+DECL|macro|NEW_SWAP
+mdefine_line|#define NEW_SWAP
 multiline_comment|/*&n; * define DEBUG if you want the wait-queues to have some extra&n; * debugging code. It&squot;s not normally used, but might catch some&n; * wait-queue coding errors.&n; *&n; *  #define DEBUG&n; */
 DECL|macro|HZ
 mdefine_line|#define HZ 100
@@ -517,6 +519,7 @@ suffix:semicolon
 DECL|member|start_code
 DECL|member|end_code
 DECL|member|end_data
+DECL|member|start_brk
 DECL|member|brk
 DECL|member|start_stack
 DECL|member|start_mmap
@@ -527,6 +530,8 @@ comma
 id|end_code
 comma
 id|end_data
+comma
+id|start_brk
 comma
 id|brk
 comma
@@ -781,14 +786,12 @@ DECL|member|close_on_exec
 id|fd_set
 id|close_on_exec
 suffix:semicolon
-multiline_comment|/* ldt for this task - not currently used */
+multiline_comment|/* ldt for this task - used by Wine.  If NULL, default_ldt is used */
 DECL|member|ldt
 r_struct
 id|desc_struct
+op_star
 id|ldt
-(braket
-l_int|32
-)braket
 suffix:semicolon
 multiline_comment|/* tss for this task */
 DECL|member|tss
@@ -796,6 +799,36 @@ r_struct
 id|tss_struct
 id|tss
 suffix:semicolon
+macro_line|#ifdef NEW_SWAP
+DECL|member|old_maj_flt
+r_int
+r_int
+id|old_maj_flt
+suffix:semicolon
+multiline_comment|/* old value of maj_flt */
+DECL|member|dec_flt
+r_int
+r_int
+id|dec_flt
+suffix:semicolon
+multiline_comment|/* page fault count of the last time */
+DECL|member|swap_cnt
+r_int
+r_int
+id|swap_cnt
+suffix:semicolon
+multiline_comment|/* number of pages to swap on next pass */
+DECL|member|swap_table
+r_int
+id|swap_table
+suffix:semicolon
+multiline_comment|/* current page table */
+DECL|member|swap_page
+r_int
+id|swap_page
+suffix:semicolon
+multiline_comment|/* current page */
+macro_line|#endif NEW_SWAP
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Per process flags&n; */
@@ -815,7 +848,7 @@ DECL|macro|COPYFD
 mdefine_line|#define COPYFD&t;&t;0x00000200&t;/* set if fd&squot;s should be copied, not shared (NI) */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15,0,0,0,0, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &bslash;&n;/* signals */&t;{{ 0, },}, &bslash;&n;/* stack */&t;0,0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* argv.. */&t;0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;/* cloe */&t;{{ 0, }}, &bslash;&n;&t;&t;{ &bslash;&n;/* ldt */&t;&t;{0,0}, &bslash;&n;&t;&t;}, &bslash;&n;/*tss*/&t;{0,0, &bslash;&n;&t; sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, KERNEL_DS, 0, &bslash;&n;&t; 0,0,0,0,0,0, &bslash;&n;&t; (long) &amp;swapper_pg_dir, &bslash;&n;&t; 0,0,0,0,0,0,0,0,0,0, &bslash;&n;&t; USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0, &bslash;&n;&t; _LDT(0),0, &bslash;&n;&t; 0, 0x8000, &bslash;&n;/* ioperm */ &t;{0xffffffff, }, &bslash;&n;&t; _TSS(0), &bslash;&n;/* 387 state */&t;{ { 0, }, } &bslash;&n;&t;} &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15,0,0,0,0, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &bslash;&n;/* signals */&t;{{ 0, },}, &bslash;&n;/* stack */&t;0,0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* argv.. */&t;0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;/* cloe */&t;{{ 0, }}, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/*tss*/&t;{0,0, &bslash;&n;&t; sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, KERNEL_DS, 0, &bslash;&n;&t; 0,0,0,0,0,0, &bslash;&n;&t; (long) &amp;swapper_pg_dir, &bslash;&n;&t; 0,0,0,0,0,0,0,0,0,0, &bslash;&n;&t; USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0, &bslash;&n;&t; _LDT(0),0, &bslash;&n;&t; 0, 0x8000, &bslash;&n;/* ioperm */ &t;{~0, }, &bslash;&n;&t; _TSS(0), &bslash;&n;/* 387 state */&t;{ { 0, }, } &bslash;&n;&t;} &bslash;&n;}
 r_extern
 r_struct
 id|task_struct
@@ -867,7 +900,15 @@ id|hard_math
 suffix:semicolon
 r_extern
 r_int
+id|x86
+suffix:semicolon
+r_extern
+r_int
 id|ignore_irq13
+suffix:semicolon
+r_extern
+r_int
+id|wp_works_ok
 suffix:semicolon
 DECL|macro|CURRENT_TIME
 mdefine_line|#define CURRENT_TIME (startup_time+(jiffies+jiffies_offset)/HZ)
@@ -1019,8 +1060,6 @@ mdefine_line|#define store_TR(n) &bslash;&n;__asm__(&quot;str %%ax&bslash;n&bsla
 multiline_comment|/*&n; *&t;switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; * This also clears the TS-flag if the task we switched to has used&n; * tha math co-processor latest.&n; */
 DECL|macro|switch_to
 mdefine_line|#define switch_to(tsk) &bslash;&n;__asm__(&quot;cmpl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;je 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cli&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;xchgl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ljmp %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sti&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl %%ecx,_last_task_used_math&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;clts&bslash;n&quot; &bslash;&n;&t;&quot;1:&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;:&quot;m&quot; (*(((char *)&amp;tsk-&gt;tss.tr)-4)), &bslash;&n;&t; &quot;c&quot; (tsk) &bslash;&n;&t;:&quot;cx&quot;)
-DECL|macro|PAGE_ALIGN
-mdefine_line|#define PAGE_ALIGN(n) (((n)+0xfff)&amp;0xfffff000)
 DECL|macro|_set_base
 mdefine_line|#define _set_base(addr,base) &bslash;&n;__asm__(&quot;movw %%dx,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%dl,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%dh,%2&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;:&quot;m&quot; (*((addr)+2)), &bslash;&n;&t; &quot;m&quot; (*((addr)+4)), &bslash;&n;&t; &quot;m&quot; (*((addr)+7)), &bslash;&n;&t; &quot;d&quot; (base) &bslash;&n;&t;:&quot;dx&quot;)
 DECL|macro|_set_limit
@@ -1510,8 +1549,16 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|macro|REMOVE_LINKS
-mdefine_line|#define REMOVE_LINKS(p) &bslash;&n;&t;(p)-&gt;next_task-&gt;prev_task = (p)-&gt;prev_task; &bslash;&n;&t;(p)-&gt;prev_task-&gt;next_task = (p)-&gt;next_task; &bslash;&n;&t;if ((p)-&gt;p_osptr) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = (p)-&gt;p_ysptr; &bslash;&n;&t;if ((p)-&gt;p_ysptr) &bslash;&n;&t;&t;(p)-&gt;p_ysptr-&gt;p_osptr = (p)-&gt;p_osptr; &bslash;&n;&t;else &bslash;&n;&t;&t;(p)-&gt;p_pptr-&gt;p_cptr = (p)-&gt;p_osptr
+mdefine_line|#define REMOVE_LINKS(p) do { unsigned long flags; &bslash;&n;&t;save_flags(flags) ; cli(); &bslash;&n;&t;(p)-&gt;next_task-&gt;prev_task = (p)-&gt;prev_task; &bslash;&n;&t;(p)-&gt;prev_task-&gt;next_task = (p)-&gt;next_task; &bslash;&n;&t;restore_flags(flags); &bslash;&n;&t;if ((p)-&gt;p_osptr) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = (p)-&gt;p_ysptr; &bslash;&n;&t;if ((p)-&gt;p_ysptr) &bslash;&n;&t;&t;(p)-&gt;p_ysptr-&gt;p_osptr = (p)-&gt;p_osptr; &bslash;&n;&t;else &bslash;&n;&t;&t;(p)-&gt;p_pptr-&gt;p_cptr = (p)-&gt;p_osptr; &bslash;&n;&t;} while (0)
 DECL|macro|SET_LINKS
-mdefine_line|#define SET_LINKS(p) &bslash;&n;&t;(p)-&gt;next_task = &amp;init_task; &bslash;&n;&t;(p)-&gt;prev_task = init_task.prev_task; &bslash;&n;&t;init_task.prev_task-&gt;next_task = (p); &bslash;&n;&t;init_task.prev_task = (p); &bslash;&n;&t;(p)-&gt;p_ysptr = NULL; &bslash;&n;&t;if (((p)-&gt;p_osptr = (p)-&gt;p_pptr-&gt;p_cptr) != NULL) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = p; &bslash;&n;&t;(p)-&gt;p_pptr-&gt;p_cptr = p
+mdefine_line|#define SET_LINKS(p) do { unsigned long flags; &bslash;&n;&t;save_flags(flags); cli(); &bslash;&n;&t;(p)-&gt;next_task = &amp;init_task; &bslash;&n;&t;(p)-&gt;prev_task = init_task.prev_task; &bslash;&n;&t;init_task.prev_task-&gt;next_task = (p); &bslash;&n;&t;init_task.prev_task = (p); &bslash;&n;&t;restore_flags(flags); &bslash;&n;&t;(p)-&gt;p_ysptr = NULL; &bslash;&n;&t;if (((p)-&gt;p_osptr = (p)-&gt;p_pptr-&gt;p_cptr) != NULL) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = p; &bslash;&n;&t;(p)-&gt;p_pptr-&gt;p_cptr = p; &bslash;&n;&t;} while (0)
+DECL|macro|for_each_task
+mdefine_line|#define for_each_task(p) &bslash;&n;&t;for (p = &amp;init_task ; (p = p-&gt;next_task) != &amp;init_task ; )
+multiline_comment|/*&n; * This is the ldt that every process will get unless we need&n; * something other than this.&n; */
+r_extern
+r_struct
+id|desc_struct
+id|default_ldt
+suffix:semicolon
 macro_line|#endif
 eof

@@ -2127,7 +2127,7 @@ id|MSDOS_ROOT_INO
 id|inode-&gt;i_mode
 op_assign
 (paren
-l_int|0777
+id|S_IRWXUGO
 op_amp
 op_complement
 id|MSDOS_SB
@@ -2321,7 +2321,7 @@ c_func
 (paren
 id|raw_entry-&gt;attr
 comma
-l_int|0777
+id|S_IRWXUGO
 op_amp
 op_complement
 id|MSDOS_SB
@@ -2473,9 +2473,11 @@ id|inode
 )paren
 ques
 c_cond
-l_int|0666
+id|S_IRUGO
+op_or
+id|S_IWUGO
 suffix:colon
-l_int|0777
+id|S_IRWXUGO
 )paren
 op_amp
 op_complement
@@ -2975,12 +2977,14 @@ id|inode-&gt;i_mode
 op_and_assign
 id|S_IFMT
 op_or
-l_int|0666
+id|S_IRUGO
+op_or
+id|S_IWUGO
 suffix:semicolon
 r_else
 id|inode-&gt;i_mode
 op_or_assign
-l_int|0111
+id|S_IXUGO
 suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
@@ -3015,7 +3019,7 @@ op_rshift
 l_int|6
 )paren
 op_star
-l_int|0111
+id|S_IXUGO
 )paren
 )paren
 op_amp

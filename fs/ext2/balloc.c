@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 DECL|macro|clear_block
-mdefine_line|#define clear_block(addr,size) &bslash;&n;&t;__asm__(&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;rep&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;stosl&quot; &bslash;&n;&t;&t;: &bslash;&n;&t;&t;:&quot;a&quot; (0), &quot;c&quot; (size/4), &quot;D&quot; ((long) (addr)) &bslash;&n;&t;&t;:&quot;cx&quot;, &quot;di&quot;)
+mdefine_line|#define clear_block(addr,size) &bslash;&n;&t;__asm__(&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;rep&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;stosl&quot; &bslash;&n;&t;&t;: &bslash;&n;&t;&t;:&quot;a&quot; (0), &quot;c&quot; (size / 4), &quot;D&quot; ((long) (addr)) &bslash;&n;&t;&t;:&quot;cx&quot;, &quot;di&quot;)
 DECL|function|find_first_zero_bit
 r_static
 r_inline
@@ -978,16 +978,20 @@ id|lock_super
 id|sb
 )paren
 suffix:semicolon
+id|es
+op_assign
+id|sb-&gt;u.ext2_sb.s_es
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|block
 OL
-id|sb-&gt;u.ext2_sb.s_first_data_block
+id|es-&gt;s_first_data_block
 op_logical_or
 id|block
 op_ge
-id|sb-&gt;u.ext2_sb.s_blocks_count
+id|es-&gt;s_blocks_count
 )paren
 (brace
 id|printk
@@ -1003,15 +1007,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|es
-op_assign
-(paren
-r_struct
-id|ext2_super_block
-op_star
-)paren
-id|sb-&gt;u.ext2_sb.s_sbh-&gt;b_data
-suffix:semicolon
 macro_line|#ifdef EXT2FS_DEBUG
 id|printk
 (paren
@@ -1051,7 +1046,7 @@ op_assign
 (paren
 id|block
 op_minus
-id|sb-&gt;u.ext2_sb.s_first_data_block
+id|es-&gt;s_first_data_block
 )paren
 op_div
 id|EXT2_BLOCKS_PER_GROUP
@@ -1065,7 +1060,7 @@ op_assign
 (paren
 id|block
 op_minus
-id|sb-&gt;u.ext2_sb.s_first_data_block
+id|es-&gt;s_first_data_block
 )paren
 op_mod
 id|EXT2_BLOCKS_PER_GROUP
@@ -1318,12 +1313,7 @@ id|sb
 suffix:semicolon
 id|es
 op_assign
-(paren
-r_struct
-id|ext2_super_block
-op_star
-)paren
-id|sb-&gt;u.ext2_sb.s_sbh-&gt;b_data
+id|sb-&gt;u.ext2_sb.s_es
 suffix:semicolon
 r_if
 c_cond
@@ -1366,7 +1356,7 @@ op_assign
 (paren
 id|goal
 op_minus
-id|sb-&gt;u.ext2_sb.s_first_data_block
+id|es-&gt;s_first_data_block
 )paren
 op_div
 id|EXT2_BLOCKS_PER_GROUP
@@ -1442,7 +1432,7 @@ op_assign
 (paren
 id|goal
 op_minus
-id|sb-&gt;u.ext2_sb.s_first_data_block
+id|es-&gt;s_first_data_block
 )paren
 op_mod
 id|EXT2_BLOCKS_PER_GROUP
@@ -2147,14 +2137,14 @@ c_func
 id|sb
 )paren
 op_plus
-id|sb-&gt;u.ext2_sb.s_first_data_block
+id|es-&gt;s_first_data_block
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|j
 op_ge
-id|sb-&gt;u.ext2_sb.s_blocks_count
+id|es-&gt;s_blocks_count
 )paren
 (brace
 id|printk
@@ -2295,12 +2285,12 @@ op_star
 id|sb
 )paren
 (brace
+macro_line|#ifdef EXT2FS_DEBUG
 r_struct
 id|ext2_super_block
 op_star
 id|es
 suffix:semicolon
-macro_line|#ifdef EXT2FS_DEBUG
 r_int
 r_int
 id|desc_count
@@ -2335,12 +2325,7 @@ id|sb
 suffix:semicolon
 id|es
 op_assign
-(paren
-r_struct
-id|ext2_super_block
-op_star
-)paren
-id|sb-&gt;u.ext2_sb.s_sbh-&gt;b_data
+id|sb-&gt;u.ext2_sb.s_es
 suffix:semicolon
 id|desc_count
 op_assign
@@ -2539,17 +2524,8 @@ r_return
 id|bitmap_count
 suffix:semicolon
 macro_line|#else
-id|es
-op_assign
-(paren
-r_struct
-id|ext2_super_block
-op_star
-)paren
-id|sb-&gt;u.ext2_sb.s_sbh-&gt;b_data
-suffix:semicolon
 r_return
-id|es-&gt;s_free_blocks_count
+id|sb-&gt;u.ext2_sb.s_es-&gt;s_free_blocks_count
 suffix:semicolon
 macro_line|#endif
 )brace

@@ -4,31 +4,6 @@ mdefine_line|#define __LINUX_KEYBOARD_H
 macro_line|#include &lt;linux/interrupt.h&gt;
 DECL|macro|set_leds
 mdefine_line|#define set_leds() mark_bh(KEYBOARD_BH)
-multiline_comment|/*&n; * Global flags: things that don&squot;t change between virtual consoles.&n; * This includes things like &quot;key-down&quot; flags - if the shift key is&n; * down when you change a console, it&squot;s down in both.&n; *&n; * Note that the KG_CAPSLOCK flags is NOT the flag that decides if&n; * capslock is on or not: it&squot;s just a flag about the key being&n; * physically down. The actual capslock status is in the local flags.&n; */
-r_extern
-r_int
-r_int
-id|kbd_flags
-suffix:semicolon
-multiline_comment|/*&n; * These are the hardcoded global flags - use the numbers beyond 16&n; * for non-standard or keyboard-dependent flags&n; */
-DECL|macro|KG_LSHIFT
-mdefine_line|#define KG_LSHIFT&t;0
-DECL|macro|KG_RSHIFT
-mdefine_line|#define KG_RSHIFT&t;1
-DECL|macro|KG_LCTRL
-mdefine_line|#define KG_LCTRL&t;2
-DECL|macro|KG_RCTRL
-mdefine_line|#define KG_RCTRL&t;3
-DECL|macro|KG_LALT
-mdefine_line|#define KG_LALT&t;&t;4
-DECL|macro|KG_RALT
-mdefine_line|#define KG_RALT&t;&t;5&t;/* doesn&squot;t exist, but.. */
-DECL|macro|KG_LALTGR
-mdefine_line|#define KG_LALTGR&t;6&t;/* doesn&squot;t exist, but.. */
-DECL|macro|KG_RALTGR
-mdefine_line|#define KG_RALTGR&t;7
-DECL|macro|KG_CAPSLOCK
-mdefine_line|#define KG_CAPSLOCK&t;8
 multiline_comment|/*&n; * &quot;dead&quot; keys - prefix key values that are valid only for the next&n; * character code (sticky shift, E0/E1 special scancodes, diacriticals)&n; */
 r_extern
 r_int
@@ -102,84 +77,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-DECL|function|kbd_flag
-r_extern
-r_inline
-r_int
-id|kbd_flag
-c_func
-(paren
-r_int
-id|flag
-)paren
-(brace
-r_return
-id|kbd_flags
-op_amp
-(paren
-l_int|1
-op_lshift
-id|flag
-)paren
-suffix:semicolon
-)brace
-DECL|function|set_kbd_flag
-r_extern
-r_inline
-r_void
-id|set_kbd_flag
-c_func
-(paren
-r_int
-id|flag
-)paren
-(brace
-id|kbd_flags
-op_or_assign
-l_int|1
-op_lshift
-id|flag
-suffix:semicolon
-)brace
-DECL|function|clr_kbd_flag
-r_extern
-r_inline
-r_void
-id|clr_kbd_flag
-c_func
-(paren
-r_int
-id|flag
-)paren
-(brace
-id|kbd_flags
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-id|flag
-)paren
-suffix:semicolon
-)brace
-DECL|function|chg_kbd_flag
-r_extern
-r_inline
-r_void
-id|chg_kbd_flag
-c_func
-(paren
-r_int
-id|flag
-)paren
-(brace
-id|kbd_flags
-op_xor_assign
-l_int|1
-op_lshift
-id|flag
-suffix:semicolon
-)brace
 DECL|function|kbd_dead
 r_extern
 r_inline
@@ -359,9 +256,9 @@ id|flag
 suffix:semicolon
 )brace
 DECL|macro|NR_KEYS
-mdefine_line|#define NR_KEYS 112
+mdefine_line|#define NR_KEYS 128
 DECL|macro|NR_KEYMAPS
-mdefine_line|#define NR_KEYMAPS 3
+mdefine_line|#define NR_KEYMAPS 16
 r_extern
 r_const
 r_int
@@ -385,6 +282,25 @@ id|NR_KEYMAPS
 id|NR_KEYS
 )braket
 suffix:semicolon
+DECL|macro|NR_FUNC
+mdefine_line|#define NR_FUNC 32
+DECL|macro|FUNC_BUFSIZE
+mdefine_line|#define FUNC_BUFSIZE 512
+r_extern
+r_char
+id|func_buf
+(braket
+id|FUNC_BUFSIZE
+)braket
+suffix:semicolon
+r_extern
+r_char
+op_star
+id|func_table
+(braket
+id|NR_FUNC
+)braket
+suffix:semicolon
 DECL|macro|KT_LATIN
 mdefine_line|#define KT_LATIN&t;0&t;/* we depend on this being zero */
 DECL|macro|KT_FN
@@ -401,6 +317,10 @@ DECL|macro|KT_CUR
 mdefine_line|#define KT_CUR&t;&t;6
 DECL|macro|KT_SHIFT
 mdefine_line|#define KT_SHIFT&t;7
+DECL|macro|KT_META
+mdefine_line|#define KT_META&t;&t;8
+DECL|macro|KT_ASCII
+mdefine_line|#define KT_ASCII&t;9
 DECL|macro|K
 mdefine_line|#define K(t,v)&t;&t;(((t)&lt;&lt;8)|(v))
 DECL|macro|KTYP
@@ -479,6 +399,14 @@ DECL|macro|K_NUM
 mdefine_line|#define K_NUM&t;&t;K(KT_SPEC,8)
 DECL|macro|K_HOLD
 mdefine_line|#define K_HOLD&t;&t;K(KT_SPEC,9)
+DECL|macro|K_SCROLLFORW
+mdefine_line|#define K_SCROLLFORW&t;K(KT_SPEC,10)
+DECL|macro|K_SCROLLBACK
+mdefine_line|#define K_SCROLLBACK&t;K(KT_SPEC,11)
+DECL|macro|K_BOOT
+mdefine_line|#define K_BOOT&t;&t;K(KT_SPEC,12)
+DECL|macro|K_CAPSON
+mdefine_line|#define K_CAPSON&t;K(KT_SPEC,13)
 DECL|macro|K_P0
 mdefine_line|#define K_P0&t;&t;K(KT_PAD,0)
 DECL|macro|K_P1
@@ -531,25 +459,45 @@ DECL|macro|K_RIGHT
 mdefine_line|#define K_RIGHT&t;&t;K(KT_CUR,2)
 DECL|macro|K_UP
 mdefine_line|#define K_UP&t;&t;K(KT_CUR,3)
-DECL|macro|K_LSHIFT
-mdefine_line|#define K_LSHIFT&t;K(KT_SHIFT,KG_LSHIFT)
-DECL|macro|K_RSHIFT
-mdefine_line|#define K_RSHIFT&t;K(KT_SHIFT,KG_RSHIFT)
-DECL|macro|K_LCTRL
-mdefine_line|#define K_LCTRL&t;&t;K(KT_SHIFT,KG_LCTRL)
-DECL|macro|K_RCTRL
-mdefine_line|#define K_RCTRL&t;&t;K(KT_SHIFT,KG_RCTRL)
-DECL|macro|K_LALT
-mdefine_line|#define K_LALT&t;&t;K(KT_SHIFT,KG_LALT)
-DECL|macro|K_RALT
-mdefine_line|#define K_RALT&t;&t;K(KT_SHIFT,KG_RALT)
-DECL|macro|K_LALTGR
-mdefine_line|#define K_LALTGR&t;K(KT_SHIFT,KG_LALTGR)
-DECL|macro|K_RALTGR
-mdefine_line|#define K_RALTGR&t;K(KT_SHIFT,KG_RALTGR)
+DECL|macro|KG_SHIFT
+mdefine_line|#define KG_SHIFT&t;0
+DECL|macro|KG_CTRL
+mdefine_line|#define KG_CTRL&t;&t;2
+DECL|macro|KG_ALT
+mdefine_line|#define KG_ALT&t;&t;3
+DECL|macro|KG_ALTGR
+mdefine_line|#define KG_ALTGR&t;1
+DECL|macro|K_SHIFT
+mdefine_line|#define K_SHIFT&t;&t;K(KT_SHIFT,KG_SHIFT)
+DECL|macro|K_CTRL
+mdefine_line|#define K_CTRL&t;&t;K(KT_SHIFT,KG_CTRL)
 DECL|macro|K_ALT
-mdefine_line|#define K_ALT&t;&t;K_LALT
+mdefine_line|#define K_ALT&t;&t;K(KT_SHIFT,KG_ALT)
 DECL|macro|K_ALTGR
-mdefine_line|#define K_ALTGR&t;&t;K_RALTGR
+mdefine_line|#define K_ALTGR&t;&t;K(KT_SHIFT,KG_ALTGR)
+DECL|macro|NR_SHIFT
+mdefine_line|#define NR_SHIFT&t;16
+DECL|macro|K_CAPSSHIFT
+mdefine_line|#define K_CAPSSHIFT&t;K(KT_SHIFT,NR_SHIFT)
+DECL|macro|K_ASC0
+mdefine_line|#define K_ASC0&t;&t;K(KT_ASCII,0)
+DECL|macro|K_ASC1
+mdefine_line|#define K_ASC1&t;&t;K(KT_ASCII,1)
+DECL|macro|K_ASC2
+mdefine_line|#define K_ASC2&t;&t;K(KT_ASCII,2)
+DECL|macro|K_ASC3
+mdefine_line|#define K_ASC3&t;&t;K(KT_ASCII,3)
+DECL|macro|K_ASC4
+mdefine_line|#define K_ASC4&t;&t;K(KT_ASCII,4)
+DECL|macro|K_ASC5
+mdefine_line|#define K_ASC5&t;&t;K(KT_ASCII,5)
+DECL|macro|K_ASC6
+mdefine_line|#define K_ASC6&t;&t;K(KT_ASCII,6)
+DECL|macro|K_ASC7
+mdefine_line|#define K_ASC7&t;&t;K(KT_ASCII,7)
+DECL|macro|K_ASC8
+mdefine_line|#define K_ASC8&t;&t;K(KT_ASCII,8)
+DECL|macro|K_ASC9
+mdefine_line|#define K_ASC9&t;&t;K(KT_ASCII,9)
 macro_line|#endif
 eof

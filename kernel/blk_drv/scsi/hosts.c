@@ -73,6 +73,8 @@ comma
 macro_line|#endif
 )brace
 suffix:semicolon
+DECL|macro|MAX_SCSI_HOSTS
+mdefine_line|#define MAX_SCSI_HOSTS (sizeof(scsi_hosts) / sizeof(Scsi_Host))
 multiline_comment|/*&n; *&t;Our semaphores and timeout counters, where size depends on MAX_SCSI_HOSTS here. &n; */
 DECL|variable|host_busy
 r_volatile

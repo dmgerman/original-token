@@ -1,8 +1,9 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the Interfaces handler.&n; *&n; * Version:&t;@(#)dev.h&t;1.0.9&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the Interfaces handler.&n; *&n; * Version:&t;@(#)dev.h&t;1.0.10&t;08/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Donald J. Becker, &lt;becker@super.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _DEV_H
 DECL|macro|_DEV_H
 mdefine_line|#define _DEV_H
 macro_line|#include &lt;linux/if.h&gt;
+macro_line|#include &lt;linux/if_ether.h&gt;
 multiline_comment|/* for future expansion when we will have different priorities. */
 DECL|macro|DEV_NUMBUFFS
 mdefine_line|#define DEV_NUMBUFFS&t;3
@@ -101,7 +102,48 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* Some hardware also needs these fields, but they are not part of the&n;     usual set specified in Space.c. */
+DECL|member|if_port
+r_int
+r_char
+id|if_port
+suffix:semicolon
+multiline_comment|/* Selectable AUI, TP,..*/
+DECL|member|dma
+r_int
+r_char
+id|dma
+suffix:semicolon
+multiline_comment|/* DMA channel&t;&t;*/
+DECL|member|get_stats
+r_struct
+id|enet_statistics
+op_star
+(paren
+op_star
+id|get_stats
+)paren
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/*&n;   * This marks the end of the &quot;visible&quot; part of the structure. All&n;   * fields hereafter are internal to the system, and may change at&n;   * will (read: may be cleaned up at will).&n;   */
+multiline_comment|/* These may be needed for future network-power-down code. */
+DECL|member|trans_start
+r_int
+r_int
+id|trans_start
+suffix:semicolon
+multiline_comment|/* Time (in jiffies) of last Tx&t;*/
+DECL|member|last_rx
+r_int
+r_int
+id|last_rx
+suffix:semicolon
+multiline_comment|/* Time of last Rx&t;&t;*/
 DECL|member|flags
 r_int
 r_int
@@ -132,12 +174,6 @@ r_int
 id|type
 suffix:semicolon
 multiline_comment|/* interface hardware type&t;*/
-DECL|member|trans_start
-r_int
-r_int
-id|trans_start
-suffix:semicolon
-multiline_comment|/* ??&t;&t;&t;&t;*/
 DECL|member|hard_header_len
 r_int
 r_int
@@ -473,9 +509,6 @@ op_star
 id|dev_check
 c_func
 (paren
-r_int
-id|which
-comma
 r_int
 r_int
 id|daddr

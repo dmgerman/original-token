@@ -262,10 +262,10 @@ DECL|macro|MSDOS_CAN_BMAP
 mdefine_line|#define MSDOS_CAN_BMAP(mib) (!(((mib)-&gt;cluster_size &amp; 1) || &bslash;&n;    ((mib)-&gt;data_start &amp; 1)))
 multiline_comment|/* Convert attribute bits and a mask to the UNIX mode. */
 DECL|macro|MSDOS_MKMODE
-mdefine_line|#define MSDOS_MKMODE(a,m) (m &amp; (a &amp; ATTR_RO ? 0555 : 0777))
+mdefine_line|#define MSDOS_MKMODE(a,m) (m &amp; (a &amp; ATTR_RO ? S_IRUGO|S_IXUGO : S_IRWXUGO))
 multiline_comment|/* Convert the UNIX mode to MS-DOS attribute bits. */
 DECL|macro|MSDOS_MKATTR
-mdefine_line|#define MSDOS_MKATTR(m) ((m &amp; 0200) ? ATTR_NONE : ATTR_RO)
+mdefine_line|#define MSDOS_MKATTR(m) ((m &amp; S_IWUGO) ? ATTR_NONE : ATTR_RO)
 DECL|function|msdos_sread
 r_static
 r_inline

@@ -924,7 +924,7 @@ c_cond
 (paren
 id|inode-&gt;i_ino
 template_param
-id|sb-&gt;u.ext2_sb.s_inodes_count
+id|sb-&gt;u.ext2_sb.s_es-&gt;s_inodes_count
 )paren
 (brace
 id|printk
@@ -943,12 +943,7 @@ suffix:semicolon
 )brace
 id|es
 op_assign
-(paren
-r_struct
-id|ext2_super_block
-op_star
-)paren
-id|sb-&gt;u.ext2_sb.s_sbh-&gt;b_data
+id|sb-&gt;u.ext2_sb.s_es
 suffix:semicolon
 id|block_group
 op_assign
@@ -1312,7 +1307,6 @@ r_struct
 id|ext2_group_desc
 op_star
 id|get_group_desc
-c_func
 (paren
 r_struct
 id|super_block
@@ -1490,12 +1484,7 @@ id|sb
 suffix:semicolon
 id|es
 op_assign
-(paren
-r_struct
-id|ext2_super_block
-op_star
-)paren
-id|sb-&gt;u.ext2_sb.s_sbh-&gt;b_data
+id|sb-&gt;u.ext2_sb.s_es
 suffix:semicolon
 id|repeat
 suffix:colon
@@ -1523,7 +1512,7 @@ id|es-&gt;s_free_inodes_count
 op_div
 id|sb-&gt;u.ext2_sb.s_groups_count
 suffix:semicolon
-multiline_comment|/* I am not yet convinced that this next bit is necessary.&n;&t;&t;i = dir-&gt;u.ext2_i.i_block_group;&n;&t;&t;for (j = 0; j &lt; sb-&gt;u.ext2_sb.s_groups_count; j++) {&n;&t;&t;&t;tmp = get_group_desc(sb, i);&n;&t;&t;&t;if ((tmp-&gt;bg_used_dirs_count &lt;&lt; 8) &lt; &n;&t;&t;&t;    tmp-&gt;bg_free_inodes_count) {&n;&t;&t;&t;&t;gdp = tmp;&n;&t;&t;&t;&t;break;&n;&t;&t;&t;}&n;&t;&t;&t;else&n;&t;&t;&t;i = ++i % sb-&gt;u.ext2_sb.s_groups_count;&n;&t;&t;}&n;*/
+multiline_comment|/* I am not yet convinced that this next bit is necessary.&n;&t;&t;i = dir-&gt;u.ext2_i.i_block_group;&n;&t;&t;for (j = 0; j &lt; sb-&gt;u.ext2_sb.s_groups_count; j++) {&n;&t;&t;&t;tmp = get_group_desc (sb, i);&n;&t;&t;&t;if ((tmp-&gt;bg_used_dirs_count &lt;&lt; 8) &lt; &n;&t;&t;&t;    tmp-&gt;bg_free_inodes_count) {&n;&t;&t;&t;&t;gdp = tmp;&n;&t;&t;&t;&t;break;&n;&t;&t;&t;}&n;&t;&t;&t;else&n;&t;&t;&t;i = ++i % sb-&gt;u.ext2_sb.s_groups_count;&n;&t;&t;}&n;*/
 r_if
 c_cond
 (paren
@@ -1549,7 +1538,6 @@ op_increment
 id|tmp
 op_assign
 id|get_group_desc
-c_func
 (paren
 id|sb
 comma
@@ -1602,7 +1590,6 @@ suffix:semicolon
 id|tmp
 op_assign
 id|get_group_desc
-c_func
 (paren
 id|sb
 comma
@@ -1655,7 +1642,6 @@ suffix:semicolon
 id|tmp
 op_assign
 id|get_group_desc
-c_func
 (paren
 id|sb
 comma
@@ -1721,7 +1707,6 @@ suffix:semicolon
 id|tmp
 op_assign
 id|get_group_desc
-c_func
 (paren
 id|sb
 comma
@@ -1878,7 +1863,7 @@ c_cond
 (paren
 id|j
 OG
-id|sb-&gt;u.ext2_sb.s_inodes_count
+id|es-&gt;s_inodes_count
 )paren
 (brace
 id|printk
@@ -1893,6 +1878,16 @@ suffix:semicolon
 id|printk
 (paren
 l_string|&quot;ext2_new_inode: inode &gt; inodes count&quot;
+)paren
+suffix:semicolon
+id|unlock_super
+(paren
+id|sb
+)paren
+suffix:semicolon
+id|iput
+(paren
+id|inode
 )paren
 suffix:semicolon
 r_return
@@ -2081,12 +2076,12 @@ op_star
 id|sb
 )paren
 (brace
+macro_line|#ifdef EXT2FS_DEBUG
 r_struct
 id|ext2_super_block
 op_star
 id|es
 suffix:semicolon
-macro_line|#ifdef EXT2FS_DEBUG
 r_int
 r_int
 id|desc_count
@@ -2121,12 +2116,7 @@ id|sb
 suffix:semicolon
 id|es
 op_assign
-(paren
-r_struct
-id|ext2_super_block
-op_star
-)paren
-id|sb-&gt;u.ext2_sb.s_sbh-&gt;b_data
+id|sb-&gt;u.ext2_sb.s_es
 suffix:semicolon
 id|desc_count
 op_assign
@@ -2332,17 +2322,8 @@ r_return
 id|desc_count
 suffix:semicolon
 macro_line|#else
-id|es
-op_assign
-(paren
-r_struct
-id|ext2_super_block
-op_star
-)paren
-id|sb-&gt;u.ext2_sb.s_sbh-&gt;b_data
-suffix:semicolon
 r_return
-id|es-&gt;s_free_inodes_count
+id|sb-&gt;u.ext2_sb.s_es-&gt;s_free_inodes_count
 suffix:semicolon
 macro_line|#endif
 )brace

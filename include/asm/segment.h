@@ -1,3 +1,6 @@
+macro_line|#ifndef _ASM_SEGMENT_H
+DECL|macro|_ASM_SEGMENT_H
+mdefine_line|#define _ASM_SEGMENT_H
 DECL|function|get_fs_byte
 r_static
 r_inline
@@ -824,4 +827,5 @@ id|val
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* _ASM_SEGMENT_H */
 eof

@@ -377,5 +377,27 @@ DECL|macro|KDGKBENT
 mdefine_line|#define KDGKBENT&t;0x4B46&t;/* gets one entry in translation table */
 DECL|macro|KDSKBENT
 mdefine_line|#define KDSKBENT&t;0x4B47&t;/* sets one entry in translation table */
+DECL|struct|kbsentry
+r_struct
+id|kbsentry
+(brace
+DECL|member|kb_func
+id|u_char
+id|kb_func
+suffix:semicolon
+DECL|member|kb_string
+id|u_char
+id|kb_string
+(braket
+l_int|512
+)braket
+suffix:semicolon
+multiline_comment|/* FUNC_BUFSIZE from keyboard.h */
+)brace
+suffix:semicolon
+DECL|macro|KDGKBSENT
+mdefine_line|#define KDGKBSENT&t;0x4B48&t;/* gets one function key string entry */
+DECL|macro|KDSKBSENT
+mdefine_line|#define KDSKBSENT&t;0x4B49&t;/* sets one function key string entry */
 macro_line|#endif /* _LINUX_KD_H */
 eof

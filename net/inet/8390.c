@@ -1,12 +1,12 @@
 multiline_comment|/* 8390.c: A general NS8390 ethernet driver core for linux. */
-multiline_comment|/*&n;    Written 1992,1993 by Donald Becker. This is alpha test code.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    &n;    This driver should work with many 8390-based ethernet adaptors.&n;&n;    The Author may be reached as becker@super.org or&n;    C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;*/
+multiline_comment|/*&n;    Written 1992,1993 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is the chip-specific code for many 8390-based ethernet adaptors.&n;&n;    The Author may be reached as becker@super.org or&n;    C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;8390.c:v0.99-10 5/28/93 for 0.99.6+ Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;8390.c:v0.99-12 8/9/93 for 0.99.12+ Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if !defined(EL2) &amp;&amp; !defined(NE2000) &amp;&amp; !defined(WD80x3) &amp;&amp; !defined(HPLAN)
@@ -20,7 +20,7 @@ mdefine_line|#define WD80x3
 DECL|macro|HPLAN
 mdefine_line|#define HPLAN
 macro_line|#endif
-multiline_comment|/*&n;  Braindamage remaining:&n;&n;  Ethernet devices should use a chr_drv device interface, with ioctl()s to&n;  configure the card, bring the interface up or down, allow access to&n;  statistics, and maybe read() and write() access to raw packets.&n;  This won&squot;t be done until after Linux 1.00.&n;&n;  This driver should support multiple, diverse boards simultaneousely.&n;  This won&squot;t be done until after Linux 1.00.&n;&n;Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;  The NE* programming info came from the Crynwr packet driver, and figuring&n;  out that the those boards are similar to the NatSemi evaluation board&n;  described in AN-729.  Thanks NS, no thanks to Novell/Eagle.&n;  Cabletron provided only info I had already gotten from other sources -- hiss.&n;  */
+multiline_comment|/*&n;  Braindamage remaining:&n;&n;  Ethernet devices should use a chr_drv device interface, with ioctl()s to&n;  configure the card, bring the interface up or down, allow access to&n;  statistics, and maybe read() and write() access to raw packets.&n;  This won&squot;t be done until after Linux 1.00.&n;&n;Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;  The NE* programming info came from the Crynwr packet driver, and figuring&n;  out that the those boards are similar to the NatSemi evaluation board&n;  described in AN-729.  Thanks NS, no thanks to Novell/Eagle.&n;  */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -38,7 +38,6 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;eth.h&quot;
-macro_line|#include &quot;timer.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;tcp.h&quot;
@@ -65,33 +64,13 @@ DECL|variable|ei_debug
 r_int
 id|ei_debug
 op_assign
-l_int|2
+l_int|1
 suffix:semicolon
 macro_line|#endif
-DECL|variable|irq2dev_map
-r_struct
-id|device
-op_star
-id|irq2dev_map
-(braket
-l_int|16
-)braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* zeroed...*/
-)brace
-suffix:semicolon
 multiline_comment|/* Max number of packets received at one Intr. */
 multiline_comment|/*static int high_water_mark = 0;*/
 multiline_comment|/* Index to functions. */
 multiline_comment|/* Put in the device structure. */
-r_static
 r_int
 id|ei_open
 c_func
@@ -136,16 +115,6 @@ suffix:semicolon
 r_static
 r_void
 id|ei_rx_overrun
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_int
-id|ethdev_init
 c_func
 (paren
 r_struct
@@ -274,7 +243,6 @@ comma
 suffix:semicolon
 "&f;"
 multiline_comment|/* Open/initialize the board.  This routine goes all-out, setting everything&n;   up anew at each open, even though many of these registers should only&n;   need to be set once at boot.&n;   */
-r_static
 r_int
 DECL|function|ei_open
 id|ei_open
@@ -1297,7 +1265,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-id|ei_local-&gt;soft_rx_errors
+id|ei_local-&gt;stat.rx_frame_errors
 op_add_assign
 id|inb_p
 c_func
@@ -1307,7 +1275,7 @@ op_plus
 id|EN0_COUNTER0
 )paren
 suffix:semicolon
-id|ei_local-&gt;soft_rx_errors
+id|ei_local-&gt;stat.rx_crc_errors
 op_add_assign
 id|inb_p
 c_func
@@ -1317,7 +1285,7 @@ op_plus
 id|EN0_COUNTER1
 )paren
 suffix:semicolon
-id|ei_local-&gt;missed_packets
+id|ei_local-&gt;stat.rx_missed_errors
 op_add_assign
 id|inb_p
 c_func
@@ -1478,24 +1446,6 @@ id|EN0_ISR
 )paren
 suffix:semicolon
 multiline_comment|/* Ack intr. */
-r_if
-c_cond
-(paren
-(paren
-id|status
-op_amp
-id|ENTSR_PTX
-)paren
-op_eq
-l_int|0
-)paren
-id|ei_local-&gt;tx_errors
-op_increment
-suffix:semicolon
-r_else
-id|ei_local-&gt;tx_packets
-op_increment
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1703,6 +1653,81 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* Do the statistics _after_ we start the next TX. */
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|ENTSR_PTX
+)paren
+id|ei_local-&gt;stat.tx_packets
+op_increment
+suffix:semicolon
+r_else
+id|ei_local-&gt;stat.tx_errors
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|ENTSR_COL
+)paren
+id|ei_local-&gt;stat.collisions
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|ENTSR_ABT
+)paren
+id|ei_local-&gt;stat.tx_aborted_errors
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|ENTSR_CRS
+)paren
+id|ei_local-&gt;stat.tx_carrier_errors
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|ENTSR_FU
+)paren
+id|ei_local-&gt;stat.tx_fifo_errors
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|ENTSR_CDH
+)paren
+id|ei_local-&gt;stat.tx_heartbeat_errors
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|ENTSR_OWC
+)paren
+id|ei_local-&gt;stat.tx_window_errors
+op_increment
+suffix:semicolon
 id|mark_bh
 (paren
 id|INET_BH
@@ -1996,7 +2021,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ei_local-&gt;rx_packets
+id|ei_local-&gt;stat.rx_packets
 op_ne
 id|last_rx_bogosity
 )paren
@@ -2024,7 +2049,7 @@ id|rx_frame.status
 suffix:semicolon
 id|last_rx_bogosity
 op_assign
-id|ei_local-&gt;rx_packets
+id|ei_local-&gt;stat.rx_packets
 suffix:semicolon
 id|outb
 c_func
@@ -2051,7 +2076,7 @@ l_string|&quot;%s: recovery failed, resetting at packet #%d..&quot;
 comma
 id|dev-&gt;name
 comma
-id|ei_local-&gt;rx_packets
+id|ei_local-&gt;stat.rx_packets
 )paren
 suffix:semicolon
 id|sti
@@ -2227,6 +2252,14 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+id|kfree_s
+c_func
+(paren
+id|skb
+comma
+id|sksize
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -2251,12 +2284,17 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|ei_local-&gt;rx_packets
+id|ei_local-&gt;stat.rx_packets
 op_increment
 suffix:semicolon
 )brace
 r_else
 (brace
+r_int
+id|errs
+op_assign
+id|rx_frame.status
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2276,11 +2314,14 @@ comma
 id|rx_frame.count
 )paren
 suffix:semicolon
-id|ei_local-&gt;soft_rx_err_bits
-op_or_assign
-id|rx_frame.status
-comma
-id|ei_local-&gt;soft_rx_errors
+r_if
+c_cond
+(paren
+id|errs
+op_amp
+id|ENRSR_FO
+)paren
+id|ei_local-&gt;stat.rx_fifo_errors
 op_increment
 suffix:semicolon
 )brace
@@ -2425,7 +2466,7 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|ei_local-&gt;rx_overruns
+id|ei_local-&gt;stat.rx_over_errors
 op_increment
 suffix:semicolon
 multiline_comment|/* The we.c driver does dummy = inb_p( RBCR[01] ); at this point.&n;       It might mean something -- magic to speed up a reset?  A 8390 bug?*/
@@ -2477,12 +2518,6 @@ r_return
 suffix:semicolon
 )brace
 suffix:semicolon
-(brace
-r_int
-id|old_rx_packets
-op_assign
-id|ei_local-&gt;rx_packets
-suffix:semicolon
 multiline_comment|/* Remove packets right away. */
 id|ei_receive
 c_func
@@ -2490,15 +2525,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|ei_local-&gt;rx_overrun_packets
-op_add_assign
-(paren
-id|ei_local-&gt;rx_packets
-op_minus
-id|old_rx_packets
-)paren
-suffix:semicolon
-)brace
 id|outb_p
 c_func
 (paren
@@ -2536,9 +2562,12 @@ id|EN0_TXCR
 suffix:semicolon
 multiline_comment|/* xmit on. */
 )brace
-r_int
-DECL|function|ethif_init
-id|ethif_init
+r_static
+r_struct
+id|enet_statistics
+op_star
+DECL|function|get_stats
+id|get_stats
 c_func
 (paren
 r_struct
@@ -2551,7 +2580,87 @@ r_struct
 id|ei_device
 op_star
 id|ei_local
+op_assign
+(paren
+r_struct
+id|ei_device
+op_star
+)paren
+id|dev-&gt;priv
 suffix:semicolon
+r_return
+op_amp
+id|ei_local-&gt;stat
+suffix:semicolon
+)brace
+r_int
+DECL|function|ethif_init
+id|ethif_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_if
+c_cond
+(paren
+l_int|1
+macro_line|#ifdef WD80x3
+op_logical_and
+op_logical_neg
+id|wdprobe
+c_func
+(paren
+id|dev-&gt;base_addr
+comma
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef EL2
+op_logical_and
+op_logical_neg
+id|el2autoprobe
+c_func
+(paren
+id|dev-&gt;base_addr
+comma
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef NE2000
+op_logical_and
+op_logical_neg
+id|neprobe
+c_func
+(paren
+id|dev-&gt;base_addr
+comma
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef HPLAN
+op_logical_and
+op_logical_neg
+id|hpprobe
+c_func
+(paren
+id|dev-&gt;base_addr
+comma
+id|dev
+)paren
+macro_line|#endif
+op_logical_and
+l_int|1
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* -ENODEV or -EAGAIN would be more accurate. */
+)brace
 r_if
 c_cond
 (paren
@@ -2565,13 +2674,96 @@ c_func
 id|version
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* Initialize the rest of the device structure. */
+r_int
+DECL|function|ethdev_init
+id|ethdev_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|DEV_NUMBUFFS
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|dev-&gt;buffs
+(braket
+id|i
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/* The open call may be overridden by the card-specific code. */
+r_if
+c_cond
+(paren
+id|dev-&gt;open
+op_eq
+l_int|NULL
+)paren
 id|dev-&gt;open
 op_assign
 op_amp
 id|ei_open
 suffix:semicolon
-multiline_comment|/* Make up a ei_local structure. */
+id|dev-&gt;get_stats
+op_assign
+id|get_stats
+suffix:semicolon
+id|dev-&gt;hard_header
+op_assign
+id|eth_header
+suffix:semicolon
+id|dev-&gt;add_arp
+op_assign
+id|eth_add_arp
+suffix:semicolon
+id|dev-&gt;queue_xmit
+op_assign
+id|dev_queue_xmit
+suffix:semicolon
+id|dev-&gt;rebuild_header
+op_assign
+id|eth_rebuild_header
+suffix:semicolon
+id|dev-&gt;type_trans
+op_assign
+id|eth_type_trans
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;priv
+op_eq
+l_int|NULL
+)paren
+(brace
+r_struct
+id|ei_device
+op_star
+id|ei_local
+suffix:semicolon
 id|dev-&gt;priv
 op_assign
 id|kmalloc
@@ -2615,179 +2807,6 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
-(paren
-l_int|1
-macro_line|#ifdef WD80x3
-op_logical_and
-op_logical_neg
-id|wdprobe
-c_func
-(paren
-id|dev-&gt;base_addr
-comma
-id|dev
-)paren
-macro_line|#endif&t;&t;     
-macro_line|#ifdef EL2
-op_logical_and
-op_logical_neg
-id|el2autoprobe
-c_func
-(paren
-id|dev-&gt;base_addr
-comma
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef NE2000
-op_logical_and
-op_logical_neg
-id|neprobe
-c_func
-(paren
-id|dev-&gt;base_addr
-comma
-id|dev
-)paren
-macro_line|#endif&t;&t;     
-macro_line|#ifdef HPLAN
-op_logical_and
-op_logical_neg
-id|hpprobe
-c_func
-(paren
-id|dev-&gt;base_addr
-comma
-id|dev
-)paren
-macro_line|#endif&t;&t;     
-op_logical_and
-l_int|1
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;No ethernet device found.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|dev-&gt;priv
-)paren
-suffix:semicolon
-id|dev-&gt;priv
-op_assign
-l_int|NULL
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-multiline_comment|/* ENODEV or EAGAIN would be more accurate. */
-)brace
-r_return
-id|ethdev_init
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Initialize the rest of the device structure. */
-r_int
-DECL|function|ethdev_init
-id|ethdev_init
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|DEV_NUMBUFFS
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|dev-&gt;buffs
-(braket
-id|i
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
-id|dev-&gt;hard_header
-op_assign
-id|eth_header
-suffix:semicolon
-id|dev-&gt;add_arp
-op_assign
-id|eth_add_arp
-suffix:semicolon
-id|dev-&gt;queue_xmit
-op_assign
-id|dev_queue_xmit
-suffix:semicolon
-id|dev-&gt;rebuild_header
-op_assign
-id|eth_rebuild_header
-suffix:semicolon
-id|dev-&gt;type_trans
-op_assign
-id|eth_type_trans
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;priv
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev-&gt;priv
-op_assign
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-r_struct
-id|ei_device
-)paren
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|dev-&gt;priv
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|ei_device
-)paren
-)paren
-suffix:semicolon
 )brace
 id|dev-&gt;hard_start_xmit
 op_assign
@@ -3345,5 +3364,5 @@ r_return
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DKERNEL -Wall -O6 -I/usr/src/linux/net/tcp -c 8390.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -Wall -O6 -x c++ -c 8390.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; * End:&n; */
 eof

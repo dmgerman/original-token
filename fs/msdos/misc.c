@@ -14,7 +14,7 @@ id|bin_extensions
 (braket
 )braket
 op_assign
-l_string|&quot;EXECOMAPPSYSOVLOBJLIB&quot;
+l_string|&quot;EXECOMBINAPPSYSDRVOVLOVROBJLIBDLLPIF&quot;
 multiline_comment|/* program code */
 l_string|&quot;ARCZIPLHALZHZOOTARZ  ARJ&quot;
 multiline_comment|/* common archivers */
@@ -615,7 +615,7 @@ c_func
 (paren
 id|inode
 comma
-l_int|0x7fffffff
+id|INT_MAX
 comma
 op_amp
 id|last

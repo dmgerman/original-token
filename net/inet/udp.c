@@ -12,7 +12,6 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;timer.h&quot;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;

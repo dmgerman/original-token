@@ -408,6 +408,8 @@ id|p-&gt;name
 comma
 id|p-&gt;len
 )paren
+op_ne
+l_int|0
 )paren
 suffix:semicolon
 id|p
@@ -863,7 +865,6 @@ macro_line|#endif
 id|queue
 op_assign
 id|hash
-c_func
 (paren
 id|dev
 comma
@@ -1065,7 +1066,6 @@ suffix:semicolon
 id|queue
 op_assign
 id|hash
-c_func
 (paren
 id|dev
 comma
@@ -1332,7 +1332,6 @@ suffix:semicolon
 id|queue
 op_assign
 id|hash
-c_func
 (paren
 id|dev
 comma

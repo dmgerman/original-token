@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/*&n; * comment out this line if you want names &gt; EXT2_NAME_LEN chars to be&n; * truncated. Else they will be disallowed.&n; */
 multiline_comment|/* #define NO_TRUNCATE */
-multiline_comment|/*&n; * ok, we cannot use strncmp, as the name is not in our data space.&n; * Thus we&squot;ll have to use ext2_match. No big problem. ext2_match also makes&n; * some sanity tests.&n; *&n; * NOTE! unlike strncmp, ext2_match returns 1 for success, 0 for failure.&n; */
+multiline_comment|/*&n; * NOTE! unlike strncmp, ext2_match returns 1 for success, 0 for failure.&n; */
 DECL|function|ext2_match
 r_static
 r_int
@@ -1122,6 +1122,10 @@ id|dir-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+id|dir-&gt;i_dirt
+op_assign
+l_int|1
+suffix:semicolon
 id|bh-&gt;b_dirt
 op_assign
 l_int|1
@@ -2120,7 +2124,7 @@ op_or
 (paren
 id|mode
 op_amp
-l_int|0777
+id|S_IRWXUGO
 op_amp
 op_complement
 id|current-&gt;umask
@@ -3276,7 +3280,7 @@ id|inode-&gt;i_mode
 op_assign
 id|S_IFLNK
 op_or
-l_int|0777
+id|S_IRWXUGO
 suffix:semicolon
 id|inode-&gt;i_op
 op_assign

@@ -1,8 +1,9 @@
 multiline_comment|/* Generic NS8390 register definitions. */
-multiline_comment|/* This file is part of Donald Becker&squot;s 8390 drivers, and is distributed&n;   under the same license.&n;   Some of these names and comments are from the Crynwr packet drivers. */
-macro_line|#ifndef e8390_h
-DECL|macro|e8390_h
-mdefine_line|#define e8390_h
+multiline_comment|/* This file is part of Donald Becker&squot;s 8390 drivers, and is distributed&n;   under the same license.&n;   Some of these names and comments originated from the Crynwr&n;   packet drivers, which are distributed under the GPL. */
+macro_line|#ifndef _8390_h
+DECL|macro|_8390_h
+mdefine_line|#define _8390_h
+macro_line|#include &lt;linux/if_ether.h&gt;
 DECL|macro|TX_2X_PAGES
 mdefine_line|#define TX_2X_PAGES 12
 DECL|macro|TX_1X_PAGES
@@ -12,6 +13,63 @@ mdefine_line|#define TX_PAGES (ei_status.pingpong ? TX_2X_PAGES : TX_1X_PAGES)
 DECL|macro|ETHER_ADDR_LEN
 mdefine_line|#define ETHER_ADDR_LEN 6
 multiline_comment|/* From 8390.c */
+r_extern
+r_int
+id|ei_debug
+suffix:semicolon
+r_extern
+r_struct
+id|sigaction
+id|ei_sigaction
+suffix:semicolon
+r_extern
+r_int
+id|ethif_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ethdev_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|NS8390_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+id|startp
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ei_open
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|ei_interrupt
 c_func
@@ -21,6 +79,15 @@ id|reg_ptr
 )paren
 suffix:semicolon
 multiline_comment|/* From auto_irq.c */
+r_extern
+r_struct
+id|device
+op_star
+id|irq2dev_map
+(braket
+l_int|16
+)braket
+suffix:semicolon
 r_extern
 r_void
 id|autoirq_setup
@@ -190,38 +257,29 @@ r_int
 id|lasttx
 suffix:semicolon
 multiline_comment|/* Alpha version consistency check. */
-multiline_comment|/* The statistics: these are returned from the ioctl() as a block.  */
-DECL|member|tx_packets
+DECL|member|reg0
 r_int
-id|tx_packets
+r_char
+id|reg0
 suffix:semicolon
-DECL|member|tx_errors
+multiline_comment|/* Register &squot;0&squot; in a WD8013 */
+DECL|member|reg5
 r_int
-id|tx_errors
+r_char
+id|reg5
 suffix:semicolon
-DECL|member|rx_packets
+multiline_comment|/* Register &squot;5&squot; in a WD8013 */
+DECL|member|saved_irq
 r_int
-id|rx_packets
+r_char
+id|saved_irq
 suffix:semicolon
-DECL|member|soft_rx_errors
-r_int
-id|soft_rx_errors
-suffix:semicolon
-DECL|member|soft_rx_err_bits
-r_int
-id|soft_rx_err_bits
-suffix:semicolon
-DECL|member|missed_packets
-r_int
-id|missed_packets
-suffix:semicolon
-DECL|member|rx_overruns
-r_int
-id|rx_overruns
-suffix:semicolon
-DECL|member|rx_overrun_packets
-r_int
-id|rx_overrun_packets
+multiline_comment|/* Original dev-&gt;irq value. */
+multiline_comment|/* The new statistics table. */
+DECL|member|stat
+r_struct
+id|enet_statistics
+id|stat
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -362,8 +420,21 @@ DECL|macro|ENRSR_DEF
 mdefine_line|#define ENRSR_DEF&t;0x80&t;/* deferring */
 multiline_comment|/* Transmitted packet status, EN0_TSR. */
 DECL|macro|ENTSR_PTX
-mdefine_line|#define ENTSR_PTX&t;0x01&t;/* Packet transmitted without error */
-multiline_comment|/* The other bits in the TX status register mean:&n;   0x02&t;The transmit wasn&squot;t deferred.&n;   0x04&t;The transmit collided at least once.&n;   0x08 The transmit collided 16 times, and was deferred.&n;   0x10&t;The carrier sense was lost (from the ethernet transceiver)&n;   0x20 A &quot;FIFO underrun&quot; (internal error) occured during transmit.&n;   0x40&t;The collision detect &quot;heartbeat&quot; signal was lost.&n;   0x80 There was an out-of-window collision.&n;   */
+mdefine_line|#define ENTSR_PTX 0x01&t;/* Packet transmitted without error */
+DECL|macro|ENTSR_ND
+mdefine_line|#define ENTSR_ND  0x02&t;/* The transmit wasn&squot;t deferred. */
+DECL|macro|ENTSR_COL
+mdefine_line|#define ENTSR_COL 0x04&t;/* The transmit collided at least once. */
+DECL|macro|ENTSR_ABT
+mdefine_line|#define ENTSR_ABT 0x08  /* The transmit collided 16 times, and was deferred. */
+DECL|macro|ENTSR_CRS
+mdefine_line|#define ENTSR_CRS 0x10&t;/* The carrier sense was lost. */
+DECL|macro|ENTSR_FU
+mdefine_line|#define ENTSR_FU  0x20  /* A &quot;FIFO underrun&quot; occured during transmit. */
+DECL|macro|ENTSR_CDH
+mdefine_line|#define ENTSR_CDH 0x40&t;/* The collision detect &quot;heartbeat&quot; signal was lost. */
+DECL|macro|ENTSR_OWC
+mdefine_line|#define ENTSR_OWC 0x80  /* There was an out-of-window collision. */
 multiline_comment|/* The per-packet-header format. */
 DECL|struct|e8390_pkt_hdr
 r_struct
@@ -389,5 +460,5 @@ suffix:semicolon
 multiline_comment|/* header + packet lenght in bytes */
 )brace
 suffix:semicolon
-macro_line|#endif /* e8390_h */
+macro_line|#endif /* _8390_h */
 eof

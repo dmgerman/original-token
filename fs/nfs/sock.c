@@ -524,7 +524,7 @@ op_star
 )paren
 id|start
 comma
-l_int|4096
+id|PAGE_SIZE
 comma
 l_int|1
 comma

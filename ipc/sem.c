@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/ipc.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 r_extern
 r_int
 id|ipcperms
@@ -428,7 +429,7 @@ op_assign
 (paren
 id|semflg
 op_amp
-l_int|0x01FF
+id|S_IRWXUGO
 )paren
 suffix:semicolon
 id|ipcp-&gt;key
@@ -1156,7 +1157,7 @@ id|ipcperms
 op_amp
 id|sma-&gt;sem_perm
 comma
-l_int|0444
+id|S_IRUGO
 )paren
 )paren
 r_return
@@ -1285,7 +1286,7 @@ id|ipcperms
 (paren
 id|ipcp
 comma
-l_int|0444
+id|S_IRUGO
 )paren
 )paren
 r_return
@@ -1726,7 +1727,7 @@ id|ipcperms
 (paren
 id|ipcp
 comma
-l_int|0444
+id|S_IRUGO
 )paren
 )paren
 r_return
@@ -1785,7 +1786,7 @@ id|ipcperms
 (paren
 id|ipcp
 comma
-l_int|0222
+id|S_IWUGO
 )paren
 )paren
 r_return
@@ -1882,13 +1883,13 @@ op_assign
 id|ipcp-&gt;mode
 op_amp
 op_complement
-l_int|0777
+id|S_IRWXUGO
 )paren
 op_or
 (paren
 id|tbuf.sem_perm.mode
 op_amp
-l_int|0777
+id|S_IRWXUGO
 )paren
 suffix:semicolon
 id|sma-&gt;sem_ctime
@@ -1913,7 +1914,7 @@ id|ipcperms
 (paren
 id|ipcp
 comma
-l_int|0444
+id|S_IRUGO
 )paren
 )paren
 r_return
@@ -1945,7 +1946,7 @@ id|ipcperms
 (paren
 id|ipcp
 comma
-l_int|0222
+id|S_IWUGO
 )paren
 )paren
 r_return
@@ -2255,9 +2256,9 @@ comma
 id|alter
 ques
 c_cond
-l_int|0222
+id|S_IWUGO
 suffix:colon
-l_int|0444
+id|S_IRUGO
 )paren
 )paren
 r_return

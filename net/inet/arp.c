@@ -13,7 +13,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;timer.h&quot;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;eth.h&quot;
 macro_line|#include &quot;ip.h&quot;
@@ -1736,7 +1735,7 @@ id|hlen
 suffix:semicolon
 id|apt-&gt;last_used
 op_assign
-id|timer_seq
+id|jiffies
 suffix:semicolon
 id|cli
 c_func
@@ -2000,7 +1999,7 @@ id|ATF_COM
 suffix:semicolon
 id|tbl-&gt;last_used
 op_assign
-id|timer_seq
+id|jiffies
 suffix:semicolon
 )brace
 r_else
@@ -2302,6 +2301,8 @@ l_int|2
 op_star
 id|dev-&gt;addr_len
 )paren
+op_plus
+id|dev-&gt;hard_header_len
 op_plus
 (paren
 l_int|2
@@ -2750,7 +2751,7 @@ c_func
 (paren
 id|apt-&gt;last_used
 comma
-id|timer_seq
+id|jiffies
 op_plus
 id|ARP_TIMEOUT
 )paren
@@ -2763,7 +2764,7 @@ l_int|0
 (brace
 id|apt-&gt;last_used
 op_assign
-id|timer_seq
+id|jiffies
 suffix:semicolon
 id|memcpy
 c_func
@@ -2950,7 +2951,7 @@ id|addr
 suffix:semicolon
 id|apt-&gt;last_used
 op_assign
-id|timer_seq
+id|jiffies
 suffix:semicolon
 id|memcpy
 c_func
@@ -3507,7 +3508,7 @@ id|hlen
 suffix:semicolon
 id|apt-&gt;last_used
 op_assign
-id|timer_seq
+id|jiffies
 suffix:semicolon
 id|apt-&gt;flags
 op_assign

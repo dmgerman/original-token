@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/msg.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 r_void
 id|ipc_init
 (paren
@@ -279,15 +280,14 @@ id|flag
 (brace
 r_int
 id|i
-comma
+suffix:semicolon
+id|mode_t
 id|perm
-op_assign
-l_int|0007
-comma
+suffix:semicolon
+id|uid_t
 id|euid
-op_assign
-id|current-&gt;euid
-comma
+suffix:semicolon
+r_int
 id|egid
 suffix:semicolon
 r_if
@@ -300,6 +300,14 @@ c_func
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|perm
+op_assign
+id|S_IRWXO
+suffix:semicolon
+id|euid
+op_assign
+id|current-&gt;euid
 suffix:semicolon
 r_if
 c_cond
@@ -314,7 +322,7 @@ id|ipcp-&gt;uid
 )paren
 id|perm
 op_assign
-l_int|0700
+id|S_IRWXU
 suffix:semicolon
 r_else
 (brace
@@ -357,7 +365,7 @@ id|ipcp-&gt;gid
 (brace
 id|perm
 op_assign
-l_int|0070
+id|S_IRWXG
 suffix:semicolon
 r_break
 suffix:semicolon

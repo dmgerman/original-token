@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/utsname.h&gt;
 r_extern
 r_int
 r_int
@@ -36,6 +37,20 @@ r_extern
 r_char
 op_star
 id|linux_banner
+suffix:semicolon
+r_extern
+l_string|&quot;C&quot;
+r_void
+id|lcall7
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|variable|default_ldt
+r_struct
+id|desc_struct
+id|default_ldt
 suffix:semicolon
 multiline_comment|/*&n; * we need this inline - forking from kernel space will result&n; * in NO COPY ON WRITE (!!!), until an execve is executed. This&n; * is no problem, but for the stack. This is handled by not letting&n; * main() use the stack at all after fork(). Thus, no function&n; * calls - which means inline code for fork too, as otherwise we&n; * would use the stack upon exit from &squot;fork()&squot;.&n; *&n; * Actually only pause and fork are needed inline, so that there&n; * won&squot;t be any messing with the stack from main(), but we define&n; * some others too.&n; */
 r_static
@@ -268,7 +283,7 @@ r_extern
 r_char
 id|empty_zero_page
 (braket
-l_int|4096
+id|PAGE_SIZE
 )braket
 suffix:semicolon
 r_extern
@@ -1650,6 +1665,15 @@ r_void
 )paren
 (brace
 multiline_comment|/*&n; * Interrupts are still disabled. Do necessary setups, then&n; * enable them&n; */
+id|set_call_gate
+c_func
+(paren
+op_amp
+id|default_ldt
+comma
+id|lcall7
+)paren
+suffix:semicolon
 id|ROOT_DEV
 op_assign
 id|ORIG_ROOT_DEV
@@ -1682,7 +1706,7 @@ l_int|10
 suffix:semicolon
 id|memory_end
 op_and_assign
-l_int|0xfffff000
+id|PAGE_MASK
 suffix:semicolon
 id|ramdisk_size
 op_assign
@@ -1754,7 +1778,7 @@ id|end
 suffix:semicolon
 id|low_memory_start
 op_assign
-l_int|4096
+id|PAGE_SIZE
 suffix:semicolon
 )brace
 r_else
@@ -1776,12 +1800,12 @@ id|end
 suffix:semicolon
 )brace
 id|low_memory_start
-op_add_assign
-l_int|0xfff
-suffix:semicolon
+op_assign
+id|PAGE_ALIGN
+c_func
+(paren
 id|low_memory_start
-op_and_assign
-l_int|0xfffff000
+)paren
 suffix:semicolon
 id|memory_start
 op_assign
@@ -2074,6 +2098,30 @@ l_string|&quot;irq13&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_MATH_EMULATION
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;No coprocessor found and no math emulation present.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Giving up.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|move_to_user_mode
 c_func
 (paren
@@ -2223,6 +2271,15 @@ c_func
 (paren
 l_int|0
 )paren
+suffix:semicolon
+id|system_utsname.machine
+(braket
+l_int|1
+)braket
+op_assign
+l_char|&squot;0&squot;
+op_plus
+id|x86
 suffix:semicolon
 id|printf
 c_func

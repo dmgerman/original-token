@@ -4,6 +4,14 @@ mdefine_line|#define _LINUX_KERNEL_H
 multiline_comment|/*&n; * &squot;kernel.h&squot; contains some often-used function prototypes etc&n; */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
+DECL|macro|INT_MAX
+mdefine_line|#define INT_MAX&t;&t;((int)(~0U&gt;&gt;1))
+DECL|macro|UINT_MAX
+mdefine_line|#define UINT_MAX&t;(~0U)
+DECL|macro|LONG_MAX
+mdefine_line|#define LONG_MAX&t;((long)(~0UL&gt;&gt;1))
+DECL|macro|ULONG_MAX
+mdefine_line|#define ULONG_MAX&t;(~0UL)
 DECL|macro|VERIFY_READ
 mdefine_line|#define VERIFY_READ 0
 DECL|macro|VERIFY_WRITE

@@ -25,8 +25,8 @@ DECL|macro|FPU_lookahead
 mdefine_line|#define FPU_lookahead           (I387.soft.lookahead)
 DECL|macro|FPU_entry_eip
 mdefine_line|#define FPU_entry_eip           (I387.soft.entry_eip)
-DECL|macro|status_word
-mdefine_line|#define status_word&t;&t;(I387.soft.swd)
+DECL|macro|partial_status
+mdefine_line|#define partial_status       &t;(I387.soft.swd)
 DECL|macro|control_word
 mdefine_line|#define control_word&t;&t;(I387.soft.cwd)
 DECL|macro|regs
@@ -41,5 +41,8 @@ DECL|macro|data_operand_offset
 mdefine_line|#define data_operand_offset&t;(I387.soft.foo)
 DECL|macro|operand_selector
 mdefine_line|#define operand_selector&t;(I387.soft.fos)
+multiline_comment|/* ######## temporary and ugly ;-) */
+DECL|macro|FPU_data_address
+mdefine_line|#define FPU_data_address        ((void *)(I387.soft.twd))
 macro_line|#endif
 eof

@@ -551,7 +551,7 @@ id|retval
 suffix:semicolon
 id|page
 op_assign
-id|get_free_page
+id|__get_free_page
 c_func
 (paren
 id|GFP_KERNEL

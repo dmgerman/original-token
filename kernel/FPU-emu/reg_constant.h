@@ -33,6 +33,10 @@ id|CONST_PI2
 suffix:semicolon
 r_extern
 id|FPU_REG
+id|CONST_PI2extra
+suffix:semicolon
+r_extern
+id|FPU_REG
 id|CONST_PI4
 suffix:semicolon
 r_extern

@@ -56,8 +56,13 @@ DECL|macro|COMP_NaN
 mdefine_line|#define COMP_NaN&t;0x40
 DECL|macro|COMP_SNaN
 mdefine_line|#define COMP_SNaN&t;0x80
+DECL|macro|status_word
+mdefine_line|#define status_word() &bslash;&n;  ((partial_status &amp; ~SW_Top &amp; 0xffff) | ((top &lt;&lt; SW_Top_Shift) &amp; SW_Top))
 DECL|macro|setcc
-mdefine_line|#define setcc(cc) ({ &bslash;&n;  status_word &amp;= ~(SW_C0|SW_C1|SW_C2|SW_C3); &bslash;&n;  status_word |= (cc) &amp; (SW_C0|SW_C1|SW_C2|SW_C3); })
+mdefine_line|#define setcc(cc) ({ &bslash;&n;  partial_status &amp;= ~(SW_C0|SW_C1|SW_C2|SW_C3); &bslash;&n;  partial_status |= (cc) &amp; (SW_C0|SW_C1|SW_C2|SW_C3); })
+multiline_comment|/* Clear the SW_C1 bit, &quot;other bits undefined&quot; */
+DECL|macro|clear_C1
+mdefine_line|#define clear_C1()  { partial_status &amp;= ~SW_C1; }
 macro_line|#endif __ASSEMBLER__
 macro_line|#endif _STATUS_H_
 eof

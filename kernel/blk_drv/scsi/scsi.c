@@ -6,7 +6,36 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &quot;../blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
+macro_line|#include &quot;constants.h&quot;
 multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/scsi.c,v 1.1 1992/07/24 06:27:38 root Exp root $&quot;;&n;*/
+multiline_comment|/* Command groups 3 and 4 are reserved and should never be used.  */
+DECL|variable|scsi_command_size
+r_const
+r_int
+r_char
+id|scsi_command_size
+(braket
+l_int|8
+)braket
+op_assign
+(brace
+l_int|6
+comma
+l_int|10
+comma
+l_int|10
+comma
+l_int|12
+comma
+l_int|12
+comma
+l_int|12
+comma
+l_int|10
+comma
+l_int|10
+)brace
+suffix:semicolon
 DECL|macro|INTERNAL_ERROR
 mdefine_line|#define INTERNAL_ERROR (printk (&quot;Internal error in file %s, line %d.&bslash;n&quot;, __FILE__, __LINE__), panic(&quot;&quot;))
 r_static
@@ -142,7 +171,7 @@ mdefine_line|#define RESET_TIMEOUT 50
 DECL|macro|ABORT_TIMEOUT
 mdefine_line|#define ABORT_TIMEOUT 50
 DECL|macro|MIN_RESET_DELAY
-mdefine_line|#define MIN_RESET_DELAY 25
+mdefine_line|#define MIN_RESET_DELAY 100
 macro_line|#endif
 multiline_comment|/* The following devices are known not to tolerate a lun != 0 scan for&n;   one reason or another.  Some will respond to all luns, others will&n;   lock up. */
 DECL|struct|blist
@@ -211,6 +240,24 @@ l_string|&quot;V&quot;
 )brace
 comma
 multiline_comment|/* A cdrom that locks up when probed at lun != 0 */
+(brace
+l_string|&quot;TEXEL&quot;
+comma
+l_string|&quot;CD-ROM&quot;
+comma
+l_string|&quot;1.06&quot;
+)brace
+comma
+multiline_comment|/* causes failed REQUEST SENSE on lun 1 for seagate&n;&t;&t;&t;&t;* controller, which causes SCSI code to reset bus.*/
+(brace
+l_string|&quot;MAXTOR&quot;
+comma
+l_string|&quot;XT-4380S&quot;
+comma
+l_string|&quot;B3C&quot;
+)brace
+comma
+multiline_comment|/* Locks-up when LUN&gt;0 polled. */
 (brace
 l_int|NULL
 comma
@@ -541,6 +588,23 @@ id|this_id
 op_ne
 id|dev
 )paren
+multiline_comment|/*&n; * We need the for so our continue, etc. work fine.&n; */
+macro_line|#ifdef NO_MULTI_LUN
+r_for
+c_loop
+(paren
+id|lun
+op_assign
+l_int|0
+suffix:semicolon
+id|lun
+OL
+l_int|1
+suffix:semicolon
+op_increment
+id|lun
+)paren
+macro_line|#else
 r_for
 c_loop
 (paren
@@ -555,6 +619,7 @@ suffix:semicolon
 op_increment
 id|lun
 )paren
+macro_line|#endif
 (brace
 id|scsi_devices
 (braket
@@ -600,6 +665,16 @@ dot
 id|device_wait
 op_assign
 l_int|NULL
+suffix:semicolon
+multiline_comment|/*&n; * Assume that the device will have handshaking problems, and then &n; * fix this field later if it turns out it doesn&squot;t.&n; */
+id|scsi_devices
+(braket
+id|NR_SCSI_DEVICES
+)braket
+dot
+id|borken
+op_assign
+l_int|1
 suffix:semicolon
 id|scsi_cmd
 (braket
@@ -674,6 +749,10 @@ id|SCmd.underflow
 op_assign
 l_int|0
 suffix:semicolon
+id|SCmd.index
+op_assign
+id|NR_SCSI_DEVICES
+suffix:semicolon
 id|scsi_do_cmd
 (paren
 op_amp
@@ -699,7 +778,7 @@ id|SCSI_TIMEOUT
 op_plus
 l_int|400
 comma
-l_int|3
+l_int|5
 )paren
 suffix:semicolon
 r_while
@@ -710,6 +789,26 @@ op_ne
 l_int|0xfffe
 )paren
 suffix:semicolon
+macro_line|#if defined(DEBUG) || defined(DEBUG_INIT)
+id|printk
+c_func
+(paren
+l_string|&quot;scsi: scan SCSIS id %d lun %d&bslash;n&quot;
+comma
+id|dev
+comma
+id|lun
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;scsi: return code %08x&bslash;n&quot;
+comma
+id|SCmd.result
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -797,6 +896,14 @@ r_break
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#if defined (DEBUG) || defined(DEBUG_INIT)
+id|printk
+c_func
+(paren
+l_string|&quot;scsi: performing INQUIRY&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t;&t; * Build an INQUIRY command block.  &n;&t;&t; */
 id|scsi_cmd
 (braket
@@ -889,6 +996,27 @@ id|the_result
 op_assign
 id|SCmd.result
 suffix:semicolon
+macro_line|#if defined(DEBUG) || defined(DEBUG_INIT)
+r_if
+c_cond
+(paren
+op_logical_neg
+id|the_result
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;scsi: INQUIRY successful&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;scsi: INQUIRY failed with code %08x&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1016,6 +1144,24 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+macro_line|#if 0
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;scsi: unknown type %d&bslash;n&quot;
+comma
+id|type
+)paren
+suffix:semicolon
+id|print_inquiry
+c_func
+(paren
+id|scsi_result
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
 id|type
 op_assign
 op_minus
@@ -1230,6 +1376,70 @@ id|NR_SCSI_DEVICES
 dot
 id|scsi_level
 op_increment
+suffix:semicolon
+multiline_comment|/*&n; * Some revisions of the Texel CD ROM drives have handshaking&n; * problems when used with the Seagate controllers.  Before we&n; * know what type of device we&squot;re talking to, we assume it&squot;s &n; * borken and then change it here if it turns out that it isn&squot;t&n; * a TEXEL drive.&n; */
+r_if
+c_cond
+(paren
+id|memcmp
+c_func
+(paren
+l_string|&quot;TEXEL&quot;
+comma
+op_amp
+id|scsi_result
+(braket
+l_int|8
+)braket
+comma
+l_int|5
+)paren
+op_ne
+l_int|0
+op_logical_or
+id|memcmp
+c_func
+(paren
+l_string|&quot;CD-ROM&quot;
+comma
+op_amp
+id|scsi_result
+(braket
+l_int|16
+)braket
+comma
+l_int|6
+)paren
+op_ne
+l_int|0
+multiline_comment|/* &n; * XXX 1.06 has problems, some one should figure out the others too so&n; * ALL TEXEL drives don&squot;t suffer in performance, especially when I finish&n; * integrating my seagate patches which do multiple I_T_L nexuses.&n; */
+macro_line|#ifdef notyet
+op_logical_or
+(paren
+id|strncmp
+(paren
+l_string|&quot;1.06&quot;
+comma
+op_amp
+id|scsi_result
+(braket
+(braket
+comma
+l_int|4
+)paren
+op_ne
+l_int|0
+)paren
+macro_line|#endif
+)paren
+id|scsi_devices
+(braket
+id|NR_SCSI_DEVICES
+)braket
+dot
+id|borken
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* These devices need this &quot;key&quot; to unlock the device&n;&t;&t;&t;   so we can use it */
 r_if
@@ -2920,6 +3130,21 @@ comma
 l_int|10
 )paren
 suffix:semicolon
+multiline_comment|/* Zero the sense buffer.  Some host adapters automatically request&n;&t;   sense on error.  0 is not a valid sense code.  */
+id|memset
+(paren
+(paren
+r_void
+op_star
+)paren
+id|SCpnt-&gt;sense_buffer
+comma
+l_int|0
+comma
+r_sizeof
+id|SCpnt-&gt;sense_buffer
+)paren
+suffix:semicolon
 id|SCpnt-&gt;request_buffer
 op_assign
 id|buffer
@@ -2965,7 +3190,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;reset(%d)&bslash;n&quot;
+l_string|&quot;scsi: reset(%d)&bslash;n&quot;
 comma
 id|SCpnt-&gt;host
 )paren
@@ -3009,6 +3234,7 @@ op_star
 id|SCpnt
 )paren
 (brace
+multiline_comment|/* If there is no sense information, request it.  */
 r_if
 c_cond
 (paren
@@ -3024,10 +3250,36 @@ l_int|0x70
 op_rshift
 l_int|4
 )paren
-op_eq
+op_ne
 l_int|7
 )paren
-(brace
+r_return
+id|SUGGEST_SENSE
+suffix:semicolon
+macro_line|#ifdef DEBUG_INIT
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : &quot;
+comma
+id|SCpnt-&gt;host
+)paren
+suffix:semicolon
+id|print_sense
+c_func
+(paren
+l_string|&quot;&quot;
+comma
+id|SCpnt
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3110,11 +3362,6 @@ r_return
 id|SUGGEST_ABORT
 suffix:semicolon
 )brace
-)brace
-r_else
-r_return
-id|SUGGEST_RETRY
-suffix:semicolon
 )brace
 multiline_comment|/* This function is the mid-level interrupt routine, which decides how&n; *  to handle error conditions.  Each invocation of this function must&n; *  do one and *only* one of the following:&n; *&n; *  (1) Call last_cmnd[host].done.  This is done for fatal errors and&n; *      normal completion, and indicates that the handling for this&n; *      request is complete.&n; *  (2) Call internal_cmnd to requeue the command.  This will result in&n; *      scsi_done being called again when the retry is complete.&n; *  (3) Call scsi_request_sense.  This asks the host adapter/drive for&n; *      more information about the error condition.  When the information&n; *      is available, scsi_done will be called again.&n; *  (4) Call reset().  This is sort of a last resort, and the idea is that&n; *      this may kick things loose and get the drive working again.  reset()&n; *      automatically calls scsi_request_sense, and thus scsi_done will be&n; *      called again once the reset is complete.&n; *&n; *      If none of the above actions are taken, the drive in question&n; * will hang. If more than one of the above actions are taken by&n; * scsi_done, then unpredictable behavior will result.&n; */
 DECL|function|scsi_done
@@ -3281,6 +3528,18 @@ id|WAS_RESET
 )paren
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : target %d lun %d request sense failed, performing reset.&bslash;n&quot;
+comma
+id|SCpnt-&gt;host
+comma
+id|SCpnt-&gt;target
+comma
+id|SCpnt-&gt;lun
+)paren
+suffix:semicolon
 id|reset
 c_func
 (paren
@@ -3370,6 +3629,9 @@ id|SCpnt
 )paren
 )paren
 (brace
+r_case
+id|SUGGEST_SENSE
+suffix:colon
 r_case
 l_int|0
 suffix:colon
@@ -3481,14 +3743,69 @@ suffix:semicolon
 r_case
 id|CHECK_CONDITION
 suffix:colon
-macro_line|#ifdef DEBUG
-id|printk
+r_switch
+c_cond
+(paren
+id|check_sense
 c_func
 (paren
-l_string|&quot;CHECK CONDITION message returned, performing request sense.&bslash;n&quot;
+id|SCpnt
+)paren
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
+id|update_timeout
+c_func
+(paren
+id|SCpnt
+comma
+id|oldto
 )paren
 suffix:semicolon
-macro_line|#endif
+id|status
+op_assign
+id|REDO
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SUGGEST_REMAP
+suffix:colon
+r_case
+id|SUGGEST_RETRY
+suffix:colon
+id|status
+op_assign
+id|MAYREDO
+suffix:semicolon
+m_exit
+op_assign
+id|DRIVER_SENSE
+op_or
+id|SUGGEST_RETRY
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SUGGEST_ABORT
+suffix:colon
+id|status
+op_assign
+id|FINISHED
+suffix:semicolon
+m_exit
+op_assign
+id|DRIVER_SENSE
+op_or
+id|SUGGEST_ABORT
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SUGGEST_SENSE
+suffix:colon
 id|scsi_request_sense
 (paren
 id|SCpnt
@@ -3500,6 +3817,9 @@ id|PENDING
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
+r_break
+suffix:semicolon
 r_case
 id|CONDITION_GOOD
 suffix:colon
@@ -3509,27 +3829,11 @@ suffix:colon
 r_case
 id|INTERMEDIATE_C_GOOD
 suffix:colon
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;CONDITION GOOD, INTERMEDIATE GOOD, or INTERMEDIATE CONDITION GOOD recieved and ignored. &bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 r_case
 id|BUSY
 suffix:colon
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;BUSY message returned, performing REDO&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|update_timeout
 c_func
 (paren
@@ -3547,6 +3851,14 @@ suffix:semicolon
 r_case
 id|RESERVATION_CONFLICT
 suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : RESERVATION CONFLICT performing reset.&bslash;n&quot;
+comma
+id|SCpnt-&gt;host
+)paren
+suffix:semicolon
 id|reset
 c_func
 (paren
@@ -3757,6 +4069,69 @@ op_eq
 id|CHECK_CONDITION
 )paren
 (brace
+r_switch
+c_cond
+(paren
+id|check_sense
+c_func
+(paren
+id|SCpnt
+)paren
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
+id|update_timeout
+c_func
+(paren
+id|SCpnt
+comma
+id|oldto
+)paren
+suffix:semicolon
+id|status
+op_assign
+id|REDO
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SUGGEST_REMAP
+suffix:colon
+r_case
+id|SUGGEST_RETRY
+suffix:colon
+id|status
+op_assign
+id|MAYREDO
+suffix:semicolon
+m_exit
+op_assign
+id|DRIVER_SENSE
+op_or
+id|SUGGEST_RETRY
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SUGGEST_ABORT
+suffix:colon
+id|status
+op_assign
+id|FINISHED
+suffix:semicolon
+m_exit
+op_assign
+id|DRIVER_SENSE
+op_or
+id|SUGGEST_ABORT
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SUGGEST_SENSE
+suffix:colon
 id|scsi_request_sense
 (paren
 id|SCpnt
@@ -3769,7 +4144,9 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-suffix:semicolon
+)brace
+r_else
+(brace
 id|status
 op_assign
 id|REDO
@@ -3778,6 +4155,7 @@ m_exit
 op_assign
 id|SUGGEST_RETRY
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_default
@@ -3852,6 +4230,14 @@ id|WAS_RESET
 )paren
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : reseting for second half of retries.&bslash;n&quot;
+comma
+id|SCpnt-&gt;host
+)paren
+suffix:semicolon
 id|reset
 c_func
 (paren

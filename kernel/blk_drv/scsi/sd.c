@@ -12,13 +12,14 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;scsi_ioctl.h&quot;
+macro_line|#include &quot;constants.h&quot;
 macro_line|#include &lt;linux/genhd.h&gt;
 multiline_comment|/*&n;static const char RCSid[] = &quot;$Header:&quot;;&n;*/
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES 5
 multiline_comment|/*&n; *&t;Time out in seconds&n; */
 DECL|macro|SD_TIMEOUT
-mdefine_line|#define SD_TIMEOUT 200
+mdefine_line|#define SD_TIMEOUT 300
 DECL|variable|sd
 r_struct
 id|hd_struct
@@ -926,45 +927,6 @@ op_ne
 l_int|0
 )paren
 (brace
-(brace
-r_int
-id|i
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Dumping sense buffer: &quot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|10
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot; %d&quot;
-comma
-id|SCpnt-&gt;sense_buffer
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-)brace
-)brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1180,35 +1142,12 @@ id|result
 op_amp
 id|DRIVER_SENSE
 )paren
-id|printk
+id|print_sense
 c_func
 (paren
-l_string|&quot;&bslash;tSense class %x, sense error %x, extended sense %x&bslash;n&quot;
+l_string|&quot;sd&quot;
 comma
-id|sense_class
-c_func
-(paren
-id|SCpnt-&gt;sense_buffer
-(braket
-l_int|0
-)braket
-)paren
-comma
-id|sense_error
-c_func
-(paren
-id|SCpnt-&gt;sense_buffer
-(braket
-l_int|0
-)braket
-)paren
-comma
-id|SCpnt-&gt;sense_buffer
-(braket
-l_int|2
-)braket
-op_amp
-l_int|0xf
+id|SCpnt
 )paren
 suffix:semicolon
 id|end_scsi_request
@@ -3010,10 +2949,8 @@ l_int|10
 suffix:semicolon
 r_int
 r_char
+op_star
 id|buffer
-(braket
-l_int|513
-)braket
 suffix:semicolon
 r_int
 id|the_result
@@ -3040,6 +2977,19 @@ dot
 id|device-&gt;index
 comma
 l_int|1
+)paren
+suffix:semicolon
+id|buffer
+op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
+id|scsi_malloc
+c_func
+(paren
+l_int|512
 )paren
 suffix:semicolon
 id|retries
@@ -3090,6 +3040,19 @@ comma
 l_int|8
 )paren
 suffix:semicolon
+id|memset
+(paren
+(paren
+r_void
+op_star
+)paren
+id|buffer
+comma
+l_int|0
+comma
+l_int|8
+)paren
+suffix:semicolon
 id|SCpnt-&gt;request.dev
 op_assign
 l_int|0xffff
@@ -3125,7 +3088,7 @@ op_star
 )paren
 id|buffer
 comma
-l_int|512
+l_int|8
 comma
 id|sd_init_done
 comma
@@ -3559,6 +3522,14 @@ suffix:semicolon
 op_decrement
 id|NR_SD
 suffix:semicolon
+id|scsi_free
+c_func
+(paren
+id|buffer
+comma
+l_int|512
+)paren
+suffix:semicolon
 r_return
 id|i
 suffix:semicolon
@@ -3631,6 +3602,14 @@ dot
 id|remap
 op_assign
 l_int|1
+suffix:semicolon
+id|scsi_free
+c_func
+(paren
+id|buffer
+comma
+l_int|512
+)paren
 suffix:semicolon
 r_return
 id|i

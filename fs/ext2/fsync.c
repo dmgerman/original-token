@@ -58,7 +58,6 @@ suffix:semicolon
 id|bh
 op_assign
 id|get_hash_table
-c_func
 (paren
 id|inode-&gt;i_dev
 comma
@@ -107,7 +106,6 @@ id|bh-&gt;b_uptodate
 )paren
 (brace
 id|brelse
-c_func
 (paren
 id|bh
 )paren
@@ -130,7 +128,6 @@ id|bh-&gt;b_dirt
 )paren
 (brace
 id|brelse
-c_func
 (paren
 id|bh
 )paren
@@ -140,7 +137,6 @@ l_int|0
 suffix:semicolon
 )brace
 id|ll_rw_block
-c_func
 (paren
 id|WRITE
 comma
@@ -229,7 +225,6 @@ op_star
 id|bh
 op_assign
 id|bread
-c_func
 (paren
 id|inode-&gt;i_dev
 comma
@@ -248,7 +243,6 @@ id|iblock
 )paren
 (brace
 id|brelse
-c_func
 (paren
 op_star
 id|bh
@@ -282,7 +276,6 @@ DECL|function|sync_direct
 r_static
 r_int
 id|sync_direct
-c_func
 (paren
 r_struct
 id|inode
@@ -358,7 +351,6 @@ DECL|function|sync_indirect
 r_static
 r_int
 id|sync_indirect
-c_func
 (paren
 r_struct
 id|inode
@@ -469,7 +461,6 @@ id|rc
 suffix:semicolon
 )brace
 id|brelse
-c_func
 (paren
 id|ind_bh
 )paren
@@ -482,7 +473,6 @@ DECL|function|sync_dindirect
 r_static
 r_int
 id|sync_dindirect
-c_func
 (paren
 r_struct
 id|inode
@@ -593,7 +583,6 @@ id|rc
 suffix:semicolon
 )brace
 id|brelse
-c_func
 (paren
 id|dind_bh
 )paren
@@ -606,7 +595,6 @@ DECL|function|sync_tindirect
 r_static
 r_int
 id|sync_tindirect
-c_func
 (paren
 r_struct
 id|inode
@@ -717,7 +705,6 @@ id|rc
 suffix:semicolon
 )brace
 id|brelse
-c_func
 (paren
 id|tind_bh
 )paren
@@ -729,7 +716,6 @@ suffix:semicolon
 DECL|function|ext2_sync_file
 r_int
 id|ext2_sync_file
-c_func
 (paren
 r_struct
 id|inode
@@ -813,7 +799,6 @@ op_increment
 id|err
 op_or_assign
 id|sync_direct
-c_func
 (paren
 id|inode
 comma
@@ -823,7 +808,6 @@ suffix:semicolon
 id|err
 op_or_assign
 id|sync_indirect
-c_func
 (paren
 id|inode
 comma
@@ -837,7 +821,6 @@ suffix:semicolon
 id|err
 op_or_assign
 id|sync_dindirect
-c_func
 (paren
 id|inode
 comma
@@ -851,7 +834,6 @@ suffix:semicolon
 id|err
 op_or_assign
 id|sync_tindirect
-c_func
 (paren
 id|inode
 comma

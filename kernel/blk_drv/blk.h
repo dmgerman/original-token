@@ -193,6 +193,36 @@ id|mem_end
 suffix:semicolon
 r_extern
 r_int
+r_int
+id|cdu31a_init
+c_func
+(paren
+r_int
+r_int
+id|mem_start
+comma
+r_int
+r_int
+id|mem_end
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|mcd_init
+c_func
+(paren
+r_int
+r_int
+id|mem_start
+comma
+r_int
+r_int
+id|mem_end
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|is_read_only
 c_func
 (paren
@@ -371,6 +401,31 @@ DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_xd_request
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (MINOR(device) &gt;&gt; 6)
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == 15)
+multiline_comment|/* CDU31A CD-ROM */
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;CDU31A&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_cdu31a_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == 23)
+multiline_comment|/* MITSUMI CD-ROM */
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;Mitsumi CD-ROM&quot;
+multiline_comment|/* #define DEVICE_INTR do_mcd */
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_mcd_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
 DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF

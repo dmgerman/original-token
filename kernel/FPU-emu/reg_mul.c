@@ -6,7 +6,7 @@ macro_line|#include &quot;fpu_emu.h&quot;
 macro_line|#include &quot;fpu_system.h&quot;
 multiline_comment|/* This routine must be called with non-empty source registers */
 DECL|function|reg_mul
-r_void
+r_int
 id|reg_mul
 c_func
 (paren
@@ -28,6 +28,11 @@ id|control_w
 )paren
 (brace
 r_char
+id|saved_sign
+op_assign
+id|dest-&gt;sign
+suffix:semicolon
+r_char
 id|sign
 op_assign
 (paren
@@ -47,7 +52,14 @@ id|b-&gt;tag
 )paren
 )paren
 (brace
-multiline_comment|/* This should be the most common case */
+multiline_comment|/* Both regs Valid, this should be the most common case. */
+id|dest-&gt;sign
+op_assign
+id|sign
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|reg_u_mul
 c_func
 (paren
@@ -59,12 +71,18 @@ id|dest
 comma
 id|control_w
 )paren
-suffix:semicolon
+)paren
+(brace
 id|dest-&gt;sign
 op_assign
-id|sign
+id|saved_sign
 suffix:semicolon
 r_return
+l_int|1
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -126,6 +144,7 @@ c_func
 )paren
 )paren
 r_return
+l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif DENORM_OPERAND
@@ -147,47 +166,9 @@ id|sign
 suffix:semicolon
 macro_line|#endif PECULIAR_486
 r_return
+l_int|0
 suffix:semicolon
 )brace
-macro_line|#if 0  /* TW_Denormal is not used yet... perhaps never will be. */
-r_else
-r_if
-c_cond
-(paren
-(paren
-id|a-&gt;tag
-op_le
-id|TW_Denormal
-)paren
-op_logical_and
-(paren
-id|b-&gt;tag
-op_le
-id|TW_Denormal
-)paren
-)paren
-(brace
-multiline_comment|/* One or both arguments are de-normalized */
-multiline_comment|/* Internal de-normalized numbers are not supported yet */
-id|EXCEPTION
-c_func
-(paren
-id|EX_INTERNAL
-op_or
-l_int|0x105
-)paren
-suffix:semicolon
-id|reg_move
-c_func
-(paren
-op_amp
-id|CONST_Z
-comma
-id|dest
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_else
 (brace
 multiline_comment|/* Must have infinities, NaNs, etc */
@@ -207,6 +188,7 @@ id|TW_NaN
 )paren
 )paren
 (brace
+r_return
 id|real_2op_NaN
 c_func
 (paren
@@ -216,8 +198,6 @@ id|b
 comma
 id|dest
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 r_else
@@ -237,13 +217,12 @@ op_eq
 id|TW_Zero
 )paren
 (brace
+r_return
 id|arith_invalid
 c_func
 (paren
 id|dest
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Zero*Infinity is invalid */
@@ -271,6 +250,7 @@ c_func
 )paren
 )paren
 r_return
+l_int|1
 suffix:semicolon
 macro_line|#endif DENORM_OPERAND
 id|reg_move
@@ -287,6 +267,7 @@ id|sign
 suffix:semicolon
 )brace
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -306,13 +287,12 @@ op_eq
 id|TW_Zero
 )paren
 (brace
+r_return
 id|arith_invalid
 c_func
 (paren
 id|dest
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Zero*Infinity is invalid */
@@ -340,6 +320,7 @@ c_func
 )paren
 )paren
 r_return
+l_int|1
 suffix:semicolon
 macro_line|#endif DENORM_OPERAND
 id|reg_move
@@ -356,6 +337,7 @@ id|sign
 suffix:semicolon
 )brace
 r_return
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef PARANOID
@@ -368,6 +350,9 @@ id|EX_INTERNAL
 op_or
 l_int|0x102
 )paren
+suffix:semicolon
+r_return
+l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif PARANOID

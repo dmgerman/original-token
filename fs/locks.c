@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 DECL|macro|OFFSET_MAX
-mdefine_line|#define OFFSET_MAX&t;0x7fffffff&t;/* FIXME: move elsewhere? */
+mdefine_line|#define OFFSET_MAX&t;((off_t)0x7fffffff)&t;/* FIXME: move elsewhere? */
 r_static
 r_int
 id|copy_flock

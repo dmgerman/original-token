@@ -2324,7 +2324,7 @@ id|SCSI_DEBUG_MAILBOXES
 (brace
 id|pending
 op_assign
-l_int|0x7fffffff
+id|INT_MAX
 suffix:semicolon
 r_for
 c_loop
@@ -2427,7 +2427,7 @@ id|pending
 op_logical_and
 id|pending
 op_ne
-l_int|0x7fffffff
+id|INT_MAX
 )paren
 (brace
 id|timer_table

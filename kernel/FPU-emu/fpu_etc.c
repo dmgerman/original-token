@@ -25,11 +25,14 @@ id|SIGN_POS
 op_xor
 id|SIGN_NEG
 suffix:semicolon
-id|status_word
-op_and_assign
-op_complement
-id|SW_C1
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
 suffix:semicolon
+macro_line|#endif PECULIAR_486
 )brace
 r_else
 id|stack_underflow
@@ -59,11 +62,14 @@ id|FPU_st0_ptr-&gt;sign
 op_assign
 id|SIGN_POS
 suffix:semicolon
-id|status_word
-op_and_assign
-op_complement
-id|SW_C1
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
 suffix:semicolon
+macro_line|#endif PECULIAR_486
 )brace
 r_else
 id|stack_underflow
@@ -101,26 +107,6 @@ suffix:semicolon
 r_case
 id|TW_Valid
 suffix:colon
-macro_line|#ifdef DENORM_OPERAND
-r_if
-c_cond
-(paren
-(paren
-id|FPU_st0_ptr-&gt;exp
-op_le
-id|EXP_UNDER
-)paren
-op_logical_and
-(paren
-id|denormal_operand
-c_func
-(paren
-)paren
-)paren
-)paren
-r_return
-suffix:semicolon
-macro_line|#endif DENORM_OPERAND
 r_if
 c_cond
 (paren
@@ -141,6 +127,44 @@ c_func
 id|SW_C0
 )paren
 suffix:semicolon
+macro_line|#ifdef DENORM_OPERAND
+r_if
+c_cond
+(paren
+(paren
+id|FPU_st0_ptr-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+op_logical_and
+(paren
+id|denormal_operand
+c_func
+(paren
+)paren
+)paren
+)paren
+(brace
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* This is wierd! */
+r_if
+c_cond
+(paren
+id|FPU_st0_ptr-&gt;sign
+op_eq
+id|SIGN_POS
+)paren
+id|setcc
+c_func
+(paren
+id|SW_C3
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif DENORM_OPERAND
 r_break
 suffix:semicolon
 r_case
@@ -186,12 +210,6 @@ id|setcc
 c_func
 (paren
 id|SW_C0
-)paren
-suffix:semicolon
-id|EXCEPTION
-c_func
-(paren
-id|EX_Invalid
 )paren
 suffix:semicolon
 r_break
@@ -303,7 +321,7 @@ multiline_comment|/* Denormal */
 r_else
 id|c
 op_assign
-id|SW_C3
+id|SW_C2
 suffix:semicolon
 r_break
 suffix:semicolon

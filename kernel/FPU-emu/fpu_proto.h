@@ -50,6 +50,15 @@ id|i
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|set_precision_flag
+c_func
+(paren
+r_int
+id|flags
+)paren
+suffix:semicolon
+r_extern
 l_string|&quot;C&quot;
 r_void
 id|exception
@@ -61,7 +70,7 @@ id|n
 suffix:semicolon
 r_extern
 l_string|&quot;C&quot;
-r_void
+r_int
 id|real_2op_NaN
 c_func
 (paren
@@ -80,7 +89,7 @@ id|dest
 suffix:semicolon
 r_extern
 l_string|&quot;C&quot;
-r_void
+r_int
 id|arith_invalid
 c_func
 (paren
@@ -91,7 +100,7 @@ id|dest
 suffix:semicolon
 r_extern
 l_string|&quot;C&quot;
-r_void
+r_int
 id|divide_by_zero
 c_func
 (paren
@@ -132,7 +141,7 @@ r_void
 suffix:semicolon
 r_extern
 l_string|&quot;C&quot;
-r_void
+r_int
 id|arith_overflow
 c_func
 (paren
@@ -143,7 +152,7 @@ id|dest
 suffix:semicolon
 r_extern
 l_string|&quot;C&quot;
-r_void
+r_int
 id|arith_underflow
 c_func
 (paren
@@ -566,11 +575,14 @@ comma
 id|FPU_REG
 op_star
 id|y_reg
+comma
+r_int
+id|invert
 )paren
 suffix:semicolon
 multiline_comment|/* reg_add_sub.c */
 r_extern
-r_void
+r_int
 id|reg_add
 c_func
 (paren
@@ -591,7 +603,7 @@ id|control_w
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|reg_sub
 c_func
 (paren
@@ -689,7 +701,7 @@ r_void
 suffix:semicolon
 multiline_comment|/* reg_ld_str.c */
 r_extern
-r_void
+r_int
 id|reg_load_extended
 c_func
 (paren
@@ -697,7 +709,7 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|reg_load_double
 c_func
 (paren
@@ -705,7 +717,7 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|reg_load_single
 c_func
 (paren
@@ -855,7 +867,7 @@ r_void
 suffix:semicolon
 multiline_comment|/* reg_mul.c */
 r_extern
-r_void
+r_int
 id|reg_mul
 c_func
 (paren

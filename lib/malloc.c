@@ -301,24 +301,20 @@ r_struct
 id|bucket_desc
 )paren
 suffix:semicolon
+op_decrement
 id|i
 OG
-l_int|1
+l_int|0
 suffix:semicolon
-id|i
-op_decrement
+id|bdesc
+op_increment
 )paren
-(brace
 id|bdesc-&gt;next
 op_assign
 id|bdesc
 op_plus
 l_int|1
 suffix:semicolon
-id|bdesc
-op_increment
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * This is done last, to avoid race conditions in case&n;&t; * get_free_page() sleeps and this routine gets called again....&n;&t; */
 id|cli
 c_func
@@ -501,23 +497,25 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|page
-op_assign
-id|get_free_page
-c_func
-(paren
-id|priority
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
+(paren
 id|page
+op_assign
+id|__get_free_page
+c_func
+(paren
+id|priority
 )paren
+)paren
+)paren
+(brace
 r_return
 l_int|NULL
 suffix:semicolon
+)brace
 id|init_bucket_desc
 c_func
 (paren
@@ -539,22 +537,22 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|page
-op_assign
-id|get_free_page
-c_func
-(paren
-id|priority
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Out of memory? Put the bucket descriptor back on the free list&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
+(paren
 id|page
+op_assign
+id|__get_free_page
+c_func
+(paren
+id|priority
+)paren
+)paren
 )paren
 (brace
+multiline_comment|/*&n;&t; * Out of memory? Put the bucket descriptor back on the free list&n;&t; */
 id|cli
 c_func
 (paren
@@ -1227,29 +1225,14 @@ r_if
 c_cond
 (paren
 id|hd-&gt;magic
-op_ne
-id|DEB_MAGIC_USED
-op_logical_and
-id|hd-&gt;magic
-op_ne
-id|DEB_MAGIC_FREED
+op_eq
+id|DEB_MAGIC_FREE
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;DEB_MALLOC Using %s block of 0x%x from %s:%d, by %s:%d, last %s:%d&bslash;n&quot;
-comma
-(paren
-id|hd-&gt;magic
-op_eq
-id|DEB_MAGIC_FREE
-)paren
-ques
-c_cond
-l_string|&quot;free&quot;
-suffix:colon
-l_string|&quot;bad&quot;
+l_string|&quot;DEB_MALLOC Using free block of 0x%x at %s:%d, by %s:%d, wasOK %s:%d&bslash;n&quot;
 comma
 id|obj
 comma
@@ -1266,15 +1249,7 @@ comma
 id|hd-&gt;ok_line
 )paren
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|hd-&gt;magic
-op_eq
-id|DEB_MAGIC_FREE
-)paren
-(brace
+multiline_comment|/* For any other condition it is either superfluous or dangerous to print something. */
 id|hd-&gt;magic
 op_assign
 id|DEB_MAGIC_FREED
@@ -1302,7 +1277,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;DEB_MALLOC size for 0x%x given as %d, stored %d, from %s:%d, last %s:%d&bslash;n&quot;
+l_string|&quot;DEB_MALLOC size for 0x%x given as %d, stored %d, at %s:%d, wasOK %s:%d&bslash;n&quot;
 comma
 id|obj
 comma
@@ -1355,7 +1330,7 @@ id|DEB_MAGIC_END
 id|printk
 c_func
 (paren
-l_string|&quot;DEB_MALLOC overran block 0x%x:%d, free at %s:%d&bslash;n&quot;
+l_string|&quot;DEB_MALLOC overran block 0x%x:%d, at %s:%d, wasOK %s:%d&bslash;n&quot;
 comma
 id|obj
 comma
@@ -1364,6 +1339,10 @@ comma
 id|deb_file
 comma
 id|deb_line
+comma
+id|hd-&gt;ok_file
+comma
+id|hd-&gt;ok_line
 )paren
 suffix:semicolon
 id|hd-&gt;magic
@@ -1477,37 +1456,14 @@ r_if
 c_cond
 (paren
 id|hd-&gt;magic
-op_ne
-id|DEB_MAGIC_ALLOC
-op_logical_and
-id|hd-&gt;magic
-op_ne
-id|DEB_MAGIC_USED
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|hd-&gt;magic
-op_ne
-id|DEB_MAGIC_FREED
+op_eq
+id|DEB_MAGIC_FREE
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;DEB_MALLOC %s free of 0x%x from %s:%d by %s:%d, last %s:%d&bslash;n&quot;
-comma
-(paren
-id|hd-&gt;magic
-op_eq
-id|DEB_MAGIC_FREE
-)paren
-ques
-c_cond
-l_string|&quot;dup&quot;
-suffix:colon
-l_string|&quot;bad&quot;
+l_string|&quot;DEB_MALLOC dup free of 0x%x at %s:%d by %s:%d, wasOK %s:%d&bslash;n&quot;
 comma
 id|obj
 comma
@@ -1524,7 +1480,6 @@ comma
 id|hd-&gt;ok_line
 )paren
 suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 )brace
@@ -1555,7 +1510,7 @@ id|DEB_MAGIC_USED
 id|printk
 c_func
 (paren
-l_string|&quot;DEB_MALLOC size for 0x%x given as %d, stored %d, from %s:%d, last %s:%d&bslash;n&quot;
+l_string|&quot;DEB_MALLOC size for 0x%x given as %d, stored %d, at %s:%d, wasOK %s:%d&bslash;n&quot;
 comma
 id|obj
 comma
@@ -1617,7 +1572,7 @@ id|DEB_MAGIC_USED
 id|printk
 c_func
 (paren
-l_string|&quot;DEB_MALLOC overran block 0x%x:%d, free at %s:%d, last %s:%d&bslash;n&quot;
+l_string|&quot;DEB_MALLOC overran block 0x%x:%d, at %s:%d, from %s:%d, wasOK %s:%d&bslash;n&quot;
 comma
 id|obj
 comma
@@ -1627,14 +1582,16 @@ id|deb_file
 comma
 id|deb_line
 comma
+id|hd-&gt;file
+comma
+id|hd-&gt;line
+comma
 id|hd-&gt;ok_file
 comma
 id|hd-&gt;ok_line
 )paren
 suffix:semicolon
 )brace
-r_return
-suffix:semicolon
 )brace
 id|size
 op_add_assign
@@ -1672,7 +1629,7 @@ r_int
 )paren
 id|obj
 op_amp
-l_int|0xfffff000
+id|PAGE_MASK
 )paren
 suffix:semicolon
 multiline_comment|/* Now search the buckets looking for that page */
@@ -2173,7 +2130,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;+++&bslash;n&quot;
+l_string|&quot;...&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/resource.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * this indicates wether you can reboot with ctrl-alt-del: the default is yes&n; */
@@ -658,7 +659,7 @@ id|PAGE_PRESENT
 (brace
 id|tmp
 op_and_assign
-l_int|0xfffff000
+id|PAGE_MASK
 suffix:semicolon
 id|pg_table
 op_assign
@@ -784,7 +785,8 @@ l_int|0x00000dd5
 suffix:semicolon
 id|info.regs.eflags
 op_or_assign
-l_int|0xfffff22a
+op_complement
+l_int|0x00000dd5
 op_amp
 id|pt_regs-&gt;eflags
 suffix:semicolon
@@ -1689,23 +1691,19 @@ id|current-&gt;brk
 suffix:semicolon
 id|newbrk
 op_assign
+id|PAGE_ALIGN
+c_func
 (paren
 id|brk
-op_plus
-l_int|0x00000fff
 )paren
-op_amp
-l_int|0xfffff000
 suffix:semicolon
 id|oldbrk
 op_assign
+id|PAGE_ALIGN
+c_func
 (paren
 id|current-&gt;brk
-op_plus
-l_int|0x00000fff
 )paren
-op_amp
-l_int|0xfffff000
 suffix:semicolon
 multiline_comment|/*&n;&t; * Always allow shrinking brk&n;&t; */
 r_if
@@ -1753,7 +1751,8 @@ id|RLIM_INFINITY
 )paren
 id|rlim
 op_assign
-l_int|0xffffffff
+op_complement
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -3979,7 +3978,7 @@ id|current-&gt;umask
 op_assign
 id|mask
 op_amp
-l_int|0777
+id|S_IRWXUGO
 suffix:semicolon
 r_return
 (paren

@@ -8,7 +8,6 @@ macro_line|#include &lt;linux/un.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;timer.h&quot;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
@@ -17,12 +16,6 @@ macro_line|#include &quot;udp.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;raw.h&quot;
-r_extern
-r_struct
-id|timer
-op_star
-id|timer_base
-suffix:semicolon
 multiline_comment|/*&n; * Get__netinfo returns the length of that string.&n; *&n; * KNOWN BUGS&n; *  As in get_unix_netinfo, the buffer might be too small. If this&n; *  happens, get__netinfo returns only part of the available infos.&n; */
 r_static
 r_int
@@ -61,6 +54,9 @@ r_int
 id|i
 suffix:semicolon
 r_int
+id|timer_active
+suffix:semicolon
+r_int
 r_int
 id|dest
 comma
@@ -71,11 +67,6 @@ r_int
 id|destp
 comma
 id|srcp
-suffix:semicolon
-r_struct
-id|timer
-op_star
-id|tp
 suffix:semicolon
 id|s_array
 op_assign
@@ -154,6 +145,25 @@ c_func
 id|srcp
 )paren
 suffix:semicolon
+id|timer_active
+op_assign
+id|del_timer
+c_func
+(paren
+op_amp
+id|sp-&gt;timer
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|timer_active
+)paren
+id|sp-&gt;timer.expires
+op_assign
+l_int|0
+suffix:semicolon
 id|pos
 op_add_assign
 id|sprintf
@@ -161,7 +171,7 @@ c_func
 (paren
 id|pos
 comma
-l_string|&quot;%2d: %08X:%04X %08X:%04X %02X %08X:%08X %02X:%08X %02X&quot;
+l_string|&quot;%2d: %08X:%04X %08X:%04X %02X %08X:%08X %02X:%08X %02X&bslash;n&quot;
 comma
 id|i
 comma
@@ -183,70 +193,23 @@ id|sp-&gt;acked_seq
 op_minus
 id|sp-&gt;copied_seq
 comma
-id|sp-&gt;time_wait.running
+id|timer_active
 comma
-id|sp-&gt;time_wait.when
-op_minus
-id|jiffies
+id|sp-&gt;timer.expires
 comma
 id|sp-&gt;retransmits
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|tp
-op_assign
-id|timer_base
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|tp
-)paren
-(brace
 r_if
 c_cond
 (paren
-id|tp
-op_eq
+id|timer_active
+)paren
+id|add_timer
+c_func
+(paren
 op_amp
-(paren
-id|sp-&gt;time_wait
-)paren
-)paren
-(brace
-id|pos
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|pos
-comma
-l_string|&quot; *&quot;
-)paren
-suffix:semicolon
-)brace
-id|tp
-op_assign
-id|tp-&gt;next
-suffix:semicolon
-)brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-id|pos
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|pos
-comma
-l_string|&quot;&bslash;n&quot;
+id|sp-&gt;timer
 )paren
 suffix:semicolon
 multiline_comment|/* Is place in buffer too rare? then abort. */

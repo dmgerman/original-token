@@ -1584,6 +1584,23 @@ id|sa
 op_assign
 id|current-&gt;sigaction
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|regs-&gt;cs
+op_ne
+id|USER_CS
+op_logical_or
+id|regs-&gt;ss
+op_ne
+id|USER_DS
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Warning: signal handler with nonstandard code/stack segment&bslash;n&quot;
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren

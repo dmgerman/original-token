@@ -46,6 +46,36 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|nfs_mmap
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+r_int
+id|addr
+comma
+r_int
+id|len
+comma
+r_int
+id|prot
+comma
+r_int
+r_int
+id|off
+)paren
+suffix:semicolon
 DECL|variable|nfs_file_operations
 r_static
 r_struct
@@ -71,7 +101,7 @@ multiline_comment|/* select - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
-l_int|NULL
+id|nfs_mmap
 comma
 multiline_comment|/* mmap */
 l_int|NULL

@@ -13,7 +13,7 @@ mdefine_line|#define NGROUPS&t;&t;32
 macro_line|#endif
 macro_line|#ifndef NOGROUP
 DECL|macro|NOGROUP
-mdefine_line|#define NOGROUP&t;&t;-1
+mdefine_line|#define NOGROUP&t;&t;(-1)
 macro_line|#endif
 DECL|macro|MAXHOSTNAMELEN
 mdefine_line|#define MAXHOSTNAMELEN&t;64&t;/* max length of hostname */

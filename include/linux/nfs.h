@@ -16,7 +16,7 @@ mdefine_line|#define NFS_FHSIZE 32
 DECL|macro|NFS_COOKIESIZE
 mdefine_line|#define NFS_COOKIESIZE 4
 DECL|macro|NFS_FIFO_DEV
-mdefine_line|#define NFS_FIFO_DEV -1
+mdefine_line|#define NFS_FIFO_DEV (-1)
 DECL|macro|NFSMODE_FMT
 mdefine_line|#define NFSMODE_FMT 0170000
 DECL|macro|NFSMODE_DIR

@@ -154,11 +154,11 @@ r_int
 id|exponent
 suffix:semicolon
 id|FPU_REG
-id|Xx
+id|fixed_arg
 comma
-id|Xx2
+id|arg_sqrd
 comma
-id|Xx4
+id|arg_to_4
 comma
 id|accum
 comma
@@ -281,11 +281,11 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif PARANOID
-id|Xx.sigl
+id|fixed_arg.sigl
 op_assign
 id|arg-&gt;sigl
 suffix:semicolon
-id|Xx.sigh
+id|fixed_arg.sigh
 op_assign
 id|arg-&gt;sigh
 suffix:semicolon
@@ -307,7 +307,7 @@ c_func
 (paren
 op_amp
 (paren
-id|Xx.sigl
+id|fixed_arg.sigl
 )paren
 comma
 op_minus
@@ -329,7 +329,7 @@ op_star
 (paren
 op_amp
 (paren
-id|Xx.sigl
+id|fixed_arg.sigl
 )paren
 )paren
 )paren
@@ -348,7 +348,7 @@ op_star
 )paren
 op_amp
 (paren
-id|Xx.sigl
+id|fixed_arg.sigl
 )paren
 comma
 (paren
@@ -358,7 +358,7 @@ op_star
 )paren
 op_amp
 (paren
-id|Xx.sigl
+id|fixed_arg.sigl
 )paren
 comma
 (paren
@@ -368,7 +368,7 @@ op_star
 )paren
 op_amp
 (paren
-id|Xx2.sigl
+id|arg_sqrd.sigl
 )paren
 )paren
 suffix:semicolon
@@ -382,7 +382,7 @@ op_star
 )paren
 op_amp
 (paren
-id|Xx2.sigl
+id|arg_sqrd.sigl
 )paren
 comma
 (paren
@@ -392,7 +392,7 @@ op_star
 )paren
 op_amp
 (paren
-id|Xx2.sigl
+id|arg_sqrd.sigl
 )paren
 comma
 (paren
@@ -402,7 +402,7 @@ op_star
 )paren
 op_amp
 (paren
-id|Xx4.sigl
+id|arg_to_4.sigl
 )paren
 )paren
 suffix:semicolon
@@ -434,7 +434,7 @@ id|accum.sigl
 comma
 op_amp
 (paren
-id|Xx4.sigl
+id|arg_to_4.sigl
 )paren
 comma
 id|lterms
@@ -472,7 +472,7 @@ id|negaccum.sigl
 comma
 op_amp
 (paren
-id|Xx4.sigl
+id|arg_to_4.sigl
 )paren
 comma
 id|negterms
@@ -492,7 +492,7 @@ op_star
 )paren
 op_amp
 (paren
-id|Xx2.sigl
+id|arg_sqrd.sigl
 )paren
 comma
 (paren
@@ -556,37 +556,14 @@ l_int|1
 op_plus
 id|accum.exp
 suffix:semicolon
-op_star
+id|reg_move
+c_func
 (paren
-r_int
-op_star
-)paren
 op_amp
-(paren
-id|result-&gt;sign
+id|accum
+comma
+id|result
 )paren
-op_assign
-op_star
-(paren
-r_int
-op_star
-)paren
-op_amp
-(paren
-id|accum.sign
-)paren
-suffix:semicolon
-id|result-&gt;exp
-op_assign
-id|accum.exp
-suffix:semicolon
-id|result-&gt;sigl
-op_assign
-id|accum.sigl
-suffix:semicolon
-id|result-&gt;sigh
-op_assign
-id|accum.sigh
 suffix:semicolon
 id|normalize
 c_func
@@ -618,7 +595,6 @@ comma
 id|FULL_PRECISION
 )paren
 suffix:semicolon
-multiline_comment|/* A small overflow may be possible... but an illegal result. */
 r_if
 c_cond
 (paren
@@ -627,6 +603,7 @@ op_ge
 id|EXP_BIAS
 )paren
 (brace
+multiline_comment|/* A small overflow may be possible... but an illegal result. */
 r_if
 c_cond
 (paren

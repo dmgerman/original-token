@@ -113,9 +113,9 @@ mdefine_line|#define MAX_DISK_SIZE 1440
 multiline_comment|/*&n; * Maximum number of sectors in a track buffer. Track buffering is disabled&n; * if tracks are bigger.&n; */
 DECL|macro|MAX_BUFFER_SECTORS
 mdefine_line|#define MAX_BUFFER_SECTORS 18
-multiline_comment|/*&n; * The DMA channel used by the floppy controller cannot access data at&n; * addresses &gt;= 16MB&n; */
+multiline_comment|/*&n; * The DMA channel used by the floppy controller cannot access data at&n; * addresses &gt;= 16MB&n; *&n; * Went back to the 1MB limit, as some people had problems with the floppy&n; * driver otherwise. It doesn&squot;t matter much for performance anyway, as most&n; * floppy accesses go through the track buffer.&n; */
 DECL|macro|LAST_DMA_ADDR
-mdefine_line|#define LAST_DMA_ADDR&t;(0x1000000 - BLOCK_SIZE)
+mdefine_line|#define LAST_DMA_ADDR&t;(0x100000 - BLOCK_SIZE)
 multiline_comment|/*&n; * globals used by &squot;result()&squot;&n; */
 DECL|macro|MAX_REPLIES
 mdefine_line|#define MAX_REPLIES 7
@@ -4968,6 +4968,22 @@ c_func
 r_return
 op_minus
 id|EPERM
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fd_ref
+(braket
+id|drive
+op_amp
+l_int|3
+)braket
+op_ne
+l_int|1
+)paren
+r_return
+op_minus
+id|EBUSY
 suffix:semicolon
 id|cli
 c_func

@@ -1,7 +1,8 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the AF_INET socket handler.&n; *&n; * Version:&t;@(#)sock.h&t;1.0.4&t;05/13/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the AF_INET socket handler.&n; *&n; * Version:&t;@(#)sock.h&t;1.0.4&t;05/13/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche &lt;flla@stud.uni-sb.de&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _SOCK_H
 DECL|macro|_SOCK_H
 mdefine_line|#define _SOCK_H
+macro_line|#include &lt;linux/timer.h&gt;
 DECL|macro|SOCK_ARRAY_SIZE
 mdefine_line|#define SOCK_ARRAY_SIZE&t;64
 multiline_comment|/*&n; * This structure really needs to be cleaned up.&n; * Most of it is for TCP, and not used by any of&n; * the other protocols.&n; */
@@ -89,9 +90,6 @@ id|linger
 comma
 DECL|member|delay_acks
 id|delay_acks
-comma
-DECL|member|timeout
-id|timeout
 comma
 DECL|member|destroy
 id|destroy
@@ -296,10 +294,16 @@ r_struct
 id|tcphdr
 id|dummy_th
 suffix:semicolon
-DECL|member|time_wait
+multiline_comment|/* This part is used for the timeout functions (timer.c). */
+DECL|member|timeout
+r_int
+id|timeout
+suffix:semicolon
+multiline_comment|/* What are we waiting for? */
+DECL|member|timer
 r_struct
+id|timer_list
 id|timer
-id|time_wait
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1058,6 +1062,41 @@ r_struct
 id|sock
 op_star
 id|sk
+)paren
+suffix:semicolon
+multiline_comment|/* declarations from timer.c */
+r_extern
+r_struct
+id|sock
+op_star
+id|timer_base
+suffix:semicolon
+r_void
+id|delete_timer
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_void
+id|reset_timer
+(paren
+r_struct
+id|sock
+op_star
+comma
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_void
+id|net_timer
+(paren
+r_int
+r_int
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* _SOCK_H */

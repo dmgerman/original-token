@@ -1,5 +1,8 @@
 multiline_comment|/*&n; * include/linux/serial.h&n; *&n; * Copyright (C) 1992 by Theodore Ts&squot;o.&n; * &n; * Redistribution of this file is permitted under the terms of the GNU &n; * Public License (GPL)&n; */
 multiline_comment|/*&n; * This is our internal structure for each serial port&squot;s state.&n; * &n; * Many fields are paralleled by the structure used by the serial_struct&n; * structure.&n; *&n; * For definitions of the flags field, see tty.h&n; */
+macro_line|#ifndef _LINUX_SERIAL_H
+DECL|macro|_LINUX_SERIAL_H
+mdefine_line|#define _LINUX_SERIAL_H
 DECL|struct|async_struct
 r_struct
 id|async_struct
@@ -21,6 +24,11 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* defined in tty.h */
+DECL|member|hub6
+r_int
+id|hub6
+suffix:semicolon
+multiline_comment|/* HUB6 plus one */
 DECL|member|type
 r_int
 id|type
@@ -57,6 +65,11 @@ DECL|member|close_delay
 r_int
 id|close_delay
 suffix:semicolon
+DECL|member|IER
+r_int
+id|IER
+suffix:semicolon
+multiline_comment|/* Interrupt Enable Register */
 DECL|member|event
 r_int
 id|event
@@ -75,6 +88,16 @@ r_int
 id|blocked_open
 suffix:semicolon
 multiline_comment|/* # of blocked opens */
+DECL|member|session
+r_int
+id|session
+suffix:semicolon
+multiline_comment|/* Session of opening process */
+DECL|member|pgrp
+r_int
+id|pgrp
+suffix:semicolon
+multiline_comment|/* pgrp of opening process */
 DECL|member|open_wait
 r_struct
 id|wait_queue
@@ -243,4 +266,5 @@ DECL|macro|UART_MSR_DCTS
 mdefine_line|#define UART_MSR_DCTS&t;0x01&t;/* Delta CTS */
 DECL|macro|UART_MSR_ANY_DELTA
 mdefine_line|#define UART_MSR_ANY_DELTA 0x0F&t;/* Any of the delta bits! */
+macro_line|#endif /* _LINUX_SERIAL_H */
 eof

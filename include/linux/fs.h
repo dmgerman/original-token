@@ -23,7 +23,7 @@ mdefine_line|#define NR_HASH 997
 DECL|macro|NR_IHASH
 mdefine_line|#define NR_IHASH 131
 DECL|macro|NR_FILE_LOCKS
-mdefine_line|#define NR_FILE_LOCKS 32
+mdefine_line|#define NR_FILE_LOCKS 64
 DECL|macro|BLOCK_SIZE
 mdefine_line|#define BLOCK_SIZE 1024
 DECL|macro|BLOCK_SIZE_BITS
@@ -144,6 +144,11 @@ DECL|macro|BLKRRPART
 mdefine_line|#define BLKRRPART 4703 /* re-read partition table */
 DECL|macro|BLKGETSIZE
 mdefine_line|#define BLKGETSIZE 4704 /* return device size */
+DECL|macro|BLKFLSBUF
+mdefine_line|#define BLKFLSBUF 4705 /* flush buffer cache */
+multiline_comment|/* These are a few other constants  only used by scsi  devices */
+DECL|macro|SCSI_IOCTL_GET_IDLUN
+mdefine_line|#define SCSI_IOCTL_GET_IDLUN 0x5382
 DECL|macro|BMAP_IOCTL
 mdefine_line|#define BMAP_IOCTL 1&t;/* obsolete - kept for compatibility */
 DECL|macro|FIBMAP

@@ -12,6 +12,7 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sr.h&quot;
 macro_line|#include &quot;scsi_ioctl.h&quot;   /* For the door lock/unlock commands */
+macro_line|#include &quot;constants.h&quot;
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES 1
 DECL|macro|SR_TIMEOUT
@@ -1048,35 +1049,12 @@ id|result
 op_eq
 id|CHECK_CONDITION
 )paren
-id|printk
+id|print_sense
 c_func
 (paren
-l_string|&quot;&bslash;tSense class %x, sense error %x, extended sense %x&bslash;n&quot;
+l_string|&quot;sr&quot;
 comma
-id|sense_class
-c_func
-(paren
-id|SCpnt-&gt;sense_buffer
-(braket
-l_int|0
-)braket
-)paren
-comma
-id|sense_error
-c_func
-(paren
-id|SCpnt-&gt;sense_buffer
-(braket
-l_int|0
-)braket
-)paren
-comma
-id|SCpnt-&gt;sense_buffer
-(braket
-l_int|2
-)braket
-op_amp
-l_int|0xf
+id|SCpnt
 )paren
 suffix:semicolon
 id|end_scsi_request

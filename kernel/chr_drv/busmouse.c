@@ -68,7 +68,9 @@ r_char
 id|dx
 comma
 id|dy
-comma
+suffix:semicolon
+r_int
+r_char
 id|buttons
 suffix:semicolon
 id|MSE_INT_OFF

@@ -22,6 +22,10 @@ DECL|macro|EXP_OVER
 mdefine_line|#define EXP_OVER&t;Const(0x4000)    /* smallest invalid large exponent */
 DECL|macro|EXP_UNDER
 mdefine_line|#define&t;EXP_UNDER&t;Const(-0x3fff)   /* largest invalid small exponent */
+DECL|macro|EXP_Infinity
+mdefine_line|#define EXP_Infinity    EXP_OVER
+DECL|macro|EXP_NaN
+mdefine_line|#define EXP_NaN         EXP_OVER
 DECL|macro|SIGN_POS
 mdefine_line|#define SIGN_POS&t;Const(0)
 DECL|macro|SIGN_NEG
@@ -32,16 +36,14 @@ mdefine_line|#define TW_Valid&t;Const(0)&t;/* valid */
 DECL|macro|TW_Zero
 mdefine_line|#define TW_Zero&t;&t;Const(1)&t;/* zero */
 multiline_comment|/* The following fold to 2 (Special) in the Tag Word */
-DECL|macro|TW_Denormal
-mdefine_line|#define TW_Denormal     Const(4)        /* De-normal */
+multiline_comment|/* #define TW_Denormal     Const(4) */
+multiline_comment|/* De-normal */
 DECL|macro|TW_Infinity
 mdefine_line|#define TW_Infinity&t;Const(5)&t;/* + or - infinity */
 DECL|macro|TW_NaN
 mdefine_line|#define&t;TW_NaN&t;&t;Const(6)&t;/* Not a Number */
 DECL|macro|TW_Empty
 mdefine_line|#define TW_Empty&t;Const(7)&t;/* empty */
-multiline_comment|/* #define TW_FPU_Interrupt Const(0x80) */
-multiline_comment|/* Signals an interrupt */
 macro_line|#ifndef __ASSEMBLER__
 macro_line|#include &lt;linux/math_emu.h&gt;
 macro_line|#ifdef PARANOID
@@ -59,6 +61,11 @@ macro_line|#  define RE_ENTRANT_CHECK_OFF
 DECL|macro|RE_ENTRANT_CHECK_ON
 macro_line|#  define RE_ENTRANT_CHECK_ON
 macro_line|#endif PARANOID
+multiline_comment|/* These are to defeat the default action, giving the instruction&n;   no net effect: */
+DECL|macro|NO_NET_DATA_EFFECT
+mdefine_line|#define NO_NET_DATA_EFFECT &bslash;&n;      { FPU_data_address = (void *)data_operand_offset; &bslash;&n;&t;FPU_data_selector = operand_selector; }
+DECL|macro|NO_NET_INSTR_EFFECT
+mdefine_line|#define NO_NET_INSTR_EFFECT &bslash;&n;      { FPU_entry_eip = ip_offset; &bslash;&n;&t;FPU_entry_op_cs = cs_selector; }
 DECL|typedef|FUNC
 r_typedef
 r_void
@@ -98,10 +105,17 @@ id|FPU_REG
 op_star
 id|FPU_st0_ptr
 suffix:semicolon
+multiline_comment|/* ###### These need to be shifted to somewhere safe. */
+multiline_comment|/* extern void  *FPU_data_address; has been shifted */
 r_extern
-r_void
-op_star
-id|FPU_data_address
+r_int
+r_int
+id|FPU_data_selector
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|FPU_entry_op_cs
 suffix:semicolon
 r_extern
 id|FPU_REG
@@ -115,7 +129,7 @@ mdefine_line|#define push()&t;{ top--; FPU_st0_ptr = st_new_ptr; }
 DECL|macro|reg_move
 mdefine_line|#define reg_move(x, y) { &bslash;&n;&t;&t; *(short *)&amp;((y)-&gt;sign) = *(short *)&amp;((x)-&gt;sign); &bslash;&n;&t;&t; *(long *)&amp;((y)-&gt;exp) = *(long *)&amp;((x)-&gt;exp); &bslash;&n;&t;&t; *(long long *)&amp;((y)-&gt;sigl) = *(long long *)&amp;((x)-&gt;sigl); }
 multiline_comment|/*----- Prototypes for functions written in assembler -----*/
-multiline_comment|/* extern &quot;C&quot; void reg_move(FPU_REG *a, FPU_REG *b); */
+multiline_comment|/* extern void reg_move(FPU_REG *a, FPU_REG *b); */
 r_extern
 l_string|&quot;C&quot;
 r_void
@@ -227,7 +241,7 @@ id|x
 suffix:semicolon
 r_extern
 l_string|&quot;C&quot;
-r_void
+r_int
 id|reg_div
 c_func
 (paren
@@ -250,7 +264,7 @@ id|control_w
 suffix:semicolon
 r_extern
 l_string|&quot;C&quot;
-r_void
+r_int
 id|reg_u_sub
 c_func
 (paren
@@ -273,7 +287,7 @@ id|control_w
 suffix:semicolon
 r_extern
 l_string|&quot;C&quot;
-r_void
+r_int
 id|reg_u_mul
 c_func
 (paren
@@ -296,7 +310,7 @@ id|control_w
 suffix:semicolon
 r_extern
 l_string|&quot;C&quot;
-r_void
+r_int
 id|reg_u_div
 c_func
 (paren
@@ -319,7 +333,7 @@ id|control_w
 suffix:semicolon
 r_extern
 l_string|&quot;C&quot;
-r_void
+r_int
 id|reg_u_add
 c_func
 (paren
@@ -342,7 +356,7 @@ id|control_w
 suffix:semicolon
 r_extern
 l_string|&quot;C&quot;
-r_void
+r_int
 id|wm_sqrt
 c_func
 (paren

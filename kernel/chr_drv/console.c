@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/console.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; * &n; *&t;&squot;long con_init(long)&squot;&n; *&t;&squot;void con_open(struct tty_queue * queue, struct )&squot;&n; * &t;&squot;void update_screen(int new_console)&squot;&n; * &t;&squot;void blank_screen(void)&squot;&n; * &t;&squot;void unblank_screen(void)&squot;&n; * &n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; * &n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; */
+multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; * &n; *&t;&squot;long con_init(long)&squot;&n; *&t;&squot;void con_open(struct tty_queue * queue, struct )&squot;&n; * &t;&squot;void update_screen(int new_console)&squot;&n; * &t;&squot;void blank_screen(void)&squot;&n; * &t;&squot;void unblank_screen(void)&squot;&n; * &n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; * &n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; *&n; * Copy and paste function by Andrew Haylett.&n; */
 multiline_comment|/*&n; *  NOTE!!! We sometimes disable and enable interrupts for a short while&n; * (to put a word in video IO), but this will work even for keyboard&n; * interrupts. We know interrupts aren&squot;t enabled when getting a keyboard&n; * interrupt, as we use trap-gates. Hopefully all is well.&n; */
 multiline_comment|/*&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; */
 macro_line|#include &lt;linux/sched.h&gt;
@@ -669,9 +669,9 @@ l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&b
 l_string|&quot;&bslash;040&bslash;255&bslash;233&bslash;234&bslash;376&bslash;235&bslash;174&bslash;025&bslash;376&bslash;376&bslash;246&bslash;256&bslash;252&bslash;055&bslash;376&bslash;376&quot;
 l_string|&quot;&bslash;370&bslash;361&bslash;375&bslash;376&bslash;376&bslash;346&bslash;024&bslash;371&bslash;376&bslash;376&bslash;247&bslash;257&bslash;254&bslash;253&bslash;376&bslash;250&quot;
 l_string|&quot;&bslash;376&bslash;376&bslash;376&bslash;376&bslash;216&bslash;217&bslash;222&bslash;200&bslash;376&bslash;220&bslash;376&bslash;376&bslash;376&bslash;376&bslash;376&bslash;376&quot;
-l_string|&quot;&bslash;376&bslash;245&bslash;376&bslash;376&bslash;376&bslash;376&bslash;231&bslash;376&bslash;376&bslash;376&bslash;376&bslash;376&bslash;232&bslash;376&bslash;376&bslash;341&quot;
+l_string|&quot;&bslash;376&bslash;245&bslash;376&bslash;376&bslash;376&bslash;376&bslash;231&bslash;376&bslash;235&bslash;376&bslash;376&bslash;376&bslash;232&bslash;376&bslash;376&bslash;341&quot;
 l_string|&quot;&bslash;205&bslash;240&bslash;203&bslash;376&bslash;204&bslash;206&bslash;221&bslash;207&bslash;212&bslash;202&bslash;210&bslash;211&bslash;215&bslash;241&bslash;214&bslash;213&quot;
-l_string|&quot;&bslash;376&bslash;244&bslash;225&bslash;242&bslash;223&bslash;376&bslash;224&bslash;366&bslash;376&bslash;227&bslash;243&bslash;226&bslash;201&bslash;376&bslash;376&bslash;230&quot;
+l_string|&quot;&bslash;376&bslash;244&bslash;225&bslash;242&bslash;223&bslash;376&bslash;224&bslash;366&bslash;233&bslash;227&bslash;243&bslash;226&bslash;201&bslash;376&bslash;376&bslash;230&quot;
 comma
 multiline_comment|/* vt100 graphics */
 (paren
@@ -910,6 +910,13 @@ r_int
 id|offset
 )paren
 (brace
+macro_line|#ifdef CONFIG_SELECTION
+id|clear_selection
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_SELECTION */
 id|cli
 c_func
 (paren
@@ -7119,6 +7126,9 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_SELECTION
+multiline_comment|/* correction factor for when screen is hardware-scrolled */
+DECL|macro|hwscroll_offset
+mdefine_line|#define&t;hwscroll_offset ((__real_origin - __origin) &lt;&lt; 1)
 multiline_comment|/* set reverse video on characters s-e of console with selection. */
 DECL|function|highlight
 r_static
@@ -7158,6 +7168,8 @@ r_char
 op_star
 )paren
 id|origin
+op_minus
+id|hwscroll_offset
 op_plus
 id|s
 op_plus
@@ -7171,6 +7183,8 @@ r_char
 op_star
 )paren
 id|origin
+op_minus
+id|hwscroll_offset
 op_plus
 id|e
 op_plus
@@ -7416,6 +7430,8 @@ r_char
 op_star
 )paren
 id|origin
+op_minus
+id|hwscroll_offset
 suffix:semicolon
 id|unblank_screen
 c_func
@@ -8088,7 +8104,7 @@ op_assign
 r_char
 op_star
 )paren
-id|origin
+id|off
 op_plus
 id|i
 suffix:semicolon
@@ -8195,6 +8211,21 @@ op_star
 id|bp
 op_assign
 id|sel_buffer
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+op_star
+id|bp
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|unblank_screen
+c_func
+(paren
+)paren
 suffix:semicolon
 r_while
 c_loop

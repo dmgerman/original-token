@@ -1439,9 +1439,17 @@ id|mscp.dcn
 op_assign
 id|FALSE
 suffix:semicolon
+multiline_comment|/* Tape drives don&squot;t work properly if the cache is used.  The SCSI&n;       READ command for a tape doesn&squot;t have a block offset, and the adapter&n;       incorrectly assumes that all reads from the tape read the same&n;       blocks.  Results will depend on read buffer size and other disk&n;       activity. &n;&n;       ???  Which other device types should never use the cache?   */
 id|mscp.ca
 op_assign
-id|TRUE
+id|scsi_devices
+(braket
+id|SCpnt-&gt;index
+)braket
+dot
+id|type
+op_ne
+id|TYPE_TAPE
 suffix:semicolon
 id|mscp.target_id
 op_assign

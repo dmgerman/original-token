@@ -110,18 +110,46 @@ id|shmall
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|SHM_RANGE_START
+mdefine_line|#define SHM_RANGE_START&t;0x40000000
+DECL|macro|SHM_RANGE_END
+mdefine_line|#define SHM_RANGE_END&t;0x60000000
+multiline_comment|/* _SHM_ID_BITS is a variable you can adjust to */
+multiline_comment|/* tune the kernel.  It determines the value of */
+multiline_comment|/* SHMMNI, which specifies the maximum no. of */
+multiline_comment|/* shared segments (system wide).  SRB. */
+DECL|macro|_SHM_ID_BITS
+mdefine_line|#define _SHM_ID_BITS&t;7&t;&t;/* keep as low as possible */
+multiline_comment|/* a static array is declared */
+multiline_comment|/* using SHMMNI */
+DECL|macro|__SHM_IDX_BITS
+mdefine_line|#define __SHM_IDX_BITS&t;(BITS_PER_PTR-2-SHM_IDX_SHIFT)
+multiline_comment|/* !!!!!!!?????&n; * Why reserve the two (2) high bits of the signature (shm_sgn) field?&n; * Since, as far as I can see, only the high bit is used (SHM_READ_ONLY).&n; *&t;&t;&t;&t;&t;&t;SRB.&n; */
+DECL|macro|_SHM_IDX_BITS
+mdefine_line|#define _SHM_IDX_BITS&t;(__SHM_IDX_BITS+PAGE_SHIFT&gt;=BITS_PER_PTR?&bslash;&n; BITS_PER_PTR-PAGE_SHIFT-1:__SHM_IDX_BITS)&t;/* sanity check */
+multiline_comment|/* not present page table entry format bit 0 is 0, low byte defined in mm.h */
+DECL|macro|SHM_ID_SHIFT
+mdefine_line|#define SHM_ID_SHIFT&t;8
+DECL|macro|SHM_ID_MASK
+mdefine_line|#define SHM_ID_MASK&t;((1&lt;&lt;_SHM_ID_BITS)-1)
+DECL|macro|SHM_IDX_SHIFT
+mdefine_line|#define SHM_IDX_SHIFT&t;(SHM_ID_SHIFT+_SHM_ID_BITS)
+DECL|macro|SHM_IDX_MASK
+mdefine_line|#define SHM_IDX_MASK&t;((1&lt;&lt;_SHM_IDX_BITS)-1)
+DECL|macro|SHM_READ_ONLY
+mdefine_line|#define SHM_READ_ONLY&t;(1&lt;&lt;BITS_PER_PTR-1)
 DECL|macro|SHMMAX
-mdefine_line|#define SHMMAX 0x400000&t; /* &lt;= 4M */          /* max shared seg size (bytes) */
+mdefine_line|#define SHMMAX (1&lt;&lt;PAGE_SHIFT+_SHM_IDX_BITS)&t;/* max shared seg size (bytes) */
 DECL|macro|SHMMIN
-mdefine_line|#define SHMMIN 1&t; /* really PAGE_SIZE */  /* min shared seg size (bytes)*/
+mdefine_line|#define SHMMIN 1&t; /* really PAGE_SIZE */&t;/* min shared seg size (bytes)*/
 DECL|macro|SHMMNI
-mdefine_line|#define SHMMNI 128       /* &lt;= 4096 */        /* max num of segs system wide */
+mdefine_line|#define SHMMNI (1&lt;&lt;_SHM_ID_BITS)&t;&t;/* max num of segs system wide */
 DECL|macro|SHMALL
-mdefine_line|#define SHMALL 0x10000 /* &lt;= SHMMAX*SHMMNI/PAGE_SIZE */  /* max shm system wide (pages) */
+mdefine_line|#define SHMALL (1&lt;&lt;_SHM_IDX_BITS+_SHM_ID_BITS)&t;/* max shm system wide (pages) */
 DECL|macro|SHMLBA
-mdefine_line|#define&t;SHMLBA 0x1000    /* = PAGE_SIZE */   /*  attach addr multiple */
+mdefine_line|#define&t;SHMLBA PAGE_SIZE&t;&t;&t;/* attach addr a multiple of this */
 DECL|macro|SHMSEG
-mdefine_line|#define SHMSEG SHMMNI    /* &lt;= SHMMNI */    /* max shared segs per process */
+mdefine_line|#define SHMSEG SHMMNI&t;&t;&t;&t;/* max shared segs per process */
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* shm_mode upper byte flags */
 DECL|macro|SHM_DEST
@@ -212,17 +240,6 @@ suffix:semicolon
 multiline_comment|/* next attach for segment */
 )brace
 suffix:semicolon
-multiline_comment|/* not present page table entry format bit 0 is 0, high byte defined in mm.h */
-DECL|macro|SHM_IDX_SHIFT
-mdefine_line|#define SHM_IDX_SHIFT 20
-DECL|macro|SHM_IDX_MASK
-mdefine_line|#define SHM_IDX_MASK  0x3FF
-DECL|macro|SHM_ID_SHIFT
-mdefine_line|#define SHM_ID_SHIFT  8
-DECL|macro|SHM_ID_MASK
-mdefine_line|#define SHM_ID_MASK   0xFFF
-DECL|macro|SHM_READ_ONLY
-mdefine_line|#define SHM_READ_ONLY 0x80000000
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_SHM_H_ */
 eof

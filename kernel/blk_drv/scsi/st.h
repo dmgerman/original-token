@@ -108,6 +108,17 @@ id|eof_hit
 suffix:colon
 l_int|1
 suffix:semicolon
+DECL|member|drv_buffer
+r_int
+id|drv_buffer
+suffix:colon
+l_int|3
+suffix:semicolon
+DECL|member|density
+r_int
+r_char
+id|density
+suffix:semicolon
 DECL|member|buffer
 id|ST_buffer
 op_star

@@ -187,11 +187,15 @@ id|reserved_char
 l_int|3
 )braket
 suffix:semicolon
+DECL|member|hub6
+r_int
+id|hub6
+suffix:semicolon
 DECL|member|reserved
 r_int
 id|reserved
 (braket
-l_int|6
+l_int|5
 )braket
 suffix:semicolon
 )brace
@@ -216,6 +220,8 @@ DECL|macro|ASYNC_FOURPORT
 mdefine_line|#define ASYNC_FOURPORT  0x0002&t;/* Set OU1, OUT2 per AST Fourport settings */
 DECL|macro|ASYNC_SAK
 mdefine_line|#define ASYNC_SAK&t;0x0004&t;/* Secure Attention Key (Orange book) */
+DECL|macro|ASYNC_TERMIOS_RESTORE
+mdefine_line|#define ASYNC_TERMIOS_RESTORE 0x0008 /* Restore termios when dialin unblocks */
 DECL|macro|ASYNC_SPD_MASK
 mdefine_line|#define ASYNC_SPD_MASK&t;0x0030
 DECL|macro|ASYNC_SPD_HI
@@ -228,8 +234,16 @@ DECL|macro|ASYNC_SKIP_TEST
 mdefine_line|#define ASYNC_SKIP_TEST&t;0x0040 /* Skip UART test during autoconfiguration */
 DECL|macro|ASYNC_AUTO_IRQ
 mdefine_line|#define ASYNC_AUTO_IRQ  0x0080 /* Do automatic IRQ during autoconfiguration */
+DECL|macro|ASYNC_SESSION_LOCKOUT
+mdefine_line|#define ASYNC_SESSION_LOCKOUT 0x0100 /* Lock out cua opens based on session */
+DECL|macro|ASYNC_PGRP_LOCKOUT
+mdefine_line|#define ASYNC_PGRP_LOCKOUT    0x0200 /* Lock out cua opens based on pgrp */
+DECL|macro|ASYNC_CALLOUT_NOHUP
+mdefine_line|#define ASYNC_CALLOUT_NOHUP   0x0400 /* Don&squot;t do hangups for cua device */
 DECL|macro|ASYNC_FLAGS
-mdefine_line|#define ASYNC_FLAGS&t;0x00F7&t;/* Possible legal async flags */
+mdefine_line|#define ASYNC_FLAGS&t;0x0FFF&t;/* Possible legal async flags */
+DECL|macro|ASYNC_USR_MASK
+mdefine_line|#define ASYNC_USR_MASK 0x0430&t;/* Legal flags that non-privileged&n;&t;&t;&t;&t; * users can set or reset */
 multiline_comment|/* Internal flags used only by kernel/chr_drv/serial.c */
 DECL|macro|ASYNC_INITIALIZED
 mdefine_line|#define ASYNC_INITIALIZED&t;0x80000000 /* Serial port was initialized */
@@ -573,6 +587,32 @@ op_star
 id|old
 )paren
 suffix:semicolon
+DECL|member|stop
+r_void
+(paren
+op_star
+id|stop
+)paren
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+suffix:semicolon
+DECL|member|start
+r_void
+(paren
+op_star
+id|start
+)paren
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+suffix:semicolon
 DECL|member|link
 r_struct
 id|tty_struct
@@ -827,6 +867,22 @@ r_struct
 id|tty_struct
 op_star
 id|tty_table
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_struct
+id|termios
+op_star
+id|tty_termios
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_struct
+id|termios
+op_star
+id|termios_locked
 (braket
 )braket
 suffix:semicolon

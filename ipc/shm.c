@@ -1,9 +1,10 @@
-multiline_comment|/*&n; * linux/ipc/shm.c&n; * Copyright (C) 1992, 1993 Krishna Balasubramanian &n; *         Many improvements/fixes by Bruno Haible.&n; * assume user segments start at 0x00&n; */
+multiline_comment|/*&n; * linux/ipc/shm.c&n; * Copyright (C) 1992, 1993 Krishna Balasubramanian &n; *         Many improvements/fixes by Bruno Haible.&n; * assume user segments start at 0x0&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ipc.h&gt; 
 macro_line|#include &lt;linux/shm.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 r_extern
 r_int
 id|ipcperms
@@ -542,7 +543,7 @@ op_assign
 (paren
 id|shmflg
 op_amp
-l_int|0777
+id|S_IRWXUGO
 )paren
 suffix:semicolon
 id|shp-&gt;shm_perm.cuid
@@ -979,8 +980,7 @@ id|free_page
 (paren
 id|page
 op_amp
-op_complement
-l_int|0xfff
+id|PAGE_MASK
 )paren
 suffix:semicolon
 id|shm_rss
@@ -1377,7 +1377,7 @@ id|ipcperms
 op_amp
 id|shp-&gt;shm_perm
 comma
-l_int|0444
+id|S_IRUGO
 )paren
 )paren
 r_return
@@ -1542,7 +1542,7 @@ id|ipcperms
 (paren
 id|ipcp
 comma
-l_int|0444
+id|S_IRUGO
 )paren
 )paren
 r_return
@@ -1631,13 +1631,13 @@ op_assign
 id|ipcp-&gt;mode
 op_amp
 op_complement
-l_int|0777
+id|S_IRWXUGO
 )paren
 op_or
 (paren
 id|tbuf.shm_perm.mode
 op_amp
-l_int|0777
+id|S_IRWXUGO
 )paren
 suffix:semicolon
 id|shp-&gt;shm_ctime
@@ -1762,22 +1762,12 @@ id|PAGE_SIZE
 (brace
 id|page_table
 op_assign
-(paren
-id|ulong
-op_star
-)paren
+id|PAGE_DIR_OFFSET
+c_func
 (paren
 id|page_dir
-op_plus
-(paren
-(paren
+comma
 id|tmp
-op_rshift
-l_int|20
-)paren
-op_amp
-l_int|0xffc
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1796,7 +1786,7 @@ id|ulong
 op_star
 )paren
 (paren
-l_int|0xfffff000
+id|PAGE_MASK
 op_amp
 op_star
 id|page_table
@@ -1811,7 +1801,9 @@ op_rshift
 id|PAGE_SHIFT
 )paren
 op_amp
-l_int|0x3ff
+id|PTRS_PER_PAGE
+op_minus
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -1848,8 +1840,7 @@ id|free_page
 op_star
 id|page_table
 op_amp
-op_complement
-l_int|0xfff
+id|PAGE_MASK
 )paren
 suffix:semicolon
 )brace
@@ -1871,23 +1862,28 @@ suffix:semicolon
 r_int
 r_int
 id|new_pt
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|new_pt
 op_assign
 id|get_free_page
 c_func
 (paren
 id|GFP_KERNEL
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|new_pt
 )paren
+)paren
+(brace
+multiline_comment|/* clearing needed?  SRB. */
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 op_star
 id|page_table
 op_assign
@@ -1896,24 +1892,16 @@ op_or
 id|PAGE_TABLE
 suffix:semicolon
 id|tmp
-op_assign
+op_or_assign
 (paren
-(paren
-id|tmp
-op_plus
 (paren
 id|PAGE_SIZE
 op_lshift
 l_int|10
 )paren
 op_minus
-l_int|1
-)paren
-op_amp
-l_int|0xff400000
-)paren
-op_minus
 id|PAGE_SIZE
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -1958,22 +1946,12 @@ id|SHM_IDX_SHIFT
 (brace
 id|page_table
 op_assign
-(paren
-id|ulong
-op_star
-)paren
+id|PAGE_DIR_OFFSET
+c_func
 (paren
 id|page_dir
-op_plus
-(paren
-(paren
+comma
 id|tmp
-op_rshift
-l_int|20
-)paren
-op_amp
-l_int|0xffc
-)paren
 )paren
 suffix:semicolon
 id|page_table
@@ -1983,7 +1961,7 @@ id|ulong
 op_star
 )paren
 (paren
-l_int|0xfffff000
+id|PAGE_MASK
 op_amp
 op_star
 id|page_table
@@ -1997,7 +1975,9 @@ op_rshift
 id|PAGE_SHIFT
 )paren
 op_amp
-l_int|0x3ff
+id|PTRS_PER_PAGE
+op_minus
+l_int|1
 suffix:semicolon
 op_star
 id|page_table
@@ -2087,10 +2067,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-DECL|macro|SHM_RANGE_END
-mdefine_line|#define SHM_RANGE_END 0x60000000
-DECL|macro|SHM_RANGE_START
-mdefine_line|#define SHM_RANGE_START 0x40000000
 r_if
 c_cond
 (paren
@@ -2164,8 +2140,7 @@ op_minus
 id|shp-&gt;shm_segsz
 )paren
 op_amp
-op_complement
-l_int|0xfff
+id|PAGE_MASK
 suffix:semicolon
 )brace
 r_else
@@ -2293,9 +2268,11 @@ op_amp
 id|SHM_RDONLY
 ques
 c_cond
-l_int|0444
+id|S_IRUGO
 suffix:colon
-l_int|0666
+id|S_IRUGO
+op_or
+id|S_IWUGO
 )paren
 )paren
 r_return
@@ -2933,7 +2910,7 @@ op_rshift
 id|SHM_ID_SHIFT
 )paren
 op_amp
-l_int|0xfff
+id|SHM_ID_MASK
 suffix:semicolon
 id|shp
 op_assign
@@ -3119,19 +3096,19 @@ id|PAGE_PRESENT
 )paren
 )paren
 (brace
-id|page
-op_assign
-id|get_free_page
-c_func
-(paren
-id|GFP_KERNEL
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
+(paren
 id|page
+op_assign
+id|__get_free_page
+c_func
+(paren
+id|GFP_KERNEL
+)paren
+)paren
 )paren
 (brace
 id|oom
@@ -3588,22 +3565,12 @@ suffix:semicolon
 )brace
 id|pte
 op_assign
-(paren
-id|ulong
-op_star
-)paren
+id|PAGE_DIR_OFFSET
+c_func
 (paren
 id|shmd-&gt;task-&gt;tss.cr3
-op_plus
-(paren
-(paren
+comma
 id|tmp
-op_rshift
-l_int|20
-)paren
-op_amp
-l_int|0xffc
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -3645,7 +3612,7 @@ id|ulong
 op_star
 )paren
 (paren
-l_int|0xfffff000
+id|PAGE_MASK
 op_amp
 op_star
 id|pte
@@ -3660,7 +3627,9 @@ op_rshift
 id|PAGE_SHIFT
 )paren
 op_amp
-l_int|0x3ff
+id|PTRS_PER_PAGE
+op_minus
+l_int|1
 )paren
 suffix:semicolon
 id|tmp
@@ -3746,8 +3715,7 @@ id|check_table
 suffix:semicolon
 id|page
 op_and_assign
-op_complement
-l_int|0xfff
+id|PAGE_MASK
 suffix:semicolon
 id|shp-&gt;shm_pages
 (braket

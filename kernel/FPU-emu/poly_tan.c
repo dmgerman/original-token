@@ -170,13 +170,11 @@ comma
 id|FPU_REG
 op_star
 id|y_reg
+comma
+r_int
+id|invert
 )paren
 (brace
-r_char
-id|invert
-op_assign
-l_int|0
-suffix:semicolon
 r_int
 id|exponent
 suffix:semicolon
@@ -204,139 +202,6 @@ id|arg-&gt;exp
 op_minus
 id|EXP_BIAS
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|arg-&gt;tag
-op_eq
-id|TW_Zero
-)paren
-(brace
-multiline_comment|/* Return 0.0 */
-id|reg_move
-c_func
-(paren
-op_amp
-id|CONST_Z
-comma
-id|y_reg
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|exponent
-op_ge
-op_minus
-l_int|1
-)paren
-(brace
-multiline_comment|/* argument is in the range  [0.5 .. 1.0] */
-r_if
-c_cond
-(paren
-id|exponent
-op_ge
-l_int|0
-)paren
-(brace
-macro_line|#ifdef PARANOID
-r_if
-c_cond
-(paren
-(paren
-id|exponent
-op_eq
-l_int|0
-)paren
-op_logical_and
-(paren
-id|arg-&gt;sigl
-op_eq
-l_int|0
-)paren
-op_logical_and
-(paren
-id|arg-&gt;sigh
-op_eq
-l_int|0x80000000
-)paren
-)paren
-macro_line|#endif PARANOID
-(brace
-id|arith_overflow
-c_func
-(paren
-id|y_reg
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-macro_line|#ifdef PARANOID
-id|EXCEPTION
-c_func
-(paren
-id|EX_INTERNAL
-op_or
-l_int|0x104
-)paren
-suffix:semicolon
-multiline_comment|/* There must be a logic error */
-r_return
-suffix:semicolon
-macro_line|#endif PARANOID
-)brace
-multiline_comment|/* The argument is in the range  [0.5 .. 1.0) */
-multiline_comment|/* Convert the argument to a number in the range  (0.0 .. 0.5] */
-op_star
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-(paren
-op_amp
-id|arg-&gt;sigl
-)paren
-)paren
-op_assign
-op_minus
-op_star
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-(paren
-op_amp
-id|arg-&gt;sigl
-)paren
-)paren
-suffix:semicolon
-id|normalize
-c_func
-(paren
-id|arg
-)paren
-suffix:semicolon
-multiline_comment|/* Needed later */
-id|exponent
-op_assign
-id|arg-&gt;exp
-op_minus
-id|EXP_BIAS
-suffix:semicolon
-id|invert
-op_assign
-l_int|1
-suffix:semicolon
-)brace
 macro_line|#ifdef PARANOID
 r_if
 c_cond
@@ -630,6 +495,7 @@ comma
 id|FULL_PRECISION
 )paren
 suffix:semicolon
+multiline_comment|/* Complete the odd polynomial. */
 id|reg_u_add
 c_func
 (paren
@@ -644,7 +510,6 @@ comma
 id|FULL_PRECISION
 )paren
 suffix:semicolon
-multiline_comment|/* This is just the odd polynomial */
 multiline_comment|/* will be a valid positive nr with expon = 0 */
 op_star
 (paren
@@ -861,6 +726,7 @@ comma
 id|FULL_PRECISION
 )paren
 suffix:semicolon
+multiline_comment|/* Complete the even polynomial */
 id|reg_sub
 c_func
 (paren
@@ -876,7 +742,6 @@ comma
 id|FULL_PRECISION
 )paren
 suffix:semicolon
-multiline_comment|/* This is just the even polynomial */
 multiline_comment|/* Now ready to copy the results */
 r_if
 c_cond

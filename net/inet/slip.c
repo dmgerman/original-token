@@ -18,7 +18,6 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &quot;inet.h&quot;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;eth.h&quot;
-macro_line|#include &quot;timer.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;route.h&quot;
 macro_line|#include &quot;protocol.h&quot;
@@ -30,13 +29,6 @@ macro_line|#include &quot;slip.h&quot;
 macro_line|#include &quot;slhc.h&quot;
 DECL|macro|SLIP_VERSION
 mdefine_line|#define&t;SLIP_VERSION&t;&quot;0.7.5&quot;
-macro_line|#ifdef SL_COMPRESSED
-DECL|macro|COMPRESSED_SLIP
-mdefine_line|#define COMPRESSED_SLIP 1
-macro_line|#else
-DECL|macro|COMPRESSED_SLIP
-mdefine_line|#define COMPRESSED_SLIP 0
-macro_line|#endif
 multiline_comment|/* Define some IP layer stuff.  Not all systems have it. */
 macro_line|#ifdef SL_DUMP
 DECL|macro|IP_VERSION
@@ -356,7 +348,7 @@ l_string|&quot;&bslash;n*****&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|function|clh_dump
+macro_line|#if 0
 r_void
 id|clh_dump
 c_func
@@ -418,6 +410,7 @@ l_string|&quot;&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* Initialize a SLIP control block for use. */
 r_static
 r_void
@@ -614,6 +607,16 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -645,17 +648,6 @@ op_eq
 l_int|0
 )paren
 (brace
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|sl-&gt;inuse
 op_assign
 l_int|1
@@ -972,7 +964,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|COMPRESSED_SLIP
+l_int|1
 )paren
 (brace
 r_if
@@ -1052,27 +1044,22 @@ id|done
 multiline_comment|/* not enough space available */
 r_return
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|count
 op_assign
 id|slhc_uncompress
 c_func
 (paren
-(paren
-r_struct
-id|slcompress
-op_star
-)paren
 id|sl-&gt;slcomp
 comma
 id|sl-&gt;rbuff
 comma
 id|count
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|count
 op_le
 l_int|0
 )paren
@@ -1106,11 +1093,6 @@ c_cond
 id|slhc_remember
 c_func
 (paren
-(paren
-r_struct
-id|slcompress
-op_star
-)paren
 id|sl-&gt;slcomp
 comma
 id|sl-&gt;rbuff
@@ -1289,7 +1271,7 @@ id|DBG_SLIP
 comma
 l_string|&quot;SLIP: sl_encaps(0x%X, %d) called&bslash;n&quot;
 comma
-id|p
+id|icp
 comma
 id|len
 )paren
@@ -1319,16 +1301,12 @@ id|p
 op_assign
 id|icp
 suffix:semicolon
+macro_line|#ifdef SL_COMPRESSED
 id|len
 op_assign
 id|slhc_compress
 c_func
 (paren
-(paren
-r_struct
-id|slcompress
-op_star
-)paren
 id|sl-&gt;slcomp
 comma
 id|p
@@ -1343,14 +1321,10 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;   * Send an initial END character to flush out any&n;   * data that may have accumulated in the receiver&n;   * due to line noise.&n;   */
 id|bp
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|sl-&gt;xbuff
 suffix:semicolon
 op_star
@@ -1382,11 +1356,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-(paren
 id|c
-op_amp
-l_int|0377
-)paren
 )paren
 (brace
 r_case
@@ -1458,11 +1428,6 @@ op_increment
 suffix:semicolon
 id|bp
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|sl-&gt;xbuff
 suffix:semicolon
 multiline_comment|/* Tell TTY to send it on its way. */
@@ -2281,16 +2246,6 @@ multiline_comment|/* not connected */
 multiline_comment|/* Suck the bytes out of the TTY queues. */
 r_do
 (brace
-id|memset
-c_func
-(paren
-id|buff
-comma
-l_int|0
-comma
-l_int|128
-)paren
-suffix:semicolon
 id|count
 op_assign
 id|tty_read_raw_data
@@ -2321,8 +2276,6 @@ c_loop
 (paren
 id|count
 op_decrement
-OG
-l_int|0
 )paren
 (brace
 id|c
@@ -2331,90 +2284,76 @@ op_star
 id|p
 op_increment
 suffix:semicolon
-r_switch
+r_if
 c_cond
 (paren
-(paren
-id|c
-op_amp
-l_int|0377
-)paren
+id|sl-&gt;escape
 )paren
 (brace
-r_case
+r_if
+c_cond
+(paren
+id|c
+op_eq
+id|ESC_ESC
+)paren
+id|sl_enqueue
+c_func
+(paren
+id|sl
+comma
 id|ESC
-suffix:colon
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|c
+op_eq
+id|ESC_END
+)paren
+id|sl_enqueue
+c_func
+(paren
+id|sl
+comma
+id|END
+)paren
+suffix:semicolon
+r_else
+id|printk
+(paren
+l_string|&quot;SLIP: received wrong character&bslash;n&quot;
+)paren
+suffix:semicolon
+id|sl-&gt;escape
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|c
+op_eq
+id|ESC
+)paren
 id|sl-&gt;escape
 op_assign
 l_int|1
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|ESC_ESC
-suffix:colon
+r_else
 r_if
 c_cond
 (paren
-id|sl-&gt;escape
-)paren
-id|sl_enqueue
-c_func
-(paren
-id|sl
-comma
-id|ESC
-)paren
-suffix:semicolon
-r_else
-id|sl_enqueue
-c_func
-(paren
-id|sl
-comma
 id|c
-)paren
-suffix:semicolon
-id|sl-&gt;escape
-op_assign
-l_int|0
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|ESC_END
-suffix:colon
-r_if
-c_cond
-(paren
-id|sl-&gt;escape
-)paren
-id|sl_enqueue
-c_func
-(paren
-id|sl
-comma
+op_eq
 id|END
 )paren
-suffix:semicolon
-r_else
-id|sl_enqueue
-c_func
-(paren
-id|sl
-comma
-id|c
-)paren
-suffix:semicolon
-id|sl-&gt;escape
-op_assign
-l_int|0
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|END
-suffix:colon
+(brace
 r_if
 c_cond
 (paren
@@ -2440,14 +2379,8 @@ id|sl-&gt;rcount
 op_assign
 l_int|0
 suffix:semicolon
-id|sl-&gt;escape
-op_assign
-l_int|0
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
+)brace
+r_else
 id|sl_enqueue
 c_func
 (paren
@@ -2455,10 +2388,6 @@ id|sl
 comma
 id|c
 )paren
-suffix:semicolon
-id|sl-&gt;escape
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 )brace

@@ -213,7 +213,7 @@ suffix:semicolon
 r_else
 id|size
 op_assign
-l_int|0x7fffffff
+id|INT_MAX
 suffix:semicolon
 r_while
 c_loop
@@ -577,7 +577,7 @@ suffix:semicolon
 r_else
 id|size
 op_assign
-l_int|0x7fffffff
+id|INT_MAX
 suffix:semicolon
 r_if
 c_cond

@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/bitops.h&gt;
 DECL|function|minix_put_inode
 r_void
 id|minix_put_inode
@@ -583,29 +584,31 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+id|set_bit
+c_func
+(paren
+l_int|0
+comma
 id|s-&gt;u.minix_sb.s_imap
 (braket
 l_int|0
 )braket
 op_member_access_from_pointer
 id|b_data
-(braket
-l_int|0
-)braket
-op_or_assign
-l_int|1
+)paren
 suffix:semicolon
+id|set_bit
+c_func
+(paren
+l_int|0
+comma
 id|s-&gt;u.minix_sb.s_zmap
 (braket
 l_int|0
 )braket
 op_member_access_from_pointer
 id|b_data
-(braket
-l_int|0
-)braket
-op_or_assign
-l_int|1
+)paren
 suffix:semicolon
 multiline_comment|/* set up enough so that it can read an inode */
 id|s-&gt;s_dev

@@ -1,4 +1,6 @@
 macro_line|#ifndef _ASM_BITOPS_H
+DECL|macro|_ASM_BITOPS_H
+mdefine_line|#define _ASM_BITOPS_H
 multiline_comment|/*&n; * Copyright 1992, Linus Torvalds.&n; */
 macro_line|#ifdef i386
 multiline_comment|/*&n; * These have to be done with inline assembly: that way the bit-setting&n; * is guaranteed to be atomic. All bitoperations return 0 if the bit&n; * was cleared before the operation and != 0 if it was not.&n; *&n; * bit 0 is the LSB of addr; bit 32 is the LSB of (addr+1).&n; */
@@ -21,7 +23,7 @@ DECL|macro|ADDR
 mdefine_line|#define ADDR (*(struct __dummy *) addr)
 DECL|function|set_bit
 r_extern
-r_inline
+id|__inline__
 r_int
 id|set_bit
 c_func
@@ -65,7 +67,7 @@ suffix:semicolon
 )brace
 DECL|function|clear_bit
 r_extern
-r_inline
+id|__inline__
 r_int
 id|clear_bit
 c_func
@@ -110,7 +112,7 @@ suffix:semicolon
 multiline_comment|/*&n; * This routine doesn&squot;t need to be atomic, but it&squot;s faster to code it&n; * this way.&n; */
 DECL|function|test_bit
 r_extern
-r_inline
+id|__inline__
 r_int
 id|test_bit
 c_func
@@ -156,7 +158,7 @@ macro_line|#else
 multiline_comment|/*&n; * For the benefit of those who are trying to port Linux to another&n; * architecture, here are some C-language equivalents.  You should&n; * recode these in the native assmebly language, if at all possible.&n; * To guarantee atomicity, these routines call cli() and sti() to&n; * disable interrupts while they operate.  (You have to provide inline&n; * routines to cli() and sti().)&n; *&n; * Also note, these routines assume that you have 32 bit integers.&n; * You will have to change this if you are trying to port Linux to the&n; * Alpha architecture or to a Cray.  :-)&n; * &n; * C language equivalents written by Theodore Ts&squot;o, 9/26/92&n; */
 DECL|function|set_bit
 r_extern
-r_inline
+id|__inline__
 r_int
 id|set_bit
 c_func
@@ -222,7 +224,7 @@ suffix:semicolon
 )brace
 DECL|function|clear_bit
 r_extern
-r_inline
+id|__inline__
 r_int
 id|clear_bit
 c_func
@@ -289,7 +291,7 @@ suffix:semicolon
 )brace
 DECL|function|test_bit
 r_extern
-r_inline
+id|__inline__
 r_int
 id|test_bit
 c_func

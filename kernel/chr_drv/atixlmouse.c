@@ -45,10 +45,12 @@ r_struct
 id|mouse_status
 (brace
 DECL|member|buttons
+r_int
 r_char
 id|buttons
 suffix:semicolon
 DECL|member|latch_buttons
+r_int
 r_char
 id|latch_buttons
 suffix:semicolon
@@ -376,9 +378,6 @@ id|put_fs_byte
 c_func
 (paren
 (paren
-r_char
-)paren
-(paren
 op_complement
 id|mouse.latch_buttons
 op_amp
@@ -393,9 +392,6 @@ suffix:semicolon
 id|put_fs_byte
 c_func
 (paren
-(paren
-r_char
-)paren
 id|mouse.dx
 comma
 id|buffer
@@ -406,9 +402,6 @@ suffix:semicolon
 id|put_fs_byte
 c_func
 (paren
-(paren
-r_char
-)paren
 op_minus
 id|mouse.dy
 comma

@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/msg.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 r_extern
 r_int
 id|ipcperms
@@ -319,7 +320,7 @@ c_func
 (paren
 id|ipcp
 comma
-l_int|0222
+id|S_IWUGO
 )paren
 )paren
 r_return
@@ -700,7 +701,7 @@ id|ipcperms
 (paren
 id|ipcp
 comma
-l_int|0444
+id|S_IRUGO
 )paren
 )paren
 r_return
@@ -1257,7 +1258,7 @@ op_assign
 (paren
 id|msgflg
 op_amp
-l_int|0x01FF
+id|S_IRWXUGO
 )paren
 suffix:semicolon
 id|ipcp-&gt;key
@@ -1919,7 +1920,7 @@ id|ipcperms
 op_amp
 id|msq-&gt;msg_perm
 comma
-l_int|0444
+id|S_IRUGO
 )paren
 )paren
 r_return
@@ -2080,7 +2081,7 @@ id|ipcperms
 (paren
 id|ipcp
 comma
-l_int|0444
+id|S_IRUGO
 )paren
 )paren
 r_return
@@ -2184,11 +2185,11 @@ op_assign
 id|ipcp-&gt;mode
 op_amp
 op_complement
-l_int|0x1FF
+id|S_IRWXUGO
 )paren
 op_or
 (paren
-l_int|0x1FF
+id|S_IRWXUGO
 op_amp
 id|tbuf.msg_perm.mode
 )paren

@@ -3,6 +3,7 @@ macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
 macro_line|#include &quot;status_w.h&quot;
+macro_line|#include &quot;control_w.h&quot;
 DECL|function|fclex
 r_void
 id|fclex
@@ -11,7 +12,7 @@ c_func
 r_void
 )paren
 (brace
-id|status_word
+id|partial_status
 op_and_assign
 op_complement
 (paren
@@ -34,6 +35,8 @@ op_or
 id|SW_Invalid
 )paren
 suffix:semicolon
+id|NO_NET_DATA_EFFECT
+suffix:semicolon
 id|FPU_entry_eip
 op_assign
 id|ip_offset
@@ -55,7 +58,7 @@ id|control_word
 op_assign
 l_int|0x037f
 suffix:semicolon
-id|status_word
+id|partial_status
 op_assign
 l_int|0
 suffix:semicolon
@@ -89,6 +92,21 @@ op_assign
 id|TW_Empty
 suffix:semicolon
 )brace
+multiline_comment|/* The behaviour is different to that detailed in&n;     Section 15.1.6 of the Intel manual */
+id|data_operand_offset
+op_assign
+l_int|0
+suffix:semicolon
+id|operand_selector
+op_assign
+l_int|0
+suffix:semicolon
+id|NO_NET_DATA_EFFECT
+suffix:semicolon
+id|FPU_entry_op_cs
+op_assign
+l_int|0
+suffix:semicolon
 id|FPU_entry_eip
 op_assign
 id|ip_offset
@@ -147,21 +165,6 @@ c_func
 r_void
 )paren
 (brace
-id|status_word
-op_and_assign
-op_complement
-id|SW_Top
-suffix:semicolon
-id|status_word
-op_or_assign
-(paren
-id|top
-op_amp
-l_int|7
-)paren
-op_lshift
-id|SW_Top_Shift
-suffix:semicolon
 op_star
 (paren
 r_int
@@ -171,6 +174,11 @@ op_amp
 id|FPU_EAX
 op_assign
 id|status_word
+c_func
+(paren
+)paren
+suffix:semicolon
+id|NO_NET_INSTR_EFFECT
 suffix:semicolon
 )brace
 DECL|variable|fstsw_table
@@ -405,6 +413,13 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|control_word
+op_amp
+id|CW_Invalid
+)paren
 id|reg_move
 c_func
 (paren
@@ -413,6 +428,7 @@ comma
 id|FPU_st0_ptr
 )paren
 suffix:semicolon
+multiline_comment|/* Masked response */
 id|stack_underflow_i
 c_func
 (paren
@@ -430,6 +446,13 @@ op_eq
 id|TW_Empty
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|control_word
+op_amp
+id|CW_Invalid
+)paren
 id|reg_move
 c_func
 (paren
@@ -438,6 +461,7 @@ comma
 id|sti_ptr
 )paren
 suffix:semicolon
+multiline_comment|/* Masked response */
 id|stack_underflow
 c_func
 (paren
@@ -446,6 +470,14 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+id|clear_C1
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|reg_move
 c_func
 (paren

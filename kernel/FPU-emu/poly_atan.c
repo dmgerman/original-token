@@ -147,6 +147,8 @@ comma
 id|pos_poly
 comma
 id|neg_poly
+comma
+id|ratio
 suffix:semicolon
 id|FPU_REG
 id|argSq
@@ -269,6 +271,8 @@ l_int|0x104
 )paren
 suffix:semicolon
 multiline_comment|/* There must be a logic error */
+r_return
+suffix:semicolon
 macro_line|#endif PARANOID
 )brace
 multiline_comment|/* If the argument is greater than sqrt(2)-1 (=0.414213562...) */
@@ -732,21 +736,6 @@ op_amp
 id|odd_poly
 )paren
 suffix:semicolon
-multiline_comment|/* The complete odd polynomial */
-id|reg_u_mul
-c_func
-(paren
-op_amp
-id|odd_poly
-comma
-id|arg
-comma
-op_amp
-id|odd_poly
-comma
-id|FULL_PRECISION
-)paren
-suffix:semicolon
 multiline_comment|/* will be a valid positive nr with expon = 0 */
 op_star
 (paren
@@ -809,6 +798,20 @@ id|odd_poly
 comma
 op_amp
 id|even_poly
+comma
+op_amp
+id|ratio
+comma
+id|FULL_PRECISION
+)paren
+suffix:semicolon
+id|reg_u_mul
+c_func
+(paren
+op_amp
+id|ratio
+comma
+id|arg
 comma
 id|arg
 comma

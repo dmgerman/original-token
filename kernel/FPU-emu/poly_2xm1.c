@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_2xm1.c                                                              |&n; |                                                                           |&n; | Function to compute 2^x-1 by a polynomial approximation.                  |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_2xm1.c                                                              |&n; |                                                                           |&n; | Function to compute 2^x-1 by a polynomial approximation.                  |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -149,7 +149,7 @@ l_int|0x0000
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*--- poly_2xm1() -----------------------------------------------------------+&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*--- poly_2xm1() -----------------------------------------------------------+&n; | Requires a positive argument which is TW_Valid and &lt; 1.                   |&n; +---------------------------------------------------------------------------*/
 DECL|function|poly_2xm1
 r_int
 id|poly_2xm1
@@ -180,90 +180,45 @@ id|arg-&gt;exp
 op_minus
 id|EXP_BIAS
 suffix:semicolon
+macro_line|#ifdef PARANOID
 r_if
 c_cond
 (paren
-id|arg-&gt;tag
-op_eq
-id|TW_Zero
-)paren
-(brace
-multiline_comment|/* Return 0.0 */
-id|reg_move
-c_func
-(paren
-op_amp
-id|CONST_Z
-comma
-id|result
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|exponent
-op_ge
-l_int|0
-)paren
-multiline_comment|/* Can&squot;t hack a number &gt;= 1.0 */
-(brace
-id|arith_invalid
-c_func
-(paren
-id|result
-)paren
-suffix:semicolon
-multiline_comment|/* Number too large */
-r_return
-l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
 (paren
 id|arg-&gt;sign
 op_ne
 id|SIGN_POS
 )paren
 multiline_comment|/* Can&squot;t hack a number &lt; 0.0 */
+op_logical_or
+(paren
+id|exponent
+op_ge
+l_int|0
+)paren
+multiline_comment|/* or a |number| &gt;= 1.0 */
+op_logical_or
+(paren
+id|arg-&gt;tag
+op_ne
+id|TW_Valid
+)paren
+)paren
 (brace
-id|arith_invalid
+multiline_comment|/* Number negative, too large, or not Valid. */
+id|EXCEPTION
 c_func
 (paren
-id|result
+id|EX_INTERNAL
+op_or
+l_int|0x127
 )paren
 suffix:semicolon
-multiline_comment|/* Number negative */
 r_return
 l_int|1
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|exponent
-OL
-op_minus
-l_int|64
-)paren
-(brace
-id|reg_move
-c_func
-(paren
-op_amp
-id|CONST_LN2
-comma
-id|result
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
+macro_line|#endif PARANOID
 op_star
 (paren
 r_int
@@ -299,7 +254,7 @@ op_minus
 l_int|1
 )paren
 (brace
-multiline_comment|/* shift the argument right by the required places */
+multiline_comment|/* Shift the argument right by the required places. */
 r_if
 c_cond
 (paren
@@ -334,7 +289,7 @@ id|accum.sign
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* will be a valid positive nr with expon = 0 */
+multiline_comment|/* Will be a valid positive nr with expon = 0 */
 id|accum.exp
 op_assign
 l_int|0

@@ -182,11 +182,18 @@ op_star
 id|FPU_ORIG_EIP
 )paren
 suffix:semicolon
+id|partial_status
+op_assign
+id|status_word
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef DEBUGGING
 r_if
 c_cond
 (paren
-id|status_word
+id|partial_status
 op_amp
 id|SW_Backward
 )paren
@@ -199,7 +206,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|status_word
+id|partial_status
 op_amp
 id|SW_C3
 )paren
@@ -212,7 +219,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|status_word
+id|partial_status
 op_amp
 id|SW_C2
 )paren
@@ -225,7 +232,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|status_word
+id|partial_status
 op_amp
 id|SW_C1
 )paren
@@ -238,7 +245,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|status_word
+id|partial_status
 op_amp
 id|SW_C0
 )paren
@@ -251,7 +258,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|status_word
+id|partial_status
 op_amp
 id|SW_Summary
 )paren
@@ -264,7 +271,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|status_word
+id|partial_status
 op_amp
 id|SW_Stack_Fault
 )paren
@@ -277,7 +284,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|status_word
+id|partial_status
 op_amp
 id|SW_Precision
 )paren
@@ -290,7 +297,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|status_word
+id|partial_status
 op_amp
 id|SW_Underflow
 )paren
@@ -303,7 +310,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|status_word
+id|partial_status
 op_amp
 id|SW_Overflow
 )paren
@@ -316,7 +323,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|status_word
+id|partial_status
 op_amp
 id|SW_Zero_Div
 )paren
@@ -329,7 +336,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|status_word
+id|partial_status
 op_amp
 id|SW_Denorm_Op
 )paren
@@ -342,7 +349,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|status_word
+id|partial_status
 op_amp
 id|SW_Invalid
 )paren
@@ -353,23 +360,6 @@ l_string|&quot;SW: invalid operation&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif DEBUGGING
-id|status_word
-op_assign
-id|status_word
-op_amp
-op_complement
-id|SW_Top
-suffix:semicolon
-id|status_word
-op_or_assign
-(paren
-id|top
-op_amp
-l_int|7
-)paren
-op_lshift
-id|SW_Top_Shift
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -435,7 +425,7 @@ c_func
 (paren
 l_string|&quot; SW: b=%d st=%d es=%d sf=%d cc=%d%d%d%d ef=%d%d%d%d%d%d&bslash;n&quot;
 comma
-id|status_word
+id|partial_status
 op_amp
 l_int|0x8000
 ques
@@ -446,7 +436,7 @@ l_int|0
 comma
 multiline_comment|/* busy */
 (paren
-id|status_word
+id|partial_status
 op_amp
 l_int|0x3800
 )paren
@@ -454,7 +444,7 @@ op_rshift
 l_int|11
 comma
 multiline_comment|/* stack top pointer */
-id|status_word
+id|partial_status
 op_amp
 l_int|0x80
 ques
@@ -464,7 +454,7 @@ suffix:colon
 l_int|0
 comma
 multiline_comment|/* Error summary status */
-id|status_word
+id|partial_status
 op_amp
 l_int|0x40
 ques
@@ -474,7 +464,7 @@ suffix:colon
 l_int|0
 comma
 multiline_comment|/* Stack flag */
-id|status_word
+id|partial_status
 op_amp
 id|SW_C3
 ques
@@ -483,7 +473,7 @@ l_int|1
 suffix:colon
 l_int|0
 comma
-id|status_word
+id|partial_status
 op_amp
 id|SW_C2
 ques
@@ -493,7 +483,7 @@ suffix:colon
 l_int|0
 comma
 multiline_comment|/* cc */
-id|status_word
+id|partial_status
 op_amp
 id|SW_C1
 ques
@@ -502,7 +492,7 @@ l_int|1
 suffix:colon
 l_int|0
 comma
-id|status_word
+id|partial_status
 op_amp
 id|SW_C0
 ques
@@ -512,7 +502,7 @@ suffix:colon
 l_int|0
 comma
 multiline_comment|/* cc */
-id|status_word
+id|partial_status
 op_amp
 id|SW_Precision
 ques
@@ -521,7 +511,7 @@ l_int|1
 suffix:colon
 l_int|0
 comma
-id|status_word
+id|partial_status
 op_amp
 id|SW_Underflow
 ques
@@ -530,7 +520,7 @@ l_int|1
 suffix:colon
 l_int|0
 comma
-id|status_word
+id|partial_status
 op_amp
 id|SW_Overflow
 ques
@@ -539,7 +529,7 @@ l_int|1
 suffix:colon
 l_int|0
 comma
-id|status_word
+id|partial_status
 op_amp
 id|SW_Zero_Div
 ques
@@ -548,7 +538,7 @@ l_int|1
 suffix:colon
 l_int|0
 comma
-id|status_word
+id|partial_status
 op_amp
 id|SW_Denorm_Op
 ques
@@ -557,7 +547,7 @@ l_int|1
 suffix:colon
 l_int|0
 comma
-id|status_word
+id|partial_status
 op_amp
 id|SW_Invalid
 ques
@@ -719,6 +709,7 @@ suffix:semicolon
 r_case
 id|TW_Zero
 suffix:colon
+macro_line|#if 0
 id|printk
 c_func
 (paren
@@ -736,15 +727,14 @@ l_char|&squot;+&squot;
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_case
 id|TW_Valid
 suffix:colon
 r_case
 id|TW_NaN
 suffix:colon
-r_case
-id|TW_Denormal
-suffix:colon
+multiline_comment|/*&t;case TW_Denormal: */
 r_case
 id|TW_Infinity
 suffix:colon
@@ -991,10 +981,8 @@ l_int|NULL
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/*&n; EX_INTERNAL is always given with a code which indicates where the&n; error was detected.&n;&n; Internal error types:&n;       0x14   in e14.c&n;       0x1nn  in a *.c file:&n;              0x101  in reg_add_sub.c&n;              0x102  in reg_mul.c&n;              0x103  in poly_sin.c&n;              0x104  in poly_tan.c&n;              0x105  in reg_mul.c&n;&t;      0x106  in reg_mov.c&n;              0x107  in fpu_trig.c&n;&t;      0x108  in reg_compare.c&n;&t;      0x109  in reg_compare.c&n;&t;      0x110  in reg_add_sub.c&n;&t;      0x111  in interface.c&n;&t;      0x112  in fpu_trig.c&n;&t;      0x113  in reg_add_sub.c&n;&t;      0x114  in reg_ld_str.c&n;&t;      0x115  in fpu_trig.c&n;&t;      0x116  in fpu_trig.c&n;&t;      0x117  in fpu_trig.c&n;&t;      0x118  in fpu_trig.c&n;&t;      0x119  in fpu_trig.c&n;&t;      0x120  in poly_atan.c&n;&t;      0x121  in reg_compare.c&n;&t;      0x122  in reg_compare.c&n;&t;      0x123  in reg_compare.c&n;       0x2nn  in an *.s file:&n;              0x201  in reg_u_add.S&n;              0x202  in reg_u_div.S&n;              0x203  in reg_u_div.S&n;              0x204  in reg_u_div.S&n;              0x205  in reg_u_mul.S&n;              0x206  in reg_u_sub.S&n;              0x207  in wm_sqrt.S&n;&t;      0x208  in reg_div.S&n;              0x209  in reg_u_sub.S&n;              0x210  in reg_u_sub.S&n;              0x211  in reg_u_sub.S&n;              0x212  in reg_u_sub.S&n;&t;      0x213  in wm_sqrt.S&n;&t;      0x214  in wm_sqrt.S&n;&t;      0x215  in wm_sqrt.S&n;&t;      0x216  in reg_round.S&n;&t;      0x217  in reg_round.S&n;&t;      0x218  in reg_round.S&n; */
+multiline_comment|/*&n; EX_INTERNAL is always given with a code which indicates where the&n; error was detected.&n;&n; Internal error types:&n;       0      in load_store.c&n;       0x14   in fpu_etc.c&n;       0x1nn  in a *.c file:&n;              0x101  in reg_add_sub.c&n;              0x102  in reg_mul.c&n;              0x103  in poly_sin.c&n;              0x104  in poly_atan.c&n;              0x105  in reg_mul.c&n;&t;      0x106  in reg_ld_str.c&n;              0x107  in fpu_trig.c&n;&t;      0x108  in reg_compare.c&n;&t;      0x109  in reg_compare.c&n;&t;      0x110  in reg_add_sub.c&n;&t;      0x111  in fpe_entry.c&n;&t;      0x112  in fpu_trig.c&n;&t;      0x113  in errors.c&n;&t;      0x114  in reg_ld_str.c&n;&t;      0x115  in fpu_trig.c&n;&t;      0x116  in fpu_trig.c&n;&t;      0x117  in fpu_trig.c&n;&t;      0x118  in fpu_trig.c&n;&t;      0x119  in fpu_trig.c&n;&t;      0x120  in poly_atan.c&n;&t;      0x121  in reg_compare.c&n;&t;      0x122  in reg_compare.c&n;&t;      0x123  in reg_compare.c&n;&t;      0x125  in fpu_trig.c&n;&t;      0x126  in fpu_entry.c&n;&t;      0x127  in poly_2xm1.c&n;       0x2nn  in an *.s file:&n;              0x201  in reg_u_add.S, reg_round.S&n;              0x202  in reg_u_div.S&n;              0x203  in reg_u_div.S&n;              0x204  in reg_u_div.S&n;              0x205  in reg_u_mul.S&n;              0x206  in reg_u_sub.S&n;              0x207  in wm_sqrt.S&n;&t;      0x208  in reg_div.S&n;              0x209  in reg_u_sub.S&n;              0x210  in reg_u_sub.S&n;              0x211  in reg_u_sub.S&n;              0x212  in reg_u_sub.S&n;&t;      0x213  in wm_sqrt.S&n;&t;      0x214  in wm_sqrt.S&n;&t;      0x215  in wm_sqrt.S&n;&t;      0x216  in reg_round.S&n;&t;      0x217  in reg_round.S&n;&t;      0x218  in reg_round.S&n; */
 DECL|function|exception
-r_extern
-l_string|&quot;C&quot;
 r_void
 id|exception
 c_func
@@ -1032,14 +1020,14 @@ op_assign
 id|EX_INTERNAL
 suffix:semicolon
 multiline_comment|/* Set lots of exception bits! */
-id|status_word
+id|partial_status
 op_or_assign
 (paren
 id|SW_Exc_Mask
 op_or
 id|SW_Summary
 op_or
-id|FPU_BUSY
+id|SW_Backward
 )paren
 suffix:semicolon
 )brace
@@ -1053,23 +1041,28 @@ id|SW_Exc_Mask
 )paren
 suffix:semicolon
 multiline_comment|/* Set the corresponding exception bit */
-id|status_word
+id|partial_status
 op_or_assign
 id|n
 suffix:semicolon
+multiline_comment|/* Set summary bits iff exception isn&squot;t masked */
 r_if
 c_cond
 (paren
-id|status_word
+id|partial_status
 op_amp
 op_complement
 id|control_word
 op_amp
 id|CW_Exceptions
 )paren
-id|status_word
+id|partial_status
 op_or_assign
+(paren
 id|SW_Summary
+op_or
+id|SW_Backward
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1094,7 +1087,7 @@ id|SW_C1
 )paren
 )paren
 multiline_comment|/* This bit distinguishes over- from underflow for a stack fault,&n;&t;       and roundup from round-down for precision loss. */
-id|status_word
+id|partial_status
 op_and_assign
 op_complement
 id|SW_C1
@@ -1255,11 +1248,12 @@ id|SIGFPE
 suffix:semicolon
 macro_line|#endif __DEBUG__
 )brace
-multiline_comment|/* Real operation attempted on two operands, one a NaN */
+multiline_comment|/* Real operation attempted on two operands, one a NaN. */
+multiline_comment|/* Returns nz if the exception is unmasked */
 DECL|function|real_2op_NaN
 r_extern
 l_string|&quot;C&quot;
-r_void
+r_int
 id|real_2op_NaN
 c_func
 (paren
@@ -1283,6 +1277,7 @@ suffix:semicolon
 r_int
 id|signalling
 suffix:semicolon
+multiline_comment|/* The default result for the case of two &quot;equal&quot; NaNs (signs may&n;     differ) is chosen to reproduce 80486 behaviour */
 id|x
 op_assign
 id|a
@@ -1438,6 +1433,7 @@ id|dest
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -1486,13 +1482,20 @@ id|EX_Invalid
 )paren
 suffix:semicolon
 r_return
+op_logical_neg
+(paren
+id|control_word
+op_amp
+id|CW_Invalid
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Invalid arith operation on Valid registers */
+multiline_comment|/* Returns nz if the exception is unmasked */
 DECL|function|arith_invalid
 r_extern
 l_string|&quot;C&quot;
-r_void
+r_int
 id|arith_invalid
 c_func
 (paren
@@ -1501,6 +1504,12 @@ op_star
 id|dest
 )paren
 (brace
+id|EXCEPTION
+c_func
+(paren
+id|EX_Invalid
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1520,20 +1529,20 @@ id|dest
 )paren
 suffix:semicolon
 )brace
-id|EXCEPTION
-c_func
-(paren
-id|EX_Invalid
-)paren
-suffix:semicolon
 r_return
+op_logical_neg
+(paren
+id|control_word
+op_amp
+id|CW_Invalid
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Divide a finite number by zero */
 DECL|function|divide_by_zero
 r_extern
 l_string|&quot;C&quot;
-r_void
+r_int
 id|divide_by_zero
 c_func
 (paren
@@ -1579,7 +1588,62 @@ id|EX_ZeroDiv
 )paren
 suffix:semicolon
 r_return
+op_logical_neg
+(paren
+id|control_word
+op_amp
+id|CW_ZeroDiv
+)paren
 suffix:semicolon
+)brace
+multiline_comment|/* This may be called often, so keep it lean */
+DECL|function|set_precision_flag
+r_int
+id|set_precision_flag
+c_func
+(paren
+r_int
+id|flags
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|control_word
+op_amp
+id|CW_Precision
+)paren
+(brace
+id|partial_status
+op_and_assign
+op_complement
+(paren
+id|SW_C1
+op_amp
+id|flags
+)paren
+suffix:semicolon
+id|partial_status
+op_or_assign
+id|flags
+suffix:semicolon
+multiline_comment|/* The masked response */
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+id|exception
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* This may be called often, so keep it lean */
 DECL|function|set_precision_flag_up
@@ -1599,7 +1663,7 @@ id|control_word
 op_amp
 id|CW_Precision
 )paren
-id|status_word
+id|partial_status
 op_or_assign
 (paren
 id|SW_Precision
@@ -1638,12 +1702,12 @@ id|CW_Precision
 )paren
 (brace
 multiline_comment|/* The masked response */
-id|status_word
+id|partial_status
 op_and_assign
 op_complement
 id|SW_C1
 suffix:semicolon
-id|status_word
+id|partial_status
 op_or_assign
 id|SW_Precision
 suffix:semicolon
@@ -1675,7 +1739,7 @@ id|CW_Denormal
 )paren
 (brace
 multiline_comment|/* The masked response */
-id|status_word
+id|partial_status
 op_or_assign
 id|SW_Denorm_Op
 suffix:semicolon
@@ -1699,7 +1763,7 @@ suffix:semicolon
 DECL|function|arith_overflow
 r_extern
 l_string|&quot;C&quot;
-r_void
+r_int
 id|arith_overflow
 c_func
 (paren
@@ -1720,7 +1784,7 @@ r_char
 id|sign
 suffix:semicolon
 multiline_comment|/* The masked response */
-multiline_comment|/* **** The response here depends upon the rounding mode */
+multiline_comment|/* ###### The response here depends upon the rounding mode */
 id|sign
 op_assign
 id|dest-&gt;sign
@@ -1755,24 +1819,52 @@ l_int|13
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* By definition, precision is lost.&n;     It appears that the roundup bit (C1) is also set by convention. */
 id|EXCEPTION
 c_func
 (paren
 id|EX_Overflow
-op_or
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|control_word
+op_amp
+id|CW_Overflow
+)paren
+(brace
+multiline_comment|/* The overflow exception is masked. */
+multiline_comment|/* By definition, precision is lost.&n;&t; The roundup bit (C1) is also set because we have&n;&t; &quot;rounded&quot; upwards to Infinity. */
+id|EXCEPTION
+c_func
+(paren
 id|EX_Precision
 op_or
 id|SW_C1
 )paren
 suffix:semicolon
 r_return
+op_logical_neg
+(paren
+id|control_word
+op_amp
+id|CW_Precision
+)paren
+suffix:semicolon
+)brace
+r_return
+op_logical_neg
+(paren
+id|control_word
+op_amp
+id|CW_Overflow
+)paren
 suffix:semicolon
 )brace
 DECL|function|arith_underflow
 r_extern
 l_string|&quot;C&quot;
-r_void
+r_int
 id|arith_underflow
 c_func
 (paren
@@ -1799,6 +1891,7 @@ id|EXP_UNDER
 op_minus
 l_int|63
 )paren
+(brace
 id|reg_move
 c_func
 (paren
@@ -1808,10 +1901,17 @@ comma
 id|dest
 )paren
 suffix:semicolon
+id|partial_status
+op_and_assign
+op_complement
+id|SW_C1
+suffix:semicolon
+multiline_comment|/* Round down. */
+)brace
 )brace
 r_else
 (brace
-multiline_comment|/* Add the magic number to the exponent */
+multiline_comment|/* Add the magic number to the exponent. */
 id|dest-&gt;exp
 op_add_assign
 (paren
@@ -1831,7 +1931,37 @@ c_func
 id|EX_Underflow
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|control_word
+op_amp
+id|CW_Underflow
+)paren
+(brace
+multiline_comment|/* The underflow exception is masked. */
+id|EXCEPTION
+c_func
+(paren
+id|EX_Precision
+)paren
+suffix:semicolon
 r_return
+op_logical_neg
+(paren
+id|control_word
+op_amp
+id|CW_Precision
+)paren
+suffix:semicolon
+)brace
+r_return
+op_logical_neg
+(paren
+id|control_word
+op_amp
+id|CW_Underflow
+)paren
 suffix:semicolon
 )brace
 DECL|function|stack_overflow

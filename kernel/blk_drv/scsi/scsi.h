@@ -102,91 +102,17 @@ DECL|macro|MODE_SELECT_10
 mdefine_line|#define MODE_SELECT_10&t;&t;0x55
 DECL|macro|MODE_SENSE_10
 mdefine_line|#define MODE_SENSE_10&t;&t;0x5a
-DECL|function|COMMAND_SIZE
-r_static
-id|__inline__
+r_extern
+r_const
 r_int
-id|COMMAND_SIZE
-(paren
-r_int
-id|opcode
-)paren
-(brace
-r_int
-id|group
-op_assign
-(paren
-id|opcode
-op_rshift
-l_int|5
-)paren
-op_amp
-l_int|7
+r_char
+id|scsi_command_size
+(braket
+l_int|8
+)braket
 suffix:semicolon
-r_switch
-c_cond
-(paren
-id|group
-)paren
-(brace
-r_case
-l_int|0
-suffix:colon
-r_return
-l_int|6
-suffix:semicolon
-r_case
-l_int|1
-suffix:colon
-r_case
-l_int|2
-suffix:colon
-r_return
-l_int|10
-suffix:semicolon
-r_case
-l_int|3
-suffix:colon
-r_case
-l_int|4
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;COMMAND_SIZE : reserved command group %d&bslash;n&quot;
-comma
-id|group
-)paren
-suffix:semicolon
-id|panic
-(paren
-l_string|&quot;&quot;
-)paren
-suffix:semicolon
-r_case
-l_int|5
-suffix:colon
-r_return
-l_int|12
-suffix:semicolon
-r_default
-suffix:colon
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;COMMAND_SIZE : vendor specific command group %d - assuming&quot;
-l_string|&quot; 10 bytes&bslash;n&quot;
-comma
-id|group
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-l_int|10
-suffix:semicolon
-)brace
-)brace
+DECL|macro|COMMAND_SIZE
+mdefine_line|#define COMMAND_SIZE(opcode) scsi_command_size[((opcode) &gt;&gt; 5) &amp; 7]
 multiline_comment|/*&n;&t;MESSAGE CODES&n;*/
 DECL|macro|COMMAND_COMPLETE
 mdefine_line|#define COMMAND_COMPLETE&t;0x00
@@ -292,6 +218,8 @@ DECL|macro|SUGGEST_REMAP
 mdefine_line|#define SUGGEST_REMAP&t;&t;0x30
 DECL|macro|SUGGEST_DIE
 mdefine_line|#define SUGGEST_DIE&t;&t;0x40
+DECL|macro|SUGGEST_SENSE
+mdefine_line|#define SUGGEST_SENSE&t;&t;0x80
 DECL|macro|DRIVER_SENSE
 mdefine_line|#define DRIVER_SENSE&t;&t;0x08
 DECL|macro|DRIVER_MASK
@@ -427,6 +355,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Able to prevent media removal */
+DECL|member|borken
+r_int
+id|borken
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Tell the Seagate driver to be &n;&t;&t;&t;&t;   painfully slow on this device */
 DECL|typedef|Scsi_Device
 )brace
 id|Scsi_Device

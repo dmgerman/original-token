@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#if defined(CONFIG_BLK_DEV_SR)
 r_extern
 r_int
 id|check_cdrom_media_change
@@ -20,6 +21,31 @@ comma
 r_int
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_CDU31A)
+r_extern
+r_int
+id|check_cdu31a_media_change
+c_func
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_MCD)
+r_extern
+r_int
+id|check_mcd_media_change
+c_func
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef LEAK_CHECK
 DECL|variable|check_malloc
 r_static
@@ -1309,6 +1335,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+macro_line|#if defined(CONFIG_BLK_DEV_SR)
 r_if
 c_cond
 (paren
@@ -1321,7 +1348,7 @@ op_eq
 l_int|11
 )paren
 (brace
-multiline_comment|/* Chech this one more time. */
+multiline_comment|/* Check this one more time. */
 r_if
 c_cond
 (paren
@@ -1340,6 +1367,73 @@ suffix:semicolon
 )brace
 )brace
 suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_CDU31A)
+r_if
+c_cond
+(paren
+id|MAJOR
+c_func
+(paren
+id|s-&gt;s_dev
+)paren
+op_eq
+l_int|15
+)paren
+(brace
+multiline_comment|/* Check this one more time. */
+r_if
+c_cond
+(paren
+id|check_cdu31a_media_change
+c_func
+(paren
+id|s-&gt;s_dev
+comma
+l_int|0
+)paren
+)paren
+(brace
+r_goto
+id|out
+suffix:semicolon
+)brace
+)brace
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_MCD)
+r_if
+c_cond
+(paren
+id|MAJOR
+c_func
+(paren
+id|s-&gt;s_dev
+)paren
+op_eq
+l_int|23
+)paren
+(brace
+multiline_comment|/* Check this one more time. */
+r_if
+c_cond
+(paren
+id|check_mcd_media_change
+c_func
+(paren
+id|s-&gt;s_dev
+comma
+l_int|0
+)paren
+)paren
+(brace
+r_goto
+id|out
+suffix:semicolon
+)brace
+)brace
+suffix:semicolon
+macro_line|#endif
 r_return
 id|s
 suffix:semicolon
@@ -1764,7 +1858,7 @@ suffix:semicolon
 suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
-l_int|0444
+id|S_IRUGO
 suffix:semicolon
 multiline_comment|/* Everybody gets to read the file. */
 id|inode-&gt;i_nlink
@@ -1785,7 +1879,9 @@ l_int|2
 (brace
 id|inode-&gt;i_mode
 op_assign
-l_int|0555
+id|S_IRUGO
+op_or
+id|S_IXUGO
 op_or
 id|S_IFDIR
 suffix:semicolon
@@ -1799,7 +1895,7 @@ r_else
 (brace
 id|inode-&gt;i_mode
 op_assign
-l_int|0444
+id|S_IRUGO
 suffix:semicolon
 multiline_comment|/* Everybody gets to read the file. */
 id|inode-&gt;i_nlink
@@ -1869,7 +1965,7 @@ l_char|&squot;;&squot;
 (brace
 id|inode-&gt;i_mode
 op_or_assign
-l_int|0111
+id|S_IXUGO
 suffix:semicolon
 )brace
 multiline_comment|/* execute permission */

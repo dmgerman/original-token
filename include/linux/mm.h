@@ -1,10 +1,7 @@
 macro_line|#ifndef _LINUX_MM_H
 DECL|macro|_LINUX_MM_H
 mdefine_line|#define _LINUX_MM_H
-DECL|macro|PAGE_SIZE
-mdefine_line|#define PAGE_SIZE 4096
-DECL|macro|PAGE_SHIFT
-mdefine_line|#define PAGE_SHIFT 12
+macro_line|#include &lt;linux/page.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 multiline_comment|/*&n; * Linux kernel virtual memory manager primitives.&n; * The idea being to have a &quot;virtual&quot; mm in the same way&n; * we have a virtual fs - giving a cleaner interface to the&n; * mm details, and allowing different kinds of memory mappings&n; * (from shared memory to executable loading to arbitrary&n; * mmap() functions).&n; */

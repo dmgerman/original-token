@@ -5,6 +5,8 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+DECL|macro|LOG_BUF_LEN
+mdefine_line|#define LOG_BUF_LEN&t;4096
 DECL|variable|buf
 r_static
 r_char
@@ -61,7 +63,7 @@ r_static
 r_char
 id|log_buf
 (braket
-l_int|4096
+id|LOG_BUF_LEN
 )braket
 suffix:semicolon
 DECL|variable|log_start
@@ -259,6 +261,11 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -269,6 +276,11 @@ OL
 id|len
 )paren
 (brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|c
 op_assign
 op_star
@@ -290,7 +302,14 @@ op_decrement
 suffix:semicolon
 id|log_start
 op_and_assign
-l_int|4095
+id|LOG_BUF_LEN
+op_minus
+l_int|1
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
 suffix:semicolon
 id|put_fs_byte
 c_func
@@ -307,6 +326,11 @@ id|i
 op_increment
 suffix:semicolon
 )brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|i
 suffix:semicolon
@@ -364,11 +388,11 @@ c_cond
 (paren
 id|count
 OG
-l_int|4096
+id|LOG_BUF_LEN
 )paren
 id|count
 op_assign
-l_int|4096
+id|LOG_BUF_LEN
 suffix:semicolon
 r_if
 c_cond
@@ -418,7 +442,9 @@ op_plus
 id|j
 op_increment
 op_amp
-l_int|4095
+id|LOG_BUF_LEN
+op_minus
+l_int|1
 )paren
 )paren
 suffix:semicolon
@@ -557,7 +583,9 @@ op_plus
 id|log_size
 )paren
 op_amp
-l_int|4095
+id|LOG_BUF_LEN
+op_minus
+l_int|1
 )braket
 op_assign
 id|buf
@@ -570,7 +598,7 @@ c_cond
 (paren
 id|log_size
 OL
-l_int|4096
+id|LOG_BUF_LEN
 )paren
 id|log_size
 op_increment
@@ -682,7 +710,9 @@ op_increment
 suffix:semicolon
 id|p
 op_and_assign
-l_int|4095
+id|LOG_BUF_LEN
+op_minus
+l_int|1
 suffix:semicolon
 r_if
 c_cond
