@@ -18,6 +18,12 @@ id|nr_files
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|max_files
+r_int
+id|max_files
+op_assign
+id|NR_FILE
+suffix:semicolon
 multiline_comment|/*&n; * Insert a new file structure at the head of the list of available ones.&n; */
 DECL|function|insert_file_free
 r_static
@@ -353,7 +359,7 @@ c_loop
 (paren
 id|nr_files
 OL
-id|NR_FILE
+id|max_files
 op_logical_and
 id|grow_files
 c_func

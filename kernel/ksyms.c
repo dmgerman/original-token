@@ -30,6 +30,7 @@ macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/mount.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
+macro_line|#include &lt;linux/sysctl.h&gt;
 r_extern
 r_int
 r_char
@@ -157,6 +158,9 @@ macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#endif
 macro_line|#if defined(CONFIG_PROC_FS)
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_KERNELD
+macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#ifdef __SMP__
@@ -464,6 +468,14 @@ c_func
 id|register_symtab
 )paren
 comma
+macro_line|#ifdef CONFIG_KERNELD
+id|X
+c_func
+(paren
+id|kerneld_send
+)paren
+comma
+macro_line|#endif
 id|X
 c_func
 (paren
@@ -1053,6 +1065,19 @@ id|X
 c_func
 (paren
 id|unregister_exec_domain
+)paren
+comma
+multiline_comment|/* sysctl table registration */
+id|X
+c_func
+(paren
+id|register_sysctl_table
+)paren
+comma
+id|X
+c_func
+(paren
+id|unregister_sysctl_table
 )paren
 comma
 multiline_comment|/* interrupt handling */

@@ -174,6 +174,9 @@ id|is_frag
 op_assign
 l_int|0
 suffix:semicolon
+id|__u32
+id|daddr
+suffix:semicolon
 macro_line|#ifdef CONFIG_FIREWALL
 r_int
 id|err
@@ -476,6 +479,10 @@ l_int|2
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Do any IP forwarding required.  chk_addr() is expensive -- avoid it someday.&n;&t; *&n;&t; *&t;This is inefficient. While finding out if it is for us we could also compute&n;&t; *&t;the routing table entry. This is where the great unified cache theory comes&n;&t; *&t;in as and when someone implements it&n;&t; *&n;&t; *&t;For most hosts over 99% of packets match the first conditional&n;&t; *&t;and don&squot;t go via ip_chk_addr. Note: brd is set to IS_MYADDR at&n;&t; *&t;function entry.&n;&t; */
+id|daddr
+op_assign
+id|iph-&gt;daddr
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -675,6 +682,23 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+id|memcpy
+c_func
+(paren
+op_amp
+id|daddr
+comma
+op_amp
+id|optptr
+(braket
+id|srrptr
+op_minus
+l_int|1
+)braket
+comma
+l_int|4
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -1082,7 +1106,7 @@ id|dev
 comma
 id|iph-&gt;saddr
 comma
-id|iph-&gt;daddr
+id|daddr
 )paren
 suffix:semicolon
 )brace
@@ -1225,7 +1249,7 @@ id|dev
 comma
 id|opt
 comma
-id|iph-&gt;daddr
+id|daddr
 comma
 (paren
 id|ntohs
@@ -1336,7 +1360,7 @@ id|dev
 comma
 id|iph-&gt;saddr
 comma
-id|iph-&gt;daddr
+id|daddr
 )paren
 suffix:semicolon
 )brace

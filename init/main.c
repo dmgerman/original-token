@@ -67,6 +67,15 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|kswapd
+c_func
+(paren
+r_void
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|init_IRQ
 c_func
@@ -118,6 +127,14 @@ c_func
 r_int
 comma
 r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sysctl_init
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -604,7 +621,7 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_BLK_DEV_RAM
-macro_line|#ifdef CONFIG_SYSVIPC
+macro_line|#if defined(CONFIG_SYSVIPC) || defined(CONFIG_KERNELD)
 r_extern
 r_void
 id|ipc_init
@@ -2814,7 +2831,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SYSVIPC
+macro_line|#if defined(CONFIG_SYSVIPC) || defined(CONFIG_KERNELD)
 id|ipc_init
 c_func
 (paren
@@ -2856,6 +2873,11 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|sysctl_init
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* &n;&t; *&t;We count on the initial thread going ok &n;&t; *&t;Like idlers init is an unlocked kernel thread, which will&n;&t; *&t;make syscalls (and thus be locked).&n;&t; */
 id|kernel_thread
 c_func
@@ -3079,6 +3101,17 @@ id|kernel_thread
 c_func
 (paren
 id|bdflush
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Start the background pageout daemon. */
+id|kernel_thread
+c_func
+(paren
+id|kswapd
 comma
 l_int|NULL
 comma

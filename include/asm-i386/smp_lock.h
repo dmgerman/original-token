@@ -1,6 +1,6 @@
-macro_line|#ifndef __LINUX_SMPLOCK_H
-DECL|macro|__LINUX_SMPLOCK_H
-mdefine_line|#define __LINUX_SMPLOCK_H
+macro_line|#ifndef __I386_SMPLOCK_H
+DECL|macro|__I386_SMPLOCK_H
+mdefine_line|#define __I386_SMPLOCK_H
 macro_line|#ifdef __SMP__
 multiline_comment|/*&n; *&t;Locking the kernel &n; */
 DECL|function|lock_kernel

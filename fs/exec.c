@@ -21,6 +21,9 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_KERNELD
+macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#endif
 id|asmlinkage
 r_int
 id|sys_exit
@@ -2762,6 +2765,9 @@ id|sh_bang
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+r_try
+suffix:semicolon
 macro_line|#ifdef __alpha__
 r_int
 id|loader
@@ -3747,6 +3753,21 @@ suffix:semicolon
 r_for
 c_loop
 (paren
+r_try
+op_assign
+l_int|0
+suffix:semicolon
+r_try
+OL
+l_int|2
+suffix:semicolon
+r_try
+op_increment
+)paren
+(brace
+r_for
+c_loop
+(paren
 id|fmt
 op_assign
 id|formats
@@ -3826,6 +3847,54 @@ id|ENOEXEC
 )paren
 r_break
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|retval
+op_ne
+op_minus
+id|ENOEXEC
+)paren
+(brace
+r_break
+suffix:semicolon
+macro_line|#ifdef CONFIG_KERNELD
+)brace
+r_else
+(brace
+r_char
+id|modname
+(braket
+l_int|20
+)braket
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|modname
+comma
+l_string|&quot;binfmt-%hd&quot;
+comma
+op_star
+(paren
+r_int
+op_star
+)paren
+(paren
+op_amp
+id|bprm.buf
+)paren
+)paren
+suffix:semicolon
+id|request_module
+c_func
+(paren
+id|modname
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 )brace
 id|exec_error2
 suffix:colon

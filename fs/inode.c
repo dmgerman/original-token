@@ -43,9 +43,9 @@ id|inode_wait
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* Keep these next two contiguous in memory for sysctl.c */
 DECL|variable|nr_inodes
 DECL|variable|nr_free_inodes
-r_static
 r_int
 id|nr_inodes
 op_assign
@@ -54,6 +54,12 @@ comma
 id|nr_free_inodes
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|max_inodes
+r_int
+id|max_inodes
+op_assign
+id|NR_INODE
 suffix:semicolon
 DECL|function|hashfn
 r_static
@@ -2000,7 +2006,7 @@ c_cond
 (paren
 id|nr_inodes
 OL
-id|NR_INODE
+id|max_inodes
 op_logical_and
 id|nr_free_inodes
 OL
@@ -2099,7 +2105,7 @@ c_cond
 (paren
 id|nr_inodes
 OL
-id|NR_INODE
+id|max_inodes
 )paren
 (brace
 r_if

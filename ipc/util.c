@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/msg.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#ifdef CONFIG_SYSVIPC
+macro_line|#if defined(CONFIG_SYSVIPC) || defined(CONFIG_KERNELD)
 r_extern
 r_void
 id|sem_init

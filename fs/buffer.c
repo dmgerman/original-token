@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
+macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -5910,11 +5911,10 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* =========== Reduce the buffer memory ============= */
-multiline_comment|/*&n; * try_to_free() checks if all the buffers on this particular page&n; * are unused, and free&squot;s the page if so.&n; */
-DECL|function|try_to_free
-r_static
+multiline_comment|/*&n; * try_to_free_buffer() checks if all the buffers on this particular page&n; * are unused, and free&squot;s the page if so.&n; */
+DECL|function|try_to_free_buffer
 r_int
-id|try_to_free
+id|try_to_free_buffer
 c_func
 (paren
 r_struct
@@ -6241,15 +6241,9 @@ id|touched
 id|touch_page
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
-id|bh-&gt;b_data
-)paren
-suffix:semicolon
-r_else
-id|age_page
+id|mem_map
+op_plus
+id|MAP_NR
 c_func
 (paren
 (paren
@@ -6257,6 +6251,24 @@ r_int
 r_int
 )paren
 id|bh-&gt;b_data
+)paren
+)paren
+suffix:semicolon
+r_else
+id|age_page
+c_func
+(paren
+id|mem_map
+op_plus
+id|MAP_NR
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|bh-&gt;b_data
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -6455,77 +6467,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Try to free up some pages by shrinking the buffer-cache&n; *&n; * Priority tells the routine how hard to try to shrink the&n; * buffers: 6 means &quot;don&squot;t bother too much&quot;, while a value&n; * of 0 means &quot;we&squot;d better get some free pages now&quot;.&n; *&n; * &quot;limit&quot; is meant to limit the shrink-action only to pages&n; * that are in the 0 - limit address range, for DMA re-allocations.&n; * We ignore that right now.&n; */
-DECL|function|shrink_buffers
-r_int
-id|shrink_buffers
-c_func
-(paren
-r_int
-r_int
-id|priority
-comma
-r_int
-r_int
-id|limit
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|priority
-OL
-l_int|2
-)paren
-(brace
-id|sync_buffers
-c_func
-(paren
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|priority
-op_eq
-l_int|2
-)paren
-(brace
-id|wakeup_bdflush
-c_func
-(paren
-l_int|1
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|maybe_shrink_lav_buffers
-c_func
-(paren
-l_int|0
-)paren
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* No good candidate size - take any size we can find */
-r_return
-id|shrink_specific_buffers
-c_func
-(paren
-id|priority
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
 DECL|function|shrink_specific_buffers
 r_static
 r_int
@@ -6692,7 +6633,7 @@ r_int
 id|bh-&gt;b_data
 )paren
 op_logical_and
-id|try_to_free
+id|try_to_free_buffer
 c_func
 (paren
 id|bh
@@ -6942,7 +6883,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|try_to_free
+id|try_to_free_buffer
 c_func
 (paren
 id|bh
@@ -8904,7 +8845,7 @@ c_func
 (paren
 id|current-&gt;comm
 comma
-l_string|&quot;kernel bdflush&quot;
+l_string|&quot;kflushd&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;As a kernel thread we want to tamper with system buffers&n;&t; *&t;and other internals and thus be subject to the SMP locking&n;&t; *&t;rules. (On a uniprocessor box this does nothing).&n;&t; */

@@ -300,6 +300,8 @@ DECL|macro|__NR_getsid
 mdefine_line|#define __NR_getsid&t;&t;147
 DECL|macro|__NR_fdatasync
 mdefine_line|#define __NR_fdatasync&t;&t;148
+DECL|macro|__NR__sysctl
+mdefine_line|#define __NR__sysctl&t;&t;149
 DECL|macro|__NR_mlock
 mdefine_line|#define __NR_mlock&t;&t;150
 DECL|macro|__NR_munlock

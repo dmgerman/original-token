@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  History:&n; *  Started: Aug 9 by Lawrence Foard (entropy@world.std.com), &n; *           to allow user process control of SCSI devices.&n; *  Development Sponsored by Killy Corp. NY NY&n; *   &n; *  Borrows code from st driver.&n; *&n; *  Version from 1.3.51 modified by Rick Richardson to fix problem in&n; *  detecting whether its a send or a recieve style command (see sg_write)&n; */
+multiline_comment|/*&n; *  History:&n; *  Started: Aug 9 by Lawrence Foard (entropy@world.std.com), &n; *           to allow user process control of SCSI devices.&n; *  Development Sponsored by Killy Corp. NY NY&n; *   &n; *  Borrows code from st driver.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1267,10 +1267,6 @@ id|read_wait
 )paren
 suffix:semicolon
 )brace
-DECL|macro|SG_SEND
-mdefine_line|#define SG_SEND 0
-DECL|macro|SG_REC
-mdefine_line|#define SG_REC  1
 DECL|function|sg_write
 r_static
 r_int
@@ -1338,7 +1334,7 @@ id|dev
 )braket
 suffix:semicolon
 r_int
-id|direction
+id|input_size
 suffix:semicolon
 r_int
 r_char
@@ -1458,7 +1454,6 @@ id|sg_header
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * fix input size, and see if we are sending data.&n;     *&n;     * Mod by Rick Richardson (rick@dgii.com):&n;     * The original test to see if its a SEND/REC was:&n;     *     if( device-&gt;header.pack_len &gt; device-&gt;header.reply_len )&n;     * I haven&squot;t a clue why the author thought this would work.  Instead,&n;     * I&squot;ve changed it to see if there is any additional data in this&n;     * packet beyond the length of the SCSI command itself.&n;     */
 id|device-&gt;header.pack_len
 op_assign
 id|count
@@ -1471,39 +1466,54 @@ r_struct
 id|sg_header
 )paren
 suffix:semicolon
-id|size
+multiline_comment|/*&n;     * Now we need to grab the command itself from the user&squot;s buffer.&n;     */
+id|opcode
 op_assign
-id|COMMAND_SIZE
-c_func
-(paren
 id|get_user
 c_func
 (paren
 id|buf
 )paren
-)paren
-op_plus
-r_sizeof
+suffix:semicolon
+id|size
+op_assign
+id|COMMAND_SIZE
+c_func
 (paren
-r_struct
-id|sg_header
+id|opcode
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|device-&gt;header.pack_len
-OG
+id|opcode
+op_ge
+l_int|0xc0
+op_logical_and
+id|device-&gt;header.twelve_byte
+)paren
 id|size
+op_assign
+l_int|12
+suffix:semicolon
+multiline_comment|/*&n;     * Determine buffer size.&n;     */
+id|input_size
+op_assign
+id|device-&gt;header.pack_len
+op_minus
+id|size
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|input_size
+OG
+id|device-&gt;header.reply_len
 )paren
 (brace
 id|bsize
 op_assign
-id|device-&gt;header.pack_len
-suffix:semicolon
-id|direction
-op_assign
-id|SG_SEND
+id|input_size
 suffix:semicolon
 )brace
 r_else
@@ -1511,10 +1521,6 @@ r_else
 id|bsize
 op_assign
 id|device-&gt;header.reply_len
-suffix:semicolon
-id|direction
-op_assign
-id|SG_REC
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     * Don&squot;t include the command header itself in the size.&n;     */
@@ -1526,6 +1532,39 @@ r_struct
 id|sg_header
 )paren
 suffix:semicolon
+id|input_size
+op_sub_assign
+r_sizeof
+(paren
+r_struct
+id|sg_header
+)paren
+suffix:semicolon
+multiline_comment|/*&n;     * Verify that the user has actually passed enough bytes for this command.&n;     */
+r_if
+c_cond
+(paren
+id|input_size
+OL
+l_int|0
+)paren
+(brace
+id|device-&gt;pending
+op_assign
+l_int|0
+suffix:semicolon
+id|wake_up
+c_func
+(paren
+op_amp
+id|device-&gt;write_wait
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
 multiline_comment|/*&n;     * Allocate a buffer that is large enough to hold the data&n;     * that has been requested.  Round up to an even number of sectors,&n;     * since scsi_malloc allocates in chunks of 512 bytes.&n;     */
 id|amt
 op_assign
@@ -1660,7 +1699,6 @@ l_string|&quot;device allocated&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif    
-multiline_comment|/*&n;     * Now we need to grab the command itself from the user&squot;s buffer.&n;     */
 id|SCpnt-&gt;request.rq_dev
 op_assign
 id|devt
@@ -1676,98 +1714,10 @@ l_int|0
 op_assign
 l_int|0
 suffix:semicolon
-id|opcode
-op_assign
-id|get_user
-c_func
-(paren
-id|buf
-)paren
-suffix:semicolon
-id|size
-op_assign
-id|COMMAND_SIZE
-c_func
-(paren
-id|opcode
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|opcode
-op_ge
-l_int|0xc0
-op_logical_and
-id|device-&gt;header.twelve_byte
-)paren
-id|size
-op_assign
-l_int|12
-suffix:semicolon
 id|SCpnt-&gt;cmd_len
 op_assign
 id|size
 suffix:semicolon
-multiline_comment|/*&n;     * If we are writing data, subtract off the size&n;     * of the command itself, to get the amount of actual data&n;     * that we need to send to the device.&n;     */
-r_if
-c_cond
-(paren
-id|direction
-op_eq
-id|SG_SEND
-)paren
-(brace
-id|amt
-op_sub_assign
-id|size
-suffix:semicolon
-)brace
-multiline_comment|/*&n;     * Verify that the user has actually passed enough bytes for this command.&n;     */
-r_if
-c_cond
-(paren
-id|count
-OL
-(paren
-r_sizeof
-(paren
-r_struct
-id|sg_header
-)paren
-op_plus
-id|size
-)paren
-)paren
-(brace
-id|device-&gt;pending
-op_assign
-l_int|0
-suffix:semicolon
-id|wake_up
-c_func
-(paren
-op_amp
-id|device-&gt;write_wait
-)paren
-suffix:semicolon
-id|sg_free
-c_func
-(paren
-id|device-&gt;buff
-comma
-id|device-&gt;buff_len
-)paren
-suffix:semicolon
-id|device-&gt;buff
-op_assign
-l_int|NULL
-suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
 multiline_comment|/*&n;     * Now copy the SCSI command from the user&squot;s address space.&n;     */
 id|memcpy_fromfs
 c_func
@@ -1787,11 +1737,10 @@ multiline_comment|/*&n;     * If we are writing data, copy the data we are writi
 r_if
 c_cond
 (paren
-id|direction
-op_eq
-id|SG_SEND
+id|input_size
+OG
+l_int|0
 )paren
-(brace
 id|memcpy_fromfs
 c_func
 (paren
@@ -1799,10 +1748,9 @@ id|device-&gt;buff
 comma
 id|buf
 comma
-id|amt
+id|input_size
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/*&n;     * Set the LUN field in the command structure.&n;     */
 id|cmnd
 (braket

@@ -1,4 +1,4 @@
-multiline_comment|/* arcnet.c&n;&t;Written 1994-95 by Avery Pennarun, derived from skeleton.c by Donald&n;&t;Becker.&n;&n;&t;Contact Avery at: apenwarr@foxnet.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&t;&n;&t;**********************&n;&t;&n;&t;The original copyright was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;         &n;&t;**********************&n;&n;&t;v2.22 (95/12/08)&n;&t;  - IRQ is always printed as a decimal, instead of a hex number.&n;&t;  - Replaced most remaining printk&squot;s with BUGMSG macros.&n;&t;  - Moved variables for VERIFY_ACK from the Outgoing struct into&n;&t;    the lp struct; Outgoing is really for packet-splitting info&n;&t;    only.&n;&t;  - Simplified INTMASK handling using a memory variable to keep a&n;&t;    &quot;running total.&quot;&n;&t;  - Tracked down more (maybe the last?) &quot;missed IRQ&quot; messages caused&n;&t;    by TX-done IRQ&squot;s occurring WHILE arcnet??_send_packet was in&n;&t;    progress.  These were pretty obscure and mostly harmless.&n;&t;  - Made an actual non-ALPHA release of the thing.&n;&n;&t;v2.21 ALPHA (95/11/29)&n;&t;  - &quot;Unknown protocol ID&quot; messages now also indicate the station&n;&t;    which sent the unrecognized packet, to aid in debugging network&n;&t;    confusion.  Also, if anyone knows why Novell servers send packets&n;&t;    with protocol ID 0xEC, be sure to tell me.  For now they&squot;re&n;&t;    ignored.&n;&t;  - Rearranged ARC_P_* handling a bit, so it makes slightly more&n;&t;    sense.&n;&t;  - We were clearing irq2dev_map too soon, and causing spurious&n;&t;    &quot;irq %d for unknown device&quot; messages.  Moved all the set/clear&n;&t;    irq2dev_map operations to more intelligent places.&n;&t;  - 1.2.x kernels really didn&squot;t work with 2.20 ALPHA.  Maybe this&n;&t;    will fix it.&n;&t;  - Fixed the setting of set_multicast_list.  Since we don&squot;t have&n;&t;    multicast support, there&squot;s no point in using this at all.&n;&n;&t;v2.20 ALPHA (95/11/12)&n;&t;  - Added a bit of protocol confusion to the arc0 code to allow&n;&t;    trxnet-compatible IPX support - and the use of all that new&n;&t;    Linux-IPX stuff (including lwared).  Just tell the ipx_interface&n;&t;    command that arc0 uses 802.3 (other protocols will probably also&n;&t;    work).&n;&t;  - Fixed lp-&gt;stats to update tx_packets on all devices, not just&n;&t;    arc0.  Also, changed a lot of the error counting to make more&n;&t;    sense.&n;&t;  - rx_packets on arc0 was being updated for each completely received&n;&t;    packet.  It now updates for each segment received, which makes&n;&t;    more sense. &n;&t;  - Removed unneeded extra check of dev-&gt;start in arcnet_inthandler.&n;&t;  - Included someone else&squot;s fixes from kernel 1.3.39.  Does it still&n;&t;    work with kernel 1.2?&n;&t;  - Added a new define to disable PRINTING (not checking) of RECON&n;&t;    messages.&n;&t;  - Separated the duplicated error checking code from the various&n;&t;    arcnet??_send_packet routines into a new function.&n;&t;  - Cleaned up lock variables and ping-pong buffers a bit.  This&n;&t;    should mean more stability, fewer missing packets, and less ugly&n;&t;    debug messages.  Assuming it works.&n;&t;  - Changed the format of debug messages to always include the actual&n;&t;    device name instead of just &quot;arcnet:&quot;.  Used more macros to&n;&t;    shorten debugging code even more.&n;&t;  - Finally squashed the &quot;startup NULL pointer&quot; bug.  irq2dev_map&n;&t;    wasn&squot;t being cleared to NULL when the driver was closed.&n;&t;  - Improved RECON checking; if a certain number of RECON messages&n;&t;    are received within one minute, a warning message is printed&n;&t;    to the effect of &quot;cabling problem.&quot;  One-log-message-per-recon&n;&t;    now defaults to OFF.&n;&n;&t;v2.12 ALPHA (95/10/27)&n;&t;  - Tried to improve skb handling and init code to fix problems with&n;&t;    the latest 1.3.x kernels. (We no longer use ether_setup except&n;&t;    in arc0e since they keep coming up with new and improved&n;&t;    incompatibilities for us.)&n;&n;&t;v2.11 ALPHA (95/10/25)&n;&t;  - Removed superfluous sti() from arcnet_inthandler.&n;&t;  - &quot;Cleaned up&quot; (?) handling of dev-&gt;interrupt for multiple&n;&t;    devices.&n;&t;  - Place includes BEFORE configuration settings (solves some&n;&t;    problems with insmod and undefined symbols)&n;&t;  - Removed race condition in arcnet_open that could cause&n;&t;    packet reception to be disabled until after the first TX.&n;&t;  &n;&t;v2.10 ALPHA (95/09/10)&n;&t;  - Integrated Tomasz Motylewski&squot;s new RFC1051 compliant &quot;arc0s&quot;&n;&t;    ([S]imple [S]tandard?) device.  This should make Linux-ARCnet&n;&t;    work with the NetBSD/AmiTCP implementation of this older RFC,&n;&t;    via the arc0s device.&n;&t;  - Decided the current implementation of Multiprotocol ARCnet&n;&t;    involved way too much duplicated code, and tried to share things&n;&t;    a _bit_ more, at least.  This means, pretty much, that any&n;&t;    bugs in the arc0s module are now my fault :)&n;&t;  - Added a new ARCNET_DEBUG_MAX define that sets the highest&n;&t;    debug message level to be included in the driver.  This can&n;&t;    reduce the size of the object file, and probably increases&n;&t;    efficiency a bit.  I get a 0.1 ms speedup in my &quot;ping&quot; times if&n;&t;    I disable all debug messages.  Oh, wow.&n;&t;  - Fixed a long-standing annoyance with some of the power-up debug&n;&t;    messages.  (&quot;IRQ for unknown device&quot; was showing up too often)&n;&n;&t;v2.00 (95/09/06)&n;&t;  - THIS IS ONLY A SUMMARY.  The complete changelog is available&n;&t;    from me upon request.&n;&n;&t;  - ARCnet RECON messages are now detected and logged.  These occur&n;&t;    when a new computer is powered up on the network, or in a&n;&t;    constant stream when the network cable is broken.  Thanks to&n;&t;    Tomasz Motylewski for this.  You must have D_EXTRA enabled&n;&t;    if you want these messages sent to syslog, otherwise they will&n;&t;    only show up in the network statistics (/proc/net/dev).&n;&t;  - The TX Acknowledge flag is now checked, and a log message is sent&n;&t;    if a completed transmit is not ACK&squot;d.  (I have yet to have this&n;&t;    happen to me.)&n;&t;  - Debug levels are now completely different.  See the README.&n;&t;  - Many code cleanups, with several no-longer-necessary and some&n;&t;    completely useless options removed.&n;&t;  - Multiprotocol support.  You can now use the &quot;arc0e&quot; device to&n;&t;    send &quot;Ethernet-Encapsulation&quot; packets, which are compatible with&n;&t;    Windows for Workgroups and LAN Manager, and possibly other&n;&t;    software.  See the README for more information.&n;&t;  - Documentation updates and improvements.&n;&t;  &n;&t;v1.02 (95/06/21)&n;          - A fix to make &quot;exception&quot; packets sent from Linux receivable&n;&t;    on other systems.  (The protocol_id byte was sometimes being set&n;&t;    incorrectly, and Linux wasn&squot;t checking it on receive so it&n;&t;    didn&squot;t show up)&n;&n;&t;v1.01 (95/03/24)&n;&t;  - Fixed some IPX-related bugs. (Thanks to Tomasz Motylewski&n;            &lt;motyl@tichy.ch.uj.edu.pl&gt; for the patches to make arcnet work&n;            with dosemu!)&n;            &n;&t;v1.00 (95/02/15)&n;&t;  - Initial non-alpha release.&n;&t;&n;         &n;&t;TO DO:&n;&t;&n;         - Test in systems with NON-ARCnet network cards, just to see if&n;           autoprobe kills anything.  Currently, we do cause some NE2000&squot;s&n;           to die.  Autoprobe is also way too slow and verbose, particularly&n;           if there aren&squot;t any ARCnet cards in the system.  And why shouldn&squot;t&n;           it work as a module again?&n;         - Rewrite autoprobe.&n;         - Make sure RESET flag is cleared during an IRQ even if dev-&gt;start==0;&n;           mainly a portability fix.  This will confuse autoprobe a bit, so&n;           test that too.&n;         - What about cards with shared memory that can be &quot;turned off?&quot;&n;           (or that have none at all, like the SMC PC500longboard)&n;         - Some newer ARCnets support promiscuous mode, supposedly.  If&n;           someone sends me information, I&squot;ll try to implement it.&n;         - Dump Linux 1.2 support and its ugly #ifdefs.&n;         - Add support for the new 1.3.x IP header cache features.&n;         - Support printk&squot;s priority levels.&n;         - Make arcnetE_send_packet use arcnet_prepare_tx for loading the&n;           packet into ARCnet memory.&n;         - Move the SKB and memory dump code into separate functions.&n;         - ATA protocol support?? &n;         - Banyan VINES TCP/IP support??&n;&n;           &n;&t;Sources:&n;&t; - Crynwr arcnet.com/arcether.com packet drivers.&n;&t; - arcnet.c v0.00 dated 1/1/94 and apparently by&n;&t; &t;Donald Becker - it didn&squot;t work :)&n;&t; - skeleton.c v0.05 dated 11/16/93 by Donald Becker&n;&t; &t;(from Linux Kernel 1.1.45)&n;&t; - RFC&squot;s 1201 and 1051 - re: TCP/IP over ARCnet&n;&t; - The official ARCnet data sheets (!) thanks to Ken Cornetet&n;&t;&t;&lt;kcornete@nyx10.cs.du.edu&gt;&n;&t; - net/inet/eth.c (from kernel 1.1.50) for header-building info.&n;&t; - Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n;&t; - Textual information and more alternate source from Joachim Koenig&n;&t; &t;&lt;jojo@repas.de&gt;&n;*/
+multiline_comment|/* arcnet.c&n;&t;Written 1994-1996 by Avery Pennarun,&n;&t;derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@foxnet.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&t;&n;&t;**********************&n;&t;&n;&t;The original copyright was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;         &n;&t;**********************&n;&t;&n;&t;This is ONLY A SUMMARY.  The complete ChangeLog is available in&n;&t;the full Linux-ARCnet package.&n;&n;&t;v2.30 ALPHA (96/01/10)&n;&t;  - Abandoned support for Linux 1.2 to simplify coding and allow me&n;&t;    to take advantage of new features in 1.3.&n;&t;  - Updated cabling/jumpers documentation with MUCH information that&n;&t;    people have recently (and in some cases, not so recently) sent&n;&t;    me.  I don&squot;t mind writing documentation, but the jumpers&n;&t;    database is REALLY starting to get dull.&n;&t;  - Autoprobing works as a module now - but ONLY with my fix to&n;&t;    register_netdev and unregister_netdev.  It&squot;s also much faster,&n;&t;    and uses the &quot;new-style&quot; IRQ autoprobe routines.  Autoprobe is&n;&t;    still a horrible mess and will be cleaned up further as time&n;&t;    passes.&n;&t;    &n;&t;v2.22 (95/12/08)&n;&t;  - Major cleanups, speedups, and better code-sharing.&n;&t;  - Eliminated/changed many useless/meaningless/scary debug messages&n;&t;    (and, in most cases, the bugs that caused them).&n;&t;  - Better IPX support.&n;&t;  - lp-&gt;stats updated properly.&n;&t;  - RECON checking now by default only bugs you if there are an&n;&t;    excessive number (ie. your cable is probably broken).&n;&t;  - New RFC1051-compliant &quot;arc0s&quot; virtual device by Tomasz&n;&t;    Motylewski.&n;&t;  - Excess debug messages can be compiled out for maximum&n;&t;    efficiency.&n;&n;&t;v2.00 (95/09/06)&n;&t;  - ARCnet RECON messages are now detected and logged.  These occur&n;&t;    when a new computer is powered up on the network, or in a&n;&t;    constant stream when the network cable is broken.  Thanks to&n;&t;    Tomasz Motylewski for this.  You must have D_EXTRA enabled&n;&t;    if you want these messages sent to syslog, otherwise they will&n;&t;    only show up in the network statistics (/proc/net/dev).&n;&t;  - The TX Acknowledge flag is now checked, and a log message is sent&n;&t;    if a completed transmit is not ACK&squot;d.  (I have yet to have this&n;&t;    happen to me.)&n;&t;  - Debug levels are now completely different.  See the README.&n;&t;  - Many code cleanups, with several no-longer-necessary and some&n;&t;    completely useless options removed.&n;&t;  - Multiprotocol support.  You can now use the &quot;arc0e&quot; device to&n;&t;    send &quot;Ethernet-Encapsulation&quot; packets, which are compatible with&n;&t;    Windows for Workgroups and LAN Manager, and possibly other&n;&t;    software.  See the README for more information.&n;&t;  - Documentation updates and improvements.&n;&t;  &n;&t;v1.02 (95/06/21)&n;          - A fix to make &quot;exception&quot; packets sent from Linux receivable&n;&t;    on other systems.  (The protocol_id byte was sometimes being set&n;&t;    incorrectly, and Linux wasn&squot;t checking it on receive so it&n;&t;    didn&squot;t show up)&n;&n;&t;v1.01 (95/03/24)&n;&t;  - Fixed some IPX-related bugs. (Thanks to Tomasz Motylewski&n;            &lt;motyl@tichy.ch.uj.edu.pl&gt; for the patches to make arcnet work&n;            with dosemu!)&n;            &n;&t;v1.00 (95/02/15)&n;&t;  - Initial non-alpha release.&n;&t;&n;         &n;&t;TO DO: (it it just me, or does this list only get longer?)&n;&t;&n;         - Test in systems with NON-ARCnet network cards, just to see if&n;           autoprobe kills anything.  Currently, we do cause some NE2000&squot;s&n;           to die.  Autoprobe is also way too slow and verbose, particularly&n;           if there aren&squot;t any ARCnet cards in the system.&n;         - Rewrite autoprobe.  Try the Linux-generic-autoirq function instead&n;           of the net-specific one.&n;         - Make sure RESET flag is cleared during an IRQ even if dev-&gt;start==0;&n;           mainly a portability fix.  This will confuse autoprobe a bit, so&n;           test that too.&n;         - What about cards with shared memory that can be &quot;turned off?&quot;&n;           (or that have none at all, like the SMC PC500longboard)&n;         - Autoconfigure PDI5xxPlus cards. (I now have a PDI508Plus to play&n;           with temporarily)&n;         - Try to implement promiscuous (receive-all-packets) mode available&n;           on some newer cards with COM20020 and similar chips.  I don&squot;t have&n;           one, but SMC sent me the specs.&n;         - Add support for the new 1.3.x IP header cache features.&n;         - Support printk&squot;s priority levels.&n;         - Make arcnetE_send_packet use arcnet_prepare_tx for loading the&n;           packet into ARCnet memory.&n;         - Move the SKB and memory dump code into separate functions.&n;         - ATA protocol support?? &n;         - VINES TCP/IP encapsulation?? (info needed)&n;&n;           &n;&t;Sources:&n;&t; - Crynwr arcnet.com/arcether.com packet drivers.&n;&t; - arcnet.c v0.00 dated 1/1/94 and apparently by&n;&t; &t;Donald Becker - it didn&squot;t work :)&n;&t; - skeleton.c v0.05 dated 11/16/93 by Donald Becker&n;&t; &t;(from Linux Kernel 1.1.45)&n;&t; - RFC&squot;s 1201 and 1051 - re: TCP/IP over ARCnet&n;&t; - The official ARCnet COM9026 data sheets (!) thanks to Ken&n;&t;&t;Cornetet &lt;kcornete@nyx10.cs.du.edu&gt;&n;&t; - Information on some more obscure ARCnet controller chips, thanks&n;&t;   to the nice people at SMC.&n;&t; - net/inet/eth.c (from kernel 1.1.50) for header-building info.&n;&t; - Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n;&t; - Textual information and more alternate source from Joachim Koenig&n;&t; &t;&lt;jojo@repas.de&gt;&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -6,38 +6,11 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;arcnet.c: v2.22 95/12/08 Avery Pennarun &lt;apenwarr@foxnet.net&gt;&bslash;n&quot;
+l_string|&quot;arcnet.c: v2.30 ALPHA 96/01/10 Avery Pennarun &lt;apenwarr@foxnet.net&gt;&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-multiline_comment|/* are we Linux 1.2.x? */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x10300
-DECL|macro|LINUX12
-macro_line|# define LINUX12
-macro_line|#endif
-multiline_comment|/* for older kernels with older module.h */
-macro_line|#ifdef LINUX12 
-macro_line|# ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-macro_line|# else
-DECL|macro|MOD_INC_USE_COUNT
-macro_line|#  undef  MOD_INC_USE_COUNT
-DECL|macro|MOD_INC_USE_COUNT
-macro_line|#  define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-macro_line|#  undef  MOD_DEC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-macro_line|#  define MOD_DEC_USE_COUNT
-macro_line|# endif
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -55,19 +28,13 @@ macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-multiline_comment|/*#include &lt;linux/config.h&gt;*/
-multiline_comment|/* For CONFIG_INET */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#ifdef LINUX12
-macro_line|#include &quot;arp.h&quot;
-macro_line|#else
 macro_line|#include &lt;net/arp.h&gt;
-macro_line|#endif
 multiline_comment|/**************************************************************************/
-multiline_comment|/* The card sends the reconfiguration signal when it loses the connection to&n; * the rest of its network. It is a &squot;Hello, is anybody there?&squot; cry.  This&n; * usually happens when a new computer on the network is powered on or when&n; * the cable is broken.&n; *&n; * Define DETECT_RECONFIGS if you want to detect network reconfigurations. &n; * They may be a real nuisance on a larger ARCnet network; if you are a&n; * network administrator you probably would like to count them. &n; * Reconfigurations will be recorded in stats.tx_carrier_errors (the last&n; * field of the /proc/net/dev file).&n; *&n; * Define SHOW_RECONFIGS if you really want to see a log message whenever&n; * a RECON occurs.&n; */
+multiline_comment|/* The card sends the reconfiguration signal when it loses the connection to&n; * the rest of its network. It is a &squot;Hello, is anybody there?&squot; cry.  This&n; * usually happens when a new computer on the network is powered on or when&n; * the cable is broken.&n; *&n; * Define DETECT_RECONFIGS if you want to detect network reconfigurations. &n; * Recons may be a real nuisance on a larger ARCnet network; if you are a&n; * network administrator you probably would like to count them. &n; * Reconfigurations will be recorded in stats.tx_carrier_errors (the last&n; * field of the /proc/net/dev file).&n; *&n; * Define SHOW_RECONFIGS if you really want to see a log message whenever&n; * a RECON occurs.&n; */
 DECL|macro|DETECT_RECONFIGS
 mdefine_line|#define DETECT_RECONFIGS
 DECL|macro|SHOW_RECONFIGS
@@ -75,7 +42,7 @@ macro_line|#undef SHOW_RECONFIGS
 multiline_comment|/* RECON_THRESHOLD is the maximum number of RECON messages to receive within&n; * one minute before printing a &quot;cabling problem&quot; warning.  You must have&n; * DETECT_RECONFIGS enabled if you want to use this.  The default value&n; * should be fine.&n; *&n; * After that, a &quot;cabling restored&quot; message will be printed on the next IRQ&n; * if no RECON messages have been received for 10 seconds.&n; *&n; * Do not define RECON_THRESHOLD at all if you want to disable this feature.&n; */
 DECL|macro|RECON_THRESHOLD
 mdefine_line|#define RECON_THRESHOLD 30
-multiline_comment|/* Define this if you want to make sure transmitted packets are &quot;acknowledged&quot;&n; * by the destination host, as long as they&squot;re not to the broadcast address.&n; *&n; * That way, if one segment of a split packet doesn&squot;t get through, it can&n; * be resent immediately rather than confusing the other end.&n; *&n; * Disable this to return to 1.02-style behaviour, if you have problems.&n; */
+multiline_comment|/* Define this if you want to make sure transmitted packets are &quot;acknowledged&quot;&n; * by the destination host, as long as they&squot;re not to the broadcast address.&n; *&n; * That way, if one segment of a split packet doesn&squot;t get through, it can be&n; * resent immediately rather than confusing the other end.  We don&squot;t&n; * actually do that yet, though.&n; *&n; * Disable this to return to 1.02-style behaviour, if you have problems.&n; */
 DECL|macro|VERIFY_ACK
 mdefine_line|#define VERIFY_ACK
 multiline_comment|/* Define this to the minimum &quot;timeout&quot; value.  If a transmit takes longer&n; * than TX_TIMEOUT jiffies, Linux will abort the TX and retry.  On a large&n; * network, or one with heavy network traffic, this timeout may need to be&n; * increased.&n; */
@@ -124,43 +91,6 @@ DECL|macro|BUGLVL
 mdefine_line|#define BUGLVL(x) if ((ARCNET_DEBUG_MAX)&amp;arcnet_debug&amp;(x))
 DECL|macro|BUGMSG
 mdefine_line|#define BUGMSG(x,msg,args...) BUGLVL(x) printk(&quot;%6s: &quot; msg, dev-&gt;name , ## args);
-macro_line|#ifndef HAVE_AUTOIRQ
-multiline_comment|/* From auto_irq.c, in ioport.h for later versions. */
-r_extern
-r_void
-id|autoirq_setup
-c_func
-(paren
-r_int
-id|waittime
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|autoirq_report
-c_func
-(paren
-r_int
-id|waittime
-)paren
-suffix:semicolon
-multiline_comment|/* The map from IRQ number (as passed to the interrupt handler) to&n;   &squot;struct device&squot;. */
-r_extern
-r_struct
-id|device
-op_star
-id|irq2dev_map
-(braket
-l_int|16
-)braket
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifndef HAVE_PORTRESERVE
-DECL|macro|check_region
-mdefine_line|#define check_region(ioaddr, size) &t;&t;0
-DECL|macro|request_region
-mdefine_line|#define&t;request_region(ioaddr, size)&t;&t;do ; while (0)
-macro_line|#endif
 multiline_comment|/* Some useful multiprotocol macros */
 DECL|macro|TBUSY
 mdefine_line|#define TBUSY lp-&gt;adev-&gt;tbusy &bslash;&n;&t;&t;=lp-&gt;edev-&gt;tbusy &bslash;&n;&t;&t;=lp-&gt;sdev-&gt;tbusy
@@ -190,11 +120,7 @@ mdefine_line|#define SETMASK outb(lp-&gt;intmask,INTMASK);
 multiline_comment|/* Time needed for various things (in clock ticks, 1/100 sec) */
 multiline_comment|/* We mostly don&squot;t bother with these - watch out. */
 DECL|macro|RESETtime
-mdefine_line|#define RESETtime 40&t;&t;/* reset */
-DECL|macro|XMITtime
-mdefine_line|#define XMITtime 10&t;&t;/* send (?) */
-DECL|macro|ACKtime
-mdefine_line|#define ACKtime 10&t;&t;/* acknowledge (?) */
+mdefine_line|#define RESETtime 30&t;&t;/* reset */
 multiline_comment|/* these are the max/min lengths of packet data. (including&n;&t; * ClientData header)&n;&t; * note: packet sizes 250, 251, 252 are impossible (God knows why)&n;&t; *  so exception packets become necessary.&n;&t; *&n;&t; * These numbers are compared with the length of the full packet,&n;&t; * including ClientData header.&n;&t; */
 DECL|macro|MTU
 mdefine_line|#define MTU&t;253&t;/* normal packet max size */
@@ -596,7 +522,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
 r_static
 r_int
 id|arcnet_memprobe
@@ -626,7 +551,6 @@ r_int
 id|ioaddr
 )paren
 suffix:semicolon
-macro_line|#endif
 r_static
 r_void
 id|arcnet_setup
@@ -939,78 +863,6 @@ id|dev
 suffix:semicolon
 multiline_comment|/*&n;static void set_multicast_list(struct device *dev);&n;*/
 multiline_comment|/* functions for header/arp/etc building */
-macro_line|#ifdef LINUX12
-r_int
-id|arcnetA_header
-c_func
-(paren
-r_int
-r_char
-op_star
-id|buff
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|type
-comma
-r_void
-op_star
-id|daddr
-comma
-r_void
-op_star
-id|saddr
-comma
-r_int
-id|len
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
-r_int
-id|arcnetS_header
-c_func
-(paren
-r_int
-r_char
-op_star
-id|buff
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|type
-comma
-r_void
-op_star
-id|daddr
-comma
-r_void
-op_star
-id|saddr
-comma
-r_int
-id|len
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
-macro_line|#else
 r_int
 id|arcnetA_header
 c_func
@@ -1071,7 +923,6 @@ r_int
 id|len
 )paren
 suffix:semicolon
-macro_line|#endif
 r_int
 id|arcnetA_rebuild_header
 c_func
@@ -1183,7 +1034,6 @@ op_star
 id|dev
 )paren
 (brace
-macro_line|#ifndef MODULE
 multiline_comment|/* I refuse to probe anything less than 0x200, because anyone using&n;&t; * an address like that should probably be shot.&n;&t; */
 r_int
 op_star
@@ -1324,9 +1174,10 @@ id|status
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif /* MODULE */
 r_int
 id|delayval
+comma
+id|ioaddr
 suffix:semicolon
 r_struct
 id|arcnet_local
@@ -1339,7 +1190,7 @@ c_func
 id|version
 )paren
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if 1
 id|BUGLVL
 c_func
 (paren
@@ -1442,7 +1293,6 @@ comma
 id|dev-&gt;mem_start
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
 r_if
 c_cond
 (paren
@@ -1471,6 +1321,7 @@ l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 r_else
@@ -1492,19 +1343,14 @@ id|port
 op_increment
 )paren
 (brace
-r_int
-id|ioaddr
-op_assign
-op_star
-id|port
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|check_region
 c_func
 (paren
-id|ioaddr
+op_star
+id|port
 comma
 id|ARCNET_TOTAL_SIZE
 )paren
@@ -1517,7 +1363,8 @@ id|D_INIT
 comma
 l_string|&quot;Skipping %Xh because of check_region...&bslash;n&quot;
 comma
-id|ioaddr
+op_star
+id|port
 )paren
 suffix:semicolon
 r_continue
@@ -1530,7 +1377,8 @@ c_func
 (paren
 id|dev
 comma
-id|ioaddr
+op_star
+id|port
 )paren
 suffix:semicolon
 r_if
@@ -1550,7 +1398,12 @@ id|status
 r_return
 id|status
 suffix:semicolon
-multiline_comment|/* ioprobe turned out okay.  Now give it a couple seconds to finish&n;&t; * initializing...&n;&t; */
+multiline_comment|/* arcnet_ioprobe set this */
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+multiline_comment|/* ioprobe turned out okay.  Now reset the card, so we have&n;&t; * a test byte to look for in shared memory...&n;&t; */
 id|BUGMSG
 c_func
 (paren
@@ -1559,10 +1412,16 @@ comma
 l_string|&quot;ioprobe okay!  Waiting for reset...&bslash;n&quot;
 )paren
 suffix:semicolon
+id|inb
+c_func
+(paren
+id|RESET
+)paren
+suffix:semicolon
 id|JIFFER
 c_func
 (paren
-l_int|100
+id|RESETtime
 )paren
 suffix:semicolon
 multiline_comment|/* okay, now we have to find the shared memory area. */
@@ -1662,52 +1521,6 @@ r_return
 id|status
 suffix:semicolon
 )brace
-macro_line|#else /* MODULE */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dev-&gt;base_addr
-op_logical_or
-op_logical_neg
-id|dev-&gt;irq
-op_logical_or
-op_logical_neg
-id|dev-&gt;mem_start
-op_logical_or
-op_logical_neg
-id|dev-&gt;rmem_start
-)paren
-(brace
-id|BUGMSG
-c_func
-(paren
-id|D_NORMAL
-comma
-l_string|&quot;loadable modules can&squot;t autoprobe!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|BUGMSG
-c_func
-(paren
-id|D_NORMAL
-comma
-l_string|&quot;try using io=, irqnum=, and shmem= on the insmod line.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|BUGMSG
-c_func
-(paren
-id|D_NORMAL
-comma
-l_string|&quot;you may also need num= to change the device name. (ie. num=1 for arc1)&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|ENODEV
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* now reserve the irq... */
 (brace
 r_int
@@ -1745,7 +1558,8 @@ id|irqval
 )paren
 suffix:semicolon
 r_return
-id|EAGAIN
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 id|irq2dev_map
@@ -1913,12 +1727,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|JIFFER
-c_func
-(paren
-l_int|50
-)paren
-suffix:semicolon
 id|BUGMSG
 c_func
 (paren
@@ -1984,17 +1792,10 @@ id|dev-&gt;rebuild_header
 op_assign
 id|arcnetA_rebuild_header
 suffix:semicolon
-macro_line|#ifdef LINUX12
-id|dev-&gt;type_trans
-op_assign
-id|arcnetA_type_trans
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifndef MODULE
 DECL|function|arcnet_ioprobe
 r_int
 id|arcnet_ioprobe
@@ -2010,9 +1811,11 @@ id|ioaddr
 )paren
 (brace
 r_int
-id|delayval
-comma
 id|airq
+suffix:semicolon
+r_int
+r_int
+id|airqmask
 suffix:semicolon
 id|BUGMSG
 c_func
@@ -2038,7 +1841,8 @@ id|STATUS
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* very simple - all we have to do is reset the card, and if there&squot;s&n;&t; * no irq, it&squot;s not an ARCnet.  We can also kill two birds with&n;&t; * one stone because we detect the IRQ at the same time :)&n;&t; */
+multiline_comment|/* very simple - all we have to do is reset the card, and if there&squot;s&n;&t; * no irq, it&squot;s not an ARCnet.  We can also kill two birds with&n;&t; * one stone because we detect the IRQ at the same time :)&n;&t; *&n;&t; * BUT: some newer cards don&squot;t seem to IRQ upon reset, or worse,&n;&t; * don&squot;t reset when BASE+0x08 is read.  This code is no longer&n;&t; * so simple, and in fact quite dangerous.  It should be redesigned.&n;&t; */
+macro_line|#if 0
 multiline_comment|/* reset the card by reading the reset port */
 id|inb
 c_func
@@ -2052,6 +1856,7 @@ c_func
 id|RESETtime
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* if status port is FF, there&squot;s certainly no arcnet... give up. */
 r_if
 c_cond
@@ -2074,6 +1879,7 @@ l_string|&quot; probe failed.  Status port empty.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -2139,6 +1945,7 @@ id|initval
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -2199,17 +2006,51 @@ id|STATUS
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* set up automatic IRQ detection */
-id|autoirq_setup
+id|outb
+c_func
+(paren
+id|NORXcmd
+comma
+id|COMMAND
+)paren
+suffix:semicolon
+id|outb
 c_func
 (paren
 l_int|0
+comma
+id|INTMASK
 )paren
 suffix:semicolon
-multiline_comment|/* if we do this, we&squot;re sure to get an IRQ since the card has&n;&t; * just reset and the NORXflag is on until we tell it to start&n;&t; * receiving.&n;&t; */
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* set up automatic IRQ detection */
+id|airqmask
+op_assign
+id|probe_irq_on
+c_func
+(paren
+)paren
+suffix:semicolon
+id|BUGMSG
+c_func
+(paren
+id|D_INIT
+comma
+l_string|&quot; airqmask=%lXh&bslash;n&quot;
+comma
+id|airqmask
+)paren
+suffix:semicolon
+multiline_comment|/* if we do this, we&squot;re sure to get an IRQ since the card&n;&t; * has just reset and the NORXflag is on until we tell it to&n;&t; * start receiving.&n;&t; */
 id|outb
 c_func
 (paren
@@ -2218,10 +2059,10 @@ comma
 id|INTMASK
 )paren
 suffix:semicolon
-id|JIFFER
+id|udelay
 c_func
 (paren
-id|RESETtime
+l_int|1
 )paren
 suffix:semicolon
 id|outb
@@ -2232,7 +2073,7 @@ comma
 id|INTMASK
 )paren
 suffix:semicolon
-multiline_comment|/* and turn the reset flag back off */
+multiline_comment|/* and turn the reset flag back off.  On some systems, we NEED to do&n;&t; * this before we re-enable the IRQ!&n;&t; */
 id|outb
 c_func
 (paren
@@ -2245,19 +2086,23 @@ comma
 id|COMMAND
 )paren
 suffix:semicolon
+multiline_comment|/* get autoirq results */
 id|airq
 op_assign
-id|autoirq_report
+id|probe_irq_off
 c_func
 (paren
-l_int|0
+id|airqmask
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|airq
+OG
+l_int|0
 )paren
+(brace
 id|BUGMSG
 c_func
 (paren
@@ -2268,6 +2113,32 @@ comma
 id|airq
 )paren
 suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|airq
+OL
+l_int|0
+)paren
+(brace
+id|BUGMSG
+c_func
+(paren
+id|D_INIT
+comma
+l_string|&quot; autoirq MAY be %d (please send mail to Avery)&bslash;n&quot;
+comma
+op_minus
+id|airq
+)paren
+suffix:semicolon
+id|airq
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* if there was no autoirq AND the user hasn&squot;t set any defaults,&n;&t; * give up.&n;&t; */
 r_if
 c_cond
@@ -2292,10 +2163,12 @@ l_string|&quot; probe failed.  no autoirq...&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/* otherwise we probably have a card.  Let&squot;s make sure. */
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -2323,6 +2196,7 @@ id|COMMAND
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2351,10 +2225,11 @@ id|STATUS
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* okay, we&squot;ve got a real, live ARCnet on our hands. */
+multiline_comment|/* okay, we&squot;ve got a real, live ARCnet on our hands.&n;&t; * I hope.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2374,7 +2249,7 @@ l_int|2
 )paren
 multiline_comment|/* &quot;Auto-IRQ&quot; */
 (brace
-multiline_comment|/* we already did the autoirq above, so store the values */
+multiline_comment|/* we already did the autoirq above, so store the value */
 id|dev-&gt;irq
 op_assign
 id|airq
@@ -2485,6 +2360,7 @@ id|TESTvalue
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -2527,6 +2403,7 @@ l_int|0
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -2571,7 +2448,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
 multiline_comment|/* Do a hardware reset on the card.&n; */
 DECL|function|arcnet_reset
 r_int
@@ -3021,12 +2897,6 @@ id|dev-&gt;rebuild_header
 op_assign
 id|arcnetS_rebuild_header
 suffix:semicolon
-macro_line|#ifdef LINUX12
-id|dev-&gt;type_trans
-op_assign
-id|arcnetS_type_trans
-suffix:semicolon
-macro_line|#endif
 id|BUGMSG
 c_func
 (paren
@@ -3069,8 +2939,6 @@ r_int
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
-comma
-id|delayval
 suffix:semicolon
 r_if
 c_cond
@@ -3344,7 +3212,7 @@ id|START
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* make sure we&squot;re ready to receive IRQ&squot;s.&n;&t; * arcnet_reset sets this for us, but if we receive one before&n;&t; * START is set to 1, it could be ignored.&n;&t; */
+multiline_comment|/* make sure we&squot;re ready to receive IRQ&squot;s.&n;&t; * arcnet_reset sets this for us, but if we receive one before&n;&t; * START is set to 1, it could be ignored.  So, we turn IRQ&squot;s&n;&t; * off, then on again to clean out the IRQ controller.&n;&t; */
 id|outb
 c_func
 (paren
@@ -3353,12 +3221,13 @@ comma
 id|INTMASK
 )paren
 suffix:semicolon
-id|JIFFER
+id|udelay
 c_func
 (paren
-id|ACKtime
+l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* give it time to set the mask before&n;&t;&t;&t; * we reset it again. (may not even be&n;&t;&t;&t; * necessary)&n;&t;&t;&t; */
 id|SETMASK
 suffix:semicolon
 id|MOD_INC_USE_COUNT
@@ -7732,7 +7601,6 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef LINUX12
 id|skb-&gt;protocol
 op_assign
 id|arcnetA_type_trans
@@ -7743,7 +7611,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 id|netif_rx
 c_func
 (paren
@@ -8337,7 +8204,6 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef LINUX12
 id|skb-&gt;protocol
 op_assign
 id|arcnetA_type_trans
@@ -8348,7 +8214,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 id|netif_rx
 c_func
 (paren
@@ -8545,7 +8410,6 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef LINUX12
 id|skb-&gt;protocol
 op_assign
 id|eth_type_trans
@@ -8556,7 +8420,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 id|netif_rx
 c_func
 (paren
@@ -8817,7 +8680,6 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef LINUX12
 id|skb-&gt;protocol
 op_assign
 id|arcnetS_type_trans
@@ -8828,7 +8690,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 id|netif_rx
 c_func
 (paren
@@ -8933,47 +8794,11 @@ macro_line|#endif
 )brace
 macro_line|#endif
 multiline_comment|/* Create the ARCnet ClientData header for an arbitrary protocol layer&n; *&n; * saddr=NULL&t;means use device source address (always will anyway)&n; * daddr=NULL&t;means leave destination address (eg unresolved arp)&n; */
-macro_line|#ifdef LINUX12
 DECL|function|arcnetA_header
 r_int
 id|arcnetA_header
 c_func
 (paren
-r_int
-r_char
-op_star
-id|buff
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|type
-comma
-r_void
-op_star
-id|daddr
-comma
-r_void
-op_star
-id|saddr
-comma
-r_int
-id|len
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-macro_line|#else
-r_int
-id|arcnetA_header
-c_func
-(paren
 r_struct
 id|sk_buff
 op_star
@@ -8999,7 +8824,6 @@ comma
 r_int
 id|len
 )paren
-macro_line|#endif
 (brace
 r_struct
 id|ClientData
@@ -9011,10 +8835,6 @@ r_struct
 id|ClientData
 op_star
 )paren
-macro_line|#ifdef LINUX12
-id|buff
-suffix:semicolon
-macro_line|#else
 id|skb_push
 c_func
 (paren
@@ -9023,7 +8843,6 @@ comma
 id|dev-&gt;hard_header_len
 )paren
 suffix:semicolon
-macro_line|#endif
 r_struct
 id|arcnet_local
 op_star
@@ -9243,47 +9062,11 @@ id|dev-&gt;hard_header_len
 suffix:semicolon
 )brace
 multiline_comment|/* Create the ARCnet ClientData header for an arbitrary protocol layer&n; *&n; * saddr=NULL&t;means use device source address (always will anyway)&n; * daddr=NULL&t;means leave destination address (eg unresolved arp)&n; */
-macro_line|#ifdef LINUX12
 DECL|function|arcnetS_header
 r_int
 id|arcnetS_header
 c_func
 (paren
-r_int
-r_char
-op_star
-id|buff
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|type
-comma
-r_void
-op_star
-id|daddr
-comma
-r_void
-op_star
-id|saddr
-comma
-r_int
-id|len
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-macro_line|#else
-r_int
-id|arcnetS_header
-c_func
-(paren
 r_struct
 id|sk_buff
 op_star
@@ -9309,7 +9092,6 @@ comma
 r_int
 id|len
 )paren
-macro_line|#endif
 (brace
 r_struct
 id|S_ClientData
@@ -9321,10 +9103,6 @@ r_struct
 id|S_ClientData
 op_star
 )paren
-macro_line|#ifdef LINUX12
-id|buff
-suffix:semicolon
-macro_line|#else
 id|skb_push
 c_func
 (paren
@@ -9333,7 +9111,6 @@ comma
 id|dev-&gt;hard_header_len
 )paren
 suffix:semicolon
-macro_line|#endif
 r_struct
 id|arcnet_local
 op_star
@@ -9792,17 +9569,6 @@ op_star
 id|dev-&gt;priv
 )paren
 suffix:semicolon
-macro_line|#ifdef LINUX12
-id|head
-op_assign
-(paren
-r_struct
-id|ClientData
-op_star
-)paren
-id|skb-&gt;data
-suffix:semicolon
-macro_line|#else
 multiline_comment|/* Pull off the arcnet header. */
 id|skb-&gt;mac.raw
 op_assign
@@ -9825,7 +9591,6 @@ op_star
 )paren
 id|skb-&gt;mac.raw
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -9980,17 +9745,6 @@ op_star
 id|dev-&gt;priv
 )paren
 suffix:semicolon
-macro_line|#ifdef LINUX12
-id|head
-op_assign
-(paren
-r_struct
-id|S_ClientData
-op_star
-)paren
-id|skb-&gt;data
-suffix:semicolon
-macro_line|#else
 multiline_comment|/* Pull off the arcnet header. */
 id|skb-&gt;mac.raw
 op_assign
@@ -10013,7 +9767,6 @@ op_star
 )paren
 id|skb-&gt;mac.raw
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -10304,6 +10057,11 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|ioaddr
+op_assign
+id|thiscard.base_addr
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -10316,6 +10074,41 @@ op_amp
 id|thiscard
 )paren
 suffix:semicolon
+multiline_comment|/* Flush TX and disable RX */
+r_if
+c_cond
+(paren
+id|ioaddr
+)paren
+(brace
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|INTMASK
+)paren
+suffix:semicolon
+multiline_comment|/* disable IRQ&squot;s */
+id|outb
+c_func
+(paren
+id|NOTXcmd
+comma
+id|COMMAND
+)paren
+suffix:semicolon
+multiline_comment|/* stop transmit */
+id|outb
+c_func
+(paren
+id|NORXcmd
+comma
+id|COMMAND
+)paren
+suffix:semicolon
+multiline_comment|/* disable receive */
+)brace
 r_if
 c_cond
 (paren

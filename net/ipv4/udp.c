@@ -374,11 +374,11 @@ id|udphdr
 id|uh
 suffix:semicolon
 DECL|member|daddr
-r_int
+id|__u32
 id|daddr
 suffix:semicolon
 DECL|member|other
-r_int
+id|__u32
 id|other
 suffix:semicolon
 DECL|member|from
@@ -388,7 +388,7 @@ op_star
 id|from
 suffix:semicolon
 DECL|member|wcheck
-r_int
+id|__u32
 id|wcheck
 suffix:semicolon
 )brace

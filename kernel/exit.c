@@ -18,6 +18,14 @@ id|sem_exit
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|kerneld_exit
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_int
 id|getrusage
 c_func
@@ -2369,6 +2377,11 @@ id|current-&gt;real_timer
 )paren
 suffix:semicolon
 id|sem_exit
+c_func
+(paren
+)paren
+suffix:semicolon
+id|kerneld_exit
 c_func
 (paren
 )paren

@@ -952,7 +952,7 @@ comma
 l_int|0x806
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB66P)
+macro_line|#elif NR_IRQS == 32
 )brace
 r_else
 r_if

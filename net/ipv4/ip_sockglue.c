@@ -1737,7 +1737,7 @@ l_int|7
 comma
 id|optptr
 op_plus
-l_int|4
+l_int|3
 comma
 id|optptr
 (braket

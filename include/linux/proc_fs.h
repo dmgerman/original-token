@@ -84,6 +84,9 @@ comma
 multiline_comment|/* whether enabled or not */
 DECL|enumerator|PROC_CMDLINE
 id|PROC_CMDLINE
+comma
+DECL|enumerator|PROC_SYS
+id|PROC_SYS
 )brace
 suffix:semicolon
 DECL|enum|pid_directory_inos
@@ -339,6 +342,11 @@ multiline_comment|/* won&squot;t ever see more than */
 )brace
 suffix:semicolon
 multiline_comment|/* 16 HBAs in one machine   */
+multiline_comment|/* Finally, the dynamically allocatable proc entries are reserved: */
+DECL|macro|PROC_DYNAMIC_FIRST
+mdefine_line|#define PROC_DYNAMIC_FIRST 4096
+DECL|macro|PROC_NDYNAMIC
+mdefine_line|#define PROC_NDYNAMIC      4096
 DECL|macro|PROC_SUPER_MAGIC
 mdefine_line|#define PROC_SUPER_MAGIC 0x9fa0
 multiline_comment|/*&n; * This is not completely implemented yet. The idea is to&n; * create a in-memory tree (like the actual /proc filesystem&n; * tree) of these proc_dir_entries, so that we can dynamically&n; * add new files to /proc.&n; *&n; * The &quot;next&quot; pointer creates a linked list of one /proc directory,&n; * while parent/subdir create the directory structure (every&n; * /proc file has a parent, but &quot;subdir&quot; is NULL for all&n; * non-directory entries).&n; *&n; * &quot;get_info&quot; is called at &quot;read&quot;, while &quot;fill_inode&quot; is used to&n; * fill in file type/protection/owner information specific to the&n; * particular /proc file.&n; */
@@ -436,6 +444,11 @@ comma
 op_star
 id|subdir
 suffix:semicolon
+DECL|member|data
+r_void
+op_star
+id|data
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
@@ -452,6 +465,11 @@ r_extern
 r_struct
 id|proc_dir_entry
 id|proc_scsi
+suffix:semicolon
+r_extern
+r_struct
+id|proc_dir_entry
+id|proc_sys
 suffix:semicolon
 r_extern
 r_struct
@@ -495,6 +513,20 @@ suffix:semicolon
 r_extern
 r_int
 id|proc_register
+c_func
+(paren
+r_struct
+id|proc_dir_entry
+op_star
+comma
+r_struct
+id|proc_dir_entry
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|proc_register_dynamic
 c_func
 (paren
 r_struct
@@ -877,6 +909,11 @@ suffix:semicolon
 r_extern
 r_struct
 id|inode_operations
+id|proc_dir_inode_operations
+suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
 id|proc_net_inode_operations
 suffix:semicolon
 r_extern
@@ -893,6 +930,11 @@ r_extern
 r_struct
 id|inode_operations
 id|proc_mem_inode_operations
+suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
+id|proc_sys_inode_operations
 suffix:semicolon
 r_extern
 r_struct

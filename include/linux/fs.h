@@ -11,22 +11,36 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 multiline_comment|/*&n; * It&squot;s silly to have NR_OPEN bigger than NR_FILE, but I&squot;ll fix&n; * that later. Anyway, now the file code is no longer dependent&n; * on bitmaps in unsigned longs, but uses the new fd_set structure..&n; *&n; * Some programs (notably those using select()) may have to be &n; * recompiled to take full advantage of the new limits..&n; */
+multiline_comment|/* Fixed constants first: */
 DECL|macro|NR_OPEN
 macro_line|#undef NR_OPEN
 DECL|macro|NR_OPEN
 mdefine_line|#define NR_OPEN 256
-DECL|macro|NR_INODE
-mdefine_line|#define NR_INODE 2048&t;/* this should be bigger than NR_FILE */
-DECL|macro|NR_FILE
-mdefine_line|#define NR_FILE 1024&t;/* this can well be larger on a larger system */
 DECL|macro|NR_SUPER
-mdefine_line|#define NR_SUPER 32
+mdefine_line|#define NR_SUPER 64
 DECL|macro|NR_IHASH
 mdefine_line|#define NR_IHASH 131
 DECL|macro|BLOCK_SIZE
 mdefine_line|#define BLOCK_SIZE 1024
 DECL|macro|BLOCK_SIZE_BITS
 mdefine_line|#define BLOCK_SIZE_BITS 10
+multiline_comment|/* And dynamically-tunable limits and defaults: */
+r_extern
+r_int
+id|max_inodes
+comma
+id|nr_inodes
+suffix:semicolon
+r_extern
+r_int
+id|max_files
+comma
+id|nr_files
+suffix:semicolon
+DECL|macro|NR_INODE
+mdefine_line|#define NR_INODE 2048&t;/* this should be bigger than NR_FILE */
+DECL|macro|NR_FILE
+mdefine_line|#define NR_FILE 1024&t;/* this can well be larger on a larger system */
 DECL|macro|MAY_EXEC
 mdefine_line|#define MAY_EXEC 1
 DECL|macro|MAY_WRITE
@@ -2345,20 +2359,6 @@ id|NR_SUPER
 )braket
 suffix:semicolon
 r_extern
-r_int
-id|shrink_buffers
-c_func
-(paren
-r_int
-r_int
-id|priority
-comma
-r_int
-r_int
-id|limit
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|refile_buffer
 c_func
@@ -2390,6 +2390,23 @@ c_func
 (paren
 r_int
 id|size
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|try_to_free_buffer
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+comma
+r_struct
+id|buffer_head
+op_star
+op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern

@@ -3858,7 +3858,6 @@ multiline_comment|/* Not implemented yet. */
 )brace
 )brace
 multiline_comment|/* End of set_multicast_list() */
-macro_line|#endif     
 "&f;"
 multiline_comment|/*-&n; * Function       : SK_rom_addr&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/06/01&n; *&n; * Description    : Try to find a Boot_ROM at all possible locations&n; *&n; * Parameters     : None&n; * Return Value   : Address where Boot_ROM is&n; * Errors         : 0 - Did not find Boot_ROM&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 DECL|function|SK_rom_addr

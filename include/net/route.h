@@ -574,6 +574,22 @@ suffix:semicolon
 macro_line|#else
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_KERNELD
+r_extern
+r_struct
+id|rtable
+op_star
+id|ip_rt_route
+c_func
+(paren
+id|__u32
+id|daddr
+comma
+r_int
+id|local
+)paren
+suffix:semicolon
+macro_line|#else
 DECL|function|ip_rt_route
 r_extern
 id|__inline__
@@ -671,6 +687,7 @@ suffix:semicolon
 )brace
 macro_line|#else
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 DECL|function|ip_check_route
 r_extern

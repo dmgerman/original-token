@@ -1027,6 +1027,12 @@ r_break
 suffix:semicolon
 )brace
 )brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* device probes assume interrupts enabled */
 r_if
 c_cond
 (paren
@@ -1066,6 +1072,11 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Add device to end of chain */
 r_if
 c_cond
@@ -1359,17 +1370,17 @@ r_break
 suffix:semicolon
 )brace
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* You can i.e use a interfaces in a route though it is not up.&n;&t;   We call close_dev (which is changed: it will down a device even if&n;&t;   dev-&gt;flags==0 (but it will not call dev-&gt;stop if IFF_UP&n;&t;   is not set).&n;&t;   This will call notifier_call_chain(&amp;netdev_chain, NETDEV_DOWN, dev),&n;&t;   dev_mc_discard(dev), ....&n;&t;*/
 id|dev_close
 c_func
 (paren
 id|dev
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 )brace

@@ -1259,7 +1259,7 @@ l_int|1024
 id|error
 c_func
 (paren
-l_string|&quot;&lt;2M of mem&bslash;n&quot;
+l_string|&quot;Less than 2MB of memory.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|output_data

@@ -139,18 +139,11 @@ comma
 id|t2
 suffix:semicolon
 id|__asm__
+c_func
 (paren
 "&quot;"
-id|bis
-op_mod
-l_int|3
-comma
-op_mod
-l_int|3
-comma
-op_mod
-l_int|0
-macro_line|# %0 is result; %0=aabbccdd
+macro_line|# bswap input: %0 (aabbccdd)
+macro_line|# output: %0, used %1 %2
 id|extlh
 op_mod
 l_int|0
@@ -178,7 +171,7 @@ comma
 op_mod
 l_int|2
 macro_line|# %2 = 00198000
-id|s8addl
+id|s8addq
 op_mod
 l_int|2
 comma
@@ -251,9 +244,11 @@ l_string|&quot;r=&quot;
 id|t2
 )paren
 suffix:colon
-l_string|&quot;r&quot;
+l_string|&quot;0&quot;
 (paren
 id|x
+op_amp
+l_int|0xffffffffUL
 )paren
 )paren
 suffix:semicolon
@@ -262,7 +257,7 @@ id|res
 suffix:semicolon
 )brace
 DECL|macro|__constant_ntohl
-mdefine_line|#define __constant_ntohl(x) &bslash;&n;((unsigned int)((((unsigned int)(x) &amp; 0x000000ffU) &lt;&lt; 24) | &bslash;&n;&t;&t;(((unsigned int)(x) &amp; 0x0000ff00U) &lt;&lt;  8) | &bslash;&n;&t;&t;(((unsigned int)(x) &amp; 0x00ff0000U) &gt;&gt;  8) | &bslash;&n;&t;&t;(((unsigned int)(x) &amp; 0xff000000U) &gt;&gt; 24)))
+mdefine_line|#define __constant_ntohl(x) &bslash;&n;   ((unsigned long int)((((x) &amp; 0x000000ffUL) &lt;&lt; 24) | &bslash;&n;&t;&t;&t;(((x) &amp; 0x0000ff00UL) &lt;&lt;  8) | &bslash;&n;&t;&t;&t;(((x) &amp; 0x00ff0000UL) &gt;&gt;  8) | &bslash;&n;&t;&t;&t;(((x) &amp; 0xff000000UL) &gt;&gt; 24)))
 r_extern
 id|__inline__
 r_int

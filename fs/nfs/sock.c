@@ -233,7 +233,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;NFS server %s not responding, &quot;
-l_string|&quot;still trying.&bslash;n&quot;
+l_string|&quot;timed out.&bslash;n&quot;
 comma
 id|server-&gt;hostname
 )paren
@@ -257,7 +257,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;NFS server %s not responding, &quot;
-l_string|&quot;timed out.&bslash;n&quot;
+l_string|&quot;still trying.&bslash;n&quot;
 comma
 id|server-&gt;hostname
 )paren
