@@ -1104,6 +1104,11 @@ suffix:semicolon
 id|ENTRY
 suffix:semicolon
 multiline_comment|/* first opener, initialize */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1142,6 +1147,11 @@ id|vcp-&gt;vc_inuse
 )paren
 suffix:semicolon
 id|EXIT
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -1187,6 +1197,11 @@ id|next
 suffix:semicolon
 id|ENTRY
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1194,6 +1209,11 @@ op_logical_neg
 id|vcp-&gt;vc_inuse
 )paren
 (brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1221,9 +1241,16 @@ c_cond
 op_decrement
 id|vcp-&gt;vc_inuse
 )paren
+(brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 multiline_comment|/* Wakeup clients so they can return. */
 id|CDEBUG
 c_func
@@ -1382,6 +1409,11 @@ l_string|&quot;Done.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|EXIT
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,0)
 macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
@@ -3898,6 +3899,11 @@ l_int|0
 comma
 id|i
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -4093,6 +4099,11 @@ id|fi
 )paren
 suffix:semicolon
 id|V22_COMPAT_MOD_DEC_USE_COUNT
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0

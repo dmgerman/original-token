@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/signal.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -1424,6 +1425,11 @@ op_star
 id|file
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|fasync_pad
 c_func
 (paren
@@ -1438,12 +1444,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 op_decrement
 id|active
 )paren
-r_return
-l_int|0
-suffix:semicolon
 id|outb
 c_func
 (paren
@@ -1455,6 +1459,11 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* switch off digitiser */
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

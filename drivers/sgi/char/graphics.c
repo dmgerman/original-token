@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;gconsole.h&quot;
 macro_line|#include &quot;graphics.h&quot;
@@ -680,6 +681,11 @@ id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
 multiline_comment|/* Tell the rendering manager that one client is going away */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|rrm_close
 (paren
 id|inode
@@ -737,6 +743,11 @@ id|enable_gconsole
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

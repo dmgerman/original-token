@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sound.h&gt;
 macro_line|#include &lt;linux/soundcard.h&gt;
@@ -11040,6 +11041,13 @@ r_struct
 id|usb_audio_state
 op_star
 id|s
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|s
 op_assign
 id|ms-&gt;state
 suffix:semicolon
@@ -11054,6 +11062,11 @@ id|release
 c_func
 (paren
 id|s
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -13125,6 +13138,14 @@ id|db
 suffix:semicolon
 r_int
 id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -13149,8 +13170,8 @@ id|as
 op_ne
 l_int|0
 )paren
-r_return
-id|ret
+r_goto
+id|out
 suffix:semicolon
 id|db
 op_assign
@@ -13182,8 +13203,8 @@ id|as
 op_ne
 l_int|0
 )paren
-r_return
-id|ret
+r_goto
+id|out
 suffix:semicolon
 id|db
 op_assign
@@ -13192,7 +13213,11 @@ id|as-&gt;usbin.dma
 suffix:semicolon
 )brace
 r_else
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|ret
+op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
@@ -13203,11 +13228,11 @@ id|vma-&gt;vm_pgoff
 op_ne
 l_int|0
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|dmabuf_mmap
 c_func
 (paren
@@ -13221,6 +13246,16 @@ id|vma-&gt;vm_start
 comma
 id|vma-&gt;vm_page_prot
 )paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|usb_audio_ioctl
@@ -15286,20 +15321,29 @@ r_struct
 id|usb_audio_state
 op_star
 id|s
-op_assign
-id|as-&gt;state
 suffix:semicolon
 r_struct
 id|usb_device
 op_star
 id|dev
-op_assign
-id|s-&gt;usbdev
 suffix:semicolon
 r_struct
 id|usb_interface
 op_star
 id|iface
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|s
+op_assign
+id|as-&gt;state
+suffix:semicolon
+id|dev
+op_assign
+id|s-&gt;usbdev
 suffix:semicolon
 r_if
 c_cond
@@ -15463,6 +15507,11 @@ c_func
 (paren
 op_amp
 id|open_wait
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

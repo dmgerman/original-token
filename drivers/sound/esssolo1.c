@@ -18,6 +18,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &quot;dm.h&quot;
@@ -6780,6 +6781,9 @@ id|db
 suffix:semicolon
 r_int
 id|ret
+op_assign
+op_minus
+id|EINVAL
 suffix:semicolon
 r_int
 r_int
@@ -6789,6 +6793,11 @@ id|VALIDATE_STATE
 c_func
 (paren
 id|s
+)paren
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -6814,8 +6823,8 @@ id|s
 op_ne
 l_int|0
 )paren
-r_return
-id|ret
+r_goto
+id|out
 suffix:semicolon
 id|db
 op_assign
@@ -6847,8 +6856,8 @@ id|s
 op_ne
 l_int|0
 )paren
-r_return
-id|ret
+r_goto
+id|out
 suffix:semicolon
 id|db
 op_assign
@@ -6857,7 +6866,11 @@ id|s-&gt;dma_adc
 suffix:semicolon
 )brace
 r_else
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|ret
+op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
@@ -6868,9 +6881,8 @@ id|vma-&gt;vm_pgoff
 op_ne
 l_int|0
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 id|size
 op_assign
@@ -6889,9 +6901,13 @@ op_lshift
 id|db-&gt;buforder
 )paren
 )paren
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|ret
+op_assign
 op_minus
-id|EINVAL
+id|EAGAIN
 suffix:semicolon
 r_if
 c_cond
@@ -6912,16 +6928,26 @@ comma
 id|vma-&gt;vm_page_prot
 )paren
 )paren
-r_return
-op_minus
-id|EAGAIN
+r_goto
+id|out
 suffix:semicolon
 id|db-&gt;mapped
 op_assign
 l_int|1
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|solo1_ioctl
@@ -8737,6 +8763,11 @@ c_func
 id|s
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8863,6 +8894,11 @@ c_func
 (paren
 op_amp
 id|s-&gt;open_sem
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -10914,6 +10950,11 @@ c_func
 id|s
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11155,6 +11196,11 @@ c_func
 (paren
 op_amp
 id|s-&gt;open_sem
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -12420,6 +12466,11 @@ c_func
 id|s
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|down
 c_func
 (paren
@@ -12506,6 +12557,11 @@ c_func
 (paren
 op_amp
 id|s-&gt;open_sem
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

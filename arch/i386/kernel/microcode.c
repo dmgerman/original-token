@@ -458,6 +458,11 @@ op_star
 id|file
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|clear_bit
 c_func
 (paren
@@ -465,6 +470,11 @@ id|MICROCODE_IS_OPEN
 comma
 op_amp
 id|microcode_status
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

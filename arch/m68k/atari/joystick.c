@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/atarikb.h&gt;
 macro_line|#include &lt;asm/atari_joystick.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -233,6 +234,11 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|joystick
 (braket
 id|minor
@@ -277,6 +283,11 @@ l_int|0
 )paren
 )paren
 id|ikbd_joystick_disable
+c_func
+(paren
+)paren
+suffix:semicolon
+id|unlock_kernel
 c_func
 (paren
 )paren

@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sysrq.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/kbio.h&gt;
 macro_line|#include &lt;asm/vuid_event.h&gt;
@@ -6670,15 +6671,19 @@ op_star
 id|f
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 op_decrement
 id|kbd_active
 )paren
-r_return
-l_int|0
-suffix:semicolon
+(brace
 r_if
 c_cond
 (paren
@@ -6711,6 +6716,12 @@ comma
 id|f
 comma
 l_int|0
+)paren
+suffix:semicolon
+)brace
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

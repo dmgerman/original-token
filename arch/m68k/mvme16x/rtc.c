@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;&t;/* For struct rtc_time and ioctls, etc */
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/mvme16xhw.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -590,9 +591,19 @@ op_star
 id|file
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|rtc_status
 op_assign
 l_int|0
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0

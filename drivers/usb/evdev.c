@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/input.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|struct|evdev
 r_struct
 id|evdev
@@ -309,6 +310,13 @@ id|evdev_list
 op_star
 op_star
 id|listptr
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|listptr
 op_assign
 op_amp
 id|list-&gt;evdev-&gt;list
@@ -408,6 +416,11 @@ id|kfree
 c_func
 (paren
 id|list
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

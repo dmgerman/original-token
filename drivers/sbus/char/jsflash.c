@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 multiline_comment|/*&n; * &lt;linux/blk.h&gt; is controlled from the outside with these definitions.&n; */
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR&t;JSFD_MAJOR
@@ -1736,9 +1737,19 @@ op_star
 id|file
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|jsf0.busy
 op_assign
 l_int|0
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0

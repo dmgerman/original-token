@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/module.h&gt;
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
 macro_line|#include &lt;linux/usb.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 multiline_comment|/* current USB framework handles max of 16 USB devices per driver */
 DECL|macro|MAX_CAMERAS
 mdefine_line|#define&t;MAX_CAMERAS&t;&t;8
@@ -879,6 +880,11 @@ id|camera-&gt;buf
 )paren
 suffix:semicolon
 multiline_comment|/* If camera was unplugged with open file ... */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -899,6 +905,11 @@ id|camera
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dbg
 (paren
 l_string|&quot;close&quot;

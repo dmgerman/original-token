@@ -29,6 +29,7 @@ macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -1443,17 +1444,6 @@ c_func
 id|sdp-&gt;device-&gt;host-&gt;hostt-&gt;module
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sg_template.module
-)paren
-id|__MOD_INC_USE_COUNT
-c_func
-(paren
-id|sg_template.module
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1484,6 +1474,11 @@ id|Sg_fd
 op_star
 id|sfp
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1509,10 +1504,17 @@ id|sfp-&gt;parentdp
 )paren
 )paren
 )paren
+(brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENXIO
 suffix:semicolon
+)brace
 id|SCSI_LOG_TIMEOUT
 c_func
 (paren
@@ -1572,19 +1574,6 @@ c_func
 id|sdp-&gt;device-&gt;host-&gt;hostt-&gt;module
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sg_template.module
-)paren
-(brace
-id|__MOD_DEC_USE_COUNT
-c_func
-(paren
-id|sg_template.module
-)paren
-suffix:semicolon
-)brace
 id|sdp-&gt;exclude
 op_assign
 l_int|0
@@ -1594,6 +1583,11 @@ c_func
 (paren
 op_amp
 id|sdp-&gt;o_excl_wait
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -6265,6 +6259,10 @@ id|file_operations
 id|sg_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|sg_read

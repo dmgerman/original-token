@@ -216,16 +216,6 @@ macro_line|#  define outb&t;&t;&t;outb_p
 DECL|macro|inb
 macro_line|#  define inb&t;&t;&t;inb_p
 macro_line|#endif
-macro_line|#ifdef LINUX20
-DECL|macro|__initfunc
-macro_line|#  define __initfunc(f)&t;&t;&t;&t;f
-DECL|macro|__initdata
-macro_line|#  define __initdata&t;&t;&t;&t;/* nothing */
-DECL|macro|spin_lock_irqsave
-macro_line|#  define spin_lock_irqsave(junk,flags)&t;&t;do { save_flags(flags); cli(); } while (0)
-DECL|macro|spin_unlock_irqrestore
-macro_line|#  define spin_unlock_irqrestore(junk,flags)&t;do { restore_flags(flags); } while (0)
-macro_line|#endif
 multiline_comment|/* JobQueueStruct */
 DECL|macro|JQS_wStart
 mdefine_line|#define JQS_wStart&t;&t;0x00
@@ -464,12 +454,10 @@ DECL|member|writeflush
 id|wait_queue_head_t
 id|writeflush
 suffix:semicolon
-macro_line|#ifndef LINUX20
 DECL|member|lock
 id|spinlock_t
 id|lock
 suffix:semicolon
-macro_line|#endif
 DECL|member|nresets
 r_int
 id|nresets
@@ -532,26 +520,6 @@ suffix:semicolon
 DECL|member|bCurrentMidiPatch
 id|BYTE
 id|bCurrentMidiPatch
-suffix:semicolon
-DECL|member|inc_ref
-r_void
-(paren
-op_star
-id|inc_ref
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-DECL|member|dec_ref
-r_void
-(paren
-op_star
-id|dec_ref
-)paren
-(paren
-r_void
-)paren
 suffix:semicolon
 multiline_comment|/* Digital audio FIFOs */
 DECL|member|DAPF

@@ -441,12 +441,6 @@ id|filp-&gt;f_op
 op_logical_and
 id|filp-&gt;f_op-&gt;release
 )paren
-(brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|filp-&gt;f_op
 op_member_access_from_pointer
 id|release
@@ -457,12 +451,6 @@ comma
 id|filp
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 id|fops_put
 c_func
 (paren

@@ -1,17 +1,12 @@
 multiline_comment|/*********************************************************************&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; * Linux 2.0/2.2 Version&n; *&n; * msnd_pinnacle.c / msnd_classic.c&n; *&n; * -- If MSND_CLASSIC is defined:&n; *&n; *     -&gt; driver for Turtle Beach Classic/Monterey/Tahiti&n; *&n; * -- Else&n; *&n; *     -&gt; driver for Turtle Beach Pinnacle/Fiji&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd_pinnacle.c,v 1.75 1999/03/21 16:50:09 andrewtv Exp $&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020101
-DECL|macro|LINUX20
-macro_line|#  define LINUX20
-macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#ifndef LINUX20
-macro_line|#  include &lt;linux/init.h&gt;
-macro_line|#endif
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -3356,30 +3351,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|mod_inc_ref
-r_static
-r_void
-id|mod_inc_ref
-c_func
-(paren
-r_void
-)paren
-(brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-)brace
-DECL|function|mod_dec_ref
-r_static
-r_void
-id|mod_dec_ref
-c_func
-(paren
-r_void
-)paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-)brace
 DECL|function|dev_open
 r_static
 r_int
@@ -3567,40 +3538,11 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-op_ge
-l_int|0
-)paren
-id|mod_inc_ref
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|err
 suffix:semicolon
 )brace
-macro_line|#ifdef LINUX20
 DECL|function|dev_release
-r_static
-r_void
-id|dev_release
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-)paren
-macro_line|#else
 r_static
 r_int
 id|dev_release
@@ -3616,7 +3558,6 @@ id|file
 op_star
 id|file
 )paren
-macro_line|#endif
 (brace
 r_int
 id|minor
@@ -3627,13 +3568,16 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
-macro_line|#ifndef LINUX20
 r_int
 id|err
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3641,18 +3585,14 @@ id|minor
 op_eq
 id|dev.dsp_minor
 )paren
-(brace
-macro_line|#ifndef LINUX20
 id|err
 op_assign
-macro_line|#endif
 id|dsp_release
 c_func
 (paren
 id|file
 )paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -3664,31 +3604,20 @@ id|dev.mixer_minor
 (brace
 multiline_comment|/* nothing */
 )brace
-macro_line|#ifndef LINUX20
 r_else
 id|err
 op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-op_ge
-l_int|0
-)paren
-macro_line|#endif
-id|mod_dec_ref
+id|unlock_kernel
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifndef LINUX20&t;
 r_return
 id|err
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|pack_DARQ_to_DARF
 r_static
@@ -4623,41 +4552,7 @@ op_minus
 id|count
 suffix:semicolon
 )brace
-macro_line|#ifdef LINUX20
 DECL|function|dev_read
-r_static
-r_int
-id|dev_read
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-)paren
-(brace
-r_int
-id|minor
-op_assign
-id|MINOR
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
-macro_line|#else
 r_static
 id|ssize_t
 id|dev_read
@@ -4689,7 +4584,6 @@ c_func
 id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4712,42 +4606,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-macro_line|#ifdef LINUX20
 DECL|function|dev_write
-r_static
-r_int
-id|dev_write
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_const
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-)paren
-(brace
-r_int
-id|minor
-op_assign
-id|MINOR
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
-macro_line|#else
 r_static
 id|ssize_t
 id|dev_write
@@ -4780,7 +4639,6 @@ c_func
 id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4885,38 +4743,6 @@ id|dev.flags
 )paren
 )paren
 (brace
-macro_line|#ifdef LINUX20
-r_if
-c_cond
-(paren
-id|test_bit
-c_func
-(paren
-id|F_WRITEFLUSH
-comma
-op_amp
-id|dev.flags
-)paren
-)paren
-(brace
-id|clear_bit
-c_func
-(paren
-id|F_WRITEFLUSH
-comma
-op_amp
-id|dev.flags
-)paren
-suffix:semicolon
-id|wake_up_interruptible
-c_func
-(paren
-op_amp
-id|dev.writeflush
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -4936,7 +4762,6 @@ op_amp
 id|dev.writeflush
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 id|clear_bit
 c_func
@@ -5230,6 +5055,10 @@ id|file_operations
 id|dev_fileops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|dev_read
@@ -9018,14 +8847,6 @@ id|dev.dspq_buff_size
 op_assign
 id|DSPQ_BUFF_SIZE
 suffix:semicolon
-id|dev.inc_ref
-op_assign
-id|mod_inc_ref
-suffix:semicolon
-id|dev.dec_ref
-op_assign
-id|mod_dec_ref
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9113,7 +8934,6 @@ op_amp
 id|dev.DARF
 )paren
 suffix:semicolon
-macro_line|#ifndef LINUX20
 id|spin_lock_init
 c_func
 (paren
@@ -9121,7 +8941,6 @@ op_amp
 id|dev.lock
 )paren
 suffix:semicolon
-macro_line|#endif
 id|printk
 c_func
 (paren

@@ -3063,6 +3063,11 @@ id|coda_cred
 op_star
 id|cred
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|ENTRY
 suffix:semicolon
 id|coda_vfs_stat.release
@@ -3182,6 +3187,11 @@ comma
 l_string|&quot;coda_release: result: %d&bslash;n&quot;
 comma
 id|error
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

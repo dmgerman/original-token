@@ -2408,11 +2408,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|sock_fasync
 c_func
 (paren
@@ -2432,11 +2427,6 @@ c_func
 (paren
 id|inode
 )paren
-)paren
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return

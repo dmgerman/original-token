@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -20995,24 +20996,6 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-macro_line|#if ONSTREAM_DEBUG
-r_if
-c_cond
-(paren
-id|tape-&gt;debug_level
-op_ge
-l_int|6
-)paren
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;ide-tape: MOD_INC_USE_COUNT in idetape_chrdev_open-1&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -21107,24 +21090,6 @@ op_amp
 id|tape-&gt;flags
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-macro_line|#if ONSTREAM_DEBUG
-r_if
-c_cond
-(paren
-id|tape-&gt;debug_level
-op_ge
-l_int|6
-)paren
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;ide-tape: MOD_DEC_USE_COUNT in idetape_chrdev_open-1&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -21145,24 +21110,6 @@ c_func
 id|drive
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-macro_line|#if ONSTREAM_DEBUG
-r_if
-c_cond
-(paren
-id|tape-&gt;debug_level
-op_ge
-l_int|6
-)paren
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;ide-tape: MOD_DEC_USE_COUNT in idetape_chrdev_open-2&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|clear_bit
 (paren
 id|IDETAPE_PIPELINE_ERROR
@@ -21179,24 +21126,6 @@ op_eq
 id|idetape_direction_none
 )paren
 (brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-macro_line|#if ONSTREAM_DEBUG
-r_if
-c_cond
-(paren
-id|tape-&gt;debug_level
-op_ge
-l_int|6
-)paren
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;ide-tape: MOD_INC_USE_COUNT in idetape_chrdev_open-2&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|idetape_create_prevent_cmd
 c_func
 (paren
@@ -21291,8 +21220,6 @@ suffix:semicolon
 id|idetape_tape_t
 op_star
 id|tape
-op_assign
-id|drive-&gt;driver_data
 suffix:semicolon
 id|idetape_pc_t
 id|pc
@@ -21305,6 +21232,15 @@ id|MINOR
 (paren
 id|inode-&gt;i_rdev
 )paren
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|tape
+op_assign
+id|drive-&gt;driver_data
 suffix:semicolon
 macro_line|#if IDETAPE_DEBUG_LOG
 r_if
@@ -21515,24 +21451,6 @@ op_assign
 id|DOOR_UNLOCKED
 suffix:semicolon
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-macro_line|#if ONSTREAM_DEBUG
-r_if
-c_cond
-(paren
-id|tape-&gt;debug_level
-op_ge
-l_int|6
-)paren
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;ide-tape: MOD_DEC_USE_COUNT in idetape_chrdev_release&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 id|clear_bit
 (paren
@@ -21540,6 +21458,11 @@ id|IDETAPE_BUSY
 comma
 op_amp
 id|tape-&gt;flags
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -25193,6 +25116,10 @@ id|file_operations
 id|idetape_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|idetape_chrdev_read

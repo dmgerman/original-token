@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/watchdog.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|TIMER_MARGIN
@@ -114,8 +115,10 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_WATCHDOG_NOWAYOUT&t; 
 id|MOD_INC_USE_COUNT
 suffix:semicolon
+macro_line|#endif&t;
 multiline_comment|/*&n;&t; *&t;Activate timer&n;&t; */
 id|mod_timer
 c_func
@@ -158,6 +161,11 @@ id|file
 )paren
 (brace
 multiline_comment|/*&n;&t; *&t;Shut off the timer.&n;&t; * &t;Lock it in if it&squot;s a module and we defined ...NOWAYOUT&n;&t; */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifndef CONFIG_WATCHDOG_NOWAYOUT&t; 
 id|del_timer
 c_func
@@ -166,12 +174,15 @@ op_amp
 id|watchdog_ticktock
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 macro_line|#endif&t;
 id|timer_alive
 op_assign
 l_int|0
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -377,6 +388,10 @@ id|file_operations
 id|softdog_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|write
 suffix:colon
 id|softdog_write

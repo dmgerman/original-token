@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -2309,8 +2310,6 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|user-&gt;event_tail
 op_assign
 id|user-&gt;event_head
@@ -2420,6 +2419,11 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|s
 op_assign
 op_amp
@@ -2441,8 +2445,8 @@ c_func
 id|user
 )paren
 )paren
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* Unlink user data structure */
 r_if
@@ -2503,8 +2507,8 @@ id|link
 op_eq
 l_int|NULL
 )paren
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 op_star
 id|link
@@ -2521,7 +2525,12 @@ c_func
 id|user
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -3892,6 +3901,10 @@ id|file_operations
 id|ds_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|open
 suffix:colon
 id|ds_open

@@ -3,6 +3,7 @@ multiline_comment|/*&n; * This program is free software; you can redistribute it
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -445,12 +446,22 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|usblp
 op_assign
 id|usblp_table
 (braket
 id|minor
 )braket
+suffix:semicolon
+id|retval
+op_assign
+op_minus
+id|ENODEV
 suffix:semicolon
 r_if
 c_cond
@@ -461,18 +472,21 @@ op_logical_or
 op_logical_neg
 id|usblp-&gt;dev
 )paren
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|retval
+op_assign
 op_minus
-id|ENODEV
+id|EBUSY
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|usblp-&gt;used
 )paren
-r_return
-op_minus
-id|EBUSY
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -487,11 +501,9 @@ id|usblp
 )paren
 )paren
 )paren
-(brace
-r_return
-id|retval
+r_goto
+id|out
 suffix:semicolon
-)brace
 id|usblp-&gt;used
 op_assign
 l_int|1
@@ -526,8 +538,15 @@ id|usblp-&gt;readurb
 )paren
 suffix:semicolon
 )brace
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
-l_int|0
+id|retval
 suffix:semicolon
 )brace
 DECL|function|usblp_release

@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/rtc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/m48t35.h&gt;
 macro_line|#include &lt;asm/ioc3.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -643,10 +644,20 @@ id|file
 )paren
 (brace
 multiline_comment|/*&n;&t; * Turn off all interrupts once the device is no longer&n;&t; * in use, and clear the data.&n;&t; */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|rtc_status
 op_and_assign
 op_complement
 id|RTC_IS_OPEN
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0

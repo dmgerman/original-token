@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|macro|COSA_SLOW_IO
 macro_line|#undef COSA_SLOW_IO&t;/* for testing purposes only */
 DECL|macro|REALLY_SLOW_IO
@@ -4409,12 +4410,19 @@ r_struct
 id|cosa_data
 op_star
 id|cosa
-op_assign
-id|channel-&gt;cosa
 suffix:semicolon
 r_int
 r_int
 id|flags
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|cosa
+op_assign
+id|channel-&gt;cosa
 suffix:semicolon
 id|spin_lock_irqsave
 c_func
@@ -4438,6 +4446,11 @@ op_amp
 id|cosa-&gt;lock
 comma
 id|flags
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

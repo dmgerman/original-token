@@ -867,6 +867,11 @@ id|file-&gt;f_flags
 op_amp
 id|O_ACCMODE
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -890,6 +895,11 @@ id|kfree
 c_func
 (paren
 id|buffer
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

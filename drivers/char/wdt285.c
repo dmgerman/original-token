@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/watchdog.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
@@ -127,8 +128,6 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Ahead watchdog factor ten, Mr Sulu&n;&t; */
 op_star
 id|CSR_TIMER4_CLR
@@ -172,6 +171,8 @@ l_int|1
 op_lshift
 l_int|13
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 macro_line|#endif
 id|timer_alive
 op_assign
@@ -199,6 +200,11 @@ id|file
 )paren
 (brace
 macro_line|#ifdef ONLY_TESTING
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|free_irq
 c_func
 (paren
@@ -211,7 +217,10 @@ id|timer_alive
 op_assign
 l_int|0
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 macro_line|#else
 multiline_comment|/*&n;&t; *&t;It&squot;s irreversible!&n;&t; */
@@ -421,6 +430,10 @@ id|file_operations
 id|watchdog_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|write
 suffix:colon
 id|watchdog_write

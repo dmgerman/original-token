@@ -4,6 +4,8 @@ macro_line|#include &quot;cardwo.h&quot;
 macro_line|#include &quot;cardwi.h&quot;
 macro_line|#include &quot;recmgr.h&quot;
 macro_line|#include &quot;audio.h&quot;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 r_static
 r_void
 id|calculate_ofrag
@@ -4078,6 +4080,11 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4160,6 +4167,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
@@ -4233,6 +4245,11 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
@@ -4289,6 +4306,11 @@ op_amp
 id|woinst-&gt;lock
 comma
 id|flags
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -4353,6 +4375,11 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -5019,12 +5046,19 @@ r_struct
 id|emu10k1_card
 op_star
 id|card
-op_assign
-id|wave_dev-&gt;card
 suffix:semicolon
 r_int
 r_int
 id|flags
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|card
+op_assign
+id|wave_dev-&gt;card
 suffix:semicolon
 id|DPF
 c_func
@@ -5342,6 +5376,11 @@ c_func
 (paren
 op_amp
 id|card-&gt;open_wait
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

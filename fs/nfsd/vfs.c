@@ -1166,7 +1166,7 @@ c_func
 (paren
 id|inode
 comma
-l_int|0
+l_int|1
 )paren
 suffix:semicolon
 id|err
@@ -3459,7 +3459,7 @@ c_func
 (paren
 id|dchild-&gt;d_inode
 comma
-l_int|0
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -4461,7 +4461,7 @@ c_func
 (paren
 id|dentry-&gt;d_inode
 comma
-l_int|0
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -4744,7 +4744,7 @@ c_func
 (paren
 id|dest
 comma
-l_int|0
+l_int|1
 )paren
 suffix:semicolon
 )brace

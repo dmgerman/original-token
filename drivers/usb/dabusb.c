@@ -12,6 +12,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/usb.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &quot;dabusb.h&quot;
 macro_line|#include &quot;dabfirmware.h&quot;
 multiline_comment|/* --------------------------------------------------------------------- */
@@ -2651,6 +2652,11 @@ c_func
 l_string|&quot;dabusb_release&quot;
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|down
 (paren
 op_amp
@@ -2711,6 +2717,11 @@ suffix:semicolon
 id|s-&gt;opened
 op_assign
 l_int|0
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0

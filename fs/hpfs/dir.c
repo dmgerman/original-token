@@ -1,5 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/hpfs/dir.c&n; *&n; *  Mikulas Patocka (mikulas@artax.karlin.mff.cuni.cz), 1998-1999&n; *&n; *  directory VFS functions&n; */
 macro_line|#include &quot;hpfs_fn.h&quot;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|function|hpfs_dir_release
 r_int
 id|hpfs_dir_release
@@ -16,6 +18,11 @@ op_star
 id|filp
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|hpfs_del_pos
 c_func
 (paren
@@ -26,6 +33,11 @@ id|filp-&gt;f_pos
 )paren
 suffix:semicolon
 multiline_comment|/*hpfs_write_if_changed(inode);*/
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -2514,7 +2515,17 @@ c_cond
 (paren
 id|fb-&gt;fb_mmap
 )paren
-r_return
+(brace
+r_int
+id|res
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|res
+op_assign
 id|fb
 op_member_access_from_pointer
 id|fb_mmap
@@ -2527,6 +2538,15 @@ comma
 id|vma
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|res
+suffix:semicolon
+)brace
 macro_line|#if defined(__sparc__) &amp;&amp; !defined(__sparc_v9__)
 multiline_comment|/* Should never get here, all fb drivers should have their own&n;&t;   mmap routines */
 r_return
@@ -2535,6 +2555,11 @@ id|EINVAL
 suffix:semicolon
 macro_line|#else
 multiline_comment|/* !sparc32... */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|fb
 op_member_access_from_pointer
 id|fb_get_fix
@@ -2631,6 +2656,11 @@ id|fix.mmio_len
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|start
 op_and_assign
 id|PAGE_MASK
@@ -3201,6 +3231,13 @@ r_struct
 id|fb_info
 op_star
 id|info
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|info
 op_assign
 id|registered_fb
 (braket
@@ -3231,6 +3268,11 @@ id|__MOD_DEC_USE_COUNT
 c_func
 (paren
 id|info-&gt;fbops-&gt;owner
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

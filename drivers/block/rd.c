@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/fd.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -923,15 +924,19 @@ r_int
 r_int
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 op_decrement
 id|initrd_users
 )paren
-r_return
-l_int|0
-suffix:semicolon
+(brace
 id|blkdev_put
 c_func
 (paren
@@ -957,6 +962,12 @@ suffix:semicolon
 id|initrd_start
 op_assign
 l_int|0
+suffix:semicolon
+)brace
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0

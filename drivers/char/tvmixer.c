@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/i2c.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -1241,6 +1242,13 @@ r_struct
 id|i2c_client
 op_star
 id|client
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|client
 op_assign
 id|mix-&gt;dev
 suffix:semicolon
@@ -1251,10 +1259,17 @@ l_int|NULL
 op_eq
 id|client
 )paren
+(brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1266,6 +1281,11 @@ id|dec_use
 c_func
 (paren
 id|client-&gt;adapter
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

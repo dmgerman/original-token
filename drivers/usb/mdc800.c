@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/usb.h&gt;
 DECL|macro|VERSION
 mdefine_line|#define VERSION &t;&quot;0.7.3&quot;
@@ -1579,6 +1580,11 @@ id|dbg
 l_string|&quot;Mustek MDC800 device closed.&quot;
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1619,6 +1625,11 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon

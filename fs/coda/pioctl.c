@@ -8,6 +8,9 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+DECL|macro|__NO_VERSION__
+mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
@@ -27,38 +30,6 @@ id|inode
 comma
 r_int
 id|mask
-)paren
-suffix:semicolon
-r_static
-r_int
-id|coda_ioctl_open
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|i
-comma
-r_struct
-id|file
-op_star
-id|f
-)paren
-suffix:semicolon
-r_static
-r_int
-id|coda_ioctl_release
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|i
-comma
-r_struct
-id|file
-op_star
-id|f
 )paren
 suffix:semicolon
 r_static
@@ -108,17 +79,13 @@ id|file_operations
 id|coda_ioctl_operations
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|ioctl
 suffix:colon
 id|coda_pioctl
-comma
-id|open
-suffix:colon
-id|coda_ioctl_open
-comma
-id|release
-suffix:colon
-id|coda_ioctl_release
 comma
 )brace
 suffix:semicolon
@@ -140,61 +107,6 @@ id|mask
 (brace
 id|ENTRY
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* The pioctl file ops*/
-DECL|function|coda_ioctl_open
-r_int
-id|coda_ioctl_open
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|i
-comma
-r_struct
-id|file
-op_star
-id|f
-)paren
-(brace
-id|ENTRY
-suffix:semicolon
-id|CDEBUG
-c_func
-(paren
-id|D_PIOCTL
-comma
-l_string|&quot;File inode number: %ld&bslash;n&quot;
-comma
-id|f-&gt;f_dentry-&gt;d_inode-&gt;i_ino
-)paren
-suffix:semicolon
-id|EXIT
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|coda_ioctl_release
-r_int
-id|coda_ioctl_release
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|i
-comma
-r_struct
-id|file
-op_star
-id|f
-)paren
-(brace
 r_return
 l_int|0
 suffix:semicolon

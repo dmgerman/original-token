@@ -3,6 +3,8 @@ DECL|macro|NVRAM_VERSION
 mdefine_line|#define NVRAM_VERSION&t;&t;&quot;1.1&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|macro|PC
 mdefine_line|#define PC&t;&t;1
 DECL|macro|ATARI
@@ -991,6 +993,11 @@ op_star
 id|file
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|nvram_open_cnt
 op_decrement
 suffix:semicolon
@@ -1017,6 +1024,11 @@ id|nvram_open_mode
 op_and_assign
 op_complement
 id|NVRAM_WRITE
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0

@@ -30,6 +30,7 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -4826,6 +4827,11 @@ id|inode-&gt;i_rdev
 )paren
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|daa_set_mode
 c_func
 (paren
@@ -5453,6 +5459,11 @@ l_int|0
 )paren
 suffix:semicolon
 singleline_comment|// remove from list of async notification
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/agp_backend.h&gt;
 macro_line|#include &lt;linux/agpgart.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -2057,6 +2058,11 @@ suffix:semicolon
 id|agp_kern_info
 id|kerninfo
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|AGP_LOCK
 c_func
 (paren
@@ -2071,6 +2077,11 @@ id|TRUE
 )paren
 (brace
 id|AGP_UNLOCK
+c_func
+(paren
+)paren
+suffix:semicolon
+id|unlock_kernel
 c_func
 (paren
 )paren
@@ -2097,6 +2108,11 @@ id|priv-&gt;access_flags
 )paren
 (brace
 id|AGP_UNLOCK
+c_func
+(paren
+)paren
+suffix:semicolon
+id|unlock_kernel
 c_func
 (paren
 )paren
@@ -2165,6 +2181,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
@@ -2187,6 +2208,11 @@ l_int|NULL
 )paren
 (brace
 id|AGP_UNLOCK
+c_func
+(paren
+)paren
+suffix:semicolon
+id|unlock_kernel
 c_func
 (paren
 )paren
@@ -2214,6 +2240,11 @@ id|vma-&gt;vm_page_prot
 )paren
 (brace
 id|AGP_UNLOCK
+c_func
+(paren
+)paren
+suffix:semicolon
+id|unlock_kernel
 c_func
 (paren
 )paren
@@ -2248,12 +2279,22 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
 id|AGP_UNLOCK
+c_func
+(paren
+)paren
+suffix:semicolon
+id|unlock_kernel
 c_func
 (paren
 )paren
@@ -2288,6 +2329,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
@@ -2314,6 +2360,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
@@ -2324,11 +2375,21 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
 id|AGP_UNLOCK
+c_func
+(paren
+)paren
+suffix:semicolon
+id|unlock_kernel
 c_func
 (paren
 )paren
@@ -2364,6 +2425,11 @@ id|agp_file_private
 op_star
 )paren
 id|file-&gt;private_data
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 id|AGP_LOCK
 c_func
@@ -2461,6 +2527,11 @@ id|priv
 )paren
 suffix:semicolon
 id|AGP_UNLOCK
+c_func
+(paren
+)paren
+suffix:semicolon
+id|unlock_kernel
 c_func
 (paren
 )paren

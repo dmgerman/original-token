@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kbd_kern.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/shmiq.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
@@ -130,60 +131,6 @@ suffix:semicolon
 multiline_comment|/* /dev/gfx device */
 r_static
 r_int
-DECL|function|sgi_gfx_open
-id|sgi_gfx_open
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;GFX: Opened by %d&bslash;n&quot;
-comma
-id|current-&gt;pid
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_static
-r_int
-DECL|function|sgi_gfx_close
-id|sgi_gfx_close
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;GFX: Closed by %d&bslash;n&quot;
-comma
-id|current-&gt;pid
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_static
-r_int
 DECL|function|sgi_gfx_ioctl
 id|sgi_gfx_ioctl
 (paren
@@ -232,14 +179,6 @@ op_assign
 id|ioctl
 suffix:colon
 id|sgi_gfx_ioctl
-comma
-id|open
-suffix:colon
-id|sgi_gfx_open
-comma
-id|release
-suffix:colon
-id|sgi_gfx_close
 comma
 )brace
 suffix:semicolon
@@ -837,9 +776,19 @@ op_star
 id|filp
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|mouse_opened
 op_assign
 l_int|0
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0

@@ -6638,6 +6638,11 @@ id|client
 op_assign
 id|file-&gt;private_data
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6649,6 +6654,11 @@ id|dec_use
 c_func
 (paren
 id|client-&gt;adapter
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

@@ -20,6 +20,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 DECL|macro|PFX
 mdefine_line|#define PFX &quot;wdt_pci: &quot;
@@ -944,8 +945,10 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_WATCHDOG_NOWAYOUT&t;
 id|MOD_INC_USE_COUNT
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t;&t;&t; *&t;Activate &n;&t;&t;&t; */
 id|wdt_is_open
 op_assign
@@ -1076,8 +1079,6 @@ suffix:semicolon
 r_case
 id|TEMP_MINOR
 suffix:colon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1119,6 +1120,11 @@ op_eq
 id|WATCHDOG_MINOR
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifndef CONFIG_WATCHDOG_NOWAYOUT&t;
 id|inb_p
 c_func
@@ -1141,9 +1147,12 @@ id|wdt_is_open
 op_assign
 l_int|0
 suffix:semicolon
-)brace
-id|MOD_DEC_USE_COUNT
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -1209,6 +1218,10 @@ id|file_operations
 id|wdtpci_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|wdtpci_llseek

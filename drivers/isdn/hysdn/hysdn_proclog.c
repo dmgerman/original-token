@@ -1339,6 +1339,11 @@ id|retval
 op_assign
 l_int|0
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1522,6 +1527,11 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* read access */
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 (paren
 id|retval

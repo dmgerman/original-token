@@ -755,6 +755,10 @@ id|file_operations
 id|lvm_chr_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|open
 suffix:colon
 id|lvm_chr_open
@@ -1492,8 +1496,6 @@ id|MAX_VG
 r_return
 op_minus
 id|ENXIO
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|lvm_chr_open_count
 op_increment
@@ -2440,6 +2442,11 @@ id|minor
 )paren
 suffix:semicolon
 macro_line|#endif
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef LVM_TOTAL_RESET
 r_if
 c_cond
@@ -2490,22 +2497,11 @@ id|lvm_wait
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-r_if
-c_cond
-(paren
-id|GET_USE_COUNT
+id|unlock_kernel
 c_func
 (paren
-op_amp
-id|__this_module
 )paren
-OG
-l_int|0
-)paren
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

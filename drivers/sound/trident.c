@@ -16,6 +16,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/ac97_codec.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
@@ -6637,6 +6638,9 @@ id|state-&gt;dmabuf
 suffix:semicolon
 r_int
 id|ret
+op_assign
+op_minus
+id|EINVAL
 suffix:semicolon
 r_int
 r_int
@@ -6646,6 +6650,11 @@ id|VALIDATE_STATE
 c_func
 (paren
 id|state
+)paren
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -6673,8 +6682,8 @@ l_int|0
 op_ne
 l_int|0
 )paren
-r_return
-id|ret
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_else
@@ -6703,12 +6712,16 @@ l_int|1
 op_ne
 l_int|0
 )paren
-r_return
-id|ret
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_else
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|ret
+op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
@@ -6719,9 +6732,8 @@ id|vma-&gt;vm_pgoff
 op_ne
 l_int|0
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 id|size
 op_assign
@@ -6740,9 +6752,13 @@ op_lshift
 id|dmabuf-&gt;buforder
 )paren
 )paren
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|ret
+op_assign
 op_minus
-id|EINVAL
+id|EAGAIN
 suffix:semicolon
 r_if
 c_cond
@@ -6763,16 +6779,26 @@ comma
 id|vma-&gt;vm_page_prot
 )paren
 )paren
-r_return
-op_minus
-id|EAGAIN
+r_goto
+id|out
 suffix:semicolon
 id|dmabuf-&gt;mapped
 op_assign
 l_int|1
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|trident_ioctl
@@ -9088,12 +9114,21 @@ r_struct
 id|trident_card
 op_star
 id|card
-op_assign
-id|state-&gt;card
 suffix:semicolon
 r_struct
 id|dmabuf
 op_star
+id|dmabuf
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|card
+op_assign
+id|state-&gt;card
+suffix:semicolon
 id|dmabuf
 op_assign
 op_amp
@@ -9219,6 +9254,11 @@ c_func
 (paren
 op_amp
 id|card-&gt;open_sem
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

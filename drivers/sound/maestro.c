@@ -2,6 +2,8 @@ multiline_comment|/*************************************************************
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,0)
 DECL|macro|DECLARE_WAITQUEUE
 mdefine_line|#define DECLARE_WAITQUEUE(QUEUE,INIT) struct wait_queue QUEUE = {INIT, NULL}
@@ -10819,6 +10821,9 @@ id|db
 suffix:semicolon
 r_int
 id|ret
+op_assign
+op_minus
+id|EINVAL
 suffix:semicolon
 r_int
 r_int
@@ -10828,6 +10833,11 @@ id|VALIDATE_STATE
 c_func
 (paren
 id|s
+)paren
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -10855,8 +10865,8 @@ l_int|1
 op_ne
 l_int|0
 )paren
-r_return
-id|ret
+r_goto
+id|out
 suffix:semicolon
 id|db
 op_assign
@@ -10892,8 +10902,8 @@ l_int|0
 op_ne
 l_int|0
 )paren
-r_return
-id|ret
+r_goto
+id|out
 suffix:semicolon
 id|db
 op_assign
@@ -10903,7 +10913,11 @@ suffix:semicolon
 )brace
 r_else
 macro_line|#endif
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|ret
+op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
@@ -10918,9 +10932,8 @@ id|vma
 op_ne
 l_int|0
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 id|size
 op_assign
@@ -10939,9 +10952,13 @@ op_lshift
 id|db-&gt;buforder
 )paren
 )paren
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|ret
+op_assign
 op_minus
-id|EINVAL
+id|EAGAIN
 suffix:semicolon
 r_if
 c_cond
@@ -10962,16 +10979,26 @@ comma
 id|vma-&gt;vm_page_prot
 )paren
 )paren
-r_return
-op_minus
-id|EAGAIN
+r_goto
+id|out
 suffix:semicolon
 id|db-&gt;mapped
 op_assign
 l_int|1
 suffix:semicolon
-r_return
+id|ret
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|ess_ioctl
@@ -14035,6 +14062,11 @@ c_func
 id|s
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -14159,6 +14191,11 @@ c_func
 (paren
 op_amp
 id|s-&gt;open_wait
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

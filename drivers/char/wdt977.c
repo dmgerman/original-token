@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|WATCHDOG_MINOR
@@ -60,8 +61,10 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_WATCHDOG_NOWAYOUT
 id|MOD_INC_USE_COUNT
 suffix:semicolon
+macro_line|#endif
 id|timer_alive
 op_increment
 suffix:semicolon
@@ -246,6 +249,11 @@ id|file
 (brace
 multiline_comment|/*&n;&t; *&t;Shut off the timer.&n;&t; * &t;Lock it in if it&squot;s a module and we defined ...NOWAYOUT&n;&t; */
 macro_line|#ifndef CONFIG_WATCHDOG_NOWAYOUT
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 singleline_comment|// unlock the SuperIO chip
 id|outb
 c_func
@@ -389,11 +397,14 @@ comma
 l_int|0x370
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|timer_alive
 op_assign
 l_int|0
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 id|printk
 c_func
@@ -519,6 +530,10 @@ id|file_operations
 id|wdt977_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|write
 suffix:colon
 id|wdt977_write

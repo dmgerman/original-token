@@ -22,6 +22,7 @@ mdefine_line|#define MTRR_NEED_STRINGS
 macro_line|#include &lt;asm/mtrr.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -5855,6 +5856,11 @@ l_int|NULL
 r_return
 l_int|0
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|max
 op_assign
 id|get_num_var_ranges
@@ -5916,6 +5922,11 @@ id|i
 suffix:semicolon
 )brace
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|kfree
 (paren
 id|fcount

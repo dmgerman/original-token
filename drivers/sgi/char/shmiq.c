@@ -1128,6 +1128,11 @@ id|start
 op_assign
 id|vma-&gt;vm_start
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|mem
 op_assign
 (paren
@@ -1152,10 +1157,17 @@ c_cond
 op_logical_neg
 id|mem
 )paren
+(brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 multiline_comment|/* Prevent the swapper from considering these pages for swap and touching them */
 id|vma-&gt;vm_flags
 op_or_assign
@@ -1210,6 +1222,11 @@ comma
 l_int|0
 comma
 id|size
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

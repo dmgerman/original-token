@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sound.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/soundcard.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;dmasound.h&quot;
 multiline_comment|/*&n;     *  Declarations&n;     */
@@ -4181,6 +4182,11 @@ op_star
 id|file
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|mixer.busy
 op_assign
 l_int|0
@@ -4188,6 +4194,11 @@ suffix:semicolon
 id|dmasound.mach
 dot
 id|release
+c_func
+(paren
+)paren
+suffix:semicolon
+id|unlock_kernel
 c_func
 (paren
 )paren
@@ -5848,6 +5859,11 @@ id|rc
 op_assign
 l_int|0
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5908,6 +5924,11 @@ id|file
 )paren
 suffix:semicolon
 multiline_comment|/* Wake up a process waiting for the queue being released.&n;&t; * Note: There may be several processes waiting for a call&n;&t; * to open() returning. */
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|rc
 suffix:semicolon
@@ -6944,6 +6965,11 @@ op_star
 id|file
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|state.busy
 op_assign
 l_int|0
@@ -6951,6 +6977,11 @@ suffix:semicolon
 id|dmasound.mach
 dot
 id|release
+c_func
+(paren
+)paren
+suffix:semicolon
+id|unlock_kernel
 c_func
 (paren
 )paren

@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/isdn.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &quot;isdn_common.h&quot;
 macro_line|#include &quot;isdn_tty.h&quot;
 macro_line|#include &quot;isdn_net.h&quot;
@@ -140,8 +141,8 @@ r_int
 )paren
 suffix:semicolon
 r_void
-DECL|function|isdn_MOD_INC_USE_COUNT
-id|isdn_MOD_INC_USE_COUNT
+DECL|function|isdn_lock_drivers
+id|isdn_lock_drivers
 c_func
 (paren
 r_void
@@ -149,8 +150,6 @@ r_void
 (brace
 r_int
 id|i
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_for
 c_loop
@@ -200,8 +199,24 @@ suffix:semicolon
 )brace
 )brace
 r_void
-DECL|function|isdn_MOD_DEC_USE_COUNT
-id|isdn_MOD_DEC_USE_COUNT
+DECL|function|isdn_MOD_INC_USE_COUNT
+id|isdn_MOD_INC_USE_COUNT
+c_func
+(paren
+r_void
+)paren
+(brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+id|isdn_lock_drivers
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_void
+DECL|function|isdn_unlock_drivers
+id|isdn_unlock_drivers
 c_func
 (paren
 r_void
@@ -209,8 +224,6 @@ r_void
 (brace
 r_int
 id|i
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_for
 c_loop
@@ -270,6 +283,22 @@ id|locks
 op_decrement
 suffix:semicolon
 )brace
+)brace
+r_void
+DECL|function|isdn_MOD_DEC_USE_COUNT
+id|isdn_MOD_DEC_USE_COUNT
+c_func
+(paren
+r_void
+)paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+id|isdn_unlock_drivers
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 macro_line|#if defined(ISDN_DEBUG_NET_DUMP) || defined(ISDN_DEBUG_MODEM_DUMP)
 r_void
@@ -7987,7 +8016,7 @@ macro_line|#undef phone
 DECL|macro|cfg
 macro_line|#undef cfg
 )brace
-multiline_comment|/*&n; * Open the device code.&n; * MOD_INC_USE_COUNT make sure that the driver memory is not freed&n; * while the device is in use.&n; */
+multiline_comment|/*&n; * Open the device code.&n; */
 r_static
 r_int
 DECL|function|isdn_open
@@ -8055,8 +8084,6 @@ id|GFP_KERNEL
 )paren
 )paren
 (brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|p-&gt;next
 op_assign
 (paren
@@ -8188,7 +8215,7 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-id|isdn_MOD_INC_USE_COUNT
+id|isdn_lock_drivers
 c_func
 (paren
 )paren
@@ -8226,7 +8253,7 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-id|isdn_MOD_INC_USE_COUNT
+id|isdn_lock_drivers
 c_func
 (paren
 )paren
@@ -8265,7 +8292,7 @@ id|filep
 )paren
 )paren
 )paren
-id|isdn_MOD_INC_USE_COUNT
+id|isdn_lock_drivers
 c_func
 (paren
 )paren
@@ -8306,6 +8333,11 @@ c_func
 id|ino-&gt;i_rdev
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8325,8 +8357,6 @@ op_star
 id|q
 op_assign
 l_int|NULL
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_while
 c_loop
@@ -8377,6 +8407,11 @@ c_func
 id|p
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -8403,11 +8438,16 @@ id|KERN_WARNING
 l_string|&quot;isdn: No private data while closing isdnctrl&bslash;n&quot;
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-id|isdn_MOD_DEC_USE_COUNT
+id|isdn_unlock_drivers
 c_func
 (paren
 )paren
@@ -8419,9 +8459,16 @@ id|minor
 OL
 id|ISDN_MINOR_CTRL
 )paren
+(brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -8440,6 +8487,11 @@ id|current
 id|dev-&gt;profd
 op_assign
 l_int|NULL
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -8464,6 +8516,11 @@ id|filep
 )paren
 suffix:semicolon
 macro_line|#endif
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -8475,6 +8532,10 @@ id|file_operations
 id|isdn_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|isdn_lseek

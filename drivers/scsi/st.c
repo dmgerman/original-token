@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/mtio.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -2795,17 +2796,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|st_template.module
-)paren
-id|__MOD_INC_USE_COUNT
-c_func
-(paren
-id|st_template.module
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|mode
 op_ne
 id|STp-&gt;current_mode
@@ -4322,17 +4312,6 @@ c_func
 id|STp-&gt;device-&gt;host-&gt;hostt-&gt;module
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|st_template.module
-)paren
-id|__MOD_DEC_USE_COUNT
-c_func
-(paren
-id|st_template.module
-)paren
-suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -5054,6 +5033,11 @@ c_func
 id|devt
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|read_lock
 c_func
 (paren
@@ -5130,15 +5114,9 @@ c_func
 id|STp-&gt;device-&gt;host-&gt;hostt-&gt;module
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|st_template.module
-)paren
-id|__MOD_DEC_USE_COUNT
+id|unlock_kernel
 c_func
 (paren
-id|st_template.module
 )paren
 suffix:semicolon
 r_return
@@ -18318,6 +18296,10 @@ id|file_operations
 id|st_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|st_read

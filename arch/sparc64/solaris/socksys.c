@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/termios.h&gt;
 macro_line|#include &quot;conv.h&quot;
@@ -479,6 +480,11 @@ op_star
 id|it
 suffix:semicolon
 multiline_comment|/* XXX: check this */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|sock
 op_assign
 (paren
@@ -566,6 +572,11 @@ r_char
 op_star
 )paren
 id|sock
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#ifdef CONFIG_ISDN_CAPI_MIDDLEWARE
@@ -706,8 +707,6 @@ id|minor
 op_assign
 l_int|0
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|mp
 op_assign
 (paren
@@ -730,8 +729,6 @@ op_logical_neg
 id|mp
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1047,8 +1044,6 @@ id|capiminor_cachep
 comma
 id|mp
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#ifdef _DEBUG_REFCOUNT
 id|printk
@@ -4969,8 +4964,6 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 macro_line|#ifdef _DEBUG_REFCOUNT
 id|printk
 c_func
@@ -5019,6 +5012,11 @@ op_star
 )paren
 id|file-&gt;private_data
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|capincci_free
 c_func
 (paren
@@ -5037,8 +5035,6 @@ id|file-&gt;private_data
 op_assign
 l_int|NULL
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 macro_line|#ifdef _DEBUG_REFCOUNT
 id|printk
 c_func
@@ -5054,6 +5050,11 @@ id|THIS_MODULE
 )paren
 suffix:semicolon
 macro_line|#endif
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -5970,6 +5971,11 @@ c_cond
 id|mp
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|mp-&gt;file
 op_assign
 l_int|0
@@ -5993,6 +5999,11 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 macro_line|#ifdef _DEBUG_REFCOUNT
 id|printk
@@ -8812,8 +8823,6 @@ r_char
 op_star
 id|p
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8893,8 +8902,6 @@ comma
 id|capi_major
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -8932,8 +8939,6 @@ l_string|&quot;capi20: unable to get major %d&bslash;n&quot;
 comma
 id|capi_rawmajor
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -9017,8 +9022,6 @@ op_eq
 l_int|0
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|devfs_unregister_chrdev
 c_func
 (paren
@@ -9099,8 +9102,6 @@ id|capi_rawmajor
 comma
 l_string|&quot;capi/r%d&quot;
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -9228,8 +9229,6 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
@@ -9253,8 +9252,6 @@ id|rev
 comma
 id|capi_major
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

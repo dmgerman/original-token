@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/kbd_ll.h&gt;
 macro_line|#include &lt;linux/kbd_kern.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/ebus.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
@@ -3035,6 +3036,11 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|aux_fasync
 c_func
 (paren
@@ -3052,8 +3058,8 @@ c_cond
 op_decrement
 id|aux_count
 )paren
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 id|spin_lock_irqsave
 c_func
@@ -3099,6 +3105,13 @@ op_amp
 id|pcikbd_lock
 comma
 id|flags
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;net/slhc_vj.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 DECL|macro|PPP_VERSION
@@ -1032,6 +1033,11 @@ op_star
 )paren
 id|file-&gt;private_data
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1094,6 +1100,11 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

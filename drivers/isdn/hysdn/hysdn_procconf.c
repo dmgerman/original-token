@@ -1556,6 +1556,11 @@ id|proc_dir_entry
 op_star
 id|pd
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* search the addressed card */
 id|card
 op_assign
@@ -1597,6 +1602,11 @@ op_logical_neg
 id|card
 )paren
 (brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 (paren
 op_minus
@@ -1714,6 +1724,11 @@ id|filep-&gt;private_data
 suffix:semicolon
 multiline_comment|/* release memory */
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 (paren
 id|retval

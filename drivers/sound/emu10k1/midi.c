@@ -2,6 +2,8 @@ multiline_comment|/*&n; ********************************************************
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;hwaccess.h&quot;
 macro_line|#include &quot;cardmo.h&quot;
@@ -693,6 +695,13 @@ r_struct
 id|emu10k1_card
 op_star
 id|card
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|card
 op_assign
 id|midi_dev-&gt;card
 suffix:semicolon
@@ -895,6 +904,11 @@ c_func
 (paren
 op_amp
 id|card-&gt;open_wait
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

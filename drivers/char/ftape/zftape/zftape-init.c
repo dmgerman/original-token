@@ -14,16 +14,10 @@ macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/wrapper.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/zftape.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;=KERNEL_VER(2,1,16)
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#else
-DECL|macro|__initdata
-mdefine_line|#define __initdata
-DECL|macro|__initfunc
-mdefine_line|#define __initfunc(__arg) __arg
-macro_line|#endif
 macro_line|#include &quot;../zftape/zftape-init.h&quot;
 macro_line|#include &quot;../zftape/zftape-read.h&quot;
 macro_line|#include &quot;../zftape/zftape-write.h&quot;
@@ -57,7 +51,6 @@ id|__initdata
 op_assign
 l_string|&quot;$Date: 1997/11/06 00:48:56 $&quot;
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,18)
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -81,7 +74,6 @@ c_func
 l_string|&quot;char-major-27&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*      Global vars.&n; */
 DECL|variable|zft_cmpr_ops
 r_struct
@@ -127,7 +119,6 @@ op_star
 id|filep
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,31)
 r_static
 r_int
 id|zft_close
@@ -144,24 +135,6 @@ op_star
 id|filep
 )paren
 suffix:semicolon
-macro_line|#else
-r_static
-r_void
-id|zft_close
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|filep
-)paren
-suffix:semicolon
-macro_line|#endif
 r_static
 r_int
 id|zft_ioctl
@@ -186,7 +159,6 @@ r_int
 id|arg
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,56)
 r_static
 r_int
 id|zft_mmap
@@ -203,30 +175,6 @@ op_star
 id|vma
 )paren
 suffix:semicolon
-macro_line|#else
-r_static
-r_int
-id|zft_mmap
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|filep
-comma
-r_struct
-id|vm_area_struct
-op_star
-id|vma
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,60)
 r_static
 id|ssize_t
 id|zft_read
@@ -271,103 +219,6 @@ op_star
 id|ppos
 )paren
 suffix:semicolon
-macro_line|#elif LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,0)
-r_static
-r_int
-id|zft_read
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|fp
-comma
-r_char
-op_star
-id|buff
-comma
-r_int
-r_int
-id|req_len
-)paren
-suffix:semicolon
-r_static
-r_int
-id|zft_write
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|fp
-comma
-r_const
-r_char
-op_star
-id|buff
-comma
-r_int
-r_int
-id|req_len
-)paren
-suffix:semicolon
-macro_line|#else
-r_static
-r_int
-id|zft_read
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|fp
-comma
-r_char
-op_star
-id|buff
-comma
-r_int
-id|req_len
-)paren
-suffix:semicolon
-r_static
-r_int
-id|zft_write
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|fp
-comma
-r_const
-r_char
-op_star
-id|buff
-comma
-r_int
-id|req_len
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|variable|zft_cdev
 r_static
 r_struct
@@ -375,6 +226,10 @@ id|file_operations
 id|zft_cdev
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|zft_read
@@ -428,23 +283,6 @@ c_func
 id|ft_t_flow
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VER(2,1,18)
-r_if
-c_cond
-(paren
-op_logical_neg
-id|MOD_IN_USE
-)paren
-(brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-multiline_comment|/* lock module in memory */
-)brace
-macro_line|#else
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-multiline_comment|/*  sets MOD_VISITED and MOD_USED_ONCE,&n;&t;&t;&t;    *  locking is done with can_unload()&n;&t;&t;&t;    */
-macro_line|#endif
 id|TRACE
 c_func
 (paren
@@ -506,22 +344,6 @@ id|busy_flag
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(MODULE) &amp;&amp; LINUX_VERSION_CODE &lt; KERNEL_VER(2,1,18)
-r_if
-c_cond
-(paren
-op_logical_neg
-id|zft_dirty
-c_func
-(paren
-)paren
-)paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-multiline_comment|/* unlock module in memory */
-)brace
-macro_line|#endif
 id|TRACE_ABORT
 c_func
 (paren
@@ -578,22 +400,6 @@ id|busy_flag
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(MODULE) &amp;&amp; LINUX_VERSION_CODE &lt; KERNEL_VER(2,1,18)
-r_if
-c_cond
-(paren
-op_logical_neg
-id|zft_dirty
-c_func
-(paren
-)paren
-)paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-multiline_comment|/* unlock module in memory */
-)brace
-macro_line|#endif
 id|TRACE_ABORT
 c_func
 (paren
@@ -652,6 +458,11 @@ c_func
 id|ft_t_flow
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -675,15 +486,14 @@ comma
 l_string|&quot;failed: not busy or wrong unit&quot;
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,31)
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|TRACE_EXIT
 l_int|0
 suffix:semicolon
-macro_line|#else
-id|TRACE_EXIT
-suffix:semicolon
-multiline_comment|/* keep busy_flag !(?) */
-macro_line|#endif
 )brace
 id|sigfillset
 c_func
@@ -725,30 +535,14 @@ id|busy_flag
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(MODULE) &amp;&amp; LINUX_VERSION_CODE &lt; KERNEL_VER(2,1,18)
-r_if
-c_cond
-(paren
-op_logical_neg
-id|zft_dirty
+id|unlock_kernel
 c_func
 (paren
 )paren
-)paren
-(brace
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
-multiline_comment|/* unlock module in memory */
-)brace
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,31)
 id|TRACE_EXIT
 l_int|0
 suffix:semicolon
-macro_line|#else
-id|TRACE_EXIT
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*      Ioctl for floppy tape device&n; */
 DECL|function|zft_ioctl
@@ -857,7 +651,6 @@ id|result
 suffix:semicolon
 )brace
 multiline_comment|/*      Ioctl for floppy tape device&n; */
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,56)
 DECL|function|zft_mmap
 r_static
 r_int
@@ -874,28 +667,6 @@ id|vm_area_struct
 op_star
 id|vma
 )paren
-macro_line|#else
-r_static
-r_int
-id|zft_mmap
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|filep
-comma
-r_struct
-id|vm_area_struct
-op_star
-id|vma
-)paren
-macro_line|#endif
 (brace
 r_int
 id|result
@@ -918,7 +689,6 @@ c_cond
 op_logical_neg
 id|busy_flag
 op_logical_or
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,56)
 id|MINOR
 c_func
 (paren
@@ -927,16 +697,6 @@ id|filep-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 op_ne
 id|zft_unit
 op_logical_or
-macro_line|#else
-id|MINOR
-c_func
-(paren
-id|ino-&gt;i_rdev
-)paren
-op_ne
-id|zft_unit
-op_logical_or
-macro_line|#endif
 id|ft_failure
 )paren
 (brace
@@ -962,6 +722,11 @@ c_func
 (paren
 op_amp
 id|current-&gt;blocked
+)paren
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -998,6 +763,11 @@ id|dummy
 suffix:semicolon
 macro_line|#endif
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|current-&gt;blocked
 op_assign
 id|old_sigmask
@@ -1008,7 +778,6 @@ id|result
 suffix:semicolon
 )brace
 multiline_comment|/*      Read from floppy tape device&n; */
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,60)
 DECL|function|zft_read
 r_static
 id|ssize_t
@@ -1031,54 +800,6 @@ id|loff_t
 op_star
 id|ppos
 )paren
-macro_line|#elif LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,0)
-r_static
-r_int
-id|zft_read
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|fp
-comma
-r_char
-op_star
-id|buff
-comma
-r_int
-r_int
-id|req_len
-)paren
-macro_line|#else
-r_static
-r_int
-id|zft_read
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|fp
-comma
-r_char
-op_star
-id|buff
-comma
-r_int
-id|req_len
-)paren
-macro_line|#endif
 (brace
 r_int
 id|result
@@ -1089,7 +810,6 @@ suffix:semicolon
 id|sigset_t
 id|old_sigmask
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,60)
 r_struct
 id|inode
 op_star
@@ -1097,7 +817,6 @@ id|ino
 op_assign
 id|fp-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
-macro_line|#endif
 id|TRACE_FUN
 c_func
 (paren
@@ -1189,7 +908,6 @@ id|result
 suffix:semicolon
 )brace
 multiline_comment|/*      Write to tape device&n; */
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,60)
 DECL|function|zft_write
 r_static
 id|ssize_t
@@ -1213,56 +931,6 @@ id|loff_t
 op_star
 id|ppos
 )paren
-macro_line|#elif LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,0)
-r_static
-r_int
-id|zft_write
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|fp
-comma
-r_const
-r_char
-op_star
-id|buff
-comma
-r_int
-r_int
-id|req_len
-)paren
-macro_line|#else
-r_static
-r_int
-id|zft_write
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|fp
-comma
-r_const
-r_char
-op_star
-id|buff
-comma
-r_int
-id|req_len
-)paren
-macro_line|#endif
 (brace
 r_int
 id|result
@@ -1273,7 +941,6 @@ suffix:semicolon
 id|sigset_t
 id|old_sigmask
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,60)
 r_struct
 id|inode
 op_star
@@ -1281,7 +948,6 @@ id|ino
 op_assign
 id|fp-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
-macro_line|#endif
 id|TRACE_FUN
 c_func
 (paren
@@ -1862,16 +1528,6 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VER(2,1,18)
-id|register_symtab
-c_func
-(paren
-op_amp
-id|zft_symbol_table
-)paren
-suffix:semicolon
-multiline_comment|/* add global zftape symbols */
-macro_line|#endif
 macro_line|#ifdef CONFIG_ZFT_COMPRESSOR
 (paren
 r_void
@@ -1895,7 +1551,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,18)
 multiline_comment|/* Called by modules package before trying to unload the module&n; */
 DECL|function|can_unload
 r_static
@@ -1908,6 +1563,12 @@ r_void
 (brace
 r_return
 (paren
+id|GET_USE_COUNT
+c_func
+(paren
+id|THIS_MODULE
+)paren
+op_logical_or
 id|zft_dirty
 c_func
 (paren
@@ -1916,14 +1577,12 @@ op_logical_or
 id|busy_flag
 )paren
 ques
-c_cond
 op_minus
 id|EBUSY
 suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* Called by modules package when installing the driver&n; */
 DECL|function|init_module
 r_int
@@ -1933,7 +1592,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,18)
 r_if
 c_cond
 (paren
@@ -1957,7 +1615,6 @@ id|__this_module.can_unload
 op_assign
 id|can_unload
 suffix:semicolon
-macro_line|#endif
 r_return
 id|zft_init
 c_func

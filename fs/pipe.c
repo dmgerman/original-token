@@ -1386,6 +1386,11 @@ id|inode
 )paren
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|PIPE_READERS
 c_func
 (paren
@@ -1466,6 +1471,11 @@ id|inode
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|up
 c_func
 (paren

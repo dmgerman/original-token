@@ -3344,6 +3344,11 @@ id|bdev-&gt;bd_sem
 )paren
 suffix:semicolon
 multiline_comment|/* syncing will go here */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3448,6 +3453,11 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/* we can&squot;t rely on driver being */
 multiline_comment|/* kind to stay around. */
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|up
 c_func
 (paren

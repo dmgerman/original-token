@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/netlink.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|variable|open_map
@@ -542,6 +543,13 @@ r_struct
 id|socket
 op_star
 id|sock
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|sock
 op_assign
 id|netlink_user
 (braket
@@ -562,6 +570,11 @@ op_complement
 l_int|1
 op_lshift
 id|minor
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|sock_release

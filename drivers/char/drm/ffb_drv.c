@@ -1,5 +1,7 @@
 multiline_comment|/* $Id: ffb_drv.c,v 1.3 2000/06/01 04:24:39 davem Exp $&n; * ffb_drv.c: Creator/Creator3D direct rendering driver.&n; *&n; * Copyright (C) 2000 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &quot;drmP.h&quot;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/upa.h&gt;
 macro_line|#include &quot;ffb_drv.h&quot;
@@ -335,6 +337,10 @@ id|file_operations
 id|ffb_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|open
 suffix:colon
 id|ffb_open
@@ -2782,8 +2788,6 @@ op_logical_neg
 id|ret
 )paren
 (brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|atomic_inc
 c_func
 (paren
@@ -2859,13 +2863,20 @@ suffix:semicolon
 id|drm_device_t
 op_star
 id|dev
-op_assign
-id|priv-&gt;dev
 suffix:semicolon
 r_int
 id|ret
 op_assign
 l_int|0
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|dev
+op_assign
+id|priv-&gt;dev
 suffix:semicolon
 id|DRM_DEBUG
 c_func
@@ -2972,8 +2983,6 @@ op_logical_neg
 id|ret
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|atomic_inc
 c_func
 (paren
@@ -3031,6 +3040,11 @@ op_amp
 id|dev-&gt;count_lock
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
@@ -3043,12 +3057,21 @@ op_amp
 id|dev-&gt;count_lock
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|ffb_takedown
 c_func
 (paren
 id|dev
 )paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 id|spin_unlock
@@ -3059,6 +3082,11 @@ id|dev-&gt;count_lock
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -4008,6 +4036,11 @@ id|vma
 )paren
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|minor
 op_assign
 id|MINOR
@@ -4067,10 +4100,17 @@ id|i
 op_ge
 id|ffb_dev_table_size
 )paren
+(brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 multiline_comment|/* We don&squot;t support/need dma mappings, so... */
 r_if
 c_cond
@@ -4082,10 +4122,17 @@ c_func
 id|vma
 )paren
 )paren
+(brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -4142,10 +4189,17 @@ id|i
 op_ge
 id|dev-&gt;map_count
 )paren
+(brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4167,10 +4221,17 @@ id|CAP_SYS_ADMIN
 )paren
 )paren
 )paren
+(brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EPERM
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4182,10 +4243,17 @@ op_minus
 id|vma-&gt;vm_start
 )paren
 )paren
+(brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 multiline_comment|/* Set read-only attribute before mappings are created&n;&t; * so it works for fb/reg maps too.&n;&t; */
 r_if
 c_cond
@@ -4267,10 +4335,17 @@ comma
 l_int|0
 )paren
 )paren
+(brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
+)brace
 id|vma-&gt;vm_ops
 op_assign
 op_amp
@@ -4307,12 +4382,22 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
 multiline_comment|/* This should never happen. */
 )brace
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 id|vma-&gt;vm_flags
 op_or_assign

@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/watchdog.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * These are the auto-probe addresses available.&n; *&n; * Revision A only uses ports 0x270 and 0x370.  Revision C introduced 0x350.&n; * Revision A has an address range of 2 addresses, while Revision C has 3.&n; */
@@ -1481,6 +1482,11 @@ op_eq
 id|WATCHDOG_MINOR
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|is_open
 op_assign
 l_int|0
@@ -1530,6 +1536,11 @@ id|io_lock
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#endif
 )brace
 r_return

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/ppdev.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|macro|PP_VERSION
 mdefine_line|#define PP_VERSION &quot;ppdev: user-space parallel port driver&quot;
 DECL|macro|CHRDEV
@@ -2054,6 +2055,11 @@ id|pp
 op_assign
 id|file-&gt;private_data
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2164,6 +2170,11 @@ id|minor
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|kfree
 (paren
 id|pp

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -5219,6 +5220,19 @@ r_struct
 id|ti_ohci
 op_star
 id|ohci
+suffix:semicolon
+r_int
+id|res
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ohci
 op_assign
 id|video-&gt;ohci
 suffix:semicolon
@@ -5250,12 +5264,10 @@ comma
 l_string|&quot;current iso context not set&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
 )brace
-r_return
+r_else
+id|res
+op_assign
 id|do_iso_mmap
 c_func
 (paren
@@ -5280,8 +5292,13 @@ id|vma-&gt;vm_start
 )paren
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
-l_int|0
+id|res
 suffix:semicolon
 )brace
 DECL|function|video1394_open
@@ -5396,6 +5413,11 @@ id|video-&gt;ohci
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -5595,6 +5617,11 @@ comma
 id|ohci-&gt;id
 comma
 l_string|&quot;release&quot;
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

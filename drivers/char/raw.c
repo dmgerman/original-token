@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/raw.h&gt;
 macro_line|#include &lt;linux/capability.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|dprintk
 mdefine_line|#define dprintk(x...) 
@@ -504,6 +505,11 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|bdev
 op_assign
 id|raw_device_bindings
@@ -524,6 +530,11 @@ id|raw_device_inuse
 id|minor
 )braket
 op_decrement
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0

@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -423,8 +424,6 @@ id|modname
 l_int|20
 )braket
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|sprintf
 (paren
 id|modname
@@ -448,8 +447,6 @@ id|video_device
 (braket
 id|minor
 )braket
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_if
 c_cond
@@ -539,6 +536,13 @@ r_struct
 id|video_device
 op_star
 id|vfl
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|vfl
 op_assign
 id|video_device
 (braket
@@ -567,6 +571,11 @@ suffix:semicolon
 id|vfl-&gt;busy
 op_assign
 l_int|0
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -700,6 +709,12 @@ op_star
 id|vma
 )paren
 (brace
+r_int
+id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 r_struct
 id|video_device
 op_star
@@ -720,7 +735,13 @@ c_cond
 id|vfl-&gt;mmap
 )paren
 (brace
-r_return
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
 id|vfl
 op_member_access_from_pointer
 id|mmap
@@ -745,10 +766,14 @@ id|vma-&gt;vm_start
 )paren
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 r_return
-op_minus
-id|EINVAL
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;/proc support&n; */
@@ -1740,6 +1765,10 @@ id|file_operations
 id|video_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|video_lseek

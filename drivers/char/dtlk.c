@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/init.h&gt;&t;&t;/* for __init, module_{init,exit} 
 macro_line|#include &lt;linux/poll.h&gt;&t;&t;/* for POLLIN, etc. */
 macro_line|#include &lt;linux/dtlk.h&gt;&t;&t;/* local header file for DoubleTalk values */
 macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#ifdef TRACING
 DECL|macro|TRACE_TEXT
 mdefine_line|#define TRACE_TEXT(str) printk(str);
@@ -1202,11 +1203,21 @@ suffix:semicolon
 )brace
 id|TRACE_RET
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|del_timer
 c_func
 (paren
 op_amp
 id|dtlk_timer
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

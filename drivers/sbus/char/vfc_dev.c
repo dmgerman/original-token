@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -814,7 +815,7 @@ suffix:semicolon
 )brace
 DECL|function|vfc_release
 r_static
-r_void
+r_int
 id|vfc_release
 c_func
 (paren
@@ -834,6 +835,11 @@ id|vfc_dev
 op_star
 id|dev
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dev
 op_assign
 id|vfc_get_dev_ptr
@@ -849,22 +855,33 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|dev
-op_eq
-l_int|NULL
-)paren
-r_return
-suffix:semicolon
-r_if
-c_cond
-(paren
+op_logical_or
 op_logical_neg
 id|dev-&gt;busy
 )paren
-r_return
+(brace
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 id|dev-&gt;busy
 op_assign
+l_int|0
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
 l_int|0
 suffix:semicolon
 )brace
@@ -2921,6 +2938,11 @@ id|vfc_dev
 op_star
 id|dev
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dev
 op_assign
 id|vfc_get_dev_ptr
@@ -2941,6 +2963,11 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENODEV
@@ -3014,6 +3041,11 @@ comma
 id|vma-&gt;vm_page_prot
 comma
 id|dev-&gt;which_io
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if

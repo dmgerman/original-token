@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 multiline_comment|/* If you want debugging uncomment: */
 multiline_comment|/* #define DEBUG */
 macro_line|#include &lt;linux/init.h&gt;
@@ -213,6 +214,10 @@ id|file_operations
 id|i2cdev_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|i2cdev_lseek
@@ -1638,8 +1643,6 @@ id|minor
 )braket
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -1700,7 +1703,10 @@ id|minor
 )paren
 suffix:semicolon
 macro_line|#endif
-id|MOD_DEC_USE_COUNT
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1724,6 +1730,11 @@ id|i2cdev_adaps
 (braket
 id|minor
 )braket
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

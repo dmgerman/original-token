@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/mtd/mtd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,2,0)
 DECL|function|mtd_lseek
 r_static
@@ -207,8 +208,6 @@ r_return
 op_minus
 id|EACCES
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|mtd
 op_assign
 id|get_mtd_device
@@ -225,14 +224,10 @@ c_cond
 op_logical_neg
 id|mtd
 )paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-)brace
 id|file-&gt;private_data
 op_assign
 id|mtd
@@ -260,8 +255,6 @@ c_func
 (paren
 id|mtd
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -313,6 +306,11 @@ op_star
 )paren
 id|file-&gt;private_data
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -332,7 +330,10 @@ c_func
 id|mtd
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 id|release_return
 c_func
@@ -1462,6 +1463,10 @@ id|file_operations
 id|mtd_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|mtd_lseek

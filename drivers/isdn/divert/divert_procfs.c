@@ -621,6 +621,11 @@ suffix:semicolon
 r_int
 id|flags
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|save_flags
 c_func
 (paren
@@ -696,6 +701,11 @@ id|inf
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 (paren
 l_int|0

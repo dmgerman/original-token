@@ -1078,6 +1078,11 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|DEB
 c_func
 (paren
@@ -1179,6 +1184,11 @@ l_int|0
 suffix:semicolon
 id|lock_depth
 op_decrement
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -2149,6 +2159,11 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2192,6 +2207,11 @@ id|KERN_ERR
 l_string|&quot;Sound: Undefined mmap() access&bslash;n&quot;
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
@@ -2210,6 +2230,11 @@ c_func
 (paren
 id|KERN_ERR
 l_string|&quot;Sound: mmap() error. dmap == NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -2232,6 +2257,11 @@ id|KERN_ERR
 l_string|&quot;Sound: mmap() called when raw_buf == NULL&bslash;n&quot;
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -2248,6 +2278,11 @@ c_func
 (paren
 id|KERN_ERR
 l_string|&quot;Sound: mmap() called twice for the same DMA buffer&bslash;n&quot;
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -2268,6 +2303,11 @@ c_func
 (paren
 id|KERN_ERR
 l_string|&quot;Sound: mmap() offset must be 0.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -2322,10 +2362,17 @@ comma
 id|vma-&gt;vm_page_prot
 )paren
 )paren
+(brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
+)brace
 id|dmap-&gt;mapping_flags
 op_or_assign
 id|DMA_MAP_MAPPED
@@ -2363,6 +2410,11 @@ comma
 id|dmap-&gt;neutral_byte
 comma
 id|dmap-&gt;bytes_in_use
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

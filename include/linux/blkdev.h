@@ -472,7 +472,7 @@ id|data
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|generic_make_request
 c_func
 (paren
