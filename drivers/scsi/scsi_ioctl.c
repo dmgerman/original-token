@@ -602,7 +602,9 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This interface is depreciated - users should use the scsi generics&n; * interface instead, as this is a more flexible approach to performing&n; * generic SCSI commands on a device.&n; */
+multiline_comment|/*&n; * This interface is depreciated - users should use the scsi generic (sg)&n; * interface instead, as this is a more flexible approach to performing&n; * generic SCSI commands on a device.&n; *&n; * The structure that we are passed should look like:&n; *&n; * struct sdata {&n; *  unsigned int inlen;&t;     [i] Length of data to be written to device &n; *  unsigned int outlen;     [i] Length of data to be read from device &n; *  unsigned char cmd[x];    [i] SCSI command (6 &lt;= x &lt;= 12).&n; *&t;&t;&t;     [o] Data read from device starts here.&n; *&t;&t;&t;     [o] On error, sense buffer starts here.&n; *  unsigned char wdata[y];  [i] Data written to device starts here.&n; * };&n; * Notes:&n; *   -&t;The SCSI command length is determined by examining the 1st byte&n; *&t;of the given command. There is no way to override this.&n; *   -&t;Data transfers are limited to PAGE_SIZE (4K on i386, 8K on alpha).&n; *   -&t;The length (x + y) must be at least OMAX_SB_LEN bytes long to&n; *&t;accomodate the sense buffer when an error occurs.&n; *&t;The sense buffer is truncated to OMAX_SB_LEN (16) bytes so that&n; *&t;old code will not be surprised.&n; *   -&t;If a Unix error occurs (e.g. ENOMEM) then the user will receive&n; *&t;a negative return and the Unix error code in &squot;errno&squot;. &n; *&t;If the SCSI command succeeds then 0 is returned.&n; *&t;Positive numbers returned are the compacted SCSI error codes (4 &n; *&t;bytes in one int) where the lowest byte is the SCSI status.&n; *&t;See the drivers/scsi/scsi.h file for more information on this.&n; *&n; */
+DECL|macro|OMAX_SB_LEN
+mdefine_line|#define OMAX_SB_LEN 16   /* Old sense buffer length */
 DECL|function|scsi_ioctl_send_command
 r_int
 id|scsi_ioctl_send_command
@@ -701,7 +703,6 @@ id|result
 r_return
 id|result
 suffix:semicolon
-multiline_comment|/*&n;&t; * The structure that we are passed should look like:&n;&t; *&n;&t; * struct sdata {&n;&t; *  unsigned int inlen;&n;&t; *  unsigned int outlen;&n;&t; *  unsigned char  cmd[];  # However many bytes are used for cmd.&n;&t; *  unsigned char  data[];&n;&t; * };&n;&t; */
 id|get_user
 c_func
 (paren
@@ -720,7 +721,7 @@ op_amp
 id|sic-&gt;outlen
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * We do not transfer more than MAX_BUF with this interface.&n;&t; * If the user needs to transfer more data than this, they&n;&t; * should use scsi_generics instead.&n;&t; */
+multiline_comment|/*&n;&t; * We do not transfer more than MAX_BUF with this interface.&n;&t; * If the user needs to transfer more data than this, they&n;&t; * should use scsi_generics (sg) instead.&n;&t; */
 r_if
 c_cond
 (paren
@@ -875,15 +876,6 @@ comma
 id|cmdlen
 op_plus
 id|inlen
-OG
-id|MAX_BUF
-ques
-c_cond
-id|MAX_BUF
-suffix:colon
-id|cmdlen
-op_plus
-id|inlen
 )paren
 suffix:semicolon
 r_if
@@ -897,10 +889,6 @@ suffix:semicolon
 id|copy_from_user
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
 id|cmd
 comma
 id|cmd_in
@@ -912,21 +900,11 @@ multiline_comment|/*&n;&t; * Obtain the data to be sent to the device (if any).&
 id|copy_from_user
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
 id|buf
 comma
-(paren
-r_void
-op_star
-)paren
-(paren
 id|cmd_in
 op_plus
 id|cmdlen
-)paren
 comma
 id|inlen
 )paren
@@ -1103,6 +1081,27 @@ c_cond
 id|SCpnt-&gt;result
 )paren
 (brace
+r_int
+id|sb_len
+op_assign
+r_sizeof
+(paren
+id|SCpnt-&gt;sense_buffer
+)paren
+suffix:semicolon
+id|sb_len
+op_assign
+(paren
+id|sb_len
+OG
+id|OMAX_SB_LEN
+)paren
+ques
+c_cond
+id|OMAX_SB_LEN
+suffix:colon
+id|sb_len
+suffix:semicolon
 id|result
 op_assign
 id|verify_area
@@ -1112,10 +1111,7 @@ id|VERIFY_WRITE
 comma
 id|cmd_in
 comma
-r_sizeof
-(paren
-id|SCpnt-&gt;sense_buffer
-)paren
+id|sb_len
 )paren
 suffix:semicolon
 r_if
@@ -1129,18 +1125,11 @@ suffix:semicolon
 id|copy_to_user
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
 id|cmd_in
 comma
 id|SCpnt-&gt;sense_buffer
 comma
-r_sizeof
-(paren
-id|SCpnt-&gt;sense_buffer
-)paren
+id|sb_len
 )paren
 suffix:semicolon
 )brace
@@ -1169,10 +1158,6 @@ suffix:semicolon
 id|copy_to_user
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
 id|cmd_in
 comma
 id|buf

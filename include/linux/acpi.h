@@ -23,32 +23,21 @@ DECL|macro|ACPI_FACP_SIG
 mdefine_line|#define ACPI_FACP_SIG  0x50434146 /* &squot;FACP&squot; */
 DECL|macro|ACPI_DSDT_SIG
 mdefine_line|#define ACPI_DSDT_SIG  0x54445344 /* &squot;DSDT&squot; */
-multiline_comment|/* PM1_STS flags */
-DECL|macro|ACPI_TMR_STS
-mdefine_line|#define ACPI_TMR_STS    0x0001
-DECL|macro|ACPI_BM_STS
-mdefine_line|#define ACPI_BM_STS     0x0010
-DECL|macro|ACPI_GBL_STS
-mdefine_line|#define ACPI_GBL_STS    0x0020
-DECL|macro|ACPI_PWRBTN_STS
-mdefine_line|#define ACPI_PWRBTN_STS 0x0100
-DECL|macro|ACPI_SLPBTN_STS
-mdefine_line|#define ACPI_SLPBTN_STS 0x0200
-DECL|macro|ACPI_RTC_STS
-mdefine_line|#define ACPI_RTC_STS    0x0400
-DECL|macro|ACPI_WAK_STS
-mdefine_line|#define ACPI_WAK_STS    0x8000
-multiline_comment|/* PM1_EN flags */
-DECL|macro|ACPI_TMR_EN
-mdefine_line|#define ACPI_TMR_EN    0x0001
-DECL|macro|ACPI_GBL_EN
-mdefine_line|#define ACPI_GBL_EN    0x0020
-DECL|macro|ACPI_PWRBTN_EN
-mdefine_line|#define ACPI_PWRBTN_EN 0x0100
-DECL|macro|ACPI_SLPBTN_EN
-mdefine_line|#define ACPI_SLPBTN_EN 0x0200
-DECL|macro|ACPI_RTC_EN
-mdefine_line|#define ACPI_RTC_EN    0x0400
+multiline_comment|/* PM1_STS/EN flags */
+DECL|macro|ACPI_TMR
+mdefine_line|#define ACPI_TMR    0x0001
+DECL|macro|ACPI_BM
+mdefine_line|#define ACPI_BM     0x0010
+DECL|macro|ACPI_GBL
+mdefine_line|#define ACPI_GBL    0x0020
+DECL|macro|ACPI_PWRBTN
+mdefine_line|#define ACPI_PWRBTN 0x0100
+DECL|macro|ACPI_SLPBTN
+mdefine_line|#define ACPI_SLPBTN 0x0200
+DECL|macro|ACPI_RTC
+mdefine_line|#define ACPI_RTC    0x0400
+DECL|macro|ACPI_WAK
+mdefine_line|#define ACPI_WAK    0x8000
 multiline_comment|/* PM1_CNT flags */
 DECL|macro|ACPI_SCI_EN
 mdefine_line|#define ACPI_SCI_EN   0x0001
@@ -345,8 +334,10 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|ACPI_FIND_TABLES
 mdefine_line|#define ACPI_FIND_TABLES&t;_IOR(&squot;A&squot;, 1, struct acpi_find_tables)
+DECL|macro|ACPI_ENABLE_EVENT
+mdefine_line|#define ACPI_ENABLE_EVENT&t;_IOW(&squot;A&squot;, 2, struct acpi_enable_event)
 DECL|macro|ACPI_WAIT_EVENT
-mdefine_line|#define ACPI_WAIT_EVENT&t;&t;_IO(&squot;A&squot;, 2)
+mdefine_line|#define ACPI_WAIT_EVENT&t;&t;_IOR(&squot;A&squot;, 3, struct acpi_wait_event)
 DECL|struct|acpi_find_tables
 r_struct
 id|acpi_find_tables
@@ -356,11 +347,50 @@ r_int
 r_int
 id|facp
 suffix:semicolon
+multiline_comment|/* FACP physical address */
 DECL|member|dsdt
 r_int
 r_int
 id|dsdt
 suffix:semicolon
+multiline_comment|/* DSDT physical address */
+)brace
+suffix:semicolon
+DECL|struct|acpi_enable_event
+r_struct
+id|acpi_enable_event
+(brace
+DECL|member|pm1_enable
+id|__u32
+id|pm1_enable
+suffix:semicolon
+multiline_comment|/* fixed events */
+DECL|member|gpe_enable
+id|__u32
+id|gpe_enable
+suffix:semicolon
+multiline_comment|/* general-purpose events (GPEs) */
+DECL|member|gpe_level
+id|__u32
+id|gpe_level
+suffix:semicolon
+multiline_comment|/* level-triggered GPEs */
+)brace
+suffix:semicolon
+DECL|struct|acpi_wait_event
+r_struct
+id|acpi_wait_event
+(brace
+DECL|member|pm1_status
+id|__u32
+id|pm1_status
+suffix:semicolon
+multiline_comment|/* fixed events */
+DECL|member|gpe_status
+id|__u32
+id|gpe_status
+suffix:semicolon
+multiline_comment|/* general-purpose events */
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__

@@ -1005,9 +1005,15 @@ id|dev-&gt;bus-&gt;bandwidth_allocated
 comma
 id|FRAME_TIME_MAX_USECS_ALLOC
 comma
+(paren
 l_int|100
 op_star
 id|dev-&gt;bus-&gt;bandwidth_allocated
+op_plus
+id|FRAME_TIME_MAX_USECS_ALLOC
+op_div
+l_int|2
+)paren
 op_div
 id|FRAME_TIME_MAX_USECS_ALLOC
 comma
@@ -1354,16 +1360,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|usbdev-&gt;devnum
-OG
+(paren
+id|level
+op_eq
 l_int|0
 )paren
+op_logical_and
+(paren
+id|usbdev-&gt;devnum
+OL
+l_int|0
+)paren
+)paren
 (brace
-multiline_comment|/* for any except root hub */
+multiline_comment|/* for root hub */
 r_if
 c_cond
 (paren
-id|usb_dump_desc
+id|usb_hcd_bandwidth
 (paren
 id|usbdev
 comma
@@ -1381,11 +1395,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* for a host controller */
+multiline_comment|/* for anything but a root hub */
 r_if
 c_cond
 (paren
-id|usb_hcd_bandwidth
+id|usb_dump_desc
 (paren
 id|usbdev
 comma

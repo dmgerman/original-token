@@ -2399,7 +2399,7 @@ id|tty_unregister_driver
 c_func
 (paren
 op_amp
-id|acm_tty_driver
+id|serial_tty_driver
 )paren
 suffix:semicolon
 id|usb_deregister

@@ -60,6 +60,20 @@ DECL|macro|USB_DIR_OUT
 mdefine_line|#define USB_DIR_OUT&t;&t;&t;0
 DECL|macro|USB_DIR_IN
 mdefine_line|#define USB_DIR_IN&t;&t;&t;0x80
+DECL|macro|USB_ENDPOINT_NUMBER_MASK
+mdefine_line|#define USB_ENDPOINT_NUMBER_MASK&t;0x0f&t;/* in bEndpointAddress */
+DECL|macro|USB_ENDPOINT_DIR_MASK
+mdefine_line|#define USB_ENDPOINT_DIR_MASK&t;&t;0x80
+DECL|macro|USB_ENDPOINT_XFERTYPE_MASK
+mdefine_line|#define USB_ENDPOINT_XFERTYPE_MASK&t;0x03&t;/* in bmAttributes */
+DECL|macro|USB_ENDPOINT_XFER_CONTROL
+mdefine_line|#define USB_ENDPOINT_XFER_CONTROL&t;0
+DECL|macro|USB_ENDPOINT_XFER_ISOC
+mdefine_line|#define USB_ENDPOINT_XFER_ISOC&t;&t;1
+DECL|macro|USB_ENDPOINT_XFER_BULK
+mdefine_line|#define USB_ENDPOINT_XFER_BULK&t;&t;2
+DECL|macro|USB_ENDPOINT_XFER_INT
+mdefine_line|#define USB_ENDPOINT_XFER_INT&t;&t;3
 multiline_comment|/*&n; * USB Packet IDs (PIDs)&n; */
 DECL|macro|USB_PID_OUT
 mdefine_line|#define USB_PID_OUT&t;&t;&t;0xe1
@@ -2341,7 +2355,7 @@ DECL|macro|PRINTD
 mdefine_line|#define PRINTD(format, args...) printk(&quot;usb: &quot; format &quot;&bslash;n&quot; , ## args);
 macro_line|#else /* NOT DEBUGGING */
 DECL|macro|PRINTD
-mdefine_line|#define PRINTD(fmt, arg...) do {} while (0) /**/
+mdefine_line|#define PRINTD(fmt, arg...) do {} while (0)
 macro_line|#endif /* USB_DEBUG */
 multiline_comment|/* A simple way to change one line from DEBUG to NOT DEBUG: */
 DECL|macro|XPRINTD

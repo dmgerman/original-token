@@ -319,8 +319,6 @@ c_func
 id|mouse-&gt;fasync
 comma
 id|SIGIO
-comma
-id|POLL_IN
 )paren
 suffix:semicolon
 r_return

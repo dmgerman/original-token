@@ -415,10 +415,6 @@ id|port
 op_assign
 id|port-&gt;physport
 suffix:semicolon
-id|port-&gt;ieee1284.phase
-op_assign
-id|IEEE1284_PH_TERMINATE
-suffix:semicolon
 multiline_comment|/* EPP terminates differently. */
 r_switch
 c_cond
@@ -467,6 +463,67 @@ id|PARPORT_CONTROL_INIT
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|IEEE1284_MODE_ECP
+suffix:colon
+r_case
+id|IEEE1284_MODE_ECPRLE
+suffix:colon
+r_case
+id|IEEE1284_MODE_ECPSWE
+suffix:colon
+multiline_comment|/* In ECP we can only terminate from fwd idle phase. */
+r_if
+c_cond
+(paren
+id|port-&gt;ieee1284.phase
+op_ne
+id|IEEE1284_PH_FWD_IDLE
+)paren
+(brace
+multiline_comment|/* Event 47: Set nInit high */
+id|parport_frob_control
+(paren
+id|port
+comma
+id|PARPORT_CONTROL_INIT
+op_or
+id|PARPORT_CONTROL_AUTOFD
+comma
+id|PARPORT_CONTROL_INIT
+op_or
+id|PARPORT_CONTROL_AUTOFD
+)paren
+suffix:semicolon
+multiline_comment|/* Event 49: PError goes high */
+id|parport_wait_peripheral
+(paren
+id|port
+comma
+id|PARPORT_STATUS_PAPEROUT
+comma
+id|PARPORT_STATUS_PAPEROUT
+)paren
+suffix:semicolon
+id|parport_data_forward
+(paren
+id|port
+)paren
+suffix:semicolon
+id|DPRINTK
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: ECP direction: forward&bslash;n&quot;
+comma
+id|port-&gt;name
+)paren
+suffix:semicolon
+id|port-&gt;ieee1284.phase
+op_assign
+id|IEEE1284_PH_FWD_IDLE
+suffix:semicolon
+)brace
+multiline_comment|/* fall-though.. */
 r_default
 suffix:colon
 multiline_comment|/* Terminate from all other modes. */

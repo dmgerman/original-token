@@ -1,5 +1,4 @@
 multiline_comment|/* Driver for USB scsi like devices&n; * &n; * (C) Michael Gee (michael@linuxspecific.com) 1999&n; *&n; */
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;

@@ -3049,7 +3049,7 @@ id|base
 comma
 (paren
 id|ctl
-op_plus
+op_or
 l_int|2
 )paren
 comma

@@ -116,7 +116,7 @@ multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
-l_int|NULL
+id|block_flushpage
 comma
 multiline_comment|/* flushpage */
 id|fat_truncate
@@ -438,7 +438,13 @@ id|status
 suffix:semicolon
 id|pgpos
 op_assign
-id|inode-&gt;i_size
+id|MSDOS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|i_realsize
 op_amp
 id|PAGE_CACHE_MASK
 suffix:semicolon
