@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sfp-util.h,v 1.1 1999/05/28 13:43:07 jj Exp $&n; * arch/sparc64/math-emu/sfp-util.h&n; *&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; *&n; */
+multiline_comment|/* $Id: sfp-util.h,v 1.2 1999/06/07 18:24:15 jj Exp $&n; * arch/sparc64/math-emu/sfp-util.h&n; *&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -200,7 +200,13 @@ comma
 op_mod
 l_int|5
 id|sethi
+op_mod
+op_mod
+id|hi
+c_func
+(paren
 l_int|0x80000000
+)paren
 comma
 op_mod
 l_int|2

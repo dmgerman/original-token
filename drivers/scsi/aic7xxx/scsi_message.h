@@ -69,5 +69,19 @@ mdefine_line|#define MSG_EXT_WDTR_BUS_8_BIT&t;0x00
 DECL|macro|MSG_EXT_WDTR_BUS_16_BIT
 mdefine_line|#define MSG_EXT_WDTR_BUS_16_BIT&t;0x01
 DECL|macro|MSG_EXT_WDTR_BUS_32_BIT
-mdefine_line|#define MSG_EXT_WDTR_BUS_32_BIT&t;0x02 
+mdefine_line|#define MSG_EXT_WDTR_BUS_32_BIT&t;0x02
+DECL|macro|MSG_EXT_PPR
+mdefine_line|#define MSG_EXT_PPR     0x04
+DECL|macro|MSG_EXT_PPR_LEN
+mdefine_line|#define MSG_EXT_PPR_LEN&t;0x06
+DECL|macro|MSG_EXT_PPR_OPTION_ST
+mdefine_line|#define MSG_EXT_PPR_OPTION_ST 0x00
+DECL|macro|MSG_EXT_PPR_OPTION_DT_CRC
+mdefine_line|#define MSG_EXT_PPR_OPTION_DT_CRC 0x02
+DECL|macro|MSG_EXT_PPR_OPTION_DT_UNITS
+mdefine_line|#define MSG_EXT_PPR_OPTION_DT_UNITS 0x03
+DECL|macro|MSG_EXT_PPR_OPTION_DT_CRC_QUICK
+mdefine_line|#define MSG_EXT_PPR_OPTION_DT_CRC_QUICK 0x04
+DECL|macro|MSG_EXT_PPR_OPTION_DT_UNITS_QUICK
+mdefine_line|#define MSG_EXT_PPR_OPTION_DT_UNITS_QUICK 0x05
 eof

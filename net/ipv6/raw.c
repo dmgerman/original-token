@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;RAW sockets for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/raw.c&n; *&n; *&t;$Id: raw.c,v 1.25 1999/05/27 00:38:16 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;RAW sockets for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/raw.c&n; *&n; *&t;$Id: raw.c,v 1.26 1999/06/09 10:11:18 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -292,65 +292,6 @@ id|SOCKHASH_UNLOCK_WRITE
 c_func
 (paren
 )paren
-suffix:semicolon
-)brace
-DECL|function|inet6_mc_check
-r_static
-id|__inline__
-r_int
-id|inet6_mc_check
-c_func
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-comma
-r_struct
-id|in6_addr
-op_star
-id|addr
-)paren
-(brace
-r_struct
-id|ipv6_mc_socklist
-op_star
-id|mc
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|mc
-op_assign
-id|sk-&gt;net_pinfo.af_inet6.ipv6_mc_list
-suffix:semicolon
-id|mc
-suffix:semicolon
-id|mc
-op_assign
-id|mc-&gt;next
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|ipv6_addr_cmp
-c_func
-(paren
-op_amp
-id|mc-&gt;addr
-comma
-id|addr
-)paren
-op_eq
-l_int|0
-)paren
-r_return
-l_int|1
-suffix:semicolon
-)brace
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Grumble... icmp and ip_input want to get at this... */

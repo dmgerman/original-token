@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: pcic.h,v 1.1 1998/09/22 05:54:39 jj Exp $&n; * pcic.h: JavaEngine 1 specific PCI definitions.&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; */
+multiline_comment|/* $Id: pcic.h,v 1.2 1999/06/03 15:02:51 davem Exp $&n; * pcic.h: JavaEngine 1 specific PCI definitions.&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; */
 macro_line|#ifndef __SPARC_PCIC_H
 DECL|macro|__SPARC_PCIC_H
 mdefine_line|#define __SPARC_PCIC_H
+macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -46,6 +47,16 @@ r_struct
 id|linux_pbm_info
 id|pbm
 suffix:semicolon
+DECL|member|pcic_imap
+r_struct
+id|pcic_ca2irq
+op_star
+id|pcic_imap
+suffix:semicolon
+DECL|member|pcic_imdim
+r_int
+id|pcic_imdim
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
@@ -76,7 +87,8 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/* Size of PCI Space */
+macro_line|#endif
+multiline_comment|/* Size of PCI I/O space which we relocate. */
 DECL|macro|PCI_SPACE_SIZE
 mdefine_line|#define PCI_SPACE_SIZE                  0x1000000       /* 16 MB */
 multiline_comment|/* PCIC Register Set. */
@@ -118,6 +130,14 @@ DECL|macro|PCI_SOFTWARE_INT_SET
 mdefine_line|#define PCI_SOFTWARE_INT_SET            0x6e    /* 16 bits */
 DECL|macro|PCI_SYS_INT_PENDING
 mdefine_line|#define PCI_SYS_INT_PENDING             0x70    /* 32 bits */
+DECL|macro|PCI_SYS_INT_PENDING_PIO
+mdefine_line|#define  PCI_SYS_INT_PENDING_PIO&t;&t;0x40000000
+DECL|macro|PCI_SYS_INT_PENDING_DMA
+mdefine_line|#define  PCI_SYS_INT_PENDING_DMA&t;&t;0x20000000
+DECL|macro|PCI_SYS_INT_PENDING_PCI
+mdefine_line|#define  PCI_SYS_INT_PENDING_PCI&t;&t;0x10000000
+DECL|macro|PCI_SYS_INT_PENDING_APSR
+mdefine_line|#define  PCI_SYS_INT_PENDING_APSR&t;&t;0x08000000
 DECL|macro|PCI_SYS_INT_TARGET_MASK
 mdefine_line|#define PCI_SYS_INT_TARGET_MASK         0x74    /* 32 bits */
 DECL|macro|PCI_SYS_INT_TARGET_MASK_CLEAR
@@ -126,6 +146,14 @@ DECL|macro|PCI_SYS_INT_TARGET_MASK_SET
 mdefine_line|#define PCI_SYS_INT_TARGET_MASK_SET     0x7c    /* 32 bits */
 DECL|macro|PCI_SYS_INT_PENDING_CLEAR
 mdefine_line|#define PCI_SYS_INT_PENDING_CLEAR       0x83    /* 8  bits */
+DECL|macro|PCI_SYS_INT_PENDING_CLEAR_ALL
+mdefine_line|#define  PCI_SYS_INT_PENDING_CLEAR_ALL&t;&t;0x80
+DECL|macro|PCI_SYS_INT_PENDING_CLEAR_PIO
+mdefine_line|#define  PCI_SYS_INT_PENDING_CLEAR_PIO&t;&t;0x40
+DECL|macro|PCI_SYS_INT_PENDING_CLEAR_DMA
+mdefine_line|#define  PCI_SYS_INT_PENDING_CLEAR_DMA&t;&t;0x20
+DECL|macro|PCI_SYS_INT_PENDING_CLEAR_PCI
+mdefine_line|#define  PCI_SYS_INT_PENDING_CLEAR_PCI&t;&t;0x10
 DECL|macro|PCI_IOTLB_CONTROL
 mdefine_line|#define PCI_IOTLB_CONTROL               0x84    /* 8  bits */
 DECL|macro|PCI_INT_SELECT_LO

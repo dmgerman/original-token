@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 Address [auto]configuration&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: addrconf.c,v 1.49 1999/05/27 00:38:20 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 Address [auto]configuration&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: addrconf.c,v 1.50 1999/06/09 10:11:09 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;Changes:&n; *&n; *&t;Janos Farkas&t;&t;&t;:&t;delete timer on ifdown&n; *&t;&lt;chexum@bankinf.banki.hu&gt;&n; *&t;Andi Kleen&t;&t;&t;:&t;kill doube kfree on module&n; *&t;&t;&t;&t;&t;&t;unload.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -127,7 +127,7 @@ comma
 id|addrconf_verify
 )brace
 suffix:semicolon
-multiline_comment|/* These locks protect only against address deletions,&n;   but not against address adds or status updates.&n;   It is OK. The only race is when address is selected,&n;   which becomes invalid immediately after selection.&n;   It is harmless, because this address could be already invalid&n;   several usecs ago.&n;&n;   Its important, that:&n;&n;   1. The result of inet6_add_addr() is used only inside lock&n;      or from bh_atomic context.&n;&n;   2. inet6_get_lladdr() is used only from bh protected context.&n;&n;   3. The result of ipv6_chk_addr() is not used outside of bh protected context.&n; */
+multiline_comment|/* These locks protect only against address deletions,&n;   but not against address adds or status updates.&n;   It is OK. The only race is when address is selected,&n;   which becomes invalid immediately after selection.&n;   It is harmless, because this address could be already invalid&n;   several usecs ago.&n;&n;   Its important, that:&n;&n;   1. The result of inet6_add_addr() is used only inside lock&n;      or from bh_atomic context.&n;&n;   2. The result of ipv6_chk_addr() is not used outside of bh protected context.&n; */
 DECL|function|addrconf_lock
 r_static
 id|__inline__
@@ -1706,9 +1706,7 @@ id|err
 suffix:semicolon
 )brace
 DECL|function|ipv6_get_lladdr
-r_struct
-id|inet6_ifaddr
-op_star
+r_int
 id|ipv6_get_lladdr
 c_func
 (paren
@@ -1716,6 +1714,11 @@ r_struct
 id|device
 op_star
 id|dev
+comma
+r_struct
+id|in6_addr
+op_star
+id|addr
 )paren
 (brace
 r_struct
@@ -1772,8 +1775,25 @@ id|ifp-&gt;scope
 op_eq
 id|IFA_LINK
 )paren
-r_break
+(brace
+id|ipv6_addr_copy
+c_func
+(paren
+id|addr
+comma
+op_amp
+id|ifp-&gt;addr
+)paren
 suffix:semicolon
+id|addrconf_unlock
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 )brace
 id|addrconf_unlock
 c_func
@@ -1782,7 +1802,8 @@ c_func
 suffix:semicolon
 )brace
 r_return
-id|ifp
+op_minus
+id|EADDRNOTAVAIL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Retrieve the ifaddr struct from an v6 address&n; *&t;Called from ipv6_rcv to check if the address belongs &n; *&t;to the host.&n; */
@@ -4023,7 +4044,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|read_lock_bh
+id|read_lock
 c_func
 (paren
 op_amp
@@ -4127,13 +4148,6 @@ op_or_assign
 id|IFA_HOST
 suffix:semicolon
 )brace
-id|read_unlock_bh
-c_func
-(paren
-op_amp
-id|dev_base_lock
-)paren
-suffix:semicolon
 id|addrconf_lock
 c_func
 (paren
@@ -4192,17 +4206,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|read_lock_bh
-c_func
-(paren
-op_amp
-id|dev_base_lock
-)paren
-suffix:semicolon
 )brace
 )brace
 )brace
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -8136,7 +8143,7 @@ op_star
 id|dev
 suffix:semicolon
 multiline_comment|/* This takes sense only during module load. */
-id|read_lock_bh
+id|read_lock
 c_func
 (paren
 op_amp
@@ -8168,13 +8175,6 @@ id|IFF_UP
 )paren
 )paren
 r_continue
-suffix:semicolon
-id|read_unlock_bh
-c_func
-(paren
-op_amp
-id|dev_base_lock
-)paren
 suffix:semicolon
 r_switch
 c_cond
@@ -8210,15 +8210,8 @@ suffix:colon
 )brace
 multiline_comment|/* Ignore all other */
 )brace
-id|read_lock_bh
-c_func
-(paren
-op_amp
-id|dev_base_lock
-)paren
-suffix:semicolon
 )brace
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp

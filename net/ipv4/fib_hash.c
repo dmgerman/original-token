@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 FIB: lookup engine and maintenance routines.&n; *&n; * Version:&t;$Id: fib_hash.c,v 1.9 1999/05/27 00:38:05 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 FIB: lookup engine and maintenance routines.&n; *&n; * Version:&t;$Id: fib_hash.c,v 1.10 1999/06/09 10:10:45 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -893,13 +893,6 @@ id|z
 )paren
 suffix:semicolon
 multiline_comment|/* Find the first not empty zone with more specific mask */
-id|write_lock_bh
-c_func
-(paren
-op_amp
-id|fib_hash_lock
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -925,6 +918,13 @@ id|i
 )braket
 )paren
 r_break
+suffix:semicolon
+id|write_lock_bh
+c_func
+(paren
+op_amp
+id|fib_hash_lock
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1026,7 +1026,7 @@ op_star
 )paren
 id|tb-&gt;tb_data
 suffix:semicolon
-id|read_lock_bh
+id|read_lock
 c_func
 (paren
 op_amp
@@ -1219,7 +1219,7 @@ l_int|1
 suffix:semicolon
 id|out
 suffix:colon
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -1456,7 +1456,7 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-id|read_lock_bh
+id|read_lock
 c_func
 (paren
 op_amp
@@ -1672,7 +1672,7 @@ id|last_idx
 suffix:semicolon
 id|out
 suffix:colon
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -2023,13 +2023,6 @@ c_func
 id|key
 comma
 id|fz
-)paren
-suffix:semicolon
-id|write_lock_bh
-c_func
-(paren
-op_amp
-id|fib_hash_lock
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Scan list to find the first route with the same destination&n;&t; */
@@ -2414,10 +2407,24 @@ id|new_f-&gt;fn_next
 op_assign
 id|f
 suffix:semicolon
+id|write_lock_bh
+c_func
+(paren
+op_amp
+id|fib_hash_lock
+)paren
+suffix:semicolon
 op_star
 id|fp
 op_assign
 id|new_f
+suffix:semicolon
+id|write_unlock_bh
+c_func
+(paren
+op_amp
+id|fib_hash_lock
+)paren
 suffix:semicolon
 id|fz-&gt;fz_nent
 op_increment
@@ -2434,6 +2441,13 @@ op_star
 id|del_fp
 suffix:semicolon
 multiline_comment|/* Unlink replaced node */
+id|write_lock_bh
+c_func
+(paren
+op_amp
+id|fib_hash_lock
+)paren
+suffix:semicolon
 op_star
 id|del_fp
 op_assign
@@ -2498,13 +2512,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|write_unlock_bh
-c_func
-(paren
-op_amp
-id|fib_hash_lock
-)paren
-suffix:semicolon
 id|rt_cache_flush
 c_func
 (paren
@@ -2534,13 +2541,6 @@ l_int|0
 suffix:semicolon
 id|out
 suffix:colon
-id|write_unlock_bh
-c_func
-(paren
-op_amp
-id|fib_hash_lock
-)paren
-suffix:semicolon
 id|fib_release_info
 c_func
 (paren
@@ -2756,13 +2756,6 @@ comma
 id|fz
 )paren
 suffix:semicolon
-id|write_lock_bh
-c_func
-(paren
-op_amp
-id|fib_hash_lock
-)paren
-suffix:semicolon
 id|FIB_SCAN
 c_func
 (paren
@@ -2796,13 +2789,6 @@ id|f-&gt;fn_key
 )paren
 )paren
 (brace
-id|write_unlock_bh
-c_func
-(paren
-op_amp
-id|fib_hash_lock
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ESRCH
@@ -2870,13 +2856,6 @@ op_amp
 id|FN_S_ZOMBIE
 )paren
 (brace
-id|write_unlock_bh
-c_func
-(paren
-op_amp
-id|fib_hash_lock
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ESRCH
@@ -2974,6 +2953,13 @@ op_ne
 l_int|1
 )paren
 (brace
+id|write_lock_bh
+c_func
+(paren
+op_amp
+id|fib_hash_lock
+)paren
+suffix:semicolon
 op_star
 id|del_fp
 op_assign
@@ -3012,13 +2998,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|write_unlock_bh
-c_func
-(paren
-op_amp
-id|fib_hash_lock
-)paren
-suffix:semicolon
 id|f-&gt;fn_state
 op_or_assign
 id|FN_S_ZOMBIE
@@ -3062,13 +3041,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|write_unlock_bh
-c_func
-(paren
-op_amp
-id|fib_hash_lock
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ESRCH
@@ -3150,10 +3122,24 @@ id|RTNH_F_DEAD
 )paren
 )paren
 (brace
+id|write_lock_bh
+c_func
+(paren
+op_amp
+id|fib_hash_lock
+)paren
+suffix:semicolon
 op_star
 id|fp
 op_assign
 id|f-&gt;fn_next
+suffix:semicolon
+id|write_unlock_bh
+c_func
+(paren
+op_amp
+id|fib_hash_lock
+)paren
 suffix:semicolon
 id|fn_free_node
 c_func
@@ -3214,13 +3200,6 @@ suffix:semicolon
 id|fib_hash_zombies
 op_assign
 l_int|0
-suffix:semicolon
-id|write_lock_bh
-c_func
-(paren
-op_amp
-id|fib_hash_lock
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -3285,13 +3264,6 @@ op_add_assign
 id|tmp
 suffix:semicolon
 )brace
-id|write_unlock_bh
-c_func
-(paren
-op_amp
-id|fib_hash_lock
-)paren
-suffix:semicolon
 r_return
 id|found
 suffix:semicolon
@@ -3346,7 +3318,7 @@ id|n
 op_assign
 l_int|0
 suffix:semicolon
-id|read_lock_bh
+id|read_lock
 c_func
 (paren
 op_amp
@@ -3509,7 +3481,7 @@ suffix:semicolon
 )brace
 id|out
 suffix:colon
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -3886,7 +3858,7 @@ id|cb-&gt;args
 l_int|1
 )braket
 suffix:semicolon
-id|read_lock_bh
+id|read_lock
 c_func
 (paren
 op_amp
@@ -3982,7 +3954,7 @@ l_int|1
 op_assign
 id|m
 suffix:semicolon
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -3995,7 +3967,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp

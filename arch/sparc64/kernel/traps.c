@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.59 1999/05/18 16:57:10 jj Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997,1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: traps.c,v 1.60 1999/06/02 19:19:55 jj Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997,1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * I like traps on v9, :))))&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
@@ -2030,6 +2030,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|regs-&gt;tstate
+op_amp
+id|TSTATE_PRIV
+)paren
+(brace
 macro_line|#if 1
 id|printk
 c_func
@@ -2048,6 +2056,23 @@ c_func
 l_string|&quot;Iax&quot;
 comma
 id|regs
+)paren
+suffix:semicolon
+)brace
+id|current-&gt;tss.sig_desc
+op_assign
+id|SUBSIG_ILLINST
+suffix:semicolon
+id|current-&gt;tss.sig_address
+op_assign
+id|regs-&gt;tpc
+suffix:semicolon
+id|force_sig
+c_func
+(paren
+id|SIGILL
+comma
+id|current
 )paren
 suffix:semicolon
 id|unlock_kernel

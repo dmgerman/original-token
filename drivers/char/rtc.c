@@ -1,6 +1,6 @@
-multiline_comment|/*&n; *&t;Real Time Clock interface for Linux&t;&n; *&n; *&t;Copyright (C) 1996 Paul Gortmaker&n; *&n; *&t;This driver allows use of the real time clock (built into&n; *&t;nearly all computers) from user space. It exports the /dev/rtc&n; *&t;interface supporting various ioctl() and also the /proc/rtc&n; *&t;pseudo-file for status information.&n; *&n; *&t;The ioctls can be used to set the interrupt behaviour and&n; *&t;generation rate from the RTC via IRQ 8. Then the /dev/rtc&n; *&t;interface can be used to make use of these timer interrupts,&n; *&t;be they interval or alarm based.&n; *&n; *&t;The /dev/rtc interface will block on reads until an interrupt&n; *&t;has been received. If a RTC interrupt has already happened,&n; *&t;it will output an unsigned long and then block. The output value&n; *&t;contains the interrupt status in the low byte and the number of&n; *&t;interrupts since the last read in the remaining high bytes. The &n; *&t;/dev/rtc interface can also be used with the select(2) call.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Based on other minimal char device drivers, like Alan&squot;s&n; *&t;watchdog, Ted&squot;s random, etc. etc.&n; *&n; *&t;1.07&t;Paul Gortmaker.&n; *&t;1.08&t;Miquel van Smoorenburg: disallow certain things on the&n; *&t;&t;DEC Alpha as the CMOS clock is also used for other things.&n; *&t;1.09&t;Nikita Schmidt: epoch support and some Alpha cleanup.&n; *&n; */
+multiline_comment|/*&n; *&t;Real Time Clock interface for Linux&t;&n; *&n; *&t;Copyright (C) 1996 Paul Gortmaker&n; *&n; *&t;This driver allows use of the real time clock (built into&n; *&t;nearly all computers) from user space. It exports the /dev/rtc&n; *&t;interface supporting various ioctl() and also the /proc/rtc&n; *&t;pseudo-file for status information.&n; *&n; *&t;The ioctls can be used to set the interrupt behaviour and&n; *&t;generation rate from the RTC via IRQ 8. Then the /dev/rtc&n; *&t;interface can be used to make use of these timer interrupts,&n; *&t;be they interval or alarm based.&n; *&n; *&t;The /dev/rtc interface will block on reads until an interrupt&n; *&t;has been received. If a RTC interrupt has already happened,&n; *&t;it will output an unsigned long and then block. The output value&n; *&t;contains the interrupt status in the low byte and the number of&n; *&t;interrupts since the last read in the remaining high bytes. The &n; *&t;/dev/rtc interface can also be used with the select(2) call.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Based on other minimal char device drivers, like Alan&squot;s&n; *&t;watchdog, Ted&squot;s random, etc. etc.&n; *&n; *&t;1.07&t;Paul Gortmaker.&n; *&t;1.08&t;Miquel van Smoorenburg: disallow certain things on the&n; *&t;&t;DEC Alpha as the CMOS clock is also used for other things.&n; *&t;1.09&t;Nikita Schmidt: epoch support and some Alpha cleanup.&n; *&t;1.09a&t;Pete Zaitcev: Sun SPARC&n; *&n; */
 DECL|macro|RTC_VERSION
-mdefine_line|#define RTC_VERSION&t;&t;&quot;1.09&quot;
+mdefine_line|#define RTC_VERSION&t;&t;&quot;1.09a&quot;
 DECL|macro|RTC_IRQ
 mdefine_line|#define RTC_IRQ &t;8&t;/* Can&squot;t see this changing soon.&t;*/
 DECL|macro|RTC_IO_EXTENT
@@ -18,6 +18,15 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#ifdef __sparc__
+macro_line|#include &lt;asm/ebus.h&gt;
+DECL|variable|rtc_port
+r_static
+r_int
+r_int
+id|rtc_port
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; *&t;We sponge a minor off of the misc major. No need slurping&n; *&t;up another valuable major dev number for this. If you add&n; *&t;an ioctl, make sure you don&squot;t conflict with SPARC&squot;s RTC&n; *&t;ioctls.&n; */
 r_static
 id|DECLARE_WAIT_QUEUE_HEAD
@@ -112,6 +121,7 @@ op_star
 id|wait
 )paren
 suffix:semicolon
+r_static
 r_void
 id|get_rtc_time
 (paren
@@ -121,6 +131,7 @@ op_star
 id|rtc_tm
 )paren
 suffix:semicolon
+r_static
 r_void
 id|get_rtc_alm_time
 (paren
@@ -130,6 +141,7 @@ op_star
 id|alm_tm
 )paren
 suffix:semicolon
+r_static
 r_void
 id|rtc_dropped_irq
 c_func
@@ -139,6 +151,7 @@ r_int
 id|data
 )paren
 suffix:semicolon
+r_static
 r_void
 id|set_rtc_irq_bit
 c_func
@@ -148,6 +161,7 @@ r_char
 id|bit
 )paren
 suffix:semicolon
+r_static
 r_void
 id|mask_rtc_irq_bit
 c_func
@@ -1902,6 +1916,21 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef __sparc__
+r_struct
+id|linux_ebus
+op_star
+id|ebus
+suffix:semicolon
+r_struct
+id|linux_ebus_device
+op_star
+id|edev
+suffix:semicolon
+r_int
+id|rtc_irq
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -1911,6 +1940,113 @@ comma
 id|RTC_VERSION
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc__
+id|for_each_ebus
+c_func
+(paren
+id|ebus
+)paren
+(brace
+id|for_each_ebusdev
+c_func
+(paren
+id|edev
+comma
+id|ebus
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|strcmp
+c_func
+(paren
+id|edev-&gt;prom_name
+comma
+l_string|&quot;rtc&quot;
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+r_goto
+id|found
+suffix:semicolon
+)brace
+)brace
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;rtc_init: no PC rtc found&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+id|found
+suffix:colon
+id|rtc_port
+op_assign
+id|edev-&gt;base_address
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|rtc_irq
+op_assign
+id|edev-&gt;irqs
+(braket
+l_int|0
+)braket
+suffix:semicolon
+multiline_comment|/*&n;&t; * XXX Interrupt pin #7 in Espresso is shared between RTC and&n;&t; * PCI Slot 2 INTA# (and some INTx# in Slot 1). SA_INTERRUPT here&n;&t; * is asking for trouble with add-on boards. Change to SA_SHIRQ.&n;&t; */
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+id|rtc_irq
+comma
+id|rtc_interrupt
+comma
+id|SA_INTERRUPT
+comma
+l_string|&quot;rtc&quot;
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|rtc_port
+)paren
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * Standard way for sparc to print irq&squot;s is to use&n;&t;&t; * __irq_itoa(). I think for EBus it&squot;s ok to use %d.&n;&t;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;rtc: cannot register IRQ %d&bslash;n&quot;
+comma
+id|rtc_irq
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+id|misc_register
+c_func
+(paren
+op_amp
+id|rtc_dev
+)paren
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -1966,6 +2102,7 @@ comma
 l_string|&quot;rtc&quot;
 )paren
 suffix:semicolon
+macro_line|#endif /* __sparc__ vs. others */
 macro_line|#ifdef __alpha__
 id|rtc_freq
 op_assign
@@ -2170,6 +2307,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * &t;At IRQ rates &gt;= 4096Hz, an interrupt may get lost altogether.&n; *&t;(usually during an IDE disk interrupt, with IRQ unmasking off)&n; *&t;Since the interrupt handler doesn&squot;t get called, the IRQ status&n; *&t;byte doesn&squot;t get read, and the RTC stops generating interrupts.&n; *&t;A timer is set, and will call this function if/when that happens.&n; *&t;To get it out of this stalled state, we just read the status.&n; *&t;At least a jiffy of interrupts (rtc_freq/HZ) will have been lost.&n; *&t;(You *really* shouldn&squot;t be trying to use a non-realtime system &n; *&t;for something that requires a steady &gt; 1KHz signal anyways.)&n; */
 DECL|function|rtc_dropped_irq
+r_static
 r_void
 id|rtc_dropped_irq
 c_func
@@ -2637,6 +2775,7 @@ id|uip
 suffix:semicolon
 )brace
 DECL|function|get_rtc_time
+r_static
 r_void
 id|get_rtc_time
 c_func
@@ -2837,6 +2976,7 @@ op_decrement
 suffix:semicolon
 )brace
 DECL|function|get_rtc_alm_time
+r_static
 r_void
 id|get_rtc_alm_time
 c_func
@@ -3007,6 +3147,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|set_rtc_irq_bit
+r_static
 r_void
 id|set_rtc_irq_bit
 c_func

@@ -910,9 +910,10 @@ id|qopt-&gt;buffer
 r_goto
 id|done
 suffix:semicolon
-id|start_bh_atomic
+id|sch_tree_lock
 c_func
 (paren
+id|sch
 )paren
 suffix:semicolon
 id|q-&gt;limit
@@ -961,9 +962,10 @@ comma
 id|ptab
 )paren
 suffix:semicolon
-id|end_bh_atomic
+id|sch_tree_unlock
 c_func
 (paren
+id|sch
 )paren
 suffix:semicolon
 id|err

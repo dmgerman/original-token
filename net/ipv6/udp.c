@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.41 1999/05/27 00:38:18 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.42 1999/06/09 10:11:24 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2219,65 +2219,6 @@ suffix:semicolon
 id|udp_stats_in6.UdpInDatagrams
 op_increment
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|inet6_mc_check
-r_static
-id|__inline__
-r_int
-id|inet6_mc_check
-c_func
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-comma
-r_struct
-id|in6_addr
-op_star
-id|addr
-)paren
-(brace
-r_struct
-id|ipv6_mc_socklist
-op_star
-id|mc
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|mc
-op_assign
-id|sk-&gt;net_pinfo.af_inet6.ipv6_mc_list
-suffix:semicolon
-id|mc
-suffix:semicolon
-id|mc
-op_assign
-id|mc-&gt;next
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|ipv6_addr_cmp
-c_func
-(paren
-op_amp
-id|mc-&gt;addr
-comma
-id|addr
-)paren
-op_eq
-l_int|0
-)paren
-r_return
-l_int|1
-suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon

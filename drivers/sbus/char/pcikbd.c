@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcikbd.c,v 1.29 1999/05/16 13:47:53 ecd Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation(MrCoffee) support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
+multiline_comment|/* $Id: pcikbd.c,v 1.30 1999/06/03 15:02:36 davem Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -18,17 +18,15 @@ macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#ifdef __sparc_v9__
-DECL|macro|PCI_KB_NAME
-mdefine_line|#define&t;PCI_KB_NAME&t;&quot;kb_ps2&quot;
-DECL|macro|PCI_MS_NAME
-mdefine_line|#define PCI_MS_NAME&t;&quot;kdmouse&quot;
-macro_line|#else
-DECL|macro|PCI_KB_NAME
-mdefine_line|#define PCI_KB_NAME&t;&quot;keyboard&quot;
-DECL|macro|PCI_MS_NAME
-mdefine_line|#define PCI_MS_NAME&t;&quot;mouse&quot;
-macro_line|#endif
+multiline_comment|/*&n; * Different platforms provide different permutations of names.&n; * AXi - kb_ps2, kdmouse.&n; * MrCoffee - keyboard, mouse.&n; * Espresso - keyboard, kdmouse.&n; */
+DECL|macro|PCI_KB_NAME1
+mdefine_line|#define&t;PCI_KB_NAME1&t;&quot;kb_ps2&quot;
+DECL|macro|PCI_KB_NAME2
+mdefine_line|#define PCI_KB_NAME2&t;&quot;keyboard&quot;
+DECL|macro|PCI_MS_NAME1
+mdefine_line|#define PCI_MS_NAME1&t;&quot;kdmouse&quot;
+DECL|macro|PCI_MS_NAME2
+mdefine_line|#define PCI_MS_NAME2&t;&quot;mouse&quot;
 macro_line|#include &quot;pcikbd.h&quot;
 macro_line|#include &quot;sunserial.h&quot;
 macro_line|#ifndef __sparc_v9__
@@ -2227,14 +2225,25 @@ id|child
 r_if
 c_cond
 (paren
-op_logical_neg
 id|strcmp
 c_func
 (paren
 id|child-&gt;prom_name
 comma
-id|PCI_KB_NAME
+id|PCI_KB_NAME1
 )paren
+op_eq
+l_int|0
+op_logical_or
+id|strcmp
+c_func
+(paren
+id|child-&gt;prom_name
+comma
+id|PCI_KB_NAME2
+)paren
+op_eq
+l_int|0
 )paren
 r_goto
 id|found
@@ -2260,6 +2269,7 @@ id|child-&gt;base_address
 l_int|0
 )braket
 suffix:semicolon
+macro_line|#ifdef __sparc_v9__
 r_if
 c_cond
 (paren
@@ -2310,6 +2320,7 @@ comma
 l_string|&quot;8042 controller&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|pcikbd_irq
 op_assign
 id|child-&gt;irqs
@@ -2414,7 +2425,7 @@ suffix:semicolon
 )brace
 id|ebus_done
 suffix:colon
-multiline_comment|/*&n;&t; * XXX: my 3.1.3 PROM does not give me the beeper node for the audio&n;&t; *      auxio register, though I know it is there... (ecd)&n;&t; *&n;&t; * Both JE1 &amp; MrCoffe have no beeper. How about Krups? --zaitcev&n;&t; */
+multiline_comment|/*&n;&t; * XXX: my 3.1.3 PROM does not give me the beeper node for the audio&n;&t; *      auxio register, though I know it is there... (ecd)&n;&t; *&n;&t; * JavaStations appear not to have beeper. --zaitcev&n;&t; */
 r_if
 c_cond
 (paren
@@ -4028,14 +4039,25 @@ id|child
 r_if
 c_cond
 (paren
-op_logical_neg
 id|strcmp
 c_func
 (paren
 id|child-&gt;prom_name
 comma
-id|PCI_MS_NAME
+id|PCI_MS_NAME1
 )paren
+op_eq
+l_int|0
+op_logical_or
+id|strcmp
+c_func
+(paren
+id|child-&gt;prom_name
+comma
+id|PCI_MS_NAME2
+)paren
+op_eq
+l_int|0
 )paren
 r_goto
 id|found
@@ -4368,6 +4390,8 @@ comma
 id|node
 comma
 id|dnode
+comma
+id|xnode
 suffix:semicolon
 r_int
 id|kbnode
@@ -4743,7 +4767,6 @@ c_loop
 id|node
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * Does it match?&n;&t;&t;&t;&t; */
 id|dnode
 op_assign
 id|prom_getchild
@@ -4752,20 +4775,21 @@ c_func
 id|node
 )paren
 suffix:semicolon
-id|dnode
+multiline_comment|/*&n;&t;&t;&t;&t; * Does it match?&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|xnode
 op_assign
 id|prom_searchsiblings
 c_func
 (paren
 id|dnode
 comma
-id|PCI_KB_NAME
+id|PCI_KB_NAME1
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dnode
+)paren
 op_eq
 id|kbnode
 )paren
@@ -4774,28 +4798,66 @@ op_increment
 id|devices
 suffix:semicolon
 )brace
-id|dnode
-op_assign
-id|prom_getchild
-c_func
+r_else
+r_if
+c_cond
 (paren
-id|node
-)paren
-suffix:semicolon
-id|dnode
+(paren
+id|xnode
 op_assign
 id|prom_searchsiblings
 c_func
 (paren
 id|dnode
 comma
-id|PCI_MS_NAME
+id|PCI_KB_NAME2
 )paren
+)paren
+op_eq
+id|kbnode
+)paren
+(brace
+op_increment
+id|devices
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
+(paren
+id|xnode
+op_assign
+id|prom_searchsiblings
+c_func
+(paren
 id|dnode
+comma
+id|PCI_MS_NAME1
+)paren
+)paren
+op_eq
+id|msnode
+)paren
+(brace
+op_increment
+id|devices
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|xnode
+op_assign
+id|prom_searchsiblings
+c_func
+(paren
+id|dnode
+comma
+id|PCI_MS_NAME2
+)paren
+)paren
 op_eq
 id|msnode
 )paren

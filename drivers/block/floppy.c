@@ -8138,10 +8138,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 id|CHECK_RESET
 suffix:semicolon
 r_if
@@ -8224,6 +8220,8 @@ id|FD_RAW_WRITE
 )paren
 )paren
 (brace
+r_int
+r_int
 id|flags
 op_assign
 id|claim_dma_lock

@@ -12,9 +12,6 @@ macro_line|#warning This file is not supposed to be used outside of kernel.
 macro_line|#endif
 DECL|macro|RT_HASH_DIVISOR
 mdefine_line|#define RT_HASH_DIVISOR&t;    &t;256
-multiline_comment|/*&n; * Prevents LRU trashing, entries considered equivalent,&n; * if the difference between last use times is less then this number.&n; */
-DECL|macro|RT_CACHE_BUBBLE_THRESHOLD
-mdefine_line|#define RT_CACHE_BUBBLE_THRESHOLD&t;(5*HZ)
 DECL|macro|RTO_ONLINK
 mdefine_line|#define RTO_ONLINK&t;0x01
 DECL|macro|RTO_TPROXY
@@ -163,6 +160,10 @@ id|ip_rt_acct
 (braket
 l_int|256
 )braket
+suffix:semicolon
+r_extern
+id|rwlock_t
+id|ip_rt_acct_lock
 suffix:semicolon
 r_extern
 r_void

@@ -450,7 +450,7 @@ comma
 l_string|&quot;Compile Options:&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef AIC7XXX_RESET_DELAY
+macro_line|#ifdef CONFIG_AIC7XXX_TCQ_ON_BY_DEFAULT
 id|size
 op_add_assign
 id|sprintf
@@ -458,46 +458,21 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;  AIC7XXX_RESET_DELAY    : %d&bslash;n&quot;
+l_string|&quot;  TCQ Enabled By Default : Enabled&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#else
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
 comma
-id|AIC7XXX_RESET_DELAY
+l_string|&quot;  TCQ Enabled By Default : Disabled&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|BLS
-comma
-l_string|&quot;  AIC7XXX_TAGGED_QUEUEING: Adapter Support Enabled&bslash;n&quot;
-)paren
-suffix:semicolon
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|BLS
-comma
-l_string|&quot;                             Check below to see &quot;
-l_string|&quot;which&bslash;n&quot;
-l_string|&quot;                             devices use tagged &quot;
-l_string|&quot;queueing&bslash;n&quot;
-)paren
-suffix:semicolon
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|BLS
-comma
-l_string|&quot;  AIC7XXX_PAGE_ENABLE    : Enabled (This is no longer &quot;
-l_string|&quot;an option)&bslash;n&quot;
-)paren
-suffix:semicolon
 macro_line|#ifdef AIC7XXX_PROC_STATS
 id|size
 op_add_assign
@@ -521,6 +496,18 @@ l_string|&quot;  AIC7XXX_PROC_STATS     : Disabled&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;  AIC7XXX_RESET_DELAY    : %d&bslash;n&quot;
+comma
+id|AIC7XXX_RESET_DELAY
+)paren
+suffix:semicolon
 id|size
 op_add_assign
 id|sprintf
@@ -646,11 +633,50 @@ c_cond
 (paren
 id|p-&gt;features
 op_amp
+id|AHC_ULTRA3
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|p-&gt;chip
+op_amp
+id|AHC_CHIPID_MASK
+)paren
+(brace
+r_case
+id|AHC_AIC7892
+suffix:colon
+r_case
+id|AHC_AIC7899
+suffix:colon
+id|ultra
+op_assign
+l_string|&quot;Ultra-160/m LVD/SE &quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|ultra
+op_assign
+l_string|&quot;Ultra-3 LVD/SE &quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|p-&gt;features
+op_amp
 id|AHC_ULTRA2
 )paren
 id|ultra
 op_assign
-l_string|&quot;Ultra2-LVD/SE &quot;
+l_string|&quot;Ultra-2 LVD/SE &quot;
 suffix:semicolon
 r_else
 r_if
@@ -1019,7 +1045,6 @@ comma
 id|p-&gt;orderedtag
 )paren
 suffix:semicolon
-macro_line|#ifdef AIC7XXX_CMDS_PER_LUN
 id|size
 op_add_assign
 id|sprintf
@@ -1029,23 +1054,9 @@ id|BLS
 comma
 l_string|&quot;Default Tag Queue Depth: %d&bslash;n&quot;
 comma
-id|AIC7XXX_CMDS_PER_LUN
+id|AIC7XXX_CMDS_PER_DEVICE
 )paren
 suffix:semicolon
-macro_line|#else
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|BLS
-comma
-l_string|&quot;Default Tag Queue Depth: %d&bslash;n&quot;
-comma
-l_int|8
-)paren
-suffix:semicolon
-macro_line|#endif
 id|size
 op_add_assign
 id|sprintf
@@ -1380,6 +1391,17 @@ op_star
 id|sync_rate
 suffix:semicolon
 r_int
+r_char
+id|options
+op_assign
+id|p-&gt;transinfo
+(braket
+id|target
+)braket
+dot
+id|cur_options
+suffix:semicolon
+r_int
 id|period
 op_assign
 id|p-&gt;transinfo
@@ -1418,7 +1440,10 @@ comma
 op_amp
 id|period
 comma
-id|AHC_SYNCRATE_ULTRA2
+l_int|0
+comma
+op_amp
+id|options
 )paren
 suffix:semicolon
 r_if
@@ -1490,7 +1515,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;current(%d/%d/%d), &quot;
+l_string|&quot;current(%d/%d/%d/%d), &quot;
 comma
 id|p-&gt;transinfo
 (braket
@@ -1512,6 +1537,13 @@ id|target
 )braket
 dot
 id|cur_width
+comma
+id|p-&gt;transinfo
+(braket
+id|target
+)braket
+dot
+id|cur_options
 )paren
 suffix:semicolon
 id|size
@@ -1521,7 +1553,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;goal(%d/%d/%d), &quot;
+l_string|&quot;goal(%d/%d/%d/%d), &quot;
 comma
 id|p-&gt;transinfo
 (braket
@@ -1543,6 +1575,13 @@ id|target
 )braket
 dot
 id|goal_width
+comma
+id|p-&gt;transinfo
+(braket
+id|target
+)braket
+dot
+id|goal_options
 )paren
 suffix:semicolon
 id|size
@@ -1552,7 +1591,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;user(%d/%d/%d)&bslash;n&quot;
+l_string|&quot;user(%d/%d/%d/%d)&bslash;n&quot;
 comma
 id|p-&gt;transinfo
 (braket
@@ -1574,6 +1613,13 @@ id|target
 )braket
 dot
 id|user_width
+comma
+id|p-&gt;transinfo
+(braket
+id|target
+)braket
+dot
+id|user_options
 )paren
 suffix:semicolon
 macro_line|#ifdef AIC7XXX_PROC_STATS

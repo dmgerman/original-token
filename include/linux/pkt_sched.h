@@ -59,6 +59,13 @@ DECL|member|backlog
 id|__u32
 id|backlog
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
+DECL|member|lock
+id|spinlock_t
+op_star
+id|lock
+suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|struct|tc_estimator

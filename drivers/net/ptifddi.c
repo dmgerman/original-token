@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ptifddi.c,v 1.5 1997/04/16 10:27:27 jj Exp $&n; * ptifddi.c: Network driver for Performance Technologies single-attach&n; *            and dual-attach FDDI sbus cards.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: ptifddi.c,v 1.7 1999/06/09 08:19:01 davem Exp $&n; * ptifddi.c: Network driver for Performance Technologies single-attach&n; *            and dual-attach FDDI sbus cards.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 DECL|variable|version
 r_static
 r_char

@@ -5410,7 +5410,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Register any pre existing devices.&n;&t; */
-id|read_lock_bh
+id|read_lock
 c_func
 (paren
 op_amp
@@ -5461,7 +5461,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp

@@ -704,6 +704,14 @@ op_assign
 id|expires
 suffix:semicolon
 )brace
+r_extern
+r_void
+id|dst_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#endif /* _NET_DST_H */
 eof

@@ -2815,9 +2815,11 @@ id|q-&gt;flow
 id|cl
 )braket
 suffix:semicolon
-id|start_bh_atomic
+id|spin_lock_bh
 c_func
 (paren
+op_amp
+id|sch-&gt;dev-&gt;queue_lock
 )paren
 suffix:semicolon
 macro_line|#if 0
@@ -2873,9 +2875,11 @@ comma
 l_int|1024
 )paren
 suffix:semicolon
-id|end_bh_atomic
+id|spin_unlock_bh
 c_func
 (paren
+op_amp
+id|sch-&gt;dev-&gt;queue_lock
 )paren
 suffix:semicolon
 r_return
@@ -2962,9 +2966,11 @@ id|q-&gt;flow
 id|cl
 )braket
 suffix:semicolon
-id|start_bh_atomic
+id|spin_lock_bh
 c_func
 (paren
+op_amp
+id|sch-&gt;dev-&gt;queue_lock
 )paren
 suffix:semicolon
 id|a-&gt;fprev-&gt;fnext
@@ -3007,9 +3013,11 @@ l_int|NULL
 )paren
 )paren
 suffix:semicolon
-id|end_bh_atomic
+id|spin_unlock_bh
 c_func
 (paren
+op_amp
+id|sch-&gt;dev-&gt;queue_lock
 )paren
 suffix:semicolon
 r_return

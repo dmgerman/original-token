@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.106 1999/05/28 16:03:18 anton Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.107 1999/06/03 15:02:20 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1221,6 +1221,26 @@ op_assign
 id|sun4m
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+op_amp
+id|cputypval
+comma
+l_string|&quot;sun4s&quot;
+)paren
+)paren
+(brace
+id|sparc_cpu_model
+op_assign
+id|sun4m
+suffix:semicolon
+)brace
+multiline_comment|/* CP-1200 with PROM 2.30 -E */
 r_if
 c_cond
 (paren

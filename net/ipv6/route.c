@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&t;FIB front-end.&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: route.c,v 1.35 1999/03/21 05:22:57 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&t;FIB front-end.&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: route.c,v 1.36 1999/06/09 10:11:21 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -6912,10 +6912,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|fib6_dump_done
+DECL|function|fib6_dump_end
 r_static
-r_int
-id|fib6_dump_done
+r_void
+id|fib6_dump_end
 c_func
 (paren
 r_struct
@@ -7002,6 +7002,25 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+)brace
+DECL|function|fib6_dump_done
+r_static
+r_int
+id|fib6_dump_done
+c_func
+(paren
+r_struct
+id|netlink_callback
+op_star
+id|cb
+)paren
+(brace
+id|fib6_dump_end
+c_func
+(paren
+id|cb
+)paren
+suffix:semicolon
 r_return
 id|cb
 op_member_access_from_pointer
@@ -7220,8 +7239,8 @@ id|w
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* res &lt; 0 is an error. (really, impossible)&n;&t;   res == 0 means that dump is complete, but skb still can contain data.&n;&t;   res &gt; 0 dump is not complete, but frame is full.&n;&t; */
-r_return
+id|res
+op_assign
 id|res
 OL
 l_int|0
@@ -7230,6 +7249,24 @@ c_cond
 id|res
 suffix:colon
 id|skb-&gt;len
+suffix:semicolon
+multiline_comment|/* res &lt; 0 is an error. (really, impossible)&n;&t;   res == 0 means that dump is complete, but skb still can contain data.&n;&t;   res &gt; 0 dump is not complete, but frame is full.&n;&t; */
+multiline_comment|/* Destroy walker, if dump of this table is complete. */
+r_if
+c_cond
+(paren
+id|res
+op_le
+l_int|0
+)paren
+id|fib6_dump_end
+c_func
+(paren
+id|cb
+)paren
+suffix:semicolon
+r_return
+id|res
 suffix:semicolon
 )brace
 DECL|function|inet6_rtm_getroute

@@ -1771,6 +1771,7 @@ id|PAGE_SIZE
 op_minus
 l_int|1
 )paren
+suffix:semicolon
 id|read_exec
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Various kernel-resident INET utility functions; mainly&n; *&t;&t;for format conversion and debugging output.&n; *&n; * Version:&t;$Id: utils.c,v 1.6 1997/12/13 21:53:03 kuznet Exp $&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area check.&n; *&t;&t;Alan Cox&t;:&t;removed old debugging.&n; *&t;&t;Andi Kleen&t;:&t;add net_ratelimit()  &n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Various kernel-resident INET utility functions; mainly&n; *&t;&t;for format conversion and debugging output.&n; *&n; * Version:&t;$Id: utils.c,v 1.7 1999/06/09 10:11:05 davem Exp $&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area check.&n; *&t;&t;Alan Cox&t;:&t;removed old debugging.&n; *&t;&t;Andi Kleen&t;:&t;add net_ratelimit()  &n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -90,6 +90,38 @@ l_int|3
 )braket
 op_amp
 l_int|255
+)paren
+)paren
+suffix:semicolon
+r_return
+id|buff
+suffix:semicolon
+)brace
+DECL|function|in_ntoa2
+r_char
+op_star
+id|in_ntoa2
+c_func
+(paren
+id|__u32
+id|in
+comma
+r_char
+op_star
+id|buff
+)paren
+(brace
+id|sprintf
+c_func
+(paren
+id|buff
+comma
+l_string|&quot;%d.%d.%d.%d&quot;
+comma
+id|NIPQUAD
+c_func
+(paren
+id|in
 )paren
 )paren
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;PACKET - implements raw packet sockets.&n; *&n; * Version:&t;$Id: af_packet.c,v 1.19 1999/03/21 05:23:03 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;verify_area() now used correctly&n; *&t;&t;Alan Cox&t;:&t;new skbuff lists, look ma no backlogs!&n; *&t;&t;Alan Cox&t;:&t;tidied skbuff lists.&n; *&t;&t;Alan Cox&t;:&t;Now uses generic datagram routines I&n; *&t;&t;&t;&t;&t;added. Also fixed the peek/read crash&n; *&t;&t;&t;&t;&t;from all old Linux datagram code.&n; *&t;&t;Alan Cox&t;:&t;Uses the improved datagram code.&n; *&t;&t;Alan Cox&t;:&t;Added NULL&squot;s for socket options.&n; *&t;&t;Alan Cox&t;:&t;Re-commented the code.&n; *&t;&t;Alan Cox&t;:&t;Use new kernel side addressing&n; *&t;&t;Rob Janssen&t;:&t;Correct MTU usage.&n; *&t;&t;Dave Platt&t;:&t;Counter leaks caused by incorrect&n; *&t;&t;&t;&t;&t;interrupt locking and some slightly&n; *&t;&t;&t;&t;&t;dubious gcc output. Can you read&n; *&t;&t;&t;&t;&t;compiler: it said _VOLATILE_&n; *&t;Richard Kooijman&t;:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;New buffers. Use sk-&gt;mac.raw.&n; *&t;&t;Alan Cox&t;:&t;sendmsg/recvmsg support.&n; *&t;&t;Alan Cox&t;:&t;Protocol setting support&n; *&t;Alexey Kuznetsov&t;:&t;Untied from IPv4 stack.&n; *&t;Cyrus Durgin&t;&t;:&t;Fixed kerneld for kmod.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;PACKET - implements raw packet sockets.&n; *&n; * Version:&t;$Id: af_packet.c,v 1.20 1999/06/09 10:11:32 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;verify_area() now used correctly&n; *&t;&t;Alan Cox&t;:&t;new skbuff lists, look ma no backlogs!&n; *&t;&t;Alan Cox&t;:&t;tidied skbuff lists.&n; *&t;&t;Alan Cox&t;:&t;Now uses generic datagram routines I&n; *&t;&t;&t;&t;&t;added. Also fixed the peek/read crash&n; *&t;&t;&t;&t;&t;from all old Linux datagram code.&n; *&t;&t;Alan Cox&t;:&t;Uses the improved datagram code.&n; *&t;&t;Alan Cox&t;:&t;Added NULL&squot;s for socket options.&n; *&t;&t;Alan Cox&t;:&t;Re-commented the code.&n; *&t;&t;Alan Cox&t;:&t;Use new kernel side addressing&n; *&t;&t;Rob Janssen&t;:&t;Correct MTU usage.&n; *&t;&t;Dave Platt&t;:&t;Counter leaks caused by incorrect&n; *&t;&t;&t;&t;&t;interrupt locking and some slightly&n; *&t;&t;&t;&t;&t;dubious gcc output. Can you read&n; *&t;&t;&t;&t;&t;compiler: it said _VOLATILE_&n; *&t;Richard Kooijman&t;:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;New buffers. Use sk-&gt;mac.raw.&n; *&t;&t;Alan Cox&t;:&t;sendmsg/recvmsg support.&n; *&t;&t;Alan Cox&t;:&t;Protocol setting support&n; *&t;Alexey Kuznetsov&t;:&t;Untied from IPv4 stack.&n; *&t;Cyrus Durgin&t;&t;:&t;Fixed kerneld for kmod.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -397,6 +397,11 @@ op_minus
 id|ENOTCONN
 suffix:semicolon
 multiline_comment|/* SOCK_PACKET must be sent giving an address */
+id|dev_lock_list
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Find the device first to size check it &n;&t; */
 id|saddr-&gt;spkt_device
 (braket
@@ -413,6 +418,11 @@ c_func
 id|saddr-&gt;spkt_device
 )paren
 suffix:semicolon
+id|err
+op_assign
+op_minus
+id|ENODEV
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -420,13 +430,15 @@ id|dev
 op_eq
 l_int|NULL
 )paren
-(brace
-r_return
-op_minus
-id|ENODEV
+r_goto
+id|out_unlock
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;You may not queue a frame bigger than the mtu. This is the lowest level&n;&t; *&t;raw protocol and you must do your own fragmentation at this level.&n;&t; */
+id|err
+op_assign
+op_minus
+id|EMSGSIZE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -437,16 +449,10 @@ op_plus
 id|dev-&gt;hard_header_len
 )paren
 (brace
-r_return
-op_minus
-id|EMSGSIZE
+r_goto
+id|out_unlock
 suffix:semicolon
 )brace
-id|dev_lock_list
-c_func
-(paren
-)paren
-suffix:semicolon
 id|err
 op_assign
 op_minus
@@ -576,15 +582,15 @@ r_goto
 id|out_free
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now send it&n;&t; */
-id|dev_unlock_list
-c_func
-(paren
-)paren
-suffix:semicolon
 id|dev_queue_xmit
 c_func
 (paren
 id|skb
+)paren
+suffix:semicolon
+id|dev_unlock_list
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -934,6 +940,11 @@ op_assign
 id|saddr-&gt;sll_addr
 suffix:semicolon
 )brace
+id|dev_lock_list
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dev
 op_assign
 id|dev_get_by_index
@@ -942,6 +953,11 @@ c_func
 id|ifindex
 )paren
 suffix:semicolon
+id|err
+op_assign
+op_minus
+id|ENXIO
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -949,9 +965,8 @@ id|dev
 op_eq
 l_int|NULL
 )paren
-r_return
-op_minus
-id|ENXIO
+r_goto
+id|out_unlock
 suffix:semicolon
 r_if
 c_cond
@@ -964,6 +979,11 @@ id|reserve
 op_assign
 id|dev-&gt;hard_header_len
 suffix:semicolon
+id|err
+op_assign
+op_minus
+id|EMSGSIZE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -973,14 +993,8 @@ id|dev-&gt;mtu
 op_plus
 id|reserve
 )paren
-r_return
-op_minus
-id|EMSGSIZE
-suffix:semicolon
-id|dev_lock_list
-c_func
-(paren
-)paren
+r_goto
+id|out_unlock
 suffix:semicolon
 id|skb
 op_assign
@@ -1159,15 +1173,15 @@ r_goto
 id|out_free
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now send it&n;&t; */
-id|dev_unlock_list
-c_func
-(paren
-)paren
-suffix:semicolon
 id|dev_queue_xmit
 c_func
 (paren
 id|skb
+)paren
+suffix:semicolon
+id|dev_unlock_list
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

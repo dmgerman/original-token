@@ -195,9 +195,7 @@ id|saddr
 )paren
 suffix:semicolon
 r_extern
-r_struct
-id|inet6_ifaddr
-op_star
+r_int
 id|ipv6_get_lladdr
 c_func
 (paren
@@ -205,6 +203,10 @@ r_struct
 id|device
 op_star
 id|dev
+comma
+r_struct
+id|in6_addr
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;multicast prototypes (mcast.c)&n; */
@@ -255,6 +257,22 @@ r_struct
 id|sock
 op_star
 id|sk
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|inet6_mc_check
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_struct
+id|in6_addr
+op_star
+id|addr
 )paren
 suffix:semicolon
 r_extern

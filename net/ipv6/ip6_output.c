@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 output functions&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_output.c,v 1.17 1999/04/22 10:07:42 davem Exp $&n; *&n; *&t;Based on linux/net/ipv4/ip_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;Changes:&n; *&t;A.N.Kuznetsov&t;:&t;airthmetics in fragmentation.&n; *&t;&t;&t;&t;extension headers are implemented.&n; *&t;&t;&t;&t;route changes now work.&n; *&t;&t;&t;&t;ip6_forward does not confuse sniffers.&n; *&t;&t;&t;&t;etc.&n; *&n; *      H. von Brand    :       Added missing #include &lt;linux/string.h&gt;&n; */
+multiline_comment|/*&n; *&t;IPv6 output functions&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_output.c,v 1.20 1999/06/09 10:11:12 davem Exp $&n; *&n; *&t;Based on linux/net/ipv4/ip_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;Changes:&n; *&t;A.N.Kuznetsov&t;:&t;airthmetics in fragmentation.&n; *&t;&t;&t;&t;extension headers are implemented.&n; *&t;&t;&t;&t;route changes now work.&n; *&t;&t;&t;&t;ip6_forward does not confuse sniffers.&n; *&t;&t;&t;&t;etc.&n; *&n; *      H. von Brand    :       Added missing #include &lt;linux/string.h&gt;&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -143,57 +143,7 @@ c_cond
 id|hh
 )paren
 (brace
-macro_line|#ifdef __alpha__
-multiline_comment|/* Alpha has disguisting memcpy. Help it. */
-id|u64
-op_star
-id|aligned_hdr
-op_assign
-(paren
-id|u64
-op_star
-)paren
-(paren
-id|skb-&gt;data
-op_minus
-l_int|16
-)paren
-suffix:semicolon
-id|u64
-op_star
-id|aligned_hdr0
-op_assign
-id|hh-&gt;hh_data
-suffix:semicolon
-id|read_lock_irq
-c_func
-(paren
-op_amp
-id|hh-&gt;hh_lock
-)paren
-suffix:semicolon
-id|aligned_hdr
-(braket
-l_int|0
-)braket
-op_assign
-id|aligned_hdr0
-(braket
-l_int|0
-)braket
-suffix:semicolon
-id|aligned_hdr
-(braket
-l_int|1
-)braket
-op_assign
-id|aligned_hdr0
-(braket
-l_int|1
-)braket
-suffix:semicolon
-macro_line|#else
-id|read_lock_irq
+id|read_lock_bh
 c_func
 (paren
 op_amp
@@ -212,8 +162,7 @@ comma
 l_int|16
 )paren
 suffix:semicolon
-macro_line|#endif
-id|read_unlock_irq
+id|read_unlock_bh
 c_func
 (paren
 op_amp
@@ -225,7 +174,7 @@ c_func
 (paren
 id|skb
 comma
-id|dev-&gt;hard_header_len
+id|hh-&gt;hh_len
 )paren
 suffix:semicolon
 r_return

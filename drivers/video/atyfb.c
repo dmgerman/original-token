@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: atyfb.c,v 1.106 1999/04/16 11:20:49 geert Exp $&n; *  linux/drivers/video/atyfb.c -- Frame buffer device for ATI Mach64&n; *&n; *&t;Copyright (C) 1997-1998  Geert Uytterhoeven&n; *&t;Copyright (C) 1998  Bernd Harries&n; *&t;Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; *  This driver is partly based on the PowerMac console driver:&n; *&n; *&t;Copyright (C) 1996 Paul Mackerras&n; *&n; *  and on the PowerMac ATI/mach64 display driver:&n; *&n; *&t;Copyright (C) 1997 Michael AK Tesch&n; *&n; *&t;      with work by Jon Howell&n; *&t;&t;&t;   Harry AC Eaton&n; *&t;&t;&t;   Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+multiline_comment|/*  $Id: atyfb.c,v 1.107 1999/06/08 19:59:03 geert Exp $&n; *  linux/drivers/video/atyfb.c -- Frame buffer device for ATI Mach64&n; *&n; *&t;Copyright (C) 1997-1998  Geert Uytterhoeven&n; *&t;Copyright (C) 1998  Bernd Harries&n; *&t;Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; *  This driver is partly based on the PowerMac console driver:&n; *&n; *&t;Copyright (C) 1996 Paul Mackerras&n; *&n; *  and on the PowerMac ATI/mach64 display driver:&n; *&n; *&t;Copyright (C) 1997 Michael AK Tesch&n; *&n; *&t;      with work by Jon Howell&n; *&t;&t;&t;   Harry AC Eaton&n; *&t;&t;&t;   Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
 multiline_comment|/******************************************************************************&n;&n;  TODO:&n;&n;    - cursor support on all cards and all ramdacs.&n;    - cursor parameters controlable via ioctl()s.&n;    - guess PLL and MCLK based on the original PLL register values initialized&n;      by the BIOS or Open Firmware (if they are initialized).&n;&n;&t;&t;&t;&t;&t;&t;(Anyone to help with this?)&n;&n;******************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -430,6 +430,10 @@ suffix:semicolon
 DECL|member|total_vram
 id|u32
 id|total_vram
+suffix:semicolon
+DECL|member|ref_clk_per
+id|u32
+id|ref_clk_per
 suffix:semicolon
 DECL|member|pll_per
 id|u32
@@ -1224,7 +1228,6 @@ op_star
 id|info
 )paren
 suffix:semicolon
-macro_line|#if defined(__sparc__) || defined(DEBUG)
 r_static
 id|u8
 id|aty_ld_pll
@@ -1240,7 +1243,6 @@ op_star
 id|info
 )paren
 suffix:semicolon
-macro_line|#endif
 r_static
 r_void
 id|aty_set_crtc
@@ -1374,6 +1376,12 @@ comma
 id|u32
 op_star
 id|vclk_per
+comma
+r_const
+r_struct
+id|fb_info_aty
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
@@ -1463,6 +1471,12 @@ comma
 id|u32
 op_star
 id|vclk_per
+comma
+r_const
+r_struct
+id|fb_info_aty
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
@@ -1808,16 +1822,6 @@ id|default_mclk
 id|__initdata
 op_assign
 l_int|0
-suffix:semicolon
-DECL|variable|ref_clk_per
-r_static
-r_const
-id|u32
-id|ref_clk_per
-op_assign
-l_int|1000000000000ULL
-op_div
-l_int|14318180
 suffix:semicolon
 macro_line|#if defined(CONFIG_PPC)
 DECL|variable|__initdata
@@ -3333,7 +3337,6 @@ id|info
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(__sparc__) || defined(DEBUG)
 DECL|function|aty_ld_pll
 r_static
 id|u8
@@ -3397,7 +3400,6 @@ r_return
 id|res
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#if defined(CONFIG_PPC)
 multiline_comment|/*&n;     *  Apple monitor sense&n;     */
 DECL|function|read_aty_sense
@@ -7546,6 +7548,12 @@ comma
 id|u32
 op_star
 id|vclk_per
+comma
+r_const
+r_struct
+id|fb_info_aty
+op_star
+id|info
 )paren
 (brace
 id|u8
@@ -7576,7 +7584,7 @@ id|vclk_per
 op_assign
 (paren
 (paren
-id|ref_clk_per
+id|info-&gt;ref_clk_per
 op_star
 id|ref_div_count
 )paren
@@ -8255,12 +8263,12 @@ l_int|2
 op_star
 l_int|255
 op_div
-id|ref_clk_per
+id|info-&gt;ref_clk_per
 suffix:semicolon
 multiline_comment|/* FIXME: use the VTB/GTB /3 post divider if it&squot;s better suited */
 id|q
 op_assign
-id|ref_clk_per
+id|info-&gt;ref_clk_per
 op_star
 id|pll_ref_div
 op_star
@@ -8342,7 +8350,7 @@ suffix:semicolon
 multiline_comment|/* FIXME: use the VTB/GTB /{3,6,12} post dividers if they&squot;re better suited */
 id|q
 op_assign
-id|ref_clk_per
+id|info-&gt;ref_clk_per
 op_star
 id|pll_ref_div
 op_star
@@ -8746,6 +8754,12 @@ comma
 id|u32
 op_star
 id|vclk_per
+comma
+r_const
+r_struct
+id|fb_info_aty
+op_star
+id|info
 )paren
 (brace
 id|u8
@@ -8832,7 +8846,7 @@ id|pll_ref_div
 op_star
 id|vpostdiv
 op_star
-id|ref_clk_per
+id|info-&gt;ref_clk_per
 op_div
 id|vclk_fb_div
 op_div
@@ -9661,6 +9675,8 @@ id|par-&gt;pll.gx
 comma
 op_amp
 id|var-&gt;pixclock
+comma
+id|info
 )paren
 suffix:semicolon
 r_else
@@ -9674,6 +9690,8 @@ id|par-&gt;pll.ct
 comma
 op_amp
 id|var-&gt;pixclock
+comma
+id|info
 )paren
 suffix:semicolon
 r_if
@@ -12629,6 +12647,9 @@ op_star
 id|ramname
 op_assign
 l_int|NULL
+comma
+op_star
+id|xtal
 suffix:semicolon
 r_int
 id|pll
@@ -12642,6 +12663,9 @@ r_int
 id|sense
 suffix:semicolon
 macro_line|#endif
+id|u8
+id|pll_ref_div
+suffix:semicolon
 id|info-&gt;aty_cmap_regs
 op_assign
 (paren
@@ -13190,6 +13214,139 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|info-&gt;ref_clk_per
+op_assign
+l_int|1000000000000ULL
+op_div
+l_int|14318180
+suffix:semicolon
+id|xtal
+op_assign
+l_string|&quot;14.31818&quot;
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|Gx
+op_eq
+id|GX_CHIP_ID
+op_logical_or
+id|Gx
+op_eq
+id|CX_CHIP_ID
+op_logical_or
+id|Gx
+op_eq
+id|CT_CHIP_ID
+op_logical_or
+id|Gx
+op_eq
+id|ET_CHIP_ID
+op_logical_or
+(paren
+(paren
+id|Gx
+op_eq
+id|VT_CHIP_ID
+op_logical_or
+id|Gx
+op_eq
+id|GT_CHIP_ID
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|Rev
+op_amp
+l_int|0x07
+)paren
+)paren
+)paren
+op_logical_and
+(paren
+id|pll_ref_div
+op_assign
+id|aty_ld_pll
+c_func
+(paren
+id|PLL_REF_DIV
+comma
+id|info
+)paren
+)paren
+)paren
+(brace
+r_int
+id|diff1
+comma
+id|diff2
+suffix:semicolon
+id|diff1
+op_assign
+l_int|510
+op_star
+l_int|14
+op_div
+id|pll_ref_div
+op_minus
+id|pll
+suffix:semicolon
+id|diff2
+op_assign
+l_int|510
+op_star
+l_int|29
+op_div
+id|pll_ref_div
+op_minus
+id|pll
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|diff1
+OL
+l_int|0
+)paren
+id|diff1
+op_assign
+op_minus
+id|diff1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|diff2
+OL
+l_int|0
+)paren
+id|diff2
+op_assign
+op_minus
+id|diff2
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|diff2
+OL
+id|diff1
+)paren
+(brace
+id|info-&gt;ref_clk_per
+op_assign
+l_int|1000000000000ULL
+op_div
+l_int|29498928
+suffix:semicolon
+id|xtal
+op_assign
+l_string|&quot;29.498928&quot;
+suffix:semicolon
+)brace
+)brace
 id|i
 op_assign
 id|aty_ld_le32
@@ -13553,7 +13710,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%d%c %s, %d MHz PLL, %d Mhz MCLK&bslash;n&quot;
+l_string|&quot;%d%c %s, %s MHz XTAL, %d MHz PLL, %d Mhz MCLK&bslash;n&quot;
 comma
 id|info-&gt;total_vram
 op_eq
@@ -13578,6 +13735,8 @@ suffix:colon
 l_char|&squot;M&squot;
 comma
 id|ramname
+comma
+id|xtal
 comma
 id|pll
 comma

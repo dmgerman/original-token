@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: policy rules.&n; *&n; * Version:&t;$Id: fib_rules.c,v 1.10 1999/05/27 00:38:03 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; * &t;&t;Rani Assaf&t;:&t;local_rule cannot be deleted&n; *&t;&t;Marc Boucher&t;:&t;routing by fwmark&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: policy rules.&n; *&n; * Version:&t;$Id: fib_rules.c,v 1.11 1999/06/09 10:10:47 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; * &t;&t;Rani Assaf&t;:&t;local_rule cannot be deleted&n; *&t;&t;Marc Boucher&t;:&t;routing by fwmark&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -238,13 +238,6 @@ op_assign
 op_minus
 id|ESRCH
 suffix:semicolon
-id|write_lock_bh
-c_func
-(paren
-op_amp
-id|fib_rules_lock
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -480,10 +473,24 @@ id|local_rule
 )paren
 r_break
 suffix:semicolon
+id|write_lock_bh
+c_func
+(paren
+op_amp
+id|fib_rules_lock
+)paren
+suffix:semicolon
 op_star
 id|rp
 op_assign
 id|r-&gt;r_next
+suffix:semicolon
+id|write_unlock_bh
+c_func
+(paren
+op_amp
+id|fib_rules_lock
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -512,13 +519,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-id|write_unlock_bh
-c_func
-(paren
-op_amp
-id|fib_rules_lock
-)paren
-suffix:semicolon
 r_return
 id|err
 suffix:semicolon
@@ -1059,13 +1059,6 @@ l_int|4
 )paren
 suffix:semicolon
 macro_line|#endif
-id|write_lock_bh
-c_func
-(paren
-op_amp
-id|fib_rules_lock
-)paren
-suffix:semicolon
 id|rp
 op_assign
 op_amp
@@ -1145,6 +1138,13 @@ suffix:semicolon
 id|new_r-&gt;r_next
 op_assign
 id|r
+suffix:semicolon
+id|write_lock_bh
+c_func
+(paren
+op_amp
+id|fib_rules_lock
+)paren
 suffix:semicolon
 op_star
 id|rp
@@ -1335,13 +1335,6 @@ id|fib_rule
 op_star
 id|r
 suffix:semicolon
-id|write_lock_bh
-c_func
-(paren
-op_amp
-id|fib_rules_lock
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1363,12 +1356,19 @@ id|r-&gt;r_ifindex
 op_eq
 id|dev-&gt;ifindex
 )paren
+(brace
+id|write_lock_bh
+c_func
+(paren
+op_amp
+id|fib_rules_lock
+)paren
+suffix:semicolon
 id|r-&gt;r_ifindex
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 id|write_unlock_bh
 c_func
 (paren
@@ -1376,6 +1376,8 @@ op_amp
 id|fib_rules_lock
 )paren
 suffix:semicolon
+)brace
+)brace
 )brace
 DECL|function|fib_rules_attach
 r_static
@@ -1393,13 +1395,6 @@ r_struct
 id|fib_rule
 op_star
 id|r
-suffix:semicolon
-id|write_lock_bh
-c_func
-(paren
-op_amp
-id|fib_rules_lock
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -1433,11 +1428,18 @@ id|r-&gt;r_ifname
 op_eq
 l_int|0
 )paren
+(brace
+id|write_lock_bh
+c_func
+(paren
+op_amp
+id|fib_rules_lock
+)paren
+suffix:semicolon
 id|r-&gt;r_ifindex
 op_assign
 id|dev-&gt;ifindex
 suffix:semicolon
-)brace
 id|write_unlock_bh
 c_func
 (paren
@@ -1445,6 +1447,8 @@ op_amp
 id|fib_rules_lock
 )paren
 suffix:semicolon
+)brace
+)brace
 )brace
 DECL|function|fib_lookup
 r_int
@@ -1499,7 +1503,7 @@ comma
 id|key-&gt;src
 )paren
 suffix:semicolon
-id|read_lock_bh
+id|read_lock
 c_func
 (paren
 op_amp
@@ -1604,7 +1608,7 @@ suffix:semicolon
 r_case
 id|RTN_UNREACHABLE
 suffix:colon
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -1620,7 +1624,7 @@ suffix:colon
 r_case
 id|RTN_BLACKHOLE
 suffix:colon
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -1634,7 +1638,7 @@ suffix:semicolon
 r_case
 id|RTN_PROHIBIT
 suffix:colon
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -1695,7 +1699,7 @@ id|res-&gt;r
 op_assign
 id|policy
 suffix:semicolon
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -1719,7 +1723,7 @@ op_minus
 id|EAGAIN
 )paren
 (brace
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -1737,7 +1741,7 @@ c_func
 l_string|&quot;FAILURE&bslash;n&quot;
 )paren
 suffix:semicolon
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -2197,7 +2201,7 @@ id|fib_rule
 op_star
 id|r
 suffix:semicolon
-id|read_lock_bh
+id|read_lock
 c_func
 (paren
 op_amp
@@ -2252,7 +2256,7 @@ l_int|0
 r_break
 suffix:semicolon
 )brace
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp

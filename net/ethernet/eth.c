@@ -691,6 +691,10 @@ comma
 id|dev-&gt;addr_len
 )paren
 suffix:semicolon
+id|hh-&gt;hh_len
+op_assign
+id|ETH_HLEN
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

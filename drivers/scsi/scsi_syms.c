@@ -20,23 +20,8 @@ macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;constants.h&quot;
 macro_line|#include &quot;sd.h&quot;
+macro_line|#include &lt;scsi/scsicam.h&gt;
 multiline_comment|/*&n; * This source file contains the symbol table used by scsi loadable&n; * modules.&n; */
-r_extern
-r_int
-id|scsicam_bios_param
-(paren
-id|Disk
-op_star
-id|disk
-comma
-r_int
-id|dev
-comma
-r_int
-op_star
-id|ip
-)paren
-suffix:semicolon
 r_extern
 r_void
 id|print_command
@@ -118,6 +103,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|scsicam_bios_param
+)paren
+suffix:semicolon
+DECL|variable|scsi_partsize
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|scsi_partsize
 )paren
 suffix:semicolon
 DECL|variable|scsi_allocate_device

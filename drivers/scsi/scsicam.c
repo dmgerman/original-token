@@ -10,36 +10,7 @@ macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
-r_static
-r_int
-id|partsize
-c_func
-(paren
-r_struct
-id|buffer_head
-op_star
-id|bh
-comma
-r_int
-r_int
-id|capacity
-comma
-r_int
-r_int
-op_star
-id|cyls
-comma
-r_int
-r_int
-op_star
-id|hds
-comma
-r_int
-r_int
-op_star
-id|secs
-)paren
-suffix:semicolon
+macro_line|#include &lt;scsi/scsicam.h&gt;
 r_static
 r_int
 id|setsize
@@ -144,7 +115,7 @@ suffix:semicolon
 multiline_comment|/* try to infer mapping from partition table */
 id|ret_code
 op_assign
-id|partsize
+id|scsi_partsize
 (paren
 id|bh
 comma
@@ -334,11 +305,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : static int partsize(struct buffer_head *bh, unsigned long &n; *     capacity,unsigned int *cyls, unsigned int *hds, unsigned int *secs);&n; *&n; * Purpose : to determine the BIOS mapping used to create the partition&n; *&t;table, storing the results in *cyls, *hds, and *secs &n; *&n; * Returns : -1 on failure, 0 on success.&n; *&n; */
-DECL|function|partsize
-r_static
+multiline_comment|/*&n; * Function : static int scsi_partsize(struct buffer_head *bh, unsigned long &n; *     capacity,unsigned int *cyls, unsigned int *hds, unsigned int *secs);&n; *&n; * Purpose : to determine the BIOS mapping used to create the partition&n; *&t;table, storing the results in *cyls, *hds, and *secs &n; *&n; * Returns : -1 on failure, 0 on success.&n; *&n; */
+DECL|function|scsi_partsize
 r_int
-id|partsize
+id|scsi_partsize
 c_func
 (paren
 r_struct

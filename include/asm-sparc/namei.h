@@ -78,8 +78,6 @@ comma
 id|LOOKUP_FOLLOW
 op_or
 id|LOOKUP_DIRECTORY
-op_or
-id|LOOKUP_SLASHOK
 )paren
 )paren
 suffix:semicolon

@@ -101,6 +101,24 @@ DECL|macro|SCSIDATH
 mdefine_line|#define&t;SCSIDATH        &t;&t;0x07
 DECL|macro|STCNT
 mdefine_line|#define&t;STCNT           &t;&t;0x08
+DECL|macro|OPTIONMODE
+mdefine_line|#define&t;OPTIONMODE      &t;&t;0x08
+DECL|macro|AUTORATEEN
+mdefine_line|#define&t;&t;AUTORATEEN      &t;0x80
+DECL|macro|AUTOACKEN
+mdefine_line|#define&t;&t;AUTOACKEN       &t;0x40
+DECL|macro|ATNMGMNTEN
+mdefine_line|#define&t;&t;ATNMGMNTEN      &t;0x20
+DECL|macro|BUSFREEREV
+mdefine_line|#define&t;&t;BUSFREEREV      &t;0x10
+DECL|macro|EXPPHASEDIS
+mdefine_line|#define&t;&t;EXPPHASEDIS     &t;0x08
+DECL|macro|SCSIDATL_IMGEN
+mdefine_line|#define&t;&t;SCSIDATL_IMGEN  &t;0x04
+DECL|macro|AUTO_MSGOUT_DE
+mdefine_line|#define&t;&t;AUTO_MSGOUT_DE  &t;0x02
+DECL|macro|DIS_MSGIN_DUALEDGE
+mdefine_line|#define&t;&t;DIS_MSGIN_DUALEDGE&t;0x01
 DECL|macro|CLRSINT0
 mdefine_line|#define&t;CLRSINT0        &t;&t;0x0b
 DECL|macro|CLRSELDO
@@ -171,10 +189,22 @@ DECL|macro|SSTAT2
 mdefine_line|#define&t;SSTAT2          &t;&t;0x0d
 DECL|macro|OVERRUN
 mdefine_line|#define&t;&t;OVERRUN         &t;0x80
+DECL|macro|SHVALID
+mdefine_line|#define&t;&t;SHVALID         &t;0x40
+DECL|macro|WIDE_RES
+mdefine_line|#define&t;&t;WIDE_RES        &t;0x20
 DECL|macro|SFCNT
 mdefine_line|#define&t;&t;SFCNT           &t;0x1f
 DECL|macro|EXP_ACTIVE
 mdefine_line|#define&t;&t;EXP_ACTIVE      &t;0x10
+DECL|macro|CRCVALERR
+mdefine_line|#define&t;&t;CRCVALERR       &t;0x08
+DECL|macro|CRCENDERR
+mdefine_line|#define&t;&t;CRCENDERR       &t;0x04
+DECL|macro|CRCREQERR
+mdefine_line|#define&t;&t;CRCREQERR       &t;0x02
+DECL|macro|DUAL_EDGE_ERROR
+mdefine_line|#define&t;&t;DUAL_EDGE_ERROR &t;0x01
 DECL|macro|SSTAT3
 mdefine_line|#define&t;SSTAT3          &t;&t;0x0e
 DECL|macro|SCSICNT
@@ -651,6 +681,8 @@ DECL|macro|SQPARERR
 mdefine_line|#define&t;&t;SQPARERR        &t;0x08
 DECL|macro|ILLOPCODE
 mdefine_line|#define&t;&t;ILLOPCODE       &t;0x04
+DECL|macro|DSCTMOUT
+mdefine_line|#define&t;&t;DSCTMOUT        &t;0x02
 DECL|macro|ILLSADDR
 mdefine_line|#define&t;&t;ILLSADDR        &t;0x02
 DECL|macro|ILLHADDR
@@ -685,12 +717,44 @@ DECL|macro|QINFIFO
 mdefine_line|#define&t;QINFIFO         &t;&t;0x9b
 DECL|macro|QINCNT
 mdefine_line|#define&t;QINCNT          &t;&t;0x9c
+DECL|macro|SCSIDATL_IMG
+mdefine_line|#define&t;SCSIDATL_IMG    &t;&t;0x9c
 DECL|macro|QOUTFIFO
 mdefine_line|#define&t;QOUTFIFO        &t;&t;0x9d
+DECL|macro|CRCCONTROL1
+mdefine_line|#define&t;CRCCONTROL1     &t;&t;0x9d
+DECL|macro|CRCONSEEN
+mdefine_line|#define&t;&t;CRCONSEEN       &t;0x80
+DECL|macro|TARGCRCCNTEN
+mdefine_line|#define&t;&t;TARGCRCCNTEN    &t;0x40
+DECL|macro|CRCVALCHKEN
+mdefine_line|#define&t;&t;CRCVALCHKEN     &t;0x40
+DECL|macro|CRCENDCHKEN
+mdefine_line|#define&t;&t;CRCENDCHKEN     &t;0x20
+DECL|macro|CRCREQCHKEN
+mdefine_line|#define&t;&t;CRCREQCHKEN     &t;0x10
+DECL|macro|TARGCRCENDEN
+mdefine_line|#define&t;&t;TARGCRCENDEN    &t;0x08
+DECL|macro|SCSIPHASE
+mdefine_line|#define&t;SCSIPHASE       &t;&t;0x9e
+DECL|macro|SP_STATUS
+mdefine_line|#define&t;&t;SP_STATUS       &t;0x20
+DECL|macro|SP_COMMAND
+mdefine_line|#define&t;&t;SP_COMMAND      &t;0x10
+DECL|macro|SP_MSG_IN
+mdefine_line|#define&t;&t;SP_MSG_IN       &t;0x08
+DECL|macro|SP_MSG_OUT
+mdefine_line|#define&t;&t;SP_MSG_OUT      &t;0x04
+DECL|macro|SP_DATA_IN
+mdefine_line|#define&t;&t;SP_DATA_IN      &t;0x02
+DECL|macro|SP_DATA_OUT
+mdefine_line|#define&t;&t;SP_DATA_OUT     &t;0x01
 DECL|macro|QOUTCNT
 mdefine_line|#define&t;QOUTCNT         &t;&t;0x9e
 DECL|macro|SFUNCT
 mdefine_line|#define&t;SFUNCT          &t;&t;0x9f
+DECL|macro|ALT_MODE
+mdefine_line|#define&t;&t;ALT_MODE        &t;0x80
 DECL|macro|SCB_CONTROL
 mdefine_line|#define&t;SCB_CONTROL     &t;&t;0xa0
 DECL|macro|MK_MESSAGE
@@ -799,18 +863,26 @@ DECL|macro|CCSCBPTR
 mdefine_line|#define&t;CCSCBPTR        &t;&t;0xf1
 DECL|macro|HNSCB_QOFF
 mdefine_line|#define&t;HNSCB_QOFF      &t;&t;0xf4
+DECL|macro|HESCB_QOFF
+mdefine_line|#define&t;HESCB_QOFF      &t;&t;0xf5
 DECL|macro|SNSCB_QOFF
 mdefine_line|#define&t;SNSCB_QOFF      &t;&t;0xf6
+DECL|macro|SESCB_QOFF
+mdefine_line|#define&t;SESCB_QOFF      &t;&t;0xf7
 DECL|macro|SDSCB_QOFF
 mdefine_line|#define&t;SDSCB_QOFF      &t;&t;0xf8
 DECL|macro|QOFF_CTLSTA
 mdefine_line|#define&t;QOFF_CTLSTA     &t;&t;0xfa
+DECL|macro|ESTABLISH_SCB_AVAIL
+mdefine_line|#define&t;&t;ESTABLISH_SCB_AVAIL&t;0x80
 DECL|macro|SCB_AVAIL
 mdefine_line|#define&t;&t;SCB_AVAIL       &t;0x40
 DECL|macro|SNSCB_ROLLOVER
 mdefine_line|#define&t;&t;SNSCB_ROLLOVER  &t;0x20
 DECL|macro|SDSCB_ROLLOVER
 mdefine_line|#define&t;&t;SDSCB_ROLLOVER  &t;0x10
+DECL|macro|SESCB_ROLLOVER
+mdefine_line|#define&t;&t;SESCB_ROLLOVER  &t;0x08
 DECL|macro|SCB_QSIZE
 mdefine_line|#define&t;&t;SCB_QSIZE       &t;0x07
 DECL|macro|SCB_QSIZE_256

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ebus.c,v 1.2 1998/10/07 11:35:16 jj Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Adopted for sparc by V. Roganov and G. Raiko.&n; */
+multiline_comment|/* $Id: ebus.c,v 1.3 1999/06/03 15:02:09 davem Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Adopted for sparc by V. Roganov and G. Raiko.&n; * Fixes for different platforms by Pete Zaitcev.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -17,11 +17,11 @@ macro_line|#undef PROM_DEBUG
 DECL|macro|DEBUG_FILL_EBUS_DEV
 macro_line|#undef DEBUG_FILL_EBUS_DEV
 macro_line|#ifdef PROM_DEBUG
-DECL|macro|dprintf
-mdefine_line|#define dprintf prom_printf
+DECL|macro|dprintk
+mdefine_line|#define dprintk prom_printf
 macro_line|#else
-DECL|macro|dprintf
-mdefine_line|#define dprintf printk
+DECL|macro|dprintk
+mdefine_line|#define dprintk printk
 macro_line|#endif
 DECL|variable|ebus_chain
 r_struct
@@ -81,6 +81,21 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* We are together with pcic.c under CONFIG_PCI. */
+r_extern
+r_int
+r_int
+id|pcic_pin_to_irq
+c_func
+(paren
+r_int
+r_int
+comma
+r_char
+op_star
+id|name
+)paren
+suffix:semicolon
 DECL|function|ebus_alloc
 r_static
 r_inline
@@ -201,6 +216,18 @@ id|regs
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+op_eq
+op_minus
+l_int|1
+)paren
+id|len
+op_assign
+l_int|0
+suffix:semicolon
 id|dev-&gt;num_addrs
 op_assign
 id|len
@@ -272,6 +299,7 @@ id|i
 )braket
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * Houston, we have a problem...&n;&t; * Sometimes PROM supplies absolutely meaningless properties.&n;&t; * Still, we take what it gives since we have nothing better.&n;&t; * Children of ebus may be wired on any input pin of PCIC.&n;&t; */
 id|len
 op_assign
 id|prom_getproperty
@@ -315,18 +343,19 @@ id|dev-&gt;num_irqs
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Oh, well, some PROMs don&squot;t export interrupts&n;&t;&t; * property to children of EBus devices...&n;&t;&t; *&n;&t;&t; * Be smart about PS/2 keyboard and mouse.&n;&t;&t; */
+id|dev-&gt;irqs
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|strcmp
-c_func
-(paren
-id|dev-&gt;parent-&gt;prom_name
-comma
-l_string|&quot;8042&quot;
-)paren
+id|dev-&gt;parent-&gt;num_irqs
+op_ne
+l_int|0
 )paren
 (brace
 id|dev-&gt;num_irqs
@@ -342,6 +371,20 @@ id|dev-&gt;parent-&gt;irqs
 (braket
 l_int|0
 )braket
+suffix:semicolon
+multiline_comment|/* P3 remove */
+id|printk
+c_func
+(paren
+l_string|&quot;EBUS: dev %s irq %d from parent&bslash;n&quot;
+comma
+id|dev-&gt;prom_name
+comma
+id|dev-&gt;irqs
+(braket
+l_int|0
+)braket
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -359,10 +402,29 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|irqs
+(braket
+l_int|0
+)braket
+op_eq
+l_int|0
+op_logical_or
+id|irqs
+(braket
+l_int|0
+)braket
+op_ge
+l_int|8
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; * XXX Zero is a valid pin number...&n;&t;&t;&t; * This works as long as Ebus is not wired to INTA#.&n;&t;&t;&t; */
 id|printk
 c_func
 (paren
-l_string|&quot;FIXME: %s irq(%d)&bslash;n&quot;
+l_string|&quot;EBUS: %s got bad irq %d from PROM&bslash;n&quot;
 comma
 id|dev-&gt;prom_name
 comma
@@ -372,6 +434,51 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+id|dev-&gt;num_irqs
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;irqs
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+id|dev-&gt;irqs
+(braket
+l_int|0
+)braket
+op_assign
+id|pcic_pin_to_irq
+c_func
+(paren
+id|irqs
+(braket
+l_int|0
+)braket
+comma
+id|dev-&gt;prom_name
+)paren
+suffix:semicolon
+multiline_comment|/* P3 remove */
+id|printk
+c_func
+(paren
+l_string|&quot;EBUS: dev %s irq %d from PROM&bslash;n&quot;
+comma
+id|dev-&gt;prom_name
+comma
+id|dev-&gt;irqs
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+)brace
 )brace
 macro_line|#ifdef DEBUG_FILL_EBUS_DEV
 id|dprintk
@@ -631,6 +738,25 @@ id|i
 op_increment
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; * XXX Collect JE-1 PROM&n;&t;&t; * &n;&t;&t; * Example - JS-E with 3.11:&n;&t;&t; *  /ebus&n;&t;&t; *      regs &n;&t;&t; *        0x00000000, 0x0, 0x00000000, 0x0, 0x00000000,&n;&t;&t; *        0x82000010, 0x0, 0xf0000000, 0x0, 0x01000000,&n;&t;&t; *        0x82000014, 0x0, 0x38800000, 0x0, 0x00800000,&n;&t;&t; *      ranges&n;&t;&t; *        0x00, 0x00000000, 0x02000010, 0x0, 0x0, 0x01000000,&n;&t;&t; *        0x01, 0x01000000, 0x02000014, 0x0, 0x0, 0x00800000,&n;&t;&t; *  /ebus/8042&n;&t;&t; *      regs&n;&t;&t; *        0x00000001, 0x00300060, 0x00000008,&n;&t;&t; *        0x00000001, 0x00300060, 0x00000008,&n;&t;&t; */
+id|n
+op_assign
+id|regs
+(braket
+id|i
+)braket
+dot
+id|which_io
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|n
+op_ge
+l_int|4
+)paren
+(brace
+multiline_comment|/* XXX This is copied from old JE-1 by Gleb. */
 id|n
 op_assign
 (paren
@@ -646,6 +772,11 @@ l_int|0x10
 op_rshift
 l_int|2
 suffix:semicolon
+)brace
+r_else
+(brace
+suffix:semicolon
+)brace
 id|dev-&gt;base_address
 (braket
 id|i
@@ -709,6 +840,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#if 0
+multiline_comment|/*&n; * This release_region() screwes those who do sparc_alloc_io().&n; * Change drivers which do check_region(). See drivers/block/floppy.c.&n; */
 multiline_comment|/* Some drivers call &squot;check_region&squot;, so we release it */
 id|release_region
 c_func
@@ -723,6 +856,7 @@ comma
 id|PAGE_SIZE
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -788,23 +922,48 @@ id|dev-&gt;num_irqs
 op_assign
 l_int|0
 suffix:semicolon
-)brace
-r_else
+r_if
+c_cond
+(paren
+(paren
+id|dev-&gt;irqs
+(braket
+l_int|0
+)braket
+op_assign
+id|dev-&gt;bus-&gt;self-&gt;irq
+)paren
+op_ne
+l_int|0
+)paren
 (brace
 id|dev-&gt;num_irqs
 op_assign
-id|len
-op_div
-r_sizeof
+l_int|1
+suffix:semicolon
+multiline_comment|/* P3 remove */
+id|printk
+c_func
 (paren
-id|irqs
+l_string|&quot;EBUS: child %s irq %d from parent&bslash;n&quot;
+comma
+id|dev-&gt;prom_name
+comma
+id|dev-&gt;irqs
 (braket
 l_int|0
 )braket
 )paren
 suffix:semicolon
-DECL|macro|IRQ_8042
-mdefine_line|#define IRQ_8042 7
+)brace
+)brace
+r_else
+(brace
+id|dev-&gt;num_irqs
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* dev-&gt;num_irqs = len / sizeof(irqs[0]); */
 r_if
 c_cond
 (paren
@@ -813,19 +972,21 @@ id|irqs
 l_int|0
 )braket
 op_eq
-l_int|4
-)paren
-id|dev-&gt;irqs
+l_int|0
+op_logical_or
+id|irqs
 (braket
 l_int|0
 )braket
-op_assign
-id|IRQ_8042
-suffix:semicolon
+op_ge
+l_int|8
+)paren
+(brace
+multiline_comment|/* See above for the parent. XXX */
 id|printk
 c_func
 (paren
-l_string|&quot;FIXME: %s irq(%d)&bslash;n&quot;
+l_string|&quot;EBUS: %s got bad irq %d from PROM&bslash;n&quot;
 comma
 id|dev-&gt;prom_name
 comma
@@ -835,6 +996,51 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+id|dev-&gt;num_irqs
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;irqs
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+id|dev-&gt;irqs
+(braket
+l_int|0
+)braket
+op_assign
+id|pcic_pin_to_irq
+c_func
+(paren
+id|irqs
+(braket
+l_int|0
+)braket
+comma
+id|dev-&gt;prom_name
+)paren
+suffix:semicolon
+multiline_comment|/* P3 remove */
+id|printk
+c_func
+(paren
+l_string|&quot;EBUS: child %s irq %d from PROM&bslash;n&quot;
+comma
+id|dev-&gt;prom_name
+comma
+id|dev-&gt;irqs
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+)brace
 )brace
 macro_line|#ifdef DEBUG_FILL_EBUS_DEV
 id|dprintk

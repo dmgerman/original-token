@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.19 1999/05/14 07:26:09 davem Exp $ */
+multiline_comment|/* $Id: io.h,v 1.20 1999/06/03 15:02:50 davem Exp $ */
 macro_line|#ifndef __SPARC_IO_H
 DECL|macro|__SPARC_IO_H
 mdefine_line|#define __SPARC_IO_H
@@ -795,6 +795,11 @@ DECL|macro|virt_to_phys
 mdefine_line|#define virt_to_phys(x) __pa((unsigned long)(x))
 DECL|macro|phys_to_virt
 mdefine_line|#define phys_to_virt(x) __va((unsigned long)(x))
+multiline_comment|/*&n; * At the moment, we do not use CMOS_READ anywhere outside of rtc.c,&n; * so rtc_port is static in it. This should not change unless a new&n; * hardware pops up.&n; */
+DECL|macro|RTC_PORT
+mdefine_line|#define RTC_PORT(x)   (rtc_port + (x))
+DECL|macro|RTC_ALWAYS_BCD
+mdefine_line|#define RTC_ALWAYS_BCD  0
 multiline_comment|/* Nothing to do */
 DECL|macro|dma_cache_inv
 mdefine_line|#define dma_cache_inv(_start,_size)&t;&t;do { } while (0)

@@ -299,6 +299,11 @@ r_int
 id|hh_type
 suffix:semicolon
 multiline_comment|/* protocol identifier, f.e ETH_P_IP */
+DECL|member|hh_len
+r_int
+id|hh_len
+suffix:semicolon
+multiline_comment|/* length of header */
 DECL|member|hh_output
 r_int
 (paren
@@ -619,6 +624,12 @@ op_star
 id|dn_ptr
 suffix:semicolon
 multiline_comment|/* DECnet specific data */
+DECL|member|ip6_ptr
+r_void
+op_star
+id|ip6_ptr
+suffix:semicolon
+multiline_comment|/* IPv6 specific data */
 DECL|member|qdisc
 r_struct
 id|Qdisc
@@ -647,6 +658,20 @@ multiline_comment|/* hard_start_xmit synchronizer */
 DECL|member|xmit_lock
 id|spinlock_t
 id|xmit_lock
+suffix:semicolon
+multiline_comment|/* cpu id of processor entered to hard_start_xmit or -1,&n;&t;   if nobody entered there.&n;&t; */
+DECL|member|xmit_lock_owner
+r_int
+id|xmit_lock_owner
+suffix:semicolon
+multiline_comment|/* device queue lock */
+DECL|member|queue_lock
+id|spinlock_t
+id|queue_lock
+suffix:semicolon
+DECL|member|refcnt
+id|atomic_t
+id|refcnt
 suffix:semicolon
 multiline_comment|/* Pointers to interface service routines.&t;*/
 DECL|member|open

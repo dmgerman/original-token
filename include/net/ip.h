@@ -516,7 +516,7 @@ c_cond
 id|hh
 )paren
 (brace
-id|read_lock_irq
+id|read_lock_bh
 c_func
 (paren
 op_amp
@@ -535,7 +535,7 @@ comma
 l_int|16
 )paren
 suffix:semicolon
-id|read_unlock_irq
+id|read_unlock_bh
 c_func
 (paren
 op_amp
@@ -547,7 +547,7 @@ c_func
 (paren
 id|skb
 comma
-id|dev-&gt;hard_header_len
+id|hh-&gt;hh_len
 )paren
 suffix:semicolon
 r_return

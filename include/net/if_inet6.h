@@ -48,6 +48,10 @@ r_int
 r_int
 id|tstamp
 suffix:semicolon
+DECL|member|refcnt
+id|atomic_t
+id|refcnt
+suffix:semicolon
 DECL|member|probes
 id|__u8
 id|probes
@@ -236,6 +240,10 @@ r_struct
 id|ifmcaddr6
 op_star
 id|mc_list
+suffix:semicolon
+DECL|member|lock
+id|rwlock_t
+id|lock
 suffix:semicolon
 DECL|member|if_flags
 id|__u32

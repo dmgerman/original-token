@@ -1586,9 +1586,10 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|start_bh_atomic
+id|sch_tree_lock
 c_func
 (paren
+id|sch
 )paren
 suffix:semicolon
 id|q-&gt;quantum
@@ -1636,9 +1637,10 @@ id|q-&gt;perturb_timer
 )paren
 suffix:semicolon
 )brace
-id|end_bh_atomic
+id|sch_tree_unlock
 c_func
 (paren
+id|sch
 )paren
 suffix:semicolon
 r_return

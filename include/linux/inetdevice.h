@@ -291,6 +291,7 @@ id|u32
 id|inet_select_addr
 c_func
 (paren
+r_const
 r_struct
 id|device
 op_star

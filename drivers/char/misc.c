@@ -165,6 +165,15 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|rtc_sun_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* Combines MK48T02 and MK48T08 */
+r_extern
+r_int
 id|rtc_DP8570A_init
 c_func
 (paren
@@ -901,7 +910,14 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_RTC) || defined(CONFIG_SUN_MOSTEK_RTC)
+macro_line|#if defined(CONFIG_SUN_MOSTEK_RTC)
+id|rtc_sun_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_RTC)
 id|rtc_init
 c_func
 (paren

@@ -200,6 +200,12 @@ op_assign
 id|bh-&gt;b_data
 suffix:semicolon
 )brace
+id|UPDATE_ATIME
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 id|base
 op_assign
 id|lookup_dentry
@@ -377,12 +383,6 @@ id|i
 op_assign
 op_minus
 id|EFAULT
-suffix:semicolon
-id|UPDATE_ATIME
-c_func
-(paren
-id|inode
-)paren
 suffix:semicolon
 r_if
 c_cond

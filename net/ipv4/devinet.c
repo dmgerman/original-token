@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;Version: $Id: devinet.c,v 1.30 1999/06/01 07:49:59 davem Exp $&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;        Alexey Kuznetsov:&t;pa_* fields are replaced with ifaddr lists.&n; *&t;&t;Cyrus Durgin:&t;&t;updated for kmod&n; */
+multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;Version: $Id: devinet.c,v 1.32 1999/06/09 11:15:33 davem Exp $&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;        Alexey Kuznetsov:&t;pa_* fields are replaced with ifaddr lists.&n; *&t;&t;Cyrus Durgin:&t;&t;updated for kmod&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -2859,6 +2859,7 @@ id|u32
 id|inet_select_addr
 c_func
 (paren
+r_const
 r_struct
 id|device
 op_star
@@ -2876,6 +2877,7 @@ id|addr
 op_assign
 l_int|0
 suffix:semicolon
+r_const
 r_struct
 id|in_device
 op_star
@@ -2949,7 +2951,7 @@ r_return
 id|addr
 suffix:semicolon
 multiline_comment|/* Not loopback addresses on loopback should be preferred&n;&t;   in this case. It is importnat that lo is the first interface&n;&t;   in dev_base list.&n;&t; */
-id|read_lock_bh
+id|read_lock
 c_func
 (paren
 op_amp
@@ -2997,7 +2999,7 @@ op_le
 id|scope
 )paren
 (brace
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -3016,7 +3018,7 @@ id|in_dev
 )paren
 suffix:semicolon
 )brace
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -3581,7 +3583,7 @@ id|cb-&gt;args
 l_int|1
 )braket
 suffix:semicolon
-id|read_lock_bh
+id|read_lock
 c_func
 (paren
 op_amp
@@ -3704,7 +3706,7 @@ suffix:semicolon
 )brace
 id|done
 suffix:colon
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -4077,7 +4079,7 @@ id|ipv4_devconf_dflt.forwarding
 op_assign
 id|on
 suffix:semicolon
-id|read_lock_bh
+id|read_lock
 c_func
 (paren
 op_amp
@@ -4115,7 +4117,7 @@ op_assign
 id|on
 suffix:semicolon
 )brace
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp

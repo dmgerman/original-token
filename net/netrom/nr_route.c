@@ -2359,7 +2359,7 @@ id|first
 op_assign
 l_int|NULL
 suffix:semicolon
-id|read_lock_bh
+id|read_lock
 c_func
 (paren
 op_amp
@@ -2419,7 +2419,7 @@ op_assign
 id|dev
 suffix:semicolon
 )brace
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -2448,7 +2448,7 @@ id|device
 op_star
 id|dev
 suffix:semicolon
-id|read_lock_bh
+id|read_lock
 c_func
 (paren
 op_amp
@@ -2504,7 +2504,7 @@ suffix:semicolon
 )brace
 id|out
 suffix:colon
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp

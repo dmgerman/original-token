@@ -24,7 +24,14 @@ macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
-multiline_comment|/*&n; *&t;Device multicast list maintenance. &n; *&n; *&t;This is used both by IP and by the user level maintenance functions. &n; *&t;Unlike BSD we maintain a usage count on a given multicast address so &n; *&t;that a casual user application can add/delete multicasts used by &n; *&t;protocols without doing damage to the protocols when it deletes the&n; *&t;entries. It also helps IP as it tracks overlapping maps.&n; *&n; *&t;Device mc lists are changed by bh at least if IPv6 is enabled,&n; *&t;so that it must be bh protected.&n; */
+multiline_comment|/*&n; *&t;Device multicast list maintenance. &n; *&n; *&t;This is used both by IP and by the user level maintenance functions. &n; *&t;Unlike BSD we maintain a usage count on a given multicast address so &n; *&t;that a casual user application can add/delete multicasts used by &n; *&t;protocols without doing damage to the protocols when it deletes the&n; *&t;entries. It also helps IP as it tracks overlapping maps.&n; *&n; *&t;Device mc lists are changed by bh at least if IPv6 is enabled,&n; *&t;so that it must be bh protected.&n; *&n; *&t;We protect all mc lists with global rw lock&n; *&t;and block accesses to device mc filters with dev-&gt;xmit_lock.&n; */
+DECL|variable|dev_mc_lock
+r_static
+id|rwlock_t
+id|dev_mc_lock
+op_assign
+id|RW_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/*&n; *&t;Update the multicast list into the physical NIC controller.&n; */
 DECL|function|dev_mc_upload
 r_void
@@ -64,7 +71,23 @@ l_int|NULL
 r_return
 suffix:semicolon
 )brace
-id|start_bh_atomic
+id|read_lock_bh
+c_func
+(paren
+op_amp
+id|dev_mc_lock
+)paren
+suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dev-&gt;xmit_lock
+)paren
+suffix:semicolon
+id|dev-&gt;xmit_lock_owner
+op_assign
+id|smp_processor_id
 c_func
 (paren
 )paren
@@ -77,9 +100,23 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|end_bh_atomic
+id|dev-&gt;xmit_lock_owner
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|spin_unlock
 c_func
 (paren
+op_amp
+id|dev-&gt;xmit_lock
+)paren
+suffix:semicolon
+id|read_unlock_bh
+c_func
+(paren
+op_amp
+id|dev_mc_lock
 )paren
 suffix:semicolon
 )brace
@@ -119,9 +156,11 @@ op_star
 op_star
 id|dmip
 suffix:semicolon
-id|start_bh_atomic
+id|write_lock_bh
 c_func
 (paren
+op_amp
+id|dev_mc_lock
 )paren
 suffix:semicolon
 r_for
@@ -226,9 +265,11 @@ id|dmi
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;We have altered the list, so the card&n;&t;&t;&t; *&t;loaded filter is now wrong. Fix it&n;&t;&t;&t; */
-id|end_bh_atomic
+id|write_unlock_bh
 c_func
 (paren
+op_amp
+id|dev_mc_lock
 )paren
 suffix:semicolon
 id|dev_mc_upload
@@ -249,9 +290,11 @@ id|ENOENT
 suffix:semicolon
 id|done
 suffix:colon
-id|end_bh_atomic
+id|write_unlock_bh
 c_func
 (paren
+op_amp
+id|dev_mc_lock
 )paren
 suffix:semicolon
 r_return
@@ -293,6 +336,7 @@ comma
 op_star
 id|dmi1
 suffix:semicolon
+multiline_comment|/* RED-PEN: does gfp_any() work now? It requires&n;&t;   true local_bh_disable rather than global.&n;&t; */
 id|dmi1
 op_assign
 (paren
@@ -315,9 +359,11 @@ c_func
 )paren
 )paren
 suffix:semicolon
-id|start_bh_atomic
+id|write_lock_bh
 c_func
 (paren
+op_amp
+id|dev_mc_lock
 )paren
 suffix:semicolon
 r_for
@@ -399,10 +445,19 @@ id|dmi1
 op_eq
 l_int|NULL
 )paren
+(brace
+id|write_unlock_bh
+c_func
+(paren
+op_amp
+id|dev_mc_lock
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 id|memcpy
 c_func
 (paren
@@ -441,9 +496,11 @@ suffix:semicolon
 id|dev-&gt;mc_count
 op_increment
 suffix:semicolon
-id|end_bh_atomic
+id|write_unlock_bh
 c_func
 (paren
+op_amp
+id|dev_mc_lock
 )paren
 suffix:semicolon
 id|dev_mc_upload
@@ -457,9 +514,11 @@ l_int|0
 suffix:semicolon
 id|done
 suffix:colon
-id|end_bh_atomic
+id|write_unlock_bh
 c_func
 (paren
+op_amp
+id|dev_mc_lock
 )paren
 suffix:semicolon
 r_if
@@ -489,9 +548,11 @@ op_star
 id|dev
 )paren
 (brace
-id|start_bh_atomic
+id|write_lock_bh
 c_func
 (paren
+op_amp
+id|dev_mc_lock
 )paren
 suffix:semicolon
 r_while
@@ -545,9 +606,11 @@ id|dev-&gt;mc_count
 op_assign
 l_int|0
 suffix:semicolon
-id|end_bh_atomic
+id|write_unlock_bh
 c_func
 (paren
+op_amp
+id|dev_mc_lock
 )paren
 suffix:semicolon
 )brace
@@ -606,7 +669,7 @@ id|device
 op_star
 id|dev
 suffix:semicolon
-id|read_lock_bh
+id|read_lock
 c_func
 (paren
 op_amp
@@ -627,6 +690,13 @@ op_assign
 id|dev-&gt;next
 )paren
 (brace
+id|read_lock_bh
+c_func
+(paren
+op_amp
+id|dev_mc_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -739,10 +809,26 @@ id|offset
 op_plus
 id|length
 )paren
+(brace
+id|read_unlock_bh
+c_func
+(paren
+op_amp
+id|dev_mc_lock
+)paren
+suffix:semicolon
 r_goto
 id|done
 suffix:semicolon
 )brace
+)brace
+id|read_unlock_bh
+c_func
+(paren
+op_amp
+id|dev_mc_lock
+)paren
+suffix:semicolon
 )brace
 op_star
 id|eof
@@ -751,7 +837,7 @@ l_int|1
 suffix:semicolon
 id|done
 suffix:colon
-id|read_unlock_bh
+id|read_unlock
 c_func
 (paren
 op_amp
