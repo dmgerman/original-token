@@ -2717,7 +2717,11 @@ dot
 id|status
 op_and_assign
 op_complement
+(paren
 id|IRQ_DISABLED
+op_or
+id|IRQ_INPROGRESS
+)paren
 suffix:semicolon
 id|irq_desc
 (braket
