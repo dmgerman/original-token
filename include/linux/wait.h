@@ -86,26 +86,6 @@ id|q
 )paren
 suffix:semicolon
 )brace
-DECL|struct|semaphore
-r_struct
-id|semaphore
-(brace
-DECL|member|count
-r_int
-id|count
-suffix:semicolon
-DECL|member|wait
-r_struct
-id|wait_queue
-op_star
-id|wait
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|macro|MUTEX
-mdefine_line|#define MUTEX ((struct semaphore) { 1, NULL })
-DECL|macro|MUTEX_LOCKED
-mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { 0, NULL })
 DECL|struct|select_table_entry
 r_struct
 id|select_table_entry

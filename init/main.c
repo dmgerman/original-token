@@ -3524,6 +3524,22 @@ r_int
 r_int
 )paren
 suffix:semicolon
+id|memset
+c_func
+(paren
+id|prof_buffer
+comma
+l_int|0
+comma
+id|prof_len
+op_star
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+)paren
+suffix:semicolon
 )brace
 id|memory_start
 op_assign
@@ -4252,7 +4268,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to open a initial console.&bslash;n&quot;
+l_string|&quot;Unable to open an initial console.&bslash;n&quot;
 )paren
 suffix:semicolon
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-tape.h&t;Version 1.5 - ALPHA&t;Apr  12, 1996&n; *&n; * Copyright (C) 1995, 1996 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-tape.h&t;Version 1.7 - ALPHA&t;Sep  10, 1996&n; *&n; * Copyright (C) 1995, 1996 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
 multiline_comment|/*&n; * Include file for the IDE ATAPI streaming tape driver.&n; *&n; * This file contains various ide-tape related structures and function&n; * prototypes which are already used in ide.h.&n; *&n; * The various compile time options are described below.&n; */
 macro_line|#ifndef IDETAPE_H
 DECL|macro|IDETAPE_H
@@ -53,7 +53,7 @@ multiline_comment|/*&n; *&t;DSC timings.&n; */
 DECL|macro|IDETAPE_DSC_READ_WRITE_FALLBACK_FREQUENCY
 mdefine_line|#define&t;IDETAPE_DSC_READ_WRITE_FALLBACK_FREQUENCY   5*HZ/100&t;/* 50 msec */
 DECL|macro|IDETAPE_DSC_READ_WRITE_LOWEST_FREQUENCY
-mdefine_line|#define IDETAPE_DSC_READ_WRITE_LOWEST_FREQUENCY&t;30*HZ/100&t;/* 300 msec */
+mdefine_line|#define IDETAPE_DSC_READ_WRITE_LOWEST_FREQUENCY&t;40*HZ/100&t;/* 400 msec */
 DECL|macro|IDETAPE_DSC_FAST_MEDIA_ACCESS_FREQUENCY
 mdefine_line|#define&t;IDETAPE_DSC_FAST_MEDIA_ACCESS_FREQUENCY&t;1*HZ&t;&t;/* 1 second */
 DECL|macro|IDETAPE_FAST_SLOW_THRESHOLD

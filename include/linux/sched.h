@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -291,10 +292,15 @@ id|vm_area_struct
 op_star
 id|mmap_avl
 suffix:semicolon
+DECL|member|mmap_sem
+r_struct
+id|semaphore
+id|mmap_sem
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM { &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;swapper_pg_dir, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;&amp;init_mmap, &amp;init_mmap }
+mdefine_line|#define INIT_MM { &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;swapper_pg_dir, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;&amp;init_mmap, &amp;init_mmap, MUTEX }
 DECL|struct|signal_struct
 r_struct
 id|signal_struct
@@ -1502,72 +1508,6 @@ id|entry-&gt;wait
 suffix:semicolon
 id|p-&gt;nr
 op_increment
-suffix:semicolon
-)brace
-r_extern
-r_void
-id|__down
-c_func
-(paren
-r_struct
-id|semaphore
-op_star
-id|sem
-)paren
-suffix:semicolon
-multiline_comment|/*&n; * These are not yet interrupt-safe&n; */
-DECL|function|down
-r_extern
-r_inline
-r_void
-id|down
-c_func
-(paren
-r_struct
-id|semaphore
-op_star
-id|sem
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|sem-&gt;count
-op_le
-l_int|0
-)paren
-id|__down
-c_func
-(paren
-id|sem
-)paren
-suffix:semicolon
-id|sem-&gt;count
-op_decrement
-suffix:semicolon
-)brace
-DECL|function|up
-r_extern
-r_inline
-r_void
-id|up
-c_func
-(paren
-r_struct
-id|semaphore
-op_star
-id|sem
-)paren
-(brace
-id|sem-&gt;count
-op_increment
-suffix:semicolon
-id|wake_up
-c_func
-(paren
-op_amp
-id|sem-&gt;wait
-)paren
 suffix:semicolon
 )brace
 DECL|macro|REMOVE_LINKS

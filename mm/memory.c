@@ -3430,7 +3430,7 @@ op_assign
 id|find_vma
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|start
 )paren

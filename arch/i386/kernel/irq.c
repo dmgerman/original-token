@@ -807,7 +807,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;%2d: %8d %c %s&quot;
+l_string|&quot;%2d: %10u %c %s&quot;
 comma
 id|i
 comma

@@ -18,9 +18,9 @@ id|check_range
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|tsk
+id|mm
 comma
 r_int
 r_int
@@ -43,7 +43,7 @@ op_assign
 id|find_vma
 c_func
 (paren
-id|tsk
+id|mm
 comma
 id|addr
 )paren
@@ -359,7 +359,7 @@ op_assign
 id|check_range
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|addr
 comma

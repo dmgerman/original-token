@@ -1145,7 +1145,7 @@ suffix:semicolon
 id|insert_vm_struct
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|mpnt
 )paren

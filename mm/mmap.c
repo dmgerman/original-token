@@ -131,15 +131,22 @@ id|newbrk
 comma
 id|oldbrk
 suffix:semicolon
+r_struct
+id|mm_struct
+op_star
+id|mm
+op_assign
+id|current-&gt;mm
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|brk
 OL
-id|current-&gt;mm-&gt;end_code
+id|mm-&gt;end_code
 )paren
 r_return
-id|current-&gt;mm-&gt;brk
+id|mm-&gt;brk
 suffix:semicolon
 id|newbrk
 op_assign
@@ -154,7 +161,7 @@ op_assign
 id|PAGE_ALIGN
 c_func
 (paren
-id|current-&gt;mm-&gt;brk
+id|mm-&gt;brk
 )paren
 suffix:semicolon
 r_if
@@ -165,7 +172,7 @@ op_eq
 id|newbrk
 )paren
 r_return
-id|current-&gt;mm-&gt;brk
+id|mm-&gt;brk
 op_assign
 id|brk
 suffix:semicolon
@@ -175,10 +182,10 @@ c_cond
 (paren
 id|brk
 op_le
-id|current-&gt;mm-&gt;brk
+id|mm-&gt;brk
 )paren
 (brace
-id|current-&gt;mm-&gt;brk
+id|mm-&gt;brk
 op_assign
 id|brk
 suffix:semicolon
@@ -223,12 +230,12 @@ c_cond
 (paren
 id|brk
 op_minus
-id|current-&gt;mm-&gt;end_code
+id|mm-&gt;end_code
 OG
 id|rlim
 )paren
 r_return
-id|current-&gt;mm-&gt;brk
+id|mm-&gt;brk
 suffix:semicolon
 multiline_comment|/*&n;&t; * Check against existing mmap mappings.&n;&t; */
 r_if
@@ -237,7 +244,7 @@ c_cond
 id|find_vma_intersection
 c_func
 (paren
-id|current
+id|mm
 comma
 id|oldbrk
 comma
@@ -247,7 +254,7 @@ id|PAGE_SIZE
 )paren
 )paren
 r_return
-id|current-&gt;mm-&gt;brk
+id|mm-&gt;brk
 suffix:semicolon
 multiline_comment|/*&n;&t; * Check if we have enough memory..&n;&t; */
 r_if
@@ -267,10 +274,10 @@ id|PAGE_SHIFT
 )paren
 )paren
 r_return
-id|current-&gt;mm-&gt;brk
+id|mm-&gt;brk
 suffix:semicolon
 multiline_comment|/*&n;&t; * Ok, looks good - let it rip.&n;&t; */
-id|current-&gt;mm-&gt;brk
+id|mm-&gt;brk
 op_assign
 id|brk
 suffix:semicolon
@@ -433,6 +440,13 @@ id|off
 )paren
 (brace
 r_struct
+id|mm_struct
+op_star
+id|mm
+op_assign
+id|current-&gt;mm
+suffix:semicolon
+r_struct
 id|vm_area_struct
 op_star
 id|vma
@@ -490,7 +504,7 @@ multiline_comment|/* mlock MCL_FUTURE? */
 r_if
 c_cond
 (paren
-id|current-&gt;mm-&gt;def_flags
+id|mm-&gt;def_flags
 op_amp
 id|VM_LOCKED
 )paren
@@ -499,7 +513,7 @@ r_int
 r_int
 id|locked
 op_assign
-id|current-&gt;mm-&gt;locked_vm
+id|mm-&gt;locked_vm
 op_lshift
 id|PAGE_SHIFT
 suffix:semicolon
@@ -736,7 +750,7 @@ id|ENOMEM
 suffix:semicolon
 id|vma-&gt;vm_mm
 op_assign
-id|current-&gt;mm
+id|mm
 suffix:semicolon
 id|vma-&gt;vm_start
 op_assign
@@ -758,7 +772,7 @@ comma
 id|flags
 )paren
 op_or
-id|current-&gt;mm-&gt;def_flags
+id|mm-&gt;def_flags
 suffix:semicolon
 r_if
 c_cond
@@ -947,7 +961,7 @@ suffix:semicolon
 id|insert_vm_struct
 c_func
 (paren
-id|current
+id|mm
 comma
 id|vma
 )paren
@@ -955,7 +969,7 @@ suffix:semicolon
 id|merge_segments
 c_func
 (paren
-id|current
+id|mm
 comma
 id|vma-&gt;vm_start
 comma
@@ -963,7 +977,7 @@ id|vma-&gt;vm_end
 )paren
 suffix:semicolon
 multiline_comment|/* merge_segments might have merged our vma, so we can&squot;t use it any more */
-id|current-&gt;mm-&gt;total_vm
+id|mm-&gt;total_vm
 op_add_assign
 id|len
 op_rshift
@@ -983,7 +997,7 @@ id|start
 op_assign
 id|addr
 suffix:semicolon
-id|current-&gt;mm-&gt;locked_vm
+id|mm-&gt;locked_vm
 op_add_assign
 id|len
 op_rshift
@@ -1098,7 +1112,7 @@ op_assign
 id|find_vma
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|addr
 )paren
@@ -3033,7 +3047,7 @@ multiline_comment|/* Truncate area */
 id|insert_vm_struct
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|mpnt
 )paren
@@ -3112,7 +3126,7 @@ suffix:semicolon
 id|insert_vm_struct
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|mpnt
 )paren
@@ -3222,7 +3236,7 @@ op_assign
 id|find_vma
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|addr
 )paren
@@ -3619,9 +3633,9 @@ id|insert_vm_struct
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|t
+id|mm
 comma
 r_struct
 id|vm_area_struct
@@ -3652,7 +3666,7 @@ suffix:semicolon
 id|p
 op_assign
 op_amp
-id|t-&gt;mm-&gt;mmap
+id|mm-&gt;mmap
 suffix:semicolon
 r_while
 c_loop
@@ -3719,7 +3733,7 @@ c_func
 id|vmp
 comma
 op_amp
-id|t-&gt;mm-&gt;mmap_avl
+id|mm-&gt;mmap_avl
 comma
 op_amp
 id|prev
@@ -3737,7 +3751,7 @@ ques
 c_cond
 id|prev-&gt;vm_next
 suffix:colon
-id|t-&gt;mm-&gt;mmap
+id|mm-&gt;mmap
 )paren
 op_ne
 id|next
@@ -3758,7 +3772,7 @@ op_assign
 id|vmp
 suffix:semicolon
 r_else
-id|t-&gt;mm-&gt;mmap
+id|mm-&gt;mmap
 op_assign
 id|vmp
 suffix:semicolon
@@ -3898,9 +3912,9 @@ r_void
 id|merge_segments
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|task
+id|mm
 comma
 r_int
 r_int
@@ -3922,12 +3936,19 @@ comma
 op_star
 id|next
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|mpnt
 op_assign
 id|find_vma
 c_func
 (paren
-id|task
+id|mm
 comma
 id|start_addr
 )paren
@@ -3938,14 +3959,15 @@ c_cond
 op_logical_neg
 id|mpnt
 )paren
-r_return
+r_goto
+id|no_vma
 suffix:semicolon
 id|avl_neighbours
 c_func
 (paren
 id|mpnt
 comma
-id|task-&gt;mm-&gt;mmap_avl
+id|mm-&gt;mmap_avl
 comma
 op_amp
 id|prev
@@ -4093,7 +4115,7 @@ c_func
 id|mpnt
 comma
 op_amp
-id|task-&gt;mm-&gt;mmap_avl
+id|mm-&gt;mmap_avl
 )paren
 suffix:semicolon
 id|prev-&gt;vm_end
@@ -4162,5 +4184,14 @@ op_assign
 id|prev
 suffix:semicolon
 )brace
+id|no_vma
+suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 )brace
 eof

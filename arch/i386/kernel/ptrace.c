@@ -791,7 +791,7 @@ op_assign
 id|find_vma
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|addr
 )paren

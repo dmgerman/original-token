@@ -682,7 +682,7 @@ suffix:semicolon
 id|insert_vm_struct
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|new_vma
 )paren
@@ -690,7 +690,7 @@ suffix:semicolon
 id|merge_segments
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|new_vma-&gt;vm_start
 comma
@@ -810,7 +810,7 @@ op_assign
 id|find_vma
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|addr
 )paren

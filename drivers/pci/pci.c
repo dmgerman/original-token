@@ -319,6 +319,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|DEC
+comma
+id|DEC_21052_AB
+comma
+l_string|&quot;DC21052-AB&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|CIRRUS
 comma
 id|CIRRUS_5430
@@ -1951,7 +1961,7 @@ id|INTEL
 comma
 id|INTEL_82371SB_0
 comma
-l_string|&quot;82371SB Natoma/Triton II PIIX&quot;
+l_string|&quot;82371SB Natoma/Triton II PIIX3&quot;
 )paren
 comma
 id|DEVICE
@@ -1961,7 +1971,27 @@ id|INTEL
 comma
 id|INTEL_82371SB_1
 comma
-l_string|&quot;82371SB Natoma/Triton II PIIX&quot;
+l_string|&quot;82371SB Natoma/Triton II PIIX3&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
+id|INTEL_82371SB_2
+comma
+l_string|&quot;82371SB Natoma/Triton II PIIX3&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
+id|INTEL_82437VX
+comma
+l_string|&quot;82437VX Triton II&quot;
 )paren
 comma
 id|DEVICE
@@ -2860,6 +2890,12 @@ id|PCI_CLASS_SERIAL_SSA
 suffix:colon
 r_return
 l_string|&quot;SSA&quot;
+suffix:semicolon
+r_case
+id|PCI_CLASS_SERIAL_USB
+suffix:colon
+r_return
+l_string|&quot;USB Controller&quot;
 suffix:semicolon
 r_case
 id|PCI_CLASS_SERIAL_FIBER

@@ -2070,6 +2070,12 @@ op_amp
 id|psaux_mouse
 )paren
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|queue
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|poll_aux_status

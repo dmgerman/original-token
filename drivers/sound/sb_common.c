@@ -2364,17 +2364,6 @@ id|devc-&gt;caps
 op_assign
 id|hw_config-&gt;driver_use_1
 suffix:semicolon
-id|irq2devc
-(braket
-id|hw_config-&gt;irq
-)braket
-op_assign
-id|devc
-suffix:semicolon
-id|devc-&gt;irq_ok
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2409,6 +2398,17 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|irq2devc
+(braket
+id|hw_config-&gt;irq
+)braket
+op_assign
+id|devc
+suffix:semicolon
+id|devc-&gt;irq_ok
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2518,6 +2518,19 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifndef NO_SB_IRQ_TEST
+r_if
+c_cond
+(paren
+id|devc-&gt;major
+op_ne
+l_int|4
+op_logical_or
+id|devc-&gt;minor
+OG
+l_int|11
+)paren
+multiline_comment|/* Not Sb16 v4.5 or v4.11 */
+(brace
 r_for
 c_loop
 (paren
@@ -2604,6 +2617,7 @@ id|devc-&gt;irq
 )paren
 )paren
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 id|request_region

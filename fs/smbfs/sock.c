@@ -15,9 +15,9 @@ macro_line|#include &lt;linux/smb.h&gt;
 macro_line|#include &lt;linux/smbno.h&gt;
 DECL|macro|_S
 mdefine_line|#define _S(nr) (1&lt;&lt;((nr)-1))
-DECL|function|_recvfrom
 r_static
 r_int
+DECL|function|_recvfrom
 id|_recvfrom
 c_func
 (paren
@@ -122,9 +122,9 @@ id|addr_len
 )paren
 suffix:semicolon
 )brace
-DECL|function|_send
 r_static
 r_int
+DECL|function|_send
 id|_send
 c_func
 (paren

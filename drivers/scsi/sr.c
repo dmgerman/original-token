@@ -583,6 +583,13 @@ l_int|2
 )braket
 op_eq
 id|VOLUME_OVERFLOW
+op_logical_or
+id|SCpnt-&gt;sense_buffer
+(braket
+l_int|2
+)braket
+op_eq
+id|ILLEGAL_REQUEST
 )paren
 )paren
 (brace

@@ -139,7 +139,7 @@ suffix:semicolon
 id|insert_vm_struct
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|n
 )paren
@@ -252,7 +252,7 @@ suffix:semicolon
 id|insert_vm_struct
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|n
 )paren
@@ -440,7 +440,7 @@ suffix:semicolon
 id|insert_vm_struct
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|left
 )paren
@@ -448,7 +448,7 @@ suffix:semicolon
 id|insert_vm_struct
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|right
 )paren
@@ -752,7 +752,7 @@ op_assign
 id|find_vma
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|start
 )paren
@@ -888,7 +888,7 @@ suffix:semicolon
 id|merge_segments
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|start
 comma
@@ -1179,7 +1179,7 @@ suffix:semicolon
 id|merge_segments
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 l_int|0
 comma

@@ -74,9 +74,6 @@ id|smb_dirent
 op_star
 id|dirent
 suffix:semicolon
-r_int
-id|open_result
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -128,6 +125,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* tries max. rights */
+r_int
 id|open_result
 op_assign
 id|smb_proc_open
@@ -151,13 +149,11 @@ c_cond
 (paren
 id|open_result
 )paren
+(brace
 r_return
 id|open_result
 suffix:semicolon
-id|dirent-&gt;opened
-op_assign
-l_int|1
-suffix:semicolon
+)brace
 )brace
 r_if
 c_cond

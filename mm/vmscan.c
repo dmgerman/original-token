@@ -359,8 +359,7 @@ c_func
 )paren
 )paren
 r_return
-op_minus
-l_int|1
+l_int|0
 suffix:semicolon
 multiline_comment|/* Aieee!!! Out of swap space! */
 id|vma-&gt;vm_mm-&gt;rss
@@ -1067,7 +1066,7 @@ op_assign
 id|find_vma
 c_func
 (paren
-id|p
+id|p-&gt;mm
 comma
 id|address
 )paren
@@ -1315,13 +1314,6 @@ id|wait
 )paren
 )paren
 (brace
-r_case
-op_minus
-l_int|1
-suffix:colon
-r_return
-l_int|0
-suffix:semicolon
 r_case
 l_int|0
 suffix:colon
