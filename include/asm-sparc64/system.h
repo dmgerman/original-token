@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.55 1999/09/10 10:44:44 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.56 2000/03/06 22:33:45 davem Exp $ */
 macro_line|#ifndef __SPARC64_SYSTEM_H
 DECL|macro|__SPARC64_SYSTEM_H
 mdefine_line|#define __SPARC64_SYSTEM_H
@@ -187,8 +187,9 @@ DECL|macro|write_pcr
 mdefine_line|#define write_pcr(__p) __asm__ __volatile__(&quot;wr&t;%0, 0x0, %%pcr&quot; : : &quot;r&quot; (__p));
 DECL|macro|read_pic
 mdefine_line|#define read_pic(__p)  __asm__ __volatile__(&quot;rd %%pic, %0&quot; : &quot;=r&quot; (__p))
+multiline_comment|/* Blackbird errata workaround.  See commentary in&n; * arch/sparc64/kernel/smp.c:smp_percpu_timer_interrupt()&n; * for more information.&n; */
 DECL|macro|reset_pic
-mdefine_line|#define reset_pic()    __asm__ __volatile__(&quot;wr&t;%g0, 0x0, %pic&quot;);
+mdefine_line|#define reset_pic()    &t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&quot;ba,pt&t;%xcc, 99f&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;     &quot;.align&t;64&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;  &quot;99:wr&t;%g0, 0x0, %pic&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;     &quot;rd&t;%pic, %g0&quot;)
 macro_line|#ifndef __ASSEMBLY__
 r_extern
 r_void

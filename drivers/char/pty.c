@@ -1360,7 +1360,7 @@ op_amp
 id|tty-&gt;flags
 )paren
 suffix:semicolon
-multiline_comment|/*  register a slave for the master  */
+multiline_comment|/*  Register a slave for the master  */
 r_if
 c_cond
 (paren
@@ -1374,6 +1374,8 @@ c_func
 op_amp
 id|tty-&gt;link-&gt;driver
 comma
+id|DEVFS_FL_AUTO_OWNER
+op_or
 id|DEVFS_FL_WAIT
 comma
 id|tty-&gt;link-&gt;driver.minor_start

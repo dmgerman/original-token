@@ -26,6 +26,12 @@ r_struct
 id|inode_operations
 id|ntfs_dir_inode_operations
 suffix:semicolon
+DECL|variable|ntfs_dir_operations
+r_static
+r_struct
+id|file_operations
+id|ntfs_dir_operations
+suffix:semicolon
 DECL|macro|ITEM_SIZE
 mdefine_line|#define ITEM_SIZE 2040
 multiline_comment|/* io functions to user space */

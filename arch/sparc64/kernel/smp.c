@@ -1395,6 +1395,7 @@ suffix:semicolon
 macro_line|#endif
 id|again
 suffix:colon
+multiline_comment|/* Ok, this is the real Spitfire Errata #54.&n;&t; * One must read back from a UDB internal register&n;&t; * after writes to the UDB interrupt dispatch, but&n;&t; * before the membar Sync for that write.&n;&t; * So we use the high UDB control register (ASI 0x7f,&n;&t; * ADDR 0x20) for the dummy read. -DaveM&n;&t; */
 id|tmp
 op_assign
 l_int|0x40
@@ -1472,6 +1473,23 @@ l_int|7
 )braket
 op_mod
 l_int|3
+id|mov
+l_int|0x20
+comma
+op_mod
+op_mod
+id|g1
+id|ldxa
+(braket
+op_mod
+op_mod
+id|g1
+)braket
+l_int|0x7f
+comma
+op_mod
+op_mod
+id|g0
 id|membar
 macro_line|#Sync&quot;
 suffix:colon
@@ -1524,6 +1542,8 @@ l_string|&quot;0&quot;
 (paren
 id|tmp
 )paren
+suffix:colon
+l_string|&quot;g1&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* NOTE: PSTATE_IE is still clear. */

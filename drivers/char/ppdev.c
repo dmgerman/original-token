@@ -76,11 +76,11 @@ mdefine_line|#define PARDEVICE_MAX 8
 multiline_comment|/* ROUND_UP macro from fs/select.c */
 DECL|macro|ROUND_UP
 mdefine_line|#define ROUND_UP(x,y) (((x)+(y)-1)/(y))
-DECL|function|enable_irq
+DECL|function|pp_enable_irq
 r_static
 r_inline
 r_void
-id|enable_irq
+id|pp_enable_irq
 (paren
 r_struct
 id|pp_struct
@@ -344,7 +344,7 @@ id|kfree
 id|kbuffer
 )paren
 suffix:semicolon
-id|enable_irq
+id|pp_enable_irq
 (paren
 id|pp
 )paren
@@ -572,7 +572,7 @@ id|kfree
 id|kbuffer
 )paren
 suffix:semicolon
-id|enable_irq
+id|pp_enable_irq
 (paren
 id|pp
 )paren
@@ -985,7 +985,7 @@ op_or_assign
 id|PP_CLAIMED
 suffix:semicolon
 multiline_comment|/* For interrupt-reporting to work, we need to be&n;&t;&t; * informed of each interrupt. */
-id|enable_irq
+id|pp_enable_irq
 (paren
 id|pp
 )paren
@@ -1648,7 +1648,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|enable_irq
+id|pp_enable_irq
 (paren
 id|pp
 )paren

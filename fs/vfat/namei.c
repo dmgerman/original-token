@@ -141,49 +141,55 @@ l_int|4
 op_assign
 (brace
 (brace
-l_int|NULL
-comma
-multiline_comment|/* d_revalidate */
+id|d_hash
+suffix:colon
 id|vfat_hashi
 comma
+id|d_compare
+suffix:colon
 id|vfat_cmpi
 comma
-l_int|NULL
-multiline_comment|/* d_delete */
 )brace
 comma
 (brace
+id|d_revalidate
+suffix:colon
 id|vfat_revalidate
 comma
+id|d_hash
+suffix:colon
 id|vfat_hashi
 comma
+id|d_compare
+suffix:colon
 id|vfat_cmpi
 comma
-l_int|NULL
-multiline_comment|/* d_delete */
 )brace
 comma
 (brace
-l_int|NULL
-comma
-multiline_comment|/* d_revalidate */
+id|d_hash
+suffix:colon
 id|vfat_hash
 comma
+id|d_compare
+suffix:colon
 id|vfat_cmp
 comma
-l_int|NULL
-multiline_comment|/* d_delete */
 )brace
 comma
 (brace
+id|d_revalidate
+suffix:colon
 id|vfat_revalidate
 comma
+id|d_hash
+suffix:colon
 id|vfat_hash
 comma
+id|d_compare
+suffix:colon
 id|vfat_cmp
 comma
-l_int|NULL
-multiline_comment|/* d_delete */
 )brace
 )brace
 suffix:semicolon

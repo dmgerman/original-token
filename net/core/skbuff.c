@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Routines having to do with the &squot;struct sk_buff&squot; memory handlers.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&n; *&t;Version:&t;$Id: skbuff.c,v 1.68 2000/02/18 16:47:18 davem Exp $&n; *&n; *&t;Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Fixed the worst of the load balancer bugs.&n; *&t;&t;Dave Platt&t;:&t;Interrupt stacking fix.&n; *&t;Richard Kooijman&t;:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Changed buffer format.&n; *&t;&t;Alan Cox&t;:&t;destructor hook for AF_UNIX etc.&n; *&t;&t;Linus Torvalds&t;:&t;Better skb_clone.&n; *&t;&t;Alan Cox&t;:&t;Added skb_copy.&n; *&t;&t;Alan Cox&t;:&t;Added all the changed routines Linus&n; *&t;&t;&t;&t;&t;only put in the headers&n; *&t;&t;Ray VanTassle&t;:&t;Fixed --skb-&gt;lock in free&n; *&t;&t;Alan Cox&t;:&t;skb_copy copy arp field&n; *&t;&t;Andi Kleen&t;:&t;slabified it.&n; *&n; *&t;NOTE:&n; *&t;&t;The __skb_ routines should be called with interrupts &n; *&t;disabled, or you better be *real* sure that the operation is atomic &n; *&t;with respect to whatever list is being frobbed (e.g. via lock_sock()&n; *&t;or via disabling bottom half handlers, etc).&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Routines having to do with the &squot;struct sk_buff&squot; memory handlers.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&n; *&t;Version:&t;$Id: skbuff.c,v 1.69 2000/03/06 03:47:58 davem Exp $&n; *&n; *&t;Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Fixed the worst of the load balancer bugs.&n; *&t;&t;Dave Platt&t;:&t;Interrupt stacking fix.&n; *&t;Richard Kooijman&t;:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Changed buffer format.&n; *&t;&t;Alan Cox&t;:&t;destructor hook for AF_UNIX etc.&n; *&t;&t;Linus Torvalds&t;:&t;Better skb_clone.&n; *&t;&t;Alan Cox&t;:&t;Added skb_copy.&n; *&t;&t;Alan Cox&t;:&t;Added all the changed routines Linus&n; *&t;&t;&t;&t;&t;only put in the headers&n; *&t;&t;Ray VanTassle&t;:&t;Fixed --skb-&gt;lock in free&n; *&t;&t;Alan Cox&t;:&t;skb_copy copy arp field&n; *&t;&t;Andi Kleen&t;:&t;slabified it.&n; *&n; *&t;NOTE:&n; *&t;&t;The __skb_ routines should be called with interrupts &n; *&t;disabled, or you better be *real* sure that the operation is atomic &n; *&t;with respect to whatever list is being frobbed (e.g. via lock_sock()&n; *&t;or via disabling bottom half handlers, etc).&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;The functions in this file will not compile correctly with gcc 2.4.x&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -628,6 +628,10 @@ id|skb-&gt;nfcache
 op_assign
 l_int|0
 suffix:semicolon
+id|skb-&gt;nfct
+op_assign
+l_int|NULL
+suffix:semicolon
 macro_line|#ifdef CONFIG_NETFILTER_DEBUG
 id|skb-&gt;nf_debug
 op_assign
@@ -786,6 +790,14 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_NETFILTER
+id|nf_conntrack_put
+c_func
+(paren
+id|skb-&gt;nfct
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_NET&t;&t;
 r_if
 c_cond
@@ -948,6 +960,14 @@ id|n-&gt;destructor
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef CONFIG_NETFILTER
+id|nf_conntrack_get
+c_func
+(paren
+id|skb-&gt;nfct
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|n
 suffix:semicolon
@@ -1131,6 +1151,20 @@ op_member_access_from_pointer
 id|nfcache
 op_assign
 id|old-&gt;nfcache
+suffix:semicolon
+r_new
+op_member_access_from_pointer
+id|nfct
+op_assign
+id|old-&gt;nfct
+suffix:semicolon
+id|nf_conntrack_get
+c_func
+(paren
+r_new
+op_member_access_from_pointer
+id|nfct
+)paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_NETFILTER_DEBUG
 r_new

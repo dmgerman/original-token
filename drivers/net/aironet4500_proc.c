@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *&t; Aironet 4500 Pcmcia driver&n; *&n; *&t;&t;Elmer Joandi, Januar 1999&n; *&t;Copyright GPL&n; *&t;&n; *&n; *&t;Revision 0.1 ,started  30.12.1998&n; *&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -3638,9 +3639,10 @@ suffix:semicolon
 )brace
 )def_block
 suffix:semicolon
-DECL|function|init_module
+DECL|function|aironet_proc_init
+r_static
 r_int
-id|init_module
+id|aironet_proc_init
 c_func
 (paren
 r_void
@@ -3708,10 +3710,11 @@ l_int|0
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|function|cleanup_module
+DECL|function|aironet_proc_exit
+r_static
 r_void
 (def_block
-id|cleanup_module
+id|aironet_proc_exit
 c_func
 (paren
 r_void
@@ -3775,11 +3778,20 @@ suffix:semicolon
 )brace
 )def_block
 suffix:semicolon
+DECL|variable|aironet_proc_init
+id|module_init
+c_func
+(paren
+id|aironet_proc_init
+)paren
+suffix:semicolon
+DECL|variable|aironet_proc_exit
+id|module_exit
+c_func
+(paren
+id|aironet_proc_exit
+)paren
+suffix:semicolon
 macro_line|#endif 
-op_div
-op_div
-id|whole
-id|proc
-id|system
-id|styff
+singleline_comment|// whole proc system styff
 eof

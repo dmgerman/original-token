@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *    $Id: zorro.c,v 1.1.2.1 1998/06/07 23:21:02 geert Exp $&n; *&n; *    Zorro Bus Services&n; *&n; *    Copyright (C) 1995-2000 Geert Uytterhoeven&n; *&n; *    This file is subject to the terms and conditions of the GNU General Public&n; *    License.  See the file COPYING in the main directory of this archive&n; *    for more details.&n; */
-macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -162,7 +162,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     *  Bitmask indicating portions of available Zorro II RAM that are unused&n;     *  by the system. Every bit represents a 64K chunk, for a maximum of 8MB&n;     *  (128 chunks, physical 0x00200000-0x009fffff).&n;     *&n;     *  If you want to use (= allocate) portions of this RAM, you should clear&n;     *  the corresponding bits.&n;     *&n;     *  Possible uses:&n;     *      - z2ram device&n;     *      - SCSI DMA bounce buffers&n;     */
+multiline_comment|/*&n;     *  Bitmask indicating portions of available Zorro II RAM that are unused&n;     *  by the system. Every bit represents a 64K chunk, for a maximum of 8MB&n;     *  (128 chunks, physical 0x00200000-0x009fffff).&n;     *&n;     *  If you want to use (= allocate) portions of this RAM, you should clear&n;     *  the corresponding bits.&n;     *&n;     *  Possible uses:&n;     *      - z2ram device&n;     *      - SCSI DMA bounce buffers&n;     *&n;     *  FIXME: use the normal resource management&n;     */
 DECL|variable|zorro_unused_z2ram
 id|u32
 id|zorro_unused_z2ram
@@ -600,12 +600,19 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
-id|zorro_proc_init
+)brace
+DECL|variable|zorro_find_device
+id|EXPORT_SYMBOL
 c_func
 (paren
+id|zorro_find_device
 )paren
 suffix:semicolon
-macro_line|#endif
-)brace
+DECL|variable|zorro_unused_z2ram
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|zorro_unused_z2ram
+)paren
+suffix:semicolon
 eof

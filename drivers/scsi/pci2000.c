@@ -17,14 +17,9 @@ macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &quot;pci2000.h&quot;
 macro_line|#include &quot;psi_roy.h&quot;
-macro_line|#if LINUX_VERSION_CODE &gt;= LINUXVERSION(2,1,95)
-macro_line|#include &lt;asm/spinlock.h&gt;
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,93)
-macro_line|#include &lt;linux/bios32.h&gt;
-macro_line|#endif
 singleline_comment|//#define DEBUG 1
 macro_line|#ifdef DEBUG
 DECL|macro|DEB

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * For the TDA9855 chip (afaik, only the Diamond DTV2000 has this)&n; * This driver will not complain if used with a TDA9850 or any &n; * other i2c device with the same address.&n; *&n; * Copyright (c) 1999 Steve VanDeBogart (vandebo@uclink.berkeley.edu)&n; * This code is placed under the terms of the GNU General Public License&n; * Based on tda8425.c by Greg Alexander (c) 1998&n; *&n; * TODO:&n; *   Fix channel change bug - sound goes out when changeing channels, mute&n; *                            and unmote to fix.&n; *   Fine tune sound&n; *   Get rest of capabilities into video_audio struct...&n; *&n; *  Revision: 0.1 &n; */
+multiline_comment|/*&n; * For the TDA9850 and TDA9855 chips&n; * (The TDA9855 is used on the Diamond DTV2000 and the TDA9850 is used &n; * on STB cards.  Other cards probably use these chips as well.)&n; * This driver will not complain if used with any &n; * other i2c device with the same address.&n; *&n; * Copyright (c) 1999 Gerd Knorr&n; * TDA9850 code and TDA9855.c merger by Eric Sandeen (eric_sandeen@bigfoot.com) &n; * This code is placed under the terms of the GNU General Public License&n; * Based on tda9855.c by Steve VanDeBogart (vandebo@uclink.berkeley.edu)&n; * Which was based on tda8425.c by Greg Alexander (c) 1998&n; *&n; * OPTIONS:&n; * debug   - set to 1 if you&squot;d like to see debug messages&n; * chip    - set to 9850 or 9855 to select your chip (default 9855)&n; *&n; * TODO:&n; *   Fix channel change bug - sound goes out when changeing channels, mute&n; *                            and unmote to fix. - Is this still here?&n; *   Fine tune sound&n; *   Get rest of capabilities into video_audio struct...&n; * &n; *  Revision: 0.4 - check for correct chip= insmod value&n; *                  also cleaned up comments a bit&n; *  Revision: 0.3 - took out extraneous tda985x_write in tda985x_command&n; *  Revision: 0.2 - added insmod option chip=&n; *  Revision: 0.1 - original version&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -20,6 +20,22 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|chip
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|chip
+comma
+l_string|&quot;Type of chip to handle: 9850 or 9855&quot;
+)paren
+suffix:semicolon
 DECL|variable|debug
 r_static
 r_int
@@ -28,11 +44,19 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* insmod parameter */
+DECL|variable|chip
+r_static
+r_int
+id|chip
+op_assign
+l_int|9855
+suffix:semicolon
+multiline_comment|/* insmod parameter */
 multiline_comment|/* Addresses to scan */
-DECL|macro|I2C_TDA9855_L
-mdefine_line|#define I2C_TDA9855_L        0xb4
-DECL|macro|I2C_TDA9855_H
-mdefine_line|#define I2C_TDA9855_H        0xb6
+DECL|macro|I2C_TDA985x_L
+mdefine_line|#define I2C_TDA985x_L        0xb4
+DECL|macro|I2C_TDA985x_H
+mdefine_line|#define I2C_TDA985x_H        0xb6
 DECL|variable|normal_i2c
 r_static
 r_int
@@ -54,11 +78,11 @@ id|normal_i2c_range
 )braket
 op_assign
 (brace
-id|I2C_TDA9855_L
+id|I2C_TDA985x_L
 op_rshift
 l_int|1
 comma
-id|I2C_TDA9855_H
+id|I2C_TDA985x_H
 op_rshift
 l_int|1
 comma
@@ -162,9 +186,10 @@ comma
 id|force
 )brace
 suffix:semicolon
-DECL|struct|tda9855
+multiline_comment|/* This is a superset of the TDA9850 and TDA9855 members */
+DECL|struct|tda985x
 r_struct
-id|tda9855
+id|tda985x
 (brace
 DECL|member|addr
 r_int
@@ -187,15 +212,18 @@ id|treble
 comma
 id|sub
 suffix:semicolon
-DECL|member|c1
-DECL|member|c2
-DECL|member|c3
+DECL|member|c4
+DECL|member|c5
+DECL|member|c6
+DECL|member|c7
 r_int
-id|c1
+id|c4
 comma
-id|c2
+id|c5
 comma
-id|c3
+id|c6
+comma
+id|c7
 suffix:semicolon
 DECL|member|a1
 DECL|member|a2
@@ -223,7 +251,8 @@ id|client_template
 suffix:semicolon
 DECL|macro|dprintk
 mdefine_line|#define dprintk  if (debug) printk
-multiline_comment|/* subaddresses */
+multiline_comment|/* The TDA9850 and TDA9855 are both made by Philips Semiconductor&n; * http://www.semiconductors.philips.com&n; * TDA9850: I2C-bus controlled BTSC stereo/SAP decoder&n; * TDA9855: I2C-bus controlled BTSC stereo/SAP decoder and audio processor&n; *&n; * The TDA9850 has more or less a subset of the functions that the TDA9855&n; * has.  As a result, we can re-use many of these defines.  Anything with&n; * TDA9855 is specific to that chip, anything with TDA9850 is specific&n; * to that chip, and anything with TDA985x is valid for either.&n; *&n; * To complicate things further, the TDA9850 uses labels C1 through C4&n; * for subaddresses 0x04 through 0x07, while the TDA9855 uses&n; * C1 through C3 for subadresses 0x05 through 0x07 - quite confusing.&n; * To help keep things straight, I have renamed the various C[1,4] labels&n; * to C[4,7] so that the numerical label matches the hex value of the&n; * subaddress for both chips.  At least the A[1,3] labels line up.  :)&n; */
+multiline_comment|/* subaddresses for TDA9855 */
 DECL|macro|TDA9855_VR
 mdefine_line|#define TDA9855_VR&t;0x00 /* Volume, right */
 DECL|macro|TDA9855_VL
@@ -234,29 +263,38 @@ DECL|macro|TDA9855_TR
 mdefine_line|#define TDA9855_TR&t;0x03 /* Treble */
 DECL|macro|TDA9855_SW
 mdefine_line|#define TDA9855_SW&t;0x04 /* Subwoofer - not connected on DTV2000 */
-DECL|macro|TDA9855_C1
-mdefine_line|#define TDA9855_C1&t;0x05 /* Control 1 */
-DECL|macro|TDA9855_C2
-mdefine_line|#define TDA9855_C2&t;0x06 /* Control 2 */
-DECL|macro|TDA9855_C3
-mdefine_line|#define TDA9855_C3&t;0x07 /* Control 3 */
-DECL|macro|TDA9855_A1
-mdefine_line|#define TDA9855_A1&t;0x08 /* Alignmnet 1*/
-DECL|macro|TDA9855_A2
-mdefine_line|#define TDA9855_A2&t;0x09 /* Alignmnet 2*/
-DECL|macro|TDA9855_A3
-mdefine_line|#define TDA9855_A3&t;0x0a /* Alignmnet 3*/
-multiline_comment|/* Masks for bits in subaddresses */
-multiline_comment|/* VR */
-multiline_comment|/* VL */
+multiline_comment|/* subaddresses for TDA9850 */
+DECL|macro|TDA9850_C4
+mdefine_line|#define TDA9850_C4&t;0x04 /* Control 1 for TDA9850 */
+multiline_comment|/* subaddesses for both chips */
+DECL|macro|TDA985x_C5
+mdefine_line|#define TDA985x_C5&t;0x05 /* Control 2 for TDA9850, Control 1 for TDA9855 */
+DECL|macro|TDA985x_C6
+mdefine_line|#define TDA985x_C6&t;0x06 /* Control 3 for TDA9850, Control 2 for TDA9855 */
+DECL|macro|TDA985x_C7
+mdefine_line|#define TDA985x_C7&t;0x07 /* Control 4 for TDA9850, Control 3 for TDA9855 */
+DECL|macro|TDA985x_A1
+mdefine_line|#define TDA985x_A1&t;0x08 /* Alignment 1 for both chips */
+DECL|macro|TDA985x_A2
+mdefine_line|#define TDA985x_A2&t;0x09 /* Alignment 2 for both chips */
+DECL|macro|TDA985x_A3
+mdefine_line|#define TDA985x_A3&t;0x0a /* Alignment 3 for both chips */
+multiline_comment|/* Masks for bits in TDA9855 subaddresses */
+multiline_comment|/* 0x00 - VR in TDA9855 */
+multiline_comment|/* 0x01 - VL in TDA9855 */
 multiline_comment|/* lower 7 bits control gain from -71dB (0x28) to 16dB (0x7f)&n; * in 1dB steps - mute is 0x27 */
-multiline_comment|/* BA */
+multiline_comment|/* 0x02 - BA in TDA9855 */
 multiline_comment|/* lower 5 bits control bass gain from -12dB (0x06) to 16.5dB (0x19)&n; * in .5dB steps - 0 is 0x0E */
-multiline_comment|/* TR */
+multiline_comment|/* 0x03 - TR in TDA9855 */
 multiline_comment|/* 4 bits &lt;&lt; 1 control treble gain from -12dB (0x3) to 12dB (0xb)&n; * in 3dB steps - 0 is 0x7 */
-multiline_comment|/* SW */
-multiline_comment|/* 4 bits &lt;&lt; 2 control subwoofer/surraound gain from -14db (0x1) to 14db (0xf)&n; * in 3dB steps - mute is 0x0 */
-multiline_comment|/* C1 */
+multiline_comment|/* Masks for bits in both chips&squot; subaddresses */
+multiline_comment|/* 0x04 - SW in TDA9855, C4/Control 1 in TDA9850 */
+multiline_comment|/* Unique to TDA9855: */
+multiline_comment|/* 4 bits &lt;&lt; 2 control subwoofer/surround gain from -14db (0x1) to 14db (0xf)&n; * in 3dB steps - mute is 0x0 */
+multiline_comment|/* Unique to TDA9850: */
+multiline_comment|/* lower 4 bits control stereo noise threshold, over which stereo turns off&n; * set to values of 0x00 through 0x0f for Ster1 through Ster16 */
+multiline_comment|/* 0x05 - C5 - Control 1 in TDA9855 , Control 2 in TDA9850*/
+multiline_comment|/* Unique to TDA9855: */
 DECL|macro|TDA9855_MUTE
 mdefine_line|#define TDA9855_MUTE&t;1&lt;&lt;7 /* GMU, Mute at outputs */
 DECL|macro|TDA9855_AVL
@@ -270,19 +308,23 @@ DECL|macro|TDA9855_EXT
 mdefine_line|#define TDA9855_EXT&t;1&lt;&lt;2 /* Selects inputs LIR and LIL.  Pins 41 &amp; 12 */
 DECL|macro|TDA9855_INT
 mdefine_line|#define TDA9855_INT&t;0    /* Selects inputs LOR and LOL.  (internal) */
-multiline_comment|/* C2 */
-DECL|macro|TDA9855_SAP
-mdefine_line|#define TDA9855_SAP&t;3&lt;&lt;6 /* Selects SAP output, mute if not received */
-DECL|macro|TDA9855_STEREO
-mdefine_line|#define TDA9855_STEREO&t;1&lt;&lt;6 /* Selects Stereo ouput, mono if not received */
-DECL|macro|TDA9855_MONO
-mdefine_line|#define TDA9855_MONO&t;0    /* Forces Mono output */
+multiline_comment|/* Unique to TDA9850:  */
+multiline_comment|/* lower 4 bits contol SAP noise threshold, over which SAP turns off&n; * set to values of 0x00 through 0x0f for SAP1 through SAP16 */
+multiline_comment|/* 0x06 - C6 - Control 2 in TDA9855, Control 3 in TDA9850 */
+multiline_comment|/* Common to TDA9855 and TDA9850: */
+DECL|macro|TDA985x_SAP
+mdefine_line|#define TDA985x_SAP&t;3&lt;&lt;6 /* Selects SAP output, mute if not received */
+DECL|macro|TDA985x_STEREO
+mdefine_line|#define TDA985x_STEREO&t;1&lt;&lt;6 /* Selects Stereo ouput, mono if not received */
+DECL|macro|TDA985x_MONO
+mdefine_line|#define TDA985x_MONO&t;0    /* Forces Mono output */
+DECL|macro|TDA985x_LMU
+mdefine_line|#define TDA985x_LMU&t;1&lt;&lt;3 /* Mute (LOR/LOL for 9855, OUTL/OUTR for 9850) */
+multiline_comment|/* Unique to TDA9855: */
 DECL|macro|TDA9855_TZCM
 mdefine_line|#define TDA9855_TZCM&t;1&lt;&lt;5 /* If set, don&squot;t mute till zero crossing */
 DECL|macro|TDA9855_VZCM
 mdefine_line|#define TDA9855_VZCM&t;1&lt;&lt;4 /* If set, don&squot;t change volume till zero crossing*/
-DECL|macro|TDA9855_LMU
-mdefine_line|#define TDA9855_LMU&t;1&lt;&lt;3 /* Mute at LOR and LOL */
 DECL|macro|TDA9855_LINEAR
 mdefine_line|#define TDA9855_LINEAR&t;0    /* Linear Stereo */
 DECL|macro|TDA9855_PSEUDO
@@ -293,26 +335,30 @@ DECL|macro|TDA9855_SPAT_50
 mdefine_line|#define TDA9855_SPAT_50&t;3    /* Spatial Stereo, 52% anti-phase crosstalk */
 DECL|macro|TDA9855_E_MONO
 mdefine_line|#define TDA9855_E_MONO&t;7    /* Forced mono - mono select elseware, so useless*/
-multiline_comment|/* C3 */
-multiline_comment|/* lower 4 bits control input gain from -3.5dB (0x0) to 4dB (0xF)&n; * in .5dB steps -  0 is 0x7 */
-multiline_comment|/* A1 and A2 (read/write) */
+multiline_comment|/* 0x07 - C7 - Control 3 in TDA9855, Control 4 in TDA9850 */
+multiline_comment|/* Common to both TDA9855 and TDA9850: */
+multiline_comment|/* lower 4 bits control input gain from -3.5dB (0x0) to 4dB (0xF)&n; * in .5dB steps -  0dB is 0x7 */
+multiline_comment|/* 0x08, 0x09 - A1 and A2 (read/write) */
+multiline_comment|/* Common to both TDA9855 and TDA9850: */
 multiline_comment|/* lower 5 bites are wideband and spectral expander alignment&n; * from 0x00 to 0x1f - nominal at 0x0f and 0x10 (read/write) */
-DECL|macro|TDA9855_STP
-mdefine_line|#define TDA9855_STP&t;1&lt;&lt;5 /* Stereo Pilot/detect (read-only) */
-DECL|macro|TDA9855_SAPP
-mdefine_line|#define TDA9855_SAPP&t;1&lt;&lt;6 /* SAP Pilot/detect (read-only) */
-DECL|macro|TDA9855_STS
-mdefine_line|#define TDA9855_STS&t;1&lt;&lt;7 /* Stereo trigger 1= &lt;35mV 0= &lt;30mV (write-only)*/
-multiline_comment|/* A3 */
+DECL|macro|TDA985x_STP
+mdefine_line|#define TDA985x_STP&t;1&lt;&lt;5 /* Stereo Pilot/detect (read-only) */
+DECL|macro|TDA985x_SAPP
+mdefine_line|#define TDA985x_SAPP&t;1&lt;&lt;6 /* SAP Pilot/detect (read-only) */
+DECL|macro|TDA985x_STS
+mdefine_line|#define TDA985x_STS&t;1&lt;&lt;7 /* Stereo trigger 1= &lt;35mV 0= &lt;30mV (write-only)*/
+multiline_comment|/* 0x0a - A3 */
+multiline_comment|/* Common to both TDA9855 and TDA9850: */
 multiline_comment|/* lower 3 bits control timing current for alignment: -30% (0x0), -20% (0x1),&n; * -10% (0x2), nominal (0x3), +10% (0x6), +20% (0x5), +30% (0x4) */
+DECL|macro|TDA985x_ADJ
+mdefine_line|#define TDA985x_ADJ&t;1&lt;&lt;7 /* Stereo adjust on/off (wideband and spectral */
+multiline_comment|/* Unique to TDA9855: */
 multiline_comment|/* 2 bits &lt;&lt; 5 control AVL attack time: 420ohm (0x0), 730ohm (0x2), &n; * 1200ohm (0x1), 2100ohm (0x3) */
-DECL|macro|TDA9855_ADJ
-mdefine_line|#define TDA9855_ADJ&t;1&lt;&lt;7 /* Stereo adjust on/off (wideband and spectral) */
 multiline_comment|/* Begin code */
-DECL|function|tda9855_write
+DECL|function|tda985x_write
 r_static
 r_int
-id|tda9855_write
+id|tda985x_write
 c_func
 (paren
 r_struct
@@ -333,6 +379,22 @@ id|buffer
 (braket
 l_int|2
 )braket
+suffix:semicolon
+id|dprintk
+c_func
+(paren
+l_string|&quot;In tda985x_write&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dprintk
+c_func
+(paren
+l_string|&quot;Writing %d 0x%x&bslash;n&quot;
+comma
+id|subaddr
+comma
+id|val
+)paren
 suffix:semicolon
 id|buffer
 (braket
@@ -368,7 +430,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;tda9855: I/O error, trying (write %d 0x%x)&bslash;n&quot;
+l_string|&quot;tda985x: I/O error, trying (write %d 0x%x)&bslash;n&quot;
 comma
 id|subaddr
 comma
@@ -384,10 +446,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|tda9855_read
+DECL|function|tda985x_read
 r_static
 r_int
-id|tda9855_read
+id|tda985x_read
 c_func
 (paren
 r_struct
@@ -399,6 +461,12 @@ id|client
 r_int
 r_char
 id|buffer
+suffix:semicolon
+id|dprintk
+c_func
+(paren
+l_string|&quot;In tda985x_read&bslash;n&quot;
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -421,7 +489,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;tda9855: I/O error, trying (read)&bslash;n&quot;
+l_string|&quot;tda985x: I/O error, trying (read)&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -429,14 +497,22 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+id|dprintk
+c_func
+(paren
+l_string|&quot;Read 0x%02x&bslash;n&quot;
+comma
+id|buffer
+)paren
+suffix:semicolon
 r_return
 id|buffer
 suffix:semicolon
 )brace
-DECL|function|tda9855_set
+DECL|function|tda985x_set
 r_static
 r_int
-id|tda9855_set
+id|tda985x_set
 c_func
 (paren
 r_struct
@@ -446,7 +522,7 @@ id|client
 )paren
 (brace
 r_struct
-id|tda9855
+id|tda985x
 op_star
 id|t
 op_assign
@@ -462,8 +538,22 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
+l_string|&quot;In tda985x_set&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|chip
+op_eq
+l_int|9855
+)paren
+(brace
+id|dprintk
+c_func
+(paren
 id|KERN_INFO
-l_string|&quot;tda9855_set(0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x)&bslash;n&quot;
+l_string|&quot;tda985x_set(0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x)&bslash;n&quot;
 comma
 id|t-&gt;rvol
 comma
@@ -475,11 +565,11 @@ id|t-&gt;treble
 comma
 id|t-&gt;sub
 comma
-id|t-&gt;c1
+id|t-&gt;c5
 comma
-id|t-&gt;c2
+id|t-&gt;c6
 comma
-id|t-&gt;c3
+id|t-&gt;c7
 comma
 id|t-&gt;a1
 comma
@@ -535,21 +625,21 @@ id|buf
 l_int|6
 )braket
 op_assign
-id|t-&gt;c1
+id|t-&gt;c5
 suffix:semicolon
 id|buf
 (braket
 l_int|7
 )braket
 op_assign
-id|t-&gt;c2
+id|t-&gt;c6
 suffix:semicolon
 id|buf
 (braket
 l_int|8
 )braket
 op_assign
-id|t-&gt;c3
+id|t-&gt;c7
 suffix:semicolon
 id|buf
 (braket
@@ -592,7 +682,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;tda9855: I/O error, trying tda9855_set&bslash;n&quot;
+l_string|&quot;tda9855: I/O error, trying tda985x_set&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -600,14 +690,130 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|chip
+op_eq
+l_int|9850
+)paren
+(brace
+id|dprintk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;tda985x_set(0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x)&bslash;n&quot;
+comma
+id|t-&gt;c4
+comma
+id|t-&gt;c5
+comma
+id|t-&gt;c6
+comma
+id|t-&gt;c7
+comma
+id|t-&gt;a1
+comma
+id|t-&gt;a2
+comma
+id|t-&gt;a3
+)paren
+suffix:semicolon
+id|buf
+(braket
+l_int|0
+)braket
+op_assign
+id|TDA9850_C4
+suffix:semicolon
+id|buf
+(braket
+l_int|1
+)braket
+op_assign
+id|t-&gt;c4
+suffix:semicolon
+id|buf
+(braket
+l_int|2
+)braket
+op_assign
+id|t-&gt;c5
+suffix:semicolon
+id|buf
+(braket
+l_int|3
+)braket
+op_assign
+id|t-&gt;c6
+suffix:semicolon
+id|buf
+(braket
+l_int|4
+)braket
+op_assign
+id|t-&gt;c7
+suffix:semicolon
+id|buf
+(braket
+l_int|5
+)braket
+op_assign
+id|t-&gt;a1
+suffix:semicolon
+id|buf
+(braket
+l_int|6
+)braket
+op_assign
+id|t-&gt;a2
+suffix:semicolon
+id|buf
+(braket
+l_int|7
+)braket
+op_assign
+id|t-&gt;a3
+suffix:semicolon
+r_if
+c_cond
+(paren
+l_int|8
+op_ne
+id|i2c_master_send
+c_func
+(paren
+id|client
+comma
+id|buf
+comma
+l_int|8
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;tda9850: I/O error, trying tda985x_set&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|do_tda9855_init
+DECL|function|do_tda985x_init
 r_static
 r_void
-id|do_tda9855_init
+id|do_tda985x_init
 c_func
 (paren
 r_struct
@@ -617,11 +823,31 @@ id|client
 )paren
 (brace
 r_struct
-id|tda9855
+id|tda985x
 op_star
 id|t
 op_assign
 id|client-&gt;data
+suffix:semicolon
+id|dprintk
+c_func
+(paren
+l_string|&quot;In tda985x_init&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|chip
+op_eq
+l_int|9855
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Using tda9855 options&bslash;n&quot;
+)paren
 suffix:semicolon
 id|t-&gt;rvol
 op_assign
@@ -654,7 +880,7 @@ op_lshift
 l_int|2
 suffix:semicolon
 multiline_comment|/* 0dB */
-id|t-&gt;c1
+id|t-&gt;c5
 op_assign
 id|TDA9855_MUTE
 op_or
@@ -665,18 +891,60 @@ op_or
 id|TDA9855_INT
 suffix:semicolon
 multiline_comment|/* Set Mute, AVL, Loudness off, Internal sound */
-id|t-&gt;c2
+id|t-&gt;c6
 op_assign
-id|TDA9855_STEREO
+id|TDA985x_STEREO
 op_or
 id|TDA9855_LINEAR
+op_or
+id|TDA9855_TZCM
+op_or
+id|TDA9855_VZCM
 suffix:semicolon
-multiline_comment|/* Set Stereo liner mode */
-id|t-&gt;c3
+multiline_comment|/* Stereo linear mode, also wait til zero crossings  */
+id|t-&gt;c7
 op_assign
 l_int|0x07
 suffix:semicolon
 multiline_comment|/* 0dB input gain */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|chip
+op_eq
+l_int|9850
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Using tda9850 options&bslash;n&quot;
+)paren
+suffix:semicolon
+id|t-&gt;c4
+op_assign
+l_int|0x08
+suffix:semicolon
+multiline_comment|/* Set stereo noise thresh to nominal */
+id|t-&gt;c5
+op_assign
+l_int|0x08
+suffix:semicolon
+multiline_comment|/* Set SAP noise threshold to nominal */
+id|t-&gt;c6
+op_assign
+id|TDA985x_STEREO
+suffix:semicolon
+multiline_comment|/* Select Stereo mode for decoder */
+id|t-&gt;c7
+op_assign
+l_int|0x07
+suffix:semicolon
+multiline_comment|/* 0dB input gain */
+)brace
+multiline_comment|/* The following is valid for both chip types */
 id|t-&gt;a1
 op_assign
 l_int|0x10
@@ -691,19 +959,8 @@ id|t-&gt;a3
 op_assign
 l_int|0x3
 suffix:semicolon
-multiline_comment|/* Set: nominal timinig current, 420ohm AVL attack */
-id|tda9855_write
-c_func
-(paren
-id|client
-comma
-id|TDA9855_C1
-comma
-id|TDA9855_MUTE
-)paren
-suffix:semicolon
-multiline_comment|/* mute */
-id|tda9855_set
+multiline_comment|/* Set: nominal timing current, 420ohm AVL attack */
+id|tda985x_set
 c_func
 (paren
 id|client
@@ -711,10 +968,10 @@ id|client
 suffix:semicolon
 )brace
 multiline_comment|/* *********************** *&n; * i2c interface functions *&n; * *********************** */
-DECL|function|tda9855_attach
+DECL|function|tda985x_attach
 r_static
 r_int
-id|tda9855_attach
+id|tda985x_attach
 c_func
 (paren
 r_struct
@@ -734,7 +991,7 @@ id|kind
 )paren
 (brace
 r_struct
-id|tda9855
+id|tda985x
 op_star
 id|t
 suffix:semicolon
@@ -742,6 +999,12 @@ r_struct
 id|i2c_client
 op_star
 id|client
+suffix:semicolon
+id|dprintk
+c_func
+(paren
+l_string|&quot;In tda985x_attach&bslash;n&quot;
+)paren
 suffix:semicolon
 id|client
 op_assign
@@ -824,7 +1087,7 @@ op_star
 id|t
 )paren
 suffix:semicolon
-id|do_tda9855_init
+id|do_tda985x_init
 c_func
 (paren
 id|client
@@ -837,14 +1100,14 @@ c_func
 (paren
 id|client-&gt;name
 comma
-l_string|&quot;TDA9855&quot;
+l_string|&quot;TDA985x&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;tda9855: init&bslash;n&quot;
+l_string|&quot;tda985x: init&bslash;n&quot;
 )paren
 suffix:semicolon
 id|i2c_attach_client
@@ -857,10 +1120,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|tda9855_probe
+DECL|function|tda985x_probe
 r_static
 r_int
-id|tda9855_probe
+id|tda985x_probe
 c_func
 (paren
 r_struct
@@ -889,17 +1152,17 @@ comma
 op_amp
 id|addr_data
 comma
-id|tda9855_attach
+id|tda985x_attach
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|tda9855_detach
+DECL|function|tda985x_detach
 r_static
 r_int
-id|tda9855_detach
+id|tda985x_detach
 c_func
 (paren
 r_struct
@@ -909,13 +1172,13 @@ id|client
 )paren
 (brace
 r_struct
-id|tda9855
+id|tda985x
 op_star
 id|t
 op_assign
 id|client-&gt;data
 suffix:semicolon
-id|do_tda9855_init
+id|do_tda985x_init
 c_func
 (paren
 id|client
@@ -945,10 +1208,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|tda9855_command
+DECL|function|tda985x_command
 r_static
 r_int
-id|tda9855_command
+id|tda985x_command
 c_func
 (paren
 r_struct
@@ -966,11 +1229,17 @@ id|arg
 )paren
 (brace
 r_struct
-id|tda9855
+id|tda985x
 op_star
 id|t
 op_assign
 id|client-&gt;data
+suffix:semicolon
+id|dprintk
+c_func
+(paren
+l_string|&quot;In tda985x_command...&bslash;n&quot;
+)paren
 suffix:semicolon
 macro_line|#if 0
 id|__u16
@@ -999,6 +1268,20 @@ id|va
 op_assign
 id|arg
 suffix:semicolon
+id|dprintk
+c_func
+(paren
+l_string|&quot;VIDIOCGAUDIO&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|chip
+op_eq
+l_int|9855
+)paren
+(brace
 r_int
 id|left
 comma
@@ -1093,7 +1376,7 @@ l_int|0x6
 op_star
 l_int|0xccc
 suffix:semicolon
-multiline_comment|/* min 0x6 max is 0x19 */
+multiline_comment|/* min 0x6 max 0x19 */
 id|va-&gt;treble
 op_assign
 (paren
@@ -1108,16 +1391,19 @@ l_int|0x3
 op_star
 l_int|0x1c71
 suffix:semicolon
+)brace
+multiline_comment|/* Valid for both chips: */
+(brace
 id|va-&gt;mode
 op_assign
 (paren
 (paren
-id|TDA9855_STP
+id|TDA985x_STP
 op_or
-id|TDA9855_SAPP
+id|TDA985x_SAPP
 )paren
 op_amp
-id|tda9855_read
+id|tda985x_read
 c_func
 (paren
 id|client
@@ -1126,12 +1412,16 @@ id|client
 op_rshift
 l_int|4
 suffix:semicolon
+multiline_comment|/* Add mono mode regardless of SAP and stereo */
+multiline_comment|/* Allows forced mono */
 id|va-&gt;mode
 op_or_assign
 id|VIDEO_SOUND_MONO
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
+multiline_comment|/* VIDIOCGAUDIO case */
 )brace
 r_case
 id|VIDIOCSAUDIO
@@ -1144,6 +1434,20 @@ id|va
 op_assign
 id|arg
 suffix:semicolon
+id|dprintk
+c_func
+(paren
+l_string|&quot;VIDEOCSAUDIO...&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|chip
+op_eq
+l_int|9855
+)paren
+(brace
 r_int
 id|left
 comma
@@ -1219,7 +1523,7 @@ l_int|0x3
 op_lshift
 l_int|1
 suffix:semicolon
-id|tda9855_write
+id|tda985x_write
 c_func
 (paren
 id|client
@@ -1229,7 +1533,7 @@ comma
 id|t-&gt;lvol
 )paren
 suffix:semicolon
-id|tda9855_write
+id|tda985x_write
 c_func
 (paren
 id|client
@@ -1239,7 +1543,7 @@ comma
 id|t-&gt;rvol
 )paren
 suffix:semicolon
-id|tda9855_write
+id|tda985x_write
 c_func
 (paren
 id|client
@@ -1249,7 +1553,7 @@ comma
 id|t-&gt;bass
 )paren
 suffix:semicolon
-id|tda9855_write
+id|tda985x_write
 c_func
 (paren
 id|client
@@ -1259,6 +1563,8 @@ comma
 id|t-&gt;treble
 )paren
 suffix:semicolon
+)brace
+multiline_comment|/* The following is valid for both chips */
 r_switch
 c_cond
 (paren
@@ -1268,14 +1574,30 @@ id|va-&gt;mode
 r_case
 id|VIDEO_SOUND_MONO
 suffix:colon
-id|t-&gt;c2
+id|dprintk
+c_func
+(paren
+l_string|&quot;VIDEO_SOUND_MONO&bslash;n&quot;
+)paren
+suffix:semicolon
+id|t-&gt;c6
 op_assign
-id|TDA9855_MONO
+id|TDA985x_MONO
 op_or
 (paren
-id|t-&gt;c2
+id|t-&gt;c6
 op_amp
 l_int|0x3f
+)paren
+suffix:semicolon
+id|tda985x_write
+c_func
+(paren
+id|client
+comma
+id|TDA985x_C6
+comma
+id|t-&gt;c6
 )paren
 suffix:semicolon
 r_break
@@ -1283,14 +1605,30 @@ suffix:semicolon
 r_case
 id|VIDEO_SOUND_STEREO
 suffix:colon
-id|t-&gt;c2
+id|dprintk
+c_func
+(paren
+l_string|&quot;VIDEO_SOUND_STEREO&bslash;n&quot;
+)paren
+suffix:semicolon
+id|t-&gt;c6
 op_assign
-id|TDA9855_STEREO
+id|TDA985x_STEREO
 op_or
 (paren
-id|t-&gt;c2
+id|t-&gt;c6
 op_amp
 l_int|0x3f
+)paren
+suffix:semicolon
+id|tda985x_write
+c_func
+(paren
+id|client
+comma
+id|TDA985x_C6
+comma
+id|t-&gt;c6
 )paren
 suffix:semicolon
 r_break
@@ -1298,458 +1636,52 @@ suffix:semicolon
 r_case
 id|VIDEO_SOUND_LANG1
 suffix:colon
-id|t-&gt;c2
-op_assign
-id|TDA9855_SAP
-op_or
-(paren
-id|t-&gt;c2
-op_amp
-l_int|0x3f
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|tda9855_write
-c_func
-(paren
-id|client
-comma
-id|TDA9855_C2
-comma
-id|t-&gt;c2
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-macro_line|#if 0
-multiline_comment|/* --- old, obsolete interface --- */
-r_case
-id|AUDC_GET_VOLUME_LEFT
-suffix:colon
-op_star
-id|sarg
-op_assign
-(paren
-id|t-&gt;lvol
-op_minus
-l_int|0x27
-)paren
-op_star
-l_int|0x2e8
-suffix:semicolon
-multiline_comment|/* min is 0x27 max is 0x7f, vstep is 2e8 */
-r_break
-suffix:semicolon
-r_case
-id|AUDC_GET_VOLUME_RIGHT
-suffix:colon
-op_star
-id|sarg
-op_assign
-(paren
-id|t-&gt;rvol
-op_minus
-l_int|0x27
-)paren
-op_star
-l_int|0x2e8
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|AUDC_SET_VOLUME_LEFT
-suffix:colon
-id|t-&gt;lvol
-op_assign
-op_star
-id|sarg
-op_div
-l_int|0x2e8
-op_plus
-l_int|0x27
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|AUDC_SET_VOLUME_RIGHT
-suffix:colon
-id|t-&gt;rvol
-op_assign
-op_star
-id|sarg
-op_div
-l_int|0x2e8
-op_plus
-l_int|0x27
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|AUDC_GET_BASS
-suffix:colon
-op_star
-id|sarg
-op_assign
-(paren
-id|t-&gt;bass
-op_minus
-l_int|0x6
-)paren
-op_star
-l_int|0xccc
-suffix:semicolon
-multiline_comment|/* min 0x6 max is 0x19 */
-r_break
-suffix:semicolon
-r_case
-id|AUDC_SET_BASS
-suffix:colon
-id|t-&gt;bass
-op_assign
-op_star
-id|sarg
-op_div
-l_int|0xccc
-op_plus
-l_int|0x6
-suffix:semicolon
-id|tda9855_write
-c_func
-(paren
-id|client
-comma
-id|TDA9855_BA
-comma
-id|t-&gt;bass
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|AUDC_GET_TREBLE
-suffix:colon
-op_star
-id|sarg
-op_assign
-(paren
-(paren
-id|t-&gt;treble
-op_rshift
-l_int|1
-)paren
-op_minus
-l_int|0x3
-)paren
-op_star
-l_int|0x1c71
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|AUDC_SET_TREBLE
-suffix:colon
-id|t-&gt;treble
-op_assign
-(paren
-op_star
-id|sarg
-op_div
-l_int|0x1c71
-op_plus
-l_int|0x3
-)paren
-op_lshift
-l_int|1
-suffix:semicolon
-id|tda9855_write
-c_func
-(paren
-id|client
-comma
-id|TDA9855_TR
-comma
-id|t-&gt;treble
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|AUDC_GET_STEREO
-suffix:colon
-op_star
-id|sarg
-op_assign
-(paren
-(paren
-id|TDA9855_STP
-op_or
-id|TDA9855_SAPP
-)paren
-op_amp
-id|tda9855_read
-c_func
-(paren
-id|client
-)paren
-)paren
-op_rshift
-l_int|4
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_star
-id|sarg
-op_eq
-l_int|0
-)paren
-(brace
-op_star
-id|sarg
-op_assign
-id|VIDEO_SOUND_MONO
-suffix:semicolon
-)brace
-r_break
-suffix:semicolon
-r_case
-id|AUDC_SET_STEREO
-suffix:colon
-r_if
-c_cond
-(paren
-op_star
-id|sarg
-op_eq
-id|VIDEO_SOUND_MONO
-)paren
-(brace
-id|t-&gt;c2
-op_assign
-id|TDA9855_MONO
-op_or
-(paren
-id|t-&gt;c2
-op_amp
-l_int|0x3f
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Mask out the sap and stereo bits and set mono */
-r_else
-r_if
-c_cond
-(paren
-op_star
-id|sarg
-op_eq
-id|VIDEO_SOUND_STEREO
-)paren
-(brace
-id|t-&gt;c2
-op_assign
-id|TDA9855_STEREO
-op_or
-(paren
-id|t-&gt;c2
-op_amp
-l_int|0x3f
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Mask out the sap and stereo bits and set stereo */
-r_else
-r_if
-c_cond
-(paren
-op_star
-id|sarg
-op_eq
-id|VIDEO_SOUND_LANG2
-)paren
-(brace
-id|t-&gt;c2
-op_assign
-id|TDA9855_SAP
-op_or
-(paren
-id|t-&gt;c2
-op_amp
-l_int|0x3f
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Mask out the sap and stereo bits and set sap */
-id|tda9855_write
-c_func
-(paren
-id|client
-comma
-id|TDA9855_C2
-comma
-id|t-&gt;c2
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|AUDC_SET_INPUT
-suffix:colon
 id|dprintk
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;tda9855: SET_INPUT with 0x%04x&bslash;n&quot;
-comma
-op_star
-id|sarg
+l_string|&quot;VIDEO_SOUND_LANG1&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-op_star
-id|sarg
-op_amp
-(paren
-id|AUDIO_MUTE
-op_or
-id|AUDIO_OFF
-)paren
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|t-&gt;c1
-op_or_assign
-id|TDA9855_MUTE
-suffix:semicolon
-)brace
-r_else
-id|t-&gt;c1
+id|t-&gt;c6
 op_assign
-id|t-&gt;c1
-op_amp
-l_int|0x7f
-suffix:semicolon
-multiline_comment|/* won&squot;t work --&gt;  (~TDA9855_MUTE); */
-r_if
-c_cond
-(paren
-(paren
-op_star
-id|sarg
-op_amp
-id|AUDIO_INTERN
-)paren
-op_eq
-id|AUDIO_INTERN
-)paren
-(brace
-id|t-&gt;c1
-op_assign
-(paren
-id|t-&gt;c1
-op_amp
-op_complement
-l_int|0x7
-)paren
+id|TDA985x_SAP
 op_or
-id|TDA9855_INT
-suffix:semicolon
-)brace
-multiline_comment|/* 0x7 is a mask for the int/ext */
-r_if
-c_cond
 (paren
-(paren
-op_star
-id|sarg
+id|t-&gt;c6
 op_amp
-id|AUDIO_EXTERN
+l_int|0x3f
 )paren
-op_eq
-id|AUDIO_EXTERN
-)paren
-(brace
-id|t-&gt;c1
-op_assign
-(paren
-id|t-&gt;c1
-op_amp
-op_complement
-l_int|0x7
-)paren
-op_or
-id|TDA9855_EXT
 suffix:semicolon
-)brace
-multiline_comment|/* 0x7 is a mask for the int/ext */
-id|tda9855_write
+id|tda985x_write
 c_func
 (paren
 id|client
 comma
-id|TDA9855_C1
+id|TDA985x_C6
 comma
-id|t-&gt;c1
+id|t-&gt;c6
 )paren
 suffix:semicolon
 r_break
-suffix:semicolon
-r_case
-id|AUDC_SWITCH_MUTE
-suffix:colon
-r_if
-c_cond
-(paren
-(paren
-id|t-&gt;c1
-op_amp
-op_complement
-id|TDA9855_MUTE
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-id|t-&gt;c1
-op_or_assign
-id|TDA9855_MUTE
 suffix:semicolon
 )brace
-r_else
-id|t-&gt;c1
-op_and_assign
-op_complement
-id|TDA9855_MUTE
-suffix:semicolon
-id|tda9855_write
-c_func
-(paren
-id|client
-comma
-id|TDA9855_C1
-comma
-id|t-&gt;c1
-)paren
-suffix:semicolon
+multiline_comment|/* End of (va-&gt;mode) switch */
 r_break
 suffix:semicolon
-multiline_comment|/* TDA9855 unsupported: */
-multiline_comment|/*&t;case AUDC_NEWCHANNEL:&n;&t;case AUDC_SET_RADIO:&n;&t;case AUDC_GET_DC:&n;*/
-macro_line|#endif
+)brace
+multiline_comment|/* end of VIDEOCSAUDIO case */
 r_default
 suffix:colon
-(brace
-)brace
+multiline_comment|/* Not VIDEOCGAUDIO or VIDEOCSAUDIO */
 multiline_comment|/* nothing */
+id|dprintk
+c_func
+(paren
+l_string|&quot;Default&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
+multiline_comment|/* end of (cmd) switch */
 r_return
 l_int|0
 suffix:semicolon
@@ -1761,17 +1693,18 @@ id|i2c_driver
 id|driver
 op_assign
 (brace
-l_string|&quot;i2c tda9855 driver&quot;
+l_string|&quot;i2c tda985x driver&quot;
 comma
 id|I2C_DRIVERID_TDA9855
 comma
+multiline_comment|/* Get new one for TDA985x? */
 id|I2C_DF_NOTIFY
 comma
-id|tda9855_probe
+id|tda985x_probe
 comma
-id|tda9855_detach
+id|tda985x_detach
 comma
-id|tda9855_command
+id|tda985x_command
 comma
 )brace
 suffix:semicolon
@@ -1808,13 +1741,41 @@ r_void
 )paren
 macro_line|#else
 r_int
-id|tda9855_init
+id|tda985x_init
 c_func
 (paren
 r_void
 )paren
 macro_line|#endif
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|chip
+op_ne
+l_int|9850
+)paren
+op_logical_and
+(paren
+id|chip
+op_ne
+l_int|9855
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;tda985x: chip parameter must be 9850 or 9855&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 id|i2c_add_driver
 c_func
 (paren

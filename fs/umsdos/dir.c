@@ -85,17 +85,14 @@ id|dentry_operations
 id|umsdos_dentry_operations
 op_assign
 (brace
+id|d_revalidate
+suffix:colon
 id|umsdos_dentry_validate
 comma
-multiline_comment|/* d_revalidate(struct dentry *, int) */
-l_int|NULL
-comma
-multiline_comment|/* d_hash */
-l_int|NULL
-comma
-multiline_comment|/* d_compare */
+id|d_delete
+suffix:colon
 id|umsdos_dentry_dput
-multiline_comment|/* d_delete(struct dentry *) */
+comma
 )brace
 suffix:semicolon
 DECL|struct|UMSDOS_DIR_ONCE

@@ -305,17 +305,22 @@ id|dentry_operations
 id|ncp_dentry_operations
 op_assign
 (brace
+id|d_revalidate
+suffix:colon
 id|ncp_lookup_validate
 comma
-multiline_comment|/* d_revalidate(struct dentry *, int) */
+id|d_hash
+suffix:colon
 id|ncp_hash_dentry
 comma
-multiline_comment|/* d_hash */
+id|d_compare
+suffix:colon
 id|ncp_compare_dentry
 comma
-multiline_comment|/* d_compare */
+id|d_delete
+suffix:colon
 id|ncp_delete_dentry
-multiline_comment|/* d_delete(struct dentry *) */
+comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Note: leave the hash unchanged if the directory&n; * is case-sensitive.&n; */

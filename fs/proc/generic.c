@@ -976,17 +976,10 @@ id|dentry_operations
 id|proc_dentry_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
-l_int|NULL
-comma
-multiline_comment|/* d_hash */
-l_int|NULL
-comma
-multiline_comment|/* d_compare */
+id|d_delete
+suffix:colon
 id|proc_delete_dentry
-multiline_comment|/* d_delete(struct dentry *) */
+comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Don&squot;t create negative dentries here, return -ENOENT by hand&n; * instead.&n; */

@@ -82,15 +82,10 @@ id|dentry_operations
 id|devpts_dentry_operations
 op_assign
 (brace
+id|d_revalidate
+suffix:colon
 id|devpts_revalidate
 comma
-multiline_comment|/* d_revalidate */
-l_int|NULL
-comma
-multiline_comment|/* d_hash */
-l_int|NULL
-comma
-multiline_comment|/* d_compare */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * The normal naming convention is simply /dev/pts/&lt;number&gt;; this conforms&n; * to the System V naming convention&n; */

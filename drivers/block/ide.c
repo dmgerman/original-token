@@ -27,6 +27,7 @@ macro_line|#endif /* MODULE */
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -15534,6 +15535,12 @@ id|ide_spin_wait_hwgroup
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Probe module&n; */
+DECL|variable|ide_devfs_handle
+id|devfs_handle_t
+id|ide_devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 DECL|variable|ide_probe
 id|EXPORT_SYMBOL
 c_func
@@ -15588,6 +15595,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|ide_add_generic_settings
+)paren
+suffix:semicolon
+DECL|variable|ide_devfs_handle
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ide_devfs_handle
 )paren
 suffix:semicolon
 macro_line|#if MAX_HWIFS &gt; 1
@@ -15960,6 +15974,19 @@ id|REVISION
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+id|ide_devfs_handle
+op_assign
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+l_string|&quot;ide&quot;
+comma
+l_int|3
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|banner_printed
 op_assign
 l_int|1
@@ -16230,6 +16257,11 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|devfs_unregister
+(paren
+id|ide_devfs_handle
+)paren
+suffix:semicolon
 )brace
 macro_line|#else /* !MODULE */
 DECL|function|parse_ide_setup

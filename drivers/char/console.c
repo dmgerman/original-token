@@ -12403,7 +12403,7 @@ id|tty_register_devfs
 op_amp
 id|console_driver
 comma
-l_int|0
+id|DEVFS_FL_AOPEN_NOTIFY
 comma
 id|console_driver.minor_start
 op_plus

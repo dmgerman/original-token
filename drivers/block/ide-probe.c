@@ -3288,6 +3288,10 @@ comma
 op_star
 id|max_ra
 suffix:semicolon
+r_extern
+id|devfs_handle_t
+id|ide_devfs_handle
+suffix:semicolon
 multiline_comment|/* figure out maximum drive number on the interface */
 r_for
 c_loop
@@ -3714,9 +3718,13 @@ id|sprintf
 (paren
 id|name
 comma
-l_string|&quot;ide/host%d/bus%d/target%d/lun%d&quot;
+l_string|&quot;host%d/bus%d/target%d/lun%d&quot;
 comma
+(paren
 id|hwif-&gt;channel
+op_logical_and
+id|hwif-&gt;mate
+)paren
 ques
 c_cond
 id|hwif-&gt;mate-&gt;index
@@ -3739,7 +3747,7 @@ id|de
 op_assign
 id|devfs_mk_dir
 (paren
-l_int|NULL
+id|ide_devfs_handle
 comma
 id|name
 comma

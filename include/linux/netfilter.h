@@ -525,11 +525,6 @@ comma
 DECL|enumerator|NF_REASON_FOR_CLS_FW
 id|NF_REASON_FOR_CLS_FW
 comma
-DECL|enumerator|NF_REASON_MIN_RESERVED_FOR_CONNTRACK
-id|NF_REASON_MIN_RESERVED_FOR_CONNTRACK
-op_assign
-l_int|1024
-comma
 )brace
 suffix:semicolon
 macro_line|#endif /*__LINUX_NETFILTER_H*/

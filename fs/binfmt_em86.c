@@ -130,10 +130,20 @@ id|bprm-&gt;sh_bang
 op_increment
 suffix:semicolon
 multiline_comment|/* Well, the bang-shell is implicit... */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dput
 c_func
 (paren
 id|bprm-&gt;dentry
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|bprm-&gt;dentry
@@ -247,6 +257,11 @@ id|bprm-&gt;argc
 op_increment
 suffix:semicolon
 multiline_comment|/*&n;&t; * OK, now restart the process with the interpreter&squot;s inode.&n;&t; * Note that we use open_namei() as the name is now in kernel&n;&t; * space, and we don&squot;t need to copy it.&n;&t; */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dentry
 op_assign
 id|open_namei
@@ -257,6 +272,11 @@ comma
 l_int|0
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if

@@ -1322,6 +1322,11 @@ id|rejected
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|claimed
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1365,6 +1370,10 @@ id|ifnum
 id|rejected
 op_increment
 suffix:semicolon
+r_else
+id|claimed
+op_increment
+suffix:semicolon
 )brace
 )brace
 r_if
@@ -1378,6 +1387,19 @@ c_func
 l_string|&quot;unhandled interfaces on device&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|claimed
+)paren
+(brace
+id|warn
+c_func
+(paren
+l_string|&quot;This device is not recognized by any installed USB driver.&quot;
+)paren
+suffix:semicolon
 macro_line|#ifdef DEBUG
 id|usb_show_device
 c_func
@@ -1386,6 +1408,7 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif
+)brace
 )brace
 multiline_comment|/*&n; * Only HC&squot;s should call usb_alloc_dev and usb_free_dev directly&n; * Anybody may use usb_inc_dev_use or usb_dec_dev_use&n; */
 DECL|function|usb_alloc_dev

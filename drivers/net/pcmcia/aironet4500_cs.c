@@ -9,7 +9,7 @@ op_assign
 l_string|&quot;aironet4500_cs.c v0.1 1/1/99 Elmer Joandi, elmer@ylenurme.ee.&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
-singleline_comment|//#include &lt;pcmcia/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -2337,9 +2337,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* awc_event */
-DECL|function|init_module
+DECL|function|aironet_cs_init
+r_static
 r_int
-id|init_module
+id|aironet_cs_init
 c_func
 (paren
 r_void
@@ -2415,9 +2416,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|aironet_cs_exit
+r_static
 r_void
-id|cleanup_module
+id|aironet_cs_exit
 c_func
 (paren
 r_void
@@ -2474,4 +2476,18 @@ suffix:semicolon
 singleline_comment|//&t;while (dev_list != NULL)
 singleline_comment|//&t;&t;awc_detach(dev_list);
 )brace
+DECL|variable|aironet_cs_init
+id|module_init
+c_func
+(paren
+id|aironet_cs_init
+)paren
+suffix:semicolon
+DECL|variable|aironet_cs_init
+id|module_exit
+c_func
+(paren
+id|aironet_cs_init
+)paren
+suffix:semicolon
 eof

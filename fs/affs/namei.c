@@ -138,17 +138,14 @@ id|dentry_operations
 id|affs_dentry_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* d_validate&t;*/
+id|d_hash
+suffix:colon
 id|affs_hash_dentry
 comma
-multiline_comment|/* d_hash&t;*/
+id|d_compare
+suffix:colon
 id|affs_compare_dentry
 comma
-multiline_comment|/* d_compare&t;*/
-l_int|NULL
-multiline_comment|/* d_delete&t;*/
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Note: the dentry argument is the parent dentry.&n; */

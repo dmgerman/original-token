@@ -3074,12 +3074,22 @@ id|current-&gt;binfmt-&gt;module
 )paren
 suffix:semicolon
 macro_line|#ifndef VM_STACK_FLAGS
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|current-&gt;executable
 op_assign
 id|dget
 c_func
 (paren
 id|bprm-&gt;dentry
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 macro_line|#endif

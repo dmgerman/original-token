@@ -173,7 +173,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Read a directory and return the name of the specified entry.  i_sem is already down().&n; */
+multiline_comment|/*&n; * Read a directory and return the name of the specified entry.&n; * i_sem is already down().&n; * The whole thing is a total BS. It should not be done via readdir(), damnit!&n; * Oh, well, as soon as it will be in filesystems...&n; */
 DECL|function|get_ino_name
 r_static
 r_int

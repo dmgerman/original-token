@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -21,12 +22,6 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;pci2220i.h&quot;
 macro_line|#include &quot;psi_dale.h&quot;
-macro_line|#if LINUX_VERSION_CODE &gt;= LINUXVERSION(2,1,95)
-macro_line|#include &lt;asm/spinlock.h&gt;
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,93)
-macro_line|#include &lt;linux/bios32.h&gt;
-macro_line|#endif
 DECL|macro|PCI2220I_VERSION
 mdefine_line|#define&t;PCI2220I_VERSION&t;&t;&quot;2.00&quot;
 DECL|macro|READ_CMD

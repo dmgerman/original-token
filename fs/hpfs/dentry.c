@@ -251,17 +251,14 @@ id|dentry_operations
 id|hpfs_dentry_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* d_validate   */
+id|d_hash
+suffix:colon
 id|hpfs_hash_dentry
 comma
-multiline_comment|/* d_hash       */
+id|d_compare
+suffix:colon
 id|hpfs_compare_dentry
 comma
-multiline_comment|/* d_compare    */
-l_int|NULL
-multiline_comment|/* d_delete     */
 )brace
 suffix:semicolon
 DECL|function|hpfs_set_dentry_operations

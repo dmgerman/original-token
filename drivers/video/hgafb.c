@@ -1,5 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/video/hgafb.c -- Hercules graphics adaptor frame buffer device&n; * &n; *      Created 25 Nov 1999 by Ferenc Bakonyi (fero@drama.obuda.kando.hu)&n; *      Based on skeletonfb.c by Geert Uytterhoeven and&n; *               mdacon.c by Andrew Apted&n; *&n; * History:&n; *&n; * - Revision 0.1.3 (22 Jan 2000): modified for the new fb_info structure&n; *                                 screen is cleared after rmmod&n; *                                 virtual resolutions&n; *                                 kernel parameter &squot;video=hga:font:{fontname}&squot;&n; *                                 module parameter &squot;font={fontname}&squot;&n; *                                 module parameter &squot;nologo={0|1}&squot;&n; *                                 the most important: boot logo :)&n; * - Revision 0.1.0  (6 Dec 1999): faster scrolling and minor fixes&n; * - First release  (25 Nov 1999)&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*&n; * linux/drivers/video/hgafb.c -- Hercules graphics adaptor frame buffer device&n; * &n; *      Created 25 Nov 1999 by Ferenc Bakonyi (fero@drama.obuda.kando.hu)&n; *      Based on skeletonfb.c by Geert Uytterhoeven and&n; *               mdacon.c by Andrew Apted&n; *&n; * History:&n; *&n; * - Revision 0.1.4 (24 Jan 2000): fixed a bug in hga_card_detect() for &n; *                                  HGA-only systems&n; * - Revision 0.1.3 (22 Jan 2000): modified for the new fb_info structure&n; *                                 screen is cleared after rmmod&n; *                                 virtual resolutions&n; *                                 kernel parameter &squot;video=hga:font:{fontname}&squot;&n; *                                 module parameter &squot;font={fontname}&squot;&n; *                                 module parameter &squot;nologo={0|1}&squot;&n; *                                 the most important: boot logo :)&n; * - Revision 0.1.0  (6 Dec 1999): faster scrolling and minor fixes&n; * - First release  (25 Nov 1999)&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -279,6 +278,20 @@ id|currcon
 op_assign
 op_minus
 l_int|1
+suffix:semicolon
+DECL|variable|release_io_port
+r_static
+r_int
+id|release_io_port
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|release_io_ports
+r_static
+r_int
+id|release_io_ports
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|variable|font
@@ -1098,26 +1111,37 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|request_region
 c_func
 (paren
 l_int|0x3b0
 comma
-l_int|16
+l_int|12
 comma
 l_string|&quot;hgafb&quot;
 )paren
 )paren
-(brace
-id|printk
+id|release_io_ports
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|request_region
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;hgafb: cannot reserve io ports&bslash;n&quot;
+l_int|0x3bf
+comma
+l_int|1
+comma
+l_string|&quot;hgafb&quot;
 )paren
+)paren
+id|release_io_port
+op_assign
+l_int|1
 suffix:semicolon
-)brace
 multiline_comment|/* do a memory check */
 id|p
 op_assign
@@ -2774,12 +2798,30 @@ c_func
 id|info
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|release_io_ports
+)paren
 id|release_region
 c_func
 (paren
 l_int|0x3b0
 comma
-l_int|16
+l_int|12
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|release_io_port
+)paren
+id|release_region
+c_func
+(paren
+l_int|0x3bf
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|release_mem_region

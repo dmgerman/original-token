@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &quot;tuner.h&quot;
+macro_line|#include &quot;audiochip.h&quot;
 multiline_comment|/* Addresses to scan */
 DECL|variable|normal_i2c
 r_static
@@ -1712,6 +1713,15 @@ id|client-&gt;name
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|AUDC_SET_RADIO
+suffix:colon
+id|t-&gt;radio
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
 multiline_comment|/* --- v4l ioctls --- */
 multiline_comment|/* take care: bttv does userspace copying, we&squot;ll get a&n;&t;   kernel pointer here... */
 r_case
@@ -1724,6 +1734,10 @@ op_star
 id|vc
 op_assign
 id|arg
+suffix:semicolon
+id|t-&gt;radio
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond

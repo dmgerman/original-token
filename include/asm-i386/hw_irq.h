@@ -229,6 +229,22 @@ r_int
 r_int
 id|prof_cpu_mask
 suffix:semicolon
+r_extern
+r_int
+r_int
+op_star
+id|prof_buffer
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|prof_len
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|prof_shift
+suffix:semicolon
 multiline_comment|/*&n; * x86 profiling function, SMP safe. We might want to do this in&n; * assembly totally?&n; */
 DECL|function|x86_do_profile
 r_static

@@ -668,8 +668,6 @@ id|inode
 r_goto
 id|out_nolock
 suffix:semicolon
-id|do_more_write
-suffix:colon
 multiline_comment|/* No readers yields SIGPIPE.  */
 r_if
 c_cond

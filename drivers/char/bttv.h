@@ -3,66 +3,99 @@ macro_line|#ifndef _BTTV_H_
 DECL|macro|_BTTV_H_
 mdefine_line|#define _BTTV_H_
 DECL|macro|BTTV_VERSION_CODE
-mdefine_line|#define BTTV_VERSION_CODE 0x00070d
+mdefine_line|#define BTTV_VERSION_CODE KERNEL_VERSION(0,7,21) 
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
+macro_line|#include &lt;linux/videodev.h&gt;
+macro_line|#include &lt;linux/i2c.h&gt;
+macro_line|#include &lt;linux/i2c-algo-bit.h&gt;
 macro_line|#include &quot;audiochip.h&quot;
 macro_line|#include &quot;bt848.h&quot;
-multiline_comment|/* experimental, interface might change */
-macro_line|#ifndef VIDIOCSWIN2
-DECL|macro|VIDIOCSWIN2
-mdefine_line|#define VIDIOCSWIN2 _IOW(&squot;v&squot;,28,struct video_window2)
-DECL|struct|video_window2
-r_struct
-id|video_window2
-(brace
-DECL|member|palette
-id|__u16
-id|palette
-suffix:semicolon
-multiline_comment|/* Palette (aka video format) in use */
-DECL|member|start
-id|__u32
-id|start
-suffix:semicolon
-multiline_comment|/* start address, relative to video_buffer.base */
-DECL|member|pitch
-id|__u32
-id|pitch
-suffix:semicolon
-DECL|member|width
-id|__u32
-id|width
-suffix:semicolon
-DECL|member|height
-id|__u32
-id|height
-suffix:semicolon
-DECL|member|flags
-id|__u32
-id|flags
-suffix:semicolon
-DECL|member|clips
-r_struct
-id|video_clip
-op_star
-id|clips
-suffix:semicolon
-DECL|member|clipcount
-r_int
-id|clipcount
-suffix:semicolon
-)brace
-suffix:semicolon
-macro_line|#endif
 DECL|macro|WAIT_QUEUE
 mdefine_line|#define WAIT_QUEUE                 wait_queue_head_t
+multiline_comment|/* returns card type, &n;   for possible values see lines below beginning with #define BTTV_UNKNOWN&n;   returns negative value if error ocurred &n;*/
+r_extern
+r_int
+id|bttv_get_id
+c_func
+(paren
+r_int
+r_int
+id|card
+)paren
+suffix:semicolon
+multiline_comment|/* sets GPOE register (BT848_GPIO_OUT_EN) to new value:&n;   data | (current_GPOE_value &amp; ~mask)&n;   returns negative value if error ocurred&n;*/
+r_extern
+r_int
+id|bttv_gpio_enable
+c_func
+(paren
+r_int
+r_int
+id|card
+comma
+r_int
+r_int
+id|mask
+comma
+r_int
+r_int
+id|data
+)paren
+suffix:semicolon
+multiline_comment|/* fills data with GPDATA register contents&n;   returns negative value if error ocurred&n;*/
+r_extern
+r_int
+id|bttv_read_gpio
+c_func
+(paren
+r_int
+r_int
+id|card
+comma
+r_int
+r_int
+op_star
+id|data
+)paren
+suffix:semicolon
+multiline_comment|/* sets GPDATA register to new value:&n;  (data &amp; mask) | (current_GPDATA_value &amp; ~mask)&n;  returns negative value if error ocurred &n;*/
+r_extern
+r_int
+id|bttv_write_gpio
+c_func
+(paren
+r_int
+r_int
+id|card
+comma
+r_int
+r_int
+id|mask
+comma
+r_int
+r_int
+id|data
+)paren
+suffix:semicolon
+multiline_comment|/* returns pointer to task queue which can be used as parameter to &n;   interruptible_sleep_on&n;   in interrupt handler if BT848_INT_GPINT bit is set - this queue is activated&n;   (wake_up_interruptible) and following call to the function bttv_read_gpio &n;   should return new value of GPDATA,&n;   returns NULL value if error ocurred or queue is not available&n;   WARNING: because there is no buffer for GPIO data, one MUST &n;   process data ASAP&n;*/
+r_extern
+id|WAIT_QUEUE
+op_star
+id|bttv_get_gpio_queue
+c_func
+(paren
+r_int
+r_int
+id|card
+)paren
+suffix:semicolon
 macro_line|#ifndef O_NONCAP  
 DECL|macro|O_NONCAP
 mdefine_line|#define O_NONCAP&t;O_TRUNC
 macro_line|#endif
 DECL|macro|MAX_GBUFFERS
-mdefine_line|#define MAX_GBUFFERS&t;2
+mdefine_line|#define MAX_GBUFFERS&t;64
 DECL|macro|RISCMEM_LEN
 mdefine_line|#define RISCMEM_LEN&t;(32744*2)
 DECL|macro|VBI_MAXLINES
@@ -71,6 +104,8 @@ DECL|macro|VBIBUF_SIZE
 mdefine_line|#define VBIBUF_SIZE     (2048*VBI_MAXLINES*2)
 DECL|macro|BTTV_MAX_FBUF
 mdefine_line|#define BTTV_MAX_FBUF&t;0x208000
+DECL|macro|I2C_CLIENTS_MAX
+mdefine_line|#define I2C_CLIENTS_MAX 8
 macro_line|#ifdef __KERNEL__
 DECL|struct|bttv_window
 r_struct
@@ -104,20 +139,6 @@ id|swidth
 comma
 id|sheight
 suffix:semicolon
-DECL|member|cropx
-DECL|member|cropy
-r_int
-id|cropx
-comma
-id|cropy
-suffix:semicolon
-DECL|member|cropwidth
-DECL|member|cropheight
-id|ushort
-id|cropwidth
-comma
-id|cropheight
-suffix:semicolon
 DECL|member|vidadr
 r_int
 r_int
@@ -142,15 +163,6 @@ suffix:semicolon
 DECL|member|depth
 id|ushort
 id|depth
-suffix:semicolon
-DECL|member|use_yuv
-r_int
-id|use_yuv
-suffix:semicolon
-DECL|member|win2
-r_struct
-id|video_window2
-id|win2
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -184,8 +196,51 @@ suffix:semicolon
 multiline_comment|/* Currently programmed ofreq */
 )brace
 suffix:semicolon
-DECL|macro|I2C_CLIENTS_MAX
-mdefine_line|#define I2C_CLIENTS_MAX 8
+DECL|struct|bttv_gbuf
+r_struct
+id|bttv_gbuf
+(brace
+DECL|member|stat
+r_int
+id|stat
+suffix:semicolon
+DECL|macro|GBUFFER_UNUSED
+mdefine_line|#define GBUFFER_UNUSED       0
+DECL|macro|GBUFFER_GRABBING
+mdefine_line|#define GBUFFER_GRABBING     1
+DECL|macro|GBUFFER_DONE
+mdefine_line|#define GBUFFER_DONE         2
+DECL|macro|GBUFFER_ERROR
+mdefine_line|#define GBUFFER_ERROR        3
+DECL|member|width
+id|u16
+id|width
+suffix:semicolon
+DECL|member|height
+id|u16
+id|height
+suffix:semicolon
+DECL|member|fmt
+id|u16
+id|fmt
+suffix:semicolon
+DECL|member|risc
+id|u32
+op_star
+id|risc
+suffix:semicolon
+DECL|member|ro
+r_int
+r_int
+id|ro
+suffix:semicolon
+DECL|member|re
+r_int
+r_int
+id|re
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|bttv
 r_struct
 id|bttv
@@ -328,6 +383,10 @@ r_struct
 id|bttv_window
 id|win
 suffix:semicolon
+DECL|member|fb_color_ctl
+r_int
+id|fb_color_ctl
+suffix:semicolon
 DECL|member|type
 r_int
 id|type
@@ -390,19 +449,31 @@ DECL|member|vbip
 r_int
 id|vbip
 suffix:semicolon
-DECL|member|risc_odd
+DECL|member|risc_scr_odd
 id|u32
 op_star
-id|risc_odd
+id|risc_scr_odd
 suffix:semicolon
-DECL|member|risc_even
+DECL|member|risc_scr_even
 id|u32
 op_star
-id|risc_even
+id|risc_scr_even
 suffix:semicolon
-DECL|member|cap
+DECL|member|risc_cap_odd
+id|u32
+id|risc_cap_odd
+suffix:semicolon
+DECL|member|risc_cap_even
+id|u32
+id|risc_cap_even
+suffix:semicolon
+DECL|member|scr_on
 r_int
-id|cap
+id|scr_on
+suffix:semicolon
+DECL|member|vbi_on
+r_int
+id|vbi_on
 suffix:semicolon
 DECL|member|cliprecs
 r_struct
@@ -410,108 +481,33 @@ id|video_clip
 op_star
 id|cliprecs
 suffix:semicolon
-DECL|member|ogbuffers
+DECL|member|gbuf
 r_struct
-id|gbuffer
+id|bttv_gbuf
 op_star
-id|ogbuffers
+id|gbuf
 suffix:semicolon
-DECL|member|egbuffers
-r_struct
-id|gbuffer
-op_star
-id|egbuffers
-suffix:semicolon
-DECL|member|gwidth
-DECL|member|gheight
-DECL|member|gfmt
-id|u16
-id|gwidth
-comma
-id|gheight
-comma
-id|gfmt
-suffix:semicolon
-DECL|member|gwidth_next
-DECL|member|gheight_next
-DECL|member|gfmt_next
-id|u16
-id|gwidth_next
-comma
-id|gheight_next
-comma
-id|gfmt_next
-suffix:semicolon
-DECL|member|grisc
-id|u32
-op_star
-id|grisc
-suffix:semicolon
-DECL|member|gro
+DECL|member|gqueue
 r_int
-r_int
-id|gro
-suffix:semicolon
-DECL|member|gre
-r_int
-r_int
-id|gre
-suffix:semicolon
-DECL|member|gro_next
-r_int
-r_int
-id|gro_next
-suffix:semicolon
-DECL|member|gre_next
-r_int
-r_int
-id|gre_next
-suffix:semicolon
-DECL|member|grf
-DECL|member|grf_next
-r_int
-id|grf
-comma
-id|grf_next
-suffix:semicolon
-multiline_comment|/* frame numbers in grab queue */
-DECL|member|frame_stat
-r_int
-id|frame_stat
+id|gqueue
 (braket
 id|MAX_GBUFFERS
 )braket
 suffix:semicolon
-DECL|macro|GBUFFER_UNUSED
-mdefine_line|#define GBUFFER_UNUSED       0
-DECL|macro|GBUFFER_GRABBING
-mdefine_line|#define GBUFFER_GRABBING     1
-DECL|macro|GBUFFER_DONE
-mdefine_line|#define GBUFFER_DONE         2
+DECL|member|gq_in
+DECL|member|gq_out
+DECL|member|gq_grab
+r_int
+id|gq_in
+comma
+id|gq_out
+comma
+id|gq_grab
+suffix:semicolon
 DECL|member|fbuffer
 r_char
 op_star
 id|fbuffer
-suffix:semicolon
-DECL|member|gmode
-r_int
-id|gmode
-suffix:semicolon
-DECL|member|grabbing
-r_int
-id|grabbing
-suffix:semicolon
-DECL|member|lastgrab
-r_int
-id|lastgrab
-suffix:semicolon
-DECL|member|grab
-r_int
-id|grab
-suffix:semicolon
-DECL|member|grabcount
-r_int
-id|grabcount
 suffix:semicolon
 DECL|member|pll
 r_struct
@@ -542,10 +538,17 @@ DECL|member|triton1
 r_int
 id|triton1
 suffix:semicolon
+DECL|member|gpioq
+id|WAIT_QUEUE
+id|gpioq
+suffix:semicolon
+DECL|member|shutdown
+r_int
+id|shutdown
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*The following should be done in more portable way. It depends on define&n;  of _ALPHA_BTTV in the Makefile.*/
 macro_line|#if defined(__powerpc__) /* big-endian */
 DECL|function|io_st_le32
 r_extern
@@ -602,17 +605,10 @@ mdefine_line|#define btwrite(dat,adr)  io_st_le32((unsigned *)(btv-&gt;bt848_mem
 DECL|macro|btread
 mdefine_line|#define btread(adr)       ld_le32((unsigned *)(btv-&gt;bt848_mem+(adr)))
 macro_line|#else
-macro_line|#ifdef _ALPHA_BTTV
-DECL|macro|btwrite
-mdefine_line|#define btwrite(dat,adr)    writel((dat),(char *) (btv-&gt;bt848_adr+(adr)))
-DECL|macro|btread
-mdefine_line|#define btread(adr)         readl(btv-&gt;bt848_adr+(adr))
-macro_line|#else
 DECL|macro|btwrite
 mdefine_line|#define btwrite(dat,adr)    writel((dat), (char *) (btv-&gt;bt848_mem+(adr)))
 DECL|macro|btread
 mdefine_line|#define btread(adr)         readl(btv-&gt;bt848_mem+(adr))
-macro_line|#endif
 macro_line|#endif
 DECL|macro|btand
 mdefine_line|#define btand(dat,adr)      btwrite((dat) &amp; btread(adr), adr)
@@ -689,12 +685,32 @@ DECL|macro|BTTV_MODTEC_205
 mdefine_line|#define BTTV_MODTEC_205    0x17
 DECL|macro|BTTV_MAGICTVIEW061
 mdefine_line|#define BTTV_MAGICTVIEW061 0x18
+DECL|macro|BTTV_VOBIS_BOOSTAR
+mdefine_line|#define BTTV_VOBIS_BOOSTAR 0x19
+DECL|macro|BTTV_HAUPPAUG_WCAM
+mdefine_line|#define BTTV_HAUPPAUG_WCAM 0x1a
 DECL|macro|BTTV_MAXI
 mdefine_line|#define BTTV_MAXI          0x1b
 DECL|macro|BTTV_TERRATV
 mdefine_line|#define BTTV_TERRATV       0x1c
 DECL|macro|BTTV_PXC200
 mdefine_line|#define BTTV_PXC200        0x1d
+DECL|macro|BTTV_FLYVIDEO_98
+mdefine_line|#define BTTV_FLYVIDEO_98   0x1e
+DECL|macro|BTTV_IPROTV
+mdefine_line|#define BTTV_IPROTV        0x1f
+DECL|macro|BTTV_INTEL_C_S_PCI
+mdefine_line|#define BTTV_INTEL_C_S_PCI 0x20
+DECL|macro|BTTV_TERRATVALUE
+mdefine_line|#define BTTV_TERRATVALUE   0x21
+DECL|macro|BTTV_WINFAST2000
+mdefine_line|#define BTTV_WINFAST2000   0x22
+DECL|macro|BTTV_CHRONOS_VS2
+mdefine_line|#define BTTV_CHRONOS_VS2   0x23
+DECL|macro|BTTV_TYPHOON_TVIEW
+mdefine_line|#define BTTV_TYPHOON_TVIEW 0x24
+DECL|macro|BTTV_PXELVWPLTVPRO
+mdefine_line|#define BTTV_PXELVWPLTVPRO 0x25
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO
@@ -747,42 +763,6 @@ DECL|macro|TDA9840_STADJ
 mdefine_line|#define TDA9840_STADJ      0x03
 DECL|macro|TDA9840_TEST
 mdefine_line|#define TDA9840_TEST       0x04
-DECL|macro|TDA9850_CON1
-mdefine_line|#define TDA9850_CON1       0x04
-DECL|macro|TDA9850_CON2
-mdefine_line|#define TDA9850_CON2       0x05
-DECL|macro|TDA9850_CON3
-mdefine_line|#define TDA9850_CON3       0x06
-DECL|macro|TDA9850_CON4
-mdefine_line|#define TDA9850_CON4       0x07
-DECL|macro|TDA9850_ALI1
-mdefine_line|#define TDA9850_ALI1       0x08
-DECL|macro|TDA9850_ALI2
-mdefine_line|#define TDA9850_ALI2       0x09
-DECL|macro|TDA9850_ALI3
-mdefine_line|#define TDA9850_ALI3       0x0a
-DECL|macro|TDA8425_VL
-mdefine_line|#define TDA8425_VL         0x00
-DECL|macro|TDA8425_VR
-mdefine_line|#define TDA8425_VR         0x01
-DECL|macro|TDA8425_BA
-mdefine_line|#define TDA8425_BA         0x02
-DECL|macro|TDA8425_TR
-mdefine_line|#define TDA8425_TR         0x03
-DECL|macro|TDA8425_S1
-mdefine_line|#define TDA8425_S1         0x08
-DECL|macro|TEA6300_VL
-mdefine_line|#define TEA6300_VL         0x00&t;&t;/* volume control left */
-DECL|macro|TEA6300_VR
-mdefine_line|#define TEA6300_VR         0x01&t;&t;/* volume control right */
-DECL|macro|TEA6300_BA
-mdefine_line|#define TEA6300_BA         0x02&t;&t;/* bass control */
-DECL|macro|TEA6300_TR
-mdefine_line|#define TEA6300_TR         0x03&t;&t;/* treble control */
-DECL|macro|TEA6300_FA
-mdefine_line|#define TEA6300_FA         0x04&t;&t;/* fader control */
-DECL|macro|TEA6300_SW
-mdefine_line|#define TEA6300_SW         0x05&t;&t;/* mute and source switch */
 DECL|macro|PT2254_L_CHANEL
 mdefine_line|#define PT2254_L_CHANEL 0x10
 DECL|macro|PT2254_R_CHANEL
@@ -798,4 +778,5 @@ mdefine_line|#define WINVIEW_PT2254_DATA 0x20
 DECL|macro|WINVIEW_PT2254_STROBE
 mdefine_line|#define WINVIEW_PT2254_STROBE 0x80
 macro_line|#endif
+multiline_comment|/*&n; * Local variables:&n; * c-basic-offset: 8&n; * End:&n; */
 eof

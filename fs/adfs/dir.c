@@ -1004,21 +1004,14 @@ id|dentry_operations
 id|adfs_dentry_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
+id|d_hash
+suffix:colon
 id|adfs_hash
 comma
+id|d_compare
+suffix:colon
 id|adfs_compare
 comma
-l_int|NULL
-comma
-multiline_comment|/* delete  = called by dput */
-l_int|NULL
-comma
-multiline_comment|/* release - called by d_free */
-l_int|NULL
-multiline_comment|/* iput    - called by dentry_iput */
 )brace
 suffix:semicolon
 DECL|function|adfs_lookup

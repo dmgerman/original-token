@@ -1077,19 +1077,14 @@ id|dentry_operations
 id|msdos_dentry_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* d_revalidate */
+id|d_hash
+suffix:colon
 id|msdos_hash
 comma
+id|d_compare
+suffix:colon
 id|msdos_cmp
 comma
-l_int|NULL
-comma
-multiline_comment|/* d_delete */
-l_int|NULL
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * AV. Wrappers for FAT sb operations. Is it wise?&n; */

@@ -576,6 +576,8 @@ DECL|macro|AMD_APSIZE
 mdefine_line|#define AMD_APSIZE      0xac
 DECL|macro|AMD_MODECNTL
 mdefine_line|#define AMD_MODECNTL    0xb0
+DECL|macro|AMD_MODECNTL2
+mdefine_line|#define AMD_MODECNTL2   0xb2
 DECL|macro|AMD_GARTENABLE
 mdefine_line|#define AMD_GARTENABLE  0x02&t;/* In mmio region (16-bit register) */
 DECL|macro|AMD_ATTBASE

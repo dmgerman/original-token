@@ -803,15 +803,10 @@ id|dentry_operations
 id|autofs_dentry_operations
 op_assign
 (brace
+id|d_revalidate
+suffix:colon
 id|autofs_revalidate
 comma
-multiline_comment|/* d_revalidate */
-l_int|NULL
-comma
-multiline_comment|/* d_hash */
-l_int|NULL
-comma
-multiline_comment|/* d_compare */
 )brace
 suffix:semicolon
 DECL|function|autofs_root_lookup

@@ -2480,23 +2480,18 @@ id|dentry_operations
 id|nfs_dentry_operations
 op_assign
 (brace
+id|d_revalidate
+suffix:colon
 id|nfs_lookup_revalidate
 comma
-multiline_comment|/* d_revalidate(struct dentry *, int) */
-l_int|NULL
-comma
-multiline_comment|/* d_hash */
-l_int|NULL
-comma
-multiline_comment|/* d_compare */
+id|d_delete
+suffix:colon
 id|nfs_dentry_delete
 comma
-multiline_comment|/* d_delete(struct dentry *) */
+id|d_release
+suffix:colon
 id|nfs_dentry_release
 comma
-multiline_comment|/* d_release(struct dentry *) */
-l_int|NULL
-multiline_comment|/* d_iput */
 )brace
 suffix:semicolon
 macro_line|#if 0 /* dead code */

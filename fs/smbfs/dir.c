@@ -684,17 +684,22 @@ id|dentry_operations
 id|smbfs_dentry_operations
 op_assign
 (brace
+id|d_revalidate
+suffix:colon
 id|smb_lookup_validate
 comma
-multiline_comment|/* d_revalidate(struct dentry *) */
+id|d_hash
+suffix:colon
 id|smb_hash_dentry
 comma
-multiline_comment|/* d_hash */
+id|d_compare
+suffix:colon
 id|smb_compare_dentry
 comma
-multiline_comment|/* d_compare */
+id|d_delete
+suffix:colon
 id|smb_delete_dentry
-multiline_comment|/* d_delete(struct dentry *) */
+comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This is the callback when the dcache has a lookup hit.&n; */

@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: sh-sci.h,v 1.5 2000-03-05 13:54:32+09 gniibe Exp $&n; *&n; *  linux/drivers/char/sh-sci.h&n; *&n; *  SuperH on-chip serial module support.  (SCI with no FIFO / with FIFO)&n; *  Copyright (C) 1999, 2000  Niibe Yutaka&n; *  Copyright (C) 2000  Greg Banks&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_SH_SCI_SERIAL)
 macro_line|#if defined(__sh3__)
 DECL|macro|SCSMR

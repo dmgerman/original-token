@@ -67,23 +67,22 @@ id|dentry_operations
 id|hfs_dentry_operations
 op_assign
 (brace
+id|d_revalidate
+suffix:colon
 id|hfs_revalidate_dentry
 comma
-multiline_comment|/* d_revalidate(struct dentry *) */
+id|d_hash
+suffix:colon
 id|hfs_hash_dentry
 comma
-multiline_comment|/* d_hash */
+id|d_compare
+suffix:colon
 id|hfs_compare_dentry
 comma
-multiline_comment|/* d_compare */
-l_int|NULL
-comma
-multiline_comment|/* d_delete(struct dentry *) */
-l_int|NULL
-comma
-multiline_comment|/* d_release(struct dentry *) */
+id|d_iput
+suffix:colon
 id|hfs_dentry_iput
-multiline_comment|/* d_iput(struct dentry *, struct inode *) */
+comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * hfs_buffer_get()&n; *&n; * Return a buffer for the &squot;block&squot;th block of the media.&n; * If (&squot;read&squot;==0) then the buffer is not read from disk.&n; */

@@ -181,6 +181,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|page-&gt;buffers
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|page
 op_minus
 id|mem_map

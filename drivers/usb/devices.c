@@ -362,6 +362,18 @@ comma
 id|desc-&gt;bEndpointAddress
 comma
 (paren
+id|desc-&gt;bmAttributes
+op_amp
+id|USB_ENDPOINT_XFERTYPE_MASK
+)paren
+op_eq
+id|USB_ENDPOINT_XFER_CONTROL
+ques
+c_cond
+l_char|&squot;B&squot;
+suffix:colon
+multiline_comment|/* bidirectional */
+(paren
 id|desc-&gt;bEndpointAddress
 op_amp
 id|USB_DIR_IN
@@ -378,7 +390,7 @@ id|EndpointType
 (braket
 id|desc-&gt;bmAttributes
 op_amp
-l_int|3
+id|USB_ENDPOINT_XFERTYPE_MASK
 )braket
 comma
 id|desc-&gt;wMaxPacketSize

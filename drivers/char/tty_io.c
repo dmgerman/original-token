@@ -5312,7 +5312,7 @@ id|pts_driver
 id|major
 )braket
 comma
-l_int|0
+id|DEVFS_FL_NO_PERSISTENCE
 comma
 id|pts_driver
 (braket
@@ -8475,10 +8475,6 @@ id|buf
 l_int|32
 )braket
 suffix:semicolon
-id|flags
-op_or_assign
-id|DEVFS_FL_DEFAULT
-suffix:semicolon
 id|tty.driver
 op_assign
 op_star
@@ -8519,10 +8515,6 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|flags
-op_or_assign
-id|DEVFS_FL_AUTO_OWNER
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -8565,24 +8557,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|driver-&gt;type
-op_eq
-id|TTY_DRIVER_TYPE_CONSOLE
-)paren
-(brace
-id|flags
-op_or_assign
-id|DEVFS_FL_AOPEN_NOTIFY
-suffix:semicolon
-id|flags
-op_and_assign
-op_complement
-id|DEVFS_FL_AUTO_OWNER
-suffix:semicolon
-)brace
 macro_line|#  ifdef CONFIG_UNIX98_PTYS
 r_if
 c_cond
@@ -8602,11 +8576,6 @@ id|UNIX98_NR_MAJORS
 )paren
 )paren
 (brace
-id|flags
-op_and_assign
-op_complement
-id|DEVFS_FL_AUTO_OWNER
-suffix:semicolon
 id|uid
 op_assign
 id|current-&gt;uid
@@ -8632,6 +8601,8 @@ comma
 l_int|0
 comma
 id|flags
+op_or
+id|DEVFS_FL_DEFAULT
 comma
 id|driver-&gt;major
 comma

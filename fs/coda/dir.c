@@ -288,17 +288,14 @@ id|dentry_operations
 id|coda_dentry_operations
 op_assign
 (brace
+id|d_revalidate
+suffix:colon
 id|coda_dentry_revalidate
 comma
-multiline_comment|/* revalidate */
-l_int|NULL
-comma
-multiline_comment|/* hash */
-l_int|NULL
-comma
-multiline_comment|/* compare */
+id|d_delete
+suffix:colon
 id|coda_dentry_delete
-multiline_comment|/* delete */
+comma
 )brace
 suffix:semicolon
 DECL|variable|coda_dir_inode_operations
@@ -2595,33 +2592,17 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* potemkin case: we are handed a directory inode */
-id|down
-c_func
-(paren
-op_amp
-id|cnp-&gt;c_ovp-&gt;i_sem
-)paren
-suffix:semicolon
 id|result
 op_assign
-id|open_file.f_op
-op_member_access_from_pointer
-id|readdir
+id|vfs_readdir
 c_func
 (paren
 op_amp
 id|open_file
 comma
-id|dirent
-comma
 id|filldir
-)paren
-suffix:semicolon
-id|up
-c_func
-(paren
-op_amp
-id|cnp-&gt;c_ovp-&gt;i_sem
+comma
+id|dirent
 )paren
 suffix:semicolon
 )brace

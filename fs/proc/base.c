@@ -2968,17 +2968,14 @@ id|dentry_operations
 id|pid_fd_dentry_operations
 op_assign
 (brace
+id|d_revalidate
+suffix:colon
 id|pid_fd_revalidate
 comma
-multiline_comment|/* revalidate */
-l_int|NULL
-comma
-multiline_comment|/* d_hash */
-l_int|NULL
-comma
-multiline_comment|/* d_compare */
+id|d_delete
+suffix:colon
 id|pid_delete_dentry
-multiline_comment|/* d_delete(struct dentry *) */
+comma
 )brace
 suffix:semicolon
 DECL|variable|pid_dentry_operations
@@ -2988,17 +2985,10 @@ id|dentry_operations
 id|pid_dentry_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
-l_int|NULL
-comma
-multiline_comment|/* d_hash */
-l_int|NULL
-comma
-multiline_comment|/* d_compare */
+id|d_delete
+suffix:colon
 id|pid_delete_dentry
-multiline_comment|/* d_delete(struct dentry *) */
+comma
 )brace
 suffix:semicolon
 DECL|variable|pid_base_dentry_operations
@@ -3008,17 +2998,14 @@ id|dentry_operations
 id|pid_base_dentry_operations
 op_assign
 (brace
+id|d_revalidate
+suffix:colon
 id|pid_base_revalidate
 comma
-multiline_comment|/* revalidate */
-l_int|NULL
-comma
-multiline_comment|/* d_hash */
-l_int|NULL
-comma
-multiline_comment|/* d_compare */
+id|d_delete
+suffix:colon
 id|pid_delete_dentry
-multiline_comment|/* d_delete(struct dentry *) */
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* Lookups */

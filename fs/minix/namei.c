@@ -375,18 +375,12 @@ id|dentry_operations
 id|minix_dentry_operations
 op_assign
 (brace
-l_int|0
-comma
-multiline_comment|/* revalidate */
 macro_line|#ifndef NO_TRUNCATE
+id|d_hash
+suffix:colon
 id|minix_hash
 comma
-macro_line|#else
-l_int|0
-comma
 macro_line|#endif
-l_int|0
-multiline_comment|/* compare */
 )brace
 suffix:semicolon
 DECL|function|minix_lookup

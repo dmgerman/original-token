@@ -6115,6 +6115,17 @@ comma
 l_int|0x80
 )paren
 suffix:semicolon
+multiline_comment|/* Set indexing mode */
+id|pci_write_config_byte
+c_func
+(paren
+id|agp_bridge.dev
+comma
+id|AMD_MODECNTL2
+comma
+l_int|0x02
+)paren
+suffix:semicolon
 multiline_comment|/* Write the enable register */
 id|enable_reg
 op_assign

@@ -293,52 +293,48 @@ id|isofs_dentry_ops
 op_assign
 (brace
 (brace
-l_int|NULL
-comma
-multiline_comment|/* d_revalidate */
+id|d_hash
+suffix:colon
 id|isofs_hash
 comma
+id|d_compare
+suffix:colon
 id|isofs_cmp
 comma
-l_int|NULL
-multiline_comment|/* d_delete */
 )brace
 comma
 (brace
-l_int|NULL
-comma
-multiline_comment|/* d_revalidate */
+id|d_hash
+suffix:colon
 id|isofs_hashi
 comma
+id|d_compare
+suffix:colon
 id|isofs_cmpi
 comma
-l_int|NULL
-multiline_comment|/* d_delete */
 )brace
 comma
 macro_line|#ifdef CONFIG_JOLIET
 (brace
-l_int|NULL
-comma
-multiline_comment|/* d_revalidate */
+id|d_hash
+suffix:colon
 id|isofs_hash_ms
 comma
+id|d_compare
+suffix:colon
 id|isofs_cmp_ms
 comma
-l_int|NULL
-multiline_comment|/* d_delete */
 )brace
 comma
 (brace
-l_int|NULL
-comma
-multiline_comment|/* d_revalidate */
+id|d_hash
+suffix:colon
 id|isofs_hashi_ms
 comma
+id|d_compare
+suffix:colon
 id|isofs_cmpi_ms
 comma
-l_int|NULL
-multiline_comment|/* d_delete */
 )brace
 macro_line|#endif
 )brace

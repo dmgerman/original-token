@@ -261,6 +261,13 @@ id|vgacon_uni_pagedir
 l_int|2
 )braket
 suffix:semicolon
+r_void
+id|clear_status_line
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* Description of the hardware situation */
 DECL|variable|vga_vram_base
 r_static
