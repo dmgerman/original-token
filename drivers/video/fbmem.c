@@ -3464,16 +3464,13 @@ id|proc_dir_entry
 op_star
 id|proc_fbmem
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|fbmem_init
 id|fbmem_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -3723,11 +3720,9 @@ id|fb_info-&gt;monspecs.dpms
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Command line options&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|video_setup
 r_void
+id|__init
 id|video_setup
 c_func
 (paren
@@ -3738,7 +3733,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int

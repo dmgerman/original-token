@@ -43,15 +43,6 @@ id|set_fs
 id|KERNEL_DS
 )paren
 suffix:semicolon
-id|MSDOS_I
-(paren
-id|filp-&gt;f_dentry-&gt;d_inode
-)paren
-op_member_access_from_pointer
-id|i_binary
-op_assign
-l_int|2
-suffix:semicolon
 id|ret
 op_assign
 id|fat_file_read
@@ -103,16 +94,6 @@ id|get_fs
 suffix:semicolon
 id|ssize_t
 id|ret
-suffix:semicolon
-multiline_comment|/* note: i_binary=2 is for CVF-FAT. We put it here, instead of&n;&t; * umsdos_file_write_kmem, since it is also wise not to compress&n;&t; * symlinks (in the unlikely event that they are &gt; 512 bytes and&n;&t; * can be compressed.&n;&t; * FIXME: should we set it when reading symlinks too?&n;&t; */
-id|MSDOS_I
-(paren
-id|filp-&gt;f_dentry-&gt;d_inode
-)paren
-op_member_access_from_pointer
-id|i_binary
-op_assign
-l_int|2
 suffix:semicolon
 id|set_fs
 (paren

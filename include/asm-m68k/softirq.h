@@ -173,6 +173,10 @@ id|local_bh_count
 id|NR_CPUS
 )braket
 suffix:semicolon
+DECL|macro|local_bh_disable
+mdefine_line|#define local_bh_disable()&t;(local_bh_count[smp_processor_id()]++)
+DECL|macro|local_bh_enable
+mdefine_line|#define local_bh_enable()&t;(local_bh_count[smp_processor_id()]--)
 DECL|function|start_bh_atomic
 r_extern
 r_inline

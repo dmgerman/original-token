@@ -7,6 +7,64 @@ DECL|macro|current_text_addr
 mdefine_line|#define current_text_addr() ({ __label__ _l; _l: &amp;&amp;_l;})
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/fpu.h&gt;
+macro_line|#include &lt;asm/ptrace.h&gt;
+DECL|function|rdusp
+r_extern
+r_inline
+r_int
+r_int
+id|rdusp
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|usp
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;move %/usp,%0&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|usp
+)paren
+)paren
+suffix:semicolon
+r_return
+id|usp
+suffix:semicolon
+)brace
+DECL|function|wrusp
+r_extern
+r_inline
+r_void
+id|wrusp
+c_func
+(paren
+r_int
+r_int
+id|usp
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;move %0,%/usp&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+id|usp
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * User space process size: 3.75GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0xF0000000UL)
@@ -96,8 +154,8 @@ multiline_comment|/* floating point state */
 suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x40000000, NULL, __pgprot(_PAGE_PRESENT|_PAGE_ACCESSED), VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL }
-DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;sizeof(init_stack) + (unsigned long) init_stack, 0, &bslash;&n;&t;PS_S, __KERNEL_DS, &bslash;&n;&t;{0, 0}, 0, {0,}, {0, 0, 0}, {0,}, &bslash;&n;}
+DECL|macro|INIT_THREAD
+mdefine_line|#define INIT_THREAD  { &bslash;&n;&t;sizeof(init_stack) + (unsigned long) init_stack, 0, &bslash;&n;&t;PS_S, __KERNEL_DS, &bslash;&n;&t;{0, 0}, 0, {0,}, {0, 0, 0}, {0,}, &bslash;&n;}
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
 DECL|function|start_thread
 r_static
@@ -143,6 +201,10 @@ id|usp
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Forward declaration, a strange C thing */
+r_struct
+id|task_struct
+suffix:semicolon
 multiline_comment|/* Free all resources held by a thread. */
 DECL|function|release_thread
 r_static
@@ -183,7 +245,7 @@ id|flags
 )paren
 suffix:semicolon
 DECL|macro|copy_segments
-mdefine_line|#define copy_segments(nr, tsk, mm)&t;do { } while (0)
+mdefine_line|#define copy_segments(tsk, mm)&t;&t;do { } while (0)
 DECL|macro|release_segments
 mdefine_line|#define release_segments(mm)&t;&t;do { } while (0)
 DECL|macro|forget_segments
@@ -281,6 +343,8 @@ r_return
 id|sw-&gt;retpc
 suffix:semicolon
 )brace
+DECL|macro|THREAD_SIZE
+mdefine_line|#define THREAD_SIZE (2*PAGE_SIZE)
 multiline_comment|/* Allocation and freeing of basic task resources. */
 DECL|macro|alloc_task_struct
 mdefine_line|#define alloc_task_struct() &bslash;&n;&t;((struct task_struct *) __get_free_pages(GFP_KERNEL,1))

@@ -3276,7 +3276,6 @@ op_assign
 id|mem
 suffix:semicolon
 )brace
-r_else
 id|memset
 c_func
 (paren

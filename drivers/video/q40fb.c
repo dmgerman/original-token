@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -14,7 +15,10 @@ macro_line|#include &lt;asm/q40_master.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;video/fbcon.h&gt;
 macro_line|#include &lt;video/fbcon-cfb16.h&gt;
+DECL|macro|FBIOSETSCROLLMODE
+mdefine_line|#define FBIOSETSCROLLMODE   0x4611
 DECL|macro|Q40_PHYS_SCREEN_ADDR
 mdefine_line|#define Q40_PHYS_SCREEN_ADDR 0xFE800000
 DECL|variable|q40_screen_addr
@@ -1016,7 +1020,7 @@ op_amp
 l_int|31
 )paren
 op_lshift
-l_int|5
+l_int|6
 )paren
 op_or
 (paren
@@ -1358,6 +1362,110 @@ op_star
 id|info
 )paren
 (brace
+macro_line|#if 0
+r_int
+r_int
+id|i
+suffix:semicolon
+r_struct
+id|display
+op_star
+id|display
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|con
+op_ge
+l_int|0
+)paren
+id|display
+op_assign
+op_amp
+id|fb_display
+(braket
+id|con
+)braket
+suffix:semicolon
+r_else
+id|display
+op_assign
+op_amp
+id|disp
+(braket
+l_int|0
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cmd
+op_eq
+id|FBIOSETSCROLLMODE
+)paren
+(brace
+id|i
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|i
+)paren
+(brace
+id|copy_from_user
+c_func
+(paren
+op_amp
+id|i
+comma
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+)paren
+suffix:semicolon
+id|display-&gt;scrollmode
+op_assign
+id|i
+suffix:semicolon
+)brace
+id|q40_updatescrollmode
+c_func
+(paren
+id|display
+)paren
+suffix:semicolon
+r_return
+id|i
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 op_minus
 id|EINVAL
@@ -1469,6 +1577,10 @@ id|display-&gt;line_length
 op_assign
 id|fix.line_length
 suffix:semicolon
+id|display-&gt;scrollmode
+op_assign
+id|SCROLL_YREDRAW
+suffix:semicolon
 macro_line|#ifdef FBCON_HAS_CFB16
 id|display-&gt;dispsw
 op_assign
@@ -1495,6 +1607,14 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|MACH_IS_Q40
+)paren
+r_return
+suffix:semicolon
 macro_line|#if 0
 id|q40_screen_addr
 op_assign

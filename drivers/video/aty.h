@@ -104,6 +104,8 @@ DECL|macro|MEM_VGA_WP_SEL
 mdefine_line|#define MEM_VGA_WP_SEL&t;&t;0x00B4&t;/* Dword offset 0_2D */
 DECL|macro|MEM_VGA_RP_SEL
 mdefine_line|#define MEM_VGA_RP_SEL&t;&t;0x00B8&t;/* Dword offset 0_2E */
+DECL|macro|I2C_CNTL_1
+mdefine_line|#define I2C_CNTL_1&t;&t;0x00BC&t;/* Dword offset 0_2F */
 DECL|macro|DAC_REGS
 mdefine_line|#define DAC_REGS&t;&t;0x00C0&t;/* Dword offset 0_30 */
 DECL|macro|DAC_W_INDEX

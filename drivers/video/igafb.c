@@ -2482,12 +2482,10 @@ id|info
 (brace
 multiline_comment|/* Not supported */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|iga_init
 r_static
 r_int
+id|__init
 id|iga_init
 c_func
 (paren
@@ -2495,7 +2493,6 @@ r_struct
 id|fb_info_iga
 op_star
 id|info
-)paren
 )paren
 (brace
 r_char
@@ -2808,16 +2805,13 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|igafb_init
 r_void
+id|__init
 id|igafb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -3424,11 +3418,9 @@ id|SRMMU_WRITE
 suffix:semicolon
 macro_line|#endif /* __sparc__ */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|igafb_setup
 r_void
+id|__init
 id|igafb_setup
 c_func
 (paren
@@ -3439,7 +3431,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_char

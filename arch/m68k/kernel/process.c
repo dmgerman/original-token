@@ -81,9 +81,7 @@ comma
 id|aligned
 c_func
 (paren
-l_int|2
-op_star
-id|PAGE_SIZE
+id|THREAD_SIZE
 )paren
 )paren
 )paren
@@ -92,52 +90,34 @@ op_assign
 id|task
 suffix:colon
 id|INIT_TASK
+c_func
+(paren
+id|init_task_union.task
+)paren
 )brace
 suffix:semicolon
 id|asmlinkage
 r_void
-id|ret_from_exception
+id|ret_from_fork
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * The idle loop on an m68k..&n; */
-DECL|function|sys_idle
-id|asmlinkage
-r_int
-id|sys_idle
+DECL|function|default_idle
+r_static
+r_void
+id|default_idle
 c_func
 (paren
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|current-&gt;pid
-op_ne
-l_int|0
-)paren
-r_return
-op_minus
-id|EPERM
-suffix:semicolon
-multiline_comment|/* endless idle loop with no priority at all */
-id|current-&gt;priority
-op_assign
-l_int|0
-suffix:semicolon
-id|current-&gt;counter
-op_assign
-op_minus
-l_int|100
-suffix:semicolon
-r_for
+r_while
 c_loop
 (paren
-suffix:semicolon
-suffix:semicolon
+l_int|1
 )paren
 (brace
 r_if
@@ -146,7 +126,7 @@ c_cond
 op_logical_neg
 id|current-&gt;need_resched
 )paren
-macro_line|#if defined(CONFIG_ATARI) &amp;&amp; !defined(CONFIG_AMIGA) &amp;&amp; !defined(CONFIG_MAC)
+macro_line|#ifdef MACH_ATARI_ONLY
 multiline_comment|/* block out HSYNC on the atari (falcon) */
 id|__asm__
 c_func
@@ -158,7 +138,7 @@ suffix:colon
 l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
-macro_line|#else /* portable version */
+macro_line|#else
 id|__asm__
 c_func
 (paren
@@ -169,7 +149,7 @@ suffix:colon
 l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* machine compilation types */ 
+macro_line|#endif
 id|schedule
 c_func
 (paren
@@ -181,6 +161,48 @@ c_func
 )paren
 suffix:semicolon
 )brace
+)brace
+DECL|variable|idle
+r_void
+(paren
+op_star
+id|idle
+)paren
+(paren
+r_void
+)paren
+op_assign
+id|default_idle
+suffix:semicolon
+multiline_comment|/*&n; * The idle thread. There&squot;s no useful work to be&n; * done, so just try to conserve power and have a&n; * low exit latency (ie sit in a loop waiting for&n; * somebody to say that they&squot;d like to reschedule)&n; */
+DECL|function|cpu_idle
+r_void
+id|cpu_idle
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* endless idle loop with no priority at all */
+id|init_idle
+c_func
+(paren
+)paren
+suffix:semicolon
+id|current-&gt;priority
+op_assign
+l_int|0
+suffix:semicolon
+id|current-&gt;counter
+op_assign
+op_minus
+l_int|100
+suffix:semicolon
+id|idle
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|machine_restart
 r_void
@@ -481,7 +503,7 @@ c_func
 id|USER_DS
 )paren
 suffix:semicolon
-id|current-&gt;tss.fs
+id|current-&gt;thread.fs
 op_assign
 id|__USER_DS
 suffix:semicolon
@@ -663,9 +685,7 @@ id|retp
 suffix:semicolon
 id|stack_offset
 op_assign
-l_int|2
-op_star
-id|PAGE_SIZE
+id|THREAD_SIZE
 op_minus
 r_sizeof
 (paren
@@ -749,13 +769,13 @@ op_assign
 r_int
 r_int
 )paren
-id|ret_from_exception
+id|ret_from_fork
 suffix:semicolon
-id|p-&gt;tss.usp
+id|p-&gt;thread.usp
 op_assign
 id|usp
 suffix:semicolon
-id|p-&gt;tss.ksp
+id|p-&gt;thread.ksp
 op_assign
 (paren
 r_int
@@ -764,7 +784,7 @@ r_int
 id|childstack
 suffix:semicolon
 multiline_comment|/*&n;&t; * Must save the current SFC/DFC value, NOT the value when&n;&t; * the parent was last descheduled - RGH  10-08-96&n;&t; */
-id|p-&gt;tss.fs
+id|p-&gt;thread.fs
 op_assign
 id|get_fs
 c_func
@@ -782,7 +802,7 @@ suffix:colon
 suffix:colon
 l_string|&quot;m&quot;
 (paren
-id|p-&gt;tss.fpstate
+id|p-&gt;thread.fpstate
 (braket
 l_int|0
 )braket
@@ -798,12 +818,12 @@ op_logical_neg
 id|CPU_IS_060
 ques
 c_cond
-id|p-&gt;tss.fpstate
+id|p-&gt;thread.fpstate
 (braket
 l_int|0
 )braket
 suffix:colon
-id|p-&gt;tss.fpstate
+id|p-&gt;thread.fpstate
 (braket
 l_int|2
 )braket
@@ -817,7 +837,7 @@ suffix:colon
 suffix:colon
 l_string|&quot;m&quot;
 (paren
-id|p-&gt;tss.fp
+id|p-&gt;thread.fp
 (braket
 l_int|0
 )braket
@@ -825,7 +845,7 @@ l_int|0
 comma
 l_string|&quot;m&quot;
 (paren
-id|p-&gt;tss.fpcntl
+id|p-&gt;thread.fpcntl
 (braket
 l_int|0
 )braket
@@ -843,7 +863,7 @@ suffix:colon
 suffix:colon
 l_string|&quot;m&quot;
 (paren
-id|p-&gt;tss.fpstate
+id|p-&gt;thread.fpstate
 (braket
 l_int|0
 )braket

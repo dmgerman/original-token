@@ -1621,7 +1621,7 @@ id|slmprint_cmd
 suffix:semicolon
 id|paddr
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|SLMBuffer
@@ -1632,7 +1632,7 @@ c_func
 (paren
 id|paddr
 comma
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|BufferP
@@ -1864,7 +1864,7 @@ suffix:colon
 (paren
 id|addr
 OL
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|BufferP

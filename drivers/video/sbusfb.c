@@ -4607,11 +4607,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Setup: parse used options&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sbusfb_setup
 r_void
+id|__init
 id|sbusfb_setup
 c_func
 (paren
@@ -4622,7 +4620,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_char
@@ -5972,12 +5969,10 @@ id|prom_palette
 r_int
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sbusfb_init_fb
 r_static
 r_void
+id|__init
 id|sbusfb_init_fb
 c_func
 (paren
@@ -5994,7 +5989,6 @@ r_struct
 id|linux_sbus_device
 op_star
 id|sbdp
-)paren
 )paren
 (brace
 r_struct
@@ -6981,16 +6975,13 @@ r_return
 id|FBTYPE_NOTYPE
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sbusfb_init
 r_void
+id|__init
 id|sbusfb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

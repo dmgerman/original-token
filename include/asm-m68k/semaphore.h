@@ -2,6 +2,7 @@ macro_line|#ifndef _M68K_SEMAPHORE_H
 DECL|macro|_M68K_SEMAPHORE_H
 mdefine_line|#define _M68K_SEMAPHORE_H
 macro_line|#include &lt;linux/linkage.h&gt;
+macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
@@ -22,12 +23,105 @@ DECL|member|wait
 id|wait_queue_head_t
 id|wait
 suffix:semicolon
+macro_line|#if WAITQUEUE_DEBUG
+DECL|member|__magic
+r_int
+id|__magic
+suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
-DECL|macro|MUTEX
-mdefine_line|#define MUTEX ((struct semaphore) { ATOMIC_INIT(1), ATOMIC_INIT(0), NULL })
-DECL|macro|MUTEX_LOCKED
-mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { ATOMIC_INIT(0), ATOMIC_INIT(0), NULL })
+macro_line|#if WAITQUEUE_DEBUG
+DECL|macro|__SEM_DEBUG_INIT
+macro_line|# define __SEM_DEBUG_INIT(name) &bslash;&n;&t;&t;, (long)&amp;(name).__magic
+macro_line|#else
+DECL|macro|__SEM_DEBUG_INIT
+macro_line|# define __SEM_DEBUG_INIT(name)
+macro_line|#endif
+DECL|macro|__SEMAPHORE_INITIALIZER
+mdefine_line|#define __SEMAPHORE_INITIALIZER(name,count) &bslash;&n;{ ATOMIC_INIT(count), ATOMIC_INIT(0), __WAIT_QUEUE_HEAD_INITIALIZER((name).wait) &bslash;&n;&t;__SEM_DEBUG_INIT(name) }
+DECL|macro|__MUTEX_INITIALIZER
+mdefine_line|#define __MUTEX_INITIALIZER(name) &bslash;&n;&t;__SEMAPHORE_INITIALIZER(name,1)
+DECL|macro|__DECLARE_SEMAPHORE_GENERIC
+mdefine_line|#define __DECLARE_SEMAPHORE_GENERIC(name,count) &bslash;&n;&t;struct semaphore name = __SEMAPHORE_INITIALIZER(name,count)
+DECL|macro|DECLARE_MUTEX
+mdefine_line|#define DECLARE_MUTEX(name) __DECLARE_SEMAPHORE_GENERIC(name,1)
+DECL|macro|DECLARE_MUTEX_LOCKED
+mdefine_line|#define DECLARE_MUTEX_LOCKED(name) __DECLARE_SEMAPHORE_GENERIC(name,0)
+DECL|function|sema_init
+r_extern
+r_inline
+r_void
+id|sema_init
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+comma
+r_int
+id|val
+)paren
+(brace
+op_star
+id|sem
+op_assign
+(paren
+r_struct
+id|semaphore
+)paren
+id|__SEMAPHORE_INITIALIZER
+c_func
+(paren
+op_star
+id|sem
+comma
+id|val
+)paren
+suffix:semicolon
+)brace
+DECL|function|init_MUTEX
+r_static
+r_inline
+r_void
+id|init_MUTEX
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+id|sema_init
+c_func
+(paren
+id|sem
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
+DECL|function|init_MUTEX_LOCKED
+r_static
+r_inline
+r_void
+id|init_MUTEX_LOCKED
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+id|sema_init
+c_func
+(paren
+id|sem
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 id|asmlinkage
 r_void
 id|__down_failed
@@ -108,8 +202,6 @@ op_star
 id|sem
 )paren
 suffix:semicolon
-DECL|macro|sema_init
-mdefine_line|#define sema_init(sem, val)&t;atomic_set(&amp;((sem)-&gt;count), val)
 multiline_comment|/*&n; * This is ugly, but we want the default case to fall through.&n; * &quot;down_failed&quot; is a special asm handler that calls the C&n; * routine that actually waits. See arch/m68k/lib/semaphore.S&n; */
 DECL|function|down
 r_extern
@@ -136,6 +228,14 @@ l_string|&quot;%a1&quot;
 op_assign
 id|sem
 suffix:semicolon
+macro_line|#if WAITQUEUE_DEBUG
+id|CHECK_MAGIC
+c_func
+(paren
+id|sem-&gt;__magic
+)paren
+suffix:semicolon
+macro_line|#endif
 id|__asm__
 id|__volatile__
 c_func
@@ -194,6 +294,14 @@ id|__asm__
 l_string|&quot;%d0&quot;
 )paren
 suffix:semicolon
+macro_line|#if WAITQUEUE_DEBUG
+id|CHECK_MAGIC
+c_func
+(paren
+id|sem-&gt;__magic
+)paren
+suffix:semicolon
+macro_line|#endif
 id|__asm__
 id|__volatile__
 c_func
@@ -261,6 +369,14 @@ id|__asm__
 l_string|&quot;%d0&quot;
 )paren
 suffix:semicolon
+macro_line|#if WAITQUEUE_DEBUG
+id|CHECK_MAGIC
+c_func
+(paren
+id|sem-&gt;__magic
+)paren
+suffix:semicolon
+macro_line|#endif
 id|__asm__
 id|__volatile__
 c_func
@@ -321,6 +437,14 @@ l_string|&quot;%a1&quot;
 op_assign
 id|sem
 suffix:semicolon
+macro_line|#if WAITQUEUE_DEBUG
+id|CHECK_MAGIC
+c_func
+(paren
+id|sem-&gt;__magic
+)paren
+suffix:semicolon
+macro_line|#endif
 id|__asm__
 id|__volatile__
 c_func

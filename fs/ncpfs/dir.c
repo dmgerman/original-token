@@ -1458,6 +1458,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|dentry-&gt;d_inode
+op_logical_or
+op_logical_neg
 id|dir
 )paren
 r_return

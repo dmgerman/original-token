@@ -1,10 +1,7 @@
-multiline_comment|/*&n;   The compile-time configurable defaults for the Linux SCSI tape driver.&n;&n;   Copyright 1995 Kai Makisara.&n;&n;   Last modified: Wed Sep  2 21:24:07 1998 by root@home&n;*/
+multiline_comment|/*&n;   The compile-time configurable defaults for the Linux SCSI tape driver.&n;&n;   Copyright 1995-1999 Kai Makisara.&n;&n;   Last modified: Sat Aug  7 13:42:21 1999 by makisara@kai.makisara.local&n;*/
 macro_line|#ifndef _ST_OPTIONS_H
 DECL|macro|_ST_OPTIONS_H
 mdefine_line|#define _ST_OPTIONS_H
-multiline_comment|/* The driver allocates the tape buffers when needed if ST_RUNTIME_BUFFERS&n;   is nonzero. Otherwise a number of buffers are allocated at initialization.&n;   The drawback of runtime allocation is that allocation may fail. In any&n;   case the driver tries to allocate a new tape buffer when none is free. */
-DECL|macro|ST_RUNTIME_BUFFERS
-mdefine_line|#define ST_RUNTIME_BUFFERS 0
 multiline_comment|/* The minimum limit for the number of SCSI tape devices is determined by&n;   ST_MAX_TAPES. If the number of tape devices and the &quot;slack&quot; defined by&n;   ST_EXTRA_DEVS exceeds ST_MAX_TAPES, the large number is used. */
 DECL|macro|ST_MAX_TAPES
 mdefine_line|#define ST_MAX_TAPES 4
@@ -26,7 +23,7 @@ mdefine_line|#define ST_BUFFER_BLOCKS 32
 multiline_comment|/* The number of kilobytes of data in the buffer that triggers an&n;   asynchronous write in fixed block mode. See also ST_ASYNC_WRITES&n;   below. */
 DECL|macro|ST_WRITE_THRESHOLD_BLOCKS
 mdefine_line|#define ST_WRITE_THRESHOLD_BLOCKS 30
-multiline_comment|/* The maximum number of tape buffers the driver allocates. The number&n;   is also constrained by the number of drives detected. Determines the&n;   maximum number of concurrently active tape drives. */
+multiline_comment|/* The maximum number of tape buffers the driver tries to allocate at &n;   driver initialisation. The number is also constrained by the number&n;   of drives detected. If more buffers are needed, they are allocated&n;   at run time and freed after use. */
 DECL|macro|ST_MAX_BUFFERS
 mdefine_line|#define ST_MAX_BUFFERS (2 + ST_EXTRA_DEVS)
 multiline_comment|/* Maximum number of scatter/gather segments */

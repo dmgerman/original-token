@@ -236,20 +236,6 @@ c_func
 id|kernel_thread
 )paren
 suffix:semicolon
-DECL|variable|register_serial
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|register_serial
-)paren
-suffix:semicolon
-DECL|variable|unregister_serial
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|unregister_serial
-)paren
-suffix:semicolon
 multiline_comment|/* Networking helper routines. */
 DECL|variable|csum_partial_copy
 id|EXPORT_SYMBOL

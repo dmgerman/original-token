@@ -1468,7 +1468,7 @@ r_int
 r_int
 id|buf
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|skb-&gt;data

@@ -2656,12 +2656,10 @@ l_int|0x00
 )brace
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|chips_hw_init
 r_static
 r_void
+id|__init
 id|chips_hw_init
 c_func
 (paren
@@ -2669,7 +2667,6 @@ r_struct
 id|fb_info_chips
 op_star
 id|p
-)paren
 )paren
 (brace
 r_int
@@ -2903,12 +2900,10 @@ id|data
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_chips
 r_static
 r_void
+id|__init
 id|init_chips
 c_func
 (paren
@@ -2916,7 +2911,6 @@ r_struct
 id|fb_info_chips
 op_star
 id|p
-)paren
 )paren
 (brace
 r_int
@@ -3337,16 +3331,13 @@ op_assign
 id|p
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|chips_init
 r_void
+id|__init
 id|chips_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifndef CONFIG_FB_OF
@@ -3378,11 +3369,9 @@ id|dp
 suffix:semicolon
 macro_line|#endif /* CONFIG_FB_OF */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|chips_of_init
 r_void
+id|__init
 id|chips_of_init
 c_func
 (paren
@@ -3390,7 +3379,6 @@ r_struct
 id|device_node
 op_star
 id|dp
-)paren
 )paren
 (brace
 r_struct

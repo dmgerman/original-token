@@ -5107,6 +5107,7 @@ id|SCpnt-&gt;request.rq_status
 op_assign
 id|RQ_SCSI_BUSY
 suffix:semicolon
+multiline_comment|/* scsi_do_cmd sets the command length */
 id|SCpnt-&gt;cmd_len
 op_assign
 l_int|0

@@ -2249,7 +2249,7 @@ suffix:semicolon
 id|handle_scancode
 c_func
 (paren
-id|scancode
+id|keycode
 comma
 op_logical_neg
 id|break_flag
@@ -2632,22 +2632,5 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-)brace
-multiline_comment|/* for &quot;kbd-reset&quot; cmdline param */
-DECL|function|amiga_kbd_reset_setup
-r_void
-id|__init
-id|amiga_kbd_reset_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-(brace
 )brace
 eof

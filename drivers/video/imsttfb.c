@@ -5442,19 +5442,16 @@ id|c-&gt;timer
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|imstt_cursor_init
 id|imstt_cursor_init
 (paren
 r_struct
 id|fb_info_imstt
 op_star
 id|p
-)paren
 )paren
 (brace
 r_struct
@@ -9938,12 +9935,10 @@ id|ctrl
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|init_imstt
 id|init_imstt
 c_func
 (paren
@@ -9951,7 +9946,6 @@ r_struct
 id|fb_info_imstt
 op_star
 id|p
-)paren
 )paren
 (brace
 id|__u32
@@ -10812,11 +10806,9 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_FB_COMPAT_XPMAC */
 )brace
 macro_line|#if defined(CONFIG_FB_OF) &amp;&amp; !defined(MODULE)
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|imsttfb_of_init
 id|imsttfb_of_init
 c_func
 (paren
@@ -10824,7 +10816,6 @@ r_struct
 id|device_node
 op_star
 id|dp
-)paren
 )paren
 (brace
 r_struct
@@ -11117,16 +11108,13 @@ id|p
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|imsttfb_init
 id|imsttfb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#if defined(CONFIG_FB_OF) &amp;&amp; !defined(MODULE)
@@ -11411,11 +11399,9 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_PCI */
 )brace
 macro_line|#ifndef MODULE
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|imsttfb_setup
 id|imsttfb_setup
 c_func
 (paren
@@ -11426,7 +11412,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_char

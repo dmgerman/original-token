@@ -225,7 +225,7 @@ mdefine_line|#define __NR_iopl&t;&t;/* 110 */ not supported
 DECL|macro|__NR_vhangup
 mdefine_line|#define __NR_vhangup&t;&t;111
 DECL|macro|__NR_idle
-mdefine_line|#define __NR_idle&t;&t;112
+mdefine_line|#define __NR_idle&t;&t;/* 112 */ Obsolete
 DECL|macro|__NR_vm86
 mdefine_line|#define __NR_vm86&t;&t;/* 113 */ not supported
 DECL|macro|__NR_wait4
@@ -399,15 +399,6 @@ macro_line|#ifdef __KERNEL_SYSCALLS__
 multiline_comment|/*&n; * we need this inline - forking from kernel space will result&n; * in NO COPY ON WRITE (!!!), until an execve is executed. This&n; * is no problem, but for the stack. This is handled by not letting&n; * main() use the stack at all after fork(). Thus, no function&n; * calls - which means inline code for fork too, as otherwise we&n; * would use the stack upon exit from &squot;fork()&squot;.&n; *&n; * Actually only pause and fork are needed inline, so that there&n; * won&squot;t be any messing with the stack from main(), but we define&n; * some others too.&n; */
 DECL|macro|__NR__exit
 mdefine_line|#define __NR__exit __NR_exit
-r_static
-r_inline
-id|_syscall0
-c_func
-(paren
-r_int
-comma
-id|idle
-)paren
 r_static
 r_inline
 id|_syscall0

@@ -3919,11 +3919,9 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|creatorfb_init
 r_char
+id|__init
 op_star
 id|creatorfb_init
 c_func
@@ -3932,7 +3930,6 @@ r_struct
 id|fb_info_sbusfb
 op_star
 id|fb
-)paren
 )paren
 (brace
 r_struct

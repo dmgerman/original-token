@@ -1114,4 +1114,13 @@ c_func
 id|device_is_compatible
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_VT
+DECL|variable|screen_info
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|screen_info
+)paren
+suffix:semicolon
+macro_line|#endif
 eof

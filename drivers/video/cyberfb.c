@@ -39,7 +39,11 @@ macro_line|#endif
 DECL|macro|arraysize
 mdefine_line|#define arraysize(x)    (sizeof(x)/sizeof(*(x)))
 DECL|macro|wb_64
-mdefine_line|#define wb_64(reg,dat) (*((unsigned char volatile *)CyberRegs + reg) = dat)
+mdefine_line|#define wb_64(regs,reg,dat) (*(((volatile unsigned char *)regs) + reg) = dat)
+DECL|macro|rb_64
+mdefine_line|#define rb_64(regs, reg) (*(((volatile unsigned char *)regs) + reg))
+DECL|macro|ww_64
+mdefine_line|#define ww_64(regs,reg,dat) (*((volatile unsigned short *)(regs + reg) = dat)
 DECL|struct|cyberfb_par
 r_struct
 id|cyberfb_par
@@ -99,155 +103,7 @@ r_struct
 id|fb_info
 id|fb_info
 suffix:semicolon
-multiline_comment|/*&n;*    Switch for Chipset Independency&n;*/
-DECL|struct|fb_hwswitch
-r_static
-r_struct
-id|fb_hwswitch
-(brace
-multiline_comment|/* Initialisation */
-DECL|member|init
-r_int
-(paren
-op_star
-id|init
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-multiline_comment|/* Display Control */
-DECL|member|encode_fix
-r_int
-(paren
-op_star
-id|encode_fix
-)paren
-(paren
-r_struct
-id|fb_fix_screeninfo
-op_star
-id|fix
-comma
-r_struct
-id|cyberfb_par
-op_star
-id|par
-)paren
-suffix:semicolon
-DECL|member|decode_var
-r_int
-(paren
-op_star
-id|decode_var
-)paren
-(paren
-r_struct
-id|fb_var_screeninfo
-op_star
-id|var
-comma
-r_struct
-id|cyberfb_par
-op_star
-id|par
-)paren
-suffix:semicolon
-DECL|member|encode_var
-r_int
-(paren
-op_star
-id|encode_var
-)paren
-(paren
-r_struct
-id|fb_var_screeninfo
-op_star
-id|var
-comma
-r_struct
-id|cyberfb_par
-op_star
-id|par
-)paren
-suffix:semicolon
-DECL|member|getcolreg
-r_int
-(paren
-op_star
-id|getcolreg
-)paren
-(paren
-id|u_int
-id|regno
-comma
-id|u_int
-op_star
-id|red
-comma
-id|u_int
-op_star
-id|green
-comma
-id|u_int
-op_star
-id|blue
-comma
-id|u_int
-op_star
-id|transp
-comma
-r_struct
-id|fb_info
-op_star
-id|info
-)paren
-suffix:semicolon
-DECL|member|setcolreg
-r_int
-(paren
-op_star
-id|setcolreg
-)paren
-(paren
-id|u_int
-id|regno
-comma
-id|u_int
-id|red
-comma
-id|u_int
-id|green
-comma
-id|u_int
-id|blue
-comma
-id|u_int
-id|transp
-comma
-r_struct
-id|fb_info
-op_star
-id|info
-)paren
-suffix:semicolon
-DECL|member|blank
-r_void
-(paren
-op_star
-id|blank
-)paren
-(paren
-r_int
-id|blank
-)paren
-suffix:semicolon
-DECL|variable|fbhw
-)brace
-op_star
-id|fbhw
-suffix:semicolon
-multiline_comment|/*&n;*    Frame Buffer Name&n;*/
+multiline_comment|/*&n; *    Frame Buffer Name&n; */
 DECL|variable|cyberfb_name
 r_static
 r_char
@@ -258,7 +114,7 @@ l_int|16
 op_assign
 l_string|&quot;Cybervision&quot;
 suffix:semicolon
-multiline_comment|/*&n;*    Cybervision Graphics Board&n;*/
+multiline_comment|/*&n; *    CyberVision Graphics Board&n; */
 DECL|variable|Cyber_colour_table
 r_static
 r_int
@@ -271,21 +127,32 @@ l_int|256
 l_int|3
 )braket
 suffix:semicolon
-DECL|variable|CyberMem
-r_static
-r_int
-r_int
-id|CyberMem
-suffix:semicolon
 DECL|variable|CyberSize
 r_static
 r_int
 r_int
 id|CyberSize
 suffix:semicolon
+DECL|variable|CyberBase
+r_static
+r_volatile
+r_int
+r_char
+op_star
+id|CyberBase
+suffix:semicolon
+DECL|variable|CyberMem
+r_static
+r_volatile
+r_int
+r_char
+op_star
+id|CyberMem
+suffix:semicolon
 DECL|variable|CyberRegs
 r_static
 r_volatile
+r_int
 r_char
 op_star
 id|CyberRegs
@@ -302,67 +169,23 @@ r_int
 r_int
 id|CyberRegs_phys
 suffix:semicolon
-multiline_comment|/* From cvision.c  for cvision_core.c */
-DECL|variable|cv64_mem
-r_static
-r_int
-r_int
-id|cv64_mem
-suffix:semicolon
-DECL|variable|cv64_fbmem
-r_static
-r_int
-r_int
-id|cv64_fbmem
-suffix:semicolon
-DECL|variable|cv64_regs
-r_static
-r_volatile
-r_char
-op_star
-id|cv64_regs
-suffix:semicolon
-DECL|variable|cv64_size
-r_static
-r_int
-r_int
-id|cv64_size
-suffix:semicolon
-macro_line|#if 0
-r_static
-r_int
-id|cvision_custom_mode
-op_assign
-l_int|0
-suffix:semicolon
-r_static
-r_int
-id|hbs
-comma
-id|hbe
-comma
-id|hss
-comma
-id|hse
-comma
-id|ht
-comma
-id|vbs
-comma
-id|vbe
-comma
-id|vss
-comma
-id|vse
-comma
-id|vt
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/*&n;*    Predefined Video Modes&n;*/
-DECL|variable|__initdata
+multiline_comment|/*&n; *    Predefined Video Modes&n; */
 r_static
 r_struct
-id|fb_videomode
+(brace
+DECL|member|name
+r_const
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|var
+r_struct
+id|fb_var_screeninfo
+id|var
+suffix:semicolon
+DECL|variable|__initdata
+)brace
 id|cyberfb_predefined
 (braket
 )braket
@@ -1077,7 +900,7 @@ id|Cyberfb_inverse
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;*    Some default modes&n;*/
+multiline_comment|/*&n; *    Some default modes&n; */
 DECL|macro|CYBER8_DEFMODE
 mdefine_line|#define CYBER8_DEFMODE     (0)
 DECL|macro|CYBER16_DEFMODE
@@ -1088,7 +911,15 @@ r_struct
 id|fb_var_screeninfo
 id|cyberfb_default
 suffix:semicolon
-multiline_comment|/*&n;*    Interface used by the world&n;*/
+DECL|variable|__initdata
+r_static
+r_int
+id|cyberfb_usermode
+id|__initdata
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n; *    Interface used by the world&n; */
 r_void
 id|cyberfb_setup
 c_func
@@ -1280,7 +1111,7 @@ op_star
 id|info
 )paren
 suffix:semicolon
-multiline_comment|/*&n;*    Interface to the low level console driver&n;*/
+multiline_comment|/*&n; *    Interface to the low level console driver&n; */
 r_void
 id|cyberfb_init
 c_func
@@ -1330,7 +1161,7 @@ op_star
 id|info
 )paren
 suffix:semicolon
-multiline_comment|/*&n;*    Text console acceleration&n;*/
+multiline_comment|/*&n; *    Text console acceleration&n; */
 macro_line|#ifdef FBCON_HAS_CFB8
 DECL|variable|fbcon_cyber8
 r_static
@@ -1339,7 +1170,7 @@ id|display_switch
 id|fbcon_cyber8
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;*    Accelerated Functions used by the low level console driver&n;*/
+multiline_comment|/*&n; *    Accelerated Functions used by the low level console driver&n; */
 r_static
 r_void
 id|Cyber_WaitQueue
@@ -1408,6 +1239,7 @@ id|u_short
 id|color
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_static
 r_void
 id|Cyber_MoveCursor
@@ -1420,7 +1252,8 @@ id|u_short
 id|y
 )paren
 suffix:semicolon
-multiline_comment|/*&n;*   Hardware Specific Routines&n;*/
+macro_line|#endif
+multiline_comment|/*&n; *   Hardware Specific Routines&n; */
 r_static
 r_int
 id|Cyber_init
@@ -1533,16 +1366,7 @@ op_star
 id|info
 )paren
 suffix:semicolon
-r_static
-r_void
-id|Cyber_blank
-c_func
-(paren
-r_int
-id|blank
-)paren
-suffix:semicolon
-multiline_comment|/*&n;*    Internal routines&n;*/
+multiline_comment|/*&n; *    Internal routines&n; */
 r_static
 r_void
 id|cyberfb_get_par
@@ -1634,7 +1458,9 @@ r_int
 id|cv_has_4mb
 (paren
 r_volatile
-id|caddr_t
+r_int
+r_char
+op_star
 )paren
 suffix:semicolon
 r_static
@@ -1654,7 +1480,7 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* -------------------- Hardware specific routines ------------------------- */
-multiline_comment|/*&n;*    Initialization&n;*&n;*    Set the default video mode for this chipset. If a video mode was&n;*    specified on the command line, it will override the default mode.&n;*/
+multiline_comment|/*&n; *    Initialization&n; *&n; *    Set the default video mode for this chipset. If a video mode was&n; *    specified on the command line, it will override the default mode.&n; */
 DECL|function|Cyber_init
 r_static
 r_int
@@ -1664,13 +1490,22 @@ c_func
 r_void
 )paren
 (brace
+r_volatile
 r_int
-id|i
+r_char
+op_star
+id|regs
+op_assign
+id|CyberRegs
 suffix:semicolon
 r_volatile
-id|u_long
+r_int
+r_int
 op_star
 id|CursorBase
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 id|DPRINTK
 c_func
@@ -1727,6 +1562,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Initialize the board and determine fbmem size */
 id|cv64_board_init
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1756,11 +1592,11 @@ id|memset
 r_char
 op_star
 )paren
-id|cv64_fbmem
+id|CyberMem
 comma
 l_int|0
 comma
-id|cv64_size
+id|CyberSize
 )paren
 suffix:semicolon
 multiline_comment|/* Disable hardware cursor */
@@ -1773,6 +1609,8 @@ suffix:semicolon
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 id|S3_CRTC_ADR
 comma
 id|S3_REG_LOCK2
@@ -1781,6 +1619,8 @@ suffix:semicolon
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 id|S3_CRTC_DATA
 comma
 l_int|0xa0
@@ -1789,6 +1629,8 @@ suffix:semicolon
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 id|S3_CRTC_ADR
 comma
 id|S3_HGC_MODE
@@ -1797,6 +1639,8 @@ suffix:semicolon
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 id|S3_CRTC_DATA
 comma
 l_int|0x00
@@ -1805,6 +1649,8 @@ suffix:semicolon
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 id|S3_CRTC_ADR
 comma
 id|S3_HWGC_DX
@@ -1813,6 +1659,8 @@ suffix:semicolon
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 id|S3_CRTC_DATA
 comma
 l_int|0x00
@@ -1821,6 +1669,8 @@ suffix:semicolon
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 id|S3_CRTC_ADR
 comma
 id|S3_HWGC_DY
@@ -1829,14 +1679,12 @@ suffix:semicolon
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 id|S3_CRTC_DATA
 comma
 l_int|0x00
 )paren
-suffix:semicolon
-id|CyberSize
-op_assign
-id|cv64_size
 suffix:semicolon
 multiline_comment|/* Initialize hardware cursor */
 id|DPRINTK
@@ -2061,7 +1909,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;*    This function should fill in the `fix&squot; structure based on the&n;*    values in the `par&squot; structure.&n;*/
+multiline_comment|/*&n; *    This function should fill in the `fix&squot; structure based on the&n; *    values in the `par&squot; structure.&n; */
 DECL|function|Cyber_encode_fix
 r_static
 r_int
@@ -2493,7 +2341,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;*    Set a single color register. Return != 0 for invalid regno.&n;*/
+multiline_comment|/*&n; *    Set a single color register. Return != 0 for invalid regno.&n; */
 DECL|function|Cyber_setcolreg
 r_static
 r_int
@@ -2521,6 +2369,14 @@ op_star
 id|info
 )paren
 (brace
+r_volatile
+r_int
+r_char
+op_star
+id|regs
+op_assign
+id|CyberRegs
+suffix:semicolon
 multiline_comment|/*DPRINTK(&quot;ENTER&bslash;n&quot;);*/
 r_if
 c_cond
@@ -2545,6 +2401,8 @@ suffix:semicolon
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 l_int|0x3c8
 comma
 (paren
@@ -2599,6 +2457,8 @@ suffix:semicolon
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 l_int|0x3c9
 comma
 id|red
@@ -2607,6 +2467,8 @@ suffix:semicolon
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 l_int|0x3c9
 comma
 id|green
@@ -2615,6 +2477,8 @@ suffix:semicolon
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 l_int|0x3c9
 comma
 id|blue
@@ -2790,15 +2654,28 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;*    (Un)Blank the screen&n;*    blank: 1 = zero fb cmap&n;*           0 = restore fb cmap from local cmap&n;*/
-DECL|function|Cyber_blank
+DECL|function|Cyberfb_blank
 r_void
-id|Cyber_blank
+id|Cyberfb_blank
 c_func
 (paren
 r_int
 id|blank
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
+r_volatile
+r_int
+r_char
+op_star
+id|regs
+op_assign
+id|CyberRegs
+suffix:semicolon
 r_int
 id|i
 suffix:semicolon
@@ -2814,7 +2691,7 @@ id|gfx_on_off
 (paren
 l_int|1
 comma
-id|cv64_regs
+id|regs
 )paren
 suffix:semicolon
 macro_line|#else
@@ -2842,6 +2719,8 @@ op_increment
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 l_int|0x3c8
 comma
 (paren
@@ -2855,6 +2734,8 @@ multiline_comment|/* ARB Pale red to detect this blanking method */
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 l_int|0x3c9
 comma
 l_int|48
@@ -2863,6 +2744,8 @@ suffix:semicolon
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 l_int|0x3c9
 comma
 l_int|0
@@ -2871,6 +2754,8 @@ suffix:semicolon
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 l_int|0x3c9
 comma
 l_int|0
@@ -2898,6 +2783,8 @@ op_increment
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 l_int|0x3c8
 comma
 (paren
@@ -2910,6 +2797,8 @@ suffix:semicolon
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 l_int|0x3c9
 comma
 id|Cyber_colour_table
@@ -2924,6 +2813,8 @@ suffix:semicolon
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 l_int|0x3c9
 comma
 id|Cyber_colour_table
@@ -2938,6 +2829,8 @@ suffix:semicolon
 id|wb_64
 c_func
 (paren
+id|regs
+comma
 l_int|0x3c9
 comma
 id|Cyber_colour_table
@@ -2969,7 +2862,8 @@ id|u_short
 id|fifo
 )paren
 (brace
-id|u_short
+r_int
+r_int
 id|status
 suffix:semicolon
 id|DPRINTK
@@ -3021,7 +2915,8 @@ id|Cyber_WaitBlit
 r_void
 )paren
 (brace
-id|u_short
+r_int
+r_int
 id|status
 suffix:semicolon
 id|DPRINTK
@@ -3092,6 +2987,14 @@ id|u_short
 id|mode
 )paren
 (brace
+r_volatile
+r_int
+r_char
+op_star
+id|regs
+op_assign
+id|CyberRegs
+suffix:semicolon
 id|u_short
 id|blitcmd
 op_assign
@@ -3184,7 +3087,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_PIXEL_CNTL
 )paren
@@ -3200,7 +3103,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_FRGD_MIX
 )paren
@@ -3220,7 +3123,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CUR_X
 )paren
@@ -3236,7 +3139,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CUR_Y
 )paren
@@ -3252,7 +3155,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_DESTX_DIASTP
 )paren
@@ -3268,7 +3171,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_DESTY_AXSTP
 )paren
@@ -3284,7 +3187,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_MIN_AXIS_PCNT
 )paren
@@ -3302,7 +3205,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_MAJ_AXIS_PCNT
 )paren
@@ -3320,7 +3223,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CMD
 )paren
@@ -3360,6 +3263,14 @@ id|u_short
 id|color
 )paren
 (brace
+r_volatile
+r_int
+r_char
+op_star
+id|regs
+op_assign
+id|CyberRegs
+suffix:semicolon
 id|u_short
 id|blitcmd
 op_assign
@@ -3384,7 +3295,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_PIXEL_CNTL
 )paren
@@ -3400,7 +3311,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_FRGD_MIX
 )paren
@@ -3420,7 +3331,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_MULT_MISC
 )paren
@@ -3436,7 +3347,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_FRGD_COLOR
 )paren
@@ -3452,7 +3363,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CUR_X
 )paren
@@ -3468,7 +3379,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CUR_Y
 )paren
@@ -3484,7 +3395,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_MIN_AXIS_PCNT
 )paren
@@ -3502,7 +3413,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_MAJ_AXIS_PCNT
 )paren
@@ -3520,7 +3431,7 @@ r_volatile
 op_star
 )paren
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CMD
 )paren
@@ -3535,8 +3446,8 @@ l_string|&quot;EXIT&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 0
 multiline_comment|/**************************************************************&n; * Move cursor to x, y&n; */
-DECL|function|Cyber_MoveCursor
 r_static
 r_void
 id|Cyber_MoveCursor
@@ -3548,6 +3459,14 @@ id|u_short
 id|y
 )paren
 (brace
+r_volatile
+r_int
+r_char
+op_star
+id|regs
+op_assign
+id|CyberRegs
+suffix:semicolon
 id|DPRINTK
 c_func
 (paren
@@ -3556,7 +3475,7 @@ l_string|&quot;ENTER&bslash;n&quot;
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -3565,7 +3484,7 @@ l_int|0x39
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -3574,7 +3493,7 @@ l_int|0xa0
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -3583,7 +3502,7 @@ id|S3_HWGC_ORGX_H
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -3603,7 +3522,7 @@ l_int|8
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -3612,7 +3531,7 @@ id|S3_HWGC_ORGX_L
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -3628,7 +3547,7 @@ l_int|0x00ff
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -3637,7 +3556,7 @@ id|S3_HWGC_ORGY_H
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -3657,7 +3576,7 @@ l_int|8
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -3666,7 +3585,7 @@ id|S3_HWGC_ORGY_L
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -3687,29 +3606,7 @@ l_string|&quot;EXIT&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* -------------------- Interfaces to hardware functions -------------------- */
-DECL|variable|Cyber_switch
-r_static
-r_struct
-id|fb_hwswitch
-id|Cyber_switch
-op_assign
-(brace
-id|Cyber_init
-comma
-id|Cyber_encode_fix
-comma
-id|Cyber_decode_var
-comma
-id|Cyber_encode_var
-comma
-id|Cyber_getcolreg
-comma
-id|Cyber_setcolreg
-comma
-id|Cyber_blank
-)brace
-suffix:semicolon
+macro_line|#endif
 multiline_comment|/* -------------------- Generic routines ---------------------------------- */
 multiline_comment|/*&n; *    Fill the hardware&squot;s `par&squot; structure.&n; */
 DECL|function|cyberfb_get_par
@@ -3744,9 +3641,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|fbhw
-op_member_access_from_pointer
-id|decode_var
+id|Cyber_decode_var
 c_func
 (paren
 op_amp
@@ -3865,9 +3760,7 @@ c_cond
 (paren
 id|err
 op_assign
-id|fbhw
-op_member_access_from_pointer
-id|decode_var
+id|Cyber_decode_var
 c_func
 (paren
 id|var
@@ -3912,9 +3805,7 @@ op_amp
 id|par
 )paren
 suffix:semicolon
-id|fbhw
-op_member_access_from_pointer
-id|encode_var
+id|Cyber_encode_var
 c_func
 (paren
 id|var
@@ -4011,7 +3902,7 @@ id|cmap
 comma
 l_int|1
 comma
-id|fbhw-&gt;setcolreg
+id|Cyber_setcolreg
 comma
 id|info
 )paren
@@ -4043,7 +3934,7 @@ id|var.bits_per_pixel
 comma
 l_int|1
 comma
-id|fbhw-&gt;setcolreg
+id|Cyber_setcolreg
 comma
 id|info
 )paren
@@ -4157,9 +4048,7 @@ r_else
 (brace
 id|error
 op_assign
-id|fbhw
-op_member_access_from_pointer
-id|decode_var
+id|Cyber_decode_var
 c_func
 (paren
 op_amp
@@ -4187,9 +4076,7 @@ ques
 c_cond
 id|error
 suffix:colon
-id|fbhw
-op_member_access_from_pointer
-id|encode_fix
+id|Cyber_encode_fix
 c_func
 (paren
 id|fix
@@ -4253,9 +4140,7 @@ id|par
 suffix:semicolon
 id|error
 op_assign
-id|fbhw
-op_member_access_from_pointer
-id|encode_var
+id|Cyber_encode_var
 c_func
 (paren
 id|var
@@ -4371,14 +4256,12 @@ l_int|0
 suffix:semicolon
 id|display-&gt;screen_base
 op_assign
-id|phys_to_virt
-(paren
 (paren
 r_int
-r_int
+r_char
+op_star
 )paren
-id|fix.smem_start
-)paren
+id|CyberMem
 suffix:semicolon
 id|display-&gt;visual
 op_assign
@@ -4753,7 +4636,7 @@ id|cmap
 comma
 id|kspc
 comma
-id|fbhw-&gt;getcolreg
+id|Cyber_getcolreg
 comma
 id|info
 )paren
@@ -4956,7 +4839,7 @@ id|cmap
 comma
 id|kspc
 comma
-id|fbhw-&gt;setcolreg
+id|Cyber_setcolreg
 comma
 id|info
 )paren
@@ -5085,11 +4968,9 @@ comma
 id|cyberfb_ioctl
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|cyberfb_setup
 r_void
+id|__init
 id|cyberfb_setup
 c_func
 (paren
@@ -5100,7 +4981,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_char
@@ -5238,6 +5118,10 @@ id|CYBER8_DEFMODE
 dot
 id|var
 suffix:semicolon
+id|cyberfb_usermode
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -5260,6 +5144,10 @@ id|CYBER16_DEFMODE
 )braket
 dot
 id|var
+suffix:semicolon
+id|cyberfb_usermode
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 r_else
@@ -5290,16 +5178,13 @@ l_string|&quot;EXIT&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *    Initialization&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|cyberfb_init
 r_void
+id|__init
 id|cyberfb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -5406,7 +5291,7 @@ comma
 id|board_size
 )paren
 suffix:semicolon
-id|cv64_mem
+id|CyberBase
 op_assign
 id|ioremap
 c_func
@@ -5416,49 +5301,34 @@ comma
 id|board_size
 )paren
 suffix:semicolon
-id|cv64_regs
+id|CyberRegs
 op_assign
-(paren
-r_volatile
-r_char
-op_star
-)paren
-(paren
-id|cv64_mem
+id|CyberBase
 op_plus
 l_int|0x02000000
-)paren
 suffix:semicolon
-id|cv64_fbmem
+id|CyberMem
 op_assign
-id|cv64_mem
+id|CyberBase
 op_plus
 l_int|0x01400000
 suffix:semicolon
 id|DPRINTK
 c_func
 (paren
-l_string|&quot;cv64_mem=%08lx cv64_regs=%08lx cv64_fbmem=%08lx&bslash;n&quot;
+l_string|&quot;CyberBase=%08lx CyberRegs=%08lx CyberMem=%08lx&bslash;n&quot;
 comma
-id|cv64_mem
+id|CyberBase
 comma
 (paren
 r_int
 r_int
 r_int
 )paren
-id|cv64_regs
-comma
-id|cv64_fbmem
-)paren
-suffix:semicolon
-id|CyberMem
-op_assign
-id|cv64_fbmem
-suffix:semicolon
 id|CyberRegs
-op_assign
-id|cv64_regs
+comma
+id|CyberMem
+)paren
 suffix:semicolon
 id|CyberMem_phys
 op_assign
@@ -5500,11 +5370,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|fbhw
-op_assign
-op_amp
-id|Cyber_switch
-suffix:semicolon
 id|strcpy
 c_func
 (paren
@@ -5547,16 +5412,36 @@ op_assign
 op_amp
 id|Cyberfb_blank
 suffix:semicolon
-id|fbhw
-op_member_access_from_pointer
-id|init
+id|Cyber_init
 c_func
 (paren
 )paren
 suffix:semicolon
-id|fbhw
-op_member_access_from_pointer
-id|decode_var
+multiline_comment|/* ++Andre: set cyberfb default mode */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|cyberfb_usermode
+)paren
+(brace
+id|cyberfb_default
+op_assign
+id|cyberfb_predefined
+(braket
+id|CYBER8_DEFMODE
+)braket
+dot
+id|var
+suffix:semicolon
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;Use default cyber8 mode&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|Cyber_decode_var
 c_func
 (paren
 op_amp
@@ -5566,9 +5451,7 @@ op_amp
 id|par
 )paren
 suffix:semicolon
-id|fbhw
-op_member_access_from_pointer
-id|encode_var
+id|Cyber_encode_var
 c_func
 (paren
 op_amp
@@ -5720,7 +5603,7 @@ id|cmap
 comma
 l_int|1
 comma
-id|fbhw-&gt;getcolreg
+id|Cyber_getcolreg
 comma
 id|info
 )paren
@@ -5789,50 +5672,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *    Blank the display.&n; */
-DECL|function|Cyberfb_blank
-r_static
-r_void
-id|Cyberfb_blank
-c_func
-(paren
-r_int
-id|blank
-comma
-r_struct
-id|fb_info
-op_star
-id|info
-)paren
-(brace
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;Enter&bslash;n&quot;
-)paren
-suffix:semicolon
-id|fbhw
-op_member_access_from_pointer
-id|blank
-c_func
-(paren
-id|blank
-)paren
-suffix:semicolon
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;Exit&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; *    Get a Video Mode&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_video_mode
 r_static
 r_int
+id|__init
 id|get_video_mode
 c_func
 (paren
@@ -5840,7 +5684,6 @@ r_const
 r_char
 op_star
 id|name
-)paren
 )paren
 (brace
 r_int
@@ -5894,6 +5737,10 @@ id|i
 dot
 id|var
 suffix:semicolon
+id|cyberfb_usermode
+op_assign
+l_int|1
+suffix:semicolon
 id|DPRINTK
 c_func
 (paren
@@ -5905,22 +5752,6 @@ id|i
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* ++Andre: set cyberfb default mode */
-id|cyberfb_default
-op_assign
-id|cyberfb_predefined
-(braket
-id|CYBER8_DEFMODE
-)braket
-dot
-id|var
-suffix:semicolon
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;EXIT - Use default cyber8 mode&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -6573,148 +6404,6 @@ l_int|0xff
 )brace
 suffix:semicolon
 multiline_comment|/* -------------------- Hardware specific routines ------------------------- */
-macro_line|#if 0
-multiline_comment|/* ARB Generates 100 usec delay */
-r_inline
-r_void
-id|__cv_delay
-(paren
-r_int
-r_int
-id|usecs
-)paren
-(brace
-r_int
-id|k
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|k
-op_assign
-l_int|0
-suffix:semicolon
-id|k
-OL
-l_int|1000
-suffix:semicolon
-id|k
-op_increment
-)paren
-(brace
-id|asm
-r_volatile
-(paren
-l_string|&quot;nop&quot;
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
-multiline_comment|/* Wait while Graphics Engine is busy */
-DECL|function|GfxBusyWait
-r_inline
-r_void
-id|GfxBusyWait
-(paren
-r_volatile
-id|caddr_t
-id|board
-)paren
-(brace
-r_int
-id|test
-suffix:semicolon
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;ENTER&bslash;n&quot;
-)paren
-suffix:semicolon
-r_do
-(brace
-id|test
-op_assign
-id|vgar16
-(paren
-id|board
-comma
-id|ECR_GP_STAT
-)paren
-suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;nop&quot;
-)paren
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|test
-op_amp
-(paren
-l_int|1
-op_lshift
-l_int|9
-)paren
-)paren
-suffix:semicolon
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;EXIT&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Wait for any of the 8 Trio32 FIFOs to be free */
-DECL|function|GfxFifoWait
-r_inline
-r_void
-id|GfxFifoWait
-(paren
-r_volatile
-id|caddr_t
-id|board
-)paren
-(brace
-r_int
-id|test
-suffix:semicolon
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;ENTER&bslash;n&quot;
-)paren
-suffix:semicolon
-r_do
-(brace
-id|test
-op_assign
-id|vgar16
-(paren
-id|board
-comma
-id|ECR_GP_STAT
-)paren
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|test
-op_amp
-l_int|0x0f
-)paren
-suffix:semicolon
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;EXIT&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Read Attribute Controller Register=idx */
 DECL|function|RAttr
 r_inline
@@ -6723,20 +6412,27 @@ r_char
 id|RAttr
 (paren
 r_volatile
-id|caddr_t
-id|board
+r_int
+r_char
+op_star
+id|regs
 comma
 r_int
 id|idx
 )paren
 (brace
-id|vgaw
+id|wb_64
 (paren
-id|board
+id|regs
 comma
 id|ACT_ADDRESS_W
 comma
 id|idx
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 id|udelay
@@ -6745,12 +6441,12 @@ c_func
 l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* __cv_delay (0); */
 r_return
 (paren
-id|vgar
+id|rb_64
+c_func
 (paren
-id|board
+id|regs
 comma
 id|ACT_ADDRESS_R
 )paren
@@ -6765,27 +6461,35 @@ r_char
 id|RSeq
 (paren
 r_volatile
-id|caddr_t
-id|board
+r_int
+r_char
+op_star
+id|regs
 comma
 r_int
 id|idx
 )paren
 (brace
-id|vgaw
+id|wb_64
 (paren
-id|board
+id|regs
 comma
 id|SEQ_ADDRESS
 comma
 id|idx
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 (paren
-id|vgar
+id|rb_64
+c_func
 (paren
-id|board
+id|regs
 comma
 id|SEQ_ADDRESS_R
 )paren
@@ -6800,27 +6504,35 @@ r_char
 id|RCrt
 (paren
 r_volatile
-id|caddr_t
-id|board
+r_int
+r_char
+op_star
+id|regs
 comma
 r_int
 id|idx
 )paren
 (brace
-id|vgaw
+id|wb_64
 (paren
-id|board
+id|regs
 comma
 id|CRT_ADDRESS
 comma
 id|idx
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 (paren
-id|vgar
+id|rb_64
+c_func
 (paren
-id|board
+id|regs
 comma
 id|CRT_ADDRESS_R
 )paren
@@ -6835,27 +6547,35 @@ r_char
 id|RGfx
 (paren
 r_volatile
-id|caddr_t
-id|board
+r_int
+r_char
+op_star
+id|regs
 comma
 r_int
 id|idx
 )paren
 (brace
-id|vgaw
+id|wb_64
 (paren
-id|board
+id|regs
 comma
 id|GCT_ADDRESS
 comma
 id|idx
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 (paren
-id|vgar
+id|rb_64
+c_func
 (paren
-id|board
+id|regs
 comma
 id|GCT_ADDRESS_R
 )paren
@@ -6876,7 +6596,7 @@ r_volatile
 r_int
 r_char
 op_star
-id|board
+id|base
 )paren
 (brace
 r_volatile
@@ -6901,7 +6621,7 @@ l_string|&quot;ENTER&bslash;n&quot;
 suffix:semicolon
 id|addr
 op_assign
-id|board
+id|base
 op_plus
 l_int|0x40001
 suffix:semicolon
@@ -7046,6 +6766,7 @@ DECL|function|gfx_on_off
 r_inline
 r_void
 id|gfx_on_off
+c_func
 (paren
 r_int
 id|toggle
@@ -7054,7 +6775,7 @@ r_volatile
 r_int
 r_char
 op_star
-id|board
+id|regs
 )paren
 (brace
 r_int
@@ -7097,12 +6818,9 @@ op_assign
 r_int
 )paren
 id|RSeq
+c_func
 (paren
-(paren
-r_volatile
-id|caddr_t
-)paren
-id|board
+id|regs
 comma
 id|SEQ_ID_CLOCKING_MODE
 )paren
@@ -7114,7 +6832,7 @@ suffix:semicolon
 multiline_comment|/* Set bit 5 to 0 */
 id|WSeq
 (paren
-id|board
+id|regs
 comma
 id|SEQ_ID_CLOCKING_MODE
 comma
@@ -7345,7 +7063,9 @@ r_int
 id|cv_has_4mb
 (paren
 r_volatile
-id|caddr_t
+r_int
+r_char
+op_star
 id|fb
 )paren
 (brace
@@ -7542,16 +7262,24 @@ id|cv64_board_init
 r_void
 )paren
 (brace
+r_volatile
+r_int
+r_char
+op_star
+id|regs
+op_assign
+id|CyberRegs
+suffix:semicolon
 r_int
 id|i
 suffix:semicolon
 r_int
-r_char
-id|test
-suffix:semicolon
-r_int
 r_int
 id|clockpar
+suffix:semicolon
+r_int
+r_char
+id|test
 suffix:semicolon
 id|DPRINTK
 c_func
@@ -7580,13 +7308,7 @@ id|cv64_write_port
 (paren
 l_int|0xff
 comma
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-id|cv64_mem
+id|CyberBase
 )paren
 suffix:semicolon
 )brace
@@ -7595,20 +7317,14 @@ id|cv64_write_port
 (paren
 l_int|0x8004
 comma
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-id|cv64_mem
+id|CyberBase
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Generic (?) S3 chip wakeup&n;   */
+multiline_comment|/*&n;&t; * Generic (?) S3 chip wakeup&n;&t; */
 multiline_comment|/* Disable I/O &amp; memory decoders, video in setup mode */
-id|vgaw
+id|wb_64
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SREG_VIDEO_SUBS_ENABLE
 comma
@@ -7616,9 +7332,9 @@ l_int|0x10
 )paren
 suffix:semicolon
 multiline_comment|/* Video responds to cmds, addrs &amp; data */
-id|vgaw
+id|wb_64
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SREG_OPTION_SELECT
 comma
@@ -7626,9 +7342,9 @@ l_int|0x1
 )paren
 suffix:semicolon
 multiline_comment|/* Enable I/O &amp; memory decoders, video in operational mode */
-id|vgaw
+id|wb_64
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SREG_VIDEO_SUBS_ENABLE
 comma
@@ -7636,9 +7352,9 @@ l_int|0x8
 )paren
 suffix:semicolon
 multiline_comment|/* VGA color emulation, enable cpu access to display mem */
-id|vgaw
+id|wb_64
 (paren
-id|cv64_regs
+id|regs
 comma
 id|GREG_MISC_OUTPUT_W
 comma
@@ -7648,7 +7364,7 @@ suffix:semicolon
 multiline_comment|/* Unlock S3 VGA regs */
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_REGISTER_LOCK_1
 comma
@@ -7658,7 +7374,7 @@ suffix:semicolon
 multiline_comment|/* Unlock system control &amp; extension registers */
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_REGISTER_LOCK_2
 comma
@@ -7671,7 +7387,7 @@ id|test
 op_assign
 id|RCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_SYSTEM_CONFIG
 )paren
@@ -7682,7 +7398,7 @@ id|test
 op_or
 l_int|0x01
 suffix:semicolon
-multiline_comment|/* enable enhaced register access */
+multiline_comment|/* enable enhanced register access */
 id|test
 op_assign
 id|test
@@ -7692,28 +7408,28 @@ suffix:semicolon
 multiline_comment|/* clear bit 4, 0 wait state */
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_SYSTEM_CONFIG
 comma
 id|test
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * bit 0=1: Enable enhaced mode functions&n;   * bit 2=0: Enhanced mode 8+ bits/pixel&n;   * bit 4=1: Enable linear addressing&n;   * bit 5=1: Enable MMIO&n;   */
-id|vgaw
+multiline_comment|/*&n;&t; * bit 0=1: Enable enhaced mode functions&n;&t; * bit 2=0: Enhanced mode 8+ bits/pixel&n;&t; * bit 4=1: Enable linear addressing&n;&t; * bit 5=1: Enable MMIO&n;&t; */
+id|wb_64
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_ADV_FUNC_CNTL
 comma
 l_int|0x31
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * bit 0=1: Color emulation&n;   * bit 1=1: Enable CPU access to display memory&n;   * bit 5=1: Select high 64K memory page&n;   */
+multiline_comment|/*&n;&t; * bit 0=1: Color emulation&n;&t; * bit 1=1: Enable CPU access to display memory&n;&t; * bit 5=1: Select high 64K memory page&n;&t; */
 multiline_comment|/* GRF - 0xE3 */
-id|vgaw
+id|wb_64
 (paren
-id|cv64_regs
+id|regs
 comma
 id|GREG_MISC_OUTPUT_W
 comma
@@ -7723,7 +7439,7 @@ suffix:semicolon
 multiline_comment|/* Cpu base addr */
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_EXT_SYS_CNTL_4
 comma
@@ -7731,11 +7447,11 @@ l_int|0x0
 )paren
 suffix:semicolon
 multiline_comment|/* Reset. This does nothing on Trio, but standard VGA practice */
-multiline_comment|/* WSeq (cv64_regs, SEQ_ID_RESET, 0x03); */
+multiline_comment|/* WSeq (CyberRegs, SEQ_ID_RESET, 0x03); */
 multiline_comment|/* Character clocks 8 dots wide */
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_CLOCKING_MODE
 comma
@@ -7745,7 +7461,7 @@ suffix:semicolon
 multiline_comment|/* Enable cpu write to all color planes */
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_MAP_MASK
 comma
@@ -7755,7 +7471,7 @@ suffix:semicolon
 multiline_comment|/* Font table in 1st 8k of plane 2, font A=B disables swtich */
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_CHAR_MAP_SELECT
 comma
@@ -7765,7 +7481,7 @@ suffix:semicolon
 multiline_comment|/* Allow mem access to 256kb */
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_MEMORY_MODE
 comma
@@ -7775,7 +7491,7 @@ suffix:semicolon
 multiline_comment|/* Unlock S3 extensions to VGA Sequencer regs */
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_UNLOCK_EXT
 comma
@@ -7787,7 +7503,7 @@ id|test
 op_assign
 id|RSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_BUS_REQ_CNTL
 )paren
@@ -7802,7 +7518,7 @@ l_int|6
 suffix:semicolon
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_BUS_REQ_CNTL
 comma
@@ -7812,7 +7528,7 @@ suffix:semicolon
 multiline_comment|/* Faster LUT write: 1 DCLK LUT write cycle, RAMDAC clk doubled */
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_RAMDAC_CNTL
 comma
@@ -7824,7 +7540,7 @@ id|test
 op_assign
 id|RSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_CLKSYN_CNTL_2
 )paren
@@ -7851,7 +7567,7 @@ suffix:semicolon
 )brace
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_CLKSYN_CNTL_2
 comma
@@ -7878,7 +7594,7 @@ l_int|8
 suffix:semicolon
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_MCLK_HI
 comma
@@ -7893,7 +7609,7 @@ l_int|0xFF
 suffix:semicolon
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_MCLK_LO
 comma
@@ -7906,7 +7622,7 @@ c_cond
 (paren
 id|RCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_REVISION
 )paren
@@ -7915,7 +7631,7 @@ l_int|0x10
 )paren
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_MORE_MAGIC
 comma
@@ -7926,7 +7642,7 @@ multiline_comment|/* We now load an 25 MHz, 31kHz, 640x480 standard VGA Mode. */
 multiline_comment|/* Set DCLK value */
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_DCLK_HI
 comma
@@ -7935,7 +7651,7 @@ l_int|0x13
 suffix:semicolon
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_DCLK_LO
 comma
@@ -7947,7 +7663,7 @@ id|test
 op_assign
 id|RSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_CLKSYN_CNTL_2
 )paren
@@ -7960,7 +7676,7 @@ l_int|0x22
 suffix:semicolon
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_CLKSYN_CNTL_2
 comma
@@ -7970,9 +7686,10 @@ suffix:semicolon
 multiline_comment|/* Enable loading of DCLK */
 id|test
 op_assign
-id|vgar
+id|rb_64
+c_func
 (paren
-id|cv64_regs
+id|regs
 comma
 id|GREG_MISC_OUTPUT_R
 )paren
@@ -7983,9 +7700,9 @@ id|test
 op_or
 l_int|0x0C
 suffix:semicolon
-id|vgaw
+id|wb_64
 (paren
-id|cv64_regs
+id|regs
 comma
 id|GREG_MISC_OUTPUT_W
 comma
@@ -7995,7 +7712,7 @@ suffix:semicolon
 multiline_comment|/* Turn off immediate xCLK load */
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_CLKSYN_CNTL_2
 comma
@@ -8006,7 +7723,7 @@ multiline_comment|/* Horizontal character clock counts */
 multiline_comment|/* 8 LSB of 9 bits = total line - 5 */
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_HOR_TOTAL
 comma
@@ -8016,7 +7733,7 @@ suffix:semicolon
 multiline_comment|/* Active display line */
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_HOR_DISP_ENA_END
 comma
@@ -8026,7 +7743,7 @@ suffix:semicolon
 multiline_comment|/* Blank assertion start */
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_START_HOR_BLANK
 comma
@@ -8036,7 +7753,7 @@ suffix:semicolon
 multiline_comment|/* Blank assertion end */
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_END_HOR_BLANK
 comma
@@ -8046,7 +7763,7 @@ suffix:semicolon
 multiline_comment|/* HSYNC assertion start */
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_START_HOR_RETR
 comma
@@ -8056,7 +7773,7 @@ suffix:semicolon
 multiline_comment|/* HSYNC assertion end */
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_END_HOR_RETR
 comma
@@ -8065,7 +7782,7 @@ l_int|0x80
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_VER_TOTAL
 comma
@@ -8074,7 +7791,7 @@ l_int|0xBF
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_OVERFLOW
 comma
@@ -8083,7 +7800,7 @@ l_int|0x1F
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_PRESET_ROW_SCAN
 comma
@@ -8092,7 +7809,7 @@ l_int|0x0
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_MAX_SCAN_LINE
 comma
@@ -8101,7 +7818,7 @@ l_int|0x40
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_CURSOR_START
 comma
@@ -8110,7 +7827,7 @@ l_int|0x00
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_CURSOR_END
 comma
@@ -8119,7 +7836,7 @@ l_int|0x00
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_START_ADDR_HIGH
 comma
@@ -8128,7 +7845,7 @@ l_int|0x00
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_START_ADDR_LOW
 comma
@@ -8137,7 +7854,7 @@ l_int|0x00
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_CURSOR_LOC_HIGH
 comma
@@ -8146,7 +7863,7 @@ l_int|0x00
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_CURSOR_LOC_LOW
 comma
@@ -8155,7 +7872,7 @@ l_int|0x00
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_START_VER_RETR
 comma
@@ -8164,7 +7881,7 @@ l_int|0x9C
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_END_VER_RETR
 comma
@@ -8173,7 +7890,7 @@ l_int|0x0E
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_VER_DISP_ENA_END
 comma
@@ -8182,7 +7899,7 @@ l_int|0x8F
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_SCREEN_OFFSET
 comma
@@ -8191,7 +7908,7 @@ l_int|0x50
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_UNDERLINE_LOC
 comma
@@ -8200,7 +7917,7 @@ l_int|0x00
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_START_VER_BLANK
 comma
@@ -8209,7 +7926,7 @@ l_int|0x96
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_END_VER_BLANK
 comma
@@ -8218,7 +7935,7 @@ l_int|0xB9
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_MODE_CONTROL
 comma
@@ -8227,7 +7944,7 @@ l_int|0xE3
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_LINE_COMPARE
 comma
@@ -8236,7 +7953,7 @@ l_int|0xFF
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_BACKWAD_COMP_3
 comma
@@ -8246,7 +7963,7 @@ suffix:semicolon
 multiline_comment|/* FIFO enabled */
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_MISC_1
 comma
@@ -8255,7 +7972,7 @@ l_int|0x35
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_DISPLAY_FIFO
 comma
@@ -8264,7 +7981,7 @@ l_int|0x5A
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_EXT_MEM_CNTL_2
 comma
@@ -8273,7 +7990,7 @@ l_int|0x70
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_LAW_POS_LO
 comma
@@ -8282,7 +7999,7 @@ l_int|0x40
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_EXT_MEM_CNTL_3
 comma
@@ -8291,7 +8008,7 @@ l_int|0xFF
 suffix:semicolon
 id|WGfx
 (paren
-id|cv64_regs
+id|regs
 comma
 id|GCT_ID_SET_RESET
 comma
@@ -8300,7 +8017,7 @@ l_int|0x0
 suffix:semicolon
 id|WGfx
 (paren
-id|cv64_regs
+id|regs
 comma
 id|GCT_ID_ENABLE_SET_RESET
 comma
@@ -8309,7 +8026,7 @@ l_int|0x0
 suffix:semicolon
 id|WGfx
 (paren
-id|cv64_regs
+id|regs
 comma
 id|GCT_ID_COLOR_COMPARE
 comma
@@ -8318,7 +8035,7 @@ l_int|0x0
 suffix:semicolon
 id|WGfx
 (paren
-id|cv64_regs
+id|regs
 comma
 id|GCT_ID_DATA_ROTATE
 comma
@@ -8327,7 +8044,7 @@ l_int|0x0
 suffix:semicolon
 id|WGfx
 (paren
-id|cv64_regs
+id|regs
 comma
 id|GCT_ID_READ_MAP_SELECT
 comma
@@ -8336,7 +8053,7 @@ l_int|0x0
 suffix:semicolon
 id|WGfx
 (paren
-id|cv64_regs
+id|regs
 comma
 id|GCT_ID_GRAPHICS_MODE
 comma
@@ -8345,7 +8062,7 @@ l_int|0x40
 suffix:semicolon
 id|WGfx
 (paren
-id|cv64_regs
+id|regs
 comma
 id|GCT_ID_MISC
 comma
@@ -8354,7 +8071,7 @@ l_int|0x01
 suffix:semicolon
 id|WGfx
 (paren
-id|cv64_regs
+id|regs
 comma
 id|GCT_ID_COLOR_XCARE
 comma
@@ -8363,7 +8080,7 @@ l_int|0x0F
 suffix:semicolon
 id|WGfx
 (paren
-id|cv64_regs
+id|regs
 comma
 id|GCT_ID_BITMASK
 comma
@@ -8387,7 +8104,7 @@ op_increment
 )paren
 id|WAttr
 (paren
-id|cv64_regs
+id|regs
 comma
 id|i
 comma
@@ -8396,7 +8113,7 @@ id|i
 suffix:semicolon
 id|WAttr
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ACT_ID_ATTR_MODE_CNTL
 comma
@@ -8405,7 +8122,7 @@ l_int|0x41
 suffix:semicolon
 id|WAttr
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ACT_ID_OVERSCAN_COLOR
 comma
@@ -8414,7 +8131,7 @@ l_int|0x01
 suffix:semicolon
 id|WAttr
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ACT_ID_COLOR_PLANE_ENA
 comma
@@ -8423,7 +8140,7 @@ l_int|0x0F
 suffix:semicolon
 id|WAttr
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ACT_ID_HOR_PEL_PANNING
 comma
@@ -8432,16 +8149,16 @@ l_int|0x0
 suffix:semicolon
 id|WAttr
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ACT_ID_COLOR_SELECT
 comma
 l_int|0x0
 )paren
 suffix:semicolon
-id|vgaw
+id|wb_64
 (paren
-id|cv64_regs
+id|regs
 comma
 id|VDAC_MASK
 comma
@@ -8456,7 +8173,7 @@ r_int
 op_star
 )paren
 (paren
-id|cv64_regs
+id|regs
 op_plus
 id|ECR_FRGD_COLOR
 )paren
@@ -8472,7 +8189,7 @@ r_int
 op_star
 )paren
 (paren
-id|cv64_regs
+id|regs
 op_plus
 id|ECR_BKGD_COLOR
 )paren
@@ -8481,9 +8198,9 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Colors initially set to grayscale */
-id|vgaw
+id|wb_64
 (paren
-id|cv64_regs
+id|regs
 comma
 id|VDAC_ADDRESS_W
 comma
@@ -8505,27 +8222,30 @@ id|i
 op_decrement
 )paren
 (brace
-id|vgaw
+id|wb_64
+c_func
 (paren
-id|cv64_regs
+id|regs
 comma
 id|VDAC_DATA
 comma
 id|i
 )paren
 suffix:semicolon
-id|vgaw
+id|wb_64
+c_func
 (paren
-id|cv64_regs
+id|regs
 comma
 id|VDAC_DATA
 comma
 id|i
 )paren
 suffix:semicolon
-id|vgaw
+id|wb_64
+c_func
 (paren
-id|cv64_regs
+id|regs
 comma
 id|VDAC_DATA
 comma
@@ -8536,7 +8256,7 @@ suffix:semicolon
 multiline_comment|/* GFx hardware cursor off */
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_HWGC_MODE
 comma
@@ -8546,7 +8266,7 @@ suffix:semicolon
 multiline_comment|/* Set first to 4MB, so test will work */
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_LAW_CNTL
 comma
@@ -8559,15 +8279,11 @@ c_cond
 (paren
 id|cv_has_4mb
 (paren
-(paren
-r_volatile
-id|caddr_t
-)paren
-id|cv64_fbmem
+id|CyberMem
 )paren
 )paren
 (brace
-id|cv64_size
+id|CyberSize
 op_assign
 l_int|1024
 op_star
@@ -8577,7 +8293,7 @@ l_int|4
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_LAW_CNTL
 comma
@@ -8593,7 +8309,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|cv64_size
+id|CyberSize
 op_assign
 l_int|1024
 op_star
@@ -8603,7 +8319,7 @@ l_int|2
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_LAW_CNTL
 comma
@@ -8623,10 +8339,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* GfxBusyWait (cv64_regs); */
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_FRGD_MIX
 comma
@@ -8635,7 +8350,7 @@ l_int|0x27
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_BKGD_MIX
 comma
@@ -8644,7 +8359,7 @@ l_int|0x07
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_READ_REG_DATA
 comma
@@ -8657,10 +8372,9 @@ c_func
 l_int|200
 )paren
 suffix:semicolon
-multiline_comment|/* __cv_delay (200000); */
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_READ_REG_DATA
 comma
@@ -8672,10 +8386,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* GfxBusyWait (cv64_regs); */
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_READ_REG_DATA
 comma
@@ -8687,17 +8400,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* GfxBusyWait (cv64_regs); */
 id|udelay
 c_func
 (paren
 l_int|200
 )paren
 suffix:semicolon
-multiline_comment|/* __cv_delay (200000); */
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_READ_REG_DATA
 comma
@@ -8709,10 +8420,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* GfxBusyWait (cv64_regs); */
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_BITPLANE_WRITE_MASK
 comma
@@ -8725,10 +8435,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* GfxBusyWait (cv64_regs); */
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_READ_REG_DATA
 comma
@@ -8737,7 +8446,7 @@ l_int|0xE000
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_CURRENT_Y_POS2
 comma
@@ -8746,7 +8455,7 @@ l_int|0x00
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_CURRENT_X_POS2
 comma
@@ -8755,7 +8464,7 @@ l_int|0x00
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_READ_REG_DATA
 comma
@@ -8764,7 +8473,7 @@ l_int|0xA000
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_DEST_Y__AX_STEP
 comma
@@ -8773,7 +8482,7 @@ l_int|0x00
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_DEST_Y2__AX_STEP2
 comma
@@ -8782,7 +8491,7 @@ l_int|0x00
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_DEST_X__DIA_STEP
 comma
@@ -8791,7 +8500,7 @@ l_int|0x00
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_DEST_X2__DIA_STEP2
 comma
@@ -8800,7 +8509,7 @@ l_int|0x00
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_SHORT_STROKE
 comma
@@ -8809,7 +8518,7 @@ l_int|0x00
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_DRAW_CMD
 comma
@@ -8821,10 +8530,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* GfxBusyWait (cv64_regs); */
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_READ_REG_DATA
 comma
@@ -8833,7 +8541,7 @@ l_int|0x4FFF
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_BKGD_COLOR
 comma
@@ -8842,7 +8550,7 @@ l_int|0x01
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_FRGD_COLOR
 comma
@@ -8853,7 +8561,7 @@ multiline_comment|/* Enable video display (set bit 5) */
 multiline_comment|/* ARB - Would also seem to write to AR13.&n; *       May want to use parts of WAttr to set JUST bit 5&n; */
 id|WAttr
 (paren
-id|cv64_regs
+id|regs
 comma
 l_int|0x33
 comma
@@ -8866,7 +8574,7 @@ id|gfx_on_off
 (paren
 l_int|0
 comma
-id|cv64_regs
+id|regs
 )paren
 suffix:semicolon
 multiline_comment|/* Pass-through */
@@ -8874,13 +8582,7 @@ id|cvscreen
 (paren
 l_int|0
 comma
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-id|cv64_mem
+id|CyberBase
 )paren
 suffix:semicolon
 id|DPRINTK
@@ -8901,6 +8603,14 @@ op_star
 id|video_mode
 )paren
 (brace
+r_volatile
+r_int
+r_char
+op_star
+id|regs
+op_assign
+id|CyberRegs
+suffix:semicolon
 r_int
 id|fx
 comma
@@ -9028,7 +8738,7 @@ id|gfx_on_off
 (paren
 l_int|1
 comma
-id|cv64_regs
+id|regs
 )paren
 suffix:semicolon
 r_switch
@@ -9441,9 +9151,9 @@ op_minus
 l_int|2
 suffix:semicolon
 )brace
-id|vgaw
+id|wb_64
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_ADV_FUNC_CNTL
 comma
@@ -9501,7 +9211,7 @@ l_int|1
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_HWGC_MODE
 comma
@@ -9510,7 +9220,7 @@ l_int|0x00
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_EXT_DAC_CNTL
 comma
@@ -9519,7 +9229,7 @@ l_int|0x00
 suffix:semicolon
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_MEMORY_MODE
 comma
@@ -9541,7 +9251,7 @@ l_int|0x0e
 suffix:semicolon
 id|WGfx
 (paren
-id|cv64_regs
+id|regs
 comma
 id|GCT_ID_READ_MAP_SELECT
 comma
@@ -9550,7 +9260,7 @@ l_int|0x00
 suffix:semicolon
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_MAP_MASK
 comma
@@ -9568,7 +9278,7 @@ l_int|0xFF
 suffix:semicolon
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_CHAR_MAP_SELECT
 comma
@@ -9624,7 +9334,7 @@ id|freq
 suffix:semicolon
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_DCLK_HI
 comma
@@ -9641,7 +9351,7 @@ l_int|8
 suffix:semicolon
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_DCLK_LO
 comma
@@ -9655,7 +9365,7 @@ suffix:semicolon
 multiline_comment|/* Load display parameters into board */
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_EXT_HOR_OVF
 comma
@@ -9733,7 +9443,7 @@ l_int|0x00
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_EXT_VER_OVF
 comma
@@ -9794,7 +9504,7 @@ l_int|0x00
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_HOR_TOTAL
 comma
@@ -9803,7 +9513,7 @@ id|HT
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_DISPLAY_FIFO
 comma
@@ -9814,7 +9524,7 @@ l_int|5
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_HOR_DISP_ENA_END
 comma
@@ -9838,7 +9548,7 @@ id|HDE
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_START_HOR_BLANK
 comma
@@ -9847,7 +9557,7 @@ id|HBS
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_END_HOR_BLANK
 comma
@@ -9864,7 +9574,7 @@ l_int|0x80
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_START_HOR_RETR
 comma
@@ -9873,7 +9583,7 @@ id|HSS
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_END_HOR_RETR
 comma
@@ -9899,7 +9609,7 @@ l_int|0x00
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_VER_TOTAL
 comma
@@ -9908,7 +9618,7 @@ id|VT
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_OVERFLOW
 comma
@@ -10008,7 +9718,7 @@ l_int|0x00
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_MAX_SCAN_LINE
 comma
@@ -10056,7 +9766,7 @@ l_int|0x00
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_MODE_CONTROL
 comma
@@ -10073,7 +9783,7 @@ id|TEXT
 macro_line|#if 1
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_CURSOR_START
 comma
@@ -10088,7 +9798,7 @@ l_int|2
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_CURSOR_END
 comma
@@ -10104,7 +9814,7 @@ suffix:semicolon
 macro_line|#else
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_CURSOR_START
 comma
@@ -10113,7 +9823,7 @@ l_int|0x00
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_CURSOR_END
 comma
@@ -10125,7 +9835,7 @@ suffix:semicolon
 macro_line|#endif
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_UNDERLINE_LOC
 comma
@@ -10140,7 +9850,7 @@ l_int|0x1F
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_CURSOR_LOC_HIGH
 comma
@@ -10149,7 +9859,7 @@ l_int|0x00
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_CURSOR_LOC_LOW
 comma
@@ -10159,7 +9869,7 @@ suffix:semicolon
 )brace
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_START_ADDR_HIGH
 comma
@@ -10168,7 +9878,7 @@ l_int|0x00
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_START_ADDR_LOW
 comma
@@ -10177,7 +9887,7 @@ l_int|0x00
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_START_VER_RETR
 comma
@@ -10186,7 +9896,7 @@ id|VSS
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_END_VER_RETR
 comma
@@ -10199,7 +9909,7 @@ l_int|0x0F
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_VER_DISP_ENA_END
 comma
@@ -10208,7 +9918,7 @@ id|VDE
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_START_VER_BLANK
 comma
@@ -10217,7 +9927,7 @@ id|VBS
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_END_VER_BLANK
 comma
@@ -10226,7 +9936,7 @@ id|VBE
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_LINE_COMPARE
 comma
@@ -10235,7 +9945,7 @@ l_int|0xFF
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_LACE_RETR_START
 comma
@@ -10246,7 +9956,7 @@ l_int|2
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_LACE_CONTROL
 comma
@@ -10262,7 +9972,7 @@ l_int|0x00
 suffix:semicolon
 id|WGfx
 (paren
-id|cv64_regs
+id|regs
 comma
 id|GCT_ID_GRAPHICS_MODE
 comma
@@ -10286,7 +9996,7 @@ l_int|0x40
 suffix:semicolon
 id|WGfx
 (paren
-id|cv64_regs
+id|regs
 comma
 id|GCT_ID_MISC
 comma
@@ -10302,7 +10012,7 @@ l_int|0x01
 suffix:semicolon
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_MEMORY_MODE
 comma
@@ -10324,9 +10034,9 @@ l_int|0x02
 )paren
 )paren
 suffix:semicolon
-id|vgaw
+id|wb_64
 (paren
-id|cv64_regs
+id|regs
 comma
 id|VDAC_MASK
 comma
@@ -10338,14 +10048,14 @@ id|test
 op_assign
 id|RCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_BACKWAD_COMP_2
 )paren
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_BACKWAD_COMP_2
 comma
@@ -10360,7 +10070,7 @@ id|sr15
 op_assign
 id|RSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_CLKSYN_CNTL_2
 )paren
@@ -10373,7 +10083,7 @@ id|sr18
 op_assign
 id|RSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_RAMDAC_CNTL
 )paren
@@ -10394,7 +10104,7 @@ id|test
 op_assign
 id|RCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_EXT_MISC_CNTL_2
 )paren
@@ -10408,26 +10118,14 @@ id|cv64_write_port
 (paren
 l_int|0x0040
 comma
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-id|cv64_mem
+id|CyberBase
 )paren
 suffix:semicolon
 id|cv64_write_port
 (paren
 l_int|0x0020
 comma
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-id|cv64_mem
+id|CyberBase
 )paren
 suffix:semicolon
 r_switch
@@ -10496,13 +10194,7 @@ id|cv64_write_port
 (paren
 l_int|0x8020
 comma
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-id|cv64_mem
+id|CyberBase
 )paren
 suffix:semicolon
 id|clock_mode
@@ -10528,13 +10220,7 @@ id|cv64_write_port
 (paren
 l_int|0x8020
 comma
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-id|cv64_mem
+id|CyberBase
 )paren
 suffix:semicolon
 id|clock_mode
@@ -10563,13 +10249,7 @@ id|cv64_write_port
 (paren
 l_int|0x8040
 comma
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-id|cv64_mem
+id|CyberBase
 )paren
 suffix:semicolon
 id|clock_mode
@@ -10591,7 +10271,7 @@ suffix:semicolon
 )brace
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_EXT_MISC_CNTL_2
 comma
@@ -10602,7 +10282,7 @@ id|test
 suffix:semicolon
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_CLKSYN_CNTL_2
 comma
@@ -10611,7 +10291,7 @@ id|sr15
 suffix:semicolon
 id|WSeq
 (paren
-id|cv64_regs
+id|regs
 comma
 id|SEQ_ID_RAMDAC_CNTL
 comma
@@ -10620,7 +10300,7 @@ id|sr18
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_SCREEN_OFFSET
 comma
@@ -10629,7 +10309,7 @@ id|HDE
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_MISC_1
 comma
@@ -10647,7 +10327,7 @@ id|test
 op_assign
 id|RCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_EXT_SYS_CNTL_2
 )paren
@@ -10669,7 +10349,7 @@ l_int|0x30
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_EXT_SYS_CNTL_2
 comma
@@ -10745,7 +10425,7 @@ suffix:semicolon
 )brace
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_EXT_SYS_CNTL_1
 comma
@@ -10758,10 +10438,9 @@ c_func
 l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* __cv_delay (100000); */
 id|WAttr
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ACT_ID_ATTR_MODE_CNTL
 comma
@@ -10781,10 +10460,9 @@ c_func
 l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* __cv_delay (100000); */
 id|WAttr
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ACT_ID_COLOR_PLANE_ENA
 comma
@@ -10806,7 +10484,6 @@ c_func
 l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* __cv_delay (100000); */
 id|tfillm
 op_assign
 (paren
@@ -10975,7 +10652,7 @@ l_int|0xFF
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_EXT_MEM_CNTL_2
 comma
@@ -10984,7 +10661,7 @@ id|m
 suffix:semicolon
 id|WCrt
 (paren
-id|cv64_regs
+id|regs
 comma
 id|CRT_ID_EXT_MEM_CNTL_3
 comma
@@ -10997,7 +10674,6 @@ c_func
 l_int|10
 )paren
 suffix:semicolon
-multiline_comment|/* __cv_delay (10000); */
 multiline_comment|/* Text initialization */
 r_if
 c_cond
@@ -11016,9 +10692,9 @@ id|CONSOLE
 r_int
 id|i
 suffix:semicolon
-id|vgaw
+id|wb_64
 (paren
-id|cv64_regs
+id|regs
 comma
 id|VDAC_ADDRESS_W
 comma
@@ -11040,9 +10716,9 @@ id|i
 op_increment
 )paren
 (brace
-id|vgaw
+id|wb_64
 (paren
-id|cv64_regs
+id|regs
 comma
 id|VDAC_DATA
 comma
@@ -11055,9 +10731,9 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-id|vgaw
+id|wb_64
 (paren
-id|cv64_regs
+id|regs
 comma
 id|VDAC_DATA
 comma
@@ -11070,9 +10746,9 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-id|vgaw
+id|wb_64
 (paren
-id|cv64_regs
+id|regs
 comma
 id|VDAC_DATA
 comma
@@ -11089,7 +10765,7 @@ suffix:semicolon
 )brace
 id|WAttr
 (paren
-id|cv64_regs
+id|regs
 comma
 l_int|0x33
 comma
@@ -11107,7 +10783,7 @@ r_int
 r_char
 op_star
 )paren
-id|cv64_regs
+id|regs
 )paren
 suffix:semicolon
 multiline_comment|/* Pass-through */
@@ -11115,13 +10791,7 @@ id|cvscreen
 (paren
 l_int|0
 comma
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-id|cv64_mem
+id|CyberBase
 )paren
 suffix:semicolon
 id|DPRINTK
@@ -11154,6 +10824,14 @@ id|u_short
 id|h
 )paren
 (brace
+r_volatile
+r_int
+r_char
+op_star
+id|regs
+op_assign
+id|CyberRegs
+suffix:semicolon
 r_int
 r_int
 id|drawdir
@@ -11231,10 +10909,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* GfxBusyWait (cv64_regs); */
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_READ_REG_DATA
 comma
@@ -11243,7 +10920,7 @@ l_int|0xA000
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_BKGD_MIX
 comma
@@ -11252,7 +10929,7 @@ l_int|0x7
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_FRGD_MIX
 comma
@@ -11261,7 +10938,7 @@ l_int|0x67
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_BKGD_COLOR
 comma
@@ -11270,7 +10947,7 @@ l_int|0x0
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_FRGD_COLOR
 comma
@@ -11279,7 +10956,7 @@ l_int|0x1
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_BITPLANE_READ_MASK
 comma
@@ -11288,7 +10965,7 @@ l_int|0x1
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_BITPLANE_WRITE_MASK
 comma
@@ -11297,7 +10974,7 @@ l_int|0xFFF
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_CURRENT_Y_POS
 comma
@@ -11306,7 +10983,7 @@ id|sy
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_CURRENT_X_POS
 comma
@@ -11315,7 +10992,7 @@ id|sx
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_DEST_Y__AX_STEP
 comma
@@ -11324,7 +11001,7 @@ id|dy
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_DEST_X__DIA_STEP
 comma
@@ -11333,7 +11010,7 @@ id|dx
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_READ_REG_DATA
 comma
@@ -11344,7 +11021,7 @@ l_int|1
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_MAJ_AXIS_PIX_CNT
 comma
@@ -11355,7 +11032,7 @@ l_int|1
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_DRAW_CMD
 comma
@@ -11391,6 +11068,14 @@ id|u_short
 id|bg
 )paren
 (brace
+r_volatile
+r_int
+r_char
+op_star
+id|regs
+op_assign
+id|CyberRegs
+suffix:semicolon
 id|DPRINTK
 c_func
 (paren
@@ -11402,10 +11087,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* GfxBusyWait (cv64_regs); */
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_FRGD_MIX
 comma
@@ -11414,7 +11098,7 @@ l_int|0x0027
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_FRGD_COLOR
 comma
@@ -11423,7 +11107,7 @@ id|bg
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_READ_REG_DATA
 comma
@@ -11432,7 +11116,7 @@ l_int|0xA000
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_CURRENT_Y_POS
 comma
@@ -11441,7 +11125,7 @@ id|dy
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_CURRENT_X_POS
 comma
@@ -11450,7 +11134,7 @@ id|dx
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_READ_REG_DATA
 comma
@@ -11461,7 +11145,7 @@ l_int|1
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_MAJ_AXIS_PIX_CNT
 comma
@@ -11472,7 +11156,7 @@ l_int|1
 suffix:semicolon
 id|vgaw16
 (paren
-id|cv64_regs
+id|regs
 comma
 id|ECR_DRAW_CMD
 comma
@@ -11496,6 +11180,14 @@ id|cv64_dump
 r_void
 )paren
 (brace
+r_volatile
+r_int
+r_char
+op_star
+id|regs
+op_assign
+id|CyberRegs
+suffix:semicolon
 id|DPRINTK
 c_func
 (paren
@@ -11505,7 +11197,7 @@ suffix:semicolon
 multiline_comment|/* Dump the VGA setup values */
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11519,7 +11211,7 @@ l_string|&quot;CR00 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11527,7 +11219,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11541,7 +11233,7 @@ l_string|&quot;CR01 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11549,7 +11241,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11563,7 +11255,7 @@ l_string|&quot;CR02 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11571,7 +11263,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11585,7 +11277,7 @@ l_string|&quot;CR03 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11593,7 +11285,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11607,7 +11299,7 @@ l_string|&quot;CR04 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11615,7 +11307,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11629,7 +11321,7 @@ l_string|&quot;CR05 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11637,7 +11329,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11651,7 +11343,7 @@ l_string|&quot;CR06 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11659,7 +11351,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11673,7 +11365,7 @@ l_string|&quot;CR07 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11681,7 +11373,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11695,7 +11387,7 @@ l_string|&quot;CR08 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11703,7 +11395,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11717,7 +11409,7 @@ l_string|&quot;CR09 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11725,7 +11417,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11739,7 +11431,7 @@ l_string|&quot;CR10 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11747,7 +11439,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11761,7 +11453,7 @@ l_string|&quot;CR11 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11769,7 +11461,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11783,7 +11475,7 @@ l_string|&quot;CR12 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11791,7 +11483,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11805,7 +11497,7 @@ l_string|&quot;CR13 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11813,7 +11505,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11827,7 +11519,7 @@ l_string|&quot;CR15 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11835,7 +11527,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11849,7 +11541,7 @@ l_string|&quot;CR16 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11857,7 +11549,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11871,7 +11563,7 @@ l_string|&quot;CR36 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11879,7 +11571,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11893,7 +11585,7 @@ l_string|&quot;CR37 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11901,7 +11593,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11915,7 +11607,7 @@ l_string|&quot;CR42 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11923,7 +11615,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11937,7 +11629,7 @@ l_string|&quot;CR43 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11945,7 +11637,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11959,7 +11651,7 @@ l_string|&quot;CR50 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11967,7 +11659,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -11981,7 +11673,7 @@ l_string|&quot;CR51 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -11989,7 +11681,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -12003,7 +11695,7 @@ l_string|&quot;CR53 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -12011,7 +11703,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -12025,7 +11717,7 @@ l_string|&quot;CR58 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -12033,7 +11725,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -12047,7 +11739,7 @@ l_string|&quot;CR59 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -12055,7 +11747,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -12069,7 +11761,7 @@ l_string|&quot;CR5A = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -12077,7 +11769,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -12091,7 +11783,7 @@ l_string|&quot;CR5D = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -12099,7 +11791,7 @@ id|S3_CRTC_DATA
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_ADR
 )paren
@@ -12113,7 +11805,7 @@ l_string|&quot;CR5E = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|S3_CRTC_DATA
 )paren
@@ -12126,7 +11818,7 @@ l_string|&quot;MISC = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|GREG_MISC_OUTPUT_R
 )paren
@@ -12134,7 +11826,7 @@ id|GREG_MISC_OUTPUT_R
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS
 )paren
@@ -12148,7 +11840,7 @@ l_string|&quot;SR01 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS_R
 )paren
@@ -12156,7 +11848,7 @@ id|SEQ_ADDRESS_R
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS
 )paren
@@ -12170,7 +11862,7 @@ l_string|&quot;SR02 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS_R
 )paren
@@ -12178,7 +11870,7 @@ id|SEQ_ADDRESS_R
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS
 )paren
@@ -12192,7 +11884,7 @@ l_string|&quot;SR03 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS_R
 )paren
@@ -12200,7 +11892,7 @@ id|SEQ_ADDRESS_R
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS
 )paren
@@ -12214,7 +11906,7 @@ l_string|&quot;SR09 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS_R
 )paren
@@ -12222,7 +11914,7 @@ id|SEQ_ADDRESS_R
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS
 )paren
@@ -12236,7 +11928,7 @@ l_string|&quot;SR10 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS_R
 )paren
@@ -12244,7 +11936,7 @@ id|SEQ_ADDRESS_R
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS
 )paren
@@ -12258,7 +11950,7 @@ l_string|&quot;SR11 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS_R
 )paren
@@ -12266,7 +11958,7 @@ id|SEQ_ADDRESS_R
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS
 )paren
@@ -12280,7 +11972,7 @@ l_string|&quot;SR12 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS_R
 )paren
@@ -12288,7 +11980,7 @@ id|SEQ_ADDRESS_R
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS
 )paren
@@ -12302,7 +11994,7 @@ l_string|&quot;SR13 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS_R
 )paren
@@ -12310,7 +12002,7 @@ id|SEQ_ADDRESS_R
 suffix:semicolon
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS
 )paren
@@ -12324,7 +12016,7 @@ l_string|&quot;SR15 = %x&bslash;n&quot;
 comma
 op_star
 (paren
-id|CyberRegs
+id|regs
 op_plus
 id|SEQ_ADDRESS_R
 )paren

@@ -185,11 +185,10 @@ suffix:semicolon
 DECL|macro|NO_SIGNATURES
 mdefine_line|#define NO_SIGNATURES (sizeof (signatures) /  sizeof (struct signature))
 multiline_comment|/*&n; * Function : t128_setup(char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : str - unused, ints - array of integer parameters with ints[0]&n; *&t;equal to the number of ints.&n; *&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|t128_setup
 r_void
+id|__init
+(def_block
 id|t128_setup
 c_func
 (paren
@@ -200,7 +199,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_static
@@ -313,19 +311,18 @@ id|commandline_current
 suffix:semicolon
 )brace
 )brace
+)def_block
 multiline_comment|/* &n; * Function : int t128_detect(Scsi_Host_Template * tpnt)&n; *&n; * Purpose : detects and initializes T128,T128F, or T228 controllers&n; *&t;that were autoprobed, overridden on the LILO command line, &n; *&t;or specified at compile time.&n; *&n; * Inputs : tpnt - template for this SCSI adapter.&n; * &n; * Returns : 1 if a host adapter was found, 0 if not.&n; *&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|t128_detect
 r_int
+id|__init
+(def_block
 id|t128_detect
 c_func
 (paren
 id|Scsi_Host_Template
 op_star
 id|tpnt
-)paren
 )paren
 (brace
 r_static
@@ -754,6 +751,7 @@ r_return
 id|count
 suffix:semicolon
 )brace
+)def_block
 multiline_comment|/*&n; * Function : int t128_biosparam(Disk * disk, kdev_t dev, int *ip)&n; *&n; * Purpose : Generates a BIOS / DOS compatible H-C-S mapping for &n; *&t;the specified device / size.&n; * &n; * Inputs : size = size of device in sectors (512 bytes), dev = block device&n; *&t;major / minor, ip[] = {heads, sectors, cylinders}  &n; *&n; * Returns : always 0 (success), initializes ip&n; *&t;&n; */
 multiline_comment|/* &n; * XXX Most SCSI boards use this mapping, I could be incorrect.  Some one&n; * using hard disks on a trantor should verify that this mapping corresponds&n; * to that used by the BIOS / ASPI driver by running the linux fdisk program&n; * and matching the H_C_S coordinates to what DOS uses.&n; */
 DECL|function|t128_biosparam

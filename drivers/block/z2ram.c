@@ -6,25 +6,21 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#if defined(MODULE)
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
-macro_line|#ifdef CONFIG_APUS
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/zorro.h&gt;
 r_extern
 r_int
-id|num_memory
+id|m68k_realnum_memory
 suffix:semicolon
 r_extern
 r_struct
 id|mem_info
-id|memory
+id|m68k_memory
 (braket
 id|NUM_MEMINFO
 )braket
@@ -585,7 +581,7 @@ c_cond
 (paren
 id|index
 op_ge
-id|num_memory
+id|m68k_realnum_memory
 )paren
 (brace
 id|printk
@@ -603,7 +599,7 @@ suffix:semicolon
 )brace
 id|paddr
 op_assign
-id|memory
+id|m68k_memory
 (braket
 id|index
 )braket
@@ -612,7 +608,7 @@ id|addr
 suffix:semicolon
 id|size
 op_assign
-id|memory
+id|m68k_memory
 (braket
 id|index
 )braket
@@ -674,15 +670,16 @@ suffix:semicolon
 macro_line|#else
 id|vaddr
 op_assign
-id|kernel_map
+(paren
+r_int
+r_int
+)paren
+id|ioremap
+c_func
 (paren
 id|paddr
 comma
 id|size
-comma
-id|KERNELMAP_FULL_CACHING
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1042,10 +1039,8 @@ op_assign
 id|z2_sizes
 suffix:semicolon
 )brace
-macro_line|#if defined(MODULE)
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -1084,10 +1079,9 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
-macro_line|#if defined(MODULE)
+multiline_comment|/*&n;     * FIXME: unmap memory&n;     */
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -1143,16 +1137,13 @@ comma
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|z2_init
 id|z2_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_if

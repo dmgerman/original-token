@@ -955,6 +955,15 @@ c_func
 id|page
 )paren
 suffix:semicolon
+id|clear_bit
+c_func
+(paren
+id|PG_swap_entry
+comma
+op_amp
+id|page-&gt;flags
+)paren
+suffix:semicolon
 id|__free_page
 c_func
 (paren

@@ -19183,19 +19183,16 @@ suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;Probe and initialize the specified board.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|stli_brdinit
 r_static
 r_int
+id|__init
 id|stli_brdinit
 c_func
 (paren
 id|stlibrd_t
 op_star
 id|brdp
-)paren
 )paren
 (brace
 macro_line|#if DEBUG
@@ -23048,16 +23045,13 @@ id|rc
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|stli_init
 r_int
+id|__init
 id|stli_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|printk

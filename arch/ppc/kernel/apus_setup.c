@@ -1490,7 +1490,7 @@ id|cmode
 )paren
 (brace
 r_case
-id|KERNELMAP_FULL_CACHING
+id|IOMAP_FULL_CACHING
 suffix:colon
 id|mask
 op_assign
@@ -1508,7 +1508,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|KERNELMAP_NOCACHE_SER
+id|IOMAP_NOCACHE_SER
 suffix:colon
 id|mask
 op_assign

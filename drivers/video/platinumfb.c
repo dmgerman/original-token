@@ -2871,12 +2871,10 @@ suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_FB_COMPAT_XPMAC */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_platinum
 r_static
 r_int
+id|__init
 id|init_platinum
 c_func
 (paren
@@ -2884,7 +2882,6 @@ r_struct
 id|fb_info_platinum
 op_star
 id|info
-)paren
 )paren
 (brace
 r_struct
@@ -3252,16 +3249,13 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|platinum_init
 r_void
+id|__init
 id|platinum_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifndef CONFIG_FB_OF
@@ -3300,11 +3294,9 @@ macro_line|#else
 DECL|macro|invalidate_cache
 mdefine_line|#define invalidate_cache(addr)
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|platinum_of_init
 r_void
+id|__init
 id|platinum_of_init
 c_func
 (paren
@@ -3312,7 +3304,6 @@ r_struct
 id|device_node
 op_star
 id|dp
-)paren
 )paren
 (brace
 r_struct
@@ -4399,11 +4390,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* &n; * Parse user speficied options (`video=platinumfb:&squot;)&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|platinum_setup
 r_void
+id|__init
 id|platinum_setup
 c_func
 (paren
@@ -4414,7 +4403,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_char

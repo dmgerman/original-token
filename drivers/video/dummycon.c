@@ -18,19 +18,16 @@ mdefine_line|#define DUMMY_COLUMNS&t;80
 DECL|macro|DUMMY_ROWS
 mdefine_line|#define DUMMY_ROWS&t;25
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dummycon_startup
 r_static
 r_const
 r_char
+id|__init
 op_star
 id|dummycon_startup
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_return

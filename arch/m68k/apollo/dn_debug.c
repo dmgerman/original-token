@@ -1,4 +1,3 @@
-macro_line|#include &lt;stdarg.h&gt;
 DECL|macro|DN_DEBUG_BUFFER_BASE
 mdefine_line|#define DN_DEBUG_BUFFER_BASE 0x82800000
 DECL|macro|DN_DEBUG_BUFFER_SIZE

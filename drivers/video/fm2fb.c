@@ -1236,16 +1236,13 @@ id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Initialisation&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|fm2fb_init
 r_void
+id|__init
 id|fm2fb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -1834,11 +1831,9 @@ id|fb_fix.id
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|fm2fb_setup
 r_void
+id|__init
 id|fm2fb_setup
 c_func
 (paren
@@ -1849,7 +1844,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_char

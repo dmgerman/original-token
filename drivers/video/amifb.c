@@ -3849,11 +3849,9 @@ comma
 id|amifb_ioctl
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|amifb_setup
 r_void
+id|__init
 id|amifb_setup
 c_func
 (paren
@@ -3864,7 +3862,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_char
@@ -6402,16 +6399,13 @@ id|con
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Initialisation&n;&t; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|amifb_init
 r_void
+id|__init
 id|amifb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -7871,12 +7865,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; * Get a Video Mode&n;&t; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_video_mode
 r_static
 r_void
+id|__init
 id|get_video_mode
 c_func
 (paren
@@ -7884,7 +7876,6 @@ r_const
 r_char
 op_star
 id|name
-)paren
 )paren
 (brace
 r_int
@@ -7942,17 +7933,14 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; *  Probe the Video Modes&n;&t; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|check_default_mode
 r_static
 r_void
+id|__init
 id|check_default_mode
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -8038,18 +8026,15 @@ l_string|&quot;Can&squot;t find any usable video mode&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Allocate, Clear and Align a Block of Chip Memory&n;&t; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|chipalloc
 r_static
 id|u_long
+id|__init
 id|chipalloc
 c_func
 (paren
 id|u_long
 id|size
-)paren
 )paren
 (brace
 id|u_long
@@ -8111,12 +8096,10 @@ id|ptr
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * A strtok which returns empty strings, too&n;&t; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|strtoke
 r_static
 r_char
+id|__init
 op_star
 id|strtoke
 c_func
@@ -8129,7 +8112,6 @@ r_const
 r_char
 op_star
 id|ct
-)paren
 )paren
 (brace
 r_char
@@ -14493,17 +14475,14 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; * Initialise the Copper Initialisation List&n;&t; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ami_init_copper
 r_static
 r_void
+id|__init
 id|ami_init_copper
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|copins

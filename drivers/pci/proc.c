@@ -2507,7 +2507,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|flags
+id|end
 )paren
 r_continue
 suffix:semicolon

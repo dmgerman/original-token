@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&n; * Hardware accelerated Matrox Millennium I, II, Mystique and G200&n; *&n; * (c) 1998,1999 Petr Vandrovec &lt;vandrove@vc.cvut.cz&gt;&n; *&n; * Version: 1.15 1999/04/19&n; *&n; * MTRR stuff: 1998 Tom Rini &lt;tmrini@ntplx.net&gt;&n; *&n; * Contributors: &quot;menion?&quot; &lt;menion@mindless.com&gt;&n; *                     Betatesting, fixes, ideas&n; *&n; *               &quot;Kurt Garloff&quot; &lt;garloff@kg1.ping.de&gt;&n; *                     Betatesting, fixes, ideas, videomodes, videomodes timmings&n; *&n; *               &quot;Tom Rini&quot; &lt;tmrini@ntplx.net&gt;&n; *                     MTRR stuff, betatesting, fixes, ideas&n; *&n; *               &quot;Bibek Sahu&quot; &lt;scorpio@dodds.net&gt;&n; *                     Access device through readb|w|l and write b|w|l&n; *                     Extensive debugging stuff&n; *&n; *               &quot;Daniel Haun&quot; &lt;haund@usa.net&gt;&n; *                     Testing, hardware cursor fixes&n; *&n; *               &quot;Scott Wood&quot; &lt;sawst46+@pitt.edu&gt;&n; *                     Fixes&n; *&n; *               &quot;Gerd Knorr&quot; &lt;kraxel@goldbach.isdn.cs.tu-berlin.de&gt;&n; *                     Betatesting&n; *&n; *               &quot;Kelly French&quot; &lt;targon@hazmat.com&gt;&n; *               &quot;Fernando Herrera&quot; &lt;fherrera@eurielec.etsit.upm.es&gt;&n; *                     Betatesting, bug reporting&n; *&n; *               &quot;Pablo Bianucci&quot; &lt;pbian@pccp.com.ar&gt;&n; *                     Fixes, ideas, betatesting&n; *&n; *               &quot;Inaky Perez Gonzalez&quot; &lt;inaky@peloncho.fis.ucm.es&gt;&n; *                     Fixes, enhandcements, ideas, betatesting&n; *&n; *               &quot;Ryuichi Oikawa&quot; &lt;roikawa@rr.iiij4u.or.jp&gt;&n; *                     PPC betatesting, PPC support, backward compatibility&n; *&n; *               &quot;Paul Womar&quot; &lt;Paul@pwomar.demon.co.uk&gt;&n; *               &quot;Owen Waller&quot; &lt;O.Waller@ee.qub.ac.uk&gt;&n; *                     PPC betatesting &n; *&n; *               &quot;Thomas Pornin&quot; &lt;pornin@bolet.ens.fr&gt;&n; *                     Alpha betatesting&n; *&n; *               &quot;Pieter van Leuven&quot; &lt;pvl@iae.nl&gt;&n; *               &quot;Ulf Jaenicke-Roessler&quot; &lt;ujr@physik.phy.tu-dresden.de&gt;&n; *                     G100 testing&n; *&n; *               &quot;H. Peter Arvin&quot; &lt;hpa@transmeta.com&gt;&n; *                     Ideas&n; *&n; *               &quot;Cort Dougan&quot; &lt;cort@cs.nmt.edu&gt;&n; *                     CHRP fixes and PReP cleanup&n; *&n; * (following author is not in any relation with this code, but his code&n; *  is included in this driver)&n; *&n; * Based on framebuffer driver for VBE 2.0 compliant graphic boards&n; *     (c) 1998 Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt;&n; *&n; * (following author is not in any relation with this code, but his ideas&n; *  were used when writting this driver)&n; *&n; *&t;&t; FreeVBE/AF (Matrox), &quot;Shawn Hargreaves&quot; &lt;shawn@talula.demon.co.uk&gt;&n; *&n; */
+multiline_comment|/*&n; *&n; * Hardware accelerated Matrox Millennium I, II, Mystique, G100, G200 and G400&n; *&n; * (c) 1998,1999 Petr Vandrovec &lt;vandrove@vc.cvut.cz&gt;&n; *&n; * Version: 1.19 1999/08/05&n; *&n; * MTRR stuff: 1998 Tom Rini &lt;tmrini@ntplx.net&gt;&n; *&n; * Contributors: &quot;menion?&quot; &lt;menion@mindless.com&gt;&n; *                     Betatesting, fixes, ideas&n; *&n; *               &quot;Kurt Garloff&quot; &lt;garloff@kg1.ping.de&gt;&n; *                     Betatesting, fixes, ideas, videomodes, videomodes timmings&n; *&n; *               &quot;Tom Rini&quot; &lt;trini@disparity.net&gt;&n; *                     MTRR stuff, PPC cleanups, betatesting, fixes, ideas&n; *&n; *               &quot;Bibek Sahu&quot; &lt;scorpio@dodds.net&gt;&n; *                     Access device through readb|w|l and write b|w|l&n; *                     Extensive debugging stuff&n; *&n; *               &quot;Daniel Haun&quot; &lt;haund@usa.net&gt;&n; *                     Testing, hardware cursor fixes&n; *&n; *               &quot;Scott Wood&quot; &lt;sawst46+@pitt.edu&gt;&n; *                     Fixes&n; *&n; *               &quot;Gerd Knorr&quot; &lt;kraxel@goldbach.isdn.cs.tu-berlin.de&gt;&n; *                     Betatesting&n; *&n; *               &quot;Kelly French&quot; &lt;targon@hazmat.com&gt;&n; *               &quot;Fernando Herrera&quot; &lt;fherrera@eurielec.etsit.upm.es&gt;&n; *                     Betatesting, bug reporting&n; *&n; *               &quot;Pablo Bianucci&quot; &lt;pbian@pccp.com.ar&gt;&n; *                     Fixes, ideas, betatesting&n; *&n; *               &quot;Inaky Perez Gonzalez&quot; &lt;inaky@peloncho.fis.ucm.es&gt;&n; *                     Fixes, enhandcements, ideas, betatesting&n; *&n; *               &quot;Ryuichi Oikawa&quot; &lt;roikawa@rr.iiij4u.or.jp&gt;&n; *                     PPC betatesting, PPC support, backward compatibility&n; *&n; *               &quot;Paul Womar&quot; &lt;Paul@pwomar.demon.co.uk&gt;&n; *               &quot;Owen Waller&quot; &lt;O.Waller@ee.qub.ac.uk&gt;&n; *                     PPC betatesting &n; *&n; *               &quot;Thomas Pornin&quot; &lt;pornin@bolet.ens.fr&gt;&n; *                     Alpha betatesting&n; *&n; *               &quot;Pieter van Leuven&quot; &lt;pvl@iae.nl&gt;&n; *               &quot;Ulf Jaenicke-Roessler&quot; &lt;ujr@physik.phy.tu-dresden.de&gt;&n; *                     G100 testing&n; *&n; *               &quot;H. Peter Arvin&quot; &lt;hpa@transmeta.com&gt;&n; *                     Ideas&n; *&n; *               &quot;Cort Dougan&quot; &lt;cort@cs.nmt.edu&gt;&n; *                     CHRP fixes and PReP cleanup&n; *&n; *               &quot;Mark Vojkovich&quot; &lt;mvojkovi@ucsd.edu&gt;&n; *                     G400 support&n; *&n; * (following author is not in any relation with this code, but his code&n; *  is included in this driver)&n; *&n; * Based on framebuffer driver for VBE 2.0 compliant graphic boards&n; *     (c) 1998 Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt;&n; *&n; * (following author is not in any relation with this code, but his ideas&n; *  were used when writting this driver)&n; *&n; *&t;&t; FreeVBE/AF (Matrox), &quot;Shawn Hargreaves&quot; &lt;shawn@talula.demon.co.uk&gt;&n; *&n; */
 multiline_comment|/* general, but fairly heavy, debugging */
 DECL|macro|MATROXFB_DEBUG
 macro_line|#undef MATROXFB_DEBUG
@@ -13,6 +13,12 @@ macro_line|#undef MATROXFB_DEBUG_LOOP
 multiline_comment|/* Debug register calls, too? */
 DECL|macro|MATROXFB_DEBUG_REG
 macro_line|#undef MATROXFB_DEBUG_REG
+multiline_comment|/* Log reentrancy attempts - you must have printstate() patch applied */
+DECL|macro|MATROXFB_DEBUG_REENTER
+macro_line|#undef MATROXFB_DEBUG_REENTER
+multiline_comment|/* you must define DEBUG_REENTER to get debugged CONSOLEBH... */
+DECL|macro|MATROXFB_DEBUG_CONSOLEBH
+macro_line|#undef MATROXFB_DEBUG_CONSOLEBH
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -49,13 +55,16 @@ macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &lt;video/macmodes.h&gt;
 macro_line|#endif
+multiline_comment|/* always compile support for 32MB... It cost almost nothing */
+DECL|macro|CONFIG_FB_MATROX_32MB
+mdefine_line|#define CONFIG_FB_MATROX_32MB
 DECL|macro|FBCON_HAS_VGATEXT
 mdefine_line|#define FBCON_HAS_VGATEXT
 macro_line|#ifdef MATROXFB_DEBUG
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG
 DECL|macro|DBG
-mdefine_line|#define DBG(x)&t;&t;printk(&quot;matroxfb: %s&bslash;n&quot;, (x));
+mdefine_line|#define DBG(x)&t;&t;printk(KERN_DEBUG &quot;matroxfb: %s&bslash;n&quot;, (x));
 macro_line|#ifdef MATROXFB_DEBUG_HEAVY
 DECL|macro|DBG_HEAVY
 mdefine_line|#define DBG_HEAVY(x)&t;DBG(x)
@@ -153,6 +162,10 @@ macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_MATROX_G100_AGP
 DECL|macro|PCI_DEVICE_ID_MATROX_G100_AGP
 mdefine_line|#define PCI_DEVICE_ID_MATROX_G100_AGP&t;0x1001
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_MATROX_G400_AGP
+DECL|macro|PCI_DEVICE_ID_MATROX_G400_AGP
+mdefine_line|#define PCI_DEVICE_ID_MATROX_G400_AGP&t;0x0525
 macro_line|#endif
 macro_line|#ifndef PCI_SS_ID_MATROX_PRODUCTIVA_G100_AGP
 DECL|macro|PCI_SS_ID_MATROX_GENERIC
@@ -1128,7 +1141,7 @@ r_int
 r_char
 id|CRTCEXT
 (braket
-l_int|6
+l_int|9
 )braket
 suffix:semicolon
 DECL|member|SEQ
@@ -1220,8 +1233,10 @@ suffix:semicolon
 )brace
 DECL|macro|PMXINFO
 mdefine_line|#define PMXINFO(p) mxinfo(p),
+DECL|macro|MINFO_FROM
+mdefine_line|#define MINFO_FROM(x)&t;   struct matrox_fb_info* minfo = x
 DECL|macro|MINFO_FROM_DISP
-mdefine_line|#define MINFO_FROM_DISP(x) struct matrox_fb_info* minfo = mxinfo(x)
+mdefine_line|#define MINFO_FROM_DISP(x) MINFO_FROM(mxinfo(x))
 macro_line|#else
 DECL|variable|global_mxinfo
 r_struct
@@ -1269,6 +1284,8 @@ suffix:semicolon
 macro_line|#endif
 DECL|macro|PMXINFO
 mdefine_line|#define PMXINFO(p)
+DECL|macro|MINFO_FROM
+mdefine_line|#define MINFO_FROM(x)
 DECL|macro|MINFO_FROM_DISP
 mdefine_line|#define MINFO_FROM_DISP(x)
 macro_line|#endif
@@ -1619,6 +1636,12 @@ DECL|member|sgram
 r_int
 id|sgram
 suffix:semicolon
+macro_line|#ifdef CONFIG_FB_MATROX_32MB
+DECL|member|support32MB
+r_int
+id|support32MB
+suffix:semicolon
+macro_line|#endif
 DECL|member|accelerator
 r_int
 id|accelerator
@@ -1807,6 +1830,20 @@ op_star
 id|dp
 )paren
 suffix:semicolon
+DECL|variable|default_vmode
+r_static
+r_int
+id|default_vmode
+op_assign
+id|VMODE_NVRAM
+suffix:semicolon
+DECL|variable|default_cmode
+r_static
+r_int
+id|default_cmode
+op_assign
+id|CMODE_NVRAM
+suffix:semicolon
 macro_line|#endif
 DECL|macro|curr_ydstorg
 mdefine_line|#define curr_ydstorg(x)&t;ACCESS_FBINFO2(x, curr.ydstorg.pixels)
@@ -1905,6 +1942,8 @@ DECL|macro|M_VCOUNT
 mdefine_line|#define M_VCOUNT&t;0x1E20
 DECL|macro|M_RESET
 mdefine_line|#define M_RESET&t;&t;0x1E40
+DECL|macro|M_AGP2PLL
+mdefine_line|#define M_AGP2PLL&t;0x1E4C
 DECL|macro|M_OPMODE
 mdefine_line|#define M_OPMODE&t;0x1E54
 DECL|macro|M_OPMODE_DMA_GEN_WRITE
@@ -1957,6 +1996,9 @@ DECL|macro|M_EXTVGA_INDEX
 mdefine_line|#define M_EXTVGA_INDEX&t;0x1FDE
 DECL|macro|M_EXTVGA_DATA
 mdefine_line|#define M_EXTVGA_DATA&t;0x1FDF
+multiline_comment|/* G200 only */
+DECL|macro|M_SRCORG
+mdefine_line|#define M_SRCORG&t;0x2CB4
 DECL|macro|M_RAMDAC_BASE
 mdefine_line|#define M_RAMDAC_BASE&t;0x3C00
 multiline_comment|/* fortunately, same on TVP3026 and MGA1064 */
@@ -1970,6 +2012,10 @@ DECL|macro|M_X_INDEX
 mdefine_line|#define M_X_INDEX&t;0x00
 DECL|macro|M_X_DATAREG
 mdefine_line|#define M_X_DATAREG&t;0x0A
+DECL|macro|DAC_XGENIOCTRL
+mdefine_line|#define DAC_XGENIOCTRL&t;&t;0x2A
+DECL|macro|DAC_XGENIODATA
+mdefine_line|#define DAC_XGENIODATA&t;&t;0x2B
 macro_line|#ifdef CONFIG_FB_MATROX_MILLENIUM
 DECL|macro|TVP3026_INDEX
 mdefine_line|#define TVP3026_INDEX&t;&t;0x00
@@ -2581,6 +2627,159 @@ mdefine_line|#define isMillenium(x)&t; (0)
 DECL|macro|isMilleniumII
 mdefine_line|#define isMilleniumII(x) (0)
 macro_line|#endif
+macro_line|#ifdef MATROXFB_DEBUG_REENTER
+DECL|variable|guard_counter
+r_static
+id|atomic_t
+id|guard_counter
+op_assign
+id|ATOMIC_INIT
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+DECL|variable|guard_printing
+r_static
+id|atomic_t
+id|guard_printing
+op_assign
+id|ATOMIC_INIT
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+DECL|function|guard_start
+r_static
+r_void
+id|guard_start
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|atomic_dec_and_test
+c_func
+(paren
+op_amp
+id|guard_counter
+)paren
+)paren
+(brace
+multiline_comment|/* first level */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|bh_mask
+op_amp
+(paren
+l_int|1
+op_lshift
+id|CONSOLE_BH
+)paren
+)paren
+)paren
+multiline_comment|/* and CONSOLE_BH disabled */
+r_return
+suffix:semicolon
+multiline_comment|/* is OK */
+multiline_comment|/* otherwise it is first level with CONSOLE_BH enabled -&n;&t;&t;   - if we are __sti or SMP, reentering from console_bh possible */
+id|atomic_dec
+c_func
+(paren
+op_amp
+id|guard_printing
+)paren
+suffix:semicolon
+multiline_comment|/* disable reentrancy warning */
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;matroxfb entered without CONSOLE_BH disabled&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef printstate
+id|printstate
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|guard_printing
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* real reentering... You should be already warned by code above */
+r_if
+c_cond
+(paren
+id|atomic_dec_and_test
+c_func
+(paren
+op_amp
+id|guard_printing
+)paren
+)paren
+(brace
+macro_line|#ifdef printstate
+id|printstate
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|guard_printing
+)paren
+suffix:semicolon
+)brace
+DECL|function|guard_end
+r_static
+r_inline
+r_void
+id|guard_end
+c_func
+(paren
+r_void
+)paren
+(brace
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|guard_counter
+)paren
+suffix:semicolon
+)brace
+DECL|macro|CRITBEGIN
+mdefine_line|#define CRITBEGIN guard_start();
+DECL|macro|CRITEND
+mdefine_line|#define CRITEND   guard_end();
+macro_line|#else
+DECL|macro|CRITBEGIN
+mdefine_line|#define CRITBEGIN
+DECL|macro|CRITEND
+mdefine_line|#define CRITEND
+macro_line|#endif
+DECL|macro|mga_ydstlen
+mdefine_line|#define mga_ydstlen(y,l) mga_outl(M_YDSTLEN | M_EXEC, ((y) &lt;&lt; 16) | (l))
 DECL|function|matrox_cfbX_init
 r_static
 r_void
@@ -2825,7 +3024,7 @@ c_func
 (paren
 id|M_YBOT
 comma
-l_int|0x007FFFFF
+l_int|0x01FFFFFF
 )paren
 suffix:semicolon
 id|mga_outl
@@ -2928,6 +3127,7 @@ c_func
 (paren
 l_string|&quot;matrox_cfbX_bmove&quot;
 )paren
+id|CRITBEGIN
 id|sx
 op_mul_assign
 id|fontwidth
@@ -3169,21 +3369,11 @@ op_or
 id|dx
 )paren
 suffix:semicolon
-id|mga_outl
+id|mga_ydstlen
 c_func
 (paren
-id|M_YDSTLEN
-op_or
-id|M_EXEC
-comma
-(paren
-(paren
 id|dy
-)paren
-op_lshift
-l_int|16
-)paren
-op_or
+comma
 id|height
 )paren
 suffix:semicolon
@@ -3192,6 +3382,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|CRITEND
 )brace
 macro_line|#ifdef FBCON_HAS_CFB4
 DECL|function|matrox_cfb4_bmove
@@ -3243,6 +3434,7 @@ c_func
 (paren
 l_string|&quot;matrox_cfb4_bmove&quot;
 )paren
+id|CRITBEGIN
 r_if
 c_cond
 (paren
@@ -3570,6 +3762,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|CRITEND
 )brace
 macro_line|#endif
 DECL|function|matroxfb_accel_clear
@@ -3600,10 +3793,11 @@ c_func
 (paren
 l_string|&quot;matroxfb_accel_clear&quot;
 )paren
+id|CRITBEGIN
 id|mga_fifo
 c_func
 (paren
-l_int|4
+l_int|5
 )paren
 suffix:semicolon
 id|mga_outl
@@ -3646,19 +3840,11 @@ op_or
 id|sx
 )paren
 suffix:semicolon
-id|mga_outl
+id|mga_ydstlen
 c_func
 (paren
-id|M_YDSTLEN
-op_or
-id|M_EXEC
-comma
-(paren
 id|sy
-op_lshift
-l_int|16
-)paren
-op_or
+comma
 id|height
 )paren
 suffix:semicolon
@@ -3667,6 +3853,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|CRITEND
 )brace
 DECL|function|matrox_cfbX_clear
 r_static
@@ -3791,6 +3978,7 @@ c_func
 (paren
 l_string|&quot;matrox_cfb4_clear&quot;
 )paren
+id|CRITBEGIN
 id|whattodo
 op_assign
 l_int|0
@@ -4152,6 +4340,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|CRITEND
 )brace
 macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB8
@@ -4459,10 +4648,11 @@ c_func
 id|p
 )paren
 suffix:semicolon
+id|CRITBEGIN
 id|mga_fifo
 c_func
 (paren
-l_int|7
+l_int|8
 )paren
 suffix:semicolon
 id|mga_outl
@@ -4563,19 +4753,11 @@ op_amp
 l_int|0x0003FFFF
 )paren
 suffix:semicolon
-id|mga_outl
+id|mga_ydstlen
 c_func
 (paren
-id|M_YDSTLEN
-op_or
-id|M_EXEC
-comma
-(paren
 id|yy
-op_lshift
-l_int|16
-)paren
-op_or
+comma
 id|fontheight
 c_func
 (paren
@@ -4588,6 +4770,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|CRITEND
 )brace
 DECL|function|matrox_cfbX_putc
 r_static
@@ -4650,6 +4833,7 @@ c_func
 id|p
 )paren
 suffix:semicolon
+id|CRITBEGIN
 macro_line|#ifdef __BIG_ENDIAN
 id|WaitTillIdle
 c_func
@@ -4824,19 +5008,11 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|mga_outl
+id|mga_ydstlen
 c_func
 (paren
-id|M_YDSTLEN
-op_or
-id|M_EXEC
-comma
-(paren
 id|yy
-op_lshift
-l_int|16
-)paren
-op_or
+comma
 id|fontheight
 c_func
 (paren
@@ -4950,19 +5126,11 @@ comma
 id|ar0
 )paren
 suffix:semicolon
-id|mga_outl
+id|mga_ydstlen
 c_func
 (paren
-id|M_YDSTLEN
-op_or
-id|M_EXEC
-comma
-(paren
 id|yy
-op_lshift
-l_int|16
-)paren
-op_or
+comma
 id|fontheight
 c_func
 (paren
@@ -5138,6 +5306,7 @@ id|accel.m_opmode
 )paren
 suffix:semicolon
 macro_line|#endif
+id|CRITEND
 )brace
 macro_line|#ifdef FBCON_HAS_CFB8
 DECL|function|matrox_cfb8_putc
@@ -5551,6 +5720,7 @@ c_func
 id|p
 )paren
 suffix:semicolon
+id|CRITBEGIN
 id|mga_fifo
 c_func
 (paren
@@ -5674,19 +5844,11 @@ op_amp
 l_int|0x0003FFFF
 )paren
 suffix:semicolon
-id|mga_outl
+id|mga_ydstlen
 c_func
 (paren
-id|M_YDSTLEN
-op_or
-id|M_EXEC
-comma
-(paren
 id|yy
-op_lshift
-l_int|16
-)paren
-op_or
+comma
 id|fontheight
 c_func
 (paren
@@ -5708,6 +5870,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|CRITEND
 )brace
 DECL|function|matrox_cfbX_putcs
 r_static
@@ -5917,6 +6080,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|CRITBEGIN
 macro_line|#ifdef __BIG_ENDIAN
 id|WaitTillIdle
 c_func
@@ -6052,7 +6216,7 @@ suffix:semicolon
 id|mga_fifo
 c_func
 (paren
-l_int|5
+l_int|6
 )paren
 suffix:semicolon
 id|mga_writel
@@ -6325,6 +6489,7 @@ id|accel.m_opmode
 )paren
 suffix:semicolon
 macro_line|#endif
+id|CRITEND
 )brace
 macro_line|#ifdef FBCON_HAS_CFB8
 DECL|function|matrox_cfb8_putcs
@@ -6803,6 +6968,7 @@ id|xx
 op_rshift_assign
 l_int|1
 suffix:semicolon
+id|CRITBEGIN
 id|mga_fifo
 c_func
 (paren
@@ -6870,6 +7036,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|CRITEND
 )brace
 macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB8
@@ -6918,6 +7085,7 @@ c_func
 id|p
 )paren
 suffix:semicolon
+id|CRITBEGIN
 id|mga_fifo
 c_func
 (paren
@@ -6968,19 +7136,11 @@ op_or
 id|xx
 )paren
 suffix:semicolon
-id|mga_outl
+id|mga_ydstlen
 c_func
 (paren
-id|M_YDSTLEN
-op_or
-id|M_EXEC
-comma
-(paren
 id|yy
-op_lshift
-l_int|16
-)paren
-op_or
+comma
 id|fontheight
 c_func
 (paren
@@ -6993,6 +7153,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|CRITEND
 )brace
 macro_line|#endif
 DECL|function|matrox_cfbX_revc
@@ -7040,6 +7201,7 @@ c_func
 id|p
 )paren
 suffix:semicolon
+id|CRITBEGIN
 id|mga_fifo
 c_func
 (paren
@@ -7090,19 +7252,11 @@ op_or
 id|xx
 )paren
 suffix:semicolon
-id|mga_outl
+id|mga_ydstlen
 c_func
 (paren
-id|M_YDSTLEN
-op_or
-id|M_EXEC
-comma
-(paren
 id|yy
-op_lshift
-l_int|16
-)paren
-op_or
+comma
 id|fontheight
 c_func
 (paren
@@ -7115,6 +7269,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|CRITEND
 )brace
 DECL|function|matrox_cfbX_clear_margins
 r_static
@@ -8110,6 +8265,19 @@ l_string|&quot;matroxfb_ti3026_cursor&quot;
 r_if
 c_cond
 (paren
+id|ACCESS_FBINFO
+c_func
+(paren
+id|currcon_display
+)paren
+op_ne
+id|p
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|mode
 op_eq
 id|CM_ERASE
@@ -8660,6 +8828,7 @@ c_func
 id|features.DAC1064.cursorimage
 )paren
 suffix:semicolon
+id|CRITBEGIN
 macro_line|#ifdef __BIG_ENDIAN
 id|WaitTillIdle
 c_func
@@ -8903,6 +9072,7 @@ id|accel.m_opmode
 )paren
 suffix:semicolon
 macro_line|#endif
+id|CRITEND
 )brace
 DECL|function|matroxfb_DAC1064_cursor
 r_static
@@ -8934,6 +9104,19 @@ c_func
 (paren
 id|p
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACCESS_FBINFO
+c_func
+(paren
+id|currcon_display
+)paren
+op_ne
+id|p
+)paren
+r_return
 suffix:semicolon
 r_if
 c_cond
@@ -9395,6 +9578,7 @@ id|fastfont.size
 r_return
 l_int|0
 suffix:semicolon
+id|CRITBEGIN
 id|mga_outl
 c_func
 (paren
@@ -9968,6 +10152,7 @@ id|accel.m_opmode
 )paren
 )paren
 suffix:semicolon
+id|CRITEND
 r_return
 l_int|1
 suffix:semicolon
@@ -10079,6 +10264,7 @@ c_func
 id|p
 )paren
 suffix:semicolon
+id|CRITBEGIN
 id|step
 op_assign
 id|ACCESS_FBINFO
@@ -10311,6 +10497,7 @@ op_decrement
 suffix:semicolon
 )brace
 )brace
+id|CRITEND
 )brace
 DECL|function|matrox_text_clear
 r_static
@@ -10409,6 +10596,7 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
+id|CRITBEGIN
 r_while
 c_loop
 (paren
@@ -10464,6 +10652,7 @@ id|height
 op_decrement
 suffix:semicolon
 )brace
+id|CRITEND
 )brace
 DECL|function|matrox_text_putc
 r_static
@@ -10570,6 +10759,7 @@ id|chr
 op_or_assign
 l_int|0x08
 suffix:semicolon
+id|CRITBEGIN
 id|mga_writew
 c_func
 (paren
@@ -10588,6 +10778,7 @@ id|chr
 )paren
 )paren
 suffix:semicolon
+id|CRITEND
 )brace
 DECL|function|matrox_text_putcs
 r_static
@@ -10687,6 +10878,7 @@ op_lshift
 l_int|4
 )paren
 suffix:semicolon
+id|CRITBEGIN
 r_while
 c_loop
 (paren
@@ -10751,6 +10943,7 @@ op_add_assign
 id|step
 suffix:semicolon
 )brace
+id|CRITEND
 )brace
 DECL|function|matrox_text_revc
 r_static
@@ -10804,6 +10997,7 @@ id|step
 op_plus
 l_int|1
 suffix:semicolon
+id|CRITBEGIN
 id|mga_writeb
 c_func
 (paren
@@ -10830,6 +11024,7 @@ op_xor
 l_int|0x77
 )paren
 suffix:semicolon
+id|CRITEND
 )brace
 DECL|function|matrox_text_loadfont
 r_static
@@ -10916,6 +11111,7 @@ op_star
 )paren
 id|p-&gt;fontdata
 suffix:semicolon
+id|CRITBEGIN
 id|mga_setr
 c_func
 (paren
@@ -11019,6 +11215,7 @@ comma
 l_int|0x03
 )paren
 suffix:semicolon
+id|CRITEND
 r_return
 l_int|1
 suffix:semicolon
@@ -11058,6 +11255,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|CRITBEGIN
 id|mga_setr
 c_func
 (paren
@@ -11088,6 +11286,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+id|CRITEND
 )brace
 DECL|function|matrox_text_cursor
 r_static
@@ -11123,6 +11322,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACCESS_FBINFO
+c_func
+(paren
+id|currcon_display
+)paren
+op_ne
+id|p
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|mode
 op_eq
 id|CM_ERASE
@@ -11140,6 +11352,7 @@ op_ne
 id|CM_ERASE
 )paren
 (brace
+id|CRITBEGIN
 id|mga_setr
 c_func
 (paren
@@ -11150,6 +11363,7 @@ comma
 l_int|0x20
 )paren
 suffix:semicolon
+id|CRITEND
 id|ACCESS_FBINFO
 c_func
 (paren
@@ -11215,6 +11429,7 @@ id|y
 op_plus
 id|x
 suffix:semicolon
+id|CRITBEGIN
 id|mga_setr
 c_func
 (paren
@@ -11251,6 +11466,7 @@ id|cursor.u
 )paren
 )paren
 suffix:semicolon
+id|CRITEND
 id|ACCESS_FBINFO
 c_func
 (paren
@@ -12346,6 +12562,12 @@ id|p1
 comma
 id|p2
 suffix:semicolon
+macro_line|#ifdef CONFIG_FB_MATROX_32MB
+r_int
+r_int
+id|p3
+suffix:semicolon
+macro_line|#endif
 r_struct
 id|display
 op_star
@@ -12502,7 +12724,7 @@ id|CRTCEXT
 l_int|0
 )braket
 op_amp
-l_int|0xF0
+l_int|0xB0
 )paren
 op_or
 (paren
@@ -12514,7 +12736,37 @@ l_int|16
 op_amp
 l_int|0x0F
 )paren
+op_or
+(paren
+(paren
+id|pos
+op_rshift
+l_int|14
+)paren
+op_amp
+l_int|0x40
+)paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_FB_MATROX_32MB
+id|p3
+op_assign
+id|ACCESS_FBINFO
+c_func
+(paren
+id|currenthw
+)paren
+op_member_access_from_pointer
+id|CRTCEXT
+(braket
+l_int|8
+)braket
+op_assign
+id|pos
+op_rshift
+l_int|21
+suffix:semicolon
+macro_line|#endif&t;
+id|CRITBEGIN
 id|mga_setr
 c_func
 (paren
@@ -12535,6 +12787,27 @@ comma
 id|p1
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_FB_MATROX_32MB
+r_if
+c_cond
+(paren
+id|ACCESS_FBINFO
+c_func
+(paren
+id|devflags.support32MB
+)paren
+)paren
+id|mga_setr
+c_func
+(paren
+id|M_EXTVGA_INDEX
+comma
+l_int|0x08
+comma
+id|p3
+)paren
+suffix:semicolon
+macro_line|#endif
 id|mga_setr
 c_func
 (paren
@@ -12545,6 +12818,7 @@ comma
 id|p2
 )paren
 suffix:semicolon
+id|CRITEND
 )brace
 multiline_comment|/*&n;&t; * Open/Release the frame buffer device&n;&t; */
 DECL|function|matroxfb_open
@@ -12928,6 +13202,7 @@ id|rounding
 op_assign
 l_int|64
 suffix:semicolon
+multiline_comment|/* doc says 64; 32 is OK for G400 */
 r_break
 suffix:semicolon
 r_case
@@ -12946,6 +13221,7 @@ id|rounding
 op_assign
 l_int|64
 suffix:semicolon
+multiline_comment|/* doc says 64; 32 is OK for G400 */
 r_break
 suffix:semicolon
 r_default
@@ -12953,6 +13229,22 @@ suffix:colon
 id|rounding
 op_assign
 l_int|16
+suffix:semicolon
+multiline_comment|/* on G400, 16 really does not work */
+r_if
+c_cond
+(paren
+id|ACCESS_FBINFO
+c_func
+(paren
+id|devflags.accelerator
+)paren
+op_eq
+id|FB_ACCEL_MATROX_MGAG400
+)paren
+id|rounding
+op_assign
+l_int|32
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -15998,12 +16290,11 @@ op_assign
 id|p
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|DAC1064_setmclk
 r_static
 r_void
+id|__init
+(def_block
 id|DAC1064_setmclk
 c_func
 (paren
@@ -16019,7 +16310,6 @@ comma
 r_int
 r_int
 id|fmem
-)paren
 )paren
 (brace
 id|u_int32_t
@@ -16361,6 +16651,7 @@ op_assign
 id|mx
 suffix:semicolon
 )brace
+)def_block
 DECL|function|DAC1064_init_1
 r_static
 r_int
@@ -16922,6 +17213,7 @@ c_func
 (paren
 l_string|&quot;DAC1064_restore_1&quot;
 )paren
+id|CRITBEGIN
 id|outDAC1064
 c_func
 (paren
@@ -17015,6 +17307,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
+id|CRITEND
 )brace
 DECL|function|DAC1064_restore_2
 r_static
@@ -17054,6 +17347,7 @@ c_func
 (paren
 l_string|&quot;DAC1064_restore_2&quot;
 )paren
+id|CRITBEGIN
 r_for
 c_loop
 (paren
@@ -17117,6 +17411,7 @@ l_int|10
 suffix:semicolon
 )brace
 suffix:semicolon
+id|CRITEND
 r_if
 c_cond
 (paren
@@ -18538,6 +18833,18 @@ suffix:semicolon
 multiline_comment|/* limit for &quot;normal&quot; gclk &amp; mclk */
 macro_line|#endif
 )brace
+multiline_comment|/* YDSTLEN contains only signed 16bit value */
+r_if
+c_cond
+(paren
+id|var-&gt;yres_virtual
+OG
+l_int|32767
+)paren
+id|var-&gt;yres_virtual
+op_assign
+l_int|32767
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -18954,12 +19261,11 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_FB_MATROX_MILLENIUM
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ti3026_setMCLK
 r_static
 r_void
+id|__init
+(def_block
 id|ti3026_setMCLK
 c_func
 (paren
@@ -18971,7 +19277,6 @@ id|hw
 comma
 r_int
 id|fout
-)paren
 )paren
 (brace
 r_int
@@ -19573,12 +19878,12 @@ l_string|&quot;matroxfb: Pixel PLL not locked after 5 secs&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+)def_block
+DECL|function|ti3026_ramdac_init
 r_static
 r_void
+id|__init
+(def_block
 id|ti3026_ramdac_init
 c_func
 (paren
@@ -19587,7 +19892,6 @@ r_struct
 id|matrox_hw_state
 op_star
 id|hw
-)paren
 )paren
 (brace
 id|DBG
@@ -19672,13 +19976,12 @@ l_int|60000
 )paren
 suffix:semicolon
 )brace
+)def_block
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|matroxfb_fastfont_init
 r_static
 r_void
+(def_block
 id|matroxfb_fastfont_init
 c_func
 (paren
@@ -19686,7 +19989,6 @@ r_struct
 id|matrox_fb_info
 op_star
 id|minfo
-)paren
 )paren
 (brace
 r_int
@@ -19812,13 +20114,13 @@ suffix:semicolon
 )brace
 )brace
 )brace
+)def_block
 macro_line|#ifdef CONFIG_FB_MATROX_MYSTIQUE
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|MGA1064_ramdac_init
 r_static
 r_void
+id|__init
+(def_block
 id|MGA1064_ramdac_init
 c_func
 (paren
@@ -19827,7 +20129,6 @@ r_struct
 id|matrox_hw_state
 op_star
 id|hw
-)paren
 )paren
 (brace
 id|DBG
@@ -19918,12 +20219,12 @@ l_int|133333
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+)def_block
+DECL|function|MGA1064_preinit
 r_static
 r_int
+id|__init
+(def_block
 id|MGA1064_preinit
 c_func
 (paren
@@ -19932,7 +20233,6 @@ r_struct
 id|matrox_hw_state
 op_star
 id|hw
-)paren
 )paren
 (brace
 r_static
@@ -20136,12 +20436,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+)def_block
+DECL|function|MGA1064_reset
 r_static
 r_void
+id|__init
+(def_block
 id|MGA1064_reset
 c_func
 (paren
@@ -20150,7 +20450,6 @@ r_struct
 id|matrox_hw_state
 op_star
 id|hw
-)paren
 )paren
 (brace
 id|DBG
@@ -20204,6 +20503,7 @@ id|hw
 )paren
 suffix:semicolon
 )brace
+)def_block
 macro_line|#endif
 macro_line|#ifdef CONFIG_FB_MATROX_G100
 multiline_comment|/* BIOS environ */
@@ -20225,12 +20525,11 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* reg50, &amp; 0x0F, &amp; 0x3000 (only 0x0000, 0x1000, 0x2000 (0x3000 disallowed and treated as 0) */
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|MGAG100_progPixClock
 r_static
 r_void
+id|__init
+(def_block
 id|MGAG100_progPixClock
 c_func
 (paren
@@ -20246,7 +20545,6 @@ id|n
 comma
 r_int
 id|p
-)paren
 )paren
 (brace
 r_int
@@ -20532,12 +20830,12 @@ id|M1064_XPIXCLKCTRL_DIS
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+)def_block
+DECL|function|MGAG100_setPixClock
 r_static
 r_void
+id|__init
+(def_block
 id|MGAG100_setPixClock
 c_func
 (paren
@@ -20547,7 +20845,6 @@ id|flags
 comma
 r_int
 id|freq
-)paren
 )paren
 (brace
 r_int
@@ -20599,12 +20896,12 @@ id|p
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+)def_block
+DECL|function|MGAG100_preinit
 r_static
 r_int
+id|__init
+(def_block
 id|MGAG100_preinit
 c_func
 (paren
@@ -20613,7 +20910,6 @@ r_struct
 id|matrox_hw_state
 op_star
 id|hw
-)paren
 )paren
 (brace
 r_static
@@ -21239,12 +21535,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+)def_block
+DECL|function|MGAG100_reset
 r_static
 r_void
+id|__init
+(def_block
 id|MGAG100_reset
 c_func
 (paren
@@ -21253,7 +21549,6 @@ r_struct
 id|matrox_hw_state
 op_star
 id|hw
-)paren
 )paren
 (brace
 id|u_int8_t
@@ -21537,6 +21832,7 @@ id|b
 suffix:semicolon
 )brace
 )brace
+)def_block
 macro_line|#endif
 DECL|function|vgaHWrestore
 r_static
@@ -21725,6 +22021,7 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+id|CRITBEGIN
 id|mga_inb
 c_func
 (paren
@@ -21939,6 +22236,7 @@ comma
 l_int|0x20
 )paren
 suffix:semicolon
+id|CRITEND
 )brace
 DECL|function|matrox_setcolreg
 r_static
@@ -22414,6 +22712,7 @@ c_func
 (paren
 l_string|&quot;MGA1064_restore&quot;
 )paren
+id|CRITBEGIN
 id|pci_write_config_dword
 c_func
 (paren
@@ -22444,6 +22743,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
+id|CRITEND
 id|DAC1064_restore_1
 c_func
 (paren
@@ -22534,6 +22834,7 @@ c_func
 (paren
 l_string|&quot;MGAG100_restore&quot;
 )paren
+id|CRITBEGIN
 id|pci_write_config_dword
 c_func
 (paren
@@ -22548,6 +22849,7 @@ comma
 id|hw-&gt;MXoptionReg
 )paren
 suffix:semicolon
+id|CRITEND
 id|DAC1064_restore_1
 c_func
 (paren
@@ -22566,6 +22868,30 @@ comma
 id|oldhw
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_FB_MATROX_32MB
+r_if
+c_cond
+(paren
+id|ACCESS_FBINFO
+c_func
+(paren
+id|devflags.support32MB
+)paren
+)paren
+id|mga_setr
+c_func
+(paren
+id|M_EXTVGA_INDEX
+comma
+l_int|8
+comma
+id|hw-&gt;CRTCEXT
+(braket
+l_int|8
+)braket
+)paren
+suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -22676,6 +23002,7 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+id|CRITBEGIN
 id|pci_write_config_dword
 c_func
 (paren
@@ -22690,6 +23017,7 @@ comma
 id|hw-&gt;MXoptionReg
 )paren
 suffix:semicolon
+id|CRITEND
 id|vgaHWrestore
 c_func
 (paren
@@ -22699,6 +23027,7 @@ comma
 id|oldhw
 )paren
 suffix:semicolon
+id|CRITBEGIN
 r_for
 c_loop
 (paren
@@ -22863,6 +23192,7 @@ id|TVP3026_XLOOPPLLDATA
 )paren
 suffix:semicolon
 )brace
+id|CRITEND
 r_if
 c_cond
 (paren
@@ -22883,6 +23213,7 @@ l_int|6
 multiline_comment|/* agrhh... setting up PLL is very slow on Millenium... */
 multiline_comment|/* Mystique PLL is locked in few ms, but Millenium PLL lock takes about 0.15 s... */
 multiline_comment|/* Maybe even we should call schedule() ? */
+id|CRITBEGIN
 id|outTi3026
 c_func
 (paren
@@ -23012,6 +23343,7 @@ l_int|10
 )paren
 suffix:semicolon
 )brace
+id|CRITEND
 r_if
 c_cond
 (paren
@@ -23037,6 +23369,7 @@ op_minus
 id|tmout
 )paren
 suffix:semicolon
+id|CRITBEGIN
 )brace
 id|outTi3026
 c_func
@@ -23085,6 +23418,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
+id|CRITEND
 r_if
 c_cond
 (paren
@@ -23111,6 +23445,7 @@ l_int|0x80
 r_int
 id|tmout
 suffix:semicolon
+id|CRITBEGIN
 id|outTi3026
 c_func
 (paren
@@ -23154,6 +23489,7 @@ l_int|10
 )paren
 suffix:semicolon
 )brace
+id|CRITEND
 r_if
 c_cond
 (paren
@@ -23483,7 +23819,7 @@ op_assign
 id|ACCESS_FBINFO
 c_func
 (paren
-id|video.len
+id|video.len_usable
 )paren
 op_minus
 id|ACCESS_FBINFO
@@ -24450,6 +24786,25 @@ l_int|16
 op_amp
 l_int|0x0F
 )paren
+op_or
+(paren
+(paren
+id|pos
+op_rshift
+l_int|14
+)paren
+op_amp
+l_int|0x40
+)paren
+suffix:semicolon
+id|hw-&gt;CRTCEXT
+(braket
+l_int|8
+)braket
+op_assign
+id|pos
+op_rshift
+l_int|21
 suffix:semicolon
 id|ACCESS_FBINFO
 c_func
@@ -25472,6 +25827,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|CRITBEGIN
 id|mga_outb
 c_func
 (paren
@@ -25526,6 +25882,7 @@ op_or
 id|crtc
 )paren
 suffix:semicolon
+id|CRITEND
 DECL|macro|minfo
 macro_line|#undef minfo
 )brace
@@ -25559,7 +25916,9 @@ DECL|macro|RS1056x400
 mdefine_line|#define RS1056x400&t;13&t;/* 132 x 50 text */
 DECL|macro|RS1056x480
 mdefine_line|#define RS1056x480&t;14&t;/* 132 x 60 text */
-multiline_comment|/* 0F-FF */
+DECL|macro|RSNoxNo
+mdefine_line|#define RSNoxNo&t;&t;15
+multiline_comment|/* 10-FF */
 DECL|member|xres
 DECL|member|yres
 DECL|member|left
@@ -25877,6 +26236,30 @@ comma
 l_int|3
 comma
 l_int|60
+)brace
+comma
+(brace
+l_int|0
+comma
+l_int|0
+comma
+op_complement
+l_int|0
+comma
+op_complement
+l_int|0
+comma
+op_complement
+l_int|0
+comma
+op_complement
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 )brace
 )brace
 suffix:semicolon
@@ -26216,6 +26599,7 @@ l_int|0
 comma
 l_int|0
 )brace
+comma
 multiline_comment|/* textmode hardwired to VGA8x8 */
 )brace
 suffix:semicolon
@@ -26248,6 +26632,19 @@ op_assign
 (brace
 multiline_comment|/* default must be first */
 macro_line|#ifdef FBCON_HAS_CFB8
+(brace
+op_complement
+l_int|0
+comma
+id|RSCreate
+c_func
+(paren
+id|RSNoxNo
+comma
+id|RS8bpp
+)paren
+)brace
+comma
 (brace
 l_int|0x101
 comma
@@ -26369,69 +26766,20 @@ id|RS8bpp
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef FBCON_HAS_CFB4
-(brace
-l_int|0x010
-comma
-id|RSCreate
-c_func
-(paren
-id|RS640x350
-comma
-id|RS4bpp
-)paren
-)brace
-comma
-(brace
-l_int|0x012
-comma
-id|RSCreate
-c_func
-(paren
-id|RS640x480
-comma
-id|RS4bpp
-)paren
-)brace
-comma
-(brace
-l_int|0x102
-comma
-id|RSCreate
-c_func
-(paren
-id|RS800x600
-comma
-id|RS4bpp
-)paren
-)brace
-comma
-(brace
-l_int|0x104
-comma
-id|RSCreate
-c_func
-(paren
-id|RS1024x768
-comma
-id|RS4bpp
-)paren
-)brace
-comma
-(brace
-l_int|0x106
-comma
-id|RSCreate
-c_func
-(paren
-id|RS1280x1024
-comma
-id|RS4bpp
-)paren
-)brace
-comma
-macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB16
+(brace
+op_complement
+l_int|0
+comma
+id|RSCreate
+c_func
+(paren
+id|RSNoxNo
+comma
+id|RS15bpp
+)paren
+)brace
+comma
 (brace
 l_int|0x110
 comma
@@ -26651,6 +26999,19 @@ comma
 macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB24
 (brace
+op_complement
+l_int|0
+comma
+id|RSCreate
+c_func
+(paren
+id|RSNoxNo
+comma
+id|RS24bpp
+)paren
+)brace
+comma
+(brace
 l_int|0x1B2
 comma
 id|RSCreate
@@ -26761,6 +27122,19 @@ comma
 macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB32
 (brace
+op_complement
+l_int|0
+comma
+id|RSCreate
+c_func
+(paren
+id|RSNoxNo
+comma
+id|RS32bpp
+)paren
+)brace
+comma
+(brace
 l_int|0x112
 comma
 id|RSCreate
@@ -26870,6 +27244,19 @@ id|RS32bpp
 comma
 macro_line|#endif
 macro_line|#ifdef FBCON_HAS_VGATEXT
+(brace
+op_complement
+l_int|0
+comma
+id|RSCreate
+c_func
+(paren
+id|RSNoxNo
+comma
+id|RSText
+)paren
+)brace
+comma
 (brace
 l_int|0x002
 comma
@@ -26987,6 +27374,81 @@ id|RSText8
 )brace
 comma
 multiline_comment|/* 132x60 */
+macro_line|#endif
+macro_line|#ifdef FBCON_HAS_CFB4
+(brace
+op_complement
+l_int|0
+comma
+id|RSCreate
+c_func
+(paren
+id|RSNoxNo
+comma
+id|RS4bpp
+)paren
+)brace
+comma
+(brace
+l_int|0x010
+comma
+id|RSCreate
+c_func
+(paren
+id|RS640x350
+comma
+id|RS4bpp
+)paren
+)brace
+comma
+(brace
+l_int|0x012
+comma
+id|RSCreate
+c_func
+(paren
+id|RS640x480
+comma
+id|RS4bpp
+)paren
+)brace
+comma
+(brace
+l_int|0x102
+comma
+id|RSCreate
+c_func
+(paren
+id|RS800x600
+comma
+id|RS4bpp
+)paren
+)brace
+comma
+(brace
+l_int|0x104
+comma
+id|RSCreate
+c_func
+(paren
+id|RS1024x768
+comma
+id|RS4bpp
+)paren
+)brace
+comma
+(brace
+l_int|0x106
+comma
+id|RSCreate
+c_func
+(paren
+id|RS1280x1024
+comma
+id|RS4bpp
+)paren
+)brace
+comma
 macro_line|#endif
 (brace
 l_int|0
@@ -27118,6 +27580,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:sgram&quot; */
+macro_line|#ifdef CONFIG_MTRR
 DECL|variable|mtrr
 r_static
 r_int
@@ -27126,6 +27589,7 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* &quot;matrox:nomtrr&quot; */
+macro_line|#endif
 DECL|variable|grayscale
 r_static
 r_int
@@ -27158,7 +27622,8 @@ r_int
 r_int
 id|vesa
 op_assign
-l_int|0x101
+op_complement
+l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:vesa:xxxxx&quot; */
 DECL|variable|depth
@@ -27194,6 +27659,7 @@ r_int
 r_int
 id|upper
 op_assign
+op_complement
 l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:upper:xxxxx&quot; */
@@ -27203,6 +27669,7 @@ r_int
 r_int
 id|lower
 op_assign
+op_complement
 l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:lower:xxxxx&quot; */
@@ -27221,6 +27688,7 @@ r_int
 r_int
 id|left
 op_assign
+op_complement
 l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:left:xxxxx&quot; */
@@ -27230,6 +27698,7 @@ r_int
 r_int
 id|right
 op_assign
+op_complement
 l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:right:xxxxx&quot; */
@@ -27297,11 +27766,10 @@ l_int|64
 suffix:semicolon
 multiline_comment|/* &quot;matrox:font:xxxxx&quot; */
 macro_line|#ifndef MODULE
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|matroxfb_setup
 r_void
+id|__init
+(def_block
 id|matroxfb_setup
 c_func
 (paren
@@ -27312,7 +27780,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_char
@@ -27342,6 +27809,7 @@ op_star
 id|options
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -27990,6 +28458,157 @@ c_func
 (paren
 id|this_opt
 comma
+l_string|&quot;mode:&quot;
+comma
+l_int|5
+)paren
+)paren
+id|strcpy
+c_func
+(paren
+id|videomode
+comma
+id|this_opt
+op_plus
+l_int|5
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_FB_OF
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|this_opt
+comma
+l_string|&quot;vmode:&quot;
+comma
+l_int|6
+)paren
+)paren
+(brace
+r_int
+r_int
+id|vmode
+op_assign
+id|simple_strtoul
+c_func
+(paren
+id|this_opt
+op_plus
+l_int|6
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|vmode
+OG
+l_int|0
+op_logical_and
+id|vmode
+op_le
+id|VMODE_MAX
+)paren
+id|default_vmode
+op_assign
+id|vmode
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|this_opt
+comma
+l_string|&quot;cmode:&quot;
+comma
+l_int|6
+)paren
+)paren
+(brace
+r_int
+r_int
+id|cmode
+op_assign
+id|simple_strtoul
+c_func
+(paren
+id|this_opt
+op_plus
+l_int|6
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|cmode
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
+r_case
+l_int|8
+suffix:colon
+id|default_cmode
+op_assign
+id|CMODE_8
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|15
+suffix:colon
+r_case
+l_int|16
+suffix:colon
+id|default_cmode
+op_assign
+id|CMODE_16
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|24
+suffix:colon
+r_case
+l_int|32
+suffix:colon
+id|default_cmode
+op_assign
+id|CMODE_32
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|this_opt
+comma
 l_string|&quot;fastfont:&quot;
 comma
 l_int|9
@@ -28253,6 +28872,7 @@ op_assign
 op_logical_neg
 id|value
 suffix:semicolon
+macro_line|#ifdef CONFIG_MTRR
 r_else
 r_if
 c_cond
@@ -28270,6 +28890,7 @@ id|mtrr
 op_assign
 id|value
 suffix:semicolon
+macro_line|#endif
 r_else
 r_if
 c_cond
@@ -28376,14 +28997,16 @@ suffix:semicolon
 )brace
 )brace
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
+)def_block
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|matroxfb_getmemory
 r_static
 r_int
+(def_block
 id|matroxfb_getmemory
 c_func
 (paren
@@ -28401,7 +29024,6 @@ r_int
 r_int
 op_star
 id|realSize
-)paren
 )paren
 (brace
 id|vaddr_t
@@ -28423,7 +29045,7 @@ r_int
 r_char
 id|bytes
 (braket
-l_int|16
+l_int|32
 )braket
 suffix:semicolon
 r_int
@@ -28482,11 +29104,11 @@ c_cond
 (paren
 id|maxSize
 OG
-l_int|0x1000000
+l_int|0x2000000
 )paren
 id|maxSize
 op_assign
-l_int|0x1000000
+l_int|0x2000000
 suffix:semicolon
 id|mga_outb
 c_func
@@ -28844,13 +29466,13 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+)def_block
 macro_line|#ifdef CONFIG_FB_MATROX_MILLENIUM
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|Ti3026_preinit
 r_static
 r_int
+id|__init
+(def_block
 id|Ti3026_preinit
 c_func
 (paren
@@ -28859,7 +29481,6 @@ r_struct
 id|matrox_hw_state
 op_star
 id|hw
-)paren
 )paren
 (brace
 r_static
@@ -29213,12 +29834,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+)def_block
+DECL|function|Ti3026_reset
 r_static
 r_void
+id|__init
+(def_block
 id|Ti3026_reset
 c_func
 (paren
@@ -29227,7 +29848,6 @@ r_struct
 id|matrox_hw_state
 op_star
 id|hw
-)paren
 )paren
 (brace
 id|DBG
@@ -29249,6 +29869,7 @@ id|hw
 )paren
 suffix:semicolon
 )brace
+)def_block
 macro_line|#endif
 macro_line|#ifdef CONFIG_FB_MATROX_MILLENIUM
 DECL|variable|matrox_millenium
@@ -29312,6 +29933,10 @@ DECL|member|maxvram
 r_int
 id|maxvram
 suffix:semicolon
+DECL|member|maxdisplayable
+r_int
+id|maxdisplayable
+suffix:semicolon
 DECL|member|accelID
 r_int
 id|accelID
@@ -29335,6 +29960,8 @@ op_assign
 (brace
 l_int|0x0800000
 comma
+l_int|0x0800000
+comma
 id|FB_ACCEL_MATROX_MGA2064W
 comma
 op_amp
@@ -29350,6 +29977,8 @@ id|__initdata
 op_assign
 (brace
 l_int|0x1000000
+comma
+l_int|0x0800000
 comma
 id|FB_ACCEL_MATROX_MGA2164W
 comma
@@ -29367,6 +29996,8 @@ op_assign
 (brace
 l_int|0x1000000
 comma
+l_int|0x0800000
+comma
 id|FB_ACCEL_MATROX_MGA2164W_AGP
 comma
 op_amp
@@ -29383,6 +30014,8 @@ id|vbMystique
 id|__initdata
 op_assign
 (brace
+l_int|0x0800000
+comma
 l_int|0x0800000
 comma
 id|FB_ACCEL_MATROX_MGA1064SG
@@ -29403,6 +30036,8 @@ op_assign
 (brace
 l_int|0x0800000
 comma
+l_int|0x0800000
+comma
 id|FB_ACCEL_MATROX_MGAG100
 comma
 op_amp
@@ -29419,12 +30054,54 @@ op_assign
 (brace
 l_int|0x1000000
 comma
+l_int|0x1000000
+comma
 id|FB_ACCEL_MATROX_MGAG200
 comma
 op_amp
 id|matrox_G100
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_FB_MATROX_32MB
+multiline_comment|/* from doc it looks like that accelerator can draw only to low 16MB :-( Direct accesses &amp; displaying are OK for&n;   whole 32MB */
+DECL|variable|__initdata
+r_static
+r_struct
+id|video_board
+id|vbG400
+id|__initdata
+op_assign
+(brace
+l_int|0x2000000
+comma
+l_int|0x1000000
+comma
+id|FB_ACCEL_MATROX_MGAG400
+comma
+op_amp
+id|matrox_G100
+)brace
+suffix:semicolon
+macro_line|#else
+DECL|variable|__initdata
+r_static
+r_struct
+id|video_board
+id|vbG400
+id|__initdata
+op_assign
+(brace
+l_int|0x2000000
+comma
+l_int|0x1000000
+comma
+id|FB_ACCEL_MATROX_MGAG400
+comma
+op_amp
+id|matrox_G100
+)brace
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 DECL|macro|DEVF_VIDEO64BIT
 mdefine_line|#define DEVF_VIDEO64BIT&t;0x01
@@ -29438,6 +30115,20 @@ DECL|macro|DEVF_CROSS4MB
 mdefine_line|#define DEVF_CROSS4MB&t;0x10
 DECL|macro|DEVF_TEXT4B
 mdefine_line|#define DEVF_TEXT4B&t;0x20
+DECL|macro|DEVF_DDC_8_2
+mdefine_line|#define DEVF_DDC_8_2&t;0x40
+DECL|macro|DEVF_DMA
+mdefine_line|#define DEVF_DMA&t;0x80
+DECL|macro|DEVF_SUPPORT32MB
+mdefine_line|#define DEVF_SUPPORT32MB&t;0x100
+DECL|macro|DEVF_ANY_VXRES
+mdefine_line|#define DEVF_ANY_VXRES&t;&t;0x200
+DECL|macro|DEVF_G100
+mdefine_line|#define DEVF_G100&t;(DEVF_VIDEO64BIT | DEVF_SWAPS | DEVF_CROSS4MB | DEVF_DDC_8_2) /* no doc, no vxres... */
+DECL|macro|DEVF_G200
+mdefine_line|#define DEVF_G200&t;(DEVF_VIDEO64BIT | DEVF_SWAPS | DEVF_CROSS4MB | DEVF_DDC_8_2 | DEVF_ANY_VXRES)
+DECL|macro|DEVF_G400
+mdefine_line|#define DEVF_G400&t;(DEVF_VIDEO64BIT | DEVF_SWAPS | DEVF_CROSS4MB | DEVF_DDC_8_2 | DEVF_ANY_VXRES | DEVF_SUPPORT32MB)
 DECL|struct|board
 r_static
 r_struct
@@ -29623,11 +30314,7 @@ id|PCI_SS_VENDOR_ID_MATROX
 comma
 id|PCI_SS_ID_MATROX_MGA_G100_PCI
 comma
-id|DEVF_VIDEO64BIT
-op_or
-id|DEVF_SWAPS
-op_or
-id|DEVF_CROSS4MB
+id|DEVF_G100
 comma
 l_int|230000
 comma
@@ -29648,11 +30335,7 @@ l_int|0
 comma
 l_int|0
 comma
-id|DEVF_VIDEO64BIT
-op_or
-id|DEVF_SWAPS
-op_or
-id|DEVF_CROSS4MB
+id|DEVF_G100
 comma
 l_int|230000
 comma
@@ -29673,11 +30356,7 @@ id|PCI_SS_VENDOR_ID_MATROX
 comma
 id|PCI_SS_ID_MATROX_GENERIC
 comma
-id|DEVF_VIDEO64BIT
-op_or
-id|DEVF_SWAPS
-op_or
-id|DEVF_CROSS4MB
+id|DEVF_G100
 comma
 l_int|230000
 comma
@@ -29698,11 +30377,7 @@ id|PCI_SS_VENDOR_ID_MATROX
 comma
 id|PCI_SS_ID_MATROX_MGA_G100_AGP
 comma
-id|DEVF_VIDEO64BIT
-op_or
-id|DEVF_SWAPS
-op_or
-id|DEVF_CROSS4MB
+id|DEVF_G100
 comma
 l_int|230000
 comma
@@ -29723,11 +30398,7 @@ id|PCI_SS_VENDOR_ID_SIEMENS_NIXDORF
 comma
 id|PCI_SS_ID_SIEMENS_MGA_G100_AGP
 comma
-id|DEVF_VIDEO64BIT
-op_or
-id|DEVF_SWAPS
-op_or
-id|DEVF_CROSS4MB
+id|DEVF_G100
 comma
 l_int|230000
 comma
@@ -29748,11 +30419,7 @@ id|PCI_SS_VENDOR_ID_MATROX
 comma
 id|PCI_SS_ID_MATROX_PRODUCTIVA_G100_AGP
 comma
-id|DEVF_VIDEO64BIT
-op_or
-id|DEVF_SWAPS
-op_or
-id|DEVF_CROSS4MB
+id|DEVF_G100
 comma
 l_int|230000
 comma
@@ -29773,11 +30440,7 @@ l_int|0
 comma
 l_int|0
 comma
-id|DEVF_VIDEO64BIT
-op_or
-id|DEVF_SWAPS
-op_or
-id|DEVF_CROSS4MB
+id|DEVF_G100
 comma
 l_int|230000
 comma
@@ -29798,11 +30461,7 @@ l_int|0
 comma
 l_int|0
 comma
-id|DEVF_VIDEO64BIT
-op_or
-id|DEVF_SWAPS
-op_or
-id|DEVF_CROSS4MB
+id|DEVF_G200
 comma
 l_int|250000
 comma
@@ -29823,11 +30482,7 @@ id|PCI_SS_VENDOR_ID_MATROX
 comma
 id|PCI_SS_ID_MATROX_GENERIC
 comma
-id|DEVF_VIDEO64BIT
-op_or
-id|DEVF_SWAPS
-op_or
-id|DEVF_CROSS4MB
+id|DEVF_G200
 comma
 l_int|220000
 comma
@@ -29848,11 +30503,7 @@ id|PCI_SS_VENDOR_ID_MATROX
 comma
 id|PCI_SS_ID_MATROX_MYSTIQUE_G200_AGP
 comma
-id|DEVF_VIDEO64BIT
-op_or
-id|DEVF_SWAPS
-op_or
-id|DEVF_CROSS4MB
+id|DEVF_G200
 comma
 l_int|230000
 comma
@@ -29873,11 +30524,7 @@ id|PCI_SS_VENDOR_ID_MATROX
 comma
 id|PCI_SS_ID_MATROX_MILLENIUM_G200_AGP
 comma
-id|DEVF_VIDEO64BIT
-op_or
-id|DEVF_SWAPS
-op_or
-id|DEVF_CROSS4MB
+id|DEVF_G200
 comma
 l_int|250000
 comma
@@ -29898,11 +30545,7 @@ id|PCI_SS_VENDOR_ID_MATROX
 comma
 id|PCI_SS_ID_MATROX_MARVEL_G200_AGP
 comma
-id|DEVF_VIDEO64BIT
-op_or
-id|DEVF_SWAPS
-op_or
-id|DEVF_CROSS4MB
+id|DEVF_G200
 comma
 l_int|230000
 comma
@@ -29923,11 +30566,7 @@ id|PCI_SS_VENDOR_ID_SIEMENS_NIXDORF
 comma
 id|PCI_SS_ID_SIEMENS_MGA_G200_AGP
 comma
-id|DEVF_VIDEO64BIT
-op_or
-id|DEVF_SWAPS
-op_or
-id|DEVF_CROSS4MB
+id|DEVF_G200
 comma
 l_int|230000
 comma
@@ -29948,11 +30587,7 @@ l_int|0
 comma
 l_int|0
 comma
-id|DEVF_VIDEO64BIT
-op_or
-id|DEVF_SWAPS
-op_or
-id|DEVF_CROSS4MB
+id|DEVF_G200
 comma
 l_int|230000
 comma
@@ -29960,6 +30595,27 @@ op_amp
 id|vbG200
 comma
 l_string|&quot;unknown G200 (AGP)&quot;
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_MATROX
+comma
+id|PCI_DEVICE_ID_MATROX_G400_AGP
+comma
+l_int|0xFF
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|DEVF_G400
+comma
+l_int|360000
+comma
+op_amp
+id|vbG400
+comma
+l_string|&quot;unknown G400 (AGP)&quot;
 )brace
 comma
 macro_line|#endif
@@ -29984,12 +30640,11 @@ l_int|NULL
 )brace
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|initMatrox2
 r_static
 r_int
+id|__init
+(def_block
 id|initMatrox2
 c_func
 (paren
@@ -30003,7 +30658,6 @@ r_struct
 id|board
 op_star
 id|b
-)paren
 )paren
 (brace
 r_int
@@ -30170,6 +30824,31 @@ op_assign
 id|FB_AUX_TEXT_MGA_STEP8
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_FB_MATROX_32MB
+id|ACCESS_FBINFO
+c_func
+(paren
+id|devflags.support32MB
+)paren
+op_assign
+id|b-&gt;flags
+op_amp
+id|DEVF_SUPPORT32MB
+suffix:semicolon
+macro_line|#endif
+id|ACCESS_FBINFO
+c_func
+(paren
+id|devflags.precise_width
+)paren
+op_assign
+op_logical_neg
+(paren
+id|b-&gt;flags
+op_amp
+id|DEVF_ANY_VXRES
+)paren
+suffix:semicolon
 id|ACCESS_FBINFO
 c_func
 (paren
@@ -30245,9 +30924,6 @@ l_int|1
 )braket
 dot
 id|start
-op_amp
-op_complement
-l_int|0x3FFF
 suffix:semicolon
 id|video_base_phys
 op_assign
@@ -30263,11 +30939,7 @@ l_int|0
 )braket
 dot
 id|start
-op_amp
-op_complement
-l_int|0x7FFFFF
 suffix:semicolon
-multiline_comment|/* aligned at 8MB (or 16 for Mill 2) */
 )brace
 r_else
 (brace
@@ -30285,9 +30957,6 @@ l_int|0
 )braket
 dot
 id|start
-op_amp
-op_complement
-l_int|0x3FFF
 suffix:semicolon
 id|video_base_phys
 op_assign
@@ -30303,11 +30972,7 @@ l_int|1
 )braket
 dot
 id|start
-op_amp
-op_complement
-l_int|0x7FFFFF
 suffix:semicolon
-multiline_comment|/* aligned at 8MB */
 )brace
 r_if
 c_cond
@@ -31015,7 +31680,7 @@ c_func
 id|video.len_usable
 )paren
 OG
-l_int|0x08000000
+id|b-&gt;base-&gt;maxdisplayable
 )paren
 id|ACCESS_FBINFO
 c_func
@@ -31023,7 +31688,7 @@ c_func
 id|video.len_usable
 )paren
 op_assign
-l_int|0x08000000
+id|b-&gt;base-&gt;maxdisplayable
 suffix:semicolon
 macro_line|#ifdef CONFIG_MTRR
 r_if
@@ -31071,6 +31736,39 @@ l_string|&quot;matroxfb: MTRR&squot;s turned on&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* CONFIG_MTRR */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ACCESS_FBINFO
+c_func
+(paren
+id|devflags.novga
+)paren
+)paren
+id|request_region
+c_func
+(paren
+l_int|0x3C0
+comma
+l_int|32
+comma
+l_string|&quot;matrox&quot;
+)paren
+suffix:semicolon
+id|ACCESS_FBINFO
+c_func
+(paren
+id|hw_switch
+op_member_access_from_pointer
+id|reset
+c_func
+(paren
+id|PMINFO
+id|hw
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* validate params, autodetect k, M */
 r_if
 c_cond
@@ -31108,6 +31806,14 @@ op_mul_assign
 l_int|1000
 suffix:semicolon
 multiline_comment|/* kHz -&gt; Hz, 1MHz minimum */
+r_if
+c_cond
+(paren
+id|vesa
+op_ne
+op_complement
+l_int|0
+)paren
 id|vesa
 op_and_assign
 l_int|0x1DFF
@@ -31214,8 +31920,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|left
+op_eq
+op_complement
+l_int|0
 )paren
 id|left
 op_assign
@@ -31244,8 +31952,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|right
+op_eq
+op_complement
+l_int|0
 )paren
 id|right
 op_assign
@@ -31274,8 +31984,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|upper
+op_eq
+op_complement
+l_int|0
 )paren
 id|upper
 op_assign
@@ -31304,8 +32016,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|lower
+op_eq
+op_complement
+l_int|0
 )paren
 id|lower
 op_assign
@@ -31371,6 +32085,7 @@ id|RSptr-&gt;info
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 0&t;
 r_if
 c_cond
 (paren
@@ -31408,174 +32123,7 @@ op_or_assign
 id|FB_SYNC_VERT_HIGH_ACT
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|xres
-OL
-l_int|320
-)paren
-id|xres
-op_assign
-l_int|320
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|xres
-OG
-l_int|2048
-)paren
-id|xres
-op_assign
-l_int|2048
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|yres
-OL
-l_int|200
-)paren
-id|yres
-op_assign
-l_int|200
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|yres
-OG
-l_int|2048
-)paren
-id|yres
-op_assign
-l_int|2048
-suffix:semicolon
-(brace
-r_int
-r_int
-id|tmp
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|fv
-)paren
-(brace
-id|tmp
-op_assign
-id|fv
-op_star
-(paren
-id|upper
-op_plus
-id|yres
-op_plus
-id|lower
-op_plus
-id|vslen
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|tmp
-OL
-id|fh
-)paren
-op_logical_or
-(paren
-id|fh
-op_eq
-l_int|0
-)paren
-)paren
-id|fh
-op_assign
-id|tmp
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|fh
-)paren
-(brace
-id|tmp
-op_assign
-id|fh
-op_star
-(paren
-id|left
-op_plus
-id|xres
-op_plus
-id|right
-op_plus
-id|hslen
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|tmp
-OL
-id|maxclk
-)paren
-op_logical_or
-(paren
-id|maxclk
-op_eq
-l_int|0
-)paren
-)paren
-id|maxclk
-op_assign
-id|tmp
-suffix:semicolon
-)brace
-id|maxclk
-op_assign
-(paren
-id|maxclk
-op_plus
-l_int|499
-)paren
-op_div
-l_int|500
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|maxclk
-)paren
-(brace
-id|tmp
-op_assign
-(paren
-l_int|2000000000
-op_plus
-id|maxclk
-)paren
-op_div
-id|maxclk
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tmp
-OG
-id|pixclock
-)paren
-id|pixclock
-op_assign
-id|tmp
-suffix:semicolon
-)brace
-)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -31653,106 +32201,13 @@ l_int|1
 dot
 id|bits_per_pixel
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pixclock
-OL
-l_int|2000
-)paren
-multiline_comment|/* &gt; 500MHz */
-id|pixclock
-op_assign
-l_int|4000
-suffix:semicolon
-multiline_comment|/* 250MHz */
-r_if
-c_cond
-(paren
-id|pixclock
-OG
-l_int|1000000
-)paren
-id|pixclock
-op_assign
-l_int|1000000
-suffix:semicolon
-multiline_comment|/* 1MHz */
-id|vesafb_defined.xres
-op_assign
-id|xres
-suffix:semicolon
-id|vesafb_defined.yres
-op_assign
-id|yres
-suffix:semicolon
-id|vesafb_defined.xoffset
-op_assign
-l_int|0
-suffix:semicolon
-id|vesafb_defined.yoffset
-op_assign
-l_int|0
-suffix:semicolon
 id|vesafb_defined.grayscale
 op_assign
 id|grayscale
 suffix:semicolon
-id|vesafb_defined.pixclock
-op_assign
-id|pixclock
-suffix:semicolon
-id|vesafb_defined.left_margin
-op_assign
-id|left
-suffix:semicolon
-id|vesafb_defined.right_margin
-op_assign
-id|right
-suffix:semicolon
-id|vesafb_defined.hsync_len
-op_assign
-id|hslen
-suffix:semicolon
-id|vesafb_defined.upper_margin
-op_assign
-id|upper
-suffix:semicolon
-id|vesafb_defined.lower_margin
-op_assign
-id|lower
-suffix:semicolon
-id|vesafb_defined.vsync_len
-op_assign
-id|vslen
-suffix:semicolon
-id|vesafb_defined.sync
-op_assign
-id|sync
-suffix:semicolon
 id|vesafb_defined.vmode
 op_assign
 l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ACCESS_FBINFO
-c_func
-(paren
-id|devflags.novga
-)paren
-)paren
-id|request_region
-c_func
-(paren
-l_int|0x3C0
-comma
-l_int|32
-comma
-l_string|&quot;matrox&quot;
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -31848,24 +32303,304 @@ suffix:semicolon
 id|ACCESS_FBINFO
 c_func
 (paren
-id|hw_switch
-op_member_access_from_pointer
-id|reset
-c_func
-(paren
-id|PMINFO
-id|hw
-)paren
-)paren
-suffix:semicolon
-id|ACCESS_FBINFO
-c_func
-(paren
 id|video.len_usable
 )paren
 op_and_assign
 id|PAGE_MASK
 suffix:semicolon
+macro_line|#if 0
+id|fb_find_mode
+c_func
+(paren
+op_amp
+id|vesafb_defined
+comma
+op_amp
+id|ACCESS_FBINFO
+c_func
+(paren
+id|fbcon
+)paren
+comma
+id|videomode
+(braket
+l_int|0
+)braket
+ques
+c_cond
+id|videomode
+suffix:colon
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|vesafb_defined.bits_per_pixel
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* mode modifiers */
+r_if
+c_cond
+(paren
+id|sync
+op_ne
+op_minus
+l_int|1
+)paren
+id|vesafb_defined.sync
+op_assign
+id|sync
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hslen
+)paren
+id|vesafb_defined.hsync_len
+op_assign
+id|hslen
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|vslen
+)paren
+id|vesafb_defined.vsync_len
+op_assign
+id|vslen
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|left
+op_ne
+op_complement
+l_int|0
+)paren
+id|vesafb_defined.left_margin
+op_assign
+id|left
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|right
+op_ne
+op_complement
+l_int|0
+)paren
+id|vesafb_defined.right_margin
+op_assign
+id|right
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|upper
+op_ne
+op_complement
+l_int|0
+)paren
+id|vesafb_defined.upper_margin
+op_assign
+id|upper
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lower
+op_ne
+op_complement
+l_int|0
+)paren
+id|vesafb_defined.lower_margin
+op_assign
+id|lower
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|xres
+)paren
+id|vesafb_defined.xres
+op_assign
+id|xres
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|yres
+)paren
+id|vesafb_defined.yres
+op_assign
+id|yres
+suffix:semicolon
+multiline_comment|/* fv, fh, maxclk limits was specified */
+(brace
+r_int
+r_int
+id|tmp
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fv
+)paren
+(brace
+id|tmp
+op_assign
+id|fv
+op_star
+(paren
+id|vesafb_defined.upper_margin
+op_plus
+id|vesafb_defined.yres
+op_plus
+id|vesafb_defined.lower_margin
+op_plus
+id|vesafb_defined.vsync_len
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|tmp
+OL
+id|fh
+)paren
+op_logical_or
+(paren
+id|fh
+op_eq
+l_int|0
+)paren
+)paren
+id|fh
+op_assign
+id|tmp
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|fh
+)paren
+(brace
+id|tmp
+op_assign
+id|fh
+op_star
+(paren
+id|vesafb_defined.left_margin
+op_plus
+id|vesafb_defined.xres
+op_plus
+id|vesafb_defined.right_margin
+op_plus
+id|vesafb_defined.hsync_len
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|tmp
+OL
+id|maxclk
+)paren
+op_logical_or
+(paren
+id|maxclk
+op_eq
+l_int|0
+)paren
+)paren
+id|maxclk
+op_assign
+id|tmp
+suffix:semicolon
+)brace
+id|maxclk
+op_assign
+(paren
+id|maxclk
+op_plus
+l_int|499
+)paren
+op_div
+l_int|500
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|maxclk
+)paren
+(brace
+id|tmp
+op_assign
+(paren
+l_int|2000000000
+op_plus
+id|maxclk
+)paren
+op_div
+id|maxclk
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp
+OG
+id|pixclock
+)paren
+id|pixclock
+op_assign
+id|tmp
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|pixclock
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|pixclock
+OL
+l_int|2000
+)paren
+multiline_comment|/* &gt; 500MHz */
+id|pixclock
+op_assign
+l_int|4000
+suffix:semicolon
+multiline_comment|/* 250MHz */
+r_if
+c_cond
+(paren
+id|pixclock
+OG
+l_int|1000000
+)paren
+id|pixclock
+op_assign
+l_int|1000000
+suffix:semicolon
+multiline_comment|/* 1MHz */
+id|vesafb_defined.pixclock
+op_assign
+id|pixclock
+suffix:semicolon
+)brace
+multiline_comment|/* FIXME: Where to move this?! */
 macro_line|#if defined(CONFIG_FB_OF)
 macro_line|#if defined(CONFIG_FB_COMPAT_XPMAC)
 id|strcpy
@@ -31931,7 +32666,14 @@ r_struct
 id|fb_var_screeninfo
 id|var
 suffix:semicolon
-r_int
+r_if
+c_cond
+(paren
+id|default_vmode
+op_eq
+id|VMODE_NVRAM
+)paren
+(brace
 id|default_vmode
 op_assign
 id|nvram_read_byte
@@ -31940,7 +32682,44 @@ c_func
 id|NV_VMODE
 )paren
 suffix:semicolon
-r_int
+r_if
+c_cond
+(paren
+id|default_vmode
+op_le
+l_int|0
+op_logical_or
+id|default_vmode
+OG
+id|VMODE_MAX
+)paren
+id|default_vmode
+op_assign
+id|VMODE_CHOOSE
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|default_vmode
+op_le
+l_int|0
+op_logical_or
+id|default_vmode
+OG
+id|VMODE_MAX
+)paren
+id|default_vmode
+op_assign
+id|VMODE_640_480_60
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|default_cmode
+op_eq
+id|CMODE_NVRAM
+)paren
 id|default_cmode
 op_assign
 id|nvram_read_byte
@@ -31952,36 +32731,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|default_vmode
-op_le
-l_int|0
-)paren
-op_logical_or
-(paren
-id|default_vmode
-OG
-id|VMODE_MAX
-)paren
-)paren
-id|default_vmode
-op_assign
-id|VMODE_640_480_60
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|default_cmode
-OL
-id|CMODE_8
-)paren
-op_logical_or
-(paren
-id|default_cmode
-OG
+template_param
 id|CMODE_32
-)paren
 )paren
 id|default_cmode
 op_assign
@@ -32021,22 +32773,9 @@ multiline_comment|/* Note: mac_vmode_to_var() doesnot set all parameters */
 )brace
 )brace
 macro_line|#endif
-(brace
-r_int
-id|pixel_size
-op_assign
-id|vesafb_defined.bits_per_pixel
-suffix:semicolon
 id|vesafb_defined.xres_virtual
 op_assign
-id|matroxfb_pitch_adjust
-c_func
-(paren
-id|PMINFO
 id|vesafb_defined.xres
-comma
-id|pixel_size
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -32055,8 +32794,7 @@ id|vesafb_defined.yres_virtual
 op_assign
 l_int|65536
 suffix:semicolon
-multiline_comment|/* large enough to be INF, but small enough&n;&t;&t;&t;                                        to yres_virtual * xres_virtual &lt; 2^32 */
-)brace
+multiline_comment|/* large enough to be INF, but small enough&n;&t;&t;                                        to yres_virtual * xres_virtual &lt; 2^32 */
 )brace
 r_if
 c_cond
@@ -32154,10 +32892,12 @@ id|fbcon
 OL
 l_int|0
 )paren
+(brace
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -32232,6 +32972,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+)def_block
 DECL|variable|fb_list
 r_static
 r_struct
@@ -32241,17 +32982,15 @@ id|fb_list
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|matrox_init
 r_static
 r_int
+id|__init
+(def_block
 id|matrox_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -32796,6 +33535,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+)def_block
 macro_line|#ifndef MODULE
 DECL|variable|initialized
 r_static
@@ -32805,16 +33545,13 @@ id|initialized
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|matroxfb_init
 r_void
+id|__init
 id|matroxfb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|DBG
@@ -32839,13 +33576,25 @@ c_func
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|fb_list
+)paren
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#if defined(CONFIG_FB_OF)
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|matrox_of_init
 r_int
+id|__init
+(def_block
 id|matrox_of_init
 c_func
 (paren
@@ -32853,7 +33602,6 @@ r_struct
 id|device_node
 op_star
 id|dp
-)paren
 )paren
 (brace
 id|DBG
@@ -32893,18 +33641,19 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+)def_block
 macro_line|#endif&t;/* CONFIG_FB_OF */
 macro_line|#else
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;(c) 1998 Petr Vandrovec &lt;vandrove@vc.cvut.cz&gt;&quot;
+l_string|&quot;(c) 1998,1999 Petr Vandrovec &lt;vandrove@vc.cvut.cz&gt;&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
 c_func
 (paren
-l_string|&quot;Accelerated FBDev driver for Matrox Millennium/Mystique/G100/G200&quot;
+l_string|&quot;Accelerated FBDev driver for Matrox Millennium/Mystique/G100/G200/G400&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -33064,7 +33813,7 @@ c_func
 (paren
 id|sgram
 comma
-l_string|&quot;Indicates that G200 has SGRAM memory (0=SDRAM, 1=SGRAM) (default=0)&quot;
+l_string|&quot;Indicates that G200/G400 has SGRAM memory (0=SDRAM, 1=SGRAM) (default=0)&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -33455,16 +34204,48 @@ comma
 l_string|&quot;Specifies that 4MB boundary can be in middle of line. (default=autodetected)&quot;
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
+macro_line|#ifdef CONFIG_FB_OF
+id|MODULE_PARM
 c_func
 (paren
+id|vmode
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|vmode
+comma
+l_string|&quot;Specify the vmode mode number that should be used (640x480 default)&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|cmode
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|cmode
+comma
+l_string|&quot;Specify the video depth that should be used (8bit default)&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|function|init_module
 r_int
+id|__init
+(def_block
 id|init_module
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|DBG
@@ -33480,7 +34261,8 @@ id|disabled
 )paren
 (brace
 r_return
-l_int|0
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 macro_line|#endif /* DEBUG */
@@ -33611,6 +34393,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+)def_block
 DECL|function|cleanup_module
 r_void
 id|cleanup_module

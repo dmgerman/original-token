@@ -5160,12 +5160,11 @@ id|p-&gt;memclock
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pm2fb_conf
 r_static
 r_int
+id|__init
+(def_block
 id|pm2fb_conf
 c_func
 (paren
@@ -5173,7 +5172,6 @@ r_struct
 id|pm2fb_info
 op_star
 id|p
-)paren
 )paren
 (brace
 r_for
@@ -5284,6 +5282,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+)def_block
 multiline_comment|/***************************************************************************&n; * Begin of per-board initialization functions&n; ***************************************************************************/
 multiline_comment|/*&n; * Phase5 CvisionPPC/BVisionPPC&n; */
 macro_line|#ifdef CONFIG_FB_PM2_CVPPC
@@ -10049,10 +10048,12 @@ op_star
 )paren
 id|info
 suffix:semicolon
-id|u32
+r_int
+r_int
 id|flags
 suffix:semicolon
-id|u32
+r_int
+r_int
 id|depth
 suffix:semicolon
 id|save_flags
@@ -10265,16 +10266,14 @@ id|i
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pm2fb_init
 r_void
+id|__init
+(def_block
 id|pm2fb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|memset
@@ -10472,18 +10471,17 @@ suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+)def_block
+DECL|function|pm2fb_mode_setup
 r_void
+id|__init
+(def_block
 id|pm2fb_mode_setup
 c_func
 (paren
 r_char
 op_star
 id|options
-)paren
 )paren
 (brace
 r_int
@@ -10557,18 +10555,17 @@ id|pm2fb_options.user_mode
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+)def_block
+DECL|function|pm2fb_font_setup
 r_void
+id|__init
+(def_block
 id|pm2fb_font_setup
 c_func
 (paren
 r_char
 op_star
 id|options
-)paren
 )paren
 (brace
 id|strncpy
@@ -10597,11 +10594,11 @@ op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+)def_block
+DECL|function|pm2fb_setup
 r_void
+id|__init
+(def_block
 id|pm2fb_setup
 c_func
 (paren
@@ -10612,7 +10609,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_char
@@ -10750,6 +10746,7 @@ id|next
 suffix:semicolon
 )brace
 )brace
+)def_block
 multiline_comment|/***************************************************************************&n; * Begin of module functions&n; ***************************************************************************/
 macro_line|#ifdef MODULE
 DECL|function|init_module

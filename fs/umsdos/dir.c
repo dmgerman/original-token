@@ -1218,15 +1218,6 @@ id|inode-&gt;i_gid
 op_assign
 id|entry-&gt;gid
 suffix:semicolon
-id|MSDOS_I
-(paren
-id|inode
-)paren
-op_member_access_from_pointer
-id|i_binary
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/* #Specification: umsdos / i_nlink&n;&t; * The nlink field of an inode is maintained by the MSDOS file system&n;&t; * for directory and by UMSDOS for other files.  The logic is that&n;&t; * MSDOS is already figuring out what to do for directories and&n;&t; * does nothing for other files.  For MSDOS, there are no hard links&n;&t; * so all file carry nlink==1.  UMSDOS use some info in the&n;&t; * EMD file to plug the correct value.&n;&t; */
 r_if
 c_cond
@@ -2792,10 +2783,10 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* followlink */
-id|fat_bmap
+l_int|NULL
 comma
 multiline_comment|/* get_block */
-id|block_read_full_page
+l_int|NULL
 comma
 multiline_comment|/* readpage */
 l_int|NULL

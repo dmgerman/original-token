@@ -202,13 +202,12 @@ r_int
 id|stram_swap_type
 suffix:semicolon
 multiline_comment|/* Semaphore for get_stram_region.  */
-DECL|variable|stram_swap_sem
 r_static
-r_struct
-id|semaphore
+id|DECLARE_MUTEX
+c_func
+(paren
 id|stram_swap_sem
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 multiline_comment|/* major and minor device number of the ST-RAM device; for the major, we use&n; * the same as Amiga z2ram, which is really similar and impossible on Atari,&n; * and for the minor a relatively odd number to avoid the user creating and&n; * using that device. */
 DECL|macro|STRAM_MAJOR
@@ -753,14 +752,13 @@ comma
 id|swap_end
 )paren
 suffix:semicolon
-multiline_comment|/* reserve some amount of memory for maintainance of&n;&t;&t; * swapping itself: 1 page for the lockmap, and one page&n;&t;&t; * for each 2048 (PAGE_SIZE/2) swap pages. (2 bytes for&n;&t;&t; * each page) */
+multiline_comment|/* reserve some amount of memory for maintainance of&n;&t;&t; * swapping itself: one page for each 2048 (PAGE_SIZE/2)&n;&t;&t; * swap pages. (2 bytes for each page) */
 id|swap_data
 op_assign
 id|start_mem
 suffix:semicolon
 id|start_mem
 op_add_assign
-(paren
 (paren
 (paren
 id|SWAP_NR
@@ -781,9 +779,6 @@ id|PAGE_SHIFT
 op_minus
 l_int|1
 )paren
-)paren
-op_plus
-l_int|1
 )paren
 op_lshift
 id|PAGE_SHIFT
@@ -1749,17 +1744,6 @@ id|p-&gt;swap_device
 op_assign
 l_int|0
 suffix:semicolon
-id|p-&gt;swap_lockmap
-op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|swap_data
-)paren
-suffix:semicolon
 id|p-&gt;swap_map
 op_assign
 (paren
@@ -1767,11 +1751,7 @@ r_int
 r_int
 op_star
 )paren
-(paren
 id|swap_data
-op_plus
-id|PAGE_SIZE
-)paren
 suffix:semicolon
 id|p-&gt;cluster_nr
 op_assign
@@ -1817,17 +1797,6 @@ id|SWAP_NR
 c_func
 (paren
 id|swap_end
-)paren
-suffix:semicolon
-multiline_comment|/* initialize lockmap */
-id|memset
-c_func
-(paren
-id|p-&gt;swap_lockmap
-comma
-l_int|0
-comma
-id|PAGE_SIZE
 )paren
 suffix:semicolon
 multiline_comment|/* initialize swap_map: set regions that are already allocated or belong&n;&t; * to kernel data space to SWAP_MAP_BAD, otherwise to free */

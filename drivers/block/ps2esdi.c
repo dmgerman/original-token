@@ -692,16 +692,13 @@ multiline_comment|/* next */
 )brace
 suffix:semicolon
 multiline_comment|/* initialization routine called by ll_rw_blk.c   */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ps2esdi_init
 r_int
+id|__init
 id|ps2esdi_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/* register the device - pass the name, major number and operations&n;&t;   vector .                                                 */
@@ -1034,11 +1031,9 @@ suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 multiline_comment|/* handles boot time command line parameters */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|tp720_setup
 r_void
+id|__init
 id|tp720_setup
 c_func
 (paren
@@ -1049,7 +1044,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 multiline_comment|/* no params, just sets the tp720esdi flag if it exists */
@@ -1066,11 +1060,9 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ed_setup
 r_void
+id|__init
 id|ed_setup
 c_func
 (paren
@@ -1081,7 +1073,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int
@@ -1320,12 +1311,10 @@ id|len
 suffix:semicolon
 )brace
 multiline_comment|/* ps2 esdi specific initialization - called thru the gendisk chain */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ps2esdi_geninit
 r_static
 r_void
+id|__init
 id|ps2esdi_geninit
 c_func
 (paren
@@ -1333,7 +1322,6 @@ r_struct
 id|gendisk
 op_star
 id|ignored
-)paren
 )paren
 (brace
 multiline_comment|/*&n;&t;   The first part contains the initialization code&n;&t;   for the ESDI disk subsystem.  All we really do&n;&t;   is search for the POS registers of the controller&n;&t;   to do some simple setup operations.  First, we&n;&t;   must ensure that the controller is installed,&n;&t;   enabled, and configured as PRIMARY.  Then we must&n;&t;   determine the DMA arbitration level being used by&n;&t;   the controller so we can handle data transfer&n;&t;   operations properly.  If all of this works, then&n;&t;   we will set the INIT_FLAG to a non-zero value.&n;&t; */
@@ -1832,17 +1820,14 @@ id|ps2esdi_blocksizes
 suffix:semicolon
 )brace
 multiline_comment|/* ps2esdi_geninit */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ps2esdi_get_device_cfg
 r_static
 r_void
+id|__init
 id|ps2esdi_get_device_cfg
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|u_short

@@ -490,9 +490,9 @@ op_star
 id|CurrentBuffer
 suffix:semicolon
 DECL|macro|SET_TIMER
-mdefine_line|#define SET_TIMER()&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;del_timer( &amp;acsi_timer );&t;&t;&t;&t;&bslash;&n;&t;&t;acsi_timer.expires = jiffies + ACSI_TIMEOUT;&t;&t;&bslash;&n;&t;&t;add_timer( &amp;acsi_timer );&t;&t;&t;&t;&bslash;&n;&t;} while(0)
+mdefine_line|#define SET_TIMER()&t;mod_timer(&amp;acsi_timer, jiffies + ACSI_TIMEOUT)
 DECL|macro|CLEAR_TIMER
-mdefine_line|#define CLEAR_TIMER()&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;del_timer( &amp;acsi_timer );&t;&t;&t;&t;&bslash;&n;&t;} while(0)
+mdefine_line|#define CLEAR_TIMER()&t;del_timer(&amp;acsi_timer)
 DECL|variable|STramMask
 r_static
 r_int
@@ -1279,16 +1279,14 @@ l_int|6
 r_int
 r_int
 id|maxjif
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|maxjif
 op_assign
 id|jiffies
 op_plus
 id|timeout
 suffix:semicolon
+r_while
+c_loop
+(paren
 id|time_before
 c_func
 (paren
@@ -1296,7 +1294,6 @@ id|jiffies
 comma
 id|maxjif
 )paren
-suffix:semicolon
 )paren
 r_if
 c_cond
@@ -1372,16 +1369,14 @@ l_int|6
 r_int
 r_int
 id|maxjif
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|maxjif
 op_assign
 id|jiffies
 op_plus
 id|timeout
 suffix:semicolon
+r_while
+c_loop
+(paren
 id|time_before
 c_func
 (paren
@@ -1389,7 +1384,6 @@ id|jiffies
 comma
 id|maxjif
 )paren
-suffix:semicolon
 )paren
 r_if
 c_cond
@@ -1612,7 +1606,7 @@ l_int|0
 suffix:semicolon
 id|paddr
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|buffer
@@ -2176,7 +2170,7 @@ suffix:semicolon
 id|dma_cache_maintenance
 c_func
 (paren
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|buffer
@@ -2952,7 +2946,7 @@ suffix:semicolon
 id|dma_cache_maintenance
 c_func
 (paren
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|CurrentBuffer
@@ -3859,7 +3853,7 @@ id|CURRENT-&gt;buffer
 suffix:semicolon
 id|pbuffer
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|buffer
@@ -3980,7 +3974,7 @@ id|bh-&gt;b_reqnext
 (brace
 id|pnewadr
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|bh-&gt;b_data
@@ -7266,7 +7260,7 @@ suffix:semicolon
 )brace
 id|phys_acsi_buffer
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|acsi_buffer

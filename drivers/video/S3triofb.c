@@ -1190,16 +1190,13 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|s3triofb_init
 r_void
+id|__init
 id|s3triofb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef __powerpc__
@@ -1209,16 +1206,14 @@ macro_line|#else /* !__powerpc__ */
 multiline_comment|/* To be merged with cybervision */
 macro_line|#endif /* !__powerpc__ */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|s3trio_resetaccel
 r_void
+id|__init
+(def_block
 id|s3trio_resetaccel
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 DECL|macro|EC01_ENH_ENB
@@ -1412,11 +1407,11 @@ l_int|0xbee8
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+)def_block
+DECL|function|s3trio_init
 r_int
+id|__init
+(def_block
 id|s3trio_init
 c_func
 (paren
@@ -1424,7 +1419,6 @@ r_struct
 id|device_node
 op_star
 id|dp
-)paren
 )paren
 (brace
 id|u_char
@@ -1744,12 +1738,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+)def_block
 multiline_comment|/*&n;     *  Initialisation&n;     *  We heavily rely on OF for the moment. This needs fixing.&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|s3triofb_init_of
 r_void
+id|__init
 id|s3triofb_init_of
 c_func
 (paren
@@ -1757,7 +1750,6 @@ r_struct
 id|device_node
 op_star
 id|dp
-)paren
 )paren
 (brace
 r_int

@@ -777,6 +777,17 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|mvme147lance_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|via_rhine_probe
 c_func
 (paren
@@ -816,6 +827,17 @@ c_func
 r_struct
 id|device
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|mac_onboard_sonic_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Gigabit Ethernet adapters */
@@ -1724,6 +1746,22 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_HPLANCE&t;&t;/* HP300 internal Ethernet */
 (brace
 id|hplance_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_MVME147_NET&t;/* MVME147 internal Ethernet */
+(brace
+id|mvme147lance_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_MACSONIC&t;&t;/* Mac 68k Quadra builtin Ethernet */ 
+(brace
+id|mac_onboard_sonic_probe
 comma
 l_int|0
 )brace

@@ -4096,6 +4096,10 @@ id|cpu_online_map
 op_assign
 id|cpu_present_map
 suffix:semicolon
+id|smp_num_cpus
+op_assign
+l_int|1
+suffix:semicolon
 r_goto
 id|smp_done
 suffix:semicolon

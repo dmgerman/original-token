@@ -1743,13 +1743,11 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * This allows offboard ide-pci cards the enable a BIOS, verify interrupt&n; * settings of split-mirror pci-config space, place chipset into init-mode,&n; * and/or preserve an interrupt if the card is not native ide support.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ide_special_settings
 r_static
 r_int
 r_int
+id|__init
 id|ide_special_settings
 (paren
 r_struct
@@ -1761,7 +1759,6 @@ r_const
 r_char
 op_star
 id|name
-)paren
 )paren
 (brace
 r_switch
@@ -1954,12 +1951,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Match a PCI IDE port against an entry in ide_hwifs[],&n; * based on io_base port if possible.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ide_match_hwif
 r_static
 id|ide_hwif_t
+id|__init
 op_star
 id|ide_match_hwif
 (paren
@@ -1974,7 +1969,6 @@ r_const
 r_char
 op_star
 id|name
-)paren
 )paren
 (brace
 r_int
@@ -2220,12 +2214,10 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ide_setup_pci_baseregs
 r_static
 r_int
+id|__init
 id|ide_setup_pci_baseregs
 (paren
 r_struct
@@ -2237,7 +2229,6 @@ r_const
 r_char
 op_star
 id|name
-)paren
 )paren
 (brace
 id|byte
@@ -2424,12 +2415,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * ide_setup_pci_device() looks at the primary/secondary interfaces&n; * on a PCI IDE device and, if they are enabled, prepares the IDE driver&n; * for use with them.  This generic code works for most PCI chipsets.&n; *&n; * One thing that is not standardized is the location of the&n; * primary/secondary interface &quot;enable/disable&quot; bits.  For chipsets that&n; * we &quot;know&quot; about, this information is in the ide_pci_device_t struct;&n; * for all other chipsets, we just assume both interfaces are enabled.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ide_setup_pci_device
 r_static
 r_void
+id|__init
 id|ide_setup_pci_device
 (paren
 r_struct
@@ -2440,7 +2429,6 @@ comma
 id|ide_pci_device_t
 op_star
 id|d
-)paren
 )paren
 (brace
 r_int
@@ -3654,15 +3642,12 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * ide_scan_pcibus() gets invoked at boot time from ide.c.&n; * It finds all PCI IDE controllers and calls ide_setup_pci_device for them.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ide_scan_pcibus
 r_void
+id|__init
 id|ide_scan_pcibus
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

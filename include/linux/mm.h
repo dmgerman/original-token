@@ -444,6 +444,8 @@ DECL|macro|PG_swap_cache
 mdefine_line|#define PG_swap_cache&t;&t; 9
 DECL|macro|PG_skip
 mdefine_line|#define PG_skip&t;&t;&t;10
+DECL|macro|PG_swap_entry
+mdefine_line|#define PG_swap_entry&t;&t;11
 multiline_comment|/* bits 21-30 unused */
 DECL|macro|PG_reserved
 mdefine_line|#define PG_reserved&t;&t;31
@@ -564,10 +566,6 @@ r_return
 id|page
 suffix:semicolon
 )brace
-r_extern
-r_int
-id|low_on_memory
-suffix:semicolon
 multiline_comment|/* memory.c &amp; swap.c*/
 DECL|macro|free_page
 mdefine_line|#define free_page(addr) free_pages((addr),0)

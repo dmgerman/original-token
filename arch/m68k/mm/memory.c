@@ -1066,6 +1066,10 @@ suffix:semicolon
 r_return
 (paren
 (paren
+(paren
+r_int
+r_int
+)paren
 id|vaddr
 op_xor
 id|base
@@ -1077,12 +1081,21 @@ op_eq
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#if DEBUG_INVALID_PTOV
+DECL|variable|mm_inv_cnt
+r_int
+id|mm_inv_cnt
+op_assign
+l_int|5
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifndef CONFIG_SINGLE_MEMORY_CHUNK
 multiline_comment|/*&n; * The following two routines map from a physical address to a kernel&n; * virtual address and vice versa.&n; */
 DECL|function|mm_vtop
 r_int
 r_int
 id|mm_vtop
+c_func
 (paren
 r_int
 r_int
@@ -1098,13 +1111,13 @@ r_int
 r_int
 id|voff
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|vaddr
-suffix:semicolon
-r_int
-r_int
-id|offset
-op_assign
-l_int|0
+op_minus
+id|PAGE_OFFSET
 suffix:semicolon
 r_do
 (brace
@@ -1113,8 +1126,6 @@ c_cond
 (paren
 id|voff
 OL
-id|offset
-op_plus
 id|m68k_memory
 (braket
 id|i
@@ -1126,7 +1137,7 @@ id|size
 macro_line|#ifdef DEBUGPV
 id|printk
 (paren
-l_string|&quot;VTOP(%lx)=%lx&bslash;n&quot;
+l_string|&quot;VTOP(%p)=%lx&bslash;n&quot;
 comma
 id|vaddr
 comma
@@ -1138,8 +1149,6 @@ dot
 id|addr
 op_plus
 id|voff
-op_minus
-id|offset
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1152,13 +1161,10 @@ dot
 id|addr
 op_plus
 id|voff
-op_minus
-id|offset
 suffix:semicolon
 )brace
-r_else
-id|offset
-op_add_assign
+id|voff
+op_sub_assign
 id|m68k_memory
 (braket
 id|i
@@ -1166,13 +1172,11 @@ id|i
 dot
 id|size
 suffix:semicolon
-id|i
-op_increment
-suffix:semicolon
 )brace
 r_while
 c_loop
 (paren
+op_increment
 id|i
 OL
 id|m68k_num_memory
@@ -1192,6 +1196,7 @@ DECL|function|mm_vtop_fallback
 r_int
 r_int
 id|mm_vtop_fallback
+c_func
 (paren
 r_int
 r_int
@@ -1236,6 +1241,10 @@ id|vaddr
 )paren
 )paren
 r_return
+(paren
+r_int
+r_int
+)paren
 id|vaddr
 suffix:semicolon
 id|asm
@@ -1265,6 +1274,10 @@ id|vaddr
 )paren
 )paren
 r_return
+(paren
+r_int
+r_int
+)paren
 id|vaddr
 suffix:semicolon
 )brace
@@ -1304,6 +1317,10 @@ id|vaddr
 )paren
 )paren
 r_return
+(paren
+r_int
+r_int
+)paren
 id|vaddr
 suffix:semicolon
 id|asm
@@ -1331,6 +1348,10 @@ id|vaddr
 )paren
 )paren
 r_return
+(paren
+r_int
+r_int
+)paren
 id|vaddr
 suffix:semicolon
 )brace
@@ -1362,13 +1383,23 @@ id|SUPER_DATA
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* The PLPAR instruction causes an access error if the translation&n;&t;   * is not possible. We don&squot;t catch that here, so a bad kernel trap&n;&t;   * will be reported in this case. */
+multiline_comment|/* The PLPAR instruction causes an access error if the translation&n;&t;   * is not possible. To catch this we use the same exception mechanism&n;&t;   * as for user space accesses in &lt;asm/uaccess.h&gt;. */
 id|asm
 r_volatile
 (paren
-l_string|&quot;.chip 68060&bslash;n&bslash;t&quot;
-l_string|&quot;plpar (%0)&bslash;n&bslash;t&quot;
-l_string|&quot;.chip 68k&quot;
+l_string|&quot;.chip 68060&bslash;n&quot;
+l_string|&quot;1: plpar (%0)&bslash;n&quot;
+l_string|&quot;.chip 68k&bslash;n&quot;
+l_string|&quot;2:&bslash;n&quot;
+l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;   .even&bslash;n&quot;
+l_string|&quot;3: lea -1,%0&bslash;n&quot;
+l_string|&quot;   jra 2b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
+l_string|&quot;   .align 4&bslash;n&quot;
+l_string|&quot;   .long 1b,3b&bslash;n&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -1452,8 +1483,10 @@ id|MMU_T_040
 (brace
 r_return
 (paren
-id|vaddr
+r_int
+r_int
 )paren
+id|vaddr
 suffix:semicolon
 multiline_comment|/* Transparent translation */
 )brace
@@ -1472,6 +1505,10 @@ id|PAGE_MASK
 )paren
 op_or
 (paren
+(paren
+r_int
+r_int
+)paren
 id|vaddr
 op_amp
 (paren
@@ -1481,14 +1518,19 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-id|panic
+id|printk
+c_func
 (paren
-l_string|&quot;VTOP040: bad virtual address %08lx (%lx)&quot;
+l_string|&quot;VTOP040: bad virtual address %lx (%lx)&quot;
 comma
 id|vaddr
 comma
 id|mmusr
 )paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 r_else
@@ -1547,9 +1589,10 @@ op_or
 id|MMU_L
 )paren
 )paren
-id|panic
+id|printk
+c_func
 (paren
-l_string|&quot;VTOP030: bad virtual address %08lx (%x)&quot;
+l_string|&quot;VTOP030: bad virtual address %lx (%x)&bslash;n&quot;
 comma
 id|vaddr
 comma
@@ -1588,6 +1631,10 @@ l_int|0xfe000000
 )paren
 op_or
 (paren
+(paren
+r_int
+r_int
+)paren
 id|vaddr
 op_amp
 l_int|0x01ffffff
@@ -1605,6 +1652,10 @@ l_int|0xfffc0000
 )paren
 op_or
 (paren
+(paren
+r_int
+r_int
+)paren
 id|vaddr
 op_amp
 l_int|0x0003ffff
@@ -1622,6 +1673,10 @@ id|PAGE_MASK
 )paren
 op_or
 (paren
+(paren
+r_int
+r_int
+)paren
 id|vaddr
 op_amp
 (paren
@@ -1633,9 +1688,10 @@ l_int|1
 suffix:semicolon
 r_default
 suffix:colon
-id|panic
+id|printk
+c_func
 (paren
-l_string|&quot;VTOP: bad levels (%u) for virtual address %08lx&quot;
+l_string|&quot;VTOP: bad levels (%u) for virtual address %lx&bslash;n&quot;
 comma
 id|mmusr
 op_amp
@@ -1646,18 +1702,23 @@ id|vaddr
 suffix:semicolon
 )brace
 )brace
-id|panic
+id|printk
+c_func
 (paren
-l_string|&quot;VTOP: bad virtual address %08lx&quot;
+l_string|&quot;VTOP: bad virtual address %lx&bslash;n&quot;
 comma
 id|vaddr
 )paren
 suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 )brace
 macro_line|#ifndef CONFIG_SINGLE_MEMORY_CHUNK
 DECL|function|mm_ptov
-r_int
-r_int
+r_void
+op_star
 id|mm_ptov
 (paren
 r_int
@@ -1672,41 +1733,36 @@ l_int|0
 suffix:semicolon
 r_int
 r_int
-id|offset
+id|poff
+comma
+id|voff
 op_assign
-l_int|0
+id|PAGE_OFFSET
 suffix:semicolon
 r_do
 (brace
+id|poff
+op_assign
+id|paddr
+op_minus
+id|m68k_memory
+(braket
+id|i
+)braket
+dot
+id|addr
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|paddr
-op_ge
-id|m68k_memory
-(braket
-id|i
-)braket
-dot
-id|addr
-op_logical_and
-id|paddr
+id|poff
 OL
-(paren
-id|m68k_memory
-(braket
-id|i
-)braket
-dot
-id|addr
-op_plus
 id|m68k_memory
 (braket
 id|i
 )braket
 dot
 id|size
-)paren
 )paren
 (brace
 macro_line|#ifdef DEBUGPV
@@ -1716,38 +1772,25 @@ l_string|&quot;PTOV(%lx)=%lx&bslash;n&quot;
 comma
 id|paddr
 comma
-(paren
-id|paddr
-op_minus
-id|m68k_memory
-(braket
-id|i
-)braket
-dot
-id|addr
-)paren
+id|poff
 op_plus
-id|offset
+id|voff
 )paren
 suffix:semicolon
 macro_line|#endif
 r_return
 (paren
-id|paddr
-op_minus
-id|m68k_memory
-(braket
-id|i
-)braket
-dot
-id|addr
+r_void
+op_star
 )paren
+(paren
+id|poff
 op_plus
-id|offset
+id|voff
+)paren
 suffix:semicolon
 )brace
-r_else
-id|offset
+id|voff
 op_add_assign
 id|m68k_memory
 (braket
@@ -1756,18 +1799,44 @@ id|i
 dot
 id|size
 suffix:semicolon
-id|i
-op_increment
-suffix:semicolon
 )brace
 r_while
 c_loop
 (paren
+op_increment
 id|i
 OL
 id|m68k_num_memory
 )paren
 suffix:semicolon
+macro_line|#if DEBUG_INVALID_PTOV
+r_if
+c_cond
+(paren
+id|mm_inv_cnt
+OG
+l_int|0
+)paren
+(brace
+id|mm_inv_cnt
+op_decrement
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Invalid use of phys_to_virt(0x%lx) at 0x%p!&bslash;n&quot;
+comma
+id|paddr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n;&t; * assume that the kernel virtual address is the same as the&n;&t; * physical address.&n;&t; *&n;&t; * This should be reasonable in most situations:&n;&t; *  1) They shouldn&squot;t be dereferencing the virtual address&n;&t; *     unless they are sure that it is valid from kernel space.&n;&t; *  2) The only usage I see so far is converting a page table&n;&t; *     reference to some non-FASTMEM address space when freeing&n;         *     mmaped &quot;/dev/mem&quot; pages.  These addresses are just passed&n;&t; *     to &quot;free_page&quot;, which ignores addresses that aren&squot;t in&n;&t; *     the memory list anyway.&n;&t; *&n;&t; */
 macro_line|#ifdef CONFIG_AMIGA
 multiline_comment|/*&n;&t; * if on an amiga and address is in first 16M, move it &n;&t; * to the ZTWO_VADDR range&n;&t; */
@@ -1785,6 +1854,10 @@ op_star
 l_int|1024
 )paren
 r_return
+(paren
+r_void
+op_star
+)paren
 id|ZTWO_VADDR
 c_func
 (paren
@@ -1793,7 +1866,12 @@ id|paddr
 suffix:semicolon
 macro_line|#endif
 r_return
-id|paddr
+(paren
+r_void
+op_star
+)paren
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif

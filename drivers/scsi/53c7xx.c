@@ -70,6 +70,14 @@ DECL|macro|inb
 macro_line|#undef inb
 DECL|macro|outb
 macro_line|#undef outb
+DECL|macro|inw
+macro_line|#undef inw
+DECL|macro|outw
+macro_line|#undef outw
+DECL|macro|inl
+macro_line|#undef inl
+DECL|macro|outl
+macro_line|#undef outl
 DECL|macro|inb
 mdefine_line|#define inb(x)          1
 DECL|macro|inw
@@ -3096,7 +3104,7 @@ l_int|0
 comma
 l_int|8192
 comma
-id|KERNELMAP_NOCACHE_SER
+id|IOMAP_NOCACHE_SER
 )paren
 suffix:semicolon
 multiline_comment|/* FIXME : if we ever support an ISA NCR53c7xx based board, we&n;       need to check if the chip is running in a 16 bit mode, and if so &n;       unregister it if it is past the 16M (0x1000000) mark */
@@ -5964,6 +5972,7 @@ c_cond
 (paren
 id|ncr_search
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -6015,6 +6024,7 @@ id|found
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n;     * Traverse the host running list until we find this command or discover&n;     * we have too many elements, pointing linux_prev at the next field of the &n;     * linux_previous element or head of the list, search at this element.&n;     */
 r_for
@@ -10458,8 +10468,7 @@ comma
 id|hostdata-&gt;saved_dcntl
 )paren
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* Following disables snooping - run with caches disabled at first */
+multiline_comment|/* Following disables snooping - snooping is not required, as non-&n;     * cached pages are used for shared data, and appropriate use is&n;     * made of cache_push/cache_clear.  Indeed, for 68060&n;     * enabling snooping causes disk corruption of ext2fs free block&n;     * bitmaps and the like.  If you have a 68060 with snooping hardwared&n;     * on, then you need to enable CONFIG_060_WRITETHROUGH.&n;     */
 id|NCR53c7x0_write8
 c_func
 (paren
@@ -10470,21 +10479,6 @@ op_or
 id|CTEST7_STD
 )paren
 suffix:semicolon
-macro_line|#else
-multiline_comment|/* Setup CTEST7 for SC1=0, SC0=1 - sink/source data without invalidating&n;     * cache lines. */
-id|NCR53c7x0_write8
-c_func
-(paren
-id|CTEST7_REG
-comma
-id|CTEST7_10_TT1
-op_or
-id|CTEST7_STD
-op_or
-id|CTEST7_10_SC0
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Actually burst of eight, according to my 53c710 databook */
 id|NCR53c7x0_write8
 c_func
@@ -10732,7 +10726,7 @@ r_int
 id|dummy
 )paren
 (brace
-multiline_comment|/* XXX This assumes default cache mode to be KERNELMAP_FULL_CACHING, which&n;     * XXX may be invalid (CONFIG_060_WRITETHROUGH)&n;     */
+multiline_comment|/* XXX This assumes default cache mode to be IOMAP_FULL_CACHING, which&n;     * XXX may be invalid (CONFIG_060_WRITETHROUGH)&n;     */
 id|kernel_set_cachemode
 c_func
 (paren
@@ -10743,7 +10737,7 @@ id|addr
 comma
 l_int|4096
 comma
-id|KERNELMAP_FULL_CACHING
+id|IOMAP_FULL_CACHING
 )paren
 suffix:semicolon
 id|free_page
@@ -11016,7 +11010,7 @@ id|real
 comma
 l_int|4096
 comma
-id|KERNELMAP_NOCACHE_SER
+id|IOMAP_NOCACHE_SER
 )paren
 suffix:semicolon
 id|tmp
@@ -11404,10 +11398,6 @@ suffix:colon
 r_case
 id|WRITE_10
 suffix:colon
-r_case
-id|START_STOP
-suffix:colon
-multiline_comment|/* also SCAN, which may do DATA OUT */
 macro_line|#if 0
 id|printk
 c_func
@@ -11468,6 +11458,9 @@ id|TEST_UNIT_READY
 suffix:colon
 r_case
 id|ALLOW_MEDIUM_REMOVAL
+suffix:colon
+r_case
+id|START_STOP
 suffix:colon
 id|datain
 op_assign
@@ -21714,6 +21707,7 @@ id|ISTAT_DIP
 )paren
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -21734,6 +21728,7 @@ l_int|3
 )paren
 r_break
 suffix:semicolon
+)brace
 )brace
 id|hostdata-&gt;state
 op_assign
@@ -22307,7 +22302,7 @@ op_star
 id|hostdata-&gt;events
 )paren
 suffix:semicolon
-multiline_comment|/* XXX This assumes default cache mode to be KERNELMAP_FULL_CACHING, which&n;     * XXX may be invalid (CONFIG_060_WRITETHROUGH)&n;     */
+multiline_comment|/* XXX This assumes default cache mode to be IOMAP_FULL_CACHING, which&n;     * XXX may be invalid (CONFIG_060_WRITETHROUGH)&n;     */
 id|kernel_set_cachemode
 c_func
 (paren
@@ -22318,7 +22313,7 @@ id|hostdata
 comma
 l_int|8192
 comma
-id|KERNELMAP_FULL_CACHING
+id|IOMAP_FULL_CACHING
 )paren
 suffix:semicolon
 id|free_pages

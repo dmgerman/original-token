@@ -9846,10 +9846,12 @@ suffix:semicolon
 multiline_comment|/* found a PCI ISI card! */
 id|ioaddr
 op_assign
-id|dev-&gt;base_address
+id|dev-&gt;resource
 (braket
 l_int|3
 )braket
+dot
+id|start
 suffix:semicolon
 multiline_comment|/* i.e at offset 0x1c in the&n;&t;&t;&t;&t;&t;&t;&t;&t;* PCI configuration register&n;&t;&t;&t;&t;&t;&t;&t;&t;* space.&n;&t;&t;&t;&t;&t;&t;&t;&t;*/
 id|ioaddr

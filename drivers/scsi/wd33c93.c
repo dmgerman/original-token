@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 macro_line|#include &lt;linux/blk.h&gt;
@@ -88,6 +89,11 @@ id|regp-&gt;SASR
 op_assign
 id|reg_num
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|regp-&gt;SCMD
 suffix:semicolon
@@ -116,9 +122,19 @@ id|regp-&gt;SASR
 op_assign
 id|reg_num
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|regp-&gt;SCMD
 op_assign
 id|value
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 DECL|function|write_wd33c93_cmd
@@ -140,9 +156,19 @@ id|regp-&gt;SASR
 op_assign
 id|WD_COMMAND
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|regp-&gt;SCMD
 op_assign
 id|cmd
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 DECL|function|read_1_byte
@@ -250,6 +276,11 @@ id|regp-&gt;SASR
 op_assign
 id|WD_TRANSFER_COUNT_MSB
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|regp-&gt;SCMD
 op_assign
 id|value
@@ -265,6 +296,11 @@ suffix:semicolon
 id|regp-&gt;SCMD
 op_assign
 id|value
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 DECL|function|read_wd33c93_count
@@ -287,6 +323,11 @@ id|regp-&gt;SASR
 op_assign
 id|WD_TRANSFER_COUNT_MSB
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|value
 op_assign
 id|regp-&gt;SCMD
@@ -302,6 +343,11 @@ suffix:semicolon
 id|value
 op_or_assign
 id|regp-&gt;SCMD
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 id|value
@@ -5336,22 +5382,16 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|function|wd33c93_setup
-r_void
+r_int
 id|wd33c93_setup
 (paren
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_int
 id|i
-comma
-id|x
 suffix:semicolon
 r_char
 op_star
@@ -5370,6 +5410,8 @@ id|p1
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
+macro_line|#if 0
+multiline_comment|/*&n; * Old style command line arguments are now dead&n; */
 r_if
 c_cond
 (paren
@@ -5423,6 +5465,7 @@ id|x
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -5557,7 +5600,18 @@ id|done_setup
 op_assign
 l_int|1
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;wd33c93&quot;
+comma
+id|wd33c93_setup
+)paren
+suffix:semicolon
 multiline_comment|/* check_setup_args() returns index if key found, 0 if not&n; */
 DECL|function|check_setup_args
 r_static
@@ -5805,8 +5859,6 @@ id|wd33c93_setup
 c_func
 (paren
 id|setup_strings
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|hostdata

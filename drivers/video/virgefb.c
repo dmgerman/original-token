@@ -56,6 +56,9 @@ DECL|macro|wl_3d
 mdefine_line|#define wl_3d(reg,dat) &bslash;&n;                (*((unsigned long volatile *)(CyberRegs + reg)) = dat)
 DECL|macro|rl_3d
 mdefine_line|#define rl_3d(reg) &bslash;&n;                (*((unsigned long volatile *)(CyberRegs + reg)))
+DECL|macro|Select_Zorro2_FrameBuffer
+mdefine_line|#define Select_Zorro2_FrameBuffer(flag) &bslash;&n;&t;do { &bslash;&n;&t;&t;*((unsigned char volatile *)((Cyber_vcode_switch_base) + 0x08)) = &bslash;&n;&t;&t;((flag * 0x40) &amp; 0xffff); asm volatile (&quot;nop&quot;); &bslash;&n;&t;} while (0)
+multiline_comment|/*&n; *&t;may be needed when we initialize the board?&n; *&t;8bit: flag = 2, 16 bit: flag = 1, 24/32bit: flag = 0 &n; *&t;_when_ the board is initialized, depth doesnt matter, we allways write&n; *&t;to the same address, aperture seems not to matter on Z2.&n; */
 DECL|struct|virgefb_par
 r_struct
 id|virgefb_par
@@ -389,10 +392,22 @@ mdefine_line|#define CYBMEM_OFFSET_8  0x800000&t;/* offsets from start of video 
 DECL|macro|CYBMEM_OFFSET_16
 mdefine_line|#define CYBMEM_OFFSET_16 0x400000&t;/* ram to appropriate aperture */
 multiline_comment|/*&n; *    Predefined Video Modes&n; */
-DECL|variable|__initdata
 r_static
 r_struct
-id|fb_videomode
+(brace
+DECL|member|name
+r_const
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|var
+r_struct
+id|fb_var_screeninfo
+id|var
+suffix:semicolon
+DECL|variable|__initdata
+)brace
 id|virgefb_predefined
 (braket
 )braket
@@ -1158,7 +1173,7 @@ comma
 op_minus
 l_int|1
 comma
-l_int|0
+id|FB_ACCELF_TEXT
 comma
 id|VIRGE16_PIXCLOCK
 comma
@@ -1245,7 +1260,7 @@ comma
 op_minus
 l_int|1
 comma
-l_int|0
+id|FB_ACCELF_TEXT
 comma
 id|VIRGE16_PIXCLOCK
 comma
@@ -1332,7 +1347,7 @@ comma
 op_minus
 l_int|1
 comma
-l_int|0
+id|FB_ACCELF_TEXT
 comma
 id|VIRGE16_PIXCLOCK
 comma
@@ -1419,7 +1434,7 @@ comma
 op_minus
 l_int|1
 comma
-l_int|0
+id|FB_ACCELF_TEXT
 comma
 id|VIRGE16_PIXCLOCK
 comma
@@ -1453,22 +1468,6 @@ id|Cyberfb_inverse
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if 0
-r_static
-r_int
-id|Cyberfb_Cyber8
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Use Cybervision board */
-r_static
-r_int
-id|Cyberfb_Cyber16
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Use Cybervision board */
-macro_line|#endif
 multiline_comment|/*&n; *    Some default modes&n; */
 DECL|macro|VIRGE8_DEFMODE
 mdefine_line|#define VIRGE8_DEFMODE     (1)
@@ -3254,7 +3253,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * CV3D low-level support&n; */
 DECL|macro|Cyber3D_WaitQueue
-mdefine_line|#define Cyber3D_WaitQueue(v)&t; { do { while ((rl_3d(0x8504) &amp; 0x1f00) &lt; (((v)+2) &lt;&lt; 8)); } while (0); }
+mdefine_line|#define Cyber3D_WaitQueue(v) &bslash;&n;{ &bslash;&n;&t; do { &bslash;&n;&t;&t;while ((rl_3d(0x8504) &amp; 0x1f00) &lt; (((v)+2) &lt;&lt; 8)); &bslash;&n;&t; } &bslash;&n;&t;while (0); &bslash;&n;}
 DECL|function|Cyber3D_WaitBusy
 r_static
 r_inline
@@ -3353,6 +3352,9 @@ id|width
 comma
 id|u_short
 id|height
+comma
+id|u_short
+id|depth
 )paren
 (brace
 r_int
@@ -3363,12 +3365,37 @@ id|S3V_BITBLT
 op_or
 id|S3V_DRAW
 op_or
-id|S3V_DST_8BPP
-suffix:semicolon
-id|blitcmd
-op_or_assign
 id|S3V_BLT_COPY
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|depth
+)paren
+(brace
+macro_line|#ifdef FBCON_HAS_CFB8
+r_case
+l_int|8
+suffix:colon
+id|blitcmd
+op_or_assign
+id|S3V_DST_8BPP
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef FBCON_HAS_CFB16
+r_case
+l_int|16
+suffix:colon
+id|blitcmd
+op_or_assign
+id|S3V_DST_16BPP
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+)brace
 multiline_comment|/* Set drawing direction */
 multiline_comment|/* -Y, X maj, -X (default) */
 r_if
@@ -3570,6 +3597,9 @@ id|height
 comma
 id|u_short
 id|color
+comma
+id|u_short
+id|depth
 )paren
 (brace
 r_int
@@ -3583,8 +3613,6 @@ op_assign
 id|S3V_RECTFILL
 op_or
 id|S3V_DRAW
-op_or
-id|S3V_DST_8BPP
 op_or
 id|S3V_BLT_CLEAR
 op_or
@@ -3616,6 +3644,35 @@ id|blit_maybe_busy
 op_assign
 l_int|1
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|depth
+)paren
+(brace
+macro_line|#ifdef FBCON_HAS_CFB8
+r_case
+l_int|8
+suffix:colon
+id|blitcmd
+op_or_assign
+id|S3V_DST_8BPP
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef FBCON_HAS_CFB16
+r_case
+l_int|16
+suffix:colon
+id|blitcmd
+op_or_assign
+id|S3V_DST_16BPP
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+)brace
 id|tmp
 op_assign
 id|color
@@ -4992,11 +5049,9 @@ comma
 id|virgefb_ioctl
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|virgefb_setup
 r_void
+id|__init
 id|virgefb_setup
 c_func
 (paren
@@ -5007,7 +5062,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_char
@@ -5173,16 +5227,13 @@ id|virgefb_default.bits_per_pixel
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *    Initialization&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|virgefb_init
 r_void
+id|__init
 id|virgefb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -5708,12 +5759,10 @@ id|blank
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *    Get a Video Mode&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_video_mode
 r_static
 r_int
+id|__init
 id|get_video_mode
 c_func
 (paren
@@ -5721,7 +5770,6 @@ r_const
 r_char
 op_star
 id|name
-)paren
 )paren
 (brace
 r_int
@@ -5888,6 +5936,8 @@ c_func
 id|p
 )paren
 )paren
+comma
+l_int|8
 )paren
 suffix:semicolon
 )brace
@@ -5985,6 +6035,8 @@ comma
 id|u_short
 )paren
 id|bg
+comma
+l_int|8
 )paren
 suffix:semicolon
 )brace
@@ -6262,15 +6314,15 @@ id|width
 (brace
 id|sx
 op_mul_assign
-l_int|16
+l_int|8
 suffix:semicolon
 id|dx
 op_mul_assign
-l_int|16
+l_int|8
 suffix:semicolon
 id|width
 op_mul_assign
-l_int|16
+l_int|8
 suffix:semicolon
 id|Cyber3D_BitBLT
 c_func
@@ -6328,6 +6380,8 @@ c_func
 id|p
 )paren
 )paren
+comma
+l_int|16
 )paren
 suffix:semicolon
 )brace
@@ -6366,11 +6420,11 @@ id|bg
 suffix:semicolon
 id|sx
 op_mul_assign
-l_int|16
+l_int|8
 suffix:semicolon
 id|width
 op_mul_assign
-l_int|16
+l_int|8
 suffix:semicolon
 id|bg
 op_assign
@@ -6425,6 +6479,8 @@ comma
 id|u_short
 )paren
 id|bg
+comma
+l_int|16
 )paren
 suffix:semicolon
 )brace

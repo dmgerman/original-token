@@ -274,12 +274,10 @@ DECL|macro|rtrc
 mdefine_line|#define rtrc(i) {}
 macro_line|#endif
 multiline_comment|/*&n; * Function : enable_board( int  board_num, unsigned short port )&n; *&n; * Purpose :  set address in new model board&n; *&n; * Inputs : board_num - logical board number 0-3, port - base address&n; *&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|enable_board
 id|enable_board
 c_func
 (paren
@@ -289,7 +287,6 @@ comma
 r_int
 r_int
 id|port
-)paren
 )paren
 (brace
 id|outb
@@ -314,11 +311,10 @@ id|MASTER_ADDRESS_PTR
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function : init_board( unsigned short port, int irq )&n; *&n; * Purpose :  Set the board up to handle the SCSI interface&n; *&n; * Inputs : port - base address of the board,&n; *&t;    irq - irq to assign to the SCSI port&n; *&t;    force_irq - set it even if it conflicts with sound driver&n; *&n; */
-DECL|function|__initfunc
-id|__initfunc
-(paren
 r_static
 r_void
+id|__init
+DECL|function|init_board
 id|init_board
 c_func
 (paren
@@ -331,7 +327,6 @@ id|irq
 comma
 r_int
 id|force_irq
-)paren
 )paren
 (brace
 r_int
@@ -489,19 +484,16 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Function : pas16_hw_detect( unsigned short board_num )&n; *&n; * Purpose : determine if a pas16 board is present&n; * &n; * Inputs : board_num - logical board number ( 0 - 3 )&n; *&n; * Returns : 0 if board not found, 1 if found.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|pas16_hw_detect
 id|pas16_hw_detect
 c_func
 (paren
 r_int
 r_int
 id|board_num
-)paren
 )paren
 (brace
 r_int
@@ -695,11 +687,9 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function : pas16_setup(char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : str - unused, ints - array of integer parameters with ints[0]&n; *&t;equal to the number of ints.&n; *&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pas16_setup
 r_void
+id|__init
 id|pas16_setup
 c_func
 (paren
@@ -710,7 +700,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_static
@@ -827,18 +816,15 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* &n; * Function : int pas16_detect(Scsi_Host_Template * tpnt)&n; *&n; * Purpose : detects and initializes PAS16 controllers&n; *&t;that were autoprobed, overridden on the LILO command line, &n; *&t;or specified at compile time.&n; *&n; * Inputs : tpnt - template for this SCSI adapter.&n; * &n; * Returns : 1 if a host adapter was found, 0 if not.&n; *&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pas16_detect
 r_int
+id|__init
 id|pas16_detect
 c_func
 (paren
 id|Scsi_Host_Template
 op_star
 id|tpnt
-)paren
 )paren
 (brace
 r_static

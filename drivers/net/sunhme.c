@@ -16490,10 +16490,10 @@ l_int|0
 dot
 id|flags
 op_amp
-id|PCI_BASE_ADDRESS_SPACE
+id|IORESOURCE_IOPORT
 )paren
 op_ne
-id|PCI_BASE_ADDRESS_SPACE_MEMORY
+l_int|0
 )paren
 (brace
 id|printk
@@ -16506,10 +16506,6 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-id|hpreg_base
-op_and_assign
-id|PCI_BASE_ADDRESS_MEM_MASK
-suffix:semicolon
 r_if
 c_cond
 (paren

@@ -2193,10 +2193,12 @@ macro_line|#endif
 multiline_comment|/* We now have the appropriate device function for the FD board so we&n;      just read the PCI config info from the registers.  */
 id|pci_base
 op_assign
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 suffix:semicolon
 id|pci_irq
 op_assign
@@ -2211,11 +2213,7 @@ suffix:semicolon
 op_star
 id|iobase
 op_assign
-(paren
 id|pci_base
-op_amp
-id|PCI_BASE_ADDRESS_IO_MASK
-)paren
 suffix:semicolon
 macro_line|#if DEBUG_DETECT
 id|printk

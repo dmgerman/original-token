@@ -104,6 +104,14 @@ op_star
 )paren
 id|dev_id
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;irq on %p&bslash;n&quot;
+comma
+id|aud
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -181,9 +189,6 @@ id|i
 op_increment
 )paren
 (brace
-r_int
-id|x
-suffix:semicolon
 id|endpoint
 op_assign
 op_amp
@@ -260,16 +265,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|na
-op_eq
-l_int|0
 )paren
-(brace
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 id|aud
 op_assign
 id|kmalloc

@@ -2296,12 +2296,10 @@ c_func
 suffix:semicolon
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_valkyrie
 r_static
 r_void
+id|__init
 id|init_valkyrie
 c_func
 (paren
@@ -2309,7 +2307,6 @@ r_struct
 id|fb_info_valkyrie
 op_star
 id|p
-)paren
 )paren
 (brace
 r_struct
@@ -2904,16 +2901,13 @@ suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_FB_COMPAT_XPMAC */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|valkyriefb_init
 r_void
+id|__init
 id|valkyriefb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifndef CONFIG_FB_OF
@@ -2945,11 +2939,9 @@ id|dp
 suffix:semicolon
 macro_line|#endif /* CONFIG_FB_OF */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|valkyrie_of_init
 r_void
+id|__init
 id|valkyrie_of_init
 c_func
 (paren
@@ -2957,7 +2949,6 @@ r_struct
 id|device_node
 op_star
 id|dp
-)paren
 )paren
 (brace
 r_struct
@@ -4013,11 +4004,9 @@ id|FBINFO_FLAG_DEFAULT
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Parse user speficied options (`video=valkyriefb:&squot;)&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|valkyriefb_setup
 r_void
+id|__init
 id|valkyriefb_setup
 c_func
 (paren
@@ -4028,7 +4017,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_char

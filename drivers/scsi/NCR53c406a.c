@@ -1464,19 +1464,16 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif USE_PIO
-DECL|function|__initfunc
-(def_block
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|NCR53c406a_detect
+(def_block
 id|NCR53c406a_detect
 c_func
 (paren
 id|Scsi_Host_Template
 op_star
 id|tpnt
-)paren
 )paren
 (brace
 r_struct
@@ -2186,11 +2183,9 @@ suffix:semicolon
 )brace
 )def_block
 multiline_comment|/* called from init/main.c */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|NCR53c406a_setup
 r_void
+id|__init
 id|NCR53c406a_setup
 c_func
 (paren
@@ -2201,7 +2196,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_static
@@ -4317,16 +4311,13 @@ id|SYNCOFF
 suffix:semicolon
 multiline_comment|/* synchronous mode */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|calc_port_addr
 r_void
+id|__init
 id|calc_port_addr
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/* Control Register Set 0 */

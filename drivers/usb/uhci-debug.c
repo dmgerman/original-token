@@ -809,7 +809,7 @@ c_cond
 (paren
 id|link
 op_amp
-l_int|1
+id|UHCI_PTR_TERM
 )paren
 r_return
 l_int|NULL
@@ -821,7 +821,7 @@ c_func
 id|link
 op_amp
 op_complement
-l_int|15
+id|UHCI_PTR_BITS
 )paren
 suffix:semicolon
 )brace
@@ -846,18 +846,45 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if 0
+r_if
+c_cond
+(paren
+id|qh-&gt;element
+op_amp
+id|UHCI_PTR_QH
+)paren
 id|printk
 c_func
 (paren
-l_string|&quot;    link = %p, element = %p&bslash;n&quot;
-comma
-id|qh-&gt;link
-comma
-id|qh-&gt;element
+l_string|&quot;      Element points to QH?&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
+r_if
+c_cond
+(paren
+id|qh-&gt;element
+op_amp
+id|UHCI_PTR_DEPTH
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;      Depth traverse&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|qh-&gt;element
+op_amp
+id|UHCI_PTR_TERM
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;      Terminate&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -866,14 +893,14 @@ op_logical_neg
 id|qh-&gt;element
 op_amp
 op_complement
-l_int|0xF
+id|UHCI_PTR_BITS
 )paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;    td 0 = NULL&bslash;n&quot;
+l_string|&quot;      td 0 = NULL&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -904,7 +931,7 @@ id|td-&gt;link
 id|printk
 c_func
 (paren
-l_string|&quot;    td %d = %p&bslash;n&quot;
+l_string|&quot;      td %d = %p&bslash;n&quot;
 comma
 id|i
 op_increment
@@ -915,7 +942,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;    &quot;
+l_string|&quot;      &quot;
 )paren
 suffix:semicolon
 id|show_td
@@ -945,17 +972,6 @@ id|qh
 r_int
 id|j
 suffix:semicolon
-r_struct
-id|uhci_device
-op_star
-id|root_hub
-op_assign
-id|usb_to_uhci
-c_func
-(paren
-id|uhci-&gt;bus-&gt;root_hub
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -965,7 +981,7 @@ l_int|0
 suffix:semicolon
 id|j
 OL
-id|UHCI_MAXQH
+id|UHCI_NUM_SKELQH
 suffix:semicolon
 id|j
 op_increment
@@ -975,7 +991,7 @@ c_cond
 (paren
 id|qh
 op_eq
-id|root_hub-&gt;qh
+id|uhci-&gt;skelqh
 op_plus
 id|j
 )paren
@@ -996,8 +1012,6 @@ id|qh_names
 )braket
 op_assign
 (brace
-l_string|&quot;isochronous&quot;
-comma
 l_string|&quot;interrupt2&quot;
 comma
 l_string|&quot;interrupt4&quot;
@@ -1016,17 +1030,7 @@ l_string|&quot;interrupt256&quot;
 comma
 l_string|&quot;control&quot;
 comma
-l_string|&quot;bulk0&quot;
-comma
-l_string|&quot;bulk1&quot;
-comma
-l_string|&quot;bulk2&quot;
-comma
-l_string|&quot;bulk3&quot;
-comma
-l_string|&quot;unused&quot;
-comma
-l_string|&quot;unused&quot;
+l_string|&quot;bulk&quot;
 )brace
 suffix:semicolon
 DECL|function|show_queues
@@ -1048,17 +1052,6 @@ id|uhci_qh
 op_star
 id|qh
 suffix:semicolon
-r_struct
-id|uhci_device
-op_star
-id|root_hub
-op_assign
-id|usb_to_uhci
-c_func
-(paren
-id|uhci-&gt;bus-&gt;root_hub
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1068,7 +1061,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|UHCI_MAXQH
+id|UHCI_NUM_SKELQH
 suffix:semicolon
 op_increment
 id|i
@@ -1077,46 +1070,40 @@ id|i
 id|printk
 c_func
 (paren
-l_string|&quot;  %s:&bslash;n&quot;
+l_string|&quot;  %s: [%p] (%08X) (%08X)&bslash;n&quot;
 comma
 id|qh_names
 (braket
 id|i
 )braket
-)paren
-suffix:semicolon
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;  qh #%d, %p&bslash;n&quot;
 comma
+op_amp
+id|uhci-&gt;skelqh
+(braket
 id|i
+)braket
 comma
-id|virt_to_bus
-c_func
-(paren
-id|root_hub-&gt;qh
-op_plus
+id|uhci-&gt;skelqh
+(braket
 id|i
-)paren
+)braket
+dot
+id|link
+comma
+id|uhci-&gt;skelqh
+(braket
+id|i
+)braket
+dot
+id|element
 )paren
 suffix:semicolon
-id|show_queue
-c_func
-(paren
-id|uhci-&gt;root_hub-&gt;qh
-op_plus
-id|i
-)paren
-suffix:semicolon
-macro_line|#endif
 id|qh
 op_assign
 id|uhci_link_to_qh
 c_func
 (paren
-id|root_hub-&gt;qh
+id|uhci-&gt;skelqh
 (braket
 id|i
 )braket
@@ -1151,6 +1138,18 @@ id|qh
 )paren
 )paren
 r_break
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;    [%p] (%08X) (%08x)&bslash;n&quot;
+comma
+id|qh
+comma
+id|qh-&gt;link
+comma
+id|qh-&gt;element
+)paren
 suffix:semicolon
 id|show_queue
 c_func

@@ -1233,18 +1233,15 @@ DECL|macro|TOPCAT_FBOMSB
 mdefine_line|#define TOPCAT_FBOMSB&t;0x5d
 DECL|macro|TOPCAT_FBOLSB
 mdefine_line|#define TOPCAT_FBOLSB&t;0x5f
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hpfb_init_one
 r_int
+id|__init
 id|hpfb_init_one
 c_func
 (paren
 r_int
 r_int
 id|base
-)paren
 )paren
 (brace
 r_int
@@ -1554,19 +1551,16 @@ multiline_comment|/* &n; * Check that the secondary ID indicates that we have so
 DECL|macro|topcat_sid_ok
 mdefine_line|#define topcat_sid_ok(x)  (((x) == DIO_ID2_LRCATSEYE) || ((x) == DIO_ID2_HRCCATSEYE)    &bslash;&n;&t;&t;&t;   || ((x) == DIO_ID2_HRMCATSEYE) || ((x) == DIO_ID2_TOPCAT))
 multiline_comment|/* &n; * Initialise the framebuffer&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hpfb_init
 r_int
 r_int
+id|__init
 id|hpfb_init
 c_func
 (paren
 r_int
 r_int
 id|mem_start
-)paren
 )paren
 (brace
 r_int
@@ -1702,11 +1696,9 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hpfb_setup
 r_void
+id|__init
 id|hpfb_setup
 c_func
 (paren
@@ -1717,7 +1709,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 )brace

@@ -4428,11 +4428,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sgivwfb_setup
 r_void
+id|__init
 id|sgivwfb_setup
 c_func
 (paren
@@ -4443,7 +4441,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_char
@@ -4522,16 +4519,13 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *  Initialisation&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sgivwfb_init
 r_void
+id|__init
 id|sgivwfb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|printk

@@ -73,8 +73,6 @@ DECL|macro|WRITE
 mdefine_line|#define WRITE 1
 DECL|macro|READA
 mdefine_line|#define READA 2&t;&t;/* read-ahead  - don&squot;t block if no resources */
-DECL|macro|WRITEA
-mdefine_line|#define WRITEA 3&t;/* write-ahead - don&squot;t block if no resources */
 DECL|macro|WRITERAW
 mdefine_line|#define WRITERAW 5&t;/* raw write - don&squot;t play with buffer lists */
 macro_line|#ifndef NULL
@@ -3902,6 +3900,29 @@ suffix:semicolon
 r_extern
 r_int
 id|block_write_partial_page
+(paren
+r_struct
+id|file
+op_star
+comma
+r_struct
+id|page
+op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+comma
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|block_write_cont_page
 (paren
 r_struct
 id|file

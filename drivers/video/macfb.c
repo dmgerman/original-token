@@ -2312,16 +2312,13 @@ id|nb_video
 op_assign
 initialization_block
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|macfb_init
 r_void
+id|__init
 id|macfb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/* nubus_remap the video .. */

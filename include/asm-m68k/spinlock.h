@@ -31,9 +31,9 @@ macro_line|#endif
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(lock)&t;do { } while(0)
 DECL|macro|spin_lock
-mdefine_line|#define spin_lock(lock)&t;&t;do { } while(0)
+mdefine_line|#define spin_lock(lock)&t;&t;(void)(lock) /* Not &quot;unused variable&quot;. */
 DECL|macro|spin_trylock
-mdefine_line|#define spin_trylock(lock)&t;do { } while(0)
+mdefine_line|#define spin_trylock(lock)&t;(1)
 DECL|macro|spin_unlock_wait
 mdefine_line|#define spin_unlock_wait(lock)&t;do { } while(0)
 DECL|macro|spin_unlock
@@ -42,6 +42,10 @@ DECL|macro|spin_lock_irq
 mdefine_line|#define spin_lock_irq(lock)&t;cli()
 DECL|macro|spin_unlock_irq
 mdefine_line|#define spin_unlock_irq(lock)&t;sti()
+DECL|macro|spin_lock_bh
+mdefine_line|#define spin_lock_bh(lock)&t;local_bh_disable()
+DECL|macro|spin_unlock_bh
+mdefine_line|#define spin_unlock_bh(lock)&t;local_bh_enable()
 DECL|macro|spin_lock_irqsave
 mdefine_line|#define spin_lock_irqsave(lock, flags) &bslash;&n;&t;do { save_flags(flags); cli(); } while (0)
 DECL|macro|spin_unlock_irqrestore
@@ -73,11 +77,11 @@ DECL|macro|RW_LOCK_UNLOCKED
 mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { 0 }
 macro_line|#endif
 DECL|macro|read_lock
-mdefine_line|#define read_lock(lock)&t;&t;do { } while(0)
+mdefine_line|#define read_lock(lock)&t;&t;(void)(lock) /* Not &quot;unused variable&quot;. */
 DECL|macro|read_unlock
 mdefine_line|#define read_unlock(lock)&t;do { } while(0)
 DECL|macro|write_lock
-mdefine_line|#define write_lock(lock)&t;do { } while(0)
+mdefine_line|#define write_lock(lock)&t;(void)(lock) /* Not &quot;unused variable&quot;. */
 DECL|macro|write_unlock
 mdefine_line|#define write_unlock(lock)&t;do { } while(0)
 DECL|macro|read_lock_irq
@@ -88,6 +92,14 @@ DECL|macro|write_lock_irq
 mdefine_line|#define write_lock_irq(lock)&t;cli()
 DECL|macro|write_unlock_irq
 mdefine_line|#define write_unlock_irq(lock)&t;sti()
+DECL|macro|read_lock_bh
+mdefine_line|#define read_lock_bh(lock)&t;local_bh_disable()
+DECL|macro|read_unlock_bh
+mdefine_line|#define read_unlock_bh(lock)&t;local_bh_enable()
+DECL|macro|write_lock_bh
+mdefine_line|#define write_lock_bh(lock)&t;local_bh_disable()
+DECL|macro|write_unlock_bh
+mdefine_line|#define write_unlock_bh(lock)&t;local_bh_enable()
 DECL|macro|read_lock_irqsave
 mdefine_line|#define read_lock_irqsave(lock, flags)&t;&t;save_and_cli(flags)
 DECL|macro|read_unlock_irqrestore

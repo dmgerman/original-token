@@ -337,6 +337,11 @@ id|parport_atari_init_state
 c_func
 (paren
 r_struct
+id|pardevice
+op_star
+id|d
+comma
+r_struct
 id|parport_state
 op_star
 id|s
@@ -479,26 +484,36 @@ id|parport_atari_inc_use_count
 comma
 id|parport_atari_dec_use_count
 comma
-id|parport_ieee1284_epp_write_data
+l_int|NULL
 comma
-id|parport_ieee1284_epp_read_data
+multiline_comment|/* epp_write_data */
+l_int|NULL
 comma
-id|parport_ieee1284_epp_write_addr
+multiline_comment|/* epp_read_data */
+l_int|NULL
 comma
-id|parport_ieee1284_epp_read_addr
+multiline_comment|/* epp_write_addr */
+l_int|NULL
 comma
-id|parport_ieee1284_ecp_write_data
+multiline_comment|/* epp_read_addr */
+l_int|NULL
 comma
-id|parport_ieee1284_ecp_read_data
+multiline_comment|/* ecp_write_data */
+l_int|NULL
 comma
-id|parport_ieee1284_ecp_write_addr
+multiline_comment|/* ecp_read_data */
+l_int|NULL
 comma
-id|parport_ieee1284_write_compat
+multiline_comment|/* ecp_write_addr */
+l_int|NULL
 comma
-id|parport_ieee1284_read_nibble
+multiline_comment|/* compat_write_data */
+l_int|NULL
 comma
-id|parport_ieee1284_read_byte
+multiline_comment|/* nibble_read_data */
+l_int|NULL
 comma
+multiline_comment|/* byte_read_data */
 )brace
 suffix:semicolon
 r_int
@@ -723,7 +738,7 @@ r_void
 r_if
 c_cond
 (paren
-id|p-&gt;irq
+id|this_port-&gt;irq
 op_ne
 id|PARPORT_IRQ_NONE
 )paren
@@ -732,7 +747,7 @@ c_func
 (paren
 id|IRQ_MFP_BUSY
 comma
-id|p
+id|this_port
 )paren
 suffix:semicolon
 id|parport_proc_unregister

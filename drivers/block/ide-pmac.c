@@ -946,12 +946,10 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_PMAC_PBOOK */
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA_PMAC
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|pmac_ide_setup_dma
 id|pmac_ide_setup_dma
 c_func
 (paren
@@ -963,7 +961,6 @@ comma
 id|ide_hwif_t
 op_star
 id|hwif
-)paren
 )paren
 (brace
 id|hwif-&gt;dma_base

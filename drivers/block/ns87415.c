@@ -448,17 +448,14 @@ suffix:semicolon
 multiline_comment|/* use standard DMA stuff */
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ide_init_ns87415
 r_void
+id|__init
 id|ide_init_ns87415
 (paren
 id|ide_hwif_t
 op_star
 id|hwif
-)paren
 )paren
 (brace
 r_struct

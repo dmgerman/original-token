@@ -725,6 +725,10 @@ id|dev-&gt;base_addr
 op_assign
 id|ioaddr
 suffix:semicolon
+id|dev-&gt;irq
+op_assign
+id|IRQ_AMIGA_PORTS
+suffix:semicolon
 multiline_comment|/* Install the Interrupt handler */
 r_if
 c_cond
@@ -797,6 +801,7 @@ id|i
 op_increment
 )paren
 (brace
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
@@ -808,6 +813,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
+macro_line|#endif
 id|dev-&gt;dev_addr
 (braket
 id|i

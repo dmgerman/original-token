@@ -415,17 +415,14 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Invoked from ide-dma.c at boot time.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ide_init_trm290
 r_void
+id|__init
 id|ide_init_trm290
 (paren
 id|ide_hwif_t
 op_star
 id|hwif
-)paren
 )paren
 (brace
 r_int

@@ -4,63 +4,6 @@ mdefine_line|#define _M68K_SYSTEM_H
 macro_line|#include &lt;linux/config.h&gt; /* get configuration macros */
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-DECL|function|rdusp
-r_extern
-r_inline
-r_int
-r_int
-id|rdusp
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-r_int
-id|usp
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;move %/usp,%0&quot;
-suffix:colon
-l_string|&quot;=a&quot;
-(paren
-id|usp
-)paren
-)paren
-suffix:semicolon
-r_return
-id|usp
-suffix:semicolon
-)brace
-DECL|function|wrusp
-r_extern
-r_inline
-r_void
-id|wrusp
-c_func
-(paren
-r_int
-r_int
-id|usp
-)paren
-(brace
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;move %0,%/usp&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;a&quot;
-(paren
-id|usp
-)paren
-)paren
-suffix:semicolon
-)brace
 DECL|macro|prepare_to_switch
 mdefine_line|#define prepare_to_switch()&t;do { } while(0)
 multiline_comment|/*&n; * switch_to(n) should switch tasks to task ptr, first checking that&n; * ptr isn&squot;t the current task, in which case it does nothing.  This&n; * also clears the TS-flag if the task we switched to has used the&n; * math co-processor latest.&n; */

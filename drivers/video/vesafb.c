@@ -292,13 +292,7 @@ id|ypan
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|ywrap
-r_static
-r_int
-id|ywrap
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/* 0..nothing, 1..ypan, 2..ywrap */
 DECL|variable|pmi_base
 r_static
 r_int
@@ -409,9 +403,6 @@ c_cond
 (paren
 op_logical_neg
 id|ypan
-op_logical_and
-op_logical_neg
-id|ywrap
 )paren
 r_return
 op_minus
@@ -429,11 +420,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ypan
-op_logical_and
 id|var-&gt;yoffset
-op_plus
-id|var-&gt;yres
 OG
 id|var-&gt;yres_virtual
 )paren
@@ -444,9 +431,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ywrap
+(paren
+id|ypan
+op_eq
+l_int|1
+)paren
 op_logical_and
 id|var-&gt;yoffset
+op_plus
+id|var-&gt;yres
 OG
 id|var-&gt;yres_virtual
 )paren
@@ -534,11 +527,7 @@ id|con
 op_eq
 id|currcon
 op_logical_and
-(paren
-id|ywrap
-op_logical_or
 id|ypan
-)paren
 )paren
 (brace
 r_struct
@@ -638,11 +627,7 @@ l_int|0
 suffix:semicolon
 id|fix-&gt;ypanstep
 op_assign
-(paren
-id|ywrap
-op_logical_or
 id|ypan
-)paren
 ques
 c_cond
 l_int|1
@@ -651,7 +636,11 @@ l_int|0
 suffix:semicolon
 id|fix-&gt;ywrapstep
 op_assign
-id|ywrap
+(paren
+id|ypan
+OG
+l_int|1
+)paren
 ques
 c_cond
 l_int|1
@@ -954,9 +943,6 @@ c_cond
 (paren
 op_logical_neg
 id|ypan
-op_logical_and
-op_logical_neg
-id|ywrap
 )paren
 (brace
 id|display-&gt;scrollmode
@@ -1067,8 +1053,6 @@ r_if
 c_cond
 (paren
 id|ypan
-op_logical_or
-id|ywrap
 )paren
 (brace
 r_if
@@ -2101,10 +2085,6 @@ comma
 l_string|&quot;redraw&quot;
 )paren
 )paren
-id|ywrap
-op_assign
-l_int|0
-comma
 id|ypan
 op_assign
 l_int|0
@@ -2122,10 +2102,6 @@ comma
 l_string|&quot;ypan&quot;
 )paren
 )paren
-id|ywrap
-op_assign
-l_int|0
-comma
 id|ypan
 op_assign
 l_int|1
@@ -2143,13 +2119,9 @@ comma
 l_string|&quot;ywrap&quot;
 )paren
 )paren
-id|ywrap
-op_assign
-l_int|1
-comma
 id|ypan
 op_assign
-l_int|0
+l_int|2
 suffix:semicolon
 r_else
 r_if
@@ -2316,16 +2288,13 @@ id|info
 (brace
 multiline_comment|/* Not supported */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|vesafb_init
 r_void
+id|__init
 id|vesafb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -2453,8 +2422,6 @@ id|screen_info.vesapm_seg
 OL
 l_int|0xc000
 )paren
-id|ywrap
-op_assign
 id|ypan
 op_assign
 id|pmi_setpal
@@ -2466,8 +2433,6 @@ r_if
 c_cond
 (paren
 id|ypan
-op_logical_or
-id|ywrap
 op_logical_or
 id|pmi_setpal
 )paren
@@ -2615,8 +2580,6 @@ c_func
 l_string|&quot;vesafb: can&squot;t handle memory requests, pmi disabled&bslash;n&quot;
 )paren
 suffix:semicolon
-id|ywrap
-op_assign
 id|ypan
 op_assign
 id|pmi_setpal
@@ -2651,11 +2614,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|ypan
-op_logical_or
-id|ywrap
-)paren
 op_logical_and
 id|vesafb_defined.yres_virtual
 OG
@@ -2667,7 +2626,11 @@ c_func
 (paren
 l_string|&quot;vesafb: scrolling: %s using protected mode interface, yres_virtual=%d&bslash;n&quot;
 comma
-id|ywrap
+(paren
+id|ypan
+OG
+l_int|1
+)paren
 ques
 c_cond
 l_string|&quot;ywrap&quot;
@@ -2691,8 +2654,6 @@ op_assign
 id|video_height
 suffix:semicolon
 id|ypan
-op_assign
-id|ywrap
 op_assign
 l_int|0
 suffix:semicolon

@@ -1,5 +1,5 @@
-multiline_comment|/* Low-level parallel-port routines for 8255-based PC-style hardware.&n; * &n; * Authors: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@torque.net&gt;&n; *          Andrea Arcangeli&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt; and Phil Blundell.&n; *&n; * Cleaned up include files - Russell King &lt;linux@arm.uk.linux.org&gt;&n; * DMA support - Bert De Jonghe &lt;bert@sophis.be&gt;&n; * Better EPP probing - Carlos Henrique Bauer &lt;chbauer@acm.org&gt;&n; */
-multiline_comment|/* This driver should work with any hardware that is broadly compatible&n; * with that in the IBM PC.  This applies to the majority of integrated&n; * I/O chipsets that are commonly available.  The expected register&n; * layout is:&n; *&n; *&t;base+0&t;&t;data&n; *&t;base+1&t;&t;status&n; *&t;base+2&t;&t;control&n; *&n; * In addition, there are some optional registers:&n; *&n; *&t;base+3&t;&t;EPP address&n; *&t;base+4&t;&t;EPP data&n; *&t;base+0x400&t;ECP config A&n; *&t;base+0x401&t;ECP config B&n; *&t;base+0x402&t;ECP control&n; *&n; * All registers are 8 bits wide and read/write.  If your hardware differs&n; * only in register addresses (eg because your registers are on 32-bit&n; * word boundaries) then you can alter the constants in parport_pc.h to&n; * accomodate this.&n; */
+multiline_comment|/* Low-level parallel-port routines for 8255-based PC-style hardware.&n; * &n; * Authors: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@torque.net&gt;&n; *          Andrea Arcangeli&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt; and Phil Blundell.&n; *&n; * Cleaned up include files - Russell King &lt;linux@arm.uk.linux.org&gt;&n; * DMA support - Bert De Jonghe &lt;bert@sophis.be&gt;&n; */
+multiline_comment|/* This driver should work with any hardware that is broadly compatible&n; * with that in the IBM PC.  This applies to the majority of integrated&n; * I/O chipsets that are commonly available.  The expected register&n; * layout is:&n; *&n; *&t;base+0&t;&t;data&n; *&t;base+1&t;&t;status&n; *&t;base+2&t;&t;control&n; *&n; * In addition, there are some optional registers:&n; *&n; *&t;base+3&t;&t;EPP address&n; *&t;base+4&t;&t;EPP data&n; *&t;base+0x400&t;ECP config A&n; *&t;base+0x401&t;ECP config B&n; *&t;base+0x402&t;ECP control&n; *&n; * All registers are 8 bits wide and read/write.  If your hardware differs&n; * only in register addresses (eg because your registers are on 32-bit&n; * word boundaries) then you can alter the constants in parport_pc.h to&n; * accomodate this.&n; *&n; * Note that the ECP registers may not start at offset 0x400 for PCI cards,&n; * but rather will start at port-&gt;base_hi.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -79,7 +79,7 @@ id|pb
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PARPORT_1284
+macro_line|#if defined(CONFIG_PARPORT_1284) || defined(CONFIG_PARPORT_PC_FIFO)
 multiline_comment|/* Safely change the mode bits in the ECR */
 DECL|function|change_mode
 r_static
@@ -535,7 +535,7 @@ r_return
 id|residue
 suffix:semicolon
 )brace
-macro_line|#endif /* IEEE 1284 support */
+macro_line|#endif /* IEEE 1284 support or FIFO support */
 multiline_comment|/*&n; * Clear TIMEOUT BIT in EPP MODE&n; *&n; * This is also used in SPP detection.&n; */
 DECL|function|clear_epp_timeout
 r_static
@@ -6340,21 +6340,6 @@ id|p-&gt;dma
 op_assign
 id|PARPORT_DMA_NONE
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|p-&gt;dma
-op_ne
-id|PARPORT_DMA_NONE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;, dma %d&quot;
-comma
-id|p-&gt;dma
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_PARPORT_PC_FIFO
 r_if
 c_cond
@@ -6385,10 +6370,21 @@ id|p-&gt;dma
 op_ne
 id|PARPORT_DMA_NONE
 )paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;, dma %d&quot;
+comma
+id|p-&gt;dma
+)paren
+suffix:semicolon
 id|p-&gt;modes
 op_or_assign
 id|PARPORT_MODE_DMA
 suffix:semicolon
+)brace
+r_else
 id|printk
 c_func
 (paren
@@ -6396,6 +6392,12 @@ l_string|&quot;, using FIFO&quot;
 )paren
 suffix:semicolon
 )brace
+r_else
+multiline_comment|/* We can&squot;t use the DMA channel after all. */
+id|p-&gt;dma
+op_assign
+id|PARPORT_DMA_NONE
+suffix:semicolon
 macro_line|#endif /* Allowed to use FIFO/DMA */
 id|printk
 c_func

@@ -375,6 +375,10 @@ r_struct
 id|inode
 op_star
 id|dir
+comma
+r_int
+op_star
+id|error
 )paren
 suffix:semicolon
 r_extern
@@ -406,9 +410,9 @@ id|minix_new_block
 c_func
 (paren
 r_struct
-id|super_block
+id|inode
 op_star
-id|sb
+id|inode
 )paren
 suffix:semicolon
 r_extern
@@ -417,9 +421,9 @@ id|minix_free_block
 c_func
 (paren
 r_struct
-id|super_block
+id|inode
 op_star
-id|sb
+id|inode
 comma
 r_int
 id|block

@@ -127,9 +127,6 @@ multiline_comment|/*&n;&t; * Dont be too eager to get aging right if&n;&t; * mem
 r_if
 c_cond
 (paren
-op_logical_neg
-id|low_on_memory
-op_logical_and
 id|pte_young
 c_func
 (paren
@@ -366,9 +363,10 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * This is a dirty, swappable page.  First of all,&n;&t; * get a suitable swap entry for it, and make sure&n;&t; * we have the swap cache set up to associate the&n;&t; * page with that swap entry.&n;&t; */
 id|entry
 op_assign
-id|get_swap_page
+id|acquire_swap_entry
 c_func
 (paren
+id|page
 )paren
 suffix:semicolon
 r_if

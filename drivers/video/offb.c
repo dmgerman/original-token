@@ -1386,16 +1386,13 @@ id|dp
 suffix:semicolon
 macro_line|#endif /* CONFIG_FB_PLATINUM */
 multiline_comment|/*&n;     *  Initialisation&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|offb_init
 r_void
+id|__init
 id|offb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -1793,12 +1790,10 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|offb_init_driver
 r_static
 r_int
+id|__init
 id|offb_init_driver
 c_func
 (paren
@@ -1806,7 +1801,6 @@ r_struct
 id|device_node
 op_star
 id|dp
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_FB_ATY
@@ -2023,12 +2017,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|offb_init_nodriver
 r_static
 r_void
+id|__init
 id|offb_init_nodriver
 c_func
 (paren
@@ -2036,7 +2028,6 @@ r_struct
 id|device_node
 op_star
 id|dp
-)paren
 )paren
 (brace
 r_int
@@ -2357,10 +2348,7 @@ id|address
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|offb_init_fb
 r_static
 r_void
 id|offb_init_fb
@@ -2391,7 +2379,6 @@ comma
 r_int
 r_int
 id|address
-)paren
 )paren
 (brace
 r_int

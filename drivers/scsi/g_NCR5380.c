@@ -168,11 +168,10 @@ macro_line|#endif
 DECL|macro|NO_OVERRIDES
 mdefine_line|#define NO_OVERRIDES (sizeof(overrides) / sizeof(struct override))
 multiline_comment|/*&n; * Function : static internal_setup(int board, char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : board - either BOARD_NCR5380 for a normal NCR5380 board, &n; * &t;or BOARD_NCR53C400 for a NCR53C400 board. str - unused, ints - &n; *&t;array of integer parameters with ints[0] equal to the number of ints.&n; *&n; */
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+(def_block
 id|internal_setup
 c_func
 (paren
@@ -186,7 +185,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_static
@@ -406,11 +404,10 @@ id|commandline_current
 suffix:semicolon
 )brace
 )brace
+)def_block
 multiline_comment|/*&n; * Function : generic_NCR5380_setup (char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : str - unused, ints - array of integer parameters with ints[0] &n; * &t;equal to the number of ints.&n; */
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
 id|generic_NCR5380_setup
 (paren
 r_char
@@ -420,7 +417,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 id|internal_setup
@@ -434,10 +430,8 @@ id|ints
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function : generic_NCR53C400_setup (char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : str - unused, ints - array of integer parameters with ints[0] &n; * &t;equal to the number of ints.&n; */
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
 id|generic_NCR53C400_setup
 (paren
 r_char
@@ -447,7 +441,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 id|internal_setup
@@ -507,17 +500,15 @@ id|ints
 suffix:semicolon
 )brace
 multiline_comment|/* &n; * Function : int generic_NCR5380_detect(Scsi_Host_Template * tpnt)&n; *&n; * Purpose : initializes generic NCR5380 driver based on the &n; *&t;command line / compile time port and irq definitions.&n; *&n; * Inputs : tpnt - template for this SCSI adapter.&n; * &n; * Returns : 1 if a host adapter was found, 0 if not.&n; *&n; */
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+(def_block
 id|generic_NCR5380_detect
 c_func
 (paren
 id|Scsi_Host_Template
 op_star
 id|tpnt
-)paren
 )paren
 (brace
 r_static
@@ -1288,6 +1279,7 @@ r_return
 id|count
 suffix:semicolon
 )brace
+)def_block
 r_const
 r_char
 op_star

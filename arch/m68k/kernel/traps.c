@@ -2938,7 +2938,7 @@ op_amp
 id|fp-&gt;ptregs
 )paren
 )paren
-id|current-&gt;tss.esp0
+id|current-&gt;thread.esp0
 op_assign
 (paren
 r_int

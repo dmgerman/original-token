@@ -971,7 +971,7 @@ l_string|&quot;drive_stat_acct: cmd not R/W?&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * add-request adds a request to the linked list.&n; * It disables interrupts (aquires the request spinlock) so that it can muck&n; * with the request-lists in peace. Thus it should be called with no spinlocks&n; * held.&n; *&n; * By this point, req-&gt;cmd is always either READ/WRITE, never READA/WRITEA,&n; * which is important for drive_stat_acct() above.&n; */
+multiline_comment|/*&n; * add-request adds a request to the linked list.&n; * It disables interrupts (aquires the request spinlock) so that it can muck&n; * with the request-lists in peace. Thus it should be called with no spinlocks&n; * held.&n; *&n; * By this point, req-&gt;cmd is always either READ/WRITE, never READA,&n; * which is important for drive_stat_acct() above.&n; */
 DECL|function|add_request
 r_void
 id|add_request
@@ -1622,7 +1622,7 @@ id|rw_ahead
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* normal case; gets changed below for READA/WRITEA */
+multiline_comment|/* normal case; gets changed below for READA */
 r_switch
 c_cond
 (paren
@@ -1678,18 +1678,6 @@ r_goto
 id|do_write
 suffix:semicolon
 multiline_comment|/* Skip the buffer refile */
-r_case
-id|WRITEA
-suffix:colon
-id|rw_ahead
-op_assign
-l_int|1
-suffix:semicolon
-id|rw
-op_assign
-id|WRITE
-suffix:semicolon
-multiline_comment|/* drop into WRITE */
 r_case
 id|WRITE
 suffix:colon
@@ -2268,29 +2256,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* Make sure that the first block contains something reasonable */
-r_while
-c_loop
-(paren
-op_logical_neg
-op_star
-id|bh
-)paren
-(brace
-id|bh
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_decrement
-id|nr
-op_le
-l_int|0
-)paren
-r_return
-suffix:semicolon
-)brace
 id|dev
 op_assign
 l_int|NULL
@@ -2622,15 +2587,6 @@ id|i
 op_increment
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|bh
-(braket
-id|i
-)braket
-)paren
-(brace
 id|set_bit
 c_func
 (paren
@@ -2711,7 +2667,6 @@ id|i
 )paren
 suffix:semicolon
 )brace
-)brace
 r_return
 suffix:semicolon
 id|sorry
@@ -2729,15 +2684,6 @@ id|nr
 suffix:semicolon
 id|i
 op_increment
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|bh
-(braket
-id|i
-)braket
 )paren
 (brace
 id|clear_bit
@@ -2784,7 +2730,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-)brace
 )brace
 r_return
 suffix:semicolon

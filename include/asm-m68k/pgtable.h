@@ -5,7 +5,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;asm/processor.h&gt;
-macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the m68k page table tree.&n; */
 macro_line|#include &lt;asm/virtconvert.h&gt;
 multiline_comment|/*&n; * Cache handling functions&n; */
@@ -626,63 +626,6 @@ DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD&t;128
 DECL|macro|USER_PTRS_PER_PGD
 mdefine_line|#define USER_PTRS_PER_PGD&t;(TASK_SIZE/PGDIR_SIZE)
-multiline_comment|/* the no. of pointers that fit on a page: this will go away */
-DECL|macro|PTRS_PER_PAGE
-mdefine_line|#define PTRS_PER_PAGE&t;(PAGE_SIZE/sizeof(void*))
-DECL|typedef|pgd_table
-r_typedef
-id|pgd_t
-id|pgd_table
-(braket
-id|PTRS_PER_PGD
-)braket
-suffix:semicolon
-DECL|typedef|pmd_table
-r_typedef
-id|pmd_t
-id|pmd_table
-(braket
-id|PTRS_PER_PMD
-)braket
-suffix:semicolon
-DECL|typedef|pte_table
-r_typedef
-id|pte_t
-id|pte_table
-(braket
-id|PTRS_PER_PTE
-)braket
-suffix:semicolon
-DECL|macro|PGD_TABLES_PER_PAGE
-mdefine_line|#define PGD_TABLES_PER_PAGE (PAGE_SIZE/sizeof(pgd_table))
-DECL|macro|PMD_TABLES_PER_PAGE
-mdefine_line|#define PMD_TABLES_PER_PAGE (PAGE_SIZE/sizeof(pmd_table))
-DECL|macro|PTE_TABLES_PER_PAGE
-mdefine_line|#define PTE_TABLES_PER_PAGE (PAGE_SIZE/sizeof(pte_table))
-DECL|typedef|pgd_tablepage
-r_typedef
-id|pgd_table
-id|pgd_tablepage
-(braket
-id|PGD_TABLES_PER_PAGE
-)braket
-suffix:semicolon
-DECL|typedef|pmd_tablepage
-r_typedef
-id|pmd_table
-id|pmd_tablepage
-(braket
-id|PMD_TABLES_PER_PAGE
-)braket
-suffix:semicolon
-DECL|typedef|pte_tablepage
-r_typedef
-id|pte_table
-id|pte_tablepage
-(braket
-id|PTE_TABLES_PER_PAGE
-)braket
-suffix:semicolon
 multiline_comment|/* Virtual address region for use by kernel_map() */
 DECL|macro|KMAP_START
 mdefine_line|#define&t;KMAP_START&t;0xd0000000
@@ -936,6 +879,10 @@ c_func
 (paren
 id|ptep
 )paren
+op_or
+id|_PAGE_TABLE
+op_or
+id|_PAGE_ACCESSED
 suffix:semicolon
 r_for
 c_loop
@@ -953,22 +900,22 @@ op_increment
 comma
 id|ptbl
 op_add_assign
+(paren
 r_sizeof
 (paren
-id|pte_table
+id|pte_t
 )paren
+op_star
+id|PTRS_PER_PTE
 op_div
 l_int|16
+)paren
 )paren
 id|pmdp-&gt;pmd
 (braket
 id|i
 )braket
 op_assign
-id|_PAGE_TABLE
-op_or
-id|_PAGE_ACCESSED
-op_or
 id|ptbl
 suffix:semicolon
 )brace
@@ -1733,120 +1680,6 @@ suffix:semicolon
 r_return
 id|pte
 suffix:semicolon
-)brace
-multiline_comment|/* to set the page-dir */
-DECL|function|SET_PAGE_DIR
-r_extern
-r_inline
-r_void
-id|SET_PAGE_DIR
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|tsk
-comma
-id|pgd_t
-op_star
-id|pgdir
-)paren
-(brace
-id|tsk-&gt;tss.crp
-(braket
-l_int|0
-)braket
-op_assign
-l_int|0x80000000
-op_or
-id|_PAGE_TABLE
-suffix:semicolon
-id|tsk-&gt;tss.crp
-(braket
-l_int|1
-)braket
-op_assign
-id|virt_to_phys
-c_func
-(paren
-id|pgdir
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tsk
-op_eq
-id|current
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|CPU_IS_040_OR_060
-)paren
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
-l_string|&quot;pflushan&bslash;n&bslash;t&quot;
-l_string|&quot;movec %0,%%urp&bslash;n&bslash;t&quot;
-l_string|&quot;.chip 68k&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|tsk-&gt;tss.crp
-(braket
-l_int|1
-)braket
-)paren
-)paren
-suffix:semicolon
-r_else
-(brace
-r_int
-r_int
-id|tmp
-suffix:semicolon
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;movec  %%cacr,%0&bslash;n&bslash;t&quot;
-l_string|&quot;orw #0x0808,%0&bslash;n&bslash;t&quot;
-l_string|&quot;movec %0,%%cacr&quot;
-suffix:colon
-l_string|&quot;=d&quot;
-(paren
-id|tmp
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* For a 030-only kernel, avoid flushing the whole&n;&t;&t;&t;   ATC, we only need to flush the user entries.&n;&t;&t;&t;   The 68851 does this by itself.  Avoid a runtime&n;&t;&t;&t;   check here.  */
-id|__asm__
-id|__volatile__
-(paren
-macro_line|#ifdef CPU_M68030_ONLY
-l_string|&quot;.chip 68030&bslash;n&bslash;t&quot;
-l_string|&quot;pmovefd %0,%%crp&bslash;n&bslash;t&quot;
-l_string|&quot;.chip 68k&bslash;n&bslash;t&quot;
-l_string|&quot;pflush #0,#4&quot;
-macro_line|#else
-l_string|&quot;pmove %0,%%crp&quot;
-macro_line|#endif
-suffix:colon
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-id|tsk-&gt;tss.crp
-(braket
-l_int|0
-)braket
-)paren
-)paren
-suffix:semicolon
-)brace
-)brace
 )brace
 DECL|macro|PAGE_DIR_OFFSET
 mdefine_line|#define PAGE_DIR_OFFSET(tsk,address) pgd_offset((tsk),(address))

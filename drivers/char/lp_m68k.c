@@ -1969,16 +1969,13 @@ c_func
 id|unregister_parallel
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|lp_m68k_init
 r_int
+id|__init
 id|lp_m68k_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_extern
@@ -2076,11 +2073,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Currently we do not accept any lp-parameters, but that may change.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|lp_setup
 r_void
+id|__init
 id|lp_setup
 c_func
 (paren
@@ -2091,7 +2086,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 )brace

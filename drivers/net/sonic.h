@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Helpfile for sonic.c&n; *&n; * (C) Waldorf Electronics, Germany&n; * Written by Andreas Busse&n; *&n; * NOTE: most of the structure definitions here are endian dependent.&n; * If you want to use this driver on big endian machines, the data&n; * and pad structure members must be exchanged. Also, the structures&n; * need to be changed accordingly to the bus size. &n; *&n; */
+multiline_comment|/*&n; * Helpfile for sonic.c&n; *&n; * (C) Waldorf Electronics, Germany&n; * Written by Andreas Busse&n; *&n; * NOTE: most of the structure definitions here are endian dependent.&n; * If you want to use this driver on big endian machines, the data&n; * and pad structure members must be exchanged. Also, the structures&n; * need to be changed accordingly to the bus size. &n; *&n; * 981229 MSch:&t;did just that for the 68k Mac port (32 bit, big endian),&n; *&t;&t;see CONFIG_MACSONIC branch below.&n; *&n; */
 macro_line|#ifndef SONIC_H
 DECL|macro|SONIC_H
 mdefine_line|#define SONIC_H
@@ -260,6 +260,290 @@ DECL|macro|SONIC_IMR_DEFAULT
 mdefine_line|#define SONIC_IMR_DEFAULT&t;(SONIC_INT_BR | &bslash;&n;&t;&t;&t;&t;SONIC_INT_LCD | &bslash;&n;                                SONIC_INT_PINT | &bslash;&n;                                SONIC_INT_PKTRX | &bslash;&n;                                SONIC_INT_TXDN | &bslash;&n;                                SONIC_INT_TXER | &bslash;&n;                                SONIC_INT_RDE | &bslash;&n;                                SONIC_INT_RBE | &bslash;&n;                                SONIC_INT_RBAE | &bslash;&n;                                SONIC_INT_CRC | &bslash;&n;                                SONIC_INT_FAE | &bslash;&n;                                SONIC_INT_MP)
 DECL|macro|SONIC_END_OF_LINKS
 mdefine_line|#define&t;SONIC_END_OF_LINKS&t;0x0001
+macro_line|#ifdef CONFIG_MACSONIC
+multiline_comment|/* Big endian like structures on Mac&n; * (680x0)&n; */
+r_typedef
+r_struct
+(brace
+DECL|member|rx_bufadr_l
+id|u32
+id|rx_bufadr_l
+suffix:semicolon
+multiline_comment|/* receive buffer ptr */
+DECL|member|rx_bufadr_h
+id|u32
+id|rx_bufadr_h
+suffix:semicolon
+DECL|member|rx_bufsize_l
+id|u32
+id|rx_bufsize_l
+suffix:semicolon
+multiline_comment|/* no. of words in the receive buffer */
+DECL|member|rx_bufsize_h
+id|u32
+id|rx_bufsize_h
+suffix:semicolon
+DECL|typedef|sonic_rr_t
+)brace
+id|sonic_rr_t
+suffix:semicolon
+multiline_comment|/*&n; * Sonic receive descriptor. Receive descriptors are&n; * kept in a linked list of these structures.&n; */
+r_typedef
+r_struct
+(brace
+id|SREGS_PAD
+c_func
+(paren
+id|pad0
+)paren
+suffix:semicolon
+DECL|member|rx_status
+id|u16
+id|rx_status
+suffix:semicolon
+multiline_comment|/* status after reception of a packet */
+id|SREGS_PAD
+c_func
+(paren
+id|pad1
+)paren
+suffix:semicolon
+DECL|member|rx_pktlen
+id|u16
+id|rx_pktlen
+suffix:semicolon
+multiline_comment|/* length of the packet incl. CRC */
+multiline_comment|/*&n;   * Pointers to the location in the receive buffer area (RBA)&n;   * where the packet resides. A packet is always received into&n;   * a contiguous piece of memory.&n;   */
+id|SREGS_PAD
+c_func
+(paren
+id|pad2
+)paren
+suffix:semicolon
+DECL|member|rx_pktptr_l
+id|u16
+id|rx_pktptr_l
+suffix:semicolon
+id|SREGS_PAD
+c_func
+(paren
+id|pad3
+)paren
+suffix:semicolon
+DECL|member|rx_pktptr_h
+id|u16
+id|rx_pktptr_h
+suffix:semicolon
+id|SREGS_PAD
+c_func
+(paren
+id|pad4
+)paren
+suffix:semicolon
+DECL|member|rx_seqno
+id|u16
+id|rx_seqno
+suffix:semicolon
+multiline_comment|/* sequence no. */
+id|SREGS_PAD
+c_func
+(paren
+id|pad5
+)paren
+suffix:semicolon
+DECL|member|link
+id|u16
+id|link
+suffix:semicolon
+multiline_comment|/* link to next RDD (end if EOL bit set) */
+multiline_comment|/*&n;   * Owner of this descriptor, 0= driver, 1=sonic&n;   */
+id|SREGS_PAD
+c_func
+(paren
+id|pad6
+)paren
+suffix:semicolon
+DECL|member|in_use
+id|u16
+id|in_use
+suffix:semicolon
+DECL|member|rda_next
+id|caddr_t
+id|rda_next
+suffix:semicolon
+multiline_comment|/* pointer to next RD */
+DECL|typedef|sonic_rd_t
+)brace
+id|sonic_rd_t
+suffix:semicolon
+multiline_comment|/*&n; * Describes a Transmit Descriptor&n; */
+r_typedef
+r_struct
+(brace
+id|SREGS_PAD
+c_func
+(paren
+id|pad0
+)paren
+suffix:semicolon
+DECL|member|tx_status
+id|u16
+id|tx_status
+suffix:semicolon
+multiline_comment|/* status after transmission of a packet */
+id|SREGS_PAD
+c_func
+(paren
+id|pad1
+)paren
+suffix:semicolon
+DECL|member|tx_config
+id|u16
+id|tx_config
+suffix:semicolon
+multiline_comment|/* transmit configuration for this packet */
+id|SREGS_PAD
+c_func
+(paren
+id|pad2
+)paren
+suffix:semicolon
+DECL|member|tx_pktsize
+id|u16
+id|tx_pktsize
+suffix:semicolon
+multiline_comment|/* size of the packet to be transmitted */
+id|SREGS_PAD
+c_func
+(paren
+id|pad3
+)paren
+suffix:semicolon
+DECL|member|tx_frag_count
+id|u16
+id|tx_frag_count
+suffix:semicolon
+multiline_comment|/* no. of fragments */
+id|SREGS_PAD
+c_func
+(paren
+id|pad4
+)paren
+suffix:semicolon
+DECL|member|tx_frag_ptr_l
+id|u16
+id|tx_frag_ptr_l
+suffix:semicolon
+id|SREGS_PAD
+c_func
+(paren
+id|pad5
+)paren
+suffix:semicolon
+DECL|member|tx_frag_ptr_h
+id|u16
+id|tx_frag_ptr_h
+suffix:semicolon
+id|SREGS_PAD
+c_func
+(paren
+id|pad6
+)paren
+suffix:semicolon
+DECL|member|tx_frag_size
+id|u16
+id|tx_frag_size
+suffix:semicolon
+id|SREGS_PAD
+c_func
+(paren
+id|pad7
+)paren
+suffix:semicolon
+DECL|member|link
+id|u16
+id|link
+suffix:semicolon
+multiline_comment|/* ptr to next descriptor */
+DECL|typedef|sonic_td_t
+)brace
+id|sonic_td_t
+suffix:semicolon
+multiline_comment|/*&n; * Describes an entry in the CAM Descriptor Area.&n; */
+r_typedef
+r_struct
+(brace
+id|SREGS_PAD
+c_func
+(paren
+id|pad0
+)paren
+suffix:semicolon
+DECL|member|cam_entry_pointer
+id|u16
+id|cam_entry_pointer
+suffix:semicolon
+id|SREGS_PAD
+c_func
+(paren
+id|pad1
+)paren
+suffix:semicolon
+DECL|member|cam_cap0
+id|u16
+id|cam_cap0
+suffix:semicolon
+id|SREGS_PAD
+c_func
+(paren
+id|pad2
+)paren
+suffix:semicolon
+DECL|member|cam_cap1
+id|u16
+id|cam_cap1
+suffix:semicolon
+id|SREGS_PAD
+c_func
+(paren
+id|pad3
+)paren
+suffix:semicolon
+DECL|member|cam_cap2
+id|u16
+id|cam_cap2
+suffix:semicolon
+DECL|typedef|sonic_cd_t
+)brace
+id|sonic_cd_t
+suffix:semicolon
+DECL|macro|CAM_DESCRIPTORS
+mdefine_line|#define CAM_DESCRIPTORS 16
+r_typedef
+r_struct
+(brace
+DECL|member|cam_desc
+id|sonic_cd_t
+id|cam_desc
+(braket
+id|CAM_DESCRIPTORS
+)braket
+suffix:semicolon
+id|SREGS_PAD
+c_func
+(paren
+id|pad
+)paren
+suffix:semicolon
+DECL|member|cam_enable
+id|u16
+id|cam_enable
+suffix:semicolon
+DECL|typedef|sonic_cda_t
+)brace
+id|sonic_cda_t
+suffix:semicolon
+macro_line|#else /* original declarations, little endian 32 bit */
 multiline_comment|/*&n; * structure definitions&n; */
 r_typedef
 r_struct
@@ -542,13 +826,23 @@ DECL|typedef|sonic_cda_t
 )brace
 id|sonic_cda_t
 suffix:semicolon
-multiline_comment|/*&n; * Some tunables for the buffer areas. Power of 2 is required&n; * the current driver uses one receive buffer for each descriptor.&n; */
+macro_line|#endif&t;/* endianness */ 
+multiline_comment|/*&n; * Some tunables for the buffer areas. Power of 2 is required&n; * the current driver uses one receive buffer for each descriptor.&n; *&n; * MSch: use more buffer space for the slow m68k Macs!&n; */
+macro_line|#ifdef CONFIG_MACSONIC
+DECL|macro|SONIC_NUM_RRS
+mdefine_line|#define SONIC_NUM_RRS    32             /* number of receive resources */
+DECL|macro|SONIC_NUM_RDS
+mdefine_line|#define SONIC_NUM_RDS    SONIC_NUM_RRS  /* number of receive descriptors */
+DECL|macro|SONIC_NUM_TDS
+mdefine_line|#define SONIC_NUM_TDS    32      /* number of transmit descriptors */
+macro_line|#else
 DECL|macro|SONIC_NUM_RRS
 mdefine_line|#define SONIC_NUM_RRS    16             /* number of receive resources */
 DECL|macro|SONIC_NUM_RDS
 mdefine_line|#define SONIC_NUM_RDS    SONIC_NUM_RRS  /* number of receive descriptors */
 DECL|macro|SONIC_NUM_TDS
 mdefine_line|#define SONIC_NUM_TDS    16      /* number of transmit descriptors */
+macro_line|#endif
 DECL|macro|SONIC_RBSIZE
 mdefine_line|#define SONIC_RBSIZE   1520      /* size of one resource buffer */
 DECL|macro|SONIC_RDS_MASK

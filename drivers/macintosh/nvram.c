@@ -418,16 +418,12 @@ op_amp
 id|nvram_fops
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|nvram_init
 r_int
 id|nvram_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|printk

@@ -378,6 +378,11 @@ id|uchar
 id|microcode
 suffix:semicolon
 multiline_comment|/* microcode rev */
+DECL|member|dma_buffer_pool
+id|uchar
+id|dma_buffer_pool
+suffix:semicolon
+multiline_comment|/* FEF: buffer from chip_ram? */
 DECL|member|dma_dir
 r_int
 id|dma_dir
@@ -406,11 +411,6 @@ r_int
 r_int
 id|dma_bounce_len
 suffix:semicolon
-DECL|member|dma_buffer_pool
-id|uchar
-id|dma_buffer_pool
-suffix:semicolon
-multiline_comment|/* FEF: buffer from chip_ram? */
 DECL|member|busy
 r_volatile
 id|uchar

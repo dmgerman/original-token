@@ -350,10 +350,12 @@ l_string|&quot;at 0x%08lx, irq %i, PCI latency %i&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 comma
 id|dev-&gt;irq
 comma
@@ -371,10 +373,12 @@ op_star
 id|ioremap
 c_func
 (paren
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 comma
 l_int|0x1000
 )paren

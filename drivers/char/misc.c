@@ -173,14 +173,6 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|hfmodem_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|pc110pad_init
 c_func
@@ -874,13 +866,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_HFMODEM
-id|hfmodem_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_NVRAM
 id|nvram_init
 c_func
@@ -890,13 +875,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_MISC_RADIO
 id|radio_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_HFMODEM
-id|hfmodem_init
 c_func
 (paren
 )paren

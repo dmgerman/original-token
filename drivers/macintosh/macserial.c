@@ -9121,12 +9121,10 @@ id|c-&gt;index
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Setup initial baud/bits/parity. We do two things here:&n; *&t;- construct a cflag setting for the first rs_open()&n; *&t;- initialize the serial port&n; *&t;Return non-zero if we didn&squot;t find a serial port.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|serial_console_setup
 r_static
 r_int
+id|__init
 id|serial_console_setup
 c_func
 (paren
@@ -9138,7 +9136,6 @@ comma
 r_char
 op_star
 id|options
-)paren
 )paren
 (brace
 r_struct
@@ -9962,10 +9959,9 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Register console.&n; */
-DECL|function|__initfunc
-id|__initfunc
-(paren
+DECL|function|serial_console_init
 r_int
+id|__init
 id|serial_console_init
 c_func
 (paren
@@ -9974,7 +9970,6 @@ id|kmem_start
 comma
 r_int
 id|kmem_end
-)paren
 )paren
 (brace
 id|register_console
@@ -10307,17 +10302,14 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* This is called at boot time to prime the kgdb serial debugging&n; * serial line.  The &squot;tty_num&squot; argument is 0 for /dev/ttya and 1&n; * for /dev/ttyb which is determined in setup_arch() from the&n; * boot command line flags.&n; * XXX at the moment probably only channel A will work&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|zs_kgdb_hook
 r_void
+id|__init
 id|zs_kgdb_hook
 c_func
 (paren
 r_int
 id|tty_num
-)paren
 )paren
 (brace
 multiline_comment|/* Find out how many Z8530 SCCs we have */

@@ -284,7 +284,7 @@ macro_line|# define PCI_SET_MASTER pci_set_master (pdev)
 DECL|macro|PCI_FIND_DEVICE
 macro_line|# define PCI_FIND_DEVICE(vend, id) (pdev = pci_find_device (vend, id, pdev))
 DECL|macro|PCI_GET_IO_AND_IRQ
-macro_line|# define PCI_GET_IO_AND_IRQ io_port = pdev-&gt;base_address[0] &amp; PCI_BASE_ADDRESS_IO_MASK; irq = pdev-&gt;irq
+macro_line|# define PCI_GET_IO_AND_IRQ io_port = pdev-&gt;resource[0].start; irq = pdev-&gt;irq
 macro_line|#else
 macro_line|# include &lt;linux/bios32.h&gt;
 DECL|macro|PDEV

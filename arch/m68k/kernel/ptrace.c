@@ -20,7 +20,7 @@ mdefine_line|#define SR_MASK 0x001f
 multiline_comment|/* sets the trace bits. */
 DECL|macro|TRACE_BITS
 mdefine_line|#define TRACE_BITS 0x8000
-multiline_comment|/* Find the stack offset for a register, relative to tss.esp0. */
+multiline_comment|/* Find the stack offset for a register, relative to thread.esp0. */
 DECL|macro|PT_REG
 mdefine_line|#define PT_REG(reg)&t;((long)&amp;((struct pt_regs *)0)-&gt;reg)
 DECL|macro|SW_REG
@@ -179,7 +179,7 @@ id|PT_USP
 id|addr
 op_assign
 op_amp
-id|task-&gt;tss.usp
+id|task-&gt;thread.usp
 suffix:semicolon
 r_else
 r_if
@@ -208,7 +208,7 @@ r_int
 op_star
 )paren
 (paren
-id|task-&gt;tss.esp0
+id|task-&gt;thread.esp0
 op_plus
 id|regoff
 (braket
@@ -261,7 +261,7 @@ id|PT_USP
 id|addr
 op_assign
 op_amp
-id|task-&gt;tss.usp
+id|task-&gt;thread.usp
 suffix:semicolon
 r_else
 r_if
@@ -290,7 +290,7 @@ r_int
 op_star
 )paren
 (paren
-id|task-&gt;tss.esp0
+id|task-&gt;thread.esp0
 op_plus
 id|regoff
 (braket
@@ -1973,7 +1973,7 @@ l_int|49
 )paren
 id|tmp
 op_assign
-id|child-&gt;tss.fp
+id|child-&gt;thread.fp
 (braket
 id|addr
 op_minus
@@ -2168,7 +2168,7 @@ OL
 l_int|48
 )paren
 (brace
-id|child-&gt;tss.fp
+id|child-&gt;thread.fp
 (braket
 id|addr
 op_minus
@@ -2762,7 +2762,7 @@ op_star
 id|data
 comma
 op_amp
-id|child-&gt;tss.fp
+id|child-&gt;thread.fp
 comma
 r_sizeof
 (paren
@@ -2796,7 +2796,7 @@ id|copy_from_user
 c_func
 (paren
 op_amp
-id|child-&gt;tss.fp
+id|child-&gt;thread.fp
 comma
 (paren
 r_void

@@ -706,15 +706,12 @@ l_int|0
 )brace
 suffix:semicolon
 macro_line|#ifndef MODULE
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|linear_init
 r_void
+id|__init
 id|linear_init
 (paren
 r_void
-)paren
 )paren
 (brace
 id|register_md_personality

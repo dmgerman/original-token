@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/iobuf.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/raw.h&gt;
+macro_line|#include &lt;linux/capability.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|dprintk
 mdefine_line|#define dprintk(x...) 
@@ -851,6 +852,26 @@ op_eq
 id|RAW_SETBIND
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; * This is like making block devices, so demand the&n;&t;&t;&t; * same capability&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_SYS_ADMIN
+)paren
+)paren
+(brace
+id|err
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 multiline_comment|/* &n;&t;&t;&t; * For now, we don&squot;t need to check that the underlying&n;&t;&t;&t; * block device is present or not: we can do that when&n;&t;&t;&t; * the raw device is opened.  Just check that the&n;&t;&t;&t; * major/minor numbers make sense. &n;&t;&t;&t; */
 r_if
 c_cond

@@ -1056,10 +1056,12 @@ id|pdev-&gt;devfn
 suffix:semicolon
 id|dRegValue
 op_assign
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 suffix:semicolon
 r_if
 c_cond

@@ -269,6 +269,13 @@ c_func
 id|kmem_cache_create
 )paren
 suffix:semicolon
+DECL|variable|kmem_cache_destroy
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kmem_cache_destroy
+)paren
+suffix:semicolon
 DECL|variable|kmem_cache_shrink
 id|EXPORT_SYMBOL
 c_func
@@ -773,6 +780,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|block_write_partial_page
+)paren
+suffix:semicolon
+DECL|variable|block_write_cont_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|block_write_cont_page
 )paren
 suffix:semicolon
 DECL|variable|block_flushpage

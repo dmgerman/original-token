@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/quotaops.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * comment out this line if you want names &gt; info-&gt;s_namelen chars to be&n; * truncated. Else they will be disallowed (ENAMETOOLONG).&n; */
 multiline_comment|/* #define NO_TRUNCATE */
@@ -846,7 +847,18 @@ id|minix_new_inode
 c_func
 (paren
 id|dir
+comma
+op_amp
+id|error
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
 suffix:semicolon
 r_if
 c_cond
@@ -992,7 +1004,18 @@ id|minix_new_inode
 c_func
 (paren
 id|dir
+comma
+op_amp
+id|error
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
 suffix:semicolon
 r_if
 c_cond
@@ -1164,7 +1187,18 @@ id|minix_new_inode
 c_func
 (paren
 id|dir
+comma
+op_amp
+id|error
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
 suffix:semicolon
 r_if
 c_cond
@@ -1753,6 +1787,12 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
+id|DQUOT_INIT
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1935,6 +1975,12 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
+id|DQUOT_INIT
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 id|bh
 op_assign
 id|minix_find_entry
@@ -2107,19 +2153,30 @@ suffix:semicolon
 r_char
 id|c
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
 id|inode
 op_assign
 id|minix_new_inode
 c_func
 (paren
 id|dir
+comma
+op_amp
+id|i
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
 )paren
+r_return
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|inode
 )paren
 r_return
 op_minus
@@ -2611,6 +2668,15 @@ suffix:semicolon
 id|new_bh
 op_assign
 l_int|NULL
+suffix:semicolon
+)brace
+r_else
+(brace
+id|DQUOT_INIT
+c_func
+(paren
+id|new_inode
+)paren
 suffix:semicolon
 )brace
 )brace

@@ -5411,11 +5411,9 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/* called from init/main.c */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|md_setup
 r_void
+id|__init
 id|md_setup
 c_func
 (paren
@@ -5426,7 +5424,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int
@@ -5477,11 +5474,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|do_md_setup
 r_void
+id|__init
 id|do_md_setup
 c_func
 (paren
@@ -5492,7 +5487,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int
@@ -5765,15 +5759,12 @@ id|raid5_init
 r_void
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|md_init
 r_int
+id|__init
 id|md_init
 (paren
 r_void
-)paren
 )paren
 (brace
 id|printk
@@ -5925,16 +5916,13 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_MD_BOOT
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|md_setup_drive
 r_void
+id|__init
 id|md_setup_drive
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_if

@@ -71,6 +71,8 @@ id|fixup
 suffix:semicolon
 r_int
 id|write
+comma
+id|fault
 suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
@@ -277,10 +279,8 @@ id|bad_area
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * If for any reason at all we couldn&squot;t handle the fault,&n;&t; * make sure we exit gracefully rather than endlessly redo&n;&t; * the fault.&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
+id|fault
+op_assign
 id|handle_mm_fault
 c_func
 (paren
@@ -292,6 +292,22 @@ id|address
 comma
 id|write
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fault
+OL
+l_int|0
+)paren
+r_goto
+id|out_of_memory
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|fault
 )paren
 r_goto
 id|do_sigbus
@@ -498,6 +514,39 @@ id|SIGKILL
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * We ran out of memory, or some other thing happened to us that made&n; * us unable to handle the page fault gracefully.&n; */
+id|out_of_memory
+suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;VM: killing process %s&bslash;n&quot;
+comma
+id|current-&gt;comm
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error_code
+op_amp
+l_int|4
+)paren
+id|do_exit
+c_func
+(paren
+id|SIGKILL
+)paren
+suffix:semicolon
+r_goto
+id|no_context
+suffix:semicolon
 id|do_sigbus
 suffix:colon
 id|up

@@ -165,24 +165,9 @@ DECL|macro|GRFBBOPnand
 mdefine_line|#define GRFBBOPnand&t;&t;0xe&t;/* NOT src OR NOT dst */
 DECL|macro|GRFBBOPset
 mdefine_line|#define GRFBBOPset&t;&t;0xf&t;/* 1 */
-multiline_comment|/* Read VGA register */
-DECL|macro|vgar
-mdefine_line|#define vgar(ba, reg) (*(((volatile caddr_t)ba)+reg))
-multiline_comment|/* Write VGA register */
-DECL|macro|vgaw
-mdefine_line|#define vgaw(ba, reg, val) &bslash;&n;*(((volatile caddr_t)ba)+reg) = ((val) &amp; 0xff)
-multiline_comment|/* Read 16 Bit VGA register */
-DECL|macro|vgar16
-mdefine_line|#define vgar16(ba, reg) (  *((unsigned short *) (((volatile caddr_t)ba)+reg)) )
 multiline_comment|/* Write 16 Bit VGA register */
 DECL|macro|vgaw16
-mdefine_line|#define vgaw16(ba, reg, val) &bslash;&n;*((unsigned short *)  (((volatile caddr_t)ba)+reg)) = val
-multiline_comment|/* Read 32 Bit VGA register */
-DECL|macro|vgar32
-mdefine_line|#define vgar32(ba, reg) (  *((unsigned long *) (((volatile caddr_t)ba)+reg)) )
-multiline_comment|/* Write 32 Bit VGA register */
-DECL|macro|vgaw32
-mdefine_line|#define vgaw32(ba, reg, val) &bslash;&n;     *((unsigned long *)  (((volatile caddr_t)ba)+reg)) = val
+mdefine_line|#define vgaw16(ba, reg, val) &bslash;&n;*((unsigned short *)  (((volatile unsigned char *)ba)+reg)) = val
 multiline_comment|/*&n; * Defines for the used register addresses (mw)&n; *&n; * NOTE: There are some registers that have different addresses when&n; *       in mono or color mode. We only support color mode, and thus&n; *       some addresses won&squot;t work in mono-mode!&n; *&n; * General and VGA-registers taken from retina driver. Fixed a few&n; * bugs in it. (SR and GR read address is Port + 1, NOT Port)&n; *&n; */
 multiline_comment|/* General Registers: */
 DECL|macro|GREG_MISC_OUTPUT_R
@@ -614,49 +599,18 @@ mdefine_line|#define VDAC_DATA&t;&t;0x03c9
 DECL|macro|VDAC_MASK
 mdefine_line|#define VDAC_MASK&t;&t;0x03c6
 DECL|macro|WGfx
-mdefine_line|#define WGfx(ba, idx, val) &bslash;&n;do { vgaw(ba, GCT_ADDRESS, idx); vgaw(ba, GCT_ADDRESS_W , val); } while (0)
+mdefine_line|#define WGfx(ba, idx, val) &bslash;&n;do { wb_64(ba, GCT_ADDRESS, idx); wb_64(ba, GCT_ADDRESS_W , val); } while (0)
 DECL|macro|WSeq
-mdefine_line|#define WSeq(ba, idx, val) &bslash;&n;do { vgaw(ba, SEQ_ADDRESS, idx); vgaw(ba, SEQ_ADDRESS_W , val); } while (0)
+mdefine_line|#define WSeq(ba, idx, val) &bslash;&n;do { wb_64(ba, SEQ_ADDRESS, idx); wb_64(ba, SEQ_ADDRESS_W , val); } while (0)
 DECL|macro|WCrt
-mdefine_line|#define WCrt(ba, idx, val) &bslash;&n;do { vgaw(ba, CRT_ADDRESS, idx); vgaw(ba, CRT_ADDRESS_W , val); } while (0)
+mdefine_line|#define WCrt(ba, idx, val) &bslash;&n;do { wb_64(ba, CRT_ADDRESS, idx); wb_64(ba, CRT_ADDRESS_W , val); } while (0)
 DECL|macro|WAttr
-mdefine_line|#define WAttr(ba, idx, val) &bslash;&n;do { &bslash;&n;  unsigned char tmp;&bslash;&n;  tmp = vgar(ba, ACT_ADDRESS_RESET);&bslash;&n;  vgaw(ba, ACT_ADDRESS_W, idx);&bslash;&n;  vgaw(ba, ACT_ADDRESS_W, val);&bslash;&n;} while (0)
+mdefine_line|#define WAttr(ba, idx, val) &bslash;&n;do { &bslash;&n;  unsigned char tmp;&bslash;&n;  tmp = rb_64(ba, ACT_ADDRESS_RESET);&bslash;&n;  wb_64(ba, ACT_ADDRESS_W, idx);&bslash;&n;  wb_64(ba, ACT_ADDRESS_W, val);&bslash;&n;} while (0)
 DECL|macro|SetTextPlane
 mdefine_line|#define SetTextPlane(ba, m) &bslash;&n;do { &bslash;&n;  WGfx(ba, GCT_ID_READ_MAP_SELECT, m &amp; 3 );&bslash;&n;  WSeq(ba, SEQ_ID_MAP_MASK, (1 &lt;&lt; (m &amp; 3)));&bslash;&n;} while (0)
 multiline_comment|/* --------------------------------- */
 multiline_comment|/* prototypes                        */
 multiline_comment|/* --------------------------------- */
-multiline_comment|/* in cvision_core.c */
-r_inline
-r_void
-id|__cv_delay
-c_func
-(paren
-r_int
-r_int
-id|usecs
-)paren
-suffix:semicolon
-r_inline
-r_void
-id|GfxBusyWait
-c_func
-(paren
-r_volatile
-id|caddr_t
-id|board
-)paren
-suffix:semicolon
-r_inline
-r_void
-id|GfxFifoWait
-c_func
-(paren
-r_volatile
-id|caddr_t
-id|board
-)paren
-suffix:semicolon
 r_inline
 r_int
 r_char
@@ -664,7 +618,9 @@ id|RAttr
 c_func
 (paren
 r_volatile
-id|caddr_t
+r_int
+r_char
+op_star
 id|board
 comma
 r_int
@@ -678,7 +634,9 @@ id|RSeq
 c_func
 (paren
 r_volatile
-id|caddr_t
+r_int
+r_char
+op_star
 id|board
 comma
 r_int
@@ -692,7 +650,9 @@ id|RCrt
 c_func
 (paren
 r_volatile
-id|caddr_t
+r_int
+r_char
+op_star
 id|board
 comma
 r_int
@@ -706,7 +666,9 @@ id|RGfx
 c_func
 (paren
 r_volatile
-id|caddr_t
+r_int
+r_char
+op_star
 id|board
 comma
 r_int
@@ -775,7 +737,9 @@ id|cv_has_4mb
 c_func
 (paren
 r_volatile
-id|caddr_t
+r_int
+r_char
+op_star
 id|fb
 )paren
 suffix:semicolon

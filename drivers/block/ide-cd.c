@@ -7324,6 +7324,7 @@ op_star
 )paren
 id|cdi-&gt;handle
 suffix:semicolon
+multiline_comment|/* here we queue the commands from the uniform CD-ROM&n;&t;   layer. the packet must be complete, as we do not&n;&t;   touch it at all. */
 id|memset
 c_func
 (paren

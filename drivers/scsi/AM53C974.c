@@ -1,4 +1,5 @@
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2073,18 +2074,15 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/**************************************************************************&n;* Function : int AM53C974_detect(Scsi_Host_Template *tpnt)&n;*&n;* Purpose : detects and initializes AM53C974 SCSI chips&n;*&n;* Inputs : tpnt - host template&n;* &n;* Returns : number of host adapters detected&n;**************************************************************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|AM53C974_detect
 r_int
+id|__init
 id|AM53C974_detect
 c_func
 (paren
 id|Scsi_Host_Template
 op_star
 id|tpnt
-)paren
 )paren
 (brace
 r_int
@@ -2123,12 +2121,10 @@ id|count
 suffix:semicolon
 )brace
 multiline_comment|/**************************************************************************&n;* Function : int AM53C974_init(Scsi_Host_Template *tpnt, struct pci_dev *pdev)&n;*&n;* Purpose : initializes instance and corresponding AM53/79C974 chip,&n;*&n;* Inputs : tpnt - template, pci_config - PCI configuration,&n;* &n;* Returns : 1 on success, 0 on failure.&n;* &n;* NOTE: If no override for the controller&squot;s SCSI id is given and AM53C974_SCSI_ID &n;*       is not defined we assume that the SCSI address of this controller is correctly&n;*       set up by the BIOS (as reflected by contents of register CNTLREG1).&n;*       This is the only BIOS assistance we need.&n;**************************************************************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|AM53C974_init
 r_static
 r_int
+id|__init
 id|AM53C974_init
 c_func
 (paren
@@ -2140,7 +2136,6 @@ r_struct
 id|pci_dev
 op_star
 id|pdev
-)paren
 )paren
 (brace
 id|AM53C974_local_declare
@@ -2206,12 +2201,12 @@ l_int|NULL
 suffix:semicolon
 id|instance-&gt;io_port
 op_assign
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_IO_MASK
+dot
+id|start
 suffix:semicolon
 id|instance-&gt;irq
 op_assign
@@ -10531,6 +10526,15 @@ id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|AM53C974
+suffix:semicolon
+multiline_comment|/* You can specify overrides=a,b,c,d in the same format at AM53C974=a,b,c,d&n;   on boot up */
+id|MODULE_PARM
+c_func
+(paren
+id|overrides
+comma
+l_string|&quot;1-32i&quot;
+)paren
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
 macro_line|#endif

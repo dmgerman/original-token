@@ -741,16 +741,13 @@ id|xxx_dispsw
 suffix:semicolon
 multiline_comment|/* ------------ Hardware Independent Functions ------------ */
 multiline_comment|/*&n;     *  Initialization&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|xxxfb_init
 r_void
+id|__init
 id|xxxfb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|fb_info.gen.fbhw
@@ -909,11 +906,9 @@ suffix:semicolon
 multiline_comment|/* ... */
 )brace
 multiline_comment|/*&n;     *  Setup&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|xxxfb_setup
 r_void
+id|__init
 id|xxxfb_setup
 c_func
 (paren
@@ -924,7 +919,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 multiline_comment|/* Parse user speficied options (`video=xxxfb:&squot;) */

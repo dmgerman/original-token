@@ -4382,6 +4382,15 @@ comma
 id|vma-&gt;vm_page_prot
 )paren
 suffix:semicolon
+id|set_bit
+c_func
+(paren
+id|PG_swap_entry
+comma
+op_amp
+id|page-&gt;flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.189 1999/07/30 09:35:08 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.190 1999/08/07 17:47:01 anton Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -250,6 +250,13 @@ r_int
 id|viking_mxcc_present
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|srmmu_context_spinlock
+r_static
+id|spinlock_t
+id|srmmu_context_spinlock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/* Physical memory can be _very_ non-contiguous on the sun4m, especially&n; * the SS10/20 class machines and with the latest openprom revisions.&n; * So we have to do a quick lookup.&n; * We use the same for SS1000/SC2000 as a fall back, when phys memory is&n; * non-contiguous.&n; */
 DECL|function|srmmu_v2p
@@ -5452,10 +5459,24 @@ op_eq
 id|NO_CONTEXT
 )paren
 (brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|srmmu_context_spinlock
+)paren
+suffix:semicolon
 id|alloc_context
 c_func
 (paren
 id|tsk-&gt;mm
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|srmmu_context_spinlock
 )paren
 suffix:semicolon
 id|ctxd_set
@@ -5490,10 +5511,24 @@ op_star
 id|mm
 )paren
 (brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|srmmu_context_spinlock
+)paren
+suffix:semicolon
 id|alloc_context
 c_func
 (paren
 id|mm
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|srmmu_context_spinlock
 )paren
 suffix:semicolon
 id|flush_cache_mm
@@ -8577,10 +8612,24 @@ id|ctxd_t
 op_star
 id|ctxp
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|srmmu_context_spinlock
+)paren
+suffix:semicolon
 id|alloc_context
 c_func
 (paren
 id|tsk-&gt;mm
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|srmmu_context_spinlock
 )paren
 suffix:semicolon
 id|ctxp
@@ -8662,10 +8711,24 @@ id|ctxd_t
 op_star
 id|ctxp
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|srmmu_context_spinlock
+)paren
+suffix:semicolon
 id|alloc_context
 c_func
 (paren
 id|mm
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|srmmu_context_spinlock
 )paren
 suffix:semicolon
 id|ctxp

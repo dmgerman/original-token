@@ -129,6 +129,15 @@ r_int
 suffix:semicolon
 r_extern
 r_int
+id|kmem_cache_destroy
+c_func
+(paren
+id|kmem_cache_t
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|kmem_cache_shrink
 c_func
 (paren

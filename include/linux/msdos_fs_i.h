@@ -26,16 +26,6 @@ r_int
 id|i_ctime_ms
 suffix:semicolon
 multiline_comment|/* unused change time in milliseconds */
-DECL|member|i_busy
-r_int
-id|i_busy
-suffix:semicolon
-multiline_comment|/* file is either deleted but still open, or&n;&t;&t;&t;   inconsistent (mkdir) */
-DECL|member|i_binary
-r_int
-id|i_binary
-suffix:semicolon
-multiline_comment|/* file contains non-text data */
 DECL|member|i_location
 r_int
 id|i_location
@@ -54,6 +44,10 @@ id|list_head
 id|i_fat_hash
 suffix:semicolon
 multiline_comment|/* hash by i_location */
+DECL|member|i_realsize
+r_int
+id|i_realsize
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif

@@ -80,27 +80,42 @@ DECL|macro|USBPORTSC_SUSP
 mdefine_line|#define   USBPORTSC_SUSP&t;0x1000&t;/* Suspend */
 DECL|macro|UHCI_NULL_DATA_SIZE
 mdefine_line|#define UHCI_NULL_DATA_SIZE&t;0x7ff&t;/* for UHCI controller TD */
+DECL|macro|UHCI_PTR_BITS
+mdefine_line|#define UHCI_PTR_BITS&t;&t;0x000F
+DECL|macro|UHCI_PTR_TERM
+mdefine_line|#define UHCI_PTR_TERM&t;&t;0x0001
+DECL|macro|UHCI_PTR_QH
+mdefine_line|#define UHCI_PTR_QH&t;&t;0x0002
+DECL|macro|UHCI_PTR_DEPTH
+mdefine_line|#define UHCI_PTR_DEPTH&t;&t;0x0004
 DECL|struct|uhci_qh
 r_struct
 id|uhci_qh
 (brace
+multiline_comment|/* Hardware fields */
 DECL|member|link
-r_int
-r_int
+id|__u32
 id|link
 suffix:semicolon
 multiline_comment|/* Next queue */
 DECL|member|element
-r_int
-r_int
+id|__u32
 id|element
 suffix:semicolon
 multiline_comment|/* Queue element pointer */
-DECL|member|inuse
-r_int
-id|inuse
+multiline_comment|/* Software fields */
+DECL|member|refcnt
+id|atomic_t
+id|refcnt
 suffix:semicolon
-multiline_comment|/* Inuse? */
+multiline_comment|/* Reference counting */
+DECL|member|dev
+r_struct
+id|uhci_device
+op_star
+id|dev
+suffix:semicolon
+multiline_comment|/* The owning device */
 DECL|member|skel
 r_struct
 id|uhci_qh
@@ -108,6 +123,10 @@ op_star
 id|skel
 suffix:semicolon
 multiline_comment|/* Skeleton head */
+DECL|member|wakeup
+id|wait_queue_head_t
+id|wakeup
+suffix:semicolon
 )brace
 id|__attribute__
 c_func
@@ -126,8 +145,7 @@ r_struct
 id|uhci_framelist
 (brace
 DECL|member|frame
-r_int
-r_int
+id|__u32
 id|frame
 (braket
 l_int|1024
@@ -146,7 +164,33 @@ l_int|4096
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * The documentation says &quot;4 words for hardware, 4 words for software&quot;.&n; *&n; * That&squot;s silly, the hardware doesn&squot;t care. The hardware only cares that&n; * the hardware words are 16-byte aligned, and we can have any amount of&n; * sw space after the TD entry as far as I can tell.&n; *&n; * But let&squot;s just go with the documentation, at least for 32-bit machines.&n; * On 64-bit machines we probably want to take advantage of the fact that&n; * hw doesn&squot;t really care about the size of the sw-only area.&n; *&n; * Alas, not anymore, we have more than 4 words of software, woops&n; */
+DECL|macro|TD_CTRL_SPD
+mdefine_line|#define TD_CTRL_SPD&t;&t;(1 &lt;&lt; 29)&t;/* Short Packet Detect */
+DECL|macro|TD_CTRL_LS
+mdefine_line|#define TD_CTRL_LS&t;&t;(1 &lt;&lt; 26)&t;/* Low Speed Device */
+DECL|macro|TD_CTRL_IOS
+mdefine_line|#define TD_CTRL_IOS&t;&t;(1 &lt;&lt; 25)&t;/* Isochronous Select */
+DECL|macro|TD_CTRL_IOC
+mdefine_line|#define TD_CTRL_IOC&t;&t;(1 &lt;&lt; 24)&t;/* Interrupt on Complete */
+DECL|macro|TD_CTRL_ACTIVE
+mdefine_line|#define TD_CTRL_ACTIVE&t;&t;(1 &lt;&lt; 23)&t;/* TD Active */
+DECL|macro|TD_CTRL_STALLED
+mdefine_line|#define TD_CTRL_STALLED&t;&t;(1 &lt;&lt; 22)&t;/* TD Stalled */
+DECL|macro|TD_CTRL_DBUFERR
+mdefine_line|#define TD_CTRL_DBUFERR&t;&t;(1 &lt;&lt; 21)&t;/* Data Buffer Error */
+DECL|macro|TD_CTRL_BABBLE
+mdefine_line|#define TD_CTRL_BABBLE&t;&t;(1 &lt;&lt; 20)&t;/* Babble Detected */
+DECL|macro|TD_CTRL_NAK
+mdefine_line|#define TD_CTRL_NAK&t;&t;(1 &lt;&lt; 19)&t;/* NAK Received */
+DECL|macro|TD_CTRL_CRCTIME
+mdefine_line|#define TD_CTRL_CRCTIME&t;&t;(1 &lt;&lt; 18)&t;/* CTC/Time Out Error */
+DECL|macro|TD_CTRL_BITSTUFF
+mdefine_line|#define TD_CTRL_BITSTUFF&t;(1 &lt;&lt; 17)&t;/* Bit Stuff Error */
+DECL|macro|uhci_ptr_to_virt
+mdefine_line|#define uhci_ptr_to_virt(x)&t;bus_to_virt(x &amp; ~UHCI_PTR_BITS)
+DECL|macro|UHCI_TD_REMOVE
+mdefine_line|#define UHCI_TD_REMOVE&t;&t;0x0001&t;&t;/* Remove when done */
+multiline_comment|/*&n; * The documentation says &quot;4 words for hardware, 4 words for software&quot;.&n; *&n; * That&squot;s silly, the hardware doesn&squot;t care. The hardware only cares that&n; * the hardware words are 16-byte aligned, and we can have any amount of&n; * sw space after the TD entry as far as I can tell.&n; *&n; * But let&squot;s just go with the documentation, at least for 32-bit machines.&n; * On 64-bit machines we probably want to take advantage of the fact that&n; * hw doesn&squot;t really care about the size of the sw-only area.&n; *&n; * Alas, not anymore, we have more than 4 words for software, woops&n; */
 DECL|struct|uhci_td
 r_struct
 id|uhci_td
@@ -169,6 +213,13 @@ id|__u32
 id|buffer
 suffix:semicolon
 multiline_comment|/* Software fields */
+DECL|member|backptr
+r_int
+r_int
+op_star
+id|backptr
+suffix:semicolon
+multiline_comment|/* Where to remove this from.. */
 DECL|member|irq_list
 r_struct
 id|list_head
@@ -180,42 +231,35 @@ id|usb_device_irq
 id|completed
 suffix:semicolon
 multiline_comment|/* Completion handler routine */
-DECL|member|backptr
-r_int
-r_int
-op_star
-id|backptr
-suffix:semicolon
-multiline_comment|/* Where to remove this from.. */
 DECL|member|dev_id
 r_void
 op_star
 id|dev_id
 suffix:semicolon
-DECL|member|inuse
-r_int
-id|inuse
+DECL|member|refcnt
+id|atomic_t
+id|refcnt
 suffix:semicolon
-multiline_comment|/* Inuse? (b0) Remove (b1)*/
+multiline_comment|/* Reference counting */
+DECL|member|dev
+r_struct
+id|uhci_device
+op_star
+id|dev
+suffix:semicolon
+multiline_comment|/* The owning device */
 DECL|member|qh
 r_struct
 id|uhci_qh
 op_star
 id|qh
 suffix:semicolon
-DECL|member|first
-r_struct
-id|uhci_td
-op_star
-id|first
+multiline_comment|/* QH this TD is a part of (ignored for Isochronous) */
+DECL|member|flags
+r_int
+id|flags
 suffix:semicolon
-DECL|member|dev
-r_struct
-id|usb_device
-op_star
-id|dev
-suffix:semicolon
-multiline_comment|/* the owning device */
+multiline_comment|/* Remove, etc */
 )brace
 id|__attribute__
 c_func
@@ -224,7 +268,7 @@ c_func
 id|aligned
 c_func
 (paren
-l_int|32
+l_int|16
 )paren
 )paren
 )paren
@@ -237,39 +281,45 @@ DECL|member|num
 r_int
 id|num
 suffix:semicolon
+multiline_comment|/* Total number of TD&squot;s */
 DECL|member|data
 r_char
 op_star
 id|data
 suffix:semicolon
+multiline_comment|/* Beginning of buffer */
 DECL|member|maxsze
 r_int
 id|maxsze
 suffix:semicolon
+multiline_comment|/* Maximum size of each data block */
 DECL|member|td
 r_struct
 id|uhci_td
 op_star
 id|td
 suffix:semicolon
+multiline_comment|/* Pointer to first TD */
 DECL|member|frame
 r_int
 id|frame
 suffix:semicolon
+multiline_comment|/* Beginning frame */
 DECL|member|endframe
 r_int
 id|endframe
 suffix:semicolon
+multiline_comment|/* End frame */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Note the alignment requirements of the entries&n; *&n; * Each UHCI device has pre-allocated QH and TD entries.&n; * You can use more than the pre-allocated ones, but I&n; * don&squot;t see you usually needing to.&n; */
 r_struct
 id|uhci
 suffix:semicolon
-DECL|macro|UHCI_MAXTD
+macro_line|#if 0
 mdefine_line|#define UHCI_MAXTD&t;64
-DECL|macro|UHCI_MAXQH
 mdefine_line|#define UHCI_MAXQH&t;16
+macro_line|#endif
 multiline_comment|/* The usb device part must be first! */
 DECL|struct|uhci_device
 r_struct
@@ -287,7 +337,7 @@ id|uhci
 op_star
 id|uhci
 suffix:semicolon
-DECL|member|qh
+macro_line|#if 0
 r_struct
 id|uhci_qh
 id|qh
@@ -296,7 +346,6 @@ id|UHCI_MAXQH
 )braket
 suffix:semicolon
 multiline_comment|/* These are the &quot;common&quot; qh&squot;s for each device */
-DECL|member|td
 r_struct
 id|uhci_td
 id|td
@@ -304,6 +353,7 @@ id|td
 id|UHCI_MAXTD
 )braket
 suffix:semicolon
+macro_line|#endif
 DECL|member|data
 r_int
 r_int
@@ -318,49 +368,29 @@ DECL|macro|uhci_to_usb
 mdefine_line|#define uhci_to_usb(uhci)&t;((uhci)-&gt;usb)
 DECL|macro|usb_to_uhci
 mdefine_line|#define usb_to_uhci(usb)&t;((struct uhci_device *)(usb)-&gt;hcpriv)
-multiline_comment|/*&n; * The root hub pre-allocated QH&squot;s and TD&squot;s have&n; * some special global uses..&n; */
-macro_line|#if 0
-mdefine_line|#define control_td&t;td&t;&t;/* Td&squot;s 0-30 */
-multiline_comment|/* This is only for the root hub&squot;s TD list */
-mdefine_line|#define tick_td&t;&t;td[31]
-macro_line|#endif
-multiline_comment|/*&n; * There are various standard queues. We set up several different&n; * queues for each of the three basic queue types: interrupt,&n; * control, and bulk.&n; *&n; *  - There are various different interrupt latencies: ranging from&n; *    every other USB frame (2 ms apart) to every 256 USB frames (ie&n; *    256 ms apart). Make your choice according to how obnoxious you&n; *    want to be on the wire, vs how critical latency is for you.&n; *  - The control list is done every frame.&n; *  - There are 4 bulk lists, so that up to four devices can have a&n; *    bulk list of their own and when run concurrently all four lists&n; *    will be be serviced.&n; *&n; * This is a bit misleading, there are various interrupt latencies, but they&n; * vary a bit, interrupt2 isn&squot;t exactly 2ms, it can vary up to 4ms since the&n; * other queues can &quot;override&quot; it. interrupt4 can vary up to 8ms, etc. Minor&n; * problem&n; *&n; * In the case of the root hub, these QH&squot;s are just head&squot;s of qh&squot;s. Don&squot;t&n; * be scared, it kinda makes sense. Look at this wonderful picture care of&n; * Linus:&n; *&n; *  generic-iso-QH  -&gt;  dev1-iso-QH  -&gt;  generic-irq-QH  -&gt;  dev1-irq-QH  -&gt; ...&n; *       |                  |                  |                   |&n; *      End             dev1-iso-TD1          End            dev1-irq-TD1&n; *                          |&n; *                      dev1-iso-TD2&n; *                          |&n; *                        ....&n; *&n; * This may vary a bit (the UHCI docs don&squot;t explicitly say you can put iso&n; * transfers in QH&squot;s and all of their pictures don&squot;t have that either) but&n; * other than that, that is what we&squot;re doing now&n; *&n; * To keep with Linus&squot; nomenclature, this is called the qh skeleton. These&n; * labels (below) are only signficant to the root hub&squot;s qh&squot;s&n; */
-DECL|macro|skel_iso_qh
-mdefine_line|#define skel_iso_qh&t;&t;qh[0]
+multiline_comment|/*&n; * There are various standard queues. We set up several different&n; * queues for each of the three basic queue types: interrupt,&n; * control, and bulk.&n; *&n; *  - There are various different interrupt latencies: ranging from&n; *    every other USB frame (2 ms apart) to every 256 USB frames (ie&n; *    256 ms apart). Make your choice according to how obnoxious you&n; *    want to be on the wire, vs how critical latency is for you.&n; *  - The control list is done every frame.&n; *  - There are 4 bulk lists, so that up to four devices can have a&n; *    bulk list of their own and when run concurrently all four lists&n; *    will be be serviced.&n; *&n; * This is a bit misleading, there are various interrupt latencies, but they&n; * vary a bit, interrupt2 isn&squot;t exactly 2ms, it can vary up to 4ms since the&n; * other queues can &quot;override&quot; it. interrupt4 can vary up to 8ms, etc. Minor&n; * problem&n; *&n; * In the case of the root hub, these QH&squot;s are just head&squot;s of qh&squot;s. Don&squot;t&n; * be scared, it kinda makes sense. Look at this wonderful picture care of&n; * Linus:&n; *&n; *  generic-iso-QH  -&gt;  dev1-iso-QH  -&gt;  generic-irq-QH  -&gt;  dev1-irq-QH  -&gt; ...&n; *       |                  |                  |                   |&n; *      End             dev1-iso-TD1          End            dev1-irq-TD1&n; *                          |&n; *                      dev1-iso-TD2&n; *                          |&n; *                        ....&n; *&n; * This may vary a bit (the UHCI docs don&squot;t explicitly say you can put iso&n; * transfers in QH&squot;s and all of their pictures don&squot;t have that either) but&n; * other than that, that is what we&squot;re doing now&n; *&n; * And now we don&squot;t put Iso transfers in QH&squot;s, so we don&squot;t waste one on it&n; *&n; * To keep with Linus&squot; nomenclature, this is called the QH skeleton. These&n; * labels (below) are only signficant to the root hub&squot;s QH&squot;s&n; */
+DECL|macro|UHCI_NUM_SKELQH
+mdefine_line|#define UHCI_NUM_SKELQH&t;&t;10
 DECL|macro|skel_int2_qh
-mdefine_line|#define skel_int2_qh&t;&t;qh[1]
+mdefine_line|#define skel_int2_qh&t;&t;skelqh[0]
 DECL|macro|skel_int4_qh
-mdefine_line|#define skel_int4_qh&t;&t;qh[2]
+mdefine_line|#define skel_int4_qh&t;&t;skelqh[1]
 DECL|macro|skel_int8_qh
-mdefine_line|#define skel_int8_qh&t;&t;qh[3]
+mdefine_line|#define skel_int8_qh&t;&t;skelqh[2]
 DECL|macro|skel_int16_qh
-mdefine_line|#define skel_int16_qh&t;&t;qh[4]
+mdefine_line|#define skel_int16_qh&t;&t;skelqh[3]
 DECL|macro|skel_int32_qh
-mdefine_line|#define skel_int32_qh&t;&t;qh[5]
+mdefine_line|#define skel_int32_qh&t;&t;skelqh[4]
 DECL|macro|skel_int64_qh
-mdefine_line|#define skel_int64_qh&t;&t;qh[6]
+mdefine_line|#define skel_int64_qh&t;&t;skelqh[5]
 DECL|macro|skel_int128_qh
-mdefine_line|#define skel_int128_qh&t;&t;qh[7]
+mdefine_line|#define skel_int128_qh&t;&t;skelqh[6]
 DECL|macro|skel_int256_qh
-mdefine_line|#define skel_int256_qh&t;&t;qh[8]
+mdefine_line|#define skel_int256_qh&t;&t;skelqh[7]
 DECL|macro|skel_control_qh
-mdefine_line|#define skel_control_qh&t;&t;qh[9]
-DECL|macro|skel_bulk0_qh
-mdefine_line|#define skel_bulk0_qh&t;&t;qh[10]
-DECL|macro|skel_bulk1_qh
-mdefine_line|#define skel_bulk1_qh&t;&t;qh[11]
-DECL|macro|skel_bulk2_qh
-mdefine_line|#define skel_bulk2_qh&t;&t;qh[12]
-DECL|macro|skel_bulk3_qh
-mdefine_line|#define skel_bulk3_qh&t;&t;qh[13]
-multiline_comment|/*&n; * These are significant to the devices allocation of QH&squot;s&n; */
-macro_line|#if 0
-mdefine_line|#define iso_qh&t;&t;&t;qh[0]
-mdefine_line|#define int_qh&t;&t;&t;qh[1]&t;/* We have 2 &quot;common&quot; interrupt QH&squot;s */
-mdefine_line|#define control_qh&t;&t;qh[3]
-mdefine_line|#define bulk_qh&t;&t;&t;qh[4]&t;/* We have 4 &quot;common&quot; bulk QH&squot;s */
-mdefine_line|#define extra_qh&t;&t;qh[8]&t;/* The rest, anything goes */
-macro_line|#endif
+mdefine_line|#define skel_control_qh&t;&t;skelqh[8]
+DECL|macro|skel_bulk_qh
+mdefine_line|#define skel_bulk_qh&t;&t;skelqh[9]
 multiline_comment|/*&n; * This describes the full uhci information.&n; *&n; * Note how the &quot;proper&quot; USB information is just&n; * a subset of what the full implementation needs.&n; */
 DECL|struct|uhci
 r_struct
@@ -375,22 +405,38 @@ r_int
 r_int
 id|io_addr
 suffix:semicolon
+DECL|member|control_pid
+r_int
+id|control_pid
+suffix:semicolon
+DECL|member|control_running
+r_int
+id|control_running
+suffix:semicolon
+DECL|member|control_continue
+r_int
+id|control_continue
+suffix:semicolon
+DECL|member|uhci_list
+r_struct
+id|list_head
+id|uhci_list
+suffix:semicolon
 DECL|member|bus
 r_struct
 id|usb_bus
 op_star
 id|bus
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* These are &quot;standard&quot; QH&squot;s for the entire bus */
+DECL|member|skelqh
 r_struct
 id|uhci_qh
-id|qh
+id|skelqh
 (braket
-id|UHCI_MAXQH
+id|UHCI_NUM_SKELQH
 )braket
 suffix:semicolon
-macro_line|#endif
+multiline_comment|/* Skeleton QH&squot;s */
 DECL|member|fl
 r_struct
 id|uhci_framelist
@@ -404,6 +450,12 @@ id|list_head
 id|interrupt_list
 suffix:semicolon
 multiline_comment|/* List of interrupt-active TD&squot;s for this uhci */
+DECL|member|ticktd
+r_struct
+id|uhci_td
+op_star
+id|ticktd
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* needed for the debugging code */

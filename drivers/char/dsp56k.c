@@ -2504,6 +2504,9 @@ c_func
 l_string|&quot;DSP56k driver installed&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 DECL|function|init_module

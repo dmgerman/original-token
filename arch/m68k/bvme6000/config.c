@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  arch/m68k/bvme6000/config.c&n; *&n; *  Copyright (C) 1997 Richard Hirst [richard@sleepie.demon.co.uk]&n; *&n; * Based on:&n; *&n; *  linux/amiga/config.c&n; *&n; *  Copyright (C) 1993 Hamish Macdonald&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
-macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

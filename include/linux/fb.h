@@ -54,6 +54,12 @@ DECL|macro|FB_AUX_TEXT_MGA_STEP16
 mdefine_line|#define FB_AUX_TEXT_MGA_STEP16&t;3&t;/* MGA Millenium I: text, attr, 14 reserved bytes */
 DECL|macro|FB_AUX_TEXT_MGA_STEP8
 mdefine_line|#define FB_AUX_TEXT_MGA_STEP8&t;4&t;/* other MGAs:      text, attr,  6 reserved bytes */
+DECL|macro|FB_AUX_VGA_PLANES_VGA4
+mdefine_line|#define FB_AUX_VGA_PLANES_VGA4&t;&t;0&t;/* 16 color planes (EGA/VGA) */
+DECL|macro|FB_AUX_VGA_PLANES_CFB4
+mdefine_line|#define FB_AUX_VGA_PLANES_CFB4&t;&t;1&t;/* CFB4 in planes (VGA) */
+DECL|macro|FB_AUX_VGA_PLANES_CFB8
+mdefine_line|#define FB_AUX_VGA_PLANES_CFB8&t;&t;2&t;/* CFB8 in planes (VGA) */
 DECL|macro|FB_VISUAL_MONO01
 mdefine_line|#define FB_VISUAL_MONO01&t;&t;0&t;/* Monochr. 1=Black 0=White */
 DECL|macro|FB_VISUAL_MONO10
@@ -113,11 +119,19 @@ mdefine_line|#define FB_ACCEL_MATROX_MGAG200&t;21&t;/* Matrox G200 (Myst, Mill, 
 DECL|macro|FB_ACCEL_SUN_CG14
 mdefine_line|#define FB_ACCEL_SUN_CG14&t;22&t;/* Sun cgfourteen&t;&t; */
 DECL|macro|FB_ACCEL_SUN_BWTWO
-mdefine_line|#define FB_ACCEL_SUN_BWTWO&t;23&t;/* Sun bwtwo&t;&t;&t; */
+mdefine_line|#define FB_ACCEL_SUN_BWTWO&t;23&t;/* Sun bwtwo&t;&t;&t;*/
 DECL|macro|FB_ACCEL_SUN_CGTHREE
-mdefine_line|#define FB_ACCEL_SUN_CGTHREE&t;24&t;/* Sun cgthree&t;&t;&t; */
+mdefine_line|#define FB_ACCEL_SUN_CGTHREE&t;24&t;/* Sun cgthree&t;&t;&t;*/
 DECL|macro|FB_ACCEL_SUN_TCX
-mdefine_line|#define FB_ACCEL_SUN_TCX&t;25&t;/* Sun tcx&t;&t;&t; */
+mdefine_line|#define FB_ACCEL_SUN_TCX&t;25&t;/* Sun tcx&t;&t;&t;*/
+DECL|macro|FB_ACCEL_MATROX_MGAG400
+mdefine_line|#define FB_ACCEL_MATROX_MGAG400&t;26&t;/* Matrox G400&t;&t;&t;*/
+DECL|macro|FB_ACCEL_NV3
+mdefine_line|#define FB_ACCEL_NV3&t;&t;27&t;/* nVidia RIVA 128              */
+DECL|macro|FB_ACCEL_NV4
+mdefine_line|#define FB_ACCEL_NV4&t;&t;28&t;/* nVidia RIVA TNT&t;&t;*/
+DECL|macro|FB_ACCEL_NV5
+mdefine_line|#define FB_ACCEL_NV5&t;&t;29&t;/* nVidia RIVA TNT2&t;&t;*/
 DECL|struct|fb_fix_screeninfo
 r_struct
 id|fb_fix_screeninfo

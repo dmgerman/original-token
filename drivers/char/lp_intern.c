@@ -570,16 +570,13 @@ l_int|NULL
 comma
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|lp_internal_init
 r_int
+id|__init
 id|lp_internal_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_AMIGA

@@ -15,17 +15,14 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifdef CONFIG_BLK_DEV_IDEPCI
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ide_init_rz1000
 r_void
+id|__init
 id|ide_init_rz1000
 (paren
 id|ide_hwif_t
 op_star
 id|hwif
-)paren
 )paren
 multiline_comment|/* called from ide-pci.c */
 (brace
@@ -116,12 +113,10 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#else
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_rz1000
 r_static
 r_void
+id|__init
 id|init_rz1000
 (paren
 r_struct
@@ -133,7 +128,6 @@ r_const
 r_char
 op_star
 id|name
-)paren
 )paren
 (brace
 r_int
@@ -323,15 +317,12 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ide_probe_for_rz100x
 r_void
+id|__init
 id|ide_probe_for_rz100x
 (paren
 r_void
-)paren
 )paren
 multiline_comment|/* called from ide.c */
 (brace

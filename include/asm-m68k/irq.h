@@ -69,6 +69,10 @@ r_int
 r_int
 )paren
 suffix:semicolon
+DECL|macro|disable_irq_nosync
+mdefine_line|#define disable_irq_nosync&t;disable_irq
+DECL|macro|enable_irq_nosync
+mdefine_line|#define enable_irq_nosync&t;enable_irq
 r_extern
 r_int
 id|sys_request_irq

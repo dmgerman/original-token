@@ -1244,16 +1244,13 @@ id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Initialisation&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|g364fb_init
 r_void
+id|__init
 id|g364fb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

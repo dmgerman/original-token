@@ -7334,16 +7334,13 @@ suffix:semicolon
 multiline_comment|/********************************************************************/
 multiline_comment|/* clgenfb_init() - master initialization function                  */
 multiline_comment|/********************************************************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|clgenfb_init
 r_void
+id|__init
 id|clgenfb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_const
@@ -8211,11 +8208,9 @@ multiline_comment|/* clgenfb_setup() might be used later for parsing possible   
 multiline_comment|/* arguments to the video= bootstrap parameter. Right now, there */
 multiline_comment|/* is nothing I do here.                                         */
 multiline_comment|/*****************************************************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|clgenfb_setup
 r_void
+id|__init
 id|clgenfb_setup
 c_func
 (paren
@@ -8226,7 +8221,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 singleline_comment|//    char *this_opt;

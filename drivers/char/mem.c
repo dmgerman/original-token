@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/joystick.h&gt;
 macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/raw.h&gt;
+macro_line|#include &lt;linux/capability.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -1919,6 +1920,77 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
+DECL|function|open_port
+r_static
+r_int
+id|open_port
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+(brace
+r_return
+id|capable
+c_func
+(paren
+id|CAP_SYS_RAWIO
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
+DECL|function|open_mem
+r_static
+r_int
+id|open_mem
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+(brace
+r_return
+(paren
+id|capable
+c_func
+(paren
+id|CAP_SYS_RAWIO
+)paren
+op_logical_or
+op_logical_neg
+(paren
+id|filp-&gt;f_mode
+op_amp
+id|FMODE_WRITE
+)paren
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
 DECL|macro|mmap_kmem
 mdefine_line|#define mmap_kmem&t;mmap_mem
 DECL|macro|zero_lseek
@@ -1929,6 +2001,8 @@ DECL|macro|write_zero
 mdefine_line|#define write_zero&t;write_null
 DECL|macro|read_full
 mdefine_line|#define read_full       read_zero
+DECL|macro|open_kmem
+mdefine_line|#define open_kmem&t;open_mem
 DECL|variable|mem_fops
 r_static
 r_struct
@@ -1953,9 +2027,8 @@ comma
 multiline_comment|/* mem_ioctl */
 id|mmap_mem
 comma
-l_int|NULL
+id|open_mem
 comma
-multiline_comment|/* no special open code */
 l_int|NULL
 comma
 multiline_comment|/* flush */
@@ -1990,9 +2063,8 @@ comma
 multiline_comment|/* kmem_ioctl */
 id|mmap_kmem
 comma
-l_int|NULL
+id|open_kmem
 comma
-multiline_comment|/* no special open code */
 l_int|NULL
 comma
 multiline_comment|/* flush */
@@ -2066,9 +2138,8 @@ multiline_comment|/* port_ioctl */
 l_int|NULL
 comma
 multiline_comment|/* port_mmap */
-l_int|NULL
+id|open_port
 comma
-multiline_comment|/* no special open code */
 l_int|NULL
 comma
 multiline_comment|/* flush */

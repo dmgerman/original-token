@@ -1144,12 +1144,12 @@ c_func
 id|wBIOS
 comma
 (paren
-id|pDev-&gt;base_address
+id|pDev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-l_int|0xFFFE
+dot
+id|start
 )paren
 comma
 id|pDev-&gt;irq

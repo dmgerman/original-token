@@ -12,19 +12,8 @@ macro_line|#ifdef DEBUG
 DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK printk
 macro_line|#else
-DECL|function|DPRINTK
-r_static
-r_inline
-r_int
-id|DPRINTK
-c_func
-(paren
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
+DECL|macro|DPRINTK
+mdefine_line|#define DPRINTK(format, args...)
 macro_line|#endif
 DECL|variable|this_port
 r_static
@@ -164,7 +153,7 @@ id|PARPORT_CONTROL_AUTOFD
 op_or
 id|PARPORT_CONTROL_STROBE
 suffix:semicolon
-multiline_comment|/* fake value: select in, no reset,&n;&t;no autolf, no strobe - seems to be closest the wiring diagram */
+multiline_comment|/* fake value: interrupt enable, select in, no reset,&n;&t;no autolf, no strobe - seems to be closest the wiring diagram */
 )brace
 DECL|function|amiga_write_control
 r_static
@@ -718,31 +707,36 @@ id|amiga_inc_use_count
 comma
 id|amiga_dec_use_count
 comma
-id|parport_ieee1284_epp_write_data
+l_int|NULL
 comma
-id|parport_ieee1284_epp_read_data
+multiline_comment|/* epp_write_data */
+l_int|NULL
 comma
-multiline_comment|/* impossible? */
-id|parport_ieee1284_epp_write_addr
+multiline_comment|/* epp_read_data */
+l_int|NULL
 comma
-id|parport_ieee1284_epp_read_addr
+multiline_comment|/* epp_write_addr */
+l_int|NULL
 comma
-multiline_comment|/* impossible? */
-id|parport_ieee1284_ecp_write_data
+multiline_comment|/* epp_read_addr */
+l_int|NULL
 comma
-id|parport_ieee1284_ecp_read_data
+multiline_comment|/* ecp_write_data */
+l_int|NULL
 comma
-multiline_comment|/* impossible? */
-id|parport_ieee1284_ecp_write_addr
+multiline_comment|/* ecp_read_data */
+l_int|NULL
 comma
-id|parport_ieee1284_write_compat
+multiline_comment|/* ecp_write_addr */
+l_int|NULL
 comma
-multiline_comment|/* FIXME - need to write amiga one */
-id|parport_ieee1284_read_nibble
+multiline_comment|/* compat_write_data */
+l_int|NULL
 comma
-id|parport_ieee1284_read_byte
+multiline_comment|/* nibble_read_data */
+l_int|NULL
 comma
-multiline_comment|/* impossible? */
+multiline_comment|/* byte_read_data */
 )brace
 suffix:semicolon
 multiline_comment|/* ----------- Initialisation code --------------------------------- */
@@ -812,29 +806,10 @@ id|pp_amiga_ops
 r_return
 l_int|0
 suffix:semicolon
-id|this_port
-op_assign
-id|p
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: Amiga built-in port using irq&bslash;n&quot;
-comma
-id|p-&gt;name
-)paren
-suffix:semicolon
-multiline_comment|/* XXX: set operating mode */
-id|parport_proc_register
-c_func
-(paren
-id|p
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|request_irq
 c_func
 (paren
@@ -859,7 +834,28 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|this_port
+op_assign
+id|p
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: Amiga built-in port using irq&bslash;n&quot;
+comma
+id|p-&gt;name
+)paren
+suffix:semicolon
+multiline_comment|/* XXX: set operating mode */
+id|parport_proc_register
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
 id|parport_announce_port
+c_func
 (paren
 id|p
 )paren
@@ -918,16 +914,16 @@ r_void
 r_if
 c_cond
 (paren
-id|p-&gt;irq
+id|this_port-&gt;irq
 op_ne
 id|PARPORT_IRQ_NONE
 )paren
 id|free_irq
 c_func
 (paren
-id|IRQ_AMIGA_CIAA_FLG
+id|IRQ_MFP_BUSY
 comma
-id|p
+id|this_port
 )paren
 suffix:semicolon
 id|parport_proc_unregister

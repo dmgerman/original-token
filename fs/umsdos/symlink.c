@@ -426,7 +426,7 @@ multiline_comment|/* readlink */
 id|UMSDOS_followlink
 comma
 multiline_comment|/* followlink */
-id|fat_bmap
+id|fat_get_block
 comma
 multiline_comment|/* get_block */
 id|block_read_full_page

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;MACII&t;ADB keyboard handler.&n; *&t;&t;Copyright (c) 1997 Alan Cox&n; *&n; *&t;Derived from code &n; *&t;&t;Copyright (C) 1996 Paul Mackerras.&n; *&n; *&t;MSch (9/97) Partial rewrite of interrupt handler to MacII style&n; *&t;&t;ADB handshake, based on:&n; *&t;&t;&t;- Guide to Mac Hardware&n; *&t;&t;&t;- Guido Koerber&squot;s session with a logic analyzer&n; *&n; *&t;MSch (1/98) Integrated start of IIsi driver by Robert Thompson&n; */
-macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
