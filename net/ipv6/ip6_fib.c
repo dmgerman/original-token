@@ -672,6 +672,7 @@ op_plus
 id|offset
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Prefix match&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -687,6 +688,7 @@ id|fn-&gt;fn_bit
 )paren
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Exact match ?&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -727,6 +729,7 @@ r_return
 id|fn
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t;&t; *&t;We have more bits to go&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -763,6 +766,7 @@ id|fn-&gt;right
 suffix:colon
 id|fn-&gt;left
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Round we go. Note if fn has become&n;&t;&t;&t;&t; *&t;NULL then dir is set and fn is handled&n;&t;&t;&t;&t; *&t;top of loop.&n;&t;&t;&t;&t; */
 r_continue
 suffix:semicolon
 )brace
@@ -1875,7 +1879,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;called to trim the tree of intermediate nodes when possible&n; */
+multiline_comment|/*&n; *&t;Called to trim the tree of intermediate nodes when possible. &quot;fn&quot;&n; *&t;is the node we want to try and remove.&n; */
 DECL|function|fib6_del_2
 r_static
 r_void
@@ -1901,6 +1905,7 @@ suffix:semicolon
 id|rt6_stats.fib_route_nodes
 op_decrement
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Can&squot;t delete a root node&n;&t; */
 r_if
 c_cond
 (paren
@@ -1929,6 +1934,7 @@ id|child
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;We have a child to left&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1943,6 +1949,7 @@ op_assign
 id|fn-&gt;left
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; *&t;To right&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1957,6 +1964,7 @@ op_assign
 id|fn-&gt;right
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; *&t;We can&squot;t tidy a case of two children.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1972,6 +1980,7 @@ id|RTN_RTINFO
 )paren
 r_break
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;The node we plan to tidy has an stree. Talk about&n;&t;&t; *&t;making life hard.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1980,10 +1989,12 @@ id|fn-&gt;subtree
 r_goto
 id|stree_node
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Up we go&n;&t;&t; */
 id|pn
 op_assign
 id|fn-&gt;parent
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Not a ROOT - we can tidy&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1996,6 +2007,7 @@ op_eq
 l_int|0
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Make our child our parents child&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2012,6 +2024,7 @@ id|pn-&gt;right
 op_assign
 id|child
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;Reparent the child&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2021,6 +2034,7 @@ id|child-&gt;parent
 op_assign
 id|pn
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;Discard leaf entries&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2042,17 +2056,20 @@ id|children
 )paren
 r_break
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;No children so no subtree&n;&t;&t;&t; */
 id|pn-&gt;subtree
 op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; *&t;We are discarding &n;&t;&t; */
 id|node_free
 c_func
 (paren
 id|fn
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Our merge of entries might propogate further&n;&t;&t; *&t;up the tree, so move up a level and retry.&n;&t;&t; */
 id|fn
 op_assign
 id|pn
@@ -2112,6 +2129,7 @@ op_assign
 id|rt
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Remove our entry in the tree. This throws away the route entry&n; *&t;from the list of entries attached to this fib node. It doesn&squot;t&n; *&t;expunge from the tree.&n; */
 DECL|function|fib6_del_1
 r_static
 r_struct
@@ -2135,6 +2153,7 @@ id|fn
 op_assign
 id|rt-&gt;rt6i_node
 suffix:semicolon
+multiline_comment|/* We need a fib node! */
 r_if
 c_cond
 (paren
@@ -2157,6 +2176,7 @@ op_assign
 op_amp
 id|fn-&gt;leaf
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Walk the leaf entries looking for ourself&n;&t;&t; */
 r_for
 c_loop
 (paren

@@ -4398,9 +4398,9 @@ id|OPEN_WRITE_BIT
 id|block_fsync
 c_func
 (paren
-id|inode
-comma
 id|filp
+comma
+id|filp-&gt;f_dentry
 )paren
 suffix:semicolon
 id|sw

@@ -956,8 +956,6 @@ op_member_access_from_pointer
 id|lock
 c_func
 (paren
-id|inode
-comma
 id|filp
 comma
 id|F_GETLK
@@ -1429,8 +1427,6 @@ op_member_access_from_pointer
 id|lock
 c_func
 (paren
-id|inode
-comma
 id|filp
 comma
 id|cmd
@@ -1593,8 +1589,6 @@ op_member_access_from_pointer
 id|lock
 c_func
 (paren
-id|inode
-comma
 id|filp
 comma
 id|F_SETLK

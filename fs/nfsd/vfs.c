@@ -1096,9 +1096,9 @@ op_member_access_from_pointer
 id|fsync
 c_func
 (paren
-id|inode
-comma
 id|filp
+comma
+id|filp-&gt;f_dentry
 )paren
 suffix:semicolon
 )brace

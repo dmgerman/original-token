@@ -1064,8 +1064,6 @@ op_member_access_from_pointer
 id|llseek
 c_func
 (paren
-id|fp-&gt;f_dentry-&gt;d_inode
-comma
 id|fp
 comma
 id|start_block
@@ -1197,8 +1195,6 @@ op_member_access_from_pointer
 id|llseek
 c_func
 (paren
-id|fp-&gt;f_dentry-&gt;d_inode
-comma
 id|fp
 comma
 (paren
@@ -1323,8 +1319,6 @@ op_member_access_from_pointer
 id|llseek
 c_func
 (paren
-id|fp-&gt;f_dentry-&gt;d_inode
-comma
 id|fp
 comma
 id|start_block

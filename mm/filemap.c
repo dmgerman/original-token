@@ -4162,11 +4162,6 @@ id|generic_file_mmap
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
@@ -4181,6 +4176,13 @@ r_struct
 id|vm_operations_struct
 op_star
 id|ops
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond
@@ -4374,9 +4376,9 @@ r_return
 id|file_fsync
 c_func
 (paren
-id|vma-&gt;vm_dentry-&gt;d_inode
-comma
 l_int|NULL
+comma
+id|vma-&gt;vm_dentry
 )paren
 suffix:semicolon
 r_return

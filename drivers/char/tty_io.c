@@ -198,11 +198,6 @@ id|tty_fasync
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|filp
@@ -1178,11 +1173,6 @@ id|tty_lseek
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
@@ -1372,8 +1362,6 @@ suffix:semicolon
 id|tty_fasync
 c_func
 (paren
-id|filp-&gt;f_dentry-&gt;d_inode
-comma
 id|filp
 comma
 l_int|0
@@ -3807,8 +3795,6 @@ suffix:semicolon
 id|tty_fasync
 c_func
 (paren
-id|filp-&gt;f_dentry-&gt;d_inode
-comma
 id|filp
 comma
 l_int|0
@@ -5070,11 +5056,6 @@ id|fasync_helper
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|filp
@@ -5264,11 +5245,6 @@ id|tty_fasync
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|filp
@@ -5302,7 +5278,7 @@ c_func
 (paren
 id|tty
 comma
-id|inode-&gt;i_rdev
+id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 comma
 l_string|&quot;tty_fasync&quot;
 )paren
@@ -5315,8 +5291,6 @@ op_assign
 id|fasync_helper
 c_func
 (paren
-id|inode
-comma
 id|filp
 comma
 id|on

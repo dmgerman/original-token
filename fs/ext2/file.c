@@ -25,10 +25,6 @@ id|ext2_file_lseek
 c_func
 (paren
 r_struct
-id|inode
-op_star
-comma
-r_struct
 id|file
 op_star
 comma
@@ -190,11 +186,6 @@ id|ext2_file_lseek
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
@@ -210,6 +201,13 @@ id|origin
 r_int
 r_int
 id|retval
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_switch
 c_cond

@@ -350,8 +350,6 @@ op_member_access_from_pointer
 id|fasync
 c_func
 (paren
-id|inode
-comma
 id|filp
 comma
 (paren

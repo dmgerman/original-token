@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Things to sort out:&n; *&n; *&t;o&t;tbusy handling&n; *&t;o&t;allow users to set the parameters&n; *&t;o&t;sync/async switching ?&n; */
+multiline_comment|/*&n; *&t;Things to sort out:&n; *&n; *&t;o&t;tbusy handling&n; *&t;o&t;allow users to set the parameters&n; *&t;o&t;sync/async switching ?&n; *&n; *&t;Note: This does _not_ implement CCITT X.25 asynchronous framing&n; *&t;recommendations. Its primarily for testing purposes. If you wanted&n; *&t;to do CCITT then in theory all you need is to nick the HDLC async&n; *&t;checksum routines from ppp.c&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;

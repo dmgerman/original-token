@@ -1,29 +1,19 @@
 multiline_comment|/*&n; * NET3:&t;Garbage Collector For AF_UNIX sockets&n; *&n; * Garbage Collector:&n; *&t;Copyright (C) Barak A. Pearlmutter.&n; *&t;Released under the GPL version 2 or later.&n; *&n; * Chopped about by Alan Cox 22/3/96 to make it fit the AF_UNIX socket problem.&n; * If it doesn&squot;t work blame me, it worked when Barak sent it.&n; *&n; * Assumptions:&n; *&n; *  - object w/ a bit&n; *  - free list&n; *&n; * Current optimizations:&n; *&n; *  - explicit stack instead of recursion&n; *  - tail recurse on first born instead of immediate push/pop&n; *&n; *  Future optimizations:&n; *&n; *  - don&squot;t just push entire root set; process in place&n; *  - use linked list for internal stack&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *  Fixes:&n; *&t;Alan Cox&t;07 Sept&t;1997&t;Vmalloc internal stack as needed.&n; *&t;&t;&t;&t;&t;Cope with changing max_files.&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/major.h&gt;
-macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/un.h&gt;
-macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/termios.h&gt;
-macro_line|#include &lt;linux/socket.h&gt;
-macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
-macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/vmalloc.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/af_unix.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
 multiline_comment|/* Internal data structures and random procedures: */
 DECL|variable|stack

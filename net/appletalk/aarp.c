@@ -1,4 +1,6 @@
 multiline_comment|/*&n; *&t;AARP:&t;&t;An implementation of the Appletalk aarp protocol for&n; *&t;&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;This doesn&squot;t fit cleanly with the IP arp. Potentially we can use&n; *&t;the generic neighbour discovery code to clean this up.&n; *&n; *&t;FIXME:&n; *&t;&t;We ought to handle the retransmits with a single list and a &n; *&t;separate fast timer for when it is needed.&n; *&t;&t;Use neighbour discovery code.&n; *&t;&t;Token Ring Support.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;References:&n; *&t;&t;Inside Appletalk (2nd Ed).&n; */
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE) 
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -1351,7 +1353,7 @@ r_return
 id|a
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Find an entry. We might return an expired but not yet purged entry. We&n; *&t;don&squot;t care as it will do no harm.&n; */
+multiline_comment|/*&n; * Find an entry. We might return an expired but not yet purged entry. We&n; * don&squot;t care as it will do no harm.&n; */
 DECL|function|aarp_find_entry
 r_static
 r_struct
@@ -2734,49 +2736,67 @@ id|aarp_notifier
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-multiline_comment|/* Free all the entries in an aarp list. Caller should turn off interrupts. */
-DECL|function|free_entry_list
-r_static
+multiline_comment|/*&n; * Remove the AARP entries associated with a device.&n; * Called from cleanup_module() in ddp.c.&n; */
+DECL|function|aarp_device_down
 r_void
-id|free_entry_list
+id|aarp_device_down
 c_func
 (paren
 r_struct
-id|aarp_entry
+id|device
 op_star
-id|list
+id|dev
 )paren
 (brace
-r_struct
-id|aarp_entry
-op_star
-id|tmp
+r_int
+id|ct
+op_assign
+l_int|0
 suffix:semicolon
-r_while
+r_for
 c_loop
 (paren
-id|list
-op_ne
-l_int|NULL
+id|ct
+op_assign
+l_int|0
+suffix:semicolon
+id|ct
+OL
+id|AARP_HASH_SIZE
+suffix:semicolon
+id|ct
+op_increment
 )paren
 (brace
-id|tmp
-op_assign
-id|list-&gt;next
-suffix:semicolon
-id|aarp_expire
+id|aarp_expire_device
 c_func
 (paren
-id|list
+op_amp
+id|resolved
+(braket
+id|ct
+)braket
+comma
+id|dev
 )paren
 suffix:semicolon
-id|list
-op_assign
-id|tmp
+id|aarp_expire_device
+c_func
+(paren
+op_amp
+id|unresolved
+(braket
+id|ct
+)braket
+comma
+id|dev
+)paren
 suffix:semicolon
 )brace
+r_return
+suffix:semicolon
 )brace
-multiline_comment|/* General module cleanup. Called from cleanup_module() in ddp.c. */
+multiline_comment|/*&n; * General module cleanup. Called from cleanup_module() in ddp.c.&n; */
 DECL|function|aarp_cleanup_module
 r_void
 id|aarp_cleanup_module
@@ -2785,24 +2805,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|del_timer
 c_func
 (paren
@@ -2823,46 +2825,7 @@ c_func
 id|aarp_snap_id
 )paren
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|AARP_HASH_SIZE
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|free_entry_list
-c_func
-(paren
-id|resolved
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-id|free_entry_list
-c_func
-(paren
-id|unresolved
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-)brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif  /* MODULE */
+macro_line|#endif  /* CONFIG_ATALK || CONFIG_ATALK_MODULE */
 eof

@@ -262,12 +262,13 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Shrink the dcache. This is done when we need&n; * more memory, or simply when we need to unmount&n; * something (at which point we need to unuse&n; * all dentries).&n; */
-DECL|function|shrink_dcache
+DECL|function|prune_dcache
 r_void
-id|shrink_dcache
+id|prune_dcache
 c_func
 (paren
-r_void
+r_int
+id|count
 )paren
 (brace
 r_for
@@ -382,6 +383,15 @@ c_func
 (paren
 id|parent
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+op_decrement
+id|count
+)paren
+r_break
 suffix:semicolon
 )brace
 )brace
@@ -637,6 +647,12 @@ l_int|0
 )brace
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|res
+)paren
+(brace
 id|res-&gt;d_parent
 op_assign
 id|res
@@ -649,6 +665,7 @@ comma
 id|root_inode
 )paren
 suffix:semicolon
+)brace
 )brace
 r_return
 id|res
@@ -1161,7 +1178,7 @@ suffix:semicolon
 )brace
 DECL|macro|switch
 mdefine_line|#define switch(x,y) do { &bslash;&n;&t;__typeof__ (x) __tmp = x; &bslash;&n;&t;x = y; y = __tmp; } while (0)
-multiline_comment|/*&n; * We cannibalize &quot;newdentry&quot; when moving dentry on top of it,&n; * because it&squot;s going to be thrown away anyway. We could be more&n; * polite about it, though.&n; *&n; * This forceful removal will result in ugly /proc output if&n; * somebody holds a file open that got deleted due to a rename.&n; * We could be nicer about the deleted file, and let it show&n; * up under the name it got deleted rather than the name that&n; * deleted it.&n; *&n; * Careful with the hash switch. The hash switch depends on&n; * the fact that any list-entry can be a head of the list.&n; * Think about it.&n; */
+multiline_comment|/*&n; * We cannibalize &quot;target&quot; when moving dentry on top of it,&n; * because it&squot;s going to be thrown away anyway. We could be more&n; * polite about it, though.&n; *&n; * This forceful removal will result in ugly /proc output if&n; * somebody holds a file open that got deleted due to a rename.&n; * We could be nicer about the deleted file, and let it show&n; * up under the name it got deleted rather than the name that&n; * deleted it.&n; *&n; * Careful with the hash switch. The hash switch depends on&n; * the fact that any list-entry can be a head of the list.&n; * Think about it.&n; */
 DECL|function|d_move
 r_void
 id|d_move

@@ -1418,6 +1418,7 @@ id|deliver
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;IPv6 multicast router mode isnt currently supported.&n;&t; */
 macro_line|#if 0
 r_if
 c_cond

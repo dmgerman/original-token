@@ -1277,17 +1277,12 @@ c_func
 suffix:semicolon
 )brace
 )brace
+DECL|function|fb_mmap
 r_static
 r_int
-DECL|function|fb_mmap
 id|fb_mmap
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -1309,7 +1304,7 @@ id|registered_fb
 id|GET_FB_IDX
 c_func
 (paren
-id|inode-&gt;i_rdev
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 )braket
 suffix:semicolon

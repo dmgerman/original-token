@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  proc.c&n; *&n; *  Copyright (C) 1995, 1996 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; *  28/06/96 - Fixed long file name support (smb_proc_readdir_long) by Yuri Per&n; */
+multiline_comment|/*&n; *  proc.c&n; *&n; *  Copyright (C) 1995, 1996 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; *  28/06/96 - Fixed long file name support (smb_proc_readdir_long) by Yuri Per&n; *  04/09/97 - Fixed smb_d_path to be non-recursive by Riccardo Facchetti&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/smbno.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/dcache.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/string.h&gt;
 DECL|macro|SMB_VWV
@@ -257,79 +258,104 @@ id|entry
 comma
 r_char
 op_star
-id|buf
+id|buffer
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|IS_ROOT
-c_func
-(paren
-id|entry
-)paren
-)paren
-(brace
+r_char
+op_star
+id|page
+comma
+op_star
+id|path
+comma
 op_star
 id|buf
 op_assign
-l_char|&squot;&bslash;&bslash;&squot;
+id|buffer
 suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-r_else
-(brace
 r_int
 id|len
 op_assign
-id|smb_d_path
+l_int|0
+suffix:semicolon
+id|page
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|__get_free_page
 c_func
 (paren
-id|entry-&gt;d_parent
-comma
-id|buf
+id|GFP_KERNEL
 )paren
 suffix:semicolon
-id|buf
-op_add_assign
-id|len
-suffix:semicolon
-r_if
-c_cond
+multiline_comment|/*&n;&t; * Get the path&n;&t; */
+id|path
+op_assign
+id|d_path
+c_func
 (paren
+id|entry
+comma
+id|page
+comma
+id|PAGE_SIZE
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * path is a string with a trailing &squot;&bslash;0&squot;&n;&t; */
 id|len
-OG
-l_int|1
+op_assign
+id|strlen
+c_func
+(paren
+id|path
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Now encode it the DOSish way and copy it to the&n;&t; * output buffer. No need to terminate output buffer&n;&t; * with a trailing &squot;&bslash;0&squot;.&n;&t; */
+r_while
+c_loop
+(paren
+op_star
+id|path
 )paren
 (brace
 op_star
 id|buf
 op_increment
 op_assign
+(paren
+(paren
+op_star
+id|path
+op_ne
+l_char|&squot;/&squot;
+)paren
+ques
+c_cond
+op_star
+id|path
+suffix:colon
 l_char|&squot;&bslash;&bslash;&squot;
+)paren
 suffix:semicolon
-id|len
+id|path
 op_increment
 suffix:semicolon
 )brace
-id|memcpy
+id|free_page
 c_func
 (paren
-id|buf
-comma
-id|entry-&gt;d_name.name
-comma
-id|entry-&gt;d_name.len
+(paren
+r_int
+r_int
+)paren
+id|page
 )paren
 suffix:semicolon
 r_return
 id|len
-op_plus
-id|entry-&gt;d_name.len
 suffix:semicolon
-)brace
 )brace
 DECL|function|smb_encode_path
 r_static
@@ -416,6 +442,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * XXX smb_d_path don&squot;t put the trailing &squot;&bslash;0&squot; in the buf.&n;&t; * The problem may arise when (dir != NULL &amp;&amp; name == NULL &amp;&amp;&n;&t; * server-&gt;opt.protocol &lt;= SMB_PROTOCOL_COREPLUS))&n;&t; * because str_upper() rely on trailing &squot;&bslash;0&squot; for converting the&n;&t; * start to upper chars. I don&squot;t know samba, so I suspect a bug but I&n;&t; * don&squot;t want to do something stupid here.&n;&t; * -Riccardo&n;&t; */
 r_if
 c_cond
 (paren

@@ -42,11 +42,6 @@ id|sock_lseek
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
@@ -169,11 +164,6 @@ r_int
 id|sock_fasync
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -1011,11 +1001,6 @@ id|sock_lseek
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
@@ -1530,8 +1515,6 @@ suffix:semicolon
 id|sock_fasync
 c_func
 (paren
-id|inode
-comma
 id|filp
 comma
 l_int|0
@@ -1558,11 +1541,6 @@ r_int
 id|sock_fasync
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -1639,7 +1617,7 @@ op_assign
 id|socki_lookup
 c_func
 (paren
-id|inode
+id|filp-&gt;f_dentry-&gt;d_inode
 )paren
 suffix:semicolon
 id|prev

@@ -31,11 +31,12 @@ r_if
 c_cond
 (paren
 id|tty-&gt;flip.count
-op_increment
-op_ge
+OL
 id|TTY_FLIPBUF_SIZE
 )paren
-r_return
+(brace
+id|tty-&gt;flip.count
+op_increment
 suffix:semicolon
 op_star
 id|tty-&gt;flip.flag_buf_ptr
@@ -49,6 +50,7 @@ op_increment
 op_assign
 id|ch
 suffix:semicolon
+)brace
 )brace
 DECL|function|tty_schedule_flip
 id|_INLINE_

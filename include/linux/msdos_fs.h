@@ -1050,10 +1050,6 @@ id|fat_mmap
 c_func
 (paren
 r_struct
-id|inode
-op_star
-comma
-r_struct
 id|file
 op_star
 comma

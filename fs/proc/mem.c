@@ -907,11 +907,6 @@ id|mem_lseek
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
@@ -965,11 +960,6 @@ id|mem_mmap
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
@@ -1018,6 +1008,13 @@ op_star
 id|src_vma
 op_assign
 l_int|NULL
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 multiline_comment|/* Get the source&squot;s task information */
 id|tsk

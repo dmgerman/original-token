@@ -1104,8 +1104,6 @@ op_member_access_from_pointer
 id|mmap
 c_func
 (paren
-id|file-&gt;f_dentry-&gt;d_inode
-comma
 id|file
 comma
 id|vma

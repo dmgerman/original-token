@@ -1074,7 +1074,9 @@ l_string|&quot;&quot;
 comma
 l_string|&quot;&quot;
 comma
-l_string|&quot;K6&quot;
+l_string|&quot;K6(PR-133..PR-166)&quot;
+comma
+l_string|&quot;K6(PR-133..PR-200)&quot;
 )brace
 suffix:semicolon
 r_if

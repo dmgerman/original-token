@@ -2484,10 +2484,10 @@ op_assign
 id|copy_to_user
 c_func
 (paren
+id|arg
+comma
 op_amp
 id|ifr
-comma
-id|arg
 comma
 r_sizeof
 (paren

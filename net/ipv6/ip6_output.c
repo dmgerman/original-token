@@ -63,6 +63,7 @@ id|dev-&gt;hard_header
 r_int
 id|mac
 suffix:semicolon
+multiline_comment|/* Maybe when Alexey has done his new magic I&squot;ll hack this&n;&t;&t;   it seems to be worth 1-2% on IPv4 */
 macro_line|#if 0
 r_if
 c_cond
@@ -402,7 +403,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;To avoid extra problems ND packets are send through this&n; *&t;routine. It&squot;s code duplication but i really want to avoid&n; *&t;extra checks since ipv6_build_header is used by TCP (which&n; *&t;is for us performace critical)&n; */
+multiline_comment|/*&n; *&t;To avoid extra problems ND packets are send through this&n; *&t;routine. It&squot;s code duplication but I really want to avoid&n; *&t;extra checks since ipv6_build_header is used by TCP (which&n; *&t;is for us performace critical)&n; */
 DECL|function|ip6_nd_hdr
 r_int
 id|ip6_nd_hdr

@@ -144,7 +144,7 @@ id|csum
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;getfrag callback&n; *&t;not static because it&squot;s needed in ndisc.c&n; */
+multiline_comment|/*&n; *&t;getfrag callback&n; */
 DECL|function|icmpv6_getfrag
 r_static
 r_int
@@ -317,7 +317,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;an inline helper for the &quot;simple&quot; if statement bellow&n; *&t;checks if parameter problem report is caused by an&n; *&t;unrecognized IPv6 option that has the Option Type &n; *&t;highest-order two bits set to 10&n; */
+multiline_comment|/*&n; *&t;an inline helper for the &quot;simple&quot; if statement below&n; *&t;checks if parameter problem report is caused by an&n; *&t;unrecognized IPv6 option that has the Option Type &n; *&t;highest-order two bits set to 10&n; */
 DECL|function|opt_unrec
 r_static
 id|__inline__

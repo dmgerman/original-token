@@ -15536,9 +15536,9 @@ multiline_comment|/* if the file is mounted OR (writable now AND writable at&n;&
 id|block_fsync
 c_func
 (paren
-id|inode
-comma
 id|filp
+comma
+id|filp-&gt;f_dentry
 )paren
 suffix:semicolon
 r_if

@@ -178,11 +178,6 @@ id|fasync_mouse
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|filp
@@ -199,8 +194,6 @@ op_assign
 id|fasync_helper
 c_func
 (paren
-id|inode
-comma
 id|filp
 comma
 id|on
@@ -243,8 +236,6 @@ id|file
 id|fasync_mouse
 c_func
 (paren
-id|inode
-comma
 id|file
 comma
 l_int|0

@@ -20,11 +20,6 @@ id|default_llseek
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
@@ -52,7 +47,7 @@ l_int|2
 suffix:colon
 id|offset
 op_add_assign
-id|inode-&gt;i_size
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_size
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -117,11 +112,6 @@ id|llseek
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
@@ -142,10 +132,6 @@ op_star
 id|fn
 )paren
 (paren
-r_struct
-id|inode
-op_star
-comma
 r_struct
 id|file
 op_star
@@ -175,8 +161,6 @@ r_return
 id|fn
 c_func
 (paren
-id|inode
-comma
 id|file
 comma
 id|offset
@@ -285,8 +269,6 @@ op_assign
 id|llseek
 c_func
 (paren
-id|inode
-comma
 id|file
 comma
 id|offset
@@ -418,8 +400,6 @@ op_assign
 id|llseek
 c_func
 (paren
-id|inode
-comma
 id|file
 comma
 (paren

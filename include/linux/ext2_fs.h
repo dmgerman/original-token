@@ -994,11 +994,11 @@ r_int
 id|ext2_sync_file
 (paren
 r_struct
-id|inode
+id|file
 op_star
 comma
 r_struct
-id|file
+id|dentry
 op_star
 )paren
 suffix:semicolon

@@ -18,6 +18,8 @@ DECL|macro|ATADDR_BCAST
 mdefine_line|#define ATADDR_BCAST&t;(__u8)255
 DECL|macro|DDP_MAXSZ
 mdefine_line|#define DDP_MAXSZ&t;587
+DECL|macro|DDP_MAXHOPS
+mdefine_line|#define DDP_MAXHOPS     15      /* 4 bits of hop counter */
 DECL|macro|SIOCATALKDIFADDR
 mdefine_line|#define SIOCATALKDIFADDR       (SIOCPROTOPRIVATE + 0)
 DECL|struct|at_addr
@@ -185,8 +187,6 @@ id|src_port
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|DDP_MAXHOPS
-mdefine_line|#define DDP_MAXHOPS&t;15&t;/* 4 bits of hop counter */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/byteorder.h&gt;
 DECL|struct|ddpehdr
@@ -482,6 +482,19 @@ id|dev
 )paren
 suffix:semicolon
 r_extern
+r_struct
+id|device
+op_star
+id|atrtr_get_dev
+c_func
+(paren
+r_struct
+id|at_addr
+op_star
+id|sa
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|aarp_send_ddp
 c_func
@@ -525,13 +538,24 @@ suffix:semicolon
 macro_line|#ifdef MODULE
 r_extern
 r_void
+id|aarp_device_down
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|aarp_cleanup_module
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#endif
-macro_line|#endif
+macro_line|#endif /* MODULE */
+macro_line|#endif /* __KERNEL__ */
+macro_line|#endif /* __LINUX_ATALK_H__ */
 eof

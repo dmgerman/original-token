@@ -2994,7 +2994,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-id|KERN_ERR
+id|KERN_ER
 l_string|&quot;apm_bios: cannot allocate struct of size %d bytes&quot;
 comma
 r_sizeof

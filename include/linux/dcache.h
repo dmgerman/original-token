@@ -345,10 +345,10 @@ id|name
 suffix:semicolon
 r_extern
 r_void
-id|shrink_dcache
+id|prune_dcache
 c_func
 (paren
-r_void
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -361,6 +361,8 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
+DECL|macro|shrink_dcache
+mdefine_line|#define shrink_dcache() prune_dcache(0)
 multiline_comment|/* only used at mount-time */
 r_extern
 r_struct

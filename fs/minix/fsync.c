@@ -1643,23 +1643,30 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The function which is called for file synchronization.&n; */
+multiline_comment|/*&n; *&t;The function which is called for file synchronization. File may be&n; *&t;NULL&n; */
 DECL|function|minix_sync_file
 r_int
 id|minix_sync_file
 c_func
 (paren
 r_struct
-id|inode
+id|file
 op_star
-id|inode
+id|file
 comma
 r_struct
-id|file
+id|dentry
 op_star
-id|file
+id|dentry
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
 r_if
 c_cond
 (paren

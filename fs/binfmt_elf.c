@@ -3522,8 +3522,6 @@ op_member_access_from_pointer
 id|llseek
 c_func
 (paren
-id|inode
-comma
 id|file
 comma
 l_int|0
@@ -4050,8 +4048,6 @@ op_member_access_from_pointer
 id|llseek
 c_func
 (paren
-id|file-&gt;f_dentry-&gt;d_inode
-comma
 id|file
 comma
 id|off

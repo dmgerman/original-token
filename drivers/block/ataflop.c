@@ -7773,9 +7773,9 @@ id|OPEN_WRITE_BIT
 multiline_comment|/* if the file is mounted OR (writable now AND writable at open&n;       time) Linus: Does this cover all cases? */
 id|block_fsync
 (paren
-id|inode
-comma
 id|filp
+comma
+id|filp-&gt;f_dentry
 )paren
 suffix:semicolon
 r_if

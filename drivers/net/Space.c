@@ -1295,6 +1295,55 @@ macro_line|#   undef NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define NEXT_DEV     (&amp;dev_cops)
 macro_line|#endif  /* COPS */
+macro_line|#if defined(CONFIG_IPDDP)
+r_extern
+r_int
+id|ipddp_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+DECL|variable|dev_ipddp
+r_static
+r_struct
+id|device
+id|dev_ipddp
+op_assign
+(brace
+l_string|&quot;ipddp0&bslash;0   &quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0x0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NEXT_DEV
+comma
+id|ipddp_init
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#   undef NEXT_DEV
+DECL|macro|NEXT_DEV
+macro_line|#   define NEXT_DEV     (&amp;dev_ipddp)
+macro_line|#endif /* CONFIG_IPDDP */
 multiline_comment|/* The first device defaults to I/O base &squot;0&squot;, which means autoprobe. */
 macro_line|#ifndef ETH0_ADDR
 DECL|macro|ETH0_ADDR

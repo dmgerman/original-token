@@ -4037,7 +4037,7 @@ id|skb-&gt;protocol
 op_assign
 id|htons
 (paren
-id|ETH_P_IP
+id|ETH_P_ARP
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Fill the device header for the ARP frame&n;&t; */
