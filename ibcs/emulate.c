@@ -25,9 +25,13 @@ id|regs
 id|printk
 c_func
 (paren
-l_string|&quot;lcall 7,xxx: eax = %08lx&bslash;n&quot;
-comma
-id|regs-&gt;eax
+l_string|&quot;iBCS2 binaries not supported yet&bslash;n&quot;
+)paren
+suffix:semicolon
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
 )paren
 suffix:semicolon
 )brace

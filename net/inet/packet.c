@@ -357,11 +357,6 @@ suffix:semicolon
 multiline_comment|/* Now allocate the buffer, knowing 4K pagelimits wont break this line */
 id|skb
 op_assign
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
 id|sk-&gt;prot
 op_member_access_from_pointer
 id|wmalloc

@@ -264,6 +264,11 @@ c_func
 id|page
 )paren
 suffix:semicolon
+id|invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -433,6 +438,11 @@ c_loop
 (paren
 op_decrement
 id|nr
+)paren
+suffix:semicolon
+id|invalidate
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

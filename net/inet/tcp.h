@@ -26,9 +26,9 @@ mdefine_line|#define TCP_RETR1&t;7&t;/*&n;&t;&t;&t;&t; * This is howmany retries
 DECL|macro|TCP_RETR2
 mdefine_line|#define TCP_RETR2&t;15&t;/*&n;&t;&t;&t;&t; * This should take at least&n;&t;&t;&t;&t; * 90 minutes to time out.&n;&t;&t;&t;&t; */
 DECL|macro|TCP_TIMEOUT_LEN
-mdefine_line|#define TCP_TIMEOUT_LEN&t;5000&t;/* should be about 5 mins&t;&t;*/
+mdefine_line|#define TCP_TIMEOUT_LEN&t;(5*60*HZ)/* should be about 5 mins&t;&t;*/
 DECL|macro|TCP_TIMEWAIT_LEN
-mdefine_line|#define TCP_TIMEWAIT_LEN 1000&t;/* how long to wait to sucessfully &n;&t;&t;&t;&t; * close the socket, about 60 seconds&t;*/
+mdefine_line|#define TCP_TIMEWAIT_LEN (60*HZ) /* how long to wait to sucessfully &n;&t;&t;&t;&t;  * close the socket, about 60 seconds&t;*/
 DECL|macro|TCP_ACK_TIME
 mdefine_line|#define TCP_ACK_TIME&t;3000&t;/* time to delay before sending an ACK&t;*/
 DECL|macro|TCP_DONE_TIME

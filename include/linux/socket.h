@@ -80,17 +80,19 @@ DECL|macro|MSG_OOB
 mdefine_line|#define MSG_OOB&t;&t;1
 DECL|macro|MSG_PEEK
 mdefine_line|#define MSG_PEEK&t;2
-multiline_comment|/* Setsockoptions(2) level. */
+multiline_comment|/* Setsockoptions(2) level. Thanks to BSD these must match IPPROTO_xxx */
 DECL|macro|SOL_SOCKET
 mdefine_line|#define SOL_SOCKET&t;1
 DECL|macro|SOL_IP
-mdefine_line|#define SOL_IP&t;&t;2
+mdefine_line|#define SOL_IP&t;&t;0
 DECL|macro|SOL_IPX
-mdefine_line|#define SOL_IPX&t;&t;3
+mdefine_line|#define SOL_IPX&t;&t;256
 DECL|macro|SOL_AX25
-mdefine_line|#define SOL_AX25&t;4
+mdefine_line|#define SOL_AX25&t;257
 DECL|macro|SOL_TCP
-mdefine_line|#define SOL_TCP&t;&t;5
+mdefine_line|#define SOL_TCP&t;&t;6
+DECL|macro|SOL_UDP
+mdefine_line|#define SOL_UDP&t;&t;17
 multiline_comment|/* For setsockoptions(2) */
 DECL|macro|SO_DEBUG
 mdefine_line|#define SO_DEBUG&t;1
@@ -135,11 +137,11 @@ mdefine_line|#define IPX_TYPE&t;1
 multiline_comment|/* AX.25 options */
 DECL|macro|AX25_WINDOW
 mdefine_line|#define AX25_WINDOW&t;1
-multiline_comment|/* TCP options */
-DECL|macro|TCP_MSS
-mdefine_line|#define TCP_MSS&t;&t;1
+multiline_comment|/* TCP options - this way around because someone left a set in the c library includes */
 DECL|macro|TCP_NODELAY
-mdefine_line|#define TCP_NODELAY&t;2
+mdefine_line|#define TCP_NODELAY&t;1
+DECL|macro|TCP_MAXSEG
+mdefine_line|#define TCP_MAXSEG&t;2
 multiline_comment|/* The various priorities. */
 DECL|macro|SOPRI_INTERACTIVE
 mdefine_line|#define SOPRI_INTERACTIVE&t;0

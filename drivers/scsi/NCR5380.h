@@ -1,10 +1,10 @@
-multiline_comment|/* &n; * NCR 5380 defines&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing&n; *&t;(Unix consulting and custom programming)&n; * &t;drew@colorado.edu&n; *      +1 (303) 440-4894&n; *&n; * DISTRIBUTION RELEASE 3&n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
-multiline_comment|/*&n; * $Log: NCR5380.h,v $&n; */
+multiline_comment|/* &n; * NCR 5380 defines&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing&n; *&t;(Unix consulting and custom programming)&n; * &t;drew@colorado.edu&n; *      +1 (303) 666-5836&n; *&n; * DISTRIBUTION RELEASE 4&n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
+multiline_comment|/*&n; * $Log: NCR5380.h,v $&n; * Revision 1.3  1994/01/19  05:24:40  drew&n; * Added support for TCR LAST_BYTE_SENT bit.&n; *&n; * Revision 1.3  1994/01/19  05:24:40  drew&n; * Added support for TCR LAST_BYTE_SENT bit.&n; *&n; * Revision 1.2  1994/01/15  06:14:11  drew&n; * REAL DMA support, bug fixes.&n; *&n; * Revision 1.1  1994/01/15  06:00:54  drew&n; * Initial revision&n; */
 macro_line|#ifndef NCR5380_H
 DECL|macro|NCR5380_H
 mdefine_line|#define NCR5380_H
 DECL|macro|NCR5380_PUBLIC_RELEASE
-mdefine_line|#define NCR5380_PUBLIC_RELEASE 3
+mdefine_line|#define NCR5380_PUBLIC_RELEASE 4
 DECL|macro|NDEBUG_ARBITRATION
 mdefine_line|#define NDEBUG_ARBITRATION&t;0x1
 DECL|macro|NDEBUG_AUTOSENSE
@@ -39,6 +39,8 @@ DECL|macro|NDEBUG_SELECTION
 mdefine_line|#define NDEBUG_SELECTION&t;0x8000
 DECL|macro|NDEBUG_USLEEP
 mdefine_line|#define NDEBUG_USLEEP&t;&t;0x10000
+DECL|macro|NDEBUG_LAST_BYTE_SENT
+mdefine_line|#define NDEBUG_LAST_BYTE_SENT&t;0x20000
 multiline_comment|/* &n; * The contents of the OUTPUT DATA register are asserted on the bus when&n; * either arbitration is occuring or the phase-indicating signals (&n; * IO, CD, MSG) in the TARGET COMMAND register and the ASSERT DATA&n; * bit in the INTITIATOR COMMAND register is set.&n; */
 DECL|macro|OUTPUT_DATA_REG
 mdefine_line|#define OUTPUT_DATA_REG         0       /* wo DATA lines on SCSI bus */
@@ -155,8 +157,8 @@ multiline_comment|/* Write any value to this register to start a DMA send */
 DECL|macro|START_DMA_SEND_REG
 mdefine_line|#define START_DMA_SEND_REG&t;5&t;/* wo */
 multiline_comment|/* &n; * Used in DMA transfer mode, data is latched from the SCSI bus on&n; * the falling edge of REQ (ini) or ACK (tgt)&n; */
-DECL|macro|INPUT_DATA_REGISTER
-mdefine_line|#define INPUT_DATA_REGISTER&t;6&t;/* ro */
+DECL|macro|INPUT_DATA_REG
+mdefine_line|#define INPUT_DATA_REG&t;&t;&t;6&t;/* ro */
 multiline_comment|/* Write any value to this register to start a DMA recieve */
 DECL|macro|START_DMA_TARGET_RECIEVE_REG
 mdefine_line|#define START_DMA_TARGET_RECIEVE_REG&t;6&t;/* wo */
@@ -198,11 +200,19 @@ DECL|macro|TAG_NEXT
 mdefine_line|#define TAG_NEXT&t;-1 &t;/* Use next free tag */
 DECL|macro|TAG_NONE
 mdefine_line|#define TAG_NONE&t;-2&t;/* &n;&t;&t;&t;&t; * Establish I_T_L nexus instead of I_T_L_Q&n;&t;&t;&t;&t; * even on SCSI-II devices.&n;&t;&t;&t;&t; */
-multiline_comment|/*&n; * These are &quot;special&quot; values for the irq field of the instance structure&n; * and returns from NCR5380_probe_irq.&n; */
+multiline_comment|/*&n; * These are &quot;special&quot; values for the irq and dma_channel fields of the &n; * Scsi_Host structure&n; */
 DECL|macro|IRQ_NONE
 mdefine_line|#define IRQ_NONE&t;255
+DECL|macro|DMA_NONE
+mdefine_line|#define DMA_NONE&t;255
 DECL|macro|IRQ_AUTO
 mdefine_line|#define IRQ_AUTO&t;254
+DECL|macro|DMA_AUTO
+mdefine_line|#define DMA_AUTO&t;254
+DECL|macro|FLAG_HAS_LAST_BYTE_SENT
+mdefine_line|#define FLAG_HAS_LAST_BYTE_SENT&t;&t;1&t;/* NCR53c81 or better */
+DECL|macro|FLAG_CHECK_LAST_BYTE_SENT
+mdefine_line|#define FLAG_CHECK_LAST_BYTE_SENT&t;2&t;/* Only test once */
 macro_line|#ifndef ASM
 DECL|struct|NCR5380_hostdata
 r_struct
@@ -231,7 +241,7 @@ l_int|8
 )braket
 suffix:semicolon
 multiline_comment|/* index = target, bit = lun */
-macro_line|#ifdef REAL_DMA
+macro_line|#if defined(REAL_DMA) || defined(REAL_DMA_POLL)
 DECL|member|dma_len
 r_volatile
 r_int
@@ -267,6 +277,10 @@ op_star
 id|disconnected_queue
 suffix:semicolon
 multiline_comment|/* waiting for reconnect */
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
 macro_line|#ifdef USLEEP
 DECL|member|time_expires
 r_int
@@ -374,6 +388,7 @@ id|NCR5380_reset
 (paren
 id|Scsi_Cmnd
 op_star
+id|cmd
 )paren
 suffix:semicolon
 macro_line|#ifndef NCR5380_queue_command
@@ -424,7 +439,7 @@ r_int
 id|tag
 )paren
 suffix:semicolon
-macro_line|#if defined(PSEUDO_DMA) || defined(REAL_DMA)
+macro_line|#if defined(PSEUDO_DMA) || defined(REAL_DMA) || defined(REAL_DMA_POLL)
 r_static
 r_int
 id|NCR5380_transfer_dma
@@ -476,6 +491,316 @@ op_star
 id|data
 )paren
 suffix:semicolon
+macro_line|#if (defined(REAL_DMA) || defined(REAL_DMA_POLL)) &amp;&amp; defined(i386)
+DECL|function|NCR5380_i386_dma_setup
+r_static
+id|__inline__
+r_int
+id|NCR5380_i386_dma_setup
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|instance
+comma
+r_int
+r_char
+op_star
+id|ptr
+comma
+r_int
+r_int
+id|count
+comma
+r_int
+r_char
+id|mode
+)paren
+(brace
+r_int
+id|limit
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|instance-&gt;dma_channel
+op_le
+l_int|3
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|count
+OG
+l_int|65536
+)paren
+id|count
+op_assign
+l_int|65536
+suffix:semicolon
+id|limit
+op_assign
+l_int|65536
+op_minus
+(paren
+(paren
+(paren
+r_int
+)paren
+id|ptr
+)paren
+op_amp
+l_int|0xFFFF
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|count
+OG
+l_int|65536
+op_star
+l_int|2
+)paren
+id|count
+op_assign
+l_int|65536
+op_star
+l_int|2
+suffix:semicolon
+id|limit
+op_assign
+l_int|65536
+op_star
+l_int|2
+op_minus
+(paren
+(paren
+(paren
+r_int
+)paren
+id|ptr
+)paren
+op_amp
+l_int|0x1FFFF
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|count
+OG
+id|limit
+)paren
+id|count
+op_assign
+id|limit
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|count
+op_amp
+l_int|1
+)paren
+op_logical_or
+(paren
+(paren
+(paren
+r_int
+)paren
+id|ptr
+)paren
+op_amp
+l_int|1
+)paren
+)paren
+id|panic
+(paren
+l_string|&quot;scsi%d : attmpted unaligned DMA transfer&bslash;n&quot;
+comma
+id|instance-&gt;host_no
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|disable_dma
+c_func
+(paren
+id|instance-&gt;dma_channel
+)paren
+suffix:semicolon
+id|clear_dma_ff
+c_func
+(paren
+id|instance-&gt;dma_channel
+)paren
+suffix:semicolon
+id|set_dma_addr
+c_func
+(paren
+id|instance-&gt;dma_channel
+comma
+(paren
+r_int
+r_int
+)paren
+id|ptr
+)paren
+suffix:semicolon
+id|set_dma_count
+c_func
+(paren
+id|instance-&gt;dma_channel
+comma
+id|count
+)paren
+suffix:semicolon
+id|set_dma_mode
+c_func
+(paren
+id|instance-&gt;dma_channel
+comma
+id|mode
+)paren
+suffix:semicolon
+id|enable_dma
+c_func
+(paren
+id|instance-&gt;dma_channel
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|count
+suffix:semicolon
+)brace
+DECL|function|NCR5380_i386_dma_write_setup
+r_static
+id|__inline__
+r_int
+id|NCR5380_i386_dma_write_setup
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|instance
+comma
+r_int
+r_char
+op_star
+id|src
+comma
+r_int
+r_int
+id|count
+)paren
+(brace
+r_return
+id|NCR5380_i386_dma_setup
+(paren
+id|instance
+comma
+id|src
+comma
+id|count
+comma
+id|DMA_MODE_WRITE
+)paren
+suffix:semicolon
+)brace
+DECL|function|NCR5380_i386_dma_read_setup
+r_static
+id|__inline__
+r_int
+id|NCR5380_i386_dma_read_setup
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|instance
+comma
+r_int
+r_char
+op_star
+id|src
+comma
+r_int
+r_int
+id|count
+)paren
+(brace
+r_return
+id|NCR5380_i386_dma_setup
+(paren
+id|instance
+comma
+id|src
+comma
+id|count
+comma
+id|DMA_MODE_READ
+)paren
+suffix:semicolon
+)brace
+DECL|function|NCR5380_i386_dma_residual
+r_static
+id|__inline__
+r_int
+id|NCR5380_i386_dma_residual
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|instance
+)paren
+(brace
+r_register
+r_int
+id|tmp
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|clear_dma_ff
+c_func
+(paren
+id|instance-&gt;dma_channel
+)paren
+suffix:semicolon
+id|tmp
+op_assign
+id|get_dma_residue
+c_func
+(paren
+id|instance-&gt;dma_channel
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|tmp
+suffix:semicolon
+)brace
+macro_line|#endif /* defined(REAL_DMA) &amp;&amp; defined(i386)  */
 macro_line|#endif __KERNEL_
 macro_line|#endif /* ndef ASM */
 macro_line|#endif /* NCR5380_H */

@@ -3688,6 +3688,7 @@ op_div
 id|s
 suffix:semicolon
 multiline_comment|/* Ignore partial cylinders */
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -3705,6 +3706,7 @@ l_int|2
 op_assign
 l_int|1024
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

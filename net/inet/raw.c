@@ -705,11 +705,6 @@ suffix:semicolon
 )brace
 id|skb
 op_assign
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
 id|sk-&gt;prot
 op_member_access_from_pointer
 id|wmalloc

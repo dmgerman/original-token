@@ -802,6 +802,10 @@ id|rt-&gt;rt_mask
 op_assign
 id|mask
 suffix:semicolon
+id|rt-&gt;rt_mtu
+op_assign
+id|dev-&gt;mtu
+suffix:semicolon
 id|rt_print
 c_func
 (paren

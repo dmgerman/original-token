@@ -309,13 +309,15 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Pid: %d, process nr: %d&bslash;n&quot;
+l_string|&quot;Pid: %d, process nr: %d (%s)&bslash;n&quot;
 comma
 id|current-&gt;pid
 comma
 l_int|0xffff
 op_amp
 id|i
+comma
+id|current-&gt;comm
 )paren
 suffix:semicolon
 r_for

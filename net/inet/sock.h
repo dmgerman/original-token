@@ -515,7 +515,8 @@ r_struct
 id|proto
 (brace
 DECL|member|wmalloc
-r_void
+r_struct
+id|sk_buff
 op_star
 (paren
 op_star
@@ -539,7 +540,8 @@ id|priority
 )paren
 suffix:semicolon
 DECL|member|rmalloc
-r_void
+r_struct
+id|sk_buff
 op_star
 (paren
 op_star
@@ -1127,6 +1129,8 @@ DECL|macro|TIME_DESTROY
 mdefine_line|#define TIME_DESTROY&t;4
 DECL|macro|TIME_DONE
 mdefine_line|#define TIME_DONE&t;5&t;/* used to absorb those last few packets */
+DECL|macro|TIME_PROBE0
+mdefine_line|#define TIME_PROBE0&t;6
 DECL|macro|SOCK_DESTROY_TIME
 mdefine_line|#define SOCK_DESTROY_TIME 1000&t;/* about 10 seconds&t;&t;&t;*/
 DECL|macro|PROT_SOCK
@@ -1221,7 +1225,8 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_struct
+id|sk_buff
 op_star
 id|sock_wmalloc
 c_func
@@ -1243,7 +1248,8 @@ id|priority
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_struct
+id|sk_buff
 op_star
 id|sock_rmalloc
 c_func

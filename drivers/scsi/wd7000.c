@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: $&n; *  linux/kernel/wd7000.c&n; *&n; *  Copyright (C) 1992  Thomas Wuensche&n; *&t;closely related to the aha1542 driver from Tommy Thorn&n; *&t;( as close as different hardware allows on a lowlevel-driver :-) )&n; *&n; *  Revised (and renamed) by John Boyd &lt;boyd@cis.ohio-state.edu&gt; to&n; *  accomodate Eric Youngdale&squot;s modifications to scsi.c.  Nov 1992.&n; *&n; *  Additional changes to support scatter/gather.  Dec. 1992.  tw/jb&n; */
+multiline_comment|/* $Id: wd7000.c,v 1.2 1994/01/15 06:02:32 drew Exp $&n; *  linux/kernel/wd7000.c&n; *&n; *  Copyright (C) 1992  Thomas Wuensche&n; *&t;closely related to the aha1542 driver from Tommy Thorn&n; *&t;( as close as different hardware allows on a lowlevel-driver :-) )&n; *&n; *  Revised (and renamed) by John Boyd &lt;boyd@cis.ohio-state.edu&gt; to&n; *  accomodate Eric Youngdale&squot;s modifications to scsi.c.  Nov 1992.&n; *&n; *  Additional changes to support scatter/gather.  Dec. 1992.  tw/jb&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -2038,6 +2038,12 @@ r_char
 op_star
 )paren
 l_int|0xce000
+comma
+(paren
+r_char
+op_star
+)paren
+id|d8000
 )brace
 suffix:semicolon
 r_typedef

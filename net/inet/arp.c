@@ -2216,6 +2216,10 @@ id|dst
 )paren
 op_ne
 id|IS_MYADDR
+op_logical_and
+id|arp_proxies
+op_eq
+l_int|0
 )paren
 (brace
 id|kfree_skb
@@ -3464,6 +3468,10 @@ id|apt-&gt;ha
 comma
 id|apt-&gt;hlen
 )paren
+suffix:semicolon
+id|req-&gt;arp_flags
+op_assign
+id|apt-&gt;flags
 suffix:semicolon
 )brace
 id|pos

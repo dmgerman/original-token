@@ -6575,7 +6575,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
+r_struct
+id|sk_buff
 op_star
 DECL|function|sock_wmalloc
 id|sock_wmalloc
@@ -6671,7 +6672,8 @@ id|priority
 )paren
 suffix:semicolon
 )brace
-r_void
+r_struct
+id|sk_buff
 op_star
 DECL|function|sock_rmalloc
 id|sock_rmalloc

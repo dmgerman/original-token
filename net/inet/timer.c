@@ -388,6 +388,22 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|TIME_PROBE0
+suffix:colon
+id|tcp_send_probe0
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+id|release_sock
+(paren
+id|sk
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|TIME_WRITE
 suffix:colon
 multiline_comment|/* try to retransmit. */

@@ -3687,6 +3687,7 @@ l_int|1
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* 1542C returns 0x44, 1542CF returns 0x45 */
 r_if
 c_cond
 (paren
@@ -3696,6 +3697,13 @@ l_int|0
 )braket
 op_eq
 l_int|0x44
+op_logical_or
+id|inquiry_result
+(braket
+l_int|0
+)braket
+op_eq
+l_int|0x45
 )paren
 (brace
 multiline_comment|/* Detect 1542C  */
