@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: oldproc.c,v 1.13 1998/05/07 20:49:50 davem Exp $&n; *&n; *&t;Backward-compatible procfs interface for PCI.&n; *&n; *&t;Copyright 1993, 1994, 1995, 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
+multiline_comment|/*&n; *&t;$Id: oldproc.c,v 1.16 1998/07/19 17:50:18 davem Exp $&n; *&n; *&t;Backward-compatible procfs interface for PCI.&n; *&n; *&t;Copyright 1993, 1994, 1995, 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2248,6 +2248,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|MADGE
+comma
+id|MADGE_C155S
+comma
+l_string|&quot;Collage 155 Server&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 l_int|3
 id|COM
 comma
@@ -4047,6 +4057,16 @@ comma
 id|ENSONIQ_AUDIOPCI
 comma
 l_string|&quot;AudioPCI&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ALTEON
+comma
+id|ALTEON_ACENIC
+comma
+l_string|&quot;AceNIC&quot;
 )paren
 comma
 id|DEVICE
@@ -6131,6 +6151,12 @@ r_return
 l_string|&quot;Cyclades&quot;
 suffix:semicolon
 r_case
+id|PCI_VENDOR_ID_ESSENTIAL
+suffix:colon
+r_return
+l_string|&quot;Essential Communications&quot;
+suffix:semicolon
+r_case
 id|PCI_VENDOR_ID_O2
 suffix:colon
 r_return
@@ -6189,6 +6215,12 @@ id|PCI_VENDOR_ID_ENSONIQ
 suffix:colon
 r_return
 l_string|&quot;Ensoniq&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_ALTEON
+suffix:colon
+r_return
+l_string|&quot;Alteon&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_PICTUREL

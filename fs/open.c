@@ -2963,6 +2963,10 @@ id|inode
 suffix:semicolon
 id|cleanup_dentry
 suffix:colon
+id|f-&gt;f_dentry
+op_assign
+l_int|NULL
+suffix:semicolon
 id|dput
 c_func
 (paren

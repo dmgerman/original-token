@@ -4,7 +4,7 @@ mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
-macro_line|#include &lt;asm/smp_lock.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n;&t;modprobe_path is set via /proc/sys.&n;*/
 DECL|variable|modprobe_path

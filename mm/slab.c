@@ -9,7 +9,6 @@ macro_line|#include&t;&lt;linux/init.h&gt;
 macro_line|#include&t;&lt;linux/smp.h&gt;
 macro_line|#include&t;&lt;asm/system.h&gt;
 macro_line|#include&t;&lt;asm/atomic.h&gt;
-macro_line|#include&t;&lt;asm/smp_lock.h&gt;
 macro_line|#include&t;&lt;asm/spinlock.h&gt;
 multiline_comment|/* If there is a different PAGE_SIZE around, and it works with this allocator,&n; * then change the following.&n; */
 macro_line|#if&t;(PAGE_SIZE != 8192 &amp;&amp; PAGE_SIZE != 4096)

@@ -20,6 +20,7 @@ DECL|macro|MTRR_NEED_STRINGS
 mdefine_line|#define MTRR_NEED_STRINGS
 macro_line|#include &lt;asm/mtrr.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -27,9 +28,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/smp_lock.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
 DECL|macro|MTRR_VERSION
 mdefine_line|#define MTRR_VERSION            &quot;1.22 (19980611)&quot;
 DECL|macro|TRUE

@@ -114,6 +114,11 @@ id|pid_t
 id|_pid
 suffix:semicolon
 multiline_comment|/* which child */
+DECL|member|_uid
+id|uid_t
+id|_uid
+suffix:semicolon
+multiline_comment|/* sender&squot;s uid */
 DECL|member|_status
 r_int
 id|_status

@@ -7,7 +7,6 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-multiline_comment|/* #include &lt;asm/smp_lock.h&gt; */
 multiline_comment|/* kernel_thread */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__

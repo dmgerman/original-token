@@ -2749,7 +2749,7 @@ c_func
 op_amp
 id|fb_con
 comma
-l_int|12
+l_int|0
 comma
 id|MAX_NR_CONSOLES
 op_minus

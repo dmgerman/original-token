@@ -13244,6 +13244,10 @@ c_cond
 (paren
 id|org
 op_eq
+(paren
+id|u16
+op_star
+)paren
 id|pos
 op_logical_and
 id|softcursor_original
@@ -13291,6 +13295,10 @@ c_cond
 (paren
 id|org
 op_eq
+(paren
+id|u16
+op_star
+)paren
 id|pos
 )paren
 (brace

@@ -1530,9 +1530,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|lock_depth
-suffix:semicolon
 r_struct
 id|task_struct
 op_star
@@ -1554,10 +1551,7 @@ id|current
 suffix:semicolon
 id|this_cpu
 op_assign
-id|smp_processor_id
-c_func
-(paren
-)paren
+id|prev-&gt;processor
 suffix:semicolon
 r_if
 c_cond
@@ -1576,8 +1570,6 @@ c_func
 id|prev
 comma
 id|this_cpu
-comma
-id|lock_depth
 )paren
 suffix:semicolon
 r_if
@@ -1607,6 +1599,10 @@ id|runqueue_lock
 )paren
 suffix:semicolon
 multiline_comment|/* move an exhausted RR process to be last.. */
+id|prev-&gt;need_resched
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1929,21 +1925,10 @@ id|scheduler_lock
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * At this point &quot;prev&quot; is &quot;current&quot;, as we just&n;&t; * switched into it (from an even more &quot;previous&quot;&n;&t; * prev)&n;&t; */
-id|prev-&gt;need_resched
-op_assign
-l_int|0
-suffix:semicolon
 id|reacquire_kernel_lock
 c_func
 (paren
 id|prev
-comma
-id|smp_processor_id
-c_func
-(paren
-)paren
-comma
-id|lock_depth
 )paren
 suffix:semicolon
 r_return
