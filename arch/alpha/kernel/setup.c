@@ -44,6 +44,11 @@ r_int
 r_int
 id|srm_hae
 suffix:semicolon
+multiline_comment|/* Which processor we booted from.  */
+DECL|variable|boot_cpuid
+r_int
+id|boot_cpuid
+suffix:semicolon
 macro_line|#ifdef CONFIG_ALPHA_GENERIC
 DECL|variable|alpha_mv
 r_struct
@@ -1241,6 +1246,13 @@ id|__va
 c_func
 (paren
 id|INIT_HWRPB-&gt;phys_addr
+)paren
+suffix:semicolon
+id|boot_cpuid
+op_assign
+id|hard_smp_processor_id
+c_func
+(paren
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * Locate the command line.&n;&t; */

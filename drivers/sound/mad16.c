@@ -20,7 +20,6 @@ r_int
 id|mad16_cdsel
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_MAD16
 macro_line|#include &quot;sb.h&quot;
 DECL|variable|already_initialized
 r_static
@@ -2752,7 +2751,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_MAD16_OLDCARD)
+macro_line|#ifdef CONFIG_MAD16_OLDCARD
 r_if
 c_cond
 (paren
@@ -2820,7 +2819,6 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 r_static
 r_int
 id|mpu_attached
@@ -2899,7 +2897,7 @@ id|C929
 )paren
 multiline_comment|/* Early chip. No MPU support. Just SB MIDI */
 (brace
-macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_MAD16_OLDCARD)
+macro_line|#ifdef CONFIG_MAD16_OLDCARD
 r_int
 r_char
 id|tmp
@@ -3320,11 +3318,6 @@ c_func
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#else
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|unload_mad16
 r_void
@@ -3382,7 +3375,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_MAD16_OLDCARD)
+macro_line|#ifdef CONFIG_MAD16_OLDCARD
 r_if
 c_cond
 (paren
@@ -3404,14 +3397,12 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 id|unload_uart401
 c_func
 (paren
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#ifdef MODULE
 DECL|variable|mpu_io
@@ -4333,7 +4324,5 @@ suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif
-multiline_comment|/* That&squot;s all folks */
-macro_line|#endif
+macro_line|#endif /* MODULE */
 eof

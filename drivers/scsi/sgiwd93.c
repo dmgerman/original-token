@@ -1,19 +1,19 @@
-multiline_comment|/*&n; * sgiwd93.c: SGI WD93 scsi driver.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * (In all truth, Jed Schimmel wrote all this code.)&n; *&n; * $Id: sgiwd93.c,v 1.13 1999/03/28 23:06:06 tsbogend Exp $&n; */
+multiline_comment|/*&n; * sgiwd93.c: SGI WD93 scsi driver.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&t;&t; 1999 Andrew R. Baker (andrewb@uab.edu)&n; *&t;&t;      - Support for 2nd SCSI controller on Indigo2&n; * &n; * (In all truth, Jed Schimmel wrote all this code.)&n; *&n; * $Id: sgiwd93.c,v 1.20 2000/02/21 15:05:48 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/sgi.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
-macro_line|#include &lt;asm/sgimc.h&gt;
-macro_line|#include &lt;asm/sgihpc.h&gt;
-macro_line|#include &lt;asm/sgint23.h&gt;
+macro_line|#include &lt;asm/sgi/sgi.h&gt;
+macro_line|#include &lt;asm/sgi/sgimc.h&gt;
+macro_line|#include &lt;asm/sgi/sgihpc.h&gt;
+macro_line|#include &lt;asm/sgi/sgint23.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
@@ -41,6 +41,14 @@ r_struct
 id|Scsi_Host
 op_star
 id|sgiwd93_host
+op_assign
+l_int|NULL
+suffix:semicolon
+DECL|variable|sgiwd93_host1
+r_struct
+id|Scsi_Host
+op_star
+id|sgiwd93_host1
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -199,7 +207,12 @@ suffix:semicolon
 id|wd33c93_intr
 c_func
 (paren
-id|sgiwd93_host
+(paren
+r_struct
+id|Scsi_Host
+op_star
+)paren
+id|dev_id
 )paren
 suffix:semicolon
 id|spin_unlock_irqrestore
@@ -887,7 +900,9 @@ r_void
 id|sgiwd93_reset
 c_func
 (paren
-r_void
+id|uchar
+op_star
+id|base
 )paren
 (brace
 r_struct
@@ -895,8 +910,12 @@ id|hpc3_scsiregs
 op_star
 id|hregs
 op_assign
-op_amp
-id|hpc3c0-&gt;scsi_chan0
+(paren
+r_struct
+id|hpc3_scsiregs
+op_star
+)paren
+id|base
 suffix:semicolon
 id|hregs-&gt;ctrl
 op_assign
@@ -1032,9 +1051,22 @@ op_amp
 id|hpc3c0-&gt;scsi_chan0
 suffix:semicolon
 r_struct
+id|hpc3_scsiregs
+op_star
+id|hregs1
+op_assign
+op_amp
+id|hpc3c0-&gt;scsi_chan1
+suffix:semicolon
+r_struct
 id|WD33C93_hostdata
 op_star
 id|hdata
+suffix:semicolon
+r_struct
+id|WD33C93_hostdata
+op_star
+id|hdata1
 suffix:semicolon
 id|uchar
 op_star
@@ -1080,7 +1112,7 @@ id|hregs
 suffix:semicolon
 id|sgiwd93_host-&gt;irq
 op_assign
-l_int|1
+id|SGI_WD93_0_IRQ
 suffix:semicolon
 id|buf
 op_assign
@@ -1112,6 +1144,7 @@ comma
 id|PAGE_SIZE
 )paren
 suffix:semicolon
+multiline_comment|/* HPC_SCSI_REG0 | 0x03 | KSEG1 */
 id|wd33c93_init
 c_func
 (paren
@@ -1172,7 +1205,7 @@ suffix:semicolon
 id|request_irq
 c_func
 (paren
-l_int|1
+id|SGI_WD93_0_IRQ
 comma
 id|sgiwd93_intr
 comma
@@ -1187,6 +1220,148 @@ op_star
 id|sgiwd93_host
 )paren
 suffix:semicolon
+multiline_comment|/* set up second controller on the Indigo2 */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sgi_guiness
+)paren
+(brace
+id|sgiwd93_host1
+op_assign
+id|scsi_register
+c_func
+(paren
+id|SGIblows
+comma
+r_sizeof
+(paren
+r_struct
+id|WD33C93_hostdata
+)paren
+)paren
+suffix:semicolon
+id|sgiwd93_host1-&gt;base
+op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
+id|hregs1
+suffix:semicolon
+id|sgiwd93_host1-&gt;irq
+op_assign
+id|SGI_WD93_1_IRQ
+suffix:semicolon
+id|buf
+op_assign
+(paren
+id|uchar
+op_star
+)paren
+id|get_free_page
+c_func
+(paren
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+id|init_hpc_chain
+c_func
+(paren
+id|buf
+)paren
+suffix:semicolon
+id|dma_cache_wback_inv
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|buf
+comma
+id|PAGE_SIZE
+)paren
+suffix:semicolon
+multiline_comment|/* HPC_SCSI_REG1 | 0x03 | KSEG1 */
+id|wd33c93_init
+c_func
+(paren
+id|sgiwd93_host1
+comma
+(paren
+id|wd33c93_regs
+op_star
+)paren
+l_int|0xbfbc8003
+comma
+id|dma_setup
+comma
+id|dma_stop
+comma
+id|WD33C93_FS_16_20
+)paren
+suffix:semicolon
+id|hdata1
+op_assign
+(paren
+r_struct
+id|WD33C93_hostdata
+op_star
+)paren
+id|sgiwd93_host1-&gt;hostdata
+suffix:semicolon
+id|hdata1-&gt;no_sync
+op_assign
+l_int|0
+suffix:semicolon
+id|hdata1-&gt;dma_bounce_buffer
+op_assign
+(paren
+id|uchar
+op_star
+)paren
+(paren
+id|KSEG1ADDR
+c_func
+(paren
+id|buf
+)paren
+)paren
+suffix:semicolon
+id|dma_cache_wback_inv
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|buf
+comma
+id|PAGE_SIZE
+)paren
+suffix:semicolon
+id|request_irq
+c_func
+(paren
+id|SGI_WD93_1_IRQ
+comma
+id|sgiwd93_intr
+comma
+l_int|0
+comma
+l_string|&quot;SGI WD93&quot;
+comma
+(paren
+r_void
+op_star
+)paren
+id|sgiwd93_host1
+)paren
+suffix:semicolon
+)brace
 id|called
 op_assign
 l_int|1
@@ -1223,7 +1398,7 @@ macro_line|#ifdef MODULE
 id|free_irq
 c_func
 (paren
-l_int|1
+id|SGI_WD93_0_IRQ
 comma
 id|sgiwd93_intr
 )paren
@@ -1243,6 +1418,37 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sgi_guiness
+)paren
+(brace
+id|free_irq
+c_func
+(paren
+id|SGI_WD93_1_IRQ
+comma
+id|sgiwd93_intr
+)paren
+suffix:semicolon
+id|free_page
+c_func
+(paren
+id|KSEG0ADDR
+c_func
+(paren
+id|hdata1-&gt;dma_bounce_buffer
+)paren
+)paren
+suffix:semicolon
+id|wd33c93_release
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif
 r_return
 l_int|1

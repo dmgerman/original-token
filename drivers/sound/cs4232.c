@@ -467,7 +467,6 @@ l_int|10
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Initialize logical device 3 (MPU)&n;&t;&t; */
-macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 r_if
 c_cond
 (paren
@@ -527,7 +526,6 @@ l_int|0x01
 suffix:semicolon
 multiline_comment|/* Activate logical dev 3 */
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -740,7 +738,6 @@ id|SOUND_MIXER_SYNTH
 suffix:semicolon
 multiline_comment|/* FM synth */
 )brace
-macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 r_if
 c_cond
 (paren
@@ -844,7 +841,6 @@ l_int|1
 )braket
 suffix:semicolon
 )brace
-macro_line|#endif
 )brace
 DECL|function|unload_cs4232
 r_void
@@ -912,7 +908,6 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 r_if
 c_cond
 (paren
@@ -993,7 +988,6 @@ id|hw_config2
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 )brace
 DECL|function|unload_cs4232_mpu
 r_void
@@ -1361,5 +1355,5 @@ multiline_comment|/* unloads MPU as well, if needed */
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* MODULE */
 eof

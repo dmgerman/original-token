@@ -1,5 +1,6 @@
-multiline_comment|/*&n; * identify.c: machine identification code.&n; *&n; * Copyright (C) 1998 Harald Koerfgen and Paul M. Antoine&n; *&n; * $Id: $&n; */
+multiline_comment|/*&n; * identify.c: machine identification code.&n; *&n; * Copyright (C) 1998 Harald Koerfgen and Paul M. Antoine&n; *&n; * $Id: identify.c,v 1.2 1999/10/09 00:00:58 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;

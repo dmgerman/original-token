@@ -24,6 +24,9 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &quot;soundmodule.h&quot;
+multiline_comment|/* From obsolete legacy.h */
+DECL|macro|SELECTED_SOUND_OPTIONS
+mdefine_line|#define SELECTED_SOUND_OPTIONS 0x0
 DECL|variable|sound_locker
 r_struct
 id|notifier_block
@@ -994,20 +997,6 @@ comma
 l_string|&quot;&bslash;n&bslash;n***** Sound driver not started *****&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_AUDIO
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-op_plus
-id|len
-comma
-l_string|&quot;&bslash;nAudio devices: NOT ENABLED IN CONFIG&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#else
 id|len
 op_add_assign
 id|sprintf
@@ -1116,21 +1105,6 @@ id|pos
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
-macro_line|#ifndef CONFIG_SEQUENCER
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-op_plus
-id|len
-comma
-l_string|&quot;&bslash;nSynth devices: NOT ENABLED IN CONFIG&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#else
 id|len
 op_add_assign
 id|sprintf
@@ -1225,21 +1199,6 @@ id|pos
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
-macro_line|#ifndef CONFIG_MIDI
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-op_plus
-id|len
-comma
-l_string|&quot;&bslash;nMidi devices: NOT ENABLED IN CONFIG&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#else
 id|len
 op_add_assign
 id|sprintf
@@ -1334,8 +1293,6 @@ id|pos
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
-macro_line|#ifdef CONFIG_SEQUENCER
 id|len
 op_add_assign
 id|sprintf
@@ -1430,7 +1387,6 @@ id|pos
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 id|len
 op_add_assign
 id|sprintf
@@ -1916,7 +1872,6 @@ id|ppos
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -1942,8 +1897,6 @@ id|count
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SEQUENCER
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -1966,8 +1919,6 @@ id|count
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MIDI
 r_case
 id|SND_DEV_MIDIN
 suffix:colon
@@ -1985,7 +1936,6 @@ comma
 id|count
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 id|unlock_kernel
 c_func
@@ -2062,7 +2012,6 @@ op_amp
 l_int|0x0f
 )paren
 (brace
-macro_line|#ifdef CONFIG_SEQUENCER
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -2085,8 +2034,6 @@ id|count
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -2112,8 +2059,6 @@ id|count
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MIDI
 r_case
 id|SND_DEV_MIDIN
 suffix:colon
@@ -2133,7 +2078,6 @@ id|count
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
 )brace
 id|unlock_kernel
 c_func
@@ -2352,7 +2296,6 @@ id|ENXIO
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_SEQUENCER
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -2381,8 +2324,6 @@ id|retval
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MIDI
 r_case
 id|SND_DEV_MIDIN
 suffix:colon
@@ -2408,8 +2349,6 @@ id|retval
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -2441,7 +2380,6 @@ id|retval
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
 r_default
 suffix:colon
 id|printk
@@ -2535,7 +2473,6 @@ id|SND_DEV_CTL
 suffix:colon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_SEQUENCER
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -2552,8 +2489,6 @@ id|file
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MIDI
 r_case
 id|SND_DEV_MIDIN
 suffix:colon
@@ -2567,8 +2502,6 @@ id|file
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -2588,7 +2521,6 @@ id|file
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
 r_default
 suffix:colon
 id|printk
@@ -3213,7 +3145,6 @@ c_cond
 id|dtype
 )paren
 (brace
-macro_line|#ifdef CONFIG_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -3244,7 +3175,6 @@ id|caddr_t
 id|arg
 )paren
 suffix:semicolon
-macro_line|#endif
 r_default
 suffix:colon
 r_return
@@ -3326,7 +3256,6 @@ id|caddr_t
 id|arg
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SEQUENCER
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -3349,8 +3278,6 @@ id|caddr_t
 id|arg
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -3378,8 +3305,6 @@ id|arg
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MIDI
 r_case
 id|SND_DEV_MIDIN
 suffix:colon
@@ -3401,7 +3326,6 @@ id|arg
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
 )brace
 r_return
 op_minus
@@ -3461,7 +3385,6 @@ op_amp
 l_int|0x0f
 )paren
 (brace
-macro_line|#ifdef CONFIG_SEQUENCER
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -3479,8 +3402,6 @@ comma
 id|wait
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MIDI
 r_case
 id|SND_DEV_MIDIN
 suffix:colon
@@ -3495,8 +3416,6 @@ comma
 id|wait
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -3519,7 +3438,6 @@ comma
 id|wait
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_return
 l_int|0
@@ -3968,7 +3886,6 @@ id|dev_list
 op_assign
 (brace
 multiline_comment|/* list of minor devices */
-macro_line|#ifdef CONFIG_AUDIO
 multiline_comment|/* seems to be some confusion here -- this device is not in the device list */
 (brace
 id|SND_DEV_DSP16
@@ -4000,7 +3917,6 @@ op_amp
 id|num_audiodevs
 )brace
 comma
-macro_line|#endif /* CONFIG_AUDIO */
 )brace
 suffix:semicolon
 r_static
@@ -4300,7 +4216,6 @@ r_return
 suffix:semicolon
 multiline_comment|/* No cards detected */
 macro_line|#endif
-macro_line|#ifdef CONFIG_AUDIO
 r_if
 c_cond
 (paren
@@ -4316,7 +4231,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_FS
 r_if
 c_cond
@@ -4649,13 +4563,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SEQUENCER
 id|sound_stop_timer
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_LOWLEVEL_SOUND
 (brace
 r_extern
@@ -5008,7 +4920,6 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_SEQUENCER
 DECL|function|do_sequencer_timer
 r_static
 r_void
@@ -5138,7 +5049,6 @@ id|seq_timer
 suffix:semicolon
 suffix:semicolon
 )brace
-macro_line|#endif
 DECL|function|conf_printf
 r_void
 id|conf_printf

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mips_ksyms.c,v 1.19 1999/04/11 18:37:55 harald Exp $&n; *&n; * Export MIPS-specific functions needed for loadable modules.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: mips_ksyms.c,v 1.25 2000/02/24 00:12:40 ralf Exp $&n; *&n; * Export MIPS-specific functions needed for loadable modules.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -12,8 +12,8 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/floppy.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/sgihpc.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
+macro_line|#include &lt;asm/sgi/sgihpc.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern
@@ -80,6 +80,28 @@ suffix:semicolon
 r_extern
 r_int
 id|__strlen_user_asm
+c_func
+(paren
+r_const
+r_char
+op_star
+id|s
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|__strnlen_user_nocheck_asm
+c_func
+(paren
+r_const
+r_char
+op_star
+id|s
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|__strnlen_user_asm
 c_func
 (paren
 r_const
@@ -180,18 +202,11 @@ c_func
 id|strpbrk
 )paren
 suffix:semicolon
-DECL|variable|clear_page
+DECL|variable|_clear_page
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|clear_page
-)paren
-suffix:semicolon
-DECL|variable|__mips_bh_counter
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__mips_bh_counter
+id|_clear_page
 )paren
 suffix:semicolon
 DECL|variable|local_bh_count
@@ -272,6 +287,20 @@ c_func
 id|__strlen_user_asm
 )paren
 suffix:semicolon
+DECL|variable|__strnlen_user_nocheck_asm
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__strnlen_user_nocheck_asm
+)paren
+suffix:semicolon
+DECL|variable|__strnlen_user_asm
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__strnlen_user_asm
+)paren
+suffix:semicolon
 multiline_comment|/* Networking helper routines. */
 DECL|variable|csum_partial_copy
 id|EXPORT_SYMBOL
@@ -281,32 +310,32 @@ id|csum_partial_copy
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Functions to control caches.&n; */
-DECL|variable|flush_page_to_ram
+DECL|variable|_flush_page_to_ram
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|flush_page_to_ram
+id|_flush_page_to_ram
 )paren
 suffix:semicolon
-DECL|variable|flush_cache_all
+DECL|variable|_flush_cache_all
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|flush_cache_all
+id|_flush_cache_all
 )paren
 suffix:semicolon
-DECL|variable|dma_cache_wback_inv
+DECL|variable|_dma_cache_wback_inv
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|dma_cache_wback_inv
+id|_dma_cache_wback_inv
 )paren
 suffix:semicolon
-DECL|variable|dma_cache_inv
+DECL|variable|_dma_cache_inv
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|dma_cache_inv
+id|_dma_cache_inv
 )paren
 suffix:semicolon
 DECL|variable|invalid_pte_table
@@ -348,7 +377,7 @@ id|vdma_log2phys
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SGI
+macro_line|#ifdef CONFIG_SGI_IP22
 DECL|variable|hpc3c0
 id|EXPORT_SYMBOL
 c_func

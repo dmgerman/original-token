@@ -1,7 +1,12 @@
-multiline_comment|/*&n; * memory.c: memory initialisation code.&n; *&n; * Copyright (C) 1998 Harald Koerfgen, Frieder Streffer and Paul M. Antoine&n; *&n; * $Id: $&n; */
-macro_line|#include &lt;asm/addrspace.h&gt;
+multiline_comment|/*&n; * memory.c: memory initialisation code.&n; *&n; * Copyright (C) 1998 Harald Koerfgen, Frieder Streffer and Paul M. Antoine&n; *&n; * $Id: memory.c,v 1.4 2000/02/13 20:52:05 harald Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/bootmem.h&gt;
+macro_line|#include &lt;asm/addrspace.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/dec/machtype.h&gt;
 macro_line|#include &quot;prom.h&quot;
 r_typedef
 r_struct
@@ -52,11 +57,6 @@ dot
 )paren
 suffix:semicolon
 macro_line|#endif
-r_extern
-r_int
-r_int
-id|mips_memory_upper
-suffix:semicolon
 DECL|variable|mem_err
 r_volatile
 r_int
@@ -66,6 +66,14 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* So we know an error occured */
+r_extern
+r_char
+id|_end
+suffix:semicolon
+DECL|macro|PFN_UP
+mdefine_line|#define PFN_UP(x)&t;(((x) + PAGE_SIZE-1) &gt;&gt; PAGE_SHIFT)
+DECL|macro|PFN_ALIGN
+mdefine_line|#define PFN_ALIGN(x)&t;(((unsigned long)(x) + (PAGE_SIZE - 1)) &amp; PAGE_MASK)
 multiline_comment|/*&n; * Probe memory in 4MB chunks, waiting for an error to tell us we&squot;ve fallen&n; * off the end of real memory.  Only suitable for the 2100/3100&squot;s (PMAX).&n; */
 DECL|macro|CHUNK_SIZE
 mdefine_line|#define CHUNK_SIZE 0x400000
@@ -309,6 +317,22 @@ r_int
 id|magic
 )paren
 (brace
+r_int
+r_int
+id|free_start
+comma
+id|free_end
+comma
+id|start_pfn
+comma
+id|bootmap_size
+suffix:semicolon
+r_int
+r_int
+id|mem_size
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -316,52 +340,119 @@ id|magic
 op_ne
 id|REX_PROM_MAGIC
 )paren
-id|mips_memory_upper
+id|mem_size
 op_assign
-id|KSEG0
-op_plus
 id|pmax_get_memory_size
 c_func
 (paren
 )paren
 suffix:semicolon
 r_else
-id|mips_memory_upper
+id|mem_size
 op_assign
-id|KSEG0
-op_plus
 id|rex_get_memory_size
 c_func
 (paren
+)paren
+suffix:semicolon
+id|free_start
+op_assign
+id|PHYSADDR
+c_func
+(paren
+id|PFN_ALIGN
+c_func
+(paren
+op_amp
+id|_end
+)paren
+)paren
+suffix:semicolon
+id|free_end
+op_assign
+id|mem_size
+suffix:semicolon
+id|start_pfn
+op_assign
+id|PFN_UP
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|_end
 )paren
 suffix:semicolon
 macro_line|#ifdef PROM_DEBUG
 id|prom_printf
 c_func
 (paren
-l_string|&quot;mips_memory_upper: 0x%08x&bslash;n&quot;
+l_string|&quot;free_start: 0x%08x&bslash;n&quot;
 comma
-id|mips_memory_upper
+id|free_start
+)paren
+suffix:semicolon
+id|prom_printf
+c_func
+(paren
+l_string|&quot;free_end: 0x%08x&bslash;n&quot;
+comma
+id|free_end
+)paren
+suffix:semicolon
+id|prom_printf
+c_func
+(paren
+l_string|&quot;start_pfn: 0x%08x&bslash;n&quot;
+comma
+id|start_pfn
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* Register all the contiguous memory with the bootmem allocator&n;&t;   and free it.  Be careful about the bootmem freemap.  */
+id|bootmap_size
+op_assign
+id|init_bootmem
+c_func
+(paren
+id|start_pfn
+comma
+id|mem_size
+op_rshift
+id|PAGE_SHIFT
+)paren
+suffix:semicolon
+id|free_bootmem
+c_func
+(paren
+id|free_start
+op_plus
+id|bootmap_size
+comma
+id|free_end
+op_minus
+id|free_start
+op_minus
+id|bootmap_size
+)paren
+suffix:semicolon
 )brace
-multiline_comment|/* Called from mem_init() to fixup the mem_map page settings. */
-DECL|function|prom_fixup_mem_map
-r_void
+DECL|function|page_is_ram
+r_int
 id|__init
-id|prom_fixup_mem_map
+id|page_is_ram
 c_func
 (paren
 r_int
 r_int
-id|start
-comma
-r_int
-r_int
-id|end
+id|pagenr
 )paren
 (brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
 DECL|function|prom_free_prom_memory
 r_void
@@ -370,5 +461,108 @@ id|prom_free_prom_memory
 r_void
 )paren
 (brace
+r_int
+r_int
+id|addr
+comma
+id|end
+suffix:semicolon
+r_extern
+r_char
+id|_ftext
+suffix:semicolon
+multiline_comment|/*&n;&t; * Free everything below the kernel itself but leave&n;&t; * the first page reserved for the exception handlers.&n;&t; */
+macro_line|#ifdef CONFIG_DECLANCE
+multiline_comment|/*&n;&t; * Leave 128 KB reserved for Lance memory for&n;&t; * IOASIC DECstations.&n;&t; *&n;&t; * XXX: save this address for use in dec_lance.c?&n;&t; */
+r_if
+c_cond
+(paren
+id|IOASIC
+)paren
+id|end
+op_assign
+id|PHYSADDR
+c_func
+(paren
+op_amp
+id|_ftext
+)paren
+op_minus
+l_int|0x00020000
+suffix:semicolon
+r_else
+macro_line|#endif
+id|end
+op_assign
+id|PHYSADDR
+c_func
+(paren
+op_amp
+id|_ftext
+)paren
+suffix:semicolon
+id|addr
+op_assign
+id|PAGE_SIZE
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|addr
+OL
+id|end
+)paren
+(brace
+id|ClearPageReserved
+c_func
+(paren
+id|mem_map
+op_plus
+id|MAP_NR
+c_func
+(paren
+id|addr
+)paren
+)paren
+suffix:semicolon
+id|set_page_count
+c_func
+(paren
+id|mem_map
+op_plus
+id|MAP_NR
+c_func
+(paren
+id|addr
+)paren
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|free_page
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|PAGE_SIZE
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;Freeing unused PROM memory: %dk freed&bslash;n&quot;
+comma
+(paren
+id|end
+op_minus
+id|PAGE_SIZE
+)paren
+op_rshift
+l_int|10
+)paren
+suffix:semicolon
 )brace
 eof

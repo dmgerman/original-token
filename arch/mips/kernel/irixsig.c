@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * irixsig.c: WHEEE, IRIX signals!  YOW, am I compatable or what?!?!&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: irixsig.c,v 1.11 1999/06/17 13:25:46 ralf Exp $&n; */
+multiline_comment|/*&n; * irixsig.c: WHEEE, IRIX signals!  YOW, am I compatable or what?!?!&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: irixsig.c,v 1.14 2000/01/17 03:58:59 ralf Exp $&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -687,14 +687,6 @@ suffix:semicolon
 macro_line|#endif
 id|regs-&gt;regs
 (braket
-l_int|5
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* XXX sigcode XXX */
-id|regs-&gt;regs
-(braket
 l_int|4
 )braket
 op_assign
@@ -704,6 +696,14 @@ r_int
 )paren
 id|signr
 suffix:semicolon
+id|regs-&gt;regs
+(braket
+l_int|5
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* XXX sigcode XXX */
 id|regs-&gt;regs
 (braket
 l_int|6
@@ -734,26 +734,33 @@ l_int|25
 op_assign
 id|regs-&gt;cp0_epc
 op_assign
-id|current-&gt;tss.irix_trampoline
+(paren
+r_int
+r_int
+)paren
+id|ka-&gt;sa.sa_restorer
 suffix:semicolon
 r_return
 suffix:semicolon
 id|segv_and_exit
 suffix:colon
-id|lock_kernel
-c_func
+r_if
+c_cond
 (paren
+id|signr
+op_eq
+id|SIGSEGV
 )paren
+id|ka-&gt;sa.sa_handler
+op_assign
+id|SIG_DFL
 suffix:semicolon
-id|do_exit
+id|force_sig
 c_func
 (paren
 id|SIGSEGV
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
+comma
+id|current
 )paren
 suffix:semicolon
 )brace
@@ -1522,10 +1529,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|irix_sigreturn
 id|asmlinkage
-r_int
-r_int
+r_void
+DECL|function|irix_sigreturn
 id|irix_sigreturn
 c_func
 (paren
@@ -1552,8 +1558,6 @@ suffix:semicolon
 id|u64
 op_star
 id|fregs
-comma
-id|res
 suffix:semicolon
 r_int
 id|sig
@@ -1778,7 +1782,7 @@ id|u64
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpu
+id|current-&gt;thread.fpu
 suffix:semicolon
 r_for
 c_loop
@@ -1812,7 +1816,7 @@ suffix:semicolon
 id|__get_user
 c_func
 (paren
-id|current-&gt;tss.fpu.hard.control
+id|current-&gt;thread.fpu.hard.control
 comma
 op_amp
 id|context-&gt;fpcsr
@@ -1895,24 +1899,13 @@ suffix:semicolon
 multiline_comment|/* Unreached */
 id|badframe
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|do_exit
+id|force_sig
 c_func
 (paren
 id|SIGSEGV
+comma
+id|current
 )paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|res
 suffix:semicolon
 )brace
 DECL|struct|sigact_irix5
@@ -2008,8 +2001,8 @@ id|sigaction
 op_star
 id|oact
 comma
-r_int
-r_int
+r_void
+op_star
 id|trampoline
 )paren
 (brace
@@ -2136,16 +2129,12 @@ id|sigset_t
 )paren
 )paren
 suffix:semicolon
-id|new_ka.ka_restorer
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Hmmm... methinks IRIX libc always passes a valid trampoline&n;&t; * value for all invocations of sigaction.  Will have to&n;&t; * investigate.  POSIX POSIX, die die die...&n;&t; */
-id|current-&gt;tss.irix_trampoline
+multiline_comment|/*&n;&t;&t; * Hmmm... methinks IRIX libc always passes a valid trampoline&n;&t;&t; * value for all invocations of sigaction.  Will have to&n;&t;&t; * investigate.  POSIX POSIX, die die die...&n;&t;&t; */
+id|new_ka.sa.sa_restorer
 op_assign
 id|trampoline
 suffix:semicolon
+)brace
 multiline_comment|/* XXX Implement SIG_SETMASK32 for IRIX compatibility */
 id|ret
 op_assign
@@ -2688,6 +2677,12 @@ suffix:semicolon
 id|current-&gt;blocked
 op_assign
 id|newset
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
+)paren
 suffix:semicolon
 id|spin_unlock_irq
 c_func
@@ -4104,7 +4099,7 @@ suffix:semicolon
 id|__put_user
 c_func
 (paren
-id|current-&gt;tss.irix_oldctx
+id|current-&gt;thread.irix_oldctx
 comma
 op_amp
 id|ctx-&gt;link
@@ -4498,7 +4493,7 @@ l_string|&quot;Wheee, cannot restore FPU context yet...&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;tss.irix_oldctx
+id|current-&gt;thread.irix_oldctx
 op_assign
 id|ctx-&gt;link
 suffix:semicolon

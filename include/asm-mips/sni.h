@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sni.h,v 1.2 1998/09/16 22:52:43 ralf Exp $&n; *&n; * SNI specific definitions&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: sni.h,v 1.3 1999/01/04 16:09:26 ralf Exp $&n; *&n; * SNI specific definitions&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1997, 1998 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_SNI_H 
 DECL|macro|__ASM_MIPS_SNI_H
 mdefine_line|#define __ASM_MIPS_SNI_H 

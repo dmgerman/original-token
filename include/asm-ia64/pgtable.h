@@ -317,6 +317,30 @@ mdefine_line|#define pte_mkdirty(pte)&t;(__pte(pte_val(pte) | _PAGE_D))
 multiline_comment|/*&n; * Macro to make mark a page protection value as &quot;uncacheable&quot;.  Note&n; * that &quot;protection&quot; is really a misnomer here as the protection value&n; * contains the memory attribute bits, dirty bits, and various other&n; * bits as well.&n; */
 DECL|macro|pgprot_noncached
 mdefine_line|#define pgprot_noncached(prot)&t;__pgprot((pgprot_val(prot) &amp; ~_PAGE_MA_MASK) | _PAGE_MA_UC)
+multiline_comment|/*&n; * Return the region index for virtual address ADDRESS.&n; */
+r_extern
+id|__inline__
+r_int
+r_int
+DECL|function|rgn_index
+id|rgn_index
+(paren
+r_int
+r_int
+id|address
+)paren
+(brace
+id|ia64_va
+id|a
+suffix:semicolon
+id|a.l
+op_assign
+id|address
+suffix:semicolon
+r_return
+id|a.f.reg
+suffix:semicolon
+)brace
 r_extern
 id|__inline__
 r_int
@@ -434,7 +458,8 @@ id|PTRS_PER_PGD
 )braket
 suffix:semicolon
 multiline_comment|/*&n; * IA-64 doesn&squot;t have any external MMU info: the page tables contain&n; * all the necessary information.  However, we can use this macro&n; * to pre-install (override) a PTE that we know is needed anyhow.&n; *&n; * Asit says that on Itanium, it is generally faster to let the VHPT&n; * walker pick up a newly installed PTE (and VHPT misses should be&n; * extremely rare compared to normal misses).  Also, since&n; * pre-installing the PTE has the problem that we may evict another&n; * TLB entry needlessly because we don&squot;t know for sure whether we need&n; * to update the iTLB or dTLB, I tend to prefer this solution, too.&n; * Also, this avoids nasty issues with forward progress (what if the&n; * newly installed PTE gets replaced before we return to the previous&n; * execution context?).&n; *&n; */
-macro_line|#if 0
+macro_line|#if 1
+DECL|macro|update_mmu_cache
 macro_line|# define update_mmu_cache(vma,address,pte)
 macro_line|#else
 DECL|macro|update_mmu_cache

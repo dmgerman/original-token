@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: ptrace.h,v 1.3 1998/07/09 21:45:21 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996, 1997, 1998 by Ralf Baechle&n; *&n; * Machine dependent structs and defines to help the user use&n; * the ptrace system call.&n; */
+multiline_comment|/* $Id: ptrace.h,v 1.8 1999/10/12 17:33:50 harald Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996, 1997, 1998 by Ralf Baechle&n; *&n; * Machine dependent structs and defines to help the user use&n; * the ptrace system call.&n; */
 macro_line|#ifndef __ASM_MIPS_PTRACE_H
 DECL|macro|__ASM_MIPS_PTRACE_H
 mdefine_line|#define __ASM_MIPS_PTRACE_H
+macro_line|#include &lt;asm/isadep.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/* 0 - 31 are integer registers, 32 - 63 are fp registers.  */
 DECL|macro|FPR_BASE
@@ -83,26 +84,14 @@ macro_line|#include &lt;asm/offset.h&gt;
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * Does the process account for user or for system time?&n; */
-r_extern
-r_int
-(paren
-op_star
-id|user_mode
-)paren
-(paren
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
+DECL|macro|user_mode
+mdefine_line|#define user_mode(regs) (((regs)-&gt;cp0_status &amp; KU_MASK) == KU_USER)
 DECL|macro|instruction_pointer
 mdefine_line|#define instruction_pointer(regs) ((regs)-&gt;cp0_epc)
 r_extern
 r_void
-(paren
-op_star
 id|show_regs
-)paren
+c_func
 (paren
 r_struct
 id|pt_regs

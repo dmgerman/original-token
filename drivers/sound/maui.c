@@ -10,7 +10,6 @@ mdefine_line|#define USE_SIMPLE_MACROS
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
-macro_line|#ifdef CONFIG_MAUI
 DECL|variable|maui_base
 r_static
 r_int
@@ -81,26 +80,7 @@ id|pmgr_flag
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef HAVE_MAUI_BOOT
 macro_line|#include &quot;maui_boot.h&quot;
-macro_line|#else
-DECL|variable|maui_os
-r_static
-r_int
-r_char
-op_star
-id|maui_os
-op_assign
-l_int|NULL
-suffix:semicolon
-DECL|variable|maui_osLen
-r_static
-r_int
-id|maui_osLen
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 DECL|function|maui_wait
 r_static
 r_int
@@ -643,7 +623,7 @@ r_int
 id|irq
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_int
 id|i
 suffix:semicolon
@@ -777,7 +757,7 @@ id|HOST_CTRL_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* Cause interrupt */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_for
 c_loop
 (paren
@@ -2073,6 +2053,5 @@ suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#endif
+macro_line|#endif /* MODULE */
 eof

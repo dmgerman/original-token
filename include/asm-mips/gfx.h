@@ -1,4 +1,7 @@
-multiline_comment|/*&n; * This is the user-visible SGI GFX interface.&n; *&n; * This must be used verbatim into the GNU libc.  It does not include&n; * any kernel-only bits on it.  &n; *&n; * miguel@nuclecu.unam.mx&n; */
+multiline_comment|/* $Id: gfx.h,v 1.5 1999/08/19 22:56:33 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * This is the user-visible SGI GFX interface.&n; *&n; * This must be used verbatim into the GNU libc.  It does not include&n; * any kernel-only bits on it.  &n; *&n; * miguel@nuclecu.unam.mx&n; */
+macro_line|#ifndef _ASM_GFX_H
+DECL|macro|_ASM_GFX_H
+mdefine_line|#define _ASM_GFX_H
 multiline_comment|/* The iocls, yes, they do not make sense, but such is life */
 DECL|macro|GFX_BASE
 mdefine_line|#define GFX_BASE             100
@@ -145,4 +148,5 @@ id|vaddr
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif /* _ASM_GFX_H */
 eof

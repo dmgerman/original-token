@@ -277,10 +277,8 @@ id|direction
 (brace
 multiline_comment|/* Nothing to do.  */
 )brace
-multiline_comment|/* Return whether the given PCI device DMA address mask can&n; * be supported properly.  For example, if your device can&n; * only drive the low 24-bits during PCI bus mastering, then&n; * you would pass 0x00ffffff as the mask to this function.&n; */
-DECL|function|pci_dma_supported
+multiline_comment|/* Return whether the given PCI device DMA address mask can&n;   be supported properly.  For example, if your device can&n;   only drive the low 24-bits during PCI bus mastering, then&n;   you would pass 0x00ffffff as the mask to this function.  */
 r_extern
-r_inline
 r_int
 id|pci_dma_supported
 c_func
@@ -293,10 +291,6 @@ comma
 id|dma_addr_t
 id|mask
 )paren
-(brace
-r_return
-l_int|1
 suffix:semicolon
-)brace
 macro_line|#endif /* __ALPHA_PCI_H */
 eof

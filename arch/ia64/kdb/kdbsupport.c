@@ -8,9 +8,10 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kdb.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt; 
 macro_line|#include &lt;linux/vmalloc.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/kdbsupport.h&gt;
 macro_line|#include &lt;asm/rse.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern
 id|kdb_state_t
 id|kdb_state
@@ -49,6 +50,79 @@ comma
 id|kdb_setup
 )paren
 suffix:semicolon
+r_static
+r_int
+DECL|function|kdb_ia64_itm
+id|kdb_ia64_itm
+(paren
+r_int
+id|argc
+comma
+r_const
+r_char
+op_star
+op_star
+id|argv
+comma
+r_const
+r_char
+op_star
+op_star
+id|envp
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+id|diag
+suffix:semicolon
+r_int
+r_int
+id|val
+suffix:semicolon
+id|diag
+op_assign
+id|kdbgetularg
+c_func
+(paren
+id|argv
+(braket
+l_int|1
+)braket
+comma
+op_amp
+id|val
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|diag
+)paren
+r_return
+id|diag
+suffix:semicolon
+id|kdb_printf
+c_func
+(paren
+l_string|&quot;new itm=%0xlx&bslash;n&quot;
+comma
+id|val
+)paren
+suffix:semicolon
+id|ia64_set_itm
+c_func
+(paren
+id|val
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_static
 r_int
 DECL|function|kdb_ia64_sir
@@ -131,6 +205,7 @@ id|lrr1
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;lid=0x%lx, tpr=0x%lx, lrr0=0x%lx, llr1=0x%lx&bslash;n&quot;
 comma
@@ -174,6 +249,7 @@ id|cmcv
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;itv=0x%lx, pmv=0x%lx, cmcv=0x%lx&bslash;n&quot;
 comma
@@ -185,6 +261,7 @@ id|cmcv
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;irr=0x%016lx,0x%016lx,0x%016lx,0x%016lx&bslash;n&quot;
 comma
@@ -204,6 +281,22 @@ c_func
 )paren
 comma
 id|ia64_get_irr3
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;itc=0x%016lx, itm=0x%016lx&bslash;n&quot;
+comma
+id|ia64_get_itc
+c_func
+(paren
+)paren
+comma
+id|ia64_get_itm
 c_func
 (paren
 )paren
@@ -307,6 +400,20 @@ comma
 l_string|&quot;&quot;
 comma
 l_string|&quot;Show interrupt registers&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|kdb_register
+c_func
+(paren
+l_string|&quot;itm&quot;
+comma
+id|kdb_ia64_itm
+comma
+l_string|&quot;&quot;
+comma
+l_string|&quot;Set new ITM value&quot;
 comma
 l_int|0
 )paren

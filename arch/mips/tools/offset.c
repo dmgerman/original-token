@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: offset.c,v 1.10 1998/08/19 21:53:53 ralf Exp $&n; *&n; * offset.c: Calculate pt_regs and task_struct offsets.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Made portable by Ralf Baechle&n; */
+multiline_comment|/* $Id: offset.c,v 1.12 1999/10/09 00:00:59 ralf Exp $&n; *&n; * offset.c: Calculate pt_regs and task_struct offsets.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Copyright (C) 1997, 1998, 1999 Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
@@ -666,6 +666,15 @@ comma
 id|mm
 )paren
 suffix:semicolon
+id|size
+c_func
+(paren
+l_string|&quot;#define TASK_STRUCT_SIZE   &quot;
+comma
+r_struct
+id|task_struct
+)paren
+suffix:semicolon
 id|linefeed
 suffix:semicolon
 )brace
@@ -691,7 +700,7 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.reg16
+id|thread.reg16
 )paren
 suffix:semicolon
 id|offset
@@ -702,7 +711,7 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.reg17
+id|thread.reg17
 )paren
 suffix:semicolon
 id|offset
@@ -713,7 +722,7 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.reg18
+id|thread.reg18
 )paren
 suffix:semicolon
 id|offset
@@ -724,7 +733,7 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.reg19
+id|thread.reg19
 )paren
 suffix:semicolon
 id|offset
@@ -735,7 +744,7 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.reg20
+id|thread.reg20
 )paren
 suffix:semicolon
 id|offset
@@ -746,7 +755,7 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.reg21
+id|thread.reg21
 )paren
 suffix:semicolon
 id|offset
@@ -757,7 +766,7 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.reg22
+id|thread.reg22
 )paren
 suffix:semicolon
 id|offset
@@ -768,7 +777,7 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.reg23
+id|thread.reg23
 )paren
 suffix:semicolon
 id|offset
@@ -779,7 +788,7 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.reg29
+id|thread.reg29
 )paren
 suffix:semicolon
 id|offset
@@ -790,7 +799,7 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.reg30
+id|thread.reg30
 )paren
 suffix:semicolon
 id|offset
@@ -801,7 +810,7 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.reg31
+id|thread.reg31
 )paren
 suffix:semicolon
 id|offset
@@ -812,7 +821,8 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.cp0_status
+"&bslash;"
+id|thread.cp0_status
 )paren
 suffix:semicolon
 id|offset
@@ -823,7 +833,7 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.fpu
+id|thread.fpu
 )paren
 suffix:semicolon
 id|offset
@@ -834,7 +844,8 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.cp0_badvaddr
+"&bslash;"
+id|thread.cp0_badvaddr
 )paren
 suffix:semicolon
 id|offset
@@ -845,7 +856,8 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.cp0_baduaddr
+"&bslash;"
+id|thread.cp0_baduaddr
 )paren
 suffix:semicolon
 id|offset
@@ -856,7 +868,8 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.error_code
+"&bslash;"
+id|thread.error_code
 )paren
 suffix:semicolon
 id|offset
@@ -867,18 +880,7 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.trap_no
-)paren
-suffix:semicolon
-id|offset
-c_func
-(paren
-l_string|&quot;#define THREAD_PGDIR   &quot;
-comma
-r_struct
-id|task_struct
-comma
-id|tss.pg_dir
+id|thread.trap_no
 )paren
 suffix:semicolon
 id|offset
@@ -889,7 +891,7 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.mflags
+id|thread.mflags
 )paren
 suffix:semicolon
 id|offset
@@ -900,7 +902,8 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.current_ds
+"&bslash;"
+id|thread.current_ds
 )paren
 suffix:semicolon
 id|offset
@@ -911,7 +914,8 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.irix_trampoline
+"&bslash;"
+id|thread.irix_trampoline
 )paren
 suffix:semicolon
 id|offset
@@ -922,7 +926,8 @@ comma
 r_struct
 id|task_struct
 comma
-id|tss.irix_oldctx
+"&bslash;"
+id|thread.irix_oldctx
 )paren
 suffix:semicolon
 id|linefeed
@@ -945,12 +950,12 @@ suffix:semicolon
 id|offset
 c_func
 (paren
-l_string|&quot;#define MM_COUNT      &quot;
+l_string|&quot;#define MM_USERS      &quot;
 comma
 r_struct
 id|mm_struct
 comma
-id|count
+id|mm_users
 )paren
 suffix:semicolon
 id|offset
@@ -995,39 +1000,6 @@ suffix:semicolon
 id|offset
 c_func
 (paren
-l_string|&quot;#define SC_REGMASK    &quot;
-comma
-r_struct
-id|sigcontext
-comma
-id|sc_regmask
-)paren
-suffix:semicolon
-id|offset
-c_func
-(paren
-l_string|&quot;#define SC_STATUS     &quot;
-comma
-r_struct
-id|sigcontext
-comma
-id|sc_status
-)paren
-suffix:semicolon
-id|offset
-c_func
-(paren
-l_string|&quot;#define SC_PC         &quot;
-comma
-r_struct
-id|sigcontext
-comma
-id|sc_pc
-)paren
-suffix:semicolon
-id|offset
-c_func
-(paren
 l_string|&quot;#define SC_REGS       &quot;
 comma
 r_struct
@@ -1045,6 +1017,50 @@ r_struct
 id|sigcontext
 comma
 id|sc_fpregs
+)paren
+suffix:semicolon
+id|offset
+c_func
+(paren
+l_string|&quot;#define SC_MDHI       &quot;
+comma
+r_struct
+id|sigcontext
+comma
+id|sc_mdhi
+)paren
+suffix:semicolon
+id|offset
+c_func
+(paren
+l_string|&quot;#define SC_MDLO       &quot;
+comma
+r_struct
+id|sigcontext
+comma
+id|sc_mdlo
+)paren
+suffix:semicolon
+id|offset
+c_func
+(paren
+l_string|&quot;#define SC_PC         &quot;
+comma
+r_struct
+id|sigcontext
+comma
+id|sc_pc
+)paren
+suffix:semicolon
+id|offset
+c_func
+(paren
+l_string|&quot;#define SC_STATUS     &quot;
+comma
+r_struct
+id|sigcontext
+comma
+id|sc_status
 )paren
 suffix:semicolon
 id|offset
@@ -1083,39 +1099,6 @@ suffix:semicolon
 id|offset
 c_func
 (paren
-l_string|&quot;#define SC_SSFLAGS    &quot;
-comma
-r_struct
-id|sigcontext
-comma
-id|sc_ssflags
-)paren
-suffix:semicolon
-id|offset
-c_func
-(paren
-l_string|&quot;#define SC_MDHI       &quot;
-comma
-r_struct
-id|sigcontext
-comma
-id|sc_mdhi
-)paren
-suffix:semicolon
-id|offset
-c_func
-(paren
-l_string|&quot;#define SC_MDLO       &quot;
-comma
-r_struct
-id|sigcontext
-comma
-id|sc_mdlo
-)paren
-suffix:semicolon
-id|offset
-c_func
-(paren
 l_string|&quot;#define SC_CAUSE      &quot;
 comma
 r_struct
@@ -1133,17 +1116,6 @@ r_struct
 id|sigcontext
 comma
 id|sc_badvaddr
-)paren
-suffix:semicolon
-id|offset
-c_func
-(paren
-l_string|&quot;#define SC_SIGSET     &quot;
-comma
-r_struct
-id|sigcontext
-comma
-id|sc_sigset
 )paren
 suffix:semicolon
 id|linefeed

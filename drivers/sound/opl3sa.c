@@ -15,7 +15,6 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_OPL3SA1
 DECL|variable|kilroy_was_here
 r_static
 r_int
@@ -614,7 +613,6 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 id|hw_config-&gt;name
 op_assign
 l_string|&quot;OPL3-SA (MPU401)&quot;
@@ -625,7 +623,6 @@ c_func
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|probe_opl3sa_mpu
 r_int
@@ -638,7 +635,6 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 r_int
 r_char
 id|conf
@@ -864,11 +860,6 @@ c_func
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#else
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|unload_opl3sa_wss
 r_void
@@ -951,14 +942,12 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 id|unload_uart401
 c_func
 (paren
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#ifdef SB_OK
 DECL|function|unload_opl3sa_sb
@@ -972,14 +961,12 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#ifdef CONFIG_SBDSP
 id|sb_dsp_unload
 c_func
 (paren
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#endif
 macro_line|#ifdef MODULE
@@ -1235,6 +1222,5 @@ suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#endif
+macro_line|#endif /* MODULE */
 eof

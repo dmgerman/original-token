@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: socket.h,v 1.5 1998/03/15 09:52:54 ralf Exp $&n; */
+multiline_comment|/*&n; * $Id: socket.h,v 1.5 1998/03/17 22:16:17 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_SOCKET_H
 DECL|macro|__ASM_MIPS_SOCKET_H
 mdefine_line|#define __ASM_MIPS_SOCKET_H

@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: string.h,v 1.6 1998/07/20 17:52:21 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994, 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: string.h,v 1.13 2000/02/19 14:12:14 harald Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994, 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_STRING_H
 DECL|macro|__ASM_MIPS_STRING_H
 mdefine_line|#define __ASM_MIPS_STRING_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__HAVE_ARCH_STRCPY
 mdefine_line|#define __HAVE_ARCH_STRCPY
 DECL|function|strcpy
@@ -202,7 +203,7 @@ l_string|&quot;bne&bslash;t$1,%2,2f&bslash;n&bslash;t&quot;
 l_string|&quot;addiu&bslash;t%1,1&bslash;n&bslash;t&quot;
 l_string|&quot;bnez&bslash;t%2,1b&bslash;n&bslash;t&quot;
 l_string|&quot;lbu&bslash;t%2,(%0)&bslash;n&bslash;t&quot;
-macro_line|#if _MIPS_ISA == _MIPS_ISA_MIPS1
+macro_line|#if defined(CONFIG_CPU_R3000)
 l_string|&quot;nop&bslash;n&bslash;t&quot;
 macro_line|#endif
 l_string|&quot;move&bslash;t%2,$1&bslash;n&quot;
@@ -244,10 +245,10 @@ suffix:semicolon
 )brace
 DECL|macro|__HAVE_ARCH_STRNCMP
 mdefine_line|#define __HAVE_ARCH_STRNCMP
-DECL|function|strncmp
 r_extern
 id|__inline__
 r_int
+DECL|function|strncmp
 id|strncmp
 c_func
 (paren
@@ -274,16 +275,22 @@ c_func
 (paren
 l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tnoat&bslash;n&quot;
-l_string|&quot;1:&bslash;tlbu&bslash;t%3,(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;1:&bslash;tlbu&bslash;t%3,(%0)&bslash;n&bslash;t&quot;
+macro_line|#if defined(CONFIG_CPU_R3000)
+l_string|&quot;lbu&bslash;t$1,(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;nop&bslash;n&bslash;t&quot;
 l_string|&quot;beqz&bslash;t%2,2f&bslash;n&bslash;t&quot;
-l_string|&quot;lbu&bslash;t$1,(%0)&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%1,1&bslash;n&bslash;t&quot;
-l_string|&quot;subu&bslash;t%3,$1,%3&bslash;n&bslash;t&quot;
-l_string|&quot;bnez&bslash;t%3,2f&bslash;n&bslash;t&quot;
+macro_line|#else
+l_string|&quot;beqz&bslash;t%2,2f&bslash;n&bslash;t&quot;
+l_string|&quot;lbu&bslash;t$1,(%1)&bslash;n&bslash;t&quot;
+macro_line|#endif
+l_string|&quot;subu&bslash;t%2,1&bslash;n&bslash;t&quot;
+l_string|&quot;bne&bslash;t$1,%3,3f&bslash;n&bslash;t&quot;
 l_string|&quot;addiu&bslash;t%0,1&bslash;n&bslash;t&quot;
-l_string|&quot;bnez&bslash;t%1,1b&bslash;n&quot;
-l_string|&quot;addiu&bslash;t%2,-1&bslash;n&quot;
-l_string|&quot;2:&bslash;n&bslash;t&quot;
+l_string|&quot;bnez&bslash;t%3,1b&bslash;n&bslash;t&quot;
+l_string|&quot;addiu&bslash;t%1,1&bslash;n&quot;
+l_string|&quot;2:&bslash;tmove&bslash;t%3,$1&bslash;n&quot;
+l_string|&quot;3:&bslash;tsubu&bslash;t%3,$1&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon

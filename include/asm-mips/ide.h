@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ide.h,v 1.4 1998/05/08 21:05:26 davem Exp $&n; *&n; *  linux/include/asm-mips/ide.h&n; *&n; *  Copyright (C) 1994-1996  Linus Torvalds &amp; authors&n; */
+multiline_comment|/* $Id: ide.h,v 1.6 1999/10/09 00:01:42 ralf Exp $&n; *&n; *  linux/include/asm-mips/ide.h&n; *&n; *  Copyright (C) 1994-1996  Linus Torvalds &amp; authors&n; */
 multiline_comment|/*&n; *  This file contains the MIPS architecture specific IDE code.&n; */
 macro_line|#ifndef __ASM_MIPS_IDE_H
 DECL|macro|__ASM_MIPS_IDE_H

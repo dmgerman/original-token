@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sysctl.c: General linux system control interface&n; *&n; * Begun 24 March 1995, Stephen Tweedie&n; * Added /proc support, Dec 1995&n; * Added bdflush entry and intvec min/max checking, 2/23/96, Tom Dyas.&n; * Added hooks for /proc/sys/net (minor, minor patch), 96/4/1, Mike Shaver.&n; * Added kernel/java-{interpreter,appletviewer}, 96/5/10, Mike Shaver.&n; * Dynamic registration fixes, Stephen Tweedie.&n; * Added kswapd-interval, ctrl-alt-del, printk stuff, 1/8/97, Chris Horn.&n; * Made sysctl support optional via CONFIG_SYSCTL, 1/10/97, Chris&n; *  Horn.&n; * Added proc_doulongvec_ms_jiffies_minmax, 09/08/99, Carlos H. Bauer.&n; * Added proc_doulongvec_minmax, 09/08/99, Carlos H. Bauer.&n; */
+multiline_comment|/*&n; * sysctl.c: General linux system control interface&n; *&n; * Begun 24 March 1995, Stephen Tweedie&n; * Added /proc support, Dec 1995&n; * Added bdflush entry and intvec min/max checking, 2/23/96, Tom Dyas.&n; * Added hooks for /proc/sys/net (minor, minor patch), 96/4/1, Mike Shaver.&n; * Added kernel/java-{interpreter,appletviewer}, 96/5/10, Mike Shaver.&n; * Dynamic registration fixes, Stephen Tweedie.&n; * Added kswapd-interval, ctrl-alt-del, printk stuff, 1/8/97, Chris Horn.&n; * Made sysctl support optional via CONFIG_SYSCTL, 1/10/97, Chris&n; *  Horn.&n; * Added proc_doulongvec_ms_jiffies_minmax, 09/08/99, Carlos H. Bauer.&n; * Added proc_doulongvec_minmax, 09/08/99, Carlos H. Bauer.&n; * Changed linked lists to use list.h instead of lists.h, 02/24/00, Bill&n; *  Wendling.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
@@ -240,7 +240,6 @@ id|root_table
 (braket
 )braket
 suffix:semicolon
-multiline_comment|/*&n;static struct ctl_table_header root_table_header = &n;&t;{ root_table, LIST_HEAD_INIT(root_table_header) };&n;*/
 r_static
 id|LIST_HEAD
 c_func
@@ -1826,6 +1825,13 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
+r_extern
+r_void
+id|init_irq_proc
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|sysctl_init
 r_void
 id|__init
@@ -1842,6 +1848,11 @@ c_func
 id|root_table
 comma
 id|proc_sys_root
+)paren
+suffix:semicolon
+id|init_irq_proc
+c_func
+(paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1876,7 +1887,6 @@ id|newlen
 r_int
 id|error
 suffix:semicolon
-multiline_comment|/* struct ctl_table_header *tmp; */
 r_struct
 id|list_head
 op_star
@@ -1938,12 +1948,12 @@ id|EFAULT
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t;tmp = &amp;root_table_header;&n;&t;do {&n;&t;&t;context = NULL;&n;&t;&t;error = parse_table(name, nlen, oldval, oldlenp, &n;&t;&t;&t;&t;    newval, newlen, tmp-&gt;ctl_table, &amp;context);&n;&t;&t;if (context)&n;&t;&t;&t;kfree(context);&n;&t;&t;if (error != -ENOTDIR)&n;&t;&t;&t;return error;&n;&t;&t;tmp = tmp-&gt;DLIST_NEXT(ctl_entry);&n;&t;} while (tmp != &amp;root_table_header);&n;&t;*/
 id|list_for_each
 c_func
 (paren
 id|tmp
 comma
+op_amp
 id|root_table_header
 )paren
 (brace
@@ -2762,7 +2772,6 @@ op_amp
 id|tmp-&gt;ctl_entry
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;if (insert_at_head)&n;&t;&t;DLIST_INSERT_AFTER(&amp;root_table_header, tmp, ctl_entry);&n;&t;else&n;&t;&t;DLIST_INSERT_BEFORE(&amp;root_table_header, tmp, ctl_entry);&n;&t;*/
 r_if
 c_cond
 (paren
@@ -2815,7 +2824,6 @@ op_star
 id|header
 )paren
 (brace
-multiline_comment|/* DLIST_DELETE(header, ctl_entry); */
 id|list_del
 c_func
 (paren

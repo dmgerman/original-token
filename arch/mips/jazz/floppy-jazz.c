@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: floppy-jazz.c,v 1.1 1998/05/07 18:38:29 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Low-level floppy stuff for Jazz family machines.&n; *&n; * Copyright (C) 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: floppy-jazz.c,v 1.3 2000/02/24 00:12:40 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Low-level floppy stuff for Jazz family machines.&n; *&n; * Copyright (C) 1998 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;

@@ -218,5 +218,5 @@ suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* MODULE */
 eof

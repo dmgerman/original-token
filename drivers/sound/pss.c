@@ -4,8 +4,6 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
-macro_line|#ifdef CONFIG_PSS
-macro_line|#ifdef CONFIG_AUDIO
 multiline_comment|/*&n; * PSS registers.&n; */
 DECL|macro|REG
 mdefine_line|#define REG(x)&t;(devc-&gt;base+x)
@@ -58,26 +56,7 @@ mdefine_line|#define WSS_AUTOCALIBRATION 0x20
 DECL|macro|NO_WSS_MIXER
 mdefine_line|#define NO_WSS_MIXER&t;-1
 macro_line|#include &quot;coproc.h&quot;
-macro_line|#ifdef PSS_HAVE_LD
 macro_line|#include &quot;pss_boot.h&quot;
-macro_line|#else
-DECL|variable|pss_synthLen
-r_static
-r_int
-id|pss_synthLen
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|pss_synth
-r_static
-r_int
-r_char
-op_star
-id|pss_synth
-op_assign
-l_int|NULL
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* If compiled into kernel, it enable or disable pss mixer */
 macro_line|#ifdef CONFIG_PSS_MIXER
 DECL|variable|pss_mixer
@@ -3205,7 +3184,6 @@ r_break
 suffix:semicolon
 multiline_comment|/* No more input */
 )brace
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 r_return
 id|probe_mpu401
 c_func
@@ -3213,11 +3191,6 @@ c_func
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#else
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|pss_coproc_open
 r_static
@@ -4594,7 +4567,6 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 id|attach_mpu401
 c_func
 (paren
@@ -4627,7 +4599,6 @@ op_assign
 op_amp
 id|pss_coproc_operations
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|probe_pss_mss
 r_int
@@ -5009,14 +4980,12 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 id|unload_mpu401
 c_func
 (paren
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|unload_pss_mss
 r_void
@@ -5503,7 +5472,5 @@ suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#endif
-macro_line|#endif
+macro_line|#endif /* MODULE */
 eof

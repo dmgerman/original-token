@@ -268,7 +268,7 @@ suffix:semicolon
 DECL|macro|list_entry
 mdefine_line|#define list_entry(ptr, type, member) &bslash;&n;&t;((type *)((char *)(ptr)-(unsigned long)(&amp;((type *)0)-&gt;member)))
 DECL|macro|list_for_each
-mdefine_line|#define list_for_each(pos, head) &bslash;&n;&t;for (pos = (head).next; pos != &amp;(head); pos = pos-&gt;next)
+mdefine_line|#define list_for_each(pos, head) &bslash;&n;&t;for (pos = (head)-&gt;next; pos != (head); pos = pos-&gt;next)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

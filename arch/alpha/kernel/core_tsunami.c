@@ -15,10 +15,6 @@ DECL|macro|__EXTERN_INLINE
 macro_line|#undef __EXTERN_INLINE
 macro_line|#include &quot;proto.h&quot;
 macro_line|#include &quot;pci_impl.h&quot;
-DECL|variable|TSUNAMI_bootcpu
-r_int
-id|TSUNAMI_bootcpu
-suffix:semicolon
 r_static
 r_struct
 (brace
@@ -662,12 +658,22 @@ id|TSUNAMI_pchip1
 suffix:colon
 id|TSUNAMI_pchip0
 suffix:semicolon
-id|wmb
-c_func
-(paren
-)paren
+r_volatile
+r_int
+r_int
+op_star
+id|csr
+suffix:semicolon
+r_int
+r_int
+id|value
 suffix:semicolon
 multiline_comment|/* We can invalidate up to 8 tlb entries in a go.  The flush&n;&t;   matches against &lt;31:16&gt; in the pci address.  */
+id|csr
+op_assign
+op_amp
+id|pchip-&gt;tlbia.csr
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -683,7 +689,13 @@ l_int|0xffff0000
 op_eq
 l_int|0
 )paren
+id|csr
+op_assign
+op_amp
 id|pchip-&gt;tlbiv.csr
+suffix:semicolon
+multiline_comment|/* For TBIA, it doesn&squot;t matter what value we write.  For TBI, &n;&t;   it&squot;s the shifted tag bits.  */
+id|value
 op_assign
 (paren
 id|start
@@ -693,15 +705,23 @@ l_int|0xffff0000
 op_rshift
 l_int|12
 suffix:semicolon
-r_else
-id|pchip-&gt;tlbia.csr
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
+op_star
+id|csr
 op_assign
-l_int|0
+id|value
 suffix:semicolon
 id|mb
 c_func
 (paren
 )paren
+suffix:semicolon
+op_star
+id|csr
 suffix:semicolon
 )brace
 "&f;"
@@ -1319,7 +1339,7 @@ l_int|3
 dot
 id|csr
 suffix:semicolon
-multiline_comment|/*&n;&t; * Set up the PCI to main memory translation windows.&n;&t; *&n;&t; * Window 0 is scatter-gather 8MB at 8MB (for isa)&n;&t; * Window 1 is scatter-gather 128MB at 3GB&n;&t; * Window 2 is direct access 1GB at 1GB&n;&t; * Window 3 is direct access 1GB at 2GB&n;&t; * ??? We ought to scale window 1 memory.&n;&t; *&n;&t; * We must actually use 2 windows to direct-map the 2GB space,&n;&t; * because of an idiot-syncrasy of the CYPRESS chip.  It may&n;&t; * respond to a PCI bus address in the last 1MB of the 4GB&n;&t; * address range.&n;&t; */
+multiline_comment|/*&n;&t; * Set up the PCI to main memory translation windows.&n;&t; *&n;&t; * Window 0 is scatter-gather 8MB at 8MB (for isa)&n;&t; * Window 1 is scatter-gather 128MB at 3GB&n;&t; * Window 2 is direct access 1GB at 1GB&n;&t; * Window 3 is direct access 1GB at 2GB&n;&t; * ??? We ought to scale window 1 memory.&n;&t; *&n;&t; * We must actually use 2 windows to direct-map the 2GB space,&n;&t; * because of an idiot-syncrasy of the CYPRESS chip.  It may&n;&t; * respond to a PCI bus address in the last 1MB of the 4GB&n;&t; * address range.&n;&t; *&n;&t; * Note that the TLB lookup logic uses bitwise concatenation,&n;&t; * not addition, so the required arena alignment is based on&n;&t; * the size of the window.&n;&t; */
 id|hose-&gt;sg_isa
 op_assign
 id|iommu_arena_new
@@ -1329,7 +1349,9 @@ l_int|0x00800000
 comma
 l_int|0x00800000
 comma
-id|PAGE_SIZE
+l_int|0x00800000
+op_rshift
+l_int|10
 )paren
 suffix:semicolon
 id|hose-&gt;sg_pci
@@ -1341,7 +1363,9 @@ l_int|0xc0000000
 comma
 l_int|0x08000000
 comma
-id|PAGE_SIZE
+l_int|0x08000000
+op_rshift
+l_int|10
 )paren
 suffix:semicolon
 id|__direct_map_base
@@ -1716,13 +1740,6 @@ id|TSUNAMI_dchip-&gt;drev.csr
 )paren
 suffix:semicolon
 macro_line|#endif
-id|TSUNAMI_bootcpu
-op_assign
-id|__hard_smp_processor_id
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* With multiple PCI busses, we play with I/O as physical addrs.  */
 id|ioport_resource.end
 op_assign
@@ -2027,12 +2044,6 @@ op_star
 id|pchip
 )paren
 (brace
-r_int
-r_int
-id|jd
-suffix:semicolon
-id|jd
-op_assign
 id|pchip-&gt;perror.csr
 suffix:semicolon
 id|pchip-&gt;perror.csr
@@ -2044,8 +2055,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|jd
-op_assign
 id|pchip-&gt;perror.csr
 suffix:semicolon
 )brace

@@ -4,7 +4,6 @@ multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree r
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_SEQUENCER)
 DECL|variable|initialized
 DECL|variable|opened
 DECL|variable|tmr_running
@@ -1138,5 +1137,4 @@ op_amp
 id|sound_timer
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

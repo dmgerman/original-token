@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
-macro_line|#if defined(CONFIG_SGALAXY) || defined (MODULE)
 DECL|function|sleep
 r_static
 r_void
@@ -642,6 +641,5 @@ suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#endif
+macro_line|#endif /* MODULE */
 eof

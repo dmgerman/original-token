@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: checksum.h,v 1.6 1998/09/16 13:30:51 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
-macro_line|#ifndef __ASM_MIPS_CHECKSUM_H
-DECL|macro|__ASM_MIPS_CHECKSUM_H
-mdefine_line|#define __ASM_MIPS_CHECKSUM_H
+multiline_comment|/* $Id: checksum.h,v 1.9 2000/02/18 22:06:19 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
+macro_line|#ifndef _ASM_CHECKSUM_H
+DECL|macro|_ASM_CHECKSUM_H
+mdefine_line|#define _ASM_CHECKSUM_H
+macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * computes the checksum of a memory block at buff, length len,&n; * and adds in &quot;sum&quot; (32-bit)&n; *&n; * returns a 32-bit number suitable for feeding into itself&n; * or csum_tcpudp_magic&n; *&n; * this function must be called with even lengths, except&n; * for the last fragment, which may be odd&n; *&n; * it&squot;s best to have buff aligned on a 32-bit boundary&n; */
 r_int
 r_int
@@ -52,10 +53,14 @@ op_star
 id|errp
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Copy and checksum to user&n; */
 DECL|macro|HAVE_CSUM_COPY_USER
 mdefine_line|#define HAVE_CSUM_COPY_USER
+r_extern
+r_inline
 r_int
 r_int
+DECL|function|csum_and_copy_to_user
 id|csum_and_copy_to_user
 (paren
 r_const
@@ -77,7 +82,48 @@ r_int
 op_star
 id|err_ptr
 )paren
+(brace
+id|sum
+op_assign
+id|csum_partial
+c_func
+(paren
+id|src
+comma
+id|len
+comma
+id|sum
+)paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|copy_to_user
+c_func
+(paren
+id|dst
+comma
+id|src
+comma
+id|len
+)paren
+)paren
+(brace
+op_star
+id|err_ptr
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_return
+id|sum
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * the same as csum_partial, but copies from user space (but on MIPS&n; * we have just one address space, so this is identical to the above)&n; *&n; * this is obsolete and will go away.&n; */
 DECL|macro|csum_partial_copy_fromuser
 mdefine_line|#define csum_partial_copy_fromuser csum_partial_copy
@@ -1077,5 +1123,5 @@ id|sum
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* __ASM_MIPS_CHECKSUM_H */
+macro_line|#endif /* _ASM_CHECKSUM_H */
 eof

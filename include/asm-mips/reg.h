@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Various register offset definitions for debuggers, core file&n; * examiners and whatnot.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Ralf Baechle&n; */
+multiline_comment|/*&n; * Various register offset definitions for debuggers, core file&n; * examiners and whatnot.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1999 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_REG_H
 DECL|macro|__ASM_MIPS_REG_H
 mdefine_line|#define __ASM_MIPS_REG_H
@@ -69,19 +69,15 @@ DECL|macro|EF_LO
 mdefine_line|#define EF_LO&t;&t;&t;38
 DECL|macro|EF_HI
 mdefine_line|#define EF_HI&t;&t;&t;39
-DECL|macro|EF_ORIG_REG2
-mdefine_line|#define EF_ORIG_REG2&t;&t;40
-DECL|macro|EF_ORIG_REG7
-mdefine_line|#define EF_ORIG_REG7&t;&t;41
 DECL|macro|EF_CP0_EPC
-mdefine_line|#define EF_CP0_EPC&t;&t;42
+mdefine_line|#define EF_CP0_EPC&t;&t;40
 DECL|macro|EF_CP0_BADVADDR
-mdefine_line|#define EF_CP0_BADVADDR&t;&t;43
+mdefine_line|#define EF_CP0_BADVADDR&t;&t;41
 DECL|macro|EF_CP0_STATUS
-mdefine_line|#define EF_CP0_STATUS&t;&t;44
+mdefine_line|#define EF_CP0_STATUS&t;&t;42
 DECL|macro|EF_CP0_CAUSE
-mdefine_line|#define EF_CP0_CAUSE&t;&t;45
+mdefine_line|#define EF_CP0_CAUSE&t;&t;44
 DECL|macro|EF_SIZE
-mdefine_line|#define EF_SIZE&t;&t;&t;180
+mdefine_line|#define EF_SIZE&t;&t;&t;180&t;/* size in bytes */
 macro_line|#endif /* __ASM_MIPS_REG_H */
 eof

@@ -1,8 +1,10 @@
-multiline_comment|/* $Id: system.h,v 1.8 1998/07/20 17:52:21 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996, 1997, 1998 by Ralf Baechle&n; * Modified further for R[236]000 by Paul M. Antoine, 1996&n; */
-macro_line|#ifndef __ASM_MIPS_SYSTEM_H
-DECL|macro|__ASM_MIPS_SYSTEM_H
-mdefine_line|#define __ASM_MIPS_SYSTEM_H
+multiline_comment|/* $Id: system.h,v 1.21 1999/12/30 14:21:21 raiko Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 by Ralf Baechle&n; * Copyright (C) 1996 by Paul M. Antoine&n; * Copyright (C) 1994 - 1999 by Ralf Baechle&n; */
+macro_line|#ifndef _ASM_SYSTEM_H
+DECL|macro|_ASM_SYSTEM_H
+mdefine_line|#define _ASM_SYSTEM_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/sgidefs.h&gt;
+macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 r_extern
 id|__inline__
@@ -18,14 +20,14 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;tpush&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;treorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0&bslash;t$1,$12&bslash;n&bslash;t&quot;
 l_string|&quot;ori&bslash;t$1,0x1f&bslash;n&bslash;t&quot;
 l_string|&quot;xori&bslash;t$1,0x1e&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0&bslash;t$1,$12&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;treorder&quot;
+l_string|&quot;.set&bslash;tpop&bslash;n&bslash;t&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
@@ -52,17 +54,18 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;tpush&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;treorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0&bslash;t$1,$12&bslash;n&bslash;t&quot;
 l_string|&quot;ori&bslash;t$1,1&bslash;n&bslash;t&quot;
 l_string|&quot;xori&bslash;t$1,1&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0&bslash;t$1,$12&bslash;n&bslash;t&quot;
 l_string|&quot;nop&bslash;n&bslash;t&quot;
 l_string|&quot;nop&bslash;n&bslash;t&quot;
 l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;treorder&quot;
+l_string|&quot;.set&bslash;tpop&bslash;n&bslash;t&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
@@ -75,9 +78,9 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 )brace
 DECL|macro|__save_flags
-mdefine_line|#define __save_flags(x)                  &bslash;&n;__asm__ __volatile__(                    &bslash;&n;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;            &bslash;&n;&t;&quot;mfc0&bslash;t%0,$12&bslash;n&bslash;t&quot;               &bslash;&n;&t;&quot;.set&bslash;treorder&quot;                  &bslash;&n;&t;: &quot;=r&quot; (x)                       &bslash;&n;&t;: /* no inputs */                &bslash;&n;&t;: &quot;memory&quot;)
+mdefine_line|#define __save_flags(x)                  &bslash;&n;__asm__ __volatile__(                    &bslash;&n;&t;&quot;.set&bslash;tpush&bslash;n&bslash;t&quot;&t;&t; &bslash;&n;&t;&quot;.set&bslash;treorder&bslash;n&bslash;t&quot;              &bslash;&n;&t;&quot;mfc0&bslash;t%0,$12&bslash;n&bslash;t&quot;               &bslash;&n;&t;&quot;.set&bslash;tpop&bslash;n&bslash;t&quot;                      &bslash;&n;&t;: &quot;=r&quot; (x)                       &bslash;&n;&t;: /* no inputs */                &bslash;&n;&t;: &quot;memory&quot;)
 DECL|macro|__save_and_cli
-mdefine_line|#define __save_and_cli(x)                &bslash;&n;__asm__ __volatile__(                    &bslash;&n;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;            &bslash;&n;&t;&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot;                 &bslash;&n;&t;&quot;mfc0&bslash;t%0,$12&bslash;n&bslash;t&quot;               &bslash;&n;&t;&quot;ori&bslash;t$1,%0,1&bslash;n&bslash;t&quot;               &bslash;&n;&t;&quot;xori&bslash;t$1,1&bslash;n&bslash;t&quot;                 &bslash;&n;&t;&quot;mtc0&bslash;t$1,$12&bslash;n&bslash;t&quot;               &bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;                        &bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;                        &bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;                        &bslash;&n;&t;&quot;.set&bslash;tat&bslash;n&bslash;t&quot;                   &bslash;&n;&t;&quot;.set&bslash;treorder&quot;                  &bslash;&n;&t;: &quot;=r&quot; (x)                       &bslash;&n;&t;: /* no inputs */                &bslash;&n;&t;: &quot;$1&quot;, &quot;memory&quot;)
+mdefine_line|#define __save_and_cli(x)                &bslash;&n;__asm__ __volatile__(                    &bslash;&n;&t;&quot;.set&bslash;tpush&bslash;n&bslash;t&quot;&t;&t; &bslash;&n;&t;&quot;.set&bslash;treorder&bslash;n&bslash;t&quot;              &bslash;&n;&t;&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot;                 &bslash;&n;&t;&quot;mfc0&bslash;t%0,$12&bslash;n&bslash;t&quot;               &bslash;&n;&t;&quot;ori&bslash;t$1,%0,1&bslash;n&bslash;t&quot;               &bslash;&n;&t;&quot;xori&bslash;t$1,1&bslash;n&bslash;t&quot;                 &bslash;&n;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;&t;&t; &bslash;&n;&t;&quot;mtc0&bslash;t$1,$12&bslash;n&bslash;t&quot;               &bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;                        &bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;                        &bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;                        &bslash;&n;&t;&quot;.set&bslash;tpop&bslash;n&bslash;t&quot;                  &bslash;&n;&t;: &quot;=r&quot; (x)                       &bslash;&n;&t;: /* no inputs */                &bslash;&n;&t;: &quot;$1&quot;, &quot;memory&quot;)
 r_extern
 r_void
 id|__inline__
@@ -93,20 +96,21 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;tpush&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;treorder&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0&bslash;t$8,$12&bslash;n&bslash;t&quot;
 l_string|&quot;li&bslash;t$9,0xff00&bslash;n&bslash;t&quot;
 l_string|&quot;and&bslash;t$8,$9&bslash;n&bslash;t&quot;
 l_string|&quot;nor&bslash;t$9,$0,$9&bslash;n&bslash;t&quot;
 l_string|&quot;and&bslash;t%0,$9&bslash;n&bslash;t&quot;
 l_string|&quot;or&bslash;t%0,$8&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0&bslash;t%0,$12&bslash;n&bslash;t&quot;
 l_string|&quot;nop&bslash;n&bslash;t&quot;
 l_string|&quot;nop&bslash;n&bslash;t&quot;
 l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;treorder&quot;
+l_string|&quot;.set&bslash;tpop&bslash;n&bslash;t&quot;
 suffix:colon
-multiline_comment|/* no output */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -142,22 +146,36 @@ mdefine_line|#define local_irq_disable()&t;__cli();
 DECL|macro|local_irq_enable
 mdefine_line|#define local_irq_enable()&t;__sti();
 multiline_comment|/*&n; * These are probably defined overly paranoid ...&n; */
+macro_line|#ifdef CONFIG_CPU_HAS_WB
+macro_line|#include &lt;asm/wbflush.h&gt;
+DECL|macro|rmb
+mdefine_line|#define rmb()
+DECL|macro|wmb
+mdefine_line|#define wmb() wbflush()
+DECL|macro|mb
+mdefine_line|#define mb() wbflush()
+macro_line|#else
 DECL|macro|mb
 mdefine_line|#define mb()&t;&t;&t;&t;&t;&t;&bslash;&n;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;# prevent instructions being moved around&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;# 8 nops to fool the R4400 pipeline&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&quot;nop;nop;nop;nop;nop;nop;nop;nop&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;.set&bslash;treorder&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;: /* no output */&t;&t;&t;&t;&bslash;&n;&t;: /* no input */&t;&t;&t;&t;&bslash;&n;&t;: &quot;memory&quot;)
 DECL|macro|rmb
 mdefine_line|#define rmb() mb()
 DECL|macro|wmb
 mdefine_line|#define wmb() mb()
+macro_line|#endif
+DECL|macro|set_mb
+mdefine_line|#define set_mb(var, value) &bslash;&n;do { var = value; mb(); } while (0)
+DECL|macro|set_rmb
+mdefine_line|#define set_rmb(var, value) &bslash;&n;do { var = value; rmb(); } while (0)
+DECL|macro|set_wmb
+mdefine_line|#define set_wmb(var, value) &bslash;&n;do { var = value; wmb(); } while (0)
 macro_line|#if !defined (_LANGUAGE_ASSEMBLY)
 multiline_comment|/*&n; * switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; */
 r_extern
 id|asmlinkage
 r_void
 op_star
-(paren
-op_star
 id|resume
-)paren
+c_func
 (paren
 r_void
 op_star
@@ -192,7 +210,7 @@ r_int
 id|val
 )paren
 (brace
-macro_line|#if (_MIPS_ISA == _MIPS_ISA_MIPS2) || (_MIPS_ISA == _MIPS_ISA_MIPS3) || &bslash;&n;    (_MIPS_ISA == _MIPS_ISA_MIPS4) || (_MIPS_ISA == _MIPS_ISA_MIPS5)
+macro_line|#if defined(CONFIG_CPU_HAS_LLSC)
 r_int
 r_int
 id|dummy
@@ -239,6 +257,9 @@ suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
+r_return
+id|val
+suffix:semicolon
 macro_line|#else
 r_int
 r_int
@@ -273,10 +294,10 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif /* Processor-dependent optimization */
 r_return
-id|val
+id|retval
 suffix:semicolon
+macro_line|#endif /* Processor-dependent optimization */
 )brace
 multiline_comment|/*&n; * Only used for 64 bit kernel.&n; */
 DECL|function|xchg_u64
@@ -311,7 +332,7 @@ l_string|&quot;lld&bslash;t%0,(%1)&bslash;n&quot;
 l_string|&quot;1:&bslash;tmove&bslash;t$1,%2&bslash;n&bslash;t&quot;
 l_string|&quot;scd&bslash;t$1,(%1)&bslash;n&bslash;t&quot;
 l_string|&quot;beqzl&bslash;t$1,1b&bslash;n&bslash;t&quot;
-l_string|&quot;ll&bslash;t%0,(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;lld&bslash;t%0,(%1)&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
@@ -436,5 +457,62 @@ op_star
 id|addr
 )paren
 suffix:semicolon
-macro_line|#endif /* __ASM_MIPS_SYSTEM_H */
+r_extern
+r_void
+id|__die
+c_func
+(paren
+r_const
+r_char
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+comma
+r_const
+r_char
+op_star
+id|where
+comma
+r_int
+r_int
+id|line
+)paren
+id|__attribute__
+c_func
+(paren
+(paren
+id|noreturn
+)paren
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__die_if_kernel
+c_func
+(paren
+r_const
+r_char
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+comma
+r_const
+r_char
+op_star
+id|where
+comma
+r_int
+r_int
+id|line
+)paren
+suffix:semicolon
+DECL|macro|die
+mdefine_line|#define die(msg, regs)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__die(msg, regs, __FILE__ &quot;:&quot;__FUNCTION__, __LINE__)
+DECL|macro|die_if_kernel
+mdefine_line|#define die_if_kernel(msg, regs)&t;&t;&t;&t;&t;&bslash;&n;&t;__die_if_kernel(msg, regs, __FILE__ &quot;:&quot;__FUNCTION__, __LINE__)
+macro_line|#endif /* _ASM_SYSTEM_H */
 eof

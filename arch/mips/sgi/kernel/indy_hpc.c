@@ -1,8 +1,8 @@
-multiline_comment|/* $Id: indy_hpc.c,v 1.6 1999/05/07 22:34:31 ulfc Exp $&n; *&n; * indy_hpc.c: Routines for generic manipulation of the HPC controllers.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1998 Ralf Baechle&n; */
+multiline_comment|/* $Id: indy_hpc.c,v 1.9 1999/12/04 03:59:00 ralf Exp $&n; *&n; * indy_hpc.c: Routines for generic manipulation of the HPC controllers.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1998 Ralf Baechle&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
-macro_line|#include &lt;asm/sgihpc.h&gt;
-macro_line|#include &lt;asm/sgint23.h&gt;
+macro_line|#include &lt;asm/sgi/sgihpc.h&gt;
+macro_line|#include &lt;asm/sgi/sgint23.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 multiline_comment|/* #define DEBUG_SGIHPC */
 DECL|variable|hpc3c0

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id$&n; *&n; * baget.c: Baget low level stuff&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; *&n; */
+multiline_comment|/* $Id: baget.c,v 1.1 1999/01/17 03:49:37 ralf Exp $&n; *&n; * baget.c: Baget low level stuff&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; *&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

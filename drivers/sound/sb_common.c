@@ -5,10 +5,6 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
-macro_line|#ifdef CONFIG_SBDSP
-macro_line|#ifndef CONFIG_AUDIO
-macro_line|#error You will need to configure the sound driver with CONFIG_AUDIO option.
-macro_line|#endif
 macro_line|#include &quot;sb_mixer.h&quot;
 macro_line|#include &quot;sb.h&quot;
 macro_line|#include &quot;sb_ess.h&quot;
@@ -322,7 +318,6 @@ id|IRQ_STAT
 )paren
 suffix:semicolon
 multiline_comment|/* Interrupt source register */
-macro_line|#if defined(CONFIG_MIDI)&amp;&amp; defined(CONFIG_UART401)
 r_if
 c_cond
 (paren
@@ -348,7 +343,6 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -418,14 +412,12 @@ suffix:semicolon
 r_case
 id|IMODE_MIDI
 suffix:colon
-macro_line|#ifdef CONFIG_MIDI
 id|sb_midi_interrupt
 c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 r_default
@@ -976,7 +968,6 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_UART401)
 DECL|function|sb16_set_mpu_port
 r_static
 r_void
@@ -1075,7 +1066,6 @@ id|hw_config-&gt;io_base
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 DECL|function|sb16_set_irq_hw
 r_static
 r_int
@@ -3179,7 +3169,6 @@ c_func
 id|devc
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_MIDI
 r_if
 c_cond
 (paren
@@ -3196,7 +3185,6 @@ c_func
 id|devc
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3908,7 +3896,6 @@ id|value
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_MIDI
 multiline_comment|/*&n; *&t;MPU401 MIDI initialization.&n; */
 DECL|function|smw_putmem
 r_static
@@ -4870,7 +4857,6 @@ macro_line|#endif
 r_return
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_UART401)
 id|attach_uart401
 c_func
 (paren
@@ -4889,7 +4875,6 @@ l_int|4
 op_member_access_from_pointer
 id|devc
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|probe_sbmpu
 r_int
@@ -5043,7 +5028,6 @@ id|hw_config
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#if defined(CONFIG_UART401)
 r_if
 c_cond
 (paren
@@ -5194,11 +5178,6 @@ c_func
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#else
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|unload_sbmpu
 r_void
@@ -5234,55 +5213,11 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#if defined(CONFIG_UART401)
 id|unload_uart401
 c_func
 (paren
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
-macro_line|#else&t;&t;&t;&t;/* !CONFIG_MIDI */
-DECL|function|unload_sbmpu
-r_void
-id|unload_sbmpu
-c_func
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-(brace
-)brace
-DECL|function|probe_sbmpu
-r_int
-id|probe_sbmpu
-c_func
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|attach_sbmpu
-r_void
-id|attach_sbmpu
-c_func
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-(brace
-)brace
-macro_line|#endif
-macro_line|#endif
 eof

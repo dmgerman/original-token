@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: rtc-no.c,v 1.2 1998/06/25 20:19:15 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Stub RTC routines to keep Linux from crashing on machine which don&squot;t&n; * have a RTC chip.&n; *&n; * Copyright (C) 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: rtc-no.c,v 1.1 1998/06/30 00:21:55 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Stub RTC routines to keep Linux from crashing on machine which don&squot;t&n; * have a RTC chip.&n; *&n; * Copyright (C) 1998 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 DECL|function|no_rtc_read_data

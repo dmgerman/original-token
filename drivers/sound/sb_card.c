@@ -6,7 +6,6 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/isapnp.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
-macro_line|#ifdef CONFIG_SBDSP
 macro_line|#include &quot;sb_mixer.h&quot;
 macro_line|#include &quot;sb.h&quot;
 DECL|variable|sbmpu
@@ -295,7 +294,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-multiline_comment|/* This is useless since is done by sb_dsp_detect - azummo*/
+multiline_comment|/* This is useless since is done by sb_dsp_detect - azummo */
 r_if
 c_cond
 (paren
@@ -410,7 +409,6 @@ id|jp_dev
 op_assign
 l_int|NULL
 comma
-multiline_comment|/*&t;&t;&t;&t;*ide_dev&t;= NULL, */
 DECL|variable|mpu_dev
 op_star
 id|mpu_dev
@@ -1235,7 +1233,7 @@ c_func
 id|sb_dev
 )paren
 suffix:semicolon
-multiline_comment|/*  This device doesn&squot;t work with DMA 0, so we must allocate&n;&t;&t; *&t;it to prevent PnP routines to assign it to the card.&n;&t;&t; *&n;&t;&t; *&t;I know i could have inlined the following lines, but it&squot;s cleaner&n;&t;&t; *  this way.&n;&t;&t; */
+multiline_comment|/*  This device doesn&squot;t work with DMA 0, so we must allocate&n;&t;&t; *  it to prevent PnP routines to assign it to the card.&n;&t;&t; *&n;&t;&t; *  I know i could have inlined the following lines, but it&squot;s cleaner&n;&t;&t; *  this way.&n;&t;&t; */
 macro_line|#ifdef CMI8330_DMA0BAD
 r_if
 c_cond
@@ -1376,7 +1374,6 @@ l_string|&quot;sb: CMI8330 panic: sb base not found&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*  @H@0001:mpu&n;&t; */
-macro_line|#ifdef CONFIG_MIDI
 r_if
 c_cond
 (paren
@@ -1478,7 +1475,6 @@ id|KERN_ERR
 l_string|&quot;sb: CMI8330 panic: mpu not found&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*  @P@:Gameport&n;&t; */
 r_if
 c_cond
@@ -1677,7 +1673,7 @@ r_return
 id|sb_dev
 suffix:semicolon
 )brace
-multiline_comment|/* Specific support for awe will be dropped when:&n; * a) The new awe_wawe driver with PnP support will be introduced in the kernel&n; * b) The joystick driver will support PnP&n; */
+multiline_comment|/* Specific support for awe will be dropped when:&n; * a) The new awe_wawe driver with PnP support will be introduced in the kernel&n; * b) The joystick driver will support PnP - a little patch is available from me....hint, hint :-)&n; */
 DECL|function|sb_init_awe
 r_static
 r_struct
@@ -2034,7 +2030,7 @@ id|KERN_ERR
 l_string|&quot;sb: AWE panic: gameport not found&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*  CTL0022:WaveTable SB64&n;&t; *  CTL0021:WaveTable SB32&n;&t; */
+multiline_comment|/*  CTL0022:WaveTable SB64&n;&t; *  CTL0021:WaveTable SB32&n;&t; *  CTL0023:WaveTable Sb64&n;&t; */
 r_if
 c_cond
 (paren
@@ -2207,9 +2203,6 @@ id|KERN_ERR
 l_string|&quot;sb: AWE panic: wavetable not found&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*  CTL2011:IDE SB32/64&n;&t; */
-multiline_comment|/* No reasons to enable this... or not? */
-multiline_comment|/*&n;&t;if( (ide_dev = isapnp_find_dev(bus, ISAPNP_VENDOR(&squot;C&squot;,&squot;T&squot;,&squot;L&squot;), ISAPNP_FUNCTION(0x2011), NULL)) )&n;&t;{&n;&t;&t;ide_dev-&gt;prepare(ide_dev);&n;&t;&t;&n;&t;&t;if((ide_dev = activate_dev(&quot;AWE&quot;, &quot;IDE&quot;, ide_dev)))&n;&t;&t;{&n;&t;&t;&t;show_base(&quot;AWE&quot;, &quot;IDE 1&quot;, &amp;ide_dev-&gt;resource[0]);&n;&t;&t;&t;show_base(&quot;AWE&quot;, &quot;IDE 2&quot;, &amp;ide_dev-&gt;resource[1]);&n;&t;&t;}&n;&t;}&n;&t;else&n;&t;&t;printk(KERN_ERR &quot;sb: AWE panic: IDE not found&bslash;n&quot;);&n;*/
 id|printk
 c_func
 (paren
@@ -3438,7 +3431,6 @@ id|wt_dev
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&t;if(ide_dev)&t;wt_dev-&gt;deactivate(ide_dev); */
 r_if
 c_cond
 (paren
@@ -3579,5 +3571,4 @@ c_func
 id|unload_sbmpu
 )paren
 suffix:semicolon
-macro_line|#endif
 eof

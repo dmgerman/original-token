@@ -5,20 +5,14 @@ macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;asm/gfx.h&gt;
 macro_line|#include &lt;asm/ng1.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/newport.h&gt;
+macro_line|#include &lt;video/newport.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 DECL|variable|npregs
 r_struct
 id|newport_regs
 op_star
 id|npregs
-suffix:semicolon
-DECL|variable|npregs
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|npregs
-)paren
 suffix:semicolon
 multiline_comment|/* Kernel routines for supporting graphics context switching */
 DECL|function|newport_save
@@ -43,7 +37,7 @@ suffix:semicolon
 DECL|macro|LOAD
 mdefine_line|#define LOAD(val) x-&gt;val = npregs-&gt;set.val;
 DECL|macro|LOADI
-mdefine_line|#define LOADI(val) x-&gt;val = npregs-&gt;set.val.i;
+mdefine_line|#define LOADI(val) x-&gt;val = npregs-&gt;set.val.word;
 DECL|macro|LOADC
 mdefine_line|#define LOADC(val) x-&gt;val = npregs-&gt;cset.val;
 id|LOAD
@@ -351,7 +345,7 @@ id|newport_bfwait
 suffix:semicolon
 id|x-&gt;dcbdata0
 op_assign
-id|npregs-&gt;set.dcbdata0.all
+id|npregs-&gt;set.dcbdata0.byword
 suffix:semicolon
 id|newport_bfwait
 (paren
@@ -383,7 +377,7 @@ suffix:semicolon
 DECL|macro|STORE
 mdefine_line|#define STORE(val) npregs-&gt;set.val = x-&gt;val
 DECL|macro|STOREI
-mdefine_line|#define STOREI(val) npregs-&gt;set.val.i = x-&gt;val
+mdefine_line|#define STOREI(val) npregs-&gt;set.val.word = x-&gt;val
 DECL|macro|STOREC
 mdefine_line|#define STOREC(val) npregs-&gt;cset.val = x-&gt;val
 id|newport_wait

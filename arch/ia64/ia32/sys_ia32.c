@@ -10612,6 +10612,53 @@ r_return
 id|err
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * sys_time() can be implemented in user-level using&n; * sys_gettimeofday().  IA64 did this but i386 Linux did not&n; * so we have to implement this system call here.&n; */
+DECL|function|sys32_time
+id|asmlinkage
+r_int
+id|sys32_time
+c_func
+(paren
+r_int
+op_star
+id|tloc
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+multiline_comment|/* SMP: This is fairly trivial. We grab CURRENT_TIME and &n;&t;   stuff it to user space. No side effects */
+id|i
+op_assign
+id|CURRENT_TIME
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tloc
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|put_user
+c_func
+(paren
+id|i
+comma
+id|tloc
+)paren
+)paren
+id|i
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
+r_return
+id|i
+suffix:semicolon
+)brace
 macro_line|#ifdef&t;NOTYET  /* UNTESTED FOR IA64 FROM HERE DOWN */
 multiline_comment|/* In order to reduce some races, while at the same time doing additional&n; * checking and hopefully speeding things up, we copy filenames to the&n; * kernel data space before using them..&n; *&n; * POSIX.1 2.4: an empty pathname is invalid (ENOENT).&n; */
 r_static

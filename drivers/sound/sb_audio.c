@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * sound/sb_audio.c&n; *&n; * Audio routines for Sound Blaster compatible cards.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Changes&n; *&t;Alan Cox&t;:&t;Formatting and clean ups&n; *&n; * Status&n; *&t;Mostly working. Weird uart bug causing irq storms&n; *&n; * Daniel J. Rodriksson: Changes to make sb16 work full duplex.&n; *                       Maybe other 16 bit cards in this code could behave&n; *                       the same.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_SBDSP
 macro_line|#include &quot;sb_mixer.h&quot;
 macro_line|#include &quot;sb.h&quot;
 macro_line|#include &quot;sb_ess.h&quot;
@@ -4719,5 +4718,4 @@ op_assign
 l_int|5
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

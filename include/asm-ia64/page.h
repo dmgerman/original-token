@@ -230,12 +230,11 @@ DECL|macro|BUG
 mdefine_line|#define BUG() do { printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); *(int *)0=0; } while (0)
 DECL|macro|PAGE_BUG
 mdefine_line|#define PAGE_BUG(page) do { BUG(); } while (0)
-DECL|function|get_order
 r_extern
 id|__inline__
 r_int
+DECL|function|get_order
 id|get_order
-c_func
 (paren
 r_int
 r_int

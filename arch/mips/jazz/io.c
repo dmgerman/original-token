@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Low level I/O functions for Jazz family machines.&n; *&n; * Copyright (C) 1997 by Ralf Baechle.&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#include &lt;asm/mipsconfig.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/jazz.h&gt;

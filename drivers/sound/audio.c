@@ -6,7 +6,6 @@ macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_AUDIO
 macro_line|#include &quot;ulaw.h&quot;
 macro_line|#include &quot;coproc.h&quot;
 DECL|macro|NEUTRAL8
@@ -2468,7 +2467,6 @@ r_void
 (brace
 multiline_comment|/*&n;&t; * NOTE! This routine could be called several times during boot.&n;&t; */
 )brace
-macro_line|#endif
 DECL|function|reorganize_buffers
 r_void
 id|reorganize_buffers

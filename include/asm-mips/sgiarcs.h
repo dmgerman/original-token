@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgiarcs.h,v 1.2 1998/07/08 16:01:57 ralf Exp $&n; *&n; * SGI ARCS firmware interface defines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: sgiarcs.h,v 1.3 1999/02/25 20:55:08 tsbogend Exp $&n; *&n; * SGI ARCS firmware interface defines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#ifndef _MIPS_SGIARCS_H
 DECL|macro|_MIPS_SGIARCS_H
 mdefine_line|#define _MIPS_SGIARCS_H

@@ -330,6 +330,17 @@ r_int
 r_char
 id|vga_hardscroll_enabled
 suffix:semicolon
+macro_line|#ifdef CONFIG_IA64_SOFTSDV_HACKS
+multiline_comment|/*&n; * SoftSDV doesn&squot;t have hardware assist VGA scrolling &n; */
+DECL|variable|vga_hardscroll_user_enable
+r_static
+r_int
+r_char
+id|vga_hardscroll_user_enable
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#else
 DECL|variable|vga_hardscroll_user_enable
 r_static
 r_int
@@ -338,6 +349,7 @@ id|vga_hardscroll_user_enable
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#endif
 DECL|variable|vga_font_is_default
 r_static
 r_int

@@ -1,4 +1,5 @@
-multiline_comment|/* $Id$&n; *&n; * setup.c: Baget/MIPS specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; *&n; */
+multiline_comment|/* $Id: setup.c,v 1.4 1999/10/09 00:00:57 ralf Exp $&n; *&n; * setup.c: Baget/MIPS specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -9,14 +10,6 @@ macro_line|#include &lt;asm/baget/baget.h&gt;
 r_extern
 r_int
 id|mips_memory_upper
-suffix:semicolon
-r_extern
-r_void
-id|wbflush_setup
-c_func
-(paren
-r_void
-)paren
 suffix:semicolon
 DECL|macro|CACHEABLE_STR
 mdefine_line|#define CACHEABLE_STR(val) ((val) ? &quot;not cached&quot; : &quot;cached&quot;)
@@ -3035,11 +3028,6 @@ suffix:semicolon
 id|irq_setup
 op_assign
 id|baget_irq_setup
-suffix:semicolon
-id|wbflush_setup
-c_func
-(paren
-)paren
 suffix:semicolon
 id|_machine_restart
 op_assign

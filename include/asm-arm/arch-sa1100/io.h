@@ -12,7 +12,7 @@ multiline_comment|/*&n; * Generic virtual read/write&n; */
 DECL|macro|__arch_getb
 mdefine_line|#define __arch_getb(a)&t;&t;(*(volatile unsigned char *)(a))
 DECL|macro|__arch_getl
-mdefine_line|#define __arch_getl(a)&t;&t;(*(volatile unsigned long *)(a))
+mdefine_line|#define __arch_getl(a)&t;&t;(*(volatile unsigned int  *)(a))
 DECL|function|__arch_getw
 r_extern
 id|__inline__
@@ -54,7 +54,7 @@ suffix:semicolon
 DECL|macro|__arch_putb
 mdefine_line|#define __arch_putb(v,a)&t;(*(volatile unsigned char *)(a) = (v))
 DECL|macro|__arch_putl
-mdefine_line|#define __arch_putl(v,a)&t;(*(volatile unsigned long *)(a) = (v))
+mdefine_line|#define __arch_putl(v,a)&t;(*(volatile unsigned int  *)(a) = (v))
 DECL|function|__arch_putw
 r_extern
 id|__inline__

@@ -1,8 +1,23 @@
-multiline_comment|/*&n; * Inline functions to do unaligned accesses.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996 by Ralf Baechle&n; */
-macro_line|#ifndef __ASM_MIPS_UNALIGNED_H
-DECL|macro|__ASM_MIPS_UNALIGNED_H
-mdefine_line|#define __ASM_MIPS_UNALIGNED_H
-macro_line|#include &lt;asm/string.h&gt;
+multiline_comment|/* $Id: unaligned.h,v 1.3 1999/08/19 22:56:34 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1999 by Ralf Baechle&n; */
+macro_line|#ifndef _ASM_UNALIGNED_H
+DECL|macro|_ASM_UNALIGNED_H
+mdefine_line|#define _ASM_UNALIGNED_H
+r_extern
+r_void
+id|__get_unaligned_bad_length
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__put_unaligned_bad_length
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Load quad unaligned.&n; */
 DECL|function|ldq_u
 r_extern
@@ -341,6 +356,15 @@ id|ptr
 suffix:semicolon
 r_break
 suffix:semicolon
+r_default
+suffix:colon
+id|__get_unaligned_bad_length
+c_func
+(paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 r_return
 id|val
@@ -443,6 +467,15 @@ id|ptr
 suffix:semicolon
 r_break
 suffix:semicolon
+r_default
+suffix:colon
+id|__put_unaligned_bad_length
+c_func
+(paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/* &n; * The main single-value unaligned transfer routines.&n; */
@@ -450,5 +483,5 @@ DECL|macro|get_unaligned
 mdefine_line|#define get_unaligned(ptr) &bslash;&n;&t;((__typeof__(*(ptr)))__get_unaligned((ptr), sizeof(*(ptr))))
 DECL|macro|put_unaligned
 mdefine_line|#define put_unaligned(x,ptr) &bslash;&n;&t;__put_unaligned((unsigned long)(x), (ptr), sizeof(*(ptr)))
-macro_line|#endif /* __ASM_MIPS_UNALIGNED_H */
+macro_line|#endif /* _ASM_UNALIGNED_H */
 eof

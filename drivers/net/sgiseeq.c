@@ -22,7 +22,8 @@ macro_line|#include &lt;linux/route.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &lt;asm/sgihpc.h&gt;
+macro_line|#include &lt;asm/sgi/sgihpc.h&gt;
+macro_line|#include &lt;asm/sgi/sgint23.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 macro_line|#include &quot;sgiseeq.h&quot;
 DECL|variable|version
@@ -350,7 +351,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|sregs-&gt;rw.eth_addr
 (braket
 id|i
@@ -361,7 +361,6 @@ id|dev-&gt;dev_addr
 id|i
 )braket
 suffix:semicolon
-)brace
 )brace
 DECL|macro|TCNTINFO_INIT
 mdefine_line|#define TCNTINFO_INIT (HPCDMA_EOX | HPCDMA_ETXD)
@@ -405,9 +404,11 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|sp-&gt;rx_new
 op_assign
@@ -710,7 +711,7 @@ op_increment
 id|printk
 c_func
 (paren
-l_string|&quot;RX [%d]: @(%p) [%08lx,%08lx,%08lx] &quot;
+l_string|&quot;RX [%d]: @(%p) [%08x,%08x,%08x] &quot;
 comma
 id|i
 comma
@@ -751,7 +752,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;-- [%d]: @(%p) [%08lx,%08lx,%08lx]&bslash;n&quot;
+l_string|&quot;-- [%d]: @(%p) [%08x,%08x,%08x]&bslash;n&quot;
 comma
 id|i
 comma
@@ -804,7 +805,7 @@ op_increment
 id|printk
 c_func
 (paren
-l_string|&quot;TX [%d]: @(%p) [%08lx,%08lx,%08lx] &quot;
+l_string|&quot;TX [%d]: @(%p) [%08x,%08x,%08x] &quot;
 comma
 id|i
 comma
@@ -845,7 +846,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;-- [%d]: @(%p) [%08lx,%08lx,%08lx]&bslash;n&quot;
+l_string|&quot;-- [%d]: @(%p) [%08x,%08x,%08x]&bslash;n&quot;
 comma
 id|i
 comma
@@ -897,7 +898,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;RREGS: rx_cbptr[%08lx] rx_ndptr[%08lx] rx_ctrl[%08lx]&bslash;n&quot;
+l_string|&quot;RREGS: rx_cbptr[%08x] rx_ndptr[%08x] rx_ctrl[%08x]&bslash;n&quot;
 comma
 id|hregs-&gt;rx_cbptr
 comma
@@ -909,7 +910,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;TREGS: tx_cbptr[%08lx] tx_ndptr[%08lx] tx_ctrl[%08lx]&bslash;n&quot;
+l_string|&quot;TREGS: tx_cbptr[%08x] tx_ndptr[%08x] tx_ctrl[%08x]&bslash;n&quot;
 comma
 id|hregs-&gt;tx_cbptr
 comma
@@ -1069,11 +1070,9 @@ id|status
 op_amp
 id|SEEQ_RSTAT_SFRAME
 )paren
-(brace
 id|sp-&gt;stats.rx_over_errors
 op_increment
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1081,11 +1080,9 @@ id|status
 op_amp
 id|SEEQ_RSTAT_CERROR
 )paren
-(brace
 id|sp-&gt;stats.rx_crc_errors
 op_increment
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1093,11 +1090,9 @@ id|status
 op_amp
 id|SEEQ_RSTAT_DERROR
 )paren
-(brace
 id|sp-&gt;stats.rx_frame_errors
 op_increment
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1105,11 +1100,9 @@ id|status
 op_amp
 id|SEEQ_RSTAT_REOF
 )paren
-(brace
 id|sp-&gt;stats.rx_errors
 op_increment
 suffix:semicolon
-)brace
 )brace
 DECL|function|rx_maybe_restart
 r_static
@@ -1270,6 +1263,9 @@ op_assign
 r_int
 r_char
 op_star
+)paren
+(paren
+r_int
 )paren
 id|rd-&gt;buf_vaddr
 suffix:semicolon
@@ -1518,7 +1514,6 @@ op_or
 id|HPCDMA_ETXD
 )paren
 )paren
-(brace
 id|td
 op_assign
 (paren
@@ -1526,13 +1521,15 @@ r_struct
 id|sgiseeq_tx_desc
 op_star
 )paren
+(paren
+r_int
+)paren
 id|KSEG1ADDR
 c_func
 (paren
 id|td-&gt;tdma.pnext
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1630,11 +1627,9 @@ id|status
 op_amp
 id|SEEQ_TSTAT_R16
 )paren
-(brace
 id|sp-&gt;stats.tx_aborted_errors
 op_increment
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1642,11 +1637,9 @@ id|status
 op_amp
 id|SEEQ_TSTAT_UFLOW
 )paren
-(brace
 id|sp-&gt;stats.tx_fifo_errors
 op_increment
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1654,11 +1647,9 @@ id|status
 op_amp
 id|SEEQ_TSTAT_LCLS
 )paren
-(brace
 id|sp-&gt;stats.collisions
 op_increment
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/* Ack &squot;em... */
 r_for
@@ -1701,10 +1692,8 @@ id|HPCDMA_XIU
 )paren
 )paren
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1768,52 +1757,6 @@ suffix:semicolon
 id|td-&gt;tdma.cntinfo
 op_or_assign
 id|HPCDMA_EOX
-suffix:semicolon
-)brace
-)brace
-DECL|function|tx_maybe_unbusy
-r_static
-r_inline
-r_void
-id|tx_maybe_unbusy
-c_func
-(paren
-r_struct
-id|sgiseeq_private
-op_star
-id|sp
-comma
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|TX_BUFFS_AVAIL
-c_func
-(paren
-id|sp
-)paren
-op_ge
-l_int|0
-)paren
-op_logical_and
-id|dev-&gt;tbusy
-)paren
-(brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|NET_BH
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -1881,10 +1824,6 @@ id|hregs-&gt;rx_reset
 op_assign
 id|HPC3_ERXRST_CLRIRQ
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/* Always check for received packets. */
 id|sgiseeq_rx
 c_func
@@ -1906,7 +1845,6 @@ id|sp-&gt;tx_old
 op_ne
 id|sp-&gt;tx_new
 )paren
-(brace
 id|sgiseeq_tx
 c_func
 (paren
@@ -1919,19 +1857,33 @@ comma
 id|sregs
 )paren
 suffix:semicolon
-)brace
-id|tx_maybe_unbusy
+r_if
+c_cond
+(paren
+(paren
+id|TX_BUFFS_AVAIL
 c_func
 (paren
 id|sp
-comma
+)paren
+OG
+l_int|0
+)paren
+op_logical_and
+id|netif_queue_stopped
+c_func
+(paren
+id|dev
+)paren
+)paren
+(brace
+id|netif_wake_queue
+c_func
+(paren
 id|dev
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
+)brace
 )brace
 DECL|function|sgiseeq_open
 r_static
@@ -2031,17 +1983,11 @@ comma
 id|sregs
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|restore_flags
 c_func
@@ -2085,13 +2031,11 @@ id|sregs
 op_assign
 id|sp-&gt;sregs
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Shutdown the Seeq. */
 id|reset_hpc3_and_seeq
@@ -2161,17 +2105,11 @@ id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -2196,127 +2134,6 @@ c_func
 (paren
 id|gdev
 )paren
-suffix:semicolon
-)brace
-DECL|function|verify_tx
-r_static
-r_inline
-r_int
-id|verify_tx
-c_func
-(paren
-r_struct
-id|sgiseeq_private
-op_star
-id|sp
-comma
-r_struct
-id|net_device
-op_star
-id|dev
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-(brace
-multiline_comment|/* Are we bolixed? */
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-r_int
-id|tickssofar
-op_assign
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-l_int|20
-)paren
-r_return
-l_int|1
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s: transmit timed out, ticks=%d resetting&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|tickssofar
-)paren
-suffix:semicolon
-id|sgiseeq_reset
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* Are we getting in someone else&squot;s way? */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* Can we even send anything? */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|TX_BUFFS_AVAIL
-c_func
-(paren
-id|sp
-)paren
-)paren
-(brace
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|sgiseeq_start_xmit
@@ -2372,35 +2189,10 @@ id|len
 comma
 id|entry
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|verify_tx
-c_func
-(paren
-id|sp
-comma
-id|dev
-comma
-id|skb
-)paren
-)paren
-(brace
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* Yeee... */
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 multiline_comment|/* Setup... */
@@ -2441,6 +2233,9 @@ c_func
 r_char
 op_star
 )paren
+(paren
+r_int
+)paren
 id|td-&gt;buf_vaddr
 comma
 id|skb-&gt;data
@@ -2451,9 +2246,7 @@ suffix:semicolon
 id|td-&gt;tdma.cntinfo
 op_assign
 (paren
-(paren
 id|len
-)paren
 op_amp
 id|HPCDMA_BCNT
 )paren
@@ -2521,7 +2314,6 @@ op_amp
 id|HPC3_ETXCTRL_ACTIVE
 )paren
 )paren
-(brace
 id|kick_tx
 c_func
 (paren
@@ -2534,7 +2326,6 @@ comma
 id|hregs
 )paren
 suffix:semicolon
-)brace
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
@@ -2548,18 +2339,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|TX_BUFFS_AVAIL
 c_func
 (paren
 id|sp
 )paren
 )paren
-(brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-)brace
 id|restore_flags
 c_func
 (paren
@@ -2568,6 +2360,43 @@ id|flags
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+DECL|function|timeout
+r_static
+r_void
+id|timeout
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: transmit timed out, resetting&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|sgiseeq_reset
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 DECL|function|sgiseeq_get_stats
@@ -2882,12 +2711,10 @@ id|dev-&gt;priv
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond
@@ -2896,14 +2723,12 @@ op_logical_neg
 id|version_printed
 op_increment
 )paren
-(brace
 id|printk
 c_func
 (paren
 id|version
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -2926,7 +2751,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -2952,7 +2776,6 @@ suffix:colon
 l_char|&squot;:&squot;
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -3161,6 +2984,20 @@ id|dev-&gt;hard_start_xmit
 op_assign
 id|sgiseeq_start_xmit
 suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+id|timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+(paren
+l_int|200
+op_star
+id|HZ
+)paren
+op_div
+l_int|1000
+suffix:semicolon
 id|dev-&gt;get_stats
 op_assign
 id|sgiseeq_get_stats
@@ -3211,13 +3048,11 @@ id|c
 op_le
 l_char|&squot;9&squot;
 )paren
-(brace
 r_return
 id|c
 op_minus
 l_char|&squot;0&squot;
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3229,7 +3064,6 @@ id|c
 op_le
 l_char|&squot;f&squot;
 )paren
-(brace
 r_return
 id|c
 op_minus
@@ -3237,7 +3071,6 @@ l_char|&squot;a&squot;
 op_plus
 l_int|10
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -3360,7 +3193,7 @@ suffix:semicolon
 id|initialized
 op_increment
 suffix:semicolon
-multiline_comment|/* First get the ethernet address of the onboard&n;&t; * interface from ARCS.&n;&t; * (This is fragile; PROM doesn&squot;t like running from cache.)&n;&t; */
+multiline_comment|/* First get the ethernet address of the onboard&n;&t; * interface from ARCS.&n;&t; * This is fragile; PROM doesn&squot;t like running from cache.&n;&t; * On MIPS64 it crashes for some other, yet unknown reason.&n;&t; */
 id|ep
 op_assign
 id|romvec
@@ -3401,7 +3234,7 @@ comma
 op_amp
 id|hpc3c0-&gt;ethregs
 comma
-l_int|3
+id|SGI_ENET_IRQ
 )paren
 suffix:semicolon
 )brace

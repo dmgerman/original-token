@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: elf.h,v 1.10 1998/05/01 01:35:51 ralf Exp $&n; */
+multiline_comment|/*&n; * $Id: elf.h,v 1.7 1999/08/20 21:59:08 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_ELF_H
 DECL|macro|__ASM_MIPS_ELF_H
 mdefine_line|#define __ASM_MIPS_ELF_H
@@ -37,7 +37,7 @@ suffix:semicolon
 multiline_comment|/*&n; * This is used to ensure we don&squot;t load something for the wrong architecture.&n; */
 DECL|macro|elf_check_arch
 mdefine_line|#define elf_check_arch(x) ((x) == EM_MIPS || (x) == EM_MIPS_RS4_BE)
-multiline_comment|/*&n; * These are used to set parameters in the core dumps.&n; * FIXME(eric) I don&squot;t know what the correct endianness to use is.&n; */
+multiline_comment|/*&n; * These are used to set parameters in the core dumps.&n; */
 DECL|macro|ELF_CLASS
 mdefine_line|#define ELF_CLASS&t;ELFCLASS32
 macro_line|#ifdef __MIPSEB__

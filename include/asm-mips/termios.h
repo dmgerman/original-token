@@ -1,5 +1,7 @@
-multiline_comment|/*&n; * ioctls for Linux/MIPS.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle&n; */
-macro_line|#ifndef __ASM_MIPS_TERMIOS_H
+multiline_comment|/* $Id: termios.h,v 1.9 2000/02/18 00:24:48 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle&n; */
+macro_line|#ifndef _ASM_TERMIOS_H
+DECL|macro|_ASM_TERMIOS_H
+mdefine_line|#define _ASM_TERMIOS_H
 macro_line|#include &lt;asm/termbits.h&gt;
 macro_line|#include &lt;asm/ioctls.h&gt;
 DECL|struct|sgttyb
@@ -232,7 +234,7 @@ mdefine_line|#define N_SMSBLOCK&t;12&t;/* SMS block mode - for talking to GSM da
 DECL|macro|N_HDLC
 mdefine_line|#define N_HDLC&t;&t;13&t;/* synchronous HDLC */
 DECL|macro|N_SYNC_PPP
-mdefine_line|#define N_SYNC_PPP&t;14
+mdefine_line|#define N_SYNC_PPP&t;14&t;/* synchronous PPP */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/string.h&gt;
 multiline_comment|/*&n; * Translate a &quot;termio&quot; structure into a &quot;termios&quot;. Ugh.&n; */
@@ -246,5 +248,5 @@ mdefine_line|#define user_termios_to_kernel_termios(k, u) copy_from_user(k, u, s
 DECL|macro|kernel_termios_to_user_termios
 mdefine_line|#define kernel_termios_to_user_termios(u, k) copy_to_user(u, k, sizeof(struct termios))
 macro_line|#endif /* defined(__KERNEL__) */
-macro_line|#endif /* __ASM_MIPS_TERMIOS_H */
+macro_line|#endif /* _ASM_TERMIOS_H */
 eof

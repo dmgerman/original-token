@@ -34,7 +34,6 @@ DECL|macro|CHIPSET_OPL3SA3
 mdefine_line|#define CHIPSET_OPL3SA3  2
 DECL|macro|CHIPSET_OPL3SAX
 mdefine_line|#define CHIPSET_OPL3SAX  4
-macro_line|#ifdef CONFIG_OPL3SA2
 multiline_comment|/* What&squot;s my version? */
 DECL|variable|chipset
 r_static
@@ -1719,7 +1718,6 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 r_return
 id|probe_mpu401
 c_func
@@ -1727,11 +1725,6 @@ c_func
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#else
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|attach_opl3sa2_mpu
 r_void
@@ -1744,14 +1737,12 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 id|attach_mpu401
 c_func
 (paren
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|unload_opl3sa2_mpu
 r_void
@@ -1764,14 +1755,12 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 id|unload_mpu401
 c_func
 (paren
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|probe_opl3sa2_mss
 r_int
@@ -2621,7 +2610,6 @@ op_amp
 id|mss_cfg
 )paren
 suffix:semicolon
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 r_if
 c_cond
 (paren
@@ -2669,7 +2657,6 @@ id|mpu_cfg
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 id|SOUND_LOCK
 suffix:semicolon
 r_return
@@ -2684,7 +2671,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 r_if
 c_cond
 (paren
@@ -2705,7 +2691,6 @@ id|mpu_cfg
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 id|unload_opl3sa2_mss
 c_func
 (paren
@@ -2724,5 +2709,4 @@ id|SOUND_LOCK_END
 suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
-macro_line|#endif /* CONFIG_OPL3SA2 */
 eof

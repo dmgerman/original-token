@@ -6900,6 +6900,12 @@ r_int
 id|dma
 )paren
 (brace
+macro_line|#ifndef PCI_VENDOR_ID_AFAVLAB
+DECL|macro|PCI_VENDOR_ID_AFAVLAB
+mdefine_line|#define PCI_VENDOR_ID_AFAVLAB&t;&t;0x14db
+DECL|macro|PCI_DEVICE_ID_AFAVLAB_TK9902
+mdefine_line|#define PCI_DEVICE_ID_AFAVLAB_TK9902&t;0x2120
+macro_line|#endif
 r_struct
 (brace
 r_int
@@ -7485,6 +7491,27 @@ comma
 l_int|5
 comma
 op_minus
+l_int|1
+)brace
+comma
+)brace
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_AFAVLAB
+comma
+id|PCI_DEVICE_ID_AFAVLAB_TK9902
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+l_int|1
+comma
+(brace
+(brace
+l_int|0
+comma
 l_int|1
 )brace
 comma

@@ -11,6 +11,9 @@ macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/sal.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#ifdef CONFIG_KDB
+macro_line|# include &lt;linux/kdb.h&gt;
+macro_line|#endif
 r_extern
 id|rwlock_t
 id|xtime_lock
@@ -117,7 +120,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Return the number of micro-seconds that elapsed since the last&n; * update to jiffy.  The xtime_lock must be at least read-locked when&n; * calling this routine.&n; */
 r_static
-r_inline
+multiline_comment|/*inline*/
 r_int
 r_int
 DECL|function|gettimeoffset
@@ -547,6 +550,42 @@ id|xtime_lock
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_ITANIUM_ASTEP_SPECIFIC
+r_void
+DECL|function|ia64_reset_itm
+id|ia64_reset_itm
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|local_irq_save
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|timer_interrupt
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+comma
+id|current
+)paren
+suffix:semicolon
+id|local_irq_restore
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_ITANIUM_ASTEP_SPECIFIC */
 multiline_comment|/*&n; * Encapsulate access to the itm structure for SMP.&n; */
 r_void
 id|__init

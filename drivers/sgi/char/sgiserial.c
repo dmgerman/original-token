@@ -1,4 +1,5 @@
-multiline_comment|/* sgiserial.c: Serial port driver for SGI machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; */
+multiline_comment|/* sgiserial.c: Serial port driver for SGI machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * Note: This driver seems to have been derived from some&n; * version of the sbus/char/zs.c driver.  A lot of clean-up&n; * and bug fixes seem to have happened to the Sun driver in&n; * the intervening time.  As of 21.09.1999, I have merged in&n; * ONLY the changes necessary to fix observed functional&n; * problems on the Indy.  Someone really ought to do a&n; * thorough pass to merge in the rest of the updates.&n; * Better still, someone really ought to make it a common&n; * code module for both platforms.   kevink@mips.com&n; */
 macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_REMOTE_DEBUG */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -20,8 +21,8 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/sgihpc.h&gt;
-macro_line|#include &lt;asm/sgint23.h&gt;
+macro_line|#include &lt;asm/sgi/sgihpc.h&gt;
+macro_line|#include &lt;asm/sgi/sgint23.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;sgiserial.h&quot;
 DECL|macro|NUM_SERIAL
@@ -94,7 +95,7 @@ r_static
 r_int
 id|zilog_irq
 op_assign
-l_int|21
+id|SGI_SERIAL_IRQ
 suffix:semicolon
 multiline_comment|/* Console hooks... */
 DECL|variable|zs_cons_chanout
@@ -1851,7 +1852,7 @@ r_int
 r_char
 id|junk
 suffix:semicolon
-multiline_comment|/* P3: In theory we have to test readiness here because a&n;&t; * serial console can clog the chip through rs_put_char().&n;&t; * David did not do this. I think he relies on 3-chars FIFO in 8530.&n;&t; * Let&squot;s watch for lost _output_ characters. XXX&n;&t; */
+multiline_comment|/* P3: In theory we have to test readiness here because a&n;&t; * serial console can clog the chip through zs_cons_put_char().&n;&t; * David did not do this. I think he relies on 3-chars FIFO in 8530.&n;&t; * Let&squot;s watch for lost _output_ characters. XXX&n;&t; */
 multiline_comment|/* SGI ADDENDUM: On most SGI machines, the Zilog does possess&n;&t; *               a 16 or 17 byte fifo, so no worries. -dm&n;&t; */
 r_if
 c_cond
@@ -3565,10 +3566,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* This is for console output over ttya/ttyb */
-DECL|function|rs_put_char
+DECL|function|zs_cons_put_char
 r_static
 r_void
-id|rs_put_char
+id|zs_cons_put_char
 c_func
 (paren
 r_char
@@ -3581,6 +3582,112 @@ op_star
 id|chan
 op_assign
 id|zs_conschan
+suffix:semicolon
+r_volatile
+r_int
+r_char
+id|junk
+suffix:semicolon
+r_int
+id|flags
+comma
+id|loops
+op_assign
+l_int|0
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+(paren
+id|junk
+op_assign
+id|chan-&gt;control
+)paren
+op_amp
+id|Tx_BUF_EMP
+)paren
+op_eq
+l_int|0
+op_logical_and
+id|loops
+OL
+l_int|10000
+)paren
+(brace
+id|loops
+op_increment
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|2
+)paren
+suffix:semicolon
+)brace
+id|udelay
+c_func
+(paren
+l_int|2
+)paren
+suffix:semicolon
+id|chan-&gt;data
+op_assign
+id|ch
+suffix:semicolon
+id|junk
+op_assign
+id|ioc_icontrol-&gt;istat0
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* &n; * This is the more generic put_char function for the driver.&n; * In earlier versions of this driver, &quot;rs_put_char&quot; was the&n; * name of the console-specific fucntion, now called zs_cons_put_char&n; */
+DECL|function|rs_put_char
+r_static
+r_void
+id|rs_put_char
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_char
+id|ch
+)paren
+(brace
+r_struct
+id|sgi_zschannel
+op_star
+id|chan
+op_assign
+(paren
+(paren
+r_struct
+id|sgi_serial
+op_star
+)paren
+id|tty-&gt;driver_data
+)paren
+op_member_access_from_pointer
+id|zs_channel
 suffix:semicolon
 r_volatile
 r_int
@@ -3898,7 +4005,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|rs_put_char
+id|zs_cons_put_char
 c_func
 (paren
 id|c
@@ -4200,18 +4307,9 @@ id|tty-&gt;stopped
 op_logical_and
 op_logical_neg
 id|tty-&gt;hw_stopped
-op_logical_and
-op_logical_neg
-(paren
-id|info-&gt;curregs
-(braket
-l_int|5
-)braket
-op_amp
-id|TxENAB
-)paren
 )paren
 (brace
+multiline_comment|/*&n;&t; * The above test used to include the condition&n; &t; * &quot;&amp;&amp; !(info-&gt;curregs[5] &amp; TxENAB)&quot;, but there&n;&t; * is reason to suspect that it is never statisfied&n;&t; * when the port is running.  The problem may in fact&n;&t; * have been masked by the fact that, if O_POST is set,&n;&t; * there is always a rs_flush_xx operation following the&n;&t; * rs_write, and the flush ignores that condition when&n;&t; * it kicks off the transmit.&n;&t; */
 multiline_comment|/* Enable transmitter */
 id|info-&gt;curregs
 (braket
@@ -4270,6 +4368,32 @@ id|info-&gt;curregs
 l_int|5
 )braket
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * The following code is imported from the 2.3.6 Sun sbus zs.c&n;&t; * driver, of which an earlier version served as the basis&n;&t; * for sgiserial.c.  Perhaps due to changes over time in&n;&t; * the line discipline code, ns_write()s with from_user&n;&t; * set would not otherwise actually kick-off output in&n;&t; * Linux 2.2.x or later.  Maybe it never really worked.&n;&t; */
+id|rs_put_char
+c_func
+(paren
+id|tty
+comma
+id|info-&gt;xmit_buf
+(braket
+id|info-&gt;xmit_tail
+op_increment
+)braket
+)paren
+suffix:semicolon
+id|info-&gt;xmit_tail
+op_assign
+id|info-&gt;xmit_tail
+op_amp
+(paren
+id|SERIAL_XMIT_SIZE
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|info-&gt;xmit_cnt
+op_decrement
 suffix:semicolon
 )brace
 id|restore_flags
@@ -8808,14 +8932,14 @@ op_eq
 l_char|&squot;&bslash;n&squot;
 )paren
 (brace
-id|rs_put_char
+id|zs_cons_put_char
 c_func
 (paren
 l_char|&squot;&bslash;r&squot;
 )paren
 suffix:semicolon
 )brace
-id|rs_put_char
+id|zs_cons_put_char
 c_func
 (paren
 op_star
@@ -9486,16 +9610,12 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; *&t;Register console.&n; */
 DECL|function|serial_console_init
-r_int
+r_void
 id|__init
 id|serial_console_init
 c_func
 (paren
-r_int
-id|kmem_start
-comma
-r_int
-id|kmem_end
+r_void
 )paren
 (brace
 id|register_console
@@ -9504,9 +9624,6 @@ c_func
 op_amp
 id|sgi_console_driver
 )paren
-suffix:semicolon
-r_return
-id|kmem_start
 suffix:semicolon
 )brace
 eof

@@ -1,7 +1,7 @@
 macro_line|#ifndef _ASM_IA64_PGALLOC_H
 DECL|macro|_ASM_IA64_PGALLOC_H
 mdefine_line|#define _ASM_IA64_PGALLOC_H
-multiline_comment|/*&n; * This file contains the functions and defines necessary to allocate&n; * page tables.&n; *&n; * This hopefully works with any (fixed) ia-64 page-size, as defined&n; * in &lt;asm/page.h&gt; (currently 8192).&n; *&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 2000, Goutham Rao &lt;goutham.rao@intel.com&gt;&n; */
+multiline_comment|/*&n; * This file contains the functions and defines necessary to allocate&n; * page tables.&n; *&n; * This hopefully works with any (fixed) ia-64 page-size, as defined&n; * in &lt;asm/page.h&gt; (currently 8192).&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 2000, Goutham Rao &lt;goutham.rao@intel.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
@@ -871,6 +871,70 @@ comma
 id|addr
 op_plus
 id|PAGE_SIZE
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Flush the TLB entries mapping the virtually mapped linear page&n; * table corresponding to address range [START-END).&n; */
+r_static
+r_inline
+r_void
+DECL|function|flush_tlb_pgtables
+id|flush_tlb_pgtables
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+(brace
+multiline_comment|/*&n;&t; * XXX fix mmap(), munmap() et al to guarantee that there are no mappings&n;&t; * across region boundaries. --davidm 00/02/23&n;&t; */
+r_if
+c_cond
+(paren
+id|rgn_index
+c_func
+(paren
+id|start
+)paren
+op_ne
+id|rgn_index
+c_func
+(paren
+id|end
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;flush_tlb_pgtables: can&squot;t flush across regions!!&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|flush_tlb_range
+c_func
+(paren
+id|mm
+comma
+id|ia64_thash
+c_func
+(paren
+id|start
+)paren
+comma
+id|ia64_thash
+c_func
+(paren
+id|end
+)paren
 )paren
 suffix:semicolon
 )brace

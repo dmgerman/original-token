@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cpu.h,v 1.2 1998/05/01 01:35:49 ralf Exp $&n; * cpu.h: Values of the PRId register used to match up&n; *        various MIPS cpu types.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: cpu.h,v 1.1.1.1 1997/06/01 03:17:12 ralf Exp $&n; * cpu.h: Values of the PRId register used to match up&n; *        various MIPS cpu types.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#ifndef _MIPS_CPU_H
 DECL|macro|_MIPS_CPU_H
 mdefine_line|#define _MIPS_CPU_H

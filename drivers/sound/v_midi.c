@@ -3,7 +3,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
-macro_line|#ifdef CONFIG_VMIDI
 macro_line|#include &quot;v_midi.h&quot;
 DECL|variable|v_devc
 r_static
@@ -104,7 +103,7 @@ suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * The DSP channel can be used either for input or output. Variable&n; * &squot;sb_irq_mode&squot; will be set when the program calls read or write first time&n; * after open. Current version doesn&squot;t support mode changes without closing&n; * and reopening the device. Support for this feature may be implemented in a&n; * future version of this driver.&n; */
 DECL|variable|midi_input_intr
 r_void
@@ -1099,5 +1098,4 @@ id|midi_mem
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

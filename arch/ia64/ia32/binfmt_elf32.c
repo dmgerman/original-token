@@ -303,6 +303,10 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Do all the IA-32 setup here */
+id|current-&gt;thread.map_base
+op_assign
+l_int|0x40000000
+suffix:semicolon
 multiline_comment|/* CS descriptor */
 id|__asm__
 c_func

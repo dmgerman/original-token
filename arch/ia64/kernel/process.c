@@ -482,6 +482,41 @@ id|pm_idle
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ITANIUM_ASTEP_SPECIFIC
+r_if
+c_cond
+(paren
+id|ia64_get_itm
+c_func
+(paren
+)paren
+OL
+id|ia64_get_itc
+c_func
+(paren
+)paren
+)paren
+(brace
+r_extern
+r_void
+id|ia64_reset_itm
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;cpu_idle: ITM in past, resetting it...&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ia64_reset_itm
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 )brace
 multiline_comment|/*&n; * Copy the state of an ia-64 thread.&n; *&n; * We get here through the following  call chain:&n; *&n; *&t;&lt;clone syscall&gt;&n; *&t;sys_clone&n; *&t;do_fork&n; *&t;copy_thread&n; *&n; * This means that the stack layout is as follows:&n; *&n; *&t;+---------------------+ (highest addr)&n; *&t;|   struct pt_regs    |&n; *&t;+---------------------+&n; *&t;| struct switch_stack |&n; *&t;+---------------------+&n; *&t;|                     |&n; *&t;|    memory stack     |&n; *&t;|                     | &lt;-- sp (lowest addr)&n; *&t;+---------------------+&n; *&n; * Note: if we get called through kernel_thread() then the memory&n; * above &quot;(highest addr)&quot; is valid kernel stack memory that needs to&n; * be copied as well.&n; *&n; * Observe that we copy the unat values that are in pt_regs and&n; * switch_stack.  Since the interpretation of unat is dependent upon&n; * the address to which the registers got spilled, doing this is valid&n; * only as long as we preserve the alignment of the stack.  Since the&n; * stack is always page aligned, we know this is the case.&n; *&n; * XXX Actually, the above isn&squot;t true when we create kernel_threads().&n; * If we ever needs to create kernel_threads() that preserve the unat&n; * values we&squot;ll need to fix this.  Perhaps an easy workaround would be&n; * to always clear the unat bits in the child thread.&n; */

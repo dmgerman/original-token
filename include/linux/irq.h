@@ -103,6 +103,22 @@ r_int
 id|irq
 )paren
 suffix:semicolon
+DECL|member|set_affinity
+r_void
+(paren
+op_star
+id|set_affinity
+)paren
+(paren
+r_int
+r_int
+id|irq
+comma
+r_int
+r_int
+id|mask
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|typedef|hw_irq_controller
@@ -120,13 +136,12 @@ r_int
 r_int
 id|status
 suffix:semicolon
-multiline_comment|/* IRQ status&n;&t;&t;&t;&t;  - IRQ_INPROGRESS, IRQ_DISABLED */
+multiline_comment|/* IRQ status */
 DECL|member|handler
 id|hw_irq_controller
 op_star
 id|handler
 suffix:semicolon
-multiline_comment|/* never derefed in arch&n;&t;&t;&t;&t;&t;   independent code */
 DECL|member|action
 r_struct
 id|irqaction
@@ -139,13 +154,24 @@ r_int
 r_int
 id|depth
 suffix:semicolon
-multiline_comment|/* Disable depth for nested irq disables */
+multiline_comment|/* nested irq disables */
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+DECL|member|__pad
+r_int
+r_int
+id|__pad
+(braket
+l_int|3
+)braket
+suffix:semicolon
 DECL|typedef|irq_desc_t
 )brace
 id|____cacheline_aligned
 id|irq_desc_t
 suffix:semicolon
-macro_line|#include &lt;asm/hw_irq.h&gt; /* the arch dependent stuff */
 r_extern
 id|irq_desc_t
 id|irq_desc
@@ -153,6 +179,51 @@ id|irq_desc
 id|NR_IRQS
 )braket
 suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|__local_irq_count
+r_int
+r_int
+id|__local_irq_count
+suffix:semicolon
+DECL|member|__local_bh_count
+r_int
+r_int
+id|__local_bh_count
+suffix:semicolon
+DECL|member|__nmi_counter
+id|atomic_t
+id|__nmi_counter
+suffix:semicolon
+DECL|member|__pad
+r_int
+r_int
+id|__pad
+(braket
+l_int|5
+)braket
+suffix:semicolon
+DECL|typedef|irq_cpustat_t
+)brace
+id|____cacheline_aligned
+id|irq_cpustat_t
+suffix:semicolon
+r_extern
+id|irq_cpustat_t
+id|irq_stat
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
+multiline_comment|/*&n; * Simple wrappers reducing source bloat&n; */
+DECL|macro|local_irq_count
+mdefine_line|#define local_irq_count(cpu) (irq_stat[(cpu)].__local_irq_count)
+DECL|macro|local_bh_count
+mdefine_line|#define local_bh_count(cpu) (irq_stat[(cpu)].__local_bh_count)
+DECL|macro|nmi_counter
+mdefine_line|#define nmi_counter(cpu) (irq_stat[(cpu)].__nmi_counter)
+macro_line|#include &lt;asm/hw_irq.h&gt; /* the arch dependent stuff */
 r_extern
 r_int
 id|handle_IRQ_event

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: indy_timer.c,v 1.12 1999/06/13 16:30:36 ralf Exp $&n; *&n; * indy_timer.c: Setting up the clock on the INDY 8254 controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copytight (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; */
+multiline_comment|/* $Id: indy_timer.c,v 1.18 2000/02/04 07:40:23 ralf Exp $&n; *&n; * indy_timer.c: Setting up the clock on the INDY 8254 controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copytight (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -14,10 +14,10 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/sgi.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
-macro_line|#include &lt;asm/sgihpc.h&gt;
-macro_line|#include &lt;asm/sgint23.h&gt;
+macro_line|#include &lt;asm/sgi/sgi.h&gt;
+macro_line|#include &lt;asm/sgi/sgihpc.h&gt;
+macro_line|#include &lt;asm/sgi/sgint23.h&gt;
 multiline_comment|/* Because of a bug in the i8254 timer we need to use the onchip r4k&n; * counter as our system wide timer interrupt running at 100HZ.&n; */
 DECL|variable|r4k_offset
 r_static
@@ -33,6 +33,10 @@ r_int
 id|r4k_cur
 suffix:semicolon
 multiline_comment|/* What counter should be at next timer irq */
+r_extern
+id|rwlock_t
+id|xtime_lock
+suffix:semicolon
 DECL|function|ack_r4ktimer
 r_static
 r_inline
@@ -254,6 +258,13 @@ id|irq
 op_assign
 l_int|7
 suffix:semicolon
+id|write_lock
+c_func
+(paren
+op_amp
+id|xtime_lock
+)paren
+suffix:semicolon
 multiline_comment|/* Ack timer and compute new compare. */
 id|count
 op_assign
@@ -351,6 +362,7 @@ op_rshift
 l_int|1
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -367,13 +379,21 @@ op_assign
 id|xtime.tv_sec
 suffix:semicolon
 r_else
+multiline_comment|/* do it again in 60 s */
 id|last_rtc_update
 op_assign
 id|xtime.tv_sec
 op_minus
 l_int|600
 suffix:semicolon
-multiline_comment|/* do it again in 60 s */
+)brace
+id|write_unlock
+c_func
+(paren
+op_amp
+id|xtime_lock
+)paren
+suffix:semicolon
 )brace
 DECL|function|dosample
 r_static
@@ -932,7 +952,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Read time from the dallas chipset. */
+id|write_lock_irq
+c_func
+(paren
+op_amp
+id|xtime_lock
+)paren
+suffix:semicolon
 id|xtime.tv_sec
 op_assign
 id|get_indy_time
@@ -940,9 +966,17 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Read time from RTC. */
 id|xtime.tv_usec
 op_assign
 l_int|0
+suffix:semicolon
+id|write_unlock_irq
+c_func
+(paren
+op_amp
+id|xtime_lock
+)paren
 suffix:semicolon
 )brace
 DECL|function|indy_8254timer_irq
@@ -966,7 +1000,7 @@ id|irq
 op_assign
 l_int|4
 suffix:semicolon
-id|hardirq_enter
+id|irq_enter
 c_func
 (paren
 id|cpu
@@ -997,7 +1031,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|hardirq_exit
+id|irq_exit
 c_func
 (paren
 id|cpu
@@ -1019,9 +1053,12 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_and_cli
+id|read_lock_irqsave
 c_func
 (paren
+op_amp
+id|xtime_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -1030,9 +1067,12 @@ id|tv
 op_assign
 id|xtime
 suffix:semicolon
-id|restore_flags
+id|read_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|xtime_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -1048,9 +1088,11 @@ op_star
 id|tv
 )paren
 (brace
-id|cli
+id|write_lock_irq
 c_func
 (paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 id|xtime
@@ -1070,9 +1112,11 @@ id|time_esterror
 op_assign
 id|MAXPHASE
 suffix:semicolon
-id|sti
+id|write_unlock_irq
 c_func
 (paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 )brace

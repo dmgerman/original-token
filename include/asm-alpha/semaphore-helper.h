@@ -53,7 +53,7 @@ l_string|&quot;&t;subl&t;%1,1,%0&bslash;n&quot;
 l_string|&quot;&t;stl_c&t;%0,%2&bslash;n&quot;
 l_string|&quot;&t;beq&t;%0,3f&bslash;n&quot;
 l_string|&quot;2:&bslash;n&quot;
-l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;3:&t;br&t;1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
@@ -136,7 +136,7 @@ l_string|&quot;&t;cmovge&t;%2,%3,%1&bslash;n&quot;
 l_string|&quot;&t;stq_c&t;%1,%4&bslash;n&quot;
 l_string|&quot;&t;beq&t;%1,3f&bslash;n&quot;
 l_string|&quot;2:&bslash;n&quot;
-l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;3:&t;br&t;1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon

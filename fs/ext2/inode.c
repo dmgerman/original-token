@@ -78,7 +78,8 @@ id|inode-&gt;i_ino
 op_eq
 id|EXT2_ACL_DATA_INO
 )paren
-r_return
+r_goto
+id|no_delete
 suffix:semicolon
 id|inode-&gt;u.ext2_i.i_dtime
 op_assign
@@ -121,6 +122,22 @@ id|ext2_free_inode
 id|inode
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+id|no_delete
+suffix:colon
+id|clear_inode
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+multiline_comment|/* We must guarantee clearing of inode... */
 id|unlock_kernel
 c_func
 (paren

@@ -1,7 +1,31 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.3 1998/10/16 19:22:54 ralf Exp $&n; *&n; * Switch a MMU context.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
-macro_line|#ifndef __ASM_MIPS_MMU_CONTEXT_H
-DECL|macro|__ASM_MIPS_MMU_CONTEXT_H
-mdefine_line|#define __ASM_MIPS_MMU_CONTEXT_H
+multiline_comment|/* $Id: mmu_context.h,v 1.8 2000/02/23 00:41:38 ralf Exp $&n; *&n; * Switch a MMU context.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998, 1999 by Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+macro_line|#ifndef _ASM_MMU_CONTEXT_H
+DECL|macro|_ASM_MMU_CONTEXT_H
+mdefine_line|#define _ASM_MMU_CONTEXT_H
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
+multiline_comment|/* Fuck.  The f-word is here so you can grep for it :-)  */
+r_extern
+r_int
+r_int
+id|asid_cache
+suffix:semicolon
+r_extern
+id|pgd_t
+op_star
+id|current_pgd
+suffix:semicolon
+macro_line|#if defined(CONFIG_CPU_R3000)
+DECL|macro|ASID_INC
+mdefine_line|#define ASID_INC&t;0x40
+DECL|macro|ASID_MASK
+mdefine_line|#define ASID_MASK&t;0xfc0
+macro_line|#else /* FIXME: not correct for R6000, R8000 */
+DECL|macro|ASID_INC
+mdefine_line|#define ASID_INC&t;0x1
+DECL|macro|ASID_MASK
+mdefine_line|#define ASID_MASK&t;0xff
+macro_line|#endif
 DECL|function|enter_lazy_tlb
 r_static
 r_inline
@@ -24,25 +48,11 @@ id|cpu
 )paren
 (brace
 )brace
-multiline_comment|/* Fuck.  The f-word is here so you can grep for it :-)  */
-r_extern
-r_int
-r_int
-id|asid_cache
-suffix:semicolon
-multiline_comment|/* I patch, therefore I am ...  */
-DECL|macro|ASID_INC
-mdefine_line|#define ASID_INC(asid)&t;&t;&t;&t;&t;&t;&bslash;&n; ({ unsigned long __asid = asid;&t;&t;&t;&t;&bslash;&n;   __asm__(&quot;1:&bslash;taddiu&bslash;t%0,0&bslash;t&bslash;t&bslash;t&bslash;t# patched&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;           &quot;.section&bslash;t__asid_inc,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;           &quot;.word&bslash;t1b&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;           &quot;.previous&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;           :&quot;=r&quot; (__asid)&t;&t;&t;&t;&t;&bslash;&n;           :&quot;0&quot; (__asid));&t;&t;&t;&t;&t;&bslash;&n;   __asid; })
-DECL|macro|ASID_MASK
-mdefine_line|#define ASID_MASK(asid)&t;&t;&t;&t;&t;&t;&bslash;&n; ({ unsigned long __asid = asid;&t;&t;&t;&t;&bslash;&n;   __asm__(&quot;1:&bslash;tandi&bslash;t%0,%1,0&bslash;t&bslash;t&bslash;t# patched&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;           &quot;.section&bslash;t__asid_mask,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;           &quot;.word&bslash;t1b&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;           &quot;.previous&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;           :&quot;=r&quot; (__asid)&t;&t;&t;&t;&t;&bslash;&n;           :&quot;r&quot; (__asid));&t;&t;&t;&t;&t;&bslash;&n;   __asid; })
+multiline_comment|/*&n; *  All unused by hardware upper bits will be considered&n; *  as a software asid extension.&n; */
 DECL|macro|ASID_VERSION_MASK
-mdefine_line|#define ASID_VERSION_MASK&t;&t;&t;&t;&t;&bslash;&n; ({ unsigned long __asid;&t;&t;&t;&t;&t;&bslash;&n;   __asm__(&quot;1:&bslash;tli&bslash;t%0,0&bslash;t&bslash;t&bslash;t&bslash;t# patched&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;           &quot;.section&bslash;t__asid_version_mask,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;           &quot;.word&bslash;t1b&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;           &quot;.previous&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;           :&quot;=r&quot; (__asid));&t;&t;&t;&t;&t;&bslash;&n;   __asid; })
+mdefine_line|#define ASID_VERSION_MASK  ((unsigned long)~(ASID_MASK|(ASID_MASK-1)))
 DECL|macro|ASID_FIRST_VERSION
-mdefine_line|#define ASID_FIRST_VERSION&t;&t;&t;&t;&t;&bslash;&n; ({ unsigned long __asid = asid;&t;&t;&t;&t;&bslash;&n;   __asm__(&quot;1:&bslash;tli&bslash;t%0,0&bslash;t&bslash;t&bslash;t&bslash;t# patched&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;           &quot;.section&bslash;t__asid_first_version,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;           &quot;.word&bslash;t1b&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;           &quot;.previous&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;           :&quot;=r&quot; (__asid));&t;&t;&t;&t;&t;&bslash;&n;   __asid; })
-DECL|macro|ASID_FIRST_VERSION_R3000
-mdefine_line|#define ASID_FIRST_VERSION_R3000 0x1000
-DECL|macro|ASID_FIRST_VERSION_R4000
-mdefine_line|#define ASID_FIRST_VERSION_R4000 0x100
+mdefine_line|#define ASID_FIRST_VERSION ((unsigned long)(~ASID_VERSION_MASK) + 1)
 r_extern
 r_inline
 r_void
@@ -64,18 +74,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|ASID_MASK
-c_func
 (paren
 (paren
 id|asid
-op_assign
+op_add_assign
 id|ASID_INC
-c_func
-(paren
-id|asid
 )paren
-)paren
+op_amp
+id|ASID_MASK
 )paren
 )paren
 (brace
@@ -104,30 +110,54 @@ op_assign
 id|asid
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Initialize the context related info for a new mm_struct&n; * instance.&n; */
 r_extern
 r_inline
 r_void
-DECL|function|get_mmu_context
-id|get_mmu_context
+DECL|function|init_new_context
+id|init_new_context
 c_func
 (paren
 r_struct
 id|task_struct
 op_star
-id|p
-)paren
-(brace
+id|tsk
+comma
 r_struct
 id|mm_struct
 op_star
 id|mm
+)paren
+(brace
+id|mm-&gt;context
 op_assign
-id|p-&gt;mm
+l_int|0
 suffix:semicolon
-r_if
-c_cond
+)brace
+DECL|function|switch_mm
+r_extern
+r_inline
+r_void
+id|switch_mm
+c_func
 (paren
-id|mm
+r_struct
+id|mm_struct
+op_star
+id|prev
+comma
+r_struct
+id|mm_struct
+op_star
+id|next
+comma
+r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_int
+id|cpu
 )paren
 (brace
 r_int
@@ -141,7 +171,7 @@ r_if
 c_cond
 (paren
 (paren
-id|mm-&gt;context
+id|next-&gt;context
 op_xor
 id|asid
 )paren
@@ -151,30 +181,20 @@ id|ASID_VERSION_MASK
 id|get_new_mmu_context
 c_func
 (paren
-id|mm
+id|next
 comma
 id|asid
 )paren
 suffix:semicolon
-)brace
-)brace
-multiline_comment|/*&n; * Initialize the context related info for a new mm_struct&n; * instance.&n; */
-DECL|function|init_new_context
-r_extern
-r_inline
-r_void
-id|init_new_context
+id|current_pgd
+op_assign
+id|next-&gt;pgd
+suffix:semicolon
+id|set_entryhi
 c_func
 (paren
-r_struct
-id|mm_struct
-op_star
-id|mm
+id|next-&gt;context
 )paren
-(brace
-id|mm-&gt;context
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Destroy context related info for an mm_struct that is about&n; * to be put to rest.&n; */
@@ -191,144 +211,46 @@ op_star
 id|mm
 )paren
 (brace
-id|mm-&gt;context
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/* Nothing to do.  */
 )brace
 multiline_comment|/*&n; * After we have set current-&gt;mm to a new value, this activates&n; * the context for the new mm so we see the new mappings.&n; */
-DECL|function|activate_context
 r_extern
 r_inline
 r_void
-id|activate_context
+DECL|function|activate_mm
+id|activate_mm
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|tsk
+id|prev
+comma
+r_struct
+id|mm_struct
+op_star
+id|next
 )paren
 (brace
-id|get_mmu_context
+multiline_comment|/* Unconditionally get a new ASID.  */
+id|get_new_mmu_context
 c_func
 (paren
-id|tsk
+id|next
+comma
+id|asid_cache
 )paren
+suffix:semicolon
+id|current_pgd
+op_assign
+id|next-&gt;pgd
 suffix:semicolon
 id|set_entryhi
 c_func
 (paren
-id|tsk-&gt;mm-&gt;context
+id|next-&gt;context
 )paren
 suffix:semicolon
 )brace
-r_extern
-r_void
-id|__asid_setup
-c_func
-(paren
-r_int
-r_int
-id|inc
-comma
-r_int
-r_int
-id|mask
-comma
-r_int
-r_int
-id|version_mask
-comma
-r_int
-r_int
-id|first_version
-)paren
-suffix:semicolon
-DECL|function|r3000_asid_setup
-r_extern
-r_inline
-r_void
-id|r3000_asid_setup
-c_func
-(paren
-r_void
-)paren
-(brace
-id|__asid_setup
-c_func
-(paren
-l_int|0x40
-comma
-l_int|0xfc0
-comma
-l_int|0xf000
-comma
-id|ASID_FIRST_VERSION_R3000
-)paren
-suffix:semicolon
-)brace
-DECL|function|r6000_asid_setup
-r_extern
-r_inline
-r_void
-id|r6000_asid_setup
-c_func
-(paren
-r_void
-)paren
-(brace
-id|panic
-c_func
-(paren
-l_string|&quot;r6000_asid_setup: implement me&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* No idea ...  */
-)brace
-DECL|function|tfp_asid_setup
-r_extern
-r_inline
-r_void
-id|tfp_asid_setup
-c_func
-(paren
-r_void
-)paren
-(brace
-id|panic
-c_func
-(paren
-l_string|&quot;tfp_asid_setup: implement me&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* No idea ...  */
-)brace
-DECL|function|r4xx0_asid_setup
-r_extern
-r_inline
-r_void
-id|r4xx0_asid_setup
-c_func
-(paren
-r_void
-)paren
-(brace
-id|__asid_setup
-c_func
-(paren
-l_int|1
-comma
-l_int|0xff
-comma
-l_int|0xff00
-comma
-id|ASID_FIRST_VERSION_R4000
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* R10000 has the same ASID mechanism as the R4000.  */
-DECL|macro|andes_asid_setup
-mdefine_line|#define andes_asid_setup r4xx0_asid_setup
-macro_line|#endif /* __ASM_MIPS_MMU_CONTEXT_H */
+macro_line|#endif /* _ASM_MMU_CONTEXT_H */
 eof

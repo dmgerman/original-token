@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Branch and jump emulation.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; *&n; * $Id: branch.h,v 1.2 1998/05/04 09:18:56 ralf Exp $&n; */
+multiline_comment|/*&n; * Branch and jump emulation.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; *&n; * $Id: branch.h,v 1.2 1998/05/04 09:13:00 ralf Exp $&n; */
 macro_line|#include &lt;asm/ptrace.h&gt;
 DECL|function|delay_slot
 r_extern

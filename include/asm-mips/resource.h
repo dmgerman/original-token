@@ -1,7 +1,7 @@
-multiline_comment|/* $Id: resource.h,v 1.2 1999/01/04 16:09:25 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1998 by Ralf Baechle&n; */
-macro_line|#ifndef __ASM_MIPS_RESOURCE_H
-DECL|macro|__ASM_MIPS_RESOURCE_H
-mdefine_line|#define __ASM_MIPS_RESOURCE_H
+multiline_comment|/* $Id: resource.h,v 1.5 2000/02/04 07:40:53 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1998 by Ralf Baechle&n; */
+macro_line|#ifndef _ASM_RESOURCE_H
+DECL|macro|_ASM_RESOURCE_H
+mdefine_line|#define _ASM_RESOURCE_H
 multiline_comment|/*&n; * Resource limits&n; */
 DECL|macro|RLIMIT_CPU
 mdefine_line|#define RLIMIT_CPU 0&t;&t;&t;/* CPU time in ms */
@@ -27,10 +27,10 @@ DECL|macro|RLIM_NLIMITS
 mdefine_line|#define RLIM_NLIMITS 10&t;&t;&t;/* Number of limit flavors.  */
 multiline_comment|/*&n; * SuS says limits have to be unsigned.&n; * Which makes a ton more sense anyway.&n; */
 DECL|macro|RLIM_INFINITY
-mdefine_line|#define RLIM_INFINITY&t;(~0UL)
+mdefine_line|#define RLIM_INFINITY&t;0x7fffffffUL
 macro_line|#ifdef __KERNEL__
 DECL|macro|INIT_RLIMITS
-mdefine_line|#define INIT_RLIMITS&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ _STK_LIM, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{        0, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ INR_OPEN, INR_OPEN },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ MAX_TASKS_PER_USER, MAX_TASKS_PER_USER },&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define INIT_RLIMITS&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ RLIM_INFINITY, RLIM_INFINITY },&t;&t;&bslash;&n;&t;{ RLIM_INFINITY, RLIM_INFINITY },&t;&t;&bslash;&n;&t;{ RLIM_INFINITY, RLIM_INFINITY },&t;&t;&bslash;&n;&t;{ _STK_LIM,      RLIM_INFINITY },&t;&t;&bslash;&n;&t;{        0,      RLIM_INFINITY },&t;&t;&bslash;&n;&t;{ INR_OPEN,      INR_OPEN      },&t;&t;&bslash;&n;&t;{ RLIM_INFINITY, RLIM_INFINITY },&t;&t;&bslash;&n;&t;{ RLIM_INFINITY, RLIM_INFINITY },&t;&t;&bslash;&n;&t;{ 0,             0             },&t;&t;&bslash;&n;&t;{ RLIM_INFINITY, RLIM_INFINITY },&t;&t;&bslash;&n;}
 macro_line|#endif /* __KERNEL__ */
-macro_line|#endif /* __ASM_MIPS_RESOURCE_H */
+macro_line|#endif /* _ASM_RESOURCE_H */
 eof

@@ -3337,7 +3337,6 @@ id|KERN_WARNING
 l_string|&quot;waveartist: unexpected interrupt&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_AUDIO
 r_if
 c_cond
 (paren
@@ -3422,7 +3421,6 @@ l_string|&quot;waveartist: Unknown interrupt&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren

@@ -92,22 +92,22 @@ r_int
 r_int
 id|smp_secondary_alive
 suffix:semicolon
+multiline_comment|/* Which cpus ids came online.  */
 DECL|variable|cpu_present_mask
 r_int
 r_int
 id|cpu_present_mask
 suffix:semicolon
-multiline_comment|/* Which cpus ids came online.  */
+multiline_comment|/* cpus reported in the hwrpb */
 DECL|variable|__initdata
 r_static
 r_int
 r_int
-id|__cpu_present_mask
+id|hwrpb_cpu_present_mask
 id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* cpu reported in the hwrpb */
 DECL|variable|max_cpus
 r_static
 r_int
@@ -117,11 +117,6 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* Command-line limitation.  */
-DECL|variable|smp_boot_cpuid
-r_int
-id|smp_boot_cpuid
-suffix:semicolon
-multiline_comment|/* Which processor we booted from.  */
 DECL|variable|smp_num_probed
 r_int
 id|smp_num_probed
@@ -1627,17 +1622,10 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|smp_boot_cpuid
-op_assign
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|smp_boot_cpuid
+id|boot_cpuid
 op_ne
 l_int|0
 )paren
@@ -1648,7 +1636,7 @@ c_func
 id|KERN_WARNING
 l_string|&quot;SMP: Booting off cpu %d instead of 0?&bslash;n&quot;
 comma
-id|smp_boot_cpuid
+id|boot_cpuid
 )paren
 suffix:semicolon
 )brace
@@ -1744,7 +1732,7 @@ id|smp_num_probed
 op_increment
 suffix:semicolon
 multiline_comment|/* Assume here that &quot;whami&quot; == index */
-id|__cpu_present_mask
+id|hwrpb_cpu_present_mask
 op_or_assign
 (paren
 l_int|1L
@@ -1791,12 +1779,12 @@ id|smp_num_probed
 op_assign
 l_int|1
 suffix:semicolon
-id|__cpu_present_mask
+id|hwrpb_cpu_present_mask
 op_assign
 (paren
 l_int|1L
 op_lshift
-id|smp_boot_cpuid
+id|boot_cpuid
 )paren
 suffix:semicolon
 )brace
@@ -1804,7 +1792,7 @@ id|cpu_present_mask
 op_assign
 l_int|1L
 op_lshift
-id|smp_boot_cpuid
+id|boot_cpuid
 suffix:semicolon
 id|printk
 c_func
@@ -1814,7 +1802,7 @@ l_string|&quot;SMP: %d CPUs probed -- cpu_present_mask = %lx&bslash;n&quot;
 comma
 id|smp_num_probed
 comma
-id|__cpu_present_mask
+id|hwrpb_cpu_present_mask
 )paren
 suffix:semicolon
 )brace
@@ -1881,7 +1869,7 @@ id|ipi_data
 suffix:semicolon
 id|__cpu_number_map
 (braket
-id|smp_boot_cpuid
+id|boot_cpuid
 )braket
 op_assign
 l_int|0
@@ -1891,16 +1879,16 @@ id|__cpu_logical_map
 l_int|0
 )braket
 op_assign
-id|smp_boot_cpuid
+id|boot_cpuid
 suffix:semicolon
 id|current-&gt;processor
 op_assign
-id|smp_boot_cpuid
+id|boot_cpuid
 suffix:semicolon
 id|smp_store_cpu_info
 c_func
 (paren
-id|smp_boot_cpuid
+id|boot_cpuid
 )paren
 suffix:semicolon
 id|smp_tune_scheduling
@@ -1911,7 +1899,7 @@ suffix:semicolon
 id|smp_setup_percpu_timer
 c_func
 (paren
-id|smp_boot_cpuid
+id|boot_cpuid
 )paren
 suffix:semicolon
 id|init_idle
@@ -1986,7 +1974,7 @@ c_cond
 (paren
 id|i
 op_eq
-id|smp_boot_cpuid
+id|boot_cpuid
 )paren
 r_continue
 suffix:semicolon
@@ -1995,7 +1983,7 @@ c_cond
 (paren
 (paren
 (paren
-id|__cpu_present_mask
+id|hwrpb_cpu_present_mask
 op_rshift
 id|i
 )paren
@@ -3772,7 +3760,7 @@ l_string|&quot;&t;or&t;%0,1,%0&bslash;n&quot;
 l_string|&quot;&t;stl_c&t;%0,%1&bslash;n&quot;
 l_string|&quot;&t;beq&t;%0,3f&bslash;n&quot;
 l_string|&quot;4:&t;mb&bslash;n&quot;
-l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;2:&t;ldl&t;%0,%1&bslash;n&quot;
 l_string|&quot;&t;subq&t;%2,1,%2&bslash;n&quot;
 l_string|&quot;3:&t;blt&t;%2,4b&bslash;n&quot;
@@ -4045,7 +4033,7 @@ l_string|&quot;&t;mov&t;1,%1&bslash;n&quot;
 l_string|&quot;&t;stl_c&t;%1,%0&bslash;n&quot;
 l_string|&quot;&t;beq&t;%1,6f&bslash;n&quot;
 l_string|&quot;4:&t;mb&bslash;n&quot;
-l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;6:&t;blt&t;%3,4b&t;# debug&bslash;n&quot;
 l_string|&quot;&t;subl&t;%3,1,%3&t;# debug&bslash;n&quot;
 l_string|&quot;&t;ldl&t;%1,%0&bslash;n&quot;
@@ -4193,7 +4181,7 @@ l_string|&quot;&t;subl&t;%1,2,%1;&quot;
 l_string|&quot;&t;stl_c&t;%1,%0;&quot;
 l_string|&quot;&t;beq&t;%1,6f;&quot;
 l_string|&quot;4:&t;mb&bslash;n&quot;
-l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;6:&t;ldl&t;%1,%0;&quot;
 l_string|&quot;&t;blt&t;%2,4b&t;# debug&bslash;n&quot;
 l_string|&quot;&t;subl&t;%2,1,%2&t;# debug&bslash;n&quot;

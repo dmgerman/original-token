@@ -254,9 +254,8 @@ id|dev
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Send request to an individual device&n; */
+multiline_comment|/*&n; * Send request to a single device&n; */
 DECL|function|pm_send
-r_static
 r_int
 id|pm_send
 c_func
@@ -280,6 +279,8 @@ op_assign
 l_int|0
 suffix:semicolon
 r_int
+id|prev_state
+comma
 id|next_state
 suffix:semicolon
 r_switch
@@ -294,6 +295,10 @@ suffix:colon
 r_case
 id|PM_RESUME
 suffix:colon
+id|prev_state
+op_assign
+id|dev-&gt;state
+suffix:semicolon
 id|next_state
 op_assign
 (paren
@@ -304,7 +309,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;state
+id|prev_state
 op_ne
 id|next_state
 )paren
@@ -334,9 +339,22 @@ c_cond
 op_logical_neg
 id|status
 )paren
+(brace
 id|dev-&gt;state
 op_assign
 id|next_state
+suffix:semicolon
+id|dev-&gt;prev_state
+op_assign
+id|prev_state
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|dev-&gt;prev_state
+op_assign
+id|prev_state
 suffix:semicolon
 )brace
 r_break
@@ -372,23 +390,16 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Undo incomplete request&n; */
-DECL|function|pm_undo_request
+DECL|function|pm_undo_all
 r_static
 r_void
-id|pm_undo_request
+id|pm_undo_all
 c_func
 (paren
 r_struct
 id|pm_dev
 op_star
 id|last
-comma
-id|pm_request_t
-id|undo
-comma
-r_void
-op_star
-id|data
 )paren
 (brace
 r_struct
@@ -426,8 +437,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;callback
+id|dev-&gt;state
+op_ne
+id|dev-&gt;prev_state
 )paren
+(brace
+multiline_comment|/* previous state was zero (running) resume or&n;&t;&t;&t; * previous state was non-zero (suspended) suspend&n;&t;&t;&t; */
+id|pm_request_t
+id|undo
+op_assign
+(paren
+id|dev-&gt;prev_state
+ques
+c_cond
+id|PM_SUSPEND
+suffix:colon
+id|PM_RESUME
+)paren
+suffix:semicolon
 id|pm_send
 c_func
 (paren
@@ -435,9 +462,14 @@ id|dev
 comma
 id|undo
 comma
-id|data
+(paren
+r_void
+op_star
+)paren
+id|dev-&gt;prev_state
 )paren
 suffix:semicolon
+)brace
 id|entry
 op_assign
 id|entry-&gt;prev
@@ -445,9 +477,9 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Send a request to all devices&n; */
-DECL|function|pm_send_request
+DECL|function|pm_send_all
 r_int
-id|pm_send_request
+id|pm_send_all
 c_func
 (paren
 id|pm_request_t
@@ -515,7 +547,7 @@ c_cond
 id|status
 )paren
 (brace
-multiline_comment|/* resume devices on failed suspend request */
+multiline_comment|/* return devices to previous state on&n;&t;&t;&t;&t; * failed suspend request&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -523,14 +555,10 @@ id|rqst
 op_eq
 id|PM_SUSPEND
 )paren
-id|pm_undo_request
+id|pm_undo_all
 c_func
 (paren
 id|dev
-comma
-id|PM_RESUME
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -645,11 +673,18 @@ c_func
 id|pm_unregister_all
 )paren
 suffix:semicolon
-DECL|variable|pm_send_request
+DECL|variable|pm_send
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|pm_send_request
+id|pm_send
+)paren
+suffix:semicolon
+DECL|variable|pm_send_all
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pm_send_all
 )paren
 suffix:semicolon
 DECL|variable|pm_find

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sysirix.c,v 1.20 1999/06/17 13:25:48 ralf Exp $&n; *&n; * sysirix.c: IRIX system call emulation.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Copyright (C) 1997 Miguel de Icaza&n; * Copyright (C) 1997, 1998 Ralf Baechle&n; */
+multiline_comment|/* $Id: sysirix.c,v 1.24 2000/02/05 06:47:08 ralf Exp $&n; *&n; * sysirix.c: IRIX system call emulation.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Copyright (C) 1997 Miguel de Icaza&n; * Copyright (C) 1997, 1998 Ralf Baechle&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
@@ -18,11 +18,15 @@ macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 macro_line|#include &lt;asm/inventory.h&gt;
 multiline_comment|/* 2,526 lines of complete and utter shit coming up... */
+r_extern
+r_int
+id|max_threads
+suffix:semicolon
 multiline_comment|/* The sysmp commands supported thus far. */
 DECL|macro|MP_NPROCS
 mdefine_line|#define MP_NPROCS       &t;1 /* # processor in complex */
@@ -55,11 +59,6 @@ r_int
 id|error
 op_assign
 l_int|0
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -109,11 +108,7 @@ id|MP_NAPROCS
 suffix:colon
 id|error
 op_assign
-l_int|1
-suffix:semicolon
-id|error
-op_assign
-id|NR_CPUS
+id|smp_num_cpus
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -142,11 +137,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -260,7 +250,7 @@ id|current-&gt;pid
 suffix:semicolon
 id|error
 op_assign
-id|NR_TASKS
+id|max_threads
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -314,12 +304,9 @@ suffix:semicolon
 id|error
 op_assign
 (paren
-id|task-&gt;next_run
-ques
-c_cond
-l_int|0
-suffix:colon
-l_int|1
+id|task-&gt;run_list.next
+op_ne
+l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/* Can _your_ OS find this out that fast? */
@@ -1401,7 +1388,7 @@ l_int|2
 suffix:colon
 id|retval
 op_assign
-id|NR_TASKS
+id|max_threads
 suffix:semicolon
 r_goto
 id|out
@@ -4994,13 +4981,6 @@ r_int
 r_int
 id|retval
 suffix:semicolon
-id|down
-c_func
-(paren
-op_amp
-id|current-&gt;mm-&gt;mmap_sem
-)paren
-suffix:semicolon
 id|lock_kernel
 c_func
 (paren
@@ -5041,7 +5021,7 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/* Ok, bad taste hack follows, try to think in something else when reading this */
+multiline_comment|/* Ok, bad taste hack follows, try to think in something else&n;&t;&t; * when reading this.  */
 r_if
 c_cond
 (paren
@@ -5146,13 +5126,6 @@ suffix:colon
 id|unlock_kernel
 c_func
 (paren
-)paren
-suffix:semicolon
-id|up
-c_func
-(paren
-op_amp
-id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_return
@@ -8099,6 +8072,8 @@ r_int
 r_int
 id|addr
 comma
+id|pgoff
+comma
 op_star
 id|sp
 suffix:semicolon
@@ -8106,6 +8081,8 @@ r_struct
 id|file
 op_star
 id|file
+op_assign
+l_int|NULL
 suffix:semicolon
 id|lock_kernel
 c_func
@@ -8122,12 +8099,10 @@ l_int|2
 op_eq
 l_int|1000
 )paren
-(brace
 id|base
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 id|sp
 op_assign
 (paren
@@ -8334,17 +8309,37 @@ r_if
 c_cond
 (paren
 id|off1
+op_amp
+id|PAGE_MASK
 )paren
 (brace
 id|error
 op_assign
 op_minus
-id|EINVAL
+id|EOVERFLOW
 suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
 )brace
+id|pgoff
+op_assign
+(paren
+id|off1
+op_lshift
+(paren
+l_int|32
+op_minus
+id|PAGE_SHIFT
+)paren
+)paren
+op_or
+(paren
+id|off2
+op_rshift
+id|PAGE_SHIFT
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8380,7 +8375,7 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/* Ok, bad taste hack follows, try to think in something else when reading this */
+multiline_comment|/* Ok, bad taste hack follows, try to think in something else&n;&t;&t;   when reading this */
 r_if
 c_cond
 (paren
@@ -8442,25 +8437,56 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|error
-op_assign
-id|sys_mmap
+id|flags
+op_and_assign
+op_complement
+(paren
+id|MAP_EXECUTABLE
+op_or
+id|MAP_DENYWRITE
+)paren
+suffix:semicolon
+id|down
 c_func
 (paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+id|error
+op_assign
+id|do_mmap_pgoff
+c_func
+(paren
+id|file
+comma
 id|addr
 comma
-(paren
-r_int
-)paren
 id|len
 comma
 id|prot
 comma
 id|flags
 comma
-id|fd
-comma
-id|off2
+id|pgoff
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|file
+)paren
+id|fput
+c_func
+(paren
+id|file
 )paren
 suffix:semicolon
 id|out
@@ -8486,11 +8512,6 @@ op_star
 id|regs
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -8499,11 +8520,6 @@ comma
 id|current-&gt;comm
 comma
 id|current-&gt;pid
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -8537,11 +8553,6 @@ r_int
 id|off2
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -8562,11 +8573,6 @@ comma
 id|off1
 comma
 id|off2
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -8600,11 +8606,6 @@ r_int
 id|off2
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -8625,11 +8626,6 @@ comma
 id|off1
 comma
 id|off2
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -8671,11 +8667,6 @@ r_int
 id|arg5
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -8699,11 +8690,6 @@ comma
 id|arg4
 comma
 id|arg5
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -11694,11 +11680,6 @@ op_star
 id|regs
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -11744,11 +11725,6 @@ id|regs-&gt;regs
 (braket
 l_int|7
 )braket
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return

@@ -502,6 +502,20 @@ r_int
 id|eoi_ptr
 suffix:semicolon
 macro_line|# ifdef CONFIG_USB
+r_extern
+r_void
+id|reenable_usb
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|disable_usb
+(paren
+r_void
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -6,7 +6,6 @@ macro_line|#include &lt;linux/kmod.h&gt;
 DECL|macro|SEQUENCER_C
 mdefine_line|#define SEQUENCER_C
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_SEQUENCER
 macro_line|#include &quot;softoss.h&quot;
 DECL|variable|softsynthp
 r_int
@@ -3413,14 +3412,12 @@ id|cmd
 r_case
 id|LOCL_STARTAUDIO
 suffix:colon
-macro_line|#ifdef CONFIG_AUDIO
 id|DMAbuf_start_devices
 c_func
 (paren
 id|parm
 )paren
 suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 r_default
@@ -7935,13 +7932,11 @@ id|sequencer_ok
 )paren
 r_return
 suffix:semicolon
-macro_line|#ifdef CONFIG_MIDI
 id|MIDIbuf_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|queue
 op_assign
 (paren
@@ -8062,5 +8057,4 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  include/asm-mips/bugs.h&n; *&n; *  Copyright (C) 1995  Waldorf Electronics&n; *  Copyright (C) 1997  Ralf Baechle&n; *&n; * $Id: bugs.h,v 1.4 1998/05/01 01:35:47 ralf Exp $&n; */
+multiline_comment|/* $Id: bugs.h,v 1.4 1999/08/18 23:37:49 ralf Exp $&n; *&n; * Copyright (C) 1995  Waldorf Electronics&n; * Copyright (C) 1997, 1999  Ralf Baechle&n; */
 macro_line|#include &lt;asm/bootinfo.h&gt;
 multiline_comment|/*&n; * This is included by init/main.c to check for architecture-dependent bugs.&n; *&n; * Needs:&n; *&t;void check_bugs(void);&n; */
 DECL|function|check_wait
@@ -71,9 +71,10 @@ r_break
 suffix:semicolon
 )brace
 )brace
-DECL|function|check_bugs
 r_static
 r_void
+id|__init
+DECL|function|check_bugs
 id|check_bugs
 c_func
 (paren

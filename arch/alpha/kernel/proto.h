@@ -433,6 +433,10 @@ r_int
 r_int
 id|srm_hae
 suffix:semicolon
+r_extern
+r_int
+id|boot_cpuid
+suffix:semicolon
 multiline_comment|/* smp.c */
 r_extern
 r_void
@@ -474,7 +478,8 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|smp_boot_cpuid
+r_int
+id|cpu_present_mask
 suffix:semicolon
 multiline_comment|/* bios32.c */
 multiline_comment|/* extern void reset_for_srm(void); */

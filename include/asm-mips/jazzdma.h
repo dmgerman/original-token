@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Helpfile for jazzdma.c -- Mips Jazz R4030 DMA controller support&n; *&n; * $Id: jazzdma.h,v 1.6 1998/05/01 01:35:57 ralf Exp $&n; */
+multiline_comment|/*&n; * Helpfile for jazzdma.c -- Mips Jazz R4030 DMA controller support&n; *&n; * $Id: jazzdma.h,v 1.6 1998/03/04 09:51:22 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_JAZZDMA_H
 DECL|macro|__ASM_MIPS_JAZZDMA_H
 mdefine_line|#define __ASM_MIPS_JAZZDMA_H

@@ -3,7 +3,6 @@ multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * 
 multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Andrew Veliath  : adapted tmr2ticks from level 1 sequencer (avoid overflow)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_SEQUENCER
 DECL|variable|opened
 DECL|variable|tmr_running
 r_static
@@ -1004,5 +1003,4 @@ comma
 id|def_tmr_arm
 )brace
 suffix:semicolon
-macro_line|#endif
 eof

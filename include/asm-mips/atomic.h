@@ -1,8 +1,8 @@
-multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc..&n; *&n; * But use these as seldom as possible since they are much more slower&n; * than regular operations.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: atomic.h,v 1.4 1998/05/01 01:35:45 ralf Exp $&n; */
+multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc..&n; *&n; * But use these as seldom as possible since they are much more slower&n; * than regular operations.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: atomic.h,v 1.7 1999/08/13 17:07:27 harald Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_ATOMIC_H
 DECL|macro|__ASM_MIPS_ATOMIC_H
 mdefine_line|#define __ASM_MIPS_ATOMIC_H
-macro_line|#include &lt;asm/sgidefs.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef __SMP__
 DECL|member|counter
 DECL|typedef|atomic_t
@@ -36,7 +36,7 @@ DECL|macro|atomic_read
 mdefine_line|#define atomic_read(v)&t;((v)-&gt;counter)
 DECL|macro|atomic_set
 mdefine_line|#define atomic_set(v,i)&t;((v)-&gt;counter = (i))
-macro_line|#if (_MIPS_ISA == _MIPS_ISA_MIPS1)
+macro_line|#if !defined(CONFIG_CPU_HAS_LLSC)
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * The MIPS I implementation is only atomic with respect to&n; * interrupts.  R3000 based multiprocessor machines are rare anyway ...&n; */
 DECL|function|atomic_add
@@ -69,8 +69,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-op_star
-id|v
+id|v-&gt;counter
 op_add_assign
 id|i
 suffix:semicolon
@@ -111,8 +110,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-op_star
-id|v
+id|v-&gt;counter
 op_sub_assign
 id|i
 suffix:semicolon
@@ -156,15 +154,13 @@ c_func
 suffix:semicolon
 id|temp
 op_assign
-op_star
-id|v
+id|v-&gt;counter
 suffix:semicolon
 id|temp
 op_add_assign
 id|i
 suffix:semicolon
-op_star
-id|v
+id|v-&gt;counter
 op_assign
 id|temp
 suffix:semicolon
@@ -211,15 +207,13 @@ c_func
 suffix:semicolon
 id|temp
 op_assign
-op_star
-id|v
+id|v-&gt;counter
 suffix:semicolon
 id|temp
 op_sub_assign
 id|i
 suffix:semicolon
-op_star
-id|v
+id|v-&gt;counter
 op_assign
 id|temp
 suffix:semicolon
@@ -233,8 +227,66 @@ r_return
 id|temp
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#if (_MIPS_ISA == _MIPS_ISA_MIPS2) || (_MIPS_ISA == _MIPS_ISA_MIPS3) || &bslash;&n;    (_MIPS_ISA == _MIPS_ISA_MIPS4) || (_MIPS_ISA == _MIPS_ISA_MIPS5)
+DECL|function|atomic_clear_mask
+r_extern
+id|__inline__
+r_void
+id|atomic_clear_mask
+c_func
+(paren
+r_int
+r_int
+id|mask
+comma
+r_int
+r_int
+op_star
+id|v
+)paren
+(brace
+r_int
+r_int
+id|temp
+suffix:semicolon
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|temp
+op_assign
+op_star
+id|v
+suffix:semicolon
+id|temp
+op_and_assign
+op_complement
+id|mask
+suffix:semicolon
+op_star
+id|v
+op_assign
+id|temp
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#else
 multiline_comment|/*&n; * ... while for MIPS II and better we can use ll/sc instruction.  This&n; * implementation is SMP safe ...&n; */
 multiline_comment|/*&n; * Make sure gcc doesn&squot;t try to be clever and move things around&n; * on us. We need to use _exactly_ the address the user gave us,&n; * not some alias that contains the same information.&n; */
 DECL|macro|__atomic_fool_gcc

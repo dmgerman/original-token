@@ -1,8 +1,6 @@
 multiline_comment|/*&n; * sound/sb_dsp.c&n; *&n; * The low level driver for the Sound Blaster DS chips.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_SBDSP
-macro_line|#ifdef CONFIG_MIDI
 macro_line|#include &quot;sb.h&quot;
 DECL|macro|SB_TEST_IRQ
 macro_line|#undef SB_TEST_IRQ
@@ -751,6 +749,4 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#endif
 eof

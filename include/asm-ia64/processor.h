@@ -10,14 +10,9 @@ mdefine_line|#define IA64_NUM_DBG_REGS&t;8
 multiline_comment|/*&n; * TASK_SIZE really is a mis-named.  It really is the maximum user&n; * space address (plus one).  On ia-64, there are five regions of 2TB&n; * each (assuming 8KB page size), for a total of 8TB of user virtual&n; * address space.&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;&t;0xa000000000000000
-macro_line|#ifdef CONFIG_IA32_SUPPORT
-DECL|macro|TASK_UNMAPPED_BASE
-macro_line|# define TASK_UNMAPPED_BASE&t;0x40000000&t;/* XXX fix me! */
-macro_line|#else
 multiline_comment|/*&n; * This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
 DECL|macro|TASK_UNMAPPED_BASE
-mdefine_line|#define TASK_UNMAPPED_BASE&t;0x2000000000000000
-macro_line|#endif
+mdefine_line|#define TASK_UNMAPPED_BASE&t;(current-&gt;thread.map_base)
 multiline_comment|/*&n; * Bus types&n; */
 DECL|macro|EISA_bus
 mdefine_line|#define EISA_bus 0
@@ -223,8 +218,16 @@ DECL|macro|IA64_THREAD_FPH_VALID
 mdefine_line|#define IA64_THREAD_FPH_VALID&t;(__IA64_UL(1) &lt;&lt; 0)&t;/* floating-point high state valid? */
 DECL|macro|IA64_THREAD_DBG_VALID
 mdefine_line|#define IA64_THREAD_DBG_VALID&t;(__IA64_UL(1) &lt;&lt; 1)&t;/* debug registers valid? */
+DECL|macro|IA64_THREAD_UAC_NOPRINT
+mdefine_line|#define IA64_THREAD_UAC_NOPRINT&t;(__IA64_UL(1) &lt;&lt; 2)&t;/* don&squot;t log unaligned accesses */
+DECL|macro|IA64_THREAD_UAC_SIGBUS
+mdefine_line|#define IA64_THREAD_UAC_SIGBUS&t;(__IA64_UL(1) &lt;&lt; 3)&t;/* generate SIGBUS on unaligned acc. */
 DECL|macro|IA64_KERNEL_DEATH
-mdefine_line|#define IA64_KERNEL_DEATH&t;(__IA64_UL(1) &lt;&lt; 63)&t;/* used for die_if_kernel() recursion detection */
+mdefine_line|#define IA64_KERNEL_DEATH&t;(__IA64_UL(1) &lt;&lt; 63)&t;/* see die_if_kernel()... */
+DECL|macro|IA64_THREAD_UAC_SHIFT
+mdefine_line|#define IA64_THREAD_UAC_SHIFT&t;2&t;
+DECL|macro|IA64_THREAD_UAC_MASK
+mdefine_line|#define IA64_THREAD_UAC_MASK&t;(IA64_THREAD_UAC_NOPRINT | IA64_THREAD_UAC_SIGBUS)
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
@@ -600,6 +603,10 @@ DECL|typedef|mm_segment_t
 )brace
 id|mm_segment_t
 suffix:semicolon
+DECL|macro|SET_UNALIGN_CTL
+mdefine_line|#define SET_UNALIGN_CTL(task,value)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(task)-&gt;thread.flags |= ((value) &lt;&lt; IA64_THREAD_UAC_SHIFT) &amp; IA64_THREAD_UAC_MASK;&t;&bslash;&n;&t;0;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+DECL|macro|GET_UNALIGN_CTL
+mdefine_line|#define GET_UNALIGN_CTL(task,addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;put_user(((task)-&gt;thread.flags &amp; IA64_THREAD_UAC_MASK) &gt;&gt; IA64_THREAD_UAC_SHIFT,&t;&bslash;&n;&t;&t; (int *) (addr));&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|struct|thread_struct
 r_struct
 id|thread_struct
@@ -638,6 +645,11 @@ id|ibr
 id|IA64_NUM_DBG_REGS
 )braket
 suffix:semicolon
+DECL|member|map_base
+id|__u64
+id|map_base
+suffix:semicolon
+multiline_comment|/* base address for mmap() */
 macro_line|#ifdef CONFIG_IA32_SUPPORT
 DECL|member|fsr
 id|__u64
@@ -670,7 +682,7 @@ suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&amp;init_mm, PAGE_OFFSET, PAGE_OFFSET + 0x10000000, NULL, PAGE_SHARED,&t;&bslash;&n;        VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|INIT_THREAD
-mdefine_line|#define INIT_THREAD {&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* ksp */&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* flags */&t;&bslash;&n;&t;{{{{0}}}, },&t;&t;&t;/* fph */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* dbr */&t;&bslash;&n;&t;{0, }&t;&t;&t;&t;/* ibr */&t;&bslash;&n;&t;INIT_THREAD_IA32&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define INIT_THREAD {&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* ksp */&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* flags */&t;&bslash;&n;&t;{{{{0}}}, },&t;&t;&t;/* fph */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* dbr */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* ibr */&t;&bslash;&n;&t;0x2000000000000000&t;&t;/* map_base */&t;&bslash;&n;&t;INIT_THREAD_IA32&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|start_thread
 mdefine_line|#define start_thread(regs,new_ip,new_sp) do {&t;&t;&t;&t;&t;&bslash;&n;&t;set_fs(USER_DS);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;cpl = 3;&t;/* set user mode */&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;ri = 0;&t;&t;/* clear return slot number */&t;&t;&bslash;&n;&t;regs-&gt;cr_iip = new_ip;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;ar_rsc = 0xf;&t;&t;/* eager mode, privilege level 3 */&t;&bslash;&n;&t;regs-&gt;r12 = new_sp - 16;&t;/* allocate 16 byte scratch area */&t;&bslash;&n;&t;regs-&gt;ar_bspstore = IA64_RBS_BOT;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;ar_rnat = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;loadrs = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/* Forward declarations, a strange C thing... */
@@ -2283,6 +2295,38 @@ macro_line|# define ia64_rotr(w,n)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  ({&t;&t;&t;&
 macro_line|#endif
 DECL|macro|ia64_rotl
 mdefine_line|#define ia64_rotl(w,n)&t;ia64_rotr((w),(64)-(n))
+r_extern
+id|__inline__
+id|__u64
+DECL|function|ia64_thash
+id|ia64_thash
+(paren
+id|__u64
+id|addr
+)paren
+(brace
+id|__u64
+id|result
+suffix:semicolon
+id|asm
+(paren
+l_string|&quot;thash %0=%1&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|result
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+)paren
+suffix:semicolon
+r_return
+id|result
+suffix:semicolon
+)brace
 macro_line|#endif /* !__ASSEMBLY__ */
 macro_line|#endif /* _ASM_IA64_PROCESSOR_H */
 eof

@@ -250,11 +250,11 @@ c_func
 suffix:semicolon
 multiline_comment|/* nothing to do */
 )brace
-DECL|function|pci_dma_syng_sg
+DECL|function|pci_dma_sync_sg
 r_extern
 r_inline
 r_void
-id|pci_dma_syng_sg
+id|pci_dma_sync_sg
 c_func
 (paren
 r_struct

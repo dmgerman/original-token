@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: syscalls.h,v 1.15 1998/09/19 19:16:17 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: syscalls.h,v 1.22 2000/02/18 00:24:30 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
 multiline_comment|/*&n; * This file is being included twice - once to build a list of all&n; * syscalls and once to build a table of how many arguments each syscall&n; * accepts.  Syscalls that receive a pointer to the saved registers are&n; * marked as having zero arguments.&n; *&n; * The binary compatibility calls are in a separate list.&n; */
 id|SYS
 c_func
@@ -212,7 +212,7 @@ l_int|2
 id|SYS
 c_func
 (paren
-id|sys_pause
+id|sys_ni_syscall
 comma
 l_int|0
 )paren
@@ -653,7 +653,7 @@ l_int|3
 id|SYS
 c_func
 (paren
-id|sys_mmap
+id|old_mmap
 comma
 l_int|6
 )paren
@@ -813,10 +813,11 @@ l_int|0
 id|SYS
 c_func
 (paren
-id|sys_idle
+id|sys_ni_syscall
 comma
 l_int|0
 )paren
+multiline_comment|/* was sys_idle() */
 id|SYS
 c_func
 (paren
@@ -1443,14 +1444,14 @@ c_func
 (paren
 id|sys_rt_sigsuspend
 comma
-l_int|2
+l_int|0
 )paren
 id|SYS
 c_func
 (paren
 id|sys_pread
 comma
-l_int|4
+l_int|6
 )paren
 multiline_comment|/* 4200 */
 id|SYS
@@ -1458,7 +1459,7 @@ c_func
 (paren
 id|sys_pwrite
 comma
-l_int|4
+l_int|6
 )paren
 id|SYS
 c_func
@@ -1494,7 +1495,7 @@ c_func
 (paren
 id|sys_sigaltstack
 comma
-l_int|2
+l_int|0
 )paren
 id|SYS
 c_func
@@ -1516,5 +1517,56 @@ c_func
 id|sys_ni_syscall
 comma
 l_int|0
+)paren
+id|SYS
+c_func
+(paren
+id|sys_mmap2
+comma
+l_int|6
+)paren
+multiline_comment|/* 4210 */
+id|SYS
+c_func
+(paren
+id|sys_truncate64
+comma
+l_int|2
+)paren
+id|SYS
+c_func
+(paren
+id|sys_ftruncate64
+comma
+l_int|2
+)paren
+id|SYS
+c_func
+(paren
+id|sys_stat64
+comma
+l_int|3
+)paren
+id|SYS
+c_func
+(paren
+id|sys_lstat64
+comma
+l_int|3
+)paren
+id|SYS
+c_func
+(paren
+id|sys_fstat64
+comma
+l_int|3
+)paren
+multiline_comment|/* 4215 */
+id|SYS
+c_func
+(paren
+id|sys_pivot_root
+comma
+l_int|2
 )paren
 eof

@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -1724,19 +1725,27 @@ c_cond
 (paren
 op_logical_neg
 id|table
-)paren
-(brace
-multiline_comment|/* ioremap is a pain, it returns NULL if the&n;&t;&t;&t; * table starts within mapped physical memory.&n;&t;&t;&t; * Hopefully, no table straddles a mapped/unmapped&n;&t;&t;&t; * physical memory boundary, ugh&n;&t;&t;&t; */
-id|table
-op_assign
-(paren
-r_struct
-id|acpi_table
-op_star
-)paren
-id|phys_to_virt
+op_logical_and
+id|addr
+OL
+id|virt_to_phys
 c_func
 (paren
+id|high_memory
+)paren
+)paren
+(brace
+multiline_comment|/* sometimes we see ACPI tables in low memory&n;&t;&t;&t; * and not reserved by the memory map (E820) code,&n;&t;&t;&t; * who is at fault for this?  BIOS?&n;&t;&t;&t; */
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;ACPI: unreserved table memory @ 0x%p!&bslash;n&quot;
+comma
+(paren
+r_void
+op_star
+)paren
 id|addr
 )paren
 suffix:semicolon
@@ -4103,7 +4112,7 @@ id|ACPI_D0
 )paren
 id|status
 op_assign
-id|pm_send_request
+id|pm_send_all
 c_func
 (paren
 id|PM_RESUME
@@ -4118,7 +4127,7 @@ suffix:semicolon
 r_else
 id|status
 op_assign
-id|pm_send_request
+id|pm_send_all
 c_func
 (paren
 id|PM_SUSPEND
@@ -5738,26 +5747,8 @@ id|KERN_ERR
 l_string|&quot;ACPI: I/O port allocation failed&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pci_driver_registered
-)paren
-id|pci_unregister_driver
-c_func
-(paren
-op_amp
-id|acpi_driver
-)paren
-suffix:semicolon
-id|acpi_destroy_tables
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENODEV
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 r_if
@@ -5791,26 +5782,8 @@ comma
 id|acpi_facp-&gt;sci_int
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pci_driver_registered
-)paren
-id|pci_unregister_driver
-c_func
-(paren
-op_amp
-id|acpi_driver
-)paren
-suffix:semicolon
-id|acpi_destroy_tables
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENODEV
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 id|acpi_sysctl
@@ -5871,6 +5844,29 @@ id|acpi_idle
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|err_out
+suffix:colon
+r_if
+c_cond
+(paren
+id|pci_driver_registered
+)paren
+id|pci_unregister_driver
+c_func
+(paren
+op_amp
+id|acpi_driver
+)paren
+suffix:semicolon
+id|acpi_destroy_tables
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Disable and deinitialize ACPI&n; */

@@ -59,7 +59,7 @@ l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
 l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
 l_string|&quot;2:&bslash;n&quot;
-l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
@@ -154,7 +154,7 @@ l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
 l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
 l_string|&quot;2:&bslash;n&quot;
-l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
@@ -242,7 +242,7 @@ l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
 l_string|&quot;&t;xor %0,%2,%0&bslash;n&quot;
 l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
-l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
@@ -333,7 +333,7 @@ l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
 l_string|&quot;&t;mb&bslash;n&quot;
 l_string|&quot;2:&bslash;n&quot;
-l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
@@ -434,7 +434,7 @@ l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
 l_string|&quot;&t;mb&bslash;n&quot;
 l_string|&quot;2:&bslash;n&quot;
-l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
@@ -533,7 +533,7 @@ l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
 l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
 l_string|&quot;&t;mb&bslash;n&quot;
-l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon

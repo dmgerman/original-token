@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: setup.c,v 1.10 1999/01/04 16:03:59 ralf Exp $&n; *&n; * Setup pointers to hardware-dependent routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: setup.c,v 1.14 2000/01/27 01:05:23 ralf Exp $&n; *&n; * Setup pointers to hardware-dependent routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
@@ -397,6 +397,21 @@ id|boardtype
 )paren
 suffix:semicolon
 )brace
+DECL|function|page_is_ram
+r_int
+id|__init
+id|page_is_ram
+c_func
+(paren
+r_int
+r_int
+id|pagenr
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
 DECL|function|sni_rm200_pci_setup
 r_void
 id|__init
@@ -633,6 +648,47 @@ id|conswitchp
 op_assign
 op_amp
 id|vga_con
+suffix:semicolon
+id|screen_info
+op_assign
+(paren
+r_struct
+id|screen_info
+)paren
+(brace
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* orig-x, orig-y */
+l_int|0
+comma
+multiline_comment|/* unused */
+l_int|52
+comma
+multiline_comment|/* orig_video_page */
+l_int|3
+comma
+multiline_comment|/* orig_video_mode */
+l_int|80
+comma
+multiline_comment|/* orig_video_cols */
+l_int|4626
+comma
+l_int|3
+comma
+l_int|9
+comma
+multiline_comment|/* unused, ega_bx, unused */
+l_int|50
+comma
+multiline_comment|/* orig_video_lines */
+l_int|0x22
+comma
+multiline_comment|/* orig_video_isVGA */
+l_int|16
+multiline_comment|/* orig_video_points */
+)brace
 suffix:semicolon
 id|rtc_ops
 op_assign

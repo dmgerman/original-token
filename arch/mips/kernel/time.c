@@ -1,5 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.12 1999/06/13 16:30:34 ralf Exp $&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *  Copyright (C) 1996, 1997, 1998  Ralf Baechle&n; *&n; * This file contains the time handling details for PC-style clocks as&n; * found in some MIPS systems.&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* $Id: time.c,v 1.14 2000/01/26 00:07:44 ralf Exp $&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *  Copyright (C) 1996, 1997, 1998  Ralf Baechle&n; *&n; * This file contains the time handling details for PC-style clocks as&n; * found in some MIPS systems.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -12,6 +11,7 @@ macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/ddb5074.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 r_extern
@@ -789,6 +789,107 @@ op_star
 id|regs
 )paren
 (brace
+macro_line|#ifdef CONFIG_DDB5074
+r_static
+r_int
+id|cnt
+op_assign
+l_int|0
+comma
+id|period
+op_assign
+l_int|0
+comma
+id|dist
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cnt
+op_eq
+l_int|0
+op_logical_or
+id|cnt
+op_eq
+id|dist
+)paren
+id|ddb5074_led_d2
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|cnt
+op_eq
+l_int|7
+op_logical_or
+id|cnt
+op_eq
+id|dist
+op_plus
+l_int|7
+)paren
+id|ddb5074_led_d2
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_increment
+id|cnt
+OG
+id|period
+)paren
+(brace
+id|cnt
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* The hyperbolic function below modifies the heartbeat period&n;&t;     * length in dependency of the current (5min) load. It goes&n;&t;     * through the points f(0)=126, f(1)=86, f(5)=51,&n;&t;     * f(inf)-&gt;30. */
+id|period
+op_assign
+(paren
+(paren
+l_int|672
+op_lshift
+id|FSHIFT
+)paren
+op_div
+(paren
+l_int|5
+op_star
+id|avenrun
+(braket
+l_int|0
+)braket
+op_plus
+(paren
+l_int|7
+op_lshift
+id|FSHIFT
+)paren
+)paren
+)paren
+op_plus
+l_int|30
+suffix:semicolon
+id|dist
+op_assign
+id|period
+op_div
+l_int|4
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#ifdef CONFIG_PROFILE
 r_if
 c_cond

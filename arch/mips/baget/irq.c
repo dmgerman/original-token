@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Code to handle Baget/MIPS IRQs plus some generic interrupt stuff.&n; *&n; * Copyright (C) 1998 Vladimir Roganov &amp; Gleb Raiko&n; *      Code (mostly sleleton and comments) derived from DECstation IRQ&n; *      handling.&n; *&n; * $Id$&n; */
+multiline_comment|/*&n; * Code to handle Baget/MIPS IRQs plus some generic interrupt stuff.&n; *&n; * Copyright (C) 1998 Vladimir Roganov &amp; Gleb Raiko&n; *      Code (mostly sleleton and comments) derived from DECstation IRQ&n; *      handling.&n; *&n; * $Id: irq.c,v 1.6 2000/02/04 07:40:23 ralf Exp $&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -40,10 +40,6 @@ r_int
 id|spurious_count
 op_assign
 l_int|0
-suffix:semicolon
-DECL|variable|__mips_bh_counter
-id|atomic_t
-id|__mips_bh_counter
 suffix:semicolon
 multiline_comment|/*&n; * This table is a correspondence between IRQ numbers and CPU PILs&n; */
 DECL|variable|irq_to_pil_map
@@ -586,23 +582,6 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Data definition for static irqaction allocation.&n; * It is used while SLAB module is not initialized.&n; */
-DECL|macro|MAX_STATIC_ALLOC
-mdefine_line|#define MAX_STATIC_ALLOC 4 
-DECL|variable|static_irqaction
-r_struct
-id|irqaction
-id|static_irqaction
-(braket
-id|MAX_STATIC_ALLOC
-)braket
-suffix:semicolon
-DECL|variable|static_irq_count
-r_int
-id|static_irq_count
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/*&n; * Pointers to the low-level handlers: first the general ones, then the&n; * fast ones, then the bad ones.&n; */
 DECL|variable|irq_action
 r_static
@@ -796,7 +775,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|hardirq_enter
+id|irq_enter
 c_func
 (paren
 id|cpu
@@ -925,7 +904,7 @@ c_func
 id|irq
 )paren
 suffix:semicolon
-id|hardirq_exit
+id|irq_exit
 c_func
 (paren
 id|cpu
@@ -1398,8 +1377,6 @@ r_struct
 id|irqaction
 op_star
 id|action
-op_assign
-l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -1436,66 +1413,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|irqflags
-op_amp
-id|SA_STATIC_ALLOC
-)paren
-(brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_and_cli
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|static_irq_count
-OL
-id|MAX_STATIC_ALLOC
-)paren
-id|action
-op_assign
-op_amp
-id|static_irqaction
-(braket
-id|static_irq_count
-op_increment
-)braket
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;Request for IRQ%d (%s) SA_STATIC_ALLOC failed &quot;
-l_string|&quot;using kmalloc&bslash;n&quot;
-comma
-id|irq
-comma
-id|devname
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|action
-op_eq
-l_int|NULL
-)paren
 id|action
 op_assign
 (paren
@@ -1682,29 +1599,6 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|action-&gt;flags
-op_amp
-id|SA_STATIC_ALLOC
-)paren
-(brace
-multiline_comment|/* This interrupt is marked as specially allocated&n;&t;&t;&t; * so it is a bad idea to free it.&n;&t;&t;&t; */
-id|printk
-c_func
-(paren
-l_string|&quot;Attempt to free statically allocated &quot;
-l_string|&quot;IRQ%d (%s)&bslash;n&quot;
-comma
-id|irq
-comma
-id|action-&gt;name
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|kfree
 c_func
 (paren
@@ -1807,6 +1701,26 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|irq0
+r_static
+r_struct
+id|irqaction
+id|irq0
+op_assign
+(brace
+id|write_err_interrupt
+comma
+id|SA_INTERRUPT
+comma
+l_int|0
+comma
+l_string|&quot;bus write error&quot;
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+suffix:semicolon
 DECL|function|init_IRQ
 r_void
 id|__init
@@ -1854,21 +1768,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|request_irq
+id|setup_baget_irq
 c_func
 (paren
 l_int|0
-multiline_comment|/*fixme*/
 comma
-id|write_err_interrupt
-comma
-id|SA_INTERRUPT
-op_or
-id|SA_STATIC_ALLOC
-comma
-l_string|&quot;write_err&quot;
-comma
-l_int|NULL
+op_amp
+id|irq0
 )paren
 OL
 l_int|0

@@ -1,6 +1,6 @@
-multiline_comment|/* $Id: indy_rtc.c,v 1.1 1998/06/25 20:19:17 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * RTC routines for Indy style attached Dallas chip.&n; *&n; * Copyright (C) 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: indy_rtc.c,v 1.2 1999/10/21 00:23:05 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * RTC routines for Indy style attached Dallas chip.&n; *&n; * Copyright (C) 1998 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
-macro_line|#include &lt;asm/sgihpc.h&gt;
+macro_line|#include &lt;asm/sgi/sgihpc.h&gt;
 DECL|function|indy_rtc_read_data
 r_static
 r_int

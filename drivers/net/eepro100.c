@@ -8636,21 +8636,6 @@ id|speedo_debug
 op_assign
 id|debug
 suffix:semicolon
-multiline_comment|/* Always emit the version message. */
-r_if
-c_cond
-(paren
-id|speedo_debug
-)paren
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s&quot;
-comma
-id|version
-)paren
-suffix:semicolon
 r_return
 id|pci_module_init
 (paren

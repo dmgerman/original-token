@@ -1,7 +1,7 @@
-multiline_comment|/* $Id: signal.h,v 1.4 1998/08/18 20:46:42 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
-macro_line|#ifndef __ASM_MIPS_SIGNAL_H
-DECL|macro|__ASM_MIPS_SIGNAL_H
-mdefine_line|#define __ASM_MIPS_SIGNAL_H
+multiline_comment|/* $Id: signal.h,v 1.7 1999/09/28 22:27:17 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998, 1999 by Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+macro_line|#ifndef _ASM_SIGNAL_H
+DECL|macro|_ASM_SIGNAL_H
+mdefine_line|#define _ASM_SIGNAL_H
 macro_line|#include &lt;linux/types.h&gt;
 DECL|macro|_NSIG
 mdefine_line|#define _NSIG&t;&t;128
@@ -13,8 +13,7 @@ r_typedef
 r_struct
 (brace
 DECL|member|sig
-r_int
-r_int
+id|__u32
 id|sig
 (braket
 id|_NSIG_WORDS
@@ -105,24 +104,28 @@ mdefine_line|#define SIGRTMIN&t;32
 DECL|macro|SIGRTMAX
 mdefine_line|#define SIGRTMAX&t;(_NSIG-1)
 multiline_comment|/*&n; * SA_FLAGS values:&n; *&n; * SA_ONSTACK indicates that a registered stack_t will be used.&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; * SA_NOCLDSTOP flag to turn off SIGCHLD when children stop.&n; * SA_RESETHAND clears the handler when the signal is delivered.&n; * SA_NOCLDWAIT flag on SIGCHLD to inhibit zombies.&n; * SA_NODEFER prevents the current signal from being masked in the handler.&n; *&n; * SA_ONESHOT and SA_NOMASK are the historical Linux names for the Single&n; * Unix names RESETHAND and NODEFER respectively.&n; */
-DECL|macro|SA_STACK
-mdefine_line|#define SA_STACK&t;0x00000001
+DECL|macro|SA_ONSTACK
+mdefine_line|#define SA_ONSTACK&t;0x08000000
 DECL|macro|SA_RESETHAND
-mdefine_line|#define SA_RESETHAND&t;0x00000002
+mdefine_line|#define SA_RESETHAND&t;0x80000000
 DECL|macro|SA_RESTART
-mdefine_line|#define SA_RESTART&t;0x00000004
+mdefine_line|#define SA_RESTART&t;0x10000000
 DECL|macro|SA_SIGINFO
 mdefine_line|#define SA_SIGINFO&t;0x00000008
 DECL|macro|SA_NODEFER
-mdefine_line|#define SA_NODEFER&t;0x00000010
+mdefine_line|#define SA_NODEFER&t;0x40000000
 DECL|macro|SA_NOCLDWAIT
 mdefine_line|#define SA_NOCLDWAIT&t;0x00010000&t;/* Not supported yet */
 DECL|macro|SA_NOCLDSTOP
-mdefine_line|#define SA_NOCLDSTOP&t;0x00020000
+mdefine_line|#define SA_NOCLDSTOP&t;0x00000001
 DECL|macro|SA_NOMASK
 mdefine_line|#define SA_NOMASK&t;SA_NODEFER
 DECL|macro|SA_ONESHOT
 mdefine_line|#define SA_ONESHOT&t;SA_RESETHAND
+DECL|macro|SA_INTERRUPT
+mdefine_line|#define SA_INTERRUPT&t;0x20000000&t;/* dummy -- ignored */
+DECL|macro|SA_RESTORER
+mdefine_line|#define SA_RESTORER&t;0x04000000
 multiline_comment|/* &n; * sigaltstack controls&n; */
 DECL|macro|SS_ONSTACK
 mdefine_line|#define SS_ONSTACK     1
@@ -133,15 +136,13 @@ mdefine_line|#define MINSIGSTKSZ    2048
 DECL|macro|SIGSTKSZ
 mdefine_line|#define SIGSTKSZ       8192
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * These values of sa_flags are used only by the kernel as part of the&n; * irq handling routines.&n; *&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; * SA_SHIRQ flag is for shared interrupt support on PCI and EISA.&n; */
-DECL|macro|SA_INTERRUPT
-mdefine_line|#define SA_INTERRUPT&t;&t;0x01000000&t;/* interrupt handling */
-DECL|macro|SA_SHIRQ
-mdefine_line|#define SA_SHIRQ&t;&t;0x08000000
+multiline_comment|/*&n; * These values of sa_flags are used only by the kernel as part of the&n; * irq handling routines.&n; *&n; * SA_INTERRUPT is also used by the irq handling routines.&n; * SA_SHIRQ flag is for shared interrupt support on PCI and EISA.&n; */
 DECL|macro|SA_PROBE
 mdefine_line|#define SA_PROBE&t;&t;SA_ONESHOT
 DECL|macro|SA_SAMPLE_RANDOM
 mdefine_line|#define SA_SAMPLE_RANDOM&t;SA_RESTART
+DECL|macro|SA_SHIRQ
+mdefine_line|#define SA_SHIRQ&t;&t;0x02000000
 macro_line|#endif /* __KERNEL__ */
 DECL|macro|SIG_BLOCK
 mdefine_line|#define SIG_BLOCK&t;1&t;/* for blocking signals */
@@ -187,17 +188,26 @@ DECL|member|sa_mask
 id|sigset_t
 id|sa_mask
 suffix:semicolon
+DECL|member|sa_restorer
+r_void
+(paren
+op_star
+id|sa_restorer
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|member|sa_resv
 r_int
 id|sa_resv
 (braket
-l_int|2
+l_int|1
 )braket
 suffix:semicolon
 multiline_comment|/* reserved */
 )brace
 suffix:semicolon
-multiline_comment|/* XXX use sa_rev for storing ka_restorer */
 DECL|struct|k_sigaction
 r_struct
 id|k_sigaction
@@ -206,16 +216,6 @@ DECL|member|sa
 r_struct
 id|sigaction
 id|sa
-suffix:semicolon
-DECL|member|ka_restorer
-r_void
-(paren
-op_star
-id|ka_restorer
-)paren
-(paren
-r_void
-)paren
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -244,8 +244,6 @@ id|stack_t
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/sigcontext.h&gt;
-macro_line|#endif
-macro_line|#if defined (__KERNEL__) || defined (__USE_MISC)
 multiline_comment|/*&n; * The following break codes are or were in use for specific purposes in&n; * other MIPS operating systems.  Linux/MIPS doesn&squot;t use all of them.  The&n; * unused ones are here as placeholders; we might encounter them in&n; * non-Linux/MIPS object files or make use of them in the future.&n; */
 DECL|macro|BRK_USERBP
 mdefine_line|#define BRK_USERBP&t;0&t;/* User bp (used by debuggers) */
@@ -273,6 +271,6 @@ DECL|macro|_BRK_THREADBP
 mdefine_line|#define _BRK_THREADBP&t;11&t;/* For threads, user bp (used by debuggers) */
 DECL|macro|BRK_MULOVF
 mdefine_line|#define BRK_MULOVF&t;1023&t;/* Multiply overflow */
-macro_line|#endif /* defined (__KERNEL__) || defined (__USE_MISC) */
-macro_line|#endif /* !defined (__ASM_MIPS_SIGNAL_H) */
+macro_line|#endif /* defined (__KERNEL__) */
+macro_line|#endif /* _ASM_SIGNAL_H */
 eof

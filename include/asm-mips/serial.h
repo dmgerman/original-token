@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: serial.h,v 1.3 1998/08/28 15:55:38 ralf Exp $&n; *&n; * include/asm-mips/serial.h&n; */
+multiline_comment|/* $Id: serial.h,v 1.9 2000/02/16 01:45:55 ralf Exp $&n; *&n; * Copyright (C) 1999 by Ralf Baechle&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/jazz.h&gt;
@@ -6,7 +6,7 @@ multiline_comment|/*&n; * This assumes you have a 1.8432 MHz clock for your UART
 DECL|macro|BASE_BAUD
 mdefine_line|#define BASE_BAUD ( 1843200 / 16 )
 macro_line|#ifndef CONFIG_OLIVETTI_M700
-multiline_comment|/* Some Jazz machines seem to have an 8MHz crystal clock but I don&squot;t know&n;   exactly which ones ... XXX */
+multiline_comment|/* Some Jazz machines seem to have an 8MHz crystal clock but I don&squot;t know&n;      exactly which ones ... XXX */
 DECL|macro|JAZZ_BASE_BAUD
 mdefine_line|#define JAZZ_BASE_BAUD ( 8000000 / 16 ) /* ( 3072000 / 16) */
 macro_line|#else
@@ -35,13 +35,20 @@ DECL|macro|BOCA_FLAGS
 mdefine_line|#define BOCA_FLAGS 0
 DECL|macro|HUB6_FLAGS
 mdefine_line|#define HUB6_FLAGS 0
+DECL|macro|RS_TABLE_SIZE
+mdefine_line|#define RS_TABLE_SIZE&t;64
+macro_line|#else
+DECL|macro|RS_TABLE_SIZE
+mdefine_line|#define RS_TABLE_SIZE
 macro_line|#endif
 multiline_comment|/*&n; * The following define the access methods for the HUB6 card. All&n; * access is through two ports for all 24 possible chips. The card is&n; * selected through the high 2 bits, the port on that card with the&n; * &quot;middle&quot; 3 bits, and the register on that port with the bottom&n; * 3 bits.&n; *&n; * While the access port and interrupt is configurable, the default&n; * port locations are 0x302 for the port control register, and 0x303&n; * for the data read/write register. Normally, the interrupt is at irq3&n; * but can be anything from 3 to 7 inclusive. Note that using 3 will&n; * require disabling com2.&n; */
 DECL|macro|C_P
 mdefine_line|#define C_P(card,port) (((card)&lt;&lt;6|(port)&lt;&lt;3) + 1)
 macro_line|#ifdef CONFIG_MIPS_JAZZ
+DECL|macro|_JAZZ_SERIAL_INIT
+mdefine_line|#define _JAZZ_SERIAL_INIT(int, base)&t;&t;&t;&t;&t;&bslash;&n;&t;{ baud_base: JAZZ_BASE_BAUD, irq: int, flags: STD_COM_FLAGS,&t;&bslash;&n;&t;  iomem_base: (u8 *) base, iomem_reg_shift: 0,&t;&t;&t;&bslash;&n;&t;  io_type: SERIAL_IO_MEM }
 DECL|macro|JAZZ_SERIAL_PORT_DEFNS
-mdefine_line|#define JAZZ_SERIAL_PORT_DEFNS&t;&t;&t;&bslash;&n;&t;/* UART CLK   PORT IRQ     FLAGS        */&t;&t;&t;&bslash;&n;&t;{ 0, JAZZ_BASE_BAUD, JAZZ_SERIAL1_BASE,         /* ttyS0 */&t;&bslash;&n;&t;  JAZZ_SERIAL1_IRQ, STD_COM_FLAGS },&t;&t;&t;&t;&bslash;&n;&t;{ 0, JAZZ_BASE_BAUD, JAZZ_SERIAL2_BASE,         /* ttyS1 */&t;&bslash;&n;&t;  JAZZ_SERIAL2_IRQ, STD_COM_FLAGS },
+mdefine_line|#define JAZZ_SERIAL_PORT_DEFNS&t;&t;&t;&t;&t;&t;&bslash;&n;&t;_JAZZ_SERIAL_INIT(JAZZ_SERIAL1_IRQ, JAZZ_SERIAL1_BASE),&t;&t;&bslash;&n;&t;_JAZZ_SERIAL_INIT(JAZZ_SERIAL2_IRQ, JAZZ_SERIAL2_BASE),
 macro_line|#else
 DECL|macro|JAZZ_SERIAL_PORT_DEFNS
 mdefine_line|#define JAZZ_SERIAL_PORT_DEFNS

@@ -1,12 +1,7 @@
-multiline_comment|/* $Id: posix_types.h,v 1.5 1998/08/17 13:59:34 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
-macro_line|#ifndef __ARCH_MIPS_POSIX_TYPES_H
-DECL|macro|__ARCH_MIPS_POSIX_TYPES_H
-mdefine_line|#define __ARCH_MIPS_POSIX_TYPES_H
-DECL|macro|__need_size_t
-mdefine_line|#define __need_size_t
-DECL|macro|__need_ptrdiff_t
-mdefine_line|#define __need_ptrdiff_t
-macro_line|#include &lt;stddef.h&gt;
+multiline_comment|/* $Id: posix_types.h,v 1.7 2000/02/16 01:07:48 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998, 2000 by Ralf Baechle&n; */
+macro_line|#ifndef _ASM_POSIX_TYPES_H
+DECL|macro|_ASM_POSIX_TYPES_H
+mdefine_line|#define _ASM_POSIX_TYPES_H
 multiline_comment|/*&n; * This file is generally used by user-level software, so you need to&n; * be a little careful about namespace pollution etc.  Also, we cannot&n; * assume GCC is being used.&n; */
 DECL|typedef|__kernel_dev_t
 r_typedef
@@ -59,12 +54,13 @@ id|__kernel_gid_t
 suffix:semicolon
 DECL|typedef|__kernel_size_t
 r_typedef
-id|__SIZE_TYPE__
+r_int
+r_int
 id|__kernel_size_t
 suffix:semicolon
 DECL|typedef|__kernel_ssize_t
 r_typedef
-id|__SSIZE_TYPE__
+r_int
 id|__kernel_ssize_t
 suffix:semicolon
 DECL|typedef|__kernel_ptrdiff_t
@@ -97,6 +93,38 @@ r_typedef
 r_char
 op_star
 id|__kernel_caddr_t
+suffix:semicolon
+DECL|typedef|__kernel_uid16_t
+r_typedef
+r_int
+r_int
+id|__kernel_uid16_t
+suffix:semicolon
+DECL|typedef|__kernel_gid16_t
+r_typedef
+r_int
+r_int
+id|__kernel_gid16_t
+suffix:semicolon
+DECL|typedef|__kernel_uid32_t
+r_typedef
+r_int
+id|__kernel_uid32_t
+suffix:semicolon
+DECL|typedef|__kernel_gid32_t
+r_typedef
+r_int
+id|__kernel_gid32_t
+suffix:semicolon
+DECL|typedef|__kernel_old_uid_t
+r_typedef
+id|__kernel_uid_t
+id|__kernel_old_uid_t
+suffix:semicolon
+DECL|typedef|__kernel_old_gid_t
+r_typedef
+id|__kernel_gid_t
+id|__kernel_old_gid_t
 suffix:semicolon
 macro_line|#ifdef __GNUC__
 DECL|typedef|__kernel_loff_t
@@ -544,5 +572,5 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* defined(__KERNEL__) || !defined(__GLIBC__) || (__GLIBC__ &lt; 2) */
-macro_line|#endif /* __ARCH_MIPS_POSIX_TYPES_H */
+macro_line|#endif /* _ASM_POSIX_TYPES_H */
 eof

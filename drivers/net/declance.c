@@ -33,6 +33,7 @@ macro_line|#include &lt;asm/dec/ioasic_addrs.h&gt;
 macro_line|#include &lt;asm/dec/machtype.h&gt;
 macro_line|#include &lt;asm/dec/tc.h&gt;
 macro_line|#include &lt;asm/dec/kn01.h&gt;
+macro_line|#include &lt;asm/wbflush.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -568,6 +569,11 @@ id|regptr
 op_assign
 id|value
 suffix:semicolon
+id|wbflush
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Load the CSR registers */
 DECL|function|load_csrs
@@ -943,6 +949,11 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+id|wbflush
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|cp_from_buf
 r_void
@@ -1715,6 +1726,11 @@ id|i
 )paren
 suffix:semicolon
 )brace
+id|wbflush
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|init_restart_lance
 r_static
@@ -2897,6 +2913,11 @@ op_or_assign
 l_int|1
 op_lshift
 l_int|16
+)paren
+suffix:semicolon
+id|wbflush
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -4429,6 +4450,11 @@ op_or_assign
 l_int|1
 op_lshift
 l_int|16
+)paren
+suffix:semicolon
+id|wbflush
+c_func
+(paren
 )paren
 suffix:semicolon
 r_break

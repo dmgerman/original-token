@@ -1,18 +1,19 @@
-multiline_comment|/* $Id: pgtable.h,v 1.19 1998/10/26 19:59:39 davem Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1998 by Ralf Baechle at alii&n; */
-macro_line|#ifndef __ASM_MIPS_PGTABLE_H
-DECL|macro|__ASM_MIPS_PGTABLE_H
-mdefine_line|#define __ASM_MIPS_PGTABLE_H
+multiline_comment|/* $Id: pgtable.h,v 1.30 2000/02/24 00:13:19 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 by Ralf Baechle at alii&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+macro_line|#ifndef _ASM_PGTABLE_H
+DECL|macro|_ASM_PGTABLE_H
+mdefine_line|#define _ASM_PGTABLE_H
 macro_line|#include &lt;asm/addrspace.h&gt;
-macro_line|#include &lt;asm/mipsconfig.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 macro_line|#ifndef _LANGUAGE_ASSEMBLY
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/cachectl.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Cache flushing:&n; *&n; *  - flush_cache_all() flushes entire cache&n; *  - flush_cache_mm(mm) flushes the specified mm context&squot;s cache lines&n; *  - flush_cache_page(mm, vmaddr) flushes a single page&n; *  - flush_cache_range(mm, start, end) flushes a range of pages&n; *  - flush_page_to_ram(page) write back kernel page to ram&n; */
 r_extern
 r_void
 (paren
 op_star
-id|flush_cache_all
+id|_flush_cache_all
 )paren
 (paren
 r_void
@@ -22,7 +23,7 @@ r_extern
 r_void
 (paren
 op_star
-id|flush_cache_mm
+id|_flush_cache_mm
 )paren
 (paren
 r_struct
@@ -35,7 +36,7 @@ r_extern
 r_void
 (paren
 op_star
-id|flush_cache_range
+id|_flush_cache_range
 )paren
 (paren
 r_struct
@@ -56,7 +57,7 @@ r_extern
 r_void
 (paren
 op_star
-id|flush_cache_page
+id|_flush_cache_page
 )paren
 (paren
 r_struct
@@ -73,7 +74,7 @@ r_extern
 r_void
 (paren
 op_star
-id|flush_cache_sigtramp
+id|_flush_cache_sigtramp
 )paren
 (paren
 r_int
@@ -85,107 +86,36 @@ r_extern
 r_void
 (paren
 op_star
-id|flush_page_to_ram
+id|_flush_page_to_ram
 )paren
 (paren
-r_int
-r_int
+r_struct
+id|page
+op_star
 id|page
 )paren
 suffix:semicolon
+DECL|macro|flush_cache_all
+mdefine_line|#define flush_cache_all()&t;&t;_flush_cache_all()
+DECL|macro|flush_cache_mm
+mdefine_line|#define flush_cache_mm(mm)&t;&t;_flush_cache_mm(mm)
+DECL|macro|flush_cache_range
+mdefine_line|#define flush_cache_range(mm,start,end)&t;_flush_cache_range(mm,start,end)
+DECL|macro|flush_cache_page
+mdefine_line|#define flush_cache_page(vma,page)&t;_flush_cache_page(vma, page)
+DECL|macro|flush_cache_sigtramp
+mdefine_line|#define flush_cache_sigtramp(addr)&t;_flush_cache_sigtramp(addr)
+DECL|macro|flush_page_to_ram
+mdefine_line|#define flush_page_to_ram(page)&t;&t;_flush_page_to_ram(page)
 DECL|macro|flush_icache_range
-mdefine_line|#define flush_icache_range(start, end) flush_cache_all()
-multiline_comment|/* TLB flushing:&n; *&n; *  - flush_tlb_all() flushes all processes TLB entries&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB entries&n; *  - flush_tlb_page(mm, vmaddr) flushes a single page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; */
-r_extern
-r_void
-(paren
-op_star
-id|flush_tlb_all
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|flush_tlb_mm
-)paren
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|flush_tlb_range
-)paren
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-comma
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|end
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|flush_tlb_page
-)paren
-(paren
-r_struct
-id|vm_area_struct
-op_star
-id|vma
-comma
-r_int
-r_int
-id|page
-)paren
-suffix:semicolon
-DECL|function|flush_tlb_pgtables
-r_extern
-id|__inline__
-r_void
-id|flush_tlb_pgtables
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-comma
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|end
-)paren
-(brace
-)brace
+mdefine_line|#define flush_icache_range(start, end)&t;flush_cache_all()
+DECL|macro|flush_icache_page
+mdefine_line|#define flush_icache_page(start,page)&t;do { } while(0)
 multiline_comment|/*&n; * - add_wired_entry() add a fixed TLB entry, and move wired register&n; */
 r_extern
 r_void
-(paren
-op_star
 id|add_wired_entry
-)paren
+c_func
 (paren
 r_int
 r_int
@@ -246,6 +176,24 @@ DECL|macro|_PAGE_ACCESSED
 mdefine_line|#define _PAGE_ACCESSED              (1&lt;&lt;3)  /* implemented in software */
 DECL|macro|_PAGE_MODIFIED
 mdefine_line|#define _PAGE_MODIFIED              (1&lt;&lt;4)  /* implemented in software */
+macro_line|#if defined(CONFIG_CPU_R3000)
+DECL|macro|_PAGE_GLOBAL
+mdefine_line|#define _PAGE_GLOBAL                (1&lt;&lt;8)
+DECL|macro|_PAGE_VALID
+mdefine_line|#define _PAGE_VALID                 (1&lt;&lt;9)
+DECL|macro|_PAGE_SILENT_READ
+mdefine_line|#define _PAGE_SILENT_READ           (1&lt;&lt;9)  /* synonym                 */
+DECL|macro|_PAGE_DIRTY
+mdefine_line|#define _PAGE_DIRTY                 (1&lt;&lt;10) /* The MIPS dirty bit      */
+DECL|macro|_PAGE_SILENT_WRITE
+mdefine_line|#define _PAGE_SILENT_WRITE          (1&lt;&lt;10)
+DECL|macro|_CACHE_UNCACHED
+mdefine_line|#define _CACHE_UNCACHED             (1&lt;&lt;11) /* R4[0246]00              */
+DECL|macro|_CACHE_MASK
+mdefine_line|#define _CACHE_MASK                 (1&lt;&lt;11)
+DECL|macro|_CACHE_CACHABLE_NONCOHERENT
+mdefine_line|#define _CACHE_CACHABLE_NONCOHERENT 0
+macro_line|#else
 DECL|macro|_PAGE_R4KBUG
 mdefine_line|#define _PAGE_R4KBUG                (1&lt;&lt;5)  /* workaround for r4k bug  */
 DECL|macro|_PAGE_GLOBAL
@@ -276,6 +224,7 @@ DECL|macro|_CACHE_CACHABLE_ACCELERATED
 mdefine_line|#define _CACHE_CACHABLE_ACCELERATED (7&lt;&lt;9)  /* R10000 only             */
 DECL|macro|_CACHE_MASK
 mdefine_line|#define _CACHE_MASK                 (7&lt;&lt;9)
+macro_line|#endif
 DECL|macro|__READABLE
 mdefine_line|#define __READABLE&t;(_PAGE_READ | _PAGE_SILENT_READ | _PAGE_ACCESSED)
 DECL|macro|__WRITEABLE
@@ -330,6 +279,12 @@ mdefine_line|#define __S110&t;PAGE_SHARED
 DECL|macro|__S111
 mdefine_line|#define __S111&t;PAGE_SHARED
 macro_line|#if !defined (_LANGUAGE_ASSEMBLY)
+DECL|macro|pte_ERROR
+mdefine_line|#define pte_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pte %016lx.&bslash;n&quot;, __FILE__, __LINE__, pte_val(e))
+DECL|macro|pmd_ERROR
+mdefine_line|#define pmd_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pmd %016lx.&bslash;n&quot;, __FILE__, __LINE__, pmd_val(e))
+DECL|macro|pgd_ERROR
+mdefine_line|#define pgd_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pgd %016lx.&bslash;n&quot;, __FILE__, __LINE__, pgd_val(e))
 multiline_comment|/*&n; * BAD_PAGETABLE is used when we need a bogus page-table, while&n; * BAD_PAGE is used for a bogus page.&n; *&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
 r_extern
 id|pte_t
@@ -363,7 +318,7 @@ mdefine_line|#define BAD_PAGETABLE __bad_pagetable()
 DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE __bad_page()
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE(__vaddr) &bslash;&n;&t;(empty_zero_page + (((unsigned long)(__vaddr)) &amp; zero_page_mask))
+mdefine_line|#define ZERO_PAGE(vaddr) &bslash;&n;&t;(mem_map + MAP_NR(empty_zero_page + (((unsigned long)(vaddr)) &amp; zero_page_mask)))
 multiline_comment|/* number of bits that fit into a memory pointer */
 DECL|macro|BITS_PER_PTR
 mdefine_line|#define BITS_PER_PTR&t;&t;&t;(8*sizeof(unsigned long))
@@ -378,19 +333,14 @@ DECL|macro|PAGE_PTR
 mdefine_line|#define PAGE_PTR(address) &bslash;&n;((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
 r_extern
 r_void
-(paren
-op_star
 id|load_pgd
-)paren
+c_func
 (paren
 r_int
 r_int
 id|pg_dir
 )paren
 suffix:semicolon
-multiline_comment|/* to set the page-dir */
-DECL|macro|SET_PAGE_DIR
-mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) (tsk)-&gt;tss.pg_dir = ((unsigned long) (pgdir))
 r_extern
 id|pmd_t
 id|invalid_pte_table
@@ -745,6 +695,13 @@ id|pgdp
 )paren
 (brace
 )brace
+multiline_comment|/*&n; * Permanent address of a page.  On MIPS64 we never have highmem, so this&n; * is simple.&n; */
+DECL|macro|page_address
+mdefine_line|#define page_address(page)&t;((page)-&gt;virtual)
+DECL|macro|pte_pagenr
+mdefine_line|#define pte_pagenr(x)&t;&t;((unsigned long)((pte_val(x) &gt;&gt; PAGE_SHIFT)))
+DECL|macro|pte_page
+mdefine_line|#define pte_page(x)&t;&t;(mem_map+pte_pagenr(x))
 multiline_comment|/*&n; * The following only work if pte_present() is true.&n; * Undefined behaviour if not..&n; */
 DECL|function|pte_read
 r_extern
@@ -1111,43 +1068,8 @@ id|pte
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
-DECL|function|mk_pte
-r_extern
-r_inline
-id|pte_t
-id|mk_pte
-c_func
-(paren
-r_int
-r_int
-id|page
-comma
-id|pgprot_t
-id|pgprot
-)paren
-(brace
-r_return
-id|__pte
-c_func
-(paren
-(paren
-(paren
-id|page
-op_amp
-id|PAGE_MASK
-)paren
-op_minus
-id|PAGE_OFFSET
-)paren
-op_or
-id|pgprot_val
-c_func
-(paren
-id|pgprot
-)paren
-)paren
-suffix:semicolon
-)brace
+DECL|macro|mk_pte
+mdefine_line|#define mk_pte(page, pgprot)&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pte_t   __pte;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pte_val(__pte) = ((unsigned long)(page - mem_map) &lt;&lt; PAGE_SHIFT) | &bslash;&n;&t;                 pgprot_val(pgprot);&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__pte;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|function|mk_pte_phys
 r_extern
 r_inline
@@ -1167,7 +1089,15 @@ r_return
 id|__pte
 c_func
 (paren
+(paren
+(paren
 id|physpage
+op_amp
+id|PAGE_MASK
+)paren
+op_minus
+id|PAGE_OFFSET
+)paren
 op_or
 id|pgprot_val
 c_func
@@ -1213,6 +1143,8 @@ id|newprot
 )paren
 suffix:semicolon
 )brace
+DECL|macro|page_pte
+mdefine_line|#define page_pte(page) page_pte_prot(page, __pgprot(0))
 multiline_comment|/* to find an entry in a kernel page-table-directory */
 DECL|macro|pgd_offset_k
 mdefine_line|#define pgd_offset_k(address) pgd_offset(&amp;init_mm, address)
@@ -1323,449 +1255,14 @@ suffix:semicolon
 multiline_comment|/*&n; * Initialize new page directory with pointers to invalid ptes&n; */
 r_extern
 r_void
-(paren
-op_star
 id|pgd_init
-)paren
+c_func
 (paren
 r_int
 r_int
 id|page
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Allocate and free page tables. The xxx_kernel() versions are&n; * used to allocate a kernel page table - this turns on ASN bits&n; * if any.&n; */
-DECL|macro|pgd_quicklist
-mdefine_line|#define pgd_quicklist (current_cpu_data.pgd_quick)
-DECL|macro|pmd_quicklist
-mdefine_line|#define pmd_quicklist ((unsigned long *)0)
-DECL|macro|pte_quicklist
-mdefine_line|#define pte_quicklist (current_cpu_data.pte_quick)
-DECL|macro|pgtable_cache_size
-mdefine_line|#define pgtable_cache_size (current_cpu_data.pgtable_cache_sz)
-DECL|function|get_pgd_slow
-r_extern
-id|__inline__
-id|pgd_t
-op_star
-id|get_pgd_slow
-c_func
-(paren
-r_void
-)paren
-(brace
-id|pgd_t
-op_star
-id|ret
-op_assign
-(paren
-id|pgd_t
-op_star
-)paren
-id|__get_free_page
-c_func
-(paren
-id|GFP_KERNEL
-)paren
-comma
-op_star
-id|init
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-)paren
-(brace
-id|init
-op_assign
-id|pgd_offset
-c_func
-(paren
-op_amp
-id|init_mm
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|pgd_init
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-id|ret
-)paren
-suffix:semicolon
-id|memcpy
-(paren
-id|ret
-op_plus
-id|USER_PTRS_PER_PGD
-comma
-id|init
-op_plus
-id|USER_PTRS_PER_PGD
-comma
-(paren
-id|PTRS_PER_PGD
-op_minus
-id|USER_PTRS_PER_PGD
-)paren
-op_star
-r_sizeof
-(paren
-id|pgd_t
-)paren
-)paren
-suffix:semicolon
-)brace
-r_return
-id|ret
-suffix:semicolon
-)brace
-DECL|function|get_pgd_fast
-r_extern
-id|__inline__
-id|pgd_t
-op_star
-id|get_pgd_fast
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-r_int
-op_star
-id|ret
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|ret
-op_assign
-id|pgd_quicklist
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-id|pgd_quicklist
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-(paren
-op_star
-id|ret
-)paren
-suffix:semicolon
-id|ret
-(braket
-l_int|0
-)braket
-op_assign
-id|ret
-(braket
-l_int|1
-)braket
-suffix:semicolon
-id|pgtable_cache_size
-op_decrement
-suffix:semicolon
-)brace
-r_else
-id|ret
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|get_pgd_slow
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-(paren
-id|pgd_t
-op_star
-)paren
-id|ret
-suffix:semicolon
-)brace
-DECL|function|free_pgd_fast
-r_extern
-id|__inline__
-r_void
-id|free_pgd_fast
-c_func
-(paren
-id|pgd_t
-op_star
-id|pgd
-)paren
-(brace
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|pgd
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|pgd_quicklist
-suffix:semicolon
-id|pgd_quicklist
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|pgd
-suffix:semicolon
-id|pgtable_cache_size
-op_increment
-suffix:semicolon
-)brace
-DECL|function|free_pgd_slow
-r_extern
-id|__inline__
-r_void
-id|free_pgd_slow
-c_func
-(paren
-id|pgd_t
-op_star
-id|pgd
-)paren
-(brace
-id|free_page
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-id|pgd
-)paren
-suffix:semicolon
-)brace
-r_extern
-id|pte_t
-op_star
-id|get_pte_slow
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-comma
-r_int
-r_int
-id|address_preadjusted
-)paren
-suffix:semicolon
-r_extern
-id|pte_t
-op_star
-id|get_pte_kernel_slow
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-comma
-r_int
-r_int
-id|address_preadjusted
-)paren
-suffix:semicolon
-DECL|function|get_pte_fast
-r_extern
-id|__inline__
-id|pte_t
-op_star
-id|get_pte_fast
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-r_int
-op_star
-id|ret
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|ret
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|pte_quicklist
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-id|pte_quicklist
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-(paren
-op_star
-id|ret
-)paren
-suffix:semicolon
-id|ret
-(braket
-l_int|0
-)braket
-op_assign
-id|ret
-(braket
-l_int|1
-)braket
-suffix:semicolon
-id|pgtable_cache_size
-op_decrement
-suffix:semicolon
-)brace
-r_return
-(paren
-id|pte_t
-op_star
-)paren
-id|ret
-suffix:semicolon
-)brace
-DECL|function|free_pte_fast
-r_extern
-id|__inline__
-r_void
-id|free_pte_fast
-c_func
-(paren
-id|pte_t
-op_star
-id|pte
-)paren
-(brace
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|pte
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|pte_quicklist
-suffix:semicolon
-id|pte_quicklist
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|pte
-suffix:semicolon
-id|pgtable_cache_size
-op_increment
-suffix:semicolon
-)brace
-DECL|function|free_pte_slow
-r_extern
-id|__inline__
-r_void
-id|free_pte_slow
-c_func
-(paren
-id|pte_t
-op_star
-id|pte
-)paren
-(brace
-id|free_page
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-id|pte
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* We don&squot;t use pmd cache, so these are dummy routines */
-DECL|function|get_pmd_fast
-r_extern
-id|__inline__
-id|pmd_t
-op_star
-id|get_pmd_fast
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-(paren
-id|pmd_t
-op_star
-)paren
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|free_pmd_fast
-r_extern
-id|__inline__
-r_void
-id|free_pmd_fast
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-)paren
-(brace
-)brace
-DECL|function|free_pmd_slow
-r_extern
-id|__inline__
-r_void
-id|free_pmd_slow
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-)paren
-(brace
-)brace
 r_extern
 r_void
 id|__bad_pte
@@ -1794,293 +1291,6 @@ DECL|macro|pgd_free
 mdefine_line|#define pgd_free(pgd)           free_pgd_fast(pgd)
 DECL|macro|pgd_alloc
 mdefine_line|#define pgd_alloc()             get_pgd_fast()
-DECL|function|pte_alloc_kernel
-r_extern
-r_inline
-id|pte_t
-op_star
-id|pte_alloc_kernel
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-comma
-r_int
-r_int
-id|address
-)paren
-(brace
-id|address
-op_assign
-(paren
-id|address
-op_rshift
-id|PAGE_SHIFT
-)paren
-op_amp
-(paren
-id|PTRS_PER_PTE
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pmd_none
-c_func
-(paren
-op_star
-id|pmd
-)paren
-)paren
-(brace
-id|pte_t
-op_star
-id|page
-op_assign
-id|get_pte_fast
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|page
-)paren
-(brace
-id|pmd_val
-c_func
-(paren
-op_star
-id|pmd
-)paren
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|page
-suffix:semicolon
-r_return
-id|page
-op_plus
-id|address
-suffix:semicolon
-)brace
-r_return
-id|get_pte_kernel_slow
-c_func
-(paren
-id|pmd
-comma
-id|address
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|pmd_bad
-c_func
-(paren
-op_star
-id|pmd
-)paren
-)paren
-(brace
-id|__bad_pte_kernel
-c_func
-(paren
-id|pmd
-)paren
-suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
-r_return
-(paren
-id|pte_t
-op_star
-)paren
-id|pmd_page
-c_func
-(paren
-op_star
-id|pmd
-)paren
-op_plus
-id|address
-suffix:semicolon
-)brace
-DECL|function|pte_alloc
-r_extern
-r_inline
-id|pte_t
-op_star
-id|pte_alloc
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-comma
-r_int
-r_int
-id|address
-)paren
-(brace
-id|address
-op_assign
-(paren
-id|address
-op_rshift
-id|PAGE_SHIFT
-)paren
-op_amp
-(paren
-id|PTRS_PER_PTE
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pmd_none
-c_func
-(paren
-op_star
-id|pmd
-)paren
-)paren
-(brace
-id|pte_t
-op_star
-id|page
-op_assign
-id|get_pte_fast
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|page
-)paren
-(brace
-id|pmd_val
-c_func
-(paren
-op_star
-id|pmd
-)paren
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|page
-suffix:semicolon
-r_return
-id|page
-op_plus
-id|address
-suffix:semicolon
-)brace
-r_return
-id|get_pte_slow
-c_func
-(paren
-id|pmd
-comma
-id|address
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|pmd_bad
-c_func
-(paren
-op_star
-id|pmd
-)paren
-)paren
-(brace
-id|__bad_pte
-c_func
-(paren
-id|pmd
-)paren
-suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
-r_return
-(paren
-id|pte_t
-op_star
-)paren
-id|pmd_page
-c_func
-(paren
-op_star
-id|pmd
-)paren
-op_plus
-id|address
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * allocating and freeing a pmd is trivial: the 1-entry pmd is&n; * inside the pgd, so has no extra memory associated with it.&n; */
-DECL|function|pmd_free
-r_extern
-r_inline
-r_void
-id|pmd_free
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-)paren
-(brace
-)brace
-DECL|function|pmd_alloc
-r_extern
-r_inline
-id|pmd_t
-op_star
-id|pmd_alloc
-c_func
-(paren
-id|pgd_t
-op_star
-id|pgd
-comma
-r_int
-r_int
-id|address
-)paren
-(brace
-r_return
-(paren
-id|pmd_t
-op_star
-)paren
-id|pgd
-suffix:semicolon
-)brace
-DECL|macro|pmd_free_kernel
-mdefine_line|#define pmd_free_kernel&t;&t;pmd_free
-DECL|macro|pmd_alloc_kernel
-mdefine_line|#define pmd_alloc_kernel&t;pmd_alloc
 r_extern
 r_int
 id|do_check_pgt_cache
@@ -2091,171 +1301,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|function|set_pgdir
-r_extern
-r_inline
-r_void
-id|set_pgdir
-c_func
-(paren
-r_int
-r_int
-id|address
-comma
-id|pgd_t
-id|entry
-)paren
-(brace
-r_struct
-id|task_struct
-op_star
-id|p
-suffix:semicolon
-id|pgd_t
-op_star
-id|pgd
-suffix:semicolon
-macro_line|#ifdef __SMP__
-r_int
-id|i
-suffix:semicolon
-macro_line|#endif&t;
-id|read_lock
-c_func
-(paren
-op_amp
-id|tasklist_lock
-)paren
-suffix:semicolon
-id|for_each_task
-c_func
-(paren
-id|p
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|p-&gt;mm
-)paren
-r_continue
-suffix:semicolon
-op_star
-id|pgd_offset
-c_func
-(paren
-id|p-&gt;mm
-comma
-id|address
-)paren
-op_assign
-id|entry
-suffix:semicolon
-)brace
-id|read_unlock
-c_func
-(paren
-op_amp
-id|tasklist_lock
-)paren
-suffix:semicolon
-macro_line|#ifndef __SMP__
-r_for
-c_loop
-(paren
-id|pgd
-op_assign
-(paren
-id|pgd_t
-op_star
-)paren
-id|pgd_quicklist
-suffix:semicolon
-id|pgd
-suffix:semicolon
-id|pgd
-op_assign
-(paren
-id|pgd_t
-op_star
-)paren
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|pgd
-)paren
-id|pgd
-(braket
-id|address
-op_rshift
-id|PGDIR_SHIFT
-)braket
-op_assign
-id|entry
-suffix:semicolon
-macro_line|#else
-multiline_comment|/* To pgd_alloc/pgd_free, one holds master kernel lock and so does our&n;&t;   callee, so we can modify pgd caches of other CPUs as well. -jj */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|NR_CPUS
-suffix:semicolon
-id|i
-op_increment
-)paren
-r_for
-c_loop
-(paren
-id|pgd
-op_assign
-(paren
-id|pgd_t
-op_star
-)paren
-id|cpu_data
-(braket
-id|i
-)braket
-dot
-id|pgd_quick
-suffix:semicolon
-id|pgd
-suffix:semicolon
-id|pgd
-op_assign
-(paren
-id|pgd_t
-op_star
-)paren
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|pgd
-)paren
-id|pgd
-(braket
-id|address
-op_rshift
-id|PGDIR_SHIFT
-)braket
-op_assign
-id|entry
-suffix:semicolon
-macro_line|#endif
-)brace
 r_extern
 id|pgd_t
 id|swapper_pg_dir
@@ -2265,10 +1310,8 @@ l_int|1024
 suffix:semicolon
 r_extern
 r_void
-(paren
-op_star
 id|update_mmu_cache
-)paren
+c_func
 (paren
 r_struct
 id|vm_area_struct
@@ -2283,13 +1326,16 @@ id|pte_t
 id|pte
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Kernel with 32 bit address space&n; */
 DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 1) &amp; 0x3f)
+mdefine_line|#define SWP_TYPE(x)&t;&t;(((x).val &gt;&gt; 1) &amp; 0x3f)
 DECL|macro|SWP_OFFSET
-mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 8)
+mdefine_line|#define SWP_OFFSET(x)&t;&t;((x).val &gt;&gt; 8)
 DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8))
+mdefine_line|#define SWP_ENTRY(type,offset)&t;((swp_entry_t) { ((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8) })
+DECL|macro|pte_to_swp_entry
+mdefine_line|#define pte_to_swp_entry(pte)&t;((swp_entry_t) { pte_val(pte) })
+DECL|macro|swp_entry_to_pte
+mdefine_line|#define swp_entry_to_pte(x)&t;((pte_t) { (x).val })
 DECL|macro|module_map
 mdefine_line|#define module_map      vmalloc
 DECL|macro|module_unmap
@@ -2314,9 +1360,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;tlbp&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2334,9 +1381,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;tlbr&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2354,9 +1402,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;tlbwi&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2374,9 +1423,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;tlbwr&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2401,11 +1451,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0 %0, $5&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -2433,11 +1482,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0 %0, $5&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -2467,11 +1515,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0 %0, $2&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -2499,11 +1546,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0 %0, $2&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -2532,11 +1578,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0 %0, $3&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -2564,11 +1609,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0 %0, $3&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -2598,11 +1642,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0 %0, $10&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -2630,11 +1673,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0 %0, $10&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -2664,11 +1706,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0 %0, $0&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -2696,11 +1737,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
-l_string|&quot;mtc0 %0, $0&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
+l_string|&quot;mtc0 %0, $0&bslash;n&bslash;t&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -2730,11 +1770,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
-l_string|&quot;mfc0 %0, $6&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
+l_string|&quot;mfc0 %0, $6&bslash;n&bslash;t&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -2762,11 +1801,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;&bslash;n&bslash;t.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0 %0, $6&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -2796,11 +1834,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0 %0, $28&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -2828,11 +1865,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0 %0, $28&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -2861,11 +1897,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0 %0, $29&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -2893,11 +1928,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0 %0, $29&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -2927,11 +1961,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0 %0, $4&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -2959,11 +1992,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0 %0, $4&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
-l_string|&quot;.set reorder&quot;
+l_string|&quot;.set pop&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -2974,5 +2006,7 @@ id|val
 suffix:semicolon
 )brace
 macro_line|#endif /* !defined (_LANGUAGE_ASSEMBLY) */
-macro_line|#endif /* __ASM_MIPS_PGTABLE_H */
+DECL|macro|io_remap_page_range
+mdefine_line|#define io_remap_page_range remap_page_range
+macro_line|#endif /* _ASM_PGTABLE_H */
 eof

@@ -3094,6 +3094,7 @@ id|status
 op_assign
 id|desc-&gt;status
 suffix:semicolon
+macro_line|#ifndef CONFIG_SMP
 multiline_comment|/* Look for broken irq masking.  */
 r_if
 c_cond
@@ -3137,6 +3138,7 @@ id|jiffies
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 multiline_comment|/*&n;&t; * REPLAY is when Linux resends an IRQ that was dropped earlier.&n;&t; * WAITING is used by probe to mark irqs that are being tested.&n;&t; */
 id|status
 op_and_assign
@@ -4018,7 +4020,7 @@ c_func
 (paren
 )paren
 op_eq
-id|smp_boot_cpuid
+id|boot_cpuid
 )paren
 macro_line|#endif
 id|handle_irq

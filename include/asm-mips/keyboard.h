@@ -1,8 +1,9 @@
-multiline_comment|/*&n; * CPU specific parts of the keyboard driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * $Id: keyboard.h,v 1.12 1998/09/16 22:52:41 ralf Exp $&n; */
-macro_line|#ifndef __ASM_MIPS_KEYBOARD_H
-DECL|macro|__ASM_MIPS_KEYBOARD_H
-mdefine_line|#define __ASM_MIPS_KEYBOARD_H
+multiline_comment|/* $Id: keyboard.h,v 1.14 1999/08/19 22:56:33 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 Ralf Baechle&n; */
+macro_line|#ifndef _ASM_KEYBOARD_H
+DECL|macro|_ASM_KEYBOARD_H
+mdefine_line|#define _ASM_KEYBOARD_H
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
@@ -252,5 +253,5 @@ mdefine_line|#define kbd_write_command(val) kbd_ops-&gt;kbd_write_command(val)
 DECL|macro|kbd_read_status
 mdefine_line|#define kbd_read_status() kbd_ops-&gt;kbd_read_status()
 macro_line|#endif /* __KERNEL */
-macro_line|#endif /* __ASM_MIPS_KEYBOARD_H */
+macro_line|#endif /* _ASM_KEYBOARD_H */
 eof

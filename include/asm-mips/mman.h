@@ -43,12 +43,12 @@ mdefine_line|#define MAP_EXECUTABLE&t;0x4000&t;&t;/* mark it as an executable */
 DECL|macro|MAP_LOCKED
 mdefine_line|#define MAP_LOCKED&t;0x8000&t;&t;/* pages are locked */
 multiline_comment|/*&n; * Flags for msync&n; */
-DECL|macro|MS_SYNC
-mdefine_line|#define MS_SYNC&t;&t;0&t;&t;/* synchronous memory sync */
 DECL|macro|MS_ASYNC
-mdefine_line|#define MS_ASYNC&t;1&t;&t;/* sync memory asynchronously */
+mdefine_line|#define MS_ASYNC&t;0x0001&t;&t;/* sync memory asynchronously */
 DECL|macro|MS_INVALIDATE
-mdefine_line|#define MS_INVALIDATE&t;2&t;&t;/* invalidate mappings &amp; caches */
+mdefine_line|#define MS_INVALIDATE&t;0x0002&t;&t;/* invalidate mappings &amp; caches */
+DECL|macro|MS_SYNC
+mdefine_line|#define MS_SYNC&t;&t;0x0004&t;&t;/* synchronous memory sync */
 multiline_comment|/*&n; * Flags for mlockall&n; */
 DECL|macro|MCL_CURRENT
 mdefine_line|#define MCL_CURRENT&t;1&t;&t;/* lock all current mappings */

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irixelf.c,v 1.17 1999/06/17 13:25:45 ralf Exp $&n; *&n; * irixelf.c: Code to load IRIX ELF executables which conform to&n; *            the MIPS ABI.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * Based upon work which is:&n; * Copyright 1993, 1994: Eric Youngdale (ericy@cais.com).&n; */
+multiline_comment|/* $Id: irixelf.c,v 1.24 2000/02/04 07:40:23 ralf Exp $&n; *&n; * irixelf.c: Code to load IRIX ELF executables which conform to&n; *            the MIPS ABI.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * Based upon work which is:&n; * Copyright 1993, 1994: Eric Youngdale (ericy@cais.com).&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -18,7 +19,7 @@ macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/prctl.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -64,6 +65,11 @@ r_struct
 id|pt_regs
 op_star
 id|regs
+comma
+r_struct
+id|file
+op_star
+id|file
 )paren
 suffix:semicolon
 r_extern
@@ -83,14 +89,8 @@ op_assign
 (brace
 l_int|NULL
 comma
-macro_line|#ifndef MODULE
-l_int|NULL
+id|THIS_MODULE
 comma
-macro_line|#else
-op_amp
-id|__this_module.usecount
-comma
-macro_line|#endif
 id|load_irix_binary
 comma
 id|load_irix_library
@@ -1845,33 +1845,22 @@ id|bprm
 r_if
 c_cond
 (paren
-id|ehp-&gt;e_ident
-(braket
-l_int|0
-)braket
-op_ne
-l_int|0x7f
-op_logical_or
-id|strncmp
+id|memcmp
 c_func
 (paren
-op_amp
 id|ehp-&gt;e_ident
-(braket
-l_int|1
-)braket
 comma
-l_string|&quot;ELF&quot;
+id|ELFMAG
 comma
-l_int|3
+id|SELFMAG
 )paren
+op_ne
+l_int|0
 )paren
-(brace
 r_return
 op_minus
 id|ENOEXEC
 suffix:semicolon
-)brace
 multiline_comment|/* First of all, some simple consistency checks */
 r_if
 c_cond
@@ -2280,33 +2269,22 @@ id|ihp
 r_if
 c_cond
 (paren
-id|ihp-&gt;e_ident
-(braket
-l_int|0
-)braket
-op_ne
-l_int|0x7f
-op_logical_or
-id|strncmp
+id|memcmp
 c_func
 (paren
-op_amp
 id|ihp-&gt;e_ident
-(braket
-l_int|1
-)braket
 comma
-l_string|&quot;ELF&quot;
+id|ELFMAG
 comma
-l_int|3
+id|SELFMAG
 )paren
+op_ne
+l_int|0
 )paren
-(brace
 r_return
 op_minus
 id|ELIBBAD
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -2949,6 +2927,11 @@ op_star
 id|bprm-&gt;buf
 )paren
 suffix:semicolon
+id|retval
+op_assign
+op_minus
+id|ENOEXEC
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2961,12 +2944,9 @@ comma
 id|bprm
 )paren
 )paren
-(brace
-r_return
-op_minus
-id|ENOEXEC
+r_goto
+id|out
 suffix:semicolon
-)brace
 macro_line|#ifdef DEBUG_ELF
 id|print_elfhdr
 c_func
@@ -2982,6 +2962,16 @@ op_assign
 id|elf_ex.e_phentsize
 op_star
 id|elf_ex.e_phnum
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|size
+OG
+l_int|65536
+)paren
+r_goto
+id|out
 suffix:semicolon
 id|elf_phdata
 op_assign
@@ -3005,10 +2995,16 @@ id|elf_phdata
 op_eq
 l_int|NULL
 )paren
-r_return
+(brace
+id|retval
+op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 id|retval
 op_assign
 id|read_exec
@@ -3037,7 +3033,7 @@ OL
 l_int|0
 )paren
 r_goto
-id|out_phdata
+id|out_free_ph
 suffix:semicolon
 macro_line|#ifdef DEBUG_ELF
 id|dump_phdrs
@@ -3147,7 +3143,7 @@ OL
 l_int|0
 )paren
 r_goto
-id|out_phdata
+id|out_free_ph
 suffix:semicolon
 id|file
 op_assign
@@ -3207,7 +3203,7 @@ id|retval
 )paren
 (brace
 r_goto
-id|out_file
+id|out_free_file
 suffix:semicolon
 )brace
 r_if
@@ -3232,7 +3228,7 @@ id|retval
 )paren
 (brace
 r_goto
-id|out_interp
+id|out_free_interp
 suffix:semicolon
 )brace
 )brace
@@ -3252,7 +3248,7 @@ op_logical_neg
 id|bprm-&gt;p
 )paren
 r_goto
-id|out_interp
+id|out_free_interp
 suffix:semicolon
 multiline_comment|/* Flush all traces of the currently running executable */
 id|retval
@@ -3269,7 +3265,7 @@ c_cond
 id|retval
 )paren
 r_goto
-id|out_interp
+id|out_free_dentry
 suffix:semicolon
 multiline_comment|/* OK, This is the point of no return */
 id|current-&gt;mm-&gt;end_data
@@ -3428,7 +3424,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_goto
-id|out_file
+id|out_free_file
 suffix:semicolon
 )brace
 )brace
@@ -3740,22 +3736,33 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-id|out_interp
+id|out
+suffix:colon
+r_return
+id|retval
+suffix:semicolon
+id|out_free_dentry
+suffix:colon
+id|dput
+c_func
+(paren
+id|interpreter_dentry
+)paren
+suffix:semicolon
+id|out_free_interp
 suffix:colon
 r_if
 c_cond
 (paren
 id|elf_interpreter
 )paren
-(brace
 id|kfree
 c_func
 (paren
 id|elf_interpreter
 )paren
 suffix:semicolon
-)brace
-id|out_file
+id|out_free_file
 suffix:colon
 id|fput
 c_func
@@ -3769,15 +3776,15 @@ c_func
 id|elf_exec_fileno
 )paren
 suffix:semicolon
-id|out_phdata
+id|out_free_ph
 suffix:colon
 id|kfree
 (paren
 id|elf_phdata
 )paren
 suffix:semicolon
-r_return
-id|retval
+r_goto
+id|out
 suffix:semicolon
 )brace
 DECL|function|load_irix_binary
@@ -3995,25 +4002,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|elf_ex.e_ident
-(braket
-l_int|0
-)braket
-op_ne
-l_int|0x7f
-op_logical_or
-id|strncmp
+id|memcmp
 c_func
 (paren
-op_amp
 id|elf_ex.e_ident
-(braket
-l_int|1
-)braket
 comma
-l_string|&quot;ELF&quot;
+id|ELFMAG
 comma
-l_int|3
+id|SELFMAG
 )paren
 op_ne
 l_int|0
@@ -4558,7 +4554,7 @@ suffix:semicolon
 id|fput
 c_func
 (paren
-id|file
+id|filp
 )paren
 suffix:semicolon
 r_return
@@ -4693,7 +4689,7 @@ suffix:semicolon
 id|fput
 c_func
 (paren
-id|file
+id|filp
 )paren
 suffix:semicolon
 r_return
@@ -4714,7 +4710,7 @@ macro_line|#endif
 id|fput
 c_func
 (paren
-id|file
+id|filp
 )paren
 suffix:semicolon
 r_return
@@ -4968,9 +4964,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* #define DEBUG */
 DECL|macro|DUMP_WRITE
-mdefine_line|#define DUMP_WRITE(addr, nr)&t;&bslash;&n;&t;do { if (!dump_write(file, (addr), (nr))) return 0; } while(0)
+mdefine_line|#define DUMP_WRITE(addr, nr)&t;&bslash;&n;&t;if (!dump_write(file, (addr), (nr))) &bslash;&n;&t;&t;goto end_coredump;
 DECL|macro|DUMP_SEEK
-mdefine_line|#define DUMP_SEEK(off)&t;&bslash;&n;&t;do { if (!dump_seek(file, (off))) return 0; } while(0)
+mdefine_line|#define DUMP_SEEK(off)&t;&bslash;&n;&t;if (!dump_seek(file, (off))) &bslash;&n;&t;&t;goto end_coredump;
 DECL|function|writenote
 r_static
 r_int
@@ -5073,6 +5069,11 @@ suffix:semicolon
 multiline_comment|/* XXX */
 r_return
 l_int|1
+suffix:semicolon
+id|end_coredump
+suffix:colon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|macro|DUMP_WRITE
@@ -6337,7 +6338,7 @@ c_func
 id|fs
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_BINFMT_ELF
+macro_line|#ifndef CONFIG_BINFMT_IRIX
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
@@ -6346,6 +6347,7 @@ id|has_dumped
 suffix:semicolon
 )brace
 DECL|function|init_irix_binfmt
+r_static
 r_int
 id|__init
 id|init_irix_binfmt
@@ -6363,25 +6365,10 @@ id|irix_format
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-multiline_comment|/* Install the COFF, ELF and XOUT loaders.&n;&t; * N.B. We *rely* on the table being the right size with the&n;&t; * right number of free slots...&n;&t; */
-r_return
-id|init_irix_binfmt
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 DECL|function|cleanup_module
+r_static
 r_void
+id|__exit
 id|cleanup_module
 c_func
 (paren
@@ -6397,5 +6384,14 @@ id|irix_format
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+id|module_init
+c_func
+(paren
+id|init_irix_binfmt
+)paren
+id|module_exit
+c_func
+(paren
+id|exit_irix_binfmt
+)paren
 eof

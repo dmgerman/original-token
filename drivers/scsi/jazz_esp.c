@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * jazz_esp.c: Driver for SCSI chip on Mips Magnum Boards (JAZZ architecture)&n; *&n; * Copyright (C) 1997 Thomas Boegndoerfer (tsbogend@alpha.franken.de)&n; *&n; * jazz_esp is based on David S. Miller&squot;s ESP driver and cyber_esp&n; */
+multiline_comment|/*&n; * jazz_esp.c: Driver for SCSI chip on Mips Magnum Boards (JAZZ architecture)&n; *&n; * Copyright (C) 1997 Thomas Bogendoerfer (tsbogend@alpha.franken.de)&n; *&n; * jazz_esp is based on David S. Miller&squot;s ESP driver and cyber_esp&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -613,7 +613,7 @@ r_int
 id|esp-&gt;dregs
 )paren
 comma
-id|vdma_get_resdiue
+id|vdma_get_residue
 c_func
 (paren
 (paren

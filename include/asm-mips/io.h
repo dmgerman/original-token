@@ -1,10 +1,11 @@
-macro_line|#ifndef __ASM_MIPS_IO_H
-DECL|macro|__ASM_MIPS_IO_H
-mdefine_line|#define __ASM_MIPS_IO_H
+multiline_comment|/* $Id: io.h,v 1.13 2000/02/24 00:13:19 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995 Waldorf GmbH&n; * Copyright (C) 1994 - 2000 Ralf Baechle&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
+macro_line|#ifndef _ASM_IO_H
+DECL|macro|_ASM_IO_H
+mdefine_line|#define _ASM_IO_H
 multiline_comment|/*&n; * Slowdown I/O port space accesses for antique hardware.&n; */
 DECL|macro|CONF_SLOWDOWN_IO
 macro_line|#undef CONF_SLOWDOWN_IO
-macro_line|#include &lt;asm/mipsconfig.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
 multiline_comment|/*&n; * This file contains the definitions for the MIPS counterpart of the&n; * x86 in/out instructions. This heap of macros and C results in much&n; * better code than the approach of doing it in plain C.  The macros&n; * result in code that is to fast for certain hardware.  On the other&n; * side the performance of the string functions should be improved for&n; * sake of certain devices like EIDE disks that do highspeed polled I/O.&n; *&n; *   Ralf&n; *&n; * This file contains the definitions for the x86 IO instructions&n; * inb/inw/inl/outb/outw/outl and the &quot;string versions&quot; of the same&n; * (insb/insw/insl/outsb/outsw/outsl). You can also use &quot;pausing&quot;&n; * versions of the single-IO instructions (inb_p/inw_p/..).&n; *&n; * This file is not meant to be obfuscating: it&squot;s just complicated&n; * to (a) handle it all in a way that makes gcc able to optimize it&n; * as well as possible and (b) trying to avoid writing the same thing&n; * over and over again with slight variations and possibly making a&n; * mistake somewhere.&n; */
 multiline_comment|/*&n; * On MIPS I/O ports are memory mapped, so we access them using normal&n; * load/store instructions. mips_io_port_base is the virtual address to&n; * which all ports are being mapped.  For sake of efficiency some code&n; * assumes that this is an address that can be loaded with a single lui&n; * instruction, so the lower 16 bits must be zero.  Should be true on&n; * on any sane architecture; generic code does not use this assumption.&n; */
@@ -229,27 +230,62 @@ id|addr
 )brace
 multiline_comment|/*&n; * XXX We need system specific versions of these to handle EISA address bits&n; * 24-31 on SNI.&n; * XXX more SNI hacks.&n; */
 DECL|macro|readb
-mdefine_line|#define readb(addr) (*(volatile unsigned char *) (0xa0000000 + (unsigned long)(addr)))
+mdefine_line|#define readb(addr) (*(volatile unsigned char *)(addr))
 DECL|macro|readw
-mdefine_line|#define readw(addr) (*(volatile unsigned short *) (0xa0000000 + (unsigned long)(addr)))
+mdefine_line|#define readw(addr) (*(volatile unsigned short *)(addr))
 DECL|macro|readl
-mdefine_line|#define readl(addr) (*(volatile unsigned int *) (0xa0000000 + (unsigned long)(addr)))
+mdefine_line|#define readl(addr) (*(volatile unsigned int *)(addr))
+DECL|macro|__raw_readb
+mdefine_line|#define __raw_readb readb
+DECL|macro|__raw_readw
+mdefine_line|#define __raw_readw readw
+DECL|macro|__raw_readl
+mdefine_line|#define __raw_readl readl
 DECL|macro|writeb
-mdefine_line|#define writeb(b,addr) (*(volatile unsigned char *) (0xa0000000 + (unsigned long)(addr)) = (b))
+mdefine_line|#define writeb(b,addr) (*(volatile unsigned char *)(addr)) = (b)
 DECL|macro|writew
-mdefine_line|#define writew(b,addr) (*(volatile unsigned short *) (0xa0000000 + (unsigned long)(addr)) = (b))
+mdefine_line|#define writew(b,addr) (*(volatile unsigned short *)(addr)) = (b)
 DECL|macro|writel
-mdefine_line|#define writel(b,addr) (*(volatile unsigned int *) (0xa0000000 + (unsigned long)(addr)) = (b))
+mdefine_line|#define writel(b,addr) (*(volatile unsigned int *)(addr)) = (b)
+DECL|macro|__raw_writeb
+mdefine_line|#define __raw_writeb writeb
+DECL|macro|__raw_writew
+mdefine_line|#define __raw_writew writew
+DECL|macro|__raw_writel
+mdefine_line|#define __raw_writel writel
 DECL|macro|memset_io
-mdefine_line|#define memset_io(a,b,c)&t;memset((void *)(0xa0000000 + (unsigned long)a),(b),(c))
+mdefine_line|#define memset_io(a,b,c)&t;memset((void *)(a),(b),(c))
 DECL|macro|memcpy_fromio
-mdefine_line|#define memcpy_fromio(a,b,c)&t;memcpy((a),(void *)(0xa0000000 + (unsigned long)(b)),(c))
+mdefine_line|#define memcpy_fromio(a,b,c)&t;memcpy((a),(void *)(b),(c))
 DECL|macro|memcpy_toio
-mdefine_line|#define memcpy_toio(a,b,c)&t;memcpy((void *)(0xa0000000 + (unsigned long)(a)),(b),(c))
+mdefine_line|#define memcpy_toio(a,b,c)&t;memcpy((void *)(a),(b),(c))
 multiline_comment|/* END SNI HACKS ... */
+multiline_comment|/*&n; * ISA space is &squot;always mapped&squot; on currently supported MIPS systems, no need&n; * to explicitly ioremap() it. The fact that the ISA IO space is mapped&n; * to PAGE_OFFSET is pure coincidence - it does not mean ISA values&n; * are physical addresses. The following constant pointer can be&n; * used as the IO-area pointer (it can be iounmapped as well, so the&n; * analogy with PCI is quite large):&n; */
+DECL|macro|__ISA_IO_base
+mdefine_line|#define __ISA_IO_base ((char *)(PAGE_OFFSET))
+DECL|macro|isa_readb
+mdefine_line|#define isa_readb(a) readb(a)
+DECL|macro|isa_readw
+mdefine_line|#define isa_readw(a) readw(a)
+DECL|macro|isa_readl
+mdefine_line|#define isa_readl(a) readl(a)
+DECL|macro|isa_writeb
+mdefine_line|#define isa_writeb(b,a) writeb(b,a)
+DECL|macro|isa_writew
+mdefine_line|#define isa_writew(w,a) writew(w,a)
+DECL|macro|isa_writel
+mdefine_line|#define isa_writel(l,a) writel(l,a)
+DECL|macro|isa_memset_io
+mdefine_line|#define isa_memset_io(a,b,c)     memset_io((a),(b),(c))
+DECL|macro|isa_memcpy_fromio
+mdefine_line|#define isa_memcpy_fromio(a,b,c) memcpy_fromio((a),(b),(c))
+DECL|macro|isa_memcpy_toio
+mdefine_line|#define isa_memcpy_toio(a,b,c)   memcpy_toio((a),(b),(c))
 multiline_comment|/*&n; * We don&squot;t have csum_partial_copy_fromio() yet, so we cheat here and&n; * just copy it. The net code will then do the checksum later.&n; */
 DECL|macro|eth_io_copy_and_sum
-mdefine_line|#define eth_io_copy_and_sum(skb,src,len,unused)&t;memcpy_fromio((skb)-&gt;data,(src),(len))
+mdefine_line|#define eth_io_copy_and_sum(skb,src,len,unused) memcpy_fromio((skb)-&gt;data,(src),(len))
+DECL|macro|isa_eth_io_copy_and_sum
+mdefine_line|#define isa_eth_io_copy_and_sum(a,b,c,d) eth_copy_and_sum((a),(b),(c),(d))
 DECL|function|check_signature
 r_static
 r_inline
@@ -319,6 +355,8 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+DECL|macro|isa_check_signature
+mdefine_line|#define isa_check_signature(io, s, l) check_signature(i,s,l)
 multiline_comment|/*&n; * Talk about misusing macros..&n; */
 DECL|macro|__OUT1
 mdefine_line|#define __OUT1(s) &bslash;&n;extern inline void __out##s(unsigned int value, unsigned int port) {
@@ -494,7 +532,7 @@ r_extern
 r_void
 (paren
 op_star
-id|dma_cache_wback_inv
+id|_dma_cache_wback_inv
 )paren
 (paren
 r_int
@@ -510,7 +548,7 @@ r_extern
 r_void
 (paren
 op_star
-id|dma_cache_wback
+id|_dma_cache_wback
 )paren
 (paren
 r_int
@@ -526,7 +564,7 @@ r_extern
 r_void
 (paren
 op_star
-id|dma_cache_inv
+id|_dma_cache_inv
 )paren
 (paren
 r_int
@@ -538,5 +576,11 @@ r_int
 id|size
 )paren
 suffix:semicolon
-macro_line|#endif /* __ASM_MIPS_IO_H */
+DECL|macro|dma_cache_wback_inv
+mdefine_line|#define dma_cache_wback_inv(start,size)&t;_dma_cache_wback_inv(start,size)
+DECL|macro|dma_cache_wback
+mdefine_line|#define dma_cache_wback(start,size)&t;_dma_cache_wback(start,size)
+DECL|macro|dma_cache_inv
+mdefine_line|#define dma_cache_inv(start,size)&t;_dma_cache_inv(start,size)
+macro_line|#endif /* _ASM_IO_H */
 eof

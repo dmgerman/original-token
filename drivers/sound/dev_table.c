@@ -104,7 +104,6 @@ r_return
 suffix:semicolon
 multiline_comment|/* No cards detected */
 macro_line|#endif
-macro_line|#ifdef CONFIG_AUDIO
 r_if
 c_cond
 (paren
@@ -137,7 +136,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -1975,7 +1973,6 @@ r_int
 id|dma2
 )paren
 (brace
-macro_line|#ifdef CONFIG_AUDIO
 r_struct
 id|audio_driver
 op_star
@@ -2329,12 +2326,6 @@ suffix:semicolon
 r_return
 id|num
 suffix:semicolon
-macro_line|#else
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|sound_install_mixer
 r_int
@@ -2692,7 +2683,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_MIDI
 r_int
 id|i
 op_assign
@@ -2741,14 +2731,6 @@ suffix:semicolon
 r_return
 id|i
 suffix:semicolon
-macro_line|#else
-r_return
-(paren
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|sound_alloc_synthdev
 r_int
@@ -2966,7 +2948,6 @@ r_int
 id|dev
 )paren
 (brace
-macro_line|#ifdef CONFIG_MIDI
 r_if
 c_cond
 (paren
@@ -2996,7 +2977,6 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 )brace
 DECL|function|sound_unload_synthdev
 r_void

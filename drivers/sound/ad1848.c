@@ -8,7 +8,6 @@ mdefine_line|#define DEB(x)
 DECL|macro|DEB1
 mdefine_line|#define DEB1(x)
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_AD1848
 macro_line|#include &quot;ad1848_mixer.h&quot;
 r_typedef
 r_struct
@@ -302,7 +301,7 @@ op_minus
 l_int|1
 )brace
 suffix:semicolon
-macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS) || defined(MODULE)
+macro_line|#ifdef MODULE
 DECL|variable|timer_installed
 r_static
 r_int
@@ -629,7 +628,7 @@ r_int
 id|bits
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
+macro_line|#ifndef EXCLUDE_TIMERS
 r_static
 r_int
 id|ad1848_tmr_install
@@ -5257,7 +5256,7 @@ id|devc-&gt;xfer_count
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
+macro_line|#ifndef EXCLUDE_TIMERS
 r_if
 c_cond
 (paren
@@ -5785,7 +5784,7 @@ id|devc-&gt;xfer_count
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
+macro_line|#ifndef EXCLUDE_TIMERS
 r_if
 c_cond
 (paren
@@ -9000,7 +8999,7 @@ op_amp
 id|CAP_F_TIMER
 )paren
 (brace
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_int
 id|x
 suffix:semicolon
@@ -9043,7 +9042,7 @@ l_int|0x10
 )paren
 suffix:semicolon
 multiline_comment|/* Timer LSB */
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|ad_write
 c_func
 (paren
@@ -9155,7 +9154,7 @@ id|devc-&gt;dev_no
 op_assign
 id|my_dev
 suffix:semicolon
-macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
+macro_line|#ifndef EXCLUDE_TIMERS
 r_if
 c_cond
 (paren
@@ -10117,7 +10116,7 @@ multiline_comment|/* Timer interrupt */
 id|devc-&gt;timer_ticks
 op_increment
 suffix:semicolon
-macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
+macro_line|#ifndef EXCLUDE_TIMERS
 r_if
 c_cond
 (paren
@@ -12026,7 +12025,7 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
+macro_line|#ifndef EXCLUDE_TIMERS
 multiline_comment|/*&n; * Timer stuff (for /dev/music).&n; */
 DECL|variable|current_interval
 r_static
@@ -12478,7 +12477,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* EXCLUDE_TIMERS */
 DECL|variable|ad1848_detect
 id|EXPORT_SYMBOL
 c_func
@@ -12784,6 +12783,5 @@ id|hw_config
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
-macro_line|#endif
+macro_line|#endif /* MODULE */
 eof

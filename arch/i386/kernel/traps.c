@@ -1583,13 +1583,6 @@ l_string|&quot;Do you have a strange power saving mode enabled?&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|variable|nmi_counter
-id|atomic_t
-id|nmi_counter
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
 macro_line|#if CONFIG_X86_IO_APIC
 DECL|variable|nmi_watchdog
 r_int
@@ -1836,11 +1829,14 @@ suffix:semicolon
 id|atomic_inc
 c_func
 (paren
+op_amp
 id|nmi_counter
-op_plus
+c_func
+(paren
 id|smp_processor_id
 c_func
 (paren
+)paren
 )paren
 )paren
 suffix:semicolon

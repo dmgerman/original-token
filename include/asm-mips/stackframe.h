@@ -1,11 +1,12 @@
-multiline_comment|/*&n; *  include/asm-mips/stackframe.h&n; *&n; *  Copyright (C) 1994, 1995, 1996 by Ralf Baechle and Paul M. Antoine.&n; *&n; * $Id: stackframe.h,v 1.7 1998/04/28 19:39:15 ralf Exp $&n; */
+multiline_comment|/*&n; *  include/asm-mips/stackframe.h&n; *&n; *  Copyright (C) 1994, 1995, 1996 by Ralf Baechle and Paul M. Antoine.&n; *&n; * $Id: stackframe.h,v 1.11 1999/12/04 03:59:12 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_STACKFRAME_H
 DECL|macro|__ASM_MIPS_STACKFRAME_H
 mdefine_line|#define __ASM_MIPS_STACKFRAME_H
 macro_line|#include &lt;asm/asm.h&gt;
 macro_line|#include &lt;asm/offset.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|SAVE_AT
-mdefine_line|#define SAVE_AT                                          &bslash;&n;&t;&t;sw&t;$1, PT_R1(sp)
+mdefine_line|#define SAVE_AT                                          &bslash;&n;&t;&t;.set&t;push;                            &bslash;&n;&t;&t;.set&t;noat;                            &bslash;&n;&t;&t;sw&t;$1, PT_R1(sp);                   &bslash;&n;&t;&t;.set&t;pop
 DECL|macro|SAVE_TEMP
 mdefine_line|#define SAVE_TEMP                                        &bslash;&n;&t;&t;mfhi&t;v1;                              &bslash;&n;&t;&t;sw&t;$8, PT_R8(sp);                   &bslash;&n;&t;&t;sw&t;$9, PT_R9(sp);                   &bslash;&n;&t;&t;sw&t;v1, PT_HI(sp);                   &bslash;&n;&t;&t;mflo&t;v1;                              &bslash;&n;&t;&t;sw&t;$10,PT_R10(sp);                  &bslash;&n;&t;&t;sw&t;$11, PT_R11(sp);                 &bslash;&n;&t;&t;sw&t;v1,  PT_LO(sp);                  &bslash;&n;&t;&t;sw&t;$12, PT_R12(sp);                 &bslash;&n;&t;&t;sw&t;$13, PT_R13(sp);                 &bslash;&n;&t;&t;sw&t;$14, PT_R14(sp);                 &bslash;&n;&t;&t;sw&t;$15, PT_R15(sp);                 &bslash;&n;&t;&t;sw&t;$24, PT_R24(sp)
 DECL|macro|SAVE_STATIC
@@ -21,17 +22,24 @@ mdefine_line|#define SAVE_SOME                                        &bslash;&n
 DECL|macro|SAVE_ALL
 mdefine_line|#define SAVE_ALL                                         &bslash;&n;&t;&t;SAVE_SOME;                               &bslash;&n;&t;&t;SAVE_AT;                                 &bslash;&n;&t;&t;SAVE_TEMP;                               &bslash;&n;&t;&t;SAVE_STATIC
 DECL|macro|RESTORE_AT
-mdefine_line|#define RESTORE_AT                                       &bslash;&n;&t;&t;lw&t;$1,  PT_R1(sp);                  &bslash;&n;
-DECL|macro|RESTORE_SP
-mdefine_line|#define RESTORE_SP                                       &bslash;&n;&t;&t;lw&t;sp,  PT_R29(sp)
+mdefine_line|#define RESTORE_AT                                       &bslash;&n;&t;&t;.set&t;push;                            &bslash;&n;&t;&t;.set&t;noat;                            &bslash;&n;&t;&t;lw&t;$1,  PT_R1(sp);                  &bslash;&n;&t;&t;.set&t;pop;
 DECL|macro|RESTORE_TEMP
 mdefine_line|#define RESTORE_TEMP                                     &bslash;&n;&t;&t;lw&t;$24, PT_LO(sp);                  &bslash;&n;&t;&t;lw&t;$8, PT_R8(sp);                   &bslash;&n;&t;&t;lw&t;$9, PT_R9(sp);                   &bslash;&n;&t;&t;mtlo&t;$24;                             &bslash;&n;&t;&t;lw&t;$24, PT_HI(sp);                  &bslash;&n;&t;&t;lw&t;$10,PT_R10(sp);                  &bslash;&n;&t;&t;lw&t;$11, PT_R11(sp);                 &bslash;&n;&t;&t;mthi&t;$24;                             &bslash;&n;&t;&t;lw&t;$12, PT_R12(sp);                 &bslash;&n;&t;&t;lw&t;$13, PT_R13(sp);                 &bslash;&n;&t;&t;lw&t;$14, PT_R14(sp);                 &bslash;&n;&t;&t;lw&t;$15, PT_R15(sp);                 &bslash;&n;&t;&t;lw&t;$24, PT_R24(sp)
 DECL|macro|RESTORE_STATIC
 mdefine_line|#define RESTORE_STATIC                                   &bslash;&n;&t;&t;lw&t;$16, PT_R16(sp);                 &bslash;&n;&t;&t;lw&t;$17, PT_R17(sp);                 &bslash;&n;&t;&t;lw&t;$18, PT_R18(sp);                 &bslash;&n;&t;&t;lw&t;$19, PT_R19(sp);                 &bslash;&n;&t;&t;lw&t;$20, PT_R20(sp);                 &bslash;&n;&t;&t;lw&t;$21, PT_R21(sp);                 &bslash;&n;&t;&t;lw&t;$22, PT_R22(sp);                 &bslash;&n;&t;&t;lw&t;$23, PT_R23(sp);                 &bslash;&n;&t;&t;lw&t;$30, PT_R30(sp)
+macro_line|#if defined(CONFIG_CPU_R3000)
+DECL|macro|RESTORE_SOME
+mdefine_line|#define RESTORE_SOME                                     &bslash;&n;&t;&t;.set&t;push;                            &bslash;&n;&t;&t;.set&t;reorder;                         &bslash;&n;&t;&t;mfc0&t;t0, CP0_STATUS;                  &bslash;&n;&t;&t;.set&t;pop;                             &bslash;&n;&t;&t;ori&t;t0, 0x1f;                        &bslash;&n;&t;&t;xori&t;t0, 0x1f;                        &bslash;&n;&t;&t;mtc0&t;t0, CP0_STATUS;                  &bslash;&n;&t;&t;li&t;v1, 0xff00;                      &bslash;&n;&t;&t;and&t;t0, v1;&t;&t;&t;&t; &bslash;&n;&t;&t;lw&t;v0, PT_STATUS(sp);               &bslash;&n;&t;&t;nor&t;v1, $0, v1;&t;&t;&t; &bslash;&n;&t;&t;and&t;v0, v1;&t;&t;&t;&t; &bslash;&n;&t;&t;or&t;v0, t0;&t;&t;&t;&t; &bslash;&n;&t;&t;mtc0&t;v0, CP0_STATUS;                  &bslash;&n;&t;&t;lw&t;$31, PT_R31(sp);                 &bslash;&n;&t;&t;lw&t;$28, PT_R28(sp);                 &bslash;&n;&t;&t;lw&t;$25, PT_R25(sp);                 &bslash;&n;&t;&t;lw&t;$7,  PT_R7(sp);                  &bslash;&n;&t;&t;lw&t;$6,  PT_R6(sp);                  &bslash;&n;&t;&t;lw&t;$5,  PT_R5(sp);                  &bslash;&n;&t;&t;lw&t;$4,  PT_R4(sp);                  &bslash;&n;&t;&t;lw&t;$3,  PT_R3(sp);                  &bslash;&n;&t;&t;lw&t;$2,  PT_R2(sp)
+DECL|macro|RESTORE_SP_AND_RET
+mdefine_line|#define RESTORE_SP_AND_RET                               &bslash;&n;&t;&t;.set&t;push;&t;&t;&t;&t; &bslash;&n;&t;&t;.set&t;noreorder;&t;&t;&t; &bslash;&n;&t;&t;lw&t;k0, PT_EPC(sp);                  &bslash;&n;&t;&t;lw&t;sp,  PT_R29(sp);                 &bslash;&n;&t;&t;jr&t;k0;                              &bslash;&n;&t;&t; rfe;&t;&t;&t;&t;&t; &bslash;&n;&t;&t;.set&t;pop
+macro_line|#else
 DECL|macro|RESTORE_SOME
 mdefine_line|#define RESTORE_SOME                                     &bslash;&n;&t;&t;.set&t;push;                            &bslash;&n;&t;&t;.set&t;reorder;                         &bslash;&n;&t;&t;mfc0&t;t0, CP0_STATUS;                  &bslash;&n;&t;&t;.set&t;pop;                             &bslash;&n;&t;&t;ori&t;t0, 0x1f;                        &bslash;&n;&t;&t;xori&t;t0, 0x1f;                        &bslash;&n;&t;&t;mtc0&t;t0, CP0_STATUS;                  &bslash;&n;&t;&t;li&t;v1, 0xff00;                      &bslash;&n;&t;&t;and&t;t0, v1;&t;&t;&t;&t; &bslash;&n;&t;&t;lw&t;v0, PT_STATUS(sp);               &bslash;&n;&t;&t;nor&t;v1, $0, v1;&t;&t;&t; &bslash;&n;&t;&t;and&t;v0, v1;&t;&t;&t;&t; &bslash;&n;&t;&t;or&t;v0, t0;&t;&t;&t;&t; &bslash;&n;&t;&t;mtc0&t;v0, CP0_STATUS;                  &bslash;&n;&t;&t;lw&t;v1, PT_EPC(sp);                  &bslash;&n;&t;&t;mtc0&t;v1, CP0_EPC;                     &bslash;&n;&t;&t;lw&t;$31, PT_R31(sp);                 &bslash;&n;&t;&t;lw&t;$28, PT_R28(sp);                 &bslash;&n;&t;&t;lw&t;$25, PT_R25(sp);                 &bslash;&n;&t;&t;lw&t;$7,  PT_R7(sp);                  &bslash;&n;&t;&t;lw&t;$6,  PT_R6(sp);                  &bslash;&n;&t;&t;lw&t;$5,  PT_R5(sp);                  &bslash;&n;&t;&t;lw&t;$4,  PT_R4(sp);                  &bslash;&n;&t;&t;lw&t;$3,  PT_R3(sp);                  &bslash;&n;&t;&t;lw&t;$2,  PT_R2(sp)
-DECL|macro|RESTORE_ALL
-mdefine_line|#define RESTORE_ALL                                      &bslash;&n;&t;&t;RESTORE_SOME;                            &bslash;&n;&t;&t;RESTORE_AT;                              &bslash;&n;&t;&t;RESTORE_TEMP;                            &bslash;&n;&t;&t;RESTORE_STATIC;                          &bslash;&n;&t;&t;RESTORE_SP
+DECL|macro|RESTORE_SP_AND_RET
+mdefine_line|#define RESTORE_SP_AND_RET                               &bslash;&n;&t;&t;lw&t;sp,  PT_R29(sp);                 &bslash;&n;&t;&t;.set&t;mips3;&t;&t;&t;&t; &bslash;&n;&t;&t;eret;&t;&t;&t;&t;&t; &bslash;&n;&t;&t;.set&t;mips0
+macro_line|#endif
+DECL|macro|RESTORE_ALL_AND_RET
+mdefine_line|#define RESTORE_ALL_AND_RET                              &bslash;&n;&t;&t;RESTORE_SOME;                            &bslash;&n;&t;&t;RESTORE_AT;                              &bslash;&n;&t;&t;RESTORE_TEMP;                            &bslash;&n;&t;&t;RESTORE_STATIC;                          &bslash;&n;&t;&t;RESTORE_SP_AND_RET
 multiline_comment|/*&n; * Move to kernel mode and disable interrupts.&n; * Set cp0 enable bit as sign that we&squot;re running on the kernel stack&n; */
 DECL|macro|CLI
 mdefine_line|#define CLI                                             &bslash;&n;&t;&t;mfc0&t;t0,CP0_STATUS;                  &bslash;&n;&t;&t;li&t;t1,ST0_CU0|0x1f;                &bslash;&n;&t;&t;or&t;t0,t1;                          &bslash;&n;&t;&t;xori&t;t0,0x1f;                        &bslash;&n;&t;&t;mtc0&t;t0,CP0_STATUS

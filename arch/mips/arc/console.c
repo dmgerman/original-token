@@ -1,5 +1,4 @@
-multiline_comment|/*&n; * console.c: SGI arcs console code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@sgi.com)&n; * Compability with board caches, Ulf Carlsson&n; *&n; * $Id: console.c,v 1.2 1999/06/12 18:42:38 ulfc Exp $&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*&n; * console.c: SGI arcs console code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@sgi.com)&n; * Compability with board caches, Ulf Carlsson&n; *&n; * $Id: console.c,v 1.3 1999/10/09 00:00:57 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 macro_line|#include &lt;asm/bcache.h&gt;

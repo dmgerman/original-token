@@ -1,7 +1,7 @@
-multiline_comment|/* $Id: mc146818rtc.h,v 1.3 1998/06/25 20:19:26 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Machine dependent access functions for RTC registers.&n; *&n; * Copyright (C) 1996, 1997, 1998 Ralf Baechle&n; */
-macro_line|#ifndef __ASM_MIPS_MC146818RTC_H
-DECL|macro|__ASM_MIPS_MC146818RTC_H
-mdefine_line|#define __ASM_MIPS_MC146818RTC_H
+multiline_comment|/* $Id: mc146818rtc.h,v 1.3 1999/08/19 22:56:33 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Machine dependent access functions for RTC registers.&n; *&n; * Copyright (C) 1996, 1997, 1998 Ralf Baechle&n; */
+macro_line|#ifndef _ASM_MC146818RTC_H
+DECL|macro|_ASM_MC146818RTC_H
+mdefine_line|#define _ASM_MC146818RTC_H
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifndef RTC_PORT
 DECL|macro|RTC_PORT
@@ -67,5 +67,5 @@ id|rtc_ops
 op_star
 id|rtc_ops
 suffix:semicolon
-macro_line|#endif /* __ASM_MIPS_MC146818RTC_H */
+macro_line|#endif /* _ASM_MC146818RTC_H */
 eof

@@ -1,12 +1,13 @@
-multiline_comment|/*&n; * include/asm-mips/bitops.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994 - 1997  Ralf Baechle (ralf@gnu.org)&n; */
-macro_line|#ifndef __ASM_MIPS_BITOPS_H
-DECL|macro|__ASM_MIPS_BITOPS_H
-mdefine_line|#define __ASM_MIPS_BITOPS_H
+multiline_comment|/* $Id: bitops.h,v 1.7 1999/08/19 22:56:33 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994 - 1997, 1999  Ralf Baechle (ralf@gnu.org)&n; */
+macro_line|#ifndef _ASM_BITOPS_H
+DECL|macro|_ASM_BITOPS_H
+mdefine_line|#define _ASM_BITOPS_H
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/byteorder/swab.h&gt;&t;&t;/* sigh ... */
+macro_line|#include &lt;asm/byteorder.h&gt;&t;&t;/* sigh ... */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/sgidefs.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Only disable interrupt for kernel mode stuff to keep usermode stuff&n; * that dares to use kernel include files alive.&n; */
 DECL|macro|__bi_flags
 mdefine_line|#define __bi_flags unsigned long flags
@@ -14,6 +15,8 @@ DECL|macro|__bi_cli
 mdefine_line|#define __bi_cli() __cli()
 DECL|macro|__bi_save_flags
 mdefine_line|#define __bi_save_flags(x) __save_flags(x)
+DECL|macro|__bi_save_and_cli
+mdefine_line|#define __bi_save_and_cli(x) __save_and_cli(x)
 DECL|macro|__bi_restore_flags
 mdefine_line|#define __bi_restore_flags(x) __restore_flags(x)
 macro_line|#else
@@ -23,6 +26,8 @@ DECL|macro|__bi_cli
 mdefine_line|#define __bi_cli()
 DECL|macro|__bi_save_flags
 mdefine_line|#define __bi_save_flags(x)
+DECL|macro|__bi_save_and_cli
+mdefine_line|#define __bi_save_and_cli(x)
 DECL|macro|__bi_restore_flags
 mdefine_line|#define __bi_restore_flags(x)
 macro_line|#endif /* __KERNEL__ */
@@ -169,7 +174,7 @@ r_int
 id|word
 )paren
 suffix:semicolon
-macro_line|#if (_MIPS_ISA == _MIPS_ISA_MIPS2) || (_MIPS_ISA == _MIPS_ISA_MIPS3) || &bslash;&n;    (_MIPS_ISA == _MIPS_ISA_MIPS4) || (_MIPS_ISA == _MIPS_ISA_MIPS5)
+macro_line|#if defined(CONFIG_CPU_HAS_LLSC)
 multiline_comment|/*&n; * These functions for MIPS ISA &gt; 1 are interrupt and SMP proof and&n; * interrupt friendly&n; */
 macro_line|#include &lt;asm/mipsregs.h&gt;
 multiline_comment|/*&n; * The following functions will only work for the R4000!&n; */
@@ -641,6 +646,7 @@ id|retval
 suffix:semicolon
 )brace
 macro_line|#else /* MIPS I */
+macro_line|#include &lt;asm/mipsregs.h&gt;
 DECL|function|set_bit
 r_extern
 id|__inline__
@@ -683,15 +689,10 @@ op_amp
 l_int|0x1f
 )paren
 suffix:semicolon
-id|__bi_save_flags
+id|__bi_save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|__bi_cli
-c_func
-(paren
 )paren
 suffix:semicolon
 op_star
@@ -748,15 +749,10 @@ op_amp
 l_int|0x1f
 )paren
 suffix:semicolon
-id|__bi_save_flags
+id|__bi_save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|__bi_cli
-c_func
-(paren
 )paren
 suffix:semicolon
 op_star
@@ -814,15 +810,10 @@ op_amp
 l_int|0x1f
 )paren
 suffix:semicolon
-id|__bi_save_flags
+id|__bi_save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|__bi_cli
-c_func
-(paren
 )paren
 suffix:semicolon
 op_star
@@ -881,15 +872,10 @@ op_amp
 l_int|0x1f
 )paren
 suffix:semicolon
-id|__bi_save_flags
+id|__bi_save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|__bi_cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|retval
@@ -962,15 +948,10 @@ op_amp
 l_int|0x1f
 )paren
 suffix:semicolon
-id|__bi_save_flags
+id|__bi_save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|__bi_cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|retval
@@ -1044,15 +1025,10 @@ op_amp
 l_int|0x1f
 )paren
 suffix:semicolon
-id|__bi_save_flags
+id|__bi_save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|__bi_cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|retval
@@ -1747,15 +1723,10 @@ op_amp
 l_int|0x07
 )paren
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|retval
@@ -1834,15 +1805,10 @@ op_amp
 l_int|0x07
 )paren
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|retval
@@ -2184,5 +2150,5 @@ DECL|macro|minix_test_bit
 mdefine_line|#define minix_test_bit(nr,addr) test_bit(nr,addr)
 DECL|macro|minix_find_first_zero_bit
 mdefine_line|#define minix_find_first_zero_bit(addr,size) find_first_zero_bit(addr,size)
-macro_line|#endif /* __ASM_MIPS_BITOPS_H */
+macro_line|#endif /* _ASM_BITOPS_H */
 eof

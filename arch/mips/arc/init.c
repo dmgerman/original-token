@@ -1,9 +1,10 @@
-multiline_comment|/*&n; * init.c: PROM library initialisation code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: init.c,v 1.2 1999/02/25 21:22:49 tsbogend Exp $&n; */
+multiline_comment|/* $Id: init.c,v 1.4 1999/10/09 00:00:57 ralf Exp $&n; * This file is subject to the terms and conditions of the GNU General Public+ &n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * PROM library initialisation code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
-multiline_comment|/* #define DEBUG_PROM_INIT */
+DECL|macro|DEBUG_PROM_INIT
+macro_line|#undef DEBUG_PROM_INIT
 multiline_comment|/* Master romvec interface. */
 DECL|variable|romvec
 r_struct
@@ -138,18 +139,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SGI
-id|printk
-c_func
-(paren
-l_string|&quot;PROMLIB: SGI ARCS firmware Version %d Revision %d&bslash;n&quot;
-comma
-id|prom_vers
-comma
-id|prom_rev
-)paren
-suffix:semicolon
-macro_line|#else
 id|printk
 c_func
 (paren
@@ -160,19 +149,11 @@ comma
 id|prom_rev
 )paren
 suffix:semicolon
-macro_line|#endif
 id|prom_meminit
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|prom_testtree
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef DEBUG_PROM_INIT
 (brace
 id|prom_printf

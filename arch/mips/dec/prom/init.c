@@ -1,5 +1,7 @@
-multiline_comment|/*&n; * init.c: PROM library initialisation code.&n; *&n; * Copyright (C) 1998 Harald Koerfgen&n; *&n; * $Id: $&n; */
+multiline_comment|/*&n; * init.c: PROM library initialisation code.&n; *&n; * Copyright (C) 1998 Harald Koerfgen&n; *&n; * $Id: init.c,v 1.4 1999/10/09 00:00:58 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &quot;prom.h&quot;
 multiline_comment|/*&n; * PROM Interface (whichprom.c)&n; */
 r_typedef
@@ -573,6 +575,14 @@ op_star
 id|prom_vec
 )paren
 (brace
+r_extern
+r_void
+id|dec_machine_halt
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* Determine which PROM&squot;s we have (and therefore which machine we&squot;re on!) */
 id|which_prom
 c_func
@@ -594,6 +604,79 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Were we compiled with the right CPU option? */
+macro_line|#if defined(CONFIG_CPU_R3000)
+r_if
+c_cond
+(paren
+(paren
+id|mips_cputype
+op_eq
+id|CPU_R4000SC
+)paren
+op_logical_or
+(paren
+id|mips_cputype
+op_eq
+id|CPU_R4400SC
+)paren
+)paren
+(brace
+id|prom_printf
+c_func
+(paren
+l_string|&quot;Sorry, this kernel is compiled for the wrong CPU type!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|prom_printf
+c_func
+(paren
+l_string|&quot;Please recompile with &bslash;&quot;CONFIG_CPU_R4x00 = y&bslash;&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dec_machine_halt
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#if defined(CONFIG_CPU_R4x00)
+r_if
+c_cond
+(paren
+(paren
+id|mips_cputype
+op_eq
+id|CPU_R3000
+)paren
+op_logical_or
+(paren
+id|mips_cputype
+op_eq
+id|CPU_R3000A
+)paren
+)paren
+(brace
+id|prom_printf
+c_func
+(paren
+l_string|&quot;Sorry, this kernel is compiled for the wrong CPU type!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|prom_printf
+c_func
+(paren
+l_string|&quot;Please recompile with &bslash;&quot;CONFIG_CPU_R3000 = y&bslash;&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dec_machine_halt
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|prom_meminit
 c_func
 (paren

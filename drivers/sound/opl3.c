@@ -5585,7 +5585,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* MODULE */
 DECL|variable|opl3_init
 id|EXPORT_SYMBOL
 c_func

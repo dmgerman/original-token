@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Hitachi H8/337 Microcontroller driver&n; *&n; * The H8 is used to deal with the power and thermal environment&n; * of a system.&n; *&n; * Fixes:&n; *&t;June 1999, AV&t;added releasing /proc/driver/h8&n; */
+multiline_comment|/*&n; * Hitachi H8/337 Microcontroller driver&n; *&n; * The H8 is used to deal with the power and thermal environment&n; * of a system.&n; *&n; * Fixes:&n; *&t;June 1999, AV&t;added releasing /proc/driver/h8&n; *&t;Feb  2000, Borislav Deianov&n; *&t;&t;&t;changed queues to use list.h instead of lists.h&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
+macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -19,9 +20,6 @@ macro_line|#include &lt;linux/slab.h&gt;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;asm/unistd.h&gt;
-multiline_comment|/*&n; * This is the only driver still using the broken&n; * lists.h stuff, let&squot;s not do that.. &n; */
-macro_line|#error must be converted to new &lt;linux/list.h&gt;
-macro_line|#include &lt;linux/lists.h&gt;
 macro_line|#include &quot;h8.h&quot;
 DECL|macro|DEBUG_H8
 mdefine_line|#define DEBUG_H8
@@ -38,6 +36,7 @@ multiline_comment|/*&n; * The h8 device is one of the misc char devices.&n; */
 DECL|macro|H8_MINOR_DEV
 mdefine_line|#define H8_MINOR_DEV   140
 multiline_comment|/*&n; * Forward declarations.&n; */
+r_static
 r_int
 id|h8_init
 c_func
@@ -77,7 +76,6 @@ op_star
 id|regs
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
 r_static
 r_int
 id|h8_get_info
@@ -95,28 +93,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#else
-DECL|function|h8_get_info
-r_static
-r_int
-id|h8_get_info
-c_func
-(paren
-r_char
-op_star
-comma
-r_char
-op_star
-op_star
-comma
-id|off_t
-comma
-r_int
-)paren
-(brace
-)brace
-macro_line|#error &quot;Somebody needs to learn C. Badly.&quot;
-macro_line|#endif
 multiline_comment|/*&n; * Support Routines.&n; */
 r_static
 r_void
@@ -447,14 +423,25 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|h8_actq
-DECL|variable|h8_cmdq
-DECL|variable|h8_freeq
-id|queue_head_t
+id|LIST_HEAD
+c_func
+(paren
 id|h8_actq
-comma
+)paren
+suffix:semicolon
+DECL|variable|h8_cmdq
+id|LIST_HEAD
+c_func
+(paren
 id|h8_cmdq
-comma
+)paren
+suffix:semicolon
+DECL|variable|h8_freeq
+id|LIST_HEAD
+c_func
+(paren
 id|h8_freeq
+)paren
 suffix:semicolon
 multiline_comment|/* &n; * Globals used in thermal control of Alphabook1.&n; */
 DECL|variable|cpu_speed_divisor
@@ -594,15 +581,12 @@ id|h8_cmd_q_t
 op_star
 id|qp
 op_assign
-(paren
-id|h8_cmd_q_t
-op_star
-)paren
-id|QUEUE_FIRST
+id|list_entry
 c_func
 (paren
-op_amp
-id|h8_actq
+id|h8_actq.next
+comma
+id|h8_cmd_q_t
 comma
 id|link
 )paren
@@ -969,13 +953,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|QUEUE_IS_EMPTY
+id|list_empty
 c_func
 (paren
 op_amp
 id|h8_actq
-comma
-id|link
 )paren
 )paren
 id|h8_send_next_cmd_byte
@@ -1041,15 +1023,11 @@ id|h8_state
 op_assign
 id|H8_IDLE
 suffix:semicolon
-id|QUEUE_REMOVE
+id|list_del
 c_func
 (paren
 op_amp
-id|h8_actq
-comma
-id|qp
-comma
-id|link
+id|qp-&gt;link
 )paren
 suffix:semicolon
 id|h8_cmd_done
@@ -1062,13 +1040,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|QUEUE_IS_EMPTY
+id|list_empty
 c_func
 (paren
 op_amp
 id|h8_cmdq
-comma
-id|link
 )paren
 )paren
 id|h8_start_new_cmd
@@ -1234,42 +1210,6 @@ comma
 l_string|&quot;h8&quot;
 )paren
 suffix:semicolon
-id|QUEUE_INIT
-c_func
-(paren
-op_amp
-id|h8_actq
-comma
-id|link
-comma
-id|h8_cmd_q_t
-op_star
-)paren
-suffix:semicolon
-id|QUEUE_INIT
-c_func
-(paren
-op_amp
-id|h8_cmdq
-comma
-id|link
-comma
-id|h8_cmd_q_t
-op_star
-)paren
-suffix:semicolon
-id|QUEUE_INIT
-c_func
-(paren
-op_amp
-id|h8_freeq
-comma
-id|link
-comma
-id|h8_cmd_q_t
-op_star
-)paren
-suffix:semicolon
 id|h8_alloc_queues
 c_func
 (paren
@@ -1420,7 +1360,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|h8_get_info
 r_static
 r_int
@@ -1443,6 +1382,7 @@ r_int
 id|length
 )paren
 (brace
+macro_line|#ifdef CONFIG_PROC_FS
 r_char
 op_star
 id|p
@@ -1478,8 +1418,12 @@ id|p
 op_minus
 id|buf
 suffix:semicolon
-)brace
+macro_line|#else
+r_return
+l_int|0
+suffix:semicolon
 macro_line|#endif
+)brace
 multiline_comment|/* Called from console driver -- must make sure h8_enabled. */
 DECL|function|h8_display_blank
 r_int
@@ -1671,22 +1615,19 @@ op_increment
 )paren
 (brace
 multiline_comment|/* place each at front of freeq */
-id|QUEUE_ENTER
+id|list_add
 c_func
 (paren
-op_amp
-id|h8_freeq
-comma
 op_amp
 id|qp
 (braket
 id|i
 )braket
-comma
+dot
 id|link
 comma
-id|h8_cmd_q_t
-op_star
+op_amp
+id|h8_freeq
 )paren
 suffix:semicolon
 )brace
@@ -1745,13 +1686,11 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|QUEUE_IS_EMPTY
+id|list_empty
 c_func
 (paren
 op_amp
 id|h8_freeq
-comma
-id|link
 )paren
 )paren
 (brace
@@ -1787,28 +1726,21 @@ suffix:semicolon
 multiline_comment|/* get first element from queue */
 id|qp
 op_assign
-(paren
-id|h8_cmd_q_t
-op_star
-)paren
-id|QUEUE_FIRST
+id|list_entry
 c_func
 (paren
-op_amp
-id|h8_freeq
+id|h8_freeq.next
+comma
+id|h8_cmd_q_t
 comma
 id|link
 )paren
 suffix:semicolon
-id|QUEUE_REMOVE
+id|list_del
 c_func
 (paren
 op_amp
-id|h8_freeq
-comma
-id|qp
-comma
-id|link
+id|qp-&gt;link
 )paren
 suffix:semicolon
 id|restore_flags
@@ -1862,18 +1794,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|QUEUE_ENTER
+multiline_comment|/* XXX this actually puts it at the start of cmd queue, bug? */
+id|list_add
 c_func
 (paren
 op_amp
+id|qp-&gt;link
+comma
+op_amp
 id|h8_cmdq
-comma
-id|qp
-comma
-id|link
-comma
-id|h8_cmd_q_t
-op_star
 )paren
 suffix:semicolon
 id|restore_flags
@@ -1949,13 +1878,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|QUEUE_IS_EMPTY
+id|list_empty
 c_func
 (paren
 op_amp
 id|h8_actq
-comma
-id|link
 )paren
 )paren
 (brace
@@ -1977,13 +1904,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|QUEUE_IS_EMPTY
+id|list_empty
 c_func
 (paren
 op_amp
 id|h8_cmdq
-comma
-id|link
 )paren
 )paren
 (brace
@@ -2005,42 +1930,32 @@ suffix:semicolon
 multiline_comment|/*&n;         * Take first command off of the command queue and put&n;         * it on the active queue.&n;         */
 id|qp
 op_assign
+id|list_entry
+c_func
 (paren
+id|h8_cmdq.next
+comma
 id|h8_cmd_q_t
-op_star
-)paren
-id|QUEUE_FIRST
-c_func
-(paren
-op_amp
-id|h8_cmdq
 comma
 id|link
 )paren
 suffix:semicolon
-id|QUEUE_REMOVE
+id|list_del
 c_func
 (paren
 op_amp
-id|h8_cmdq
-comma
-id|qp
-comma
-id|link
+id|qp-&gt;link
 )paren
 suffix:semicolon
-id|QUEUE_ENTER
+multiline_comment|/* XXX should this go to the end of the active queue? */
+id|list_add
 c_func
 (paren
+op_amp
+id|qp-&gt;link
+comma
 op_amp
 id|h8_actq
-comma
-id|qp
-comma
-id|link
-comma
-id|h8_cmd_q_t
-op_star
 )paren
 suffix:semicolon
 id|h8_state
@@ -2095,15 +2010,12 @@ id|h8_cmd_q_t
 op_star
 id|qp
 op_assign
-(paren
-id|h8_cmd_q_t
-op_star
-)paren
-id|QUEUE_FIRST
+id|list_entry
 c_func
 (paren
-op_amp
-id|h8_actq
+id|h8_actq.next
+comma
+id|h8_cmd_q_t
 comma
 id|link
 )paren
@@ -2722,18 +2634,14 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-id|QUEUE_ENTER
+id|list_add
 c_func
 (paren
 op_amp
+id|qp-&gt;link
+comma
+op_amp
 id|h8_freeq
-comma
-id|qp
-comma
-id|link
-comma
-id|h8_cmd_q_t
-op_star
 )paren
 suffix:semicolon
 r_break
@@ -2780,18 +2688,14 @@ l_int|5
 )braket
 )paren
 suffix:semicolon
-id|QUEUE_ENTER
+id|list_add
 c_func
 (paren
 op_amp
+id|qp-&gt;link
+comma
+op_amp
 id|h8_freeq
-comma
-id|qp
-comma
-id|link
-comma
-id|h8_cmd_q_t
-op_star
 )paren
 suffix:semicolon
 r_break
@@ -2821,18 +2725,14 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-id|QUEUE_ENTER
+id|list_add
 c_func
 (paren
 op_amp
+id|qp-&gt;link
+comma
+op_amp
 id|h8_freeq
-comma
-id|qp
-comma
-id|link
-comma
-id|h8_cmd_q_t
-op_star
 )paren
 suffix:semicolon
 r_break
@@ -2856,18 +2756,14 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-id|QUEUE_ENTER
+id|list_add
 c_func
 (paren
 op_amp
+id|qp-&gt;link
+comma
+op_amp
 id|h8_freeq
-comma
-id|qp
-comma
-id|link
-comma
-id|h8_cmd_q_t
-op_star
 )paren
 suffix:semicolon
 r_break
@@ -2906,18 +2802,14 @@ op_amp
 id|h8_sync_wait
 )paren
 suffix:semicolon
-id|QUEUE_ENTER
+id|list_add
 c_func
 (paren
 op_amp
+id|qp-&gt;link
+comma
+op_amp
 id|h8_freeq
-comma
-id|qp
-comma
-id|link
-comma
-id|h8_cmd_q_t
-op_star
 )paren
 suffix:semicolon
 r_break
@@ -2993,18 +2885,14 @@ op_amp
 id|h8_sync_wait
 )paren
 suffix:semicolon
-id|QUEUE_ENTER
+id|list_add
 c_func
 (paren
 op_amp
+id|qp-&gt;link
+comma
+op_amp
 id|h8_freeq
-comma
-id|qp
-comma
-id|link
-comma
-id|h8_cmd_q_t
-op_star
 )paren
 suffix:semicolon
 r_break
@@ -3060,18 +2948,14 @@ l_int|2
 )braket
 )paren
 suffix:semicolon
-id|QUEUE_ENTER
+id|list_add
 c_func
 (paren
 op_amp
+id|qp-&gt;link
+comma
+op_amp
 id|h8_freeq
-comma
-id|qp
-comma
-id|link
-comma
-id|h8_cmd_q_t
-op_star
 )paren
 suffix:semicolon
 r_break
@@ -3111,18 +2995,14 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|QUEUE_ENTER
+id|list_add
 c_func
 (paren
 op_amp
+id|qp-&gt;link
+comma
+op_amp
 id|h8_freeq
-comma
-id|qp
-comma
-id|link
-comma
-id|h8_cmd_q_t
-op_star
 )paren
 suffix:semicolon
 r_break
@@ -3188,18 +3068,14 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|QUEUE_ENTER
+id|list_add
 c_func
 (paren
 op_amp
+id|qp-&gt;link
+comma
+op_amp
 id|h8_freeq
-comma
-id|qp
-comma
-id|link
-comma
-id|h8_cmd_q_t
-op_star
 )paren
 suffix:semicolon
 r_break

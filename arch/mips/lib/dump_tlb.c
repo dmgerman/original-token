@@ -1,32 +1,15 @@
-multiline_comment|/*&n; * Dump R4x00 TLB for debugging purposes.&n; *&n; * Copyright (C) 1994, 1995 by Waldorf Electronics,&n; * written by Ralf Baechle.&n; */
+multiline_comment|/*&n; * Dump R4x00 TLB for debugging purposes.&n; *&n; * Copyright (C) 1994, 1995 by Waldorf Electronics, written by Ralf Baechle.&n; * Copyright (C) 1999 by Silicon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/cachectl.h&gt;
-macro_line|#include &lt;asm/mipsconfig.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-DECL|variable|region_map
-r_static
-r_char
-op_star
-id|region_map
-(braket
-)braket
-op_assign
-(brace
-l_string|&quot;u&quot;
-comma
-l_string|&quot;s&quot;
-comma
-l_string|&quot;k&quot;
-comma
-l_string|&quot;!&quot;
-)brace
-suffix:semicolon
+DECL|macro|mips_tlb_entries
+mdefine_line|#define mips_tlb_entries 48
 r_void
 DECL|function|dump_tlb
 id|dump_tlb
@@ -43,9 +26,6 @@ r_int
 id|i
 suffix:semicolon
 r_int
-id|wired
-suffix:semicolon
-r_int
 r_int
 id|pagemask
 comma
@@ -53,9 +33,8 @@ id|c0
 comma
 id|c1
 comma
-id|r
+id|asid
 suffix:semicolon
-r_int
 r_int
 r_int
 id|entryhi
@@ -64,21 +43,14 @@ id|entrylo0
 comma
 id|entrylo1
 suffix:semicolon
-id|wired
+id|asid
 op_assign
-id|read_32bit_cp0_register
+id|get_entryhi
 c_func
 (paren
-id|CP0_WIRED
 )paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Wired: %d&quot;
-comma
-id|wired
-)paren
+op_amp
+l_int|0xff
 suffix:semicolon
 r_for
 c_loop
@@ -88,7 +60,7 @@ op_assign
 id|first
 suffix:semicolon
 id|i
-OL
+op_le
 id|last
 suffix:semicolon
 id|i
@@ -126,7 +98,7 @@ id|CP0_PAGEMASK
 suffix:semicolon
 id|entryhi
 op_assign
-id|read_64bit_cp0_register
+id|read_32bit_cp0_register
 c_func
 (paren
 id|CP0_ENTRYHI
@@ -134,7 +106,7 @@ id|CP0_ENTRYHI
 suffix:semicolon
 id|entrylo0
 op_assign
-id|read_64bit_cp0_register
+id|read_32bit_cp0_register
 c_func
 (paren
 id|CP0_ENTRYLO0
@@ -142,40 +114,43 @@ id|CP0_ENTRYLO0
 suffix:semicolon
 id|entrylo1
 op_assign
-id|read_64bit_cp0_register
+id|read_32bit_cp0_register
 c_func
 (paren
 id|CP0_ENTRYLO1
 )paren
 suffix:semicolon
+multiline_comment|/* Unused entries have a virtual address of KSEG0.  */
 r_if
 c_cond
 (paren
 (paren
-id|entrylo0
-op_or
-id|entrylo1
-)paren
+id|entryhi
 op_amp
-l_int|2
+l_int|0xffffe000
+)paren
+op_ne
+l_int|0x80000000
+op_logical_and
+(paren
+id|entryhi
+op_amp
+l_int|0xff
+)paren
+op_eq
+id|asid
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t; * Only print entries in use&n;&t;&t;&t; */
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nIndex: %2d pgmask=%08x &quot;
+l_string|&quot;Index: %2d pgmask=%08x &quot;
 comma
 id|i
 comma
 id|pagemask
 )paren
-suffix:semicolon
-id|r
-op_assign
-id|entryhi
-op_rshift
-l_int|62
 suffix:semicolon
 id|c0
 op_assign
@@ -200,30 +175,23 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s vpn2=%08Lx &quot;
-l_string|&quot;[pfn=%06Lx c=%d d=%d v=%d g=%Ld]&quot;
-l_string|&quot;[pfn=%06Lx c=%d d=%d v=%d g=%Ld]&quot;
-comma
-id|region_map
-(braket
-id|r
-)braket
+l_string|&quot;va=%08lx asid=%08lx&quot;
+l_string|&quot;  [pa=%06lx c=%d d=%d v=%d g=%ld]&quot;
+l_string|&quot;  [pa=%06lx c=%d d=%d v=%d g=%ld]&quot;
 comma
 (paren
 id|entryhi
-op_rshift
-l_int|13
-)paren
 op_amp
-l_int|0xffffffff
+l_int|0xffffe000
+)paren
 comma
-(paren
-id|entrylo0
-op_rshift
-l_int|6
-)paren
+id|entryhi
 op_amp
-l_int|0xffffff
+l_int|0xff
+comma
+id|entrylo0
+op_amp
+id|PAGE_MASK
 comma
 id|c0
 comma
@@ -255,13 +223,9 @@ op_amp
 l_int|1
 )paren
 comma
-(paren
 id|entrylo1
-op_rshift
-l_int|6
-)paren
 op_amp
-l_int|0xffffff
+id|PAGE_MASK
 comma
 id|c1
 comma
@@ -302,6 +266,12 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+id|set_entryhi
+c_func
+(paren
+id|asid
+)paren
+suffix:semicolon
 )brace
 r_void
 DECL|function|dump_tlb_all
@@ -330,6 +300,25 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|wired
+suffix:semicolon
+id|wired
+op_assign
+id|read_32bit_cp0_register
+c_func
+(paren
+id|CP0_WIRED
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Wired: %d&quot;
+comma
+id|wired
+)paren
+suffix:semicolon
 id|dump_tlb
 c_func
 (paren
@@ -340,6 +329,122 @@ c_func
 (paren
 id|CP0_WIRED
 )paren
+)paren
+suffix:semicolon
+)brace
+DECL|macro|BARRIER
+mdefine_line|#define BARRIER&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;nop;nop;nop;nop;nop;nop;nop&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&quot;.set&bslash;treorder&quot;);
+r_void
+DECL|function|dump_tlb_addr
+id|dump_tlb_addr
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|flags
+comma
+id|oldpid
+suffix:semicolon
+r_int
+id|index
+suffix:semicolon
+id|__save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|oldpid
+op_assign
+id|get_entryhi
+c_func
+(paren
+)paren
+op_amp
+l_int|0xff
+suffix:semicolon
+id|BARRIER
+suffix:semicolon
+id|set_entryhi
+c_func
+(paren
+(paren
+id|addr
+op_amp
+id|PAGE_MASK
+)paren
+op_or
+id|oldpid
+)paren
+suffix:semicolon
+id|BARRIER
+suffix:semicolon
+id|tlb_probe
+c_func
+(paren
+)paren
+suffix:semicolon
+id|BARRIER
+suffix:semicolon
+id|index
+op_assign
+id|get_index
+c_func
+(paren
+)paren
+suffix:semicolon
+id|set_entryhi
+c_func
+(paren
+id|oldpid
+)paren
+suffix:semicolon
+id|__restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|index
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;No entry for address 0x%08lx in TLB&bslash;n&quot;
+comma
+id|addr
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;Entry %d maps address 0x%08lx&bslash;n&quot;
+comma
+id|index
+comma
+id|addr
+)paren
+suffix:semicolon
+id|dump_tlb
+c_func
+(paren
+id|index
+comma
+id|index
 )paren
 suffix:semicolon
 )brace
@@ -402,6 +507,10 @@ r_int
 r_int
 id|addr
 suffix:semicolon
+r_int
+r_int
+id|val
+suffix:semicolon
 id|addr
 op_assign
 (paren
@@ -413,7 +522,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Addr              == %08x&bslash;n&quot;
+l_string|&quot;Addr                 == %08x&bslash;n&quot;
 comma
 id|addr
 )paren
@@ -421,19 +530,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;tasks-&gt;tss.pg_dir == %08x&bslash;n&quot;
-comma
-(paren
-r_int
-r_int
-)paren
-id|t-&gt;tss.pg_dir
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;tasks-&gt;mm.pgd     == %08x&bslash;n&quot;
+l_string|&quot;tasks-&gt;mm.pgd        == %08x&bslash;n&quot;
 comma
 (paren
 r_int
@@ -549,6 +646,124 @@ c_func
 (paren
 id|page
 )paren
+)paren
+suffix:semicolon
+id|val
+op_assign
+id|pte_val
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|val
+op_amp
+id|_PAGE_PRESENT
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;present &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|val
+op_amp
+id|_PAGE_READ
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;read &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|val
+op_amp
+id|_PAGE_WRITE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;write &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|val
+op_amp
+id|_PAGE_ACCESSED
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;accessed &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|val
+op_amp
+id|_PAGE_MODIFIED
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;modified &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|val
+op_amp
+id|_PAGE_R4KBUG
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;r4kbug &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|val
+op_amp
+id|_PAGE_GLOBAL
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;global &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|val
+op_amp
+id|_PAGE_VALID
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;valid &quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

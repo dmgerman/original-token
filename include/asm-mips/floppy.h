@@ -1,11 +1,10 @@
-multiline_comment|/* $Id: floppy.h,v 1.4 1998/05/07 18:38:41 ralf Exp $&n; *&n; * Architecture specific parts of the Floppy driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 Ralf Baechle&n; */
-macro_line|#ifndef __ASM_MIPS_FLOPPY_H
-DECL|macro|__ASM_MIPS_FLOPPY_H
-mdefine_line|#define __ASM_MIPS_FLOPPY_H
+multiline_comment|/* $Id: floppy.h,v 1.7 1999/08/18 23:37:49 ralf Exp $&n; *&n; * Architecture specific parts of the Floppy driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 Ralf Baechle&n; */
+macro_line|#ifndef _ASM_FLOPPY_H
+DECL|macro|_ASM_FLOPPY_H
+mdefine_line|#define _ASM_FLOPPY_H
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/jazz.h&gt;
 macro_line|#include &lt;asm/jazzdma.h&gt;
-macro_line|#include &lt;asm/mipsconfig.h&gt;
 DECL|struct|fd_ops
 r_struct
 id|fd_ops
@@ -294,5 +293,5 @@ mdefine_line|#define FLOPPY_MOTOR_MASK 0xf0
 multiline_comment|/*&n; * The DMA channel used by the floppy controller cannot access data at&n; * addresses &gt;= 16MB&n; *&n; * Went back to the 1MB limit, as some people had problems with the floppy&n; * driver otherwise. It doesn&squot;t matter much for performance anyway, as most&n; * floppy accesses go through the track buffer.&n; *&n; * On MIPSes using vdma, this actually means that *all* transfers go thru&n; * the * track buffer since 0x1000000 is always smaller than KSEG0/1.&n; * Actually this needs to be a bit more complicated since the so much different&n; * hardware available with MIPS CPUs ...&n; */
 DECL|macro|CROSS_64KB
 mdefine_line|#define CROSS_64KB(a,s) ((unsigned long)(a)/K_64 != ((unsigned long)(a) + (s) - 1) / K_64)
-macro_line|#endif /* __ASM_MIPS_FLOPPY_H */
+macro_line|#endif /* _ASM_FLOPPY_H */
 eof

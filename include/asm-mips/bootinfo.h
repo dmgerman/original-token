@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bootinfo.h,v 1.5 1998/08/19 21:58:10 ralf Exp $&n; *&n; * bootinfo.h -- Definition of the Linux/MIPS boot information structure&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle, Andreas Busse,&n; *                             Stoned Elipot and Paul M. Antoine.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/* $Id: bootinfo.h,v 1.10 2000/01/26 00:07:45 ralf Exp $&n; *&n; * bootinfo.h -- Definition of the Linux/MIPS boot information structure&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle, Andreas Busse,&n; *                             Stoned Elipot and Paul M. Antoine.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 macro_line|#ifndef __ASM_MIPS_BOOTINFO_H
 DECL|macro|__ASM_MIPS_BOOTINFO_H
 mdefine_line|#define __ASM_MIPS_BOOTINFO_H
@@ -21,8 +21,10 @@ DECL|macro|MACH_GROUP_SGI
 mdefine_line|#define MACH_GROUP_SGI          6 /* Silicon Graphics workstations and servers */
 DECL|macro|MACH_GROUP_COBALT
 mdefine_line|#define MACH_GROUP_COBALT       7 /* Cobalt servers&t;&t; &t;      */
+DECL|macro|MACH_GROUP_NEC_DDB
+mdefine_line|#define MACH_GROUP_NEC_DDB&t;8 /* NEC DDB */
 DECL|macro|GROUP_NAMES
-mdefine_line|#define GROUP_NAMES { &quot;unknown&quot;, &quot;Jazz&quot;, &quot;Digital&quot;, &quot;ARC&quot;, &bslash;&n;                      &quot;SNI&quot;, &quot;ACN&quot;, &quot;SGI&quot;, &quot;Cobalt&quot; }
+mdefine_line|#define GROUP_NAMES { &quot;unknown&quot;, &quot;Jazz&quot;, &quot;Digital&quot;, &quot;ARC&quot;, &bslash;&n;                      &quot;SNI&quot;, &quot;ACN&quot;, &quot;SGI&quot;, &quot;Cobalt&quot;, &quot;NEC DDB&quot; }
 multiline_comment|/*&n; * Valid machtype values for group unknown (low order halfword of mips_machtype)&n; */
 DECL|macro|MACH_UNKNOWN
 mdefine_line|#define MACH_UNKNOWN&t;&t;0&t;/* whatever...&t;&t;&t;*/
@@ -87,6 +89,11 @@ DECL|macro|MACH_COBALT_27
 mdefine_line|#define MACH_COBALT_27 &t;&t; 0&t;/* Proto &quot;27&quot; hardware */
 DECL|macro|GROUP_COBALT_NAMES
 mdefine_line|#define GROUP_COBALT_NAMES { &quot;Microserver 27&quot; }
+multiline_comment|/*&n; * Valid machtype for group NEC DDB&n; */
+DECL|macro|MACH_NEC_DDB5074
+mdefine_line|#define MACH_NEC_DDB5074&t; 0&t;/* NEC DDB Vrc-5074 */
+DECL|macro|GROUP_NEC_DDB_NAMES
+mdefine_line|#define GROUP_NEC_DDB_NAMES { &quot;Vrc-5074&quot; }
 multiline_comment|/*&n; * Valid cputype values&n; */
 DECL|macro|CPU_UNKNOWN
 mdefine_line|#define CPU_UNKNOWN&t;&t;0
@@ -197,18 +204,6 @@ DECL|typedef|mips_arc_DisplayInfo
 )brace
 id|mips_arc_DisplayInfo
 suffix:semicolon
-macro_line|#ifdef CONFIG_SGI
-multiline_comment|/* screen info will dissapear... soon */
-singleline_comment|//#define DEFAULT_SCREEN_INFO {0, 0, 0, 0, 0, 158, 0, 0, 0, 62, 0, 16}
-DECL|macro|DEFAULT_SCREEN_INFO
-mdefine_line|#define DEFAULT_SCREEN_INFO {0, 0, 0, 0, 0, 160, 0, 0, 0, 64, 0, 16}
-DECL|macro|DEFAULT_DRIVE_INFO
-mdefine_line|#define DEFAULT_DRIVE_INFO { {0,}}
-macro_line|#else
-multiline_comment|/* default values for screen_info variable (Colour VGA) */
-DECL|macro|DEFAULT_SCREEN_INFO
-mdefine_line|#define DEFAULT_SCREEN_INFO {0, 0, 0, 52, 3, 80, 4626, 3, 9, 50, 0x22, 16}
-macro_line|#endif
 multiline_comment|/* default values for drive info */
 DECL|macro|DEFAULT_DRIVE_INFO
 mdefine_line|#define DEFAULT_DRIVE_INFO { {0,}}

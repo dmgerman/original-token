@@ -2,28 +2,21 @@ macro_line|#ifndef __ASM_HARDIRQ_H
 DECL|macro|__ASM_HARDIRQ_H
 mdefine_line|#define __ASM_HARDIRQ_H
 macro_line|#include &lt;linux/threads.h&gt;
-r_extern
-r_int
-r_int
-id|local_irq_count
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
+macro_line|#include &lt;linux/irq.h&gt;
 multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
 DECL|macro|in_interrupt
-mdefine_line|#define in_interrupt() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count[__cpu] + local_bh_count[__cpu] != 0); })
+mdefine_line|#define in_interrupt() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count(__cpu) + local_bh_count(__cpu) != 0); })
 DECL|macro|in_irq
-mdefine_line|#define in_irq() (local_irq_count[smp_processor_id()] != 0)
+mdefine_line|#define in_irq() (local_irq_count(smp_processor_id()) != 0)
 macro_line|#ifndef __SMP__
 DECL|macro|hardirq_trylock
-mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count[cpu] == 0)
+mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count(cpu) == 0)
 DECL|macro|hardirq_endlock
 mdefine_line|#define hardirq_endlock(cpu)&t;do { } while (0)
 DECL|macro|irq_enter
-mdefine_line|#define irq_enter(cpu, irq)&t;(local_irq_count[cpu]++)
+mdefine_line|#define irq_enter(cpu, irq)&t;(local_irq_count(cpu)++)
 DECL|macro|irq_exit
-mdefine_line|#define irq_exit(cpu, irq)&t;(local_irq_count[cpu]--)
+mdefine_line|#define irq_exit(cpu, irq)&t;(local_irq_count(cpu)--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;barrier()
 macro_line|#else
@@ -40,10 +33,48 @@ r_volatile
 r_int
 id|global_irq_lock
 suffix:semicolon
-r_extern
-id|atomic_t
-id|global_irq_count
+DECL|function|irqs_running
+r_static
+r_inline
+r_int
+id|irqs_running
+(paren
+r_void
+)paren
+(brace
+r_int
+id|i
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|local_irq_count
+c_func
+(paren
+id|i
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|release_irqlock
 r_static
 r_inline
@@ -99,15 +130,9 @@ id|irq
 (brace
 op_increment
 id|local_irq_count
-(braket
-id|cpu
-)braket
-suffix:semicolon
-id|atomic_inc
 c_func
 (paren
-op_amp
-id|global_irq_count
+id|cpu
 )paren
 suffix:semicolon
 r_while
@@ -141,18 +166,12 @@ r_int
 id|irq
 )paren
 (brace
-id|atomic_dec
-c_func
-(paren
-op_amp
-id|global_irq_count
-)paren
-suffix:semicolon
 op_decrement
 id|local_irq_count
-(braket
+c_func
+(paren
 id|cpu
-)braket
+)paren
 suffix:semicolon
 )brace
 DECL|function|hardirq_trylock
@@ -169,9 +188,10 @@ id|cpu
 r_return
 op_logical_neg
 id|local_irq_count
-(braket
+c_func
+(paren
 id|cpu
-)braket
+)paren
 op_logical_and
 op_logical_neg
 id|test_bit

@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;  /* for in_interrupt() */
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/unaligned.h&gt;
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
 DECL|macro|OHCI_USE_NPS
@@ -56,6 +57,7 @@ id|ohci_hcd_list
 )paren
 suffix:semicolon
 DECL|variable|usb_ed_lock
+r_static
 id|spinlock_t
 id|usb_ed_lock
 op_assign
@@ -1270,6 +1272,15 @@ suffix:semicolon
 id|usb_dec_dev_use
 (paren
 id|urb-&gt;dev
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|usb_ed_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -5862,10 +5873,10 @@ id|status
 op_assign
 id|TD_CC_NOERROR
 suffix:semicolon
-id|__u8
+id|__u32
 id|datab
 (braket
-l_int|16
+l_int|4
 )braket
 suffix:semicolon
 id|__u8
@@ -6505,7 +6516,18 @@ l_int|1
 op_assign
 l_int|0x29
 suffix:semicolon
-op_star
+id|put_unaligned
+c_func
+(paren
+id|cpu_to_le32
+(paren
+id|readl
+(paren
+op_amp
+id|ohci-&gt;regs-&gt;roothub.a
+)paren
+)paren
+comma
 (paren
 id|__u32
 op_star
@@ -6514,14 +6536,6 @@ op_star
 id|data_buf
 op_plus
 l_int|2
-)paren
-op_assign
-id|cpu_to_le32
-(paren
-id|readl
-(paren
-op_amp
-id|ohci-&gt;regs-&gt;roothub.a
 )paren
 )paren
 suffix:semicolon
@@ -6649,7 +6663,19 @@ suffix:semicolon
 )brace
 r_else
 (brace
-op_star
+id|put_unaligned
+c_func
+(paren
+id|cpu_to_le32
+(paren
+id|readl
+c_func
+(paren
+op_amp
+id|ohci-&gt;regs-&gt;roothub.b
+)paren
+)paren
+comma
 (paren
 id|__u32
 op_star
@@ -6658,15 +6684,6 @@ op_star
 id|data_buf
 op_plus
 l_int|7
-)paren
-op_assign
-id|cpu_to_le32
-(paren
-id|readl
-c_func
-(paren
-op_amp
-id|ohci-&gt;regs-&gt;roothub.b
 )paren
 )paren
 suffix:semicolon

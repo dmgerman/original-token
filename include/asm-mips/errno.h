@@ -1,7 +1,7 @@
-multiline_comment|/*&n; * include/asm-mips/errno.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Ralf Baechle&n; */
-macro_line|#ifndef __ASM_MIPS_ERRNO_H
-DECL|macro|__ASM_MIPS_ERRNO_H
-mdefine_line|#define __ASM_MIPS_ERRNO_H
+multiline_comment|/*&n; * include/asm-mips/errno.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1999 by Ralf Baechle&n; */
+macro_line|#ifndef _ASM_ERRNO_H
+DECL|macro|_ASM_ERRNO_H
+mdefine_line|#define _ASM_ERRNO_H
 multiline_comment|/*&n; * These error numbers are intended to be MIPS ABI compatible&n; */
 DECL|macro|EPERM
 mdefine_line|#define&t;EPERM&t;&t; 1&t;/* Operation not permitted */
@@ -256,14 +256,12 @@ DECL|macro|ENOMEDIUM
 mdefine_line|#define ENOMEDIUM&t;159&t;/* No medium found */
 DECL|macro|EMEDIUMTYPE
 mdefine_line|#define EMEDIUMTYPE&t;160&t;/* Wrong medium type */
-multiline_comment|/*&n; * IRIX 5 error number start from 1000.&n; * Stupid enough; ECANCELED gets redefined with a different value ...&n;#define ECANCELED       1000&n; */
-multiline_comment|/*&n; * IRIX 4 compatibility error numbers.&n; */
 DECL|macro|EDQUOT
-mdefine_line|#define&t;EDQUOT&t;&t;1133&t;/* Quota exceeded */
-DECL|macro|ENFSREMOTE
-mdefine_line|#define ENFSREMOTE&t;1134&t;/* ??? */
+mdefine_line|#define EDQUOT&t;&t;1133&t;/* Quota exceeded */
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* The biggest error number defined here or in &lt;linux/errno.h&gt;. */
 DECL|macro|EMAXERRNO
-mdefine_line|#define EMAXERRNO&t;1134
-macro_line|#endif /* __ASM_MIPS_ERRNO_H */
+mdefine_line|#define EMAXERRNO&t;1133
+macro_line|#endif /* __KERNEL__ */
+macro_line|#endif /* _ASM_ERRNO_H */
 eof

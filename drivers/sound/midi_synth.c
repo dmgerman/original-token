@@ -7,7 +7,6 @@ mdefine_line|#define USE_SEQ_MACROS
 DECL|macro|USE_SIMPLE_MACROS
 mdefine_line|#define USE_SIMPLE_MACROS
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_MIDI
 DECL|macro|_MIDI_SYNTH_C_
 mdefine_line|#define _MIDI_SYNTH_C_
 macro_line|#include &quot;midi_synth.h&quot;
@@ -40,13 +39,8 @@ id|prev_out_status
 id|MAX_MIDI_DEV
 )braket
 suffix:semicolon
-macro_line|#ifndef CONFIG_SEQUENCER
-DECL|macro|STORE
-mdefine_line|#define STORE(cmd)
-macro_line|#else
 DECL|macro|STORE
 mdefine_line|#define STORE(cmd) &bslash;&n;{ &bslash;&n;  int len; &bslash;&n;  unsigned char obuf[8]; &bslash;&n;  cmd; &bslash;&n;  seq_input_event(obuf, len); &bslash;&n;}
-macro_line|#endif
 DECL|macro|_seqbuf
 mdefine_line|#define _seqbuf obuf
 DECL|macro|_seqbufptr
@@ -3025,5 +3019,4 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

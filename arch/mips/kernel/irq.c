@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.c,v 1.15 1999/02/25 21:50:49 tsbogend Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Code to handle x86 style IRQs plus some generic interrupt stuff.&n; *&n; * Copyright (C) 1992 Linus Torvalds&n; * Copyright (C) 1994, 1995, 1996, 1997, 1998 Ralf Baechle&n; */
+multiline_comment|/* $Id: irq.c,v 1.20 2000/02/23 00:41:00 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Code to handle x86 style IRQs plus some generic interrupt stuff.&n; *&n; * Copyright (C) 1992 Linus Torvalds&n; * Copyright (C) 1994, 1995, 1996, 1997, 1998 Ralf Baechle&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -18,6 +18,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/sni.h&gt;
+macro_line|#include &lt;asm/nile4.h&gt;
 multiline_comment|/*&n; * This contains the irq mask for both 8259A irq controllers, it&squot;s an&n; * int so we can deal with the third PIC in some systems like the RM300.&n; * (XXX This is broken for big endian.)&n; */
 DECL|variable|cached_irq_mask
 r_static
@@ -158,9 +159,9 @@ l_int|0x21
 suffix:semicolon
 )brace
 )brace
-DECL|function|disable_irq
+DECL|function|i8259_disable_irq
 r_void
-id|disable_irq
+id|i8259_disable_irq
 c_func
 (paren
 r_int
@@ -191,9 +192,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|function|enable_irq
+DECL|function|i8259_enable_irq
 r_void
-id|enable_irq
+id|i8259_enable_irq
 c_func
 (paren
 r_int
@@ -508,10 +509,6 @@ r_return
 id|len
 suffix:semicolon
 )brace
-DECL|variable|__mips_bh_counter
-id|atomic_t
-id|__mips_bh_counter
-suffix:semicolon
 DECL|function|i8259_mask_and_ack_irq
 r_static
 r_inline
@@ -627,7 +624,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|hardirq_enter
+id|irq_enter
 c_func
 (paren
 id|cpu
@@ -758,7 +755,7 @@ id|irq
 suffix:semicolon
 id|out
 suffix:colon
-id|hardirq_exit
+id|irq_exit
 c_func
 (paren
 id|cpu
@@ -798,7 +795,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|hardirq_enter
+id|irq_enter
 c_func
 (paren
 id|cpu
@@ -904,10 +901,32 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|hardirq_exit
+id|irq_exit
 c_func
 (paren
 id|cpu
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|softirq_state
+(braket
+id|cpu
+)braket
+dot
+id|active
+op_amp
+id|softirq_state
+(braket
+id|cpu
+)braket
+dot
+id|mask
+)paren
+id|do_softirq
+c_func
+(paren
 )paren
 suffix:semicolon
 multiline_comment|/* unmasking and bottom half handling is done magically for us. */
@@ -1058,10 +1077,30 @@ op_logical_neg
 id|shared
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|is_i8259_irq
+c_func
+(paren
+id|irq
+)paren
+)paren
 id|unmask_irq
 c_func
 (paren
 id|irq
+)paren
+suffix:semicolon
+r_else
+id|nile4_enable_irq
+c_func
+(paren
+id|irq_to_nile4
+c_func
+(paren
+id|irq
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1553,7 +1592,6 @@ id|irq
 suffix:semicolon
 )brace
 DECL|function|i8259_init
-r_static
 r_void
 id|__init
 id|i8259_init

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: graphics.c,v 1.16 1999/04/01 23:45:00 ulfc Exp $&n; *&n; * gfx.c: support for SGI&squot;s /dev/graphics, /dev/opengl&n; *&n; * Author: Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *         Ralf Baechle (ralf@gnu.org)&n; *         Ulf Carlsson (ulfc@bun.falkenberg.se)&n; *&n; * On IRIX, /dev/graphics is [10, 146]&n; *          /dev/opengl   is [10, 147]&n; *&n; * From a mail with Mark J. Kilgard, /dev/opengl and /dev/graphics are&n; * the same thing, the use of /dev/graphics seems deprecated though.&n; *&n; * The reason that the original SGI programmer had to use only one&n; * device for all the graphic cards on the system will remain a&n; * mistery for the rest of our lives.  Why some ioctls take a board&n; * number and some others not?  Mistery.  Why do they map the hardware&n; * registers into the user address space with an ioctl instead of&n; * mmap?  Mistery too.  Why they did not use the standard way of&n; * making ioctl constants and instead sticked a random constant?&n; * Mistery too.&n; *&n; * We implement those misterious things, and tried not to think about&n; * the reasons behind them.&n; */
+multiline_comment|/* $Id: graphics.c,v 1.23 2000/02/23 00:41:21 ralf Exp $&n; *&n; * gfx.c: support for SGI&squot;s /dev/graphics, /dev/opengl&n; *&n; * Author: Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *         Ralf Baechle (ralf@gnu.org)&n; *         Ulf Carlsson (ulfc@bun.falkenberg.se)&n; *&n; * On IRIX, /dev/graphics is [10, 146]&n; *          /dev/opengl   is [10, 147]&n; *&n; * From a mail with Mark J. Kilgard, /dev/opengl and /dev/graphics are&n; * the same thing, the use of /dev/graphics seems deprecated though.&n; *&n; * The reason that the original SGI programmer had to use only one&n; * device for all the graphic cards on the system will remain a&n; * mistery for the rest of our lives.  Why some ioctls take a board&n; * number and some others not?  Mistery.  Why do they map the hardware&n; * registers into the user address space with an ioctl instead of&n; * mmap?  Mistery too.  Why they did not use the standard way of&n; * making ioctl constants and instead sticked a random constant?&n; * Mistery too.&n; *&n; * We implement those misterious things, and tried not to think about&n; * the reasons behind them.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -16,7 +16,7 @@ macro_line|#include &lt;asm/gfx.h&gt;
 macro_line|#include &lt;asm/rrm.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/newport.h&gt;
+macro_line|#include &lt;video/newport.h&gt;
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG
 multiline_comment|/* The boards */

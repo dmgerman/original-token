@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;asm/unaligned.h&gt;
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
 DECL|macro|DEBUG_DATA
@@ -2581,7 +2582,9 @@ op_assign
 id|le16_to_cpu
 c_func
 (paren
-op_star
+id|get_unaligned
+c_func
+(paren
 (paren
 (paren
 id|__u16
@@ -2590,6 +2593,7 @@ op_star
 id|start
 )paren
 op_increment
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2619,7 +2623,9 @@ op_assign
 id|le32_to_cpu
 c_func
 (paren
-op_star
+id|get_unaligned
+c_func
+(paren
 (paren
 (paren
 id|__u32
@@ -2628,6 +2634,7 @@ op_star
 id|start
 )paren
 op_increment
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -3276,12 +3283,15 @@ r_return
 id|le64_to_cpu
 c_func
 (paren
-op_star
+id|get_unaligned
+c_func
+(paren
 (paren
 id|__u64
 op_star
 )paren
 id|report
+)paren
 )paren
 op_rshift
 id|offset

@@ -12,7 +12,9 @@ macro_line|#ifndef ASSEMBLY
 macro_line|#include &lt;asm/fixmap.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/mpspec.h&gt;
+macro_line|#ifdef CONFIG_X86_IO_APIC
 macro_line|#include &lt;asm/io_apic.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/apic.h&gt;
 macro_line|#endif
 macro_line|#endif

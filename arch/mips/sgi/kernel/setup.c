@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: setup.c,v 1.24 1999/06/12 17:26:15 ulfc Exp $&n; *&n; * setup.c: SGI specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; */
+multiline_comment|/* $Id: setup.c,v 1.29 2000/01/27 01:05:23 ralf Exp $&n; *&n; * setup.c: SGI specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kbd_ll.h&gt;
@@ -15,10 +15,9 @@ macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/reboot.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
-macro_line|#include &lt;asm/sgi.h&gt;
-macro_line|#include &lt;asm/sgimc.h&gt;
-macro_line|#include &lt;asm/sgihpc.h&gt;
-macro_line|#include &lt;asm/sgint23.h&gt;
+macro_line|#include &lt;asm/sgi/sgimc.h&gt;
+macro_line|#include &lt;asm/sgi/sgihpc.h&gt;
+macro_line|#include &lt;asm/sgi/sgint23.h&gt;
 macro_line|#include &lt;asm/gdb-stub.h&gt;
 macro_line|#ifdef CONFIG_REMOTE_DEBUG
 r_extern
@@ -45,9 +44,6 @@ id|console_setup
 c_func
 (paren
 r_char
-op_star
-comma
-r_int
 op_star
 )paren
 suffix:semicolon
@@ -331,6 +327,53 @@ suffix:semicolon
 multiline_comment|/* you may move this line to whereever you want :-) */
 macro_line|#endif
 )brace
+DECL|function|page_is_ram
+r_int
+id|__init
+id|page_is_ram
+c_func
+(paren
+r_int
+r_int
+id|pagenr
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|pagenr
+OL
+id|MAP_NR
+c_func
+(paren
+id|PAGE_OFFSET
+op_plus
+l_int|0x2000UL
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pagenr
+OG
+id|MAP_NR
+c_func
+(paren
+id|PAGE_OFFSET
+op_plus
+l_int|0x08002000
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|sgi_setup
 r_void
 id|__init
@@ -409,8 +452,6 @@ l_char|&squot;2&squot;
 id|console_setup
 (paren
 l_string|&quot;ttyS1&quot;
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -418,8 +459,6 @@ r_else
 id|console_setup
 (paren
 l_string|&quot;ttyS0&quot;
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -570,6 +609,47 @@ id|conswitchp
 op_assign
 op_amp
 id|newport_con
+suffix:semicolon
+id|screen_info
+op_assign
+(paren
+r_struct
+id|screen_info
+)paren
+(brace
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* orig-x, orig-y */
+l_int|0
+comma
+multiline_comment|/* unused */
+l_int|0
+comma
+multiline_comment|/* orig_video_page */
+l_int|0
+comma
+multiline_comment|/* orig_video_mode */
+l_int|160
+comma
+multiline_comment|/* orig_video_cols */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* unused, ega_bx, unused */
+l_int|64
+comma
+multiline_comment|/* orig_video_lines */
+l_int|0
+comma
+multiline_comment|/* orig_video_isVGA */
+l_int|16
+multiline_comment|/* orig_video_points */
+)brace
 suffix:semicolon
 macro_line|#else
 id|conswitchp

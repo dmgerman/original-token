@@ -1,4 +1,4 @@
-multiline_comment|/* $Id$&n; * baget.h: Definitions specific to Baget/MIPS machines.&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; */
+multiline_comment|/* $Id: baget.h,v 1.2 1999/04/11 17:03:40 harald Exp $&n; * baget.h: Definitions specific to Baget/MIPS machines.&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; */
 macro_line|#ifndef _MIPS_BAGET_H
 DECL|macro|_MIPS_BAGET_H
 mdefine_line|#define _MIPS_BAGET_H

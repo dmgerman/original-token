@@ -181,7 +181,7 @@ id|hw_interrupt_type
 id|irq_type_ia64_internal
 op_assign
 (brace
-l_string|&quot;IA64 internal&quot;
+l_string|&quot;IA64-internal&quot;
 comma
 (paren
 r_void

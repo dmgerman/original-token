@@ -199,7 +199,7 @@ r_int
 id|root_mountflags
 suffix:semicolon
 r_extern
-r_int
+r_char
 id|_text
 comma
 id|_etext

@@ -1389,6 +1389,7 @@ c_func
 (paren
 id|tmp
 comma
+op_amp
 id|runqueue_head
 )paren
 (brace
@@ -1896,7 +1897,6 @@ c_func
 (paren
 id|tmp
 comma
-op_star
 id|head
 )paren
 (brace

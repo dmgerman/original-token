@@ -1,4 +1,7 @@
-multiline_comment|/*&n; * SGI/Newport video card ioctl definitions&n; *&n; */
+multiline_comment|/* $Id: ng1.h,v 1.4 1999/08/19 22:56:33 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * SGI/Newport video card ioctl definitions&n; */
+macro_line|#ifndef _ASM_NG1_H
+DECL|macro|_ASM_NG1_H
+mdefine_line|#define _ASM_NG1_H
 r_typedef
 r_struct
 (brace
@@ -150,4 +153,5 @@ l_int|256
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif /* _ASM_NG1_H */
 eof

@@ -12,7 +12,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 r_static
 r_inline
@@ -435,9 +435,9 @@ id|page
 (brace
 r_int
 r_int
-id|addr
+id|nr
 op_assign
-id|pte_page
+id|pte_pagenr
 c_func
 (paren
 id|page
@@ -446,11 +446,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|MAP_NR
-c_func
-(paren
-id|addr
-)paren
+id|nr
 op_ge
 id|max_mapnr
 op_logical_or
@@ -459,19 +455,19 @@ c_func
 (paren
 id|mem_map
 op_plus
-id|MAP_NR
-c_func
-(paren
-id|addr
-)paren
+id|nr
 )paren
 )paren
 r_return
 suffix:semicolon
-id|free_page
+id|__free_page
 c_func
 (paren
-id|addr
+id|pte_page
+c_func
+(paren
+id|page
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -492,7 +488,7 @@ suffix:semicolon
 id|swap_free
 c_func
 (paren
-id|pte_val
+id|pte_to_swp_entry
 c_func
 (paren
 id|page
@@ -606,8 +602,9 @@ op_assign
 op_star
 id|pte
 suffix:semicolon
-r_int
-r_int
+r_struct
+id|page
+op_star
 id|page
 suffix:semicolon
 id|pte_clear
@@ -654,7 +651,7 @@ c_func
 (paren
 id|pte
 comma
-id|mk_pte_phys
+id|mk_pte
 c_func
 (paren
 id|page

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: reset.c,v 1.6 1999/04/10 12:21:30 ulfc Exp $&n; *&n; * Reset a SGI.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: reset.c,v 1.8 1999/10/21 00:23:05 ralf Exp $&n; *&n; * Reset a SGI.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1997, 1998 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
@@ -8,8 +8,8 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/reboot.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
-macro_line|#include &lt;asm/sgihpc.h&gt;
-macro_line|#include &lt;asm/sgint23.h&gt;
+macro_line|#include &lt;asm/sgi/sgihpc.h&gt;
+macro_line|#include &lt;asm/sgi/sgint23.h&gt;
 multiline_comment|/*&n; * Just powerdown if init hasn&squot;t done after POWERDOWN_TIMEOUT seconds.&n; * I&squot;m not shure if this feature is a good idea, for now it&squot;s here just to&n; * make the power button make behave just like under IRIX.&n; */
 DECL|macro|POWERDOWN_TIMEOUT
 mdefine_line|#define POWERDOWN_TIMEOUT&t;120
@@ -325,7 +325,7 @@ suffix:semicolon
 id|enable_irq
 c_func
 (paren
-l_int|9
+id|SGI_PANEL_IRQ
 )paren
 suffix:semicolon
 )brace
@@ -652,7 +652,7 @@ multiline_comment|/* Wait until interrupt goes away */
 id|disable_irq
 c_func
 (paren
-l_int|9
+id|SGI_PANEL_IRQ
 )paren
 suffix:semicolon
 id|init_timer
@@ -869,7 +869,7 @@ suffix:semicolon
 id|request_irq
 c_func
 (paren
-l_int|9
+id|SGI_PANEL_IRQ
 comma
 id|panel_int
 comma

@@ -75,11 +75,11 @@ DECL|macro|PREFX
 mdefine_line|#define PREFX
 macro_line|#endif
 multiline_comment|/*&n; * MIPS ISA IV/V movn/movz instructions and equivalents for older CPUs.&n; */
-macro_line|#if _MIPS_ISA == _MIPS_ISA_MIPS1
+macro_line|#if (_MIPS_ISA == _MIPS_ISA_MIPS1)
 DECL|macro|MOVN
-mdefine_line|#define MOVN(rd,rs,rt)                                  &bslash;&n;&t;&t;.set&t;push;&t;&t;&t;&t;&bslash;&n;&t;&t;.set&t;reorder;&t;&t;&t;&bslash;&n;&t;&t;beqz&t;rt,9f;                          &bslash;&n;&t;&t;move&t;rd,rs;                          &bslash;&n;&t;&t;.set&t;pop;&t;&t;&t;&t;&bslash;&n;9:
+mdefine_line|#define MOVN(rd,rs,rt)                                  &bslash;&n;&t;&t;.set&t;push;&t;&t;&t;&t;&bslash;&n;&t;&t;.set&t;noreorder;&t;&t;&t;&bslash;&n;&t;&t;beqz&t;rt,9f;                          &bslash;&n;&t;&t;move&t;rd,rs;                          &bslash;&n;&t;&t;.set&t;pop;&t;&t;&t;&t;&bslash;&n;9:
 DECL|macro|MOVZ
-mdefine_line|#define MOVZ(rd,rs,rt)                                  &bslash;&n;&t;&t;.set&t;push;&t;&t;&t;&t;&bslash;&n;&t;&t;.set&t;reorder;&t;&t;&t;&bslash;&n;&t;&t;bnez&t;rt,9f;                          &bslash;&n;&t;&t;move&t;rd,rt;                          &bslash;&n;&t;&t;.set&t;pop;&t;&t;&t;&t;&bslash;&n;9:
+mdefine_line|#define MOVZ(rd,rs,rt)                                  &bslash;&n;&t;&t;.set&t;push;&t;&t;&t;&t;&bslash;&n;&t;&t;.set&t;noreorder;&t;&t;&t;&bslash;&n;&t;&t;bnez&t;rt,9f;                          &bslash;&n;&t;&t;move&t;rd,rt;                          &bslash;&n;&t;&t;.set&t;pop;&t;&t;&t;&t;&bslash;&n;9:
 macro_line|#endif /* _MIPS_ISA == _MIPS_ISA_MIPS1 */
 macro_line|#if (_MIPS_ISA == _MIPS_ISA_MIPS2) || (_MIPS_ISA == _MIPS_ISA_MIPS3)
 DECL|macro|MOVN

@@ -2,8 +2,6 @@ multiline_comment|/*&n; * sound/sb_mixer.h&n; * &n; * Definitions for the SB Pro
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 multiline_comment|/*&n; * Modified:&n; *&t;Hunyue Yau&t;Jan 6 1994&n; *&t;Added defines for the Sound Galaxy NX Pro mixer.&n; *&n; *&t;Rolf Fokkens&t;Dec 20 1998&n; *&t;Added defines for some ES188x chips.&n; *&n; *&t;Rolf Fokkens&t;Dec 27 1998&n; *&t;Moved static stuff to sb_mixer.c&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &quot;legacy.h&quot;
-macro_line|#ifdef CONFIG_SBDSP
 multiline_comment|/*&n; * Mixer registers&n; * &n; * NOTE!&t;RECORD_SRC == IN_FILTER&n; */
 multiline_comment|/* &n; * Mixer registers of SB Pro&n; */
 DECL|macro|VOC_VOL
@@ -92,5 +90,4 @@ DECL|macro|ALS007_CD
 mdefine_line|#define ALS007_CD&t;2
 DECL|macro|ALS007_SYNTH
 mdefine_line|#define ALS007_SYNTH&t;7
-macro_line|#endif
 eof

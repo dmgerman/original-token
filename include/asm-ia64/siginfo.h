@@ -145,6 +145,11 @@ op_star
 id|_addr
 suffix:semicolon
 multiline_comment|/* faulting insn/memory ref. */
+DECL|member|_imm
+r_int
+id|_imm
+suffix:semicolon
+multiline_comment|/* immediate value for &quot;break&quot; */
 DECL|member|_sigfault
 )brace
 id|_sigfault
@@ -156,7 +161,7 @@ DECL|member|_band
 r_int
 id|_band
 suffix:semicolon
-multiline_comment|/* POLL_IN, POLL_OUT, POLL_MSG */
+multiline_comment|/* POLL_IN, POLL_OUT, POLL_MSG (XPG requires a &quot;long&quot;) */
 DECL|member|_fd
 r_int
 id|_fd
@@ -192,6 +197,8 @@ DECL|macro|si_ptr
 mdefine_line|#define si_ptr&t;&t;_sifields._rt._sigval.sival_ptr
 DECL|macro|si_addr
 mdefine_line|#define si_addr&t;&t;_sifields._sigfault._addr
+DECL|macro|si_imm
+mdefine_line|#define si_imm&t;&t;_sifields._sigfault._imm&t;/* as per UNIX SysV ABI spec */
 DECL|macro|si_band
 mdefine_line|#define si_band&t;&t;_sifields._sigpoll._band
 DECL|macro|si_fd
@@ -233,9 +240,11 @@ mdefine_line|#define ILL_COPROC&t;7&t;/* coprocessor error */
 DECL|macro|ILL_BADSTK
 mdefine_line|#define ILL_BADSTK&t;8&t;/* internal stack error */
 DECL|macro|ILL_BADIADDR
-mdefine_line|#define ILL_BADIADDR    9&t;/* Unimplemented instruction address */
+mdefine_line|#define ILL_BADIADDR    9&t;/* unimplemented instruction address */
+DECL|macro|__ILL_BREAK
+mdefine_line|#define __ILL_BREAK&t;10&t;/* illegal break */
 DECL|macro|NSIGILL
-mdefine_line|#define NSIGILL&t;&t;9
+mdefine_line|#define NSIGILL&t;&t;10
 multiline_comment|/*&n; * SIGFPE si_codes&n; */
 DECL|macro|FPE_INTDIV
 mdefine_line|#define FPE_INTDIV&t;1&t;/* integer divide by zero */
@@ -253,15 +262,27 @@ DECL|macro|FPE_FLTINV
 mdefine_line|#define FPE_FLTINV&t;7&t;/* floating point invalid operation */
 DECL|macro|FPE_FLTSUB
 mdefine_line|#define FPE_FLTSUB&t;8&t;/* subscript out of range */
+DECL|macro|__FPE_DECOVF
+mdefine_line|#define __FPE_DECOVF&t;9&t;/* decimal overflow */
+DECL|macro|__FPE_DECDIV
+mdefine_line|#define __FPE_DECDIV&t;10&t;/* decimal division by zero */
+DECL|macro|__FPE_DECERR
+mdefine_line|#define __FPE_DECERR&t;11&t;/* packed decimal error */
+DECL|macro|__FPE_INVASC
+mdefine_line|#define __FPE_INVASC&t;12&t;/* invalid ASCII digit */
+DECL|macro|__FPE_INVDEC
+mdefine_line|#define __FPE_INVDEC&t;13&t;/* invalid decimal digit */
 DECL|macro|NSIGFPE
-mdefine_line|#define NSIGFPE&t;&t;8
+mdefine_line|#define NSIGFPE&t;&t;13
 multiline_comment|/*&n; * SIGSEGV si_codes&n; */
 DECL|macro|SEGV_MAPERR
 mdefine_line|#define SEGV_MAPERR&t;1&t;/* address not mapped to object */
 DECL|macro|SEGV_ACCERR
 mdefine_line|#define SEGV_ACCERR&t;2&t;/* invalid permissions for mapped object */
+DECL|macro|__SEGV_PSTKOVF
+mdefine_line|#define __SEGV_PSTKOVF&t;3&t;/* paragraph stack overflow */
 DECL|macro|NSIGSEGV
-mdefine_line|#define NSIGSEGV&t;2
+mdefine_line|#define NSIGSEGV&t;3
 multiline_comment|/*&n; * SIGBUS si_codes&n; */
 DECL|macro|BUS_ADRALN
 mdefine_line|#define BUS_ADRALN&t;1&t;/* invalid address alignment */

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.9 1999/01/04 16:03:53 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: fault.c,v 1.16 2000/02/18 00:24:30 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -13,34 +13,19 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|development_version
 mdefine_line|#define development_version (LINUX_VERSION_CODE &amp; 0x100)
-r_extern
-r_void
-id|die
-c_func
-(paren
-r_char
-op_star
-comma
-r_struct
-id|pt_regs
-op_star
-comma
-r_int
-r_int
-id|write
-)paren
-suffix:semicolon
 DECL|variable|asid_cache
 r_int
 r_int
 id|asid_cache
+op_assign
+id|ASID_FIRST_VERSION
 suffix:semicolon
 multiline_comment|/*&n; * Macro for exception fixup code to access integer registers.&n; */
 DECL|macro|dpf_reg
@@ -84,6 +69,11 @@ op_star
 id|mm
 op_assign
 id|tsk-&gt;mm
+suffix:semicolon
+r_int
+id|si_code
+op_assign
+id|SEGV_MAPERR
 suffix:semicolon
 r_int
 r_int
@@ -188,6 +178,10 @@ suffix:semicolon
 multiline_comment|/*&n; * Ok, we have a good vm_area for this memory access, so&n; * we can handle it..&n; */
 id|good_area
 suffix:colon
+id|si_code
+op_assign
+id|SEGV_ACCERR
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -294,11 +288,15 @@ id|regs
 )paren
 )paren
 (brace
-id|tsk-&gt;tss.cp0_badvaddr
+r_struct
+id|siginfo
+id|si
+suffix:semicolon
+id|tsk-&gt;thread.cp0_badvaddr
 op_assign
 id|address
 suffix:semicolon
-id|tsk-&gt;tss.error_code
+id|tsk-&gt;thread.error_code
 op_assign
 id|write
 suffix:semicolon
@@ -337,10 +335,29 @@ l_int|31
 )paren
 suffix:semicolon
 macro_line|#endif
-id|force_sig
+id|si.si_signo
+op_assign
+id|SIGSEGV
+suffix:semicolon
+id|si.si_code
+op_assign
+id|si_code
+suffix:semicolon
+id|si.si_addr
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|address
+suffix:semicolon
+id|force_sig_info
 c_func
 (paren
 id|SIGSEGV
+comma
+op_amp
+id|si
 comma
 id|tsk
 )paren
@@ -368,7 +385,7 @@ id|fixup
 r_int
 id|new_epc
 suffix:semicolon
-id|tsk-&gt;tss.cp0_baduaddr
+id|tsk-&gt;thread.cp0_baduaddr
 op_assign
 id|address
 suffix:semicolon
@@ -433,8 +450,6 @@ c_func
 l_string|&quot;Oops&quot;
 comma
 id|regs
-comma
-id|write
 )paren
 suffix:semicolon
 id|do_exit
@@ -488,7 +503,11 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Send a sigbus, regardless of whether we were in kernel&n;&t; * or user mode.&n;&t; * XXX Store details about fault for siginfo handling into tss.&n;&t; */
+multiline_comment|/*&n;&t; * Send a sigbus, regardless of whether we were in kernel&n;&t; * or user mode.&n;&t; */
+id|tsk-&gt;thread.cp0_badvaddr
+op_assign
+id|address
+suffix:semicolon
 id|force_sig
 c_func
 (paren

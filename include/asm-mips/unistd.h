@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.21 1998/10/19 21:29:15 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; *&n; * Changed system calls macros _syscall5 - _syscall7 to push args 5 to 7 onto&n; * the stack. Robin Farine for ACN S.A, Copyright (C) 1996 by ACN S.A&n; */
+multiline_comment|/* $Id: unistd.h,v 1.20 2000/02/18 00:24:48 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; *&n; * Changed system calls macros _syscall5 - _syscall7 to push args 5 to 7 onto&n; * the stack. Robin Farine for ACN S.A, Copyright (C) 1996 by ACN S.A&n; */
 macro_line|#ifndef __ASM_MIPS_UNISTD_H
 DECL|macro|__ASM_MIPS_UNISTD_H
 mdefine_line|#define __ASM_MIPS_UNISTD_H
@@ -1960,8 +1960,8 @@ DECL|macro|__NR_alarm
 mdefine_line|#define __NR_alarm&t;&t;&t;(__NR_Linux +  27)
 DECL|macro|__NR_oldfstat
 mdefine_line|#define __NR_oldfstat&t;&t;&t;(__NR_Linux +  28)
-DECL|macro|__NR_pause
-mdefine_line|#define __NR_pause&t;&t;&t;(__NR_Linux +  29)
+DECL|macro|__NR_unused29
+mdefine_line|#define __NR_unused29&t;&t;&t;(__NR_Linux +  29)
 DECL|macro|__NR_utime
 mdefine_line|#define __NR_utime&t;&t;&t;(__NR_Linux +  30)
 DECL|macro|__NR_stty
@@ -2322,9 +2322,23 @@ DECL|macro|__NR_getpmsg
 mdefine_line|#define __NR_getpmsg&t;&t;&t;(__NR_Linux + 208)
 DECL|macro|__NR_putpmsg
 mdefine_line|#define __NR_putpmsg&t;&t;&t;(__NR_Linux + 209)
+DECL|macro|__NR_mmap2
+mdefine_line|#define __NR_mmap2&t;&t;&t;(__NR_Linux + 210)
+DECL|macro|__NR_truncate64
+mdefine_line|#define __NR_truncate64&t;&t;&t;(__NR_Linux + 211)
+DECL|macro|__NR_ftruncate64
+mdefine_line|#define __NR_ftruncate64&t;&t;(__NR_Linux + 212)
+DECL|macro|__NR_stat64
+mdefine_line|#define __NR_stat64&t;&t;&t;(__NR_Linux + 213)
+DECL|macro|__NR_lstat64
+mdefine_line|#define __NR_lstat64&t;&t;&t;(__NR_Linux + 214)
+DECL|macro|__NR_fstat64
+mdefine_line|#define __NR_fstat64&t;&t;&t;(__NR_Linux + 215)
+DECL|macro|__NR_pivot_root
+mdefine_line|#define __NR_pivot_root&t;&t;&t;(__NR_Linux + 216)
 multiline_comment|/*&n; * Offset of the last Linux flavoured syscall&n; */
 DECL|macro|__NR_Linux_syscalls
-mdefine_line|#define __NR_Linux_syscalls&t;&t;209
+mdefine_line|#define __NR_Linux_syscalls&t;&t;216
 macro_line|#ifndef _LANGUAGE_ASSEMBLY
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0
@@ -2348,24 +2362,6 @@ macro_line|#ifdef __KERNEL_SYSCALLS__
 multiline_comment|/*&n; * we need this inline - forking from kernel space will result&n; * in NO COPY ON WRITE (!!!), until an execve is executed. This&n; * is no problem, but for the stack. This is handled by not letting&n; * main() use the stack at all after fork(). Thus, no function&n; * calls - which means inline code for fork too, as otherwise we&n; * would use the stack upon exit from &squot;fork()&squot;.&n; *&n; * Actually only pause and fork are needed inline, so that there&n; * won&squot;t be any messing with the stack from main(), but we define&n; * some others too.&n; */
 DECL|macro|__NR__exit
 mdefine_line|#define __NR__exit __NR_exit
-r_static
-r_inline
-id|_syscall0
-c_func
-(paren
-r_int
-comma
-id|idle
-)paren
-r_static
-r_inline
-id|_syscall0
-c_func
-(paren
-r_int
-comma
-id|pause
-)paren
 r_static
 r_inline
 id|_syscall0

@@ -895,20 +895,6 @@ id|length
 l_int|2
 )braket
 suffix:semicolon
-id|mm_segment_t
-id|oldfs
-op_assign
-id|get_fs
-(paren
-)paren
-suffix:semicolon
-id|set_fs
-(paren
-id|get_ds
-(paren
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* First two bytes are MSB,LSB of inclusive length. */
 id|retval
 op_assign
@@ -929,7 +915,7 @@ op_ne
 l_int|2
 )paren
 r_goto
-id|restore_fs
+id|end_id
 suffix:semicolon
 id|idlen
 op_assign
@@ -990,8 +976,7 @@ comma
 id|len
 )paren
 suffix:semicolon
-multiline_comment|/* Some printer manufacturers mistakenly believe that&n;                   the length field is supposed to be _exclusive_. */
-multiline_comment|/* In addition, there are broken devices out there&n;                   that don&squot;t even finish off with a semi-colon. */
+multiline_comment|/* Some printer manufacturers mistakenly believe that&n;                   the length field is supposed to be _exclusive_.&n;&t;&t;   In addition, there are broken devices out there&n;                   that don&squot;t even finish off with a semi-colon. */
 r_if
 c_cond
 (paren
@@ -1065,7 +1050,7 @@ suffix:semicolon
 multiline_comment|/* If we get here, I don&squot;t think we&n;                                   need to worry about the possible&n;                                   standard violation of having read&n;                                   more than we were told to.  The&n;                                   device is non-compliant anyhow. */
 )brace
 )brace
-id|restore_fs
+id|end_id
 suffix:colon
 id|buffer
 (braket
@@ -1073,11 +1058,6 @@ id|len
 )braket
 op_assign
 l_char|&squot;&bslash;0&squot;
-suffix:semicolon
-id|set_fs
-(paren
-id|oldfs
-)paren
 suffix:semicolon
 id|parport_negotiate
 (paren

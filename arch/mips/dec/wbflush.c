@@ -213,4 +213,14 @@ r_void
 )paren
 (brace
 )brace
+macro_line|#ifdef EXPORT_SYMTAB
+macro_line|#include &lt;linux/module.h&gt;
+DECL|variable|__wbflush
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__wbflush
+)paren
+suffix:semicolon
+macro_line|#endif
 eof

@@ -7482,10 +7482,6 @@ OL
 id|size
 )paren
 (brace
-r_if
-c_cond
-(paren
-(paren
 id|err
 op_assign
 id|sock_error
@@ -7493,9 +7489,11 @@ c_func
 (paren
 id|sk
 )paren
-op_ne
-l_int|0
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
 )paren
 r_goto
 id|out

@@ -267,7 +267,7 @@ l_string|&quot;&t;subl&t;%0,1,%2&bslash;n&quot;
 l_string|&quot;&t;subl&t;%0,1,%0&bslash;n&quot;
 l_string|&quot;&t;stl_c&t;%2,%1&bslash;n&quot;
 l_string|&quot;&t;bne&t;%2,2f&bslash;n&quot;
-l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;2:&t;br&t;1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
@@ -479,7 +479,7 @@ l_string|&quot;&t;ldah&t;%2,%3(%0)&bslash;n&quot;
 l_string|&quot;&t;ldah&t;%0,%3(%0)&bslash;n&quot;
 l_string|&quot;&t;stl_c&t;%2,%1&bslash;n&quot;
 l_string|&quot;&t;bne&t;%2,2f&bslash;n&quot;
-l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;2:&t;br&t;1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon

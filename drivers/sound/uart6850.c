@@ -4,8 +4,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/* Mon Nov 22 22:38:35 MET 1993 marco@driq.home.usn.nl:&n; *      added 6850 support, used with COVOX SoundMaster II and custom cards.&n; */
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_SOUND_UART6850
-macro_line|#ifdef CONFIG_MIDI
 macro_line|#include &quot;soundmodule.h&quot;
 DECL|variable|uart6850_base
 r_static
@@ -1099,7 +1097,5 @@ suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#endif
-macro_line|#endif
+macro_line|#endif /* MODULE */
 eof

@@ -8,9 +8,7 @@ DECL|macro|USE_SIMPLE_MACROS
 mdefine_line|#define USE_SIMPLE_MACROS
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 macro_line|#include &quot;coproc.h&quot;
-macro_line|#ifdef CONFIG_SEQUENCER
 DECL|variable|timer_mode
 DECL|variable|timer_caps
 r_static
@@ -23,7 +21,6 @@ id|timer_caps
 op_assign
 id|TMR_INTERNAL
 suffix:semicolon
-macro_line|#endif
 DECL|struct|mpu_config
 r_struct
 id|mpu_config
@@ -451,13 +448,8 @@ l_int|0
 multiline_comment|/* Fx */
 )brace
 suffix:semicolon
-macro_line|#ifndef CONFIG_SEQUENCER
-DECL|macro|STORE
-mdefine_line|#define STORE(cmd)
-macro_line|#else
 DECL|macro|STORE
 mdefine_line|#define STORE(cmd) &bslash;&n;{ &bslash;&n;&t;int len; &bslash;&n;&t;unsigned char obuf[8]; &bslash;&n;&t;cmd; &bslash;&n;&t;seq_input_event(obuf, len); &bslash;&n;}
-macro_line|#endif
 DECL|macro|_seqbuf
 mdefine_line|#define _seqbuf obuf
 DECL|macro|_seqbufptr
@@ -4718,7 +4710,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*****************************************************&n; *      Timer stuff&n; ****************************************************/
-macro_line|#if defined(CONFIG_SEQUENCER)
 DECL|variable|timer_initialized
 DECL|variable|timer_open
 DECL|variable|tmr_running
@@ -6781,7 +6772,6 @@ r_return
 id|n
 suffix:semicolon
 )brace
-macro_line|#endif
 DECL|variable|probe_mpu401
 id|EXPORT_SYMBOL
 c_func
@@ -6948,6 +6938,5 @@ multiline_comment|/*  FREE SYMTAB */
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#endif
+macro_line|#endif /* MODULE */
 eof

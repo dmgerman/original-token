@@ -1,9 +1,9 @@
-multiline_comment|/*&n; * identify.c: identify machine by looking up system identifier&n; *&n; * Copyright (C) 1998 Thomas Bogendoerfer&n; * &n; * This code is based on arch/mips/sgi/kernel/system.c, which is&n; * &n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: identify.c,v 1.2 1999/02/25 21:04:13 tsbogend Exp $&n; */
+multiline_comment|/*&n; * identify.c: identify machine by looking up system identifier&n; *&n; * Copyright (C) 1998 Thomas Bogendoerfer&n; * &n; * This code is based on arch/mips/sgi/kernel/system.c, which is&n; * &n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: identify.c,v 1.3 1999/10/21 00:23:04 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;asm/sgi.h&gt;
+macro_line|#include &lt;asm/sgi/sgi.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 DECL|struct|smatch

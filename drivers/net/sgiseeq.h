@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgiseeq.h,v 1.3 1998/08/25 09:17:45 ralf Exp $&n; * sgiseeq.h: Defines for the Seeq8003 ethernet controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: sgiseeq.h,v 1.5 1999/12/04 03:59:03 ralf Exp $&n; * sgiseeq.h: Defines for the Seeq8003 ethernet controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#ifndef _SGISEEQ_H
 DECL|macro|_SGISEEQ_H
 mdefine_line|#define _SGISEEQ_H

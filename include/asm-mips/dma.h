@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dma.h,v 1.2 1998/10/19 21:29:10 ralf Exp $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; * High DMA channel support &amp; info by Hannu Savolainen&n; * and John Boyd, Nov. 1992.&n; *&n; * NOTE: all this is true *only* for ISA/EISA expansions on Mips boards&n; * and can only be used for expansion cards. Onboard DMA controllers, such&n; * as the R4030 on Jazz boards behave totally different!&n; */
+multiline_comment|/* $Id: dma.h,v 1.7 2000/01/29 01:42:28 ralf Exp $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; * High DMA channel support &amp; info by Hannu Savolainen&n; * and John Boyd, Nov. 1992.&n; *&n; * NOTE: all this is true *only* for ISA/EISA expansions on Mips boards&n; * and can only be used for expansion cards. Onboard DMA controllers, such&n; * as the R4030 on Jazz boards behave totally different!&n; */
 macro_line|#ifndef __ASM_MIPS_DMA_H
 DECL|macro|__ASM_MIPS_DMA_H
 mdefine_line|#define __ASM_MIPS_DMA_H
@@ -20,13 +20,8 @@ multiline_comment|/*&n; * NOTES about DMA transfers:&n; *&n; *  controller 1: ch
 DECL|macro|MAX_DMA_CHANNELS
 mdefine_line|#define MAX_DMA_CHANNELS&t;8
 multiline_comment|/*&n; * The maximum address in KSEG0 that we can perform a DMA transfer to on this&n; * platform.  This describes only the PC style part of the DMA logic like on&n; * Deskstations or Acer PICA but not the much more versatile DMA logic used&n; * for the local devices on Acer PICA or Magnums.&n; */
-macro_line|#ifndef CONFIG_SGI
 DECL|macro|MAX_DMA_ADDRESS
 mdefine_line|#define MAX_DMA_ADDRESS&t;&t;(PAGE_OFFSET + 0x01000000)
-macro_line|#else
-DECL|macro|MAX_DMA_ADDRESS
-mdefine_line|#define MAX_DMA_ADDRESS&t;&t;(~0UL)
-macro_line|#endif
 multiline_comment|/* 8237 DMA controllers */
 DECL|macro|IO_DMA1_BASE
 mdefine_line|#define IO_DMA1_BASE&t;0x00&t;/* 8 bit slave DMA, channels 0..3 */
@@ -859,5 +854,14 @@ id|dmanr
 )paren
 suffix:semicolon
 multiline_comment|/* release it again */
+macro_line|#ifdef CONFIG_PCI
+r_extern
+r_int
+id|isa_dma_bridge_buggy
+suffix:semicolon
+macro_line|#else
+DECL|macro|isa_dma_bridge_buggy
+mdefine_line|#define isa_dma_bridge_buggy &t;(0)
+macro_line|#endif
 macro_line|#endif /* __ASM_MIPS_DMA_H */
 eof

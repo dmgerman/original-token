@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_AD1816
 DECL|macro|DEBUGNOISE
 mdefine_line|#define DEBUGNOISE(x)
 DECL|macro|DEBUGINFO
@@ -5972,5 +5971,4 @@ id|SOUND_LOCK_END
 suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
-macro_line|#endif /* CONFIG_AD1816 */
 eof

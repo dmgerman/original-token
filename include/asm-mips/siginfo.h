@@ -1,9 +1,9 @@
-multiline_comment|/* $Id: siginfo.h,v 1.4 1998/08/28 16:23:06 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1998 by Ralf Baechle&n; */
-macro_line|#ifndef __ASM_MIPS_SIGINFO_H
-DECL|macro|__ASM_MIPS_SIGINFO_H
-mdefine_line|#define __ASM_MIPS_SIGINFO_H
+multiline_comment|/* $Id: siginfo.h,v 1.6 2000/02/18 00:24:48 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1998, 1999 by Ralf Baechle&n; */
+macro_line|#ifndef _ASM_SIGINFO_H
+DECL|macro|_ASM_SIGINFO_H
+mdefine_line|#define _ASM_SIGINFO_H
 macro_line|#include &lt;linux/types.h&gt;
-multiline_comment|/* This structure matches OSF/1 for binary compatibility. */
+multiline_comment|/* This structure matches IRIX 32/n32 ABIs for binary compatibility. */
 DECL|union|sigval
 r_typedef
 r_union
@@ -22,10 +22,11 @@ DECL|typedef|sigval_t
 )brace
 id|sigval_t
 suffix:semicolon
+multiline_comment|/* This structure matches IRIX 32/n32 ABIs for binary compatibility but&n;   has Linux extensions.  */
 DECL|macro|SI_MAX_SIZE
 mdefine_line|#define SI_MAX_SIZE&t;128
 DECL|macro|SI_PAD_SIZE
-mdefine_line|#define SI_PAD_SIZE&t;((SI_MAX_SIZE/sizeof(int)) - 4)
+mdefine_line|#define SI_PAD_SIZE&t;((SI_MAX_SIZE/sizeof(int)) - 3)
 DECL|struct|siginfo
 r_typedef
 r_struct
@@ -35,13 +36,13 @@ DECL|member|si_signo
 r_int
 id|si_signo
 suffix:semicolon
-DECL|member|si_errno
-r_int
-id|si_errno
-suffix:semicolon
 DECL|member|si_code
 r_int
 id|si_code
+suffix:semicolon
+DECL|member|si_errno
+r_int
+id|si_errno
 suffix:semicolon
 r_union
 (brace
@@ -68,6 +69,90 @@ multiline_comment|/* sender&squot;s uid */
 DECL|member|_kill
 )brace
 id|_kill
+suffix:semicolon
+multiline_comment|/* SIGCHLD */
+r_struct
+(brace
+DECL|member|_pid
+id|pid_t
+id|_pid
+suffix:semicolon
+multiline_comment|/* which child */
+DECL|member|_uid
+id|uid_t
+id|_uid
+suffix:semicolon
+multiline_comment|/* sender&squot;s uid */
+DECL|member|_utime
+id|clock_t
+id|_utime
+suffix:semicolon
+DECL|member|_status
+r_int
+id|_status
+suffix:semicolon
+multiline_comment|/* exit code */
+DECL|member|_stime
+id|clock_t
+id|_stime
+suffix:semicolon
+DECL|member|_sigchld
+)brace
+id|_sigchld
+suffix:semicolon
+multiline_comment|/* IRIX SIGCHLD */
+r_struct
+(brace
+DECL|member|_pid
+id|pid_t
+id|_pid
+suffix:semicolon
+multiline_comment|/* which child */
+DECL|member|_utime
+id|clock_t
+id|_utime
+suffix:semicolon
+DECL|member|_status
+r_int
+id|_status
+suffix:semicolon
+multiline_comment|/* exit code */
+DECL|member|_stime
+id|clock_t
+id|_stime
+suffix:semicolon
+DECL|member|_irix_sigchld
+)brace
+id|_irix_sigchld
+suffix:semicolon
+multiline_comment|/* SIGILL, SIGFPE, SIGSEGV, SIGBUS */
+r_struct
+(brace
+DECL|member|_addr
+r_void
+op_star
+id|_addr
+suffix:semicolon
+multiline_comment|/* faulting insn/memory ref. */
+DECL|member|_sigfault
+)brace
+id|_sigfault
+suffix:semicolon
+multiline_comment|/* SIGPOLL, SIGXFSZ (To do ...)  */
+r_struct
+(brace
+DECL|member|_band
+r_int
+id|_band
+suffix:semicolon
+multiline_comment|/* POLL_IN, POLL_OUT, POLL_MSG */
+DECL|member|_fd
+r_int
+id|_fd
+suffix:semicolon
+DECL|member|_sigpoll
+)brace
+id|_sigpoll
 suffix:semicolon
 multiline_comment|/* POSIX.1b timers */
 r_struct
@@ -107,65 +192,6 @@ DECL|member|_rt
 )brace
 id|_rt
 suffix:semicolon
-multiline_comment|/* SIGCHLD */
-r_struct
-(brace
-DECL|member|_pid
-id|pid_t
-id|_pid
-suffix:semicolon
-multiline_comment|/* which child */
-DECL|member|_uid
-id|uid_t
-id|_uid
-suffix:semicolon
-multiline_comment|/* sender&squot;s uid */
-DECL|member|_status
-r_int
-id|_status
-suffix:semicolon
-multiline_comment|/* exit code */
-DECL|member|_utime
-id|clock_t
-id|_utime
-suffix:semicolon
-DECL|member|_stime
-id|clock_t
-id|_stime
-suffix:semicolon
-DECL|member|_sigchld
-)brace
-id|_sigchld
-suffix:semicolon
-multiline_comment|/* SIGILL, SIGFPE, SIGSEGV, SIGBUS */
-r_struct
-(brace
-DECL|member|_addr
-r_void
-op_star
-id|_addr
-suffix:semicolon
-multiline_comment|/* faulting insn/memory ref. */
-DECL|member|_sigfault
-)brace
-id|_sigfault
-suffix:semicolon
-multiline_comment|/* SIGPOLL */
-r_struct
-(brace
-DECL|member|_band
-r_int
-id|_band
-suffix:semicolon
-multiline_comment|/* POLL_IN, POLL_OUT, POLL_MSG */
-DECL|member|_fd
-r_int
-id|_fd
-suffix:semicolon
-DECL|member|_sigpoll
-)brace
-id|_sigpoll
-suffix:semicolon
 DECL|member|_sifields
 )brace
 id|_sifields
@@ -197,7 +223,7 @@ DECL|macro|si_band
 mdefine_line|#define si_band&t;&t;_sifields._sigpoll._band
 DECL|macro|si_fd
 mdefine_line|#define si_fd&t;&t;_sifields._sigpoll._fd
-multiline_comment|/*&n; * si_code values&n; * Digital reserves positive values for kernel-generated signals.&n; */
+multiline_comment|/*&n; * si_code values&n; * Again these have been choosen to be IRIX compatible.&n; */
 DECL|macro|SI_USER
 mdefine_line|#define SI_USER&t;&t;0&t;/* sent by kill, sigsend, raise */
 DECL|macro|SI_KERNEL
@@ -300,7 +326,7 @@ mdefine_line|#define POLL_OUT&t;2&t;/* output buffers available */
 DECL|macro|POLL_MSG
 mdefine_line|#define POLL_MSG&t;3&t;/* input message available */
 DECL|macro|POLL_ERR
-mdefine_line|#define POLL_ERR&t;4&t;/* i/o error */
+mdefine_line|#define POLL_ERR&t;4&t;/* I/O error */
 DECL|macro|POLL_PRI
 mdefine_line|#define POLL_PRI&t;5&t;/* high priority input available */
 DECL|macro|POLL_HUP
@@ -308,21 +334,28 @@ mdefine_line|#define POLL_HUP&t;6&t;/* device disconnected */
 DECL|macro|NSIGPOLL
 mdefine_line|#define NSIGPOLL&t;6
 multiline_comment|/*&n; * sigevent definitions&n; * &n; * It seems likely that SIGEV_THREAD will have to be handled from &n; * userspace, libpthread transmuting it to SIGEV_SIGNAL, which the&n; * thread manager then catches and does the appropriate nonsense.&n; * However, everything is written out here so as to not get lost.&n; */
-DECL|macro|SIGEV_SIGNAL
-mdefine_line|#define SIGEV_SIGNAL&t;0&t;/* notify via signal */
 DECL|macro|SIGEV_NONE
-mdefine_line|#define SIGEV_NONE&t;1&t;/* other notification: meaningless */
+mdefine_line|#define SIGEV_NONE&t;128&t;/* other notification: meaningless */
+DECL|macro|SIGEV_SIGNAL
+mdefine_line|#define SIGEV_SIGNAL&t;129&t;/* notify via signal */
+DECL|macro|SIGEV_CALLBACK
+mdefine_line|#define SIGEV_CALLBACK&t;130&t;/* ??? */
 DECL|macro|SIGEV_THREAD
-mdefine_line|#define SIGEV_THREAD&t;2&t;/* deliver via thread creation */
+mdefine_line|#define SIGEV_THREAD&t;131&t;/* deliver via thread creation */
 DECL|macro|SIGEV_MAX_SIZE
 mdefine_line|#define SIGEV_MAX_SIZE&t;64
 DECL|macro|SIGEV_PAD_SIZE
 mdefine_line|#define SIGEV_PAD_SIZE&t;((SIGEV_MAX_SIZE/sizeof(int)) - 4)
+multiline_comment|/* XXX This one isn&squot;t yet IRIX / ABI compatible.  */
 DECL|struct|sigevent
 r_typedef
 r_struct
 id|sigevent
 (brace
+DECL|member|sigev_notify
+r_int
+id|sigev_notify
+suffix:semicolon
 DECL|member|sigev_value
 id|sigval_t
 id|sigev_value
@@ -330,10 +363,6 @@ suffix:semicolon
 DECL|member|sigev_signo
 r_int
 id|sigev_signo
-suffix:semicolon
-DECL|member|sigev_notify
-r_int
-id|sigev_notify
 suffix:semicolon
 r_union
 (brace
@@ -378,5 +407,5 @@ DECL|macro|sigev_notify_function
 mdefine_line|#define sigev_notify_function&t;_sigev_un._sigev_thread._function
 DECL|macro|sigev_notify_attributes
 mdefine_line|#define sigev_notify_attributes&t;_sigev_un._sigev_thread._attribute
-macro_line|#endif /* __ASM_MIPS_SIGINFO_H */
+macro_line|#endif /* _ASM_SIGINFO_H */
 eof

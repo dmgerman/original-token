@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;MIPS specific IP/TCP/UDP checksumming routines&n; *&n; * Authors:&t;Ralf Baechle, &lt;ralf@waldorf-gmbh.de&gt;&n; *&t;&t;Lots of code moved from tcp.c and ip.c; see those files&n; *&t;&t;for more names.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * $Id: csum_partial_copy.c,v 1.2 1998/09/19 19:16:17 ralf Exp $&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;MIPS specific IP/TCP/UDP checksumming routines&n; *&n; * Authors:&t;Ralf Baechle, &lt;ralf@waldorf-gmbh.de&gt;&n; *&t;&t;Lots of code moved from tcp.c and ip.c; see those files&n; *&t;&t;for more names.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * $Id: csum_partial_copy.c,v 1.3 2000/02/05 06:47:08 ralf Exp $&n; */
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -134,73 +134,6 @@ id|len
 comma
 id|sum
 )paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Copy to userspace and compute checksum.&n; */
-DECL|function|csum_partial_copy_to_user
-r_int
-r_int
-id|csum_partial_copy_to_user
-(paren
-r_const
-r_char
-op_star
-id|src
-comma
-r_char
-op_star
-id|dst
-comma
-r_int
-id|len
-comma
-r_int
-r_int
-id|sum
-comma
-r_int
-op_star
-id|err_ptr
-)paren
-(brace
-id|sum
-op_assign
-id|csum_partial
-c_func
-(paren
-id|src
-comma
-id|len
-comma
-id|sum
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|copy_to_user
-c_func
-(paren
-id|dst
-comma
-id|src
-comma
-id|len
-)paren
-)paren
-(brace
-op_star
-id|err_ptr
-op_assign
-op_minus
-id|EFAULT
-suffix:semicolon
-r_return
-id|sum
-suffix:semicolon
-)brace
-r_return
-id|sum
 suffix:semicolon
 )brace
 eof

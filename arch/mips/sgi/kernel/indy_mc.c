@@ -1,10 +1,10 @@
-multiline_comment|/*&n; * indy_mc.c: Routines for manipulating the INDY memory controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1999 Andrew R. Baker (andrewb@uab.edu) - Indigo2 changes&n; *&n; * $Id: indy_mc.c,v 1.4 1999/05/07 22:34:32 ulfc Exp $&n; */
+multiline_comment|/*&n; * indy_mc.c: Routines for manipulating the INDY memory controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1999 Andrew R. Baker (andrewb@uab.edu) - Indigo2 changes&n; *&n; * $Id: indy_mc.c,v 1.8 1999/12/06 23:13:20 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
-macro_line|#include &lt;asm/sgimc.h&gt;
-macro_line|#include &lt;asm/sgihpc.h&gt;
+macro_line|#include &lt;asm/sgi/sgimc.h&gt;
+macro_line|#include &lt;asm/sgi/sgihpc.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 multiline_comment|/* #define DEBUG_SGIMC */
 DECL|variable|mcmisc_regs
@@ -14,8 +14,7 @@ op_star
 id|mcmisc_regs
 suffix:semicolon
 DECL|variable|rpsscounter
-r_int
-r_int
+id|u32
 op_star
 id|rpsscounter
 suffix:semicolon

@@ -774,13 +774,6 @@ c_func
 id|strnlen
 )paren
 suffix:semicolon
-DECL|variable|strspn
-id|EXPORT_SYMBOL_NOVERS
-c_func
-(paren
-id|strspn
-)paren
-suffix:semicolon
 DECL|variable|strpbrk
 id|EXPORT_SYMBOL_NOVERS
 c_func

@@ -7,7 +7,6 @@ macro_line|#include &lt;linux/kmod.h&gt;
 DECL|macro|MIDIBUF_C
 mdefine_line|#define MIDIBUF_C
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_MIDI
 multiline_comment|/*&n; * Don&squot;t make MAX_QUEUE_SIZE larger than 4000&n; */
 DECL|macro|MAX_QUEUE_SIZE
 mdefine_line|#define MAX_QUEUE_SIZE&t;4000
@@ -1843,5 +1842,4 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

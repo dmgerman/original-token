@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: setup.c,v 1.20 1999/02/25 21:57:47 tsbogend Exp $&n; *&n; * Setup pointers to hardware-dependent routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: setup.c,v 1.25 2000/01/27 01:05:23 ralf Exp $&n; *&n; * Setup pointers to hardware-dependent routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -9,11 +9,12 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
-macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/jazz.h&gt;
+macro_line|#include &lt;asm/jazzdma.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/reboot.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -268,6 +269,21 @@ id|irq2
 )paren
 suffix:semicolon
 )brace
+DECL|function|page_is_ram
+r_int
+id|__init
+id|page_is_ram
+c_func
+(paren
+r_int
+r_int
+id|pagenr
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
 DECL|function|jazz_setup
 r_void
 id|__init
@@ -386,10 +402,61 @@ op_amp
 id|std_ide_ops
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_FD
+id|fd_ops
+op_assign
+op_amp
+id|jazz_fd_ops
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_VT
 id|conswitchp
 op_assign
 op_amp
 id|dummy_con
+suffix:semicolon
+macro_line|#endif
+macro_line|#warning &quot;Somebody should check if screen_info is ok for Jazz.&quot;
+id|screen_info
+op_assign
+(paren
+r_struct
+id|screen_info
+)paren
+(brace
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* orig-x, orig-y */
+l_int|0
+comma
+multiline_comment|/* unused */
+l_int|0
+comma
+multiline_comment|/* orig_video_page */
+l_int|0
+comma
+multiline_comment|/* orig_video_mode */
+l_int|160
+comma
+multiline_comment|/* orig_video_cols */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* unused, ega_bx, unused */
+l_int|64
+comma
+multiline_comment|/* orig_video_lines */
+l_int|0
+comma
+multiline_comment|/* orig_video_isVGA */
+l_int|16
+multiline_comment|/* orig_video_points */
+)brace
 suffix:semicolon
 id|rtc_ops
 op_assign
@@ -401,10 +468,10 @@ op_assign
 op_amp
 id|jazz_kbd_ops
 suffix:semicolon
-id|fd_ops
-op_assign
-op_amp
-id|jazz_fd_ops
+id|vdma_init
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 eof

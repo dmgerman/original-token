@@ -1,9 +1,10 @@
 multiline_comment|/*&n; * arch/mips/jazz/jazzdma.c&n; *&n; * Mips Jazz DMA controller support&n; * Copyright (C) 1995, 1996 by Andreas Busse&n; *&n; * NOTE: Some of the argument checking could be removed when&n; * things have settled down. Also, instead of returning 0xffffffff&n; * on failure of vdma_alloc() one could leave page #0 unused&n; * and return the more usual NULL pointer as logical address.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
-macro_line|#include &lt;asm/mipsconfig.h&gt;
 macro_line|#include &lt;asm/jazz.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -18,14 +19,6 @@ r_static
 r_int
 r_int
 id|vdma_pagetable_start
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|vdma_pagetable_end
-r_static
-r_int
-r_int
-id|vdma_pagetable_end
 op_assign
 l_int|0
 suffix:semicolon
@@ -110,48 +103,51 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initialize the Jazz R4030 dma controller&n; */
 DECL|function|vdma_init
-r_int
-r_int
+r_void
+id|__init
 id|vdma_init
 c_func
 (paren
-r_int
-r_int
-id|memory_start
-comma
-r_int
-r_int
-id|memory_end
+r_void
 )paren
 (brace
-multiline_comment|/*&n;     * Allocate 32k of memory for DMA page tables.&n;     * This needs to be page aligned and should be&n;     * uncached to avoid cache flushing after every&n;     * update.&n;     */
+multiline_comment|/*&n;&t; * Allocate 32k of memory for DMA page tables.  This needs to be page&n;&t; * aligned and should be uncached to avoid cache flushing after every&n;&t; * update.&n;&t; */
+id|vdma_pagetable_start
+op_assign
+id|alloc_bootmem_low_pages
+c_func
+(paren
+id|VDMA_PGTBL_SIZE
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|vdma_pagetable_start
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+id|dma_cache_wback_inv
+c_func
+(paren
+id|vdma_pagetable_start
+comma
+id|VDMA_PGTBL_SIZE
+)paren
+suffix:semicolon
 id|vdma_pagetable_start
 op_assign
 id|KSEG1ADDR
 c_func
 (paren
-(paren
-id|memory_start
-op_plus
-l_int|4095
-)paren
-op_amp
-op_complement
-l_int|4095
-)paren
-suffix:semicolon
-id|vdma_pagetable_end
-op_assign
 id|vdma_pagetable_start
-op_plus
-id|VDMA_PGTBL_SIZE
-suffix:semicolon
-id|flush_cache_all
-c_func
-(paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Clear the R4030 translation table&n;     */
+multiline_comment|/*&n;&t; * Clear the R4030 translation table&n;&t; */
 id|vdma_pgtbl_init
 c_func
 (paren

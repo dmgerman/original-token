@@ -242,6 +242,11 @@ mdefine_line|#define BUILD_COMMON_IRQ() &bslash;&n;asmlinkage void call_do_IRQ(v
 multiline_comment|/* &n; * subtle. orig_eax is used by the signal code to distinct between&n; * system calls and interrupted &squot;random user-space&squot;. Thus we have&n; * to put a negative value into orig_eax here. (the problem is that&n; * both system calls and IRQs want to have small integer numbers in&n; * orig_eax, and the syscall code has won the optimization conflict ;)&n; *&n; * Subtle as a pigs ear.  VY&n; */
 DECL|macro|BUILD_IRQ
 mdefine_line|#define BUILD_IRQ(nr) &bslash;&n;asmlinkage void IRQ_NAME(nr); &bslash;&n;__asm__( &bslash;&n;&quot;&bslash;n&quot;__ALIGN_STR&quot;&bslash;n&quot; &bslash;&n;SYMBOL_NAME_STR(IRQ) #nr &quot;_interrupt:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $&quot;#nr&quot;-256&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp common_interrupt&quot;);
+r_extern
+r_int
+r_int
+id|prof_cpu_mask
+suffix:semicolon
 multiline_comment|/*&n; * x86 profiling function, SMP safe. We might want to do this in&n; * assembly totally?&n; */
 DECL|function|x86_do_profile
 r_static
@@ -254,12 +259,30 @@ r_int
 id|eip
 )paren
 (brace
+multiline_comment|/*&n;&t; * Only measure the CPUs specified by /proc/irq/prof_cpu_mask.&n;&t; * (default is all CPUs.)&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+(paren
+l_int|1
+op_lshift
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+op_amp
+id|prof_cpu_mask
+)paren
+)paren
+r_return
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|prof_buffer
-op_logical_and
-id|current-&gt;pid
 )paren
 (brace
 id|eip

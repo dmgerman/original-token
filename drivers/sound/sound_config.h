@@ -6,7 +6,6 @@ mdefine_line|#define  _SOUND_CONFIG_H_
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sound.h&gt;
-macro_line|#include &quot;legacy.h&quot;
 macro_line|#include &quot;os.h&quot;
 macro_line|#include &quot;soundvers.h&quot;
 macro_line|#ifndef SND_DEFAULT_ENABLE

@@ -273,7 +273,7 @@ DECL|member|pad
 r_char
 id|pad
 suffix:semicolon
-macro_line|#ifdef CONFIG_SGI
+macro_line|#ifdef CONFIG_SGI_IP22
 DECL|member|pad2
 DECL|member|pad3
 r_char

@@ -9740,6 +9740,10 @@ id|MAILBOX_REGISTER_COUNT
 )braket
 suffix:semicolon
 macro_line|#ifdef QLA1280_UNUSED
+r_uint8
+op_star
+id|sp
+suffix:semicolon
 r_int
 id|i
 suffix:semicolon
@@ -9753,15 +9757,9 @@ suffix:semicolon
 r_uint8
 op_star
 id|tbuf
-comma
-op_star
-id|sp
 suffix:semicolon
 id|u_long
 id|p_tbuf
-suffix:semicolon
-r_int
-id|i
 suffix:semicolon
 macro_line|#ifdef QL_DEBUG_LEVEL_3
 id|ENTER

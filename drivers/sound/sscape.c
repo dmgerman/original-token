@@ -23,7 +23,6 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#endif&t;&t;&t;&t;/* __KERNEL__ */
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#ifdef CONFIG_SSCAPE
 macro_line|#include &quot;coproc.h&quot;
 multiline_comment|/*&n; *    I/O ports&n; */
 DECL|macro|MIDI_DATA
@@ -2772,7 +2771,6 @@ id|i
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_MPU_EMU)
 r_if
 c_cond
 (paren
@@ -2842,7 +2840,6 @@ op_amp
 id|sscape_coproc_operations
 suffix:semicolon
 )brace
-macro_line|#endif
 id|sscape_write
 c_func
 (paren
@@ -6703,14 +6700,12 @@ comma
 l_int|6
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_MPU_EMU) &amp;&amp; defined(CONFIG_MIDI)
 id|unload_mpu401
 c_func
 (paren
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|unload_ss_ms_sound
 r_void
@@ -7089,6 +7084,5 @@ id|mpu_config
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#endif
+macro_line|#endif /* MODULE */
 eof

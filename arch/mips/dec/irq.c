@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Code to handle DECstation IRQs plus some generic interrupt stuff.&n; *&n; * Copyright (C) 1992 Linus Torvalds&n; * Copyright (C) 1994, 1995, 1996, 1997 Ralf Baechle&n; *&n; * $Id: irq.c,v 1.3 1999/04/11 17:06:16 harald Exp $&n; */
+multiline_comment|/*&n; * Code to handle DECstation IRQs plus some generic interrupt stuff.&n; *&n; * Copyright (C) 1992 Linus Torvalds&n; * Copyright (C) 1994, 1995, 1996, 1997 Ralf Baechle&n; *&n; * $Id: irq.c,v 1.6 2000/02/04 07:40:23 ralf Exp $&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -500,10 +500,6 @@ r_return
 id|len
 suffix:semicolon
 )brace
-DECL|variable|__mips_bh_counter
-id|atomic_t
-id|__mips_bh_counter
-suffix:semicolon
 multiline_comment|/*&n; * do_IRQ handles IRQ&squot;s that have been installed without the&n; * SA_INTERRUPT flag: it uses the full signal-handling return&n; * and runs with other interrupts enabled. All relatively slow&n; * IRQ&squot;s should use this format: notably the keyboard/timer&n; * routines.&n; */
 DECL|function|do_IRQ
 id|asmlinkage
@@ -537,7 +533,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|hardirq_enter
+id|irq_enter
 c_func
 (paren
 id|cpu
@@ -655,7 +651,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|hardirq_exit
+id|irq_exit
 c_func
 (paren
 id|cpu

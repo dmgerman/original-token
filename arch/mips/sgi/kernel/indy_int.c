@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: indy_int.c,v 1.13 1999/06/12 17:26:15 ulfc Exp $&n; *&n; * indy_int.c: Routines for generic manipulation of the INT[23] ASIC&n; *             found on INDY workstations..&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; * Copyright (C) 1999 Andrew R. Baker (andrewb@uab.edu) &n; *                    - Indigo2 changes&n; *                    - Interrupt handling fixes&n; */
+multiline_comment|/* $Id: indy_int.c,v 1.17 2000/02/04 07:40:23 ralf Exp $&n; *&n; * indy_int.c: Routines for generic manipulation of the INT[23] ASIC&n; *             found on INDY workstations..&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; * Copyright (C) 1999 Andrew R. Baker (andrewb@uab.edu) &n; *                    - Indigo2 changes&n; *                    - Interrupt handling fixes&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -20,9 +21,9 @@ macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
-macro_line|#include &lt;asm/sgi.h&gt;
-macro_line|#include &lt;asm/sgihpc.h&gt;
-macro_line|#include &lt;asm/sgint23.h&gt;
+macro_line|#include &lt;asm/sgi/sgi.h&gt;
+macro_line|#include &lt;asm/sgi/sgihpc.h&gt;
+macro_line|#include &lt;asm/sgi/sgint23.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 macro_line|#include &lt;asm/gdb-stub.h&gt;
 multiline_comment|/* #define DEBUG_SGINT */
@@ -1231,10 +1232,6 @@ r_return
 id|len
 suffix:semicolon
 )brace
-DECL|variable|__mips_bh_counter
-id|atomic_t
-id|__mips_bh_counter
-suffix:semicolon
 multiline_comment|/*&n; * do_IRQ handles IRQ&squot;s that have been installed without the&n; * SA_INTERRUPT flag: it uses the full signal-handling return&n; * and runs with other interrupts enabled. All relatively slow&n; * IRQ&squot;s should use this format: notably the keyboard/timer&n; * routines.&n; */
 DECL|function|do_IRQ
 id|asmlinkage
@@ -1268,7 +1265,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|hardirq_enter
+id|irq_enter
 c_func
 (paren
 id|cpu
@@ -1396,7 +1393,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|hardirq_exit
+id|irq_exit
 c_func
 (paren
 id|cpu
@@ -2097,7 +2094,7 @@ r_goto
 id|no_handler
 suffix:semicolon
 )brace
-id|hardirq_enter
+id|irq_enter
 c_func
 (paren
 id|cpu
@@ -2126,7 +2123,7 @@ comma
 id|regs
 )paren
 suffix:semicolon
-id|hardirq_exit
+id|irq_exit
 c_func
 (paren
 id|cpu
@@ -2274,7 +2271,7 @@ r_goto
 id|no_handler
 suffix:semicolon
 )brace
-id|hardirq_enter
+id|irq_enter
 c_func
 (paren
 id|cpu
@@ -2303,7 +2300,7 @@ comma
 id|regs
 )paren
 suffix:semicolon
-id|hardirq_exit
+id|irq_exit
 c_func
 (paren
 id|cpu
@@ -2351,7 +2348,7 @@ id|irq
 op_assign
 l_int|6
 suffix:semicolon
-id|hardirq_enter
+id|irq_enter
 c_func
 (paren
 id|cpu
@@ -2392,7 +2389,7 @@ l_int|1
 (brace
 suffix:semicolon
 )brace
-id|hardirq_exit
+id|irq_exit
 c_func
 (paren
 id|cpu

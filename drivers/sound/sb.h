@@ -1,6 +1,4 @@
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &quot;legacy.h&quot;
-macro_line|#ifdef CONFIG_SBDSP
 DECL|macro|DSP_RESET
 mdefine_line|#define DSP_RESET&t;(devc-&gt;base + 0x6)
 DECL|macro|DSP_READ
@@ -601,5 +599,4 @@ id|sb_devc
 op_star
 id|last_sb
 suffix:semicolon
-macro_line|#endif
 eof

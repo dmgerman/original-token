@@ -1,4 +1,4 @@
-multiline_comment|/* $Id$&n; * time.c: Baget/MIPS specific time handling details&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; */
+multiline_comment|/* $Id: time.c,v 1.4 1999/10/09 00:00:57 ralf Exp $&n; * time.c: Baget/MIPS specific time handling details&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -162,6 +162,26 @@ id|VIC_LINT2
 )paren
 suffix:semicolon
 )brace
+DECL|variable|timer_irq
+r_static
+r_struct
+id|irqaction
+id|timer_irq
+op_assign
+(brace
+id|timer_interrupt
+comma
+id|SA_INTERRUPT
+comma
+l_int|0
+comma
+l_string|&quot;timer&quot;
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+suffix:semicolon
 DECL|function|time_init
 r_void
 id|__init
@@ -174,20 +194,13 @@ r_void
 r_if
 c_cond
 (paren
-id|request_irq
+id|setup_baget_irq
 c_func
 (paren
 id|BAGET_VIC_TIMER_IRQ
 comma
-id|timer_interrupt
-comma
-id|SA_INTERRUPT
-op_or
-id|SA_STATIC_ALLOC
-comma
-l_string|&quot;timer&quot;
-comma
-l_int|NULL
+op_amp
+id|timer_irq
 )paren
 OL
 l_int|0

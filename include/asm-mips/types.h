@@ -1,7 +1,7 @@
-multiline_comment|/*&n; * include/asm-mips/types.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996 by Ralf Baechle&n; */
-macro_line|#ifndef __ASM_MIPS_TYPES_H
-DECL|macro|__ASM_MIPS_TYPES_H
-mdefine_line|#define __ASM_MIPS_TYPES_H
+multiline_comment|/* $Id: types.h,v 1.4 2000/02/18 00:24:48 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996, 1999 by Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+macro_line|#ifndef _ASM_TYPES_H
+DECL|macro|_ASM_TYPES_H
+mdefine_line|#define _ASM_TYPES_H
 DECL|typedef|umode_t
 r_typedef
 r_int
@@ -45,7 +45,20 @@ r_int
 r_int
 id|__u32
 suffix:semicolon
-macro_line|#if ((~0UL) == 0xffffffff)
+macro_line|#if (_MIPS_SZLONG == 64)
+DECL|typedef|__s64
+r_typedef
+id|__signed__
+r_int
+id|__s64
+suffix:semicolon
+DECL|typedef|__u64
+r_typedef
+r_int
+r_int
+id|__u64
+suffix:semicolon
+macro_line|#else
 macro_line|#if defined(__GNUC__) &amp;&amp; !defined(__STRICT_ANSI__)
 DECL|typedef|__s64
 r_typedef
@@ -62,19 +75,6 @@ r_int
 id|__u64
 suffix:semicolon
 macro_line|#endif
-macro_line|#else
-DECL|typedef|__s64
-r_typedef
-id|__signed__
-r_int
-id|__s64
-suffix:semicolon
-DECL|typedef|__u64
-r_typedef
-r_int
-r_int
-id|__u64
-suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * These aren&squot;t exported outside the kernel to avoid name space clashes&n; */
 macro_line|#ifdef __KERNEL__
@@ -114,7 +114,20 @@ r_int
 r_int
 id|u32
 suffix:semicolon
-macro_line|#if ((~0UL) == 0xffffffff)
+macro_line|#if (_MIPS_SZLONG == 64)
+DECL|typedef|s64
+r_typedef
+id|__signed__
+r_int
+id|s64
+suffix:semicolon
+DECL|typedef|u64
+r_typedef
+r_int
+r_int
+id|u64
+suffix:semicolon
+macro_line|#else
 macro_line|#if defined(__GNUC__) &amp;&amp; !defined(__STRICT_ANSI__)
 DECL|typedef|s64
 r_typedef
@@ -131,22 +144,15 @@ r_int
 id|u64
 suffix:semicolon
 macro_line|#endif
-macro_line|#else
-DECL|typedef|s64
-r_typedef
-id|__signed__
-r_int
-id|s64
-suffix:semicolon
-DECL|typedef|u64
-r_typedef
-r_int
-r_int
-id|u64
-suffix:semicolon
 macro_line|#endif
 DECL|macro|BITS_PER_LONG
 mdefine_line|#define BITS_PER_LONG _MIPS_SZLONG
+DECL|typedef|dma_addr_t
+r_typedef
+r_int
+r_int
+id|dma_addr_t
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
-macro_line|#endif /* __ASM_MIPS_TYPES_H */
+macro_line|#endif /* _ASM_TYPES_H */
 eof

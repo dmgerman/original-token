@@ -1,4 +1,4 @@
-multiline_comment|/* $Id$&n; *&n; * print.c: Simple print fascility&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; *&n; */
+multiline_comment|/* $Id: print.c,v 1.2 1999/10/09 00:00:57 ralf Exp $&n; *&n; * print.c: Simple print fascility&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; *&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

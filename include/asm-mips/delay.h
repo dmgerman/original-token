@@ -1,14 +1,15 @@
-multiline_comment|/* $Id: delay.h,v 1.2 1999/01/04 16:09:20 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 by Waldorf Electronics&n; * Copyright (C) 1995 - 1998 by Ralf Baechle&n; */
-macro_line|#ifndef __ASM_MIPS_DELAY_H
-DECL|macro|__ASM_MIPS_DELAY_H
-mdefine_line|#define __ASM_MIPS_DELAY_H
-DECL|function|__delay
+multiline_comment|/* $Id: delay.h,v 1.3 1999/08/18 23:37:49 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 by Waldorf Electronics&n; * Copyright (C) 1995 - 1998 by Ralf Baechle&n; */
+macro_line|#ifndef _ASM_DELAY_H
+DECL|macro|_ASM_DELAY_H
+mdefine_line|#define _ASM_DELAY_H
 r_extern
 id|__inline__
 r_void
+DECL|function|__delay
 id|__delay
 c_func
 (paren
+r_int
 r_int
 id|loops
 )paren
@@ -93,5 +94,5 @@ mdefine_line|#define __udelay_val loops_per_sec
 macro_line|#endif
 DECL|macro|udelay
 mdefine_line|#define udelay(usecs) __udelay((usecs),__udelay_val)
-macro_line|#endif /* __ASM_MIPS_DELAY_H */
+macro_line|#endif /* _ASM_DELAY_H */
 eof

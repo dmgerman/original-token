@@ -14,7 +14,7 @@ macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &lt;linux/wavefront.h&gt;
 multiline_comment|/*&n; *&t;This sucks, hopefully it&squot;ll get standardised&n; */
 macro_line|#if defined(__alpha__)
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|LOOPS_PER_SEC
 mdefine_line|#define LOOPS_PER_SEC cpu_data[smp_processor_id()].loops_per_sec
 macro_line|#else
@@ -5999,7 +5999,6 @@ id|prog
 )paren
 suffix:semicolon
 multiline_comment|/* Now pan as best we can ... use the slave/internal MIDI device&n;&t;   number if it exists (since it talks to the WaveFront), or the&n;&t;   master otherwise.&n;&t;*/
-macro_line|#ifdef CONFIG_MIDI
 r_if
 c_cond
 (paren
@@ -6037,7 +6036,6 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif CONFIG_MIDI
 r_return
 l_int|0
 suffix:semicolon

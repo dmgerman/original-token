@@ -8,7 +8,7 @@ id|version
 (braket
 )braket
 op_assign
-l_string|&quot;Linux Tulip driver version 0.9.2 (Feb 15, 2000)&bslash;n&quot;
+l_string|&quot;Linux Tulip driver version 0.9.3 (Feb 23, 2000)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;tulip.h&quot;
@@ -1239,7 +1239,7 @@ suffix:semicolon
 id|spin_unlock_irqrestore
 (paren
 op_amp
-id|tp-&gt;lock
+id|tp-&gt;tx_lock
 comma
 id|flags
 )paren
@@ -5865,7 +5865,7 @@ id|irq
 op_assign
 id|pdev-&gt;irq
 suffix:semicolon
-multiline_comment|/* Make certain the data structures are quadword aligned. */
+multiline_comment|/* init_etherdev ensures qword aligned structures */
 id|dev
 op_assign
 id|init_etherdev
@@ -5890,7 +5890,7 @@ id|printk
 (paren
 id|KERN_ERR
 id|PFX
-l_string|&quot;unable to allocate ether device, aborting&bslash;n&quot;
+l_string|&quot;ether device alloc failed, aborting&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5923,7 +5923,17 @@ id|printk
 (paren
 id|KERN_ERR
 id|PFX
-l_string|&quot;unable to allocate ether device, aborting&bslash;n&quot;
+l_string|&quot;I/O ports (0x%x@0x%lx) unavailable, &quot;
+l_string|&quot;aborting&bslash;n&quot;
+comma
+id|tulip_tbl
+(braket
+id|chip_idx
+)braket
+dot
+id|io_size
+comma
+id|ioaddr
 )paren
 suffix:semicolon
 r_goto
@@ -5944,7 +5954,8 @@ id|printk
 (paren
 id|KERN_ERR
 id|PFX
-l_string|&quot;cannot enable PCI device (id %04x:%04x, bus %d, devfn %d), aborting&bslash;n&quot;
+l_string|&quot;cannot enable PCI device (id %04x:%04x, &quot;
+l_string|&quot;bus %d, devfn %d), aborting&bslash;n&quot;
 comma
 id|pdev-&gt;vendor
 comma
@@ -5965,24 +5976,6 @@ c_func
 id|pdev
 )paren
 suffix:semicolon
-id|tp
-op_assign
-id|dev-&gt;priv
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|tp
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-op_star
-id|tp
-)paren
-)paren
-suffix:semicolon
 id|pci_read_config_byte
 (paren
 id|pdev
@@ -5991,6 +5984,43 @@ id|PCI_REVISION_ID
 comma
 op_amp
 id|chip_rev
+)paren
+suffix:semicolon
+multiline_comment|/* tp/dev-&gt;priv zeroed in init_etherdev */
+id|tp
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
+id|tp-&gt;chip_id
+op_assign
+id|chip_idx
+suffix:semicolon
+id|tp-&gt;flags
+op_assign
+id|tulip_tbl
+(braket
+id|chip_idx
+)braket
+dot
+id|flags
+suffix:semicolon
+id|tp-&gt;pdev
+op_assign
+id|pdev
+suffix:semicolon
+id|tp-&gt;base_addr
+op_assign
+id|ioaddr
+suffix:semicolon
+id|tp-&gt;revision
+op_assign
+id|chip_rev
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|tp-&gt;tx_lock
 )paren
 suffix:semicolon
 id|printk
@@ -6698,34 +6728,9 @@ id|dev-&gt;irq
 op_assign
 id|irq
 suffix:semicolon
-id|tp-&gt;chip_id
-op_assign
-id|chip_idx
-suffix:semicolon
-id|tp-&gt;revision
-op_assign
-id|chip_rev
-suffix:semicolon
-id|tp-&gt;flags
-op_assign
-id|tulip_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|flags
-suffix:semicolon
 id|tp-&gt;csr0
 op_assign
 id|csr0
-suffix:semicolon
-id|tp-&gt;pdev
-op_assign
-id|pdev
-suffix:semicolon
-id|tp-&gt;base_addr
-op_assign
-id|dev-&gt;base_addr
 suffix:semicolon
 multiline_comment|/* BugFixes: The 21143-TD hangs with PCI Write-and-Invalidate cycles.&n;&t;   And the ASIX must have a burst limit or horrible things happen. */
 r_if

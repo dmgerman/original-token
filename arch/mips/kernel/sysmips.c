@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * MIPS specific syscalls&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: sysmips.c,v 1.6 1998/08/25 09:14:42 ralf Exp $&n; */
+multiline_comment|/*&n; * MIPS specific syscalls&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: sysmips.c,v 1.9 2000/02/18 00:24:30 ralf Exp $&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;asm/cachectl.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/sysmips.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * How long a hostname can we get from user space?&n; *  -EFAULT if invalid area or too long&n; *  0 if ok&n; *  &gt;0 EFAULT after xx bytes&n; */
@@ -215,6 +215,7 @@ id|__NEW_UTS_LEN
 r_goto
 id|out
 suffix:semicolon
+multiline_comment|/* Fiiiixmeeee...  */
 id|copy_from_user
 c_func
 (paren
@@ -305,12 +306,12 @@ id|MIPS_FIXADE
 suffix:colon
 id|tmp
 op_assign
-id|current-&gt;tss.mflags
+id|current-&gt;thread.mflags
 op_amp
 op_complement
 l_int|3
 suffix:semicolon
-id|current-&gt;tss.mflags
+id|current-&gt;thread.mflags
 op_assign
 id|tmp
 op_or

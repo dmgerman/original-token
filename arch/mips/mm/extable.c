@@ -21,6 +21,7 @@ suffix:semicolon
 r_static
 r_inline
 r_int
+r_int
 DECL|function|search_one_table
 id|search_one_table
 c_func

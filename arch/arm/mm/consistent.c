@@ -32,11 +32,6 @@ r_int
 r_int
 id|page
 suffix:semicolon
-r_struct
-id|vm_struct
-op_star
-id|area
-suffix:semicolon
 r_void
 op_star
 id|ret
@@ -120,26 +115,6 @@ op_star
 id|page
 )paren
 suffix:semicolon
-id|area
-op_assign
-id|get_vm_area
-c_func
-(paren
-id|size
-comma
-id|VM_IOREMAP
-)paren
-suffix:semicolon
-multiline_comment|/* maybe new type? */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|area
-)paren
-r_goto
-id|no_area
-suffix:semicolon
 id|ret
 op_assign
 id|__ioremap
@@ -170,8 +145,6 @@ id|ret
 r_return
 id|ret
 suffix:semicolon
-id|no_area
-suffix:colon
 id|free_pages
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: streamable.c,v 1.9 1998/09/19 19:17:50 ralf Exp $&n; *&n; * streamable.c: streamable devices. /dev/gfx&n; * (C) 1997 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Major 10 is the streams clone device.  The IRIX Xsgi server just&n; * opens /dev/gfx and closes it inmediately.&n; *&n; */
+multiline_comment|/* $Id: streamable.c,v 1.11 2000/02/23 00:41:21 ralf Exp $&n; *&n; * streamable.c: streamable devices. /dev/gfx&n; * (C) 1997 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Major 10 is the streams clone device.  The IRIX Xsgi server just&n; * opens /dev/gfx and closes it inmediately.&n; *&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

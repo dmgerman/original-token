@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * graphics_syms.c: interfaces for SGI Indy newport graphics&n; *&n; * Copyright (C) 1999 Alex deVries &lt;puffin@redhat.com&gt;&n; *&n; * We should not even be trying to compile this if we are not doing&n; * a module.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/* extern int rrm_command (unsigned int cmd, void *arg);&n;extern int rrm_close (struct inode *inode, struct file *file);&n;EXPORT_SYMBOL(rrm_command);&n;EXPORT_SYMBOL(rrm_close);&n;&n;&n;*/
 r_extern
@@ -85,6 +86,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|remove_mapping
+)paren
+suffix:semicolon
+DECL|variable|npregs
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|npregs
 )paren
 suffix:semicolon
 eof

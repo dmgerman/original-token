@@ -1763,7 +1763,7 @@ id|num_midis
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS) &amp;&amp; !defined(VMIDI)
+macro_line|#ifndef EXCLUDE_TIMERS
 r_extern
 r_struct
 id|sound_timer_operations
@@ -1890,7 +1890,6 @@ id|unload_gus_db16
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_GUS
 (brace
 l_string|&quot;GUS&quot;
 comma
@@ -1923,7 +1922,6 @@ comma
 id|unload_gus
 )brace
 comma
-macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_SOUND_MSS
 (brace
@@ -2152,7 +2150,7 @@ id|unload_pas
 )brace
 comma
 macro_line|#endif
-macro_line|#if (defined(CONFIG_SOUND_MPU401) || defined(CONFIG_SOUND_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if (defined(CONFIG_SOUND_MPU401) || defined(CONFIG_SOUND_MPU_EMU))
 (brace
 l_string|&quot;MPU401&quot;
 comma
@@ -2170,7 +2168,7 @@ id|unload_mpu401
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_SOUND_UART401) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_SOUND_UART401)
 (brace
 l_string|&quot;UART401&quot;
 comma
@@ -2224,7 +2222,7 @@ id|unload_maui
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_SOUND_UART6850) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_SOUND_UART6850)
 (brace
 l_string|&quot;MIDI6850&quot;
 comma
@@ -2275,7 +2273,6 @@ comma
 id|unload_sb
 )brace
 comma
-macro_line|#ifdef CONFIG_MIDI
 (brace
 l_string|&quot;SBMPU&quot;
 comma
@@ -2292,7 +2289,6 @@ comma
 id|unload_sbmpu
 )brace
 comma
-macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_SOUND_SSCAPE
 (brace
@@ -2431,7 +2427,7 @@ id|unload_softsyn
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_SOUND_VMIDI) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_SOUND_VMIDI
 (brace
 l_string|&quot;VMIDI&quot;
 comma
@@ -2517,7 +2513,6 @@ r_struct
 id|driver_info
 )paren
 suffix:semicolon
-macro_line|#ifndef FULL_SOUND
 multiline_comment|/*&n; *&t;List of devices actually configured in the system.&n; *&n; *&t;Note! The detection order is significant. Don&squot;t change it.&n; */
 DECL|variable|snd_installed_cards
 r_struct
@@ -3065,7 +3060,7 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_SOUND_MPU401) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_SOUND_MPU401
 (brace
 id|SNDCARD_MPU401
 comma
@@ -3122,7 +3117,7 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#endif
-macro_line|#if defined(CONFIG_SOUND_UART6850) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_SOUND_UART6850
 (brace
 id|SNDCARD_UART6850
 comma
@@ -3142,7 +3137,7 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SOUND_SB
-macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_SB_MPU_BASE)
+macro_line|#ifdef CONFIG_SB_MPU_BASE
 (brace
 id|SNDCARD_SB16MIDI
 comma
@@ -3222,7 +3217,7 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_SOUND_VMIDI) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_SOUND_VMIDI
 (brace
 id|SNDCARD_VMIDI
 comma
@@ -3319,36 +3314,7 @@ r_struct
 id|card_info
 )paren
 suffix:semicolon
-macro_line|#else
-DECL|variable|num_sound_cards
-r_int
-id|num_sound_cards
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|snd_installed_cards
-r_struct
-id|card_info
-id|snd_installed_cards
-(braket
-l_int|20
-)braket
-op_assign
-(brace
-(brace
-l_int|0
-)brace
-)brace
-suffix:semicolon
-DECL|variable|max_sound_cards
-r_static
-r_int
-id|max_sound_cards
-op_assign
-l_int|20
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(MODULE) || (!defined(linux) &amp;&amp; !defined(_AIX))
+macro_line|#if defined(MODULE)
 DECL|variable|trace_init
 r_int
 id|trace_init

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: setup.c,v 1.16 1999/06/17 13:25:47 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995  Linus Torvalds&n; * Copyright (C) 1995, 1996, 1997, 1998  Ralf Baechle&n; * Copyright (C) 1996  Stoned Elipot&n; */
+multiline_comment|/* $Id: setup.c,v 1.22 2000/01/27 01:05:23 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995  Linus Torvalds&n; * Copyright (C) 1995, 1996, 1997, 1998  Ralf Baechle&n; * Copyright (C) 1996  Stoned Elipot&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
@@ -29,7 +29,7 @@ macro_line|#include &lt;asm/cachectl.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/stackframe.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#ifdef CONFIG_SGI
+macro_line|#ifdef CONFIG_SGI_IP22
 macro_line|#include &lt;asm/sgialib.h&gt;
 macro_line|#endif
 DECL|variable|boot_cpu_data
@@ -62,13 +62,10 @@ id|EISA_bus
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * Milo passes some information to the kernel that looks like as if it&n; * had been returned by a Intel PC BIOS.  Milo doesn&squot;t fill the passed&n; * drive_info and Linux can find out about this anyway, so I&squot;m going to&n; * remove this sometime.  screen_info contains information about the &n; * resolution of the text screen.  For VGA graphics based machine this&n; * information is being use to continue the screen output just below&n; * the BIOS printed text and with the same text resolution.&n; */
 DECL|variable|screen_info
 r_struct
 id|screen_info
 id|screen_info
-op_assign
-id|DEFAULT_SCREEN_INFO
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_FD
 r_extern
@@ -157,16 +154,6 @@ r_extern
 r_int
 id|_end
 suffix:semicolon
-r_extern
-r_char
-id|empty_zero_page
-(braket
-id|PAGE_SIZE
-)braket
-suffix:semicolon
-multiline_comment|/*&n; * This is set up by the setup-routine at boot-time&n; */
-DECL|macro|PARAM
-mdefine_line|#define PARAM&t;empty_zero_page
 DECL|variable|command_line
 r_static
 r_char
@@ -244,22 +231,8 @@ r_char
 op_star
 op_star
 id|cmdline_p
-comma
-r_int
-r_int
-op_star
-id|memory_start_p
-comma
-r_int
-r_int
-op_star
-id|memory_end_p
 )paren
 (brace
-r_int
-r_int
-id|memory_end
-suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 r_int
 r_int
@@ -315,6 +288,13 @@ r_void
 suffix:semicolon
 r_void
 id|sgi_setup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|ddb_setup
 c_func
 (paren
 r_void
@@ -403,7 +383,8 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SGI
+macro_line|#ifdef CONFIG_SGI_IP22
+multiline_comment|/* As of now this is only IP22.  */
 r_case
 id|MACH_GROUP_SGI
 suffix:colon
@@ -427,6 +408,18 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_DDB5074
+r_case
+id|MACH_GROUP_NEC_DDB
+suffix:colon
+id|ddb_setup
+c_func
+(paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 id|panic
@@ -436,19 +429,6 @@ l_string|&quot;Unsupported architecture&quot;
 )paren
 suffix:semicolon
 )brace
-id|memory_end
-op_assign
-id|mips_memory_upper
-suffix:semicolon
-multiline_comment|/*&n;&t; * Due to prefetching and similar mechanism the CPU sometimes&n;&t; * generates addresses beyond the end of memory.  We leave the size&n;&t; * of one cache line at the end of memory unused to make shure we&n;&t; * don&squot;t catch this type of bus errors.&n;&t; */
-id|memory_end
-op_sub_assign
-l_int|128
-suffix:semicolon
-id|memory_end
-op_and_assign
-id|PAGE_MASK
-suffix:semicolon
 id|strncpy
 (paren
 id|command_line
@@ -482,22 +462,8 @@ id|cmdline_p
 op_assign
 id|command_line
 suffix:semicolon
-op_star
-id|memory_start_p
-op_assign
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|_end
-suffix:semicolon
-op_star
-id|memory_end_p
-op_assign
-id|memory_end
-suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+macro_line|#error &quot;Fixme, I&squot;m broken.&quot;
 id|tmp
 op_assign
 (paren

@@ -5,7 +5,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
-macro_line|#ifdef CONFIG_GUS
 macro_line|#include &quot;gus_hw.h&quot;
 r_void
 id|gusintr
@@ -166,14 +165,12 @@ comma
 id|hw_config-&gt;dma2
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_MIDI
 id|gus_midi_init
 c_func
 (paren
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -642,14 +639,12 @@ id|MIDI_RX_IRQ
 )paren
 )paren
 (brace
-macro_line|#ifdef CONFIG_MIDI
 id|gus_midi_interrupt
 c_func
 (paren
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -663,7 +658,6 @@ id|GF1_TIMER2_IRQ
 )paren
 )paren
 (brace
-macro_line|#ifdef CONFIG_SEQUENCER
 r_if
 c_cond
 (paren
@@ -692,17 +686,6 @@ l_int|0x80
 )paren
 suffix:semicolon
 multiline_comment|/* Reset IRQ flags */
-macro_line|#else
-id|gus_write8
-c_func
-(paren
-l_int|0x45
-comma
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Stop timers */
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -722,7 +705,6 @@ c_func
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 multiline_comment|/*&n; *&t;Some extra code for the 16 bit sampling option&n; */
 macro_line|#ifdef CONFIG_GUS16
 DECL|function|probe_gus_db16
@@ -759,7 +741,6 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#ifdef CONFIG_GUS
 id|gus_pcm_volume
 op_assign
 l_int|100
@@ -768,7 +749,6 @@ id|gus_wave_volume
 op_assign
 l_int|90
 suffix:semicolon
-macro_line|#endif
 id|hw_config-&gt;slots
 (braket
 l_int|3
@@ -1117,5 +1097,5 @@ suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* MODULE */
 eof

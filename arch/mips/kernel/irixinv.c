@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Support the inventory interface for IRIX binaries&n; * This is invoked before the mm layer is working, so we do not&n; * use the linked lists for the inventory yet. &n; *&n; * Miguel de Icaza, 1997.&n; *&n; * $Id: irixinv.c,v 1.3 1998/04/05 11:23:51 ralf Exp $&n; */
+multiline_comment|/*&n; * Support the inventory interface for IRIX binaries&n; * This is invoked before the mm layer is working, so we do not&n; * use the linked lists for the inventory yet. &n; *&n; * Miguel de Icaza, 1997.&n; *&n; * $Id: irixinv.c,v 1.4 1999/10/09 00:00:58 ralf Exp $&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;

@@ -399,6 +399,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|ioc3_probe
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|SK_init
 c_func
 (paren
@@ -1535,6 +1545,14 @@ op_assign
 macro_line|#ifdef CONFIG_MIPS_JAZZ_SONIC
 (brace
 id|sonic_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SGI_IOC3_ETH
+(brace
+id|ioc3_probe
 comma
 l_int|0
 )brace

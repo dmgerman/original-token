@@ -5,28 +5,8 @@ macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;sb.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
-macro_line|#ifdef CONFIG_TRIX
-macro_line|#ifdef INCLUDE_TRIX_BOOT
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;trix_boot.h&quot;
-macro_line|#else
-DECL|variable|trix_boot
-r_static
-r_int
-r_char
-op_star
-id|trix_boot
-op_assign
-l_int|NULL
-suffix:semicolon
-DECL|variable|trix_boot_len
-r_static
-r_int
-id|trix_boot_len
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 DECL|variable|kilroy_was_here
 r_static
 r_int
@@ -1334,7 +1314,6 @@ id|hw_config-&gt;name
 op_assign
 l_string|&quot;AudioTrix SB&quot;
 suffix:semicolon
-macro_line|#ifdef CONFIG_SBDSP
 r_return
 id|sb_dsp_detect
 c_func
@@ -1346,11 +1325,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#else
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|attach_trix_sb
 r_void
@@ -1370,7 +1344,6 @@ suffix:semicolon
 r_int
 id|old_quiet
 suffix:semicolon
-macro_line|#ifdef CONFIG_SBDSP
 id|hw_config-&gt;driver_use_1
 op_assign
 id|SB_NO_MIDI
@@ -1398,7 +1371,6 @@ id|sb_be_quiet
 op_assign
 id|old_quiet
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|attach_trix_mpu
 r_void
@@ -1411,7 +1383,6 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 id|hw_config-&gt;name
 op_assign
 l_string|&quot;AudioTrix Pro&quot;
@@ -1422,7 +1393,6 @@ c_func
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|probe_trix_mpu
 r_int
@@ -1435,7 +1405,6 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 r_int
 r_char
 id|conf
@@ -1694,11 +1663,6 @@ c_func
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#else
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|unload_trix_wss
 r_void
@@ -1781,14 +1745,12 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 id|unload_uart401
 c_func
 (paren
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|unload_trix_sb
 r_void
@@ -1801,7 +1763,6 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#ifdef CONFIG_SBDSP
 id|sb_dsp_unload
 c_func
 (paren
@@ -1810,7 +1771,6 @@ comma
 id|mpu
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#ifdef MODULE
 DECL|variable|io
@@ -2301,6 +2261,5 @@ suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#endif
+macro_line|#endif /* MODULE */
 eof

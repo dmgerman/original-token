@@ -73,11 +73,11 @@ DECL|macro|MAXINE_DTOP_RECV
 mdefine_line|#define MAXINE_DTOP_RECV&t;0x00000001&t;/* DTI Recv-Available&t;*/
 multiline_comment|/* kn03 aka 3max+ aka DS5000_2x0 */
 DECL|macro|KN03_TC2
-mdefine_line|#define KN03_TC2&t;&t;0x00004000
+mdefine_line|#define KN03_TC2&t;&t;0x00002000
 DECL|macro|KN03_TC1
-mdefine_line|#define KN03_TC1&t;&t;0x00002000
+mdefine_line|#define KN03_TC1&t;&t;0x00001000
 DECL|macro|KN03_TC0
-mdefine_line|#define KN03_TC0&t;&t;0x00001000
+mdefine_line|#define KN03_TC0&t;&t;0x00000800
 DECL|macro|KN03_SCSI_FIFO
 mdefine_line|#define KN03_SCSI_FIFO&t;&t;0x00000004&t;/* ??? Info from Mach&t;*/
 multiline_comment|/*&n; * Now form groups, i.e. all serial interrupts, all SCSI interrupts and so on. &n; */

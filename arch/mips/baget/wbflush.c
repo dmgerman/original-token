@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * Setup the right wbflush routine for Baget/MIPS.&n; *&n; * Copyright (C) 1999 Gleb Raiko &amp; Vladimir Roganov&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
-macro_line|#include &lt;asm/init.h&gt;
 DECL|variable|__wbflush
 r_void
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id$&n; *&n; * balo.c: BAget LOader&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; *&n; */
+multiline_comment|/* $Id: balo.c,v 1.1 1999/01/17 03:49:37 ralf Exp $&n; *&n; * balo.c: BAget LOader&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;

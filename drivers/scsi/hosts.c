@@ -244,6 +244,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_JAZZ_ESP
 macro_line|#include &quot;jazz_esp.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_DECNCR
+macro_line|#include &quot;dec_esp.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SUN3X_ESP
 macro_line|#include &quot;sun3x_esp.h&quot;
 macro_line|#endif
@@ -580,6 +583,10 @@ macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_IPHASE5526
 id|IPH5526_SCSI_FC
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_DECNCR&t;
+id|SCSI_DEC_ESP
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_3W_XXXX_RAID

@@ -7,7 +7,6 @@ mdefine_line|#define GUSPNP_AUTODETECT
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &lt;linux/ultrasound.h&gt;
 macro_line|#include &quot;gus_hw.h&quot;
-macro_line|#ifdef CONFIG_GUS
 DECL|macro|GUS_BANK_SIZE
 mdefine_line|#define GUS_BANK_SIZE (((iw_mode) ? 256*1024*1024 : 256*1024))
 DECL|macro|MAX_SAMPLE
@@ -14184,7 +14183,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SEQUENCER
 id|gus_tmr_install
 c_func
 (paren
@@ -14193,7 +14191,6 @@ op_plus
 l_int|8
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 id|reset_sample_memory
 c_func
@@ -15507,7 +15504,6 @@ id|gus_devnum
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef CONFIG_SEQUENCER
 multiline_comment|/*&n; * Timer stuff&n; */
 DECL|variable|select_addr
 DECL|variable|data_addr
@@ -15923,6 +15919,4 @@ l_string|&quot;GUS&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#endif
-macro_line|#endif
 eof

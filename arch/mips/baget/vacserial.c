@@ -1,4 +1,4 @@
-multiline_comment|/* $Id$&n; * vacserial.c: VAC UART serial driver&n; *              This code stealed and adopted from linux/drivers/char/serial.c&n; *              See that for author info&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; */
+multiline_comment|/* $Id: vacserial.c,v 1.4 1999/10/09 00:00:57 ralf Exp $&n; * vacserial.c: VAC UART serial driver&n; *              This code stealed and adopted from linux/drivers/char/serial.c&n; *              See that for author info&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; */
 DECL|macro|SERIAL_PARANOIA_CHECK
 macro_line|#undef  SERIAL_PARANOIA_CHECK
 DECL|macro|CONFIG_SERIAL_NOPAUSE_IO
@@ -21,7 +21,7 @@ mdefine_line|#define RS_STROBE_TIME (10*HZ)
 DECL|macro|RS_ISR_PASS_LIMIT
 mdefine_line|#define RS_ISR_PASS_LIMIT  2 /* Beget is not a super-computer (old=256) */
 DECL|macro|IRQ_T
-mdefine_line|#define IRQ_T(info) ((info-&gt;flags &amp; ASYNC_SHARE_IRQ) ? SA_SHIRQ : SA_INTERRUPT)
+mdefine_line|#define IRQ_T(state) &bslash;&n; ((state-&gt;flags &amp; ASYNC_SHARE_IRQ) ? SA_SHIRQ : SA_INTERRUPT)
 DECL|macro|SERIAL_INLINE
 mdefine_line|#define SERIAL_INLINE
 macro_line|#if defined(MODULE) &amp;&amp; defined(SERIAL_DEBUG_MCOUNT)
@@ -289,13 +289,12 @@ r_char
 op_star
 id|tmp_buf
 suffix:semicolon
-DECL|variable|tmp_buf_sem
 r_static
-r_struct
-id|semaphore
+id|DECLARE_MUTEX
+c_func
+(paren
 id|tmp_buf_sem
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 DECL|function|serial_paranoia_check
 r_static
@@ -2325,7 +2324,7 @@ comma
 id|IRQ_T
 c_func
 (paren
-id|info
+id|state
 )paren
 comma
 l_string|&quot;serial&quot;
@@ -2711,7 +2710,7 @@ comma
 id|IRQ_T
 c_func
 (paren
-id|info
+id|state
 )paren
 comma
 l_string|&quot;serial&quot;
@@ -3061,6 +3060,17 @@ c_func
 id|info-&gt;tty
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|baud
+)paren
+id|baud
+op_assign
+l_int|9600
+suffix:semicolon
+multiline_comment|/* B0 transition handled in rs_set_termios */
 id|baud_base
 op_assign
 id|info-&gt;state-&gt;baud_base
@@ -5149,7 +5159,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|state-&gt;flags
+id|info-&gt;flags
 op_amp
 id|ASYNC_INITIALIZED
 )paren
@@ -6376,11 +6386,17 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
+r_int
+r_int
+id|cflag
+op_assign
+id|tty-&gt;termios-&gt;c_cflag
+suffix:semicolon
 r_if
 c_cond
 (paren
 (paren
-id|tty-&gt;termios-&gt;c_cflag
+id|cflag
 op_eq
 id|old_termios-&gt;c_cflag
 )paren
@@ -6419,7 +6435,7 @@ id|CRTSCTS
 op_logical_and
 op_logical_neg
 (paren
-id|tty-&gt;termios-&gt;c_cflag
+id|cflag
 op_amp
 id|CRTSCTS
 )paren
@@ -7167,15 +7183,13 @@ op_star
 id|info
 )paren
 (brace
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 r_struct
 id|serial_state
@@ -7730,6 +7744,27 @@ r_sizeof
 r_struct
 id|async_struct
 )paren
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|info-&gt;open_wait
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|info-&gt;close_wait
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|info-&gt;delta_msr_wait
 )paren
 suffix:semicolon
 id|info-&gt;magic

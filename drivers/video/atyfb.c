@@ -24,10 +24,12 @@ macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifdef __powerpc__
 macro_line|#include &lt;linux/adb.h&gt;
-macro_line|#include &lt;linux/pmu.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &lt;video/macmodes.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_ADB_PMU
+macro_line|#include &lt;linux/pmu.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_NVRAM
 macro_line|#include &lt;linux/nvram.h&gt;
@@ -17846,6 +17848,17 @@ op_sub_assign
 id|GUI_RESERVE
 suffix:semicolon
 )brace
+multiline_comment|/* Clear the video memory */
+id|memset_io
+c_func
+(paren
+id|info-&gt;frame_buffer
+comma
+l_int|0
+comma
+id|info-&gt;total_vram
+)paren
+suffix:semicolon
 id|disp
 op_assign
 op_amp
@@ -21226,7 +21239,7 @@ suffix:semicolon
 id|u8
 id|gen_cntl
 suffix:semicolon
-macro_line|#ifdef CONFIG_PPC
+macro_line|#ifdef CONFIG_ADB_PMU
 r_if
 c_cond
 (paren
@@ -21325,7 +21338,7 @@ comma
 id|info
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PPC
+macro_line|#ifdef CONFIG_ADB_PMU
 r_if
 c_cond
 (paren

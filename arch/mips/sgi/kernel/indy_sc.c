@@ -1,11 +1,11 @@
-multiline_comment|/* $Id: indy_sc.c,v 1.9 1999/05/12 21:57:49 ulfc Exp $&n; *&n; * indy_sc.c: Indy cache managment functions.&n; *&n; * Copyright (C) 1997 Ralf Baechle (ralf@gnu.org),&n; * derived from r4xx0.c by David S. Miller (dm@engr.sgi.com).&n; */
+multiline_comment|/* $Id: indy_sc.c,v 1.13 1999/12/04 03:59:00 ralf Exp $&n; *&n; * indy_sc.c: Indy cache managment functions.&n; *&n; * Copyright (C) 1997 Ralf Baechle (ralf@gnu.org),&n; * derived from r4xx0.c by David S. Miller (dm@engr.sgi.com).&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/bcache.h&gt;
-macro_line|#include &lt;asm/sgi.h&gt;
-macro_line|#include &lt;asm/sgimc.h&gt;
+macro_line|#include &lt;asm/sgi/sgi.h&gt;
+macro_line|#include &lt;asm/sgi/sgimc.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -931,6 +931,8 @@ c_func
 r_void
 )paren
 (brace
+r_return
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -1355,7 +1355,7 @@ id|isa_device_interrupt
 comma
 id|init_arch
 suffix:colon
-id|lca_init_arch
+id|apecs_init_arch
 comma
 id|init_irq
 suffix:colon

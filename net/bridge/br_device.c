@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Device handling code&n; *&t;Linux ethernet bridge&n; *&n; *&t;Authors:&n; *&t;Lennert Buytenhek&t;&t;&lt;buytenh@gnu.org&gt;&n; *&n; *&t;$Id: br_device.c,v 1.1 2000/02/18 16:47:11 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Device handling code&n; *&t;Linux ethernet bridge&n; *&n; *&t;Authors:&n; *&t;Lennert Buytenhek&t;&t;&lt;buytenh@gnu.org&gt;&n; *&n; *&t;$Id: br_device.c,v 1.2 2000/02/24 19:48:06 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -430,7 +430,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_NET_FASTROUTE
 DECL|function|br_dev_accept_fastpath
 r_static
 r_int
@@ -453,7 +452,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#endif
 DECL|function|br_dev_setup
 r_void
 id|br_dev_setup
@@ -499,15 +497,17 @@ id|dev-&gt;stop
 op_assign
 id|br_dev_stop
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET_FASTROUTE
 id|dev-&gt;accept_fastpath
 op_assign
 id|br_dev_accept_fastpath
 suffix:semicolon
-macro_line|#endif
 id|dev-&gt;tx_queue_len
 op_assign
 l_int|0
+suffix:semicolon
+id|dev-&gt;set_mac_address
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 eof
