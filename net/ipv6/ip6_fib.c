@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation &n; *&t;Forwarding Information Database&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_fib.c,v 1.16 1999/03/21 05:22:52 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation &n; *&t;Forwarding Information Database&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_fib.c,v 1.17 1999/04/22 10:07:41 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2945,24 +2945,6 @@ c_func
 l_string|&quot;fib6_del_route&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|rt-&gt;rt6i_flags
-op_amp
-id|RTF_CACHE
-)paren
-)paren
-id|fib6_prune_clones
-c_func
-(paren
-id|fn
-comma
-id|rt
-)paren
-suffix:semicolon
 multiline_comment|/* Unlink it */
 op_star
 id|rtp
@@ -3134,6 +3116,24 @@ c_func
 id|fn-&gt;fn_flags
 op_amp
 id|RTN_RTINFO
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|rt-&gt;rt6i_flags
+op_amp
+id|RTF_CACHE
+)paren
+)paren
+id|fib6_prune_clones
+c_func
+(paren
+id|fn
+comma
+id|rt
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Walk the leaf entries looking for ourself&n;&t; */

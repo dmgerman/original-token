@@ -1106,7 +1106,7 @@ l_int|0
 comma
 id|PAGE_SIZE
 op_star
-id|NCPUS
+id|SUN4M_NCPUS
 comma
 l_string|&quot;counters_percpu&quot;
 comma
@@ -1611,7 +1611,7 @@ l_int|0
 comma
 id|PAGE_SIZE
 op_star
-id|NCPUS
+id|SUN4M_NCPUS
 comma
 l_string|&quot;interrupts_percpu&quot;
 comma

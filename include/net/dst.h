@@ -5,13 +5,8 @@ mdefine_line|#define _NET_DST_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/neighbour.h&gt;
 multiline_comment|/*&n; * 0 - no debugging messages&n; * 1 - rare events and bugs (default)&n; * 2 - trace mode.&n; */
-macro_line|#ifdef  NO_ANK_FIX
 DECL|macro|RT_CACHE_DEBUG
 mdefine_line|#define RT_CACHE_DEBUG&t;&t;0
-macro_line|#else
-DECL|macro|RT_CACHE_DEBUG
-mdefine_line|#define RT_CACHE_DEBUG&t;&t;1
-macro_line|#endif
 DECL|macro|DST_GC_MIN
 mdefine_line|#define DST_GC_MIN&t;(1*HZ)
 DECL|macro|DST_GC_INC

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: psycho.h,v 1.4 1998/12/23 10:08:16 davem Exp $&n; * psycho.h: UltraSparc AX specific PCI definitions.&n; *&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: psycho.h,v 1.5 1999/04/01 12:27:28 davem Exp $&n; * psycho.h: UltraSparc AX specific PCI definitions.&n; *&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#ifndef __SPARC64_PSYCHO_H
 DECL|macro|__SPARC64_PSYCHO_H
 mdefine_line|#define __SPARC64_PSYCHO_H
@@ -955,8 +955,8 @@ DECL|macro|PSYCHO_CEAFSR_RESV1
 mdefine_line|#define PSYCHO_CEAFSR_RESV1&t;0x0300000000000000 /* Reserved                     */
 DECL|macro|PSYCHO_CEAFSR_ESYND
 mdefine_line|#define PSYCHO_CEAFSR_ESYND&t;0x00ff000000000000 /* Syndrome Bits                */
-DECL|macro|PSYCHO_UEAFSR_SIZE
-mdefine_line|#define PSYCHO_UEAFSR_SIZE&t;0x0000ffff00000000 /* Bytemask of failed transfer  */
+DECL|macro|PSYCHO_CEAFSR_SIZE
+mdefine_line|#define PSYCHO_CEAFSR_SIZE&t;0x0000ffff00000000 /* Bytemask of failed transfer  */
 DECL|macro|PSYCHO_CEAFSR_DOFF
 mdefine_line|#define PSYCHO_CEAFSR_DOFF&t;0x00000000e0000000 /* Double Offset                */
 DECL|macro|PSYCHO_CEAFSR_MID

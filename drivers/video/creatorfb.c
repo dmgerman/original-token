@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: creatorfb.c,v 1.26 1999/03/11 00:29:54 davem Exp $&n; * creatorfb.c: Creator/Creator3D frame buffer driver&n; *&n; * Copyright (C) 1997,1998,1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: creatorfb.c,v 1.27 1999/03/28 12:37:12 jj Exp $&n; * creatorfb.c: Creator/Creator3D frame buffer driver&n; *&n; * Copyright (C) 1997,1998,1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -4419,6 +4419,16 @@ id|i
 comma
 id|fb-&gt;s.ffb.dac_rev
 )paren
+suffix:semicolon
+multiline_comment|/* Elite3D has different DAC revision numbering, and no DAC revisions&n;&t;   have the reversed meaning of cursor enable */
+r_if
+c_cond
+(paren
+id|afb
+)paren
+id|fb-&gt;s.ffb.dac_rev
+op_assign
+l_int|10
 suffix:semicolon
 r_return
 id|idstring

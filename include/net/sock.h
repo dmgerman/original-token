@@ -235,9 +235,9 @@ id|in6_addr
 op_star
 id|daddr_cache
 suffix:semicolon
-DECL|member|flow_lbl
+DECL|member|flow_label
 id|__u32
-id|flow_lbl
+id|flow_label
 suffix:semicolon
 DECL|member|frag_size
 id|__u32
@@ -254,10 +254,6 @@ suffix:semicolon
 DECL|member|mcast_oif
 r_int
 id|mcast_oif
-suffix:semicolon
-DECL|member|priority
-id|__u8
-id|priority
 suffix:semicolon
 multiline_comment|/* pktoption flags */
 r_union
@@ -295,8 +291,8 @@ id|authhdr
 suffix:colon
 l_int|1
 comma
-DECL|member|unused
-id|unused
+DECL|member|rxflow
+id|rxflow
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -324,6 +320,11 @@ id|recverr
 suffix:colon
 l_int|1
 comma
+DECL|member|sndflow
+id|sndflow
+suffix:colon
+l_int|1
+comma
 DECL|member|pmtudisc
 id|pmtudisc
 suffix:colon
@@ -334,6 +335,12 @@ r_struct
 id|ipv6_mc_socklist
 op_star
 id|ipv6_mc_list
+suffix:semicolon
+DECL|member|ipv6_fl_list
+r_struct
+id|ipv6_fl_socklist
+op_star
+id|ipv6_fl_list
 suffix:semicolon
 DECL|member|dst_cookie
 id|__u32

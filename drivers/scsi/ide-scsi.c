@@ -153,10 +153,12 @@ suffix:semicolon
 multiline_comment|/* Status/Action flags */
 DECL|member|transform
 r_int
+r_int
 id|transform
 suffix:semicolon
 multiline_comment|/* SCSI cmd translation layer */
 DECL|member|log
+r_int
 r_int
 id|log
 suffix:semicolon

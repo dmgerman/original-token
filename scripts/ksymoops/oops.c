@@ -1262,7 +1262,7 @@ c_cond
 id|errno
 )paren
 (brace
-macro_line|#if 0
+macro_line|#ifdef __sparc__
 multiline_comment|/* Try strtoull also, e.g. sparc binutils print &lt;_PC+0xfffffffffffffd58&gt; */
 id|errno
 op_assign

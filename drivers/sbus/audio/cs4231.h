@@ -261,6 +261,26 @@ id|recording_count
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef EB4231_SUPPORT
+DECL|macro|CS4231_READ32
+mdefine_line|#define CS4231_READ32(__C, __REG) &bslash;&n;&t;(((__C)-&gt;status &amp; CS_STATUS_IS_EBUS) ? readl((unsigned long)(__REG)) : (*(__REG)))
+DECL|macro|CS4231_READ8
+mdefine_line|#define CS4231_READ8(__C, __REG) &bslash;&n;&t;(((__C)-&gt;status &amp; CS_STATUS_IS_EBUS) ? readb((unsigned long)(__REG)) : (*(__REG)))
+DECL|macro|CS4231_WRITE32
+mdefine_line|#define CS4231_WRITE32(__C, __REG, __VAL) &bslash;&n;&t;(((__C)-&gt;status &amp; CS_STATUS_IS_EBUS) ? &bslash;&n;         writel((__VAL), (unsigned long)(__REG)) : &bslash;&n;         (*(__REG) = (__VAL)))
+DECL|macro|CS4231_WRITE8
+mdefine_line|#define CS4231_WRITE8(__C, __REG, __VAL) &bslash;&n;&t;(((__C)-&gt;status &amp; CS_STATUS_IS_EBUS) ? &bslash;&n;         writeb((__VAL), (unsigned long)(__REG)) : &bslash;&n;         (*(__REG) = (__VAL)))
+macro_line|#else
+multiline_comment|/* We can assume all is SBUS in this case. */
+DECL|macro|CS4231_READ32
+mdefine_line|#define CS4231_READ32(__C, __REG) (*(__REG))
+DECL|macro|CS4231_READ8
+mdefine_line|#define CS4231_READ8(__C, __REG) (*(__REG))
+DECL|macro|CS4231_WRITE32
+mdefine_line|#define CS4231_WRITE32(__C, __REG, __VAL) (*(__REG) = (__VAL))
+DECL|macro|CS4231_WRITE8
+mdefine_line|#define CS4231_WRITE8(__C, __REG, __VAL) (*(__REG) = (__VAL))
+macro_line|#endif
 multiline_comment|/* Local status bits */
 DECL|macro|CS_STATUS_NEED_INIT
 mdefine_line|#define CS_STATUS_NEED_INIT 0x01

@@ -756,11 +756,11 @@ l_int|1
 suffix:semicolon
 id|inode-&gt;i_uid
 op_assign
-id|current-&gt;uid
+id|current-&gt;fsuid
 suffix:semicolon
 id|inode-&gt;i_gid
 op_assign
-id|current-&gt;gid
+id|current-&gt;fsgid
 suffix:semicolon
 id|sock-&gt;inode
 op_assign
@@ -4246,8 +4246,7 @@ c_cond
 (paren
 id|msg_sys.msg_iovlen
 OG
-l_int|1
-multiline_comment|/* UIO_FASTIOV */
+id|UIO_FASTIOV
 )paren
 (brace
 id|iov
@@ -4301,6 +4300,22 @@ suffix:semicolon
 id|total_len
 op_assign
 id|err
+suffix:semicolon
+id|err
+op_assign
+op_minus
+id|ENOBUFS
+suffix:semicolon
+multiline_comment|/* msg_controllen must fit to int */
+r_if
+c_cond
+(paren
+id|msg_sys.msg_controllen
+OG
+id|INT_MAX
+)paren
+r_goto
+id|out_freeiov
 suffix:semicolon
 id|ctl_len
 op_assign

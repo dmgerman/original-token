@@ -2067,7 +2067,7 @@ mdefine_line|#define __memset(s, c, count) &bslash;&n;(__builtin_constant_p(coun
 DECL|macro|__HAVE_ARCH_MEMSET
 mdefine_line|#define __HAVE_ARCH_MEMSET
 DECL|macro|memset
-mdefine_line|#define memset(s, c, count) &bslash;&n;(__builtin_constant_p(c) ? &bslash;&n; __constant_c_x_memset((s),(0x01010101UL*(unsigned char)c),(count)) : &bslash;&n; __memset((s),(c),(count)))
+mdefine_line|#define memset(s, c, count) &bslash;&n;(__builtin_constant_p(c) ? &bslash;&n; __constant_c_x_memset((s),(0x01010101UL*(unsigned char)(c)),(count)) : &bslash;&n; __memset((s),(c),(count)))
 multiline_comment|/*&n; * find the first occurrence of byte &squot;c&squot;, or 1 past the area if none&n; */
 DECL|macro|__HAVE_ARCH_MEMSCAN
 mdefine_line|#define __HAVE_ARCH_MEMSCAN

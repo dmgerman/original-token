@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: vaddrs.h,v 1.21 1996/10/07 03:03:02 davem Exp $ */
+multiline_comment|/* $Id: vaddrs.h,v 1.22 1999/04/20 13:22:55 anton Exp $ */
 macro_line|#ifndef _SPARC_VADDRS_H
 DECL|macro|_SPARC_VADDRS_H
 mdefine_line|#define _SPARC_VADDRS_H
@@ -37,7 +37,7 @@ mdefine_line|#define  PERCPU_VADDR   0xffc00000  /* Base for per-cpu virtual map
 DECL|macro|PERCPU_ENTSIZE
 mdefine_line|#define  PERCPU_ENTSIZE 0x00100000
 DECL|macro|PERCPU_LEN
-mdefine_line|#define  PERCPU_LEN     ((PERCPU_ENTSIZE*NCPUS))
+mdefine_line|#define  PERCPU_LEN     ((PERCPU_ENTSIZE*SUN4M_NCPUS))
 multiline_comment|/* per-cpu offsets */
 DECL|macro|PERCPU_TBR_OFFSET
 mdefine_line|#define  PERCPU_TBR_OFFSET      0x00000      /* %tbr, mainly used for identification. */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.42 1999/01/19 08:20:06 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.43 1999/04/22 10:07:39 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -635,8 +635,6 @@ suffix:semicolon
 r_int
 r_int
 id|snum
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|addr_type
@@ -693,48 +691,6 @@ l_int|0
 r_return
 op_minus
 id|EINVAL
-suffix:semicolon
-id|snum
-op_assign
-id|ntohs
-c_func
-(paren
-id|addr-&gt;sin6_port
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|snum
-op_eq
-l_int|0
-)paren
-id|snum
-op_assign
-id|sk-&gt;prot
-op_member_access_from_pointer
-id|good_socknum
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|snum
-OL
-id|PROT_SOCK
-op_logical_and
-op_logical_neg
-id|capable
-c_func
-(paren
-id|CAP_NET_BIND_SERVICE
-)paren
-)paren
-r_return
-op_minus
-id|EACCES
 suffix:semicolon
 id|addr_type
 op_assign
@@ -892,6 +848,48 @@ r_struct
 id|in6_addr
 )paren
 )paren
+suffix:semicolon
+id|snum
+op_assign
+id|ntohs
+c_func
+(paren
+id|addr-&gt;sin6_port
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|snum
+op_eq
+l_int|0
+)paren
+id|snum
+op_assign
+id|sk-&gt;prot
+op_member_access_from_pointer
+id|good_socknum
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|snum
+OL
+id|PROT_SOCK
+op_logical_and
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_BIND_SERVICE
+)paren
+)paren
+r_return
+op_minus
+id|EACCES
 suffix:semicolon
 multiline_comment|/* Make sure we are allowed to bind here. */
 r_if
@@ -1066,6 +1064,13 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+multiline_comment|/* Free flowlabels */
+id|fl6_free_socklist
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 multiline_comment|/* Free tx options */
 r_if
 c_cond
@@ -1145,6 +1150,10 @@ id|sin-&gt;sin6_family
 op_assign
 id|AF_INET6
 suffix:semicolon
+id|sin-&gt;sin6_flowinfo
+op_assign
+l_int|0
+suffix:semicolon
 id|sk
 op_assign
 id|sock-&gt;sk
@@ -1188,6 +1197,15 @@ r_struct
 id|in6_addr
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;net_pinfo.af_inet6.sndflow
+)paren
+id|sin-&gt;sin6_flowinfo
+op_assign
+id|sk-&gt;net_pinfo.af_inet6.flow_label
 suffix:semicolon
 )brace
 r_else
@@ -2081,6 +2099,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|ip6_flowlabel_init
+c_func
+(paren
+)paren
+suffix:semicolon
 id|addrconf_init
 c_func
 (paren
@@ -2246,6 +2269,11 @@ c_func
 )paren
 suffix:semicolon
 id|ipv6_netdev_notif_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ip6_flowlabel_cleanup
 c_func
 (paren
 )paren

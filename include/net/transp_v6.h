@@ -19,6 +19,9 @@ r_struct
 id|proto
 id|tcpv6_prot
 suffix:semicolon
+r_struct
+id|flowi
+suffix:semicolon
 r_extern
 r_void
 id|rawv6_init
@@ -93,15 +96,10 @@ id|msghdr
 op_star
 id|msg
 comma
-r_int
-op_star
-id|oif
-comma
 r_struct
-id|in6_addr
+id|flowi
 op_star
-op_star
-id|src_addr
+id|fl
 comma
 r_struct
 id|ipv6_txoptions

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: visasm.h,v 1.3 1998/09/04 01:59:48 ecd Exp $ */
+multiline_comment|/* $Id: visasm.h,v 1.4 1999/04/19 01:25:55 davem Exp $ */
 macro_line|#ifndef _SPARC64_VISASM_H
 DECL|macro|_SPARC64_VISASM_H
 mdefine_line|#define _SPARC64_VISASM_H
@@ -6,7 +6,7 @@ multiline_comment|/* visasm.h:  FPU saving macros for VIS routines&n; *&n; * Cop
 macro_line|#include &lt;asm/pstate.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 DECL|macro|AOFF_task_fpregs
-mdefine_line|#define AOFF_task_fpregs&t;(((ASIZ_task) + 255) &amp; ~255)
+mdefine_line|#define AOFF_task_fpregs&t;(((ASIZ_task) + (64 - 1)) &amp; ~(64 - 1))
 multiline_comment|/* Clobbers %o5, %g1, %g2, %g3, %g7, %icc, %xcc */
 DECL|macro|VISEntry
 mdefine_line|#define VISEntry&t;&t;&t;&t;&t;&bslash;&n;&t;rd&t;&t;%fprs, %o5;&t;&t;&t;&bslash;&n;&t;andcc&t;&t;%o5, (FPRS_FEF|FPRS_DU), %g0;&t;&bslash;&n;&t;be,pt&t;&t;%icc, 297f;&t;&t;&t;&bslash;&n;&t; sethi&t;&t;%hi(297f), %g7;&t;&t;&t;&bslash;&n;&t;ba,pt&t;&t;%xcc, VISenter;&t;&t;&t;&bslash;&n;&t; or&t;&t;%g7, %lo(297f), %g7;&t;&t;&bslash;&n;297:&t;wr&t;&t;%g0, FPRS_FEF, %fprs;&t;&t;&bslash;&n;

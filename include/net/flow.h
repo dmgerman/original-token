@@ -41,6 +41,10 @@ id|in6_addr
 op_star
 id|saddr
 suffix:semicolon
+DECL|member|flowlabel
+id|__u32
+id|flowlabel
+suffix:semicolon
 DECL|member|ip6_u
 )brace
 id|ip6_u
@@ -53,6 +57,8 @@ DECL|macro|fl6_dst
 mdefine_line|#define fl6_dst&t;&t;nl_u.ip6_u.daddr
 DECL|macro|fl6_src
 mdefine_line|#define fl6_src&t;&t;nl_u.ip6_u.saddr
+DECL|macro|fl6_flowlabel
+mdefine_line|#define fl6_flowlabel&t;nl_u.ip6_u.flowlabel
 DECL|macro|fl4_dst
 mdefine_line|#define fl4_dst&t;&t;nl_u.ip4_u.daddr
 DECL|macro|fl4_src

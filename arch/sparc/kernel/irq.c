@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: irq.c,v 1.91 1998/10/14 07:04:17 jj Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@metabyte.com)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; *  Copyright (C) 1998 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/*  $Id: irq.c,v 1.93 1999/04/21 06:15:45 anton Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@metabyte.com)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; *  Copyright (C) 1998-99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -12,6 +12,8 @@ macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -684,7 +686,19 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Per-processor IRQ and bh locking depth, both SMP and non-SMP code use this. */
+macro_line|#ifndef __SMP__
+DECL|variable|local_bh_count
+r_int
+r_int
+id|local_bh_count
+suffix:semicolon
+DECL|variable|local_irq_count
+r_int
+r_int
+id|local_irq_count
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* SMP interrupt locking on Sparc. */
 DECL|variable|local_bh_count
 r_int
 r_int
@@ -701,8 +715,22 @@ id|local_irq_count
 id|NR_CPUS
 )braket
 suffix:semicolon
-macro_line|#ifdef __SMP__
-multiline_comment|/* SMP interrupt locking on Sparc. */
+DECL|variable|global_bh_lock
+id|atomic_t
+id|global_bh_lock
+op_assign
+id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+DECL|variable|global_bh_count
+id|spinlock_t
+id|global_bh_count
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/* Who has global_irq_lock. */
 DECL|variable|global_irq_holder
 r_int
@@ -729,26 +757,6 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-DECL|variable|global_bh_count
-id|atomic_t
-id|global_bh_count
-op_assign
-id|ATOMIC_INIT
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-DECL|variable|global_bh_lock
-id|atomic_t
-id|global_bh_lock
-op_assign
-id|ATOMIC_INIT
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
 multiline_comment|/* This protects BH software state (masks, things like that). */
 DECL|variable|sparc_bh_lock
 id|spinlock_t
@@ -756,15 +764,169 @@ id|sparc_bh_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#ifdef DEBUG_IRQLOCK
-DECL|macro|INIT_STUCK
-macro_line|#undef INIT_STUCK
-DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK 100000000
-DECL|macro|STUCK
-macro_line|#undef STUCK
-DECL|macro|STUCK
-mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;wait_on_bh CPU#%d stuck at %08lx&bslash;n&quot;, cpu, where); stuck = INIT_STUCK; }
+r_void
+id|smp_show_backtrace_all_cpus
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|show_backtrace
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|macro|MAXCOUNT
+mdefine_line|#define MAXCOUNT 100000000
+DECL|macro|VERBOSE_DEBUG_IRQLOCK
+mdefine_line|#define VERBOSE_DEBUG_IRQLOCK
+DECL|function|show
+r_static
+r_void
+id|show
+c_func
+(paren
+r_char
+op_star
+id|str
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n%s, CPU %d:&bslash;n&quot;
+comma
+id|str
+comma
+id|cpu
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;irq:  %d [ &quot;
+comma
+id|atomic_read
+c_func
+(paren
+op_amp
+id|global_irq_count
+)paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NR_CPUS
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%d &quot;
+comma
+id|local_irq_count
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;]&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;bh:   %d [ &quot;
+comma
+(paren
+id|spin_is_locked
+c_func
+(paren
+op_amp
+id|global_bh_count
+)paren
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NR_CPUS
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%d &quot;
+comma
+id|local_bh_count
+(braket
+id|cpu
+)braket
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;]&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef VERBOSE_DEBUG_IRQLOCK
+id|smp_show_backtrace_all_cpus
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#else
+id|show_backtrace
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 DECL|function|wait_on_bh
 r_static
 r_inline
@@ -772,56 +934,58 @@ r_void
 id|wait_on_bh
 c_func
 (paren
-r_int
-id|cpu
-comma
-r_int
-r_int
-id|where
+r_void
 )paren
 (brace
 r_int
-id|stuck
+id|count
 op_assign
-id|INIT_STUCK
+id|MAXCOUNT
 suffix:semicolon
 r_do
 (brace
-id|STUCK
+r_if
+c_cond
+(paren
+op_logical_neg
+op_decrement
+id|count
+)paren
+(brace
+id|show
+c_func
+(paren
+l_string|&quot;wait_on_bh&quot;
+)paren
 suffix:semicolon
-multiline_comment|/* nothing .. wait for the other bh&squot;s to go away */
+id|count
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 r_while
 c_loop
 (paren
-id|atomic_read
+id|spin_is_locked
 c_func
 (paren
 op_amp
 id|global_bh_count
 )paren
-op_ne
-l_int|0
 )paren
+(brace
 suffix:semicolon
 )brace
-DECL|variable|previous_irqholder
-r_static
-r_int
-r_int
-id|previous_irqholder
-suffix:semicolon
-DECL|macro|INIT_STUCK
-macro_line|#undef INIT_STUCK
-DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK 100000000
-DECL|macro|STUCK
-macro_line|#undef STUCK
-DECL|macro|STUCK
-mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;wait_on_irq CPU#%d stuck at %08lx, waiting for %08lx (local=%d, global=%d)&bslash;n&quot;, cpu, where, previous_irqholder, local_count, atomic_read(&amp;global_irq_count)); stuck = INIT_STUCK; }
+)brace
 multiline_comment|/*&n; * We have to allow irqs to arrive between __sti and __cli&n; */
 DECL|macro|SYNC_OTHER_CORES
-mdefine_line|#define SYNC_OTHER_CORES(x) __asm__ __volatile__ (&quot;nop&quot;)
+mdefine_line|#define SYNC_OTHER_CORES(x) udelay(x+1)
 DECL|function|wait_on_irq
 r_static
 r_inline
@@ -831,24 +995,12 @@ c_func
 (paren
 r_int
 id|cpu
-comma
-r_int
-r_int
-id|where
 )paren
 (brace
 r_int
-id|stuck
+id|count
 op_assign
-id|INIT_STUCK
-suffix:semicolon
-r_int
-id|local_count
-op_assign
-id|local_irq_count
-(braket
-id|cpu
-)braket
+id|MAXCOUNT
 suffix:semicolon
 r_for
 c_loop
@@ -879,7 +1031,7 @@ id|cpu
 )braket
 op_logical_or
 op_logical_neg
-id|atomic_read
+id|spin_is_locked
 c_func
 (paren
 op_amp
@@ -904,8 +1056,26 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-id|STUCK
+r_if
+c_cond
+(paren
+op_logical_neg
+op_decrement
+id|count
+)paren
+(brace
+id|show
+c_func
+(paren
+l_string|&quot;wait_on_irq&quot;
+)paren
 suffix:semicolon
+id|count
+op_assign
+op_complement
+l_int|0
+suffix:semicolon
+)brace
 id|__sti
 c_func
 (paren
@@ -937,13 +1107,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_star
+id|spin_is_locked
 (paren
-(paren
-r_int
-r_char
-op_star
-)paren
 op_amp
 id|global_irq_lock
 )paren
@@ -959,7 +1124,7 @@ id|local_bh_count
 id|cpu
 )braket
 op_logical_and
-id|atomic_read
+id|spin_is_locked
 c_func
 (paren
 op_amp
@@ -992,26 +1157,10 @@ c_func
 r_void
 )paren
 (brace
-r_int
-r_int
-id|where
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;mov %%i7, %0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|where
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|atomic_read
-c_func
+id|spin_is_locked
 (paren
 op_amp
 id|global_bh_count
@@ -1023,24 +1172,11 @@ c_func
 (paren
 )paren
 )paren
-(brace
-r_int
-id|cpu
-op_assign
-id|smp_processor_id
-c_func
-(paren
-)paren
-suffix:semicolon
 id|wait_on_bh
 c_func
 (paren
-id|cpu
-comma
-id|where
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * This is called when we want to synchronize with&n; * interrupts. We may for example tell a device to&n; * stop sending interrupts: but to make sure there&n; * are no interrupts that are executing on another&n; * CPU we need to call this function.&n; */
 DECL|function|synchronize_irq
@@ -1075,14 +1211,6 @@ c_func
 suffix:semicolon
 )brace
 )brace
-DECL|macro|INIT_STUCK
-macro_line|#undef INIT_STUCK
-DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK 10000000
-DECL|macro|STUCK
-macro_line|#undef STUCK
-DECL|macro|STUCK
-mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;get_irqlock stuck at %08lx, waiting for %08lx&bslash;n&quot;, where, previous_irqholder); stuck = INIT_STUCK;}
 DECL|function|get_irqlock
 r_static
 r_inline
@@ -1092,16 +1220,12 @@ c_func
 (paren
 r_int
 id|cpu
-comma
-r_int
-r_int
-id|where
 )paren
 (brace
 r_int
-id|stuck
+id|count
 op_assign
-id|INIT_STUCK
+id|MAXCOUNT
 suffix:semicolon
 r_if
 c_cond
@@ -1132,32 +1256,43 @@ suffix:semicolon
 multiline_comment|/* Uhhuh.. Somebody else got it. Wait.. */
 r_do
 (brace
-r_do
+r_while
+c_loop
+(paren
+id|spin_is_locked
+c_func
+(paren
+op_amp
+id|global_irq_lock
+)paren
+)paren
 (brace
-id|STUCK
+r_if
+c_cond
+(paren
+op_logical_neg
+op_decrement
+id|count
+)paren
+(brace
+id|show
+c_func
+(paren
+l_string|&quot;get_irqlock&quot;
+)paren
 suffix:semicolon
+id|count
+op_assign
+op_complement
+l_int|0
+suffix:semicolon
+)brace
 id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-r_while
-c_loop
-(paren
-op_star
-(paren
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-op_amp
-id|global_irq_lock
-)paren
-)paren
-suffix:semicolon
 )brace
 r_while
 c_loop
@@ -1177,18 +1312,12 @@ id|wait_on_irq
 c_func
 (paren
 id|cpu
-comma
-id|where
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Ok, finally..&n;&t; */
 id|global_irq_holder
 op_assign
 id|cpu
-suffix:semicolon
-id|previous_irqholder
-op_assign
-id|where
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * A global &quot;cli()&quot; while in an interrupt context&n; * turns into just a local cli(). Interrupts&n; * should use spinlocks for the (very unlikely)&n; * case that they ever want to protect against&n; * each other.&n; *&n; * If we already have local interrupts disabled,&n; * this will not turn a local disable into a&n; * global one (problems with spinlocks: this makes&n; * save_flags+cli+sti usable inside a spinlock).&n; */
@@ -1203,21 +1332,6 @@ r_void
 r_int
 r_int
 id|flags
-suffix:semicolon
-r_int
-r_int
-id|where
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;mov %%i7, %0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|where
-)paren
-)paren
 suffix:semicolon
 id|__save_flags
 c_func
@@ -1263,8 +1377,6 @@ id|get_irqlock
 c_func
 (paren
 id|cpu
-comma
-id|where
 )paren
 suffix:semicolon
 )brace
@@ -1460,239 +1572,38 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;global_restore_flags: %08lx (%08lx)&bslash;n&quot;
-comma
-id|flags
-comma
-(paren
-op_amp
-id|flags
-)paren
-(braket
-op_minus
-l_int|1
-)braket
-)paren
-suffix:semicolon
+(brace
 )brace
-)brace
-DECL|macro|INIT_STUCK
-macro_line|#undef INIT_STUCK
-DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK 200000000
-DECL|macro|STUCK
-macro_line|#undef STUCK
-DECL|macro|STUCK
-mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;irq_enter stuck (irq=%d, cpu=%d, global=%d)&bslash;n&quot;,irq,cpu,global_irq_holder); stuck = INIT_STUCK;}
-DECL|macro|VERBOSE_IRQLOCK_DEBUGGING
-mdefine_line|#define VERBOSE_IRQLOCK_DEBUGGING
-DECL|function|irq_enter
-r_void
-id|irq_enter
-c_func
-(paren
-r_int
-id|cpu
-comma
-r_int
-id|irq
-comma
-r_void
-op_star
-id|_opaque
-)paren
 (brace
-macro_line|#ifdef VERBOSE_IRQLOCK_DEBUGGING
-r_extern
-r_void
-id|smp_show_backtrace_all_cpus
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-r_int
-id|stuck
-op_assign
-id|INIT_STUCK
-suffix:semicolon
-id|hardirq_enter
-c_func
-(paren
-id|cpu
-)paren
-suffix:semicolon
-id|barrier
-c_func
-(paren
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-op_star
-(paren
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-op_amp
-id|global_irq_lock
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-r_int
-r_char
-)paren
-id|cpu
-op_eq
-id|global_irq_holder
-)paren
-(brace
-r_struct
-id|pt_regs
-op_star
-id|regs
-op_assign
-id|_opaque
-suffix:semicolon
-r_int
-id|sbh_cnt
-op_assign
-id|atomic_read
-c_func
-(paren
-op_amp
-id|global_bh_count
-)paren
-suffix:semicolon
-r_int
-id|globl_locked
-op_assign
-op_star
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-op_amp
-id|global_irq_lock
-)paren
-suffix:semicolon
-r_int
-id|globl_icount
-op_assign
-id|atomic_read
-c_func
-(paren
-op_amp
-id|global_irq_count
-)paren
-suffix:semicolon
-r_int
-id|local_count
-op_assign
-id|local_irq_count
-(braket
-id|cpu
-)braket
-suffix:semicolon
 r_int
 r_int
 id|pc
-op_assign
-id|regs-&gt;pc
 suffix:semicolon
-multiline_comment|/* It is very important that we load the state variables&n;&t;&t;&t; * before we do the first call to printk() as printk()&n;&t;&t;&t; * could end up changing them...&n;&t;&t;&t; */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;mov %%i7, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|pc
+)paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CPU[%d]: BAD! Local IRQ&squot;s enabled, global disabled &quot;
-l_string|&quot;interrupt at PC[%08lx]&bslash;n&quot;
+l_string|&quot;global_restore_flags: Bogon flags(%08lx) caller %08lx&bslash;n&quot;
 comma
-id|cpu
+id|flags
 comma
 id|pc
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;CPU[%d]: bhcnt[%d] glocked[%d] gicnt[%d] licnt[%d]&bslash;n&quot;
-comma
-id|cpu
-comma
-id|sbh_cnt
-comma
-id|globl_locked
-comma
-id|globl_icount
-comma
-id|local_count
-)paren
-suffix:semicolon
-macro_line|#ifdef VERBOSE_IRQLOCK_DEBUGGING
-id|printk
-c_func
-(paren
-l_string|&quot;Performing backtrace on all cpus, write this down!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|smp_show_backtrace_all_cpus
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-r_break
-suffix:semicolon
-)brace
-id|STUCK
-suffix:semicolon
-id|barrier
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 )brace
-DECL|function|irq_exit
-r_void
-id|irq_exit
-c_func
-(paren
-r_int
-id|cpu
-comma
-r_int
-id|irq
-)paren
-(brace
-id|hardirq_exit
-c_func
-(paren
-id|cpu
-)paren
-suffix:semicolon
-id|release_irqlock
-c_func
-(paren
-id|cpu
-)paren
-suffix:semicolon
 )brace
-macro_line|#endif /* DEBUG_IRQLOCK */
 macro_line|#endif /* __SMP__ */
 DECL|function|unexpected_irq
 r_void
@@ -1896,8 +1807,6 @@ c_func
 id|cpu
 comma
 id|irq
-comma
-id|regs
 )paren
 suffix:semicolon
 id|action
@@ -2034,8 +1943,6 @@ c_func
 id|cpu
 comma
 id|irq
-comma
-id|regs
 )paren
 suffix:semicolon
 id|kstat.irqs

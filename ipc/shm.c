@@ -3366,6 +3366,10 @@ OG
 id|max_shmid
 )paren
 (brace
+id|swap_id
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3377,10 +3381,6 @@ suffix:semicolon
 id|loop
 op_assign
 l_int|1
-suffix:semicolon
-id|swap_id
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 r_goto

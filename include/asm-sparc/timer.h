@@ -1,9 +1,9 @@
-multiline_comment|/* $Id: timer.h,v 1.20 1998/09/21 05:07:37 jj Exp $&n; * timer.h:  Definitions for the timer chips on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: timer.h,v 1.21 1999/04/20 13:22:51 anton Exp $&n; * timer.h:  Definitions for the timer chips on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef _SPARC_TIMER_H
 DECL|macro|_SPARC_TIMER_H
 mdefine_line|#define _SPARC_TIMER_H
-macro_line|#include &lt;asm/system.h&gt;  /* For NCPUS */
+macro_line|#include &lt;asm/system.h&gt;  /* For SUN4M_NCPUS */
 macro_line|#include &lt;asm/sun4paddr.h&gt;
 macro_line|#include &lt;asm/btfixup.h&gt;
 multiline_comment|/* Timer structures. The interrupt timer has two properties which&n; * are the counter (which is handled in do_timer in sched.c) and the limit.&n; * This limit is where the timer&squot;s counter &squot;wraps&squot; around. Oddly enough,&n; * the sun4c timer when it hits the limit wraps back to 1 and not zero&n; * thus when calculating the value at which it will fire a microsecond you&n; * must adjust by one.  Thanks SUN for designing such great hardware ;(&n; */
@@ -107,7 +107,7 @@ r_struct
 id|sun4m_timer_percpu_info
 id|cpu_timers
 (braket
-id|NCPUS
+id|SUN4M_NCPUS
 )braket
 suffix:semicolon
 DECL|member|l10_timer_limit

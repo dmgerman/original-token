@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 BSD socket options interface&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/net/ipv4/ip_sockglue.c&n; *&n; *&t;$Id: ipv6_sockglue.c,v 1.26 1999/03/25 10:04:53 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;FIXME: Make the setsockopt code POSIX compliant: That is&n; *&n; *&t;o&t;Return -EINVAL for setsockopt of short lengths&n; *&t;o&t;Truncate getsockopt returns&n; *&t;o&t;Return an optlen of the truncated length if need be&n; */
+multiline_comment|/*&n; *&t;IPv6 BSD socket options interface&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/net/ipv4/ip_sockglue.c&n; *&n; *&t;$Id: ipv6_sockglue.c,v 1.27 1999/04/22 10:07:43 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;FIXME: Make the setsockopt code POSIX compliant: That is&n; *&n; *&t;o&t;Return -EINVAL for setsockopt of short lengths&n; *&t;o&t;Truncate getsockopt returns&n; *&t;o&t;Return an optlen of the truncated length if need be&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -496,6 +496,18 @@ r_goto
 id|addrform_done
 suffix:semicolon
 )brace
+id|fl6_free_socklist
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+id|ipv6_sock_mc_close
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -723,6 +735,16 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|IPV6_FLOWINFO
+suffix:colon
+id|np-&gt;rxopt.bits.rxflow
+op_assign
+id|valbool
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+r_case
 id|IPV6_PKTOPTIONS
 suffix:colon
 (brace
@@ -737,13 +759,20 @@ r_struct
 id|msghdr
 id|msg
 suffix:semicolon
+r_struct
+id|flowi
+id|fl
+suffix:semicolon
 r_int
 id|junk
 suffix:semicolon
-r_struct
-id|in6_addr
-op_star
-id|saddr
+id|fl.fl6_flowlabel
+op_assign
+l_int|0
+suffix:semicolon
+id|fl.oif
+op_assign
+id|sk-&gt;bound_dev_if
 suffix:semicolon
 r_if
 c_cond
@@ -859,10 +888,7 @@ op_amp
 id|msg
 comma
 op_amp
-id|junk
-comma
-op_amp
-id|saddr
+id|fl
 comma
 id|opt
 comma
@@ -1257,9 +1283,7 @@ id|IPV6_RECVERR
 suffix:colon
 id|np-&gt;recverr
 op_assign
-op_logical_neg
-op_logical_neg
-id|val
+id|valbool
 suffix:semicolon
 r_if
 c_cond
@@ -1276,6 +1300,30 @@ id|sk-&gt;error_queue
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+r_case
+id|IPV6_FLOWINFO_SEND
+suffix:colon
+id|np-&gt;sndflow
+op_assign
+id|valbool
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+r_case
+id|IPV6_FLOWLABEL_MGR
+suffix:colon
+r_return
+id|ipv6_flowlabel_opt
+c_func
+(paren
+id|sk
+comma
+id|optval
+comma
+id|optlen
+)paren
 suffix:semicolon
 )brace
 suffix:semicolon

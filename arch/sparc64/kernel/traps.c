@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.57 1999/03/02 15:42:18 jj Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997,1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: traps.c,v 1.58 1999/03/29 12:38:10 jj Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997,1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * I like traps on v9, :))))&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
@@ -2484,11 +2484,6 @@ id|regs
 )paren
 (brace
 macro_line|#ifdef DEBUG_FPU
-id|save_and_clear_fpu
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2545,11 +2540,6 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|save_and_clear_fpu
-c_func
-(paren
-)paren
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -2599,7 +2589,7 @@ id|ret
 )paren
 r_return
 suffix:semicolon
-macro_line|#ifdef DEBUG_FPU&t;
+macro_line|#ifdef DEBUG_FPU
 id|printk
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: zs.c,v 1.40 1999/02/23 15:14:45 jj Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@metabyte.com&gt;.&n; */
+multiline_comment|/* $Id: zs.c,v 1.41 1999/04/16 16:22:27 jj Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@metabyte.com&gt;.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -7697,7 +7697,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.40 $&quot;
+l_string|&quot;$Revision: 1.41 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -10219,19 +10219,6 @@ c_func
 l_string|&quot;not doing zs_init()&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_PCI
-r_if
-c_cond
-(paren
-id|pci_present
-c_func
-(paren
-)paren
-)paren
 r_return
 l_int|0
 suffix:semicolon

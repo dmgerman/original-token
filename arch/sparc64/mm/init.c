@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.125 1999/03/28 08:39:33 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.126 1999/04/09 16:16:41 jj Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -5760,6 +5760,16 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|sun_serial_setup
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -6148,6 +6158,17 @@ id|start_mem
 op_plus
 id|shift
 suffix:semicolon
+macro_line|#ifdef CONFIG_SUN_SERIAL
+multiline_comment|/* This does not logically belong here, but is the first place&n;&t;   we can initialize it at, so that we work in the PAGE_OFFSET+&n;&t;   address space. */
+id|mempool
+op_assign
+id|sun_serial_setup
+c_func
+(paren
+id|mempool
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Allocate 64M for dynamic DVMA mapping area. */
 id|allocate_ptable_skeleton
 c_func

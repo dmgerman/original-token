@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.185 1999/03/24 11:42:35 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.186 1999/04/13 14:17:19 jj Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -12590,6 +12591,47 @@ comma
 id|end_mem
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+multiline_comment|/* If initial ramdisk was specified with physical address,&n;&t;   translate it here, as the p2v translation in srmmu&n;&t;   is not straightforward. */
+r_if
+c_cond
+(paren
+id|initrd_start
+op_logical_and
+id|initrd_start
+OL
+id|KERNBASE
+)paren
+(brace
+id|initrd_start
+op_assign
+id|srmmu_p2v
+c_func
+(paren
+id|initrd_start
+)paren
+suffix:semicolon
+id|initrd_end
+op_assign
+id|srmmu_p2v
+c_func
+(paren
+id|initrd_end
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|initrd_end
+op_le
+id|initrd_start
+)paren
+id|initrd_start
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 id|PAGE_ALIGN
 c_func

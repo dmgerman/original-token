@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.17 1998/09/16 12:25:29 jj Exp $&n; * uaccess.h: User space memore access functions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: uaccess.h,v 1.18 1999/03/30 06:38:38 jj Exp $&n; * uaccess.h: User space memore access functions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _ASM_UACCESS_H
 DECL|macro|_ASM_UACCESS_H
 mdefine_line|#define _ASM_UACCESS_H
@@ -255,8 +255,6 @@ comma
 l_int|3
 dot
 id|previous
-l_int|1
-suffix:colon
 id|mov
 op_mod
 l_int|2
@@ -264,6 +262,8 @@ comma
 op_mod
 op_mod
 id|o1
+l_int|1
+suffix:colon
 id|call
 id|__bzero
 id|mov

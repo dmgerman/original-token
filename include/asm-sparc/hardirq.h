@@ -1,8 +1,32 @@
-multiline_comment|/* hardirq.h: 32-bit Sparc hard IRQ support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/* hardirq.h: 32-bit Sparc hard IRQ support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998-99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#ifndef __SPARC_HARDIRQ_H
 DECL|macro|__SPARC_HARDIRQ_H
 mdefine_line|#define __SPARC_HARDIRQ_H
 macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#ifndef __SMP__
+r_extern
+r_int
+r_int
+id|local_irq_count
+suffix:semicolon
+multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
+DECL|macro|in_interrupt
+mdefine_line|#define in_interrupt()  ((local_irq_count + local_bh_count) != 0)
+DECL|macro|hardirq_trylock
+mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count == 0)
+DECL|macro|hardirq_endlock
+mdefine_line|#define hardirq_endlock(cpu)&t;do { } while (0)
+DECL|macro|hardirq_enter
+mdefine_line|#define hardirq_enter(cpu)&t;(local_irq_count++)
+DECL|macro|hardirq_exit
+mdefine_line|#define hardirq_exit(cpu)&t;(local_irq_count--)
+DECL|macro|synchronize_irq
+mdefine_line|#define synchronize_irq()&t;barrier()
+macro_line|#else
+macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/smp.h&gt;
 r_extern
 r_int
 r_int
@@ -11,25 +35,6 @@ id|local_irq_count
 id|NR_CPUS
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
-DECL|macro|in_interrupt
-mdefine_line|#define in_interrupt() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count[__cpu] + local_bh_count[__cpu] != 0); })
-macro_line|#ifndef __SMP__
-DECL|macro|hardirq_trylock
-mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count[cpu] == 0)
-DECL|macro|hardirq_endlock
-mdefine_line|#define hardirq_endlock(cpu)&t;do { } while (0)
-DECL|macro|hardirq_enter
-mdefine_line|#define hardirq_enter(cpu)&t;(local_irq_count[cpu]++)
-DECL|macro|hardirq_exit
-mdefine_line|#define hardirq_exit(cpu)&t;(local_irq_count[cpu]--)
-DECL|macro|synchronize_irq
-mdefine_line|#define synchronize_irq()&t;barrier()
-macro_line|#else
-macro_line|#include &lt;asm/atomic.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/smp.h&gt;
 r_extern
 r_int
 r_char
@@ -43,6 +48,9 @@ r_extern
 id|atomic_t
 id|global_irq_count
 suffix:semicolon
+multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
+DECL|macro|in_interrupt
+mdefine_line|#define in_interrupt() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count[__cpu] + local_bh_count[__cpu] != 0); })
 DECL|function|release_irqlock
 r_static
 r_inline
@@ -142,6 +150,7 @@ id|cpu
 )paren
 (brace
 r_return
+(paren
 op_logical_neg
 id|atomic_read
 c_func
@@ -151,19 +160,10 @@ id|global_irq_count
 )paren
 op_logical_and
 op_logical_neg
-op_star
-(paren
-(paren
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
+id|spin_is_locked
 (paren
 op_amp
 id|global_irq_lock
-)paren
 )paren
 )paren
 suffix:semicolon

@@ -1,10 +1,14 @@
-multiline_comment|/* softirq.h: 32-bit Sparc soft IRQ support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/* softirq.h: 32-bit Sparc soft IRQ support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998-99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#ifndef __SPARC_SOFTIRQ_H
 DECL|macro|__SPARC_SOFTIRQ_H
 mdefine_line|#define __SPARC_SOFTIRQ_H
+macro_line|#include &lt;linux/tasks.h&gt;&t;/* For NR_CPUS */
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
+DECL|macro|get_active_bhs
+mdefine_line|#define get_active_bhs()&t;(bh_mask &amp; bh_active)
+macro_line|#ifdef __SMP__
 r_extern
 r_int
 r_int
@@ -13,16 +17,13 @@ id|local_bh_count
 id|NR_CPUS
 )braket
 suffix:semicolon
-DECL|macro|get_active_bhs
-mdefine_line|#define get_active_bhs()&t;(bh_mask &amp; bh_active)
-macro_line|#ifdef __SMP__
 multiline_comment|/*&n; * The locking mechanism for base handlers, to prevent re-entrancy,&n; * is entirely private to an implementation, it should not be&n; * referenced at all outside of this file.&n; */
 r_extern
 id|atomic_t
 id|global_bh_lock
 suffix:semicolon
 r_extern
-id|atomic_t
+id|spinlock_t
 id|global_bh_count
 suffix:semicolon
 r_extern
@@ -407,16 +408,12 @@ id|cpu
 r_if
 c_cond
 (paren
-id|atomic_add_return
+id|spin_trylock
 c_func
 (paren
-l_int|1
-comma
 op_amp
 id|global_bh_count
 )paren
-op_eq
-l_int|1
 )paren
 (brace
 r_if
@@ -442,14 +439,14 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-)brace
-id|atomic_dec
+id|spin_unlock
 c_func
 (paren
 op_amp
 id|global_bh_count
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -471,7 +468,7 @@ id|cpu
 )braket
 op_decrement
 suffix:semicolon
-id|atomic_dec
+id|spin_unlock
 c_func
 (paren
 op_amp
@@ -480,15 +477,20 @@ id|global_bh_count
 suffix:semicolon
 )brace
 macro_line|#else
+r_extern
+r_int
+r_int
+id|local_bh_count
+suffix:semicolon
 DECL|macro|clear_active_bhs
 mdefine_line|#define clear_active_bhs(x)&t;(bh_active &amp;= ~(x))
 DECL|macro|mark_bh
 mdefine_line|#define mark_bh(nr)&t;&t;(bh_active |= (1 &lt;&lt; (nr)))
 multiline_comment|/* These are for the irq&squot;s testing the lock */
 DECL|macro|softirq_trylock
-mdefine_line|#define softirq_trylock(cpu)&t;(local_bh_count[cpu] ? 0 : (local_bh_count[cpu]=1))
+mdefine_line|#define softirq_trylock(cpu)&t;(local_bh_count ? 0 : (local_bh_count=1))
 DECL|macro|softirq_endlock
-mdefine_line|#define softirq_endlock(cpu)&t;(local_bh_count[cpu] = 0)
+mdefine_line|#define softirq_endlock(cpu)&t;(local_bh_count = 0)
 DECL|macro|synchronize_bh
 mdefine_line|#define synchronize_bh()&t;barrier()
 multiline_comment|/*&n; * These use a mask count to correctly handle&n; * nested disable/enable calls&n; */
@@ -625,6 +627,11 @@ op_lshift
 id|nr
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|bh_base
 (braket
 id|nr
@@ -644,9 +651,6 @@ r_void
 )paren
 (brace
 id|local_bh_count
-(braket
-l_int|0
-)braket
 op_increment
 suffix:semicolon
 id|barrier
@@ -671,9 +675,6 @@ c_func
 )paren
 suffix:semicolon
 id|local_bh_count
-(braket
-l_int|0
-)braket
 op_decrement
 suffix:semicolon
 )brace

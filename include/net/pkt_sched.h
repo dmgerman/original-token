@@ -693,6 +693,8 @@ mdefine_line|#define PSCHED_US2JIFFIE(delay) (((delay)+psched_clock_per_hz-1)/ps
 macro_line|#if CPU == 586 || CPU == 686
 DECL|macro|PSCHED_GET_TIME
 mdefine_line|#define PSCHED_GET_TIME(stamp) &bslash;&n;({ u64 __cur; &bslash;&n;   __asm__ __volatile__ (&quot;.byte 0x0f,0x31&quot; :&quot;=A&quot; (__cur)); &bslash;&n;   (stamp) = __cur&gt;&gt;psched_clock_scale; &bslash;&n;})
+DECL|macro|PSCHED_EXPORTLIST_1
+mdefine_line|#define PSCHED_EXPORTLIST_1
 macro_line|#elif defined (__alpha__)
 DECL|macro|PSCHED_WATCHER
 mdefine_line|#define PSCHED_WATCHER u32

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.41 1999/01/04 20:12:25 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.43 1999/04/12 08:08:24 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1712,16 +1712,6 @@ suffix:semicolon
 r_extern
 r_int
 r_int
-id|sun_serial_setup
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
 id|root_flags
 suffix:semicolon
 r_extern
@@ -1737,12 +1727,12 @@ suffix:semicolon
 r_extern
 r_int
 r_int
-id|ramdisk_image
+id|sparc_ramdisk_image
 suffix:semicolon
 r_extern
 r_int
 r_int
-id|ramdisk_size
+id|sparc_ramdisk_size
 suffix:semicolon
 DECL|macro|RAMDISK_IMAGE_START_MASK
 mdefine_line|#define RAMDISK_IMAGE_START_MASK&t;0x07FF
@@ -2151,7 +2141,7 @@ macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 r_if
 c_cond
 (paren
-id|ramdisk_image
+id|sparc_ramdisk_image
 )paren
 (brace
 r_int
@@ -2163,7 +2153,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ramdisk_image
+id|sparc_ramdisk_image
 op_ge
 (paren
 r_int
@@ -2176,13 +2166,13 @@ l_int|2
 op_star
 id|PAGE_SIZE
 )paren
-id|ramdisk_image
+id|sparc_ramdisk_image
 op_sub_assign
 id|KERNBASE
 suffix:semicolon
 id|initrd_start
 op_assign
-id|ramdisk_image
+id|sparc_ramdisk_image
 op_plus
 id|phys_base
 op_plus
@@ -2192,7 +2182,7 @@ id|initrd_end
 op_assign
 id|initrd_start
 op_plus
-id|ramdisk_size
+id|sparc_ramdisk_size
 suffix:semicolon
 r_if
 c_cond
@@ -2228,7 +2218,7 @@ id|initrd_start
 )paren
 id|start
 op_assign
-id|ramdisk_image
+id|sparc_ramdisk_image
 op_plus
 id|KERNBASE
 suffix:semicolon
@@ -2261,7 +2251,7 @@ id|PAGE_ALIGN
 (paren
 id|start
 op_plus
-id|ramdisk_size
+id|sparc_ramdisk_size
 )paren
 suffix:semicolon
 )brace
@@ -2516,17 +2506,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-op_star
-id|memory_start_p
-op_assign
-id|sun_serial_setup
-c_func
-(paren
-op_star
-id|memory_start_p
-)paren
-suffix:semicolon
-multiline_comment|/* set this up ASAP */
 macro_line|#else
 id|serial_console
 op_assign

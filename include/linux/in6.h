@@ -103,11 +103,72 @@ id|ipv6mr_ifindex
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|in6_flowlabel_req
+r_struct
+id|in6_flowlabel_req
+(brace
+DECL|member|flr_dst
+r_struct
+id|in6_addr
+id|flr_dst
+suffix:semicolon
+DECL|member|flr_label
+id|__u32
+id|flr_label
+suffix:semicolon
+DECL|member|flr_action
+id|__u8
+id|flr_action
+suffix:semicolon
+DECL|member|flr_share
+id|__u8
+id|flr_share
+suffix:semicolon
+DECL|member|flr_flags
+id|__u16
+id|flr_flags
+suffix:semicolon
+DECL|member|flr_expires
+id|__u16
+id|flr_expires
+suffix:semicolon
+DECL|member|flr_linger
+id|__u16
+id|flr_linger
+suffix:semicolon
+DECL|member|__flr_pad
+id|__u32
+id|__flr_pad
+suffix:semicolon
+multiline_comment|/* Options in format of IPV6_PKTOPTIONS */
+)brace
+suffix:semicolon
+DECL|macro|IPV6_FL_A_GET
+mdefine_line|#define IPV6_FL_A_GET&t;0
+DECL|macro|IPV6_FL_A_PUT
+mdefine_line|#define IPV6_FL_A_PUT&t;1
+DECL|macro|IPV6_FL_A_RENEW
+mdefine_line|#define IPV6_FL_A_RENEW&t;2
+DECL|macro|IPV6_FL_F_CREATE
+mdefine_line|#define IPV6_FL_F_CREATE&t;1
+DECL|macro|IPV6_FL_F_EXCL
+mdefine_line|#define IPV6_FL_F_EXCL&t;&t;2
+DECL|macro|IPV6_FL_S_NONE
+mdefine_line|#define IPV6_FL_S_NONE&t;&t;0
+DECL|macro|IPV6_FL_S_EXCL
+mdefine_line|#define IPV6_FL_S_EXCL&t;&t;1
+DECL|macro|IPV6_FL_S_PROCESS
+mdefine_line|#define IPV6_FL_S_PROCESS&t;2
+DECL|macro|IPV6_FL_S_USER
+mdefine_line|#define IPV6_FL_S_USER&t;&t;3
+DECL|macro|IPV6_FL_S_ANY
+mdefine_line|#define IPV6_FL_S_ANY&t;&t;255
 multiline_comment|/*&n; *&t;Bitmask constant declarations to help applications select out the &n; *&t;flow label and priority fields.&n; *&n; *&t;Note that this are in host byte order while the flowinfo field of&n; *&t;sockaddr_in6 is in network byte order.&n; */
 DECL|macro|IPV6_FLOWINFO_FLOWLABEL
-mdefine_line|#define IPV6_FLOWINFO_FLOWLABEL&t;&t;0x00ff
+mdefine_line|#define IPV6_FLOWINFO_FLOWLABEL&t;&t;0x000fffff
 DECL|macro|IPV6_FLOWINFO_PRIORITY
-mdefine_line|#define IPV6_FLOWINFO_PRIORITY&t;&t;0x0f00
+mdefine_line|#define IPV6_FLOWINFO_PRIORITY&t;&t;0x0ff00000
+multiline_comment|/* These defintions are obsolete */
 DECL|macro|IPV6_PRIORITY_UNCHARACTERIZED
 mdefine_line|#define IPV6_PRIORITY_UNCHARACTERIZED&t;0x0000
 DECL|macro|IPV6_PRIORITY_FILLER
@@ -187,6 +248,8 @@ DECL|macro|IPV6_NEXTHOP
 mdefine_line|#define IPV6_NEXTHOP&t;&t;9
 DECL|macro|IPV6_AUTHHDR
 mdefine_line|#define IPV6_AUTHHDR&t;&t;10
+DECL|macro|IPV6_FLOWINFO
+mdefine_line|#define IPV6_FLOWINFO&t;&t;11
 macro_line|#if 0
 multiline_comment|/* Aliases for obsolete names */
 mdefine_line|#define IPV6_RXHOPOPTS&t;&t;IPV6_HOPOPTS
@@ -223,5 +286,10 @@ DECL|macro|IPV6_PMTUDISC_WANT
 mdefine_line|#define IPV6_PMTUDISC_WANT&t;&t;1
 DECL|macro|IPV6_PMTUDISC_DO
 mdefine_line|#define IPV6_PMTUDISC_DO&t;&t;2
+multiline_comment|/* Flowlabel */
+DECL|macro|IPV6_FLOWLABEL_MGR
+mdefine_line|#define IPV6_FLOWLABEL_MGR&t;32
+DECL|macro|IPV6_FLOWINFO_SEND
+mdefine_line|#define IPV6_FLOWINFO_SEND&t;33
 macro_line|#endif
 eof

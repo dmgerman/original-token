@@ -10,6 +10,19 @@ macro_line|#include &lt;asm/machines.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/auxio.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+multiline_comment|/* We don&squot;t need no stinkin&squot; I/O port allocation crap. */
+DECL|macro|release_region
+macro_line|#undef release_region
+DECL|macro|check_region
+macro_line|#undef check_region
+DECL|macro|request_region
+macro_line|#undef request_region
+DECL|macro|release_region
+mdefine_line|#define release_region(X, Y)&t;do { } while(0)
+DECL|macro|check_region
+mdefine_line|#define check_region(X, Y)&t;(0)
+DECL|macro|request_region
+mdefine_line|#define request_region(X, Y, Z)&t;do { } while(0)
 multiline_comment|/* References:&n; * 1) Netbsd Sun floppy driver.&n; * 2) NCR 82077 controller manual&n; * 3) Intel 82077 controller manual&n; */
 DECL|struct|sun_flpy_controller
 r_struct
@@ -1137,42 +1150,6 @@ dot
 id|which_io
 comma
 l_int|0x0
-)paren
-suffix:semicolon
-id|release_region
-c_func
-(paren
-(paren
-r_int
-)paren
-id|sun_fdc
-op_amp
-id|PAGE_MASK
-comma
-(paren
-(paren
-(paren
-r_int
-)paren
-id|sun_fdc
-op_amp
-op_complement
-id|PAGE_MASK
-)paren
-op_plus
-id|fd_regs
-(braket
-l_int|0
-)braket
-dot
-id|reg_size
-op_plus
-id|PAGE_SIZE
-op_minus
-l_int|1
-)paren
-op_amp
-id|PAGE_MASK
 )paren
 suffix:semicolon
 multiline_comment|/* Last minute sanity check... */

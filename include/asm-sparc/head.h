@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: head.h,v 1.35 1998/03/18 09:15:40 jj Exp $ */
+multiline_comment|/* $Id: head.h,v 1.36 1999/04/20 13:22:42 anton Exp $ */
 macro_line|#ifndef __SPARC_HEAD_H
 DECL|macro|__SPARC_HEAD_H
 mdefine_line|#define __SPARC_HEAD_H
@@ -12,8 +12,6 @@ DECL|macro|SRMMU_L1_KBASE_OFFSET
 mdefine_line|#define SRMMU_L1_KBASE_OFFSET ((KERNBASE&gt;&gt;24)&lt;&lt;2)  /* Used in boot remapping. */
 DECL|macro|INTS_ENAB
 mdefine_line|#define INTS_ENAB        0x01           /* entry.S uses this. */
-DECL|macro|NCPUS
-mdefine_line|#define NCPUS            4              /* Architectural limit of sun4m. */
 DECL|macro|SUN4_PROM_VECTOR
 mdefine_line|#define SUN4_PROM_VECTOR 0xFFE81000     /* SUN4 PROM needs to be hardwired */
 DECL|macro|WRITE_PAUSE

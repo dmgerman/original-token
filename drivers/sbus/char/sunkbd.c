@@ -6476,7 +6476,7 @@ id|kbd_redirected
 )paren
 id|kbd_table
 (braket
-id|kbd_opened
+id|kbd_redirected
 op_minus
 l_int|1
 )braket

@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;qlogicisp.h&quot;
@@ -24,8 +25,8 @@ mdefine_line|#define USE_NVRAM_DEFAULTS&t;0
 multiline_comment|/*  Macros used for debugging */
 DECL|macro|DEBUG_ISP1020
 mdefine_line|#define DEBUG_ISP1020&t;&t;0
-DECL|macro|DEBUG_ISP1020_INT
-mdefine_line|#define DEBUG_ISP1020_INT&t;0
+DECL|macro|DEBUG_ISP1020_INTR
+mdefine_line|#define DEBUG_ISP1020_INTR&t;0
 DECL|macro|DEBUG_ISP1020_SETUP
 mdefine_line|#define DEBUG_ISP1020_SETUP&t;0
 DECL|macro|TRACE_ISP
@@ -2501,6 +2502,9 @@ l_int|1
 suffix:semicolon
 id|cmd-&gt;handle
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 (paren
 id|u_int
 )paren
@@ -2508,6 +2512,7 @@ id|virt_to_bus
 c_func
 (paren
 id|Cmnd
+)paren
 )paren
 suffix:semicolon
 id|cmd-&gt;target_lun
@@ -2520,17 +2525,29 @@ id|Cmnd-&gt;target
 suffix:semicolon
 id|cmd-&gt;cdb_length
 op_assign
+id|cpu_to_le16
+c_func
+(paren
 id|Cmnd-&gt;cmd_len
+)paren
 suffix:semicolon
 id|cmd-&gt;control_flags
 op_assign
+id|cpu_to_le16
+c_func
+(paren
 id|CFLAG_READ
 op_or
 id|CFLAG_WRITE
+)paren
 suffix:semicolon
 id|cmd-&gt;time_out
 op_assign
+id|cpu_to_le16
+c_func
+(paren
 l_int|30
+)paren
 suffix:semicolon
 id|memcpy
 c_func
@@ -2550,9 +2567,13 @@ id|Cmnd-&gt;use_sg
 (brace
 id|cmd-&gt;segment_cnt
 op_assign
+id|cpu_to_le16
+c_func
+(paren
 id|sg_count
 op_assign
 id|Cmnd-&gt;use_sg
+)paren
 suffix:semicolon
 id|sg
 op_assign
@@ -2605,6 +2626,9 @@ id|i
 dot
 id|d_base
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 (paren
 id|u_int
 )paren
@@ -2612,6 +2636,7 @@ id|virt_to_bus
 c_func
 (paren
 id|sg-&gt;address
+)paren
 )paren
 suffix:semicolon
 id|ds
@@ -2621,7 +2646,11 @@ id|i
 dot
 id|d_count
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|sg-&gt;length
+)paren
 suffix:semicolon
 op_increment
 id|sg
@@ -2758,6 +2787,9 @@ id|i
 dot
 id|d_base
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 (paren
 id|u_int
 )paren
@@ -2765,6 +2797,7 @@ id|virt_to_bus
 c_func
 (paren
 id|sg-&gt;address
+)paren
 )paren
 suffix:semicolon
 id|ds
@@ -2774,7 +2807,11 @@ id|i
 dot
 id|d_count
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|sg-&gt;length
+)paren
 suffix:semicolon
 op_increment
 id|sg
@@ -2795,6 +2832,9 @@ l_int|0
 dot
 id|d_base
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 (paren
 id|u_int
 )paren
@@ -2802,6 +2842,7 @@ id|virt_to_bus
 c_func
 (paren
 id|Cmnd-&gt;request_buffer
+)paren
 )paren
 suffix:semicolon
 id|cmd-&gt;dataseg
@@ -2811,14 +2852,22 @@ l_int|0
 dot
 id|d_count
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 (paren
 id|u_int
 )paren
 id|Cmnd-&gt;request_bufflen
+)paren
 suffix:semicolon
 id|cmd-&gt;segment_cnt
 op_assign
+id|cpu_to_le16
+c_func
+(paren
 l_int|1
+)paren
 suffix:semicolon
 )brace
 id|outw
@@ -3165,6 +3214,8 @@ c_func
 id|in_ptr
 comma
 id|out_ptr
+comma
+id|RES_QUEUE_LEN
 )paren
 )paren
 )paren
@@ -3212,7 +3263,11 @@ op_star
 id|bus_to_virt
 c_func
 (paren
+id|le32_to_cpu
+c_func
+(paren
 id|sts-&gt;handle
+)paren
 )paren
 suffix:semicolon
 id|TRACE
@@ -3228,16 +3283,28 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|sts-&gt;completion_status
+)paren
 op_eq
 id|CS_RESET_OCCURRED
 op_logical_or
+id|le16_to_cpu
+c_func
+(paren
 id|sts-&gt;completion_status
+)paren
 op_eq
 id|CS_ABORTED
 op_logical_or
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|sts-&gt;status_flags
+)paren
 op_amp
 id|STF_BUS_RESET
 )paren
@@ -3249,7 +3316,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|sts-&gt;state_flags
+)paren
 op_amp
 id|SF_GOT_SENSE
 )paren
@@ -3390,14 +3461,22 @@ c_func
 (paren
 l_string|&quot;qlogicisp : completion status = 0x%04x&bslash;n&quot;
 comma
+id|le16_to_cpu
+c_func
+(paren
 id|sts-&gt;completion_status
+)paren
 )paren
 )paren
 suffix:semicolon
 r_switch
 c_cond
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|sts-&gt;completion_status
+)paren
 )paren
 (brace
 r_case
@@ -3417,7 +3496,11 @@ c_cond
 (paren
 op_logical_neg
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|sts-&gt;state_flags
+)paren
 op_amp
 id|SF_GOT_BUS
 )paren
@@ -3432,7 +3515,11 @@ c_cond
 (paren
 op_logical_neg
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|sts-&gt;state_flags
+)paren
 op_amp
 id|SF_GOT_TARGET
 )paren
@@ -3447,7 +3534,11 @@ c_cond
 (paren
 op_logical_neg
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|sts-&gt;state_flags
+)paren
 op_amp
 id|SF_SENT_CDB
 )paren
@@ -3462,7 +3553,11 @@ c_cond
 (paren
 op_logical_neg
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|sts-&gt;state_flags
+)paren
 op_amp
 id|SF_TRANSFERRED_DATA
 )paren
@@ -3477,7 +3572,11 @@ c_cond
 (paren
 op_logical_neg
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|sts-&gt;state_flags
+)paren
 op_amp
 id|SF_GOT_STATUS
 )paren
@@ -3492,7 +3591,11 @@ c_cond
 (paren
 op_logical_neg
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|sts-&gt;state_flags
+)paren
 op_amp
 id|SF_GOT_SENSE
 )paren
@@ -3603,7 +3706,11 @@ c_func
 (paren
 l_string|&quot;qlogicisp : unknown completion status 0x%04x&bslash;n&quot;
 comma
+id|le16_to_cpu
+c_func
+(paren
 id|sts-&gt;completion_status
+)paren
 )paren
 suffix:semicolon
 id|host_status
@@ -3626,7 +3733,11 @@ id|reason
 id|host_status
 )braket
 comma
+id|le16_to_cpu
+c_func
+(paren
 id|sts-&gt;scsi_status
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -3638,7 +3749,11 @@ l_string|&quot;isp1020_return_status&quot;
 suffix:semicolon
 r_return
 (paren
+id|le16_to_cpu
+c_func
+(paren
 id|sts-&gt;scsi_status
+)paren
 op_amp
 id|STATUS_MASK
 )paren
@@ -4096,6 +4211,12 @@ op_plus
 id|PCI_INTF_CTL
 )paren
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|100
+)paren
+suffix:semicolon
 id|outw
 c_func
 (paren
@@ -4104,6 +4225,12 @@ comma
 id|host-&gt;io_port
 op_plus
 id|HOST_HCCR
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|100
 )paren
 suffix:semicolon
 id|outw
@@ -4259,6 +4386,42 @@ id|MBOX5
 )paren
 suffix:semicolon
 macro_line|#endif /* DEBUG_ISP1020 */
+id|param
+(braket
+l_int|0
+)braket
+op_assign
+id|MBOX_NO_OP
+suffix:semicolon
+id|isp1020_mbox_command
+c_func
+(paren
+id|host
+comma
+id|param
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|param
+(braket
+l_int|0
+)braket
+op_ne
+id|MBOX_COMMAND_COMPLETE
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;qlogicisp : NOP test failed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|DEBUG
 c_func
 (paren
@@ -4270,47 +4433,18 @@ l_string|&quot;qlogicisp : loading risc ram&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#if RELOAD_FIRMWARE
-multiline_comment|/* Do not reload firmware if 1040B, i.e. revision 5 chip.  */
-r_if
-c_cond
-(paren
-(paren
-(paren
-r_struct
-id|isp1020_hostdata
-op_star
-)paren
-id|host-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|revision
-op_ge
-l_int|5
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;qlogicisp : 1040B or later chip,&quot;
-l_string|&quot; firmware not (re)loaded&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
-r_int
-id|i
-suffix:semicolon
 r_for
 c_loop
 (paren
-id|i
+id|loop_count
 op_assign
 l_int|0
 suffix:semicolon
-id|i
+id|loop_count
 OL
 id|risc_code_length01
 suffix:semicolon
-id|i
+id|loop_count
 op_increment
 )paren
 (brace
@@ -4328,7 +4462,7 @@ l_int|1
 op_assign
 id|risc_code_addr01
 op_plus
-id|i
+id|loop_count
 suffix:semicolon
 id|param
 (braket
@@ -4337,7 +4471,7 @@ l_int|2
 op_assign
 id|risc_code01
 (braket
-id|i
+id|loop_count
 )braket
 suffix:semicolon
 id|isp1020_mbox_command
@@ -4362,13 +4496,14 @@ id|MBOX_COMMAND_COMPLETE
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicisp : firmware load failure&bslash;n&quot;
+l_string|&quot;qlogicisp : firmware load failure at %d&bslash;n&quot;
+comma
+id|loop_count
 )paren
 suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
-)brace
 )brace
 )brace
 macro_line|#endif /* RELOAD_FIRMWARE */
@@ -4673,6 +4808,63 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#ifdef __sparc__
+id|command
+op_or_assign
+(paren
+id|PCI_COMMAND_MASTER
+op_or
+id|PCI_COMMAND_IO
+op_or
+id|PCI_COMMAND_MEMORY
+op_or
+id|PCI_COMMAND_INVALIDATE
+op_or
+id|PCI_COMMAND_SERR
+)paren
+suffix:semicolon
+id|pci_write_config_word
+c_func
+(paren
+id|pdev
+comma
+id|PCI_COMMAND
+comma
+id|command
+)paren
+suffix:semicolon
+id|pci_read_config_word
+c_func
+(paren
+id|pdev
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|command
+)paren
+suffix:semicolon
+id|pci_write_config_byte
+c_func
+(paren
+id|pdev
+comma
+id|PCI_CACHE_LINE_SIZE
+comma
+l_int|16
+)paren
+suffix:semicolon
+id|pci_write_config_byte
+c_func
+(paren
+id|pdev
+comma
+id|PCI_LATENCY_TIMER
+comma
+l_int|64
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4787,6 +4979,14 @@ suffix:semicolon
 id|sh-&gt;io_port
 op_assign
 id|io_base
+suffix:semicolon
+id|sh-&gt;max_id
+op_assign
+id|MAX_TARGETS
+suffix:semicolon
+id|sh-&gt;max_lun
+op_assign
+id|MAX_LUNS
 suffix:semicolon
 id|LEAVE
 c_func
@@ -7224,9 +7424,17 @@ c_func
 (paren
 l_string|&quot;qlogicisp : scsi status = 0x%04x, completion status = 0x%04x&bslash;n&quot;
 comma
+id|le16_to_cpu
+c_func
+(paren
 id|status-&gt;scsi_status
+)paren
 comma
+id|le16_to_cpu
+c_func
+(paren
 id|status-&gt;completion_status
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -7234,9 +7442,17 @@ c_func
 (paren
 l_string|&quot;qlogicisp : state flags = 0x%04x, status flags = 0x%04x&bslash;n&quot;
 comma
+id|le16_to_cpu
+c_func
+(paren
 id|status-&gt;state_flags
+)paren
 comma
+id|le16_to_cpu
+c_func
+(paren
 id|status-&gt;status_flags
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -7244,9 +7460,17 @@ c_func
 (paren
 l_string|&quot;qlogicisp : time = 0x%04x, request sense length = 0x%04x&bslash;n&quot;
 comma
+id|le16_to_cpu
+c_func
+(paren
 id|status-&gt;time
+)paren
 comma
+id|le16_to_cpu
+c_func
+(paren
 id|status-&gt;req_sense_len
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -7254,7 +7478,11 @@ c_func
 (paren
 l_string|&quot;qlogicisp : residual transfer length = 0x%08x&bslash;n&quot;
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|status-&gt;residual
+)paren
 )paren
 suffix:semicolon
 r_for
@@ -7266,7 +7494,11 @@ l_int|0
 suffix:semicolon
 id|i
 OL
+id|le16_to_cpu
+c_func
+(paren
 id|status-&gt;req_sense_len
+)paren
 suffix:semicolon
 id|i
 op_increment

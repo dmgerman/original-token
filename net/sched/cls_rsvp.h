@@ -630,6 +630,11 @@ l_int|2
 macro_line|#endif
 )paren
 (brace
+op_star
+id|res
+op_assign
+id|f-&gt;res
+suffix:semicolon
 id|RSVP_POLICE
 c_func
 (paren
@@ -644,18 +649,9 @@ id|f-&gt;tunnelhdr
 op_eq
 l_int|0
 )paren
-(brace
-op_star
-id|res
-op_assign
-id|f-&gt;res
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-)brace
-r_else
-(brace
 id|tunnelid
 op_assign
 id|f-&gt;res.classid
@@ -683,7 +679,6 @@ id|restart
 suffix:semicolon
 )brace
 )brace
-)brace
 multiline_comment|/* And wildcard bucket... */
 r_for
 c_loop
@@ -702,6 +697,11 @@ op_assign
 id|f-&gt;next
 )paren
 (brace
+op_star
+id|res
+op_assign
+id|f-&gt;res
+suffix:semicolon
 id|RSVP_POLICE
 c_func
 (paren

@@ -956,14 +956,35 @@ l_int|1
 suffix:semicolon
 DECL|function|PROC_CONSOLE
 r_static
-r_inline
 r_int
 id|PROC_CONSOLE
 c_func
 (paren
-r_void
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
+r_int
+id|fgc
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;display_fg
+op_ne
+l_int|NULL
+)paren
+id|fgc
+op_assign
+id|info-&gt;display_fg-&gt;vc_num
+suffix:semicolon
+r_else
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -971,7 +992,7 @@ op_logical_neg
 id|current-&gt;tty
 )paren
 r_return
-id|fg_console
+id|fgc
 suffix:semicolon
 r_if
 c_cond
@@ -982,7 +1003,7 @@ id|TTY_DRIVER_TYPE_CONSOLE
 )paren
 multiline_comment|/* XXX Should report error here? */
 r_return
-id|fg_console
+id|fgc
 suffix:semicolon
 r_if
 c_cond
@@ -996,7 +1017,7 @@ OL
 l_int|1
 )paren
 r_return
-id|fg_console
+id|fgc
 suffix:semicolon
 r_return
 id|MINOR
@@ -1224,6 +1245,7 @@ comma
 id|PROC_CONSOLE
 c_func
 (paren
+id|info
 )paren
 comma
 id|info
@@ -1377,6 +1399,7 @@ comma
 id|PROC_CONSOLE
 c_func
 (paren
+id|info
 )paren
 comma
 id|info
@@ -1476,6 +1499,7 @@ comma
 id|PROC_CONSOLE
 c_func
 (paren
+id|info
 )paren
 comma
 id|info
@@ -1961,6 +1985,7 @@ comma
 id|PROC_CONSOLE
 c_func
 (paren
+id|info
 )paren
 comma
 id|info
@@ -2054,6 +2079,7 @@ comma
 id|PROC_CONSOLE
 c_func
 (paren
+id|info
 )paren
 comma
 id|info
@@ -2115,6 +2141,7 @@ comma
 id|PROC_CONSOLE
 c_func
 (paren
+id|info
 )paren
 comma
 id|info
@@ -2192,6 +2219,7 @@ comma
 id|PROC_CONSOLE
 c_func
 (paren
+id|info
 )paren
 comma
 id|info
@@ -2241,6 +2269,7 @@ comma
 id|PROC_CONSOLE
 c_func
 (paren
+id|info
 )paren
 comma
 id|info
@@ -2292,6 +2321,7 @@ comma
 id|PROC_CONSOLE
 c_func
 (paren
+id|info
 )paren
 comma
 id|info
@@ -2549,6 +2579,7 @@ comma
 id|PROC_CONSOLE
 c_func
 (paren
+id|info
 )paren
 comma
 id|info
@@ -2653,6 +2684,7 @@ comma
 id|PROC_CONSOLE
 c_func
 (paren
+id|info
 )paren
 comma
 id|info
@@ -2717,6 +2749,7 @@ comma
 id|PROC_CONSOLE
 c_func
 (paren
+id|info
 )paren
 comma
 id|info

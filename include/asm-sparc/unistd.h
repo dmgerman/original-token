@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.54 1999/03/25 00:40:12 davem Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.55 1999/04/07 17:14:15 davem Exp $ */
 macro_line|#ifndef _SPARC_UNISTD_H
 DECL|macro|_SPARC_UNISTD_H
 mdefine_line|#define _SPARC_UNISTD_H
@@ -86,7 +86,8 @@ mdefine_line|#define __NR_pipe                42 /* Common                      
 DECL|macro|__NR_times
 mdefine_line|#define __NR_times               43 /* Implemented via getrusage() in SunOS        */
 multiline_comment|/* #define __NR_profil           44    Common                                      */
-multiline_comment|/* #define __NR_ni_syscall       45    ENOSYS under SunOS                          */
+DECL|macro|__NR_umount2
+mdefine_line|#define __NR_umount2             45 /* Linux Specific                              */
 DECL|macro|__NR_setgid
 mdefine_line|#define __NR_setgid              46 /* Implemented via setregid() in SunOS         */
 DECL|macro|__NR_getgid

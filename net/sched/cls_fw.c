@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * net/sched/cls_fw.c&t;Classifier mapping ipchains&squot; fwmark to traffic class.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; */
+multiline_comment|/*&n; * net/sched/cls_fw.c&t;Classifier mapping ipchains&squot; fwmark to traffic class.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; * Changes:&n; * Karlis Peisenieks &lt;karlis@mt.lv&gt; : 990415 : fw_walk off by one&n; * Karlis Peisenieks &lt;karlis@mt.lv&gt; : 990415 : fw_delete killed all the filter (and kernel).&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -546,14 +546,7 @@ r_struct
 id|fw_head
 op_star
 )paren
-id|xchg
-c_func
-(paren
-op_amp
 id|tp-&gt;root
-comma
-l_int|NULL
-)paren
 suffix:semicolon
 r_struct
 id|fw_filter
@@ -1310,7 +1303,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|h
-op_le
+OL
 l_int|256
 suffix:semicolon
 id|h

@@ -3511,11 +3511,7 @@ id|ipv6hdr
 op_minus
 id|len
 comma
-id|ntohs
-c_func
-(paren
-id|skb-&gt;nh.ipv6h-&gt;payload_len
-)paren
+id|skb-&gt;len
 op_plus
 l_int|8
 )paren
@@ -3787,7 +3783,6 @@ c_func
 (paren
 id|opt
 comma
-op_amp
 id|skb-&gt;nh.ipv6h
 comma
 id|rd_len

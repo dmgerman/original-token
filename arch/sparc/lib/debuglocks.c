@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: debuglocks.c,v 1.6 1999/02/23 13:23:55 jj Exp $&n; * debuglocks.c: Debugging versions of SMP locking primitives.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/* $Id: debuglocks.c,v 1.7 1999/04/21 02:26:58 anton Exp $&n; * debuglocks.c: Debugging versions of SMP locking primitives.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998-99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/tasks.h&gt;&t;/* For NR_CPUS */
 macro_line|#include &lt;asm/psr.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
@@ -153,10 +154,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s(%p) CPU#%d stuck at %08lx, owner PC(%08lx):CPU(%lx) reader[0]=%08lx reader[1]=%08lx reader[2]=%08lx reader[3]=%08lx&bslash;n&quot;
+l_string|&quot;%s(%p) CPU#%d stuck at %08lx, owner PC(%08lx):CPU(%lx)&quot;
 comma
 id|str
 comma
@@ -174,26 +178,39 @@ comma
 id|lock-&gt;owner_pc
 op_amp
 l_int|3
-comma
-id|lock-&gt;reader_pc
-(braket
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
 l_int|0
-)braket
+suffix:semicolon
+id|i
+OL
+id|NR_CPUS
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; reader[i]=%08lx&quot;
 comma
 id|lock-&gt;reader_pc
 (braket
-l_int|1
+id|i
 )braket
-comma
-id|lock-&gt;reader_pc
-(braket
-l_int|2
-)braket
-comma
-id|lock-&gt;reader_pc
-(braket
-l_int|3
-)braket
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -431,10 +448,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-DECL|macro|INIT_STUCK
-macro_line|#undef INIT_STUCK
-DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK 100000000
 DECL|function|_do_read_lock
 r_void
 id|_do_read_lock
@@ -561,10 +574,6 @@ id|rw-&gt;lock
 op_increment
 suffix:semicolon
 )brace
-DECL|macro|INIT_STUCK
-macro_line|#undef INIT_STUCK
-DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK 100000000
 DECL|function|_do_read_unlock
 r_void
 id|_do_read_unlock
@@ -692,10 +701,6 @@ op_sub_assign
 l_int|0x1ff
 suffix:semicolon
 )brace
-DECL|macro|INIT_STUCK
-macro_line|#undef INIT_STUCK
-DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK 100000000
 DECL|function|_do_write_lock
 r_void
 id|_do_write_lock

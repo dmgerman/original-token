@@ -2,6 +2,7 @@ multiline_comment|/* spinlock.h: 32-bit Sparc spinlock support.&n; *&n; * Copyri
 macro_line|#ifndef __SPARC_SPINLOCK_H
 DECL|macro|__SPARC_SPINLOCK_H
 mdefine_line|#define __SPARC_SPINLOCK_H
+macro_line|#include &lt;linux/tasks.h&gt;&t;/* For NR_CPUS */
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#ifndef __SMP__
 DECL|typedef|spinlock_t
@@ -102,6 +103,8 @@ DECL|macro|SPIN_LOCK_UNLOCKED
 mdefine_line|#define SPIN_LOCK_UNLOCKED&t;(spinlock_t) { 0, 0 }
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(lp)&t;do { (lp)-&gt;owner_pc = 0; (lp)-&gt;lock = 0; } while(0)
+DECL|macro|spin_is_locked
+mdefine_line|#define spin_is_locked(lp)  (*((volatile unsigned char *)(&amp;((lp)-&gt;lock))) != 0)
 DECL|macro|spin_unlock_wait
 mdefine_line|#define spin_unlock_wait(lp)&t;do { barrier(); } while(*(volatile unsigned char *)(&amp;(lp)-&gt;lock))
 r_extern
@@ -172,7 +175,7 @@ r_int
 r_int
 id|reader_pc
 (braket
-id|NCPUS
+id|NR_CPUS
 )braket
 suffix:semicolon
 )brace
@@ -272,8 +275,10 @@ DECL|macro|SPIN_LOCK_UNLOCKED
 mdefine_line|#define SPIN_LOCK_UNLOCKED&t;0
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(lock)&t;(*(lock) = 0)
+DECL|macro|spin_is_locked
+mdefine_line|#define spin_is_locked(lock)    (*((volatile unsigned char *)(lock)) != 0)
 DECL|macro|spin_unlock_wait
-mdefine_line|#define spin_unlock_wait(lock)&t;do { barrier(); } while(*(volatile spinlock_t *)lock)
+mdefine_line|#define spin_unlock_wait(lock)&t;do { barrier(); } while(*(volatile unsigned char *)lock)
 DECL|function|spin_lock
 r_extern
 id|__inline__

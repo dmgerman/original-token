@@ -449,31 +449,12 @@ op_minus
 id|EINVAL
 suffix:semicolon
 multiline_comment|/* Verify that cmsg_len is at least sizeof(struct cmsghdr) */
+multiline_comment|/* The first check was omitted in &lt;= 2.2.5. The reasoning was&n;&t;&t;   that parser checks cmsg_len in any case, so that&n;&t;&t;   additional check would be work duplication.&n;&t;&t;   But if cmsg_level is not SOL_SOCKET, we do not check &n;&t;&t;   for too short ancillary data object at all! Oops.&n;&t;&t;   OK, let&squot;s add it...&n;&t;&t; */
 r_if
 c_cond
 (paren
-(paren
-r_int
-r_int
-)paren
-(paren
-(paren
-(paren
-r_char
-op_star
-)paren
-id|cmsg
-op_minus
-(paren
-r_char
-op_star
-)paren
-id|msg-&gt;msg_control
-)paren
-op_plus
 id|cmsg-&gt;cmsg_len
-)paren
-OG
+template_param
 id|msg-&gt;msg_controllen
 )paren
 r_goto

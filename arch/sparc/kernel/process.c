@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.133 1999/03/24 11:42:30 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: process.c,v 1.136 1999/04/16 01:20:33 anton Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -744,6 +744,31 @@ r_while
 c_loop
 (paren
 id|rw
+op_logical_and
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|rw
+)paren
+op_ge
+id|PAGE_OFFSET
+)paren
+op_logical_and
+op_logical_neg
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|rw
+)paren
+op_amp
+l_int|0x7
+)paren
 )paren
 (brace
 id|printk
@@ -818,6 +843,12 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|macro|__SAVE
+mdefine_line|#define __SAVE __asm__ __volatile__(&quot;save %sp, -0x40, %sp&bslash;n&bslash;t&quot;)
+DECL|macro|__RESTORE
+mdefine_line|#define __RESTORE __asm__ __volatile__(&quot;restore %g0, %g0, %g0&bslash;n&bslash;t&quot;)
+DECL|macro|__GET_FP
+mdefine_line|#define __GET_FP(fp) __asm__ __volatile__(&quot;mov %%i6, %0&quot; : &quot;=r&quot; (fp))
 DECL|function|show_backtrace
 r_void
 id|show_backtrace
@@ -830,32 +861,42 @@ r_int
 r_int
 id|fp
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|__SAVE
+suffix:semicolon
+id|__SAVE
+suffix:semicolon
+id|__SAVE
+suffix:semicolon
+id|__SAVE
+suffix:semicolon
+id|__SAVE
+suffix:semicolon
+id|__SAVE
+suffix:semicolon
+id|__SAVE
+suffix:semicolon
+id|__SAVE
+suffix:semicolon
+id|__RESTORE
+suffix:semicolon
+id|__RESTORE
+suffix:semicolon
+id|__RESTORE
+suffix:semicolon
+id|__RESTORE
+suffix:semicolon
+id|__RESTORE
+suffix:semicolon
+id|__RESTORE
+suffix:semicolon
+id|__RESTORE
+suffix:semicolon
+id|__RESTORE
+suffix:semicolon
+id|__GET_FP
 c_func
 (paren
-l_string|&quot;save %%sp, -64, %%sp&bslash;n&bslash;t&quot;
-l_string|&quot;save %%sp, -64, %%sp&bslash;n&bslash;t&quot;
-l_string|&quot;save %%sp, -64, %%sp&bslash;n&bslash;t&quot;
-l_string|&quot;save %%sp, -64, %%sp&bslash;n&bslash;t&quot;
-l_string|&quot;save %%sp, -64, %%sp&bslash;n&bslash;t&quot;
-l_string|&quot;save %%sp, -64, %%sp&bslash;n&bslash;t&quot;
-l_string|&quot;save %%sp, -64, %%sp&bslash;n&bslash;t&quot;
-l_string|&quot;save %%sp, -64, %%sp&bslash;n&bslash;t&quot;
-l_string|&quot;restore&bslash;n&bslash;t&quot;
-l_string|&quot;restore&bslash;n&bslash;t&quot;
-l_string|&quot;restore&bslash;n&bslash;t&quot;
-l_string|&quot;restore&bslash;n&bslash;t&quot;
-l_string|&quot;restore&bslash;n&bslash;t&quot;
-l_string|&quot;restore&bslash;n&bslash;t&quot;
-l_string|&quot;restore&bslash;n&bslash;t&quot;
-l_string|&quot;restore&bslash;n&bslash;t&quot;
-l_string|&quot;mov %%i6, %0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
 id|fp
-)paren
 )paren
 suffix:semicolon
 id|__show_backtrace
@@ -1631,13 +1672,38 @@ op_and_assign
 op_complement
 id|SPARC_FLAG_KTHREAD
 suffix:semicolon
+multiline_comment|/* We must fixup kregs as well. */
+id|current-&gt;tss.kregs
+op_assign
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|current
+)paren
+op_plus
+(paren
+id|TASK_UNION_SIZE
+op_minus
+id|TRACEREG_SZ
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Exec&squot;ing out of a vfork() shared address space is&n;&t; * tricky on sparc32.  exec_mmap will not set the mmu&n;&t; * context because it sets the new current-&gt;mm after&n;&t; * calling init_new_context and activate_context is&n;&t; * a nop on sparc32, so we gotta catch it here.  And&n;&t; * clone()&squot;s had the same problem.  -DaveM&n;&t; */
 id|switch_to_context
 c_func
 (paren
 id|current
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|function|copy_regs
 r_static
@@ -2157,10 +2223,6 @@ id|p-&gt;tss.kwim
 op_assign
 id|current-&gt;tss.fork_kwim
 suffix:semicolon
-id|p-&gt;tss.kregs
-op_assign
-id|childregs
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2169,6 +2231,16 @@ op_amp
 id|PSR_PS
 )paren
 (brace
+r_extern
+r_struct
+id|pt_regs
+id|fake_swapper_regs
+suffix:semicolon
+id|p-&gt;tss.kregs
+op_assign
+op_amp
+id|fake_swapper_regs
+suffix:semicolon
 id|new_stack
 op_assign
 (paren
@@ -2254,6 +2326,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|p-&gt;tss.kregs
+op_assign
+id|childregs
+suffix:semicolon
 id|childregs-&gt;u_regs
 (braket
 id|UREG_FP

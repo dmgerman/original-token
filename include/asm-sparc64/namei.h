@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: namei.h,v 1.13 1998/10/28 08:13:49 jj Exp $&n; * linux/include/asm-sparc64/namei.h&n; *&n; * Routines to handle famous /usr/gnemul/s*.&n; * Included from linux/fs/namei.c&n; */
+multiline_comment|/* $Id: namei.h,v 1.14 1999/04/06 06:54:39 jj Exp $&n; * linux/include/asm-sparc64/namei.h&n; *&n; * Routines to handle famous /usr/gnemul/s*.&n; * Included from linux/fs/namei.c&n; */
 macro_line|#ifndef __SPARC64_NAMEI_H
 DECL|macro|__SPARC64_NAMEI_H
 mdefine_line|#define __SPARC64_NAMEI_H
@@ -39,8 +39,6 @@ c_cond
 id|current-&gt;personality
 )paren
 (brace
-macro_line|#if 0
-multiline_comment|/* Until we solve, why SunOS apps sometime crash, disable gnemul support for SunOS */
 r_case
 id|PER_BSD
 suffix:colon
@@ -50,7 +48,6 @@ id|SPARC_BSD_EMUL
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif&t;&t;
 r_case
 id|PER_SVR4
 suffix:colon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: psycho.c,v 1.79 1999/03/19 05:38:46 davem Exp $&n; * psycho.c: Ultra/AX U2P PCI controller support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: psycho.c,v 1.85 1999/04/02 14:54:28 davem Exp $&n; * psycho.c: Ultra/AX U2P PCI controller support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3124,6 +3124,11 @@ id|hdr_type
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|is_multi
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3147,10 +3152,18 @@ c_func
 (paren
 id|devfn
 )paren
+op_ne
+l_int|0
+op_logical_and
+id|is_multi
 op_eq
 l_int|0
 )paren
 (brace
+multiline_comment|/* not a multi-function device */
+r_continue
+suffix:semicolon
+)brace
 id|pbm_read_config_byte
 c_func
 (paren
@@ -3166,23 +3179,23 @@ op_amp
 id|hdr_type
 )paren
 suffix:semicolon
-)brace
-r_else
 r_if
 c_cond
 (paren
-op_logical_neg
+id|PCI_FUNC
+c_func
 (paren
+id|devfn
+)paren
+op_eq
+l_int|0
+)paren
+id|is_multi
+op_assign
 id|hdr_type
 op_amp
 l_int|0x80
-)paren
-)paren
-(brace
-multiline_comment|/* not a multi-function device */
-r_continue
 suffix:semicolon
-)brace
 multiline_comment|/* Check if there is anything here. */
 id|pbm_read_config_dword
 c_func
@@ -3209,9 +3222,17 @@ op_logical_or
 id|l
 op_eq
 l_int|0x00000000
+op_logical_or
+id|l
+op_eq
+l_int|0x0000ffff
+op_logical_or
+id|l
+op_eq
+l_int|0xffff0000
 )paren
 (brace
-id|hdr_type
+id|is_multi
 op_assign
 l_int|0
 suffix:semicolon
@@ -5855,10 +5876,11 @@ id|pci_addr
 )paren
 suffix:semicolon
 id|pdev-&gt;rom_address
-op_or_assign
-l_int|1
+op_and_assign
+op_complement
+l_int|1UL
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Enable access to the ROM.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Disable access to the ROM.&n;&t;&t;&t; */
 id|pci_read_config_dword
 c_func
 (paren
@@ -5878,7 +5900,8 @@ comma
 id|PCI_ROM_ADDRESS
 comma
 id|rtmp
-op_or
+op_amp
+op_complement
 l_int|1
 )paren
 suffix:semicolon
@@ -6848,7 +6871,8 @@ id|base
 )paren
 suffix:semicolon
 id|rtmp
-op_or_assign
+op_and_assign
+op_complement
 (paren
 id|base
 op_amp
@@ -6978,7 +7002,8 @@ id|pci_addr
 )paren
 suffix:semicolon
 id|pdev-&gt;rom_address
-op_or_assign
+op_and_assign
+op_complement
 (paren
 id|base
 op_amp
@@ -7524,6 +7549,90 @@ id|imap_offset
 c_func
 (paren
 id|imap_ser
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x2c
+suffix:colon
+multiline_comment|/* Onboard Timer 0 */
+id|imap_off
+op_assign
+id|imap_offset
+c_func
+(paren
+id|imap_tim0
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x2d
+suffix:colon
+multiline_comment|/* Onboard Timer 1 */
+id|imap_off
+op_assign
+id|imap_offset
+c_func
+(paren
+id|imap_tim1
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x2e
+suffix:colon
+multiline_comment|/* Psycho UE Interrupt */
+id|imap_off
+op_assign
+id|imap_offset
+c_func
+(paren
+id|imap_ue
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x2f
+suffix:colon
+multiline_comment|/* Psycho CE Interrupt */
+id|imap_off
+op_assign
+id|imap_offset
+c_func
+(paren
+id|imap_ce
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x30
+suffix:colon
+multiline_comment|/* Psycho PCI A Error Interrupt */
+id|imap_off
+op_assign
+id|imap_offset
+c_func
+(paren
+id|imap_a_err
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x31
+suffix:colon
+multiline_comment|/* Psycho PCI B Error Interrupt */
+id|imap_off
+op_assign
+id|imap_offset
+c_func
+(paren
+id|imap_b_err
 )paren
 suffix:semicolon
 r_break
@@ -8119,12 +8228,6 @@ op_assign
 id|pbm-&gt;parent-&gt;upa_portid
 suffix:semicolon
 r_int
-r_char
-id|pci_irq_line
-op_assign
-id|pdev-&gt;irq
-suffix:semicolon
-r_int
 id|err
 suffix:semicolon
 macro_line|#ifdef FIXUP_IRQ_DEBUG
@@ -8354,14 +8457,63 @@ l_int|4
 suffix:colon
 l_int|0
 suffix:semicolon
+multiline_comment|/* Use the given interrupt property value as the line if it&n;&t;&t; * is non-zero and legal.  Legal encodings are INTA=1, INTB=2,&n;&t;&t; * INTC=3, INTD=4 as per PCI OBP binding spec version 2.1 -DaveM&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|prom_irq
+OG
+l_int|0
+op_logical_and
+id|prom_irq
+OL
+l_int|5
+)paren
+(brace
 id|line
 op_assign
 (paren
-id|pci_irq_line
+(paren
+id|prom_irq
+op_minus
+l_int|1
 )paren
 op_amp
 l_int|3
+)paren
 suffix:semicolon
+)brace
+r_else
+(brace
+r_int
+r_char
+id|pci_irq_line
+suffix:semicolon
+multiline_comment|/* The generic PCI probing layer will read the&n;&t;&t;&t; * interrupt line into pdev-&gt;irq if the interrupt&n;&t;&t;&t; * pin is non-zero, so we have to explicitly fetch&n;&t;&t;&t; * the pin here to be certain (the interrupt line is&n;&t;&t;&t; * typically left at zero by OBP).&n;&t;&t;&t; */
+id|pci_read_config_byte
+c_func
+(paren
+id|pdev
+comma
+id|PCI_INTERRUPT_PIN
+comma
+op_amp
+id|pci_irq_line
+)paren
+suffix:semicolon
+id|line
+op_assign
+(paren
+(paren
+id|pci_irq_line
+op_minus
+l_int|1
+)paren
+op_amp
+l_int|3
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Slot determination is only slightly complex.  Handle&n;&t;&t; * the easy case first.&n;&t;&t; */
 r_if
 c_cond

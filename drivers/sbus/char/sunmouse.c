@@ -155,7 +155,7 @@ suffix:semicolon
 DECL|macro|SMOUSE_DEBUG
 macro_line|#undef SMOUSE_DEBUG
 r_static
-r_void
+r_int
 DECL|function|push_event
 id|push_event
 (paren
@@ -195,7 +195,13 @@ id|sunmouse.head
 op_assign
 id|next
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 r_static
 r_int
@@ -375,7 +381,35 @@ l_int|1200
 (brace
 id|mouse_baud
 op_assign
+l_int|2400
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|mouse_baud
+op_eq
+l_int|2400
+)paren
+(brace
+id|mouse_baud
+op_assign
 l_int|4800
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|mouse_baud
+op_eq
+l_int|4800
+)paren
+(brace
+id|mouse_baud
+op_assign
+l_int|9600
 suffix:semicolon
 )brace
 r_else
@@ -539,6 +573,10 @@ id|mvalue
 suffix:semicolon
 r_int
 id|d
+comma
+id|pushed
+op_assign
+l_int|0
 suffix:semicolon
 id|Firm_event
 id|ev
@@ -879,6 +917,8 @@ id|VKEY_DOWN
 suffix:colon
 id|VKEY_UP
 suffix:semicolon
+id|pushed
+op_add_assign
 id|push_event
 (paren
 op_amp
@@ -904,6 +944,8 @@ id|ev.value
 op_assign
 id|sunmouse.delta_x
 suffix:semicolon
+id|pushed
+op_add_assign
 id|push_event
 (paren
 op_amp
@@ -933,6 +975,8 @@ id|ev.value
 op_assign
 id|sunmouse.delta_y
 suffix:semicolon
+id|pushed
+op_add_assign
 id|push_event
 (paren
 op_amp
@@ -940,7 +984,15 @@ id|ev
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* We just completed a transaction, wake up whoever is awaiting&n;&t; * this event.&n;&t; */
+r_if
+c_cond
+(paren
+id|pushed
+op_ne
+l_int|0
+)paren
+(brace
+multiline_comment|/* We just completed a transaction, wake up whoever is awaiting&n;&t;&t; * this event.&n;&t;&t; */
 id|sunmouse.ready
 op_assign
 l_int|1
@@ -964,6 +1016,7 @@ op_amp
 id|sunmouse.proc_list
 )paren
 suffix:semicolon
+)brace
 r_return
 suffix:semicolon
 )brace

@@ -751,6 +751,23 @@ op_star
 id|vma
 )paren
 suffix:semicolon
+multiline_comment|/* switch to/from raster image mode */
+DECL|member|fb_rasterimg
+r_int
+(paren
+op_star
+id|fb_rasterimg
+)paren
+(paren
+r_struct
+id|fb_info
+op_star
+id|info
+comma
+r_int
+id|start
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n;    *    This is the interface between the low-level console driver and the&n;    *    low-level frame buffer device&n;    */

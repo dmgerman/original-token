@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: nosrmmu.c,v 1.1 1998/03/09 14:04:15 jj Exp $&n; * nosrmmu.c: This file is a bunch of dummies for sun4 compiles, &n; *         so that it does not need srmmu and avoid ifdefs.&n; *&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: nosrmmu.c,v 1.2 1999/03/30 10:17:39 jj Exp $&n; * nosrmmu.c: This file is a bunch of dummies for sun4 compiles, &n; *         so that it does not need srmmu and avoid ifdefs.&n; *&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -158,6 +158,46 @@ r_int
 op_star
 id|mem_end_p
 )paren
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|iounit_map_dma_init
+id|__u32
+id|iounit_map_dma_init
+c_func
+(paren
+r_struct
+id|linux_sbus
+op_star
+id|sbus
+comma
+r_int
+id|size
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|iounit_map_dma_page
+id|__u32
+id|iounit_map_dma_page
+c_func
+(paren
+id|__u32
+id|vaddr
+comma
+r_void
+op_star
+id|addr
+comma
+r_struct
+id|linux_sbus
+op_star
+id|sbus
 )paren
 (brace
 r_return

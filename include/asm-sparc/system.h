@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.72 1999/01/02 16:50:21 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.73 1999/04/20 13:22:49 anton Exp $ */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H
@@ -84,6 +84,8 @@ mdefine_line|#define ARCH_SUN4C_SUN4 1
 DECL|macro|ARCH_SUN4
 mdefine_line|#define ARCH_SUN4 1
 macro_line|#endif
+DECL|macro|SUN4M_NCPUS
+mdefine_line|#define SUN4M_NCPUS            4              /* Architectural limit of sun4m. */
 r_extern
 r_int
 r_int
