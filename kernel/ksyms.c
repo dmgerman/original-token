@@ -2,6 +2,7 @@ multiline_comment|/* &n; * Herein lies all the functions/variables that are &quo
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -28,6 +29,7 @@ macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/mount.h&gt;
+macro_line|#include &lt;linux/pagemap.h&gt;
 r_extern
 r_int
 r_char
@@ -649,6 +651,12 @@ c_func
 id|high_memory
 )paren
 comma
+id|X
+c_func
+(paren
+id|update_vm_cache
+)paren
+comma
 multiline_comment|/* filesystem internal functions */
 id|X
 c_func
@@ -816,6 +824,18 @@ id|X
 c_func
 (paren
 id|add_blkdev_randomness
+)paren
+comma
+id|X
+c_func
+(paren
+id|generic_file_read
+)paren
+comma
+id|X
+c_func
+(paren
+id|generic_readpage
 )paren
 comma
 multiline_comment|/* device registration */
@@ -2195,20 +2215,12 @@ c_func
 id|generate_cluster
 )paren
 comma
-macro_line|#ifdef CONFIG_SCSI
 id|X
 c_func
 (paren
 id|proc_scsi
 )paren
 comma
-id|X
-c_func
-(paren
-id|proc_scsi_inode_operations
-)paren
-comma
-macro_line|#endif
 id|X
 c_func
 (paren

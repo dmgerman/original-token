@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -1087,6 +1088,90 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|file-&gt;f_op
+op_member_access_from_pointer
+id|fsync
+c_func
+(paren
+id|inode
+comma
+id|file
+)paren
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|sys_fdatasync
+id|asmlinkage
+r_int
+id|sys_fdatasync
+c_func
+(paren
+r_int
+r_int
+id|fd
+)paren
+(brace
+r_struct
+id|file
+op_star
+id|file
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fd
+op_ge
+id|NR_OPEN
+op_logical_or
+op_logical_neg
+(paren
+id|file
+op_assign
+id|current-&gt;files-&gt;fd
+(braket
+id|fd
+)braket
+)paren
+op_logical_or
+op_logical_neg
+(paren
+id|inode
+op_assign
+id|file-&gt;f_inode
+)paren
+)paren
+r_return
+op_minus
+id|EBADF
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|file-&gt;f_op
+op_logical_or
+op_logical_neg
+id|file-&gt;f_op-&gt;fsync
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+multiline_comment|/* this needs further work, at the moment it is identical to fsync() */
 r_if
 c_cond
 (paren

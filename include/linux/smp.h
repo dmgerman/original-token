@@ -4,7 +4,6 @@ mdefine_line|#define __LINUX_SMP_H
 multiline_comment|/*&n; *&t;Generic SMP support&n; *&t;&t;Alan Cox. &lt;alan@cymru.net&gt;&n; */
 macro_line|#ifdef __SMP__
 macro_line|#include &lt;asm/smp.h&gt;
-macro_line|#include &lt;asm/smp_lock.h&gt;
 r_extern
 r_void
 id|smp_message_pass

@@ -333,7 +333,6 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_SCSI
 DECL|variable|proc_scsi
 r_struct
 id|proc_dir_entry
@@ -375,7 +374,6 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-macro_line|#endif
 DECL|function|proc_register
 r_int
 id|proc_register

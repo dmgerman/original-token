@@ -28,8 +28,10 @@ id|mem_map
 )paren
 suffix:semicolon
 )brace
+DECL|macro|PAGE_HASH_BITS
+mdefine_line|#define PAGE_HASH_BITS 10
 DECL|macro|PAGE_HASH_SIZE
-mdefine_line|#define PAGE_HASH_SIZE 257
+mdefine_line|#define PAGE_HASH_SIZE (1 &lt;&lt; PAGE_HASH_BITS)
 DECL|macro|PAGE_AGE_VALUE
 mdefine_line|#define PAGE_AGE_VALUE 16
 r_extern
@@ -46,6 +48,7 @@ id|page_hash_table
 id|PAGE_HASH_SIZE
 )braket
 suffix:semicolon
+multiline_comment|/*&n; * We use a power-of-two hash table to avoid a modulus,&n; * and get a reasonable hash by knowing roughly how the&n; * inode pointer and offsets are distributed (ie, we&n; * roughly know which bits are &quot;significant&quot;)&n; */
 DECL|function|_page_hashfn
 r_static
 r_inline
@@ -64,19 +67,33 @@ r_int
 id|offset
 )paren
 (brace
-id|offset
-op_xor_assign
-(paren
-r_int
-r_int
-)paren
-id|inode
-suffix:semicolon
+DECL|macro|i
+mdefine_line|#define i (((unsigned long) inode)/sizeof(unsigned long))
+DECL|macro|o
+mdefine_line|#define o (offset &gt;&gt; PAGE_SHIFT)
+DECL|macro|s
+mdefine_line|#define s(x) ((x)+((x)&gt;&gt;PAGE_HASH_BITS))
 r_return
-id|offset
-op_mod
+id|s
+c_func
+(paren
+id|i
+op_plus
+id|o
+)paren
+op_amp
+(paren
 id|PAGE_HASH_SIZE
+op_minus
+l_int|1
+)paren
 suffix:semicolon
+DECL|macro|i
+macro_line|#undef i
+DECL|macro|o
+macro_line|#undef o
+DECL|macro|s
+macro_line|#undef s
 )brace
 DECL|macro|page_hash
 mdefine_line|#define page_hash(inode,offset) page_hash_table[_page_hashfn(inode,offset)]

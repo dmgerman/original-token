@@ -298,6 +298,8 @@ DECL|macro|__NR_writev
 mdefine_line|#define __NR_writev&t;&t;146
 DECL|macro|__NR_getsid
 mdefine_line|#define __NR_getsid&t;&t;147
+DECL|macro|__NR_fdatasync
+mdefine_line|#define __NR_fdatasync&t;&t;148
 DECL|macro|__NR_mlock
 mdefine_line|#define __NR_mlock&t;&t;150
 DECL|macro|__NR_munlock
@@ -306,6 +308,22 @@ DECL|macro|__NR_mlockall
 mdefine_line|#define __NR_mlockall&t;&t;152
 DECL|macro|__NR_munlockall
 mdefine_line|#define __NR_munlockall&t;&t;153
+DECL|macro|__NR_sched_setparam
+mdefine_line|#define __NR_sched_setparam&t;&t;154
+DECL|macro|__NR_sched_getparam
+mdefine_line|#define __NR_sched_getparam&t;&t;155
+DECL|macro|__NR_sched_setscheduler
+mdefine_line|#define __NR_sched_setscheduler&t;&t;156
+DECL|macro|__NR_sched_getscheduler
+mdefine_line|#define __NR_sched_getscheduler&t;&t;157
+DECL|macro|__NR_sched_yield
+mdefine_line|#define __NR_sched_yield&t;&t;158
+DECL|macro|__NR_sched_get_priority_max
+mdefine_line|#define __NR_sched_get_priority_max&t;159
+DECL|macro|__NR_sched_get_priority_min
+mdefine_line|#define __NR_sched_get_priority_min&t;160
+DECL|macro|__NR_sched_rr_get_interval
+mdefine_line|#define __NR_sched_rr_get_interval&t;161
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0
 mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name)); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}

@@ -1,6 +1,22 @@
 macro_line|#ifndef _LINUX_TIME_H
 DECL|macro|_LINUX_TIME_H
 mdefine_line|#define _LINUX_TIME_H
+DECL|struct|timespec
+r_struct
+id|timespec
+(brace
+DECL|member|tv_sec
+r_int
+id|tv_sec
+suffix:semicolon
+multiline_comment|/* seconds */
+DECL|member|tv_nsec
+r_int
+id|tv_nsec
+suffix:semicolon
+multiline_comment|/* nanoseconds */
+)brace
+suffix:semicolon
 DECL|struct|timeval
 r_struct
 id|timeval
@@ -74,6 +90,24 @@ DECL|macro|ITIMER_VIRTUAL
 mdefine_line|#define&t;ITIMER_VIRTUAL&t;1
 DECL|macro|ITIMER_PROF
 mdefine_line|#define&t;ITIMER_PROF&t;2
+DECL|struct|itimerspec
+r_struct
+id|itimerspec
+(brace
+DECL|member|it_interval
+r_struct
+id|timespec
+id|it_interval
+suffix:semicolon
+multiline_comment|/* timer period */
+DECL|member|it_value
+r_struct
+id|timespec
+id|it_value
+suffix:semicolon
+multiline_comment|/* timer expiration */
+)brace
+suffix:semicolon
 DECL|struct|itimerval
 r_struct
 id|itimerval

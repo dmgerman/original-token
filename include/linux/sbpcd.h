@@ -147,11 +147,11 @@ mdefine_line|#define DBG_SEQ&t;26&t;/* Sequoia interface configuration trace */
 DECL|macro|DBG_LCS
 mdefine_line|#define DBG_LCS&t;27&t;/* Longshine LCS-7260 debugging trace */
 DECL|macro|DBG_CD2
-mdefine_line|#define DBG_CD2&t;28&t;/* MKE CD200 debugging trace */
+mdefine_line|#define DBG_CD2&t;28&t;/* MKE/Funai CD200 debugging trace */
 DECL|macro|DBG_TEA
 mdefine_line|#define DBG_TEA&t;29&t;/* TEAC CD-55A debugging trace */
-DECL|macro|DBG_TE2
-mdefine_line|#define DBG_TE2&t;30&t;/* TEAC CD-55A 2nd debugging level */
+DECL|macro|DBG_ECS
+mdefine_line|#define DBG_ECS&t;30&t;/* ECS-AT (Vertos 100) debugging trace */
 DECL|macro|DBG_000
 mdefine_line|#define DBG_000&t;31&t;/* unnecessary information */
 multiline_comment|/*==========================================================================*/
@@ -226,7 +226,7 @@ multiline_comment|/*&n; * LCS-7260 special status result bits:&n; */
 DECL|macro|p_lcs_door_locked
 mdefine_line|#define p_lcs_door_locked&t;0x02
 DECL|macro|p_lcs_door_closed
-mdefine_line|#define p_lcs_door_closed&t;0x01
+mdefine_line|#define p_lcs_door_closed&t;0x01 /* probably disk_in */
 multiline_comment|/*&n; * CR-52x special status result bits:&n; */
 DECL|macro|p_caddin_old
 mdefine_line|#define p_caddin_old&t;0x40
@@ -267,6 +267,20 @@ DECL|macro|pL_door_locked
 mdefine_line|#define pL_door_locked&t;0x02
 DECL|macro|pL_door_closed
 mdefine_line|#define pL_door_closed&t;0x01
+DECL|macro|pV_door_closed
+mdefine_line|#define pV_door_closed&t;0x40
+DECL|macro|pV_spinning
+mdefine_line|#define pV_spinning&t;0x20
+DECL|macro|pV_check
+mdefine_line|#define pV_check&t;0x10
+DECL|macro|pV_success
+mdefine_line|#define pV_success&t;0x08
+DECL|macro|pV_busy
+mdefine_line|#define pV_busy&t;&t;0x04
+DECL|macro|pV_door_locked
+mdefine_line|#define pV_door_locked&t;0x02
+DECL|macro|pV_disk_ok
+mdefine_line|#define pV_disk_ok&t;0x01
 DECL|macro|p1_door_closed
 mdefine_line|#define p1_door_closed&t;0x80
 DECL|macro|p1_disk_in
@@ -328,9 +342,9 @@ DECL|macro|DATA_READY
 mdefine_line|#define DATA_READY&t;((inb(CDi_status)&amp;s_not_data_ready)==0)
 DECL|macro|RESULT_READY
 mdefine_line|#define RESULT_READY&t;((inb(CDi_status)&amp;s_not_result_ready)==0)
-multiline_comment|/*&n; * drive types (firmware versions):&n; */
+multiline_comment|/*&n; * drive families and types (firmware versions):&n; */
 DECL|macro|drv_fam0
-mdefine_line|#define drv_fam0&t;0x08&t;&t;/* CR-52x family */
+mdefine_line|#define drv_fam0&t;0x0100&t;&t;/* CR-52x family */
 DECL|macro|drv_199
 mdefine_line|#define drv_199&t;&t;(drv_fam0+0x01)&t;/* &lt;200 */
 DECL|macro|drv_200
@@ -343,28 +357,34 @@ DECL|macro|drv_211
 mdefine_line|#define drv_211&t;&t;(drv_fam0+0x05)&t;/* &lt;300 */
 DECL|macro|drv_300
 mdefine_line|#define drv_300&t;&t;(drv_fam0+0x06)&t;/* &gt;=300 */
+DECL|macro|drv_fam1
+mdefine_line|#define drv_fam1&t;0x0200&t;&t;/* CR-56x family */
+DECL|macro|drv_099
+mdefine_line|#define drv_099&t;&t;(drv_fam1+0x01)&t;/* &lt;100 */
+DECL|macro|drv_100
+mdefine_line|#define drv_100&t;&t;(drv_fam1+0x02)&t;/* &gt;=100, only 1.02 and 5.00 known */
+DECL|macro|drv_fam2
+mdefine_line|#define drv_fam2&t;0x0400&t;&t;/* CD200 family */
+DECL|macro|drv_famT
+mdefine_line|#define drv_famT&t;0x0800&t;&t;/* TEAC CD-55A */
 DECL|macro|drv_famL
-mdefine_line|#define drv_famL&t;0x10&t;&t;/* Longshine family */
+mdefine_line|#define drv_famL&t;0x1000&t;&t;/* Longshine family */
 DECL|macro|drv_260
 mdefine_line|#define drv_260&t;&t;(drv_famL+0x01)&t;/* LCS-7260 */
 DECL|macro|drv_e1
 mdefine_line|#define drv_e1&t;&t;(drv_famL+0x01)&t;/* LCS-7260, firmware &quot;A E1&quot; */
 DECL|macro|drv_f4
 mdefine_line|#define drv_f4&t;&t;(drv_famL+0x02)&t;/* LCS-7260, firmware &quot;A4F4&quot; */
-DECL|macro|drv_fam1
-mdefine_line|#define drv_fam1&t;0x20&t;&t;/* CR-56x family */
-DECL|macro|drv_099
-mdefine_line|#define drv_099&t;&t;(drv_fam1+0x01)&t;/* &lt;100 */
-DECL|macro|drv_100
-mdefine_line|#define drv_100&t;&t;(drv_fam1+0x02)&t;/* &gt;=100, only 5.00 known here */
-DECL|macro|drv_famT
-mdefine_line|#define drv_famT&t;0x40&t;&t;/* TEAC CD-55A */
-DECL|macro|drv_fam2
-mdefine_line|#define drv_fam2&t;0x80&t;&t;/* CD200 family */
+DECL|macro|drv_famV
+mdefine_line|#define drv_famV&t;0x2000&t;&t;/* ECS-AT (vertos-100) family */
+DECL|macro|drv_at
+mdefine_line|#define drv_at&t;&t;(drv_famV+0x01)&t;/* ECS-AT, firmware &quot;1.00&quot; */
 DECL|macro|fam0_drive
 mdefine_line|#define fam0_drive&t;(D_S[d].drv_type&amp;drv_fam0)
 DECL|macro|famL_drive
 mdefine_line|#define famL_drive&t;(D_S[d].drv_type&amp;drv_famL)
+DECL|macro|famV_drive
+mdefine_line|#define famV_drive&t;(D_S[d].drv_type&amp;drv_famV)
 DECL|macro|fam1_drive
 mdefine_line|#define fam1_drive&t;(D_S[d].drv_type&amp;drv_fam1)
 DECL|macro|fam2_drive
@@ -373,8 +393,18 @@ DECL|macro|famT_drive
 mdefine_line|#define famT_drive&t;(D_S[d].drv_type&amp;drv_famT)
 DECL|macro|fam0L_drive
 mdefine_line|#define fam0L_drive&t;(D_S[d].drv_type&amp;(drv_fam0|drv_famL))
+DECL|macro|fam0V_drive
+mdefine_line|#define fam0V_drive&t;(D_S[d].drv_type&amp;(drv_fam0|drv_famV))
+DECL|macro|famLV_drive
+mdefine_line|#define famLV_drive&t;(D_S[d].drv_type&amp;(drv_famL|drv_famV))
+DECL|macro|fam0LV_drive
+mdefine_line|#define fam0LV_drive&t;(D_S[d].drv_type&amp;(drv_fam0|drv_famL|drv_famV))
 DECL|macro|fam1L_drive
 mdefine_line|#define fam1L_drive&t;(D_S[d].drv_type&amp;(drv_fam1|drv_famL))
+DECL|macro|fam1V_drive
+mdefine_line|#define fam1V_drive&t;(D_S[d].drv_type&amp;(drv_fam1|drv_famV))
+DECL|macro|fam1LV_drive
+mdefine_line|#define fam1LV_drive&t;(D_S[d].drv_type&amp;(drv_fam1|drv_famL|drv_famV))
 DECL|macro|fam01_drive
 mdefine_line|#define fam01_drive&t;(D_S[d].drv_type&amp;(drv_fam0|drv_fam1))
 DECL|macro|fam12_drive
@@ -442,9 +472,8 @@ multiline_comment|/*============================================================
 DECL|macro|MIXER_CD_Volume
 mdefine_line|#define MIXER_CD_Volume&t;0x28&t;/* internal SB Pro register address */
 multiline_comment|/*==========================================================================*/
-multiline_comment|/*&n; * Creative Labs Programmers did this:&n; */
 DECL|macro|MAX_TRACKS
-mdefine_line|#define MAX_TRACKS&t;120&t;/* why more than 99? */
+mdefine_line|#define MAX_TRACKS&t;99
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * To make conversions easier (machine dependent!)&n; */
 DECL|union|_msf
@@ -489,7 +518,7 @@ id|BLK
 suffix:semicolon
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*============================================================================&n;==============================================================================&n;&n;COMMAND SET of &quot;old&quot; drives like CR-521, CR-522&n;               (the CR-562 family is different):&n;&n;No.&t;Command&t;&t;&t;       Code&n;--------------------------------------------&n;&n;Drive Commands:&n; 1&t;Seek&t;&t;&t;&t;01&t;&n; 2&t;Read Data&t;&t;&t;02&n; 3&t;Read XA-Data&t;&t;&t;03&n; 4&t;Read Header&t;&t;&t;04&n; 5&t;Spin Up&t;&t;&t;&t;05&n; 6&t;Spin Down&t;&t;&t;06&n; 7&t;Diagnostic&t;&t;&t;07&n; 8&t;Read UPC&t;&t;&t;08&n; 9&t;Read ISRC&t;&t;&t;09&n;10&t;Play Audio&t;&t;&t;0A&n;11&t;Play Audio MSF&t;&t;&t;0B&n;12&t;Play Audio Track/Index&t;&t;0C&n;&n;Status Commands:&n;13&t;Read Status&t;&t;&t;81&t;&n;14&t;Read Error&t;&t;&t;82&n;15&t;Read Drive Version&t;&t;83&n;16&t;Mode Select&t;&t;&t;84&n;17&t;Mode Sense&t;&t;&t;85&n;18&t;Set XA Parameter&t;&t;86&n;19&t;Read XA Parameter&t;&t;87&n;20&t;Read Capacity&t;&t;&t;88&n;21&t;Read SUB_Q&t;&t;&t;89&n;22&t;Read Disc Code&t;&t;&t;8A&n;23&t;Read Disc Information&t;&t;8B&n;24&t;Read TOC&t;&t;&t;8C&n;25&t;Pause/Resume&t;&t;&t;8D&n;26&t;Read Packet&t;&t;&t;8E&n;27&t;Read Path Check&t;&t;&t;00&n; &n; &n;all numbers (lba, msf-bin, msf-bcd, counts) to transfer high byte first&n;&n;mnemo     7-byte command        #bytes response (r0...rn)&n;________ ____________________  ____ &n;&n;Read Status:&n;status:  81.                    (1)  one-byte command, gives the main&n;                                                          status byte&n;Read Error:&n;check1:  82 00 00 00 00 00 00.  (6)  r1: audio status&n;&n;Read Packet:&n;check2:  8e xx 00 00 00 00 00. (xx)  gets xx bytes response, relating&n;                                        to commands 01 04 05 07 08 09&n;&n;Play Audio:&n;play:    0a ll-bb-aa nn-nn-nn.  (0)  play audio, ll-bb-aa: starting block (lba),&n;                                                 nn-nn-nn: #blocks&n;Play Audio MSF:&n;         0b mm-ss-ff mm-ss-ff   (0)  play audio from/to&n;&n;Play Audio Track/Index:&n;         0c ...&n;&n;Pause/Resume:&n;pause:   8d pr 00 00 00 00 00.  (0)  pause (pr=00) &n;                                     resume (pr=80) audio playing&n;&n;Mode Select:&n;         84 00 nn-nn ??-?? 00   (0)  nn-nn: 2048 or 2340&n;                                     possibly defines transfer size&n;&n;set_vol: 84 83 00 00 sw le 00.  (0)  sw(itch): lrxxxxxx (off=1)&n;                                     le(vel): min=0, max=FF, else half&n;&t;&t;&t;&t;     (firmware 2.11)&n;&n;Mode Sense:&n;get_vol: 85 03 00 00 00 00 00.  (2)  tell current audio volume setting&n;&n;Read Disc Information:&n;tocdesc: 8b 00 00 00 00 00 00.  (6)  read the toc descriptor (&quot;msf-bin&quot;-format)&n;&n;Read TOC:&n;tocent:  8c fl nn 00 00 00 00.  (8)  read toc entry #nn&n;                                       (fl=0:&quot;lba&quot;-, =2:&quot;msf-bin&quot;-format)&n;&n;Read Capacity:&n;capacit: 88 00 00 00 00 00 00.  (5)  &quot;read CD-ROM capacity&quot;&n;&n;&n;Read Path Check:&n;ping:    00 00 00 00 00 00 00.  (2)  r0=AA, r1=55&n;                                     (&quot;ping&quot; if the drive is connected)&n;&n;Read Drive Version:&n;ident:   83 00 00 00 00 00 00. (12)  gives &quot;MATSHITAn.nn&quot; &n;                                     (n.nn = 2.01, 2.11., 3.00, ...)&n;&n;Seek:&n;seek:    01 00 ll-bb-aa 00 00.  (0)  &n;seek:    01 02 mm-ss-ff 00 00.  (0)  &n;&n;Read Data:&n;read:    02 xx-xx-xx nn-nn fl. (??)  read nn-nn blocks of 2048 bytes,&n;                                     starting at block xx-xx-xx  &n;                                     fl=0: &quot;lba&quot;-, =2:&quot;msf-bcd&quot;-coded xx-xx-xx&n;&n;Read XA-Data:&n;read:    03 xx-xx-xx nn-nn fl. (??)  read nn-nn blocks of 2340 bytes, &n;                                     starting at block xx-xx-xx&n;                                     fl=0: &quot;lba&quot;-, =2:&quot;msf-bcd&quot;-coded xx-xx-xx&n;&n;Read SUB_Q:&n;         89 fl 00 00 00 00 00. (13)  r0: audio status, r4-r7: lba/msf, &n;                                       fl=0: &quot;lba&quot;, fl=2: &quot;msf&quot;&n;&n;Read Disc Code:&n;         8a 00 00 00 00 00 00. (14)  possibly extended &quot;check condition&quot;-info&n;&n;Read Header:&n;         04 00 ll-bb-aa 00 00.  (0)   4 bytes response with &quot;check2&quot;&n;         04 02 mm-ss-ff 00 00.  (0)   4 bytes response with &quot;check2&quot;&n;&n;Spin Up:&n;         05 00 ll-bb-aa 00 00.  (0)  possibly implies a &quot;seek&quot;&n;&n;Spin Down:&n;         06 ...&n;&n;Diagnostic:&n;         07 00 ll-bb-aa 00 00.  (2)   2 bytes response with &quot;check2&quot;&n;         07 02 mm-ss-ff 00 00.  (2)   2 bytes response with &quot;check2&quot;&n;&n;Read UPC:&n;         08 00 ll-bb-aa 00 00. (16)  &n;         08 02 mm-ss-ff 00 00. (16)  &n;&n;Read ISRC:&n;         09 00 ll-bb-aa 00 00. (15)  15 bytes response with &quot;check2&quot;&n;         09 02 mm-ss-ff 00 00. (15)  15 bytes response with &quot;check2&quot;&n;&n;Set XA Parameter:&n;         86 ...&n;&n;Read XA Parameter:&n;         87 ...&n;&n;==============================================================================&n;============================================================================*/
-multiline_comment|/*&n; * commands&n; *&n; * CR-52x:      CMD0_&n; * CR-56x:      CMD1_&n; * CD200:       CMD2_&n; * LCS-7260:    CMDL_&n; * TEAC CD-55A: CMDT_&n; */
+multiline_comment|/*&n; * commands&n; *&n; * CR-52x:      CMD0_&n; * CR-56x:      CMD1_&n; * CD200:       CMD2_&n; * LCS-7260:    CMDL_&n; * TEAC CD-55A: CMDT_&n; * ECS-AT:      CMDV_&n; */
 DECL|macro|CMD1_RESET
 mdefine_line|#define CMD1_RESET&t;0x0a
 DECL|macro|CMD2_RESET
@@ -504,6 +533,8 @@ DECL|macro|CMDT_LOCK_CTL
 mdefine_line|#define CMDT_LOCK_CTL&t;CMD2_LOCK_CTL
 DECL|macro|CMDL_LOCK_CTL
 mdefine_line|#define CMDL_LOCK_CTL&t;0x0e
+DECL|macro|CMDV_LOCK_CTL
+mdefine_line|#define CMDV_LOCK_CTL&t;CMDL_LOCK_CTL
 DECL|macro|CMD1_TRAY_CTL
 mdefine_line|#define CMD1_TRAY_CTL&t;0x07
 DECL|macro|CMD2_TRAY_CTL
@@ -512,10 +543,14 @@ DECL|macro|CMDT_TRAY_CTL
 mdefine_line|#define CMDT_TRAY_CTL&t;CMD2_TRAY_CTL
 DECL|macro|CMDL_TRAY_CTL
 mdefine_line|#define CMDL_TRAY_CTL&t;0x0d
+DECL|macro|CMDV_TRAY_CTL
+mdefine_line|#define CMDV_TRAY_CTL&t;CMDL_TRAY_CTL
 DECL|macro|CMD1_MULTISESS
 mdefine_line|#define CMD1_MULTISESS&t;0x8d
 DECL|macro|CMDL_MULTISESS
 mdefine_line|#define CMDL_MULTISESS&t;0x8c
+DECL|macro|CMDV_MULTISESS
+mdefine_line|#define CMDV_MULTISESS&t;CMDL_MULTISESS
 DECL|macro|CMD1_SUBCHANINF
 mdefine_line|#define CMD1_SUBCHANINF&t;0x11
 DECL|macro|CMD2_SUBCHANINF
@@ -540,6 +575,8 @@ DECL|macro|CMDT_PATH_CHECK
 mdefine_line|#define CMDT_PATH_CHECK&t;0x???
 DECL|macro|CMDL_PATH_CHECK
 mdefine_line|#define CMDL_PATH_CHECK&t;CMD0_PATH_CHECK
+DECL|macro|CMDV_PATH_CHECK
+mdefine_line|#define CMDV_PATH_CHECK&t;CMD0_PATH_CHECK
 DECL|macro|CMD0_SEEK
 mdefine_line|#define CMD0_SEEK&t;0x01
 DECL|macro|CMD1_SEEK
@@ -550,6 +587,8 @@ DECL|macro|CMDT_SEEK
 mdefine_line|#define CMDT_SEEK&t;CMD2_SEEK
 DECL|macro|CMDL_SEEK
 mdefine_line|#define CMDL_SEEK&t;CMD0_SEEK
+DECL|macro|CMDV_SEEK
+mdefine_line|#define CMDV_SEEK&t;CMD0_SEEK
 DECL|macro|CMD0_READ
 mdefine_line|#define CMD0_READ&t;0x02
 DECL|macro|CMD1_READ
@@ -560,6 +599,8 @@ DECL|macro|CMDT_READ
 mdefine_line|#define CMDT_READ&t;CMD2_READ
 DECL|macro|CMDL_READ
 mdefine_line|#define CMDL_READ&t;CMD0_READ
+DECL|macro|CMDV_READ
+mdefine_line|#define CMDV_READ&t;CMD0_READ
 DECL|macro|CMD0_READ_XA
 mdefine_line|#define CMD0_READ_XA&t;0x03
 DECL|macro|CMD2_READ_XA
@@ -568,6 +609,8 @@ DECL|macro|CMD2_READ_XA2
 mdefine_line|#define CMD2_READ_XA2&t;0xd5
 DECL|macro|CMDL_READ_XA
 mdefine_line|#define CMDL_READ_XA&t;CMD0_READ_XA /* really ?? */
+DECL|macro|CMDV_READ_XA
+mdefine_line|#define CMDV_READ_XA&t;CMD0_READ_XA
 DECL|macro|CMD0_READ_HEAD
 mdefine_line|#define CMD0_READ_HEAD&t;0x04
 DECL|macro|CMD0_SPINUP
@@ -578,6 +621,8 @@ DECL|macro|CMD2_SPINUP
 mdefine_line|#define CMD2_SPINUP&t;CMD2_TRAY_CTL
 DECL|macro|CMDL_SPINUP
 mdefine_line|#define CMDL_SPINUP&t;CMD0_SPINUP
+DECL|macro|CMDV_SPINUP
+mdefine_line|#define CMDV_SPINUP&t;CMD0_SPINUP
 DECL|macro|CMD0_SPINDOWN
 mdefine_line|#define CMD0_SPINDOWN&t;0x06 /* really??? */
 DECL|macro|CMD1_SPINDOWN
@@ -586,6 +631,8 @@ DECL|macro|CMD2_SPINDOWN
 mdefine_line|#define CMD2_SPINDOWN&t;CMD2_TRAY_CTL
 DECL|macro|CMDL_SPINDOWN
 mdefine_line|#define CMDL_SPINDOWN&t;0x0d
+DECL|macro|CMDV_SPINDOWN
+mdefine_line|#define CMDV_SPINDOWN&t;CMD0_SPINDOWN
 DECL|macro|CMD0_DIAG
 mdefine_line|#define CMD0_DIAG&t;0x07
 DECL|macro|CMD0_READ_UPC
@@ -596,6 +643,8 @@ DECL|macro|CMD2_READ_UPC
 mdefine_line|#define CMD2_READ_UPC&t;0x???
 DECL|macro|CMDL_READ_UPC
 mdefine_line|#define CMDL_READ_UPC&t;CMD0_READ_UPC
+DECL|macro|CMDV_READ_UPC
+mdefine_line|#define CMDV_READ_UPC&t;0x8f
 DECL|macro|CMD0_READ_ISRC
 mdefine_line|#define CMD0_READ_ISRC&t;0x09
 DECL|macro|CMD0_PLAY
@@ -606,6 +655,8 @@ DECL|macro|CMD2_PLAY
 mdefine_line|#define CMD2_PLAY&t;0x???
 DECL|macro|CMDL_PLAY
 mdefine_line|#define CMDL_PLAY&t;CMD0_PLAY
+DECL|macro|CMDV_PLAY
+mdefine_line|#define CMDV_PLAY&t;CMD0_PLAY
 DECL|macro|CMD0_PLAY_MSF
 mdefine_line|#define CMD0_PLAY_MSF&t;0x0b
 DECL|macro|CMD1_PLAY_MSF
@@ -630,6 +681,8 @@ DECL|macro|CMDT_STATUS
 mdefine_line|#define CMDT_STATUS&t;CMD2_STATUS
 DECL|macro|CMDL_STATUS
 mdefine_line|#define CMDL_STATUS&t;CMD0_STATUS
+DECL|macro|CMDV_STATUS
+mdefine_line|#define CMDV_STATUS&t;CMD0_STATUS
 DECL|macro|CMD2_SEEK_LEADIN
 mdefine_line|#define CMD2_SEEK_LEADIN 0x00
 DECL|macro|CMD0_READ_ERR
@@ -642,6 +695,8 @@ DECL|macro|CMDT_READ_ERR
 mdefine_line|#define CMDT_READ_ERR&t;CMD2_READ_ERR /* get audio status */
 DECL|macro|CMDL_READ_ERR
 mdefine_line|#define CMDL_READ_ERR&t;CMD0_READ_ERR
+DECL|macro|CMDV_READ_ERR
+mdefine_line|#define CMDV_READ_ERR&t;CMD0_READ_ERR
 DECL|macro|CMD0_READ_VER
 mdefine_line|#define CMD0_READ_VER&t;0x83
 DECL|macro|CMD1_READ_VER
@@ -652,6 +707,8 @@ DECL|macro|CMDT_READ_VER
 mdefine_line|#define CMDT_READ_VER&t;CMD2_READ_VER /* really ?? */
 DECL|macro|CMDL_READ_VER
 mdefine_line|#define CMDL_READ_VER&t;CMD0_READ_VER
+DECL|macro|CMDV_READ_VER
+mdefine_line|#define CMDV_READ_VER&t;CMD0_READ_VER
 DECL|macro|CMD0_SETMODE
 mdefine_line|#define CMD0_SETMODE&t;0x84
 DECL|macro|CMD1_SETMODE
@@ -694,6 +751,8 @@ DECL|macro|CMDT_READSUBQ
 mdefine_line|#define CMDT_READSUBQ&t;CMD2_READSUBQ
 DECL|macro|CMDL_READSUBQ
 mdefine_line|#define CMDL_READSUBQ&t;CMD0_READSUBQ
+DECL|macro|CMDV_READSUBQ
+mdefine_line|#define CMDV_READSUBQ&t;CMD0_READSUBQ
 DECL|macro|CMD0_DISKCODE
 mdefine_line|#define CMD0_DISKCODE&t;0x8a
 DECL|macro|CMD0_DISKINFO
@@ -706,6 +765,8 @@ DECL|macro|CMDT_DISKINFO
 mdefine_line|#define CMDT_DISKINFO&t;CMD2_DISKINFO
 DECL|macro|CMDL_DISKINFO
 mdefine_line|#define CMDL_DISKINFO&t;CMD0_DISKINFO
+DECL|macro|CMDV_DISKINFO
+mdefine_line|#define CMDV_DISKINFO&t;CMD0_DISKINFO
 DECL|macro|CMD0_READTOC
 mdefine_line|#define CMD0_READTOC&t;0x8c
 DECL|macro|CMD1_READTOC
@@ -714,6 +775,8 @@ DECL|macro|CMD2_READTOC
 mdefine_line|#define CMD2_READTOC&t;0x???
 DECL|macro|CMDL_READTOC
 mdefine_line|#define CMDL_READTOC&t;CMD0_READTOC
+DECL|macro|CMDV_READTOC
+mdefine_line|#define CMDV_READTOC&t;CMD0_READTOC
 DECL|macro|CMD0_PAU_RES
 mdefine_line|#define CMD0_PAU_RES&t;0x8d
 DECL|macro|CMD1_PAU_RES
@@ -724,6 +787,8 @@ DECL|macro|CMDT_PAUSE
 mdefine_line|#define CMDT_PAUSE&t;CMD2_PAU_RES
 DECL|macro|CMDL_PAU_RES
 mdefine_line|#define CMDL_PAU_RES&t;CMD0_PAU_RES
+DECL|macro|CMDV_PAUSE
+mdefine_line|#define CMDV_PAUSE&t;CMD0_PAU_RES
 DECL|macro|CMD0_PACKET
 mdefine_line|#define CMD0_PACKET&t;0x8e
 DECL|macro|CMD1_PACKET
@@ -732,6 +797,8 @@ DECL|macro|CMD2_PACKET
 mdefine_line|#define CMD2_PACKET&t;0x???
 DECL|macro|CMDL_PACKET
 mdefine_line|#define CMDL_PACKET&t;CMD0_PACKET
+DECL|macro|CMDV_PACKET
+mdefine_line|#define CMDV_PACKET&t;0x???
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
 macro_line|#endif _LINUX_SBPCD_H

@@ -144,7 +144,7 @@ multiline_comment|/* FDC version return types */
 DECL|macro|FDC_NONE
 mdefine_line|#define FDC_NONE&t;0x00
 DECL|macro|FDC_UNKNOWN
-mdefine_line|#define FDC_UNKNOWN&t;0x10
+mdefine_line|#define FDC_UNKNOWN&t;0x10&t;/* DO NOT USE THIS TYPE EXCEPT IF IDENTIFICATION&n;&t;&t;&t;&t;   FAILS EARLY */
 DECL|macro|FDC_8272A
 mdefine_line|#define FDC_8272A&t;0x20&t;/* Intel 8272a, NEC 765 */
 DECL|macro|FDC_765ED
@@ -155,10 +155,15 @@ DECL|macro|FDC_82077_ORIG
 mdefine_line|#define FDC_82077_ORIG&t;0x50&t;/* Original version of 82077AA, sans LOCK */
 DECL|macro|FDC_82077
 mdefine_line|#define FDC_82077&t;0x52&t;/* 82077AA-1 */
+DECL|macro|FDC_82077_UNKN
+mdefine_line|#define FDC_82077_UNKN&t;0x53&t;/* Unknown 82077 variant */
 DECL|macro|FDC_82078
 mdefine_line|#define FDC_82078&t;0x60&t;/* 44pin 82078 or 64pin 82078SL */
 DECL|macro|FDC_82078_1
 mdefine_line|#define FDC_82078_1&t;0x61&t;/* 82078-1 (2Mbps fdc) */
+DECL|macro|FDC_87306
+mdefine_line|#define FDC_87306&t;0x63&t;/* National Semiconductor PC 87306 */
+multiline_comment|/*&n; * Beware: the fdc type list is roughly sorted by increasing features.&n; * Presence of features is tested by comparing the FDC version id with the&n; * &quot;oldest&quot; version that has the needed feature.&n; * If during FDC detection, an obscure test fails late in the sequence, don&squot;t&n; * assign FDC_UNKNOWN. Else the FDC will be treated as a dumb 8272a, or worse.&n; * This is especially true if the tests are unneeded.&n; */
 DECL|macro|FD_RESET_DELAY
 mdefine_line|#define FD_RESET_DELAY 20
 macro_line|#endif

@@ -16468,7 +16468,9 @@ l_int|10
 id|printk
 c_func
 (paren
-l_string|&quot;FDC init: DUMPREGS: unexpected return of %d bytes.&bslash;n&quot;
+l_string|&quot;FDC %d init: DUMPREGS: unexpected return of %d bytes.&bslash;n&quot;
+comma
+id|fdc
 comma
 id|r
 )paren
@@ -16544,7 +16546,9 @@ l_int|0x90
 id|printk
 c_func
 (paren
-l_string|&quot;FDC init: VERSION: unexpected return of %d bytes.&bslash;n&quot;
+l_string|&quot;FDC %d init: VERSION: unexpected return of %d bytes.&bslash;n&quot;
+comma
+id|fdc
 comma
 id|r
 )paren
@@ -16620,7 +16624,9 @@ l_int|0x00
 id|printk
 c_func
 (paren
-l_string|&quot;FDC init: UNLOCK: unexpected return of %d bytes.&bslash;n&quot;
+l_string|&quot;FDC %d init: UNLOCK: unexpected return of %d bytes.&bslash;n&quot;
+comma
+id|fdc
 comma
 id|r
 )paren
@@ -16653,7 +16659,9 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;FDC init: PARTID: unexpected return of %d bytes.&bslash;n&quot;
+l_string|&quot;FDC %d init: PARTID: unexpected return of %d bytes.&bslash;n&quot;
+comma
+id|fdc
 comma
 id|r
 )paren
@@ -16724,7 +16732,9 @@ l_int|17
 id|printk
 c_func
 (paren
-l_string|&quot;FDC init: SAVE: unexpected return of %d bytes.&bslash;n&quot;
+l_string|&quot;FDC %d init: SAVE: unexpected return of %d bytes.&bslash;n&quot;
+comma
+id|fdc
 comma
 id|r
 )paren
@@ -16785,12 +16795,26 @@ suffix:semicolon
 r_return
 id|FDC_82078
 suffix:semicolon
+r_case
+l_int|0x3
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;FDC %d is a National Semiconductor PC87306&bslash;n&quot;
+comma
+id|fdc
+)paren
+suffix:semicolon
+r_return
+id|FDC_87306
+suffix:semicolon
 r_default
 suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;FDC %d init: PARTID returned an unknown ID: %d.&bslash;n&quot;
+l_string|&quot;FDC %d init: Unknown 82077 variant, PARTID = %d.&bslash;n&quot;
 comma
 id|fdc
 comma
@@ -16803,7 +16827,7 @@ l_int|5
 )paren
 suffix:semicolon
 r_return
-id|FDC_UNKNOWN
+id|FDC_82077_UNKN
 suffix:semicolon
 )brace
 )brace

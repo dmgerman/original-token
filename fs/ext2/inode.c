@@ -63,6 +63,7 @@ DECL|macro|inode_bmap
 mdefine_line|#define inode_bmap(inode, nr) ((inode)-&gt;u.ext2_i.i_data[(nr)])
 DECL|function|block_bmap
 r_static
+r_inline
 r_int
 id|block_bmap
 (paren

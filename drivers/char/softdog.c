@@ -95,6 +95,9 @@ op_amp
 id|watchdog_ticktock
 )paren
 suffix:semicolon
+id|timer_alive
+op_increment
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -253,7 +256,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Software Watchdog Timer: 0.02&bslash;n&quot;
+l_string|&quot;Software Watchdog Timer: 0.03&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

@@ -491,9 +491,6 @@ r_int
 r_int
 id|addr
 suffix:semicolon
-id|page-&gt;count
-op_increment
-suffix:semicolon
 r_if
 c_cond
 (paren

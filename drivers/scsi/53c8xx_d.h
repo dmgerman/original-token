@@ -25,7 +25,7 @@ comma
 multiline_comment|/*&n;&t;CALL scratch_to_dsa&n;&n;at 0x00000007 : */
 l_int|0x88080000
 comma
-l_int|0x00000960
+l_int|0x00000980
 comma
 multiline_comment|/*&n;&t;CALL select&n;&n;at 0x00000009 : */
 l_int|0x88080000
@@ -81,7 +81,7 @@ comma
 multiline_comment|/*&n;&t;CALL scratch_to_dsa&n;&n;at 0x0000001e : */
 l_int|0x88080000
 comma
-l_int|0x00000960
+l_int|0x00000980
 comma
 multiline_comment|/*&n;&t;JUMP reselected_check_next&n;&n;at 0x00000020 : */
 l_int|0x80080000
@@ -228,7 +228,7 @@ comma
 multiline_comment|/*&n;ENTRY dsa_zero&n;dsa_zero:&n;ENTRY dsa_code_template_end&n;dsa_code_template_end:&n;&n;; Perform sanity check for dsa_fields_start == dsa_code_template_end - &n;; dsa_zero, puke.&n;&n;ABSOLUTE dsa_fields_start =  0&t;; Sanity marker&n;&t;&t;&t;&t;; &t;pad 48 bytes (fix this RSN)&n;ABSOLUTE dsa_next = 48&t;&t;; len 4 Next DSA&n; &t;&t;&t;&t;; del 4 Previous DSA address&n;ABSOLUTE dsa_cmnd = 56&t;&t;; len 4 Scsi_Cmnd * for this thread.&n;ABSOLUTE dsa_select = 60&t;; len 4 Device ID, Period, Offset for &n;&t;&t;&t; &t;;&t;table indirect select&n;ABSOLUTE dsa_msgout = 64&t;; len 8 table indirect move parameter for &n;&t;&t;&t;&t;;       select message&n;ABSOLUTE dsa_cmdout = 72&t;; len 8 table indirect move parameter for &n;&t;&t;&t;&t;;&t;command&n;ABSOLUTE dsa_dataout = 80&t;; len 4 code pointer for dataout&n;ABSOLUTE dsa_datain = 84&t;; len 4 code pointer for datain&n;ABSOLUTE dsa_msgin = 88&t;&t;; len 8 table indirect move for msgin&n;ABSOLUTE dsa_status = 96 &t;; len 8 table indirect move for status byte&n;ABSOLUTE dsa_msgout_other = 104&t;; len 8 table indirect for normal message out&n;&t;&t;&t;&t;; (Synchronous transfer negotiation, etc).&n;ABSOLUTE dsa_end = 112&n;&n;ABSOLUTE schedule = 0 &t;&t;; Array of JUMP dsa_begin or JUMP (next),&n;&t;&t;&t;&t;; terminated by a call to JUMP wait_reselect&n;&n;; Linked lists of DSA structures&n;ABSOLUTE reconnect_dsa_head = 0&t;; Link list of DSAs which can reconnect&n;ABSOLUTE addr_reconnect_dsa_head = 0 ; Address of variable contataining&n;&t;&t;&t;&t;; address of reconnect_dsa_head&n;&n;; These select the source and destination of a MOVE MEMORY instruction&n;ABSOLUTE dmode_memory_to_memory = 0x0&n;ABSOLUTE dmode_memory_to_ncr = 0x0&n;ABSOLUTE dmode_ncr_to_memory = 0x0&n;&n;ABSOLUTE addr_scratch = 0x0&n;ABSOLUTE addr_temp = 0x0&n;&n;&n;; Interrupts - &n;; MSB indicates type&n;; 0&t;handle error condition&n;; 1 &t;handle message &n;; 2 &t;handle normal condition&n;; 3&t;debugging interrupt&n;; 4 &t;testing interrupt &n;; Next byte indicates specific error&n;&n;; XXX not yet implemented, I&squot;m not sure if I want to - &n;; Next byte indicates the routine the error occurred in&n;; The LSB indicates the specific place the error occurred&n; &n;ABSOLUTE int_err_unexpected_phase = 0x00000000&t;; Unexpected phase encountered&n;ABSOLUTE int_err_selected = 0x00010000&t;&t;; SELECTED (nee RESELECTED)&n;ABSOLUTE int_err_unexpected_reselect = 0x00020000 &n;ABSOLUTE int_err_check_condition = 0x00030000&t;&n;ABSOLUTE int_err_no_phase = 0x00040000&n;ABSOLUTE int_msg_wdtr = 0x01000000&t;&t;; WDTR message received&n;ABSOLUTE int_msg_sdtr = 0x01010000&t;&t;; SDTR received&n;ABSOLUTE int_msg_1 = 0x01020000&t;&t;&t;; single byte special message&n;&t;&t;&t;&t;&t;&t;; received&n;&n;ABSOLUTE int_norm_select_complete = 0x02000000&t;; Select complete, reprogram&n;&t;&t;&t;&t;&t;&t;; registers.&n;ABSOLUTE int_norm_reselect_complete = 0x02010000&t;; Nexus established&n;ABSOLUTE int_norm_command_complete = 0x02020000 ; Command complete&n;ABSOLUTE int_norm_disconnected = 0x02030000&t;; Disconnected &n;ABSOLUTE int_norm_aborted =0x02040000&t;&t;; Aborted *dsa&n;ABSOLUTE int_norm_reset = 0x02050000&t;&t;; Generated BUS reset.&n;ABSOLUTE int_debug_break = 0x03000000&t;&t;; Break point&n;&n;ABSOLUTE int_debug_panic = 0x030b0000&t;&t;; Panic driver&n;&n;&n;ABSOLUTE int_test_1 = 0x04000000&t;&t;; Test 1 complete&n;ABSOLUTE int_test_2 = 0x04010000&t;&t;; Test 2 complete&n;ABSOLUTE int_test_3 = 0x04020000&t;&t;; Test 3 complete&n;&n;&n;; These should start with 0x05000000, with low bits incrementing for &n;; each one.&n;&n;&n;&t;&t;&t;&t;&t;&t;&n;ABSOLUTE NCR53c7xx_msg_abort = 0&t;; Pointer to abort message&n;ABSOLUTE NCR53c7xx_msg_reject = 0       ; Pointer to reject message&n;ABSOLUTE NCR53c7xx_zero&t;= 0&t;&t;; long with zero in it, use for source&n;ABSOLUTE NCR53c7xx_sink = 0&t;&t;; long to dump worthless data in&n;ABSOLUTE NOP_insn = 0&t;&t;&t;; NOP instruction&n;&n;; Pointer to message, potentially multi-byte&n;ABSOLUTE msg_buf = 0&n;&n;; Pointer to holding area for reselection information&n;ABSOLUTE reselected_identify = 0&n;ABSOLUTE reselected_tag = 0&n;&n;; Request sense command pointer, it&squot;s a 6 byte command, should&n;; be constant for all commands since we always want 16 bytes of &n;; sense and we don&squot;t need to change any fields as we did under &n;; SCSI-I when we actually cared about the LUN field.&n;;EXTERNAL NCR53c7xx_sense&t;&t;; Request sense command&n;&n;&n;; dsa_schedule  &n;; PURPOSE : after a DISCONNECT message has been received, and pointers&n;;&t;saved, insert the current DSA structure at the head of the &n;; &t;disconnected queue and fall through to the scheduler.&n;;&n;; CALLS : OK&n;;&n;; INPUTS : dsa - current DSA structure, reconnect_dsa_head - list&n;;&t;of disconnected commands&n;;&n;; MODIFIES : SCRATCH, reconnect_dsa_head&n;; &n;; EXITS : always passes control to schedule&n;&n;ENTRY dsa_schedule&n;dsa_schedule:&n;&n;&n;&n;&n;;&n;; Calculate the address of the next pointer within the DSA &n;; structure of the command that is currently disconnecting&n;;&n;    CALL dsa_to_scratch&n;&n;at 0x0000005a : */
 l_int|0x88080000
 comma
-l_int|0x00000918
+l_int|0x00000938
 comma
 multiline_comment|/*&n;    MOVE SCRATCH0 + dsa_next TO SCRATCH0&n;&n;at 0x0000005c : */
 l_int|0x7e343000
@@ -277,7 +277,7 @@ comma
 multiline_comment|/*&n;&n;; And update the head pointer.&n;    CALL dsa_to_scratch&n;&n;at 0x0000006e : */
 l_int|0x88080000
 comma
-l_int|0x00000918
+l_int|0x00000938
 comma
 multiline_comment|/*&n;    MOVE dmode_ncr_to_memory TO DMODE&t;&n;&n;at 0x00000070 : */
 l_int|0x78380000
@@ -324,7 +324,7 @@ comma
 multiline_comment|/*&n;&n;; XXX&n;;&n;; In effect, SELECTION operations are backgrounded, with execution&n;; continuing until code which waits for REQ or a fatal interrupt is &n;; encountered.&n;;&n;; So, for more performance, we could overlap the code which removes &n;; the command from the NCRs issue queue with the selection, but &n;; at this point I don&squot;t want to deal with the error recovery.&n;;&n;&n;&n;    SELECT ATN FROM dsa_select, select_failed&n;&n;at 0x00000081 : */
 l_int|0x4300003c
 comma
-l_int|0x00000794
+l_int|0x000007a4
 comma
 multiline_comment|/*&n;    JUMP select_msgout, WHEN MSG_OUT&n;&n;at 0x00000083 : */
 l_int|0x860b0000
@@ -409,7 +409,7 @@ comma
 multiline_comment|/*&n;ENTRY end_data_transfer&n;end_data_transfer:&n;&n;;&n;; FIXME: On NCR53c700 and NCR53c700-66 chips, do_dataout/do_datain &n;; should be fixed up whenever the nexus changes so it can point to the &n;; correct routine for that command.&n;;&n;&n;&n;; Nasty jump to dsa-&gt;dataout&n;do_dataout:&n;    CALL dsa_to_scratch&n;&n;at 0x000000a3 : */
 l_int|0x88080000
 comma
-l_int|0x00000918
+l_int|0x00000938
 comma
 multiline_comment|/*&n;    MOVE SCRATCH0 + dsa_dataout TO SCRATCH0&t;&n;&n;at 0x000000a5 : */
 l_int|0x7e345000
@@ -463,7 +463,7 @@ comma
 multiline_comment|/*&n;&n;; Nasty jump to dsa-&gt;dsain&n;do_datain:&n;    CALL dsa_to_scratch&n;&n;at 0x000000b9 : */
 l_int|0x88080000
 comma
-l_int|0x00000918
+l_int|0x00000938
 comma
 multiline_comment|/*&n;    MOVE SCRATCH0 + dsa_datain TO SCRATCH0&t;&n;&n;at 0x000000bb : */
 l_int|0x7e345400
@@ -1048,7 +1048,7 @@ comma
 multiline_comment|/*&n;    CALL scratch_to_dsa&n;&n;at 0x000001a4 : */
 l_int|0x88080000
 comma
-l_int|0x00000960
+l_int|0x00000980
 comma
 multiline_comment|/*&n;&n;    ; Fix the update-next pointer so that the reconnect_dsa_head&n;    ; pointer is the one that will be updated if this DSA is a hit &n;    ; and we remove it from the queue.&n;&n;    MOVE MEMORY 4, addr_reconnect_dsa_head, reselected_ok + 8&n;&n;at 0x000001a6 : */
 l_int|0xc0000004
@@ -1181,7 +1181,7 @@ l_int|0x98080000
 comma
 l_int|0x00010000
 comma
-multiline_comment|/*&n;&n;;&n;; A select or reselect failure can be caused by one of two conditions : &n;; 1.  SIG_P was set.  This will be the case if the user has written&n;;&t;a new value to a previously NULL head of the issue queue.&n;;&n;; 2.  The NCR53c810 was selected or reselected by another device.&n;; &n;&n;wait_reselect_failed:&n;&n;&n;&n;    MOVE SIST0 &amp; 0x20 TO SFBR&n;&n;at 0x000001db : */
+multiline_comment|/*&n;&n;;&n;; A select or reselect failure can be caused by one of two conditions : &n;; 1.  SIG_P was set.  This will be the case if the user has written&n;;&t;a new value to a previously NULL head of the issue queue.&n;;&n;; 2.  The NCR53c810 was selected or reselected by another device.&n;;&n;; 3.  The bus was allready busy since we were selected or reselected&n;;&t;before starting the command.&n;&n;wait_reselect_failed:&n;&n;&n;&n;; Check selected bit.  &n;    MOVE SIST0 &amp; 0x20 TO SFBR&n;&n;at 0x000001db : */
 l_int|0x74422000
 comma
 l_int|0x00000000
@@ -1201,339 +1201,359 @@ l_int|0x800c0040
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;; FIXME : Something bogus happened, and we shouldn&squot;t fail silently.&n;&n;&n;&n;    INT int_debug_panic&n;&n;at 0x000001e3 : */
+multiline_comment|/*&n;; Check connected bit.  &n;; FIXME: this needs to change if we support target mode&n;    MOVE ISTAT &amp; 0x08 TO SFBR&n;&n;at 0x000001e3 : */
+l_int|0x74140800
+comma
+l_int|0x00000000
+comma
+multiline_comment|/*&n;    JUMP reselected, IF 0x08&n;&n;at 0x000001e5 : */
+l_int|0x800c0008
+comma
+l_int|0x0000065c
+comma
+multiline_comment|/*&n;; FIXME : Something bogus happened, and we shouldn&squot;t fail silently.&n;&n;&n;&n;    INT int_debug_panic&n;&n;at 0x000001e7 : */
 l_int|0x98080000
 comma
 l_int|0x030b0000
 comma
-multiline_comment|/*&n;&n;&n;&n;select_failed:&n;&n;&n;&n;; Otherwise, mask the selected and reselected bits off SIST0&n;    MOVE SIST0 &amp; 0x30 TO SFBR&n;&n;at 0x000001e5 : */
+multiline_comment|/*&n;&n;&n;&n;select_failed:&n;&n;&n;&n;; Otherwise, mask the selected and reselected bits off SIST0&n;    MOVE SIST0 &amp; 0x30 TO SFBR&n;&n;at 0x000001e9 : */
 l_int|0x74423000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    JUMP selected, IF 0x20&n;&n;at 0x000001e7 : */
+multiline_comment|/*&n;    JUMP selected, IF 0x20&n;&n;at 0x000001eb : */
 l_int|0x800c0020
 comma
 l_int|0x00000764
 comma
-multiline_comment|/*&n;    JUMP reselected, IF 0x10 &n;&n;at 0x000001e9 : */
+multiline_comment|/*&n;    JUMP reselected, IF 0x10 &n;&n;at 0x000001ed : */
 l_int|0x800c0010
 comma
 l_int|0x0000065c
 comma
-multiline_comment|/*&n;; If SIGP is set, the user just gave us another command, and&n;; we should restart or return to the scheduler.&n;; Reading CTEST2 clears the SIG_P bit in the ISTAT register.&n;    MOVE CTEST2 &amp; 0x40 TO SFBR&t;&n;&n;at 0x000001eb : */
+multiline_comment|/*&n;; If SIGP is set, the user just gave us another command, and&n;; we should restart or return to the scheduler.&n;; Reading CTEST2 clears the SIG_P bit in the ISTAT register.&n;    MOVE CTEST2 &amp; 0x40 TO SFBR&t;&n;&n;at 0x000001ef : */
 l_int|0x741a4000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    JUMP select, IF 0x40&n;&n;at 0x000001ed : */
+multiline_comment|/*&n;    JUMP select, IF 0x40&n;&n;at 0x000001f1 : */
 l_int|0x800c0040
 comma
 l_int|0x000001fc
 comma
-multiline_comment|/*&n;; FIXME : Something bogus happened, and we shouldn&squot;t fail silently.&n;&n;&n;&n;    INT int_debug_panic&n;&n;at 0x000001ef : */
+multiline_comment|/*&n;; Check connected bit.  &n;; FIXME: this needs to change if we support target mode&n;; FIXME: is this really necessary? &n;    MOVE ISTAT &amp; 0x08 TO SFBR&n;&n;at 0x000001f3 : */
+l_int|0x74140800
+comma
+l_int|0x00000000
+comma
+multiline_comment|/*&n;    JUMP reselected, IF 0x08&n;&n;at 0x000001f5 : */
+l_int|0x800c0008
+comma
+l_int|0x0000065c
+comma
+multiline_comment|/*&n;; FIXME : Something bogus happened, and we shouldn&squot;t fail silently.&n;&n;&n;&n;    INT int_debug_panic&n;&n;at 0x000001f7 : */
 l_int|0x98080000
 comma
 l_int|0x030b0000
 comma
-multiline_comment|/*&n;&n;&n;;&n;; test_1&n;; test_2&n;;&n;; PURPOSE : run some verification tests on the NCR.  test_1&n;;&t;copies test_src to test_dest and interrupts the host&n;;&t;processor, testing for cache coherency and interrupt&n;; &t;problems in the processes.&n;;&n;;&t;test_2 runs a command with offsets relative to the &n;;&t;DSA on entry, and is useful for miscellaneous experimentation.&n;;&n;&n;; Verify that interrupts are working correctly and that we don&squot;t &n;; have a cache invalidation problem.&n;&n;ABSOLUTE test_src = 0, test_dest = 0&n;ENTRY test_1&n;test_1:&n;    MOVE MEMORY 4, test_src, test_dest&n;&n;at 0x000001f1 : */
+multiline_comment|/*&n;&n;&n;;&n;; test_1&n;; test_2&n;;&n;; PURPOSE : run some verification tests on the NCR.  test_1&n;;&t;copies test_src to test_dest and interrupts the host&n;;&t;processor, testing for cache coherency and interrupt&n;; &t;problems in the processes.&n;;&n;;&t;test_2 runs a command with offsets relative to the &n;;&t;DSA on entry, and is useful for miscellaneous experimentation.&n;;&n;&n;; Verify that interrupts are working correctly and that we don&squot;t &n;; have a cache invalidation problem.&n;&n;ABSOLUTE test_src = 0, test_dest = 0&n;ENTRY test_1&n;test_1:&n;    MOVE MEMORY 4, test_src, test_dest&n;&n;at 0x000001f9 : */
 l_int|0xc0000004
 comma
 l_int|0x00000000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    INT int_test_1&n;&n;at 0x000001f4 : */
+multiline_comment|/*&n;    INT int_test_1&n;&n;at 0x000001fc : */
 l_int|0x98080000
 comma
 l_int|0x04000000
 comma
-multiline_comment|/*&n;&n;;&n;; Run arbitrary commands, with test code establishing a DSA&n;;&n; &n;ENTRY test_2&n;test_2:&n;    CLEAR TARGET&n;&n;at 0x000001f6 : */
+multiline_comment|/*&n;&n;;&n;; Run arbitrary commands, with test code establishing a DSA&n;;&n; &n;ENTRY test_2&n;test_2:&n;    CLEAR TARGET&n;&n;at 0x000001fe : */
 l_int|0x60000200
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    SELECT ATN FROM 0, test_2_fail&n;&n;at 0x000001f8 : */
+multiline_comment|/*&n;    SELECT ATN FROM 0, test_2_fail&n;&n;at 0x00000200 : */
 l_int|0x43000000
 comma
-l_int|0x00000830
+l_int|0x00000850
 comma
-multiline_comment|/*&n;    JUMP test_2_msgout, WHEN MSG_OUT&n;&n;at 0x000001fa : */
+multiline_comment|/*&n;    JUMP test_2_msgout, WHEN MSG_OUT&n;&n;at 0x00000202 : */
 l_int|0x860b0000
 comma
-l_int|0x000007f0
+l_int|0x00000810
 comma
-multiline_comment|/*&n;ENTRY test_2_msgout&n;test_2_msgout:&n;    MOVE FROM 8, WHEN MSG_OUT&n;&n;at 0x000001fc : */
+multiline_comment|/*&n;ENTRY test_2_msgout&n;test_2_msgout:&n;    MOVE FROM 8, WHEN MSG_OUT&n;&n;at 0x00000204 : */
 l_int|0x1e000000
 comma
 l_int|0x00000008
 comma
-multiline_comment|/*&n;    MOVE FROM 16, WHEN CMD &n;&n;at 0x000001fe : */
+multiline_comment|/*&n;    MOVE FROM 16, WHEN CMD &n;&n;at 0x00000206 : */
 l_int|0x1a000000
 comma
 l_int|0x00000010
 comma
-multiline_comment|/*&n;    MOVE FROM 24, WHEN DATA_IN&n;&n;at 0x00000200 : */
+multiline_comment|/*&n;    MOVE FROM 24, WHEN DATA_IN&n;&n;at 0x00000208 : */
 l_int|0x19000000
 comma
 l_int|0x00000018
 comma
-multiline_comment|/*&n;    MOVE FROM 32, WHEN STATUS&n;&n;at 0x00000202 : */
+multiline_comment|/*&n;    MOVE FROM 32, WHEN STATUS&n;&n;at 0x0000020a : */
 l_int|0x1b000000
 comma
 l_int|0x00000020
 comma
-multiline_comment|/*&n;    MOVE FROM 40, WHEN MSG_IN&n;&n;at 0x00000204 : */
+multiline_comment|/*&n;    MOVE FROM 40, WHEN MSG_IN&n;&n;at 0x0000020c : */
 l_int|0x1f000000
 comma
 l_int|0x00000028
 comma
-multiline_comment|/*&n;    MOVE SCNTL2 &amp; 0x7f TO SCNTL2&n;&n;at 0x00000206 : */
+multiline_comment|/*&n;    MOVE SCNTL2 &amp; 0x7f TO SCNTL2&n;&n;at 0x0000020e : */
 l_int|0x7c027f00
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    CLEAR ACK&n;&n;at 0x00000208 : */
+multiline_comment|/*&n;    CLEAR ACK&n;&n;at 0x00000210 : */
 l_int|0x60000040
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    WAIT DISCONNECT&n;&n;at 0x0000020a : */
+multiline_comment|/*&n;    WAIT DISCONNECT&n;&n;at 0x00000212 : */
 l_int|0x48000000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;test_2_fail:&n;    INT int_test_2&n;&n;at 0x0000020c : */
+multiline_comment|/*&n;test_2_fail:&n;    INT int_test_2&n;&n;at 0x00000214 : */
 l_int|0x98080000
 comma
 l_int|0x04010000
 comma
-multiline_comment|/*&n;&n;ENTRY debug_break&n;debug_break:&n;    INT int_debug_break&n;&n;at 0x0000020e : */
+multiline_comment|/*&n;&n;ENTRY debug_break&n;debug_break:&n;    INT int_debug_break&n;&n;at 0x00000216 : */
 l_int|0x98080000
 comma
 l_int|0x03000000
 comma
-multiline_comment|/*&n;&n;;&n;; initiator_abort&n;; target_abort&n;;&n;; PURPOSE : Abort the currently established nexus from with initiator&n;;&t;or target mode.&n;;&n;;  &n;&n;ENTRY target_abort&n;target_abort:&n;    SET TARGET&n;&n;at 0x00000210 : */
+multiline_comment|/*&n;&n;;&n;; initiator_abort&n;; target_abort&n;;&n;; PURPOSE : Abort the currently established nexus from with initiator&n;;&t;or target mode.&n;;&n;;  &n;&n;ENTRY target_abort&n;target_abort:&n;    SET TARGET&n;&n;at 0x00000218 : */
 l_int|0x58000200
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    DISCONNECT&n;&n;at 0x00000212 : */
+multiline_comment|/*&n;    DISCONNECT&n;&n;at 0x0000021a : */
 l_int|0x48000000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    CLEAR TARGET&n;&n;at 0x00000214 : */
+multiline_comment|/*&n;    CLEAR TARGET&n;&n;at 0x0000021c : */
 l_int|0x60000200
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    JUMP schedule&n;&n;at 0x00000216 : */
+multiline_comment|/*&n;    JUMP schedule&n;&n;at 0x0000021e : */
 l_int|0x80080000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    &n;ENTRY initiator_abort&n;initiator_abort:&n;    SET ATN&n;&n;at 0x00000218 : */
+multiline_comment|/*&n;    &n;ENTRY initiator_abort&n;initiator_abort:&n;    SET ATN&n;&n;at 0x00000220 : */
 l_int|0x58000008
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;;&n;; The SCSI-I specification says that targets may go into MSG out at &n;; their leisure upon receipt of the ATN single.  On all versions of the &n;; specification, we can&squot;t change phases until REQ transitions true-&gt;false, &n;; so we need to sink/source one byte of data to allow the transition.&n;;&n;; For the sake of safety, we&squot;ll only source one byte of data in all &n;; cases, but to accomodate the SCSI-I dain bramage, we&squot;ll sink an  &n;; arbitrary number of bytes.&n;    JUMP spew_cmd, WHEN CMD&n;&n;at 0x0000021a : */
+multiline_comment|/*&n;;&n;; The SCSI-I specification says that targets may go into MSG out at &n;; their leisure upon receipt of the ATN single.  On all versions of the &n;; specification, we can&squot;t change phases until REQ transitions true-&gt;false, &n;; so we need to sink/source one byte of data to allow the transition.&n;;&n;; For the sake of safety, we&squot;ll only source one byte of data in all &n;; cases, but to accomodate the SCSI-I dain bramage, we&squot;ll sink an  &n;; arbitrary number of bytes.&n;    JUMP spew_cmd, WHEN CMD&n;&n;at 0x00000222 : */
 l_int|0x820b0000
 comma
-l_int|0x00000898
+l_int|0x000008b8
 comma
-multiline_comment|/*&n;    JUMP eat_msgin, WHEN MSG_IN&n;&n;at 0x0000021c : */
+multiline_comment|/*&n;    JUMP eat_msgin, WHEN MSG_IN&n;&n;at 0x00000224 : */
 l_int|0x870b0000
 comma
-l_int|0x000008a8
+l_int|0x000008c8
 comma
-multiline_comment|/*&n;    JUMP eat_datain, WHEN DATA_IN&n;&n;at 0x0000021e : */
+multiline_comment|/*&n;    JUMP eat_datain, WHEN DATA_IN&n;&n;at 0x00000226 : */
 l_int|0x810b0000
-comma
-l_int|0x000008d8
-comma
-multiline_comment|/*&n;    JUMP eat_status, WHEN STATUS&n;&n;at 0x00000220 : */
-l_int|0x830b0000
-comma
-l_int|0x000008c0
-comma
-multiline_comment|/*&n;    JUMP spew_dataout, WHEN DATA_OUT&n;&n;at 0x00000222 : */
-l_int|0x800b0000
-comma
-l_int|0x000008f0
-comma
-multiline_comment|/*&n;    JUMP sated&n;&n;at 0x00000224 : */
-l_int|0x80080000
 comma
 l_int|0x000008f8
 comma
-multiline_comment|/*&n;spew_cmd:&n;    MOVE 1, NCR53c7xx_zero, WHEN CMD&n;&n;at 0x00000226 : */
+multiline_comment|/*&n;    JUMP eat_status, WHEN STATUS&n;&n;at 0x00000228 : */
+l_int|0x830b0000
+comma
+l_int|0x000008e0
+comma
+multiline_comment|/*&n;    JUMP spew_dataout, WHEN DATA_OUT&n;&n;at 0x0000022a : */
+l_int|0x800b0000
+comma
+l_int|0x00000910
+comma
+multiline_comment|/*&n;    JUMP sated&n;&n;at 0x0000022c : */
+l_int|0x80080000
+comma
+l_int|0x00000918
+comma
+multiline_comment|/*&n;spew_cmd:&n;    MOVE 1, NCR53c7xx_zero, WHEN CMD&n;&n;at 0x0000022e : */
 l_int|0x0a000001
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    JUMP sated&n;&n;at 0x00000228 : */
+multiline_comment|/*&n;    JUMP sated&n;&n;at 0x00000230 : */
 l_int|0x80080000
 comma
-l_int|0x000008f8
+l_int|0x00000918
 comma
-multiline_comment|/*&n;eat_msgin:&n;    MOVE 1, NCR53c7xx_sink, WHEN MSG_IN&n;&n;at 0x0000022a : */
+multiline_comment|/*&n;eat_msgin:&n;    MOVE 1, NCR53c7xx_sink, WHEN MSG_IN&n;&n;at 0x00000232 : */
 l_int|0x0f000001
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    JUMP eat_msgin, WHEN MSG_IN&n;&n;at 0x0000022c : */
+multiline_comment|/*&n;    JUMP eat_msgin, WHEN MSG_IN&n;&n;at 0x00000234 : */
 l_int|0x870b0000
 comma
-l_int|0x000008a8
+l_int|0x000008c8
 comma
-multiline_comment|/*&n;    JUMP sated&n;&n;at 0x0000022e : */
+multiline_comment|/*&n;    JUMP sated&n;&n;at 0x00000236 : */
 l_int|0x80080000
 comma
-l_int|0x000008f8
+l_int|0x00000918
 comma
-multiline_comment|/*&n;eat_status:&n;    MOVE 1, NCR53c7xx_sink, WHEN STATUS&n;&n;at 0x00000230 : */
+multiline_comment|/*&n;eat_status:&n;    MOVE 1, NCR53c7xx_sink, WHEN STATUS&n;&n;at 0x00000238 : */
 l_int|0x0b000001
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    JUMP eat_status, WHEN STATUS&n;&n;at 0x00000232 : */
+multiline_comment|/*&n;    JUMP eat_status, WHEN STATUS&n;&n;at 0x0000023a : */
 l_int|0x830b0000
 comma
-l_int|0x000008c0
+l_int|0x000008e0
 comma
-multiline_comment|/*&n;    JUMP sated&n;&n;at 0x00000234 : */
+multiline_comment|/*&n;    JUMP sated&n;&n;at 0x0000023c : */
 l_int|0x80080000
 comma
-l_int|0x000008f8
+l_int|0x00000918
 comma
-multiline_comment|/*&n;eat_datain:&n;    MOVE 1, NCR53c7xx_sink, WHEN DATA_IN&n;&n;at 0x00000236 : */
+multiline_comment|/*&n;eat_datain:&n;    MOVE 1, NCR53c7xx_sink, WHEN DATA_IN&n;&n;at 0x0000023e : */
 l_int|0x09000001
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    JUMP eat_datain, WHEN DATA_IN&n;&n;at 0x00000238 : */
+multiline_comment|/*&n;    JUMP eat_datain, WHEN DATA_IN&n;&n;at 0x00000240 : */
 l_int|0x810b0000
-comma
-l_int|0x000008d8
-comma
-multiline_comment|/*&n;    JUMP sated&n;&n;at 0x0000023a : */
-l_int|0x80080000
 comma
 l_int|0x000008f8
 comma
-multiline_comment|/*&n;spew_dataout:&n;    MOVE 1, NCR53c7xx_zero, WHEN DATA_OUT&n;&n;at 0x0000023c : */
+multiline_comment|/*&n;    JUMP sated&n;&n;at 0x00000242 : */
+l_int|0x80080000
+comma
+l_int|0x00000918
+comma
+multiline_comment|/*&n;spew_dataout:&n;    MOVE 1, NCR53c7xx_zero, WHEN DATA_OUT&n;&n;at 0x00000244 : */
 l_int|0x08000001
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;sated:&n;    MOVE SCNTL2 &amp; 0x7f TO SCNTL2&n;&n;at 0x0000023e : */
+multiline_comment|/*&n;sated:&n;    MOVE SCNTL2 &amp; 0x7f TO SCNTL2&n;&n;at 0x00000246 : */
 l_int|0x7c027f00
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    MOVE 1, NCR53c7xx_msg_abort, WHEN MSG_OUT&n;&n;at 0x00000240 : */
+multiline_comment|/*&n;    MOVE 1, NCR53c7xx_msg_abort, WHEN MSG_OUT&n;&n;at 0x00000248 : */
 l_int|0x0e000001
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    WAIT DISCONNECT&n;&n;at 0x00000242 : */
+multiline_comment|/*&n;    WAIT DISCONNECT&n;&n;at 0x0000024a : */
 l_int|0x48000000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    INT int_norm_aborted&n;&n;at 0x00000244 : */
+multiline_comment|/*&n;    INT int_norm_aborted&n;&n;at 0x0000024c : */
 l_int|0x98080000
 comma
 l_int|0x02040000
 comma
-multiline_comment|/*&n;&n;;&n;; dsa_to_scratch&n;; scratch_to_dsa&n;;&n;; PURPOSE :&n;; &t;The NCR chips cannot do a move memory instruction with the DSA register &n;; &t;as the source or destination.  So, we provide a couple of subroutines&n;; &t;that let us switch between the DSA register and scratch register.&n;;&n;; &t;Memory moves to/from the DSPS  register also don&squot;t work, but we &n;; &t;don&squot;t use them.&n;;&n;;&n;&n; &n;dsa_to_scratch:&n;    MOVE DSA0 TO SFBR&n;&n;at 0x00000246 : */
+multiline_comment|/*&n;&n;;&n;; dsa_to_scratch&n;; scratch_to_dsa&n;;&n;; PURPOSE :&n;; &t;The NCR chips cannot do a move memory instruction with the DSA register &n;; &t;as the source or destination.  So, we provide a couple of subroutines&n;; &t;that let us switch between the DSA register and scratch register.&n;;&n;; &t;Memory moves to/from the DSPS  register also don&squot;t work, but we &n;; &t;don&squot;t use them.&n;;&n;;&n;&n; &n;dsa_to_scratch:&n;    MOVE DSA0 TO SFBR&n;&n;at 0x0000024e : */
 l_int|0x72100000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    MOVE SFBR TO SCRATCH0&n;&n;at 0x00000248 : */
+multiline_comment|/*&n;    MOVE SFBR TO SCRATCH0&n;&n;at 0x00000250 : */
 l_int|0x6a340000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    MOVE DSA1 TO SFBR&n;&n;at 0x0000024a : */
+multiline_comment|/*&n;    MOVE DSA1 TO SFBR&n;&n;at 0x00000252 : */
 l_int|0x72110000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    MOVE SFBR TO SCRATCH1&n;&n;at 0x0000024c : */
+multiline_comment|/*&n;    MOVE SFBR TO SCRATCH1&n;&n;at 0x00000254 : */
 l_int|0x6a350000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    MOVE DSA2 TO SFBR&n;&n;at 0x0000024e : */
+multiline_comment|/*&n;    MOVE DSA2 TO SFBR&n;&n;at 0x00000256 : */
 l_int|0x72120000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    MOVE SFBR TO SCRATCH2&n;&n;at 0x00000250 : */
+multiline_comment|/*&n;    MOVE SFBR TO SCRATCH2&n;&n;at 0x00000258 : */
 l_int|0x6a360000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    MOVE DSA3 TO SFBR&n;&n;at 0x00000252 : */
+multiline_comment|/*&n;    MOVE DSA3 TO SFBR&n;&n;at 0x0000025a : */
 l_int|0x72130000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    MOVE SFBR TO SCRATCH3&n;&n;at 0x00000254 : */
+multiline_comment|/*&n;    MOVE SFBR TO SCRATCH3&n;&n;at 0x0000025c : */
 l_int|0x6a370000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    RETURN&n;&n;at 0x00000256 : */
+multiline_comment|/*&n;    RETURN&n;&n;at 0x0000025e : */
 l_int|0x90080000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;&n;scratch_to_dsa:&n;    MOVE SCRATCH0 TO SFBR&n;&n;at 0x00000258 : */
+multiline_comment|/*&n;&n;scratch_to_dsa:&n;    MOVE SCRATCH0 TO SFBR&n;&n;at 0x00000260 : */
 l_int|0x72340000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    MOVE SFBR TO DSA0&n;&n;at 0x0000025a : */
+multiline_comment|/*&n;    MOVE SFBR TO DSA0&n;&n;at 0x00000262 : */
 l_int|0x6a100000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    MOVE SCRATCH1 TO SFBR&n;&n;at 0x0000025c : */
+multiline_comment|/*&n;    MOVE SCRATCH1 TO SFBR&n;&n;at 0x00000264 : */
 l_int|0x72350000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    MOVE SFBR TO DSA1&n;&n;at 0x0000025e : */
+multiline_comment|/*&n;    MOVE SFBR TO DSA1&n;&n;at 0x00000266 : */
 l_int|0x6a110000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    MOVE SCRATCH2 TO SFBR&n;&n;at 0x00000260 : */
+multiline_comment|/*&n;    MOVE SCRATCH2 TO SFBR&n;&n;at 0x00000268 : */
 l_int|0x72360000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    MOVE SFBR TO DSA2&n;&n;at 0x00000262 : */
+multiline_comment|/*&n;    MOVE SFBR TO DSA2&n;&n;at 0x0000026a : */
 l_int|0x6a120000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    MOVE SCRATCH3 TO SFBR&n;&n;at 0x00000264 : */
+multiline_comment|/*&n;    MOVE SCRATCH3 TO SFBR&n;&n;at 0x0000026c : */
 l_int|0x72370000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    MOVE SFBR TO DSA3&n;&n;at 0x00000266 : */
+multiline_comment|/*&n;    MOVE SFBR TO DSA3&n;&n;at 0x0000026e : */
 l_int|0x6a130000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;    RETURN&n;&n;at 0x00000268 : */
+multiline_comment|/*&n;    RETURN&n;&n;at 0x00000270 : */
 l_int|0x90080000
 comma
 l_int|0x00000000
@@ -1549,7 +1569,7 @@ id|A_NCR53c7xx_msg_abort_used
 )braket
 op_assign
 (brace
-l_int|0x00000241
+l_int|0x00000249
 comma
 )brace
 suffix:semicolon
@@ -1575,11 +1595,11 @@ id|A_NCR53c7xx_sink_used
 )braket
 op_assign
 (brace
-l_int|0x0000022b
+l_int|0x00000233
 comma
-l_int|0x00000231
+l_int|0x00000239
 comma
-l_int|0x00000237
+l_int|0x0000023f
 comma
 )brace
 suffix:semicolon
@@ -1592,9 +1612,9 @@ id|A_NCR53c7xx_zero_used
 )braket
 op_assign
 (brace
-l_int|0x00000227
+l_int|0x0000022f
 comma
-l_int|0x0000023d
+l_int|0x00000245
 comma
 )brace
 suffix:semicolon
@@ -2104,7 +2124,7 @@ id|A_int_debug_break_used
 )braket
 op_assign
 (brace
-l_int|0x0000020f
+l_int|0x00000217
 comma
 )brace
 suffix:semicolon
@@ -2117,9 +2137,9 @@ id|A_int_debug_panic_used
 )braket
 op_assign
 (brace
-l_int|0x000001e4
+l_int|0x000001e8
 comma
-l_int|0x000001f0
+l_int|0x000001f8
 comma
 )brace
 suffix:semicolon
@@ -2262,7 +2282,7 @@ id|A_int_norm_aborted_used
 )braket
 op_assign
 (brace
-l_int|0x00000245
+l_int|0x0000024d
 comma
 )brace
 suffix:semicolon
@@ -2330,7 +2350,7 @@ id|A_int_test_1_used
 )braket
 op_assign
 (brace
-l_int|0x000001f5
+l_int|0x000001fd
 comma
 )brace
 suffix:semicolon
@@ -2343,7 +2363,7 @@ id|A_int_test_2_used
 )braket
 op_assign
 (brace
-l_int|0x0000020d
+l_int|0x00000215
 comma
 )brace
 suffix:semicolon
@@ -2439,7 +2459,7 @@ l_int|0x00000192
 comma
 l_int|0x000001e2
 comma
-l_int|0x00000217
+l_int|0x0000021f
 comma
 )brace
 suffix:semicolon
@@ -2452,7 +2472,7 @@ id|A_test_dest_used
 )braket
 op_assign
 (brace
-l_int|0x000001f3
+l_int|0x000001fb
 comma
 )brace
 suffix:semicolon
@@ -2465,7 +2485,7 @@ id|A_test_src_used
 )braket
 op_assign
 (brace
-l_int|0x000001f2
+l_int|0x000001fa
 comma
 )brace
 suffix:semicolon
@@ -2482,7 +2502,7 @@ mdefine_line|#define Ent_data_transfer&t;0x00000254
 DECL|macro|Ent_datain_to_jump
 mdefine_line|#define Ent_datain_to_jump&t;0x00000328
 DECL|macro|Ent_debug_break
-mdefine_line|#define Ent_debug_break&t;0x00000838
+mdefine_line|#define Ent_debug_break&t;0x00000858
 DECL|macro|Ent_dsa_code_begin
 mdefine_line|#define Ent_dsa_code_begin&t;0x00000000
 DECL|macro|Ent_dsa_code_check_reselect
@@ -2504,7 +2524,7 @@ mdefine_line|#define Ent_dsa_zero&t;0x00000168
 DECL|macro|Ent_end_data_transfer
 mdefine_line|#define Ent_end_data_transfer&t;0x0000028c
 DECL|macro|Ent_initiator_abort
-mdefine_line|#define Ent_initiator_abort&t;0x00000860
+mdefine_line|#define Ent_initiator_abort&t;0x00000880
 DECL|macro|Ent_msg_in
 mdefine_line|#define Ent_msg_in&t;0x00000404
 DECL|macro|Ent_msg_in_restart
@@ -2528,13 +2548,13 @@ mdefine_line|#define Ent_select&t;0x000001fc
 DECL|macro|Ent_select_msgout
 mdefine_line|#define Ent_select_msgout&t;0x00000214
 DECL|macro|Ent_target_abort
-mdefine_line|#define Ent_target_abort&t;0x00000840
+mdefine_line|#define Ent_target_abort&t;0x00000860
 DECL|macro|Ent_test_1
-mdefine_line|#define Ent_test_1&t;0x000007c4
+mdefine_line|#define Ent_test_1&t;0x000007e4
 DECL|macro|Ent_test_2
-mdefine_line|#define Ent_test_2&t;0x000007d8
+mdefine_line|#define Ent_test_2&t;0x000007f8
 DECL|macro|Ent_test_2_msgout
-mdefine_line|#define Ent_test_2_msgout&t;0x000007f0
+mdefine_line|#define Ent_test_2_msgout&t;0x00000810
 DECL|macro|Ent_wait_reselect
 mdefine_line|#define Ent_wait_reselect&t;0x00000654
 DECL|variable|LABELPATCHES
@@ -2666,41 +2686,45 @@ l_int|0x000001cf
 comma
 l_int|0x000001de
 comma
-l_int|0x000001e8
+l_int|0x000001e6
 comma
-l_int|0x000001ea
+l_int|0x000001ec
 comma
 l_int|0x000001ee
 comma
-l_int|0x000001f9
+l_int|0x000001f2
 comma
-l_int|0x000001fb
+l_int|0x000001f6
 comma
-l_int|0x0000021b
+l_int|0x00000201
 comma
-l_int|0x0000021d
-comma
-l_int|0x0000021f
-comma
-l_int|0x00000221
+l_int|0x00000203
 comma
 l_int|0x00000223
 comma
 l_int|0x00000225
 comma
+l_int|0x00000227
+comma
 l_int|0x00000229
+comma
+l_int|0x0000022b
 comma
 l_int|0x0000022d
 comma
-l_int|0x0000022f
-comma
-l_int|0x00000233
+l_int|0x00000231
 comma
 l_int|0x00000235
 comma
-l_int|0x00000239
+l_int|0x00000237
 comma
 l_int|0x0000023b
+comma
+l_int|0x0000023d
+comma
+l_int|0x00000241
+comma
+l_int|0x00000243
 comma
 )brace
 suffix:semicolon
@@ -2728,13 +2752,13 @@ DECL|variable|INSTRUCTIONS
 id|u32
 id|INSTRUCTIONS
 op_assign
-l_int|297
+l_int|301
 suffix:semicolon
 DECL|variable|PATCHES
 id|u32
 id|PATCHES
 op_assign
-l_int|79
+l_int|81
 suffix:semicolon
 DECL|variable|EXTERNAL_PATCHES_LEN
 id|u32

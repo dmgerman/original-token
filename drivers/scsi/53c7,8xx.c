@@ -2868,6 +2868,10 @@ id|ok
 op_assign
 l_int|0
 suffix:semicolon
+r_void
+op_star
+id|tmp
+suffix:semicolon
 id|options
 op_or_assign
 id|perm_options
@@ -3044,7 +3048,19 @@ multiline_comment|/* Current startup / termination required per phase */
 op_star
 l_int|8
 multiline_comment|/* Each instruction is eight bytes */
+suffix:semicolon
+multiline_comment|/* Allocate fixed part of hostdata, dynamic part to hold appropriate&n;       SCSI SCRIPT(tm) plus a single, maximum-sized NCR53c7x0_cmd structure.&n;&n;       We need a NCR53c7x0_cmd structure for scan_scsis() when we are &n;       not loaded as a module, and when we&squot;re loaded as a module, we &n;       can&squot;t use a non-dynamically allocated structure because modules&n;       are vmalloc()&squot;d, which can allow structures to cross page &n;       boundaries and breaks our physical/virtual address assumptions&n;       for DMA.&n;&n;       So, we stick it past the end of our hostdata structure.&n;&n;       ASSUMPTION : &n;       &t; Regardless of how many simultaneous SCSI commands we allow,&n;&t; the probe code only executes a _single_ instruction at a time,&n;&t; so we only need one here, and don&squot;t need to allocate NCR53c7x0_cmd&n;&t; structures for each target until we are no longer in scan_scsis&n;&t; and kmalloc() has become functional (memory_init() happens &n;&t; after all device driver initialization).&n;    */
+id|size
+op_assign
+r_sizeof
+(paren
+r_struct
+id|NCR53c7x0_hostdata
+)paren
 op_plus
+id|script_len
+op_plus
+multiline_comment|/* Note that alignment will be guaranteed, since we put the command&n;       allocated at probe time after the fixed-up SCSI script, which &n;       consists of 32 bit words, aligned on a 32 bit boundary.  But&n;       on a 64bit machine we need 8 byte alignment for hostdata-&gt;free, so&n;       we add in another 4 bytes to take care of potential misalignment&n;       */
 (paren
 r_sizeof
 (paren
@@ -3057,19 +3073,6 @@ r_sizeof
 id|u32
 )paren
 )paren
-suffix:semicolon
-multiline_comment|/* to ensure proper alignment */
-multiline_comment|/* Note that alignment will be guaranteed, since we put the command&n;       allocated at probe time after the fixed-up SCSI script, which &n;       consists of 32 bit words, aligned on a 32 bit boundary.  But&n;       on a 64bit machine we need 8 byte alignment for hostdata-&gt;free, so&n;       we add in another 4 bytes to take care of potential misalignment&n;       */
-multiline_comment|/* Allocate fixed part of hostdata, dynamic part to hold appropriate&n;       SCSI SCRIPT(tm) plus a single, maximum-sized NCR53c7x0_cmd structure.&n;&n;       We need a NCR53c7x0_cmd structure for scan_scsis() when we are &n;       not loaded as a module, and when we&squot;re loaded as a module, we &n;       can&squot;t use a non-dynamically allocated structure because modules&n;       are vmalloc()&squot;d, which can allow structures to cross page &n;       boundaries and breaks our physical/virtual address assumptions&n;       for DMA.&n;&n;       So, we stick it past the end of our hostdata structure.&n;&n;       ASSUMPTION : &n;       &t; Regardless of how many simultaneous SCSI commands we allow,&n;&t; the probe code only executes a _single_ instruction at a time,&n;&t; so we only need one here, and don&squot;t need to allocate NCR53c7x0_cmd&n;&t; structures for each target until we are no longer in scan_scsis&n;&t; and kmalloc() has become functional (memory_init() happens &n;&t; after all device driver initialization).&n;    */
-id|size
-op_assign
-r_sizeof
-(paren
-r_struct
-id|NCR53c7x0_hostdata
-)paren
-op_plus
-id|script_len
 op_plus
 id|max_cmd_size
 op_plus
@@ -3279,26 +3282,20 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Initialize single command */
-id|hostdata-&gt;free
+id|tmp
 op_assign
-(paren
-r_struct
-id|NCR53c7x0_cmd
-op_star
-)paren
 (paren
 id|hostdata-&gt;script
 op_plus
 id|hostdata-&gt;script_count
 )paren
 suffix:semicolon
-multiline_comment|/* &n; * FIXME: This is wrong.  If we add max_cmd_size to hostdata-&gt;free&n; * once it&squot;s been rounded up, we end up going past the end of what &n; * we allocated.&n; */
 id|hostdata-&gt;free
 op_assign
 id|ROUNDUP
 c_func
 (paren
-id|hostdata-&gt;free
+id|tmp
 comma
 r_void
 op_star
@@ -3306,11 +3303,7 @@ op_star
 suffix:semicolon
 id|hostdata-&gt;free-&gt;real
 op_assign
-(paren
-r_void
-op_star
-)paren
-id|hostdata-&gt;free
+id|tmp
 suffix:semicolon
 id|hostdata-&gt;free-&gt;size
 op_assign
@@ -6816,11 +6809,22 @@ c_cond
 (paren
 id|linux_search
 )paren
+(brace
 op_star
 id|linux_prev
 op_assign
 id|linux_search-&gt;next
 suffix:semicolon
+op_decrement
+id|hostdata-&gt;busy
+(braket
+id|c-&gt;target
+)braket
+(braket
+id|c-&gt;lun
+)braket
+suffix:semicolon
+)brace
 multiline_comment|/* Return the NCR command structure to the free list */
 id|cmd-&gt;next
 op_assign
@@ -9851,13 +9855,21 @@ macro_line|#ifdef A_int_debug_panic
 r_case
 id|A_int_debug_panic
 suffix:colon
-id|panic
+id|printk
 c_func
 (paren
 l_string|&quot;scsi%d : int_debug_panic received&bslash;n&quot;
 comma
 id|host-&gt;host_no
 )paren
+suffix:semicolon
+id|print_lots
+(paren
+id|host
+)paren
+suffix:semicolon
+r_return
+id|SPECIFIC_INT_PANIC
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef A_int_debug_saved
@@ -12159,7 +12171,7 @@ id|STEST3_800_TE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function static struct NCR53c7x0_cmd *allocate_cmd (Scsi_Cmnd *cmd)&n; * &n; * Purpose : Return the first free NCR53c7x0_cmd structure (which are &n; * &t;reused in a LIFO maner to minimize cache thrashing).&n; *&n; * Side effects : If we don&squot;t have enough NCR53c7x0_cmd structures,&n; *&t;allocate more.  Teach programmers not to drink and hack.&n; *&n; * Inputs : cmd - SCSI command&n; *&n; * Returns : NCR53c7x0_cmd structure allocated on behalf of cmd;&n; *&t;NULL on failure.&n; */
+multiline_comment|/*&n; * Function static struct NCR53c7x0_cmd *allocate_cmd (Scsi_Cmnd *cmd)&n; * &n; * Purpose : Return the first free NCR53c7x0_cmd structure (which are &n; * &t;reused in a LIFO maner to minimize cache thrashing).&n; *&n; * Side effects : If we haven&squot;t yet scheduled allocation of NCR53c7x0_cmd&n; *&t;structures for this device, do so.  Attempt to complete all scheduled&n; *&t;allocations using kmalloc(), putting NCR53c7x0_cmd structures on &n; *&t;the free list.  Teach programmers not to drink and hack.&n; *&n; * Inputs : cmd - SCSI command&n; *&n; * Returns : NCR53c7x0_cmd structure allocated on behalf of cmd;&n; *&t;NULL on failure.&n; */
 r_static
 r_struct
 id|NCR53c7x0_cmd
@@ -12250,15 +12262,61 @@ suffix:colon
 l_string|&quot;not allocated&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* &n; * Under Linux 1.2.x, kmalloc() and friends are unavailable until after &n; * device driver initialization has happened.  Calling kmalloc()&n; * during scsi device initialization will print a &quot;cannot get free page&quot;&n; * message.  To avoid too many of these, we&squot;ll forget about trying &n; * to allocate command structures until AFTER initialization.&n; */
-macro_line|#ifdef LINUX_1_2
+multiline_comment|/*&n; * If we have not yet reserved commands for this I_T_L nexus, and&n; * the device exists (as indicated by permanant Scsi_Cmnd structures&n; * being allocated under 1.3.x, or being outside of scan_scsis in &n; * 1.2.x), do so now.&n; */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|in_scan_scsis
+(paren
+id|hostdata-&gt;cmd_allocated
+(braket
+id|cmd-&gt;target
+)braket
+op_amp
+(paren
+l_int|1
+op_lshift
+id|cmd-&gt;lun
 )paren
+)paren
+op_logical_and
+macro_line|#ifdef LINUX_1_2
+op_logical_neg
+id|in_scan_scsis
+macro_line|#else
+id|cmd-&gt;device
+op_logical_and
+id|cmd-&gt;device-&gt;has_cmdblocks
 macro_line|#endif
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|hostdata-&gt;extra_allocate
+op_plus
+id|hostdata-&gt;num_cmds
+)paren
+OL
+id|host-&gt;can_queue
+)paren
+id|hostdata-&gt;extra_allocate
+op_add_assign
+id|host-&gt;cmd_per_lun
+suffix:semicolon
+id|hostdata-&gt;cmd_allocated
+(braket
+id|cmd-&gt;target
+)braket
+op_or_assign
+(paren
+l_int|1
+op_lshift
+id|cmd-&gt;lun
+)paren
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -12274,7 +12332,7 @@ op_increment
 id|hostdata-&gt;num_cmds
 )paren
 (brace
-multiline_comment|/* kmalloc() can allocate any size, but historically has returned &n;       unaligned addresses, so we need to allow for alignment */
+multiline_comment|/* historically, kmalloc has returned unaligned addresses; pad so we &n;       have enough room to ROUNDUP */
 id|size
 op_assign
 id|hostdata-&gt;max_cmd_size
@@ -16105,62 +16163,6 @@ op_complement
 id|OPTION_DEBUG_INTR
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; * If we have not yet reserved commands for this I_T_L nexus, and the &n; * command completed successfully, reserve NCR53c7x0_cmd structures&n; * which will be allocated the next time we run the allocate&n; * routine.&n; */
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|hostdata-&gt;cmd_allocated
-(braket
-id|tmp-&gt;target
-)braket
-op_amp
-(paren
-l_int|1
-op_lshift
-id|tmp-&gt;lun
-)paren
-)paren
-op_logical_and
-id|status_byte
-c_func
-(paren
-id|tmp-&gt;result
-)paren
-op_eq
-id|GOOD
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|hostdata-&gt;extra_allocate
-op_plus
-id|hostdata-&gt;num_cmds
-)paren
-OL
-id|host-&gt;can_queue
-)paren
-(brace
-id|hostdata-&gt;extra_allocate
-op_add_assign
-id|host-&gt;cmd_per_lun
-suffix:semicolon
-)brace
-id|hostdata-&gt;cmd_allocated
-(braket
-id|tmp-&gt;target
-)braket
-op_or_assign
-(paren
-l_int|1
-op_lshift
-id|tmp-&gt;lun
-)paren
-suffix:semicolon
-)brace
 id|tmp
 op_member_access_from_pointer
 id|scsi_done
@@ -18571,7 +18573,7 @@ id|printk
 c_func
 (paren
 id|KERN_ALERT
-l_string|&quot;         mail drew@colorado.edu&bslash;n&quot;
+l_string|&quot;         mail drew@PoohSticks.ORG&bslash;n&quot;
 )paren
 suffix:semicolon
 id|FATAL
@@ -20822,6 +20824,25 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* &n;     * Only print messages if they&squot;re sane in length so we don&squot;t&n;     * blow the kernel printk buffer on something which won&squot;t buy us&n;     * anything.&n;     */
+r_if
+c_cond
+(paren
+id|dsa
+(braket
+id|hostdata-&gt;dsa_msgout
+op_div
+r_sizeof
+(paren
+id|u32
+)paren
+)braket
+OL
+r_sizeof
+(paren
+id|hostdata-&gt;free-&gt;select
+)paren
+)paren
 r_for
 c_loop
 (paren
@@ -21620,7 +21641,8 @@ id|SBCL_REG
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;scsi%d : DCMD|DBC=0x%x, DSA=0x%lx (virt 0x%p)&bslash;n&quot;
+l_string|&quot;scsi%d : DCMD|DBC=0x%x, DNAD=0x%x (virt 0x%p)&bslash;n&quot;
+l_string|&quot;         DSA=0x%lx (virt 0x%p)&bslash;n&quot;
 l_string|&quot;         DSPS=0x%x, TEMP=0x%x (virt 0x%p), DMODE=0x%x&bslash;n&quot;
 l_string|&quot;         SXFER=0x%x, SCNTL3=0x%x&bslash;n&quot;
 l_string|&quot;         %s%s%sphase=%s, %d bytes in SCSI FIFO&bslash;n&quot;
@@ -21629,6 +21651,22 @@ comma
 id|host-&gt;host_no
 comma
 id|dbc_dcmd
+comma
+id|NCR53c7x0_read32
+c_func
+(paren
+id|DNAD_REG
+)paren
+comma
+id|bus_to_virt
+c_func
+(paren
+id|NCR53c7x0_read32
+c_func
+(paren
+id|DNAD_REG
+)paren
+)paren
 comma
 id|virt_to_bus
 c_func
