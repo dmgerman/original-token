@@ -2545,6 +2545,8 @@ c_func
 id|i
 )paren
 suffix:semicolon
+r_continue
+suffix:semicolon
 )brace
 r_if
 c_cond

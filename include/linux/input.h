@@ -393,18 +393,16 @@ DECL|macro|KEY_REWIND
 mdefine_line|#define KEY_REWIND&t;&t;168&t;&t;
 DECL|macro|KEY_PHONE
 mdefine_line|#define KEY_PHONE&t;&t;169
-DECL|macro|KEY_CALENDAR
-mdefine_line|#define KEY_CALENDAR&t;&t;170
-DECL|macro|KEY_NOTEPAD
-mdefine_line|#define KEY_NOTEPAD&t;&t;171
-DECL|macro|KEY_PROG3
-mdefine_line|#define KEY_PROG3&t;&t;172
-DECL|macro|KEY_PRINT
-mdefine_line|#define KEY_PRINT&t;&t;173
-DECL|macro|KEY_SOUND
-mdefine_line|#define KEY_SOUND&t;&t;174
-DECL|macro|KEY_FULLSCREEN
-mdefine_line|#define KEY_FULLSCREEN&t;&t;175
+DECL|macro|KEY_CONFIG
+mdefine_line|#define KEY_CONFIG&t;&t;171
+DECL|macro|KEY_HOMEPAGE
+mdefine_line|#define KEY_HOMEPAGE&t;&t;172
+DECL|macro|KEY_REFRESH
+mdefine_line|#define KEY_REFRESH&t;&t;173
+DECL|macro|KEY_EXIT
+mdefine_line|#define KEY_EXIT&t;&t;174
+DECL|macro|KEY_MOVE
+mdefine_line|#define KEY_MOVE&t;&t;175
 DECL|macro|KEY_UNKNOWN
 mdefine_line|#define KEY_UNKNOWN&t;&t;180
 DECL|macro|BTN_MISC

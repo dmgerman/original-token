@@ -13,8 +13,22 @@ DECL|macro|flush_cache_page
 mdefine_line|#define flush_cache_page(vma, vmaddr)&t;&t;do { } while (0)
 DECL|macro|flush_page_to_ram
 mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
+multiline_comment|/*&n; * The icache is not coherent with the dcache on alpha, thus before&n; * running self modified code like kernel modules we must always run&n; * an imb().&n; */
+macro_line|#ifndef __SMP__
 DECL|macro|flush_icache_range
-mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
+mdefine_line|#define flush_icache_range(start, end)&t;&t;imb()
+macro_line|#else
+DECL|macro|flush_icache_range
+mdefine_line|#define flush_icache_range(start, end)&t;&t;smp_imb()
+r_extern
+r_void
+id|smp_imb
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|macro|flush_icache_page
 mdefine_line|#define flush_icache_page(vma, page)&t;&t;do { } while (0)
 multiline_comment|/*&n; * Use a few helper functions to hide the ugly broken ASN&n; * numbers on early Alphas (ev4 and ev45)&n; */
@@ -216,6 +230,29 @@ id|current-&gt;mm
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Flush a specified range of user mapping page tables&n; * from TLB.&n; * Although Alpha uses VPTE caches, this can be a nop, as Alpha does&n; * not have finegrained tlb flushing, so it will flush VPTE stuff&n; * during next flush_tlb_range.&n; */
+DECL|function|flush_tlb_pgtables
+r_static
+r_inline
+r_void
+id|flush_tlb_pgtables
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+(brace
+)brace
 macro_line|#ifndef __SMP__
 multiline_comment|/*&n; * Flush everything (kernel mapping may also have&n; * changed due to vmalloc/vfree)&n; */
 DECL|function|flush_tlb_all
@@ -347,29 +384,6 @@ c_func
 id|mm
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/*&n; * Flush a specified range of user mapping page tables&n; * from TLB.&n; * Although Alpha uses VPTE caches, this can be a nop, as Alpha does&n; * not have finegrained tlb flushing, so it will flush VPTE stuff&n; * during next flush_tlb_range.&n; */
-DECL|function|flush_tlb_pgtables
-r_static
-r_inline
-r_void
-id|flush_tlb_pgtables
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-comma
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|end
-)paren
-(brace
 )brace
 macro_line|#else /* __SMP__ */
 r_extern

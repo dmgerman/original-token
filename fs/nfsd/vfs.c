@@ -6009,7 +6009,7 @@ l_int|3
 (paren
 r_void
 )paren
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|cd.offset

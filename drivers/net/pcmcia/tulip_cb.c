@@ -16311,11 +16311,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-id|netif_stop_queue
-(paren
-id|dev
-)paren
-suffix:semicolon
 multiline_comment|/* Disable interrupts by clearing the interrupt mask. */
 id|outl
 c_func
@@ -16390,13 +16385,6 @@ id|CSR8
 op_amp
 l_int|0xffff
 suffix:semicolon
-id|del_timer
-c_func
-(paren
-op_amp
-id|tp-&gt;timer
-)paren
-suffix:semicolon
 id|dev-&gt;if_port
 op_assign
 id|tp-&gt;saved_if_port
@@ -16458,6 +16446,12 @@ id|CSR5
 )paren
 )paren
 suffix:semicolon
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -16471,6 +16465,13 @@ id|tulip_down
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|del_timer
+c_func
+(paren
+op_amp
+id|tp-&gt;timer
 )paren
 suffix:semicolon
 id|free_irq

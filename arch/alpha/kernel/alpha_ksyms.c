@@ -58,6 +58,10 @@ id|elf_fpregset_t
 op_star
 )paren
 suffix:semicolon
+r_extern
+id|spinlock_t
+id|kernel_flag
+suffix:semicolon
 multiline_comment|/* these are C runtime functions with special calling conventions: */
 r_extern
 r_void
@@ -141,6 +145,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|disable_irq_nosync
+)paren
+suffix:semicolon
+DECL|variable|probe_irq_mask
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|probe_irq_mask
 )paren
 suffix:semicolon
 DECL|variable|screen_info
@@ -788,6 +799,13 @@ id|__rwsem_wake
 suffix:semicolon
 multiline_comment|/* &n; * SMP-specific symbols.&n; */
 macro_line|#ifdef __SMP__
+DECL|variable|kernel_flag
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kernel_flag
+)paren
+suffix:semicolon
 DECL|variable|synchronize_irq
 id|EXPORT_SYMBOL
 c_func
@@ -823,6 +841,13 @@ c_func
 id|flush_tlb_range
 )paren
 suffix:semicolon
+DECL|variable|smp_imb
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|smp_imb
+)paren
+suffix:semicolon
 DECL|variable|cpu_data
 id|EXPORT_SYMBOL
 c_func
@@ -835,6 +860,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__cpu_number_map
+)paren
+suffix:semicolon
+DECL|variable|smp_num_cpus
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|smp_num_cpus
 )paren
 suffix:semicolon
 DECL|variable|global_irq_holder

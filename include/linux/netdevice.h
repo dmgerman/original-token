@@ -1842,6 +1842,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Use this variant when it is known for sure that it&n; * is executing from interrupt context.&n; */
 DECL|function|dev_kfree_skb_irq
 r_extern
 id|__inline__
@@ -1917,6 +1918,42 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/* Use this variant in places where it could be invoked&n; * either from interrupt or non-interrupt context.&n; */
+DECL|function|dev_kfree_skb_any
+r_extern
+id|__inline__
+r_void
+id|dev_kfree_skb_any
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|in_irq
+c_func
+(paren
+)paren
+)paren
+id|dev_kfree_skb_irq
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_else
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 )brace
 DECL|macro|HAVE_NETIF_RX
 mdefine_line|#define HAVE_NETIF_RX 1

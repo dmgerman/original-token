@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunhme.c,v 1.90 2000/02/16 10:36:16 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sunhme.c,v 1.91 2000/02/17 18:29:02 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
 DECL|variable|version
 r_static
 r_char
@@ -5229,22 +5229,7 @@ comma
 id|RX_BUF_ALLOC_SIZE
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|in_irq
-c_func
-(paren
-)paren
-)paren
-id|dev_kfree_skb_irq
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_else
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|skb
@@ -5332,22 +5317,7 @@ comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|in_irq
-c_func
-(paren
-)paren
-)paren
-id|dev_kfree_skb_irq
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_else
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|skb

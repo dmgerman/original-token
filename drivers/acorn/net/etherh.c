@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/net/etherh.c&n; *&n; * NS8390 ANT etherh specific driver&n; *  For Acorn machines&n; *&n; * Thanks to I-Cubed for information on their cards.&n; *&n; * By Russell King.&n; *&n; * Changelog:&n; *  08-12-1996&t;RMK&t;1.00&t;Created&n; *&t;&t;RMK&t;1.03&t;Added support for EtherLan500 cards&n; *  23-11-1997&t;RMK&t;1.04&t;Added media autodetection&n; *  16-04-1998&t;RMK&t;1.05&t;Improved media autodetection&n; *&n; * Insmod Module Parameters&n; * ------------------------&n; *   io=&lt;io_base&gt;&n; *   irq=&lt;irqno&gt;&n; *   xcvr=&lt;0|1&gt; 0 = 10bT, 1=10b2 (Lan600/600A only)&n; */
+multiline_comment|/*&n; * linux/drivers/net/etherh.c&n; *&n; * NS8390 ANT etherh specific driver&n; *  For Acorn machines&n; *&n; * Thanks to I-Cubed for information on their cards.&n; *&n; * By Russell King.&n; *&n; * Changelog:&n; *  08-12-1996&t;RMK&t;1.00&t;Created&n; *&t;&t;RMK&t;1.03&t;Added support for EtherLan500 cards&n; *  23-11-1997&t;RMK&t;1.04&t;Added media autodetection&n; *  16-04-1998&t;RMK&t;1.05&t;Improved media autodetection&n; *  10-02-2000&t;RMK&t;1.06&t;Updated for 2.3.43&n; *&n; * Insmod Module Parameters&n; * ------------------------&n; *   io=&lt;io_base&gt;&n; *   irq=&lt;irqno&gt;&n; *   xcvr=&lt;0|1&gt; 0 = 10bT, 1=10b2 (Lan600/600A only)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -87,7 +87,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;etherh [500/600/600A] ethernet driver (c) 1998 R.M.King v1.05&bslash;n&quot;
+l_string|&quot;etherh [500/600/600A] ethernet driver (c) 2000 R.M.King v1.06&bslash;n&quot;
 suffix:semicolon
 DECL|macro|ETHERH500_DATAPORT
 mdefine_line|#define ETHERH500_DATAPORT&t;0x200&t;/* MEMC */
@@ -555,15 +555,13 @@ id|ei_status.dmaing
 id|printk
 (paren
 l_string|&quot;%s: DMAing conflict in etherh_block_input: &quot;
-l_string|&quot; DMAstat %d irqlock %d intr %ld&bslash;n&quot;
+l_string|&quot; DMAstat %d irqlock %d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|ei_status.dmaing
 comma
 id|ei_status.irqlock
-comma
-id|dev-&gt;interrupt
 )paren
 suffix:semicolon
 r_return
@@ -856,15 +854,13 @@ id|ei_status.dmaing
 id|printk
 (paren
 l_string|&quot;%s: DMAing conflict in etherh_block_input: &quot;
-l_string|&quot; DMAstat %d irqlock %d intr %ld&bslash;n&quot;
+l_string|&quot; DMAstat %d irqlock %d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|ei_status.dmaing
 comma
 id|ei_status.irqlock
-comma
-id|dev-&gt;interrupt
 )paren
 suffix:semicolon
 r_return
@@ -1047,15 +1043,13 @@ id|ei_status.dmaing
 id|printk
 (paren
 l_string|&quot;%s: DMAing conflict in etherh_get_header: &quot;
-l_string|&quot; DMAstat %d irqlock %d intr %ld&bslash;n&quot;
+l_string|&quot; DMAstat %d irqlock %d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|ei_status.dmaing
 comma
 id|ei_status.irqlock
-comma
-id|dev-&gt;interrupt
 )paren
 suffix:semicolon
 r_return
@@ -1311,6 +1305,13 @@ r_char
 op_star
 id|if_type
 suffix:semicolon
+r_const
+r_char
+op_star
+id|name
+op_assign
+l_string|&quot;etherh&quot;
+suffix:semicolon
 id|addr
 op_assign
 id|dev-&gt;base_addr
@@ -1342,7 +1343,7 @@ id|PROD_I3_ETHERLAN500
 suffix:colon
 id|dev_type
 op_assign
-l_string|&quot;500 &quot;
+l_string|&quot;500&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1351,7 +1352,7 @@ id|PROD_I3_ETHERLAN600
 suffix:colon
 id|dev_type
 op_assign
-l_string|&quot;600 &quot;
+l_string|&quot;600&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1360,7 +1361,7 @@ id|PROD_I3_ETHERLAN600A
 suffix:colon
 id|dev_type
 op_assign
-l_string|&quot;600A &quot;
+l_string|&quot;600A&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1394,10 +1395,13 @@ op_amp
 id|DEBUG_INIT
 )paren
 id|printk
+c_func
 (paren
-l_string|&quot;%s: etherh error: NS8390 command register wrong&bslash;n&quot;
+l_string|&quot;%s: %s error: NS8390 command register wrong&bslash;n&quot;
 comma
 id|dev-&gt;name
+comma
+id|name
 )paren
 suffix:semicolon
 r_return
@@ -1475,10 +1479,13 @@ op_amp
 id|DEBUG_INIT
 )paren
 id|printk
+c_func
 (paren
-l_string|&quot;%s: etherh error: NS8390 not found&bslash;n&quot;
+l_string|&quot;%s: %s error: NS8390 not found&bslash;n&quot;
 comma
 id|dev-&gt;name
+comma
+id|name
 )paren
 suffix:semicolon
 id|outb
@@ -1506,6 +1513,7 @@ r_if
 c_cond
 (paren
 id|ethdev_init
+c_func
 (paren
 id|dev
 )paren
@@ -1515,20 +1523,23 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 id|request_region
+c_func
 (paren
 id|addr
 comma
 l_int|16
 comma
-l_string|&quot;etherh&quot;
+id|name
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: etherh %sfound at %lx, IRQ%d, ether address &quot;
+l_string|&quot;%s: %s %s at %lx, IRQ%d, ether address &quot;
 comma
 id|dev-&gt;name
+comma
+id|name
 comma
 id|dev_type
 comma
@@ -1570,7 +1581,7 @@ id|i
 suffix:semicolon
 id|ei_status.name
 op_assign
-l_string|&quot;etherh&quot;
+id|name
 suffix:semicolon
 id|ei_status.word16
 op_assign
@@ -2316,8 +2327,9 @@ l_int|0
 )paren
 (brace
 id|printk
+c_func
 (paren
-id|KERN_WARNING
+id|KERN_ERR
 l_string|&quot;No etherh card found at %08lX&bslash;n&quot;
 comma
 id|dev-&gt;base_addr

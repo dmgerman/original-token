@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/fs/lockd/svcproc.c&n; *&n; * Lockd server procedures. We don&squot;t implement the NLM_*_RES &n; * procedures because we don&squot;t use the async procedures.&n; *&n; * Copyright (C) 1996, Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
+multiline_comment|/*&n; * linux/fs/lockd/svc4proc.c&n; *&n; * Lockd server procedures. We don&squot;t implement the NLM_*_RES &n; * procedures because we don&squot;t use the async procedures.&n; *&n; * Copyright (C) 1996, Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -13,7 +13,7 @@ DECL|macro|NLMDBG_FACILITY
 mdefine_line|#define NLMDBG_FACILITY&t;&t;NLMDBG_CLIENT
 r_static
 id|u32
-id|nlmsvc_callback
+id|nlm4svc_callback
 c_func
 (paren
 r_struct
@@ -29,7 +29,7 @@ op_star
 suffix:semicolon
 r_static
 r_void
-id|nlmsvc_callback_exit
+id|nlm4svc_callback_exit
 c_func
 (paren
 r_struct
@@ -37,80 +37,11 @@ id|rpc_task
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_LOCKD_V4
-r_static
-id|u32
-DECL|function|cast_to_nlm
-id|cast_to_nlm
-c_func
-(paren
-id|u32
-id|status
-comma
-id|u32
-id|vers
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|vers
-op_ne
-l_int|4
-)paren
-(brace
-r_switch
-c_cond
-(paren
-id|ntohl
-c_func
-(paren
-id|status
-)paren
-)paren
-(brace
-r_case
-id|NLM_LCK_GRANTED
-suffix:colon
-r_case
-id|NLM_LCK_DENIED
-suffix:colon
-r_case
-id|NLM_LCK_DENIED_NOLOCKS
-suffix:colon
-r_case
-id|NLM_LCK_BLOCKED
-suffix:colon
-r_case
-id|NLM_LCK_DENIED_GRACE_PERIOD
-suffix:colon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|status
-op_assign
-id|NLM_LCK_DENIED_NOLOCKS
-suffix:semicolon
-)brace
-)brace
-r_return
-(paren
-id|status
-)paren
-suffix:semicolon
-)brace
-DECL|macro|cast_status
-mdefine_line|#define&t;cast_status(status) (cast_to_nlm(status, rqstp-&gt;rq_vers))
-macro_line|#else
-DECL|macro|cast_status
-mdefine_line|#define cast_status(status) (status)
-macro_line|#endif
 multiline_comment|/*&n; * Obtain client and file from arguments&n; */
 r_static
 id|u32
-DECL|function|nlmsvc_retrieve_args
-id|nlmsvc_retrieve_args
+DECL|function|nlm4svc_retrieve_args
+id|nlm4svc_retrieve_args
 c_func
 (paren
 r_struct
@@ -160,6 +91,8 @@ id|argp-&gt;lock
 suffix:semicolon
 id|u32
 id|error
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* nfsd callbacks must have been installed for this procedure */
 r_if
@@ -309,6 +242,14 @@ c_func
 id|host
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
+suffix:semicolon
 r_return
 id|nlm_lck_denied_nolocks
 suffix:semicolon
@@ -316,8 +257,8 @@ suffix:semicolon
 multiline_comment|/*&n; * NULL: Test for presence of service&n; */
 r_static
 r_int
-DECL|function|nlmsvc_proc_null
-id|nlmsvc_proc_null
+DECL|function|nlm4svc_proc_null
+id|nlm4svc_proc_null
 c_func
 (paren
 r_struct
@@ -347,8 +288,8 @@ suffix:semicolon
 multiline_comment|/*&n; * TEST: Check for conflicting lock&n; */
 r_static
 r_int
-DECL|function|nlmsvc_proc_test
-id|nlmsvc_proc_test
+DECL|function|nlm4svc_proc_test
+id|nlm4svc_proc_test
 c_func
 (paren
 r_struct
@@ -380,7 +321,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: TEST          called&bslash;n&quot;
+l_string|&quot;lockd: TEST4        called&bslash;n&quot;
 )paren
 suffix:semicolon
 id|resp-&gt;cookie
@@ -409,7 +350,7 @@ c_cond
 (paren
 id|resp-&gt;status
 op_assign
-id|nlmsvc_retrieve_args
+id|nlm4svc_retrieve_args
 c_func
 (paren
 id|rqstp
@@ -430,9 +371,6 @@ suffix:semicolon
 multiline_comment|/* Now check for conflicting locks */
 id|resp-&gt;status
 op_assign
-id|cast_status
-c_func
-(paren
 id|nlmsvc_testlock
 c_func
 (paren
@@ -444,20 +382,17 @@ comma
 op_amp
 id|resp-&gt;lock
 )paren
-)paren
 suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: TEST          status %d vers %d&bslash;n&quot;
+l_string|&quot;lockd: TEST4          status %d&bslash;n&quot;
 comma
 id|ntohl
 c_func
 (paren
 id|resp-&gt;status
 )paren
-comma
-id|rqstp-&gt;rq_vers
 )paren
 suffix:semicolon
 id|nlm_release_host
@@ -478,8 +413,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|nlmsvc_proc_lock
-id|nlmsvc_proc_lock
+DECL|function|nlm4svc_proc_lock
+id|nlm4svc_proc_lock
 c_func
 (paren
 r_struct
@@ -543,7 +478,7 @@ c_cond
 (paren
 id|resp-&gt;status
 op_assign
-id|nlmsvc_retrieve_args
+id|nlm4svc_retrieve_args
 c_func
 (paren
 id|rqstp
@@ -583,9 +518,6 @@ macro_line|#endif
 multiline_comment|/* Now try to lock the file */
 id|resp-&gt;status
 op_assign
-id|cast_status
-c_func
-(paren
 id|nlmsvc_lock
 c_func
 (paren
@@ -600,7 +532,6 @@ id|argp-&gt;block
 comma
 op_amp
 id|argp-&gt;cookie
-)paren
 )paren
 suffix:semicolon
 id|dprintk
@@ -633,8 +564,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|nlmsvc_proc_cancel
-id|nlmsvc_proc_cancel
+DECL|function|nlm4svc_proc_cancel
+id|nlm4svc_proc_cancel
 c_func
 (paren
 r_struct
@@ -695,7 +626,7 @@ c_cond
 (paren
 id|resp-&gt;status
 op_assign
-id|nlmsvc_retrieve_args
+id|nlm4svc_retrieve_args
 c_func
 (paren
 id|rqstp
@@ -716,9 +647,6 @@ suffix:semicolon
 multiline_comment|/* Try to cancel request. */
 id|resp-&gt;status
 op_assign
-id|cast_status
-c_func
-(paren
 id|nlmsvc_cancel_blocked
 c_func
 (paren
@@ -726,7 +654,6 @@ id|file
 comma
 op_amp
 id|argp-&gt;lock
-)paren
 )paren
 suffix:semicolon
 id|dprintk
@@ -760,8 +687,8 @@ suffix:semicolon
 multiline_comment|/*&n; * UNLOCK: release a lock&n; */
 r_static
 r_int
-DECL|function|nlmsvc_proc_unlock
-id|nlmsvc_proc_unlock
+DECL|function|nlm4svc_proc_unlock
+id|nlm4svc_proc_unlock
 c_func
 (paren
 r_struct
@@ -822,7 +749,7 @@ c_cond
 (paren
 id|resp-&gt;status
 op_assign
-id|nlmsvc_retrieve_args
+id|nlm4svc_retrieve_args
 c_func
 (paren
 id|rqstp
@@ -843,9 +770,6 @@ suffix:semicolon
 multiline_comment|/* Now try to remove the lock */
 id|resp-&gt;status
 op_assign
-id|cast_status
-c_func
-(paren
 id|nlmsvc_unlock
 c_func
 (paren
@@ -853,7 +777,6 @@ id|file
 comma
 op_amp
 id|argp-&gt;lock
-)paren
 )paren
 suffix:semicolon
 id|dprintk
@@ -887,8 +810,8 @@ suffix:semicolon
 multiline_comment|/*&n; * GRANTED: A server calls us to tell that a process&squot; lock request&n; * was granted&n; */
 r_static
 r_int
-DECL|function|nlmsvc_proc_granted
-id|nlmsvc_proc_granted
+DECL|function|nlm4svc_proc_granted
+id|nlm4svc_proc_granted
 c_func
 (paren
 r_struct
@@ -945,8 +868,8 @@ suffix:semicolon
 multiline_comment|/*&n; * `Async&squot; versions of the above service routines. They aren&squot;t really,&n; * because we send the callback before the reply proper. I hope this&n; * doesn&squot;t break any clients.&n; */
 r_static
 r_int
-DECL|function|nlmsvc_proc_test_msg
-id|nlmsvc_proc_test_msg
+DECL|function|nlm4svc_proc_test_msg
+id|nlm4svc_proc_test_msg
 c_func
 (paren
 r_struct
@@ -983,7 +906,7 @@ c_cond
 (paren
 id|stat
 op_assign
-id|nlmsvc_proc_test
+id|nlm4svc_proc_test
 c_func
 (paren
 id|rqstp
@@ -999,7 +922,7 @@ l_int|0
 )paren
 id|stat
 op_assign
-id|nlmsvc_callback
+id|nlm4svc_callback
 c_func
 (paren
 id|rqstp
@@ -1016,8 +939,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|nlmsvc_proc_lock_msg
-id|nlmsvc_proc_lock_msg
+DECL|function|nlm4svc_proc_lock_msg
+id|nlm4svc_proc_lock_msg
 c_func
 (paren
 r_struct
@@ -1054,7 +977,7 @@ c_cond
 (paren
 id|stat
 op_assign
-id|nlmsvc_proc_lock
+id|nlm4svc_proc_lock
 c_func
 (paren
 id|rqstp
@@ -1070,7 +993,7 @@ l_int|0
 )paren
 id|stat
 op_assign
-id|nlmsvc_callback
+id|nlm4svc_callback
 c_func
 (paren
 id|rqstp
@@ -1087,8 +1010,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|nlmsvc_proc_cancel_msg
-id|nlmsvc_proc_cancel_msg
+DECL|function|nlm4svc_proc_cancel_msg
+id|nlm4svc_proc_cancel_msg
 c_func
 (paren
 r_struct
@@ -1125,7 +1048,7 @@ c_cond
 (paren
 id|stat
 op_assign
-id|nlmsvc_proc_cancel
+id|nlm4svc_proc_cancel
 c_func
 (paren
 id|rqstp
@@ -1141,7 +1064,7 @@ l_int|0
 )paren
 id|stat
 op_assign
-id|nlmsvc_callback
+id|nlm4svc_callback
 c_func
 (paren
 id|rqstp
@@ -1158,8 +1081,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|nlmsvc_proc_unlock_msg
-id|nlmsvc_proc_unlock_msg
+DECL|function|nlm4svc_proc_unlock_msg
+id|nlm4svc_proc_unlock_msg
 c_func
 (paren
 r_struct
@@ -1196,7 +1119,7 @@ c_cond
 (paren
 id|stat
 op_assign
-id|nlmsvc_proc_unlock
+id|nlm4svc_proc_unlock
 c_func
 (paren
 id|rqstp
@@ -1212,7 +1135,7 @@ l_int|0
 )paren
 id|stat
 op_assign
-id|nlmsvc_callback
+id|nlm4svc_callback
 c_func
 (paren
 id|rqstp
@@ -1229,8 +1152,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|nlmsvc_proc_granted_msg
-id|nlmsvc_proc_granted_msg
+DECL|function|nlm4svc_proc_granted_msg
+id|nlm4svc_proc_granted_msg
 c_func
 (paren
 r_struct
@@ -1267,7 +1190,7 @@ c_cond
 (paren
 id|stat
 op_assign
-id|nlmsvc_proc_granted
+id|nlm4svc_proc_granted
 c_func
 (paren
 id|rqstp
@@ -1283,7 +1206,7 @@ l_int|0
 )paren
 id|stat
 op_assign
-id|nlmsvc_callback
+id|nlm4svc_callback
 c_func
 (paren
 id|rqstp
@@ -1301,8 +1224,8 @@ suffix:semicolon
 multiline_comment|/*&n; * SHARE: create a DOS share or alter existing share.&n; */
 r_static
 r_int
-DECL|function|nlmsvc_proc_share
-id|nlmsvc_proc_share
+DECL|function|nlm4svc_proc_share
+id|nlm4svc_proc_share
 c_func
 (paren
 r_struct
@@ -1366,7 +1289,7 @@ c_cond
 (paren
 id|resp-&gt;status
 op_assign
-id|nlmsvc_retrieve_args
+id|nlm4svc_retrieve_args
 c_func
 (paren
 id|rqstp
@@ -1387,9 +1310,6 @@ suffix:semicolon
 multiline_comment|/* Now try to create the share */
 id|resp-&gt;status
 op_assign
-id|cast_status
-c_func
-(paren
 id|nlmsvc_share_file
 c_func
 (paren
@@ -1398,7 +1318,6 @@ comma
 id|file
 comma
 id|argp
-)paren
 )paren
 suffix:semicolon
 id|dprintk
@@ -1432,8 +1351,8 @@ suffix:semicolon
 multiline_comment|/*&n; * UNSHARE: Release a DOS share.&n; */
 r_static
 r_int
-DECL|function|nlmsvc_proc_unshare
-id|nlmsvc_proc_unshare
+DECL|function|nlm4svc_proc_unshare
+id|nlm4svc_proc_unshare
 c_func
 (paren
 r_struct
@@ -1494,7 +1413,7 @@ c_cond
 (paren
 id|resp-&gt;status
 op_assign
-id|nlmsvc_retrieve_args
+id|nlm4svc_retrieve_args
 c_func
 (paren
 id|rqstp
@@ -1512,12 +1431,9 @@ id|file
 r_return
 id|rpc_success
 suffix:semicolon
-multiline_comment|/* Now try to unshare the file */
+multiline_comment|/* Now try to lock the file */
 id|resp-&gt;status
 op_assign
-id|cast_status
-c_func
-(paren
 id|nlmsvc_unshare_file
 c_func
 (paren
@@ -1526,7 +1442,6 @@ comma
 id|file
 comma
 id|argp
-)paren
 )paren
 suffix:semicolon
 id|dprintk
@@ -1560,8 +1475,8 @@ suffix:semicolon
 multiline_comment|/*&n; * NM_LOCK: Create an unmonitored lock&n; */
 r_static
 r_int
-DECL|function|nlmsvc_proc_nm_lock
-id|nlmsvc_proc_nm_lock
+DECL|function|nlm4svc_proc_nm_lock
+id|nlm4svc_proc_nm_lock
 c_func
 (paren
 r_struct
@@ -1592,7 +1507,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* just clean the monitor flag */
 r_return
-id|nlmsvc_proc_lock
+id|nlm4svc_proc_lock
 c_func
 (paren
 id|rqstp
@@ -1606,8 +1521,8 @@ suffix:semicolon
 multiline_comment|/*&n; * FREE_ALL: Release all locks and shares held by client&n; */
 r_static
 r_int
-DECL|function|nlmsvc_proc_free_all
-id|nlmsvc_proc_free_all
+DECL|function|nlm4svc_proc_free_all
+id|nlm4svc_proc_free_all
 c_func
 (paren
 r_struct
@@ -1634,7 +1549,7 @@ multiline_comment|/* Obtain client */
 r_if
 c_cond
 (paren
-id|nlmsvc_retrieve_args
+id|nlm4svc_retrieve_args
 c_func
 (paren
 id|rqstp
@@ -1669,8 +1584,8 @@ suffix:semicolon
 multiline_comment|/*&n; * SM_NOTIFY: private callback from statd (not part of official NLM proto)&n; */
 r_static
 r_int
-DECL|function|nlmsvc_proc_sm_notify
-id|nlmsvc_proc_sm_notify
+DECL|function|nlm4svc_proc_sm_notify
+id|nlm4svc_proc_sm_notify
 c_func
 (paren
 r_struct
@@ -1868,8 +1783,8 @@ suffix:semicolon
 multiline_comment|/*&n; * This is the generic lockd callback for async RPC calls&n; */
 r_static
 id|u32
-DECL|function|nlmsvc_callback
-id|nlmsvc_callback
+DECL|function|nlm4svc_callback
+id|nlm4svc_callback
 c_func
 (paren
 r_struct
@@ -1932,7 +1847,7 @@ op_logical_neg
 id|host
 )paren
 (brace
-id|kfree
+id|rpc_free
 c_func
 (paren
 id|call
@@ -1965,6 +1880,7 @@ id|resp
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME this should become nlmSVC_async_call when that code gets&n;   merged in XXX */
 r_if
 c_cond
 (paren
@@ -1975,7 +1891,7 @@ id|call
 comma
 id|proc
 comma
-id|nlmsvc_callback_exit
+id|nlm4svc_callback_exit
 )paren
 OL
 l_int|0
@@ -1989,8 +1905,8 @@ suffix:semicolon
 )brace
 r_static
 r_void
-DECL|function|nlmsvc_callback_exit
-id|nlmsvc_callback_exit
+DECL|function|nlm4svc_callback_exit
+id|nlm4svc_callback_exit
 c_func
 (paren
 r_struct
@@ -2037,13 +1953,7 @@ c_func
 id|call-&gt;a_host
 )paren
 suffix:semicolon
-id|rpc_release_task
-c_func
-(paren
-id|task
-)paren
-suffix:semicolon
-id|kfree
+id|rpc_free
 c_func
 (paren
 id|call
@@ -2051,32 +1961,32 @@ id|call
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * NLM Server procedures.&n; */
-DECL|macro|nlmsvc_encode_norep
-mdefine_line|#define nlmsvc_encode_norep&t;nlmsvc_encode_void
-DECL|macro|nlmsvc_decode_norep
-mdefine_line|#define nlmsvc_decode_norep&t;nlmsvc_decode_void
-DECL|macro|nlmsvc_decode_testres
-mdefine_line|#define nlmsvc_decode_testres&t;nlmsvc_decode_void
-DECL|macro|nlmsvc_decode_lockres
-mdefine_line|#define nlmsvc_decode_lockres&t;nlmsvc_decode_void
-DECL|macro|nlmsvc_decode_unlockres
-mdefine_line|#define nlmsvc_decode_unlockres&t;nlmsvc_decode_void
-DECL|macro|nlmsvc_decode_cancelres
-mdefine_line|#define nlmsvc_decode_cancelres&t;nlmsvc_decode_void
-DECL|macro|nlmsvc_decode_grantedres
-mdefine_line|#define nlmsvc_decode_grantedres&t;nlmsvc_decode_void
-DECL|macro|nlmsvc_proc_none
-mdefine_line|#define nlmsvc_proc_none&t;nlmsvc_proc_null
-DECL|macro|nlmsvc_proc_test_res
-mdefine_line|#define nlmsvc_proc_test_res&t;nlmsvc_proc_null
-DECL|macro|nlmsvc_proc_lock_res
-mdefine_line|#define nlmsvc_proc_lock_res&t;nlmsvc_proc_null
-DECL|macro|nlmsvc_proc_cancel_res
-mdefine_line|#define nlmsvc_proc_cancel_res&t;nlmsvc_proc_null
-DECL|macro|nlmsvc_proc_unlock_res
-mdefine_line|#define nlmsvc_proc_unlock_res&t;nlmsvc_proc_null
-DECL|macro|nlmsvc_proc_granted_res
-mdefine_line|#define nlmsvc_proc_granted_res&t;nlmsvc_proc_null
+DECL|macro|nlm4svc_encode_norep
+mdefine_line|#define nlm4svc_encode_norep&t;nlm4svc_encode_void
+DECL|macro|nlm4svc_decode_norep
+mdefine_line|#define nlm4svc_decode_norep&t;nlm4svc_decode_void
+DECL|macro|nlm4svc_decode_testres
+mdefine_line|#define nlm4svc_decode_testres&t;nlm4svc_decode_void
+DECL|macro|nlm4svc_decode_lockres
+mdefine_line|#define nlm4svc_decode_lockres&t;nlm4svc_decode_void
+DECL|macro|nlm4svc_decode_unlockres
+mdefine_line|#define nlm4svc_decode_unlockres&t;nlm4svc_decode_void
+DECL|macro|nlm4svc_decode_cancelres
+mdefine_line|#define nlm4svc_decode_cancelres&t;nlm4svc_decode_void
+DECL|macro|nlm4svc_decode_grantedres
+mdefine_line|#define nlm4svc_decode_grantedres&t;nlm4svc_decode_void
+DECL|macro|nlm4svc_proc_none
+mdefine_line|#define nlm4svc_proc_none&t;nlm4svc_proc_null
+DECL|macro|nlm4svc_proc_test_res
+mdefine_line|#define nlm4svc_proc_test_res&t;nlm4svc_proc_null
+DECL|macro|nlm4svc_proc_lock_res
+mdefine_line|#define nlm4svc_proc_lock_res&t;nlm4svc_proc_null
+DECL|macro|nlm4svc_proc_cancel_res
+mdefine_line|#define nlm4svc_proc_cancel_res&t;nlm4svc_proc_null
+DECL|macro|nlm4svc_proc_unlock_res
+mdefine_line|#define nlm4svc_proc_unlock_res&t;nlm4svc_proc_null
+DECL|macro|nlm4svc_proc_granted_res
+mdefine_line|#define nlm4svc_proc_granted_res&t;nlm4svc_proc_null
 DECL|struct|nlm_void
 DECL|member|dummy
 r_struct
@@ -2088,11 +1998,11 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|PROC
-mdefine_line|#define PROC(name, xargt, xrest, argt, rest)&t;&bslash;&n; { (svc_procfunc) nlmsvc_proc_##name,&t;&bslash;&n;   (kxdrproc_t) nlmsvc_decode_##xargt,&t;&bslash;&n;   (kxdrproc_t) nlmsvc_encode_##xrest,&t;&bslash;&n;   NULL,&t;&t;&t;&t;&bslash;&n;   sizeof(struct nlm_##argt),&t;&t;&bslash;&n;   sizeof(struct nlm_##rest),&t;&t;&bslash;&n;   0,&t;&t;&t;&t;&t;&bslash;&n;   0&t;&t;&t;&t;&t;&bslash;&n; }
-DECL|variable|nlmsvc_procedures
+mdefine_line|#define PROC(name, xargt, xrest, argt, rest)&t;&bslash;&n; { (svc_procfunc) nlm4svc_proc_##name,&t;&bslash;&n;   (kxdrproc_t) nlm4svc_decode_##xargt,&t;&bslash;&n;   (kxdrproc_t) nlm4svc_encode_##xrest,&t;&bslash;&n;   NULL,&t;&t;&t;&t;&bslash;&n;   sizeof(struct nlm_##argt),&t;&t;&bslash;&n;   sizeof(struct nlm_##rest),&t;&t;&bslash;&n;   0,&t;&t;&t;&t;&t;&bslash;&n;   0&t;&t;&t;&t;&t;&bslash;&n; }
+DECL|variable|nlmsvc_procedures4
 r_struct
 id|svc_procedure
-id|nlmsvc_procedures
+id|nlmsvc_procedures4
 (braket
 )braket
 op_assign

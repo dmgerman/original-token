@@ -1857,7 +1857,8 @@ id|region_high
 op_assign
 id|region_low
 suffix:semicolon
-id|ide_ioreg_t
+r_int
+r_int
 id|region_request
 op_assign
 l_int|8

@@ -318,7 +318,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;       check f=%p pd=%d %ld-%ld ty=%d&bslash;n&quot;
+l_string|&quot;lockd: check f=%p pd=%d %ld-%ld ty=%d cookie=%x&bslash;n&quot;
 comma
 id|block-&gt;b_file
 comma
@@ -329,6 +329,16 @@ comma
 id|fl-&gt;fl_end
 comma
 id|fl-&gt;fl_type
+comma
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+(paren
+id|block-&gt;b_call.a_args.cookie.data
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -454,6 +464,16 @@ op_assign
 id|block-&gt;b_next
 )paren
 (brace
+id|dprintk
+c_func
+(paren
+l_string|&quot;cookie: head of blocked queue %p, block %p&bslash;n&quot;
+comma
+id|nlm_blocked
+comma
+id|block
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1143,7 +1163,14 @@ suffix:semicolon
 r_case
 id|EDEADLK
 suffix:colon
+macro_line|#ifdef CONFIG_LOCKD_V4
+r_return
+id|nlm4_deadlock
+suffix:semicolon
+multiline_comment|/* will be downgraded to lck_deined if this&n;&t;&t;&t;&t;&t;       * is a NLMv1,3 request */
+macro_line|#else
 multiline_comment|/* no applicable NLM status */
+macro_line|#endif
 r_case
 id|EAGAIN
 suffix:colon
@@ -1893,6 +1920,22 @@ c_func
 l_string|&quot;lockd: GRANT_MSG RPC callback&bslash;n&quot;
 )paren
 suffix:semicolon
+id|dprintk
+c_func
+(paren
+l_string|&quot;callback: looking for cookie %x &bslash;n&quot;
+comma
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+(paren
+id|call-&gt;a_args.cookie.data
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2198,7 +2241,7 @@ id|nlm_blocked
 )paren
 op_logical_and
 id|block-&gt;b_when
-OL
+op_le
 id|jiffies
 )paren
 (brace

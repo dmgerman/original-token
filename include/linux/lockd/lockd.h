@@ -9,6 +9,9 @@ macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/nfsd/nfsfh.h&gt;
 macro_line|#include &lt;linux/lockd/bind.h&gt;
 macro_line|#include &lt;linux/lockd/xdr.h&gt;
+macro_line|#ifdef CONFIG_LOCKD_V4
+macro_line|#include &lt;linux/lockd/xdr4.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/lockd/debug.h&gt;
 multiline_comment|/*&n; * Version string&n; */
 DECL|macro|LOCKD_VERSION
@@ -336,6 +339,15 @@ id|nlmsvc_procedures
 (braket
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_LOCKD_V4
+r_extern
+r_struct
+id|svc_procedure
+id|nlmsvc_procedures4
+(braket
+)braket
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_int
 r_int

@@ -297,6 +297,19 @@ id|_do_idle
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * flush I cache for a page&n;&t; */
+DECL|member|_flush_icache_page
+r_void
+(paren
+op_star
+id|_flush_icache_page
+)paren
+(paren
+r_int
+r_int
+id|address
+)paren
+suffix:semicolon
 )brace
 id|processor
 suffix:semicolon
@@ -358,6 +371,8 @@ DECL|macro|cpu_cache_wback_area
 mdefine_line|#define cpu_cache_wback_area(start,end)&t;&t;processor._cache_wback_area(start,end)
 DECL|macro|cpu_cache_purge_area
 mdefine_line|#define cpu_cache_purge_area(start,end)&t;&t;processor._cache_purge_area(start,end)
+DECL|macro|cpu_flush_icache_page
+mdefine_line|#define cpu_flush_icache_page(virt)&t;&t;processor._flush_icache_page(virt)
 DECL|macro|cpu_switch_mm
 mdefine_line|#define cpu_switch_mm(pgd,tsk)&t;&t;&t;cpu_set_pgd(__virt_to_phys((unsigned long)(pgd)))
 macro_line|#endif

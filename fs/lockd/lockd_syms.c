@@ -65,5 +65,43 @@ c_func
 id|nlmsvc_timeout
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_LOCKD_V4
+multiline_comment|/* NLM4 exported symbols */
+DECL|variable|nlm4_rofs
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|nlm4_rofs
+)paren
+suffix:semicolon
+DECL|variable|nlm4_stale_fh
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|nlm4_stale_fh
+)paren
+suffix:semicolon
+DECL|variable|nlm4_deadlock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|nlm4_deadlock
+)paren
+suffix:semicolon
+DECL|variable|nlm4_failed
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|nlm4_failed
+)paren
+suffix:semicolon
+DECL|variable|nlm4_fbig
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|nlm4_fbig
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* CONFIG_MODULES */
 eof

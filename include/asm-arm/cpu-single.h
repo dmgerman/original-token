@@ -49,6 +49,8 @@ DECL|macro|cpu_cache_wback_area
 mdefine_line|#define cpu_cache_wback_area&t;&t;cpu_fn(CPU_NAME,_cache_wback_area)
 DECL|macro|cpu_cache_purge_area
 mdefine_line|#define cpu_cache_purge_area&t;&t;cpu_fn(CPU_NAME,_cache_purge_area)
+DECL|macro|cpu_flush_icache_page
+mdefine_line|#define cpu_flush_icache_page&t;&t;cpu_fn(CPU_NAME,_flush_icache_page)
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/* forward declare task_struct */
@@ -280,6 +282,16 @@ comma
 r_int
 r_int
 id|end
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|cpu_flush_icache_page
+c_func
+(paren
+r_int
+r_int
+id|virt
 )paren
 suffix:semicolon
 DECL|macro|cpu_switch_mm

@@ -916,7 +916,7 @@ id|NFS3_MAXPATHLEN
 (brace
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -932,7 +932,7 @@ r_else
 (brace
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -946,7 +946,7 @@ suffix:semicolon
 )brace
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -997,7 +997,7 @@ id|inode-&gt;i_rdev
 suffix:semicolon
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -1010,7 +1010,7 @@ id|inode-&gt;i_dev
 suffix:semicolon
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -1191,7 +1191,7 @@ id|NFS3_MAXPATHLEN
 (brace
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -1207,7 +1207,7 @@ r_else
 (brace
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -1221,7 +1221,7 @@ suffix:semicolon
 )brace
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -1272,7 +1272,7 @@ id|fhp-&gt;fh_post_rdev
 suffix:semicolon
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -1285,7 +1285,7 @@ id|inode-&gt;i_dev
 suffix:semicolon
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -1446,7 +1446,7 @@ id|xdr_one
 suffix:semicolon
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -3788,7 +3788,7 @@ c_cond
 (paren
 id|cd-&gt;offset
 )paren
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|cd-&gt;offset
@@ -3878,7 +3878,7 @@ suffix:semicolon
 multiline_comment|/* mark entry present */
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -3948,7 +3948,7 @@ suffix:semicolon
 multiline_comment|/* remember pointer */
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -4196,7 +4196,7 @@ l_int|0
 (brace
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -4209,7 +4209,7 @@ suffix:semicolon
 multiline_comment|/* total bytes */
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -4222,7 +4222,7 @@ suffix:semicolon
 multiline_comment|/* free bytes */
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -4235,7 +4235,7 @@ suffix:semicolon
 multiline_comment|/* user available bytes */
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -4246,7 +4246,7 @@ suffix:semicolon
 multiline_comment|/* total inodes */
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -4257,7 +4257,7 @@ suffix:semicolon
 multiline_comment|/* free inodes */
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p
@@ -4396,7 +4396,7 @@ id|resp-&gt;f_dtpref
 suffix:semicolon
 id|p
 op_assign
-id|enc64
+id|xdr_encode_hyper
 c_func
 (paren
 id|p

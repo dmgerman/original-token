@@ -30,9 +30,6 @@ op_star
 id|i_name
 comma
 op_star
-id|i_name_start
-comma
-op_star
 id|i_arg
 suffix:semicolon
 r_struct
@@ -204,8 +201,6 @@ op_minus
 id|ENOEXEC
 suffix:semicolon
 multiline_comment|/* No interpreter name found */
-id|i_name_start
-op_assign
 id|i_name
 op_assign
 id|cp
@@ -238,22 +233,7 @@ suffix:semicolon
 id|cp
 op_increment
 )paren
-(brace
-r_if
-c_cond
-(paren
-op_star
-id|cp
-op_eq
-l_char|&squot;/&squot;
-)paren
-id|i_name
-op_assign
-id|cp
-op_plus
-l_int|1
-suffix:semicolon
-)brace
+multiline_comment|/* nothing */
 r_while
 c_loop
 (paren
@@ -291,7 +271,7 @@ id|strcpy
 (paren
 id|interp
 comma
-id|i_name_start
+id|i_name
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * OK, we&squot;ve parsed out the interpreter name and&n;&t; * (optional) argument.&n;&t; * Splice in (1) the interpreter&squot;s name for argv[0]&n;&t; *           (2) (optional) argument to interpreter&n;&t; *           (3) filename of shell script (replace argv[0])&n;&t; *&n;&t; * This is done in reverse order, because of how the&n;&t; * user environment and arguments are stored.&n;&t; */

@@ -18,7 +18,7 @@ macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;qlogicfc.h&quot;
 multiline_comment|/* Configuration section **************************************************** */
-multiline_comment|/* Set the following macro to 1 to reload the ISP2x00&squot;s firmware.  This is&n;   version 1.15.37 of the isp2100&squot;s firmware and version 2.00.16 of the &n;   isp2200&squot;s firmware. &n;*/
+multiline_comment|/* Set the following macro to 1 to reload the ISP2x00&squot;s firmware.  This is&n;   version 1.17.30 of the isp2100&squot;s firmware and version 2.00.40 of the &n;   isp2200&squot;s firmware. &n;*/
 DECL|macro|RELOAD_FIRMWARE
 mdefine_line|#define RELOAD_FIRMWARE&t;&t;1
 DECL|macro|USE_NVRAM_DEFAULTS
@@ -32,7 +32,7 @@ multiline_comment|/*  Macros used for debugging */
 multiline_comment|/*&n;#define DEBUG_ISP2x00&t;&t;1&n;#define DEBUG_ISP2x00_INT&t;1&n;#define DEBUG_ISP2x00_INTR&t;1&n;#define DEBUG_ISP2x00_SETUP&t;1&n;&n;#define DEBUG_ISP2x00_FABRIC    1&n;*/
 multiline_comment|/* #define TRACE_ISP             1 */
 DECL|macro|DEFAULT_LOOP_COUNT
-mdefine_line|#define DEFAULT_LOOP_COUNT&t;10000000
+mdefine_line|#define DEFAULT_LOOP_COUNT&t;1000000000
 multiline_comment|/* End Configuration section ************************************************ */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#if TRACE_ISP
@@ -1320,6 +1320,17 @@ DECL|macro|QLOGICFC_MAX_LUN
 mdefine_line|#define QLOGICFC_MAX_LUN&t;128
 DECL|macro|QLOGICFC_MAX_LOOP_ID
 mdefine_line|#define QLOGICFC_MAX_LOOP_ID&t;0x7d
+multiline_comment|/* the following connection options only apply to the 2200.  i have only&n; * had success with LOOP_ONLY and P2P_ONLY.&n; */
+DECL|macro|LOOP_ONLY
+mdefine_line|#define LOOP_ONLY              0
+DECL|macro|P2P_ONLY
+mdefine_line|#define P2P_ONLY               1
+DECL|macro|LOOP_PREFERED
+mdefine_line|#define LOOP_PREFERED          2
+DECL|macro|P2P_PREFERED
+mdefine_line|#define P2P_PREFERED           3
+DECL|macro|CONNECTION_PREFERENCE
+mdefine_line|#define CONNECTION_PREFERENCE  LOOP_ONLY
 multiline_comment|/* adapter_state values */
 DECL|macro|AS_FIRMWARE_DEAD
 mdefine_line|#define AS_FIRMWARE_DEAD      -1
@@ -1970,7 +1981,7 @@ l_int|0x1
 suffix:semicolon
 id|hostdata-&gt;control_block.firm_opts
 op_assign
-l_int|0x000e
+l_int|0x800e
 suffix:semicolon
 id|hostdata-&gt;control_block.max_frame_len
 op_assign
@@ -2067,6 +2078,12 @@ c_func
 (paren
 id|hostdata-&gt;req
 )paren
+suffix:semicolon
+id|hostdata-&gt;control_block.add_firm_opts
+op_or_assign
+id|CONNECTION_PREFERENCE
+op_lshift
+l_int|4
 suffix:semicolon
 id|hostdata-&gt;adapter_state
 op_assign

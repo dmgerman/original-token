@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|RTL8139_VERSION
-mdefine_line|#define RTL8139_VERSION &quot;0.9.2&quot;
+mdefine_line|#define RTL8139_VERSION &quot;0.9.3&quot;
 DECL|macro|RTL8139_MODULE_NAME
 mdefine_line|#define RTL8139_MODULE_NAME &quot;8139too&quot;
 DECL|macro|RTL8139_DRIVER_NAME
@@ -96,7 +96,7 @@ comma
 )brace
 suffix:semicolon
 DECL|macro|RTL_IO_SIZE
-mdefine_line|#define RTL_IO_SIZE 256
+mdefine_line|#define RTL_IO_SIZE 0x80
 DECL|macro|RTL8139_CAPS
 mdefine_line|#define RTL8139_CAPS  HAS_CHIP_XCVR|HAS_LNK_CHNG
 r_typedef
@@ -112,12 +112,6 @@ DECL|enumerator|SMC1211TX
 id|SMC1211TX
 comma
 multiline_comment|/*MPX5030,*/
-DECL|enumerator|SIS900
-id|SIS900
-comma
-DECL|enumerator|SIS7016
-id|SIS7016
-comma
 DECL|enumerator|DELTA8139
 id|DELTA8139
 comma
@@ -168,18 +162,6 @@ l_string|&quot;SMC1211TX EZCard 10/100 (RealTek RTL8139)&quot;
 )brace
 comma
 multiline_comment|/*&t;{ MPX5030, &quot;Accton MPX5030 (RealTek RTL8139)&quot;},*/
-(brace
-id|SIS900
-comma
-l_string|&quot;SiS 900 (RealTek RTL8139) Fast Ethernet&quot;
-)brace
-comma
-(brace
-id|SIS7016
-comma
-l_string|&quot;SiS 7016 (RealTek RTL8139) Fast Ethernet&quot;
-)brace
-comma
 (brace
 id|DELTA8139
 comma
@@ -258,38 +240,6 @@ id|SMC1211TX
 )brace
 comma
 multiline_comment|/*&t;{0x1113, 0x1211, PCI_ANY_ID, PCI_ANY_ID, 0, 0, MPX5030 },*/
-(brace
-l_int|0x1039
-comma
-l_int|0x0900
-comma
-id|PCI_ANY_ID
-comma
-id|PCI_ANY_ID
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|SIS900
-)brace
-comma
-(brace
-l_int|0x1039
-comma
-l_int|0x7016
-comma
-id|PCI_ANY_ID
-comma
-id|PCI_ANY_ID
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|SIS7016
-)brace
-comma
 (brace
 l_int|0x1500
 comma

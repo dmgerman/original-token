@@ -1,3 +1,4 @@
+macro_line|#include &lt;asm/mman.h&gt;
 multiline_comment|/*&n; * Cache flushing...&n; */
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;&t;&t;&t;&t;&bslash;&n;&t;cpu_flush_cache_all()
@@ -13,6 +14,8 @@ DECL|macro|clean_cache_area
 mdefine_line|#define clean_cache_area(_start,_size)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;unsigned long _s;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;_s = (unsigned long)_start;&t;&t;&t;&t;&bslash;&n;&t;&t;cpu_clean_cache_area(_s, _size);&t;&t;&t;&bslash;&n;&t;} while (0)
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(_start,_end)&t;&t;&t;&t;&t;&bslash;&n;&t;cpu_flush_icache_area((_start), (_end) - (_start))
+DECL|macro|flush_icache_page
+mdefine_line|#define flush_icache_page(vma,pg)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((vma)-&gt;vm_flags &amp; PROT_EXEC)&t;&t;&t;&bslash;&n;&t;&t;&t;cpu_flush_icache_page(page_address(pg));&t;&bslash;&n;&t;} while (0)
 multiline_comment|/*&n; * We don&squot;t have a MEMC chip...&n; */
 DECL|macro|memc_update_all
 mdefine_line|#define memc_update_all()&t;&t;do { } while (0)

@@ -401,6 +401,20 @@ c_func
 id|file
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_LOCKD_V4
+r_if
+c_cond
+(paren
+id|nfserr
+op_eq
+l_int|1
+)paren
+id|nfserr
+op_assign
+id|nlm4_stale_fh
+suffix:semicolon
+r_else
+macro_line|#endif
 id|nfserr
 op_assign
 id|nlm_lck_denied

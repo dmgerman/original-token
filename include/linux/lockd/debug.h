@@ -46,6 +46,8 @@ DECL|macro|NLMDBG_SVCSUBS
 mdefine_line|#define NLMDBG_SVCSUBS&t;&t;0x0040
 DECL|macro|NLMDBG_HOSTCACHE
 mdefine_line|#define NLMDBG_HOSTCACHE&t;0x0080
+DECL|macro|NLMDBG_XDR
+mdefine_line|#define NLMDBG_XDR&t;&t;0x0100
 DECL|macro|NLMDBG_ALL
 mdefine_line|#define NLMDBG_ALL&t;&t;0x7fff
 macro_line|#endif /* LINUX_LOCKD_DEBUG_H */

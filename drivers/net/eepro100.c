@@ -73,7 +73,6 @@ op_assign
 l_int|64
 suffix:semicolon
 multiline_comment|/* &squot;options&squot; is used to pass a transceiver override or full-duplex flag&n;   e.g. &quot;options=16&quot; for FD, &quot;options=32&quot; for 100mbps-only. */
-macro_line|#if MODULE_SETUP_FIXED
 DECL|variable|full_duplex
 r_static
 r_int
@@ -140,7 +139,6 @@ op_minus
 l_int|1
 )brace
 suffix:semicolon
-macro_line|#endif
 DECL|variable|debug
 r_static
 r_int
@@ -171,7 +169,7 @@ macro_line|#warning  You must compile this file with the correct options!
 macro_line|#warning  See the last lines of the source file.
 macro_line|#error You must compile this driver with &quot;-O&quot;.
 macro_line|#endif
-macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -209,7 +207,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#if MODULE_OPTIONS_FIXED
 id|MODULE_PARM
 c_func
 (paren
@@ -238,7 +235,6 @@ l_int|8
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|MODULE_PARM
 c_func
 (paren
@@ -309,6 +305,36 @@ DECL|macro|PFX
 mdefine_line|#define PFX EEPRO100_MODULE_NAME &quot;: &quot;
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
+multiline_comment|/* ACPI power states don&squot;t universally work (yet) */
+macro_line|#ifndef CONFIG_EEPRO100_PM
+DECL|macro|pci_set_power_state
+macro_line|#undef pci_set_power_state
+DECL|macro|pci_set_power_state
+mdefine_line|#define pci_set_power_state null_set_power_state
+DECL|function|null_set_power_state
+r_static
+r_inline
+r_int
+id|null_set_power_state
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_int
+id|state
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_EEPRO100_PM */
+multiline_comment|/* compile-time switch to en/disable slow PIO */
+DECL|macro|USE_IO
+macro_line|#undef USE_IO
 DECL|variable|speedo_debug
 r_int
 id|speedo_debug
@@ -1674,6 +1700,13 @@ id|ioaddr
 suffix:semicolon
 r_static
 r_int
+id|card_idx
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_static
+r_int
 id|did_version
 op_assign
 l_int|0
@@ -1703,6 +1736,9 @@ macro_line|#endif
 id|irq
 op_assign
 id|pdev-&gt;irq
+suffix:semicolon
+id|card_idx
+op_increment
 suffix:semicolon
 r_if
 c_cond
@@ -1958,7 +1994,6 @@ id|option
 op_assign
 id|dev-&gt;mem_start
 suffix:semicolon
-macro_line|#if MODULE_SETUP_FIXED
 r_else
 r_if
 c_cond
@@ -1981,7 +2016,6 @@ id|options
 id|card_idx
 )braket
 suffix:semicolon
-macro_line|#endif
 r_else
 id|option
 op_assign
@@ -2882,7 +2916,6 @@ l_int|1
 suffix:colon
 l_int|0
 suffix:semicolon
-macro_line|#if MODULE_SETUP_FIXED
 r_if
 c_cond
 (paren
@@ -2909,7 +2942,6 @@ id|card_idx
 )braket
 suffix:semicolon
 )brace
-macro_line|#endif
 id|sp-&gt;default_port
 op_assign
 id|option
@@ -3068,9 +3100,9 @@ op_star
 id|ioaddr
 )paren
 suffix:semicolon
-macro_line|#endif
 id|err_out_free_mmio_region
 suffix:colon
+macro_line|#endif
 id|release_mem_region
 (paren
 id|pci_resource_start
@@ -5770,7 +5802,6 @@ id|sp-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
 multiline_comment|/* Count only user packets. */
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20127
 id|sp-&gt;stats.tx_bytes
 op_add_assign
 id|sp-&gt;tx_skbuff
@@ -5780,7 +5811,6 @@ id|entry
 op_member_access_from_pointer
 id|len
 suffix:semicolon
-macro_line|#endif
 id|pci_unmap_single
 c_func
 (paren
@@ -6411,12 +6441,10 @@ suffix:semicolon
 id|sp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20127
 id|sp-&gt;stats.rx_bytes
 op_add_assign
 id|pkt_len
 suffix:semicolon
-macro_line|#endif
 )brace
 id|entry
 op_assign
@@ -6794,12 +6822,6 @@ id|RxFD
 )paren
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 id|dev_kfree_skb
 c_func
 (paren

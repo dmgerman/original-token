@@ -1333,52 +1333,5 @@ id|ino_t
 id|ino
 )paren
 suffix:semicolon
-macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * This is needed in nfs_readdir for encoding NFS3 directory cookies.&n; */
-r_static
-r_inline
-id|u32
-op_star
-DECL|function|enc64
-id|enc64
-c_func
-(paren
-id|u32
-op_star
-id|p
-comma
-id|u64
-id|val
-)paren
-(brace
-op_star
-id|p
-op_increment
-op_assign
-id|htonl
-c_func
-(paren
-id|val
-op_rshift
-l_int|32
-)paren
-suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-id|htonl
-c_func
-(paren
-id|val
-op_amp
-l_int|0xffffffff
-)paren
-suffix:semicolon
-r_return
-id|p
-suffix:semicolon
-)brace
-macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_NFSD_XDR3_H */
 eof

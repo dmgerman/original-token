@@ -64,6 +64,8 @@ DECL|macro|DEV_KFREE_SKB
 mdefine_line|#define DEV_KFREE_SKB(skb) dev_kfree_skb(skb)
 DECL|macro|DEV_KFREE_SKB_IRQ
 mdefine_line|#define DEV_KFREE_SKB_IRQ(skb) dev_kfree_skb_irq(skb)
+DECL|macro|DEV_KFREE_SKB_ANY
+mdefine_line|#define DEV_KFREE_SKB_ANY(skb) dev_kfree_skb_any(skb)
 multiline_comment|/* function prototypes ******************************************************/
 r_static
 r_void
@@ -6229,28 +6231,12 @@ id|pTxd-&gt;pMBuf-&gt;len
 )paren
 suffix:semicolon
 multiline_comment|/* free message */
-r_if
-c_cond
-(paren
-id|in_irq
-c_func
-(paren
-)paren
-)paren
-id|DEV_KFREE_SKB_IRQ
+id|DEV_KFREE_SKB_ANY
 c_func
 (paren
 id|pTxd-&gt;pMBuf
 )paren
 suffix:semicolon
-r_else
-id|DEV_KFREE_SKB
-c_func
-(paren
-id|pTxd-&gt;pMBuf
-)paren
-suffix:semicolon
-multiline_comment|/* free message */
 id|pTxPort-&gt;TxdRingFree
 op_increment
 suffix:semicolon
@@ -12141,22 +12127,7 @@ id|pNextMbuf
 op_assign
 id|pFreeMbuf-&gt;pNext
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|in_irq
-c_func
-(paren
-)paren
-)paren
-id|DEV_KFREE_SKB_IRQ
-c_func
-(paren
-id|pFreeMbuf-&gt;pOs
-)paren
-suffix:semicolon
-r_else
-id|DEV_KFREE_SKB
+id|DEV_KFREE_SKB_ANY
 c_func
 (paren
 id|pFreeMbuf-&gt;pOs

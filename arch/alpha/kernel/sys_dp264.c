@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_dp264.c&n; *&n; *&t;Copyright (C) 1995 David A Rusling&n; *&t;Copyright (C) 1996, 1999 Jay A Estabrook&n; *&t;Copyright (C) 1998, 1999 Richard Henderson&n; *&n; * Code supporting the DP264 (EV6+TSUNAMI).&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -168,9 +169,6 @@ r_static
 r_int
 r_int
 id|cached_irq_mask
-op_assign
-op_complement
-l_int|0UL
 suffix:semicolon
 DECL|macro|TSUNAMI_SET_IRQ_MASK
 mdefine_line|#define TSUNAMI_SET_IRQ_MASK(cpu, value)&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;volatile unsigned long *csr;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;csr = &amp;TSUNAMI_cchip-&gt;dim##cpu##.csr;&t;&bslash;&n;&t;*csr = (value);&t;&t;&t;&t;&bslash;&n;&t;mb();&t;&t;&t;&t;&t;&bslash;&n;&t;*csr;&t;&t;&t;&t;&t;&bslash;&n;} while(0)
@@ -355,21 +353,15 @@ r_int
 id|value
 suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
-id|value
-op_assign
-op_complement
-id|mask
-suffix:semicolon
 id|do_flush_smp_irq_mask
 c_func
 (paren
-id|value
+id|mask
 )paren
 suffix:semicolon
 macro_line|#endif
 id|value
 op_assign
-op_complement
 id|mask
 op_or
 (paren
@@ -400,13 +392,10 @@ id|irq
 )paren
 (brace
 id|cached_irq_mask
-op_and_assign
-op_complement
-(paren
+op_or_assign
 l_int|1UL
 op_lshift
 id|irq
-)paren
 suffix:semicolon
 id|dp264_flush_irq_mask
 c_func
@@ -427,10 +416,13 @@ id|irq
 )paren
 (brace
 id|cached_irq_mask
-op_or_assign
+op_and_assign
+op_complement
+(paren
 l_int|1UL
 op_lshift
 id|irq
+)paren
 suffix:semicolon
 id|dp264_flush_irq_mask
 c_func
@@ -454,14 +446,13 @@ r_int
 r_int
 id|value
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
 id|value
 op_assign
-op_complement
 id|mask
 op_rshift
 l_int|16
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
 id|do_flush_smp_irq_mask
 c_func
 (paren
@@ -471,12 +462,7 @@ suffix:semicolon
 macro_line|#endif
 id|value
 op_assign
-(paren
-op_complement
-id|mask
-op_rshift
-l_int|16
-)paren
+id|value
 op_or
 (paren
 l_int|1UL
@@ -504,13 +490,10 @@ id|irq
 )paren
 (brace
 id|cached_irq_mask
-op_and_assign
-op_complement
-(paren
+op_or_assign
 l_int|1UL
 op_lshift
 id|irq
-)paren
 suffix:semicolon
 id|clipper_flush_irq_mask
 c_func
@@ -531,10 +514,13 @@ id|irq
 )paren
 (brace
 id|cached_irq_mask
-op_or_assign
+op_and_assign
+op_complement
+(paren
 l_int|1UL
 op_lshift
 id|irq
+)paren
 suffix:semicolon
 id|clipper_flush_irq_mask
 c_func
@@ -791,6 +777,16 @@ l_int|16
 )paren
 r_continue
 suffix:semicolon
+multiline_comment|/* only irqs between 16 and 47 are tsunami irqs */
+r_if
+c_cond
+(paren
+id|i
+op_ge
+l_int|48
+)paren
+r_break
+suffix:semicolon
 id|irq_desc
 (braket
 id|i
@@ -884,7 +880,6 @@ suffix:semicolon
 id|dp264_flush_irq_mask
 c_func
 (paren
-op_complement
 l_int|0UL
 )paren
 suffix:semicolon
@@ -960,7 +955,6 @@ suffix:semicolon
 id|clipper_flush_irq_mask
 c_func
 (paren
-op_complement
 l_int|0UL
 )paren
 suffix:semicolon

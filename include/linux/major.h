@@ -140,6 +140,8 @@ DECL|macro|IDE4_MAJOR
 mdefine_line|#define IDE4_MAJOR&t;56
 DECL|macro|IDE5_MAJOR
 mdefine_line|#define IDE5_MAJOR&t;57
+DECL|macro|LVM_BLK_MAJOR
+mdefine_line|#define LVM_BLK_MAJOR&t;58&t;/* Logical Volume Manager */
 DECL|macro|SCSI_DISK1_MAJOR
 mdefine_line|#define SCSI_DISK1_MAJOR&t;65
 DECL|macro|SCSI_DISK2_MAJOR
@@ -154,8 +156,6 @@ DECL|macro|SCSI_DISK6_MAJOR
 mdefine_line|#define SCSI_DISK6_MAJOR&t;70
 DECL|macro|SCSI_DISK7_MAJOR
 mdefine_line|#define SCSI_DISK7_MAJOR&t;71
-DECL|macro|LVM_BLK_MAJOR
-mdefine_line|#define LVM_BLK_MAJOR&t;58&t;/* Logical Volume Manager */
 DECL|macro|COMPAQ_SMART2_MAJOR
 mdefine_line|#define COMPAQ_SMART2_MAJOR&t;72
 DECL|macro|COMPAQ_SMART2_MAJOR1
@@ -172,16 +172,12 @@ DECL|macro|COMPAQ_SMART2_MAJOR6
 mdefine_line|#define COMPAQ_SMART2_MAJOR6&t;78
 DECL|macro|COMPAQ_SMART2_MAJOR7
 mdefine_line|#define COMPAQ_SMART2_MAJOR7&t;79
-DECL|macro|LVM_BLK_MAJOR
-mdefine_line|#define LVM_BLK_MAJOR&t;58&t;/* Logical Volume Manager */
 DECL|macro|SPECIALIX_NORMAL_MAJOR
 mdefine_line|#define SPECIALIX_NORMAL_MAJOR 75
 DECL|macro|SPECIALIX_CALLOUT_MAJOR
 mdefine_line|#define SPECIALIX_CALLOUT_MAJOR 76
 DECL|macro|DASD_MAJOR
 mdefine_line|#define DASD_MAJOR      94&t;/* Official assignations from Peter */
-DECL|macro|LVM_CHAR_MAJOR
-mdefine_line|#define LVM_CHAR_MAJOR&t;109&t;/* Logical Volume Manager */
 DECL|macro|MDISK_MAJOR
 mdefine_line|#define MDISK_MAJOR     95&t;/* Official assignations from Peter */
 DECL|macro|I2O_MAJOR
@@ -198,6 +194,8 @@ DECL|macro|AURORA_MAJOR
 mdefine_line|#define AURORA_MAJOR 79
 DECL|macro|PHONE_MAJOR
 mdefine_line|#define PHONE_MAJOR&t;100
+DECL|macro|LVM_CHAR_MAJOR
+mdefine_line|#define LVM_CHAR_MAJOR&t;109&t;/* Logical Volume Manager */
 DECL|macro|RTF_MAJOR
 mdefine_line|#define RTF_MAJOR&t;150
 DECL|macro|RAW_MAJOR

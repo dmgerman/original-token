@@ -1035,7 +1035,7 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_NFSD_NFS3
+macro_line|#ifdef CONFIG_LOCKD_V4
 DECL|variable|nlmsvc_version4
 r_static
 r_struct
@@ -1073,7 +1073,7 @@ comma
 op_amp
 id|nlmsvc_version3
 comma
-macro_line|#ifdef CONFIG_NFSD_NFS3
+macro_line|#ifdef CONFIG_LOCKD_V4
 op_amp
 id|nlmsvc_version4
 comma

@@ -11,6 +11,15 @@ macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+r_extern
+r_char
+op_star
+id|ide_xfer_verbose
+(paren
+id|byte
+id|xfer_rate
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Maximum number of interfaces per card&n; */
 DECL|macro|MAX_IFS
 mdefine_line|#define MAX_IFS&t;2

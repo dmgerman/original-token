@@ -178,8 +178,8 @@ DECL|macro|HID_UP_LED
 mdefine_line|#define HID_UP_LED &t;&t;0x00080000
 DECL|macro|HID_UP_BUTTON
 mdefine_line|#define HID_UP_BUTTON &t;&t;0x00090000
-DECL|macro|HID_UP_HOTKEY
-mdefine_line|#define HID_UP_HOTKEY&t;&t;0x000c0000
+DECL|macro|HID_UP_CONSUMER
+mdefine_line|#define HID_UP_CONSUMER&t;&t;0x000c0000
 DECL|macro|HID_UP_DIGITIZER
 mdefine_line|#define HID_UP_DIGITIZER &t;0x000d0000
 DECL|macro|HID_UP_PID
@@ -252,7 +252,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; * This is the local enviroment. It is resistent up the the next main-item.&n; */
 DECL|macro|MAX_USAGES
-mdefine_line|#define MAX_USAGES 256
+mdefine_line|#define MAX_USAGES 512
 DECL|struct|hid_local
 r_struct
 id|hid_local

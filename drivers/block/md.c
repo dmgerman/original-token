@@ -13656,7 +13656,7 @@ id|devfs_handle
 comma
 l_string|&quot;%u&quot;
 comma
-id|MAX_MD_DEV
+id|MAX_MD_DEVS
 comma
 id|DEVFS_FL_DEFAULT
 comma

@@ -1,6 +1,7 @@
 macro_line|#ifndef __ASM_ARM_UNALIGNED_H
 DECL|macro|__ASM_ARM_UNALIGNED_H
 mdefine_line|#define __ASM_ARM_UNALIGNED_H
+macro_line|#include &lt;linux/types.h&gt;
 DECL|macro|get_unaligned
 mdefine_line|#define get_unaligned(ptr) &bslash;&n;&t;((__typeof__(*(ptr)))__get_unaligned_size((ptr), sizeof(*(ptr))))
 DECL|macro|put_unaligned
