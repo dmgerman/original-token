@@ -1390,9 +1390,6 @@ id|mm
 comma
 op_star
 id|old_mm
-comma
-op_star
-id|active_mm
 suffix:semicolon
 id|old_mm
 op_assign

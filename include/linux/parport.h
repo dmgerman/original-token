@@ -130,6 +130,9 @@ DECL|macro|IEEE1284_MODE_EPPSWE
 mdefine_line|#define IEEE1284_MODE_EPPSWE            (1&lt;&lt;12) /* Software-emulated */
 DECL|macro|IEEE1284_DEVICEID
 mdefine_line|#define IEEE1284_DEVICEID               (1&lt;&lt;2)  /* This is a flag */
+multiline_comment|/* For the benefit of parport_read/write, you can use these with&n; * parport_negotiate to use address operations.  They have no effect&n; * other than to make parport_read/write use address transfers. */
+DECL|macro|IEEE1284_ADDR
+mdefine_line|#define IEEE1284_ADDR&t;&t;&t;(1&lt;&lt;13)&t;/* This is a flag */
 multiline_comment|/* The rest is for the kernel only */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/wait.h&gt;

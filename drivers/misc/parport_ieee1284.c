@@ -577,6 +577,9 @@ r_int
 id|m
 op_assign
 id|mode
+op_amp
+op_complement
+id|IEEE1284_ADDR
 suffix:semicolon
 r_int
 r_char
@@ -597,6 +600,33 @@ id|mode
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* Is the difference just an address-or-not bit? */
+r_if
+c_cond
+(paren
+(paren
+id|port-&gt;ieee1284.mode
+op_amp
+op_complement
+id|IEEE1284_ADDR
+)paren
+op_eq
+(paren
+id|mode
+op_amp
+op_complement
+id|IEEE1284_ADDR
+)paren
+)paren
+(brace
+id|port-&gt;ieee1284.mode
+op_assign
+id|mode
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* Go to compability forward idle mode */
 r_if
 c_cond
@@ -1129,6 +1159,13 @@ op_assign
 id|port-&gt;ieee1284.mode
 suffix:semicolon
 r_int
+id|addr
+op_assign
+id|mode
+op_amp
+id|IEEE1284_ADDR
+suffix:semicolon
+r_int
 (paren
 op_star
 id|fn
@@ -1147,11 +1184,15 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* Ignore the device-ID-request bit. */
+multiline_comment|/* Ignore the device-ID-request bit and the address bit. */
 id|mode
 op_and_assign
 op_complement
+(paren
 id|IEEE1284_DEVICEID
+op_or
+id|IEEE1284_ADDR
+)paren
 suffix:semicolon
 multiline_comment|/* Use the mode we&squot;re in. */
 r_switch
@@ -1198,6 +1239,16 @@ comma
 id|port-&gt;name
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|addr
+)paren
+id|fn
+op_assign
+id|port-&gt;ops-&gt;epp_write_addr
+suffix:semicolon
+r_else
 id|fn
 op_assign
 id|port-&gt;ops-&gt;epp_write_data
@@ -1218,6 +1269,16 @@ comma
 id|port-&gt;name
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|addr
+)paren
+id|fn
+op_assign
+id|port-&gt;ops-&gt;ecp_write_addr
+suffix:semicolon
+r_else
 id|fn
 op_assign
 id|port-&gt;ops-&gt;ecp_write_data
@@ -1236,6 +1297,16 @@ id|port-&gt;name
 )paren
 suffix:semicolon
 multiline_comment|/* The caller has specified that it must be emulated,&n;&t;&t; * even if we have ECP hardware! */
+r_if
+c_cond
+(paren
+id|addr
+)paren
+id|fn
+op_assign
+id|parport_ieee1284_ecp_write_addr
+suffix:semicolon
+r_else
 id|fn
 op_assign
 id|parport_ieee1284_ecp_write_data
@@ -1328,6 +1399,13 @@ op_assign
 id|port-&gt;physport-&gt;ieee1284.mode
 suffix:semicolon
 r_int
+id|addr
+op_assign
+id|mode
+op_amp
+id|IEEE1284_ADDR
+suffix:semicolon
+r_int
 (paren
 op_star
 id|fn
@@ -1345,11 +1423,15 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* Ignore the device-ID-request bit. */
+multiline_comment|/* Ignore the device-ID-request bit and the address bit. */
 id|mode
 op_and_assign
 op_complement
+(paren
 id|IEEE1284_DEVICEID
+op_or
+id|IEEE1284_ADDR
+)paren
 suffix:semicolon
 multiline_comment|/* Use the mode we&squot;re in. */
 r_switch
@@ -1420,6 +1502,16 @@ comma
 id|port-&gt;name
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|addr
+)paren
+id|fn
+op_assign
+id|port-&gt;ops-&gt;epp_read_addr
+suffix:semicolon
+r_else
 id|fn
 op_assign
 id|port-&gt;ops-&gt;epp_read_data
