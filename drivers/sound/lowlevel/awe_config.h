@@ -3,6 +3,8 @@ macro_line|#ifndef AWE_CONFIG_H_DEF
 DECL|macro|AWE_CONFIG_H_DEF
 mdefine_line|#define AWE_CONFIG_H_DEF
 multiline_comment|/*----------------------------------------------------------------&n; * system configuration&n; *----------------------------------------------------------------*/
+DECL|macro|AWE_NEW_KERNEL_INTERFACE
+mdefine_line|#define AWE_NEW_KERNEL_INTERFACE
 multiline_comment|/* if you&squot;re using obsolete VoxWare 3.0.x on Linux 1.2.x (or FreeBSD),&n; * define the following line.&n; */
 DECL|macro|AWE_OBSOLETE_VOXWARE
 macro_line|#undef AWE_OBSOLETE_VOXWARE

@@ -275,7 +275,8 @@ id|socket
 op_star
 id|sock
 suffix:semicolon
-id|mm_segment_t
+r_int
+r_int
 id|fs
 suffix:semicolon
 r_int

@@ -2298,7 +2298,6 @@ id|intrfc-&gt;if_dlink_type
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef CONFIG_IPX_PPROP_ROUTING
 r_if
 c_cond
 (paren
@@ -2525,7 +2524,6 @@ id|intrfc-&gt;if_netnum
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren

@@ -1602,7 +1602,7 @@ comma
 l_string|&quot;fdiv_bug&bslash;t: %s&bslash;n&quot;
 l_string|&quot;hlt_bug&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;sep_bug&bslash;t&bslash;t: %s&bslash;n&quot;
-l_string|&quot;pentium_f00f_bug&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;f00f_bug&bslash;t: %s&bslash;n&quot;
 l_string|&quot;fpu&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;fpu_exception&bslash;t: %s&bslash;n&quot;
 l_string|&quot;cpuid&bslash;t&bslash;t: %s&bslash;n&quot;

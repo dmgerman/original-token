@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *    seagate.c Copyright (C) 1992, 1993 Drew Eckhardt&n; *      low level scsi driver for ST01/ST02, Future Domain TMC-885,&n; *      TMC-950  by&n; *&n; *              Drew Eckhardt&n; *&n; *      &lt;drew@colorado.edu&gt;&n; *&n; *      Note : TMC-880 boards don&squot;t work because they have two bits in&n; *              the status register flipped, I&squot;ll fix this &quot;RSN&quot;&n; *&n; *      This card does all the I/O via memory mapped I/O, so there is no need&n; *      to check or allocate a region of the I/O address space.&n; */
 multiline_comment|/* Modified 1996 to use new read{b,w,l}, write{b,w,l}, and phys_to_virt&n;   macros. This meant redefining st0x_cr_sr and st0x_dr, as well as&n;   replacing the &quot;DATA = foo;&quot; and &quot;CONTROL = foo;&quot; structures with &n;   WRITE_DATA(foo) and WRITE_CONTROL(foo) macros.&n;&n;   Replaced assembler routines with C. There&squot;s probably a performance hit,&n;   but I only have a cdrom and can&squot;t tell. Define SEAGATE_USE_ASM if you&n;   want the old assembler code.&n;&n;   Look for the string &quot;SJT&quot; for details.&n;&n; */
-multiline_comment|/*&n; * Configuration :&n; * To use without BIOS -DOVERRIDE=base_address -DCONTROLLER=FD or SEAGATE&n; * -DIRQ will override the default of 5.&n; * Note: You can now set these options from the kernel&squot;s &quot;command line&quot;.&n; * The syntax is:&n; *&n; *     st0x=ADDRESS,IRQ                (for a Seagate controller)&n; * or:&n; *     tmc8xx=ADDRESS,IRQ              (for a TMC-8xx or TMC-950 controller)&n; * eg:&n; *     tmc8xx=0xC8000,15&n; *&n; * will configure the driver for a TMC-8xx style controller using IRQ 15&n; * with a base address of 0xC8000.&n; *&n; * -DARBITRATE &n; *      Will cause the host adapter to arbitrate for the&n; *      bus for better SCSI-II compatibility, rather than just&n; *      waiting for BUS FREE and then doing its thing.  Should&n; *      let us do one command per Lun when I integrate my&n; *      reorganization changes into the distribution sources.&n; *&n; * -DDEBUG&n; *      Will activate debug code.&n; *&n; * -DFAST or -DFAST32 &n; *      Will use blind transfers where possible&n; *&n; * -DPARITY  &n; *      This will enable parity.&n; *&n; * -DSEAGATE_USE_ASM&n; *      Will use older seagate assembly code. should be (very small amount)&n; *      Faster.&n; *&n; * -DSLOW_HANDSHAKE&n; *      Will allow compatibility with broken devices that don&squot;t&n; *      handshake fast enough (ie, some CD ROM&squot;s) for the Seagate&n; *      code.&n; *&n; * -DSLOW_RATE=x&n; *      x is some number, It will let you specify a default&n; *      transfer rate if handshaking isn&squot;t working correctly.&n; *&n; * The following to options are patches from the SCSI.HOWTO&n; *&n; * -DSWAPSTAT  This will swap the definitions for STAT_MSG and STAT_CD.&n; *&n; * -DSWAPCNTDATA  This will swap the order that seagate.c messes with&n; *                the CONTROL an DATA registers.&n; */
+multiline_comment|/*&n; * Configuration :&n; * To use without BIOS -DOVERRIDE=base_address -DCONTROLLER=FD or SEAGATE&n; * -DIRQ will override the default of 5.&n; * Note: You can now set these options from the kernel&squot;s &quot;command line&quot;.&n; * The syntax is:&n; *&n; *     st0x=ADDRESS,IRQ                (for a Seagate controller)&n; * or:&n; *     tmc8xx=ADDRESS,IRQ              (for a TMC-8xx or TMC-950 controller)&n; * eg:&n; *     tmc8xx=0xC8000,15&n; *&n; * will configure the driver for a TMC-8xx style controller using IRQ 15&n; * with a base address of 0xC8000.&n; *&n; * -DARBITRATE &n; *      Will cause the host adapter to arbitrate for the&n; *      bus for better SCSI-II compatibility, rather than just&n; *      waiting for BUS FREE and then doing its thing.  Should&n; *      let us do one command per Lun when I integrate my&n; *      reorganization changes into the distribution sources.&n; *&n; * -DDEBUG&n; *      Will activate debug code.&n; *&n; * -DFAST or -DFAST32 &n; *      Will use blind transfers where possible&n; *&n; * -DPARITY  &n; *      This will enable parity.&n; *&n; * -DSEAGATE_USE_ASM&n; *      Will use older seagate assembly code. should be (very small amount)&n; *      Faster.&n; *&n; * -DSLOW_HANDSHAKE&n; *      Will allow compatibility with broken devices that don&squot;t&n; *      handshake fast enough (ie, some CD ROM&squot;s) for the Seagate&n; *      code.&n; *&n; * -DSLOW_RATE=x&n; *      x is some number, It will let you specify a default&n; *      transfer rate if handshaking isn&squot;t working correctly.&n; *&n; * -DOLDCNTDATASCEME  There is a new sceme to set the CONTROL&n; *                    and DATA reigsters which complies more closely&n; *                    with the SCSI2 standard. This hopefully eliminates&n; *                    the need to swap the order these registers are&n; *                    &squot;messed&squot; with. It makes the following two options&n; *                    obsolete. To reenable the old sceme define this.&n; *&n; * The following to options are patches from the SCSI.HOWTO&n; *&n; * -DSWAPSTAT  This will swap the definitions for STAT_MSG and STAT_CD.&n; *&n; * -DSWAPCNTDATA  This will swap the order that seagate.c messes with&n; *                the CONTROL an DATA registers.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -1765,6 +1765,18 @@ r_int
 r_char
 id|status_read
 suffix:semicolon
+macro_line|#ifndef OLDCNTDATASCEME
+r_volatile
+r_int
+r_char
+id|tmp_data
+suffix:semicolon
+r_volatile
+r_int
+r_char
+id|tmp_control
+suffix:semicolon
+macro_line|#endif
 r_int
 id|transfersize
 op_assign
@@ -2387,6 +2399,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 multiline_comment|/*&n; *    When the SCSI device decides that we&squot;re gawking at it, it will&n; *    respond by asserting BUSY on the bus.&n; *&n; *    Note : the Seagate ST-01/02 product manual says that we should&n; *    twiddle the DATA register before the control register.    However,&n; *    this does not work reliably so we do it the other way around.&n; *&n; *    Probably could be a problem with arbitration too, we really should&n; *    try this with a SCSI protocol or logic analyzer to see what is&n; *    going on.&n; */
+macro_line|#ifdef OLDCNTDATASCEME
 macro_line|#ifdef SWAPCNTDATA
 id|cli
 c_func
@@ -2496,6 +2509,74 @@ id|sti
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#else
+id|tmp_data
+op_assign
+(paren
+r_int
+r_char
+)paren
+(paren
+(paren
+l_int|1
+op_lshift
+id|target
+)paren
+op_or
+(paren
+id|controller_type
+op_eq
+id|SEAGATE
+ques
+c_cond
+l_int|0x80
+suffix:colon
+l_int|0x40
+)paren
+)paren
+suffix:semicolon
+id|tmp_control
+op_assign
+id|BASE_CMD
+op_or
+id|CMD_DRVR_ENABLE
+op_or
+id|CMD_SEL
+op_or
+(paren
+id|reselect
+ques
+c_cond
+id|CMD_ATTN
+suffix:colon
+l_int|0
+)paren
+op_or
+id|CMD_BSY
+suffix:semicolon
+id|WRITE_CONTROL
+c_func
+(paren
+id|tmp_data
+)paren
+suffix:semicolon
+id|WRITE_DATA
+c_func
+(paren
+id|tmp_control
+)paren
+suffix:semicolon
+id|tmp_control
+op_xor_assign
+id|CMD_BSY
+suffix:semicolon
+id|WRITE_CONTROL
+c_func
+(paren
+id|tmp_control
+)paren
+suffix:semicolon
+macro_line|#endif /* OLDCNTDATASCEME */
 r_while
 c_loop
 (paren

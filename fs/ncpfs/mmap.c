@@ -91,7 +91,8 @@ suffix:semicolon
 r_int
 id|pos
 suffix:semicolon
-id|mm_segment_t
+r_int
+r_int
 id|fs
 suffix:semicolon
 id|page

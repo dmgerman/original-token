@@ -2404,7 +2404,9 @@ macro_line|#ifdef NFS_PARANOIA
 id|printk
 c_func
 (paren
-l_string|&quot;nfs_refresh_inode: mode changed, %07o to %07o&bslash;n&quot;
+l_string|&quot;nfs_refresh_inode: inode %ld mode changed, %07o to %07o&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
 comma
 id|inode-&gt;i_mode
 comma
@@ -2428,10 +2430,6 @@ op_assign
 id|fattr-&gt;mode
 suffix:semicolon
 multiline_comment|/* restore mode */
-id|inode-&gt;i_nlink
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/*&n;&t; * No need to worry about unhashing the dentry, as the&n;&t; * lookup validation will know that the inode is bad.&n;&t; * (But we fall through to invalidate the caches.)&n;&t; */
 id|out_invalid
 suffix:colon

@@ -202,10 +202,6 @@ id|Scsi_Device
 op_star
 id|device
 suffix:semicolon
-DECL|member|SCpnt
-id|Scsi_Cmnd
-id|SCpnt
-suffix:semicolon
 DECL|member|sem
 r_struct
 id|semaphore

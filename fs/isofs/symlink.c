@@ -159,8 +159,6 @@ c_func
 (paren
 id|pnt
 )paren
-op_plus
-l_int|1
 suffix:semicolon
 r_if
 c_cond

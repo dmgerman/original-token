@@ -856,6 +856,13 @@ c_func
 id|shrink_dcache_sb
 )paren
 suffix:semicolon
+DECL|variable|shrink_dcache_parent
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|shrink_dcache_parent
+)paren
+suffix:semicolon
 macro_line|#if !defined(CONFIG_NFSD) &amp;&amp; defined(CONFIG_NFSD_MODULE)
 DECL|variable|do_nfsservctl
 id|EXPORT_SYMBOL

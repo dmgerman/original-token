@@ -1252,6 +1252,16 @@ c_func
 (paren
 id|PROMISE
 comma
+id|PROMISE_IDE_UDMA
+comma
+l_string|&quot;IDE Ultra DMA/33&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|PROMISE
+comma
 id|PROMISE_5300
 comma
 l_string|&quot;DC5030&quot;

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;  Michael Leodolter, Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992 - 1997 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Tue May 27 22:29:00 1997 by makisara@home&n;  Some small formal changes - aeb, 950809&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;  Michael Leodolter, Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992 - 1997 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Wed Nov  5 23:39:52 1997 by makisara@home&n;  Some small formal changes - aeb, 950809&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -882,41 +882,6 @@ id|last_result
 op_assign
 id|SCpnt-&gt;result
 suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-(paren
-id|STp-&gt;buffer
-)paren
-op_member_access_from_pointer
-id|writing
-)paren
-(brace
-multiline_comment|/* Process errors before releasing request */
-(paren
-id|STp-&gt;buffer
-)paren
-op_member_access_from_pointer
-id|last_result_fatal
-op_assign
-id|st_chk_result
-c_func
-(paren
-id|SCpnt
-)paren
-suffix:semicolon
-id|SCpnt-&gt;request.rq_status
-op_assign
-id|RQ_INACTIVE
-suffix:semicolon
-)brace
-r_else
-id|SCpnt-&gt;request.rq_status
-op_assign
-id|RQ_SCSI_DONE
-suffix:semicolon
-macro_line|#else
 id|SCpnt-&gt;request.rq_status
 op_assign
 id|RQ_SCSI_DONE
@@ -929,7 +894,6 @@ id|last_SCpnt
 op_assign
 id|SCpnt
 suffix:semicolon
-macro_line|#endif
 macro_line|#if DEBUG
 id|STp-&gt;write_pending
 op_assign
@@ -2963,6 +2927,14 @@ r_if
 c_cond
 (paren
 (paren
+id|STp-&gt;device
+)paren
+op_member_access_from_pointer
+id|scsi_level
+op_ge
+id|SCSI_2
+op_logical_and
+(paren
 id|SCpnt-&gt;sense_buffer
 (braket
 l_int|0
@@ -2982,9 +2954,17 @@ op_amp
 l_int|0x0f
 )paren
 op_eq
-id|NO_TAPE
+id|NOT_READY
+op_logical_and
+id|SCpnt-&gt;sense_buffer
+(braket
+l_int|12
+)braket
+op_eq
+l_int|0x3a
 )paren
 (brace
+multiline_comment|/* Check ASC */
 id|STp-&gt;ready
 op_assign
 id|ST_NO_TAPE
@@ -4287,11 +4267,6 @@ id|SCpnt
 r_goto
 id|out
 suffix:semicolon
-id|SCpnt-&gt;request.rq_status
-op_assign
-id|RQ_INACTIVE
-suffix:semicolon
-multiline_comment|/* Mark as not busy */
 r_if
 c_cond
 (paren
@@ -4366,6 +4341,11 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Filter out successful write at EOM */
+id|SCpnt-&gt;request.rq_status
+op_assign
+id|RQ_INACTIVE
+suffix:semicolon
+multiline_comment|/* Mark as not busy */
 id|printk
 c_func
 (paren
@@ -4392,6 +4372,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|SCpnt-&gt;request.rq_status
+op_assign
+id|RQ_INACTIVE
+suffix:semicolon
+multiline_comment|/* Mark as not busy */
 r_if
 c_cond
 (paren
@@ -4833,12 +4818,28 @@ id|STp-&gt;ready
 op_ne
 id|ST_READY
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|STp-&gt;ready
+op_eq
+id|ST_NO_TAPE
+)paren
+r_return
+(paren
+op_minus
+id|ENOMEDIUM
+)paren
+suffix:semicolon
+r_else
 r_return
 (paren
 op_minus
 id|EIO
 )paren
 suffix:semicolon
+)brace
 id|STm
 op_assign
 op_amp
@@ -6869,6 +6870,9 @@ suffix:semicolon
 multiline_comment|/* Mark as not busy */
 id|SCpnt
 op_assign
+op_star
+id|aSCpnt
+op_assign
 l_int|NULL
 suffix:semicolon
 r_if
@@ -7394,12 +7398,28 @@ id|STp-&gt;ready
 op_ne
 id|ST_READY
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|STp-&gt;ready
+op_eq
+id|ST_NO_TAPE
+)paren
+r_return
+(paren
+op_minus
+id|ENOMEDIUM
+)paren
+suffix:semicolon
+r_else
 r_return
 (paren
 op_minus
 id|EIO
 )paren
 suffix:semicolon
+)brace
 id|STm
 op_assign
 op_amp
@@ -7837,7 +7857,7 @@ id|printk
 c_func
 (paren
 id|ST_DEB_MSG
-l_string|&quot;st%d: EOF up (%d). Left %d, needed %ld.&bslash;n&quot;
+l_string|&quot;st%d: EOF up (%d). Left %d, needed %d.&bslash;n&quot;
 comma
 id|dev
 comma
@@ -9647,12 +9667,28 @@ id|cmd_in
 op_ne
 id|MTLOAD
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|STp-&gt;ready
+op_eq
+id|ST_NO_TAPE
+)paren
+r_return
+(paren
+op_minus
+id|ENOMEDIUM
+)paren
+suffix:semicolon
+r_else
 r_return
 (paren
 op_minus
 id|EIO
 )paren
 suffix:semicolon
+)brace
 id|timeout
 op_assign
 id|STp-&gt;long_timeout
@@ -13249,6 +13285,11 @@ op_minus
 id|EBUSY
 )paren
 suffix:semicolon
+id|SCpnt-&gt;request.rq_status
+op_assign
+id|RQ_INACTIVE
+suffix:semicolon
+multiline_comment|/* Mark as not busy */
 id|STps-&gt;drv_block
 op_assign
 id|STps-&gt;drv_file
@@ -13377,11 +13418,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|SCpnt-&gt;request.rq_status
-op_assign
-id|RQ_INACTIVE
-suffix:semicolon
-multiline_comment|/* Mark as not busy */
 r_return
 id|result
 suffix:semicolon

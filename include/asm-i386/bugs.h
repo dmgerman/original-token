@@ -547,7 +547,7 @@ l_int|12345678
 id|printk
 c_func
 (paren
-l_string|&quot;Bad.&bslash;n&quot;
+l_string|&quot;Buggy.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else
@@ -619,6 +619,14 @@ r_extern
 r_int
 id|pentium_f00f_bug
 suffix:semicolon
+r_extern
+r_void
+id|trap_init_f00f_bug
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -633,11 +641,9 @@ r_void
 )paren
 (brace
 multiline_comment|/*&n;&t; * Pentium and Pentium MMX&n;&t; */
-id|printk
-c_func
-(paren
-l_string|&quot;checking for F00F bug ...&quot;
-)paren
+id|pentium_f00f_bug
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -658,19 +664,11 @@ l_int|12
 )paren
 )paren
 (brace
-r_extern
-r_void
-id|trap_init_f00f_bug
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;&bslash;nIntel Pentium/[MMX] F0 0F bug detected - turning on workaround.&bslash;n&quot;
+l_string|&quot;Intel Pentium with F0 0F bug - workaround enabled.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|pentium_f00f_bug
@@ -681,20 +679,6 @@ id|trap_init_f00f_bug
 c_func
 (paren
 )paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot; no F0 0F bug in this CPU, great!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|pentium_f00f_bug
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 )brace

@@ -155,7 +155,7 @@ mdefine_line|#define DC2114x     DC2114x_DID
 DECL|macro|DC21142
 mdefine_line|#define DC21142     (DC2114x_DID | 0x0010)
 DECL|macro|DC21143
-mdefine_line|#define DC21143     (DC2114x_DID | 0x0020)
+mdefine_line|#define DC21143     (DC2114x_DID | 0x0030)
 DECL|macro|is_DC21040
 mdefine_line|#define is_DC21040 ((vendor == DC21040_VID) &amp;&amp; (device == DC21040_DID))
 DECL|macro|is_DC21041
@@ -497,6 +497,16 @@ DECL|macro|TR_128
 mdefine_line|#define TR_128     0x00008000       /* Threshold set to 128 (512) bytes */
 DECL|macro|TR_160
 mdefine_line|#define TR_160     0x0000c000       /* Threshold set to 160 (1024) bytes */
+DECL|macro|OMR_DEF
+mdefine_line|#define OMR_DEF     (OMR_SDP)
+DECL|macro|OMR_SIA
+mdefine_line|#define OMR_SIA     (OMR_SDP | OMR_TTM)
+DECL|macro|OMR_SYM
+mdefine_line|#define OMR_SYM     (OMR_SDP | OMR_SCR | OMR_PCS | OMR_HBD | OMR_PS)
+DECL|macro|OMR_MII_10
+mdefine_line|#define OMR_MII_10  (OMR_SDP | OMR_TTM | OMR_PS)
+DECL|macro|OMR_MII_100
+mdefine_line|#define OMR_MII_100 (OMR_SDP | OMR_SCR | OMR_HBD | OMR_PS)
 multiline_comment|/*&n;** DC21040 Interrupt Mask Register (DE4X5_IMR)&n;*/
 DECL|macro|IMR_GPM
 mdefine_line|#define IMR_GPM    0x04000000       /* General Purpose Port Mask */
@@ -853,80 +863,95 @@ mdefine_line|#define GPT_VAL  0x0000ffff        /* Timer Value */
 multiline_comment|/*&n;** DC21140 General Purpose Register (DE4X5_GEP) (hardware dependent bits)&n;*/
 multiline_comment|/* Valid ONLY for DE500 hardware */
 DECL|macro|GEP_LNP
-mdefine_line|#define GEP_LNP  0x00000080        /* Link Pass               (input) */
+mdefine_line|#define GEP_LNP  0x00000080        /* Link Pass               (input)        */
 DECL|macro|GEP_SLNK
-mdefine_line|#define GEP_SLNK 0x00000040        /* SYM LINK                (input) */
+mdefine_line|#define GEP_SLNK 0x00000040        /* SYM LINK                (input)        */
 DECL|macro|GEP_SDET
-mdefine_line|#define GEP_SDET 0x00000020        /* Signal Detect           (input) */
+mdefine_line|#define GEP_SDET 0x00000020        /* Signal Detect           (input)        */
 DECL|macro|GEP_HRST
-mdefine_line|#define GEP_HRST 0x00000010        /* Hard RESET (to PHY)     (output) */
+mdefine_line|#define GEP_HRST 0x00000010        /* Hard RESET (to PHY)     (output)       */
 DECL|macro|GEP_FDXD
-mdefine_line|#define GEP_FDXD 0x00000008        /* Full Duplex Disable     (output) */
+mdefine_line|#define GEP_FDXD 0x00000008        /* Full Duplex Disable     (output)       */
 DECL|macro|GEP_PHYL
-mdefine_line|#define GEP_PHYL 0x00000004        /* PHY Loopback            (output) */
+mdefine_line|#define GEP_PHYL 0x00000004        /* PHY Loopback            (output)       */
 DECL|macro|GEP_FLED
-mdefine_line|#define GEP_FLED 0x00000002        /* Force Activity LED on   (output) */
+mdefine_line|#define GEP_FLED 0x00000002        /* Force Activity LED on   (output)       */
 DECL|macro|GEP_MODE
-mdefine_line|#define GEP_MODE 0x00000001        /* 0: 10Mb/s,  1: 100Mb/s           */
+mdefine_line|#define GEP_MODE 0x00000001        /* 0: 10Mb/s,  1: 100Mb/s                 */
 DECL|macro|GEP_INIT
-mdefine_line|#define GEP_INIT 0x0000011f        /* Setup inputs (0) and outputs (1) */
+mdefine_line|#define GEP_INIT 0x0000011f        /* Setup inputs (0) and outputs (1)       */
 DECL|macro|GEP_CTRL
-mdefine_line|#define GEP_CTRL 0x00000100        /* GEP control bit                  */
+mdefine_line|#define GEP_CTRL 0x00000100        /* GEP control bit                        */
+multiline_comment|/*&n;** SIA Register Defaults&n;*/
+DECL|macro|CSR13
+mdefine_line|#define CSR13 0x00000001
+DECL|macro|CSR14
+mdefine_line|#define CSR14 0x0003ff7f           /* Autonegotiation disabled               */
+DECL|macro|CSR15
+mdefine_line|#define CSR15 0x00000008
 multiline_comment|/*&n;** SIA Status Register (DE4X5_SISR)&n;*/
 DECL|macro|SISR_LPC
-mdefine_line|#define SISR_LPC   0xffff0000      /* Link Partner&squot;s Code Word */
+mdefine_line|#define SISR_LPC   0xffff0000      /* Link Partner&squot;s Code Word               */
 DECL|macro|SISR_LPN
-mdefine_line|#define SISR_LPN   0x00008000      /* Link Partner Negotiable */
+mdefine_line|#define SISR_LPN   0x00008000      /* Link Partner Negotiable                */
 DECL|macro|SISR_ANS
-mdefine_line|#define SISR_ANS   0x00007000      /* Auto Negotiation Arbitration State */
+mdefine_line|#define SISR_ANS   0x00007000      /* Auto Negotiation Arbitration State     */
 DECL|macro|SISR_NSN
-mdefine_line|#define SISR_NSN   0x00000800      /* Non Stable NLPs Detected (DC21041) */
+mdefine_line|#define SISR_NSN   0x00000800      /* Non Stable NLPs Detected (DC21041)     */
 DECL|macro|SISR_TRF
-mdefine_line|#define SISR_TRF   0x00000800      /* Transmit Remote Fault */
+mdefine_line|#define SISR_TRF   0x00000800      /* Transmit Remote Fault                  */
 DECL|macro|SISR_NSND
-mdefine_line|#define SISR_NSND  0x00000400      /* Non Stable NLPs Detected (DC21142) */
+mdefine_line|#define SISR_NSND  0x00000400      /* Non Stable NLPs Detected (DC21142)     */
 DECL|macro|SISR_ANR_FDS
 mdefine_line|#define SISR_ANR_FDS 0x00000400    /* Auto Negotiate Restart/Full Duplex Sel.*/
 DECL|macro|SISR_TRA
-mdefine_line|#define SISR_TRA   0x00000200      /* 10BASE-T Receive Port Activity */
+mdefine_line|#define SISR_TRA   0x00000200      /* 10BASE-T Receive Port Activity         */
 DECL|macro|SISR_NRA
-mdefine_line|#define SISR_NRA   0x00000200      /* Non Selected Port Receive Activity */
+mdefine_line|#define SISR_NRA   0x00000200      /* Non Selected Port Receive Activity     */
 DECL|macro|SISR_ARA
-mdefine_line|#define SISR_ARA   0x00000100      /* AUI Receive Port Activity */
+mdefine_line|#define SISR_ARA   0x00000100      /* AUI Receive Port Activity              */
 DECL|macro|SISR_SRA
-mdefine_line|#define SISR_SRA   0x00000100      /* Selected Port Receive Activity */
+mdefine_line|#define SISR_SRA   0x00000100      /* Selected Port Receive Activity         */
 DECL|macro|SISR_DAO
-mdefine_line|#define SISR_DAO   0x00000080      /* PLL All One */
+mdefine_line|#define SISR_DAO   0x00000080      /* PLL All One                            */
 DECL|macro|SISR_DAZ
-mdefine_line|#define SISR_DAZ   0x00000040      /* PLL All Zero */
+mdefine_line|#define SISR_DAZ   0x00000040      /* PLL All Zero                           */
 DECL|macro|SISR_DSP
-mdefine_line|#define SISR_DSP   0x00000020      /* PLL Self-Test Pass */
+mdefine_line|#define SISR_DSP   0x00000020      /* PLL Self-Test Pass                     */
 DECL|macro|SISR_DSD
-mdefine_line|#define SISR_DSD   0x00000010      /* PLL Self-Test Done */
+mdefine_line|#define SISR_DSD   0x00000010      /* PLL Self-Test Done                     */
 DECL|macro|SISR_APS
-mdefine_line|#define SISR_APS   0x00000008      /* Auto Polarity State */
+mdefine_line|#define SISR_APS   0x00000008      /* Auto Polarity State                    */
 DECL|macro|SISR_LKF
-mdefine_line|#define SISR_LKF   0x00000004      /* Link Fail Status */
+mdefine_line|#define SISR_LKF   0x00000004      /* Link Fail Status                       */
+DECL|macro|SISR_LS10
+mdefine_line|#define SISR_LS10  0x00000004      /* 10Mb/s Link Fail Status                */
 DECL|macro|SISR_NCR
-mdefine_line|#define SISR_NCR   0x00000002      /* Network Connection Error */
+mdefine_line|#define SISR_NCR   0x00000002      /* Network Connection Error               */
+DECL|macro|SISR_LS100
+mdefine_line|#define SISR_LS100 0x00000002      /* 100Mb/s Link Fail Status               */
 DECL|macro|SISR_PAUI
-mdefine_line|#define SISR_PAUI  0x00000001      /* AUI_TP Indication */
+mdefine_line|#define SISR_PAUI  0x00000001      /* AUI_TP Indication                      */
 DECL|macro|SISR_MRA
-mdefine_line|#define SISR_MRA   0x00000001      /* MII Receive Port Activity */
+mdefine_line|#define SISR_MRA   0x00000001      /* MII Receive Port Activity              */
 DECL|macro|ANS_NDIS
-mdefine_line|#define ANS_NDIS   0x00000000      /* Nway disable */
+mdefine_line|#define ANS_NDIS   0x00000000      /* Nway disable                           */
 DECL|macro|ANS_TDIS
-mdefine_line|#define ANS_TDIS   0x00001000      /* Transmit Disable */
+mdefine_line|#define ANS_TDIS   0x00001000      /* Transmit Disable                       */
 DECL|macro|ANS_ADET
-mdefine_line|#define ANS_ADET   0x00002000      /* Ability Detect */
+mdefine_line|#define ANS_ADET   0x00002000      /* Ability Detect                         */
 DECL|macro|ANS_ACK
-mdefine_line|#define ANS_ACK    0x00003000      /* Acknowledge */
+mdefine_line|#define ANS_ACK    0x00003000      /* Acknowledge                            */
 DECL|macro|ANS_CACK
-mdefine_line|#define ANS_CACK   0x00004000      /* Complete Acknowledge */
+mdefine_line|#define ANS_CACK   0x00004000      /* Complete Acknowledge                   */
 DECL|macro|ANS_NWOK
-mdefine_line|#define ANS_NWOK   0x00005000      /* Nway OK - FLP Link Good */
+mdefine_line|#define ANS_NWOK   0x00005000      /* Nway OK - FLP Link Good                */
 DECL|macro|ANS_LCHK
-mdefine_line|#define ANS_LCHK   0x00006000      /* Link Check */
+mdefine_line|#define ANS_LCHK   0x00006000      /* Link Check                             */
+DECL|macro|SISR_RST
+mdefine_line|#define SISR_RST   0x00000301      /* CSR12 reset                            */
+DECL|macro|SISR_ANR
+mdefine_line|#define SISR_ANR   0x00001301      /* Autonegotiation restart                */
 multiline_comment|/*&n;** SIA Connectivity Register (DE4X5_SICR)&n;*/
 DECL|macro|SICR_SDM
 mdefine_line|#define SICR_SDM   0xffff0000       /* SIA Diagnostics Mode */
@@ -1230,6 +1255,8 @@ DECL|macro|DEBUG_CLOSE
 mdefine_line|#define DEBUG_CLOSE     0x0080     /* Print de4x5_close() messages */
 DECL|macro|DEBUG_PCICFG
 mdefine_line|#define DEBUG_PCICFG    0x0100
+DECL|macro|DEBUG_ALL
+mdefine_line|#define DEBUG_ALL       0x01ff
 multiline_comment|/*&n;** Miscellaneous&n;*/
 DECL|macro|PCI
 mdefine_line|#define PCI  0
@@ -1290,6 +1317,11 @@ DECL|macro|CLOSED
 mdefine_line|#define CLOSED               1     /* Ready for opening */
 DECL|macro|OPEN
 mdefine_line|#define OPEN                 2     /* Running */
+multiline_comment|/*&n;** Various wait times&n;*/
+DECL|macro|PDET_LINK_WAIT
+mdefine_line|#define PDET_LINK_WAIT    1200    /* msecs to wait for link detect bits     */
+DECL|macro|ANS_FINISH_WAIT
+mdefine_line|#define ANS_FINISH_WAIT   1000    /* msecs to wait for link detect bits     */
 multiline_comment|/*&n;** IEEE OUIs for various PHY vendor/chip combos - Reg 2 values only. Since&n;** the vendors seem split 50-50 on how to calculate the OUI register values&n;** anyway, just reading Reg2 seems reasonable for now [see de4x5_get_oui()].&n;*/
 DECL|macro|NATIONAL_TX
 mdefine_line|#define NATIONAL_TX 0x2000
@@ -1301,9 +1333,9 @@ DECL|macro|CYPRESS_T4
 mdefine_line|#define CYPRESS_T4  0x0014
 multiline_comment|/*&n;** Speed Selection stuff&n;*/
 DECL|macro|SET_10Mb
-mdefine_line|#define SET_10Mb {&bslash;&n;  if ((lp-&gt;phy[lp-&gt;active].id) &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&bslash;&n;    omr = inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX);&bslash;&n;    if ((lp-&gt;tmp != MII_SR_ASSC) || (lp-&gt;autosense != AUTO)) {&bslash;&n;      mii_wr(MII_CR_10|(lp-&gt;fdx?MII_CR_FDM:0), MII_CR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    omr |= ((lp-&gt;fdx ? OMR_FDX : 0) | OMR_TTM);&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;    if (!lp-&gt;useSROM) lp-&gt;cache.gep = 0;&bslash;&n;  } else if (lp-&gt;useSROM &amp;&amp; !lp-&gt;useMII) {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | lp-&gt;infoblock_csr6, DE4X5_OMR);&bslash;&n;  } else {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | OMR_TTM, DE4X5_OMR);&bslash;&n;    lp-&gt;cache.gep = (lp-&gt;fdx ? 0 : GEP_FDXD);&bslash;&n;  }&bslash;&n;}
+mdefine_line|#define SET_10Mb {&bslash;&n;  if ((lp-&gt;phy[lp-&gt;active].id) &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&bslash;&n;    omr = inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX);&bslash;&n;    if ((lp-&gt;tmp != MII_SR_ASSC) || (lp-&gt;autosense != AUTO)) {&bslash;&n;      mii_wr(MII_CR_10|(lp-&gt;fdx?MII_CR_FDM:0), MII_CR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    omr |= ((lp-&gt;fdx ? OMR_FDX : 0) | OMR_TTM);&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;    if (!lp-&gt;useSROM) lp-&gt;cache.gep = 0;&bslash;&n;  } else if (lp-&gt;useSROM &amp;&amp; !lp-&gt;useMII) {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | (lp-&gt;infoblock_csr6 &amp; ~(OMR_SCR | OMR_HBD)), DE4X5_OMR);&bslash;&n;  } else {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | OMR_TTM, DE4X5_OMR);&bslash;&n;    lp-&gt;cache.gep = (lp-&gt;fdx ? 0 : GEP_FDXD);&bslash;&n;  }&bslash;&n;}
 DECL|macro|SET_100Mb
-mdefine_line|#define SET_100Mb {&bslash;&n;  if ((lp-&gt;phy[lp-&gt;active].id) &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&bslash;&n;    int fdx=0;&bslash;&n;    if (lp-&gt;phy[lp-&gt;active].id == NATIONAL_TX) {&bslash;&n;        mii_wr(mii_rd(0x18, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII) &amp; ~0x2000,&bslash;&n;                      0x18, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    omr = inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX);&bslash;&n;    sr = mii_rd(MII_SR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    if (!(sr &amp; MII_ANA_T4AM) &amp;&amp; lp-&gt;fdx) fdx=1;&bslash;&n;    if ((lp-&gt;tmp != MII_SR_ASSC) || (lp-&gt;autosense != AUTO)) {&bslash;&n;      mii_wr(MII_CR_100|(fdx?MII_CR_FDM:0), MII_CR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    if (fdx) omr |= OMR_FDX;&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;    if (!lp-&gt;useSROM) lp-&gt;cache.gep = 0;&bslash;&n;  } else if (lp-&gt;useSROM &amp;&amp; !lp-&gt;useMII) {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | lp-&gt;infoblock_csr6 | OMR_HBD, DE4X5_OMR);&bslash;&n;  } else {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | OMR_PS | OMR_HBD | OMR_PCS | OMR_SCR, DE4X5_OMR);&bslash;&n;    lp-&gt;cache.gep = (lp-&gt;fdx ? 0 : GEP_FDXD) | GEP_MODE;&bslash;&n;  }&bslash;&n;}
+mdefine_line|#define SET_100Mb {&bslash;&n;  if ((lp-&gt;phy[lp-&gt;active].id) &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&bslash;&n;    int fdx=0;&bslash;&n;    if (lp-&gt;phy[lp-&gt;active].id == NATIONAL_TX) {&bslash;&n;        mii_wr(mii_rd(0x18, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII) &amp; ~0x2000,&bslash;&n;                      0x18, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    omr = inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX);&bslash;&n;    sr = mii_rd(MII_SR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    if (!(sr &amp; MII_ANA_T4AM) &amp;&amp; lp-&gt;fdx) fdx=1;&bslash;&n;    if ((lp-&gt;tmp != MII_SR_ASSC) || (lp-&gt;autosense != AUTO)) {&bslash;&n;      mii_wr(MII_CR_100|(fdx?MII_CR_FDM:0), MII_CR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    if (fdx) omr |= OMR_FDX;&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;    if (!lp-&gt;useSROM) lp-&gt;cache.gep = 0;&bslash;&n;  } else if (lp-&gt;useSROM &amp;&amp; !lp-&gt;useMII) {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | lp-&gt;infoblock_csr6, DE4X5_OMR);&bslash;&n;  } else {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | OMR_PS | OMR_HBD | OMR_PCS | OMR_SCR, DE4X5_OMR);&bslash;&n;    lp-&gt;cache.gep = (lp-&gt;fdx ? 0 : GEP_FDXD) | GEP_MODE;&bslash;&n;  }&bslash;&n;}
 multiline_comment|/* FIX ME so I don&squot;t jam 10Mb networks */
 DECL|macro|SET_100Mb_PDET
 mdefine_line|#define SET_100Mb_PDET {&bslash;&n;  if ((lp-&gt;phy[lp-&gt;active].id) &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&bslash;&n;    mii_wr(MII_CR_100|MII_CR_ASSE, MII_CR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;  } else if (lp-&gt;useSROM &amp;&amp; !lp-&gt;useMII) {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;  } else {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    outl(omr | OMR_PS | OMR_HBD | OMR_PCS | OMR_SCR, DE4X5_OMR);&bslash;&n;    lp-&gt;cache.gep = (GEP_FDXD | GEP_MODE);&bslash;&n;  }&bslash;&n;}
@@ -1365,4 +1397,6 @@ DECL|macro|DE4X5_SET_OMR
 mdefine_line|#define DE4X5_SET_OMR           0x0d /* Set the OMR Register contents */
 DECL|macro|DE4X5_GET_REG
 mdefine_line|#define DE4X5_GET_REG           0x0e /* Get the DE4X5 Registers */
+DECL|macro|LinuxVersionCode
+mdefine_line|#define LinuxVersionCode(v, p, s) (((v)&lt;&lt;16)+((p)&lt;&lt;8)+(s))
 eof

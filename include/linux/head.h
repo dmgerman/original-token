@@ -2,7 +2,6 @@ macro_line|#ifndef _LINUX_HEAD_H
 DECL|macro|_LINUX_HEAD_H
 mdefine_line|#define _LINUX_HEAD_H
 DECL|struct|desc_struct
-r_typedef
 r_struct
 id|desc_struct
 (brace
@@ -14,19 +13,55 @@ id|a
 comma
 id|b
 suffix:semicolon
-DECL|typedef|desc_table
 )brace
-id|desc_table
+suffix:semicolon
+r_extern
+r_struct
+id|desc_struct
+id|idt_table
 (braket
-l_int|256
+)braket
+comma
+id|gdt_table
+(braket
 )braket
 suffix:semicolon
 r_extern
-id|desc_table
+r_struct
+id|desc_struct
+op_star
 id|idt
 comma
+op_star
 id|gdt
 suffix:semicolon
+DECL|struct|Xgt_desc_struct
+r_struct
+id|Xgt_desc_struct
+(brace
+DECL|member|size
+r_int
+r_int
+id|size
+suffix:semicolon
+DECL|member|address
+r_int
+r_int
+id|address
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|idt_descr
+mdefine_line|#define idt_descr (*(struct Xgt_desc_struct *)((char *)&amp;idt - 2))
+DECL|macro|gdt_descr
+mdefine_line|#define gdt_descr (*(struct Xgt_desc_struct *)((char *)&amp;gdt - 2))
 DECL|macro|GDT_NUL
 mdefine_line|#define GDT_NUL 0
 DECL|macro|GDT_CODE
