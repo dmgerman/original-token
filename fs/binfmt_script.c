@@ -373,10 +373,6 @@ op_minus
 id|E2BIG
 suffix:semicolon
 multiline_comment|/*&n;&t; * OK, now restart the process with the interpreter&squot;s inode.&n;&t; */
-id|bprm-&gt;filename
-op_assign
-id|interp
-suffix:semicolon
 id|retval
 op_assign
 id|open_namei

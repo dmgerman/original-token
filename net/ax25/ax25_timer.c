@@ -434,15 +434,11 @@ op_ne
 l_int|NULL
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|ax25-&gt;sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
-id|KERN_DEBUG
+id|ax25-&gt;sk
+comma
 l_string|&quot;AX.25 T3 Timeout&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1081,15 +1077,11 @@ op_ne
 l_int|NULL
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|ax25-&gt;sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
-id|KERN_DEBUG
+id|ax25-&gt;sk
+comma
 l_string|&quot;AX.25 link Failure&bslash;n&quot;
 )paren
 suffix:semicolon

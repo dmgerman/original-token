@@ -33,6 +33,13 @@ id|timer_alive
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|in_use
+r_static
+r_int
+id|in_use
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n; *&t;If the timer expires..&n; */
 DECL|function|watchdog_fire
 r_static
@@ -103,7 +110,7 @@ id|file
 r_if
 c_cond
 (paren
-id|timer_alive
+id|in_use
 )paren
 (brace
 r_return
@@ -111,6 +118,10 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+id|in_use
+op_assign
+l_int|1
+suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Activate timer&n;&t; */
@@ -178,6 +189,10 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif&t;
+id|in_use
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|softdog_ping
 r_static

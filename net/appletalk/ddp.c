@@ -5407,21 +5407,16 @@ id|sk-&gt;protinfo.af_at.dest_net
 suffix:semicolon
 )brace
 multiline_comment|/* Build a packet */
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-(brace
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;SK %p: Got address.&bslash;n&quot;
 comma
 id|sk
 )paren
 suffix:semicolon
-)brace
 id|size
 op_assign
 r_sizeof
@@ -5515,15 +5510,11 @@ op_assign
 id|rt-&gt;dev
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-(brace
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;SK %p: Size needed %d, device %s&bslash;n&quot;
 comma
 id|sk
@@ -5533,7 +5524,6 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-)brace
 id|size
 op_add_assign
 id|dev-&gt;hard_header_len
@@ -5597,21 +5587,16 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-(brace
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;SK %p: Begin build.&bslash;n&quot;
 comma
 id|sk
 )paren
 suffix:semicolon
-)brace
 id|ddp
 op_assign
 (paren
@@ -5696,15 +5681,11 @@ id|ddp-&gt;deh_sport
 op_assign
 id|sk-&gt;protinfo.af_at.src_port
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-(brace
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;SK %p: Copy user data (%d bytes).&bslash;n&quot;
 comma
 id|sk
@@ -5712,7 +5693,6 @@ comma
 id|len
 )paren
 suffix:semicolon
-)brace
 id|err
 op_assign
 id|memcpy_fromiovec
@@ -5867,21 +5847,16 @@ id|loopback
 op_assign
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-(brace
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;SK %p: send out(copy).&bslash;n&quot;
 comma
 id|sk
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -5927,21 +5902,16 @@ op_logical_or
 id|loopback
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-(brace
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;SK %p: Loop back.&bslash;n&quot;
 comma
 id|sk
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* loop back */
 id|skb_orphan
 c_func
@@ -6002,21 +5972,16 @@ suffix:semicolon
 )brace
 r_else
 (brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-(brace
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;SK %p: send out.&bslash;n&quot;
 comma
 id|sk
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -6066,15 +6031,11 @@ suffix:semicolon
 )brace
 multiline_comment|/* else queued/sent above in the aarp queue */
 )brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-(brace
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;SK %p: Done write (%d).&bslash;n&quot;
 comma
 id|sk
@@ -6082,7 +6043,6 @@ comma
 id|len
 )paren
 suffix:semicolon
-)brace
 r_return
 id|len
 suffix:semicolon

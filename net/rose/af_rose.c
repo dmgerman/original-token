@@ -3104,14 +3104,11 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;Rose: bind failed: invalid address&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3201,14 +3198,11 @@ id|sk-&gt;zapped
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;Rose: socket is bound&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4504,26 +4498,20 @@ id|sk-&gt;protinfo.rose-&gt;dest_digi
 suffix:semicolon
 )brace
 )brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;Rose: sendto: Addresses built.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Build a packet */
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;Rose: sendto: building packet.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4591,14 +4579,11 @@ comma
 id|ROSE_MIN_LEN
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;Building Rose Header.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4637,14 +4622,11 @@ op_increment
 op_assign
 id|ROSE_DATA
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;Built header.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4663,14 +4645,11 @@ id|asmptr
 op_assign
 id|skb-&gt;h.raw
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;Rose: Appending user data&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4685,14 +4664,11 @@ comma
 id|len
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;Rose: Transmitting buffer&bslash;n&quot;
 )paren
 suffix:semicolon

@@ -5207,14 +5207,11 @@ op_assign
 op_star
 id|call
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;AX25: source address set to %s&bslash;n&quot;
 comma
 id|ax2asc
@@ -5264,14 +5261,11 @@ id|dev
 op_assign
 l_int|NULL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;AX25: bound to any device&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5298,14 +5292,11 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;AX25: bind failed - no device&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5314,14 +5305,11 @@ op_minus
 id|EADDRNOTAVAIL
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;AX25: bound to device %s&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5348,14 +5336,11 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;AX25: bind failed - no device&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5364,14 +5349,11 @@ op_minus
 id|EADDRNOTAVAIL
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;AX25: bound to device %s&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5396,14 +5378,11 @@ id|sk-&gt;zapped
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;AX25: socket is bound&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -8215,26 +8194,20 @@ op_assign
 id|sk-&gt;protinfo.ax25-&gt;digipeat
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;AX.25: sendto: Addresses built.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Build a packet */
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;AX.25: sendto: building packet.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -8296,14 +8269,11 @@ op_minus
 id|len
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;AX.25: Appending user data&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -8340,14 +8310,11 @@ id|asmptr
 op_assign
 id|sk-&gt;protocol
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;AX.25: Transmitting buffer&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -8412,15 +8379,11 @@ id|dp
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-(brace
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;Building AX.25 Header (dp=%p).&bslash;n&quot;
 comma
 id|dp
@@ -8433,9 +8396,12 @@ id|dp
 op_ne
 l_int|0
 )paren
-id|printk
+(brace
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;Num digipeaters=%d&bslash;n&quot;
 comma
 id|dp-&gt;ndigi
@@ -8467,14 +8433,11 @@ id|AX25_MODULUS
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;Built header (%d bytes)&bslash;n&quot;
 comma
 id|lv
@@ -8484,14 +8447,11 @@ id|skb-&gt;h.raw
 op_assign
 id|asmptr
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;base=%p pos=%p&bslash;n&quot;
 comma
 id|skb-&gt;data

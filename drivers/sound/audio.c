@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * sound/audio.c&n; *&n; * Device file manager for /dev/audio&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIG_AUDIO
 macro_line|#include &quot;ulaw.h&quot;
@@ -2317,10 +2318,11 @@ r_void
 multiline_comment|/*&n;     * NOTE! This routine could be called several times during boot.&n;   */
 )brace
 r_int
-DECL|function|audio_select
-id|audio_select
-(paren
 r_int
+DECL|function|audio_poll
+id|audio_poll
+(paren
+id|kdev_t
 id|dev
 comma
 r_struct
@@ -2328,10 +2330,7 @@ id|fileinfo
 op_star
 id|file
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
@@ -2339,6 +2338,12 @@ id|wait
 r_char
 op_star
 id|dma_buf
+suffix:semicolon
+r_int
+r_int
+id|mask
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|buf_no
@@ -2353,15 +2358,18 @@ id|dev
 op_rshift
 l_int|4
 suffix:semicolon
-r_switch
-c_cond
+id|mask
+op_assign
+id|DMAbuf_poll
 (paren
-id|sel_type
+id|dev
+comma
+id|file
+comma
+id|wait
 )paren
-(brace
-r_case
-id|SEL_IN
-suffix:colon
+suffix:semicolon
+multiline_comment|/* sel_in */
 r_if
 c_cond
 (paren
@@ -2384,29 +2392,17 @@ op_amp
 id|DMA_DUPLEX
 )paren
 )paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* Not recording */
-)brace
-r_return
-id|DMAbuf_select
+id|mask
+op_and_assign
+op_complement
 (paren
-id|dev
-comma
-id|file
-comma
-id|sel_type
-comma
-id|wait
+id|POLLIN
+op_or
+id|POLLRDNORM
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|SEL_OUT
-suffix:colon
+multiline_comment|/* Wrong direction */
+multiline_comment|/* sel_out */
 r_if
 c_cond
 (paren
@@ -2430,10 +2426,19 @@ id|DMA_DUPLEX
 )paren
 )paren
 (brace
-r_return
-l_int|0
+id|mask
+op_and_assign
+op_complement
+(paren
+id|POLLOUT
+op_or
+id|POLLWRNORM
+)paren
 suffix:semicolon
 multiline_comment|/* Wrong direction */
+r_goto
+id|sel_ex
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -2457,35 +2462,16 @@ id|buf_size
 op_ge
 l_int|0
 )paren
-(brace
-r_return
-l_int|1
+id|mask
+op_or_assign
+id|POLLOUT
+op_or
+id|POLLWRNORM
 suffix:semicolon
-multiline_comment|/* There is space in the current buffer */
-)brace
-r_return
-id|DMAbuf_select
-(paren
-id|dev
-comma
-id|file
-comma
-id|sel_type
-comma
-id|wait
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|SEL_EX
+id|sel_ex
 suffix:colon
 r_return
-l_int|0
-suffix:semicolon
-)brace
-r_return
-l_int|0
+id|mask
 suffix:semicolon
 )brace
 macro_line|#endif

@@ -1464,6 +1464,7 @@ op_plus
 id|HEAP_SIZE
 )paren
 suffix:semicolon
+macro_line|#ifdef STANDARD_MEMORY_BIOS_CALL
 r_if
 c_cond
 (paren
@@ -1481,6 +1482,27 @@ c_func
 l_string|&quot;Less than 4MB of memory.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+id|EXT_MEM_K
+op_star
+l_int|64
+OL
+(paren
+l_int|3
+op_star
+l_int|1024
+)paren
+)paren
+id|error
+c_func
+(paren
+l_string|&quot;Less than 4MB of memory.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 id|mv-&gt;low_buffer_start
 op_assign
 id|output_data

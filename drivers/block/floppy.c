@@ -18473,14 +18473,6 @@ id|floppy
 op_assign
 l_int|NULL
 suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|floppy
-comma
-l_string|&quot;s&quot;
-)paren
-suffix:semicolon
 DECL|function|parse_floppy_cfg_string
 r_static
 r_void

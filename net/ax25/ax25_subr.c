@@ -2256,18 +2256,11 @@ op_eq
 l_int|0
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|ax25-&gt;sk
-op_ne
-l_int|NULL
-op_logical_and
-id|ax25-&gt;sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|ax25-&gt;sk
+comma
 l_string|&quot;ax25_dama_on: DAMA on&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2318,18 +2311,11 @@ op_eq
 l_int|0
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|ax25-&gt;sk
-op_ne
-l_int|NULL
-op_logical_and
-id|ax25-&gt;sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|ax25-&gt;sk
+comma
 l_string|&quot;ax25_dama_off: DAMA off&bslash;n&quot;
 )paren
 suffix:semicolon

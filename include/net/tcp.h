@@ -1538,15 +1538,11 @@ op_assign
 id|state
 suffix:semicolon
 macro_line|#ifdef STATE_TRACE
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-(brace
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;TCP sk=%p, State %s -&gt; %s&bslash;n&quot;
 comma
 id|sk
@@ -1562,7 +1558,6 @@ id|state
 )braket
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif&t;
 r_switch
 c_cond

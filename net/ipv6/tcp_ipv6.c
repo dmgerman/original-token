@@ -1957,21 +1957,16 @@ c_cond
 id|sk-&gt;dead
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-(brace
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;Reset on %p: Connect on dead socket.&bslash;n&quot;
 comma
 id|sk
 )paren
 suffix:semicolon
-)brace
 id|tcp_statistics.TcpAttemptFails
 op_increment
 suffix:semicolon

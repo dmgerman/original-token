@@ -4605,6 +4605,14 @@ r_char
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|get_swaparea_info
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
 macro_line|#ifdef __SMP_PROF__
 r_extern
 r_int
@@ -4870,6 +4878,16 @@ id|PROC_MTAB
 suffix:colon
 r_return
 id|get_filesystem_info
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_case
+id|PROC_SWAP
+suffix:colon
+r_return
+id|get_swaparea_info
 c_func
 (paren
 id|page

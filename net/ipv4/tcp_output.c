@@ -1055,9 +1055,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Anything on the transmit queue that fits the window can&n;&t; *&t;be added providing we are:&n;&t; *&n;&t; *&t;a) following SWS avoidance [and Nagle algorithm]&n;&t; *&t;b) not exceeding our congestion window.&n;&t; *&t;c) not retransmiting [Nagle]&n;&t; */
-id|start_bh_atomic
+id|lock_sock
 c_func
 (paren
+id|sk
 )paren
 suffix:semicolon
 id|rcv_wnd
@@ -1318,9 +1319,10 @@ id|tp-&gt;rto
 )paren
 suffix:semicolon
 )brace
-id|end_bh_atomic
+id|release_sock
 c_func
 (paren
+id|sk
 )paren
 suffix:semicolon
 )brace
@@ -1784,9 +1786,10 @@ op_amp
 id|sk-&gt;tp_pinfo.af_tcp
 )paren
 suffix:semicolon
-id|start_bh_atomic
+id|lock_sock
 c_func
 (paren
+id|sk
 )paren
 suffix:semicolon
 r_if
@@ -1976,14 +1979,11 @@ macro_line|#endif
 r_break
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;retransmit sending&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2079,12 +2079,6 @@ suffix:semicolon
 id|tcp_statistics.TcpRetransSegs
 op_increment
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Record the high sequence number to help avoid doing&n;&t;&t; * to much fast retransmission.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|sk-&gt;retransmits
-)paren
 id|tp-&gt;high_seq
 op_assign
 id|tp-&gt;snd_nxt
@@ -2141,9 +2135,10 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
-id|end_bh_atomic
+id|release_sock
 c_func
 (paren
+id|sk
 )paren
 suffix:semicolon
 )brace
@@ -3141,14 +3136,11 @@ comma
 id|buff
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;&bslash;rtcp_send_ack: seq %x ack %x&bslash;n&quot;
 comma
 id|tp-&gt;snd_nxt

@@ -2733,14 +2733,11 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;NET/ROM: bind failed: invalid node callsign&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2851,14 +2848,11 @@ id|sk-&gt;zapped
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;NET/ROM: socket is bound&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4334,26 +4328,20 @@ op_assign
 id|sk-&gt;protinfo.nr-&gt;dest_addr
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;NET/ROM: sendto: Addresses built.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Build a packet */
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;NET/ROM: sendto: building packet.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4423,14 +4411,11 @@ comma
 id|NR_TRANSPORT_LEN
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;Building NET/ROM Header.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4467,14 +4452,11 @@ op_increment
 op_assign
 id|NR_INFO
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;Built header.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4493,14 +4475,11 @@ id|asmptr
 op_assign
 id|skb-&gt;h.raw
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;NET/ROM: Appending user data&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4515,14 +4494,11 @@ comma
 id|len
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;NET/ROM: Transmitting buffer&bslash;n&quot;
 )paren
 suffix:semicolon

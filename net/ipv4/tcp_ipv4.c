@@ -1285,11 +1285,6 @@ op_assign
 id|skb-&gt;h.icmph-&gt;code
 suffix:semicolon
 r_struct
-id|tcp_opt
-op_star
-id|tp
-suffix:semicolon
-r_struct
 id|sock
 op_star
 id|sk
@@ -1328,15 +1323,31 @@ op_eq
 id|ICMP_SOURCE_QUENCH
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * FIXME:&n;&t;&t; * Follow BSD for now and just reduce cong_window to 1 again.&n;&t;&t; * It is possible that we just want to reduce the&n;&t;&t; * window by 1/2, or that we want to reduce ssthresh by 1/2&n;&t;&t; * here as well.&n;&t;&t; */
+r_struct
+id|tcp_opt
+op_star
 id|tp
 op_assign
 op_amp
 id|sk-&gt;tp_pinfo.af_tcp
 suffix:semicolon
+id|sk-&gt;ssthresh
+op_assign
+id|max
+c_func
+(paren
+id|sk-&gt;cong_window
+op_rshift
+l_int|1
+comma
+l_int|2
+)paren
+suffix:semicolon
 id|sk-&gt;cong_window
 op_assign
-l_int|1
+id|sk-&gt;ssthresh
+op_plus
+l_int|3
 suffix:semicolon
 id|tp-&gt;high_seq
 op_assign
@@ -2486,21 +2497,16 @@ c_cond
 id|sk-&gt;dead
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-(brace
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;Reset on %p: Connect on dead socket.&bslash;n&quot;
 comma
 id|sk
 )paren
 suffix:semicolon
-)brace
 id|tcp_statistics.TcpAttemptFails
 op_increment
 suffix:semicolon
@@ -4560,5 +4566,4 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -fno-strength-reduce -pipe -m486 -DCPU=486 -c -o tcp_ipv4.o tcp_ipv4.c&quot;&n; * c-file-style: &quot;Linux&quot;&n; * End:&n; */
 eof

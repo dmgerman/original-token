@@ -2528,15 +2528,11 @@ id|sk-&gt;zapped
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
-id|KERN_DEBUG
+id|sk
+comma
 l_string|&quot;x25_bind: socket is bound&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3636,28 +3632,20 @@ op_assign
 id|sk-&gt;protinfo.x25-&gt;dest_addr
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
-id|KERN_DEBUG
+id|sk
+comma
 l_string|&quot;x25_sendmsg: sendto: Addresses built.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Build a packet */
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
-id|KERN_DEBUG
+id|sk
+comma
 l_string|&quot;x25_sendmsg: sendto: building packet.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3726,15 +3714,11 @@ id|X25_EXT_MIN_LEN
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Put the data on the end&n;&t; */
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
-id|KERN_DEBUG
+id|sk
+comma
 l_string|&quot;x25_sendmsg: Copying user data&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3786,15 +3770,11 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Push down the X.25 header&n;&t; */
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
-id|KERN_DEBUG
+id|sk
+comma
 l_string|&quot;x25_sendmsg: Building X.25 Header.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4026,27 +4006,19 @@ op_or_assign
 id|X25_Q_BIT
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
-id|KERN_DEBUG
+id|sk
+comma
 l_string|&quot;x25_sendmsg: Built header.&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
-id|KERN_DEBUG
+id|sk
+comma
 l_string|&quot;x25_sendmsg: Transmitting buffer&bslash;n&quot;
 )paren
 suffix:semicolon

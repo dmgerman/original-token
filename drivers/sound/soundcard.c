@@ -724,23 +724,16 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|sound_select
-id|sound_select
+r_int
+DECL|function|sound_poll
+id|sound_poll
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
 comma
-r_int
-id|sel_type
-comma
-id|select_table
+id|poll_table
 op_star
 id|wait
 )paren
@@ -752,7 +745,7 @@ id|dev
 op_assign
 id|MINOR
 (paren
-id|inode-&gt;i_rdev
+id|file-&gt;f_inode-&gt;i_rdev
 )paren
 suffix:semicolon
 id|files
@@ -768,11 +761,9 @@ id|DEB
 (paren
 id|printk
 (paren
-l_string|&quot;sound_select(dev=%d, type=0x%x)&bslash;n&quot;
+l_string|&quot;sound_poll(dev=%d)&bslash;n&quot;
 comma
 id|dev
-comma
-id|sel_type
 )paren
 )paren
 suffix:semicolon
@@ -792,7 +783,7 @@ r_case
 id|SND_DEV_SEQ2
 suffix:colon
 r_return
-id|sequencer_select
+id|sequencer_poll
 (paren
 id|dev
 comma
@@ -801,8 +792,6 @@ id|files
 (braket
 id|dev
 )braket
-comma
-id|sel_type
 comma
 id|wait
 )paren
@@ -815,7 +804,7 @@ r_case
 id|SND_DEV_MIDIN
 suffix:colon
 r_return
-id|MIDIbuf_select
+id|MIDIbuf_poll
 (paren
 id|dev
 comma
@@ -824,8 +813,6 @@ id|files
 (braket
 id|dev
 )braket
-comma
-id|sel_type
 comma
 id|wait
 )paren
@@ -844,7 +831,7 @@ r_case
 id|SND_DEV_AUDIO
 suffix:colon
 r_return
-id|audio_select
+id|audio_poll
 (paren
 id|dev
 comma
@@ -853,8 +840,6 @@ id|files
 (braket
 id|dev
 )braket
-comma
-id|sel_type
 comma
 id|wait
 )paren
@@ -1197,7 +1182,7 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* sound_readdir */
-id|sound_select
+id|sound_poll
 comma
 id|sound_ioctl
 comma

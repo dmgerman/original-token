@@ -7351,17 +7351,12 @@ op_ne
 l_int|NULL
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-(brace
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
-l_string|&quot;IPX: bind failed because port %X in&quot;
-l_string|&quot; use.&bslash;n&quot;
+id|sk
+comma
+l_string|&quot;IPX: bind failed because port %X in use.&bslash;n&quot;
 comma
 (paren
 r_int
@@ -7369,7 +7364,6 @@ r_int
 id|addr-&gt;sipx_port
 )paren
 suffix:semicolon
-)brace
 r_return
 op_minus
 id|EADDRINUSE
@@ -7403,17 +7397,12 @@ op_ne
 l_int|NULL
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-(brace
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
-l_string|&quot;IPX: bind failed because port %X in&quot;
-l_string|&quot; use.&bslash;n&quot;
+id|sk
+comma
+l_string|&quot;IPX: bind failed because port %X in use.&bslash;n&quot;
 comma
 (paren
 r_int
@@ -7421,7 +7410,6 @@ r_int
 id|addr-&gt;sipx_port
 )paren
 suffix:semicolon
-)brace
 r_return
 op_minus
 id|EADDRINUSE
@@ -7444,15 +7432,11 @@ op_ne
 l_int|NULL
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-(brace
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;IPX: bind failed because port %X in use.&bslash;n&quot;
 comma
 (paren
@@ -7461,7 +7445,6 @@ r_int
 id|addr-&gt;sipx_port
 )paren
 suffix:semicolon
-)brace
 r_return
 op_minus
 id|EADDRINUSE
@@ -7480,19 +7463,14 @@ id|sk-&gt;zapped
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-(brace
-id|printk
+id|SOCK_DEBUG
 c_func
 (paren
+id|sk
+comma
 l_string|&quot;IPX: socket is bound.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon

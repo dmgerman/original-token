@@ -841,9 +841,9 @@ l_int|0xf105
 comma
 l_int|0xf200
 comma
-l_int|0xf107
+l_int|0xf106
 comma
-l_int|0xf200
+l_int|0xf107
 comma
 l_int|0xf108
 comma
@@ -1373,9 +1373,9 @@ l_int|0xf505
 comma
 l_int|0xf200
 comma
-l_int|0xf507
+l_int|0xf506
 comma
-l_int|0xf200
+l_int|0xf507
 comma
 l_int|0xf508
 comma
@@ -1639,9 +1639,9 @@ l_int|0xf505
 comma
 l_int|0xf200
 comma
-l_int|0xf507
+l_int|0xf506
 comma
-l_int|0xf200
+l_int|0xf507
 comma
 l_int|0xf508
 comma

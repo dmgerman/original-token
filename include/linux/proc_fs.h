@@ -97,6 +97,9 @@ comma
 DECL|enumerator|PROC_MTAB
 id|PROC_MTAB
 comma
+DECL|enumerator|PROC_SWAP
+id|PROC_SWAP
+comma
 DECL|enumerator|PROC_MD
 id|PROC_MD
 comma

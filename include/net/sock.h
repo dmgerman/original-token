@@ -512,6 +512,16 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; * This structure really needs to be cleaned up.&n; * Most of it is for TCP, and not used by any of&n; * the other protocols.&n; */
 multiline_comment|/*&n; * The idea is to start moving to a newer struct gradualy&n; * &n; * IMHO the newer struct should have the following format:&n; * &n; *&t;struct sock {&n; *&t;&t;sockmem [mem, proto, callbacks]&n; *&n; *&t;&t;union or struct {&n; *&t;&t;&t;netrom;&n; *&t;&t;&t;ax_25;&n; *&t;&t;} ll_pinfo;&n; *&t;&n; *&t;&t;union {&n; *&t;&t;&t;ipv4;&n; *&t;&t;&t;ipv6;&n; *&t;&t;&t;ipx;&n; *&t;&t;} net_pinfo;&n; *&n; *&t;&t;union {&n; *&t;&t;&t;tcp;&n; *&t;&t;&t;udp;&n; *&t;&t;&t;spx;&n; *&t;&t;} tp_pinfo;&n; *&n; *&t;}&n; */
+multiline_comment|/* Define this to get the sk-&gt;debug debugging facility. */
+DECL|macro|SOCK_DEBUGGING
+mdefine_line|#define SOCK_DEBUGGING
+macro_line|#ifdef SOCK_DEBUGGING
+DECL|macro|SOCK_DEBUG
+mdefine_line|#define SOCK_DEBUG(sk, msg...) if((sk) &amp;&amp; ((sk)-&gt;debug)) printk(KERN_DEBUG ## msg)
+macro_line|#else
+DECL|macro|SOCK_DEBUG
+mdefine_line|#define SOCK_DEBUG(sk, msg...) do { } while (0)
+macro_line|#endif
 multiline_comment|/*&n; *  TCP will start to use the new protinfo while *still using the old* fields &n; */
 DECL|struct|sock
 r_struct

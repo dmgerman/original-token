@@ -300,7 +300,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM { &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;swapper_pg_dir, &bslash;&n;&t;&t;-1, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;&amp;init_mmap, &amp;init_mmap, MUTEX }
+mdefine_line|#define INIT_MM { &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;swapper_pg_dir, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;&amp;init_mmap, &amp;init_mmap, MUTEX }
 DECL|struct|signal_struct
 r_struct
 id|signal_struct
