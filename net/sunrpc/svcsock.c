@@ -2983,8 +2983,6 @@ comma
 id|rqstp
 )paren
 suffix:semicolon
-id|again
-suffix:colon
 multiline_comment|/* Initialize the buffers */
 id|rqstp-&gt;rq_argbuf
 op_assign
@@ -3201,8 +3199,9 @@ c_func
 id|rqstp
 )paren
 suffix:semicolon
-r_goto
-id|again
+r_return
+op_minus
+id|EAGAIN
 suffix:semicolon
 )brace
 id|rqstp-&gt;rq_secure

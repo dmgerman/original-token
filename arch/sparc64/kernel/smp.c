@@ -22,6 +22,7 @@ macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/timer.h&gt;
+macro_line|#include &lt;asm/starfire.h&gt;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/unistd.h&gt;
@@ -1340,6 +1341,51 @@ id|u64
 id|result
 comma
 id|target
+suffix:semicolon
+r_int
+id|stuck
+comma
+id|tmp
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|this_is_starfire
+)paren
+(brace
+multiline_comment|/* map to real upaid */
+id|cpu
+op_assign
+(paren
+(paren
+(paren
+id|cpu
+op_amp
+l_int|0x3c
+)paren
+op_lshift
+l_int|1
+)paren
+op_or
+(paren
+(paren
+id|cpu
+op_amp
+l_int|0x40
+)paren
+op_rshift
+l_int|4
+)paren
+op_or
+(paren
+id|cpu
+op_amp
+l_int|0x3
+)paren
+)paren
+suffix:semicolon
+)brace
+id|target
 op_assign
 (paren
 id|cpu
@@ -1348,11 +1394,6 @@ l_int|14
 )paren
 op_or
 l_int|0x70
-suffix:semicolon
-r_int
-id|stuck
-comma
-id|tmp
 suffix:semicolon
 macro_line|#ifdef XCALL_DEBUG
 id|printk

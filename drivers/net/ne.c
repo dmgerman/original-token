@@ -624,23 +624,6 @@ id|start_page
 suffix:semicolon
 "&f;"
 multiline_comment|/*  Probe for various non-shared-memory ethercards.&n;&n;   NEx000-clone boards have a Station Address PROM (SAPROM) in the packet&n;   buffer memory space.  NE2000 clones have 0x57,0x57 in bytes 0x0e,0x0f of&n;   the SAPROM, while other supposed NE2000 clones must be detected by their&n;   SA prefix.&n;&n;   Reading the SAPROM from a word-wide card with the 8390 set in byte-wide&n;   mode results in doubled values, which can be detected and compensated for.&n;&n;   The probe is also responsible for initializing the card and filling&n;   in the &squot;dev&squot; and &squot;ei_status&squot; structures.&n;&n;   We use the minimum memory size for some ethercard product lines, iff we can&squot;t&n;   distinguish models.  You can increase the packet buffer size by setting&n;   PACKETBUF_MEMSIZE.  Reported Cabletron packet buffer locations are:&n;&t;E1010   starts at 0x100 and ends at 0x2000.&n;&t;E1010-x starts at 0x100 and ends at 0x8000. (&quot;-x&quot; means &quot;more memory&quot;)&n;&t;E2010&t; starts at 0x100 and ends at 0x4000.&n;&t;E2010-x starts at 0x100 and ends at 0xffff.  */
-macro_line|#ifdef HAVE_DEVLIST
-DECL|variable|netcard_drv
-r_struct
-id|netdev_entry
-id|netcard_drv
-op_assign
-(brace
-l_string|&quot;ne&quot;
-comma
-id|ne_probe1
-comma
-id|NE_IO_EXTENT
-comma
-id|netcard_portlist
-)brace
-suffix:semicolon
-macro_line|#else
 multiline_comment|/*&n; * Note that at boot, this probe only picks up one card at a time, even for&n; * multiple PCI ne2k cards. Use &quot;ether=0,0,eth1&quot; if you have a second PCI&n; * ne2k card.  This keeps things consistent regardless of the bus type of&n; * the card.&n; */
 DECL|function|ne_probe
 r_int
@@ -807,7 +790,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
 DECL|function|ne_probe_pci
 r_static
@@ -1392,33 +1374,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;ne.c: Passed a NULL device.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|dev
-op_assign
-id|init_etherdev
-c_func
-(paren
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
 )brace
 r_if
 c_cond
@@ -3667,8 +3622,6 @@ suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|macro|MAX_NE_CARDS
 mdefine_line|#define MAX_NE_CARDS&t;4&t;/* Max number of NE cards per module */
-DECL|macro|NAMELEN
-mdefine_line|#define NAMELEN&t;&t;8&t;/* # of chars for storing dev-&gt;name */
 DECL|variable|dev_ne
 r_static
 r_struct
@@ -3677,35 +3630,6 @@ id|dev_ne
 (braket
 id|MAX_NE_CARDS
 )braket
-op_assign
-(brace
-(brace
-l_string|&quot;&quot;
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-)brace
 suffix:semicolon
 DECL|variable|io
 r_static
@@ -3714,11 +3638,6 @@ id|io
 (braket
 id|MAX_NE_CARDS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|irq
 r_static
@@ -3727,11 +3646,6 @@ id|irq
 (braket
 id|MAX_NE_CARDS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|bad
 r_static
@@ -3740,11 +3654,6 @@ id|bad
 (braket
 id|MAX_NE_CARDS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 multiline_comment|/* 0xbad = bad sig or no reset ack */
 id|MODULE_PARM

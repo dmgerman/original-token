@@ -4814,17 +4814,20 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_region
+op_logical_neg
+id|request_region
 c_func
 (paren
 id|addr
 comma
-l_int|0xf
+id|ELP_IO_EXTENT
+comma
+l_string|&quot;3c505&quot;
 )paren
 )paren
 r_return
 op_minus
-l_int|1
+id|ENODEV
 suffix:semicolon
 id|orig_HSR
 op_assign
@@ -4874,9 +4877,8 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_return
-op_minus
-l_int|1
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/* Enable interrupts - we need timers! */
@@ -4979,9 +4981,8 @@ comma
 l_int|2
 )paren
 suffix:semicolon
-r_return
-op_minus
-l_int|1
+r_goto
+id|out
 suffix:semicolon
 )brace
 )brace
@@ -5056,9 +5057,8 @@ comma
 l_int|3
 )paren
 suffix:semicolon
-r_return
-op_minus
-l_int|1
+r_goto
+id|out
 suffix:semicolon
 )brace
 )brace
@@ -5078,6 +5078,20 @@ id|found_msg
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+id|release_region
+c_func
+(paren
+id|addr
+comma
+id|ELP_IO_EXTENT
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*************************************************************&n; *&n; * Search through addr_list[] and try to find a 3C505&n; * Called only by eplus_probe&n; *************************************************************/
@@ -5703,6 +5717,14 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+id|release_region
+c_func
+(paren
+id|dev-&gt;base_addr
+comma
+id|ELP_IO_EXTENT
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENODEV
@@ -6090,17 +6112,6 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * and reserve the address region&n;&t; */
-id|request_region
-c_func
-(paren
-id|dev-&gt;base_addr
-comma
-id|ELP_IO_EXTENT
-comma
-l_string|&quot;3c505&quot;
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * initialise the device&n;&t; */
 id|elp_init
 c_func

@@ -52,6 +52,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_static
 r_int
 id|wd_probe1
 c_func
@@ -187,23 +188,6 @@ DECL|macro|WD_IO_EXTENT
 mdefine_line|#define WD_IO_EXTENT&t;32
 "&f;"
 multiline_comment|/*&t;Probe for the WD8003 and WD8013.  These cards have the station&n;&t;address PROM at I/O ports &lt;base&gt;+8 to &lt;base&gt;+13, with a checksum&n;&t;following. A Soundblaster can have the same checksum as an WDethercard,&n;&t;so we have an extra exclusionary check for it.&n;&n;&t;The wd_probe1() routine initializes the card and fills the&n;&t;station address field. */
-macro_line|#ifdef HAVE_DEVLIST
-DECL|variable|wd_drv
-r_struct
-id|netdev_entry
-id|wd_drv
-op_assign
-(brace
-l_string|&quot;wd&quot;
-comma
-id|wd_probe1
-comma
-id|WD_IO_EXTENT
-comma
-id|wd_portlist
-)brace
-suffix:semicolon
-macro_line|#else
 DECL|function|wd_probe
 r_int
 id|__init
@@ -318,8 +302,8 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#endif
 DECL|function|wd_probe1
+r_static
 r_int
 id|__init
 id|wd_probe1
@@ -427,32 +411,6 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;wd.c: Passed a NULL device.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|dev
-op_assign
-id|init_etherdev
-c_func
-(paren
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Check for semi-valid mem_start/end values if supplied. */
 r_if
 c_cond
@@ -2116,36 +2074,6 @@ id|dev_wd
 (braket
 id|MAX_WD_CARDS
 )braket
-op_assign
-(brace
-(brace
-l_string|&quot;&quot;
-comma
-multiline_comment|/* assign a chunk of namelist[] below */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-)brace
 suffix:semicolon
 DECL|variable|io
 r_static

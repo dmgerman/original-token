@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 singleline_comment|// #define DEBUG
 macro_line|#include &lt;linux/usb.h&gt;
 DECL|variable|vendor
@@ -177,6 +178,12 @@ id|wait_queue_head_t
 id|rd_wait_q
 suffix:semicolon
 multiline_comment|/* read timeouts */
+DECL|member|gen_lock
+r_struct
+id|semaphore
+id|gen_lock
+suffix:semicolon
+multiline_comment|/* lock to prevent concurrent reads or writes */
 )brace
 suffix:semicolon
 DECL|variable|p_scn_table

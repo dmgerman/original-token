@@ -6199,7 +6199,7 @@ op_star
 id|GET_TIMEOUT
 )paren
 )paren
-op_ge
+OG
 l_int|0
 op_logical_or
 id|result
@@ -6209,6 +6209,7 @@ id|EPIPE
 )paren
 r_break
 suffix:semicolon
+multiline_comment|/* retry if the returned length was 0; flaky device */
 )brace
 r_return
 id|result

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;&n;&t;8139too.c: A RealTek RTL-8139 Fast Ethernet driver for Linux.&n;&n;&t;Maintained by Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&n;&t;Much code comes from Donald Becker&squot;s rtl8139.c driver,&n;&t;versions 1.11 and older.  This driver was originally based&n;&t;on rtl8139.c version 1.07.  Header of rtl8139.c version 1.11:&n;&n;&t;-----&lt;snip&gt;-----&n;&n;        &t;Written 1997-2000 by Donald Becker.&n;&t;&t;This software may be used and distributed according to the&n;&t;&t;terms of the GNU General Public License (GPL), incorporated&n;&t;&t;herein by reference.  Drivers based on or derived from this&n;&t;&t;code fall under the GPL and must retain the authorship,&n;&t;&t;copyright and license notice.  This file is not a complete&n;&t;&t;program and may only be used when the entire operating&n;&t;&t;system is licensed under the GPL.&n;&n;&t;&t;This driver is for boards based on the RTL8129 and RTL8139&n;&t;&t;PCI ethernet chips.&n;&n;&t;&t;The author may be reached as becker@scyld.com, or C/O Scyld&n;&t;&t;Computing Corporation 410 Severn Ave., Suite 210 Annapolis&n;&t;&t;MD 21403&n;&n;&t;&t;Support and updates available at&n;&t;&t;http://www.scyld.com/network/rtl8139.html&n;&n;&t;&t;Twister-tuning table provided by Kinston&n;&t;&t;&lt;shangh@realtek.com.tw&gt;.&n;&n;&t;-----&lt;snip&gt;-----&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;Contributors:&n;&n;&t;&t;Donald Becker - he wrote the original driver, kudos to him!&n;&t;&t;(but please don&squot;t e-mail him for support, this isn&squot;t his driver)&n;&n;&t;&t;Tigran Aivazian - bug fixes, skbuff free cleanup&n;&n;&t;&t;Martin Mares - suggestions for PCI cleanup&n;&n;&t;&t;David S. Miller - PCI DMA and softnet updates&n;&n;&t;&t;Ernst Gill - fixes ported from BSD driver&n;&n;&t;&t;Daniel Kobras - identified specific locations of&n;&t;&t;&t;posted MMIO write bugginess&n;&n;&t;&t;Gerard Sharp - bug fix, testing and feedback&n;&n;&t;&t;David Ford - Rx ring wrap fix&n;&n;&t;&t;Dan DeMaggio - swapped RTL8139 cards with me, and allowed me&n;&t;&t;to find and fix a crucial bug on older chipsets.&n;&n;&t;&t;Donald Becker/Chris Butterworth/Marcus Westergren -&n;&t;&t;Noticed various Rx packet size-related buglets.&n;&n;&t;&t;Santiago Garcia Mantinan - testing and feedback&n;&n;&t;&t;Jens David - 2.2.x kernel backports&n;&n;&t;&t;Martin Dennett - incredibly helpful insight on undocumented&n;&t;&t;features of the 8139 chips&n;&n;&t;Submitting bug reports:&n;&n;&t;&t;&quot;rtl8139-diag -mmmaaavvveefN&quot; output&n;&t;&t;enable RTL8139_DEBUG below, and look at &squot;dmesg&squot; or kernel log&n;&n;&t;&t;See 8139too.txt for more details.&n;&n;-----------------------------------------------------------------------------&n;&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the RealTek RTL8139 series, the RealTek&n;Fast Ethernet controllers for PCI and CardBus.  This chip is used on many&n;low-end boards, sometimes with its markings changed.&n;&n;&n;II. Board-specific settings&n;&n;PCI bus devices are configured by the system at boot time, so no jumpers&n;need to be set on the board.  The system BIOS will assign the&n;PCI INTA signal to a (preferably otherwise unused) system IRQ line.&n;&n;III. Driver operation&n;&n;IIIa. Rx Ring buffers&n;&n;The receive unit uses a single linear ring buffer rather than the more&n;common (and more efficient) descriptor-based architecture.  Incoming frames&n;are sequentially stored into the Rx region, and the host copies them into&n;skbuffs.&n;&n;Comment: While it is theoretically possible to process many frames in place,&n;any delay in Rx processing would cause us to drop frames.  More importantly,&n;the Linux protocol stack is not designed to operate in this manner.&n;&n;IIIb. Tx operation&n;&n;The RTL8139 uses a fixed set of four Tx descriptors in register space.&n;In a stunningly bad design choice, Tx frames must be 32 bit aligned.  Linux&n;aligns the IP header on word boundaries, and 14 byte ethernet header means&n;that almost all frames will need to be copied to an alignment buffer.&n;&n;IVb. References&n;&n;http://www.realtek.com.tw/cn/cn.html&n;http://www.scyld.com/expert/NWay.html&n;&n;IVc. Errata&n;&n;1) The RTL-8139 has a serious problem with motherboards which do&n;posted MMIO writes to PCI space.  This driver works around the&n;problem by having an MMIO  register write be immediately followed by&n;an MMIO register read.&n;&n;2) The RTL-8129 is only supported in Donald Becker&squot;s rtl8139 driver.&n;&n;*/
+multiline_comment|/*&n;&n;&t;8139too.c: A RealTek RTL-8139 Fast Ethernet driver for Linux.&n;&n;&t;Maintained by Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&n;&t;Much code comes from Donald Becker&squot;s rtl8139.c driver,&n;&t;versions 1.11 and older.  This driver was originally based&n;&t;on rtl8139.c version 1.07.  Header of rtl8139.c version 1.11:&n;&n;&t;-----&lt;snip&gt;-----&n;&n;        &t;Written 1997-2000 by Donald Becker.&n;&t;&t;This software may be used and distributed according to the&n;&t;&t;terms of the GNU General Public License (GPL), incorporated&n;&t;&t;herein by reference.  Drivers based on or derived from this&n;&t;&t;code fall under the GPL and must retain the authorship,&n;&t;&t;copyright and license notice.  This file is not a complete&n;&t;&t;program and may only be used when the entire operating&n;&t;&t;system is licensed under the GPL.&n;&n;&t;&t;This driver is for boards based on the RTL8129 and RTL8139&n;&t;&t;PCI ethernet chips.&n;&n;&t;&t;The author may be reached as becker@scyld.com, or C/O Scyld&n;&t;&t;Computing Corporation 410 Severn Ave., Suite 210 Annapolis&n;&t;&t;MD 21403&n;&n;&t;&t;Support and updates available at&n;&t;&t;http://www.scyld.com/network/rtl8139.html&n;&n;&t;&t;Twister-tuning table provided by Kinston&n;&t;&t;&lt;shangh@realtek.com.tw&gt;.&n;&n;&t;-----&lt;snip&gt;-----&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;Contributors:&n;&n;&t;&t;Donald Becker - he wrote the original driver, kudos to him!&n;&t;&t;(but please don&squot;t e-mail him for support, this isn&squot;t his driver)&n;&n;&t;&t;Tigran Aivazian - bug fixes, skbuff free cleanup&n;&n;&t;&t;Martin Mares - suggestions for PCI cleanup&n;&n;&t;&t;David S. Miller - PCI DMA and softnet updates&n;&n;&t;&t;Ernst Gill - fixes ported from BSD driver&n;&n;&t;&t;Daniel Kobras - identified specific locations of&n;&t;&t;&t;posted MMIO write bugginess&n;&n;&t;&t;Gerard Sharp - bug fix, testing and feedback&n;&n;&t;&t;David Ford - Rx ring wrap fix&n;&n;&t;&t;Dan DeMaggio - swapped RTL8139 cards with me, and allowed me&n;&t;&t;to find and fix a crucial bug on older chipsets.&n;&n;&t;&t;Donald Becker/Chris Butterworth/Marcus Westergren -&n;&t;&t;Noticed various Rx packet size-related buglets.&n;&n;&t;&t;Santiago Garcia Mantinan - testing and feedback&n;&n;&t;&t;Jens David - 2.2.x kernel backports&n;&n;&t;&t;Martin Dennett - incredibly helpful insight on undocumented&n;&t;&t;features of the 8139 chips&n;&n;&t;&t;Jean-Jacques Michel - bug fix&n;&t;&t;&n;&t;&t;Tobias - Rx interrupt status checking suggestion&n;&n;&t;Submitting bug reports:&n;&n;&t;&t;&quot;rtl8139-diag -mmmaaavvveefN&quot; output&n;&t;&t;enable RTL8139_DEBUG below, and look at &squot;dmesg&squot; or kernel log&n;&n;&t;&t;See 8139too.txt for more details.&n;&n;-----------------------------------------------------------------------------&n;&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the RealTek RTL8139 series, the RealTek&n;Fast Ethernet controllers for PCI and CardBus.  This chip is used on many&n;low-end boards, sometimes with its markings changed.&n;&n;&n;II. Board-specific settings&n;&n;PCI bus devices are configured by the system at boot time, so no jumpers&n;need to be set on the board.  The system BIOS will assign the&n;PCI INTA signal to a (preferably otherwise unused) system IRQ line.&n;&n;III. Driver operation&n;&n;IIIa. Rx Ring buffers&n;&n;The receive unit uses a single linear ring buffer rather than the more&n;common (and more efficient) descriptor-based architecture.  Incoming frames&n;are sequentially stored into the Rx region, and the host copies them into&n;skbuffs.&n;&n;Comment: While it is theoretically possible to process many frames in place,&n;any delay in Rx processing would cause us to drop frames.  More importantly,&n;the Linux protocol stack is not designed to operate in this manner.&n;&n;IIIb. Tx operation&n;&n;The RTL8139 uses a fixed set of four Tx descriptors in register space.&n;In a stunningly bad design choice, Tx frames must be 32 bit aligned.  Linux&n;aligns the IP header on word boundaries, and 14 byte ethernet header means&n;that almost all frames will need to be copied to an alignment buffer.&n;&n;IVb. References&n;&n;http://www.realtek.com.tw/cn/cn.html&n;http://www.scyld.com/expert/NWay.html&n;&n;IVc. Errata&n;&n;1) The RTL-8139 has a serious problem with motherboards which do&n;posted MMIO writes to PCI space.  This driver works around the&n;problem by having an MMIO  register write be immediately followed by&n;an MMIO register read.&n;&n;2) The RTL-8129 is only supported in Donald Becker&squot;s rtl8139 driver.&n;&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|RTL8139_VERSION
-mdefine_line|#define RTL8139_VERSION &quot;0.9.10&quot;
+mdefine_line|#define RTL8139_VERSION &quot;0.9.11&quot;
 DECL|macro|RTL8139_MODULE_NAME
 mdefine_line|#define RTL8139_MODULE_NAME &quot;8139too&quot;
 DECL|macro|RTL8139_DRIVER_NAME
@@ -40,8 +40,6 @@ macro_line|#else
 DECL|macro|assert
 macro_line|#  define assert(expr) &bslash;&n;        if(!(expr)) {&t;&t;&t;&t;&t;&bslash;&n;        printk( &quot;Assertion failed! %s,%s,%s,line=%d&bslash;n&quot;,&t;&bslash;&n;        #expr,__FILE__,__FUNCTION__,__LINE__);&t;&t;&bslash;&n;        }
 macro_line|#endif
-DECL|macro|arraysize
-mdefine_line|#define arraysize(x)            (sizeof(x)/sizeof(*(x)))
 multiline_comment|/* A few user-configurable values. */
 multiline_comment|/* media options */
 DECL|variable|media
@@ -107,9 +105,12 @@ mdefine_line|#define RX_BUF_TOT_LEN (RX_BUF_LEN + RX_BUF_PAD + RX_BUF_WRAP_PAD)
 multiline_comment|/* Number of Tx descriptor registers. */
 DECL|macro|NUM_TX_DESC
 mdefine_line|#define NUM_TX_DESC&t;4
+multiline_comment|/* max supported ethernet frame size -- must be at least (dev-&gt;mtu+14+4).*/
+DECL|macro|MAX_ETH_FRAME_SIZE
+mdefine_line|#define MAX_ETH_FRAME_SIZE&t;1536
 multiline_comment|/* Size of the Tx bounce buffers -- must be at least (dev-&gt;mtu+14+4). */
 DECL|macro|TX_BUF_SIZE
-mdefine_line|#define TX_BUF_SIZE&t;1536
+mdefine_line|#define TX_BUF_SIZE&t;MAX_ETH_FRAME_SIZE
 DECL|macro|TX_BUF_TOT_LEN
 mdefine_line|#define TX_BUF_TOT_LEN&t;(TX_BUF_SIZE * NUM_TX_DESC)
 multiline_comment|/* PCI Tuning Parameters&n;   Threshold is bytes transferred to chip before transmission starts. */
@@ -1642,7 +1643,7 @@ mdefine_line|#define RTL_R8(reg)&t;&t;inb (((unsigned long)ioaddr) + (reg))
 DECL|macro|RTL_R16
 mdefine_line|#define RTL_R16(reg)&t;&t;inw (((unsigned long)ioaddr) + (reg))
 DECL|macro|RTL_R32
-mdefine_line|#define RTL_R32(reg)&t;&t;inl (((unsigned long)ioaddr) + (reg))
+mdefine_line|#define RTL_R32(reg)&t;&t;((unsigned long) inl (((unsigned long)ioaddr) + (reg)))
 DECL|macro|RTL_W8
 mdefine_line|#define RTL_W8(reg, val8)&t;outb ((val8), ((unsigned long)ioaddr) + (reg))
 DECL|macro|RTL_W16
@@ -1711,7 +1712,7 @@ mdefine_line|#define RTL_R8(reg)&t;&t;readb (ioaddr + (reg))
 DECL|macro|RTL_R16
 mdefine_line|#define RTL_R16(reg)&t;&t;readw (ioaddr + (reg))
 DECL|macro|RTL_R32
-mdefine_line|#define RTL_R32(reg)&t;&t;readl (ioaddr + (reg))
+mdefine_line|#define RTL_R32(reg)&t;&t;((unsigned long) readl (ioaddr + (reg)))
 macro_line|#endif /* USE_IO_OPS */
 DECL|variable|rtl8139_intr_mask
 r_static
@@ -2063,12 +2064,6 @@ multiline_comment|/* check for weird/broken PCI region reporting */
 r_if
 c_cond
 (paren
-(paren
-id|pio_len
-op_ne
-id|mmio_len
-)paren
-op_logical_or
 (paren
 id|pio_len
 OL
@@ -2488,7 +2483,7 @@ c_loop
 (paren
 id|i
 op_assign
-id|arraysize
+id|ARRAY_SIZE
 (paren
 id|rtl_chip_info
 )paren
@@ -2537,7 +2532,7 @@ id|printk
 (paren
 id|KERN_DEBUG
 id|PFX
-l_string|&quot;PCI device %s: TxConfig = 0x%x&bslash;n&quot;
+l_string|&quot;PCI device %s: TxConfig = 0x%lx&bslash;n&quot;
 comma
 id|pdev-&gt;slot_name
 comma
@@ -5588,153 +5583,20 @@ id|tp-&gt;timer
 )paren
 suffix:semicolon
 )brace
-DECL|function|rtl8139_tx_timeout
+DECL|function|rtl8139_tx_clear
 r_static
 r_void
-id|rtl8139_tx_timeout
+id|rtl8139_tx_clear
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-(brace
 r_struct
 id|rtl8139_private
 op_star
 id|tp
-op_assign
-(paren
-r_struct
-id|rtl8139_private
-op_star
 )paren
-id|dev-&gt;priv
-suffix:semicolon
-r_void
-op_star
-id|ioaddr
-op_assign
-id|tp-&gt;mmio_addr
-suffix:semicolon
+(brace
 r_int
 id|i
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|DPRINTK
-(paren
-l_string|&quot;%s: Transmit timeout, status %2.2x %4.4x &quot;
-l_string|&quot;media %2.2x.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|RTL_R8
-(paren
-id|ChipCmd
-)paren
-comma
-id|RTL_R16
-(paren
-id|IntrStatus
-)paren
-comma
-id|RTL_R8
-(paren
-id|MediaStatus
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* Disable interrupts by clearing the interrupt mask. */
-id|RTL_W16
-(paren
-id|IntrMask
-comma
-l_int|0x0000
-)paren
-suffix:semicolon
-multiline_comment|/* Emit info to figure out what went wrong. */
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;%s: Tx queue start entry %d  dirty entry %d.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|atomic_read
-(paren
-op_amp
-id|tp-&gt;cur_tx
-)paren
-comma
-id|atomic_read
-(paren
-op_amp
-id|tp-&gt;dirty_tx
-)paren
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|NUM_TX_DESC
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;%s:  Tx descriptor %d is %8.8x.%s&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|i
-comma
-id|RTL_R32
-(paren
-id|TxStatus0
-op_plus
-(paren
-id|i
-op_star
-l_int|4
-)paren
-)paren
-comma
-id|i
-op_eq
-id|atomic_read
-(paren
-op_amp
-id|tp-&gt;dirty_tx
-)paren
-op_mod
-id|NUM_TX_DESC
-ques
-c_cond
-l_string|&quot; (queue head)&quot;
-suffix:colon
-l_string|&quot;&quot;
-)paren
-suffix:semicolon
-id|spin_lock_irqsave
-(paren
-op_amp
-id|tp-&gt;lock
-comma
-id|flags
-)paren
-suffix:semicolon
-multiline_comment|/* Stop a shared interrupt from scavenging while we are. */
 id|atomic_set
 (paren
 op_amp
@@ -5822,6 +5684,187 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+)brace
+DECL|function|rtl8139_tx_timeout
+r_static
+r_void
+id|rtl8139_tx_timeout
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|rtl8139_private
+op_star
+id|tp
+op_assign
+(paren
+r_struct
+id|rtl8139_private
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_void
+op_star
+id|ioaddr
+op_assign
+id|tp-&gt;mmio_addr
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+id|u8
+id|tmp8
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|DPRINTK
+(paren
+l_string|&quot;%s: Transmit timeout, status %2.2x %4.4x &quot;
+l_string|&quot;media %2.2x.&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|RTL_R8
+(paren
+id|ChipCmd
+)paren
+comma
+id|RTL_R16
+(paren
+id|IntrStatus
+)paren
+comma
+id|RTL_R8
+(paren
+id|MediaStatus
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* disable Tx ASAP, if not already */
+id|tmp8
+op_assign
+id|RTL_R8
+(paren
+id|ChipCmd
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp8
+op_amp
+id|CmdTxEnb
+)paren
+id|RTL_W8
+(paren
+id|ChipCmd
+comma
+id|tmp8
+op_amp
+op_complement
+id|CmdTxEnb
+)paren
+suffix:semicolon
+multiline_comment|/* Disable interrupts by clearing the interrupt mask. */
+id|RTL_W16
+(paren
+id|IntrMask
+comma
+l_int|0x0000
+)paren
+suffix:semicolon
+multiline_comment|/* Emit info to figure out what went wrong. */
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: Tx queue start entry %d  dirty entry %d.&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|atomic_read
+(paren
+op_amp
+id|tp-&gt;cur_tx
+)paren
+comma
+id|atomic_read
+(paren
+op_amp
+id|tp-&gt;dirty_tx
+)paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NUM_TX_DESC
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s:  Tx descriptor %d is %8.8lx.%s&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|i
+comma
+id|RTL_R32
+(paren
+id|TxStatus0
+op_plus
+(paren
+id|i
+op_star
+l_int|4
+)paren
+)paren
+comma
+id|i
+op_eq
+id|atomic_read
+(paren
+op_amp
+id|tp-&gt;dirty_tx
+)paren
+op_mod
+id|NUM_TX_DESC
+ques
+c_cond
+l_string|&quot; (queue head)&quot;
+suffix:colon
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Stop a shared interrupt from scavenging while we are. */
+id|spin_lock_irqsave
+(paren
+op_amp
+id|tp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|rtl8139_tx_clear
+(paren
+id|tp
+)paren
+suffix:semicolon
 id|spin_unlock_irqrestore
 (paren
 op_amp
@@ -6012,7 +6055,6 @@ suffix:semicolon
 )brace
 DECL|function|rtl8139_tx_interrupt
 r_static
-r_inline
 r_void
 id|rtl8139_tx_interrupt
 (paren
@@ -6032,8 +6074,11 @@ id|ioaddr
 )paren
 (brace
 r_int
-r_int
+id|cur_tx
+comma
 id|dirty_tx
+comma
+id|tx_left
 suffix:semicolon
 m_assert
 (paren
@@ -6064,18 +6109,24 @@ op_amp
 id|tp-&gt;dirty_tx
 )paren
 suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
+id|cur_tx
+op_assign
 id|atomic_read
 (paren
 op_amp
 id|tp-&gt;cur_tx
 )paren
+suffix:semicolon
+id|tx_left
+op_assign
+id|cur_tx
 op_minus
 id|dirty_tx
-)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|tx_left
 OG
 l_int|0
 )paren
@@ -6330,27 +6381,56 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|netif_queue_stopped
-(paren
-id|dev
+id|dirty_tx
+OL
+l_int|0
 )paren
-op_logical_and
+(brace
+multiline_comment|/* handle signed int overflow */
+id|atomic_sub
 (paren
-id|atomic_read
-(paren
+id|cur_tx
+comma
 op_amp
 id|tp-&gt;cur_tx
 )paren
-op_minus
+suffix:semicolon
+multiline_comment|/* XXX racy? */
 id|dirty_tx
-OL
-id|NUM_TX_DESC
+op_assign
+id|cur_tx
+op_minus
+id|tx_left
+op_plus
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|netif_queue_stopped
+(paren
+id|dev
 )paren
 )paren
 id|netif_wake_queue
 (paren
 id|dev
 )paren
+suffix:semicolon
+id|cur_tx
+op_assign
+id|atomic_read
+(paren
+op_amp
+id|tp-&gt;cur_tx
+)paren
+suffix:semicolon
+id|tx_left
+op_assign
+id|cur_tx
+op_minus
+id|dirty_tx
 suffix:semicolon
 )brace
 macro_line|#ifndef RTL8139_NDEBUG
@@ -6709,6 +6789,22 @@ id|RX_BUF_LEN
 suffix:semicolon
 id|u32
 id|rx_status
+suffix:semicolon
+r_int
+r_int
+id|rx_size
+suffix:semicolon
+r_int
+r_int
+id|pkt_size
+suffix:semicolon
+r_struct
+id|sk_buff
+op_star
+id|skb
+suffix:semicolon
+multiline_comment|/* read size+status of next frame from DMA ring buffer */
+id|rx_status
 op_assign
 id|le32_to_cpu
 (paren
@@ -6724,19 +6820,12 @@ id|ring_offset
 )paren
 )paren
 suffix:semicolon
-r_int
 id|rx_size
 op_assign
 id|rx_status
 op_rshift
 l_int|16
 suffix:semicolon
-r_struct
-id|sk_buff
-op_star
-id|skb
-suffix:semicolon
-r_int
 id|pkt_size
 op_assign
 id|rx_size
@@ -6813,22 +6902,27 @@ l_int|0xfff0
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/* if Rx err received, Rx process gets reset, so&n;&t;&t; * we abort any further Rx processing&n;&t;&t; */
+multiline_comment|/* If Rx err or invalid rx_size/rx_status received&n;&t;&t; * (which happens if we get lost in the ring),&n;&t;&t; * Rx process gets reset, so we abort any further&n;&t;&t; * Rx processing.&n;&t;&t; */
 r_if
 c_cond
 (paren
+(paren
+id|rx_size
+OG
+(paren
+id|MAX_ETH_FRAME_SIZE
+op_plus
+l_int|4
+)paren
+)paren
+op_logical_or
+(paren
+op_logical_neg
+(paren
 id|rx_status
 op_amp
-(paren
-id|RxBadSymbol
-op_or
-id|RxRunt
-op_or
-id|RxTooLong
-op_or
-id|RxCRCErr
-op_or
-id|RxBadAlign
+id|RxStatusOK
+)paren
 )paren
 )paren
 (brace
@@ -6862,24 +6956,8 @@ r_if
 c_cond
 (paren
 id|skb
-op_eq
-l_int|NULL
 )paren
 (brace
-id|printk
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: Memory squeeze, dropping packet.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|tp-&gt;stats.rx_dropped
-op_increment
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -6937,6 +7015,21 @@ suffix:semicolon
 id|tp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: Memory squeeze, dropping packet.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|tp-&gt;stats.rx_dropped
+op_increment
+suffix:semicolon
+)brace
 id|cur_rx
 op_assign
 (paren
@@ -7141,6 +7234,13 @@ suffix:colon
 l_int|0x20
 )paren
 suffix:semicolon
+id|RTL_W8
+(paren
+id|Cfg9346
+comma
+id|Cfg9346_Lock
+)paren
+suffix:semicolon
 )brace
 id|status
 op_and_assign
@@ -7148,6 +7248,7 @@ op_complement
 id|RxUnderrun
 suffix:semicolon
 )brace
+multiline_comment|/* XXX along with rtl8139_rx_err, are we double-counting errors? */
 r_if
 c_cond
 (paren
@@ -7597,9 +7698,6 @@ op_assign
 id|tp-&gt;mmio_addr
 suffix:semicolon
 r_int
-id|i
-suffix:semicolon
-r_int
 r_int
 id|flags
 suffix:semicolon
@@ -7639,14 +7737,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* Disable interrupts by clearing the interrupt mask. */
-id|RTL_W16
-(paren
-id|IntrMask
-comma
-l_int|0x0000
-)paren
-suffix:semicolon
 multiline_comment|/* Stop the chip&squot;s Tx and Rx DMA processes. */
 id|RTL_W8
 (paren
@@ -7660,6 +7750,14 @@ id|ChipCmd
 op_amp
 id|ChipCmdClear
 )paren
+)paren
+suffix:semicolon
+multiline_comment|/* Disable interrupts by clearing the interrupt mask. */
+id|RTL_W16
+(paren
+id|IntrMask
+comma
+l_int|0x0000
 )paren
 suffix:semicolon
 multiline_comment|/* Update the error counts. */
@@ -7685,13 +7783,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* snooze for a small bit */
-r_if
-c_cond
-(paren
-id|current-&gt;need_resched
-)paren
-id|schedule
+id|synchronize_irq
 (paren
 )paren
 suffix:semicolon
@@ -7702,90 +7794,11 @@ comma
 id|dev
 )paren
 suffix:semicolon
-r_for
-c_loop
+id|rtl8139_tx_clear
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|NUM_TX_DESC
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-r_struct
-id|sk_buff
-op_star
-id|skb
-op_assign
-id|tp-&gt;tx_info
-(braket
-id|i
-)braket
-dot
-id|skb
-suffix:semicolon
-id|dma_addr_t
-id|mapping
-op_assign
-id|tp-&gt;tx_info
-(braket
-id|i
-)braket
-dot
-id|mapping
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|mapping
-)paren
-id|pci_unmap_single
-(paren
-id|tp-&gt;pci_dev
-comma
-id|mapping
-comma
-id|skb-&gt;len
-comma
-id|PCI_DMA_TODEVICE
+id|tp
 )paren
 suffix:semicolon
-id|dev_kfree_skb
-(paren
-id|skb
-)paren
-suffix:semicolon
-)brace
-id|tp-&gt;tx_info
-(braket
-id|i
-)braket
-dot
-id|skb
-op_assign
-l_int|NULL
-suffix:semicolon
-id|tp-&gt;tx_info
-(braket
-id|i
-)braket
-dot
-id|mapping
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 id|pci_free_consistent
 c_func
 (paren

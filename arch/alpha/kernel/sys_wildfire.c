@@ -1383,22 +1383,6 @@ r_return
 id|irq
 suffix:semicolon
 )brace
-r_static
-r_void
-id|__init
-DECL|function|wildfire_init_pci
-id|wildfire_init_pci
-c_func
-(paren
-r_void
-)paren
-(brace
-id|common_init_pci
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * The System Vectors&n; */
 DECL|variable|__initmv
 r_struct
@@ -1457,7 +1441,7 @@ id|common_init_rtc
 comma
 id|init_pci
 suffix:colon
-id|wildfire_init_pci
+id|common_init_pci
 comma
 id|kill_arch
 suffix:colon

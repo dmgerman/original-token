@@ -24,8 +24,7 @@ DECL|macro|OHCI_USE_NPS
 mdefine_line|#define OHCI_USE_NPS&t;&t;
 singleline_comment|// force NoPowerSwitching mode
 singleline_comment|// #define OHCI_VERBOSE_DEBUG&t;/* not always helpful */
-DECL|macro|OHCI_MEM_SLAB
-mdefine_line|#define OHCI_MEM_SLAB
+singleline_comment|// #define OHCI_MEM_SLAB
 singleline_comment|// #define OHCI_MEM_FLAGS&t;SLAB_POISON&t;/* no redzones; see mm/slab.c */
 macro_line|#include &quot;usb-ohci.h&quot;
 macro_line|#ifdef CONFIG_PMAC_PBOOK

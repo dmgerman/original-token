@@ -628,6 +628,17 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|mc32_probe
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* Gigabit Ethernet adapters */
 r_extern
 r_int
@@ -970,6 +981,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_ELMC&t;&t;/* 3c523 */
 (brace
 id|elmc_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ELMC_II&t;&t;/* 3c527 */
+(brace
+id|mc32_probe
 comma
 l_int|0
 )brace

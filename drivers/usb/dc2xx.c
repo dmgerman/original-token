@@ -71,11 +71,21 @@ l_int|0x040a
 comma
 id|idProduct
 suffix:colon
+l_int|0x0131
+)brace
+comma
+singleline_comment|// Kodak DC-5000
+(brace
+id|idVendor
+suffix:colon
+l_int|0x040a
+comma
+id|idProduct
+suffix:colon
 l_int|0x0132
 )brace
 comma
 singleline_comment|// Kodak DC-3400
-singleline_comment|// { idVendor: 0x040a, idProduct: 0xXXXX },&t;&t;// Kodak DC-5000
 multiline_comment|/* These have a different application level protocol which&n;&t; * is part of the Flashpoint &quot;DigitaOS&quot;.  That supports some&n;&t; * non-camera devices, and some non-Kodak cameras.&n;&t; */
 (brace
 id|idVendor

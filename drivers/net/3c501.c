@@ -310,23 +310,6 @@ DECL|macro|RX_GOOD
 mdefine_line|#define RX_GOOD&t;0x30&t;&t;/* Good packet 0x20, or simple overflow 0x10. */
 "&f;"
 multiline_comment|/*&n; *&t;The boilerplate probe code.&n; */
-macro_line|#ifdef HAVE_DEVLIST
-DECL|variable|el1_drv
-r_struct
-id|netdev_entry
-id|el1_drv
-op_assign
-(brace
-l_string|&quot;3c501&quot;
-comma
-id|el1_probe1
-comma
-id|EL1_IO_EXTENT
-comma
-id|netcard_portlist
-)brace
-suffix:semicolon
-macro_line|#else
 multiline_comment|/**&n; * el1_probe:&n; * @dev: The device structure passed in to probe. &n; *&n; * This can be called from two places. The network layer will probe using&n; * a device structure passed in with the probe information completed. For a&n; * modular driver we use #init_module to fill in our own structure and probe&n; * for it.&n; *&n; * Returns 0 on success. ENXIO if asked not to probe and ENODEV if asked to&n; * probe and failing to find anything.&n; */
 DECL|function|el1_probe
 r_int
@@ -422,7 +405,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/**&n; *&t;el1_probe: &n; *&t;@dev: The device structure to use&n; *&t;@ioaddr: An I/O address to probe at.&n; *&n; *&t;The actual probe. This is iterated over by #el1_probe in order to&n; *&t;check all the applicable device locations.&n; *&n; *&t;Returns 0 for a success, in which case the device is activated,&n; *&t;EAGAIN if the IRQ is in use by another driver, and ENODEV if the&n; *&t;board cannot be found.&n; */
 DECL|function|el1_probe1
 r_static

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.92 2000/08/09 08:45:40 anton Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.95 2000/10/30 21:01:40 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -12,6 +12,8 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/fs_struct.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -22,6 +24,7 @@ macro_line|#include &lt;asm/softirq.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/idprom.h&gt;
 macro_line|#include &lt;asm/svr4.h&gt;
+macro_line|#include &lt;asm/elf.h&gt;
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/mostek.h&gt;
@@ -30,6 +33,7 @@ macro_line|#include &lt;asm/user.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#include &lt;asm/fpumacro.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#ifdef CONFIG_SBUS
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -492,6 +496,20 @@ comma
 r_struct
 id|user
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|dump_fpu
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+comma
+id|elf_fpregset_t
+op_star
+id|fpregs
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
@@ -1132,6 +1150,43 @@ c_func
 id|dump_thread
 )paren
 suffix:semicolon
+DECL|variable|dump_fpu
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dump_fpu
+)paren
+suffix:semicolon
+DECL|variable|get_pmd_slow
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_pmd_slow
+)paren
+suffix:semicolon
+DECL|variable|get_pte_slow
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_pte_slow
+)paren
+suffix:semicolon
+macro_line|#ifndef CONFIG_SMP
+DECL|variable|pgt_quicklists
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pgt_quicklists
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|variable|put_fs_struct
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|put_fs_struct
+)paren
+suffix:semicolon
 multiline_comment|/* math-emu wants this */
 DECL|variable|die_if_kernel
 id|EXPORT_SYMBOL
@@ -1316,6 +1371,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|strnlen
+)paren
+suffix:semicolon
+DECL|variable|__strlen_user
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__strlen_user
 )paren
 suffix:semicolon
 DECL|variable|strcpy

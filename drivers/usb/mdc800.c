@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * copyright (C) 1999/2000 by Henning Zabel &lt;henning@uni-paderborn.de&gt;&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2 of the License, or (at your&n; * option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY&n; * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n; * for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software Foundation,&n; * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
-multiline_comment|/*&n; *&t;USB-Kernel Driver for the Mustek MDC800 Digital Camera&n; *&t;(c) 1999/2000 Henning Zabel &lt;henning@uni-paderborn.de&gt;&n; *&n; *&n; *&t;The driver brings the USB functions of the MDC800 to Linux.&n; * To use the Camera you must support the USB Protocoll of the camera&n; * to the Kernel Node.&n; * The Driver uses a misc device Node. Create it with :&n; * mknod /dev/mustek c 180 32&n; *&n; * The driver supports only one camera.&n; *&n; * version 0.7.3&n; * bugfix : The mdc800-&gt;state field gets set to READY after the&n; * the diconnect function sets it to NOT_CONNECTED. This makes the&n; * driver running like the camera is connected and causes some&n; * hang ups.&n; *&n; * version 0.7.1&n; * MOD_INC and MOD_DEC are changed in usb_probe to prevent load/unload&n; * problems when compiled as Module.&n; * (04/04/2000)&n; *&n; * The mdc800 driver gets assigned the USB Minor 32-47. The Registration&n; * was updated to use these values.&n; * (26/03/2000)&n; *&n; * The Init und Exit Module Function are updated.&n; * (01/03/2000)&n; *&n; * version 0.7.0&n; * Rewrite of the driver : The driver now uses URB&squot;s. The old stuff&n; * has been removed.&n; *&n; * version 0.6.0&n; * Rewrite of this driver: The Emulation of the rs232 protocoll&n; * has been removed from the driver. A special executeCommand function&n; * for this driver is included to gphoto.&n; * The driver supports two kind of communication to bulk endpoints.&n; * Either with the dev-&gt;bus-&gt;ops-&gt;bulk... or with callback function.&n; * (09/11/1999)&n; *&n; * version 0.5.0:&n; *&t;first Version that gets a version number. Most of the needed&n; * functions work.&n; * (20/10/1999)&n; */
+multiline_comment|/*&n; *&t;USB-Kernel Driver for the Mustek MDC800 Digital Camera&n; *&t;(c) 1999/2000 Henning Zabel &lt;henning@uni-paderborn.de&gt;&n; *&n; *&n; * The driver brings the USB functions of the MDC800 to Linux.&n; * To use the Camera you must support the USB Protocoll of the camera&n; * to the Kernel Node.&n; * The Driver uses a misc device Node. Create it with :&n; * mknod /dev/mustek c 180 32&n; *&n; * The driver supports only one camera.&n; *&n; * version 0.7.5&n; * Fixed potential SMP races with Spinlocks.&n; * Thanks to Oliver Neukum &lt;oliver.neukum@lrz.uni-muenchen.de&gt; who &n; * noticed the race conditions.&n; * (30/10/2000)&n; *&n; * Fixed: Setting urb-&gt;dev before submitting urb.&n; * by Greg KH &lt;greg@kroah.com&gt;&n; * (13/10/2000)&n; *&n; * version 0.7.3&n; * bugfix : The mdc800-&gt;state field gets set to READY after the&n; * the diconnect function sets it to NOT_CONNECTED. This makes the&n; * driver running like the camera is connected and causes some&n; * hang ups.&n; *&n; * version 0.7.1&n; * MOD_INC and MOD_DEC are changed in usb_probe to prevent load/unload&n; * problems when compiled as Module.&n; * (04/04/2000)&n; *&n; * The mdc800 driver gets assigned the USB Minor 32-47. The Registration&n; * was updated to use these values.&n; * (26/03/2000)&n; *&n; * The Init und Exit Module Function are updated.&n; * (01/03/2000)&n; *&n; * version 0.7.0&n; * Rewrite of the driver : The driver now uses URB&squot;s. The old stuff&n; * has been removed.&n; *&n; * version 0.6.0&n; * Rewrite of this driver: The Emulation of the rs232 protocoll&n; * has been removed from the driver. A special executeCommand function&n; * for this driver is included to gphoto.&n; * The driver supports two kind of communication to bulk endpoints.&n; * Either with the dev-&gt;bus-&gt;ops-&gt;bulk... or with callback function.&n; * (09/11/1999)&n; *&n; * version 0.5.0:&n; * first Version that gets a version number. Most of the needed&n; * functions work.&n; * (20/10/1999)&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -13,9 +13,9 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/usb.h&gt;
 DECL|macro|VERSION
-mdefine_line|#define VERSION &t;&quot;0.7.3&quot;
+mdefine_line|#define VERSION &t;&quot;0.7.5&quot;
 DECL|macro|RELEASE_DATE
-mdefine_line|#define RELEASE_DATE &t;&quot;(24/04/2000)&quot;
+mdefine_line|#define RELEASE_DATE &t;&quot;(30/10/2000)&quot;
 multiline_comment|/* Vendor and Product Information */
 DECL|macro|MDC800_VENDOR_ID
 mdefine_line|#define MDC800_VENDOR_ID &t;0x055f
@@ -166,11 +166,11 @@ r_int
 id|open
 suffix:semicolon
 singleline_comment|// Camera device open ?
-DECL|member|rw_lock
-r_int
-id|rw_lock
+DECL|member|io_lock
+id|spinlock_t
+id|io_lock
 suffix:semicolon
-singleline_comment|// Block read &lt;-&gt; write
+singleline_comment|// IO -lock&t;
 DECL|member|in
 r_char
 id|in
@@ -1176,19 +1176,17 @@ id|info
 l_string|&quot;Found Mustek MDC800 on USB.&quot;
 )paren
 suffix:semicolon
+id|spin_lock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
+suffix:semicolon
 id|mdc800-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-id|mdc800-&gt;state
-op_assign
-id|READY
-suffix:semicolon
 id|mdc800-&gt;open
-op_assign
-l_int|0
-suffix:semicolon
-id|mdc800-&gt;rw_lock
 op_assign
 l_int|0
 suffix:semicolon
@@ -1268,6 +1266,16 @@ comma
 id|mdc800_usb_download_notify
 comma
 id|mdc800
+)paren
+suffix:semicolon
+id|mdc800-&gt;state
+op_assign
+id|READY
+suffix:semicolon
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
 )paren
 suffix:semicolon
 r_return
@@ -1452,6 +1460,17 @@ id|retval
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|errn
+op_assign
+l_int|0
+suffix:semicolon
+id|spin_lock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1460,9 +1479,13 @@ op_eq
 id|NOT_CONNECTED
 )paren
 (brace
-r_return
+id|errn
+op_assign
 op_minus
 id|EBUSY
+suffix:semicolon
+r_goto
+id|error_out
 suffix:semicolon
 )brace
 r_if
@@ -1471,15 +1494,15 @@ c_cond
 id|mdc800-&gt;open
 )paren
 (brace
-r_return
+id|errn
+op_assign
 op_minus
 id|EBUSY
 suffix:semicolon
-)brace
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|0
+r_goto
+id|error_out
 suffix:semicolon
+)brace
 id|mdc800-&gt;in_count
 op_assign
 l_int|0
@@ -1539,9 +1562,13 @@ comma
 id|mdc800-&gt;irq_urb-&gt;status
 )paren
 suffix:semicolon
-r_return
+id|errn
+op_assign
 op_minus
 id|EIO
+suffix:semicolon
+r_goto
+id|error_out
 suffix:semicolon
 )brace
 id|mdc800-&gt;open
@@ -1553,8 +1580,16 @@ id|dbg
 l_string|&quot;Mustek MDC800 device opened.&quot;
 )paren
 suffix:semicolon
+id|error_out
+suffix:colon
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
+suffix:semicolon
 r_return
-l_int|0
+id|errn
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Close the Camera and release Memory&n; */
@@ -1584,9 +1619,10 @@ id|dbg
 l_string|&quot;Mustek MDC800 device closed.&quot;
 )paren
 suffix:semicolon
-id|lock_kernel
-c_func
+id|spin_lock
 (paren
+op_amp
+id|mdc800-&gt;io_lock
 )paren
 suffix:semicolon
 r_if
@@ -1629,9 +1665,10 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|unlock_kernel
-c_func
+id|spin_unlock
 (paren
+op_amp
+id|mdc800-&gt;io_lock
 )paren
 suffix:semicolon
 r_return
@@ -1677,6 +1714,12 @@ id|ptr
 op_assign
 id|buf
 suffix:semicolon
+id|spin_lock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1684,10 +1727,18 @@ id|mdc800-&gt;state
 op_eq
 id|NOT_CONNECTED
 )paren
+(brace
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1701,6 +1752,12 @@ id|warn
 l_string|&quot;Illegal State &bslash;&quot;working&bslash;&quot; reached during read ?!&quot;
 )paren
 suffix:semicolon
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
@@ -1711,17 +1768,19 @@ c_cond
 (paren
 op_logical_neg
 id|mdc800-&gt;open
-op_logical_or
-id|mdc800-&gt;rw_lock
 )paren
+(brace
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|1
-suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -1737,9 +1796,11 @@ id|current
 )paren
 )paren
 (brace
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|0
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
 suffix:semicolon
 r_return
 op_minus
@@ -1809,9 +1870,11 @@ comma
 id|mdc800-&gt;download_urb-&gt;status
 )paren
 suffix:semicolon
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|0
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
 suffix:semicolon
 r_return
 id|len
@@ -1846,9 +1909,11 @@ comma
 id|mdc800-&gt;download_urb-&gt;status
 )paren
 suffix:semicolon
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|0
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
 suffix:semicolon
 r_return
 id|len
@@ -1860,9 +1925,11 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* No more bytes -&gt; that&squot;s an error*/
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|0
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
 suffix:semicolon
 r_return
 op_minus
@@ -1900,9 +1967,11 @@ id|sts
 suffix:semicolon
 )brace
 )brace
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|0
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
 suffix:semicolon
 r_return
 id|len
@@ -1939,6 +2008,12 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
+id|spin_lock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1946,26 +2021,36 @@ id|mdc800-&gt;state
 op_ne
 id|READY
 )paren
+(brace
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
 op_logical_neg
 id|mdc800-&gt;open
-op_logical_or
-id|mdc800-&gt;rw_lock
 )paren
+(brace
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|1
-suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -1983,9 +2068,11 @@ id|current
 )paren
 )paren
 (brace
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|0
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
 suffix:semicolon
 r_return
 op_minus
@@ -2054,9 +2141,11 @@ id|err
 l_string|&quot;Command is to long !&bslash;n&quot;
 )paren
 suffix:semicolon
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|0
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
 suffix:semicolon
 r_return
 op_minus
@@ -2091,9 +2180,11 @@ id|err
 l_string|&quot;Camera didn&squot;t get ready.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|0
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
 suffix:semicolon
 r_return
 op_minus
@@ -2143,9 +2234,11 @@ comma
 id|mdc800-&gt;write_urb-&gt;status
 )paren
 suffix:semicolon
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|0
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
 suffix:semicolon
 r_return
 op_minus
@@ -2177,9 +2270,11 @@ id|usb_unlink_urb
 id|mdc800-&gt;write_urb
 )paren
 suffix:semicolon
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|0
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
 suffix:semicolon
 r_return
 op_minus
@@ -2224,9 +2319,11 @@ id|mdc800-&gt;state
 op_assign
 id|READY
 suffix:semicolon
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|0
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
 suffix:semicolon
 r_return
 op_minus
@@ -2287,9 +2384,11 @@ id|err
 l_string|&quot;requesting answer from irq fails&quot;
 )paren
 suffix:semicolon
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|0
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
 suffix:semicolon
 r_return
 op_minus
@@ -2407,9 +2506,11 @@ id|err
 l_string|&quot;Command Timeout.&quot;
 )paren
 suffix:semicolon
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|0
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
 suffix:semicolon
 r_return
 op_minus
@@ -2429,9 +2530,11 @@ id|i
 op_increment
 suffix:semicolon
 )brace
-id|mdc800-&gt;rw_lock
-op_assign
-l_int|0
+id|spin_unlock
+(paren
+op_amp
+id|mdc800-&gt;io_lock
+)paren
 suffix:semicolon
 r_return
 id|i
@@ -2526,18 +2629,6 @@ id|GFP_KERNEL
 )paren
 )paren
 suffix:semicolon
-id|mdc800-&gt;dev
-op_assign
-l_int|0
-suffix:semicolon
-id|mdc800-&gt;open
-op_assign
-l_int|0
-suffix:semicolon
-id|mdc800-&gt;state
-op_assign
-id|NOT_CONNECTED
-suffix:semicolon
 id|memset
 c_func
 (paren
@@ -2550,6 +2641,24 @@ r_sizeof
 r_struct
 id|mdc800_data
 )paren
+)paren
+suffix:semicolon
+id|mdc800-&gt;dev
+op_assign
+l_int|0
+suffix:semicolon
+id|mdc800-&gt;open
+op_assign
+l_int|0
+suffix:semicolon
+id|mdc800-&gt;state
+op_assign
+id|NOT_CONNECTED
+suffix:semicolon
+id|spin_lock_init
+(paren
+op_amp
+id|mdc800-&gt;io_lock
 )paren
 suffix:semicolon
 id|init_waitqueue_head

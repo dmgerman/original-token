@@ -308,13 +308,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
+macro_line|#ifdef MODULE
 id|dev
 op_assign
 id|init_etherdev
@@ -329,8 +323,17 @@ id|hplance_private
 )paren
 )paren
 suffix:semicolon
-r_else
-(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+macro_line|#else
 id|dev-&gt;priv
 op_assign
 id|kmalloc
@@ -370,7 +373,7 @@ id|hplance_private
 )paren
 )paren
 suffix:semicolon
-)brace
+macro_line|#endif
 id|printk
 c_func
 (paren

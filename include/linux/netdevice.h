@@ -37,6 +37,8 @@ DECL|macro|NET_RX_CN_HIGH
 mdefine_line|#define NET_RX_CN_HIGH&t;&t;5   /* The storm is here */
 DECL|macro|NET_RX_DROP
 mdefine_line|#define NET_RX_DROP&t;&t;-1  /* packet dropped */
+DECL|macro|NET_RX_BAD
+mdefine_line|#define NET_RX_BAD&t;&t;-2  /* packet dropped due to kernel error */
 DECL|macro|net_xmit_errno
 mdefine_line|#define net_xmit_errno(e)&t;((e) != NET_XMIT_CN ? -ENOBUFS : 0)
 macro_line|#endif

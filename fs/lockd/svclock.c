@@ -3,6 +3,8 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/sunrpc/svc.h&gt;
 macro_line|#include &lt;linux/lockd/nlm.h&gt;
@@ -110,34 +112,72 @@ c_func
 id|block
 )paren
 suffix:semicolon
-r_for
-c_loop
-(paren
 id|bp
 op_assign
 op_amp
 id|nlm_blocked
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|when
+op_ne
+id|NLM_NEVER
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|when
+op_add_assign
+id|jiffies
+)paren
+op_eq
+id|NLM_NEVER
+)paren
+id|when
+op_increment
+suffix:semicolon
+r_while
+c_loop
+(paren
 (paren
 id|b
 op_assign
 op_star
 id|bp
 )paren
-suffix:semicolon
+op_logical_and
+id|time_before_eq
+c_func
+(paren
+id|b-&gt;b_when
+comma
+id|when
+)paren
+)paren
 id|bp
 op_assign
 op_amp
 id|b-&gt;b_next
-)paren
-r_if
-c_cond
+suffix:semicolon
+)brace
+r_else
+r_while
+c_loop
 (paren
-id|when
-OL
-id|b-&gt;b_when
+(paren
+id|b
+op_assign
+op_star
+id|bp
 )paren
-r_break
+)paren
+id|bp
+op_assign
+op_amp
+id|b-&gt;b_next
 suffix:semicolon
 id|block-&gt;b_queued
 op_assign
@@ -378,11 +418,17 @@ c_cond
 (paren
 id|remove
 )paren
+(brace
 op_star
 id|head
 op_assign
 id|block-&gt;b_next
 suffix:semicolon
+id|block-&gt;b_queued
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_return
 id|block
 suffix:semicolon
@@ -635,11 +681,6 @@ op_amp
 id|block-&gt;b_call.a_res.lock.fl
 )paren
 suffix:semicolon
-multiline_comment|/* Set notifier function for VFS, and init args */
-id|lock-&gt;fl.fl_notify
-op_assign
-id|nlmsvc_notify_blocked
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -655,6 +696,11 @@ id|lock
 )paren
 r_goto
 id|failed_free
+suffix:semicolon
+multiline_comment|/* Set notifier function for VFS, and init args */
+id|block-&gt;b_call.a_args.lock.fl.fl_notify
+op_assign
+id|nlmsvc_notify_blocked
 suffix:semicolon
 id|block-&gt;b_call.a_args.cookie
 op_assign
@@ -1655,6 +1701,11 @@ c_func
 id|fl
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1689,12 +1740,6 @@ id|fl
 )paren
 )paren
 (brace
-id|svc_wake_up
-c_func
-(paren
-id|block-&gt;b_daemon
-)paren
-suffix:semicolon
 id|nlmsvc_insert_block
 c_func
 (paren
@@ -1703,10 +1748,21 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|svc_wake_up
+c_func
+(paren
+id|block-&gt;b_daemon
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1886,8 +1942,6 @@ c_func
 (paren
 id|block
 comma
-id|jiffies
-op_plus
 l_int|10
 op_star
 id|HZ
@@ -1926,8 +1980,6 @@ c_func
 (paren
 id|block
 comma
-id|jiffies
-op_plus
 l_int|30
 op_star
 id|HZ
@@ -2072,8 +2124,6 @@ l_int|0
 multiline_comment|/* RPC error: Re-insert for retransmission */
 id|timeout
 op_assign
-id|jiffies
-op_plus
 l_int|10
 op_star
 id|HZ
@@ -2097,8 +2147,6 @@ r_else
 multiline_comment|/* Call was successful, now wait for client callback */
 id|timeout
 op_assign
-id|jiffies
-op_plus
 l_int|60
 op_star
 id|HZ
@@ -2214,8 +2262,6 @@ c_func
 (paren
 id|block
 comma
-id|jiffies
-op_plus
 l_int|10
 op_star
 id|HZ
@@ -2323,12 +2369,30 @@ id|block
 op_assign
 id|nlm_blocked
 )paren
-op_logical_and
-id|block-&gt;b_when
-op_le
-id|jiffies
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|block-&gt;b_when
+op_eq
+id|NLM_NEVER
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|time_after
+c_func
+(paren
+id|block-&gt;b_when
+comma
+id|jiffies
+)paren
+)paren
+r_break
+suffix:semicolon
 id|dprintk
 c_func
 (paren

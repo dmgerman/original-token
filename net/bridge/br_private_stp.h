@@ -1,11 +1,11 @@
-multiline_comment|/*&n; *&t;Linux ethernet bridge&n; *&n; *&t;Authors:&n; *&t;Lennert Buytenhek&t;&t;&lt;buytenh@gnu.org&gt;&n; *&n; *&t;$Id: br_private_stp.h,v 1.1 2000/02/18 16:47:13 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux ethernet bridge&n; *&n; *&t;Authors:&n; *&t;Lennert Buytenhek&t;&t;&lt;buytenh@gnu.org&gt;&n; *&n; *&t;$Id: br_private_stp.h,v 1.2 2000/10/30 22:03:20 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _BR_PRIVATE_STP_H
 DECL|macro|_BR_PRIVATE_STP_H
 mdefine_line|#define _BR_PRIVATE_STP_H
 DECL|macro|BPDU_TYPE_CONFIG
 mdefine_line|#define BPDU_TYPE_CONFIG 0
 DECL|macro|BPDU_TYPE_TCN
-mdefine_line|#define BPDU_TYPE_TCN 1
+mdefine_line|#define BPDU_TYPE_TCN 0x80
 DECL|struct|br_config_bpdu
 r_struct
 id|br_config_bpdu

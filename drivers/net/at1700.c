@@ -522,24 +522,6 @@ comma
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, allocate space for the device and return success&n;   (detachable devices only).&n;   */
-macro_line|#ifdef HAVE_DEVLIST
-multiline_comment|/* Support for a alternate probe manager, which will eliminate the&n;   boilerplate below. */
-DECL|variable|at1700_drv
-r_struct
-id|netdev_entry
-id|at1700_drv
-op_assign
-(brace
-l_string|&quot;at1700&quot;
-comma
-id|at1700_probe1
-comma
-id|AT1700_IO_EXTENT
-comma
-id|at1700_probe_list
-)brace
-suffix:semicolon
-macro_line|#else
 DECL|function|at1700_probe
 r_int
 id|at1700_probe
@@ -653,7 +635,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* The Fujitsu datasheet suggests that the NIC be probed for by checking its&n;   &quot;signature&quot;, the default bit pattern after a reset.  This *doesn&squot;t* work --&n;   there is no way to reset the bus interface without a complete power-cycle!&n;&n;   It turns out that ATI came to the same conclusion I did: the only thing&n;   that can be done is checking a few bits and then diving right into an&n;   EEPROM read. */
 DECL|function|at1700_probe1
 r_int
@@ -1161,28 +1142,6 @@ comma
 id|ioaddr
 op_plus
 id|RESET
-)paren
-suffix:semicolon
-multiline_comment|/* Allocate a new &squot;dev&squot; if needed. */
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-id|dev
-op_assign
-id|init_etherdev
-c_func
-(paren
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|net_local
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -3947,29 +3906,8 @@ id|net_device
 id|dev_at1700
 op_assign
 (brace
-l_string|&quot;&quot;
-comma
-multiline_comment|/* device name is inserted by linux/drivers/net/net_init.c */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
+id|init
+suffix:colon
 id|at1700_probe
 )brace
 suffix:semicolon
@@ -3984,8 +3922,6 @@ DECL|variable|irq
 r_static
 r_int
 id|irq
-op_assign
-l_int|0
 suffix:semicolon
 id|MODULE_PARM
 c_func

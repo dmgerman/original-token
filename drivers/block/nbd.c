@@ -259,7 +259,7 @@ r_do
 (brace
 id|sock-&gt;sk-&gt;allocation
 op_assign
-id|GFP_ATOMIC
+id|GFP_BUFFER
 suffix:semicolon
 id|iov.iov_base
 op_assign

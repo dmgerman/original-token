@@ -183,6 +183,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;NAT: %u dropping untracked packet %p %u %u.%u.%u.%u -&gt; %u.%u.%u.%u&bslash;n&quot;
 comma
 id|hooknum

@@ -319,7 +319,7 @@ op_ne
 id|p-&gt;p_opptr-&gt;pid
 ques
 c_cond
-id|p-&gt;p_opptr-&gt;pid
+id|p-&gt;p_pptr-&gt;pid
 suffix:colon
 l_int|0
 comma

@@ -299,6 +299,24 @@ op_or
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;scsi: out of memory in scsi_register.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 id|memset
 c_func
 (paren

@@ -755,24 +755,6 @@ multiline_comment|/* a complete sel reset */
 DECL|macro|eepro_complete_selreset
 mdefine_line|#define eepro_complete_selreset(ioaddr) { &t;eepro_dis_int(ioaddr);&bslash;&n;&t;&t;&t;&t;&t;&t;lp-&gt;stats.tx_errors++;&bslash;&n;&t;&t;&t;&t;&t;&t;eepro_sel_reset(ioaddr);&bslash;&n;&t;&t;&t;&t;&t;&t;lp-&gt;tx_end = &bslash;&n;&t;&t;&t;&t;&t;&t;&t;(XMT_LOWER_LIMIT &lt;&lt; 8);&bslash;&n;&t;&t;&t;&t;&t;&t;lp-&gt;tx_start = lp-&gt;tx_end;&bslash;&n;&t;&t;&t;&t;&t;&t;lp-&gt;tx_last = 0;&bslash;&n;&t;&t;&t;&t;&t;&t;dev-&gt;trans_start = jiffies;&bslash;&n;&t;&t;&t;&t;&t;&t;netif_wake_queue(dev);&bslash;&n;&t;&t;&t;&t;&t;&t;eepro_en_int(ioaddr);&bslash;&n;&t;&t;&t;&t;&t;&t;eepro_en_rx(ioaddr);&bslash;&n;&t;&t;&t;&t;&t;}
 multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; if one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, allocate space for the device and return success&n;   (detachable devices only).&n;   */
-macro_line|#ifdef HAVE_DEVLIST
-multiline_comment|/* Support for an alternate probe manager, which will eliminate the&n;   boilerplate below. */
-DECL|variable|netcard_drv
-r_struct
-id|netdev_entry
-id|netcard_drv
-op_assign
-(brace
-l_string|&quot;eepro&quot;
-comma
-id|eepro_probe1
-comma
-id|EEPRO_IO_EXTENT
-comma
-id|eepro_portlist
-)brace
-suffix:semicolon
-macro_line|#else
 DECL|function|eepro_probe
 r_int
 id|__init
@@ -1006,7 +988,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#endif
 DECL|function|printEEPROMInfo
 r_void
 id|printEEPROMInfo

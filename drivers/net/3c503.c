@@ -90,39 +90,6 @@ l_int|0
 suffix:semicolon
 DECL|macro|EL2_IO_EXTENT
 mdefine_line|#define EL2_IO_EXTENT&t;16
-macro_line|#ifdef HAVE_DEVLIST
-multiline_comment|/* The 3c503 uses two entries, one for the safe memory-mapped probe and&n;   the other for the typical I/O probe. */
-DECL|variable|el2_drv
-r_struct
-id|netdev_entry
-id|el2_drv
-op_assign
-(brace
-l_string|&quot;3c503&quot;
-comma
-id|el2_probe
-comma
-id|EL1_IO_EXTENT
-comma
-l_int|0
-)brace
-suffix:semicolon
-DECL|variable|el2pio_drv
-r_struct
-id|netdev_entry
-id|el2pio_drv
-op_assign
-(brace
-l_string|&quot;3c503pio&quot;
-comma
-id|el2_pioprobe1
-comma
-id|EL1_IO_EXTENT
-comma
-id|netcard_portlist
-)brace
-suffix:semicolon
-macro_line|#endif
 r_static
 r_int
 id|el2_open
@@ -401,7 +368,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if ! defined(no_probe_nonshared_memory) &amp;&amp; ! defined (HAVE_DEVLIST)
+macro_line|#if ! defined(no_probe_nonshared_memory)
 r_return
 id|el2_pio_probe
 c_func
@@ -416,7 +383,6 @@ id|ENODEV
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifndef HAVE_DEVLIST
 multiline_comment|/*  Try all of the locations that aren&squot;t obviously empty.  This touches&n;    a lot of locations, and is much riskier than the code above. */
 r_int
 id|__init
@@ -532,7 +498,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* Probe for the Etherlink II card at I/O port base IOADDR,&n;   returning non-zero on success.  If found, set the station&n;   address and memory parameters in DEVICE. */
 r_int
 id|__init
@@ -751,42 +716,6 @@ suffix:semicolon
 r_return
 op_minus
 id|ENODEV
-suffix:semicolon
-)brace
-multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;3c503.c: Passed a NULL device.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|dev
-op_assign
-id|init_etherdev
-c_func
-(paren
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dev
-)paren
-r_return
-op_minus
-id|ENOMEM
 suffix:semicolon
 )brace
 r_if

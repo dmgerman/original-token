@@ -88,6 +88,16 @@ suffix:semicolon
 id|kdev_t
 id|scn_minor
 suffix:semicolon
+r_int
+id|err
+op_assign
+l_int|0
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|scn_minor
 op_assign
 id|USB_SCN_MINOR
@@ -122,9 +132,13 @@ comma
 id|scn_minor
 )paren
 suffix:semicolon
-r_return
+id|err
+op_assign
 op_minus
 id|ENODEV
+suffix:semicolon
+r_goto
+id|out_error
 suffix:semicolon
 )brace
 id|scn
@@ -153,9 +167,13 @@ comma
 id|scn_minor
 )paren
 suffix:semicolon
-r_return
+id|err
+op_assign
 op_minus
 id|ENODEV
+suffix:semicolon
+r_goto
+id|out_error
 suffix:semicolon
 )brace
 r_if
@@ -173,9 +191,13 @@ comma
 id|scn_minor
 )paren
 suffix:semicolon
-r_return
+id|err
+op_assign
 op_minus
 id|ENODEV
+suffix:semicolon
+r_goto
+id|out_error
 suffix:semicolon
 )brace
 r_if
@@ -192,9 +214,13 @@ comma
 id|scn_minor
 )paren
 suffix:semicolon
-r_return
+id|err
+op_assign
 op_minus
 id|EBUSY
+suffix:semicolon
+r_goto
+id|out_error
 suffix:semicolon
 )brace
 id|init_waitqueue_head
@@ -215,8 +241,15 @@ suffix:semicolon
 multiline_comment|/* Used by the read and write metheds */
 id|MOD_INC_USE_COUNT
 suffix:semicolon
+id|out_error
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
-l_int|0
+id|err
 suffix:semicolon
 )brace
 r_static
@@ -387,6 +420,15 @@ suffix:semicolon
 id|file-&gt;f_dentry-&gt;d_inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+(paren
+id|scn-&gt;gen_lock
+)paren
+)paren
 suffix:semicolon
 r_while
 c_loop
@@ -659,6 +701,15 @@ r_break
 suffix:semicolon
 )brace
 )brace
+id|up
+c_func
+(paren
+op_amp
+(paren
+id|scn-&gt;gen_lock
+)paren
+)paren
+suffix:semicolon
 id|mdelay
 c_func
 (paren
@@ -767,6 +818,15 @@ op_assign
 id|CURRENT_TIME
 suffix:semicolon
 multiline_comment|/* Update the&n;                                                            atime of&n;                                                            the device&n;                                                            node */
+id|down
+c_func
+(paren
+op_amp
+(paren
+id|scn-&gt;gen_lock
+)paren
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -847,7 +907,7 @@ comma
 id|count
 )paren
 suffix:semicolon
-multiline_comment|/* &n; * Scanners are sometimes inheriently slow since they are mechanical&n; * in nature.  USB bulk reads tend to timeout while the scanner is&n; * positioning, resetting, warming up the lamp, etc if the timeout is&n; * set too low.  A very long timeout parameter for bulk reads was used&n; * to overcome this limitation, but this sometimes resulted in folks&n; * having to wait for the timeout to expire after pressing Ctrl-C from&n; * an application. The user was sometimes left with the impression&n; * that something had hung or crashed when in fact the USB read was&n; * just waiting on data.  So, the below code retains the same long&n; * timeout period, but splits it up into smaller parts so that&n; * Ctrl-C&squot;s are acted upon in a reasonable amount of time. &n; */
+multiline_comment|/*&n; * Scanners are sometimes inheriently slow since they are mechanical&n; * in nature.  USB bulk reads tend to timeout while the scanner is&n; * positioning, resetting, warming up the lamp, etc if the timeout is&n; * set too low.  A very long timeout parameter for bulk reads was used&n; * to overcome this limitation, but this sometimes resulted in folks&n; * having to wait for the timeout to expire after pressing Ctrl-C from&n; * an application. The user was sometimes left with the impression&n; * that something had hung or crashed when in fact the USB read was&n; * just waiting on data.  So, the below code retains the same long&n; * timeout period, but splits it up into smaller parts so that&n; * Ctrl-C&squot;s are acted upon in a reasonable amount of time.&n; */
 r_if
 c_cond
 (paren
@@ -1062,6 +1122,15 @@ r_break
 suffix:semicolon
 )brace
 )brace
+id|up
+c_func
+(paren
+op_amp
+(paren
+id|scn-&gt;gen_lock
+)paren
+)paren
+suffix:semicolon
 r_return
 id|ret
 ques
@@ -1166,7 +1235,7 @@ id|ifnum
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * 1. Check Vendor/Product&n; * 2. Determine/Assign Bulk Endpoints&n; * 3. Determine/Assign Intr Endpoint&n; */
-multiline_comment|/* &n; * There doesn&squot;t seem to be an imaging class defined in the USB&n; * Spec. (yet).  If there is, HP isn&squot;t following it and it doesn&squot;t&n; * look like anybody else is either.  Therefore, we have to test the&n; * Vendor and Product ID&squot;s to see what we have.  Also, other scanners&n; * may be able to use this driver by specifying both vendor and&n; * product ID&squot;s as options to the scanner module in conf.modules.&n; *&n; * NOTE: Just because a product is supported here does not mean that&n; * applications exist that support the product.  It&squot;s in the hopes&n; * that this will allow developers a means to produce applications&n; * that will support USB products.&n; *&n; * Until we detect a device which is pleasing, we silently punt.&n; */
+multiline_comment|/*&n; * There doesn&squot;t seem to be an imaging class defined in the USB&n; * Spec. (yet).  If there is, HP isn&squot;t following it and it doesn&squot;t&n; * look like anybody else is either.  Therefore, we have to test the&n; * Vendor and Product ID&squot;s to see what we have.  Also, other scanners&n; * may be able to use this driver by specifying both vendor and&n; * product ID&squot;s as options to the scanner module in conf.modules.&n; *&n; * NOTE: Just because a product is supported here does not mean that&n; * applications exist that support the product.  It&squot;s in the hopes&n; * that this will allow developers a means to produce applications&n; * that will support USB products.&n; *&n; * Until we detect a device which is pleasing, we silently punt.&n; */
 r_for
 c_loop
 (paren
@@ -1319,7 +1388,7 @@ id|ifnum
 dot
 id|endpoint
 suffix:semicolon
-multiline_comment|/* &n; * Start checking for two bulk endpoints OR two bulk endpoints *and* one&n; * interrupt endpoint. If we have an interrupt endpoint go ahead and&n; * setup the handler. FIXME: This is a future enhancement...&n; */
+multiline_comment|/*&n; * Start checking for two bulk endpoints OR two bulk endpoints *and* one&n; * interrupt endpoint. If we have an interrupt endpoint go ahead and&n; * setup the handler. FIXME: This is a future enhancement...&n; */
 id|dbg
 c_func
 (paren
@@ -1560,7 +1629,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Determine a minor number and initialize the structure associated&n; * with it.  The problem with this is that we are counting on the fact&n; * that the user will sequentially add device nodes for the scanner&n; * devices.  */
+multiline_comment|/*&n; * Determine a minor number and initialize the structure associated&n; * with it.  The problem with this is that we are counting on the fact&n; * that the user will sequentially add device nodes for the scanner&n; * devices.  */
 r_for
 c_loop
 (paren
@@ -1876,6 +1945,15 @@ suffix:semicolon
 id|scn-&gt;isopen
 op_assign
 l_int|0
+suffix:semicolon
+id|init_MUTEX
+c_func
+(paren
+op_amp
+(paren
+id|scn-&gt;gen_lock
+)paren
+)paren
 suffix:semicolon
 r_return
 id|p_scn_table

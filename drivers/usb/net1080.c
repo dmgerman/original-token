@@ -43,6 +43,10 @@ l_int|0x0525
 comma
 id|driver_info
 suffix:colon
+(paren
+r_int
+r_int
+)paren
 l_string|&quot;NetChip TurboCONNECT&quot;
 comma
 )brace
@@ -53,6 +57,13 @@ singleline_comment|// Belkin, ...
 comma
 singleline_comment|// END
 )brace
+suffix:semicolon
+id|MODULE_DEVICE_TABLE
+(paren
+id|usb
+comma
+id|products
+)paren
 suffix:semicolon
 DECL|variable|node_id
 r_static
@@ -104,6 +115,8 @@ suffix:semicolon
 singleline_comment|// packetsize == f(mtu setting), with upper limit
 DECL|macro|NC_MAX_PACKET
 mdefine_line|#define NC_MAX_PACKET(mtu) (sizeof (struct nc_header) &bslash;&n;&t;&t;&t;&t;+ (mtu) &bslash;&n;&t;&t;&t;&t;+ 1 &bslash;&n;&t;&t;&t;&t;+ sizeof (struct nc_trailer))
+DECL|macro|MAX_PACKET
+mdefine_line|#define MAX_PACKET&t;8191
 singleline_comment|// zero means no timeout; else, how long a 64 byte bulk
 singleline_comment|// read may be queued before HW flushes it.
 DECL|macro|NC_READ_TTL
@@ -1319,7 +1332,7 @@ id|NC_MAX_PACKET
 id|new_mtu
 )paren
 OG
-l_int|8191
+id|MAX_PACKET
 )paren
 r_return
 op_minus
@@ -1675,12 +1688,6 @@ id|USB_ASYNC_UNLINK
 )paren
 op_ne
 l_int|0
-op_logical_or
-id|netif_queue_stopped
-(paren
-op_amp
-id|dev-&gt;net
-)paren
 )paren
 (brace
 id|dbg
@@ -1711,12 +1718,14 @@ suffix:colon
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
 id|skb-&gt;len
 op_amp
 l_int|0x01
 )paren
-r_break
-suffix:semicolon
+)paren
+(brace
 id|entry-&gt;state
 op_assign
 id|rx_cleanup
@@ -1734,6 +1743,34 @@ comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|skb-&gt;len
+OG
+id|MAX_PACKET
+)paren
+(brace
+id|entry-&gt;state
+op_assign
+id|rx_cleanup
+suffix:semicolon
+id|dev-&gt;stats.rx_errors
+op_increment
+suffix:semicolon
+id|dev-&gt;stats.rx_frame_errors
+op_increment
+suffix:semicolon
+id|dbg
+(paren
+l_string|&quot;rx too big, %d&quot;
+comma
+id|skb-&gt;len
+)paren
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 singleline_comment|// hardware-reported interface shutdown ... which we
@@ -2992,6 +3029,29 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|header-&gt;packet_len
+OG
+id|MAX_PACKET
+)paren
+(brace
+id|dev-&gt;stats.rx_frame_errors
+op_increment
+suffix:semicolon
+id|dbg
+(paren
+l_string|&quot;packet too big, %d&quot;
+comma
+id|header-&gt;packet_len
+)paren
+suffix:semicolon
+r_goto
+id|error
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
 id|header-&gt;hdr_len
 OL
 id|NC_MIN_HEADER
@@ -3005,6 +3065,31 @@ id|dbg
 l_string|&quot;header too short, %d&quot;
 comma
 id|header-&gt;hdr_len
+)paren
+suffix:semicolon
+r_goto
+id|error
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|header-&gt;hdr_len
+OG
+id|header-&gt;packet_len
+)paren
+(brace
+id|dev-&gt;stats.rx_frame_errors
+op_increment
+suffix:semicolon
+id|dbg
+(paren
+l_string|&quot;header too big, %d packet %d&quot;
+comma
+id|header-&gt;hdr_len
+comma
+id|header-&gt;packet_len
 )paren
 suffix:semicolon
 r_goto

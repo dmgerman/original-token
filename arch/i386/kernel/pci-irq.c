@@ -1059,7 +1059,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The Intel PIIX4 pirq rules are very sane, compared to&n; * the ALI ones (or anything else, for that matter).&n; */
+multiline_comment|/*&n; * The Intel PIIX4 pirq rules are fairly simple: &quot;pirq&quot; is&n; * just a pointer to the config space. However, something&n; * funny is going on with 0xfe/0xff, and apparently they&n; * should handle IDE irq routing. Ignore them for now.&n; */
 DECL|function|pirq_piix_get
 r_static
 r_int
@@ -1083,6 +1083,23 @@ id|pirq
 id|u8
 id|x
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|pirq
+)paren
+(brace
+r_case
+l_int|0xfe
+suffix:colon
+r_case
+l_int|0xff
+suffix:colon
+r_return
+l_int|0
+suffix:semicolon
+r_default
+suffix:colon
 id|pci_read_config_byte
 c_func
 (paren
@@ -1107,6 +1124,7 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
+)brace
 DECL|function|pirq_piix_set
 r_static
 r_int
@@ -1130,6 +1148,23 @@ r_int
 id|irq
 )paren
 (brace
+r_switch
+c_cond
+(paren
+id|pirq
+)paren
+(brace
+r_case
+l_int|0xfe
+suffix:colon
+r_case
+l_int|0xff
+suffix:colon
+r_return
+l_int|0
+suffix:semicolon
+r_default
+suffix:colon
 id|pci_write_config_byte
 c_func
 (paren
@@ -1143,6 +1178,7 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * The VIA pirq rules are nibble-based, like ALI,&n; * but without the ugly irq number munging or the&n; * strange special cases..&n; */
 DECL|function|pirq_via_get

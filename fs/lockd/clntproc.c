@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/sunrpc/svc.h&gt;
 macro_line|#include &lt;linux/lockd/lockd.h&gt;
@@ -247,28 +248,38 @@ op_star
 id|lock
 )paren
 (brace
-id|nlmclnt_next_cookie
+id|locks_copy_lock
 c_func
 (paren
 op_amp
-id|call-&gt;a_args.cookie
+id|call-&gt;a_args.lock.fl
+comma
+op_amp
+id|lock-&gt;fl
 )paren
 suffix:semicolon
-id|call-&gt;a_args.lock
-op_assign
-op_star
-id|lock
+id|memcpy
+c_func
+(paren
+op_amp
+id|call-&gt;a_args.lock.fh
+comma
+op_amp
+id|lock-&gt;fh
+comma
+r_sizeof
+(paren
+id|call-&gt;a_args.lock.fh
+)paren
+)paren
 suffix:semicolon
 id|call-&gt;a_args.lock.caller
 op_assign
 id|system_utsname.nodename
 suffix:semicolon
-id|init_waitqueue_head
-c_func
-(paren
-op_amp
-id|call-&gt;a_args.lock.fl.fl_wait
-)paren
+id|call-&gt;a_args.lock.oh.len
+op_assign
+id|lock-&gt;oh.len
 suffix:semicolon
 multiline_comment|/* set default data area */
 id|call-&gt;a_args.lock.oh.data
@@ -1738,10 +1749,20 @@ op_star
 id|fl
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|nlm_get_host
 c_func
 (paren
 id|fl-&gt;fl_u.nfs_fl.host
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -1757,6 +1778,11 @@ op_star
 id|fl
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1774,6 +1800,11 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * LOCK: Try to create a lock&n; *&n; *&t;&t;&t;Programmer Harassment Alert&n; *&n; * When given a blocking lock request in a sync RPC call, the HPUX lockd&n; * will faithfully return LCK_BLOCKED but never cares to notify us when&n; * the lock could be granted. This way, our local process could hang&n; * around forever waiting for the callback.&n; *&n; *  Solution A:&t;Implement busy-waiting&n; *  Solution B: Use the async version of the call (NLM_LOCK_{MSG,RES})&n; *&n; * For now I am implementing solution A, because I hate the idea of&n; * re-implementing lockd for a third time in two months. The async&n; * calls shouldn&squot;t be too hard to do, however.&n; *&n; * This is one of the lovely things about standards in the NFS area:&n; * they&squot;re so soft and squishy you can&squot;t really blame HP for doing this.&n; */
 r_static

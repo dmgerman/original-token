@@ -275,24 +275,6 @@ id|dev
 suffix:semicolon
 "&f;"
 multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, allocate space for the device and return success&n;   (detachable devices only).&n;   */
-macro_line|#ifdef HAVE_DEVLIST
-multiline_comment|/* Support for an alternate probe manager, which will eliminate the&n;   boilerplate below. */
-DECL|variable|seeq8005_drv
-r_struct
-id|netdev_entry
-id|seeq8005_drv
-op_assign
-(brace
-l_string|&quot;seeq8005&quot;
-comma
-id|seeq8005_probe1
-comma
-id|SEEQ8005_IO_EXTENT
-comma
-id|seeq8005_portlist
-)brace
-suffix:semicolon
-macro_line|#else
 r_int
 id|__init
 DECL|function|seeq8005_probe
@@ -407,7 +389,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* This is the real probe routine.  Linux has a history of friendly device&n;   probes on the ISA bus.  A good device probes avoids doing writes, and&n;   verifies that the correct device exists and functions.  */
 DECL|function|seeq8005_probe1
 r_static
@@ -1234,28 +1215,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-multiline_comment|/* Allocate a new &squot;dev&squot; if needed. */
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-id|dev
-op_assign
-id|init_etherdev
-c_func
-(paren
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|net_local
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3353,19 +3312,6 @@ id|SEEQ_CMD
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|devicename
-r_static
-r_char
-id|devicename
-(braket
-l_int|9
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|dev_seeq
 r_static
 r_struct
@@ -3373,29 +3319,8 @@ id|net_device
 id|dev_seeq
 op_assign
 (brace
-id|devicename
-comma
-multiline_comment|/* device name is inserted by linux/drivers/net/net_init.c */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0x300
-comma
-l_int|5
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
+id|init
+suffix:colon
 id|seeq8005_probe
 )brace
 suffix:semicolon

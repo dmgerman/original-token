@@ -3376,7 +3376,7 @@ multiline_comment|/* If users can be writing to this page using arbitrary&n;&t;&
 r_if
 c_cond
 (paren
-id|page-&gt;mapping-&gt;i_mmap_shared
+id|mapping-&gt;i_mmap_shared
 op_ne
 l_int|NULL
 )paren
@@ -5199,6 +5199,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * If a task terminates while we&squot;re swapping the page, the vma and&n; * and file could be released: try_to_swap_out has done a get_file.&n; * vma/file is guaranteed to exist in the unmap/sync cases because&n; * mmap_sem is held.&n; *&n; * The &quot;mapping&quot; test takes care of somebody having truncated the&n; * page and thus made this write-page a no-op..&n; */
 DECL|function|filemap_write_page
 r_static
 r_int
@@ -5219,9 +5220,26 @@ r_int
 id|wait
 )paren
 (brace
-multiline_comment|/*&n;&t; * If a task terminates while we&squot;re swapping the page, the vma and&n;&t; * and file could be released: try_to_swap_out has done a get_file.&n;&t; * vma/file is guaranteed to exist in the unmap/sync cases because&n;&t; * mmap_sem is held.&n;&t; */
-r_return
-id|page-&gt;mapping-&gt;a_ops
+r_struct
+id|address_space
+op_star
+id|mapping
+op_assign
+id|page-&gt;mapping
+suffix:semicolon
+r_int
+id|error
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mapping
+)paren
+id|error
+op_assign
+id|mapping-&gt;a_ops
 op_member_access_from_pointer
 id|writepage
 c_func
@@ -5230,6 +5248,9 @@ id|file
 comma
 id|page
 )paren
+suffix:semicolon
+r_return
+id|error
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The page cache takes care of races between somebody&n; * trying to swap something out and swap something in&n; * at the same time..&n; */
@@ -5567,16 +5588,6 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|error
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Nothing to do if somebody truncated the page from under us.. */
-r_if
-c_cond
-(paren
-id|page-&gt;mapping
-)paren
 id|error
 op_assign
 id|filemap_write_page
@@ -8841,6 +8852,13 @@ r_struct
 id|page
 op_star
 id|page
+suffix:semicolon
+r_int
+id|err
+suffix:semicolon
+id|retry
+suffix:colon
+id|page
 op_assign
 id|__read_cache_page
 c_func
@@ -8853,9 +8871,6 @@ id|filler
 comma
 id|data
 )paren
-suffix:semicolon
-r_int
-id|err
 suffix:semicolon
 r_if
 c_cond
@@ -8881,6 +8896,29 @@ c_func
 id|page
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|page-&gt;mapping
+)paren
+(brace
+id|UnlockPage
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+id|page_cache_release
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_goto
+id|retry
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

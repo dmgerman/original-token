@@ -335,6 +335,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;scsi_logging_setup : usage scsi_logging_level=n &quot;
 l_string|&quot;(n should be 0 or non-zero)&bslash;n&quot;
 )paren
@@ -3717,6 +3718,7 @@ multiline_comment|/* low on space (D.Gilbert 990424) */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;scsi_build_commandblocks: want=%d, space for=%d blocks&bslash;n&quot;
 comma
 id|SDpnt-&gt;queue_depth
@@ -4758,6 +4760,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;scsi logging level set to 0x%8.8x&bslash;n&quot;
 comma
 id|scsi_logging_level
@@ -4850,6 +4853,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;scsi singledevice %d %d %d %d&bslash;n&quot;
 comma
 id|host
@@ -5434,7 +5438,8 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;Failure to register low-level scsi driver&quot;
+id|KERN_ERR
+l_string|&quot;scsi: Failure to register low-level scsi driver&quot;
 )paren
 suffix:semicolon
 id|scsi_unregister_host
@@ -5448,6 +5453,9 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* &n;&t;&t;&t; * The low-level driver failed to register a driver.&n;&t;&t;&t; * We can do this now.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
 id|scsi_register
 c_func
 (paren
@@ -5455,7 +5463,27 @@ id|tpnt
 comma
 l_int|0
 )paren
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;scsi: register failed.&bslash;n&quot;
+)paren
 suffix:semicolon
+id|scsi_unregister_host
+c_func
+(paren
+id|tpnt
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 )brace
 id|tpnt-&gt;next
 op_assign
@@ -5598,6 +5626,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;scsi%d : %s&bslash;n&quot;
 comma
 multiline_comment|/* And print a little message */
@@ -6101,6 +6130,7 @@ id|RQ_INACTIVE
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;SCSI device not inactive - rq_status=%d, target=%d, pid=%ld, state=%d, owner=%d.&bslash;n&quot;
 comma
 id|SCpnt-&gt;request.rq_status
@@ -6160,6 +6190,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Device busy???&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -6255,6 +6286,7 @@ id|SDpnt-&gt;attached
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Attached usage count = %d&bslash;n&quot;
 comma
 id|SDpnt-&gt;attached
@@ -6555,6 +6587,7 @@ id|next_scsi_host
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;scsi : %d host%s left.&bslash;n&quot;
 comma
 id|next_scsi_host
@@ -7256,6 +7289,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Dump of scsi host parameters:&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7280,6 +7314,7 @@ id|shpnt-&gt;next
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot; %d %d %d : %d %d&bslash;n&quot;
 comma
 id|shpnt-&gt;host_failed
@@ -7302,12 +7337,14 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Dump of scsi command parameters:&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7328,6 +7365,7 @@ id|shpnt-&gt;next
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;h:c:t:l (dev sect nsect cnumsec sg) (ret all flg) (to/cmd to ito) cmd snse result&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7363,6 +7401,7 @@ multiline_comment|/*  (0) h:c:t:l (dev sect nsect cnumsec sg) (ret all flg) (to/
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;(%3d) %2d:%1d:%2d:%2d (%6s %4ld %4ld %4ld %4x %1d) (%1d %1d 0x%2x) (%4d %4d %4d) 0x%2.2x 0x%2.2x 0x%8.8x&bslash;n&quot;
 comma
 id|i
@@ -7452,6 +7491,7 @@ multiline_comment|/* Now dump the request lists for each block device */
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Dump of pending block device requests&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7509,6 +7549,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%d: &quot;
 comma
 id|i
@@ -7847,6 +7888,7 @@ id|scsihosts
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;scsi: host order: %s&bslash;n&quot;
 comma
 id|scsihosts
@@ -7988,7 +8030,7 @@ c_func
 id|exit_scsi
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Function:    scsi_get_host_dev()&n; *&n; * Purpose:     Create a Scsi_Device that points to the host adapter itself.&n; *&n; * Arguments:   SHpnt   - Host that needs a Scsi_Device&n; *&n; * Lock status: None assumed.&n; *&n; * Returns:     Nothing&n; *&n; * Notes:&n; */
+multiline_comment|/*&n; * Function:    scsi_get_host_dev()&n; *&n; * Purpose:     Create a Scsi_Device that points to the host adapter itself.&n; *&n; * Arguments:   SHpnt   - Host that needs a Scsi_Device&n; *&n; * Lock status: None assumed.&n; *&n; * Returns:     The Scsi_Device or NULL&n; *&n; * Notes:&n; */
 DECL|function|scsi_get_host_dev
 id|Scsi_Device
 op_star
@@ -8023,6 +8065,18 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|SDpnt
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 id|memset
 c_func
 (paren

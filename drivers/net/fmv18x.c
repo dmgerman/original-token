@@ -657,28 +657,6 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-multiline_comment|/* Allocate a new &squot;dev&squot; if needed. */
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-id|dev
-op_assign
-id|init_etherdev
-c_func
-(paren
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|net_local
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* Grab the region so that we can find another board if the IRQ request&n;&t;   fails. */
 id|request_region
 c_func
@@ -2659,19 +2637,6 @@ suffix:semicolon
 multiline_comment|/* Disable promiscuous, use normal mode */
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|devicename
-r_static
-r_char
-id|devicename
-(braket
-l_int|9
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|dev_fmv18x
 r_static
 r_struct
@@ -2679,29 +2644,8 @@ id|net_device
 id|dev_fmv18x
 op_assign
 (brace
-id|devicename
-comma
-multiline_comment|/* device name is inserted by linux/drivers/net/net_init.c */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
+id|init
+suffix:colon
 id|fmv18x_probe
 )brace
 suffix:semicolon
@@ -2716,8 +2660,6 @@ DECL|variable|irq
 r_static
 r_int
 id|irq
-op_assign
-l_int|0
 suffix:semicolon
 id|MODULE_PARM
 c_func

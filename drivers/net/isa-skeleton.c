@@ -1,4 +1,4 @@
-multiline_comment|/* skeleton.c: A network driver outline for linux.&n; *&n; *&t;Written 1993-94 by Donald Becker.&n; *&n; *&t;Copyright 1993 United States Government as represented by the&n; *&t;Director, National Security Agency.&n; *&n; *&t;This software may be used and distributed according to the terms&n; *&t;of the GNU Public License, incorporated herein by reference.&n; *&n; *&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n; *&t;Center of Excellence in Space Data and Information Sciences&n; *&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n; *&n; *&t;This file is an outline for writing a network device driver for the&n; *&t;the Linux operating system.&n; *&n; *&t;To write (or understand) a driver, have a look at the &quot;loopback.c&quot; file to&n; *&t;get a feel of what is going on, and then use the code below as a skeleton&n; *&t;for the new driver.&n; *&n; */
+multiline_comment|/* isa-skeleton.c: A network driver outline for linux.&n; *&n; *&t;Written 1993-94 by Donald Becker.&n; *&n; *&t;Copyright 1993 United States Government as represented by the&n; *&t;Director, National Security Agency.&n; *&n; *&t;This software may be used and distributed according to the terms&n; *&t;of the GNU Public License, incorporated herein by reference.&n; *&n; *&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n; *&t;Center of Excellence in Space Data and Information Sciences&n; *&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n; *&n; *&t;This file is an outline for writing a network device driver for the&n; *&t;the Linux operating system.&n; *&n; *&t;To write (or understand) a driver, have a look at the &quot;loopback.c&quot; file to&n; *&t;get a feel of what is going on, and then use the code below as a skeleton&n; *&t;for the new driver.&n; *&n; */
 DECL|variable|version
 r_static
 r_const
@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;skeleton.c:v1.51 9/24/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
+l_string|&quot;isa-skeleton.c:v1.51 9/24/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n; *  Sources:&n; *&t;List your sources of programming information to document that&n; *&t;the driver is your own creation, and give due credit to others&n; *&t;that contributed to the work. Remember that GNU project code&n; *&t;cannot use proprietary or trade secret information. Interface&n; *&t;definitions are generally considered non-copyrightable to the&n; *&t;extent that the same names and structures must be used to be&n; *&t;compatible.&n; *&n; *&t;Finally, keep in mind that the Linux kernel is has an API, not&n; *&t;ABI. Proprietary object-code-only distributions are not permitted&n; *&t;under the GPL.&n; */
 macro_line|#include &lt;linux/module.h&gt;
@@ -278,24 +278,6 @@ id|startp
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n; * If dev-&gt;base_addr == 0, probe all likely locations.&n; * If dev-&gt;base_addr == 1, always return failure.&n; * If dev-&gt;base_addr == 2, allocate space for the device and return success&n; * (detachable devices only).&n; */
-macro_line|#ifdef HAVE_DEVLIST
-multiline_comment|/*&n; * Support for an alternate probe manager,&n; * which will eliminate the boilerplate below.&n; */
-DECL|variable|netcard_drv
-r_struct
-id|netdev_entry
-id|netcard_drv
-op_assign
-(brace
-id|cardname
-comma
-id|netcard_probe1
-comma
-id|NETCARD_IO_EXTENT
-comma
-id|netcard_portlist
-)brace
-suffix:semicolon
-macro_line|#else
 r_int
 id|__init
 DECL|function|netcard_probe
@@ -410,7 +392,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*&n; * This is the real probe routine. Linux has a history of friendly device&n; * probes on the ISA bus. A good device probes avoids doing writes, and&n; * verifies that the correct device exists and functions.&n; */
 DECL|function|netcard_probe1
 r_static
@@ -480,38 +461,6 @@ id|SA_ADDR2
 r_return
 op_minus
 id|ENODEV
-suffix:semicolon
-)brace
-multiline_comment|/* Allocate a new &squot;dev&squot; if needed. */
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * Don&squot;t allocate the private data here, it is done later&n;&t;&t; * This makes it easier to free the memory when this driver&n;&t;&t; * is used as a module.&n;&t;&t; */
-id|dev
-op_assign
-id|init_etherdev
-c_func
-(paren
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-r_return
-op_minus
-id|ENOMEM
 suffix:semicolon
 )brace
 r_if
@@ -2057,19 +2006,6 @@ id|ioaddr
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|devicename
-r_static
-r_char
-id|devicename
-(braket
-l_int|9
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|this_device
 r_static
 r_struct
@@ -2077,30 +2013,8 @@ id|net_device
 id|this_device
 op_assign
 (brace
-id|devicename
-comma
-multiline_comment|/* will be inserted by linux/drivers/net/net_init.c */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* I/O address, IRQ */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
+id|init
+suffix:colon
 id|netcard_probe
 )brace
 suffix:semicolon

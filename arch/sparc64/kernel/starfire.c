@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: starfire.c,v 1.7 2000/09/22 23:02:13 davem Exp $&n; * starfire.c: Starfire/E10000 support.&n; *&n; * Copyright (C) 1998 David S. Miller (davem@redhat.com)&n; * Copyright (C) 2000 Anton Blanchard (anton@linuxcare.com)&n; */
+multiline_comment|/* $Id: starfire.c,v 1.8 2000/10/27 18:36:47 anton Exp $&n; * starfire.c: Starfire/E10000 support.&n; *&n; * Copyright (C) 1998 David S. Miller (davem@redhat.com)&n; * Copyright (C) 2000 Anton Blanchard (anton@linuxcare.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
@@ -63,7 +63,7 @@ c_cond
 id|this_is_starfire
 )paren
 (brace
-multiline_comment|/* We do this in starfire_translate - Anton */
+multiline_comment|/*&n; * We do this in starfire_translate and xcall_deliver. When we fix our cpu&n; * arrays to support &gt; 64 processors we can use the real upaid instead&n; * of the logical cpuid in __cpu_number_map etc, then we can get rid of&n; * the translations everywhere. - Anton&n; */
 macro_line|#if 0
 r_int
 id|i

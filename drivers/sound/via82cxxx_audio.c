@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * Support for VIA 82Cxxx Audio Codecs&n; * Copyright 1999,2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n; *&n; * Distributed under the GNU GENERAL PUBLIC LICENSE (GPL) Version 2.&n; * See the &quot;COPYING&quot; file distributed with this software for more info.&n; *&n; * For a list of known bugs (errata) and documentation,&n; * see via-audio.pdf in linux/Documentation/DocBook.&n; * If this documentation does not exist, run &quot;make pdfdocs&quot;.&n; * If &quot;make pdfdocs&quot; fails, obtain the documentation from&n; * the driver&squot;s Website at&n; * http://gtf.org/garzik/drivers/via82cxxx/&n; *&n; */
 DECL|macro|VIA_VERSION
-mdefine_line|#define VIA_VERSION&t;&quot;1.1.12&quot;
+mdefine_line|#define VIA_VERSION&t;&quot;1.1.14&quot;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -5055,12 +5055,14 @@ op_assign
 id|vma-&gt;vm_pgoff
 op_plus
 (paren
+(paren
 id|address
 op_minus
 id|vma-&gt;vm_start
 )paren
 op_rshift
 id|PAGE_SHIFT
+)paren
 suffix:semicolon
 id|rd
 op_assign
@@ -5191,6 +5193,7 @@ r_return
 id|dmapage
 suffix:semicolon
 )brace
+macro_line|#ifndef VM_RESERVE
 DECL|function|via_mm_swapout
 r_static
 r_int
@@ -5211,6 +5214,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif /* VM_RESERVE */
 DECL|variable|via_mm_ops
 r_struct
 id|vm_operations_struct
@@ -5221,10 +5225,12 @@ id|nopage
 suffix:colon
 id|via_mm_nopage
 comma
+macro_line|#ifndef VM_RESERVE
 id|swapout
 suffix:colon
 id|via_mm_swapout
 comma
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|function|via_dsp_mmap
@@ -5440,6 +5446,12 @@ id|vma-&gt;vm_private_data
 op_assign
 id|card
 suffix:semicolon
+macro_line|#ifdef VM_RESERVE
+id|vma-&gt;vm_flags
+op_or_assign
+id|VM_RESERVE
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cs4215.h,v 1.7 1999/09/21 14:37:19 davem Exp $&n; * drivers/sbus/audio/cs4215.h&n; *&n; * Copyright (C) 1997 Rudolf Koenig (rfkoenig@immd4.informatik.uni-erlangen.de)&n; * Used with dbri.h&n; */
+multiline_comment|/* $Id: cs4215.h,v 1.8 2000/10/27 07:01:38 uzi Exp $&n; * drivers/sbus/audio/cs4215.h&n; *&n; * Copyright (C) 1997 Rudolf Koenig (rfkoenig@immd4.informatik.uni-erlangen.de)&n; * Used with dbri.h&n; */
 macro_line|#ifndef _CS4215_H_
 DECL|macro|_CS4215_H_
 mdefine_line|#define _CS4215_H_
@@ -377,7 +377,7 @@ multiline_comment|/* Time Slot 6, Output Setting  */
 DECL|macro|CS4215_RO
 mdefine_line|#define CS4215_RO(v)&t;v&t;/* Right Output Attenuation 0x3f: -94.5 dB */
 DECL|macro|CS4215_SE
-mdefine_line|#define CS4215_SE&t;(1&lt;&lt;6)&t;/* Line Out Enable */
+mdefine_line|#define CS4215_SE&t;(1&lt;&lt;6)&t;/* Speaker Enable */
 DECL|macro|CS4215_ADI
 mdefine_line|#define CS4215_ADI&t;(1&lt;&lt;7)&t;/* A/D Data Invalid: Busy in calibration */
 multiline_comment|/* Time Slot 7, Input Setting */
