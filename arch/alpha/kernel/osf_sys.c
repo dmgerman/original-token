@@ -5002,8 +5002,7 @@ id|ret
 suffix:semicolon
 id|timeout
 op_assign
-op_complement
-l_int|0UL
+id|MAX_SCHEDULE_TIMEOUT
 suffix:semicolon
 r_if
 c_cond
@@ -5089,17 +5088,6 @@ op_add_assign
 id|sec
 op_star
 id|HZ
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|timeout
-)paren
-id|timeout
-op_add_assign
-id|jiffies
-op_plus
-l_int|1
 suffix:semicolon
 )brace
 id|ret
@@ -5235,6 +5223,7 @@ id|n
 comma
 id|fds
 comma
+op_amp
 id|timeout
 )paren
 suffix:semicolon

@@ -20,7 +20,6 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
-macro_line|#include &lt;linux/capability.h&gt;
 macro_line|#include &lt;linux/securebits.h&gt;
 multiline_comment|/*&n; * cloning flags:&n; */
 DECL|macro|CSIGNAL
@@ -75,11 +74,9 @@ r_int
 id|last_pid
 suffix:semicolon
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/resource.h&gt;
-macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|TASK_RUNNING

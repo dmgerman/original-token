@@ -817,6 +817,7 @@ id|retry
 suffix:semicolon
 )brace
 DECL|function|V1_minix_truncate
+r_static
 r_void
 id|V1_minix_truncate
 c_func

@@ -880,7 +880,7 @@ multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
-id|ufs_bmap
+l_int|NULL
 comma
 multiline_comment|/* bmap */
 l_int|NULL

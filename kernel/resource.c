@@ -1,8 +1,6 @@
 multiline_comment|/*&n; *&t;linux/kernel/resource.c&n; *&n; * Copyright (C) 1995&t;Linus Torvalds&n; *&t;&t;&t;David Hinds&n; *&n; * Kernel io-region resource management&n; */
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|IOTABLE_SIZE

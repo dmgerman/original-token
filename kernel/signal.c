@@ -1,14 +1,10 @@
 multiline_comment|/*&n; *  linux/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1997-11-02  Modified for POSIX.1b signals by Richard Henderson&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
-macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -1175,9 +1171,6 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
-id|nr_queued_signals
-op_increment
-suffix:semicolon
 )brace
 r_if
 c_cond
@@ -1185,6 +1178,9 @@ c_cond
 id|q
 )paren
 (brace
+id|nr_queued_signals
+op_increment
+suffix:semicolon
 id|q-&gt;next
 op_assign
 l_int|NULL

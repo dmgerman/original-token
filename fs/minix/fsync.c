@@ -625,6 +625,7 @@ id|err
 suffix:semicolon
 )brace
 DECL|function|V1_minix_sync_file
+r_static
 r_int
 id|V1_minix_sync_file
 c_func
@@ -1489,6 +1490,7 @@ id|err
 suffix:semicolon
 )brace
 DECL|function|V2_minix_sync_file
+r_static
 r_int
 id|V2_minix_sync_file
 c_func

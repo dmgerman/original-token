@@ -1610,7 +1610,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This function makes sure the current process has its own signal table,&n; * so that flush_old_signals can later reset the signals without disturbing&n; * other processes.  (Other processes might share the signal table via&n; * the CLONE_SIGHAND option to clone().)&n; */
+multiline_comment|/*&n; * This function makes sure the current process has its own signal table,&n; * so that flush_signal_handlers can later reset the handlers without&n; * disturbing other processes.  (Other processes might share the signal&n; * table via the CLONE_SIGHAND option to clone().)&n; */
 DECL|function|make_private_signals
 r_static
 r_inline
@@ -1744,34 +1744,6 @@ id|oldsig
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * These functions flushes out all traces of the currently running executable&n; * so that a new one can be started&n; */
-DECL|function|flush_old_signals
-r_static
-r_inline
-r_void
-id|flush_old_signals
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|t
-)paren
-(brace
-macro_line|#if 0
-id|flush_signals
-c_func
-(paren
-id|t
-)paren
-suffix:semicolon
-macro_line|#endif
-id|flush_signal_handlers
-c_func
-(paren
-id|t
-)paren
-suffix:semicolon
-)brace
 DECL|function|flush_old_files
 r_static
 r_inline
@@ -2041,7 +2013,7 @@ id|current-&gt;dumpable
 op_assign
 l_int|0
 suffix:semicolon
-id|flush_old_signals
+id|flush_signal_handlers
 c_func
 (paren
 id|current

@@ -10704,7 +10704,7 @@ multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
-id|fat_bmap
+l_int|NULL
 comma
 multiline_comment|/* bmap */
 l_int|NULL

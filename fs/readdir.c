@@ -1,12 +1,9 @@
 multiline_comment|/*&n; *  linux/fs/readdir.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * Traditional linux readdir() handling..&n; *&n; * &quot;count=1&quot; is a special case, meaning that the buffer is one&n; * dirent-structure in size and that the code can&squot;t handle more&n; * anyway. Thus the special &quot;fillonedir()&quot; function for that&n; * case (the low-level handlers don&squot;t need to care about this).&n; */

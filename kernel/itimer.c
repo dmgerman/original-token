@@ -1,12 +1,9 @@
 multiline_comment|/*&n; * linux/kernel/itimer.c&n; *&n; * Copyright (C) 1992 Darren Senn&n; */
 multiline_comment|/* These are all the functions necessary to implement itimers */
-macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * change timeval to jiffies, trying to avoid the &n; * most obvious overflows..&n; *&n; * The tv_*sec values are signed, but nothing seems to &n; * indicate whether we really should use them as signed values&n; * when doing itimers. POSIX doesn&squot;t mention this (but if&n; * alarm() uses itimers without checking, we have to use unsigned&n; * arithmetic).&n; */

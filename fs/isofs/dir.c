@@ -114,7 +114,7 @@ multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
-id|isofs_bmap
+l_int|NULL
 comma
 multiline_comment|/* bmap */
 l_int|NULL

@@ -104,6 +104,13 @@ op_star
 id|wb_page
 suffix:semicolon
 multiline_comment|/* page to be written */
+DECL|member|wb_wait
+r_struct
+id|wait_queue
+op_star
+id|wb_wait
+suffix:semicolon
+multiline_comment|/* wait for completion */
 DECL|member|wb_offset
 r_int
 r_int
@@ -116,6 +123,16 @@ r_int
 id|wb_bytes
 suffix:semicolon
 multiline_comment|/* dirty range */
+DECL|member|wb_count
+r_int
+r_int
+id|wb_count
+suffix:semicolon
+multiline_comment|/* user count */
+DECL|member|wb_status
+r_int
+id|wb_status
+suffix:semicolon
 DECL|member|wb_pid
 id|pid_t
 id|wb_pid
@@ -141,15 +158,9 @@ suffix:semicolon
 multiline_comment|/* file attributes */
 )brace
 suffix:semicolon
-DECL|macro|wb_status
-mdefine_line|#define wb_status&t;&t;wb_task.tk_status
 DECL|macro|WB_NEXT
 mdefine_line|#define WB_NEXT(req)&t;&t;((struct nfs_wreq *) ((req)-&gt;wb_list.next))
 multiline_comment|/*&n; * Various flags for wb_flags&n; */
-DECL|macro|NFS_WRITE_WANTLOCK
-mdefine_line|#define NFS_WRITE_WANTLOCK&t;0x0001&t;/* needs to lock page */
-DECL|macro|NFS_WRITE_LOCKED
-mdefine_line|#define NFS_WRITE_LOCKED&t;0x0002&t;/* holds lock on page */
 DECL|macro|NFS_WRITE_CANCELLED
 mdefine_line|#define NFS_WRITE_CANCELLED&t;0x0004&t;/* has been cancelled */
 DECL|macro|NFS_WRITE_UNCOMMITTED
@@ -160,10 +171,6 @@ DECL|macro|NFS_WRITE_INPROGRESS
 mdefine_line|#define NFS_WRITE_INPROGRESS&t;0x0100&t;/* RPC call in progress */
 DECL|macro|NFS_WRITE_COMPLETE
 mdefine_line|#define NFS_WRITE_COMPLETE&t;0x0200&t;/* RPC call completed */
-DECL|macro|WB_WANTLOCK
-mdefine_line|#define WB_WANTLOCK(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_WANTLOCK)
-DECL|macro|WB_HAVELOCK
-mdefine_line|#define WB_HAVELOCK(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_LOCKED)
 DECL|macro|WB_CANCELLED
 mdefine_line|#define WB_CANCELLED(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_CANCELLED)
 DECL|macro|WB_UNCOMMITTED
@@ -814,6 +821,22 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|nfs_flush_pages
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+id|pid_t
+comma
+id|off_t
+comma
+id|off_t
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|nfs_flush_dirty_pages
 c_func
 (paren
@@ -962,12 +985,6 @@ id|dentry
 )paren
 suffix:semicolon
 )brace
-r_extern
-r_struct
-id|nfs_wreq
-op_star
-id|nfs_failed_requests
-suffix:semicolon
 r_static
 r_inline
 r_int
@@ -981,17 +998,13 @@ op_star
 id|inode
 )paren
 (brace
-r_if
-c_cond
+r_return
+id|NFS_WRITEBACK
+c_func
 (paren
-id|nfs_failed_requests
-op_eq
-l_int|NULL
+id|inode
 )paren
-r_return
-l_int|0
-suffix:semicolon
-r_return
+op_logical_and
 id|nfs_check_error
 c_func
 (paren

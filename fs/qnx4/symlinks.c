@@ -49,14 +49,9 @@ op_assign
 l_int|NULL
 comma
 multiline_comment|/* no file-operations */
-macro_line|#ifdef CONFIG_QNX4FS_RW
-id|qnx4_create
-comma
-multiline_comment|/* create */
-macro_line|#else
 l_int|NULL
 comma
-macro_line|#endif
+multiline_comment|/* create */
 l_int|NULL
 comma
 multiline_comment|/* lookup */

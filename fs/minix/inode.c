@@ -71,6 +71,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|minix_write_super
+r_static
 r_void
 id|minix_write_super
 (paren
@@ -126,6 +127,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|minix_put_super
+r_static
 r_void
 id|minix_put_super
 c_func
@@ -254,6 +256,7 @@ id|minix_remount
 )brace
 suffix:semicolon
 DECL|function|minix_remount
+r_static
 r_int
 id|minix_remount
 (paren
@@ -602,6 +605,7 @@ id|errmsg
 suffix:semicolon
 )brace
 DECL|function|minix_read_super
+r_static
 r_struct
 id|super_block
 op_star
@@ -1400,6 +1404,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|minix_statfs
+r_static
 r_int
 id|minix_statfs
 c_func
@@ -4236,6 +4241,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * The global function to read an inode.&n; */
 DECL|function|minix_read_inode
+r_static
 r_void
 id|minix_read_inode
 c_func
@@ -4710,6 +4716,7 @@ id|bh
 suffix:semicolon
 )brace
 DECL|function|minix_update_inode
+r_static
 r_struct
 id|buffer_head
 op_star
@@ -4750,6 +4757,7 @@ id|inode
 suffix:semicolon
 )brace
 DECL|function|minix_write_inode
+r_static
 r_void
 id|minix_write_inode
 c_func
