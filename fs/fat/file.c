@@ -1279,10 +1279,7 @@ id|inode-&gt;i_sb
 )paren
 op_member_access_from_pointer
 id|cvf_format
-)paren
-r_if
-c_cond
-(paren
+op_logical_and
 id|MSDOS_SB
 c_func
 (paren
@@ -1291,7 +1288,6 @@ id|inode-&gt;i_sb
 op_member_access_from_pointer
 id|cvf_format-&gt;cvf_file_read
 )paren
-(brace
 r_return
 id|MSDOS_SB
 c_func
@@ -1313,7 +1309,6 @@ comma
 id|ppos
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1434,6 +1429,20 @@ id|inode
 op_member_access_from_pointer
 id|i_binary
 suffix:semicolon
+id|PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;fat_file_write: dentry=%p, inode=%p, ino=%ld&bslash;n&quot;
+comma
+id|filp-&gt;f_dentry
+comma
+id|inode
+comma
+id|inode-&gt;i_ino
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1462,10 +1471,7 @@ id|sb
 )paren
 op_member_access_from_pointer
 id|cvf_format
-)paren
-r_if
-c_cond
-(paren
+op_logical_and
 id|MSDOS_SB
 c_func
 (paren
@@ -1474,7 +1480,6 @@ id|sb
 op_member_access_from_pointer
 id|cvf_format-&gt;cvf_file_write
 )paren
-(brace
 r_return
 id|MSDOS_SB
 c_func
@@ -1496,7 +1501,6 @@ comma
 id|ppos
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* S_ISLNK allows for UMSDOS. Should never happen for normal MSDOS */
 r_if
 c_cond

@@ -217,6 +217,7 @@ DECL|function|csum_partial_cfu_dest_aligned
 id|csum_partial_cfu_dest_aligned
 c_func
 (paren
+r_const
 r_int
 r_int
 op_star

@@ -111,7 +111,7 @@ id|env_offset
 l_int|6
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t;   * Volume computation parameters for gus_adagio_vol()&n;&t;   */
+multiline_comment|/*&n;&t; * Volume computation parameters for gus_adagio_vol()&n;&t; */
 DECL|member|main_vol
 DECL|member|expression_vol
 DECL|member|patch_vol
@@ -720,9 +720,9 @@ DECL|macro|INSTANT_RAMP
 mdefine_line|#define&t;INSTANT_RAMP&t;&t;-1&t;/* Instant change. No ramping */
 DECL|macro|FAST_RAMP
 mdefine_line|#define FAST_RAMP&t;&t;0&t;/* Fastest possible ramp */
+DECL|function|reset_sample_memory
 r_static
 r_void
-DECL|function|reset_sample_memory
 id|reset_sample_memory
 c_func
 (paren
@@ -845,8 +845,8 @@ op_assign
 id|NOT_SAMPLE
 suffix:semicolon
 )brace
-r_void
 DECL|function|gus_delay
+r_void
 id|gus_delay
 c_func
 (paren
@@ -877,9 +877,9 @@ id|u_DRAMIO
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_poke
 r_static
 r_void
-DECL|function|gus_poke
 id|gus_poke
 c_func
 (paren
@@ -988,10 +988,10 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_peek
 r_static
 r_int
 r_char
-DECL|function|gus_peek
 id|gus_peek
 c_func
 (paren
@@ -1101,8 +1101,8 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
-r_void
 DECL|function|gus_write8
+r_void
 id|gus_write8
 c_func
 (paren
@@ -1165,10 +1165,10 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_read8
 r_static
 r_int
 r_char
-DECL|function|gus_read8
 id|gus_read8
 c_func
 (paren
@@ -1226,10 +1226,10 @@ r_return
 id|val
 suffix:semicolon
 )brace
+DECL|function|gus_look8
 r_static
 r_int
 r_char
-DECL|function|gus_look8
 id|gus_look8
 c_func
 (paren
@@ -1285,9 +1285,9 @@ r_return
 id|val
 suffix:semicolon
 )brace
+DECL|function|gus_write16
 r_static
 r_void
-DECL|function|gus_write16
 id|gus_write16
 c_func
 (paren
@@ -1372,10 +1372,10 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_read16
 r_static
 r_int
 r_int
-DECL|function|gus_read16
 id|gus_read16
 c_func
 (paren
@@ -1453,10 +1453,10 @@ op_or
 id|lo
 suffix:semicolon
 )brace
+DECL|function|gus_look16
 r_static
 r_int
 r_int
-DECL|function|gus_look16
 id|gus_look16
 c_func
 (paren
@@ -1532,9 +1532,9 @@ op_or
 id|lo
 suffix:semicolon
 )brace
+DECL|function|gus_write_addr
 r_static
 r_void
-DECL|function|gus_write_addr
 id|gus_write_addr
 c_func
 (paren
@@ -1592,7 +1592,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t;     * Special processing required for 16 bit patches&n;&t;&t;&t;     */
+multiline_comment|/*&n;&t;&t;&t; * Special processing required for 16 bit patches&n;&t;&t;&t; */
 id|hold_address
 op_assign
 id|address
@@ -1726,9 +1726,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_select_voice
 r_static
 r_void
-DECL|function|gus_select_voice
 id|gus_select_voice
 c_func
 (paren
@@ -1756,9 +1756,9 @@ id|u_Voice
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_select_max_voices
 r_static
 r_void
-DECL|function|gus_select_max_voices
 id|gus_select_max_voices
 c_func
 (paren
@@ -1818,9 +1818,9 @@ l_int|0xc0
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_voice_on
 r_static
 r_void
-DECL|function|gus_voice_on
 id|gus_voice_on
 c_func
 (paren
@@ -1867,9 +1867,9 @@ l_int|0xfc
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_voice_off
 r_static
 r_void
-DECL|function|gus_voice_off
 id|gus_voice_off
 c_func
 (paren
@@ -1891,9 +1891,9 @@ l_int|0x03
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_voice_mode
 r_static
 r_void
-DECL|function|gus_voice_mode
 id|gus_voice_mode
 c_func
 (paren
@@ -1967,9 +1967,9 @@ l_int|0xfc
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_voice_freq
 r_static
 r_void
-DECL|function|gus_voice_freq
 id|gus_voice_freq
 c_func
 (paren
@@ -2063,9 +2063,9 @@ id|fc
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_voice_volume
 r_static
 r_void
-DECL|function|gus_voice_volume
 id|gus_voice_volume
 c_func
 (paren
@@ -2100,9 +2100,9 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_voice_balance
 r_static
 r_void
-DECL|function|gus_voice_balance
 id|gus_voice_balance
 c_func
 (paren
@@ -2128,9 +2128,9 @@ l_int|0xff
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_ramp_range
 r_static
 r_void
-DECL|function|gus_ramp_range
 id|gus_ramp_range
 c_func
 (paren
@@ -2184,9 +2184,9 @@ l_int|0xff
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_ramp_rate
 r_static
 r_void
-DECL|function|gus_ramp_rate
 id|gus_ramp_rate
 c_func
 (paren
@@ -2228,9 +2228,9 @@ l_int|0x3f
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_rampon
 r_static
 r_void
-DECL|function|gus_rampon
 id|gus_rampon
 c_func
 (paren
@@ -2279,9 +2279,9 @@ l_int|0xfc
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_ramp_mode
 r_static
 r_void
-DECL|function|gus_ramp_mode
 id|gus_ramp_mode
 c_func
 (paren
@@ -2355,9 +2355,9 @@ l_int|0xfc
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_rampoff
 r_static
 r_void
-DECL|function|gus_rampoff
 id|gus_rampoff
 c_func
 (paren
@@ -2373,9 +2373,9 @@ l_int|0x03
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_set_voice_pos
 r_static
 r_void
-DECL|function|gus_set_voice_pos
 id|gus_set_voice_pos
 c_func
 (paren
@@ -2463,9 +2463,9 @@ id|WAVE_16_BITS
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_voice_init
 r_static
 r_void
-DECL|function|gus_voice_init
 id|gus_voice_init
 c_func
 (paren
@@ -2557,9 +2557,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_voice_init2
 r_static
 r_void
-DECL|function|gus_voice_init2
 id|gus_voice_init2
 c_func
 (paren
@@ -2731,9 +2731,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|step_envelope
 r_static
 r_void
-DECL|function|step_envelope
 id|step_envelope
 c_func
 (paren
@@ -2808,7 +2808,7 @@ id|flags
 suffix:semicolon
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;   * Sustain phase begins. Continue envelope after receiving note off.&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * Sustain phase begins. Continue envelope after receiving note off.&n;&t;&t; */
 )brace
 r_if
 c_cond
@@ -3058,9 +3058,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|init_envelope
 r_static
 r_void
-DECL|function|init_envelope
 id|init_envelope
 c_func
 (paren
@@ -3094,9 +3094,9 @@ id|voice
 )paren
 suffix:semicolon
 )brace
+DECL|function|start_release
 r_static
 r_void
-DECL|function|start_release
 id|start_release
 c_func
 (paren
@@ -3183,9 +3183,9 @@ id|voice
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_voice_fade
 r_static
 r_void
-DECL|function|gus_voice_fade
 id|gus_voice_fade
 c_func
 (paren
@@ -3393,9 +3393,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_reset
 r_static
 r_void
-DECL|function|gus_reset
 id|gus_reset
 c_func
 (paren
@@ -3453,9 +3453,9 @@ id|i
 suffix:semicolon
 )brace
 )brace
+DECL|function|gus_initialize
 r_static
 r_void
-DECL|function|gus_initialize
 id|gus_initialize
 c_func
 (paren
@@ -3763,6 +3763,7 @@ id|tmp
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Warning! GUS IRQ not selected&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3817,6 +3818,7 @@ id|tmp
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Warning! GUS DMA not selected&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3826,8 +3828,8 @@ id|tmp
 suffix:semicolon
 )brace
 r_else
-multiline_comment|/* Setup dual DMA channel mode for GUS MAX */
 (brace
+multiline_comment|/* Setup dual DMA channel mode for GUS MAX */
 id|dma_image
 op_assign
 id|gus_dma_map
@@ -3844,6 +3846,7 @@ id|dma_image
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Warning! GUS DMA not selected&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3866,6 +3869,7 @@ id|tmp
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Warning! Invalid GUS MAX DMA&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4009,7 +4013,7 @@ comma
 id|u_Mixer
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;   * Turn mixer channels on&n;&t;&t;&t;&t;&t;   * Note! Mic in is left off.&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Turn mixer channels on&n;&t;&t;&t;&t;&t; * Note! Mic in is left off.&n;&t;&t;&t;&t;&t; */
 id|gus_select_voice
 c_func
 (paren
@@ -4082,9 +4086,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|pnp_mem_init
 r_static
 r_void
-DECL|function|pnp_mem_init
 id|pnp_mem_init
 c_func
 (paren
@@ -4476,12 +4480,14 @@ multiline_comment|/* No RAM - Give up */
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Sound: An Interwave audio chip detected but no DRAM&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Sound: Unable to work with this card.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4507,7 +4513,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Now we know how much DRAM there is in each bank. The next step is&n; * to find a DRAM size encoding (0 to 12) which is best for the combination&n; * we have.&n; *&n; * First try if any of the possible alternatives matches exactly the amount&n; * of memory we have.&n; */
+multiline_comment|/*&n;&t; * Now we know how much DRAM there is in each bank. The next step is&n;&t; * to find a DRAM size encoding (0 to 12) which is best for the combination&n;&t; * we have.&n;&t; *&n;&t; * First try if any of the possible alternatives matches exactly the amount&n;&t; * of memory we have.&n;&t; */
 r_for
 c_loop
 (paren
@@ -4574,7 +4580,7 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* No hit */
 )brace
-multiline_comment|/*&n; * If necessary, try to find a combination where other than the last&n; * bank matches our configuration and the last bank is left oversized.&n; * In this way we don&squot;t leave holes in the middle of memory.&n; */
+multiline_comment|/*&n;&t; * If necessary, try to find a combination where other than the last&n;&t; * bank matches our configuration and the last bank is left oversized.&n;&t; * In this way we don&squot;t leave holes in the middle of memory.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4584,6 +4590,7 @@ op_minus
 l_int|1
 )paren
 multiline_comment|/* No luck yet */
+(brace
 r_for
 c_loop
 (paren
@@ -4678,7 +4685,8 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* The last bank is too small */
 )brace
-multiline_comment|/*&n; * The last resort is to search for a combination where the last bank is&n; * smaller than the actual SIMM. This leaves some memory in the last bank&n; * unused but doesn&squot;t leave holes in the DRAM address space.&n; */
+)brace
+multiline_comment|/*&n;&t; * The last resort is to search for a combination where the last bank is&n;&t; * smaller than the actual SIMM. This leaves some memory in the last bank&n;&t; * unused but doesn&squot;t leave holes in the DRAM address space.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4769,12 +4777,14 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Interwave: Can&squot;t use all installed RAM.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Interwave: Try reordering SIMMS.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4792,12 +4802,14 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Interwave: Can&squot;t find working DRAM encoding.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Interwave: Defaulting to 256k. Try reordering SIMMS.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4911,7 +4923,7 @@ l_int|1024
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *    Set the memory addressing mode.&n; */
+multiline_comment|/*&n;&t; *    Set the memory addressing mode.&n;&t; */
 id|gus_write16
 c_func
 (paren
@@ -4959,8 +4971,8 @@ l_int|0x02
 )paren
 suffix:semicolon
 )brace
-r_int
 DECL|function|gus_wave_detect
+r_int
 id|gus_wave_detect
 c_func
 (paren
@@ -5066,6 +5078,7 @@ l_int|0xf0
 )paren
 )paren
 multiline_comment|/* No change */
+(brace
 r_if
 c_cond
 (paren
@@ -5135,6 +5148,7 @@ id|gus_pnp_flag
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 )brace
 id|gus_write8
 c_func
@@ -5355,7 +5369,7 @@ op_assign
 id|nr_voices
 suffix:semicolon
 r_return
-id|__copy_to_user
+id|copy_to_user
 c_func
 (paren
 id|arg
@@ -5413,9 +5427,9 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
+DECL|function|guswave_set_instr
 r_static
 r_int
-DECL|function|guswave_set_instr
 id|guswave_set_instr
 c_func
 (paren
@@ -5504,16 +5518,7 @@ op_eq
 id|NOT_SAMPLE
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;GUS: Undefined patch %d for voice %d&bslash;n&quot;
-comma
-id|instr_no
-comma
-id|voice
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(&quot;GUS: Undefined patch %d for voice %d&bslash;n&quot;, instr_no, voice);*/
 r_return
 op_minus
 id|EINVAL
@@ -5533,18 +5538,7 @@ l_int|1
 )paren
 multiline_comment|/* Sample not loaded */
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;GUS: Sample #%d not loaded for patch %d (voice %d)&bslash;n&quot;
-comma
-id|sample_no
-comma
-id|instr_no
-comma
-id|voice
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(&quot;GUS: Sample #%d not loaded for patch %d (voice %d)&bslash;n&quot;, sample_no, instr_no, voice);*/
 r_return
 op_minus
 id|EINVAL
@@ -5568,9 +5562,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|guswave_kill_note
 r_static
 r_int
-DECL|function|guswave_kill_note
 id|guswave_kill_note
 c_func
 (paren
@@ -5657,9 +5651,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|guswave_aftertouch
 r_static
 r_void
-DECL|function|guswave_aftertouch
 id|guswave_aftertouch
 c_func
 (paren
@@ -5674,9 +5668,9 @@ id|pressure
 )paren
 (brace
 )brace
+DECL|function|guswave_panning
 r_static
 r_void
-DECL|function|guswave_panning
 id|guswave_panning
 c_func
 (paren
@@ -5711,9 +5705,9 @@ op_assign
 id|value
 suffix:semicolon
 )brace
+DECL|function|guswave_volume_method
 r_static
 r_void
-DECL|function|guswave_volume_method
 id|guswave_volume_method
 c_func
 (paren
@@ -5740,9 +5734,9 @@ op_assign
 id|mode
 suffix:semicolon
 )brace
+DECL|function|compute_volume
 r_static
 r_void
-DECL|function|compute_volume
 id|compute_volume
 c_func
 (paren
@@ -5890,9 +5884,9 @@ op_assign
 l_int|4030
 suffix:semicolon
 )brace
+DECL|function|compute_and_set_volume
 r_static
 r_void
-DECL|function|compute_and_set_volume
 id|compute_and_set_volume
 c_func
 (paren
@@ -5950,7 +5944,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;   * CAUTION! Interrupts disabled. Enable them before returning&n;&t; */
+multiline_comment|/*&n;&t; * CAUTION! Interrupts disabled. Enable them before returning&n;&t; */
 id|gus_select_voice
 c_func
 (paren
@@ -6140,9 +6134,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|dynamic_volume_change
 r_static
 r_void
-DECL|function|dynamic_volume_change
 id|dynamic_volume_change
 c_func
 (paren
@@ -6322,9 +6316,9 @@ id|midi_volume
 )paren
 suffix:semicolon
 )brace
+DECL|function|guswave_controller
 r_static
 r_void
-DECL|function|guswave_controller
 id|guswave_controller
 c_func
 (paren
@@ -6587,9 +6581,9 @@ r_break
 suffix:semicolon
 )brace
 )brace
+DECL|function|guswave_start_note2
 r_static
 r_int
-DECL|function|guswave_start_note2
 id|guswave_start_note2
 c_func
 (paren
@@ -6648,12 +6642,7 @@ template_param
 l_int|31
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;GUS: Invalid voice&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(&quot;GUS: Invalid voice&bslash;n&quot;);*/
 r_return
 op_minus
 id|EINVAL
@@ -6728,12 +6717,10 @@ op_eq
 op_minus
 l_int|1
 )paren
-(brace
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -6854,10 +6841,12 @@ id|samplep
 dot
 id|high_note
 )paren
+(brace
 id|sample
 op_assign
 id|samplep
 suffix:semicolon
+)brace
 r_else
 id|samplep
 op_assign
@@ -6891,16 +6880,7 @@ op_minus
 l_int|1
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;GUS: Patch %d not defined for note %d&bslash;n&quot;
-comma
-id|patch
-comma
-id|note_num
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(&quot;GUS: Patch %d not defined for note %d&bslash;n&quot;, patch, note_num);*/
 r_return
 l_int|0
 suffix:semicolon
@@ -7244,11 +7224,12 @@ id|GUS_BANK_SIZE
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;GUS: Sample address error&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*************************************************************************&n;   *    CAUTION!        Interrupts disabled. Don&squot;t return before enabling&n;   *************************************************************************/
+multiline_comment|/*************************************************************************&n;&t; *    CAUTION!        Interrupts disabled. Don&squot;t return before enabling&n;&t; *************************************************************************/
 id|save_flags
 c_func
 (paren
@@ -7670,9 +7651,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * New guswave_start_note by Andrew J. Robinson attempts to minimize clicking&n; * when the note playing on the voice is changed.  It uses volume&n; * ramping.&n; */
+DECL|function|guswave_start_note
 r_static
 r_int
-DECL|function|guswave_start_note
 id|guswave_start_note
 c_func
 (paren
@@ -8026,9 +8007,9 @@ r_return
 id|ret_val
 suffix:semicolon
 )brace
+DECL|function|guswave_reset
 r_static
 r_void
-DECL|function|guswave_reset
 id|guswave_reset
 c_func
 (paren
@@ -8068,9 +8049,9 @@ id|i
 suffix:semicolon
 )brace
 )brace
+DECL|function|guswave_open
 r_static
 r_int
-DECL|function|guswave_open
 id|guswave_open
 c_func
 (paren
@@ -8173,9 +8154,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|guswave_close
 r_static
 r_void
-DECL|function|guswave_close
 id|guswave_close
 c_func
 (paren
@@ -8209,9 +8190,9 @@ id|gus_devnum
 )paren
 suffix:semicolon
 )brace
+DECL|function|guswave_load_patch
 r_static
 r_int
-DECL|function|guswave_load_patch
 id|guswave_load_patch
 c_func
 (paren
@@ -8284,14 +8265,7 @@ op_ne
 id|GUS_PATCH
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;GUS Error: Invalid patch format (key) 0x%x&bslash;n&quot;
-comma
-id|format
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(&quot;GUS Error: Invalid patch format (key) 0x%x&bslash;n&quot;, format);*/
 r_return
 op_minus
 id|EINVAL
@@ -8305,12 +8279,7 @@ OL
 id|sizeof_patch
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;GUS Error: Patch header too short&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;  printk(&quot;GUS Error: Patch header too short&bslash;n&quot;);*/
 r_return
 op_minus
 id|EINVAL
@@ -8328,12 +8297,7 @@ op_ge
 id|MAX_SAMPLE
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;GUS: Sample table full&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;  printk(&quot;GUS: Sample table full&bslash;n&quot;);*/
 r_return
 op_minus
 id|ENOSPC
@@ -8403,14 +8367,7 @@ template_param
 id|MAX_PATCH
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;GUS: Invalid patch number %d&bslash;n&quot;
-comma
-id|instr
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(KERN_ERR &quot;GUS: Invalid patch number %d&bslash;n&quot;, instr);*/
 r_return
 op_minus
 id|EINVAL
@@ -8424,19 +8381,7 @@ OL
 id|patch.len
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;GUS Warning: Patch record too short (%d&lt;%d)&bslash;n&quot;
-comma
-id|count
-comma
-(paren
-r_int
-)paren
-id|patch.len
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(KERN_ERR &quot;GUS Warning: Patch record too short (%d&lt;%d)&bslash;n&quot;, count, (int) patch.len);*/
 id|patch.len
 op_assign
 id|count
@@ -8454,17 +8399,7 @@ OG
 id|gus_mem_size
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;GUS: Invalid sample length %d&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|patch.len
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(KERN_ERR &quot;GUS: Invalid sample length %d&bslash;n&quot;, (int) patch.len);*/
 r_return
 op_minus
 id|EINVAL
@@ -8490,12 +8425,7 @@ op_ge
 id|patch.len
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;GUS: Invalid loop start&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;&t;printk(KERN_ERR &quot;GUS: Invalid loop start&bslash;n&quot;);*/
 r_return
 op_minus
 id|EINVAL
@@ -8509,12 +8439,7 @@ template_param
 id|patch.len
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;GUS: Invalid loop end&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;&t;printk(KERN_ERR &quot;GUS: Invalid loop end&bslash;n&quot;);*/
 r_return
 op_minus
 id|EINVAL
@@ -8541,7 +8466,7 @@ op_amp
 id|WAVE_16_BITS
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;   * 16 bit samples must fit one 256k bank.&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * 16 bit samples must fit one 256k bank.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -8550,17 +8475,7 @@ op_ge
 id|GUS_BANK_SIZE
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;GUS: Sample (16 bit) too long %d&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|patch.len
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;&t; printk(&quot;GUS: Sample (16 bit) too long %d&bslash;n&quot;, (int) patch.len);*/
 r_return
 op_minus
 id|ENOSPC
@@ -8755,7 +8670,7 @@ id|blk_sz
 op_assign
 id|left
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;   * DMA cannot cross bank (256k) boundaries. Check for that.&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * DMA cannot cross bank (256k) boundaries. Check for that.&n;&t;&t; */
 id|blk_end
 op_assign
 id|target
@@ -8801,7 +8716,7 @@ c_cond
 id|gus_no_dma
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;     * For some reason the DMA is not possible. We have to use PIO.&n;&t;&t;&t;     */
+multiline_comment|/*&n;&t;&t;&t; * For some reason the DMA is not possible. We have to use PIO.&n;&t;&t;&t; */
 r_int
 id|i
 suffix:semicolon
@@ -8910,6 +8825,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_int
+r_int
+id|tlimit
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8926,6 +8845,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;GUS: DMA buffer == NULL&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -8934,7 +8854,7 @@ op_minus
 id|ENOSPC
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t;     * OK, move now. First in and then out.&n;&t;&t;&t;     */
+multiline_comment|/*&n;&t;&t;&t; * OK, move now. First in and then out.&n;&t;&t;&t; */
 id|copy_from_user
 c_func
 (paren
@@ -8996,7 +8916,7 @@ comma
 id|DMA_MODE_WRITE
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;     * Set the DRAM address for the wave data&n;&t;&t;&t;     */
+multiline_comment|/*&n;&t;&t;&t; * Set the DRAM address for the wave data&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -9137,7 +9057,7 @@ l_int|0xffff
 suffix:semicolon
 multiline_comment|/* DRAM DMA address */
 )brace
-multiline_comment|/*&n;&t;&t;&t;     * Start the DMA transfer&n;&t;&t;&t;     */
+multiline_comment|/*&n;&t;&t;&t; * Start the DMA transfer&n;&t;&t;&t; */
 id|dma_command
 op_assign
 l_int|0x21
@@ -9193,40 +9113,18 @@ id|dma_command
 )paren
 suffix:semicolon
 multiline_comment|/* Lets go luteet (=bugs) */
-multiline_comment|/*&n;&t;&t;&t;     * Sleep here until the DRAM DMA done interrupt is served&n;&t;&t;&t;     */
+multiline_comment|/*&n;&t;&t;&t; * Sleep here until the DRAM DMA done interrupt is served&n;&t;&t;&t; */
 id|active_device
 op_assign
 id|GUS_DEV_WAVE
 suffix:semicolon
-(brace
-r_int
-r_int
-id|tlimit
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|HZ
-)paren
 id|current-&gt;timeout
 op_assign
 id|tlimit
 op_assign
 id|jiffies
 op_plus
-(paren
 id|HZ
-)paren
-suffix:semicolon
-r_else
-id|tlimit
-op_assign
-(paren
-r_int
-r_int
-)paren
-op_minus
-l_int|1
 suffix:semicolon
 id|dram_sleep_flag.opts
 op_assign
@@ -9267,8 +9165,6 @@ op_and_assign
 op_complement
 id|WK_SLEEP
 suffix:semicolon
-)brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9281,6 +9177,7 @@ id|WK_TIMEOUT
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;GUS: DMA Transfer timed out&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -9291,7 +9188,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;   * Now the next part&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * Now the next part&n;&t;&t; */
 id|left
 op_sub_assign
 id|blk_sz
@@ -9325,9 +9222,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|guswave_hw_control
 r_static
 r_void
-DECL|function|guswave_hw_control
 id|guswave_hw_control
 c_func
 (paren
@@ -10060,12 +9957,13 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-suffix:semicolon
+(brace
 )brace
 )brace
+)brace
+DECL|function|gus_audio_set_speed
 r_static
 r_int
-DECL|function|gus_audio_set_speed
 id|gus_audio_set_speed
 c_func
 (paren
@@ -10161,9 +10059,9 @@ r_return
 id|speed
 suffix:semicolon
 )brace
+DECL|function|gus_audio_set_channels
 r_static
 r_int
-DECL|function|gus_audio_set_channels
 id|gus_audio_set_channels
 c_func
 (paren
@@ -10210,9 +10108,9 @@ r_return
 id|channels
 suffix:semicolon
 )brace
+DECL|function|gus_audio_set_bits
 r_static
 r_int
-DECL|function|gus_audio_set_bits
 id|gus_audio_set_bits
 c_func
 (paren
@@ -10293,7 +10191,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|val
@@ -10317,34 +10215,16 @@ c_func
 id|val
 )paren
 suffix:semicolon
-r_return
-id|__put_user
-c_func
-(paren
-id|val
-comma
-(paren
-r_int
-op_star
-)paren
-id|arg
-)paren
+r_break
 suffix:semicolon
 r_case
 id|SOUND_PCM_READ_RATE
 suffix:colon
-r_return
-id|__put_user
-c_func
-(paren
+id|val
+op_assign
 id|gus_audio_speed
-comma
-(paren
-r_int
-op_star
-)paren
-id|arg
-)paren
+suffix:semicolon
+r_break
 suffix:semicolon
 r_case
 id|SNDCTL_DSP_STEREO
@@ -10352,7 +10232,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|val
@@ -10380,18 +10260,7 @@ l_int|1
 op_minus
 l_int|1
 suffix:semicolon
-r_return
-id|__put_user
-c_func
-(paren
-id|val
-comma
-(paren
-r_int
-op_star
-)paren
-id|arg
-)paren
+r_break
 suffix:semicolon
 r_case
 id|SOUND_PCM_WRITE_CHANNELS
@@ -10399,7 +10268,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|val
@@ -10423,34 +10292,16 @@ c_func
 id|val
 )paren
 suffix:semicolon
-r_return
-id|__put_user
-c_func
-(paren
-id|val
-comma
-(paren
-r_int
-op_star
-)paren
-id|arg
-)paren
+r_break
 suffix:semicolon
 r_case
 id|SOUND_PCM_READ_CHANNELS
 suffix:colon
-r_return
-id|__put_user
-c_func
-(paren
+id|val
+op_assign
 id|gus_audio_channels
-comma
-(paren
-r_int
-op_star
-)paren
-id|arg
-)paren
+suffix:semicolon
+r_break
 suffix:semicolon
 r_case
 id|SNDCTL_DSP_SETFMT
@@ -10458,7 +10309,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|val
@@ -10482,8 +10333,40 @@ c_func
 id|val
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SOUND_PCM_READ_BITS
+suffix:colon
+id|val
+op_assign
+id|gus_audio_bits
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SOUND_PCM_WRITE_FILTER
+suffix:colon
+multiline_comment|/* NOT POSSIBLE */
+r_case
+id|SOUND_PCM_READ_FILTER
+suffix:colon
+id|val
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 r_return
-id|__put_user
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_return
+id|put_user
 c_func
 (paren
 id|val
@@ -10495,52 +10378,10 @@ op_star
 id|arg
 )paren
 suffix:semicolon
-r_case
-id|SOUND_PCM_READ_BITS
-suffix:colon
-r_return
-id|__put_user
-c_func
-(paren
-id|gus_audio_bits
-comma
-(paren
-r_int
-op_star
-)paren
-id|arg
-)paren
-suffix:semicolon
-r_case
-id|SOUND_PCM_WRITE_FILTER
-suffix:colon
-multiline_comment|/* NOT POSSIBLE */
-r_case
-id|SOUND_PCM_READ_FILTER
-suffix:colon
-r_return
-id|__put_user
-c_func
-(paren
-op_minus
-id|EINVAL
-comma
-(paren
-r_int
-op_star
-)paren
-id|arg
-)paren
-suffix:semicolon
 )brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
+DECL|function|gus_audio_reset
 r_static
 r_void
-DECL|function|gus_audio_reset
 id|gus_audio_reset
 c_func
 (paren
@@ -10576,9 +10417,9 @@ r_int
 id|saved_iw_mode
 suffix:semicolon
 multiline_comment|/* A hack hack hack */
+DECL|function|gus_audio_open
 r_static
 r_int
-DECL|function|gus_audio_open
 id|gus_audio_open
 c_func
 (paren
@@ -10608,14 +10449,7 @@ op_amp
 id|OPEN_READ
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;GUS: Audio device #%d is playback only.&bslash;n&quot;
-comma
-id|dev
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(KERN_ERR &quot;GUS: Audio device #%d is playback only.&bslash;n&quot;, dev);*/
 r_return
 op_minus
 id|EIO
@@ -10757,9 +10591,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|gus_audio_close
 r_static
 r_void
-DECL|function|gus_audio_close
 id|gus_audio_close
 c_func
 (paren
@@ -10814,9 +10648,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|gus_audio_update_volume
 r_static
 r_void
-DECL|function|gus_audio_update_volume
 id|gus_audio_update_volume
 c_func
 (paren
@@ -10908,9 +10742,9 @@ id|flags
 suffix:semicolon
 )brace
 )brace
+DECL|function|play_next_pcm_block
 r_static
 r_void
-DECL|function|play_next_pcm_block
 id|play_next_pcm_block
 c_func
 (paren
@@ -11171,7 +11005,7 @@ id|pcm_active
 )paren
 multiline_comment|/* Playback not already active */
 (brace
-multiline_comment|/*&n;&t;&t;&t;     * The playback was not started yet (or there has been a pause).&n;&t;&t;&t;     * Start the voice (again) and ask for a rollover irq at the end of&n;&t;&t;&t;     * this_one block. If this_one one is last of the buffers, use just&n;&t;&t;&t;     * the normal loop with irq.&n;&t;&t;&t;     */
+multiline_comment|/*&n;&t;&t;&t; * The playback was not started yet (or there has been a pause).&n;&t;&t;&t; * Start the voice (again) and ask for a rollover irq at the end of&n;&t;&t;&t; * this_one block. If this_one one is last of the buffers, use just&n;&t;&t;&t; * the normal loop with irq.&n;&t;&t;&t; */
 id|gus_voice_off
 c_func
 (paren
@@ -11385,9 +11219,9 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|gus_transfer_output_block
 r_static
 r_void
-DECL|function|gus_transfer_output_block
 id|gus_transfer_output_block
 c_func
 (paren
@@ -11463,6 +11297,7 @@ id|pcm_nblk
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;GUS Warning: PCM buffers out of sync&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -11650,7 +11485,7 @@ l_int|1
 )paren
 multiline_comment|/* Last channel */
 (brace
-multiline_comment|/*&n;&t;&t;   * Last (right or mono) channel data&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * Last (right or mono) channel data&n;&t;&t; */
 id|dma_active
 op_assign
 l_int|1
@@ -11686,7 +11521,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;     * Left channel data. The right channel&n;&t;&t;     * is transferred after DMA interrupt&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * Left channel data. The right channel&n;&t;&t; * is transferred after DMA interrupt&n;&t;&t; */
 id|active_device
 op_assign
 id|GUS_DEV_PCM_CONTINUE
@@ -11699,9 +11534,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_uninterleave8
 r_static
 r_void
-DECL|function|gus_uninterleave8
 id|gus_uninterleave8
 c_func
 (paren
@@ -11791,9 +11626,9 @@ suffix:semicolon
 multiline_comment|/* Right channel */
 )brace
 )brace
+DECL|function|gus_uninterleave16
 r_static
 r_void
-DECL|function|gus_uninterleave16
 id|gus_uninterleave16
 c_func
 (paren
@@ -11893,9 +11728,9 @@ suffix:semicolon
 multiline_comment|/* Right channel */
 )brace
 )brace
+DECL|function|gus_audio_output_block
 r_static
 r_void
-DECL|function|gus_audio_output_block
 id|gus_audio_output_block
 c_func
 (paren
@@ -12013,9 +11848,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_audio_start_input
 r_static
 r_void
-DECL|function|gus_audio_start_input
 id|gus_audio_start_input
 c_func
 (paren
@@ -12118,9 +11953,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_audio_prepare_for_input
 r_static
 r_int
-DECL|function|gus_audio_prepare_for_input
 id|gus_audio_prepare_for_input
 c_func
 (paren
@@ -12194,12 +12029,7 @@ op_ne
 l_int|8
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;GUS Error: 16 bit recording not supported&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(&quot;GUS Error: 16 bit recording not supported&bslash;n&quot;);*/
 r_return
 op_minus
 id|EINVAL
@@ -12209,9 +12039,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|gus_audio_prepare_for_output
 r_static
 r_int
-DECL|function|gus_audio_prepare_for_output
 id|gus_audio_prepare_for_output
 c_func
 (paren
@@ -12365,9 +12195,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|gus_local_qlen
 r_static
 r_int
-DECL|function|gus_local_qlen
 id|gus_local_qlen
 c_func
 (paren
@@ -12407,9 +12237,9 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+DECL|function|guswave_setup_voice
 r_static
 r_void
-DECL|function|guswave_setup_voice
 id|guswave_setup_voice
 c_func
 (paren
@@ -12536,9 +12366,9 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|guswave_bender
 r_static
 r_void
-DECL|function|guswave_bender
 id|guswave_bender
 c_func
 (paren
@@ -12635,9 +12465,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|guswave_alloc
 r_static
 r_int
-DECL|function|guswave_alloc
 id|guswave_alloc
 c_func
 (paren
@@ -12674,7 +12504,7 @@ id|p
 op_assign
 id|alloc-&gt;ptr
 suffix:semicolon
-multiline_comment|/*&n;&t;   * First look for a completely stopped voice&n;&t; */
+multiline_comment|/*&n;&t; * First look for a completely stopped voice&n;&t; */
 r_for
 c_loop
 (paren
@@ -12743,7 +12573,7 @@ op_mod
 id|alloc-&gt;max_voice
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;   * Then look for a releasing voice&n;&t; */
+multiline_comment|/*&n;&t; * Then look for a releasing voice&n;&t; */
 r_for
 c_loop
 (paren
@@ -12859,9 +12689,9 @@ comma
 id|guswave_setup_voice
 )brace
 suffix:semicolon
+DECL|function|set_input_volumes
 r_static
 r_void
-DECL|function|set_input_volumes
 id|set_input_volumes
 c_func
 (paren
@@ -12931,7 +12761,7 @@ c_cond
 id|recording_active
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;   *    Disable channel, if not selected for recording&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; *    Disable channel, if not selected for recording&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -13376,7 +13206,7 @@ op_amp
 l_int|0xff
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Return parameters&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Return parameters&n;&t;&t;&t; */
 r_case
 id|SOUND_MIXER_RECSRC
 suffix:colon
@@ -13520,9 +13350,9 @@ comma
 id|gus_default_mixer_ioctl
 )brace
 suffix:semicolon
+DECL|function|gus_default_mixer_init
 r_static
 r_int
-DECL|function|gus_default_mixer_init
 id|gus_default_mixer_init
 c_func
 (paren
@@ -13548,7 +13378,7 @@ op_minus
 l_int|1
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * Don&squot;t install if there is another&n;&t;&t;&t;&t; * mixer&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Don&squot;t install if there is another&n;&t;&t; * mixer&n;&t;&t; */
 id|mixer_devs
 (braket
 id|n
@@ -13564,7 +13394,7 @@ c_cond
 id|have_gus_max
 )paren
 (brace
-multiline_comment|/*&n; *  Enable all mixer channels on the GF1 side. Otherwise recording will&n; *  not be possible using GUS MAX.&n; */
+multiline_comment|/*&n;&t;&t; *  Enable all mixer channels on the GF1 side. Otherwise recording will&n;&t;&t; *  not be possible using GUS MAX.&n;&t;&t; */
 id|mix_image
 op_and_assign
 op_complement
@@ -13705,6 +13535,7 @@ l_int|15
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ERROR! Invalid IRQ#%d. GUS Disabled&quot;
 comma
 id|irq
@@ -13729,6 +13560,7 @@ l_int|4
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ERROR! Invalid DMA#%d. GUS Disabled&quot;
 comma
 id|dma
@@ -13835,7 +13667,7 @@ op_assign
 l_int|0x12345678
 suffix:semicolon
 multiline_comment|/* Interwave &quot;magic&quot; */
-multiline_comment|/*&n;&t;&t; * It has the digital ASIC so the card is at least v3.4.&n;&t;&t; * Next try to detect the true model.&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * It has the digital ASIC so the card is at least v3.4.&n;&t;&t; * Next try to detect the true model.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -14124,14 +13956,15 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;[Where&squot;s the CS4231?]&quot;
+l_string|&quot;GUS: No CS4231 ??&quot;
 )paren
 suffix:semicolon
 macro_line|#else
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n&bslash;n&bslash;nGUS MAX support was not compiled in!!!&bslash;n&bslash;n&bslash;n&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;GUS MAX found, but not compiled in&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -14905,7 +14738,7 @@ id|mode
 r_case
 id|LMODE_FINISH
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * Final loop finished, shoot volume down&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Final loop finished, shoot volume down&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -14924,7 +14757,7 @@ l_int|4
 OL
 l_int|100
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Get current volume&n;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Get current volume&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 (brace
 id|gus_voice_off
 c_func
@@ -14961,7 +14794,7 @@ comma
 l_int|63
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Fastest possible rate&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Fastest possible rate&n;&t;&t;&t;&t;&t;&t;&t; */
 id|gus_rampon
 c_func
 (paren
@@ -14970,7 +14803,7 @@ op_or
 l_int|0x40
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Ramp down, once, irq&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Ramp down, once, irq&n;&t;&t;&t;&t;&t;&t;&t; */
 id|voices
 (braket
 id|voice
@@ -15063,7 +14896,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t;   * If the queue was full before this interrupt, the DMA transfer was&n;&t;&t;&t;   * suspended. Let it continue now.&n;&t;&t;&t;   */
+multiline_comment|/*&n;&t;&t;&t; * If the queue was full before this interrupt, the DMA transfer was&n;&t;&t;&t; * suspended. Let it continue now.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -15089,7 +14922,8 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-suffix:semicolon
+(brace
+)brace
 )brace
 id|restore_flags
 c_func
@@ -15098,9 +14932,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|do_volume_irq
 r_static
 r_void
-DECL|function|do_volume_irq
 id|do_volume_irq
 c_func
 (paren
@@ -15377,8 +15211,8 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|gus_voice_irq
+r_void
 id|gus_voice_irq
 c_func
 (paren
@@ -15419,7 +15253,7 @@ c_func
 l_int|0x0f
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Get source info&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Get source info&n;&t;&t;&t;&t;&t; */
 id|voice
 op_assign
 id|src
@@ -15443,7 +15277,7 @@ l_int|0x40
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * No interrupt&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * No interrupt&n;&t;&t;&t;&t; */
 id|voice_bit
 op_assign
 l_int|1
@@ -15478,7 +15312,7 @@ id|voice
 OL
 id|nr_voices
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;   * Not done&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;   * yet&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Not done&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * yet&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 (brace
 id|wave_ignore
 op_or_assign
@@ -15534,8 +15368,8 @@ suffix:semicolon
 )brace
 )brace
 )brace
-r_void
 DECL|function|guswave_dma_irq
+r_void
 id|guswave_dma_irq
 c_func
 (paren
@@ -15594,7 +15428,6 @@ id|dram_sleeper
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -15683,7 +15516,8 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-suffix:semicolon
+(brace
+)brace
 )brace
 id|status
 op_assign
@@ -15730,8 +15564,8 @@ id|curr_timer
 op_assign
 l_int|0
 suffix:semicolon
-r_void
 DECL|function|gus_timer_command
+r_void
 id|gus_timer_command
 c_func
 (paren
@@ -15824,9 +15658,9 @@ id|select_addr
 )paren
 suffix:semicolon
 )brace
+DECL|function|arm_timer
 r_static
 r_void
-DECL|function|arm_timer
 id|arm_timer
 c_func
 (paren
@@ -15917,10 +15751,10 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|gus_tmr_start
 r_static
 r_int
 r_int
-DECL|function|gus_tmr_start
 id|gus_tmr_start
 c_func
 (paren
@@ -16002,9 +15836,9 @@ op_star
 id|resolution
 suffix:semicolon
 )brace
+DECL|function|gus_tmr_disable
 r_static
 r_void
-DECL|function|gus_tmr_disable
 id|gus_tmr_disable
 c_func
 (paren
@@ -16026,9 +15860,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|gus_tmr_restart
 r_static
 r_void
-DECL|function|gus_tmr_restart
 id|gus_tmr_restart
 c_func
 (paren
@@ -16085,9 +15919,9 @@ comma
 id|gus_tmr_restart
 )brace
 suffix:semicolon
+DECL|function|gus_tmr_install
 r_static
 r_void
-DECL|function|gus_tmr_install
 id|gus_tmr_install
 c_func
 (paren

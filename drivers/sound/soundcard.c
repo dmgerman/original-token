@@ -5167,6 +5167,10 @@ op_lshift
 id|sz
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
 id|start_addr
 op_assign
 (paren
@@ -5182,11 +5186,7 @@ id|GFP_DMA
 comma
 id|sz
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|start_addr
+)paren
 op_eq
 l_int|NULL
 )paren

@@ -3450,11 +3450,13 @@ suffix:semicolon
 r_int
 id|secsize
 suffix:semicolon
+macro_line|#ifdef CONFIG_PMAC
 r_int
 id|first_bootable
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#endif
 r_struct
 id|mac_partition
 op_star

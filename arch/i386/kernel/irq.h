@@ -114,6 +114,7 @@ id|irq_controller_lock
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;* Protects both the 8259 and the&n;&t;&t;&t;&t;&t;* IO-APIC&n;&t;&t;&t;&t;&t;*/
 macro_line|#ifdef __SMP__
+macro_line|#include &lt;asm/atomic.h&gt;
 DECL|function|irq_enter
 r_static
 r_inline

@@ -443,7 +443,6 @@ r_int
 id|level
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *  This is the number  of clock ticks we should wait before we time out&n; *  and abort the command.  This is for  where the scsi.c module generates&n; *  the command, not where it originates from a higher level, in which&n; *  case the timeout is specified there.&n; *&n; */
 DECL|struct|dev_info
 r_struct
 id|dev_info
@@ -11929,7 +11928,12 @@ id|shpnt-&gt;host_failed
 comma
 id|shpnt-&gt;host_busy
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|shpnt-&gt;host_active
+)paren
 comma
 id|shpnt-&gt;host_blocked
 comma

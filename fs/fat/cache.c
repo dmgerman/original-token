@@ -86,10 +86,7 @@ id|sb
 )paren
 op_member_access_from_pointer
 id|cvf_format
-)paren
-r_if
-c_cond
-(paren
+op_logical_and
 id|MSDOS_SB
 c_func
 (paren
@@ -98,7 +95,6 @@ id|sb
 op_member_access_from_pointer
 id|cvf_format-&gt;fat_access
 )paren
-(brace
 r_return
 id|MSDOS_SB
 c_func
@@ -118,7 +114,6 @@ comma
 id|new_value
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1615,13 +1610,9 @@ r_if
 c_cond
 (paren
 id|sb-&gt;cvf_format
-)paren
-r_if
-c_cond
-(paren
+op_logical_and
 id|sb-&gt;cvf_format-&gt;cvf_smap
 )paren
-(brace
 r_return
 id|sb-&gt;cvf_format
 op_member_access_from_pointer
@@ -1633,7 +1624,6 @@ comma
 id|sector
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

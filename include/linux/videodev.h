@@ -585,5 +585,29 @@ DECL|macro|VID_HARDWARE_PMS
 mdefine_line|#define VID_HARDWARE_PMS&t;3
 DECL|macro|VID_HARDWARE_QCAM_C
 mdefine_line|#define VID_HARDWARE_QCAM_C&t;4
+multiline_comment|/*&n; *&t;Initialiser list&n; */
+DECL|struct|video_init
+r_struct
+id|video_init
+(brace
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|init
+r_int
+(paren
+op_star
+id|init
+)paren
+(paren
+r_struct
+id|video_init
+op_star
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
 macro_line|#endif
 eof

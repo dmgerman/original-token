@@ -3790,9 +3790,6 @@ id|DGRS_PRIV
 op_star
 id|priv
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
 macro_line|#ifdef MODULE
 (brace
 multiline_comment|/* Allocate and fill new device structure. */
@@ -3809,6 +3806,9 @@ r_sizeof
 (paren
 id|DGRS_PRIV
 )paren
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 id|dev
 op_assign

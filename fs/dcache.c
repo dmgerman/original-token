@@ -168,6 +168,13 @@ op_amp
 id|dentry-&gt;d_alias
 )paren
 suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|dentry-&gt;d_alias
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

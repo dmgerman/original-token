@@ -57,8 +57,8 @@ id|gus_pnp_flag
 op_assign
 l_int|0
 suffix:semicolon
-r_void
 DECL|function|attach_gus_card
+r_void
 id|attach_gus_card
 c_func
 (paren
@@ -164,8 +164,8 @@ id|hw_config
 suffix:semicolon
 macro_line|#endif
 )brace
-r_int
 DECL|function|probe_gus
+r_int
 id|probe_gus
 c_func
 (paren
@@ -239,6 +239,7 @@ l_int|15
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;GUS: Unsupported IRQ %d&bslash;n&quot;
 comma
 id|irq
@@ -262,6 +263,7 @@ l_int|16
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;GUS: I/O range conflict (1)&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -282,6 +284,7 @@ l_int|16
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;GUS: I/O range conflict (2)&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -372,8 +375,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|unload_gus
+r_void
 id|unload_gus
 c_func
 (paren
@@ -451,8 +454,8 @@ id|hw_config-&gt;dma2
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|gusintr
+r_void
 id|gusintr
 c_func
 (paren
@@ -574,13 +577,11 @@ c_cond
 (paren
 id|gus_timer_enabled
 )paren
-(brace
 id|sound_timer_interrupt
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 id|gus_write8
 c_func
 (paren
@@ -622,7 +623,6 @@ op_or
 id|ENVELOPE_IRQ
 )paren
 )paren
-(brace
 id|gus_voice_irq
 c_func
 (paren
@@ -630,12 +630,11 @@ c_func
 suffix:semicolon
 )brace
 )brace
-)brace
 macro_line|#endif
-multiline_comment|/*&n; * Some extra code for the 16 bit sampling option&n; */
+multiline_comment|/*&n; *&t;Some extra code for the 16 bit sampling option&n; */
 macro_line|#ifdef CONFIG_GUS16
-r_int
 DECL|function|probe_gus_db16
+r_int
 id|probe_gus_db16
 c_func
 (paren
@@ -657,8 +656,8 @@ id|hw_config-&gt;osp
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|attach_gus_db16
+r_void
 id|attach_gus_db16
 c_func
 (paren
@@ -702,8 +701,8 @@ id|hw_config-&gt;osp
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|unload_gus_db16
+r_void
 id|unload_gus_db16
 c_func
 (paren
@@ -852,8 +851,8 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-r_int
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
@@ -863,6 +862,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Gravis Ultrasound audio driver Copyright (C) by Hannu Savolainen 1993-1996&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -888,6 +888,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;I/O, IRQ, and DMA are mandatory&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -972,8 +973,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren

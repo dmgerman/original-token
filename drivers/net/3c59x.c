@@ -1901,6 +1901,7 @@ l_int|1
 comma
 )brace
 suffix:semicolon
+macro_line|#ifdef MODULE
 DECL|variable|full_duplex
 r_static
 r_int
@@ -1945,6 +1946,7 @@ id|root_vortex_dev
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef MODULE
 multiline_comment|/* Variables to work-around the Compaq PCI BIOS32 problem. */
 DECL|variable|compaq_ioaddr

@@ -106,7 +106,7 @@ l_int|0
 suffix:semicolon
 DECL|variable|orig_sigmask
 r_static
-r_int
+id|sigset_t
 id|orig_sigmask
 suffix:semicolon
 multiline_comment|/*  the interface to the kernel vfs layer&n; */
@@ -569,9 +569,12 @@ id|orig_sigmask
 op_assign
 id|current-&gt;blocked
 suffix:semicolon
+id|sigfillset
+c_func
+(paren
+op_amp
 id|current-&gt;blocked
-op_assign
-id|_BLOCK_ALL
+)paren
 suffix:semicolon
 id|result
 op_assign
@@ -639,8 +642,14 @@ multiline_comment|/* Mask signals that will disturb proper operation of the&n;&t
 id|current-&gt;blocked
 op_assign
 id|orig_sigmask
-op_or
+suffix:semicolon
+id|sigaddsetmask
+(paren
+op_amp
+id|current-&gt;blocked
+comma
 id|_DO_BLOCK
+)paren
 suffix:semicolon
 id|TRACE_EXIT
 l_int|0
@@ -648,7 +657,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*      Close floppy tape device&n; */
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,31)
 DECL|function|zft_close
 r_static
 r_int
@@ -665,23 +673,6 @@ id|file
 op_star
 id|filep
 )paren
-macro_line|#else
-r_static
-r_void
-id|zft_close
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|filep
-)paren
-macro_line|#endif
 (brace
 r_int
 id|result
@@ -725,9 +716,12 @@ suffix:semicolon
 multiline_comment|/* keep busy_flag !(?) */
 macro_line|#endif
 )brace
+id|sigfillset
+c_func
+(paren
+op_amp
 id|current-&gt;blocked
-op_assign
-id|_BLOCK_ALL
+)paren
 suffix:semicolon
 id|result
 op_assign
@@ -819,7 +813,7 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
-r_int
+id|sigset_t
 id|old_sigmask
 suffix:semicolon
 id|TRACE_FUN
@@ -862,9 +856,12 @@ op_assign
 id|current-&gt;blocked
 suffix:semicolon
 multiline_comment|/* save mask */
+id|sigfillset
+c_func
+(paren
+op_amp
 id|current-&gt;blocked
-op_assign
-id|_BLOCK_ALL
+)paren
 suffix:semicolon
 multiline_comment|/* This will work as long as sizeof(void *) == sizeof(long) */
 id|result
@@ -937,7 +934,7 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
-r_int
+id|sigset_t
 id|old_sigmask
 suffix:semicolon
 id|TRACE_FUN
@@ -991,9 +988,12 @@ op_assign
 id|current-&gt;blocked
 suffix:semicolon
 multiline_comment|/* save mask */
+id|sigfillset
+c_func
+(paren
+op_amp
 id|current-&gt;blocked
-op_assign
-id|_BLOCK_ALL
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1140,7 +1140,7 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
-r_int
+id|sigset_t
 id|old_sigmask
 suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,60)
@@ -1206,9 +1206,12 @@ op_assign
 id|current-&gt;blocked
 suffix:semicolon
 multiline_comment|/* save mask */
+id|sigfillset
+c_func
+(paren
+op_amp
 id|current-&gt;blocked
-op_assign
-id|_BLOCK_ALL
+)paren
 suffix:semicolon
 id|result
 op_assign
@@ -1344,7 +1347,7 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
-r_int
+id|sigset_t
 id|old_sigmask
 suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,60)
@@ -1410,9 +1413,12 @@ op_assign
 id|current-&gt;blocked
 suffix:semicolon
 multiline_comment|/* save mask */
+id|sigfillset
+c_func
+(paren
+op_amp
 id|current-&gt;blocked
-op_assign
-id|_BLOCK_ALL
+)paren
 suffix:semicolon
 id|result
 op_assign

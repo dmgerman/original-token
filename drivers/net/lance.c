@@ -2442,6 +2442,7 @@ multiline_comment|/* set autoselect and clean xmausel */
 id|outw
 c_func
 (paren
+(paren
 id|inw
 c_func
 (paren
@@ -2451,6 +2452,7 @@ id|LANCE_BUS_IF
 )paren
 op_amp
 l_int|0xfffe
+)paren
 op_or
 l_int|0x0002
 comma
@@ -2665,6 +2667,7 @@ multiline_comment|/* set autoselect and clean xmausel */
 id|outw
 c_func
 (paren
+(paren
 id|inw
 c_func
 (paren
@@ -2674,6 +2677,7 @@ id|LANCE_BUS_IF
 )paren
 op_amp
 l_int|0xfffe
+)paren
 op_or
 l_int|0x0002
 comma

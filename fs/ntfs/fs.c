@@ -4191,9 +4191,9 @@ c_func
 id|vol
 )paren
 suffix:semicolon
-macro_line|#endif
 id|ntfs_read_super_dec
 suffix:colon
+macro_line|#endif
 id|ntfs_debug
 c_func
 (paren

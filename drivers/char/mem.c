@@ -29,7 +29,7 @@ r_void
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_ISDN
-r_void
+r_int
 id|isdn_init
 c_func
 (paren
@@ -38,8 +38,18 @@ r_void
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCWATCHDOG
-r_void
+r_int
 id|pcwatchdog_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_VIDEO_DEV
+r_extern
+r_int
+id|videodev_init
 c_func
 (paren
 r_void

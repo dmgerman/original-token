@@ -341,12 +341,13 @@ comma
 id|BT848_I2C
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Timeout for I2CRead is 1 second (this should be enough, really!)&n;&t; */
 r_for
 c_loop
 (paren
 id|i
 op_assign
-l_int|0x7fffffff
+l_int|1000
 suffix:semicolon
 id|i
 suffix:semicolon
@@ -371,6 +372,13 @@ id|BT848_INT_I2CDONE
 )paren
 r_break
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
+multiline_comment|/* 1ms, as I2C is 1kHz (?) */
 )brace
 r_if
 c_cond
@@ -378,10 +386,19 @@ c_cond
 op_logical_neg
 id|i
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;bttv: I2CRead timeout&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -517,7 +534,7 @@ c_loop
 (paren
 id|i
 op_assign
-l_int|0x7fffffff
+l_int|1000
 suffix:semicolon
 id|i
 suffix:semicolon
@@ -542,6 +559,12 @@ id|BT848_INT_I2CDONE
 )paren
 r_break
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -549,10 +572,19 @@ c_cond
 op_logical_neg
 id|i
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;bttv: I2CWrite timeout&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4909,7 +4941,7 @@ c_cond
 (paren
 id|btv-&gt;win.bpp
 op_eq
-l_int|8
+l_int|1
 )paren
 (brace
 id|p.palette
@@ -4922,7 +4954,7 @@ c_cond
 (paren
 id|btv-&gt;win.bpp
 op_eq
-l_int|16
+l_int|2
 )paren
 (brace
 id|p.palette
@@ -4935,7 +4967,7 @@ c_cond
 (paren
 id|btv-&gt;win.bpp
 op_eq
-l_int|24
+l_int|3
 )paren
 (brace
 id|p.palette
@@ -4948,7 +4980,7 @@ c_cond
 (paren
 id|btv-&gt;win.bpp
 op_eq
-l_int|32
+l_int|4
 )paren
 (brace
 id|p.palette

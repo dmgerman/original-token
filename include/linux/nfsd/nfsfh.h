@@ -333,10 +333,23 @@ multiline_comment|/*&n;&t;dfprintk(FILEOP, &quot;nfsd: fh_lock(%x/%ld) locked = 
 r_if
 c_cond
 (paren
-op_logical_neg
 id|fhp-&gt;fh_locked
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;fh_lock: %s/%s already locked!&bslash;n&quot;
+comma
+id|fhp-&gt;fh_dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|fhp-&gt;fh_dentry-&gt;d_name.name
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|down
 c_func
 (paren
@@ -359,7 +372,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-)brace
 multiline_comment|/*&n; * Unlock a file handle/inode&n; */
 r_static
 r_inline
@@ -374,6 +386,12 @@ op_star
 id|fhp
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|fhp-&gt;fh_locked
+)paren
+(brace
 r_struct
 id|inode
 op_star
@@ -381,12 +399,6 @@ id|inode
 op_assign
 id|fhp-&gt;fh_dentry-&gt;d_inode
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|fhp-&gt;fh_locked
-)paren
-(brace
 r_if
 c_cond
 (paren

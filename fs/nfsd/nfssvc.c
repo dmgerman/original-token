@@ -57,6 +57,13 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+DECL|variable|nfsd_active
+r_static
+r_int
+id|nfsd_active
+op_assign
+l_int|0
+suffix:semicolon
 r_int
 DECL|function|nfsd_svc
 id|nfsd_svc
@@ -287,6 +294,9 @@ op_assign
 id|xtime
 suffix:semicolon
 multiline_comment|/* record boot time */
+id|nfsd_active
+op_increment
+suffix:semicolon
 id|lockd_up
 c_func
 (paren
@@ -541,6 +551,27 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+op_decrement
+id|nfsd_active
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;nfsd: last server exiting&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* revoke all exports */
+id|nfsd_export_shutdown
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Destroy the thread */
 id|svc_exit_thread
 c_func

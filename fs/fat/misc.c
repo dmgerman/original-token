@@ -1061,7 +1061,6 @@ id|sb
 op_member_access_from_pointer
 id|cvf_format-&gt;zero_out_cluster
 )paren
-(brace
 id|MSDOS_SB
 c_func
 (paren
@@ -1078,7 +1077,6 @@ comma
 id|nr
 )paren
 suffix:semicolon
-)brace
 r_else
 r_for
 c_loop

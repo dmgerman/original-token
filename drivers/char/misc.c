@@ -182,6 +182,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PC110_PAD
+r_extern
+r_int
+id|pc110pad_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|misc_read_proc
 r_static

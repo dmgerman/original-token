@@ -1273,19 +1273,6 @@ op_amp
 id|proc_file_inode_operations
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * kludge until we fixup the md device driver&n;&t; */
-r_if
-c_cond
-(paren
-id|dp-&gt;low_ino
-op_eq
-id|PROC_MD
-)paren
-id|dp-&gt;ops
-op_assign
-op_amp
-id|proc_array_inode_operations
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -11,9 +11,9 @@ r_int
 id|gus_wave_volume
 suffix:semicolon
 multiline_comment|/*&n; * Calculate gus volume from note velocity, main volume, expression, and&n; * intrinsic patch volume given in patch library.  Expression is multiplied&n; * in, so it emphasizes differences in note velocity, while main volume is&n; * added in -- I don&squot;t know whether this is right, but it seems reasonable to&n; * me.  (In the previous stage, main volume controller messages were changed&n; * to expression controller messages, if they were found to be used for&n; * dynamic volume adjustments, so here, main volume can be assumed to be&n; * constant throughout a song.)&n; *&n; * Intrinsic patch volume is added in, but if over 64 is also multiplied in, so&n; * we can give a big boost to very weak voices like nylon guitar and the&n; * basses.  The normal value is 64.  Strings are assigned lower values.&n; */
-r_int
-r_int
 DECL|function|gus_adagio_vol
+r_int
+r_int
 id|gus_adagio_vol
 c_func
 (paren
@@ -202,6 +202,7 @@ op_decrement
 suffix:semicolon
 )brace
 r_else
+(brace
 r_while
 c_loop
 (paren
@@ -217,6 +218,7 @@ suffix:semicolon
 id|i
 op_increment
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n;&t; * Mantissa is part of linear volume not expressed in exponent.  (This is&n;&t; * not quite like real logs -- I wonder if it&squot;s right.)&n;&t; */
 id|m
@@ -279,9 +281,9 @@ id|m
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Volume-values are interpreted as linear values. Volume is based on the&n; * value supplied with SEQ_START_NOTE(), channel main volume (if compiled in)&n; * and the volume set by the mixer-device (default 60%).&n; */
-r_int
-r_int
 DECL|function|gus_linear_vol
+r_int
+r_int
 id|gus_linear_vol
 c_func
 (paren

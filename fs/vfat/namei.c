@@ -14,11 +14,28 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &quot;../fat/msbuffer.h&quot;
-macro_line|#if 0
-macro_line|# define PRINTK(x) printk x
+DECL|macro|DEBUG_LEVEL
+mdefine_line|#define DEBUG_LEVEL 0
+macro_line|#if (DEBUG_LEVEL &gt;= 1)
+DECL|macro|PRINTK1
+macro_line|#  define PRINTK1(x) printk x
 macro_line|#else
-DECL|macro|PRINTK
-macro_line|# define PRINTK(x)
+DECL|macro|PRINTK1
+macro_line|#  define PRINTK1(x)
+macro_line|#endif
+macro_line|#if (DEBUG_LEVEL &gt;= 2)
+DECL|macro|PRINTK2
+macro_line|#  define PRINTK2(x) printk x
+macro_line|#else
+DECL|macro|PRINTK2
+macro_line|#  define PRINTK2(x)
+macro_line|#endif
+macro_line|#if (DEBUG_LEVEL &gt;= 3)
+DECL|macro|PRINTK3
+macro_line|#  define PRINTK3(x) printk x
+macro_line|#else
+DECL|macro|PRINTK3
+macro_line|#  define PRINTK3(x)
 macro_line|#endif
 macro_line|#ifndef DEBUG
 DECL|macro|CHECK_STACK
@@ -442,6 +459,16 @@ op_star
 id|dentry
 )paren
 (brace
+id|PRINTK1
+c_func
+(paren
+(paren
+l_string|&quot;vfat_revalidate: %s&bslash;n&quot;
+comma
+id|dentry-&gt;d_name.name
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1418,6 +1445,29 @@ id|options.dotsOK
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|MSDOS_SB
+c_func
+(paren
+id|sb
+)paren
+op_member_access_from_pointer
+id|options.posixfs
+)paren
+(brace
+id|MSDOS_SB
+c_func
+(paren
+id|sb
+)paren
+op_member_access_from_pointer
+id|options.name_check
+op_assign
+l_char|&squot;s&squot;
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3404,7 +3454,7 @@ r_struct
 id|qstr
 id|qname
 suffix:semicolon
-id|PRINTK
+id|PRINTK2
 c_func
 (paren
 (paren
@@ -3565,7 +3615,7 @@ op_minus
 l_int|1
 )paren
 (brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -3601,7 +3651,7 @@ op_amp
 id|sinfo
 )paren
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -3626,7 +3676,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -4566,7 +4616,7 @@ suffix:semicolon
 r_int
 id|added
 suffix:semicolon
-id|PRINTK
+id|PRINTK2
 c_func
 (paren
 (paren
@@ -4673,7 +4723,7 @@ id|inode
 op_member_access_from_pointer
 id|i_busy
 suffix:semicolon
-multiline_comment|/* PRINTK((&quot;inode %d still busy&bslash;n&quot;, ino)); */
+multiline_comment|/* PRINTK3((&quot;inode %d still busy&bslash;n&quot;, ino)); */
 id|iput
 c_func
 (paren
@@ -5502,7 +5552,7 @@ id|i
 )braket
 suffix:semicolon
 )brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -5541,7 +5591,7 @@ id|end
 comma
 id|j
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -5569,7 +5619,7 @@ id|ps-&gt;start
 op_assign
 l_int|0
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -5642,7 +5692,7 @@ id|ip
 op_increment
 suffix:semicolon
 )brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -5687,7 +5737,7 @@ id|ip
 op_increment
 suffix:semicolon
 )brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -5733,7 +5783,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -5759,7 +5809,7 @@ op_star
 )paren
 id|ps
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -5843,7 +5893,7 @@ id|nls_table
 op_star
 id|nls
 suffix:semicolon
-id|PRINTK
+id|PRINTK2
 c_func
 (paren
 (paren
@@ -5966,7 +6016,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -5997,7 +6047,7 @@ op_minus
 l_int|1
 )paren
 (brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -6021,7 +6071,7 @@ comma
 id|utf8
 )paren
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -6417,7 +6467,7 @@ suffix:semicolon
 r_int
 id|res
 suffix:semicolon
-id|PRINTK
+id|PRINTK2
 c_func
 (paren
 (paren
@@ -6529,7 +6579,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -6594,7 +6644,7 @@ id|sinfo_out-&gt;ino
 op_assign
 id|vf.ino
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -6610,7 +6660,7 @@ r_goto
 id|cleanup
 suffix:semicolon
 )brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -6686,7 +6736,7 @@ c_cond
 id|new_filename
 )paren
 (brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -6728,7 +6778,7 @@ r_goto
 id|cleanup
 suffix:semicolon
 )brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -6763,7 +6813,7 @@ id|ps
 op_increment
 )paren
 (brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -6798,7 +6848,7 @@ OL
 l_int|0
 )paren
 (brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -6839,7 +6889,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -6861,7 +6911,7 @@ c_func
 id|dir
 )paren
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -7055,7 +7105,8 @@ suffix:semicolon
 r_int
 id|table
 suffix:semicolon
-id|PRINTK
+id|PRINTK2
+c_func
 (paren
 (paren
 l_string|&quot;vfat_lookup: name=%s, len=%d&bslash;n&quot;
@@ -7136,7 +7187,8 @@ r_goto
 id|error
 suffix:semicolon
 )brace
-id|PRINTK
+id|PRINTK3
+c_func
 (paren
 (paren
 l_string|&quot;vfat_lookup 4.5&bslash;n&quot;
@@ -7163,7 +7215,8 @@ r_return
 op_minus
 id|EACCES
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
+c_func
 (paren
 (paren
 l_string|&quot;vfat_lookup 5&bslash;n&quot;
@@ -7200,7 +7253,8 @@ r_goto
 id|error
 suffix:semicolon
 )brace
-id|PRINTK
+id|PRINTK3
+c_func
 (paren
 (paren
 l_string|&quot;vfat_lookup 6&bslash;n&quot;
@@ -7293,11 +7347,11 @@ id|result
 op_assign
 l_int|0
 suffix:semicolon
-id|PRINTK
+id|PRINTK1
 c_func
 (paren
 (paren
-l_string|&quot;vfat_create_entry 1&bslash;n&quot;
+l_string|&quot;vfat_create_entry: Entering&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -7336,7 +7390,7 @@ id|offset
 op_assign
 id|sinfo.shortname_offset
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -7373,7 +7427,7 @@ OL
 l_int|0
 )paren
 (brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -7398,7 +7452,7 @@ r_return
 id|ino
 suffix:semicolon
 )brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -7563,7 +7617,7 @@ OL
 l_int|0
 )paren
 (brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -7641,11 +7695,11 @@ id|inode
 op_star
 id|dot
 suffix:semicolon
-id|PRINTK
+id|PRINTK2
 c_func
 (paren
 (paren
-l_string|&quot;vfat_create_a_dotdir 1&bslash;n&quot;
+l_string|&quot;vfat_create_a_dotdir: Entering&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -7864,7 +7918,7 @@ c_func
 id|dot
 )paren
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -7916,11 +7970,11 @@ suffix:semicolon
 id|loff_t
 id|offset
 suffix:semicolon
-id|PRINTK
+id|PRINTK2
 c_func
 (paren
 (paren
-l_string|&quot;vfat_create_dotdirs 1&bslash;n&quot;
+l_string|&quot;vfat_create_dotdirs: Entering&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -7942,7 +7996,7 @@ l_int|0
 r_return
 id|res
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -7985,7 +8039,7 @@ l_int|0
 r_return
 id|res
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -8013,7 +8067,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -8041,7 +8095,7 @@ r_return
 id|res
 suffix:semicolon
 )brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -8086,7 +8140,7 @@ r_return
 id|res
 suffix:semicolon
 )brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -8114,7 +8168,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -8167,14 +8221,6 @@ id|msdos_dir_entry
 op_star
 id|de
 suffix:semicolon
-multiline_comment|/*&n;&t; * Prune any child dentries, then verify that&n;&t; * the directory is empty and not in use.&n;&t; */
-id|shrink_dcache_sb
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
-multiline_comment|/* should be child prune */
 r_if
 c_cond
 (paren
@@ -8782,16 +8828,22 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|vfat_delete_dentries
+multiline_comment|/* Replace inodes in alias dentries and drop all but the initial dentry */
+DECL|function|drop_replace_inodes
 r_static
 r_void
-id|vfat_delete_dentries
+id|drop_replace_inodes
 c_func
 (paren
 r_struct
 id|dentry
 op_star
 id|dentry
+comma
+r_struct
+id|inode
+op_star
+id|inode
 )paren
 (brace
 r_struct
@@ -8809,6 +8861,18 @@ r_struct
 id|dentry
 op_star
 id|alias
+suffix:semicolon
+id|PRINTK1
+c_func
+(paren
+(paren
+l_string|&quot;drop_replace_inodes: dentry=%p, inode=%p&bslash;n&quot;
+comma
+id|dentry
+comma
+id|inode
+)paren
+)paren
 suffix:semicolon
 id|head
 op_assign
@@ -8854,7 +8918,56 @@ comma
 id|d_alias
 )paren
 suffix:semicolon
-id|d_delete
+r_if
+c_cond
+(paren
+id|inode
+)paren
+(brace
+id|list_del
+c_func
+(paren
+op_amp
+id|alias-&gt;d_alias
+)paren
+suffix:semicolon
+id|iput
+c_func
+(paren
+id|alias-&gt;d_inode
+)paren
+suffix:semicolon
+id|d_instantiate
+c_func
+(paren
+id|alias
+comma
+id|inode
+)paren
+suffix:semicolon
+multiline_comment|/* dentry is already accounted for */
+r_if
+c_cond
+(paren
+id|alias
+op_ne
+id|dentry
+)paren
+(brace
+id|inode-&gt;i_count
+op_increment
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|alias
+op_ne
+id|dentry
+)paren
+(brace
+id|d_drop
 c_func
 (paren
 id|alias
@@ -8862,14 +8975,6 @@ id|alias
 suffix:semicolon
 )brace
 )brace
-r_else
-(brace
-id|d_delete
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
 )brace
 )brace
 DECL|function|vfat_rmdirx
@@ -8907,6 +9012,16 @@ suffix:semicolon
 r_struct
 id|vfat_slot_info
 id|sinfo
+suffix:semicolon
+id|PRINTK1
+c_func
+(paren
+(paren
+l_string|&quot;vfat_rmdirx: dentry=%p&bslash;n&quot;
+comma
+id|dentry
+)paren
+)paren
 suffix:semicolon
 id|res
 op_assign
@@ -9020,6 +9135,18 @@ id|dentry
 r_int
 id|res
 suffix:semicolon
+id|PRINTK1
+c_func
+(paren
+(paren
+l_string|&quot;vfat_rmdir: dentry=%p, inode=%p&bslash;n&quot;
+comma
+id|dentry
+comma
+id|dentry-&gt;d_inode
+)paren
+)paren
+suffix:semicolon
 id|res
 op_assign
 id|vfat_rmdirx
@@ -9038,7 +9165,15 @@ op_ge
 l_int|0
 )paren
 (brace
-id|vfat_delete_dentries
+id|drop_replace_inodes
+c_func
+(paren
+id|dentry
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|d_delete
 c_func
 (paren
 id|dentry
@@ -9088,6 +9223,18 @@ suffix:semicolon
 r_struct
 id|vfat_slot_info
 id|sinfo
+suffix:semicolon
+id|PRINTK1
+c_func
+(paren
+(paren
+l_string|&quot;vfat_unlinkx: dentry=%p, inode=%p&bslash;n&quot;
+comma
+id|dentry
+comma
+id|dentry-&gt;d_inode
+)paren
+)paren
 suffix:semicolon
 id|bh
 op_assign
@@ -9202,6 +9349,18 @@ id|inode
 suffix:semicolon
 r_int
 id|res
+suffix:semicolon
+id|PRINTK1
+c_func
+(paren
+(paren
+l_string|&quot;vfat_mkdir: dentry=%p, inode=%p&bslash;n&quot;
+comma
+id|dentry
+comma
+id|dentry-&gt;d_inode
+)paren
+)paren
 suffix:semicolon
 id|fat_lock_creation
 c_func
@@ -9351,6 +9510,18 @@ id|dentry
 r_int
 id|res
 suffix:semicolon
+id|PRINTK1
+c_func
+(paren
+(paren
+l_string|&quot;vfat_unlink: dentry=%p, inode=%p&bslash;n&quot;
+comma
+id|dentry
+comma
+id|dentry-&gt;d_inode
+)paren
+)paren
+suffix:semicolon
 id|res
 op_assign
 id|vfat_unlinkx
@@ -9370,7 +9541,15 @@ op_ge
 l_int|0
 )paren
 (brace
-id|vfat_delete_dentries
+id|drop_replace_inodes
+c_func
+(paren
+id|dentry
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|d_delete
 c_func
 (paren
 id|dentry
@@ -9525,11 +9704,33 @@ r_struct
 id|vfat_slot_info
 id|sinfo
 suffix:semicolon
-id|PRINTK
+r_int
+id|put_new_inode
+op_assign
+l_int|0
+suffix:semicolon
+id|PRINTK1
 c_func
 (paren
 (paren
-l_string|&quot;vfat_rename 1&bslash;n&quot;
+l_string|&quot;vfat_rename: Entering: old_dentry=%p, old_inode=%p, old ino=%ld, new_dentry=%p, new_inode=%p, new ino=%ld&bslash;n&quot;
+comma
+id|old_dentry
+comma
+id|old_dentry-&gt;d_inode
+comma
+id|old_dentry-&gt;d_inode-&gt;i_ino
+comma
+id|new_dentry
+comma
+id|new_dentry-&gt;d_inode
+comma
+id|new_dentry-&gt;d_inode
+ques
+c_cond
+id|new_dentry-&gt;d_inode-&gt;i_ino
+suffix:colon
+l_int|0
 )paren
 )paren
 suffix:semicolon
@@ -9591,7 +9792,7 @@ op_amp
 id|sinfo
 )paren
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -9642,7 +9843,7 @@ op_amp
 id|old_de
 )paren
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -9766,7 +9967,7 @@ op_amp
 id|sinfo
 )paren
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -9786,7 +9987,7 @@ l_int|1
 r_int
 id|new_is_dir
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -9816,7 +10017,7 @@ op_amp
 id|new_de
 )paren
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -9873,7 +10074,7 @@ c_cond
 id|new_is_dir
 )paren
 (brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -9891,7 +10092,7 @@ comma
 id|new_dentry
 )paren
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -9921,7 +10122,7 @@ op_ne
 id|old_inode
 )paren
 (brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -9939,7 +10140,7 @@ comma
 id|new_dentry
 )paren
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -9960,7 +10161,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -9997,7 +10198,7 @@ op_amp
 id|sinfo
 )paren
 suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -10023,76 +10224,15 @@ id|new_ino
 op_assign
 id|sinfo.ino
 suffix:semicolon
-id|res
-op_assign
-id|fat_get_entry
-c_func
-(paren
-id|new_dir
-comma
-op_amp
-id|new_offset
-comma
-op_amp
-id|new_bh
-comma
-op_amp
-id|new_de
-)paren
-suffix:semicolon
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
-l_string|&quot;vfat_rename 13&bslash;n&quot;
+l_string|&quot;vfat_rename 13: new_ino=%d&bslash;n&quot;
+comma
+id|new_ino
 )paren
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|res
-OL
-l_int|0
-)paren
-r_goto
-id|rename_done
-suffix:semicolon
-id|new_de-&gt;attr
-op_assign
-id|old_de-&gt;attr
-suffix:semicolon
-id|new_de-&gt;time
-op_assign
-id|old_de-&gt;time
-suffix:semicolon
-id|new_de-&gt;date
-op_assign
-id|old_de-&gt;date
-suffix:semicolon
-id|new_de-&gt;ctime_ms
-op_assign
-id|old_de-&gt;ctime_ms
-suffix:semicolon
-id|new_de-&gt;cdate
-op_assign
-id|old_de-&gt;cdate
-suffix:semicolon
-id|new_de-&gt;adate
-op_assign
-id|old_de-&gt;adate
-suffix:semicolon
-id|new_de-&gt;start
-op_assign
-id|old_de-&gt;start
-suffix:semicolon
-id|new_de-&gt;starthi
-op_assign
-id|old_de-&gt;starthi
-suffix:semicolon
-id|new_de-&gt;size
-op_assign
-id|old_de-&gt;size
 suffix:semicolon
 r_if
 c_cond
@@ -10113,40 +10253,49 @@ id|new_ino
 r_goto
 id|rename_done
 suffix:semicolon
-id|PRINTK
-c_func
-(paren
-(paren
-l_string|&quot;vfat_rename 14&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* At this point, we have the inodes of the old file and the&n;&t; * new file.  We need to transfer all information from the old&n;&t; * inode to the new inode and then delete the slots of the old&n;&t; * entry&n;&t; */
-id|vfat_read_inode
-c_func
-(paren
-id|new_inode
-)paren
-suffix:semicolon
-id|MSDOS_I
-c_func
-(paren
-id|old_inode
-)paren
-op_member_access_from_pointer
-id|i_busy
+id|put_new_inode
 op_assign
 l_int|1
 suffix:semicolon
+id|new_inode-&gt;i_mode
+op_assign
+id|old_inode-&gt;i_mode
+suffix:semicolon
+id|new_inode-&gt;i_size
+op_assign
+id|old_inode-&gt;i_size
+suffix:semicolon
+id|new_inode-&gt;i_blocks
+op_assign
+id|old_inode-&gt;i_blocks
+suffix:semicolon
+id|new_inode-&gt;i_mtime
+op_assign
+id|old_inode-&gt;i_mtime
+suffix:semicolon
+id|new_inode-&gt;i_atime
+op_assign
+id|old_inode-&gt;i_atime
+suffix:semicolon
+id|new_inode-&gt;i_ctime
+op_assign
+id|old_inode-&gt;i_ctime
+suffix:semicolon
+id|MSDOS_I
+c_func
+(paren
+id|new_inode
+)paren
+op_member_access_from_pointer
+id|i_ctime_ms
+op_assign
 id|MSDOS_I
 c_func
 (paren
 id|old_inode
 )paren
 op_member_access_from_pointer
-id|i_linked
-op_assign
-id|new_inode
+id|i_ctime_ms
 suffix:semicolon
 id|MSDOS_I
 c_func
@@ -10154,36 +10303,73 @@ c_func
 id|new_inode
 )paren
 op_member_access_from_pointer
-id|i_oldlink
+id|i_start
 op_assign
-id|old_inode
-suffix:semicolon
-id|fat_cache_inval_inode
+id|MSDOS_I
 c_func
 (paren
 id|old_inode
 )paren
+op_member_access_from_pointer
+id|i_start
 suffix:semicolon
-id|PRINTK
+id|MSDOS_I
 c_func
 (paren
+id|new_inode
+)paren
+op_member_access_from_pointer
+id|i_logstart
+op_assign
+id|MSDOS_I
+c_func
 (paren
-l_string|&quot;vfat_rename 15: old_slots=%d&bslash;n&quot;
-comma
-id|old_slots
+id|old_inode
 )paren
+op_member_access_from_pointer
+id|i_logstart
+suffix:semicolon
+id|MSDOS_I
+c_func
+(paren
+id|new_inode
 )paren
+op_member_access_from_pointer
+id|i_attrs
+op_assign
+id|MSDOS_I
+c_func
+(paren
+id|old_inode
+)paren
+op_member_access_from_pointer
+id|i_attrs
 suffix:semicolon
 id|mark_inode_dirty
 c_func
 (paren
-id|old_inode
+id|new_inode
 )paren
 suffix:semicolon
 id|old_dir-&gt;i_version
 op_assign
 op_increment
 id|event
+suffix:semicolon
+id|new_dir-&gt;i_version
+op_assign
+op_increment
+id|event
+suffix:semicolon
+id|PRINTK3
+c_func
+(paren
+(paren
+l_string|&quot;vfat_rename 14: old_slots=%d&bslash;n&quot;
+comma
+id|old_slots
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/* remove the old entry */
 r_for
@@ -10229,7 +10415,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;vfat_unlinkx: problem 1&bslash;n&quot;
+l_string|&quot;vfat_rename: problem 1&bslash;n&quot;
 )paren
 suffix:semicolon
 r_continue
@@ -10257,7 +10443,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-id|PRINTK
+id|PRINTK3
 c_func
 (paren
 (paren
@@ -10265,17 +10451,6 @@ l_string|&quot;vfat_rename 15b&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|fat_mark_buffer_dirty
-c_func
-(paren
-id|sb
-comma
-id|new_bh
-comma
-l_int|1
-)paren
-suffix:semicolon
-multiline_comment|/* XXX: There is some code in the original MSDOS rename that&n;&t; * is not duplicated here and it might cause a problem in&n;&t; * certain circumstances.&n;&t; */
 r_if
 c_cond
 (paren
@@ -10476,6 +10651,14 @@ op_eq
 l_int|0
 )paren
 (brace
+id|drop_replace_inodes
+c_func
+(paren
+id|old_dentry
+comma
+id|new_inode
+)paren
+suffix:semicolon
 id|d_move
 c_func
 (paren
@@ -10483,6 +10666,10 @@ id|old_dentry
 comma
 id|new_dentry
 )paren
+suffix:semicolon
+id|put_new_inode
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 id|rename_done
@@ -10521,6 +10708,17 @@ c_func
 id|sb
 comma
 id|new_bh
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|put_new_inode
+)paren
+id|iput
+c_func
+(paren
+id|new_inode
 )paren
 suffix:semicolon
 r_return

@@ -3049,10 +3049,6 @@ op_star
 id|bus_to_virt
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
 id|mem_base
 )paren
 suffix:semicolon

@@ -93,9 +93,9 @@ r_int
 op_star
 id|gus_osp
 suffix:semicolon
+DECL|function|GUS_MIDI_STATUS
 r_static
 r_int
-DECL|function|GUS_MIDI_STATUS
 id|GUS_MIDI_STATUS
 c_func
 (paren
@@ -110,9 +110,9 @@ id|u_MidiStatus
 )paren
 suffix:semicolon
 )brace
+DECL|function|gus_midi_open
 r_static
 r_int
-DECL|function|gus_midi_open
 id|gus_midi_open
 c_func
 (paren
@@ -153,12 +153,7 @@ c_cond
 id|midi_busy
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;GUS: Midi busy&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(&quot;GUS: Midi busy&bslash;n&quot;);*/
 r_return
 op_minus
 id|EBUSY
@@ -247,9 +242,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|dump_to_midi
 r_static
 r_int
-DECL|function|dump_to_midi
 id|dump_to_midi
 c_func
 (paren
@@ -310,7 +305,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;   * Enable Midi xmit interrupts (again)&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * Enable Midi xmit interrupts (again)&n;&t;&t; */
 id|gus_midi_control
 op_or_assign
 id|MIDI_ENABLE_XMIT
@@ -336,9 +331,9 @@ r_return
 id|ok
 suffix:semicolon
 )brace
+DECL|function|gus_midi_close
 r_static
 r_void
-DECL|function|gus_midi_close
 id|gus_midi_close
 c_func
 (paren
@@ -362,9 +357,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|gus_midi_out
 r_static
 r_int
-DECL|function|gus_midi_out
 id|gus_midi_out
 c_func
 (paren
@@ -420,7 +415,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Output the byte if the local queue is empty.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Output the byte if the local queue is empty.&n;&t; */
 r_if
 c_cond
 (paren
@@ -440,7 +435,7 @@ r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t; * OK&n;&t;&t;&t;&t;&t; */
-multiline_comment|/*&n;&t; * Put to the local queue&n;&t; */
+multiline_comment|/*&n;&t; *&t;Put to the local queue&n;&t; */
 r_if
 c_cond
 (paren
@@ -486,9 +481,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|gus_midi_start_read
 r_static
 r_int
-DECL|function|gus_midi_start_read
 id|gus_midi_start_read
 c_func
 (paren
@@ -500,9 +495,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|gus_midi_end_read
 r_static
 r_int
-DECL|function|gus_midi_end_read
 id|gus_midi_end_read
 c_func
 (paren
@@ -514,9 +509,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|gus_midi_kick
 r_static
 r_void
-DECL|function|gus_midi_kick
 id|gus_midi_kick
 c_func
 (paren
@@ -525,9 +520,9 @@ id|dev
 )paren
 (brace
 )brace
+DECL|function|gus_midi_buffer_status
 r_static
 r_int
-DECL|function|gus_midi_buffer_status
 id|gus_midi_buffer_status
 c_func
 (paren
@@ -657,8 +652,8 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-r_void
 DECL|function|gus_midi_init
+r_void
 id|gus_midi_init
 c_func
 (paren
@@ -734,8 +729,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_void
 DECL|function|gus_midi_interrupt
+r_void
 id|gus_midi_interrupt
 c_func
 (paren
@@ -861,7 +856,7 @@ op_logical_neg
 id|qlen
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;       * Disable Midi output interrupts, since no data in the buffer&n;&t;&t;&t;&t;       */
+multiline_comment|/*&n;&t;&t;&t;       * Disable Midi output interrupts, since no data in the buffer&n;&t;&t;&t;       */
 id|gus_midi_control
 op_and_assign
 op_complement

@@ -337,13 +337,6 @@ id|on
 r_int
 id|retval
 suffix:semicolon
-r_struct
-id|inode
-op_star
-id|inode
-op_assign
-id|filp-&gt;f_dentry-&gt;d_inode
-suffix:semicolon
 id|retval
 op_assign
 id|fasync_helper

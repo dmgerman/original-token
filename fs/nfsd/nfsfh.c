@@ -3682,6 +3682,14 @@ id|access
 )paren
 (brace
 r_struct
+id|knfs_fh
+op_star
+id|fh
+op_assign
+op_amp
+id|fhp-&gt;fh_handle
+suffix:semicolon
+r_struct
 id|svc_export
 op_star
 id|exp
@@ -3696,33 +3704,15 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
-r_struct
-id|knfs_fh
-op_star
-id|fh
-op_assign
-op_amp
-id|fhp-&gt;fh_handle
-suffix:semicolon
 id|u32
 id|error
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|fhp-&gt;fh_dverified
-)paren
-(brace
-r_goto
-id|out
-suffix:semicolon
-)brace
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: fh_lookup(exp %x/%ld fh %p)&bslash;n&quot;
+l_string|&quot;nfsd: fh_verify(exp %x/%ld cookie %p)&bslash;n&quot;
 comma
 id|fh-&gt;fh_xdev
 comma
@@ -3731,7 +3721,17 @@ comma
 id|fh-&gt;fh_dcookie
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Look up the export entry.&n;&t; * N.B. We need to lock this while in use ...&n;&t; */
+r_if
+c_cond
+(paren
+id|fhp-&gt;fh_dverified
+)paren
+(brace
+r_goto
+id|check_type
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Look up the export entry.&n;&t; */
 id|error
 op_assign
 id|nfserr_stale
@@ -3847,6 +3847,12 @@ id|nfsd_nr_verified
 op_increment
 suffix:semicolon
 multiline_comment|/* Type check. The correct error return for type mismatches&n;&t; * does not seem to be generally agreed upon. SunOS seems to&n;&t; * use EISDIR if file isn&squot;t S_IFREG; a comment in the NFSv3&n;&t; * spec says this is incorrect (implementation notes for the&n;&t; * write call).&n;&t; */
+id|check_type
+suffix:colon
+id|dentry
+op_assign
+id|fhp-&gt;fh_dentry
+suffix:semicolon
 id|inode
 op_assign
 id|dentry-&gt;d_inode
@@ -3932,6 +3938,7 @@ comma
 id|access
 )paren
 suffix:semicolon
+macro_line|#ifdef NFSD_PARANOIA
 r_if
 c_cond
 (paren
@@ -3951,6 +3958,7 @@ comma
 id|error
 )paren
 suffix:semicolon
+macro_line|#endif
 id|out
 suffix:colon
 r_return

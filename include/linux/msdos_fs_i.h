@@ -30,39 +30,16 @@ r_int
 id|i_attrs
 suffix:semicolon
 multiline_comment|/* unused attribute bits */
+DECL|member|i_ctime_ms
+r_int
+id|i_ctime_ms
+suffix:semicolon
+multiline_comment|/* unused change time in milliseconds */
 DECL|member|i_busy
 r_int
 id|i_busy
 suffix:semicolon
 multiline_comment|/* file is either deleted but still open, or&n;&t;&t;&t;   inconsistent (mkdir) */
-DECL|member|i_depend
-r_struct
-id|inode
-op_star
-id|i_depend
-suffix:semicolon
-multiline_comment|/* pointer to inode that depends on the&n;&t;&t;&t;&t;   current inode */
-DECL|member|i_old
-r_struct
-id|inode
-op_star
-id|i_old
-suffix:semicolon
-multiline_comment|/* pointer to the old inode this inode&n;&t;&t;&t;&t;   depends on */
-DECL|member|i_linked
-r_struct
-id|inode
-op_star
-id|i_linked
-suffix:semicolon
-multiline_comment|/* pointer to inode linked to the current one,&n;&t;&t;&t;&t;   happens when an open file is moved */
-DECL|member|i_oldlink
-r_struct
-id|inode
-op_star
-id|i_oldlink
-suffix:semicolon
-multiline_comment|/* pointer to open inode that references&n;&t;&t;&t;&t;   the same file */
 DECL|member|i_binary
 r_int
 id|i_binary

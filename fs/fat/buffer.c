@@ -54,10 +54,7 @@ id|sb
 )paren
 op_member_access_from_pointer
 id|cvf_format
-)paren
-r_if
-c_cond
-(paren
+op_logical_and
 id|MSDOS_SB
 c_func
 (paren
@@ -184,8 +181,8 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* #Specification: msdos / strategy / special device / dummy blocks&n;&t;&t;&t;&t;&t;Many special device (Scsi optical disk for one) use&n;&t;&t;&t;&t;&t;larger hardware sector size. This allows for higher&n;&t;&t;&t;&t;&t;capacity.&n;&n;&t;&t;&t;&t;&t;Most of the time, the MsDOS file system that sit&n;&t;&t;&t;&t;&t;on this device is totally unaligned. It use logically&n;&t;&t;&t;&t;&t;512 bytes sector size, with logical sector starting&n;&t;&t;&t;&t;&t;in the middle of a hardware block. The bad news is&n;&t;&t;&t;&t;&t;that a hardware sector may hold data own by two&n;&t;&t;&t;&t;&t;different files. This means that the hardware sector&n;&t;&t;&t;&t;&t;must be read, patch and written almost all the time.&n;&n;&t;&t;&t;&t;&t;Needless to say that it kills write performance&n;&t;&t;&t;&t;&t;on all OS.&n;&n;&t;&t;&t;&t;&t;Internally the linux msdos fs is using 512 bytes&n;&t;&t;&t;&t;&t;logical sector. When accessing such a device, we&n;&t;&t;&t;&t;&t;allocate dummy buffer cache blocks, that we stuff&n;&t;&t;&t;&t;&t;with the information of a real one (1k large).&n;&n;&t;&t;&t;&t;&t;This strategy is used to hide this difference to&n;&t;&t;&t;&t;&t;the core of the msdos fs. The slowdown is not&n;&t;&t;&t;&t;&t;hidden though!&n;&t;&t;&t;&t;*/
-multiline_comment|/*&n;&t;&t;&t;&t;&t;The memset is there only to catch errors. The msdos&n;&t;&t;&t;&t;&t;fs is only using b_data&n;&t;&t;&t;&t;*/
+multiline_comment|/* #Specification: msdos / strategy / special device / dummy blocks&n;&t;&t;&t;&t; * Many special device (Scsi optical disk for one) use&n;&t;&t;&t;&t; * larger hardware sector size. This allows for higher&n;&t;&t;&t;&t; * capacity.&n;&n;&t;&t;&t;&t; * Most of the time, the MsDOS file system that sit&n;&t;&t;&t;&t; * on this device is totally unaligned. It use logically&n;&t;&t;&t;&t; * 512 bytes sector size, with logical sector starting&n;&t;&t;&t;&t; * in the middle of a hardware block. The bad news is&n;&t;&t;&t;&t; * that a hardware sector may hold data own by two&n;&t;&t;&t;&t; * different files. This means that the hardware sector&n;&t;&t;&t;&t; * must be read, patch and written almost all the time.&n;&n;&t;&t;&t;&t; * Needless to say that it kills write performance&n;&t;&t;&t;&t; * on all OS.&n;&n;&t;&t;&t;&t; * Internally the linux msdos fs is using 512 bytes&n;&t;&t;&t;&t; * logical sector. When accessing such a device, we&n;&t;&t;&t;&t; * allocate dummy buffer cache blocks, that we stuff&n;&t;&t;&t;&t; * with the information of a real one (1k large).&n;&n;&t;&t;&t;&t; * This strategy is used to hide this difference to&n;&t;&t;&t;&t; * the core of the msdos fs. The slowdown is not&n;&t;&t;&t;&t; * hidden though!&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * The memset is there only to catch errors. The msdos&n;&t;&t;&t;&t; * fs is only using b_data&n;&t;&t;&t;&t; */
 id|memset
 (paren
 id|ret
@@ -267,6 +264,7 @@ r_struct
 id|buffer_head
 op_star
 id|fat_getblk
+c_func
 (paren
 r_struct
 id|super_block
@@ -304,10 +302,7 @@ id|sb
 )paren
 op_member_access_from_pointer
 id|cvf_format
-)paren
-r_if
-c_cond
-(paren
+op_logical_and
 id|MSDOS_SB
 c_func
 (paren
@@ -316,7 +311,6 @@ id|sb
 op_member_access_from_pointer
 id|cvf_format-&gt;cvf_getblk
 )paren
-(brace
 r_return
 id|MSDOS_SB
 c_func
@@ -334,7 +328,6 @@ comma
 id|block
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -357,7 +350,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* #Specification: msdos / special device / writing&n;&t;&t;&t;A write is always preceded by a read of the complete block&n;&t;&t;&t;(large hardware sector size). This defeat write performance.&n;&t;&t;&t;There is a possibility to optimize this when writing large&n;&t;&t;&t;chunk by making sure we are filling large block. Volunteer ?&n;&t;&t;*/
+multiline_comment|/*&n;&t;&t; * #Specification: msdos / special device / writing&n;&t;&t; * A write is always preceded by a read of the complete block&n;&t;&t; * (large hardware sector size). This defeat write performance.&n;&t;&t; * There is a possibility to optimize this when writing large&n;&t;&t; * chunk by making sure we are filling large block. Volunteer ?&n;&t;&t; */
 id|ret
 op_assign
 id|fat_bread
@@ -405,10 +398,7 @@ id|sb
 )paren
 op_member_access_from_pointer
 id|cvf_format
-)paren
-r_if
-c_cond
-(paren
+op_logical_and
 id|MSDOS_SB
 c_func
 (paren
@@ -417,7 +407,6 @@ id|sb
 op_member_access_from_pointer
 id|cvf_format-&gt;cvf_brelse
 )paren
-(brace
 r_return
 id|MSDOS_SB
 c_func
@@ -435,7 +424,6 @@ comma
 id|bh
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -481,7 +469,7 @@ op_star
 id|bh
 comma
 r_int
-id|dirty_val
+id|dirty
 )paren
 (brace
 r_if
@@ -494,10 +482,7 @@ id|sb
 )paren
 op_member_access_from_pointer
 id|cvf_format
-)paren
-r_if
-c_cond
-(paren
+op_logical_and
 id|MSDOS_SB
 c_func
 (paren
@@ -522,7 +507,7 @@ id|sb
 comma
 id|bh
 comma
-id|dirty_val
+id|dirty
 )paren
 suffix:semicolon
 r_return
@@ -545,7 +530,7 @@ id|mark_buffer_dirty
 (paren
 id|bh
 comma
-id|dirty_val
+id|dirty
 )paren
 suffix:semicolon
 )brace
@@ -577,10 +562,7 @@ id|sb
 )paren
 op_member_access_from_pointer
 id|cvf_format
-)paren
-r_if
-c_cond
-(paren
+op_logical_and
 id|MSDOS_SB
 c_func
 (paren
@@ -658,10 +640,7 @@ id|sb
 )paren
 op_member_access_from_pointer
 id|cvf_format
-)paren
-r_if
-c_cond
-(paren
+op_logical_and
 id|MSDOS_SB
 c_func
 (paren
@@ -744,10 +723,7 @@ id|sb
 )paren
 op_member_access_from_pointer
 id|cvf_format
-)paren
-r_if
-c_cond
-(paren
+op_logical_and
 id|MSDOS_SB
 c_func
 (paren

@@ -23,30 +23,7 @@ id|video_device
 id|VIDEO_NUM_DEVICES
 )braket
 suffix:semicolon
-multiline_comment|/*&n; *&t;Initialiser list&n; */
-DECL|struct|video_init
-r_struct
-id|video_init
-(brace
-DECL|member|name
-r_char
-op_star
-id|name
-suffix:semicolon
-DECL|member|init
-r_int
-(paren
-op_star
-id|init
-)paren
-(paren
-r_struct
-id|video_init
-op_star
-)paren
-suffix:semicolon
-)brace
-suffix:semicolon
+macro_line|#ifdef CONFIG_VIDEO_BT848
 r_extern
 r_int
 id|init_bttv_cards
@@ -57,6 +34,31 @@ id|video_init
 op_star
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_VIDEO_CQCAM
+r_extern
+r_int
+id|init_colour_qcams
+c_func
+(paren
+r_struct
+id|video_init
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_VIDEO_BWQCAM
+r_extern
+r_int
+id|init_bw_qcams
+c_func
+(paren
+r_struct
+id|video_init
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|video_init_list
 r_static
 r_struct
@@ -91,9 +93,6 @@ op_star
 id|ppos
 )paren
 (brace
-r_int
-id|err
-suffix:semicolon
 r_struct
 id|video_device
 op_star
@@ -151,9 +150,6 @@ op_star
 id|ppos
 )paren
 (brace
-r_int
-id|err
-suffix:semicolon
 r_struct
 id|video_device
 op_star

@@ -4238,6 +4238,7 @@ r_void
 id|calc_port_addr
 c_func
 (paren
+r_void
 )paren
 )paren
 (brace

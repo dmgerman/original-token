@@ -88,10 +88,10 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef FIXME
 r_int
 id|soundcards_installed
 suffix:semicolon
-macro_line|#ifdef FIXME
 r_if
 c_cond
 (paren

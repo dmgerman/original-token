@@ -335,11 +335,6 @@ r_void
 )paren
 )paren
 (brace
-r_struct
-id|parport
-op_star
-id|pb
-suffix:semicolon
 r_if
 c_cond
 (paren

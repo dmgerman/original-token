@@ -3748,6 +3748,9 @@ c_func
 id|port
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#endif
 eof

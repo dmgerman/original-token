@@ -2365,7 +2365,6 @@ id|inode-&gt;i_sb
 op_member_access_from_pointer
 id|cvf_format-&gt;cvf_dir_ioctl
 )paren
-(brace
 r_return
 id|MSDOS_SB
 c_func
@@ -2387,7 +2386,6 @@ comma
 id|arg
 )paren
 suffix:semicolon
-)brace
 r_return
 op_minus
 id|EINVAL

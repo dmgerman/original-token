@@ -311,10 +311,7 @@ id|inode-&gt;i_sb
 )paren
 op_member_access_from_pointer
 id|cvf_format
-)paren
-r_if
-c_cond
-(paren
+op_logical_and
 id|MSDOS_SB
 c_func
 (paren
@@ -323,7 +320,6 @@ id|inode-&gt;i_sb
 op_member_access_from_pointer
 id|cvf_format-&gt;cvf_mmap
 )paren
-(brace
 r_return
 id|MSDOS_SB
 c_func
@@ -341,7 +337,6 @@ comma
 id|vma
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -458,10 +453,7 @@ id|inode-&gt;i_sb
 )paren
 op_member_access_from_pointer
 id|cvf_format
-)paren
-r_if
-c_cond
-(paren
+op_logical_and
 id|MSDOS_SB
 c_func
 (paren
@@ -470,7 +462,6 @@ id|inode-&gt;i_sb
 op_member_access_from_pointer
 id|cvf_format-&gt;cvf_readpage
 )paren
-(brace
 r_return
 id|MSDOS_SB
 c_func
@@ -488,7 +479,6 @@ comma
 id|page
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren

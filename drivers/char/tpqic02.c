@@ -6126,7 +6126,8 @@ id|printk
 c_func
 (paren
 id|TPQIC02_NAME
-l_string|&quot;: request READ, minor=%x, buf=%p, count=%lx, pos=%lx, flags=%x&bslash;n&quot;
+l_string|&quot;: request READ, minor=%x, buf=%p, count=%lx&quot;
+l_string|&quot;, pos=%lx, flags=%x&bslash;n&quot;
 comma
 id|MINOR
 c_func
@@ -6136,6 +6137,9 @@ id|dev
 comma
 id|buf
 comma
+(paren
+r_int
+)paren
 id|count
 comma
 (paren
@@ -6694,7 +6698,8 @@ id|printk
 c_func
 (paren
 id|TPQIC02_NAME
-l_string|&quot;: request WRITE, minor=%x, buf=%p, count=%lx, pos=%lx, flags=%x&bslash;n&quot;
+l_string|&quot;: request WRITE, minor=%x, buf=%p&quot;
+l_string|&quot;, count=%lx, pos=%lx, flags=%x&bslash;n&quot;
 comma
 id|MINOR
 c_func
@@ -6704,6 +6709,9 @@ id|dev
 comma
 id|buf
 comma
+(paren
+r_int
+)paren
 id|count
 comma
 (paren
@@ -7146,7 +7154,8 @@ id|printk
 c_func
 (paren
 id|TPQIC02_NAME
-l_string|&quot;: status_bytes_wr %x, buf %p, total_bytes_done %lx, count %lx&bslash;n&quot;
+l_string|&quot;: status_bytes_wr %x, buf %p&quot;
+l_string|&quot;, total_bytes_done %lx, count %lx&bslash;n&quot;
 comma
 id|status_bytes_wr
 comma
@@ -7154,6 +7163,9 @@ id|buf
 comma
 id|total_bytes_done
 comma
+(paren
+r_int
+)paren
 id|count
 )paren
 suffix:semicolon
@@ -9698,7 +9710,6 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_static
 r_int
 id|qic02_tape_init
 c_func

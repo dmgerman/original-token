@@ -830,7 +830,7 @@ id|acct_active
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * Fill the accounting struct with the needed info as recorded by the different&n;&t; * kernel functions.&n;&t; */
+multiline_comment|/*&n;&t; * Fill the accounting struct with the needed info as recorded&n;&t; * by the different kernel functions.&n;&t; */
 id|memset
 c_func
 (paren
@@ -1040,6 +1040,7 @@ c_func
 id|current-&gt;io_usage
 )paren
 suffix:semicolon
+multiline_comment|/* %% */
 id|ac.ac_rw
 op_assign
 id|encode_comp_t

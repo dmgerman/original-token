@@ -22030,6 +22030,9 @@ id|print_dsa
 (paren
 id|host
 comma
+id|bus_to_virt
+c_func
+(paren
 id|le32_to_cpu
 c_func
 (paren
@@ -22043,6 +22046,7 @@ id|cmd-&gt;host_scribble
 )paren
 op_member_access_from_pointer
 id|dsa
+)paren
 )paren
 comma
 l_string|&quot;&quot;

@@ -159,6 +159,6 @@ DECL|macro|TRACE_CATCH
 mdefine_line|#define TRACE_CATCH(fun, fail) _TRACE_CATCH(ft_t_err, fun, fail)
 multiline_comment|/*  Abort the current function when signalled. This doesn&squot;t belong here,&n; *  but rather into ftape-rw.h (maybe)&n; */
 DECL|macro|FT_SIGNAL_EXIT
-mdefine_line|#define FT_SIGNAL_EXIT(sig_mask)&t;&t;&t;&t;&t;&bslash;&n;&t;if (current-&gt;signal &amp; (sig_mask)) {&t;&t;&t;&t;&bslash;&n;&t;&t;TRACE_ABORT(-EINTR,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;    ft_t_warn,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;    &quot;interrupted by non-blockable signal&quot;);&t;&bslash;&n;&t;}
+mdefine_line|#define FT_SIGNAL_EXIT(sig_mask)&t;&t;&t;&t;&t;&bslash;&n;&t;if (sigtestsetmask(&amp;current-&gt;signal, sig_mask)) {&t;&t;&bslash;&n;&t;&t;TRACE_ABORT(-EINTR,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;    ft_t_warn,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;    &quot;interrupted by non-blockable signal&quot;);&t;&bslash;&n;&t;}
 macro_line|#endif /* _FTAPE_TRACING_H */
 eof

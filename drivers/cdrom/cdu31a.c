@@ -3488,8 +3488,8 @@ op_mod
 l_int|256
 suffix:semicolon
 )brace
+macro_line|#if 0
 multiline_comment|/* Uniform cdrom interface function.&n;   Return the status of the current disc:&n;   If it is recognized as CD-I -&gt; return XA Mode 2 Form 2&n;   If it is recognized as XA   -&gt; return XA Mode 2 Form 1&n;   If there is at least one data track return Mode 1&n;   else return type AUDIO&n; */
-DECL|function|scd_disc_status
 r_static
 r_int
 id|scd_disc_status
@@ -3576,6 +3576,7 @@ r_return
 id|CDS_NO_INFO
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* Starts a read operation. Returns 0 on success and 1 on failure. &n;   The read operation used here allows multiple sequential sectors &n;   to be read and status returned for each sector.  The driver will&n;   read the output one at a time as the requests come and abort the&n;   operation if the requested sector is not the next one from the&n;   drive. */
 r_static
 r_int

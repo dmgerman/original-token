@@ -145,11 +145,11 @@ c_func
 id|__up_wakeup
 )paren
 suffix:semicolon
-DECL|variable|__intel_bh_counter
+DECL|variable|global_bh_lock
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|__intel_bh_counter
+id|global_bh_lock
 )paren
 suffix:semicolon
 multiline_comment|/* Networking helper routines. */

@@ -23,8 +23,6 @@ DECL|macro|hardirq_exit
 mdefine_line|#define hardirq_exit(cpu)&t;(local_irq_count[cpu]--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;do { } while (0)
-DECL|macro|synchronize_one_irq
-mdefine_line|#define synchronize_one_irq(x)&t;do { } while (0)
 macro_line|#else
 macro_line|#include &lt;asm/atomic.h&gt;
 r_extern
@@ -70,9 +68,14 @@ id|global_irq_holder
 op_assign
 id|NO_PROC_ID
 suffix:semicolon
-id|global_irq_lock
-op_assign
+id|clear_bit
+c_func
+(paren
 l_int|0
+comma
+op_amp
+id|global_irq_lock
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -242,16 +245,6 @@ id|synchronize_irq
 c_func
 (paren
 r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|synchronize_one_irq
-c_func
-(paren
-r_int
-r_int
-id|irq
 )paren
 suffix:semicolon
 macro_line|#endif /* __SMP__ */

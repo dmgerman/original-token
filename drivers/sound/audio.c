@@ -1529,6 +1529,8 @@ id|arg
 (brace
 r_int
 id|val
+op_assign
+l_int|0
 comma
 id|info
 comma

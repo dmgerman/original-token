@@ -30,6 +30,16 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_CDROM 
+macro_line|#ifdef CONFIG_ISP16_CDI
+r_extern
+r_int
+id|isp16_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_ISP16_CDI
 macro_line|#ifdef CONFIG_CDU31A
 r_extern
 r_int
