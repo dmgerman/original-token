@@ -3729,11 +3729,11 @@ suffix:semicolon
 id|outb
 c_func
 (paren
+id|control
+comma
 id|UART_MCR
 op_plus
 id|port
-comma
-id|control
 )paren
 suffix:semicolon
 r_return

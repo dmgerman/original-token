@@ -34,15 +34,15 @@ multiline_comment|/* type of dst correction */
 )brace
 suffix:semicolon
 DECL|macro|FD_SETSIZE
-mdefine_line|#define FD_SETSIZE&t;&t;(8*sizeof(fd_set))
+mdefine_line|#define FD_SETSIZE&t;&t;__FD_SETSIZE
 DECL|macro|FD_SET
-mdefine_line|#define FD_SET(fd,fdsetp)&t;(*(fdsetp) |= (1 &lt;&lt; (fd)))
+mdefine_line|#define FD_SET(fd,fdsetp)&t;__FD_SET(fd,fdsetp)
 DECL|macro|FD_CLR
-mdefine_line|#define FD_CLR(fd,fdsetp)&t;(*(fdsetp) &amp;= ~(1 &lt;&lt; (fd)))
+mdefine_line|#define FD_CLR(fd,fdsetp)&t;__FD_CLR(fd,fdsetp)
 DECL|macro|FD_ISSET
-mdefine_line|#define FD_ISSET(fd,fdsetp)&t;((*(fdsetp) &gt;&gt; fd) &amp; 1)
+mdefine_line|#define FD_ISSET(fd,fdsetp)&t;__FD_ISSET(fd,fdsetp)
 DECL|macro|FD_ZERO
-mdefine_line|#define FD_ZERO(fdsetp)&t;&t;(*(fdsetp) = 0)
+mdefine_line|#define FD_ZERO(fdsetp)&t;&t;__FD_ZERO(fdsetp)
 multiline_comment|/*&n; * Names of the interval timers, and structure&n; * defining a timer setting.&n; */
 DECL|macro|ITIMER_REAL
 mdefine_line|#define&t;ITIMER_REAL&t;0

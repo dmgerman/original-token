@@ -1,4 +1,5 @@
 multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_entry.c                                                              |&n; |                                                                           |&n; | The entry function for wm-FPU-emu                                         |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; | See the files &quot;README&quot; and &quot;COPYING&quot; for further copyright and warranty   |&n; | information.                                                              |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; | Note:                                                                     |&n; |    The file contains code which accesses user memory.                     |&n; |    Emulator static data may change when user memory is accessed, due to   |&n; |    other processes using the emulator while swapping is in progress.      |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | math_emulate() is the sole entry point for wm-FPU-emu                     |&n; +---------------------------------------------------------------------------*/
 macro_line|#ifdef KERNEL_MATH_EMULATION
 macro_line|#include &lt;linux/signal.h&gt;
@@ -298,42 +299,29 @@ comma
 id|_null_
 )brace
 suffix:semicolon
-DECL|variable|FPU_lookahead
-r_int
-r_char
-id|FPU_lookahead
-suffix:semicolon
-DECL|variable|FPU_modrm
-r_int
-r_char
-id|FPU_modrm
-suffix:semicolon
+multiline_comment|/* Be careful when using any of these global variables...&n;   they might change if swapping is triggered */
 DECL|variable|FPU_rm
 r_int
 r_char
 id|FPU_rm
 suffix:semicolon
-DECL|variable|st0_tag
+DECL|variable|FPU_st0_tag
 r_char
-id|st0_tag
+id|FPU_st0_tag
 suffix:semicolon
-DECL|variable|st0_ptr
-r_struct
-id|reg
+DECL|variable|FPU_st0_ptr
+id|FPU_REG
 op_star
-id|st0_ptr
+id|FPU_st0_ptr
 suffix:semicolon
-DECL|variable|FPU_info
-r_struct
-id|info
-op_star
-id|FPU_info
+macro_line|#ifdef PARANOID
+DECL|variable|emulating
+r_char
+id|emulating
+op_assign
+l_int|0
 suffix:semicolon
-DECL|variable|FPU_entry_eip
-r_int
-r_int
-id|FPU_entry_eip
-suffix:semicolon
+macro_line|#endif PARANOID
 DECL|macro|bswapw
 mdefine_line|#define bswapw(x) __asm__(&quot;xchgb %%al,%%ah&quot;:&quot;=a&quot; (x):&quot;0&quot; ((short)x))
 DECL|function|math_emulate
@@ -346,16 +334,14 @@ id|arg
 )paren
 (brace
 r_int
+r_char
+id|FPU_modrm
+suffix:semicolon
+r_int
 r_int
 id|code
 suffix:semicolon
 macro_line|#ifdef PARANOID
-r_static
-r_int
-id|emulating
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -369,10 +355,7 @@ l_string|&quot;ERROR: wm-FPU-emu is not RE-ENTRANT!&bslash;r&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|emulating
-op_assign
-l_int|1
-suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 macro_line|#endif PARANOID
 r_if
 c_cond
@@ -474,6 +457,7 @@ id|FPU_ORIG_EIP
 op_assign
 id|FPU_EIP
 suffix:semicolon
+id|RE_ENTRANT_CHECK_OFF
 id|code
 op_assign
 id|get_fs_word
@@ -487,6 +471,7 @@ op_star
 id|FPU_EIP
 )paren
 suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 r_if
 c_cond
 (paren
@@ -502,6 +487,7 @@ l_int|0x66
 id|FPU_EIP
 op_increment
 suffix:semicolon
+id|RE_ENTRANT_CHECK_OFF
 id|code
 op_assign
 id|get_fs_word
@@ -515,6 +501,7 @@ op_star
 id|FPU_EIP
 )paren
 suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 )brace
 id|FPU_EIP
 op_add_assign
@@ -532,19 +519,6 @@ id|FPU_modrm
 op_amp
 l_int|7
 suffix:semicolon
-id|st0_ptr
-op_assign
-op_amp
-id|st
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-id|st0_tag
-op_assign
-id|st0_ptr-&gt;tag
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -557,6 +531,7 @@ multiline_comment|/* All of these instructions use the mod/rm byte to get a data
 id|get_address
 c_func
 (paren
+id|FPU_modrm
 )paren
 suffix:semicolon
 r_if
@@ -568,12 +543,6 @@ id|code
 op_amp
 l_int|1
 )paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|NOT_EMPTY_0
 )paren
 (brace
 r_switch
@@ -629,6 +598,26 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* No more access to user memory, it is safe&n;&t;     to use static data now */
+id|FPU_st0_ptr
+op_assign
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+id|FPU_st0_tag
+op_assign
+id|FPU_st0_ptr-&gt;tag
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|NOT_EMPTY_0
+)paren
+(brace
 r_switch
 c_cond
 (paren
@@ -648,12 +637,12 @@ multiline_comment|/* fadd */
 id|reg_add
 c_func
 (paren
-id|st0_ptr
+id|FPU_st0_ptr
 comma
 op_amp
 id|FPU_loaded_data
 comma
-id|st0_ptr
+id|FPU_st0_ptr
 )paren
 suffix:semicolon
 r_break
@@ -665,12 +654,12 @@ multiline_comment|/* fmul */
 id|reg_mul
 c_func
 (paren
-id|st0_ptr
+id|FPU_st0_ptr
 comma
 op_amp
 id|FPU_loaded_data
 comma
-id|st0_ptr
+id|FPU_st0_ptr
 )paren
 suffix:semicolon
 r_break
@@ -709,12 +698,12 @@ multiline_comment|/* fsub */
 id|reg_sub
 c_func
 (paren
-id|st0_ptr
+id|FPU_st0_ptr
 comma
 op_amp
 id|FPU_loaded_data
 comma
-id|st0_ptr
+id|FPU_st0_ptr
 )paren
 suffix:semicolon
 r_break
@@ -729,9 +718,9 @@ c_func
 op_amp
 id|FPU_loaded_data
 comma
-id|st0_ptr
+id|FPU_st0_ptr
 comma
-id|st0_ptr
+id|FPU_st0_ptr
 )paren
 suffix:semicolon
 r_break
@@ -743,12 +732,12 @@ multiline_comment|/* fdiv */
 id|reg_div
 c_func
 (paren
-id|st0_ptr
+id|FPU_st0_ptr
 comma
 op_amp
 id|FPU_loaded_data
 comma
-id|st0_ptr
+id|FPU_st0_ptr
 )paren
 suffix:semicolon
 r_break
@@ -763,9 +752,9 @@ c_func
 op_amp
 id|FPU_loaded_data
 comma
-id|st0_ptr
+id|FPU_st0_ptr
 comma
-id|st0_ptr
+id|FPU_st0_ptr
 )paren
 suffix:semicolon
 r_break
@@ -780,6 +769,7 @@ c_func
 suffix:semicolon
 )brace
 r_else
+(brace
 id|load_store_instr
 c_func
 (paren
@@ -800,13 +790,19 @@ op_rshift
 l_int|1
 )paren
 suffix:semicolon
+)brace
 id|data_operand_offset
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|FPU_data_address
 suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* None of these instructions access user memory */
 r_int
 r_char
 id|instr_index
@@ -822,6 +818,19 @@ id|code
 op_amp
 l_int|7
 )paren
+suffix:semicolon
+id|FPU_st0_ptr
+op_assign
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+id|FPU_st0_tag
+op_assign
+id|FPU_st0_ptr-&gt;tag
 suffix:semicolon
 r_switch
 c_cond
@@ -978,6 +987,7 @@ id|next
 suffix:semicolon
 id|skip_fwait
 suffix:colon
+id|RE_ENTRANT_CHECK_OFF
 id|next
 op_assign
 id|get_fs_byte
@@ -991,6 +1001,7 @@ op_star
 id|FPU_EIP
 )paren
 suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 id|test_for_fp
 suffix:colon
 r_if
@@ -1034,6 +1045,7 @@ l_int|0x66
 )paren
 multiline_comment|/* size prefix */
 (brace
+id|RE_ENTRANT_CHECK_OFF
 id|next
 op_assign
 id|get_fs_byte
@@ -1051,6 +1063,7 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 r_if
 c_cond
 (paren
@@ -1067,12 +1080,7 @@ id|test_for_fp
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef PARANOID
-id|emulating
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif PARANOID
+id|RE_ENTRANT_CHECK_OFF
 )brace
 DECL|function|__math_abort
 r_void

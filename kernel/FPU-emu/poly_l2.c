@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_l2.c                                                                |&n; |                                                                           |&n; | Compute the base 2 logarithm of a REG, using a polynomial approximation.  |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_l2.c                                                                |&n; |                                                                           |&n; | Compute the base 2 log of a FPU_REG, using a polynomial approximation.    |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -115,11 +115,11 @@ r_void
 id|poly_l2
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|arg
 comma
-id|REG
+id|FPU_REG
 op_star
 id|result
 )paren
@@ -141,7 +141,7 @@ r_int
 r_int
 id|Xsq
 suffix:semicolon
-id|REG
+id|FPU_REG
 id|accum
 comma
 id|denom
@@ -387,7 +387,7 @@ id|exponent
 (brace
 multiline_comment|/* If the exponent is zero, then we would lose precision by&n;&t; sticking to fixed point computation here */
 multiline_comment|/* We need to re-compute Xx because of loss of precision. */
-id|REG
+id|FPU_REG
 id|lXx
 suffix:semicolon
 r_char
@@ -560,7 +560,6 @@ id|EXP_BIAS
 op_plus
 l_int|1
 suffix:semicolon
-multiline_comment|/*&t;  normalize(&amp;accum); ********/
 id|reg_u_add
 c_func
 (paren
@@ -889,11 +888,11 @@ r_int
 id|poly_l2p1
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|arg
 comma
-id|REG
+id|FPU_REG
 op_star
 id|result
 )paren
@@ -907,7 +906,7 @@ r_int
 r_int
 id|Xsq
 suffix:semicolon
-id|REG
+id|FPU_REG
 id|arg_pl1
 comma
 id|denom

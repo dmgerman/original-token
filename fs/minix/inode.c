@@ -135,6 +135,8 @@ op_assign
 (brace
 id|minix_read_inode
 comma
+l_int|NULL
+comma
 id|minix_write_inode
 comma
 id|minix_put_inode
@@ -182,6 +184,23 @@ id|s-&gt;s_dev
 comma
 id|block
 suffix:semicolon
+r_if
+c_cond
+(paren
+l_int|32
+op_ne
+r_sizeof
+(paren
+r_struct
+id|minix_inode
+)paren
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;bad i-node size&quot;
+)paren
+suffix:semicolon
 id|lock_super
 c_func
 (paren
@@ -220,7 +239,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;bread failed&bslash;n&quot;
+l_string|&quot;MINIX-fs: unable to read superblock&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -299,7 +318,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;magic match failed&bslash;n&quot;
+l_string|&quot;MINIX-fs magic match failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -503,7 +522,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;block failed&bslash;n&quot;
+l_string|&quot;MINIX-fs: bad superblock or unable to read bitmaps&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -574,7 +593,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;get root inode failed&bslash;n&quot;
+l_string|&quot;MINIX-fs: get root inode failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1156,6 +1175,9 @@ c_func
 (paren
 id|READ
 comma
+l_int|1
+comma
+op_amp
 id|bh
 )paren
 suffix:semicolon
@@ -1568,6 +1590,9 @@ c_func
 (paren
 id|READ
 comma
+l_int|1
+comma
+op_amp
 id|bh
 )paren
 suffix:semicolon
@@ -1618,6 +1643,12 @@ id|raw_inode
 suffix:semicolon
 r_int
 id|block
+comma
+id|ino
+suffix:semicolon
+id|ino
+op_assign
+id|inode-&gt;i_ino
 suffix:semicolon
 id|block
 op_assign
@@ -1628,7 +1659,7 @@ op_plus
 id|inode-&gt;i_sb-&gt;u.minix_sb.s_zmap_blocks
 op_plus
 (paren
-id|inode-&gt;i_ino
+id|ino
 op_minus
 l_int|1
 )paren
@@ -1671,7 +1702,7 @@ id|bh-&gt;b_data
 )paren
 op_plus
 (paren
-id|inode-&gt;i_ino
+id|ino
 op_minus
 l_int|1
 )paren
@@ -2076,13 +2107,13 @@ id|inode-&gt;u.minix_i.i_data
 id|block
 )braket
 suffix:semicolon
-id|bh-&gt;b_dirt
-op_assign
-l_int|1
-suffix:semicolon
 id|inode-&gt;i_dirt
 op_assign
 l_int|0
+suffix:semicolon
+id|bh-&gt;b_dirt
+op_assign
+l_int|1
 suffix:semicolon
 id|brelse
 c_func

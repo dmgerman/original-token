@@ -372,6 +372,12 @@ suffix:semicolon
 id|free_page
 c_func
 (paren
+id|p-&gt;kernel_stack_page
+)paren
+suffix:semicolon
+id|free_page
+c_func
+(paren
 (paren
 r_int
 )paren
@@ -444,7 +450,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This routine scans the pid tree and make sure the rep invarient still&n; * holds.  Used for debugging only, since it&squot;s very slow....&n; *&n; * It looks a lot scarier than it really is.... we&squot;re doing &#xfffd;nothing more&n; * than verifying the doubly-linked list found&#xfffd;in p_ysptr and p_osptr, &n; * and checking it corresponds with the process tree defined by p_cptr and &n; * p_pptr;&n; */
+multiline_comment|/*&n; * This routine scans the pid tree and make sure the rep invarient still&n; * holds.  Used for debugging only, since it&squot;s very slow....&n; *&n; * It looks a lot scarier than it really is.... we&squot;re doing &#xfffd;nothing more&n; * than verifying the doubly-linked list found in p_ysptr and p_osptr, &n; * and checking it corresponds with the process tree defined by p_cptr and &n; * p_pptr;&n; */
 DECL|function|audit_ptree
 r_void
 id|audit_ptree
@@ -1882,7 +1888,11 @@ suffix:semicolon
 id|p-&gt;flags
 op_and_assign
 op_complement
+(paren
 id|PF_PTRACED
+op_or
+id|PF_TRACESYS
+)paren
 suffix:semicolon
 r_if
 c_cond

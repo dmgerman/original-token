@@ -1,18 +1,16 @@
-multiline_comment|/* $Header: /sys/linux-0.97/include/asm/RCS/dma.h,v 1.4 1992/09/21 03:15:46 root Exp root $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; */
+multiline_comment|/* $Header: /sys/linux-0.97/include/asm/RCS/dma.h,v 1.4 1992/09/21 03:15:46 root Exp root $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; *&n; * High DMA channel support by Hannu Savolainen&n; */
 macro_line|#ifndef _ASM_DMA_H
 DECL|macro|_ASM_DMA_H
 mdefine_line|#define _ASM_DMA_H
 macro_line|#include &lt;asm/io.h&gt;&t;&t;/* need byte IO */
-macro_line|#include &lt;linux/kernel.h&gt;&t;/* need panic() [FIXME] */
 macro_line|#ifdef HAVE_REALLY_SLOW_DMA_CONTROLLER
 DECL|macro|outb
 mdefine_line|#define outb&t;outb_p
 macro_line|#endif
-multiline_comment|/* FIXME: better fix this code for dma channels&gt;3!!!!!!! */
-multiline_comment|/*&n; * The routines below should in most cases (with optimizing on) result&n; * in equal or better code than similar code using macros.&n; *&n; * NOTE about DMA transfers: The DMA controller cannot handle transfers&n; * that cross a 64k boundary. When the address reaches 0xNffff, it will wrap&n; * around to 0xN0000, rather than increment to 0x(N+1)0000 !&n; * Make sure you align your buffers properly! Runtime check recommended.&n; *&n; * NOTE2: DMA1..3 can only use the lower 1MB of physical memory. DMA4..7&n; * can access the lower 16MB. There are people with &gt;16MB, so beware!&n; */
+multiline_comment|/*&n; * The routines below should in most cases (with optimizing on) result&n; * in equal or better code than similar code using macros.&n; *&n; * NOTE about DMA transfers: The DMA controller cannot handle transfers&n; * that cross a 64k boundary. When the address reaches 0xNffff, it will wrap&n; * around to 0xN0000, rather than increment to 0x(N+1)0000 !&n; * Make sure you align your buffers properly! Runtime check recommended.&n;&n; ****** Correction!!!!!&n; * &t;Channels 4-7 16 bit channels and capable to cross 64k boundaries&n; *&t;but not 128k boundaries. Transfer count must be given as words.&n; *&t;Maximum transfer size is 65k words = 128kb.&n; *&n; * NOTE2: DMA1..3 can only use the lower 1MB of physical memory. DMA4..7&n; * can access the lower 16MB. There are people with &gt;16MB, so beware!&n; &n; * **** Not correct!!! All channels are able to access the first 16MB *******&n; */
 DECL|macro|MAX_DMA_CHANNELS
 mdefine_line|#define MAX_DMA_CHANNELS&t;8
-multiline_comment|/* SOMEBODY should check the following:&n; * Channels 0..3 are on the first DMA controller, channels 4..7 are&n; * on the second. Channel 0 is for refresh, 4 is for cascading.&n; * The first DMA controller uses bytes, the second words.&n; *&n; * Where are the page regs for the second DMA controller?????&n; */
+multiline_comment|/* SOMEBODY should check the following:&n; * Channels 0..3 are on the first DMA controller, channels 4..7 are&n; * on the second. Channel 0 is for refresh, 4 is for cascading.&n; * The first DMA controller uses bytes, the second words.&n; *&n; * Where are the page regs for the second DMA controller?????&n; * (ch 5=0x8b, 6=0x89, 7=0x8a)&n; */
 multiline_comment|/* 8237 DMA controllers */
 DECL|macro|IO_DMA1_BASE
 mdefine_line|#define IO_DMA1_BASE&t;0x00&t;/* 8 bit slave DMA, channels 0..3 */
@@ -31,19 +29,25 @@ DECL|macro|DMA1_CLEAR_FF_REG
 mdefine_line|#define DMA1_CLEAR_FF_REG&t;0x0C&t;/* Write 0 for LSB, 1 for MSB */
 DECL|macro|DMA1_RESET_REG
 mdefine_line|#define DMA1_RESET_REG&t;&t;0x0D&t;/* Write here to reset DMA controller */
-multiline_comment|/* don&squot;t have much info on the second DMA controller... */
+DECL|macro|DMA2_CMD_REG
+mdefine_line|#define DMA2_CMD_REG&t;&t;0xD0&t;/* DMA command register */
+DECL|macro|DMA2_STAT_REG
+mdefine_line|#define DMA2_STAT_REG&t;&t;0xD0&t;/* DMA status register */
 DECL|macro|DMA2_MASK_REG
 mdefine_line|#define DMA2_MASK_REG&t;&t;0xD4
 DECL|macro|DMA2_MODE_REG
 mdefine_line|#define DMA2_MODE_REG&t;&t;0xD6
-multiline_comment|/* #define DMA2_CLEAR_FF_REG 0xD8 -- pure guessing.... */
-multiline_comment|/************* #error This needs more work!!!!!!!*************/
+DECL|macro|DMA2_CLEAR_FF_REG
+mdefine_line|#define DMA2_CLEAR_FF_REG &t;0xD8
+DECL|macro|DMA2_RESET_REG
+mdefine_line|#define DMA2_RESET_REG&t;&t;0xDA&t;/* Write here to reset DMA controller */
 DECL|macro|DMA_MODE_READ
 mdefine_line|#define DMA_MODE_READ&t;0x44&t;/* I/O to memory, no autoinit, increment, single mode */
 DECL|macro|DMA_MODE_WRITE
 mdefine_line|#define DMA_MODE_WRITE&t;0x48&t;/* memory to I/O, no autoinit, increment, single mode */
+multiline_comment|/* cascade mode (for DMA2 controller only) */
 DECL|macro|DMA_MODE_CASCADE
-mdefine_line|#define DMA_MODE_CASCADE&t;0xC0&t;/* cascade mode (for DMA2 controller only) */
+mdefine_line|#define DMA_MODE_CASCADE&t;0x40&t;/* 0xC0 */
 multiline_comment|/* enable/disable a specific DMA channel */
 DECL|function|enable_dma
 r_static
@@ -158,7 +162,6 @@ id|DMA1_CLEAR_FF_REG
 )paren
 suffix:semicolon
 r_else
-macro_line|#ifdef DMA2_CLEAR_FF_REG
 id|outb
 c_func
 (paren
@@ -167,14 +170,6 @@ comma
 id|DMA2_CLEAR_FF_REG
 )paren
 suffix:semicolon
-macro_line|#else
-id|panic
-c_func
-(paren
-l_string|&quot;dma.h: Don&squot;t have CLEAR_FF for high dma channels!&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* set mode (above) for a specific DMA channel */
 DECL|function|set_dma_mode
@@ -304,26 +299,58 @@ suffix:semicolon
 r_case
 l_int|4
 suffix:colon
+id|outb
+c_func
+(paren
+id|pagenr
+comma
+l_int|0x8f
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 l_int|5
 suffix:colon
+id|outb
+c_func
+(paren
+id|pagenr
+comma
+l_int|0x8b
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 l_int|6
 suffix:colon
+id|outb
+c_func
+(paren
+id|pagenr
+comma
+l_int|0x89
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 l_int|7
 suffix:colon
-id|panic
+id|outb
 c_func
 (paren
-l_string|&quot;dma.h: don&squot;t know how to set DMA page regs for channels&gt;3&quot;
+id|pagenr
+comma
+l_int|0x8a
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Set transfer address &amp; page bits for specific DMA channel.&n; * Assumes dma flipflop is clear.&n; */
+multiline_comment|/* Set transfer address &amp; page bits for specific DMA channel.&n; * Assumes dma flipflop is clear.&n; *&n; * NOTE! A word address is assumed for the channels 4 to 7.&n; */
 DECL|function|set_dma_addr
 r_static
 id|__inline__
@@ -355,15 +382,44 @@ id|IO_DMA1_BASE
 suffix:colon
 id|IO_DMA2_BASE
 suffix:semicolon
+r_int
+r_int
+id|page
+op_assign
+id|a
+op_rshift
+l_int|16
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dmanr
+OG
+l_int|3
+)paren
+id|page
+op_and_assign
+l_int|0xfe
+suffix:semicolon
+multiline_comment|/* The last bit is never used */
 id|set_dma_page
 c_func
 (paren
 id|dmanr
 comma
-id|a
-op_rshift
-l_int|16
+id|page
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dmanr
+OG
+l_int|3
+)paren
+id|a
+op_rshift_assign
+l_int|1
 suffix:semicolon
 id|outb
 c_func
@@ -430,10 +486,6 @@ id|count
 r_int
 r_int
 id|dc
-op_assign
-id|count
-op_minus
-l_int|1
 suffix:semicolon
 r_int
 r_int
@@ -449,6 +501,23 @@ c_cond
 id|IO_DMA1_BASE
 suffix:colon
 id|IO_DMA2_BASE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dmanr
+OG
+l_int|3
+)paren
+id|count
+op_rshift_assign
+l_int|1
+suffix:semicolon
+id|dc
+op_assign
+id|count
+op_minus
+l_int|1
 suffix:semicolon
 id|outb
 c_func

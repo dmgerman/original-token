@@ -7,7 +7,9 @@ macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/dirent.h&gt;
 macro_line|#include &lt;linux/vfs.h&gt;
-multiline_comment|/* devices are as follows: (same as minix, so we can use the minix&n; * file system. These are major numbers.)&n; *&n; *  0 - unused (nodev)&n; *  1 - /dev/mem&n; *  2 - /dev/fd&n; *  3 - /dev/hd&n; *  4 - /dev/ttyx&n; *  5 - /dev/tty&n; *  6 - /dev/lp&n; *  7 -&n; *  8 - /dev/sd&n; *  9 - /dev/st&n; * 10 - mice&n; * 11 - scsi cdrom&n; */
+multiline_comment|/* devices are as follows: (same as minix, so we can use the minix&n; * file system. These are major numbers.)&n; *&n; *  0 - unnamed (minor 0 = true nodev)&n; *  1 - /dev/mem&n; *  2 - /dev/fd&n; *  3 - /dev/hd&n; *  4 - /dev/ttyx&n; *  5 - /dev/tty&n; *  6 - /dev/lp&n; *  7 -&n; *  8 - /dev/sd&n; *  9 - /dev/st&n; * 10 - mice&n; * 11 - scsi cdrom&n; * 12 -&n; * 13 -&n; * 14 - sound card (?)&n; * 15 -&n; */
+DECL|macro|UNNAMED_MAJOR
+mdefine_line|#define UNNAMED_MAJOR 0
 DECL|macro|MAY_EXEC
 mdefine_line|#define MAY_EXEC 1
 DECL|macro|MAY_WRITE
@@ -287,6 +289,36 @@ r_struct
 id|vm_area_struct
 op_star
 id|i_mmap
+suffix:semicolon
+DECL|member|i_next
+DECL|member|i_prev
+r_struct
+id|inode
+op_star
+id|i_next
+comma
+op_star
+id|i_prev
+suffix:semicolon
+DECL|member|i_hash_next
+DECL|member|i_hash_prev
+r_struct
+id|inode
+op_star
+id|i_hash_next
+comma
+op_star
+id|i_hash_prev
+suffix:semicolon
+DECL|member|i_bound_to
+DECL|member|i_bound_by
+r_struct
+id|inode
+op_star
+id|i_bound_to
+comma
+op_star
+id|i_bound_by
 suffix:semicolon
 DECL|member|i_count
 r_int
@@ -623,7 +655,6 @@ id|dirent
 op_star
 comma
 r_int
-id|count
 )paren
 suffix:semicolon
 DECL|member|select
@@ -954,16 +985,13 @@ id|inode
 op_star
 comma
 r_int
-id|flag
 comma
 r_int
-id|mode
 comma
 r_struct
 id|inode
 op_star
 op_star
-id|res_inode
 )paren
 suffix:semicolon
 DECL|member|bmap
@@ -1008,7 +1036,18 @@ id|read_inode
 r_struct
 id|inode
 op_star
+)paren
+suffix:semicolon
+DECL|member|notify_change
+r_int
+(paren
+op_star
+id|notify_change
+)paren
+(paren
+r_struct
 id|inode
+op_star
 )paren
 suffix:semicolon
 DECL|member|write_inode
@@ -1021,7 +1060,6 @@ id|write_inode
 r_struct
 id|inode
 op_star
-id|inode
 )paren
 suffix:semicolon
 DECL|member|put_inode
@@ -1034,7 +1072,6 @@ id|put_inode
 r_struct
 id|inode
 op_star
-id|inode
 )paren
 suffix:semicolon
 DECL|member|put_super
@@ -1047,7 +1084,6 @@ id|put_super
 r_struct
 id|super_block
 op_star
-id|sb
 )paren
 suffix:semicolon
 DECL|member|write_super
@@ -1060,7 +1096,6 @@ id|write_super
 r_struct
 id|super_block
 op_star
-id|sb
 )paren
 suffix:semicolon
 DECL|member|statfs
@@ -1073,12 +1108,10 @@ id|statfs
 r_struct
 id|super_block
 op_star
-id|sb
 comma
 r_struct
 id|statfs
 op_star
-id|buf
 )paren
 suffix:semicolon
 )brace
@@ -1099,17 +1132,19 @@ id|read_super
 r_struct
 id|super_block
 op_star
-id|sb
 comma
 r_void
 op_star
-id|mode
 )paren
 suffix:semicolon
 DECL|member|name
 r_char
 op_star
 id|name
+suffix:semicolon
+DECL|member|requires_dev
+r_int
+id|requires_dev
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1320,6 +1355,17 @@ id|block
 suffix:semicolon
 r_extern
 r_int
+id|notify_change
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|namei
 c_func
 (paren
@@ -1449,6 +1495,16 @@ r_void
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|clear_inode
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_struct
 id|inode
 op_star
@@ -1510,10 +1566,15 @@ c_func
 r_int
 id|rw
 comma
+r_int
+id|nr
+comma
 r_struct
 id|buffer_head
 op_star
 id|bh
+(braket
+)braket
 )paren
 suffix:semicolon
 r_extern

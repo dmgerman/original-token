@@ -566,7 +566,7 @@ r_int
 id|len
 )paren
 (brace
-id|free_s
+id|kfree_s
 c_func
 (paren
 id|ptr
@@ -584,13 +584,18 @@ id|arp_malloc
 r_int
 r_int
 id|amount
+comma
+r_int
+id|priority
 )paren
 (brace
 r_return
 (paren
-id|malloc
+id|kmalloc
 (paren
 id|amount
+comma
+id|priority
 )paren
 )paren
 suffix:semicolon
@@ -650,6 +655,8 @@ op_star
 id|arp1-&gt;plen
 op_plus
 id|dev-&gt;hard_header_len
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -1258,6 +1265,8 @@ r_sizeof
 op_star
 id|apt
 )paren
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -1688,6 +1697,8 @@ op_star
 id|dev-&gt;addr_len
 op_plus
 l_int|8
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if

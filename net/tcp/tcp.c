@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 multiline_comment|/* #include &lt;signal.h&gt;*/
 macro_line|#include &lt;linux/termios.h&gt; /* for ioctl&squot;s */
 macro_line|#include &quot;../kern_sock.h&quot; /* for PRINTK */
@@ -1444,6 +1445,8 @@ comma
 id|MAX_ACK_SIZE
 comma
 l_int|1
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -2207,6 +2210,8 @@ id|skb
 )paren
 comma
 l_int|0
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 multiline_comment|/* if we didn&squot;t get any memory, we need to sleep. */
@@ -2701,6 +2706,8 @@ comma
 id|MAX_ACK_SIZE
 comma
 l_int|1
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -4145,6 +4152,8 @@ comma
 id|MAX_RESET_SIZE
 comma
 l_int|1
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -4500,7 +4509,7 @@ multiline_comment|/* we need to build a new sock struct. */
 multiline_comment|/* It is sort of bad to have a socket without an inode attached to&n;     it, but the wake_up&squot;s will just wake up the listening socket,&n;     and if the listening socket is destroyed before this is taken&n;     off of the queue, this will take care of it. */
 id|newsk
 op_assign
-id|malloc
+id|kmalloc
 c_func
 (paren
 r_sizeof
@@ -4508,6 +4517,8 @@ r_sizeof
 r_struct
 id|sock
 )paren
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -4850,6 +4861,8 @@ comma
 id|MAX_SYN_SIZE
 comma
 l_int|1
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -5548,6 +5561,8 @@ comma
 id|MAX_FIN_SIZE
 comma
 l_int|1
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -7446,6 +7461,8 @@ comma
 id|MAX_ACK_SIZE
 comma
 l_int|1
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -8069,6 +8086,8 @@ comma
 id|MAX_SYN_SIZE
 comma
 l_int|0
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -10320,6 +10339,8 @@ comma
 id|MAX_ACK_SIZE
 comma
 l_int|1
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 multiline_comment|/* no big loss. */

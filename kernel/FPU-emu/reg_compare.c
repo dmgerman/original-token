@@ -1,5 +1,5 @@
 multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_compare.c                                                            |&n; |                                                                           |&n; | Compare two floating point registers                                      |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
-multiline_comment|/*---------------------------------------------------------------------------+&n; | compare() is the core REG comparison function                             |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; | compare() is the core FPU_REG comparison function                         |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -9,7 +9,7 @@ r_int
 id|compare
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|b
 )paren
@@ -20,7 +20,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|st0_ptr-&gt;tag
+id|FPU_st0_ptr-&gt;tag
 op_or
 id|b-&gt;tag
 )paren
@@ -28,7 +28,7 @@ id|b-&gt;tag
 r_if
 c_cond
 (paren
-id|st0_ptr-&gt;tag
+id|FPU_st0_ptr-&gt;tag
 op_eq
 id|TW_Zero
 )paren
@@ -77,14 +77,14 @@ id|TW_Zero
 r_if
 c_cond
 (paren
-id|st0_ptr-&gt;tag
+id|FPU_st0_ptr-&gt;tag
 op_eq
 id|TW_Valid
 )paren
 (brace
 r_return
 (paren
-id|st0_ptr-&gt;sign
+id|FPU_st0_ptr-&gt;sign
 op_eq
 id|SIGN_POS
 )paren
@@ -99,7 +99,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|st0_ptr-&gt;tag
+id|FPU_st0_ptr-&gt;tag
 op_eq
 id|TW_Infinity
 )paren
@@ -122,7 +122,7 @@ id|TW_Zero
 (brace
 r_return
 (paren
-id|st0_ptr-&gt;sign
+id|FPU_st0_ptr-&gt;sign
 op_eq
 id|SIGN_POS
 )paren
@@ -145,7 +145,7 @@ id|TW_Infinity
 multiline_comment|/* The 80486 book says that infinities can be equal! */
 r_return
 (paren
-id|st0_ptr-&gt;sign
+id|FPU_st0_ptr-&gt;sign
 op_eq
 id|b-&gt;sign
 )paren
@@ -155,7 +155,7 @@ id|COMP_A_EQ_B
 suffix:colon
 (paren
 (paren
-id|st0_ptr-&gt;sign
+id|FPU_st0_ptr-&gt;sign
 op_eq
 id|SIGN_POS
 )paren
@@ -182,13 +182,13 @@ r_if
 c_cond
 (paren
 (paren
-id|st0_ptr-&gt;tag
+id|FPU_st0_ptr-&gt;tag
 op_eq
 id|TW_Valid
 )paren
 op_logical_or
 (paren
-id|st0_ptr-&gt;tag
+id|FPU_st0_ptr-&gt;tag
 op_eq
 id|TW_Zero
 )paren
@@ -214,7 +214,7 @@ r_if
 c_cond
 (paren
 (paren
-id|st0_ptr-&gt;tag
+id|FPU_st0_ptr-&gt;tag
 op_eq
 id|TW_NaN
 )paren
@@ -231,14 +231,14 @@ c_cond
 (paren
 (paren
 (paren
-id|st0_ptr-&gt;tag
+id|FPU_st0_ptr-&gt;tag
 op_eq
 id|TW_NaN
 )paren
 op_logical_and
 op_logical_neg
 (paren
-id|st0_ptr-&gt;sigh
+id|FPU_st0_ptr-&gt;sigh
 op_amp
 l_int|0x40000000
 )paren
@@ -288,7 +288,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|st0_ptr-&gt;sigh
+id|FPU_st0_ptr-&gt;sigh
 op_amp
 l_int|0x80000000
 )paren
@@ -319,13 +319,13 @@ macro_line|#endif PARANOID
 r_if
 c_cond
 (paren
-id|st0_ptr-&gt;sign
+id|FPU_st0_ptr-&gt;sign
 op_ne
 id|b-&gt;sign
 )paren
 r_return
 (paren
-id|st0_ptr-&gt;sign
+id|FPU_st0_ptr-&gt;sign
 op_eq
 id|SIGN_POS
 )paren
@@ -337,7 +337,7 @@ id|COMP_A_LT_B
 suffix:semicolon
 id|diff
 op_assign
-id|st0_ptr-&gt;exp
+id|FPU_st0_ptr-&gt;exp
 op_minus
 id|b-&gt;exp
 suffix:semicolon
@@ -351,7 +351,7 @@ l_int|0
 (brace
 id|diff
 op_assign
-id|st0_ptr-&gt;sigh
+id|FPU_st0_ptr-&gt;sigh
 op_minus
 id|b-&gt;sigh
 suffix:semicolon
@@ -364,7 +364,7 @@ l_int|0
 )paren
 id|diff
 op_assign
-id|st0_ptr-&gt;sigl
+id|FPU_st0_ptr-&gt;sigl
 op_minus
 id|b-&gt;sigl
 suffix:semicolon
@@ -378,7 +378,7 @@ l_int|0
 )paren
 r_return
 (paren
-id|st0_ptr-&gt;sign
+id|FPU_st0_ptr-&gt;sign
 op_eq
 id|SIGN_POS
 )paren
@@ -397,7 +397,7 @@ l_int|0
 )paren
 r_return
 (paren
-id|st0_ptr-&gt;sign
+id|FPU_st0_ptr-&gt;sign
 op_eq
 id|SIGN_POS
 )paren
@@ -862,6 +862,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|FPU_st0_ptr
+op_assign
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
 id|pop
 c_func
 (paren
@@ -928,6 +937,15 @@ suffix:semicolon
 id|pop
 c_func
 (paren
+)paren
+suffix:semicolon
+id|FPU_st0_ptr
+op_assign
+op_amp
+id|st
+c_func
+(paren
+l_int|0
 )paren
 suffix:semicolon
 id|pop

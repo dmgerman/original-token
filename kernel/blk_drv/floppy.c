@@ -1071,6 +1071,9 @@ c_func
 (paren
 id|WRITE
 comma
+l_int|1
+comma
+op_amp
 id|bh
 )paren
 suffix:semicolon
@@ -1090,6 +1093,9 @@ c_func
 (paren
 id|READ
 comma
+l_int|1
+comma
+op_amp
 id|bh
 )paren
 suffix:semicolon

@@ -140,11 +140,11 @@ r_void
 id|poly_sine
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|arg
 comma
-id|REG
+id|FPU_REG
 op_star
 id|result
 )paren
@@ -152,7 +152,7 @@ id|result
 r_int
 id|exponent
 suffix:semicolon
-id|REG
+id|FPU_REG
 id|Xx
 comma
 id|Xx2
@@ -648,6 +648,7 @@ multiline_comment|/* Much &gt; 1.0 */
 )paren
 (brace
 macro_line|#ifdef DEBUGGING
+id|RE_ENTRANT_CHECK_OFF
 id|printk
 c_func
 (paren
@@ -660,6 +661,7 @@ comma
 id|result-&gt;sigl
 )paren
 suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 macro_line|#endif DEBUGGING
 id|EXCEPTION
 c_func
@@ -671,6 +673,7 @@ l_int|0x103
 suffix:semicolon
 )brace
 macro_line|#ifdef DEBUGGING
+id|RE_ENTRANT_CHECK_OFF
 id|printk
 c_func
 (paren
@@ -689,6 +692,7 @@ comma
 id|result-&gt;sigl
 )paren
 suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 macro_line|#endif DEBUGGING
 id|result-&gt;sigl
 op_assign

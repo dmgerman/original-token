@@ -3,14 +3,15 @@ DECL|macro|_LINUX_LIMITS_H
 mdefine_line|#define _LINUX_LIMITS_H
 DECL|macro|NAME_MAX
 mdefine_line|#define NAME_MAX 255
+multiline_comment|/*&n; * It&squot;s silly to have NR_OPEN bigger than NR_FILE, but I&squot;ll fix&n; * that later. Anyway, now the file code is no longer dependent&n; * on bitmaps in unsigned longs, but uses the new fd_set structure..&n; *&n; * Some programs (notably those using select()) may have to be &n; * recompiled to take full advantage of the new limits..&n; */
 DECL|macro|NR_OPEN
-mdefine_line|#define NR_OPEN 32
+mdefine_line|#define NR_OPEN 256
 DECL|macro|NR_INODE
 mdefine_line|#define NR_INODE 128
 DECL|macro|NR_FILE
 mdefine_line|#define NR_FILE 128
 DECL|macro|NR_SUPER
-mdefine_line|#define NR_SUPER 8
+mdefine_line|#define NR_SUPER 16
 DECL|macro|NR_HASH
 mdefine_line|#define NR_HASH 997
 DECL|macro|NR_FILE_LOCKS
@@ -20,9 +21,9 @@ mdefine_line|#define BLOCK_SIZE 1024
 DECL|macro|BLOCK_SIZE_BITS
 mdefine_line|#define BLOCK_SIZE_BITS 10
 DECL|macro|MAX_CHRDEV
-mdefine_line|#define MAX_CHRDEV 16
+mdefine_line|#define MAX_CHRDEV 32
 DECL|macro|MAX_BLKDEV
-mdefine_line|#define MAX_BLKDEV 16
+mdefine_line|#define MAX_BLKDEV 32
 DECL|macro|NGROUPS_MAX
 mdefine_line|#define NGROUPS_MAX       32&t;/* supplemental group IDs are available */
 DECL|macro|ARG_MAX
@@ -30,7 +31,7 @@ mdefine_line|#define ARG_MAX       131072&t;/* # bytes of args + environ for exe
 DECL|macro|CHILD_MAX
 mdefine_line|#define CHILD_MAX        999    /* no limit :-) */
 DECL|macro|OPEN_MAX
-mdefine_line|#define OPEN_MAX          32&t;/* # open files a process may have */
+mdefine_line|#define OPEN_MAX         256&t;/* # open files a process may have */
 DECL|macro|LINK_MAX
 mdefine_line|#define LINK_MAX         127&t;/* # links a file may have */
 DECL|macro|MAX_CANON

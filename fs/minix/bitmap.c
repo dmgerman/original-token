@@ -688,18 +688,10 @@ op_logical_neg
 id|inode-&gt;i_dev
 )paren
 (brace
-id|memset
+id|printk
 c_func
 (paren
-id|inode
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-op_star
-id|inode
-)paren
+l_string|&quot;free_inode: inode has no device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -709,7 +701,7 @@ r_if
 c_cond
 (paren
 id|inode-&gt;i_count
-OG
+op_ne
 l_int|1
 )paren
 (brace
@@ -815,25 +807,19 @@ id|bh-&gt;b_data
 id|printk
 c_func
 (paren
-l_string|&quot;free_inode: bit already cleared.&bslash;n&bslash;r&quot;
+l_string|&quot;free_inode: bit %d already cleared.&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
 )paren
 suffix:semicolon
 id|bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
-id|memset
+id|clear_inode
 c_func
 (paren
 id|inode
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-op_star
-id|inode
-)paren
 )paren
 suffix:semicolon
 )brace

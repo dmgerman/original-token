@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  p_atan.c                                                                 |&n; |                                                                           |&n; | Compute the tan of a REG, using a polynomial approximation.               |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  p_atan.c                                                                 |&n; |                                                                           |&n; | Compute the tan of a FPU_REG, using a polynomial approximation.           |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -125,7 +125,7 @@ r_void
 id|poly_atan
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|arg
 )paren
@@ -138,7 +138,7 @@ suffix:semicolon
 r_int
 id|exponent
 suffix:semicolon
-id|REG
+id|FPU_REG
 id|odd_poly
 comma
 id|even_poly
@@ -147,7 +147,7 @@ id|pos_poly
 comma
 id|neg_poly
 suffix:semicolon
-id|REG
+id|FPU_REG
 id|argSq
 suffix:semicolon
 r_int
@@ -288,7 +288,7 @@ l_int|0xd413ccd0
 )paren
 )paren
 (brace
-id|REG
+id|FPU_REG
 id|numerator
 comma
 id|denom
@@ -850,7 +850,7 @@ r_void
 id|poly_add_1
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|src
 )paren

@@ -71,6 +71,17 @@ macro_line|#if !defined(CONFIG_SCSI_AHA1542) &amp;&amp; !defined(CONFIG_SCSI_CSC
 macro_line|#error  Error : SCSI devices enabled, but no low level drivers have been enabled.
 macro_line|#endif
 macro_line|#endif
+multiline_comment|/*&n; *  Choose filesystems here.&n; */
+DECL|macro|MINIX_FS
+mdefine_line|#define MINIX_FS
+DECL|macro|EXT_FS
+mdefine_line|#define EXT_FS
+DECL|macro|MSDOS_FS
+mdefine_line|#define MSDOS_FS
+DECL|macro|PROC_FS
+mdefine_line|#define PROC_FS
+DECL|macro|NFS_FS
+macro_line|#undef  NFS_FS
 macro_line|#ifdef CONFIG_DISTRIBUTION
 macro_line|#include &lt;linux/config.dist.h&gt;
 macro_line|#else

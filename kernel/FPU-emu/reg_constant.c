@@ -1,11 +1,10 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_constant.c                                                           |&n; |                                                                           |&n; | All of the constant REGs                                                  |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_constant.c                                                           |&n; |                                                                           |&n; | All of the constant FPU_REGs                                              |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
 macro_line|#include &quot;status_w.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 DECL|variable|CONST_1
-r_struct
-id|reg
+id|FPU_REG
 id|CONST_1
 op_assign
 (brace
@@ -21,8 +20,7 @@ l_int|0x80000000
 )brace
 suffix:semicolon
 DECL|variable|CONST_2
-r_struct
-id|reg
+id|FPU_REG
 id|CONST_2
 op_assign
 (brace
@@ -40,8 +38,7 @@ l_int|0x80000000
 )brace
 suffix:semicolon
 DECL|variable|CONST_HALF
-r_struct
-id|reg
+id|FPU_REG
 id|CONST_HALF
 op_assign
 (brace
@@ -59,8 +56,7 @@ l_int|0x80000000
 )brace
 suffix:semicolon
 DECL|variable|CONST_L2T
-r_struct
-id|reg
+id|FPU_REG
 id|CONST_L2T
 op_assign
 (brace
@@ -78,8 +74,7 @@ l_int|0xd49a784b
 )brace
 suffix:semicolon
 DECL|variable|CONST_L2E
-r_struct
-id|reg
+id|FPU_REG
 id|CONST_L2E
 op_assign
 (brace
@@ -95,8 +90,7 @@ l_int|0xb8aa3b29
 )brace
 suffix:semicolon
 DECL|variable|CONST_PI
-r_struct
-id|reg
+id|FPU_REG
 id|CONST_PI
 op_assign
 (brace
@@ -114,8 +108,7 @@ l_int|0xc90fdaa2
 )brace
 suffix:semicolon
 DECL|variable|CONST_PI2
-r_struct
-id|reg
+id|FPU_REG
 id|CONST_PI2
 op_assign
 (brace
@@ -131,8 +124,7 @@ l_int|0xc90fdaa2
 )brace
 suffix:semicolon
 DECL|variable|CONST_PI4
-r_struct
-id|reg
+id|FPU_REG
 id|CONST_PI4
 op_assign
 (brace
@@ -150,8 +142,7 @@ l_int|0xc90fdaa2
 )brace
 suffix:semicolon
 DECL|variable|CONST_LG2
-r_struct
-id|reg
+id|FPU_REG
 id|CONST_LG2
 op_assign
 (brace
@@ -169,8 +160,7 @@ l_int|0x9a209a84
 )brace
 suffix:semicolon
 DECL|variable|CONST_LN2
-r_struct
-id|reg
+id|FPU_REG
 id|CONST_LN2
 op_assign
 (brace
@@ -189,8 +179,7 @@ l_int|0xb17217f7
 suffix:semicolon
 multiline_comment|/* Only the sign (and tag) is used in internal zeroes */
 DECL|variable|CONST_Z
-r_struct
-id|reg
+id|FPU_REG
 id|CONST_Z
 op_assign
 (brace
@@ -206,11 +195,10 @@ l_int|0x0
 )brace
 suffix:semicolon
 multiline_comment|/* Only the sign and significand (and tag) are used in internal NaNs */
-multiline_comment|/* The 80486 never generates one of these &n;struct reg CONST_SNAN = { SIGN_POS, TW_NaN, EXP_OVER, 0x00000001, 0x80000000 };&n; */
+multiline_comment|/* The 80486 never generates one of these &n;FPU_REG CONST_SNAN = { SIGN_POS, TW_NaN, EXP_OVER, 0x00000001, 0x80000000 };&n; */
 multiline_comment|/* This is the real indefinite QNaN */
 DECL|variable|CONST_QNaN
-r_struct
-id|reg
+id|FPU_REG
 id|CONST_QNaN
 op_assign
 (brace
@@ -227,8 +215,7 @@ l_int|0xC0000000
 suffix:semicolon
 multiline_comment|/* Only the sign (and tag) is used in internal infinities */
 DECL|variable|CONST_INF
-r_struct
-id|reg
+id|FPU_REG
 id|CONST_INF
 op_assign
 (brace
@@ -249,12 +236,12 @@ r_void
 id|fld_const
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|c
 )paren
 (brace
-id|REG
+id|FPU_REG
 op_star
 id|st_new_ptr
 suffix:semicolon
@@ -282,7 +269,7 @@ c_func
 (paren
 id|c
 comma
-id|st0_ptr
+id|FPU_st0_ptr
 )paren
 suffix:semicolon
 id|status_word

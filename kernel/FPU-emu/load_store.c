@@ -1,21 +1,20 @@
 multiline_comment|/*---------------------------------------------------------------------------+&n; |  load_store.c                                                             |&n; |                                                                           |&n; | This file contains most of the code to interpret the FPU instructions     |&n; | which load and store from user memory.                                    |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; | Note:                                                                     |&n; |    The file contains code which accesses user memory.                     |&n; |    Emulator static data may change when user memory is accessed, due to   |&n; |    other processes using the emulator while swapping is in progress.      |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
 macro_line|#include &quot;status_w.h&quot;
 DECL|macro|_NONE_
-mdefine_line|#define _NONE_ 0
+mdefine_line|#define _NONE_ 0   /* FPU_st0_ptr etc not needed */
 DECL|macro|_REG0_
-mdefine_line|#define _REG0_ 1   /* Need to check for not empty st(0) */
-DECL|macro|_REGI_
-mdefine_line|#define _REGI_ 2   /* Need to check for not empty st(0) and st(rm) */
-DECL|macro|_REGi_
-mdefine_line|#define _REGi_ 0   /* Uses st(rm) */
+mdefine_line|#define _REG0_ 1   /* Will be storing st(0) */
 DECL|macro|_PUSH_
 mdefine_line|#define _PUSH_ 3   /* Need to check for space to push onto stack */
 DECL|macro|_null_
 mdefine_line|#define _null_ 4   /* Function illegal or not implemented */
+DECL|macro|pop_0
+mdefine_line|#define pop_0()&t;{ pop_ptr-&gt;tag = TW_Empty; top++; }
 DECL|variable|type_table
 r_static
 r_int
@@ -100,6 +99,11 @@ r_char
 id|type
 )paren
 (brace
+id|FPU_REG
+op_star
+id|pop_ptr
+suffix:semicolon
+multiline_comment|/* We need a version of FPU_st0_ptr which won&squot;t change. */
 r_switch
 c_cond
 (paren
@@ -123,20 +127,47 @@ suffix:semicolon
 r_case
 id|_REG0_
 suffix:colon
+id|pop_ptr
+op_assign
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Some of these instructions pop after&n;&t;&t;&t;&t; storing */
+id|FPU_st0_ptr
+op_assign
+id|pop_ptr
+suffix:semicolon
+multiline_comment|/* Set the global variables. */
+id|FPU_st0_tag
+op_assign
+id|FPU_st0_ptr-&gt;tag
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 id|_PUSH_
 suffix:colon
 (brace
-id|REG
-op_star
-id|st_new_ptr
+id|pop_ptr
+op_assign
+op_amp
+id|st
+c_func
+(paren
+op_minus
+l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|STACK_OVERFLOW
+id|pop_ptr-&gt;tag
+op_ne
+id|TW_Empty
 )paren
 (brace
 id|stack_overflow
@@ -147,10 +178,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|push
-c_func
-(paren
-)paren
+id|top
+op_decrement
 suffix:semicolon
 )brace
 r_break
@@ -197,7 +226,7 @@ c_func
 op_amp
 id|FPU_loaded_data
 comma
-id|st0_ptr
+id|pop_ptr
 )paren
 suffix:semicolon
 r_break
@@ -217,7 +246,7 @@ c_func
 op_amp
 id|FPU_loaded_data
 comma
-id|st0_ptr
+id|pop_ptr
 )paren
 suffix:semicolon
 r_break
@@ -237,7 +266,7 @@ c_func
 op_amp
 id|FPU_loaded_data
 comma
-id|st0_ptr
+id|pop_ptr
 )paren
 suffix:semicolon
 r_break
@@ -257,7 +286,7 @@ c_func
 op_amp
 id|FPU_loaded_data
 comma
-id|st0_ptr
+id|pop_ptr
 )paren
 suffix:semicolon
 r_break
@@ -318,7 +347,7 @@ c_func
 (paren
 )paren
 )paren
-id|pop
+id|pop_0
 c_func
 (paren
 )paren
@@ -338,7 +367,7 @@ c_func
 (paren
 )paren
 )paren
-id|pop
+id|pop_0
 c_func
 (paren
 )paren
@@ -358,7 +387,7 @@ c_func
 (paren
 )paren
 )paren
-id|pop
+id|pop_0
 c_func
 (paren
 )paren
@@ -378,7 +407,7 @@ c_func
 (paren
 )paren
 )paren
-id|pop
+id|pop_0
 c_func
 (paren
 )paren
@@ -423,7 +452,7 @@ c_func
 op_amp
 id|FPU_loaded_data
 comma
-id|st0_ptr
+id|pop_ptr
 )paren
 suffix:semicolon
 r_break
@@ -432,6 +461,7 @@ r_case
 l_int|024
 suffix:colon
 multiline_comment|/* fldcw */
+id|RE_ENTRANT_CHECK_OFF
 id|control_word
 op_assign
 id|get_fs_word
@@ -445,6 +475,7 @@ op_star
 id|FPU_data_address
 )paren
 suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 macro_line|#ifdef NO_UNDERFLOW_TRAP
 r_if
 c_cond
@@ -494,7 +525,7 @@ c_func
 op_amp
 id|FPU_loaded_data
 comma
-id|st0_ptr
+id|pop_ptr
 )paren
 suffix:semicolon
 r_break
@@ -514,7 +545,7 @@ c_func
 op_amp
 id|FPU_loaded_data
 comma
-id|st0_ptr
+id|pop_ptr
 )paren
 suffix:semicolon
 r_break
@@ -581,7 +612,7 @@ c_func
 (paren
 )paren
 )paren
-id|pop
+id|pop_0
 c_func
 (paren
 )paren
@@ -593,6 +624,7 @@ r_case
 l_int|034
 suffix:colon
 multiline_comment|/* fstcw m16int */
+id|RE_ENTRANT_CHECK_OFF
 id|verify_area
 c_func
 (paren
@@ -613,6 +645,7 @@ op_star
 id|FPU_data_address
 )paren
 suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 id|FPU_data_address
 op_assign
 (paren
@@ -641,7 +674,7 @@ c_func
 (paren
 )paren
 )paren
-id|pop
+id|pop_0
 c_func
 (paren
 )paren
@@ -668,6 +701,7 @@ l_int|7
 op_lshift
 id|SW_TOPS
 suffix:semicolon
+id|RE_ENTRANT_CHECK_OFF
 id|verify_area
 c_func
 (paren
@@ -688,6 +722,7 @@ op_star
 id|FPU_data_address
 )paren
 suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 id|FPU_data_address
 op_assign
 (paren
@@ -716,7 +751,7 @@ c_func
 (paren
 )paren
 )paren
-id|pop
+id|pop_0
 c_func
 (paren
 )paren

@@ -1,6 +1,6 @@
 multiline_comment|/*---------------------------------------------------------------------------+&n; |  get_address.c                                                            |&n; |                                                                           |&n; | Get the effective address from an FPU instruction.                        |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; | Note:                                                                     |&n; |    The file contains code which accesses user memory.                     |&n; |    Emulator static data may change when user memory is accessed, due to   |&n; |    other processes using the emulator while swapping is in progress.      |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &lt;linux/stddef.h&gt;
-macro_line|#include &lt;linux/math_emu.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;exception.h&quot;
@@ -108,6 +108,7 @@ suffix:semicolon
 r_int
 id|offset
 suffix:semicolon
+id|RE_ENTRANT_CHECK_OFF
 id|base
 op_assign
 id|get_fs_byte
@@ -121,6 +122,7 @@ id|FPU_EIP
 )paren
 suffix:semicolon
 multiline_comment|/* The SIB byte */
+id|RE_ENTRANT_CHECK_ON
 id|FPU_EIP
 op_increment
 suffix:semicolon
@@ -219,6 +221,7 @@ l_int|1
 )paren
 (brace
 multiline_comment|/* 8 bit signed displacement */
+id|RE_ENTRANT_CHECK_OFF
 id|offset
 op_add_assign
 (paren
@@ -235,6 +238,7 @@ op_star
 id|FPU_EIP
 )paren
 suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 id|FPU_EIP
 op_increment
 suffix:semicolon
@@ -254,6 +258,7 @@ l_int|5
 multiline_comment|/* The second condition also has mod==0 */
 (brace
 multiline_comment|/* 32 bit displacment */
+id|RE_ENTRANT_CHECK_OFF
 id|offset
 op_add_assign
 (paren
@@ -270,6 +275,7 @@ op_star
 id|FPU_EIP
 )paren
 suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 id|FPU_EIP
 op_add_assign
 l_int|4
@@ -289,7 +295,9 @@ r_void
 id|get_address
 c_func
 (paren
-r_void
+r_int
+r_char
+id|FPU_modrm
 )paren
 (brace
 r_int
@@ -363,6 +371,7 @@ l_int|5
 )paren
 (brace
 multiline_comment|/* Special case: disp32 */
+id|RE_ENTRANT_CHECK_OFF
 id|offset
 op_assign
 id|get_fs_long
@@ -376,6 +385,7 @@ op_star
 id|FPU_EIP
 )paren
 suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 id|FPU_EIP
 op_add_assign
 l_int|4
@@ -410,6 +420,7 @@ r_case
 l_int|1
 suffix:colon
 multiline_comment|/* 8 bit signed displacement */
+id|RE_ENTRANT_CHECK_OFF
 id|offset
 op_assign
 (paren
@@ -426,6 +437,7 @@ op_star
 id|FPU_EIP
 )paren
 suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 id|FPU_EIP
 op_increment
 suffix:semicolon
@@ -435,6 +447,7 @@ r_case
 l_int|2
 suffix:colon
 multiline_comment|/* 32 bit displacement */
+id|RE_ENTRANT_CHECK_OFF
 id|offset
 op_assign
 (paren
@@ -451,6 +464,7 @@ op_star
 id|FPU_EIP
 )paren
 suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 id|FPU_EIP
 op_add_assign
 l_int|4

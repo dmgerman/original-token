@@ -323,6 +323,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|skb-&gt;next
+op_ne
+l_int|NULL
+)paren
+(brace
+multiline_comment|/*      printk (&quot;retransmitted packet still on queue. &bslash;n&quot;);*/
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|pri
 OL
 l_int|0
@@ -358,22 +370,6 @@ op_eq
 l_int|0
 )paren
 (brace
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|skb-&gt;next
-op_ne
-l_int|NULL
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;retransmitted packet still on queue. &bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -529,7 +525,7 @@ l_int|NULL
 (brace
 id|skb
 op_assign
-id|malloc
+id|kmalloc
 (paren
 r_sizeof
 (paren
@@ -538,6 +534,8 @@ id|skb
 )paren
 op_plus
 id|len
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -673,7 +671,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|free_s
+id|kfree_s
 (paren
 id|skb-&gt;mem_addr
 comma
@@ -770,7 +768,7 @@ id|skb
 op_ne
 l_int|NULL
 )paren
-id|free_s
+id|kfree_s
 (paren
 id|skb-&gt;mem_addr
 comma
@@ -947,9 +945,11 @@ id|ptype-&gt;copy
 (brace
 id|skb2
 op_assign
-id|malloc
+id|kmalloc
 (paren
 id|skb-&gt;mem_len
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if

@@ -191,12 +191,36 @@ r_int
 r_int
 id|tcflag_t
 suffix:semicolon
-DECL|typedef|fd_set
+multiline_comment|/*&n; * This allows for 256 file descriptors: if NR_OPEN is ever grown beyond that&n; * you&squot;ll have to change this too. But 256 fd&squot;s seem to be enough even for such&n; * &quot;real&quot; unices like SunOS, so hopefully this is one limit that doesn&squot;t have&n; * to be changed.&n; *&n; * Note that POSIX wants the FD_CLEAR(fd,fdsetp) defines to be in &lt;sys/time.h&gt;&n; * (and thus &lt;linux/time.h&gt;) - but this is a more logical place for them. Solved&n; * by having dummy defines in &lt;sys/time.h&gt;.&n; */
+DECL|macro|__FDSET_LONGS
+mdefine_line|#define __FDSET_LONGS 8
+DECL|struct|fd_set
 r_typedef
+r_struct
+id|fd_set
+(brace
+DECL|member|fd_mask
 r_int
 r_int
+id|fd_mask
+(braket
+id|__FDSET_LONGS
+)braket
+suffix:semicolon
+DECL|typedef|fd_set
+)brace
 id|fd_set
 suffix:semicolon
+DECL|macro|__FD_SETSIZE
+mdefine_line|#define __FD_SETSIZE (__FDSET_LONGS*32)
+DECL|macro|__FD_SET
+mdefine_line|#define __FD_SET(fd,fdsetp) &bslash;&n;__asm__ __volatile__(&quot;btsl %1,%0&quot;:&quot;=m&quot; (*(struct fd_set *)fdsetp):&quot;r&quot; ((int) fd))
+DECL|macro|__FD_CLR
+mdefine_line|#define __FD_CLR(fd,fdsetp) &bslash;&n;__asm__ __volatile__(&quot;btrl %1,%0&quot;:&quot;=m&quot; (*(struct fd_set *)fdsetp):&quot;r&quot; ((int) fd))
+DECL|macro|__FD_ISSET
+mdefine_line|#define __FD_ISSET(fd,fdsetp) &bslash;&n;({ char __result; &bslash;&n;__asm__ __volatile__(&quot;btl %1,%2 ; setb %0&quot; &bslash;&n;&t;:&quot;=q&quot; (__result) &bslash;&n;&t;:&quot;r&quot; ((int) fd),&quot;m&quot; (*(struct fd_set *) fdsetp)); &bslash;&n;__result; })
+DECL|macro|__FD_ZERO
+mdefine_line|#define __FD_ZERO(fdsetp) &bslash;&n;__asm__ __volatile__(&quot;cld ; rep ; stosl&quot; &bslash;&n;&t;:&quot;=m&quot; (*(struct fd_set *) fdsetp) &bslash;&n;&t;:&quot;a&quot; (0), &quot;c&quot; (__FDSET_LONGS), &quot;D&quot; ((struct fd_set *) fdsetp) &bslash;&n;&t;:&quot;cx&quot;,&quot;di&quot;)
 DECL|struct|ustat
 r_struct
 id|ustat

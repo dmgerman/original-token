@@ -3,7 +3,7 @@ multiline_comment|/*&n;    Copyright (C) 1992  Bob Harris&n;&n;    This program 
 multiline_comment|/* modified by Ross Biro bir7@leland.stanford.edu to do more than just&n;   echo responses. */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;&t;/* free_s */
+macro_line|#include &lt;linux/kernel.h&gt;&t;/* kfree_s */
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;netinet/in.h&gt;
@@ -204,9 +204,11 @@ id|dev-&gt;hard_header_len
 suffix:semicolon
 id|skb
 op_assign
-id|malloc
+id|kmalloc
 (paren
 id|len
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -716,13 +718,15 @@ l_int|1
 suffix:semicolon
 id|rt
 op_assign
-id|malloc
+id|kmalloc
 (paren
 r_sizeof
 (paren
 op_star
 id|rt
 )paren
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -804,10 +808,12 @@ id|len
 suffix:semicolon
 id|skb
 op_assign
-id|malloc
+id|kmalloc
 c_func
 (paren
 id|size
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -884,7 +890,7 @@ c_func
 l_string|&quot;&bslash;nCould not build IP Header for ICMP ECHO Response&quot;
 )paren
 suffix:semicolon
-id|free_s
+id|kfree_s
 (paren
 id|skb-&gt;mem_addr
 comma

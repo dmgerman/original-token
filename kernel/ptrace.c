@@ -388,6 +388,17 @@ l_int|10
 op_amp
 l_int|0xffc
 suffix:semicolon
+multiline_comment|/* we&squot;re bypassing pagetables, so we have to set the dirty bit ourselves */
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|page
+op_or_assign
+id|PAGE_DIRTY
+suffix:semicolon
 id|page
 op_assign
 op_star
@@ -1357,12 +1368,33 @@ r_return
 l_int|0
 suffix:semicolon
 r_case
+id|PTRACE_SYSCALL
+suffix:colon
+multiline_comment|/* continue and stop at next (return from) syscall */
+r_case
 id|PTRACE_CONT
 suffix:colon
 (brace
 multiline_comment|/* restart after signal. */
 r_int
 id|tmp
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|request
+op_eq
+id|PTRACE_SYSCALL
+)paren
+id|child-&gt;flags
+op_or_assign
+id|PF_TRACESYS
+suffix:semicolon
+r_else
+id|child-&gt;flags
+op_and_assign
+op_complement
+id|PF_TRACESYS
 suffix:semicolon
 id|child-&gt;signal
 op_assign
@@ -1495,6 +1527,11 @@ multiline_comment|/* set the trap flag. */
 r_int
 id|tmp
 suffix:semicolon
+id|child-&gt;flags
+op_and_assign
+op_complement
+id|PF_TRACESYS
+suffix:semicolon
 id|tmp
 op_assign
 id|get_stack_long
@@ -1570,7 +1607,11 @@ suffix:semicolon
 id|child-&gt;flags
 op_and_assign
 op_complement
+(paren
 id|PF_PTRACED
+op_or
+id|PF_TRACESYS
+)paren
 suffix:semicolon
 id|child-&gt;signal
 op_assign

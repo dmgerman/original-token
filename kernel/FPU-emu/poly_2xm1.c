@@ -155,11 +155,11 @@ r_int
 id|poly_2xm1
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|arg
 comma
-id|REG
+id|FPU_REG
 op_star
 id|result
 )paren
@@ -171,7 +171,7 @@ r_int
 r_int
 id|Xll
 suffix:semicolon
-id|REG
+id|FPU_REG
 id|accum
 suffix:semicolon
 id|exponent

@@ -13,6 +13,8 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &quot;../kern_sock.h&quot; /* for PRINTK */
 r_extern
 r_struct
@@ -340,7 +342,7 @@ id|err
 suffix:semicolon
 id|skb
 op_assign
-id|malloc
+id|kmalloc
 (paren
 id|len
 op_plus
@@ -349,6 +351,8 @@ r_sizeof
 op_star
 id|skb
 )paren
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -680,6 +684,8 @@ op_plus
 id|sk-&gt;prot-&gt;max_header
 comma
 l_int|0
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 multiline_comment|/* this shouldn&squot;t happen, but it could. */
@@ -911,7 +917,7 @@ op_star
 id|sk-&gt;pair
 )paren
 suffix:semicolon
-id|free_s
+id|kfree_s
 (paren
 (paren
 r_void
@@ -951,13 +957,15 @@ id|p
 suffix:semicolon
 id|p
 op_assign
-id|malloc
+id|kmalloc
 (paren
 r_sizeof
 (paren
 op_star
 id|p
 )paren
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if

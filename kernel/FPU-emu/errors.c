@@ -1,4 +1,5 @@
 multiline_comment|/*---------------------------------------------------------------------------+&n; |  errors.c                                                                 |&n; |                                                                           |&n; |  The error handling functions for wm-FPU-emu                              |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; | Note:                                                                     |&n; |    The file contains code which accesses user memory.                     |&n; |    Emulator static data may change when user memory is accessed, due to   |&n; |    other processes using the emulator while swapping is in progress.      |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;fpu_system.h&quot;
@@ -8,11 +9,6 @@ macro_line|#include &quot;status_w.h&quot;
 macro_line|#include &quot;control_w.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;version.h&quot;
-r_extern
-r_int
-r_char
-id|FPU_lookahead
-suffix:semicolon
 multiline_comment|/* */
 DECL|macro|PRINT_MESSAGES
 macro_line|#undef PRINT_MESSAGES
@@ -28,10 +24,30 @@ r_void
 r_int
 r_char
 id|byte1
+comma
+id|FPU_modrm
+suffix:semicolon
+id|RE_ENTRANT_CHECK_OFF
+id|byte1
 op_assign
 id|get_fs_byte
 c_func
 (paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|FPU_ORIG_EIP
+)paren
+suffix:semicolon
+id|FPU_modrm
+op_assign
+id|get_fs_byte
+c_func
+(paren
+l_int|1
+op_plus
 (paren
 r_int
 r_char
@@ -88,6 +104,7 @@ op_amp
 l_int|7
 )paren
 suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 id|EXCEPTION
 c_func
 (paren
@@ -133,10 +150,30 @@ suffix:semicolon
 r_int
 r_char
 id|byte1
+comma
+id|FPU_modrm
+suffix:semicolon
+id|RE_ENTRANT_CHECK_OFF
+id|byte1
 op_assign
 id|get_fs_byte
 c_func
 (paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|FPU_ORIG_EIP
+)paren
+suffix:semicolon
+id|FPU_modrm
+op_assign
+id|get_fs_byte
+c_func
+(paren
+l_int|1
+op_plus
 (paren
 r_int
 r_char
@@ -661,8 +698,7 @@ id|i
 op_increment
 )paren
 (brace
-r_struct
-id|reg
+id|FPU_REG
 op_star
 id|r
 op_assign
@@ -878,6 +914,7 @@ id|FPU_loaded_data.tag
 )braket
 )paren
 suffix:semicolon
+id|RE_ENTRANT_CHECK_ON
 )brace
 r_static
 r_struct
@@ -1013,6 +1050,7 @@ op_complement
 id|SW_C1
 suffix:semicolon
 )brace
+id|RE_ENTRANT_CHECK_OFF
 r_if
 c_cond
 (paren
@@ -1153,6 +1191,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+id|RE_ENTRANT_CHECK_ON
 macro_line|#ifdef __DEBUG__
 id|math_abort
 c_func
@@ -1175,20 +1214,20 @@ r_void
 id|real_2op_NaN
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|a
 comma
-id|REG
+id|FPU_REG
 op_star
 id|b
 comma
-id|REG
+id|FPU_REG
 op_star
 id|dest
 )paren
 (brace
-id|REG
+id|FPU_REG
 op_star
 id|x
 suffix:semicolon
@@ -1315,7 +1354,7 @@ r_void
 id|arith_invalid
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|dest
 )paren
@@ -1357,7 +1396,7 @@ c_func
 r_int
 id|sign
 comma
-id|REG
+id|FPU_REG
 op_star
 id|dest
 )paren
@@ -1403,7 +1442,7 @@ r_void
 id|arith_overflow
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|dest
 )paren
@@ -1468,7 +1507,7 @@ r_void
 id|arith_underflow
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|dest
 )paren
@@ -1552,7 +1591,7 @@ c_func
 op_amp
 id|CONST_QNaN
 comma
-id|st0_ptr
+id|FPU_st0_ptr
 op_assign
 op_amp
 id|st
@@ -1595,7 +1634,7 @@ c_func
 op_amp
 id|CONST_QNaN
 comma
-id|st0_ptr
+id|FPU_st0_ptr
 )paren
 suffix:semicolon
 )brace

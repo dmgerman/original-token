@@ -102,6 +102,8 @@ op_assign
 (brace
 id|ext_read_inode
 comma
+l_int|NULL
+comma
 id|ext_write_inode
 comma
 id|ext_put_inode
@@ -185,7 +187,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;bread failed&bslash;n&quot;
+l_string|&quot;EXT-fs: unable to read superblock&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -272,7 +274,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;magic match failed&bslash;n&quot;
+l_string|&quot;EXT-fs: magic match failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -310,6 +312,7 @@ id|BLOCK_SIZE
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;ext_read_super: unable to read first free block&bslash;n&quot;
 )paren
@@ -372,6 +375,7 @@ id|BLOCK_SIZE
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;ext_read_super: unable to read first free inode block&bslash;n&quot;
 )paren
@@ -436,7 +440,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;get root inode failed&bslash;n&quot;
+l_string|&quot;EXT-fs: get root inode failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1226,6 +1230,9 @@ c_func
 (paren
 id|READ
 comma
+l_int|1
+comma
+op_amp
 id|bh
 )paren
 suffix:semicolon
@@ -1724,6 +1731,9 @@ c_func
 (paren
 id|READ
 comma
+l_int|1
+comma
+op_amp
 id|bh
 )paren
 suffix:semicolon

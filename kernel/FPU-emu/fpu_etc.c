@@ -18,7 +18,7 @@ c_cond
 id|NOT_EMPTY_0
 )paren
 (brace
-id|st0_ptr-&gt;sign
+id|FPU_st0_ptr-&gt;sign
 op_xor_assign
 id|SIGN_POS
 op_xor
@@ -48,12 +48,12 @@ c_func
 r_if
 c_cond
 (paren
-id|st0_tag
+id|FPU_st0_tag
 op_xor
 id|TW_Empty
 )paren
 (brace
-id|st0_ptr-&gt;sign
+id|FPU_st0_ptr-&gt;sign
 op_assign
 id|SIGN_POS
 suffix:semicolon
@@ -81,7 +81,7 @@ c_func
 r_switch
 c_cond
 (paren
-id|st0_tag
+id|FPU_st0_tag
 )paren
 (brace
 r_case
@@ -101,7 +101,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|st0_ptr-&gt;sign
+id|FPU_st0_ptr-&gt;sign
 op_eq
 id|SIGN_POS
 )paren
@@ -144,7 +144,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|st0_ptr-&gt;sign
+id|FPU_st0_ptr-&gt;sign
 op_eq
 id|SIGN_POS
 )paren
@@ -228,7 +228,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|st0_tag
+id|FPU_st0_tag
 )paren
 (brace
 r_case
@@ -257,7 +257,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|st0_ptr-&gt;sigh
+id|FPU_st0_ptr-&gt;sigh
 op_amp
 l_int|0x80000000
 )paren
@@ -298,7 +298,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|st0_ptr-&gt;sign
+id|FPU_st0_ptr-&gt;sign
 op_eq
 id|SIGN_NEG
 )paren

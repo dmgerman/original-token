@@ -1,5 +1,5 @@
 multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_add_sub.c                                                            |&n; |                                                                           |&n; | Functions to add or subtract two registers and put the result in a third. |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
-multiline_comment|/*---------------------------------------------------------------------------+&n; | For each function, the destination may be any REG, including one of the   |&n; | source REGs.                                                              |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; | For each function, the destination may be any FPU_REG, including one of   |&n; | the source FPU_REGs.                                                      |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -8,15 +8,15 @@ r_void
 id|reg_add
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|a
 comma
-id|REG
+id|FPU_REG
 op_star
 id|b
 comma
-id|REG
+id|FPU_REG
 op_star
 id|dest
 )paren
@@ -314,15 +314,15 @@ r_void
 id|reg_sub
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|a
 comma
-id|REG
+id|FPU_REG
 op_star
 id|b
 comma
-id|REG
+id|FPU_REG
 op_star
 id|dest
 )paren

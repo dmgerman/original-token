@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_SCHED_H
 DECL|macro|_LINUX_SCHED_H
 mdefine_line|#define _LINUX_SCHED_H
+multiline_comment|/*&n; * define DEBUG if you want the wait-queues to have some extra&n; * debugging code. It&squot;s not normally used, but might catch some&n; * wait-queue coding errors.&n; *&n; *  #define DEBUG&n; */
 DECL|macro|HZ
 mdefine_line|#define HZ 100
 multiline_comment|/*&n; * This is the maximum nr of tasks - change it if you need to&n; */
@@ -43,9 +44,7 @@ macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/resource.h&gt;
 macro_line|#include &lt;linux/vm86.h&gt;
-macro_line|#if (NR_OPEN &gt; 32)
-macro_line|#error &quot;Currently the close-on-exec-flags and select masks are in one long, max 32 files/proc&quot;
-macro_line|#endif
+macro_line|#include &lt;linux/math_emu.h&gt;
 DECL|macro|TASK_RUNNING
 mdefine_line|#define TASK_RUNNING&t;&t;0
 DECL|macro|TASK_INTERRUPTIBLE
@@ -199,14 +198,31 @@ DECL|member|top
 r_int
 id|top
 suffix:semicolon
-DECL|member|regs_space
-r_int
-id|regs_space
+DECL|member|regs
+r_struct
+id|fpu_reg
+id|regs
 (braket
-l_int|32
+l_int|8
 )braket
 suffix:semicolon
 multiline_comment|/* 8*16 bytes for each FP-reg = 112 bytes */
+DECL|member|lookahead
+r_int
+r_char
+id|lookahead
+suffix:semicolon
+DECL|member|info
+r_struct
+id|info
+op_star
+id|info
+suffix:semicolon
+DECL|member|entry_eip
+r_int
+r_int
+id|entry_eip
+suffix:semicolon
 DECL|member|soft
 )brace
 id|soft
@@ -408,6 +424,17 @@ r_int
 r_int
 id|saved_kernel_stack
 suffix:semicolon
+DECL|member|kernel_stack_page
+r_int
+r_int
+id|kernel_stack_page
+suffix:semicolon
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* per process flags, defined below */
 multiline_comment|/* various fields */
 DECL|member|exit_code
 r_int
@@ -486,11 +513,6 @@ op_star
 id|p_osptr
 suffix:semicolon
 multiline_comment|/*&n;&t; * For ease of programming... Normal sleeps don&squot;t need to&n;&t; * keep track of a wait-queue: every task has an entry of it&squot;s own&n;&t; */
-DECL|member|wait
-r_struct
-id|wait_queue
-id|wait
-suffix:semicolon
 DECL|member|uid
 DECL|member|euid
 DECL|member|suid
@@ -580,12 +602,6 @@ id|rlim
 id|RLIM_NLIMITS
 )braket
 suffix:semicolon
-DECL|member|flags
-r_int
-r_int
-id|flags
-suffix:semicolon
-multiline_comment|/* per process flags, defined below */
 DECL|member|used_math
 r_int
 r_int
@@ -698,17 +714,16 @@ id|NR_OPEN
 )braket
 suffix:semicolon
 DECL|member|close_on_exec
-r_int
-r_int
+id|fd_set
 id|close_on_exec
 suffix:semicolon
-multiline_comment|/* ldt for this task 0 - zero 1 - cs 2 - ds&amp;ss */
+multiline_comment|/* ldt for this task 0 - zero 1 - cs 2 - ds&amp;ss, rest unused */
 DECL|member|ldt
 r_struct
 id|desc_struct
 id|ldt
 (braket
-l_int|3
+l_int|32
 )braket
 suffix:semicolon
 multiline_comment|/* tss for this task */
@@ -725,9 +740,11 @@ mdefine_line|#define PF_ALIGNWARN&t;0x00000001&t;/* Print alignment warning msgs
 multiline_comment|/* Not implemented yet, only for 486*/
 DECL|macro|PF_PTRACED
 mdefine_line|#define PF_PTRACED&t;0x00000010&t;/* set if ptrace (0) has been called. */
+DECL|macro|PF_TRACESYS
+mdefine_line|#define PF_TRACESYS&t;0x00000020&t;/* tracing system calls */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x9ffff (=640kB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{},},0,0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task.task,&amp;init_task.task,NULL,NULL,NULL, &bslash;&n;/* wait queue*/ {&amp;init_task.task,NULL}, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* flags */&t;0, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL,NULL, &bslash;&n;/* libraries */&t;{ { NULL, 0, 0}, }, 0, &bslash;&n;/* filp */&t;{NULL,}, 0, &bslash;&n;&t;&t;{ &bslash;&n;&t;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;&t;{0x9f,0xc0c0fa00}, &bslash;&n;&t;&t;&t;{0x9f,0xc0c0f200} &bslash;&n;&t;&t;}, &bslash;&n;/*tss*/&t;{0,PAGE_SIZE+(long)&amp;init_task,0x10,0,0,0,0,(long)&amp;swapper_pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000,{0xffffffff}, &bslash;&n;&t;&t;{ { 0, } } &bslash;&n;&t;}, &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{},},0,0,0, &bslash;&n;/* flags */&t;0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL,NULL, &bslash;&n;/* libraries */&t;{ { NULL, 0, 0}, }, 0, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;/* cloe */&t;{0,}, &bslash;&n;&t;&t;{ &bslash;&n;&t;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;&t;{0x9f,0xc0c0fa00}, &bslash;&n;&t;&t;&t;{0x9f,0xc0c0f200}, &bslash;&n;&t;&t;}, &bslash;&n;/*tss*/&t;{0,sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, &bslash;&n;&t; 0x10,0,0,0,0,(long) &amp;swapper_pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000,{0xffffffff}, &bslash;&n;&t;&t;{ { 0, } } &bslash;&n;&t;}, &bslash;&n;}
 r_extern
 r_struct
 id|task_struct
@@ -1089,6 +1106,14 @@ id|wait_queue
 op_star
 id|tmp
 suffix:semicolon
+macro_line|#ifdef DEBUG
+r_int
+r_int
+id|ok
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 id|__asm__
 id|__volatile__
 c_func
@@ -1111,6 +1136,14 @@ op_eq
 id|wait
 )paren
 op_logical_and
+macro_line|#ifdef DEBUG
+(paren
+id|ok
+op_assign
+l_int|1
+)paren
+op_logical_and
+macro_line|#endif
 (paren
 (paren
 op_star
@@ -1142,10 +1175,26 @@ id|tmp-&gt;next
 op_ne
 id|wait
 )paren
+(brace
 id|tmp
 op_assign
 id|tmp-&gt;next
 suffix:semicolon
+macro_line|#ifdef DEBUG
+r_if
+c_cond
+(paren
+id|tmp
+op_eq
+op_star
+id|p
+)paren
+id|ok
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
+)brace
 id|tmp-&gt;next
 op_assign
 id|wait-&gt;next
@@ -1167,6 +1216,51 @@ id|flags
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ok
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;removed wait_queue not on list.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;list = %08x, queue = %08x&bslash;n&quot;
+comma
+id|p
+comma
+id|wait
+)paren
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;call 1f&bslash;n1:&bslash;tpopl %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|ok
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;eip = %08x&bslash;n&quot;
+comma
+id|ok
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 DECL|function|select_wait
 r_extern
@@ -1190,18 +1284,32 @@ r_struct
 id|select_table_entry
 op_star
 id|entry
-op_assign
-id|p-&gt;entry
-op_plus
-id|p-&gt;nr
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
+id|p
+op_logical_or
+op_logical_neg
 id|wait_address
 )paren
 r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;nr
+op_ge
+id|__MAX_SELECT_TABLE_ENTRIES
+)paren
+r_return
+suffix:semicolon
+id|entry
+op_assign
+id|p-&gt;entry
+op_plus
+id|p-&gt;nr
 suffix:semicolon
 id|entry-&gt;wait_address
 op_assign

@@ -3,14 +3,6 @@ macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
 macro_line|#include &quot;status_w.h&quot;
-r_extern
-r_struct
-id|info
-op_star
-id|FPU_info
-suffix:semicolon
-DECL|macro|EAX_REG
-mdefine_line|#define EAX_REG ((long)(FPU_info-&gt;___eax))
 DECL|function|fclex
 r_static
 r_void
@@ -209,7 +201,7 @@ r_int
 op_star
 )paren
 op_amp
-id|EAX_REG
+id|FPU_EAX
 op_assign
 id|status_word
 suffix:semicolon
@@ -313,7 +305,7 @@ c_func
 (paren
 )paren
 (brace
-id|REG
+id|FPU_REG
 op_star
 id|st_new_ptr
 suffix:semicolon
@@ -400,11 +392,11 @@ c_func
 )paren
 (brace
 multiline_comment|/* fxch st(i) */
-id|REG
+id|FPU_REG
 id|t
 suffix:semicolon
 r_register
-id|REG
+id|FPU_REG
 op_star
 id|sti_ptr
 op_assign
@@ -418,7 +410,7 @@ suffix:semicolon
 id|reg_move
 c_func
 (paren
-id|st0_ptr
+id|FPU_st0_ptr
 comma
 op_amp
 id|t
@@ -429,7 +421,7 @@ c_func
 (paren
 id|sti_ptr
 comma
-id|st0_ptr
+id|FPU_st0_ptr
 )paren
 suffix:semicolon
 id|reg_move
@@ -472,7 +464,7 @@ multiline_comment|/* fst st(i) */
 id|reg_move
 c_func
 (paren
-id|st0_ptr
+id|FPU_st0_ptr
 comma
 op_amp
 id|st
@@ -494,7 +486,7 @@ multiline_comment|/* fstp st(i) */
 id|reg_move
 c_func
 (paren
-id|st0_ptr
+id|FPU_st0_ptr
 comma
 op_amp
 id|st

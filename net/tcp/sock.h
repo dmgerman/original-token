@@ -325,6 +325,9 @@ id|size
 comma
 r_int
 id|force
+comma
+r_int
+id|priority
 )paren
 suffix:semicolon
 DECL|member|rmalloc
@@ -347,6 +350,9 @@ id|size
 comma
 r_int
 id|force
+comma
+r_int
+id|priority
 )paren
 suffix:semicolon
 DECL|member|wfree
@@ -1120,6 +1126,9 @@ id|size
 comma
 r_int
 id|force
+comma
+r_int
+id|priority
 )paren
 suffix:semicolon
 r_void
@@ -1139,6 +1148,9 @@ id|size
 comma
 r_int
 id|force
+comma
+r_int
+id|priority
 )paren
 suffix:semicolon
 r_void

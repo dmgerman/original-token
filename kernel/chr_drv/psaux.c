@@ -733,7 +733,7 @@ id|O_NONBLOCK
 )paren
 r_return
 op_minus
-id|EWOULDBLOCK
+id|EAGAIN
 suffix:semicolon
 id|cli
 c_func
@@ -937,52 +937,6 @@ r_return
 id|kmem_start
 suffix:semicolon
 )brace
-id|aux_write_ack
-c_func
-(paren
-id|AUX_SET_RES
-)paren
-suffix:semicolon
-id|aux_write_ack
-c_func
-(paren
-l_int|0x03
-)paren
-suffix:semicolon
-multiline_comment|/* set resultion to 8 counts/mm */
-id|aux_write_ack
-c_func
-(paren
-id|AUX_SET_SCALE
-)paren
-suffix:semicolon
-id|aux_write_ack
-c_func
-(paren
-l_int|0x02
-)paren
-suffix:semicolon
-multiline_comment|/* set scaling to 2:1 */
-id|aux_write_ack
-c_func
-(paren
-id|AUX_SET_SAMPLE
-)paren
-suffix:semicolon
-id|aux_write_ack
-c_func
-(paren
-l_int|0x64
-)paren
-suffix:semicolon
-multiline_comment|/* set sampling rate to 100/sec */
-id|aux_write_ack
-c_func
-(paren
-id|AUX_SET_STREAM
-)paren
-suffix:semicolon
-multiline_comment|/* set stream mode */
 id|printk
 c_func
 (paren

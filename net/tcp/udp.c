@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/termios.h&gt; /* for ioctl&squot;s */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &quot;../kern_sock.h&quot; /* for PRINTK */
 macro_line|#include &quot;udp.h&quot;
 macro_line|#include &quot;icmp.h&quot;
@@ -760,6 +761,8 @@ op_plus
 l_int|4
 comma
 l_int|0
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 multiline_comment|/* if we didn&squot;t get the memory, just drop the packet. */
@@ -1254,6 +1257,8 @@ op_plus
 id|sk-&gt;prot-&gt;max_header
 comma
 l_int|0
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 multiline_comment|/* this should never happen, but it is possible. */

@@ -68,6 +68,8 @@ op_assign
 (brace
 id|proc_read_inode
 comma
+l_int|NULL
+comma
 id|proc_write_inode
 comma
 id|proc_put_inode

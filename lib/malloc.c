@@ -1,6 +1,9 @@
-multiline_comment|/*&n; * malloc.c --- a general purpose kernel memory allocator for Linux.&n; *&n; * Written by Theodore Ts&squot;o (tytso@mit.edu), 11/29/91&n; *&n; * This routine is written to be as fast as possible, so that it&n; * can be called from the interrupt level.&n; *&n; * Limitations: maximum size of memory we can allocate using this routine&n; *&t;is 4k, the size of a page in Linux.&n; *&n; * The general game plan is that each page (called a bucket) will only hold&n; * objects of a given size.  When all of the object on a page are released,&n; * the page can be returned to the general free pool.  When malloc() is&n; * called, it looks for the smallest bucket size which will fulfill its&n; * request, and allocate a piece of memory from that bucket pool.&n; *&n; * Each bucket has as its control block a bucket descriptor which keeps&n; * track of how many objects are in use on that page, and the free list&n; * for that page.  Like the buckets themselves, bucket descriptors are&n; * stored on pages requested from get_free_page().  However, unlike buckets,&n; * pages devoted to bucket descriptor pages are never released back to the&n; * system.  Fortunately, a system should probably only need 1 or 2 bucket&n; * descriptor pages, since a page can hold 256 bucket descriptors (which&n; * corresponds to 1 megabyte worth of bucket pages.)  If the kernel is using&n; * that much allocated memory, it&squot;s probably doing something wrong.  :-)&n; *&n; * Note: malloc() and free() both call get_free_page() and free_page()&n; *&t;in sections of code where interrupts are turned off, to allow&n; *&t;malloc() and free() to be safely called from an interrupt routine.&n; *&t;(We will probably need this functionality when networking code,&n; *&t;particularily things like NFS, is added to Linux.)  However, this&n; *&t;presumes that get_free_page() and free_page() are interrupt-level&n; *&t;safe, which they may not be once paging is added.  If this is the&n; *&t;case, we will need to modify malloc() to keep a few unused pages&n; *&t;&quot;pre-allocated&quot; so that it can safely draw upon those pages if&n; * &t;it is called from an interrupt routine.&n; *&n; * &t;Another concern is that get_free_page() should not sleep; if it&n; *&t;does, the code is carefully ordered so as to avoid any race&n; *&t;conditions.  The catch is that if malloc() is called re-entrantly,&n; *&t;there is a chance that unecessary pages will be grabbed from the&n; *&t;system.  Except for the pages for the bucket descriptor page, the&n; *&t;extra pages will eventually get released back to the system, though,&n; *&t;so it isn&squot;t all that bad.&n; */
-multiline_comment|/* I&squot;m going to modify it to keep some free pages around.  Get free page&n;   can sleep, and tcp/ip needs to call malloc at interrupt time  (Or keep&n;   big buffers around for itself.)  I guess I&squot;ll have return from&n;   syscall fill up the free page descriptors. -RAB */
-multiline_comment|/* since the advent of GFP_ATOMIC, I&squot;ve changed the malloc code to&n;   use it and return NULL if it can&squot;t get a page. -RAB */
+multiline_comment|/*&n; * malloc.c --- a general purpose kernel memory allocator for Linux.&n; *&n; * Written by Theodore Ts&squot;o (tytso@mit.edu), 11/29/91&n; *&n; * This routine is written to be as fast as possible, so that it&n; * can be called from the interrupt level.&n; *&n; * Limitations: maximum size of memory we can allocate using this routine&n; *&t;is 4k, the size of a page in Linux.&n; *&n; * The general game plan is that each page (called a bucket) will only hold&n; * objects of a given size.  When all of the object on a page are released,&n; * the page can be returned to the general free pool.  When kmalloc() is&n; * called, it looks for the smallest bucket size which will fulfill its&n; * request, and allocate a piece of memory from that bucket pool.&n; *&n; * Each bucket has as its control block a bucket descriptor which keeps&n; * track of how many objects are in use on that page, and the free list&n; * for that page.  Like the buckets themselves, bucket descriptors are&n; * stored on pages requested from get_free_page().  However, unlike buckets,&n; * pages devoted to bucket descriptor pages are never released back to the&n; * system.  Fortunately, a system should probably only need 1 or 2 bucket&n; * descriptor pages, since a page can hold 256 bucket descriptors (which&n; * corresponds to 1 megabyte worth of bucket pages.)  If the kernel is using&n; * that much allocated memory, it&squot;s probably doing something wrong.  :-)&n; *&n; * Note: kmalloc() and kfree() both call get_free_page() and free_page()&n; *&t;in sections of code where interrupts are turned off, to allow&n; *&t;kmalloc() and kfree() to be safely called from an interrupt routine.&n; *&t;(We will probably need this functionality when networking code,&n; *&t;particularily things like NFS, is added to Linux.)  However, this&n; *&t;presumes that get_free_page() and free_page() are interrupt-level&n; *&t;safe, which they may not be once paging is added.  If this is the&n; *&t;case, we will need to modify kmalloc() to keep a few unused pages&n; *&t;&quot;pre-allocated&quot; so that it can safely draw upon those pages if&n; * &t;it is called from an interrupt routine.&n; *&n; * &t;Another concern is that get_free_page() should not sleep; if it&n; *&t;does, the code is carefully ordered so as to avoid any race&n; *&t;conditions.  The catch is that if kmalloc() is called re-entrantly,&n; *&t;there is a chance that unecessary pages will be grabbed from the&n; *&t;system.  Except for the pages for the bucket descriptor page, the&n; *&t;extra pages will eventually get released back to the system, though,&n; *&t;so it isn&squot;t all that bad.&n; */
+multiline_comment|/* I&squot;m going to modify it to keep some free pages around.  Get free page&n;   can sleep, and tcp/ip needs to call kmalloc at interrupt time  (Or keep&n;   big buffers around for itself.)  I guess I&squot;ll have return from&n;   syscall fill up the free page descriptors. -RAB */
+multiline_comment|/* since the advent of GFP_ATOMIC, I&squot;ve changed the kmalloc code to&n;   use it and return NULL if it can&squot;t get a page. -RAB  */
+multiline_comment|/* (mostly just undid the previous changes -RAB) */
+multiline_comment|/* I&squot;ve added the priority argument to kmalloc so routines can&n;   sleep on memory if they want. - RAB */
+multiline_comment|/* I&squot;ve also got to make sure that kmalloc is reentrant now. */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -192,6 +195,7 @@ op_star
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * This routine initializes a bucket description page.&n; */
+multiline_comment|/* It assumes it is called with interrupts on. and will&n;   return that way.  It also can sleep if priority != GFP_ATOMIC. */
 DECL|function|init_bucket_desc
 r_static
 r_inline
@@ -199,6 +203,8 @@ r_int
 id|init_bucket_desc
 c_func
 (paren
+r_int
+id|priority
 )paren
 (brace
 r_struct
@@ -225,7 +231,7 @@ op_star
 id|get_free_page
 c_func
 (paren
-id|GFP_ATOMIC
+id|priority
 )paren
 suffix:semicolon
 r_if
@@ -237,6 +243,7 @@ id|bdesc
 r_return
 l_int|1
 suffix:semicolon
+multiline_comment|/* At this point it is possible that we have slept and &n;&t;   free has been called etc.  So we might not actually need&n;&t;   this page anymore. */
 r_for
 c_loop
 (paren
@@ -269,7 +276,11 @@ op_increment
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * This is done last, to avoid race conditions in case&n;&t; * get_free_page() sleeps and this routine gets called again....&n;&t; */
-multiline_comment|/* Get free page will not sleep because of the GFP_ATOMIC */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|bdesc-&gt;next
 op_assign
 id|free_bucket_desc
@@ -278,21 +289,29 @@ id|free_bucket_desc
 op_assign
 id|first
 suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 (paren
 l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|malloc
 r_void
 op_star
-id|malloc
+DECL|function|kmalloc
+id|kmalloc
 c_func
 (paren
 r_int
 r_int
 id|len
+comma
+r_int
+id|priority
 )paren
 (brace
 r_struct
@@ -310,6 +329,7 @@ op_star
 id|retval
 suffix:semicolon
 multiline_comment|/*&n;&t; * First we search the bucket_dir to find the right bucket change&n;&t; * for this request.&n;&t; */
+multiline_comment|/* The sizes are static so there is no reentry problem here. */
 r_for
 c_loop
 (paren
@@ -338,10 +358,11 @@ op_logical_neg
 id|bdir-&gt;size
 )paren
 (brace
+multiline_comment|/* This should be changed for sizes &gt; 1 page. */
 id|printk
 c_func
 (paren
-l_string|&quot;malloc called with impossibly large argument (%d)&bslash;n&quot;
+l_string|&quot;kmalloc called with impossibly large argument (%d)&bslash;n&quot;
 comma
 id|len
 )paren
@@ -350,10 +371,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|len
-op_assign
-id|bdir-&gt;size
-suffix:semicolon
 multiline_comment|/*&n;&t; * Now we search for a bucket descriptor which has free space&n;&t; */
 id|cli
 c_func
@@ -369,6 +386,8 @@ op_assign
 id|bdir-&gt;chain
 suffix:semicolon
 id|bdesc
+op_ne
+l_int|NULL
 suffix:semicolon
 id|bdesc
 op_assign
@@ -378,6 +397,12 @@ r_if
 c_cond
 (paren
 id|bdesc-&gt;freeptr
+op_ne
+l_int|NULL
+op_logical_or
+id|bdesc-&gt;page
+op_eq
+l_int|NULL
 )paren
 r_break
 suffix:semicolon
@@ -396,19 +421,12 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-r_if
-c_cond
+multiline_comment|/* This must be a while because it is possible&n;&t;       to get interrupted after init_bucket_desc&n;&t;       and before cli.  The interrupt could steal&n;&t;       our free_desc. */
+r_while
+c_loop
 (paren
 op_logical_neg
 id|free_bucket_desc
-)paren
-r_if
-c_cond
-(paren
-id|init_bucket_desc
-c_func
-(paren
-)paren
 )paren
 (brace
 id|sti
@@ -416,9 +434,27 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* This might happen anyway, so we&n;&t;&t;&t;   might as well make it explicit. */
+r_if
+c_cond
+(paren
+id|init_bucket_desc
+c_func
+(paren
+id|priority
+)paren
+)paren
+(brace
 r_return
 l_int|NULL
 suffix:semicolon
+)brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Turn them back off. */
 )brace
 id|bdesc
 op_assign
@@ -428,13 +464,19 @@ id|free_bucket_desc
 op_assign
 id|bdesc-&gt;next
 suffix:semicolon
+multiline_comment|/* get_free_page will turn interrupts back&n;&t;       on.  So we might as well do it&n;&t;       ourselves. */
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 id|bdesc-&gt;refcnt
 op_assign
 l_int|0
 suffix:semicolon
 id|bdesc-&gt;bucket_size
 op_assign
-id|len
+id|bdir-&gt;size
 suffix:semicolon
 id|bdesc-&gt;page
 op_assign
@@ -449,7 +491,7 @@ op_assign
 id|get_free_page
 c_func
 (paren
-id|GFP_ATOMIC
+id|priority
 )paren
 suffix:semicolon
 r_if
@@ -459,6 +501,20 @@ op_logical_neg
 id|cp
 )paren
 (brace
+multiline_comment|/* put bdesc back on the free list. */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|bdesc-&gt;next
+op_assign
+id|free_bucket_desc
+suffix:semicolon
+id|free_bucket_desc
+op_assign
+id|bdesc-&gt;next
+suffix:semicolon
 id|sti
 c_func
 (paren
@@ -476,7 +532,7 @@ id|i
 op_assign
 id|PAGE_SIZE
 op_div
-id|len
+id|bdir-&gt;size
 suffix:semicolon
 id|i
 OG
@@ -498,11 +554,11 @@ id|cp
 op_assign
 id|cp
 op_plus
-id|len
+id|bdir-&gt;size
 suffix:semicolon
 id|cp
 op_add_assign
-id|len
+id|bdir-&gt;size
 suffix:semicolon
 )brace
 op_star
@@ -517,6 +573,13 @@ id|cp
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* turn interrupts back off for putting the&n;&t;       thing onto the chain. */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* remember bdir is not changed. */
 id|bdesc-&gt;next
 op_assign
 id|bdir-&gt;chain
@@ -556,24 +619,14 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* OK, we&squot;re safe again */
-id|memset
-c_func
-(paren
-id|retval
-comma
-l_int|0
-comma
-id|len
-)paren
-suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Here is the free routine.  If you know the size of the object that you&n; * are freeing, then free_s() will use that information to speed up the&n; * search for the bucket descriptor.&n; *&n; * We will #define a macro so that &quot;free(x)&quot; is becomes &quot;free_s(x, 0)&quot;&n; */
-DECL|function|free_s
+multiline_comment|/*&n; * Here is the kfree routine.  If you know the size of the object that you&n; * are freeing, then kfree_s() will use that information to speed up the&n; * search for the bucket descriptor.&n; *&n; * We will #define a macro so that &quot;kfree(x)&quot; is becomes &quot;kfree_s(x, 0)&quot;&n; */
+DECL|function|kfree_s
 r_void
-id|free_s
+id|kfree_s
 c_func
 (paren
 r_void
@@ -636,16 +689,22 @@ id|prev
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* If size is zero then this conditional is always false */
+multiline_comment|/* If size is zero then this conditional is always true */
 r_if
 c_cond
 (paren
 id|bdir-&gt;size
-OL
+op_ge
 id|size
 )paren
-r_continue
+(brace
+multiline_comment|/* We have to turn off interrupts here because&n;&t;&t;   we are descending the chain.  If something&n;&t;&t;   changes it in the middle we could suddenly&n;&t;&t;   find ourselves descending the free list.&n;&t;&t;   I think this would only cause a memory&n;&t;&t;   leak, but better safe than sorry. */
+id|cli
+c_func
+(paren
+)paren
 suffix:semicolon
+multiline_comment|/* To avoid race conditions */
 r_for
 c_loop
 (paren
@@ -676,22 +735,27 @@ id|bdesc
 suffix:semicolon
 )brace
 )brace
+)brace
 id|printk
 c_func
 (paren
-l_string|&quot;Bad address passed to kernel free_s()&quot;
+l_string|&quot;Bad address passed to kernel kfree_s(%X, %d)&bslash;n&quot;
+comma
+id|obj
+comma
+id|size
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 id|found
 suffix:colon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* To avoid race conditions */
+multiline_comment|/* interrupts are off here. */
 op_star
 (paren
 (paren
@@ -787,7 +851,7 @@ id|bdesc
 id|panic
 c_func
 (paren
-l_string|&quot;malloc bucket chains corrupted&quot;
+l_string|&quot;kmalloc bucket chains corrupted&quot;
 )paren
 suffix:semicolon
 id|bdir-&gt;chain
@@ -795,6 +859,14 @@ op_assign
 id|bdesc-&gt;next
 suffix:semicolon
 )brace
+id|bdesc-&gt;next
+op_assign
+id|free_bucket_desc
+suffix:semicolon
+id|free_bucket_desc
+op_assign
+id|bdesc
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -804,14 +876,6 @@ r_int
 )paren
 id|bdesc-&gt;page
 )paren
-suffix:semicolon
-id|bdesc-&gt;next
-op_assign
-id|free_bucket_desc
-suffix:semicolon
-id|free_bucket_desc
-op_assign
-id|bdesc
 suffix:semicolon
 )brace
 id|sti

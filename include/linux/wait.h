@@ -1,7 +1,6 @@
 macro_line|#ifndef _LINUX_WAIT_H
 DECL|macro|_LINUX_WAIT_H
 mdefine_line|#define _LINUX_WAIT_H
-macro_line|#include &lt;linux/limits.h&gt;
 DECL|macro|WNOHANG
 mdefine_line|#define WNOHANG&t;&t;1
 DECL|macro|WUNTRACED
@@ -51,16 +50,14 @@ id|wait_address
 suffix:semicolon
 DECL|member|entry
 )brace
-id|entry
-(braket
-id|NR_OPEN
 op_star
-l_int|3
-)braket
+id|entry
 suffix:semicolon
 DECL|typedef|select_table
 )brace
 id|select_table
 suffix:semicolon
+DECL|macro|__MAX_SELECT_TABLE_ENTRIES
+mdefine_line|#define __MAX_SELECT_TABLE_ENTRIES (4096 / sizeof (struct select_table_entry))
 macro_line|#endif
 eof

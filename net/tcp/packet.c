@@ -373,6 +373,8 @@ op_plus
 id|sk-&gt;prot-&gt;max_header
 comma
 l_int|0
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 multiline_comment|/* this shouldn&squot;t happen, but it could. */
@@ -597,7 +599,7 @@ op_star
 id|sk-&gt;pair
 )paren
 suffix:semicolon
-id|free_s
+id|kfree_s
 (paren
 (paren
 r_void
@@ -637,13 +639,15 @@ id|p
 suffix:semicolon
 id|p
 op_assign
-id|malloc
+id|kmalloc
 (paren
 r_sizeof
 (paren
 op_star
 id|p
 )paren
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if

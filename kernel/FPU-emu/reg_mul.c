@@ -1,5 +1,5 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_mul.c                                                                |&n; |                                                                           |&n; | Multiply one REG by another and put the result in a destination REG.      |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
-multiline_comment|/*---------------------------------------------------------------------------+&n; | The destination may be any REG, including one of the source REGs.         |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_mul.c                                                                |&n; |                                                                           |&n; | Multiply one FPU_REG by another, put the result in a destination FPU_REG. |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; | The destination may be any FPU_REG, including one of the source FPU_REGs. |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -9,15 +9,15 @@ r_void
 id|reg_mul
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|a
 comma
-id|REG
+id|FPU_REG
 op_star
 id|b
 comma
-id|REG
+id|FPU_REG
 op_star
 id|dest
 )paren
@@ -74,7 +74,7 @@ id|EXP_UNDER
 id|arith_underflow
 c_func
 (paren
-id|st0_ptr
+id|FPU_st0_ptr
 )paren
 suffix:semicolon
 )brace
@@ -90,7 +90,7 @@ id|EXP_OVER
 id|arith_overflow
 c_func
 (paren
-id|st0_ptr
+id|FPU_st0_ptr
 )paren
 suffix:semicolon
 )brace

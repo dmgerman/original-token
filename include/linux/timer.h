@@ -17,6 +17,8 @@ DECL|macro|SCSI_TIMER
 mdefine_line|#define SCSI_TIMER &t;18
 DECL|macro|NET_TIMER
 mdefine_line|#define NET_TIMER&t;19
+DECL|macro|SOUND_TIMER
+mdefine_line|#define SOUND_TIMER&t;20
 DECL|struct|timer_struct
 r_struct
 id|timer_struct

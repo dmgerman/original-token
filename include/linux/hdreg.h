@@ -74,8 +74,11 @@ DECL|macro|ECC_ERR
 mdefine_line|#define ECC_ERR&t;&t;0x40&t;/* ? */
 DECL|macro|BBD_ERR
 mdefine_line|#define&t;BBD_ERR&t;&t;0x80&t;/* ? */
+multiline_comment|/* HDIO_GETGEO is the preferred choice - HDIO_REQ will be removed at some&n;   later date */
 DECL|macro|HDIO_REQ
 mdefine_line|#define HDIO_REQ 0x301
+DECL|macro|HDIO_GETGEO
+mdefine_line|#define HDIO_GETGEO 0x301
 DECL|struct|hd_geometry
 r_struct
 id|hd_geometry

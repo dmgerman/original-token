@@ -37,6 +37,22 @@ mdefine_line|#define&t;TW_NaN&t;&t;Const(6)&t;/* Not a Number */
 DECL|macro|TW_Empty
 mdefine_line|#define TW_Empty&t;Const(7)&t;/* empty */
 macro_line|#ifndef __ASSEMBLER__
+macro_line|#include &lt;linux/math_emu.h&gt;
+macro_line|#ifdef PARANOID
+r_extern
+r_char
+id|emulating
+suffix:semicolon
+DECL|macro|RE_ENTRANT_CHECK_OFF
+macro_line|#  define RE_ENTRANT_CHECK_OFF emulating = 0;
+DECL|macro|RE_ENTRANT_CHECK_ON
+macro_line|#  define RE_ENTRANT_CHECK_ON emulating = 1;
+macro_line|#else
+DECL|macro|RE_ENTRANT_CHECK_OFF
+macro_line|#  define RE_ENTRANT_CHECK_OFF
+DECL|macro|RE_ENTRANT_CHECK_ON
+macro_line|#  define RE_ENTRANT_CHECK_ON
+macro_line|#endif PARANOID
 DECL|typedef|FUNC
 r_typedef
 r_void
@@ -47,34 +63,11 @@ id|FUNC
 (paren
 )paren
 suffix:semicolon
-DECL|macro|REG
-mdefine_line|#define&t;REG&t;struct&t;reg
-DECL|struct|reg
+DECL|typedef|FPU_REG
+r_typedef
 r_struct
-id|reg
-(brace
-DECL|member|sign
-r_char
-id|sign
-suffix:semicolon
-DECL|member|tag
-r_char
-id|tag
-suffix:semicolon
-multiline_comment|/*  short exp; *****/
-DECL|member|exp
-r_int
-id|exp
-suffix:semicolon
-DECL|member|sigl
-r_int
-id|sigl
-suffix:semicolon
-DECL|member|sigh
-r_int
-id|sigh
-suffix:semicolon
-)brace
+id|fpu_reg
+id|FPU_REG
 suffix:semicolon
 DECL|macro|st
 mdefine_line|#define&t;st(x)&t;( regs[((top+x) &amp;7 )] )
@@ -83,12 +76,7 @@ mdefine_line|#define&t;STACK_OVERFLOW&t;(st_new_ptr = &amp;st(-1), st_new_ptr-&g
 DECL|macro|NOT_EMPTY
 mdefine_line|#define&t;NOT_EMPTY(i)&t;(st(i).tag != TW_Empty)
 DECL|macro|NOT_EMPTY_0
-mdefine_line|#define&t;NOT_EMPTY_0&t;(st0_tag ^ TW_Empty)
-r_extern
-r_int
-r_char
-id|FPU_modrm
-suffix:semicolon
+mdefine_line|#define&t;NOT_EMPTY_0&t;(FPU_st0_tag ^ TW_Empty)
 r_extern
 r_int
 r_char
@@ -96,12 +84,12 @@ id|FPU_rm
 suffix:semicolon
 r_extern
 r_char
-id|st0_tag
+id|FPU_st0_tag
 suffix:semicolon
 r_extern
-id|REG
+id|FPU_REG
 op_star
-id|st0_ptr
+id|FPU_st0_ptr
 suffix:semicolon
 r_extern
 r_void
@@ -109,23 +97,18 @@ op_star
 id|FPU_data_address
 suffix:semicolon
 r_extern
-r_int
-r_int
-id|FPU_entry_eip
-suffix:semicolon
-r_extern
-id|REG
+id|FPU_REG
 id|FPU_loaded_data
 suffix:semicolon
 DECL|macro|pop
-mdefine_line|#define pop()&t;{ st0_ptr-&gt;tag = TW_Empty; &bslash;&n;&t;&t;&t;&t;  top++; st0_ptr = &amp;(regs[top&amp;7]); }
+mdefine_line|#define pop()&t;{ FPU_st0_ptr-&gt;tag = TW_Empty; top++; }
 multiline_comment|/* push() does not affect the tags */
 DECL|macro|push
-mdefine_line|#define push()&t;{ top--; st0_ptr = st_new_ptr; }
+mdefine_line|#define push()&t;{ top--; FPU_st0_ptr = st_new_ptr; }
 DECL|macro|reg_move
 mdefine_line|#define reg_move(x, y) { &bslash;&n;&t;&t; *(short *)&amp;((y)-&gt;sign) = *(short *)&amp;((x)-&gt;sign); &bslash;&n;&t;&t; *(long *)&amp;((y)-&gt;exp) = *(long *)&amp;((x)-&gt;exp); &bslash;&n;&t;&t; *(long long *)&amp;((y)-&gt;sigl) = *(long long *)&amp;((x)-&gt;sigl); }
 multiline_comment|/*----- Prototypes for functions written in assembler -----*/
-multiline_comment|/* extern void reg_move(REG *a, REG *b); */
+multiline_comment|/* extern void reg_move(FPU_REG *a, FPU_REG *b); */
 r_extern
 r_void
 id|mul64
@@ -213,7 +196,7 @@ r_void
 id|normalize
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|x
 )paren
@@ -223,15 +206,15 @@ r_void
 id|reg_div
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|arg1
 comma
-id|REG
+id|FPU_REG
 op_star
 id|arg2
 comma
-id|REG
+id|FPU_REG
 op_star
 id|answ
 )paren
@@ -241,15 +224,15 @@ r_void
 id|reg_u_sub
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|arg1
 comma
-id|REG
+id|FPU_REG
 op_star
 id|arg2
 comma
-id|REG
+id|FPU_REG
 op_star
 id|answ
 )paren
@@ -259,15 +242,15 @@ r_void
 id|reg_u_mul
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|arg1
 comma
-id|REG
+id|FPU_REG
 op_star
 id|arg2
 comma
-id|REG
+id|FPU_REG
 op_star
 id|answ
 )paren
@@ -287,7 +270,7 @@ r_int
 op_star
 id|arg2
 comma
-id|REG
+id|FPU_REG
 op_star
 id|answ
 )paren
@@ -297,15 +280,15 @@ r_void
 id|reg_u_add
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|arg1
 comma
-id|REG
+id|FPU_REG
 op_star
 id|arg2
 comma
-id|REG
+id|FPU_REG
 op_star
 id|answ
 )paren
@@ -315,7 +298,7 @@ r_void
 id|wm_sqrt
 c_func
 (paren
-id|REG
+id|FPU_REG
 op_star
 id|n
 )paren

@@ -28,6 +28,8 @@ DECL|macro|PTRACE_ATTACH
 mdefine_line|#define PTRACE_ATTACH&t;&t;0x10
 DECL|macro|PTRACE_DETACH
 mdefine_line|#define PTRACE_DETACH&t;&t;0x11
+DECL|macro|PTRACE_SYSCALL
+mdefine_line|#define PTRACE_SYSCALL&t;&t;  24
 multiline_comment|/* use ptrace (3 or 6, pid, PT_EXCL, data); to read or write&n;   the processes registers. */
 DECL|macro|EBX
 mdefine_line|#define EBX 0
