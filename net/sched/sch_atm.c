@@ -3,6 +3,7 @@ multiline_comment|/* Written 1998-2000 by Werner Almesberger, EPFL ICA */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/atmdev.h&gt;
 macro_line|#include &lt;linux/atmclip.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -28,8 +29,7 @@ suffix:semicolon
 multiline_comment|/* @@@ fix this */
 DECL|macro|sockfd_put
 mdefine_line|#define sockfd_put(sock) fput((sock)-&gt;file)&t;/* @@@ copied because it&squot;s&n;&t;&t;&t;&t;&t;&t;   __inline__ in socket.c */
-macro_line|#if 1 /* control */
-DECL|macro|DPRINTK
+macro_line|#if 0 /* control */
 mdefine_line|#define DPRINTK(format,args...) printk(KERN_DEBUG format,##args)
 macro_line|#else
 DECL|macro|DPRINTK
@@ -89,6 +89,13 @@ id|skb
 )paren
 suffix:semicolon
 multiline_comment|/* chaining */
+DECL|member|parent
+r_struct
+id|atm_qdisc_data
+op_star
+id|parent
+suffix:semicolon
+multiline_comment|/* parent qdisc */
 DECL|member|sock
 r_struct
 id|socket
@@ -156,6 +163,12 @@ op_star
 id|flows
 suffix:semicolon
 multiline_comment|/* NB: &quot;link&quot; is also on this&n;&t;&t;&t;&t;&t;&t;   list */
+DECL|member|task
+r_struct
+id|tasklet_struct
+id|task
+suffix:semicolon
+multiline_comment|/* requeue tasklet */
 )brace
 suffix:semicolon
 multiline_comment|/* ------------------------- Class/flow operations ------------------------- */
@@ -565,6 +578,55 @@ id|classid
 )paren
 suffix:semicolon
 )brace
+DECL|function|destroy_filters
+r_static
+r_void
+id|destroy_filters
+c_func
+(paren
+r_struct
+id|atm_flow_data
+op_star
+id|flow
+)paren
+(brace
+r_struct
+id|tcf_proto
+op_star
+id|filter
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|filter
+op_assign
+id|flow-&gt;filter_list
+)paren
+)paren
+(brace
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;destroy_filters: destroying filter %p&bslash;n&quot;
+comma
+id|filter
+)paren
+suffix:semicolon
+id|flow-&gt;filter_list
+op_assign
+id|filter-&gt;next
+suffix:semicolon
+id|filter-&gt;ops
+op_member_access_from_pointer
+id|destroy
+c_func
+(paren
+id|filter
+)paren
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/*&n; * atm_tc_put handles all destructions, including the ones that are explicitly&n; * requested (atm_tc_destroy, etc.). The assumption here is that we never drop&n; * anything that still seems to be in use.&n; */
 DECL|function|atm_tc_put
 r_static
@@ -610,11 +672,6 @@ id|atm_flow_data
 op_star
 op_star
 id|prev
-suffix:semicolon
-r_struct
-id|tcf_proto
-op_star
-id|filter
 suffix:semicolon
 id|DPRINTK
 c_func
@@ -712,45 +769,12 @@ c_func
 id|flow-&gt;q
 )paren
 suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-id|filter
-op_assign
-id|flow-&gt;filter_list
-)paren
-)paren
-(brace
-id|DPRINTK
+id|destroy_filters
 c_func
 (paren
-l_string|&quot;atm_tc_put: destroying filter %p&bslash;n&quot;
-comma
-id|filter
+id|flow
 )paren
 suffix:semicolon
-id|flow-&gt;filter_list
-op_assign
-id|filter-&gt;next
-suffix:semicolon
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;atm_tc_put: filter %p&bslash;n&quot;
-comma
-id|filter
-)paren
-suffix:semicolon
-id|filter-&gt;ops
-op_member_access_from_pointer
-id|destroy
-c_func
-(paren
-id|filter
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -830,6 +854,31 @@ op_star
 id|skb
 )paren
 (brace
+r_struct
+id|atm_qdisc_data
+op_star
+id|p
+op_assign
+id|VCC2FLOW
+c_func
+(paren
+id|vcc
+)paren
+op_member_access_from_pointer
+id|parent
+suffix:semicolon
+id|D2PRINTK
+c_func
+(paren
+l_string|&quot;sch_atm_pop(vcc %p,skb %p,[qdisc %p])&bslash;n&quot;
+comma
+id|vcc
+comma
+id|skb
+comma
+id|p
+)paren
+suffix:semicolon
 id|VCC2FLOW
 c_func
 (paren
@@ -844,13 +893,13 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|mark_bh
+id|tasklet_schedule
 c_func
 (paren
-id|NET_BH
+op_amp
+id|p-&gt;task
 )paren
 suffix:semicolon
-multiline_comment|/* may allow to send more */
 )brace
 DECL|function|atm_tc_change
 r_static
@@ -1527,6 +1576,10 @@ suffix:semicolon
 id|flow-&gt;old_pop
 op_assign
 id|flow-&gt;vcc-&gt;pop
+suffix:semicolon
+id|flow-&gt;parent
+op_assign
+id|p
 suffix:semicolon
 id|flow-&gt;vcc-&gt;pop
 op_assign
@@ -2263,20 +2316,30 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|atm_tc_dequeue
+multiline_comment|/*&n; * Dequeue packets and send them over ATM. Note that we quite deliberately&n; * avoid checking net_device&squot;s flow control here, simply because sch_atm&n; * uses its own channels, which have nothing to do with any CLIP/LANE/or&n; * non-ATM interfaces.&n; */
+DECL|function|sch_atm_dequeue
 r_static
-r_struct
-id|sk_buff
-op_star
-id|atm_tc_dequeue
+r_void
+id|sch_atm_dequeue
 c_func
 (paren
+r_int
+r_int
+id|data
+)paren
+(brace
 r_struct
 id|Qdisc
 op_star
 id|sch
+op_assign
+(paren
+r_struct
+id|Qdisc
+op_star
 )paren
-(brace
+id|data
+suffix:semicolon
 r_struct
 id|atm_qdisc_data
 op_star
@@ -2301,7 +2364,7 @@ suffix:semicolon
 id|D2PRINTK
 c_func
 (paren
-l_string|&quot;atm_tc_dequeue(sch %p,[qdisc %p])&bslash;n&quot;
+l_string|&quot;sch_atm_dequeue(sch %p,[qdisc %p])&bslash;n&quot;
 comma
 id|sch
 comma
@@ -2321,7 +2384,7 @@ id|flow
 op_assign
 id|flow-&gt;next
 )paren
-multiline_comment|/*&n;&t;&t; * If traffic is properly shaped, this won&squot;t generate nasty&n;&t;&t; * little bursts. Otherwise, it may ... @@@&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * If traffic is properly shaped, this won&squot;t generate nasty&n;&t;&t; * little bursts. Otherwise, it may ... (but that&squot;s okay)&n;&t;&t; */
 r_while
 c_loop
 (paren
@@ -2351,6 +2414,9 @@ id|skb-&gt;truesize
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|flow-&gt;q-&gt;ops
 op_member_access_from_pointer
 id|requeue
@@ -2360,6 +2426,9 @@ id|skb
 comma
 id|flow-&gt;q
 )paren
+)paren
+id|sch-&gt;q.qlen
+op_decrement
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2443,7 +2512,7 @@ suffix:semicolon
 id|D2PRINTK
 c_func
 (paren
-l_string|&quot;atm_tc_dequeue: ip %p, data %p&bslash;n&quot;
+l_string|&quot;sch_atm_dequeue: ip %p, data %p&bslash;n&quot;
 comma
 id|skb-&gt;nh.iph
 comma
@@ -2510,6 +2579,54 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+)brace
+DECL|function|atm_tc_dequeue
+r_static
+r_struct
+id|sk_buff
+op_star
+id|atm_tc_dequeue
+c_func
+(paren
+r_struct
+id|Qdisc
+op_star
+id|sch
+)paren
+(brace
+r_struct
+id|atm_qdisc_data
+op_star
+id|p
+op_assign
+id|PRIV
+c_func
+(paren
+id|sch
+)paren
+suffix:semicolon
+r_struct
+id|sk_buff
+op_star
+id|skb
+suffix:semicolon
+id|D2PRINTK
+c_func
+(paren
+l_string|&quot;atm_tc_dequeue(sch %p,[qdisc %p])&bslash;n&quot;
+comma
+id|sch
+comma
+id|p
+)paren
+suffix:semicolon
+id|tasklet_schedule
+c_func
+(paren
+op_amp
+id|p-&gt;task
+)paren
+suffix:semicolon
 id|skb
 op_assign
 id|p-&gt;link.q
@@ -2798,6 +2915,21 @@ id|p-&gt;link.next
 op_assign
 l_int|NULL
 suffix:semicolon
+id|tasklet_init
+c_func
+(paren
+op_amp
+id|p-&gt;task
+comma
+id|sch_atm_dequeue
+comma
+(paren
+r_int
+r_int
+)paren
+id|sch
+)paren
+suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
@@ -2915,6 +3047,12 @@ id|p-&gt;flows
 )paren
 )paren
 (brace
+id|destroy_filters
+c_func
+(paren
+id|flow
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2972,6 +3110,13 @@ r_break
 suffix:semicolon
 )brace
 )brace
+id|tasklet_kill
+c_func
+(paren
+op_amp
+id|p-&gt;task
+)paren
+suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace

@@ -1300,22 +1300,7 @@ id|or_val
 suffix:semicolon
 macro_line|#endif /* ndef ASSEMBLY*/
 macro_line|#ifdef CONFIG_MACH_SPECIFIC
-macro_line|#if defined(CONFIG_PREP)
-DECL|macro|_machine
-mdefine_line|#define _machine _MACH_prep
-DECL|macro|have_of
-mdefine_line|#define have_of 0
-macro_line|#elif defined(CONFIG_CHRP)
-DECL|macro|_machine
-mdefine_line|#define _machine _MACH_chrp
-DECL|macro|have_of
-mdefine_line|#define have_of 1
-macro_line|#elif defined(CONFIG_PMAC)
-DECL|macro|_machine
-mdefine_line|#define _machine _MACH_Pmac
-DECL|macro|have_of
-mdefine_line|#define have_of 1
-macro_line|#elif defined(CONFIG_8xx)
+macro_line|#if defined(CONFIG_8xx)
 DECL|macro|_machine
 mdefine_line|#define _machine _MACH_8xx
 DECL|macro|have_of

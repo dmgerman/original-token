@@ -562,7 +562,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_PREP) || defined(CONFIG_APUS) || defined(CONFIG_ALL_PPC)
+macro_line|#if defined(CONFIG_APUS) || defined(CONFIG_ALL_PPC)
 multiline_comment|/*&n; * Add some memory to an array of pieces&n; */
 r_void
 id|__init

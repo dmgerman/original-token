@@ -1,5 +1,5 @@
 multiline_comment|/* net/atm/raw.c - Raw AAL0 and AAL5 transports */
-multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/atmdev.h&gt;
@@ -95,7 +95,7 @@ op_amp
 id|vcc-&gt;tx_inuse
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|skb

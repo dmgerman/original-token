@@ -358,14 +358,7 @@ DECL|macro|B1500000
 mdefine_line|#define B1500000  0x0000100e
 DECL|macro|B2000000
 mdefine_line|#define B2000000  0x0000100f
-DECL|macro|B2500000
-mdefine_line|#define B2500000  0x00001010
-DECL|macro|B3000000
-mdefine_line|#define B3000000  0x00001011
-DECL|macro|B3500000
-mdefine_line|#define B3500000  0x00001012
-DECL|macro|B4000000
-mdefine_line|#define B4000000  0x00001013
+multiline_comment|/* These have totally bogus values and nobody uses them&n;   so far. Later on we&squot;d have to use say 0x10000x and&n;   adjust CBAUD constant and drivers accordingly.&n;#define B2500000  0x00001010&n;#define B3000000  0x00001011&n;#define B3500000  0x00001012&n;#define B4000000  0x00001013  */
 DECL|macro|CIBAUD
 mdefine_line|#define CIBAUD&t;  0x100f0000  /* input baud rate (not used) */
 DECL|macro|CMSPAR

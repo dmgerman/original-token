@@ -63,83 +63,82 @@ mdefine_line|#define PCI_DRAM_OFFSET&t;pci_dram_offset
 macro_line|#endif /* CONFIG_APUS */
 macro_line|#endif
 DECL|macro|readb
-mdefine_line|#define readb(addr) in_8((volatile unsigned char *)(addr))
+mdefine_line|#define readb(addr) in_8((volatile u8 *)(addr))
 DECL|macro|writeb
-mdefine_line|#define writeb(b,addr) out_8((volatile unsigned char *)(addr), (b))
+mdefine_line|#define writeb(b,addr) out_8((volatile u8 *)(addr), (b))
 macro_line|#if defined(CONFIG_APUS)
 DECL|macro|readw
-mdefine_line|#define readw(addr) (*(volatile unsigned short *) (addr))
+mdefine_line|#define readw(addr) (*(volatile u16 *) (addr))
 DECL|macro|readl
-mdefine_line|#define readl(addr) (*(volatile unsigned int *) (addr))
+mdefine_line|#define readl(addr) (*(volatile u32 *) (addr))
 DECL|macro|writew
-mdefine_line|#define writew(b,addr) ((*(volatile unsigned short *) (addr)) = (b))
+mdefine_line|#define writew(b,addr) ((*(volatile u16 *) (addr)) = (b))
 DECL|macro|writel
-mdefine_line|#define writel(b,addr) ((*(volatile unsigned int *) (addr)) = (b))
+mdefine_line|#define writel(b,addr) ((*(volatile u32 *) (addr)) = (b))
 macro_line|#else
 DECL|macro|readw
-mdefine_line|#define readw(addr) in_le16((volatile unsigned short *)(addr))
+mdefine_line|#define readw(addr) in_le16((volatile u16 *)(addr))
 DECL|macro|readl
-mdefine_line|#define readl(addr) in_le32((volatile unsigned *)(addr))
+mdefine_line|#define readl(addr) in_le32((volatile u32 *)(addr))
 DECL|macro|writew
-mdefine_line|#define writew(b,addr) out_le16((volatile unsigned short *)(addr),(b))
+mdefine_line|#define writew(b,addr) out_le16((volatile u16 *)(addr),(b))
 DECL|macro|writel
-mdefine_line|#define writel(b,addr) out_le32((volatile unsigned *)(addr),(b))
+mdefine_line|#define writel(b,addr) out_le32((volatile u32 *)(addr),(b))
 macro_line|#endif
 DECL|macro|insb
-mdefine_line|#define insb(port, buf, ns)&t;_insb((unsigned char *)((port)+_IO_BASE), (buf), (ns))
+mdefine_line|#define insb(port, buf, ns)&t;_insb((u8 *)((port)+_IO_BASE), (buf), (ns))
 DECL|macro|outsb
-mdefine_line|#define outsb(port, buf, ns)&t;_outsb((unsigned char *)((port)+_IO_BASE), (buf), (ns))
+mdefine_line|#define outsb(port, buf, ns)&t;_outsb((u8 *)((port)+_IO_BASE), (buf), (ns))
 DECL|macro|insw
-mdefine_line|#define insw(port, buf, ns)&t;_insw((unsigned short *)((port)+_IO_BASE), (buf), (ns))
+mdefine_line|#define insw(port, buf, ns)&t;_insw((u16 *)((port)+_IO_BASE), (buf), (ns))
 DECL|macro|outsw
-mdefine_line|#define outsw(port, buf, ns)&t;_outsw((unsigned short *)((port)+_IO_BASE), (buf), (ns))
+mdefine_line|#define outsw(port, buf, ns)&t;_outsw((u16 *)((port)+_IO_BASE), (buf), (ns))
 DECL|macro|insl
-mdefine_line|#define insl(port, buf, nl)&t;_insl((unsigned long *)((port)+_IO_BASE), (buf), (nl))
+mdefine_line|#define insl(port, buf, nl)&t;_insl((u32 *)((port)+_IO_BASE), (buf), (nl))
 DECL|macro|outsl
-mdefine_line|#define outsl(port, buf, nl)&t;_outsl((unsigned long *)((port)+_IO_BASE), (buf), (nl))
+mdefine_line|#define outsl(port, buf, nl)&t;_outsl((u32 *)((port)+_IO_BASE), (buf), (nl))
 DECL|macro|inb
-mdefine_line|#define inb(port)&t;&t;in_8((unsigned char *)((port)+_IO_BASE))
+mdefine_line|#define inb(port)&t;&t;in_8((u8 *)((port)+_IO_BASE))
 DECL|macro|outb
-mdefine_line|#define outb(val, port)&t;&t;out_8((unsigned char *)((port)+_IO_BASE), (val))
+mdefine_line|#define outb(val, port)&t;&t;out_8((u8 *)((port)+_IO_BASE), (val))
 macro_line|#if defined(CONFIG_APUS)
 DECL|macro|inw
-mdefine_line|#define inw(port)&t;&t;in_be16((unsigned short *)((port)+_IO_BASE))
+mdefine_line|#define inw(port)&t;&t;in_be16((u16 *)((port)+_IO_BASE))
 DECL|macro|outw
-mdefine_line|#define outw(val, port)&t;&t;out_be16((unsigned short *)((port)+_IO_BASE), (val))
+mdefine_line|#define outw(val, port)&t;&t;out_be16((u16 *)((port)+_IO_BASE), (val))
 DECL|macro|inl
-mdefine_line|#define inl(port)&t;&t;in_be32((unsigned *)((port)+_IO_BASE))
+mdefine_line|#define inl(port)&t;&t;in_be32((u32 *)((port)+_IO_BASE))
 DECL|macro|outl
-mdefine_line|#define outl(val, port)&t;&t;out_be32((unsigned *)((port)+_IO_BASE), (val))
+mdefine_line|#define outl(val, port)&t;&t;out_be32((u32 *)((port)+_IO_BASE), (val))
 macro_line|#else
 DECL|macro|inw
-mdefine_line|#define inw(port)&t;&t;in_le16((unsigned short *)((port)+_IO_BASE))
+mdefine_line|#define inw(port)&t;&t;in_le16((u16 *)((port)+_IO_BASE))
 DECL|macro|outw
-mdefine_line|#define outw(val, port)&t;&t;out_le16((unsigned short *)((port)+_IO_BASE), (val))
+mdefine_line|#define outw(val, port)&t;&t;out_le16((u16 *)((port)+_IO_BASE), (val))
 DECL|macro|inl
-mdefine_line|#define inl(port)&t;&t;in_le32((unsigned *)((port)+_IO_BASE))
+mdefine_line|#define inl(port)&t;&t;in_le32((u32 *)((port)+_IO_BASE))
 DECL|macro|outl
-mdefine_line|#define outl(val, port)&t;&t;out_le32((unsigned *)((port)+_IO_BASE), (val))
+mdefine_line|#define outl(val, port)&t;&t;out_le32((u32 *)((port)+_IO_BASE), (val))
 macro_line|#endif
 DECL|macro|inb_p
-mdefine_line|#define inb_p(port)&t;&t;in_8((unsigned char *)((port)+_IO_BASE))
+mdefine_line|#define inb_p(port)&t;&t;in_8((u8 *)((port)+_IO_BASE))
 DECL|macro|outb_p
-mdefine_line|#define outb_p(val, port)&t;out_8((unsigned char *)((port)+_IO_BASE), (val))
+mdefine_line|#define outb_p(val, port)&t;out_8((u8 *)((port)+_IO_BASE), (val))
 DECL|macro|inw_p
-mdefine_line|#define inw_p(port)&t;&t;in_le16((unsigned short *)((port)+_IO_BASE))
+mdefine_line|#define inw_p(port)&t;&t;in_le16((u16 *)((port)+_IO_BASE))
 DECL|macro|outw_p
-mdefine_line|#define outw_p(val, port)&t;out_le16((unsigned short *)((port)+_IO_BASE), (val))
+mdefine_line|#define outw_p(val, port)&t;out_le16((u16 *)((port)+_IO_BASE), (val))
 DECL|macro|inl_p
-mdefine_line|#define inl_p(port)&t;&t;in_le32((unsigned *)((port)+_IO_BASE))
+mdefine_line|#define inl_p(port)&t;&t;in_le32((u32 *)((port)+_IO_BASE))
 DECL|macro|outl_p
-mdefine_line|#define outl_p(val, port)&t;out_le32((unsigned *)((port)+_IO_BASE), (val))
+mdefine_line|#define outl_p(val, port)&t;out_le32((u32 *)((port)+_IO_BASE), (val))
 r_extern
 r_void
 id|_insb
 c_func
 (paren
 r_volatile
-r_int
-r_char
+id|u8
 op_star
 id|port
 comma
@@ -157,8 +156,7 @@ id|_outsb
 c_func
 (paren
 r_volatile
-r_int
-r_char
+id|u8
 op_star
 id|port
 comma
@@ -177,8 +175,7 @@ id|_insw
 c_func
 (paren
 r_volatile
-r_int
-r_int
+id|u16
 op_star
 id|port
 comma
@@ -196,8 +193,7 @@ id|_outsw
 c_func
 (paren
 r_volatile
-r_int
-r_int
+id|u16
 op_star
 id|port
 comma
@@ -216,8 +212,7 @@ id|_insl
 c_func
 (paren
 r_volatile
-r_int
-r_int
+id|u32
 op_star
 id|port
 comma
@@ -235,8 +230,7 @@ id|_outsl
 c_func
 (paren
 r_volatile
-r_int
-r_int
+id|u32
 op_star
 id|port
 comma
@@ -251,21 +245,20 @@ id|nl
 suffix:semicolon
 multiline_comment|/*&n; * The *_ns versions below don&squot;t do byte-swapping.&n; */
 DECL|macro|insw_ns
-mdefine_line|#define insw_ns(port, buf, ns)&t;_insw_ns((unsigned short *)((port)+_IO_BASE), (buf), (ns))
+mdefine_line|#define insw_ns(port, buf, ns)&t;_insw_ns((u16 *)((port)+_IO_BASE), (buf), (ns))
 DECL|macro|outsw_ns
-mdefine_line|#define outsw_ns(port, buf, ns)&t;_outsw_ns((unsigned short *)((port)+_IO_BASE), (buf), (ns))
+mdefine_line|#define outsw_ns(port, buf, ns)&t;_outsw_ns((u16 *)((port)+_IO_BASE), (buf), (ns))
 DECL|macro|insl_ns
-mdefine_line|#define insl_ns(port, buf, nl)&t;_insl_ns((unsigned long *)((port)+_IO_BASE), (buf), (nl))
+mdefine_line|#define insl_ns(port, buf, nl)&t;_insl_ns((u32 *)((port)+_IO_BASE), (buf), (nl))
 DECL|macro|outsl_ns
-mdefine_line|#define outsl_ns(port, buf, nl)&t;_outsl_ns((unsigned long *)((port)+_IO_BASE), (buf), (nl))
+mdefine_line|#define outsl_ns(port, buf, nl)&t;_outsl_ns((u32 *)((port)+_IO_BASE), (buf), (nl))
 r_extern
 r_void
 id|_insw_ns
 c_func
 (paren
 r_volatile
-r_int
-r_int
+id|u16
 op_star
 id|port
 comma
@@ -283,8 +276,7 @@ id|_outsw_ns
 c_func
 (paren
 r_volatile
-r_int
-r_int
+id|u16
 op_star
 id|port
 comma
@@ -303,8 +295,7 @@ id|_insl_ns
 c_func
 (paren
 r_volatile
-r_int
-r_int
+id|u32
 op_star
 id|port
 comma
@@ -322,8 +313,7 @@ id|_outsl_ns
 c_func
 (paren
 r_volatile
-r_int
-r_int
+id|u32
 op_star
 id|port
 comma
@@ -339,11 +329,11 @@ suffix:semicolon
 DECL|macro|IO_SPACE_LIMIT
 mdefine_line|#define IO_SPACE_LIMIT ~0
 DECL|macro|memset_io
-mdefine_line|#define memset_io(a,b,c)&t;memset((a),(b),(c))
+mdefine_line|#define memset_io(a,b,c)       memset((void *)(a),(b),(c))
 DECL|macro|memcpy_fromio
-mdefine_line|#define memcpy_fromio(a,b,c)&t;memcpy((a),(b),(c))
+mdefine_line|#define memcpy_fromio(a,b,c)   memcpy((a),(void *)(b),(c))
 DECL|macro|memcpy_toio
-mdefine_line|#define memcpy_toio(a,b,c)&t;memcpy((a),(b),(c))
+mdefine_line|#define memcpy_toio(a,b,c)&t;memcpy((void *)(a),(b),(c))
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Map in an area of physical address space, for accessing&n; * I/O devices etc.&n; */
 r_extern

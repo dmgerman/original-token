@@ -3124,7 +3124,7 @@ op_logical_neg
 id|size
 )paren
 (brace
-id|kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|skb
@@ -3154,7 +3154,7 @@ id|skb-&gt;truesize
 )paren
 )paren
 (brace
-id|kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|skb
@@ -4465,7 +4465,7 @@ id|skb
 )paren
 suffix:semicolon
 r_else
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|skb
@@ -4833,7 +4833,7 @@ id|skb
 )paren
 suffix:semicolon
 r_else
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|skb
@@ -7753,7 +7753,8 @@ id|error
 )paren
 suffix:semicolon
 r_return
-id|error
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 id|eprom_get_esi
@@ -10010,13 +10011,6 @@ c_func
 (paren
 id|vcc
 comma
-id|skb
-)paren
-suffix:semicolon
-r_else
-id|dev_kfree_skb
-c_func
-(paren
 id|skb
 )paren
 suffix:semicolon

@@ -1,5 +1,5 @@
 multiline_comment|/* net/atm/atmarp.h - RFC1577 ATM ARP */
-multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#ifndef _ATMCLIP_H
 DECL|macro|_ATMCLIP_H
 mdefine_line|#define _ATMCLIP_H
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/atm.h&gt;
 macro_line|#include &lt;linux/atmdev.h&gt;
 macro_line|#include &lt;linux/atmarp.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;net/neighbour.h&gt;
 DECL|macro|CLIP_VCC
 mdefine_line|#define CLIP_VCC(vcc) ((struct clip_vcc *) ((vcc)-&gt;user_back))
@@ -31,6 +32,11 @@ op_star
 id|entry
 suffix:semicolon
 multiline_comment|/* ATMARP table entry, NULL if IP addr.&n;&t;&t;&t;&t;&t;   isn&squot;t known yet */
+DECL|member|xoff
+r_int
+id|xoff
+suffix:semicolon
+multiline_comment|/* 1 if send buffer is full */
 DECL|member|encap
 r_int
 r_char
@@ -146,6 +152,11 @@ r_int
 id|number
 suffix:semicolon
 multiline_comment|/* for convenience ... */
+DECL|member|xoff_lock
+id|spinlock_t
+id|xoff_lock
+suffix:semicolon
+multiline_comment|/* ensures that pop is atomic (SMP) */
 DECL|member|stats
 r_struct
 id|net_device_stats

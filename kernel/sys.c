@@ -821,10 +821,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-r_break
-suffix:semicolon
 )brace
-suffix:semicolon
 id|unlock_kernel
 c_func
 (paren

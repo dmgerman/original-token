@@ -2703,7 +2703,7 @@ multiline_comment|/* End of SK_lance_init() */
 multiline_comment|/*-&n; * Function       : SK_send_packet&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/27&n; *&n; * Description    : Writes an socket buffer into a transmit descriptor&n; *                  and starts transmission.&n; *&n; * Parameters     : I : struct sk_buff *skb - packet to transfer&n; *                  I : struct net_device *dev  - SK_G16 device structure&n; * Return Value   : 0 - OK&n; *                  1 - Could not transmit (dev_queue_xmit will queue it)&n; *                      and try to sent it later&n; * Globals        : None&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 DECL|function|SK_timeout
 r_static
-r_int
+r_void
 id|SK_timeout
 c_func
 (paren

@@ -2129,15 +2129,8 @@ id|mousedev_disconnect
 comma
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
+DECL|function|mousedev_init
+r_static
 r_int
 id|__init
 id|mousedev_init
@@ -2145,7 +2138,6 @@ c_func
 (paren
 r_void
 )paren
-macro_line|#endif
 (brace
 id|input_register_handler
 c_func
@@ -2210,10 +2202,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|mousedev_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|mousedev_exit
 c_func
 (paren
 r_void
@@ -2236,5 +2229,18 @@ id|mousedev_handler
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|mousedev_init
+id|module_init
+c_func
+(paren
+id|mousedev_init
+)paren
+suffix:semicolon
+DECL|variable|mousedev_exit
+id|module_exit
+c_func
+(paren
+id|mousedev_exit
+)paren
+suffix:semicolon
 eof

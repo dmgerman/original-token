@@ -153,6 +153,38 @@ r_int
 id|val
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Mark an irq as &quot;lost&quot;.  This is only used on the pmac&n; * since it can lose interrupts (see pmac_set_irq_mask).&n; * -- Cort&n; */
+DECL|function|__no_use_set_lost
+r_void
+id|__pmac
+id|__no_use_set_lost
+c_func
+(paren
+r_int
+r_int
+id|irq_nr
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|test_and_set_bit
+c_func
+(paren
+id|irq_nr
+comma
+id|ppc_lost_interrupts
+)paren
+)paren
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|ppc_n_lost_interrupts
+)paren
+suffix:semicolon
+)brace
 DECL|function|pmac_openpic_mask_irq
 r_static
 r_void
@@ -501,27 +533,15 @@ op_amp
 id|bit
 )paren
 )paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|test_and_set_bit
+id|__set_lost
 c_func
 (paren
+(paren
+id|ulong
+)paren
 id|irq_nr
-comma
-id|ppc_lost_interrupts
-)paren
-)paren
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|ppc_n_lost_interrupts
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|function|pmac_mask_irq
 r_static
@@ -763,6 +783,13 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#ifdef __SMP__
+r_void
+id|pmac_smp_message_recv
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* IPI&squot;s are a hack on the powersurge -- Cort */
 r_if
 c_cond
@@ -792,7 +819,7 @@ id|regs
 )paren
 suffix:semicolon
 macro_line|#endif
-id|smp_message_recv
+id|pmac_smp_message_recv
 c_func
 (paren
 )paren
@@ -804,7 +831,7 @@ suffix:semicolon
 multiline_comment|/* ignore, already handled */
 )brace
 macro_line|#endif /* __SMP__ */
-multiline_comment|/* Yeah, I know, this could be a separate do_IRQ function */
+multiline_comment|/* Yeah, I know, this could be a separate get_irq function */
 r_if
 c_cond
 (paren
@@ -1758,6 +1785,10 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+id|int_control.int_set_lost
+op_assign
+id|__no_use_set_lost
+suffix:semicolon
 multiline_comment|/*&n;&t; * G3 powermacs and 1999 G3 PowerBooks have 64 interrupts,&n;&t; * 1998 G3 Series PowerBooks have 128, &n;&t; * other powermacs have 32.&n;&t; * The combo ethernet/modem card for the Powerstar powerbooks&n;&t; * (2400/3400/3500, ohare based) has a second ohare chip&n;&t; * effectively making a total of 64.&n;&t; */
 id|max_irqs
 op_assign

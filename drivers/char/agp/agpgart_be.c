@@ -5903,12 +5903,6 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-(paren
-r_void
-)paren
-id|pdev
-suffix:semicolon
-multiline_comment|/* unused */
 )brace
 macro_line|#endif /* CONFIG_AGP_SIS */
 macro_line|#ifdef CONFIG_AGP_AMD

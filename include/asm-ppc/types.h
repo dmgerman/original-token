@@ -62,7 +62,6 @@ id|__u64
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * These aren&squot;t exported outside the kernel to avoid name space clashes&n; */
-macro_line|#ifdef __KERNEL__
 DECL|typedef|s8
 r_typedef
 r_int
@@ -113,8 +112,6 @@ r_int
 r_int
 id|u64
 suffix:semicolon
-DECL|macro|BITS_PER_LONG
-mdefine_line|#define BITS_PER_LONG 32
 r_typedef
 r_struct
 (brace
@@ -140,6 +137,9 @@ l_int|16
 )paren
 id|vector128
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
+DECL|macro|BITS_PER_LONG
+mdefine_line|#define BITS_PER_LONG 32
 multiline_comment|/* DMA addresses are 32-bits wide */
 DECL|typedef|dma_addr_t
 r_typedef

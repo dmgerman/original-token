@@ -1384,16 +1384,11 @@ id|still_running
 suffix:semicolon
 id|still_running_back
 suffix:colon
-id|tmp
-op_assign
-id|runqueue_head.next
-suffix:semicolon
-r_while
-c_loop
+id|list_for_each
+c_func
 (paren
 id|tmp
-op_ne
-op_amp
+comma
 id|runqueue_head
 )paren
 (brace
@@ -1449,10 +1444,6 @@ op_assign
 id|p
 suffix:semicolon
 )brace
-id|tmp
-op_assign
-id|tmp-&gt;next
-suffix:semicolon
 )brace
 multiline_comment|/* Do we need to re-calculate counters? */
 r_if
@@ -1900,15 +1891,12 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|tmp
-op_assign
-id|head-&gt;next
-suffix:semicolon
-r_while
-c_loop
+id|list_for_each
+c_func
 (paren
 id|tmp
-op_ne
+comma
+op_star
 id|head
 )paren
 (brace
@@ -1929,10 +1917,6 @@ id|wait_queue_t
 comma
 id|task_list
 )paren
-suffix:semicolon
-id|tmp
-op_assign
-id|tmp-&gt;next
 suffix:semicolon
 macro_line|#if WAITQUEUE_DEBUG
 id|CHECK_MAGIC

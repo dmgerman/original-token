@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *   olympic.c (c) 1999 Peter De Schrijver All Rights Reserved&n; *&t;&t;   1999 Mike Phillips (phillim@amtrak.com)&n; *&n; *  Linux driver for IBM PCI tokenring cards based on the Pit/Pit-Phy/Olympic&n; *  chipset. &n; *&n; *  Base Driver Skeleton:&n; *      Written 1993-94 by Donald Becker.&n; *&n; *      Copyright 1993 United States Government as represented by the&n; *      Director, National Security Agency.&n; *&n; *  Thanks to Erik De Cock, Adrian Bridgett and Frank Fiene for their &n; *  assistance and perserverance with the testing of this driver.&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; * &n; *  4/27/99 - Alpha Release 0.1.0&n; *            First release to the public&n; *&n; *  6/8/99  - Official Release 0.2.0   &n; *            Merged into the kernel code &n; *  8/18/99 - Updated driver for 2.3.13 kernel to use new pci&n; *&t;      resource. Driver also reports the card name returned by&n; *            the pci resource.&n; *  1/11/00 - Added spinlocks for smp&n; *  &n; *  To Do:&n; *&n; *  IPv6 Multicast&n; *&n; *  If Problems do Occur&n; *  Most problems can be rectified by either closing and opening the interface&n; *  (ifconfig down and up) or rmmod and insmod&squot;ing the driver (a bit difficult&n; *  if compiled into the kernel).&n; */
+multiline_comment|/*&n; *   olympic.c (c) 1999 Peter De Schrijver All Rights Reserved&n; *&t;&t;   1999 Mike Phillips (phillim@amtrak.com)&n; *&n; *  Linux driver for IBM PCI tokenring cards based on the Pit/Pit-Phy/Olympic&n; *  chipset. &n; *&n; *  Base Driver Skeleton:&n; *      Written 1993-94 by Donald Becker.&n; *&n; *      Copyright 1993 United States Government as represented by the&n; *      Director, National Security Agency.&n; *&n; *  Thanks to Erik De Cock, Adrian Bridgett and Frank Fiene for their &n; *  assistance and perserverance with the testing of this driver.&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; * &n; *  4/27/99 - Alpha Release 0.1.0&n; *            First release to the public&n; *&n; *  6/8/99  - Official Release 0.2.0   &n; *            Merged into the kernel code &n; *  8/18/99 - Updated driver for 2.3.13 kernel to use new pci&n; *&t;      resource. Driver also reports the card name returned by&n; *            the pci resource.&n; *  1/11/00 - Added spinlocks for smp&n; *  2/23/00 - Updated to dev_kfree_irq &n; *&n; *  To Do:&n; *&n; *  If Problems do Occur&n; *  Most problems can be rectified by either closing and opening the interface&n; *  (ifconfig down and up) or rmmod and insmod&squot;ing the driver (a bit difficult&n; *  if compiled into the kernel).&n; */
 multiline_comment|/* Change OLYMPIC_DEBUG to 1 to get verbose, and I mean really verbose, messages */
 DECL|macro|OLYMPIC_DEBUG
 mdefine_line|#define OLYMPIC_DEBUG 0
@@ -37,7 +37,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;Olympic.c v0.3.1 1/11/00 - Peter De Schrijver &amp; Mike Phillips&quot;
+l_string|&quot;Olympic.c v0.3.2 2/23/00 - Peter De Schrijver &amp; Mike Phillips&quot;
 suffix:semicolon
 DECL|variable|open_maj_error
 r_static
@@ -4361,7 +4361,7 @@ suffix:semicolon
 id|olympic_priv-&gt;olympic_stats.tx_packets
 op_increment
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|olympic_priv-&gt;tx_ring_skb

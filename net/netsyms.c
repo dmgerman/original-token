@@ -2318,15 +2318,6 @@ c_func
 id|dev_queue_xmit
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET_FASTROUTE
-DECL|variable|dev_fastroute_stat
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|dev_fastroute_stat
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_NET_HW_FLOWCONTROL
 DECL|variable|netdev_register_fc
 id|EXPORT_SYMBOL

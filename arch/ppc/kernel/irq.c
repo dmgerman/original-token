@@ -62,8 +62,6 @@ id|chrp_int_ack_special
 suffix:semicolon
 DECL|macro|MAXCOUNT
 mdefine_line|#define MAXCOUNT 10000000
-DECL|macro|NR_MASK_WORDS
-mdefine_line|#define NR_MASK_WORDS&t;((NR_IRQS + 31) / 32)
 DECL|variable|irq_desc
 id|irq_desc_t
 id|irq_desc

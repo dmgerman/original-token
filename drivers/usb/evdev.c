@@ -1106,15 +1106,8 @@ id|evdev_disconnect
 comma
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
+DECL|function|evdev_init
+r_static
 r_int
 id|__init
 id|evdev_init
@@ -1122,7 +1115,6 @@ c_func
 (paren
 r_void
 )paren
-macro_line|#endif
 (brace
 id|input_register_handler
 c_func
@@ -1135,10 +1127,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|evdev_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|evdev_exit
 c_func
 (paren
 r_void
@@ -1152,5 +1145,18 @@ id|evdev_handler
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|evdev_init
+id|module_init
+c_func
+(paren
+id|evdev_init
+)paren
+suffix:semicolon
+DECL|variable|evdev_exit
+id|module_exit
+c_func
+(paren
+id|evdev_exit
+)paren
+suffix:semicolon
 eof

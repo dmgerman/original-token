@@ -153,22 +153,170 @@ r_return
 id|irq
 suffix:semicolon
 )brace
-macro_line|#else
-macro_line|#ifdef CONFIG_APUS
-DECL|macro|enable_irq
-mdefine_line|#define enable_irq m68k_enable_irq
-DECL|macro|disable_irq
-mdefine_line|#define disable_irq m68k_disable_irq
-macro_line|#include &lt;asm-m68k/irq.h&gt;
-DECL|macro|enable_irq
-macro_line|#undef enable_irq
-DECL|macro|disable_irq
-macro_line|#undef disable_irq
-macro_line|#else /* CONFIG_APUS */
+macro_line|#else /* CONFIG_4xx + CONFIG_8xx */
+macro_line|#if defined(CONFIG_APUS)
+multiline_comment|/*&n; * This structure is used to chain together the ISRs for a particular&n; * interrupt source (if it supports chaining).&n; */
+DECL|struct|irq_node
+r_typedef
+r_struct
+id|irq_node
+(brace
+DECL|member|handler
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
+DECL|member|dev_id
+r_void
+op_star
+id|dev_id
+suffix:semicolon
+DECL|member|devname
+r_const
+r_char
+op_star
+id|devname
+suffix:semicolon
+DECL|member|next
+r_struct
+id|irq_node
+op_star
+id|next
+suffix:semicolon
+DECL|typedef|irq_node_t
+)brace
+id|irq_node_t
+suffix:semicolon
+multiline_comment|/*&n; * This structure has only 4 elements for speed reasons&n; */
+DECL|struct|irq_handler
+r_typedef
+r_struct
+id|irq_handler
+(brace
+DECL|member|handler
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
+DECL|member|dev_id
+r_void
+op_star
+id|dev_id
+suffix:semicolon
+DECL|member|devname
+r_const
+r_char
+op_star
+id|devname
+suffix:semicolon
+DECL|typedef|irq_handler_t
+)brace
+id|irq_handler_t
+suffix:semicolon
+multiline_comment|/* count of spurious interrupts */
+r_extern
+r_volatile
+r_int
+r_int
+id|num_spurious
+suffix:semicolon
+r_extern
+r_int
+id|sys_request_irq
+c_func
+(paren
+r_int
+r_int
+comma
+r_void
+(paren
+op_star
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+comma
+r_int
+r_int
+comma
+r_const
+r_char
+op_star
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sys_free_irq
+c_func
+(paren
+r_int
+r_int
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * This function returns a new irq_node_t&n; */
+r_extern
+id|irq_node_t
+op_star
+id|new_irq_node
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* Number of m68k interrupts */
+DECL|macro|SYS_IRQS
+mdefine_line|#define SYS_IRQS 8
+macro_line|#endif /* CONFIG_APUS */
 multiline_comment|/*&n; * this is the # irq&squot;s for all ppc arch&squot;s (pmac/chrp/prep)&n; * so it is the max of them all&n; */
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS&t;&t;&t;256
-macro_line|#endif /* CONFIG_APUS */
 DECL|macro|NUM_8259_INTERRUPTS
 mdefine_line|#define NUM_8259_INTERRUPTS&t;16
 DECL|macro|IRQ_8259_CASCADE
@@ -177,7 +325,6 @@ DECL|macro|openpic_to_irq
 mdefine_line|#define openpic_to_irq(n)&t;((n)+NUM_8259_INTERRUPTS)
 DECL|macro|irq_to_openpic
 mdefine_line|#define irq_to_openpic(n)&t;((n)-NUM_8259_INTERRUPTS)
-macro_line|#ifndef CONFIG_APUS
 multiline_comment|/*&n; * This gets called from serial.c, which is now used on&n; * powermacs as well as prep/chrp boxes.&n; * Prep and chrp both have cascaded 8259 PICs.&n; */
 DECL|function|irq_cannonicalize
 r_static
@@ -213,7 +360,16 @@ id|irq
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* !CONFIG_APUS */
 macro_line|#endif
+DECL|macro|NR_MASK_WORDS
+mdefine_line|#define NR_MASK_WORDS&t;((NR_IRQS + 31) / 32)
+r_extern
+r_int
+r_int
+id|ppc_lost_interrupts
+(braket
+id|NR_MASK_WORDS
+)braket
+suffix:semicolon
 macro_line|#endif /* _ASM_IRQ_H */
 eof

@@ -72,6 +72,16 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ATM_FORE200E
+r_extern
+r_int
+id|fore200e_detect
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|atmdev_init
 r_int
 id|__init
@@ -146,6 +156,15 @@ macro_line|#ifdef CONFIG_ATM_IA
 id|devs
 op_add_assign
 id|ia_detect
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ATM_FORE200E
+id|devs
+op_add_assign
+id|fore200e_detect
 c_func
 (paren
 )paren

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/input.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;usb.h&quot;
 id|MODULE_AUTHOR
 c_func
@@ -911,10 +912,32 @@ id|graphire_disconnect
 comma
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|graphire_init
+r_static
+r_int
+id|__init
+id|graphire_init
+c_func
+(paren
 r_void
-id|cleanup_module
+)paren
+(brace
+id|usb_register
+c_func
+(paren
+op_amp
+id|graphire_driver
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|graphire_exit
+r_static
+r_void
+id|__exit
+id|graphire_exit
 c_func
 (paren
 r_void
@@ -928,31 +951,18 @@ id|graphire_driver
 )paren
 suffix:semicolon
 )brace
-DECL|function|init_module
-r_int
-id|init_module
+DECL|variable|graphire_init
+id|module_init
 c_func
 (paren
-r_void
-)paren
-macro_line|#else
-r_int
 id|graphire_init
-c_func
-(paren
-r_void
-)paren
-macro_line|#endif
-(brace
-id|usb_register
-c_func
-(paren
-op_amp
-id|graphire_driver
 )paren
 suffix:semicolon
-r_return
-l_int|0
+DECL|variable|graphire_exit
+id|module_exit
+c_func
+(paren
+id|graphire_exit
+)paren
 suffix:semicolon
-)brace
 eof

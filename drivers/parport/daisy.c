@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * IEEE 1284.3 Parallel port daisy chain and multiplexor code&n; * &n; * Copyright (C) 1999  Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * ??-12-1998: Initial implementation.&n; * 31-01-1999: Make port-cloning transparent.&n; * 13-02-1999: Move DeviceID technique from parport_probe.&n; * 13-03-1999: Get DeviceID from non-IEEE 1284.3 devices too.&n; *&n; */
+multiline_comment|/*&n; * IEEE 1284.3 Parallel port daisy chain and multiplexor code&n; * &n; * Copyright (C) 1999, 2000  Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * ??-12-1998: Initial implementation.&n; * 31-01-1999: Make port-cloning transparent.&n; * 13-02-1999: Move DeviceID technique from parport_probe.&n; * 13-03-1999: Get DeviceID from non-IEEE 1284.3 devices too.&n; * 22-02-2000: Count devices that are actually detected.&n; *&n; */
 macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -252,7 +252,7 @@ r_return
 id|extra
 suffix:semicolon
 )brace
-multiline_comment|/* Discover the IEEE1284.3 topology on a port -- muxes and daisy chains. */
+multiline_comment|/* Discover the IEEE1284.3 topology on a port -- muxes and daisy chains.&n; * Return value is number of devices actually detected. */
 DECL|function|parport_daisy_init
 r_int
 id|parport_daisy_init
@@ -263,6 +263,11 @@ op_star
 id|port
 )paren
 (brace
+r_int
+id|detected
+op_assign
+l_int|0
+suffix:semicolon
 r_char
 op_star
 id|deviceid
@@ -442,6 +447,8 @@ id|parport_daisy_deselect_all
 id|port
 )paren
 suffix:semicolon
+id|detected
+op_add_assign
 id|assign_addrs
 (paren
 id|port
@@ -475,6 +482,9 @@ c_cond
 id|deviceid
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|parport_device_id
 (paren
 id|numdevs
@@ -485,6 +495,11 @@ id|deviceid
 comma
 l_int|1000
 )paren
+OG
+l_int|2
+)paren
+id|detected
+op_increment
 suffix:semicolon
 id|kfree
 (paren
@@ -493,7 +508,7 @@ id|deviceid
 suffix:semicolon
 )brace
 r_return
-l_int|0
+id|detected
 suffix:semicolon
 )brace
 multiline_comment|/* Forget about devices on a physical port. */
@@ -526,12 +541,21 @@ id|prev-&gt;port
 op_eq
 id|port
 )paren
-id|prev
-op_assign
+(brace
 id|topology
 op_assign
 id|topology-&gt;next
 suffix:semicolon
+id|kfree
+(paren
+id|prev
+)paren
+suffix:semicolon
+id|prev
+op_assign
+id|topology
+suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -554,6 +578,11 @@ id|port
 id|prev-&gt;next
 op_assign
 id|dev-&gt;next
+suffix:semicolon
+id|kfree
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|prev
 op_assign
@@ -1641,8 +1670,7 @@ id|s
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|ENXIO
+l_int|0
 suffix:semicolon
 )brace
 id|parport_write_data
@@ -1697,8 +1725,7 @@ id|s
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|ENXIO
+l_int|0
 suffix:semicolon
 )brace
 id|parport_write_data
@@ -1879,7 +1906,9 @@ id|deviceid
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|numdevs
+op_minus
+id|thisdev
 suffix:semicolon
 )brace
 multiline_comment|/* Find a device with a particular manufacturer and model string,&n;   starting from a given device number.  Like the PCI equivalent,&n;   &squot;from&squot; itself is skipped. */

@@ -5535,6 +5535,11 @@ r_if
 c_cond
 (paren
 id|devc
+op_logical_and
+id|io
+op_ne
+op_minus
+l_int|1
 )paren
 (brace
 r_if

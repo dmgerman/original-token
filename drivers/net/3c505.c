@@ -1096,7 +1096,7 @@ op_logical_and
 id|netif_running
 c_func
 (paren
-id|dev-&gt;state
+id|dev
 )paren
 )paren
 (brace

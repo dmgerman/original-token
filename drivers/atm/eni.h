@@ -24,6 +24,8 @@ DECL|macro|DEFAULT_RX_MULT
 mdefine_line|#define DEFAULT_RX_MULT&t;300&t;&t;/* max_sdu*3 */
 DECL|macro|DEFAULT_TX_MULT
 mdefine_line|#define DEFAULT_TX_MULT&t;300&t;&t;/* max_sdu*3 */
+DECL|macro|ENI_ZEROES_SIZE
+mdefine_line|#define ENI_ZEROES_SIZE&t;  4&t;&t;/* need that many DMA-able zero bytes */
 DECL|struct|eni_free
 r_struct
 id|eni_free
@@ -422,11 +424,18 @@ r_int
 id|size
 suffix:semicolon
 multiline_comment|/* PDU size in reassembly buffer */
+DECL|member|paddr
+id|dma_addr_t
+id|paddr
+suffix:semicolon
+multiline_comment|/* DMA handle */
 )brace
 suffix:semicolon
 DECL|macro|ENI_PRV_SIZE
 mdefine_line|#define ENI_PRV_SIZE(skb) (((struct eni_skb_prv *) (skb)-&gt;cb)-&gt;size)
 DECL|macro|ENI_PRV_POS
 mdefine_line|#define ENI_PRV_POS(skb) (((struct eni_skb_prv *) (skb)-&gt;cb)-&gt;pos)
+DECL|macro|ENI_PRV_PADDR
+mdefine_line|#define ENI_PRV_PADDR(skb) (((struct eni_skb_prv *) (skb)-&gt;cb)-&gt;paddr)
 macro_line|#endif
 eof

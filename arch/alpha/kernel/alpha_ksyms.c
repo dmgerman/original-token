@@ -449,6 +449,20 @@ c_func
 id|__constant_c_memset
 )paren
 suffix:semicolon
+DECL|variable|__direct_map_base
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__direct_map_base
+)paren
+suffix:semicolon
+DECL|variable|__direct_map_size
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__direct_map_size
+)paren
+suffix:semicolon
 DECL|variable|pci_alloc_consistent
 id|EXPORT_SYMBOL
 c_func
@@ -722,6 +736,15 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|alpha_fp_emul
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ALPHA_BROKEN_IRQ_MASK
+DECL|variable|__min_ipl
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__min_ipl
 )paren
 suffix:semicolon
 macro_line|#endif

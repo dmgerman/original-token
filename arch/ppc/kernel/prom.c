@@ -3034,14 +3034,6 @@ l_int|0
 )paren
 r_continue
 suffix:semicolon
-id|RELOC
-c_func
-(paren
-id|smp_ibm_chrp_hack
-)paren
-op_assign
-l_int|1
-suffix:semicolon
 id|prom_print
 c_func
 (paren

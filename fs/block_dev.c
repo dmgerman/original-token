@@ -1146,7 +1146,12 @@ suffix:semicolon
 r_else
 id|size
 op_assign
+(paren
+id|loff_t
+)paren
 id|INT_MAX
+op_lshift
+id|BLOCK_SIZE_BITS
 suffix:semicolon
 r_if
 c_cond

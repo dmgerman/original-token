@@ -12435,7 +12435,8 @@ id|error
 )paren
 suffix:semicolon
 r_return
-id|error
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 multiline_comment|/*  &n;&t; * Delay at least 1us before doing any mem accesses (how &squot;bout 10?)  &n;&t; */
@@ -13307,7 +13308,8 @@ id|dev
 )paren
 suffix:semicolon
 r_return
-id|error
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 id|udelay
@@ -16372,6 +16374,7 @@ id|KERN_CRIT
 l_string|&quot;null skb in ia_send&bslash;n&quot;
 )paren
 suffix:semicolon
+r_else
 id|dev_kfree_skb
 c_func
 (paren

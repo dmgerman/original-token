@@ -3116,7 +3116,7 @@ id|cbq_class
 op_star
 id|borrow
 op_assign
-l_int|NULL
+id|cl
 suffix:semicolon
 r_if
 c_cond

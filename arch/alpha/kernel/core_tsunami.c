@@ -739,10 +739,11 @@ op_assign
 id|swpipl
 c_func
 (paren
-l_int|6
+id|IPL_MCHECK
+op_minus
+l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* Block everything but machine checks. */
 id|mcheck_taken
 c_func
 (paren

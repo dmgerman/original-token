@@ -970,9 +970,6 @@ comma
 id|TRUE
 )paren
 suffix:semicolon
-r_return
-id|curr
-suffix:semicolon
 )brace
 multiline_comment|/*  End Function search_for_entry_in_dir  */
 DECL|function|create_entry

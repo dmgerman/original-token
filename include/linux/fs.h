@@ -4714,7 +4714,7 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|variable|page_symlink_inode_operations
+r_extern
 r_struct
 id|inode_operations
 id|page_symlink_inode_operations

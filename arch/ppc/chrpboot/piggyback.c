@@ -1,4 +1,5 @@
 macro_line|#include &lt;stdio.h&gt;
+macro_line|#include &lt;unistd.h&gt;
 r_extern
 r_int
 id|ce_exec_config
@@ -6,6 +7,7 @@ id|ce_exec_config
 )braket
 suffix:semicolon
 DECL|function|main
+r_int
 id|main
 c_func
 (paren

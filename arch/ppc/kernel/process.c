@@ -581,7 +581,7 @@ c_func
 (paren
 l_int|NULL
 )paren
-suffix:colon
+suffix:semicolon
 multiline_comment|/* just enable AltiVec for kernel - force */
 macro_line|#else
 id|giveup_altivec

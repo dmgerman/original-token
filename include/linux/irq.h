@@ -17,6 +17,8 @@ DECL|macro|IRQ_WAITING
 mdefine_line|#define IRQ_WAITING&t;32&t;/* IRQ not yet seen - for autodetection */
 DECL|macro|IRQ_LEVEL
 mdefine_line|#define IRQ_LEVEL&t;64&t;/* IRQ level triggered */
+DECL|macro|IRQ_MASKED
+mdefine_line|#define IRQ_MASKED&t;128&t;/* IRQ masked - shouldn&squot;t be seen again */
 multiline_comment|/*&n; * Interrupt controller descriptor. This is all we need&n; * to describe about the low-level hardware. &n; */
 DECL|struct|hw_interrupt_type
 r_struct

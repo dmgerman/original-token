@@ -329,20 +329,11 @@ comma
 id|Hash_mask
 suffix:semicolon
 macro_line|#if !defined(CONFIG_4xx) &amp;&amp; !defined(CONFIG_8xx)
-macro_line|#ifdef CONFIG_PPC64
-DECL|variable|_SDR1
-r_int
-r_int
-r_int
-id|_SDR1
-suffix:semicolon
-macro_line|#else
 DECL|variable|_SDR1
 r_int
 r_int
 id|_SDR1
 suffix:semicolon
-macro_line|#endif
 r_static
 r_void
 id|hash_init
@@ -2311,7 +2302,7 @@ id|mem_pieces
 op_star
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_PMAC) || defined(CONFIG_CHRP) || defined(CONFIG_ALL_PPC)
+macro_line|#if defined(CONFIG_ALL_PPC)
 multiline_comment|/*&n; * Read in a property describing some pieces of memory.&n; */
 DECL|function|get_mem_prop
 r_static
@@ -2414,7 +2405,7 @@ id|mp
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_PMAC || CONFIG_CHRP || CONFIG_ALL_PPC */
+macro_line|#endif /* CONFIG_ALL_PPC */
 multiline_comment|/*&n; * Set up one of the I/D BAT (block address translation) register pairs.&n; * The parameters are not checked; in particular size must be a power&n; * of 2 between 128k and 256M.&n; */
 DECL|function|setbat
 r_void
@@ -3805,10 +3796,26 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_PPC64
 id|_SDR1
 op_assign
-l_int|0
+id|__pa
+c_func
+(paren
+id|Hash
+)paren
+op_or
+(paren
+id|ffz
+c_func
+(paren
+op_complement
+id|Hash_size
+)paren
+op_minus
+l_int|7
+)paren
+op_minus
+l_int|11
 suffix:semicolon
-multiline_comment|/* temporary hack to just use bats -- Cort */
-macro_line|#else&t;
+macro_line|#else
 id|_SDR1
 op_assign
 id|__pa
@@ -3823,7 +3830,7 @@ op_rshift
 l_int|10
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 id|ioremap_base
 op_assign
 l_int|0xf8000000
@@ -3927,20 +3934,7 @@ id|IO_PAGE
 suffix:semicolon
 macro_line|#ifdef CONFIG_PPC64
 multiline_comment|/* temporary hack to get working until page tables are stable -- Cort*/
-id|setbat
-c_func
-(paren
-l_int|1
-comma
-l_int|0x80000000
-comma
-l_int|0xc0000000
-comma
-l_int|0x10000000
-comma
-id|IO_PAGE
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;setbat(1, 0x80000000, 0xc0000000, 0x10000000, IO_PAGE);*/
 id|setbat
 c_func
 (paren
@@ -4680,10 +4674,14 @@ id|zones_size
 l_int|0
 )braket
 op_assign
-id|virt_to_phys
-c_func
 (paren
+(paren
+r_int
+r_int
+)paren
 id|end_of_DRAM
+op_minus
+id|KERNELBASE
 )paren
 op_rshift
 id|PAGE_SHIFT
@@ -4754,7 +4752,7 @@ id|initpages
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(CONFIG_CHRP) || defined(CONFIG_ALL_PPC)&t;
+macro_line|#if defined(CONFIG_ALL_PPC)&t;
 r_extern
 r_int
 r_int
@@ -4762,7 +4760,7 @@ id|rtas_data
 comma
 id|rtas_size
 suffix:semicolon
-macro_line|#endif /* defined(CONFIG_CHRP) || defined(CONFIG_ALL_PPC) */
+macro_line|#endif /* defined(CONFIG_ALL_PPC) */
 id|max_mapnr
 op_assign
 id|max_low_pfn
@@ -4836,7 +4834,7 @@ id|flags
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_INITRD */
-macro_line|#if defined(CONFIG_CHRP) || defined(CONFIG_ALL_PPC)&t;
+macro_line|#if defined(CONFIG_ALL_PPC)&t;
 multiline_comment|/* mark the RTAS pages as reserved */
 r_if
 c_cond
@@ -4876,7 +4874,7 @@ id|addr
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif /* defined(CONFIG_CHRP) || defined(CONFIG_ALL_PPC) */
+macro_line|#endif /* defined(CONFIG_ALL_PPC) */
 r_if
 c_cond
 (paren
@@ -5055,7 +5053,7 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#if !defined(CONFIG_4xx) &amp;&amp; !defined(CONFIG_8xx)
-macro_line|#if defined(CONFIG_PMAC) || defined(CONFIG_CHRP) || defined(CONFIG_ALL_PPC)
+macro_line|#if defined(CONFIG_ALL_PPC)
 multiline_comment|/*&n; * On systems with Open Firmware, collect information about&n; * physical RAM and which pieces are already in use.&n; * At this point, we have (at least) the first 8MB mapped with a BAT.&n; * Our text, data, bss use something over 1MB, starting at 0.&n; * Open Firmware may be using 1MB at the 4MB point.&n; */
 DECL|function|pmac_find_end_of_memory
 r_int
@@ -5074,9 +5072,40 @@ id|a
 comma
 id|total
 suffix:semicolon
-multiline_comment|/* max amount of RAM we allow -- Cort */
-DECL|macro|RAM_LIMIT
-mdefine_line|#define RAM_LIMIT (768&lt;&lt;20)
+r_int
+r_int
+id|ram_limit
+op_assign
+l_int|0xf0000000
+op_minus
+id|KERNELBASE
+suffix:semicolon
+multiline_comment|/* allow 0x08000000 for IO space */
+r_if
+c_cond
+(paren
+id|_machine
+op_amp
+(paren
+id|_MACH_prep
+op_or
+id|_MACH_Pmac
+)paren
+)paren
+id|ram_limit
+op_assign
+l_int|0xd8000000
+op_minus
+id|KERNELBASE
+suffix:semicolon
+macro_line|#ifdef CONFIG_PPC64
+id|ram_limit
+op_assign
+l_int|64
+op_lshift
+l_int|20
+suffix:semicolon
+macro_line|#endif
 id|memory_node
 op_assign
 id|find_devices
@@ -5150,7 +5179,6 @@ c_func
 l_string|&quot;RAM doesn&squot;t start at physical address 0&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * XXX:&n;&t; * Make sure ram mappings don&squot;t stomp on IO space&n;&t; * This is a temporary hack to keep this from happening&n;&t; * until we move the KERNELBASE and can allocate RAM up&n;&t; * to our nearest IO area.&n;&t; * -- Cort&n;&t; */
 r_if
 c_cond
 (paren
@@ -5160,11 +5188,11 @@ l_int|0
 op_logical_or
 id|__max_memory
 OG
-id|RAM_LIMIT
+id|ram_limit
 )paren
 id|__max_memory
 op_assign
-id|RAM_LIMIT
+id|ram_limit
 suffix:semicolon
 r_if
 c_cond
@@ -5245,8 +5273,6 @@ op_amp
 id|phys_mem
 )paren
 suffix:semicolon
-DECL|macro|RAM_LIMIT
-macro_line|#undef RAM_LIMIT
 r_return
 id|__va
 c_func
@@ -5255,8 +5281,8 @@ id|total
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_PMAC || CONFIG_CHRP || CONFIG_ALL_PPC */
-macro_line|#if defined(CONFIG_PREP) || defined(CONFIG_ALL_PPC)
+macro_line|#endif /* CONFIG_ALL_PPC */
+macro_line|#if defined(CONFIG_ALL_PPC)
 multiline_comment|/*&n; * This finds the amount of physical ram and does necessary&n; * setup for prep.  This is pretty architecture specific so&n; * this will likely stay separate from the pmac.&n; * -- Cort&n; */
 DECL|function|prep_find_end_of_memory
 r_int
@@ -5335,7 +5361,7 @@ id|total
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* defined(CONFIG_PREP) || defined(CONFIG_ALL_PPC) */
+macro_line|#endif /* defined(CONFIG_ALL_PPC) */
 macro_line|#if defined(CONFIG_GEMINI)
 DECL|function|gemini_find_end_of_memory
 r_int
@@ -5738,50 +5764,6 @@ id|end_of_DRAM
 op_minus
 id|KERNELBASE
 suffix:semicolon
-macro_line|#ifdef CONFIG_PPC64&t;
-id|Hash_mask
-op_assign
-l_int|0
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|h
-op_assign
-l_int|256
-op_lshift
-l_int|10
-suffix:semicolon
-id|h
-OL
-id|ramsize
-op_div
-l_int|256
-op_logical_and
-id|h
-OL
-l_int|4
-op_lshift
-l_int|20
-suffix:semicolon
-id|h
-op_mul_assign
-l_int|2
-comma
-id|Hash_mask
-op_increment
-)paren
-suffix:semicolon
-id|Hash_size
-op_assign
-id|h
-suffix:semicolon
-id|Hash_mask
-op_lshift_assign
-l_int|10
-suffix:semicolon
-multiline_comment|/* so setting _SDR1 works the same -- Cort */
-macro_line|#else
 r_for
 c_loop
 (paren
@@ -5812,6 +5794,18 @@ id|Hash_size
 op_assign
 id|h
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPC64
+id|Hash_mask
+op_assign
+(paren
+id|h
+op_rshift
+l_int|7
+)paren
+op_minus
+l_int|1
+suffix:semicolon
+macro_line|#else&t;
 id|Hash_mask
 op_assign
 (paren
@@ -5954,6 +5948,19 @@ id|Hash_size
 suffix:semicolon
 multiline_comment|/*__clear_user(Hash, Hash_size);*/
 multiline_comment|/*&n;&t;&t; * Patch up the instructions in head.S:hash_page&n;&t;&t; */
+macro_line|#ifdef CONFIG_PPC64&t;&t;
+id|Hash_bits
+op_assign
+id|ffz
+c_func
+(paren
+op_complement
+id|Hash_size
+)paren
+op_minus
+l_int|7
+suffix:semicolon
+macro_line|#else
 id|Hash_bits
 op_assign
 id|ffz
@@ -5965,6 +5972,7 @@ id|Hash_size
 op_minus
 l_int|6
 suffix:semicolon
+macro_line|#endif&t;&t;
 id|hash_page_patch_A
 (braket
 l_int|0
@@ -6065,6 +6073,15 @@ op_amp
 op_complement
 l_int|0xffff
 )paren
+macro_line|#ifdef CONFIG_PPC64&t;&t;&t;
+op_or
+(paren
+id|Hash_mask
+op_rshift
+l_int|11
+)paren
+suffix:semicolon
+macro_line|#else
 op_or
 (paren
 id|Hash_mask
@@ -6072,6 +6089,7 @@ op_rshift
 l_int|10
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;
 id|hash_page_patch_C
 (braket
 l_int|0
@@ -6086,6 +6104,15 @@ op_amp
 op_complement
 l_int|0xffff
 )paren
+macro_line|#ifdef CONFIG_PPC64&t;&t;&t;
+op_or
+(paren
+id|Hash_mask
+op_rshift
+l_int|11
+)paren
+suffix:semicolon
+macro_line|#else
 op_or
 (paren
 id|Hash_mask
@@ -6093,6 +6120,7 @@ op_rshift
 l_int|10
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;
 macro_line|#if 0&t;/* see hash_page in head.S, note also patch_C ref below */
 id|hash_page_patch_D
 (braket

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      smc-ircc.c&n; * Version:       0.4&n; * Description:   Driver for the SMC Infrared Communications Controller&n; * Status:        Experimental.&n; * Author:        Thomas Davis (tadavis@jps.net)&n; * Created at:    &n; * Modified at:   Fri Jan 21 09:41:08 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999-2000 Dag Brattli&n; *     Copyright (c) 1998-1999 Thomas Davis, &n; *     All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *&n; *     SIO&squot;s: SMC FDC37N869, FDC37C669, FDC37N958&n; *     Applicable Models : Fujitsu Lifebook 635t, Sony PCG-505TX&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      smc-ircc.c&n; * Version:       0.4&n; * Description:   Driver for the SMC Infrared Communications Controller&n; * Status:        Experimental.&n; * Author:        Thomas Davis (tadavis@jps.net)&n; * Created at:    &n; * Modified at:   Tue Feb 22 10:05:06 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999-2000 Dag Brattli&n; *     Copyright (c) 1998-1999 Thomas Davis, &n; *     All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *&n; *     SIO&squot;s: SMC FDC37N869, FDC37C669, FDC37N958&n; *     Applicable Models : Fujitsu Lifebook 635t, Sony PCG-505TX&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2293,10 +2293,6 @@ id|speed
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 id|register_bank
 c_func
 (paren
@@ -2554,26 +2550,11 @@ id|self-&gt;new_speed
 op_assign
 id|speed
 suffix:semicolon
-multiline_comment|/* Lock transmit buffer */
-r_if
-c_cond
-(paren
-id|irda_lock
+id|netif_stop_queue
 c_func
 (paren
-(paren
-r_void
-op_star
+id|dev
 )paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_eq
-id|FALSE
-)paren
-r_return
-op_minus
-id|EBUSY
 suffix:semicolon
 id|memcpy
 c_func
@@ -3098,17 +3079,10 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Unlock tx_buff and request another frame */
-id|self-&gt;netdev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Unlock */
-multiline_comment|/* Tell the network layer, that we can accept more frames */
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|self-&gt;netdev
 )paren
 suffix:semicolon
 )brace
@@ -3631,10 +3605,6 @@ op_amp
 id|self-&gt;lock
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
 id|register_bank
 c_func
 (paren
@@ -3736,10 +3706,6 @@ id|iobase
 op_plus
 id|IRCC_IER
 )paren
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
 suffix:semicolon
 id|spin_unlock
 c_func

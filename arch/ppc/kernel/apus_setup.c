@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/ppc/kernel/apus_setup.c&n; *&n; *  Copyright (C) 1998, 1999  Jesper Skov&n; *&n; *  Basically what is needed to replace functionality found in&n; *  arch/m68k allowing Amiga drivers to work under APUS.&n; *  Bits of code and/or ideas from arch/m68k and arch/ppc files.&n; *&n; * TODO:&n; *  This file needs a *really* good cleanup. Restructure and optimize.&n; *  Make sure it can be compiled for non-APUS configs. Begin to move&n; *  Amiga specific stuff into linux/machine/amiga.&n; */
+multiline_comment|/*&n; *  linux/arch/ppc/kernel/apus_setup.c&n; *&n; *  Copyright (C) 1998, 1999  Jesper Skov&n; *&n; *  Basically what is needed to replace functionality found in&n; *  arch/m68k allowing Amiga drivers to work under APUS.&n; *  Bits of code and/or ideas from arch/m68k and arch/ppc files.&n; *&n; * TODO:&n; *  This file needs a *really* good cleanup. Restructure and optimize.&n; *  Make sure it can be compiled for non-APUS configs. Begin to move&n; *  Amiga specific stuff into mach/amiga.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -11,6 +11,9 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#ifdef CONFIG_APUS
 macro_line|#include &lt;asm/logging.h&gt;
 macro_line|#endif
+multiline_comment|/* Needs INITSERIAL call in head.S! */
+DECL|macro|APUS_DEBUG
+macro_line|#undef APUS_DEBUG
 macro_line|#include &lt;linux/ide.h&gt;
 DECL|macro|T_CHAR
 mdefine_line|#define T_CHAR          (0x0000)        /* char:  don&squot;t touch  */
@@ -141,36 +144,6 @@ multiline_comment|/* dma_1word - reservedyy */
 suffix:semicolon
 DECL|macro|num_driveid_types
 mdefine_line|#define num_driveid_types       (sizeof(driveid_types)/sizeof(*driveid_types))
-macro_line|#if 0 /* Get rid of this crud */
-multiline_comment|/* Get the IDE stuff from the 68k file */
-mdefine_line|#define ide_init_hwif_ports m68k_ide_init_hwif_ports
-mdefine_line|#define ide_default_irq m68k_ide_default_irq
-macro_line|#undef ide_request_irq
-mdefine_line|#define ide_request_irq m68k_ide_request_irq
-macro_line|#undef ide_free_irq
-mdefine_line|#define ide_free_irq m68k_ide_free_irq
-mdefine_line|#define ide_default_io_base m68k_ide_default_io_base
-mdefine_line|#define ide_check_region m68k_ide_check_region
-mdefine_line|#define ide_request_region m68k_ide_request_region
-mdefine_line|#define ide_release_region m68k_ide_release_region
-mdefine_line|#define ide_fix_driveid m68k_ide_fix_driveid
-mdefine_line|#define ide_init_default_hwifs m68k_ide_init_default_hwifs
-mdefine_line|#define select_t m68k_select_t
-singleline_comment|//#include &lt;asm/hdreg.h&gt;
-macro_line|#include &lt;asm-m68k/ide.h&gt;
-macro_line|#undef ide_free_irq
-macro_line|#undef select_t
-macro_line|#undef ide_request_irq
-macro_line|#undef ide_init_default_hwifs
-macro_line|#undef ide_init_hwif_ports
-macro_line|#undef ide_default_irq
-macro_line|#undef ide_default_io_base
-macro_line|#undef ide_check_region
-macro_line|#undef ide_request_region
-macro_line|#undef ide_release_region
-macro_line|#undef ide_fix_driveid
-multiline_comment|/*-------------------------------------------*/
-macro_line|#endif
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
@@ -3065,6 +3038,23 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/****************************************************** IRQ stuff */
 id|__apus
+DECL|function|apus_irq_cannonicalize
+r_static
+r_int
+r_int
+id|apus_irq_cannonicalize
+c_func
+(paren
+r_int
+r_int
+id|irq
+)paren
+(brace
+r_return
+id|irq
+suffix:semicolon
+)brace
+id|__apus
 DECL|function|apus_get_irq_list
 r_int
 id|apus_get_irq_list
@@ -3694,6 +3684,354 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
+multiline_comment|/****************************************************** debugging */
+multiline_comment|/* some serial hardware definitions */
+DECL|macro|SDR_OVRUN
+mdefine_line|#define SDR_OVRUN   (1&lt;&lt;15)
+DECL|macro|SDR_RBF
+mdefine_line|#define SDR_RBF     (1&lt;&lt;14)
+DECL|macro|SDR_TBE
+mdefine_line|#define SDR_TBE     (1&lt;&lt;13)
+DECL|macro|SDR_TSRE
+mdefine_line|#define SDR_TSRE    (1&lt;&lt;12)
+DECL|macro|AC_SETCLR
+mdefine_line|#define AC_SETCLR   (1&lt;&lt;15)
+DECL|macro|AC_UARTBRK
+mdefine_line|#define AC_UARTBRK  (1&lt;&lt;11)
+DECL|macro|SER_DTR
+mdefine_line|#define SER_DTR     (1&lt;&lt;7)
+DECL|macro|SER_RTS
+mdefine_line|#define SER_RTS     (1&lt;&lt;6)
+DECL|macro|SER_DCD
+mdefine_line|#define SER_DCD     (1&lt;&lt;5)
+DECL|macro|SER_CTS
+mdefine_line|#define SER_CTS     (1&lt;&lt;4)
+DECL|macro|SER_DSR
+mdefine_line|#define SER_DSR     (1&lt;&lt;3)
+DECL|function|ser_RTSon
+r_static
+id|__inline__
+r_void
+id|ser_RTSon
+c_func
+(paren
+r_void
+)paren
+(brace
+id|ciab.pra
+op_and_assign
+op_complement
+id|SER_RTS
+suffix:semicolon
+multiline_comment|/* active low */
+)brace
+id|__apus
+DECL|function|__debug_ser_out
+r_int
+id|__debug_ser_out
+c_func
+(paren
+r_int
+r_char
+id|c
+)paren
+(brace
+id|custom.serdat
+op_assign
+id|c
+op_or
+l_int|0x100
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|custom.serdatr
+op_amp
+l_int|0x2000
+)paren
+)paren
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|__apus
+DECL|function|__debug_ser_in
+r_int
+r_char
+id|__debug_ser_in
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_char
+id|c
+suffix:semicolon
+multiline_comment|/* XXX: is that ok?? derived from amiga_ser.c... */
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|custom.intreqr
+op_amp
+id|IF_RBF
+)paren
+)paren
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+id|c
+op_assign
+id|custom.serdatr
+suffix:semicolon
+multiline_comment|/* clear the interrupt, so that another character can be read */
+id|custom.intreq
+op_assign
+id|IF_RBF
+suffix:semicolon
+r_return
+id|c
+suffix:semicolon
+)brace
+id|__apus
+DECL|function|__debug_serinit
+r_int
+id|__debug_serinit
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* turn off Rx and Tx interrupts */
+id|custom.intena
+op_assign
+id|IF_RBF
+op_or
+id|IF_TBE
+suffix:semicolon
+multiline_comment|/* clear any pending interrupt */
+id|custom.intreq
+op_assign
+id|IF_RBF
+op_or
+id|IF_TBE
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * set the appropriate directions for the modem control flags,&n;&t; * and clear RTS and DTR&n;&t; */
+id|ciab.ddra
+op_or_assign
+(paren
+id|SER_DTR
+op_or
+id|SER_RTS
+)paren
+suffix:semicolon
+multiline_comment|/* outputs */
+id|ciab.ddra
+op_and_assign
+op_complement
+(paren
+id|SER_DCD
+op_or
+id|SER_CTS
+op_or
+id|SER_DSR
+)paren
+suffix:semicolon
+multiline_comment|/* inputs */
+macro_line|#ifdef CONFIG_KGDB
+multiline_comment|/* turn Rx interrupts on for GDB */
+id|custom.intena
+op_assign
+id|IF_SETCLR
+op_or
+id|IF_RBF
+suffix:semicolon
+id|ser_RTSon
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|__apus
+DECL|function|__debug_print_hex
+r_void
+id|__debug_print_hex
+c_func
+(paren
+r_int
+r_int
+id|x
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_char
+id|hexchars
+(braket
+)braket
+op_assign
+l_string|&quot;0123456789ABCDEF&quot;
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|8
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|__debug_ser_out
+c_func
+(paren
+id|hexchars
+(braket
+(paren
+id|x
+op_rshift
+l_int|28
+)paren
+op_amp
+l_int|15
+)braket
+)paren
+suffix:semicolon
+id|x
+op_lshift_assign
+l_int|4
+suffix:semicolon
+)brace
+id|__debug_ser_out
+c_func
+(paren
+l_char|&squot;&bslash;n&squot;
+)paren
+suffix:semicolon
+id|__debug_ser_out
+c_func
+(paren
+l_char|&squot;&bslash;r&squot;
+)paren
+suffix:semicolon
+)brace
+id|__apus
+DECL|function|__debug_print_string
+r_void
+id|__debug_print_string
+c_func
+(paren
+r_char
+op_star
+id|s
+)paren
+(brace
+r_int
+r_char
+id|c
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|c
+op_assign
+op_star
+id|s
+op_increment
+)paren
+)paren
+(brace
+id|__debug_ser_out
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
+)brace
+id|__debug_ser_out
+c_func
+(paren
+l_char|&squot;&bslash;n&squot;
+)paren
+suffix:semicolon
+id|__debug_ser_out
+c_func
+(paren
+l_char|&squot;&bslash;r&squot;
+)paren
+suffix:semicolon
+)brace
+id|__apus
+DECL|function|apus_progress
+r_static
+r_void
+id|apus_progress
+c_func
+(paren
+r_char
+op_star
+id|s
+comma
+r_int
+r_int
+id|value
+)paren
+(brace
+id|__debug_print_string
+c_func
+(paren
+id|s
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/****************************************************** init */
 multiline_comment|/* The number of spurious interrupts */
 DECL|variable|num_spurious
@@ -3889,7 +4227,7 @@ id|irq_desc
 id|i
 )braket
 dot
-id|ctl
+id|handler
 op_assign
 op_amp
 id|amiga_irqctrl
@@ -4097,7 +4435,7 @@ id|apus_get_cpuinfo
 suffix:semicolon
 id|ppc_md.irq_cannonicalize
 op_assign
-l_int|NULL
+id|apus_irq_cannonicalize
 suffix:semicolon
 id|ppc_md.init_IRQ
 op_assign
@@ -4119,6 +4457,17 @@ suffix:semicolon
 id|ppc_md.heartbeat_count
 op_assign
 l_int|1
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef APUS_DEBUG
+id|__debug_serinit
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ppc_md.progress
+op_assign
+id|apus_progress
 suffix:semicolon
 macro_line|#endif
 id|ppc_md.init

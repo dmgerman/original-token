@@ -866,6 +866,10 @@ r_static
 r_int
 id|raid0_make_request
 (paren
+id|request_queue_t
+op_star
+id|q
+comma
 id|mddev_t
 op_star
 id|mddev
@@ -880,12 +884,13 @@ id|bh
 )paren
 (brace
 r_int
-r_int
-id|size
-op_assign
-id|bh-&gt;b_size
-op_rshift
-l_int|10
+id|blk_in_chunk
+comma
+id|chunksize_bits
+comma
+id|chunk
+comma
+id|chunk_size
 suffix:semicolon
 id|raid0_conf_t
 op_star
@@ -912,15 +917,6 @@ op_star
 id|tmp_dev
 suffix:semicolon
 r_int
-id|blk_in_chunk
-comma
-id|chunksize_bits
-comma
-id|chunk
-comma
-id|chunk_size
-suffix:semicolon
-r_int
 id|block
 comma
 id|rblock
@@ -942,9 +938,9 @@ id|chunk_size
 suffix:semicolon
 id|block
 op_assign
-id|bh-&gt;b_blocknr
-op_star
-id|size
+id|bh-&gt;b_rsector
+op_rshift
+l_int|1
 suffix:semicolon
 id|hash
 op_assign
@@ -966,7 +962,11 @@ op_mod
 id|chunk_size
 )paren
 op_plus
-id|size
+(paren
+id|bh-&gt;b_size
+op_rshift
+l_int|10
+)paren
 )paren
 r_goto
 id|bad_map
@@ -1069,7 +1069,7 @@ id|blk_in_chunk
 op_plus
 id|zone-&gt;dev_offset
 suffix:semicolon
-multiline_comment|/*&n;&t; * Important, at this point we are not guaranteed to be the only&n;&t; * CPU modifying b_rdev and b_rsector! Only __make_request() later&n;&t; * on serializes the IO. So in 2.4 we must never write temporary&n;&t; * values to bh-&gt;b_rdev, like 2.2 and 2.0 did.&n;&t; */
+multiline_comment|/*&n;&t; * The new BH_Lock semantics in ll_rw_blk.c guarantee that this&n;&t; * is the only IO operation happening on this bh.&n;&t; */
 id|bh-&gt;b_rdev
 op_assign
 id|tmp_dev-&gt;dev
@@ -1080,28 +1080,23 @@ id|rblock
 op_lshift
 l_int|1
 suffix:semicolon
-id|generic_make_request
-c_func
-(paren
-id|rw
-comma
-id|bh
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t; * Let the main block layer submit the IO and resolve recursion:&n;&t; */
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 id|bad_map
 suffix:colon
 id|printk
 (paren
-l_string|&quot;raid0_make_request bug: can&squot;t convert block across chunks or bigger than %dk %ld %ld&bslash;n&quot;
+l_string|&quot;raid0_make_request bug: can&squot;t convert block across chunks or bigger than %dk %ld %d&bslash;n&quot;
 comma
 id|chunk_size
 comma
 id|bh-&gt;b_rsector
 comma
-id|size
+id|bh-&gt;b_size
+op_rshift
+l_int|10
 )paren
 suffix:semicolon
 r_return

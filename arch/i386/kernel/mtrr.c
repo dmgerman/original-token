@@ -7420,7 +7420,7 @@ op_amp
 id|proc_mtrr_inode_operations
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdev CONFIG_DEVFS_FS
+macro_line|#ifdef CONFIG_DEVFS_FS
 id|devfs_handle
 op_assign
 id|devfs_register

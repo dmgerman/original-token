@@ -663,7 +663,7 @@ id|sr_cmd
 comma
 l_int|NULL
 comma
-l_int|255
+l_int|0
 comma
 l_int|1
 comma
@@ -769,7 +769,7 @@ id|sr_cmd
 comma
 l_int|NULL
 comma
-l_int|255
+l_int|0
 comma
 l_int|0
 comma

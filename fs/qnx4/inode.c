@@ -1040,7 +1040,11 @@ r_else
 singleline_comment|// iblock is beyond first extent. We have to follow the extent chain.
 id|i_xblk
 op_assign
+id|le32_to_cpu
+c_func
+(paren
 id|qnx4_inode-&gt;i_xblk
+)paren
 suffix:semicolon
 id|offset
 op_assign

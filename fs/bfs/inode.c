@@ -951,17 +951,9 @@ id|write_inode
 suffix:colon
 id|bfs_write_inode
 comma
-id|put_inode
-suffix:colon
-l_int|NULL
-comma
 id|delete_inode
 suffix:colon
 id|bfs_delete_inode
-comma
-id|notify_change
-suffix:colon
-l_int|NULL
 comma
 id|put_super
 suffix:colon
@@ -975,17 +967,6 @@ id|statfs
 suffix:colon
 id|bfs_statfs
 comma
-id|remount_fs
-suffix:colon
-l_int|NULL
-comma
-id|clear_inode
-suffix:colon
-l_int|NULL
-comma
-id|umount_begin
-suffix:colon
-l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|dump_imap
@@ -1629,9 +1610,6 @@ id|read_super
 suffix:colon
 id|bfs_read_super
 comma
-id|next
-suffix:colon
-l_int|NULL
 )brace
 suffix:semicolon
 macro_line|#ifdef MODULE

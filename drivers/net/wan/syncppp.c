@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/inetdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/pkt_sched.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &quot;syncppp.h&quot;
 DECL|macro|MAXALIVECNT
 mdefine_line|#define MAXALIVECNT     6               /* max. alive packets */
@@ -184,6 +185,11 @@ r_static
 r_struct
 id|timer_list
 id|sppp_keepalive_timer
+suffix:semicolon
+DECL|variable|spppq_lock
+r_static
+id|spinlock_t
+id|spppq_lock
 suffix:semicolon
 r_static
 r_void
@@ -1235,15 +1241,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|spppq_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_for
@@ -1432,9 +1436,12 @@ id|nmagic
 suffix:semicolon
 )brace
 )brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|spppq_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -3878,6 +3885,19 @@ op_assign
 op_amp
 id|pd-&gt;sppp
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|spppq_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* Initialize keepalive handler. */
 r_if
 c_cond
@@ -3921,6 +3941,15 @@ suffix:semicolon
 id|spppq
 op_assign
 id|sp
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|spppq_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 id|sp-&gt;pp_loopcnt
 op_assign
@@ -4083,6 +4112,19 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|spppq_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* Remove the entry from the keepalive list. */
 r_for
 c_loop
@@ -4137,6 +4179,15 @@ suffix:semicolon
 id|sppp_clear_timeout
 (paren
 id|sp
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|spppq_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -5548,6 +5599,13 @@ c_func
 (paren
 id|KERN_INFO
 l_string|&quot;Linux port (c) 1998 Building Number Three Ltd &amp; Jan &bslash;&quot;Yenya&bslash;&quot; Kasprzak.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|spppq_lock
 )paren
 suffix:semicolon
 id|sppp_packet_type.type

@@ -1670,7 +1670,7 @@ c_cond
 id|MAP_NR
 c_func
 (paren
-id|page
+id|vaddr
 )paren
 op_ge
 id|max_mapnr
@@ -3654,6 +3654,16 @@ id|mapping
 op_assign
 id|inode-&gt;i_mapping
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;i_size
+OL
+id|offset
+)paren
+r_goto
+id|out
+suffix:semicolon
 id|inode-&gt;i_size
 op_assign
 id|offset
@@ -3906,6 +3916,13 @@ c_func
 op_amp
 id|mapping-&gt;i_shared_lock
 )paren
+suffix:semicolon
+id|out
+suffix:colon
+multiline_comment|/* this should go into -&gt;truncate */
+id|inode-&gt;i_size
+op_assign
+id|offset
 suffix:semicolon
 r_if
 c_cond

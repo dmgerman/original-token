@@ -31,6 +31,8 @@ DECL|macro|FBIOPUT_CON2FBMAP
 mdefine_line|#define FBIOPUT_CON2FBMAP&t;0x4610
 DECL|macro|FBIOBLANK
 mdefine_line|#define FBIOBLANK&t;&t;0x4611&t;&t;/* arg: 0 or vesa level + 1 */
+DECL|macro|FBIOGET_VBLANK
+mdefine_line|#define FBIOGET_VBLANK&t;&t;_IOR(&squot;F&squot;, 0x12, struct fb_vblank)
 DECL|macro|FB_TYPE_PACKED_PIXELS
 mdefine_line|#define FB_TYPE_PACKED_PIXELS&t;&t;0&t;/* Packed Pixels&t;*/
 DECL|macro|FB_TYPE_PLANES
@@ -528,6 +530,58 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* supports DPMS */
+)brace
+suffix:semicolon
+DECL|macro|FB_VBLANK_VBLANKING
+mdefine_line|#define FB_VBLANK_VBLANKING&t;0x001&t;/* currently in a vertical blank */
+DECL|macro|FB_VBLANK_HBLANKING
+mdefine_line|#define FB_VBLANK_HBLANKING&t;0x002&t;/* currently in a horizontal blank */
+DECL|macro|FB_VBLANK_HAVE_VBLANK
+mdefine_line|#define FB_VBLANK_HAVE_VBLANK&t;0x004&t;/* vertical blanks can be detected */
+DECL|macro|FB_VBLANK_HAVE_HBLANK
+mdefine_line|#define FB_VBLANK_HAVE_HBLANK&t;0x008&t;/* horizontal blanks can be detected */
+DECL|macro|FB_VBLANK_HAVE_COUNT
+mdefine_line|#define FB_VBLANK_HAVE_COUNT&t;0x010&t;/* global retrace counter is available */
+DECL|macro|FB_VBLANK_HAVE_VCOUNT
+mdefine_line|#define FB_VBLANK_HAVE_VCOUNT&t;0x020&t;/* the vcount field is valid */
+DECL|macro|FB_VBLANK_HAVE_HCOUNT
+mdefine_line|#define FB_VBLANK_HAVE_HCOUNT&t;0x040&t;/* the hcount field is valid */
+DECL|macro|FB_VBLANK_VSYNCING
+mdefine_line|#define FB_VBLANK_VSYNCING&t;0x080&t;/* currently in a vsync */
+DECL|macro|FB_VBLANK_HAVE_VSYNC
+mdefine_line|#define FB_VBLANK_HAVE_VSYNC&t;0x100&t;/* verical syncs can be detected */
+DECL|struct|fb_vblank
+r_struct
+id|fb_vblank
+(brace
+DECL|member|flags
+id|__u32
+id|flags
+suffix:semicolon
+multiline_comment|/* FB_VBLANK flags */
+DECL|member|count
+id|__u32
+id|count
+suffix:semicolon
+multiline_comment|/* counter of retraces since boot */
+DECL|member|vcount
+id|__u32
+id|vcount
+suffix:semicolon
+multiline_comment|/* current scanline position */
+DECL|member|hcount
+id|__u32
+id|hcount
+suffix:semicolon
+multiline_comment|/* current scandot position */
+DECL|member|reserved
+id|__u32
+id|reserved
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* reserved for future compatibility */
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__

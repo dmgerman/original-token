@@ -5,6 +5,8 @@ DECL|macro|WNOHANG
 mdefine_line|#define WNOHANG&t;&t;0x00000001
 DECL|macro|WUNTRACED
 mdefine_line|#define WUNTRACED&t;0x00000002
+DECL|macro|__WALL
+mdefine_line|#define __WALL&t;&t;0x40000000
 DECL|macro|__WCLONE
 mdefine_line|#define __WCLONE&t;0x80000000
 macro_line|#ifdef __KERNEL__

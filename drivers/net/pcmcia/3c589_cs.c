@@ -3729,7 +3729,6 @@ c_func
 (paren
 id|dev
 )paren
-)paren
 op_logical_or
 (paren
 (paren

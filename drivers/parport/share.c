@@ -937,11 +937,55 @@ id|port
 (brace
 macro_line|#ifdef CONFIG_PARPORT_1284
 multiline_comment|/* Analyse the IEEE1284.3 topology of the port. */
+r_if
+c_cond
+(paren
+id|parport_daisy_init
+(paren
+id|port
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* No devices were detected.  Perhaps they are in some&n;                   funny state; let&squot;s try to reset them and see if&n;                   they wake up. */
+id|parport_daisy_fini
+(paren
+id|port
+)paren
+suffix:semicolon
+id|parport_write_control
+(paren
+id|port
+comma
+id|PARPORT_CONTROL_SELECT
+)paren
+suffix:semicolon
+id|udelay
+(paren
+l_int|50
+)paren
+suffix:semicolon
+id|parport_write_control
+(paren
+id|port
+comma
+id|PARPORT_CONTROL_SELECT
+op_or
+id|PARPORT_CONTROL_INIT
+)paren
+suffix:semicolon
+id|udelay
+(paren
+l_int|50
+)paren
+suffix:semicolon
 id|parport_daisy_init
 (paren
 id|port
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 multiline_comment|/* Let drivers know that a new port has arrived. */
 id|call_driver_chain

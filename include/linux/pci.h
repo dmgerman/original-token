@@ -430,6 +430,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 multiline_comment|/* This defines the direction arg to the DMA mapping routines. */
 DECL|macro|PCI_DMA_BIDIRECTIONAL
 mdefine_line|#define PCI_DMA_BIDIRECTIONAL&t;0

@@ -1893,6 +1893,13 @@ id|first_minor
 op_plus
 id|dev-&gt;max_p
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev-&gt;sizes
+)paren
+(brace
 id|blk_size
 (braket
 id|dev-&gt;major
@@ -1900,6 +1907,7 @@ id|dev-&gt;major
 op_assign
 l_int|NULL
 suffix:semicolon
+)brace
 id|dev-&gt;part
 (braket
 id|first_minor

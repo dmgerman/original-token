@@ -2398,12 +2398,8 @@ op_star
 id|ctl_table
 suffix:semicolon
 DECL|member|ctl_entry
-id|DLNODE
-c_func
-(paren
 r_struct
-id|ctl_table_header
-)paren
+id|list_head
 id|ctl_entry
 suffix:semicolon
 )brace

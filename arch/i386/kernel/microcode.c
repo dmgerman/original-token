@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;CPU Microcode Update interface for Linux&n; *&n; *&t;Copyright (C) 2000 Tigran Aivazian&n; *&n; *&t;This driver allows to upgrade microcode on Intel processors&n; *&t;belonging to P6 family - PentiumPro, Pentium II, Pentium III etc.&n; *&n; *&t;Reference: Section 8.10 of Volume III, Intel Pentium III Manual, &n; *&t;Order Number 243192 or download from:&n; *&t;&t;&n; *&t;http://developer.intel.com/design/pentiumii/manuals/243192.htm&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;1.0&t;16 February 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Initial release.&n; *&t;1.01&t;18 February 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added read() support + cleanups.&n; */
+multiline_comment|/*&n; *&t;CPU Microcode Update interface for Linux&n; *&n; *&t;Copyright (C) 2000 Tigran Aivazian&n; *&n; *&t;This driver allows to upgrade microcode on Intel processors&n; *&t;belonging to P6 family - PentiumPro, Pentium II, Pentium III etc.&n; *&n; *&t;Reference: Section 8.10 of Volume III, Intel Pentium III Manual, &n; *&t;Order Number 243192 or download from:&n; *&t;&t;&n; *&t;http://developer.intel.com/design/pentiumii/manuals/243192.htm&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;1.0&t;16 February 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Initial release.&n; *&t;1.01&t;18 February 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added read() support + cleanups.&n; *&t;1.02&t;21 February 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added &squot;device trimming&squot; support. open(O_WRONLY) zeroes&n; *&t;&t;and frees the saved copy of applied microcode.&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -9,7 +9,7 @@ macro_line|#include &lt;asm/msr.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|MICROCODE_VERSION
-mdefine_line|#define MICROCODE_VERSION &t;&quot;1.01&quot;
+mdefine_line|#define MICROCODE_VERSION &t;&quot;1.02&quot;
 id|MODULE_DESCRIPTION
 c_func
 (paren
@@ -110,7 +110,7 @@ op_star
 suffix:semicolon
 multiline_comment|/*&n; *  Bits in microcode_status. (31 bits of room for future expansion)&n; */
 DECL|macro|MICROCODE_IS_OPEN
-mdefine_line|#define MICROCODE_IS_OPEN&t;0&t;/* set if /dev/microcode is in use */
+mdefine_line|#define MICROCODE_IS_OPEN&t;0&t;/* set if device is in use */
 DECL|variable|microcode_status
 r_static
 r_int
@@ -202,9 +202,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|size
-suffix:semicolon
 id|proc_microcode
 op_assign
 id|create_proc_entry
@@ -243,64 +240,6 @@ op_assign
 op_amp
 id|microcode_inops
 suffix:semicolon
-id|size
-op_assign
-id|smp_num_cpus
-op_star
-r_sizeof
-(paren
-r_struct
-id|microcode
-)paren
-suffix:semicolon
-id|mc_applied
-op_assign
-id|kmalloc
-c_func
-(paren
-id|size
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|mc_applied
-)paren
-(brace
-id|remove_proc_entry
-c_func
-(paren
-l_string|&quot;microcode&quot;
-comma
-id|proc_root_driver
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;microcode: can&squot;t allocate memory for saved microcode&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
-id|memset
-c_func
-(paren
-id|mc_applied
-comma
-l_int|0
-comma
-id|size
-)paren
-suffix:semicolon
-multiline_comment|/* so that reading from offsets corresponding to failed&n;&t;                                update makes this obvious */
 id|printk
 c_func
 (paren
@@ -332,6 +271,11 @@ comma
 id|proc_root_driver
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mc_applied
+)paren
 id|kfree
 c_func
 (paren
@@ -411,6 +355,56 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|file-&gt;f_flags
+op_amp
+id|O_ACCMODE
+)paren
+op_eq
+id|O_WRONLY
+)paren
+(brace
+id|proc_microcode-&gt;size
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mc_applied
+)paren
+(brace
+id|memset
+c_func
+(paren
+id|mc_applied
+comma
+l_int|0
+comma
+id|smp_num_cpus
+op_star
+r_sizeof
+(paren
+r_struct
+id|microcode
+)paren
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|mc_applied
+)paren
+suffix:semicolon
+id|mc_applied
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+)brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
@@ -1147,6 +1141,64 @@ suffix:semicolon
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mc_applied
+)paren
+(brace
+r_int
+id|size
+op_assign
+id|smp_num_cpus
+op_star
+r_sizeof
+(paren
+r_struct
+id|microcode
+)paren
+suffix:semicolon
+id|mc_applied
+op_assign
+id|kmalloc
+c_func
+(paren
+id|size
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mc_applied
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;microcode: can&squot;t allocate memory for saved microcode&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+id|memset
+c_func
+(paren
+id|mc_applied
+comma
+l_int|0
+comma
+id|size
+)paren
 suffix:semicolon
 )brace
 id|lock_kernel

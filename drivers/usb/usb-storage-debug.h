@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_USB_STORAGE_DEBUG
 multiline_comment|/* Debug output for Driver for USB mass storage (scsi-like) devices&n; * &n; * (C) Michael Gee (michael@linuxspecific.com) 1999&n; *&n; */
 DECL|function|us_show_command

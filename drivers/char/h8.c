@@ -12,7 +12,6 @@ macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
-macro_line|#include &lt;linux/lists.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -20,6 +19,9 @@ macro_line|#include &lt;linux/slab.h&gt;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;asm/unistd.h&gt;
+multiline_comment|/*&n; * This is the only driver still using the broken&n; * lists.h stuff, let&squot;s not do that.. &n; */
+macro_line|#error must be converted to new &lt;linux/list.h&gt;
+macro_line|#include &lt;linux/lists.h&gt;
 macro_line|#include &quot;h8.h&quot;
 DECL|macro|DEBUG_H8
 mdefine_line|#define DEBUG_H8

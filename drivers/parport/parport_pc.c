@@ -2829,6 +2829,15 @@ id|port
 )paren
 suffix:semicolon
 multiline_comment|/* Must be in PS2 mode */
+id|parport_pc_frob_control
+(paren
+id|port
+comma
+id|PARPORT_CONTROL_STROBE
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|change_mode
 (paren
 id|port
@@ -3067,6 +3076,17 @@ id|port
 )paren
 suffix:semicolon
 multiline_comment|/* Must be in PS2 mode */
+id|parport_pc_frob_control
+(paren
+id|port
+comma
+id|PARPORT_CONTROL_STROBE
+op_or
+id|PARPORT_CONTROL_AUTOFD
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|change_mode
 (paren
 id|port
@@ -3446,6 +3466,17 @@ id|port
 )paren
 suffix:semicolon
 multiline_comment|/* Must be in PS2 mode */
+id|parport_pc_frob_control
+(paren
+id|port
+comma
+id|PARPORT_CONTROL_STROBE
+op_or
+id|PARPORT_CONTROL_AUTOFD
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|change_mode
 (paren
 id|port
@@ -6815,7 +6846,7 @@ suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_PARPORT_PC_FIFO */
 )brace
-multiline_comment|/* Done probing.  Now put the port into a sensible start-up state.&n;&t; * SELECT | INIT also puts IEEE1284-compliant devices into&n;&t; * compatibility mode. */
+multiline_comment|/* Done probing.  Now put the port into a sensible start-up state. */
 r_if
 c_cond
 (paren

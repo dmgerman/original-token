@@ -62,13 +62,6 @@ r_void
 )paren
 suffix:semicolon
 r_int
-id|usb_stor_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
 id|dabusb_init
 c_func
 (paren
@@ -77,27 +70,6 @@ r_void
 suffix:semicolon
 r_int
 id|plusb_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-id|usb_mouse_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-id|usb_kbd_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-id|graphire_init
 c_func
 (paren
 r_void
@@ -205,13 +177,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_USB_STORAGE
-id|usb_stor_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_USB_DABUSB
 id|dabusb_init
 c_func
@@ -221,27 +186,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_USB_PLUSB
 id|plusb_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_MOUSE
-id|usb_mouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_KBD
-id|usb_kbd_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_GRAPHIRE
-id|graphire_init
 c_func
 (paren
 )paren

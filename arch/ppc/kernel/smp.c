@@ -1582,6 +1582,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_GEMINI&t;
 r_if
 c_cond
 (paren
@@ -1594,6 +1595,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_while
 c_loop
 (paren

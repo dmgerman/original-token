@@ -307,7 +307,7 @@ id|driver_version
 (braket
 )braket
 op_assign
-l_string|&quot;1.12&quot;
+l_string|&quot;1.13&quot;
 suffix:semicolon
 multiline_comment|/* no spaces */
 DECL|variable|apm_event_name
@@ -1254,12 +1254,13 @@ r_while
 c_loop
 (paren
 id|cpu_number_map
-(braket
+c_func
+(paren
 id|smp_processor_id
 c_func
 (paren
 )paren
-)braket
+)paren
 op_ne
 l_int|0
 )paren

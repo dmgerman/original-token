@@ -419,6 +419,45 @@ id|isa_cascade_irqaction
 )paren
 suffix:semicolon
 )brace
+macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_PC164)
+r_static
+r_void
+DECL|function|pc164_device_interrupt
+id|pc164_device_interrupt
+c_func
+(paren
+r_int
+r_int
+id|v
+comma
+r_struct
+id|pt_regs
+op_star
+id|r
+)paren
+(brace
+multiline_comment|/* In theory, the PC164 has the same interrupt hardware as&n;&t;   the other Cabriolet based systems.  However, something &n;&t;   got screwed up late in the development cycle which broke&n;&t;   the interrupt masking hardware.  Repeat, it is not &n;&t;   possible to mask and ack interrupts.  At all.&n;&n;&t;   In an attempt to work around this, while processing &n;&t;   interrupts, we do not allow the IPL to drop below what&n;&t;   it is currently.  This prevents the possibility of&n;&t;   recursion.  &n;&n;&t;   ??? Another option might be to force all PCI devices&n;&t;   to use edge triggered rather than level triggered&n;&t;   interrupts.  That might be too invasive though.  */
+id|__min_ipl
+op_assign
+id|getipl
+c_func
+(paren
+)paren
+suffix:semicolon
+id|cabriolet_device_interrupt
+c_func
+(paren
+id|v
+comma
+id|r
+)paren
+suffix:semicolon
+id|__min_ipl
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n; * The EB66+ is very similar to the EB66 except that it does not have&n; * the on-board NCR and Tulip chips.  In the code below, I have used&n; * slot number to refer to the id select line and *not* the slot&n; * number used in the EB66+ documentation.  However, in the table,&n; * I&squot;ve given the slot number, the id select line and the Jxx number&n; * that&squot;s printed on the board.  The interrupt pins from the PCI slots&n; * are wired into 3 interrupt summary registers at 0x804, 0x805 and&n; * 0x806 ISA.&n; *&n; * In the table, -1 means don&squot;t assign an IRQ number.  This is usually&n; * because it is the Saturn IO (SIO) PCI/ISA Bridge Chip.&n; */
 r_static
 r_inline
@@ -1346,7 +1385,7 @@ l_int|35
 comma
 id|device_interrupt
 suffix:colon
-id|cabriolet_device_interrupt
+id|pc164_device_interrupt
 comma
 id|init_arch
 suffix:colon

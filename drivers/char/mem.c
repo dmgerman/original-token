@@ -1089,7 +1089,7 @@ id|ppos
 )paren
 suffix:semicolon
 )brace
-macro_line|#if !defined(CONFIG_PPC) &amp;&amp; !defined(__mc68000__)
+macro_line|#if !defined(__mc68000__)
 DECL|function|read_port
 r_static
 id|ssize_t
@@ -2101,7 +2101,7 @@ id|write_null
 comma
 )brace
 suffix:semicolon
-macro_line|#if !defined(CONFIG_PPC) &amp;&amp; !defined(__mc68000__)
+macro_line|#if !defined(__mc68000__)
 DECL|variable|port_fops
 r_static
 r_struct
@@ -2231,7 +2231,7 @@ id|null_fops
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#if !defined(CONFIG_PPC) &amp;&amp; !defined(__mc68000__)
+macro_line|#if !defined(__mc68000__)
 r_case
 l_int|4
 suffix:colon

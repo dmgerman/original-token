@@ -33,6 +33,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
+macro_line|#include &lt;asm/hw_irq.h&gt;
 macro_line|#ifdef __SMP__
 macro_line|#include &lt;asm/smplock.h&gt;
 macro_line|#endif /* __SMP__ */
@@ -124,10 +125,6 @@ id|pt_regs
 op_star
 id|regs
 )paren
-suffix:semicolon
-r_extern
-id|atomic_t
-id|ppc_n_lost_interrupts
 suffix:semicolon
 r_extern
 r_void
@@ -260,6 +257,13 @@ c_func
 id|ppc_n_lost_interrupts
 )paren
 suffix:semicolon
+DECL|variable|ppc_lost_interrupts
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ppc_lost_interrupts
+)paren
+suffix:semicolon
 DECL|variable|do_lost_interrupts
 id|EXPORT_SYMBOL
 c_func
@@ -356,7 +360,7 @@ id|DMA_MODE_WRITE
 )paren
 suffix:semicolon
 macro_line|#ifndef CONFIG_8xx
-macro_line|#if defined(CONFIG_PREP) || defined(CONFIG_ALL_PPC)
+macro_line|#if defined(CONFIG_ALL_PPC)
 DECL|variable|_prep_type
 id|EXPORT_SYMBOL
 c_func
@@ -559,13 +563,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|strnlen
-)paren
-suffix:semicolon
-DECL|variable|strspn
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|strspn
 )paren
 suffix:semicolon
 DECL|variable|strcmp
@@ -1014,7 +1011,7 @@ id|pmu_enable_irled
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_PMAC_PBOOK
-macro_line|#if defined(CONFIG_PMAC) || defined(CONFIG_ALL_PPC)
+macro_line|#if defined(CONFIG_ALL_PPC)
 DECL|variable|find_devices
 id|EXPORT_SYMBOL
 c_func
@@ -1120,8 +1117,8 @@ c_func
 id|feature_test
 )paren
 suffix:semicolon
-macro_line|#endif /* defined(CONFIG_PMAC) || defined(CONFIG_ALL_PPC) */
-macro_line|#if defined(CONFIG_SCSI) &amp;&amp; (defined(CONFIG_PMAC) || defined(CONFIG_ALL_PPC))
+macro_line|#endif /* defined(CONFIG_ALL_PPC) */
+macro_line|#if defined(CONFIG_SCSI) &amp;&amp; defined(CONFIG_ALL_PPC)
 DECL|variable|note_scsi_host
 id|EXPORT_SYMBOL
 c_func
@@ -1239,11 +1236,6 @@ c_func
 id|timer_interrupt
 )paren
 suffix:semicolon
-r_extern
-r_int
-r_int
-id|do_IRQ_intercept
-suffix:semicolon
 DECL|variable|do_IRQ_intercept
 id|EXPORT_SYMBOL
 c_func
@@ -1295,6 +1287,22 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|console_drivers
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_XMON
+DECL|variable|xmon
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|xmon
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|variable|down_read_failed
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|down_read_failed
 )paren
 suffix:semicolon
 eof

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/input.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;usb.h&quot;
 id|MODULE_AUTHOR
 c_func
@@ -1486,10 +1487,32 @@ suffix:colon
 id|usb_kbd_disconnect
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|usb_kbd_init
+r_static
+r_int
+id|__init
+id|usb_kbd_init
+c_func
+(paren
 r_void
-id|cleanup_module
+)paren
+(brace
+id|usb_register
+c_func
+(paren
+op_amp
+id|usb_kbd_driver
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|usb_kbd_exit
+r_static
+r_void
+id|__exit
+id|usb_kbd_exit
 c_func
 (paren
 r_void
@@ -1503,31 +1526,18 @@ id|usb_kbd_driver
 )paren
 suffix:semicolon
 )brace
-DECL|function|init_module
-r_int
-id|init_module
+DECL|variable|usb_kbd_init
+id|module_init
 c_func
 (paren
-r_void
-)paren
-macro_line|#else
-r_int
 id|usb_kbd_init
-c_func
-(paren
-r_void
-)paren
-macro_line|#endif
-(brace
-id|usb_register
-c_func
-(paren
-op_amp
-id|usb_kbd_driver
 )paren
 suffix:semicolon
-r_return
-l_int|0
+DECL|variable|usb_kbd_exit
+id|module_exit
+c_func
+(paren
+id|usb_kbd_exit
+)paren
 suffix:semicolon
-)brace
 eof

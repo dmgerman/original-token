@@ -589,16 +589,50 @@ r_int
 r_int
 )paren
 suffix:semicolon
+DECL|macro|IPL_MIN
+mdefine_line|#define IPL_MIN&t;&t;0
+DECL|macro|IPL_SW0
+mdefine_line|#define IPL_SW0&t;&t;1
+DECL|macro|IPL_SW1
+mdefine_line|#define IPL_SW1&t;&t;2
+DECL|macro|IPL_DEV0
+mdefine_line|#define IPL_DEV0&t;3
+DECL|macro|IPL_DEV1
+mdefine_line|#define IPL_DEV1&t;4
+DECL|macro|IPL_TIMER
+mdefine_line|#define IPL_TIMER&t;5
+DECL|macro|IPL_PERF
+mdefine_line|#define IPL_PERF&t;6
+DECL|macro|IPL_POWERFAIL
+mdefine_line|#define IPL_POWERFAIL&t;6
+DECL|macro|IPL_MCHECK
+mdefine_line|#define IPL_MCHECK&t;7
+DECL|macro|IPL_MAX
+mdefine_line|#define IPL_MAX&t;&t;7
+macro_line|#ifdef CONFIG_ALPHA_BROKEN_IRQ_MASK
+DECL|macro|IPL_MIN
+macro_line|#undef IPL_MIN
+DECL|macro|IPL_MIN
+mdefine_line|#define IPL_MIN&t;&t;__min_ipl
+r_extern
+r_int
+id|__min_ipl
+suffix:semicolon
+macro_line|#endif
+DECL|macro|getipl
+mdefine_line|#define getipl()&t;&t;(rdps() &amp; 7)
+DECL|macro|setipl
+mdefine_line|#define setipl(ipl)&t;&t;((void) swpipl(ipl))
 DECL|macro|__cli
-mdefine_line|#define __cli()&t;&t;&t;((void) swpipl(7))
+mdefine_line|#define __cli()&t;&t;&t;setipl(IPL_MAX)
 DECL|macro|__sti
-mdefine_line|#define __sti()&t;&t;&t;((void) swpipl(0))
+mdefine_line|#define __sti()&t;&t;&t;setipl(IPL_MIN)
 DECL|macro|__save_flags
 mdefine_line|#define __save_flags(flags)&t;((flags) = rdps())
 DECL|macro|__save_and_cli
-mdefine_line|#define __save_and_cli(flags)&t;((flags) = swpipl(7))
+mdefine_line|#define __save_and_cli(flags)&t;((flags) = swpipl(IPL_MAX))
 DECL|macro|__restore_flags
-mdefine_line|#define __restore_flags(flags)&t;((void) swpipl(flags))
+mdefine_line|#define __restore_flags(flags)&t;setipl(flags)
 DECL|macro|local_irq_save
 mdefine_line|#define local_irq_save(flags)&t;&t;__save_and_cli(flags)
 DECL|macro|local_irq_restore

@@ -312,7 +312,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;sb_card: I/O port %x is already in use&bslash;n&bslash;n&quot;
+l_string|&quot;sb_card: I/O port 0x%x is already in use&bslash;n&bslash;n&quot;
 comma
 id|hw_config-&gt;io_base
 )paren
@@ -508,7 +508,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Do acer notebook init */
-macro_line|#if defined CONFIGISAPNP || defined CONFIG_ISAPNP_MODULE
+macro_line|#if defined CONFIG_ISAPNP || defined CONFIG_ISAPNP_MODULE
 DECL|variable|isapnp
 r_int
 id|isapnp
@@ -807,7 +807,7 @@ id|smw_free
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#if defined CONFIGISAPNP || defined CONFIG_ISAPNP_MODULE
+macro_line|#if defined CONFIG_ISAPNP || defined CONFIG_ISAPNP_MODULE
 multiline_comment|/* That&squot;s useful. */
 DECL|macro|show_base
 mdefine_line|#define show_base(devname, resname, resptr) printk(KERN_INFO &quot;sb: %s %s base located at %#lx&bslash;n&quot;, devname, resname, (resptr)-&gt;start)
@@ -3161,7 +3161,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Please remember that even with CONFIG_ISAPNP defined one should still be&n;&t;&t;&t;able to disable PNP support for this single driver!&n;&t;&t;*/
-macro_line|#if defined CONFIGISAPNP || defined CONFIG_ISAPNP_MODULE&t;&t;&t;
+macro_line|#if defined CONFIG_ISAPNP || defined CONFIG_ISAPNP_MODULE&t;&t;&t;
 r_if
 c_cond
 (paren

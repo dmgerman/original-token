@@ -96,10 +96,13 @@ suffix:semicolon
 DECL|macro|DEVICE_REQUEST
 mdefine_line|#define&t;DEVICE_REQUEST&t;lvm_dummy_device_request
 r_static
-r_void
+r_int
 id|lvm_make_request_fn
 c_func
 (paren
+id|request_queue_t
+op_star
+comma
 r_int
 comma
 r_struct
@@ -4888,7 +4891,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|bh-&gt;b_dev
+id|bh-&gt;b_rdev
 )paren
 suffix:semicolon
 r_int
@@ -4912,9 +4915,7 @@ suffix:semicolon
 id|ulong
 id|rsector_tmp
 op_assign
-id|bh-&gt;b_blocknr
-op_star
-id|size
+id|bh-&gt;b_rsector
 suffix:semicolon
 id|ulong
 id|rsector_sav
@@ -4922,7 +4923,7 @@ suffix:semicolon
 id|kdev_t
 id|rdev_tmp
 op_assign
-id|bh-&gt;b_dev
+id|bh-&gt;b_rdev
 suffix:semicolon
 id|kdev_t
 id|rdev_sav
@@ -5816,10 +5817,14 @@ suffix:semicolon
 multiline_comment|/*&n; * make request function&n; */
 DECL|function|lvm_make_request_fn
 r_static
-r_void
+r_int
 id|lvm_make_request_fn
 c_func
 (paren
+id|request_queue_t
+op_star
+id|q
+comma
 r_int
 id|rw
 comma
@@ -5837,22 +5842,8 @@ comma
 id|rw
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|bh-&gt;b_rdev
-op_ne
-id|MD_MAJOR
-)paren
-id|generic_make_request
-c_func
-(paren
-id|rw
-comma
-id|bh
-)paren
-suffix:semicolon
 r_return
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/********************************************************************&n; *&n; * Character device support functions&n; *&n; ********************************************************************/

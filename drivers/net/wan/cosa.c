@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cosa.c,v 1.28 1999/10/11 21:06:58 kas Exp $ */
+multiline_comment|/* $Id: cosa.c,v 1.30 2000/02/21 15:19:49 kas Exp $ */
 multiline_comment|/*&n; *  Copyright (C) 1995-1997  Jan &quot;Yenya&quot; Kasprzak &lt;kas@fi.muni.cz&gt;&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 multiline_comment|/*&n; * The driver for the SRP and COSA synchronous serial cards.&n; *&n; * HARDWARE INFO&n; *&n; * Both cards are developed at the Institute of Computer Science,&n; * Masaryk University (http://www.ics.muni.cz/). The hardware is&n; * developed by Jiri Novotny &lt;novotny@ics.muni.cz&gt;. More information&n; * and the photo of both cards is available at&n; * http://www.pavoucek.cz/cosa.html. The card documentation, firmwares&n; * and other goods can be downloaded from ftp://ftp.ics.muni.cz/pub/cosa/.&n; * For Linux-specific utilities, see below in the &quot;Software info&quot; section.&n; * If you want to order the card, contact Jiri Novotny.&n; *&n; * The SRP (serial port?, the Czech word &quot;srp&quot; means &quot;sickle&quot;) card&n; * is a 2-port intelligent (with its own 8-bit CPU) synchronous serial card&n; * with V.24 interfaces up to 80kb/s each.&n; *&n; * The COSA (communication serial adapter?, the Czech word &quot;kosa&quot; means&n; * &quot;scythe&quot;) is a next-generation sync/async board with two interfaces&n; * - currently any of V.24, X.21, V.35 and V.36 can be selected.&n; * It has a 16-bit SAB80166 CPU and can do up to 10 Mb/s per channel.&n; * The 8-channels version is in development.&n; *&n; * Both types have downloadable firmware and communicate via ISA DMA.&n; * COSA can be also a bus-mastering device.&n; *&n; * SOFTWARE INFO&n; *&n; * The homepage of the Linux driver is at http://www.fi.muni.cz/~kas/cosa/.&n; * The CVS tree of Linux driver can be viewed there, as well as the&n; * firmware binaries and user-space utilities for downloading the firmware&n; * into the card and setting up the card.&n; *&n; * The Linux driver (unlike the present *BSD drivers :-) can work even&n; * for the COSA and SRP in one computer and allows each channel to work&n; * in one of the three modes (character device, Cisco HDLC, Sync PPP).&n; *&n; * AUTHOR&n; *&n; * The Linux driver was written by Jan &quot;Yenya&quot; Kasprzak &lt;kas@fi.muni.cz&gt;.&n; *&n; * You can mail me bugfixes and even success reports. I am especially&n; * interested in the SMP and/or muliti-channel success/failure reports&n; * (I wonder if I did the locking properly :-).&n; *&n; * THE AUTHOR USED THE FOLLOWING SOURCES WHEN PROGRAMMING THE DRIVER&n; *&n; * The COSA/SRP NetBSD driver by Zdenek Salvet and Ivos Cernohlavek&n; * The skeleton.c by Donald Becker&n; * The SDL Riscom/N2 driver by Mike Natale&n; * The Comtrol Hostess SV11 driver by Alan Cox&n; * The Sync PPP/Cisco HDLC layer (syncppp.c) ported to Linux by Alan Cox&n; */
 multiline_comment|/*&n; *     5/25/1999 : Marcelo Tosatti &lt;marcelo@conectiva.com.br&gt;&n; *             fixed a deadlock in cosa_sppp_open&n; */
@@ -384,6 +384,8 @@ DECL|macro|DEBUG_IRQS
 macro_line|#undef DEBUG_IRQS 1&t;/* Print the message when the IRQ is received */
 DECL|macro|DEBUG_IO
 macro_line|#undef DEBUG_IO 1&t;/* Dump the I/O traffic */
+DECL|macro|TX_TIMEOUT
+mdefine_line|#define TX_TIMEOUT&t;(5*HZ)
 multiline_comment|/* Maybe the following should be allocated dynamically */
 DECL|variable|cosa_cards
 r_static
@@ -758,6 +760,17 @@ suffix:semicolon
 r_static
 r_int
 id|cosa_sppp_close
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|d
+)paren
+suffix:semicolon
+r_static
+r_void
+id|cosa_sppp_timeout
 c_func
 (paren
 r_struct
@@ -1425,7 +1438,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;cosa v1.06 (c) 1997-8 Jan Kasprzak &lt;kas@fi.muni.cz&gt;&bslash;n&quot;
+l_string|&quot;cosa v1.07 (c) 1997-2000 Jan Kasprzak &lt;kas@fi.muni.cz&gt;&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef __SMP__
@@ -1656,9 +1669,6 @@ id|cleanup_module
 r_void
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 r_struct
 id|cosa_data
 op_star
@@ -2579,6 +2589,14 @@ id|d-&gt;get_stats
 op_assign
 id|cosa_net_stats
 suffix:semicolon
+id|d-&gt;tx_timeout
+op_assign
+id|cosa_sppp_timeout
+suffix:semicolon
+id|d-&gt;watchdog_timeo
+op_assign
+id|TX_TIMEOUT
+suffix:semicolon
 id|dev_init_buffers
 c_func
 (paren
@@ -2811,9 +2829,11 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|d-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+id|d
+)paren
 suffix:semicolon
 id|cosa_enable_rx
 c_func
@@ -2849,31 +2869,49 @@ id|chan
 op_assign
 id|dev-&gt;priv
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|time_before
+id|netif_stop_queue
 c_func
 (paren
-id|jiffies
-comma
-id|dev-&gt;trans_start
-op_plus
-l_int|2
-op_star
-id|HZ
+id|dev
 )paren
-)paren
-r_return
-l_int|1
 suffix:semicolon
-multiline_comment|/* Two seconds timeout */
+id|chan-&gt;tx_skb
+op_assign
+id|skb
+suffix:semicolon
+id|cosa_start_tx
+c_func
+(paren
+id|chan
+comma
+id|skb-&gt;data
+comma
+id|skb-&gt;len
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cosa_sppp_timeout
+r_static
+r_void
+id|cosa_sppp_timeout
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|channel_data
+op_star
+id|chan
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2926,63 +2964,11 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|test_and_set_bit
+id|netif_wake_queue
 c_func
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
+id|dev
 )paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-id|chan-&gt;tx_skb
-op_assign
-id|skb
-suffix:semicolon
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-id|cosa_start_tx
-c_func
-(paren
-id|chan
-comma
-id|skb-&gt;data
-comma
-id|skb-&gt;len
-)paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|cosa_sppp_close
@@ -3007,15 +2993,17 @@ suffix:semicolon
 r_int
 id|flags
 suffix:semicolon
-id|sppp_close
+id|netif_stop_queue
 c_func
 (paren
 id|d
 )paren
 suffix:semicolon
-id|d-&gt;tbusy
-op_assign
-l_int|1
+id|sppp_close
+c_func
+(paren
+id|d
+)paren
 suffix:semicolon
 id|cosa_disable_rx
 c_func
@@ -3300,14 +3288,10 @@ id|chan-&gt;stats.tx_bytes
 op_add_assign
 id|size
 suffix:semicolon
-id|chan-&gt;pppdev.dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|chan-&gt;pppdev.dev
 )paren
 suffix:semicolon
 r_return
@@ -6196,7 +6180,7 @@ r_char
 op_star
 id|s
 op_assign
-l_string|&quot;Unknown&quot;
+l_string|&quot;(probably) IRQ&quot;
 suffix:semicolon
 r_if
 c_cond
@@ -6212,7 +6196,7 @@ id|cosa-&gt;rxtx
 )paren
 id|s
 op_assign
-l_string|&quot;RX&quot;
+l_string|&quot;RX DMA&quot;
 suffix:semicolon
 r_if
 c_cond
@@ -6228,13 +6212,13 @@ id|cosa-&gt;rxtx
 )paren
 id|s
 op_assign
-l_string|&quot;TX&quot;
+l_string|&quot;TX DMA&quot;
 suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: %s DMA timeout - restarting.&bslash;n&quot;
+l_string|&quot;%s: %s timeout - restarting.&bslash;n&quot;
 comma
 id|cosa-&gt;name
 comma

@@ -1631,6 +1631,8 @@ op_or
 id|WUNTRACED
 op_or
 id|__WCLONE
+op_or
+id|__WALL
 )paren
 )paren
 r_return
@@ -1735,9 +1737,10 @@ id|pid
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* wait for cloned processes iff the __WCLONE flag is set */
+multiline_comment|/* Wait for all children (clone and not) if __WALL is set;&n;&t;&t; * otherwise, wait for clone children *only* if __WCLONE is&n;&t;&t; * set; otherwise, wait for non-clone children *only*.  (Note:&n;&t;&t; * A &quot;clone&quot; child here is one that reports to its parent&n;&t;&t; * using a signal other than SIGCHLD.) */
 r_if
 c_cond
+(paren
 (paren
 (paren
 id|p-&gt;exit_signal
@@ -1753,6 +1756,14 @@ id|__WCLONE
 )paren
 op_ne
 l_int|0
+)paren
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|options
+op_amp
+id|__WALL
 )paren
 )paren
 r_continue

@@ -2953,6 +2953,7 @@ c_cond
 id|netif_running
 c_func
 (paren
+op_amp
 id|sixpack_ctrls
 (braket
 id|i
@@ -2965,14 +2966,12 @@ id|unregister_netdev
 c_func
 (paren
 op_amp
-(paren
 id|sixpack_ctrls
 (braket
 id|i
 )braket
 op_member_access_from_pointer
 id|dev
-)paren
 )paren
 suffix:semicolon
 id|kfree

@@ -502,106 +502,6 @@ DECL|typedef|vg46x_state_t
 )brace
 id|vg46x_state_t
 suffix:semicolon
-DECL|struct|ti113x_state_t
-r_typedef
-r_struct
-id|ti113x_state_t
-(brace
-DECL|member|sysctl
-id|u_int
-id|sysctl
-suffix:semicolon
-DECL|member|cardctl
-DECL|member|devctl
-DECL|member|diag
-id|u_char
-id|cardctl
-comma
-id|devctl
-comma
-id|diag
-suffix:semicolon
-DECL|typedef|ti113x_state_t
-)brace
-id|ti113x_state_t
-suffix:semicolon
-DECL|struct|rl5c4xx_state_t
-r_typedef
-r_struct
-id|rl5c4xx_state_t
-(brace
-DECL|member|misc
-DECL|member|ctl
-DECL|member|io
-DECL|member|mem
-id|u_short
-id|misc
-comma
-id|ctl
-comma
-id|io
-comma
-id|mem
-suffix:semicolon
-DECL|typedef|rl5c4xx_state_t
-)brace
-id|rl5c4xx_state_t
-suffix:semicolon
-DECL|struct|o2micro_state_t
-r_typedef
-r_struct
-id|o2micro_state_t
-(brace
-DECL|member|mode_a
-DECL|member|mode_b
-DECL|member|mode_c
-DECL|member|mode_d
-id|u_char
-id|mode_a
-comma
-id|mode_b
-comma
-id|mode_c
-comma
-id|mode_d
-suffix:semicolon
-DECL|member|mhpg
-DECL|member|fifo
-DECL|member|mode_e
-id|u_char
-id|mhpg
-comma
-id|fifo
-comma
-id|mode_e
-suffix:semicolon
-DECL|typedef|o2micro_state_t
-)brace
-id|o2micro_state_t
-suffix:semicolon
-DECL|struct|topic_state_t
-r_typedef
-r_struct
-id|topic_state_t
-(brace
-DECL|member|slot
-DECL|member|ccr
-DECL|member|cdr
-id|u_char
-id|slot
-comma
-id|ccr
-comma
-id|cdr
-suffix:semicolon
-DECL|member|rcr
-id|u_int
-id|rcr
-suffix:semicolon
-DECL|typedef|topic_state_t
-)brace
-id|topic_state_t
-suffix:semicolon
 DECL|struct|socket_info_t
 r_typedef
 r_struct
@@ -912,28 +812,6 @@ macro_line|#endif
 suffix:semicolon
 DECL|macro|PCIC_COUNT
 mdefine_line|#define PCIC_COUNT&t;(sizeof(pcic)/sizeof(pcic_t))
-multiline_comment|/*====================================================================*/
-multiline_comment|/* Some PCI shortcuts */
-DECL|macro|config_readb
-mdefine_line|#define config_readb(sock, r, v)&t;pci_read_config_byte((sock)-&gt;pdev, r, v)
-DECL|macro|config_readw
-mdefine_line|#define config_readw(sock, r, v)&t;pci_read_config_word((sock)-&gt;pdev, r, v)
-DECL|macro|config_readl
-mdefine_line|#define config_readl(sock, r, v)&t;pci_read_config_dword((sock)-&gt;pdev, r, v)
-DECL|macro|config_writeb
-mdefine_line|#define config_writeb(sock, r, v)&t;pci_write_config_byte((sock)-&gt;pdev, r, v)
-DECL|macro|config_writew
-mdefine_line|#define config_writew(sock, r, v)&t;pci_write_config_word((sock)-&gt;pdev, r, v)
-DECL|macro|config_writel
-mdefine_line|#define config_writel(sock, r, v)&t;pci_write_config_dword((sock)-&gt;pdev, r, v)
-DECL|macro|cb_readb
-mdefine_line|#define cb_readb(s, r)&t;&t;readb(socket[s].cb_virt + (r))
-DECL|macro|cb_readl
-mdefine_line|#define cb_readl(s, r)&t;&t;readl(socket[s].cb_virt + (r))
-DECL|macro|cb_writeb
-mdefine_line|#define cb_writeb(s, r, v)&t;writeb(v, socket[s].cb_virt + (r))
-DECL|macro|cb_writel
-mdefine_line|#define cb_writel(s, r, v)&t;writel(v, socket[s].cb_virt + (r))
 multiline_comment|/*====================================================================*/
 DECL|function|i365_get
 r_static
