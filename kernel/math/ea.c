@@ -286,6 +286,9 @@ suffix:semicolon
 r_int
 op_star
 id|tmp
+op_assign
+op_amp
+id|EAX
 suffix:semicolon
 r_int
 id|offset
@@ -453,7 +456,13 @@ c_func
 (paren
 id|info
 comma
+l_int|1
+op_lshift
+(paren
 id|SIGILL
+op_minus
+l_int|1
+)paren
 )paren
 suffix:semicolon
 )brace

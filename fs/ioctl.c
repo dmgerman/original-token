@@ -1,8 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/ioctl.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
-macro_line|#include &lt;errno.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;errno.h&gt;
+macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 DECL|function|sys_ioctl
 r_int
@@ -27,9 +26,6 @@ id|file
 op_star
 id|filp
 suffix:semicolon
-r_int
-id|block
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -51,62 +47,6 @@ r_return
 op_minus
 id|EBADF
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|S_ISREG
-c_func
-(paren
-id|filp-&gt;f_inode-&gt;i_mode
-)paren
-op_logical_and
-id|cmd
-op_eq
-id|BMAP_IOCTL
-op_logical_and
-id|filp-&gt;f_inode-&gt;i_op-&gt;bmap
-)paren
-(brace
-id|block
-op_assign
-id|get_fs_long
-c_func
-(paren
-(paren
-r_int
-op_star
-)paren
-id|arg
-)paren
-suffix:semicolon
-id|block
-op_assign
-id|filp-&gt;f_inode-&gt;i_op
-op_member_access_from_pointer
-id|bmap
-c_func
-(paren
-id|filp-&gt;f_inode
-comma
-id|block
-)paren
-suffix:semicolon
-id|put_fs_long
-c_func
-(paren
-id|block
-comma
-(paren
-r_int
-op_star
-)paren
-id|arg
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

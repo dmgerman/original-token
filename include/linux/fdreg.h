@@ -135,8 +135,6 @@ DECL|macro|FD_SENSEI
 mdefine_line|#define FD_SENSEI&t;0x08&t;&t;/* Sense Interrupt Status */
 DECL|macro|FD_SPECIFY
 mdefine_line|#define FD_SPECIFY&t;0x03&t;&t;/* specify HUT etc */
-DECL|macro|FD_FORMAT
-mdefine_line|#define FD_FORMAT&t;0x4D&t;&t;/* format one track */
 multiline_comment|/* DMA commands */
 DECL|macro|DMA_READ
 mdefine_line|#define DMA_READ&t;0x46

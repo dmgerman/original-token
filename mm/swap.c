@@ -1,7 +1,7 @@
 multiline_comment|/*&n; *  linux/mm/swap.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; * This file should contain most things doing the swapping from/to disk.&n; * Started 18.12.91&n; */
 macro_line|#include &lt;errno.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -940,10 +940,6 @@ id|inode
 op_star
 id|swap_inode
 suffix:semicolon
-r_char
-op_star
-id|tmp
-suffix:semicolon
 r_int
 id|i
 comma
@@ -1049,7 +1045,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|tmp
+id|swap_bitmap
 op_assign
 (paren
 r_char
@@ -1064,7 +1060,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|tmp
+id|swap_bitmap
 )paren
 (brace
 id|iput
@@ -1097,7 +1093,7 @@ c_func
 (paren
 l_int|0
 comma
-id|tmp
+id|swap_bitmap
 )paren
 suffix:semicolon
 r_if
@@ -1108,7 +1104,7 @@ c_func
 (paren
 l_string|&quot;SWAP-SPACE&quot;
 comma
-id|tmp
+id|swap_bitmap
 op_plus
 l_int|4086
 comma
@@ -1128,7 +1124,7 @@ c_func
 (paren
 r_int
 )paren
-id|tmp
+id|swap_bitmap
 )paren
 suffix:semicolon
 id|iput
@@ -1157,7 +1153,7 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|tmp
+id|swap_bitmap
 op_plus
 l_int|4086
 comma
@@ -1190,7 +1186,7 @@ c_cond
 id|bit
 c_func
 (paren
-id|tmp
+id|swap_bitmap
 comma
 id|i
 )paren
@@ -1217,7 +1213,7 @@ c_func
 (paren
 r_int
 )paren
-id|tmp
+id|swap_bitmap
 )paren
 suffix:semicolon
 id|iput
@@ -1243,10 +1239,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|swap_bitmap
-op_assign
-id|tmp
-suffix:semicolon
 id|printk
 c_func
 (paren

@@ -1,16 +1,8 @@
 multiline_comment|/*&n; *  linux/init/main.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
-macro_line|#include &lt;stddef.h&gt;
-macro_line|#include &lt;stdarg.h&gt;
+DECL|macro|__LIBRARY__
+mdefine_line|#define __LIBRARY__
+macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &lt;time.h&gt;
-macro_line|#include &lt;sys/types.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/tty.h&gt;
-macro_line|#include &lt;linux/head.h&gt;
-macro_line|#include &lt;linux/unistd.h&gt;
 multiline_comment|/*&n; * we need this inline - forking from kernel space will result&n; * in NO COPY ON WRITE (!!!), until an execve is executed. This&n; * is no problem, but for the stack. This is handled by not letting&n; * main() use the stack at all after fork(). Thus, no function&n; * calls - which means inline code for fork too, as otherwise we&n; * would use the stack upon exit from &squot;fork()&squot;.&n; *&n; * Actually only pause and fork are needed inline, so that there&n; * won&squot;t be any messing with the stack from main(), but we define&n; * some others too.&n; */
 r_static
 r_inline
@@ -53,161 +45,17 @@ r_int
 comma
 id|sync
 )paren
-r_static
-r_inline
-id|_syscall0
-c_func
-(paren
-id|pid_t
-comma
-id|setsid
-)paren
-r_static
-r_inline
-id|_syscall3
-c_func
-(paren
-r_int
-comma
-id|write
-comma
-r_int
-comma
-id|fd
-comma
-r_const
-r_char
-op_star
-comma
-id|buf
-comma
-id|off_t
-comma
-id|count
-)paren
-r_static
-r_inline
-id|_syscall1
-c_func
-(paren
-r_int
-comma
-id|dup
-comma
-r_int
-comma
-id|fd
-)paren
-r_static
-r_inline
-id|_syscall3
-c_func
-(paren
-r_int
-comma
-id|execve
-comma
-r_const
-r_char
-op_star
-comma
-id|file
-comma
-r_char
-op_star
-op_star
-comma
-id|argv
-comma
-r_char
-op_star
-op_star
-comma
-id|envp
-)paren
-r_static
-r_inline
-id|_syscall3
-c_func
-(paren
-r_int
-comma
-id|open
-comma
-r_const
-r_char
-op_star
-comma
-id|file
-comma
-r_int
-comma
-id|flag
-comma
-r_int
-comma
-id|mode
-)paren
-r_static
-r_inline
-id|_syscall1
-c_func
-(paren
-r_int
-comma
-id|close
-comma
-r_int
-comma
-id|fd
-)paren
-r_static
-r_inline
-id|_syscall3
-c_func
-(paren
-id|pid_t
-comma
-id|waitpid
-comma
-id|pid_t
-comma
-id|pid
-comma
-r_int
-op_star
-comma
-id|wait_stat
-comma
-r_int
-comma
-id|options
-)paren
-DECL|function|wait
-r_static
-r_inline
-id|pid_t
-id|wait
-c_func
-(paren
-r_int
-op_star
-id|wait_stat
-)paren
-(brace
-r_return
-id|waitpid
-c_func
-(paren
-op_minus
-l_int|1
-comma
-id|wait_stat
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/head.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;stddef.h&gt;
+macro_line|#include &lt;stdarg.h&gt;
+macro_line|#include &lt;unistd.h&gt;
+macro_line|#include &lt;fcntl.h&gt;
+macro_line|#include &lt;sys/types.h&gt;
 DECL|variable|printbuf
 r_static
 r_char
@@ -215,6 +63,14 @@ id|printbuf
 (braket
 l_int|1024
 )braket
+suffix:semicolon
+r_extern
+r_char
+op_star
+id|strcpy
+c_func
+(paren
+)paren
 suffix:semicolon
 r_extern
 r_int
@@ -233,30 +89,18 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|init_IRQ
+id|blk_dev_init
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|blk_dev_init
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
+r_void
 id|chr_dev_init
 c_func
 (paren
-r_int
-comma
-r_int
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -270,14 +114,6 @@ suffix:semicolon
 r_extern
 r_void
 id|floppy_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|sock_init
 c_func
 (paren
 r_void
@@ -318,16 +154,6 @@ op_star
 id|tm
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SCSI
-r_extern
-r_void
-id|scsi_dev_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|function|sprintf
 r_static
 r_int
@@ -818,41 +644,20 @@ id|main_memory_start
 op_assign
 id|buffer_memory_end
 suffix:semicolon
-id|trap_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|init_IRQ
-c_func
-(paren
-)paren
-suffix:semicolon
-id|sched_init
-c_func
-(paren
-)paren
-suffix:semicolon
+macro_line|#ifdef RAMDISK
 id|main_memory_start
-op_assign
-id|chr_dev_init
+op_add_assign
+id|rd_init
 c_func
 (paren
 id|main_memory_start
 comma
-id|memory_end
+id|RAMDISK
+op_star
+l_int|1024
 )paren
 suffix:semicolon
-id|main_memory_start
-op_assign
-id|blk_dev_init
-c_func
-(paren
-id|main_memory_start
-comma
-id|memory_end
-)paren
-suffix:semicolon
+macro_line|#endif
 id|mem_init
 c_func
 (paren
@@ -861,21 +666,29 @@ comma
 id|memory_end
 )paren
 suffix:semicolon
+id|trap_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|chr_dev_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|blk_dev_init
+c_func
+(paren
+)paren
+suffix:semicolon
 id|time_init
 c_func
 (paren
 )paren
 suffix:semicolon
-id|printk
+id|sched_init
 c_func
 (paren
-l_string|&quot;Linux version &quot;
-id|UTS_RELEASE
-l_string|&quot; &quot;
-id|__DATE__
-l_string|&quot; &quot;
-id|__TIME__
-l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|buffer_init
@@ -894,23 +707,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|sock_init
-c_func
-(paren
-)paren
-suffix:semicolon
 id|sti
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SCSI
-id|scsi_dev_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|move_to_user_mode
 c_func
 (paren
@@ -933,7 +734,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * task[0] is meant to be used as an &quot;idle&quot; task: it may not sleep, but&n; * it might do some general things like count free pages or it could be&n; * used to implement a reasonable LRU algorithm for the paging routines:&n; * anything that can be useful, but shouldn&squot;t take time from the real&n; * processes.&n; *&n; * Right now task[0] just does a infinite loop in user mode.&n; */
+multiline_comment|/*&n; *   NOTE!!   For any other task &squot;pause()&squot; would mean we have to get a&n; * signal to awaken, but task0 is the sole exception (see &squot;schedule()&squot;)&n; * as task 0 gets activated at every idle moment (when no other tasks&n; * can run). For task0 &squot;pause()&squot; just means we go check if some other&n; * task can run, and if not we return here.&n; */
 r_for
 c_loop
 (paren
@@ -941,7 +742,18 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-multiline_comment|/* nothing */
+id|__asm__
+c_func
+(paren
+l_string|&quot;int $0x80&quot;
+op_scope_resolution
+l_string|&quot;a&quot;
+(paren
+id|__NR_pause
+)paren
+suffix:colon
+l_string|&quot;ax&quot;
+)paren
 suffix:semicolon
 )brace
 )brace

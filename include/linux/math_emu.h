@@ -743,19 +743,6 @@ id|temp_real
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* sqrt.c */
-r_void
-id|fsqrt
-c_func
-(paren
-r_const
-id|temp_real
-op_star
-comma
-id|temp_real
-op_star
-)paren
-suffix:semicolon
 multiline_comment|/* compare.c */
 r_void
 id|fcom

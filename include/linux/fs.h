@@ -2,14 +2,11 @@ multiline_comment|/*&n; * This file has definitions for some important file tabl
 macro_line|#ifndef _FS_H
 DECL|macro|_FS_H
 mdefine_line|#define _FS_H
-macro_line|#include &lt;linux/limits.h&gt;
-macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;sys/types.h&gt;
 macro_line|#include &lt;sys/dirent.h&gt;
-macro_line|#include &lt;sys/vfs.h&gt;
-multiline_comment|/* devices are as follows: (same as minix, so we can use the minix&n; * file system. These are major numbers.)&n; *&n; * 0 - unused (nodev)&n; * 1 - /dev/mem&n; * 2 - /dev/fd&n; * 3 - /dev/hd&n; * 4 - /dev/ttyx&n; * 5 - /dev/tty&n; * 6 - /dev/lp&n; * 7 - unnamed pipes&n; * 8 - /dev/sd&n; * 9 - /dev/st&n; */
+multiline_comment|/* devices are as follows: (same as minix, so we can use the minix&n; * file system. These are major numbers.)&n; *&n; * 0 - unused (nodev)&n; * 1 - /dev/mem&n; * 2 - /dev/fd&n; * 3 - /dev/hd&n; * 4 - /dev/ttyx&n; * 5 - /dev/tty&n; * 6 - /dev/lp&n; * 7 - unnamed pipes&n; */
 DECL|macro|IS_SEEKABLE
-mdefine_line|#define IS_SEEKABLE(x) ((x)&gt;=1 &amp;&amp; (x)&lt;=3 || (x)==8)
+mdefine_line|#define IS_SEEKABLE(x) ((x)&gt;=1 &amp;&amp; (x)&lt;=3)
 DECL|macro|MAY_EXEC
 mdefine_line|#define MAY_EXEC 1
 DECL|macro|MAY_WRITE
@@ -36,6 +33,26 @@ DECL|macro|MAJOR
 mdefine_line|#define MAJOR(a) (((unsigned)(a))&gt;&gt;8)
 DECL|macro|MINOR
 mdefine_line|#define MINOR(a) ((a)&amp;0xff)
+DECL|macro|NR_OPEN
+mdefine_line|#define NR_OPEN 20
+DECL|macro|NR_INODE
+mdefine_line|#define NR_INODE 128
+DECL|macro|NR_FILE
+mdefine_line|#define NR_FILE 64
+DECL|macro|NR_SUPER
+mdefine_line|#define NR_SUPER 8
+DECL|macro|NR_HASH
+mdefine_line|#define NR_HASH 307
+DECL|macro|NR_BUFFERS
+mdefine_line|#define NR_BUFFERS nr_buffers
+DECL|macro|BLOCK_SIZE
+mdefine_line|#define BLOCK_SIZE 1024
+DECL|macro|BLOCK_SIZE_BITS
+mdefine_line|#define BLOCK_SIZE_BITS 10
+DECL|macro|MAX_CHRDEV
+mdefine_line|#define MAX_CHRDEV 16
+DECL|macro|MAX_BLKDEV
+mdefine_line|#define MAX_BLKDEV 16
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
@@ -48,10 +65,6 @@ DECL|macro|PIPE_HEAD
 mdefine_line|#define PIPE_HEAD(inode) ((inode).i_data[0])
 DECL|macro|PIPE_TAIL
 mdefine_line|#define PIPE_TAIL(inode) ((inode).i_data[1])
-DECL|macro|PIPE_READERS
-mdefine_line|#define PIPE_READERS(inode) ((inode).i_data[2])
-DECL|macro|PIPE_WRITERS
-mdefine_line|#define PIPE_WRITERS(inode) ((inode).i_data[3])
 DECL|macro|PIPE_SIZE
 mdefine_line|#define PIPE_SIZE(inode) ((PIPE_HEAD(inode)-PIPE_TAIL(inode))&amp;(PAGE_SIZE-1))
 DECL|macro|PIPE_EMPTY
@@ -66,35 +79,6 @@ DECL|macro|SEL_OUT
 mdefine_line|#define SEL_OUT&t;&t;2
 DECL|macro|SEL_EX
 mdefine_line|#define SEL_EX&t;&t;4
-multiline_comment|/*&n; * These are the fs-independent mount-flags: up to 16 flags are supported&n; */
-DECL|macro|MS_RDONLY
-mdefine_line|#define MS_RDONLY    1 /* mount read-only */
-DECL|macro|MS_NOSUID
-mdefine_line|#define MS_NOSUID    2 /* ignore suid and sgid bits */
-DECL|macro|MS_NODEV
-mdefine_line|#define MS_NODEV     4 /* disallow access to device special files */
-DECL|macro|MS_NOEXEC
-mdefine_line|#define MS_NOEXEC    8 /* disallow program execution */
-DECL|macro|MS_SYNC
-mdefine_line|#define MS_SYNC     16 /* writes are synced at once */
-multiline_comment|/*&n; * Note that read-only etc flags are inode-specific: setting some file-system&n; * flags just means all the inodes inherit those flags by default. It might be&n; * possible to overrride it sevelctively if you really wanted to with some&n; * ioctl() that is not currently implemented.&n; */
-DECL|macro|IS_RDONLY
-mdefine_line|#define IS_RDONLY(inode) ((inode)-&gt;i_flags &amp; MS_RDONLY)
-DECL|macro|IS_NOSUID
-mdefine_line|#define IS_NOSUID(inode) ((inode)-&gt;i_flags &amp; MS_NOSUID)
-DECL|macro|IS_NODEV
-mdefine_line|#define IS_NODEV(inode) ((inode)-&gt;i_flags &amp; MS_NODEV)
-DECL|macro|IS_NOEXEC
-mdefine_line|#define IS_NOEXEC(inode) ((inode)-&gt;i_flags &amp; MS_NOEXEC)
-DECL|macro|IS_SYNC
-mdefine_line|#define IS_SYNC(inode) ((inode)-&gt;i_flags &amp; MS_SYNC)
-multiline_comment|/* the read-only stuff doesn&squot;t really belong here, but any other place is&n;   probably as bad and I don&squot;t want to create yet another include file. */
-DECL|macro|BLKROSET
-mdefine_line|#define BLKROSET 4701 /* set device read-only (0 = read-write) */
-DECL|macro|BLKROGET
-mdefine_line|#define BLKROGET 4702 /* get read-only status (0 = read_write) */
-DECL|macro|BMAP_IOCTL
-mdefine_line|#define BMAP_IOCTL 1
 DECL|typedef|buffer_block
 r_typedef
 r_char
@@ -150,7 +134,7 @@ suffix:semicolon
 multiline_comment|/* 0 - ok, 1 -locked */
 DECL|member|b_wait
 r_struct
-id|wait_queue
+id|task_struct
 op_star
 id|b_wait
 suffix:semicolon
@@ -178,12 +162,6 @@ id|buffer_head
 op_star
 id|b_next_free
 suffix:semicolon
-DECL|member|b_reqnext
-r_struct
-id|buffer_head
-op_star
-id|b_reqnext
-suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|inode
@@ -195,8 +173,7 @@ id|dev_t
 id|i_dev
 suffix:semicolon
 DECL|member|i_ino
-r_int
-r_int
+id|ino_t
 id|i_ino
 suffix:semicolon
 DECL|member|i_mode
@@ -257,13 +234,13 @@ id|i_sb
 suffix:semicolon
 DECL|member|i_wait
 r_struct
-id|wait_queue
+id|task_struct
 op_star
 id|i_wait
 suffix:semicolon
 DECL|member|i_wait2
 r_struct
-id|wait_queue
+id|task_struct
 op_star
 id|i_wait2
 suffix:semicolon
@@ -272,11 +249,6 @@ DECL|member|i_count
 r_int
 r_int
 id|i_count
-suffix:semicolon
-DECL|member|i_flags
-r_int
-r_int
-id|i_flags
 suffix:semicolon
 DECL|member|i_lock
 r_int
@@ -329,17 +301,6 @@ r_int
 r_int
 id|f_count
 suffix:semicolon
-DECL|member|f_reada
-r_int
-r_int
-id|f_reada
-suffix:semicolon
-DECL|member|f_rdev
-r_int
-r_int
-id|f_rdev
-suffix:semicolon
-multiline_comment|/* needed for /dev/tty */
 DECL|member|f_inode
 r_struct
 id|inode
@@ -357,6 +318,63 @@ id|off_t
 id|f_pos
 suffix:semicolon
 )brace
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|old_task
+r_struct
+id|task_struct
+op_star
+id|old_task
+suffix:semicolon
+DECL|member|wait_address
+r_struct
+id|task_struct
+op_star
+op_star
+id|wait_address
+suffix:semicolon
+DECL|typedef|wait_entry
+)brace
+id|wait_entry
+suffix:semicolon
+DECL|struct|select_table_struct
+r_typedef
+r_struct
+id|select_table_struct
+(brace
+DECL|member|nr
+DECL|member|woken
+r_int
+id|nr
+comma
+id|woken
+suffix:semicolon
+DECL|member|current
+r_struct
+id|task_struct
+op_star
+id|current
+suffix:semicolon
+DECL|member|next_table
+r_struct
+id|select_table_struct
+op_star
+id|next_table
+suffix:semicolon
+DECL|member|entry
+id|wait_entry
+id|entry
+(braket
+id|NR_OPEN
+op_star
+l_int|3
+)braket
+suffix:semicolon
+DECL|typedef|select_table
+)brace
+id|select_table
 suffix:semicolon
 DECL|struct|super_block
 r_struct
@@ -445,7 +463,7 @@ id|s_time
 suffix:semicolon
 DECL|member|s_wait
 r_struct
-id|wait_queue
+id|task_struct
 op_star
 id|s_wait
 suffix:semicolon
@@ -470,10 +488,6 @@ r_struct
 id|super_operations
 op_star
 id|s_op
-suffix:semicolon
-DECL|member|s_flags
-r_int
-id|s_flags
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -566,6 +580,22 @@ r_int
 id|count
 )paren
 suffix:semicolon
+DECL|member|close
+r_int
+(paren
+op_star
+id|close
+)paren
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
+)paren
+suffix:semicolon
 DECL|member|select
 r_int
 (paren
@@ -609,50 +639,12 @@ r_int
 r_int
 )paren
 suffix:semicolon
-DECL|member|open
-r_int
-(paren
-op_star
-id|open
-)paren
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_struct
-id|file
-op_star
-)paren
-suffix:semicolon
-DECL|member|release
-r_void
-(paren
-op_star
-id|release
-)paren
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_struct
-id|file
-op_star
-)paren
-suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|inode_operations
 r_struct
 id|inode_operations
 (brace
-DECL|member|default_file_ops
-r_struct
-id|file_operations
-op_star
-id|default_file_ops
-suffix:semicolon
 DECL|member|create
 r_int
 (paren
@@ -868,6 +860,38 @@ comma
 r_int
 )paren
 suffix:semicolon
+DECL|member|open
+r_int
+(paren
+op_star
+id|open
+)paren
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
+)paren
+suffix:semicolon
+DECL|member|release
+r_void
+(paren
+op_star
+id|release
+)paren
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
+)paren
+suffix:semicolon
 DECL|member|follow_link
 r_struct
 id|inode
@@ -912,25 +936,7 @@ id|inode
 op_star
 )paren
 suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|super_operations
-r_struct
-id|super_operations
-(brace
-DECL|member|read_inode
-r_void
-(paren
-op_star
-id|read_inode
-)paren
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-suffix:semicolon
+multiline_comment|/* added by entropy */
 DECL|member|write_inode
 r_void
 (paren
@@ -957,6 +963,25 @@ op_star
 id|inode
 )paren
 suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|super_operations
+r_struct
+id|super_operations
+(brace
+DECL|member|read_inode
+r_void
+(paren
+op_star
+id|read_inode
+)paren
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+suffix:semicolon
 DECL|member|put_super
 r_void
 (paren
@@ -968,37 +993,6 @@ r_struct
 id|super_block
 op_star
 id|sb
-)paren
-suffix:semicolon
-DECL|member|write_super
-r_void
-(paren
-op_star
-id|write_super
-)paren
-(paren
-r_struct
-id|super_block
-op_star
-id|sb
-)paren
-suffix:semicolon
-DECL|member|statfs
-r_void
-(paren
-op_star
-id|statfs
-)paren
-(paren
-r_struct
-id|super_block
-op_star
-id|sb
-comma
-r_struct
-id|statfs
-op_star
-id|buf
 )paren
 suffix:semicolon
 )brace
@@ -1107,15 +1101,6 @@ id|dev
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|invalidate_inodes
-c_func
-(paren
-r_int
-id|dev
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|floppy_change
 c_func
@@ -1154,6 +1139,17 @@ c_func
 r_int
 r_int
 id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|truncate
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
 )paren
 suffix:semicolon
 r_extern
@@ -1271,23 +1267,6 @@ id|inode
 op_star
 op_star
 id|res_inode
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|do_mknod
-c_func
-(paren
-r_const
-r_char
-op_star
-id|filename
-comma
-r_int
-id|mode
-comma
-r_int
-id|dev
 )paren
 suffix:semicolon
 r_extern
@@ -1496,15 +1475,6 @@ r_struct
 id|super_block
 op_star
 id|get_super
-c_func
-(paren
-r_int
-id|dev
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|put_super
 c_func
 (paren
 r_int

@@ -1,7 +1,6 @@
 macro_line|#ifndef _ASM_IO_H
 DECL|macro|_ASM_IO_H
 mdefine_line|#define _ASM_IO_H
-multiline_comment|/*&n; * Thanks to James van Artsdalen for a better timing-fix than&n; * the two short jumps: using outb&squot;s to a nonexistent port seems&n; * to guarantee better timings even on fast machines.&n; *&n; *&t;&t;Linus&n; */
 DECL|function|outb
 r_extern
 r_void
@@ -18,7 +17,7 @@ id|port
 )paren
 (brace
 id|__asm__
-id|__volatile__
+r_volatile
 (paren
 l_string|&quot;outb %0,%1&quot;
 op_scope_resolution
@@ -57,15 +56,14 @@ id|port
 )paren
 (brace
 id|__asm__
-id|__volatile__
+r_volatile
 (paren
-l_string|&quot;outb %0,%1&bslash;n&bslash;t&quot;
-macro_line|#ifdef REALLY_SLOW_IO
-l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
-l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
-l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
-macro_line|#endif
-l_string|&quot;outb %0,$0x80&quot;
+l_string|&quot;outb %0,%1&bslash;n&quot;
+l_string|&quot;&bslash;tjmp 1f&bslash;n&quot;
+l_string|&quot;1:&bslash;tjmp 1f&bslash;n&quot;
+l_string|&quot;1:&bslash;tjmp 1f&bslash;n&quot;
+l_string|&quot;1:&bslash;tjmp 1f&bslash;n&quot;
+l_string|&quot;1:&quot;
 op_scope_resolution
 l_string|&quot;a&quot;
 (paren
@@ -104,7 +102,7 @@ r_char
 id|_v
 suffix:semicolon
 id|__asm__
-id|__volatile__
+r_volatile
 (paren
 l_string|&quot;inb %1,%0&quot;
 suffix:colon
@@ -145,15 +143,14 @@ r_char
 id|_v
 suffix:semicolon
 id|__asm__
-id|__volatile__
+r_volatile
 (paren
-l_string|&quot;inb %1,%0&bslash;n&bslash;t&quot;
-macro_line|#ifdef REALLY_SLOW_IO
-l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
-l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
-l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
-macro_line|#endif
-l_string|&quot;outb %0,$0x80&quot;
+l_string|&quot;inb %1,%0&bslash;n&quot;
+l_string|&quot;&bslash;tjmp 1f&bslash;n&quot;
+l_string|&quot;1:&bslash;tjmp 1f&bslash;n&quot;
+l_string|&quot;1:&bslash;tjmp 1f&bslash;n&quot;
+l_string|&quot;1:&bslash;tjmp 1f&bslash;n&quot;
+l_string|&quot;1:&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren

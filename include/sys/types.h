@@ -1,7 +1,6 @@
 macro_line|#ifndef _SYS_TYPES_H
 DECL|macro|_SYS_TYPES_H
 mdefine_line|#define _SYS_TYPES_H
-macro_line|#include &lt;stddef.h&gt;
 macro_line|#ifndef _SIZE_T
 DECL|macro|_SIZE_T
 mdefine_line|#define _SIZE_T
@@ -12,15 +11,6 @@ r_int
 r_int
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef _SSIZE_T
-DECL|macro|_SSIZE_T
-mdefine_line|#define _SSIZE_T
-DECL|typedef|ssize_t
-r_typedef
-r_int
-id|ssize_t
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifndef _TIME_T
 DECL|macro|_TIME_T
 mdefine_line|#define _TIME_T
@@ -28,15 +18,6 @@ DECL|typedef|time_t
 r_typedef
 r_int
 id|time_t
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifndef _CLOCK_T
-DECL|macro|_CLOCK_T
-mdefine_line|#define _CLOCK_T
-DECL|typedef|clock_t
-r_typedef
-r_int
-id|clock_t
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifndef _PTRDIFF_T
@@ -75,21 +56,12 @@ r_int
 r_int
 id|dev_t
 suffix:semicolon
-macro_line|#ifdef OLD_LINUX
 DECL|typedef|ino_t
 r_typedef
 r_int
 r_int
 id|ino_t
 suffix:semicolon
-macro_line|#else
-DECL|typedef|ino_t
-r_typedef
-r_int
-r_int
-id|ino_t
-suffix:semicolon
-macro_line|#endif
 DECL|typedef|mode_t
 r_typedef
 r_int
@@ -118,7 +90,6 @@ r_typedef
 r_int
 id|off_t
 suffix:semicolon
-multiline_comment|/* bsd */
 DECL|typedef|u_char
 r_typedef
 r_int
@@ -131,42 +102,17 @@ r_int
 r_int
 id|u_short
 suffix:semicolon
-DECL|typedef|u_int
-r_typedef
-r_int
-r_int
-id|u_int
-suffix:semicolon
 DECL|typedef|u_long
 r_typedef
 r_int
 r_int
 id|u_long
 suffix:semicolon
-multiline_comment|/* sysv */
-DECL|typedef|unchar
-r_typedef
-r_int
-r_char
-id|unchar
-suffix:semicolon
 DECL|typedef|ushort
 r_typedef
 r_int
 r_int
 id|ushort
-suffix:semicolon
-DECL|typedef|uint
-r_typedef
-r_int
-r_int
-id|uint
-suffix:semicolon
-DECL|typedef|ulong
-r_typedef
-r_int
-r_int
-id|ulong
 suffix:semicolon
 DECL|typedef|caddr_t
 r_typedef

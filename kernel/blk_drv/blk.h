@@ -2,7 +2,7 @@ macro_line|#ifndef _BLK_H
 DECL|macro|_BLK_H
 mdefine_line|#define _BLK_H
 DECL|macro|NR_BLK_DEV
-mdefine_line|#define NR_BLK_DEV&t;10
+mdefine_line|#define NR_BLK_DEV&t;7
 multiline_comment|/*&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; *&n; * 32 seems to be a reasonable number: enough to get some benefit&n; * from the elevator-mechanism, but not so much as to lock a lot of&n; * buffers when they are in the queue. 64 seems to be too many (easily&n; * long pauses in reading when heavy writing/syncing is going on)&n; */
 DECL|macro|NR_REQUEST
 mdefine_line|#define NR_REQUEST&t;32
@@ -42,7 +42,7 @@ id|buffer
 suffix:semicolon
 DECL|member|waiting
 r_struct
-id|wait_queue
+id|task_struct
 op_star
 id|waiting
 suffix:semicolon
@@ -51,12 +51,6 @@ r_struct
 id|buffer_head
 op_star
 id|bh
-suffix:semicolon
-DECL|member|bhtail
-r_struct
-id|buffer_head
-op_star
-id|bhtail
 suffix:semicolon
 DECL|member|next
 r_struct
@@ -109,7 +103,7 @@ id|NR_REQUEST
 suffix:semicolon
 r_extern
 r_struct
-id|wait_queue
+id|task_struct
 op_star
 id|wait_for_request
 suffix:semicolon
@@ -121,29 +115,6 @@ id|blk_size
 id|NR_BLK_DEV
 )braket
 suffix:semicolon
-r_extern
-r_int
-id|is_read_only
-c_func
-(paren
-r_int
-id|dev
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|set_device_ro
-c_func
-(paren
-r_int
-id|dev
-comma
-r_int
-id|flag
-)paren
-suffix:semicolon
-DECL|macro|RO_IOCTLS
-mdefine_line|#define RO_IOCTLS(dev,where) &bslash;&n;  case BLKROSET: if (!suser()) return -EPERM; &bslash;&n;&t;&t; set_device_ro((dev),get_fs_long((long *) (where))); return 0; &bslash;&n;  case BLKROGET: put_fs_long(is_read_only(dev),(long *) (where)); return 0;
 macro_line|#ifdef MAJOR_NR
 multiline_comment|/*&n; * Add entries as needed. Currently the only block devices&n; * supported are hard-disks and floppies.&n; */
 macro_line|#if (MAJOR_NR == 1)
@@ -186,34 +157,6 @@ DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_hd_request
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (MINOR(device)&gt;&gt;6)
-DECL|macro|DEVICE_ON
-mdefine_line|#define DEVICE_ON(device)
-DECL|macro|DEVICE_OFF
-mdefine_line|#define DEVICE_OFF(device)
-macro_line|#elif (MAJOR_NR == 8)
-multiline_comment|/* scsi disk */
-DECL|macro|DEVICE_NAME
-mdefine_line|#define DEVICE_NAME &quot;scsidisk&quot;
-DECL|macro|DEVICE_INTR
-mdefine_line|#define DEVICE_INTR do_sd  
-DECL|macro|DEVICE_REQUEST
-mdefine_line|#define DEVICE_REQUEST do_sd_request
-DECL|macro|DEVICE_NR
-mdefine_line|#define DEVICE_NR(device) (MINOR(device) &gt;&gt; 4)
-DECL|macro|DEVICE_ON
-mdefine_line|#define DEVICE_ON(device)
-DECL|macro|DEVICE_OFF
-mdefine_line|#define DEVICE_OFF(device)
-macro_line|#elif (MAJOR_NR == 9)
-multiline_comment|/* scsi tape */
-DECL|macro|DEVICE_NAME
-mdefine_line|#define DEVICE_NAME &quot;scsitape&quot;
-DECL|macro|DEVICE_INTR
-mdefine_line|#define DEVICE_INTR do_st  
-DECL|macro|DEVICE_REQUEST
-mdefine_line|#define DEVICE_REQUEST do_st_request
-DECL|macro|DEVICE_NR
-mdefine_line|#define DEVICE_NR(device) (MINOR(device))
 DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
@@ -299,7 +242,8 @@ id|bh-&gt;b_wait
 suffix:semicolon
 )brace
 DECL|function|end_request
-r_static
+r_extern
+r_inline
 r_void
 id|end_request
 c_func
@@ -308,24 +252,29 @@ r_int
 id|uptodate
 )paren
 (brace
-r_struct
-id|request
-op_star
-id|req
+id|DEVICE_OFF
+c_func
+(paren
+id|CURRENT-&gt;dev
+)paren
 suffix:semicolon
-r_struct
-id|buffer_head
-op_star
-id|bh
-suffix:semicolon
-id|req
+r_if
+c_cond
+(paren
+id|CURRENT-&gt;bh
+)paren
+(brace
+id|CURRENT-&gt;bh-&gt;b_uptodate
 op_assign
-id|CURRENT
+id|uptodate
 suffix:semicolon
-id|req-&gt;errors
-op_assign
-l_int|0
+id|unlock_buffer
+c_func
+(paren
+id|CURRENT-&gt;bh
+)paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -343,113 +292,20 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;dev %04x, sector %d&bslash;n&bslash;r&quot;
+l_string|&quot;dev %04x, block %d&bslash;n&bslash;r&quot;
 comma
-id|req-&gt;dev
+id|CURRENT-&gt;dev
 comma
-id|req-&gt;sector
-)paren
-suffix:semicolon
-id|req-&gt;nr_sectors
-op_decrement
-suffix:semicolon
-id|req-&gt;nr_sectors
-op_and_assign
-op_complement
-l_int|1
-suffix:semicolon
-id|req-&gt;sector
-op_add_assign
-l_int|2
-suffix:semicolon
-id|req-&gt;sector
-op_and_assign
-op_complement
-l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|bh
-op_assign
-id|req-&gt;bh
-)paren
-(brace
-id|req-&gt;bh
-op_assign
-id|bh-&gt;b_reqnext
-suffix:semicolon
-id|bh-&gt;b_reqnext
-op_assign
-l_int|NULL
-suffix:semicolon
-id|bh-&gt;b_uptodate
-op_assign
-id|uptodate
-suffix:semicolon
-id|unlock_buffer
-c_func
-(paren
-id|bh
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|bh
-op_assign
-id|req-&gt;bh
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|req-&gt;nr_sectors
-OL
-l_int|2
-)paren
-(brace
-id|req-&gt;nr_sectors
-op_assign
-l_int|2
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;end_request: buffer-list destroyed&bslash;n&quot;
+id|CURRENT-&gt;bh-&gt;b_blocknr
 )paren
 suffix:semicolon
 )brace
-id|req-&gt;buffer
-op_assign
-id|bh-&gt;b_data
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-)brace
-id|DEVICE_OFF
-c_func
-(paren
-id|req-&gt;dev
-)paren
-suffix:semicolon
-id|CURRENT
-op_assign
-id|req-&gt;next
-suffix:semicolon
 id|wake_up
 c_func
 (paren
 op_amp
-id|req-&gt;waiting
+id|CURRENT-&gt;waiting
 )paren
-suffix:semicolon
-id|req-&gt;dev
-op_assign
-op_minus
-l_int|1
 suffix:semicolon
 id|wake_up
 c_func
@@ -457,6 +313,15 @@ c_func
 op_amp
 id|wait_for_request
 )paren
+suffix:semicolon
+id|CURRENT-&gt;dev
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|CURRENT
+op_assign
+id|CURRENT-&gt;next
 suffix:semicolon
 )brace
 macro_line|#ifdef DEVICE_INTR

@@ -61,12 +61,6 @@ DECL|macro|TIOCINQ
 mdefine_line|#define TIOCINQ&t;&t;FIONREAD
 DECL|macro|TIOCLINUX
 mdefine_line|#define TIOCLINUX&t;0x541C
-DECL|macro|TIOCCONS
-mdefine_line|#define TIOCCONS&t;0x541D
-DECL|macro|TIOCGSERIAL
-mdefine_line|#define TIOCGSERIAL&t;0x541E
-DECL|macro|TIOCSSERIAL
-mdefine_line|#define TIOCSSERIAL&t;0x541F
 DECL|struct|winsize
 r_struct
 id|winsize
@@ -450,11 +444,6 @@ DECL|macro|TCSADRAIN
 mdefine_line|#define&t;TCSADRAIN&t;1
 DECL|macro|TCSAFLUSH
 mdefine_line|#define&t;TCSAFLUSH&t;2
-macro_line|#ifdef __cplusplus
-r_extern
-l_string|&quot;C&quot;
-(brace
-macro_line|#endif
 r_extern
 id|speed_t
 id|cfgetispeed
@@ -581,8 +570,5 @@ op_star
 id|termios_p
 )paren
 suffix:semicolon
-macro_line|#ifdef __cplusplus
-)brace
-macro_line|#endif
 macro_line|#endif
 eof
