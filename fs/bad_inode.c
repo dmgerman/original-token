@@ -43,6 +43,7 @@ r_int
 id|return_EIO
 c_func
 (paren
+r_void
 )paren
 (brace
 r_return
@@ -189,6 +190,27 @@ id|inode-&gt;i_op
 op_assign
 op_amp
 id|bad_inode_ops
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * This tests whether an inode has been flagged as bad. The test uses&n; * &amp;bad_inode_ops to cover the case of invalidated inodes as well as&n; * those created by make_bad_inode() above.&n; */
+DECL|function|is_bad_inode
+r_int
+id|is_bad_inode
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+r_return
+(paren
+id|inode-&gt;i_op
+op_eq
+op_amp
+id|bad_inode_ops
+)paren
 suffix:semicolon
 )brace
 eof

@@ -687,6 +687,8 @@ comma
 op_amp
 id|nr_files
 comma
+l_int|3
+op_star
 r_sizeof
 (paren
 r_int

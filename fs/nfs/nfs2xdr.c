@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 DECL|macro|NFSDBG_FACILITY
 mdefine_line|#define NFSDBG_FACILITY&t;&t;NFSDBG_XDR
+multiline_comment|/* #define NFS_PARANOIA 1 */
 DECL|macro|QUADLEN
 mdefine_line|#define QUADLEN(len)&t;&t;(((len) + 3) &gt;&gt; 2)
 r_static
@@ -1674,7 +1675,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Decode the result of a readdir call. We decode the result in place&n; * to avoid a malloc of NFS_MAXNAMLEN+1 for each file name.&n; * After decoding, the layout in memory looks like this:&n; *&t;entry1 entry2 ... entryN &lt;space&gt; stringN ... string2 string1&n; * Note that the strings are not null-terminated so that the entire number&n; * of entries returned by the server should fit into the buffer.&n; */
+multiline_comment|/*&n; * Decode the result of a readdir call. We decode the result in place&n; * to avoid a malloc of NFS_MAXNAMLEN+1 for each file name.&n; * After decoding, the layout in memory looks like this:&n; *&t;entry1 entry2 ... entryN &lt;space&gt; stringN ... string2 string1&n; * Each entry consists of three __u32 values, the same space as NFS uses.&n; * Note that the strings are not null-terminated so that the entire number&n; * of entries returned by the server should fit into the buffer.&n; */
 r_static
 r_int
 DECL|function|nfs_xdr_readdirres
@@ -1697,11 +1698,6 @@ id|res
 )paren
 (brace
 r_struct
-id|nfs_entry
-op_star
-id|entry
-suffix:semicolon
-r_struct
 id|iovec
 op_star
 id|iov
@@ -1718,10 +1714,21 @@ suffix:semicolon
 r_char
 op_star
 id|string
+comma
+op_star
+id|start
 suffix:semicolon
 id|u32
 op_star
 id|end
+suffix:semicolon
+id|__u32
+id|fileid
+comma
+id|cookie
+comma
+op_star
+id|entry
 suffix:semicolon
 r_if
 c_cond
@@ -1817,8 +1824,15 @@ multiline_comment|/* Get start and end of dirent buffer */
 id|entry
 op_assign
 (paren
-r_struct
-id|nfs_entry
+id|__u32
+op_star
+)paren
+id|res-&gt;buffer
+suffix:semicolon
+id|start
+op_assign
+(paren
+r_char
 op_star
 )paren
 id|res-&gt;buffer
@@ -1846,12 +1860,9 @@ op_increment
 suffix:semicolon
 id|nr
 op_increment
-comma
-id|entry
-op_increment
 )paren
 (brace
-id|entry-&gt;fileid
+id|fileid
 op_assign
 id|ntohl
 c_func
@@ -1934,7 +1945,7 @@ op_star
 (paren
 id|entry
 op_plus
-l_int|1
+l_int|3
 )paren
 OG
 (paren
@@ -1944,12 +1955,11 @@ op_star
 id|string
 )paren
 (brace
-multiline_comment|/* This may actually happen because an nfs_entry&n;&t;&t;&t; * will take up more space than the XDR data. On&n;&t;&t;&t; * 32bit machines that&squot;s due to 8byte alignment,&n;&t;&t;&t; * on 64bit machines that&squot;s because the char * takes&n;&t;&t;&t; * up 2 longs.&n;&t;&t;&t; *&n;&t;&t;&t; * THIS IS BAD!&n;&t;&t;&t; */
+multiline_comment|/* &n;&t;&t;&t; * This error is impossible as long as the temp&n;&t;&t;&t; * buffer is no larger than the user buffer. The &n;&t;&t;&t; * current packing algorithm uses the same amount&n;&t;&t;&t; * of space in the user buffer as in the XDR data,&n;&t;&t;&t; * so it&squot;s guaranteed to fit.&n;&t;&t;&t; */
 id|printk
 c_func
 (paren
-id|KERN_NOTICE
-l_string|&quot;NFS: should not happen in %s!&bslash;n&quot;
+l_string|&quot;NFS: incorrect buffer size in %s!&bslash;n&quot;
 comma
 id|__FUNCTION__
 )paren
@@ -1957,14 +1967,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|entry-&gt;name
-op_assign
-id|string
-suffix:semicolon
-id|entry-&gt;length
-op_assign
-id|len
-suffix:semicolon
 id|memmove
 c_func
 (paren
@@ -1983,7 +1985,7 @@ c_func
 id|len
 )paren
 suffix:semicolon
-id|entry-&gt;cookie
+id|cookie
 op_assign
 id|ntohl
 c_func
@@ -1993,7 +1995,8 @@ id|p
 op_increment
 )paren
 suffix:semicolon
-id|entry-&gt;eof
+multiline_comment|/*&n;&t;&t; * To make everything fit, we encode the length, offset,&n;&t;&t; * and eof flag into 32 bits. This works for filenames&n;&t;&t; * up to 32K and PAGE_SIZE up to 64K.&n;&t;&t; */
+id|status
 op_assign
 op_logical_neg
 id|p
@@ -2005,8 +2008,80 @@ id|p
 (braket
 l_int|1
 )braket
+ques
+c_cond
+(paren
+l_int|1
+op_lshift
+l_int|15
+)paren
+suffix:colon
+l_int|0
+suffix:semicolon
+multiline_comment|/* eof flag */
+op_star
+id|entry
+op_increment
+op_assign
+id|fileid
+suffix:semicolon
+op_star
+id|entry
+op_increment
+op_assign
+id|cookie
+suffix:semicolon
+op_star
+id|entry
+op_increment
+op_assign
+(paren
+(paren
+id|string
+op_minus
+id|start
+)paren
+op_lshift
+l_int|16
+)paren
+op_or
+id|status
+op_or
+(paren
+id|len
+op_amp
+l_int|0x7FFF
+)paren
 suffix:semicolon
 )brace
+macro_line|#ifdef NFS_PARANOIA
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_xdr_readdirres: %d entries, ent sp=%d, str sp=%d&bslash;n&quot;
+comma
+id|nr
+comma
+(paren
+(paren
+r_char
+op_star
+)paren
+id|entry
+op_minus
+id|start
+)paren
+comma
+(paren
+id|start
+op_plus
+id|res-&gt;bufsiz
+op_minus
+id|string
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|nr
 suffix:semicolon

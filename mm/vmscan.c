@@ -12,9 +12,6 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
-macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
-macro_line|#include &lt;asm/uaccess.h&gt; /* for copy_to/from_user */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/* &n; * When are we next due for a page scan? &n; */
@@ -1642,6 +1639,8 @@ id|s
 )paren
 suffix:semicolon
 )brace
+DECL|macro|MAX_SWAP_FAIL
+mdefine_line|#define MAX_SWAP_FAIL 3
 multiline_comment|/*&n; * The background pageout daemon.&n; * Started as a kernel thread from the init process.&n; */
 DECL|function|kswapd
 r_int
@@ -1701,6 +1700,9 @@ c_loop
 l_int|1
 )paren
 (brace
+r_int
+id|fail
+suffix:semicolon
 id|kswapd_awake
 op_assign
 l_int|0
@@ -1730,82 +1732,99 @@ suffix:semicolon
 id|swapstats.wakeups
 op_increment
 suffix:semicolon
-multiline_comment|/* Do the background pageout: &n;&t;&t; * We now only swap out as many pages as needed.&n;&t;&t; * When we are truly low on memory, we swap out&n;&t;&t; * synchronously (WAIT == 1).  -- Rik.&n;&t;&t; */
-r_while
+multiline_comment|/* Do the background pageout: &n;&t;&t; * We now only swap out as many pages as needed.&n;&t;&t; * When we are truly low on memory, we swap out&n;&t;&t; * synchronously (WAIT == 1).  -- Rik.&n;&t;&t; * If we&squot;ve had too many consecutive failures,&n;&t;&t; * go back to sleep to let other tasks run.&n;&t;&t; */
+r_for
 c_loop
+(paren
+id|fail
+op_assign
+l_int|0
+suffix:semicolon
+id|fail
+op_increment
+OL
+id|MAX_SWAP_FAIL
+suffix:semicolon
+)paren
+(brace
+r_int
+id|pages
+comma
+id|wait
+suffix:semicolon
+id|pages
+op_assign
+id|nr_free_pages
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nr_free_pages
+op_ge
+id|min_free_pages
+)paren
+id|pages
+op_add_assign
+id|atomic_read
+c_func
+(paren
+op_amp
+id|nr_async_pages
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pages
+op_ge
+id|free_pages_high
+)paren
+r_break
+suffix:semicolon
+id|wait
+op_assign
+(paren
+id|pages
+OL
+id|free_pages_low
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|try_to_free_page
+c_func
+(paren
+id|GFP_KERNEL
+comma
+l_int|0
+comma
+id|wait
+)paren
+)paren
+id|fail
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; * Report failure if we couldn&squot;t reach the minimum goal.&n;&t;&t; */
+r_if
+c_cond
 (paren
 id|nr_free_pages
 OL
 id|min_free_pages
 )paren
-(brace
-id|try_to_free_page
+id|printk
 c_func
 (paren
-id|GFP_KERNEL
+l_string|&quot;kswapd: failed, got %d of %d&bslash;n&quot;
 comma
-l_int|0
-comma
-l_int|1
-)paren
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-(paren
 id|nr_free_pages
-op_plus
-id|atomic_read
-c_func
-(paren
-op_amp
-id|nr_async_pages
-)paren
-)paren
-OL
-id|free_pages_low
-)paren
-(brace
-id|try_to_free_page
-c_func
-(paren
-id|GFP_KERNEL
 comma
-l_int|0
-comma
-l_int|1
+id|min_free_pages
 )paren
 suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-(paren
-id|nr_free_pages
-op_plus
-id|atomic_read
-c_func
-(paren
-op_amp
-id|nr_async_pages
-)paren
-)paren
-OL
-id|free_pages_high
-)paren
-(brace
-id|try_to_free_page
-c_func
-(paren
-id|GFP_KERNEL
-comma
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/* &n; * The swap_tick function gets called on every clock tick.&n; */

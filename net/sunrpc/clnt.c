@@ -415,7 +415,7 @@ r_return
 id|clnt
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Properly shut down an RPC client, terminating all outstanding&n; * requests.&n; */
+multiline_comment|/*&n; * Properly shut down an RPC client, terminating all outstanding&n; * requests. Note that we must be certain that cl_oneshot and&n; * cl_dead are cleared, or else the client would be destroyed&n; * when the last task releases it.&n; */
 r_int
 DECL|function|rpc_shutdown_client
 id|rpc_shutdown_client
@@ -443,25 +443,26 @@ c_loop
 id|clnt-&gt;cl_users
 )paren
 (brace
-id|dprintk
+macro_line|#ifdef RPC_DEBUG
+id|printk
 c_func
 (paren
-l_string|&quot;sigmask %08lx&bslash;n&quot;
+l_string|&quot;rpc_shutdown_client: client %s, tasks=%d&bslash;n&quot;
 comma
-id|current-&gt;signal
-)paren
-suffix:semicolon
-id|dprintk
-c_func
-(paren
-l_string|&quot;users %d&bslash;n&quot;
+id|clnt-&gt;cl_protname
 comma
 id|clnt-&gt;cl_users
 )paren
 suffix:semicolon
+macro_line|#endif
+multiline_comment|/* Don&squot;t let rpc_release_client destroy us */
+id|clnt-&gt;cl_oneshot
+op_assign
+l_int|0
+suffix:semicolon
 id|clnt-&gt;cl_dead
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 id|rpc_killall_tasks
 c_func
@@ -576,14 +577,31 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|clnt-&gt;cl_users
+)paren
+(brace
+r_if
+c_cond
+(paren
 op_decrement
 (paren
 id|clnt-&gt;cl_users
 )paren
-op_eq
+OG
 l_int|0
 )paren
-(brace
+r_return
+suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;rpc_release_client: %s client already free??&bslash;n&quot;
+comma
+id|clnt-&gt;cl_protname
+)paren
+suffix:semicolon
 id|wake_up
 c_func
 (paren
@@ -602,13 +620,6 @@ id|rpc_destroy_client
 c_func
 (paren
 id|clnt
-)paren
-suffix:semicolon
-)brace
-id|dprintk
-c_func
-(paren
-l_string|&quot;RPC:      rpc_release_client done&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -787,6 +798,11 @@ id|func
 op_assign
 id|rpc_default_callback
 suffix:semicolon
+id|status
+op_assign
+op_minus
+id|ENOMEM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -805,16 +821,9 @@ id|flags
 )paren
 )paren
 )paren
-(brace
-id|current-&gt;blocked
-op_assign
-id|oldmask
+r_goto
+id|out
 suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
 id|task-&gt;tk_calldata
 op_assign
 id|data
@@ -874,6 +883,10 @@ id|async
 op_assign
 l_int|0
 suffix:semicolon
+id|status
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -892,11 +905,8 @@ id|task
 )paren
 suffix:semicolon
 )brace
-r_else
-id|status
-op_assign
-l_int|0
-suffix:semicolon
+id|out
+suffix:colon
 id|current-&gt;blocked
 op_assign
 id|oldmask
@@ -1349,6 +1359,14 @@ op_ne
 l_int|NULL
 )paren
 r_return
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;RPC: buffer allocation failed for task %p&bslash;n&quot;
+comma
+id|task
+)paren
 suffix:semicolon
 r_if
 c_cond

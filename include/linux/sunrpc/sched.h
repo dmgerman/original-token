@@ -530,7 +530,7 @@ r_void
 op_star
 )paren
 suffix:semicolon
-r_void
+r_int
 id|rpciod_up
 c_func
 (paren

@@ -138,8 +138,10 @@ l_int|1
 suffix:semicolon
 id|task-&gt;tk_status
 op_assign
-l_int|0
+op_minus
+id|EACCES
 suffix:semicolon
+multiline_comment|/* why set this? returns -EIO below */
 r_if
 c_cond
 (paren
@@ -158,16 +160,14 @@ id|map-&gt;pm_prot
 )paren
 )paren
 )paren
-(brace
-id|task-&gt;tk_status
-op_assign
-op_minus
-id|EACCES
-suffix:semicolon
 r_goto
 id|bailout
 suffix:semicolon
-)brace
+id|task-&gt;tk_status
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t; * Note: rpc_new_child will release client after a failure.&n;&t; */
 r_if
 c_cond
 (paren
@@ -184,17 +184,9 @@ id|task
 )paren
 )paren
 )paren
-(brace
-id|rpc_destroy_client
-c_func
-(paren
-id|pmap_clnt
-)paren
-suffix:semicolon
 r_goto
 id|bailout
 suffix:semicolon
-)brace
 multiline_comment|/* Setup the call info struct */
 id|rpc_call_setup
 c_func

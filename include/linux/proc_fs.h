@@ -664,6 +664,8 @@ id|fill_inode
 r_struct
 id|inode
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|member|next
@@ -742,6 +744,17 @@ op_star
 id|data
 )paren
 suffix:semicolon
+DECL|member|count
+r_int
+r_int
+id|count
+suffix:semicolon
+multiline_comment|/* use count */
+DECL|member|deleted
+r_int
+id|deleted
+suffix:semicolon
+multiline_comment|/* delete flag */
 )brace
 suffix:semicolon
 r_extern

@@ -657,6 +657,8 @@ id|host-&gt;h_reclaiming
 )paren
 id|current-&gt;timeout
 op_assign
+id|jiffies
+op_plus
 l_int|10
 op_star
 id|HZ
@@ -667,6 +669,10 @@ c_func
 op_amp
 id|host-&gt;h_gracewait
 )paren
+suffix:semicolon
+id|current-&gt;timeout
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 id|signalled
@@ -734,8 +740,16 @@ id|call
 r_return
 id|call
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;nlmclnt_alloc_call: failed, waiting for memory&bslash;n&quot;
+)paren
+suffix:semicolon
 id|current-&gt;timeout
 op_assign
+id|jiffies
+op_plus
 l_int|5
 op_star
 id|HZ
@@ -748,6 +762,10 @@ id|schedule
 c_func
 (paren
 )paren
+suffix:semicolon
+id|current-&gt;timeout
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_return
@@ -971,6 +989,10 @@ c_func
 op_amp
 id|host-&gt;h_gracewait
 )paren
+suffix:semicolon
+id|current-&gt;timeout
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_while

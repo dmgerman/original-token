@@ -37,11 +37,15 @@ r_int
 id|max_files
 comma
 id|nr_files
+comma
+id|nr_free_files
 suffix:semicolon
 DECL|macro|NR_INODE
 mdefine_line|#define NR_INODE 4096&t;/* this should be bigger than NR_FILE */
 DECL|macro|NR_FILE
 mdefine_line|#define NR_FILE 1024&t;/* this can well be larger on a larger system */
+DECL|macro|NR_RESERVED_FILES
+mdefine_line|#define NR_RESERVED_FILES 10 /* reserved for root */
 DECL|macro|MAY_EXEC
 mdefine_line|#define MAY_EXEC 1
 DECL|macro|MAY_WRITE
@@ -2745,6 +2749,29 @@ r_extern
 r_struct
 id|inode_operations
 id|fifo_inode_operations
+suffix:semicolon
+multiline_comment|/* Invalid inode operations -- fs/bad_inode.c */
+r_extern
+r_void
+id|make_bad_inode
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|is_bad_inode
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
 suffix:semicolon
 r_extern
 r_struct

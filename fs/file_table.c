@@ -21,12 +21,21 @@ id|nr_files
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* read only */
+DECL|variable|nr_free_files
+r_int
+id|nr_free_files
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* read only */
 DECL|variable|max_files
 r_int
 id|max_files
 op_assign
 id|NR_FILE
 suffix:semicolon
+multiline_comment|/* tunable */
 multiline_comment|/* Free list management, if you are here you must have f_count == 0 */
 DECL|variable|free_filps
 r_static
@@ -74,6 +83,9 @@ id|file-&gt;f_pprev
 op_assign
 op_amp
 id|free_filps
+suffix:semicolon
+id|nr_free_files
+op_increment
 suffix:semicolon
 )brace
 multiline_comment|/* The list of in-use filp&squot;s must be exported (ugh...) */
@@ -126,6 +138,7 @@ op_amp
 id|inuse_filps
 suffix:semicolon
 )brace
+multiline_comment|/* N.B. This should be an __initfunc ... */
 DECL|function|file_table_init
 r_void
 id|file_table_init
@@ -170,6 +183,7 @@ l_string|&quot;VFS: Cannot alloc filp SLAB cache.&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * We could allocate the reserved files here, but really&n;&t; * shouldn&squot;t need to: the normal boot process will create&n;&t; * plenty of free files.&n;&t; */
 )brace
 multiline_comment|/* Find an unused file structure and return a pointer to it.&n; * Returns NULL, if there are no more free file structures or&n; * we run out of memory.&n; */
 DECL|function|get_empty_filp
@@ -193,18 +207,19 @@ id|file
 op_star
 id|f
 suffix:semicolon
-id|f
-op_assign
-id|free_filps
-suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|f
+id|nr_free_files
+OG
+id|NR_RESERVED_FILES
 )paren
-r_goto
-id|get_more
+(brace
+id|used_one
+suffix:colon
+id|f
+op_assign
+id|free_filps
 suffix:semicolon
 id|remove_filp
 c_func
@@ -212,7 +227,10 @@ c_func
 id|f
 )paren
 suffix:semicolon
-id|got_one
+id|nr_free_files
+op_decrement
+suffix:semicolon
+id|new_one
 suffix:colon
 id|memset
 c_func
@@ -246,24 +264,26 @@ suffix:semicolon
 r_return
 id|f
 suffix:semicolon
-id|get_more
-suffix:colon
-multiline_comment|/* Reserve a few files for the super-user.. */
+)brace
+multiline_comment|/*&n;&t; * Use a reserved one if we&squot;re the superuser&n;&t; */
+r_if
+c_cond
+(paren
+id|nr_free_files
+op_logical_and
+op_logical_neg
+id|current-&gt;euid
+)paren
+r_goto
+id|used_one
+suffix:semicolon
+multiline_comment|/*&n;&t; * Allocate a new one if we&squot;re below the limit.&n;&t; */
 r_if
 c_cond
 (paren
 id|nr_files
 OL
-(paren
-id|current-&gt;euid
-ques
-c_cond
 id|max_files
-op_minus
-l_int|10
-suffix:colon
-id|max_files
-)paren
 )paren
 (brace
 id|f
@@ -286,7 +306,7 @@ id|nr_files
 op_increment
 suffix:semicolon
 r_goto
-id|got_one
+id|new_one
 suffix:semicolon
 )brace
 multiline_comment|/* Big problems... */

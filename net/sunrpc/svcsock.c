@@ -2760,6 +2760,7 @@ suffix:semicolon
 id|svsk-&gt;sk_inuse
 op_increment
 suffix:semicolon
+multiline_comment|/* N.B. where is this decremented? */
 )brace
 r_else
 (brace
@@ -2780,9 +2781,10 @@ comma
 id|rqstp
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * We have to be able to interrupt this wait&n;&t;&t; * to bring down the daemons ...&n;&t;&t; */
 id|current-&gt;state
 op_assign
-id|TASK_UNINTERRUPTIBLE
+id|TASK_INTERRUPTIBLE
 suffix:semicolon
 id|add_wait_queue
 c_func
@@ -2849,6 +2851,16 @@ id|EAGAIN
 suffix:semicolon
 )brace
 )brace
+id|printk
+c_func
+(paren
+l_string|&quot;svc_recv: svsk=%p, use count=%d&bslash;n&quot;
+comma
+id|svsk
+comma
+id|svsk-&gt;sk_inuse
+)paren
+suffix:semicolon
 id|dprintk
 c_func
 (paren

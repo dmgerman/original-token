@@ -447,6 +447,33 @@ id|sk-&gt;sleep
 suffix:semicolon
 )brace
 )brace
+r_int
+DECL|function|smb_valid_socket
+id|smb_valid_socket
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+r_return
+(paren
+id|inode
+op_logical_and
+id|S_ISSOCK
+c_func
+(paren
+id|inode-&gt;i_mode
+)paren
+op_logical_and
+id|inode-&gt;u.socket_i.type
+op_eq
+id|SOCK_STREAM
+)paren
+suffix:semicolon
+)brace
 r_static
 r_struct
 id|socket
@@ -466,11 +493,6 @@ id|file
 op_star
 id|file
 suffix:semicolon
-r_struct
-id|inode
-op_star
-id|inode
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -481,29 +503,31 @@ id|file
 op_assign
 id|server-&gt;sock_file
 )paren
-op_logical_and
-(paren
-id|inode
-op_assign
-id|file-&gt;f_dentry-&gt;d_inode
 )paren
-op_logical_and
-id|S_ISSOCK
+(brace
+macro_line|#ifdef SMBFS_PARANOIA
+r_if
+c_cond
+(paren
+op_logical_neg
+id|smb_valid_socket
 c_func
 (paren
-id|inode-&gt;i_mode
+id|file-&gt;f_dentry-&gt;d_inode
 )paren
-op_logical_and
-id|inode-&gt;u.socket_i.type
-op_eq
-id|SOCK_STREAM
 )paren
-r_return
-op_amp
+id|printk
+c_func
 (paren
-id|inode-&gt;u.socket_i
+l_string|&quot;smb_server_sock: bad socket!&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
+r_return
+op_amp
+id|file-&gt;f_dentry-&gt;d_inode-&gt;u.socket_i
+suffix:semicolon
+)brace
 r_return
 l_int|NULL
 suffix:semicolon
@@ -850,30 +874,31 @@ c_cond
 id|file
 )paren
 (brace
-r_struct
-id|socket
-op_star
-id|socket
-op_assign
-id|server_sock
-c_func
-(paren
-id|server
-)paren
-suffix:semicolon
+macro_line|#ifdef SMBFS_DEBUG_VERBOSE
 id|printk
 c_func
 (paren
 l_string|&quot;smb_close_socket: closing socket %p&bslash;n&quot;
 comma
-id|socket
+id|server_sock
+c_func
+(paren
+id|server
+)paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * We need a way to check for tasks running the callback!&n;&t;&t; */
+macro_line|#endif
+macro_line|#ifdef SMBFS_PARANOIA
 r_if
 c_cond
 (paren
-id|socket-&gt;sk-&gt;data_ready
+id|server_sock
+c_func
+(paren
+id|server
+)paren
+op_member_access_from_pointer
+id|sk-&gt;data_ready
 op_eq
 id|smb_data_callback
 )paren
@@ -883,6 +908,7 @@ c_func
 l_string|&quot;smb_close_socket: still catching keepalives!&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|server-&gt;sock_file
 op_assign
 l_int|NULL
@@ -1174,7 +1200,8 @@ OL
 l_int|0
 )paren
 (brace
-id|pr_debug
+macro_line|#ifdef SMBFS_PARANOIA
+id|printk
 c_func
 (paren
 l_string|&quot;smb_get_length: recv error = %d&bslash;n&quot;
@@ -1183,6 +1210,7 @@ op_minus
 id|result
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 id|result
 suffix:semicolon
@@ -1218,12 +1246,19 @@ id|re_recv
 suffix:semicolon
 r_default
 suffix:colon
-id|pr_debug
+macro_line|#ifdef SMBFS_PARANOIA
+id|printk
 c_func
 (paren
-l_string|&quot;smb_get_length: Invalid NBT packet&bslash;n&quot;
+l_string|&quot;smb_get_length: Invalid NBT packet, code=%x&bslash;n&quot;
+comma
+id|peek_buf
+(braket
+l_int|0
+)braket
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 op_minus
 id|EIO
@@ -1283,8 +1318,7 @@ id|server
 suffix:semicolon
 r_int
 id|len
-suffix:semicolon
-r_int
+comma
 id|result
 suffix:semicolon
 r_int
@@ -1294,7 +1328,7 @@ id|peek_buf
 l_int|4
 )braket
 suffix:semicolon
-id|len
+id|result
 op_assign
 id|smb_get_length
 c_func
@@ -1307,15 +1341,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|len
+id|result
 OL
 l_int|0
 )paren
-(brace
-r_return
-id|len
+r_goto
+id|out
 suffix:semicolon
-)brace
+id|len
+op_assign
+id|result
+suffix:semicolon
+multiline_comment|/*&n;&t; * Some servers do not respect our max_xmit and send&n;&t; * larger packets.  Try to allocate a new packet,&n;&t; * but don&squot;t free the old one unless we succeed.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1326,7 +1363,10 @@ OG
 id|server-&gt;packet_size
 )paren
 (brace
-multiline_comment|/* Some servers do not care about our max_xmit. They&n;&t;&t;   send larger packets */
+r_char
+op_star
+id|packet
+suffix:semicolon
 id|pr_debug
 c_func
 (paren
@@ -1339,21 +1379,12 @@ op_plus
 l_int|4
 )paren
 suffix:semicolon
-id|smb_vfree
-c_func
-(paren
-id|server-&gt;packet
-)paren
-suffix:semicolon
-id|server-&gt;packet
+id|result
 op_assign
-l_int|0
+op_minus
+id|ENOMEM
 suffix:semicolon
-id|server-&gt;packet_size
-op_assign
-l_int|0
-suffix:semicolon
-id|server-&gt;packet
+id|packet
 op_assign
 id|smb_vmalloc
 c_func
@@ -1366,16 +1397,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|server-&gt;packet
+id|packet
 op_eq
 l_int|NULL
 )paren
-(brace
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|out
 suffix:semicolon
-)brace
+id|smb_vfree
+c_func
+(paren
+id|server-&gt;packet
+)paren
+suffix:semicolon
+id|server-&gt;packet
+op_assign
+id|packet
+suffix:semicolon
 id|server-&gt;packet_size
 op_assign
 id|len
@@ -1415,7 +1453,8 @@ OL
 l_int|0
 )paren
 (brace
-id|pr_debug
+macro_line|#ifdef SMBFS_DEBUG_VERBOSE
+id|printk
 c_func
 (paren
 l_string|&quot;smb_receive: receive error: %d&bslash;n&quot;
@@ -1423,8 +1462,9 @@ comma
 id|result
 )paren
 suffix:semicolon
-r_return
-id|result
+macro_line|#endif
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|server-&gt;rcls
@@ -1465,10 +1505,13 @@ id|server-&gt;err
 )paren
 suffix:semicolon
 macro_line|#endif
+id|out
+suffix:colon
 r_return
 id|result
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * This routine needs a lot of work.  We should check whether the packet&n; * is all one part before allocating a new one, and should try first to&n; * copy to a temp buffer before allocating.&n; * The final server-&gt;packet should be the larger of the two.&n; */
 r_static
 r_int
 DECL|function|smb_receive_trans2
@@ -2076,6 +2119,25 @@ id|lparam
 op_assign
 id|param_len
 suffix:semicolon
+macro_line|#ifdef SMBFS_PARANOIA
+r_if
+c_cond
+(paren
+id|buf_len
+OL
+id|server-&gt;packet_size
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;smb_receive_trans2: changing packet, old size=%d, new size=%d&bslash;n&quot;
+comma
+id|server-&gt;packet_size
+comma
+id|buf_len
+)paren
+suffix:semicolon
+macro_line|#endif
 id|smb_vfree
 c_func
 (paren
@@ -2139,16 +2201,6 @@ id|result
 op_assign
 op_minus
 id|EBADF
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|server
-)paren
-multiline_comment|/* this can&squot;t happen */
-r_goto
-id|bad_no_server
 suffix:semicolon
 id|buffer
 op_assign
@@ -2375,6 +2427,7 @@ id|result
 suffix:semicolon
 id|bad_conn
 suffix:colon
+macro_line|#ifdef SMBFS_PARANOIA
 id|printk
 c_func
 (paren
@@ -2383,6 +2436,7 @@ comma
 id|result
 )paren
 suffix:semicolon
+macro_line|#endif
 id|server-&gt;state
 op_assign
 id|CONN_INVALID
@@ -2391,17 +2445,6 @@ id|smb_invalidate_inodes
 c_func
 (paren
 id|server
-)paren
-suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
-id|bad_no_server
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;smb_request: no server!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -2579,6 +2622,7 @@ r_struct
 id|msghdr
 id|msg
 suffix:semicolon
+multiline_comment|/* N.B. This test isn&squot;t valid! packet_size may be &lt; max_xmit */
 r_if
 c_cond
 (paren
@@ -2630,6 +2674,7 @@ comma
 id|ldata
 )paren
 suffix:semicolon
+multiline_comment|/* N.B. these values should reflect out current packet size */
 id|WSET
 c_func
 (paren
@@ -3214,12 +3259,14 @@ id|result
 suffix:semicolon
 id|bad_conn
 suffix:colon
+macro_line|#ifdef SMBFS_PARANOIA
 id|printk
 c_func
 (paren
 l_string|&quot;smb_trans2_request: connection bad, setting invalid&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|server-&gt;state
 op_assign
 id|CONN_INVALID

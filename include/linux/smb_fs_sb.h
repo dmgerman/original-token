@@ -6,6 +6,11 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/smb.h&gt;
 macro_line|#include &lt;linux/smb_mount.h&gt;
+multiline_comment|/* Get the server for the specified dentry */
+DECL|macro|server_from_dentry
+mdefine_line|#define server_from_dentry(dentry) &amp;dentry-&gt;d_sb-&gt;u.smbfs_sb
+DECL|macro|SB_of
+mdefine_line|#define SB_of(server) ((struct super_block *) ((char *)(server) - &bslash;&n;&t;(unsigned long)(&amp;((struct super_block *)0)-&gt;u.smbfs_sb)))
 DECL|struct|smb_sb_info
 r_struct
 id|smb_sb_info
@@ -45,6 +50,12 @@ DECL|member|sem
 r_struct
 id|semaphore
 id|sem
+suffix:semicolon
+DECL|member|wait
+r_struct
+id|wait_queue
+op_star
+id|wait
 suffix:semicolon
 DECL|member|packet_size
 id|__u32

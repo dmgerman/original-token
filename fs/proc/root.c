@@ -41,6 +41,20 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
+r_static
+r_int
+id|proc_unlink
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|dentry
+op_star
+)paren
+suffix:semicolon
 DECL|variable|proc_alloc_map
 r_static
 r_int
@@ -121,6 +135,66 @@ multiline_comment|/* unlink */
 l_int|NULL
 comma
 multiline_comment|/* symlink */
+l_int|NULL
+comma
+multiline_comment|/* mkdir */
+l_int|NULL
+comma
+multiline_comment|/* rmdir */
+l_int|NULL
+comma
+multiline_comment|/* mknod */
+l_int|NULL
+comma
+multiline_comment|/* rename */
+l_int|NULL
+comma
+multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* readpage */
+l_int|NULL
+comma
+multiline_comment|/* writepage */
+l_int|NULL
+comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
+multiline_comment|/* truncate */
+l_int|NULL
+multiline_comment|/* permission */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * /proc dynamic directories now support unlinking&n; */
+DECL|variable|proc_dyna_dir_inode_operations
+r_struct
+id|inode_operations
+id|proc_dyna_dir_inode_operations
+op_assign
+(brace
+op_amp
+id|proc_dir_operations
+comma
+multiline_comment|/* default proc dir ops */
+l_int|NULL
+comma
+multiline_comment|/* create */
+id|proc_lookup
+comma
+multiline_comment|/* lookup */
+l_int|NULL
+comma
+multiline_comment|/* link&t;*/
+id|proc_unlink
+comma
+multiline_comment|/* unlink(struct inode *, struct dentry *) */
+l_int|NULL
+comma
+multiline_comment|/* symlink&t;*/
 l_int|NULL
 comma
 multiline_comment|/* mkdir */
@@ -782,6 +856,8 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+DECL|macro|OPENPROM_DEFREADDIR
+mdefine_line|#define OPENPROM_DEFREADDIR proc_openprom_defreaddir
 r_static
 r_int
 DECL|function|proc_openprom_deflookup
@@ -825,6 +901,13 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
+DECL|macro|OPENPROM_DEFLOOKUP
+mdefine_line|#define OPENPROM_DEFLOOKUP proc_openprom_deflookup
+macro_line|#else
+DECL|macro|OPENPROM_DEFREADDIR
+mdefine_line|#define OPENPROM_DEFREADDIR NULL
+DECL|macro|OPENPROM_DEFLOOKUP
+mdefine_line|#define OPENPROM_DEFLOOKUP NULL
 macro_line|#endif
 DECL|variable|proc_openprom_operations
 r_static
@@ -842,15 +925,9 @@ multiline_comment|/* read - bad */
 l_int|NULL
 comma
 multiline_comment|/* write - bad */
-macro_line|#if defined(CONFIG_SUN_OPENPROMFS_MODULE) &amp;&amp; defined(CONFIG_KERNELD)
-id|proc_openprom_defreaddir
+id|OPENPROM_DEFREADDIR
 comma
 multiline_comment|/* readdir */
-macro_line|#else
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-macro_line|#endif&t;
 l_int|NULL
 comma
 multiline_comment|/* poll - default */
@@ -883,15 +960,9 @@ multiline_comment|/* default net directory file-ops */
 l_int|NULL
 comma
 multiline_comment|/* create */
-macro_line|#if defined(CONFIG_SUN_OPENPROMFS_MODULE) &amp;&amp; defined(CONFIG_KERNELD)
-id|proc_openprom_deflookup
+id|OPENPROM_DEFLOOKUP
 comma
 multiline_comment|/* lookup */
-macro_line|#else
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-macro_line|#endif&t;
 l_int|NULL
 comma
 multiline_comment|/* link */
@@ -2795,6 +2866,46 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
+multiline_comment|/*&n; * As some entries in /proc are volatile, we want to &n; * get rid of unused dentries.  This could be made &n; * smarter: we could keep a &quot;volatile&quot; flag in the &n; * inode to indicate which ones to keep.&n; */
+r_static
+r_void
+DECL|function|proc_delete_dentry
+id|proc_delete_dentry
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|dentry
+)paren
+(brace
+id|d_drop
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
+)brace
+DECL|variable|proc_dentry_operations
+r_static
+r_struct
+id|dentry_operations
+id|proc_dentry_operations
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* revalidate */
+l_int|NULL
+comma
+multiline_comment|/* d_hash */
+l_int|NULL
+comma
+multiline_comment|/* d_compare */
+id|proc_delete_dentry
+multiline_comment|/* d_delete(struct dentry *) */
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * Don&squot;t create negative dentries here, return -ENOENT by hand&n; * instead.&n; */
 DECL|function|proc_lookup
 r_int
@@ -2822,6 +2933,14 @@ id|proc_dir_entry
 op_star
 id|de
 suffix:semicolon
+r_int
+id|error
+suffix:semicolon
+id|error
+op_assign
+op_minus
+id|ENOTDIR
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2835,9 +2954,17 @@ c_func
 id|dir-&gt;i_mode
 )paren
 )paren
-r_return
+r_goto
+id|out
+suffix:semicolon
+id|error
+op_assign
 op_minus
-id|ENOTDIR
+id|ENOENT
+suffix:semicolon
+id|inode
+op_assign
+l_int|NULL
 suffix:semicolon
 id|de
 op_assign
@@ -2847,10 +2974,6 @@ id|proc_dir_entry
 op_star
 )paren
 id|dir-&gt;u.generic_ip
-suffix:semicolon
-id|inode
-op_assign
-l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -2921,6 +3044,11 @@ l_int|0xffff
 )paren
 )paren
 suffix:semicolon
+id|error
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 id|inode
 op_assign
 id|proc_get_inode
@@ -2933,16 +3061,6 @@ comma
 id|de
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|inode
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -2951,12 +3069,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|inode
 )paren
-r_return
-op_minus
-id|ENOENT
+(brace
+id|dentry-&gt;d_op
+op_assign
+op_amp
+id|proc_dentry_operations
 suffix:semicolon
 id|d_add
 c_func
@@ -2966,8 +3085,15 @@ comma
 id|inode
 )paren
 suffix:semicolon
-r_return
+id|error
+op_assign
 l_int|0
+suffix:semicolon
+)brace
+id|out
+suffix:colon
+r_return
+id|error
 suffix:semicolon
 )brace
 DECL|function|proc_root_lookup
@@ -3195,6 +3321,11 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+id|dentry-&gt;d_op
+op_assign
+op_amp
+id|proc_dentry_operations
+suffix:semicolon
 id|d_add
 c_func
 (paren
@@ -3650,6 +3781,62 @@ c_func
 (paren
 op_amp
 id|tasklist_lock
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|proc_unlink
+r_static
+r_int
+id|proc_unlink
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|dir
+comma
+r_struct
+id|dentry
+op_star
+id|dentry
+)paren
+(brace
+r_struct
+id|proc_dir_entry
+op_star
+id|dp
+op_assign
+id|dir-&gt;u.generic_ip
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;proc_file_unlink: deleting %s/%s&bslash;n&quot;
+comma
+id|dp-&gt;name
+comma
+id|dentry-&gt;d_name.name
+)paren
+suffix:semicolon
+id|remove_proc_entry
+c_func
+(paren
+id|dentry-&gt;d_name.name
+comma
+id|dp
+)paren
+suffix:semicolon
+id|dentry-&gt;d_inode-&gt;i_nlink
+op_assign
+l_int|0
+suffix:semicolon
+id|d_delete
+c_func
+(paren
+id|dentry
 )paren
 suffix:semicolon
 r_return

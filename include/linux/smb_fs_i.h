@@ -15,12 +15,6 @@ r_int
 r_int
 id|open
 suffix:semicolon
-DECL|member|dentry
-r_void
-op_star
-id|dentry
-suffix:semicolon
-multiline_comment|/* The dentry we were opened with */
 DECL|member|fileid
 id|__u16
 id|fileid
@@ -36,6 +30,23 @@ id|__u16
 id|access
 suffix:semicolon
 multiline_comment|/* Access bits. */
+DECL|member|cache_valid
+id|__u16
+id|cache_valid
+suffix:semicolon
+multiline_comment|/* dircache valid? */
+DECL|member|oldmtime
+r_int
+r_int
+id|oldmtime
+suffix:semicolon
+multiline_comment|/* last time refreshed */
+DECL|member|dentry
+r_void
+op_star
+id|dentry
+suffix:semicolon
+multiline_comment|/* The dentry we were opened with */
 )brace
 suffix:semicolon
 macro_line|#endif

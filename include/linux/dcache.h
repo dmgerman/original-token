@@ -359,6 +359,16 @@ r_int
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|shrink_dcache_sb
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|d_invalidate
 c_func

@@ -104,6 +104,7 @@ l_int|NULL
 multiline_comment|/* permission */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * The fill argument is non-zero when the inode is being filled ...&n; * we don&squot;t need to do anything when it&squot;s being deleted.&n; */
 DECL|function|proc_pid_fill_inode
 r_static
 r_void
@@ -114,6 +115,9 @@ r_struct
 id|inode
 op_star
 id|inode
+comma
+r_int
+id|fill
 )paren
 (brace
 r_struct
@@ -138,6 +142,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|fill
+op_logical_and
 (paren
 id|p
 op_assign

@@ -474,8 +474,7 @@ r_int
 r_int
 id|size
 comma
-r_struct
-id|nfs_entry
+id|__u32
 op_star
 id|entry
 )paren
@@ -553,7 +552,7 @@ id|fattr
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|nfs_refresh_inode
 c_func
 (paren
