@@ -749,7 +749,70 @@ comma
 id|nfserr
 )paren
 suffix:semicolon
-multiline_comment|/* Encode result.&n;&t; * FIXME: Most NFSv3 calls return wcc data even when the call failed&n;&t; */
+multiline_comment|/* Encode result.&n;&t; * For NFSv2, additional info is never returned in case of an error.&n;&t; */
+macro_line|#ifdef CONFIG_NFSD_V3
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|nfserr
+op_logical_and
+id|rqstp-&gt;rq_vers
+op_eq
+l_int|2
+)paren
+)paren
+(brace
+id|xdr
+op_assign
+id|proc-&gt;pc_encode
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|xdr
+op_logical_and
+op_logical_neg
+id|xdr
+c_func
+(paren
+id|rqstp
+comma
+id|rqstp-&gt;rq_resbuf.buf
+comma
+id|rqstp-&gt;rq_resp
+)paren
+)paren
+(brace
+multiline_comment|/* Failed to encode result. Release cache entry */
+id|dprintk
+c_func
+(paren
+l_string|&quot;nfsd: failed to encode result!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|nfsd_cache_update
+c_func
+(paren
+id|rqstp
+comma
+id|RC_NOCACHE
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+op_star
+id|statp
+op_assign
+id|rpc_system_err
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+)brace
+macro_line|#else
 id|xdr
 op_assign
 id|proc-&gt;pc_encode
@@ -800,6 +863,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_NFSD_V3 */
 multiline_comment|/* Store reply in cache. */
 id|nfsd_cache_update
 c_func
@@ -833,7 +897,7 @@ comma
 id|nfsd_dispatch
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_NFSD_NFS3
+macro_line|#ifdef CONFIG_NFSD_V3
 DECL|variable|nfsd_version3
 r_static
 r_struct
@@ -843,7 +907,7 @@ op_assign
 (brace
 l_int|3
 comma
-l_int|23
+l_int|22
 comma
 id|nfsd_procedures3
 comma
@@ -868,7 +932,7 @@ comma
 op_amp
 id|nfsd_version2
 comma
-macro_line|#ifdef CONFIG_NFSD_NFS3
+macro_line|#ifdef CONFIG_NFSD_V3
 op_amp
 id|nfsd_version3
 comma

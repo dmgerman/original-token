@@ -1,3 +1,4 @@
+multiline_comment|/* DO NOT EDIT - Generated automatically by script_asm.pl */
 DECL|variable|SCRIPT
 r_static
 id|u32

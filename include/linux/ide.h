@@ -757,6 +757,16 @@ id|values_t
 id|smart_values
 suffix:semicolon
 macro_line|#endif
+DECL|member|last_lun
+r_int
+id|last_lun
+suffix:semicolon
+multiline_comment|/* last logical unit */
+DECL|member|forced_lun
+r_int
+id|forced_lun
+suffix:semicolon
+multiline_comment|/* if hdxlun was given at boot */
 DECL|typedef|ide_drive_t
 )brace
 id|ide_drive_t

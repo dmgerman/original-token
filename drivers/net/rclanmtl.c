@@ -2229,7 +2229,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Unknown private I2O msg received: 0x%x&bslash;n&quot;
+l_string|&quot;Unknown private I2O msg received: 0x%lx&bslash;n&quot;
 comma
 id|p32
 (braket
@@ -3793,7 +3793,7 @@ suffix:semicolon
 id|kprintf
 c_func
 (paren
-l_string|&quot;0x%08.8ulx&bslash;n&quot;
+l_string|&quot;0x%8.8lx&bslash;n&quot;
 comma
 id|p32
 (braket
@@ -4204,7 +4204,7 @@ suffix:semicolon
 id|kprintf
 c_func
 (paren
-l_string|&quot;0x%08.8ulx&bslash;n&quot;
+l_string|&quot;0x%8.8lx&bslash;n&quot;
 comma
 id|p32
 (braket
@@ -4484,7 +4484,7 @@ suffix:semicolon
 id|kprintf
 c_func
 (paren
-l_string|&quot;0x%08.8ulx&bslash;n&quot;
+l_string|&quot;0x%8.8lx&bslash;n&quot;
 comma
 id|p32
 (braket

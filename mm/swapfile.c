@@ -369,11 +369,6 @@ c_cond
 id|offset
 )paren
 (brace
-r_int
-id|curtp
-op_assign
-id|type
-suffix:semicolon
 id|entry
 op_assign
 id|SWP_ENTRY
@@ -412,7 +407,7 @@ id|prio
 (brace
 id|swap_list.next
 op_assign
-id|curtp
+id|swap_list.head
 suffix:semicolon
 )brace
 r_else

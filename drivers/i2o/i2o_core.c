@@ -6221,7 +6221,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Enableing iop%d&bslash;n&quot;
+l_string|&quot;Enabling iop%d&bslash;n&quot;
 comma
 id|iop-&gt;unit
 )paren
@@ -10917,6 +10917,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|i2o_get_class_name
+)paren
+suffix:semicolon
+DECL|variable|i2o_status_get
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|i2o_status_get
 )paren
 suffix:semicolon
 DECL|variable|i2o_query_scalar

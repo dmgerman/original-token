@@ -185,6 +185,20 @@ op_star
 id|fh_export
 suffix:semicolon
 multiline_comment|/* export pointer */
+macro_line|#ifdef CONFIG_NFSD_V3
+DECL|member|fh_post_saved
+r_int
+r_char
+id|fh_post_saved
+suffix:semicolon
+multiline_comment|/* post-op attrs saved */
+DECL|member|fh_pre_saved
+r_int
+r_char
+id|fh_pre_saved
+suffix:semicolon
+multiline_comment|/* pre-op attrs saved */
+macro_line|#endif /* CONFIG_NFSD_V3 */
 DECL|member|fh_locked
 r_int
 r_char
@@ -197,6 +211,82 @@ r_char
 id|fh_dverified
 suffix:semicolon
 multiline_comment|/* dentry has been checked */
+macro_line|#ifdef CONFIG_NFSD_V3
+multiline_comment|/* Pre-op attributes saved during fh_lock */
+DECL|member|fh_pre_size
+id|__u64
+id|fh_pre_size
+suffix:semicolon
+multiline_comment|/* size before operation */
+DECL|member|fh_pre_mtime
+id|time_t
+id|fh_pre_mtime
+suffix:semicolon
+multiline_comment|/* mtime before oper */
+DECL|member|fh_pre_ctime
+id|time_t
+id|fh_pre_ctime
+suffix:semicolon
+multiline_comment|/* ctime before oper */
+multiline_comment|/* Post-op attributes saved in fh_unlock */
+DECL|member|fh_post_mode
+id|umode_t
+id|fh_post_mode
+suffix:semicolon
+multiline_comment|/* i_mode */
+DECL|member|fh_post_nlink
+id|nlink_t
+id|fh_post_nlink
+suffix:semicolon
+multiline_comment|/* i_nlink */
+DECL|member|fh_post_uid
+id|uid_t
+id|fh_post_uid
+suffix:semicolon
+multiline_comment|/* i_uid */
+DECL|member|fh_post_gid
+id|gid_t
+id|fh_post_gid
+suffix:semicolon
+multiline_comment|/* i_gid */
+DECL|member|fh_post_size
+id|__u64
+id|fh_post_size
+suffix:semicolon
+multiline_comment|/* i_size */
+DECL|member|fh_post_blocks
+r_int
+r_int
+id|fh_post_blocks
+suffix:semicolon
+multiline_comment|/* i_blocks */
+DECL|member|fh_post_blksize
+r_int
+r_int
+id|fh_post_blksize
+suffix:semicolon
+multiline_comment|/* i_blksize */
+DECL|member|fh_post_rdev
+id|kdev_t
+id|fh_post_rdev
+suffix:semicolon
+multiline_comment|/* i_rdev */
+DECL|member|fh_post_atime
+id|time_t
+id|fh_post_atime
+suffix:semicolon
+multiline_comment|/* i_atime */
+DECL|member|fh_post_mtime
+id|time_t
+id|fh_post_mtime
+suffix:semicolon
+multiline_comment|/* i_mtime */
+DECL|member|fh_post_ctime
+id|time_t
+id|fh_post_ctime
+suffix:semicolon
+multiline_comment|/* i_ctime */
+macro_line|#endif /* CONFIG_NFSD_V3 */
 DECL|typedef|svc_fh
 )brace
 id|svc_fh
@@ -372,6 +462,145 @@ r_return
 id|fhp
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_NFSD_V3
+multiline_comment|/*&n; * Fill in the pre_op attr for the wcc data&n; */
+r_static
+r_inline
+r_void
+DECL|function|fill_pre_wcc
+id|fill_pre_wcc
+c_func
+(paren
+r_struct
+id|svc_fh
+op_star
+id|fhp
+)paren
+(brace
+r_struct
+id|inode
+op_star
+id|inode
+suffix:semicolon
+id|inode
+op_assign
+id|fhp-&gt;fh_dentry-&gt;d_inode
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|fhp-&gt;fh_pre_saved
+)paren
+(brace
+id|fhp-&gt;fh_pre_mtime
+op_assign
+id|inode-&gt;i_mtime
+suffix:semicolon
+id|fhp-&gt;fh_pre_ctime
+op_assign
+id|inode-&gt;i_ctime
+suffix:semicolon
+id|fhp-&gt;fh_pre_size
+op_assign
+id|inode-&gt;i_size
+suffix:semicolon
+id|fhp-&gt;fh_pre_saved
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+id|fhp-&gt;fh_locked
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Fill in the post_op attr for the wcc data&n; */
+r_static
+r_inline
+r_void
+DECL|function|fill_post_wcc
+id|fill_post_wcc
+c_func
+(paren
+r_struct
+id|svc_fh
+op_star
+id|fhp
+)paren
+(brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|fhp-&gt;fh_dentry-&gt;d_inode
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fhp-&gt;fh_post_saved
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;nfsd: inode locked twice during operation.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|fhp-&gt;fh_post_mode
+op_assign
+id|inode-&gt;i_mode
+suffix:semicolon
+id|fhp-&gt;fh_post_nlink
+op_assign
+id|inode-&gt;i_nlink
+suffix:semicolon
+id|fhp-&gt;fh_post_uid
+op_assign
+id|inode-&gt;i_uid
+suffix:semicolon
+id|fhp-&gt;fh_post_gid
+op_assign
+id|inode-&gt;i_gid
+suffix:semicolon
+id|fhp-&gt;fh_post_size
+op_assign
+id|inode-&gt;i_size
+suffix:semicolon
+id|fhp-&gt;fh_post_blksize
+op_assign
+id|inode-&gt;i_blksize
+suffix:semicolon
+id|fhp-&gt;fh_post_blocks
+op_assign
+id|inode-&gt;i_blocks
+suffix:semicolon
+id|fhp-&gt;fh_post_rdev
+op_assign
+id|inode-&gt;i_rdev
+suffix:semicolon
+id|fhp-&gt;fh_post_atime
+op_assign
+id|inode-&gt;i_atime
+suffix:semicolon
+id|fhp-&gt;fh_post_mtime
+op_assign
+id|inode-&gt;i_mtime
+suffix:semicolon
+id|fhp-&gt;fh_post_ctime
+op_assign
+id|inode-&gt;i_ctime
+suffix:semicolon
+id|fhp-&gt;fh_post_saved
+op_assign
+l_int|1
+suffix:semicolon
+id|fhp-&gt;fh_locked
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_NFSD_V3 */
 multiline_comment|/*&n; * Lock a file handle/inode&n; */
 r_static
 r_inline
@@ -471,10 +700,19 @@ op_amp
 id|inode-&gt;i_sem
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NFSD_V3
+id|fill_pre_wcc
+c_func
+(paren
+id|fhp
+)paren
+suffix:semicolon
+macro_line|#else
 id|fhp-&gt;fh_locked
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#endif /* CONFIG_NFSD_V3 */
 )brace
 multiline_comment|/*&n; * Unlock a file handle/inode&n; */
 r_static
@@ -509,6 +747,21 @@ c_cond
 id|fhp-&gt;fh_locked
 )paren
 (brace
+macro_line|#ifdef CONFIG_NFSD_V3
+id|fill_post_wcc
+c_func
+(paren
+id|fhp
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|fhp-&gt;fh_dentry-&gt;d_inode-&gt;i_sem
+)paren
+suffix:semicolon
+macro_line|#else
 r_struct
 id|dentry
 op_star
@@ -534,6 +787,7 @@ op_amp
 id|inode-&gt;i_sem
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_NFSD_V3 */
 )brace
 )brace
 macro_line|#endif /* __KERNEL__ */

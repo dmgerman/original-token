@@ -345,6 +345,10 @@ id|devName
 l_int|8
 )braket
 suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 DECL|typedef|TLanPrivateInfo
 )brace
 id|TLanPrivateInfo

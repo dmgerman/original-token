@@ -41,6 +41,7 @@ id|decnet_dr_count
 op_assign
 l_int|5
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 r_extern
 r_int
 id|decnet_dst_gc_interval
@@ -2148,4 +2149,24 @@ id|dn_table_header
 )paren
 suffix:semicolon
 )brace
+macro_line|#else  /* CONFIG_SYSCTL */
+DECL|function|dn_unregister_sysctl
+r_void
+id|dn_unregister_sysctl
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+DECL|function|dn_register_sysctl
+r_void
+id|dn_register_sysctl
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+macro_line|#endif
 eof

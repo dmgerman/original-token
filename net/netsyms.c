@@ -78,6 +78,17 @@ id|udp_port_rover
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
+r_extern
+r_int
+id|netdev_finish_unregister
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
 macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#if&t;defined(CONFIG_ULTRA)&t;||&t;defined(CONFIG_WD80x3)&t;&t;|| &bslash;&n;&t;defined(CONFIG_EL2)&t;||&t;defined(CONFIG_NE2000)&t;&t;|| &bslash;&n;&t;defined(CONFIG_E2100)&t;||&t;defined(CONFIG_HPLAN_PLUS)&t;|| &bslash;&n;&t;defined(CONFIG_HPLAN)&t;||&t;defined(CONFIG_AC3200)&t;&t;|| &bslash;&n;&t;defined(CONFIG_ES3210)&t;||&t;defined(CONFIG_ULTRA32)&t;&t;|| &bslash;&n;&t;defined(CONFIG_LNE390)&t;||&t;defined(CONFIG_NE3210)&t;&t;|| &bslash;&n;&t;defined(CONFIG_NE2K_PCI) ||&t;defined(CONFIG_APNE)&t;&t;|| &bslash;&n;&t;defined(CONFIG_DAYNAPORT)
 macro_line|#include &quot;../drivers/net/8390.h&quot;
@@ -804,6 +815,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_INET
 multiline_comment|/* Internet layer registration */
+DECL|variable|inetdev_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|inetdev_lock
+)paren
+suffix:semicolon
 DECL|variable|inet_add_protocol
 id|EXPORT_SYMBOL
 c_func
@@ -2414,6 +2432,7 @@ id|unregister_hipdev
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SYSCTL
 DECL|variable|sysctl_wmem_max
 id|EXPORT_SYMBOL
 c_func
@@ -2428,6 +2447,7 @@ c_func
 id|sysctl_rmem_max
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE) 
 macro_line|#include&lt;linux/if_ltalk.h&gt;
 DECL|variable|ltalk_setup

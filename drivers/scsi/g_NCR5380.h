@@ -197,7 +197,7 @@ multiline_comment|/* therefore CONFIG_SCSI_G_NCR5380_MEM */
 DECL|macro|NCR5380_map_config
 mdefine_line|#define NCR5380_map_config memory
 DECL|macro|NCR5380_map_type
-mdefine_line|#define NCR5380_map_type volatile unsigned char*
+mdefine_line|#define NCR5380_map_type unsigned long
 DECL|macro|NCR5380_map_name
 mdefine_line|#define NCR5380_map_name base
 DECL|macro|NCR5380_instance_name

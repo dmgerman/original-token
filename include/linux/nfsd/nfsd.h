@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/linux/nfsd/nfsd.h&n; *&n; * Hodge-podge collection of knfsd-related stuff.&n; * I will sort this out later.&n; *&n; * Copyright (C) 1995 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
+multiline_comment|/*&n; * linux/include/linux/nfsd/nfsd.h&n; *&n; * Hodge-podge collection of knfsd-related stuff.&n; * I will sort this out later.&n; *&n; * Copyright (C) 1995-1997 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
 macro_line|#ifndef LINUX_NFSD_NFSD_H
 DECL|macro|LINUX_NFSD_NFSD_H
 mdefine_line|#define LINUX_NFSD_NFSD_H
@@ -129,6 +129,15 @@ id|nfsd_procedures2
 (braket
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_NFSD_V3
+r_extern
+r_struct
+id|svc_procedure
+id|nfsd_procedures3
+(braket
+)braket
+suffix:semicolon
+macro_line|#endif /* CONFIG_NFSD_V3 */
 r_extern
 r_struct
 id|svc_program
@@ -198,6 +207,24 @@ id|svc_fh
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NFSD_V3
+r_int
+id|nfsd_access
+c_func
+(paren
+r_struct
+id|svc_rqst
+op_star
+comma
+r_struct
+id|svc_fh
+op_star
+comma
+id|u32
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_NFSD_V3 */
 r_int
 id|nfsd_setattr
 c_func
@@ -251,6 +278,45 @@ op_star
 id|res
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NFSD_V3
+r_int
+id|nfsd_create_v3
+c_func
+(paren
+r_struct
+id|svc_rqst
+op_star
+comma
+r_struct
+id|svc_fh
+op_star
+comma
+r_char
+op_star
+id|name
+comma
+r_int
+id|len
+comma
+r_struct
+id|iattr
+op_star
+id|attrs
+comma
+r_struct
+id|svc_fh
+op_star
+id|res
+comma
+r_int
+id|createmode
+comma
+id|u32
+op_star
+id|verifier
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_NFSD_V3 */
 r_int
 id|nfsd_open
 c_func
@@ -375,6 +441,10 @@ r_struct
 id|svc_fh
 op_star
 id|res
+comma
+r_struct
+id|iattr
+op_star
 )paren
 suffix:semicolon
 r_int
@@ -507,6 +577,10 @@ comma
 r_int
 op_star
 id|countp
+comma
+id|u32
+op_star
+id|verf
 )paren
 suffix:semicolon
 r_int
@@ -526,6 +600,26 @@ id|statfs
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NFSD_V3
+r_int
+id|nfsd_commit
+c_func
+(paren
+r_struct
+id|svc_rqst
+op_star
+comma
+r_struct
+id|svc_fh
+op_star
+comma
+id|off_t
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_NFSD_V3 */
 r_int
 id|nfsd_notify_change
 c_func
