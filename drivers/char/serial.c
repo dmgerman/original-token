@@ -17835,6 +17835,33 @@ comma
 l_int|115200
 )brace
 comma
+macro_line|#ifdef CONFIG_DDB5074
+multiline_comment|/*&n;&t; * NEC Vrc-5074 (Nile 4) builtin UART.&n;&t; * Conditionally compiled in since this is a motherboard device.&n;&t; */
+(brace
+id|PCI_VENDOR_ID_NEC
+comma
+id|PCI_DEVICE_ID_NEC_NILE4
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|SPCI_FL_BASE0
+comma
+l_int|1
+comma
+l_int|520833
+comma
+l_int|64
+comma
+l_int|3
+comma
+l_int|NULL
+comma
+l_int|0x300
+)brace
+comma
+macro_line|#endif
 multiline_comment|/* Generic serial board */
 (brace
 l_int|0

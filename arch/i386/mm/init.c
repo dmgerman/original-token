@@ -1938,13 +1938,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_X86_LOCAL_APIC
-id|init_apic_mappings
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_HIGHMEM
 id|kmap_init
 c_func

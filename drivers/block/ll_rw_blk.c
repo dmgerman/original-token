@@ -4613,7 +4613,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#else
-macro_line|#if !defined (__mc68000__) &amp;&amp; !defined(CONFIG_PPC) &amp;&amp; !defined(__sparc__)&bslash;&n;    &amp;&amp; !defined(CONFIG_APUS) &amp;&amp; !defined(__sh__) &amp;&amp; !defined(__ia64__)
+macro_line|#if defined(__i386__)&t;/* Do we even need this? */
 id|outb_p
 c_func
 (paren
@@ -4622,7 +4622,6 @@ comma
 l_int|0x3f2
 )paren
 suffix:semicolon
-multiline_comment|/* XXX do something with the floppy controller?? */
 macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_CDU31A

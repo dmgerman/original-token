@@ -1018,7 +1018,7 @@ l_int|10
 suffix:semicolon
 id|scmd-&gt;sc_data_direction
 op_assign
-id|DATA_READ
+id|SCSI_DATA_READ
 suffix:semicolon
 multiline_comment|/*&n;&t; * Do the command and wait for it to finish.&n;&t; */
 id|scsi_wait_cmd

@@ -786,6 +786,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SGI_DS1286
+id|ds1286_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_ATARI_DSP56K
 id|dsp56k_init
 c_func
@@ -813,7 +820,7 @@ id|gfx_register
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SGI
+macro_line|#ifdef CONFIG_SGI_IP22
 id|streamable_init
 (paren
 )paren

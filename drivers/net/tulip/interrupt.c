@@ -1,4 +1,4 @@
-multiline_comment|/*&n;&t;drivers/net/tulip/interrupt.c&n;&n;&t;Copyright 2000  The Linux Kernel Team&n;&t;Written/copyright 1994-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;*/
+multiline_comment|/*&n;&t;drivers/net/tulip/interrupt.c&n;&n;&t;Maintained by Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&t;Copyright 2000  The Linux Kernel Team&n;&t;Written/copyright 1994-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;Please refer to Documentation/networking/tulip.txt for more&n;&t;information on this driver.&n;&n;*/
 macro_line|#include &quot;tulip.h&quot;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -879,7 +879,7 @@ id|spin_lock
 c_func
 (paren
 op_amp
-id|tp-&gt;tx_lock
+id|tp-&gt;lock
 )paren
 suffix:semicolon
 r_for
@@ -1226,7 +1226,7 @@ id|spin_unlock
 c_func
 (paren
 op_amp
-id|tp-&gt;tx_lock
+id|tp-&gt;lock
 )paren
 suffix:semicolon
 )brace

@@ -454,8 +454,14 @@ id|smp_found_config
 suffix:semicolon
 r_extern
 r_void
-id|init_smp_config
-c_func
+id|find_smp_config
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|get_smp_config
 (paren
 r_void
 )paren

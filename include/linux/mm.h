@@ -1124,14 +1124,6 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|paging_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|free_area_init
 c_func
 (paren

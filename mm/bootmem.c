@@ -282,9 +282,14 @@ comma
 id|bdata-&gt;node_bootmem_map
 )paren
 )paren
-id|BUG
+id|printk
 c_func
 (paren
+l_string|&quot;hm, page %08x reserved twice.&bslash;n&quot;
+comma
+id|i
+op_star
+id|PAGE_SIZE
 )paren
 suffix:semicolon
 )brace

@@ -648,7 +648,7 @@ multiline_comment|/* If time &gt; 4sec, it is &quot;slow&quot; path, no recyclin
 macro_line|#if HZ == 20
 DECL|macro|TCP_TW_RECYCLE_TICK
 macro_line|# define TCP_TW_RECYCLE_TICK (5+2-TCP_TW_RECYCLE_SLOTS_LOG)
-macro_line|#elif HZ == 100
+macro_line|#elif HZ == 100 || HZ == 128
 DECL|macro|TCP_TW_RECYCLE_TICK
 macro_line|# define TCP_TW_RECYCLE_TICK (7+2-TCP_TW_RECYCLE_SLOTS_LOG)
 macro_line|#elif HZ == 1024

@@ -1213,20 +1213,29 @@ r_return
 id|num_processors
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Scan the memory blocks for an SMP configuration block.&n; */
-DECL|function|smp_get_mpf
+DECL|variable|mpf_found
 r_static
-r_int
+r_struct
+id|intel_mp_floating
+op_star
+id|mpf_found
+suffix:semicolon
+multiline_comment|/*&n; * Scan the memory blocks for an SMP configuration block.&n; */
+DECL|function|get_smp_config
+r_void
 id|__init
-id|smp_get_mpf
-c_func
+id|get_smp_config
 (paren
+r_void
+)paren
+(brace
 r_struct
 id|intel_mp_floating
 op_star
 id|mpf
-)paren
-(brace
+op_assign
+id|mpf_found
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1271,10 +1280,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|smp_found_config
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/*&n;&t; * default CPU id - if it&squot;s different in the mptable&n;&t; * then we change it before first using it.&n;&t; */
 id|boot_cpu_id
 op_assign
@@ -1431,7 +1436,6 @@ id|mpf-&gt;mpf_feature1
 )paren
 suffix:semicolon
 r_return
-l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -1489,16 +1493,12 @@ id|num_processors
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Only use the first configuration found.&n;&t; */
-r_return
-l_int|1
-suffix:semicolon
 )brace
 DECL|function|smp_scan_config
 r_static
 r_int
 id|__init
 id|smp_scan_config
-c_func
 (paren
 r_int
 r_int
@@ -1614,10 +1614,14 @@ l_int|4
 )paren
 )paren
 (brace
+id|smp_found_config
+op_assign
+l_int|1
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;found SMP MP-table at %08ld&bslash;n&quot;
+l_string|&quot;found SMP MP-table at %08lx&bslash;n&quot;
 comma
 id|virt_to_phys
 c_func
@@ -1626,11 +1630,34 @@ id|mpf
 )paren
 )paren
 suffix:semicolon
-id|smp_get_mpf
+id|reserve_bootmem
 c_func
 (paren
-id|mpf
+(paren
+r_int
+r_int
 )paren
+id|mpf
+comma
+id|PAGE_SIZE
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mpf-&gt;mpf_physptr
+)paren
+id|reserve_bootmem
+c_func
+(paren
+id|mpf-&gt;mpf_physptr
+comma
+id|PAGE_SIZE
+)paren
+suffix:semicolon
+id|mpf_found
+op_assign
+id|mpf
 suffix:semicolon
 r_return
 l_int|1
@@ -1649,10 +1676,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|init_intel_smp
+DECL|function|find_intel_smp
 r_void
 id|__init
-id|init_intel_smp
+id|find_intel_smp
 (paren
 r_void
 )paren
@@ -1735,10 +1762,10 @@ suffix:semicolon
 )brace
 macro_line|#else
 multiline_comment|/*&n; * The Visual Workstation is Intel MP compliant in the hardware&n; * sense, but it doesnt have a BIOS(-configuration table).&n; * No problem for Linux.&n; */
-DECL|function|init_visws_smp
+DECL|function|find_visws_smp
 r_void
 id|__init
-id|init_visws_smp
+id|find_visws_smp
 c_func
 (paren
 r_void
@@ -1775,23 +1802,23 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; * - Intel MP Configuration Table&n; * - or SGI Visual Workstation configuration&n; */
-DECL|function|init_smp_config
+DECL|function|find_smp_config
 r_void
 id|__init
-id|init_smp_config
+id|find_smp_config
 (paren
 r_void
 )paren
 (brace
 macro_line|#ifdef CONFIG_X86_IO_APIC
-id|init_intel_smp
+id|find_intel_smp
 c_func
 (paren
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_VISWS
-id|init_visws_smp
+id|find_visws_smp
 c_func
 (paren
 )paren

@@ -14,6 +14,14 @@ id|swapper_pg_dir
 l_int|1024
 )braket
 suffix:semicolon
+r_extern
+r_void
+id|paging_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* Caches aren&squot;t brain-dead on the intel. */
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;&t;do { } while (0)

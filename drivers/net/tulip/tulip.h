@@ -96,6 +96,7 @@ l_int|0x100
 comma
 )brace
 suffix:semicolon
+multiline_comment|/* chip types.  careful!  order is VERY IMPORTANT here, as these&n; * are used throughout the driver as indices into arrays */
 multiline_comment|/* Note 21142 == 21143. */
 DECL|enum|chips
 r_enum
@@ -128,6 +129,9 @@ l_int|3
 comma
 DECL|enumerator|LC82C168
 id|LC82C168
+comma
+DECL|enumerator|NGMC169
+id|NGMC169
 comma
 DECL|enumerator|MX98713
 id|MX98713
@@ -675,9 +679,9 @@ id|timer_list
 id|timer
 suffix:semicolon
 multiline_comment|/* Media selection timer. */
-DECL|member|tx_lock
+DECL|member|lock
 id|spinlock_t
-id|tx_lock
+id|lock
 suffix:semicolon
 DECL|member|cur_rx
 DECL|member|cur_tx

@@ -2454,8 +2454,33 @@ suffix:semicolon
 multiline_comment|/* AP processor realmode stacks in low memory*/
 macro_line|#endif
 macro_line|#ifdef CONFIG_X86_IO_APIC
-multiline_comment|/*&n;&t; *&t;Save possible boot-time SMP configuration:&n;&t; */
-id|init_smp_config
+multiline_comment|/*&n;&t; * Find and reserve possible boot-time SMP configuration:&n;&t; */
+id|find_smp_config
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|paging_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_X86_IO_APIC
+multiline_comment|/*&n;&t; * get boot-time SMP configuration:&n;&t; */
+r_if
+c_cond
+(paren
+id|smp_found_config
+)paren
+id|get_smp_config
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_X86_LOCAL_APIC
+id|init_apic_mappings
 c_func
 (paren
 )paren

@@ -1,5 +1,5 @@
 multiline_comment|/* tulip_core.c: A DEC 21040-family ethernet driver for Linux. */
-multiline_comment|/*&n;&t;Copyright 2000  The Linux Kernel Team&n;&t;Written/copyright 1994-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&t;&n;&t;Please read Documentation/networking/tulip.txt for more&n;&t;information.&n;&n;&t;For this specific driver variant please use linux-kernel for &n;&t;bug reports.&n;&n;&t;Additional information available at&n;&t;http://cesdis.gsfc.nasa.gov/linux/drivers/tulip.html&n;&n;*/
+multiline_comment|/*&n;&t;Maintained by Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&t;Copyright 2000  The Linux Kernel Team&n;&t;Written/copyright 1994-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&t;&n;&t;Please read Documentation/networking/tulip.txt for more&n;&t;information.&n;&n;&t;For this specific driver variant please use linux-kernel for &n;&t;bug reports.&n;&n;&t;Additional information available at&n;&t;http://cesdis.gsfc.nasa.gov/linux/drivers/tulip.html&n;&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -15,8 +15,8 @@ macro_line|#include &quot;tulip.h&quot;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
 multiline_comment|/* A few user-configurable values. */
 multiline_comment|/* Maximum events (Rx packets, etc.) to handle at each interrupt. */
@@ -346,6 +346,20 @@ id|pnic_timer
 )brace
 comma
 (brace
+l_string|&quot;NETGEAR NGMC169 MAC&quot;
+comma
+l_int|256
+comma
+l_int|0x0001ebef
+comma
+id|HAS_MII
+op_or
+id|HAS_PNICNWAY
+comma
+id|pnic_timer
+)brace
+comma
+(brace
 l_string|&quot;Macronix 98713 PMAC&quot;
 comma
 l_int|128
@@ -579,6 +593,22 @@ comma
 l_int|0
 comma
 id|LC82C168
+)brace
+comma
+(brace
+l_int|0x1385
+comma
+l_int|0xf004
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NGMC169
 )brace
 comma
 (brace
@@ -1042,18 +1072,7 @@ id|attempts
 op_assign
 l_int|200
 suffix:semicolon
-r_int
-id|flags
-suffix:semicolon
-multiline_comment|/* really a hw lock */
-id|spin_lock_irqsave
-(paren
-op_amp
-id|tp-&gt;tx_lock
-comma
-id|flags
-)paren
-suffix:semicolon
+multiline_comment|/* common path */
 r_if
 c_cond
 (paren
@@ -1061,9 +1080,19 @@ id|tp-&gt;chip_id
 op_ne
 id|X3201_3
 )paren
-r_goto
-id|out_write
+(brace
+id|outl
+(paren
+id|newcsr6
+comma
+id|ioaddr
+op_plus
+id|CSR6
+)paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|newcsr6
 op_and_assign
 l_int|0x726cfeca
@@ -1236,14 +1265,6 @@ op_plus
 id|CSR6
 )paren
 suffix:semicolon
-id|spin_unlock_irqrestore
-(paren
-op_amp
-id|tp-&gt;tx_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 )brace
 DECL|function|tulip_up
 r_static
@@ -1354,7 +1375,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s: tulip_open() irq %d.&bslash;n&quot;
+l_string|&quot;%s: tulip_up(), irq==%d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -2592,6 +2613,18 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+(paren
+op_amp
+id|tp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2664,7 +2697,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: transmit timed out, switching to &quot;
+l_string|&quot;%s: 21040 transmit timed out, switching to &quot;
 l_string|&quot;%s.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2684,11 +2717,8 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_else
@@ -3276,14 +3306,27 @@ op_plus
 id|CSR1
 )paren
 suffix:semicolon
+id|tp-&gt;stats.tx_errors
+op_increment
+suffix:semicolon
+id|out
+suffix:colon
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-id|tp-&gt;stats.tx_errors
-op_increment
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
-r_return
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|tp-&gt;lock
+comma
+id|flags
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the Rx and Tx rings, along with various &squot;dev&squot; bits. */
@@ -3647,7 +3690,7 @@ id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|tp-&gt;tx_lock
+id|tp-&gt;lock
 comma
 id|cpuflags
 )paren
@@ -3801,15 +3844,6 @@ suffix:semicolon
 id|tp-&gt;cur_tx
 op_increment
 suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|tp-&gt;tx_lock
-comma
-id|cpuflags
-)paren
-suffix:semicolon
 multiline_comment|/* Trigger an immediate transmit demand. */
 id|outl
 c_func
@@ -3819,6 +3853,15 @@ comma
 id|dev-&gt;base_addr
 op_plus
 id|CSR1
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|tp-&gt;lock
+comma
+id|cpuflags
 )paren
 suffix:semicolon
 id|dev-&gt;trans_start
@@ -3857,6 +3900,10 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|netif_device_detach
 (paren
 id|dev
@@ -3866,6 +3913,14 @@ id|del_timer
 (paren
 op_amp
 id|tp-&gt;timer
+)paren
+suffix:semicolon
+id|spin_lock_irqsave
+(paren
+op_amp
+id|tp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* Disable interrupts by clearing the interrupt mask. */
@@ -3933,6 +3988,14 @@ id|CSR8
 )paren
 op_amp
 l_int|0xffff
+suffix:semicolon
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|tp-&gt;lock
+comma
+id|flags
+)paren
 suffix:semicolon
 id|dev-&gt;if_port
 op_assign
@@ -4181,6 +4244,19 @@ c_func
 id|dev
 )paren
 )paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+(paren
+op_amp
+id|tp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|tp-&gt;stats.rx_missed_errors
 op_add_assign
 id|inl
@@ -4193,6 +4269,16 @@ id|CSR8
 op_amp
 l_int|0xffff
 suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|tp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 r_return
 op_amp
 id|tp-&gt;stats
@@ -4508,15 +4594,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|save_flags
-c_func
+id|spin_lock_irqsave
 (paren
+op_amp
+id|tp-&gt;lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|data
@@ -4544,9 +4627,11 @@ op_amp
 l_int|0x1f
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
+id|spin_unlock_irqrestore
 (paren
+op_amp
+id|tp-&gt;lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -4611,15 +4696,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|save_flags
-c_func
+id|spin_lock_irqsave
 (paren
+op_amp
+id|tp-&gt;lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|tulip_mdio_write
@@ -4647,9 +4729,12 @@ l_int|2
 )braket
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|tp-&gt;lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -4912,10 +4997,6 @@ id|CSR6
 op_amp
 op_complement
 l_int|0x00D5
-suffix:semicolon
-r_int
-r_int
-id|cpuflags
 suffix:semicolon
 id|tp-&gt;csr6
 op_and_assign
@@ -5195,6 +5276,10 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/* Note that only the low-address shortword of setup_frame is valid!&n;&t;&t;   The values are doubled for big-endian architectures. */
 r_if
 c_cond
@@ -5466,14 +5551,13 @@ id|eaddrs
 l_int|2
 )braket
 suffix:semicolon
-multiline_comment|/* Now add this frame to the Tx list. */
 id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|tp-&gt;tx_lock
+id|tp-&gt;lock
 comma
-id|cpuflags
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -5494,23 +5578,9 @@ r_else
 (brace
 r_int
 r_int
-id|flags
-suffix:semicolon
-r_int
-r_int
 id|entry
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* Now add this frame to the Tx list. */
 id|entry
 op_assign
 id|tp-&gt;cur_tx
@@ -5672,15 +5742,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|tp-&gt;tx_lock
-comma
-id|cpuflags
-)paren
-suffix:semicolon
 multiline_comment|/* Trigger an immediate transmit demand. */
 id|outl
 c_func
@@ -5693,6 +5754,15 @@ id|CSR1
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|tp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 id|tulip_outl_CSR6
 c_func
@@ -5986,7 +6056,7 @@ op_amp
 id|chip_rev
 )paren
 suffix:semicolon
-multiline_comment|/* tp/dev-&gt;priv zeroed in init_etherdev */
+multiline_comment|/*&n;&t; * initialize priviate data structure &squot;tp&squot;&n;&t; * it is zeroed and aligned in init_etherdev&n;&t; */
 id|tp
 op_assign
 id|dev-&gt;priv
@@ -6020,9 +6090,31 @@ id|spin_lock_init
 c_func
 (paren
 op_amp
-id|tp-&gt;tx_lock
+id|tp-&gt;lock
 )paren
 suffix:semicolon
+macro_line|#ifdef TULIP_FULL_DUPLEX
+id|tp-&gt;full_duplex
+op_assign
+l_int|1
+suffix:semicolon
+id|tp-&gt;full_duplex_lock
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef TULIP_DEFAULT_MEDIA
+id|tp-&gt;default_port
+op_assign
+id|TULIP_DEFAULT_MEDIA
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef TULIP_NO_MEDIA_SWITCH
+id|tp-&gt;medialock
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -6760,32 +6852,6 @@ id|AX88140
 id|tp-&gt;csr0
 op_or_assign
 l_int|0x2000
-suffix:semicolon
-macro_line|#ifdef TULIP_FULL_DUPLEX
-id|tp-&gt;full_duplex
-op_assign
-l_int|1
-suffix:semicolon
-id|tp-&gt;full_duplex_lock
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef TULIP_DEFAULT_MEDIA
-id|tp-&gt;default_port
-op_assign
-id|TULIP_DEFAULT_MEDIA
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef TULIP_NO_MEDIA_SWITCH
-id|tp-&gt;medialock
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
-id|tp-&gt;tx_lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/* The lower four bits are the media type. */
 r_if

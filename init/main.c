@@ -1875,11 +1875,6 @@ op_amp
 id|command_line
 )paren
 suffix:semicolon
-id|paging_init
-c_func
-(paren
-)paren
-suffix:semicolon
 id|trap_init
 c_func
 (paren
