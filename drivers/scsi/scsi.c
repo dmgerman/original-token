@@ -5210,12 +5210,6 @@ l_string|&quot;Invalid or not present host.&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * We must prevent reentrancy to the lowlevel host driver.  This prevents&n;&t; * it - we enter a loop until the host we want to talk to is not busy.&n;&t; * Race conditions are prevented, as interrupts are disabled in between the&n;&t; * time we check for the host being not busy, and the time we mark it busy&n;&t; * ourselves.&n;&t; */
-id|host-&gt;host_busy
-op_increment
-suffix:semicolon
-id|device-&gt;device_busy
-op_increment
-suffix:semicolon
 multiline_comment|/*&n;&t; * Our own function scsi_done (which marks the host as not busy, disables&n;&t; * the timeout counter, etc) will be called by us or by the&n;&t; * scsi_hosts[host].queuecommand() function needs to also call&n;&t; * the completion function for the high level driver.&n;&t; */
 id|memcpy
 c_func
@@ -5427,7 +5421,7 @@ id|SCpnt-&gt;serial_number
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * First, see whether this command already timed out.  If so, we ignore&n;&t; * the response.  We treat it as if the command never finished.&n;&t; *&n;&t; * Since serial_number is now 0, the error handler cound detect this&n;&t; * situation and avoid to call the the low level driver abort routine.&n;&t; * (DB)&n;&t; */
+multiline_comment|/*&n;&t; * First, see whether this command already timed out.  If so, we ignore&n;&t; * the response.  We treat it as if the command never finished.&n;&t; *&n;&t; * Since serial_number is now 0, the error handler cound detect this&n;&t; * situation and avoid to call the the low level driver abort routine.&n;&t; * (DB)&n;         *&n;         * FIXME(eric) - I believe that this test is now redundant, due to&n;         * the test of the return status of del_timer().&n;&t; */
 r_if
 c_cond
 (paren

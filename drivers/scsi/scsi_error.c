@@ -4656,6 +4656,17 @@ id|SCpnt-&gt;bh_next
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/*&n;                 * Oh, this is a vile hack.  scsi_done() expects a timer&n;                 * to be running on the command.  If there isn&squot;t, it assumes&n;                 * that the command has actually timed out, and a timer&n;                 * handler is running.  That may well be how we got into&n;                 * this fix, but right now things are stable.  We add&n;                 * a timer back again so that we can report completion.&n;                 * scsi_done() will immediately remove said timer from&n;                 * the command, and then process it.&n;                 */
+id|scsi_add_timer
+c_func
+(paren
+id|SCpnt
+comma
+l_int|100
+comma
+id|scsi_eh_times_out
+)paren
+suffix:semicolon
 id|scsi_done
 c_func
 (paren
@@ -4701,6 +4712,13 @@ c_func
 id|sem
 )paren
 suffix:semicolon
+multiline_comment|/*&n;         * We only listen to signals if the HA was loaded as a module.&n;         * If the HA was compiled into the kernel, then we don&squot;t listen&n;         * to any signals.&n;         */
+r_if
+c_cond
+(paren
+id|host-&gt;loaded_as_module
+)paren
+(brace
 id|siginitsetinv
 c_func
 (paren
@@ -4710,6 +4728,7 @@ comma
 id|SHUTDOWN_SIGS
 )paren
 suffix:semicolon
+)brace
 id|lock_kernel
 c_func
 (paren
@@ -4786,6 +4805,12 @@ l_string|&quot;Error handler sleeping&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|host-&gt;loaded_as_module
+)paren
+(brace
 id|down_interruptible
 c_func
 (paren
@@ -4804,6 +4829,17 @@ id|current
 )paren
 r_break
 suffix:semicolon
+)brace
+r_else
+(brace
+id|down
+c_func
+(paren
+op_amp
+id|sem
+)paren
+suffix:semicolon
+)brace
 id|SCSI_LOG_ERROR_RECOVERY
 c_func
 (paren

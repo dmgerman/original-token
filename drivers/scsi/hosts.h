@@ -760,6 +760,18 @@ r_int
 r_char
 id|major
 suffix:semicolon
+DECL|member|min_major
+r_int
+r_char
+id|min_major
+suffix:semicolon
+multiline_comment|/* Minimum major in range. */
+DECL|member|max_major
+r_int
+r_char
+id|max_major
+suffix:semicolon
+multiline_comment|/* Maximum major in range. */
 DECL|member|nr_dev
 r_int
 r_char
@@ -853,7 +865,7 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Used by new queueing code. */
+multiline_comment|/* Used by new queueing code. &n;                                           Selects command for blkdevs */
 )brace
 suffix:semicolon
 r_extern

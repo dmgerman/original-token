@@ -699,6 +699,14 @@ op_star
 id|devices
 suffix:semicolon
 multiline_comment|/* devices behind this bridge */
+DECL|member|last_dev_p
+r_struct
+id|pci_dev
+op_star
+op_star
+id|last_dev_p
+suffix:semicolon
+multiline_comment|/* where should next device be linked to */
 DECL|member|resource
 r_struct
 id|resource
@@ -1267,6 +1275,28 @@ comma
 r_void
 op_star
 id|sysdata
+)paren
+suffix:semicolon
+r_struct
+id|pci_bus
+op_star
+id|pci_alloc_primary_bus
+c_func
+(paren
+r_int
+id|bus
+)paren
+suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pci_scan_slot
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|temp
 )paren
 suffix:semicolon
 r_int

@@ -673,6 +673,15 @@ id|major
 suffix:colon
 id|SCSI_DISK0_MAJOR
 comma
+multiline_comment|/*&n;         * Secondary range of majors that this driver handles.&n;         */
+id|min_major
+suffix:colon
+id|SCSI_DISK1_MAJOR
+comma
+id|max_major
+suffix:colon
+id|SCSI_DISK7_MAJOR
+comma
 id|blk
 suffix:colon
 l_int|1
@@ -784,7 +793,7 @@ l_int|6
 suffix:semicolon
 id|devm
 op_assign
-id|MINOR
+id|SD_PARTITION
 c_func
 (paren
 id|SCpnt-&gt;request.rq_dev
@@ -2269,7 +2278,7 @@ id|error_sector
 op_sub_assign
 id|sd
 (braket
-id|MINOR
+id|SD_PARTITION
 c_func
 (paren
 id|SCpnt-&gt;request.rq_dev

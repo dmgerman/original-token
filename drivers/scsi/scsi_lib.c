@@ -1504,6 +1504,31 @@ r_return
 id|spnt
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; * I am still not entirely satisfied with this solution,&n;&t;&t; * but it is good enough for now.  Disks have a number of&n;&t;&t; * major numbers associated with them, the primary&n;&t;&t; * 8, which we test above, and a secondary range of 7&n;&t;&t; * different consecutive major numbers.   If this ever&n;&t;&t; * becomes insufficient, then we could add another function&n;&t;&t; * to the structure, and generalize this completely.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|spnt-&gt;min_major
+op_ne
+l_int|0
+op_logical_and
+id|spnt-&gt;max_major
+op_ne
+l_int|0
+op_logical_and
+id|major
+op_ge
+id|spnt-&gt;min_major
+op_logical_and
+id|major
+op_le
+id|spnt-&gt;max_major
+)paren
+(brace
+r_return
+id|spnt
+suffix:semicolon
+)brace
 )brace
 r_return
 l_int|NULL
@@ -1770,13 +1795,14 @@ id|SCpnt
 r_break
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/*&n;&t;&t; * Now bump the usage count for both the host and the&n;&t;&t; * device.&n;&t;&t; */
 id|SHpnt-&gt;host_busy
 op_increment
 suffix:semicolon
 id|SDpnt-&gt;device_busy
 op_increment
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t;&t; * FIXME(eric)&n;&t;&t; * I am not sure where the best place to do this is.  We need&n;&t;&t; * to hook in a place where we are likely to come if in user&n;&t;&t; * space.   Technically the error handling thread should be&n;&t;&t; * doing this crap, but the error handler isn&squot;t used by&n;&t;&t; * most hosts.&n;&t;&t; */
 r_if
 c_cond
