@@ -396,11 +396,6 @@ DECL|member|count
 id|atomic_t
 id|count
 suffix:semicolon
-DECL|member|unused
-r_int
-r_int
-id|unused
-suffix:semicolon
 DECL|member|flags
 r_int
 r_int
@@ -426,12 +421,6 @@ id|buffer_head
 op_star
 id|buffers
 suffix:semicolon
-DECL|member|map_nr
-r_int
-r_int
-id|map_nr
-suffix:semicolon
-multiline_comment|/* page-&gt;map_nr == page - mem_map */
 DECL|typedef|mem_map_t
 )brace
 id|mem_map_t
@@ -572,6 +561,10 @@ r_return
 id|page
 suffix:semicolon
 )brace
+r_extern
+r_int
+id|low_on_memory
+suffix:semicolon
 multiline_comment|/* memory.c &amp; swap.c*/
 DECL|macro|free_page
 mdefine_line|#define free_page(addr) free_pages((addr),0)

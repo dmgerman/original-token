@@ -4908,10 +4908,6 @@ id|mm
 )paren
 suffix:semicolon
 )brace
-r_else
-r_return
-l_int|0
-suffix:semicolon
 r_return
 id|sprintf
 c_func

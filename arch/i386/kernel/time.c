@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/i386/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1996-05-03    Ingo Molnar&n; *      fixed time warps in do_[slow|fast]_gettimeoffset()&n; * 1998-09-05    (Various)&n; *&t;More robust do_fast_gettimeoffset() algorithm implemented&n; *&t;(works with APM, Cyrix 6x86MX and Centaur C6),&n; *&t;monotonic gettimeofday() with fast_get_timeoffset(),&n; *&t;drift-proof precision TSC calibration on boot&n; *&t;(C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;, Andrew D.&n; *&t;Balsa &lt;andrebalsa@altern.org&gt;, Philip Gladstone &lt;philip@raptor.com&gt;;&n; *&t;ported from 2.0.35 Jumbo-9 by Michael Krause &lt;m.krause@tu-harburg.de&gt;).&n; * 1998-12-16    Andrea Arcangeli&n; *&t;Fixed Jumbo-9 code in 2.1.131: do_gettimeofday was missing 1 jiffy&n; *&t;because was not accounting lost_ticks.&n; * 1998-12-24 Copyright (C) 1998  Andrea Arcangeli&n; *&t;Fixed a xtime SMP race (we need the xtime_lock rw spinlock to&n; *&t;serialize accesses to xtime/lost_ticks).&n; */
+multiline_comment|/*&n; *  linux/arch/i386/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1996-05-03    Ingo Molnar&n; *      fixed time warps in do_[slow|fast]_gettimeoffset()&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; * 1998-09-05    (Various)&n; *&t;More robust do_fast_gettimeoffset() algorithm implemented&n; *&t;(works with APM, Cyrix 6x86MX and Centaur C6),&n; *&t;monotonic gettimeofday() with fast_get_timeoffset(),&n; *&t;drift-proof precision TSC calibration on boot&n; *&t;(C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;, Andrew D.&n; *&t;Balsa &lt;andrebalsa@altern.org&gt;, Philip Gladstone &lt;philip@raptor.com&gt;;&n; *&t;ported from 2.0.35 Jumbo-9 by Michael Krause &lt;m.krause@tu-harburg.de&gt;).&n; * 1998-12-16    Andrea Arcangeli&n; *&t;Fixed Jumbo-9 code in 2.1.131: do_gettimeofday was missing 1 jiffy&n; *&t;because was not accounting lost_ticks.&n; * 1998-12-24 Copyright (C) 1998  Andrea Arcangeli&n; *&t;Fixed a xtime SMP race (we need the xtime_lock rw spinlock to&n; *&t;serialize accesses to xtime/lost_ticks).&n; */
 multiline_comment|/* What about the &quot;updated NTP code&quot; stuff in 2.0 time.c? It&squot;s not in&n; * 2.1, perhaps it should be ported, too.&n; *&n; * What about the BUGGY_NEPTUN_TIMER stuff in do_slow_gettimeoffset()?&n; * Whatever it fixes, is it also fixed in the new code from the Jumbo&n; * patch, so that that code can be used instead?&n; *&n; * The CPU Hz should probably be displayed in check_bugs() together&n; * with the CPU vendor and type. Perhaps even only in MHz, though that&n; * takes away some of the fun of the new code :)&n; *&n; * - Michael Krause */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -19,20 +19,10 @@ macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;asm/fixmap.h&gt;
+macro_line|#include &lt;asm/cobalt.h&gt;
 multiline_comment|/*&n; * for x86_do_profile()&n; */
 macro_line|#include &quot;irq.h&quot;
-r_extern
-r_int
-id|setup_x86_irq
-c_func
-(paren
-r_int
-comma
-r_struct
-id|irqaction
-op_star
-)paren
-suffix:semicolon
 DECL|variable|cpu_hz
 r_int
 r_int
@@ -503,17 +493,27 @@ op_assign
 op_star
 id|tv
 suffix:semicolon
+id|time_adjust
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* stop active adjtime() */
+id|time_status
+op_or_assign
+id|STA_UNSYNC
+suffix:semicolon
 id|time_state
 op_assign
-id|TIME_BAD
+id|TIME_ERROR
 suffix:semicolon
+multiline_comment|/* p. 24, (a) */
 id|time_maxerror
 op_assign
-id|MAXPHASE
+id|NTP_PHASE_LIMIT
 suffix:semicolon
 id|time_esterror
 op_assign
-id|MAXPHASE
+id|NTP_PHASE_LIMIT
 suffix:semicolon
 id|write_unlock_irq
 c_func
@@ -790,6 +790,24 @@ op_star
 id|regs
 )paren
 (brace
+macro_line|#ifdef CONFIG_VISWS
+multiline_comment|/* Clear the interrupt */
+id|co_cpu_write
+c_func
+(paren
+id|CO_CPU_STAT
+comma
+id|co_cpu_read
+c_func
+(paren
+id|CO_CPU_STAT
+)paren
+op_amp
+op_complement
+id|CO_STAT_TIMEINTR
+)paren
+suffix:semicolon
+macro_line|#endif
 id|do_timer
 c_func
 (paren
@@ -832,9 +850,13 @@ multiline_comment|/*&n;&t; * If we have an externally synchronized Linux clock, 
 r_if
 c_cond
 (paren
-id|time_state
-op_ne
-id|TIME_BAD
+(paren
+id|time_status
+op_amp
+id|STA_UNSYNC
+)paren
+op_eq
+l_int|0
 op_logical_and
 id|xtime.tv_sec
 OG
@@ -843,24 +865,30 @@ op_plus
 l_int|660
 op_logical_and
 id|xtime.tv_usec
-OG
+op_ge
 l_int|500000
 op_minus
 (paren
-id|tick
-op_rshift
-l_int|1
+(paren
+r_int
 )paren
+id|tick
+)paren
+op_div
+l_int|2
 op_logical_and
 id|xtime.tv_usec
-OL
+op_le
 l_int|500000
 op_plus
 (paren
-id|tick
-op_rshift
-l_int|1
+(paren
+r_int
 )paren
+id|tick
+)paren
+op_div
+l_int|2
 )paren
 (brace
 r_if
@@ -1650,6 +1678,66 @@ id|cpu_hz
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef CONFIG_VISWS
+id|printk
+c_func
+(paren
+l_string|&quot;Starting Cobalt Timer system clock&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Set the countdown value */
+id|co_cpu_write
+c_func
+(paren
+id|CO_CPU_TIMEVAL
+comma
+id|CO_TIME_HZ
+op_div
+id|HZ
+)paren
+suffix:semicolon
+multiline_comment|/* Start the timer */
+id|co_cpu_write
+c_func
+(paren
+id|CO_CPU_CTRL
+comma
+id|co_cpu_read
+c_func
+(paren
+id|CO_CPU_CTRL
+)paren
+op_or
+id|CO_CTRL_TIMERUN
+)paren
+suffix:semicolon
+multiline_comment|/* Enable (unmask) the timer interrupt */
+id|co_cpu_write
+c_func
+(paren
+id|CO_CPU_CTRL
+comma
+id|co_cpu_read
+c_func
+(paren
+id|CO_CPU_CTRL
+)paren
+op_amp
+op_complement
+id|CO_CTRL_TIMEMASK
+)paren
+suffix:semicolon
+multiline_comment|/* Wire cpu IDT entry to s/w handler (and Cobalt APIC to IDT) */
+id|setup_x86_irq
+c_func
+(paren
+id|CO_IRQ_TIMER
+comma
+op_amp
+id|irq0
+)paren
+suffix:semicolon
+macro_line|#else
 id|setup_x86_irq
 c_func
 (paren
@@ -1659,5 +1747,6 @@ op_amp
 id|irq0
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 eof

@@ -37,8 +37,8 @@ macro_line|#elif defined(CONFIG_ATARI) || defined(CONFIG_MAC) || defined(CONFIG_
 DECL|macro|MACH_IS_AMIGA
 macro_line|#  define MACH_IS_AMIGA (m68k_machtype == MACH_AMIGA)
 macro_line|#else
-DECL|macro|CONFIG_AMIGA_ONLY
-macro_line|#  define CONFIG_AMIGA_ONLY
+DECL|macro|MACH_AMIGA_ONLY
+macro_line|#  define MACH_AMIGA_ONLY
 DECL|macro|MACH_IS_AMIGA
 macro_line|#  define MACH_IS_AMIGA (1)
 DECL|macro|MACH_TYPE
@@ -51,8 +51,8 @@ macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_
 DECL|macro|MACH_IS_ATARI
 macro_line|#  define MACH_IS_ATARI (m68k_machtype == MACH_ATARI)
 macro_line|#else
-DECL|macro|CONFIG_ATARI_ONLY
-macro_line|#  define CONFIG_ATARI_ONLY
+DECL|macro|MACH_ATARI_ONLY
+macro_line|#  define MACH_ATARI_ONLY
 DECL|macro|MACH_IS_ATARI
 macro_line|#  define MACH_IS_ATARI (1)
 DECL|macro|MACH_TYPE
@@ -65,8 +65,8 @@ macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_ATARI) || defined(CONFI
 DECL|macro|MACH_IS_MAC
 macro_line|#  define MACH_IS_MAC (m68k_machtype == MACH_MAC)
 macro_line|#else
-DECL|macro|CONFIG_MAC_ONLY
-macro_line|#  define CONFIG_MAC_ONLY
+DECL|macro|MACH_MAC_ONLY
+macro_line|#  define MACH_MAC_ONLY
 DECL|macro|MACH_IS_MAC
 macro_line|#  define MACH_IS_MAC (1)
 DECL|macro|MACH_TYPE
@@ -85,8 +85,8 @@ macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_
 DECL|macro|MACH_IS_APOLLO
 macro_line|#  define MACH_IS_APOLLO (m68k_machtype == MACH_APOLLO)
 macro_line|#else
-DECL|macro|CONFIG_APOLLO_ONLY
-macro_line|#  define CONFIG_APOLLO_ONLY
+DECL|macro|MACH_APOLLO_ONLY
+macro_line|#  define MACH_APOLLO_ONLY
 DECL|macro|MACH_IS_APOLLO
 macro_line|#  define MACH_IS_APOLLO (1)
 DECL|macro|MACH_TYPE
@@ -99,8 +99,8 @@ macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_
 DECL|macro|MACH_IS_MVME16x
 macro_line|#  define MACH_IS_MVME16x (m68k_machtype == MACH_MVME16x)
 macro_line|#else
-DECL|macro|CONFIG_MVME16x_ONLY
-macro_line|#  define CONFIG_MVME16x_ONLY
+DECL|macro|MACH_MVME16x_ONLY
+macro_line|#  define MACH_MVME16x_ONLY
 DECL|macro|MACH_IS_MVME16x
 macro_line|#  define MACH_IS_MVME16x (1)
 DECL|macro|MACH_TYPE
@@ -113,8 +113,8 @@ macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_
 DECL|macro|MACH_IS_BVME6000
 macro_line|#  define MACH_IS_BVME6000 (m68k_machtype == MACH_BVME6000)
 macro_line|#else
-DECL|macro|CONFIG_BVME6000_ONLY
-macro_line|#  define CONFIG_BVME6000_ONLY
+DECL|macro|MACH_BVME6000_ONLY
+macro_line|#  define MACH_BVME6000_ONLY
 DECL|macro|MACH_IS_BVME6000
 macro_line|#  define MACH_IS_BVME6000 (1)
 DECL|macro|MACH_TYPE
@@ -127,8 +127,8 @@ macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_
 DECL|macro|MAC_IS_HP300
 macro_line|#  define MAC_IS_HP300 (m68k_machtype == MACH_HP300)
 macro_line|#else
-DECL|macro|CONFIG_HP300_ONLY
-macro_line|#  define CONFIG_HP300_ONLY
+DECL|macro|MACH_HP300_ONLY
+macro_line|#  define MACH_HP300_ONLY
 DECL|macro|MACH_IS_HP300
 macro_line|#  define MACH_IS_HP300 (1)
 DECL|macro|MACH_TYPE
@@ -316,7 +316,12 @@ r_extern
 r_int
 id|m68k_num_memory
 suffix:semicolon
-multiline_comment|/* # of memory blocks found */
+multiline_comment|/* # of memory blocks found (and used) */
+r_extern
+r_int
+id|m68k_realnum_memory
+suffix:semicolon
+multiline_comment|/* real # of memory blocks found */
 r_extern
 r_struct
 id|mem_info

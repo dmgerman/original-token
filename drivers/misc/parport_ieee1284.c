@@ -138,6 +138,34 @@ r_char
 id|mode
 )paren
 (brace
+multiline_comment|/* make sure it&squot;s a valid state, set nStrobe &amp; nAutoFeed high */
+id|parport_write_control
+c_func
+(paren
+id|port
+comma
+(paren
+id|parport_read_control
+c_func
+(paren
+id|port
+)paren
+"&bslash;"
+op_amp
+op_complement
+l_int|1
+)paren
+op_amp
+op_complement
+l_int|2
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 id|parport_write_data
 c_func
 (paren
@@ -149,7 +177,7 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|500
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* nSelectIn high, nAutoFd low */
@@ -227,48 +255,39 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|5
-)paren
-suffix:semicolon
-multiline_comment|/* Strobe wait */
-multiline_comment|/* nStrobe high */
-id|parport_write_control
-c_func
-(paren
-id|port
-comma
-id|parport_read_control
-c_func
-(paren
-id|port
-)paren
-op_amp
-op_complement
 l_int|1
 )paren
 suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|5
-)paren
-suffix:semicolon
-multiline_comment|/* nAutoFd low */
+multiline_comment|/* Strobe wait */
+multiline_comment|/* nStrobe high, nAutoFeed low, last step before transferring &n;&t; *  reverse data */
 id|parport_write_control
 c_func
 (paren
 id|port
 comma
+(paren
 id|parport_read_control
 c_func
 (paren
 id|port
+)paren
+"&bslash;"
+op_amp
+op_complement
+l_int|1
 )paren
 op_amp
 op_complement
 l_int|2
 )paren
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* Data available? */
 r_return
 (paren
 id|parport_wait_peripheral
@@ -283,9 +302,9 @@ l_int|0
 )paren
 ques
 c_cond
-l_int|2
-suffix:colon
 l_int|1
+suffix:colon
+l_int|2
 suffix:semicolon
 )brace
 eof

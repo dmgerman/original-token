@@ -5408,15 +5408,12 @@ id|board_size
 suffix:semicolon
 id|cv64_mem
 op_assign
-id|kernel_map
+id|ioremap
+c_func
 (paren
 id|board_addr
 comma
 id|board_size
-comma
-id|KERNELMAP_NOCACHE_SER
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|cv64_regs

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irmod.c&n; * Version:       0.8&n; * Description:   IrDA module code and some other stuff&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Dec 15 13:55:39 1997&n; * Modified at:   Mon Dec 14 20:10:28 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irmod.c&n; * Version:       0.8&n; * Description:   IrDA module code and some other stuff&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Dec 15 13:55:39 1997&n; * Modified at:   Tue Jan 19 23:34:18 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt; 
 macro_line|#include &lt;linux/init.h&gt;
@@ -10,10 +10,18 @@ macro_line|#include &lt;net/irda/iriap.h&gt;
 macro_line|#include &lt;net/irda/irttp.h&gt;
 DECL|variable|irda
 r_struct
-id|irda
+id|irda_cb
 id|irda
 suffix:semicolon
 multiline_comment|/* One global instance */
+macro_line|#ifdef CONFIG_IRDA_DEBUG
+DECL|variable|irda_debug
+id|__u32
+id|irda_debug
+op_assign
+id|IRDA_DEBUG
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|irda_proc_register
@@ -116,6 +124,22 @@ suffix:semicolon
 r_extern
 r_int
 id|irvtd_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|irlpt_client_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|irlpt_server_init
 c_func
 (paren
 r_void
@@ -356,6 +380,10 @@ op_amp
 id|irda.dev
 )paren
 suffix:semicolon
+id|irda.in_use
+op_assign
+id|FALSE
+suffix:semicolon
 multiline_comment|/* &n;&t; * Initialize modules that got compiled into the kernel &n;&t; */
 macro_line|#ifdef CONFIG_IRLAN
 id|irlan_init
@@ -392,6 +420,20 @@ c_func
 )paren
 suffix:semicolon
 id|irvtd_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_IRLPT_CLIENT
+id|irlpt_client_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_IRLPT_SERVER
+id|irlpt_server_init
 c_func
 (paren
 )paren
@@ -622,6 +664,24 @@ r_struct
 id|irmanager_event
 id|event
 suffix:semicolon
+multiline_comment|/* Make sure irmanager is running */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|irda.in_use
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;irmanager is not running!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* Make new todo event */
 r_new
 op_assign
@@ -738,6 +798,24 @@ id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* Make sure irmanager is running */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|irda.in_use
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;irmanager is not running!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* Make new IrDA Event */
 r_new
 op_assign
@@ -838,6 +916,30 @@ comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irda.in_use
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), irmanager is already running!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+id|irda.in_use
+op_assign
+id|TRUE
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -1060,6 +1162,10 @@ l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+id|irda.in_use
+op_assign
+id|FALSE
 suffix:semicolon
 r_return
 l_int|0

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_event.c&n; * Version:       0.1&n; * Description:   An IrDA LMP event driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Wed Dec  9 01:48:48 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_event.c&n; * Version:       0.1&n; * Description:   An IrDA LMP event driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Sat Jan 16 22:22:29 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/timer.h&gt;
@@ -344,7 +344,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;do_lsap_event: EVENT = %s, STATE = %s&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), EVENT = %s, STATE = %s&bslash;n&quot;
 comma
 id|irlmp_event
 (braket
@@ -420,7 +421,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;do_lap_event: EVENT = %s, STATE = %s&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), EVENT = %s, STATE = %s&bslash;n&quot;
 comma
 id|irlmp_event
 (braket
@@ -474,7 +476,7 @@ c_func
 l_int|8
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Restart timer&n;&t; */
+multiline_comment|/* Restart timer */
 id|irlmp_start_discovery_timer
 c_func
 (paren
@@ -575,7 +577,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_standby()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -753,7 +756,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_u_connect()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 r_switch
@@ -827,7 +831,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(), IRLAP_DISCONNECT_INDICATION&bslash;n&quot;
@@ -911,13 +915,21 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(), LM_LAP_DISCONNECT_REQUEST&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* irlmp_next_lap_state( self, LAP_STANDBY); */
+id|irlmp_next_lap_state
+c_func
+(paren
+id|self
+comma
+id|LAP_STANDBY
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME */
 multiline_comment|/* &t;&t;irlap_disconnect_request( self-&gt;irlap); */
 r_break
 suffix:semicolon
@@ -928,7 +940,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_u_connect: Unknown event&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown event&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -971,7 +984,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_active()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 r_switch
@@ -988,7 +1002,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_active(), LS_CONNECT_REQUEST&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), LS_CONNECT_REQUEST&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *  LAP connection allready active, just bounce back! Since we &n;&t;&t; *  don&squot;t know which LSAP that tried to do this, we have to &n;&t;&t; *  notify all LSAPs using this LAP, but that should be safe to&n;&t;&t; *  do anyway.&n;&t;&t; */
@@ -1224,7 +1239,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_disconnected()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -1263,7 +1279,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_disconnected: LM_CONNECT_REQUEST&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), LM_CONNECT_REQUEST&bslash;n&quot;
 )paren
 suffix:semicolon
 id|irlmp_next_lsap_state
@@ -1413,7 +1430,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_connect()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -1529,7 +1547,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_connect_pend()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -1667,7 +1686,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_dtr()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -2000,7 +2020,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_dtr: Unknown event %d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %d&bslash;n&quot;
 comma
 id|event
 )paren
@@ -2175,7 +2196,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_setup: Unknown event %d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %d&bslash;n&quot;
 comma
 id|event
 )paren
@@ -2297,12 +2319,11 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irlmp_state_setup_pend() WATCHDOG_TIMEOUT!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;() WATCHDOG_TIMEOUT!&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* FIXME: should we do a disconnect_indication? */
-r_return
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -2341,7 +2362,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_setup_pend: Unknown event %d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %d&bslash;n&quot;
 comma
 id|event
 )paren
@@ -2369,7 +2391,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;LMP LAP = %s&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), LMP LAP = %s&bslash;n&quot;
 comma
 id|irlmp_state
 (braket
@@ -2412,7 +2435,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;LMP LSAP = %s&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), LMP LSAP = %s&bslash;n&quot;
 comma
 id|irlsap_state
 (braket

@@ -933,6 +933,7 @@ op_amp
 id|ICANON
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -951,6 +952,7 @@ op_or_assign
 l_int|0x20
 suffix:semicolon
 multiline_comment|/* raw */
+)brace
 r_if
 c_cond
 (paren

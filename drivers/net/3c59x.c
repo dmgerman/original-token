@@ -6854,16 +6854,12 @@ id|name
 suffix:semicolon
 id|next_tick
 op_assign
-id|RUN_AT
-c_func
-(paren
 id|media_tbl
 (braket
 id|dev-&gt;if_port
 )braket
 dot
 id|wait
-)paren
 suffix:semicolon
 )brace
 id|outw

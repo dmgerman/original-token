@@ -514,7 +514,7 @@ l_int|4
 )paren
 (brace
 r_case
-l_int|1
+l_int|2
 suffix:colon
 id|current-&gt;state
 op_assign
@@ -547,8 +547,7 @@ id|len
 suffix:semicolon
 r_break
 suffix:semicolon
-r_case
-l_int|0
+r_default
 suffix:colon
 id|result
 op_assign

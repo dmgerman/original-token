@@ -3,6 +3,7 @@ DECL|macro|_M68K_SEMAPHORE_H
 mdefine_line|#define _M68K_SEMAPHORE_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
+macro_line|#include &lt;asm/current.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; *&n; * m68k version by Andreas Schwab&n; */
@@ -13,6 +14,14 @@ id|semaphore
 DECL|member|count
 id|atomic_t
 id|count
+suffix:semicolon
+DECL|member|owner
+DECL|member|owner_depth
+r_int
+r_int
+id|owner
+comma
+id|owner_depth
 suffix:semicolon
 DECL|member|waking
 id|atomic_t
@@ -26,10 +35,13 @@ id|wait
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * Because we want the non-contention case to be&n; * fast, we save the stack pointer into the &quot;owner&quot;&n; * field, and to get the true task pointer we have&n; * to do the bit masking. That moves the masking&n; * operation into the slow path.&n; */
+DECL|macro|semaphore_owner
+mdefine_line|#define semaphore_owner(sem) &bslash;&n;&t;((struct task_struct *)((2*PAGE_MASK) &amp; (sem)-&gt;owner))
 DECL|macro|MUTEX
-mdefine_line|#define MUTEX ((struct semaphore) { ATOMIC_INIT(1), ATOMIC_INIT(0), NULL })
+mdefine_line|#define MUTEX ((struct semaphore) { ATOMIC_INIT(1), 0, 0, ATOMIC_INIT(0), NULL })
 DECL|macro|MUTEX_LOCKED
-mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { ATOMIC_INIT(0), ATOMIC_INIT(0), NULL })
+mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { ATOMIC_INIT(0), 0, 1, ATOMIC_INIT(0), NULL })
 id|asmlinkage
 r_void
 id|__down_failed
@@ -163,8 +175,31 @@ id|sem-&gt;waking
 )paren
 OG
 l_int|0
+op_logical_or
+(paren
+id|owner_depth
+op_logical_and
+id|semaphore_owner
+c_func
+(paren
+id|sem
+)paren
+op_eq
+id|tsk
+)paren
 )paren
 (brace
+id|sem-&gt;owner
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|tsk
+suffix:semicolon
+id|sem-&gt;owner_depth
+op_increment
+suffix:semicolon
 id|atomic_dec
 c_func
 (paren
@@ -193,7 +228,7 @@ id|__asm__
 id|__volatile__
 (paren
 l_string|&quot;1:&t;movel&t;%2,%0&bslash;n&quot;
-l_string|&quot;&t;jeq&t;3f&bslash;n&quot;
+l_string|&quot;    jeq&t;3f&bslash;n&quot;
 l_string|&quot;2:&t;movel&t;%0,%1&bslash;n&quot;
 l_string|&quot;&t;subql&t;#1,%1&bslash;n&quot;
 l_string|&quot;&t;casl&t;%0,%1,%2&bslash;n&quot;
@@ -218,6 +253,44 @@ id|sem-&gt;waking
 )paren
 )paren
 suffix:semicolon
+id|ret
+op_or_assign
+(paren
+(paren
+id|sem-&gt;owner_depth
+op_ne
+l_int|0
+)paren
+op_logical_and
+(paren
+id|semaphore_owner
+c_func
+(paren
+id|sem
+)paren
+op_eq
+id|tsk
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+(brace
+id|sem-&gt;owner
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|tsk
+suffix:semicolon
+id|sem-&gt;owner_depth
+op_increment
+suffix:semicolon
+)brace
 macro_line|#endif
 r_return
 id|ret
@@ -255,7 +328,9 @@ c_func
 (paren
 l_string|&quot;| atomic down operation&bslash;n&bslash;t&quot;
 l_string|&quot;subql #1,%0@&bslash;n&bslash;t&quot;
-l_string|&quot;jmi 2f&bslash;n&quot;
+l_string|&quot;jmi 2f&bslash;n&bslash;t&quot;
+l_string|&quot;movel %%sp,4(%0)&bslash;n&quot;
+l_string|&quot;movel #1,8(%0)&bslash;n&bslash;t&quot;
 l_string|&quot;1:&bslash;n&quot;
 l_string|&quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;.even&bslash;n&quot;
@@ -314,6 +389,9 @@ c_func
 l_string|&quot;| atomic interruptible down operation&bslash;n&bslash;t&quot;
 l_string|&quot;subql #1,%1@&bslash;n&bslash;t&quot;
 l_string|&quot;jmi 2f&bslash;n&bslash;t&quot;
+l_string|&quot;movel %%sp,4(%1)&bslash;n&quot;
+l_string|&quot;moveql #1,%0&bslash;n&quot;
+l_string|&quot;movel %0,8(%1)&bslash;n&quot;
 l_string|&quot;clrl %0&bslash;n&quot;
 l_string|&quot;1:&bslash;n&quot;
 l_string|&quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
@@ -372,6 +450,7 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;| atomic up operation&bslash;n&bslash;t&quot;
+l_string|&quot;subql #1,8(%0)&bslash;n&bslash;t&quot;
 l_string|&quot;addql #1,%0@&bslash;n&bslash;t&quot;
 l_string|&quot;jle 2f&bslash;n&quot;
 l_string|&quot;1:&bslash;n&quot;

@@ -1,4 +1,4 @@
-multiline_comment|/* at1700.c: A network device driver for  the Allied Telesis AT1700.&n;&n;&t;Written 1993-98 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This is a device driver for the Allied Telesis AT1700, which is a&n;&t;straight-forward Fujitsu MB86965 implementation.&n;&n;  Sources:&n;    The Fujitsu MB86965 datasheet.&n;&n;&t;After the initial version of this driver was written Gerry Sawkins of&n;&t;ATI provided their EEPROM configuration code header file.&n;    Thanks to NIIBE Yutaka &lt;gniibe@mri.co.jp&gt; for bug fixes.&n;&n;    MCA bus (AT1720) support by Rene Schmit &lt;rene@bss.lu&gt;&n;&n;  Bugs:&n;&t;The MB86965 has a design flaw that makes all probes unreliable.  Not&n;&t;only is it difficult to detect, it also moves around in I/O space in&n;&t;response to inb()s from other device probes!&n;*/
+multiline_comment|/* at1700.c: A network device driver for  the Allied Telesis AT1700.&n;&n;&t;Written 1993-98 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This is a device driver for the Allied Telesis AT1700, and&n;        Fujitsu FMV-181/182/181A/182A/183/184/183A/184A, which are&n;&t;straight-forward Fujitsu MB86965 implementations.&n;&n;&t;Modification for Fujitsu FMV-18X cards is done by Yutaka Tamiya&n;&t;(tamy@flab.fujitsu.co.jp). &n;&n;  Sources:&n;    The Fujitsu MB86965 datasheet.&n;&n;&t;After the initial version of this driver was written Gerry Sawkins of&n;&t;ATI provided their EEPROM configuration code header file.&n;    Thanks to NIIBE Yutaka &lt;gniibe@mri.co.jp&gt; for bug fixes.&n;&n;    MCA bus (AT1720) support by Rene Schmit &lt;rene@bss.lu&gt;&n;&n;  Bugs:&n;&t;The MB86965 has a design flaw that makes all probes unreliable.  Not&n;&t;only is it difficult to detect, it also moves around in I/O space in&n;&t;response to inb()s from other device probes!&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -91,6 +91,7 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;MCA&n; */
+macro_line|#ifdef CONFIG_MCA&t;
 DECL|variable|at1700_ioaddr_pattern
 r_static
 r_int
@@ -186,6 +187,7 @@ comma
 l_int|0x00
 )brace
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* use 0 for production, 1 for verification, &gt;2 for debug */
 macro_line|#ifndef NET_DEBUG
 DECL|macro|NET_DEBUG
@@ -237,6 +239,20 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Packets are on the Tx queue. */
+DECL|member|tx_queue_ready
+id|uint
+id|tx_queue_ready
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Tx queue is ready to be sent. */
+DECL|member|rx_started
+id|uint
+id|rx_started
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Packets are Rxing. */
 DECL|member|invalid_irq
 id|uint
 id|invalid_irq
@@ -284,6 +300,8 @@ DECL|macro|DATAPORT
 mdefine_line|#define DATAPORT&t;&t;8&t;&t;/* Word-wide DMA or programmed-I/O dataport. */
 DECL|macro|TX_START
 mdefine_line|#define TX_START&t;&t;10
+DECL|macro|COL16CNTL
+mdefine_line|#define COL16CNTL&t;&t;11&t;&t;/* Controll Reg for 16 collisions */
 DECL|macro|MODE13
 mdefine_line|#define MODE13&t;&t;&t;13
 multiline_comment|/* Configuration registers only on the &squot;865A/B chips. */
@@ -291,6 +309,10 @@ DECL|macro|EEPROM_Ctrl
 mdefine_line|#define EEPROM_Ctrl &t;16
 DECL|macro|EEPROM_Data
 mdefine_line|#define EEPROM_Data &t;17
+DECL|macro|CARDSTATUS
+mdefine_line|#define CARDSTATUS&t;16&t;&t;&t;/* FMV-18x Card Status */
+DECL|macro|CARDSTATUS1
+mdefine_line|#define CARDSTATUS1&t;17&t;&t;&t;/* FMV-18x Card Status */
 DECL|macro|IOCONFIG
 mdefine_line|#define IOCONFIG&t;&t;18&t;&t;/* Either read the jumper, or move the I/O. */
 DECL|macro|IOCONFIG1
@@ -646,6 +668,30 @@ l_int|15
 )brace
 suffix:semicolon
 r_char
+id|fmv_irqmap_pnp
+(braket
+l_int|8
+)braket
+op_assign
+(brace
+l_int|3
+comma
+l_int|4
+comma
+l_int|5
+comma
+l_int|7
+comma
+l_int|9
+comma
+l_int|10
+comma
+l_int|11
+comma
+l_int|15
+)brace
+suffix:semicolon
+r_char
 id|at1700_irqmap
 (braket
 l_int|8
@@ -682,9 +728,6 @@ comma
 id|is_at1700
 op_assign
 l_int|0
-suffix:semicolon
-r_int
-id|l_i
 suffix:semicolon
 r_int
 id|slot
@@ -746,6 +789,9 @@ id|MCA_bus
 r_int
 id|j
 suffix:semicolon
+r_int
+id|l_i
+suffix:semicolon
 id|u_char
 id|pos3
 comma
@@ -805,10 +851,8 @@ id|slot
 op_eq
 id|MCA_NOTFOUND
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 multiline_comment|/* if we get this far, an adapter has been detected and is&n;&t;&t;&t;&t;enabled */
 id|pos3
 op_assign
@@ -1038,21 +1082,6 @@ r_else
 r_if
 c_cond
 (paren
-id|fmv18x_probe_list
-(braket
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-id|IOCONFIG
-)paren
-op_amp
-l_int|0x07
-)braket
-op_eq
-id|ioaddr
-op_logical_and
 id|inb
 c_func
 (paren
@@ -1096,8 +1125,10 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+macro_line|#ifdef CONFIG_MCA
 id|found
 suffix:colon
+macro_line|#endif
 multiline_comment|/* Reset the internal state machines. */
 id|outb
 c_func
@@ -1166,11 +1197,91 @@ l_int|14
 )braket
 suffix:semicolon
 r_else
+(brace
+multiline_comment|/* Check PnP mode for FMV-183/184/183A/184A. */
+multiline_comment|/* This PnP routine is very poor. IO and IRQ should be known. */
 r_if
 c_cond
 (paren
-id|is_fmv18x
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|CARDSTATUS1
 )paren
+op_amp
+l_int|0x20
+)paren
+(brace
+id|irq
+op_assign
+id|dev-&gt;irq
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|8
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|irq
+op_eq
+id|fmv_irqmap_pnp
+(braket
+id|i
+)braket
+)paren
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|8
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|fmv18x_probe_list
+(braket
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|IOCONFIG
+)paren
+op_amp
+l_int|0x07
+)braket
+op_ne
+id|ioaddr
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
 id|irq
 op_assign
 id|fmv_irqmap
@@ -1190,6 +1301,8 @@ op_amp
 l_int|0x03
 )braket
 suffix:semicolon
+)brace
+)brace
 multiline_comment|/* Grab the region so that we can find another board if the IRQ request&n;&t;   fails. */
 id|request_region
 c_func
@@ -1204,9 +1317,16 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: AT1700 found at %#3x, IRQ %d, address &quot;
+l_string|&quot;%s: %s found at %#3x, IRQ %d, address &quot;
 comma
 id|dev-&gt;name
+comma
+id|is_at1700
+ques
+c_cond
+l_string|&quot;AT1700&quot;
+suffix:colon
+l_string|&quot;FMV-18X&quot;
 comma
 id|ioaddr
 comma
@@ -1221,6 +1341,12 @@ id|dev-&gt;irq
 op_assign
 id|irq
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|is_at1700
+)paren
+(brace
 r_for
 c_loop
 (paren
@@ -1277,6 +1403,55 @@ id|eeprom_val
 )paren
 suffix:semicolon
 )brace
+)brace
+r_else
+(brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|6
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_int
+r_char
+id|val
+op_assign
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|SAPROM
+op_plus
+id|i
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%02x&quot;
+comma
+id|val
+)paren
+suffix:semicolon
+id|dev-&gt;dev_addr
+(braket
+id|i
+)braket
+op_assign
+id|val
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/* The EEPROM word 12 bit 0x0400 means use regular 100 ohm 10baseT signals,&n;&t;   rather than 150 ohm shielded twisted pair compensation.&n;&t;   0x0000 == auto-sense the interface&n;&t;   0x0800 == use TP interface&n;&t;   0x1800 == use coax interface&n;&t;   */
 (brace
 r_const
@@ -1296,6 +1471,12 @@ comma
 l_string|&quot;10base2&quot;
 )brace
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|is_at1700
+)paren
+(brace
 id|ushort
 id|setup_value
 op_assign
@@ -1313,6 +1494,63 @@ id|setup_value
 op_rshift
 l_int|8
 suffix:semicolon
+)brace
+r_else
+(brace
+id|ushort
+id|setup_value
+op_assign
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|CARDSTATUS
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|setup_value
+op_amp
+l_int|0x07
+)paren
+(brace
+r_case
+l_int|0x01
+suffix:colon
+multiline_comment|/* 10base5 */
+r_case
+l_int|0x02
+suffix:colon
+multiline_comment|/* 10base2 */
+id|dev-&gt;if_port
+op_assign
+l_int|0x18
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x04
+suffix:colon
+multiline_comment|/* 10baseT */
+id|dev-&gt;if_port
+op_assign
+l_int|0x08
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+multiline_comment|/* auto-sense */
+id|dev-&gt;if_port
+op_assign
+l_int|0x00
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
 id|printk
 c_func
 (paren
@@ -1331,11 +1569,22 @@ l_int|3
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Set the configuration register 0 to 32K 100ns. byte-wide memory, 16 bit&n;&t;   bus access, two 4K Tx queues, and disabled Tx and Rx. */
+id|outb
+c_func
+(paren
+l_int|0xda
+comma
+id|ioaddr
+op_plus
+id|CONFIG_0
+)paren
+suffix:semicolon
 multiline_comment|/* Set the station address in bank zero. */
 id|outb
 c_func
 (paren
-l_int|0xe0
+l_int|0x00
 comma
 id|ioaddr
 op_plus
@@ -1375,7 +1624,7 @@ multiline_comment|/* Switch to bank 1 and set the multicast table to accept none
 id|outb
 c_func
 (paren
-l_int|0xe4
+l_int|0x04
 comma
 id|ioaddr
 op_plus
@@ -1408,22 +1657,12 @@ op_plus
 id|i
 )paren
 suffix:semicolon
-multiline_comment|/* Set the configuration register 0 to 32K 100ns. byte-wide memory, 16 bit&n;&t;   bus access, two 4K Tx queues, and disabled Tx and Rx. */
+multiline_comment|/* Switch to bank 2 */
+multiline_comment|/* Lock our I/O address, and set manual processing mode for 16 collisions. */
 id|outb
 c_func
 (paren
-l_int|0xda
-comma
-id|ioaddr
-op_plus
-id|CONFIG_0
-)paren
-suffix:semicolon
-multiline_comment|/* Switch to bank 2 and lock our I/O address. */
-id|outb
-c_func
-(paren
-l_int|0xe8
+l_int|0x08
 comma
 id|ioaddr
 op_plus
@@ -1435,10 +1674,11 @@ c_func
 (paren
 id|dev-&gt;if_port
 comma
+id|ioaddr
+op_plus
 id|MODE13
 )paren
 suffix:semicolon
-multiline_comment|/* Power-down the chip.  Aren&squot;t we green! */
 id|outb
 c_func
 (paren
@@ -1446,7 +1686,7 @@ l_int|0x00
 comma
 id|ioaddr
 op_plus
-id|CONFIG_1
+id|COL16CNTL
 )paren
 suffix:semicolon
 r_if
@@ -1868,110 +2108,37 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-multiline_comment|/* Powerup the chip, initialize config register 1, and select bank 0. */
-id|outb
-c_func
-(paren
-l_int|0xe0
-comma
-id|ioaddr
-op_plus
-id|CONFIG_1
-)paren
-suffix:semicolon
-multiline_comment|/* Set the station address in bank zero. */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|6
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|outb
-c_func
-(paren
-id|dev-&gt;dev_addr
-(braket
-id|i
-)braket
-comma
-id|ioaddr
-op_plus
-l_int|8
-op_plus
-id|i
-)paren
-suffix:semicolon
-multiline_comment|/* Switch to bank 1 and set the multicast table to accept none. */
-id|outb
-c_func
-(paren
-l_int|0xe4
-comma
-id|ioaddr
-op_plus
-id|CONFIG_1
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|8
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|outb
-c_func
-(paren
-l_int|0x00
-comma
-id|ioaddr
-op_plus
-l_int|8
-op_plus
-id|i
-)paren
-suffix:semicolon
 multiline_comment|/* Set the configuration register 0 to 32K 100ns. byte-wide memory, 16 bit&n;&t;   bus access, and two 4K Tx queues. */
 id|outb
 c_func
 (paren
-l_int|0xda
+l_int|0x5a
 comma
 id|ioaddr
 op_plus
 id|CONFIG_0
 )paren
 suffix:semicolon
-multiline_comment|/* Switch to register bank 2, enable the Rx and Tx. */
-id|outw
+multiline_comment|/* Powerup, switch to register bank 2, and enable the Rx and Tx. */
+id|outb
 c_func
 (paren
-l_int|0xe85a
+l_int|0xe8
 comma
 id|ioaddr
 op_plus
-id|CONFIG_0
+id|CONFIG_1
 )paren
 suffix:semicolon
 id|lp-&gt;tx_started
+op_assign
+l_int|0
+suffix:semicolon
+id|lp-&gt;tx_queue_ready
+op_assign
+l_int|1
+suffix:semicolon
+id|lp-&gt;rx_started
 op_assign
 l_int|0
 suffix:semicolon
@@ -1983,11 +2150,11 @@ id|lp-&gt;tx_queue_len
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Turn on Rx interrupts, leave Tx interrupts off until packet Tx. */
+multiline_comment|/* Turn on hardware Tx and Rx interrupts. */
 id|outb
 c_func
 (paren
-l_int|0x00
+l_int|0x82
 comma
 id|ioaddr
 op_plus
@@ -2004,6 +2171,24 @@ op_plus
 id|RX_INTR
 )paren
 suffix:semicolon
+multiline_comment|/* Enable the IRQ on boards of fmv18x it is feasible. */
+r_if
+c_cond
+(paren
+id|lp-&gt;jumpered
+)paren
+(brace
+id|outb
+c_func
+(paren
+l_int|0x80
+comma
+id|ioaddr
+op_plus
+id|IOCONFIG1
+)paren
+suffix:semicolon
+)brace
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -2220,11 +2405,31 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-l_int|0x8100
+l_int|0x8182
 comma
 id|ioaddr
 op_plus
 id|TX_INTR
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+id|ioaddr
+op_plus
+id|TX_START
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x03
+comma
+id|ioaddr
+op_plus
+id|COL16CNTL
 )paren
 suffix:semicolon
 id|dev-&gt;tbusy
@@ -2236,6 +2441,14 @@ op_assign
 id|jiffies
 suffix:semicolon
 id|lp-&gt;tx_started
+op_assign
+l_int|0
+suffix:semicolon
+id|lp-&gt;tx_queue_ready
+op_assign
+l_int|1
+suffix:semicolon
+id|lp-&gt;rx_started
 op_assign
 l_int|0
 suffix:semicolon
@@ -2296,17 +2509,12 @@ id|buf
 op_assign
 id|skb-&gt;data
 suffix:semicolon
-multiline_comment|/* Turn off the possible Tx interrupts. */
-id|outb
-c_func
-(paren
-l_int|0x00
-comma
-id|ioaddr
-op_plus
-id|TX_INTR
-)paren
+multiline_comment|/* We may not start transmitting unless we finish transferring&n;&t;&t;   a packet into the Tx queue. During executing the following&n;&t;&t;   codes we possibly catch a Tx interrupt. Thus we flag off&n;&t;&t;   tx_queue_ready, so that we prevent the interrupt routine&n;&t;&t;   (net_interrupt) to start transmitting. */
+id|lp-&gt;tx_queue_ready
+op_assign
+l_int|0
 suffix:semicolon
+(brace
 id|outw
 c_func
 (paren
@@ -2343,6 +2551,11 @@ op_add_assign
 id|length
 op_plus
 l_int|2
+suffix:semicolon
+)brace
+id|lp-&gt;tx_queue_ready
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -2400,17 +2613,6 @@ multiline_comment|/* Yes, there is room for one more packet. */
 id|dev-&gt;tbusy
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/* Turn on Tx interrupts back on. */
-id|outb
-c_func
-(paren
-l_int|0x82
-comma
-id|ioaddr
-op_plus
-id|TX_INTR
-)paren
 suffix:semicolon
 )brace
 id|dev_kfree_skb
@@ -2535,6 +2737,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|lp-&gt;rx_started
+op_eq
+l_int|0
+op_logical_and
+(paren
 id|status
 op_amp
 l_int|0xff00
@@ -2553,13 +2760,44 @@ l_int|0x40
 op_eq
 l_int|0
 )paren
+)paren
 (brace
-multiline_comment|/* Got a packet(s). */
+multiline_comment|/* Got a packet(s).&n;&t;&t;   We cannot execute net_rx more than once at the same time for&n;&t;&t;   the same device. During executing net_rx, we possibly catch a&n;&t;&t;   Tx interrupt. Thus we flag on rx_started, so that we prevent&n;&t;&t;   the interrupt routine (net_interrupt) to dive into net_rx&n;&t;&t;   again. */
+id|lp-&gt;rx_started
+op_assign
+l_int|1
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+id|ioaddr
+op_plus
+id|RX_INTR
+)paren
+suffix:semicolon
+multiline_comment|/* Disable RX intr. */
 id|net_rx
 c_func
 (paren
 id|dev
 )paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x81
+comma
+id|ioaddr
+op_plus
+id|RX_INTR
+)paren
+suffix:semicolon
+multiline_comment|/* Enable  RX intr. */
+id|lp-&gt;rx_started
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -2575,16 +2813,58 @@ c_cond
 (paren
 id|status
 op_amp
-l_int|0x80
+l_int|0x02
+)paren
+(brace
+multiline_comment|/* More than 16 collisions occurred */
+r_if
+c_cond
+(paren
+id|net_debug
+OG
+l_int|4
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%s: 16 Collision occur during Txing.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+multiline_comment|/* Cancel sending a packet. */
+id|outb
+c_func
+(paren
+l_int|0x03
+comma
+id|ioaddr
+op_plus
+id|COL16CNTL
+)paren
+suffix:semicolon
+id|lp-&gt;stats.collisions
+op_increment
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|status
+op_amp
+l_int|0x82
 )paren
 (brace
 id|lp-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
+multiline_comment|/* The Tx queue has any packets and is not being&n;&t;&t;&t;   transferred a packet from the host, start&n;&t;&t;&t;   transmitting. */
 r_if
 c_cond
 (paren
 id|lp-&gt;tx_queue
+op_logical_and
+id|lp-&gt;tx_queue_ready
 )paren
 (brace
 id|outb
@@ -2628,17 +2908,6 @@ r_else
 id|lp-&gt;tx_started
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/* Turn on Tx interrupts off. */
-id|outb
-c_func
-(paren
-l_int|0x00
-comma
-id|ioaddr
-op_plus
-id|TX_INTR
-)paren
 suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
@@ -3129,7 +3398,18 @@ op_star
 id|dev
 )paren
 (brace
-multiline_comment|/*&t;struct net_local *lp = (struct net_local *)dev-&gt;priv;*/
+r_struct
+id|net_local
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|net_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
 r_int
 id|ioaddr
 op_assign
@@ -3155,8 +3435,7 @@ id|CONFIG_0
 )paren
 suffix:semicolon
 multiline_comment|/* No statistic counters on the chip to update. */
-macro_line|#if 0
-multiline_comment|/* Disable the IRQ on boards where it is feasible. */
+multiline_comment|/* Disable the IRQ on boards of fmv18x where it is feasible. */
 r_if
 c_cond
 (paren
@@ -3182,7 +3461,6 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* Power-down the chip.  Green, green, green! */
 id|outb
 c_func
@@ -3738,6 +4016,30 @@ id|irq
 op_assign
 l_int|0
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|net_debug
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -3803,6 +4105,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_MCA&t;
 r_struct
 id|net_local
 op_star
@@ -3810,14 +4113,6 @@ id|lp
 op_assign
 id|dev_at1700.priv
 suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-op_amp
-id|dev_at1700
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_MCA&t;
 r_if
 c_cond
 (paren
@@ -3832,6 +4127,13 @@ id|lp-&gt;mca_slot
 suffix:semicolon
 )brace
 macro_line|#endif&t;
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_at1700
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren

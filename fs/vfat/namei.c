@@ -9109,7 +9109,6 @@ id|new_dentry
 )paren
 suffix:semicolon
 )brace
-)brace
 id|res
 op_assign
 id|vfat_remove_entry
@@ -9123,6 +9122,7 @@ comma
 id|new_inode
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

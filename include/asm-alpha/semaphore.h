@@ -111,7 +111,7 @@ op_star
 id|sem
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * These two _must_ execute atomically wrt each other.&n; *&n; * This is trivially done with load_locked/store_cond,&n; * which we have.  Let the rest of the losers suck eggs.&n; *&n; * Tricky bits --&n; *&n; * (1) One task does two downs, no other contention&n; *&t;initial state:&n; *&t;&t;count = 1, waking = 0, depth = undef;&n; *&t;down(&amp;sem)&n; *&t;&t;count = 0, waking = 0, depth = 1;&n; *&t;down(&amp;sem)&n; *&t;&t;atomic dec and test sends us to waking_non_zero via __down&n; *&t;&t;&t;count = -1, waking = 0;&n; *&t;&t;conditional atomic dec on waking discovers no free slots&n; *&t;&t;&t;count = -1, waking = 0;&n; *&t;&t;test for owner succeeeds and we return ok.&n; *&t;&t;&t;count = -1, waking = 0, depth = 2;&n; *&t;up(&amp;sem)&n; *&t;&t;dec depth&n; *&t;&t;&t;count = -1, waking = 0, depth = 0;&n; *&t;&t;atomic inc and test sends us to slow path&n; *&t;&t;&t;count = 0, waking = 0, depth = 0;&n; *&t;&t;notice !(depth &lt; 0) and don&squot;t call __up.&n; *&t;up(&amp;sem)&n; *&t;&t;dec depth&n; *&t;&t;&t;count = 0, waking = 0, depth = -1;&n; *&t;&t;atomic inc and test succeeds.&n; *&t;&t;&t;count = 1, waking = 0, depth = 0;&n; */
+multiline_comment|/*&n; * These two _must_ execute atomically wrt each other.&n; *&n; * This is trivially done with load_locked/store_cond,&n; * which we have.  Let the rest of the losers suck eggs.&n; *&n; * Tricky bits --&n; *&n; * (1) One task does two downs, no other contention&n; *&t;initial state:&n; *&t;&t;count = 1, waking = 0, depth = undef;&n; *&t;down(&amp;sem)&n; *&t;&t;count = 0, waking = 0, depth = 1;&n; *&t;down(&amp;sem)&n; *&t;&t;atomic dec and test sends us to waking_non_zero via __down&n; *&t;&t;&t;count = -1, waking = 0;&n; *&t;&t;conditional atomic dec on waking discovers no free slots&n; *&t;&t;&t;count = -1, waking = 0;&n; *&t;&t;test for owner succeeeds and we return ok.&n; *&t;&t;&t;count = -1, waking = 0, depth = 2;&n; *&t;up(&amp;sem)&n; *&t;&t;dec depth&n; *&t;&t;&t;count = -1, waking = 0, depth = 1;&n; *&t;&t;atomic inc and test sends us to slow path&n; *&t;&t;&t;count = 0, waking = 0, depth = 1;&n; *&t;&t;notice !(depth &lt; 0) and don&squot;t call __up.&n; *&t;up(&amp;sem)&n; *&t;&t;dec depth&n; *&t;&t;&t;count = 0, waking = 0, depth = 0;&n; *&t;&t;atomic inc and test succeeds.&n; *&t;&t;&t;count = 1, waking = 0, depth = 0;&n; */
 DECL|function|wake_one_more
 r_static
 r_inline
@@ -427,7 +427,7 @@ l_string|&quot;4:&bslash;n&quot;
 l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;2:&t;br&t;1b&bslash;n&quot;
 l_string|&quot;3:&t;lda&t;$24,%1&bslash;n&quot;
-l_string|&quot;&t;bge&t;%2,4b&bslash;n&quot;
+l_string|&quot;&t;bgt&t;%2,4b&bslash;n&quot;
 l_string|&quot;&t;jsr&t;$28,__up_wakeup&bslash;n&quot;
 l_string|&quot;&t;ldgp&t;$29,0($28)&bslash;n&quot;
 l_string|&quot;&t;br&t;4b&bslash;n&quot;

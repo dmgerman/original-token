@@ -50,7 +50,7 @@ suffix:semicolon
 DECL|macro|DEBUG_HEADS
 mdefine_line|#define DEBUG_HEADS
 DECL|macro|DEBUG_SCREEN
-mdefine_line|#define DEBUG_SCREEN
+macro_line|#undef DEBUG_SCREEN
 DECL|macro|DEBUG_SERIAL
 mdefine_line|#define DEBUG_SERIAL
 multiline_comment|/*&n; * These two auxiliary debug functions should go away ASAP. Only usage: &n; * before the console output is up (after head.S come some other crucial&n; * setup routines :-) it permits writing &squot;data&squot; to the screen as bit patterns&n; * (good luck reading those). Helped to figure that the bootinfo contained&n; * garbage data on the amount and size of memory chunks ...&n; *&n; * The &squot;pos&squot; argument now simply means &squot;linefeed after print&squot; ...&n; */

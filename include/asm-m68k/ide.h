@@ -898,7 +898,7 @@ mdefine_line|#define ide_ack_intr(hwif)&t;((hwif)-&gt;ack_intr ? (hwif)-&gt;ack_
 multiline_comment|/*&n; * On the Atari, we sometimes can&squot;t enable interrupts:&n; */
 multiline_comment|/* MSch: changed sti() to STI() wherever possible in ide.c; moved STI() def. &n; * to asm/ide.h &n; */
 multiline_comment|/* The Atari interrupt structure strictly requires that the IPL isn&squot;t lowered&n; * uncontrolled in an interrupt handler. In the concrete case, the IDE&n; * interrupt is already a slow int, so the irq is already disabled at the time&n; * the handler is called, and the IPL has been lowered to the minimum value&n; * possible. To avoid going below that, STI() checks for being called inside&n; * an interrupt, and in that case it does nothing. Hope that is reasonable and&n; * works. (Roman)&n; */
-macro_line|#ifdef CONFIG_ATARI_ONLY
+macro_line|#ifdef MACH_ATARI_ONLY
 DECL|macro|ide__sti
 mdefine_line|#define&t;ide__sti()&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (!in_interrupt()) __sti();&t;&t;&t;&bslash;&n;    } while(0)
 macro_line|#elif defined(CONFIG_ATARI)

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.c&n; * Version:       0.8&n; * Description:   IrDA Link Management Protocol (LMP) layer                 &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Mon Dec 14 11:54:08 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.c&n; * Version:       0.8&n; * Description:   IrDA Link Management Protocol (LMP) layer                 &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Sat Jan 16 22:13:20 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -1252,8 +1252,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irlmp_connect_request: &quot;
-l_string|&quot;Could not allocate an sk_buff of length %d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Could not allocate sk_buff of length %d&bslash;n&quot;
 comma
 l_int|64
 )paren
@@ -2147,7 +2147,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_disconnect_indication()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -2293,7 +2294,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_disconnect_indication: reason=%02x&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), reason=%02x&bslash;n&quot;
 comma
 id|userdata-&gt;data
 (braket
@@ -2345,7 +2347,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_discovery_request()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -2677,7 +2680,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_discovery_confirm()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -2702,25 +2706,6 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  If log is missing this means that IrLAP was unable to perform the&n;&t; *  discovery, so restart discovery again with just the half timeout&n;&t; *  of the normal one.&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|log
-)paren
-(brace
-id|irlmp_start_discovery_timer
-c_func
-(paren
-id|irlmp
-comma
-l_int|150
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *  Now, check all discovered devices (if any)&n;&t; */
 id|discovery
 op_assign
@@ -2850,19 +2835,17 @@ op_assign
 id|discovery-&gt;daddr
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Create a new discovery log if neccessary&n;&t; */
-r_if
-c_cond
-(paren
-id|self-&gt;cachelog
-op_eq
-l_int|NULL
-)paren
-id|self-&gt;cachelog
-op_assign
-id|hashbin_new
+multiline_comment|/* if ( self-&gt;cachelog == NULL) */
+multiline_comment|/* &t;&t;self-&gt;cachelog = hashbin_new( HB_LOCAL); */
+id|ASSERT
 c_func
 (paren
-id|HB_LOCAL
+id|self-&gt;cachelog
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Insert this discovery device into the discovery_log if its&n;&t; *  not there already&n;&t; */
@@ -3359,7 +3342,7 @@ c_func
 l_int|0
 comma
 id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+l_string|&quot;(), Sorry not implemented&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

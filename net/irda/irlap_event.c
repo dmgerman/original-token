@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.1&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Mon Dec 14 14:16:00 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.1&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Tue Jan 19 22:58:45 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -335,6 +335,27 @@ op_star
 id|info
 )paren
 suffix:semicolon
+r_static
+r_int
+id|irlap_state_reset_check
+c_func
+(paren
+r_struct
+id|irlap_cb
+op_star
+comma
+id|IRLAP_EVENT
+id|event
+comma
+r_struct
+id|sk_buff
+op_star
+comma
+r_struct
+id|irlap_info
+op_star
+)paren
+suffix:semicolon
 DECL|variable|irlap_event
 r_static
 r_char
@@ -355,6 +376,8 @@ comma
 l_string|&quot;DATA_REQUEST&quot;
 comma
 l_string|&quot;RESET_REQUEST&quot;
+comma
+l_string|&quot;RESET_RESPONSE&quot;
 comma
 l_string|&quot;SEND_I_CMD&quot;
 comma
@@ -438,6 +461,8 @@ l_string|&quot;LAP_XMIT_S&quot;
 comma
 l_string|&quot;LAP_SCLOSE&quot;
 comma
+l_string|&quot;LAP_RESET_CHECK&quot;
+comma
 )brace
 suffix:semicolon
 DECL|variable|state
@@ -498,6 +523,8 @@ id|irlap_state_xmit_s
 comma
 id|irlap_state_sclose
 comma
+id|irlap_state_reset_check
+comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Function irda_poll_timer_expired (data)&n; *&n; *    &n; *&n; */
@@ -523,14 +550,6 @@ id|irlap_cb
 op_star
 )paren
 id|data
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;Poll timer expired!&bslash;n&quot;
-)paren
 suffix:semicolon
 id|ASSERT
 c_func
@@ -1025,7 +1044,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlap_state_ndm()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -1514,7 +1534,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlap_state_query(), daddr=%08x&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), daddr=%08x&bslash;n&quot;
 comma
 id|info-&gt;discovery-&gt;daddr
 )paren
@@ -1643,7 +1664,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlap_state_query: Unknown event %d, %s&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %d, %s&bslash;n&quot;
 comma
 id|event
 comma
@@ -1720,7 +1742,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlap_state_reply()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -1763,7 +1786,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irlap_state_reply: QUERY_TIMER_EXPIRED &lt;%ld&gt;&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), QUERY_TIMER_EXPIRED &lt;%ld&gt;&bslash;n&quot;
 comma
 id|jiffies
 )paren
@@ -1974,7 +1998,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(), event=%s&bslash;n&quot;
@@ -2114,7 +2138,8 @@ c_func
 (paren
 l_int|3
 comma
-l_string|&quot;irlap_state_conn: event RECV_SNRM_CMD!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), event RECV_SNRM_CMD!&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#if 0
@@ -2137,7 +2162,8 @@ c_func
 (paren
 l_int|3
 comma
-l_string|&quot;irlap_state_conn: event RECV_DISCOVER_XID_CMD!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), event RECV_DISCOVER_XID_CMD!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|irlap_next_state
@@ -2176,7 +2202,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irlap_state_conn: Unknown event %d, %s&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %d, %s&bslash;n&quot;
 comma
 id|event
 comma
@@ -2350,9 +2377,10 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
-l_string|&quot;irlap_state_setup: SNRM battle!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), SNRM battle!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -2503,17 +2531,6 @@ id|self
 )paren
 suffix:semicolon
 multiline_comment|/* Negotiate connection parameters */
-id|IS_SKB
-c_func
-(paren
-id|skb
-comma
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)paren
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -2802,7 +2819,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlap_state_xmit: Window=%d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Window=%d&bslash;n&quot;
 comma
 id|self-&gt;window
 )paren
@@ -2956,7 +2974,7 @@ r_else
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unable to send! remote busy?&bslash;n&quot;
@@ -3258,7 +3276,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irlap_state_pclose: Unknown event %d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %d&bslash;n&quot;
 comma
 id|event
 )paren
@@ -3352,7 +3371,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlap_state_nrm_p: RECV_RR_FRAME: &quot;
+id|__FUNCTION__
+l_string|&quot;(), RECV_RR_FRAME: &quot;
 l_string|&quot;Retrans:%d, nr=%d, va=%d, vs=%d, vr=%d&bslash;n&quot;
 comma
 id|self-&gt;retry_count
@@ -3901,8 +3921,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;*** irlap_state_nrm_p:&quot;
-l_string|&quot; missing or duplicate frame!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), missing or duplicate frame!&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Update Nr received */
@@ -4830,7 +4850,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irlap_state_reset_wait: Unknown event %s&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %s&bslash;n&quot;
 comma
 id|irlap_event
 (braket
@@ -5171,7 +5192,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irlap_state_reset: Unknown event %s&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %s&bslash;n&quot;
 comma
 id|irlap_event
 (braket
@@ -5271,29 +5293,6 @@ id|event
 r_case
 id|SEND_I_CMD
 suffix:colon
-id|ASSERT
-c_func
-(paren
-id|skb
-op_ne
-l_int|NULL
-comma
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irlap_state_xmit: Window=%d&bslash;n&quot;
-comma
-id|self-&gt;window
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t;&t; *  Send frame only if send window &gt; 1&n;&t;&t; */
 r_if
 c_cond
@@ -5388,7 +5387,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlap_state_xmit: window &gt; 1&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), window &gt; 1&bslash;n&quot;
 )paren
 suffix:semicolon
 id|irlap_send_data_secondary
@@ -5415,7 +5415,7 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlap_state_xmit: window &lt;= 1&bslash;n&quot;
+l_string|&quot;(), window &lt;= 1&bslash;n&quot;
 )paren
 suffix:semicolon
 id|irlap_send_data_secondary_final
@@ -5443,7 +5443,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;Unable to send!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unable to send!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|skb_queue_head
@@ -5763,7 +5764,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irlap_state_nrm_s: **** &quot;
+id|__FUNCTION__
+l_string|&quot;(), &quot;
 l_string|&quot;invalid nr not implemented!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -6417,7 +6419,6 @@ suffix:semicolon
 r_case
 id|RECV_SNRM_CMD
 suffix:colon
-macro_line|#if 1
 id|del_timer
 c_func
 (paren
@@ -6438,40 +6439,15 @@ c_func
 (paren
 id|self
 comma
-id|LAP_RESET
+id|LAP_RESET_CHECK
 )paren
 suffix:semicolon
-macro_line|#else
-id|irlap_wait_min_turn_around
-c_func
-(paren
-op_amp
-id|self-&gt;qos_session
-)paren
-suffix:semicolon
-id|irlap_send_ua_response_frame
-c_func
-(paren
-op_amp
-id|self-&gt;qos_session
-)paren
-suffix:semicolon
-id|irda_start_timer
-c_func
-(paren
-id|WD_TIMER
-comma
-id|self-&gt;wd_timeout
-)paren
-suffix:semicolon
-id|irlap_next_state
+id|irlap_reset_indication
 c_func
 (paren
 id|self
-comma
-id|LAP_SCLOSE
 )paren
-macro_line|#endif
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -6487,7 +6463,7 @@ comma
 id|jiffies
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *  Wait until  retry_count * n matches negotiated threshold/&n;&t;&t; *  disconnect time (note 2 in IrLAP p. 82)&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *  Wait until retry_count * n matches negotiated threshold/&n;&t;&t; *  disconnect time (note 2 in IrLAP p. 82)&n;&t;&t; */
 id|DEBUG
 c_func
 (paren
@@ -6752,7 +6728,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irlap_state_nrm_s: Unknown event %d, (%s)&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %d, (%s)&bslash;n&quot;
 comma
 id|event
 comma
@@ -6812,6 +6789,177 @@ suffix:semicolon
 r_return
 op_minus
 l_int|1
+suffix:semicolon
+)brace
+DECL|function|irlap_state_reset_check
+r_static
+r_int
+id|irlap_state_reset_check
+c_func
+(paren
+r_struct
+id|irlap_cb
+op_star
+id|self
+comma
+id|IRLAP_EVENT
+id|event
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|irlap_info
+op_star
+id|info
+)paren
+(brace
+r_int
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), event=%s&bslash;n&quot;
+comma
+id|irlap_event
+(braket
+id|event
+)braket
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;magic
+op_eq
+id|LAP_MAGIC
+comma
+r_return
+op_minus
+id|EBADR
+suffix:semicolon
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|event
+)paren
+(brace
+r_case
+id|RESET_RESPONSE
+suffix:colon
+id|irlap_send_ua_response_frame
+c_func
+(paren
+id|self
+comma
+op_amp
+id|self-&gt;qos_rx
+)paren
+suffix:semicolon
+id|irlap_initiate_connection_state
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
+id|irlap_start_wd_timer
+c_func
+(paren
+id|self
+comma
+id|WD_TIMEOUT
+)paren
+suffix:semicolon
+id|irlap_flush_all_queues
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
+id|irlap_next_state
+c_func
+(paren
+id|self
+comma
+id|LAP_NRM_S
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|DISCONNECT_REQUEST
+suffix:colon
+id|irlap_wait_min_turn_around
+c_func
+(paren
+id|self
+comma
+op_amp
+id|self-&gt;qos_tx
+)paren
+suffix:semicolon
+multiline_comment|/* irlap_send_rd_frame(self); */
+id|irlap_start_wd_timer
+c_func
+(paren
+id|self
+comma
+id|WD_TIMEOUT
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %d, (%s)&bslash;n&quot;
+comma
+id|event
+comma
+id|irlap_event
+(braket
+id|event
+)braket
+)paren
+suffix:semicolon
+id|ret
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_return
+id|ret
 suffix:semicolon
 )brace
 eof

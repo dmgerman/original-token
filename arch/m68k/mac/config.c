@@ -74,12 +74,6 @@ op_star
 id|mac_env
 suffix:semicolon
 multiline_comment|/* Loaded by the boot asm */
-multiline_comment|/* The logical video addr. determined by head.S - testing */
-r_extern
-r_int
-r_int
-id|mac_videobase
-suffix:semicolon
 multiline_comment|/* The phys. video addr. - might be bogus on some machines */
 DECL|variable|mac_orig_videoaddr
 r_int
@@ -114,17 +108,6 @@ c_func
 r_int
 r_int
 id|leds
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|mac_kbd_reset_setup
-c_func
-(paren
-r_char
-op_star
-comma
-r_int
 )paren
 suffix:semicolon
 multiline_comment|/* Mac specific irq functions */
@@ -1019,15 +1002,17 @@ suffix:semicolon
 r_case
 id|BI_MAC_VADDR
 suffix:colon
-multiline_comment|/* save booter supplied videobase; use the one mapped in head.S! */
-id|mac_orig_videoaddr
-op_assign
-op_star
-id|data
-suffix:semicolon
 id|mac_bi_data.videoaddr
 op_assign
-id|mac_videobase
+id|VIDEOMEMBASE
+op_plus
+(paren
+op_star
+id|data
+op_amp
+op_complement
+id|VIDEOMEMMASK
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1248,10 +1233,6 @@ suffix:semicolon
 id|mach_kbd_leds
 op_assign
 id|mac_kbd_leds
-suffix:semicolon
-id|kbd_reset_setup
-op_assign
-id|mac_kbd_reset_setup
 suffix:semicolon
 id|mach_init_IRQ
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.c&n; * Version:       0.3&n; * Description:   Build and transmit IrLAP frames&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Mon Dec 14 14:24:05 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Resrved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.c&n; * Version:       0.3&n; * Description:   Build and transmit IrLAP frames&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Tue Jan 19 22:58:13 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Resrved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
@@ -112,7 +112,7 @@ id|cb-&gt;xbofs
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlap_send_connect_snrm_cmd (void)&n; *&n; *    Transmits a connect SNRM command frame&n; */
+multiline_comment|/*&n; * Function irlap_send_snrm_cmd (void)&n; *&n; *    Transmits a connect SNRM command frame&n; */
 DECL|function|irlap_send_snrm_frame
 r_void
 id|irlap_send_snrm_frame
@@ -2133,10 +2133,6 @@ id|skb
 op_assign
 id|self-&gt;recycle_rr_skb
 suffix:semicolon
-id|skb-&gt;stamp.tv_sec
-op_assign
-l_int|0
-suffix:semicolon
 id|self-&gt;recycle_rr_skb
 op_assign
 l_int|NULL
@@ -2419,7 +2415,7 @@ id|self-&gt;recycle_rr_skb
 op_assign
 id|skb
 suffix:semicolon
-multiline_comment|/*  &n;&t;&t; *  Set skb to NULL, so that the state machine will not &n;&t;&t; *  deallocate it.&n;&t;&t; */
+multiline_comment|/*  &n;&t;&t; *  Set skb to NULL, so that the state machine will not &n;&t;&t; *  try to deallocate it.&n;&t;&t; */
 id|skb
 op_assign
 l_int|NULL
@@ -2458,7 +2454,6 @@ id|info
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlap_send_rr_frame ()&n; *&n; *    Build and transmit RR (Receive Ready) frame&n; */
 DECL|function|irlap_send_frmr_frame
 r_void
 id|irlap_send_frmr_frame
@@ -3067,15 +3062,6 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|skb
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 multiline_comment|/* Initialize variables */
 id|tx_skb
 op_assign
@@ -3353,15 +3339,6 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|skb
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 multiline_comment|/* Is this reliable or unreliable data? */
 r_if
 c_cond
@@ -3602,15 +3579,6 @@ c_func
 id|skb
 op_ne
 l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|skb
 comma
 r_return
 suffix:semicolon
@@ -4002,8 +3970,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irlap_resend_rejected_frames: &quot;
-l_string|&quot;sending additional frames!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), sending additional frames!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -4304,7 +4272,7 @@ l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* insert nr */
-macro_line|#if 0&t;
+macro_line|#if 0
 (brace
 r_int
 id|vr
@@ -4352,7 +4320,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;(), vs=%d, vr=%d, p=%d, %ld&bslash;n&quot;
@@ -5206,7 +5174,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|3
+l_int|4
 comma
 l_string|&quot;*** RNR frame received! pf = %d ***&bslash;n&quot;
 comma

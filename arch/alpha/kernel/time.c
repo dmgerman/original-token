@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/alpha/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1997-01-09    Adrian Sun&n; *      use interval timer if CONFIG_RTC=y&n; * 1997-10-29    John Bowman (bowman@math.ualberta.ca)&n; *      fixed tick loss calculation in timer_interrupt&n; *      (round system clock to nearest tick instead of truncating)&n; *      fixed algorithm in time_init for getting time from CMOS clock&n; */
+multiline_comment|/*&n; *  linux/arch/alpha/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; * 1997-01-09    Adrian Sun&n; *      use interval timer if CONFIG_RTC=y&n; * 1997-10-29    John Bowman (bowman@math.ualberta.ca)&n; *      fixed tick loss calculation in timer_interrupt&n; *      (round system clock to nearest tick instead of truncating)&n; *      fixed algorithm in time_init for getting time from CMOS clock&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -223,9 +223,13 @@ multiline_comment|/*&n;&t; * If we have an externally synchronized Linux clock, 
 r_if
 c_cond
 (paren
-id|time_state
-op_ne
-id|TIME_BAD
+(paren
+id|time_status
+op_amp
+id|STA_UNSYNC
+)paren
+op_eq
+l_int|0
 op_logical_and
 id|xtime.tv_sec
 OG
@@ -238,20 +242,26 @@ op_ge
 l_int|500000
 op_minus
 (paren
-id|tick
-op_rshift
-l_int|1
+(paren
+r_int
 )paren
+id|tick
+)paren
+op_div
+l_int|2
 op_logical_and
 id|xtime.tv_usec
 op_le
 l_int|500000
 op_plus
 (paren
-id|tick
-op_rshift
-l_int|1
+(paren
+r_int
 )paren
+id|tick
+)paren
+op_div
+l_int|2
 )paren
 (brace
 r_int
@@ -1241,17 +1251,27 @@ op_assign
 op_star
 id|tv
 suffix:semicolon
+id|time_adjust
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* stop active adjtime() */
+id|time_status
+op_or_assign
+id|STA_UNSYNC
+suffix:semicolon
 id|time_state
 op_assign
-id|TIME_BAD
+id|TIME_ERROR
 suffix:semicolon
+multiline_comment|/* p. 24, (a) */
 id|time_maxerror
 op_assign
-l_int|0x70000000
+id|NTP_PHASE_LIMIT
 suffix:semicolon
 id|time_esterror
 op_assign
-l_int|0x70000000
+id|NTP_PHASE_LIMIT
 suffix:semicolon
 id|sti
 c_func
@@ -1259,7 +1279,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * In order to set the CMOS clock precisely, set_rtc_mmss has to be&n; * called 500 ms after the second nowtime has started, because when&n; * nowtime is written into the registers of the CMOS clock, it will&n; * jump to the next second precisely 500 ms later. Check the Motorola&n; * MC146818A or Dallas DS12887 data sheet for details.&n; */
+multiline_comment|/*&n; * In order to set the CMOS clock precisely, set_rtc_mmss has to be&n; * called 500 ms after the second nowtime has started, because when&n; * nowtime is written into the registers of the CMOS clock, it will&n; * jump to the next second precisely 500 ms later. Check the Motorola&n; * MC146818A or Dallas DS12887 data sheet for details.&n; *&n; * BUG: This routine does not handle hour overflow properly; it just&n; *      sets the minutes. Usually you won&squot;t notice until after reboot!&n; */
 r_static
 r_int
 DECL|function|set_rtc_mmss
@@ -1460,11 +1480,24 @@ id|RTC_MINUTES
 suffix:semicolon
 )brace
 r_else
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;set_rtc_mmss: can&squot;t update from %d to %d&bslash;n&quot;
+comma
+id|cmos_minutes
+comma
+id|real_minutes
+)paren
+suffix:semicolon
 id|retval
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
+)brace
 multiline_comment|/* The following flags have to be released exactly in this order,&n;&t; * otherwise the DS12887 (popular MC146818A clone with integrated&n;&t; * battery and quartz) will not reset the oscillator and will not&n;&t; * update precisely 500 ms later. You won&squot;t find this mentioned in&n;&t; * the Dallas Semiconductor data sheets, but who believes data&n;&t; * sheets anyway ...                           -- Markus Kuhn&n;&t; */
 id|CMOS_WRITE
 c_func

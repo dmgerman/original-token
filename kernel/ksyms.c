@@ -26,6 +26,7 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#if defined(CONFIG_PROC_FS)
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
@@ -868,6 +869,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|vfs_rename
+)paren
+suffix:semicolon
+DECL|variable|__pollwait
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__pollwait
 )paren
 suffix:semicolon
 macro_line|#if !defined(CONFIG_NFSD) &amp;&amp; defined(CONFIG_NFSD_MODULE)

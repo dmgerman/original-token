@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_SWAP_H
 DECL|macro|_LINUX_SWAP_H
 mdefine_line|#define _LINUX_SWAP_H
+macro_line|#include &lt;asm/page.h&gt;
 DECL|macro|SWAP_FLAG_PREFER
 mdefine_line|#define SWAP_FLAG_PREFER&t;0x8000&t;/* set if swap priority specified */
 DECL|macro|SWAP_FLAG_PRIO_MASK
@@ -83,6 +84,11 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
+multiline_comment|/*&n; * Max bad pages in the new format..&n; */
+DECL|macro|__swapoffset
+mdefine_line|#define __swapoffset(x) ((unsigned long)&amp;((union swap_header *)0)-&gt;x)
+DECL|macro|MAX_SWAP_BADPAGES
+mdefine_line|#define MAX_SWAP_BADPAGES &bslash;&n;&t;((__swapoffset(magic.magic) - __swapoffset(info.badpages)) / sizeof(int))
 DECL|macro|DEBUG_SWAP
 macro_line|#undef DEBUG_SWAP
 macro_line|#include &lt;asm/atomic.h&gt;

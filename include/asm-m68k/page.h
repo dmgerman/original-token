@@ -9,7 +9,7 @@ mdefine_line|#define PAGE_SIZE&t;(1UL &lt;&lt; PAGE_SHIFT)
 DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK&t;(~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
-macro_line|#include&lt;linux/config.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 DECL|macro|STRICT_MM_TYPECHECKS
 mdefine_line|#define STRICT_MM_TYPECHECKS
 DECL|macro|get_user_page
@@ -17,7 +17,7 @@ mdefine_line|#define get_user_page(vaddr)&t;__get_free_page(GFP_KERNEL)
 DECL|macro|free_user_page
 mdefine_line|#define free_user_page(page, addr)&t;free_page(addr)
 multiline_comment|/*&n; * We don&squot;t need to check for alignment etc.&n; */
-macro_line|#if defined(CONFIG_OPTIMIZE_040) || defined(CONFIG_OPTIMIZE_060)
+macro_line|#ifdef CPU_M68040_OR_M68060_ONLY
 DECL|function|copy_page
 r_static
 r_inline

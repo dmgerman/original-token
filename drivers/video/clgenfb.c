@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;video/fbcon.h&gt;
 macro_line|#include &lt;video/fbcon-mfb.h&gt;
 macro_line|#include &lt;video/fbcon-cfb8.h&gt;
@@ -7689,21 +7690,12 @@ multiline_comment|/* for P4, map in its address space in 2 chunks (### TEST! ) *
 multiline_comment|/* (note the ugly hardcoded 16M number) */
 id|fb_info-&gt;regs
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-id|kernel_map
+id|ioremap
 c_func
 (paren
 id|board_addr
 comma
 l_int|16777216
-comma
-id|KERNELMAP_NOCACHE_SER
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|DEBUG
@@ -7734,16 +7726,12 @@ l_int|16777216
 suffix:semicolon
 id|fb_info-&gt;fbmem
 op_assign
-id|kernel_map
+id|ioremap
 c_func
 (paren
 id|fb_info-&gt;fbmem_phys
 comma
 l_int|16777216
-comma
-id|KERNELMAP_NOCACHE_SER
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|DEBUG
@@ -7792,16 +7780,12 @@ l_int|0x01000000
 )paren
 id|fb_info-&gt;fbmem
 op_assign
-id|kernel_map
+id|ioremap
 c_func
 (paren
 id|board_addr
 comma
 id|board_size
-comma
-id|KERNELMAP_NOCACHE_SER
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_else

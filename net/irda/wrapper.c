@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      wrapper.c&n; * Version:       &n; * Description:   IrDA Wrapper layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Wed Dec  9 01:35:53 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      wrapper.c&n; * Version:       &n; * Description:   IrDA Wrapper layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Sat Jan 16 22:05:45 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
@@ -317,19 +317,11 @@ op_increment
 op_assign
 id|EOF
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|6
-comma
-l_string|&quot;async_wrap() --&gt;&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 id|n
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function async_bump (irdev)&n; *&n; *    Got a frame, make a copy of it, and pass it up the stack!&n; *&n; */
+multiline_comment|/*&n; * Function async_bump (idev)&n; *&n; *    Got a frame, make a copy of it, and pass it up the stack!&n; *&n; */
 DECL|function|async_bump
 r_static
 id|__inline__
@@ -340,7 +332,7 @@ c_func
 r_struct
 id|irda_device
 op_star
-id|irdev
+id|idev
 comma
 id|__u8
 op_star
@@ -382,7 +374,7 @@ l_string|&quot;() memory squeeze, &quot;
 l_string|&quot;dropping frame.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|irdev-&gt;stats.rx_dropped
+id|idev-&gt;stats.rx_dropped
 op_increment
 suffix:semicolon
 r_return
@@ -395,14 +387,6 @@ c_func
 id|skb
 comma
 l_int|1
-)paren
-suffix:semicolon
-multiline_comment|/* For finding out how much time we use to&n;&t;   send a frame */
-id|do_gettimeofday
-c_func
-(paren
-op_amp
-id|skb-&gt;stamp
 )paren
 suffix:semicolon
 id|ASSERT
@@ -441,7 +425,7 @@ op_minus
 l_int|2
 )paren
 suffix:semicolon
-id|irdev-&gt;rx_buff.len
+id|idev-&gt;rx_buff.len
 op_assign
 l_int|0
 suffix:semicolon
@@ -450,7 +434,7 @@ multiline_comment|/* memcpy(skb_put(skb,count), ax-&gt;rbuff, count); */
 id|skb-&gt;dev
 op_assign
 op_amp
-id|irdev-&gt;netdev
+id|idev-&gt;netdev
 suffix:semicolon
 id|skb-&gt;mac.raw
 op_assign
@@ -470,10 +454,13 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-id|irdev-&gt;stats.rx_packets
+id|idev-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
-multiline_comment|/* irlap_input( skb, skb-&gt;dev, NULL); */
+id|idev-&gt;stats.rx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function async_unwrap (skb)&n; *&n; *    Parse and de-stuff frame received from the IR-port&n; *&n; */
 DECL|function|async_unwrap_char
@@ -484,25 +471,17 @@ c_func
 r_struct
 id|irda_device
 op_star
-id|irdev
+id|idev
 comma
 id|__u8
 id|byte
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|6
-comma
-l_string|&quot;async_unwrap()&bslash;n&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* State machine for receiving frames */
 r_switch
 c_cond
 (paren
-id|irdev-&gt;rx_buff.state
+id|idev-&gt;rx_buff.state
 )paren
 (brace
 r_case
@@ -516,11 +495,11 @@ op_eq
 id|BOF
 )paren
 (brace
-id|irdev-&gt;rx_buff.state
+id|idev-&gt;rx_buff.state
 op_assign
 id|BEGIN_FRAME
 suffix:semicolon
-id|irdev-&gt;rx_buff.in_frame
+id|idev-&gt;rx_buff.in_frame
 op_assign
 id|TRUE
 suffix:semicolon
@@ -537,7 +516,7 @@ id|EOF
 id|irda_device_set_media_busy
 c_func
 (paren
-id|irdev
+id|idev
 comma
 id|TRUE
 )paren
@@ -564,7 +543,7 @@ r_case
 id|CE
 suffix:colon
 multiline_comment|/* Stuffed byte */
-id|irdev-&gt;rx_buff.state
+id|idev-&gt;rx_buff.state
 op_assign
 id|LINK_ESCAPE
 suffix:semicolon
@@ -574,17 +553,15 @@ r_case
 id|EOF
 suffix:colon
 multiline_comment|/* Abort frame */
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;Frame abort (1)&bslash;n&quot;
-)paren
-suffix:semicolon
-id|irdev-&gt;rx_buff.state
+id|idev-&gt;rx_buff.state
 op_assign
 id|OUTSIDE_FRAME
+suffix:semicolon
+id|idev-&gt;stats.rx_errors
+op_increment
+suffix:semicolon
+id|idev-&gt;stats.rx_frame_errors
+op_increment
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -596,29 +573,30 @@ multiline_comment|/* Got first byte of frame */
 r_if
 c_cond
 (paren
-id|irdev-&gt;rx_buff.len
+id|idev-&gt;rx_buff.len
 OL
-id|irdev-&gt;rx_buff.truesize
+id|idev-&gt;rx_buff.truesize
 )paren
 (brace
-id|irdev-&gt;rx_buff.data
+id|idev-&gt;rx_buff.data
 (braket
-id|irdev-&gt;rx_buff.len
+id|idev-&gt;rx_buff.len
 op_increment
 )braket
 op_assign
 id|byte
 suffix:semicolon
-id|irdev-&gt;rx_buff.fcs
+id|idev-&gt;rx_buff.fcs
 op_assign
 id|IR_FCS
+c_func
 (paren
 id|INIT_FCS
 comma
 id|byte
 )paren
 suffix:semicolon
-id|irdev-&gt;rx_buff.state
+id|idev-&gt;rx_buff.state
 op_assign
 id|INSIDE_FRAME
 suffix:semicolon
@@ -656,18 +634,18 @@ comma
 l_string|&quot;New frame?&bslash;n&quot;
 )paren
 suffix:semicolon
-id|irdev-&gt;rx_buff.state
+id|idev-&gt;rx_buff.state
 op_assign
 id|BEGIN_FRAME
 suffix:semicolon
-id|irdev-&gt;rx_buff.len
+id|idev-&gt;rx_buff.len
 op_assign
 l_int|0
 suffix:semicolon
 id|irda_device_set_media_busy
 c_func
 (paren
-id|irdev
+id|idev
 comma
 id|TRUE
 )paren
@@ -699,11 +677,11 @@ comma
 l_string|&quot;Abort frame (2)&bslash;n&quot;
 )paren
 suffix:semicolon
-id|irdev-&gt;rx_buff.state
+id|idev-&gt;rx_buff.state
 op_assign
 id|OUTSIDE_FRAME
 suffix:semicolon
-id|irdev-&gt;rx_buff.len
+id|idev-&gt;rx_buff.len
 op_assign
 l_int|0
 suffix:semicolon
@@ -719,30 +697,30 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|irdev-&gt;rx_buff.len
+id|idev-&gt;rx_buff.len
 OL
-id|irdev-&gt;rx_buff.truesize
+id|idev-&gt;rx_buff.truesize
 )paren
 (brace
-id|irdev-&gt;rx_buff.data
+id|idev-&gt;rx_buff.data
 (braket
-id|irdev-&gt;rx_buff.len
+id|idev-&gt;rx_buff.len
 op_increment
 )braket
 op_assign
 id|byte
 suffix:semicolon
-id|irdev-&gt;rx_buff.fcs
+id|idev-&gt;rx_buff.fcs
 op_assign
 id|IR_FCS
 c_func
 (paren
-id|irdev-&gt;rx_buff.fcs
+id|idev-&gt;rx_buff.fcs
 comma
 id|byte
 )paren
 suffix:semicolon
-id|irdev-&gt;rx_buff.state
+id|idev-&gt;rx_buff.state
 op_assign
 id|INSIDE_FRAME
 suffix:semicolon
@@ -772,26 +750,18 @@ r_case
 id|BOF
 suffix:colon
 multiline_comment|/* New frame? */
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;New frame?&bslash;n&quot;
-)paren
-suffix:semicolon
-id|irdev-&gt;rx_buff.state
+id|idev-&gt;rx_buff.state
 op_assign
 id|BEGIN_FRAME
 suffix:semicolon
-id|irdev-&gt;rx_buff.len
+id|idev-&gt;rx_buff.len
 op_assign
 l_int|0
 suffix:semicolon
 id|irda_device_set_media_busy
 c_func
 (paren
-id|irdev
+id|idev
 comma
 id|TRUE
 )paren
@@ -802,7 +772,7 @@ r_case
 id|CE
 suffix:colon
 multiline_comment|/* Stuffed char */
-id|irdev-&gt;rx_buff.state
+id|idev-&gt;rx_buff.state
 op_assign
 id|LINK_ESCAPE
 suffix:semicolon
@@ -812,11 +782,11 @@ r_case
 id|EOF
 suffix:colon
 multiline_comment|/* End of frame */
-id|irdev-&gt;rx_buff.state
+id|idev-&gt;rx_buff.state
 op_assign
 id|OUTSIDE_FRAME
 suffix:semicolon
-id|irdev-&gt;rx_buff.in_frame
+id|idev-&gt;rx_buff.in_frame
 op_assign
 id|FALSE
 suffix:semicolon
@@ -824,7 +794,7 @@ multiline_comment|/* &n;&t;&t;&t; *  Test FCS and deliver frame if it&squot;s go
 r_if
 c_cond
 (paren
-id|irdev-&gt;rx_buff.fcs
+id|idev-&gt;rx_buff.fcs
 op_eq
 id|GOOD_FCS
 )paren
@@ -832,36 +802,34 @@ id|GOOD_FCS
 id|async_bump
 c_func
 (paren
-id|irdev
+id|idev
 comma
-id|irdev-&gt;rx_buff.data
+id|idev-&gt;rx_buff.data
 comma
-id|irdev-&gt;rx_buff.len
+id|idev-&gt;rx_buff.len
 )paren
 suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* &n;&t;&t;&t;&t; *  Wrong CRC, discard frame! &n;&t;&t;&t;&t; */
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;Received frame has wrong CRC&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/* Wrong CRC, discard frame!  */
 id|irda_device_set_media_busy
 c_func
 (paren
-id|irdev
+id|idev
 comma
 id|TRUE
 )paren
 suffix:semicolon
-id|irdev-&gt;rx_buff.len
+id|idev-&gt;rx_buff.len
 op_assign
 l_int|0
+suffix:semicolon
+id|idev-&gt;stats.rx_errors
+op_increment
+suffix:semicolon
+id|idev-&gt;stats.rx_crc_errors
+op_increment
 suffix:semicolon
 )brace
 r_break
@@ -874,25 +842,25 @@ multiline_comment|/* Next byte of frame */
 r_if
 c_cond
 (paren
-id|irdev-&gt;rx_buff.len
+id|idev-&gt;rx_buff.len
 OL
-id|irdev-&gt;rx_buff.truesize
+id|idev-&gt;rx_buff.truesize
 )paren
 (brace
-id|irdev-&gt;rx_buff.data
+id|idev-&gt;rx_buff.data
 (braket
-id|irdev-&gt;rx_buff.len
+id|idev-&gt;rx_buff.len
 op_increment
 )braket
 op_assign
 id|byte
 suffix:semicolon
-id|irdev-&gt;rx_buff.fcs
+id|idev-&gt;rx_buff.fcs
 op_assign
 id|IR_FCS
 c_func
 (paren
-id|irdev-&gt;rx_buff.fcs
+id|idev-&gt;rx_buff.fcs
 comma
 id|byte
 )paren

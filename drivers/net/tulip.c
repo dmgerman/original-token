@@ -457,7 +457,7 @@ id|PCI_DEVICE_ID_DEC_TULIP_21142
 comma
 l_string|&quot;Digital DS21142/3 Tulip&quot;
 comma
-l_int|256
+l_int|128
 comma
 l_int|0x0801fbff
 comma
@@ -13364,7 +13364,6 @@ id|pkt_len
 )paren
 suffix:semicolon
 macro_line|#else
-macro_line|#warning Code untested
 id|eth_copy_and_sum
 c_func
 (paren

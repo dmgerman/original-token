@@ -378,6 +378,8 @@ DECL|macro|__NR_getpmsg
 mdefine_line|#define __NR_getpmsg&t;&t;188&t;/* some people actually want streams */
 DECL|macro|__NR_putpmsg
 mdefine_line|#define __NR_putpmsg&t;&t;189&t;/* some people actually want streams */
+DECL|macro|__NR_vfork
+mdefine_line|#define __NR_vfork&t;&t;190
 multiline_comment|/* user-visible error numbers are in the range -1 - -122: see&n;   &lt;asm-m68k/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;/* avoid using res which is declared to be in register d0; &bslash;&n;&t;   errno might expand to a function call and clobber it.  */ &bslash;&n;&t;&t;int __err = -(res); &bslash;&n;&t;&t;errno = __err; &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)
@@ -625,149 +627,6 @@ op_star
 comma
 id|name
 )paren
-multiline_comment|/*&n; * This is the mechanism for creating a new kernel thread.&n; *&n; * NOTE! Only a kernel-only process(ie the swapper or direct descendants&n; * who haven&squot;t done an &quot;execve()&quot;) should use this: it will work within&n; * a system call from a &quot;real&quot; process, but the process memory space will&n; * not be free&squot;d until both the parent and the child have exited.&n; */
-DECL|function|kernel_thread
-r_static
-r_inline
-id|pid_t
-id|kernel_thread
-c_func
-(paren
-r_int
-(paren
-op_star
-id|fn
-)paren
-(paren
-r_void
-op_star
-)paren
-comma
-r_void
-op_star
-id|arg
-comma
-r_int
-r_int
-id|flags
-)paren
-(brace
-id|pid_t
-id|pid
-suffix:semicolon
-id|mm_segment_t
-id|fs
-suffix:semicolon
-id|fs
-op_assign
-id|get_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-id|set_fs
-(paren
-id|KERNEL_DS
-)paren
-suffix:semicolon
-(brace
-r_register
-r_int
-id|retval
-id|__asm__
-(paren
-l_string|&quot;d0&quot;
-)paren
-suffix:semicolon
-r_register
-r_int
-id|clone_arg
-id|__asm__
-(paren
-l_string|&quot;d1&quot;
-)paren
-op_assign
-id|flags
-op_or
-id|CLONE_VM
-suffix:semicolon
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;clrl %%d2&bslash;n&bslash;t&quot;
-l_string|&quot;trap #0&bslash;n&bslash;t&quot;
-multiline_comment|/* Linux/m68k system call */
-l_string|&quot;tstl %0&bslash;n&bslash;t&quot;
-multiline_comment|/* child or parent */
-l_string|&quot;jne 1f&bslash;n&bslash;t&quot;
-multiline_comment|/* parent - jump */
-l_string|&quot;lea %%sp@(-8192),%6&bslash;n&bslash;t&quot;
-multiline_comment|/* reload current */
-l_string|&quot;movel %3,%%sp@-&bslash;n&bslash;t&quot;
-multiline_comment|/* push argument */
-l_string|&quot;jsr %4@&bslash;n&bslash;t&quot;
-multiline_comment|/* call fn */
-l_string|&quot;movel %0,%%d1&bslash;n&bslash;t&quot;
-multiline_comment|/* pass exit value */
-l_string|&quot;movel %2,%0&bslash;n&bslash;t&quot;
-multiline_comment|/* exit */
-l_string|&quot;trap #0&bslash;n&quot;
-l_string|&quot;1:&quot;
-suffix:colon
-l_string|&quot;=d&quot;
-(paren
-id|retval
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|__NR_clone
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|__NR_exit
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|arg
-)paren
-comma
-l_string|&quot;a&quot;
-(paren
-id|fn
-)paren
-comma
-l_string|&quot;d&quot;
-(paren
-id|clone_arg
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|current
-)paren
-suffix:colon
-l_string|&quot;d0&quot;
-comma
-l_string|&quot;d2&quot;
-)paren
-suffix:semicolon
-id|pid
-op_assign
-id|retval
-suffix:semicolon
-)brace
-id|set_fs
-(paren
-id|fs
-)paren
-suffix:semicolon
-r_return
-id|pid
-suffix:semicolon
-)brace
 DECL|function|wait
 r_static
 r_inline

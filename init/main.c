@@ -2806,7 +2806,7 @@ comma
 id|smp_setup
 )brace
 comma
-macro_line|#ifdef __i386__
+macro_line|#ifdef CONFIG_X86_IO_APIC
 (brace
 l_string|&quot;noapic&quot;
 comma

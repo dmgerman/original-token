@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) output module.&n; *&n; * Version:&t;$Id: ip_output.c,v 1.64 1999/01/04 20:05:33 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&n; *&t;See ip_input.c for original log&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Missing nonblock feature in ip_build_xmit.&n; *&t;&t;Mike Kilburn&t;:&t;htons() missing in ip_build_xmit.&n; *&t;&t;Bradford Johnson:&t;Fix faulty handling of some frames when &n; *&t;&t;&t;&t;&t;no route is found.&n; *&t;&t;Alexander Demenshin:&t;Missing sk/skb free in ip_queue_xmit&n; *&t;&t;&t;&t;&t;(in case if packet not accepted by&n; *&t;&t;&t;&t;&t;output firewall rules)&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;&t;Alexey Kuznetsov:&t;use new route cache&n; *&t;&t;Andi Kleen:&t;&t;Fix broken PMTU recovery and remove&n; *&t;&t;&t;&t;&t;some redundant tests.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; *&t;&t;Andi Kleen&t;: &t;Replace ip_reply with ip_send_reply.&n; *&t;&t;Andi Kleen&t;:&t;Split fast and slow ip_build_xmit path &n; *&t;&t;&t;&t;&t;for decreased register pressure on x86 &n; *&t;&t;&t;&t;&t;and more readibility. &n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) output module.&n; *&n; * Version:&t;$Id: ip_output.c,v 1.64 1999/01/04 20:05:33 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&n; *&t;See ip_input.c for original log&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Missing nonblock feature in ip_build_xmit.&n; *&t;&t;Mike Kilburn&t;:&t;htons() missing in ip_build_xmit.&n; *&t;&t;Bradford Johnson:&t;Fix faulty handling of some frames when &n; *&t;&t;&t;&t;&t;no route is found.&n; *&t;&t;Alexander Demenshin:&t;Missing sk/skb free in ip_queue_xmit&n; *&t;&t;&t;&t;&t;(in case if packet not accepted by&n; *&t;&t;&t;&t;&t;output firewall rules)&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;&t;Alexey Kuznetsov:&t;use new route cache&n; *&t;&t;Andi Kleen:&t;&t;Fix broken PMTU recovery and remove&n; *&t;&t;&t;&t;&t;some redundant tests.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; *&t;&t;Andi Kleen&t;: &t;Replace ip_reply with ip_send_reply.&n; *&t;&t;Andi Kleen&t;:&t;Split fast and slow ip_build_xmit path &n; *&t;&t;&t;&t;&t;for decreased register pressure on x86 &n; *&t;&t;&t;&t;&t;and more readibility. &n; *&t;&t;Marc Boucher&t;:&t;When call_out_firewall returns FW_QUEUE,&n; *&t;&t;&t;&t;&t;silently abort send instead of failing&n; *&t;&t;&t;&t;&t;with -EPERM.&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -283,6 +283,7 @@ id|dev
 op_assign
 id|rt-&gt;u.dst.dev
 suffix:semicolon
+macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
@@ -306,6 +307,7 @@ id|FW_ACCEPT
 r_goto
 id|drop
 suffix:semicolon
+macro_line|#endif
 id|ip_send_check
 c_func
 (paren
@@ -323,6 +325,7 @@ id|skb
 suffix:semicolon
 r_return
 suffix:semicolon
+macro_line|#ifdef CONFIG_FIREWALL
 id|drop
 suffix:colon
 id|kfree_skb
@@ -331,6 +334,7 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|__ip_finish_output
 r_int
@@ -837,6 +841,7 @@ id|dev
 op_assign
 id|rt-&gt;u.dst.dev
 suffix:semicolon
+macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
@@ -860,6 +865,7 @@ id|FW_ACCEPT
 r_goto
 id|drop
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* This can happen when the transport layer has segments queued&n;&t; * with a cached route, and by the time we get here things are&n;&t; * re-routed to a device with a different MTU than the original&n;&t; * device.  Sick, but we must cover it.&n;&t; */
 r_if
 c_cond
@@ -1724,12 +1730,19 @@ op_minus
 id|EFAULT
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Account for the fragment.&n;&t;&t; */
+macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
 op_logical_neg
 id|err
-op_logical_and
+)paren
+(brace
+r_int
+id|fw_res
+suffix:semicolon
+id|fw_res
+op_assign
 id|call_out_firewall
 c_func
 (paren
@@ -1744,6 +1757,31 @@ comma
 op_amp
 id|skb
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fw_res
+op_eq
+id|FW_QUEUE
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+id|skb
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|fw_res
 OL
 id|FW_ACCEPT
 )paren
@@ -1754,6 +1792,8 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1800,6 +1840,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|skb
+op_logical_and
 id|rt-&gt;u.dst
 dot
 id|output
@@ -2228,12 +2270,19 @@ op_assign
 op_minus
 id|EFAULT
 suffix:semicolon
+macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
 op_logical_neg
 id|err
-op_logical_and
+)paren
+(brace
+r_int
+id|fw_res
+suffix:semicolon
+id|fw_res
+op_assign
 id|call_out_firewall
 c_func
 (paren
@@ -2248,6 +2297,30 @@ comma
 op_amp
 id|skb
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fw_res
+op_eq
+id|FW_QUEUE
+)paren
+(brace
+multiline_comment|/* re-queued elsewhere; silently abort this send */
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|fw_res
 OL
 id|FW_ACCEPT
 )paren
@@ -2258,6 +2331,8 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren

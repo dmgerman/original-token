@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      esi.c&n; * Version:       1.0&n; * Description:   Driver for the Extended Systems JetEye PC&n; * Status:        Experimental.&n; * Author:        Thomas Davis, &lt;ratbert@radiks.net&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Mon Dec 14 11:48:22 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  esi.c&n; *&n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     Copyright (c) 1998, Dag Brattli,  &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Thomas Davis, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      esi.c&n; * Version:       1.1&n; * Description:   Driver for the Extended Systems JetEye PC&n; * Status:        Experimental.&n; * Author:        Thomas Davis, &lt;ratbert@radiks.net&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Mon Jan 18 11:30:32 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  esi.c&n; *&n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     Copyright (c) 1998, Dag Brattli,  &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Thomas Davis, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -156,7 +156,7 @@ id|type
 id|strcat
 c_func
 (paren
-id|idev-&gt;name
+id|idev-&gt;description
 comma
 l_string|&quot; &lt;-&gt; esi&quot;
 )paren
@@ -212,7 +212,7 @@ suffix:semicolon
 r_int
 id|arg
 op_assign
-l_int|0
+id|TIOCM_OUT2
 suffix:semicolon
 r_struct
 id|termios
@@ -223,15 +223,6 @@ id|cflag
 suffix:semicolon
 id|mm_segment_t
 id|fs
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
 suffix:semicolon
 id|ASSERT
 c_func
@@ -328,7 +319,7 @@ op_or_assign
 id|B19200
 suffix:semicolon
 id|arg
-op_assign
+op_or_assign
 id|TIOCM_DTR
 suffix:semicolon
 r_break
@@ -341,7 +332,7 @@ op_or_assign
 id|B115200
 suffix:semicolon
 id|arg
-op_assign
+op_or_assign
 id|TIOCM_RTS
 op_or
 id|TIOCM_DTR
@@ -358,7 +349,7 @@ op_or_assign
 id|B9600
 suffix:semicolon
 id|arg
-op_assign
+op_or_assign
 id|TIOCM_RTS
 suffix:semicolon
 r_break
@@ -424,7 +415,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;error setting ESI speed!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), error setting ESI speed!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

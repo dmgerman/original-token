@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.39 1998/09/29 09:46:15 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * Chris Davis (cdavis@cois.on.ca) 03/27/1998&n; * Added support for the intersil on the sun4/4200&n; *&n; * Gleb Raiko (rajko@mech.math.msu.su) 08/18/1998&n; * Support for MicroSPARC-IIep, PCI CPU.&n; *&n; * This file handles the Sparc specific time handling details.&n; */
+multiline_comment|/* $Id: time.c,v 1.39 1998/09/29 09:46:15 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * Chris Davis (cdavis@cois.on.ca) 03/27/1998&n; * Added support for the intersil on the sun4/4200&n; *&n; * Gleb Raiko (rajko@mech.math.msu.su) 08/18/1998&n; * Support for MicroSPARC-IIep, PCI CPU.&n; *&n; * This file handles the Sparc specific time handling details.&n; *&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -180,9 +180,13 @@ multiline_comment|/* Determine when to update the Mostek clock. */
 r_if
 c_cond
 (paren
-id|time_state
-op_ne
-id|TIME_BAD
+(paren
+id|time_status
+op_amp
+id|STA_UNSYNC
+)paren
+op_eq
+l_int|0
 op_logical_and
 id|xtime.tv_sec
 OG
@@ -191,24 +195,30 @@ op_plus
 l_int|660
 op_logical_and
 id|xtime.tv_usec
-OG
+op_ge
 l_int|500000
 op_minus
 (paren
-id|tick
-op_rshift
-l_int|1
+(paren
+r_int
 )paren
+id|tick
+)paren
+op_div
+l_int|2
 op_logical_and
 id|xtime.tv_usec
-OL
+op_le
 l_int|500000
 op_plus
 (paren
-id|tick
-op_rshift
-l_int|1
+(paren
+r_int
 )paren
+id|tick
+)paren
+op_div
+l_int|2
 )paren
 (brace
 r_if
@@ -2239,17 +2249,27 @@ op_assign
 op_star
 id|tv
 suffix:semicolon
+id|time_adjust
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* stop active adjtime() */
+id|time_status
+op_or_assign
+id|STA_UNSYNC
+suffix:semicolon
 id|time_state
 op_assign
-id|TIME_BAD
+id|TIME_ERROR
 suffix:semicolon
+multiline_comment|/* p. 24, (a) */
 id|time_maxerror
 op_assign
-l_int|0x70000000
+id|NTP_PHASE_LIMIT
 suffix:semicolon
 id|time_esterror
 op_assign
-l_int|0x70000000
+id|NTP_PHASE_LIMIT
 suffix:semicolon
 id|sti
 c_func
@@ -2257,6 +2277,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * BUG: This routine does not handle hour overflow properly; it just&n; *      sets the minutes. Usually you won&squot;t notice until after reboot!&n; */
 DECL|function|set_rtc_mmss
 r_static
 r_int
@@ -2403,10 +2424,23 @@ id|iregs
 suffix:semicolon
 )brace
 r_else
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;set_rtc_mmss: can&squot;t update from %d to %d&bslash;n&quot;
+comma
+id|cmos_minutes
+comma
+id|real_minutes
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon

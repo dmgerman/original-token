@@ -3230,6 +3230,7 @@ id|dentry
 r_goto
 m_exit
 suffix:semicolon
+multiline_comment|/*&n;&t; * EEXIST is kind of a strange error code to&n;&t; * return, but basically if the dentry was moved&n;&t; * or unlinked while we locked the parent, we&n;&t; * do know that it _did_ exist before, and as&n;&t; * such it makes perfect sense.. In contrast,&n;&t; * ENOENT doesn&squot;t make sense for mkdir.&n;&t; */
 id|dir
 op_assign
 id|lock_parent
@@ -3241,7 +3242,7 @@ suffix:semicolon
 id|error
 op_assign
 op_minus
-id|ENOENT
+id|EEXIST
 suffix:semicolon
 r_if
 c_cond

@@ -252,6 +252,13 @@ c_func
 id|strpbrk
 )paren
 suffix:semicolon
+DECL|variable|strstr
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|strstr
+)paren
+suffix:semicolon
 DECL|variable|strncpy_from_user
 id|EXPORT_SYMBOL
 c_func

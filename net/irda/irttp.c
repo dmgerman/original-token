@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.c&n; * Version:       0.4&n; * Description:   Tiny Transport Protocol (TTP) implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Mon Dec 14 11:53:19 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.c&n; * Version:       0.4&n; * Description:   Tiny Transport Protocol (TTP) implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Tue Jan 19 23:56:58 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -998,17 +998,6 @@ c_func
 id|skb
 op_ne
 l_int|NULL
-comma
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)paren
-suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|skb
 comma
 r_return
 op_minus
@@ -4258,12 +4247,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Fragment index */
-r_int
-id|i
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* Fragment nr */
 id|ASSERT
 c_func
 (paren
@@ -4353,23 +4336,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), copying fragment %d with len=%d&bslash;n&quot;
-comma
-id|i
-op_increment
-comma
-(paren
-r_int
-)paren
-id|frag-&gt;len
-)paren
-suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -4470,11 +4436,6 @@ suffix:semicolon
 id|__u8
 op_star
 id|frame
-suffix:semicolon
-r_int
-id|i
-op_assign
-l_int|0
 suffix:semicolon
 id|DEBUG
 c_func
@@ -4659,24 +4620,6 @@ c_func
 id|skb
 comma
 id|self-&gt;max_seg_size
-)paren
-suffix:semicolon
-multiline_comment|/* Queue segment */
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), queuing segment %d with len=%d&bslash;n&quot;
-comma
-id|i
-op_increment
-comma
-(paren
-r_int
-)paren
-id|frag-&gt;len
 )paren
 suffix:semicolon
 id|skb_queue_tail

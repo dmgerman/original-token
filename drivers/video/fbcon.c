@@ -2244,7 +2244,7 @@ op_eq
 l_int|256
 )paren
 (brace
-id|p-&gt;conp-&gt;vc_hi_font_mask
+id|conp-&gt;vc_hi_font_mask
 op_assign
 l_int|0
 suffix:semicolon
@@ -2263,11 +2263,16 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|p-&gt;conp-&gt;vc_hi_font_mask
+id|conp-&gt;vc_hi_font_mask
 op_assign
 l_int|0x100
 suffix:semicolon
-id|p-&gt;conp-&gt;vc_complement_mask
+r_if
+c_cond
+(paren
+id|conp-&gt;vc_can_do_color
+)paren
+id|conp-&gt;vc_complement_mask
 op_lshift_assign
 l_int|1
 suffix:semicolon
@@ -7044,6 +7049,11 @@ id|p-&gt;conp-&gt;vc_hi_font_mask
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;conp-&gt;vc_can_do_color
+)paren
 id|p-&gt;conp-&gt;vc_complement_mask
 op_rshift_assign
 l_int|1
@@ -7059,6 +7069,11 @@ op_assign
 l_int|0xff
 suffix:semicolon
 multiline_comment|/* ++Edmund: reorder the attribute bits */
+r_if
+c_cond
+(paren
+id|p-&gt;conp-&gt;vc_can_do_color
+)paren
 (brace
 r_struct
 id|vc_data
@@ -7180,6 +7195,11 @@ id|p-&gt;conp-&gt;vc_hi_font_mask
 op_assign
 l_int|0x100
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;conp-&gt;vc_can_do_color
+)paren
 id|p-&gt;conp-&gt;vc_complement_mask
 op_lshift_assign
 l_int|1
@@ -7241,6 +7261,10 @@ id|cp
 op_increment
 )paren
 (brace
+r_int
+r_int
+id|newc
+suffix:semicolon
 id|c
 op_assign
 id|scr_readw
@@ -7249,9 +7273,13 @@ c_func
 id|cp
 )paren
 suffix:semicolon
-id|scr_writew
-c_func
+r_if
+c_cond
 (paren
+id|conp-&gt;vc_can_do_color
+)paren
+id|newc
+op_assign
 (paren
 (paren
 id|c
@@ -7267,6 +7295,19 @@ id|c
 op_amp
 l_int|0xff
 )paren
+suffix:semicolon
+r_else
+id|newc
+op_assign
+id|c
+op_amp
+op_complement
+l_int|0x100
+suffix:semicolon
+id|scr_writew
+c_func
+(paren
+id|newc
 comma
 id|cp
 )paren
@@ -7276,6 +7317,12 @@ id|c
 op_assign
 id|conp-&gt;vc_video_erase_char
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|conp-&gt;vc_can_do_color
+)paren
+(brace
 id|conp-&gt;vc_video_erase_char
 op_assign
 (paren
@@ -7297,6 +7344,15 @@ suffix:semicolon
 id|conp-&gt;vc_attr
 op_lshift_assign
 l_int|1
+suffix:semicolon
+)brace
+r_else
+id|conp-&gt;vc_video_erase_char
+op_assign
+id|c
+op_amp
+op_complement
+l_int|0x100
 suffix:semicolon
 )brace
 )brace
@@ -7594,10 +7650,13 @@ suffix:semicolon
 r_int
 id|i
 comma
-id|j
-comma
 id|k
 suffix:semicolon
+macro_line|#ifndef CONFIG_FBCON_FONTWIDTH8_ONLY
+r_int
+id|j
+suffix:semicolon
+macro_line|#endif
 id|u8
 op_star
 id|new_data
@@ -10192,7 +10251,7 @@ id|p-&gt;line_length
 suffix:semicolon
 multiline_comment|/* for support of Atari interleaved planes */
 DECL|macro|MAP_X
-mdefine_line|#define MAP_X(x)&t;(line_length ? x : (x &amp; ~1)*depth + (x &amp; 1))
+mdefine_line|#define MAP_X(x)&t;(line_length ? (x) : ((x) &amp; ~1)*depth + ((x) &amp; 1))
 macro_line|#else
 mdefine_line|#define MAP_X(x)&t;(x)
 macro_line|#endif
@@ -10248,6 +10307,10 @@ op_plus
 id|MAP_X
 c_func
 (paren
+id|x
+op_div
+l_int|8
+op_plus
 id|x1
 )paren
 suffix:semicolon
@@ -10373,6 +10436,10 @@ op_plus
 id|MAP_X
 c_func
 (paren
+id|x
+op_div
+l_int|8
+op_plus
 id|x1
 )paren
 op_plus

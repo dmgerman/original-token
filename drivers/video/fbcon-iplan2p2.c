@@ -1,11 +1,11 @@
 multiline_comment|/*&n; *  linux/drivers/video/fbcon-iplan2p2.c -- Low level frame buffer operations&n; *&t;&t;&t;&t;  for interleaved bitplanes &#xfffd; la Atari (2&n; *&t;&t;&t;&t;  planes, 2 bytes interleave)&n; *&n; *&t;Created 5 Apr 1997 by Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;video/fbcon.h&gt;
 macro_line|#include &lt;video/fbcon-iplan2p2.h&gt;
 multiline_comment|/*&n;     *  Interleaved bitplanes &#xfffd; la Atari (2 planes, 2 bytes interleave)&n;     */
@@ -75,7 +75,7 @@ id|u16
 id|val
 )paren
 (brace
-macro_line|#if defined __mc68000__ &amp;&amp; !defined CONFIG_OPTIMIZE_060
+macro_line|#if defined __mc68000__ &amp;&amp; !defined CPU_M68060_ONLY
 id|asm
 r_volatile
 (paren

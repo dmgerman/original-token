@@ -1,11 +1,17 @@
 macro_line|#ifndef __ASM_SMP_H
 DECL|macro|__ASM_SMP_H
 mdefine_line|#define __ASM_SMP_H
-macro_line|#ifdef __SMP__
+multiline_comment|/*&n; * We need the APIC definitions automatically as part of &squot;smp.h&squot;&n; */
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_X86_LOCAL_APIC
 macro_line|#ifndef ASSEMBLY
+macro_line|#include &lt;asm/fixmap.h&gt;
 macro_line|#include &lt;asm/i82489.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/fixmap.h&gt;
+macro_line|#endif
+macro_line|#endif
+macro_line|#ifdef __SMP__
+macro_line|#ifndef ASSEMBLY
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 multiline_comment|/*&n; *&t;Support definitions for SMP machines following the intel multiprocessing&n; *&t;specification&n; */
@@ -593,73 +599,6 @@ id|id
 )paren
 suffix:semicolon
 multiline_comment|/* Store per CPU info (like the initial udelay numbers */
-multiline_comment|/*&n; *&t;APIC handlers: Note according to the Intel specification update&n; *&t;you should put reads between APIC writes.&n; *&t;Intel Pentium processor specification update [11AP, pg 64]&n; *&t;&quot;Back to Back Assertions of HOLD May Cause Lost APIC Write Cycle&quot;&n; */
-DECL|macro|APIC_BASE
-mdefine_line|#define APIC_BASE (fix_to_virt(FIX_APIC_BASE))
-DECL|function|apic_write
-r_extern
-id|__inline
-r_void
-id|apic_write
-c_func
-(paren
-r_int
-r_int
-id|reg
-comma
-r_int
-r_int
-id|v
-)paren
-(brace
-op_star
-(paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
-)paren
-(paren
-id|APIC_BASE
-op_plus
-id|reg
-)paren
-)paren
-op_assign
-id|v
-suffix:semicolon
-)brace
-DECL|function|apic_read
-r_extern
-id|__inline
-r_int
-r_int
-id|apic_read
-c_func
-(paren
-r_int
-r_int
-id|reg
-)paren
-(brace
-r_return
-op_star
-(paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
-)paren
-(paren
-id|APIC_BASE
-op_plus
-id|reg
-)paren
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * This function is needed by all SMP systems. It must _always_ be valid&n; * from the initial startup. We map APIC_BASE very early in page_setup(),&n; * so this is correct in the x86 case.&n; */
 DECL|macro|smp_processor_id
 mdefine_line|#define smp_processor_id() (current-&gt;processor)

@@ -977,12 +977,10 @@ id|page
 op_star
 )paren
 (paren
-id|PAGE_OFFSET
-op_plus
+id|page_address
+c_func
 (paren
-id|ret-&gt;map_nr
-op_lshift
-id|PAGE_SHIFT
+id|ret
 )paren
 op_plus
 id|off

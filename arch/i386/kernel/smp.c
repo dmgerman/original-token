@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
-macro_line|#include &lt;asm/i82489.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -449,6 +448,45 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_X86_VISWS_APIC
+multiline_comment|/*&n; * hacky!&n; */
+DECL|function|smp_scan_config
+r_int
+id|__init
+id|smp_scan_config
+c_func
+(paren
+r_int
+r_int
+id|base
+comma
+r_int
+r_int
+id|length
+)paren
+(brace
+id|cpu_present_map
+op_or_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* or in id 1 */
+id|apic_version
+(braket
+l_int|1
+)braket
+op_or_assign
+l_int|0x10
+suffix:semicolon
+multiline_comment|/* integrated APIC */
+id|num_processors
+op_assign
+l_int|2
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#else
 multiline_comment|/*&n; *&t;Checksum an MP configuration block.&n; */
 DECL|function|mpf_checksum
 r_static
@@ -1820,6 +1858,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; *&t;Trampoline 80x86 program as an array.&n; */
 r_extern
 r_int
@@ -2174,10 +2213,12 @@ id|apic_phys
 op_assign
 id|mp_lapic_addr
 suffix:semicolon
+macro_line|#ifdef CONFIG_X86_IO_APIC
 id|ioapic_phys
 op_assign
 id|mp_ioapic_addr
 suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 (brace
@@ -2223,6 +2264,7 @@ op_star
 id|PAGE_SIZE
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_X86_IO_APIC
 id|set_fixmap
 c_func
 (paren
@@ -2263,6 +2305,7 @@ comma
 id|ioapic_phys
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 id|memory_start
 suffix:semicolon
@@ -3758,6 +3801,7 @@ id|boot_cpu_id
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_X86_IO_APIC
 multiline_comment|/*&n;&t; *&t;If we don&squot;t conform to the Intel MPS standard, get out&n;&t; *&t;of here now!&n;&t; */
 r_if
 c_cond
@@ -3785,6 +3829,7 @@ r_goto
 id|smp_done
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;If SMP should be disabled, then really disable it!&n;&t; */
 r_if
 c_cond
@@ -4236,6 +4281,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_X86_IO_APIC
 multiline_comment|/*&n;&t; * Here we can be sure that there is an IO-APIC in the system. Let&squot;s&n;&t; * go and set it up:&n;&t; */
 r_if
 c_cond
@@ -4250,6 +4296,7 @@ c_func
 suffix:semicolon
 id|smp_done
 suffix:colon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * the following functions deal with sending IPIs between CPUs.&n; *&n; * We use &squot;broadcast&squot;, CPU-&gt;CPU IPIs and self-IPIs too.&n; */
 multiline_comment|/*&n; * Silly serialization to work around CPU bug in P5s.&n; * We can safely turn it off on a 686.&n; */

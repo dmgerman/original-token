@@ -21,6 +21,13 @@ r_struct
 id|pci_bus
 id|pci_root
 suffix:semicolon
+macro_line|#ifdef CONFIG_VISWS
+DECL|variable|pci_other
+r_struct
+id|pci_bus
+id|pci_other
+suffix:semicolon
+macro_line|#endif
 DECL|variable|pci_devices
 r_struct
 id|pci_dev
@@ -1706,6 +1713,27 @@ op_amp
 id|pci_root
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_VISWS
+id|pci_other.number
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* XXX unless bridge(s) on pci_root */
+id|pci_other.subordinate
+op_assign
+id|pci_scan_bus
+c_func
+(paren
+op_amp
+id|pci_other
+)paren
+suffix:semicolon
+id|pci_root.next
+op_assign
+op_amp
+id|pci_other
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* give BIOS a chance to apply platform specific fixes: */
 id|pcibios_fixup
 c_func

@@ -21,8 +21,6 @@ mdefine_line|#define MCDX_DEBUG   0
 macro_line|#endif
 multiline_comment|/* *** make the following line uncommented, if you&squot;re sure,&n; * *** all configuration is done */
 multiline_comment|/* #define I_WAS_HERE */
-DECL|macro|I_WAS_HERE
-mdefine_line|#define I_WAS_HERE   /* delete this line, it&squot;s for heiko only */
 multiline_comment|/*&t;The name of the device */
 DECL|macro|MCDX
 mdefine_line|#define MCDX &quot;mcdx&quot;&t;

@@ -2499,6 +2499,35 @@ id|regs
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * This is trivial, and on the face of it looks like it&n; * could equally well be done in user mode.&n; *&n; * Not so, for quite unobvious reasons - register pressure.&n; * In user mode vfork() cannot have a stack frame, and if&n; * done by calling the &quot;clone()&quot; system call directly, you&n; * do not have enough call-clobbered registers to hold all&n; * the information you need.&n; */
+DECL|function|sys_vfork
+id|asmlinkage
+r_int
+id|sys_vfork
+c_func
+(paren
+r_struct
+id|pt_regs
+id|regs
+)paren
+(brace
+r_return
+id|do_fork
+c_func
+(paren
+id|CLONE_VFORK
+op_or
+id|CLONE_VM
+op_or
+id|SIGCHLD
+comma
+id|regs.esp
+comma
+op_amp
+id|regs
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * sys_execve() executes a new program.&n; */
 DECL|function|sys_execve
 id|asmlinkage

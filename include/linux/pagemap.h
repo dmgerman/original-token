@@ -24,7 +24,11 @@ id|PAGE_OFFSET
 op_plus
 id|PAGE_SIZE
 op_star
-id|page-&gt;map_nr
+(paren
+id|page
+op_minus
+id|mem_map
+)paren
 suffix:semicolon
 )brace
 DECL|macro|PAGE_HASH_BITS

@@ -461,7 +461,9 @@ id|page-&gt;next_hash
 suffix:semicolon
 id|clock
 op_assign
-id|page-&gt;map_nr
+id|page
+op_minus
+id|mem_map
 suffix:semicolon
 )brace
 id|count

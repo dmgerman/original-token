@@ -21,6 +21,10 @@ macro_line|#include &lt;asm/pgtable.h&gt;&t;/* io_remap_page_range() */
 macro_line|#include &lt;video/sbusfb.h&gt;
 DECL|macro|DEFAULT_CURSOR_BLINK_RATE
 mdefine_line|#define DEFAULT_CURSOR_BLINK_RATE       (2*HZ/5)
+DECL|macro|CURSOR_SHAPE
+mdefine_line|#define CURSOR_SHAPE&t;&t;&t;1
+DECL|macro|CURSOR_BLINK
+mdefine_line|#define CURSOR_BLINK&t;&t;&t;2
 multiline_comment|/*&n;     *  Interface used by the world&n;     */
 r_void
 id|sbusfb_init
@@ -2567,8 +2571,8 @@ r_if
 c_cond
 (paren
 id|fb-&gt;cursor.mode
-op_ne
-l_int|2
+op_amp
+id|CURSOR_BLINK
 )paren
 (brace
 id|fb-&gt;cursor.enable
@@ -2640,8 +2644,9 @@ r_case
 id|CM_ERASE
 suffix:colon
 id|fb-&gt;cursor.mode
-op_assign
-l_int|2
+op_and_assign
+op_complement
+id|CURSOR_BLINK
 suffix:semicolon
 id|fb-&gt;cursor.enable
 op_assign
@@ -2667,6 +2672,8 @@ r_if
 c_cond
 (paren
 id|fb-&gt;cursor.mode
+op_amp
+id|CURSOR_SHAPE
 )paren
 (brace
 id|fb-&gt;cursor.size.fbx
@@ -2843,11 +2850,11 @@ id|fb-&gt;setcurshape
 id|fb
 )paren
 suffix:semicolon
+)brace
 id|fb-&gt;cursor.mode
 op_assign
-l_int|0
+id|CURSOR_BLINK
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4388,7 +4395,7 @@ suffix:semicolon
 multiline_comment|/* Don&squot;t let graphics programs hide our nice text cursor */
 id|fb-&gt;cursor.mode
 op_assign
-l_int|2
+id|CURSOR_SHAPE
 suffix:semicolon
 multiline_comment|/* Forget state of our text cursor */
 )brace
@@ -4925,8 +4932,8 @@ id|con
 )paren
 )paren
 id|fb-&gt;cursor.mode
-op_assign
-l_int|1
+op_or_assign
+id|CURSOR_SHAPE
 suffix:semicolon
 )brace
 id|x_margin
@@ -5691,8 +5698,8 @@ op_star
 id|y_margin
 suffix:semicolon
 id|fb-&gt;cursor.mode
-op_assign
-l_int|1
+op_or_assign
+id|CURSOR_SHAPE
 suffix:semicolon
 r_if
 c_cond
@@ -6629,6 +6636,10 @@ id|fb-&gt;cursor.timer
 suffix:semicolon
 )brace
 )brace
+id|fb-&gt;cursor.mode
+op_assign
+id|CURSOR_SHAPE
+suffix:semicolon
 id|fb-&gt;dispsw.set_font
 op_assign
 id|sbusfb_set_font

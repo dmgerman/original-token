@@ -34,6 +34,12 @@ id|mm_vtop_fallback
 r_int
 r_int
 )paren
+id|__attribute__
+(paren
+(paren
+r_const
+)paren
+)paren
 suffix:semicolon
 r_extern
 r_int

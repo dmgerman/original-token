@@ -814,6 +814,15 @@ l_int|22
 )brace
 comma
 multiline_comment|/* IBM Thinkpad Dock II SCSI */
+(brace
+l_string|&quot;DTC3520A Host Adapter BIOS&quot;
+comma
+l_int|0x318a
+comma
+l_int|26
+)brace
+comma
+multiline_comment|/* DTC 3520A ISA SCSI */
 )brace
 suffix:semicolon
 DECL|macro|SIGNATURE_COUNT

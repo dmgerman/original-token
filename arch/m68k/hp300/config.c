@@ -134,25 +134,6 @@ id|leds
 )paren
 (brace
 )brace
-multiline_comment|/* for &quot;kbd-reset&quot; cmdline param */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_void
-id|hp300_kbd_reset_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-id|i
-)paren
-)paren
-(brace
-)brace
 DECL|function|hp300_get_model
 r_static
 r_void
@@ -212,10 +193,6 @@ suffix:semicolon
 id|mach_free_irq
 op_assign
 id|hp300_free_irq
-suffix:semicolon
-id|kbd_reset_setup
-op_assign
-id|hp300_kbd_reset_setup
 suffix:semicolon
 id|mach_get_model
 op_assign

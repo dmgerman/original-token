@@ -655,6 +655,11 @@ id|__u8
 id|rcv_wscale
 suffix:semicolon
 multiline_comment|/* Window scaling to send to receiver&t;*/
+DECL|member|rexmt_done
+id|__u8
+id|rexmt_done
+suffix:semicolon
+multiline_comment|/* Retransmitted up to send head?&t;*/
 DECL|member|rcv_tsval
 id|__u32
 id|rcv_tsval
@@ -3240,7 +3245,8 @@ r_int
 )paren
 suffix:semicolon
 multiline_comment|/* &n; *&t;Enable debug/info messages &n; */
-macro_line|#if 0
+macro_line|#if 1
+DECL|macro|NETDEBUG
 mdefine_line|#define NETDEBUG(x)&t;do { } while (0)
 macro_line|#else
 DECL|macro|NETDEBUG

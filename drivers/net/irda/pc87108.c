@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      pc87108.c&n; * Version:       0.8&n; * Description:   FIR/MIR driver for the NS PC87108 chip&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Nov  7 21:43:15 1998&n; * Modified at:   Mon Dec 14 11:40:24 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Lichen Wang, &lt;lwang@actisys.com&gt;&n; *     Copyright (c) 1998 Actisys Corp., www.actisys.com&n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb( iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb( bank, iobase+BSR);&n; *&n; *    If you find bugs in this file, its very likely that the same bug&n; *    will also be in w83977af_ir.c since the implementations is quite&n; *    similar.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      pc87108.c&n; * Version:       0.8&n; * Description:   FIR/MIR driver for the NS PC87108 chip&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Nov  7 21:43:15 1998&n; * Modified at:   Mon Dec 28 08:46:16 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Lichen Wang, &lt;lwang@actisys.com&gt;&n; *     Copyright (c) 1998 Actisys Corp., www.actisys.com&n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb( iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb( bank, iobase+BSR);&n; *&n; *    If you find bugs in this file, its very likely that the same bug&n; *    will also be in w83977af_ir.c since the implementations is quite&n; *    similar.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -427,15 +427,6 @@ r_void
 (brace
 r_int
 id|i
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -1537,7 +1528,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-l_int|4000
+l_int|2048
 op_amp
 l_int|0xff
 comma
@@ -1550,7 +1541,7 @@ id|outb
 c_func
 (paren
 (paren
-l_int|4000
+l_int|2048
 op_rshift
 l_int|8
 )paren
@@ -1566,7 +1557,7 @@ multiline_comment|/* Transmitter frame length */
 id|outb
 c_func
 (paren
-l_int|4000
+l_int|2048
 op_amp
 l_int|0xff
 comma
@@ -1579,7 +1570,7 @@ id|outb
 c_func
 (paren
 (paren
-l_int|4000
+l_int|2048
 op_rshift
 l_int|8
 )paren
@@ -2831,14 +2822,19 @@ c_func
 (paren
 id|FCR_RXTH
 op_or
+multiline_comment|/* Set Rx FIFO threshold */
 id|FCR_TXTH
 op_or
+multiline_comment|/* Set Tx FIFO threshold */
 id|FCR_TXSR
 op_or
+multiline_comment|/* Reset Tx FIFO */
 id|FCR_RXSR
 op_or
+multiline_comment|/* Reset Rx FIFO */
 id|FCR_FIFO_EN
 comma
+multiline_comment|/* Enable FIFOs */
 id|iobase
 op_plus
 id|FCR
@@ -3729,7 +3725,7 @@ suffix:semicolon
 id|idev-&gt;stats.tx_fifo_errors
 op_increment
 suffix:semicolon
-multiline_comment|/* Clear bit, by writing 1 to it */
+multiline_comment|/* Clear bit, by writing 1 into it */
 id|outb
 c_func
 (paren

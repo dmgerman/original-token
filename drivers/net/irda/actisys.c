@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      actisys.c&n; * Version:       0.3&n; * Description:   Implementation for the ACTiSYS IR-220L and IR-220L+ &n; *                dongles&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Oct 21 20:02:35 1998&n; * Modified at:   Mon Dec 14 11:50:32 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      actisys.c&n; * Version:       0.4&n; * Description:   Implementation for the ACTiSYS IR-220L and IR-220L+ &n; *                dongles&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Oct 21 20:02:35 1998&n; * Modified at:   Mon Jan 18 11:30:25 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -245,8 +245,6 @@ id|tty
 suffix:semicolon
 r_int
 id|arg
-op_assign
-l_int|0
 suffix:semicolon
 r_struct
 id|termios
@@ -405,6 +403,8 @@ multiline_comment|/* Set DTR, clear RTS */
 id|arg
 op_assign
 id|TIOCM_DTR
+op_or
+id|TIOCM_OUT2
 suffix:semicolon
 id|fs
 op_assign
@@ -478,6 +478,8 @@ op_assign
 id|TIOCM_DTR
 op_or
 id|TIOCM_RTS
+op_or
+id|TIOCM_OUT2
 suffix:semicolon
 id|fs
 op_assign
@@ -814,6 +816,8 @@ suffix:semicolon
 id|arg
 op_assign
 id|TIOCM_RTS
+op_or
+id|TIOCM_OUT2
 suffix:semicolon
 id|fs
 op_assign
@@ -860,7 +864,7 @@ c_func
 l_int|0
 comma
 id|__FUNCTION__
-l_string|&quot;(), Ioctl error!&bslash;n&quot;
+l_string|&quot;(), ioctl error!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -895,6 +899,8 @@ op_assign
 id|TIOCM_RTS
 op_or
 id|TIOCM_DTR
+op_or
+id|TIOCM_OUT2
 suffix:semicolon
 id|fs
 op_assign
@@ -941,7 +947,7 @@ c_func
 l_int|0
 comma
 id|__FUNCTION__
-l_string|&quot;(), Ioctl error!&bslash;n&quot;
+l_string|&quot;(), ioctl error!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

@@ -31,20 +31,6 @@ suffix:semicolon
 multiline_comment|/* data */
 )brace
 suffix:semicolon
-macro_line|#else /* __ASSEMBLY__ */
-id|BIR_tag
-op_assign
-l_int|0
-id|BIR_size
-op_assign
-id|BIR_tag
-op_plus
-l_int|2
-id|BIR_data
-op_assign
-id|BIR_size
-op_plus
-l_int|2
 macro_line|#endif /* __ASSEMBLY__ */
 multiline_comment|/*&n;     *  Tag Definitions&n;     *&n;     *  Machine independent tags start counting from 0x0000&n;     *  Machine dependent tags start counting from 0x8000&n;     */
 DECL|macro|BI_LAST
@@ -172,93 +158,116 @@ DECL|macro|BI_MAC_IOP_ADB
 mdefine_line|#define BI_MAC_IOP_ADB&t;&t;0x8021&t;/* Mac ADB IOP */
 multiline_comment|/*&n;     * Mac: compatibility with old booter data format (temporarily)&n;     * Fields unused with the new bootinfo can be deleted now; instead of&n;     * adding new fields the struct might be splitted into a hardware address&n;     * part and a hardware type part&n;     */
 macro_line|#ifndef __ASSEMBLY__
+DECL|struct|mac_booter_data
 r_struct
 id|mac_booter_data
 (brace
+DECL|member|videoaddr
 r_int
 r_int
 id|videoaddr
 suffix:semicolon
+DECL|member|videorow
 r_int
 r_int
 id|videorow
 suffix:semicolon
+DECL|member|videodepth
 r_int
 r_int
 id|videodepth
 suffix:semicolon
+DECL|member|dimensions
 r_int
 r_int
 id|dimensions
 suffix:semicolon
+DECL|member|args
 r_int
 r_int
 id|args
 suffix:semicolon
+DECL|member|boottime
 r_int
 r_int
 id|boottime
 suffix:semicolon
+DECL|member|gmtbias
 r_int
 r_int
 id|gmtbias
 suffix:semicolon
+DECL|member|bootver
 r_int
 r_int
 id|bootver
 suffix:semicolon
+DECL|member|videological
 r_int
 r_int
 id|videological
 suffix:semicolon
+DECL|member|sccbase
 r_int
 r_int
 id|sccbase
 suffix:semicolon
+DECL|member|id
 r_int
 r_int
 id|id
 suffix:semicolon
+DECL|member|memsize
 r_int
 r_int
 id|memsize
 suffix:semicolon
+DECL|member|serialmf
 r_int
 r_int
 id|serialmf
 suffix:semicolon
+DECL|member|serialhsk
 r_int
 r_int
 id|serialhsk
 suffix:semicolon
+DECL|member|serialgpi
 r_int
 r_int
 id|serialgpi
 suffix:semicolon
+DECL|member|printmf
 r_int
 r_int
 id|printmf
 suffix:semicolon
+DECL|member|printhsk
 r_int
 r_int
 id|printhsk
 suffix:semicolon
+DECL|member|printgpi
 r_int
 r_int
 id|printgpi
 suffix:semicolon
+DECL|member|cpuid
 r_int
 r_int
 id|cpuid
 suffix:semicolon
+DECL|member|rombase
 r_int
 r_int
 id|rombase
 suffix:semicolon
+DECL|member|adbdelay
 r_int
 r_int
 id|adbdelay
 suffix:semicolon
+DECL|member|timedbra
 r_int
 r_int
 id|timedbra
@@ -523,19 +532,6 @@ id|timedbra
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#else
-DECL|macro|BI_videoaddr
-mdefine_line|#define BI_videoaddr&t;BI_un
-DECL|macro|BI_videorow
-mdefine_line|#define BI_videorow&t;BI_videoaddr+4
-DECL|macro|BI_videodepth
-mdefine_line|#define BI_videodepth&t;BI_videorow+4
-DECL|macro|BI_dimensions
-mdefine_line|#define BI_dimensions&t;BI_videodepth+4
-DECL|macro|BI_args
-mdefine_line|#define BI_args&t;&t;BI_dimensions+4
-DECL|macro|BI_cpuid
-mdefine_line|#define BI_cpuid&t;BI_args+56
 macro_line|#endif
 DECL|struct|compat_mem_info
 r_struct

@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;fmv18x.c:v1.3.71e 03/04/96  Yutaka TAMIYA (tamy@flab.fujitsu.co.jp)&bslash;n&quot;
+l_string|&quot;fmv18x.c:v2.2.0 09/24/98  Yutaka TAMIYA (tamy@flab.fujitsu.co.jp)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -98,6 +98,20 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Number of packet on the Tx queue. */
+DECL|member|tx_queue_ready
+id|uint
+id|tx_queue_ready
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Tx queue is ready to be sent. */
+DECL|member|rx_started
+id|uint
+id|rx_started
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Packets are Rxing. */
 DECL|member|tx_queue
 id|uchar
 id|tx_queue
@@ -135,7 +149,7 @@ mdefine_line|#define DATAPORT&t;&t;8&t;&t;/* Word-wide DMA or programmed-I/O dat
 DECL|macro|TX_START
 mdefine_line|#define TX_START&t;&t;10
 DECL|macro|COL16CNTL
-mdefine_line|#define COL16CNTL&t;&t;11
+mdefine_line|#define COL16CNTL&t;&t;11&t;&t;/* Controll Reg for 16 collisions */
 DECL|macro|MODE13
 mdefine_line|#define MODE13&t;&t;&t;13
 multiline_comment|/* Fujitsu FMV-18x Card Configuration */
@@ -443,6 +457,30 @@ comma
 l_int|15
 )brace
 suffix:semicolon
+r_char
+id|irqmap_pnp
+(braket
+l_int|8
+)braket
+op_assign
+(brace
+l_int|3
+comma
+l_int|4
+comma
+l_int|5
+comma
+l_int|7
+comma
+l_int|9
+comma
+l_int|10
+comma
+l_int|11
+comma
+l_int|15
+)brace
+suffix:semicolon
 r_int
 r_int
 id|i
@@ -454,21 +492,6 @@ multiline_comment|/* Check I/O address configuration and Fujitsu vendor code */
 r_if
 c_cond
 (paren
-id|fmv18x_probe_list
-(braket
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-id|FJ_CONFIG0
-)paren
-op_amp
-l_int|0x07
-)braket
-op_ne
-id|ioaddr
-op_logical_or
 id|inb
 c_func
 (paren
@@ -507,6 +530,90 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+multiline_comment|/* Check PnP mode for FMV-183/184/183A/184A. */
+multiline_comment|/* This PnP routine is very poor. IO and IRQ should be known. */
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|FJ_STATUS1
+)paren
+op_amp
+l_int|0x20
+)paren
+(brace
+id|irq
+op_assign
+id|dev-&gt;irq
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|8
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|irq
+op_eq
+id|irqmap_pnp
+(braket
+id|i
+)braket
+)paren
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|8
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|fmv18x_probe_list
+(braket
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|FJ_CONFIG0
+)paren
+op_amp
+l_int|0x07
+)braket
+op_ne
+id|ioaddr
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
 id|irq
 op_assign
 id|irqmap
@@ -526,6 +633,7 @@ op_amp
 l_int|0x03
 )braket
 suffix:semicolon
+)brace
 multiline_comment|/* Snarf the interrupt vector now. */
 r_if
 c_cond
@@ -898,6 +1006,16 @@ op_plus
 id|MODE13
 )paren
 suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+id|ioaddr
+op_plus
+id|COL16CNTL
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1034,6 +1152,14 @@ id|CONFIG_1
 )paren
 suffix:semicolon
 id|lp-&gt;tx_started
+op_assign
+l_int|0
+suffix:semicolon
+id|lp-&gt;tx_queue_ready
+op_assign
+l_int|1
+suffix:semicolon
+id|lp-&gt;rx_started
 op_assign
 l_int|0
 suffix:semicolon
@@ -1499,17 +1625,12 @@ r_int
 id|skb-&gt;len
 )paren
 suffix:semicolon
-multiline_comment|/* Disable both interrupts. */
-id|outw
-c_func
-(paren
-l_int|0x0000
-comma
-id|ioaddr
-op_plus
-id|TX_INTR
-)paren
+multiline_comment|/* We may not start transmitting unless we finish transferring&n;&t;&t;   a packet into the Tx queue. During executing the following&n;&t;&t;   codes we possibly catch a Tx interrupt. Thus we flag off&n;&t;&t;   tx_queue_ready, so that we prevent the interrupt routine&n;&t;&t;   (net_interrupt) to start transmitting. */
+id|lp-&gt;tx_queue_ready
+op_assign
+l_int|0
 suffix:semicolon
+(brace
 id|outw
 c_func
 (paren
@@ -1546,6 +1667,11 @@ op_add_assign
 id|length
 op_plus
 l_int|2
+suffix:semicolon
+)brace
+id|lp-&gt;tx_queue_ready
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -1603,17 +1729,6 @@ multiline_comment|/* Yes, there is room for one more packet. */
 id|dev-&gt;tbusy
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/* Re-enable interrupts */
-id|outw
-c_func
-(paren
-l_int|0x8182
-comma
-id|ioaddr
-op_plus
-id|TX_INTR
-)paren
 suffix:semicolon
 )brace
 id|dev_kfree_skb
@@ -1698,17 +1813,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-multiline_comment|/* Avoid multiple interrupts. */
-id|outw
-c_func
-(paren
-l_int|0x0000
-comma
-id|ioaddr
-op_plus
-id|TX_INTR
-)paren
-suffix:semicolon
 id|status
 op_assign
 id|inw
@@ -1749,6 +1853,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|lp-&gt;rx_started
+op_eq
+l_int|0
+op_logical_and
+(paren
 id|status
 op_amp
 l_int|0xff00
@@ -1767,13 +1876,44 @@ l_int|0x40
 op_eq
 l_int|0
 )paren
+)paren
 (brace
-multiline_comment|/* Got a packet(s). */
+multiline_comment|/* Got a packet(s).&n;&t;&t;   We cannot execute net_rx more than once at the same time for&n;&t;&t;   the same device. During executing net_rx, we possibly catch a&n;&t;&t;   Tx interrupt. Thus we flag on rx_started, so that we prevent&n;&t;&t;   the interrupt routine (net_interrupt) to dive into net_rx&n;&t;&t;   again. */
+id|lp-&gt;rx_started
+op_assign
+l_int|1
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+id|ioaddr
+op_plus
+id|RX_INTR
+)paren
+suffix:semicolon
+multiline_comment|/* Disable RX intr. */
 id|net_rx
 c_func
 (paren
 id|dev
 )paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x81
+comma
+id|ioaddr
+op_plus
+id|RX_INTR
+)paren
+suffix:semicolon
+multiline_comment|/* Enable  RX intr. */
+id|lp-&gt;rx_started
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -1789,7 +1929,46 @@ c_cond
 (paren
 id|status
 op_amp
-l_int|0x80
+l_int|0x02
+)paren
+(brace
+multiline_comment|/* More than 16 collisions occurred */
+r_if
+c_cond
+(paren
+id|net_debug
+OG
+l_int|4
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%s: 16 Collision occur during Txing.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+multiline_comment|/* Cancel sending a packet. */
+id|outb
+c_func
+(paren
+l_int|0x03
+comma
+id|ioaddr
+op_plus
+id|COL16CNTL
+)paren
+suffix:semicolon
+id|lp-&gt;stats.collisions
+op_increment
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|status
+op_amp
+l_int|0x82
 )paren
 (brace
 id|lp-&gt;stats.tx_packets
@@ -1799,6 +1978,8 @@ r_if
 c_cond
 (paren
 id|lp-&gt;tx_queue
+op_logical_and
+id|lp-&gt;tx_queue_ready
 )paren
 (brace
 id|outb
@@ -1856,55 +2037,10 @@ suffix:semicolon
 multiline_comment|/* Inform upper layers. */
 )brace
 )brace
-r_if
-c_cond
-(paren
-id|status
-op_amp
-l_int|0x02
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|net_debug
-OG
-l_int|4
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: 16 Collision occur during Txing.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-multiline_comment|/* Retry to send the packet */
-id|outb
-c_func
-(paren
-l_int|0x02
-comma
-id|ioaddr
-op_plus
-id|COL16CNTL
-)paren
-suffix:semicolon
-)brace
 )brace
 id|dev-&gt;interrupt
 op_assign
 l_int|0
-suffix:semicolon
-id|outw
-c_func
-(paren
-l_int|0x8182
-comma
-id|ioaddr
-op_plus
-id|TX_INTR
-)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -1942,9 +2078,8 @@ suffix:semicolon
 r_int
 id|boguscount
 op_assign
-l_int|10
+l_int|5
 suffix:semicolon
-multiline_comment|/* 5 -&gt; 10: by agy 19940922 */
 r_while
 c_loop
 (paren
@@ -2650,6 +2785,14 @@ id|MODULE_PARM
 c_func
 (paren
 id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|net_debug
 comma
 l_string|&quot;i&quot;
 )paren

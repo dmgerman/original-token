@@ -11196,7 +11196,7 @@ id|hw_config-&gt;irq
 comma
 id|hw_config-&gt;dma
 comma
-id|hw_config-&gt;dma
+id|hw_config-&gt;dma2
 comma
 l_int|0
 )paren

@@ -2488,30 +2488,10 @@ l_int|0
 suffix:colon
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
 id|reclen
 op_and_assign
 l_int|0x7fffffff
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_NOTICE
-l_string|&quot;RPC:      empty TCP record.&bslash;n&quot;
-)paren
 suffix:semicolon
-r_return
-op_minus
-id|ENOTCONN
-suffix:semicolon
-multiline_comment|/* break connection */
-)brace
 id|xprt-&gt;tcp_total
 op_add_assign
 id|reclen

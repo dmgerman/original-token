@@ -170,6 +170,8 @@ DECL|macro|SENSE_SIZE
 mdefine_line|#define SENSE_SIZE&t;&t;14
 DECL|macro|INI_VENDOR_ID
 mdefine_line|#define INI_VENDOR_ID   0x1101&t;/* Initio&squot;s PCI vendor ID       */
+DECL|macro|DMX_VENDOR_ID
+mdefine_line|#define DMX_VENDOR_ID   0x134a&t;/* Domex&squot;s PCI vendor ID       */
 DECL|macro|I950_DEVICE_ID
 mdefine_line|#define I950_DEVICE_ID&t;0x9500&t;/* Initio&squot;s inic-950 product ID   */
 DECL|macro|I940_DEVICE_ID

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Sep  2 20:22:08 1998&n; * Modified at:   Mon Dec 14 19:18:51 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.c&n; * Version:       0.3&n; * Description:   Abstract device driver layer and helper functions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Sep  2 20:22:08 1998&n; * Modified at:   Mon Jan 18 11:05:59 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -344,15 +344,6 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* Check that a minimum of allocation flags are specified */
 id|ASSERT
 c_func
@@ -535,16 +526,6 @@ id|self-&gt;priv
 op_assign
 id|priv
 suffix:semicolon
-id|strncpy
-c_func
-(paren
-id|self-&gt;name
-comma
-id|name
-comma
-l_int|16
-)paren
-suffix:semicolon
 multiline_comment|/* Initialize IrDA net device */
 r_do
 (brace
@@ -612,7 +593,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;IrDA Device, register_netdev() failed!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), register_netdev() failed!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -620,6 +602,35 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* &n;&t; * Make the description for the device. self-&gt;netdev.name will get&n;&t; * a name like &quot;irda0&quot; and the self-&gt;descriptin will get a name&n;&t; * like &quot;irda0 &lt;-&gt; irtty0&quot; &n;&t; */
+id|strncpy
+c_func
+(paren
+id|self-&gt;description
+comma
+id|self-&gt;name
+comma
+l_int|4
+)paren
+suffix:semicolon
+id|strcat
+c_func
+(paren
+id|self-&gt;description
+comma
+l_string|&quot; &lt;-&gt; &quot;
+)paren
+suffix:semicolon
+id|strncat
+c_func
+(paren
+id|self-&gt;description
+comma
+id|name
+comma
+l_int|23
+)paren
+suffix:semicolon
 id|hashbin_insert
 c_func
 (paren
@@ -650,7 +661,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;IrDA irda_device %s registered.&bslash;n&quot;
+l_string|&quot;IrDA device %s registered.&bslash;n&quot;
 comma
 id|self-&gt;name
 )paren
@@ -1935,9 +1946,42 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;Irda_Device name: %s&bslash;n&quot;
+l_string|&quot;device name: %s&bslash;n&quot;
 comma
 id|self-&gt;name
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;description: %s&bslash;n&quot;
+comma
+id|self-&gt;description
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;  tbusy=%s&bslash;n&quot;
+comma
+id|self-&gt;netdev.tbusy
+ques
+c_cond
+l_string|&quot;TRUE&quot;
+suffix:colon
+l_string|&quot;FALSE&quot;
 )paren
 suffix:semicolon
 id|len

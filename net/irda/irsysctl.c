@@ -1,13 +1,15 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irsysctl.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun May 24 22:12:06 1998&n; * Modified at:   Wed Dec  9 01:29:22 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irsysctl.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun May 24 22:12:06 1998&n; * Modified at:   Thu Jan  7 10:35:02 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;net/irda/irda.h&gt;
 DECL|macro|NET_IRDA
 mdefine_line|#define NET_IRDA 412 /* Random number */
 DECL|enumerator|DISCOVERY
 DECL|enumerator|DEVNAME
 DECL|enumerator|COMPRESSION
+DECL|enumerator|DEBUG
 r_enum
 (brace
 id|DISCOVERY
@@ -17,6 +19,8 @@ comma
 id|DEVNAME
 comma
 id|COMPRESSION
+comma
+id|DEBUG
 )brace
 suffix:semicolon
 r_extern
@@ -35,6 +39,13 @@ id|sysctl_devname
 (braket
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_IRDA_DEBUG
+r_extern
+r_int
+r_int
+id|irda_debug
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* One file */
 DECL|variable|irda_table
 r_static
@@ -106,6 +117,29 @@ op_amp
 id|proc_dointvec
 )brace
 comma
+macro_line|#ifdef CONFIG_IRDA_DEBUG
+(brace
+id|DEBUG
+comma
+l_string|&quot;debug&quot;
+comma
+op_amp
+id|irda_debug
+comma
+r_sizeof
+(paren
+r_int
+)paren
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dointvec
+)brace
+comma
+macro_line|#endif
 (brace
 l_int|0
 )brace

@@ -834,11 +834,7 @@ op_star
 id|swstack
 )paren
 (brace
-r_int
-id|child
-suffix:semicolon
-id|child
-op_assign
+r_return
 id|do_fork
 c_func
 (paren
@@ -864,9 +860,6 @@ op_plus
 l_int|1
 )paren
 )paren
-suffix:semicolon
-r_return
-id|child
 suffix:semicolon
 )brace
 r_extern

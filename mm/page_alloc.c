@@ -396,7 +396,9 @@ suffix:semicolon
 id|free_pages_ok
 c_func
 (paren
-id|page-&gt;map_nr
+id|page
+op_minus
+id|mem_map
 comma
 l_int|0
 )paren
@@ -511,9 +513,15 @@ mdefine_line|#define CAN_DMA(x) (PageDMA(x))
 DECL|macro|ADDRESS
 mdefine_line|#define ADDRESS(x) (PAGE_OFFSET + ((x) &lt;&lt; PAGE_SHIFT))
 DECL|macro|RMQUEUE
-mdefine_line|#define RMQUEUE(order, dma) &bslash;&n;do { struct free_area_struct * area = free_area+order; &bslash;&n;     unsigned long new_order = order; &bslash;&n;&t;do { struct page *prev = memory_head(area), *ret = prev-&gt;next; &bslash;&n;&t;&t;while (memory_head(area) != ret) { &bslash;&n;&t;&t;&t;if (!dma || CAN_DMA(ret)) { &bslash;&n;&t;&t;&t;&t;unsigned long map_nr; &bslash;&n;&t;&t;&t;&t;(prev-&gt;next = ret-&gt;next)-&gt;prev = prev; &bslash;&n;&t;&t;&t;&t;map_nr = ret-&gt;map_nr; &bslash;&n;&t;&t;&t;&t;MARK_USED(map_nr, new_order, area); &bslash;&n;&t;&t;&t;&t;nr_free_pages -= 1 &lt;&lt; order; &bslash;&n;&t;&t;&t;&t;EXPAND(ret, map_nr, order, new_order, area); &bslash;&n;&t;&t;&t;&t;spin_unlock_irqrestore(&amp;page_alloc_lock, flags); &bslash;&n;&t;&t;&t;&t;return ADDRESS(map_nr); &bslash;&n;&t;&t;&t;} &bslash;&n;&t;&t;&t;prev = ret; &bslash;&n;&t;&t;&t;ret = ret-&gt;next; &bslash;&n;&t;&t;} &bslash;&n;&t;&t;new_order++; area++; &bslash;&n;&t;} while (new_order &lt; NR_MEM_LISTS); &bslash;&n;} while (0)
+mdefine_line|#define RMQUEUE(order, dma) &bslash;&n;do { struct free_area_struct * area = free_area+order; &bslash;&n;     unsigned long new_order = order; &bslash;&n;&t;do { struct page *prev = memory_head(area), *ret = prev-&gt;next; &bslash;&n;&t;&t;while (memory_head(area) != ret) { &bslash;&n;&t;&t;&t;if (!dma || CAN_DMA(ret)) { &bslash;&n;&t;&t;&t;&t;unsigned long map_nr; &bslash;&n;&t;&t;&t;&t;(prev-&gt;next = ret-&gt;next)-&gt;prev = prev; &bslash;&n;&t;&t;&t;&t;map_nr = ret - mem_map; &bslash;&n;&t;&t;&t;&t;MARK_USED(map_nr, new_order, area); &bslash;&n;&t;&t;&t;&t;nr_free_pages -= 1 &lt;&lt; order; &bslash;&n;&t;&t;&t;&t;EXPAND(ret, map_nr, order, new_order, area); &bslash;&n;&t;&t;&t;&t;spin_unlock_irqrestore(&amp;page_alloc_lock, flags); &bslash;&n;&t;&t;&t;&t;return ADDRESS(map_nr); &bslash;&n;&t;&t;&t;} &bslash;&n;&t;&t;&t;prev = ret; &bslash;&n;&t;&t;&t;ret = ret-&gt;next; &bslash;&n;&t;&t;} &bslash;&n;&t;&t;new_order++; area++; &bslash;&n;&t;} while (new_order &lt; NR_MEM_LISTS); &bslash;&n;} while (0)
 DECL|macro|EXPAND
 mdefine_line|#define EXPAND(map,index,low,high,area) &bslash;&n;do { unsigned long size = 1 &lt;&lt; high; &bslash;&n;&t;while (high &gt; low) { &bslash;&n;&t;&t;area--; high--; size &gt;&gt;= 1; &bslash;&n;&t;&t;add_mem_queue(area, map); &bslash;&n;&t;&t;MARK_USED(index, high, area); &bslash;&n;&t;&t;index += size; &bslash;&n;&t;&t;map += size; &bslash;&n;&t;} &bslash;&n;&t;atomic_set(&amp;map-&gt;count, 1); &bslash;&n;} while (0)
+DECL|variable|low_on_memory
+r_int
+id|low_on_memory
+op_assign
+l_int|0
+suffix:semicolon
 DECL|function|__get_free_pages
 r_int
 r_int
@@ -603,12 +611,6 @@ id|PF_MEMALLOC
 )paren
 )paren
 (brace
-r_static
-r_int
-id|trashing
-op_assign
-l_int|0
-suffix:semicolon
 r_int
 id|freed
 suffix:semicolon
@@ -624,7 +626,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|trashing
+id|low_on_memory
 )paren
 r_goto
 id|ok_to_allocate
@@ -633,11 +635,11 @@ r_if
 c_cond
 (paren
 id|nr_free_pages
-OG
-id|freepages.low
+op_ge
+id|freepages.high
 )paren
 (brace
-id|trashing
+id|low_on_memory
 op_assign
 l_int|0
 suffix:semicolon
@@ -646,7 +648,7 @@ id|ok_to_allocate
 suffix:semicolon
 )brace
 )brace
-id|trashing
+id|low_on_memory
 op_assign
 l_int|1
 suffix:semicolon
@@ -1086,12 +1088,6 @@ l_int|1
 op_lshift
 id|PG_reserved
 )paren
-suffix:semicolon
-id|p-&gt;map_nr
-op_assign
-id|p
-op_minus
-id|mem_map
 suffix:semicolon
 )brace
 r_while

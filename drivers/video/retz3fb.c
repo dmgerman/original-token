@@ -7130,15 +7130,12 @@ id|cd-&gt;cd_BoardSize
 suffix:semicolon
 id|zinfo-&gt;base
 op_assign
-id|kernel_map
+id|ioremap
+c_func
 (paren
 id|board_addr
 comma
 id|board_size
-comma
-id|KERNELMAP_NOCACHE_SER
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|zinfo-&gt;regs

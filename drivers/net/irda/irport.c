@@ -1,26 +1,63 @@
-multiline_comment|/*********************************************************************&n; *&t;&t;  &n; * Filename:&t;  irport.c&n; * Version:&t;  0.1&n; * Description:   Serial driver for IrDA. The functions in this file&n; *                may be used by FIR drivers, but this file knows&n; *                nothing about FIR drivers!!!&n; * Status:&t;  Experimental.&n; * Author:&t;  Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:&t;  Sun Aug  3 13:49:59 1997&n; * Modified at:   Sat May 23 23:15:20 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  serial.c by Linus Torvalds &n; *&t;&t;  serial_serial.c by Aage Kvalnes &lt;aage@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997,1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
-multiline_comment|/* #include &lt;linux/module.h&gt; */
+multiline_comment|/*********************************************************************&n; *&t;&t;  &n; * Filename:&t;  irport.c&n; * Version:&t;  0.8&n; * Description:   Serial driver for IrDA. &n; * Status:&t;  Experimental.&n; * Author:&t;  Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:&t;  Sun Aug  3 13:49:59 1997&n; * Modified at:   Sat May 23 23:15:20 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  serial.c by Linus Torvalds &n; *&t;&t;  serial_serial.c by Aage Kvalnes &lt;aage@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997,1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     NOTICE:&n; *&n; *     This driver is ment to be a small serial driver to be used for&n; *     IR-chipsets that has a UART (16550) compatibility mode. If your&n; *     chipset is is UART only, you should probably use IrTTY instead since&n; *     the Linux serial driver is probably more robust and optimized.&n; *&n; *     The functions in this file may be used by FIR drivers, but this&n; *     driver knows nothing about FIR drivers so don&squot;t ever insert such&n; *     code into this file. Instead you should code your FIR driver in a&n; *     separate file, and then call the functions in this file if&n; *     necessary. This is becase it is difficult to use the Linux serial&n; *     driver with a FIR driver becase they must share interrupts etc. Most&n; *     FIR chipsets can function in advanced SIR mode, and you should&n; *     probably use that mode instead of the UART compatibility mode (and&n; *     then just forget about this file)&n; *&n; ********************************************************************/
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/serial_reg.h&gt;
-macro_line|#include &quot;irda.h&quot;
-macro_line|#include &quot;ircompat.h&quot;
-macro_line|#include &quot;irport.h&quot;
-macro_line|#include &quot;timer.h&quot;
-macro_line|#include &quot;crc.h&quot;
-macro_line|#include &quot;wrapper.h&quot;
-macro_line|#include &quot;irlap_frame.h&quot;
+macro_line|#include &lt;net/irda/irda.h&gt;
+macro_line|#include &lt;net/irda/irmod.h&gt;
+macro_line|#include &lt;net/irda/wrapper.h&gt;
+macro_line|#include &lt;net/irda/irport.h&gt;
 DECL|macro|IO_EXTENT
-mdefine_line|#define IO_EXTENT&t;8
+mdefine_line|#define IO_EXTENT 8
+DECL|variable|io
+r_static
+r_int
+r_int
+id|io
+(braket
+)braket
+op_assign
+(brace
+l_int|0x3e8
+comma
+op_complement
+l_int|0
+comma
+op_complement
+l_int|0
+comma
+op_complement
+l_int|0
+)brace
+suffix:semicolon
+DECL|variable|irq
+r_static
+r_int
+r_int
+id|irq
+(braket
+)braket
+op_assign
+(brace
+l_int|11
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)brace
+suffix:semicolon
 r_static
 r_void
 id|irport_write_wakeup
@@ -62,6 +99,60 @@ op_star
 id|idev
 )paren
 suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_int
+id|irport_init
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+multiline_comment|/* &t;int i; */
+multiline_comment|/* &t;for ( i=0; (io[i] &lt; 2000) &amp;&amp; (i &lt; 4); i++) { */
+multiline_comment|/* &t;&t;int ioaddr = io[i]; */
+multiline_comment|/* &t;&t;if (check_region(ioaddr, IO_EXTENT)) */
+multiline_comment|/* &t;&t;&t;continue; */
+multiline_comment|/* &t;&t;if (irport_open( i, io[i], io2[i], irq[i], dma[i]) == 0) */
+multiline_comment|/* &t;&t;&t;return 0; */
+multiline_comment|/* &t;} */
+multiline_comment|/* &t;return -ENODEV; */
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Function pc87108_cleanup ()&n; *&n; *    Close all configured chips&n; *&n; */
+macro_line|#ifdef MODULE
+DECL|function|irport_cleanup
+r_static
+r_void
+id|irport_cleanup
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* for ( i=0; i &lt; 4; i++) { */
+multiline_comment|/* &t;&t;if ( dev_self[i]) */
+multiline_comment|/* &t;&t;&t;irport_close( &amp;(dev_self[i]-&gt;idev)); */
+multiline_comment|/* &t;} */
+)brace
+macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * Function irport_open (void)&n; *&n; *    Start IO port &n; *&n; */
 DECL|function|irport_open
 r_int
@@ -72,8 +163,19 @@ r_int
 id|iobase
 )paren
 (brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), iobase=%#x&bslash;n&quot;
+comma
+id|iobase
+)paren
+suffix:semicolon
 multiline_comment|/* Initialize UART */
-id|outb_p
+id|outb
 c_func
 (paren
 id|UART_LCR_WLEN8
@@ -84,7 +186,7 @@ id|UART_LCR
 )paren
 suffix:semicolon
 multiline_comment|/* Reset DLAB */
-id|outb_p
+id|outb
 c_func
 (paren
 (paren
@@ -101,7 +203,7 @@ id|UART_MCR
 )paren
 suffix:semicolon
 multiline_comment|/* Turn on interrups */
-id|outb_p
+id|outb
 c_func
 (paren
 (paren
@@ -141,7 +243,7 @@ l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Reset UART */
-id|outb_p
+id|outb
 c_func
 (paren
 l_int|0
@@ -152,7 +254,7 @@ id|UART_MCR
 )paren
 suffix:semicolon
 multiline_comment|/* Turn off interrupts */
-id|outb_p
+id|outb
 c_func
 (paren
 l_int|0
@@ -198,8 +300,19 @@ comma
 id|speed
 )paren
 suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), iobase=%#x&bslash;n&quot;
+comma
+id|iobase
+)paren
+suffix:semicolon
 multiline_comment|/* Turn off interrupts */
-id|outb_p
+id|outb
 c_func
 (paren
 l_int|0
@@ -226,7 +339,7 @@ id|lcr
 op_assign
 id|UART_LCR_WLEN8
 suffix:semicolon
-id|outb_p
+id|outb
 c_func
 (paren
 id|UART_LCR_DLAB
@@ -239,7 +352,7 @@ id|UART_LCR
 )paren
 suffix:semicolon
 multiline_comment|/* Set DLAB */
-id|outb_p
+id|outb
 c_func
 (paren
 id|divisor
@@ -251,8 +364,8 @@ op_plus
 id|UART_DLL
 )paren
 suffix:semicolon
-multiline_comment|/* Set speed&t;*/
-id|outb_p
+multiline_comment|/* Set speed */
+id|outb
 c_func
 (paren
 id|divisor
@@ -264,7 +377,7 @@ op_plus
 id|UART_DLM
 )paren
 suffix:semicolon
-id|outb_p
+id|outb
 c_func
 (paren
 id|lcr
@@ -275,7 +388,7 @@ id|UART_LCR
 )paren
 suffix:semicolon
 multiline_comment|/* Set 8N1&t;*/
-id|outb_p
+id|outb
 c_func
 (paren
 id|fcr
@@ -287,16 +400,14 @@ id|UART_FCR
 suffix:semicolon
 multiline_comment|/* Enable FIFO&squot;s */
 multiline_comment|/* Turn on interrups */
-id|outb_p
+id|outb
 c_func
-(paren
 (paren
 id|UART_IER_THRI
 op_or
 id|UART_IER_RLSI
 op_or
 id|UART_IER_RDI
-)paren
 comma
 id|iobase
 op_plus
@@ -374,9 +485,13 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|idev-&gt;netdev.interrupt
+op_assign
+l_int|1
+suffix:semicolon
 id|iobase
 op_assign
-id|idev-&gt;io.iobase
+id|idev-&gt;io.iobase2
 suffix:semicolon
 id|iir
 op_assign
@@ -450,6 +565,10 @@ id|UART_IIR_NO_INT
 )paren
 )paren
 suffix:semicolon
+id|idev-&gt;netdev.interrupt
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irport_write_wakeup (tty)&n; *&n; *    Called by the driver when there&squot;s room for more data.  If we have&n; *    more packets to send, we send them here.&n; *&n; */
 DECL|function|irport_write_wakeup
@@ -482,7 +601,6 @@ comma
 id|jiffies
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; *  First make sure we&squot;re connected. &n;&t; */
 id|ASSERT
 c_func
 (paren
@@ -505,13 +623,13 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Finished with frame?&n;&t; */
+multiline_comment|/* Finished with frame?  */
 r_if
 c_cond
 (paren
-id|idev-&gt;tx.ptr
+id|idev-&gt;tx_buff.offset
 op_eq
-id|idev-&gt;tx.len
+id|idev-&gt;tx_buff.len
 )paren
 (brace
 multiline_comment|/* &n;&t;&t; *  Now serial buffer is almost free &amp; we can start &n;&t;&t; *  transmission of another packet &n;&t;&t; */
@@ -542,32 +660,32 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *  Write data left in transmit buffer&n;&t; */
+multiline_comment|/* Write data left in transmit buffer */
 id|count
 op_assign
-id|idev-&gt;tx.len
+id|idev-&gt;tx_buff.len
 op_minus
-id|idev-&gt;tx.ptr
+id|idev-&gt;tx_buff.offset
 suffix:semicolon
 id|actual
 op_assign
 id|irport_write
 c_func
 (paren
-id|idev-&gt;io.iobase
+id|idev-&gt;io.iobase2
 comma
 id|idev-&gt;io.fifo_size
 comma
-id|idev-&gt;tx.head
+id|idev-&gt;tx_buff.head
 comma
 id|count
 )paren
 suffix:semicolon
-id|idev-&gt;tx.ptr
+id|idev-&gt;tx_buff.offset
 op_add_assign
 id|actual
 suffix:semicolon
-id|idev-&gt;tx.head
+id|idev-&gt;tx_buff.head
 op_add_assign
 id|actual
 suffix:semicolon
@@ -598,12 +716,13 @@ id|actual
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Tx FIFO should be empty! */
 r_if
 c_cond
 (paren
 op_logical_neg
 (paren
-id|inb_p
+id|inb
 c_func
 (paren
 id|iobase
@@ -789,35 +908,6 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), skb==NULL&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; LinuxVersionCode(2,1,0)
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* Lock transmit buffer */
 r_if
 c_cond
@@ -840,16 +930,16 @@ op_minus
 id|EBUSY
 suffix:semicolon
 multiline_comment|/*  &n;&t; *  Transfer skb to tx_buff while wrapping, stuffing and making CRC &n;&t; */
-id|idev-&gt;tx.len
+id|idev-&gt;tx_buff.len
 op_assign
 id|async_wrap_skb
 c_func
 (paren
 id|skb
 comma
-id|idev-&gt;tx.buff
+id|idev-&gt;tx_buff.data
 comma
-id|idev-&gt;tx.buffsize
+id|idev-&gt;tx_buff.truesize
 )paren
 suffix:semicolon
 id|actual
@@ -857,47 +947,29 @@ op_assign
 id|irport_write
 c_func
 (paren
-id|idev-&gt;io.iobase
+id|idev-&gt;io.iobase2
 comma
 id|idev-&gt;io.fifo_size
 comma
-id|idev-&gt;tx.buff
+id|idev-&gt;tx_buff.data
 comma
-id|idev-&gt;tx.len
+id|idev-&gt;tx_buff.len
 )paren
 suffix:semicolon
-id|idev-&gt;tx.ptr
+id|idev-&gt;tx_buff.offset
 op_assign
 id|actual
 suffix:semicolon
-id|idev-&gt;tx.head
+id|idev-&gt;tx_buff.head
 op_assign
-id|idev-&gt;tx.buff
+id|idev-&gt;tx_buff.data
 op_plus
 id|actual
 suffix:semicolon
-id|IS_SKB
+id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-r_return
-l_int|0
-suffix:semicolon
-)paren
-suffix:semicolon
-id|FREE_SKB_MAGIC
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-id|DEV_KFREE_SKB
-c_func
-(paren
-id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -917,11 +989,6 @@ op_star
 id|idev
 )paren
 (brace
-id|__u8
-id|byte
-op_assign
-l_int|0x00
-suffix:semicolon
 r_int
 id|iobase
 suffix:semicolon
@@ -936,7 +1003,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -944,47 +1011,41 @@ l_string|&quot;()&bslash;n&quot;
 suffix:semicolon
 id|iobase
 op_assign
-id|idev-&gt;io.iobase
+id|idev-&gt;io.iobase2
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|idev-&gt;rx.len
+id|idev-&gt;rx_buff.len
 op_eq
 l_int|0
 )paren
-(brace
-id|idev-&gt;rx.head
+id|idev-&gt;rx_buff.head
 op_assign
-id|idev-&gt;rx.buff
+id|idev-&gt;rx_buff.data
 suffix:semicolon
-)brace
-multiline_comment|/* &n;&t; *  Receive all characters in FIFO &n;&t; */
+multiline_comment|/*  &n;&t; * Receive all characters in Rx FIFO, unwrap and unstuff them. &n;         * async_unwrap_char will deliver all found frames  &n;&t; */
 r_do
 (brace
-id|byte
-op_assign
-id|inb_p
+id|async_unwrap_char
+c_func
+(paren
+id|idev
+comma
+id|inb
 c_func
 (paren
 id|iobase
 op_plus
 id|UART_RX
 )paren
-suffix:semicolon
-id|async_unwrap_char
-c_func
-(paren
-id|idev
-comma
-id|byte
 )paren
 suffix:semicolon
 )brace
 r_while
 c_loop
 (paren
-id|inb_p
+id|inb
 c_func
 (paren
 id|iobase
@@ -996,19 +1057,54 @@ id|UART_LSR_DR
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
 multiline_comment|/*&n; * Function cleanup_module (void)&n; *&n; *    &n; *&n; */
-multiline_comment|/* void cleanup_module(void) */
-multiline_comment|/* { */
-multiline_comment|/* &t;DEBUG( 3, &quot;IrPORT: cleanup_module!&bslash;n&quot;); */
-multiline_comment|/* &t;irport_cleanup(irport_drv); */
-multiline_comment|/* } */
-multiline_comment|/*&n; * Function init_module (void)&n; *&n; *    &n; *&n; */
-multiline_comment|/* int init_module(void) */
-multiline_comment|/* { */
-multiline_comment|/* &t;if (irport_init() &lt; 0) { */
-multiline_comment|/* &t;&t;cleanup_module(); */
-multiline_comment|/* &t;&t;return 1; */
-multiline_comment|/* &t;} */
-multiline_comment|/* &t;return(0); */
-multiline_comment|/* } */
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|irport_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Function init_module (void)&n; *&n; *    &n; */
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|irport_init
+c_func
+(paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|cleanup_module
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif /* MODULE */
 eof

@@ -2,6 +2,14 @@ multiline_comment|/*&n;** linux/machw.h -- This header defines some macros and p
 macro_line|#ifndef _ASM_MACHW_H_
 DECL|macro|_ASM_MACHW_H_
 mdefine_line|#define _ASM_MACHW_H_
+multiline_comment|/*&n; * head.S maps the videomem to VIDEOMEMBASE&n; */
+DECL|macro|VIDEOMEMBASE
+mdefine_line|#define VIDEOMEMBASE&t;0xf0000000
+DECL|macro|VIDEOMEMSIZE
+mdefine_line|#define VIDEOMEMSIZE&t;(4096*1024)
+DECL|macro|VIDEOMEMMASK
+mdefine_line|#define VIDEOMEMMASK&t;(-4096*1024)
+macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/* Mac SCSI Controller 5380 */
 DECL|macro|MAC_5380_BAS
@@ -417,5 +425,6 @@ DECL|variable|mac_hw_present
 id|mac_hw_present
 suffix:semicolon
 multiline_comment|/* extern struct mac_hw_present mac_hw_present; */
+macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif /* linux/machw.h */
 eof

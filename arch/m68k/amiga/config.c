@@ -145,17 +145,6 @@ id|kbd_repeat
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|amiga_kbd_reset_setup
-c_func
-(paren
-r_char
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
 multiline_comment|/* amiga specific irq functions */
 r_extern
 r_void
@@ -1484,10 +1473,6 @@ suffix:semicolon
 id|mach_kbdrate
 op_assign
 id|amiga_kbdrate
-suffix:semicolon
-id|kbd_reset_setup
-op_assign
-id|amiga_kbd_reset_setup
 suffix:semicolon
 id|mach_init_IRQ
 op_assign

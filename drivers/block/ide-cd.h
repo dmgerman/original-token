@@ -200,6 +200,34 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive can write to CD-R/W media . */
+DECL|member|dvd
+id|__u8
+id|dvd
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive is a DVD-ROM */
+DECL|member|dvd_r
+id|__u8
+id|dvd_r
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can write DVD-RAM */
+DECL|member|dvd_rw
+id|__u8
+id|dvd_rw
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can write DVD-R/W */
+DECL|member|test_write
+id|__u8
+id|test_write
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can fake writes */
 DECL|member|supp_disc_present
 id|__u8
 id|supp_disc_present
@@ -769,7 +797,28 @@ DECL|member|reserved2
 id|__u8
 id|reserved2
 suffix:colon
-l_int|5
+l_int|2
+suffix:semicolon
+multiline_comment|/* Drive supports reading of DVD-RAM discs */
+DECL|member|dvd_ram_read
+id|__u8
+id|dvd_ram_read
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive supports reading of DVD-R discs */
+DECL|member|dvd_r_read
+id|__u8
+id|dvd_r_read
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive supports reading of DVD-ROM discs */
+DECL|member|dvd_rom
+id|__u8
+id|dvd_rom
+suffix:colon
+l_int|1
 suffix:semicolon
 multiline_comment|/* Drive supports reading CD-R discs with addressing method 2 */
 DECL|member|method2
@@ -813,11 +862,38 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* reserved in 1.2 */
 multiline_comment|/* Drive supports reading CD-R discs with addressing method 2 */
+DECL|member|method2
+id|__u8
+id|method2
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive supports reading of DVD-ROM discs */
+DECL|member|dvd_rom
+id|__u8
+id|dvd_rom
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive supports reading of DVD-R discs */
+DECL|member|dvd_r_read
+id|__u8
+id|dvd_r_read
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive supports reading of DVD-RAM discs */
+DECL|member|dvd_ram_read
+id|__u8
+id|dvd_ram_read
+suffix:colon
+l_int|1
+suffix:semicolon
 DECL|member|reserved2
 id|__u8
 id|reserved2
 suffix:colon
-l_int|5
+l_int|2
 suffix:semicolon
 macro_line|#else
 macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
@@ -827,7 +903,34 @@ DECL|member|reserved3
 id|__u8
 id|reserved3
 suffix:colon
-l_int|6
+l_int|2
+suffix:semicolon
+multiline_comment|/* Drive can fake writes */
+DECL|member|test_write
+id|__u8
+id|test_write
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|reserved3a
+id|__u8
+id|reserved3a
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can write DVD-R discs */
+DECL|member|dvd_r_write
+id|__u8
+id|dvd_r_write
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can write DVD-RAM discs */
+DECL|member|dvd_ram_write
+id|__u8
+id|dvd_ram_write
+suffix:colon
+l_int|1
 suffix:semicolon
 multiline_comment|/* Drive can write to CD-R/W (CD-E) discs (orange book, part III) */
 DECL|member|cd_rw_write
@@ -862,11 +965,38 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* reserved in 1.2 */
+multiline_comment|/* Drive can write DVD-RAM discs */
+DECL|member|dvd_ram_write
+id|__u8
+id|dvd_ram_write
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can write DVD-R discs */
+DECL|member|dvd_r_write
+id|__u8
+id|dvd_r_write
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|reserved3a
+id|__u8
+id|reserved3a
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can fake writes */
+DECL|member|test_write
+id|__u8
+id|test_write
+suffix:colon
+l_int|1
+suffix:semicolon
 DECL|member|reserved3
 id|__u8
 id|reserved3
 suffix:colon
-l_int|6
+l_int|2
 suffix:semicolon
 macro_line|#else
 macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;

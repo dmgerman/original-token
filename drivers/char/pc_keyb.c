@@ -2431,15 +2431,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|val
-op_eq
-l_int|0x5a
-op_logical_and
-(paren
 id|status
 op_amp
 id|KBD_STAT_MOUSE_OBF
-)paren
 )paren
 (brace
 id|printk

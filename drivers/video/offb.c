@@ -1840,15 +1840,28 @@ macro_line|#ifdef CONFIG_FB_S3TRIO
 r_if
 c_cond
 (paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|dp-&gt;name
+comma
+l_string|&quot;S3Trio&quot;
+comma
+l_int|6
+)paren
+)paren
+(brace
 id|s3triofb_init_of
 c_func
 (paren
 id|dp
 )paren
-)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+)brace
 macro_line|#endif /* CONFIG_FB_S3TRIO */
 macro_line|#ifdef CONFIG_FB_IMSTT
 r_if

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:13:12 1997&n; * Modified at:   Mon Nov  2 14:49:11 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:13:12 1997&n; * Modified at:   Sat Jan 16 01:23:15 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRDA_H
 DECL|macro|IRDA_H
 mdefine_line|#define IRDA_H
@@ -16,28 +16,23 @@ mdefine_line|#define ALIGN __attribute__((aligned))
 DECL|macro|PACK
 mdefine_line|#define PACK __attribute__((packed))
 multiline_comment|/* use 0 for production, 1 for verification, &gt;2 for debug */
-macro_line|#ifndef NET_DEBUG
-DECL|macro|NET_DEBUG
-mdefine_line|#define NET_DEBUG 3
-DECL|variable|net_debug
-r_static
-r_int
-r_int
-id|net_debug
-op_assign
-id|NET_DEBUG
+macro_line|#ifdef CONFIG_IRDA_DEBUG
+r_extern
+id|__u32
+id|irda_debug
 suffix:semicolon
+DECL|macro|IRDA_DEBUG
+mdefine_line|#define IRDA_DEBUG 3
 DECL|macro|DEBUG
-mdefine_line|#define DEBUG(n, args...) if (net_debug &gt;= (n)) printk( KERN_DEBUG args)
+mdefine_line|#define DEBUG(n, args...) if (irda_debug &gt;= (n)) printk( KERN_DEBUG args)
 DECL|macro|ASSERT
 mdefine_line|#define ASSERT(expr, func) &bslash;&n;if(!(expr)) { &bslash;&n;        printk( &quot;Assertion failed! %s,%s,%s,line=%d&bslash;n&quot;,&bslash;&n;        #expr,__FILE__,__FUNCTION__,__LINE__); &bslash;&n;        ##func}
 macro_line|#else
-macro_line|#error
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG(n, args...)
 DECL|macro|ASSERT
 mdefine_line|#define ASSERT(expr, func)
-macro_line|#endif /* NET_DEBUG */
+macro_line|#endif /* CONFIG_IRDA_DEBUG */
 macro_line|#ifdef CHECK_SKB
 DECL|variable|check_skb
 r_static

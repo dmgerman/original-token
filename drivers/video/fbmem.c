@@ -140,7 +140,7 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
-id|cvppcfb_init
+id|pm2fb_init
 c_func
 (paren
 r_void
@@ -148,7 +148,7 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|cvppcfb_setup
+id|pm2fb_setup
 c_func
 (paren
 r_char
@@ -609,13 +609,13 @@ id|cyberfb_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_FB_CVPPC
+macro_line|#ifdef CONFIG_FB_PM2
 (brace
-l_string|&quot;cvppcfb&quot;
+l_string|&quot;pm2fb&quot;
 comma
-id|cvppcfb_init
+id|pm2fb_init
 comma
-id|cvppcfb_setup
+id|pm2fb_setup
 )brace
 comma
 macro_line|#endif

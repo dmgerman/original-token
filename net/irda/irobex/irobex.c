@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irobex.c&n; * Version:       0.1&n; * Description:   Kernel side of the IrOBEX layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Jun 25 21:21:07 1998&n; * Modified at:   Mon Dec 14 11:56:26 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irobex.c&n; * Version:       0.3&n; * Description:   Kernel side of the IrOBEX layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Jun 25 21:21:07 1998&n; * Modified at:   Sat Jan 16 22:18:03 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
@@ -20,6 +20,26 @@ r_struct
 id|irobex_cb
 op_star
 id|irobex
+suffix:semicolon
+DECL|variable|irobex_state
+r_char
+op_star
+id|irobex_state
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;OBEX_IDLE&quot;
+comma
+l_string|&quot;OBEX_DISCOVER&quot;
+comma
+l_string|&quot;OBEX_QUERY&quot;
+comma
+l_string|&quot;OBEX_CONN&quot;
+comma
+l_string|&quot;OBEX_DATA&quot;
+comma
+)brace
 suffix:semicolon
 r_static
 r_int
@@ -283,16 +303,6 @@ id|irobex_cb
 op_star
 id|self
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;--&gt; &quot;
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|self
 op_assign
 id|kmalloc
@@ -339,7 +349,7 @@ id|self-&gt;devname
 comma
 l_string|&quot;irobex%d&quot;
 comma
-l_int|1
+l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Just one instance for now */
@@ -391,12 +401,6 @@ op_amp
 id|self-&gt;dev
 )paren
 suffix:semicolon
-id|irobex_register_server
-c_func
-(paren
-id|self
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_register
 c_func
@@ -423,19 +427,12 @@ comma
 id|irobex_discovery_indication
 )paren
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irobex_init --&gt;&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irobex_cleanup (void)&n; *&n; *     Removes the IrOBEX layer&n; *&n; */
+macro_line|#ifdef MODULE
 DECL|function|irobex_cleanup
 r_void
 id|irobex_cleanup
@@ -459,7 +456,6 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;--&gt;&quot;
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
@@ -543,14 +539,12 @@ id|self-&gt;rx_queue
 op_ne
 l_int|NULL
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_unregister
 c_func
@@ -575,16 +569,8 @@ c_func
 id|self
 )paren
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;() --&gt;&bslash;n&quot;
-)paren
-suffix:semicolon
 )brace
+macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * Function irobex_read (inode, file, buffer, count)&n; *&n; *    User process wants to read some data&n; *&n; */
 DECL|function|irobex_read
 r_static
@@ -665,7 +651,7 @@ c_func
 l_int|4
 comma
 id|__FUNCTION__
-l_string|&quot;: count=%d, skb_len=%d, conn.=%d, eof=%d&bslash;n&quot;
+l_string|&quot;: count=%d, skb_len=%d, state=%s, eof=%d&bslash;n&quot;
 comma
 id|count
 comma
@@ -676,12 +662,37 @@ op_amp
 id|self-&gt;rx_queue
 )paren
 comma
-id|self-&gt;connected
+id|irobex_state
+(braket
+id|self-&gt;state
+)braket
 comma
 id|self-&gt;eof
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Check if there is no data to return&n;&t; */
+r_if
+c_cond
+(paren
+id|self-&gt;state
+op_ne
+id|OBEX_DATA
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), link not connected yet!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *  If there is data to return, then we return it. If not, then we &n;&t; *  must check if we are still connected&n;&t; */
 r_if
 c_cond
 (paren
@@ -695,12 +706,13 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *  Disconnected yet?&n;&t;&t; */
+multiline_comment|/* Still connected?  */
 r_if
 c_cond
 (paren
-op_logical_neg
-id|self-&gt;connected
+id|self-&gt;state
+op_ne
+id|OBEX_DATA
 )paren
 (brace
 r_switch
@@ -788,7 +800,7 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-multiline_comment|/* * Go to sleep and wait for data!  */
+multiline_comment|/* Go to sleep and wait for data!  */
 id|interruptible_sleep_on
 c_func
 (paren
@@ -858,7 +870,7 @@ id|LOW_THRESHOLD
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(), Starting IrTTP&bslash;n&quot;
@@ -1049,8 +1061,9 @@ multiline_comment|/*&n;&t; *  If we are not connected then we just give up!&n;&t
 r_if
 c_cond
 (paren
-op_logical_neg
-id|self-&gt;connected
+id|self-&gt;state
+op_ne
+id|OBEX_DATA
 )paren
 (brace
 id|DEBUG
@@ -1079,7 +1092,7 @@ id|FLOW_STOP
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(), IrTTP wants us to slow down, going to sleep&bslash;n&quot;
@@ -1100,7 +1113,7 @@ c_loop
 id|count
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *  Check if request is larger than what fits inside a TTP&n;&t;&t; *  frame&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *  Check if request is larger than what fits inside a TTP&n;&t;&t; *  frame. In that case we must fragment the frame into &n;&t;&t; *  multiple TTP frames. IrOBEX should not care about message&n;&t;&t; *  boundaries.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1437,7 +1450,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -1578,7 +1591,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(): IROBEX_IOCSCONNECT!&bslash;n&quot;
@@ -1588,21 +1601,39 @@ multiline_comment|/* Already connected? */
 r_if
 c_cond
 (paren
-id|self-&gt;connected
+id|self-&gt;state
+op_eq
+id|OBEX_DATA
 )paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), already connected!&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *  Wait until we have discovered a remote IrOBEX device&n;&t;&t; */
+)brace
+multiline_comment|/* Timeout after 15 secs. */
+id|irobex_start_watchdog_timer
+c_func
+(paren
+id|self
+comma
+l_int|1000
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * If we have discovered a remote device we&n;&t;&t; * check if the discovery is still fresh. If not, we don&squot;t&n;&t;&t; * trust the address.&n;&t;&t; */
 r_if
 c_cond
 (paren
-(paren
 id|self-&gt;daddr
-op_eq
-l_int|0
-)paren
-op_logical_or
+op_logical_and
 (paren
 (paren
 id|jiffies
@@ -1613,70 +1644,50 @@ OG
 l_int|500
 )paren
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|self-&gt;daddr
-op_ne
-l_int|0
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), daddr is old!&bslash;n&quot;
-)paren
-suffix:semicolon
 id|self-&gt;daddr
 op_assign
 l_int|0
 suffix:semicolon
-)brace
+multiline_comment|/* &n;&t;&t; * Try to discover remote remote device if it has not been &n;&t;&t; * discovered yet. &n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|self-&gt;daddr
+)paren
+(brace
+id|self-&gt;state
+op_assign
+id|OBEX_DISCOVER
+suffix:semicolon
 id|irlmp_discovery_request
 c_func
 (paren
 l_int|8
 )paren
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(): Sleep until device discovered&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Timeout after 10 secs. */
-id|irobex_start_watchdog_timer
-c_func
-(paren
-id|self
-comma
-l_int|1000
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; *  Wait for discovery to complete&n;&t;&t;&t; */
+multiline_comment|/* Wait for discovery to complete */
 id|interruptible_sleep_on
 c_func
 (paren
 op_amp
-id|self-&gt;discover_wait
+id|self-&gt;write_wait
 )paren
 suffix:semicolon
-multiline_comment|/* del_timer( &amp;self-&gt;watchdog_timer); */
+id|del_timer
+c_func
+(paren
+op_amp
+id|self-&gt;watchdog_timer
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Give up if we are unable to discover any remote devices */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|self-&gt;daddr
-op_eq
-l_int|0
 )paren
 (brace
 id|DEBUG
@@ -1697,9 +1708,8 @@ multiline_comment|/* Need to find remote destination TSAP selector? */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|self-&gt;dtsap_sel
-op_eq
-l_int|0
 )paren
 (brace
 id|DEBUG
@@ -1710,6 +1720,10 @@ comma
 id|__FUNCTION__
 l_string|&quot;() : Quering remote IAS!&bslash;n&quot;
 )paren
+suffix:semicolon
+id|self-&gt;state
+op_assign
+id|OBEX_QUERY
 suffix:semicolon
 multiline_comment|/* Timeout after 5 secs. */
 id|irobex_start_watchdog_timer
@@ -1734,30 +1748,26 @@ comma
 id|self
 )paren
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(): Sleep until IAS answer&bslash;n&quot;
-)paren
-suffix:semicolon
 id|interruptible_sleep_on
 c_func
 (paren
 op_amp
-id|self-&gt;ias_wait
+id|self-&gt;write_wait
 )paren
 suffix:semicolon
-multiline_comment|/* del_timer( &amp;self-&gt;watchdog_timer); */
+id|del_timer
+c_func
+(paren
+op_amp
+id|self-&gt;watchdog_timer
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
+op_logical_neg
 id|self-&gt;dtsap_sel
-op_eq
-l_int|0
 )paren
 (brace
 id|DEBUG
@@ -1774,15 +1784,9 @@ op_minus
 id|ENOTTY
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; *  Try connect&n;&t;&t; */
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(): Connecting ...&bslash;n&quot;
-)paren
+id|self-&gt;state
+op_assign
+id|OBEX_CONN
 suffix:semicolon
 multiline_comment|/* Timeout after 5 secs. */
 id|irobex_start_watchdog_timer
@@ -1809,21 +1813,12 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *  Go to sleep and wait for connection!&n;&t;&t; */
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(): Waiting for connection!&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/* Go to sleep and wait for connection!  */
 id|interruptible_sleep_on
 c_func
 (paren
 op_amp
-id|self-&gt;connect_wait
+id|self-&gt;write_wait
 )paren
 suffix:semicolon
 id|del_timer
@@ -1836,8 +1831,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|self-&gt;connected
+id|self-&gt;state
+op_ne
+id|OBEX_DATA
 )paren
 (brace
 id|DEBUG
@@ -1862,7 +1858,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(): IROBEX_IOCSDISCONNECT!&bslash;n&quot;
@@ -1871,8 +1867,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|self-&gt;connected
+id|self-&gt;state
+op_ne
+id|OBEX_DATA
 )paren
 r_return
 l_int|0
@@ -1888,13 +1885,13 @@ id|P_NORMAL
 )paren
 suffix:semicolon
 multiline_comment|/* Reset values for this instance */
-id|self-&gt;connected
+id|self-&gt;state
 op_assign
-id|FALSE
+id|OBEX_IDLE
 suffix:semicolon
 id|self-&gt;eof
 op_assign
-l_int|0
+id|LM_USER_REQUEST
 suffix:semicolon
 id|self-&gt;daddr
 op_assign
@@ -1932,7 +1929,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irobex_dev_open (inode, file)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function irobex_dev_open (inode, file)&n; *&n; *    Device opened by user process&n; *&n; */
 DECL|function|irobex_dev_open
 r_static
 r_int
@@ -1960,7 +1957,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;open_irobex:&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|self
@@ -2018,6 +2016,37 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+id|irobex_register_server
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
+multiline_comment|/* Reset values for this instance */
+id|self-&gt;state
+op_assign
+id|OBEX_IDLE
+suffix:semicolon
+id|self-&gt;eof
+op_assign
+id|FALSE
+suffix:semicolon
+id|self-&gt;daddr
+op_assign
+l_int|0
+suffix:semicolon
+id|self-&gt;dtsap_sel
+op_assign
+l_int|0
+suffix:semicolon
+id|self-&gt;rx_flow
+op_assign
+id|FLOW_START
+suffix:semicolon
+id|self-&gt;tx_flow
+op_assign
+id|FLOW_START
+suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
@@ -2056,7 +2085,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;close_irobex()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|self
@@ -2122,11 +2152,48 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* if ( self-&gt;tsap) { */
-multiline_comment|/* &t;&t;irttp_close_tsap( self-&gt;tsap); */
-multiline_comment|/* &t;&t;self-&gt;tsap = NULL; */
-multiline_comment|/* &t;&t;self-&gt;connected = FALSE; */
-multiline_comment|/* &t;} */
+multiline_comment|/* Close TSAP is its still there */
+r_if
+c_cond
+(paren
+id|self-&gt;tsap
+)paren
+(brace
+id|irttp_close_tsap
+c_func
+(paren
+id|self-&gt;tsap
+)paren
+suffix:semicolon
+id|self-&gt;tsap
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+id|self-&gt;state
+op_assign
+id|OBEX_IDLE
+suffix:semicolon
+id|self-&gt;eof
+op_assign
+id|FALSE
+suffix:semicolon
+id|self-&gt;daddr
+op_assign
+l_int|0
+suffix:semicolon
+id|self-&gt;dtsap_sel
+op_assign
+l_int|0
+suffix:semicolon
+id|self-&gt;rx_flow
+op_assign
+id|FLOW_START
+suffix:semicolon
+id|self-&gt;tx_flow
+op_assign
+id|FLOW_START
+suffix:semicolon
 multiline_comment|/* Remove this filp from the asynchronously notified filp&squot;s */
 id|irobex_fasync
 c_func
@@ -2199,6 +2266,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+multiline_comment|/* Remember address and time if was discovered */
 id|self-&gt;daddr
 op_assign
 id|discovery-&gt;daddr
@@ -2207,15 +2275,23 @@ id|self-&gt;time_discovered
 op_assign
 id|jiffies
 suffix:semicolon
+multiline_comment|/* Wake up process if its waiting for device to be discovered */
+r_if
+c_cond
+(paren
+id|self-&gt;state
+op_eq
+id|OBEX_DISCOVER
+)paren
 id|wake_up_interruptible
 c_func
 (paren
 op_amp
-id|self-&gt;discover_wait
+id|self-&gt;write_wait
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irobex_disconnect_indication (handle, reason, priv)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function irobex_disconnect_indication (handle, reason, priv)&n; *&n; *    Link has been disconnected&n; *&n; */
 DECL|function|irobex_disconnect_indication
 r_void
 id|irobex_disconnect_indication
@@ -2246,7 +2322,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(), reason=%d&bslash;n&quot;
@@ -2285,11 +2361,9 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/* &t;save_flags(flags); */
-multiline_comment|/* &t;cli(); */
-id|self-&gt;connected
+id|self-&gt;state
 op_assign
-id|FALSE
+id|OBEX_IDLE
 suffix:semicolon
 id|self-&gt;eof
 op_assign
@@ -2309,19 +2383,11 @@ id|self-&gt;tx_flow
 op_assign
 id|FLOW_START
 suffix:semicolon
-multiline_comment|/* &t;restore_flags(flags); */
 id|wake_up_interruptible
 c_func
 (paren
 op_amp
 id|self-&gt;read_wait
-)paren
-suffix:semicolon
-id|wake_up_interruptible
-c_func
-(paren
-op_amp
-id|self-&gt;connect_wait
 )paren
 suffix:semicolon
 id|wake_up_interruptible
@@ -2336,7 +2402,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irobex_disconnect_indication: skb_queue_len=%d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), skb_queue_len=%d&bslash;n&quot;
 comma
 id|skb_queue_len
 c_func
@@ -2351,14 +2418,12 @@ c_cond
 (paren
 id|userdata
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|userdata
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Function irobex_connect_confirm (instance, sap, qos, userdata)&n; *&n; *    Connection to peer IrOBEX layer established&n; *&n; */
 DECL|function|irobex_connect_confirm
@@ -2396,7 +2461,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -2447,7 +2512,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(), IrLAP data size=%d&bslash;n&quot;
@@ -2459,18 +2524,27 @@ id|self-&gt;irlap_data_size
 op_assign
 id|qos-&gt;data_size.value
 suffix:semicolon
-id|self-&gt;connected
-op_assign
-id|TRUE
-suffix:semicolon
 multiline_comment|/*&n;&t; *  Wake up any blocked process wanting to write. Finally this process&n;&t; *  can start writing since the connection is now open :-)&n;&t; */
+r_if
+c_cond
+(paren
+id|self-&gt;state
+op_eq
+id|OBEX_CONN
+)paren
+(brace
+id|self-&gt;state
+op_assign
+id|OBEX_DATA
+suffix:semicolon
 id|wake_up_interruptible
 c_func
 (paren
 op_amp
-id|self-&gt;connect_wait
+id|self-&gt;write_wait
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2508,7 +2582,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irobex_connect_response()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -2533,9 +2608,9 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|self-&gt;connected
+id|self-&gt;state
 op_assign
-id|TRUE
+id|OBEX_DATA
 suffix:semicolon
 id|skb
 op_assign
@@ -2558,10 +2633,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irobex_connect_response: &quot;
-l_string|&quot;Could not allocate an sk_buff of length %d&bslash;n&quot;
-comma
-l_int|64
+id|__FUNCTION__
+l_string|&quot;() Could not allocate sk_buff!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2631,9 +2704,10 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
-l_string|&quot;irobex_connect_indication()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|self
@@ -2685,9 +2759,10 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
-l_string|&quot;irobex_connect_indication, skb_len = %d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), skb_len = %d&bslash;n&quot;
 comma
 (paren
 r_int
@@ -2698,7 +2773,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(), IrLAP data size=%d&bslash;n&quot;
@@ -2721,12 +2796,14 @@ id|self-&gt;irlap_data_size
 op_assign
 id|qos-&gt;data_size.value
 suffix:semicolon
+multiline_comment|/* We just accept the connection */
 id|irobex_connect_response
 c_func
 (paren
 id|self
 )paren
 suffix:semicolon
+macro_line|#if 1
 id|mgr_event.event
 op_assign
 id|EVENT_IROBEX_START
@@ -2748,6 +2825,7 @@ op_amp
 id|mgr_event
 )paren
 suffix:semicolon
+macro_line|#endif
 id|wake_up_interruptible
 c_func
 (paren
@@ -2944,7 +3022,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -3025,7 +3103,7 @@ id|wake_up_interruptible
 c_func
 (paren
 op_amp
-id|self-&gt;discover_wait
+id|self-&gt;write_wait
 )paren
 suffix:semicolon
 r_break
@@ -3072,7 +3150,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irobex_get_value_confirm()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -3129,9 +3208,10 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
-l_string|&quot;irobex_get_value_confirm() int=%d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;() int=%d&bslash;n&quot;
 comma
 id|value-&gt;t.integer
 )paren
@@ -3150,11 +3230,18 @@ op_assign
 id|value-&gt;t.integer
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *  Got the remote TSAP, so wake up any processes&n;&t;&t;&t; *  blocking on write. We don&squot;t do the connect &n;&t;&t;&t; *  ourselves since we must make sure there is a &n;&t;&t;&t; *  process that wants to make a connection, so we&n;&t;&t;&t; *  just let that process do the connect itself&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|self-&gt;state
+op_eq
+id|OBEX_QUERY
+)paren
 id|wake_up_interruptible
 c_func
 (paren
 op_amp
-id|self-&gt;ias_wait
+id|self-&gt;write_wait
 )paren
 suffix:semicolon
 )brace
@@ -3173,7 +3260,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irlan_get_value_confirm(), got string %s&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), got string %s&bslash;n&quot;
 comma
 id|value-&gt;t.string
 )paren
@@ -3188,8 +3276,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irobex_get_value_confirm(), &quot;
-l_string|&quot;OCT_SEQ not implemented&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), OCT_SEQ not implemented&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -3202,8 +3290,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irobex_get_value_confirm(), &quot;
-l_string|&quot;MISSING not implemented&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), MISSING not implemented&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -3215,7 +3303,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irobex_get_value_confirm(), unknown type!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), unknown type!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -3431,8 +3520,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irobex_register_server(), &quot;
-l_string|&quot;Unable to allocate TSAP!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unable to allocate TSAP!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3491,7 +3580,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -3519,28 +3608,38 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|self-&gt;state
+)paren
+(brace
+r_case
+id|OBEX_CONN
+suffix:colon
+multiline_comment|/* FALLTROUGH */
+r_case
+id|OBEX_DISCOVER
+suffix:colon
+multiline_comment|/* FALLTROUGH */
+r_case
+id|OBEX_QUERY
+suffix:colon
+multiline_comment|/* FALLTROUGH */
 id|wake_up_interruptible
 c_func
 (paren
 op_amp
-id|self-&gt;discover_wait
+id|self-&gt;write_wait
 )paren
 suffix:semicolon
-id|wake_up_interruptible
-c_func
-(paren
-op_amp
-id|self-&gt;ias_wait
-)paren
+r_break
 suffix:semicolon
-id|wake_up_interruptible
-c_func
-(paren
-op_amp
-id|self-&gt;connect_wait
-)paren
+r_default
+suffix:colon
+r_break
 suffix:semicolon
-multiline_comment|/* irlmp_do_lsap_event( self, LM_WATCHDOG_TIMEOUT, NULL); */
+)brace
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
 multiline_comment|/*&n; * Function irobex_proc_read (buf, start, offset, len, unused)&n; *&n; *    Give some info to the /proc file system&n; */
@@ -3631,14 +3730,12 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;connected: %s &quot;
+l_string|&quot;state: %s &quot;
 comma
-id|self-&gt;connected
-ques
-c_cond
-l_string|&quot;TRUE&quot;
-suffix:colon
-l_string|&quot;FALSE&quot;
+id|irobex_state
+(braket
+id|self-&gt;state
+)braket
 )paren
 suffix:semicolon
 id|len
@@ -3687,25 +3784,9 @@ c_func
 r_void
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;--&gt; irobex: init_module&bslash;n&quot;
-)paren
-suffix:semicolon
 id|irobex_init
 c_func
 (paren
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irobex: init_module --&gt;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3721,27 +3802,11 @@ c_func
 r_void
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;--&gt; irobex, cleanup_module&bslash;n&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* &n;&t; *  No need to check MOD_IN_USE, as sys_delete_module() checks. &n;&t; */
 multiline_comment|/* Free some memory */
 id|irobex_cleanup
 c_func
 (paren
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irobex, cleanup_module --&gt;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

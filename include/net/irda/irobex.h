@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irobex.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Jul  4 22:43:57 1998&n; * Modified at:   Mon Oct 19 12:32:33 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irobex.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Jul  4 22:43:57 1998&n; * Modified at:   Wed Jan 13 15:55:28 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#ifndef IROBEX_H
 DECL|macro|IROBEX_H
 mdefine_line|#define IROBEX_H
@@ -37,6 +37,33 @@ DECL|macro|IROBEX_IOC_MAXNR
 mdefine_line|#define IROBEX_IOC_MAXNR 2
 DECL|macro|IROBEX_MAX_HEADER
 mdefine_line|#define IROBEX_MAX_HEADER (TTP_HEADER+LMP_HEADER+LAP_HEADER)
+r_typedef
+r_enum
+(brace
+DECL|enumerator|OBEX_IDLE
+id|OBEX_IDLE
+comma
+multiline_comment|/* Doing nothing */
+DECL|enumerator|OBEX_DISCOVER
+id|OBEX_DISCOVER
+comma
+multiline_comment|/* Trying to discovery remote device */
+DECL|enumerator|OBEX_QUERY
+id|OBEX_QUERY
+comma
+multiline_comment|/* Querying remote LM-IAS */
+DECL|enumerator|OBEX_CONN
+id|OBEX_CONN
+comma
+multiline_comment|/* Trying to connect to remote device */
+DECL|enumerator|OBEX_DATA
+id|OBEX_DATA
+comma
+multiline_comment|/* Data transfer ready */
+DECL|typedef|OBEX_STATE
+)brace
+id|OBEX_STATE
+suffix:semicolon
 DECL|struct|irobex_cb
 r_struct
 id|irobex_cb
@@ -51,6 +78,11 @@ r_int
 id|magic
 suffix:semicolon
 multiline_comment|/* magic used to detect corruption of the struct */
+DECL|member|state
+id|OBEX_STATE
+id|state
+suffix:semicolon
+multiline_comment|/* Current state */
 DECL|member|saddr
 id|__u32
 id|saddr
@@ -79,10 +111,6 @@ r_struct
 id|tsap_cb
 op_star
 id|tsap
-suffix:semicolon
-DECL|member|connected
-r_int
-id|connected
 suffix:semicolon
 DECL|member|eof
 r_int
@@ -129,25 +157,6 @@ r_struct
 id|wait_queue
 op_star
 id|write_wait
-suffix:semicolon
-multiline_comment|/* These wait queues are used for setting up a connections */
-DECL|member|connect_wait
-r_struct
-id|wait_queue
-op_star
-id|connect_wait
-suffix:semicolon
-DECL|member|discover_wait
-r_struct
-id|wait_queue
-op_star
-id|discover_wait
-suffix:semicolon
-DECL|member|ias_wait
-r_struct
-id|wait_queue
-op_star
-id|ias_wait
 suffix:semicolon
 DECL|member|async
 r_struct

@@ -2,21 +2,43 @@ multiline_comment|/*&n; * fixmap.h: compile-time virtual memory allocation&n; *&
 macro_line|#ifndef _ASM_FIXMAP_H
 DECL|macro|_ASM_FIXMAP_H
 mdefine_line|#define _ASM_FIXMAP_H
-macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/*&n; * Here we define all the compile-time &squot;special&squot; virtual&n; * addresses. The point is to have a constant address at&n; * compile time, but to set the physical address only&n; * in the boot process. We allocate these special  addresses&n; * from the end of virtual memory (0xfffff000) backwards.&n; * Also this lets us do fail-safe vmalloc(), we&n; * can guarantee that these special addresses and&n; * vmalloc()-ed addresses never overlap.&n; *&n; * these &squot;compile-time allocated&squot; memory buffers are&n; * fixed-size 4k pages. (or larger if used with an increment&n; * bigger than 1) use fixmap_set(idx,phys) to associate&n; * physical memory with fixmap indices.&n; *&n; * TLB entries of such buffers will not be flushed across&n; * task switches.&n; */
 multiline_comment|/*&n; * on UP currently we will have no trace of the fixmap mechanizm,&n; * no page table allocations, etc. This might change in the&n; * future, say framebuffers for the console driver(s) could be&n; * fix-mapped?&n; */
 DECL|enum|fixed_addresses
 r_enum
 id|fixed_addresses
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_X86_LOCAL_APIC
 DECL|enumerator|FIX_APIC_BASE
 id|FIX_APIC_BASE
 comma
+multiline_comment|/* local (CPU) APIC) -- required for SMP or not */
+macro_line|#endif
+macro_line|#ifdef CONFIG_X86_IO_APIC
 DECL|enumerator|FIX_IO_APIC_BASE
 id|FIX_IO_APIC_BASE
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_X86_VISWS_APIC
+DECL|enumerator|FIX_CO_CPU
+id|FIX_CO_CPU
+comma
+multiline_comment|/* Cobalt timer */
+DECL|enumerator|FIX_CO_APIC
+id|FIX_CO_APIC
+comma
+multiline_comment|/* Cobalt APIC Redirection Table */
+DECL|enumerator|FIX_LI_PCIA
+id|FIX_LI_PCIA
+comma
+multiline_comment|/* Lithium PCI Bridge A */
+DECL|enumerator|FIX_LI_PCIB
+id|FIX_LI_PCIB
+comma
+multiline_comment|/* Lithium PCI Bridge B */
 macro_line|#endif
 DECL|enumerator|__end_of_fixed_addresses
 id|__end_of_fixed_addresses

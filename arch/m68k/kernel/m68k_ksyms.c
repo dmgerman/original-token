@@ -12,6 +12,7 @@ macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
@@ -122,6 +123,13 @@ c_func
 id|mm_vtop_fallback
 )paren
 suffix:semicolon
+DECL|variable|m68k_realnum_memory
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|m68k_realnum_memory
+)paren
+suffix:semicolon
 DECL|variable|m68k_memory
 id|EXPORT_SYMBOL
 c_func
@@ -129,11 +137,18 @@ c_func
 id|m68k_memory
 )paren
 suffix:semicolon
-DECL|variable|kernel_map
+DECL|variable|__ioremap
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|kernel_map
+id|__ioremap
+)paren
+suffix:semicolon
+DECL|variable|iounmap
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|iounmap
 )paren
 suffix:semicolon
 DECL|variable|m68k_debug_device
@@ -178,20 +193,6 @@ c_func
 id|strstr
 )paren
 suffix:semicolon
-DECL|variable|strtok
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|strtok
-)paren
-suffix:semicolon
-DECL|variable|strpbrk
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|strpbrk
-)paren
-suffix:semicolon
 DECL|variable|local_irq_count
 id|EXPORT_SYMBOL
 c_func
@@ -225,6 +226,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|kernel_set_cachemode
+)paren
+suffix:semicolon
+DECL|variable|kernel_thread
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kernel_thread
 )paren
 suffix:semicolon
 multiline_comment|/* Networking helper routines. */

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.c&n; * Version:       0.3&n; * Description:   An IrDA LAP driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Mon Dec 14 11:54:42 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute iyt and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.c&n; * Version:       0.8&n; * Description:   An IrDA LAP driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Sat Jan 16 22:19:27 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute iyt and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -654,7 +654,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlap_connect_indication()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -834,7 +835,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irlap_connect_request() Wrong state!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;() Wrong state!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|irlap_disconnect_indication
@@ -967,15 +969,6 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|skb
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 multiline_comment|/* Hide LAP header from IrLMP layer */
 id|skb_pull
 c_func
@@ -1056,7 +1049,7 @@ id|skb
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -1090,15 +1083,6 @@ c_func
 id|skb
 op_ne
 l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|skb
 comma
 r_return
 suffix:semicolon
@@ -1227,15 +1211,6 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|skb
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -1350,15 +1325,6 @@ op_assign
 id|UI_FRAME
 suffix:semicolon
 )brace
-id|IS_SKB
-c_func
-(paren
-id|skb
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 multiline_comment|/* &n;&t; *  Send event if this frame only if we are in the right state &n;&t; *  FIXME: udata should be sent first! (skb_queue_head?)&n;&t; */
 r_if
 c_cond
@@ -1413,15 +1379,6 @@ c_func
 id|skb
 op_ne
 l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|skb
 comma
 r_return
 suffix:semicolon
@@ -1661,15 +1618,6 @@ r_struct
 id|irlap_info
 id|info
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -1800,15 +1748,6 @@ op_star
 id|discovery_log
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -1859,7 +1798,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlap_discovery_indication (log)&n; *&n; *    Somebody is trying to discover us!&n; *&n; */
 DECL|function|irlap_discovery_indication
-r_inline
 r_void
 id|irlap_discovery_indication
 c_func
@@ -2034,12 +1972,32 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;state
+op_eq
+id|LAP_RESET_WAIT
+)paren
 id|irlap_do_event
 c_func
 (paren
 id|self
 comma
 id|RESET_REQUEST
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_else
+id|irlap_do_event
+c_func
+(paren
+id|self
+comma
+id|RESET_RESPONSE
 comma
 l_int|NULL
 comma
@@ -2062,7 +2020,7 @@ c_func
 l_int|0
 comma
 id|__FUNCTION__
-l_string|&quot;() Not implemented!&bslash;n&quot;
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2108,20 +2066,6 @@ op_mod
 id|S
 op_minus
 id|s
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;S=%d, s=%d, rnd=%d&bslash;n&quot;
-comma
-id|S
-comma
-id|s
-comma
-id|slot
 )paren
 suffix:semicolon
 id|ASSERT
@@ -2403,7 +2347,7 @@ id|EBADR
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; *  ns as expected?&n;&t; */
+multiline_comment|/*  ns as expected?  */
 r_if
 c_cond
 (paren
@@ -2471,7 +2415,7 @@ id|EBADR
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; *  nr as expected?&n;&t; */
+multiline_comment|/*  nr as expected?  */
 r_if
 c_cond
 (paren
@@ -2516,20 +2460,9 @@ op_le
 id|self-&gt;vs
 )paren
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;*** irlap_validate_nr_received:&quot;
-l_string|&quot; unexpected nr, no wrap&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 id|NR_UNEXPECTED
 suffix:semicolon
-)brace
 )brace
 r_else
 (brace
@@ -2548,39 +2481,11 @@ op_le
 id|self-&gt;vs
 )paren
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;*** irlap_validate_nr_received:&quot;
-l_string|&quot; unexpected nr, wrapped&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 id|NR_UNEXPECTED
 suffix:semicolon
 )brace
-)brace
 multiline_comment|/* Invalid nr!  */
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irlap_validate_nr_received: invalid nr!, &quot;
-l_string|&quot; vs=%d, vr=%d, va=%d, nr=%d&bslash;n&quot;
-comma
-id|self-&gt;vs
-comma
-id|self-&gt;vr
-comma
-id|self-&gt;va
-comma
-id|nr
-)paren
-suffix:semicolon
 r_return
 id|NR_INVALID
 suffix:semicolon
@@ -2627,7 +2532,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Next to send and next to receive&n;&t; */
+multiline_comment|/* Next to send and next to receive */
 id|self-&gt;vs
 op_assign
 id|self-&gt;vr
@@ -2713,7 +2618,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Get QoS values.&n;&t; */
+multiline_comment|/* Get QoS values.  */
 id|speed
 op_assign
 id|qos-&gt;baud_rate.value
@@ -2791,14 +2696,6 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irlap_flush_all_queues()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -2821,7 +2718,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Free transmission queue&n;&t; */
+multiline_comment|/* Free transmission queue */
 r_while
 c_loop
 (paren
@@ -2838,15 +2735,13 @@ id|self-&gt;tx_list
 op_ne
 l_int|NULL
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; *  Free sliding window buffered packets&n;&t; */
+multiline_comment|/* Free sliding window buffered packets */
 r_while
 c_loop
 (paren
@@ -2863,14 +2758,31 @@ id|self-&gt;wx_list
 op_ne
 l_int|NULL
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IRDA_RECYCLE_RR
+r_if
+c_cond
+(paren
+id|self-&gt;recycle_rr_skb
+)paren
+(brace
+id|dev_kfree_skb
+c_func
+(paren
+id|self-&gt;recycle_rr_skb
+)paren
+suffix:semicolon
+id|self-&gt;recycle_rr_skb
+op_assign
+l_int|NULL
+suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Function irlap_setspeed (self, speed)&n; *&n; *    Change the speed of the IrDA port&n; *&n; */
 DECL|function|irlap_change_speed
@@ -3287,8 +3199,17 @@ id|self-&gt;qos_rx.max_turn_time.bits
 op_and_assign
 l_int|0x03
 suffix:semicolon
+id|self-&gt;qos_rx.max_turn_time.bits
+op_and_assign
+l_int|0x01
+suffix:semicolon
 multiline_comment|/* Set data size */
 multiline_comment|/* self-&gt;qos_rx.data_size.bits &amp;= 0x03; */
+multiline_comment|/* Set disconnect time */
+id|self-&gt;qos_rx.link_disc_time.bits
+op_and_assign
+l_int|0x07
+suffix:semicolon
 id|irda_qos_bits_to_value
 c_func
 (paren
@@ -3314,7 +3235,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlap_apply_default_connection_parameters()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -3534,39 +3456,6 @@ op_assign
 id|self-&gt;poll_timeout
 op_star
 l_int|2
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), Setting poll timeout = %d&bslash;n&quot;
-comma
-id|self-&gt;poll_timeout
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), Setting final timeout = %d&bslash;n&quot;
-comma
-id|self-&gt;final_timeout
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), Setting wd timeout = %d&bslash;n&quot;
-comma
-id|self-&gt;wd_timeout
-)paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_IRDA_COMPRESSION
 r_if

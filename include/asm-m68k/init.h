@@ -17,7 +17,7 @@ mdefine_line|#define __FINIT&t;&t;.previous
 DECL|macro|__INITDATA
 mdefine_line|#define __INITDATA&t;.section&t;&quot;.data.init&quot;,#alloc,#write
 DECL|macro|__cacheline_aligned
-mdefine_line|#define __cacheline_aligned __attribute__ &bslash;&n;&t;&t;&t; ((__section__ (&quot;.data.cacheline_aligned&quot;)))
+mdefine_line|#define __cacheline_aligned __attribute__ &bslash;&n;&t;&t;((__aligned__(16), __section__ (&quot;.data.cacheline_aligned&quot;)))
 macro_line|#else
 multiline_comment|/* gdb doesn&squot;t like it all if the code for one source file isn&squot;t together in&n; * the executable, so we must avoid the .init sections :-( */
 DECL|macro|__init
@@ -34,7 +34,7 @@ mdefine_line|#define __FINIT
 DECL|macro|__INITDATA
 mdefine_line|#define __INITDATA
 DECL|macro|__cacheline_aligned
-mdefine_line|#define __cacheline_aligned
+mdefine_line|#define __cacheline_aligned __attribute__ ((__aligned__(16)))
 macro_line|#endif /* CONFIG_KGDB */
 macro_line|#endif
 eof

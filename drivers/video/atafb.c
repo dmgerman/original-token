@@ -21,6 +21,7 @@ macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#include &lt;asm/atari_stram.h&gt;
@@ -3083,7 +3084,7 @@ l_int|0xff
 suffix:semicolon
 id|par-&gt;screen_base
 op_assign
-id|PTOV
+id|phys_to_virt
 c_func
 (paren
 id|addr
@@ -6836,7 +6837,7 @@ l_int|0xff
 suffix:semicolon
 id|par-&gt;screen_base
 op_assign
-id|PTOV
+id|phys_to_virt
 c_func
 (paren
 id|addr
@@ -8703,7 +8704,7 @@ l_int|0xff
 suffix:semicolon
 id|par-&gt;screen_base
 op_assign
-id|PTOV
+id|phys_to_virt
 c_func
 (paren
 id|addr
@@ -9293,7 +9294,7 @@ id|addr
 suffix:semicolon
 id|addr
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|s_base
@@ -10353,7 +10354,7 @@ id|addr
 suffix:semicolon
 id|addr
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|s_base
@@ -12804,7 +12805,7 @@ multiline_comment|/* On a &squot;040+, the cache mode of video RAM must be set t
 id|cache_push
 c_func
 (paren
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|screen_base
@@ -12820,7 +12821,7 @@ id|screen_base
 comma
 id|screen_len
 comma
-id|KERNELMAP_NO_COPYBACK
+id|IOMAP_WRITETHROUGH
 )paren
 suffix:semicolon
 )brace
@@ -12831,16 +12832,12 @@ r_else
 multiline_comment|/* Map the video memory (physical address given) to somewhere&n;&t;&t; * in the kernel address space.&n;&t;&t; */
 id|external_addr
 op_assign
-id|kernel_map
+id|ioremap_writethrough
 c_func
 (paren
 id|external_addr
 comma
 id|external_len
-comma
-id|KERNELMAP_NO_COPYBACK
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -12850,16 +12847,12 @@ id|external_vgaiobase
 )paren
 id|external_vgaiobase
 op_assign
-id|kernel_map
+id|ioremap
 c_func
 (paren
 id|external_vgaiobase
 comma
 l_int|0x10000
-comma
-id|KERNELMAP_NOCACHE_SER
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|screen_base

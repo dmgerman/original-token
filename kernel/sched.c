@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/kernel/sched.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1996-04-21&t;Modified by Ulrich Windl to make NTP work&n; *  1996-12-23  Modified by Dave Grothe to fix bugs in semaphores and&n; *              make semaphores SMP safe&n; *  1997-01-28  Modified by Finn Arne Gangstad to make timers scale better.&n; *  1998-11-19&t;Implemented schedule_timeout() and related stuff&n; *&t;&t;by Andrea Arcangeli&n; *  1998-12-24&t;Fixed a xtime SMP race (we need the xtime_lock rw spinlock to&n; *&t;&t;serialize accesses to xtime/lost_ticks).&n; *&t;&t;&t;&t;Copyright (C) 1998  Andrea Arcangeli&n; *  1998-12-28  Implemented better SMP scheduling by Ingo Molnar&n; */
+multiline_comment|/*&n; *  linux/kernel/sched.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1996-04-21&t;Modified by Ulrich Windl to make NTP work&n; *  1996-12-23  Modified by Dave Grothe to fix bugs in semaphores and&n; *              make semaphores SMP safe&n; *  1997-01-28  Modified by Finn Arne Gangstad to make timers scale better.&n; *  1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; *  1998-11-19&t;Implemented schedule_timeout() and related stuff&n; *&t;&t;by Andrea Arcangeli&n; *  1998-12-24&t;Fixed a xtime SMP race (we need the xtime_lock rw spinlock to&n; *&t;&t;serialize accesses to xtime/lost_ticks).&n; *&t;&t;&t;&t;Copyright (C) 1998  Andrea Arcangeli&n; *  1998-12-28  Implemented better SMP scheduling by Ingo Molnar&n; */
 multiline_comment|/*&n; * &squot;sched.c&squot; is the main kernel file. It contains scheduling primitives&n; * (sleep_on, wakeup, schedule etc) as well as a number of simple system&n; * call functions (type getpid()), which just extract a field from&n; * current-task&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -134,14 +134,14 @@ DECL|variable|time_maxerror
 r_int
 id|time_maxerror
 op_assign
-id|MAXPHASE
+id|NTP_PHASE_LIMIT
 suffix:semicolon
 multiline_comment|/* maximum error (us) */
 DECL|variable|time_esterror
 r_int
 id|time_esterror
 op_assign
-id|MAXPHASE
+id|NTP_PHASE_LIMIT
 suffix:semicolon
 multiline_comment|/* estimated error (us) */
 DECL|variable|time_phase
@@ -3210,12 +3210,23 @@ c_cond
 (paren
 id|time_maxerror
 OG
-id|MAXPHASE
+id|NTP_PHASE_LIMIT
 )paren
+(brace
 id|time_maxerror
 op_assign
-id|MAXPHASE
+id|NTP_PHASE_LIMIT
 suffix:semicolon
+id|time_state
+op_assign
+id|TIME_ERROR
+suffix:semicolon
+multiline_comment|/* p. 17, sect. 4.3, (b) */
+id|time_status
+op_or_assign
+id|STA_UNSYNC
+suffix:semicolon
+)brace
 multiline_comment|/*&n;     * Leap second processing. If in leap-insert state at&n;     * the end of the day, the system clock is set back one&n;     * second; if in leap-delete state, the system clock is&n;     * set ahead one second. The microtime() routine or&n;     * external clock driver will insure that reported time&n;     * is always monotonic. The ugly divides should be&n;     * replaced.&n;     */
 r_switch
 c_cond
@@ -3274,6 +3285,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;Clock: inserting leap second 23:59:60 UTC&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3307,6 +3319,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;Clock: deleting leap second 23:59:59 UTC&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3489,6 +3502,7 @@ op_eq
 id|PPS_VALID
 )paren
 (brace
+multiline_comment|/* PPS signal lost */
 id|pps_jitter
 op_assign
 id|MAXTIME
@@ -3551,7 +3565,7 @@ id|SHIFT_SCALE
 )paren
 suffix:semicolon
 macro_line|#if HZ == 100
-multiline_comment|/* compensate for (HZ==100) != 128. Add 25% to get 125; =&gt; only 3% error */
+multiline_comment|/* Compensate for (HZ==100) != (1 &lt;&lt; SHIFT_HZ).&n;     * Add 25% and 3.125% to get 128.125; =&gt; only 0.125% error (p. 14)&n;     */
 r_if
 c_cond
 (paren
@@ -3561,17 +3575,34 @@ l_int|0
 )paren
 id|time_adj
 op_sub_assign
+(paren
 op_minus
 id|time_adj
 op_rshift
 l_int|2
+)paren
+op_plus
+(paren
+op_minus
+id|time_adj
+op_rshift
+l_int|5
+)paren
 suffix:semicolon
 r_else
 id|time_adj
 op_add_assign
+(paren
 id|time_adj
 op_rshift
 l_int|2
+)paren
+op_plus
+(paren
+id|time_adj
+op_rshift
+l_int|5
+)paren
 suffix:semicolon
 macro_line|#endif
 )brace
@@ -3585,6 +3616,56 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|time_adjust_step
+op_assign
+id|time_adjust
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+multiline_comment|/* We are doing an adjtime thing. &n;&t;     *&n;&t;     * Prepare time_adjust_step to be within bounds.&n;&t;     * Note that a positive time_adjust means we want the clock&n;&t;     * to run faster.&n;&t;     *&n;&t;     * Limit the amount of the step to be in the range&n;&t;     * -tickadj .. +tickadj&n;&t;     */
+r_if
+c_cond
+(paren
+id|time_adjust
+OG
+id|tickadj
+)paren
+id|time_adjust_step
+op_assign
+id|tickadj
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|time_adjust
+OL
+op_minus
+id|tickadj
+)paren
+id|time_adjust_step
+op_assign
+op_minus
+id|tickadj
+suffix:semicolon
+multiline_comment|/* Reduce by this step the amount of time left  */
+id|time_adjust
+op_sub_assign
+id|time_adjust_step
+suffix:semicolon
+)brace
+id|xtime.tv_usec
+op_add_assign
+id|tick
+op_plus
+id|time_adjust_step
+suffix:semicolon
 multiline_comment|/*&n;&t; * Advance the phase, once it gets to one microsecond, then&n;&t; * advance the tick more.&n;&t; */
 id|time_phase
 op_add_assign
@@ -3614,11 +3695,7 @@ op_lshift
 id|SHIFT_SCALE
 suffix:semicolon
 id|xtime.tv_usec
-op_add_assign
-id|tick
-op_plus
-id|time_adjust_step
-op_minus
+op_sub_assign
 id|ltemp
 suffix:semicolon
 )brace
@@ -3646,68 +3723,9 @@ id|SHIFT_SCALE
 suffix:semicolon
 id|xtime.tv_usec
 op_add_assign
-id|tick
-op_plus
-id|time_adjust_step
-op_plus
 id|ltemp
 suffix:semicolon
 )brace
-r_else
-id|xtime.tv_usec
-op_add_assign
-id|tick
-op_plus
-id|time_adjust_step
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|time_adjust
-)paren
-(brace
-multiline_comment|/* We are doing an adjtime thing. &n;&t;     *&n;&t;     * Modify the value of the tick for next time.&n;&t;     * Note that a positive delta means we want the clock&n;&t;     * to run fast. This means that the tick should be bigger&n;&t;     *&n;&t;     * Limit the amount of the step for *next* tick to be&n;&t;     * in the range -tickadj .. +tickadj&n;&t;     */
-r_if
-c_cond
-(paren
-id|time_adjust
-OG
-id|tickadj
-)paren
-id|time_adjust_step
-op_assign
-id|tickadj
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|time_adjust
-OL
-op_minus
-id|tickadj
-)paren
-id|time_adjust_step
-op_assign
-op_minus
-id|tickadj
-suffix:semicolon
-r_else
-id|time_adjust_step
-op_assign
-id|time_adjust
-suffix:semicolon
-multiline_comment|/* Reduce by this step the amount of time left  */
-id|time_adjust
-op_sub_assign
-id|time_adjust_step
-suffix:semicolon
-)brace
-r_else
-id|time_adjust_step
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Using a loop looks inefficient, but &quot;ticks&quot; is&n; * usually just one (we shouldn&squot;t be losing ticks,&n; * we&squot;re doing this this way mainly for interrupt&n; * latency reasons, not because we think we&squot;ll&n; * have lots of lost timer ticks&n; */
 DECL|function|update_wall_time

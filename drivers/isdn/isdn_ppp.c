@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_ppp.c,v 1.33 1998/02/20 17:11:54 fritz Exp $&n; *&n; * Linux ISDN subsystem, functions for synchronous PPP (linklevel).&n; *&n; * Copyright 1995,96 by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_ppp.c,v $&n; * Revision 1.33  1998/02/20 17:11:54  fritz&n; * Changes for recent kernels.&n; *&n; * Revision 1.32  1998/01/31 19:29:55  calle&n; * Merged changes from and for 2.1.82, not tested only compiled ...&n; *&n; * Revision 1.31  1997/10/09 21:29:01  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *   New L1 error status (not yet in use).&n; *   Cleaned up obsolete structures.&n; * Implemented Cisco-SLARP.&n; * Changed local net-interface data to be dynamically allocated.&n; * Removed old 2.0 compatibility stuff.&n; *&n; * Revision 1.30  1997/10/01 09:20:38  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.29  1997/08/21 23:11:44  fritz&n; * Added changes for kernels &gt;= 2.1.45&n; *&n; * Revision 1.28  1997/06/17 13:05:57  hipp&n; * Applied Eric&squot;s underflow-patches (slightly modified)&n; * more compression changes (but disabled at the moment)&n; * changed one copy_to_user() to run with enabled IRQs&n; * a few MP changes&n; * changed &squot;proto&squot; handling in the isdn_ppp receive code&n; *&n; * Revision 1.27  1997/03/30 16:51:17  calle&n; * changed calls to copy_from_user/copy_to_user and removed verify_area&n; * were possible.&n; *&n; * Revision 1.26  1997/02/23 16:53:44  hipp&n; * minor cleanup&n; * some initial changes for future PPP compresion&n; * added AC,PC compression for outgoing frames&n; *&n; * Revision 1.25  1997/02/12 20:37:35  hipp&n; * New ioctl() PPPIOCGCALLINFO, minor cleanup&n; *&n; * Revision 1.24  1997/02/11 18:32:56  fritz&n; * Bugfix in isdn_ppp_free_mpqueue().&n; *&n; * Revision 1.23  1997/02/10 11:12:19  fritz&n; * More changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.22  1997/02/06 15:03:51  hipp&n; * changed GFP_KERNEL kmalloc to GFP_ATOMIC in isdn_ppp_fill_mpqueue()&n; *&n; * Revision 1.21  1997/02/03 23:29:38  fritz&n; * Reformatted according CodingStyle&n; * Bugfix: removed isdn_ppp_skb_destructor, used by upper layers.&n; * Misc changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.20  1996/10/30 12:21:58  fritz&n; * Cosmetic fix: Compiler warning when compiling without MPP.&n; *&n; * Revision 1.19  1996/10/25 19:03:21  hipp&n; * changed/added some defines to (re)allow compilation without MP/VJ&n; *&n; * Revision 1.18  1996/10/22 23:14:00  fritz&n; * Changes for compatibility to 2.0.X and 2.1.X kernels.&n; *&n; * Revision 1.17  1996/10/22 09:39:49  hipp&n; * a few MP changes and bugfixes&n; *&n; * Revision 1.16  1996/09/23 01:58:10  fritz&n; * Fix: With syncPPP encapsulation, discard LCP packets&n; *      when calculating hangup timeout.&n; *&n; * Revision 1.15  1996/09/07 12:50:12  hipp&n; * bugfixes (unknown device after failed dial attempt, minor bugs)&n; *&n; * Revision 1.14  1996/08/12 16:26:47  hipp&n; * code cleanup&n; * changed connection management from minors to slots&n; *&n; * Revision 1.13  1996/07/01 19:47:24  hipp&n; * Fixed memory leak in VJ handling and more VJ changes&n; *&n; * Revision 1.12  1996/06/24 17:42:03  fritz&n; * Minor bugfixes.&n; *&n; * Revision 1.11  1996/06/16 17:46:05  tsbogend&n; * changed unsigned long to u32 to make Alpha people happy&n; *&n; * Revision 1.10  1996/06/11 14:50:29  hipp&n; * Lot of changes and bugfixes.&n; * New scheme to resend packets to busy LL devices.&n; *&n; * Revision 1.9  1996/05/18 01:37:01  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.8  1996/05/06 11:34:55  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.7  1996/04/30 11:07:42  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.6  1996/04/30 09:33:09  fritz&n; * Removed compatibility-macros.&n; *&n; * Revision 1.5  1996/04/20 16:32:32  fritz&n; * Changed ippp_table to an array of pointers, allocating each part&n; * separately.&n; *&n; * Revision 1.4  1996/02/19 15:25:50  fritz&n; * Bugfix: Sync-PPP packets got compressed twice, when resent due to&n; * send-queue-full reject.&n; *&n; * Revision 1.3  1996/02/11 02:27:12  fritz&n; * Lot of Bugfixes my Michael.&n; * Moved calls to skb_push() into isdn_net_header()&n; * Fixed a possible race-condition in isdn_ppp_timer_timeout().&n; *&n; * Revision 1.2  1996/01/22 05:08:06  fritz&n; * Merged in Michael&squot;s patches for MP.&n; * Minor changes in isdn_ppp_xmit.&n; *&n; * Revision 1.1  1996/01/09 04:11:29  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn_ppp.c,v 1.33 1998/02/20 17:11:54 fritz Exp $&n; *&n; * Linux ISDN subsystem, functions for synchronous PPP (linklevel).&n; *&n; * Copyright 1995,96 by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Note: This file differs from the corresponding revision as present in the&n; * isdn4linux CVS repository because some later bug fixes have been extracted&n; * from the repository and merged into this file. -- Henner Eisen&n; *&n; * $Log: isdn_ppp.c,v $&n; * Revision 1.33  1998/02/20 17:11:54  fritz&n; * Changes for recent kernels.&n; *&n; * Revision 1.32  1998/01/31 19:29:55  calle&n; * Merged changes from and for 2.1.82, not tested only compiled ...&n; *&n; * Revision 1.31  1997/10/09 21:29:01  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *   New L1 error status (not yet in use).&n; *   Cleaned up obsolete structures.&n; * Implemented Cisco-SLARP.&n; * Changed local net-interface data to be dynamically allocated.&n; * Removed old 2.0 compatibility stuff.&n; *&n; * Revision 1.30  1997/10/01 09:20:38  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.29  1997/08/21 23:11:44  fritz&n; * Added changes for kernels &gt;= 2.1.45&n; *&n; * Revision 1.28  1997/06/17 13:05:57  hipp&n; * Applied Eric&squot;s underflow-patches (slightly modified)&n; * more compression changes (but disabled at the moment)&n; * changed one copy_to_user() to run with enabled IRQs&n; * a few MP changes&n; * changed &squot;proto&squot; handling in the isdn_ppp receive code&n; *&n; * Revision 1.27  1997/03/30 16:51:17  calle&n; * changed calls to copy_from_user/copy_to_user and removed verify_area&n; * were possible.&n; *&n; * Revision 1.26  1997/02/23 16:53:44  hipp&n; * minor cleanup&n; * some initial changes for future PPP compresion&n; * added AC,PC compression for outgoing frames&n; *&n; * Revision 1.25  1997/02/12 20:37:35  hipp&n; * New ioctl() PPPIOCGCALLINFO, minor cleanup&n; *&n; * Revision 1.24  1997/02/11 18:32:56  fritz&n; * Bugfix in isdn_ppp_free_mpqueue().&n; *&n; * Revision 1.23  1997/02/10 11:12:19  fritz&n; * More changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.22  1997/02/06 15:03:51  hipp&n; * changed GFP_KERNEL kmalloc to GFP_ATOMIC in isdn_ppp_fill_mpqueue()&n; *&n; * Revision 1.21  1997/02/03 23:29:38  fritz&n; * Reformatted according CodingStyle&n; * Bugfix: removed isdn_ppp_skb_destructor, used by upper layers.&n; * Misc changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.20  1996/10/30 12:21:58  fritz&n; * Cosmetic fix: Compiler warning when compiling without MPP.&n; *&n; * Revision 1.19  1996/10/25 19:03:21  hipp&n; * changed/added some defines to (re)allow compilation without MP/VJ&n; *&n; * Revision 1.18  1996/10/22 23:14:00  fritz&n; * Changes for compatibility to 2.0.X and 2.1.X kernels.&n; *&n; * Revision 1.17  1996/10/22 09:39:49  hipp&n; * a few MP changes and bugfixes&n; *&n; * Revision 1.16  1996/09/23 01:58:10  fritz&n; * Fix: With syncPPP encapsulation, discard LCP packets&n; *      when calculating hangup timeout.&n; *&n; * Revision 1.15  1996/09/07 12:50:12  hipp&n; * bugfixes (unknown device after failed dial attempt, minor bugs)&n; *&n; * Revision 1.14  1996/08/12 16:26:47  hipp&n; * code cleanup&n; * changed connection management from minors to slots&n; *&n; * Revision 1.13  1996/07/01 19:47:24  hipp&n; * Fixed memory leak in VJ handling and more VJ changes&n; *&n; * Revision 1.12  1996/06/24 17:42:03  fritz&n; * Minor bugfixes.&n; *&n; * Revision 1.11  1996/06/16 17:46:05  tsbogend&n; * changed unsigned long to u32 to make Alpha people happy&n; *&n; * Revision 1.10  1996/06/11 14:50:29  hipp&n; * Lot of changes and bugfixes.&n; * New scheme to resend packets to busy LL devices.&n; *&n; * Revision 1.9  1996/05/18 01:37:01  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.8  1996/05/06 11:34:55  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.7  1996/04/30 11:07:42  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.6  1996/04/30 09:33:09  fritz&n; * Removed compatibility-macros.&n; *&n; * Revision 1.5  1996/04/20 16:32:32  fritz&n; * Changed ippp_table to an array of pointers, allocating each part&n; * separately.&n; *&n; * Revision 1.4  1996/02/19 15:25:50  fritz&n; * Bugfix: Sync-PPP packets got compressed twice, when resent due to&n; * send-queue-full reject.&n; *&n; * Revision 1.3  1996/02/11 02:27:12  fritz&n; * Lot of Bugfixes my Michael.&n; * Moved calls to skb_push() into isdn_net_header()&n; * Fixed a possible race-condition in isdn_ppp_timer_timeout().&n; *&n; * Revision 1.2  1996/01/22 05:08:06  fritz&n; * Merged in Michael&squot;s patches for MP.&n; * Minor changes in isdn_ppp_xmit.&n; *&n; * Revision 1.1  1996/01/09 04:11:29  fritz&n; * Initial revision&n; *&n; */
 multiline_comment|/* TODO: right tbusy handling when using MP */
 multiline_comment|/*&n; * experimental for dynamic addressing: readdress IP frames&n; */
 DECL|macro|ISDN_SYNCPPP_READDRESS
@@ -1479,9 +1479,6 @@ r_int
 id|len
 )paren
 (brace
-r_int
-id|r
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1500,9 +1497,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|r
-op_assign
 id|copy_from_user
 c_func
 (paren
@@ -1517,9 +1511,9 @@ comma
 id|len
 )paren
 )paren
-)paren
 r_return
-id|r
+op_minus
+id|EFAULT
 suffix:semicolon
 r_return
 l_int|0
@@ -1545,9 +1539,6 @@ op_star
 id|str
 )paren
 (brace
-r_int
-id|r
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1558,9 +1549,6 @@ id|str
 r_if
 c_cond
 (paren
-(paren
-id|r
-op_assign
 id|copy_to_user
 c_func
 (paren
@@ -1576,9 +1564,9 @@ comma
 l_int|4
 )paren
 )paren
-)paren
 r_return
-id|r
+op_minus
+id|EFAULT
 suffix:semicolon
 )brace
 r_else
@@ -1586,9 +1574,6 @@ r_else
 r_if
 c_cond
 (paren
-(paren
-id|r
-op_assign
 id|copy_to_user
 c_func
 (paren
@@ -1599,9 +1584,9 @@ comma
 id|val
 )paren
 )paren
-)paren
 r_return
-id|r
+op_minus
+id|EFAULT
 suffix:semicolon
 )brace
 r_return
@@ -7981,7 +7966,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-r_return
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -7996,6 +7983,15 @@ r_struct
 id|ppp_stats
 )paren
 )paren
+)paren
+(brace
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_int
@@ -8019,6 +8015,8 @@ id|cmd
 (brace
 r_int
 id|error
+op_assign
+l_int|0
 suffix:semicolon
 r_char
 op_star
@@ -8088,8 +8086,9 @@ id|PPP_VERSION
 op_plus
 l_int|1
 suffix:semicolon
-id|error
-op_assign
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -8099,7 +8098,14 @@ id|PPP_VERSION
 comma
 id|len
 )paren
+)paren
+(brace
+id|error
+op_assign
+op_minus
+id|EFAULT
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case

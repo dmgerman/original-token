@@ -1200,6 +1200,12 @@ id|dfn
 comma
 id|x
 suffix:semicolon
+macro_line|#ifdef CONFIG_VISWS
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* Lithium PCI Bridges are non-standard */
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4383,7 +4389,7 @@ id|cmd
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#if defined(CONFIG_X86_IO_APIC)
 multiline_comment|/*&n;&t;&t; * Recalculate IRQ numbers if we use the I/O APIC&n;&t;&t; */
 (brace
 r_int

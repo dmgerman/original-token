@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_cli.c&n; * Version:       0.8&n; * Description:   IrDA LAN Access Protocol Client&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Mon Dec 14 10:44:07 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_cli.c&n; * Version:       0.8&n; * Description:   IrDA LAN Access Protocol Client&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Mon Jan 18 13:24:26 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -240,9 +240,10 @@ r_void
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
-l_string|&quot;--&gt; irlan_client_cleanup&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|irlmp_unregister_layer
@@ -251,14 +252,6 @@ c_func
 id|S_LAN
 comma
 id|CLIENT
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irlan_client_cleanup --&gt;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -582,9 +575,10 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
-l_string|&quot;Found instance!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Found instance!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -862,7 +856,7 @@ id|self-&gt;tsap_data
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 l_string|&quot;IrLAN, data channel disconnected by peer!&bslash;n&quot;
 )paren
@@ -884,7 +878,7 @@ id|self-&gt;tsap_ctrl
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 l_string|&quot;IrLAN, control channel disconnected by peer!&bslash;n&quot;
 )paren

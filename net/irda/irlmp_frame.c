@@ -1,9 +1,10 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_frame.c&n; * Version:       0.1&n; * Description:   IrLMP frame implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 02:09:59 1997&n; * Modified at:   Wed Dec  9 01:25:47 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_frame.c&n; * Version:       0.8&n; * Description:   IrLMP frame implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 02:09:59 1997&n; * Modified at:   Sat Jan 16 22:14:04 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irlap.h&gt;
+macro_line|#include &lt;net/irda/timer.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
 macro_line|#include &lt;net/irda/irlmp_frame.h&gt;
 r_static
@@ -26,6 +27,9 @@ id|slsap
 comma
 r_int
 id|status
+comma
+id|hashbin_t
+op_star
 )paren
 suffix:semicolon
 DECL|function|irlmp_send_data_pdu
@@ -57,15 +61,6 @@ id|skb
 id|__u8
 op_star
 id|frame
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
 suffix:semicolon
 id|ASSERT
 c_func
@@ -349,14 +344,6 @@ id|lsap_cb
 op_star
 id|lsap
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irlmp_link_data_indication()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -413,8 +400,7 @@ id|fp
 l_int|0
 )braket
 op_amp
-op_complement
-id|CONTROL_BIT
+id|LSAP_MASK
 suffix:semicolon
 id|dlsap_sel
 op_assign
@@ -422,18 +408,6 @@ id|fp
 (braket
 l_int|1
 )braket
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;slsap_sel = %02x, dlsap_sel = %02x&bslash;n&quot;
-comma
-id|slsap_sel
-comma
-id|dlsap_sel
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Check if this is an incoming connection, since we must deal with&n;&t; *  it in a different way than other established connections.&n;&t; */
 r_if
@@ -470,6 +444,7 @@ comma
 id|dlsap_sel
 )paren
 suffix:semicolon
+multiline_comment|/* Try to find LSAP among the unconnected LSAPs */
 id|lsap
 op_assign
 id|irlmp_find_lsap
@@ -482,6 +457,31 @@ comma
 id|slsap_sel
 comma
 id|CONNECT_CMD
+comma
+id|irlmp-&gt;unconnected_lsaps
+)paren
+suffix:semicolon
+multiline_comment|/* Maybe LSAP was already connected, so try one more time */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lsap
+)paren
+id|lsap
+op_assign
+id|irlmp_find_lsap
+c_func
+(paren
+id|self
+comma
+id|dlsap_sel
+comma
+id|slsap_sel
+comma
+l_int|0
+comma
+id|self-&gt;lsaps
 )paren
 suffix:semicolon
 )brace
@@ -498,6 +498,8 @@ comma
 id|slsap_sel
 comma
 l_int|0
+comma
+id|self-&gt;lsaps
 )paren
 suffix:semicolon
 r_if
@@ -588,7 +590,6 @@ op_amp
 id|CONTROL_BIT
 )paren
 (brace
-multiline_comment|/* DEBUG( 0, &quot;irlmp_input: Got control frame&bslash;n&quot;); */
 r_switch
 c_cond
 (paren
@@ -601,14 +602,6 @@ l_int|2
 r_case
 id|CONNECT_CMD
 suffix:colon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irlmp_input: CONNECT_CMD&bslash;n&quot;
-)paren
-suffix:semicolon
 id|lsap-&gt;lap
 op_assign
 id|self
@@ -648,7 +641,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_input: Disconnect indication!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Disconnect indication!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|irlmp_do_lsap_event
@@ -696,7 +690,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irlmp_input: Unknown control frame %02x&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown control frame %02x&bslash;n&quot;
 comma
 id|fp
 (braket
@@ -780,7 +775,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_link_disconnect_indication()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -849,7 +845,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_link_connect_indication()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Copy QoS settings for this session */
@@ -963,12 +960,18 @@ op_star
 id|log
 )paren
 (brace
+multiline_comment|/* &t;DISCOVERY *discovery; */
+id|hashbin_t
+op_star
+id|old_log
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_link_connect_confirm()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -993,25 +996,118 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|self-&gt;cachelog
-)paren
-id|hashbin_delete
+id|ASSERT
 c_func
 (paren
 id|self-&gt;cachelog
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *  If log is missing this means that IrLAP was unable to perform the&n;&t; *  discovery, so restart discovery again with just the half timeout&n;&t; *  of the normal one.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|log
+)paren
+(brace
+id|irlmp_start_discovery_timer
+c_func
+(paren
+id|irlmp
+comma
+l_int|150
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#if 0
+id|discovery
+op_assign
+id|hashbin_remove_first
+c_func
+(paren
+id|log
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|discovery
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), found %s&bslash;n&quot;
+comma
+id|discovery-&gt;info
+)paren
+suffix:semicolon
+multiline_comment|/* Remove any old discovery of this device */
+id|hashbin_remove
+c_func
+(paren
+id|self-&gt;cachelog
+comma
+id|discovery-&gt;daddr
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+multiline_comment|/* Insert the new one */
+id|hashbin_insert
+c_func
+(paren
+id|self-&gt;cachelog
+comma
+(paren
+id|QUEUE
+op_star
+)paren
+id|discovery
+comma
+id|discovery-&gt;daddr
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|discovery
+op_assign
+id|hashbin_remove_first
+c_func
+(paren
+id|log
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+id|old_log
+op_assign
+id|self-&gt;cachelog
+suffix:semicolon
+id|self-&gt;cachelog
+op_assign
+id|log
+suffix:semicolon
+id|hashbin_delete
+c_func
+(paren
+id|old_log
 comma
 (paren
 id|FREE_FUNC
 )paren
 id|kfree
 )paren
-suffix:semicolon
-id|self-&gt;cachelog
-op_assign
-id|log
 suffix:semicolon
 id|irlmp_do_lap_event
 c_func
@@ -1023,9 +1119,19 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;() --&gt;&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_IRDA_CACHE_LAST_LSAP
 DECL|function|irlmp_update_cache
+id|__inline__
 r_void
 id|irlmp_update_cache
 c_func
@@ -1036,15 +1142,6 @@ op_star
 id|self
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* Update cache entry */
 id|irlmp-&gt;cache.dlsap_sel
 op_assign
@@ -1064,7 +1161,7 @@ id|TRUE
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * Function irlmp_find_handle (dlsap, slsap)&n; *&n; *    Find handle assosiated with destination and source LSAP&n; *&n; */
+multiline_comment|/*&n; * Function irlmp_find_handle (self, dlsap_sel, slsap_sel, status, queue)&n; *&n; *    Find handle assosiated with destination and source LSAP&n; *&n; */
 DECL|function|irlmp_find_lsap
 r_static
 r_struct
@@ -1086,28 +1183,16 @@ id|slsap_sel
 comma
 r_int
 id|status
+comma
+id|hashbin_t
+op_star
+id|queue
 )paren
 (brace
 r_struct
 id|lsap_cb
 op_star
 id|lsap
-suffix:semicolon
-id|hashbin_t
-op_star
-id|queue
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irlmp_find_lsap: dlsap_sel=0x%02x, slsap_sel=0x%02x&bslash;n&quot;
-comma
-id|dlsap_sel
-comma
-id|slsap_sel
-)paren
 suffix:semicolon
 id|ASSERT
 c_func
@@ -1132,20 +1217,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|status
-)paren
-id|queue
-op_assign
-id|irlmp-&gt;unconnected_lsaps
-suffix:semicolon
-r_else
-id|queue
-op_assign
-id|self-&gt;lsaps
 suffix:semicolon
 multiline_comment|/* &n;&t; *  Optimize for the common case. We assume that the last frame&n;&t; *  received is in the same connection as the last one, so check in&n;&t; *  cache first to avoid the linear search&n;&t; */
 macro_line|#ifdef CONFIG_IRDA_CACHE_LAST_LSAP
@@ -1218,20 +1289,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* &n;&t;&t; *  Check if source LSAP (in our view!) match, and if&n;&t;&t; *  dest LSAP is equal to LM_ANY, which is the case&n;&t;&t; *  for incomming connections &n;&t;&t; */
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irlmp_find_lsap: &quot;
-l_string|&quot;LSAP: lsap-&gt;dlsap=%d, lsap-&gt;slsap=%d&bslash;n&quot;
-comma
-id|lsap-&gt;dlsap_sel
-comma
-id|lsap-&gt;slsap_sel
-)paren
-suffix:semicolon
+multiline_comment|/* &n;&t;&t; *  If this is an incomming connection, then the destination &n;&t;&t; *  LSAP selector may have been specified as LM_ANY so that &n;&t;&t; *  any client can connect. In that case we only need to check&n;&t;&t; *  if the source LSAP (in our view!) match!&n;&t;&t; */
 r_if
 c_cond
 (paren

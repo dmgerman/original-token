@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/include/asm/traps.h&n; *&n; *  Copyright (C) 19
 macro_line|#ifndef _M68K_TRAPS_H
 DECL|macro|_M68K_TRAPS_H
 mdefine_line|#define _M68K_TRAPS_H
+macro_line|#ifndef __ASSEMBLY__
 DECL|typedef|e_vector
 r_typedef
 r_void
@@ -19,6 +20,7 @@ id|vectors
 (braket
 )braket
 suffix:semicolon
+macro_line|#endif
 DECL|macro|VEC_BUSERR
 mdefine_line|#define VEC_BUSERR  (2)
 DECL|macro|VEC_ADDRERR
@@ -115,8 +117,11 @@ DECL|macro|VEC_UNIMPEA
 mdefine_line|#define&t;VEC_UNIMPEA (60)
 DECL|macro|VEC_UNIMPII
 mdefine_line|#define&t;VEC_UNIMPII (61)
+DECL|macro|VEC_USER
+mdefine_line|#define VEC_USER    (64)
 DECL|macro|VECOFF
 mdefine_line|#define VECOFF(vec) ((vec)&lt;&lt;2)
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* Status register bits */
 DECL|macro|PS_T
 mdefine_line|#define PS_T  (0x8000)
@@ -626,5 +631,6 @@ id|un
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif /* _M68K_TRAPS_H */
 eof
