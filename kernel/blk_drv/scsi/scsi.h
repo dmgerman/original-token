@@ -937,13 +937,13 @@ id|printk
 c_func
 (paren
 id|DEVICE_NAME
-l_string|&quot; I/O error&bslash;n&bslash;r&quot;
+l_string|&quot; I/O error&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;dev %04x, sector %d&bslash;n&bslash;r&quot;
+l_string|&quot;dev %04x, sector %d&bslash;n&quot;
 comma
 id|req-&gt;dev
 comma

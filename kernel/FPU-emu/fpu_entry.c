@@ -657,7 +657,7 @@ id|emulating
 id|printk
 c_func
 (paren
-l_string|&quot;ERROR: wm-FPU-emu is not RE-ENTRANT!&bslash;r&bslash;n&quot;
+l_string|&quot;ERROR: wm-FPU-emu is not RE-ENTRANT!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -726,7 +726,7 @@ l_int|0x000f
 id|printk
 c_func
 (paren
-l_string|&quot;math_emulate: %04x:%08x&bslash;n&bslash;r&quot;
+l_string|&quot;math_emulate: %04x:%08x&bslash;n&quot;
 comma
 id|FPU_CS
 comma

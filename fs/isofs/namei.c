@@ -166,7 +166,7 @@ id|__asm__
 c_func
 (paren
 l_string|&quot;cld&bslash;n&bslash;t&quot;
-l_string|&quot;fs ; repe ; cmpsb&bslash;n&bslash;t&quot;
+l_string|&quot;repe ; cmpsb&bslash;n&bslash;t&quot;
 l_string|&quot;setz %%al&quot;
 suffix:colon
 l_string|&quot;=a&quot;
@@ -1313,6 +1313,14 @@ r_if
 c_cond
 (paren
 id|ino_back
+op_logical_and
+op_logical_neg
+(paren
+op_star
+id|result
+)paren
+op_member_access_from_pointer
+id|i_pipe
 )paren
 (paren
 op_star

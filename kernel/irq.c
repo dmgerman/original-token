@@ -95,7 +95,9 @@ suffix:semicolon
 r_else
 id|printk
 (paren
-l_string|&quot;irq.c:bad bottom half entry.&bslash;n&quot;
+l_string|&quot;irq.c:bad bottom half entry (%d).&bslash;n&quot;
+comma
+id|nr
 )paren
 suffix:semicolon
 )brace

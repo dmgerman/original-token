@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;netinet/in.h&gt;
 macro_line|#include &quot;../../net/kern_sock.h&quot;
 r_extern
@@ -206,29 +207,19 @@ op_minus
 id|EBADF
 suffix:semicolon
 )brace
-id|__asm__
+id|fs
+op_assign
+id|get_fs
 c_func
 (paren
-l_string|&quot;mov %%fs,%0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|fs
-)paren
 )paren
 suffix:semicolon
-id|__asm__
+id|set_fs
 c_func
 (paren
-l_string|&quot;mov %0,%%fs&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
+id|get_ds
+c_func
 (paren
-(paren
-r_int
-r_int
-)paren
-l_int|0x10
 )paren
 )paren
 suffix:semicolon
@@ -561,15 +552,17 @@ op_minus
 id|EAGAIN
 )paren
 (brace
+r_goto
+id|re_select
+suffix:semicolon
+macro_line|#if 0
 id|printk
 c_func
 (paren
 l_string|&quot;nfs_rpc_call: bad select ready&bslash;n&quot;
 )paren
 suffix:semicolon
-r_goto
-id|re_select
-suffix:semicolon
+macro_line|#endif
 )brace
 r_if
 c_cond
@@ -627,15 +620,10 @@ l_string|&quot;nfs_rpc_call: XID mismatch&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-id|__asm__
+id|set_fs
 c_func
 (paren
-l_string|&quot;mov %0,%%fs&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
 id|fs
-)paren
 )paren
 suffix:semicolon
 r_return

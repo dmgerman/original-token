@@ -250,6 +250,14 @@ r_int
 id|vsprintf
 c_func
 (paren
+r_char
+op_star
+comma
+r_const
+r_char
+op_star
+comma
+id|va_list
 )paren
 suffix:semicolon
 r_extern
@@ -1557,7 +1565,7 @@ l_int|0
 id|printf
 c_func
 (paren
-l_string|&quot;Fork failed in init&bslash;r&bslash;n&quot;
+l_string|&quot;Fork failed in init&bslash;n&bslash;r&quot;
 )paren
 suffix:semicolon
 r_continue

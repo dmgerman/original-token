@@ -2327,12 +2327,6 @@ op_eq
 l_int|1
 )paren
 (brace
-id|brelse
-c_func
-(paren
-id|bh
-)paren
-suffix:semicolon
 id|parent_dir
 op_assign
 id|find_rock_ridge_relocation
@@ -2341,6 +2335,12 @@ c_func
 id|de
 comma
 id|parent
+)paren
+suffix:semicolon
+id|brelse
+c_func
+(paren
+id|bh
 )paren
 suffix:semicolon
 r_break

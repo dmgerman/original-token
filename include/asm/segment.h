@@ -353,6 +353,7 @@ r_int
 id|get_fs
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int
@@ -383,6 +384,7 @@ r_int
 id|get_ds
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int

@@ -76,6 +76,8 @@ DECL|macro|TIOCSETD
 mdefine_line|#define TIOCSETD&t;0x5423
 DECL|macro|TIOCGETD
 mdefine_line|#define TIOCGETD&t;0x5424
+DECL|macro|TCSBRKP
+mdefine_line|#define TCSBRKP&t;&t;0x5425&t;/* Needed for POSIX tcsendbreak() */
 DECL|macro|FIONCLEX
 mdefine_line|#define FIONCLEX&t;0x5450  /* these numbers need to be adjusted. */
 DECL|macro|FIOCLEX
@@ -169,7 +171,7 @@ multiline_comment|/* control characters */
 )brace
 suffix:semicolon
 DECL|macro|NCCS
-mdefine_line|#define NCCS 17
+mdefine_line|#define NCCS 19
 DECL|struct|termios
 r_struct
 id|termios

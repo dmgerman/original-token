@@ -3,22 +3,23 @@ DECL|macro|_LINUX_MINIX_FS_H
 mdefine_line|#define _LINUX_MINIX_FS_H
 multiline_comment|/*&n; * The minix filesystem constants/structures&n; */
 multiline_comment|/*&n; * Thanks to Kees J Bot for sending me the definitions of the new&n; * minix filesystem (aka V2) with bigger inodes and 32-bit block&n; * pointers. It&squot;s not actually implemented yet, but I&squot;ll look into&n; * it.&n; */
-DECL|macro|MINIX_NAME_LEN
-mdefine_line|#define MINIX_NAME_LEN 14
 DECL|macro|MINIX_ROOT_INO
 mdefine_line|#define MINIX_ROOT_INO 1
+multiline_comment|/* Not the same as the bogus LINK_MAX in &lt;linux/limits.h&gt;. Oh well. */
+DECL|macro|MINIX_LINK_MAX
+mdefine_line|#define MINIX_LINK_MAX&t;250
 DECL|macro|MINIX_I_MAP_SLOTS
 mdefine_line|#define MINIX_I_MAP_SLOTS&t;8
 DECL|macro|MINIX_Z_MAP_SLOTS
 mdefine_line|#define MINIX_Z_MAP_SLOTS&t;8
 DECL|macro|MINIX_SUPER_MAGIC
-mdefine_line|#define MINIX_SUPER_MAGIC&t;0x137F
+mdefine_line|#define MINIX_SUPER_MAGIC&t;0x137F&t;&t;/* original minix fs */
+DECL|macro|MINIX_SUPER_MAGIC2
+mdefine_line|#define MINIX_SUPER_MAGIC2&t;0x138F&t;&t;/* minix fs, 30 char names */
 DECL|macro|NEW_MINIX_SUPER_MAGIC
-mdefine_line|#define NEW_MINIX_SUPER_MAGIC&t;0x2468
+mdefine_line|#define NEW_MINIX_SUPER_MAGIC&t;0x2468&t;&t;/* minix V2 - not implemented */
 DECL|macro|MINIX_INODES_PER_BLOCK
 mdefine_line|#define MINIX_INODES_PER_BLOCK ((BLOCK_SIZE)/(sizeof (struct minix_inode)))
-DECL|macro|MINIX_DIR_ENTRIES_PER_BLOCK
-mdefine_line|#define MINIX_DIR_ENTRIES_PER_BLOCK ((BLOCK_SIZE)/(sizeof (struct minix_dir_entry)))
 DECL|struct|minix_inode
 r_struct
 id|minix_inode
@@ -178,7 +179,7 @@ DECL|member|name
 r_char
 id|name
 (braket
-id|MINIX_NAME_LEN
+l_int|0
 )braket
 suffix:semicolon
 )brace
@@ -612,21 +613,6 @@ r_extern
 r_struct
 id|inode_operations
 id|minix_symlink_inode_operations
-suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
-id|minix_chrdev_inode_operations
-suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
-id|minix_blkdev_inode_operations
-suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
-id|minix_fifo_inode_operations
 suffix:semicolon
 r_extern
 r_struct

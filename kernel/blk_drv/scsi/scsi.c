@@ -416,7 +416,7 @@ id|SCpnt
 macro_line|#ifdef DEBUG
 id|printk
 (paren
-l_string|&quot;scan_scsis_done(%d, %06x)&bslash;n&bslash;r&quot;
+l_string|&quot;scan_scsis_done(%d, %06x)&bslash;n&quot;
 comma
 id|SCpnt-&gt;host
 comma
@@ -1578,7 +1578,7 @@ id|in_scan
 id|printk
 c_func
 (paren
-l_string|&quot;SCSI host %d timed out - aborting command &bslash;r&bslash;n&quot;
+l_string|&quot;SCSI host %d timed out - aborting command&bslash;n&quot;
 comma
 id|SCpnt-&gt;host
 )paren
@@ -1602,7 +1602,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;SCSI host %d abort() timed out - reseting &bslash;r&bslash;n&quot;
+l_string|&quot;SCSI host %d abort() timed out - reseting&bslash;n&quot;
 comma
 id|SCpnt-&gt;host
 )paren
@@ -1631,7 +1631,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to reset scsi host %d&bslash;r&bslash;n&quot;
+l_string|&quot;Unable to reset scsi host %d&bslash;n&quot;
 comma
 id|SCpnt-&gt;host
 )paren
@@ -3617,6 +3617,52 @@ id|SUGGEST_ABORT
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|DID_RESET
+suffix:colon
+r_if
+c_cond
+(paren
+id|msg_byte
+c_func
+(paren
+id|result
+)paren
+op_eq
+id|GOOD
+op_logical_and
+id|status_byte
+c_func
+(paren
+id|result
+)paren
+op_eq
+id|CHECK_CONDITION
+)paren
+(brace
+id|scsi_request_sense
+(paren
+id|SCpnt
+)paren
+suffix:semicolon
+id|status
+op_assign
+id|PENDING
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+suffix:semicolon
+id|status
+op_assign
+id|REDO
+suffix:semicolon
+m_exit
+op_assign
+id|SUGGEST_RETRY
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 m_exit
@@ -3649,7 +3695,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;In MAYREDO, allowing %d retries, have %d&bslash;n&bslash;r&quot;
+l_string|&quot;In MAYREDO, allowing %d retries, have %d&bslash;n&quot;
 comma
 id|SCpnt-&gt;allowed
 comma

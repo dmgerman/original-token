@@ -32,10 +32,9 @@ id|tty_struct
 op_star
 id|tty
 suffix:semicolon
-DECL|member|timer
+DECL|member|read_status_mask
 r_int
-r_int
-id|timer
+id|read_status_mask
 suffix:semicolon
 DECL|member|timeout
 r_int
@@ -54,6 +53,10 @@ r_int
 id|x_char
 suffix:semicolon
 multiline_comment|/* xon/xoff characater */
+DECL|member|close_delay
+r_int
+id|close_delay
+suffix:semicolon
 DECL|member|event
 r_int
 id|event
@@ -98,14 +101,12 @@ DECL|macro|RS_EVENT_READ_PROCESS
 mdefine_line|#define RS_EVENT_READ_PROCESS&t;0
 DECL|macro|RS_EVENT_WRITE_WAKEUP
 mdefine_line|#define RS_EVENT_WRITE_WAKEUP&t;1
-DECL|macro|RS_EVENT_HUP_PGRP
-mdefine_line|#define RS_EVENT_HUP_PGRP&t;2
-DECL|macro|RS_EVENT_BREAK_INT
-mdefine_line|#define RS_EVENT_BREAK_INT&t;3
-DECL|macro|RS_EVENT_DO_SAK
-mdefine_line|#define RS_EVENT_DO_SAK&t;&t;4
+DECL|macro|RS_EVENT_HANGUP
+mdefine_line|#define RS_EVENT_HANGUP&t;&t;2
+DECL|macro|RS_EVENT_BREAK
+mdefine_line|#define RS_EVENT_BREAK&t;&t;3
 DECL|macro|RS_EVENT_OPEN_WAKEUP
-mdefine_line|#define RS_EVENT_OPEN_WAKEUP&t;5
+mdefine_line|#define RS_EVENT_OPEN_WAKEUP&t;4
 multiline_comment|/*&n; * These are the UART port assignments, expressed as offsets from the base&n; * register.  These assignments should hold for any serial port based on&n; * a 8250, 16450, or 16550(A).&n; */
 DECL|macro|UART_RX
 mdefine_line|#define UART_RX&t;&t;0&t;/* In:  Receive buffer (DLAB=0) */

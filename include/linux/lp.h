@@ -1,7 +1,7 @@
 macro_line|#ifndef _LINUX_LP_H
 DECL|macro|_LINUX_LP_H
 mdefine_line|#define _LINUX_LP_H
-multiline_comment|/*&n; * usr/include/linux/lp.h c.1991-1992 James Wiegand&n; * many modifications copyright (C) 1992 Michael K. Johnson&n; */
+multiline_comment|/*&n; * usr/include/linux/lp.h c.1991-1992 James Wiegand&n; * many modifications copyright (C) 1992 Michael K. Johnson&n; * Interrupt support added 1993 Nigel Gamble&n; */
 multiline_comment|/*&n; * Per POSIX guidelines, this module reserves the LP and lp prefixes&n; * These are the lp_table[minor].flags flags...&n; */
 DECL|macro|LP_EXIST
 mdefine_line|#define LP_EXIST 0x0001
@@ -33,11 +33,17 @@ DECL|macro|LPTIME
 mdefine_line|#define LPTIME   0x0002  /* corresponds to LP_INIT_TIME */
 DECL|macro|LPABORT
 mdefine_line|#define LPABORT  0x0004  /* call with TRUE arg to abort on error,&n;&t;&t;&t;    FALSE to retry.  Default is retry.  */
+DECL|macro|LPSETIRQ
+mdefine_line|#define LPSETIRQ 0x0005  /* call with new IRQ number,&n;&t;&t;&t;    or 0 for polling (no IRQ) */
+DECL|macro|LPGETIRQ
+mdefine_line|#define LPGETIRQ 0x0006  /* get the current IRQ number */
 DECL|macro|LPWAIT
 mdefine_line|#define LPWAIT   0x0008  /* corresponds to LP_INIT_WAIT */
 multiline_comment|/* timeout for printk&squot;ing a timeout, in jiffies (100ths of a second).&n;   This is also used for re-checking error conditions if LP_ABORT is&n;   not set.  This is the default behavior. */
-DECL|macro|LP_TIMEOUT
-mdefine_line|#define LP_TIMEOUT 1000
+DECL|macro|LP_TIMEOUT_INTERRUPT
+mdefine_line|#define LP_TIMEOUT_INTERRUPT&t;(60 * HZ)
+DECL|macro|LP_TIMEOUT_POLLED
+mdefine_line|#define LP_TIMEOUT_POLLED&t;(10 * HZ)
 DECL|macro|LP_B
 mdefine_line|#define LP_B(minor)&t;lp_table[(minor)].base&t;&t;/* IO address */
 DECL|macro|LP_F
@@ -52,7 +58,11 @@ DECL|macro|LP_TIME
 mdefine_line|#define LP_TIME(minor)&t;lp_table[(minor)].time&t;&t;/* wait time */
 DECL|macro|LP_WAIT
 mdefine_line|#define LP_WAIT(minor)&t;lp_table[(minor)].wait&t;&t;/* strobe wait */
-multiline_comment|/* &n;since we are dealing with a horribly slow device&n;I don&squot;t see the need for a queue&n;*/
+DECL|macro|LP_IRQ
+mdefine_line|#define LP_IRQ(minor)&t;lp_table[(minor)].irq&t;&t;/* interrupt # */
+multiline_comment|/* 0 means polled */
+DECL|macro|LP_BUFFER_SIZE
+mdefine_line|#define LP_BUFFER_SIZE 256
 DECL|struct|lp_struct
 r_struct
 id|lp_struct
@@ -60,6 +70,11 @@ id|lp_struct
 DECL|member|base
 r_int
 id|base
+suffix:semicolon
+DECL|member|irq
+r_int
+r_int
+id|irq
 suffix:semicolon
 DECL|member|flags
 r_int
@@ -80,6 +95,17 @@ r_int
 r_int
 id|wait
 suffix:semicolon
+DECL|member|lp_wait_q
+r_struct
+id|wait_queue
+op_star
+id|lp_wait_q
+suffix:semicolon
+DECL|member|lp_buffer
+r_char
+op_star
+id|lp_buffer
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* the BIOS manuals say there can be up to 4 lpt devices&n; * but I have not seen a board where the 4th address is listed&n; * if you have different hardware change the table below &n; * please let me know if you have different equipment&n; * if you have more than 3 printers, remember to increase LP_NO&n; */
@@ -96,11 +122,17 @@ l_int|0x3bc
 comma
 l_int|0
 comma
+l_int|0
+comma
 id|LP_INIT_CHAR
 comma
 id|LP_INIT_TIME
 comma
 id|LP_INIT_WAIT
+comma
+l_int|NULL
+comma
+l_int|NULL
 comma
 )brace
 comma
@@ -109,11 +141,17 @@ l_int|0x378
 comma
 l_int|0
 comma
+l_int|0
+comma
 id|LP_INIT_CHAR
 comma
 id|LP_INIT_TIME
 comma
 id|LP_INIT_WAIT
+comma
+l_int|NULL
+comma
+l_int|NULL
 comma
 )brace
 comma
@@ -122,11 +160,17 @@ l_int|0x278
 comma
 l_int|0
 comma
+l_int|0
+comma
 id|LP_INIT_CHAR
 comma
 id|LP_INIT_TIME
 comma
 id|LP_INIT_WAIT
+comma
+l_int|NULL
+comma
+l_int|NULL
 comma
 )brace
 comma
@@ -146,6 +190,8 @@ mdefine_line|#define LP_PSELECD&t;0x10
 DECL|macro|LP_PERRORP
 mdefine_line|#define LP_PERRORP&t;0x08 /* active low*/
 multiline_comment|/* &n; * defines for 8255 control port&n; * base + 2 &n; * accessed with LP_C(minor)&n; */
+DECL|macro|LP_PINTEN
+mdefine_line|#define LP_PINTEN&t;0x10
 DECL|macro|LP_PSELECP
 mdefine_line|#define LP_PSELECP&t;0x08
 DECL|macro|LP_PINITP

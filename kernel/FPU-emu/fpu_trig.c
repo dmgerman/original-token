@@ -312,6 +312,7 @@ r_void
 id|f2xm1
 c_func
 (paren
+r_void
 )paren
 (brace
 r_switch
@@ -486,6 +487,7 @@ r_void
 id|fptan
 c_func
 (paren
+r_void
 )paren
 (brace
 id|FPU_REG
@@ -692,6 +694,7 @@ r_void
 id|fxtract
 c_func
 (paren
+r_void
 )paren
 (brace
 id|FPU_REG
@@ -960,6 +963,7 @@ r_void
 id|fdecstp
 c_func
 (paren
+r_void
 )paren
 (brace
 id|top
@@ -973,6 +977,7 @@ r_void
 id|fincstp
 c_func
 (paren
+r_void
 )paren
 (brace
 id|top
@@ -986,6 +991,7 @@ r_void
 id|fsqrt_
 c_func
 (paren
+r_void
 )paren
 (brace
 r_if
@@ -1106,6 +1112,7 @@ r_void
 id|frndint_
 c_func
 (paren
+r_void
 )paren
 (brace
 r_if
@@ -1183,6 +1190,7 @@ r_void
 id|fsin
 c_func
 (paren
+r_void
 )paren
 (brace
 r_if
@@ -1587,6 +1595,7 @@ r_void
 id|fcos
 c_func
 (paren
+r_void
 )paren
 (brace
 id|f_cos
@@ -1602,6 +1611,7 @@ r_void
 id|fsincos
 c_func
 (paren
+r_void
 )paren
 (brace
 id|FPU_REG
@@ -2126,6 +2136,7 @@ r_void
 id|fyl2x
 c_func
 (paren
+r_void
 )paren
 (brace
 id|FPU_REG
@@ -2678,6 +2689,7 @@ r_void
 id|fpatan
 c_func
 (paren
+r_void
 )paren
 (brace
 id|FPU_REG
@@ -3170,6 +3182,7 @@ r_void
 id|fprem
 c_func
 (paren
+r_void
 )paren
 (brace
 id|fprem_kernel
@@ -3185,6 +3198,7 @@ r_void
 id|fprem1
 c_func
 (paren
+r_void
 )paren
 (brace
 id|fprem_kernel
@@ -3200,6 +3214,7 @@ r_void
 id|fyl2xp1
 c_func
 (paren
+r_void
 )paren
 (brace
 id|FPU_REG
@@ -3487,6 +3502,7 @@ r_void
 id|fscale
 c_func
 (paren
+r_void
 )paren
 (brace
 id|FPU_REG
@@ -4003,6 +4019,7 @@ r_void
 id|trig_a
 c_func
 (paren
+r_void
 )paren
 (brace
 (paren
@@ -4045,6 +4062,7 @@ r_void
 id|trig_b
 c_func
 (paren
+r_void
 )paren
 (brace
 (paren

@@ -563,6 +563,78 @@ r_return
 id|count
 suffix:semicolon
 )brace
+DECL|function|mmap_mem
+r_static
+r_int
+id|mmap_mem
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+r_int
+id|addr
+comma
+r_int
+id|len
+comma
+r_int
+id|prot
+comma
+r_int
+r_int
+id|off
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|len
+OG
+id|high_memory
+op_logical_or
+id|off
+OG
+id|high_memory
+op_minus
+id|len
+)paren
+multiline_comment|/* avoid overflow */
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|remap_page_range
+c_func
+(paren
+id|addr
+comma
+id|off
+comma
+id|len
+comma
+id|prot
+)paren
+)paren
+r_return
+op_minus
+id|EAGAIN
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|read_port
 r_static
 r_int
@@ -861,6 +933,69 @@ r_return
 id|count
 suffix:semicolon
 )brace
+DECL|function|mmap_zero
+r_static
+r_int
+id|mmap_zero
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+r_int
+id|addr
+comma
+r_int
+id|len
+comma
+r_int
+id|prot
+comma
+r_int
+r_int
+id|off
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|prot
+op_amp
+id|PAGE_RW
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|zeromap_page_range
+c_func
+(paren
+id|addr
+comma
+id|len
+comma
+id|prot
+)paren
+)paren
+r_return
+op_minus
+id|EAGAIN
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * The memory devices use the full 32 bits of the offset, and so we cannot&n; * check against negative addresses: they are ok. The return value is weird,&n; * though, in that case (0).&n; *&n; * also note that seeking relative to the &quot;end of file&quot; isn&squot;t supported:&n; * it has no meaning, so it returns -EINVAL.&n; */
 DECL|function|memory_lseek
 r_static
@@ -936,6 +1071,8 @@ DECL|macro|read_kmem
 mdefine_line|#define read_kmem read_mem
 DECL|macro|write_kmem
 mdefine_line|#define write_kmem write_mem
+DECL|macro|mmap_kmem
+mdefine_line|#define mmap_kmem mmap_mem
 DECL|variable|ram_fops
 r_static
 r_struct
@@ -990,9 +1127,8 @@ multiline_comment|/* mem_select */
 l_int|NULL
 comma
 multiline_comment|/* mem_ioctl */
-l_int|NULL
+id|mmap_mem
 comma
-multiline_comment|/* mem_mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open code */
@@ -1022,9 +1158,8 @@ multiline_comment|/* kmem_select */
 l_int|NULL
 comma
 multiline_comment|/* kmem_ioctl */
-l_int|NULL
+id|mmap_kmem
 comma
-multiline_comment|/* kmem_mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open code */
@@ -1118,9 +1253,8 @@ multiline_comment|/* zero_select */
 l_int|NULL
 comma
 multiline_comment|/* zero_ioctl */
-l_int|NULL
+id|mmap_zero
 comma
-multiline_comment|/* zero_mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open code */

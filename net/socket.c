@@ -2192,6 +2192,8 @@ suffix:semicolon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|usockvec
 comma
 l_int|2
@@ -3978,6 +3980,8 @@ suffix:colon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|args
 comma
 l_int|3
@@ -4023,6 +4027,8 @@ suffix:colon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|args
 comma
 l_int|3
@@ -4073,6 +4079,8 @@ suffix:colon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|args
 comma
 l_int|3
@@ -4123,6 +4131,8 @@ suffix:colon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|args
 comma
 l_int|2
@@ -4160,6 +4170,8 @@ suffix:colon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|args
 comma
 l_int|3
@@ -4214,6 +4226,8 @@ suffix:colon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|args
 comma
 l_int|3
@@ -4268,6 +4282,8 @@ suffix:colon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|args
 comma
 l_int|3
@@ -4322,6 +4338,8 @@ suffix:colon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|args
 comma
 l_int|4
@@ -4379,6 +4397,8 @@ suffix:colon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|args
 comma
 l_int|4
@@ -4438,6 +4458,8 @@ suffix:colon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|args
 comma
 l_int|6
@@ -4518,6 +4540,8 @@ suffix:colon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|args
 comma
 l_int|4
@@ -4577,6 +4601,8 @@ suffix:colon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|args
 comma
 l_int|6
@@ -4659,7 +4685,10 @@ r_case
 id|SYS_SHUTDOWN
 suffix:colon
 id|verify_area
+c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|args
 comma
 l_int|2
@@ -4695,7 +4724,10 @@ r_case
 id|SYS_SETSOCKOPT
 suffix:colon
 id|verify_area
+c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|args
 comma
 l_int|5
@@ -4756,7 +4788,10 @@ r_case
 id|SYS_GETSOCKOPT
 suffix:colon
 id|verify_area
+c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|args
 comma
 l_int|5

@@ -1299,7 +1299,7 @@ r_struct
 id|ip_config
 id|ipc
 suffix:semicolon
-multiline_comment|/*  verify_area (u_ipc, sizeof (ipc));*/
+multiline_comment|/*  verify_area (VERIFY_WRITE, u_ipc, sizeof (ipc));*/
 id|memcpy_fromfs
 c_func
 (paren

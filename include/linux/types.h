@@ -233,7 +233,7 @@ mdefine_line|#define __FD_CLR(fd,fdsetp) &bslash;&n;&t;&t;__asm__ __volatile__(&
 DECL|macro|__FD_ISSET
 macro_line|#undef&t;__FD_ISSET
 DECL|macro|__FD_ISSET
-mdefine_line|#define __FD_ISSET(fd,fdsetp) ({ &bslash;&n;&t;&t;char __result; &bslash;&n;&t;&t;__asm__ __volatile__(&quot;btl %1,%2 ; setb %0&quot; &bslash;&n;&t;&t;&t;:&quot;=q&quot; (__result) :&quot;r&quot; ((int) (fd)), &bslash;&n;&t;&t;&t;&quot;m&quot; (*(fd_set *) (fdsetp))); &bslash;&n;&t;&t;__result; })
+mdefine_line|#define __FD_ISSET(fd,fdsetp) (__extension__ ({ &bslash;&n;&t;&t;unsigned char __result; &bslash;&n;&t;&t;__asm__ __volatile__(&quot;btl %1,%2 ; setb %0&quot; &bslash;&n;&t;&t;&t;:&quot;=q&quot; (__result) :&quot;r&quot; ((int) (fd)), &bslash;&n;&t;&t;&t;&quot;m&quot; (*(fd_set *) (fdsetp))); &bslash;&n;&t;&t;__result; }))
 DECL|macro|__FD_ZERO
 macro_line|#undef&t;__FD_ZERO
 DECL|macro|__FD_ZERO

@@ -188,6 +188,34 @@ id|oldfd
 r_return
 id|newfd
 suffix:semicolon
+multiline_comment|/*&n;&t; * errno&squot;s for dup2() are slightly different than for fcntl(F_DUPFD)&n;&t; * for historical reasons.&n;&t; */
+r_if
+c_cond
+(paren
+id|newfd
+OG
+id|NR_OPEN
+)paren
+multiline_comment|/* historical botch - should have been &gt;= */
+r_return
+op_minus
+id|EBADF
+suffix:semicolon
+multiline_comment|/* dupfd() would return -EINVAL */
+macro_line|#if 1
+r_if
+c_cond
+(paren
+id|newfd
+op_eq
+id|NR_OPEN
+)paren
+r_return
+op_minus
+id|EBADF
+suffix:semicolon
+multiline_comment|/* dupfd() does return -EINVAL and that may&n;&t;&t;&t;&t; * even be the standard!  But that is too&n;&t;&t;&t;&t; * weird for now.&n;&t;&t;&t;&t; */
+macro_line|#endif
 id|sys_close
 c_func
 (paren

@@ -61,6 +61,7 @@ op_star
 id|FUNC
 )paren
 (paren
+r_void
 )paren
 suffix:semicolon
 DECL|typedef|FPU_REG

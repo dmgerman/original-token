@@ -236,6 +236,9 @@ op_star
 id|l
 )paren
 (brace
+r_int
+id|error
+suffix:semicolon
 r_struct
 id|flock
 id|flock
@@ -273,9 +276,13 @@ r_return
 op_minus
 id|EBADF
 suffix:semicolon
+id|error
+op_assign
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|l
 comma
 r_sizeof
@@ -284,6 +291,14 @@ op_star
 id|l
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
 suffix:semicolon
 id|memcpy_fromfs
 c_func
@@ -452,6 +467,9 @@ op_star
 id|l
 )paren
 (brace
+r_int
+id|error
+suffix:semicolon
 r_struct
 id|file
 op_star
@@ -490,9 +508,13 @@ r_return
 op_minus
 id|EBADF
 suffix:semicolon
+id|error
+op_assign
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|l
 comma
 r_sizeof
@@ -501,6 +523,14 @@ op_star
 id|l
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
 suffix:semicolon
 id|memcpy_fromfs
 c_func
@@ -693,12 +723,36 @@ op_eq
 id|F_SETLKW
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
+)paren
+r_return
+op_minus
+id|ERESTARTSYS
+suffix:semicolon
 id|interruptible_sleep_on
 c_func
 (paren
 op_amp
 id|fl-&gt;fl_wait
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
+)paren
+r_return
+op_minus
+id|ERESTARTSYS
 suffix:semicolon
 r_goto
 id|repeat
@@ -1380,7 +1434,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;lock_it: program bug: unanticipated overlap&bslash;n&quot;
+l_string|&quot;VFS: lock_it: program bug: unanticipated overlap&bslash;n&quot;
 )paren
 suffix:semicolon
 id|free_lock
@@ -1718,7 +1772,7 @@ l_int|NULL
 id|panic
 c_func
 (paren
-l_string|&quot;alloc_lock: broken free list&bslash;n&quot;
+l_string|&quot;VFS: alloc_lock: broken free list&bslash;n&quot;
 )paren
 suffix:semicolon
 r_new
@@ -1799,7 +1853,7 @@ multiline_comment|/* sanity check */
 id|panic
 c_func
 (paren
-l_string|&quot;free_lock: broken lock list&bslash;n&quot;
+l_string|&quot;VFS: free_lock: broken lock list&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * We only use a singly linked list to save some memory space&n;&t; * (the only place we&squot;d use a doubly linked list is here).&n;&t; */
@@ -1850,7 +1904,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;free_lock: lock is not in file&squot;s lock list&bslash;n&quot;
+l_string|&quot;VFS: free_lock: lock is not in file&squot;s lock list&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

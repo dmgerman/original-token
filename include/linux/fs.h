@@ -251,9 +251,11 @@ suffix:semicolon
 macro_line|#include &lt;linux/pipe_fs_i.h&gt;
 macro_line|#include &lt;linux/minix_fs_i.h&gt;
 macro_line|#include &lt;linux/ext_fs_i.h&gt;
+macro_line|#include &lt;linux/ext2_fs_i.h&gt;
 macro_line|#include &lt;linux/msdos_fs_i.h&gt;
 macro_line|#include &lt;linux/iso_fs_i.h&gt;
 macro_line|#include &lt;linux/nfs_fs_i.h&gt;
+macro_line|#include &lt;linux/xia_fs_i.h&gt;
 DECL|struct|inode
 r_struct
 id|inode
@@ -430,6 +432,11 @@ r_struct
 id|ext_inode_info
 id|ext_i
 suffix:semicolon
+DECL|member|ext2_i
+r_struct
+id|ext2_inode_info
+id|ext2_i
+suffix:semicolon
 DECL|member|msdos_i
 r_struct
 id|msdos_inode_info
@@ -444,6 +451,11 @@ DECL|member|nfs_i
 r_struct
 id|nfs_inode_info
 id|nfs_i
+suffix:semicolon
+DECL|member|xiafs_i
+r_struct
+id|xiafs_inode_info
+id|xiafs_i
 suffix:semicolon
 DECL|member|u
 )brace
@@ -541,9 +553,11 @@ suffix:semicolon
 suffix:semicolon
 macro_line|#include &lt;linux/minix_fs_sb.h&gt;
 macro_line|#include &lt;linux/ext_fs_sb.h&gt;
+macro_line|#include &lt;linux/ext2_fs_sb.h&gt;
 macro_line|#include &lt;linux/msdos_fs_sb.h&gt;
 macro_line|#include &lt;linux/iso_fs_sb.h&gt;
 macro_line|#include &lt;linux/nfs_fs_sb.h&gt;
+macro_line|#include &lt;linux/xia_fs_sb.h&gt;
 DECL|struct|super_block
 r_struct
 id|super_block
@@ -623,6 +637,11 @@ r_struct
 id|ext_sb_info
 id|ext_sb
 suffix:semicolon
+DECL|member|ext2_sb
+r_struct
+id|ext2_sb_info
+id|ext2_sb
+suffix:semicolon
 DECL|member|msdos_sb
 r_struct
 id|msdos_sb_info
@@ -637,6 +656,11 @@ DECL|member|nfs_sb
 r_struct
 id|nfs_sb_info
 id|nfs_sb
+suffix:semicolon
+DECL|member|xiafs_sb
+r_struct
+id|xiafs_sb_info
+id|xiafs_sb
 suffix:semicolon
 DECL|member|u
 )brace
@@ -782,7 +806,23 @@ op_star
 id|mmap
 )paren
 (paren
-r_void
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
+comma
+r_int
+r_int
+comma
+r_int
+comma
+r_int
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 DECL|member|open
@@ -1255,6 +1295,32 @@ r_int
 id|requires_dev
 suffix:semicolon
 )brace
+suffix:semicolon
+r_extern
+r_int
+id|getname
+c_func
+(paren
+r_const
+r_char
+op_star
+id|filename
+comma
+r_char
+op_star
+op_star
+id|result
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|putname
+c_func
+(paren
+r_char
+op_star
+id|name
+)paren
 suffix:semicolon
 r_extern
 r_int
@@ -1837,7 +1903,8 @@ id|size
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
+r_int
 id|bread_page
 c_func
 (paren
@@ -1851,8 +1918,13 @@ comma
 r_int
 id|b
 (braket
-l_int|4
 )braket
+comma
+r_int
+id|size
+comma
+r_int
+id|prot
 )paren
 suffix:semicolon
 r_extern

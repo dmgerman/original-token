@@ -214,7 +214,7 @@ r_int
 id|ramdisk_size
 suffix:semicolon
 DECL|macro|RO_IOCTLS
-mdefine_line|#define RO_IOCTLS(dev,where) &bslash;&n;  case BLKROSET: if (!suser()) return -EPERM; &bslash;&n;&t;&t; set_device_ro((dev),get_fs_long((long *) (where))); return 0; &bslash;&n;  case BLKROGET: verify_area((void *) (where), sizeof(long)); &bslash;&n;&t;&t; put_fs_long(is_read_only(dev),(long *) (where)); return 0;
+mdefine_line|#define RO_IOCTLS(dev,where) &bslash;&n;  case BLKROSET: if (!suser()) return -EPERM; &bslash;&n;&t;&t; set_device_ro((dev),get_fs_long((long *) (where))); return 0; &bslash;&n;  case BLKROGET: { int __err = verify_area(VERIFY_WRITE, (void *) (where), sizeof(long)); &bslash;&n;&t;&t;   if (!__err) put_fs_long(is_read_only(dev),(long *) (where)); return __err; }
 macro_line|#ifdef MAJOR_NR
 multiline_comment|/*&n; * Add entries as needed. Currently the only block devices&n; * supported are hard-disks and floppies.&n; */
 macro_line|#if (MAJOR_NR == 1)
@@ -434,13 +434,13 @@ id|printk
 c_func
 (paren
 id|DEVICE_NAME
-l_string|&quot; I/O error&bslash;n&bslash;r&quot;
+l_string|&quot; I/O error&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;dev %04x, sector %d&bslash;n&bslash;r&quot;
+l_string|&quot;dev %04x, sector %d&bslash;n&quot;
 comma
 id|req-&gt;dev
 comma

@@ -400,7 +400,19 @@ id|ROOT_DEV
 id|printk
 c_func
 (paren
-l_string|&quot;root diskette changed: prepare for armageddon&bslash;n&bslash;r&quot;
+l_string|&quot;VFS: Root device %d/%d: prepare for armageddon&bslash;n&quot;
+comma
+id|MAJOR
+c_func
+(paren
+id|dev
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -431,7 +443,19 @@ id|sb-&gt;s_covered
 id|printk
 c_func
 (paren
-l_string|&quot;Mounted disk changed - tssk, tssk&bslash;n&bslash;r&quot;
+l_string|&quot;VFS: Mounted device %d/%d - tssk, tssk&bslash;n&quot;
+comma
+id|MAJOR
+c_func
+(paren
+id|dev
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -535,7 +559,19 @@ id|name
 id|printk
 c_func
 (paren
-l_string|&quot;get fs type failed %s&bslash;n&quot;
+l_string|&quot;VFS: on device %d/%d: get_fs_type(%s) failed&bslash;n&quot;
+comma
+id|MAJOR
+c_func
+(paren
+id|dev
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
 comma
 id|name
 )paren
@@ -769,7 +805,19 @@ id|dev
 id|printk
 c_func
 (paren
-l_string|&quot;put_unnamed_dev: trying to free unused device&bslash;n&quot;
+l_string|&quot;VFS: put_unnamed_dev: freeing unused device %d/%d&bslash;n&quot;
+comma
+id|MAJOR
+c_func
+(paren
+id|dev
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -841,7 +889,19 @@ id|sb-&gt;s_covered-&gt;i_mount
 id|printk
 c_func
 (paren
-l_string|&quot;Mounted inode has i_mount=0&bslash;n&quot;
+l_string|&quot;VFS: umount(%d/%d): mounted inode has i_mount=0&bslash;n&quot;
+comma
+id|MAJOR
+c_func
+(paren
+id|dev
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1571,6 +1631,7 @@ op_or
 id|MS_REMOUNT
 )paren
 )paren
+(brace
 r_return
 id|do_remount
 c_func
@@ -1586,6 +1647,7 @@ op_complement
 id|MS_REMOUNT
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2043,7 +2105,7 @@ l_int|2
 id|printk
 c_func
 (paren
-l_string|&quot;Insert root floppy and press ENTER&quot;
+l_string|&quot;VFS: Insert root floppy and press ENTER&quot;
 )paren
 suffix:semicolon
 id|wait_for_keypress
@@ -2125,7 +2187,7 @@ suffix:semicolon
 id|panic
 c_func
 (paren
-l_string|&quot;Unable to mount root&quot;
+l_string|&quot;VFS: Unable to mount root&quot;
 )paren
 suffix:semicolon
 )brace

@@ -804,6 +804,7 @@ r_struct
 id|iso_path_table
 (brace
 DECL|member|name_len
+r_int
 r_char
 id|name_len
 (braket
@@ -958,6 +959,7 @@ l_int|32
 suffix:semicolon
 multiline_comment|/* 723 */
 DECL|member|name_len
+r_int
 r_char
 id|name_len
 (braket

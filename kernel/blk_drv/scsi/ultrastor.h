@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;ultrastor.c&t;(C) 1991 David B. Gentzel&n; *&t;Low-level scsi driver for UltraStor 14F&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *&t;Thanks to UltraStor for providing the necessary documentation&n; */
+multiline_comment|/*&n; *&t;ultrastor.c&t;(C) 1991 David B. Gentzel&n; *&t;Low-level scsi driver for UltraStor 14F&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *  scatter/gather added by Scott Taylor (n217cg@tamuts.tamu.edu)&n; *&t;Thanks to UltraStor for providing the necessary documentation&n; */
 macro_line|#ifndef _ULTRASTOR_H
 DECL|macro|_ULTRASTOR_H
 mdefine_line|#define _ULTRASTOR_H
@@ -11,10 +11,8 @@ macro_line|#ifndef FALSE
 DECL|macro|FALSE
 macro_line|# define FALSE 0
 macro_line|#endif
-multiline_comment|/* ??? This should go eventually, once I&squot;m convinced the queueing stuff is&n;   stable enough... */
-multiline_comment|/* #define NO_QUEUEING */
 r_int
-id|ultrastor_14f_detect
+id|ultrastor_detect
 c_func
 (paren
 r_int
@@ -23,14 +21,14 @@ suffix:semicolon
 r_const
 r_char
 op_star
-id|ultrastor_14f_info
+id|ultrastor_info
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
 r_int
-id|ultrastor_14f_queuecommand
+id|ultrastor_queuecommand
 c_func
 (paren
 id|Scsi_Cmnd
@@ -47,18 +45,8 @@ op_star
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef NO_QUEUEING
 r_int
-id|ultrastor_14f_command
-c_func
-(paren
-id|Scsi_Cmnd
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif
-r_int
-id|ultrastor_14f_abort
+id|ultrastor_abort
 c_func
 (paren
 id|Scsi_Cmnd
@@ -68,21 +56,33 @@ r_int
 )paren
 suffix:semicolon
 r_int
-id|ultrastor_14f_reset
+id|ultrastor_reset
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifndef NO_QUEUEING
+r_int
+id|ultrastor_biosparam
+c_func
+(paren
+r_int
+comma
+r_int
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+DECL|macro|ULTRASTOR_14F_MAX_CMDS
+mdefine_line|#define ULTRASTOR_14F_MAX_CMDS 1 /*???*/
+DECL|macro|ULTRASTOR_14F_MAX_SG
+mdefine_line|#define ULTRASTOR_14F_MAX_SG 16  /* Should be 32, but 32 doesn&squot;t work */
+DECL|macro|ULTRASTOR_14F_MAX_CMDS_PER_LUN
+mdefine_line|#define ULTRASTOR_14F_MAX_CMDS_PER_LUN 1 /*???*/
 DECL|macro|ULTRASTOR_14F
-mdefine_line|#define ULTRASTOR_14F &bslash;&n;    { &quot;UltraStor 14F&quot;, ultrastor_14f_detect, ultrastor_14f_info, 0, &bslash;&n;      ultrastor_14f_queuecommand, ultrastor_14f_abort, ultrastor_14f_reset, &bslash;&n;      NULL, NULL, 1, 0, SG_NONE, 1, 0, 1}
-multiline_comment|/* ??? What should can_queue be set to?  Currently 1... */
-multiline_comment|/* Set it to the number of outstanding requests that the host adapter can keep&n;   track of at one time.  ERY */
-macro_line|#else
-DECL|macro|ULTRASTOR_14F
-mdefine_line|#define ULTRASTOR_14F &bslash;&n;    { &quot;UltraStor 14F&quot;, ultrastor_14f_detect, ultrastor_14f_info, &bslash;&n;      ultrastor_14f_command, 0, ultrastor_14f_abort, ultrastor_14f_reset, &bslash;&n;      NULL, NULL, 0, 0, SG_NONE, 1, 0, 1}
-macro_line|#endif
+mdefine_line|#define ULTRASTOR_14F &bslash;&n;    { &quot;UltraStor 14F&quot;, ultrastor_detect, ultrastor_info, 0, &bslash;&n;      ultrastor_queuecommand, ultrastor_abort, ultrastor_reset, &bslash;&n;      0, ultrastor_biosparam, ULTRASTOR_14F_MAX_CMDS, 0, &bslash;&n;      ULTRASTOR_14F_MAX_SG, ULTRASTOR_14F_MAX_CMDS_PER_LUN, 0, 0 }
+macro_line|#ifdef ULTRASTOR_PRIVATE
 DECL|macro|UD_ABORT
 mdefine_line|#define UD_ABORT 0x0001
 DECL|macro|UD_COMMAND
@@ -93,7 +93,6 @@ DECL|macro|UD_INTERRUPT
 mdefine_line|#define UD_INTERRUPT 0x0008
 DECL|macro|UD_RESET
 mdefine_line|#define UD_RESET 0x0010
-macro_line|#ifdef ULTRASTOR_PRIVATE
 multiline_comment|/* #define PORT_OVERRIDE 0x330 */
 multiline_comment|/* Port addresses (relative to the base address) */
 DECL|macro|LCL_DOORBELL_MASK
@@ -117,6 +116,11 @@ DECL|macro|US14F_PRODUCT_ID_0
 mdefine_line|#define US14F_PRODUCT_ID_0 0x56
 DECL|macro|US14F_PRODUCT_ID_1
 mdefine_line|#define US14F_PRODUCT_ID_1 0x40&t;&t;/* NOTE: Only upper nibble is used */
+multiline_comment|/* Subversion values */
+DECL|macro|U14F
+mdefine_line|#define U14F 0
+DECL|macro|U34F
+mdefine_line|#define U34F 1
 multiline_comment|/* MSCP field values */
 multiline_comment|/* Opcode */
 DECL|macro|OP_HOST_ADAPTER

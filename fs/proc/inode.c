@@ -498,13 +498,9 @@ id|proc_mem_inode_operations
 suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
-id|S_IFCHR
+id|S_IFREG
 op_or
 l_int|0600
-suffix:semicolon
-id|inode-&gt;i_rdev
-op_assign
-l_int|0x0101
 suffix:semicolon
 r_return
 suffix:semicolon

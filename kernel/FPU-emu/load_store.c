@@ -633,6 +633,8 @@ id|RE_ENTRANT_CHECK_OFF
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|FPU_data_address
 comma
 l_int|2
@@ -710,6 +712,8 @@ id|RE_ENTRANT_CHECK_OFF
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|FPU_data_address
 comma
 l_int|2

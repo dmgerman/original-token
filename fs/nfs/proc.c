@@ -170,6 +170,7 @@ r_int
 op_star
 id|p
 comma
+r_const
 r_char
 op_star
 id|string
@@ -1337,6 +1338,7 @@ id|nfs_fh
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|name
@@ -2304,6 +2306,7 @@ id|nfs_fh
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|name
@@ -2535,6 +2538,7 @@ id|nfs_fh
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|name
@@ -2721,6 +2725,7 @@ id|nfs_fh
 op_star
 id|old_dir
 comma
+r_const
 r_char
 op_star
 id|old_name
@@ -2730,6 +2735,7 @@ id|nfs_fh
 op_star
 id|new_dir
 comma
+r_const
 r_char
 op_star
 id|new_name
@@ -2943,6 +2949,7 @@ id|nfs_fh
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|name
@@ -3139,10 +3146,12 @@ id|nfs_fh
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|name
 comma
+r_const
 r_char
 op_star
 id|path
@@ -3356,6 +3365,7 @@ id|nfs_fh
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|name
@@ -3587,6 +3597,7 @@ id|nfs_fh
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|name

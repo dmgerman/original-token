@@ -1728,6 +1728,8 @@ id|RE_ENTRANT_CHECK_OFF
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|d
 comma
 l_int|10
@@ -2341,6 +2343,8 @@ id|RE_ENTRANT_CHECK_OFF
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 (paren
 r_void
 op_star
@@ -2433,6 +2437,8 @@ id|RE_ENTRANT_CHECK_OFF
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 (paren
 r_void
 op_star
@@ -2827,6 +2833,8 @@ id|RE_ENTRANT_CHECK_OFF
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 (paren
 r_void
 op_star
@@ -2909,6 +2917,8 @@ id|RE_ENTRANT_CHECK_OFF
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 (paren
 r_void
 op_star
@@ -3140,6 +3150,8 @@ id|RE_ENTRANT_CHECK_OFF
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 (paren
 r_void
 op_star
@@ -3253,6 +3265,8 @@ id|RE_ENTRANT_CHECK_OFF
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|d
 comma
 l_int|4
@@ -3370,6 +3384,8 @@ id|RE_ENTRANT_CHECK_OFF
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|d
 comma
 l_int|4
@@ -3447,6 +3463,8 @@ id|RE_ENTRANT_CHECK_OFF
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|d
 comma
 l_int|2
@@ -3561,6 +3579,8 @@ id|RE_ENTRANT_CHECK_OFF
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|d
 comma
 l_int|2
@@ -3744,6 +3764,8 @@ id|RE_ENTRANT_CHECK_OFF
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|d
 comma
 l_int|10
@@ -3807,6 +3829,8 @@ suffix:semicolon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|d
 comma
 l_int|10
@@ -4582,6 +4606,8 @@ suffix:semicolon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|d
 comma
 l_int|28
@@ -4830,6 +4856,8 @@ suffix:semicolon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|d
 comma
 l_int|80

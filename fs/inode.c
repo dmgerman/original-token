@@ -635,7 +635,19 @@ id|inode-&gt;i_count
 id|printk
 c_func
 (paren
-l_string|&quot;inode in use on removed disk&bslash;n&bslash;r&quot;
+l_string|&quot;VFS: inode busy on removed device %d/%d&bslash;n&quot;
+comma
+id|MAJOR
+c_func
+(paren
+id|dev
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
 )paren
 suffix:semicolon
 r_continue
@@ -748,15 +760,25 @@ id|inode-&gt;i_count
 id|printk
 c_func
 (paren
-l_string|&quot;iput: trying to free free inode&bslash;n&quot;
+l_string|&quot;VFS: iput: trying to free free inode&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;device %04x, inode %d, mode=%07o&bslash;n&quot;
+l_string|&quot;VFS: device %d/%d, inode %d, mode=0%07o&bslash;n&quot;
 comma
+id|MAJOR
+c_func
+(paren
 id|inode-&gt;i_rdev
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
 comma
 id|inode-&gt;i_ino
 comma
@@ -998,7 +1020,7 @@ id|inode
 id|printk
 c_func
 (paren
-l_string|&quot;No free inodes - contact Linus&bslash;n&quot;
+l_string|&quot;VFS: No free inodes - contact Linus&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sleep_on
@@ -1170,6 +1192,22 @@ id|inode
 op_assign
 l_int|0
 suffix:semicolon
+id|PIPE_RD_OPENERS
+c_func
+(paren
+op_star
+id|inode
+)paren
+op_assign
+id|PIPE_WR_OPENERS
+c_func
+(paren
+op_star
+id|inode
+)paren
+op_assign
+l_int|0
+suffix:semicolon
 id|PIPE_READERS
 c_func
 (paren
@@ -1189,6 +1227,26 @@ suffix:semicolon
 id|inode-&gt;i_pipe
 op_assign
 l_int|1
+suffix:semicolon
+id|inode-&gt;i_mode
+op_or_assign
+id|S_IFIFO
+suffix:semicolon
+id|inode-&gt;i_uid
+op_assign
+id|current-&gt;euid
+suffix:semicolon
+id|inode-&gt;i_gid
+op_assign
+id|current-&gt;egid
+suffix:semicolon
+id|inode-&gt;i_atime
+op_assign
+id|inode-&gt;i_mtime
+op_assign
+id|inode-&gt;i_ctime
+op_assign
+id|CURRENT_TIME
 suffix:semicolon
 r_return
 id|inode
@@ -1227,7 +1285,7 @@ id|sb
 id|panic
 c_func
 (paren
-l_string|&quot;iget with sb==NULL&quot;
+l_string|&quot;VFS: iget with sb==NULL&quot;
 )paren
 suffix:semicolon
 id|empty
@@ -1345,7 +1403,7 @@ id|NR_SUPER
 id|printk
 c_func
 (paren
-l_string|&quot;Mounted inode hasn&squot;t got sb&bslash;n&quot;
+l_string|&quot;VFS: Mounted inode hasn&squot;t got sb&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1353,12 +1411,31 @@ c_cond
 (paren
 id|empty
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|last_inode
+OG
+id|inode_table
+)paren
+op_decrement
+id|last_inode
+suffix:semicolon
+r_else
+id|last_inode
+op_assign
+id|inode_table
+op_plus
+id|NR_INODE
+suffix:semicolon
 id|iput
 c_func
 (paren
 id|empty
 )paren
 suffix:semicolon
+)brace
 r_return
 id|inode
 suffix:semicolon
@@ -1387,7 +1464,19 @@ id|s_mounted
 id|printk
 c_func
 (paren
-l_string|&quot;iget: mounted dev has no rootinode&bslash;n&quot;
+l_string|&quot;VFS: Mounted device %d/%d has no rootinode&bslash;n&quot;
+comma
+id|MAJOR
+c_func
+(paren
+id|inode-&gt;i_dev
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_dev
+)paren
 )paren
 suffix:semicolon
 r_else
@@ -1408,12 +1497,31 @@ c_cond
 (paren
 id|empty
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|last_inode
+OG
+id|inode_table
+)paren
+op_decrement
+id|last_inode
+suffix:semicolon
+r_else
+id|last_inode
+op_assign
+id|inode_table
+op_plus
+id|NR_INODE
+suffix:semicolon
 id|iput
 c_func
 (paren
 id|empty
 )paren
 suffix:semicolon
+)brace
 r_return
 id|inode
 suffix:semicolon

@@ -910,7 +910,7 @@ op_star
 id|uh
 )paren
 suffix:semicolon
-multiline_comment|/*&t;verify_area (from , len); */
+multiline_comment|/*&t;verify_area (VERIFY_WRITE, from , len); */
 id|memcpy_fromfs
 c_func
 (paren
@@ -1130,7 +1130,7 @@ op_minus
 id|EINVAL
 )paren
 suffix:semicolon
-multiline_comment|/*&t;&t;  verify_area (usin, sizeof (sin));*/
+multiline_comment|/*&t;&t;  verify_area (VERIFY_WRITE, usin, sizeof (sin));*/
 id|memcpy_fromfs
 (paren
 op_amp
@@ -1610,7 +1610,7 @@ id|copied
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&t;&t;  verify_area (from, amt);*/
+multiline_comment|/*&t;&t;  verify_area (VERIFY_WRITE, from, amt);*/
 id|memcpy_fromfs
 c_func
 (paren
@@ -1790,6 +1790,8 @@ l_int|2
 suffix:semicolon
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 (paren
 r_void
 op_star
@@ -1872,6 +1874,8 @@ suffix:semicolon
 )brace
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 (paren
 r_void
 op_star
@@ -2008,6 +2012,8 @@ id|addr_len
 (brace
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 id|addr_len
 comma
 r_sizeof
@@ -2185,6 +2191,8 @@ id|skb-&gt;len
 suffix:semicolon
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 id|to
 comma
 id|copied
@@ -2230,6 +2238,8 @@ id|skb-&gt;daddr
 suffix:semicolon
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 id|sin
 comma
 r_sizeof
@@ -2370,7 +2380,7 @@ op_minus
 id|EINVAL
 )paren
 suffix:semicolon
-multiline_comment|/*&t;verify_area (usin, sizeof (sin)); */
+multiline_comment|/*&t;verify_area (VERIFY_WRITE, usin, sizeof (sin)); */
 id|memcpy_fromfs
 (paren
 op_amp

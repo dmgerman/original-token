@@ -9,6 +9,7 @@ r_void
 id|fclex
 c_func
 (paren
+r_void
 )paren
 (brace
 id|status_word
@@ -178,6 +179,7 @@ r_void
 id|fstsw_ax
 c_func
 (paren
+r_void
 )paren
 (brace
 id|status_word
@@ -254,6 +256,7 @@ r_void
 id|fnop
 c_func
 (paren
+r_void
 )paren
 (brace
 )brace

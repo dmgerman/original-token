@@ -1259,6 +1259,8 @@ id|amount
 suffix:semicolon
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 (paren
 r_void
 op_star
@@ -1349,6 +1351,8 @@ id|sk
 suffix:semicolon
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 (paren
 r_void
 op_star
@@ -1414,6 +1418,8 @@ l_int|2
 suffix:semicolon
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 (paren
 r_void
 op_star
@@ -4707,6 +4713,8 @@ id|len
 suffix:semicolon
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 id|to
 comma
 id|amt
@@ -5489,6 +5497,8 @@ id|len
 suffix:semicolon
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 id|to
 comma
 id|used
@@ -6185,6 +6195,8 @@ id|sk-&gt;daddr
 suffix:semicolon
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 id|addr
 comma
 id|len
@@ -6202,6 +6214,8 @@ id|len
 suffix:semicolon
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 id|addr_len
 comma
 r_sizeof
@@ -6755,6 +6769,10 @@ suffix:semicolon
 id|newsk-&gt;back_log
 op_assign
 l_int|NULL
+suffix:semicolon
+id|newsk-&gt;rtt
+op_assign
+id|TCP_CONNECT_TIME
 suffix:semicolon
 id|newsk-&gt;blog
 op_assign
@@ -10952,7 +10970,7 @@ op_minus
 id|EINVAL
 )paren
 suffix:semicolon
-multiline_comment|/*  verify_area (usin, addr_len);*/
+multiline_comment|/*  verify_area (VERIFY_WRITE, usin, addr_len);*/
 id|memcpy_fromfs
 (paren
 op_amp
@@ -11442,13 +11460,15 @@ id|th-&gt;seq
 op_plus
 id|len
 op_minus
-r_sizeof
 (paren
+id|th-&gt;doff
 op_star
-id|th
+l_int|4
 )paren
 comma
 id|sk-&gt;acked_seq
+op_plus
+l_int|1
 comma
 id|sk-&gt;acked_seq
 op_plus
@@ -11469,10 +11489,10 @@ id|th-&gt;seq
 op_plus
 id|len
 op_minus
-r_sizeof
 (paren
+id|th-&gt;doff
 op_star
-id|th
+l_int|4
 )paren
 comma
 id|sk-&gt;acked_seq
@@ -11536,9 +11556,11 @@ id|th-&gt;ack
 op_logical_and
 id|len
 op_eq
+(paren
 id|th-&gt;doff
 op_star
 l_int|4
+)paren
 op_logical_and
 id|after
 (paren

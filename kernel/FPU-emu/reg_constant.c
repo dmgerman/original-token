@@ -284,6 +284,7 @@ r_void
 id|fld1
 c_func
 (paren
+r_void
 )paren
 (brace
 id|fld_const
@@ -300,6 +301,7 @@ r_void
 id|fldl2t
 c_func
 (paren
+r_void
 )paren
 (brace
 id|fld_const
@@ -316,6 +318,7 @@ r_void
 id|fldl2e
 c_func
 (paren
+r_void
 )paren
 (brace
 id|fld_const
@@ -332,6 +335,7 @@ r_void
 id|fldpi
 c_func
 (paren
+r_void
 )paren
 (brace
 id|fld_const
@@ -348,6 +352,7 @@ r_void
 id|fldlg2
 c_func
 (paren
+r_void
 )paren
 (brace
 id|fld_const
@@ -364,6 +369,7 @@ r_void
 id|fldln2
 c_func
 (paren
+r_void
 )paren
 (brace
 id|fld_const
@@ -380,6 +386,7 @@ r_void
 id|fldz
 c_func
 (paren
+r_void
 )paren
 (brace
 id|fld_const
@@ -420,6 +427,7 @@ r_void
 id|fconst
 c_func
 (paren
+r_void
 )paren
 (brace
 (paren

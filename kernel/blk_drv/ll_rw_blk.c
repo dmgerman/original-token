@@ -1011,7 +1011,7 @@ id|dev
 id|printk
 c_func
 (paren
-l_string|&quot;Can&squot;t page to read-only device 0x%X&bslash;n&bslash;r&quot;
+l_string|&quot;Can&squot;t page to read-only device 0x%X&bslash;n&quot;
 comma
 id|dev
 )paren
@@ -1422,7 +1422,7 @@ id|b_dev
 id|printk
 c_func
 (paren
-l_string|&quot;Can&squot;t write to read-only device 0x%X&bslash;n&bslash;r&quot;
+l_string|&quot;Can&squot;t write to read-only device 0x%X&bslash;n&quot;
 comma
 id|bh
 (braket
@@ -1667,7 +1667,7 @@ id|request_fn
 id|printk
 c_func
 (paren
-l_string|&quot;ll_rw_swap_file: trying to swap nonexistent block-device&bslash;n&bslash;r&quot;
+l_string|&quot;ll_rw_swap_file: trying to swap nonexistent block-device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1711,7 +1711,7 @@ id|dev
 id|printk
 c_func
 (paren
-l_string|&quot;Can&squot;t swap to read-only device 0x%X&bslash;n&bslash;r&quot;
+l_string|&quot;Can&squot;t swap to read-only device 0x%X&bslash;n&quot;
 comma
 id|dev
 )paren

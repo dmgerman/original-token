@@ -713,6 +713,10 @@ id|exec
 id|ex
 suffix:semicolon
 r_int
+r_int
+id|offset
+suffix:semicolon
+r_int
 id|error
 suffix:semicolon
 r_if
@@ -913,13 +917,9 @@ id|ex.a_trsize
 op_logical_or
 id|ex.a_drsize
 op_logical_or
-id|ex.a_text
-op_plus
-id|ex.a_data
-op_plus
-id|ex.a_bss
-OG
-l_int|0x3000000
+id|ex.a_entry
+op_amp
+l_int|0xfff
 op_logical_or
 id|inode-&gt;i_size
 OL
@@ -965,12 +965,7 @@ id|start
 op_assign
 id|ex.a_entry
 suffix:semicolon
-id|current-&gt;libraries
-(braket
-id|libnum
-)braket
-dot
-id|length
+id|offset
 op_assign
 (paren
 id|ex.a_data
@@ -987,21 +982,38 @@ id|current-&gt;libraries
 id|libnum
 )braket
 dot
+id|length
+op_assign
+id|offset
+suffix:semicolon
+id|current-&gt;libraries
+(braket
+id|libnum
+)braket
+dot
 id|bss
 op_assign
-(paren
 id|ex.a_bss
-op_plus
-l_int|0xfff
+suffix:semicolon
+id|offset
+op_add_assign
+id|ex.a_entry
+suffix:semicolon
+id|zeromap_page_range
+c_func
+(paren
+id|offset
+comma
+id|ex.a_bss
+comma
+id|PAGE_COPY
 )paren
-op_amp
-l_int|0xfffff000
 suffix:semicolon
 macro_line|#if 0
 id|printk
 c_func
 (paren
-l_string|&quot;Loaded library %d at %08x, length %08x&bslash;n&quot;
+l_string|&quot;VFS: Loaded library %d at %08x, length %08x&bslash;n&quot;
 comma
 id|libnum
 comma
@@ -1453,7 +1465,7 @@ id|argc
 id|panic
 c_func
 (paren
-l_string|&quot;argc is wrong&quot;
+l_string|&quot;VFS: argc is wrong&quot;
 )paren
 suffix:semicolon
 r_if
@@ -2089,7 +2101,7 @@ l_int|0x000f
 id|panic
 c_func
 (paren
-l_string|&quot;execve called from supervisor mode&quot;
+l_string|&quot;VFS: execve called from supervisor mode&quot;
 )paren
 suffix:semicolon
 r_for
@@ -2825,38 +2837,22 @@ r_goto
 id|exec_error1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * OK, now restart the process with the interpreter&squot;s inode.&n;&t;&t; */
-id|old_fs
-op_assign
-id|get_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-id|set_fs
-c_func
-(paren
-id|get_ds
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t;&t; * OK, now restart the process with the interpreter&squot;s inode.&n;&t;&t; * Note that we use open_namei() as the name is now in kernel&n;&t;&t; * space, and we don&squot;t need to copy it.&n;&t;&t; */
 id|retval
 op_assign
-id|namei
+id|open_namei
 c_func
 (paren
 id|interp
 comma
+l_int|0
+comma
+l_int|0
+comma
 op_amp
 id|inode
-)paren
-suffix:semicolon
-id|set_fs
-c_func
-(paren
-id|old_fs
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -2895,14 +2891,6 @@ op_logical_or
 id|ex.a_trsize
 op_logical_or
 id|ex.a_drsize
-op_logical_or
-id|ex.a_text
-op_plus
-id|ex.a_data
-op_plus
-id|ex.a_bss
-OG
-l_int|0x3000000
 op_logical_or
 id|inode-&gt;i_size
 OL
@@ -2951,9 +2939,7 @@ id|OMAGIC
 id|printk
 c_func
 (paren
-l_string|&quot;%s: N_TXTOFF != BLOCK_SIZE. See a.out.h.&quot;
-comma
-id|filename
+l_string|&quot;VFS: N_TXTOFF != BLOCK_SIZE. See a.out.h.&quot;
 )paren
 suffix:semicolon
 id|retval
@@ -3438,6 +3424,24 @@ r_else
 id|current-&gt;executable
 op_assign
 id|inode
+suffix:semicolon
+id|zeromap_page_range
+c_func
+(paren
+(paren
+id|ex.a_text
+op_plus
+id|ex.a_data
+op_plus
+l_int|0xfff
+)paren
+op_amp
+l_int|0xfffff000
+comma
+id|ex.a_bss
+comma
+id|PAGE_COPY
+)paren
 suffix:semicolon
 id|eip
 (braket

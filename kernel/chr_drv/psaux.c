@@ -277,6 +277,7 @@ r_int
 id|get_from_queue
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int
@@ -341,6 +342,7 @@ r_int
 id|queue_empty
 c_func
 (paren
+r_void
 )paren
 (brace
 r_return

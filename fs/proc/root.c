@@ -385,11 +385,8 @@ l_int|0
 (brace
 id|c
 op_assign
-id|get_fs_byte
-c_func
-(paren
+op_star
 id|name
-)paren
 op_minus
 l_char|&squot;0&squot;
 suffix:semicolon

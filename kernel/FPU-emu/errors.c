@@ -1103,7 +1103,7 @@ c_func
 id|FPU_VERSION
 l_string|&quot; &quot;
 id|__DATE__
-l_string|&quot; (C) W. Metzenthen.&bslash;r&bslash;n&quot;
+l_string|&quot; (C) W. Metzenthen.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif PRINT_MESSAGES

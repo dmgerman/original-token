@@ -1023,7 +1023,7 @@ id|sk-&gt;next
 r_if
 c_cond
 (paren
-id|sk-&gt;dummy_th.source
+id|sk-&gt;num
 op_eq
 id|num
 )paren
@@ -2631,7 +2631,7 @@ op_minus
 id|EINVAL
 )paren
 suffix:semicolon
-multiline_comment|/*    verify_area (optval, sizeof (int));*/
+multiline_comment|/*    verify_area (VERIFY_WRITE, optval, sizeof (int));*/
 id|val
 op_assign
 id|get_fs_long
@@ -3002,6 +3002,8 @@ suffix:semicolon
 )brace
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 id|optlen
 comma
 r_sizeof
@@ -3028,6 +3030,8 @@ suffix:semicolon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|optval
 comma
 r_sizeof
@@ -3780,10 +3784,6 @@ id|sk-&gt;linger
 op_assign
 l_int|0
 suffix:semicolon
-id|sk-&gt;rtt
-op_assign
-l_int|0
-suffix:semicolon
 id|sk-&gt;destroy
 op_assign
 l_int|0
@@ -4371,7 +4371,7 @@ op_minus
 id|EINVAL
 )paren
 suffix:semicolon
-multiline_comment|/*  verify_area (uaddr, addr_len);*/
+multiline_comment|/*  verify_area (VERIFY_WRITE, uaddr, addr_len);*/
 id|memcpy_fromfs
 (paren
 op_amp
@@ -5404,6 +5404,8 @@ id|sin
 suffix:semicolon
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 id|uaddr
 comma
 id|len
@@ -5426,6 +5428,8 @@ suffix:semicolon
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|uaddr_len
 comma
 r_sizeof
@@ -6708,6 +6712,8 @@ suffix:colon
 (brace
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 (paren
 r_void
 op_star

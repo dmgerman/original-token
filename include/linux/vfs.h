@@ -51,11 +51,15 @@ DECL|member|f_fsid
 id|fsid_t
 id|f_fsid
 suffix:semicolon
+DECL|member|f_namelen
+r_int
+id|f_namelen
+suffix:semicolon
 DECL|member|f_spare
 r_int
 id|f_spare
 (braket
-l_int|7
+l_int|6
 )braket
 suffix:semicolon
 )brace

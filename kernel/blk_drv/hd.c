@@ -965,7 +965,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;HD controller times out, status = 0x%02x&bslash;n&bslash;r&quot;
+l_string|&quot;HD controller times out, status = 0x%02x&bslash;n&quot;
 comma
 id|c
 )paren
@@ -989,7 +989,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;HD-controller reset&bslash;r&bslash;n&quot;
+l_string|&quot;HD-controller reset&bslash;n&quot;
 )paren
 suffix:semicolon
 id|outb
@@ -1047,7 +1047,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;HD-controller still busy&bslash;n&bslash;r&quot;
+l_string|&quot;HD-controller still busy&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1068,7 +1068,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;HD-controller reset failed: %02x&bslash;n&bslash;r&quot;
+l_string|&quot;HD-controller reset failed: %02x&bslash;n&quot;
 comma
 id|hd_error
 )paren
@@ -1219,7 +1219,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Unexpected HD interrupt&bslash;n&bslash;r&quot;
+l_string|&quot;Unexpected HD interrupt&bslash;n&quot;
 )paren
 suffix:semicolon
 id|SET_TIMER
@@ -1898,7 +1898,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;HD timeout&bslash;n&bslash;r&quot;
+l_string|&quot;HD timeout&bslash;n&quot;
 )paren
 suffix:semicolon
 id|cli
@@ -2412,6 +2412,8 @@ id|arg
 suffix:semicolon
 r_int
 id|dev
+comma
+id|err
 suffix:semicolon
 r_if
 c_cond
@@ -2463,9 +2465,13 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+id|err
+op_assign
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|loc
 comma
 r_sizeof
@@ -2474,6 +2480,14 @@ op_star
 id|loc
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+id|err
 suffix:semicolon
 id|put_fs_byte
 c_func
@@ -2568,9 +2582,13 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+id|err
+op_assign
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 (paren
 r_int
 op_star
@@ -2582,6 +2600,14 @@ r_sizeof
 r_int
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+id|err
 suffix:semicolon
 id|put_fs_long
 c_func
@@ -2744,6 +2770,7 @@ r_void
 id|hd_geninit
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
 DECL|variable|hd_gendisk
@@ -3067,53 +3094,99 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
-(paren
+id|i
+op_assign
 id|NR_HD
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|i
+op_decrement
+OG
+l_int|0
 )paren
 (brace
+id|hd
+(braket
+id|i
+op_lshift
+l_int|6
+)braket
+dot
+id|nr_sects
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|irqaction
-c_func
-(paren
-id|HD_IRQ
-comma
-op_amp
-id|hd_sigaction
-)paren
+id|hd_info
+(braket
+id|i
+)braket
+dot
+id|head
+OG
+l_int|16
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to get IRQ%d for the harddisk driver&bslash;n&quot;
-comma
-id|HD_IRQ
+l_string|&quot;hd.c: ST-506 interface disk with more than 16 heads detected,&bslash;n&quot;
 )paren
 suffix:semicolon
-id|NR_HD
-op_assign
-l_int|0
+id|printk
+c_func
+(paren
+l_string|&quot;  probably due to non-standard sector translation. Giving up.&bslash;n&quot;
+)paren
 suffix:semicolon
-)brace
-)brace
-r_for
-c_loop
+id|printk
+c_func
+(paren
+l_string|&quot;  (disk %d: cyl=%d, sect=%d, head=%d)&bslash;n&quot;
+comma
+id|i
+comma
+id|hd_info
+(braket
+id|i
+)braket
+dot
+id|cyl
+comma
+id|hd_info
+(braket
+id|i
+)braket
+dot
+id|sect
+comma
+id|hd_info
+(braket
+id|i
+)braket
+dot
+id|head
+)paren
+suffix:semicolon
+r_if
+c_cond
 (paren
 id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
+op_plus
+l_int|1
+op_eq
 id|NR_HD
-suffix:semicolon
-id|i
-op_increment
 )paren
+id|NR_HD
+op_decrement
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|hd
 (braket
 id|i
@@ -3144,6 +3217,40 @@ id|i
 dot
 id|cyl
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|NR_HD
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|irqaction
+c_func
+(paren
+id|HD_IRQ
+comma
+op_amp
+id|hd_sigaction
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;hd.c: unable to get IRQ%d for the harddisk driver&bslash;n&quot;
+comma
+id|HD_IRQ
+)paren
+suffix:semicolon
+id|NR_HD
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
 id|hd_gendisk.nr_real
 op_assign
 id|NR_HD

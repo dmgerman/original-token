@@ -128,10 +128,6 @@ id|res_inode
 r_int
 id|error
 suffix:semicolon
-r_int
-r_int
-id|fs
-suffix:semicolon
 r_char
 op_star
 id|res
@@ -299,32 +295,6 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;mov %%fs,%0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|fs
-)paren
-)paren
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;mov %0,%%fs&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
-(paren
-r_int
-r_int
-)paren
-l_int|0x10
-)paren
-)paren
-suffix:semicolon
 id|current-&gt;link_count
 op_increment
 suffix:semicolon
@@ -355,17 +325,6 @@ comma
 id|NFS_MAXPATHLEN
 op_plus
 l_int|1
-)paren
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;mov %0,%%fs&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
-id|fs
-)paren
 )paren
 suffix:semicolon
 r_return

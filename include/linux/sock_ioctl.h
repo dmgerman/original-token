@@ -1,5 +1,3 @@
-multiline_comment|/* ip.h */
-multiline_comment|/* Contains the structures for communicating with the ip level of the&n;   sockets.  Currently just for configuration. */
 macro_line|#ifndef _LINUX_SOCK_IOCTL_H
 DECL|macro|_LINUX_SOCK_IOCTL_H
 mdefine_line|#define _LINUX_SOCK_IOCTL_H
@@ -8,10 +6,6 @@ mdefine_line|#define MAX_IP_NAME 20
 multiline_comment|/* some ioctl.  Their values are not special. */
 DECL|macro|IP_SET_DEV
 mdefine_line|#define IP_SET_DEV 0x2401
-DECL|macro|IP_ADD_ROUTE
-mdefine_line|#define IP_ADD_ROUTE 0x2402
-DECL|macro|IP_HANDOFF
-mdefine_line|#define IP_HANDOFF 0x2403
 DECL|struct|ip_config
 r_struct
 id|ip_config

@@ -1075,6 +1075,25 @@ id|SCint
 id|mbo
 )braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|SCtmp
+op_logical_or
+op_logical_neg
+id|SCtmp-&gt;scsi_done
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;aha1542_intr_handle: Unexpected interrupt&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|my_done
 op_assign
 id|SCtmp-&gt;scsi_done
@@ -1092,22 +1111,6 @@ comma
 l_int|512
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|my_done
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;aha1542_intr_handle: Unexpected interrupt&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 multiline_comment|/* Fetch the sense data, and tuck it away, in the required slot.  The&n;&t; Adaptec automatically fetches it, and there is no guarantee that&n;&t; we will still have it in the cdb when we come back */
 r_if
 c_cond

@@ -1729,7 +1729,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Done.                                             &bslash;n&bslash;r&quot;
+l_string|&quot;Done.                                             &bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk

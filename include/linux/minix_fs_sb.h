@@ -59,6 +59,16 @@ id|s_zmap
 l_int|8
 )braket
 suffix:semicolon
+DECL|member|s_dirsize
+r_int
+r_int
+id|s_dirsize
+suffix:semicolon
+DECL|member|s_namelen
+r_int
+r_int
+id|s_namelen
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif

@@ -11,9 +11,9 @@ mdefine_line|#define LOAD_INT(x) ((x) &gt;&gt; FSHIFT)
 DECL|macro|LOAD_FRAC
 mdefine_line|#define LOAD_FRAC(x) LOAD_INT(((x) &amp; (FIXED_1-1)) * 100)
 DECL|macro|KSTK_EIP
-mdefine_line|#define&t;KSTK_EIP(stack)&t;(((char *)stack)[1019])
+mdefine_line|#define&t;KSTK_EIP(stack)&t;(((unsigned long *)stack)[1019])
 DECL|macro|KSTK_ESP
-mdefine_line|#define&t;KSTK_ESP(stack)&t;(((char *)stack)[1022])
+mdefine_line|#define&t;KSTK_ESP(stack)&t;(((unsigned long *)stack)[1022])
 DECL|macro|_SSIZE
 mdefine_line|#define&t;_SSIZE(stack)&t;(TASK_SIZE - KSTK_ESP(stack))
 DECL|macro|SSIZE
@@ -782,6 +782,10 @@ op_logical_or
 id|p
 op_eq
 id|current
+op_logical_or
+id|p-&gt;state
+op_eq
+id|TASK_RUNNING
 )paren
 r_return
 l_int|0

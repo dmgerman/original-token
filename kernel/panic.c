@@ -25,7 +25,7 @@ id|s
 id|printk
 c_func
 (paren
-l_string|&quot;Kernel panic: %s&bslash;n&bslash;r&quot;
+l_string|&quot;Kernel panic: %s&bslash;n&quot;
 comma
 id|s
 )paren
@@ -43,7 +43,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;In swapper task - not syncing&bslash;n&bslash;r&quot;
+l_string|&quot;In swapper task - not syncing&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else

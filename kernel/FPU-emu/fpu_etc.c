@@ -10,6 +10,7 @@ r_void
 id|fchs
 c_func
 (paren
+r_void
 )paren
 (brace
 r_if
@@ -43,6 +44,7 @@ r_void
 id|fabs
 c_func
 (paren
+r_void
 )paren
 (brace
 r_if
@@ -76,6 +78,7 @@ r_void
 id|ftst_
 c_func
 (paren
+r_void
 )paren
 (brace
 r_switch
@@ -218,6 +221,7 @@ r_void
 id|fxam
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int

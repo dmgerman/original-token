@@ -52,8 +52,6 @@ l_int|0
 suffix:semicolon
 DECL|macro|_S
 mdefine_line|#define _S(nr) (1&lt;&lt;((nr)-1))
-DECL|macro|_BLOCKABLE
-mdefine_line|#define _BLOCKABLE (~(_S(SIGKILL) | _S(SIGSTOP)))
 DECL|macro|LATCH
 mdefine_line|#define LATCH (1193180/HZ)
 r_extern
@@ -193,6 +191,7 @@ r_void
 id|math_state_restore
 c_func
 (paren
+r_void
 )paren
 (brace
 r_if
@@ -544,6 +543,7 @@ id|next
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * This is a little tricky because POSIX pause (3.4.2.1) should only&n; * return for a caught signal or a signal that terminates the process.&n; * We just block ignored signals or &quot;harmless&quot; default signals.&n; * For suspending signals, we must return so that they are handled&n; * and then pause again.  -- jrs&n; */
 DECL|function|sys_pause
 r_int
 id|sys_pause
@@ -560,6 +560,9 @@ r_int
 r_int
 id|mask
 suffix:semicolon
+r_int
+id|sig
+suffix:semicolon
 r_struct
 id|sigaction
 op_star
@@ -571,10 +574,15 @@ id|old_blocked
 op_assign
 id|current-&gt;blocked
 suffix:semicolon
+multiline_comment|/* block everything we can that shouldn&squot;t interrupt pause */
 r_for
 c_loop
 (paren
 id|mask
+op_assign
+l_int|1
+comma
+id|sig
 op_assign
 l_int|1
 suffix:semicolon
@@ -586,6 +594,9 @@ comma
 id|mask
 op_add_assign
 id|mask
+comma
+id|sig
+op_increment
 )paren
 r_if
 c_cond
@@ -593,6 +604,26 @@ c_cond
 id|sa-&gt;sa_handler
 op_eq
 id|SIG_IGN
+op_logical_or
+(paren
+id|sa-&gt;sa_handler
+op_eq
+id|SIG_DFL
+op_logical_and
+(paren
+id|sig
+op_eq
+id|SIGCONT
+op_logical_or
+id|sig
+op_eq
+id|SIGCHLD
+op_logical_or
+id|sig
+op_eq
+id|SIGWINCH
+)paren
+)paren
 )paren
 id|current-&gt;blocked
 op_or_assign
@@ -607,6 +638,55 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* if a suspending signal interrupted us we must restart */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
+op_amp
+op_complement
+(paren
+id|_S
+c_func
+(paren
+id|SIGSTOP
+)paren
+op_or
+id|_S
+c_func
+(paren
+id|SIGTSTP
+)paren
+op_or
+id|_S
+c_func
+(paren
+id|SIGTTIN
+)paren
+op_or
+id|_S
+c_func
+(paren
+id|SIGTTOU
+)paren
+)paren
+)paren
+)paren
+(brace
+id|current-&gt;blocked
+op_assign
+id|old_blocked
+suffix:semicolon
+r_return
+op_minus
+id|ERESTARTSYS
+suffix:semicolon
+)brace
 id|current-&gt;blocked
 op_assign
 id|old_blocked
@@ -1396,6 +1476,7 @@ op_star
 id|fn
 )paren
 (paren
+r_void
 )paren
 suffix:semicolon
 DECL|member|next
@@ -2478,7 +2559,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%d/%d chars free in kstack&bslash;n&bslash;r&quot;
+l_string|&quot;%d/%d chars free in kstack&bslash;n&quot;
 comma
 id|i
 comma
@@ -2513,7 +2594,7 @@ id|p-&gt;p_osptr
 id|printk
 c_func
 (paren
-l_string|&quot;   Younger sib=%d, older sib=%d&bslash;n&bslash;r&quot;
+l_string|&quot;   Younger sib=%d, older sib=%d&bslash;n&quot;
 comma
 id|p-&gt;p_ysptr
 ques
@@ -2536,7 +2617,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n&bslash;r&quot;
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2554,7 +2635,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;rTask-info:&bslash;n&bslash;r&quot;
+l_string|&quot;Task-info:&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for

@@ -170,10 +170,21 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|__zero_page
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|macro|BAD_PAGETABLE
 mdefine_line|#define BAD_PAGETABLE __bad_pagetable()
 DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE __bad_page()
+DECL|macro|ZERO_PAGE
+mdefine_line|#define ZERO_PAGE __zero_page()
 r_extern
 r_volatile
 r_int
@@ -200,30 +211,20 @@ id|secondary_page_list
 suffix:semicolon
 DECL|macro|MAX_SECONDARY_PAGES
 mdefine_line|#define MAX_SECONDARY_PAGES 10
+multiline_comment|/*&n; * This is timing-critical - most of the time in getting a new page&n; * goes to clearing the page. If you want a page without the clearing&n; * overhead, just use __get_free_page() directly..&n; */
 r_extern
-r_void
-id|rw_swap_page
+r_int
+r_int
+id|__get_free_page
 c_func
 (paren
 r_int
-id|rw
-comma
-r_int
-r_int
-id|nr
-comma
-r_char
-op_star
-id|buf
+id|priority
 )paren
 suffix:semicolon
-DECL|macro|read_swap_page
-mdefine_line|#define read_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(READ,(nr),(buf))
-DECL|macro|write_swap_page
-mdefine_line|#define write_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(WRITE,(nr),(buf))
-multiline_comment|/* mmap.c */
-multiline_comment|/* memory.c */
+DECL|function|get_free_page
 r_extern
+r_inline
 r_int
 r_int
 id|get_free_page
@@ -231,6 +232,65 @@ c_func
 (paren
 r_int
 id|priority
+)paren
+(brace
+r_int
+r_int
+id|page
+suffix:semicolon
+id|page
+op_assign
+id|__get_free_page
+c_func
+(paren
+id|priority
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|page
+)paren
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;rep ; stosl&quot;
+op_scope_resolution
+l_string|&quot;a&quot;
+(paren
+l_int|0
+)paren
+comma
+l_string|&quot;c&quot;
+(paren
+l_int|1024
+)paren
+comma
+l_string|&quot;D&quot;
+(paren
+id|page
+)paren
+suffix:colon
+l_string|&quot;di&quot;
+comma
+l_string|&quot;cx&quot;
+)paren
+suffix:semicolon
+r_return
+id|page
+suffix:semicolon
+)brace
+multiline_comment|/* mmap.c */
+multiline_comment|/* memory.c */
+r_extern
+r_void
+id|free_page
+c_func
+(paren
+r_int
+r_int
+id|addr
 )paren
 suffix:semicolon
 r_extern
@@ -251,16 +311,6 @@ comma
 r_int
 r_int
 id|address
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|free_page
-c_func
-(paren
-r_int
-r_int
-id|addr
 )paren
 suffix:semicolon
 r_extern
@@ -328,7 +378,24 @@ r_int
 id|size
 comma
 r_int
-id|permiss
+id|mask
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|zeromap_page_range
+c_func
+(paren
+r_int
+r_int
+id|from
+comma
+r_int
+r_int
+id|size
+comma
+r_int
+id|mask
 )paren
 suffix:semicolon
 r_extern
@@ -477,7 +544,8 @@ id|page_nr
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
+r_int
 id|swap_duplicate
 c_func
 (paren
@@ -508,6 +576,27 @@ op_star
 id|val
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|rw_swap_page
+c_func
+(paren
+r_int
+id|rw
+comma
+r_int
+r_int
+id|nr
+comma
+r_char
+op_star
+id|buf
+)paren
+suffix:semicolon
+DECL|macro|read_swap_page
+mdefine_line|#define read_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(READ,(nr),(buf))
+DECL|macro|write_swap_page
+mdefine_line|#define write_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(WRITE,(nr),(buf))
 DECL|macro|invalidate
 mdefine_line|#define invalidate() &bslash;&n;__asm__ __volatile__(&quot;movl %%cr3,%%eax&bslash;n&bslash;tmovl %%eax,%%cr3&quot;:::&quot;ax&quot;)
 r_extern
@@ -525,16 +614,32 @@ r_int
 op_star
 id|mem_map
 suffix:semicolon
-DECL|macro|PAGE_DIRTY
-mdefine_line|#define PAGE_DIRTY&t;0x40
-DECL|macro|PAGE_ACCESSED
-mdefine_line|#define PAGE_ACCESSED&t;0x20
-DECL|macro|PAGE_USER
-mdefine_line|#define PAGE_USER&t;0x04
-DECL|macro|PAGE_RW
-mdefine_line|#define PAGE_RW&t;&t;0x02
 DECL|macro|PAGE_PRESENT
-mdefine_line|#define PAGE_PRESENT&t;0x01
+mdefine_line|#define PAGE_PRESENT&t;0x001
+DECL|macro|PAGE_RW
+mdefine_line|#define PAGE_RW&t;&t;0x002
+DECL|macro|PAGE_USER
+mdefine_line|#define PAGE_USER&t;0x004
+DECL|macro|PAGE_PWT
+mdefine_line|#define PAGE_PWT&t;0x008&t;/* 486 only - not used currently */
+DECL|macro|PAGE_PCD
+mdefine_line|#define PAGE_PCD&t;0x010&t;/* 486 only - not used currently */
+DECL|macro|PAGE_ACCESSED
+mdefine_line|#define PAGE_ACCESSED&t;0x020
+DECL|macro|PAGE_DIRTY
+mdefine_line|#define PAGE_DIRTY&t;0x040
+DECL|macro|PAGE_COW
+mdefine_line|#define PAGE_COW&t;0x200&t;/* implemented in software (one of the AVL bits) */
+DECL|macro|PAGE_PRIVATE
+mdefine_line|#define PAGE_PRIVATE&t;(PAGE_PRESENT | PAGE_RW | PAGE_USER | PAGE_ACCESSED | PAGE_COW)
+DECL|macro|PAGE_SHARED
+mdefine_line|#define PAGE_SHARED&t;(PAGE_PRESENT | PAGE_RW | PAGE_USER | PAGE_ACCESSED)
+DECL|macro|PAGE_COPY
+mdefine_line|#define PAGE_COPY&t;(PAGE_PRESENT | PAGE_USER | PAGE_ACCESSED | PAGE_COW)
+DECL|macro|PAGE_READONLY
+mdefine_line|#define PAGE_READONLY&t;(PAGE_PRESENT | PAGE_USER | PAGE_ACCESSED)
+DECL|macro|PAGE_TABLE
+mdefine_line|#define PAGE_TABLE&t;(PAGE_PRESENT | PAGE_RW | PAGE_USER | PAGE_ACCESSED)
 DECL|macro|GFP_BUFFER
 mdefine_line|#define GFP_BUFFER&t;0x00
 DECL|macro|GFP_ATOMIC

@@ -1681,7 +1681,7 @@ r_default
 suffix:colon
 id|printk
 (paren
-l_string|&quot;Unknown sd command %d&bslash;r&bslash;n&quot;
+l_string|&quot;Unknown sd command %d&bslash;n&quot;
 comma
 id|SCpnt-&gt;request.cmd
 )paren

@@ -60,7 +60,6 @@ DECL|macro|F_EXLCK
 mdefine_line|#define F_EXLCK&t;&t;4&t;/* or 3 */
 DECL|macro|F_SHLCK
 mdefine_line|#define F_SHLCK&t;&t;8&t;/* or 4 */
-multiline_comment|/* Once again - not implemented, but ... */
 DECL|struct|flock
 r_struct
 id|flock

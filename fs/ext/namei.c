@@ -107,7 +107,7 @@ id|__asm__
 c_func
 (paren
 l_string|&quot;cld&bslash;n&bslash;t&quot;
-l_string|&quot;fs ; repe ; cmpsb&bslash;n&bslash;t&quot;
+l_string|&quot;repe ; cmpsb&bslash;n&bslash;t&quot;
 l_string|&quot;setz %%al&quot;
 suffix:colon
 l_string|&quot;=a&quot;
@@ -1279,13 +1279,10 @@ id|de-&gt;name
 id|i
 )braket
 op_assign
-id|get_fs_byte
-c_func
-(paren
 id|name
-op_plus
+(braket
 id|i
-)paren
+)braket
 suffix:semicolon
 id|bh-&gt;b_dirt
 op_assign
@@ -3119,6 +3116,16 @@ id|inode-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+id|dir-&gt;i_ctime
+op_assign
+id|dir-&gt;i_mtime
+op_assign
+id|CURRENT_TIME
+suffix:semicolon
+id|dir-&gt;i_dirt
+op_assign
+l_int|1
+suffix:semicolon
 id|retval
 op_assign
 l_int|0
@@ -3295,8 +3302,7 @@ op_logical_and
 (paren
 id|c
 op_assign
-id|get_fs_byte
-c_func
+op_star
 (paren
 id|symname
 op_increment
@@ -3699,40 +3705,10 @@ id|old
 )paren
 (brace
 r_int
-r_int
-id|fs
-suffix:semicolon
-r_int
 id|ino
 suffix:semicolon
 r_int
 id|result
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;mov %%fs,%0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|fs
-)paren
-)paren
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;mov %0,%%fs&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
-(paren
-r_int
-r_int
-)paren
-l_int|0x10
-)paren
-)paren
 suffix:semicolon
 r_new
 op_member_access_from_pointer
@@ -3816,17 +3792,6 @@ id|iput
 c_func
 (paren
 r_new
-)paren
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;mov %0,%%fs&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
-id|fs
-)paren
 )paren
 suffix:semicolon
 r_return

@@ -629,7 +629,7 @@ op_minus
 id|EINVAL
 )paren
 suffix:semicolon
-multiline_comment|/*&t;verify_area (usin, sizeof (sin));*/
+multiline_comment|/*&t;verify_area (VERIFY_WRITE, usin, sizeof (sin));*/
 id|memcpy_fromfs
 (paren
 op_amp
@@ -914,7 +914,7 @@ id|tmp
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*   verify_area (from, len);*/
+multiline_comment|/*   verify_area (VERIFY_WRITE, from, len);*/
 id|memcpy_fromfs
 (paren
 (paren
@@ -1304,6 +1304,8 @@ id|addr_len
 (brace
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 id|addr_len
 comma
 r_sizeof
@@ -1482,6 +1484,8 @@ id|skb-&gt;len
 suffix:semicolon
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 id|to
 comma
 id|copied
@@ -1517,6 +1521,8 @@ id|skb-&gt;daddr
 suffix:semicolon
 id|verify_area
 (paren
+id|VERIFY_WRITE
+comma
 id|sin
 comma
 r_sizeof

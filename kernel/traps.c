@@ -207,7 +207,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: %04x&bslash;n&bslash;r&quot;
+l_string|&quot;%s: %04x&bslash;n&quot;
 comma
 id|str
 comma
@@ -280,7 +280,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Pid: %d, process nr: %d&bslash;n&bslash;r&quot;
+l_string|&quot;Pid: %d, process nr: %d&bslash;n&quot;
 comma
 id|current-&gt;pid
 comma
@@ -338,7 +338,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n&bslash;r&quot;
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|do_exit

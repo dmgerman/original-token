@@ -4413,6 +4413,8 @@ id|param
 )paren
 (brace
 r_int
+id|i
+comma
 id|drive
 comma
 id|cnt
@@ -4559,9 +4561,13 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+id|i
+op_assign
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 (paren
 r_void
 op_star
@@ -4574,6 +4580,14 @@ r_struct
 id|floppy_struct
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+)paren
+r_return
+id|i
 suffix:semicolon
 r_for
 c_loop

@@ -2,14 +2,22 @@ macro_line|#ifndef _LINUX_KERNEL_H
 DECL|macro|_LINUX_KERNEL_H
 mdefine_line|#define _LINUX_KERNEL_H
 multiline_comment|/*&n; * &squot;kernel.h&squot; contains some often-used function prototypes etc&n; */
-r_void
+DECL|macro|VERIFY_READ
+mdefine_line|#define VERIFY_READ 0
+DECL|macro|VERIFY_WRITE
+mdefine_line|#define VERIFY_WRITE 1
+r_int
 id|verify_area
 c_func
 (paren
+r_int
+id|type
+comma
 r_void
 op_star
 id|addr
 comma
+r_int
 r_int
 id|count
 )paren

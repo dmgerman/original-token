@@ -18,7 +18,7 @@ r_int
 id|fd
 )paren
 suffix:semicolon
-r_void
+r_int
 id|getrusage
 c_func
 (paren
@@ -325,7 +325,7 @@ id|current
 id|printk
 c_func
 (paren
-l_string|&quot;task releasing itself&bslash;n&bslash;r&quot;
+l_string|&quot;task releasing itself&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -456,6 +456,7 @@ r_void
 id|audit_ptree
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int
@@ -2330,14 +2331,28 @@ c_cond
 (paren
 id|stat_addr
 )paren
+(brace
+id|flag
+op_assign
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|stat_addr
 comma
 l_int|4
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|flag
+)paren
+r_return
+id|flag
+suffix:semicolon
+)brace
 id|repeat
 suffix:colon
 id|current-&gt;signal

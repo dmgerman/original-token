@@ -222,7 +222,7 @@ id|i
 (brace
 id|printk
 (paren
-l_string|&quot;scsi%d : %s.&bslash;n&bslash;r&quot;
+l_string|&quot;scsi%d : %s.&bslash;n&quot;
 comma
 id|count
 comma
@@ -256,7 +256,7 @@ suffix:semicolon
 )brace
 id|printk
 (paren
-l_string|&quot;scsi : %d hosts. &bslash;n&bslash;r&quot;
+l_string|&quot;scsi : %d hosts.&bslash;n&quot;
 comma
 id|count
 )paren

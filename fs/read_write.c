@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/*&n; * Count is not yet used: but we&squot;ll probably support reading several entries&n; * at once in the future. Use count=1 in the library for future expansions.&n; */
 DECL|function|sys_readdir
@@ -26,6 +25,9 @@ r_int
 id|count
 )paren
 (brace
+r_int
+id|error
+suffix:semicolon
 r_struct
 id|file
 op_star
@@ -64,6 +66,11 @@ r_return
 op_minus
 id|EBADF
 suffix:semicolon
+id|error
+op_assign
+op_minus
+id|ENOTDIR
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -72,9 +79,13 @@ op_logical_and
 id|file-&gt;f_op-&gt;readdir
 )paren
 (brace
+id|error
+op_assign
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|dirent
 comma
 r_sizeof
@@ -84,7 +95,14 @@ id|dirent
 )paren
 )paren
 suffix:semicolon
-r_return
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
+id|error
+op_assign
 id|file-&gt;f_op
 op_member_access_from_pointer
 id|readdir
@@ -101,8 +119,7 @@ id|count
 suffix:semicolon
 )brace
 r_return
-op_minus
-id|ENOTDIR
+id|error
 suffix:semicolon
 )brace
 DECL|function|sys_lseek
@@ -282,6 +299,9 @@ r_int
 id|count
 )paren
 (brace
+r_int
+id|error
+suffix:semicolon
 r_struct
 id|file
 op_star
@@ -356,13 +376,25 @@ id|count
 r_return
 l_int|0
 suffix:semicolon
+id|error
+op_assign
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|buf
 comma
 id|count
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
 suffix:semicolon
 r_return
 id|file-&gt;f_op
@@ -398,6 +430,9 @@ r_int
 id|count
 )paren
 (brace
+r_int
+id|error
+suffix:semicolon
 r_struct
 id|file
 op_star
@@ -471,6 +506,26 @@ id|count
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|error
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|buf
+comma
+id|count
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
 suffix:semicolon
 r_return
 id|file-&gt;f_op

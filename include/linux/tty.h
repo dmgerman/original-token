@@ -176,11 +176,22 @@ DECL|member|baud_base
 r_int
 id|baud_base
 suffix:semicolon
+DECL|member|close_delay
+r_char
+id|close_delay
+suffix:semicolon
+DECL|member|reserved_char
+r_char
+id|reserved_char
+(braket
+l_int|3
+)braket
+suffix:semicolon
 DECL|member|reserved
 r_int
 id|reserved
 (braket
-l_int|7
+l_int|6
 )braket
 suffix:semicolon
 )brace
@@ -199,6 +210,8 @@ mdefine_line|#define PORT_16550A&t;4
 DECL|macro|PORT_MAX
 mdefine_line|#define PORT_MAX&t;4
 multiline_comment|/*&n; * Definitions for async_struct (and serial_struct) flags field&n; */
+DECL|macro|ASYNC_HUP_NOTIFY
+mdefine_line|#define ASYNC_HUP_NOTIFY 0x0001 /* Notify blocked open on hangups */
 DECL|macro|ASYNC_FOURPORT
 mdefine_line|#define ASYNC_FOURPORT  0x0002&t;/* Set OU1, OUT2 per AST Fourport settings */
 DECL|macro|ASYNC_SAK
@@ -212,7 +225,7 @@ mdefine_line|#define ASYNC_SPD_VHI&t;0x0020  /* Use 115200 instead of 38400 bps 
 DECL|macro|ASYNC_SPD_CUST
 mdefine_line|#define ASYNC_SPD_CUST&t;0x0030  /* Use user-specified divisor */
 DECL|macro|ASYNC_FLAGS
-mdefine_line|#define ASYNC_FLAGS&t;0x0036&t;/* Possible legal async flags */
+mdefine_line|#define ASYNC_FLAGS&t;0x0037&t;/* Possible legal async flags */
 multiline_comment|/* Internal flags used only by kernel/chr_drv/serial.c */
 DECL|macro|ASYNC_INITIALIZED
 mdefine_line|#define ASYNC_INITIALIZED&t;0x80000000 /* Serial port was initialized */
@@ -299,6 +312,8 @@ DECL|macro|_I_FLAG
 mdefine_line|#define _I_FLAG(tty,f)&t;((tty)-&gt;termios-&gt;c_iflag &amp; f)
 DECL|macro|_O_FLAG
 mdefine_line|#define _O_FLAG(tty,f)&t;((tty)-&gt;termios-&gt;c_oflag &amp; f)
+DECL|macro|_C_FLAG
+mdefine_line|#define _C_FLAG(tty,f)&t;((tty)-&gt;termios-&gt;c_cflag &amp; f)
 DECL|macro|L_CANON
 mdefine_line|#define L_CANON(tty)&t;_L_FLAG((tty),ICANON)
 DECL|macro|L_ISIG
@@ -317,6 +332,16 @@ DECL|macro|L_ECHOKE
 mdefine_line|#define L_ECHOKE(tty)&t;_L_FLAG((tty),ECHOKE)
 DECL|macro|L_TOSTOP
 mdefine_line|#define L_TOSTOP(tty)&t;_L_FLAG((tty),TOSTOP)
+DECL|macro|I_IGNBRK
+mdefine_line|#define I_IGNBRK(tty)&t;_I_FLAG((tty),IGNBRK)
+DECL|macro|I_BRKINT
+mdefine_line|#define I_BRKINT(tty)&t;_I_FLAG((tty),BRKINT)
+DECL|macro|I_IGNPAR
+mdefine_line|#define I_IGNPAR(tty)&t;_I_FLAG((tty),IGNPAR)
+DECL|macro|I_PARMRK
+mdefine_line|#define I_PARMRK(tty)&t;_I_FLAG((tty),PARMRK)
+DECL|macro|I_INPCK
+mdefine_line|#define I_INPCK(tty)&t;_I_FLAG((tty),INPCK)
 DECL|macro|I_UCLC
 mdefine_line|#define I_UCLC(tty)&t;_I_FLAG((tty),IUCLC)
 DECL|macro|I_NLCR
@@ -341,6 +366,10 @@ DECL|macro|O_NLRET
 mdefine_line|#define O_NLRET(tty)&t;_O_FLAG((tty),ONLRET)
 DECL|macro|O_LCUC
 mdefine_line|#define O_LCUC(tty)&t;_O_FLAG((tty),OLCUC)
+DECL|macro|C_LOCAL
+mdefine_line|#define C_LOCAL(tty)&t;_C_FLAG((tty),CLOCAL)
+DECL|macro|C_RTSCTS
+mdefine_line|#define C_RTSCTS(tty)&t;_C_FLAG((tty),CRTSCTS)
 DECL|macro|C_SPEED
 mdefine_line|#define C_SPEED(tty)&t;((tty)-&gt;termios-&gt;c_cflag &amp; CBAUD)
 DECL|macro|C_HUP
@@ -385,6 +414,13 @@ comma
 id|lnext
 suffix:colon
 l_int|1
+suffix:semicolon
+DECL|member|char_error
+r_int
+r_char
+id|char_error
+suffix:colon
+l_int|2
 suffix:semicolon
 DECL|member|ctrl_status
 r_int
@@ -553,6 +589,15 @@ DECL|member|write_data_arg
 r_void
 op_star
 id|write_data_arg
+suffix:semicolon
+DECL|member|readq_flags
+r_int
+id|readq_flags
+(braket
+id|TTY_BUF_SIZE
+op_div
+l_int|32
+)braket
 suffix:semicolon
 DECL|member|read_q
 r_struct
@@ -728,6 +773,13 @@ DECL|macro|TTY_RQ_THROTTLED
 mdefine_line|#define TTY_RQ_THROTTLED 4
 DECL|macro|TTY_IO_ERROR
 mdefine_line|#define TTY_IO_ERROR 5
+multiline_comment|/*&n; * When a break, frame error, or parity error happens, these codes are&n; * stuffed into the read queue, and the relevant bit in readq_flag bit&n; * array is set.&n; */
+DECL|macro|TTY_BREAK
+mdefine_line|#define TTY_BREAK&t;1
+DECL|macro|TTY_FRAME
+mdefine_line|#define TTY_FRAME&t;2
+DECL|macro|TTY_PARITY
+mdefine_line|#define TTY_PARITY&t;3
 DECL|macro|TTY_WRITE_FLUSH
 mdefine_line|#define TTY_WRITE_FLUSH(tty) tty_write_flush((tty))
 DECL|macro|TTY_READ_FLUSH
@@ -991,7 +1043,29 @@ id|tty
 suffix:semicolon
 r_extern
 r_void
+id|tty_vhangup
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|tty_unhangup
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|filp
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|tty_hung_up_p
 c_func
 (paren
 r_struct

@@ -88,6 +88,7 @@ id|nfs_fh
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|name
@@ -200,6 +201,7 @@ id|nfs_fh
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|name
@@ -235,6 +237,7 @@ id|nfs_fh
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|name
@@ -255,6 +258,7 @@ id|nfs_fh
 op_star
 id|old_dir
 comma
+r_const
 r_char
 op_star
 id|old_name
@@ -264,6 +268,7 @@ id|nfs_fh
 op_star
 id|new_dir
 comma
+r_const
 r_char
 op_star
 id|new_name
@@ -289,6 +294,7 @@ id|nfs_fh
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|name
@@ -309,10 +315,12 @@ id|nfs_fh
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|name
 comma
+r_const
 r_char
 op_star
 id|path
@@ -338,6 +346,7 @@ id|nfs_fh
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|name
@@ -373,6 +382,7 @@ id|nfs_fh
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|name
@@ -520,24 +530,6 @@ r_extern
 r_struct
 id|inode_operations
 id|nfs_symlink_inode_operations
-suffix:semicolon
-multiline_comment|/* linux/fs/nfs/chrdev.c */
-r_extern
-r_struct
-id|inode_operations
-id|nfs_chrdev_inode_operations
-suffix:semicolon
-multiline_comment|/* linux/fs/nfs/blkdev.c */
-r_extern
-r_struct
-id|inode_operations
-id|nfs_blkdev_inode_operations
-suffix:semicolon
-multiline_comment|/* linux/fs/nfs/fifo.c */
-r_extern
-r_struct
-id|inode_operations
-id|nfs_fifo_inode_operations
 suffix:semicolon
 macro_line|#endif
 eof

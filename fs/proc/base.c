@@ -327,7 +327,7 @@ id|__asm__
 c_func
 (paren
 l_string|&quot;cld&bslash;n&bslash;t&quot;
-l_string|&quot;fs ; repe ; cmpsb&bslash;n&bslash;t&quot;
+l_string|&quot;repe ; cmpsb&bslash;n&bslash;t&quot;
 l_string|&quot;setz %%al&quot;
 suffix:colon
 l_string|&quot;=a&quot;

@@ -2276,6 +2276,15 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+r_else
+(brace
+id|arp_destroy
+c_func
+(paren
+id|paddr
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* this assume haddr are at least 4 bytes.&n;     If this isn&squot;t true we can use a lookup&n;     table, one for every dev. */
 op_star

@@ -1177,9 +1177,13 @@ l_int|0
 r_return
 id|res
 suffix:semicolon
+id|res
+op_assign
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 (paren
 r_void
 op_star
@@ -1189,6 +1193,12 @@ comma
 l_int|4
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|res
+)paren
 id|put_fs_long
 c_func
 (paren
@@ -1203,7 +1213,7 @@ id|data
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|res
 suffix:semicolon
 )brace
 multiline_comment|/* read the word at location addr in the USER area. */
@@ -1213,6 +1223,8 @@ suffix:colon
 (brace
 r_int
 id|tmp
+comma
+id|res
 suffix:semicolon
 id|addr
 op_assign
@@ -1236,9 +1248,13 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
+id|res
+op_assign
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 (paren
 r_void
 op_star
@@ -1247,6 +1263,14 @@ id|data
 comma
 l_int|4
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|res
+)paren
+r_return
+id|res
 suffix:semicolon
 id|tmp
 op_assign

@@ -19,7 +19,7 @@ mdefine_line|#define UNBLK_FIRST(mask) &bslash;&n;&t;&quot;inb $0x21,%al&bslash;
 DECL|macro|UNBLK_SECOND
 mdefine_line|#define UNBLK_SECOND(mask) &bslash;&n;&t;&quot;inb $0xA1,%al&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp 1f&bslash;n&quot; &bslash;&n;&t;&quot;1:&bslash;tjmp 1f&bslash;n&quot; &bslash;&n;&t;&quot;1:&bslash;tandb $~(&quot; #mask &quot;),_cache_A1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb _cache_A1,%al&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;outb %al,$0xA1&bslash;n&bslash;t&quot;
 DECL|macro|IRQ_NAME2
-mdefine_line|#define IRQ_NAME2(nr) nr##_interrupt()
+mdefine_line|#define IRQ_NAME2(nr) nr##_interrupt(void)
 DECL|macro|IRQ_NAME
 mdefine_line|#define IRQ_NAME(nr) IRQ_NAME2(IRQ##nr)
 DECL|macro|FAST_IRQ_NAME

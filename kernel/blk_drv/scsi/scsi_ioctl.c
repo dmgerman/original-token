@@ -419,7 +419,7 @@ suffix:semicolon
 r_char
 id|cmd
 (braket
-l_int|10
+l_int|12
 )braket
 suffix:semicolon
 r_char
@@ -615,11 +615,38 @@ id|cmdlen
 )paren
 comma
 id|inlen
+OG
+id|MAX_BUF
+ques
+c_cond
+id|MAX_BUF
+suffix:colon
+id|inlen
 )paren
 suffix:semicolon
 id|host
 op_assign
 id|dev-&gt;host_no
+suffix:semicolon
+id|cmd
+(braket
+l_int|1
+)braket
+op_assign
+(paren
+id|cmd
+(braket
+l_int|1
+)braket
+op_amp
+l_int|0x1f
+)paren
+op_or
+(paren
+id|dev-&gt;lun
+op_lshift
+l_int|5
+)paren
 suffix:semicolon
 macro_line|#ifndef DEBUG_NO_CMD
 id|SCpnt
@@ -693,9 +720,13 @@ c_func
 suffix:semicolon
 )brace
 suffix:semicolon
+id|result
+op_assign
 id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
 id|cmd_in
 comma
 (paren
@@ -709,6 +740,14 @@ id|MAX_BUF
 suffix:colon
 id|outlen
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+)paren
+r_return
+id|result
 suffix:semicolon
 id|memcpy_tofs
 (paren
@@ -811,7 +850,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;r&bslash;nbuffer =&quot;
+l_string|&quot;&bslash;nbuffer =&quot;
 )paren
 suffix:semicolon
 r_for
@@ -842,7 +881,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;r&bslash;n&quot;
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk

@@ -32,6 +32,16 @@ r_int
 r_int
 id|tail
 suffix:semicolon
+DECL|member|rd_openers
+r_int
+r_int
+id|rd_openers
+suffix:semicolon
+DECL|member|wr_openers
+r_int
+r_int
+id|wr_openers
+suffix:semicolon
 DECL|member|readers
 r_int
 r_int
@@ -54,6 +64,10 @@ DECL|macro|PIPE_HEAD
 mdefine_line|#define PIPE_HEAD(inode)&t;((inode).u.pipe_i.head)
 DECL|macro|PIPE_TAIL
 mdefine_line|#define PIPE_TAIL(inode)&t;((inode).u.pipe_i.tail)
+DECL|macro|PIPE_RD_OPENERS
+mdefine_line|#define PIPE_RD_OPENERS(inode)&t;((inode).u.pipe_i.rd_openers)
+DECL|macro|PIPE_WR_OPENERS
+mdefine_line|#define PIPE_WR_OPENERS(inode)&t;((inode).u.pipe_i.wr_openers)
 DECL|macro|PIPE_READERS
 mdefine_line|#define PIPE_READERS(inode)&t;((inode).u.pipe_i.readers)
 DECL|macro|PIPE_WRITERS

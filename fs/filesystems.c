@@ -4,8 +4,14 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#ifdef CONFIG_MINIX_FS
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_XIA_FS
+macro_line|#include &lt;linux/xia_fs.h&gt;
+macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_EXT2_FS
+macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_EXT_FS
 macro_line|#include &lt;linux/ext_fs.h&gt;
@@ -37,11 +43,31 @@ l_int|1
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_XIA_FS
+(brace
+id|xiafs_read_super
+comma
+l_string|&quot;xiafs&quot;
+comma
+l_int|1
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_EXT_FS
 (brace
 id|ext_read_super
 comma
 l_string|&quot;ext&quot;
+comma
+l_int|1
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_EXT2_FS
+(brace
+id|ext2_read_super
+comma
+l_string|&quot;ext2&quot;
 comma
 l_int|1
 )brace
