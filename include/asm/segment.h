@@ -214,6 +214,134 @@ id|addr
 )paren
 suffix:semicolon
 )brace
+DECL|function|memcpy_tofs
+r_extern
+r_inline
+r_void
+id|memcpy_tofs
+c_func
+(paren
+r_void
+op_star
+id|to
+comma
+r_void
+op_star
+id|from
+comma
+r_int
+r_int
+id|n
+)paren
+(brace
+id|__asm__
+c_func
+(paren
+l_string|&quot;cld&bslash;n&bslash;t&quot;
+l_string|&quot;push %%es&bslash;n&bslash;t&quot;
+l_string|&quot;push %%fs&bslash;n&bslash;t&quot;
+l_string|&quot;pop %%es&bslash;n&bslash;t&quot;
+l_string|&quot;testb $1,%%cl&bslash;n&bslash;t&quot;
+l_string|&quot;je 1f&bslash;n&bslash;t&quot;
+l_string|&quot;movsb&bslash;n&quot;
+l_string|&quot;1:&bslash;ttestb $2,%%cl&bslash;n&bslash;t&quot;
+l_string|&quot;je 2f&bslash;n&bslash;t&quot;
+l_string|&quot;movsw&bslash;n&quot;
+l_string|&quot;2:&bslash;tshrl $2,%%ecx&bslash;n&bslash;t&quot;
+l_string|&quot;rep ; movsl&bslash;n&bslash;t&quot;
+l_string|&quot;pop %%es&quot;
+op_scope_resolution
+l_string|&quot;c&quot;
+(paren
+id|n
+)paren
+comma
+l_string|&quot;D&quot;
+(paren
+(paren
+r_int
+)paren
+id|to
+)paren
+comma
+l_string|&quot;S&quot;
+(paren
+(paren
+r_int
+)paren
+id|from
+)paren
+suffix:colon
+l_string|&quot;cx&quot;
+comma
+l_string|&quot;di&quot;
+comma
+l_string|&quot;si&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|memcpy_fromfs
+r_extern
+r_inline
+r_void
+id|memcpy_fromfs
+c_func
+(paren
+r_void
+op_star
+id|to
+comma
+r_void
+op_star
+id|from
+comma
+r_int
+r_int
+id|n
+)paren
+(brace
+id|__asm__
+c_func
+(paren
+l_string|&quot;cld&bslash;n&bslash;t&quot;
+l_string|&quot;testb $1,%%cl&bslash;n&bslash;t&quot;
+l_string|&quot;je 1f&bslash;n&bslash;t&quot;
+l_string|&quot;fs ; movsb&bslash;n&quot;
+l_string|&quot;1:&bslash;ttestb $2,%%cl&bslash;n&bslash;t&quot;
+l_string|&quot;je 2f&bslash;n&bslash;t&quot;
+l_string|&quot;fs ; movsw&bslash;n&quot;
+l_string|&quot;2:&bslash;tshrl $2,%%ecx&bslash;n&bslash;t&quot;
+l_string|&quot;rep ; fs ; movsl&quot;
+op_scope_resolution
+l_string|&quot;c&quot;
+(paren
+id|n
+)paren
+comma
+l_string|&quot;D&quot;
+(paren
+(paren
+r_int
+)paren
+id|to
+)paren
+comma
+l_string|&quot;S&quot;
+(paren
+(paren
+r_int
+)paren
+id|from
+)paren
+suffix:colon
+l_string|&quot;cx&quot;
+comma
+l_string|&quot;di&quot;
+comma
+l_string|&quot;si&quot;
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Someone who knows GNU asm better than I should double check the followig.&n; * It seems to work, but I don&squot;t know if I&squot;m doing something subtly wrong.&n; * --- TYT, 11/24/91&n; * [ nothing wrong here, Linus: I just changed the ax to be any reg ]&n; */
 DECL|function|get_fs
 r_extern

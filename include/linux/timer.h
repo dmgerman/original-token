@@ -11,10 +11,18 @@ DECL|macro|SER1_TIMER
 mdefine_line|#define SER1_TIMER&t;2
 DECL|macro|SER2_TIMER
 mdefine_line|#define SER2_TIMER&t;3
+DECL|macro|SER3_TIMER
+mdefine_line|#define SER3_TIMER&t;4
+DECL|macro|SER4_TIMER
+mdefine_line|#define SER4_TIMER&t;5
 DECL|macro|SER1_TIMEOUT
 mdefine_line|#define SER1_TIMEOUT&t;8
 DECL|macro|SER2_TIMEOUT
 mdefine_line|#define SER2_TIMEOUT&t;9
+DECL|macro|SER3_TIMEOUT
+mdefine_line|#define SER3_TIMEOUT&t;10
+DECL|macro|SER4_TIMEOUT
+mdefine_line|#define SER4_TIMEOUT&t;11
 DECL|macro|HD_TIMER
 mdefine_line|#define HD_TIMER&t;16
 DECL|macro|FLOPPY_TIMER

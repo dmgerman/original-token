@@ -304,12 +304,16 @@ c_cond
 (paren
 id|inode-&gt;i_count
 )paren
+(brace
 id|printk
 c_func
 (paren
 l_string|&quot;inode in use on removed disk&bslash;n&bslash;r&quot;
 )paren
 suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|inode-&gt;i_dev
 op_assign
 id|inode-&gt;i_dirt

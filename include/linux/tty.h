@@ -5,7 +5,7 @@ mdefine_line|#define _TTY_H
 DECL|macro|MAX_CONSOLES
 mdefine_line|#define MAX_CONSOLES&t;8
 DECL|macro|NR_SERIALS
-mdefine_line|#define NR_SERIALS&t;2
+mdefine_line|#define NR_SERIALS&t;4
 DECL|macro|NR_PTYS
 mdefine_line|#define NR_PTYS&t;&t;4
 r_extern
@@ -14,7 +14,7 @@ id|NR_CONSOLES
 suffix:semicolon
 macro_line|#include &lt;termios.h&gt;
 DECL|macro|TTY_BUF_SIZE
-mdefine_line|#define TTY_BUF_SIZE 1024
+mdefine_line|#define TTY_BUF_SIZE 2048
 DECL|struct|tty_queue
 r_struct
 id|tty_queue
@@ -116,6 +116,10 @@ DECL|member|stopped
 r_int
 id|stopped
 suffix:semicolon
+DECL|member|busy
+r_int
+id|busy
+suffix:semicolon
 DECL|member|winsize
 r_struct
 id|winsize
@@ -154,6 +158,8 @@ id|secondary
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|TTY_WRITE
+mdefine_line|#define TTY_WRITE(tty) &bslash;&n;do { &bslash;&n;&t;cli(); &bslash;&n;&t;if (!(tty)-&gt;busy) { &bslash;&n;&t;&t;(tty)-&gt;busy = 1; &bslash;&n;&t;&t;sti(); &bslash;&n;&t;&t;(tty)-&gt;write((tty)); &bslash;&n;&t;&t;(tty)-&gt;busy = 0; &bslash;&n;&t;} else &bslash;&n;&t;&t;sti(); &bslash;&n;} while (0)
 r_extern
 r_struct
 id|tty_struct
@@ -273,6 +279,16 @@ r_struct
 id|tty_struct
 op_star
 id|tty
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|serial_open
+c_func
+(paren
+r_int
+r_int
+id|line
 )paren
 suffix:semicolon
 r_void

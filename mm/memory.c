@@ -906,7 +906,7 @@ id|tmp
 suffix:semicolon
 )brace
 id|page_table
-(braket
+op_add_assign
 (paren
 id|address
 op_rshift
@@ -914,7 +914,33 @@ l_int|12
 )paren
 op_amp
 l_int|0x3ff
-)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|page_table
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;put_page: page already exists&bslash;n&quot;
+)paren
+suffix:semicolon
+op_star
+id|page_table
+op_assign
+l_int|0
+suffix:semicolon
+id|invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+op_star
+id|page_table
 op_assign
 id|page
 op_or
@@ -1073,7 +1099,7 @@ id|tmp
 suffix:semicolon
 )brace
 id|page_table
-(braket
+op_add_assign
 (paren
 id|address
 op_rshift
@@ -1081,7 +1107,33 @@ l_int|12
 )paren
 op_amp
 l_int|0x3ff
-)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|page_table
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;put_dirty_page: page already exists&bslash;n&quot;
+)paren
+suffix:semicolon
+op_star
+id|page_table
+op_assign
+l_int|0
+suffix:semicolon
+id|invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+op_star
+id|page_table
 op_assign
 id|page
 op_or
@@ -1318,12 +1370,20 @@ id|address
 OL
 id|TASK_SIZE
 )paren
+(brace
 id|printk
 c_func
 (paren
 l_string|&quot;&bslash;n&bslash;rBAD! KERNEL MEMORY WP-ERR!&bslash;n&bslash;r&quot;
 )paren
 suffix:semicolon
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2086,12 +2146,20 @@ id|address
 OL
 id|TASK_SIZE
 )paren
+(brace
 id|printk
 c_func
 (paren
 l_string|&quot;&bslash;n&bslash;rBAD!! KERNEL PAGE MISSING&bslash;n&bslash;r&quot;
 )paren
 suffix:semicolon
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2892,6 +2960,7 @@ multiline_comment|/* This routine handles page faults.  It determines the addres
 DECL|function|do_page_fault
 r_void
 id|do_page_fault
+c_func
 (paren
 r_int
 r_int
@@ -2909,6 +2978,7 @@ id|address
 suffix:semicolon
 multiline_comment|/* get the address */
 id|__asm__
+c_func
 (paren
 l_string|&quot;movl %%cr2,%0&quot;
 suffix:colon

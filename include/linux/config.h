@@ -12,7 +12,7 @@ mdefine_line|#define UTS_NODENAME &quot;(none)&quot;&t;/* set by sethostname() *
 DECL|macro|UTS_RELEASE
 mdefine_line|#define UTS_RELEASE &quot;0&quot;&t;&t;/* patchlevel */
 DECL|macro|UTS_VERSION
-mdefine_line|#define UTS_VERSION &quot;0.12&quot;
+mdefine_line|#define UTS_VERSION &quot;0.95a&quot;
 DECL|macro|UTS_MACHINE
 mdefine_line|#define UTS_MACHINE &quot;i386&quot;&t;/* hardware type */
 multiline_comment|/* Don&squot;t touch these, unless you really know what your doing. */

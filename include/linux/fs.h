@@ -809,9 +809,10 @@ r_int
 id|floppy_change
 c_func
 (paren
-r_int
-r_int
-id|nr
+r_struct
+id|buffer_head
+op_star
+id|first_block
 )paren
 suffix:semicolon
 r_extern

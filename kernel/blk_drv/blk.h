@@ -183,7 +183,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef DEVICE_TIMEOUT
 DECL|macro|SET_INTR
-mdefine_line|#define SET_INTR(x) (DEVICE_INTR = (x), &bslash;&n;&t;timer_table[DEVICE_TIMEOUT].expires = jiffies + 200, &bslash;&n;&t;timer_active |= 1&lt;&lt;DEVICE_TIMEOUT)
+mdefine_line|#define SET_INTR(x) if (DEVICE_INTR = (x)) { &bslash;&n;timer_table[DEVICE_TIMEOUT].expires = jiffies + 200; &bslash;&n;timer_active |= 1&lt;&lt;DEVICE_TIMEOUT; &bslash;&n;} else timer_active &amp;= ~(1&lt;&lt;DEVICE_TIMEOUT)
 macro_line|#else
 DECL|macro|SET_INTR
 mdefine_line|#define SET_INTR(x) (DEVICE_INTR = (x))
@@ -318,22 +318,15 @@ op_assign
 id|CURRENT-&gt;next
 suffix:semicolon
 )brace
-macro_line|#ifdef DEVICE_TIMEOUT
-DECL|macro|CLEAR_DEVICE_TIMEOUT
-mdefine_line|#define CLEAR_DEVICE_TIMEOUT timer_active &amp;= ~(1&lt;&lt;DEVICE_TIMEOUT);
-macro_line|#else
-DECL|macro|CLEAR_DEVICE_TIMEOUT
-mdefine_line|#define CLEAR_DEVICE_TIMEOUT
-macro_line|#endif
 macro_line|#ifdef DEVICE_INTR
-DECL|macro|CLEAR_DEVICE_INTR
-mdefine_line|#define CLEAR_DEVICE_INTR DEVICE_INTR = 0;
+DECL|macro|CLEAR_INTR
+mdefine_line|#define CLEAR_INTR SET_INTR(NULL)
 macro_line|#else
-DECL|macro|CLEAR_DEVICE_INTR
-mdefine_line|#define CLEAR_DEVICE_INTR
+DECL|macro|CLEAR_INTR
+mdefine_line|#define CLEAR_INTR
 macro_line|#endif
 DECL|macro|INIT_REQUEST
-mdefine_line|#define INIT_REQUEST &bslash;&n;repeat: &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;CLEAR_DEVICE_INTR &bslash;&n;&t;&t;CLEAR_DEVICE_TIMEOUT &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!CURRENT-&gt;bh-&gt;b_lock) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
+mdefine_line|#define INIT_REQUEST &bslash;&n;repeat: &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;CLEAR_INTR; &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!CURRENT-&gt;bh-&gt;b_lock) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
 macro_line|#endif
 macro_line|#endif
 eof

@@ -903,6 +903,16 @@ suffix:semicolon
 id|execve
 c_func
 (paren
+l_string|&quot;/etc/init&quot;
+comma
+id|argv_init
+comma
+id|envp_init
+)paren
+suffix:semicolon
+id|execve
+c_func
+(paren
 l_string|&quot;/bin/init&quot;
 comma
 id|argv_init

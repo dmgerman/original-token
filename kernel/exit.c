@@ -1884,7 +1884,8 @@ l_int|1
 suffix:semicolon
 id|tty-&gt;pgrp
 op_assign
-l_int|0
+op_minus
+l_int|1
 suffix:semicolon
 id|tty-&gt;session
 op_assign

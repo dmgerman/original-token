@@ -2,8 +2,6 @@ macro_line|#ifndef _TERMIOS_H
 DECL|macro|_TERMIOS_H
 mdefine_line|#define _TERMIOS_H
 macro_line|#include &lt;sys/types.h&gt;
-DECL|macro|TTY_BUF_SIZE
-mdefine_line|#define TTY_BUF_SIZE 1024
 multiline_comment|/* 0x54 is just a magic number to make these relatively uniqe (&squot;T&squot;) */
 DECL|macro|TCGETS
 mdefine_line|#define TCGETS&t;&t;0x5401
