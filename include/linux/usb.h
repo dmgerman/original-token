@@ -841,6 +841,61 @@ suffix:semicolon
 r_struct
 id|usb_device
 suffix:semicolon
+multiline_comment|/*&n; * Device table entry for &quot;new style&quot; table-driven USB drivers.&n; * User mode code can read these tables to choose which modules to load.&n; * Declare the table as __devinitdata, and as a MODULE_DEVICE_TABLE.&n; *&n; * With a device table provide bind() instead of probe().  Then the&n; * third bind() parameter will point to a matching entry from this&n; * table.  (Null value reserved.)&n; * &n; * Terminate the driver&squot;s table with an all-zeroes entry.&n; * Init the fields you care about; zeroes are not used in comparisons.&n; */
+DECL|struct|usb_device_id
+r_struct
+id|usb_device_id
+(brace
+multiline_comment|/*&n;&t; * vendor/product codes are checked, if vendor is nonzero&n;&t; * Range is for device revision (bcdDevice), inclusive;&n;&t; * zero values here mean range isn&squot;t considered&n;&t; */
+DECL|member|idVendor
+id|__u16
+id|idVendor
+suffix:semicolon
+DECL|member|idProduct
+id|__u16
+id|idProduct
+suffix:semicolon
+DECL|member|bcdDevice_lo
+DECL|member|bcdDevice_hi
+id|__u16
+id|bcdDevice_lo
+comma
+id|bcdDevice_hi
+suffix:semicolon
+multiline_comment|/*&n;&t; * if device class != 0, these can be match criteria;&n;&t; * but only if this bDeviceClass value is nonzero&n;&t; */
+DECL|member|bDeviceClass
+id|__u8
+id|bDeviceClass
+suffix:semicolon
+DECL|member|bDeviceSubClass
+id|__u8
+id|bDeviceSubClass
+suffix:semicolon
+DECL|member|bDeviceProtocol
+id|__u8
+id|bDeviceProtocol
+suffix:semicolon
+multiline_comment|/*&n;&t; * if interface class != 0, these can be match criteria;&n;&t; * but only if this bInterfaceClass value is nonzero&n;&t; */
+DECL|member|bInterfaceClass
+id|__u8
+id|bInterfaceClass
+suffix:semicolon
+DECL|member|bInterfaceSubClass
+id|__u8
+id|bInterfaceSubClass
+suffix:semicolon
+DECL|member|bInterfaceProtocol
+id|__u8
+id|bInterfaceProtocol
+suffix:semicolon
+multiline_comment|/*&n;&t; * for driver&squot;s use; not involved in driver matching.&n;&t; */
+DECL|member|driver_info
+r_int
+r_int
+id|driver_info
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|usb_driver
 r_struct
 id|usb_driver
@@ -902,6 +957,7 @@ r_struct
 id|semaphore
 id|serialize
 suffix:semicolon
+multiline_comment|/* ioctl -- userspace apps can talk to drivers through usbdevfs */
 DECL|member|ioctl
 r_int
 (paren
@@ -923,27 +979,44 @@ op_star
 id|buf
 )paren
 suffix:semicolon
-)brace
+multiline_comment|/* support for &quot;new-style&quot; USB hotplugging&n;&t; * binding policy can be driven from user mode too&n;&t; */
+DECL|member|id_table
+r_const
+r_struct
+id|usb_device_id
+op_star
+id|id_table
 suffix:semicolon
-multiline_comment|/*&n; * Pointer to a device endpoint interrupt function -greg&n; *   Parameters:&n; *     int status - This needs to be defined.  Right now each HCD&n; *         passes different transfer status bits back.  Don&squot;t use it&n; *         until we come up with a common meaning.&n; *     void *buffer - This is a pointer to the data used in this&n; *         USB transfer.&n; *     int length - This is the number of bytes transferred in or out&n; *         of the buffer by this transfer.  (-1 = unknown/unsupported)&n; *     void *dev_id - This is a user defined pointer set when the IRQ&n; *         is requested that is passed back.&n; *&n; *   Special Cases:&n; *     if (status == USB_ST_REMOVED), don&squot;t trust buffer or len.&n; */
-DECL|typedef|usb_device_irq
-r_typedef
-r_int
-(paren
-op_star
-id|usb_device_irq
-)paren
-(paren
-r_int
-comma
+DECL|member|bind
 r_void
 op_star
-comma
-r_int
-comma
-r_void
+(paren
 op_star
+id|bind
 )paren
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+multiline_comment|/* the device */
+r_int
+id|intf
+comma
+multiline_comment|/* what interface */
+r_const
+r_struct
+id|usb_device_id
+op_star
+id|id
+multiline_comment|/* from id_table */
+)paren
+suffix:semicolon
+multiline_comment|/* suspend before the bus suspends;&n;&t; * disconnect or resume when the bus resumes */
+singleline_comment|// void (*suspend)(struct usb_device *dev);
+singleline_comment|// void (*resume)(struct usb_device *dev);
+)brace
 suffix:semicolon
 multiline_comment|/*----------------------------------------------------------------------------* &n; * New USB Structures                                                         *&n; *----------------------------------------------------------------------------*/
 multiline_comment|/*&n; * urb-&gt;transfer_flags:&n; */
@@ -1240,7 +1313,7 @@ r_int
 id|timeout
 )paren
 suffix:semicolon
-multiline_comment|/*-------------------------------------------------------------------*&n; *                         COMPATIBILITY STUFF                       *&n; *-------------------------------------------------------------------*/
+multiline_comment|/*-------------------------------------------------------------------*&n; *                         SYNCHRONOUS CALL SUPPORT                  *&n; *-------------------------------------------------------------------*/
 r_typedef
 r_struct
 (brace
@@ -1248,10 +1321,6 @@ DECL|member|wakeup
 id|wait_queue_head_t
 op_star
 id|wakeup
-suffix:semicolon
-DECL|member|handler
-id|usb_device_irq
-id|handler
 suffix:semicolon
 DECL|member|stuff
 r_void
@@ -1262,21 +1331,6 @@ multiline_comment|/* more to follow */
 DECL|typedef|api_wrapper_data
 )brace
 id|api_wrapper_data
-suffix:semicolon
-DECL|struct|irq_wrapper_data
-r_struct
-id|irq_wrapper_data
-(brace
-DECL|member|context
-r_void
-op_star
-id|context
-suffix:semicolon
-DECL|member|handler
-id|usb_device_irq
-id|handler
-suffix:semicolon
-)brace
 suffix:semicolon
 multiline_comment|/* -------------------------------------------------------------------------- */
 DECL|struct|usb_operations

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;Zorro Device Name Tables&n; *&n; *&t;Copyright (C) 1999--2000 Geert Uytterhoeven&n; *&n; *&t;Based on the PCI version:&n; *&n; *&t;Copyright 1992--1999 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

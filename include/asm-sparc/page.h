@@ -29,7 +29,6 @@ mdefine_line|#define TASK_UNION_SIZE&t;&t;8192
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * XXX I am hitting compiler bugs with __builtin_trap. This has&n; * hit me before and rusty was blaming his netfilter bugs on&n; * this so lets disable it. - Anton&n; */
 macro_line|#if 0
-multiline_comment|/* #if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8) */
 multiline_comment|/* We need the mb()&squot;s so we don&squot;t trigger a compiler bug - Anton */
 mdefine_line|#define BUG() do { &bslash;&n;&t;mb(); &bslash;&n;&t;__builtin_trap(); &bslash;&n;&t;mb(); &bslash;&n;} while(0)
 macro_line|#else

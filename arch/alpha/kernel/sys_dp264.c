@@ -1361,7 +1361,7 @@ l_int|6
 (braket
 l_int|5
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */
@@ -1594,7 +1594,7 @@ l_int|13
 (braket
 l_int|5
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */
@@ -2027,7 +2027,7 @@ l_int|13
 (braket
 l_int|5
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */
@@ -2247,7 +2247,7 @@ l_int|7
 (braket
 l_int|5
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */

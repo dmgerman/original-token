@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/highuid.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/param.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 DECL|macro|DLINFO_ITEMS
 mdefine_line|#define DLINFO_ITEMS 13
@@ -531,6 +532,8 @@ suffix:semicolon
 )brace
 id|sp
 op_sub_assign
+l_int|3
+op_star
 l_int|2
 suffix:semicolon
 id|NEW_AUX_ENT
@@ -543,6 +546,26 @@ comma
 id|hwcap
 )paren
 suffix:semicolon
+id|NEW_AUX_ENT
+c_func
+(paren
+l_int|1
+comma
+id|AT_PAGESZ
+comma
+id|ELF_EXEC_PAGESIZE
+)paren
+suffix:semicolon
+id|NEW_AUX_ENT
+c_func
+(paren
+l_int|2
+comma
+id|AT_CLKTCK
+comma
+id|CLOCKS_PER_SEC
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -551,7 +574,7 @@ id|exec
 (brace
 id|sp
 op_sub_assign
-l_int|11
+l_int|10
 op_star
 l_int|2
 suffix:semicolon
@@ -596,16 +619,6 @@ c_func
 (paren
 l_int|3
 comma
-id|AT_PAGESZ
-comma
-id|ELF_EXEC_PAGESIZE
-)paren
-suffix:semicolon
-id|NEW_AUX_ENT
-c_func
-(paren
-l_int|4
-comma
 id|AT_BASE
 comma
 id|interp_load_addr
@@ -614,7 +627,7 @@ suffix:semicolon
 id|NEW_AUX_ENT
 c_func
 (paren
-l_int|5
+l_int|4
 comma
 id|AT_FLAGS
 comma
@@ -624,7 +637,7 @@ suffix:semicolon
 id|NEW_AUX_ENT
 c_func
 (paren
-l_int|6
+l_int|5
 comma
 id|AT_ENTRY
 comma
@@ -636,7 +649,7 @@ suffix:semicolon
 id|NEW_AUX_ENT
 c_func
 (paren
-l_int|7
+l_int|6
 comma
 id|AT_UID
 comma
@@ -649,7 +662,7 @@ suffix:semicolon
 id|NEW_AUX_ENT
 c_func
 (paren
-l_int|8
+l_int|7
 comma
 id|AT_EUID
 comma
@@ -662,7 +675,7 @@ suffix:semicolon
 id|NEW_AUX_ENT
 c_func
 (paren
-l_int|9
+l_int|8
 comma
 id|AT_GID
 comma
@@ -675,7 +688,7 @@ suffix:semicolon
 id|NEW_AUX_ENT
 c_func
 (paren
-l_int|10
+l_int|9
 comma
 id|AT_EGID
 comma

@@ -357,18 +357,12 @@ id|user_ptrs_per_pgd
 )paren
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
-macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8)
 DECL|macro|pte_ERROR
 mdefine_line|#define pte_ERROR(e)   __builtin_trap()
 DECL|macro|pmd_ERROR
 mdefine_line|#define pmd_ERROR(e)   __builtin_trap()
 DECL|macro|pgd_ERROR
 mdefine_line|#define pgd_ERROR(e)   __builtin_trap()
-macro_line|#else
-mdefine_line|#define pte_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pte %08lx.&bslash;n&quot;, __FILE__, __LINE__, pte_val(e))
-mdefine_line|#define pmd_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pmd %08lx.&bslash;n&quot;, __FILE__, __LINE__, pmd_val(e))
-mdefine_line|#define pgd_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pgd %08lx.&bslash;n&quot;, __FILE__, __LINE__, pgd_val(e))
-macro_line|#endif
 id|BTFIXUPDEF_INT
 c_func
 (paren

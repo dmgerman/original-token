@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Dumb Network Address Translation.&n; *&n; * Version:&t;$Id: ip_nat_dumb.c,v 1.9 1999/08/20 11:05:46 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Rani Assaf&t;:&t;A zero checksum is a special case&n; *&t;&t;&t;&t;&t;only in UDP&n; * &t;&t;Rani Assaf&t;:&t;Added ICMP messages rewriting&n; * &t;&t;Rani Assaf&t;:&t;Repaired wrong changes, made by ANK.&n; *&n; *&n; * NOTE:&t;It is just working model of real NAT.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Dumb Network Address Translation.&n; *&n; * Version:&t;$Id: ip_nat_dumb.c,v 1.10 2000/10/24 22:54:26 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Rani Assaf&t;:&t;A zero checksum is a special case&n; *&t;&t;&t;&t;&t;only in UDP&n; * &t;&t;Rani Assaf&t;:&t;Added ICMP messages rewriting&n; * &t;&t;Rani Assaf&t;:&t;Repaired wrong changes, made by ANK.&n; *&n; *&n; * NOTE:&t;It is just working model of real NAT.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -654,10 +654,11 @@ suffix:semicolon
 )brace
 )brace
 r_return
-l_int|0
+id|NET_RX_SUCCESS
 suffix:semicolon
 id|truncated
 suffix:colon
+multiline_comment|/* should be return NET_RX_BAD; */
 r_return
 op_minus
 id|EINVAL

@@ -8318,10 +8318,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* request_io */
 multiline_comment|/*======================================================================&n;&n;    Request_irq() reserves an irq for this client.&n;&n;    Also, since Linux only reserves irq&squot;s when they are actually&n;    hooked, we don&squot;t guarantee that an irq will still be available&n;    when the configuration is locked.  Now that I think about it,&n;    there might be a way to fix this using a dummy handler.&n;    &n;======================================================================*/
-DECL|function|cs_request_irq
-r_static
+DECL|function|pcmcia_request_irq
 r_int
-id|cs_request_irq
+id|pcmcia_request_irq
 c_func
 (paren
 id|client_handle_t
@@ -8710,7 +8709,7 @@ r_return
 id|CS_SUCCESS
 suffix:semicolon
 )brace
-multiline_comment|/* cs_request_irq */
+multiline_comment|/* pcmcia_request_irq */
 multiline_comment|/*======================================================================&n;&n;    Request_window() establishes a mapping between card memory space&n;    and system memory space.&n;&n;======================================================================*/
 DECL|function|pcmcia_request_window
 r_int

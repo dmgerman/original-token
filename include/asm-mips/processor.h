@@ -447,15 +447,8 @@ DECL|macro|init_stack
 mdefine_line|#define init_stack&t;(init_task_union.stack)
 macro_line|#endif /* !defined (_LANGUAGE_ASSEMBLY) */
 macro_line|#endif /* __KERNEL__ */
-multiline_comment|/*&n; * Return_address is a replacement for __builtin_return_address(count)&n; * which on certain architectures cannot reasonably be implemented in GCC&n; * (MIPS, Alpha) or is unuseable with -fomit-frame-pointer (i386).&n; * Note that __builtin_return_address(x&gt;=1) is forbidden because GCC&n; * aborts compilation on some CPUs.  It&squot;s simply not possible to unwind&n; * some CPU&squot;s stackframes.&n; */
-macro_line|#if (__GNUC__ &gt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8))
-multiline_comment|/*&n; * __builtin_return_address works only for non-leaf functions.  We avoid the&n; * overhead of a function call by forcing the compiler to save the return&n; * address register on the stack.&n; */
+multiline_comment|/*&n; * Return_address is a replacement for __builtin_return_address(count)&n; * which on certain architectures cannot reasonably be implemented in GCC&n; * (MIPS, Alpha) or is unuseable with -fomit-frame-pointer (i386).&n; * Note that __builtin_return_address(x&gt;=1) is forbidden because GCC&n; * aborts compilation on some CPUs.  It&squot;s simply not possible to unwind&n; * some CPU&squot;s stackframes.&n; *&n; * __builtin_return_address works only for non-leaf functions.  We avoid the&n; * overhead of a function call by forcing the compiler to save the return&n; * address register on the stack.&n; */
 DECL|macro|return_address
 mdefine_line|#define return_address() ({__asm__ __volatile__(&quot;&quot;:::&quot;$31&quot;);__builtin_return_address(0);})
-macro_line|#else
-multiline_comment|/*&n; * __builtin_return_address is not implemented at all.  Calling it&n; * will return senseless values.  Return NULL which at least is an obviously&n; * senseless value.&n; */
-DECL|macro|return_address
-mdefine_line|#define return_address() NULL
-macro_line|#endif
 macro_line|#endif /* _ASM_PROCESSOR_H */
 eof

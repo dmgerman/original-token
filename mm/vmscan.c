@@ -141,30 +141,12 @@ id|page_table
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|onlist
-)paren
-(brace
-multiline_comment|/*&n;&t;&t;&t; * Transfer the &quot;accessed&quot; bit from the page&n;&t;&t;&t; * tables to the global page map. Page aging&n;&t;&t;&t; * will be done by refill_inactive_scan().&n;&t;&t;&t; */
-id|SetPageReferenced
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/*&n;&t;&t;&t; * The page is not on the active list, so&n;&t;&t;&t; * we have to do the page aging ourselves.&n;&t;&t;&t; */
 id|age_page_up
 c_func
 (paren
 id|page
 )paren
 suffix:semicolon
-)brace
 r_goto
 id|out_failed
 suffix:semicolon
@@ -2587,6 +2569,10 @@ multiline_comment|/*&n;&t;&t;&t; * Since we don&squot;t hold a reference on the 
 r_if
 c_cond
 (paren
+id|page-&gt;age
+op_eq
+l_int|0
+op_logical_and
 id|page_count
 c_func
 (paren

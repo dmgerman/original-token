@@ -1,7 +1,7 @@
-multiline_comment|/*&n; *  TUN - Universal TUN/TAP device driver.&n; *  Copyright (C) 1999-2000 Maxim Krasnyansky &lt;max_mk@yahoo.com&gt;&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *  GNU General Public License for more details.&n; *&n; *  $Id: tun.c,v 1.2 2000/09/22 12:40:31 maxk Exp $&n; */
+multiline_comment|/*&n; *  TUN - Universal TUN/TAP device driver.&n; *  Copyright (C) 1999-2000 Maxim Krasnyansky &lt;max_mk@yahoo.com&gt;&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *  GNU General Public License for more details.&n; *&n; *  $Id: tun.c,v 1.3 2000/10/23 10:01:25 maxk Exp $&n; */
 multiline_comment|/*&n; *  Daniel Podlejski &lt;underley@underley.eu.org&gt;&n; *    Modifications for 2.3.99-pre5 kernel.&n; */
 DECL|macro|TUN_VER
-mdefine_line|#define TUN_VER &quot;1.2&quot;
+mdefine_line|#define TUN_VER &quot;1.3&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -165,21 +165,6 @@ id|tun-&gt;name
 comma
 id|skb-&gt;len
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|netif_queue_stopped
-c_func
-(paren
-id|dev
-)paren
-)paren
-r_return
-l_int|1
-suffix:semicolon
-id|tun-&gt;stats.tx_packets
-op_increment
 suffix:semicolon
 multiline_comment|/* Queue frame */
 id|skb_queue_tail
@@ -760,6 +745,10 @@ suffix:semicolon
 id|tun-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
+id|tun-&gt;stats.rx_bytes
+op_add_assign
+id|len
+suffix:semicolon
 r_return
 id|count
 suffix:semicolon
@@ -999,6 +988,13 @@ id|len
 )paren
 suffix:semicolon
 id|total
+op_add_assign
+id|len
+suffix:semicolon
+id|tun-&gt;stats.tx_packets
+op_increment
+suffix:semicolon
+id|tun-&gt;stats.tx_bytes
 op_add_assign
 id|len
 suffix:semicolon

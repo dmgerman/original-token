@@ -281,6 +281,12 @@ id|page-&gt;age
 op_assign
 l_int|0
 suffix:semicolon
+id|ClearPageReferenced
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Don&squot;t touch it if it&squot;s not on the active list.&n;&t; * (some pages aren&squot;t on any list at all)&n;&t; */
 r_if
 c_cond

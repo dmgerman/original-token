@@ -1240,13 +1240,6 @@ c_func
 id|ROOT_DEV
 )paren
 suffix:semicolon
-DECL|variable|__find_get_page
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__find_get_page
-)paren
-suffix:semicolon
 DECL|variable|__find_lock_page
 id|EXPORT_SYMBOL
 c_func

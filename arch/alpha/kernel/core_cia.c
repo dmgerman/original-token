@@ -1506,7 +1506,7 @@ id|PAGE_SIZE
 )paren
 )paren
 )paren
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 l_int|0

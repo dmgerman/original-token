@@ -359,7 +359,6 @@ r_char
 op_star
 )paren
 suffix:semicolon
-macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 91)
 r_extern
 id|__kernel_size_t
 id|strlen
@@ -370,13 +369,6 @@ r_char
 op_star
 )paren
 suffix:semicolon
-macro_line|#else /* !EGCS */
-multiline_comment|/* Ugly but it works around a bug in our original sparc64-linux-gcc.  */
-DECL|macro|strlen
-macro_line|#undef strlen
-DECL|macro|strlen
-mdefine_line|#define strlen(__arg0)&t;&t;&t;&t;&t;&bslash;&n;({&t;int __strlen_res = __strlen(__arg0) + 1;&t;&bslash;&n;&t;__strlen_res -= 1;&t;&t;&t;&t;&bslash;&n;&t;__strlen_res;&t;&t;&t;&t;&t;&bslash;&n;})
-macro_line|#endif /* !EGCS */
 DECL|macro|__HAVE_ARCH_STRNCMP
 mdefine_line|#define __HAVE_ARCH_STRNCMP
 r_extern

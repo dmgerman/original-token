@@ -1304,7 +1304,6 @@ c_func
 id|__strlen
 )paren
 suffix:semicolon
-macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91
 DECL|variable|strlen
 id|EXPORT_SYMBOL
 c_func
@@ -1312,7 +1311,6 @@ c_func
 id|strlen
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|variable|strnlen
 id|EXPORT_SYMBOL
 c_func

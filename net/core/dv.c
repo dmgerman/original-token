@@ -22,7 +22,7 @@ macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
-macro_line|#include &lt;net/divert.h&gt;
+macro_line|#include &lt;linux/divert.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
 DECL|variable|sysctl_divert_version
 r_const

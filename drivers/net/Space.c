@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/netlink.h&gt;
-macro_line|#include &lt;net/divert.h&gt;
+macro_line|#include &lt;linux/divert.h&gt;
 DECL|macro|NEXT_DEV
 mdefine_line|#define&t;NEXT_DEV&t;NULL
 multiline_comment|/* A unified ethernet device probe.  This is the easiest way to have every&n;   ethernet adaptor have the name &quot;eth[0123...]&quot;.&n;   */

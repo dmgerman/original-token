@@ -1,8 +1,6 @@
 macro_line|#ifndef _ASMARM_CURRENT_H
 DECL|macro|_ASMARM_CURRENT_H
 mdefine_line|#define _ASMARM_CURRENT_H
-multiline_comment|/* Old compilers seem to generate bad code if we allow `current&squot; to be&n;   non volatile.  */
-macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt; 90)
 r_static
 r_inline
 r_struct
@@ -20,7 +18,6 @@ id|__const__
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|function|get_current
 r_static
 r_inline

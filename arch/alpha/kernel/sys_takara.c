@@ -613,7 +613,7 @@ l_int|15
 (braket
 l_int|5
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 (brace
@@ -991,7 +991,7 @@ l_int|15
 (braket
 l_int|5
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 (brace

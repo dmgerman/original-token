@@ -676,6 +676,12 @@ comma
 id|ret
 )paren
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|hub-&gt;descriptor
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|1
@@ -927,6 +933,12 @@ comma
 id|ret
 )paren
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|hub-&gt;descriptor
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|1
@@ -1038,6 +1050,12 @@ c_func
 l_string|&quot;couldn&squot;t allocate interrupt urb&quot;
 )paren
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|hub-&gt;descriptor
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|1
@@ -1083,6 +1101,12 @@ c_func
 l_string|&quot;usb_submit_urb failed (%d)&quot;
 comma
 id|ret
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|hub-&gt;descriptor
 )paren
 suffix:semicolon
 r_return
@@ -1185,9 +1209,21 @@ op_ne
 l_int|1
 )paren
 )paren
+(brace
+id|err
+c_func
+(paren
+l_string|&quot;invalid subclass (%d) for USB hub device #%d&quot;
+comma
+id|interface-&gt;bInterfaceSubClass
+comma
+id|dev-&gt;devnum
+)paren
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
+)brace
 multiline_comment|/* Multiple endpoints? What kind of mutant ninja-hub is this? */
 r_if
 c_cond
@@ -1196,9 +1232,21 @@ id|interface-&gt;bNumEndpoints
 op_ne
 l_int|1
 )paren
+(brace
+id|err
+c_func
+(paren
+l_string|&quot;invalid bNumEndpoints (%d) for USB hub device #%d&quot;
+comma
+id|interface-&gt;bNumEndpoints
+comma
+id|dev-&gt;devnum
+)paren
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
+)brace
 id|endpoint
 op_assign
 op_amp
@@ -1222,7 +1270,9 @@ id|USB_DIR_IN
 id|err
 c_func
 (paren
-l_string|&quot;Device is hub class, but has output endpoint?&quot;
+l_string|&quot;Device #%d is hub class, but has output endpoint?&quot;
+comma
+id|dev-&gt;devnum
 )paren
 suffix:semicolon
 r_return
@@ -1236,16 +1286,18 @@ c_cond
 (paren
 id|endpoint-&gt;bmAttributes
 op_amp
-l_int|3
+id|USB_ENDPOINT_XFERTYPE_MASK
 )paren
 op_ne
-l_int|3
+id|USB_ENDPOINT_XFER_INT
 )paren
 (brace
 id|err
 c_func
 (paren
-l_string|&quot;Device is hub class, but has endpoint other than interrupt?&quot;
+l_string|&quot;Device #%d is hub class, but has endpoint other than interrupt?&quot;
+comma
+id|dev-&gt;devnum
 )paren
 suffix:semicolon
 r_return
@@ -1370,7 +1422,9 @@ suffix:semicolon
 id|err
 c_func
 (paren
-l_string|&quot;hub configuration failed&quot;
+l_string|&quot;hub configuration failed for device #%d&quot;
+comma
+id|dev-&gt;devnum
 )paren
 suffix:semicolon
 multiline_comment|/* free hub, but first clean up its list. */
@@ -3555,6 +3609,12 @@ c_func
 (paren
 op_amp
 id|hub_driver
+)paren
+suffix:semicolon
+id|err
+c_func
+(paren
+l_string|&quot;failed to start usb_hub_thread&quot;
 )paren
 suffix:semicolon
 r_return

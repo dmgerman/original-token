@@ -2,10 +2,8 @@ macro_line|#ifndef __ARCH_SPARC64_POSIX_TYPES_H
 DECL|macro|__ARCH_SPARC64_POSIX_TYPES_H
 mdefine_line|#define __ARCH_SPARC64_POSIX_TYPES_H
 multiline_comment|/*&n; * This file is generally used by user-level software, so you need to&n; * be a little careful about namespace pollution etc.  Also, we cannot&n; * assume GCC is being used.&n; */
-macro_line|#if (__GNUC__ &gt; 2) || (__GNUC_MINOR__ &gt;= 8)
 DECL|typedef|__kernel_size_t
 r_typedef
-r_int
 r_int
 r_int
 id|__kernel_size_t
@@ -13,24 +11,8 @@ suffix:semicolon
 DECL|typedef|__kernel_ssize_t
 r_typedef
 r_int
-r_int
 id|__kernel_ssize_t
 suffix:semicolon
-macro_line|#else
-DECL|typedef|__kernel_size_t
-r_typedef
-r_int
-r_int
-r_int
-id|__kernel_size_t
-suffix:semicolon
-DECL|typedef|__kernel_ssize_t
-r_typedef
-r_int
-r_int
-id|__kernel_ssize_t
-suffix:semicolon
-macro_line|#endif
 DECL|typedef|__kernel_ptrdiff_t
 r_typedef
 r_int

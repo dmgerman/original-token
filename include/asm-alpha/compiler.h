@@ -2,8 +2,7 @@ macro_line|#ifndef __ALPHA_COMPILER_H
 DECL|macro|__ALPHA_COMPILER_H
 mdefine_line|#define __ALPHA_COMPILER_H
 multiline_comment|/* &n; * Herein are macros we use when describing various patterns we want to GCC.&n; * In all cases we can get better schedules out of the compiler if we hide&n; * as little as possible inside inline assembly.  However, we want to be&n; * able to know what we&squot;ll get out before giving up inline assembly.  Thus&n; * these tests and macros.&n; */
-multiline_comment|/*&n; * EGCS (of varying versions) does a good job of using insxl and extxl.&n; */
-macro_line|#if 0 &amp;&amp; (__GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91)
+macro_line|#if 0
 mdefine_line|#define __kernel_insbl(val, shift) &bslash;&n;  (((unsigned long)(val) &amp; 0xfful) &lt;&lt; ((shift) * 8))
 mdefine_line|#define __kernel_inswl(val, shift) &bslash;&n;  (((unsigned long)(val) &amp; 0xfffful) &lt;&lt; ((shift) * 8))
 mdefine_line|#define __kernel_insql(val, shift) &bslash;&n;  ((unsigned long)(val) &lt;&lt; ((shift) * 8))

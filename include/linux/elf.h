@@ -293,6 +293,8 @@ DECL|macro|AT_PLATFORM
 mdefine_line|#define AT_PLATFORM 15  /* string identifying CPU for optimizations */
 DECL|macro|AT_HWCAP
 mdefine_line|#define AT_HWCAP  16    /* arch dependent hints at CPU capabilities */
+DECL|macro|AT_CLKTCK
+mdefine_line|#define AT_CLKTCK 17&t;/* frequency at which times() increments */
 DECL|struct|dynamic
 r_typedef
 r_struct

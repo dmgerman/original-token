@@ -173,12 +173,7 @@ id|addr
 suffix:semicolon
 )brace
 multiline_comment|/* alas, egcs sounds like it has a bug in this code that doesn&squot;t use the&n;   inline asm correctly, and can cause file corruption. Until I hear that&n;   it&squot;s fixed, I can live without the extra speed. I hope. */
-macro_line|#if !(__GNUC__ &gt;= 2 &amp;&amp; __GNUC_MINOR__ &gt;= 90)
 macro_line|#if 0
-macro_line|#  define __arch_swab16(x) ld_le16(&amp;x)
-macro_line|#  define __arch_swab32(x) ld_le32(&amp;x)
-macro_line|#else
-DECL|function|___arch__swab16
 r_static
 id|__inline__
 id|__const__
@@ -220,7 +215,6 @@ r_return
 id|result
 suffix:semicolon
 )brace
-DECL|function|___arch__swab32
 r_static
 id|__inline__
 id|__const__
@@ -264,12 +258,9 @@ r_return
 id|result
 suffix:semicolon
 )brace
-DECL|macro|__arch__swab32
 mdefine_line|#define __arch__swab32(x) ___arch__swab32(x)
-DECL|macro|__arch__swab16
 mdefine_line|#define __arch__swab16(x) ___arch__swab16(x)
 macro_line|#endif /* 0 */
-macro_line|#endif
 multiline_comment|/* The same, but returns converted value from the location pointer by addr. */
 DECL|macro|__arch__swab16p
 mdefine_line|#define __arch__swab16p(addr) ld_le16(addr)

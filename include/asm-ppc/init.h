@@ -2,7 +2,6 @@ macro_line|#ifndef _PPC_INIT_H
 DECL|macro|_PPC_INIT_H
 mdefine_line|#define _PPC_INIT_H
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 90 /* egcs */
 DECL|macro|__pmac
 mdefine_line|#define __pmac __attribute__ ((__section__ (&quot;.text.pmac&quot;)))
 DECL|macro|__pmacdata
@@ -34,31 +33,5 @@ DECL|macro|__openfirmwaredata
 mdefine_line|#define __openfirmwaredata __attribute__ ((__section__ (&quot;.data.openfirmware&quot;)))
 DECL|macro|__openfirmwarefunc
 mdefine_line|#define __openfirmwarefunc(__argopenfirmware) &bslash;&n;&t;__argopenfirmware __openfirmware; &bslash;&n;&t;__argopenfirmware
-macro_line|#else /* not egcs */
-DECL|macro|__pmac
-mdefine_line|#define __pmac
-DECL|macro|__pmacdata
-mdefine_line|#define __pmacdata
-DECL|macro|__pmacfunc
-mdefine_line|#define __pmacfunc(x) x
-DECL|macro|__prep
-mdefine_line|#define __prep
-DECL|macro|__prepdata
-mdefine_line|#define __prepdata
-DECL|macro|__prepfunc
-mdefine_line|#define __prepfunc(x) x
-DECL|macro|__apus
-mdefine_line|#define __apus
-DECL|macro|__apusdata
-mdefine_line|#define __apusdata
-DECL|macro|__apusfunc
-mdefine_line|#define __apusfunc(x) x
-DECL|macro|__openfirmware
-mdefine_line|#define __openfirmware
-DECL|macro|__openfirmwaredata
-mdefine_line|#define __openfirmwaredata
-DECL|macro|__openfirmwarefunc
-mdefine_line|#define __openfirmwarefunc(x) x
-macro_line|#endif /* egcs */
 macro_line|#endif /* _PPC_INIT_H */
 eof

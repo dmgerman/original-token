@@ -359,7 +359,7 @@ r_int
 id|size
 (braket
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 l_int|0x40000000UL

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP forwarding functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_forward.c,v 1.46 2000/01/09 02:19:37 davem Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip_input.c for &n; *&t;&t;&t;&t;&t;history.&n; *&t;&t;Dave Gregorich&t;:&t;NULL ip_rt_put fix for multicast &n; *&t;&t;&t;&t;&t;routing.&n; *&t;&t;Jos Vos&t;&t;:&t;Add call_out_firewall before sending,&n; *&t;&t;&t;&t;&t;use output device for accounting.&n; *&t;&t;Jos Vos&t;&t;:&t;Call forward firewall after routing&n; *&t;&t;&t;&t;&t;(always use output device).&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP forwarding functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_forward.c,v 1.47 2000/10/24 22:54:26 davem Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip_input.c for &n; *&t;&t;&t;&t;&t;history.&n; *&t;&t;Dave Gregorich&t;:&t;NULL ip_rt_put fix for multicast &n; *&t;&t;&t;&t;&t;routing.&n; *&t;&t;Jos Vos&t;&t;:&t;Add call_out_firewall before sending,&n; *&t;&t;&t;&t;&t;use output device for accounting.&n; *&t;&t;Jos Vos&t;&t;:&t;Call forward firewall after routing&n; *&t;&t;&t;&t;&t;(always use output device).&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -158,14 +158,14 @@ id|old_dst
 suffix:semicolon
 )brace
 macro_line|#endif
+r_return
+(paren
 id|ip_send
 c_func
 (paren
 id|skb
 )paren
-suffix:semicolon
-r_return
-l_int|0
+)paren
 suffix:semicolon
 )brace
 id|ip_forward_options
@@ -174,14 +174,14 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+r_return
+(paren
 id|ip_send
 c_func
 (paren
 id|skb
 )paren
-suffix:semicolon
-r_return
-l_int|0
+)paren
 suffix:semicolon
 )brace
 DECL|function|ip_forward
@@ -251,7 +251,7 @@ id|skb
 )paren
 )paren
 r_return
-l_int|0
+id|NET_RX_SUCCESS
 suffix:semicolon
 r_if
 c_cond
@@ -352,8 +352,7 @@ op_eq
 l_int|NULL
 )paren
 r_return
-op_minus
-l_int|1
+id|NET_RX_DROP
 suffix:semicolon
 id|iph
 op_assign
@@ -426,8 +425,7 @@ id|skb
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+id|NET_RX_BAD
 suffix:semicolon
 )brace
 )brace
@@ -518,8 +516,7 @@ id|skb
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+id|NET_RX_DROP
 suffix:semicolon
 )brace
 eof

@@ -24,7 +24,7 @@ macro_line|#include &lt;net/scm.h&gt;
 macro_line|#include &lt;linux/if_bridge.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#ifdef CONFIG_NET_DIVERT
-macro_line|#include &lt;net/divert.h&gt;
+macro_line|#include &lt;linux/divert.h&gt;
 macro_line|#endif /* CONFIG_NET_DIVERT */
 macro_line|#ifdef CONFIG_NET
 r_extern

@@ -56,10 +56,8 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91
 DECL|macro|memcpy
 mdefine_line|#define memcpy __builtin_memcpy
-macro_line|#endif
 DECL|macro|__HAVE_ARCH_MEMSET
 mdefine_line|#define __HAVE_ARCH_MEMSET
 r_extern
@@ -105,13 +103,8 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91
 DECL|macro|memset
 mdefine_line|#define memset(s, c, n)&t;&t;&t;&t;&t;&t;&t;    &bslash;&n;(__builtin_constant_p(c)&t;&t;&t;&t;&t;&t;    &bslash;&n; ? (__builtin_constant_p(n) &amp;&amp; (c) == 0&t;&t;&t;&t;&t;    &bslash;&n;    ? __builtin_memset((s),0,(n)) &t;&t;&t;&t;&t;    &bslash;&n;    : __constant_c_memset((s),0x0101010101010101UL*(unsigned char)(c),(n))) &bslash;&n; : __memset((s),(c),(n)))
-macro_line|#else
-DECL|macro|memset
-mdefine_line|#define memset(s, c, n)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;(__builtin_constant_p(c)&t;&t;&t;&t;&t;&t;&bslash;&n; ? __constant_c_memset((s),0x0101010101010101UL*(unsigned char)(c),(n)) &bslash;&n; : __memset((s),(c),(n)))
-macro_line|#endif
 DECL|macro|__HAVE_ARCH_STRCPY
 mdefine_line|#define __HAVE_ARCH_STRCPY
 r_extern

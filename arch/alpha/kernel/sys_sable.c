@@ -858,7 +858,7 @@ l_int|9
 (braket
 l_int|5
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */

@@ -2821,7 +2821,7 @@ op_star
 id|systype_vecs
 (braket
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 l_int|NULL
@@ -2953,7 +2953,7 @@ op_star
 id|unofficial_vecs
 (braket
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 l_int|NULL
@@ -2971,7 +2971,7 @@ op_star
 id|api_vecs
 (braket
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 l_int|NULL
@@ -2989,7 +2989,7 @@ op_star
 id|alcor_vecs
 (braket
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 op_amp
@@ -3009,7 +3009,7 @@ op_star
 id|eb164_vecs
 (braket
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 op_amp
@@ -3035,7 +3035,7 @@ op_star
 id|eb64p_vecs
 (braket
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 op_amp
@@ -3056,7 +3056,7 @@ op_star
 id|eb66_vecs
 (braket
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 op_amp
@@ -3073,7 +3073,7 @@ op_star
 id|titan_vecs
 (braket
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 l_int|NULL
@@ -3091,7 +3091,7 @@ op_star
 id|tsunami_vecs
 (braket
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 l_int|NULL
@@ -3543,7 +3543,7 @@ op_star
 id|all_vecs
 (braket
 )braket
-id|__initlocaldata
+id|__initdata
 op_assign
 (brace
 op_amp

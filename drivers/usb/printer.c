@@ -539,6 +539,11 @@ r_goto
 id|out
 suffix:semicolon
 )brace
+macro_line|#else
+id|retval
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#endif
 id|usblp-&gt;used
 op_assign
@@ -1456,6 +1461,10 @@ op_eq
 id|usblp-&gt;readurb.actual_length
 )paren
 (brace
+id|usblp-&gt;readcount
+op_assign
+l_int|0
+suffix:semicolon
 id|usblp-&gt;readurb.dev
 op_assign
 id|usblp-&gt;dev

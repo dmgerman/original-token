@@ -23,7 +23,7 @@ macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/if_bridge.h&gt;
-macro_line|#include &lt;net/divert.h&gt;
+macro_line|#include &lt;linux/divert.h&gt;
 macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#include &lt;net/profile.h&gt;
@@ -3195,7 +3195,7 @@ suffix:semicolon
 multiline_comment|/* Deliver skb to an old protocol, which is not threaded well&n;   or which do not understand shared skbs.&n; */
 DECL|function|deliver_to_old_ones
 r_static
-r_void
+r_int
 id|deliver_to_old_ones
 c_func
 (paren
@@ -3218,6 +3218,11 @@ id|spinlock_t
 id|net_bh_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
+r_int
+id|ret
+op_assign
+id|NET_RX_DROP
 suffix:semicolon
 r_if
 c_cond
@@ -3244,6 +3249,7 @@ op_eq
 l_int|NULL
 )paren
 r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/* The assumption (correct one) is that old protocols&n;&t;   did not depened on BHs different of NET_BH and TIMER_BH.&n;&t; */
@@ -3264,6 +3270,8 @@ op_plus
 id|TIMER_BH
 )paren
 suffix:semicolon
+id|ret
+op_assign
 id|pt
 op_member_access_from_pointer
 id|func
@@ -3290,6 +3298,9 @@ c_func
 op_amp
 id|net_bh_lock
 )paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/* Reparent skb to master device. This function is called&n; * only from net_rx_action under BR_NETPROTO_LOCK. It is misuse&n; * of BR_NETPROTO_LOCK, but it is OK for now.&n; */
@@ -3610,7 +3621,7 @@ suffix:semicolon
 macro_line|#endif
 DECL|function|handle_bridge
 r_static
-r_void
+r_int
 id|__inline__
 id|handle_bridge
 c_func
@@ -3626,6 +3637,11 @@ op_star
 id|pt_prev
 )paren
 (brace
+r_int
+id|ret
+op_assign
+id|NET_RX_DROP
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3638,6 +3654,8 @@ c_cond
 op_logical_neg
 id|pt_prev-&gt;data
 )paren
+id|ret
+op_assign
 id|deliver_to_old_ones
 c_func
 (paren
@@ -3657,6 +3675,8 @@ op_amp
 id|skb-&gt;users
 )paren
 suffix:semicolon
+id|ret
+op_assign
 id|pt_prev
 op_member_access_from_pointer
 id|func
@@ -3676,6 +3696,9 @@ c_func
 (paren
 id|skb
 )paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_NET_DIVERT
