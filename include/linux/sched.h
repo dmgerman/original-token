@@ -44,6 +44,8 @@ DECL|macro|CLONE_VFORK
 mdefine_line|#define CLONE_VFORK&t;0x00004000&t;/* set if the parent wants the child to wake it up on mm_release */
 DECL|macro|CLONE_PARENT
 mdefine_line|#define CLONE_PARENT&t;0x00008000&t;/* set if we want to have the same parent as the cloner */
+DECL|macro|CLONE_THREAD
+mdefine_line|#define CLONE_THREAD&t;0x00010000&t;/* set if we want to clone the &quot;thread group&quot; */
 multiline_comment|/*&n; * These are the constant used to fake the fixed-point load-average&n; * counting. Some notes:&n; *  - 11 bit fractions expand to 22 bits by the multiplies: this gives&n; *    a load-average precision of 10 bits integer + 11 bits fractional&n; *  - if you want to count load-averages more often, you need more&n; *    precision, or rounding will get you. With 2-second counting freq,&n; *    the EXP_n values would be 1981, 2034 and 2043 if still using only&n; *    11 bit fractions.&n; */
 r_extern
 r_int
@@ -682,6 +684,10 @@ DECL|member|session
 id|pid_t
 id|session
 suffix:semicolon
+DECL|member|tgid
+id|pid_t
+id|tgid
+suffix:semicolon
 multiline_comment|/* boolean value for session group leader */
 DECL|member|leader
 r_int
@@ -709,6 +715,11 @@ id|p_ysptr
 comma
 op_star
 id|p_osptr
+suffix:semicolon
+DECL|member|thread_group
+r_struct
+id|list_head
+id|thread_group
 suffix:semicolon
 multiline_comment|/* PID hash table linkage. */
 DECL|member|pidhash_next
@@ -1061,7 +1072,7 @@ DECL|macro|DEF_NICE
 mdefine_line|#define DEF_NICE&t;(0)
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK(tsk)&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    state:&t;&t;0,&t;&t;&t;&t;&t;&t;&bslash;&n;    flags:&t;&t;0,&t;&t;&t;&t;&t;&t;&bslash;&n;    sigpending:&t;&t;0,&t;&t;&t;&t;&t;&t;&bslash;&n;    addr_limit:&t;&t;KERNEL_DS,&t;&t;&t;&t;&t;&bslash;&n;    exec_domain:&t;&amp;default_exec_domain,&t;&t;&t;&t;&bslash;&n;    lock_depth:&t;&t;-1,&t;&t;&t;&t;&t;&t;&bslash;&n;    counter:&t;&t;DEF_COUNTER,&t;&t;&t;&t;&t;&bslash;&n;    nice:&t;&t;DEF_NICE,&t;&t;&t;&t;&t;&bslash;&n;    policy:&t;&t;SCHED_OTHER,&t;&t;&t;&t;&t;&bslash;&n;    mm:&t;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;    active_mm:&t;&t;&amp;init_mm,&t;&t;&t;&t;&t;&bslash;&n;    cpus_allowed:&t;-1,&t;&t;&t;&t;&t;&t;&bslash;&n;    run_list:&t;&t;LIST_HEAD_INIT(tsk.run_list),&t;&t;&t;&bslash;&n;    next_task:&t;&t;&amp;tsk,&t;&t;&t;&t;&t;&t;&bslash;&n;    prev_task:&t;&t;&amp;tsk,&t;&t;&t;&t;&t;&t;&bslash;&n;    p_opptr:&t;&t;&amp;tsk,&t;&t;&t;&t;&t;&t;&bslash;&n;    p_pptr:&t;&t;&amp;tsk,&t;&t;&t;&t;&t;&t;&bslash;&n;    wait_chldexit:&t;__WAIT_QUEUE_HEAD_INITIALIZER(tsk.wait_chldexit),&bslash;&n;    real_timer:&t;&t;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;function:&t;&t;it_real_fn&t;&t;&t;&t;&bslash;&n;    },&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    cap_effective:&t;CAP_INIT_EFF_SET,&t;&t;&t;&t;&bslash;&n;    cap_inheritable:&t;CAP_INIT_INH_SET,&t;&t;&t;&t;&bslash;&n;    cap_permitted:&t;CAP_FULL_SET,&t;&t;&t;&t;&t;&bslash;&n;    keep_capabilities:&t;0,&t;&t;&t;&t;&t;&t;&bslash;&n;    rlim:&t;&t;INIT_RLIMITS,&t;&t;&t;&t;&t;&bslash;&n;    user:&t;&t;INIT_USER,&t;&t;&t;&t;&t;&bslash;&n;    comm:&t;&t;&quot;swapper&quot;,&t;&t;&t;&t;&t;&bslash;&n;    thread:&t;&t;INIT_THREAD,&t;&t;&t;&t;&t;&bslash;&n;    fs:&t;&t;&t;&amp;init_fs,&t;&t;&t;&t;&t;&bslash;&n;    files:&t;&t;&amp;init_files,&t;&t;&t;&t;&t;&bslash;&n;    sigmask_lock:&t;SPIN_LOCK_UNLOCKED,&t;&t;&t;&t;&bslash;&n;    sig:&t;&t;&amp;init_signals,&t;&t;&t;&t;&t;&bslash;&n;    signal:&t;&t;{{0}},&t;&t;&t;&t;&t;&t;&bslash;&n;    blocked:&t;&t;{{0}},&t;&t;&t;&t;&t;&t;&bslash;&n;    sigqueue:&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;    sigqueue_tail:&t;&amp;tsk.sigqueue,&t;&t;&t;&t;&t;&bslash;&n;    alloc_lock:&t;&t;SPIN_LOCK_UNLOCKED&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define INIT_TASK(tsk)&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    state:&t;&t;0,&t;&t;&t;&t;&t;&t;&bslash;&n;    flags:&t;&t;0,&t;&t;&t;&t;&t;&t;&bslash;&n;    sigpending:&t;&t;0,&t;&t;&t;&t;&t;&t;&bslash;&n;    addr_limit:&t;&t;KERNEL_DS,&t;&t;&t;&t;&t;&bslash;&n;    exec_domain:&t;&amp;default_exec_domain,&t;&t;&t;&t;&bslash;&n;    lock_depth:&t;&t;-1,&t;&t;&t;&t;&t;&t;&bslash;&n;    counter:&t;&t;DEF_COUNTER,&t;&t;&t;&t;&t;&bslash;&n;    nice:&t;&t;DEF_NICE,&t;&t;&t;&t;&t;&bslash;&n;    policy:&t;&t;SCHED_OTHER,&t;&t;&t;&t;&t;&bslash;&n;    mm:&t;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;    active_mm:&t;&t;&amp;init_mm,&t;&t;&t;&t;&t;&bslash;&n;    cpus_allowed:&t;-1,&t;&t;&t;&t;&t;&t;&bslash;&n;    run_list:&t;&t;LIST_HEAD_INIT(tsk.run_list),&t;&t;&t;&bslash;&n;    next_task:&t;&t;&amp;tsk,&t;&t;&t;&t;&t;&t;&bslash;&n;    prev_task:&t;&t;&amp;tsk,&t;&t;&t;&t;&t;&t;&bslash;&n;    p_opptr:&t;&t;&amp;tsk,&t;&t;&t;&t;&t;&t;&bslash;&n;    p_pptr:&t;&t;&amp;tsk,&t;&t;&t;&t;&t;&t;&bslash;&n;    thread_group:&t;LIST_HEAD_INIT(tsk.thread_group),&t;&t;&bslash;&n;    wait_chldexit:&t;__WAIT_QUEUE_HEAD_INITIALIZER(tsk.wait_chldexit),&bslash;&n;    real_timer:&t;&t;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;function:&t;&t;it_real_fn&t;&t;&t;&t;&bslash;&n;    },&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    cap_effective:&t;CAP_INIT_EFF_SET,&t;&t;&t;&t;&bslash;&n;    cap_inheritable:&t;CAP_INIT_INH_SET,&t;&t;&t;&t;&bslash;&n;    cap_permitted:&t;CAP_FULL_SET,&t;&t;&t;&t;&t;&bslash;&n;    keep_capabilities:&t;0,&t;&t;&t;&t;&t;&t;&bslash;&n;    rlim:&t;&t;INIT_RLIMITS,&t;&t;&t;&t;&t;&bslash;&n;    user:&t;&t;INIT_USER,&t;&t;&t;&t;&t;&bslash;&n;    comm:&t;&t;&quot;swapper&quot;,&t;&t;&t;&t;&t;&bslash;&n;    thread:&t;&t;INIT_THREAD,&t;&t;&t;&t;&t;&bslash;&n;    fs:&t;&t;&t;&amp;init_fs,&t;&t;&t;&t;&t;&bslash;&n;    files:&t;&t;&amp;init_files,&t;&t;&t;&t;&t;&bslash;&n;    sigmask_lock:&t;SPIN_LOCK_UNLOCKED,&t;&t;&t;&t;&bslash;&n;    sig:&t;&t;&amp;init_signals,&t;&t;&t;&t;&t;&bslash;&n;    signal:&t;&t;{{0}},&t;&t;&t;&t;&t;&t;&bslash;&n;    blocked:&t;&t;{{0}},&t;&t;&t;&t;&t;&t;&bslash;&n;    sigqueue:&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;    sigqueue_tail:&t;&amp;tsk.sigqueue,&t;&t;&t;&t;&t;&bslash;&n;    alloc_lock:&t;&t;SPIN_LOCK_UNLOCKED&t;&t;&t;&t;&bslash;&n;}
 macro_line|#ifndef INIT_TASK_SIZE
 DECL|macro|INIT_TASK_SIZE
 macro_line|# define INIT_TASK_SIZE&t;2048*sizeof(long)
@@ -1635,14 +1646,12 @@ id|pid_t
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|kill_something_info
+r_void
+id|notify_parent
 c_func
 (paren
-r_int
-comma
 r_struct
-id|siginfo
+id|task_struct
 op_star
 comma
 r_int
@@ -1650,7 +1659,7 @@ r_int
 suffix:semicolon
 r_extern
 r_void
-id|notify_parent
+id|do_notify_parent
 c_func
 (paren
 r_struct
@@ -2539,6 +2548,8 @@ DECL|macro|SET_LINKS
 mdefine_line|#define SET_LINKS(p) do { &bslash;&n;&t;(p)-&gt;next_task = &amp;init_task; &bslash;&n;&t;(p)-&gt;prev_task = init_task.prev_task; &bslash;&n;&t;init_task.prev_task-&gt;next_task = (p); &bslash;&n;&t;init_task.prev_task = (p); &bslash;&n;&t;(p)-&gt;p_ysptr = NULL; &bslash;&n;&t;if (((p)-&gt;p_osptr = (p)-&gt;p_pptr-&gt;p_cptr) != NULL) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = p; &bslash;&n;&t;(p)-&gt;p_pptr-&gt;p_cptr = p; &bslash;&n;&t;} while (0)
 DECL|macro|for_each_task
 mdefine_line|#define for_each_task(p) &bslash;&n;&t;for (p = &amp;init_task ; (p = p-&gt;next_task) != &amp;init_task ; )
+DECL|macro|next_thread
+mdefine_line|#define next_thread(p) &bslash;&n;&t;list_entry((p)-&gt;thread_group.next, struct task_struct, thread_group)
 DECL|function|del_from_runqueue
 r_static
 r_inline
@@ -2635,6 +2646,13 @@ id|REMOVE_LINKS
 c_func
 (paren
 id|p
+)paren
+suffix:semicolon
+id|list_del
+c_func
+(paren
+op_amp
+id|p-&gt;thread_group
 )paren
 suffix:semicolon
 id|write_unlock_irq

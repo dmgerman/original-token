@@ -1201,10 +1201,7 @@ id|file_operations
 id|soundcore_fops
 op_assign
 (brace
-id|owner
-suffix:colon
-id|THIS_MODULE
-comma
+multiline_comment|/*&t;owner:&t;THIS_MODULE,  * this is a bug: if we have an owner, the kernel &n;                               generates a MOD_INC_USE_COUNT - thus&n;&t;&t;&t;        the module cannot be unloaded since the device&n;&t;&t;&t;        is never released here ! - solution: owner&n; &t;&t;&t;&t;has to be NULL. Patch by Peter Wahl &lt;Peter.Wahl@epost.de&gt; */
 id|open
 suffix:colon
 id|soundcore_open

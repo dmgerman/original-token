@@ -2595,6 +2595,12 @@ id|skb-&gt;nfct
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef CONFIG_NETFILTER_DEBUG
+id|skb-&gt;nf_debug
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 id|ipgre_ecn_decapsulate
 c_func
@@ -3743,6 +3749,12 @@ id|skb-&gt;nfct
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef CONFIG_NETFILTER_DEBUG
+id|skb-&gt;nf_debug
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 id|IPTUNNEL_XMIT
 c_func

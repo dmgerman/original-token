@@ -505,6 +505,10 @@ r_int
 id|part
 op_assign
 (paren
+r_char
+op_star
+)paren
+(paren
 id|page_address
 c_func
 (paren
@@ -1136,6 +1140,10 @@ id|p-&gt;name
 comma
 id|entry-&gt;name
 comma
+(paren
+r_char
+op_star
+)paren
 (paren
 id|page_address
 c_func

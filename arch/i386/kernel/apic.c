@@ -2137,27 +2137,10 @@ id|cpu
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_SMP
-multiline_comment|/*&n;&t;&t; * update_process_times() expects us to have done irq_enter().&n;&t;&t; * Besides, if we don&squot;t timer interrupts ignore the global&n;&t;&t; * interrupt lock, which is the WrongThing (tm) to do.&n;&t;&t; */
-id|irq_enter
-c_func
-(paren
-id|cpu
-comma
-l_int|0
-)paren
-suffix:semicolon
 id|update_process_times
 c_func
 (paren
 id|user
-)paren
-suffix:semicolon
-id|irq_exit
-c_func
-(paren
-id|cpu
-comma
-l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2189,13 +2172,18 @@ op_star
 id|regs
 )paren
 (brace
-multiline_comment|/*&n;&t; * the NMI deadlock-detector uses this.&n;&t; */
-id|apic_timer_irqs
-(braket
+r_int
+id|cpu
+op_assign
 id|smp_processor_id
 c_func
 (paren
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * the NMI deadlock-detector uses this.&n;&t; */
+id|apic_timer_irqs
+(braket
+id|cpu
 )braket
 op_increment
 suffix:semicolon
@@ -2205,10 +2193,27 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * update_process_times() expects us to have done irq_enter().&n;&t; * Besides, if we don&squot;t timer interrupts ignore the global&n;&t; * interrupt lock, which is the WrongThing (tm) to do.&n;&t; */
+id|irq_enter
+c_func
+(paren
+id|cpu
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|smp_local_timer_interrupt
 c_func
 (paren
 id|regs
+)paren
+suffix:semicolon
+id|irq_exit
+c_func
+(paren
+id|cpu
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: esp.c,v 1.94 2000/03/30 02:09:10 davem Exp $&n; * esp.c:  EnhancedScsiProcessor Sun SCSI driver code.&n; *&n; * Copyright (C) 1995, 1998 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: esp.c,v 1.95 2000/08/23 22:32:37 davem Exp $&n; * esp.c:  EnhancedScsiProcessor Sun SCSI driver code.&n; *&n; * Copyright (C) 1995, 1998 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/* TODO:&n; *&n; * 1) Maybe disable parity checking in config register one for SCSI1&n; *    targets.  (Gilmore says parity error on the SBus can lock up&n; *    old sun4c&squot;s)&n; * 2) Add support for DMA2 pipelining.&n; * 3) Add tagged queueing.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -17,13 +17,15 @@ macro_line|#include &quot;esp.h&quot;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/machines.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#ifndef __sparc_v9__
+macro_line|#include &lt;asm/machines.h&gt;
 macro_line|#include &lt;asm/idprom.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
 DECL|macro|DEBUG_ESP
 mdefine_line|#define DEBUG_ESP
@@ -6452,6 +6454,7 @@ id|cdrom_hwbug_wkaround
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifndef __sparc_v9__
 multiline_comment|/* Never allow disconnects or synchronous transfers on&n;&t;&t; * SparcStation1 and SparcStation1+.  Allowing those&n;&t;&t; * to be enabled seems to lockup the machine completely.&n;&t;&t; */
 r_if
 c_cond
@@ -6524,6 +6527,7 @@ r_goto
 id|do_sync_known
 suffix:semicolon
 )brace
+macro_line|#endif /* !(__sparc_v9__) */
 multiline_comment|/* We&squot;ve talked to this guy before,&n;&t;&t; * but never negotiated.  Let&squot;s try,&n;&t;&t; * need to attempt WIDE first, before&n;&t;&t; * sync nego, as per SCSI 2 standard.&n;&t;&t; */
 r_if
 c_cond

@@ -2969,7 +2969,7 @@ l_int|NULL
 id|i
 op_assign
 op_minus
-id|EINVAL
+id|EAFNOSUPPORT
 suffix:semicolon
 r_goto
 id|out
@@ -6564,11 +6564,6 @@ c_func
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Initialize the protocols module. &n;&t; */
-id|proto_init
-c_func
-(paren
-)paren
-suffix:semicolon
 id|register_filesystem
 c_func
 (paren
@@ -6583,6 +6578,11 @@ c_func
 (paren
 op_amp
 id|sock_fs_type
+)paren
+suffix:semicolon
+id|proto_init
+c_func
+(paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;The netlink device handler may be needed early.&n;&t; */

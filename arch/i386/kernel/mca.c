@@ -1665,7 +1665,7 @@ id|reg
 )paren
 )paren
 suffix:semicolon
-id|outp_b
+id|outb_p
 c_func
 (paren
 l_int|0xff

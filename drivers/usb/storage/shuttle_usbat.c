@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for SCM Microsystems USB-ATAPI cable&n; *&n; * $Id: shuttle_usbat.c,v 1.2 2000/08/03 00:03:39 groovyjava Exp $&n; *&n; * SCM driver v0.2:&n; *&n; * Removed any reference to maxlen for bulk transfers.&n; * Changed scm_bulk_transport to allow for transfers without commands.&n; * Changed hp8200e transport to use the request_bufflen field in the&n; *   SCSI command for the length of the transfer, rather than calculating&n; *   it ourselves based on the command.&n; *&n; * SCM driver v0.1:&n; *&n; * First release - hp8200e.&n; *&n; * Current development and maintainance by:&n; *   (c) 2000 Robert Baruch (autophile@dol.net)&n; *&n; * Many originally ATAPI devices were slightly modified to meet the USB&n; * market by using some kind of translation from ATAPI to USB on the host,&n; * and the peripheral would translate from USB back to ATAPI.&n; *&n; * SCM Microsystems (www.scmmicro.com) makes a device, sold to OEM&squot;s only, &n; * which does the USB-to-ATAPI conversion.  By obtaining the data sheet on&n; * their device under nondisclosure agreement, I have been able to write&n; * this driver for Linux.&n; *&n; * The chip used in the device can also be used for EPP and ISA translation&n; * as well. This driver is only guaranteed to work with the ATAPI&n; * translation.&n; *&n; * The only peripherals that I know of (as of 14 Jul 2000) that uses this&n; * device is the Hewlett-Packard 8200e CD-Writer Plus.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/* Driver for SCM Microsystems USB-ATAPI cable&n; *&n; * $Id: shuttle_usbat.c,v 1.4 2000/08/25 00:13:51 mdharm Exp $&n; *&n; * SCM driver v0.2:&n; *&n; * Removed any reference to maxlen for bulk transfers.&n; * Changed scm_bulk_transport to allow for transfers without commands.&n; * Changed hp8200e transport to use the request_bufflen field in the&n; *   SCSI command for the length of the transfer, rather than calculating&n; *   it ourselves based on the command.&n; *&n; * SCM driver v0.1:&n; *&n; * First release - hp8200e.&n; *&n; * Current development and maintenance by:&n; *   (c) 2000 Robert Baruch (autophile@dol.net)&n; *&n; * Many originally ATAPI devices were slightly modified to meet the USB&n; * market by using some kind of translation from ATAPI to USB on the host,&n; * and the peripheral would translate from USB back to ATAPI.&n; *&n; * SCM Microsystems (www.scmmicro.com) makes a device, sold to OEM&squot;s only, &n; * which does the USB-to-ATAPI conversion.  By obtaining the data sheet on&n; * their device under nondisclosure agreement, I have been able to write&n; * this driver for Linux.&n; *&n; * The chip used in the device can also be used for EPP and ISA translation&n; * as well. This driver is only guaranteed to work with the ATAPI&n; * translation.&n; *&n; * The only peripherals that I know of (as of 14 Jul 2000) that uses this&n; * device is the Hewlett-Packard 8200e CD-Writer Plus.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#include &quot;transport.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;usb.h&quot;
@@ -2499,7 +2499,6 @@ id|result
 suffix:semicolon
 )brace
 DECL|function|init_8200e
-r_static
 r_int
 id|init_8200e
 c_func
@@ -3068,32 +3067,7 @@ l_string|&quot;XDXXXXXXXXXXXXXX&quot;
 l_string|&quot;XXW00HXXXXXXXXXX&quot;
 suffix:semicolon
 multiline_comment|/* E0-FF */
-r_if
-c_cond
-(paren
-id|us-&gt;flags
-op_amp
-id|US_FL_NEED_INIT
-)paren
-(brace
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;8200e: initializing&bslash;n&quot;
-)paren
-suffix:semicolon
-id|init_8200e
-c_func
-(paren
-id|us
-)paren
-suffix:semicolon
-id|us-&gt;flags
-op_and_assign
-op_complement
-id|US_FL_NEED_INIT
-suffix:semicolon
-)brace
+multiline_comment|/*&t;if (us-&gt;flags &amp; US_FL_NEED_INIT) {&n;&t;&t;US_DEBUGP(&quot;8200e: initializing&bslash;n&quot;);&n;&t;&t;init_8200e(us);&n;&t;&t;us-&gt;flags &amp;= ~US_FL_NEED_INIT;&n;&t;} */
 id|len
 op_assign
 id|srb-&gt;request_bufflen

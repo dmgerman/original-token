@@ -2783,7 +2783,7 @@ r_void
 (brace
 multiline_comment|/* This is SMP safe - current-&gt;pid doesn&squot;t change */
 r_return
-id|current-&gt;pid
+id|current-&gt;tgid
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is not strictly SMP safe: p_opptr could change&n; * from under us. However, rather than getting any lock&n; * we can use an optimistic algorithm: get the parent&n; * pid, and go back and check that the parent is still&n; * the same. If it has changed (which is extremely unlikely&n; * indeed), we just try again..&n; *&n; * NOTE! This depends on the fact that even if we _do_&n; * get an old value of &quot;parent&quot;, we can happily dereference&n; * the pointer: we just can&squot;t necessarily trust the result&n; * until we know that the parent pointer is valid.&n; *&n; * The &quot;mb()&quot; macro is a memory barrier - a synchronizing&n; * event. It also makes sure that gcc doesn&squot;t optimize&n; * away the necessary memory references.. The barrier doesn&squot;t&n; * have to have all that strong semantics: on x86 we don&squot;t&n; * really require a synchronizing instruction, for example.&n; * The barrier is more important for code generation than&n; * for any real memory ordering semantics (even if there is&n; * a small window for a race, using the old pointer is&n; * harmless for a while).&n; */

@@ -5,10 +5,12 @@ DECL|macro|WNOHANG
 mdefine_line|#define WNOHANG&t;&t;0x00000001
 DECL|macro|WUNTRACED
 mdefine_line|#define WUNTRACED&t;0x00000002
+DECL|macro|__WNOTHREAD
+mdefine_line|#define __WNOTHREAD&t;0x20000000&t;/* Don&squot;t wait on children of other threads in this group */
 DECL|macro|__WALL
-mdefine_line|#define __WALL&t;&t;0x40000000
+mdefine_line|#define __WALL&t;&t;0x40000000&t;/* Wait on all children, regardless of type */
 DECL|macro|__WCLONE
-mdefine_line|#define __WCLONE&t;0x80000000
+mdefine_line|#define __WCLONE&t;0x80000000&t;/* Wait only on non-SIGCHLD children */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
@@ -456,7 +458,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|list_add
+id|list_add_tail
 c_func
 (paren
 op_amp
@@ -464,7 +466,8 @@ r_new
 op_member_access_from_pointer
 id|task_list
 comma
-id|head-&gt;task_list.prev
+op_amp
+id|head-&gt;task_list
 )paren
 suffix:semicolon
 )brace

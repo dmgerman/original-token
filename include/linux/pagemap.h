@@ -98,8 +98,6 @@ l_int|1
 suffix:semicolon
 DECL|macro|i
 macro_line|#undef i
-DECL|macro|o
-macro_line|#undef o
 DECL|macro|s
 macro_line|#undef s
 )brace

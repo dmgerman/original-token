@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/highuid.h&gt;
+macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &quot;ncplib_kernel.h&quot;
 multiline_comment|/* maximum limit for ncp_objectname_ioctl */
@@ -15,6 +16,9 @@ mdefine_line|#define NCP_OBJECT_NAME_MAX_LEN&t;4096
 multiline_comment|/* maximum limit for ncp_privatedata_ioctl */
 DECL|macro|NCP_PRIVATE_DATA_MAX_LEN
 mdefine_line|#define NCP_PRIVATE_DATA_MAX_LEN 8192
+multiline_comment|/* maximum negotiable packet size */
+DECL|macro|NCP_PACKET_SIZE_INTERNAL
+mdefine_line|#define NCP_PACKET_SIZE_INTERNAL 65536
 DECL|function|ncp_ioctl
 r_int
 id|ncp_ioctl
@@ -152,12 +156,10 @@ suffix:semicolon
 )brace
 id|bouncebuffer
 op_assign
-id|kmalloc
+id|vmalloc
 c_func
 (paren
-id|NCP_PACKET_SIZE
-comma
-id|GFP_NFS
+id|NCP_PACKET_SIZE_INTERNAL
 )paren
 suffix:semicolon
 r_if
@@ -184,7 +186,7 @@ id|request.size
 )paren
 )paren
 (brace
-id|kfree
+id|vfree
 c_func
 (paren
 id|bouncebuffer
@@ -231,7 +233,7 @@ id|request.function
 comma
 id|bouncebuffer
 comma
-id|NCP_PACKET_SIZE
+id|NCP_PACKET_SIZE_INTERNAL
 )paren
 suffix:semicolon
 r_if
@@ -290,7 +292,7 @@ op_assign
 op_minus
 id|EFAULT
 suffix:semicolon
-id|kfree
+id|vfree
 c_func
 (paren
 id|bouncebuffer

@@ -1635,7 +1635,7 @@ suffix:semicolon
 id|strncpy
 c_func
 (paren
-id|mnt-&gt;codepage.local_name
+id|mnt-&gt;codepage.remote_name
 comma
 id|CONFIG_SMB_NLS_REMOTE
 comma

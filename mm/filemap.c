@@ -3057,7 +3057,7 @@ id|raend
 op_logical_or
 id|index
 op_plus
-id|filp-&gt;f_ralen
+id|filp-&gt;f_rawin
 OL
 id|raend
 )paren
@@ -3629,6 +3629,18 @@ id|page
 )paren
 r_goto
 id|page_not_up_to_date
+suffix:semicolon
+id|generic_file_readahead
+c_func
+(paren
+id|reada_ok
+comma
+id|filp
+comma
+id|inode
+comma
+id|page
+)paren
 suffix:semicolon
 id|page_ok
 suffix:colon

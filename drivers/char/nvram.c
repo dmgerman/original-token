@@ -560,7 +560,10 @@ op_amp
 id|rtc_lock
 )paren
 suffix:semicolon
-id|copy_to_user_ret
+r_if
+c_cond
+(paren
+id|copy_to_user
 (paren
 id|buf
 comma
@@ -569,10 +572,11 @@ comma
 id|tmp
 op_minus
 id|contents
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 op_star
 id|ppos
@@ -639,8 +643,10 @@ r_char
 op_star
 id|tmp
 suffix:semicolon
-multiline_comment|/* could comebody please help me indent this better? */
-id|copy_from_user_ret
+r_if
+c_cond
+(paren
+id|copy_from_user
 (paren
 id|contents
 comma
@@ -662,10 +668,11 @@ id|i
 )paren
 suffix:colon
 id|count
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 id|spin_lock_irq
 (paren
