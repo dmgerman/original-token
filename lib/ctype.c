@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/lib/ctype.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/lib/ctype.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#include &lt;linux/ctype.h&gt;
 DECL|variable|_ctmp
 r_char

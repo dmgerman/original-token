@@ -1,5 +1,8 @@
+macro_line|#ifndef _LINUX_LP_H
+DECL|macro|_LINUX_LP_H
+mdefine_line|#define _LINUX_LP_H
 multiline_comment|/*&n;$Header: /usr/src/linux/include/linux/lp.h,v 1.2 1992/01/21 23:59:24 james_r_wiegand Exp james_r_wiegand $&n;*/
-macro_line|#include &lt;errno.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -25,16 +28,9 @@ DECL|macro|LP_B
 mdefine_line|#define LP_B(minor)&t;lp_table[(minor)].base
 DECL|macro|LP_F
 mdefine_line|#define LP_F(minor)&t;lp_table[(minor)].flags
-DECL|macro|LP_T
-mdefine_line|#define LP_T(minor)&t;lp_table[(minor)].lp_task
 DECL|macro|LP_S
 mdefine_line|#define LP_S(minor)&t;inb(LP_B((minor)) + 1)
-DECL|macro|LP_R
-mdefine_line|#define LP_R(minor)&t;lp_table[(minor)].remainder
 multiline_comment|/* &n;since we are dealing with a horribly slow device&n;I don&squot;t see the need for a queue&n;*/
-macro_line|#ifndef __LP_C__
-r_extern
-macro_line|#endif
 DECL|struct|lp_struct
 r_struct
 id|lp_struct
@@ -47,22 +43,9 @@ DECL|member|flags
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* number of characters yet to be printed in current block */
-DECL|member|remainder
-r_int
-id|remainder
-suffix:semicolon
-multiline_comment|/* needed for busy determination */
-DECL|member|lp_task
-r_int
-id|lp_task
-suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* &n; * the BIOS manuals say there can be up to 4 lpt devices&n; * but I have not seen a board where the 4th address is listed&n; * if you have different hardware change the table below &n; * please let me know if you have different equipment&n; * if you have more than 3 printers, remember to increase LP_NO&n; */
-macro_line|#ifndef __LP_C__
-r_extern
-macro_line|#endif   
 DECL|variable|lp_table
 r_struct
 id|lp_struct
@@ -127,11 +110,12 @@ DECL|macro|LP_DELAY
 mdefine_line|#define LP_DELAY &t;150000
 multiline_comment|/*&n; * function prototypes&n; */
 r_extern
-r_void
+r_int
 id|lp_init
 c_func
 (paren
-r_void
+r_int
 )paren
 suffix:semicolon
+macro_line|#endif
 eof

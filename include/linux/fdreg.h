@@ -1,7 +1,7 @@
+macro_line|#ifndef _LINUX_FDREG_H
+DECL|macro|_LINUX_FDREG_H
+mdefine_line|#define _LINUX_FDREG_H
 multiline_comment|/*&n; * This file contains some defines for the floppy disk controller.&n; * Various sources. Mostly &quot;IBM Microcomputers: A Programmers&n; * Handbook&quot;, Sanches and Canton.&n; */
-macro_line|#ifndef _FDREG_H
-DECL|macro|_FDREG_H
-mdefine_line|#define _FDREG_H
 r_extern
 r_int
 id|ticks_to_floppy_on
@@ -124,21 +124,34 @@ DECL|macro|ST3_WP
 mdefine_line|#define ST3_WP&t;&t;0x40&t;&t;/* Write Protect */
 multiline_comment|/* Values for FD_COMMAND */
 DECL|macro|FD_RECALIBRATE
-mdefine_line|#define FD_RECALIBRATE&t;0x07&t;&t;/* move to track 0 */
+mdefine_line|#define FD_RECALIBRATE&t;&t;0x07&t;/* move to track 0 */
 DECL|macro|FD_SEEK
-mdefine_line|#define FD_SEEK&t;&t;0x0F&t;&t;/* seek track */
+mdefine_line|#define FD_SEEK&t;&t;&t;0x0F&t;/* seek track */
 DECL|macro|FD_READ
-mdefine_line|#define FD_READ&t;&t;0xE6&t;&t;/* read with MT, MFM, SKip deleted */
+mdefine_line|#define FD_READ&t;&t;&t;0xE6&t;/* read with MT, MFM, SKip deleted */
 DECL|macro|FD_WRITE
-mdefine_line|#define FD_WRITE&t;0xC5&t;&t;/* write with MT, MFM */
+mdefine_line|#define FD_WRITE&t;&t;0xC5&t;/* write with MT, MFM */
 DECL|macro|FD_SENSEI
-mdefine_line|#define FD_SENSEI&t;0x08&t;&t;/* Sense Interrupt Status */
+mdefine_line|#define FD_SENSEI&t;&t;0x08&t;/* Sense Interrupt Status */
 DECL|macro|FD_SPECIFY
-mdefine_line|#define FD_SPECIFY&t;0x03&t;&t;/* specify HUT etc */
+mdefine_line|#define FD_SPECIFY&t;&t;0x03&t;/* specify HUT etc */
+DECL|macro|FD_FORMAT
+mdefine_line|#define FD_FORMAT&t;&t;0x4D&t;/* format one track */
+DECL|macro|FD_VERSION
+mdefine_line|#define FD_VERSION&t;&t;0x10&t;/* get version code */
+DECL|macro|FD_CONFIGURE
+mdefine_line|#define FD_CONFIGURE&t;&t;0x13&t;/* configure FIFO operation */
+DECL|macro|FD_PERPENDICULAR
+mdefine_line|#define FD_PERPENDICULAR&t;0x12&t;/* perpendicular r/w mode */
 multiline_comment|/* DMA commands */
 DECL|macro|DMA_READ
 mdefine_line|#define DMA_READ&t;0x46
 DECL|macro|DMA_WRITE
 mdefine_line|#define DMA_WRITE&t;0x4A
+multiline_comment|/* FDC version return types */
+DECL|macro|FDC_TYPE_STD
+mdefine_line|#define FDC_TYPE_STD&t;0x80&t;/* normal 8272A clone FDC */
+DECL|macro|FDC_TYPE_82077
+mdefine_line|#define FDC_TYPE_82077&t;0x90&t;/* FIFO + perpendicular support */
 macro_line|#endif
 eof

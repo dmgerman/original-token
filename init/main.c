@@ -1,8 +1,15 @@
-multiline_comment|/*&n; *  linux/init/main.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
-DECL|macro|__LIBRARY__
-mdefine_line|#define __LIBRARY__
-macro_line|#include &lt;unistd.h&gt;
+multiline_comment|/*&n; *  linux/init/main.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;time.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/head.h&gt;
+macro_line|#include &lt;linux/unistd.h&gt;
 multiline_comment|/*&n; * we need this inline - forking from kernel space will result&n; * in NO COPY ON WRITE (!!!), until an execve is executed. This&n; * is no problem, but for the stack. This is handled by not letting&n; * main() use the stack at all after fork(). Thus, no function&n; * calls - which means inline code for fork too, as otherwise we&n; * would use the stack upon exit from &squot;fork()&squot;.&n; *&n; * Actually only pause and fork are needed inline, so that there&n; * won&squot;t be any messing with the stack from main(), but we define&n; * some others too.&n; */
 r_static
 r_inline
@@ -45,17 +52,161 @@ r_int
 comma
 id|sync
 )paren
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/tty.h&gt;
-macro_line|#include &lt;linux/head.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;stddef.h&gt;
-macro_line|#include &lt;stdarg.h&gt;
-macro_line|#include &lt;unistd.h&gt;
-macro_line|#include &lt;fcntl.h&gt;
-macro_line|#include &lt;sys/types.h&gt;
+r_static
+r_inline
+id|_syscall0
+c_func
+(paren
+id|pid_t
+comma
+id|setsid
+)paren
+r_static
+r_inline
+id|_syscall3
+c_func
+(paren
+r_int
+comma
+id|write
+comma
+r_int
+comma
+id|fd
+comma
+r_const
+r_char
+op_star
+comma
+id|buf
+comma
+id|off_t
+comma
+id|count
+)paren
+r_static
+r_inline
+id|_syscall1
+c_func
+(paren
+r_int
+comma
+id|dup
+comma
+r_int
+comma
+id|fd
+)paren
+r_static
+r_inline
+id|_syscall3
+c_func
+(paren
+r_int
+comma
+id|execve
+comma
+r_const
+r_char
+op_star
+comma
+id|file
+comma
+r_char
+op_star
+op_star
+comma
+id|argv
+comma
+r_char
+op_star
+op_star
+comma
+id|envp
+)paren
+r_static
+r_inline
+id|_syscall3
+c_func
+(paren
+r_int
+comma
+id|open
+comma
+r_const
+r_char
+op_star
+comma
+id|file
+comma
+r_int
+comma
+id|flag
+comma
+r_int
+comma
+id|mode
+)paren
+r_static
+r_inline
+id|_syscall1
+c_func
+(paren
+r_int
+comma
+id|close
+comma
+r_int
+comma
+id|fd
+)paren
+r_static
+r_inline
+id|_syscall3
+c_func
+(paren
+id|pid_t
+comma
+id|waitpid
+comma
+id|pid_t
+comma
+id|pid
+comma
+r_int
+op_star
+comma
+id|wait_stat
+comma
+r_int
+comma
+id|options
+)paren
+DECL|function|wait
+r_static
+r_inline
+id|pid_t
+id|wait
+c_func
+(paren
+r_int
+op_star
+id|wait_stat
+)paren
+(brace
+r_return
+id|waitpid
+c_func
+(paren
+op_minus
+l_int|1
+comma
+id|wait_stat
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 DECL|variable|printbuf
 r_static
 r_char
@@ -63,14 +214,6 @@ id|printbuf
 (braket
 l_int|1024
 )braket
-suffix:semicolon
-r_extern
-r_char
-op_star
-id|strcpy
-c_func
-(paren
-)paren
 suffix:semicolon
 r_extern
 r_int
@@ -89,18 +232,30 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|blk_dev_init
+id|init_IRQ
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
+id|blk_dev_init
+c_func
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|chr_dev_init
 c_func
 (paren
-r_void
+r_int
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -121,14 +276,10 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|mem_init
+id|sock_init
 c_func
 (paren
-r_int
-id|start
-comma
-r_int
-id|end
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -154,6 +305,16 @@ op_star
 id|tm
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SCSI
+r_extern
+r_void
+id|scsi_dev_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|sprintf
 r_static
 r_int
@@ -213,12 +374,10 @@ suffix:semicolon
 multiline_comment|/*&n; * This is set up by the setup-routine at boot-time&n; */
 DECL|macro|EXT_MEM_K
 mdefine_line|#define EXT_MEM_K (*(unsigned short *)0x90002)
-DECL|macro|CON_ROWS
-mdefine_line|#define CON_ROWS ((*(unsigned short *)0x9000e) &amp; 0xff)
-DECL|macro|CON_COLS
-mdefine_line|#define CON_COLS (((*(unsigned short *)0x9000e) &amp; 0xff00) &gt;&gt; 8)
 DECL|macro|DRIVE_INFO
 mdefine_line|#define DRIVE_INFO (*(struct drive_info *)0x90080)
+DECL|macro|SCREEN_INFO
+mdefine_line|#define SCREEN_INFO (*(struct screen_info *)0x90000)
 DECL|macro|ORIG_ROOT_DEV
 mdefine_line|#define ORIG_ROOT_DEV (*(unsigned short *)0x901FC)
 multiline_comment|/*&n; * Yeah, yeah, it&squot;s ugly, but I cannot find how to do this correctly&n; * and this seems to work. I anybody has more info on the real-time&n; * clock I&squot;d be interested. Most of this was trial and error, and some&n; * bios-listing reading. Urghh.&n; */
@@ -351,24 +510,19 @@ id|time
 )paren
 suffix:semicolon
 )brace
+DECL|variable|memory_start
+r_static
+r_int
+r_int
+id|memory_start
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|memory_end
 r_static
 r_int
+r_int
 id|memory_end
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|buffer_memory_end
-r_static
-r_int
-id|buffer_memory_end
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|main_memory_start
-r_static
-r_int
-id|main_memory_start
 op_assign
 l_int|0
 suffix:semicolon
@@ -485,6 +639,11 @@ suffix:semicolon
 )brace
 id|drive_info
 suffix:semicolon
+DECL|variable|screen_info
+r_struct
+id|screen_info
+id|screen_info
+suffix:semicolon
 DECL|function|start_kernel
 r_void
 id|start_kernel
@@ -498,6 +657,14 @@ id|ROOT_DEV
 op_assign
 id|ORIG_ROOT_DEV
 suffix:semicolon
+id|drive_info
+op_assign
+id|DRIVE_INFO
+suffix:semicolon
+id|screen_info
+op_assign
+id|SCREEN_INFO
+suffix:semicolon
 id|sprintf
 c_func
 (paren
@@ -505,9 +672,9 @@ id|term
 comma
 l_string|&quot;TERM=con%dx%d&quot;
 comma
-id|CON_COLS
+id|ORIG_VIDEO_COLS
 comma
-id|CON_ROWS
+id|ORIG_VIDEO_LINES
 )paren
 suffix:semicolon
 id|envp
@@ -530,10 +697,6 @@ l_int|1
 )braket
 op_assign
 id|term
-suffix:semicolon
-id|drive_info
-op_assign
-id|DRIVE_INFO
 suffix:semicolon
 id|memory_end
 op_assign
@@ -572,116 +735,18 @@ l_int|1024
 op_star
 l_int|1024
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|memory_end
-op_ge
-l_int|12
-op_star
-l_int|1024
-op_star
-l_int|1024
-)paren
-id|buffer_memory_end
+id|memory_start
 op_assign
-l_int|4
-op_star
 l_int|1024
 op_star
 l_int|1024
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|memory_end
-op_ge
-l_int|6
-op_star
-l_int|1024
-op_star
-l_int|1024
-)paren
-id|buffer_memory_end
-op_assign
-l_int|2
-op_star
-l_int|1024
-op_star
-l_int|1024
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|memory_end
-op_ge
-l_int|4
-op_star
-l_int|1024
-op_star
-l_int|1024
-)paren
-id|buffer_memory_end
-op_assign
-l_int|3
-op_star
-l_int|512
-op_star
-l_int|1024
-suffix:semicolon
-r_else
-id|buffer_memory_end
-op_assign
-l_int|1
-op_star
-l_int|1024
-op_star
-l_int|1024
-suffix:semicolon
-id|main_memory_start
-op_assign
-id|buffer_memory_end
-suffix:semicolon
-macro_line|#ifdef RAMDISK
-id|main_memory_start
-op_add_assign
-id|rd_init
-c_func
-(paren
-id|main_memory_start
-comma
-id|RAMDISK
-op_star
-l_int|1024
-)paren
-suffix:semicolon
-macro_line|#endif
-id|mem_init
-c_func
-(paren
-id|main_memory_start
-comma
-id|memory_end
-)paren
 suffix:semicolon
 id|trap_init
 c_func
 (paren
 )paren
 suffix:semicolon
-id|chr_dev_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|blk_dev_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|time_init
+id|init_IRQ
 c_func
 (paren
 )paren
@@ -691,10 +756,56 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|memory_start
+op_assign
+id|chr_dev_init
+c_func
+(paren
+id|memory_start
+comma
+id|memory_end
+)paren
+suffix:semicolon
+id|memory_start
+op_assign
+id|blk_dev_init
+c_func
+(paren
+id|memory_start
+comma
+id|memory_end
+)paren
+suffix:semicolon
+id|memory_start
+op_assign
+id|mem_init
+c_func
+(paren
+id|memory_start
+comma
+id|memory_end
+)paren
+suffix:semicolon
 id|buffer_init
 c_func
 (paren
-id|buffer_memory_end
+)paren
+suffix:semicolon
+id|time_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Linux version &quot;
+id|UTS_RELEASE
+l_string|&quot; &quot;
+id|__DATE__
+l_string|&quot; &quot;
+id|__TIME__
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|hd_init
@@ -707,11 +818,23 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|sock_init
+c_func
+(paren
+)paren
+suffix:semicolon
 id|sti
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SCSI
+id|scsi_dev_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|move_to_user_mode
 c_func
 (paren
@@ -734,7 +857,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *   NOTE!!   For any other task &squot;pause()&squot; would mean we have to get a&n; * signal to awaken, but task0 is the sole exception (see &squot;schedule()&squot;)&n; * as task 0 gets activated at every idle moment (when no other tasks&n; * can run). For task0 &squot;pause()&squot; just means we go check if some other&n; * task can run, and if not we return here.&n; */
+multiline_comment|/*&n; * task[0] is meant to be used as an &quot;idle&quot; task: it may not sleep, but&n; * it might do some general things like count free pages or it could be&n; * used to implement a reasonable LRU algorithm for the paging routines:&n; * anything that can be useful, but shouldn&squot;t take time from the real&n; * processes.&n; *&n; * Right now task[0] just does a infinite loop in user mode.&n; */
 r_for
 c_loop
 (paren
@@ -742,18 +865,7 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-id|__asm__
-c_func
-(paren
-l_string|&quot;int $0x80&quot;
-op_scope_resolution
-l_string|&quot;a&quot;
-(paren
-id|__NR_pause
-)paren
-suffix:colon
-l_string|&quot;ax&quot;
-)paren
+multiline_comment|/* nothing */
 suffix:semicolon
 )brace
 )brace
@@ -877,9 +989,9 @@ c_func
 (paren
 l_string|&quot;%d buffers = %d bytes buffer space&bslash;n&bslash;r&quot;
 comma
-id|NR_BUFFERS
+id|nr_buffers
 comma
-id|NR_BUFFERS
+id|nr_buffers
 op_star
 id|BLOCK_SIZE
 )paren
@@ -891,7 +1003,7 @@ l_string|&quot;Free mem: %d bytes&bslash;n&bslash;r&quot;
 comma
 id|memory_end
 op_minus
-id|main_memory_start
+id|memory_start
 )paren
 suffix:semicolon
 id|execve

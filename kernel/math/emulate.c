@@ -1,8 +1,8 @@
-multiline_comment|/*&n; * linux/kernel/math/emulate.c&n; *&n; * (C) 1991 Linus Torvalds&n; */
+multiline_comment|/*&n; * linux/kernel/math/emulate.c&n; *&n; * Copyright (C) 1991, 1992 Linus Torvalds&n; */
 multiline_comment|/*&n; * Limited emulation 27.12.91 - mostly loads/stores, which gcc wants&n; * even for soft-float, unless you use bruce evans&squot; patches. The patches&n; * are great, but they have to be re-applied for every version, and the&n; * library is different for soft-float and 80387. So emulation is more&n; * practical, even though it&squot;s slower.&n; *&n; * 28.12.91 - loads/stores work, even BCD. I&squot;ll have to start thinking&n; * about add/sub/mul/div. Urgel. I should find some good source, but I&squot;ll&n; * just fake up something.&n; *&n; * 30.12.91 - add/sub/mul/div/com seem to work mostly. I should really&n; * test every possible combination.&n; */
 multiline_comment|/*&n; * This file is full of ugly macros etc: one problem was that gcc simply&n; * didn&squot;t want to make the structures as they should be: it has to try to&n; * align them. Sickening code, but at least I&squot;ve hidden the ugly things&n; * in this one file: the other files don&squot;t need to know about these things.&n; *&n; * The other files also don&squot;t care about ST(x) etc - they just get addresses&n; * to 80-bit temporary reals, and do with them as they please. I wanted to&n; * hide most of the 387-specific things here.&n; */
 macro_line|#ifdef KERNEL_MATH_EMULATION
-macro_line|#include &lt;signal.h&gt;
+macro_line|#include &lt;linux/signal.h&gt;
 DECL|macro|__ALIGNED_TEMP_REAL
 mdefine_line|#define __ALIGNED_TEMP_REAL 1
 macro_line|#include &lt;linux/math_emu.h&gt;
@@ -221,13 +221,7 @@ c_func
 (paren
 id|info
 comma
-l_int|1
-op_lshift
-(paren
 id|SIGILL
-op_minus
-l_int|1
-)paren
 )paren
 suffix:semicolon
 r_case
@@ -271,13 +265,7 @@ c_func
 (paren
 id|info
 comma
-l_int|1
-op_lshift
-(paren
 id|SIGILL
-op_minus
-l_int|1
-)paren
 )paren
 suffix:semicolon
 r_case
@@ -309,13 +297,7 @@ c_func
 (paren
 id|info
 comma
-l_int|1
-op_lshift
-(paren
 id|SIGILL
-op_minus
-l_int|1
-)paren
 )paren
 suffix:semicolon
 r_case
@@ -329,13 +311,7 @@ c_func
 (paren
 id|info
 comma
-l_int|1
-op_lshift
-(paren
 id|SIGILL
-op_minus
-l_int|1
-)paren
 )paren
 suffix:semicolon
 r_case
@@ -472,14 +448,40 @@ c_func
 (paren
 id|info
 comma
-l_int|1
-op_lshift
-(paren
 id|SIGILL
-op_minus
-l_int|1
+)paren
+suffix:semicolon
+r_case
+l_int|0x1fa
+suffix:colon
+id|fsqrt
+c_func
+(paren
+id|PST
+c_func
+(paren
+l_int|0
+)paren
+comma
+op_amp
+id|tmp
+)paren
+suffix:semicolon
+id|real_to_real
+c_func
+(paren
+op_amp
+id|tmp
+comma
+op_amp
+id|ST
+c_func
+(paren
+l_int|0
 )paren
 )paren
+suffix:semicolon
+r_return
 suffix:semicolon
 r_case
 l_int|0x1f0
@@ -512,9 +514,6 @@ r_case
 l_int|0x1f9
 suffix:colon
 r_case
-l_int|0x1fa
-suffix:colon
-r_case
 l_int|0x1fb
 suffix:colon
 r_case
@@ -541,13 +540,7 @@ c_func
 (paren
 id|info
 comma
-l_int|1
-op_lshift
-(paren
 id|SIGILL
-op_minus
-l_int|1
-)paren
 )paren
 suffix:semicolon
 r_case
@@ -1444,13 +1437,7 @@ c_func
 (paren
 id|info
 comma
-l_int|1
-op_lshift
-(paren
 id|SIGILL
-op_minus
-l_int|1
-)paren
 )paren
 suffix:semicolon
 r_case
@@ -1923,13 +1910,7 @@ c_func
 (paren
 id|info
 comma
-l_int|1
-op_lshift
-(paren
 id|SIGILL
-op_minus
-l_int|1
-)paren
 )paren
 suffix:semicolon
 id|fpop
@@ -3119,13 +3100,7 @@ c_func
 (paren
 id|info
 comma
-l_int|1
-op_lshift
-(paren
 id|SIGFPE
-op_minus
-l_int|1
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -3194,9 +3169,15 @@ id|EIP
 op_assign
 id|ORIG_EIP
 suffix:semicolon
-id|current-&gt;signal
-op_or_assign
+id|send_sig
+c_func
+(paren
 id|signal
+comma
+id|current
+comma
+l_int|1
+)paren
 suffix:semicolon
 id|__asm__
 c_func
@@ -3358,7 +3339,7 @@ id|I387.st_space
 suffix:semicolon
 )brace
 macro_line|#else /* no math emulation */
-macro_line|#include &lt;signal.h&gt;
+macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 DECL|function|math_emulate
 r_void
@@ -3369,13 +3350,13 @@ r_int
 id|___false
 )paren
 (brace
-id|current-&gt;signal
-op_or_assign
-l_int|1
-op_lshift
+id|send_sig
+c_func
 (paren
 id|SIGFPE
-op_minus
+comma
+id|current
+comma
 l_int|1
 )paren
 suffix:semicolon

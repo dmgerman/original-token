@@ -1,10 +1,11 @@
 multiline_comment|/*&n; *&t;linux/mm/mmap.c&n; *&n; * Written by obz.&n; */
-macro_line|#include &lt;sys/stat.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;sys/mman.h&gt;
 multiline_comment|/*&n; * description of effects of mapping type and prot in current implementation.&n; * this is due to the current handling of page faults in memory.c. the expected&n; * behavior is in parens:&n; *&n; * map_type&t;prot&n; *&t;&t;PROT_NONE&t;PROT_READ&t;PROT_WRITE&t;PROT_EXEC&n; * MAP_SHARED&t;r: (no) yes&t;r: (yes) yes&t;r: (no) yes&t;r: (no) no&n; *&t;&t;w: (no) yes&t;w: (no) copy&t;w: (yes) yes&t;w: (no) no&n; *&t;&t;x: (no) no&t;x: (no) no&t;x: (no) no&t;x: (yes) no&n; *&t;&t;&n; * MAP_PRIVATE&t;r: (no) yes&t;r: (yes) yes&t;r: (no) yes&t;r: (no) no&n; *&t;&t;w: (no) copy&t;w: (no) copy&t;w: (copy) copy&t;w: (no) no&n; *&t;&t;x: (no) no&t;x: (no) no&t;x: (no) no&t;x: (yes) no&n; *&n; * the permissions are encoded as cxwr (copy,exec,write,read)&n; */
 DECL|macro|MTYP
@@ -19,41 +20,6 @@ DECL|macro|PERMISS
 mdefine_line|#define PERMISS(T,P) (PREAD(T,P)|PWRITE(T,P)|PEXEC(T,P))
 DECL|macro|CODE_SPACE
 mdefine_line|#define CODE_SPACE(addr) ((((addr)+4095)&amp;~4095) &lt; &bslash;&n;&t;&t;&t;  current-&gt;start_code + current-&gt;end_code)
-r_extern
-r_int
-id|remap_page_range
-c_func
-(paren
-r_int
-r_int
-id|from
-comma
-r_int
-r_int
-id|to
-comma
-r_int
-r_int
-id|size
-comma
-r_int
-id|permiss
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|unmap_page_range
-c_func
-(paren
-r_int
-r_int
-id|from
-comma
-r_int
-r_int
-id|size
-)paren
-suffix:semicolon
 r_static
 id|caddr_t
 DECL|function|mmap_chr
@@ -87,11 +53,6 @@ r_int
 id|major
 comma
 id|minor
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|HIGH_MEMORY
 suffix:semicolon
 id|major
 op_assign
@@ -128,17 +89,17 @@ id|caddr_t
 op_minus
 id|ENODEV
 suffix:semicolon
-multiline_comment|/*&n;&t; * we only allow mappings from address 0 to HIGH_MEMORY, since thats&n;&t; * the range of our memory [actually this is a lie. the buffer cache&n;&t; * and ramdisk occupy higher memory, but the paging stuff won&squot;t&n;&t; * let us map to it anyway, so we break it here].&n;&t; *&n;&t; * this call is very dangerous! because of the lack of adequate&n;&t; * tagging of frames, it is possible to mmap over a frame belonging&n;&t; * to another (innocent) process. with MAP_SHARED|MAP_WRITE, this&n;&t; * rogue process can trample over the other&squot;s data! we ignore this :{&n;&t; * for now, we hope people will malloc the required amount of space,&n;&t; * then mmap over it. the mm needs serious work before this can be&n;&t; * truly useful.&n;&t; */
+multiline_comment|/*&n;&t; * we only allow mappings from address 0 to high_memory, since thats&n;&t; * the range of our memory [actually this is a lie. the buffer cache&n;&t; * and ramdisk occupy higher memory, but the paging stuff won&squot;t&n;&t; * let us map to it anyway, so we break it here].&n;&t; *&n;&t; * this call is very dangerous! because of the lack of adequate&n;&t; * tagging of frames, it is possible to mmap over a frame belonging&n;&t; * to another (innocent) process. with MAP_SHARED|MAP_WRITE, this&n;&t; * rogue process can trample over the other&squot;s data! we ignore this :{&n;&t; * for now, we hope people will malloc the required amount of space,&n;&t; * then mmap over it. the mm needs serious work before this can be&n;&t; * truly useful.&n;&t; */
 r_if
 c_cond
 (paren
 id|len
 OG
-id|HIGH_MEMORY
+id|high_memory
 op_logical_or
 id|off
 OG
-id|HIGH_MEMORY
+id|high_memory
 op_minus
 id|len
 )paren

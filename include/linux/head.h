@@ -1,6 +1,6 @@
-macro_line|#ifndef _HEAD_H
-DECL|macro|_HEAD_H
-mdefine_line|#define _HEAD_H
+macro_line|#ifndef _LINUX_HEAD_H
+DECL|macro|_LINUX_HEAD_H
+mdefine_line|#define _LINUX_HEAD_H
 DECL|struct|desc_struct
 r_typedef
 r_struct

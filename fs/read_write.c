@@ -1,8 +1,7 @@
-multiline_comment|/*&n; *  linux/fs/read_write.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
-macro_line|#include &lt;errno.h&gt;
-macro_line|#include &lt;sys/types.h&gt;
-macro_line|#include &lt;sys/stat.h&gt;
-macro_line|#include &lt;sys/dirent.h&gt;
+multiline_comment|/*&n; *  linux/fs/read_write.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
@@ -130,6 +129,9 @@ id|file
 suffix:semicolon
 r_int
 id|tmp
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -254,6 +256,10 @@ id|file-&gt;f_pos
 op_assign
 id|tmp
 suffix:semicolon
+id|file-&gt;f_reada
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 id|file-&gt;f_pos
 suffix:semicolon
@@ -367,14 +373,6 @@ comma
 id|count
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;(Read)inode-&gt;i_mode=%06o&bslash;n&bslash;r&quot;
-comma
-id|inode-&gt;i_mode
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EINVAL
@@ -479,14 +477,6 @@ comma
 id|buf
 comma
 id|count
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;(Write)inode-&gt;i_mode=%06o&bslash;n&bslash;r&quot;
-comma
-id|inode-&gt;i_mode
 )paren
 suffix:semicolon
 r_return

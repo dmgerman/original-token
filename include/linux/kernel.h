@@ -1,3 +1,6 @@
+macro_line|#ifndef _LINUX_KERNEL_H
+DECL|macro|_LINUX_KERNEL_H
+mdefine_line|#define _LINUX_KERNEL_H
 multiline_comment|/*&n; * &squot;kernel.h&squot; contains some often-used function prototypes etc&n; */
 r_void
 id|verify_area
@@ -32,20 +35,6 @@ id|error_code
 )paren
 suffix:semicolon
 r_int
-id|printf
-c_func
-(paren
-r_const
-r_char
-op_star
-id|fmt
-comma
-dot
-dot
-dot
-)paren
-suffix:semicolon
-r_int
 id|printk
 c_func
 (paren
@@ -57,16 +46,6 @@ comma
 dot
 dot
 dot
-)paren
-suffix:semicolon
-r_void
-id|console_print
-c_func
-(paren
-r_const
-r_char
-op_star
-id|str
 )paren
 suffix:semicolon
 r_void
@@ -96,4 +75,5 @@ mdefine_line|#define free(x) free_s((x), 0)
 multiline_comment|/*&n; * This is defined as a macro, but at some point this might become a&n; * real subroutine that sets a flag if it returns true (to do&n; * BSD-style accounting where the process is flagged if it uses root&n; * privs).  The implication of this is that you should do normal&n; * permissions checks first, and check suser() last.&n; */
 DECL|macro|suser
 mdefine_line|#define suser() (current-&gt;euid == 0)
+macro_line|#endif
 eof

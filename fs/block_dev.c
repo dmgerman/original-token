@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/fs/block_dev.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
-macro_line|#include &lt;errno.h&gt;
+multiline_comment|/*&n; *  linux/fs/block_dev.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -166,6 +166,8 @@ c_func
 id|dev
 comma
 id|block
+comma
+id|BLOCK_SIZE
 )paren
 suffix:semicolon
 r_else

@@ -1,31 +1,11 @@
-macro_line|#ifndef _STRING_H_
-DECL|macro|_STRING_H_
-mdefine_line|#define _STRING_H_
+macro_line|#ifndef _LINUX_STRING_H_
+DECL|macro|_LINUX_STRING_H_
+mdefine_line|#define _LINUX_STRING_H_
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
 macro_line|#endif
-macro_line|#ifndef _SIZE_T
-DECL|macro|_SIZE_T
-mdefine_line|#define _SIZE_T
-DECL|typedef|size_t
-r_typedef
-r_int
-r_int
-r_int
-suffix:semicolon
-macro_line|#endif
-r_extern
-r_char
-op_star
-id|strerror
-c_func
-(paren
-r_int
-id|errno
-)paren
-suffix:semicolon
-multiline_comment|/*&n; * This string-include defines all string functions as inline&n; * functions. Use gcc. It also assumes ds=es=data space, this should be&n; * normal. Most of the string-functions are rather heavily hand-optimized,&n; * see especially strtok,strstr,str[c]spn. They should work, but are not&n; * very easy to understand. Everything is done entirely within the register&n; * set, making the functions fast and clean. String instructions have been&n; * used through-out, making for &quot;slightly&quot; unclear code :-)&n; *&n; *&t;&t;(C) 1991 Linus Torvalds&n; */
+multiline_comment|/*&n; * This string-include defines all string functions as inline&n; * functions. Use gcc. It also assumes ds=es=data space, this should be&n; * normal. Most of the string-functions are rather heavily hand-optimized,&n; * see especially strtok,strstr,str[c]spn. They should work, but are not&n; * very easy to understand. Everything is done entirely within the register&n; * set, making the functions fast and clean. String instructions have been&n; * used through-out, making for &quot;slightly&quot; unclear code :-)&n; *&n; *&t;&t;Copyright (C) 1991, 1992 Linus Torvalds&n; */
 DECL|function|strcpy
 r_extern
 r_inline
@@ -998,11 +978,6 @@ r_register
 r_char
 op_star
 id|__res
-id|__asm__
-c_func
-(paren
-l_string|&quot;si&quot;
-)paren
 suffix:semicolon
 id|__asm__
 c_func
@@ -1058,19 +1033,11 @@ l_string|&quot;7:&bslash;ttestl %0,%0&bslash;n&bslash;t&quot;
 l_string|&quot;jne 8f&bslash;n&bslash;t&quot;
 l_string|&quot;movl %0,%1&bslash;n&quot;
 l_string|&quot;8:&quot;
-macro_line|#if __GNUC__ == 2
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|__res
-)paren
-macro_line|#else
 suffix:colon
 l_string|&quot;=b&quot;
 (paren
 id|__res
 )paren
-macro_line|#endif
 comma
 l_string|&quot;=S&quot;
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/kernel/mktime.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/kernel/mktime.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#include &lt;time.h&gt;
 multiline_comment|/*&n; * This isn&squot;t the library routine, it is only used in the kernel.&n; * as such, we don&squot;t care about years&lt;1970 etc, but assume everything&n; * is ok. Similarly, TZ etc is happily ignored. We just do everything&n; * as easily as possible. Let&squot;s find something public for the library&n; * routines (although I think minix times is public).&n; */
 multiline_comment|/*&n; * PS. I hate whoever though up the year 1970 - couldn&squot;t they have gotten&n; * a leap-year instead? I also hate Gregorius, pope or no. I&squot;m grumpy.&n; */

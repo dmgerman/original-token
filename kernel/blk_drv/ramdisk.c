@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *  linux/kernel/blk_drv/ramdisk.c&n; *&n; *  Written by Theodore Ts&squot;o, 12/2/91&n; */
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef RAMDISK
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -23,6 +24,7 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|function|do_rd_request
+r_static
 r_void
 id|do_rd_request
 c_func
@@ -37,6 +39,8 @@ r_char
 op_star
 id|addr
 suffix:semicolon
+id|repeat
+suffix:colon
 id|INIT_REQUEST
 suffix:semicolon
 id|addr
@@ -174,12 +178,15 @@ comma
 multiline_comment|/* readdir - bad */
 l_int|NULL
 comma
-multiline_comment|/* close - default */
-l_int|NULL
-comma
 multiline_comment|/* select */
 l_int|NULL
+comma
 multiline_comment|/* ioctl */
+l_int|NULL
+comma
+multiline_comment|/* no special open code */
+l_int|NULL
+multiline_comment|/* no special release code */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Returns amount of memory which needs to be reserved.&n; */
@@ -274,7 +281,7 @@ op_star
 id|bh
 suffix:semicolon
 r_struct
-id|super_block
+id|minix_super_block
 id|s
 suffix:semicolon
 r_int
@@ -440,7 +447,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Loading %d bytes into ram disk... 0000k&quot;
+l_string|&quot;Loading %d bytes into ram disk&bslash;n&quot;
 comma
 id|nblocks
 op_lshift
@@ -494,6 +501,8 @@ c_func
 id|ROOT_DEV
 comma
 id|block
+comma
+id|BLOCK_SIZE
 )paren
 suffix:semicolon
 r_if
@@ -533,12 +542,21 @@ c_func
 id|bh
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|nblocks
+op_decrement
+op_amp
+l_int|15
+)paren
+)paren
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;010&bslash;010&bslash;010&bslash;010&bslash;010%4dk&quot;
-comma
-id|i
+l_string|&quot;.&quot;
 )paren
 suffix:semicolon
 id|cp
@@ -548,9 +566,6 @@ suffix:semicolon
 id|block
 op_increment
 suffix:semicolon
-id|nblocks
-op_decrement
-suffix:semicolon
 id|i
 op_increment
 suffix:semicolon
@@ -558,7 +573,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;010&bslash;010&bslash;010&bslash;010&bslash;010done &bslash;n&quot;
+l_string|&quot;&bslash;ndone&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ROOT_DEV
@@ -566,4 +581,5 @@ op_assign
 l_int|0x0101
 suffix:semicolon
 )brace
+macro_line|#endif
 eof

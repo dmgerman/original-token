@@ -1,7 +1,7 @@
+macro_line|#ifndef _LINUX_HDREG_H
+DECL|macro|_LINUX_HDREG_H
+mdefine_line|#define _LINUX_HDREG_H
 multiline_comment|/*&n; * This file contains some defines for the AT-hd-controller.&n; * Various sources. Check out some definitions (see comments with&n; * a ques).&n; */
-macro_line|#ifndef _HDREG_H
-DECL|macro|_HDREG_H
-mdefine_line|#define _HDREG_H
 multiline_comment|/* Hd controller regs. Ref: IBM AT Bios-listing */
 DECL|macro|HD_DATA
 mdefine_line|#define HD_DATA&t;&t;0x1f0&t;/* _CTL when writing */
@@ -74,74 +74,6 @@ DECL|macro|ECC_ERR
 mdefine_line|#define ECC_ERR&t;&t;0x40&t;/* ? */
 DECL|macro|BBD_ERR
 mdefine_line|#define&t;BBD_ERR&t;&t;0x80&t;/* ? */
-DECL|macro|EXTENDED_PARTITION
-mdefine_line|#define EXTENDED_PARTITION 5
-DECL|struct|partition
-r_struct
-id|partition
-(brace
-DECL|member|boot_ind
-r_int
-r_char
-id|boot_ind
-suffix:semicolon
-multiline_comment|/* 0x80 - active */
-DECL|member|head
-r_int
-r_char
-id|head
-suffix:semicolon
-multiline_comment|/* starting head */
-DECL|member|sector
-r_int
-r_char
-id|sector
-suffix:semicolon
-multiline_comment|/* starting sector */
-DECL|member|cyl
-r_int
-r_char
-id|cyl
-suffix:semicolon
-multiline_comment|/* starting cylinder */
-DECL|member|sys_ind
-r_int
-r_char
-id|sys_ind
-suffix:semicolon
-multiline_comment|/* What partition type */
-DECL|member|end_head
-r_int
-r_char
-id|end_head
-suffix:semicolon
-multiline_comment|/* end head */
-DECL|member|end_sector
-r_int
-r_char
-id|end_sector
-suffix:semicolon
-multiline_comment|/* end sector */
-DECL|member|end_cyl
-r_int
-r_char
-id|end_cyl
-suffix:semicolon
-multiline_comment|/* end cylinder */
-DECL|member|start_sect
-r_int
-r_int
-id|start_sect
-suffix:semicolon
-multiline_comment|/* starting sector counting from 0 */
-DECL|member|nr_sects
-r_int
-r_int
-id|nr_sects
-suffix:semicolon
-multiline_comment|/* nr of sectors in partition */
-)brace
-suffix:semicolon
 DECL|macro|HDIO_REQ
 mdefine_line|#define HDIO_REQ 0x301
 DECL|struct|hd_geometry
@@ -162,6 +94,11 @@ DECL|member|cylinders
 r_int
 r_int
 id|cylinders
+suffix:semicolon
+DECL|member|start
+r_int
+r_int
+id|start
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/kernel/math/add.c&n; *&n; * (C) 1991 Linus Torvalds&n; */
+multiline_comment|/*&n; * linux/kernel/math/add.c&n; *&n; * Copyright (C) 1991, 1992 Linus Torvalds&n; */
 multiline_comment|/*&n; * temporary real addition routine.&n; *&n; * NOTE! These aren&squot;t exact: they are only 62 bits wide, and don&squot;t do&n; * correct rounding. Fast hack. The reason is that we shift right the&n; * values by two, in order not to have overflow (1 bit), and to be able&n; * to move the sign into the mantissa (1 bit). Much simpler algorithms,&n; * and 62 bits (61 really - no rounding) accuracy is usually enough. The&n; * only time you should notice anything weird is when adding 64-bit&n; * integers together. When using doubles (52 bits accuracy), the&n; * 61-bit accuracy never shows at all.&n; */
 macro_line|#include &lt;linux/math_emu.h&gt;
 DECL|macro|NEGINT

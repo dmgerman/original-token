@@ -1,6 +1,6 @@
-multiline_comment|/*&n; * linux/kernel/math/get_put.c&n; *&n; * (C) 1991 Linus Torvalds&n; */
+multiline_comment|/*&n; * linux/kernel/math/get_put.c&n; *&n; * Copyright (C) 1991, 1992 Linus Torvalds&n; */
 multiline_comment|/*&n; * This file handles all accesses to user memory: getting and putting&n; * ints/reals/BCD etc. This is the only part that concerns itself with&n; * other than temporary real format. All other cals are strictly temp_real.&n; */
-macro_line|#include &lt;signal.h&gt;
+macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/math_emu.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;

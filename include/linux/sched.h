@@ -1,6 +1,6 @@
-macro_line|#ifndef _SCHED_H
-DECL|macro|_SCHED_H
-mdefine_line|#define _SCHED_H
+macro_line|#ifndef _LINUX_SCHED_H
+DECL|macro|_LINUX_SCHED_H
+mdefine_line|#define _LINUX_SCHED_H
 DECL|macro|HZ
 mdefine_line|#define HZ 100
 DECL|macro|NR_TASKS
@@ -37,10 +37,10 @@ mdefine_line|#define LAST_TASK task[NR_TASKS-1]
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;sys/param.h&gt;
-macro_line|#include &lt;sys/time.h&gt;
-macro_line|#include &lt;sys/resource.h&gt;
-macro_line|#include &lt;signal.h&gt;
+macro_line|#include &lt;linux/signal.h&gt;
+macro_line|#include &lt;linux/time.h&gt;
+macro_line|#include &lt;linux/param.h&gt;
+macro_line|#include &lt;linux/resource.h&gt;
 macro_line|#if (NR_OPEN &gt; 32)
 macro_line|#error &quot;Currently the close-on-exec-flags and select masks are in one long, max 32 files/proc&quot;
 macro_line|#endif
@@ -61,39 +61,16 @@ macro_line|#endif
 DECL|macro|MAX_SHARED_LIBS
 mdefine_line|#define MAX_SHARED_LIBS 6
 r_extern
-r_int
-id|copy_page_tables
+r_void
+id|sched_init
 c_func
 (paren
-r_int
-r_int
-id|from
-comma
-r_int
-r_int
-id|to
-comma
-r_int
-id|size
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|free_page_tables
-c_func
-(paren
-r_int
-r_int
-id|from
-comma
-r_int
-r_int
-id|size
+r_void
 )paren
 suffix:semicolon
 r_extern
 r_void
-id|sched_init
+id|show_state
 c_func
 (paren
 r_void
@@ -373,6 +350,18 @@ DECL|member|exit_code
 r_int
 id|exit_code
 suffix:semicolon
+DECL|member|dumpable
+r_int
+id|dumpable
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|swappable
+r_int
+id|swappable
+suffix:colon
+l_int|1
+suffix:semicolon
 DECL|member|start_code
 DECL|member|end_code
 DECL|member|end_data
@@ -410,13 +399,17 @@ id|groups
 id|NGROUPS
 )braket
 suffix:semicolon
-multiline_comment|/* &n;&t; * pointers to parent process, youngest child, younger sibling,&n;&t; * older sibling, respectively.  (p-&gt;father can be replaced with &n;&t; * p-&gt;p_pptr-&gt;pid)&n;&t; */
+multiline_comment|/* &n;&t; * pointers to (original) parent process, youngest child, younger sibling,&n;&t; * older sibling, respectively.  (p-&gt;father can be replaced with &n;&t; * p-&gt;p_pptr-&gt;pid)&n;&t; */
+DECL|member|p_opptr
 DECL|member|p_pptr
 DECL|member|p_cptr
 DECL|member|p_ysptr
 DECL|member|p_osptr
 r_struct
 id|task_struct
+op_star
+id|p_opptr
+comma
 op_star
 id|p_pptr
 comma
@@ -429,12 +422,11 @@ comma
 op_star
 id|p_osptr
 suffix:semicolon
-multiline_comment|/*&n;&t; * sleep makes a singly linked list with this.&n;&t; */
-DECL|member|next_wait
+multiline_comment|/*&n;&t; * For ease of programming... Normal sleeps don&squot;t need to&n;&t; * keep track of a wait-queue: every task has an entry of it&squot;s own&n;&t; */
+DECL|member|wait
 r_struct
-id|task_struct
-op_star
-id|next_wait
+id|wait_queue
+id|wait
 suffix:semicolon
 DECL|member|uid
 DECL|member|euid
@@ -459,12 +451,31 @@ comma
 id|sgid
 suffix:semicolon
 DECL|member|timeout
-DECL|member|alarm
 r_int
 r_int
 id|timeout
+suffix:semicolon
+DECL|member|it_real_value
+DECL|member|it_prof_value
+DECL|member|it_virt_value
+r_int
+r_int
+id|it_real_value
 comma
-id|alarm
+id|it_prof_value
+comma
+id|it_virt_value
+suffix:semicolon
+DECL|member|it_real_incr
+DECL|member|it_prof_incr
+DECL|member|it_virt_incr
+r_int
+r_int
+id|it_real_incr
+comma
+id|it_prof_incr
+comma
+id|it_virt_incr
 suffix:semicolon
 DECL|member|utime
 DECL|member|stime
@@ -635,7 +646,7 @@ multiline_comment|/* task. */
 multiline_comment|/* not impelmented. */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x9ffff (=640kB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{},},0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task.task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* flags */&t;0, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL, &bslash;&n;/* libraries */&t;{ { NULL, 0, 0}, }, 0, &bslash;&n;/* filp */&t;{NULL,}, 0, &bslash;&n;&t;&t;{ &bslash;&n;&t;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;&t;{0x9f,0xc0fa00}, &bslash;&n;&t;&t;&t;{0x9f,0xc0f200} &bslash;&n;&t;&t;}, &bslash;&n;/*tss*/&t;{0,PAGE_SIZE+(long)&amp;init_task,0x10,0,0,0,0,(long)&amp;pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000,{0xffffffff}, &bslash;&n;&t;&t;{} &bslash;&n;&t;}, &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{},},0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task.task,&amp;init_task.task,NULL,NULL,NULL, &bslash;&n;/* wait queue*/ {&amp;init_task.task,NULL}, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* flags */&t;0, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL, &bslash;&n;/* libraries */&t;{ { NULL, 0, 0}, }, 0, &bslash;&n;/* filp */&t;{NULL,}, 0, &bslash;&n;&t;&t;{ &bslash;&n;&t;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;&t;{0x9f,0xc0fa00}, &bslash;&n;&t;&t;&t;{0x9f,0xc0f200} &bslash;&n;&t;&t;}, &bslash;&n;/*tss*/&t;{0,PAGE_SIZE+(long)&amp;init_task,0x10,0,0,0,0,(long)&amp;pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000,{0xffffffff}, &bslash;&n;&t;&t;{} &bslash;&n;&t;}, &bslash;&n;}
 r_extern
 r_struct
 id|task_struct
@@ -698,7 +709,7 @@ id|sleep_on
 c_func
 (paren
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 op_star
 id|p
@@ -710,7 +721,7 @@ id|interruptible_sleep_on
 c_func
 (paren
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 op_star
 id|p
@@ -722,10 +733,38 @@ id|wake_up
 c_func
 (paren
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 op_star
 id|p
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|wake_one_task
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|p
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|send_sig
+c_func
+(paren
+r_int
+id|sig
+comma
+r_struct
+id|task_struct
+op_star
+id|p
+comma
+r_int
+id|priv
 )paren
 suffix:semicolon
 r_extern
@@ -735,6 +774,50 @@ c_func
 (paren
 id|gid_t
 id|grp
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|request_irq
+c_func
+(paren
+r_int
+r_int
+id|irq
+comma
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_int
+)paren
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|free_irq
+c_func
+(paren
+r_int
+r_int
+id|irq
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|irqaction
+c_func
+(paren
+r_int
+r_int
+id|irq
+comma
+r_struct
+id|sigaction
+op_star
+r_new
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Entry into gdt where to find first TSS. 0-nul, 1-cs, 2-ds, 3-syscall&n; * 4-TSS0, 5-LDT0, 6-TSS1 etc ...&n; */
@@ -754,7 +837,7 @@ DECL|macro|str
 mdefine_line|#define str(n) &bslash;&n;__asm__(&quot;str %%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;subl %2,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;shrl $4,%%eax&quot; &bslash;&n;&t;:&quot;=a&quot; (n) &bslash;&n;&t;:&quot;0&quot; (0),&quot;i&quot; (FIRST_TSS_ENTRY&lt;&lt;3))
 multiline_comment|/*&n; *&t;switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; * This also clears the TS-flag if the task we switched to has used&n; * tha math co-processor latest.&n; */
 DECL|macro|switch_to
-mdefine_line|#define switch_to(n) {&bslash;&n;struct {long a,b;} __tmp; &bslash;&n;__asm__(&quot;cmpl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;je 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %%dx,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;xchgl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ljmp %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl %%ecx,_last_task_used_math&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;clts&bslash;n&quot; &bslash;&n;&t;&quot;1:&quot; &bslash;&n;&t;::&quot;m&quot; (*&amp;__tmp.a),&quot;m&quot; (*&amp;__tmp.b), &bslash;&n;&t;&quot;d&quot; (_TSS(n)),&quot;c&quot; ((long) task[n]) &bslash;&n;&t;:&quot;cx&quot;); &bslash;&n;}
+mdefine_line|#define switch_to(n) {&bslash;&n;struct {long a,b;} __tmp; &bslash;&n;__asm__(&quot;cmpl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;je 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %%dx,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cli&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;xchgl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ljmp %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sti&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl %%ecx,_last_task_used_math&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;clts&bslash;n&quot; &bslash;&n;&t;&quot;1:&quot; &bslash;&n;&t;::&quot;m&quot; (*&amp;__tmp.a),&quot;m&quot; (*&amp;__tmp.b), &bslash;&n;&t;&quot;d&quot; (_TSS(n)),&quot;c&quot; ((long) task[n]) &bslash;&n;&t;:&quot;cx&quot;); &bslash;&n;}
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(n) (((n)+0xfff)&amp;0xfffff000)
 DECL|macro|_set_base
@@ -765,6 +848,260 @@ DECL|macro|set_base
 mdefine_line|#define set_base(ldt,base) _set_base( ((char *)&amp;(ldt)) , base )
 DECL|macro|set_limit
 mdefine_line|#define set_limit(ldt,limit) _set_limit( ((char *)&amp;(ldt)) , (limit-1)&gt;&gt;12 )
+DECL|function|add_wait_queue
+r_extern
+r_inline
+r_void
+id|add_wait_queue
+c_func
+(paren
+r_struct
+id|wait_queue
+op_star
+op_star
+id|p
+comma
+r_struct
+id|wait_queue
+op_star
+id|wait
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_struct
+id|wait_queue
+op_star
+id|tmp
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;pushfl ; popl %0 ; cli&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|flags
+)paren
+)paren
+suffix:semicolon
+id|wait-&gt;next
+op_assign
+op_star
+id|p
+suffix:semicolon
+id|tmp
+op_assign
+id|wait
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|tmp-&gt;next
+)paren
+r_if
+c_cond
+(paren
+(paren
+id|tmp
+op_assign
+id|tmp-&gt;next
+)paren
+op_member_access_from_pointer
+id|next
+op_eq
+op_star
+id|p
+)paren
+r_break
+suffix:semicolon
+op_star
+id|p
+op_assign
+id|tmp-&gt;next
+op_assign
+id|wait
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;pushl %0 ; popfl&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+id|flags
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|remove_wait_queue
+r_extern
+r_inline
+r_void
+id|remove_wait_queue
+c_func
+(paren
+r_struct
+id|wait_queue
+op_star
+op_star
+id|p
+comma
+r_struct
+id|wait_queue
+op_star
+id|wait
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_struct
+id|wait_queue
+op_star
+id|tmp
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;pushfl ; popl %0 ; cli&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|flags
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|p
+op_eq
+id|wait
+)paren
+r_if
+c_cond
+(paren
+(paren
+op_star
+id|p
+op_assign
+id|wait-&gt;next
+)paren
+op_eq
+id|wait
+)paren
+op_star
+id|p
+op_assign
+l_int|NULL
+suffix:semicolon
+id|tmp
+op_assign
+id|wait
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|tmp
+op_logical_and
+id|tmp-&gt;next
+op_ne
+id|wait
+)paren
+id|tmp
+op_assign
+id|tmp-&gt;next
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp
+)paren
+id|tmp-&gt;next
+op_assign
+id|wait-&gt;next
+suffix:semicolon
+id|wait-&gt;next
+op_assign
+l_int|NULL
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;pushl %0 ; popfl&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+id|flags
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|select_wait
+r_extern
+r_inline
+r_void
+id|select_wait
+c_func
+(paren
+r_struct
+id|wait_queue
+op_star
+op_star
+id|wait_address
+comma
+id|select_table
+op_star
+id|p
+)paren
+(brace
+r_struct
+id|select_table_entry
+op_star
+id|entry
+op_assign
+id|p-&gt;entry
+op_plus
+id|p-&gt;nr
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|wait_address
+)paren
+r_return
+suffix:semicolon
+id|entry-&gt;wait_address
+op_assign
+id|wait_address
+suffix:semicolon
+id|entry-&gt;wait.task
+op_assign
+id|current
+suffix:semicolon
+id|add_wait_queue
+c_func
+(paren
+id|wait_address
+comma
+op_amp
+id|entry-&gt;wait
+)paren
+suffix:semicolon
+id|p-&gt;nr
+op_increment
+suffix:semicolon
+)brace
 DECL|function|_get_base
 r_static
 r_int
@@ -877,5 +1214,9 @@ op_plus
 l_int|1
 suffix:semicolon
 )brace
+DECL|macro|REMOVE_LINKS
+mdefine_line|#define REMOVE_LINKS(p) &bslash;&n;&t;if ((p)-&gt;p_osptr) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = (p)-&gt;p_ysptr; &bslash;&n;&t;if ((p)-&gt;p_ysptr) &bslash;&n;&t;&t;(p)-&gt;p_ysptr-&gt;p_osptr = (p)-&gt;p_osptr; &bslash;&n;&t;else &bslash;&n;&t;&t;(p)-&gt;p_pptr-&gt;p_cptr = (p)-&gt;p_osptr
+DECL|macro|SET_LINKS
+mdefine_line|#define SET_LINKS(p) &bslash;&n;&t;(p)-&gt;p_ysptr = NULL; &bslash;&n;&t;if ((p)-&gt;p_osptr = (p)-&gt;p_pptr-&gt;p_cptr) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = p; &bslash;&n;&t;(p)-&gt;p_pptr-&gt;p_cptr = p
 macro_line|#endif
 eof

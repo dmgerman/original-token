@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/kernel/math/compare.c&n; *&n; * (C) 1991 Linus Torvalds&n; */
+multiline_comment|/*&n; * linux/kernel/math/compare.c&n; *&n; * Copyright (C) 1991, 1992 Linus Torvalds&n; */
 multiline_comment|/*&n; * temporary real comparison routines&n; */
 macro_line|#include &lt;linux/math_emu.h&gt;
 DECL|macro|clear_Cx

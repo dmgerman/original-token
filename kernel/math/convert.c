@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/kernel/math/convert.c&n; *&n; * (C) 1991 Linus Torvalds&n; */
+multiline_comment|/*&n; * linux/kernel/math/convert.c&n; *&n; * Copyright (C) 1991, 1992 Linus Torvalds&n; */
 macro_line|#include &lt;linux/math_emu.h&gt;
 multiline_comment|/*&n; * NOTE!!! There is some &quot;non-obvious&quot; optimisations in the temp_to_long&n; * and temp_to_short conversion routines: don&squot;t touch them if you don&squot;t&n; * know what&squot;s going on. They are the adding of one in the rounding: the&n; * overflow bit is also used for adding one into the exponent. Thus it&n; * looks like the overflow would be incorrectly handled, but due to the&n; * way the IEEE numbers work, things are correct.&n; *&n; * There is no checking for total overflow in the conversions, though (ie&n; * if the temp-real number simply won&squot;t fit in a short- or long-real.)&n; */
 DECL|function|short_to_temp

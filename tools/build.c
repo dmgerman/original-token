@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/tools/build.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/tools/build.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; * This file builds a disk-image from three different files:&n; *&n; * - bootsect: max 510 bytes of 8086 machine code, loads the rest&n; * - setup: max 4 sectors of 8086 machine code, sets up system parm&n; * - system: 80386 code for actual system&n; *&n; * It does some checking that all files are of the correct type, and&n; * just writes the result to stdout, removing headers and padding to&n; * the right amount. It also writes some system data to stderr.&n; */
 multiline_comment|/*&n; * Changes by tytso to allow root device specification&n; */
 macro_line|#include &lt;stdio.h&gt;&t;/* fprintf */
@@ -6,7 +6,7 @@ macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;stdlib.h&gt;&t;/* contains exit */
 macro_line|#include &lt;sys/types.h&gt;&t;/* unistd.h needs this */
 macro_line|#include &lt;sys/stat.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;sys/sysmacros.h&gt;
 macro_line|#include &lt;unistd.h&gt;&t;/* contains read/write */
 macro_line|#include &lt;fcntl.h&gt;
 DECL|macro|MINIX_HEADER
@@ -14,7 +14,7 @@ mdefine_line|#define MINIX_HEADER 32
 DECL|macro|GCC_HEADER
 mdefine_line|#define GCC_HEADER 1024
 DECL|macro|SYS_SIZE
-mdefine_line|#define SYS_SIZE 0x4000
+mdefine_line|#define SYS_SIZE 0x5000
 DECL|macro|DEFAULT_MAJOR_ROOT
 mdefine_line|#define DEFAULT_MAJOR_ROOT 0
 DECL|macro|DEFAULT_MINOR_ROOT
@@ -178,7 +178,7 @@ suffix:semicolon
 )brace
 id|major_root
 op_assign
-id|MAJOR
+id|major
 c_func
 (paren
 id|sb.st_rdev
@@ -186,7 +186,7 @@ id|sb.st_rdev
 suffix:semicolon
 id|minor_root
 op_assign
-id|MINOR
+id|minor
 c_func
 (paren
 id|sb.st_rdev
@@ -241,6 +241,12 @@ op_logical_and
 id|major_root
 op_ne
 l_int|3
+)paren
+op_logical_and
+(paren
+id|major_root
+op_ne
+l_int|8
 )paren
 op_logical_and
 (paren

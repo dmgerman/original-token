@@ -1,6 +1,6 @@
-multiline_comment|/*&n; * linux/kernel/math/ea.c&n; *&n; * (C) 1991 Linus Torvalds&n; */
+multiline_comment|/*&n; * linux/kernel/math/ea.c&n; *&n; * Copyright (C) 1991, 1992 Linus Torvalds&n; */
 multiline_comment|/*&n; * Calculate the effective address.&n; */
-macro_line|#include &lt;stddef.h&gt;
+macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/math_emu.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|variable|__regoffset
@@ -286,9 +286,6 @@ suffix:semicolon
 r_int
 op_star
 id|tmp
-op_assign
-op_amp
-id|EAX
 suffix:semicolon
 r_int
 id|offset
@@ -456,13 +453,7 @@ c_func
 (paren
 id|info
 comma
-l_int|1
-op_lshift
-(paren
 id|SIGILL
-op_minus
-l_int|1
-)paren
 )paren
 suffix:semicolon
 )brace

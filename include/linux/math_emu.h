@@ -1,4 +1,3 @@
-multiline_comment|/*&n; * linux/include/linux/math_emu.h&n; *&n; * (C) 1991 Linus Torvalds&n; */
 macro_line|#ifndef _LINUX_MATH_EMU_H
 DECL|macro|_LINUX_MATH_EMU_H
 mdefine_line|#define _LINUX_MATH_EMU_H
@@ -735,6 +734,19 @@ r_const
 id|temp_real
 op_star
 comma
+r_const
+id|temp_real
+op_star
+comma
+id|temp_real
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* sqrt.c */
+r_void
+id|fsqrt
+c_func
+(paren
 r_const
 id|temp_real
 op_star

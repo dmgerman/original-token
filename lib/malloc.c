@@ -220,6 +220,7 @@ op_star
 id|get_free_page
 c_func
 (paren
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -426,6 +427,7 @@ op_assign
 id|get_free_page
 c_func
 (paren
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if
