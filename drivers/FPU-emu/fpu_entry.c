@@ -689,6 +689,10 @@ id|FPU_modrm
 comma
 id|byte1
 suffix:semicolon
+r_int
+r_int
+id|code
+suffix:semicolon
 id|fpu_addr_modes
 id|addr_modes
 suffix:semicolon
@@ -1026,8 +1030,6 @@ id|SW_Summary
 (brace
 multiline_comment|/* Ignore the error for now if the current instruction is a no-wait&n;&t; control instruction */
 multiline_comment|/* The 80486 manual contradicts itself on this topic,&n;&t; but a real 80486 uses the following instructions:&n;&t; fninit, fnstenv, fnsave, fnstsw, fnstenv, fnclex.&n;       */
-r_int
-r_int
 id|code
 op_assign
 (paren

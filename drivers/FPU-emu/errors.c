@@ -233,7 +233,7 @@ multiline_comment|/* No need to verify_area(), we have previously fetched these 
 id|printk
 c_func
 (paren
-l_string|&quot;At %p: &quot;
+l_string|&quot;At %p:&quot;
 comma
 (paren
 r_void
@@ -283,12 +283,22 @@ l_int|0xf8
 op_eq
 l_int|0xd8
 )paren
-r_break
-suffix:semicolon
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;[%02x]&quot;
+l_string|&quot; %02x&quot;
+comma
+id|byte1
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot; [%02x]&quot;
 comma
 id|byte1
 )paren
@@ -307,15 +317,13 @@ id|MAX_PRINTED_BYTES
 id|printk
 c_func
 (paren
-l_string|&quot;[more..]&quot;
+l_string|&quot; [more..]&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%02x &quot;
-comma
-id|byte1
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|FPU_modrm

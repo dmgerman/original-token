@@ -1467,6 +1467,26 @@ l_string|&quot;EXT2-fs warning: maximal mount count reached, &quot;
 l_string|&quot;running e2fsck is recommended&bslash;n&quot;
 )paren
 suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|es-&gt;s_checkinterval
+op_logical_and
+(paren
+id|es-&gt;s_lastcheck
+op_plus
+id|es-&gt;s_checkinterval
+op_le
+id|CURRENT_TIME
+)paren
+)paren
+id|printk
+(paren
+l_string|&quot;EXT2-fs warning: checktime reached, &quot;
+l_string|&quot;running e2fsck is recommended&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

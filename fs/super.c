@@ -1751,7 +1751,8 @@ r_static
 r_int
 id|copy_mount_options
 (paren
-r_char
+r_const
+r_void
 op_star
 id|data
 comma

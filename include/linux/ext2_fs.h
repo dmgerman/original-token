@@ -476,6 +476,8 @@ mdefine_line|#define test_opt(sb, opt)&t;&t;((sb)-&gt;u.ext2_sb.s_mount_opt &amp
 multiline_comment|/*&n; * Maximal mount counts between two filesystem checks&n; */
 DECL|macro|EXT2_DFL_MAX_MNT_COUNT
 mdefine_line|#define EXT2_DFL_MAX_MNT_COUNT&t;&t;20&t;/* Allow 20 mounts */
+DECL|macro|EXT2_DFL_CHECKINTERVAL
+mdefine_line|#define EXT2_DFL_CHECKINTERVAL&t;&t;0&t;/* Don&squot;t use interval check */
 multiline_comment|/*&n; * Behaviour when detecting errors&n; */
 DECL|macro|EXT2_ERRORS_CONTINUE
 mdefine_line|#define EXT2_ERRORS_CONTINUE&t;&t;1&t;/* Continue execution */
@@ -601,12 +603,24 @@ r_int
 r_int
 id|s_pad
 suffix:semicolon
+DECL|member|s_lastcheck
+r_int
+r_int
+id|s_lastcheck
+suffix:semicolon
+multiline_comment|/* time of last check */
+DECL|member|s_checkinterval
+r_int
+r_int
+id|s_checkinterval
+suffix:semicolon
+multiline_comment|/* max. time between checks */
 DECL|member|s_reserved
 r_int
 r_int
 id|s_reserved
 (braket
-l_int|240
+l_int|238
 )braket
 suffix:semicolon
 multiline_comment|/* Padding to the end of the block */

@@ -1039,6 +1039,7 @@ id|tty-&gt;session
 OG
 l_int|0
 )paren
+(brace
 id|kill_sl
 c_func
 (paren
@@ -1049,6 +1050,17 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|kill_sl
+c_func
+(paren
+id|tty-&gt;session
+comma
+id|SIGCONT
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
 id|tty-&gt;session
 op_assign
 l_int|0
@@ -1172,7 +1184,7 @@ id|hung_up_tty_fops
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This function is typically called only by the session leader, when&n; * it wants to dissassociate itself from its controlling tty.&n; *&n; * It performs the following functions:&n; * &t;(1)  Sends a SIGHUP to the foreground process group&n; * &t;(2)  Clears the tty from being controlling the session&n; * &t;(3)  Clears the controlling tty for all processes in the&n; * &t;&t;session group.&n; */
+multiline_comment|/*&n; * This function is typically called only by the session leader, when&n; * it wants to dissassociate itself from its controlling tty.&n; *&n; * It performs the following functions:&n; * &t;(1)  Sends a SIGHUP and SIGCONT to the foreground process group&n; * &t;(2)  Clears the tty from being controlling the session&n; * &t;(3)  Clears the controlling tty for all processes in the&n; * &t;&t;session group.&n; */
 DECL|function|disassociate_ctty
 r_void
 id|disassociate_ctty
@@ -1220,6 +1232,7 @@ id|tty-&gt;pgrp
 OG
 l_int|0
 )paren
+(brace
 id|kill_pg
 c_func
 (paren
@@ -1230,6 +1243,17 @@ comma
 id|priv
 )paren
 suffix:semicolon
+id|kill_pg
+c_func
+(paren
+id|tty-&gt;pgrp
+comma
+id|SIGCONT
+comma
+id|priv
+)paren
+suffix:semicolon
+)brace
 id|tty-&gt;session
 op_assign
 l_int|0

@@ -1788,6 +1788,11 @@ id|sock
 op_star
 id|sk
 op_assign
+(paren
+r_struct
+id|sock
+op_star
+)paren
 id|sock-&gt;data
 suffix:semicolon
 r_if
