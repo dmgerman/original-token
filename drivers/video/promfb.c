@@ -1,5 +1,4 @@
 multiline_comment|/* $Id: promfb.c,v 1.3 1998/07/08 07:36:49 ecd Exp $&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

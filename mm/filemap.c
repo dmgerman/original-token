@@ -392,7 +392,7 @@ op_assign
 (paren
 id|limit
 op_lshift
-l_int|1
+l_int|2
 )paren
 op_rshift
 (paren
@@ -406,7 +406,7 @@ op_assign
 (paren
 id|limit
 op_lshift
-l_int|1
+l_int|2
 )paren
 op_rshift
 (paren

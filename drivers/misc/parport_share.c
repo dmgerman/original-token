@@ -1410,10 +1410,16 @@ c_cond
 (paren
 id|port-&gt;waittail
 )paren
+(brace
 id|port-&gt;waittail-&gt;waitnext
 op_assign
 id|dev
 suffix:semicolon
+id|port-&gt;waittail
+op_assign
+id|dev
+suffix:semicolon
+)brace
 r_else
 id|port-&gt;waithead
 op_assign

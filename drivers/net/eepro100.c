@@ -50,12 +50,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Set the copy breakpoint for the copy-only-tiny-buffer Rx method.&n;   Lower values use more memory, but are faster. */
+multiline_comment|/*&n; * NOTE! The value of 2000 means that this optimization never gets&n; * used. Rationale: it seems to be broken when in low-memory situations,&n; * apparently when alloc_skb() can return NULL the clever list of&n; * copy-buffers can get buggered. &n; *&n; * My personal suspicion is that the allocation failure will cause&n; * us to not remove the skb from the list of available buffers, but&n; * we&squot;d already have done a &quot;skb_push()&quot; with the data we got, so&n; * the buffer stays on the list but the available memory in it&n; * shrinks until we panic.&n; *&n; * Donald, when you fix this you can shrink this value again.&n; *&n; *&t;&t;Linus&n; */
 DECL|variable|rx_copybreak
 r_static
 r_int
 id|rx_copybreak
 op_assign
-l_int|200
+l_int|2000
 suffix:semicolon
 multiline_comment|/* Maximum events (Rx packets, etc.) to handle at each interrupt. */
 DECL|variable|max_interrupt_work

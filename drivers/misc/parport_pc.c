@@ -3279,21 +3279,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Give any attached devices a chance to gather their thoughts */
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
-l_int|75
-suffix:semicolon
-id|schedule
-(paren
-)paren
-suffix:semicolon
 r_return
 id|count
 suffix:semicolon

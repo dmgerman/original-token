@@ -2,6 +2,7 @@ multiline_comment|/*************************************************************
 macro_line|#ifndef NCR53C8XX_H
 DECL|macro|NCR53C8XX_H
 mdefine_line|#define NCR53C8XX_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if 0
 mdefine_line|#define CONFIG_SCSI_NCR53C8XX_PROFILE
 macro_line|#endif
@@ -16,7 +17,6 @@ multiline_comment|/*&n;**&t;Check supported Linux versions&n;*/
 macro_line|#if !defined(LINUX_VERSION_CODE)
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
-macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|LinuxVersionCode
 mdefine_line|#define LinuxVersionCode(v, p, s) (((v)&lt;&lt;16)+((p)&lt;&lt;8)+(s))
 multiline_comment|/*&n;**&t;These options are&squot;nt tunable from &squot;make config&squot;&n;*/

@@ -226,6 +226,163 @@ id|cpuinfo_x86
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/*&n; *&t;Generic CPUID function&n; */
+DECL|function|cpuid
+r_extern
+r_inline
+r_void
+id|cpuid
+c_func
+(paren
+r_int
+id|op
+comma
+r_int
+op_star
+id|eax
+comma
+r_int
+op_star
+id|ebx
+comma
+r_int
+op_star
+id|ecx
+comma
+r_int
+op_star
+id|edx
+)paren
+(brace
+id|__asm__
+c_func
+(paren
+l_string|&quot;cpuid&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+op_star
+id|eax
+)paren
+comma
+l_string|&quot;=b&quot;
+(paren
+op_star
+id|ebx
+)paren
+comma
+l_string|&quot;=c&quot;
+(paren
+op_star
+id|ecx
+)paren
+comma
+l_string|&quot;=d&quot;
+(paren
+op_star
+id|edx
+)paren
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+id|op
+)paren
+suffix:colon
+l_string|&quot;cc&quot;
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *      Cyrix CPU configuration register indexes&n; */
+DECL|macro|CX86_CCR2
+mdefine_line|#define CX86_CCR2 0xc2
+DECL|macro|CX86_CCR3
+mdefine_line|#define CX86_CCR3 0xc3
+DECL|macro|CX86_CCR4
+mdefine_line|#define CX86_CCR4 0xe8
+DECL|macro|CX86_CCR5
+mdefine_line|#define CX86_CCR5 0xe9
+DECL|macro|CX86_DIR0
+mdefine_line|#define CX86_DIR0 0xfe
+DECL|macro|CX86_DIR1
+mdefine_line|#define CX86_DIR1 0xff
+multiline_comment|/*&n; *      Cyrix CPU indexed register access macros&n; */
+DECL|function|getCx86
+r_extern
+r_inline
+r_int
+r_char
+id|getCx86
+c_func
+(paren
+r_int
+r_char
+id|reg
+)paren
+(brace
+r_int
+r_char
+id|data
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;movb %1,%%al&bslash;n&bslash;t&quot;
+l_string|&quot;outb %%al,$0x22&bslash;n&bslash;t&quot;
+l_string|&quot;inb $0x23,%%al&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|data
+)paren
+suffix:colon
+l_string|&quot;q&quot;
+(paren
+id|reg
+)paren
+)paren
+suffix:semicolon
+r_return
+id|data
+suffix:semicolon
+)brace
+DECL|function|setCx86
+r_extern
+r_inline
+r_void
+id|setCx86
+c_func
+(paren
+r_int
+r_char
+id|reg
+comma
+r_int
+r_char
+id|data
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;outb %%al,$0x22&bslash;n&bslash;t&quot;
+l_string|&quot;movb %1,%%al&bslash;n&bslash;t&quot;
+l_string|&quot;outb %%al,$0x23&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+id|reg
+)paren
+comma
+l_string|&quot;q&quot;
+(paren
+id|data
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Bus types (default is ISA, but people can check others with these..)&n; */
 r_extern
 r_int
@@ -717,12 +874,26 @@ l_int|3
 )braket
 suffix:semicolon
 )brace
-multiline_comment|/* Allocation and freeing of basic task resources. */
-multiline_comment|/*&n; * NOTE! The task struct and the stack go together&n; */
-DECL|macro|alloc_task_struct
-mdefine_line|#define alloc_task_struct() &bslash;&n;&t;((struct task_struct *) __get_free_pages(GFP_KERNEL,1))
-DECL|macro|free_task_struct
-mdefine_line|#define free_task_struct(p)&t;free_pages((unsigned long)(p),1)
+r_extern
+r_struct
+id|task_struct
+op_star
+id|alloc_task_struct
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|free_task_struct
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+)paren
+suffix:semicolon
 DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack

@@ -29,7 +29,7 @@ l_string|&quot;HOME=/&quot;
 comma
 l_string|&quot;TERM=linux&quot;
 comma
-l_string|&quot;PATH=/usr/bin:/bin&quot;
+l_string|&quot;PATH=/sbin:/usr/sbin:/bin:/usr/bin&quot;
 comma
 l_int|NULL
 )brace
