@@ -99,8 +99,10 @@ DECL|macro|PORT_16650V2
 mdefine_line|#define PORT_16650V2&t;7
 DECL|macro|PORT_16750
 mdefine_line|#define PORT_16750&t;8
+DECL|macro|PORT_STARTECH
+mdefine_line|#define PORT_STARTECH&t;9
 DECL|macro|PORT_MAX
-mdefine_line|#define PORT_MAX&t;8
+mdefine_line|#define PORT_MAX&t;9
 DECL|struct|serial_uart_config
 r_struct
 id|serial_uart_config

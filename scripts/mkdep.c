@@ -5,6 +5,7 @@ macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;sys/types.h&gt;
 macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;unistd.h&gt;
+macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;sys/fcntl.h&gt;
 macro_line|#include &lt;sys/mman.h&gt;
 DECL|variable|filename

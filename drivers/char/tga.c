@@ -1721,7 +1721,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|variable|bt463_cursor_source
+DECL|variable|__initdata
 r_const
 r_int
 r_int
@@ -1729,8 +1729,8 @@ id|bt463_cursor_source
 (braket
 l_int|256
 )braket
-op_assign
 id|__initdata
+op_assign
 (brace
 l_int|0xffff0000
 comma

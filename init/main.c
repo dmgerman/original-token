@@ -1154,6 +1154,22 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_CYCLADES
+r_extern
+r_void
+id|cy_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_DIGI
 r_extern
 r_void
@@ -2162,6 +2178,14 @@ macro_line|#if defined(CONFIG_GVP11_SCSI)
 l_string|&quot;gvp11=&quot;
 comma
 id|gvp11_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_CYCLADES
+(brace
+l_string|&quot;cyclades=&quot;
+comma
+id|cy_setup
 )brace
 comma
 macro_line|#endif

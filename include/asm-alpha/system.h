@@ -143,30 +143,26 @@ r_int
 id|pctxp
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|imb
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|macro|mb
 mdefine_line|#define mb() &bslash;&n;__asm__ __volatile__(&quot;mb&quot;: : :&quot;memory&quot;)
+DECL|macro|imb
+mdefine_line|#define imb() &bslash;&n;__asm__ __volatile__ (&quot;call_pal %0&quot; : : &quot;i&quot; (PAL_imb) : &quot;memory&quot;)
 DECL|macro|draina
 mdefine_line|#define draina() &bslash;&n;__asm__ __volatile__ (&quot;call_pal %0&quot; : : &quot;i&quot; (PAL_draina) : &quot;memory&quot;)
+DECL|macro|call_pal1
+mdefine_line|#define call_pal1(palno,arg) &bslash;&n;({ &bslash;&n;&t;register unsigned long __r0 __asm__(&quot;$0&quot;); &bslash;&n;&t;register unsigned long __r16 __asm__(&quot;$16&quot;); __r16 = arg; &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;call_pal %3&quot; &bslash;&n;&t;&t;:&quot;=r&quot; (__r0),&quot;=r&quot; (__r16) &bslash;&n;&t;&t;:&quot;1&quot; (__r16),&quot;i&quot; (palno) &bslash;&n;&t;&t;:&quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;); &bslash;&n;&t;__r0; &bslash;&n;})
 DECL|macro|getipl
-mdefine_line|#define getipl(__old_ipl) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;call_pal 54&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bis $0,$0,%0&quot; &bslash;&n;&t;: &quot;=r&quot; (__old_ipl) &bslash;&n;&t;: : &quot;$0&quot;, &quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;)
+mdefine_line|#define getipl() &bslash;&n;({ &bslash;&n;&t;register unsigned long r0 __asm__(&quot;$0&quot;); &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;call_pal %1&quot; &bslash;&n;&t;&t;:&quot;=r&quot; (r0) &bslash;&n;&t;&t;:&quot;i&quot; (PAL_rdps) &bslash;&n;&t;&t;:&quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;); &bslash;&n;&t;r0; &bslash;&n;})
 DECL|macro|setipl
-mdefine_line|#define setipl(__new_ipl) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;bis %0,%0,$16&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;call_pal 53&quot; &bslash;&n;&t;: : &quot;r&quot; (__new_ipl) &bslash;&n;&t;: &quot;$0&quot;, &quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;)
+mdefine_line|#define setipl(ipl) &bslash;&n;do { &bslash;&n;&t;register unsigned long __r16 __asm__(&quot;$16&quot;) = (ipl); &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;call_pal %2&quot; &bslash;&n;&t;&t;:&quot;=r&quot; (__r16) &bslash;&n;&t;&t;:&quot;0&quot; (__r16),&quot;i&quot; (PAL_swpipl) &bslash;&n;&t;&t;:&quot;$0&quot;, &quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;); &bslash;&n;} while (0)
 DECL|macro|swpipl
-mdefine_line|#define swpipl(__old_ipl,__new_ipl) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;bis %1,%1,$16&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;call_pal 53&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bis $0,$0,%0&quot; &bslash;&n;&t;: &quot;=r&quot; (__old_ipl) &bslash;&n;&t;: &quot;r&quot; (__new_ipl) &bslash;&n;&t;: &quot;$0&quot;, &quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;)
+mdefine_line|#define swpipl(ipl) &bslash;&n;({ &bslash;&n;&t;register unsigned long __r0 __asm__(&quot;$0&quot;); &bslash;&n;&t;register unsigned long __r16 __asm__(&quot;$16&quot;) = (ipl); &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;call_pal %3&quot; &bslash;&n;&t;&t;:&quot;=r&quot; (__r0),&quot;=r&quot; (__r16) &bslash;&n;&t;&t;:&quot;1&quot; (__r16),&quot;i&quot; (PAL_swpipl) &bslash;&n;&t;&t;:&quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;); &bslash;&n;&t;__r0; &bslash;&n;})
 DECL|macro|__cli
 mdefine_line|#define __cli()&t;&t;&t;setipl(7)
 DECL|macro|__sti
 mdefine_line|#define __sti()&t;&t;&t;setipl(0)
 DECL|macro|__save_flags
-mdefine_line|#define __save_flags(flags)&t;getipl(flags)
+mdefine_line|#define __save_flags(flags)&t;do { (flags) = getipl(); } while (0)
 DECL|macro|__restore_flags
 mdefine_line|#define __restore_flags(flags)&t;setipl(flags)
 DECL|macro|cli
@@ -174,33 +170,24 @@ mdefine_line|#define cli()&t;&t;&t;setipl(7)
 DECL|macro|sti
 mdefine_line|#define sti()&t;&t;&t;setipl(0)
 DECL|macro|save_flags
-mdefine_line|#define save_flags(flags)&t;getipl(flags)
+mdefine_line|#define save_flags(flags)&t;do { (flags) = getipl(); } while (0)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(flags)&t;setipl(flags)
 multiline_comment|/*&n; * TB routines..&n; */
-r_extern
-r_void
-id|tbi
-c_func
-(paren
-r_int
-id|type
-comma
-dot
-dot
-dot
-)paren
-suffix:semicolon
+DECL|macro|__tbi
+mdefine_line|#define __tbi(nr,arg,arg1...) do { &bslash;&n;&t;register unsigned long __r16 __asm__(&quot;$16&quot;) = (nr); &bslash;&n;&t;register unsigned long __r17 __asm__(&quot;$17&quot;); arg; &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;call_pal %3&quot; &bslash;&n;&t;&t;:&quot;=r&quot; (__r16),&quot;=r&quot; (__r17) &bslash;&n;&t;&t;:&quot;0&quot; (__r16),&quot;i&quot; (PAL_tbi) ,##arg1 &bslash;&n;&t;&t;:&quot;$0&quot;, &quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;); &bslash;&n;} while (0)
+DECL|macro|tbi
+mdefine_line|#define tbi(x,y)&t;__tbi(x,__r17=(y),&quot;1&quot; (__r17))
 DECL|macro|tbisi
-mdefine_line|#define tbisi(x)&t;tbi(1,(x))
+mdefine_line|#define tbisi(x)&t;__tbi(1,__r17=(x),&quot;1&quot; (__r17))
 DECL|macro|tbisd
-mdefine_line|#define tbisd(x)&t;tbi(2,(x))
+mdefine_line|#define tbisd(x)&t;__tbi(2,__r17=(x),&quot;1&quot; (__r17))
 DECL|macro|tbis
-mdefine_line|#define tbis(x)&t;&t;tbi(3,(x))
+mdefine_line|#define tbis(x)&t;&t;__tbi(3,__r17=(x),&quot;1&quot; (__r17))
 DECL|macro|tbiap
-mdefine_line|#define tbiap()&t;&t;tbi(-1)
+mdefine_line|#define tbiap()&t;&t;__tbi(-1, /* no second argument */)
 DECL|macro|tbia
-mdefine_line|#define tbia()&t;&t;tbi(-2)
+mdefine_line|#define tbia()&t;&t;__tbi(-2, /* no second argument */)
 multiline_comment|/*&n; * Give prototypes to shut up gcc.&n; */
 r_extern
 id|__inline__

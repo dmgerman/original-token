@@ -49,11 +49,11 @@ r_int
 r_int
 id|ipl
 suffix:semicolon
+id|ipl
+op_assign
 id|swpipl
 c_func
 (paren
-id|ipl
-comma
 l_int|7
 )paren
 suffix:semicolon

@@ -31,7 +31,7 @@ mdefine_line|#define spin_lock_irq(lock)&t;&t;&t;setipl(7)
 DECL|macro|spin_unlock_irq
 mdefine_line|#define spin_unlock_irq(lock)&t;&t;&t;setipl(0)
 DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(lock, flags)&t;&t;swpipl(flags,7)
+mdefine_line|#define spin_lock_irqsave(lock, flags)&t;&t;do { (flags) = swpipl(7); } while (0)
 DECL|macro|spin_unlock_irqrestore
 mdefine_line|#define spin_unlock_irqrestore(lock, flags)&t;setipl(flags)
 multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers&n; * but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts&n; * but no interrupt writers. For those circumstances we&n; * can &quot;mix&quot; irq-safe locks - any writer needs to get a&n; * irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; */
@@ -65,11 +65,11 @@ mdefine_line|#define write_lock_irq(lock)&t;cli()
 DECL|macro|write_unlock_irq
 mdefine_line|#define write_unlock_irq(lock)&t;sti()
 DECL|macro|read_lock_irqsave
-mdefine_line|#define read_lock_irqsave(lock, flags)&t;&t;swpipl(flags,7)
+mdefine_line|#define read_lock_irqsave(lock, flags)&t;&t;do { (flags) = swpipl(7); } while (0)
 DECL|macro|read_unlock_irqrestore
 mdefine_line|#define read_unlock_irqrestore(lock, flags)&t;setipl(flags)
 DECL|macro|write_lock_irqsave
-mdefine_line|#define write_lock_irqsave(lock, flags)&t;&t;swpipl(flags,7)
+mdefine_line|#define write_lock_irqsave(lock, flags)&t;&t;do { (flags) = swpipl(7); } while (0)
 DECL|macro|write_unlock_irqrestore
 mdefine_line|#define write_unlock_irqrestore(lock, flags)&t;setipl(flags)
 macro_line|#else
@@ -250,7 +250,7 @@ mdefine_line|#define spin_lock_irq(lock) &bslash;&n;&t;do { __cli(); spin_lock(l
 DECL|macro|spin_unlock_irq
 mdefine_line|#define spin_unlock_irq(lock) &bslash;&n;&t;do { spin_unlock(lock); __sti(); } while (0)
 DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(lock, flags) &bslash;&n;&t;do { swpipl(flags,7); spin_lock(lock); } while (0)
+mdefine_line|#define spin_lock_irqsave(lock, flags) &bslash;&n;&t;do { flags = swpipl(7); spin_lock(lock); } while (0)
 DECL|macro|spin_unlock_irqrestore
 mdefine_line|#define spin_unlock_irqrestore(lock, flags) &bslash;&n;&t;do { spin_unlock(lock); setipl(flags); } while (0)
 macro_line|#endif /* SMP */

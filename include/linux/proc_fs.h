@@ -443,6 +443,9 @@ comma
 DECL|enumerator|PROC_SCSI_EATA2X
 id|PROC_SCSI_EATA2X
 comma
+DECL|enumerator|PROC_SCSI_DC390T
+id|PROC_SCSI_DC390T
+comma
 DECL|enumerator|PROC_SCSI_AM53C974
 id|PROC_SCSI_AM53C974
 comma

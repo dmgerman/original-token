@@ -30663,13 +30663,12 @@ multiline_comment|/* revalidate */
 suffix:semicolon
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * accept &quot;kernel command line&quot; parameters &n; * (suggested by Peter MacDonald with SLS 1.03)&n; *&n; * This is only implemented for the first controller. Should be enough to&n; * allow installing with a &quot;strange&quot; distribution kernel.&n; *&n; * use: tell LILO:&n; *                 sbpcd=0x230,SoundBlaster&n; *             or&n; *                 sbpcd=0x300,LaserMate&n; *             or&n; *                 sbpcd=0x338,SoundScape&n; *             or&n; *                 sbpcd=0x2C0,Teac16bit&n; *&n; * (upper/lower case sensitive here - but all-lowercase is ok!!!).&n; *&n; * the address value has to be the CDROM PORT ADDRESS -&n; * not the soundcard base address.&n; * For the SPEA/SoundScape setup, DO NOT specify the &quot;configuration port&quot;&n; * address, but the address which is really used for the CDROM (usually 8&n; * bytes above).&n; *&n; */
+macro_line|#if (SBPCD_ISSUE-1)
 DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-macro_line|#if (SBPCD_ISSUE-1)
 r_static
-macro_line|#endif
 r_void
 id|sbpcd_setup
 c_func
@@ -30684,6 +30683,25 @@ op_star
 id|p
 )paren
 )paren
+macro_line|#else
+id|__initfunc
+c_func
+(paren
+r_void
+id|sbpcd_setup
+c_func
+(paren
+r_const
+r_char
+op_star
+id|s
+comma
+r_int
+op_star
+id|p
+)paren
+)paren
+macro_line|#endif
 (brace
 id|setup_done
 op_increment

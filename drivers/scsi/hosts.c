@@ -108,6 +108,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_NCR53C406A
 macro_line|#include &quot;NCR53c406a.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_DC390T
+macro_line|#include &quot;dc390.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AM53C974
 macro_line|#include &quot;AM53C974.h&quot;
 macro_line|#endif
@@ -266,6 +269,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_EATA
 id|EATA
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_DC390T
+id|DC390_T
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AM53C974

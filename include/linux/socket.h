@@ -3,8 +3,8 @@ DECL|macro|_LINUX_SOCKET_H
 mdefine_line|#define _LINUX_SOCKET_H
 macro_line|#include &lt;asm/socket.h&gt;&t;&t;&t;/* arch-dependent defines&t;*/
 macro_line|#include &lt;linux/sockios.h&gt;&t;&t;/* the SIOCxxx I/O controls&t;*/
-macro_line|#include &lt;linux/uio.h&gt;&t;&t;&t;/* iovec support&t;&t;*/
 macro_line|#include &lt;linux/types.h&gt;&t;&t;/* pid_t&t;&t;&t;*/
+macro_line|#include &lt;linux/uio.h&gt;&t;&t;&t;/* iovec support&t;&t;*/
 DECL|typedef|sa_family_t
 r_typedef
 r_int

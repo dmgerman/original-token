@@ -2215,6 +2215,17 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+id|smp_commenced
+)paren
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
 id|cpu_idle
 c_func
 (paren
