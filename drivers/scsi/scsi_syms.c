@@ -185,6 +185,14 @@ c_func
 id|request_queueable
 )paren
 comma
+macro_line|#if defined(CONFIG_PROC_FS)
+id|X
+c_func
+(paren
+id|proc_print_scsidevice
+)paren
+comma
+macro_line|#endif
 multiline_comment|/*&n; * These are here only while I debug the rest of the scsi stuff.&n; */
 id|X
 c_func

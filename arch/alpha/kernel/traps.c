@@ -703,7 +703,7 @@ id|SIGSEGV
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Handle user-level unaligned fault.  For now, simply send a&n; * SIGSEGV---there should be little reason for users not wanting to&n; * fix their code instead.  Notice that we have the regular kernel&n; * stack layout here, so finding the appropriate registers is a little&n; * more difficult than in the kernel case.  Also, we&squot;d need to do&n; * a &quot;verify_area()&quot; before accessing memory on behalf of the user.&n; */
+multiline_comment|/*&n; * Handle user-level unaligned fault.  For now, simply send a&n; * SIGBUS---there should be little reason for users not wanting to&n; * fix their code instead.  Notice that we have the regular kernel&n; * stack layout here, so finding the appropriate registers is a little&n; * more difficult than in the kernel case.  Also, we&squot;d need to do&n; * a &quot;verify_area()&quot; before accessing memory on behalf of the user.&n; */
 DECL|function|do_entUnaUser
 id|asmlinkage
 r_void
@@ -747,7 +747,7 @@ multiline_comment|/* make pc point to faulting insn */
 id|send_sig
 c_func
 (paren
-id|SIGSEGV
+id|SIGBUS
 comma
 id|current
 comma

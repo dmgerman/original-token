@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/char/psaux.c&n; *&n; * Driver for PS/2 type mouse by Johan Myreen.&n; *&n; * Supports pointing devices attached to a PS/2 type&n; * Keyboard and Auxiliary Device Controller.&n; *&n; * Corrections in device setup for some laptop mice &amp; trackballs.&n; * 02Feb93  (troyer@saifr00.cfsat.Honeywell.COM,mch@wimsey.bc.ca)&n; *&n; * Changed to prevent keyboard lockups on AST Power Exec.&n; * 28Jul93  Brad Bosch - brad@lachman.com&n; *&n; * Modified by Johan Myreen (jem@cs.hut.fi) 04Aug93&n; *   to include support for QuickPort mouse.&n; *&n; * Changed references to &quot;QuickPort&quot; with &quot;82C710&quot; since &quot;QuickPort&quot;&n; * is not what this driver is all about -- QuickPort is just a&n; * connector type, and this driver is for the mouse port on the Chips&n; * &amp; Technologies 82C710 interface chip. 15Nov93 jem@cs.hut.fi&n; */
+multiline_comment|/*&n; * linux/drivers/char/psaux.c&n; *&n; * Driver for PS/2 type mouse by Johan Myreen.&n; *&n; * Supports pointing devices attached to a PS/2 type&n; * Keyboard and Auxiliary Device Controller.&n; *&n; * Corrections in device setup for some laptop mice &amp; trackballs.&n; * 02Feb93  (troyer@saifr00.cfsat.Honeywell.COM,mch@wimsey.bc.ca)&n; *&n; * Changed to prevent keyboard lockups on AST Power Exec.&n; * 28Jul93  Brad Bosch - brad@lachman.com&n; *&n; * Modified by Johan Myreen (jempandora.pp.fi) 04Aug93&n; *   to include support for QuickPort mouse.&n; *&n; * Changed references to &quot;QuickPort&quot; with &quot;82C710&quot; since &quot;QuickPort&quot;&n; * is not what this driver is all about -- QuickPort is just a&n; * connector type, and this driver is for the mouse port on the Chips&n; * &amp; Technologies 82C710 interface chip. 15Nov93 jem@pandora.pp.fi&n; */
 multiline_comment|/* Uncomment the following line if your mouse needs initialization. */
 multiline_comment|/* #define INITIALIZE_DEVICE */
 macro_line|#include &lt;linux/sched.h&gt;
@@ -162,6 +162,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_static
+r_int
+id|poll_aux_status_nosleep
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_82C710_MOUSE
 DECL|variable|qp_present
 r_static
@@ -219,7 +227,7 @@ r_int
 id|val
 )paren
 (brace
-id|poll_aux_status
+id|poll_aux_status_nosleep
 c_func
 (paren
 )paren
@@ -233,7 +241,7 @@ id|AUX_COMMAND
 )paren
 suffix:semicolon
 multiline_comment|/* write magic cookie */
-id|poll_aux_status
+id|poll_aux_status_nosleep
 c_func
 (paren
 )paren
@@ -272,54 +280,11 @@ id|val
 )paren
 suffix:semicolon
 multiline_comment|/* write the value to the device */
-r_while
-c_loop
-(paren
-(paren
-id|inb
-c_func
-(paren
-id|AUX_STATUS
-)paren
-op_amp
-id|AUX_OBUF_FULL
-)paren
-op_ne
-id|AUX_OBUF_FULL
-op_logical_and
-id|retries
-OL
-id|MAX_RETRIES
-)paren
-(brace
-multiline_comment|/* wait for ack */
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
-(paren
-l_int|5
-op_star
-id|HZ
-op_plus
-l_int|99
-)paren
-op_div
-l_int|100
-suffix:semicolon
-id|schedule
+id|poll_aux_status_nosleep
 c_func
 (paren
 )paren
 suffix:semicolon
-id|retries
-op_increment
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1568,11 +1533,6 @@ id|psaux_fops.release
 op_assign
 id|release_qp
 suffix:semicolon
-id|poll_qp_status
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 r_else
 macro_line|#endif
@@ -1597,11 +1557,6 @@ suffix:semicolon
 id|kbd_read_mask
 op_assign
 id|AUX_OBUF_FULL
-suffix:semicolon
-id|poll_aux_status
-c_func
-(paren
-)paren
 suffix:semicolon
 )brace
 r_else
@@ -1688,7 +1643,7 @@ id|AUX_SET_SCALE21
 )paren
 suffix:semicolon
 multiline_comment|/* 2:1 scaling */
-id|poll_aux_status
+id|poll_aux_status_nosleep
 c_func
 (paren
 )paren
@@ -1710,11 +1665,6 @@ id|AUX_INTS_OFF
 )paren
 suffix:semicolon
 multiline_comment|/* disable controller ints */
-id|poll_aux_status
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 r_return
 id|kmem_start
@@ -1806,6 +1756,72 @@ op_logical_neg
 id|retries
 op_eq
 id|MAX_RETRIES
+)paren
+suffix:semicolon
+)brace
+DECL|function|poll_aux_status_nosleep
+r_static
+r_int
+id|poll_aux_status_nosleep
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|retries
+op_assign
+l_int|0
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|AUX_STATUS
+)paren
+op_amp
+l_int|0x03
+)paren
+op_logical_and
+id|retries
+OL
+l_int|1000000
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|inb_p
+c_func
+(paren
+id|AUX_STATUS
+)paren
+op_amp
+id|AUX_OBUF_FULL
+)paren
+op_eq
+id|AUX_OBUF_FULL
+)paren
+id|inb_p
+c_func
+(paren
+id|AUX_INPUT_PORT
+)paren
+suffix:semicolon
+id|retries
+op_increment
+suffix:semicolon
+)brace
+r_return
+op_logical_neg
+(paren
+id|retries
+op_eq
+l_int|1000000
 )paren
 suffix:semicolon
 )brace

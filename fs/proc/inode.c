@@ -748,6 +748,8 @@ id|inode-&gt;i_mode
 op_assign
 id|S_IFREG
 op_or
+id|S_IRUGO
+op_or
 id|S_IWUSR
 suffix:semicolon
 id|inode-&gt;i_op

@@ -364,7 +364,7 @@ r_char
 op_star
 id|s
 comma
-r_char
+r_int
 id|c
 )paren
 (brace
@@ -375,6 +375,9 @@ suffix:semicolon
 op_star
 id|s
 op_ne
+(paren
+r_char
+)paren
 id|c
 suffix:semicolon
 op_increment
@@ -1123,7 +1126,6 @@ op_star
 id|addr
 comma
 r_int
-r_char
 id|c
 comma
 r_int

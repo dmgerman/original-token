@@ -4431,6 +4431,12 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * name not found.&n;&t; */
+id|brelse4
+c_func
+(paren
+id|qbh
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

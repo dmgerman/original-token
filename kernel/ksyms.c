@@ -1541,6 +1541,14 @@ id|resetup_one_dev
 )paren
 comma
 multiline_comment|/* Needed for sd.c */
+macro_line|#if defined(CONFIG_PROC_FS)
+id|X
+c_func
+(paren
+id|proc_print_scsidevice
+)paren
+comma
+macro_line|#endif
 macro_line|#else
 multiline_comment|/*&n;&t; * With no scsi configured, we still need to export a few&n;&t; * symbols so that scsi can be loaded later via insmod.&n;&t; */
 id|X

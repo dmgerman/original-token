@@ -720,7 +720,7 @@ l_string|&quot;%s: unimplemented OSF mmap flags %04lx&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
-id|osf_flags
+id|flags
 )paren
 suffix:semicolon
 r_if
