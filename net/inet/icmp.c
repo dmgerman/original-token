@@ -906,6 +906,8 @@ id|RTF_GATEWAY
 comma
 id|ip
 comma
+l_int|0
+comma
 id|icmph-&gt;un.gateway
 comma
 id|dev
@@ -930,6 +932,8 @@ id|RTF_GATEWAY
 )paren
 comma
 id|ip
+comma
+l_int|0
 comma
 id|icmph-&gt;un.gateway
 comma

@@ -164,6 +164,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* set if paging hardware honours WP */
+multiline_comment|/*&n; * Bus types ..&n; */
+DECL|variable|EISA_bus
+r_int
+id|EISA_bus
+op_assign
+l_int|0
+suffix:semicolon
 r_extern
 r_int
 id|_setitimer

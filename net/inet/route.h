@@ -78,6 +78,10 @@ id|addr
 comma
 r_int
 r_int
+id|mask
+comma
+r_int
+r_int
 id|gw
 comma
 r_struct

@@ -903,6 +903,7 @@ r_extern
 r_int
 id|need_resched
 suffix:semicolon
+multiline_comment|/*&n; * System setup flags..&n; */
 r_extern
 r_int
 id|hard_math
@@ -919,6 +920,13 @@ r_extern
 r_int
 id|wp_works_ok
 suffix:semicolon
+multiline_comment|/*&n; * Bus types (default is ISA, but people can check others with these..)&n; * MCA_bus hardcoded to 0 for now.&n; */
+r_extern
+r_int
+id|EISA_bus
+suffix:semicolon
+DECL|macro|MCA_bus
+mdefine_line|#define MCA_bus 0
 DECL|macro|CURRENT_TIME
 mdefine_line|#define CURRENT_TIME (xtime.tv_sec)
 r_extern

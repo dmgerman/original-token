@@ -14,6 +14,8 @@ r_int
 id|rt_hash
 suffix:semicolon
 multiline_comment|/* hash key for lookups&t;&t;*/
+DECL|macro|rt_genmask
+mdefine_line|#define rt_genmask rt_hash
 DECL|member|rt_dst
 r_struct
 id|sockaddr

@@ -251,25 +251,11 @@ id|current_tag
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* First check for a board on the EISA bus.&t; This first check should&n;&t;   really be in init/main.c, along with a MCA check. */
+multiline_comment|/* First check for a board on the EISA bus. */
 r_if
 c_cond
 (paren
-id|strncmp
-c_func
-(paren
-(paren
-r_char
-op_star
-)paren
-l_int|0x0FFFD9
-comma
-l_string|&quot;EISA&quot;
-comma
-l_int|4
-)paren
-op_eq
-l_int|0
+id|EISA_bus
 )paren
 (brace
 r_for
