@@ -103,6 +103,8 @@ multiline_comment|/* happen (negative values ?) - don&squot;t ask me why ! -FB *
 macro_line|#endif
 id|t-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 id|len
 suffix:semicolon
 id|add_timer
@@ -155,6 +157,8 @@ id|in_bh
 (brace
 id|sk-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 l_int|10
 suffix:semicolon
 id|add_timer

@@ -477,16 +477,58 @@ l_int|0
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;mad16.c: A 82C929 detected???&bslash;n&quot;
+l_string|&quot;mad16.c: 82C929 detected???&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
 r_else
+(brace
+r_int
+r_char
+id|model
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|model
+op_assign
+id|mad_read
+(paren
+id|MC3_PORT
+)paren
+)paren
+op_amp
+l_int|0x03
+)paren
+op_eq
+l_int|0x03
+)paren
+(brace
 id|printk
 (paren
-l_string|&quot;mad16.c: A 82C928 or Mozart detected???&bslash;n&quot;
+l_string|&quot;mad16.c: Mozart detected???&bslash;n&quot;
 )paren
 suffix:semicolon
+id|board_type
+op_assign
+id|MOZART
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+(paren
+l_string|&quot;mad16.c: 82C928 detected???&bslash;n&quot;
+)paren
+suffix:semicolon
+id|board_type
+op_assign
+id|C928
+suffix:semicolon
+)brace
+)brace
 r_for
 c_loop
 (paren

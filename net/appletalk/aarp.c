@@ -1188,12 +1188,16 @@ l_int|0
 (brace
 id|aarp_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|AARP_EXPIRY_TIME
 suffix:semicolon
 )brace
 r_else
 id|aarp_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|AARP_TICK_TIME
 suffix:semicolon
 id|add_timer
@@ -1790,6 +1794,8 @@ id|aarp_timer
 suffix:semicolon
 id|aarp_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|AARP_TICK_TIME
 suffix:semicolon
 id|add_timer
@@ -2321,6 +2327,8 @@ id|aarp_timer
 suffix:semicolon
 id|aarp_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|AARP_EXPIRY_TIME
 suffix:semicolon
 id|add_timer
@@ -2488,6 +2496,8 @@ l_int|0
 suffix:semicolon
 id|aarp_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|AARP_EXPIRY_TIME
 suffix:semicolon
 id|add_timer

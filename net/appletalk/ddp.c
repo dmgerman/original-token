@@ -479,6 +479,8 @@ id|sk-&gt;timer
 suffix:semicolon
 id|sk-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 l_int|10
 op_star
 id|HZ

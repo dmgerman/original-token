@@ -1,5 +1,21 @@
 multiline_comment|/*&n; * Sony CDU-31A CDROM interface device driver.&n; *&n; * Corey Minyard (minyard@wf-rch.cirr.com)&n; *&n; * Colossians 3:17&n; *&n; * The Sony interface device driver handles Sony interface CDROM&n; * drives and provides a complete block-level interface as well as an&n; * ioctl() interface compatible with the Sun (as specified in&n; * include/linux/cdrom.h).  With this interface, CDROMs can be&n; * accessed and standard audio CDs can be played back normally.&n; *&n; * WARNING - &t;All autoprobes have been removed from the driver.&n; *&t;&t;You MUST configure the CDU31A via a LILO config&n; *&t;&t;at boot time or in lilo.conf.  I have the&n; *&t;&t;following in my lilo.conf:&n; *&n; *                append=&quot;cdu31a=0x1f88,0,PAS&quot;&n; *&n; *&t;&t;The first number is the I/O base address of the&n; *&t;&t;card.  The second is the interrupt (0 means none).&n; *&t;&t;The third should be &quot;PAS&quot; if on a Pro-Audio&n; *&t;&t;spectrum, or nothing if on something else.&n; *&n; * This interface is (unfortunately) a polled interface.  This is&n; * because most Sony interfaces are set up with DMA and interrupts&n; * disables.  Some (like mine) do not even have the capability to&n; * handle interrupts or DMA.  For this reason you will see a lot of&n; * the following:&n; *&n; *   retry_count = jiffies+ SONY_JIFFIES_TIMEOUT;&n; *   while ((retry_count &gt; jiffies) &amp;&amp; (! &lt;some condition to wait for))&n; *   {&n; *      while (handle_sony_cd_attention())&n; *         ;&n; *&n; *      sony_sleep();&n; *   }&n; *   if (the condition not met)&n; *   {&n; *      return an error;&n; *   }&n; *&n; * This ugly hack waits for something to happen, sleeping a little&n; * between every try.  it also handles attentions, which are&n; * asynchronous events from the drive informing the driver that a disk&n; * has been inserted, removed, etc.&n; *&n; * NEWS FLASH - The driver now supports interrupts but they are&n; * turned off by default.  Use of interrupts is highly encouraged, it&n; * cuts CPU usage down to a reasonable level.  I had DMA in for a while&n; * but PC DMA is just too slow.  Better to just insb() it.&n; *&n; * One thing about these drives: They talk in MSF (Minute Second Frame) format.&n; * There are 75 frames a second, 60 seconds a minute, and up to 75 minutes on a&n; * disk.  The funny thing is that these are sent to the drive in BCD, but the&n; * interface wants to see them in decimal.  A lot of conversion goes on.&n; *&n; * DRIVER SPECIAL FEATURES&n; * -----------------------&n; *&n; * This section describes features beyond the normal audio and CD-ROM&n; * functions of the drive.&n; *&n; * 2048 byte buffer mode&n; *&n; * If a disk is mounted with -o block=2048, data is copied straight&n; * from the drive data port to the buffer.  Otherwise, the readahead&n; * buffer must be involved to hold the other 1K of data when a 1K&n; * block operation is done.  Note that with 2048 byte blocks you&n; * cannot execute files from the CD.&n; *&n; * XA compatibility&n; *&n; * The driver should support XA disks for both the CDU31A and CDU33A.&n; * It does this transparently, the using program doesn&squot;t need to set it.&n; *&n; * Multi-Session&n; *&n; * A multi-session disk looks just like a normal disk to the user.&n; * Just mount one normally, and all the data should be there.&n; * A special thanks to Koen for help with this!&n; * &n; * Raw sector I/O&n; *&n; * Using the CDROMREADAUDIO it is possible to read raw audio and data&n; * tracks.  Both operations return 2352 bytes per sector.  On the data&n; * tracks, the first 12 bytes is not returned by the drive and the value&n; * of that data is indeterminate.&n; *&n; *&n; *  Copyright (C) 1993  Corey Minyard&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
 multiline_comment|/*&n; *&n; * Setting up the Sony CDU31A/CDU33A drive interface card.  If&n; * You have another card, you are on your own.&n; * &n; *      +----------+-----------------+----------------------+&n; *      |  JP1     |  34 Pin Conn    |                      |&n; *      |  JP2     +-----------------+                      |&n; *      |  JP3                                              |&n; *      |  JP4                                              |&n; *      |                                                   +--+&n; *      |                                                   |  +-+&n; *      |                                                   |  | |  External&n; *      |                                                   |  | |  Connector&n; *      |                                                   |  | |&n; *      |                                                   |  +-+&n; *      |                                                   +--+&n; *      |                                                   |&n; *      |                                          +--------+&n; *      |                                          |&n; *      +------------------------------------------+&n; * &n; *    JP1 sets the Base Address, using the following settings:&n; * &n; *      Address         Pin 1           Pin 2&n; *      -------         -----           -----&n; *      0x320           Short           Short&n; *      0x330           Short           Open&n; *      0x340           Open            Short&n; *      0x360           Open            Open&n; * &n; *    JP2 and JP3 configure the DMA channel; they must be set the same.&n; * &n; *      DMA             Pin 1           Pin 2           Pin 3&n; *      ---             -----           -----           -----&n; *      1               On              Off             On&n; *      2               Off             On              Off&n; *      3               Off             Off             On&n; * &n; *    JP4 Configures the IRQ:&n; * &n; *      IRQ     Pin 1           Pin 2           Pin 3           Pin 4&n; *      ---     -----           -----           -----           -----&n; *      3       Off             Off             On              Off&n; *      4       Off             Off*            Off             On&n; *      5       On              Off             Off             Off&n; *      6       Off             On              Off             Off&n; * &n; *              * The documentation states to set this for interrupt&n; *                4, but I think that is a mistake.&n; */
+macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef MODULE
+macro_line|# include &lt;linux/module.h&gt;
+macro_line|# include &lt;linux/version.h&gt;
+macro_line|# ifndef CONFIG_MODVERSIONS
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+macro_line|# endif
+macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -216,11 +232,11 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Number of 512 byte blocks left&n;                                             in the current read command. */
 multiline_comment|/* The base I/O address of the Sony Interface.  This is a variable (not a&n;   #define) so it can be easily changed via some future ioctl() */
-DECL|variable|sony_cd_base_io
+DECL|variable|cdu31a_port
 r_static
 r_int
 r_int
-id|sony_cd_base_io
+id|cdu31a_port
 op_assign
 l_int|0
 suffix:semicolon
@@ -326,10 +342,9 @@ DECL|variable|sony_toc
 r_static
 r_struct
 id|s_sony_session_toc
-op_star
 id|sony_toc
 suffix:semicolon
-multiline_comment|/* Points to the&n;&t;&t;&t;&t;&t;       table of&n;&t;&t;&t;&t;&t;       contents. */
+multiline_comment|/* Holds the&n;&t;&t;&t;&t;&t;       table of&n;&t;&t;&t;&t;&t;       contents. */
 DECL|variable|sony_toc_read
 r_static
 r_int
@@ -342,11 +357,9 @@ DECL|variable|last_sony_subcode
 r_static
 r_struct
 id|s_sony_subcode
-op_star
-r_volatile
 id|last_sony_subcode
 suffix:semicolon
-multiline_comment|/* Points to the last&n;                                                    subcode address read */
+multiline_comment|/* Points to the last&n;                                                   subcode address read */
 DECL|variable|sony_inuse
 r_static
 r_volatile
@@ -431,10 +444,10 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/* What IRQ is the drive using?  0 if none. */
-DECL|variable|irq_used
+DECL|variable|cdu31a_irq
 r_static
 r_int
-id|irq_used
+id|cdu31a_irq
 op_assign
 l_int|0
 suffix:semicolon
@@ -466,12 +479,11 @@ multiline_comment|/* Variable for using the readahead buffer.  The readahead buf
 DECL|variable|readahead_buffer
 r_static
 r_char
-op_star
 id|readahead_buffer
-op_assign
-l_int|NULL
+(braket
+id|CD_FRAMESIZE_RAW
+)braket
 suffix:semicolon
-multiline_comment|/* Used for 1024 byte blocksize. */
 DECL|variable|readahead_dataleft
 r_static
 r_int
@@ -492,6 +504,14 @@ r_static
 r_struct
 id|timer_list
 id|cdu31a_abort_timer
+suffix:semicolon
+multiline_comment|/* Marks if the timeout has started an abort read.  This is used&n;   on entry to the drive to tell the code to read out the status&n;   from the abort read. */
+DECL|variable|abort_read_started
+r_static
+r_int
+id|abort_read_started
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * This routine returns 1 if the disk has been changed since the last&n; * check or 0 if it hasn&squot;t.&n; */
 r_static
@@ -642,7 +662,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|irq_used
+id|cdu31a_irq
 op_le
 l_int|0
 )paren
@@ -2150,12 +2170,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|num_retries
 op_assign
 l_int|0
@@ -2169,6 +2183,11 @@ id|handle_sony_cd_attention
 c_func
 (paren
 )paren
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
 )paren
 suffix:semicolon
 id|retry_count
@@ -2352,6 +2371,12 @@ id|sony_wait
 )paren
 suffix:semicolon
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Handle an attention from the drive.  This will return 1 if it found one&n; * or 0 if not (if one is found, the caller might want to call again).&n; *&n; * This routine counts the number of consecutive times it is called&n; * (since this is always called from a while loop until it returns&n; * a 0), and returns a 0 if it happens too many times.  This will help&n; * prevent a lockup.&n; */
 r_static
@@ -2373,6 +2398,70 @@ id|num_consecutive_attentions
 op_assign
 l_int|0
 suffix:semicolon
+r_volatile
+r_int
+id|val
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|abort_read_started
+)paren
+(brace
+r_while
+c_loop
+(paren
+id|is_result_reg_not_empty
+c_func
+(paren
+)paren
+)paren
+(brace
+id|val
+op_assign
+id|read_result_register
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+id|clear_data_ready
+c_func
+(paren
+)paren
+suffix:semicolon
+id|clear_result_ready
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Clear out the data */
+r_while
+c_loop
+(paren
+id|is_data_requested
+c_func
+(paren
+)paren
+)paren
+(brace
+id|val
+op_assign
+id|read_data_register
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+id|abort_read_started
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -2837,12 +2926,12 @@ op_plus
 id|nsect
 )paren
 op_ge
-id|sony_toc-&gt;lead_out_start_lba
+id|sony_toc.lead_out_start_lba
 )paren
 (brace
 id|read_size
 op_assign
-id|sony_toc-&gt;lead_out_start_lba
+id|sony_toc.lead_out_start_lba
 op_minus
 id|sector
 suffix:semicolon
@@ -3122,11 +3211,48 @@ r_int
 id|data
 )paren
 (brace
-id|abort_read
+multiline_comment|/* If it is in use, ignore it. */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sony_inuse
+)paren
+(brace
+multiline_comment|/* We can&squot;t use abort_read(), because it will sleep&n;         or schedule in the timer interrupt.  Just start&n;         the operation, finish it on the next access to&n;         the drive. */
+id|clear_result_ready
 c_func
 (paren
 )paren
 suffix:semicolon
+id|clear_param_reg
+c_func
+(paren
+)paren
+suffix:semicolon
+id|write_cmd
+c_func
+(paren
+id|SONY_ABORT_CMD
+)paren
+suffix:semicolon
+id|sony_blocks_left
+op_assign
+l_int|0
+suffix:semicolon
+id|readahead_dataleft
+op_assign
+l_int|0
+suffix:semicolon
+id|readahead_bad
+op_assign
+l_int|0
+suffix:semicolon
+id|abort_read_started
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Actually get data and status from the drive. */
 r_static
@@ -4181,11 +4307,6 @@ id|has_cd_task
 op_assign
 id|current
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Get drive status before doing anything. */
 r_while
 c_loop
@@ -4194,6 +4315,11 @@ id|handle_sony_cd_attention
 c_func
 (paren
 )paren
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
 )paren
 suffix:semicolon
 multiline_comment|/* If the timer is running, cancel it. */
@@ -4352,7 +4478,7 @@ multiline_comment|/* Offset the request into the session. */
 id|block
 op_add_assign
 (paren
-id|sony_toc-&gt;start_track_lba
+id|sony_toc.start_track_lba
 op_star
 l_int|4
 )paren
@@ -4378,7 +4504,7 @@ op_div
 l_int|4
 )paren
 OL
-id|sony_toc-&gt;start_track_lba
+id|sony_toc.start_track_lba
 )paren
 (brace
 id|printk
@@ -4407,7 +4533,7 @@ op_div
 l_int|4
 )paren
 op_ge
-id|sony_toc-&gt;lead_out_start_lba
+id|sony_toc.lead_out_start_lba
 )paren
 (brace
 id|printk
@@ -4439,7 +4565,7 @@ op_div
 l_int|4
 )paren
 op_ge
-id|sony_toc-&gt;lead_out_start_lba
+id|sony_toc.lead_out_start_lba
 )paren
 (brace
 id|printk
@@ -4756,7 +4882,11 @@ macro_line|#else
 multiline_comment|/* Start a timer to time out after a while to disable&n;      the read. */
 id|cdu31a_abort_timer.expires
 op_assign
-l_int|200
+id|jiffies
+op_plus
+l_int|2
+op_star
+id|HZ
 suffix:semicolon
 multiline_comment|/* Wait 2 seconds */
 id|add_timer
@@ -5033,6 +5163,7 @@ r_int
 r_char
 op_star
 )paren
+op_amp
 id|sony_toc
 comma
 op_amp
@@ -5050,7 +5181,7 @@ l_int|2
 op_logical_or
 (paren
 (paren
-id|sony_toc-&gt;exec_status
+id|sony_toc.exec_status
 (braket
 l_int|0
 )braket
@@ -5074,7 +5205,7 @@ multiline_comment|/* For points that do not exist, move the data over them&n;&t;
 r_if
 c_cond
 (paren
-id|sony_toc-&gt;pointb0
+id|sony_toc.pointb0
 op_ne
 l_int|0xb0
 )paren
@@ -5087,6 +5218,7 @@ c_func
 r_char
 op_star
 )paren
+op_amp
 id|sony_toc
 )paren
 op_plus
@@ -5097,6 +5229,7 @@ comma
 r_char
 op_star
 )paren
+op_amp
 id|sony_toc
 )paren
 op_plus
@@ -5115,7 +5248,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sony_toc-&gt;pointb1
+id|sony_toc.pointb1
 op_ne
 l_int|0xb1
 )paren
@@ -5128,6 +5261,7 @@ c_func
 r_char
 op_star
 )paren
+op_amp
 id|sony_toc
 )paren
 op_plus
@@ -5138,6 +5272,7 @@ comma
 r_char
 op_star
 )paren
+op_amp
 id|sony_toc
 )paren
 op_plus
@@ -5156,7 +5291,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sony_toc-&gt;pointb2
+id|sony_toc.pointb2
 op_ne
 l_int|0xb2
 )paren
@@ -5169,6 +5304,7 @@ c_func
 r_char
 op_star
 )paren
+op_amp
 id|sony_toc
 )paren
 op_plus
@@ -5179,6 +5315,7 @@ comma
 r_char
 op_star
 )paren
+op_amp
 id|sony_toc
 )paren
 op_plus
@@ -5197,7 +5334,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sony_toc-&gt;pointb3
+id|sony_toc.pointb3
 op_ne
 l_int|0xb3
 )paren
@@ -5210,6 +5347,7 @@ c_func
 r_char
 op_star
 )paren
+op_amp
 id|sony_toc
 )paren
 op_plus
@@ -5220,6 +5358,7 @@ comma
 r_char
 op_star
 )paren
+op_amp
 id|sony_toc
 )paren
 op_plus
@@ -5238,7 +5377,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sony_toc-&gt;pointb4
+id|sony_toc.pointb4
 op_ne
 l_int|0xb4
 )paren
@@ -5251,6 +5390,7 @@ c_func
 r_char
 op_star
 )paren
+op_amp
 id|sony_toc
 )paren
 op_plus
@@ -5261,6 +5401,7 @@ comma
 r_char
 op_star
 )paren
+op_amp
 id|sony_toc
 )paren
 op_plus
@@ -5279,7 +5420,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sony_toc-&gt;pointc0
+id|sony_toc.pointc0
 op_ne
 l_int|0xc0
 )paren
@@ -5292,6 +5433,7 @@ c_func
 r_char
 op_star
 )paren
+op_amp
 id|sony_toc
 )paren
 op_plus
@@ -5302,6 +5444,7 @@ comma
 r_char
 op_star
 )paren
+op_amp
 id|sony_toc
 )paren
 op_plus
@@ -5317,12 +5460,12 @@ op_add_assign
 l_int|9
 suffix:semicolon
 )brace
-id|sony_toc-&gt;start_track_lba
+id|sony_toc.start_track_lba
 op_assign
 id|msf_to_log
 c_func
 (paren
-id|sony_toc-&gt;tracks
+id|sony_toc.tracks
 (braket
 l_int|0
 )braket
@@ -5330,12 +5473,12 @@ dot
 id|track_start_msf
 )paren
 suffix:semicolon
-id|sony_toc-&gt;lead_out_start_lba
+id|sony_toc.lead_out_start_lba
 op_assign
 id|msf_to_log
 c_func
 (paren
-id|sony_toc-&gt;lead_out_start_msf
+id|sony_toc.lead_out_start_msf
 )paren
 suffix:semicolon
 macro_line|#if DEBUG
@@ -5346,9 +5489,9 @@ l_string|&quot;Disk session %d, start track: %d, stop track: %d&bslash;n&quot;
 comma
 id|session
 comma
-id|sony_toc-&gt;start_track_lba
+id|sony_toc.start_track_lba
 comma
-id|sony_toc-&gt;lead_out_start_lba
+id|sony_toc.lead_out_start_lba
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5381,9 +5524,9 @@ id|num_tracks
 suffix:semicolon
 id|num_tracks
 op_assign
-id|sony_toc-&gt;last_track_num
+id|sony_toc.last_track_num
 op_minus
-id|sony_toc-&gt;first_track_num
+id|sony_toc.first_track_num
 op_plus
 l_int|1
 suffix:semicolon
@@ -5405,7 +5548,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|sony_toc-&gt;tracks
+id|sony_toc.tracks
 (braket
 id|i
 )braket
@@ -5453,6 +5596,7 @@ r_int
 r_char
 op_star
 )paren
+op_amp
 id|last_sony_subcode
 comma
 op_amp
@@ -5470,7 +5614,7 @@ l_int|2
 op_logical_or
 (paren
 (paren
-id|last_sony_subcode-&gt;exec_status
+id|last_sony_subcode.exec_status
 (braket
 l_int|0
 )braket
@@ -5487,7 +5631,7 @@ c_func
 (paren
 l_string|&quot;Sony CDROM error 0x%2.2x (read_subcode)&bslash;n&quot;
 comma
-id|last_sony_subcode-&gt;exec_status
+id|last_sony_subcode.exec_status
 (braket
 l_int|1
 )braket
@@ -5680,18 +5824,18 @@ id|sony_audio_status
 suffix:semicolon
 id|schi.cdsc_adr
 op_assign
-id|last_sony_subcode-&gt;address
+id|last_sony_subcode.address
 suffix:semicolon
 id|schi.cdsc_ctrl
 op_assign
-id|last_sony_subcode-&gt;control
+id|last_sony_subcode.control
 suffix:semicolon
 id|schi.cdsc_trk
 op_assign
 id|bcd_to_int
 c_func
 (paren
-id|last_sony_subcode-&gt;track_num
+id|last_sony_subcode.track_num
 )paren
 suffix:semicolon
 id|schi.cdsc_ind
@@ -5699,7 +5843,7 @@ op_assign
 id|bcd_to_int
 c_func
 (paren
-id|last_sony_subcode-&gt;index_num
+id|last_sony_subcode.index_num
 )paren
 suffix:semicolon
 r_if
@@ -5715,7 +5859,7 @@ op_assign
 id|bcd_to_int
 c_func
 (paren
-id|last_sony_subcode-&gt;abs_msf
+id|last_sony_subcode.abs_msf
 (braket
 l_int|0
 )braket
@@ -5726,7 +5870,7 @@ op_assign
 id|bcd_to_int
 c_func
 (paren
-id|last_sony_subcode-&gt;abs_msf
+id|last_sony_subcode.abs_msf
 (braket
 l_int|1
 )braket
@@ -5737,7 +5881,7 @@ op_assign
 id|bcd_to_int
 c_func
 (paren
-id|last_sony_subcode-&gt;abs_msf
+id|last_sony_subcode.abs_msf
 (braket
 l_int|2
 )braket
@@ -5748,7 +5892,7 @@ op_assign
 id|bcd_to_int
 c_func
 (paren
-id|last_sony_subcode-&gt;rel_msf
+id|last_sony_subcode.rel_msf
 (braket
 l_int|0
 )braket
@@ -5759,7 +5903,7 @@ op_assign
 id|bcd_to_int
 c_func
 (paren
-id|last_sony_subcode-&gt;rel_msf
+id|last_sony_subcode.rel_msf
 (braket
 l_int|1
 )braket
@@ -5770,7 +5914,7 @@ op_assign
 id|bcd_to_int
 c_func
 (paren
-id|last_sony_subcode-&gt;rel_msf
+id|last_sony_subcode.rel_msf
 (braket
 l_int|2
 )braket
@@ -5791,7 +5935,7 @@ op_assign
 id|msf_to_log
 c_func
 (paren
-id|last_sony_subcode-&gt;abs_msf
+id|last_sony_subcode.abs_msf
 )paren
 suffix:semicolon
 id|schi.cdsc_reladdr.lba
@@ -5799,7 +5943,7 @@ op_assign
 id|msf_to_log
 c_func
 (paren
-id|last_sony_subcode-&gt;rel_msf
+id|last_sony_subcode.rel_msf
 )paren
 suffix:semicolon
 )brace
@@ -7093,10 +7237,9 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The big ugly ioctl handler.&n; */
-DECL|function|do_sony_cd_cmd_chk
 r_static
 r_int
+DECL|function|do_sony_cd_cmd_chk
 id|do_sony_cd_cmd_chk
 c_func
 (paren
@@ -7188,6 +7331,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * The big ugly ioctl handler.&n; */
 DECL|function|scd_ioctl
 r_static
 r_int
@@ -7373,7 +7517,7 @@ id|cur_pos_msf
 l_int|0
 )braket
 op_assign
-id|last_sony_subcode-&gt;abs_msf
+id|last_sony_subcode.abs_msf
 (braket
 l_int|0
 )braket
@@ -7383,7 +7527,7 @@ id|cur_pos_msf
 l_int|1
 )braket
 op_assign
-id|last_sony_subcode-&gt;abs_msf
+id|last_sony_subcode.abs_msf
 (braket
 l_int|1
 )braket
@@ -7393,7 +7537,7 @@ id|cur_pos_msf
 l_int|2
 )braket
 op_assign
-id|last_sony_subcode-&gt;abs_msf
+id|last_sony_subcode.abs_msf
 (braket
 l_int|2
 )braket
@@ -7784,7 +7928,7 @@ op_assign
 id|bcd_to_int
 c_func
 (paren
-id|sony_toc-&gt;first_track_num
+id|sony_toc.first_track_num
 )paren
 suffix:semicolon
 id|loc_hdr.cdth_trk1
@@ -7792,7 +7936,7 @@ op_assign
 id|bcd_to_int
 c_func
 (paren
-id|sony_toc-&gt;last_track_num
+id|sony_toc.last_track_num
 )paren
 suffix:semicolon
 id|memcpy_tofs
@@ -7945,15 +8089,15 @@ id|CDROM_LEADOUT
 (brace
 id|loc_entry.cdte_adr
 op_assign
-id|sony_toc-&gt;address2
+id|sony_toc.address2
 suffix:semicolon
 id|loc_entry.cdte_ctrl
 op_assign
-id|sony_toc-&gt;control2
+id|sony_toc.control2
 suffix:semicolon
 id|msf_val
 op_assign
-id|sony_toc-&gt;lead_out_start_msf
+id|sony_toc.lead_out_start_msf
 suffix:semicolon
 )brace
 r_else
@@ -7985,7 +8129,7 @@ suffix:semicolon
 )brace
 id|loc_entry.cdte_adr
 op_assign
-id|sony_toc-&gt;tracks
+id|sony_toc.tracks
 (braket
 id|track_idx
 )braket
@@ -7994,7 +8138,7 @@ id|address
 suffix:semicolon
 id|loc_entry.cdte_ctrl
 op_assign
-id|sony_toc-&gt;tracks
+id|sony_toc.tracks
 (braket
 id|track_idx
 )braket
@@ -8003,7 +8147,7 @@ id|control
 suffix:semicolon
 id|msf_val
 op_assign
-id|sony_toc-&gt;tracks
+id|sony_toc.tracks
 (braket
 id|track_idx
 )braket
@@ -8179,13 +8323,13 @@ c_cond
 (paren
 id|ti.cdti_trk0
 OL
-id|sony_toc-&gt;first_track_num
+id|sony_toc.first_track_num
 )paren
 op_logical_or
 (paren
 id|ti.cdti_trk0
 OG
-id|sony_toc-&gt;last_track_num
+id|sony_toc.last_track_num
 )paren
 op_logical_or
 (paren
@@ -8230,7 +8374,7 @@ id|params
 l_int|1
 )braket
 op_assign
-id|sony_toc-&gt;tracks
+id|sony_toc.tracks
 (braket
 id|track_idx
 )braket
@@ -8245,7 +8389,7 @@ id|params
 l_int|2
 )braket
 op_assign
-id|sony_toc-&gt;tracks
+id|sony_toc.tracks
 (braket
 id|track_idx
 )braket
@@ -8260,7 +8404,7 @@ id|params
 l_int|3
 )braket
 op_assign
-id|sony_toc-&gt;tracks
+id|sony_toc.tracks
 (braket
 id|track_idx
 )braket
@@ -8279,7 +8423,7 @@ op_ge
 id|bcd_to_int
 c_func
 (paren
-id|sony_toc-&gt;last_track_num
+id|sony_toc.last_track_num
 )paren
 )paren
 (brace
@@ -8289,7 +8433,7 @@ c_func
 id|msf_to_log
 c_func
 (paren
-id|sony_toc-&gt;lead_out_start_msf
+id|sony_toc.lead_out_start_msf
 )paren
 op_minus
 l_int|1
@@ -8339,7 +8483,7 @@ c_func
 id|msf_to_log
 c_func
 (paren
-id|sony_toc-&gt;tracks
+id|sony_toc.tracks
 (braket
 id|track_idx
 )braket
@@ -8795,7 +8939,7 @@ c_cond
 (paren
 id|ra.addr.lba
 op_ge
-id|sony_toc-&gt;lead_out_start_lba
+id|sony_toc.lead_out_start_lba
 )paren
 op_logical_or
 (paren
@@ -8803,7 +8947,7 @@ id|ra.addr.lba
 op_plus
 id|ra.nframes
 op_ge
-id|sony_toc-&gt;lead_out_start_lba
+id|sony_toc.lead_out_start_lba
 )paren
 )paren
 (brace
@@ -8873,7 +9017,7 @@ c_cond
 (paren
 id|ra.addr.lba
 op_ge
-id|sony_toc-&gt;lead_out_start_lba
+id|sony_toc.lead_out_start_lba
 )paren
 op_logical_or
 (paren
@@ -8881,7 +9025,7 @@ id|ra.addr.lba
 op_plus
 id|ra.nframes
 op_ge
-id|sony_toc-&gt;lead_out_start_lba
+id|sony_toc.lead_out_start_lba
 )paren
 )paren
 (brace
@@ -9224,7 +9368,7 @@ r_if
 c_cond
 (paren
 (paren
-id|sony_toc-&gt;disk_type
+id|sony_toc.disk_type
 op_eq
 id|SONY_XA_DISK_TYPE
 )paren
@@ -9577,56 +9721,56 @@ r_int
 id|retry_count
 suffix:semicolon
 multiline_comment|/* Set the base address */
-id|sony_cd_base_io
+id|cdu31a_port
 op_assign
 id|base_io
 suffix:semicolon
 multiline_comment|/* Set up all the register locations */
 id|sony_cd_cmd_reg
 op_assign
-id|sony_cd_base_io
+id|cdu31a_port
 op_plus
 id|SONY_CMD_REG_OFFSET
 suffix:semicolon
 id|sony_cd_param_reg
 op_assign
-id|sony_cd_base_io
+id|cdu31a_port
 op_plus
 id|SONY_PARAM_REG_OFFSET
 suffix:semicolon
 id|sony_cd_write_reg
 op_assign
-id|sony_cd_base_io
+id|cdu31a_port
 op_plus
 id|SONY_WRITE_REG_OFFSET
 suffix:semicolon
 id|sony_cd_control_reg
 op_assign
-id|sony_cd_base_io
+id|cdu31a_port
 op_plus
 id|SONY_CONTROL_REG_OFFSET
 suffix:semicolon
 id|sony_cd_status_reg
 op_assign
-id|sony_cd_base_io
+id|cdu31a_port
 op_plus
 id|SONY_STATUS_REG_OFFSET
 suffix:semicolon
 id|sony_cd_result_reg
 op_assign
-id|sony_cd_base_io
+id|cdu31a_port
 op_plus
 id|SONY_RESULT_REG_OFFSET
 suffix:semicolon
 id|sony_cd_read_reg
 op_assign
-id|sony_cd_base_io
+id|cdu31a_port
 op_plus
 id|SONY_READ_REG_OFFSET
 suffix:semicolon
 id|sony_cd_fifost_reg
 op_assign
-id|sony_cd_base_io
+id|cdu31a_port
 op_plus
 id|SONY_FIFOST_REG_OFFSET
 suffix:semicolon
@@ -9759,7 +9903,7 @@ OG
 l_int|0
 )paren
 (brace
-id|sony_cd_base_io
+id|cdu31a_port
 op_assign
 id|ints
 (braket
@@ -9778,7 +9922,7 @@ OG
 l_int|1
 )paren
 (brace
-id|irq_used
+id|cdu31a_irq
 op_assign
 id|ints
 (braket
@@ -9841,6 +9985,7 @@ r_int
 id|cdu31a_block_size
 suffix:semicolon
 multiline_comment|/*&n; * Initialize the driver.&n; */
+macro_line|#ifndef MODULE
 r_int
 r_int
 DECL|function|cdu31a_init
@@ -9855,6 +10000,14 @@ r_int
 r_int
 id|mem_end
 )paren
+macro_line|#else
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+macro_line|#endif
 (brace
 r_struct
 id|s_sony_drive_config
@@ -9905,7 +10058,7 @@ multiline_comment|/* Setting the base I/O address to 0xffff will disable it. */
 r_if
 c_cond
 (paren
-id|sony_cd_base_io
+id|cdu31a_port
 op_eq
 l_int|0xffff
 )paren
@@ -9915,24 +10068,24 @@ r_else
 r_if
 c_cond
 (paren
-id|sony_cd_base_io
+id|cdu31a_port
 op_ne
 l_int|0
 )paren
 (brace
 id|tmp_irq
 op_assign
-id|irq_used
+id|cdu31a_irq
 suffix:semicolon
 multiline_comment|/* Need IRQ 0 because we can&squot;t sleep here. */
-id|irq_used
+id|cdu31a_irq
 op_assign
 l_int|0
 suffix:semicolon
 id|get_drive_configuration
 c_func
 (paren
-id|sony_cd_base_io
+id|cdu31a_port
 comma
 id|drive_config.exec_status
 comma
@@ -9968,14 +10121,14 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|irq_used
+id|cdu31a_irq
 op_assign
 id|tmp_irq
 suffix:semicolon
 )brace
 r_else
 (brace
-id|irq_used
+id|cdu31a_irq
 op_assign
 l_int|0
 suffix:semicolon
@@ -10069,7 +10222,7 @@ id|drive_found
 op_assign
 l_int|1
 suffix:semicolon
-id|irq_used
+id|cdu31a_irq
 op_assign
 id|cdu31a_addresses
 (braket
@@ -10096,7 +10249,7 @@ id|drive_found
 id|request_region
 c_func
 (paren
-id|sony_cd_base_io
+id|cdu31a_port
 comma
 l_int|4
 comma
@@ -10126,9 +10279,16 @@ comma
 id|MAJOR_NR
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+macro_line|#else
 r_return
 id|mem_start
 suffix:semicolon
+macro_line|#endif
 )brace
 r_if
 c_cond
@@ -10145,66 +10305,12 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* A negative irq_used will attempt an autoirq. */
-r_if
-c_cond
-(paren
-id|irq_used
-OL
-l_int|0
-)paren
-(brace
-id|autoirq_setup
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-id|enable_interrupts
-c_func
-(paren
-)paren
-suffix:semicolon
-id|reset_drive
-c_func
-(paren
-)paren
-suffix:semicolon
 id|tmp_irq
 op_assign
-id|autoirq_report
-c_func
-(paren
-l_int|10
-)paren
-suffix:semicolon
-id|disable_interrupts
-c_func
-(paren
-)paren
-suffix:semicolon
-id|irq_used
-op_assign
-l_int|0
-suffix:semicolon
-id|set_drive_params
-c_func
-(paren
-)paren
-suffix:semicolon
-id|irq_used
-op_assign
-id|tmp_irq
-suffix:semicolon
-)brace
-r_else
-(brace
-id|tmp_irq
-op_assign
-id|irq_used
+id|cdu31a_irq
 suffix:semicolon
 multiline_comment|/* Need IRQ 0 because we can&squot;t sleep here. */
-id|irq_used
+id|cdu31a_irq
 op_assign
 l_int|0
 suffix:semicolon
@@ -10213,15 +10319,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|irq_used
+id|cdu31a_irq
 op_assign
 id|tmp_irq
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
-id|irq_used
+id|cdu31a_irq
 OG
 l_int|0
 )paren
@@ -10232,7 +10337,7 @@ c_cond
 id|request_irq
 c_func
 (paren
-id|irq_used
+id|cdu31a_irq
 comma
 id|cdu31a_interrupt
 comma
@@ -10247,10 +10352,10 @@ c_func
 (paren
 l_string|&quot;Unable to grab IRQ%d for the CDU31A driver&bslash;n&quot;
 comma
-id|irq_used
+id|cdu31a_irq
 )paren
 suffix:semicolon
-id|irq_used
+id|cdu31a_irq
 op_assign
 l_int|0
 suffix:semicolon
@@ -10384,7 +10489,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|irq_used
+id|cdu31a_irq
 OG
 l_int|0
 )paren
@@ -10394,7 +10499,7 @@ c_func
 (paren
 l_string|&quot;, irq %d&quot;
 comma
-id|irq_used
+id|cdu31a_irq
 )paren
 suffix:semicolon
 )brace
@@ -10434,53 +10539,6 @@ op_assign
 op_amp
 id|cdu31a_block_size
 suffix:semicolon
-id|last_sony_subcode
-op_assign
-(paren
-r_struct
-id|s_sony_subcode
-op_star
-)paren
-id|mem_start
-suffix:semicolon
-id|mem_start
-op_add_assign
-r_sizeof
-(paren
-op_star
-id|last_sony_subcode
-)paren
-suffix:semicolon
-id|readahead_buffer
-op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-id|mem_start
-suffix:semicolon
-id|mem_start
-op_add_assign
-id|CD_FRAMESIZE_RAW
-suffix:semicolon
-id|sony_toc
-op_assign
-(paren
-r_struct
-id|s_sony_session_toc
-op_star
-)paren
-id|mem_start
-suffix:semicolon
-id|mem_start
-op_add_assign
-r_sizeof
-(paren
-r_struct
-id|s_sony_session_toc
-)paren
-suffix:semicolon
 id|cdu31a_abort_timer.next
 op_assign
 l_int|NULL
@@ -10498,8 +10556,96 @@ id|disk_changed
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#ifdef MODULE
+r_if
+c_cond
+(paren
+id|drive_found
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+macro_line|#else
 r_return
 id|mem_start
 suffix:semicolon
+macro_line|#endif
 )brace
+macro_line|#ifdef MODULE
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sony_usage
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;cdu31a module in use - can&squot;t remove it.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|unregister_blkdev
+c_func
+(paren
+id|MAJOR_NR
+comma
+l_string|&quot;cdu31a&quot;
+)paren
+op_eq
+op_minus
+id|EINVAL
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Can&squot;t unregister cdu31a&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|release_region
+c_func
+(paren
+id|cdu31a_port
+comma
+l_int|4
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;cdu31a module released.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif MODULE
 eof

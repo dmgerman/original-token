@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 029&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 006&t;Alan(GW4PTS)&t;&t;Nearly died of shock - its working 8-)&n; *&t;AX.25 007&t;Alan(GW4PTS)&t;&t;Removed the silliest bugs&n; *&t;AX.25 008&t;Alan(GW4PTS)&t;&t;Cleaned up, fixed a few state machine problems, added callbacks&n; *&t;AX.25 009&t;Alan(GW4PTS)&t;&t;Emergency patch kit to fix memory corruption&n; * &t;AX.25 010&t;Alan(GW4PTS)&t;&t;Added RAW sockets/Digipeat.&n; *&t;AX.25 011&t;Alan(GW4PTS)&t;&t;RAW socket and datagram fixes (thanks) - Raw sendto now gets PID right&n; *&t;&t;&t;&t;&t;&t;datagram sendto uses correct target address.&n; *&t;AX.25 012&t;Alan(GW4PTS)&t;&t;Correct incoming connection handling, send DM to failed connects.&n; *&t;&t;&t;&t;&t;&t;Use skb-&gt;data not skb+1. Support sk-&gt;priority correctly.&n; *&t;&t;&t;&t;&t;&t;Correct receive on SOCK_DGRAM.&n; *&t;AX.25 013&t;Alan(GW4PTS)&t;&t;Send DM to all unknown frames, missing initialiser fixed&n; *&t;&t;&t;&t;&t;&t;Leave spare SSID bits set (DAMA etc) - thanks for bug report,&n; *&t;&t;&t;&t;&t;&t;removed device registration (its not used or needed). Clean up for&n; *&t;&t;&t;&t;&t;&t;gcc 2.5.8. PID to AX25_P_&n; *&t;AX.25 014&t;Alan(GW4PTS)&t;&t;Cleanup and NET3 merge&n; *&t;AX.25 015&t;Alan(GW4PTS)&t;&t;Internal test version.&n; *&t;AX.25 016&t;Alan(GW4PTS)&t;&t;Semi Internal version for PI card&n; *&t;&t;&t;&t;&t;&t;work.&n; *&t;AX.25 017&t;Alan(GW4PTS)&t;&t;Fixed some small bugs reported by&n; *&t;&t;&t;&t;&t;&t;G4KLX&n; *&t;AX.25 018&t;Alan(GW4PTS)&t;&t;Fixed a small error in SOCK_DGRAM&n; *&t;AX.25 019&t;Alan(GW4PTS)&t;&t;Clean ups for the non INET kernel and device ioctls in AX.25&n; *&t;AX.25 020&t;Jonathan(G4KLX)&t;&t;/proc support and other changes.&n; *&t;AX.25 021&t;Alan(GW4PTS)&t;&t;Added AX25_T1, AX25_N2, AX25_T3 as requested.&n; *&t;AX.25 022&t;Jonathan(G4KLX)&t;&t;More work on the ax25 auto router and /proc improved (again)!&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Added TIOCINQ/OUTQ&n; *&t;AX.25 023&t;Alan(GW4PTS)&t;&t;Fixed shutdown bug&n; *&t;AX.25 023&t;Alan(GW4PTS)&t;&t;Linus changed timers&n; *&t;AX.25 024&t;Alan(GW4PTS)&t;&t;Small bug fixes&n; *&t;AX.25 025&t;Alan(GW4PTS)&t;&t;More fixes, Linux 1.1.51 compatibility stuff, timers again!&n; *&t;AX.25 026&t;Alan(GW4PTS)&t;&t;Small state fix.&n; *&t;AX.25 027&t;Alan(GW4PTS)&t;&t;Socket close crash fixes.&n; *&t;AX.25 028&t;Alan(GW4PTS)&t;&t;Callsign control including settings per uid.&n; *&t;&t;&t;&t;&t;&t;Small bug fixes.&n; *&t;&t;&t;&t;&t;&t;Protocol set by sockets only.&n; *&t;&t;&t;&t;&t;&t;Small changes to allow for start of NET/ROM layer.&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;&t;Changes to state machine.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;&t;Extracted ax25 control block&n; *&t;&t;&t;&t;&t;&t;from sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;&t;Combined 028b and some KA9Q code&n; *&t;&t;&t;Jonathan(G4KLX)&t;&t;and removed all the old Berkeley, added IP mode registration.&n; *&t;&t;&t;Darryl(G7LED)&t;&t;stuff. Cross-port digipeating. Minor fixes and enhancements.&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Missed suser() on axassociate checks&n; *&t;AX.25 030&t;Alan(GW4PTS)&t;&t;Added variable length headers.&n; *&t;&t;&t;Jonathan(G4KLX)&t;&t;Added BPQ Ethernet interface.&n; *&t;&t;&t;Steven(GW7RRM)&n; *&n; *&t;To do:&n; *&t;&t;Support use as digipeater, including an on/off ioctl&n; *&t;&t;Restructure the ax25_rcv code to be cleaner/faster and&n; *&t;&t;copy only when needed.&n; *&t;&t;Consider better arbitary protocol support.&n; *&t;&t;Fix non-blocking connect failure.&n; *&t;&t;VC mode doesnt work on the PI card.&n; *&t;&t;Settable protocol id for SEQPACKET sockets&n; */
+multiline_comment|/*&n; *&t;AX.25 release 030&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 006&t;Alan(GW4PTS)&t;&t;Nearly died of shock - its working 8-)&n; *&t;AX.25 007&t;Alan(GW4PTS)&t;&t;Removed the silliest bugs&n; *&t;AX.25 008&t;Alan(GW4PTS)&t;&t;Cleaned up, fixed a few state machine problems, added callbacks&n; *&t;AX.25 009&t;Alan(GW4PTS)&t;&t;Emergency patch kit to fix memory corruption&n; * &t;AX.25 010&t;Alan(GW4PTS)&t;&t;Added RAW sockets/Digipeat.&n; *&t;AX.25 011&t;Alan(GW4PTS)&t;&t;RAW socket and datagram fixes (thanks) - Raw sendto now gets PID right&n; *&t;&t;&t;&t;&t;&t;datagram sendto uses correct target address.&n; *&t;AX.25 012&t;Alan(GW4PTS)&t;&t;Correct incoming connection handling, send DM to failed connects.&n; *&t;&t;&t;&t;&t;&t;Use skb-&gt;data not skb+1. Support sk-&gt;priority correctly.&n; *&t;&t;&t;&t;&t;&t;Correct receive on SOCK_DGRAM.&n; *&t;AX.25 013&t;Alan(GW4PTS)&t;&t;Send DM to all unknown frames, missing initialiser fixed&n; *&t;&t;&t;&t;&t;&t;Leave spare SSID bits set (DAMA etc) - thanks for bug report,&n; *&t;&t;&t;&t;&t;&t;removed device registration (its not used or needed). Clean up for&n; *&t;&t;&t;&t;&t;&t;gcc 2.5.8. PID to AX25_P_&n; *&t;AX.25 014&t;Alan(GW4PTS)&t;&t;Cleanup and NET3 merge&n; *&t;AX.25 015&t;Alan(GW4PTS)&t;&t;Internal test version.&n; *&t;AX.25 016&t;Alan(GW4PTS)&t;&t;Semi Internal version for PI card&n; *&t;&t;&t;&t;&t;&t;work.&n; *&t;AX.25 017&t;Alan(GW4PTS)&t;&t;Fixed some small bugs reported by&n; *&t;&t;&t;&t;&t;&t;G4KLX&n; *&t;AX.25 018&t;Alan(GW4PTS)&t;&t;Fixed a small error in SOCK_DGRAM&n; *&t;AX.25 019&t;Alan(GW4PTS)&t;&t;Clean ups for the non INET kernel and device ioctls in AX.25&n; *&t;AX.25 020&t;Jonathan(G4KLX)&t;&t;/proc support and other changes.&n; *&t;AX.25 021&t;Alan(GW4PTS)&t;&t;Added AX25_T1, AX25_N2, AX25_T3 as requested.&n; *&t;AX.25 022&t;Jonathan(G4KLX)&t;&t;More work on the ax25 auto router and /proc improved (again)!&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Added TIOCINQ/OUTQ&n; *&t;AX.25 023&t;Alan(GW4PTS)&t;&t;Fixed shutdown bug&n; *&t;AX.25 023&t;Alan(GW4PTS)&t;&t;Linus changed timers&n; *&t;AX.25 024&t;Alan(GW4PTS)&t;&t;Small bug fixes&n; *&t;AX.25 025&t;Alan(GW4PTS)&t;&t;More fixes, Linux 1.1.51 compatibility stuff, timers again!&n; *&t;AX.25 026&t;Alan(GW4PTS)&t;&t;Small state fix.&n; *&t;AX.25 027&t;Alan(GW4PTS)&t;&t;Socket close crash fixes.&n; *&t;AX.25 028&t;Alan(GW4PTS)&t;&t;Callsign control including settings per uid.&n; *&t;&t;&t;&t;&t;&t;Small bug fixes.&n; *&t;&t;&t;&t;&t;&t;Protocol set by sockets only.&n; *&t;&t;&t;&t;&t;&t;Small changes to allow for start of NET/ROM layer.&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;&t;Changes to state machine.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;&t;Extracted ax25 control block&n; *&t;&t;&t;&t;&t;&t;from sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;&t;Combined 028b and some KA9Q code&n; *&t;&t;&t;Jonathan(G4KLX)&t;&t;and removed all the old Berkeley, added IP mode registration.&n; *&t;&t;&t;Darryl(G7LED)&t;&t;stuff. Cross-port digipeating. Minor fixes and enhancements.&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Missed suser() on axassociate checks&n; *&t;AX.25 030&t;Alan(GW4PTS)&t;&t;Added variable length headers.&n; *&t;&t;&t;Jonathan(G4KLX)&t;&t;Added BPQ Ethernet interface.&n; *&t;&t;&t;Steven(GW7RRM)&t;&t;Added digi-peating control ioctl.&n; *&t;&t;&t;&t;&t;&t;Added extended AX.25 support.&n; *&t;&t;&t;&t;&t;&t;Added AX.25 frame segmentation.&n; *&n; *&t;To do:&n; *&t;&t;Support use as digipeater, including an on/off ioctl&n; *&t;&t;Restructure the ax25_rcv code to be cleaner/faster and&n; *&t;&t;copy only when needed.&n; *&t;&t;Consider better arbitary protocol support.&n; *&t;&t;Fix non-blocking connect failure.&n; *&t;&t;VC mode doesnt work on the PI card.&n; *&t;&t;Settable protocol id for SEQPACKET sockets&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &lt;linux/errno.h&gt;
@@ -25,6 +25,13 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
+DECL|variable|ax25_digi_on
+r_static
+r_int
+id|ax25_digi_on
+op_assign
+l_int|1
+suffix:semicolon
 DECL|macro|CONFIG_AX25_XDIGI
 mdefine_line|#define&t;CONFIG_AX25_XDIGI&t;/* Cross port (band) digi stuff */
 multiline_comment|/**********************************************************************************************************************&bslash;&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;       *&n;*&t;&t;&t;&t;&t;&t;Handlers for the socket list.&t;&t;&t;&t;&t;       *&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;       *&n;&bslash;**********************************************************************************************************************/
@@ -398,6 +405,10 @@ op_eq
 id|dev
 )paren
 (brace
+id|s-&gt;state
+op_assign
+id|AX25_STATE_0
+suffix:semicolon
 id|s-&gt;device
 op_assign
 l_int|NULL
@@ -1153,13 +1164,13 @@ c_func
 id|ax25
 )paren
 suffix:semicolon
-id|ax25_clear_tx_queue
+id|ax25_clear_queues
 c_func
 (paren
 id|ax25
 )paren
 suffix:semicolon
-multiline_comment|/* Flush the send queue */
+multiline_comment|/* Flush the queues */
 r_if
 c_cond
 (paren
@@ -1270,6 +1281,8 @@ id|ax25-&gt;timer
 suffix:semicolon
 id|ax25-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 l_int|10
 op_star
 id|HZ
@@ -1712,7 +1725,21 @@ id|skb_queue_head_init
 c_func
 (paren
 op_amp
+id|ax25-&gt;frag_queue
+)paren
+suffix:semicolon
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
 id|ax25-&gt;ack_queue
+)paren
+suffix:semicolon
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|ax25-&gt;reseq_queue
 )paren
 suffix:semicolon
 id|init_timer
@@ -1741,6 +1768,18 @@ suffix:semicolon
 id|ax25-&gt;t3
 op_assign
 id|DEFAULT_T3
+suffix:semicolon
+id|ax25-&gt;modulus
+op_assign
+id|MODULUS
+suffix:semicolon
+id|ax25-&gt;fragno
+op_assign
+l_int|0
+suffix:semicolon
+id|ax25-&gt;fraglen
+op_assign
+l_int|0
 suffix:semicolon
 id|ax25-&gt;backoff
 op_assign
@@ -2390,6 +2429,14 @@ suffix:colon
 r_if
 c_cond
 (paren
+id|sk-&gt;ax25-&gt;modulus
+op_eq
+id|MODULUS
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|opt
 template_param
 l_int|7
@@ -2398,6 +2445,21 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|opt
+template_param
+l_int|63
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 id|sk-&gt;ax25-&gt;window
 op_assign
 id|opt
@@ -2510,6 +2572,21 @@ c_cond
 l_int|1
 suffix:colon
 l_int|0
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+r_case
+id|AX25_EXTSEQ
+suffix:colon
+id|sk-&gt;ax25-&gt;modulus
+op_assign
+id|opt
+ques
+c_cond
+id|EMODULUS
+suffix:colon
+id|MODULUS
 suffix:semicolon
 r_return
 l_int|0
@@ -2668,6 +2745,20 @@ op_assign
 id|sk-&gt;ax25-&gt;backoff
 suffix:semicolon
 r_break
+suffix:semicolon
+r_case
+id|AX25_EXTSEQ
+suffix:colon
+id|val
+op_assign
+(paren
+id|sk-&gt;ax25-&gt;modulus
+op_eq
+id|EMODULUS
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 r_default
 suffix:colon
@@ -3449,6 +3540,10 @@ id|sk-&gt;error_report
 op_assign
 id|def_callback1
 suffix:semicolon
+id|ax25-&gt;modulus
+op_assign
+id|osk-&gt;ax25-&gt;modulus
+suffix:semicolon
 id|ax25-&gt;backoff
 op_assign
 id|osk-&gt;ax25-&gt;backoff
@@ -3694,8 +3789,8 @@ c_func
 id|sk-&gt;ax25
 comma
 id|DISC
-op_or
-id|PF
+comma
+id|POLLON
 comma
 id|C_COMMAND
 )paren
@@ -3733,8 +3828,8 @@ c_func
 id|sk-&gt;ax25
 comma
 id|DM
-op_or
-id|PF
+comma
+id|POLLON
 comma
 id|C_RESPONSE
 )paren
@@ -3769,7 +3864,7 @@ suffix:colon
 r_case
 id|AX25_STATE_4
 suffix:colon
-id|ax25_clear_tx_queue
+id|ax25_clear_queues
 c_func
 (paren
 id|sk-&gt;ax25
@@ -3785,8 +3880,8 @@ c_func
 id|sk-&gt;ax25
 comma
 id|DISC
-op_or
-id|PF
+comma
+id|POLLON
 comma
 id|C_COMMAND
 )paren
@@ -5330,12 +5425,20 @@ op_amp
 id|dp
 comma
 id|type
+comma
+id|MODULUS
 )paren
 suffix:semicolon
 id|skb-&gt;arp
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ax25_digi_on
+)paren
+(brace
 id|ax25_queue_xmit
 c_func
 (paren
@@ -5346,6 +5449,18 @@ comma
 id|SOPRI_NORMAL
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -5752,10 +5867,21 @@ c_cond
 op_star
 id|skb-&gt;data
 op_amp
-l_int|0xEF
+op_complement
+id|PF
 )paren
 op_ne
 id|SABM
+op_logical_and
+(paren
+op_star
+id|skb-&gt;data
+op_amp
+op_complement
+id|PF
+)paren
+op_ne
+id|SABME
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; *&t;Never reply to a DM. Also ignore any connects for&n;&t;&t; *&t;addresses that are not our interfaces and not a socket.&n;&t;&t; */
@@ -5766,7 +5892,8 @@ c_cond
 op_star
 id|skb-&gt;data
 op_amp
-l_int|0xEF
+op_complement
+id|PF
 )paren
 op_ne
 id|DM
@@ -6126,6 +6253,32 @@ id|ax25-&gt;digipeat
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+(paren
+op_star
+id|skb-&gt;data
+op_amp
+op_complement
+id|PF
+)paren
+op_eq
+id|SABME
+)paren
+(brace
+id|ax25-&gt;modulus
+op_assign
+id|EMODULUS
+suffix:semicolon
+)brace
+r_else
+(brace
+id|ax25-&gt;modulus
+op_assign
+id|MODULUS
+suffix:semicolon
+)brace
 id|ax25-&gt;device
 op_assign
 id|dev
@@ -6136,8 +6289,8 @@ c_func
 id|ax25
 comma
 id|UA
-op_or
-id|PF
+comma
+id|POLLON
 comma
 id|C_RESPONSE
 )paren
@@ -6355,12 +6508,12 @@ id|len
 op_assign
 id|skb-&gt;data
 (braket
-l_int|14
+l_int|0
 )braket
 op_plus
 id|skb-&gt;data
 (braket
-l_int|15
+l_int|1
 )braket
 op_star
 l_int|256
@@ -6372,10 +6525,10 @@ c_func
 (paren
 id|skb
 comma
-id|AX25_BPQ_HEADER_LEN
+l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* Remove the BPQ Header */
+multiline_comment|/* Remove the length bytes */
 id|skb_trim
 c_func
 (paren
@@ -6846,7 +6999,7 @@ id|size
 op_assign
 id|len
 op_plus
-l_int|2
+l_int|3
 op_plus
 id|size_ax25_addr
 c_func
@@ -7069,6 +7222,8 @@ comma
 id|dp
 comma
 id|C_COMMAND
+comma
+id|MODULUS
 )paren
 )paren
 suffix:semicolon
@@ -7351,7 +7506,7 @@ id|ENOTCONN
 suffix:semicolon
 id|bias
 op_assign
-l_int|2
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Now we can treat all alike */
@@ -8149,6 +8304,75 @@ r_return
 l_int|0
 suffix:semicolon
 r_case
+id|SIOCAX25DIGCTL
+suffix:colon
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+)paren
+op_ne
+l_int|0
+)paren
+r_return
+id|err
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+id|amount
+op_assign
+id|get_fs_long
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+id|ax25_digi_on
+op_assign
+id|amount
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+r_case
 id|SIOCGIFADDR
 suffix:colon
 r_case
@@ -8264,7 +8488,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;dest_addr src_addr  dev  st vs vr va    t1     t2     t3     n2  rtt wnd Snd-Q Rcv-Q&bslash;n&quot;
+l_string|&quot;dest_addr src_addr  dev  st  vs  vr  va    t1     t2     t3     n2  rtt wnd Snd-Q Rcv-Q&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -8331,7 +8555,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%-9s %-4s %2d %2d %2d %2d %3d/%03d %2d/%02d %3d/%03d %2d/%02d %3d %3d&quot;
+l_string|&quot;%-9s %-4s %2d %3d %3d %3d %3d/%03d %2d/%02d %3d/%03d %2d/%02d %3d %3d&quot;
 comma
 id|ax2asc
 c_func
@@ -8943,7 +9167,7 @@ id|buff
 l_int|6
 )braket
 op_or_assign
-id|SSID_SPARE
+id|SSSID_SPARE
 suffix:semicolon
 id|buff
 op_add_assign
@@ -8997,7 +9221,7 @@ id|buff
 l_int|6
 )braket
 op_or_assign
-id|SSID_SPARE
+id|SSSID_SPARE
 suffix:semicolon
 id|buff
 op_add_assign
@@ -9242,7 +9466,7 @@ id|bp
 l_int|7
 )braket
 op_or_assign
-id|SSID_SPARE
+id|SSSID_SPARE
 suffix:semicolon
 id|bp
 (braket
@@ -9264,7 +9488,7 @@ id|bp
 l_int|14
 )braket
 op_or_assign
-id|SSID_SPARE
+id|SSSID_SPARE
 suffix:semicolon
 r_return
 l_int|0

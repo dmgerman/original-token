@@ -92,6 +92,8 @@ id|nr_timer
 suffix:semicolon
 id|sk-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 l_int|10
 suffix:semicolon
 id|add_timer
@@ -157,6 +159,8 @@ id|nr_timer
 suffix:semicolon
 id|sk-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 l_int|10
 suffix:semicolon
 id|add_timer
@@ -387,7 +391,7 @@ op_eq
 id|sk-&gt;nr-&gt;n2
 )paren
 (brace
-id|nr_clear_tx_queue
+id|nr_clear_queues
 c_func
 (paren
 id|sk
@@ -451,7 +455,7 @@ op_eq
 id|sk-&gt;nr-&gt;n2
 )paren
 (brace
-id|nr_clear_tx_queue
+id|nr_clear_queues
 c_func
 (paren
 id|sk
@@ -515,7 +519,7 @@ op_eq
 id|sk-&gt;nr-&gt;n2
 )paren
 (brace
-id|nr_clear_tx_queue
+id|nr_clear_queues
 c_func
 (paren
 id|sk

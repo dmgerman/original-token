@@ -1281,6 +1281,8 @@ suffix:semicolon
 multiline_comment|/* Start a timer for this entry. */
 id|qp-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 id|IP_FRAG_TIME
 suffix:semicolon
 multiline_comment|/* about 30 seconds&t;*/
@@ -1836,6 +1838,8 @@ id|qp-&gt;timer
 suffix:semicolon
 id|qp-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 id|IP_FRAG_TIME
 suffix:semicolon
 multiline_comment|/* about 30 seconds */
@@ -5640,6 +5644,8 @@ comma
 id|im-&gt;tm_running
 comma
 id|im-&gt;timer.expires
+op_minus
+id|jiffies
 )paren
 suffix:semicolon
 id|pos

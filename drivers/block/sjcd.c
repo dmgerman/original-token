@@ -431,7 +431,7 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|macro|SJCD_SET_TIMER
-mdefine_line|#define SJCD_SET_TIMER( func, jiffies )           &bslash;&n;    ( sjcd_delay_timer.expires = jiffies,         &bslash;&n;      sjcd_delay_timer.function = ( void * )func, &bslash;&n;      add_timer( &amp;sjcd_delay_timer ) )
+mdefine_line|#define SJCD_SET_TIMER( func, tmout )           &bslash;&n;    ( sjcd_delay_timer.expires = jiffies+tmout,         &bslash;&n;      sjcd_delay_timer.function = ( void * )func, &bslash;&n;      add_timer( &amp;sjcd_delay_timer ) )
 DECL|macro|CLEAR_TIMER
 mdefine_line|#define CLEAR_TIMER del_timer( &amp;sjcd_delay_timer )
 multiline_comment|/*&n; * Set up device, i.e., use command line data to set&n; * base address, irq and dma.&n; */

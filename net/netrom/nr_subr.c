@@ -22,10 +22,10 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;net/netrom.h&gt;
-multiline_comment|/*&n; * This routine purges the input queue of frames.&n; */
-DECL|function|nr_clear_tx_queue
+multiline_comment|/*&n; *&t;This routine purges all of the queues of frames.&n; */
+DECL|function|nr_clear_queues
 r_void
-id|nr_clear_tx_queue
+id|nr_clear_queues
 c_func
 (paren
 r_struct
@@ -124,10 +124,32 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|skb-&gt;free
-op_assign
-l_int|1
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
 suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+(paren
+id|skb
+op_assign
+id|skb_dequeue
+c_func
+(paren
+op_amp
+id|sk-&gt;nr-&gt;frag_queue
+)paren
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
 id|kfree_skb
 c_func
 (paren
@@ -471,7 +493,7 @@ id|AX25_BPQ_HEADER_LEN
 op_plus
 id|AX25_MAX_HEADER_LEN
 op_plus
-l_int|2
+l_int|3
 op_plus
 id|NR_NETWORK_LEN
 op_plus
@@ -674,7 +696,7 @@ id|dptr
 l_int|6
 )braket
 op_or_assign
-id|SSID_SPARE
+id|SSSID_SPARE
 suffix:semicolon
 id|dptr
 op_add_assign
@@ -715,7 +737,7 @@ id|dptr
 l_int|6
 )braket
 op_or_assign
-id|SSID_SPARE
+id|SSSID_SPARE
 suffix:semicolon
 id|dptr
 op_add_assign
@@ -909,7 +931,7 @@ id|AX25_BPQ_HEADER_LEN
 op_plus
 id|AX25_MAX_HEADER_LEN
 op_plus
-l_int|2
+l_int|3
 op_plus
 id|NR_NETWORK_LEN
 op_plus
@@ -993,7 +1015,7 @@ id|dptr
 l_int|6
 )braket
 op_or_assign
-id|SSID_SPARE
+id|SSSID_SPARE
 suffix:semicolon
 id|dptr
 op_add_assign
@@ -1031,7 +1053,7 @@ id|dptr
 l_int|6
 )braket
 op_or_assign
-id|SSID_SPARE
+id|SSSID_SPARE
 suffix:semicolon
 id|dptr
 op_add_assign
@@ -1078,7 +1100,7 @@ id|dptr
 op_increment
 op_assign
 id|NR_CONNACK
-op_plus
+op_or
 id|NR_CHOKE_FLAG
 suffix:semicolon
 op_star
@@ -1155,6 +1177,17 @@ op_increment
 id|t
 op_mul_assign
 l_int|2
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|t
+OG
+l_int|8
+)paren
+id|t
+op_assign
+l_int|8
 suffix:semicolon
 r_return
 id|t

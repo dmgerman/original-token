@@ -14,6 +14,8 @@ DECL|macro|SIOCNRSETPARMS
 mdefine_line|#define&t;SIOCNRSETPARMS&t;&t;(SIOCPROTOPRIVATE+1)
 DECL|macro|SIOCNRDECOBS
 mdefine_line|#define&t;SIOCNRDECOBS&t;&t;(SIOCPROTOPRIVATE+2)
+DECL|macro|SIOCNRRTCTL
+mdefine_line|#define&t;SIOCNRRTCTL&t;&t;(SIOCPROTOPRIVATE+3)
 DECL|struct|nr_route_struct
 r_struct
 id|nr_route_struct

@@ -918,5 +918,11 @@ mdefine_line|#define&t;CDROMRESET&t;&t;0x5312 /* hard-reset the drive */
 DECL|macro|CDROMVOLREAD
 mdefine_line|#define&t;CDROMVOLREAD&t;&t;0x5313 /* let the drive tell its volume setting */
 multiline_comment|/* (struct cdrom_volctrl) */
+DECL|macro|CDROMREADMODE0
+mdefine_line|#define CDROMREADMODE0          0x5314  /*read data in audio mode*/
+DECL|macro|CDROMREADRAW
+mdefine_line|#define CDROMREADRAW            0x5315  /*read data in raw mode*/
+DECL|macro|CDROMREADCOOKED
+mdefine_line|#define CDROMREADCOOKED         0x5316  /*read data in cooked mode*/
 macro_line|#endif  _LINUX_CDROM_H
 eof

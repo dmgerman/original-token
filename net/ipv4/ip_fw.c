@@ -1895,6 +1895,8 @@ suffix:semicolon
 multiline_comment|/* ftp-data */
 id|ms-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 id|MASQUERADE_EXPIRE_TCP_FIN
 suffix:semicolon
 id|add_timer
@@ -2535,6 +2537,8 @@ id|IPPROTO_UDP
 (brace
 id|ms-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 id|MASQUERADE_EXPIRE_UDP
 suffix:semicolon
 id|recalc_check
@@ -2643,6 +2647,8 @@ id|th-&gt;fin
 (brace
 id|ms-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 id|MASQUERADE_EXPIRE_TCP_FIN
 suffix:semicolon
 id|ms-&gt;sawfin
@@ -2653,6 +2659,8 @@ suffix:semicolon
 r_else
 id|ms-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 id|MASQUERADE_EXPIRE_TCP
 suffix:semicolon
 id|tcp_send_check
@@ -5621,7 +5629,7 @@ id|timer_active
 )paren
 id|ms-&gt;timer.expires
 op_assign
-l_int|0
+id|jiffies
 suffix:semicolon
 id|len
 op_add_assign
@@ -5676,6 +5684,8 @@ comma
 id|ms-&gt;delta
 comma
 id|ms-&gt;timer.expires
+op_minus
+id|jiffies
 )paren
 suffix:semicolon
 r_if

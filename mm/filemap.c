@@ -250,6 +250,10 @@ id|inode
 op_assign
 id|vma-&gt;vm_inode
 suffix:semicolon
+id|offset
+op_add_assign
+id|vma-&gt;vm_offset
+suffix:semicolon
 id|multi_bmap
 c_func
 (paren

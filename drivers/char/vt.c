@@ -586,6 +586,8 @@ id|ticks
 (brace
 id|sound_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|ticks
 suffix:semicolon
 id|add_timer

@@ -103,6 +103,8 @@ DECL|macro|SNDCTL_MIDI_INFO
 mdefine_line|#define SNDCTL_MIDI_INFO&t;&t;_IOWR(&squot;Q&squot;,12, struct midi_info)
 DECL|macro|SNDCTL_SEQ_THRESHOLD
 mdefine_line|#define SNDCTL_SEQ_THRESHOLD&t;&t;_IOW (&squot;Q&squot;,13, int)
+DECL|macro|SNDCTL_SEQ_TRESHOLD
+mdefine_line|#define SNDCTL_SEQ_TRESHOLD&t;&t;SNDCTL_SEQ_THRESHOLD&t;/* there was once a typo */
 DECL|macro|SNDCTL_SYNTH_MEMAVL
 mdefine_line|#define SNDCTL_SYNTH_MEMAVL&t;&t;_IOWR(&squot;Q&squot;,14, int)&t;/* in=dev#, out=memsize */
 DECL|macro|SNDCTL_FM_4OP_ENABLE

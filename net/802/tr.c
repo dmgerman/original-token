@@ -1369,6 +1369,8 @@ id|rif_timer
 suffix:semicolon
 id|rif_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|RIF_CHECK_INTERVAL
 suffix:semicolon
 id|add_timer

@@ -7736,6 +7736,8 @@ suffix:semicolon
 )brace
 id|lp-&gt;watchdog.expires
 op_assign
+id|jiffies
+op_plus
 id|WATCHDOG_JIFFIES
 suffix:semicolon
 id|add_timer

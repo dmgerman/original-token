@@ -843,6 +843,8 @@ id|wait
 suffix:semicolon
 id|cd-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 id|timeout
 suffix:semicolon
 id|add_timer

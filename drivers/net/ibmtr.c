@@ -3005,6 +3005,8 @@ id|FAILURE
 (brace
 id|tr_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|TR_RETRY_INTERVAL
 suffix:semicolon
 id|tr_timer.data
@@ -3076,6 +3078,8 @@ id|open_sap-&gt;ret_code
 suffix:semicolon
 id|tr_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|TR_RETRY_INTERVAL
 suffix:semicolon
 id|tr_timer.data
@@ -3529,6 +3533,8 @@ l_string|&quot;We try to reopen the adapter.&bslash;n&quot;
 suffix:semicolon
 id|tr_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|TR_RETRY_INTERVAL
 suffix:semicolon
 id|tr_timer.data

@@ -71,6 +71,12 @@ id|source_addr
 comma
 id|dest_addr
 suffix:semicolon
+DECL|member|device
+r_struct
+id|device
+op_star
+id|device
+suffix:semicolon
 DECL|member|my_index
 DECL|member|my_id
 r_int
@@ -144,13 +150,25 @@ id|t2timer
 comma
 id|t4timer
 suffix:semicolon
+DECL|member|fraglen
+r_int
+r_int
+id|fraglen
+suffix:semicolon
 DECL|member|ack_queue
-DECL|member|reseq_queue
 r_struct
 id|sk_buff_head
 id|ack_queue
-comma
+suffix:semicolon
+DECL|member|reseq_queue
+r_struct
+id|sk_buff_head
 id|reseq_queue
+suffix:semicolon
+DECL|member|frag_queue
+r_struct
+id|sk_buff_head
+id|frag_queue
 suffix:semicolon
 DECL|member|sk
 r_struct
@@ -362,7 +380,7 @@ op_star
 suffix:semicolon
 multiline_comment|/* nr_out.c */
 r_extern
-r_int
+r_void
 id|nr_output
 c_func
 (paren
@@ -559,7 +577,7 @@ suffix:semicolon
 multiline_comment|/* nr_subr.c */
 r_extern
 r_void
-id|nr_clear_tx_queue
+id|nr_clear_queues
 c_func
 (paren
 r_struct

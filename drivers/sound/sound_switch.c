@@ -81,7 +81,7 @@ suffix:semicolon
 id|l
 OL
 l_int|256
-comma
+op_logical_and
 id|s
 (braket
 id|l
@@ -91,7 +91,7 @@ id|l
 op_increment
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * l=strlen(s);&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * l=strnlen(s,256);&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren

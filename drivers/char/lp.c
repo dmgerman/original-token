@@ -96,21 +96,6 @@ DECL|macro|LP_CAREFUL_READY
 mdefine_line|#define LP_CAREFUL_READY(minor, status) &bslash;&n;  ((LP_F(minor) &amp; LP_CAREFUL) ? _LP_CAREFUL_READY(status) : 1)
 DECL|macro|_LP_CAREFUL_READY
 mdefine_line|#define _LP_CAREFUL_READY(status) &bslash;&n;   (status &amp; (LP_PBUSY|LP_POUTPA|LP_PSELECD|LP_PERRORP)) == &bslash;&n;      (LP_PBUSY|LP_PSELECD|LP_PERRORP) 
-multiline_comment|/* Allow old versions of tunelp to continue to work */
-DECL|macro|OLD_LPCHAR
-mdefine_line|#define OLD_LPCHAR   0x0001
-DECL|macro|OLD_LPTIME
-mdefine_line|#define OLD_LPTIME   0x0002
-DECL|macro|OLD_LPABORT
-mdefine_line|#define OLD_LPABORT  0x0004
-DECL|macro|OLD_LPSETIRQ
-mdefine_line|#define OLD_LPSETIRQ 0x0005
-DECL|macro|OLD_LPGETIRQ
-mdefine_line|#define OLD_LPGETIRQ 0x0006
-DECL|macro|OLD_LPWAIT
-mdefine_line|#define OLD_LPWAIT   0x0008
-DECL|macro|OLD_IOCTL_MAX
-mdefine_line|#define OLD_IOCTL_MAX 8
 multiline_comment|/* &n; * All my debugging code assumes that you debug with only one printer at&n; * a time. RWWH&n; */
 DECL|macro|LP_DEBUG
 macro_line|#undef LP_DEBUG
@@ -2084,33 +2069,12 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|cmd
-op_le
-id|OLD_IOCTL_MAX
-)paren
-id|printk
-c_func
-(paren
-id|KERN_NOTICE
-l_string|&quot;lp%d: warning: obsolete ioctl %#x (perhaps you need a new tunelp)&bslash;n&quot;
-comma
-id|minor
-comma
-id|cmd
-)paren
-suffix:semicolon
 r_switch
 c_cond
 (paren
 id|cmd
 )paren
 (brace
-r_case
-id|OLD_LPTIME
-suffix:colon
 r_case
 id|LPTIME
 suffix:colon
@@ -2125,9 +2089,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|OLD_LPCHAR
-suffix:colon
-r_case
 id|LPCHAR
 suffix:colon
 id|LP_CHAR
@@ -2140,9 +2101,6 @@ id|arg
 suffix:semicolon
 r_break
 suffix:semicolon
-r_case
-id|OLD_LPABORT
-suffix:colon
 r_case
 id|LPABORT
 suffix:colon
@@ -2228,9 +2186,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|OLD_LPWAIT
-suffix:colon
-r_case
 id|LPWAIT
 suffix:colon
 id|LP_WAIT
@@ -2243,9 +2198,6 @@ id|arg
 suffix:semicolon
 r_break
 suffix:semicolon
-r_case
-id|OLD_LPSETIRQ
-suffix:colon
 r_case
 id|LPSETIRQ
 suffix:colon
@@ -2446,19 +2398,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-r_case
-id|OLD_LPGETIRQ
-suffix:colon
-id|retval
-op_assign
-id|LP_IRQ
-c_func
-(paren
-id|minor
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|LPGETIRQ
 suffix:colon

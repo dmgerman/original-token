@@ -611,9 +611,7 @@ c_func
 l_string|&quot;Aiee: scheduling in interrupt&bslash;n&quot;
 )paren
 suffix:semicolon
-id|intr_count
-op_assign
-l_int|0
+r_return
 suffix:semicolon
 )brace
 id|run_task_queue
@@ -802,8 +800,6 @@ suffix:semicolon
 id|timer.expires
 op_assign
 id|timeout
-op_minus
-id|jiffies
 suffix:semicolon
 id|timer.data
 op_assign
@@ -1417,10 +1413,6 @@ op_assign
 op_amp
 id|timer_head
 suffix:semicolon
-id|timer-&gt;expires
-op_add_assign
-id|jiffies
-suffix:semicolon
 id|save_flags
 c_func
 (paren
@@ -1548,10 +1540,6 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|timer-&gt;expires
-op_sub_assign
-id|jiffies
-suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -1622,10 +1610,6 @@ c_func
 (paren
 id|flags
 )paren
-suffix:semicolon
-id|timer-&gt;expires
-op_sub_assign
-id|jiffies
 suffix:semicolon
 r_return
 l_int|1

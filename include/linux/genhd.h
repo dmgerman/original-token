@@ -12,8 +12,10 @@ DECL|macro|EXTENDED_PARTITION
 mdefine_line|#define EXTENDED_PARTITION 5
 DECL|macro|DM6_PARTITION
 mdefine_line|#define DM6_PARTITION&t;&t;0x54&t;/* has DDO: use xlated geom &amp; offset */
-DECL|macro|DM6_AUXPARTITION
-mdefine_line|#define DM6_AUXPARTITION&t;0x51&t;/* no DDO:  use xlated geom */
+DECL|macro|DM6_AUX1PARTITION
+mdefine_line|#define DM6_AUX1PARTITION&t;0x51&t;/* no DDO:  use xlated geom */
+DECL|macro|DM6_AUX3PARTITION
+mdefine_line|#define DM6_AUX3PARTITION&t;0x53&t;/* no DDO:  use xlated geom */
 DECL|struct|partition
 r_struct
 id|partition

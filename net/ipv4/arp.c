@@ -373,6 +373,8 @@ id|arp_timer
 suffix:semicolon
 id|arp_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|ARP_CHECK_INTERVAL
 suffix:semicolon
 id|add_timer
@@ -1095,6 +1097,8 @@ id|entry-&gt;timer
 suffix:semicolon
 id|entry-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 id|ARP_RES_TIME
 suffix:semicolon
 id|add_timer
@@ -2884,6 +2888,8 @@ id|entry
 suffix:semicolon
 id|entry-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 id|ARP_RES_TIME
 suffix:semicolon
 id|arp_tables

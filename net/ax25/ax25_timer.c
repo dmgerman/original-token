@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 029&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;Extracted AX25 control block from the&n; *&t;&t;&t;&t;&t;sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; */
+multiline_comment|/*&n; *&t;AX.25 release 030&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;Extracted AX25 control block from the&n; *&t;&t;&t;&t;&t;sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &lt;linux/errno.h&gt;
@@ -93,6 +93,8 @@ id|ax25_timer
 suffix:semicolon
 id|ax25-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 l_int|10
 suffix:semicolon
 id|add_timer
@@ -157,6 +159,8 @@ id|ax25_timer
 suffix:semicolon
 id|ax25-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 l_int|10
 suffix:semicolon
 id|add_timer
@@ -277,6 +281,8 @@ c_func
 id|ax25
 comma
 id|RR
+comma
+id|POLLOFF
 comma
 id|C_RESPONSE
 )paren
@@ -431,6 +437,14 @@ op_eq
 id|ax25-&gt;n2
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|ax25-&gt;modulus
+op_eq
+id|MODULUS
+)paren
+(brace
 macro_line|#ifdef CONFIG_NETROM
 id|nr_link_failed
 c_func
@@ -442,7 +456,7 @@ id|ax25-&gt;device
 )paren
 suffix:semicolon
 macro_line|#endif
-id|ax25_clear_tx_queue
+id|ax25_clear_queues
 c_func
 (paren
 id|ax25
@@ -490,21 +504,57 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|ax25-&gt;modulus
+op_assign
+id|MODULUS
+suffix:semicolon
+id|ax25-&gt;n2count
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
 id|ax25-&gt;n2count
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ax25-&gt;modulus
+op_eq
+id|MODULUS
+)paren
+(brace
 id|ax25_send_control
 c_func
 (paren
 id|ax25
 comma
 id|SABM
-op_or
-id|PF
+comma
+id|POLLON
 comma
 id|C_COMMAND
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|ax25_send_control
+c_func
+(paren
+id|ax25
+comma
+id|SABME
+comma
+id|POLLON
+comma
+id|C_COMMAND
+)paren
+suffix:semicolon
+)brace
 )brace
 r_break
 suffix:semicolon
@@ -530,7 +580,7 @@ id|ax25-&gt;device
 )paren
 suffix:semicolon
 macro_line|#endif
-id|ax25_clear_tx_queue
+id|ax25_clear_queues
 c_func
 (paren
 id|ax25
@@ -587,8 +637,8 @@ c_func
 id|ax25
 comma
 id|DISC
-op_or
-id|PF
+comma
+id|POLLON
 comma
 id|C_COMMAND
 )paren
@@ -637,7 +687,7 @@ id|ax25-&gt;device
 )paren
 suffix:semicolon
 macro_line|#endif
-id|ax25_clear_tx_queue
+id|ax25_clear_queues
 c_func
 (paren
 id|ax25
@@ -649,8 +699,8 @@ c_func
 id|ax25
 comma
 id|DM
-op_or
-id|PF
+comma
+id|POLLON
 comma
 id|C_RESPONSE
 )paren

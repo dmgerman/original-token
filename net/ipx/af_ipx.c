@@ -1295,7 +1295,7 @@ id|in_offset
 op_assign
 id|skb-&gt;h.raw
 op_minus
-id|skb-&gt;data
+id|skb-&gt;head
 suffix:semicolon
 r_int
 id|out_offset
@@ -1761,6 +1761,33 @@ op_add_assign
 id|skb-&gt;truesize
 suffix:semicolon
 )brace
+macro_line|#if 0
+multiline_comment|/* Now log the packet just before transmission */
+id|dump_pkt
+c_func
+(paren
+l_string|&quot;IPX snd:&quot;
+comma
+(paren
+id|ipx_packet
+op_star
+)paren
+id|skb-&gt;h.raw
+)paren
+suffix:semicolon
+id|dump_data
+c_func
+(paren
+l_string|&quot;ETH hdr:&quot;
+comma
+id|skb-&gt;data
+comma
+id|skb-&gt;h.raw
+op_minus
+id|skb-&gt;data
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Send it out */
 id|dev_queue_xmit
 c_func
@@ -6903,6 +6930,9 @@ r_int
 r_char
 op_star
 id|d
+comma
+r_int
+id|len
 )paren
 (brace
 r_static
@@ -6934,6 +6964,10 @@ id|l
 op_assign
 l_int|0
 suffix:semicolon
+id|len
+OG
+l_int|0
+op_logical_and
 id|l
 OL
 l_int|16
@@ -6959,24 +6993,19 @@ l_int|8
 suffix:semicolon
 id|i
 op_increment
+comma
+op_decrement
+id|len
 )paren
 (brace
-op_star
+r_if
+c_cond
 (paren
-id|p
-op_increment
+id|len
+OG
+l_int|0
 )paren
-op_assign
-id|h2c
-(braket
-id|d
-(braket
-id|i
-)braket
-op_amp
-l_int|0x0f
-)braket
-suffix:semicolon
+(brace
 op_star
 (paren
 id|p
@@ -7003,6 +7032,42 @@ id|p
 op_increment
 )paren
 op_assign
+id|h2c
+(braket
+id|d
+(braket
+id|i
+)braket
+op_amp
+l_int|0x0f
+)braket
+suffix:semicolon
+)brace
+r_else
+(brace
+op_star
+(paren
+id|p
+op_increment
+)paren
+op_assign
+l_char|&squot; &squot;
+suffix:semicolon
+op_star
+(paren
+id|p
+op_increment
+)paren
+op_assign
+l_char|&squot; &squot;
+suffix:semicolon
+)brace
+op_star
+(paren
+id|p
+op_increment
+)paren
+op_assign
 l_char|&squot; &squot;
 suffix:semicolon
 )brace
@@ -7022,6 +7087,10 @@ op_increment
 op_assign
 l_char|&squot; &squot;
 suffix:semicolon
+id|len
+op_add_assign
+l_int|8
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -7035,6 +7104,16 @@ l_int|8
 suffix:semicolon
 id|i
 op_increment
+comma
+op_decrement
+id|len
+)paren
+r_if
+c_cond
+(paren
+id|len
+OG
+l_int|0
 )paren
 op_star
 (paren
@@ -7063,6 +7142,15 @@ id|i
 )braket
 suffix:colon
 l_char|&squot;.&squot;
+suffix:semicolon
+r_else
+op_star
+(paren
+id|p
+op_increment
+)paren
+op_assign
+l_char|&squot; &squot;
 suffix:semicolon
 op_star
 id|p
@@ -7226,6 +7314,15 @@ op_star
 id|p
 )paren
 (brace
+r_int
+id|len
+op_assign
+id|ntohs
+c_func
+(paren
+id|p-&gt;ipx_pktsize
+)paren
+suffix:semicolon
 id|dump_hdr
 c_func
 (paren
@@ -7234,6 +7331,13 @@ comma
 id|p
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+l_int|30
+)paren
 id|dump_data
 c_func
 (paren
@@ -7245,6 +7349,12 @@ r_char
 op_star
 )paren
 id|p
+op_plus
+l_int|30
+comma
+id|len
+op_minus
+l_int|30
 )paren
 suffix:semicolon
 )brace

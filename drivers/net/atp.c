@@ -817,6 +817,8 @@ id|atp_timer
 suffix:semicolon
 id|atp_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|TIMED_CHECKER
 suffix:semicolon
 id|atp_timed_dev
@@ -2513,6 +2515,8 @@ id|atp_timer
 suffix:semicolon
 id|atp_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|TIMED_CHECKER
 suffix:semicolon
 id|add_timer
@@ -2747,6 +2751,8 @@ id|atp_timer
 suffix:semicolon
 id|atp_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|TIMED_CHECKER
 suffix:semicolon
 id|add_timer

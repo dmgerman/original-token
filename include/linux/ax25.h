@@ -70,6 +70,8 @@ DECL|macro|AX25_T2
 mdefine_line|#define AX25_T2&t;&t;5
 DECL|macro|AX25_BACKOFF
 mdefine_line|#define&t;AX25_BACKOFF&t;6
+DECL|macro|AX25_EXTSEQ
+mdefine_line|#define&t;AX25_EXTSEQ&t;7
 DECL|macro|SIOCAX25GETUID
 mdefine_line|#define SIOCAX25GETUID&t;&t;(SIOCPROTOPRIVATE)
 DECL|macro|SIOCAX25ADDUID
@@ -78,6 +80,8 @@ DECL|macro|SIOCAX25DELUID
 mdefine_line|#define SIOCAX25DELUID&t;&t;(SIOCPROTOPRIVATE+2)
 DECL|macro|SIOCAX25NOUID
 mdefine_line|#define SIOCAX25NOUID&t;&t;(SIOCPROTOPRIVATE+3)
+DECL|macro|SIOCAX25DIGCTL
+mdefine_line|#define&t;SIOCAX25DIGCTL&t;&t;(SIOCPROTOPRIVATE+4)
 DECL|macro|AX25_NOUID_DEFAULT
 mdefine_line|#define AX25_NOUID_DEFAULT&t;0
 DECL|macro|AX25_NOUID_BLOCK

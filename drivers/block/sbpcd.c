@@ -1684,6 +1684,8 @@ id|delay_timer
 suffix:semicolon
 id|delay_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|time
 suffix:semicolon
 id|timed_out_delay
@@ -15836,6 +15838,8 @@ suffix:semicolon
 macro_line|#endif
 id|delay_timer.expires
 op_assign
+id|jiffies
+op_plus
 l_int|110
 suffix:semicolon
 id|timed_out_delay
@@ -27214,6 +27218,8 @@ id|data_timer
 suffix:semicolon
 id|data_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|max_latency
 suffix:semicolon
 id|timed_out_data

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: aztcd.h,v 1.40 1995/07/15 20:35:01 root Exp root $&n; *&n; * Definitions for a AztechCD268 CD-ROM interface&n; *&t;Copyright (C) 1994, 1995  Werner Zimmermann&n; *&n; *&t;based on Mitsumi CDROM driver by Martin Harriss&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&t;W.Zimmermann adaption to Aztech CD268-01A Version 1.3&n; *&t;&t;October 1994 Email: zimmerma@rz.fht-esslingen.de&n; */
+multiline_comment|/* $Id: aztcd.h,v 1.50 1995/07/29 20:31:32 root Exp $&n; *&n; * Definitions for a AztechCD268 CD-ROM interface&n; *&t;Copyright (C) 1994, 1995  Werner Zimmermann&n; *&n; *&t;based on Mitsumi CDROM driver by Martin Harriss&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&t;W.Zimmermann adaption to Aztech CD268-01A Version 1.3&n; *&t;&t;October 1994 Email: zimmerma@rz.fht-esslingen.de&n; */
 multiline_comment|/* *** change this to set the I/O port address of your CD-ROM drive*/
 DECL|macro|AZT_BASE_ADDR
 mdefine_line|#define AZT_BASE_ADDR&t;&t;0x320
@@ -16,7 +16,7 @@ DECL|macro|AZT_AUTO_EJECT
 mdefine_line|#define AZT_AUTO_EJECT          0
 multiline_comment|/*Set this to 1, if you want multisession support. Be warned, this function has&n;not been tested !!!*/
 DECL|macro|AZT_MULTISESSION
-mdefine_line|#define AZT_MULTISESSION        0
+mdefine_line|#define AZT_MULTISESSION        1
 multiline_comment|/*Set this to 1, if you want to use incompatible ioctls for reading in raw and&n;  cooked mode */
 DECL|macro|AZT_PRIVATE_IOCTLS
 mdefine_line|#define AZT_PRIVATE_IOCTLS      1
@@ -51,13 +51,15 @@ mdefine_line|#define AZT_SW32_ID_REG         AZT_SW32_BASE_ADDR+0x04  /*Soundwav
 macro_line|#endif
 multiline_comment|/* status bits */
 DECL|macro|AST_CMD_CHECK
-mdefine_line|#define AST_CMD_CHECK&t;&t;0x80&t;&t;/* command error */
-DECL|macro|AST_DSK_CHG
-mdefine_line|#define AST_DSK_CHG&t;&t;0x20&t;&t;/* disk removed or changed */
-DECL|macro|AST_NOT_READY
-mdefine_line|#define AST_NOT_READY&t;&t;0x02&t;&t;/* no disk in the drive */
+mdefine_line|#define AST_CMD_CHECK&t;&t;0x80&t;&t;/* 1 = command error */
 DECL|macro|AST_DOOR_OPEN
-mdefine_line|#define AST_DOOR_OPEN&t;&t;0x40&t;&t;/* door is open */
+mdefine_line|#define AST_DOOR_OPEN&t;&t;0x40&t;&t;/* 1 = door is open */
+DECL|macro|AST_NOT_READY
+mdefine_line|#define AST_NOT_READY&t;&t;0x20&t;&t;/* 1 = no disk in the drive */
+DECL|macro|AST_DSK_CHG
+mdefine_line|#define AST_DSK_CHG&t;&t;0x02&t;&t;/* 1 = disk removed or changed */
+DECL|macro|AST_MODE
+mdefine_line|#define AST_MODE                0x01            /* 0=MODE1, 1=MODE2 */
 DECL|macro|AST_MODE_BITS
 mdefine_line|#define AST_MODE_BITS&t;&t;0x1C&t;&t;/* Mode Bits */
 DECL|macro|AST_INITIAL
@@ -84,8 +86,8 @@ DECL|macro|ACMD_SOFT_RESET
 mdefine_line|#define ACMD_SOFT_RESET&t;&t;0x10&t;&t;/* reset drive */
 DECL|macro|ACMD_PLAY_READ
 mdefine_line|#define ACMD_PLAY_READ&t;&t;0x20&t;&t;/* read data track in cooked mode */
-DECL|macro|ACMD_DATA_READ_RAW
-mdefine_line|#define ACMD_DATA_READ_RAW      0x21&t;&t;/* reading in raw mode*/
+DECL|macro|ACMD_PLAY_READ_RAW
+mdefine_line|#define ACMD_PLAY_READ_RAW      0x21&t;&t;/* reading in raw mode*/
 DECL|macro|ACMD_SEEK_TO_LEADIN
 mdefine_line|#define ACMD_SEEK_TO_LEADIN     0x31&t;&t;/* seek to leadin track*/
 DECL|macro|ACMD_GET_ERROR
@@ -112,16 +114,10 @@ DECL|macro|ACMD_SET_VOLUME
 mdefine_line|#define ACMD_SET_VOLUME&t;&t;0x93&t;&t;/* set audio level */
 DECL|macro|ACMD_GET_VERSION
 mdefine_line|#define ACMD_GET_VERSION&t;0xA0&t;&t;/* get firmware version */
-DECL|macro|ACMD_SET_MODE
-mdefine_line|#define ACMD_SET_MODE&t;&t;0xA1&t;&t;/* set drive mode */
+DECL|macro|ACMD_SET_DISK_TYPE
+mdefine_line|#define ACMD_SET_DISK_TYPE&t;0xA1&t;&t;/* set disk data mode */
 DECL|macro|MAX_TRACKS
 mdefine_line|#define MAX_TRACKS&t;&t;104
-DECL|macro|CD_DATA
-mdefine_line|#define CD_DATA&t;&t;&t;0x01
-DECL|macro|CD_AUDIO
-mdefine_line|#define CD_AUDIO&t;&t;0x02
-DECL|macro|CD_XA
-mdefine_line|#define CD_XA                   (CD_DATA|CD_AUDIO)
 DECL|struct|msf
 r_struct
 id|msf
@@ -193,10 +189,15 @@ r_struct
 id|msf
 id|lastTrack
 suffix:semicolon
-DECL|member|type
+DECL|member|xa
 r_int
 r_char
-id|type
+id|xa
+suffix:semicolon
+DECL|member|audio
+r_int
+r_char
+id|audio
 suffix:semicolon
 )brace
 suffix:semicolon

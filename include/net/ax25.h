@@ -21,14 +21,22 @@ DECL|macro|AX25_P_TEXT
 mdefine_line|#define AX25_P_TEXT &t;0xF0
 DECL|macro|AX25_P_NETROM
 mdefine_line|#define AX25_P_NETROM &t;0xCF
+DECL|macro|AX25_P_SEGMENT
+mdefine_line|#define&t;AX25_P_SEGMENT&t;0x08
+DECL|macro|SEG_REM
+mdefine_line|#define&t;SEG_REM&t;&t;0x7F
+DECL|macro|SEG_FIRST
+mdefine_line|#define&t;SEG_FIRST&t;0x80
 DECL|macro|LAPB_UI
-mdefine_line|#define LAPB_UI&t;0x03
+mdefine_line|#define LAPB_UI&t;&t;0x03
 DECL|macro|LAPB_C
-mdefine_line|#define LAPB_C&t;0x80
+mdefine_line|#define LAPB_C&t;&t;0x80
 DECL|macro|LAPB_E
-mdefine_line|#define LAPB_E&t;0x01
-DECL|macro|SSID_SPARE
-mdefine_line|#define SSID_SPARE&t;0x60&t;&t;/* Unused bits (DAMA bit and spare must be 1) */
+mdefine_line|#define LAPB_E&t;&t;0x01
+DECL|macro|SSSID_SPARE
+mdefine_line|#define SSSID_SPARE&t;0x60&t;/* Unused bits in SSID for standard AX.25 */
+DECL|macro|ESSID_SPARE
+mdefine_line|#define ESSID_SPARE&t;0x20&t;/* Unused bits in SSID for extended AX.25 */
 DECL|macro|AX25_REPEATED
 mdefine_line|#define AX25_REPEATED&t;0x80
 DECL|macro|ACK_PENDING_CONDITION
@@ -72,11 +80,15 @@ mdefine_line|#define&t;FRMR&t;0x87&t;/* Frame reject */
 DECL|macro|UI
 mdefine_line|#define&t;UI&t;0x03&t;/* Unnumbered information */
 DECL|macro|PF
-mdefine_line|#define&t;PF&t;0x10&t;/* Poll/final bit */
+mdefine_line|#define&t;PF&t;0x10&t;/* Poll/final bit for standard AX.25 */
+DECL|macro|EPF
+mdefine_line|#define&t;EPF&t;0x01&t;/* Poll/final bit for extended AX.25 */
 DECL|macro|ILLEGAL
 mdefine_line|#define ILLEGAL&t;0x100&t;/* Impossible to be a real frame type */
-DECL|macro|MMASK
-mdefine_line|#define&t;MMASK&t;7&t;/* Mask for modulo-8 sequence numbers */
+DECL|macro|POLLOFF
+mdefine_line|#define&t;POLLOFF&t;&t;0
+DECL|macro|POLLON
+mdefine_line|#define&t;POLLON&t;&t;1
 multiline_comment|/* AX25 L2 C-bit */
 DECL|macro|C_COMMAND
 mdefine_line|#define C_COMMAND&t;1&t;/* C_ otherwise it clashes with the de600 defines (sigh)) */
@@ -106,9 +118,9 @@ mdefine_line|#define DEFAULT_N2&t;10&t;&t;&t;/*  Number of retries */
 DECL|macro|DEFAULT_WINDOW
 mdefine_line|#define&t;DEFAULT_WINDOW&t;2&t;&t;&t;/*  Default window size&t;*/
 DECL|macro|MODULUS
-mdefine_line|#define MODULUS &t;8
-DECL|macro|MAX_WINDOW_SIZE
-mdefine_line|#define MAX_WINDOW_SIZE 7&t;&t;&t;/*  Maximum window allowable */
+mdefine_line|#define MODULUS &t;8&t;&t;&t;/*  Standard AX.25 modulus */
+DECL|macro|EMODULUS
+mdefine_line|#define&t;EMODULUS&t;128&t;&t;&t;/*  Extended AX.25 modulus */
 DECL|struct|ax25_uid_assoc
 r_typedef
 r_struct
@@ -188,9 +200,12 @@ op_star
 id|device
 suffix:semicolon
 DECL|member|state
+DECL|member|modulus
 r_int
 r_char
 id|state
+comma
+id|modulus
 suffix:semicolon
 DECL|member|vs
 DECL|member|vr
@@ -244,6 +259,14 @@ id|t2timer
 comma
 id|t3timer
 suffix:semicolon
+DECL|member|fragno
+DECL|member|fraglen
+r_int
+r_int
+id|fragno
+comma
+id|fraglen
+suffix:semicolon
 DECL|member|digipeat
 id|ax25_digi
 op_star
@@ -254,10 +277,20 @@ r_struct
 id|sk_buff_head
 id|write_queue
 suffix:semicolon
+DECL|member|reseq_queue
+r_struct
+id|sk_buff_head
+id|reseq_queue
+suffix:semicolon
 DECL|member|ack_queue
 r_struct
 id|sk_buff_head
 id|ack_queue
+suffix:semicolon
+DECL|member|frag_queue
+r_struct
+id|sk_buff_head
+id|frag_queue
 suffix:semicolon
 DECL|member|window
 r_int
@@ -463,7 +496,7 @@ r_int
 suffix:semicolon
 multiline_comment|/* ax25_out.c */
 r_extern
-r_int
+r_void
 id|ax25_output
 c_func
 (paren
@@ -661,7 +694,7 @@ suffix:semicolon
 multiline_comment|/* ax25_subr.c */
 r_extern
 r_void
-id|ax25_clear_tx_queue
+id|ax25_clear_queues
 c_func
 (paren
 id|ax25_cb
@@ -697,8 +730,20 @@ r_int
 id|ax25_decode
 c_func
 (paren
+id|ax25_cb
+op_star
+comma
+r_struct
+id|sk_buff
+op_star
+comma
 r_int
-r_char
+op_star
+comma
+r_int
+op_star
+comma
+r_int
 op_star
 )paren
 suffix:semicolon
@@ -709,6 +754,8 @@ c_func
 (paren
 id|ax25_cb
 op_star
+comma
+r_int
 comma
 r_int
 comma
@@ -777,6 +824,8 @@ op_star
 comma
 id|ax25_digi
 op_star
+comma
+r_int
 comma
 r_int
 )paren

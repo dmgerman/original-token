@@ -504,8 +504,8 @@ multiline_comment|/* Line1 */
 l_int|0x4b4b
 comma
 multiline_comment|/* Line2 */
-l_int|0x4b4b
-multiline_comment|/* Line3 */
+l_int|0x3232
+multiline_comment|/* Line3 (usually line in)*/
 )brace
 suffix:semicolon
 DECL|macro|LEFT_CHN

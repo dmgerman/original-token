@@ -680,6 +680,8 @@ id|dev-&gt;priv
 suffix:semicolon
 id|eql-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 id|EQL_DEFAULT_RESCHED_IVAL
 suffix:semicolon
 id|eql-&gt;timer.function
@@ -3833,6 +3835,8 @@ l_int|0
 (brace
 id|eql-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 id|EQL_DEFAULT_RESCHED_IVAL
 suffix:semicolon
 id|add_timer

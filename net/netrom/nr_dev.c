@@ -187,7 +187,7 @@ id|buff
 l_int|6
 )braket
 op_or_assign
-id|SSID_SPARE
+id|SSSID_SPARE
 suffix:semicolon
 id|buff
 op_add_assign
@@ -230,7 +230,7 @@ id|buff
 l_int|6
 )braket
 op_or_assign
-id|SSID_SPARE
+id|SSSID_SPARE
 suffix:semicolon
 id|buff
 op_add_assign
@@ -396,7 +396,7 @@ id|bp
 l_int|6
 )braket
 op_or_assign
-id|SSID_SPARE
+id|SSSID_SPARE
 suffix:semicolon
 id|bp
 op_add_assign
@@ -422,7 +422,7 @@ id|bp
 l_int|6
 )braket
 op_or_assign
-id|SSID_SPARE
+id|SSSID_SPARE
 suffix:semicolon
 r_if
 c_cond

@@ -200,7 +200,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Find-bit routines..&n; */
 DECL|function|find_first_zero_bit
 r_extern
-r_inline
+id|__inline__
 r_int
 id|find_first_zero_bit
 c_func
@@ -344,7 +344,7 @@ suffix:semicolon
 )brace
 DECL|function|find_next_zero_bit
 r_extern
-r_inline
+id|__inline__
 r_int
 id|find_next_zero_bit
 (paren
@@ -500,7 +500,7 @@ suffix:semicolon
 multiline_comment|/*&n; * ffz = Find First Zero in word. Undefined if no zero exists,&n; * so code should check against ~0UL first..&n; */
 DECL|function|ffz
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|ffz

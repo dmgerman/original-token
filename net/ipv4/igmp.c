@@ -118,6 +118,8 @@ suffix:semicolon
 multiline_comment|/* Pick a number any number 8) */
 id|im-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 id|tv
 suffix:semicolon
 id|im-&gt;tm_running

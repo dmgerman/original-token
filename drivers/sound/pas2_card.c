@@ -625,6 +625,15 @@ id|FILTER_FREQUENCY
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Sets mute&n;&t;&t;&t;&t;&t;&t;&t;&t; * off and *&n;&t;&t;&t;&t;&t;&t;&t;&t; * selects&n;&t;&t;&t;&t;&t;&t;&t;&t; * filter&n;&t;&t;&t;&t;&t;&t;&t;&t; * rate * of&n;&t;&t;&t;&t;&t;&t;&t;&t; * 17.897 kHz&n;&t;&t;&t;&t;&t;&t;&t;&t; */
+macro_line|#if 1
+id|pas_write
+(paren
+l_int|8
+comma
+id|PRESCALE_DIVIDER
+)paren
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -651,6 +660,7 @@ comma
 id|PRESCALE_DIVIDER
 )paren
 suffix:semicolon
+macro_line|#endif
 id|mix_write
 (paren
 id|P_M_MV508_ADDRESS

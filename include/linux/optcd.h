@@ -219,7 +219,7 @@ mdefine_line|#define READ_TIMEOUT&t;&t;3000&t;&t;/* for poll wait */
 DECL|macro|RESET_WAIT
 mdefine_line|#define RESET_WAIT&t;&t;1000
 DECL|macro|SET_TIMER
-mdefine_line|#define SET_TIMER(func, jifs) &bslash;&n;&t;delay_timer.expires = jifs; &bslash;&n;&t;delay_timer.function = (void *) func; &bslash;&n;&t;add_timer(&amp;delay_timer);
+mdefine_line|#define SET_TIMER(func, jifs) &bslash;&n;&t;delay_timer.expires = jiffies+(jifs); &bslash;&n;&t;delay_timer.function = (void *) (func); &bslash;&n;&t;add_timer(&amp;delay_timer);
 DECL|macro|CLEAR_TIMER
 mdefine_line|#define CLEAR_TIMER&t;&t;del_timer(&amp;delay_timer)
 DECL|macro|MAX_TRACKS

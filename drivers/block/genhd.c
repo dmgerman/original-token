@@ -1,10 +1,11 @@
 multiline_comment|/*&n; *  Code extracted from&n; *  linux/kernel/hd.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; *  Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  in the early extended-partition checks and added DM partitions&n; */
-multiline_comment|/*&n; *  Support for DiskManager v6.0x added by Mark Lord (mlord@bnr.ca)&n; *  with hints from uwe@eas.iis.fhg.de (us3@irz.inf.tu-dresden.de).&n; */
+multiline_comment|/*&n; *  Support for DiskManager v6.0x added by Mark Lord (mlord@bnr.ca)&n; *  with information provided by OnTrack.  This now works for linux fdisk&n; *  and LILO, as well as loadlin and bootln.  Note that disks other than&n; *  /dev/hda *must* have a &quot;DOS&quot; type 0x51 partition in the first slot (hda1).&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 DECL|variable|gendisk_head
 r_struct
 id|gendisk
@@ -441,7 +442,7 @@ id|minor
 op_assign
 id|current_minor
 comma
-id|found_dm6
+id|tested_for_dm6
 op_assign
 l_int|0
 suffix:semicolon
@@ -466,16 +467,6 @@ id|hd-&gt;minor_shift
 op_minus
 l_int|1
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDE
-r_extern
-r_void
-id|ide_xlate_1024
-c_func
-(paren
-id|dev_t
-)paren
-suffix:semicolon
-macro_line|#endif
 id|read_mbr
 suffix:colon
 r_if
@@ -500,7 +491,7 @@ l_int|1024
 id|printk
 c_func
 (paren
-l_string|&quot;unable to read partition table&bslash;n&quot;
+l_string|&quot; unable to read partition table&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -549,70 +540,59 @@ op_plus
 id|bh-&gt;b_data
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Check for Disk Manager v6.0x &quot;Dynamic Disk Overlay&quot; (DDO)&n;&t; */
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
+multiline_comment|/*&n;&t; *  Check for Disk Manager v6.0x with geometry translation&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tested_for_dm6
+op_increment
+)paren
+(brace
+multiline_comment|/* only check for DM6 *once* */
+r_extern
+r_int
+id|ide_xlate_1024
+c_func
+(paren
+id|dev_t
+comma
+r_int
+comma
+r_char
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* check for DM6 with Dynamic Drive Overlay (DDO) */
 r_if
 c_cond
 (paren
 id|p-&gt;sys_ind
 op_eq
 id|DM6_PARTITION
-op_logical_and
-op_logical_neg
-id|found_dm6
-op_increment
 )paren
 (brace
-id|printk
-c_func
+multiline_comment|/*&n;&t;&t;&t; * Everything on the disk is offset by 63 sectors,&n;&t;&t;&t; * including a &quot;new&quot; MBR with its own partition table,&n;&t;&t;&t; * and the remainder of the disk must be accessed using&n;&t;&t;&t; * a translated geometry that reduces the number of &n;&t;&t;&t; * apparent cylinders to less than 1024 if possible.&n;&t;&t;&t; *&n;&t;&t;&t; * ide_xlate_1024() will take care of the necessary&n;&t;&t;&t; * adjustments to fool fdisk/LILO and partition check.&n;&t;&t;&t; */
+r_if
+c_cond
 (paren
-l_string|&quot; [DM6:DDO]&quot;
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Everything is offset by one track (p-&gt;end_sector sectors),&n;&t;&t; * and a translated geometry is used to reduce the number&n;&t;&t; * of apparent cylinders to 1024 or less.&n;&t;&t; *&n;&t;&t; * For complete compatibility with linux fdisk, we do:&n;&t;&t; *  1. tell the driver to offset *everything* by one track,&n;&t;&t; *  2. reduce the apparent disk capacity by one track,&n;&t;&t; *  3. adjust the geometry reported by HDIO_GETGEO (for fdisk),&n;&t;&t; *&t;(does nothing if not an IDE drive, but that&squot;s okay).&n;&t;&t; *  4. invalidate our in-memory copy of block zero,&n;&t;&t; *  5. restart the partition table hunt from scratch.&n;&t;&t; */
-id|first_sector
-op_add_assign
-id|p-&gt;end_sector
-suffix:semicolon
-id|hd-&gt;part
-(braket
-id|MINOR
-c_func
-(paren
-id|dev
-)paren
-)braket
-dot
-id|start_sect
-op_add_assign
-id|p-&gt;end_sector
-suffix:semicolon
-id|hd-&gt;part
-(braket
-id|MINOR
-c_func
-(paren
-id|dev
-)paren
-)braket
-dot
-id|nr_sects
-op_sub_assign
-id|p-&gt;end_sector
-suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDE
 id|ide_xlate_1024
 c_func
 (paren
 id|dev
+comma
+l_int|1
+comma
+l_string|&quot; [DM6:DDO]&quot;
 )paren
-suffix:semicolon
-multiline_comment|/* harmless if not an IDE drive */
-macro_line|#endif
+)paren
+(brace
 id|bh-&gt;b_dirt
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* prevent re-use of this block */
+multiline_comment|/* force re-read of MBR block */
 id|bh-&gt;b_uptodate
 op_assign
 l_int|0
@@ -630,32 +610,115 @@ suffix:semicolon
 r_goto
 id|read_mbr
 suffix:semicolon
+multiline_comment|/* start over with new MBR */
 )brace
-multiline_comment|/*&n;&t; *  Check for Disk Manager v6.0x DDO on a secondary drive (?)&n;&t; */
+)brace
+r_else
+(brace
+multiline_comment|/* look for DM6 signature in MBR, courtesy of OnTrack */
+r_int
+r_int
+id|sig
+op_assign
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+(paren
+id|bh-&gt;b_data
+op_plus
+l_int|2
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sig
+op_le
+l_int|0x1ae
+op_logical_and
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+(paren
+id|bh-&gt;b_data
+op_plus
+id|sig
+)paren
+op_eq
+l_int|0x55AA
+op_logical_and
+(paren
+l_int|1
+op_amp
+op_star
+(paren
+r_int
+r_char
+op_star
+)paren
+(paren
+id|bh-&gt;b_data
+op_plus
+id|sig
+op_plus
+l_int|2
+)paren
+)paren
+)paren
+(brace
+(paren
+r_void
+)paren
+id|ide_xlate_1024
+c_func
+(paren
+id|dev
+comma
+l_int|0
+comma
+l_string|&quot; [DM6:MBR]&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* look for DM6 AUX partition type in slot 1 */
 r_if
 c_cond
 (paren
 id|p-&gt;sys_ind
 op_eq
-id|DM6_AUXPARTITION
+id|DM6_AUX1PARTITION
+op_logical_or
+id|p-&gt;sys_ind
+op_eq
+id|DM6_AUX3PARTITION
 )paren
 (brace
-id|printk
-c_func
 (paren
-l_string|&quot; [DM6]&quot;
+r_void
 )paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDE
 id|ide_xlate_1024
 c_func
 (paren
 id|dev
+comma
+l_int|0
+comma
+l_string|&quot; [DM6:AUX]&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* harmless if not an IDE drive */
-macro_line|#endif
 )brace
+)brace
+)brace
+)brace
+macro_line|#endif&t;/* CONFIG_BLK_DEV_IDE */
 id|current_minor
 op_add_assign
 l_int|4
@@ -1320,7 +1383,7 @@ macro_line|#endif
 id|printk
 c_func
 (paren
-l_string|&quot;unknown partition table&bslash;n&quot;
+l_string|&quot; unknown partition table&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

@@ -321,6 +321,8 @@ comma
 id|timer_active
 comma
 id|timer_expires
+op_minus
+id|jiffies
 comma
 (paren
 r_int

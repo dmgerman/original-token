@@ -1068,6 +1068,8 @@ suffix:semicolon
 )brace
 id|sk-&gt;retransmit_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|when
 suffix:semicolon
 id|add_timer
@@ -1438,6 +1440,8 @@ id|in_bh
 multiline_comment|/* Try again in 1 second */
 id|sk-&gt;retransmit_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|HZ
 suffix:semicolon
 id|add_timer
@@ -3240,6 +3244,8 @@ suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Wait up to 1 second for the buffer to fill.&n;&t; */
 id|sk-&gt;partial_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|HZ
 suffix:semicolon
 id|sk-&gt;partial_timer.function
@@ -5546,6 +5552,8 @@ c_cond
 op_logical_neg
 id|was_active
 op_logical_or
+id|jiffies
+op_plus
 id|TCP_ACK_TIME
 OL
 id|sk-&gt;timer.expires

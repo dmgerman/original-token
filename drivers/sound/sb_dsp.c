@@ -2503,11 +2503,11 @@ macro_line|#ifdef JAZZ16
 multiline_comment|/*&n; * Initialization of a Media Vision ProSonic 16 Soundcard.&n; * The function initializes a ProSonic 16 like PROS.EXE does for DOS. It sets&n; * the base address, the DMA-channels, interrupts and enables the joystickport.&n; *&n; * Also used by Jazz 16 (same card, different name)&n; *&n; * written 1994 by Rainer Vranken&n; * E-Mail: rvranken@polaris.informatik.uni-essen.de&n; */
 macro_line|#ifndef MPU_BASE&t;&t;/* take default values if not specified */
 DECL|macro|MPU_BASE
-mdefine_line|#define MPU_BASE 0x330
+mdefine_line|#define MPU_BASE 0
 macro_line|#endif
 macro_line|#ifndef MPU_IRQ
 DECL|macro|MPU_IRQ
-mdefine_line|#define MPU_IRQ 9
+mdefine_line|#define MPU_IRQ 0
 macro_line|#endif
 r_int
 r_int

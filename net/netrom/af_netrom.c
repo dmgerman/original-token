@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET/ROM release 003&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.3.0 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from the AX25 code.&n; *&t;NET/ROM 002&t;Darryl(G7LED)&t;Fixes and address enhancement.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Complete bind re-think.&n; *&t;&t;&t;Alan(GW4PTS)&t;Trivial tweaks into new format.&n; *&t;NET/ROM&t;003&t;Jonathan(G4KLX)&t;Added G8BPQ extensions.&n; *&n; *&t;To do:&n; *&t;&t;Fix non-blocking connect failure.&n; */
+multiline_comment|/*&n; *&t;NET/ROM release 003&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.3.0 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from the AX25 code.&n; *&t;NET/ROM 002&t;Darryl(G7LED)&t;Fixes and address enhancement.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Complete bind re-think.&n; *&t;&t;&t;Alan(GW4PTS)&t;Trivial tweaks into new format.&n; *&t;NET/ROM&t;003&t;Jonathan(G4KLX)&t;Added G8BPQ extensions.&n; *&t;&t;&t;&t;&t;Added NET/ROM routing ioctl.&n; *&n; *&t;To do:&n; *&t;&t;Fix non-blocking connect failure.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_NETROM
 macro_line|#include &lt;linux/errno.h&gt;
@@ -154,6 +154,85 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Kill all bound sockets on a dropped device.&n; */
+DECL|function|nr_kill_by_device
+r_static
+r_void
+id|nr_kill_by_device
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|sock
+op_star
+id|s
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|s
+op_assign
+id|nr_list
+suffix:semicolon
+id|s
+op_ne
+l_int|NULL
+suffix:semicolon
+id|s
+op_assign
+id|s-&gt;next
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|s-&gt;nr-&gt;device
+op_eq
+id|dev
+)paren
+(brace
+id|s-&gt;nr-&gt;state
+op_assign
+id|NR_STATE_0
+suffix:semicolon
+id|s-&gt;nr-&gt;device
+op_assign
+l_int|NULL
+suffix:semicolon
+id|s-&gt;state
+op_assign
+id|TCP_CLOSE
+suffix:semicolon
+id|s-&gt;err
+op_assign
+id|ENETUNREACH
+suffix:semicolon
+id|s
+op_member_access_from_pointer
+id|state_change
+c_func
+(paren
+id|s
+)paren
+suffix:semicolon
+id|s-&gt;dead
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+)brace
+id|nr_rt_device_down
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *&t;Handle device status changes.&n; */
 DECL|function|nr_device_event
 r_static
@@ -180,7 +259,7 @@ id|NETDEV_DOWN
 r_return
 id|NOTIFY_DONE
 suffix:semicolon
-id|nr_rt_device_down
+id|nr_kill_by_device
 c_func
 (paren
 id|ptr
@@ -598,13 +677,13 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-id|nr_clear_tx_queue
+id|nr_clear_queues
 c_func
 (paren
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/* Flush the send queue */
+multiline_comment|/* Flush the queues */
 r_while
 c_loop
 (paren
@@ -674,6 +753,8 @@ id|sk-&gt;timer
 suffix:semicolon
 id|sk-&gt;timer.expires
 op_assign
+id|jiffies
+op_plus
 l_int|10
 op_star
 id|HZ
@@ -1629,6 +1710,13 @@ op_amp
 id|nr-&gt;reseq_queue
 )paren
 suffix:semicolon
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|nr-&gt;frag_queue
+)paren
+suffix:semicolon
 id|nr-&gt;my_index
 op_assign
 l_int|0
@@ -1705,9 +1793,17 @@ id|nr-&gt;bpqext
 op_assign
 l_int|1
 suffix:semicolon
+id|nr-&gt;fraglen
+op_assign
+l_int|0
+suffix:semicolon
 id|nr-&gt;state
 op_assign
 id|NR_STATE_0
+suffix:semicolon
+id|nr-&gt;device
+op_assign
+l_int|NULL
 suffix:semicolon
 id|memset
 c_func
@@ -1942,10 +2038,6 @@ op_amp
 id|sk-&gt;timer
 )paren
 suffix:semicolon
-id|sk-&gt;rmem_alloc
-op_assign
-l_int|0
-suffix:semicolon
 id|sk-&gt;dead
 op_assign
 l_int|0
@@ -2065,6 +2157,13 @@ op_amp
 id|nr-&gt;reseq_queue
 )paren
 suffix:semicolon
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|nr-&gt;frag_queue
+)paren
+suffix:semicolon
 id|nr-&gt;rtt
 op_assign
 id|osk-&gt;nr-&gt;rtt
@@ -2081,9 +2180,17 @@ id|nr-&gt;n2
 op_assign
 id|osk-&gt;nr-&gt;n2
 suffix:semicolon
+id|nr-&gt;device
+op_assign
+id|osk-&gt;nr-&gt;device
+suffix:semicolon
 id|nr-&gt;bpqext
 op_assign
 id|osk-&gt;nr-&gt;bpqext
+suffix:semicolon
+id|nr-&gt;fraglen
+op_assign
+l_int|0
 suffix:semicolon
 id|nr-&gt;t1timer
 op_assign
@@ -2309,7 +2416,7 @@ suffix:semicolon
 r_case
 id|NR_STATE_3
 suffix:colon
-id|nr_clear_tx_queue
+id|nr_clear_queues
 c_func
 (paren
 id|sk
@@ -2435,6 +2542,11 @@ op_star
 )paren
 id|uaddr
 suffix:semicolon
+r_struct
+id|device
+op_star
+id|dev
+suffix:semicolon
 id|ax25_address
 op_star
 id|user
@@ -2521,11 +2633,15 @@ macro_line|#endif
 r_if
 c_cond
 (paren
+(paren
+id|dev
+op_assign
 id|nr_dev_get
 c_func
 (paren
 op_amp
 id|addr-&gt;fsa_ax25.sax25_call
+)paren
 )paren
 op_eq
 l_int|NULL
@@ -2675,6 +2791,10 @@ id|ax25_address
 )paren
 suffix:semicolon
 )brace
+id|sk-&gt;nr-&gt;device
+op_assign
+id|dev
+suffix:semicolon
 id|nr_insert_socket
 c_func
 (paren
@@ -4157,6 +4277,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|sk-&gt;nr-&gt;device
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|ENETUNREACH
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|usax
 )paren
 (brace
@@ -4292,7 +4423,7 @@ id|AX25_BPQ_HEADER_LEN
 op_plus
 id|AX25_MAX_HEADER_LEN
 op_plus
-l_int|2
+l_int|3
 op_plus
 id|NR_NETWORK_LEN
 op_plus
@@ -5300,6 +5431,9 @@ suffix:colon
 r_case
 id|SIOCNRDECOBS
 suffix:colon
+r_case
+id|SIOCNRRTCTL
+suffix:colon
 r_if
 c_cond
 (paren
@@ -5535,6 +5669,15 @@ id|sock
 op_star
 id|s
 suffix:semicolon
+r_struct
+id|device
+op_star
+id|dev
+suffix:semicolon
+r_char
+op_star
+id|devname
+suffix:semicolon
 r_int
 id|len
 op_assign
@@ -5562,7 +5705,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;user_addr dest_node src_node    my  your  st vs vr va    t1     t2    n2  rtt wnd Snd-Q Rcv-Q&bslash;n&quot;
+l_string|&quot;user_addr dest_node src_node  dev    my  your  st vs vr va    t1     t2    n2  rtt wnd Snd-Q Rcv-Q&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -5581,6 +5724,26 @@ op_assign
 id|s-&gt;next
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|dev
+op_assign
+id|s-&gt;nr-&gt;device
+)paren
+op_eq
+l_int|NULL
+)paren
+id|devname
+op_assign
+l_string|&quot;???&quot;
+suffix:semicolon
+r_else
+id|devname
+op_assign
+id|dev-&gt;name
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -5628,7 +5791,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%-9s %02X/%02X %02X/%02X %2d %2d %2d %2d %3d/%03d %2d/%02d %2d/%02d %3d %3d %5ld %5ld&bslash;n&quot;
+l_string|&quot;%-9s %-3s  %02X/%02X %02X/%02X %2d %2d %2d %2d %3d/%03d %2d/%02d %2d/%02d %3d %3d %5ld %5ld&bslash;n&quot;
 comma
 id|ax2asc
 c_func
@@ -5636,6 +5799,8 @@ c_func
 op_amp
 id|s-&gt;nr-&gt;source_addr
 )paren
+comma
+id|devname
 comma
 id|s-&gt;nr-&gt;my_index
 comma

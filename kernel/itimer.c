@@ -143,6 +143,8 @@ id|current-&gt;real_timer
 id|val
 op_assign
 id|current-&gt;real_timer.expires
+op_minus
+id|jiffies
 suffix:semicolon
 id|add_timer
 c_func
@@ -353,6 +355,8 @@ id|p-&gt;it_real_incr
 (brace
 id|p-&gt;real_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|p-&gt;it_real_incr
 suffix:semicolon
 id|add_timer
@@ -457,6 +461,8 @@ id|j
 (brace
 id|current-&gt;real_timer.expires
 op_assign
+id|jiffies
+op_plus
 id|j
 suffix:semicolon
 id|add_timer
