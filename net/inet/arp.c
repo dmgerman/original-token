@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the Address Resolution Protocol (ARP),&n; *&t;&t;which is used by TCP/IP to map the IP addresses from a host&n; *&t;&t;to a low-level hardware address (like an Ethernet address)&n; *&t;&t;which it can use to talk to that host.&n; *&n; * NOTE:&t;This module will be rewritten completely in the near future,&n; *&t;&t;because I want it to become a multi-address-family address&n; *&t;&t;resolver, like it should be.  It will be put in a separate&n; *&t;&t;directory under &squot;net&squot;, being a protocol of its own. -FvK&n; *&n; * Version:&t;@(#)arp.c&t;1.0.15&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Stephen A. Wood, &lt;saw@hallc1.cebaf.gov&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@pvv.unit.no&gt;&n; *&n; * Fixes:&n; *&t;&t;&squot;Mr Linux&squot;&t;:&t;arp problems.&n; *&t;&t;Alan Cox&t;:&t;arp_ioctl now checks memory areas with verify_area.&n; *&t;&t;Alan Cox&t;:&t;Non IP arp message now only appears with debugging on.&n; *&t;&t;Alan Cox&t;: &t;arp queue is volatile (may be altered by arp messages while doing sends) &n; *&t;&t;&t;&t;&t;Generic queue code is urgently needed!&n; *&t;&t;Alan Cox&t;:&t;Deleting your own ip addr now gives EINVAL not a printk message.&n; *&t;&t;Alan Cox&t;:&t;Fix to arp linked list error&n; *&t;&t;Alan Cox&t;:&t;Ignore broadcast arp (Linus&squot; idea 8-))&n; *&t;&t;Alan Cox&t;:&t;arp_send memory leak removed&n; *&t;&t;Alan Cox&t;:&t;generic skbuff code fixes.&n; *&t;&t;Alan Cox&t;:&t;&squot;Bad Packet&squot; only reported on debugging&n; *&t;&t;Alan Cox&t;:&t;Proxy arp.&n; *&t;&t;Alan Cox&t;:&t;skb-&gt;link3 maintained by letting the other xmit queue kill the packet.&n; *&t;&t;Alan Cox&t;:&t;Knows about type 3 devices (AX.25) using an AX.25 protocol ID not the ethernet&n; *&t;&t;&t;&t;&t;one.&n; *&n; * To Fix:&n; *&t;&t;&t;&t;:&t;arp response allocates an skbuff to send. However there is a perfectly&n; *&t;&t;&t;&t;&t;good spare skbuff the right size about to be freed (the query). Use the&n; *&t;&t;&t;&t;&t;query for the reply. This avoids an out of memory case _and_ speeds arp&n; *&t;&t;&t;&t;&t;up.&n; *&t;&t;&t;&t;:&t;FREE_READ v FREE_WRITE errors. Not critical as loopback arps don&squot;t occur&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the Address Resolution Protocol (ARP),&n; *&t;&t;which is used by TCP/IP to map the IP addresses from a host&n; *&t;&t;to a low-level hardware address (like an Ethernet address)&n; *&t;&t;which it can use to talk to that host.&n; *&n; * NOTE:&t;This module will be rewritten completely in the near future,&n; *&t;&t;because I want it to become a multi-address-family address&n; *&t;&t;resolver, like it should be.  It will be put in a separate&n; *&t;&t;directory under &squot;net&squot;, being a protocol of its own. -FvK&n; *&n; * Version:&t;@(#)arp.c&t;1.0.15&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Stephen A. Wood, &lt;saw@hallc1.cebaf.gov&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@pvv.unit.no&gt;&n; *&n; * Fixes:&n; *&t;&t;&squot;Mr Linux&squot;&t;:&t;arp problems.&n; *&t;&t;Alan Cox&t;:&t;arp_ioctl now checks memory areas with verify_area.&n; *&t;&t;Alan Cox&t;:&t;Non IP arp message now only appears with debugging on.&n; *&t;&t;Alan Cox&t;: &t;arp queue is volatile (may be altered by arp messages while doing sends) &n; *&t;&t;&t;&t;&t;Generic queue code is urgently needed!&n; *&t;&t;Alan Cox&t;:&t;Deleting your own ip addr now gives EINVAL not a printk message.&n; *&t;&t;Alan Cox&t;:&t;Fix to arp linked list error&n; *&t;&t;Alan Cox&t;:&t;Ignore broadcast arp (Linus&squot; idea 8-))&n; *&t;&t;Alan Cox&t;:&t;arp_send memory leak removed&n; *&t;&t;Alan Cox&t;:&t;generic skbuff code fixes.&n; *&t;&t;Alan Cox&t;:&t;&squot;Bad Packet&squot; only reported on debugging&n; *&t;&t;Alan Cox&t;:&t;Proxy arp.&n; *&t;&t;Alan Cox&t;:&t;skb-&gt;link3 maintained by letting the other xmit queue kill the packet.&n; *&t;&t;Alan Cox&t;:&t;Knows about type 3 devices (AX.25) using an AX.25 protocol ID not the ethernet&n; *&t;&t;&t;&t;&t;one.&n; *&t;&t;Dominik Kubla&t;:&t;Better checking&n; *&t;&t;Tegge&t;&t;:&t;Assorted corrections on cross port stuff&n; *&t;&t;Alan Cox&t;:&t;ATF_PERM was backwards! - might be useful now (sigh)&n; *&n; * To Fix:&n; *&t;&t;&t;&t;:&t;arp response allocates an skbuff to send. However there is a perfectly&n; *&t;&t;&t;&t;&t;good spare skbuff the right size about to be freed (the query). Use the&n; *&t;&t;&t;&t;&t;query for the reply. This avoids an out of memory case _and_ speeds arp&n; *&t;&t;&t;&t;&t;up.&n; *&t;&t;&t;&t;:&t;FREE_READ v FREE_WRITE errors. Not critical as loopback arps don&squot;t occur&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1512,13 +1512,16 @@ suffix:semicolon
 )brace
 multiline_comment|/* Delete an ARP mapping entry in the cache. */
 r_void
-DECL|function|arp_destroy
-id|arp_destroy
+DECL|function|arp_destructor
+id|arp_destructor
 c_func
 (paren
 r_int
 r_int
 id|paddr
+comma
+r_int
+id|force
 )paren
 (brace
 r_struct
@@ -1632,6 +1635,22 @@ op_eq
 id|paddr
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|apt-&gt;flags
+op_amp
+id|ATF_PERM
+)paren
+op_logical_and
+op_logical_neg
+id|force
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
 op_star
 id|lapt
 op_assign
@@ -1678,6 +1697,46 @@ suffix:semicolon
 id|sti
 c_func
 (paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Kill an entry - eg for ioctl()&n; */
+DECL|function|arp_destroy
+r_void
+id|arp_destroy
+c_func
+(paren
+r_int
+r_int
+id|paddr
+)paren
+(brace
+id|arp_destructor
+c_func
+(paren
+id|paddr
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Delete a possibly invalid entry (see timer.c)&n; */
+DECL|function|arp_destroy_maybe
+r_void
+id|arp_destroy_maybe
+c_func
+(paren
+r_int
+r_int
+id|paddr
+)paren
+(brace
+id|arp_destructor
+c_func
+(paren
+id|paddr
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -2260,17 +2319,17 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * A broadcast arp, ignore it&n;   */
+multiline_comment|/*&n; * A broadcast arp, ignore it&n; */
 r_if
 c_cond
 (paren
+id|chk_addr
+c_func
 (paren
 id|dst
-op_amp
-l_int|0xFF
 )paren
 op_eq
-l_int|0xFF
+id|IS_BROADCAST
 )paren
 (brace
 id|kfree_skb
@@ -2930,25 +2989,17 @@ r_if
 c_cond
 (paren
 (paren
-op_logical_neg
-(paren
 id|apt-&gt;flags
 op_amp
 id|ATF_PERM
 )paren
-)paren
 op_logical_or
 (paren
-op_logical_neg
-id|before
-c_func
-(paren
 id|apt-&gt;last_used
-comma
+OL
 id|jiffies
 op_plus
 id|ARP_TIMEOUT
-)paren
 op_logical_and
 id|apt-&gt;hlen
 op_ne
@@ -3571,6 +3622,19 @@ suffix:semicolon
 id|hlen
 op_assign
 id|ETH_ALEN
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ARPHRD_AX25
+suffix:colon
+id|htype
+op_assign
+id|ARPHRD_AX25
+suffix:semicolon
+id|hlen
+op_assign
+l_int|7
 suffix:semicolon
 r_break
 suffix:semicolon

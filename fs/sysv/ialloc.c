@@ -179,13 +179,30 @@ id|bh_data
 )paren
 )paren
 (brace
-id|panic
+id|printk
 c_func
 (paren
-l_string|&quot;sysv_free_inode: unable to read inode block&quot;
+l_string|&quot;sysv_free_inode: unable to read inode block on device %d/%d&bslash;n&quot;
+comma
+id|MAJOR
+c_func
+(paren
+id|inode-&gt;i_dev
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_dev
+)paren
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: too severe? */
+id|clear_inode
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace

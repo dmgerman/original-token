@@ -1455,6 +1455,10 @@ l_int|0
 op_logical_and
 id|es-&gt;s_mnt_count
 op_ge
+(paren
+r_int
+r_int
+)paren
 id|es-&gt;s_max_mnt_count
 )paren
 id|printk

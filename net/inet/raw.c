@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;RAW - implementation of IP &quot;raw&quot; sockets.&n; *&n; * Version:&t;@(#)raw.c&t;1.0.4&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixed up&n; *&t;&t;Alan Cox&t;:&t;ICMP error handling&n; *&t;&t;Alan Cox&t;:&t;EMSGSIZE if you send too big a packet&n; *&t;&t;Alan Cox&t;: &t;Now uses generic datagrams and shared skbuff&n; *&t;&t;&t;&t;&t;library. No more peek crashes, no more backlogs&n; *&t;&t;Alan Cox&t;:&t;Checks sk-&gt;broadcast.&n; *&t;&t;Alan Cox&t;:&t;Uses skb_free_datagram/skb_copy_datagram&n; *&t;&t;Alan Cox&t;:&t;Raw passes ip options too&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;RAW - implementation of IP &quot;raw&quot; sockets.&n; *&n; * Version:&t;@(#)raw.c&t;1.0.4&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixed up&n; *&t;&t;Alan Cox&t;:&t;ICMP error handling&n; *&t;&t;Alan Cox&t;:&t;EMSGSIZE if you send too big a packet&n; *&t;&t;Alan Cox&t;: &t;Now uses generic datagrams and shared skbuff&n; *&t;&t;&t;&t;&t;library. No more peek crashes, no more backlogs&n; *&t;&t;Alan Cox&t;:&t;Checks sk-&gt;broadcast.&n; *&t;&t;Alan Cox&t;:&t;Uses skb_free_datagram/skb_copy_datagram&n; *&t;&t;Alan Cox&t;:&t;Raw passes ip options too&n; *&t;&t;Alan Cox&t;:&t;Setsocketopt added&n; *&t;&t;Alan Cox&t;:&t;Fixed error return for broadcasts&n; *&t;&t;Alan Cox&t;:&t;Removed wake_up calls&n; *&t;&t;Alan Cox&t;:&t;Use ttl/tos&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -170,10 +170,12 @@ l_int|0xff
 dot
 id|errno
 suffix:semicolon
-id|wake_up
+id|sk
+op_member_access_from_pointer
+id|error_report
 c_func
 (paren
-id|sk-&gt;sleep
+id|sk
 )paren
 suffix:semicolon
 r_return
@@ -373,10 +375,14 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|wake_up
+id|sk
+op_member_access_from_pointer
+id|data_ready
 c_func
 (paren
-id|sk-&gt;sleep
+id|sk
+comma
+id|skb-&gt;len
 )paren
 suffix:semicolon
 id|release_sock
@@ -641,7 +647,7 @@ id|IS_BROADCAST
 )paren
 r_return
 op_minus
-id|ENETUNREACH
+id|EACCES
 suffix:semicolon
 id|sk-&gt;inuse
 op_assign
@@ -855,6 +861,10 @@ comma
 id|sk-&gt;opt
 comma
 id|skb-&gt;mem_len
+comma
+id|sk-&gt;ip_tos
+comma
+id|sk-&gt;ip_ttl
 )paren
 suffix:semicolon
 r_if
@@ -1425,6 +1435,39 @@ id|addr_len
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|sin
+)paren
+(brace
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|sin
+comma
+r_sizeof
+(paren
+op_star
+id|sin
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
+)brace
 id|err
 op_assign
 id|verify_area
@@ -1514,20 +1557,6 @@ suffix:semicolon
 id|addr.sin_addr.s_addr
 op_assign
 id|skb-&gt;daddr
-suffix:semicolon
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|sin
-comma
-r_sizeof
-(paren
-op_star
-id|sin
-)paren
-)paren
 suffix:semicolon
 id|memcpy_tofs
 c_func
@@ -1658,6 +1687,10 @@ comma
 id|raw_init
 comma
 l_int|NULL
+comma
+id|ip_setsockopt
+comma
+id|ip_getsockopt
 comma
 l_int|128
 comma

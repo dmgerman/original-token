@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Ethernet-type device handling.&n; *&n; * Version:&t;@(#)eth.c&t;1.0.7&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; * &n; * Fixes:&n; *&t;&t;Mr Linux&t;: Arp problems&n; *&t;&t;Alan Cox&t;: Generic queue tidyup (very tiny here)&n; *&t;&t;Alan Cox&t;: eth_header ntohs should be htons&n; *&t;&t;Alan Cox&t;: eth_rebuild_header missing an htons and&n; *&t;&t;&t;&t;  minor other things.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Ethernet-type device handling.&n; *&n; * Version:&t;@(#)eth.c&t;1.0.7&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; * &n; * Fixes:&n; *&t;&t;Mr Linux&t;: Arp problems&n; *&t;&t;Alan Cox&t;: Generic queue tidyup (very tiny here)&n; *&t;&t;Alan Cox&t;: eth_header ntohs should be htons&n; *&t;&t;Alan Cox&t;: eth_rebuild_header missing an htons and&n; *&t;&t;&t;&t;  minor other things.&n; *&t;&t;Tegge&t;&t;: Arp bug fixes. &n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -510,7 +510,7 @@ id|daddr
 comma
 id|dev
 comma
-id|saddr
+id|dev-&gt;pa_addr
 )paren
 )paren
 (brace
@@ -686,7 +686,8 @@ id|dst
 comma
 id|dev
 comma
-id|src
+id|dev-&gt;pa_addr
+multiline_comment|/* src */
 )paren
 )paren
 r_return

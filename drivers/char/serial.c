@@ -6910,7 +6910,7 @@ id|info-&gt;close_wait
 suffix:semicolon
 r_return
 op_minus
-id|EAGAIN
+id|ERESTARTSYS
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * If this is a callout device, then just make sure the normal&n;&t; * device isn&squot;t being used.&n;&t; */
@@ -7128,7 +7128,7 @@ id|ASYNC_INITIALIZED
 id|retval
 op_assign
 op_minus
-id|EAGAIN
+id|ERESTARTSYS
 suffix:semicolon
 r_break
 suffix:semicolon

@@ -1,12 +1,10 @@
 multiline_comment|/*&n; *  linux/fs/ext2/dir.c&n; *&n; *  Copyright (C) 1992, 1993, 1994  Remy Card (card@masi.ibp.fr)&n; *                                  Laboratoire MASI - Institut Blaise Pascal&n; *                                  Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/dir.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  ext2 directory handling functions&n; */
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#ifndef CONFIG_EXT2_FS_DIR_READ
 DECL|function|ext2_dir_read
 r_static
 r_int
@@ -35,25 +33,6 @@ op_minus
 id|EISDIR
 suffix:semicolon
 )brace
-macro_line|#else
-r_int
-id|ext2_file_read
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_struct
-id|file
-op_star
-comma
-r_char
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-macro_line|#endif
 r_static
 r_int
 id|ext2_readdir
@@ -83,15 +62,9 @@ op_assign
 l_int|NULL
 comma
 multiline_comment|/* lseek - default */
-macro_line|#ifdef CONFIG_EXT2_FS_DIR_READ
-id|ext2_file_read
-comma
-multiline_comment|/* read */
-macro_line|#else
 id|ext2_dir_read
 comma
 multiline_comment|/* read */
-macro_line|#endif
 l_int|NULL
 comma
 multiline_comment|/* write - bad */

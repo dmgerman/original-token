@@ -351,7 +351,7 @@ id|sk
 )paren
 suffix:semicolon
 multiline_comment|/* Kill the ARP entry in case the hardware has changed. */
-id|arp_destroy
+id|arp_destroy_maybe
 (paren
 id|sk-&gt;daddr
 )paren
@@ -510,7 +510,7 @@ l_string|&quot;timer.c TIME_WRITE time-out 1&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|arp_destroy
+id|arp_destroy_maybe
 (paren
 id|sk-&gt;daddr
 )paren
@@ -672,7 +672,7 @@ l_string|&quot;timer.c TIME_KEEPOPEN time-out 1&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|arp_destroy
+id|arp_destroy_maybe
 (paren
 id|sk-&gt;daddr
 )paren
@@ -711,7 +711,7 @@ l_string|&quot;timer.c TIME_KEEPOPEN time-out 2&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|arp_destroy
+id|arp_destroy_maybe
 (paren
 id|sk-&gt;daddr
 )paren

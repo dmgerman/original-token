@@ -1608,7 +1608,19 @@ id|silent
 id|printk
 c_func
 (paren
-l_string|&quot;VFS: unable to read Xenix/SystemV/Coherent superblock&bslash;n&quot;
+l_string|&quot;VFS: unable to read Xenix/SystemV/Coherent superblock on device %d/%d&bslash;n&quot;
+comma
+id|MAJOR
+c_func
+(paren
+id|dev
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
 )paren
 suffix:semicolon
 r_return

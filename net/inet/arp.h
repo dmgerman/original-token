@@ -212,5 +212,15 @@ op_star
 id|arg
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|arp_destroy_maybe
+c_func
+(paren
+r_int
+r_int
+id|paddr
+)paren
+suffix:semicolon
 macro_line|#endif&t;/* _ARP_H */
 eof

@@ -128,6 +128,13 @@ DECL|member|h
 )brace
 id|h
 suffix:semicolon
+DECL|member|ip_hdr
+r_struct
+id|iphdr
+op_star
+id|ip_hdr
+suffix:semicolon
+multiline_comment|/* For IPPROTO_RAW */
 DECL|member|mem_len
 r_int
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * These are the functions used to load COFF IBSC style executables.&n; * Information on COFF format may be obtained in either the Intel Binary&n; * Compatibility Specification 2 or O&squot;Rilley&squot;s book on COFF. The shared&n; * libraries are defined only the in the Intel book.&n; *&n; * This file is based upon code written by Eric Youndale for the ELF object&n; * file format.&n; *&n; * Revision information:&n; *    28 August 1993&n; *       Al Longyear (longyear@sii.com)&n; *       initial release to alpha level testing. This version does not load&n; *       shared libraries, but will identify them and log the file names.&n; *&n; *     4 September 1993&n; *       Al Longyear (longyear@sii.com)&n; *       Added support for shared libraries.&n; *&n; *     9 September 1993&n; *       Al Longyear (longyear@sii.com)&n; *       Load the FS register with the proper value prior to the call to&n; *       sys_uselib().&n; *&n; *       Built the parameter and envionment strings before destroying the&n; *       current executable.&n; *&n; *    10 September 1993&n; *       Al Longyear (longyear@sii.com)&n; *       Added new parameter to the create_tables() function to allow the&n; *       proper creation of the IBCS environment stack when the process is&n; *       started.&n; *&n; *       Added code to create_tables() which I mistakenly deleted in the&n; *       last patch.&n; *&n; *    13 September 1993&n; *       Al Longyear (longyear@sii.com)&n; *       Removed erroneous code which mistakenly folded .data with .bss for&n; *       a shared library. &n; */
+multiline_comment|/*&n; * These are the functions used to load COFF IBSC style executables.&n; * Information on COFF format may be obtained in either the Intel Binary&n; * Compatibility Specification 2 or O&squot;Rilley&squot;s book on COFF. The shared&n; * libraries are defined only the in the Intel book.&n; *&n; * This file is based upon code written by Eric Youndale for the ELF object&n; * file format.&n; *&n; * Revision information:&n; *    28 August 1993&n; *       Al Longyear (longyear@sii.com)&n; *       initial release to alpha level testing. This version does not load&n; *       shared libraries, but will identify them and log the file names.&n; *&n; *     4 September 1993&n; *       Al Longyear (longyear@sii.com)&n; *       Added support for shared libraries.&n; *&n; *     9 September 1993&n; *       Al Longyear (longyear@sii.com)&n; *       Load the FS register with the proper value prior to the call to&n; *       sys_uselib().&n; *&n; *       Built the parameter and envionment strings before destroying the&n; *       current executable.&n; *&n; *    10 September 1993&n; *       Al Longyear (longyear@sii.com)&n; *       Added new parameter to the create_tables() function to allow the&n; *       proper creation of the IBCS environment stack when the process is&n; *       started.&n; *&n; *       Added code to create_tables() which I mistakenly deleted in the&n; *       last patch.&n; *&n; *    13 September 1993&n; *       Al Longyear (longyear@sii.com)&n; *       Removed erroneous code which mistakenly folded .data with .bss for&n; *       a shared library. &n; *&n; *     8 Janurary 1994&n; *       Al Longyear (longyear@sii.com)&n; *       Corrected problem with read of library section returning the byte&n; *       count rather than zero. This was a change between the pl12 and&n; *       pl14 kernels which slipped by me.&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1907,6 +1907,32 @@ id|old_fs
 )paren
 suffix:semicolon
 multiline_comment|/* Restore the selector */
+multiline_comment|/*&n; *  Check the result. The value returned is the byte count actaully read.&n; */
+r_if
+c_cond
+(paren
+id|status
+op_ge
+l_int|0
+op_logical_and
+id|status
+op_ne
+id|nbytes
+)paren
+(brace
+macro_line|#ifdef COFF_DEBUG
+id|printk
+(paren
+l_string|&quot;read of lib section was short&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|status
+op_assign
+op_minus
+id|ENOEXEC
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; *  At this point, go through the list of libraries in the data area.&n; */
 id|phdr
@@ -1921,7 +1947,7 @@ r_while
 c_loop
 (paren
 id|status
-op_eq
+op_ge
 l_int|0
 op_logical_and
 id|nbytes

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;SUCS&t;NET2 Debugged.&n; *&n; *&t;Generic datagram handling routines. These are generic for all protocols. Possibly a generic IP version on top&n; *&t;of these would make sense. Not tonight however 8-). &n; *&t;This is used because UDP, RAW, PACKET and the to be released IPX layer all have identical select code and mostly&n; *&t;identical recvfrom() code. So we share it here. The select was shared before but buried in udp.c so I moved it.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;. (datagram_select() from old udp.c code)&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;NULL return from skb_peek_copy() understood&n; *&t;&t;Alan Cox&t;:&t;Rewrote skb_read_datagram to avoid the skb_peek_copy stuff.&n; *&t;&t;Alan Cox&t;:&t;Added support for SOCK_SEQPACKET. IPX can no longer use the SO_TYPE hack but&n; *&t;&t;&t;&t;&t;AX.25 now works right, and SPX is feasible.&n; */
+multiline_comment|/*&n; *&t;SUCS&t;NET2 Debugged.&n; *&n; *&t;Generic datagram handling routines. These are generic for all protocols. Possibly a generic IP version on top&n; *&t;of these would make sense. Not tonight however 8-).&n; *&t;This is used because UDP, RAW, PACKET and the to be released IPX layer all have identical select code and mostly&n; *&t;identical recvfrom() code. So we share it here. The select was shared before but buried in udp.c so I moved it.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;. (datagram_select() from old udp.c code)&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;NULL return from skb_peek_copy() understood&n; *&t;&t;Alan Cox&t;:&t;Rewrote skb_read_datagram to avoid the skb_peek_copy stuff.&n; *&t;&t;Alan Cox&t;:&t;Added support for SOCK_SEQPACKET. IPX can no longer use the SO_TYPE hack but&n; *&t;&t;&t;&t;&t;AX.25 now works right, and SPX is feasible.&n; *&t;&t;Alan Cox&t;:&t;Fixed write select of non IP protocol crash.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -172,7 +172,7 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/* Interrupts off so that no packet arrives before we begin sleeping. &n;&t;&t;   Otherwise we might miss our wake up */
+multiline_comment|/* Interrupts off so that no packet arrives before we begin sleeping.&n;&t;&t;   Otherwise we might miss our wake up */
 id|cli
 c_func
 (paren
@@ -442,7 +442,7 @@ r_int
 id|size
 )paren
 (brace
-multiline_comment|/* We will know all about the fraglist options to allow &gt;4K receives &n;&t;   but not this release */
+multiline_comment|/* We will know all about the fraglist options to allow &gt;4K receives&n;&t;   but not this release */
 id|memcpy_tofs
 c_func
 (paren
@@ -542,6 +542,24 @@ c_func
 (paren
 id|sk
 )paren
+op_ge
+id|MIN_WRITE_SPACE
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|sk-&gt;prot
+op_eq
+l_int|NULL
+op_logical_and
+id|sk-&gt;sndbuf
+op_minus
+id|sk-&gt;wmem_alloc
 op_ge
 id|MIN_WRITE_SPACE
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_trig.c                                                               |&n; |                                                                           |&n; | Implementation of the FPU &quot;transcendental&quot; functions.                     |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_trig.c                                                               |&n; |                                                                           |&n; | Implementation of the FPU &quot;transcendental&quot; functions.                     |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994                                              |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -325,6 +325,10 @@ id|EXP_BIAS
 op_plus
 l_int|63
 suffix:semicolon
+id|tmp.tag
+op_assign
+id|TW_Valid
+suffix:semicolon
 id|normalize
 c_func
 (paren
@@ -360,6 +364,23 @@ comma
 id|FULL_PRECISION
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|X-&gt;sign
+op_eq
+id|SIGN_NEG
+)paren
+(brace
+multiline_comment|/* CONST_PI2extra is negative, so the result of the addition&n;&t;&t; can be negative. This means that the argument is actually&n;&t;&t; in a different quadrant. The correction is always &lt; pi/2,&n;&t;&t; so it can&squot;t overflow into yet another quadrant. */
+id|X-&gt;sign
+op_assign
+id|SIGN_POS
+suffix:semicolon
+id|q
+op_increment
+suffix:semicolon
+)brace
 )brace
 macro_line|#endif BETTER_THAN_486
 )brace
@@ -409,6 +430,10 @@ id|EXP_BIAS
 op_plus
 l_int|63
 suffix:semicolon
+id|tmp.tag
+op_assign
+id|TW_Valid
+suffix:semicolon
 id|normalize
 c_func
 (paren
@@ -444,6 +469,56 @@ comma
 id|FULL_PRECISION
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|X-&gt;exp
+op_eq
+id|CONST_PI2.exp
+)paren
+op_logical_and
+(paren
+(paren
+id|X-&gt;sigh
+OG
+id|CONST_PI2.sigh
+)paren
+op_logical_or
+(paren
+(paren
+id|X-&gt;sigh
+op_eq
+id|CONST_PI2.sigh
+)paren
+op_logical_and
+(paren
+id|X-&gt;sigl
+OG
+id|CONST_PI2.sigl
+)paren
+)paren
+)paren
+)paren
+(brace
+multiline_comment|/* CONST_PI2extra is negative, so the result of the&n;&t;&t; subtraction can be larger than pi/2. This means&n;&t;&t; that the argument is actually in a different quadrant.&n;&t;&t; The correction is always &lt; pi/2, so it can&squot;t overflow&n;&t;&t; into yet another quadrant. */
+id|reg_sub
+c_func
+(paren
+op_amp
+id|CONST_PI
+comma
+id|X
+comma
+id|X
+comma
+id|FULL_PRECISION
+)paren
+suffix:semicolon
+id|q
+op_increment
+suffix:semicolon
+)brace
 )brace
 )brace
 macro_line|#endif BETTER_THAN_486

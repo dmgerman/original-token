@@ -110,7 +110,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined CONFIG_PSMOUSE || defined CONFIG_QUICKPORT_MOUSE
+macro_line|#if defined CONFIG_PSMOUSE || defined CONFIG_82C710_MOUSE
 r_case
 id|PSMOUSE_MINOR
 suffix:colon
@@ -220,7 +220,7 @@ id|kmem_start
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined CONFIG_PSMOUSE || defined CONFIG_QUICKPORT_MOUSE
+macro_line|#if defined CONFIG_PSMOUSE || defined CONFIG_82C710_MOUSE
 id|kmem_start
 op_assign
 id|psaux_init

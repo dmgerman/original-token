@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * UNIX&t;&t;An implementation of the AF_UNIX network domain for the&n; *&t;&t;LINUX operating system.  UNIX is implemented using the&n; *&t;&t;BSD Socket interface as the means of communication with&n; *&t;&t;the user level.&n; *&n; * Version:&t;@(#)sock.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify Area&n; *&n; * BUGS&n; *&t;Page faults on read while another process reads could lose data.&n; *&t;Page faults on write happen to interleave data (probably not allowed)&n; *&t;with any other simultaneous writers on the socket but dont cause harm.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or(at your option) any later version.&n; */
+multiline_comment|/*&n; * UNIX&t;&t;An implementation of the AF_UNIX network domain for the&n; *&t;&t;LINUX operating system.  UNIX is implemented using the&n; *&t;&t;BSD Socket interface as the means of communication with&n; *&t;&t;the user level.&n; *&n; * Version:&t;@(#)sock.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify Area&n; *&t;&t;NET2E Team&t;:&t;Page fault locks&n; *&n; * To Do:&n; *&n; *&t;Change to the NET2E3 code for Unix domain sockets in general. The&n; *&t;read/write logic is much better and cleaner.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or(at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -697,6 +697,59 @@ id|UN_PATH_OFFSET
 )paren
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/* Support routines doing anti page fault locking &n; * FvK &amp; Matt Dillon (borrowed From NET2E3)&n; */
+multiline_comment|/*&n; * Locking for unix-domain sockets.  We don&squot;t use the socket structure&squot;s&n; * wait queue because it is allowed to &squot;go away&squot; outside of our control,&n; * whereas unix_proto_data structures stick around.&n; */
+DECL|function|unix_lock
+r_void
+id|unix_lock
+c_func
+(paren
+r_struct
+id|unix_proto_data
+op_star
+id|upd
+)paren
+(brace
+r_while
+c_loop
+(paren
+id|upd-&gt;lock_flag
+)paren
+id|sleep_on
+c_func
+(paren
+op_amp
+id|upd-&gt;wait
+)paren
+suffix:semicolon
+id|upd-&gt;lock_flag
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+DECL|function|unix_unlock
+r_void
+id|unix_unlock
+c_func
+(paren
+r_struct
+id|unix_proto_data
+op_star
+id|upd
+)paren
+(brace
+id|upd-&gt;lock_flag
+op_assign
+l_int|0
+suffix:semicolon
+id|wake_up
+c_func
+(paren
+op_amp
+id|upd-&gt;wait
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* don&squot;t have to do anything. */
 r_static
@@ -2908,6 +2961,12 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;   * Copy from the read buffer into the user&squot;s buffer,&n;   * watching for wraparound. Then we wake up the writer.&n;   */
+id|unix_lock
+c_func
+(paren
+id|upd
+)paren
+suffix:semicolon
 r_do
 (brace
 r_int
@@ -3010,6 +3069,12 @@ OL
 l_int|0
 )paren
 (brace
+id|unix_unlock
+c_func
+(paren
+id|upd
+)paren
+suffix:semicolon
 r_return
 id|er
 suffix:semicolon
@@ -3080,6 +3145,12 @@ id|avail
 (brace
 suffix:semicolon
 )brace
+id|unix_unlock
+c_func
+(paren
+id|upd
+)paren
+suffix:semicolon
 r_return
 id|size
 op_minus
@@ -3284,6 +3355,12 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;   * Copy from the user&squot;s buffer to the write buffer,&n;   * watching for wraparound. Then we wake up the reader.&n;   */
+id|unix_lock
+c_func
+(paren
+id|pupd
+)paren
+suffix:semicolon
 r_do
 (brace
 r_int
@@ -3337,6 +3414,12 @@ comma
 id|current
 comma
 l_int|1
+)paren
+suffix:semicolon
+id|unix_unlock
+c_func
+(paren
+id|pupd
 )paren
 suffix:semicolon
 r_return
@@ -3408,6 +3491,12 @@ c_cond
 id|er
 )paren
 (brace
+id|unix_unlock
+c_func
+(paren
+id|pupd
+)paren
+suffix:semicolon
 r_return
 id|er
 suffix:semicolon
@@ -3478,6 +3567,12 @@ id|space
 (brace
 suffix:semicolon
 )brace
+id|unix_unlock
+c_func
+(paren
+id|pupd
+)paren
+suffix:semicolon
 r_return
 id|size
 op_minus

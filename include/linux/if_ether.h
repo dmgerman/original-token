@@ -25,7 +25,9 @@ mdefine_line|#define ETH_P_IP&t;0x0800&t;&t;/* Internet Protocol packet&t;*/
 DECL|macro|ETH_P_ARP
 mdefine_line|#define ETH_P_ARP&t;0x0806&t;&t;/* Address Resolution packet&t;*/
 DECL|macro|ETH_P_RARP
-mdefine_line|#define ETH_P_RARP      0x0835&t;&t;/* Reverse Addr Res packet&t;*/
+mdefine_line|#define ETH_P_RARP      0x8035&t;&t;/* Reverse Addr Res packet&t;*/
+DECL|macro|ETH_P_X25
+mdefine_line|#define ETH_P_X25&t;0x0805&t;&t;/* CCITT X.25&t;&t;&t;*/
 DECL|macro|ETH_P_IPX
 mdefine_line|#define ETH_P_IPX&t;0x8137&t;&t;/* IPX over DIX&t;&t;&t;*/
 DECL|macro|ETH_P_802_3

@@ -57,7 +57,7 @@ mdefine_line|#define AUX_DISABLE_DEV&t;0xf5&t;&t;/* disable aux device */
 DECL|macro|AUX_RESET
 mdefine_line|#define AUX_RESET&t;0xff&t;&t;/* reset aux device */
 DECL|macro|MAX_RETRIES
-mdefine_line|#define MAX_RETRIES&t;30&t;&t;/* some aux operations take long time*/
+mdefine_line|#define MAX_RETRIES&t;60&t;&t;/* some aux operations take long time*/
 DECL|macro|AUX_IRQ
 mdefine_line|#define AUX_IRQ&t;&t;12
 DECL|macro|AUX_BUF_SIZE

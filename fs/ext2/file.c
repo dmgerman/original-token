@@ -1,7 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/ext2/file.c&n; *&n; *  Copyright (C) 1992, 1993, 1994  Remy Card (card@masi.ibp.fr)&n; *                                  Laboratoire MASI - Institut Blaise Pascal&n; *                                  Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/file.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  ext2 fs regular file handling primitives&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
@@ -17,9 +16,7 @@ DECL|macro|MAX
 mdefine_line|#define MAX(a,b) (((a)&gt;(b))?(a):(b))
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
-macro_line|#ifndef CONFIG_EXT2_FS_DIR_READ
 r_static
-macro_line|#endif
 r_int
 id|ext2_file_read
 (paren
@@ -160,10 +157,8 @@ id|ext2_permission
 multiline_comment|/* permission */
 )brace
 suffix:semicolon
-macro_line|#ifndef CONFIG_EXT2_FS_DIR_READ
-r_static
-macro_line|#endif
 DECL|function|ext2_file_read
+r_static
 r_int
 id|ext2_file_read
 (paren
@@ -268,13 +263,6 @@ c_cond
 (paren
 op_logical_neg
 id|S_ISREG
-c_func
-(paren
-id|inode-&gt;i_mode
-)paren
-op_logical_and
-op_logical_neg
-id|S_ISDIR
 c_func
 (paren
 id|inode-&gt;i_mode

@@ -54,6 +54,17 @@ id|unix_proto_data
 op_star
 id|peerupd
 suffix:semicolon
+DECL|member|wait
+r_struct
+id|wait_queue
+op_star
+id|wait
+suffix:semicolon
+multiline_comment|/* Lock across page faults (FvK) */
+DECL|member|lock_flag
+r_int
+id|lock_flag
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
