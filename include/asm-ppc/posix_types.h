@@ -1,6 +1,6 @@
 macro_line|#ifndef _PPC_POSIX_TYPES_H
-DECL|macro|_PPc_POSIX_TYPES_H
-mdefine_line|#define _PPc_POSIX_TYPES_H
+DECL|macro|_PPC_POSIX_TYPES_H
+mdefine_line|#define _PPC_POSIX_TYPES_H
 multiline_comment|/*&n; * This file is generally used by user-level software, so you need to&n; * be a little careful about namespace pollution etc.  Also, we cannot&n; * assume GCC is being used.&n; */
 DECL|typedef|__kernel_dev_t
 r_typedef
@@ -390,5 +390,5 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* __GNUC__ */
-macro_line|#endif /* _PPc_POSIX_TYPES_H */
+macro_line|#endif /* _PPC_POSIX_TYPES_H */
 eof

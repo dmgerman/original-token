@@ -841,6 +841,33 @@ id|ENODEV
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;ne.c: Passed a NULL device.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev
+op_assign
+id|init_etherdev
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1518,32 +1545,6 @@ r_return
 id|ENXIO
 suffix:semicolon
 macro_line|#endif
-)brace
-multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;ne.c: Passed a NULL device.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|dev
-op_assign
-id|init_etherdev
-c_func
-(paren
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
 )brace
 r_if
 c_cond

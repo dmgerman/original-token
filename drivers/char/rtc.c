@@ -1,12 +1,10 @@
 multiline_comment|/*&n; *&t;Real Time Clock interface for Linux&t;&n; *&n; *&t;Copyright (C) 1996 Paul Gortmaker&n; *&n; *&t;This driver allows use of the real time clock (built into&n; *&t;nearly all computers) from user space. It exports the /dev/rtc&n; *&t;interface supporting various ioctl() and also the /proc/rtc&n; *&t;pseudo-file for status information.&n; *&n; *&t;The ioctls can be used to set the interrupt behaviour and&n; *&t;generation rate from the RTC via IRQ 8. Then the /dev/rtc&n; *&t;interface can be used to make use of these timer interrupts,&n; *&t;be they interval or alarm based.&n; *&n; *&t;The /dev/rtc interface will block on reads until an interrupt&n; *&t;has been received. If a RTC interrupt has already happened,&n; *&t;it will output an unsigned long and then block. The output value&n; *&t;contains the interrupt status in the low byte and the number of&n; *&t;interrupts since the last read in the remaining high bytes. The &n; *&t;/dev/rtc interface can also be used with the select(2) call.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Based on other minimal char device drivers, like Alan&squot;s&n; *&t;watchdog, Ted&squot;s random, etc. etc.&n; *&n; */
 DECL|macro|RTC_VERSION
-mdefine_line|#define RTC_VERSION&t;&t;&quot;1.06&quot;
+mdefine_line|#define RTC_VERSION&t;&t;&quot;1.07&quot;
 DECL|macro|RTC_IRQ
 mdefine_line|#define RTC_IRQ &t;8&t;/* Can&squot;t see this changing soon.&t;*/
-DECL|macro|RTC_IO_BASE
-mdefine_line|#define RTC_IO_BASE&t;0x70&t;/* Or this...&t;&t;&t;&t;*/
 DECL|macro|RTC_IO_EXTENT
-mdefine_line|#define RTC_IO_EXTENT&t;0x10&t;/* Only really 0x70 to 0x71, but...&t;*/
+mdefine_line|#define RTC_IO_EXTENT&t;0x10&t;/* Only really two ports, but...&t;*/
 multiline_comment|/*&n; *&t;Note that *all* calls to CMOS_READ and CMOS_WRITE are done with&n; *&t;interrupts disabled. Due to the index-port/data-port (0x70/0x71)&n; *&t;design of the RTC, we don&squot;t want two different things trying to&n; *&t;get to it at once. (e.g. the periodic 11 min sync from time.c vs.&n; *&t;this driver.)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -2102,7 +2100,11 @@ multiline_comment|/* Check region? Naaah! Just snarf it up. */
 id|request_region
 c_func
 (paren
-id|RTC_IO_BASE
+id|RTC_PORT
+c_func
+(paren
+l_int|0
+)paren
 comma
 id|RTC_IO_EXTENT
 comma

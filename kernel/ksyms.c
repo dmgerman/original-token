@@ -537,12 +537,6 @@ comma
 id|X
 c_func
 (paren
-id|__wait_on_page
-)paren
-comma
-id|X
-c_func
-(paren
 id|mark_buffer_uptodate
 )paren
 comma

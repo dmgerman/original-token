@@ -2338,13 +2338,7 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|host_byte
-c_func
-(paren
 id|SCpnt-&gt;result
-)paren
-op_ne
-id|DID_OK
 )paren
 (brace
 r_if
@@ -5892,6 +5886,26 @@ suffix:semicolon
 r_case
 id|SUGGEST_REMAP
 suffix:colon
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;SENSE SUGGEST REMAP - status = FINISHED&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|status
+op_assign
+id|FINISHED
+suffix:semicolon
+m_exit
+op_assign
+id|DRIVER_SENSE
+op_or
+id|SUGGEST_ABORT
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 id|SUGGEST_RETRY
 suffix:colon
@@ -5899,7 +5913,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;SENSE SUGGEST REMAP or SUGGEST RETRY - status = MAYREDO&bslash;n&quot;
+l_string|&quot;SENSE SUGGEST RETRY - status = MAYREDO&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -6006,6 +6020,18 @@ suffix:semicolon
 r_case
 id|SUGGEST_REMAP
 suffix:colon
+id|status
+op_assign
+id|FINISHED
+suffix:semicolon
+m_exit
+op_assign
+id|DRIVER_SENSE
+op_or
+id|SUGGEST_ABORT
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 id|SUGGEST_RETRY
 suffix:colon

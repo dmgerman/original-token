@@ -2507,6 +2507,21 @@ c_cond
 op_logical_neg
 id|error
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|fattr.fileid
+op_eq
+id|dir-&gt;i_ino
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Sony NewsOS 4.1R buggy nfs server?&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
 id|nfs_lookup_cache_add
 c_func
 (paren
@@ -2521,6 +2536,7 @@ op_amp
 id|fattr
 )paren
 suffix:semicolon
+)brace
 id|iput
 c_func
 (paren

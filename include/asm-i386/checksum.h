@@ -89,6 +89,7 @@ r_int
 id|sum
 suffix:semicolon
 id|__asm__
+id|__volatile__
 c_func
 (paren
 "&quot;"

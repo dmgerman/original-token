@@ -1614,6 +1614,10 @@ c_cond
 (paren
 id|redirport
 )paren
+r_if
+c_cond
+(paren
+(paren
 op_star
 id|redirport
 op_assign
@@ -1627,7 +1631,18 @@ op_plus
 id|f-&gt;fw_ndp
 )braket
 )paren
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* Wildcard redirection.&n;&t;&t;&t;&t;&t;&t; * Note that redirport will become&n;&t;&t;&t;&t;&t;&t; * 0xFFFF for non-TCP/UDP packets.&n;&t;&t;&t;&t;&t;&t; */
+op_star
+id|redirport
+op_assign
+id|dst_port
 suffix:semicolon
+)brace
 id|answer
 op_assign
 id|FW_REDIRECT

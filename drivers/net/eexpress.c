@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: eexpress.c,v 1.12 1996/04/15 17:27:30 phil Exp $&n; *&n; * Intel EtherExpress device driver for Linux&n; *&n; * Original version written 1993 by Donald Becker&n; * Modularized by Pauline Middelink &lt;middelin@polyware.iaf.nl&gt;&n; * Changed to support io= irq= by Alan Cox &lt;Alan.Cox@linux.org&gt;&n; * Reworked 1995 by John Sullivan &lt;js10039@cam.ac.uk&gt;&n; * More fixes by Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; */
+multiline_comment|/* $Id: eexpress.c,v 1.13 1996/05/19 15:59:51 phil Exp $&n; *&n; * Intel EtherExpress device driver for Linux&n; *&n; * Original version written 1993 by Donald Becker&n; * Modularized by Pauline Middelink &lt;middelin@polyware.iaf.nl&gt;&n; * Changed to support io= irq= by Alan Cox &lt;Alan.Cox@linux.org&gt;&n; * Reworked 1995 by John Sullivan &lt;js10039@cam.ac.uk&gt;&n; * More fixes by Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; */
 multiline_comment|/*&n; * The original EtherExpress driver was just about usable, but&n; * suffered from a long startup delay, a hard limit of 16k memory&n; * usage on the card (EtherExpress 16s have either 32k or 64k),&n; * and random locks under load. The last was particularly annoying&n; * and made running eXceed/W preferable to Linux/XFree. After hacking&n; * through the driver for a couple of days, I had fixed most of the&n; * card handling errors, at the expense of turning the code into&n; * a complete jungle, but still hadn&squot;t tracked down the lock-ups.&n; * I had hoped these would be an IP bug, but failed to reproduce them&n; * under other drivers, so decided to start from scratch and rewrite&n; * the driver cleanly. And here it is.&n; *&n; * It&squot;s still not quite there, but self-corrects a lot more problems.&n; * the &squot;CU wedged, resetting...&squot; message shouldn&squot;t happen at all, but&n; * at least we recover. It still locks occasionally, any ideas welcome.&n; *&n; * The original startup delay experienced by some people was due to the&n; * first ARP request for the address of the default router getting lost.&n; * (mostly the reply we were getting back was arriving before our&n; * hardware address was set up, or before the configuration sequence&n; * had told the card NOT to strip of the frame header). If you a long&n; * startup delay, you may have lost this ARP request/reply, although&n; * the original cause has been fixed. However, it is more likely that&n; * you&squot;ve just locked under this version.&n; *&n; * The main changes are in the 586 initialization procedure (which was&n; * just broken before - the EExp is a strange beasty and needs careful&n; * handling) the receive buffer handling (we now use a non-terminating&n; * circular list of buffers, which stops the card giving us out-of-&n; * resources errors), and the transmit code. The driver is also more&n; * structured, and I have tried to keep the kernel interface separate&n; * from the hardware interface (although some routines naturally want&n; * to do both).&n; *&n; * John Sullivan&n; *&n; * 18/5/95:&n; *&n; * The lock-ups seem to happen when you access card memory after a 586&n; * reset. This happens only 1 in 12 resets, on a random basis, and&n; * completely locks the machine. As far as I can see there is no&n; * workaround possible - the only thing to be done is make sure we&n; * never reset the card *after* booting the kernel - once at probe time&n; * must be sufficient, and we&squot;ll just have to put up with that failing&n; * occasionally (or buy a new NIC). By the way, this looks like a &n; * definite card bug, since Intel&squot;s own driver for DOS does exactly the&n; * same.&n; *&n; * This bug makes switching in and out of promiscuous mode a risky&n; * business, since we must do a 586 reset each time.&n; */
 multiline_comment|/*&n; * Sources:&n; *&n; * The original eexpress.c by Donald Becker&n; *   Sources: the Crynwr EtherExpress driver source.&n; *            the Intel Microcommunications Databook Vol.1 1990&n; *&n; * wavelan.c and i82586.h&n; *   This was invaluable for the complete &squot;586 configuration details&n; *   and command format.&n; *&n; * The Crynwr sources (again)&n; *   Not as useful as the Wavelan driver, but then I had eexpress.c to&n; *   go off.&n; *&n; * The Intel EtherExpress 16 ethernet card&n; *   Provided the only reason I want to see a working etherexpress driver.&n; *   A lot of fixes came from just observing how the card (mis)behaves when&n; *   you prod it.&n; *&n; */
 DECL|variable|version
@@ -9,7 +9,7 @@ id|version
 )braket
 op_assign
 l_string|&quot;eexpress.c: v0.10 04-May-95 John Sullivan &lt;js10039@cam.ac.uk&gt;&bslash;n&quot;
-l_string|&quot;            v0.13 10-Apr-96 Philip Blundell &lt;phil@tazenda.demon.co.uk&gt;&bslash;n&quot;
+l_string|&quot;            v0.14 19-May-96 Philip Blundell &lt;phil@tazenda.demon.co.uk&gt;&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -25,6 +25,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -4830,13 +4831,7 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 macro_line|#endif
-id|PRIV
-c_func
-(paren
-id|dev
-)paren
-op_member_access_from_pointer
-id|started
+id|lp-&gt;started
 op_assign
 l_int|0
 suffix:semicolon
@@ -4867,6 +4862,80 @@ op_plus
 id|EEPROM_Ctrl
 )paren
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|2000
+)paren
+suffix:semicolon
+multiline_comment|/* delay 20ms */
+(brace
+r_int
+r_int
+id|ofs
+comma
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|ofs
+op_assign
+l_int|0
+suffix:semicolon
+id|ofs
+OL
+id|lp-&gt;rx_buf_end
+suffix:semicolon
+id|ofs
+op_add_assign
+l_int|32
+)paren
+(brace
+id|outw_p
+c_func
+(paren
+id|ofs
+comma
+id|ioaddr
+op_plus
+id|SM_PTR
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|16
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|outw_p
+c_func
+(paren
+l_int|0
+comma
+id|ioaddr
+op_plus
+id|SM_ADDR
+c_func
+(paren
+id|i
+op_lshift
+l_int|1
+)paren
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
 id|outw_p
 c_func
 (paren
@@ -4908,13 +4977,7 @@ op_complement
 l_int|1
 )paren
 suffix:semicolon
-id|PRIV
-c_func
-(paren
-id|dev
-)paren
-op_member_access_from_pointer
-id|promisc
+id|lp-&gt;promisc
 op_assign
 id|dev-&gt;flags
 op_amp
@@ -5571,6 +5634,7 @@ id|EEXP_MAX_CARDS
 )braket
 op_assign
 (brace
+(brace
 l_int|NULL
 comma
 multiline_comment|/* will allocate dynamically */
@@ -5595,6 +5659,8 @@ comma
 l_int|NULL
 comma
 id|express_probe
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|variable|irq

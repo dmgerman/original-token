@@ -191,7 +191,7 @@ c_func
 (paren
 id|stderr
 comma
-l_string|&quot;Can&squot;t create outpue file: &squot;%s&squot;: %s&bslash;n&quot;
+l_string|&quot;Can&squot;t create output file: &squot;%s&squot;: %s&bslash;n&quot;
 comma
 id|argv
 (braket
@@ -662,7 +662,7 @@ op_assign
 l_int|79
 suffix:semicolon
 multiline_comment|/* assumes 80 cylinders/diskette     */
-multiline_comment|/*&n;     * The &quot;PReP&quot; software ignores the above fields and just looks at&n;     * the next two.&n;     *   - size of the diskette is (assumed to be)&n;     *     (2 tracks/cylinder)(18 sectors/tracks)(80 cylinders/diskette)&n;     *   - unlike the above sector nunbers, the beginning sector is zero-based!&n;     */
+multiline_comment|/*&n;     * The &quot;PReP&quot; software ignores the above fields and just looks at&n;     * the next two.&n;     *   - size of the diskette is (assumed to be)&n;     *     (2 tracks/cylinder)(18 sectors/tracks)(80 cylinders/diskette)&n;     *   - unlike the above sector numbers, the beginning sector is zero-based!&n;     */
 macro_line|#if 0     
 id|pe-&gt;beginning_sector
 op_assign

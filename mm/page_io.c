@@ -215,6 +215,13 @@ c_func
 id|buf
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|page-&gt;count
+)paren
+suffix:semicolon
 id|wait_on_page
 c_func
 (paren
@@ -234,9 +241,6 @@ op_logical_neg
 id|wait
 )paren
 (brace
-id|page-&gt;count
-op_increment
-suffix:semicolon
 id|set_bit
 c_func
 (paren
@@ -284,6 +288,7 @@ comma
 id|buf
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * NOTE! We don&squot;t decrement the page count if we&n;&t;&t; * don&squot;t wait - that will happen asynchronously&n;&t;&t; * when the IO completes.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -494,6 +499,13 @@ id|printk
 c_func
 (paren
 l_string|&quot;rw_swap_page: no swap file or device&bslash;n&quot;
+)paren
+suffix:semicolon
+id|atomic_dec
+c_func
+(paren
+op_amp
+id|page-&gt;count
 )paren
 suffix:semicolon
 r_if

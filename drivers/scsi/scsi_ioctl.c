@@ -463,9 +463,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|SCpnt-&gt;device-&gt;was_reset
+op_logical_and
 id|SCpnt-&gt;device-&gt;scsi_request_fn
 )paren
-(brace
 (paren
 op_star
 id|SCpnt-&gt;device-&gt;scsi_request_fn
@@ -473,7 +475,6 @@ id|SCpnt-&gt;device-&gt;scsi_request_fn
 (paren
 )paren
 suffix:semicolon
-)brace
 id|wake_up
 c_func
 (paren

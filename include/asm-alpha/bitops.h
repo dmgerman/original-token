@@ -77,7 +77,7 @@ l_string|&quot;=&amp;r&quot;
 id|oldbit
 )paren
 suffix:colon
-l_string|&quot;r&quot;
+l_string|&quot;Ir&quot;
 (paren
 l_int|1UL
 op_lshift
@@ -175,7 +175,7 @@ l_string|&quot;=&amp;r&quot;
 id|oldbit
 )paren
 suffix:colon
-l_string|&quot;r&quot;
+l_string|&quot;Ir&quot;
 (paren
 l_int|1UL
 op_lshift
@@ -271,7 +271,7 @@ l_string|&quot;=&amp;r&quot;
 id|oldbit
 )paren
 suffix:colon
-l_string|&quot;r&quot;
+l_string|&quot;Ir&quot;
 (paren
 l_int|1UL
 op_lshift

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Miscallaneous support routines&n; */
+multiline_comment|/*&n; * Miscellaneous support routines&n; */
 macro_line|#include &lt;asm/bitops.h&gt;
 DECL|function|find_first_zero_bit
 multiline_comment|/*extern __inline__*/

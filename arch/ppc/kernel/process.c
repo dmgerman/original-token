@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Adapted for PowerPC by Gary THomas&n; */
+multiline_comment|/*&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Adapted for PowerPC by Gary Thomas&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
