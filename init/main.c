@@ -4768,11 +4768,6 @@ c_func
 l_string|&quot;POSIX conformance testing by UNIFIX&bslash;n&quot;
 )paren
 suffix:semicolon
-id|check_bugs
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#ifdef __SMP__
 id|smp_init
 c_func
@@ -4780,6 +4775,11 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|check_bugs
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#if defined(CONFIG_MTRR)&t;/* Do this after SMP initialization */
 multiline_comment|/*&n; * We should probably create some architecture-dependent &quot;fixup after&n; * everything is up&quot; style function where this would belong better&n; * than in init/main.c..&n; */
 id|mtrr_init

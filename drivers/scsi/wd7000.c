@@ -1684,7 +1684,7 @@ id|ints
 l_int|4
 )braket
 op_div
-l_float|125.0
+l_int|125
 suffix:semicolon
 )brace
 r_else
@@ -1760,7 +1760,7 @@ id|ints
 l_int|5
 )braket
 op_div
-l_float|125.0
+l_int|125
 suffix:semicolon
 )brace
 r_else

@@ -4235,12 +4235,6 @@ op_amp
 id|ioapic_edge_irq_type
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * disable it in the 8259A:&n;&t;&t;&t; */
-id|cached_irq_mask
-op_or_assign
-l_int|1
-op_lshift
-id|i
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4248,7 +4242,7 @@ id|i
 OL
 l_int|16
 )paren
-id|set_8259A_irq_mask
+id|disable_8259A_irq
 c_func
 (paren
 id|i

@@ -1808,6 +1808,25 @@ id|dentry
 op_star
 id|dir
 suffix:semicolon
+id|error
+op_assign
+op_minus
+id|EEXIST
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dentry-&gt;d_inode
+op_logical_and
+(paren
+id|flag
+op_amp
+id|O_EXCL
+)paren
+)paren
+r_goto
+m_exit
+suffix:semicolon
 id|dir
 op_assign
 id|lock_parent
@@ -1836,7 +1855,7 @@ id|dir
 r_goto
 m_exit
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * The existence test must be done _after_ getting the directory&n;&t;&t; * semaphore - the dentry might otherwise change.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Somebody might have created the file while we&n;&t;&t; * waited for the directory lock.. So we have to&n;&t;&t; * re-do the existence test.&n;&t;&t; */
 r_if
 c_cond
 (paren

@@ -1763,7 +1763,7 @@ id|KD_FONT_OP_SET
 suffix:semicolon
 id|op.flags
 op_assign
-l_int|0
+id|KD_FONT_FLAG_OLD
 suffix:semicolon
 id|op.width
 op_assign
@@ -1801,7 +1801,7 @@ id|KD_FONT_OP_GET
 suffix:semicolon
 id|op.flags
 op_assign
-l_int|0
+id|KD_FONT_FLAG_OLD
 suffix:semicolon
 id|op.width
 op_assign
@@ -4082,6 +4082,8 @@ id|KD_FONT_OP_SET
 suffix:semicolon
 id|op.flags
 op_assign
+id|KD_FONT_FLAG_OLD
+op_or
 id|KD_FONT_FLAG_DONT_RECALC
 suffix:semicolon
 multiline_comment|/* Compatibility */
@@ -4130,7 +4132,7 @@ id|KD_FONT_OP_GET
 suffix:semicolon
 id|op.flags
 op_assign
-l_int|0
+id|KD_FONT_FLAG_OLD
 suffix:semicolon
 id|op.width
 op_assign
@@ -4334,10 +4336,6 @@ id|KD_FONT_OP_GET
 r_return
 op_minus
 id|EPERM
-suffix:semicolon
-id|op.flags
-op_or_assign
-id|KD_FONT_FLAG_NEW
 suffix:semicolon
 id|i
 op_assign
@@ -5385,36 +5383,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: Do we still need this? */
-macro_line|#ifdef CONFIG_SUN_CONSOLE
-r_if
-c_cond
-(paren
-id|old_vc_mode
-op_ne
-id|vt_cons
-(braket
-id|new_console
-)braket
-op_member_access_from_pointer
-id|vc_mode
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|old_vc_mode
-op_eq
-id|KD_GRAPHICS
-)paren
-id|update_screen
-c_func
-(paren
-id|new_console
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif&t;&t;
 multiline_comment|/*&n;&t; * Wake anyone waiting for their VT to activate&n;&t; */
 id|vt_wake_waitactive
 c_func

@@ -6511,32 +6511,17 @@ r_return
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#error Floating point in kernel - shoot programmer
 r_return
 (paren
-r_int
-)paren
-(paren
-(paren
-(paren
-r_float
-)paren
 id|IBM_DS.ldn_access
 (braket
 id|ldn
 )braket
-op_div
-(paren
-r_float
-)paren
-id|IBM_DS.total_accesses
-)paren
 op_star
-(paren
-r_float
+l_int|100
 )paren
-l_float|100.000
-)paren
+op_div
+id|IBM_DS.total_accesses
 suffix:semicolon
 )brace
 multiline_comment|/* calculate total amount of r/w-accesses */

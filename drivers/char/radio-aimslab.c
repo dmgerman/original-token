@@ -606,11 +606,11 @@ id|freq
 op_assign
 (paren
 id|freq
-op_div
-l_float|16.0
-)paren
 op_star
 l_int|100
+)paren
+op_div
+l_int|16
 suffix:semicolon
 multiline_comment|/* massage the data a little&t;*/
 id|freq
@@ -962,10 +962,7 @@ suffix:semicolon
 id|v.rangelow
 op_assign
 (paren
-r_int
-)paren
-(paren
-l_float|88.0
+l_int|88
 op_star
 l_int|16
 )paren
@@ -973,10 +970,7 @@ suffix:semicolon
 id|v.rangehigh
 op_assign
 (paren
-r_int
-)paren
-(paren
-l_float|108.0
+l_int|108
 op_star
 l_int|16
 )paren

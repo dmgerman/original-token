@@ -1126,7 +1126,9 @@ l_int|0
 comma
 l_int|0
 comma
-l_float|1.2
+l_int|1
+comma
+l_int|2
 )brace
 suffix:semicolon
 r_static

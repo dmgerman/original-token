@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/char/keyboard.c&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; *&n; * Some additional features added by Christoph Niemann (ChN), March 1993&n; *&n; * Loadable keymaps by Risto Kankkunen, May 1993&n; *&n; * Diacriticals redone &amp; other small changes, aeb@cwi.nl, June 1993&n; * Added decr/incr_console, dynamic keymaps, Unicode support,&n; * dynamic function/string keys, led setting,  Sept 1994&n; * `Sticky&squot; modifier keys, 951006.&n; * 11-11-96: SAK should now work in the raw mode (Martin Mares)&n; * &n; * Modified to provide &squot;generic&squot; keyboard support by Hamish Macdonald&n; * Merge with the m68k keyboard driver and split-off of the PC low-level&n; * parts by Geert Uytterhoeven, May 1997&n; *&n; * 27-05-97: Added support for the Magic SysRq Key (Martin Mares)&n; */
+multiline_comment|/*&n; * linux/drivers/char/keyboard.c&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; *&n; * Some additional features added by Christoph Niemann (ChN), March 1993&n; *&n; * Loadable keymaps by Risto Kankkunen, May 1993&n; *&n; * Diacriticals redone &amp; other small changes, aeb@cwi.nl, June 1993&n; * Added decr/incr_console, dynamic keymaps, Unicode support,&n; * dynamic function/string keys, led setting,  Sept 1994&n; * `Sticky&squot; modifier keys, 951006.&n; * 11-11-96: SAK should now work in the raw mode (Martin Mares)&n; * &n; * Modified to provide &squot;generic&squot; keyboard support by Hamish Macdonald&n; * Merge with the m68k keyboard driver and split-off of the PC low-level&n; * parts by Geert Uytterhoeven, May 1997&n; *&n; * 27-05-97: Added support for the Magic SysRq Key (Martin Mares)&n; * 16-01-97: Dead-key-twice behavior now configurable (Jiri Hanika)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -502,7 +502,7 @@ c_func
 id|max_vals
 )paren
 suffix:semicolon
-r_static
+multiline_comment|/* N.B. drivers/macintosh/mac_keyb.c needs to call put_queue */
 r_void
 id|put_queue
 c_func
@@ -1194,7 +1194,6 @@ macro_line|#endif
 )brace
 )brace
 DECL|function|put_queue
-r_static
 r_void
 id|put_queue
 c_func
@@ -1226,7 +1225,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|tty_schedule_flip
+id|con_schedule_flip
 c_func
 (paren
 id|tty
@@ -1282,7 +1281,7 @@ id|cp
 op_increment
 suffix:semicolon
 )brace
-id|tty_schedule_flip
+id|con_schedule_flip
 c_func
 (paren
 id|tty
@@ -1714,7 +1713,7 @@ comma
 id|TTY_BREAK
 )paren
 suffix:semicolon
-id|tty_schedule_flip
+id|con_schedule_flip
 c_func
 (paren
 id|tty
@@ -2067,8 +2066,8 @@ comma
 id|A_CEDIL
 )brace
 suffix:semicolon
-multiline_comment|/* If a dead key pressed twice, output a character corresponding to it,&t;*/
-multiline_comment|/* otherwise just remember the dead key.&t;&t;&t;&t;*/
+multiline_comment|/* If a dead key pressed twice, output a character corresponding to it,    */
+multiline_comment|/* unless overriden in accent_table; otherwise just remember the dead key. */
 DECL|function|do_dead
 r_static
 r_void
@@ -2106,14 +2105,14 @@ id|value
 )paren
 (brace
 multiline_comment|/* pressed twice */
-id|diacr
-op_assign
-l_int|0
-suffix:semicolon
 id|put_queue
 c_func
 (paren
+id|handle_diacr
+c_func
+(paren
 id|value
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2204,6 +2203,14 @@ dot
 id|result
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|ch
+op_ne
+id|d
+)paren
+multiline_comment|/* dead key pressed twice, put once */
 id|put_queue
 c_func
 (paren

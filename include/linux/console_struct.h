@@ -1,7 +1,4 @@
 multiline_comment|/*&n; * console_struct.h&n; *&n; * Data structure describing single virtual console except for data&n; * used by vt.c.&n; *&n; * Fields marked with [#] must be set by the low-level driver.&n; * Fields marked with [!] can be changed by the low-level driver&n; * to achieve effects such as fast scrolling by changing the origin.&n; */
-multiline_comment|/*&n; * You can set here how should the cursor look by default.&n; * In case you set CONFIG_SOFTCURSOR, this might be really interesting.&n; */
-DECL|macro|CUR_DEFAULT
-mdefine_line|#define CUR_DEFAULT CUR_UNDERLINE
 DECL|macro|NPAR
 mdefine_line|#define NPAR 16
 DECL|struct|vc_data
@@ -491,4 +488,6 @@ DECL|macro|CUR_HWMASK
 mdefine_line|#define CUR_HWMASK&t;0x0f
 DECL|macro|CUR_SWMASK
 mdefine_line|#define CUR_SWMASK&t;0xfff0
+DECL|macro|CUR_DEFAULT
+mdefine_line|#define CUR_DEFAULT CUR_UNDERLINE
 eof

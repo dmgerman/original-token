@@ -351,7 +351,7 @@ ques
 c_cond
 id|p-&gt;driver_name
 suffix:colon
-l_string|&quot;&quot;
+l_string|&quot;unknown&quot;
 comma
 id|p-&gt;name
 comma

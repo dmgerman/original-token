@@ -262,7 +262,7 @@ suffix:semicolon
 DECL|macro|STATS_TIMER
 mdefine_line|#define STATS_TIMER (10*HZ)
 DECL|macro|ERRTIME
-mdefine_line|#define ERRTIME     (0.1*HZ)
+mdefine_line|#define ERRTIME     (HZ/10)
 multiline_comment|/* MRU */
 DECL|macro|MAXBUFSIZE
 mdefine_line|#define MAXBUFSIZE  1534

@@ -42,51 +42,31 @@ DECL|variable|nmi_counter
 id|atomic_t
 id|nmi_counter
 suffix:semicolon
-multiline_comment|/*&n; * About the IO-APIC, the architecture is &squot;merged&squot; into our&n; * current irq architecture, seemlessly. (i hope). It is only&n; * visible through 8 more hardware interrupt lines, but otherwise&n; * drivers are unaffected. The main code is believed to be&n; * NR_IRQS-safe (nothing anymore thinks we have 16&n; * irq lines only), but there might be some places left ...&n; */
-multiline_comment|/*&n; * This contains the irq mask for both 8259A irq controllers,&n; * and on SMP the extended IO-APIC IRQs 16-23. The IO-APIC&n; * uses this mask too, in probe_irq*().&n; *&n; * (0x0000ffff for NR_IRQS==16, 0x00ffffff for NR_IRQS=24)&n; */
-macro_line|#if NR_IRQS == 64
+multiline_comment|/*&n; * About the IO-APIC, the architecture is &squot;merged&squot; into our&n; * current irq architecture, seemlessly. (i hope). It is only&n; * visible through a few more more hardware interrupt lines, but &n; * otherwise drivers are unaffected. The main code is believed&n; * to be NR_IRQS-safe (nothing anymore thinks we have 16&n; * irq lines only), but there might be some places left ...&n; */
+multiline_comment|/*&n; * This contains the irq mask for both 8259A irq controllers,&n; */
 DECL|variable|cached_irq_mask
-r_int
+r_static
 r_int
 r_int
 id|cached_irq_mask
 op_assign
-op_minus
-l_int|1
+l_int|0xffff
 suffix:semicolon
-macro_line|#else
-DECL|variable|cached_irq_mask
-r_int
-r_int
-r_int
-id|cached_irq_mask
-op_assign
-(paren
-(paren
-(paren
-r_int
-r_int
-r_int
-)paren
-l_int|1
-)paren
-op_lshift
-id|NR_IRQS
-)paren
-op_minus
-l_int|1
-suffix:semicolon
-macro_line|#endif
+DECL|macro|__byte
+mdefine_line|#define __byte(x,y) (((unsigned char *)&amp;(y))[x])
+DECL|macro|__word
+mdefine_line|#define __word(x,y) (((unsigned short *)&amp;(y))[x])
+DECL|macro|__long
+mdefine_line|#define __long(x,y) (((unsigned int *)&amp;(y))[x])
 DECL|macro|cached_21
-mdefine_line|#define cached_21&t;((cached_irq_mask | io_apic_irqs) &amp; 0xff)
+mdefine_line|#define cached_21&t;(__byte(0,cached_irq_mask))
 DECL|macro|cached_A1
-mdefine_line|#define cached_A1&t;(((cached_irq_mask | io_apic_irqs) &gt;&gt; 8) &amp; 0xff)
+mdefine_line|#define cached_A1&t;(__byte(1,cached_irq_mask))
 DECL|variable|irq_controller_lock
 id|spinlock_t
 id|irq_controller_lock
 suffix:semicolon
 multiline_comment|/*&n; * Not all IRQs can be routed through the IO-APIC, eg. on certain (older)&n; * boards the timer interrupt is not connected to any IO-APIC pin, it&squot;s&n; * fed to the CPU IRQ line directly.&n; *&n; * Any &squot;1&squot; bit in this mask means the IRQ is routed through the IO-APIC.&n; * this &squot;mixed mode&squot; IRQ handling costs us one more branch in do_IRQ,&n; * but we have _much_ higher compatibility and robustness this way.&n; */
-multiline_comment|/*&n; * Default to all normal IRQ&squot;s _not_ using the IO APIC.&n; *&n; * To get IO-APIC interrupts we turn some of them into IO-APIC&n; * interrupts during boot.&n; */
 DECL|variable|io_apic_irqs
 r_int
 r_int
@@ -115,15 +95,16 @@ suffix:semicolon
 r_static
 r_void
 id|enable_8259A_irq
+c_func
 (paren
 r_int
 r_int
 id|irq
 )paren
 suffix:semicolon
-r_static
 r_void
 id|disable_8259A_irq
+c_func
 (paren
 r_int
 r_int
@@ -273,11 +254,9 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * These have to be protected by the irq controller spinlock&n; * before being called.&n; */
-DECL|function|mask_8259A
-r_static
-r_inline
+DECL|function|disable_8259A_irq
 r_void
-id|mask_8259A
+id|disable_8259A_irq
 c_func
 (paren
 r_int
@@ -285,11 +264,17 @@ r_int
 id|irq
 )paren
 (brace
-id|cached_irq_mask
-op_or_assign
+r_int
+r_int
+id|mask
+op_assign
 l_int|1
 op_lshift
 id|irq
+suffix:semicolon
+id|cached_irq_mask
+op_or_assign
+id|mask
 suffix:semicolon
 r_if
 c_cond
@@ -320,11 +305,10 @@ l_int|0x21
 suffix:semicolon
 )brace
 )brace
-DECL|function|unmask_8259A
+DECL|function|enable_8259A_irq
 r_static
-r_inline
 r_void
-id|unmask_8259A
+id|enable_8259A_irq
 c_func
 (paren
 r_int
@@ -332,8 +316,10 @@ r_int
 id|irq
 )paren
 (brace
-id|cached_irq_mask
-op_and_assign
+r_int
+r_int
+id|mask
+op_assign
 op_complement
 (paren
 l_int|1
@@ -341,6 +327,10 @@ op_lshift
 id|irq
 )paren
 suffix:semicolon
+id|cached_irq_mask
+op_and_assign
+id|mask
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -368,55 +358,6 @@ comma
 l_int|0x21
 )paren
 suffix:semicolon
-)brace
-)brace
-DECL|function|set_8259A_irq_mask
-r_void
-id|set_8259A_irq_mask
-c_func
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-multiline_comment|/*&n;&t; * (it might happen that we see IRQ&gt;15 on a UP box, with SMP&n;&t; * emulation)&n;&t; */
-r_if
-c_cond
-(paren
-id|irq
-OL
-l_int|16
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|irq
-op_amp
-l_int|8
-)paren
-(brace
-id|outb
-c_func
-(paren
-id|cached_A1
-comma
-l_int|0xA1
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|outb
-c_func
-(paren
-id|cached_21
-comma
-l_int|0x21
-)paren
-suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/*&n; * This builds up the IRQ handler stubs using some ugly macros in irq.h&n; *&n; * These macros create the low-level assembly IRQ routines that save&n; * register context and call do_IRQ(). do_IRQ() then does all the&n; * operations that are needed to keep the AT (or SMP IOAPIC)&n; * interrupt-controller happy.&n; */
@@ -2290,59 +2231,10 @@ r_return
 id|status
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * disable/enable_irq() wait for all irq contexts to finish&n; * executing. Also it&squot;s recursive.&n; */
-DECL|function|disable_8259A_irq
-r_static
-r_void
-id|disable_8259A_irq
-c_func
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-id|cached_irq_mask
-op_or_assign
-l_int|1
-op_lshift
-id|irq
-suffix:semicolon
-id|set_8259A_irq_mask
-c_func
-(paren
-id|irq
-)paren
-suffix:semicolon
-)brace
-DECL|function|enable_8259A_irq
-r_void
-id|enable_8259A_irq
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-id|cached_irq_mask
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-id|irq
-)paren
-suffix:semicolon
-id|set_8259A_irq_mask
-c_func
-(paren
-id|irq
-)paren
-suffix:semicolon
-)brace
 DECL|function|i8259A_irq_pending
 r_int
 id|i8259A_irq_pending
+c_func
 (paren
 r_int
 r_int
@@ -2394,13 +2286,20 @@ suffix:semicolon
 DECL|function|make_8259A_irq
 r_void
 id|make_8259A_irq
+c_func
 (paren
 r_int
 r_int
 id|irq
 )paren
 (brace
+id|__long
+c_func
+(paren
+l_int|0
+comma
 id|io_apic_irqs
+)paren
 op_and_assign
 op_complement
 (paren
@@ -2609,7 +2508,7 @@ op_and_assign
 id|IRQ_DISABLED
 )paren
 )paren
-id|unmask_8259A
+id|enable_8259A_irq
 c_func
 (paren
 id|irq
@@ -2750,7 +2649,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * do_IRQ handles all normal device IRQ&squot;s (the special&n; * SMP cross-CPU interrupts have their own specific&n; * handlers).&n; *&n; * the biggest change on SMP is the fact that we no more mask&n; * interrupts in hardware, please believe me, this is unavoidable,&n; * the hardware is largely message-oriented, i tried to force our&n; * state-driven irq handling scheme onto the IO-APIC, but no avail.&n; *&n; * so we soft-disable interrupts via &squot;event counters&squot;, the first &squot;incl&squot;&n; * will do the IRQ handling. This also has the nice side effect of increased&n; * overlapping ... i saw no driver problem so far.&n; */
+multiline_comment|/*&n; * do_IRQ handles all normal device IRQ&squot;s (the special&n; * SMP cross-CPU interrupts have their own specific&n; * handlers).&n; */
 DECL|function|do_IRQ
 id|asmlinkage
 r_void
@@ -2990,13 +2889,7 @@ id|irq
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * First disable it in the 8259A:&n;&t;&t;&t; */
-id|cached_irq_mask
-op_or_assign
-l_int|1
-op_lshift
-id|irq
-suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * If it was on a 8259, disable it there&n;&t;&t;&t; * and move the &quot;pendingness&quot; onto the&n;&t;&t;&t; * new irq descriptor.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3005,13 +2898,12 @@ OL
 l_int|16
 )paren
 (brace
-id|set_8259A_irq_mask
+id|disable_8259A_irq
 c_func
 (paren
 id|irq
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * transport pending ISA IRQs to&n;&t;&t;&t;&t; * the new descriptor&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren

@@ -23,6 +23,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#endif
@@ -270,6 +271,14 @@ op_star
 id|master_display_fg
 op_assign
 l_int|NULL
+suffix:semicolon
+multiline_comment|/*&n; * Unfortunately, we need to delay tty echo when we&squot;re currently writing to the&n; * console since the code is (and always was) not re-entrant, so we insert&n; * all filp requests to con_task_queue instead of tq_timer and run it from&n; * the console_bh.&n; */
+DECL|variable|con_task_queue
+id|DECLARE_TASK_QUEUE
+c_func
+(paren
+id|con_task_queue
+)paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Low-Level Functions&n; */
 DECL|macro|IS_FG
@@ -5240,7 +5249,7 @@ id|p
 op_increment
 suffix:semicolon
 )brace
-id|tty_schedule_flip
+id|con_schedule_flip
 c_func
 (paren
 id|tty
@@ -8731,21 +8740,6 @@ id|himask
 comma
 id|charmask
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|ap_write
-c_func
-(paren
-l_int|1
-comma
-id|buf
-comma
-id|count
-)paren
-suffix:semicolon
-r_return
-id|count
-suffix:semicolon
-macro_line|#endif
 id|currcons
 op_assign
 id|vt-&gt;vc_num
@@ -9462,6 +9456,13 @@ c_func
 r_void
 )paren
 (brace
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|con_task_queue
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9578,16 +9579,6 @@ id|myx
 op_assign
 id|x
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-id|prom_printf
-c_func
-(paren
-id|b
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -9644,10 +9635,16 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|quit
 suffix:semicolon
 )brace
 multiline_comment|/* undraw cursor first */
+r_if
+c_cond
+(paren
+id|IS_FG
+)paren
 id|hide_cursor
 c_func
 (paren
@@ -9663,6 +9660,12 @@ op_star
 id|pos
 suffix:semicolon
 multiline_comment|/* Contrived structure to try to emulate original need_wrap behaviour&n;&t; * Problems caused when we have need_wrap set on &squot;&bslash;n&squot; character */
+id|disable_bh
+c_func
+(paren
+id|CONSOLE_BH
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -9670,11 +9673,23 @@ id|count
 op_decrement
 )paren
 (brace
+id|enable_bh
+c_func
+(paren
+id|CONSOLE_BH
+)paren
+suffix:semicolon
 id|c
 op_assign
 op_star
 id|b
 op_increment
+suffix:semicolon
+id|disable_bh
+c_func
+(paren
+id|CONSOLE_BH
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -9702,6 +9717,11 @@ OG
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|IS_VISIBLE
+)paren
 id|sw
 op_member_access_from_pointer
 id|con_putcs
@@ -9870,6 +9890,11 @@ OG
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|IS_VISIBLE
+)paren
 id|sw
 op_member_access_from_pointer
 id|con_putcs
@@ -9912,6 +9937,12 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+id|enable_bh
+c_func
+(paren
+id|CONSOLE_BH
+)paren
+suffix:semicolon
 id|set_cursor
 c_func
 (paren
@@ -9923,6 +9954,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|quit
+suffix:colon
 id|printing
 op_assign
 l_int|0
@@ -10439,7 +10472,6 @@ id|console_num
 )paren
 r_return
 suffix:semicolon
-macro_line|#if !CONFIG_AP1000
 id|set_vc_kbd_led
 c_func
 (paren
@@ -10455,7 +10487,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * Turn the Scroll-Lock LED off when the console is started&n; */
 DECL|function|con_start
@@ -10505,7 +10536,6 @@ id|console_num
 )paren
 r_return
 suffix:semicolon
-macro_line|#if !CONFIG_AP1000
 id|clr_vc_kbd_led
 c_func
 (paren
@@ -10521,7 +10551,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|con_flush_chars
 r_static
@@ -11006,11 +11035,6 @@ c_func
 l_string|&quot;Couldn&squot;t register console driver&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_AP1000
-r_return
-id|kmem_start
-suffix:semicolon
-macro_line|#endif
 id|timer_table
 (braket
 id|BLANK_TIMER
@@ -12690,9 +12714,12 @@ multiline_comment|/* If from KDFONTOP ioctl, don&squot;t allow things which can 
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
 id|op-&gt;flags
 op_amp
-id|KD_FONT_FLAG_NEW
+id|KD_FONT_FLAG_OLD
+)paren
 )paren
 r_goto
 id|quit
@@ -12976,9 +13003,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
 id|op-&gt;flags
 op_amp
-id|KD_FONT_FLAG_NEW
+id|KD_FONT_FLAG_OLD
+)paren
 )paren
 (brace
 r_if
@@ -13242,12 +13272,12 @@ id|org
 r_if
 c_cond
 (paren
+(paren
+r_int
+r_int
+)paren
 id|org
 op_eq
-(paren
-id|u16
-op_star
-)paren
 id|pos
 op_logical_and
 id|softcursor_original
@@ -13293,12 +13323,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+r_int
+r_int
+)paren
 id|org
 op_eq
-(paren
-id|u16
-op_star
-)paren
 id|pos
 )paren
 (brace

@@ -169,7 +169,8 @@ id|irq
 )paren
 suffix:semicolon
 r_void
-id|set_8259A_irq_mask
+id|disable_8259A_irq
+c_func
 (paren
 r_int
 r_int
@@ -244,12 +245,6 @@ r_int
 r_int
 r_int
 id|io_apic_irqs
-suffix:semicolon
-r_extern
-r_int
-r_int
-r_int
-id|cached_irq_mask
 suffix:semicolon
 DECL|macro|IO_APIC_VECTOR
 mdefine_line|#define IO_APIC_VECTOR(irq)&t;irq_vector[irq]
