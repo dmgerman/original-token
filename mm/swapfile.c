@@ -1641,7 +1641,7 @@ op_amp
 id|tasklist_lock
 )paren
 suffix:semicolon
-id|shm_unuse
+id|shmem_unuse
 c_func
 (paren
 id|entry

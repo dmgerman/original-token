@@ -1243,7 +1243,7 @@ id|MAP_SHARED
 (brace
 id|error
 op_assign
-id|map_zero_setup
+id|shmem_zero_setup
 c_func
 (paren
 id|vma

@@ -6678,6 +6678,18 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+multiline_comment|/* get_block() might have updated the buffer synchronously */
+r_if
+c_cond
+(paren
+id|buffer_uptodate
+c_func
+(paren
+id|bh
+)paren
+)paren
+r_continue
+suffix:semicolon
 )brace
 id|arr
 (braket

@@ -4431,6 +4431,7 @@ c_func
 l_string|&quot;NTFS driver&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG
 id|MODULE_PARM
 c_func
 (paren
@@ -4447,6 +4448,7 @@ comma
 l_string|&quot;Debug level&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|module_init
 c_func
 (paren

@@ -1926,7 +1926,7 @@ op_amp
 id|VM_SHARED
 )paren
 r_return
-id|map_zero_setup
+id|shmem_zero_setup
 c_func
 (paren
 id|vma

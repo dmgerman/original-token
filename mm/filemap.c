@@ -2132,7 +2132,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * a rather lightweight function, finding and getting a reference to a&n; * hashed page atomically, waiting for it if it&squot;s locked.&n; */
 DECL|function|__find_get_page
-r_static
 r_struct
 id|page
 op_star

@@ -2058,6 +2058,9 @@ op_star
 op_assign
 id|page-&gt;mapping-&gt;a_ops-&gt;writepage
 suffix:semicolon
+r_int
+id|result
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2119,6 +2122,8 @@ op_amp
 id|pagemap_lru_lock
 )paren
 suffix:semicolon
+id|result
+op_assign
 id|writepage
 c_func
 (paren
@@ -2139,7 +2144,24 @@ op_amp
 id|pagemap_lru_lock
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+op_ne
+l_int|1
+)paren
 r_continue
+suffix:semicolon
+multiline_comment|/* writepage refused to do anything */
+id|SetPageDirty
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_goto
+id|page_active
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * If the page has buffers, try to free the buffer mappings&n;&t;&t; * associated with this page. If we succeed we either free&n;&t;&t; * the page (in case it was a buffercache only page) or we&n;&t;&t; * move the page to the inactive_clean list.&n;&t;&t; *&n;&t;&t; * On the first round, we should free all previously cleaned&n;&t;&t; * buffer pages&n;&t;&t; */

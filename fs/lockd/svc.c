@@ -911,8 +911,6 @@ suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 multiline_comment|/* New module support in 2.1.18 */
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
 id|MODULE_AUTHOR
 c_func
 (paren

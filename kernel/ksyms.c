@@ -2735,6 +2735,13 @@ c_func
 id|tasklet_kill
 )paren
 suffix:semicolon
+DECL|variable|__run_task_queue
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__run_task_queue
+)paren
+suffix:semicolon
 multiline_comment|/* init task, for moving kthread roots - ought to export a function ?? */
 DECL|variable|init_task_union
 id|EXPORT_SYMBOL

@@ -513,6 +513,7 @@ macro_line|#include &lt;linux/ufs_fs_i.h&gt;
 macro_line|#include &lt;linux/efs_fs_i.h&gt;
 macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/romfs_fs_i.h&gt;
+macro_line|#include &lt;linux/shmem_fs.h&gt;
 macro_line|#include &lt;linux/smb_fs_i.h&gt;
 macro_line|#include &lt;linux/hfs_fs_i.h&gt;
 macro_line|#include &lt;linux/adfs_fs_i.h&gt;
@@ -1066,6 +1067,11 @@ DECL|member|romfs_i
 r_struct
 id|romfs_inode_info
 id|romfs_i
+suffix:semicolon
+DECL|member|shmem_i
+r_struct
+id|shmem_inode_info
+id|shmem_i
 suffix:semicolon
 DECL|member|coda_i
 r_struct
@@ -2102,6 +2108,11 @@ DECL|member|efs_sb
 r_struct
 id|efs_sb_info
 id|efs_sb
+suffix:semicolon
+DECL|member|shmem_sb
+r_struct
+id|shmem_sb_info
+id|shmem_sb
 suffix:semicolon
 DECL|member|romfs_sb
 r_struct
