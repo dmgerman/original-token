@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.27 1999/06/02 12:06:34 jj Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.28 1999/07/30 09:35:27 davem Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -712,7 +712,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_32BIT
 )paren
@@ -1203,7 +1203,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|current-&gt;tss.utraps
+id|current-&gt;thread.utraps
 )paren
 id|put_user_ret
 c_func
@@ -1224,7 +1224,7 @@ c_func
 id|utrap_handler_t
 )paren
 (paren
-id|current-&gt;tss.utraps
+id|current-&gt;thread.utraps
 (braket
 id|type
 )braket
@@ -1266,10 +1266,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|current-&gt;tss.utraps
+id|current-&gt;thread.utraps
 )paren
 (brace
-id|current-&gt;tss.utraps
+id|current-&gt;thread.utraps
 op_assign
 id|kmalloc
 c_func
@@ -1292,13 +1292,13 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|current-&gt;tss.utraps
+id|current-&gt;thread.utraps
 )paren
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-id|current-&gt;tss.utraps
+id|current-&gt;thread.utraps
 (braket
 l_int|0
 )braket
@@ -1308,7 +1308,7 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|current-&gt;tss.utraps
+id|current-&gt;thread.utraps
 op_plus
 l_int|1
 comma
@@ -1331,14 +1331,14 @@ c_cond
 (paren
 id|utrap_handler_t
 )paren
-id|current-&gt;tss.utraps
+id|current-&gt;thread.utraps
 (braket
 id|type
 )braket
 op_ne
 id|new_p
 op_logical_and
-id|current-&gt;tss.utraps
+id|current-&gt;thread.utraps
 (braket
 l_int|0
 )braket
@@ -1350,9 +1350,9 @@ r_int
 op_star
 id|p
 op_assign
-id|current-&gt;tss.utraps
+id|current-&gt;thread.utraps
 suffix:semicolon
-id|current-&gt;tss.utraps
+id|current-&gt;thread.utraps
 op_assign
 id|kmalloc
 c_func
@@ -1375,10 +1375,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|current-&gt;tss.utraps
+id|current-&gt;thread.utraps
 )paren
 (brace
-id|current-&gt;tss.utraps
+id|current-&gt;thread.utraps
 op_assign
 id|p
 suffix:semicolon
@@ -1393,7 +1393,7 @@ l_int|0
 )braket
 op_decrement
 suffix:semicolon
-id|current-&gt;tss.utraps
+id|current-&gt;thread.utraps
 (braket
 l_int|0
 )braket
@@ -1403,7 +1403,7 @@ suffix:semicolon
 id|memcpy
 c_func
 (paren
-id|current-&gt;tss.utraps
+id|current-&gt;thread.utraps
 op_plus
 l_int|1
 comma
@@ -1433,7 +1433,7 @@ c_func
 id|utrap_handler_t
 )paren
 (paren
-id|current-&gt;tss.utraps
+id|current-&gt;thread.utraps
 (braket
 id|type
 )braket
@@ -1461,7 +1461,7 @@ op_minus
 id|EFAULT
 )paren
 suffix:semicolon
-id|current-&gt;tss.utraps
+id|current-&gt;thread.utraps
 (braket
 id|type
 )braket
@@ -1695,7 +1695,7 @@ suffix:semicolon
 id|tmp
 op_assign
 (paren
-id|current-&gt;tss.kernel_cntd0
+id|current-&gt;thread.kernel_cntd0
 op_add_assign
 (paren
 r_int
@@ -1709,13 +1709,13 @@ c_func
 (paren
 id|tmp
 comma
-id|current-&gt;tss.user_cntd0
+id|current-&gt;thread.user_cntd0
 )paren
 suffix:semicolon
 id|tmp
 op_assign
 (paren
-id|current-&gt;tss.kernel_cntd1
+id|current-&gt;thread.kernel_cntd1
 op_add_assign
 (paren
 id|pic
@@ -1729,7 +1729,7 @@ c_func
 (paren
 id|tmp
 comma
-id|current-&gt;tss.user_cntd1
+id|current-&gt;thread.user_cntd1
 )paren
 suffix:semicolon
 id|reset_pic
@@ -1774,11 +1774,11 @@ id|opcode
 r_case
 id|PERFCTR_ON
 suffix:colon
-id|current-&gt;tss.pcr_reg
+id|current-&gt;thread.pcr_reg
 op_assign
 id|arg2
 suffix:semicolon
-id|current-&gt;tss.user_cntd0
+id|current-&gt;thread.user_cntd0
 op_assign
 (paren
 id|u64
@@ -1786,7 +1786,7 @@ op_star
 )paren
 id|arg0
 suffix:semicolon
-id|current-&gt;tss.user_cntd1
+id|current-&gt;thread.user_cntd1
 op_assign
 (paren
 id|u64
@@ -1794,9 +1794,9 @@ op_star
 )paren
 id|arg1
 suffix:semicolon
-id|current-&gt;tss.kernel_cntd0
+id|current-&gt;thread.kernel_cntd0
 op_assign
-id|current-&gt;tss.kernel_cntd1
+id|current-&gt;thread.kernel_cntd1
 op_assign
 l_int|0
 suffix:semicolon
@@ -1811,7 +1811,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_or_assign
 id|SPARC_FLAG_PERFCTR
 suffix:semicolon
@@ -1829,7 +1829,7 @@ r_if
 c_cond
 (paren
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_PERFCTR
 )paren
@@ -1837,13 +1837,13 @@ op_ne
 l_int|0
 )paren
 (brace
-id|current-&gt;tss.user_cntd0
+id|current-&gt;thread.user_cntd0
 op_assign
-id|current-&gt;tss.user_cntd1
+id|current-&gt;thread.user_cntd1
 op_assign
 l_int|NULL
 suffix:semicolon
-id|current-&gt;tss.pcr_reg
+id|current-&gt;thread.pcr_reg
 op_assign
 l_int|0
 suffix:semicolon
@@ -1853,7 +1853,7 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_and_assign
 op_complement
 (paren
@@ -1882,7 +1882,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_PERFCTR
 )paren
@@ -1905,7 +1905,7 @@ suffix:semicolon
 id|tmp
 op_assign
 (paren
-id|current-&gt;tss.kernel_cntd0
+id|current-&gt;thread.kernel_cntd0
 op_add_assign
 (paren
 r_int
@@ -1921,13 +1921,13 @@ c_func
 (paren
 id|tmp
 comma
-id|current-&gt;tss.user_cntd0
+id|current-&gt;thread.user_cntd0
 )paren
 suffix:semicolon
 id|tmp
 op_assign
 (paren
-id|current-&gt;tss.kernel_cntd1
+id|current-&gt;thread.kernel_cntd1
 op_add_assign
 (paren
 id|pic
@@ -1943,7 +1943,7 @@ c_func
 (paren
 id|tmp
 comma
-id|current-&gt;tss.user_cntd1
+id|current-&gt;thread.user_cntd1
 )paren
 suffix:semicolon
 id|reset_pic
@@ -1962,7 +1962,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_PERFCTR
 )paren
@@ -1976,9 +1976,9 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|current-&gt;tss.kernel_cntd0
+id|current-&gt;thread.kernel_cntd0
 op_assign
-id|current-&gt;tss.kernel_cntd1
+id|current-&gt;thread.kernel_cntd1
 op_assign
 l_int|0
 suffix:semicolon
@@ -2008,7 +2008,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_PERFCTR
 )paren
@@ -2027,7 +2027,7 @@ op_or_assign
 id|__get_user
 c_func
 (paren
-id|current-&gt;tss.pcr_reg
+id|current-&gt;thread.pcr_reg
 comma
 id|user_pcr
 )paren
@@ -2035,12 +2035,12 @@ suffix:semicolon
 id|write_pcr
 c_func
 (paren
-id|current-&gt;tss.pcr_reg
+id|current-&gt;thread.pcr_reg
 )paren
 suffix:semicolon
-id|current-&gt;tss.kernel_cntd0
+id|current-&gt;thread.kernel_cntd0
 op_assign
-id|current-&gt;tss.kernel_cntd1
+id|current-&gt;thread.kernel_cntd1
 op_assign
 l_int|0
 suffix:semicolon
@@ -2071,7 +2071,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_PERFCTR
 )paren
@@ -2090,7 +2090,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|current-&gt;tss.pcr_reg
+id|current-&gt;thread.pcr_reg
 comma
 id|user_pcr
 )paren

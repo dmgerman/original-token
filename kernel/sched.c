@@ -2357,6 +2357,11 @@ id|kstat.context_swtch
 op_increment
 suffix:semicolon
 multiline_comment|/*&n;&t; * there are 3 processes which are affected by a context switch:&n;&t; *&n;&t; * prev == .... ==&gt; (last =&gt; next)&n;&t; *&n;&t; * It&squot;s the &squot;much more previous&squot; &squot;prev&squot; that is on next&squot;s stack,&n;&t; * but prev is set to (the just run) &squot;last&squot; process by switch_to().&n;&t; * This might sound slightly confusing but makes tons of sense.&n;&t; */
+id|prepare_to_switch
+c_func
+(paren
+)paren
+suffix:semicolon
 (brace
 r_struct
 id|mm_struct

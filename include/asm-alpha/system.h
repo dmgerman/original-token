@@ -222,6 +222,8 @@ id|noreturn
 )paren
 )paren
 suffix:semicolon
+DECL|macro|prepare_to_switch
+mdefine_line|#define prepare_to_switch()&t;do { } while(0)
 DECL|macro|switch_to
 mdefine_line|#define switch_to(prev,next,last)&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long pcbb;&t;&t;&t;&t;&bslash;&n;&t;current = (next);&t;&t;&t;&t;&bslash;&n;&t;pcbb = virt_to_phys(&amp;current-&gt;thread);&t;&t;&bslash;&n;&t;(last) = alpha_switch_to(pcbb, (prev));&t;&t;&bslash;&n;} while (0)
 r_extern

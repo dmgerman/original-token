@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.44 1999/05/28 02:17:29 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.46 1999/08/02 08:39:36 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -406,6 +406,13 @@ id|task_struct
 op_star
 id|p
 suffix:semicolon
+r_struct
+id|mm_struct
+op_star
+id|mm
+op_assign
+l_int|NULL
+suffix:semicolon
 id|pgd_t
 op_star
 id|pgdp
@@ -423,19 +430,36 @@ c_func
 (paren
 id|p
 )paren
+(brace
+id|mm
+op_assign
+id|p-&gt;mm
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;tss.ctx
+id|CTX_HWBITS
+c_func
+(paren
+id|mm-&gt;context
+)paren
 op_eq
 id|ctx
 )paren
 r_break
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
-id|p-&gt;tss.ctx
+op_logical_neg
+id|mm
+op_logical_or
+id|CTX_HWBITS
+c_func
+(paren
+id|mm-&gt;context
+)paren
 op_ne
 id|ctx
 )paren
@@ -447,7 +471,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|p-&gt;mm
+id|mm
 comma
 id|va
 )paren
@@ -2271,15 +2295,7 @@ op_assign
 op_star
 id|memory_end_p
 suffix:semicolon
-id|init_mm.context
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|NO_CONTEXT
-suffix:semicolon
-id|init_task.tss.kregs
+id|init_task.thread.kregs
 op_assign
 op_amp
 id|fake_swapper_regs

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunos_ioctl.c,v 1.31 1998/10/25 19:31:04 davem Exp $&n; * sunos_ioctl.c: The Linux Operating system: SunOS ioctl compatibility.&n; * &n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunos_ioctl.c,v 1.33 1999/07/28 12:59:03 anton Exp $&n; * sunos_ioctl.c: The Linux Operating system: SunOS ioctl compatibility.&n; * &n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;asm/kbio.h&gt;
 macro_line|#if 0
 r_extern

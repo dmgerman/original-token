@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.36 1999/07/04 04:35:56 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.38 1999/08/02 08:39:50 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -288,26 +288,40 @@ id|printk
 c_func
 (paren
 id|KERN_ALERT
-l_string|&quot;tsk-&gt;mm-&gt;context = %016lx&bslash;n&quot;
+l_string|&quot;tsk-&gt;{mm,active_mm}-&gt;context = %016lx&bslash;n&quot;
 comma
 (paren
-r_int
-r_int
-)paren
+id|tsk-&gt;mm
+ques
+c_cond
 id|tsk-&gt;mm-&gt;context
+suffix:colon
+id|tsk-&gt;active_mm-&gt;context
+)paren
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_ALERT
-l_string|&quot;tsk-&gt;mm-&gt;pgd = %016lx&bslash;n&quot;
+l_string|&quot;tsk-&gt;{mm,active_mm}-&gt;pgd = %016lx&bslash;n&quot;
 comma
+(paren
+id|tsk-&gt;mm
+ques
+c_cond
 (paren
 r_int
 r_int
 )paren
 id|tsk-&gt;mm-&gt;pgd
+suffix:colon
+(paren
+r_int
+r_int
+)paren
+id|tsk-&gt;active_mm-&gt;pgd
+)paren
 )paren
 suffix:semicolon
 id|die_if_kernel
@@ -736,10 +750,38 @@ op_eq
 l_int|100000
 )paren
 (brace
+r_int
+r_char
+id|tmp
+suffix:semicolon
+r_register
+r_int
+r_int
+id|tmp1
+id|asm
+c_func
+(paren
+l_string|&quot;o5&quot;
+)paren
+suffix:semicolon
+r_register
+r_int
+r_int
+id|tmp2
+id|asm
+c_func
+(paren
+l_string|&quot;o4&quot;
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;do_sparc64_fault: possible fault loop for %016lx %s&bslash;n&quot;
+l_string|&quot;do_sparc64_fault[%s:%d]: possible fault loop for %016lx %s&bslash;n&quot;
+comma
+id|current-&gt;comm
+comma
+id|current-&gt;pid
 comma
 id|address
 comma
@@ -751,12 +793,128 @@ suffix:colon
 l_string|&quot;read&quot;
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;do_sparc64_fault: CHECK[papgd[%016lx],pcac[%016lx]]&bslash;n&quot;
+comma
+id|__pa
+c_func
+(paren
+id|mm-&gt;pgd
+)paren
+comma
+id|pgd_val
+c_func
+(paren
+id|mm-&gt;pgd
+(braket
+l_int|0
+)braket
+)paren
+op_lshift
+l_int|11UL
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;wrpr&t;%%g0, 0x494, %%pstate&bslash;n&bslash;t&quot;
+l_string|&quot;mov&t;%3, %%g4&bslash;n&bslash;t&quot;
+l_string|&quot;mov&t;%%g7, %0&bslash;n&bslash;t&quot;
+l_string|&quot;ldxa&t;[%%g4] %2, %1&bslash;n&bslash;t&quot;
+l_string|&quot;wrpr&t;%%g0, 0x096, %%pstate&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|tmp1
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|tmp2
+)paren
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|TSB_REG
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;do_sparc64_fault:    IS[papgd[%016lx],pcac[%016lx]]&bslash;n&quot;
+comma
+id|tmp1
+comma
+id|tmp2
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;do_sparc64_fault: CHECK[ctx(%016lx)] IS[ctx(%016lx)]&bslash;n&quot;
+comma
+id|mm-&gt;context
+comma
+id|spitfire_get_secondary_context
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;rd&t;%%asi, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|tmp
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;do_sparc64_fault: CHECK[seg(%02x)] IS[seg(%02x)]&bslash;n&quot;
+comma
+id|current-&gt;thread.current_ds.seg
+comma
+id|tmp
+)paren
+suffix:semicolon
 id|show_regs
 c_func
 (paren
 id|regs
 )paren
 suffix:semicolon
+id|__sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 )brace
 )brace
 r_else
@@ -1309,11 +1467,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|address
 suffix:semicolon
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_NOMAPPING
 suffix:semicolon
@@ -1349,11 +1507,11 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|address
 suffix:semicolon
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_MISCERROR
 suffix:semicolon

@@ -204,6 +204,8 @@ DECL|macro|wmb
 mdefine_line|#define wmb() mb()
 DECL|macro|nop
 mdefine_line|#define nop() __asm__ __volatile__(&quot;mov&bslash;tr0,r0&bslash;t@ nop&bslash;n&bslash;t&quot;);
+DECL|macro|prepare_to_switch
+mdefine_line|#define prepare_to_switch()&t;do { } while(0)
 multiline_comment|/*&n; * switch_to(prev, next) should switch from task `prev&squot; to `next&squot;&n; * `prev&squot; will never be the same as `next&squot;.&n; * The `mb&squot; is to tell GCC not to cache `current&squot; across this call.&n; */
 r_extern
 r_struct

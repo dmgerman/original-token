@@ -2,6 +2,7 @@ multiline_comment|/* devices.c: Initial scan of the prom device tree for importa
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -91,6 +92,15 @@ r_int
 id|cpu_ctr
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/* FIX ME FAST... -DaveM */
+id|ioport_resource.end
+op_assign
+l_int|0xffffffffffffffffUL
+suffix:semicolon
+id|iomem_resource.end
+op_assign
+l_int|0xffffffffffffffffUL
 suffix:semicolon
 id|prom_getstring
 c_func

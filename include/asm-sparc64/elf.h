@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: elf.h,v 1.19 1999/06/11 13:26:04 jj Exp $ */
+multiline_comment|/* $Id: elf.h,v 1.20 1999/07/30 09:31:14 davem Exp $ */
 macro_line|#ifndef __ASM_SPARC64_ELF_H
 DECL|macro|__ASM_SPARC64_ELF_H
 mdefine_line|#define __ASM_SPARC64_ELF_H
@@ -85,7 +85,7 @@ DECL|macro|ELF_PLATFORM
 mdefine_line|#define ELF_PLATFORM&t;(NULL)
 macro_line|#ifdef __KERNEL__
 DECL|macro|SET_PERSONALITY
-mdefine_line|#define SET_PERSONALITY(ex, ibcs2)&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((ex).e_ident[EI_CLASS] == ELFCLASS32)&t;&t;&bslash;&n;&t;&t;current-&gt;tss.flags |= SPARC_FLAG_32BIT;&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;tss.flags &amp;= ~SPARC_FLAG_32BIT;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (ibcs2)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;personality = PER_SVR4;&t;&t;&bslash;&n;&t;else if (current-&gt;personality != PER_LINUX32)&t;&t;&bslash;&n;&t;&t;current-&gt;personality = PER_LINUX;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define SET_PERSONALITY(ex, ibcs2)&t;&t;&t;&bslash;&n;do {&t;unsigned char flags = current-&gt;thread.flags;&t;&bslash;&n;&t;if ((ex).e_ident[EI_CLASS] == ELFCLASS32)&t;&bslash;&n;&t;&t;flags |= SPARC_FLAG_32BIT;&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;flags &amp;= ~SPARC_FLAG_32BIT;&t;&t;&bslash;&n;&t;if (flags != current-&gt;thread.flags) {&t;&t;&bslash;&n;&t;&t;unsigned long pgd_cache = 0UL;&t;&t;&bslash;&n;&t;&t;if (flags &amp; SPARC_FLAG_32BIT)&t;&t;&bslash;&n;&t;&t;  pgd_cache =&t;&t;&t;&t;&bslash;&n;&t;&t;    pgd_val(current-&gt;mm-&gt;pgd[0])&lt;&lt;11UL;&t;&bslash;&n;&t;&t;__asm__ __volatile__(&t;&t;&t;&bslash;&n;&t;&t;&t;&quot;stxa&bslash;t%0, [%1] %2&quot;&t;&t;&bslash;&n;&t;&t;&t;: /* no outputs */&t;&t;&bslash;&n;&t;&t;&t;: &quot;r&quot; (pgd_cache),&t;&t;&bslash;&n;&t;&t;&t;  &quot;r&quot; (TSB_REG),&t;&t;&bslash;&n;&t;&t;&t;  &quot;i&quot; (ASI_DMMU));&t;&t;&bslash;&n;&t;&t;current-&gt;thread.flags = flags;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (ibcs2)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;personality = PER_SVR4;&t;&bslash;&n;&t;else if (current-&gt;personality != PER_LINUX32)&t;&bslash;&n;&t;&t;current-&gt;personality = PER_LINUX;&t;&bslash;&n;} while (0)
 macro_line|#endif
 macro_line|#endif /* !(__ASM_SPARC64_ELF_H) */
 eof

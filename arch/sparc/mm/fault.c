@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.103 1999/07/04 04:35:51 davem Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.106 1999/07/30 09:35:07 davem Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1723,6 +1723,7 @@ c_cond
 (paren
 id|write
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1738,7 +1739,9 @@ r_goto
 id|bad_area
 suffix:semicolon
 )brace
+)brace
 r_else
+(brace
 r_if
 c_cond
 (paren
@@ -1757,6 +1760,7 @@ id|VM_EXEC
 r_goto
 id|bad_area
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond

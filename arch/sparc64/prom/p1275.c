@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: p1275.c,v 1.15 1998/10/13 14:03:47 davem Exp $&n; * p1275.c: Sun IEEE 1275 PROM low level interface routines&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: p1275.c,v 1.16 1999/08/02 12:05:57 jj Exp $&n; * p1275.c: Sun IEEE 1275 PROM low level interface routines&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2714,7 +2714,6 @@ id|prom_entry_depth
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef __SMP__
 DECL|variable|prom_entry_lock
 r_static
 id|spinlock_t
@@ -2722,6 +2721,7 @@ id|prom_entry_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
+macro_line|#ifdef __SMP__
 r_extern
 r_void
 id|smp_capture

@@ -1333,7 +1333,7 @@ macro_line|#ifdef CONFIG_SPARC32_COMPAT
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_32BIT
 )paren

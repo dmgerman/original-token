@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: timod.c,v 1.2 1999/05/12 11:11:55 davem Exp $&n; * timod.c: timod emulation.&n; *&n; * Copyright (C) 1998 Patrik Rak (prak3264@ss1000.ms.mff.cuni.cz)&n; *&n; * Streams &amp; timod emulation based on code&n; * Copyright (C) 1995, 1996 Mike Jagdis (jaggy@purplet.demon.co.uk)&n; *&n; */
+multiline_comment|/* $Id: timod.c,v 1.3 1999/08/02 12:06:01 jj Exp $&n; * timod.c: timod emulation.&n; *&n; * Copyright (C) 1998 Patrik Rak (prak3264@ss1000.ms.mff.cuni.cz)&n; *&n; * Streams &amp; timod emulation based on code&n; * Copyright (C) 1995, 1996 Mike Jagdis (jaggy@purplet.demon.co.uk)&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -78,14 +78,12 @@ id|u32
 id|arg
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
 DECL|variable|timod_pagelock
 id|spinlock_t
 id|timod_pagelock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#endif
 DECL|variable|page
 r_static
 r_char
@@ -4982,7 +4980,7 @@ c_cond
 (paren
 id|fd
 op_ge
-id|current-&gt;files-&gt;max_fds
+id|NR_OPEN
 )paren
 (brace
 r_goto
@@ -5356,7 +5354,7 @@ c_cond
 (paren
 id|fd
 op_ge
-id|current-&gt;files-&gt;max_fds
+id|NR_OPEN
 )paren
 (brace
 r_goto

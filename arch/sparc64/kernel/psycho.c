@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: psycho.c,v 1.86 1999/07/01 10:39:43 davem Exp $&n; * psycho.c: Ultra/AX U2P PCI controller support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: psycho.c,v 1.87 1999/07/23 01:56:45 davem Exp $&n; * psycho.c: Ultra/AX U2P PCI controller support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

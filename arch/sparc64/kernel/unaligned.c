@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unaligned.c,v 1.16 1999/05/25 16:53:15 jj Exp $&n; * unaligned.c: Unaligned load/store trap handling with special&n; *              cases for the kernel to do them more quickly.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: unaligned.c,v 1.18 1999/08/02 08:39:44 davem Exp $&n; * unaligned.c: Unaligned load/store trap handling with special&n; *              cases for the kernel to do them more quickly.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -229,7 +229,7 @@ c_func
 (paren
 l_string|&quot;Byte sized unaligned access?!?!&quot;
 comma
-id|current-&gt;tss.kregs
+id|current-&gt;thread.kregs
 )paren
 suffix:semicolon
 )brace
@@ -487,7 +487,7 @@ r_else
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_32BIT
 )paren
@@ -654,7 +654,7 @@ r_else
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_32BIT
 )paren
@@ -862,7 +862,7 @@ id|regs
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* This is just to make gcc think panic does return... */
+multiline_comment|/* This is just to make gcc think die_if_kernel does return... */
 DECL|function|unaligned_panic
 r_static
 r_void
@@ -872,12 +872,19 @@ c_func
 r_char
 op_star
 id|str
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
-id|panic
+id|die_if_kernel
 c_func
 (paren
 id|str
+comma
+id|regs
 )paren
 suffix:semicolon
 )brace
@@ -1194,7 +1201,9 @@ suffix:semicolon
 id|unaligned_panic
 c_func
 (paren
-l_string|&quot;Wheee. Kernel does fpu/atomic unaligned load/store.&quot;
+l_string|&quot;Kernel does fpu/atomic unaligned load/store.&quot;
+comma
+id|regs
 )paren
 suffix:semicolon
 id|__asm__
@@ -1649,7 +1658,7 @@ r_else
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_32BIT
 )paren
@@ -1867,7 +1876,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|current-&gt;tss.xfsr
+id|current-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
@@ -1883,7 +1892,7 @@ op_amp
 l_int|3
 )paren
 (brace
-id|current-&gt;tss.xfsr
+id|current-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
@@ -1926,7 +1935,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.fpsaved
+id|current-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
@@ -2457,7 +2466,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|current-&gt;tss.fpsaved
+id|current-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
@@ -2466,14 +2475,14 @@ id|FPRS_FEF
 )paren
 )paren
 (brace
-id|current-&gt;tss.fpsaved
+id|current-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
 op_assign
 id|FPRS_FEF
 suffix:semicolon
-id|current-&gt;tss.gsr
+id|current-&gt;thread.gsr
 (braket
 l_int|0
 )braket
@@ -2486,7 +2495,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|current-&gt;tss.fpsaved
+id|current-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
@@ -2550,7 +2559,7 @@ op_star
 l_int|4
 )paren
 suffix:semicolon
-id|current-&gt;tss.fpsaved
+id|current-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
@@ -2742,7 +2751,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_32BIT
 )paren
@@ -2930,7 +2939,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|current-&gt;tss.fpsaved
+id|current-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
@@ -2939,14 +2948,14 @@ id|FPRS_FEF
 )paren
 )paren
 (brace
-id|current-&gt;tss.fpsaved
+id|current-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
 op_assign
 id|FPRS_FEF
 suffix:semicolon
-id|current-&gt;tss.gsr
+id|current-&gt;thread.gsr
 (braket
 l_int|0
 )braket
@@ -2959,7 +2968,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|current-&gt;tss.fpsaved
+id|current-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
@@ -3022,7 +3031,7 @@ id|freg
 op_assign
 id|value
 suffix:semicolon
-id|current-&gt;tss.fpsaved
+id|current-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
@@ -3124,7 +3133,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_32BIT
 )paren
@@ -3227,7 +3236,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.fpsaved
+id|current-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket

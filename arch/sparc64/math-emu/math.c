@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: math.c,v 1.8 1999/05/28 13:43:11 jj Exp $&n; * arch/sparc64/math-emu/math.c&n; *&n; * Copyright (C) 1997,1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; *&n; * Emulation routines originate from soft-fp package, which is part&n; * of glibc and has appropriate copyrights in it.&n; */
+multiline_comment|/* $Id: math.c,v 1.9 1999/07/30 09:35:41 davem Exp $&n; * arch/sparc64/math-emu/math.c&n; *&n; * Copyright (C) 1997,1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; *&n; * Emulation routines originate from soft-fp package, which is part&n; * of glibc and has appropriate copyrights in it.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/fpumacro.h&gt;
@@ -219,7 +219,7 @@ id|eflag
 id|u64
 id|fsr
 op_assign
-id|current-&gt;tss.xfsr
+id|current-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
@@ -411,7 +411,7 @@ l_int|14
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;tss.xfsr
+id|current-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
@@ -543,7 +543,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_32BIT
 )paren
@@ -1126,7 +1126,7 @@ suffix:semicolon
 id|freg
 op_assign
 (paren
-id|current-&gt;tss.xfsr
+id|current-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
@@ -1150,7 +1150,7 @@ l_int|8
 r_goto
 id|err
 suffix:semicolon
-id|current-&gt;tss.xfsr
+id|current-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
@@ -1189,7 +1189,7 @@ op_amp
 l_int|2
 )paren
 (brace
-id|current-&gt;tss.xfsr
+id|current-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
@@ -1259,7 +1259,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|current-&gt;tss.fpsaved
+id|current-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
@@ -1310,7 +1310,7 @@ op_amp
 l_int|2
 )paren
 (brace
-id|current-&gt;tss.xfsr
+id|current-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
@@ -1380,7 +1380,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|current-&gt;tss.fpsaved
+id|current-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
@@ -1455,7 +1455,7 @@ op_amp
 l_int|2
 )paren
 (brace
-id|current-&gt;tss.xfsr
+id|current-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
@@ -1525,7 +1525,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|current-&gt;tss.fpsaved
+id|current-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
@@ -1534,14 +1534,14 @@ id|FPRS_FEF
 )paren
 )paren
 (brace
-id|current-&gt;tss.fpsaved
+id|current-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
 op_assign
 id|FPRS_FEF
 suffix:semicolon
-id|current-&gt;tss.gsr
+id|current-&gt;thread.gsr
 (braket
 l_int|0
 )braket
@@ -1554,7 +1554,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|current-&gt;tss.fpsaved
+id|current-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
@@ -1604,7 +1604,7 @@ id|u32
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;tss.fpsaved
+id|current-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
@@ -1645,7 +1645,7 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/* Success and no exceptions detected. */
-id|current-&gt;tss.xfsr
+id|current-&gt;thread.xfsr
 (braket
 l_int|0
 )braket

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.60 1999/06/02 19:19:55 jj Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997,1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: traps.c,v 1.61 1999/07/30 09:35:32 davem Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997,1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * I like traps on v9, :))))&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
@@ -1322,7 +1322,7 @@ id|i
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_32BIT
 )paren
@@ -1363,7 +1363,7 @@ r_else
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_32BIT
 )paren
@@ -1465,7 +1465,8 @@ id|retval
 suffix:semicolon
 )brace
 macro_line|#endif /* SYSCALL_TRACING */
-macro_line|#if 0
+macro_line|#if 1
+DECL|function|rtrap_check
 r_void
 id|rtrap_check
 c_func
@@ -1735,6 +1736,8 @@ id|current-&gt;mm-&gt;pgd
 l_int|0
 )braket
 )paren
+op_lshift
+l_int|11UL
 )paren
 )paren
 op_logical_or
@@ -1748,7 +1751,9 @@ l_int|0x0000000000000018UL
 )paren
 )paren
 op_logical_or
+DECL|macro|KERN_HIGHBITS
 mdefine_line|#define KERN_HIGHBITS&t;&t;((_PAGE_VALID | _PAGE_SZ4MB) ^ 0xfffff80000000000)
+DECL|macro|KERN_LOWBITS
 mdefine_line|#define KERN_LOWBITS&t;&t;(_PAGE_CP | _PAGE_CV | _PAGE_P | _PAGE_W)
 (paren
 id|g2
@@ -1760,7 +1765,9 @@ id|KERN_LOWBITS
 )paren
 )paren
 op_logical_or
+DECL|macro|KERN_HIGHBITS
 macro_line|#undef KERN_HIGHBITS
+DECL|macro|KERN_LOWBITS
 macro_line|#undef KERN_LOWBITS
 (paren
 (paren
@@ -1780,7 +1787,11 @@ l_int|0
 )paren
 op_logical_or
 (paren
-id|current-&gt;tss.ctx
+id|CTX_HWBITS
+c_func
+(paren
+id|current-&gt;mm-&gt;context
+)paren
 op_ne
 id|ctx
 )paren
@@ -1791,7 +1802,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;SHIT[%s:%d]: &quot;
-l_string|&quot;(PP[%016lx] CACH[%016lx] CTX[%x] g1g3[%016lx] g2[%016lx]) &quot;
+l_string|&quot;(PP[%016lx] CACH[%016lx] CTX[%lx] g1g3[%016lx] g2[%016lx]) &quot;
 comma
 id|current-&gt;comm
 comma
@@ -1812,7 +1823,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;SHIT[%s:%d]: &quot;
-l_string|&quot;[PP[%016lx] CACH[%016lx] CTX[%x:%x]] PC[%016lx:%016lx]&bslash;n&quot;
+l_string|&quot;[PP[%016lx] CACH[%016lx] CTX[%lx]] PC[%016lx:%016lx]&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -1836,8 +1847,6 @@ comma
 id|current-&gt;mm-&gt;context
 op_amp
 l_int|0x3ff
-comma
-id|current-&gt;tss.ctx
 comma
 id|regs-&gt;tpc
 comma
@@ -1934,7 +1943,7 @@ comma
 id|regs
 )paren
 suffix:semicolon
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_BADTRAP
 c_func
@@ -1944,7 +1953,7 @@ op_minus
 l_int|0x100
 )paren
 suffix:semicolon
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|regs-&gt;tpc
 suffix:semicolon
@@ -2059,11 +2068,11 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_ILLINST
 suffix:semicolon
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|regs-&gt;tpc
 suffix:semicolon
@@ -2477,11 +2486,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|regs-&gt;tpc
 suffix:semicolon
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_FPERROR
 suffix:semicolon
@@ -2514,7 +2523,7 @@ c_func
 (paren
 l_string|&quot;fpieee %016lx&bslash;n&quot;
 comma
-id|current-&gt;tss.xfsr
+id|current-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
@@ -2569,7 +2578,7 @@ r_switch
 c_cond
 (paren
 (paren
-id|current-&gt;tss.xfsr
+id|current-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
@@ -2620,7 +2629,7 @@ c_func
 (paren
 l_string|&quot;fpother %016lx&bslash;n&quot;
 comma
-id|current-&gt;tss.xfsr
+id|current-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
@@ -2662,11 +2671,11 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|regs-&gt;tpc
 suffix:semicolon
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_TAG
 suffix:semicolon
@@ -3237,7 +3246,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_32BIT
 )paren
@@ -3325,11 +3334,11 @@ r_return
 suffix:semicolon
 )brace
 )brace
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|pc
 suffix:semicolon
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_ILLINST
 suffix:semicolon
@@ -3418,11 +3427,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|regs-&gt;tpc
 suffix:semicolon
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_PRIVINST
 suffix:semicolon
@@ -3449,11 +3458,11 @@ op_star
 id|regs
 )paren
 (brace
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|regs-&gt;tpc
 suffix:semicolon
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_PRIVINST
 suffix:semicolon
@@ -3479,11 +3488,11 @@ op_star
 id|regs
 )paren
 (brace
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|regs-&gt;tpc
 suffix:semicolon
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_PRIVINST
 suffix:semicolon
@@ -3538,11 +3547,11 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|pc
 suffix:semicolon
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_PRIVINST
 suffix:semicolon
@@ -4131,5 +4140,19 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* Attach to the address space of init_task. */
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|init_mm.mm_count
+)paren
+suffix:semicolon
+id|current-&gt;active_mm
+op_assign
+op_amp
+id|init_mm
+suffix:semicolon
+multiline_comment|/* NOTE: Other cpus have this done as they are started&n;&t; *       up on SMP.&n;&t; */
 )brace
 eof

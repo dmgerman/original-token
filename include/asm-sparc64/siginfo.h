@@ -156,7 +156,7 @@ DECL|member|_sigchld
 )brace
 id|_sigchld
 suffix:semicolon
-multiline_comment|/* SIGILL, SIGFPE, SIGSEGV, SIGBUS */
+multiline_comment|/* SIGILL, SIGFPE, SIGSEGV, SIGBUS, SIGEMT */
 r_struct
 (brace
 DECL|member|_addr
@@ -234,7 +234,8 @@ id|_pid
 suffix:semicolon
 multiline_comment|/* sender&squot;s pid */
 DECL|member|_uid
-id|__kernel_uid_t32
+r_int
+r_int
 id|_uid
 suffix:semicolon
 multiline_comment|/* sender&squot;s uid */
@@ -268,7 +269,8 @@ id|_pid
 suffix:semicolon
 multiline_comment|/* sender&squot;s pid */
 DECL|member|_uid
-id|__kernel_uid_t32
+r_int
+r_int
 id|_uid
 suffix:semicolon
 multiline_comment|/* sender&squot;s uid */
@@ -288,6 +290,12 @@ id|__kernel_pid_t32
 id|_pid
 suffix:semicolon
 multiline_comment|/* which child */
+DECL|member|_uid
+r_int
+r_int
+id|_uid
+suffix:semicolon
+multiline_comment|/* sender&squot;s uid */
 DECL|member|_status
 r_int
 id|_status
@@ -305,7 +313,7 @@ DECL|member|_sigchld
 )brace
 id|_sigchld
 suffix:semicolon
-multiline_comment|/* SIGILL, SIGFPE, SIGSEGV, SIGBUS */
+multiline_comment|/* SIGILL, SIGFPE, SIGSEGV, SIGBUS, SIGEMT */
 r_struct
 (brace
 DECL|member|_addr
@@ -372,6 +380,8 @@ mdefine_line|#define si_band&t;&t;_sifields._sigpoll._band
 DECL|macro|si_fd
 mdefine_line|#define si_fd&t;&t;_sifields._sigpoll._fd
 multiline_comment|/*&n; * si_code values&n; * Digital reserves positive values for kernel-generated signals.&n; */
+DECL|macro|SI_NOINFO
+mdefine_line|#define SI_NOINFO&t;32767&t;/* no information in siginfo_t */
 DECL|macro|SI_USER
 mdefine_line|#define SI_USER&t;&t;0&t;/* sent by kill, sigsend, raise */
 DECL|macro|SI_KERNEL
@@ -481,6 +491,11 @@ DECL|macro|POLL_HUP
 mdefine_line|#define POLL_HUP&t;6&t;/* device disconnected */
 DECL|macro|NSIGPOLL
 mdefine_line|#define NSIGPOLL&t;6
+multiline_comment|/*&n; * SIGEMT si_codes&n; */
+DECL|macro|EMT_TAGOVF
+mdefine_line|#define EMT_TAGOVF&t;1&t;/* tag overflow */
+DECL|macro|NSIGEMT
+mdefine_line|#define NSIGEMT&t;&t;1
 multiline_comment|/*&n; * sigevent definitions&n; * &n; * It seems likely that SIGEV_THREAD will have to be handled from &n; * userspace, libpthread transmuting it to SIGEV_SIGNAL, which the&n; * thread manager then catches and does the appropriate nonsense.&n; * However, everything is written out here so as to not get lost.&n; */
 DECL|macro|SIGEV_SIGNAL
 mdefine_line|#define SIGEV_SIGNAL&t;0&t;/* notify via signal */

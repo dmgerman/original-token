@@ -169,6 +169,8 @@ id|next
 )paren
 suffix:semicolon
 macro_line|#endif /* !defined (_LANGUAGE_ASSEMBLY) */
+DECL|macro|prepare_to_switch
+mdefine_line|#define prepare_to_switch()&t;do { } while(0)
 DECL|macro|switch_to
 mdefine_line|#define switch_to(prev,next,last) &bslash;&n;do { &bslash;&n;&t;(last) = resume(prev, next); &bslash;&n;} while(0)
 multiline_comment|/*&n; * For 32 and 64 bit operands we can take advantage of ll and sc.&n; * FIXME: This doesn&squot;t work for R3000 machines.&n; */

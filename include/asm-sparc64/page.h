@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.25 1999/06/23 03:53:15 davem Exp $ */
+multiline_comment|/* $Id: page.h,v 1.27 1999/07/31 00:07:25 davem Exp $ */
 macro_line|#ifndef _SPARC64_PAGE_H
 DECL|macro|_SPARC64_PAGE_H
 mdefine_line|#define _SPARC64_PAGE_H
@@ -17,9 +17,9 @@ mdefine_line|#define PAGE_MASK    (~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASSEMBLY__
 DECL|macro|BUG
-mdefine_line|#define BUG() do { printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); *(int *)0=0; } while (0)
+mdefine_line|#define BUG()&t;&t;__builtin_trap()
 DECL|macro|PAGE_BUG
-mdefine_line|#define PAGE_BUG(page) do { &bslash;&n;&t;&t;&t;&t;BUG(); } while (0)
+mdefine_line|#define PAGE_BUG(page)&t;BUG()
 r_extern
 r_void
 id|clear_page
@@ -234,7 +234,7 @@ DECL|macro|__iopgprot
 mdefine_line|#define __iopgprot(x)&t;(x)
 macro_line|#endif /* (STRICT_MM_TYPECHECKS) */
 DECL|macro|TASK_UNMAPPED_BASE
-mdefine_line|#define TASK_UNMAPPED_BASE&t;((current-&gt;tss.flags &amp; SPARC_FLAG_32BIT) ? &bslash;&n;&t;&t;&t;&t; (0x0000000070000000UL) : (PAGE_OFFSET))
+mdefine_line|#define TASK_UNMAPPED_BASE&t;((current-&gt;thread.flags &amp; SPARC_FLAG_32BIT) ? &bslash;&n;&t;&t;&t;&t; (0x0000000070000000UL) : (PAGE_OFFSET))
 macro_line|#endif /* !(__ASSEMBLY__) */
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN

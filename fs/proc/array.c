@@ -2631,7 +2631,7 @@ suffix:semicolon
 macro_line|#endif
 id|fp
 op_assign
-id|p-&gt;tss.ksp
+id|p-&gt;thread.ksp
 op_plus
 id|bias
 suffix:semicolon
@@ -2752,14 +2752,14 @@ DECL|macro|KSTK_ESP
 mdefine_line|#define KSTK_ESP(tsk)&t;((tsk)-&gt;tss.regs-&gt;gpr[1])
 macro_line|#elif defined (__sparc_v9__)
 DECL|macro|KSTK_EIP
-macro_line|# define KSTK_EIP(tsk)  ((tsk)-&gt;tss.kregs-&gt;tpc)
+macro_line|# define KSTK_EIP(tsk)  ((tsk)-&gt;thread.kregs-&gt;tpc)
 DECL|macro|KSTK_ESP
-macro_line|# define KSTK_ESP(tsk)  ((tsk)-&gt;tss.kregs-&gt;u_regs[UREG_FP])
+macro_line|# define KSTK_ESP(tsk)  ((tsk)-&gt;thread.kregs-&gt;u_regs[UREG_FP])
 macro_line|#elif defined(__sparc__)
 DECL|macro|KSTK_EIP
-macro_line|# define KSTK_EIP(tsk)  ((tsk)-&gt;tss.kregs-&gt;pc)
+macro_line|# define KSTK_EIP(tsk)  ((tsk)-&gt;thread.kregs-&gt;pc)
 DECL|macro|KSTK_ESP
-macro_line|# define KSTK_ESP(tsk)  ((tsk)-&gt;tss.kregs-&gt;u_regs[UREG_FP])
+macro_line|# define KSTK_ESP(tsk)  ((tsk)-&gt;thread.kregs-&gt;u_regs[UREG_FP])
 macro_line|#endif
 multiline_comment|/* Gcc optimizes away &quot;strlen(x)&quot; for constant x */
 DECL|macro|ADDBUF

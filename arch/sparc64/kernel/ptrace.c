@@ -123,7 +123,7 @@ id|addr
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_32BIT
 )paren
@@ -372,7 +372,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_32BIT
 )paren
@@ -912,7 +912,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|child-&gt;tss.flags
+id|child-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_32BIT
 )paren
@@ -1023,7 +1023,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_32BIT
 )paren
@@ -1170,7 +1170,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_32BIT
 )paren
@@ -1307,7 +1307,7 @@ id|pt_regs
 op_star
 id|cregs
 op_assign
-id|child-&gt;tss.kregs
+id|child-&gt;thread.kregs
 suffix:semicolon
 r_int
 id|rval
@@ -1474,7 +1474,7 @@ id|pt_regs
 op_star
 id|cregs
 op_assign
-id|child-&gt;tss.kregs
+id|child-&gt;thread.kregs
 suffix:semicolon
 r_int
 id|rval
@@ -1637,7 +1637,7 @@ id|pt_regs
 op_star
 id|cregs
 op_assign
-id|child-&gt;tss.kregs
+id|child-&gt;thread.kregs
 suffix:semicolon
 r_int
 r_int
@@ -1840,7 +1840,7 @@ id|pt_regs
 op_star
 id|cregs
 op_assign
-id|child-&gt;tss.kregs
+id|child-&gt;thread.kregs
 suffix:semicolon
 r_int
 r_int
@@ -2136,7 +2136,7 @@ op_logical_or
 id|__put_user
 c_func
 (paren
-id|child-&gt;tss.xfsr
+id|child-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
@@ -2302,7 +2302,7 @@ op_logical_or
 id|__put_user
 c_func
 (paren
-id|child-&gt;tss.xfsr
+id|child-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
@@ -2470,14 +2470,14 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-id|child-&gt;tss.xfsr
+id|child-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
 op_and_assign
 l_int|0xffffffff00000000UL
 suffix:semicolon
-id|child-&gt;tss.xfsr
+id|child-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
@@ -2489,7 +2489,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|child-&gt;tss.fpsaved
+id|child-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
@@ -2497,14 +2497,14 @@ op_amp
 id|FPRS_FEF
 )paren
 )paren
-id|child-&gt;tss.gsr
+id|child-&gt;thread.gsr
 (braket
 l_int|0
 )braket
 op_assign
 l_int|0
 suffix:semicolon
-id|child-&gt;tss.fpsaved
+id|child-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
@@ -2606,7 +2606,7 @@ op_logical_or
 id|__get_user
 c_func
 (paren
-id|child-&gt;tss.xfsr
+id|child-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
@@ -2635,7 +2635,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|child-&gt;tss.fpsaved
+id|child-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
@@ -2643,14 +2643,14 @@ op_amp
 id|FPRS_FEF
 )paren
 )paren
-id|child-&gt;tss.gsr
+id|child-&gt;thread.gsr
 (braket
 l_int|0
 )braket
 op_assign
 l_int|0
 suffix:semicolon
-id|child-&gt;tss.fpsaved
+id|child-&gt;thread.fpsaved
 (braket
 l_int|0
 )braket
@@ -2883,9 +2883,9 @@ id|printk
 (paren
 l_string|&quot;Original: %016lx %016lx&bslash;n&quot;
 comma
-id|child-&gt;tss.kregs-&gt;tpc
+id|child-&gt;thread.kregs-&gt;tpc
 comma
-id|child-&gt;tss.kregs-&gt;tnpc
+id|child-&gt;thread.kregs-&gt;tnpc
 )paren
 suffix:semicolon
 id|printk
@@ -2900,11 +2900,11 @@ l_int|4
 )paren
 suffix:semicolon
 macro_line|#endif
-id|child-&gt;tss.kregs-&gt;tpc
+id|child-&gt;thread.kregs-&gt;tpc
 op_assign
 id|addr
 suffix:semicolon
-id|child-&gt;tss.kregs-&gt;tnpc
+id|child-&gt;thread.kregs-&gt;tnpc
 op_assign
 id|addr
 op_plus
@@ -2944,9 +2944,9 @@ id|child-&gt;pid
 comma
 id|child-&gt;exit_code
 comma
-id|child-&gt;tss.kregs-&gt;tpc
+id|child-&gt;thread.kregs-&gt;tpc
 comma
-id|child-&gt;tss.kregs-&gt;tnpc
+id|child-&gt;thread.kregs-&gt;tnpc
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3281,7 +3281,7 @@ id|current-&gt;state
 op_assign
 id|TASK_STOPPED
 suffix:semicolon
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_xor_assign
 id|MAGIC_CONSTANT
 suffix:semicolon

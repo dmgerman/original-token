@@ -2,7 +2,7 @@ multiline_comment|/* smp.h: Sparc64 specific SMP stuff.&n; *&n; * Copyright (C) 
 macro_line|#ifndef _SPARC64_SMP_H
 DECL|macro|_SPARC64_SMP_H
 mdefine_line|#define _SPARC64_SMP_H
-macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;asm/asi.h&gt;
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* PROM provided per-processor information we need&n; * to start them all up.&n; */

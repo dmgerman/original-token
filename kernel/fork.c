@@ -1264,6 +1264,12 @@ c_func
 id|mm-&gt;pgd
 )paren
 suffix:semicolon
+id|destroy_context
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
 id|kmem_cache_free
 c_func
 (paren

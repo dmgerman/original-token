@@ -759,6 +759,9 @@ macro_line|#if 1
 id|pyxis_init_arch
 c_func
 (paren
+id|mem_start
+comma
+id|mem_end
 )paren
 suffix:semicolon
 macro_line|#else

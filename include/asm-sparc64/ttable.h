@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ttable.h,v 1.11 1999/03/29 12:38:12 jj Exp $ */
+multiline_comment|/* $Id: ttable.h,v 1.12 1999/07/30 09:31:24 davem Exp $ */
 macro_line|#ifndef _SPARC64_TTABLE_H
 DECL|macro|_SPARC64_TTABLE_H
 mdefine_line|#define _SPARC64_TTABLE_H
@@ -27,7 +27,7 @@ mdefine_line|#define SYSCALL_TRAP(routine, systbl)&t;&t;&t;&bslash;&n;&t;sethi&t
 DECL|macro|INDIRECT_SOLARIS_SYSCALL
 mdefine_line|#define INDIRECT_SOLARIS_SYSCALL(num)&t;&t;&t;&bslash;&n;&t;sethi&t;%hi(109f), %g7;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, etrap;&t;&t;&t;&t;&bslash;&n;109:&t; or&t;%g7, %lo(109b), %g7;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, tl0_solaris + 0xc;&t;&t;&bslash;&n;&t; mov&t;num, %g1;&t;&t;&t;&t;&bslash;&n;&t;nop;nop;nop;
 DECL|macro|TRAP_UTRAP
-mdefine_line|#define TRAP_UTRAP(handler,lvl)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ldx&t;[%g6 + AOFF_task_tss + AOFF_thread_utraps], %g1;&t;&bslash;&n;&t;sethi&t;%hi(109f), %g7;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;brz,pn&t;%g1, utrap;&t;&t;&t;&t;&t;&t;&bslash;&n;&t; or&t;%g7, %lo(109f), %g7;&t;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, utrap;&t;&t;&t;&t;&t;&t;&bslash;&n;109:&t; ldx&t;[%g1 + handler*8], %g1;&t;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, utrap_ill;&t;&t;&t;&t;&t;&bslash;&n;&t; mov&t;lvl, %o1;
+mdefine_line|#define TRAP_UTRAP(handler,lvl)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ldx&t;[%g6 + AOFF_task_thread + AOFF_thread_utraps], %g1;&t;&bslash;&n;&t;sethi&t;%hi(109f), %g7;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;brz,pn&t;%g1, utrap;&t;&t;&t;&t;&t;&t;&bslash;&n;&t; or&t;%g7, %lo(109f), %g7;&t;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, utrap;&t;&t;&t;&t;&t;&t;&bslash;&n;109:&t; ldx&t;[%g1 + handler*8], %g1;&t;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, utrap_ill;&t;&t;&t;&t;&t;&bslash;&n;&t; mov&t;lvl, %o1;
 DECL|macro|SUNOS_SYSCALL_TRAP
 mdefine_line|#define SUNOS_SYSCALL_TRAP SYSCALL_TRAP(linux_sparc_syscall32, sunos_sys_table)
 DECL|macro|LINUX_32BIT_SYSCALL_TRAP

@@ -11,11 +11,11 @@ mdefine_line|#define _FP_WS_TYPE&t;&t;signed long
 DECL|macro|_FP_I_TYPE
 mdefine_line|#define _FP_I_TYPE&t;&t;long
 DECL|macro|_FP_MUL_MEAT_S
-mdefine_line|#define _FP_MUL_MEAT_S(R,X,Y)&t;_FP_MUL_MEAT_1_wide(S,R,X,Y,umul_ppmm)
+mdefine_line|#define _FP_MUL_MEAT_S(R,X,Y)&t;&t;&t;&t;&t;&bslash;&n;  _FP_MUL_MEAT_1_wide(_FP_WFRACBITS_S,R,X,Y)
 DECL|macro|_FP_MUL_MEAT_D
-mdefine_line|#define _FP_MUL_MEAT_D(R,X,Y)&t;_FP_MUL_MEAT_2_wide(D,R,X,Y,umul_ppmm)
+mdefine_line|#define _FP_MUL_MEAT_D(R,X,Y)&t;&t;&t;&t;&t;&bslash;&n;  _FP_MUL_MEAT_2_wide(_FP_WFRACBITS_D,R,X,Y,umul_ppmm)
 DECL|macro|_FP_MUL_MEAT_Q
-mdefine_line|#define _FP_MUL_MEAT_Q(R,X,Y)&t;_FP_MUL_MEAT_4_wide(Q,R,X,Y,umul_ppmm)
+mdefine_line|#define _FP_MUL_MEAT_Q(R,X,Y)&t;&t;&t;&t;&t;&bslash;&n;  _FP_MUL_MEAT_4_wide(_FP_WFRACBITS_Q,R,X,Y,umul_ppmm)
 DECL|macro|_FP_DIV_MEAT_S
 mdefine_line|#define _FP_DIV_MEAT_S(R,X,Y)&t;_FP_DIV_MEAT_1_udiv(S,R,X,Y)
 DECL|macro|_FP_DIV_MEAT_D
@@ -39,7 +39,7 @@ mdefine_line|#define _FP_KEEPNANFRACP 1
 multiline_comment|/* If one NaN is signaling and the other is not,&n; * we choose that one, otherwise we choose X.&n; */
 multiline_comment|/* For _Qp_* and _Q_*, this should prefer X, for&n; * CPU instruction emulation this should prefer Y.&n; * (see SPAMv9 B.2.2 section).&n; */
 DECL|macro|_FP_CHOOSENAN
-mdefine_line|#define _FP_CHOOSENAN(fs, wc, R, X, Y)&t;&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    if ((_FP_FRAC_HIGH_RAW_##fs(Y) &amp; _FP_QNANBIT_##fs)&t;&t;&bslash;&n;&t;&amp;&amp; !(_FP_FRAC_HIGH_RAW_##fs(X) &amp; _FP_QNANBIT_##fs))&t;&bslash;&n;      {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;R##_s = X##_s;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;_FP_FRAC_COPY_##wc(R,X);&t;&t;&t;&t;&bslash;&n;      }&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    else&t;&t;&t;&t;&t;&t;&t;&bslash;&n;      {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;R##_s = Y##_s;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;_FP_FRAC_COPY_##wc(R,Y);&t;&t;&t;&t;&bslash;&n;      }&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    R##_c = FP_CLS_NAN;&t;&t;&t;&t;&t;&t;&bslash;&n;  } while (0)
+mdefine_line|#define _FP_CHOOSENAN(fs, wc, R, X, Y, OP)&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    if ((_FP_FRAC_HIGH_RAW_##fs(Y) &amp; _FP_QNANBIT_##fs)&t;&t;&bslash;&n;&t;&amp;&amp; !(_FP_FRAC_HIGH_RAW_##fs(X) &amp; _FP_QNANBIT_##fs))&t;&bslash;&n;      {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;R##_s = X##_s;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;_FP_FRAC_COPY_##wc(R,X);&t;&t;&t;&t;&bslash;&n;      }&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    else&t;&t;&t;&t;&t;&t;&t;&bslash;&n;      {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;R##_s = Y##_s;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;_FP_FRAC_COPY_##wc(R,Y);&t;&t;&t;&t;&bslash;&n;      }&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    R##_c = FP_CLS_NAN;&t;&t;&t;&t;&t;&t;&bslash;&n;  } while (0)
 multiline_comment|/* Some assembly to speed things up. */
 DECL|macro|__FP_FRAC_ADD_3
 mdefine_line|#define __FP_FRAC_ADD_3(r2,r1,r0,x2,x1,x0,y2,y1,y0)&t;&t;&t;&bslash;&n;  __asm__ (&quot;addcc %r7,%8,%2

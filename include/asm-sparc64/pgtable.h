@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.106 1999/06/27 00:38:33 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.109 1999/08/02 08:57:46 jj Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
@@ -37,13 +37,13 @@ multiline_comment|/* We the first one in this file, what we export to the kernel
 DECL|macro|REAL_PTRS_PER_PMD
 mdefine_line|#define REAL_PTRS_PER_PMD&t;(1UL &lt;&lt; (PAGE_SHIFT-2))
 DECL|macro|PTRS_PER_PMD
-mdefine_line|#define PTRS_PER_PMD&t;&t;((const int)((current-&gt;tss.flags &amp; SPARC_FLAG_32BIT) ? &bslash;&n;&t;&t;&t;&t; (REAL_PTRS_PER_PMD &gt;&gt; 2) : (REAL_PTRS_PER_PMD)))
+mdefine_line|#define PTRS_PER_PMD&t;&t;((const int)((current-&gt;thread.flags &amp; SPARC_FLAG_32BIT) ? &bslash;&n;&t;&t;&t;&t; (REAL_PTRS_PER_PMD &gt;&gt; 2) : (REAL_PTRS_PER_PMD)))
 multiline_comment|/* We cannot use the top 16G because VPTE table lives there. */
 DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD&t;&t;((1UL &lt;&lt; (PAGE_SHIFT-3))-1)
 multiline_comment|/* Kernel has a separate 44bit address space. */
 DECL|macro|USER_PTRS_PER_PGD
-mdefine_line|#define USER_PTRS_PER_PGD&t;((const int)((current-&gt;tss.flags &amp; SPARC_FLAG_32BIT) ? &bslash;&n;&t;&t;&t;&t; (1) : (PTRS_PER_PGD)))
+mdefine_line|#define USER_PTRS_PER_PGD&t;((const int)((current-&gt;thread.flags &amp; SPARC_FLAG_32BIT) ? &bslash;&n;&t;&t;&t;&t; (1) : (PTRS_PER_PGD)))
 DECL|macro|PTE_TABLE_SIZE
 mdefine_line|#define PTE_TABLE_SIZE&t;0x2000&t;/* 1024 entries 8 bytes each */
 DECL|macro|PMD_TABLE_SIZE
@@ -209,11 +209,11 @@ suffix:semicolon
 multiline_comment|/* Cache and TLB flush operations. */
 multiline_comment|/* These are the same regardless of whether this is an SMP kernel or not. */
 DECL|macro|flush_cache_mm
-mdefine_line|#define flush_cache_mm(mm)&t;&t;&t;flushw_user()
+mdefine_line|#define flush_cache_mm(__mm) &bslash;&n;&t;do { if ((__mm) == current-&gt;mm) flushw_user(); } while(0)
 DECL|macro|flush_cache_range
-mdefine_line|#define flush_cache_range(mm, start, end)&t;flushw_user()
+mdefine_line|#define flush_cache_range(mm, start, end) &bslash;&n;&t;flush_cache_mm(mm)
 DECL|macro|flush_cache_page
-mdefine_line|#define flush_cache_page(vma, page)&t;&t;flushw_user()
+mdefine_line|#define flush_cache_page(vma, page) &bslash;&n;&t;flush_cache_mm((vma)-&gt;vm_mm)
 multiline_comment|/* These operations are unnecessary on the SpitFire since D-CACHE is write-through. */
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
@@ -317,11 +317,11 @@ mdefine_line|#define flush_cache_all()&t;__flush_cache_all()
 DECL|macro|flush_tlb_all
 mdefine_line|#define flush_tlb_all()&t;&t;__flush_tlb_all()
 DECL|macro|flush_tlb_mm
-mdefine_line|#define flush_tlb_mm(mm) &bslash;&n;do { if((mm)-&gt;context != NO_CONTEXT) &bslash;&n;&t;__flush_tlb_mm((mm)-&gt;context &amp; 0x3ff, SECONDARY_CONTEXT); &bslash;&n;} while(0)
+mdefine_line|#define flush_tlb_mm(__mm) &bslash;&n;do { if(CTX_VALID((__mm)-&gt;context)) &bslash;&n;&t;__flush_tlb_mm(CTX_HWBITS((__mm)-&gt;context), SECONDARY_CONTEXT); &bslash;&n;} while(0)
 DECL|macro|flush_tlb_range
-mdefine_line|#define flush_tlb_range(mm, start, end) &bslash;&n;do { if((mm)-&gt;context != NO_CONTEXT) { &bslash;&n;&t;unsigned long __start = (start)&amp;PAGE_MASK; &bslash;&n;&t;unsigned long __end = (end)&amp;PAGE_MASK; &bslash;&n;&t;__flush_tlb_range((mm)-&gt;context &amp; 0x3ff, __start, &bslash;&n;&t;&t;&t;  SECONDARY_CONTEXT, __end, PAGE_SIZE, &bslash;&n;&t;&t;&t;  (__end - __start)); &bslash;&n;     } &bslash;&n;} while(0)
+mdefine_line|#define flush_tlb_range(__mm, start, end) &bslash;&n;do { if(CTX_VALID((__mm)-&gt;context)) { &bslash;&n;&t;unsigned long __start = (start)&amp;PAGE_MASK; &bslash;&n;&t;unsigned long __end = (end)&amp;PAGE_MASK; &bslash;&n;&t;__flush_tlb_range(CTX_HWBITS((__mm)-&gt;context), __start, &bslash;&n;&t;&t;&t;  SECONDARY_CONTEXT, __end, PAGE_SIZE, &bslash;&n;&t;&t;&t;  (__end - __start)); &bslash;&n;     } &bslash;&n;} while(0)
 DECL|macro|flush_tlb_page
-mdefine_line|#define flush_tlb_page(vma, page) &bslash;&n;do { struct mm_struct *__mm = (vma)-&gt;vm_mm; &bslash;&n;     if(__mm-&gt;context != NO_CONTEXT) &bslash;&n;&t;__flush_tlb_page(__mm-&gt;context &amp; 0x3ff, (page)&amp;PAGE_MASK, &bslash;&n;&t;&t;&t; SECONDARY_CONTEXT); &bslash;&n;} while(0)
+mdefine_line|#define flush_tlb_page(vma, page) &bslash;&n;do { struct mm_struct *__mm = (vma)-&gt;vm_mm; &bslash;&n;     if(CTX_VALID(__mm-&gt;context)) &bslash;&n;&t;__flush_tlb_page(CTX_HWBITS(__mm-&gt;context), (page)&amp;PAGE_MASK, &bslash;&n;&t;&t;&t; SECONDARY_CONTEXT); &bslash;&n;} while(0)
 macro_line|#else /* __SMP__ */
 r_extern
 r_void
@@ -404,18 +404,18 @@ id|mm
 r_if
 c_cond
 (paren
+id|CTX_VALID
+c_func
+(paren
 id|mm-&gt;context
-op_ne
-id|NO_CONTEXT
 )paren
-(brace
+)paren
 id|smp_flush_tlb_mm
 c_func
 (paren
 id|mm
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|function|flush_tlb_range
 r_extern
@@ -441,11 +441,12 @@ id|end
 r_if
 c_cond
 (paren
+id|CTX_VALID
+c_func
+(paren
 id|mm-&gt;context
-op_ne
-id|NO_CONTEXT
 )paren
-(brace
+)paren
 id|smp_flush_tlb_range
 c_func
 (paren
@@ -456,7 +457,6 @@ comma
 id|end
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|function|flush_tlb_page
 r_extern
@@ -485,11 +485,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|CTX_VALID
+c_func
+(paren
 id|mm-&gt;context
-op_ne
-id|NO_CONTEXT
 )paren
-(brace
+)paren
 id|smp_flush_tlb_page
 c_func
 (paren
@@ -498,7 +499,6 @@ comma
 id|page
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif
 DECL|macro|mk_pte
@@ -1739,149 +1739,6 @@ id|swapper_pg_dir
 l_int|1
 )braket
 suffix:semicolon
-DECL|function|SET_PAGE_DIR
-r_extern
-r_inline
-r_void
-id|SET_PAGE_DIR
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|tsk
-comma
-id|pgd_t
-op_star
-id|pgdir
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|pgdir
-op_ne
-id|swapper_pg_dir
-op_logical_and
-id|tsk
-op_eq
-id|current
-)paren
-(brace
-r_register
-r_int
-r_int
-id|paddr
-id|asm
-c_func
-(paren
-l_string|&quot;o5&quot;
-)paren
-suffix:semicolon
-id|paddr
-op_assign
-id|__pa
-c_func
-(paren
-id|pgdir
-)paren
-suffix:semicolon
-id|__asm__
-id|__volatile__
-(paren
-"&quot;"
-id|rdpr
-op_mod
-op_mod
-id|pstate
-comma
-op_mod
-op_mod
-id|o4
-id|wrpr
-op_mod
-op_mod
-id|o4
-comma
-op_mod
-l_int|1
-comma
-op_mod
-op_mod
-id|pstate
-id|mov
-op_mod
-l_int|3
-comma
-op_mod
-op_mod
-id|g4
-id|mov
-op_mod
-l_int|0
-comma
-op_mod
-op_mod
-id|g7
-id|stxa
-op_mod
-op_mod
-id|g0
-comma
-(braket
-op_mod
-op_mod
-id|g4
-)braket
-op_mod
-l_int|2
-id|wrpr
-op_mod
-op_mod
-id|o4
-comma
-l_int|0x0
-comma
-op_mod
-op_mod
-id|pstate
-"&quot;"
-suffix:colon
-multiline_comment|/* No outputs */
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|paddr
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|PSTATE_MG
-op_or
-id|PSTATE_IE
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|ASI_DMMU
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|TSB_REG
-)paren
-suffix:colon
-l_string|&quot;o4&quot;
-)paren
-suffix:semicolon
-id|flush_tlb_mm
-c_func
-(paren
-id|current-&gt;mm
-)paren
-suffix:semicolon
-)brace
-)brace
 multiline_comment|/* Routines for getting a dvma scsi buffer. */
 DECL|struct|mmu_sglist
 r_struct

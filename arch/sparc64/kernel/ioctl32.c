@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.63 1999/06/09 04:56:14 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.65 1999/07/30 09:35:19 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -29,6 +29,7 @@ macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/raw.h&gt;
 macro_line|#include &lt;scsi/scsi.h&gt;
 multiline_comment|/* Ugly hack. */
 DECL|macro|__KERNEL__
@@ -13856,6 +13857,13 @@ id|AUTOFS_IOC_PROTOVER
 suffix:colon
 r_case
 id|AUTOFS_IOC_EXPIRE
+suffix:colon
+multiline_comment|/* Raw devices */
+r_case
+id|RAW_SETBIND
+suffix:colon
+r_case
+id|RAW_GETBIND
 suffix:colon
 id|error
 op_assign

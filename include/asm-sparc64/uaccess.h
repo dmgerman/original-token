@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.30 1999/05/25 16:53:32 jj Exp $ */
+multiline_comment|/* $Id: uaccess.h,v 1.31 1999/07/30 09:31:24 davem Exp $ */
 macro_line|#ifndef _ASM_UACCESS_H
 DECL|macro|_ASM_UACCESS_H
 mdefine_line|#define _ASM_UACCESS_H
@@ -22,13 +22,13 @@ mdefine_line|#define VERIFY_READ&t;0
 DECL|macro|VERIFY_WRITE
 mdefine_line|#define VERIFY_WRITE&t;1
 DECL|macro|get_fs
-mdefine_line|#define get_fs() (current-&gt;tss.current_ds)
+mdefine_line|#define get_fs() (current-&gt;thread.current_ds)
 DECL|macro|get_ds
 mdefine_line|#define get_ds() (KERNEL_DS)
 DECL|macro|segment_eq
 mdefine_line|#define segment_eq(a,b)  ((a).seg == (b).seg)
 DECL|macro|set_fs
-mdefine_line|#define set_fs(val)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;current-&gt;tss.current_ds = (val);&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&quot;wr %%g0, %0, %%asi&quot; : : &quot;r&quot; ((val).seg));&t;&bslash;&n;} while(0)
+mdefine_line|#define set_fs(val)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;current-&gt;thread.current_ds = (val);&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&quot;wr %%g0, %0, %%asi&quot; : : &quot;r&quot; ((val).seg));&t;&bslash;&n;} while(0)
 DECL|macro|__user_ok
 mdefine_line|#define __user_ok(addr,size) 1
 DECL|macro|__kernel_ok

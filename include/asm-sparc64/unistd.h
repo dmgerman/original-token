@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.28 1999/04/07 17:14:19 davem Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.30 1999/07/31 04:05:24 ecd Exp $ */
 macro_line|#ifndef _SPARC64_UNISTD_H
 DECL|macro|_SPARC64_UNISTD_H
 mdefine_line|#define _SPARC64_UNISTD_H
@@ -359,8 +359,7 @@ DECL|macro|__NR_syslog
 mdefine_line|#define __NR_syslog             207 /* Linux Specific                              */
 multiline_comment|/* #define __NR_olduname        208    Linux Specific                              */
 multiline_comment|/* #define __NR_iopl            209    Linux Specific - i386 specific, unused      */
-DECL|macro|__NR_idle
-mdefine_line|#define __NR_idle               210 /* Linux Specific                              */
+multiline_comment|/* #define __NR_idle            210    Linux Specific - was sys_idle, now unused   */
 multiline_comment|/* #define __NR_vm86            211    Linux Specific - i386 specific, unused      */
 DECL|macro|__NR_waitpid
 mdefine_line|#define __NR_waitpid            212 /* Linux Specific                              */
@@ -462,15 +461,6 @@ macro_line|#ifdef __KERNEL_SYSCALLS__
 multiline_comment|/*&n; * we need this inline - forking from kernel space will result&n; * in NO COPY ON WRITE (!!!), until an execve is executed. This&n; * is no problem, but for the stack. This is handled by not letting&n; * main() use the stack at all after fork(). Thus, no function&n; * calls - which means inline code for fork too, as otherwise we&n; * would use the stack upon exit from &squot;fork()&squot;.&n; *&n; * Actually only pause and fork are needed inline, so that there&n; * won&squot;t be any messing with the stack from main(), but we define&n; * some others too.&n; */
 DECL|macro|__NR__exit
 mdefine_line|#define __NR__exit __NR_exit
-r_static
-id|__inline__
-id|_syscall0
-c_func
-(paren
-r_int
-comma
-id|idle
-)paren
 r_static
 id|__inline__
 id|_syscall0

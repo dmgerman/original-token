@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fcmpq.c,v 1.5 1999/05/28 13:43:33 jj Exp $&n; * arch/sparc64/math-emu/fcmpq.c&n; *&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; *&n; */
+multiline_comment|/* $Id: fcmpq.c,v 1.6 1999/07/30 09:35:40 davem Exp $&n; * arch/sparc64/math-emu/fcmpq.c&n; *&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; *&n; */
 macro_line|#include &quot;sfp-util.h&quot;
 macro_line|#include &quot;soft-fp.h&quot;
 macro_line|#include &quot;quad.h&quot;
@@ -143,7 +143,7 @@ l_int|2
 suffix:semicolon
 id|fsr
 op_assign
-id|current-&gt;tss.xfsr
+id|current-&gt;thread.xfsr
 (braket
 l_int|0
 )braket
@@ -227,7 +227,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|current-&gt;tss.xfsr
+id|current-&gt;thread.xfsr
 (braket
 l_int|0
 )braket

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: signal.c,v 1.92 1999/06/14 05:23:53 davem Exp $&n; *  linux/arch/sparc/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: signal.c,v 1.94 1999/07/30 09:35:04 davem Exp $&n; *  linux/arch/sparc/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -3371,6 +3371,22 @@ r_sizeof
 (paren
 r_struct
 id|reg_window
+)paren
+)paren
+suffix:semicolon
+id|err
+op_or_assign
+id|__copy_to_user
+c_func
+(paren
+op_amp
+id|sf-&gt;info
+comma
+id|info
+comma
+r_sizeof
+(paren
+id|siginfo_t
 )paren
 )paren
 suffix:semicolon

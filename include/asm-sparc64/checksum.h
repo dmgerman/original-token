@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: checksum.h,v 1.12 1999/05/25 16:53:36 jj Exp $ */
+multiline_comment|/* $Id: checksum.h,v 1.13 1999/07/30 09:31:13 davem Exp $ */
 macro_line|#ifndef __SPARC64_CHECKSUM_H
 DECL|macro|__SPARC64_CHECKSUM_H
 mdefine_line|#define __SPARC64_CHECKSUM_H
@@ -84,7 +84,7 @@ r_int
 r_char
 id|cur_ds
 op_assign
-id|current-&gt;tss.current_ds.seg
+id|current-&gt;thread.current_ds.seg
 suffix:semicolon
 id|__asm__
 id|__volatile__

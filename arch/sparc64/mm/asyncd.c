@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: asyncd.c,v 1.8 1999/07/04 04:35:55 davem Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
+multiline_comment|/*  $Id: asyncd.c,v 1.9 1999/07/30 09:35:43 davem Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -302,15 +302,14 @@ r_int
 )paren
 )paren
 (brace
+macro_line|#warning Need some fixing here... -DaveM
 r_struct
 id|task_struct
 op_star
 id|tsk
 op_assign
-id|task
-(braket
-id|taskid
-)braket
+id|current
+multiline_comment|/* XXX task[taskid] */
 suffix:semicolon
 r_struct
 id|mm_struct
@@ -394,15 +393,14 @@ id|last_task
 comma
 id|loop_counter
 suffix:semicolon
+macro_line|#warning Need some fixing here... -DaveM
 r_struct
 id|task_struct
 op_star
 id|tsk
 op_assign
-id|task
-(braket
-id|taskid
-)braket
+id|current
+multiline_comment|/* XXX task[taskid] */
 suffix:semicolon
 id|pgd_t
 op_star
@@ -723,11 +721,11 @@ suffix:colon
 id|stats.failure
 op_increment
 suffix:semicolon
-id|tsk-&gt;tss.sig_address
+id|tsk-&gt;thread.sig_address
 op_assign
 id|address
 suffix:semicolon
-id|tsk-&gt;tss.sig_desc
+id|tsk-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_NOMAPPING
 suffix:semicolon

@@ -174,12 +174,11 @@ mdefine_line|#define FP_PACK_Q(val,X)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bsla
 DECL|macro|FP_PACK_QP
 mdefine_line|#define FP_PACK_QP(val,X)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    _FP_PACK_CANONICAL(Q,4,X);&t;&t;&bslash;&n;    if (!FP_INHIBIT_RESULTS)&t;&t;&bslash;&n;      _FP_PACK_RAW_4_P(Q,val,X);&t;&bslash;&n;  } while (0)
 DECL|macro|FP_ISSIGNAN_Q
-mdefine_line|#define FP_ISSIGNAN_Q(X)&t;_FP_ISSIGNAN(Q,4,X)
+mdefine_line|#define FP_ISSIGNAN_Q(X)&t;&t;_FP_ISSIGNAN(Q,4,X)
 DECL|macro|FP_NEG_Q
-mdefine_line|#define FP_NEG_Q(R,X)&t;&t;_FP_NEG(Q,4,R,X)
+mdefine_line|#define FP_NEG_Q(R,X)&t;&t;&t;_FP_NEG(Q,4,R,X)
 DECL|macro|FP_ADD_Q
-mdefine_line|#define FP_ADD_Q(R,X,Y)&t;&t;_FP_ADD(Q,4,R,X,Y)
-multiline_comment|/* single.h and double.h define FP_SUB_t this way too. However, _FP_SUB is&n; * never defined in op-common.h! Fortunately nobody seems to use the FP_SUB_t &n; * macros: I suggest a combination of FP_NEG and FP_ADD :-&gt; -- PMM 02/1998&n; */
+mdefine_line|#define FP_ADD_Q(R,X,Y)&t;&t;&t;_FP_ADD(Q,4,R,X,Y)
 DECL|macro|FP_SUB_Q
 mdefine_line|#define FP_SUB_Q(R,X,Y)&t;&t;&t;_FP_SUB(Q,4,R,X,Y)
 DECL|macro|FP_MUL_Q

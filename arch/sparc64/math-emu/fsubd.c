@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fsubd.c,v 1.4 1999/05/28 13:45:04 jj Exp $&n; * arch/sparc64/math-emu/fsubd.c&n; *&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; *&n; */
+multiline_comment|/* $Id: fsubd.c,v 1.5 1999/08/02 14:08:04 jj Exp $&n; * arch/sparc64/math-emu/fsubd.c&n; *&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; *&n; */
 macro_line|#include &quot;sfp-util.h&quot;
 macro_line|#include &quot;soft-fp.h&quot;
 macro_line|#include &quot;double.h&quot;
@@ -56,18 +56,7 @@ comma
 id|rs2
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|B_c
-op_ne
-id|FP_CLS_NAN
-)paren
-id|B_s
-op_xor_assign
-l_int|1
-suffix:semicolon
-id|FP_ADD_D
+id|FP_SUB_D
 c_func
 (paren
 id|R

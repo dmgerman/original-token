@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sunos32.c,v 1.28 1999/06/29 12:34:04 davem Exp $&n; * sys_sunos32.c: SunOS binary compatability layer on sparc64.&n; *&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; */
+multiline_comment|/* $Id: sys_sunos32.c,v 1.30 1999/07/30 09:35:31 davem Exp $&n; * sys_sunos32.c: SunOS binary compatability layer on sparc64.&n; *&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2553,13 +2553,13 @@ c_func
 suffix:semicolon
 id|regs
 op_assign
-id|current-&gt;tss.kregs
+id|current-&gt;thread.kregs
 suffix:semicolon
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|regs-&gt;tpc
 suffix:semicolon
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|regs-&gt;u_regs
 (braket
@@ -5512,7 +5512,7 @@ id|sparc_stackf32
 op_star
 )paren
 (paren
-id|current-&gt;tss.kregs-&gt;u_regs
+id|current-&gt;thread.kregs-&gt;u_regs
 (braket
 id|UREG_FP
 )braket

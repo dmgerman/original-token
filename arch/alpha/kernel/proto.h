@@ -1493,12 +1493,11 @@ id|reboot_cmd
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|cpu_idle
 c_func
 (paren
 r_void
-op_star
 )paren
 id|__attribute__
 c_func

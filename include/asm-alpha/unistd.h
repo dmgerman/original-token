@@ -478,8 +478,7 @@ DECL|macro|__NR_sysinfo
 mdefine_line|#define __NR_sysinfo&t;&t;318
 DECL|macro|__NR__sysctl
 mdefine_line|#define __NR__sysctl&t;&t;319
-DECL|macro|__NR_idle
-mdefine_line|#define __NR_idle&t;&t;320
+multiline_comment|/* 320 was sys_idle.  */
 DECL|macro|__NR_oldumount
 mdefine_line|#define __NR_oldumount&t;&t;321
 DECL|macro|__NR_swapon

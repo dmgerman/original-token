@@ -106,22 +106,6 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/* Dummy function for now, we need it to link.  -DaveM */
-DECL|function|kbd_reset_setup
-r_void
-id|kbd_reset_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-(brace
-)brace
 macro_line|#ifndef CONFIG_PCI
 DECL|variable|keypress_wait
 id|DECLARE_WAIT_QUEUE_HEAD
@@ -5541,7 +5525,7 @@ macro_line|#ifdef CONFIG_SPARC32_COMPAT
 r_if
 c_cond
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_32BIT
 )paren

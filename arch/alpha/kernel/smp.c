@@ -411,7 +411,6 @@ multiline_comment|/* Do nothing.  */
 id|cpu_idle
 c_func
 (paren
-l_int|NULL
 )paren
 suffix:semicolon
 )brace

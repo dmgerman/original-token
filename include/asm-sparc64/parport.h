@@ -1,4 +1,4 @@
-multiline_comment|/* $Id$&n; * parport.h: sparc64 specific parport initialization and dma.&n; *&n; * Copyright (C) 1999  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: parport.h,v 1.2 1999/07/31 04:48:13 ecd Exp $&n; * parport.h: sparc64 specific parport initialization and dma.&n; *&n; * Copyright (C) 1999  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef _ASM_SPARC64_PARPORT_H
 DECL|macro|_ASM_SPARC64_PARPORT_H
 mdefine_line|#define _ASM_SPARC64_PARPORT_H 1
@@ -17,6 +17,8 @@ mdefine_line|#define __maybe_initdata __initdata
 macro_line|#endif
 DECL|macro|HAVE_SLOW_DEVICES
 macro_line|#undef HAVE_SLOW_DEVICES
+DECL|macro|PARPORT_PC_MAX_PORTS
+mdefine_line|#define PARPORT_PC_MAX_PORTS&t;PARPORT_MAX
 DECL|variable|sparc_ebus_dmas
 r_static
 r_struct
@@ -24,7 +26,7 @@ id|linux_ebus_dma
 op_star
 id|sparc_ebus_dmas
 (braket
-id|PARPORT_MAX
+id|PARPORT_PC_MAX_PORTS
 )braket
 suffix:semicolon
 r_static
@@ -516,6 +518,14 @@ comma
 r_int
 id|dma
 )paren
+suffix:semicolon
+DECL|variable|__initdata
+r_static
+r_int
+id|user_specified
+id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|__init
