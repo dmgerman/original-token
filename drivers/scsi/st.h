@@ -77,6 +77,12 @@ r_int
 r_char
 id|defined
 suffix:semicolon
+DECL|member|sysv
+r_int
+r_char
+id|sysv
+suffix:semicolon
+multiline_comment|/* SYS V semantics? */
 DECL|member|do_async_writes
 r_int
 r_char
@@ -134,10 +140,10 @@ r_int
 r_char
 id|rw
 suffix:semicolon
-DECL|member|moves_after_eof
+DECL|member|eof
 r_int
 r_char
-id|moves_after_eof
+id|eof
 suffix:semicolon
 DECL|member|at_sm
 r_int
@@ -152,6 +158,15 @@ suffix:semicolon
 DECL|member|last_block_visited
 id|u32
 id|last_block_visited
+suffix:semicolon
+DECL|member|drv_block
+r_int
+id|drv_block
+suffix:semicolon
+multiline_comment|/* The block where the drive head is */
+DECL|member|drv_file
+r_int
+id|drv_file
 suffix:semicolon
 DECL|typedef|ST_partstat
 )brace
@@ -290,11 +305,6 @@ r_int
 r_char
 id|ready
 suffix:semicolon
-DECL|member|eof
-r_int
-r_char
-id|eof
-suffix:semicolon
 DECL|member|write_prot
 r_int
 r_char
@@ -309,11 +319,6 @@ DECL|member|in_use
 r_int
 r_char
 id|in_use
-suffix:semicolon
-DECL|member|eof_hit
-r_int
-r_char
-id|eof_hit
 suffix:semicolon
 DECL|member|blksize_changed
 r_int
@@ -366,11 +371,6 @@ DECL|member|recover_count
 r_int
 id|recover_count
 suffix:semicolon
-DECL|member|drv_block
-r_int
-id|drv_block
-suffix:semicolon
-multiline_comment|/* The block where the drive head is */
 DECL|member|mt_status
 r_struct
 id|mtget
@@ -391,6 +391,22 @@ DECL|member|nbr_waits
 r_int
 id|nbr_waits
 suffix:semicolon
+DECL|member|last_cmnd
+r_int
+r_char
+id|last_cmnd
+(braket
+l_int|6
+)braket
+suffix:semicolon
+DECL|member|last_sense
+r_int
+r_char
+id|last_sense
+(braket
+l_int|16
+)braket
+suffix:semicolon
 macro_line|#endif
 DECL|typedef|Scsi_Tape
 )brace
@@ -404,14 +420,21 @@ suffix:semicolon
 multiline_comment|/* Values of eof */
 DECL|macro|ST_NOEOF
 mdefine_line|#define&t;ST_NOEOF&t;0
+DECL|macro|ST_FM_HIT
+mdefine_line|#define ST_FM_HIT       1
 DECL|macro|ST_FM
-mdefine_line|#define&t;ST_FM&t;&t;1
+mdefine_line|#define ST_FM           2
 DECL|macro|ST_EOM_OK
-mdefine_line|#define&t;ST_EOM_OK&t;2
+mdefine_line|#define ST_EOM_OK       3
 DECL|macro|ST_EOM_ERROR
-mdefine_line|#define ST_EOM_ERROR&t;3
+mdefine_line|#define ST_EOM_ERROR&t;4
+DECL|macro|ST_EOD_1
+mdefine_line|#define&t;ST_EOD_1        5
+DECL|macro|ST_EOD_2
+mdefine_line|#define ST_EOD_2        6
 DECL|macro|ST_EOD
-mdefine_line|#define ST_EOD&t;&t;4
+mdefine_line|#define ST_EOD&t;&t;7
+multiline_comment|/* EOD hit while reading =&gt; ST_EOD_1 =&gt; return zero =&gt; ST_EOD_2 =&gt;&n;   return zero =&gt; ST_EOD, return ENOSPC */
 multiline_comment|/* Values of rw */
 DECL|macro|ST_IDLE
 mdefine_line|#define&t;ST_IDLE&t;&t;0

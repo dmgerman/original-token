@@ -24,7 +24,7 @@ mdefine_line|#define NDISC_QUEUE_LEN&t;3
 DECL|macro|NCF_NOARP
 mdefine_line|#define NCF_NOARP&t;&t;0x0100&t;/* no ARP needed on this device */
 DECL|macro|NCF_SUBNET
-mdefine_line|#define NCF_SUBNET&t;&t;0x0200   /* NC entry for subnet&t;&t;*/
+mdefine_line|#define NCF_SUBNET&t;&t;0x0200  /* NC entry for subnet&t;&t;*/
 DECL|macro|NCF_INVALID
 mdefine_line|#define NCF_INVALID&t;&t;0x0400
 DECL|macro|NCF_DELAY_EXPIRED

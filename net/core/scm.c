@@ -23,7 +23,7 @@ macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
-multiline_comment|/*&n; *&t;Allow to send credentials, that user could set with setu(g)id.&n; */
+multiline_comment|/*&n; *&t;Only allow a user to send credentials, that they could set with &n; *&t;setu(g)id.&n; */
 DECL|function|scm_check_creds
 r_static
 id|__inline__
@@ -91,9 +91,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|scm_fp_copy
 r_static
 r_int
-DECL|function|scm_fp_copy
 id|scm_fp_copy
 c_func
 (paren
@@ -398,7 +398,7 @@ id|fpl
 suffix:semicolon
 )brace
 DECL|function|not_one_bit
-r_static
+r_extern
 id|__inline__
 r_int
 id|not_one_bit
@@ -500,7 +500,7 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Temporary hack: no protocols except for AF_UNIX&n;&t;&t; * undestand scm now.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Temporary hack: no protocols except for AF_UNIX&n;&t;&t; *&t;undestand scm now.&n;&t;&t; */
 r_if
 c_cond
 (paren

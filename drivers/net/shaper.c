@@ -1708,9 +1708,6 @@ op_star
 id|dev
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Set up the shaper.&n;&t; */
 id|dev-&gt;priv
 op_assign
@@ -1754,32 +1751,12 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Intialise the packet queues&n;&t; */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|DEV_NUMBUFFS
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|skb_queue_head_init
+id|dev_init_buffers
 c_func
 (paren
-op_amp
-id|dev-&gt;buffs
-(braket
-id|i
-)braket
+id|dev
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;Handlers for when we attach to a device.&n;&t; */
 id|dev-&gt;hard_header
 op_assign

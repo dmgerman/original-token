@@ -693,29 +693,11 @@ id|dev-&gt;get_stats
 op_assign
 id|eql_get_stats
 suffix:semicolon
-multiline_comment|/*&n;  &t; *&t;Fill in the fields of the device structure with &n;&t; *&t;eql-generic values. This should be in a common &n;&t; *&t;file instead of per-driver.  &n;&t; */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|DEV_NUMBUFFS
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|skb_queue_head_init
+multiline_comment|/*&n;  &t; *&t;Fill in the fields of the device structure with &n;&t; *&t;eql-generic values. &n;&t; */
+id|dev_init_buffers
 c_func
 (paren
-op_amp
-id|dev-&gt;buffs
-(braket
-id|i
-)braket
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now we undo some of the things that eth_setup does&n;&t; * &t;that we don&squot;t like &n;&t; */

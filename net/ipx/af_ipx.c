@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Implements an IPX socket layer (badly - but I&squot;m working on it).&n; *&n; *&t;This code is derived from work by&n; *&t;&t;Ross Biro&t;: &t;Writing the original IP stack&n; *&t;&t;Fred Van Kempen :&t;Tidying up the TCP/IP&n; *&n; *&t;Many thanks go to Keith Baker, Institute For Industrial Information&n; *&t;Technology Ltd, Swansea University for allowing me to work on this&n; *&t;in my own time even though it was in some ways related to commercial&n; *&t;work I am currently employed to do there.&n; *&n; *&t;All the material in this file is subject to the Gnu license version 2.&n; *&t;Neither Alan Cox nor the Swansea University Computer Society admit liability&n; *&t;nor provide warranty for any of this software. This material is provided&n; *&t;as is and at no charge.&n; *&n; *&t;Revision 0.21:&t;Uses the new generic socket option code.&n; *&t;Revision 0.22:&t;Gcc clean ups and drop out device registration. Use the&n; *&t;&t;&t;new multi-protocol edition of hard_header&n; *&t;Revision 0.23:  IPX /proc by Mark Evans.&n; *     &t;&t;&t;Adding a route will overwrite any existing route to the same&n; *&t;&t;&t;network.&n; *&t;Revision 0.24:&t;Supports new /proc with no 4K limit&n; *&t;Revision 0.25:&t;Add ephemeral sockets, passive local network&n; *&t;&t;&t;identification, support for local net 0 and&n; *&t;&t;&t;multiple datalinks &lt;Greg Page&gt;&n; *&t;Revision 0.26:  Device drop kills IPX routes via it. (needed for modules)&n; *&t;Revision 0.27:  Autobind &lt;Mark Evans&gt;&n; *&t;Revision 0.28:  Small fix for multiple local networks &lt;Thomas Winder&gt;&n; *&t;Revision 0.29:  Assorted major errors removed &lt;Mark Evans&gt;&n; *&t;&t;&t;Small correction to promisc mode error fix &lt;Alan Cox&gt;&n; *&t;&t;&t;Asynchronous I/O support.&n; *&t;&t;&t;Changed to use notifiers and the newer packet_type stuff.&n; *&t;&t;&t;Assorted major fixes &lt;Alejandro Liu&gt;&n; *&t;Revision 0.30:&t;Moved to net/ipx/...&t;&lt;Alan Cox&gt;&n; *&t;&t;&t;Don&squot;t set address length on recvfrom that errors.&n; *&t;&t;&t;Incorrect verify_area.&n; *&t;Revision 0.31:&t;New sk_buffs. This still needs a lot of testing. &lt;Alan Cox&gt;&n; *&t;Revision 0.32:  Using sock_alloc_send_skb, firewall hooks. &lt;Alan Cox&gt;&n; *&t;&t;&t;Supports sendmsg/recvmsg&n; *&t;Revision 0.33:&t;Internal network support, routing changes, uses a&n; *&t;&t;&t;protocol private area for ipx data.&n; *&t;Revision 0.34:&t;Module support. &lt;Jim Freeman&gt;&n; *&t;Revision 0.35:  Checksum support. &lt;Neil Turton&gt;, hooked in by &lt;Alan Cox&gt;&n; *&t;&t;&t;Handles WIN95 discovery packets &lt;Volker Lendecke&gt;&n; *&t;Revision 0.36:&t;Internal bump up for 2.1&n; *&t;Revision 0.37:&t;Began adding POSIXisms.&n; *&n; *&t;Protect the module by a MOD_INC_USE_COUNT/MOD_DEC_USE_COUNT&n; *&t;pair. Also, now usage count is managed this way&n; *&t;-Count one if the auto_interface mode is on&n; *      -Count one per configured interface&n; *&n; *&t;Jacques Gelinas (jacques@solucorp.qc.ca)&n; *&n; *&n; * &t;Portions Copyright (c) 1995 Caldera, Inc. &lt;greg@caldera.com&gt;&n; *&t;Neither Greg Page nor Caldera, Inc. admit liability nor provide&n; *&t;warranty for any of this software. This material is provided&n; *&t;&quot;AS-IS&quot; and at no charge.&n; */
+multiline_comment|/*&n; *&t;Implements an IPX socket layer (badly - but I&squot;m working on it).&n; *&n; *&t;This code is derived from work by&n; *&t;&t;Ross Biro&t;: &t;Writing the original IP stack&n; *&t;&t;Fred Van Kempen :&t;Tidying up the TCP/IP&n; *&n; *&t;Many thanks go to Keith Baker, Institute For Industrial Information&n; *&t;Technology Ltd, Swansea University for allowing me to work on this&n; *&t;in my own time even though it was in some ways related to commercial&n; *&t;work I am currently employed to do there.&n; *&n; *&t;All the material in this file is subject to the Gnu license version 2.&n; *&t;Neither Alan Cox nor the Swansea University Computer Society admit liability&n; *&t;nor provide warranty for any of this software. This material is provided&n; *&t;as is and at no charge.&n; *&n; *&t;Revision 0.21:&t;Uses the new generic socket option code.&n; *&t;Revision 0.22:&t;Gcc clean ups and drop out device registration. Use the&n; *&t;&t;&t;new multi-protocol edition of hard_header&n; *&t;Revision 0.23:  IPX /proc by Mark Evans.&n; *     &t;&t;&t;Adding a route will overwrite any existing route to the same&n; *&t;&t;&t;network.&n; *&t;Revision 0.24:&t;Supports new /proc with no 4K limit&n; *&t;Revision 0.25:&t;Add ephemeral sockets, passive local network&n; *&t;&t;&t;identification, support for local net 0 and&n; *&t;&t;&t;multiple datalinks &lt;Greg Page&gt;&n; *&t;Revision 0.26:  Device drop kills IPX routes via it. (needed for modules)&n; *&t;Revision 0.27:  Autobind &lt;Mark Evans&gt;&n; *&t;Revision 0.28:  Small fix for multiple local networks &lt;Thomas Winder&gt;&n; *&t;Revision 0.29:  Assorted major errors removed &lt;Mark Evans&gt;&n; *&t;&t;&t;Small correction to promisc mode error fix &lt;Alan Cox&gt;&n; *&t;&t;&t;Asynchronous I/O support.&n; *&t;&t;&t;Changed to use notifiers and the newer packet_type stuff.&n; *&t;&t;&t;Assorted major fixes &lt;Alejandro Liu&gt;&n; *&t;Revision 0.30:&t;Moved to net/ipx/...&t;&lt;Alan Cox&gt;&n; *&t;&t;&t;Don&squot;t set address length on recvfrom that errors.&n; *&t;&t;&t;Incorrect verify_area.&n; *&t;Revision 0.31:&t;New sk_buffs. This still needs a lot of testing. &lt;Alan Cox&gt;&n; *&t;Revision 0.32:  Using sock_alloc_send_skb, firewall hooks. &lt;Alan Cox&gt;&n; *&t;&t;&t;Supports sendmsg/recvmsg&n; *&t;Revision 0.33:&t;Internal network support, routing changes, uses a&n; *&t;&t;&t;protocol private area for ipx data.&n; *&t;Revision 0.34:&t;Module support. &lt;Jim Freeman&gt;&n; *&t;Revision 0.35:  Checksum support. &lt;Neil Turton&gt;, hooked in by &lt;Alan Cox&gt;&n; *&t;&t;&t;Handles WIN95 discovery packets &lt;Volker Lendecke&gt;&n; *&t;Revision 0.36:&t;Internal bump up for 2.1&n; *&t;Revision 0.37:&t;Began adding POSIXisms.&n; *&t;Revision 0.38:  Asynchronous socket stuff made current.&n; *&n; *&t;Protect the module by a MOD_INC_USE_COUNT/MOD_DEC_USE_COUNT&n; *&t;pair. Also, now usage count is managed this way&n; *&t;-Count one if the auto_interface mode is on&n; *      -Count one per configured interface&n; *&n; *&t;Jacques Gelinas (jacques@solucorp.qc.ca)&n; *&n; *&n; * &t;Portions Copyright (c) 1995 Caldera, Inc. &lt;greg@caldera.com&gt;&n; *&t;Neither Greg Page nor Caldera, Inc. admit liability nor provide&n; *&t;warranty for any of this software. This material is provided&n; *&t;&quot;AS-IS&quot; and at no charge.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -145,9 +145,9 @@ id|ipx_internal_net
 op_assign
 l_int|NULL
 suffix:semicolon
+DECL|function|ipxcfg_set_auto_create
 r_static
 r_int
-DECL|function|ipxcfg_set_auto_create
 id|ipxcfg_set_auto_create
 c_func
 (paren
@@ -186,9 +186,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ipxcfg_set_auto_select
 r_static
 r_int
-DECL|function|ipxcfg_set_auto_select
 id|ipxcfg_set_auto_select
 c_func
 (paren
@@ -219,9 +219,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ipxcfg_get_config_data
 r_static
 r_int
-DECL|function|ipxcfg_get_config_data
 id|ipxcfg_get_config_data
 c_func
 (paren
@@ -265,9 +265,9 @@ suffix:semicolon
 )brace
 multiline_comment|/***********************************************************************************************************************&bslash;&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n;*&t;&t;&t;&t;&t;&t;Handlers for the socket list.&t;&t;&t;&t;&t;&t;*&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n;&bslash;***********************************************************************************************************************/
 multiline_comment|/*&n; *&t;Note: Sockets may not be removed _during_ an interrupt or inet_bh&n; *&t;handler using this technique. They can be added although we do not&n; *&t;use this facility.&n; */
+DECL|function|ipx_remove_socket
 r_static
 r_void
-DECL|function|ipx_remove_socket
 id|ipx_remove_socket
 c_func
 (paren
@@ -390,9 +390,9 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;This is only called from user mode. Thus it protects itself against&n; *&t;interrupt users but doesn&squot;t worry about being called during work.&n; *&t;Once it is removed from the queue no interrupt or bottom half will&n; *&t;touch it and we are (fairly 8-) ) safe.&n; */
+DECL|function|ipx_destroy_socket
 r_static
 r_void
-DECL|function|ipx_destroy_socket
 id|ipx_destroy_socket
 c_func
 (paren
@@ -459,9 +459,9 @@ r_int
 r_int
 )paren
 suffix:semicolon
+DECL|function|ipxitf_clear_primary_net
 r_static
 r_void
-DECL|function|ipxitf_clear_primary_net
 id|ipxitf_clear_primary_net
 c_func
 (paren
@@ -489,10 +489,10 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+DECL|function|ipxitf_find_using_phys
 r_static
 id|ipx_interface
 op_star
-DECL|function|ipxitf_find_using_phys
 id|ipxitf_find_using_phys
 c_func
 (paren
@@ -542,10 +542,10 @@ r_return
 id|i
 suffix:semicolon
 )brace
+DECL|function|ipxitf_find_using_net
 r_static
 id|ipx_interface
 op_star
-DECL|function|ipxitf_find_using_net
 id|ipxitf_find_using_net
 c_func
 (paren
@@ -593,9 +593,9 @@ id|i
 suffix:semicolon
 )brace
 multiline_comment|/* Sockets are bound to a particular IPX interface. */
+DECL|function|ipxitf_insert_socket
 r_static
 r_void
-DECL|function|ipxitf_insert_socket
 id|ipxitf_insert_socket
 c_func
 (paren
@@ -659,11 +659,11 @@ id|sk
 suffix:semicolon
 )brace
 )brace
+DECL|function|ipxitf_find_socket
 r_static
 r_struct
 id|sock
 op_star
-DECL|function|ipxitf_find_socket
 id|ipxitf_find_socket
 c_func
 (paren
@@ -710,11 +710,11 @@ id|s
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_IPX_INTERN
+DECL|function|ipxitf_find_internal_socket
 r_static
 r_struct
 id|sock
 op_star
-DECL|function|ipxitf_find_internal_socket
 id|ipxitf_find_internal_socket
 c_func
 (paren
@@ -793,9 +793,9 @@ id|ipx_interface
 op_star
 )paren
 suffix:semicolon
+DECL|function|ipxitf_down
 r_static
 r_void
-DECL|function|ipxitf_down
 id|ipxitf_down
 c_func
 (paren
@@ -981,9 +981,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|ipxitf_device_event
 r_static
 r_int
-DECL|function|ipxitf_device_event
 id|ipxitf_device_event
 c_func
 (paren
@@ -1120,9 +1120,9 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * On input skb-&gt;sk is NULL. Nobody is charged for the memory.&n; */
 macro_line|#ifdef CONFIG_IPX_INTERN
+DECL|function|ipxitf_demux_socket
 r_static
 r_int
-DECL|function|ipxitf_demux_socket
 id|ipxitf_demux_socket
 c_func
 (paren
@@ -1314,9 +1314,9 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#else
+DECL|function|ipxitf_demux_socket
 r_static
 r_int
-DECL|function|ipxitf_demux_socket
 id|ipxitf_demux_socket
 c_func
 (paren
@@ -1585,11 +1585,11 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+DECL|function|ipxitf_adjust_skbuff
 r_static
 r_struct
 id|sk_buff
 op_star
-DECL|function|ipxitf_adjust_skbuff
 id|ipxitf_adjust_skbuff
 c_func
 (paren
@@ -2478,7 +2478,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* dump packet if too many hops or already seen this net */
+multiline_comment|/* &n;&t;&t; *&t;Dump packet if too many hops or already seen this net &n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2542,7 +2542,7 @@ op_assign
 id|ifcs-&gt;if_next
 )paren
 (brace
-multiline_comment|/* that aren&squot;t in the list */
+multiline_comment|/* That aren&squot;t in the list */
 id|l
 op_assign
 (paren
@@ -2647,7 +2647,7 @@ id|ifcs-&gt;if_netnum
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/* reset netnum in packet */
+multiline_comment|/*&n;&t;&t;&t; *&t;Reset network number in packet &n;&t;&t;&t; */
 id|ipx-&gt;ipx_dest.net
 op_assign
 id|intrfc-&gt;if_netnum
@@ -2836,9 +2836,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ipxitf_insert
 r_static
 r_void
-DECL|function|ipxitf_insert
 id|ipxitf_insert
 c_func
 (paren
@@ -2911,9 +2911,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|ipxitf_create_internal
 r_static
 r_int
-DECL|function|ipxitf_create_internal
 id|ipxitf_create_internal
 c_func
 (paren
@@ -3064,9 +3064,9 @@ id|intrfc
 )paren
 suffix:semicolon
 )brace
+DECL|function|ipx_map_frame_type
 r_static
 r_int
-DECL|function|ipx_map_frame_type
 id|ipx_map_frame_type
 c_func
 (paren
@@ -3136,9 +3136,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ipxitf_create
 r_static
 r_int
-DECL|function|ipxitf_create
 id|ipxitf_create
 c_func
 (paren
@@ -3563,9 +3563,9 @@ id|intrfc
 )paren
 suffix:semicolon
 )brace
+DECL|function|ipxitf_delete
 r_static
 r_int
-DECL|function|ipxitf_delete
 id|ipxitf_delete
 c_func
 (paren
@@ -3695,10 +3695,10 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+DECL|function|ipxitf_auto_create
 r_static
 id|ipx_interface
 op_star
-DECL|function|ipxitf_auto_create
 id|ipxitf_auto_create
 c_func
 (paren
@@ -3909,9 +3909,9 @@ r_return
 id|intrfc
 suffix:semicolon
 )brace
+DECL|function|ipxitf_ioctl_real
 r_static
 r_int
-DECL|function|ipxitf_ioctl_real
 id|ipxitf_ioctl_real
 c_func
 (paren
@@ -4293,9 +4293,9 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
+DECL|function|ipxitf_ioctl
 r_static
 r_int
-DECL|function|ipxitf_ioctl
 id|ipxitf_ioctl
 c_func
 (paren
@@ -4329,10 +4329,10 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************************************************&bslash;&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;            *&n;*&t;            &t;&t;&t;Routing tables for the IPX socket layer&t;&t;&t;&t;            *&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;    *&n;&bslash;*******************************************************************************************************************/
+DECL|function|ipxrtr_lookup
 r_static
 id|ipx_route
 op_star
-DECL|function|ipxrtr_lookup
 id|ipxrtr_lookup
 c_func
 (paren
@@ -4373,9 +4373,9 @@ r_return
 id|r
 suffix:semicolon
 )brace
+DECL|function|ipxrtr_add_route
 r_static
 r_int
-DECL|function|ipxrtr_add_route
 id|ipxrtr_add_route
 c_func
 (paren
@@ -4517,9 +4517,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ipxrtr_del_routes
 r_static
 r_void
-DECL|function|ipxrtr_del_routes
 id|ipxrtr_del_routes
 c_func
 (paren
@@ -4592,9 +4592,9 @@ suffix:semicolon
 )brace
 )brace
 )brace
+DECL|function|ipxrtr_create
 r_static
 r_int
-DECL|function|ipxrtr_create
 id|ipxrtr_create
 c_func
 (paren
@@ -4639,9 +4639,9 @@ id|rd-&gt;ipx_router_node
 )paren
 suffix:semicolon
 )brace
+DECL|function|ipxrtr_delete
 r_static
 r_int
-DECL|function|ipxrtr_delete
 id|ipxrtr_delete
 c_func
 (paren
@@ -4693,13 +4693,11 @@ op_logical_neg
 id|tmp-&gt;ir_routed
 )paren
 )paren
-(brace
 multiline_comment|/* Directly connected; can&squot;t lose route */
 r_return
 op_minus
 id|EPERM
 suffix:semicolon
-)brace
 op_star
 id|r
 op_assign
@@ -4951,12 +4949,10 @@ id|rt
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 op_minus
 id|ENETUNREACH
 suffix:semicolon
-)brace
 id|intrfc
 op_assign
 id|rt-&gt;ir_intrfc
@@ -5293,9 +5289,9 @@ id|ipx-&gt;ipx_dest.node
 )paren
 suffix:semicolon
 )brace
+DECL|function|ipxrtr_route_skb
 r_static
 r_int
-DECL|function|ipxrtr_route_skb
 id|ipxrtr_route_skb
 c_func
 (paren
@@ -5556,11 +5552,11 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
+DECL|function|ipx_frame_name
 r_static
 r_const
 r_char
 op_star
-DECL|function|ipx_frame_name
 id|ipx_frame_name
 c_func
 (paren
@@ -5616,11 +5612,11 @@ l_string|&quot;None&quot;
 suffix:semicolon
 )brace
 )brace
+DECL|function|ipx_device_name
 r_static
 r_const
 r_char
 op_star
-DECL|function|ipx_device_name
 id|ipx_device_name
 c_func
 (paren
@@ -6909,6 +6905,44 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+DECL|function|def_callback3
+r_static
+r_void
+id|def_callback3
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_int
+id|len
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sk-&gt;dead
+)paren
+(brace
+id|wake_up_interruptible
+c_func
+(paren
+id|sk-&gt;sleep
+)paren
+suffix:semicolon
+id|sock_wake_async
+c_func
+(paren
+id|sk-&gt;socket
+comma
+l_int|2
+)paren
+suffix:semicolon
+)brace
+)brace
 DECL|function|ipx_create
 r_static
 r_int
@@ -7066,7 +7100,7 @@ id|def_callback2
 suffix:semicolon
 id|sk-&gt;write_space
 op_assign
-id|def_callback1
+id|def_callback3
 suffix:semicolon
 id|sk-&gt;error_report
 op_assign
@@ -7179,10 +7213,10 @@ id|SOCK_DGRAM
 )paren
 suffix:semicolon
 )brace
+DECL|function|ipx_first_free_socketnum
 r_static
 r_int
 r_int
-DECL|function|ipx_first_free_socketnum
 id|ipx_first_free_socketnum
 c_func
 (paren
@@ -8258,6 +8292,7 @@ comma
 op_decrement
 id|len
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -8302,6 +8337,7 @@ op_increment
 op_assign
 l_char|&squot; &squot;
 suffix:semicolon
+)brace
 op_star
 id|p
 op_assign
@@ -9191,6 +9227,7 @@ r_return
 id|copied
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;FIXME: We have to support shutdown really.&n; */
 DECL|function|ipx_shutdown
 r_static
 r_int
@@ -9969,7 +10006,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Swansea University Computer Society IPX 0.35 for NET3.037&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society IPX 0.38 for NET3.037&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
@@ -9982,9 +10019,9 @@ suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 multiline_comment|/* Note on MOD_{INC,DEC}_USE_COUNT:&n; *&n; * Use counts are incremented/decremented when&n; * sockets are created/deleted.&n; *&n; * Routes are always associated with an interface, and&n; * allocs/frees will remain properly accounted for by&n; * their associated interfaces.&n; *&n; * Ergo, before the ipx module can be removed, all IPX&n; * sockets be closed from user space.&n; */
+DECL|function|ipx_proto_finito
 r_static
 r_void
-DECL|function|ipx_proto_finito
 id|ipx_proto_finito
 c_func
 (paren

@@ -27,9 +27,7 @@ macro_line|#include &lt;net/slhc.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;net/br.h&gt;
-macro_line|#ifdef CONFIG_NET_ALIAS
 macro_line|#include &lt;linux/net_alias.h&gt;
-macro_line|#endif
 macro_line|#ifdef CONFIG_KERNELD
 macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
@@ -44,7 +42,7 @@ id|device
 op_star
 id|dev_up_base
 suffix:semicolon
-multiline_comment|/*&n; *&t;The list of packet types we will receive (as opposed to discard)&n; *&t;and the routines to invoke.&n; */
+multiline_comment|/*&n; *&t;The list of packet types we will receive (as opposed to discard)&n; *&t;and the routines to invoke.&n; *&n; *&t;Why 16. Because with 16 the only overlap we get on a hash of the&n; *&t;low nibble of the protocol value is RARP/SNAP/X.25. &n; *&n; *&t;&t;0800&t;IP&n; *&t;&t;0001&t;802.3&n; *&t;&t;0002&t;AX.25&n; *&t;&t;0004&t;802.2&n; *&t;&t;8035&t;RARP&n; *&t;&t;0005&t;SNAP&n; *&t;&t;0805&t;X.25&n; *&t;&t;0806&t;ARP&n; *&t;&t;8137&t;IPX&n; *&t;&t;0009&t;Localtalk&n; *&t;&t;86DD&t;IPv6&n; */
 DECL|variable|ptype_base
 r_struct
 id|packet_type
@@ -54,6 +52,7 @@ id|ptype_base
 l_int|16
 )braket
 suffix:semicolon
+multiline_comment|/* 16 way hashed list */
 DECL|variable|ptype_all
 r_struct
 id|packet_type
@@ -492,11 +491,10 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET_ALIAS
+multiline_comment|/* &n;&t;&t; *&t;FIXME: This logic was wrong before. Now its&n;&t;&t; *&t;obviously so. I think the change here (removing the&n;&t;&t; *&t;! on the net_alias_is) is right. ANK ??&n;&t;&t; */
 r_if
 c_cond
 (paren
-op_logical_neg
 id|net_alias_is
 c_func
 (paren
@@ -505,13 +503,6 @@ id|dev
 op_logical_or
 id|dev-&gt;tx_queue_len
 )paren
-macro_line|#else
-r_if
-c_cond
-(paren
-id|dev-&gt;tx_queue_len
-)paren
-macro_line|#endif
 (brace
 id|cli
 c_func
@@ -656,6 +647,7 @@ id|ct
 op_increment
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;The device is no longer up. Drop it from the list.&n;&t; */
 id|devp
 op_assign
 op_amp
@@ -744,6 +736,128 @@ comma
 id|nb
 )paren
 suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Support routine. Sends outgoing frames to any network&n; *&t;taps currently in use.&n; */
+DECL|function|queue_xmit_nit
+r_static
+r_void
+id|queue_xmit_nit
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|packet_type
+op_star
+id|ptype
+suffix:semicolon
+id|get_fast_time
+c_func
+(paren
+op_amp
+id|skb-&gt;stamp
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|ptype
+op_assign
+id|ptype_all
+suffix:semicolon
+id|ptype
+op_ne
+l_int|NULL
+suffix:semicolon
+id|ptype
+op_assign
+id|ptype-&gt;next
+)paren
+(brace
+multiline_comment|/* Never send packets back to the socket&n;&t;&t; * they originated from - MvS (miquels@drinkel.ow.org)&n;&t;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|ptype-&gt;dev
+op_eq
+id|dev
+op_logical_or
+op_logical_neg
+id|ptype-&gt;dev
+)paren
+op_logical_and
+(paren
+(paren
+r_struct
+id|sock
+op_star
+)paren
+id|ptype-&gt;data
+op_ne
+id|skb-&gt;sk
+)paren
+)paren
+(brace
+r_struct
+id|sk_buff
+op_star
+id|skb2
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|skb2
+op_assign
+id|skb_clone
+c_func
+(paren
+id|skb
+comma
+id|GFP_ATOMIC
+)paren
+)paren
+op_eq
+l_int|NULL
+)paren
+r_break
+suffix:semicolon
+id|skb2-&gt;mac.raw
+op_assign
+id|skb2-&gt;data
+suffix:semicolon
+id|skb2-&gt;nh.raw
+op_assign
+id|skb2-&gt;h.raw
+op_assign
+id|skb2-&gt;data
+op_plus
+id|dev-&gt;hard_header_len
+suffix:semicolon
+id|ptype
+op_member_access_from_pointer
+id|func
+c_func
+(paren
+id|skb2
+comma
+id|skb-&gt;dev
+comma
+id|ptype
+)paren
+suffix:semicolon
+)brace
+)brace
 )brace
 multiline_comment|/*&n; *&t;Send (or queue for sending) a packet. &n; *&n; *&t;IMPORTANT: When this is called to resend frames. The caller MUST&n; *&t;already have locked the sk_buff. Apart from that we do the&n; *&t;rest of the magic.&n; */
 DECL|function|do_dev_queue_xmit
@@ -875,22 +989,12 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* if this isn&squot;t a retransmission, use the first packet instead... */
+multiline_comment|/*&n;&t; *&t;If this isn&squot;t a retransmission, use the first packet instead.&n;&t; *&t;Note: We don&squot;t do strict priority ordering here. We will in&n;&t; *&t;fact kick the queue that is our priority. The dev_tint reload&n;&t; *&t;does strict priority queueing. In effect what we are doing here&n;&t; *&t;is to add some random jitter to the queues and to do so by&n;&t; *&t;saving clocks. Doing a perfect priority queue isn&squot;t a good idea&n;&t; *&t;as you get some fascinating timing interactions.&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|retransmission
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|skb_queue_len
-c_func
-(paren
-id|list
-)paren
 )paren
 (brace
 multiline_comment|/* avoid overrunning the device queue.. */
@@ -917,118 +1021,20 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-)brace
 multiline_comment|/* copy outgoing packets to any sniffer packet handlers */
 r_if
 c_cond
 (paren
 id|dev_nit
 )paren
-(brace
-r_struct
-id|packet_type
-op_star
-id|ptype
-suffix:semicolon
-id|get_fast_time
-c_func
-(paren
-op_amp
-id|skb-&gt;stamp
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|ptype
-op_assign
-id|ptype_all
-suffix:semicolon
-id|ptype
-op_ne
-l_int|NULL
-suffix:semicolon
-id|ptype
-op_assign
-id|ptype-&gt;next
-)paren
-(brace
-multiline_comment|/* Never send packets back to the socket&n;&t;&t;&t;&t; * they originated from - MvS (miquels@drinkel.ow.org)&n;&t;&t;&t;&t; */
-r_if
-c_cond
-(paren
-(paren
-id|ptype-&gt;dev
-op_eq
-id|dev
-op_logical_or
-op_logical_neg
-id|ptype-&gt;dev
-)paren
-op_logical_and
-(paren
-(paren
-r_struct
-id|sock
-op_star
-)paren
-id|ptype-&gt;data
-op_ne
-id|skb-&gt;sk
-)paren
-)paren
-(brace
-r_struct
-id|sk_buff
-op_star
-id|skb2
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|skb2
-op_assign
-id|skb_clone
+id|queue_xmit_nit
 c_func
 (paren
 id|skb
 comma
-id|GFP_ATOMIC
-)paren
-)paren
-op_eq
-l_int|NULL
-)paren
-r_break
-suffix:semicolon
-id|skb2-&gt;mac.raw
-op_assign
-id|skb2-&gt;data
-suffix:semicolon
-id|skb2-&gt;nh.raw
-op_assign
-id|skb2-&gt;h.raw
-op_assign
-id|skb2-&gt;data
-op_plus
-id|dev-&gt;hard_header_len
-suffix:semicolon
-id|ptype
-op_member_access_from_pointer
-id|func
-c_func
-(paren
-id|skb2
-comma
-id|skb-&gt;dev
-comma
-id|ptype
+id|dev
 )paren
 suffix:semicolon
-)brace
-)brace
-)brace
 r_if
 c_cond
 (paren
@@ -1109,6 +1115,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Entry point for transmitting frames.&n; */
 DECL|function|dev_queue_xmit
 r_int
 id|dev_queue_xmit
@@ -1148,6 +1155,7 @@ op_logical_neg
 id|skb-&gt;arp
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; *&t;FIXME: we should make the printk for no rebuild&n;&t;&t; *&t;header a default rebuild_header routine and drop&n;&t;&t; *&t;this call. Similarly we should make hard_header&n;&t;&t; *&t;have a default NULL operation not check conditions.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1187,7 +1195,6 @@ id|dev-&gt;name
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&n;&t; * &t;If dev is an alias, switch to its main device.&n;&t; *&t;&quot;arp&quot; resolution has been made with alias device, so&n;&t; *&t;arp entries refer to alias, not main.&n;&t; *&n;&t; */
-macro_line|#ifdef CONFIG_NET_ALIAS
 r_if
 c_cond
 (paren
@@ -1207,7 +1214,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 id|do_dev_queue_xmit
 c_func
 (paren
@@ -1227,6 +1233,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Fast path for loopback frames.&n; */
 DECL|function|dev_loopback_xmit
 r_void
 id|dev_loopback_xmit
@@ -1294,7 +1301,7 @@ id|newskb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Receive a packet from a device driver and queue it for the upper&n; *&t;(protocol) levels.  It always succeeds. This is the recommended &n; *&t;interface to use.&n; */
+multiline_comment|/*&n; *&t;Receive a packet from a device driver and queue it for the upper&n; *&t;(protocol) levels.  It always succeeds. &n; */
 DECL|function|netif_rx
 r_void
 id|netif_rx
@@ -1859,13 +1866,11 @@ macro_line|#endif&t;&t;
 multiline_comment|/* End of queue loop */
 multiline_comment|/*&n;  &t; *&t;We have emptied the queue&n;  &t; */
 multiline_comment|/*&n;&t; *&t;One last output flush.&n;&t; */
-macro_line|#ifdef XMIT_AFTER&t; 
 id|dev_transmit
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; *&t;This routine is called when an device driver (i.e. an&n; *&t;interface) is ready to transmit a packet.&n; */
 DECL|function|dev_tint
@@ -1892,7 +1897,6 @@ op_star
 id|head
 suffix:semicolon
 multiline_comment|/*&n;&t; * aliases do not transmit (for now :) )&n;&t; */
-macro_line|#ifdef CONFIG_NET_ALIAS
 r_if
 c_cond
 (paren
@@ -1914,7 +1918,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif
 id|head
 op_assign
 id|dev-&gt;buffs
@@ -2020,7 +2023,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Perform a SIOCGIFCONF call. This structure will change&n; *&t;size shortly, and there is nothing I can do about it.&n; *&t;Thus we will need a &squot;compatibility mode&squot;.&n; */
+multiline_comment|/*&n; *&t;Perform a SIOCGIFCONF call. This structure will change&n; *&t;size eventually, and there is nothing I can do about it.&n; *&t;Thus we will need a &squot;compatibility mode&squot;.&n; */
 DECL|function|dev_ifconf
 r_static
 r_int
@@ -4117,6 +4120,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|lapbeth_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|proc_net_dev
 r_static
@@ -4277,6 +4288,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_SOUNDMODEM)
 id|sm_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_LAPBETHER)
+id|lapbeth_init
 c_func
 (paren
 )paren

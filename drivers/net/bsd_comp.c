@@ -31,7 +31,7 @@ macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/ppp_defs.h&gt;
 macro_line|#ifdef NEW_SKBUFF
-macro_line|#include &lt;linux/netprotocol.h&gt;
+macro_line|# /*nodep*/ include &lt;linux/netprotocol.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;

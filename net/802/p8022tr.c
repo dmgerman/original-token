@@ -1,3 +1,4 @@
+multiline_comment|/*&n; * NET3:&t;Handling for token ring frames that are not IP. IP is hooked&n; *&t;&t;early in the token ring support code.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -16,12 +17,12 @@ id|p8022tr_list
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n; *&t;We don&squot;t handle the loopback SAP stuff, the extended&n; *&t;802.2 command set, multicast SAP identifiers and non UI&n; *&t;frames. We have the absolute minimum needed for IPX,&n; *&t;IP and Appletalk phase 2.&n; */
+multiline_comment|/*&n; *&t;We don&squot;t handle the loopback SAP stuff, the extended&n; *&t;802.2 command set, multicast SAP identifiers and non UI&n; *&t;frames. We have the absolute minimum needed for IPX,&n; *&t;IP and Appletalk phase 2. See the llc_* routines for support&n; *&t;to handle the fun stuff.&n; *&n; *&t;We assume the list will be very short (at the moment its normally&n; *&t;one or two entries).&n; */
+DECL|function|find_8022tr_client
 r_static
 r_struct
 id|datalink_proto
 op_star
-DECL|function|find_8022tr_client
 id|find_8022tr_client
 c_func
 (paren
@@ -68,8 +69,8 @@ r_return
 id|proto
 suffix:semicolon
 )brace
-r_int
 DECL|function|p8022tr_rcv
+r_int
 id|p8022tr_rcv
 c_func
 (paren
@@ -155,9 +156,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|p8022tr_datalink_header
 r_static
 r_void
-DECL|function|p8022tr_datalink_header
 id|p8022tr_datalink_header
 c_func
 (paren
@@ -339,10 +340,10 @@ id|p8022tr_packet_type
 )paren
 suffix:semicolon
 )brace
+DECL|function|register_8022tr_client
 r_struct
 id|datalink_proto
 op_star
-DECL|function|register_8022tr_client
 id|register_8022tr_client
 c_func
 (paren

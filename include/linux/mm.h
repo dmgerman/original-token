@@ -651,7 +651,7 @@ id|to
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|zap_page_range
 c_func
 (paren

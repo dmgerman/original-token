@@ -114,19 +114,6 @@ r_int
 id|wic_rebuild_header
 c_func
 (paren
-r_void
-op_star
-id|buff
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|raddr
-comma
 r_struct
 id|sk_buff
 op_star
@@ -530,19 +517,6 @@ op_star
 id|orig_rebuild_header
 )paren
 (paren
-r_void
-op_star
-id|eth
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|raddr
-comma
 r_struct
 id|sk_buff
 op_star
@@ -552,8 +526,8 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* Entry point of WIC driver.&n;   Probe the hardware, and register/initialize the driver. */
-r_int
 DECL|function|wic_init
+r_int
 id|wic_init
 c_func
 (paren
@@ -1066,8 +1040,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Bottom half handler for the delayed request.&n;   This routine is kicked by do_timer().&n;   Request `wic_bh&squot; to be invoked. */
-r_void
 DECL|function|wic_kick_bh
+r_void
 id|wic_kick_bh
 c_func
 (paren
@@ -1300,8 +1274,8 @@ comma
 id|wic_error
 )brace
 suffix:semicolon
-r_void
 DECL|function|wic_set_multicast_list
+r_void
 id|wic_set_multicast_list
 c_func
 (paren
@@ -1578,8 +1552,8 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Bottom half handler of WIC. */
-r_void
 DECL|function|wic_bh
+r_void
 id|wic_bh
 c_func
 (paren
@@ -1694,8 +1668,8 @@ id|tq_timer
 suffix:semicolon
 )brace
 )brace
-r_int
 DECL|function|wic_bh_timeout_error
+r_int
 id|wic_bh_timeout_error
 c_func
 (paren
@@ -1919,10 +1893,6 @@ c_cond
 id|rcv-&gt;skb
 )paren
 (brace
-id|rcv-&gt;skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -1946,10 +1916,6 @@ c_cond
 id|snd-&gt;skb
 )paren
 (brace
-id|snd-&gt;skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
@@ -2018,8 +1984,8 @@ r_return
 id|TIMEOUT
 suffix:semicolon
 )brace
-r_int
 DECL|function|wic_none
+r_int
 id|wic_none
 c_func
 (paren
@@ -2049,9 +2015,10 @@ id|OK
 suffix:semicolon
 )brace
 multiline_comment|/* WIC_RECEIVE --- receive a byte(two nibbles)&n;   Returns OK on success, TIMEOUT on timeout */
+DECL|function|wic_receive
+r_extern
 r_inline
 r_int
-DECL|function|wic_receive
 id|wic_receive
 c_func
 (paren
@@ -2152,8 +2119,8 @@ id|OK
 suffix:semicolon
 )brace
 multiline_comment|/* WIC_RECEIVE_PACKET --- receive a packet */
-r_int
 DECL|function|wic_receive_packet
+r_int
 id|wic_receive_packet
 c_func
 (paren
@@ -2965,9 +2932,10 @@ id|OK
 suffix:semicolon
 )brace
 multiline_comment|/* WIC_SEND --- send a byte (two nibbles) &n;   Returns OK on success, TIMEOUT when timeout    */
+DECL|function|wic_send
+r_extern
 r_inline
 r_int
-DECL|function|wic_send
 id|wic_send
 c_func
 (paren
@@ -3067,8 +3035,8 @@ id|OK
 suffix:semicolon
 )brace
 multiline_comment|/* WIC_SEND_PACKET --- send a packet */
-r_int
 DECL|function|wic_send_packet
+r_int
 id|wic_send_packet
 c_func
 (paren
@@ -3882,8 +3850,8 @@ r_return
 id|OK
 suffix:semicolon
 )brace
-r_int
 DECL|function|wic_connection_close
+r_int
 id|wic_connection_close
 c_func
 (paren
@@ -3957,8 +3925,8 @@ id|OK
 suffix:semicolon
 )brace
 multiline_comment|/* WIC_ERROR --- wait till other end settled */
-r_int
 DECL|function|wic_error
+r_int
 id|wic_error
 c_func
 (paren
@@ -4090,8 +4058,8 @@ id|OK
 suffix:semicolon
 )brace
 multiline_comment|/* Handle the parallel port interrupts. */
-r_void
 DECL|function|wic_interrupt
+r_void
 id|wic_interrupt
 c_func
 (paren
@@ -4318,30 +4286,24 @@ r_break
 suffix:semicolon
 )brace
 )brace
-r_int
 DECL|function|wic_rebuild_header
+r_int
 id|wic_rebuild_header
 c_func
 (paren
-r_void
-op_star
-id|buff
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|dst
-comma
 r_struct
 id|sk_buff
 op_star
 id|skb
 )paren
 (brace
+r_struct
+id|device
+op_star
+id|dev
+op_assign
+id|skb-&gt;dev
+suffix:semicolon
 r_struct
 id|net_local
 op_star
@@ -4364,7 +4326,7 @@ r_struct
 id|ethhdr
 op_star
 )paren
-id|buff
+id|skb-&gt;data
 suffix:semicolon
 r_int
 id|i
@@ -4386,12 +4348,6 @@ op_member_access_from_pointer
 id|orig_rebuild_header
 c_func
 (paren
-id|buff
-comma
-id|dev
-comma
-id|dst
-comma
 id|skb
 )paren
 suffix:semicolon
@@ -4484,8 +4440,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|wic_tx_packet
+r_int
 id|wic_tx_packet
 c_func
 (paren
@@ -4697,8 +4653,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Open/initialize the board.  This is called (in the current kernel)&n;   sometime after booting when the &squot;ifconfig&squot; program is run.&n;&n;   This routine gets exclusive access to the parallel port by allocating&n;   its IRQ line.&n; */
-r_int
 DECL|function|wic_open
+r_int
 id|wic_open
 c_func
 (paren
@@ -4872,8 +4828,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* The inverse routine to wic_open (). */
-r_int
 DECL|function|wic_close
+r_int
 id|wic_close
 c_func
 (paren
@@ -4974,10 +4930,6 @@ c_cond
 id|snd-&gt;skb
 )paren
 (brace
-id|snd-&gt;skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
@@ -5001,10 +4953,6 @@ c_cond
 id|rcv-&gt;skb
 )paren
 (brace
-id|rcv-&gt;skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren

@@ -461,7 +461,6 @@ c_cond
 id|memcmp
 c_func
 (paren
-op_amp
 id|neigh-&gt;primary_key
 comma
 id|pkey
@@ -482,7 +481,8 @@ id|dev
 op_eq
 id|neigh-&gt;dev
 )paren
-r_break
+r_return
+id|neigh
 suffix:semicolon
 )brace
 id|neigh
@@ -500,7 +500,7 @@ id|head
 suffix:semicolon
 )brace
 r_return
-id|neigh
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;neighbour must already be out of the table;&n; *&n; */

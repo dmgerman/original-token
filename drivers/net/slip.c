@@ -4354,9 +4354,9 @@ id|ENODEV
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/* Initialize the SLIP driver.  Called by DDI. */
-r_int
+multiline_comment|/* Initialise the SLIP driver.  Called by the device init code */
 DECL|function|slip_init
+r_int
 id|slip_init
 c_func
 (paren
@@ -4379,9 +4379,6 @@ op_star
 (paren
 id|dev-&gt;priv
 )paren
-suffix:semicolon
-r_int
-id|i
 suffix:semicolon
 r_if
 c_cond
@@ -4418,7 +4415,7 @@ id|sl-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/* Finish setting up the DEVICE info. */
+multiline_comment|/*&n;&t; *&t;Finish setting up the DEVICE info. &n;&t; */
 id|dev-&gt;mtu
 op_assign
 id|SL_MTU
@@ -4457,32 +4454,12 @@ id|dev-&gt;tx_queue_len
 op_assign
 l_int|10
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|DEV_NUMBUFFS
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|skb_queue_head_init
+id|dev_init_buffers
 c_func
 (paren
-op_amp
-id|dev-&gt;buffs
-(braket
-id|i
-)braket
+id|dev
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* New-style flags. */
 id|dev-&gt;flags
 op_assign

@@ -7,10 +7,10 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_BLK_DEV_LOOP_DES
-macro_line|#include &lt;linux/des.h&gt;
+macro_line|# /*nodep*/ include &lt;linux/des.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_LOOP_IDEA
-macro_line|#include &lt;linux/idea.h&gt;
+macro_line|# /*nodep*/ include &lt;linux/idea.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/loop.h&gt;&t;&t;/* must follow des.h */
 DECL|macro|MAJOR_NR

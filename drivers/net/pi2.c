@@ -6470,30 +6470,12 @@ op_assign
 id|pi_get_stats
 suffix:semicolon
 multiline_comment|/* Fill in the fields of the device structure */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|DEV_NUMBUFFS
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|skb_queue_head_init
+id|dev_init_buffers
 c_func
 (paren
-op_amp
-id|dev-&gt;buffs
-(braket
-id|i
-)braket
+id|dev
 )paren
-suffix:semicolon
+suffix:colon
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 id|dev-&gt;hard_header
 op_assign

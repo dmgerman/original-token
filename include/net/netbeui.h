@@ -39,6 +39,12 @@ DECL|struct|nb_link
 r_struct
 id|nb_link
 (brace
+DECL|member|llc
+r_struct
+id|llc
+id|llc
+suffix:semicolon
+multiline_comment|/* Must be first */
 DECL|member|mac
 id|u8
 id|mac
@@ -54,13 +60,6 @@ op_star
 id|dev
 suffix:semicolon
 multiline_comment|/* Device we heard him on */
-DECL|member|llc
-r_struct
-id|llc
-op_star
-id|llc
-suffix:semicolon
-multiline_comment|/* 802.2 link layer */
 DECL|member|sessions
 r_struct
 id|nb_ses
@@ -75,6 +74,24 @@ op_star
 id|wait
 suffix:semicolon
 multiline_comment|/* Wait queue for this netbios LLC */
+DECL|member|busy
+r_int
+id|busy
+suffix:semicolon
+multiline_comment|/* Track the LLC busy state */
+DECL|member|state
+r_int
+id|state
+suffix:semicolon
+multiline_comment|/* Link state */
+DECL|macro|NETBEUI_OPEN
+mdefine_line|#define NETBEUI_OPEN&t;&t;1&t;/* Up and going */
+DECL|macro|NETBEUI_CONNWAIT
+mdefine_line|#define NETBEUI_CONNWAIT&t;2&t;/* Waiting to come up */
+DECL|macro|NETBEUI_DISCWAIT
+mdefine_line|#define NETBEUI_DISCWAIT&t;3&t;/* Waiting to drop and recover */
+DECL|macro|NETBEUI_DEADWAIT
+mdefine_line|#define NETBEUI_DEADWAIT&t;4&t;/* Trying to die */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Netbios name defence list&n; */

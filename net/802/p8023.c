@@ -1,11 +1,13 @@
+multiline_comment|/*&n; *&t;NET3:&t;802.3 data link hooks used for IPX 802.3&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;802.3 isn&squot;t really a protocol data link layer. Some old IPX stuff&n; *&t;uses it however. Note that there is only one 802.3 protocol layer&n; *&t;in the system. We don&squot;t currently support different protocols&n; *&t;running raw 802.3 on different devices. Thankfully nobody else&n; *&t;has done anything like the old IPX.&n; */
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/datalink.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+multiline_comment|/*&n; *&t;Place an 802.3 header on a packet. The driver will do the mac&n; *&t;addresses, we just need to give it the buffer length.&n; */
+DECL|function|p8023_datalink_header
 r_static
 r_void
-DECL|function|p8023_datalink_header
 id|p8023_datalink_header
 c_func
 (paren
@@ -51,10 +53,11 @@ id|skb-&gt;len
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Create an 802.3 client. Note there can be only one 802.3 client&n; */
+DECL|function|make_8023_client
 r_struct
 id|datalink_proto
 op_star
-DECL|function|make_8023_client
 id|make_8023_client
 c_func
 (paren
@@ -114,6 +117,7 @@ r_return
 id|proto
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Destroy the 802.3 client.&n; */
 DECL|function|destroy_8023_client
 r_void
 id|destroy_8023_client

@@ -707,7 +707,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|verify_area
+op_logical_neg
+id|access_ok
 c_func
 (paren
 id|VERIFY_WRITE
@@ -730,10 +731,11 @@ DECL|macro|__CODE
 mdefine_line|#define __CODE ((unsigned long)(frame+24))
 DECL|macro|CODE
 mdefine_line|#define CODE(x) ((unsigned long *) ((x)+__CODE))
+multiline_comment|/* XXX Can possible miss a SIGSEGV when frame crosses a page border&n;       and a thread unmaps it while we are accessing it. &n;       So either check all put_user() calls or don&squot;t do it at all.  &n;       We use __put_user() here because the access_ok() call was already&n;       done earlier. */
 r_if
 c_cond
 (paren
-id|put_user
+id|__put_user
 c_func
 (paren
 id|__CODE
@@ -754,7 +756,7 @@ id|current-&gt;exec_domain
 op_logical_and
 id|current-&gt;exec_domain-&gt;signal_invmap
 )paren
-id|put_user
+id|__put_user
 c_func
 (paren
 id|current-&gt;exec_domain-&gt;signal_invmap
@@ -768,7 +770,7 @@ l_int|1
 )paren
 suffix:semicolon
 r_else
-id|put_user
+id|__put_user
 c_func
 (paren
 id|signr
@@ -786,7 +788,7 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|macro|PUT_SEG
-mdefine_line|#define PUT_SEG(seg, mem) &bslash;&n;__asm__(&quot;mov %%&quot; #seg&quot;,%w0&quot;:&quot;=r&quot; (tmp):&quot;0&quot; (tmp)); put_user(tmp,mem);
+mdefine_line|#define PUT_SEG(seg, mem) &bslash;&n;__asm__(&quot;mov %%&quot; #seg&quot;,%w0&quot;:&quot;=r&quot; (tmp):&quot;0&quot; (tmp)); __put_user(tmp,mem);
 id|PUT_SEG
 c_func
 (paren
@@ -808,7 +810,7 @@ l_int|3
 )paren
 suffix:semicolon
 )brace
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;xes
@@ -818,7 +820,7 @@ op_plus
 l_int|4
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;xds
@@ -828,7 +830,7 @@ op_plus
 l_int|5
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;edi
@@ -838,7 +840,7 @@ op_plus
 l_int|6
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;esi
@@ -848,7 +850,7 @@ op_plus
 l_int|7
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;ebp
@@ -858,7 +860,7 @@ op_plus
 l_int|8
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;esp
@@ -868,7 +870,7 @@ op_plus
 l_int|9
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;ebx
@@ -878,7 +880,7 @@ op_plus
 l_int|10
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;edx
@@ -888,7 +890,7 @@ op_plus
 l_int|11
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;ecx
@@ -898,7 +900,7 @@ op_plus
 l_int|12
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;eax
@@ -908,7 +910,7 @@ op_plus
 l_int|13
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|current-&gt;tss.trap_no
@@ -918,7 +920,7 @@ op_plus
 l_int|14
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|current-&gt;tss.error_code
@@ -928,7 +930,7 @@ op_plus
 l_int|15
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;eip
@@ -938,7 +940,7 @@ op_plus
 l_int|16
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;xcs
@@ -948,7 +950,7 @@ op_plus
 l_int|17
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;eflags
@@ -958,7 +960,7 @@ op_plus
 l_int|18
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;esp
@@ -968,7 +970,7 @@ op_plus
 l_int|19
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;xss
@@ -978,7 +980,7 @@ op_plus
 l_int|20
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 (paren
@@ -1006,7 +1008,7 @@ l_int|21
 )paren
 suffix:semicolon
 multiline_comment|/* non-iBCS2 extensions.. */
-id|put_user
+id|__put_user
 c_func
 (paren
 id|oldmask
@@ -1016,7 +1018,7 @@ op_plus
 l_int|22
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|current-&gt;tss.cr2
@@ -1027,7 +1029,7 @@ l_int|23
 )paren
 suffix:semicolon
 multiline_comment|/* set up the return code... */
-id|put_user
+id|__put_user
 c_func
 (paren
 l_int|0x0000b858
@@ -1040,7 +1042,7 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* popl %eax ; movl $,%eax */
-id|put_user
+id|__put_user
 c_func
 (paren
 l_int|0x80cd0000
@@ -1053,7 +1055,7 @@ l_int|4
 )paren
 suffix:semicolon
 multiline_comment|/* int $0x80 */
-id|put_user
+id|__put_user
 c_func
 (paren
 id|__NR_sigreturn

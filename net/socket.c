@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET&t;&t;An implementation of the SOCKET network access protocol.&n; *&n; * Version:&t;@(#)socket.c&t;1.1.93&t;18/02/95&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Anonymous&t;:&t;NOTSOCK/BADF cleanup. Error fix in&n; *&t;&t;&t;&t;&t;shutdown()&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixes&n; *&t;&t;Alan Cox&t;: &t;Removed DDI&n; *&t;&t;Jonathan Kamens&t;:&t;SOCK_DGRAM reconnect bug&n; *&t;&t;Alan Cox&t;:&t;Moved a load of checks to the very&n; *&t;&t;&t;&t;&t;top level.&n; *&t;&t;Alan Cox&t;:&t;Move address structures to/from user&n; *&t;&t;&t;&t;&t;mode above the protocol layers.&n; *&t;&t;Rob Janssen&t;:&t;Allow 0 length sends.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support (cribbed from the&n; *&t;&t;&t;&t;&t;tty drivers).&n; *&t;&t;Niibe Yutaka&t;:&t;Asynchronous I/O for writes (4.4BSD style)&n; *&t;&t;Jeff Uphoff&t;:&t;Made max number of sockets command-line&n; *&t;&t;&t;&t;&t;configurable.&n; *&t;&t;Matti Aarnio&t;:&t;Made the number of sockets dynamic,&n; *&t;&t;&t;&t;&t;to be allocated when needed, and mr.&n; *&t;&t;&t;&t;&t;Uphoff&squot;s max is used as max to be&n; *&t;&t;&t;&t;&t;allowed to allocate.&n; *&t;&t;Linus&t;&t;:&t;Argh. removed all the socket allocation&n; *&t;&t;&t;&t;&t;altogether: it&squot;s in the inode now.&n; *&t;&t;Alan Cox&t;:&t;Made sock_alloc()/sock_release() public&n; *&t;&t;&t;&t;&t;for NetROM and future kernel nfsd type&n; *&t;&t;&t;&t;&t;stuff.&n; *&t;&t;Alan Cox&t;:&t;sendmsg/recvmsg basics.&n; *&t;&t;Tom Dyas&t;:&t;Export net symbols.&n; *&t;&t;Marcin Dalecki&t;:&t;Fixed problems with CONFIG_NET=&quot;n&quot;.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;This module is effectively the top level interface to the BSD socket&n; *&t;paradigm. Because it is very simple it works well for Unix domain sockets,&n; *&t;but requires a whole layer of substructure for the other protocols.&n; *&n; *&t;In addition it lacks an effective kernel -&gt; kernel interface to go with&n; *&t;the user one.&n; *&n; * PROBLEMS:&n; *&t;- CLONE_FILES. Big problem, cloned thread can close file,&n; *&t;  while other thread sleeps in kernel. It can be solved&n; *&t;  by increasing f_count and releasing it on exit from syscall.&n; *&n; */
+multiline_comment|/*&n; * NET&t;&t;An implementation of the SOCKET network access protocol.&n; *&n; * Version:&t;@(#)socket.c&t;1.1.93&t;18/02/95&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Anonymous&t;:&t;NOTSOCK/BADF cleanup. Error fix in&n; *&t;&t;&t;&t;&t;shutdown()&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixes&n; *&t;&t;Alan Cox&t;: &t;Removed DDI&n; *&t;&t;Jonathan Kamens&t;:&t;SOCK_DGRAM reconnect bug&n; *&t;&t;Alan Cox&t;:&t;Moved a load of checks to the very&n; *&t;&t;&t;&t;&t;top level.&n; *&t;&t;Alan Cox&t;:&t;Move address structures to/from user&n; *&t;&t;&t;&t;&t;mode above the protocol layers.&n; *&t;&t;Rob Janssen&t;:&t;Allow 0 length sends.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support (cribbed from the&n; *&t;&t;&t;&t;&t;tty drivers).&n; *&t;&t;Niibe Yutaka&t;:&t;Asynchronous I/O for writes (4.4BSD style)&n; *&t;&t;Jeff Uphoff&t;:&t;Made max number of sockets command-line&n; *&t;&t;&t;&t;&t;configurable.&n; *&t;&t;Matti Aarnio&t;:&t;Made the number of sockets dynamic,&n; *&t;&t;&t;&t;&t;to be allocated when needed, and mr.&n; *&t;&t;&t;&t;&t;Uphoff&squot;s max is used as max to be&n; *&t;&t;&t;&t;&t;allowed to allocate.&n; *&t;&t;Linus&t;&t;:&t;Argh. removed all the socket allocation&n; *&t;&t;&t;&t;&t;altogether: it&squot;s in the inode now.&n; *&t;&t;Alan Cox&t;:&t;Made sock_alloc()/sock_release() public&n; *&t;&t;&t;&t;&t;for NetROM and future kernel nfsd type&n; *&t;&t;&t;&t;&t;stuff.&n; *&t;&t;Alan Cox&t;:&t;sendmsg/recvmsg basics.&n; *&t;&t;Tom Dyas&t;:&t;Export net symbols.&n; *&t;&t;Marcin Dalecki&t;:&t;Fixed problems with CONFIG_NET=&quot;n&quot;.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;This module is effectively the top level interface to the BSD socket&n; *&t;paradigm. &n; *&n; * PROBLEMS:&n; *&t;- CLONE_FILES. Big problem, cloned thread can close file,&n; *&t;  while other thread sleeps in kernel. It can be solved&n; *&t;  by increasing f_count and releasing it on exit from syscall.&n; *&t;  _HAS_ to be fixed before 2.2 is released. I assume whoever is&n; *&t;  working on the CLONE stuff will fix that pile of accidents. If&n; *&t;  you find this comment in a 2.2-preXXX kernel scream loudly.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -521,7 +521,7 @@ id|fd
 suffix:semicolon
 )brace
 DECL|function|socki_lookup
-r_static
+r_extern
 id|__inline__
 r_struct
 id|socket
@@ -1550,7 +1550,7 @@ op_star
 id|filp
 )paren
 (brace
-multiline_comment|/*&n;&t; * It&squot;s possible the inode is NULL if we&squot;re closing an unfinished socket. &n;&t; */
+multiline_comment|/*&n;&t; *&t;It was possible the inode is NULL we were &n;&t; *&t;closing an unfinished socket. &n;&t; */
 r_if
 c_cond
 (paren
@@ -1562,7 +1562,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;Nope. It is impossible!&bslash;n&quot;
+l_string|&quot;sock_close: NULL inode&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2131,9 +2131,9 @@ l_string|&quot;socket: no more sockets&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-id|ENOSR
+id|ENFILE
 suffix:semicolon
-multiline_comment|/* Was: EAGAIN, but we are out of&n;&t;&t;&t;&t;   system resources! */
+multiline_comment|/* Not exactly a match, but its the&n;&t;&t;&t;&t;&t;   closest posix thing */
 )brace
 id|sock-&gt;type
 op_assign
@@ -2638,7 +2638,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;For accept, we attempt to create a new socket, set up the link&n; *&t;with the client, wake up the client, then return the new&n; *&t;connected fd. We collect the address of the connector in kernel&n; *&t;space and move it to user at the very end. This is unclean because&n; *&t;we open the socket then return an error.&n; *&n; *&t;1003.1g addcs the ability to recvmsg() to query connection pending&n; *&t;status to recvmsg. We need to add that support in a way thats&n; *&t;clean when we restucture accept also.&n; */
+multiline_comment|/*&n; *&t;For accept, we attempt to create a new socket, set up the link&n; *&t;with the client, wake up the client, then return the new&n; *&t;connected fd. We collect the address of the connector in kernel&n; *&t;space and move it to user at the very end. This is unclean because&n; *&t;we open the socket then return an error.&n; *&n; *&t;1003.1g adds the ability to recvmsg() to query connection pending&n; *&t;status to recvmsg. We need to add that support in a way thats&n; *&t;clean when we restucture accept also.&n; */
 DECL|function|sys_accept
 id|asmlinkage
 r_int
@@ -4648,7 +4648,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/*&n;&t; * save the user-mode address (verify_iovec will change the&n;&t; * kernel msghdr to use the kernel address space)&n;&t; */
+multiline_comment|/*&n;&t; *&t;Save the user-mode address (verify_iovec will change the&n;&t; *&t;kernel msghdr to use the kernel address space)&n;&t; */
 id|uaddr
 op_assign
 id|msg_sys.msg_name

@@ -865,6 +865,16 @@ op_ne
 l_int|NULL
 )paren
 (brace
+multiline_comment|/* Whoops.  We must save the old FS, since otherwise&n;       * we would destroy the kernels idea about FS on root&n;       * mount in read_super... [chexum]&n;       */
+r_int
+r_int
+id|old_fs
+op_assign
+id|get_fs
+c_func
+(paren
+)paren
+suffix:semicolon
 id|inode_fake.i_rdev
 op_assign
 id|dev
@@ -912,7 +922,7 @@ suffix:semicolon
 id|set_fs
 c_func
 (paren
-id|USER_DS
+id|old_fs
 )paren
 suffix:semicolon
 macro_line|#if 0

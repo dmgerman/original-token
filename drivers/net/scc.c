@@ -525,11 +525,11 @@ multiline_comment|/* ***********************************************************
 multiline_comment|/* *&t;&t;&t;Port Access Functions&t;&t;&t;      * */
 multiline_comment|/* ******************************************************************** */
 multiline_comment|/* These provide interrupt save 2-step access to the Z8530 registers */
-r_static
+DECL|function|InReg
+r_extern
 id|__inline__
 r_int
 r_char
-DECL|function|InReg
 id|InReg
 c_func
 (paren
@@ -617,10 +617,10 @@ r_return
 id|r
 suffix:semicolon
 )brace
-r_static
+DECL|function|OutReg
+r_extern
 id|__inline__
 r_void
-DECL|function|OutReg
 id|OutReg
 c_func
 (paren
@@ -705,10 +705,10 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-r_static
+DECL|function|wr
+r_extern
 id|__inline__
 r_void
-DECL|function|wr
 id|wr
 c_func
 (paren
@@ -744,10 +744,10 @@ id|val
 )paren
 suffix:semicolon
 )brace
-r_static
+DECL|function|or
+r_extern
 id|__inline__
 r_void
-DECL|function|or
 op_logical_or
 (paren
 r_struct
@@ -782,10 +782,10 @@ id|val
 )paren
 suffix:semicolon
 )brace
-r_static
+DECL|function|cl
+r_extern
 id|__inline__
 r_void
-DECL|function|cl
 id|cl
 c_func
 (paren
@@ -824,7 +824,7 @@ suffix:semicolon
 )brace
 macro_line|#ifdef DISABLE_ALL_INTS
 DECL|function|scc_cli
-r_static
+r_extern
 id|__inline__
 r_void
 id|scc_cli
@@ -841,7 +841,7 @@ c_func
 suffix:semicolon
 )brace
 DECL|function|scc_sti
-r_static
+r_extern
 id|__inline__
 r_void
 id|scc_sti
@@ -898,10 +898,10 @@ macro_line|#endif
 multiline_comment|/* ******************************************************************** */
 multiline_comment|/* *&t;&t;&t;Some useful macros&t;&t;&t;      * */
 multiline_comment|/* ******************************************************************** */
-r_static
+DECL|function|scc_lock_dev
+r_extern
 id|__inline__
 r_void
-DECL|function|scc_lock_dev
 id|scc_lock_dev
 c_func
 (paren
@@ -916,10 +916,10 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-r_static
+DECL|function|scc_unlock_dev
+r_extern
 id|__inline__
 r_void
-DECL|function|scc_unlock_dev
 id|scc_unlock_dev
 c_func
 (paren
@@ -934,10 +934,10 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_static
+DECL|function|scc_discard_buffers
+r_extern
 id|__inline__
 r_void
-DECL|function|scc_discard_buffers
 id|scc_discard_buffers
 c_func
 (paren
@@ -1017,10 +1017,10 @@ multiline_comment|/* ***********************************************************
 multiline_comment|/* *&t;&t;&t;Interrupt Service Routines&t;&t;      * */
 multiline_comment|/* ******************************************************************** */
 multiline_comment|/* ----&gt; subroutines for the interrupt handlers &lt;---- */
-r_static
+DECL|function|scc_notify
+r_extern
 id|__inline__
 r_void
-DECL|function|scc_notify
 id|scc_notify
 c_func
 (paren
@@ -1107,10 +1107,10 @@ id|scc-&gt;stat.nospace
 op_increment
 suffix:semicolon
 )brace
-r_static
+DECL|function|flush_rx_FIFO
+r_extern
 id|__inline__
 r_void
-DECL|function|flush_rx_FIFO
 id|flush_rx_FIFO
 c_func
 (paren
@@ -1173,10 +1173,10 @@ suffix:semicolon
 multiline_comment|/* ----&gt; four different interrupt handlers for Tx, Rx, changing of&t;*/
 multiline_comment|/*       DCD/CTS and Rx/Tx errors&t;&t;&t;&t;&t;*/
 multiline_comment|/* Transmitter interrupt handler */
-r_static
+DECL|function|scc_txint
+r_extern
 id|__inline__
 r_void
-DECL|function|scc_txint
 id|scc_txint
 c_func
 (paren
@@ -1419,10 +1419,10 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* External/Status interrupt handler */
-r_static
+DECL|function|scc_exint
+r_extern
 id|__inline__
 r_void
-DECL|function|scc_exint
 id|scc_exint
 c_func
 (paren
@@ -1741,10 +1741,10 @@ id|RES_EXT_INT
 suffix:semicolon
 )brace
 multiline_comment|/* Receiver interrupt handler */
-r_static
+DECL|function|scc_rxint
+r_extern
 id|__inline__
 r_void
-DECL|function|scc_rxint
 id|scc_rxint
 c_func
 (paren
@@ -1940,10 +1940,10 @@ id|scc-&gt;data
 suffix:semicolon
 )brace
 multiline_comment|/* Receive Special Condition interrupt handler */
-r_static
+DECL|function|scc_spint
+r_extern
 id|__inline__
 r_void
-DECL|function|scc_spint
 id|scc_spint
 c_func
 (paren
@@ -2124,9 +2124,9 @@ id|ERR_RES
 suffix:semicolon
 )brace
 multiline_comment|/* ----&gt; interrupt service routine for the Z8530 &lt;---- */
+DECL|function|scc_isr_dispatch
 r_static
 r_void
-DECL|function|scc_isr_dispatch
 id|scc_isr_dispatch
 c_func
 (paren
@@ -2196,9 +2196,9 @@ suffix:semicolon
 multiline_comment|/* If the card has a latch for the interrupt vector (like the PA0HZP card)&n;   use it to get the number of the chip that generated the int.&n;   If not: poll all defined chips.&n; */
 DECL|macro|SCC_IRQTIMEOUT
 mdefine_line|#define SCC_IRQTIMEOUT 30000
+DECL|function|scc_isr
 r_static
 r_void
-DECL|function|scc_isr
 id|scc_isr
 c_func
 (paren
@@ -2521,10 +2521,10 @@ multiline_comment|/* ***********************************************************
 multiline_comment|/* *&t;&t;&t;Init Channel&t;&t;&t;&t;&t;*/
 multiline_comment|/* ******************************************************************** */
 multiline_comment|/* ----&gt; set SCC channel speed &lt;---- */
-r_static
+DECL|function|set_brg
+r_extern
 id|__inline__
 r_void
-DECL|function|set_brg
 id|set_brg
 c_func
 (paren
@@ -2586,10 +2586,10 @@ id|BRENABL
 suffix:semicolon
 multiline_comment|/* enable baudrate generator */
 )brace
-r_static
+DECL|function|set_speed
+r_extern
 id|__inline__
 r_void
-DECL|function|set_speed
 id|set_speed
 c_func
 (paren
@@ -2642,10 +2642,10 @@ id|scc-&gt;irq
 suffix:semicolon
 )brace
 multiline_comment|/* ----&gt; initialize a SCC channel &lt;---- */
-r_static
+DECL|function|init_brg
+r_extern
 id|__inline__
 r_void
-DECL|function|init_brg
 id|init_brg
 c_func
 (paren
@@ -2700,9 +2700,9 @@ suffix:semicolon
 multiline_comment|/* DPLL NRZI mode */
 )brace
 multiline_comment|/*&n; * Initialization according to the Z8530 manual (SGS-Thomson&squot;s version):&n; *&n; * 1. Modes and constants&n; *&n; * WR9&t;11000000&t;chip reset&n; * WR4&t;XXXXXXXX&t;Tx/Rx control, async or sync mode&n; * WR1&t;0XX00X00&t;select W/REQ (optional)&n; * WR2&t;XXXXXXXX&t;program interrupt vector&n; * WR3&t;XXXXXXX0&t;select Rx control&n; * WR5&t;XXXX0XXX&t;select Tx control&n; * WR6&t;XXXXXXXX&t;sync character&n; * WR7&t;XXXXXXXX&t;sync character&n; * WR9&t;000X0XXX&t;select interrupt control&n; * WR10&t;XXXXXXXX&t;miscellaneous control (optional)&n; * WR11&t;XXXXXXXX&t;clock control&n; * WR12&t;XXXXXXXX&t;time constant lower byte (optional)&n; * WR13&t;XXXXXXXX&t;time constant upper byte (optional)&n; * WR14&t;XXXXXXX0&t;miscellaneous control&n; * WR14&t;XXXSSSSS&t;commands (optional)&n; *&n; * 2. Enables&n; *&n; * WR14&t;000SSSS1&t;baud rate enable&n; * WR3&t;SSSSSSS1&t;Rx enable&n; * WR5&t;SSSS1SSS&t;Tx enable&n; * WR0&t;10000000&t;reset Tx CRG (optional)&n; * WR1&t;XSS00S00&t;DMA enable (optional)&n; *&n; * 3. Interrupt status&n; *&n; * WR15&t;XXXXXXXX&t;enable external/status&n; * WR0&t;00010000&t;reset external status&n; * WR0&t;00010000&t;reset external status twice&n; * WR1&t;SSSXXSXX&t;enable Rx, Tx and Ext/status&n; * WR9&t;000SXSSS&t;enable master interrupt enable&n; *&n; * 1 = set to one, 0 = reset to zero&n; * X = user defined, S = same as previous init&n; *&n; *&n; * Note that the implementation differs in some points from above scheme.&n; *&n; */
+DECL|function|init_channel
 r_static
 r_void
-DECL|function|init_channel
 id|init_channel
 c_func
 (paren
@@ -3151,9 +3151,9 @@ multiline_comment|/* ***********************************************************
 multiline_comment|/* *&t;&t;&t;SCC timer functions&t;&t;&t;      * */
 multiline_comment|/* ******************************************************************** */
 multiline_comment|/* ----&gt; scc_key_trx sets the time constant for the baudrate &n;         generator and keys the transmitter&t;&t;     &lt;---- */
+DECL|function|scc_key_trx
 r_static
 r_void
-DECL|function|scc_key_trx
 id|scc_key_trx
 c_func
 (paren
@@ -3507,9 +3507,9 @@ id|scc-&gt;irq
 suffix:semicolon
 )brace
 multiline_comment|/* ----&gt; SCC timer interrupt handler and friends. &lt;---- */
+DECL|function|scc_start_tx_timer
 r_static
 r_void
-DECL|function|scc_start_tx_timer
 id|scc_start_tx_timer
 c_func
 (paren
@@ -3627,9 +3627,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|scc_start_defer
 r_static
 r_void
-DECL|function|scc_start_defer
 id|scc_start_defer
 c_func
 (paren
@@ -3713,9 +3713,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|scc_start_maxkeyup
 r_static
 r_void
-DECL|function|scc_start_maxkeyup
 id|scc_start_maxkeyup
 c_func
 (paren
@@ -3800,9 +3800,9 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/* &n; * This is called from scc_txint() when there are no more frames to send.&n; * Not exactly a timer function, but it is a close friend of the family...&n; */
+DECL|function|scc_tx_done
 r_static
 r_void
-DECL|function|scc_tx_done
 id|scc_tx_done
 c_func
 (paren
@@ -3892,10 +3892,10 @@ id|Rand
 op_assign
 l_int|17
 suffix:semicolon
-r_static
+DECL|function|is_grouped
+r_extern
 id|__inline__
 r_int
-DECL|function|is_grouped
 id|is_grouped
 c_func
 (paren
@@ -4032,9 +4032,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* DWAIT and SLOTTIME expired&n; *&n; * fulldup == 0:  DCD is active or Rand &gt; P-persistence: start t_busy timer&n; *                else key trx and start txdelay&n; * fulldup == 1:  key trx and start txdelay&n; * fulldup == 2:  mintime expired, reset status or key trx and start txdelay&n; */
+DECL|function|t_dwait
 r_static
 r_void
-DECL|function|t_dwait
 id|t_dwait
 c_func
 (paren
@@ -4219,9 +4219,9 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* TXDELAY expired&n; *&n; * kick transmission by a fake scc_txint(scc), start &squot;maxkeyup&squot; watchdog.&n; */
+DECL|function|t_txdelay
 r_static
 r_void
-DECL|function|t_txdelay
 id|t_txdelay
 c_func
 (paren
@@ -4277,9 +4277,9 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* TAILTIME expired&n; *&n; * switch off transmitter. If we were stopped by Maxkeyup restart&n; * transmission after &squot;mintime&squot; seconds&n; */
+DECL|function|t_tail
 r_static
 r_void
-DECL|function|t_tail
 id|t_tail
 c_func
 (paren
@@ -4400,9 +4400,9 @@ id|scc
 suffix:semicolon
 )brace
 multiline_comment|/* BUSY timeout&n; *&n; * throw away send buffers if DCD remains active too long.&n; */
+DECL|function|t_busy
 r_static
 r_void
-DECL|function|t_busy
 id|t_busy
 c_func
 (paren
@@ -4483,9 +4483,9 @@ id|scc
 suffix:semicolon
 )brace
 multiline_comment|/* MAXKEYUP timeout&n; *&n; * this is our watchdog.&n; */
+DECL|function|t_maxkeyup
 r_static
 r_void
-DECL|function|t_maxkeyup
 id|t_maxkeyup
 c_func
 (paren
@@ -4603,9 +4603,9 @@ id|scc-&gt;kiss.tailtime
 suffix:semicolon
 )brace
 multiline_comment|/* IDLE timeout&n; *&n; * in fulldup mode 2 it keys down the transmitter after &squot;idle&squot; seconds&n; * of inactivity. We will not restart transmission before &squot;mintime&squot;&n; * expires.&n; */
+DECL|function|t_idle
 r_static
 r_void
-DECL|function|t_idle
 id|t_idle
 c_func
 (paren
@@ -4691,9 +4691,9 @@ op_assign
 id|TXS_WAIT
 suffix:semicolon
 )brace
+DECL|function|scc_init_timer
 r_static
 r_void
-DECL|function|scc_init_timer
 id|scc_init_timer
 c_func
 (paren
@@ -4735,10 +4735,10 @@ multiline_comment|/* ***********************************************************
 multiline_comment|/*&n; * this will set the &quot;hardware&quot; parameters through KISS commands or ioctl()&n; */
 DECL|macro|CAST
 mdefine_line|#define CAST(x) (unsigned long)(x)
+DECL|function|scc_set_param
 r_static
 r_int
 r_int
-DECL|function|scc_set_param
 id|scc_set_param
 c_func
 (paren
@@ -5070,10 +5070,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|scc_get_param
 r_static
 r_int
 r_int
-DECL|function|scc_get_param
 id|scc_get_param
 c_func
 (paren
@@ -5292,9 +5292,9 @@ multiline_comment|/* ***********************************************************
 multiline_comment|/* *&t;&t;Init channel structures, special HW, etc...&t;     * */
 multiline_comment|/* ******************************************************************* */
 multiline_comment|/*&n; * Reset the Z8530s and setup special hardware&n; */
+DECL|function|z8530_init
 r_static
 r_void
-DECL|function|z8530_init
 id|z8530_init
 c_func
 (paren
@@ -5532,9 +5532,9 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Allocate device structure, err, instance, and register driver&n; */
+DECL|function|scc_net_setup
 r_static
 r_int
-DECL|function|scc_net_setup
 id|scc_net_setup
 c_func
 (paren
@@ -5781,9 +5781,9 @@ l_int|1
 )brace
 suffix:semicolon
 multiline_comment|/* ----&gt; Initialize device &lt;----- */
+DECL|function|scc_net_init
 r_static
 r_int
-DECL|function|scc_net_init
 id|scc_net_init
 c_func
 (paren
@@ -5793,31 +5793,10 @@ op_star
 id|dev
 )paren
 (brace
-r_int
-id|k
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|k
-op_assign
-l_int|0
-suffix:semicolon
-id|k
-OL
-id|DEV_NUMBUFFS
-suffix:semicolon
-id|k
-op_increment
-)paren
-id|skb_queue_head_init
+id|dev_init_buffers
 c_func
 (paren
-op_amp
-id|dev-&gt;buffs
-(braket
-id|k
-)braket
+id|dev
 )paren
 suffix:semicolon
 id|dev-&gt;tx_queue_len
@@ -5924,9 +5903,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* ----&gt; open network device &lt;---- */
+DECL|function|scc_net_open
 r_static
 r_int
-DECL|function|scc_net_open
 id|scc_net_open
 c_func
 (paren
@@ -6005,9 +5984,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* ----&gt; close network device &lt;---- */
+DECL|function|scc_net_close
 r_static
 r_int
-DECL|function|scc_net_close
 id|scc_net_close
 c_func
 (paren
@@ -6130,9 +6109,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* ----&gt; receive frame, called from scc_rxint() &lt;---- */
+DECL|function|scc_net_rx
 r_static
 r_void
-DECL|function|scc_net_rx
 id|scc_net_rx
 c_func
 (paren
@@ -6195,9 +6174,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* ----&gt; transmit frame &lt;---- */
+DECL|function|scc_net_tx
 r_static
 r_int
-DECL|function|scc_net_tx
 id|scc_net_tx
 c_func
 (paren
@@ -6515,9 +6494,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* ----&gt; ioctl functions &lt;---- */
 multiline_comment|/*&n; * SIOCSCCCFG&t;&t;- configure driver&t;arg: (struct scc_hw_config *) arg&n; * SIOCSCCINI&t;&t;- initialize driver&t;arg: ---&n; * SIOCSCCCHANINI&t;- initialize channel&t;arg: (struct scc_modem *) arg&n; * SIOCSCCSMEM&t;&t;- set memory&t;&t;arg: (struct scc_mem_config *) arg&n; * SIOCSCCGKISS&t;&t;- get level 1 parameter&t;arg: (struct scc_kiss_cmd *) arg&n; * SIOCSCCSKISS&t;&t;- set level 1 parameter arg: (struct scc_kiss_cmd *) arg&n; * SIOCSCCGSTAT&t;&t;- get driver status&t;arg: (struct scc_stat *) arg&n; */
+DECL|function|scc_net_ioctl
 r_static
 r_int
-DECL|function|scc_net_ioctl
 id|scc_net_ioctl
 c_func
 (paren
@@ -7649,9 +7628,9 @@ id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/* ----&gt; set interface callsign &lt;---- */
+DECL|function|scc_net_set_mac_address
 r_static
 r_int
-DECL|function|scc_net_set_mac_address
 id|scc_net_set_mac_address
 c_func
 (paren
@@ -7692,9 +7671,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* ----&gt; rebuild header &lt;---- */
+DECL|function|scc_net_rebuild_header
 r_static
 r_int
-DECL|function|scc_net_rebuild_header
 id|scc_net_rebuild_header
 c_func
 (paren
@@ -7713,9 +7692,9 @@ id|skb
 suffix:semicolon
 )brace
 multiline_comment|/* ----&gt; &quot;hard&quot; header &lt;---- */
+DECL|function|scc_net_header
 r_static
 r_int
-DECL|function|scc_net_header
 id|scc_net_header
 c_func
 (paren
@@ -7764,11 +7743,11 @@ id|len
 suffix:semicolon
 )brace
 multiline_comment|/* ----&gt; get statistics &lt;---- */
+DECL|function|scc_net_get_stats
 r_static
 r_struct
 id|enet_statistics
 op_star
-DECL|function|scc_net_get_stats
 id|scc_net_get_stats
 c_func
 (paren
@@ -7832,9 +7811,9 @@ suffix:semicolon
 multiline_comment|/* ******************************************************************** */
 multiline_comment|/* *&t;&t;dump statistics to /proc/net/z8530drv&t;&t;      * */
 multiline_comment|/* ******************************************************************** */
+DECL|function|scc_net_get_info
 r_static
 r_int
-DECL|function|scc_net_get_info
 id|scc_net_get_info
 c_func
 (paren

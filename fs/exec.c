@@ -1473,6 +1473,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|flush_cache_mm
+c_func
+(paren
+id|current-&gt;mm
+)paren
+suffix:semicolon
 id|exit_mmap
 c_func
 (paren
@@ -1483,6 +1489,12 @@ id|clear_page_tables
 c_func
 (paren
 id|current
+)paren
+suffix:semicolon
+id|flush_tlb_mm
+c_func
+(paren
+id|current-&gt;mm
 )paren
 suffix:semicolon
 )brace

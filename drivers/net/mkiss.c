@@ -3494,7 +3494,7 @@ id|ENODEV
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/* Initialize the driver.  Called by DDI. */
+multiline_comment|/* Initialize the driver.  Called by network startup. */
 DECL|function|ax25_init
 r_static
 r_int
@@ -3518,9 +3518,6 @@ id|ax_disp
 op_star
 )paren
 id|dev-&gt;priv
-suffix:semicolon
-r_int
-id|i
 suffix:semicolon
 r_static
 r_char
@@ -3704,28 +3701,10 @@ op_assign
 id|ax_rebuild_header
 suffix:semicolon
 macro_line|#endif
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|DEV_NUMBUFFS
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|skb_queue_head_init
+id|dev_init_buffers
 c_func
 (paren
-op_amp
-id|dev-&gt;buffs
-(braket
-id|i
-)braket
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* New-style flags. */

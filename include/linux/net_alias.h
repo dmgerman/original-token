@@ -2,6 +2,7 @@ multiline_comment|/*&n; *&t;&t;NET_ALIAS network device aliasing definitions.&n;
 macro_line|#ifndef _NET_ALIAS_H
 DECL|macro|_NET_ALIAS_H
 mdefine_line|#define _NET_ALIAS_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -17,7 +18,7 @@ suffix:semicolon
 r_struct
 id|net_alias_type
 suffix:semicolon
-multiline_comment|/*&n; * main alias structure&n; * note that *defines* dev &amp; devname&n; */
+multiline_comment|/*&n; *&t;Main alias structure&n; *&t;Note that *defines* dev &amp; devname.&n; */
 DECL|struct|net_alias
 r_struct
 id|net_alias
@@ -104,7 +105,7 @@ suffix:semicolon
 multiline_comment|/* hashed alias table */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * net_alias_type class&n; * declares a generic (AF_ independent) structure that will&n; * manage generic to family-specific behavior.&n; */
+multiline_comment|/*&n; *&t;net_alias_type class&n; *&t;Declares a generic (AF_ independent) structure that will&n; *&t;manage generic to family-specific behavior.&n; */
 DECL|struct|net_alias_type
 r_struct
 id|net_alias_type
@@ -269,11 +270,12 @@ suffix:semicolon
 multiline_comment|/* link */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * is dev an alias?&n; */
-r_static
+multiline_comment|/*&n; *&t;is dev an alias?&n; */
+macro_line|#ifdef CONFIG_NET_ALIAS
+DECL|function|net_alias_is
+r_extern
 id|__inline__
 r_int
-DECL|function|net_alias_is
 id|net_alias_is
 c_func
 (paren
@@ -291,11 +293,11 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * does dev have aliases?&n; */
-r_static
+multiline_comment|/*&n; *&t;Does dev have aliases?&n; */
+DECL|function|net_alias_has
+r_extern
 id|__inline__
 r_int
-DECL|function|net_alias_has
 id|net_alias_has
 c_func
 (paren
@@ -313,6 +315,124 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Returns MY &squot;true&squot; main device&n; *&t;intended for alias devices&n; */
+DECL|function|net_alias_main_dev
+r_extern
+id|__inline__
+r_struct
+id|device
+op_star
+id|net_alias_main_dev
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_return
+(paren
+id|net_alias_is
+c_func
+(paren
+id|dev
+)paren
+)paren
+ques
+c_cond
+id|dev-&gt;my_alias-&gt;main_dev
+suffix:colon
+id|dev
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Returns NEXT &squot;true&squot; device&n; *&t;intended for true devices&n; */
+DECL|function|net_alias_nextdev
+r_extern
+id|__inline__
+r_struct
+id|device
+op_star
+id|net_alias_nextdev
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_return
+(paren
+id|dev-&gt;alias_info
+)paren
+ques
+c_cond
+id|dev-&gt;alias_info-&gt;taildev-&gt;next
+suffix:colon
+id|dev-&gt;next
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Sets NEXT &squot;true&squot; device&n; *&t;Intended for main devices (treat main device as block: dev+aliases).&n; */
+DECL|function|net_alias_nextdev_set
+r_extern
+id|__inline__
+r_struct
+id|device
+op_star
+id|net_alias_nextdev_set
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|device
+op_star
+id|nextdev
+)paren
+(brace
+r_struct
+id|device
+op_star
+id|pdev
+op_assign
+id|dev
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|net_alias_has
+c_func
+(paren
+id|dev
+)paren
+)paren
+(brace
+id|pdev
+op_assign
+id|dev-&gt;alias_info-&gt;taildev
+suffix:semicolon
+multiline_comment|/* point to last dev alias */
+)brace
+id|pdev-&gt;next
+op_assign
+id|nextdev
+suffix:semicolon
+r_return
+id|nextdev
+suffix:semicolon
+)brace
+macro_line|#else
+DECL|macro|net_alias_has
+mdefine_line|#define net_alias_has(dev)&t;(0)
+DECL|macro|net_alias_is
+mdefine_line|#define net_alias_is(dev)&t;(0)
+DECL|macro|net_alias_main_dev
+mdefine_line|#define net_alias_main_dev(dev)&t;(dev)
+macro_line|#endif
 r_extern
 r_void
 id|net_alias_init
@@ -524,115 +644,5 @@ id|__u32
 id|dst
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * returns MY &squot;true&squot; main device&n; * intended for alias devices&n; */
-DECL|function|net_alias_main_dev
-r_static
-id|__inline__
-r_struct
-id|device
-op_star
-id|net_alias_main_dev
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-r_return
-(paren
-id|net_alias_is
-c_func
-(paren
-id|dev
-)paren
-)paren
-ques
-c_cond
-id|dev-&gt;my_alias-&gt;main_dev
-suffix:colon
-id|dev
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * returns NEXT &squot;true&squot; device&n; * intended for true devices&n; */
-r_static
-id|__inline__
-r_struct
-id|device
-op_star
-DECL|function|net_alias_nextdev
-id|net_alias_nextdev
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-r_return
-(paren
-id|dev-&gt;alias_info
-)paren
-ques
-c_cond
-id|dev-&gt;alias_info-&gt;taildev-&gt;next
-suffix:colon
-id|dev-&gt;next
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * sets NEXT &squot;true&squot; device&n; * intended for main devices (treat main device as block: dev+aliases).&n; */
-r_static
-id|__inline__
-r_struct
-id|device
-op_star
-DECL|function|net_alias_nextdev_set
-id|net_alias_nextdev_set
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
-id|device
-op_star
-id|nextdev
-)paren
-(brace
-r_struct
-id|device
-op_star
-id|pdev
-op_assign
-id|dev
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|net_alias_has
-c_func
-(paren
-id|dev
-)paren
-)paren
-(brace
-id|pdev
-op_assign
-id|dev-&gt;alias_info-&gt;taildev
-suffix:semicolon
-multiline_comment|/* point to last dev alias */
-)brace
-id|pdev-&gt;next
-op_assign
-id|nextdev
-suffix:semicolon
-r_return
-id|nextdev
-suffix:semicolon
-)brace
 macro_line|#endif  /* _NET_ALIAS_H */
 eof

@@ -504,7 +504,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Datagram select: Again totally generic. Moved from udp.c&n; *&t;Now does seqpacket.&n; */
+multiline_comment|/*&n; *&t;Datagram select: Again totally generic. This also handles&n; *&t;sequenced packet sockets providing the socket receive queue&n; *&t;is only ever holding data ready to receive.&n; */
 DECL|function|datagram_select
 r_int
 id|datagram_select

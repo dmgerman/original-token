@@ -8,8 +8,13 @@ macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * Define this if you want SunOS compatibility wrt braindead&n; * select behaviour on FIFO&squot;s.&n; */
+macro_line|#ifdef __sparc__
+DECL|macro|FIFO_SUNOS_BRAINDAMAGE
+mdefine_line|#define FIFO_SUNOS_BRAINDAMAGE
+macro_line|#else
 DECL|macro|FIFO_SUNOS_BRAINDAMAGE
 macro_line|#undef FIFO_SUNOS_BRAINDAMAGE
+macro_line|#endif
 multiline_comment|/* We don&squot;t use the head/tail construction any more. Now we use the start/len*/
 multiline_comment|/* construction providing full use of PIPE_BUF (multiple of PAGE_SIZE) */
 multiline_comment|/* Florian Coosmann (FGC)                                ^ current = 1       */
@@ -810,9 +815,6 @@ r_int
 id|arg
 )paren
 (brace
-r_int
-id|error
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -822,31 +824,7 @@ id|cmd
 r_case
 id|FIONREAD
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|error
-)paren
+r_return
 id|put_user
 c_func
 (paren
@@ -863,9 +841,6 @@ op_star
 )paren
 id|arg
 )paren
-suffix:semicolon
-r_return
-id|error
 suffix:semicolon
 r_default
 suffix:colon

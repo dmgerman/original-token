@@ -612,9 +612,6 @@ op_star
 id|dev
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 multiline_comment|/* Oh, just say we&squot;re here, in case anyone cares */
 r_static
 r_int
@@ -697,28 +694,10 @@ id|enet_statistics
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize the tunnel device structure */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|DEV_NUMBUFFS
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|skb_queue_head_init
+id|dev_init_buffers
 c_func
 (paren
-op_amp
-id|dev-&gt;buffs
-(braket
-id|i
-)braket
+id|dev
 )paren
 suffix:semicolon
 id|dev-&gt;hard_header

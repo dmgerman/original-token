@@ -499,6 +499,8 @@ op_logical_neg
 id|error
 )paren
 (brace
+id|error
+op_assign
 id|copy_to_user
 c_func
 (paren
@@ -509,6 +511,14 @@ comma
 id|len
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
+id|error
+op_assign
 id|put_user
 c_func
 (paren
@@ -519,6 +529,12 @@ op_plus
 id|len
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
 id|error
 op_assign
 id|len

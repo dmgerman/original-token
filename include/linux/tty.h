@@ -754,7 +754,7 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|esp_init
+id|espserial_init
 c_func
 (paren
 r_void

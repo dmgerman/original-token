@@ -1,12 +1,12 @@
-multiline_comment|/* $Id: tpqic02.h,v 0.25 1994/07/21 02:16:30 root Exp root $&n; *&n; * Include file for QIC-02 driver for Linux.&n; *&n; * Copyright (c) 1992--1995 by H. H. Bergman. All rights reserved.&n; *&n; * ******* USER CONFIG SECTION BELOW (Near line 70) *******&n; */
+multiline_comment|/* $Id: tpqic02.h,v 1.5 1996/12/14 23:01:38 root Exp root $&n; *&n; * Include file for QIC-02 driver for Linux.&n; *&n; * Copyright (c) 1992--1995 by H. H. Bergman. All rights reserved.&n; *&n; * ******* USER CONFIG SECTION BELOW (Near line 70) *******&n; */
 macro_line|#ifndef _LINUX_TPQIC02_H
 DECL|macro|_LINUX_TPQIC02_H
 mdefine_line|#define _LINUX_TPQIC02_H
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_QIC02_TAPE) || defined (CONFIG_QIC02_TAPE_MODULE)
+macro_line|#if CONFIG_QIC02_TAPE || CONFIG_QIC02_TAPE_MODULE
 multiline_comment|/* need to have QIC02_TAPE_DRIVE and QIC02_TAPE_IFC expand to something */
 macro_line|#include &lt;linux/mtio.h&gt;
-multiline_comment|/* Make QIC02_TAPE_IFC expand to something.&n; *&n; * The only difference between WANGTEK and EVEREX is in the &n; * handling of the DMA channel 3.&n; * Note that the driver maps EVEREX to WANGTEK internally for speed&n; * reasons. Externally WANGTEK==1, EVEREX==2, ARCHIVE==3.&n; * These must correspond to the values used in qic02config(1).&n; *&n; * Support for Mountain controllers was added by Erik Jacobson&n; * and severely hacked by me.   -- hhb&n; */
+multiline_comment|/* Make QIC02_TAPE_IFC expand to something.&n; *&n; * The only difference between WANGTEK and EVEREX is in the &n; * handling of the DMA channel 3.&n; * Note that the driver maps EVEREX to WANGTEK internally for speed&n; * reasons. Externally WANGTEK==1, EVEREX==2, ARCHIVE==3.&n; * These must correspond to the values used in qic02config(1).&n; *&n; * Support for Mountain controllers was added by Erik Jacobson&n; * and severely hacked by me.   -- hhb&n; * &n; * Support for Emerald controllers by Alan Bain &lt;afrb2@chiark.chu.cam.ac.uk&gt;&n; * with more hacks by me.   -- hhb&n; */
 DECL|macro|WANGTEK
 mdefine_line|#define WANGTEK&t;&t;1&t;&t;   /* don&squot;t know about Wangtek QIC-36 */
 DECL|macro|EVEREX
@@ -25,6 +25,10 @@ DECL|macro|ARCHIVE_SC499
 mdefine_line|#define ARCHIVE_SC499&t;ARCHIVE       /* SC402 and SC499R should be identical */
 DECL|macro|MOUNTAIN
 mdefine_line|#define MOUNTAIN&t;5&t;&t;       /* Mountain Computer Interface */
+DECL|macro|EMERALD
+mdefine_line|#define EMERALD&t;&t;6&t;&t;       /* Emerald Interface card */
+DECL|macro|QIC02_TAPE_PORT_RANGE
+mdefine_line|#define QIC02_TAPE_PORT_RANGE &t;8&t; /* number of IO locations to reserve */
 multiline_comment|/*********** START OF USER CONFIGURABLE SECTION ************/
 multiline_comment|/* Tape configuration: Select DRIVE, IFC, PORT, IRQ and DMA below.&n; * Runtime (re)configuration is not supported yet.&n; *&n; * Tape drive configuration:&t;(MT_IS* constants are defined in mtio.h)&n; *&n; * QIC02_TAPE_DRIVE = MT_ISWT5150&n; *&t;- Wangtek 5150, format: up to QIC-150.&n; * QIC02_TAPE_DRIVE = MT_ISQIC02_ALL_FEATURES&n; *&t;- Enables some optional QIC02 commands that some drives may lack.&n; *&t;  It is provided so you can check which are supported by your drive.&n; *&t;  Refer to tpqic02.h for others.&n; *&n; * Supported interface cards: QIC02_TAPE_IFC =&n; *&t;WANGTEK,&n; *&t;ARCHIVE_SC402, ARCHIVE_SC499.&t;(both same programming interface)&n; *&n; * Make sure you have the I/O ports/DMA channels &n; * and IRQ stuff configured properly!&n; * NOTE: There may be other device drivers using the same major&n; *       number. This must be avoided. Check for timer.h conflicts too.&n; *&n; * If you have an EVEREX EV-831 card and you are using DMA channel 3,&n; * you will probably have to ``#define QIC02_TAPE_DMA3_FIX&squot;&squot; below.&n; */
 multiline_comment|/* CONFIG_QIC02_DYNCONF can be defined in autoconf.h, by `make config&squot; */
@@ -190,6 +194,8 @@ mdefine_line|#define WT_QIC02_CMD_PORT&t;(QIC02_TAPE_PORT+1)
 DECL|macro|WT_QIC02_DATA_PORT
 mdefine_line|#define WT_QIC02_DATA_PORT&t;(QIC02_TAPE_PORT+1)
 multiline_comment|/* status register bits (Active LOW!) */
+DECL|macro|WT_QIC02_STAT_POLARITY
+mdefine_line|#define WT_QIC02_STAT_POLARITY&t;0
 DECL|macro|WT_QIC02_STAT_READY
 mdefine_line|#define WT_QIC02_STAT_READY&t;0x01
 DECL|macro|WT_QIC02_STAT_EXCEPTION
@@ -213,6 +219,41 @@ DECL|macro|WT_CTL_DMA3
 mdefine_line|#define WT_CTL_DMA3&t;&t;0x10&t;&t;&t;  /* enable dma chan3 */
 DECL|macro|WT_CTL_DMA1
 mdefine_line|#define WT_CTL_DMA1&t;&t;0x08&t;         /* enable dma chan1 or chan2 */
+multiline_comment|/* EMERALD interface card specifics&n; * Much like Wangtek, only different polarity and bit locations&n; */
+DECL|macro|EMR_QIC02_STAT_PORT
+mdefine_line|#define EMR_QIC02_STAT_PORT&t;(QIC02_TAPE_PORT)
+DECL|macro|EMR_QIC02_CTL_PORT
+mdefine_line|#define EMR_QIC02_CTL_PORT&t;(QIC02_TAPE_PORT)
+DECL|macro|EMR_QIC02_CMD_PORT
+mdefine_line|#define EMR_QIC02_CMD_PORT&t;(QIC02_TAPE_PORT+1)
+DECL|macro|EMR_QIC02_DATA_PORT
+mdefine_line|#define EMR_QIC02_DATA_PORT&t;(QIC02_TAPE_PORT+1)
+multiline_comment|/* status register bits (Active High!) */
+DECL|macro|EMR_QIC02_STAT_POLARITY
+mdefine_line|#define EMR_QIC02_STAT_POLARITY&t;&t;1
+DECL|macro|EMR_QIC02_STAT_READY
+mdefine_line|#define EMR_QIC02_STAT_READY&t;&t;0x01
+DECL|macro|EMR_QIC02_STAT_EXCEPTION
+mdefine_line|#define EMR_QIC02_STAT_EXCEPTION&t;0x02
+DECL|macro|EMR_QIC02_STAT_MASK
+mdefine_line|#define EMR_QIC02_STAT_MASK&t;(EMR_QIC02_STAT_READY|EMR_QIC02_STAT_EXCEPTION)
+DECL|macro|EMR_QIC02_STAT_RESETMASK
+mdefine_line|#define EMR_QIC02_STAT_RESETMASK&t;0x07
+DECL|macro|EMR_QIC02_STAT_RESETVAL
+mdefine_line|#define EMR_QIC02_STAT_RESETVAL&t;(EMR_QIC02_STAT_RESETMASK &amp; ~EMR_QIC02_STAT_EXCEPTION)
+multiline_comment|/* controller register (QIC02_CTL_PORT) bits */
+DECL|macro|EMR_QIC02_CTL_RESET
+mdefine_line|#define EMR_QIC02_CTL_RESET&t;0x02
+DECL|macro|EMR_QIC02_CTL_REQUEST
+mdefine_line|#define EMR_QIC02_CTL_REQUEST&t;0x04
+DECL|macro|EMR_CTL_ONLINE
+mdefine_line|#define EMR_CTL_ONLINE&t;&t;0x01
+DECL|macro|EMR_CTL_CMDOFF
+mdefine_line|#define EMR_CTL_CMDOFF&t;&t;0xC0 
+DECL|macro|EMR_CTL_DMA3
+mdefine_line|#define EMR_CTL_DMA3&t;&t;0x10&t;&t;&t;  /* enable dma chan3 */
+DECL|macro|EMR_CTL_DMA1
+mdefine_line|#define EMR_CTL_DMA1&t;&t;0x08&t;         /* enable dma chan1 or chan2 */
 multiline_comment|/* ARCHIVE interface card specifics */
 DECL|macro|AR_QIC02_STAT_PORT
 mdefine_line|#define AR_QIC02_STAT_PORT&t;(QIC02_TAPE_PORT+1)
@@ -227,6 +268,8 @@ mdefine_line|#define AR_START_DMA_PORT&t;(QIC02_TAPE_PORT+2)
 DECL|macro|AR_RESET_DMA_PORT
 mdefine_line|#define AR_RESET_DMA_PORT&t;(QIC02_TAPE_PORT+3)
 multiline_comment|/* STAT port bits */
+DECL|macro|AR_QIC02_STAT_POLARITY
+mdefine_line|#define AR_QIC02_STAT_POLARITY&t;0
 DECL|macro|AR_STAT_IRQF
 mdefine_line|#define AR_STAT_IRQF&t;&t;0x80&t;/* active high, interrupt request flag */
 DECL|macro|AR_QIC02_STAT_READY
@@ -269,6 +312,8 @@ mdefine_line|#define MTN_R_DESELECT_DMA_PORT&t;(QIC02_TAPE_PORT+2)
 DECL|macro|MTN_W_DMA_WRITE_PORT
 mdefine_line|#define MTN_W_DMA_WRITE_PORT&t;(QIC02_TAPE_PORT+3)
 multiline_comment|/* STAT port bits */
+DECL|macro|MTN_QIC02_STAT_POLARITY
+mdefine_line|#define MTN_QIC02_STAT_POLARITY&t; 0
 DECL|macro|MTN_QIC02_STAT_READY
 mdefine_line|#define MTN_QIC02_STAT_READY&t; 0x02&t;/* active low */
 DECL|macro|MTN_QIC02_STAT_EXCEPTION
@@ -306,6 +351,8 @@ macro_line|#ifndef CONFIG_QIC02_DYNCONF
 DECL|macro|QIC02_TAPE_DEBUG
 macro_line|# define QIC02_TAPE_DEBUG&t;(qic02_tape_debug)
 macro_line|# if QIC02_TAPE_IFC == WANGTEK&t;
+DECL|macro|QIC02_STAT_POLARITY
+macro_line|#  define QIC02_STAT_POLARITY&t;WT_QIC02_STAT_POLARITY
 DECL|macro|QIC02_STAT_PORT
 macro_line|#  define QIC02_STAT_PORT&t;WT_QIC02_STAT_PORT
 DECL|macro|QIC02_CTL_PORT
@@ -342,7 +389,48 @@ macro_line|#    define WT_CTL_DMA&t;&t;WT_CTL_DMA1
 macro_line|#  else
 macro_line|#   error Unsupported or incorrect DMA configuration.
 macro_line|#  endif
+macro_line|# elif QIC02_TAPE_IFC == EMERALD
+DECL|macro|QIC02_STAT_POLARITY
+macro_line|#  define QIC02_STAT_POLARITY&t;EMR_QIC02_STAT_POLARITY
+DECL|macro|QIC02_STAT_PORT
+macro_line|#  define QIC02_STAT_PORT&t;EMR_QIC02_STAT_PORT
+DECL|macro|QIC02_CTL_PORT
+macro_line|#  define QIC02_CTL_PORT&t;EMR_QIC02_CTL_PORT
+DECL|macro|QIC02_CMD_PORT
+macro_line|#  define QIC02_CMD_PORT&t;EMR_QIC02_CMD_PORT
+DECL|macro|QIC02_DATA_PORT
+macro_line|#  define QIC02_DATA_PORT&t;EMR_QIC02_DATA_PORT
+DECL|macro|QIC02_STAT_READY
+macro_line|#  define QIC02_STAT_READY&t;EMR_QIC02_STAT_READY
+DECL|macro|QIC02_STAT_EXCEPTION
+macro_line|#  define QIC02_STAT_EXCEPTION&t;EMR_QIC02_STAT_EXCEPTION
+DECL|macro|QIC02_STAT_MASK
+macro_line|#  define QIC02_STAT_MASK&t;EMR_QIC02_STAT_MASK
+DECL|macro|QIC02_STAT_RESETMASK
+macro_line|#  define QIC02_STAT_RESETMASK&t;EMR_QIC02_STAT_RESETMASK
+DECL|macro|QIC02_STAT_RESETVAL
+macro_line|#  define QIC02_STAT_RESETVAL&t;EMR_QIC02_STAT_RESETVAL
+DECL|macro|QIC02_CTL_RESET
+macro_line|#  define QIC02_CTL_RESET&t;EMR_QIC02_CTL_RESET
+DECL|macro|QIC02_CTL_REQUEST
+macro_line|#  define QIC02_CTL_REQUEST&t;EMR_QIC02_CTL_REQUEST
+macro_line|#  if QIC02_TAPE_DMA == 3
+macro_line|#   ifdef QIC02_TAPE_DMA3_FIX
+DECL|macro|EMR_CTL_DMA
+macro_line|#    define EMR_CTL_DMA&t;&t;EMR_CTL_DMA1
+macro_line|#   else
+DECL|macro|EMR_CTL_DMA
+macro_line|#    define EMR_CTL_DMA&t;&t;EMR_CTL_DMA3
+macro_line|#   endif
+macro_line|#  elif QIC02_TAPE_DMA == 1
+DECL|macro|EMR_CTL_DMA
+macro_line|#    define EMR_CTL_DMA&t;&t;EMR_CTL_DMA1
+macro_line|#  else
+macro_line|#   error Unsupported or incorrect DMA configuration.
+macro_line|#  endif
 macro_line|# elif QIC02_TAPE_IFC == ARCHIVE
+DECL|macro|QIC02_STAT_POLARITY
+macro_line|#  define QIC02_STAT_POLARITY&t;AR_QIC02_STAT_POLARITY
 DECL|macro|QIC02_STAT_PORT
 macro_line|#  define QIC02_STAT_PORT&t;AR_QIC02_STAT_PORT
 DECL|macro|QIC02_CTL_PORT
@@ -369,6 +457,8 @@ macro_line|#  if QIC02_TAPE_DMA &gt; 3&t;/* channel 2 is used by the floppy driv
 macro_line|#   error DMA channels other than 1 and 3 are not supported.
 macro_line|#  endif
 macro_line|# elif QIC02_TAPE_IFC == MOUNTAIN
+DECL|macro|QIC02_STAT_POLARITY
+macro_line|#  define QIC02_STAT_POLARITY&t;MTN_QIC02_STAT_POLARITY
 DECL|macro|QIC02_STAT_PORT
 macro_line|#  define QIC02_STAT_PORT&t;MTN_QIC02_STAT_PORT
 DECL|macro|QIC02_CTL_PORT
@@ -427,6 +517,8 @@ DECL|macro|QIC02_CMD_PORT
 macro_line|# define QIC02_CMD_PORT &t;(qic02_tape_ccb.port_cmd)
 DECL|macro|QIC02_DATA_PORT
 macro_line|# define QIC02_DATA_PORT &t;(qic02_tape_ccb.port_data)
+DECL|macro|QIC02_STAT_POLARITY
+macro_line|# define QIC02_STAT_POLARITY&t;(qic02_tape_ccb.stat_polarity)
 DECL|macro|QIC02_STAT_READY
 macro_line|# define QIC02_STAT_READY&t;(qic02_tape_ccb.stat_ready)
 DECL|macro|QIC02_STAT_EXCEPTION
@@ -732,9 +824,9 @@ macro_line|# define TPQDEB(s)
 DECL|macro|TPQPUTS
 macro_line|# define TPQPUTS(s)
 macro_line|#endif
-multiline_comment|/* NR_BLK_BUF is a `tuneable parameter&squot;. If you&squot;re really low on&n; * kernel space, you could decrease it to 1, or if you got a very&n; * slow machine, you could increase it up to 128 blocks. Less kernel&n; * buffer blocks result in more context-switching.&n; */
+multiline_comment|/* NR_BLK_BUF is a `tuneable parameter&squot;. If you&squot;re really low on&n; * kernel space, you could decrease it to 1, or if you got a very&n; * slow machine, you could increase it up to 127 blocks. Less kernel&n; * buffer blocks result in more context-switching.&n; */
 DECL|macro|NR_BLK_BUF
-mdefine_line|#define NR_BLK_BUF&t;20&t;&t;&t;&t;    /* max 128 blocks */
+mdefine_line|#define NR_BLK_BUF&t;20&t;&t;&t;&t;    /* max 127 blocks */
 DECL|macro|TAPE_BLKSIZE
 mdefine_line|#define TAPE_BLKSIZE&t;512&t;&t;  /* streamer tape block size (fixed) */
 DECL|macro|TPQBUF_SIZE
@@ -777,6 +869,12 @@ id|port_data
 suffix:semicolon
 multiline_comment|/* Data port address */
 multiline_comment|/* status register bits */
+DECL|member|stat_polarity
+r_int
+r_int
+id|stat_polarity
+suffix:semicolon
+multiline_comment|/* invert status bits or not */
 DECL|member|stat_ready
 r_int
 r_int
@@ -825,6 +923,16 @@ id|dma_enable_value
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#if MODULE
+r_static
+r_int
+id|qic02_tape_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#else
 r_extern
 r_int
 id|qic02_tape_init
@@ -834,6 +942,7 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* for mem.c */
+macro_line|#endif
 macro_line|#endif /* CONFIG_QIC02_TAPE */
 macro_line|#endif /* _LINUX_TPQIC02_H */
 eof

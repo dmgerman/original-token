@@ -428,5 +428,8 @@ DECL|macro|MT_ST_DEF_COMPRESSION
 mdefine_line|#define MT_ST_DEF_COMPRESSION&t;(MT_ST_DEF_OPTIONS | 0x200000)
 DECL|macro|MT_ST_DEF_DRVBUFFER
 mdefine_line|#define MT_ST_DEF_DRVBUFFER&t;(MT_ST_DEF_OPTIONS | 0x300000)
+multiline_comment|/* The offset for the arguments for the special HP changer load command. */
+DECL|macro|MT_ST_HPLOADER_OFFSET
+mdefine_line|#define MT_ST_HPLOADER_OFFSET 10000
 macro_line|#endif /* _LINUX_MTIO_H */
 eof

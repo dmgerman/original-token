@@ -4,14 +4,8 @@ DECL|macro|NCR53C8XX_H
 mdefine_line|#define NCR53C8XX_H
 multiline_comment|/*&n;**&t;Name and revision of the driver&n;*/
 DECL|macro|SCSI_NCR_DRIVER_NAME
-mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&t;&quot;ncr53c8xx - revision 1.14c&quot;
-multiline_comment|/*&n;**&t;If SCSI_NCR_SPECIAL_FEATURES is defined,&n;**&t;the driver enables or not the following features according to chip id &n;**&t;revision id:&n;**&t;DMODE   0xce&n;**&t;&t;0x02&t;burst op-code fetch&n;**&t;&t;0x04&t;enable read multiple&n;**&t;&t;0x08&t;enable read line&n;**&t;&t;0xc0&t;burst length 16/8/2&n;**&t;DCNTL   0xa0&n;**&t;&t;0x20&t;enable pre-fetch&n;**&t;&t;0x80&t;enable cache line size&n;**&t;CTEST3  0x01&n;**&t;&t;0x01&t;set write and invalidate&n;**&t;CTEST4  0x80&n;**&t;&t;0x80&t;burst disabled&n;**&n;**&t;If SCSI_NCR_TRUST_BIOS_SETTING is defined, the driver will use the &n;**&t;initial value of corresponding bit fields, assuming they have been &n;**&t;set by the SDMS BIOS.&n;**&t;When Linux is booted from another O/S, these assertion is false and &n;**&t;the driver will not be able to guess it. &n;*/
-macro_line|#if 0
-mdefine_line|#define SCSI_NCR_TRUST_BIOS_SETTING
-macro_line|#endif
-macro_line|#if 0
-mdefine_line|#define SCSI_NCR_SPECIAL_FEATURES
-macro_line|#endif
+mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&t;&quot;ncr53c8xx - revision 1.16b&quot;
+multiline_comment|/*&n;**&t;If SCSI_NCR_SETUP_SPECIAL_FEATURES is defined,&n;**&t;the driver enables or not the following features according to chip id &n;**&t;revision id:&n;**&t;DMODE   0xce&n;**&t;&t;0x02&t;burst op-code fetch&n;**&t;&t;0x04&t;enable read multiple&n;**&t;&t;0x08&t;enable read line&n;**&t;&t;0xc0&t;burst length 16/8/2&n;**&t;DCNTL   0xa0&n;**&t;&t;0x20&t;enable pre-fetch&n;**&t;&t;0x80&t;enable cache line size&n;**&t;CTEST3  0x01&n;**&t;&t;0x01&t;set write and invalidate&n;**&t;CTEST4  0x80&n;**&t;&t;0x80&t;burst disabled&n;**&t;CTEST5  0x24&t;(825a and 875 only)&n;**&t;&t;0x04&t;burst 128&n;**&t;&t;0x80&t;dma fifo 536&n;**&n;**&t;If SCSI_NCR_TRUST_BIOS_SETTING is defined, the driver will use the &n;**&t;initial value of corresponding bit fields, assuming they have been &n;**&t;set by the SDMS BIOS.&n;**&t;When Linux is booted from another O/S, these assertion is false and &n;**&t;the driver will not be able to guess it. &n;*/
 multiline_comment|/*********** LINUX SPECIFIC SECTION ******************/
 multiline_comment|/*&n;**&t;Check supported Linux versions&n;*/
 macro_line|#if !defined(LINUX_VERSION_CODE)
@@ -59,7 +53,24 @@ macro_line|#if&t;LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,72)
 DECL|macro|SCSI_NCR_SHARE_IRQ
 macro_line|#&t;define SCSI_NCR_SHARE_IRQ
 macro_line|#endif
-multiline_comment|/*&n;**&t;Avoid to change these constants, unless you know what you are doing.&n;*/
+multiline_comment|/* ---------------------------------------------------------------------&n;** Take into account kernel configured parameters.&n;** Most of these options can be overridden at startup by a command line.&n;** ---------------------------------------------------------------------&n;*/
+multiline_comment|/*&n; * For Ultra SCSI support option, use special features and allow 20Mhz &n; * synchronous data transfers.&n; */
+macro_line|#if&t;1 /* CONFIG_SCSI_NCR53C8XX_ULTRA_SUPPORT */
+DECL|macro|SCSI_NCR_SETUP_SPECIAL_FEATURES
+mdefine_line|#define&t;SCSI_NCR_SETUP_SPECIAL_FEATURES&t;&t;(1)
+DECL|macro|SCSI_NCR_SETUP_ULTRA_SCSI
+mdefine_line|#define SCSI_NCR_SETUP_ULTRA_SCSI&t;&t;(1)
+DECL|macro|SCSI_NCR_MAX_SYNC
+mdefine_line|#define SCSI_NCR_MAX_SYNC (20000)
+macro_line|#else
+DECL|macro|SCSI_NCR_SETUP_SPECIAL_FEATURES
+mdefine_line|#define&t;SCSI_NCR_SETUP_SPECIAL_FEATURES&t;&t;(0)
+DECL|macro|SCSI_NCR_SETUP_ULTRA_SCSI
+mdefine_line|#define SCSI_NCR_SETUP_ULTRA_SCSI&t;&t;(0)
+DECL|macro|SCSI_NCR_MAX_SYNC
+mdefine_line|#define SCSI_NCR_MAX_SYNC (10000)
+macro_line|#endif
+multiline_comment|/*&n; * Allow tags from 2 to 12, default 4&n; */
 macro_line|#ifdef&t;CONFIG_SCSI_NCR53C8XX_MAX_TAGS
 macro_line|#if&t;CONFIG_SCSI_NCR53C8XX_MAX_TAGS &lt; 2
 DECL|macro|SCSI_NCR_MAX_TAGS
@@ -75,62 +86,80 @@ macro_line|#else
 DECL|macro|SCSI_NCR_MAX_TAGS
 mdefine_line|#define SCSI_NCR_MAX_TAGS&t;(4)
 macro_line|#endif
-DECL|macro|SCSI_NCR_ALWAYS_SIMPLE_TAG
-mdefine_line|#define SCSI_NCR_ALWAYS_SIMPLE_TAG
-macro_line|#ifdef CONFIG_SCSI_NCR53C8XX_TAGGED_QUEUE
-DECL|macro|SCSI_NCR_DEFAULT_TAGS
-mdefine_line|#define SCSI_NCR_DEFAULT_TAGS&t;SCSI_NCR_MAX_TAGS
+multiline_comment|/*&n; * Allow tagged command queuing support if configured with default number &n; * of tags set to max (see above).&n; */
+macro_line|#ifdef&t;CONFIG_SCSI_NCR53C8XX_TAGGED_QUEUE
+DECL|macro|SCSI_NCR_SETUP_DEFAULT_TAGS
+mdefine_line|#define&t;SCSI_NCR_SETUP_DEFAULT_TAGS&t;SCSI_NCR_MAX_TAGS
 macro_line|#else
-DECL|macro|SCSI_NCR_DEFAULT_TAGS
-mdefine_line|#define SCSI_NCR_DEFAULT_TAGS&t;(0)
+DECL|macro|SCSI_NCR_SETUP_DEFAULT_TAGS
+mdefine_line|#define&t;SCSI_NCR_SETUP_DEFAULT_TAGS&t;(0)
 macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI_NCR53C8XX_IOMAPPED
+multiline_comment|/*&n; * Use normal IO if configured. Forced for alpha.&n; */
+macro_line|#if defined(CONFIG_SCSI_NCR53C8XX_IOMAPPED) || defined(__alpha__)
 DECL|macro|SCSI_NCR_IOMAPPED
 mdefine_line|#define&t;SCSI_NCR_IOMAPPED
 macro_line|#endif
+multiline_comment|/*&n; * Sync transfer frequency at startup.&n; * Allow from 5Mhz to 20Mhz default 10 Mhz.&n; */
 macro_line|#ifdef&t;CONFIG_SCSI_NCR53C8XX_SYNC
 macro_line|#if&t;CONFIG_SCSI_NCR53C8XX_SYNC == 0
-DECL|macro|SCSI_NCR_DEFAULT_SYNC
-mdefine_line|#define&t;SCSI_NCR_DEFAULT_SYNC&t;(0)
-macro_line|#elif&t;CONFIG_SCSI_NCR53C8XX_SYNC &lt; 5
-DECL|macro|SCSI_NCR_DEFAULT_SYNC
-mdefine_line|#define&t;SCSI_NCR_DEFAULT_SYNC&t;(5000)
-macro_line|#elif&t;CONFIG_SCSI_NCR53C8XX_SYNC &gt; 10
-DECL|macro|SCSI_NCR_DEFAULT_SYNC
-mdefine_line|#define&t;SCSI_NCR_DEFAULT_SYNC&t;(10000)
+DECL|macro|SCSI_NCR_SETUP_DEFAULT_SYNC
+mdefine_line|#define&t;SCSI_NCR_SETUP_DEFAULT_SYNC&t;(0)
+macro_line|#elif&t;CONFIG_SCSI_NCR53C8XX_SYNC*1000 &lt; 5000
+DECL|macro|SCSI_NCR_SETUP_DEFAULT_SYNC
+mdefine_line|#define&t;SCSI_NCR_SETUP_DEFAULT_SYNC&t;(5000)
+macro_line|#elif&t;CONFIG_SCSI_NCR53C8XX_SYNC*1000 &gt; SCSI_NCR_MAX_SYNC
+DECL|macro|SCSI_NCR_SETUP_DEFAULT_SYNC
+mdefine_line|#define&t;SCSI_NCR_SETUP_DEFAULT_SYNC&t;SCSI_NCR_MAX_SYNC
 macro_line|#else
-DECL|macro|SCSI_NCR_DEFAULT_SYNC
-mdefine_line|#define&t;SCSI_NCR_DEFAULT_SYNC&t;(CONFIG_SCSI_NCR53C8XX_SYNC * 1000)
+DECL|macro|SCSI_NCR_SETUP_DEFAULT_SYNC
+mdefine_line|#define&t;SCSI_NCR_SETUP_DEFAULT_SYNC&t;(CONFIG_SCSI_NCR53C8XX_SYNC * 1000)
 macro_line|#endif
 macro_line|#else
-DECL|macro|SCSI_NCR_DEFAULT_SYNC
-mdefine_line|#define&t;SCSI_NCR_DEFAULT_SYNC&t;(10000)
+DECL|macro|SCSI_NCR_SETUP_DEFAULT_SYNC
+mdefine_line|#define&t;SCSI_NCR_SETUP_DEFAULT_SYNC&t;(10000)
 macro_line|#endif
+multiline_comment|/*&n; * Default sync to 0 will force asynchronous at startup&n; */
 macro_line|#ifdef&t;CONFIG_SCSI_FORCE_ASYNCHRONOUS
-DECL|macro|SCSI_NCR_DEFAULT_SYNC
-macro_line|#undef&t;SCSI_NCR_DEFAULT_SYNC
-DECL|macro|SCSI_NCR_DEFAULT_SYNC
-mdefine_line|#define SCSI_NCR_DEFAULT_SYNC&t;(0)
+DECL|macro|SCSI_NCR_SETUP_DEFAULT_SYNC
+macro_line|#undef&t;SCSI_NCR_SETUP_DEFAULT_SYNC
+DECL|macro|SCSI_NCR_SETUP_DEFAULT_SYNC
+mdefine_line|#define SCSI_NCR_SETUP_DEFAULT_SYNC&t;(0)
 macro_line|#endif
+multiline_comment|/*&n; * Disallow disconnections at boot-up&n; */
 macro_line|#ifdef CONFIG_SCSI_NCR53C8XX_NO_DISCONNECT
-DECL|macro|SCSI_NCR_NO_DISCONNECT
-mdefine_line|#define SCSI_NCR_NO_DISCONNECT
+DECL|macro|SCSI_NCR_SETUP_DISCONNECTION
+mdefine_line|#define SCSI_NCR_SETUP_DISCONNECTION&t;(0)
+macro_line|#else
+DECL|macro|SCSI_NCR_SETUP_DISCONNECTION
+mdefine_line|#define SCSI_NCR_SETUP_DISCONNECTION&t;(1)
 macro_line|#endif
+multiline_comment|/*&n; * Force synchronous negotiation for all targets&n; */
 macro_line|#ifdef CONFIG_SCSI_NCR53C8XX_FORCE_SYNC_NEGO
-DECL|macro|SCSI_NCR_FORCE_SYNC_NEGO
-mdefine_line|#define SCSI_NCR_FORCE_SYNC_NEGO
+DECL|macro|SCSI_NCR_SETUP_FORCE_SYNC_NEGO
+mdefine_line|#define SCSI_NCR_SETUP_FORCE_SYNC_NEGO&t;(1)
+macro_line|#else
+DECL|macro|SCSI_NCR_SETUP_FORCE_SYNC_NEGO
+mdefine_line|#define SCSI_NCR_SETUP_FORCE_SYNC_NEGO&t;(0)
 macro_line|#endif
+multiline_comment|/*&n; * Disable master parity checking (flawed hardwares need that)&n; */
 macro_line|#ifdef CONFIG_SCSI_NCR53C8XX_DISABLE_MPARITY_CHECK
-DECL|macro|SCSI_NCR_DISABLE_MPARITY_CHECK
-mdefine_line|#define SCSI_NCR_DISABLE_MPARITY_CHECK
+DECL|macro|SCSI_NCR_SETUP_MASTER_PARITY
+mdefine_line|#define SCSI_NCR_SETUP_MASTER_PARITY&t;(0)
+macro_line|#else
+DECL|macro|SCSI_NCR_SETUP_MASTER_PARITY
+mdefine_line|#define SCSI_NCR_SETUP_MASTER_PARITY&t;(1)
 macro_line|#endif
+multiline_comment|/*&n; * Disable scsi parity checking (flawed devices may need that)&n; */
 macro_line|#ifdef CONFIG_SCSI_NCR53C8XX_DISABLE_PARITY_CHECK
-DECL|macro|SCSI_NCR_DISABLE_PARITY_CHECK
-mdefine_line|#define SCSI_NCR_DISABLE_PARITY_CHECK
+DECL|macro|SCSI_NCR_SETUP_SCSI_PARITY
+mdefine_line|#define SCSI_NCR_SETUP_SCSI_PARITY&t;(0)
+macro_line|#else
+DECL|macro|SCSI_NCR_SETUP_SCSI_PARITY
+mdefine_line|#define SCSI_NCR_SETUP_SCSI_PARITY&t;(1)
 macro_line|#endif
-macro_line|#if 0
-mdefine_line|#define SCSI_NCR_SEGMENT_SIZE&t;(512)
-macro_line|#endif
+multiline_comment|/*&n;**&t;Other parameters not configurable with &quot;make config&quot;&n;**&t;Avoid to change these constants, unless you know what you are doing.&n;*/
+DECL|macro|SCSI_NCR_ALWAYS_SIMPLE_TAG
+mdefine_line|#define SCSI_NCR_ALWAYS_SIMPLE_TAG
 DECL|macro|SCSI_NCR_MAX_SCATTER
 mdefine_line|#define SCSI_NCR_MAX_SCATTER&t;(128)
 DECL|macro|SCSI_NCR_MAX_TARGET
@@ -147,6 +176,8 @@ DECL|macro|SCSI_NCR_CMD_PER_LUN
 mdefine_line|#define SCSI_NCR_CMD_PER_LUN&t;(SCSI_NCR_MAX_TAGS)
 DECL|macro|SCSI_NCR_SG_TABLESIZE
 mdefine_line|#define SCSI_NCR_SG_TABLESIZE&t;(SCSI_NCR_MAX_SCATTER-1)
+DECL|macro|SCSI_NCR_TIMER_INTERVAL
+mdefine_line|#define SCSI_NCR_TIMER_INTERVAL&t;((HZ+5-1)/5)
 macro_line|#if 1 /* defined CONFIG_SCSI_MULTI_LUN */
 DECL|macro|SCSI_NCR_MAX_LUN
 mdefine_line|#define SCSI_NCR_MAX_LUN&t;(8)
@@ -154,11 +185,16 @@ macro_line|#else
 DECL|macro|SCSI_NCR_MAX_LUN
 mdefine_line|#define SCSI_NCR_MAX_LUN&t;(1)
 macro_line|#endif
-DECL|macro|SCSI_NCR_TIMER_INTERVAL
-mdefine_line|#define SCSI_NCR_TIMER_INTERVAL&t;((HZ+5-1)/5)
+multiline_comment|/*&n;**&t;Initial setup.&n;**&t;Can be overriden at startup by a command line.&n;*/
+DECL|macro|SCSI_NCR_DRIVER_SETUP
+mdefine_line|#define SCSI_NCR_DRIVER_SETUP&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_MASTER_PARITY,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_SCSI_PARITY,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DISCONNECTION,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_SPECIAL_FEATURES,&t;&bslash;&n;&t;SCSI_NCR_SETUP_ULTRA_SCSI,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_FORCE_SYNC_NEGO,&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DEFAULT_TAGS,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DEFAULT_SYNC,&t;&t;&bslash;&n;&t;0x00&t;&t;&t;&t;&t;&bslash;&n;}
 multiline_comment|/*&n;**&t;Define Scsi_Host_Template parameters&n;**&n;**&t;Used by hosts.c and ncr53c8xx.c with module configuration.&n;*/
 macro_line|#if defined(HOSTS_C) || defined(MODULE)
+macro_line|#if&t;LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,98)
 macro_line|#include &lt;scsi/scsicam.h&gt;
+macro_line|#else
+macro_line|#include &lt;linux/scsicam.h&gt;
+macro_line|#endif
 r_int
 id|ncr53c8xx_abort
 c_func
@@ -552,8 +588,14 @@ multiline_comment|/*1b*/
 id|u_char
 id|nc_ctest3
 suffix:semicolon
+DECL|macro|FLF
+mdefine_line|#define   FLF     0x08  /* cmd: flush dma fifo              */
 DECL|macro|CLF
-mdefine_line|#define   CLF&t;  0x04&t;/* clear scsi fifo&t;&t;    */
+mdefine_line|#define   CLF&t;  0x04&t;/* cmd: clear dma fifo&t;&t;    */
+DECL|macro|FM
+mdefine_line|#define   FM      0x02  /* mod: fetch pin mode              */
+DECL|macro|WRIE
+mdefine_line|#define   WRIE    0x01  /* mod: write and invalidate enable */
 DECL|member|nc_temp
 multiline_comment|/*1c*/
 id|u_int32
@@ -570,6 +612,10 @@ multiline_comment|/*21*/
 id|u_char
 id|nc_ctest4
 suffix:semicolon
+DECL|macro|BDIS
+mdefine_line|#define   BDIS    0x80  /* mod: burst disable               */
+DECL|macro|MPEE
+mdefine_line|#define   MPEE    0x08  /* mod: master parity error enable  */
 DECL|member|nc_ctest5
 multiline_comment|/*22*/
 id|u_char
@@ -615,6 +661,16 @@ multiline_comment|/*38*/
 id|u_char
 id|nc_dmode
 suffix:semicolon
+DECL|macro|BL_2
+mdefine_line|#define   BL_2    0x80  /* mod: burst length shift value +2 */
+DECL|macro|BL_1
+mdefine_line|#define   BL_1    0x40  /* mod: burst length shift value +1 */
+DECL|macro|ERL
+mdefine_line|#define   ERL     0x08  /* mod: enable read line            */
+DECL|macro|ERMP
+mdefine_line|#define   ERMP    0x04  /* mod: enable read multiple        */
+DECL|macro|BOF
+mdefine_line|#define   BOF     0x02  /* mod: burst op code fetch         */
 DECL|member|nc_dien
 multiline_comment|/*39*/
 id|u_char
@@ -631,10 +687,20 @@ id|u_char
 id|nc_dcntl
 suffix:semicolon
 multiline_comment|/* --&gt; Script execution control     */
+DECL|macro|CLSE
+mdefine_line|#define   CLSE    0x80  /* mod: cache line size enable      */
+DECL|macro|PFF
+mdefine_line|#define   PFF     0x40  /* cmd: pre-fetch flush             */
+DECL|macro|PFEN
+mdefine_line|#define   PFEN    0x20  /* mod: pre-fetch enable            */
 DECL|macro|SSM
 mdefine_line|#define   SSM     0x10  /* mod: single step mode            */
+DECL|macro|IRQM
+mdefine_line|#define   IRQM    0x08  /* mod: irq mode (1 = totem pole !) */
 DECL|macro|STD
 mdefine_line|#define   STD     0x04  /* cmd: start dma mode              */
+DECL|macro|IRQD
+mdefine_line|#define   IRQD    0x02  /* mod: irq disable                 */
 DECL|macro|NOCOM
 mdefine_line|#define&t;  NOCOM   0x01&t;/* cmd: protect sfbr while reselect */
 DECL|member|nc_adder

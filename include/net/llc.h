@@ -14,205 +14,6 @@ id|llc_struct
 op_star
 id|llcptr
 suffix:semicolon
-multiline_comment|/*&n; *&t;LLC operations object.&n; */
-r_typedef
-r_struct
-(brace
-DECL|member|data_indication_ep
-r_void
-(paren
-op_star
-id|data_indication_ep
-)paren
-(paren
-id|llcptr
-id|llc
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
-multiline_comment|/* unit data returns 0 to keep the data 1 to free it */
-DECL|member|unit_data_indication_ep
-r_int
-(paren
-op_star
-id|unit_data_indication_ep
-)paren
-(paren
-id|llcptr
-id|llc
-comma
-r_int
-id|ll
-comma
-r_char
-op_star
-id|xid_data
-)paren
-suffix:semicolon
-DECL|member|connect_indication_ep
-r_void
-(paren
-op_star
-id|connect_indication_ep
-)paren
-(paren
-id|llcptr
-id|llc
-)paren
-suffix:semicolon
-DECL|member|connect_confirm_ep
-r_void
-(paren
-op_star
-id|connect_confirm_ep
-)paren
-(paren
-id|llcptr
-id|llc
-)paren
-suffix:semicolon
-DECL|member|data_connect_indication_ep
-r_void
-(paren
-op_star
-id|data_connect_indication_ep
-)paren
-(paren
-id|llcptr
-id|llc
-)paren
-suffix:semicolon
-DECL|member|data_connect_confirm_ep
-r_void
-(paren
-op_star
-id|data_connect_confirm_ep
-)paren
-(paren
-id|llcptr
-id|llc
-)paren
-suffix:semicolon
-DECL|member|disconnect_indication_ep
-r_void
-(paren
-op_star
-id|disconnect_indication_ep
-)paren
-(paren
-id|llcptr
-id|llc
-)paren
-suffix:semicolon
-DECL|member|disconnect_confirm_ep
-r_void
-(paren
-op_star
-id|disconnect_confirm_ep
-)paren
-(paren
-id|llcptr
-id|llc
-)paren
-suffix:semicolon
-DECL|member|reset_confirm_ep
-r_void
-(paren
-op_star
-id|reset_confirm_ep
-)paren
-(paren
-id|llcptr
-id|llc
-comma
-r_char
-id|lr
-)paren
-suffix:semicolon
-DECL|member|reset_indication_ep
-r_void
-(paren
-op_star
-id|reset_indication_ep
-)paren
-(paren
-id|llcptr
-id|llc
-comma
-r_char
-id|lr
-)paren
-suffix:semicolon
-DECL|macro|LOCAL
-mdefine_line|#define LOCAL&t;&t;0
-DECL|macro|REMOTE
-mdefine_line|#define REMOTE&t;&t;1
-DECL|member|xid_indication_ep
-r_void
-(paren
-op_star
-id|xid_indication_ep
-)paren
-(paren
-id|llcptr
-id|llc
-comma
-r_int
-id|ll
-comma
-r_char
-op_star
-id|xid_data
-)paren
-suffix:semicolon
-DECL|member|test_indication_ep
-r_void
-(paren
-op_star
-id|test_indication_ep
-)paren
-(paren
-id|llcptr
-id|llc
-comma
-r_int
-id|ll
-comma
-r_char
-op_star
-id|test_data
-)paren
-suffix:semicolon
-DECL|member|report_status_ep
-r_void
-(paren
-op_star
-id|report_status_ep
-)paren
-(paren
-id|llcptr
-id|llc
-comma
-r_char
-id|status
-)paren
-suffix:semicolon
-DECL|macro|FRMR_RECEIVED
-mdefine_line|#define FRMR_RECEIVED&t;0
-DECL|macro|FRMR_SENT
-mdefine_line|#define FRMR_SENT&t;1
-DECL|macro|REMOTE_BUSY
-mdefine_line|#define REMOTE_BUSY&t;2
-DECL|macro|REMOTE_NOT_BUSY
-mdefine_line|#define REMOTE_NOT_BUSY&t;3
-DECL|typedef|llc_ops
-)brace
-id|llc_ops
-suffix:semicolon
 multiline_comment|/*&n; *&t;LLC private data area structure.&n; */
 DECL|struct|llc_struct
 r_struct
@@ -381,11 +182,18 @@ id|tl
 l_int|4
 )braket
 suffix:semicolon
-multiline_comment|/* &n;&t; *&t;Client entry points, called by the LLC &n;&t; */
-DECL|member|ops
-id|llc_ops
+multiline_comment|/* &n;&t; *&t;Client entry point, called by the LLC.&n;&t; */
+DECL|member|llc_event
+r_void
+(paren
 op_star
-id|ops
+id|llc_event
+)paren
+(paren
+r_struct
+id|llc_struct
+op_star
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Mux and Demux variables&n;&t; */
 DECL|member|client_data
@@ -444,20 +252,20 @@ r_int
 id|llc_callbacks
 suffix:semicolon
 multiline_comment|/* Pending callbacks */
-DECL|macro|LLC_CONNECT_INDICATION
-mdefine_line|#define LLC_CONNECT_INDICATION&t;1&t;
-DECL|macro|LLC_CONNECT_CONFIRM
-mdefine_line|#define LLC_CONNECT_CONFIRM&t;2
-DECL|macro|LLC_DATA_INDICATION
-mdefine_line|#define LLC_DATA_INDICATION&t;4
+DECL|macro|LLC_CONN_INDICATION
+mdefine_line|#define LLC_CONN_INDICATION&t;1&t;/* We have to ensure the names don&squot;t */
+DECL|macro|LLC_CONN_CONFIRM
+mdefine_line|#define LLC_CONN_CONFIRM&t;2&t;/* mix up with the 802 state table */
+DECL|macro|LLC_DATA_INDIC
+mdefine_line|#define LLC_DATA_INDIC&t;&t;4
 DECL|macro|LLC_DISC_INDICATION
 mdefine_line|#define LLC_DISC_INDICATION&t;8
 DECL|macro|LLC_RESET_INDIC_LOC
 mdefine_line|#define LLC_RESET_INDIC_LOC&t;16
 DECL|macro|LLC_RESET_INDIC_REM
 mdefine_line|#define LLC_RESET_INDIC_REM&t;32
-DECL|macro|LLC_RESET_CONFIRM
-mdefine_line|#define LLC_RESET_CONFIRM&t;64
+DECL|macro|LLC_RST_CONFIRM
+mdefine_line|#define LLC_RST_CONFIRM&t;&t;64
 DECL|macro|LLC_FRMR_RECV
 mdefine_line|#define LLC_FRMR_RECV&t;&t;128
 DECL|macro|LLC_FRMR_SENT
@@ -466,8 +274,12 @@ DECL|macro|LLC_REMOTE_BUSY
 mdefine_line|#define LLC_REMOTE_BUSY&t;&t;512
 DECL|macro|LLC_REMOTE_NOTBUSY
 mdefine_line|#define LLC_REMOTE_NOTBUSY&t;1024
-DECL|macro|LLC_SET_REMOTE_BUSY
-mdefine_line|#define LLC_SET_REMOTE_BUSY&t;2048
+DECL|macro|LLC_TEST_INDICATION
+mdefine_line|#define LLC_TEST_INDICATION&t;2048
+DECL|macro|LLC_XID_INDICATION
+mdefine_line|#define LLC_XID_INDICATION&t;4096
+DECL|macro|LLC_UI_DATA
+mdefine_line|#define LLC_UI_DATA&t;&t;8192
 DECL|member|inc_skb
 r_struct
 id|sk_buff
@@ -816,9 +628,14 @@ r_char
 op_star
 id|device
 comma
-id|llc_ops
+r_void
+(paren
 op_star
 id|ops
+)paren
+(paren
+id|llcptr
+)paren
 comma
 id|u8
 op_star

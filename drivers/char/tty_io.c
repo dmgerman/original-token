@@ -8298,7 +8298,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_ESPSERIAL  /* init ESP before rs, so rs doesn&squot;t see the port */
-id|esp_init
+id|espserial_init
 c_func
 (paren
 )paren

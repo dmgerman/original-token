@@ -9376,9 +9376,6 @@ op_star
 id|dev
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 multiline_comment|/*&n;     * Finish setting up the DEVICE info.&n;     */
 id|dev-&gt;trans_start
 op_assign
@@ -9467,28 +9464,10 @@ r_int
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Pointer to the interface buffers.&n;     */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|DEV_NUMBUFFS
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|skb_queue_head_init
+id|dev_init_buffers
 c_func
 (paren
-op_amp
-id|dev-&gt;buffs
-(braket
-id|i
-)braket
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Pointers to interface service routines.&n;     */

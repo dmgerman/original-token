@@ -66,6 +66,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Don&squot;t allow two people to adjust at once.&n;&t; */
+multiline_comment|/*&n;&t; *&t;FIXME: Swap for a kernel semaphore object&n;&t; */
 r_while
 c_loop
 (paren

@@ -510,6 +510,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|ncr53c8xx_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|eata2x_setup
 c_func
 (paren
@@ -1155,6 +1169,22 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_WDT
+r_extern
+r_void
+id|wdt_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_SYSVIPC) || defined(CONFIG_KERNELD)
 r_extern
 r_void
@@ -1771,6 +1801,14 @@ id|BusLogic_Setup
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_NCR53C8XX
+(brace
+l_string|&quot;ncr53c8xx=&quot;
+comma
+id|ncr53c8xx_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_EATA
 (brace
 l_string|&quot;eata=&quot;
@@ -2078,6 +2116,14 @@ macro_line|#ifdef CONFIG_SOUNDMODEM
 l_string|&quot;soundmodem=&quot;
 comma
 id|sm_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_WDT
+(brace
+l_string|&quot;wdt=&quot;
+comma
+id|wdt_setup
 )brace
 comma
 macro_line|#endif

@@ -2,7 +2,6 @@ multiline_comment|/*&n; *&t;Linux NET3:&t;Multicast List maintenance. &n; *&n; *
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -22,10 +21,8 @@ macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
-macro_line|#ifdef CONFIG_NET_ALIAS
 macro_line|#include &lt;linux/net_alias.h&gt;
-macro_line|#endif
-multiline_comment|/*&n; *&t;Device multicast list maintenance. This knows about such little matters as promiscuous mode and&n; *&t;converting from the list to the array the drivers use. At least until I fix the drivers up.&n; *&n; *&t;This is used both by IP and by the user level maintenance functions. Unlike BSD we maintain a usage count&n; *&t;on a given multicast address so that a casual user application can add/delete multicasts used by protocols&n; *&t;without doing damage to the protocols when it deletes the entries. It also helps IP as it tracks overlapping&n; *&t;maps.&n; */
+multiline_comment|/*&n; *&t;Device multicast list maintenance. &n; *&n; *&t;This is used both by IP and by the user level maintenance functions. &n; *&t;Unlike BSD we maintain a usage count on a given multicast address so &n; *&t;that a casual user application can add/delete multicasts used by &n; *&t;protocols without doing damage to the protocols when it deletes the&n; *&t;entries. It also helps IP as it tracks overlapping maps.&n; */
 multiline_comment|/*&n; *&t;Update the multicast list into the physical NIC controller.&n; */
 DECL|function|dev_mc_upload
 r_void
@@ -53,7 +50,7 @@ id|IFF_UP
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_NET_ALIAS
+multiline_comment|/*&n;&t; *&t;An aliased device should end up with the combined&n;&t; *&t;multicast list of all its aliases. &n;&t; *&t;[Check this is still ok -AC]&n;&t; */
 id|dev
 op_assign
 id|net_alias_main_dev
@@ -62,7 +59,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Devices with no set multicast don&squot;t get set &n;&t; */
 r_if
 c_cond
@@ -112,7 +108,6 @@ op_star
 op_star
 id|dmi
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET_ALIAS
 id|dev
 op_assign
 id|net_alias_main_dev
@@ -121,7 +116,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -146,6 +140,7 @@ op_member_access_from_pointer
 id|next
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; *&t;Find the entry we want to delete. The device could&n;&t;&t; *&t;have variable length entries so check these too.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -207,6 +202,7 @@ id|all
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Last user. So delete the entry.&n;&t;&t;&t; */
 op_star
 id|dmi
 op_assign
@@ -232,6 +228,7 @@ id|tmp
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;We have altered the list, so the card&n;&t;&t;&t; *&t;loaded filter is now wrong. Fix it&n;&t;&t;&t; */
 id|dev_mc_upload
 c_func
 (paren
@@ -270,7 +267,6 @@ id|dev_mc_list
 op_star
 id|dmi
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET_ALIAS
 id|dev
 op_assign
 id|net_alias_main_dev
@@ -279,7 +275,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -410,7 +405,6 @@ op_star
 id|dev
 )paren
 (brace
-macro_line|#ifdef CONFIG_NET_ALIAS
 r_if
 c_cond
 (paren
@@ -422,7 +416,6 @@ id|dev
 )paren
 r_return
 suffix:semicolon
-macro_line|#endif
 r_while
 c_loop
 (paren

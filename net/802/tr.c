@@ -1,3 +1,4 @@
+multiline_comment|/*&n; * NET3:&t;Token ring device handling subroutines&n; * &n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -60,6 +61,7 @@ id|rif_cache_s
 op_star
 id|rif_cache
 suffix:semicolon
+multiline_comment|/*&n; *&t;Each RIF entry we learn is kept this way&n; */
 DECL|struct|rif_cache_s
 r_struct
 id|rif_cache_s
@@ -98,6 +100,7 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|RIF_TABLE_SIZE
 mdefine_line|#define RIF_TABLE_SIZE 16
+multiline_comment|/*&n; *&t;We hash the RIF cache 16 ways. We do after all have to look it&n; *&t;up a lot.&n; */
 DECL|variable|rif_table
 id|rif_cache
 id|rif_table
@@ -111,14 +114,26 @@ DECL|macro|RIF_TIMEOUT
 mdefine_line|#define RIF_TIMEOUT 60*10*HZ
 DECL|macro|RIF_CHECK_INTERVAL
 mdefine_line|#define RIF_CHECK_INTERVAL 60*HZ
+multiline_comment|/*&n; *&t;Garbage disposal timer.&n; */
 DECL|variable|rif_timer
 r_static
 r_struct
 id|timer_list
 id|rif_timer
 op_assign
-initialization_block
+(brace
+l_int|NULL
+comma
+l_int|NULL
+comma
+id|RIF_CHECK_INTERVAL
+comma
+l_int|0L
+comma
+id|rif_check_expire
+)brace
 suffix:semicolon
+multiline_comment|/*&n; *&t;Put the headers on a token ring packet. Token ring source routing&n; *&t;makes this a little more exciting than on ethernet.&n; */
 DECL|function|tr_header
 r_int
 id|tr_header
@@ -221,6 +236,7 @@ id|dev-&gt;addr_len
 )paren
 suffix:semicolon
 multiline_comment|/* Adapter fills in address */
+multiline_comment|/*&n;&t; *&t;This is the stuff needed for IP encoding - IP over 802.2&n;&t; *&t;with SNAP.&n;&t; */
 id|trllc-&gt;dsap
 op_assign
 id|trllc-&gt;ssap
@@ -256,6 +272,7 @@ c_func
 id|type
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Build the destination and then source route the frame&n;&t; */
 r_if
 c_cond
 (paren
@@ -289,6 +306,7 @@ op_minus
 id|dev-&gt;hard_header_len
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;A neighbour discovery of some species (eg arp) has completed. We&n; *&t;can now send the packet.&n; */
 DECL|function|tr_rebuild_header
 r_int
 id|tr_rebuild_header
@@ -339,6 +357,7 @@ id|dev
 op_assign
 id|skb-&gt;dev
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;FIXME: We don&squot;t yet support IPv6 over token rings&n;&t; */
 r_if
 c_cond
 (paren
@@ -402,6 +421,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n; *&t;Some of this is a bit hackish. We intercept RIF information&n; *&t;used for source routing. We also grab IP directly and don&squot;t feed&n; *&t;it via SNAP.&n; */
 DECL|function|tr_type_trans
 r_int
 r_int
@@ -549,7 +569,7 @@ r_return
 id|trllc-&gt;ethertype
 suffix:semicolon
 )brace
-multiline_comment|/* We try to do source routing... */
+multiline_comment|/*&n; *&t;We try to do source routing... &n; */
 DECL|function|tr_source_route
 r_static
 r_void
@@ -577,7 +597,7 @@ suffix:semicolon
 id|rif_cache
 id|entry
 suffix:semicolon
-multiline_comment|/* Broadcasts are single route as stated in RFC 1042 */
+multiline_comment|/*&n;&t; *&t;Broadcasts are single route as stated in RFC 1042 &n;&t; */
 r_if
 c_cond
 (paren
@@ -672,6 +692,7 @@ id|RIF_TABLE_SIZE
 op_minus
 l_int|1
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Walk the hash table and look for an entry&n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -713,6 +734,7 @@ id|entry-&gt;next
 (brace
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; *&t;If we found an entry we can route the frame.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -833,6 +855,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Without the information we simply have to shout&n;&t;&t;&t; *&t;on the wire. The replies should rapidly clean this&n;&t;&t;&t; *&t;situation up.&n;&t;&t;&t; */
 id|trh-&gt;rcf
 op_assign
 id|htons
@@ -868,6 +891,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/*&n; *&t;We have learned some new RIF information for our source&n; *&t;routing.&n; */
 DECL|function|tr_add_rif_info
 r_static
 r_void
@@ -890,6 +914,7 @@ suffix:semicolon
 id|rif_cache
 id|entry
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Firstly see if the entry exists&n;&t; */
 id|trh-&gt;saddr
 (braket
 l_int|0
@@ -929,16 +954,6 @@ id|RIF_TABLE_SIZE
 op_minus
 l_int|1
 suffix:semicolon
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;hash: %d&bslash;n&quot;
-comma
-id|hash
-)paren
-suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -1028,6 +1043,7 @@ id|trh-&gt;rcf
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n;&t;&t; *&t;Allocate our new entry. A failure to allocate loses&n;&t;&t; *&t;use the information. This is harmless.&n;&t;&t; *&n;&t;&t; *&t;FIXME: We ought to keep some kind of cache size&n;&t;&t; *&t;limiting and adjust the timers to suit.&n;&t;&t; */
 id|entry
 op_assign
 id|kmalloc
@@ -1052,6 +1068,7 @@ id|entry
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;tr.c: Couldn&squot;t malloc rif cache entry !&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1131,9 +1148,10 @@ op_assign
 id|entry
 suffix:semicolon
 )brace
-multiline_comment|/* Y. Tahara added */
 r_else
+multiline_comment|/* Y. Tahara added */
 (brace
+multiline_comment|/*&n;&t;&t; *&t;Update existing entries&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1237,6 +1255,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/*&n; *&t;Scan the cache with a timer and see what we need to throw out.&n; */
 DECL|function|rif_check_expire
 r_static
 r_void
@@ -1305,6 +1324,8 @@ op_star
 id|pentry
 )paren
 )paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Out it goes&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1342,12 +1363,14 @@ op_amp
 id|entry-&gt;next
 suffix:semicolon
 )brace
+)brace
 id|restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Reset the timer&n;&t; */
 id|del_timer
 c_func
 (paren
@@ -1369,6 +1392,7 @@ id|rif_timer
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Generate the /proc/net information for the token ring RIF&n; *&t;routing.&n; */
 DECL|function|rif_get_info
 r_int
 id|rif_get_info
@@ -1645,6 +1669,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Called during bootup.  We don&squot;t actually have to initialise&n; *&t;too much for this. The timer structure is setup statically. Thats&n; *&t;probably NOT a good thing if we change the structure.&n; */
 DECL|function|rif_init
 r_void
 id|rif_init

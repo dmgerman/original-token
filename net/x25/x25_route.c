@@ -135,10 +135,23 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-id|x25_route-&gt;address
-op_assign
-op_star
-id|address
+id|strcpy
+c_func
+(paren
+id|x25_route-&gt;address.x25_addr
+comma
+l_string|&quot;000000000000000&quot;
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|x25_route-&gt;address.x25_addr
+comma
+id|address-&gt;x25_addr
+comma
+id|sigdigits
+)paren
 suffix:semicolon
 id|x25_route-&gt;sigdigits
 op_assign
@@ -487,10 +500,12 @@ op_logical_and
 id|dev-&gt;type
 op_eq
 id|ARPHRD_X25
+macro_line|#if defined(CONFIG_LLC) || defined(CONFIG_LLC_MODULE)
 op_logical_or
 id|dev-&gt;type
 op_eq
 id|ARPHRD_ETHER
+macro_line|#endif
 )paren
 )paren
 r_return
@@ -870,7 +885,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;address         digits  device&bslash;n&quot;
+l_string|&quot;address          digits  device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -898,7 +913,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%-15s %2d %-4s&bslash;n&quot;
+l_string|&quot;%-15s  %-6d  %-5s&bslash;n&quot;
 comma
 id|x25_route-&gt;address.x25_addr
 comma

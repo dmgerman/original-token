@@ -1,15 +1,16 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the Interfaces handler.&n; *&n; * Version:&t;@(#)dev.h&t;1.0.10&t;08/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Donald J. Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;A.Cox@swansea.ac.uk&gt;&n; *&t;&t;Bjorn Ekwall. &lt;bj0rn@blox.se&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;&t;Moved to /usr/include/linux for NET3&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the Interfaces handler.&n; *&n; * Version:&t;@(#)dev.h&t;1.0.10&t;08/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Donald J. Becker, &lt;becker@cesdis.gsfc.nasa.gov&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Bjorn Ekwall. &lt;bj0rn@blox.se&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;&t;Moved to /usr/include/linux for NET3&n; */
 macro_line|#ifndef _LINUX_NETDEVICE_H
 DECL|macro|_LINUX_NETDEVICE_H
 mdefine_line|#define _LINUX_NETDEVICE_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
-multiline_comment|/* for future expansion when we will have different priorities. */
+multiline_comment|/*&n; *&t;For future expansion when we will have different priorities. &n; */
 DECL|macro|DEV_NUMBUFFS
-mdefine_line|#define DEV_NUMBUFFS&t;3
+mdefine_line|#define DEV_NUMBUFFS&t;3&t;&t;/* Number of queues per device&t;   */
 DECL|macro|MAX_ADDR_LEN
-mdefine_line|#define MAX_ADDR_LEN&t;7
+mdefine_line|#define MAX_ADDR_LEN&t;7&t;&t;/* Largest hardware address length */
+multiline_comment|/*&n; *&t;Compute the worst case header length according to the protocols&n; *&t;used.&n; */
 macro_line|#if !defined(CONFIG_AX25) &amp;&amp; !defined(CONFIG_AX25_MODULE) &amp;&amp; !defined(CONFIG_TR)
 DECL|macro|LL_MAX_HEADER
 mdefine_line|#define LL_MAX_HEADER&t;32
@@ -88,11 +89,12 @@ id|hh_cache
 op_star
 id|hh_next
 suffix:semicolon
+multiline_comment|/* Next entry&t;&t;&t;     */
 DECL|member|hh_refcnt
 r_int
 id|hh_refcnt
 suffix:semicolon
-multiline_comment|/* number of users */
+multiline_comment|/* number of users                   */
 DECL|member|hh_type
 r_int
 r_int
@@ -103,8 +105,8 @@ DECL|member|hh_uptodate
 r_char
 id|hh_uptodate
 suffix:semicolon
-multiline_comment|/* hh_data is valid */
-multiline_comment|/* cached hardware header; allow for machine alignment needs.  */
+multiline_comment|/* hh_data is valid                  */
+multiline_comment|/* cached hardware header; allow for machine alignment needs.        */
 DECL|member|hh_data
 r_int
 r_int
@@ -231,6 +233,7 @@ r_char
 id|dma
 suffix:semicolon
 multiline_comment|/* DMA channel&t;&t;*/
+multiline_comment|/*&n;&t; *&t;FIXME:&n;&t; *&t;The description &squot;enet_statistics&squot; is misleading. We&n;&t; *&t;should change this.&n;&t; */
 DECL|member|get_stats
 r_struct
 id|enet_statistics
@@ -403,10 +406,12 @@ DECL|member|ip_flags
 r_int
 id|ip_flags
 suffix:semicolon
+multiline_comment|/* IP layer control flags&t;*/
 DECL|member|hash
 id|__u8
 id|hash
 suffix:semicolon
+multiline_comment|/* Hashing index &t;&t;*/
 DECL|member|tx_queue_len
 id|__u32
 id|tx_queue_len
@@ -694,13 +699,14 @@ r_int
 r_int
 id|type
 suffix:semicolon
-multiline_comment|/* This is really htons(ether_type). */
+multiline_comment|/* This is really htons(ether_type).&t;*/
 DECL|member|dev
 r_struct
 id|device
 op_star
 id|dev
 suffix:semicolon
+multiline_comment|/* NULL is wildcarded here&t;&t;*/
 DECL|member|func
 r_int
 (paren
@@ -726,6 +732,7 @@ r_void
 op_star
 id|data
 suffix:semicolon
+multiline_comment|/* Private to the packet type&t;&t;*/
 DECL|member|next
 r_struct
 id|packet_type
@@ -736,20 +743,19 @@ suffix:semicolon
 suffix:semicolon
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
-multiline_comment|/* Used by dev_rint */
-DECL|macro|IN_SKBUFF
-mdefine_line|#define IN_SKBUFF&t;1
 r_extern
 r_struct
 id|device
 id|loopback_dev
 suffix:semicolon
+multiline_comment|/* The loopback */
 r_extern
 r_struct
 id|device
 op_star
 id|dev_base
 suffix:semicolon
+multiline_comment|/* All devices */
 r_extern
 r_struct
 id|packet_type
@@ -759,6 +765,7 @@ id|ptype_base
 l_int|16
 )braket
 suffix:semicolon
+multiline_comment|/* Hashed types */
 multiline_comment|/* NOTE: move to INET specific header;&n;   __ip_chk_addr is deprecated, do not use if it&squot;s possible.&n; */
 r_extern
 r_int
@@ -1051,7 +1058,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* NOTE: about to be replaced with if_index */
 DECL|function|dev_hash_name
-r_static
+r_extern
 id|__inline__
 id|__u8
 id|dev_hash_name
@@ -1094,7 +1101,7 @@ id|hash
 suffix:semicolon
 )brace
 DECL|function|dev_hash_mc_name
-r_static
+r_extern
 id|__inline__
 id|__u8
 id|dev_hash_mc_name
@@ -1175,6 +1182,50 @@ suffix:semicolon
 r_return
 id|hash
 suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Buffer initialisation function. This used to appear in all the&n; *&t;drivers but is now an inline in case we ever want to change the&n; *&t;schemes used.&n; */
+DECL|function|dev_init_buffers
+r_extern
+id|__inline__
+r_void
+id|dev_init_buffers
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|DEV_NUMBUFFS
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|dev-&gt;buffs
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* These functions live elsewhere (drivers/net/net_init.c, but related) */
 r_extern

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunserial.c,v 1.24 1996/11/21 16:57:56 jj Exp $&n; * serial.c: Serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sunserial.c,v 1.25 1996/12/30 07:50:26 davem Exp $&n; * serial.c: Serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2107,6 +2107,13 @@ op_star
 id|info
 )paren
 (brace
+r_struct
+id|tty_struct
+op_star
+id|tty
+op_assign
+id|info-&gt;tty
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2139,7 +2146,13 @@ op_le
 l_int|0
 )paren
 op_logical_or
-id|info-&gt;tty-&gt;stopped
+(paren
+id|tty
+op_ne
+l_int|0
+op_logical_and
+id|tty-&gt;stopped
+)paren
 )paren
 (brace
 multiline_comment|/* That&squot;s peculiar... */
@@ -2726,6 +2739,22 @@ id|tty
 )paren
 r_return
 suffix:semicolon
+macro_line|#ifdef SERIAL_DEBUG_OPEN
+id|printk
+c_func
+(paren
+l_string|&quot;do_serial_hangup&lt;%p: tty-%d&bslash;n&quot;
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+comma
+id|info-&gt;line
+)paren
+suffix:semicolon
+macro_line|#endif
 id|tty_hangup
 c_func
 (paren
@@ -2829,7 +2858,7 @@ macro_line|#ifdef SERIAL_DEBUG_OPEN
 id|printk
 c_func
 (paren
-l_string|&quot;starting up ttys%d (irq %d)...&quot;
+l_string|&quot;Starting up tty-%d (irq %d)...&bslash;n&quot;
 comma
 id|info-&gt;line
 comma
@@ -3235,23 +3264,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|i
-op_eq
-l_int|0
-)paren
-(brace
-multiline_comment|/* XXX B0, hangup the line. */
-id|do_serial_hangup
-c_func
-(paren
-id|info
-)paren
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
 id|baud_table
 (braket
 id|i
@@ -3332,6 +3344,8 @@ id|BRSRC
 op_or
 id|BRENAB
 suffix:semicolon
+multiline_comment|/* } else { */
+multiline_comment|/* XXX */
 )brace
 multiline_comment|/* byte size and parity */
 r_switch
@@ -5990,7 +6004,7 @@ macro_line|#ifdef SERIAL_DEBUG_OPEN
 id|printk
 c_func
 (paren
-l_string|&quot;rs_close ttys%d, count = %d&bslash;n&quot;
+l_string|&quot;rs_close tty-%d, count = %d&bslash;n&quot;
 comma
 id|info-&gt;line
 comma
@@ -6316,6 +6330,18 @@ op_amp
 id|info-&gt;close_wait
 )paren
 suffix:semicolon
+macro_line|#ifdef SERIAL_DEBUG_OPEN
+id|printk
+c_func
+(paren
+l_string|&quot;rs_close tty-%d exiting, count = %d&bslash;n&quot;
+comma
+id|info-&gt;line
+comma
+id|info-&gt;count
+)paren
+suffix:semicolon
+macro_line|#endif
 id|restore_flags
 c_func
 (paren
@@ -6362,6 +6388,24 @@ l_string|&quot;rs_hangup&quot;
 )paren
 r_return
 suffix:semicolon
+macro_line|#ifdef SERIAL_DEBUG_OPEN
+id|printk
+c_func
+(paren
+l_string|&quot;rs_hangup&lt;%p: tty-%d, count = %d bye&bslash;n&quot;
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+comma
+id|info-&gt;line
+comma
+id|info-&gt;count
+)paren
+suffix:semicolon
+macro_line|#endif
 id|rs_flush_buffer
 c_func
 (paren
@@ -6443,6 +6487,10 @@ r_int
 id|do_clocal
 op_assign
 l_int|0
+suffix:semicolon
+r_int
+r_char
+id|r0
 suffix:semicolon
 multiline_comment|/*&n;&t; * If the device is in the middle of being closed, then block&n;&t; * until it&squot;s done, and then try again.&n;&t; */
 r_if
@@ -6746,6 +6794,18 @@ id|ZILOG_INITIALIZED
 )paren
 )paren
 (brace
+macro_line|#ifdef SERIAL_DEBUG_OPEN
+id|printk
+c_func
+(paren
+l_string|&quot;block_til_ready hup-ed: ttys%d, count = %d&bslash;n&quot;
+comma
+id|info-&gt;line
+comma
+id|info-&gt;count
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef SERIAL_DO_RESTART
 r_if
 c_cond
@@ -6775,6 +6835,26 @@ macro_line|#endif
 r_break
 suffix:semicolon
 )brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|r0
+op_assign
+id|read_zsreg
+c_func
+(paren
+id|info-&gt;zs_channel
+comma
+id|R0
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6798,13 +6878,7 @@ op_logical_or
 (paren
 id|DCD
 op_amp
-id|read_zsreg
-c_func
-(paren
-id|info-&gt;zs_channel
-comma
-id|R0
-)paren
+id|r0
 )paren
 )paren
 )paren
@@ -7028,6 +7102,34 @@ id|info-&gt;count
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|info-&gt;tty
+op_ne
+l_int|0
+op_logical_and
+id|info-&gt;tty
+op_ne
+id|tty
+)paren
+(brace
+multiline_comment|/* Never happen? */
+id|printk
+c_func
+(paren
+l_string|&quot;rs_open %s%d, tty overwrite.&bslash;n&quot;
+comma
+id|tty-&gt;driver.name
+comma
+id|info-&gt;line
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
 id|info-&gt;count
 op_increment
 suffix:semicolon
@@ -7165,7 +7267,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.24 $&quot;
+l_string|&quot;$Revision: 1.25 $&quot;
 suffix:semicolon
 r_char
 op_star

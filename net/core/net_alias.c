@@ -13,7 +13,7 @@ macro_line|#include &lt;linux/net_alias.h&gt;
 macro_line|#ifdef CONFIG_KERNELD
 macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
-multiline_comment|/*&n; * Only allow the following flags to pass from main device to aliases&n; */
+multiline_comment|/*&n; *&t;Only allow the following flags to pass from main device to aliases&n; */
 DECL|macro|NET_ALIAS_IFF_MASK
 mdefine_line|#define  NET_ALIAS_IFF_MASK   (IFF_UP|IFF_RUNNING|IFF_NOARP|IFF_LOOPBACK|IFF_POINTOPOINT|IFF_BROADCAST|IFF_MULTICAST)
 r_static
@@ -205,7 +205,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * net_alias_type base array, will hold net_alias_type obj hashed list heads.&n; */
+multiline_comment|/*&n; *&t;net_alias_type base array, will hold net_alias_type obj hashed list &n; *&t;heads.&n; */
 DECL|variable|nat_base
 r_struct
 id|net_alias_type
@@ -215,13 +215,13 @@ id|nat_base
 l_int|16
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * get net_alias_type ptr by type&n; */
-r_static
+multiline_comment|/*&n; *&t;Get net_alias_type ptr by type&n; */
+DECL|function|nat_getbytype
+r_extern
 id|__inline__
 r_struct
 id|net_alias_type
 op_star
-DECL|function|nat_getbytype
 id|nat_getbytype
 c_func
 (paren
@@ -268,11 +268,11 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * get addr32 representation (pre-hashing) of address.&n; * if NULL nat-&gt;get_addr32, assume sockaddr_in struct (IP-ish).&n; */
-r_static
+multiline_comment|/*&n; *&t;Get addr32 representation (pre-hashing) of address.&n; *&t;If NULL nat-&gt;get_addr32, assume sockaddr_in struct (IP-ish).&n; */
+DECL|function|nat_addr32
+r_extern
 id|__inline__
 id|__u32
-DECL|function|nat_addr32
 id|nat_addr32
 c_func
 (paren
@@ -313,11 +313,11 @@ op_star
 id|sa.sin_addr.s_addr
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * hashing code for alias_info-&gt;hash_tab entries&n; * 4 bytes -&gt; 1/2 byte using xor complemented by af&n; */
-r_static
+multiline_comment|/*&n; *&t;Hashing code for alias_info-&gt;hash_tab entries&n; *&t;4 bytes -&gt; 1/2 byte using xor complemented by af&n; */
+DECL|function|HASH
+r_extern
 id|__inline__
 r_int
-DECL|function|HASH
 id|HASH
 c_func
 (paren
@@ -367,10 +367,10 @@ suffix:semicolon
 multiline_comment|/* 1 -&gt; 1/2 */
 )brace
 multiline_comment|/*&n; * get hash key for supplied net alias type and address&n; * nat must be !NULL&n; * the purpose here is to map a net_alias_type and a generic&n; * address to a hash code.&n; */
-r_static
+DECL|function|nat_hash_key
+r_extern
 id|__inline__
 r_int
-DECL|function|nat_hash_key
 id|nat_hash_key
 c_func
 (paren
@@ -401,10 +401,10 @@ id|sa-&gt;sa_family
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * change net_alias_type number of attachments (bindings)&n; */
+multiline_comment|/*&n; *&t;Change net_alias_type number of attachments (bindings)&n; */
+DECL|function|nat_attach_chg
 r_static
 r_int
-DECL|function|nat_attach_chg
 id|nat_attach_chg
 c_func
 (paren
@@ -493,11 +493,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * bind alias to its type (family) object and call initialization hook&n; */
-r_static
+multiline_comment|/*&n; *&t;Bind alias to its type (family) object and call initialization hook&n; */
+DECL|function|nat_bind
+r_extern
 id|__inline__
 r_int
-DECL|function|nat_bind
 id|nat_bind
 c_func
 (paren
@@ -545,11 +545,11 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * unbind alias from type object and call alias destructor&n; */
-r_static
+multiline_comment|/*&n; *&t;Unbind alias from type object and call alias destructor&n; */
+DECL|function|nat_unbind
+r_extern
 id|__inline__
 r_int
-DECL|function|nat_unbind
 id|nat_unbind
 c_func
 (paren
@@ -590,7 +590,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * compare device address with given. if NULL nat-&gt;dev_addr_chk,&n; * compare dev-&gt;pa_addr with (sockaddr_in) 32 bits address (IP-ish)&n; */
+multiline_comment|/*&n; *&t;Compare device address with given. if NULL nat-&gt;dev_addr_chk,&n; *&t;compare dev-&gt;pa_addr with (sockaddr_in) 32 bits address (IP-ish)&n; */
 DECL|function|nat_dev_addr_chk_1
 r_static
 id|__inline__
@@ -646,10 +646,10 @@ id|sa.sin_addr.s_addr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * alias device init()&n; * do nothing.&n; */
+multiline_comment|/*&n; *&t;Alias device init()&n; *&t;do nothing.&n; */
+DECL|function|net_alias_devinit
 r_static
 r_int
-DECL|function|net_alias_devinit
 id|net_alias_devinit
 c_func
 (paren
@@ -673,10 +673,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * hard_start_xmit() should not be called.&n; * ignore ... but shout!.&n; */
+multiline_comment|/*&n; *&t;Hard_start_xmit() should not be called.&n; *&t;ignore ... but shout!.&n; */
+DECL|function|net_alias_hard_start_xmit
 r_static
 r_int
-DECL|function|net_alias_hard_start_xmit
 id|net_alias_hard_start_xmit
 c_func
 (paren
@@ -712,9 +712,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|net_alias_open
 r_static
 r_int
-DECL|function|net_alias_open
 id|net_alias_open
 c_func
 (paren
@@ -728,9 +728,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|net_alias_close
 r_static
 r_int
-DECL|function|net_alias_close
 id|net_alias_close
 c_func
 (paren
@@ -745,9 +745,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * setups a new (alias) device &n; */
+DECL|function|net_alias_devsetup
 r_static
 r_int
-DECL|function|net_alias_devsetup
 id|net_alias_devsetup
 c_func
 (paren
@@ -783,7 +783,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n;   *&n;   * generic device setup based on main_dev info&n;   *&n;   * FIXME: is NULL bitwise 0 for all Linux platforms?&n;   */
+multiline_comment|/*&n;&t; *&n;&t; * generic device setup based on main_dev info&n;&t; *&n;&t; * FIXME: is NULL bitwise 0 for all Linux platforms?&n;&t; */
 id|main_dev
 op_assign
 id|alias-&gt;main_dev
@@ -889,7 +889,7 @@ op_amp
 op_complement
 id|IFF_UP
 suffix:semicolon
-multiline_comment|/*&n;   * only makes sense if same family&n;   */
+multiline_comment|/*&n;&t; *&t;Only makes sense if same family (arguable)&n;&t; */
 r_if
 c_cond
 (paren
@@ -927,7 +927,7 @@ op_assign
 id|main_dev-&gt;rebuild_header
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   *&t;Fill in the generic fields of the device structure.&n;   *    not actually used, avoids some dev.c #ifdef&squot;s&n;   */
+multiline_comment|/*&n;&t; *&t;Fill in the generic fields of the device structure.&n;&t; *&t;not actually used, avoids some dev.c #ifdef&squot;s&n;&t; */
 r_for
 c_loop
 (paren
@@ -960,13 +960,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * slow alias find (parse the whole hash_tab)&n; * returns: alias&squot; pointer address&n; */
+multiline_comment|/*&n; *&t;Slow alias find (parse the whole hash_tab)&n; *&t;returns: alias&squot; pointer address&n; */
+DECL|function|net_alias_slow_findp
 r_static
 r_struct
 id|net_alias
 op_star
 op_star
-DECL|function|net_alias_slow_findp
 id|net_alias_slow_findp
 c_func
 (paren
@@ -992,7 +992,7 @@ op_star
 op_star
 id|aliasp
 suffix:semicolon
-multiline_comment|/*&n;   * for each alias_info&squot;s hash_tab entry, for every alias ...&n;   */
+multiline_comment|/*&n;&t; *&t;For each alias_info&squot;s hash_tab entry, for every alias ...&n;&t; */
 id|n_aliases
 op_assign
 id|alias_info-&gt;n_aliases
@@ -1011,6 +1011,7 @@ suffix:semicolon
 id|idx
 op_increment
 )paren
+(brace
 r_for
 c_loop
 (paren
@@ -1035,6 +1036,7 @@ id|aliasp
 op_member_access_from_pointer
 id|next
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1058,16 +1060,18 @@ l_int|0
 r_break
 suffix:semicolon
 multiline_comment|/* faster give up */
+)brace
+)brace
 r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * create alias device for main_dev with given slot num.&n; * if sa==NULL will create a same_family alias device &n; */
+multiline_comment|/*&n; *&t;Create alias device for main_dev with given slot num.&n; *&t;if sa==NULL will create a same_family alias device.&n; */
+DECL|function|net_alias_dev_create
 r_static
 r_struct
 id|device
 op_star
-DECL|function|net_alias_dev_create
 id|net_alias_dev_create
 c_func
 (paren
@@ -1132,7 +1136,7 @@ id|alias_info
 op_assign
 id|main_dev-&gt;alias_info
 suffix:semicolon
-multiline_comment|/*&n;   * if NULL address given, take family from main_dev&n;   */
+multiline_comment|/*&n;&t; *&t;If NULL address given, take family from main_dev&n;&t; */
 id|family
 op_assign
 (paren
@@ -1144,7 +1148,7 @@ id|sa-&gt;sa_family
 suffix:colon
 id|main_dev-&gt;family
 suffix:semicolon
-multiline_comment|/*&n;   * check if wanted family has a net_alias_type object registered&n;   */
+multiline_comment|/*&n;&t; *&t;Check if wanted family has a net_alias_type object registered&n;&t; */
 id|nat
 op_assign
 id|nat_getbytype
@@ -1225,7 +1229,7 @@ macro_line|#ifdef CONFIG_KERNELD
 )brace
 macro_line|#endif
 )brace
-multiline_comment|/*&n;   * do not allow creation over downed devices&n;   */
+multiline_comment|/*&n;&t; *&t;Do not allow creation over downed devices&n;&t; */
 op_star
 id|err
 op_assign
@@ -1245,7 +1249,7 @@ id|IFF_UP
 r_return
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * if first alias, must also create alias_info&n;   */
+multiline_comment|/*&n;&t; *&t;If first alias, must also create alias_info&n;&t; */
 op_star
 id|err
 op_assign
@@ -1322,7 +1326,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* ENOMEM */
-multiline_comment|/*&n;   * FIXME: is NULL bitwise 0 for all Linux platforms?&n;   */
 id|memset
 c_func
 (paren
@@ -1369,7 +1372,7 @@ comma
 id|slot
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * initialise alias&squot; device structure&n;   */
+multiline_comment|/*&n;&t; *&t;Initialise alias&squot; device structure&n;&t; */
 id|net_alias_devsetup
 c_func
 (paren
@@ -1396,7 +1399,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * bind alias to its object type&n;   * nat_bind calls nat-&gt;alias_init_1&n;   */
+multiline_comment|/*&n;&t; *&t;bind alias to its object type&n;&t; *&t;nat_bind calls nat-&gt;alias_init_1&n;&t; */
 id|nat_bind
 c_func
 (paren
@@ -1407,7 +1410,7 @@ comma
 id|sa
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * if no address passed, take from device (could have been&n;   * set by nat-&gt;alias_init_1)&n;   */
+multiline_comment|/*&n;&t; *&t;If no address passed, take from device (could have been&n;&t; *&t;set by nat-&gt;alias_init_1)&n;&t; */
 id|addr32
 op_assign
 (paren
@@ -1425,7 +1428,7 @@ id|sa
 suffix:colon
 id|alias-&gt;dev.pa_addr
 suffix:semicolon
-multiline_comment|/*&n;   * store hash key in alias: will speed-up rehashing and deletion&n;   */
+multiline_comment|/*&n;&t; *&t;Store hash key in alias: will speed-up rehashing and deletion&n;&t; */
 id|alias-&gt;hash
 op_assign
 id|HASH
@@ -1436,7 +1439,7 @@ comma
 id|family
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * insert alias in hashed linked list&n;   */
+multiline_comment|/*&n;&t; *&t;Insert alias in hashed linked list&n;&t; */
 id|aliasp
 op_assign
 op_amp
@@ -1455,7 +1458,7 @@ id|aliasp
 op_assign
 id|alias
 suffix:semicolon
-multiline_comment|/*&n;   * if first alias ...&n;   */
+multiline_comment|/*&n;&t; *&t;If first alias ...&n;&t; */
 r_if
 c_cond
 (paren
@@ -1473,7 +1476,7 @@ op_assign
 id|alias_info
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * add device at tail (just after last main_dev alias)&n;   */
+multiline_comment|/*&n;&t; * add device at tail (just after last main_dev alias)&n;&t; */
 id|dev-&gt;next
 op_assign
 id|alias_info-&gt;taildev-&gt;next
@@ -1496,12 +1499,12 @@ r_return
 id|dev
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * delete one main_dev alias (referred by its slot num)&n; */
+multiline_comment|/*&n; *&t;Delete one main_dev alias (referred by its slot num)&n; */
+DECL|function|net_alias_dev_delete
 r_static
 r_struct
 id|device
 op_star
-DECL|function|net_alias_dev_delete
 id|net_alias_dev_delete
 c_func
 (paren
@@ -1571,7 +1574,7 @@ l_int|NULL
 r_return
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * does main_dev have aliases?&n;   */
+multiline_comment|/*&n;&t; *&t;Does main_dev have aliases?&n;&t; */
 id|alias_info
 op_assign
 id|main_dev-&gt;alias_info
@@ -1590,7 +1593,7 @@ id|n_aliases
 op_assign
 id|alias_info-&gt;n_aliases
 suffix:semicolon
-multiline_comment|/*&n;   * find device that holds the same slot number (could also&n;   * be strcmp() ala dev_get).&n;   */
+multiline_comment|/*&n;&t; *&t;Find device that holds the same slot number (could also&n;&t; *&t;be strcmp() ala dev_get).&n;&t; */
 r_for
 c_loop
 (paren
@@ -1665,7 +1668,7 @@ op_assign
 op_amp
 id|alias-&gt;dev
 suffix:semicolon
-multiline_comment|/*&n;   * find alias hashed entry&n;   */
+multiline_comment|/*&n;&t; *&t;Find alias hashed entry&n;&t; */
 r_for
 c_loop
 (paren
@@ -1690,6 +1693,7 @@ id|aliasp
 op_member_access_from_pointer
 id|next
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1702,7 +1706,8 @@ id|alias
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * if not found (???), try a full search&n;   */
+)brace
+multiline_comment|/*&n;&t; *&t;If not found (???), try a full search&n;&t; */
 r_if
 c_cond
 (paren
@@ -1711,6 +1716,7 @@ id|aliasp
 op_ne
 id|alias
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1751,6 +1757,7 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/* ENODEV */
 )brace
+)brace
 id|nat
 op_assign
 id|alias-&gt;nat
@@ -1766,7 +1773,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * unbind alias from alias_type obj.&n;   */
+multiline_comment|/*&n;&t; *&t;Unbind alias from alias_type obj.&n;&t; */
 id|nat_unbind
 c_func
 (paren
@@ -1775,7 +1782,7 @@ comma
 id|alias
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * is alias at tail?&n;   */
+multiline_comment|/*&n;&t; *&t;Is alias at tail?&n;&t; */
 r_if
 c_cond
 (paren
@@ -1787,7 +1794,7 @@ id|alias_info-&gt;taildev
 op_assign
 id|prevdev
 suffix:semicolon
-multiline_comment|/*&n;   * unlink and close device&n;   */
+multiline_comment|/*&n;&t; *&t;Unlink and close device&n;&t; */
 id|prevdev-&gt;next
 op_assign
 id|dev-&gt;next
@@ -1798,7 +1805,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * unlink alias&n;   */
+multiline_comment|/*&n;&t; *&t;Unlink alias&n;&t; */
 op_star
 id|aliasp
 op_assign
@@ -1828,7 +1835,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * now free structures&n;   */
+multiline_comment|/*&n;&t; *&t;Now free structures&n;&t; */
 id|kfree_s
 c_func
 (paren
@@ -1860,7 +1867,7 @@ id|net_alias_info
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * deletion ok (*err=0), NULL device returned.&n;   */
+multiline_comment|/*&n;&t; *&t;Deletion ok (*err=0), NULL device returned.&n;&t; */
 op_star
 id|err
 op_assign
@@ -1870,10 +1877,10 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * free all main device aliasing stuff&n; * will be called on dev_close(main_dev)&n; */
+multiline_comment|/*&n; *&t;Free all main device aliasing stuff&n; *&t;will be called on dev_close(main_dev)&n; */
+DECL|function|net_alias_free
 r_static
 r_void
-DECL|function|net_alias_free
 id|net_alias_free
 c_func
 (paren
@@ -1907,7 +1914,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/*&n;   * do I really have aliases?&n;   */
+multiline_comment|/*&n;&t; *&t;Do I really have aliases?&n;&t; */
 r_if
 c_cond
 (paren
@@ -1920,7 +1927,7 @@ id|main_dev-&gt;alias_info
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;   * fast device link &quot;short-circuit&quot;: set main_dev-&gt;next to&n;   * device after last alias&n;   */
+multiline_comment|/*&n;&t; *&t;Fast device link &quot;short-circuit&quot;: set main_dev-&gt;next to&n;&t; *&t;device after last alias&n;&t; */
 id|save_flags
 c_func
 (paren
@@ -1954,7 +1961,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * loop over alias devices, free and dev_close()&n;   */
+multiline_comment|/*&n;&t; *&t;Loop over alias devices, free and dev_close()&n;&t; */
 r_while
 c_loop
 (paren
@@ -1983,7 +1990,7 @@ op_eq
 id|main_dev
 )paren
 (brace
-multiline_comment|/*&n;&t; * unbind alias from alias_type object&n;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * unbind alias from alias_type object&n;&t;&t;&t;&t; */
 id|nat
 op_assign
 id|alias-&gt;nat
@@ -2043,6 +2050,7 @@ id|alias-&gt;name
 suffix:semicolon
 )brace
 r_else
+(brace
 id|printk
 c_func
 (paren
@@ -2052,6 +2060,7 @@ comma
 id|main_dev-&gt;name
 )paren
 suffix:semicolon
+)brace
 id|dev
 op_assign
 id|dev-&gt;next
@@ -2071,11 +2080,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * dev_get() with added alias naming magic.&n; */
+multiline_comment|/*&n; *&t;dev_get() with added alias naming magic.&n; */
+DECL|function|net_alias_dev_get
 r_struct
 id|device
 op_star
-DECL|function|net_alias_dev_get
 id|net_alias_dev_get
 c_func
 (paren
@@ -2144,7 +2153,7 @@ id|dev_name
 r_return
 id|dev
 suffix:semicolon
-multiline_comment|/*&n;   * want alias naming magic?&n;   */
+multiline_comment|/*&n;&t; *&t;Want alias naming magic?&n;&t; */
 r_if
 c_cond
 (paren
@@ -2167,7 +2176,34 @@ id|dev_name
 r_return
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * find the first &squot;:&squot; , must be followed by, at least, 1 char&n;   */
+multiline_comment|/*&n;&t; *&t;Find the first &squot;:&squot; , must be followed by, at least, 1 char&n;&t; */
+id|sptr
+op_assign
+id|strchr
+c_func
+(paren
+id|dev_name
+comma
+l_char|&squot;:&squot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sptr
+op_eq
+l_int|NULL
+op_logical_or
+op_logical_neg
+id|sptr
+(braket
+l_int|1
+)braket
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+macro_line|#if 0
 r_for
 c_loop
 (paren
@@ -2211,7 +2247,8 @@ l_int|1
 r_return
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * seems to be an alias name, fetch main device&n;   */
+macro_line|#endif
+multiline_comment|/*&n;&t; *&t;Seems to be an alias name, fetch main device&n;&t; */
 op_star
 id|sptr
 op_assign
@@ -2240,7 +2277,7 @@ op_increment
 op_assign
 l_char|&squot;:&squot;
 suffix:semicolon
-multiline_comment|/*&n;   * fetch slot number&n;   */
+multiline_comment|/*&n;&t; *&t;Fetch slot number&n;&t; */
 id|slot
 op_assign
 id|simple_strtoul
@@ -2264,7 +2301,7 @@ id|NET_ALIAS_MAX_SLOT
 r_return
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * if last char is &squot;-&squot;, it is a deletion request&n;   */
+multiline_comment|/*&n;&t; *&t;If last char is &squot;-&squot;, it is a deletion request&n;&t; */
 r_if
 c_cond
 (paren
@@ -2296,7 +2333,7 @@ l_int|0
 r_return
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * well... let&squot;s work.&n;   */
+multiline_comment|/*&n;&t; *&t;Well... let&squot;s work.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2330,9 +2367,9 @@ id|data
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * rehash alias device with address supplied. &n; */
-r_int
+multiline_comment|/*&n; *&t;Rehash alias device with address supplied. &n; */
 DECL|function|net_alias_dev_rehash
+r_int
 id|net_alias_dev_rehash
 c_func
 (paren
@@ -2381,7 +2418,7 @@ suffix:semicolon
 r_int
 id|n_hash
 suffix:semicolon
-multiline_comment|/*&n;   * defensive ...&n;   */
+multiline_comment|/*&n;&t; *&t;Defensive ...&n;&t; */
 r_if
 c_cond
 (paren
@@ -2427,7 +2464,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * defensive. should not happen.&n;   */
+multiline_comment|/*&n;&t; *&t;Defensive. should not happen.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2454,7 +2491,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * defensive. should not happen.&n;   */
+multiline_comment|/*&n;&t; *&t;Defensive. should not happen.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2480,7 +2517,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * will the request also change device family?&n;   */
+multiline_comment|/*&n;&t; *&t;Will the request also change device family?&n;&t; */
 id|o_nat
 op_assign
 id|alias-&gt;nat
@@ -2506,7 +2543,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * point to new alias_type obj.&n;   */
+multiline_comment|/*&n;&t; *&t;Point to new alias_type obj.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2552,7 +2589,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;   * new hash key. if same as old AND same type (family) return;&n;   */
+multiline_comment|/*&n;&t; *&t;New hash key. if same as old AND same type (family) return;&n;&t; */
 id|n_hash
 op_assign
 id|nat_hash_key
@@ -2577,7 +2614,7 @@ id|n_nat
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;   * find alias in hashed list&n;   */
+multiline_comment|/*&n;&t; *&t;Find alias in hashed list&n;&t; */
 r_for
 c_loop
 (paren
@@ -2602,6 +2639,7 @@ id|aliasp
 op_member_access_from_pointer
 id|next
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2612,7 +2650,8 @@ id|alias
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/*&n;   * not found (???). try a full search&n;   */
+)brace
+multiline_comment|/*&n;&t; *&t;Not found (???). try a full search&n;&t; */
 r_if
 c_cond
 (paren
@@ -2620,6 +2659,7 @@ op_logical_neg
 op_star
 id|aliasp
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2635,6 +2675,7 @@ id|alias
 )paren
 )paren
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -2644,6 +2685,7 @@ comma
 id|alias-&gt;name
 )paren
 suffix:semicolon
+)brace
 r_else
 (brace
 id|printk
@@ -2660,6 +2702,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+)brace
 id|save_flags
 c_func
 (paren
@@ -2671,7 +2714,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * if type (family) changed, unlink from old type object (o_nat)&n;   * will call o_nat-&gt;alias_done_1()&n;   */
+multiline_comment|/*&n;&t; *&t;If type (family) changed, unlink from old type object (o_nat)&n;&t; *&t;Will call o_nat-&gt;alias_done_1()&n;&t; */
 r_if
 c_cond
 (paren
@@ -2687,7 +2730,7 @@ comma
 id|alias
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * if diff hash key, change alias position in hashed list&n;   */
+multiline_comment|/*&n;&t; *&t;If diff hash key, change alias position in hashed list&n;&t; */
 r_if
 c_cond
 (paren
@@ -2729,7 +2772,7 @@ op_assign
 id|alias
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * if type (family) changed link to new type object (n_nat)&n;   * will call n_nat-&gt;alias_init_1()&n;   */
+multiline_comment|/*&n;&t; *&t;If type (family) changed link to new type object (n_nat)&n;&t; *&t;will call n_nat-&gt;alias_init_1()&n;&t; */
 r_if
 c_cond
 (paren
@@ -2757,7 +2800,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  implements /proc/net/alias_types entry&n; *  shows net_alias_type objects registered.&n; */
+multiline_comment|/*&n; *&t;Implements /proc/net/alias_types entry&n; *&t;Shows net_alias_type objects registered.&n; */
 DECL|function|net_alias_types_getinfo
 r_int
 id|net_alias_types_getinfo
@@ -2828,6 +2871,7 @@ suffix:semicolon
 id|idx
 op_increment
 )paren
+(brace
 r_for
 c_loop
 (paren
@@ -2900,6 +2944,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
+)brace
 op_star
 id|start
 op_assign
@@ -2936,7 +2981,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  implements /proc/net/aliases entry, shows alias devices.&n; *   calls alias nat-&gt;alias_print_1 if not NULL and formats everything&n; *   to a fixed rec. size without using local (stack) buffers&n; *&n; */
+multiline_comment|/*&n; *&t;Implements /proc/net/aliases entry, shows alias devices.&n; *&t;calls alias nat-&gt;alias_print_1 if not NULL and formats everything&n; *&t;to a fixed rec. size without using local (stack) buffers&n; *&n; */
 DECL|macro|NET_ALIASES_RECSIZ
 mdefine_line|#define NET_ALIASES_RECSIZ 64
 DECL|function|net_alias_getinfo
@@ -3024,6 +3069,7 @@ id|dev
 op_assign
 id|dev-&gt;next
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -3058,7 +3104,7 @@ comma
 id|alias-&gt;dev.family
 )paren
 suffix:semicolon
-multiline_comment|/*&n;       * call alias_type specific print function.&n;       */
+multiline_comment|/*&n;&t;&t;&t; *&t;Call alias_type specific print function.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3101,7 +3147,7 @@ comma
 l_string|&quot;-&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;       * fill with spaces if needed &n;       */
+multiline_comment|/*&n;&t;&t;&t; *&t;Fill with spaces if needed &n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3125,7 +3171,7 @@ op_minus
 id|dlen
 )paren
 suffix:semicolon
-multiline_comment|/*&n;       * truncate to NET_ALIASES_RECSIZ&n;       */
+multiline_comment|/*&n;&t;&t;&t; *&t;Truncate to NET_ALIASES_RECSIZ&n;&t;&t;&t; */
 id|len
 op_add_assign
 id|NET_ALIASES_RECSIZ
@@ -3176,6 +3222,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
+)brace
 op_star
 id|start
 op_assign
@@ -3212,7 +3259,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * notifier for devices events&n; */
+multiline_comment|/*&n; *&t;Notifier for devices events&n; */
 DECL|function|net_alias_device_event
 r_int
 id|net_alias_device_event
@@ -3300,13 +3347,13 @@ r_return
 id|NOTIFY_DONE
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * device aliases address comparison workhorse&n; * no checks for nat and alias_info, must be !NULL&n; */
-r_static
+multiline_comment|/*&n; *&t;Device aliases address comparison workhorse&n; *&t;No checks for nat and alias_info, must be !NULL&n; */
+DECL|function|nat_addr_chk
+r_extern
 id|__inline__
 r_struct
 id|device
 op_star
-DECL|function|nat_addr_chk
 id|nat_addr_chk
 c_func
 (paren
@@ -3369,7 +3416,7 @@ id|sa-&gt;sa_family
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/*&n;     * nat_dev_addr_chk_1 will call type specific address cmp function.&n;     */
+multiline_comment|/*&n;&t;&t; *&t;Nat_dev_addr_chk_1 will call type specific address &n;&t;&t; *&t;cmp function.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3404,13 +3451,13 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * nat_addr_chk enough for protocols whose addr is (fully) stored at pa_addr.&n; * note that nat pointer is ignored because of static comparison.&n; */
-r_static
+multiline_comment|/*&n; *&t;Nat_addr_chk enough for protocols whose addr is (fully) stored at &n; *&t;pa_addr. Note that nat pointer is ignored because of static comparison.&n; */
+DECL|function|nat_addr_chk32
+r_extern
 id|__inline__
 r_struct
 id|device
 op_star
-DECL|function|nat_addr_chk32
 id|nat_addr_chk32
 c_func
 (paren
@@ -3474,7 +3521,7 @@ id|family
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/*&n;     * &quot;hard&quot; (static) comparison between addr32 and pa_addr.&n;     */
+multiline_comment|/*&n;&t; *&t;&quot;hard&quot; (static) comparison between addr32 and pa_addr.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3502,11 +3549,11 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * returns alias device with specified address AND flags_on AND flags_off,&n; * else NULL.&n; * intended for main devices.&n; */
+multiline_comment|/*&n; *&t;Returns alias device with specified address AND flags_on AND flags_off,&n; *&t;else NULL.&n; *&t;Intended for main devices.&n; */
+DECL|function|net_alias_dev_chk
 r_struct
 id|device
 op_star
-DECL|function|net_alias_dev_chk
 id|net_alias_dev_chk
 c_func
 (paren
@@ -3539,7 +3586,7 @@ id|net_alias_type
 op_star
 id|nat
 suffix:semicolon
-multiline_comment|/*&n;   * only if main_dev has aliases&n;   */
+multiline_comment|/*&n;&t; *&t;Only if main_dev has aliases&n;&t; */
 r_if
 c_cond
 (paren
@@ -3549,7 +3596,7 @@ id|alias_info
 r_return
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * get alias_type object for sa-&gt;sa_family.&n;   */
+multiline_comment|/*&n;&t; *&t;Get alias_type object for sa-&gt;sa_family.&n;&t; */
 id|nat
 op_assign
 id|nat_getbytype
@@ -3584,10 +3631,10 @@ id|flags_off
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * net_alias_dev_chk enough for protocols whose addr is (fully) stored&n; * at pa_addr.&n; */
+DECL|function|net_alias_dev_chk32
 r_struct
 id|device
 op_star
-DECL|function|net_alias_dev_chk32
 id|net_alias_dev_chk32
 c_func
 (paren
@@ -3616,7 +3663,7 @@ id|alias_info
 op_assign
 id|main_dev-&gt;alias_info
 suffix:semicolon
-multiline_comment|/*&n;   * only if main_dev has aliases&n;   */
+multiline_comment|/*&n;&t; * only if main_dev has aliases&n;&t; */
 r_if
 c_cond
 (paren
@@ -3644,11 +3691,11 @@ id|flags_off
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * select closest (main or alias) device to &lt;src,dst&gt; addresses given. if no&n; * further info is available, return main_dev (for easier calling arrangement).&n; *&n; * Should be called early at xxx_rcv() time for device selection&n; */
+multiline_comment|/*&n; *&t;Select closest (main or alias) device to &lt;src,dst&gt; addresses given. If&n; *&t;there is no further info available, return main_dev (for easier &n; *&t;calling arrangement).&n; *&n; *&t;Should be called early at xxx_rcv() time for device selection&n; */
+DECL|function|net_alias_dev_rcv_sel
 r_struct
 id|device
 op_star
-DECL|function|net_alias_dev_rcv_sel
 id|net_alias_dev_rcv_sel
 c_func
 (paren
@@ -3696,7 +3743,7 @@ l_int|NULL
 r_return
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * if not aliased, don&squot;t bother any more&n;   */
+multiline_comment|/*&n;&t; *&t;If not aliased, don&squot;t bother any more&n;&t; */
 r_if
 c_cond
 (paren
@@ -3711,7 +3758,7 @@ l_int|NULL
 r_return
 id|main_dev
 suffix:semicolon
-multiline_comment|/*&n;   * find out family&n;   */
+multiline_comment|/*&n;&t; *&t;Find out family&n;&t; */
 id|family
 op_assign
 (paren
@@ -3742,7 +3789,7 @@ id|AF_UNSPEC
 r_return
 id|main_dev
 suffix:semicolon
-multiline_comment|/*&n;   * get net_alias_type object for this family&n;   */
+multiline_comment|/*&n;&t; *&t;Get net_alias_type object for this family&n;&t; */
 r_if
 c_cond
 (paren
@@ -3761,7 +3808,7 @@ l_int|NULL
 r_return
 id|main_dev
 suffix:semicolon
-multiline_comment|/*&n;   * first step: find out if dst addr is main_dev&squot;s or one of its aliases&squot;&n;   */
+multiline_comment|/*&n;&t; *&t;First step: find out if dst addr is main_dev&squot;s or one of its &n;&t; *&t;aliases&squot;&n;&t; */
 r_if
 c_cond
 (paren
@@ -3811,7 +3858,7 @@ r_return
 id|dev
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * second step: find the rcv addr &squot;closest&squot; alias through nat method call&n;   */
+multiline_comment|/*&n;&t; *&t;Second step: find the rcv addr &squot;closest&squot; alias through nat &n;&t; *&t;method call&n;&t; */
 r_if
 c_cond
 (paren
@@ -3854,7 +3901,7 @@ id|family
 r_return
 id|main_dev
 suffix:semicolon
-multiline_comment|/*&n;   * dev ok only if it is alias of main_dev&n;   */
+multiline_comment|/*&n;&t; *&t;Dev ok only if it is alias of main_dev&n;&t; */
 id|dev
 op_assign
 id|net_alias_is
@@ -3879,7 +3926,7 @@ l_int|NULL
 suffix:colon
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * do not return NULL.&n;   */
+multiline_comment|/*&n;&t; *&t;Do not return NULL.&n;&t; */
 r_return
 (paren
 id|dev
@@ -3891,11 +3938,11 @@ suffix:colon
 id|main_dev
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * dev_rcv_sel32: dev_rcv_sel for &squot;pa_addr&squot; protocols.&n; */
+multiline_comment|/*&n; *&t;dev_rcv_sel32: dev_rcv_sel for &squot;pa_addr&squot; protocols.&n; */
+DECL|function|net_alias_dev_rcv_sel32
 r_struct
 id|device
 op_star
-DECL|function|net_alias_dev_rcv_sel32
 id|net_alias_dev_rcv_sel32
 c_func
 (paren
@@ -3943,7 +3990,7 @@ l_int|NULL
 r_return
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * if not aliased, don&squot;t bother any more&n;   */
+multiline_comment|/*&n;&t; *&t;If not aliased, don&squot;t bother any more&n;&t; */
 r_if
 c_cond
 (paren
@@ -3958,7 +4005,7 @@ l_int|NULL
 r_return
 id|main_dev
 suffix:semicolon
-multiline_comment|/*&n;   * early return if dst is main_dev&squot;s address&n;   */
+multiline_comment|/*&n;&t; *&t;Early return if dst is main_dev&squot;s address&n;&t; */
 r_if
 c_cond
 (paren
@@ -3979,7 +4026,7 @@ id|AF_UNSPEC
 r_return
 id|main_dev
 suffix:semicolon
-multiline_comment|/*&n;   * get net_alias_type object for this family&n;   */
+multiline_comment|/*&n;&t; * &t;Get net_alias_type object for this family&n;&t; */
 r_if
 c_cond
 (paren
@@ -3998,7 +4045,7 @@ l_int|NULL
 r_return
 id|main_dev
 suffix:semicolon
-multiline_comment|/*&n;   * first step: find out if dst address one of main_dev aliases&squot;&n;   */
+multiline_comment|/*&n;&t; *&t;First step: find out if dst address one of main_dev aliases&squot;&n;&t; */
 r_if
 c_cond
 (paren
@@ -4032,7 +4079,7 @@ r_return
 id|dev
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * second step: find the rcv addr &squot;closest&squot; alias through nat method call&n;   */
+multiline_comment|/*&n;&t; *&t;Second step: find the rcv addr &squot;closest&squot; alias through nat&n;&t; *&t;method call&n;&t; */
 r_if
 c_cond
 (paren
@@ -4089,7 +4136,7 @@ id|family
 r_return
 id|main_dev
 suffix:semicolon
-multiline_comment|/*&n;   * dev ok only if it is alias of main_dev&n;   */
+multiline_comment|/*&n;&t; *&t;Dev ok only if it is alias of main_dev&n;&t; */
 id|dev
 op_assign
 id|net_alias_is
@@ -4114,7 +4161,7 @@ l_int|NULL
 suffix:colon
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * do not return NULL.&n;   */
+multiline_comment|/*&n;&t; *&t;Do not return NULL.&n;&t; */
 r_return
 (paren
 id|dev
@@ -4126,7 +4173,7 @@ suffix:colon
 id|main_dev
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * device event hook&n; */
+multiline_comment|/*&n; *&t;Device event hook&n; */
 DECL|variable|net_alias_dev_notifier
 r_static
 r_struct
@@ -4207,7 +4254,7 @@ id|net_alias_getinfo
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-multiline_comment|/*&n; * net_alias initialisation&n; * called from net_dev_init().&n; */
+multiline_comment|/*&n; *&t;Net_alias initialisation called from net_dev_init().&n; */
 DECL|function|net_alias_init
 r_void
 id|net_alias_init
@@ -4216,7 +4263,7 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/*&n;   * register dev events notifier&n;   */
+multiline_comment|/*&n;&t; *&t;Register device events notifier&n;&t; */
 id|register_netdevice_notifier
 c_func
 (paren
@@ -4224,7 +4271,7 @@ op_amp
 id|net_alias_dev_notifier
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * register /proc/net entries&n;   */
+multiline_comment|/*&n;&t; *&t;Register /proc/net entries&n;&t; */
 macro_line|#ifndef ALIAS_USER_LAND_DEBUG
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
@@ -4244,7 +4291,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 )brace
-multiline_comment|/*&n; * net_alias type object registering func.&n; */
+multiline_comment|/*&n; *&t;Net_alias type object registering func.&n; */
 DECL|function|register_net_alias_type
 r_int
 id|register_net_alias_type
@@ -4334,7 +4381,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * net_alias type object unreg.&n; */
+multiline_comment|/*&n; *&t;Net_alias type object unreg.&n; */
 DECL|function|unregister_net_alias_type
 r_int
 id|unregister_net_alias_type
@@ -4378,7 +4425,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * only allow unregistration if it has no attachments&n;   */
+multiline_comment|/*&n;&t; *&t;Only allow unregistration if it has no attachments&n;&t; */
 r_if
 c_cond
 (paren

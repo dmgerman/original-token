@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET3:&t;Implementation of BSD Unix domain sockets.&n; *&n; * Authors:&t;Alan Cox, &lt;alan@cymru.net&gt;&n; *&n; *&t;&t;Currently this contains all but the file descriptor passing code.&n; *&t;&t;Before that goes in the odd bugs in the iovec handlers need &n; *&t;&t;fixing, and this bit testing. BSD fd passing is not a trivial part&n; *&t;&t;of the exercise it turns out. Anyone like writing garbage collectors.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Linus Torvalds&t;:&t;Assorted bug cures.&n; *&t;&t;Niibe Yutaka&t;:&t;async I/O support.&n; *&t;&t;Carsten Paeth&t;:&t;PF_UNIX check, address fixes.&n; *&t;&t;Alan Cox&t;:&t;Limit size of allocated blocks.&n; *&t;&t;Alan Cox&t;:&t;Fixed the stupid socketpair bug.&n; *&t;&t;Alan Cox&t;:&t;BSD compatibility fine tuning.&n; *&t;&t;Alan Cox&t;:&t;Fixed a bug in connect when interrupted.&n; *&t;&t;Alan Cox&t;:&t;Sorted out a proper draft version of&n; *&t;&t;&t;&t;&t;file descriptor passing hacked up from&n; *&t;&t;&t;&t;&t;Mike Shaver&squot;s work.&n; *&t;&t;Marty Leisner&t;:&t;Fixes to fd passing&n; *&t;&t;Nick Nevin&t;:&t;recvmsg bugfix.&n; *&t;&t;Alan Cox&t;:&t;Started proper garbage collector&n; *&t;&t;Heiko EiBfeldt&t;:&t;Missing verify_area check&n; *&t;&t;Alan Cox&t;:&t;Started POSIXisms&n; *&n; * Known differences from reference BSD that was tested:&n; *&n; *&t;[TO FIX]&n; *&t;ECONNREFUSED is not returned from one end of a connected() socket to the&n; *&t;&t;other the moment one end closes.&n; *&t;fstat() doesn&squot;t return st_dev=NODEV, and give the blksize as high water mark&n; *&t;&t;and a fake inode identifier (nor the BSD first socket fstat twice bug).&n; *&t;[NOT TO FIX]&n; *&t;accept() returns a path name even if the connecting socket has closed&n; *&t;&t;in the meantime (BSD loses the path and gives up).&n; *&t;accept() returns 0 length path for an unbound connector. BSD returns 16&n; *&t;&t;and a null first byte in the path (but not for gethost/peername - BSD bug ??)&n; *&t;socketpair(...SOCK_RAW..) doesn&squot;t panic the kernel.&n; *&t;BSD af_unix apparently has connect forgetting to block properly.&n; *&t;&t;(need to check this with the POSIX spec in detail)&n; *&n; * Differences from 2.0.0-11-... (ANK)&n; *&t;Bug fixes and improvements.&n; *&t;&t;- client shutdown killed server socket.&n; *&t;&t;- removed all useless cli/sti pairs.&n; *&t;&t;- (suspicious!) not allow connect/send to connected not to us&n; *&t;&t;  socket, return EPERM.&n; *&n; *&t;Semantic changes/extensions.&n; *&t;&t;- generic control message passing.&n; *&t;&t;- SCM_CREDENTIALS control message.&n; *&t;&t;- &quot;Abstract&quot; (not FS based) socket bindings.&n; *&t;&t;  Abstract names are sequences of bytes (not zero terminated)&n; *&t;&t;  started by 0, so that this name space does not intersect&n; *&t;&t;  with BSD names.&n; */
+multiline_comment|/*&n; * NET3:&t;Implementation of BSD Unix domain sockets.&n; *&n; * Authors:&t;Alan Cox, &lt;alan.cox@linux.org&gt;&n; *&n; *&t;&t;Currently this contains all but the file descriptor passing code.&n; *&t;&t;Before that goes in the odd bugs in the iovec handlers need &n; *&t;&t;fixing, and this bit testing. BSD fd passing is not a trivial part&n; *&t;&t;of the exercise it turns out. Anyone like writing garbage collectors.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Linus Torvalds&t;:&t;Assorted bug cures.&n; *&t;&t;Niibe Yutaka&t;:&t;async I/O support.&n; *&t;&t;Carsten Paeth&t;:&t;PF_UNIX check, address fixes.&n; *&t;&t;Alan Cox&t;:&t;Limit size of allocated blocks.&n; *&t;&t;Alan Cox&t;:&t;Fixed the stupid socketpair bug.&n; *&t;&t;Alan Cox&t;:&t;BSD compatibility fine tuning.&n; *&t;&t;Alan Cox&t;:&t;Fixed a bug in connect when interrupted.&n; *&t;&t;Alan Cox&t;:&t;Sorted out a proper draft version of&n; *&t;&t;&t;&t;&t;file descriptor passing hacked up from&n; *&t;&t;&t;&t;&t;Mike Shaver&squot;s work.&n; *&t;&t;Marty Leisner&t;:&t;Fixes to fd passing&n; *&t;&t;Nick Nevin&t;:&t;recvmsg bugfix.&n; *&t;&t;Alan Cox&t;:&t;Started proper garbage collector&n; *&t;&t;Heiko EiBfeldt&t;:&t;Missing verify_area check&n; *&t;&t;Alan Cox&t;:&t;Started POSIXisms&n; *&n; * Known differences from reference BSD that was tested:&n; *&n; *&t;[TO FIX]&n; *&t;ECONNREFUSED is not returned from one end of a connected() socket to the&n; *&t;&t;other the moment one end closes.&n; *&t;fstat() doesn&squot;t return st_dev=NODEV, and give the blksize as high water mark&n; *&t;&t;and a fake inode identifier (nor the BSD first socket fstat twice bug).&n; *&t;[NOT TO FIX]&n; *&t;accept() returns a path name even if the connecting socket has closed&n; *&t;&t;in the meantime (BSD loses the path and gives up).&n; *&t;accept() returns 0 length path for an unbound connector. BSD returns 16&n; *&t;&t;and a null first byte in the path (but not for gethost/peername - BSD bug ??)&n; *&t;socketpair(...SOCK_RAW..) doesn&squot;t panic the kernel.&n; *&t;BSD af_unix apparently has connect forgetting to block properly.&n; *&t;&t;(need to check this with the POSIX spec in detail)&n; *&n; * Differences from 2.0.0-11-... (ANK)&n; *&t;Bug fixes and improvements.&n; *&t;&t;- client shutdown killed server socket.&n; *&t;&t;- removed all useless cli/sti pairs.&n; *&n; *&t;Semantic changes/extensions.&n; *&t;&t;- generic control message passing.&n; *&t;&t;- SCM_CREDENTIALS control message.&n; *&t;&t;- &quot;Abstract&quot; (not FS based) socket bindings.&n; *&t;&t;  Abstract names are sequences of bytes (not zero terminated)&n; *&t;&t;  started by 0, so that this name space does not intersect&n; *&t;&t;  with BSD names.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -43,7 +43,7 @@ mdefine_line|#define unix_sockets_unbound&t;(unix_socket_table[UNIX_HASH_SIZE])
 DECL|macro|UNIX_ABSTRACT
 mdefine_line|#define UNIX_ABSTRACT(sk)&t;((sk)-&gt;protinfo.af_unix.addr-&gt;hash!=UNIX_HASH_SIZE)
 DECL|function|unix_hash_fold
-r_static
+r_extern
 id|__inline__
 r_int
 id|unix_hash_fold
@@ -78,7 +78,7 @@ suffix:semicolon
 DECL|macro|unix_peer
 mdefine_line|#define unix_peer(sk) ((sk)-&gt;pair)
 DECL|function|unix_our_peer
-r_static
+r_extern
 id|__inline__
 r_int
 id|unix_our_peer
@@ -104,7 +104,7 @@ id|sk
 suffix:semicolon
 )brace
 DECL|function|unix_may_send
-r_static
+r_extern
 id|__inline__
 r_int
 id|unix_may_send
@@ -120,24 +120,15 @@ id|osk
 )paren
 (brace
 r_return
-op_logical_neg
-id|unix_peer
-c_func
 (paren
-id|osk
-)paren
-op_logical_or
-id|unix_peer
-c_func
-(paren
-id|osk
-)paren
+id|sk-&gt;type
 op_eq
-id|sk
+id|osk-&gt;type
+)paren
 suffix:semicolon
 )brace
 DECL|function|unix_lock
-r_static
+r_extern
 id|__inline__
 r_void
 id|unix_lock
@@ -153,7 +144,7 @@ op_increment
 suffix:semicolon
 )brace
 DECL|function|unix_unlock
-r_static
+r_extern
 id|__inline__
 r_int
 id|unix_unlock
@@ -170,7 +161,7 @@ op_decrement
 suffix:semicolon
 )brace
 DECL|function|unix_locked
-r_static
+r_extern
 id|__inline__
 r_int
 id|unix_locked
@@ -186,7 +177,7 @@ id|sk-&gt;users
 suffix:semicolon
 )brace
 DECL|function|unix_release_addr
-r_static
+r_extern
 id|__inline__
 r_void
 id|unix_release_addr
@@ -882,7 +873,6 @@ suffix:semicolon
 multiline_comment|/* Try every so often until buffers are all freed */
 )brace
 )brace
-multiline_comment|/*&n; *&t;Fixme: We need async I/O on AF_UNIX doing next.&n; */
 DECL|function|unix_fcntl
 r_static
 r_int
@@ -2508,7 +2498,7 @@ id|other
 suffix:semicolon
 r_return
 op_minus
-id|EPERM
+id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * If it was connected, reconnect.&n;&t; */
@@ -4095,7 +4085,7 @@ op_logical_and
 id|other-&gt;dead
 )paren
 (brace
-multiline_comment|/* Alan said:&n;&t;&t; *&t;Check with 1003.1g - what should&n;&t;&t; *&t;datagram error&n;&t;&t; * &n;&t;&t; * Pardon, if POSIX says, that we should return&n;&t;&t; * error here, it is wrong.&n;&t;&t; * It is the main idea of SOCK_DGRAM sockets,&n;&t;&t; * they could die and be borned, and clients&n;&t;&t; * should not care about it.&n;&t;&t; * If you want SOCK_STREAM semantics,&n;&t;&t; * use SOCK_STREAM.&n;&t;&t; *&t;&t;&t;&t;--ANK&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Check with 1003.1g - what should&n;&t;&t; *&t;datagram error&n;&t;&t; */
 id|unix_unlock
 c_func
 (paren
@@ -4209,7 +4199,7 @@ id|FREE_WRITE
 suffix:semicolon
 r_return
 op_minus
-id|EPERM
+id|EINVAL
 suffix:semicolon
 )brace
 )brace
@@ -4469,13 +4459,13 @@ c_cond
 (paren
 id|size
 OG
-l_int|4000
+l_int|3500
 )paren
 id|limit
 op_assign
-l_int|4000
+l_int|3500
 suffix:semicolon
-multiline_comment|/* Fall back to 4K if we can&squot;t grab a big buffer this instant */
+multiline_comment|/* Fall back to a page if we can&squot;t grab a big buffer this instant */
 r_else
 id|limit
 op_assign
@@ -4978,7 +4968,7 @@ id|size
 suffix:semicolon
 )brace
 r_else
-multiline_comment|/* It is questionable: on PEEK we could:&n;&t;&t;   - do not return fds - good, but too simple 8)&n;&t;&t;   - return fds, and do not return them on read (old strategy,&n;&t;&t;     apparently wrong)&n;&t;&t;   - clone fds (I choosed it for now, it is the most universal&n;&t;&t;     solution)&n;&t;&t;*/
+multiline_comment|/* It is questionable: on PEEK we could:&n;&t;&t;   - do not return fds - good, but too simple 8)&n;&t;&t;   - return fds, and do not return them on read (old strategy,&n;&t;&t;     apparently wrong)&n;&t;&t;   - clone fds (I choosed it for now, it is the most universal&n;&t;&t;     solution)&n;&t;&t;&n;&t;           POSIX 1003.1g does not actually define this clearly&n;&t;           at all. POSIX 1003.1g doesn&squot;t define a lot of things&n;&t;           clearly however!&t;&t;     &n;&t;&t;   &n;&t;&t;*/
 r_if
 c_cond
 (paren
@@ -5164,8 +5154,6 @@ id|target
 )paren
 r_break
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* ANK: sk-&gt;err is never set for UNIX */
 r_if
 c_cond
 (paren
@@ -5178,7 +5166,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -5430,7 +5417,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* It is questionable,&n;&t;&t;&t;   see note in unix_dgram_recvmsg.&n;&t;&t;&t; */
+multiline_comment|/* It is questionable, see note in unix_dgram_recvmsg.&n;&t;&t;&t;   &n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5744,7 +5731,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; *&t;These two are safe on a single CPU system as&n;&t;&t;&t; *&t;only user tasks fiddle here&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;These two are safe on current systems as&n;&t;&t;&t; *&t;only user tasks fiddle here&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -6193,7 +6180,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;NET3: Unix domain sockets 0.14 for Linux NET3.037.&bslash;n&quot;
+l_string|&quot;NET3: Unix domain sockets 0.15 for Linux NET3.038.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if

@@ -81,6 +81,14 @@ DECL|macro|X25_STATE_3
 mdefine_line|#define X25_STATE_3&t;&t;3&t;&t;/* Data Transfer */
 DECL|macro|X25_STATE_4
 mdefine_line|#define&t;X25_STATE_4&t;&t;4&t;&t;/* Awaiting Reset Confirmation */
+DECL|macro|X25_LINK_STATE_0
+mdefine_line|#define&t;X25_LINK_STATE_0&t;0
+DECL|macro|X25_LINK_STATE_1
+mdefine_line|#define&t;X25_LINK_STATE_1&t;1
+DECL|macro|X25_LINK_STATE_2
+mdefine_line|#define&t;X25_LINK_STATE_2&t;2
+DECL|macro|X25_LINK_STATE_3
+mdefine_line|#define&t;X25_LINK_STATE_3&t;3
 DECL|macro|X25_DEFAULT_T20
 mdefine_line|#define X25_DEFAULT_T20&t;&t;(180 * X25_SLOWHZ)&t;/* Default T20 value */
 DECL|macro|X25_DEFAULT_T21
@@ -429,16 +437,6 @@ suffix:semicolon
 macro_line|#include &lt;net/x25call.h&gt;
 multiline_comment|/* x25_dev.c */
 r_extern
-r_int
-id|x25_link_up
-c_func
-(paren
-r_struct
-id|device
-op_star
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|x25_send_frame
 c_func
@@ -448,7 +446,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|device
+id|x25_neigh
 op_star
 )paren
 suffix:semicolon
@@ -485,6 +483,26 @@ op_star
 comma
 r_struct
 id|packet_type
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|x25_establish_link
+c_func
+(paren
+r_struct
+id|x25_neigh
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|x25_terminate_link
+c_func
+(paren
+r_struct
+id|x25_neigh
 op_star
 )paren
 suffix:semicolon
@@ -538,6 +556,26 @@ c_func
 (paren
 r_struct
 id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|x25_link_established
+c_func
+(paren
+r_struct
+id|x25_neigh
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|x25_link_terminated
+c_func
+(paren
+r_struct
+id|x25_neigh
 op_star
 )paren
 suffix:semicolon

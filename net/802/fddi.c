@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;FDDI-type device handling.&n; *&n; * Version:&t;@(#)fddi.c&t;1.0.0&t;08/12/96&n; *&n; * Authors:&t;Lawrence V. Stefani, &lt;stefani@lkg.dec.com&gt;&n; *&n; *&t;&t;fddi.c is based on previous eth.c and tr.c work by&n; *&t;&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche, &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; * &n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;FDDI-type device handling.&n; *&n; * Version:&t;@(#)fddi.c&t;1.0.0&t;08/12/96&n; *&n; * Authors:&t;Lawrence V. Stefani, &lt;stefani@lkg.dec.com&gt;&n; *&n; *&t;&t;fddi.c is based on previous eth.c and tr.c work by&n; *&t;&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche, &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; * &n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Changes&n; *&t;&t;Alan Cox&t;:&t;New arp/rebuild header&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -173,19 +173,6 @@ r_int
 id|fddi_rebuild_header
 c_func
 (paren
-r_void
-op_star
-id|buff
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|dest
-comma
 r_struct
 id|sk_buff
 op_star
@@ -202,7 +189,7 @@ r_struct
 id|fddihdr
 op_star
 )paren
-id|buff
+id|skb-&gt;data
 suffix:semicolon
 multiline_comment|/* Only ARP/IP is currently supported */
 r_if
@@ -238,28 +225,18 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Try to get ARP to resolve the header and fill destination address */
-r_if
-c_cond
-(paren
+r_return
 id|arp_find
 c_func
 (paren
 id|fddi-&gt;daddr
 comma
-id|dest
-comma
-id|dev
-comma
-id|dev-&gt;pa_addr
-comma
 id|skb
 )paren
-)paren
-r_return
+ques
+c_cond
 l_int|1
-suffix:semicolon
-r_else
-r_return
+suffix:colon
 l_int|0
 suffix:semicolon
 )brace

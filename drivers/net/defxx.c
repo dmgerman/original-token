@@ -1325,7 +1325,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* not supported for now &amp;&amp;&amp; */
-id|tmp_dev-&gt;header_cache_bind
+id|tmp_dev-&gt;hard_header_cache
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -6598,7 +6598,7 @@ id|FDDI_K_LLC_LEN
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Invalid packet length - %lu bytes&bslash;n&quot;
+l_string|&quot;%s: Invalid packet length - %u bytes&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

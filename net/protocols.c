@@ -34,6 +34,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_X25
 macro_line|#include &lt;net/x25call.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_LAPB
+macro_line|#include &lt;net/lapbcall.h&gt;
+macro_line|#endif
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &lt;net/ax25call.h&gt;
 macro_line|#ifdef CONFIG_NETROM
@@ -198,6 +201,15 @@ id|atalk_proto_init
 )brace
 comma
 multiline_comment|/* Netatalk Appletalk driver&t;*/
+macro_line|#endif
+macro_line|#ifdef CONFIG_LAPB
+(brace
+l_string|&quot;LAPB&quot;
+comma
+id|lapb_proto_init
+)brace
+comma
+multiline_comment|/* LAPB protocols */
 macro_line|#endif
 macro_line|#ifdef CONFIG_X25
 (brace

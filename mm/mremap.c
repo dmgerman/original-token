@@ -514,7 +514,7 @@ op_plus
 id|offset
 )paren
 suffix:semicolon
-id|flush_tlb_range
+id|zap_page_range
 c_func
 (paren
 id|mm
@@ -526,7 +526,7 @@ op_plus
 id|len
 )paren
 suffix:semicolon
-id|zap_page_range
+id|flush_tlb_range
 c_func
 (paren
 id|mm

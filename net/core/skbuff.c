@@ -107,7 +107,7 @@ suffix:semicolon
 macro_line|#endif&t;
 )brace
 macro_line|#if CONFIG_SKB_CHECK
-multiline_comment|/*&n; *&t;Debugging paranoia. Can go later when this crud stack works&n; */
+multiline_comment|/*&n; *&t;Debugging paranoia. Used for debugging network stacks.&n; */
 DECL|function|skb_check
 r_int
 id|skb_check
@@ -233,71 +233,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#if 0
-(brace
-r_struct
-id|sk_buff
-op_star
-id|skb2
-op_assign
-id|skb-&gt;next
-suffix:semicolon
-r_int
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|skb2
-op_ne
-id|skb
-op_logical_and
-id|i
-OL
-l_int|5
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|skb_check
-c_func
-(paren
-id|skb2
-comma
-l_int|0
-comma
-id|line
-comma
-id|file
-)paren
-OL
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;bad queue element in whole queue&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-id|i
-op_increment
-suffix:semicolon
-id|skb2
-op_assign
-id|skb2-&gt;next
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -2017,7 +1952,8 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-multiline_comment|/*&n; *&t;Free an sk_buff. This still knows about things it should&n; *&t;not need to like protocols and sockets.&n; */
+multiline_comment|/**************************************************************************&n;&n;      Stuff below this point isn&squot;t debugging duplicates of the inlines&n;      used for buffer handling&n;      &n;***************************************************************************/
+multiline_comment|/*&n; *&t;Free an sk_buff. Release anything attached to the buffer.&n; */
 DECL|function|__kfree_skb
 r_void
 id|__kfree_skb
@@ -2107,7 +2043,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Allocate a new skbuff. We do this ourselves so we can fill in a few &squot;private&squot;&n; *&t;fields and also do memory statistics to find all the [BEEP] leaks.&n; */
+multiline_comment|/*&n; *&t;Allocate a new skbuff. We do this ourselves so we can fill in a few &squot;private&squot;&n; *&t;fields and also do memory statistics to find all the [BEEP] leaks.&n; *&n; *&t;Note: For now we put the header after the data to get better cache&n; *&t;usage. Once we have a good cache aware kmalloc this will cease&n; *&t;to be a good idea.&n; */
 DECL|function|alloc_skb
 r_struct
 id|sk_buff
@@ -2180,6 +2116,7 @@ id|GFP_ATOMIC
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;&t; *&t;FIXME: We could do with an architecture dependant&n;&t; *&t;&squot;alignment mask&squot;.&n;&t; */
 id|size
 op_assign
 (paren
@@ -2392,7 +2329,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Free an skbuff by memory&n; */
 DECL|function|__kfree_skbmem
-r_static
+r_extern
 r_inline
 r_void
 id|__kfree_skbmem

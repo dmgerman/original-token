@@ -85,12 +85,14 @@ DECL|macro|ESI_NO_COMMAND
 mdefine_line|#define ESI_NO_COMMAND&t;&t;0xff
 DECL|macro|ESP_STAT_RX_TIMEOUT
 mdefine_line|#define ESP_STAT_RX_TIMEOUT&t;0x01
-DECL|macro|ESP_STAT_NEED_DMA
-mdefine_line|#define ESP_STAT_NEED_DMA&t;0x02
+DECL|macro|ESP_STAT_NEED_DMA_RX
+mdefine_line|#define ESP_STAT_NEED_DMA_RX&t;0x02
+DECL|macro|ESP_STAT_NEED_DMA_TX
+mdefine_line|#define ESP_STAT_NEED_DMA_TX    0x04
 DECL|macro|ESP_STAT_DMA_RX
-mdefine_line|#define ESP_STAT_DMA_RX&t;&t;0x04
+mdefine_line|#define ESP_STAT_DMA_RX&t;&t;0x08
 DECL|macro|ESP_STAT_DMA_TX
-mdefine_line|#define ESP_STAT_DMA_TX&t;&t;0x08
+mdefine_line|#define ESP_STAT_DMA_TX&t;&t;0x10
 DECL|macro|ESP_EVENT_WRITE_WAKEUP
 mdefine_line|#define ESP_EVENT_WRITE_WAKEUP&t;0
 DECL|macro|ESP_MAGIC
