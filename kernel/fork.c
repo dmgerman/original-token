@@ -290,6 +290,14 @@ r_return
 id|up
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * For SMP, we need to re-test the user struct counter&n; * after having aquired the spinlock. This allows us to do&n; * the common case (not freeing anything) without having&n; * any locking.&n; */
+macro_line|#ifdef __SMP__
+DECL|macro|uid_hash_free
+mdefine_line|#define uid_hash_free(up)&t;(!atomic_read(&amp;(up)-&gt;count))
+macro_line|#else
+DECL|macro|uid_hash_free
+mdefine_line|#define uid_hash_free(up)&t;(1)
+macro_line|#endif
 DECL|function|free_uid
 r_void
 id|free_uid
@@ -336,17 +344,20 @@ op_amp
 id|uidhash_lock
 )paren
 suffix:semicolon
-id|uid_hash_remove
+r_if
+c_cond
+(paren
+id|uid_hash_free
 c_func
 (paren
 id|up
 )paren
-suffix:semicolon
-id|spin_unlock
+)paren
+(brace
+id|uid_hash_remove
 c_func
 (paren
-op_amp
-id|uidhash_lock
+id|up
 )paren
 suffix:semicolon
 id|kmem_cache_free
@@ -355,6 +366,14 @@ c_func
 id|uid_cachep
 comma
 id|up
+)paren
+suffix:semicolon
+)brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|uidhash_lock
 )paren
 suffix:semicolon
 )brace

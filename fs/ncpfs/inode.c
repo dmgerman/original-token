@@ -1197,6 +1197,11 @@ c_func
 id|sb
 )paren
 suffix:semicolon
+id|sb-&gt;s_flags
+op_or_assign
+id|MS_ODD_RENAME
+suffix:semicolon
+multiline_comment|/* This should go away */
 id|sb-&gt;s_blocksize
 op_assign
 l_int|1024

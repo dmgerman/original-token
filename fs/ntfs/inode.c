@@ -1,8 +1,12 @@
-multiline_comment|/*&n; *  inode.c&n; *&n; *  Copyright (C) 1995-1999 Martin von L&#xfffd;wis&n; *  Copyright (C) 1996 Albert D. Cahalan&n; *  Copyright (C) 1996-1997 R&#xfffd;gis Duchesne&n; *  Copyright (C) 1998 Joseph Malicki&n; */
+multiline_comment|/*&n; *  inode.c&n; *&n; *  Copyright (C) 1995-1999 Martin von L&#xfffd;wis&n; *  Copyright (C) 1996 Albert D. Cahalan&n; *  Copyright (C) 1996-1997 R&#xfffd;gis Duchesne&n; *  Copyright (C) 1998 Joseph Malicki&n; *  Copyright (C) 1999 Steve Dodd&n; */
 macro_line|#include &quot;ntfstypes.h&quot;
+macro_line|#include &quot;ntfsendian.h&quot;
 macro_line|#include &quot;struct.h&quot;
 macro_line|#include &quot;inode.h&quot;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#ifdef HAVE_STRING_H
+macro_line|#include &lt;string.h&gt;
+macro_line|#endif
 macro_line|#include &quot;macros.h&quot;
 macro_line|#include &quot;attr.h&quot;
 macro_line|#include &quot;super.h&quot;
@@ -46,10 +50,9 @@ DECL|typedef|ntfs_disk_inode
 )brace
 id|ntfs_disk_inode
 suffix:semicolon
-r_static
 r_void
-DECL|function|fill_mft_header
-id|fill_mft_header
+DECL|function|ntfs_fill_mft_header
+id|ntfs_fill_mft_header
 c_func
 (paren
 id|ntfs_u8
@@ -481,7 +484,9 @@ id|size
 op_div
 l_int|1000
 comma
-id|block
+id|mdata-&gt;size
+op_plus
+id|vol-&gt;mft_recordsize
 )paren
 suffix:semicolon
 id|size
@@ -726,7 +731,7 @@ r_return
 id|ENOMEM
 suffix:semicolon
 )brace
-id|fill_mft_header
+id|ntfs_fill_mft_header
 c_func
 (paren
 id|buf
@@ -797,6 +802,24 @@ id|vol-&gt;mft_recordsize
 (brace
 r_return
 id|EIO
+suffix:semicolon
+)brace
+id|error
+op_assign
+id|ntfs_update_inode
+c_func
+(paren
+id|vol-&gt;mft_ino
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+(brace
+r_return
+id|error
 suffix:semicolon
 )brace
 r_return
@@ -875,11 +898,9 @@ l_int|0
 (brace
 r_int
 op_star
-id|old
-op_assign
-id|ino-&gt;records
+r_new
 suffix:semicolon
-id|ino-&gt;records
+r_new
 op_assign
 id|ntfs_malloc
 c_func
@@ -899,7 +920,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|old
+op_logical_neg
+r_new
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|ino-&gt;records
 )paren
 (brace
 r_for
@@ -917,12 +948,12 @@ id|i
 op_increment
 )paren
 (brace
-id|ino-&gt;records
+r_new
 (braket
 id|i
 )braket
 op_assign
-id|old
+id|ino-&gt;records
 (braket
 id|i
 )braket
@@ -931,10 +962,14 @@ suffix:semicolon
 id|ntfs_free
 c_func
 (paren
-id|old
+id|ino-&gt;records
 )paren
 suffix:semicolon
 )brace
+id|ino-&gt;records
+op_assign
+r_new
+suffix:semicolon
 )brace
 id|ino-&gt;records
 (braket
@@ -986,6 +1021,8 @@ op_ne
 op_minus
 l_int|1
 )paren
+(brace
+multiline_comment|/* FIXME: check ntfs_insert_attribute for failure (e.g. no mem)? */
 id|ntfs_insert_attribute
 c_func
 (paren
@@ -994,6 +1031,7 @@ comma
 id|it
 )paren
 suffix:semicolon
+)brace
 id|it
 op_add_assign
 id|len
@@ -1061,6 +1099,17 @@ c_func
 id|ino-&gt;vol-&gt;mft_recordsize
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mft
+)paren
+(brace
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -1311,6 +1360,16 @@ c_func
 l_int|1024
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|buf
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
 id|delta
 op_assign
 l_int|0
@@ -1507,6 +1566,17 @@ c_func
 id|vol-&gt;mft_recordsize
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|buf
+)paren
+(brace
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
 id|error
 op_assign
 id|ntfs_read_mft_record
@@ -2443,8 +2513,6 @@ id|dest
 )paren
 (brace
 r_int
-id|datasize
-comma
 id|rnum
 suffix:semicolon
 id|ntfs_cluster_t
@@ -2476,10 +2544,6 @@ id|clustersize
 op_assign
 id|ino-&gt;vol-&gt;clustersize
 suffix:semicolon
-id|datasize
-op_assign
-id|attr-&gt;size
-suffix:semicolon
 id|l
 op_assign
 id|dest-&gt;size
@@ -2502,12 +2566,13 @@ c_cond
 id|dest-&gt;do_read
 )paren
 (brace
+multiline_comment|/* if read _starts_ beyond end of stream, return nothing */
 r_if
 c_cond
 (paren
 id|offset
 op_ge
-id|datasize
+id|attr-&gt;size
 )paren
 (brace
 id|dest-&gt;size
@@ -2518,6 +2583,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* if read _extends_ beyond end of stream, return as much&n;&t;&t;&t;initialised data as we have */
 r_if
 c_cond
 (paren
@@ -2525,14 +2591,14 @@ id|offset
 op_plus
 id|l
 op_ge
-id|datasize
+id|attr-&gt;size
 )paren
 (brace
 id|l
 op_assign
 id|dest-&gt;size
 op_assign
-id|datasize
+id|attr-&gt;size
 op_minus
 id|offset
 suffix:semicolon
@@ -2541,6 +2607,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* fixed by CSA: if writing beyond end, extend attribute */
+multiline_comment|/* if write extends beyond _allocated_ size, extend attrib */
 r_if
 c_cond
 (paren
@@ -2548,7 +2615,7 @@ id|offset
 op_plus
 id|l
 OG
-id|datasize
+id|attr-&gt;allocated
 )paren
 (brace
 id|error
@@ -2576,6 +2643,8 @@ id|error
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* the amount of initialised data has increased; update */
+multiline_comment|/* FIXME: shouldn&squot;t we zero-out the section between the old&n;&t;&t;&t;initialised length and the write start? */
 r_if
 c_cond
 (paren
@@ -2585,12 +2654,20 @@ id|l
 OG
 id|attr-&gt;initialized
 )paren
+(brace
 id|attr-&gt;initialized
 op_assign
 id|offset
 op_plus
 id|l
 suffix:semicolon
+id|attr-&gt;size
+op_assign
+id|offset
+op_plus
+id|l
+suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -3155,14 +3232,6 @@ id|ntfs_attribute
 op_star
 id|data
 suffix:semicolon
-id|ntfs_error
-c_func
-(paren
-l_string|&quot;bmap %x&bslash;n&quot;
-comma
-id|vcn
-)paren
-suffix:semicolon
 id|data
 op_assign
 id|ntfs_find_attr
@@ -3269,21 +3338,6 @@ dot
 id|len
 suffix:semicolon
 )brace
-id|ntfs_error
-c_func
-(paren
-l_string|&quot;result %x&bslash;n&quot;
-comma
-id|data-&gt;d.r.runlist
-(braket
-id|rnum
-)braket
-dot
-id|cluster
-op_plus
-id|vcn
-)paren
-suffix:semicolon
 r_return
 id|data-&gt;d.r.runlist
 (braket
@@ -3749,7 +3803,7 @@ id|i
 dot
 id|cluster
 op_eq
-l_int|0
+id|MAX_CLUSTER_T
 )paren
 (brace
 multiline_comment|/*compressed run*/
@@ -4564,17 +4618,7 @@ l_int|2
 op_star
 id|attr-&gt;namelen
 suffix:semicolon
-id|asize
-op_assign
-(paren
-id|asize
-op_plus
-l_int|7
-)paren
-op_amp
-op_complement
-l_int|7
-suffix:semicolon
+multiline_comment|/* SRD: you whaaa?&n;&t;&t;&t;asize=(asize+7) &amp; ~7;*/
 )brace
 multiline_comment|/* asize points at the beginning of the data */
 id|NTFS_PUTU16
@@ -4976,18 +5020,8 @@ id|error
 suffix:semicolon
 )brace
 )brace
-id|next
-op_assign
-(paren
-id|next
-op_plus
-l_int|7
-)paren
-op_amp
-op_complement
-l_int|7
-suffix:semicolon
-multiline_comment|/* align to DWORD */
+multiline_comment|/* SRD: umm..&n;&t;&t;next=(next+7) &amp; ~7; */
+multiline_comment|/* is this setting the length? if so maybe we could get&n;&t;&t;   away with rounding up so long as we set the length first..&n;&t;&t;   ..except, is the length the only way to get to the next attr?&n;&t;&t; */
 id|NTFS_PUTU16
 c_func
 (paren
@@ -5947,12 +5981,13 @@ id|data-&gt;size
 op_div
 id|vol-&gt;mft_recordsize
 suffix:semicolon
+multiline_comment|/* SRD: start at byte 0: bits for system files _are_ already set in bitmap */
 r_for
 c_loop
 (paren
 id|byte
 op_assign
-l_int|3
+l_int|0
 suffix:semicolon
 l_int|8
 op_star
@@ -6077,7 +6112,7 @@ comma
 id|vol-&gt;mft_recordsize
 )paren
 suffix:semicolon
-id|fill_mft_header
+id|ntfs_fill_mft_header
 c_func
 (paren
 id|mft
@@ -6295,6 +6330,17 @@ c_func
 id|size
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|data
+)paren
+(brace
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
 id|ntfs_bzero
 c_func
 (paren
@@ -6757,7 +6803,7 @@ suffix:semicolon
 id|ntfs_u8
 id|buffer
 (braket
-l_int|1
+l_int|2
 )braket
 suffix:semicolon
 id|ntfs_volume
@@ -6965,7 +7011,7 @@ id|buffer
 suffix:semicolon
 id|io.size
 op_assign
-l_int|0x10
+l_int|2
 suffix:semicolon
 id|error
 op_assign
@@ -7020,6 +7066,17 @@ c_func
 id|vol-&gt;mft_recordsize
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|result-&gt;attr
+)paren
+(brace
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
 id|result-&gt;attr_count
 op_assign
 l_int|0
@@ -7045,6 +7102,27 @@ r_int
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|result-&gt;records
+)paren
+(brace
+id|ntfs_free
+c_func
+(paren
+id|result-&gt;attr
+)paren
+suffix:semicolon
+id|result-&gt;attr
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
 id|result-&gt;records
 (braket
 l_int|0

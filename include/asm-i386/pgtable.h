@@ -421,8 +421,8 @@ DECL|macro|_PAGE_RW
 mdefine_line|#define _PAGE_RW&t;0x002
 DECL|macro|_PAGE_USER
 mdefine_line|#define _PAGE_USER&t;0x004
-DECL|macro|_PAGE_WT
-mdefine_line|#define _PAGE_WT&t;0x008
+DECL|macro|_PAGE_PWT
+mdefine_line|#define _PAGE_PWT&t;0x008
 DECL|macro|_PAGE_PCD
 mdefine_line|#define _PAGE_PCD&t;0x010
 DECL|macro|_PAGE_ACCESSED

@@ -4050,9 +4050,49 @@ c_func
 (paren
 id|CYCLADES
 comma
+id|CYCLOM_4Y_Lo
+comma
+l_string|&quot;Cyclom-4Y below 1Mbyte&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CYCLADES
+comma
+id|CYCLOM_4Y_Hi
+comma
+l_string|&quot;Cyclom-4Y above 1Mbyte&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CYCLADES
+comma
+id|CYCLOM_8Y_Lo
+comma
+l_string|&quot;Cyclom-8Y below 1Mbyte&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CYCLADES
+comma
+id|CYCLOM_8Y_Hi
+comma
+l_string|&quot;Cyclom-8Y above 1Mbyte&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CYCLADES
+comma
 id|CYCLOM_Z_Lo
 comma
-l_string|&quot;Cyclom-Z below 1Mbyte&quot;
+l_string|&quot;Cyclades-Z below 1Mbyte&quot;
 )paren
 comma
 id|DEVICE
@@ -4062,7 +4102,7 @@ id|CYCLADES
 comma
 id|CYCLOM_Z_Hi
 comma
-l_string|&quot;Cyclom-Z above 1Mbyte&quot;
+l_string|&quot;Cyclades-Z above 1Mbyte&quot;
 )paren
 comma
 id|DEVICE

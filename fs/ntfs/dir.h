@@ -198,4 +198,16 @@ op_star
 id|ino
 )paren
 suffix:semicolon
+r_int
+id|ntfs_add_index_root
+c_func
+(paren
+id|ntfs_inode
+op_star
+id|ino
+comma
+r_int
+id|type
+)paren
+suffix:semicolon
 eof

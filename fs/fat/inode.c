@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/fat/inode.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *  VFAT extensions by Gordon Chaffee, merged with msdos fs by Henrik Storner&n; */
+multiline_comment|/*&n; *  linux/fs/fat/inode.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *  VFAT extensions by Gordon Chaffee, merged with msdos fs by Henrik Storner&n; *&n; *  Fixes:&n; *&n; *  &t;Max Cohan: Fixed invalid FSINFO offset when info_sector is 0&n; */
 macro_line|#include &lt;linux/version.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -1960,6 +1960,28 @@ c_func
 id|b-&gt;root_cluster
 )paren
 suffix:semicolon
+id|CF_LE_W
+c_func
+(paren
+id|b-&gt;info_sector
+)paren
+comma
+id|logical_sector_size
+)paren
+suffix:semicolon
+multiline_comment|/* MC - if info_sector is 0, don&squot;t multiply by 0 */
+r_if
+c_cond
+(paren
+id|CF_LE_W
+c_func
+(paren
+id|b-&gt;info_sector
+)paren
+op_eq
+l_int|0
+)paren
+(brace
 id|MSDOS_SB
 c_func
 (paren
@@ -1968,6 +1990,22 @@ id|sb
 op_member_access_from_pointer
 id|fsinfo_offset
 op_assign
+id|logical_sector_size
+op_plus
+l_int|0x1e0
+suffix:semicolon
+)brace
+r_else
+(brace
+id|MSDOS_SB
+c_func
+(paren
+id|sb
+)paren
+op_member_access_from_pointer
+id|fsinfo_offset
+op_assign
+(paren
 id|CF_LE_W
 c_func
 (paren
@@ -1975,9 +2013,11 @@ id|b-&gt;info_sector
 )paren
 op_star
 id|logical_sector_size
+)paren
 op_plus
 l_int|0x1e0
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

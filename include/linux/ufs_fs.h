@@ -108,6 +108,8 @@ DECL|macro|UFS_ST_44BSD
 mdefine_line|#define UFS_ST_44BSD&t;&t;0x00000100
 DECL|macro|UFS_ST_SUN
 mdefine_line|#define UFS_ST_SUN&t;&t;0x00000200
+DECL|macro|UFS_ST_SUNx86
+mdefine_line|#define UFS_ST_SUNx86&t;&t;0x00000400
 multiline_comment|/*cylinder group encoding */
 DECL|macro|UFS_CG_MASK
 mdefine_line|#define UFS_CG_MASK&t;&t;0x00003000&t;/* mask for the following */
@@ -134,17 +136,19 @@ mdefine_line|#define UFS_MOUNT_ONERROR_UMOUNT&t;0x00000004
 DECL|macro|UFS_MOUNT_ONERROR_REPAIR
 mdefine_line|#define UFS_MOUNT_ONERROR_REPAIR&t;0x00000008
 DECL|macro|UFS_MOUNT_UFSTYPE
-mdefine_line|#define UFS_MOUNT_UFSTYPE&t;&t;0x000001F0
+mdefine_line|#define UFS_MOUNT_UFSTYPE&t;&t;0x000003F0
 DECL|macro|UFS_MOUNT_UFSTYPE_OLD
 mdefine_line|#define UFS_MOUNT_UFSTYPE_OLD&t;&t;0x00000010
 DECL|macro|UFS_MOUNT_UFSTYPE_44BSD
 mdefine_line|#define UFS_MOUNT_UFSTYPE_44BSD&t;&t;0x00000020
 DECL|macro|UFS_MOUNT_UFSTYPE_SUN
 mdefine_line|#define UFS_MOUNT_UFSTYPE_SUN&t;&t;0x00000040
-DECL|macro|UFS_MOUNT_UFSTYPE_NEXT
-mdefine_line|#define UFS_MOUNT_UFSTYPE_NEXT&t;&t;0x00000080
+DECL|macro|UFS_MOUNT_UFSTYPE_NEXTSTEP
+mdefine_line|#define UFS_MOUNT_UFSTYPE_NEXTSTEP&t;0x00000080
 DECL|macro|UFS_MOUNT_UFSTYPE_OPENSTEP
 mdefine_line|#define UFS_MOUNT_UFSTYPE_OPENSTEP&t;0x00000100
+DECL|macro|UFS_MOUNT_UFSTYPE_SUNx86
+mdefine_line|#define UFS_MOUNT_UFSTYPE_SUNx86&t;0x00000200
 DECL|macro|ufs_clear_opt
 mdefine_line|#define ufs_clear_opt(o,opt)&t;o &amp;= ~UFS_MOUNT_##opt
 DECL|macro|ufs_set_opt
@@ -223,7 +227,7 @@ mdefine_line|#define UFS_MAXMNTLEN 512
 DECL|macro|UFS_MAXCSBUFS
 mdefine_line|#define UFS_MAXCSBUFS 31
 DECL|macro|UFS_LINK_MAX
-mdefine_line|#define UFS_LINK_MAX EXT2_LINK_MAX
+mdefine_line|#define UFS_LINK_MAX 32000
 multiline_comment|/*&n; * UFS_DIR_PAD defines the directory entries boundaries&n; * (must be a multiple of 4)&n; */
 DECL|macro|UFS_DIR_PAD
 mdefine_line|#define UFS_DIR_PAD&t;&t;&t;4
@@ -519,11 +523,34 @@ id|fs_optim
 suffix:semicolon
 multiline_comment|/* optimization preference, see below */
 multiline_comment|/* these fields are derived from the hardware */
+r_union
+(brace
+r_struct
+(brace
 DECL|member|fs_npsect
 id|__u32
 id|fs_npsect
 suffix:semicolon
 multiline_comment|/* # sectors/track including spares */
+DECL|member|fs_sun
+)brace
+id|fs_sun
+suffix:semicolon
+r_struct
+(brace
+DECL|member|fs_state
+id|__s32
+id|fs_state
+suffix:semicolon
+multiline_comment|/* file system state time stamp */
+DECL|member|fs_sunx86
+)brace
+id|fs_sunx86
+suffix:semicolon
+DECL|member|fs_u1
+)brace
+id|fs_u1
+suffix:semicolon
 DECL|member|fs_interleave
 id|__u32
 id|fs_interleave
@@ -609,27 +636,27 @@ suffix:semicolon
 multiline_comment|/* cylinder summary information */
 multiline_comment|/* these fields are cleared at mount time */
 DECL|member|fs_fmod
-id|__u8
+id|__s8
 id|fs_fmod
 suffix:semicolon
 multiline_comment|/* super block modified flag */
 DECL|member|fs_clean
-id|__u8
+id|__s8
 id|fs_clean
 suffix:semicolon
 multiline_comment|/* file system is clean flag */
 DECL|member|fs_ronly
-id|__u8
+id|__s8
 id|fs_ronly
 suffix:semicolon
 multiline_comment|/* mounted read-only flag */
 DECL|member|fs_flags
-id|__u8
+id|__s8
 id|fs_flags
 suffix:semicolon
 multiline_comment|/* currently unused flag */
 DECL|member|fs_fsmnt
-id|__u8
+id|__s8
 id|fs_fsmnt
 (braket
 id|UFS_MAXMNTLEN
@@ -724,6 +751,52 @@ DECL|member|fs_sparecon
 id|__s32
 id|fs_sparecon
 (braket
+l_int|53
+)braket
+suffix:semicolon
+multiline_comment|/* reserved for future constants */
+DECL|member|fs_reclaim
+id|__s32
+id|fs_reclaim
+suffix:semicolon
+DECL|member|fs_sparecon2
+id|__s32
+id|fs_sparecon2
+(braket
+l_int|1
+)braket
+suffix:semicolon
+DECL|member|fs_npsect
+id|__u32
+id|fs_npsect
+suffix:semicolon
+multiline_comment|/* # sectors/track including spares */
+DECL|member|fs_qbmask
+id|__u32
+id|fs_qbmask
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* ~usb_bmask */
+DECL|member|fs_qfmask
+id|__u32
+id|fs_qfmask
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* ~usb_fmask */
+DECL|member|fs_sunx86
+)brace
+id|fs_sunx86
+suffix:semicolon
+r_struct
+(brace
+DECL|member|fs_sparecon
+id|__s32
+id|fs_sparecon
+(braket
 l_int|50
 )braket
 suffix:semicolon
@@ -776,9 +849,9 @@ DECL|member|fs_44
 )brace
 id|fs_44
 suffix:semicolon
-DECL|member|fs_u
+DECL|member|fs_u2
 )brace
-id|fs_u
+id|fs_u2
 suffix:semicolon
 DECL|member|fs_postblformat
 id|__s32

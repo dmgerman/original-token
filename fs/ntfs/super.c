@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  super.c&n; *&n; *  Copyright (C) 1995-1997 Martin von L&#xfffd;wis&n; *  Copyright (C) 1996-1997 R&#xfffd;gis Duchesne&n; */
+multiline_comment|/*&n; *  super.c&n; *&n; *  Copyright (C) 1995-1997, 1999 Martin von L&#xfffd;wis&n; *  Copyright (C) 1996-1997 R&#xfffd;gis Duchesne&n; *  Copyright (C) 1999 Steve Dodd&n; */
 macro_line|#include &quot;ntfstypes.h&quot;
 macro_line|#include &quot;struct.h&quot;
 macro_line|#include &quot;super.h&quot;
@@ -437,10 +437,16 @@ op_star
 id|UPCASE_LENGTH
 )paren
 suffix:semicolon
-id|upcase-&gt;vol-&gt;upcase_length
-op_assign
-id|UPCASE_LENGTH
+r_if
+c_cond
+(paren
+op_logical_neg
+id|upcase-&gt;vol-&gt;upcase
+)paren
+(brace
+r_return
 suffix:semicolon
+)brace
 id|io.fn_put
 op_assign
 id|ntfs_put
@@ -477,6 +483,10 @@ comma
 op_amp
 id|io
 )paren
+suffix:semicolon
+id|upcase-&gt;vol-&gt;upcase_length
+op_assign
+id|io.size
 suffix:semicolon
 )brace
 r_static
@@ -1296,6 +1306,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Writes the volume size into vol_size. Returns 0 if successful&n; * or error.&n; */
 DECL|function|ntfs_get_volumesize
 r_int
 id|ntfs_get_volumesize
@@ -1304,13 +1315,33 @@ c_func
 id|ntfs_volume
 op_star
 id|vol
+comma
+r_int
+op_star
+id|vol_size
 )paren
 (brace
 id|ntfs_io
 id|io
 suffix:semicolon
+id|ntfs_u64
+id|size
+suffix:semicolon
 r_char
 op_star
+id|cluster0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|vol_size
+)paren
+(brace
+r_return
+id|EFAULT
+suffix:semicolon
+)brace
 id|cluster0
 op_assign
 id|ntfs_malloc
@@ -1319,9 +1350,17 @@ c_func
 id|vol-&gt;clustersize
 )paren
 suffix:semicolon
-id|ntfs_u64
-id|size
+r_if
+c_cond
+(paren
+op_logical_neg
+id|cluster0
+)paren
+(brace
+r_return
+id|ENOMEM
 suffix:semicolon
+)brace
 id|io.fn_put
 op_assign
 id|ntfs_put
@@ -1373,7 +1412,9 @@ id|cluster0
 suffix:semicolon
 multiline_comment|/* FIXME: more than 2**32 cluster */
 multiline_comment|/* FIXME: gcc will emit udivdi3 if we don&squot;t truncate it */
-r_return
+op_star
+id|vol_size
+op_assign
 (paren
 (paren
 r_int
@@ -1383,6 +1424,9 @@ id|size
 )paren
 op_div
 id|vol-&gt;clusterfactor
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|variable|nc
@@ -1939,7 +1983,7 @@ c_loop
 id|l
 op_logical_and
 op_star
-id|cnt
+id|bits
 op_eq
 l_int|0xFF
 )paren
@@ -2284,9 +2328,8 @@ l_int|7
 op_plus
 l_int|7
 )paren
-op_amp
-op_complement
-l_int|7
+op_rshift
+l_int|3
 suffix:semicolon
 multiline_comment|/* round up to multiple of 8*/
 id|bits
@@ -2426,7 +2469,7 @@ id|locit
 op_mod
 l_int|8
 op_eq
-l_int|7
+l_int|0
 )paren
 (brace
 id|it
@@ -2612,8 +2655,6 @@ op_assign
 l_int|0
 suffix:semicolon
 r_int
-id|loc
-comma
 id|cnt
 comma
 id|bloc
@@ -2628,6 +2669,9 @@ suffix:semicolon
 r_int
 id|start
 suffix:semicolon
+id|ntfs_cluster_t
+id|loc
+suffix:semicolon
 id|bits
 op_assign
 id|ntfs_malloc
@@ -2636,6 +2680,17 @@ c_func
 l_int|2048
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|bits
+)paren
+(brace
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
 id|io.fn_put
 op_assign
 id|ntfs_put

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  fs.c&n; *  NTFS driver for Linux 2.1&n; *&n; *  Copyright (C) 1995-1997 Martin von L&#xfffd;wis&n; *  Copyright (C) 1996 Richard Russon&n; *  Copyright (C) 1996-1997 R&#xfffd;gis Duchesne&n; */
+multiline_comment|/*&n; *  fs.c&n; *  NTFS driver for Linux 2.1&n; *&n; *  Copyright (C) 1995-1997, 1999 Martin von L&#xfffd;wis&n; *  Copyright (C) 1996 Richard Russon&n; *  Copyright (C) 1996-1997 R&#xfffd;gis Duchesne&n; */
 macro_line|#ifdef HAVE_CONFIG_H
 macro_line|#include &quot;config.h&quot;
 macro_line|#endif
@@ -2105,6 +2105,17 @@ c_func
 id|ITEM_SIZE
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|item
+)paren
+(brace
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
 multiline_comment|/* ntfs_getdir will place the directory entry into item,&n;&t;   and the first long long is the MFT record number */
 id|walk.type
 op_assign
@@ -3008,26 +3019,6 @@ comma
 id|ret
 )paren
 suffix:semicolon
-id|ntfs_error
-c_func
-(paren
-l_string|&quot;bmap of %lx,block %x is %x&bslash;n&quot;
-comma
-id|ino-&gt;i_ino
-comma
-id|block
-comma
-id|ret
-)paren
-suffix:semicolon
-id|ntfs_error
-c_func
-(paren
-l_string|&quot;super %x&bslash;n&quot;
-comma
-id|ino-&gt;i_sb-&gt;s_blocksize
-)paren
-suffix:semicolon
 r_return
 (paren
 id|ret
@@ -3388,6 +3379,7 @@ op_amp
 id|inode-&gt;u.ntfs_i
 suffix:semicolon
 macro_line|#else
+multiline_comment|/* FIXME: check for ntfs_malloc failure */
 id|ino
 op_assign
 (paren
@@ -3873,6 +3865,9 @@ id|ntfs_volume
 op_star
 id|vol
 suffix:semicolon
+r_int
+id|error
+suffix:semicolon
 id|ntfs_debug
 c_func
 (paren
@@ -3911,7 +3906,7 @@ id|fs.f_bsize
 op_assign
 id|vol-&gt;clustersize
 suffix:semicolon
-id|fs.f_blocks
+id|error
 op_assign
 id|ntfs_get_volumesize
 c_func
@@ -3921,8 +3916,21 @@ c_func
 (paren
 id|sb
 )paren
+comma
+op_amp
+id|fs.f_blocks
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+(brace
+r_return
+id|error
+suffix:semicolon
+)brace
 id|fs.f_bfree
 op_assign
 id|ntfs_get_free_cluster_count

@@ -1,18 +1,20 @@
-multiline_comment|/*&n; *  attr.c&n; *&n; *  Copyright (C) 1996-1998 Martin von L&#xfffd;wis&n; *  Copyright (C) 1996-1997 R&#xfffd;gis Duchesne&n; *  Copyright (C) 1998 Joseph Malicki&n; */
+multiline_comment|/*&n; *  attr.c&n; *&n; *  Copyright (C) 1996-1999 Martin von L&#xfffd;wis&n; *  Copyright (C) 1996-1997 R&#xfffd;gis Duchesne&n; *  Copyright (C) 1998 Joseph Malicki&n; *  Copyright (C) 1999 Steve Dodd&n; */
 macro_line|#include &quot;ntfstypes.h&quot;
 macro_line|#include &quot;struct.h&quot;
 macro_line|#include &quot;attr.h&quot;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#ifdef HAVE_STRING_H
+macro_line|#include &lt;string.h&gt;
+macro_line|#endif
 macro_line|#include &quot;macros.h&quot;
 macro_line|#include &quot;support.h&quot;
 macro_line|#include &quot;util.h&quot;
 macro_line|#include &quot;super.h&quot;
 macro_line|#include &quot;inode.h&quot;
 multiline_comment|/* Look if an attribute already exists in the inode, and if not, create it */
-r_static
 r_int
-DECL|function|new_attr
-id|new_attr
+DECL|function|ntfs_new_attr
+id|ntfs_new_attr
 c_func
 (paren
 id|ntfs_inode
@@ -36,6 +38,9 @@ comma
 r_int
 op_star
 id|found
+comma
+r_int
+id|do_search
 )paren
 (brace
 r_int
@@ -95,7 +100,13 @@ comma
 id|n
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * We assume that each attribute can be uniquely &n;&t;&t; * identified by inode&n;&t;&t; * number, attribute type and attribute name.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|do_search
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; * We assume that each attribute can be uniquely &n;&t;&t;&t; * identified by inode&n;&t;&t;&t; * number, attribute type and attribute name.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -134,6 +145,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* attributes are ordered by type, then by name */
 r_if
@@ -185,11 +197,9 @@ l_int|0
 (brace
 id|ntfs_attribute
 op_star
-id|old
-op_assign
-id|ino-&gt;attrs
+r_new
 suffix:semicolon
-id|ino-&gt;attrs
+r_new
 op_assign
 (paren
 id|ntfs_attribute
@@ -213,15 +223,26 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|old
+op_logical_neg
+r_new
+)paren
+(brace
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|ino-&gt;attrs
 )paren
 (brace
 id|ntfs_memcpy
 c_func
 (paren
-id|ino-&gt;attrs
+r_new
 comma
-id|old
+id|ino-&gt;attrs
 comma
 id|ino-&gt;attr_count
 op_star
@@ -234,10 +255,14 @@ suffix:semicolon
 id|ntfs_free
 c_func
 (paren
-id|old
+id|ino-&gt;attrs
 )paren
 suffix:semicolon
 )brace
+id|ino-&gt;attrs
+op_assign
+r_new
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -356,7 +381,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Store in the inode readable information about a run */
-r_static
 r_void
 DECL|function|ntfs_insert_run
 id|ntfs_insert_run
@@ -389,13 +413,9 @@ l_int|0
 (brace
 id|ntfs_runlist
 op_star
-id|old
+r_new
 suffix:semicolon
-id|old
-op_assign
-id|attr-&gt;d.r.runlist
-suffix:semicolon
-id|attr-&gt;d.r.runlist
+r_new
 op_assign
 id|ntfs_malloc
 c_func
@@ -415,15 +435,25 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|old
+op_logical_neg
+r_new
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|attr-&gt;d.r.runlist
 )paren
 (brace
 id|ntfs_memcpy
 c_func
 (paren
-id|attr-&gt;d.r.runlist
+r_new
 comma
-id|old
+id|attr-&gt;d.r.runlist
 comma
 id|attr-&gt;d.r.len
 op_star
@@ -436,10 +466,14 @@ suffix:semicolon
 id|ntfs_free
 c_func
 (paren
-id|old
+id|attr-&gt;d.r.runlist
 )paren
 suffix:semicolon
 )brace
+id|attr-&gt;d.r.runlist
+op_assign
+r_new
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -497,6 +531,7 @@ id|attr-&gt;d.r.len
 op_increment
 suffix:semicolon
 )brace
+multiline_comment|/* Extends an attribute. Another run will be added if necessary,&n; * but we try to extend the last run in the runlist first.&n; * FIXME: what if there isn&squot;t enough contiguous space, we don&squot;t create&n; * multiple runs?&n; *&n; * *len: the desired new length of the attr (_not_ the amount to extend by)&n; */
 DECL|function|ntfs_extend_attr
 r_int
 id|ntfs_extend_attr
@@ -585,6 +620,20 @@ id|error
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+op_star
+id|len
+op_le
+id|attr-&gt;allocated
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* truely stupid things do sometimes happen */
 id|rl
 op_assign
 id|attr-&gt;d.r.runlist
@@ -626,12 +675,16 @@ id|cluster
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* round up to multiple of cluster size */
+multiline_comment|/* calculate the extra space we need, and round up to multiple of cluster&n;&t; * size to get number of new clusters needed */
 id|clen
 op_assign
 (paren
+(paren
 op_star
 id|len
+op_minus
+id|attr-&gt;allocated
+)paren
 op_plus
 id|ino-&gt;vol-&gt;clustersize
 op_minus
@@ -690,9 +743,7 @@ suffix:semicolon
 op_star
 id|len
 op_assign
-id|clen
-op_star
-id|ino-&gt;vol-&gt;clustersize
+id|attr-&gt;allocated
 suffix:semicolon
 multiline_comment|/* contiguous chunk */
 r_if
@@ -1091,6 +1142,12 @@ op_logical_neg
 id|attr-&gt;d.data
 )paren
 (brace
+id|ntfs_free
+c_func
+(paren
+id|v
+)paren
+suffix:semicolon
 r_return
 id|ENOMEM
 suffix:semicolon
@@ -1250,8 +1307,7 @@ id|i
 dot
 id|cluster
 op_ne
-op_minus
-l_int|1
+id|MAX_CLUSTER_T
 )paren
 (brace
 r_int
@@ -1355,8 +1411,7 @@ id|i
 dot
 id|cluster
 op_ne
-op_minus
-l_int|1
+id|MAX_CLUSTER_T
 )paren
 (brace
 id|error
@@ -1560,6 +1615,17 @@ op_star
 id|namelen
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|name
+)paren
+(brace
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
 id|ntfs_ascii2uni
 c_func
 (paren
@@ -1582,7 +1648,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|new_attr
+id|error
+op_assign
+id|ntfs_new_attr
 c_func
 (paren
 id|ino
@@ -1598,8 +1666,26 @@ id|i
 comma
 op_amp
 id|found
+comma
+l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+(brace
+id|ntfs_free
+c_func
+(paren
+id|name
+)paren
+suffix:semicolon
+r_return
+id|error
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1698,6 +1784,17 @@ c_func
 id|dsize
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|attr-&gt;d.data
+)paren
+(brace
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
 id|ntfs_memcpy
 c_func
 (paren
@@ -1987,6 +2084,9 @@ id|ntfs_attribute
 op_star
 id|attr
 suffix:semicolon
+r_int
+id|error
+suffix:semicolon
 id|type
 op_assign
 id|NTFS_GETU32
@@ -2031,6 +2131,17 @@ op_star
 id|namelen
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|name
+)paren
+(brace
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
 id|ntfs_memcpy
 c_func
 (paren
@@ -2052,7 +2163,9 @@ id|namelen
 )paren
 suffix:semicolon
 )brace
-id|new_attr
+id|error
+op_assign
+id|ntfs_new_attr
 c_func
 (paren
 id|ino
@@ -2068,8 +2181,33 @@ id|i
 comma
 op_amp
 id|found
+comma
+l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|name
+)paren
+(brace
+id|ntfs_free
+c_func
+(paren
+id|name
+)paren
+suffix:semicolon
+)brace
+r_return
+id|error
+suffix:semicolon
+)brace
 multiline_comment|/* We can have in one inode two attributes with type 0x00000030 (File Name) &n;&t;   and without name */
 r_if
 c_cond
@@ -2096,6 +2234,35 @@ id|attrdata
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|found
+)paren
+(brace
+multiline_comment|/*&t;Don&squot;t understand the above, but I know it leaks memory below&n; &t;&t;&t;as it overwrites a found entry without freeing it. So here we&n; &t;&t;&t;call ntfs_new_attr again but this time ask it to always allocate a&n; &t;&t;&t;new&t;entry */
+id|ntfs_new_attr
+c_func
+(paren
+id|ino
+comma
+id|type
+comma
+id|name
+comma
+id|namelen
+comma
+op_amp
+id|i
+comma
+op_amp
+id|found
+comma
+l_int|0
+)paren
 suffix:semicolon
 )brace
 id|attr
@@ -2176,6 +2343,17 @@ c_func
 id|attr-&gt;size
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|attr-&gt;d.data
+)paren
+(brace
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
 id|ntfs_memcpy
 c_func
 (paren
@@ -2558,8 +2736,7 @@ c_cond
 (paren
 id|cluster
 op_eq
-op_minus
-l_int|1
+id|MAX_CLUSTER_T
 )paren
 (brace
 multiline_comment|/* sparse cluster */
@@ -2799,8 +2976,7 @@ c_loop
 (paren
 id|cluster
 op_ne
-op_minus
-l_int|1
+id|MAX_CLUSTER_T
 op_logical_and
 id|got
 OL
@@ -2819,8 +2995,7 @@ c_cond
 (paren
 id|cluster
 op_ne
-op_minus
-l_int|1
+id|MAX_CLUSTER_T
 op_logical_or
 id|got
 op_eq

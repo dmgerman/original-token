@@ -1719,15 +1719,6 @@ id|is_dir
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* update dcache */
-id|d_move
-c_func
-(paren
-id|old_dentry
-comma
-id|new_dentry
-)paren
-suffix:semicolon
 )brace
 id|hfs_rename_put
 suffix:colon

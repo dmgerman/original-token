@@ -512,6 +512,7 @@ id|prot
 )paren
 (brace
 macro_line|#if defined(__i386__)
+multiline_comment|/* On PPro and successors, PCD alone doesn&squot;t always mean &n;&t;    uncached because of interactions with the MTRRs. PCD | PWT&n;&t;    means definitely uncached. */
 r_if
 c_cond
 (paren
@@ -522,6 +523,8 @@ l_int|3
 id|prot
 op_or_assign
 id|_PAGE_PCD
+op_or
+id|_PAGE_PWT
 suffix:semicolon
 macro_line|#elif defined(__powerpc__)
 id|prot
@@ -573,6 +576,49 @@ r_return
 id|prot
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Architectures vary in how they handle caching for addresses &n; * outside of main memory.&n; */
+DECL|function|noncached_address
+r_static
+r_inline
+r_int
+id|noncached_address
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+macro_line|#if defined(__i386__)
+multiline_comment|/* &n;&t; * On the PPro and successors, the MTRRs are used to set&n;&t; * memory types for physical addresses outside main memory, &n;&t; * so blindly setting PCD or PWT on those pages is wrong.&n;&t; * For Pentiums and earlier, the surround logic should disable &n;&t; * caching for the high addresses through the KEN pin, but&n;&t; * we maintain the tradition of paranoia in this code.&n;&t; */
+r_return
+op_logical_neg
+(paren
+id|boot_cpu_data.x86_capability
+op_amp
+id|X86_FEATURE_MTRR
+)paren
+op_logical_and
+id|addr
+op_ge
+id|__pa
+c_func
+(paren
+id|high_memory
+)paren
+suffix:semicolon
+macro_line|#else
+r_return
+id|addr
+op_ge
+id|__pa
+c_func
+(paren
+id|high_memory
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 DECL|function|mmap_mem
 r_static
 r_int
@@ -608,7 +654,39 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-multiline_comment|/*&n;&t; * Accessing memory above the top the kernel knows about or&n;&t; * through a file pointer that was marked O_SYNC will be&n;&t; * done non-cached.&n;&t; *&n;&t; * Set VM_IO, as this is likely a non-cached access to an&n;&t; * I/O area, and we don&squot;t want to include that in a core&n;&t; * file.&n;&t; */
+multiline_comment|/*&n;&t; * Accessing memory above the top the kernel knows about or&n;&t; * through a file pointer that was marked O_SYNC will be&n;&t; * done non-cached.&n;&t; */
+r_if
+c_cond
+(paren
+id|noncached_address
+c_func
+(paren
+id|offset
+)paren
+op_logical_or
+(paren
+id|file-&gt;f_flags
+op_amp
+id|O_SYNC
+)paren
+)paren
+id|pgprot_val
+c_func
+(paren
+id|vma-&gt;vm_page_prot
+)paren
+op_assign
+id|pgprot_noncached
+c_func
+(paren
+id|pgprot_val
+c_func
+(paren
+id|vma-&gt;vm_page_prot
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Don&squot;t dump addresses that are not real memory to a core file.&n;&t; */
 r_if
 c_cond
 (paren
@@ -626,28 +704,10 @@ op_amp
 id|O_SYNC
 )paren
 )paren
-(brace
-id|pgprot_val
-c_func
-(paren
-id|vma-&gt;vm_page_prot
-)paren
-op_assign
-id|pgprot_noncached
-c_func
-(paren
-id|pgprot_val
-c_func
-(paren
-id|vma-&gt;vm_page_prot
-)paren
-)paren
-suffix:semicolon
 id|vma-&gt;vm_flags
 op_or_assign
 id|VM_IO
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

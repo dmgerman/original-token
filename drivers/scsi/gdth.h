@@ -1,7 +1,7 @@
 macro_line|#ifndef _GDTH_H
 DECL|macro|_GDTH_H
 mdefine_line|#define _GDTH_H
-multiline_comment|/*&n; * Header file for the GDT ISA/EISA/PCI Disk Array Controller driver for Linux&n; * &n; * gdth.h Copyright (C) 1995-98 ICP vortex Computersysteme GmbH, Achim Leubner&n; * See gdth.c for further informations and &n; * below for supported controller types&n; *&n; * &lt;achim@vortex.de&gt;&n; *&n; * $Id: gdth.h,v 1.16 1998/12/17 15:54:53 achim Exp $&n; */
+multiline_comment|/*&n; * Header file for the GDT ISA/EISA/PCI Disk Array Controller driver for Linux&n; * &n; * gdth.h Copyright (C) 1995-99 ICP vortex Computersysteme GmbH, Achim Leubner&n; * See gdth.c for further informations and &n; * below for supported controller types&n; *&n; * &lt;achim@vortex.de&gt;&n; *&n; * $Id: gdth.h,v 1.21 1999/03/26 09:12:24 achim Exp $&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#ifndef NULL
@@ -19,11 +19,11 @@ macro_line|#endif
 multiline_comment|/* defines, macros */
 multiline_comment|/* driver version */
 DECL|macro|GDTH_VERSION_STR
-mdefine_line|#define GDTH_VERSION_STR        &quot;1.10&quot;
+mdefine_line|#define GDTH_VERSION_STR        &quot;1.14&quot;
 DECL|macro|GDTH_VERSION
 mdefine_line|#define GDTH_VERSION            1
 DECL|macro|GDTH_SUBVERSION
-mdefine_line|#define GDTH_SUBVERSION         10
+mdefine_line|#define GDTH_SUBVERSION         14
 multiline_comment|/* protocol version */
 DECL|macro|PROTOCOL_VERSION
 mdefine_line|#define PROTOCOL_VERSION        1
@@ -162,6 +162,8 @@ DECL|macro|GDTH_MAXCMDS
 mdefine_line|#define GDTH_MAXCMDS    124
 DECL|macro|GDTH_MAXC_P_L
 mdefine_line|#define GDTH_MAXC_P_L   16                      /* max. cmds per lun */
+DECL|macro|GDTH_MAX_RAW
+mdefine_line|#define GDTH_MAX_RAW    2                       /* max. cmds per raw device */
 DECL|macro|MAXOFFSETS
 mdefine_line|#define MAXOFFSETS      128
 DECL|macro|MAXHA
@@ -276,22 +278,48 @@ mdefine_line|#define GDT_SCAN_START  19                      /* start device sca
 DECL|macro|GDT_SCAN_END
 mdefine_line|#define GDT_SCAN_END    20                      /* stop device scan */  
 multiline_comment|/* IOCTL command defines */
+DECL|macro|SCSI_DR_INFO
+mdefine_line|#define SCSI_DR_INFO    0x00                    /* SCSI drive info */                   
 DECL|macro|SCSI_CHAN_CNT
-mdefine_line|#define SCSI_CHAN_CNT   5                       /* subfunctions */
-DECL|macro|GET_IOCHAN_DESC
-mdefine_line|#define GET_IOCHAN_DESC 0x5e
+mdefine_line|#define SCSI_CHAN_CNT   0x05                    /* SCSI channel count */   
+DECL|macro|SCSI_DR_LIST
+mdefine_line|#define SCSI_DR_LIST    0x06                    /* SCSI drive list */
+DECL|macro|SCSI_DEF_CNT
+mdefine_line|#define SCSI_DEF_CNT    0x15                    /* grown/primary defects */
+DECL|macro|DSK_STATISTICS
+mdefine_line|#define DSK_STATISTICS  0x4b                    /* SCSI disk statistics */
+DECL|macro|IOCHAN_DESC
+mdefine_line|#define IOCHAN_DESC     0x5d                    /* description of IO channel */
+DECL|macro|IOCHAN_RAW_DESC
+mdefine_line|#define IOCHAN_RAW_DESC 0x5e                    /* description of raw IO channel */
 DECL|macro|L_CTRL_PATTERN
-mdefine_line|#define L_CTRL_PATTERN  0x20000000L
+mdefine_line|#define L_CTRL_PATTERN  0x20000000L             /* SCSI IOCTL mask */
+DECL|macro|ARRAY_INFO
+mdefine_line|#define ARRAY_INFO      0x12                    /* array drive info */
+DECL|macro|ARRAY_DRV_LIST
+mdefine_line|#define ARRAY_DRV_LIST  0x0f                    /* array drive list */
+DECL|macro|LA_CTRL_PATTERN
+mdefine_line|#define LA_CTRL_PATTERN 0x10000000L             /* array IOCTL mask */
+DECL|macro|CACHE_DRV_CNT
+mdefine_line|#define CACHE_DRV_CNT   0x01                    /* cache drive count */
+DECL|macro|CACHE_DRV_LIST
+mdefine_line|#define CACHE_DRV_LIST  0x02                    /* cache drive list */
 DECL|macro|CACHE_INFO
-mdefine_line|#define CACHE_INFO      4
+mdefine_line|#define CACHE_INFO      0x04                    /* cache info */
 DECL|macro|CACHE_CONFIG
-mdefine_line|#define CACHE_CONFIG    5
+mdefine_line|#define CACHE_CONFIG    0x05                    /* cache configuration */
+DECL|macro|CACHE_DRV_INFO
+mdefine_line|#define CACHE_DRV_INFO  0x07                    /* cache drive info */
+DECL|macro|BOARD_FEATURES
+mdefine_line|#define BOARD_FEATURES  0x15                    /* controller features */
 DECL|macro|BOARD_INFO
-mdefine_line|#define BOARD_INFO      0x28
+mdefine_line|#define BOARD_INFO      0x28                    /* controller info */
+DECL|macro|HOST_GET
+mdefine_line|#define HOST_GET        0x10001L                /* get host drive list */
 DECL|macro|IO_CHANNEL
-mdefine_line|#define IO_CHANNEL      0x00020000L             /* channels */
+mdefine_line|#define IO_CHANNEL      0x00020000L             /* default IO channel */
 DECL|macro|INVALID_CHANNEL
-mdefine_line|#define INVALID_CHANNEL 0x0000ffffL     
+mdefine_line|#define INVALID_CHANNEL 0x0000ffffL             /* invalid channel */
 multiline_comment|/* IOCTLs */
 DECL|macro|GDTIOCTL_MASK
 mdefine_line|#define GDTIOCTL_MASK       (&squot;J&squot;&lt;&lt;8)
@@ -320,9 +348,9 @@ DECL|macro|S_RAW_ILL
 mdefine_line|#define S_RAW_ILL       0xff                    /* raw serv.: illegal */
 multiline_comment|/* timeout values */
 DECL|macro|INIT_RETRIES
-mdefine_line|#define INIT_RETRIES    10000                   /* 10000 * 1ms = 10s */
+mdefine_line|#define INIT_RETRIES    100000                  /* 100000 * 1ms = 100s */
 DECL|macro|INIT_TIMEOUT
-mdefine_line|#define INIT_TIMEOUT    100000                  /* 1000 * 1ms = 1s */
+mdefine_line|#define INIT_TIMEOUT    100000                  /* 100000 * 1ms = 100s */
 DECL|macro|POLL_TIMEOUT
 mdefine_line|#define POLL_TIMEOUT    10000                   /* 10000 * 1ms = 10s */
 multiline_comment|/* priorities */
@@ -434,7 +462,231 @@ DECL|typedef|gdth_msg_str
 id|PACKED
 id|gdth_msg_str
 suffix:semicolon
-multiline_comment|/* get channel count IOCTL */
+multiline_comment|/* IOCTL data structures */
+multiline_comment|/* SCSI drive info */
+r_typedef
+r_struct
+(brace
+DECL|member|vendor
+id|unchar
+id|vendor
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* vendor string */
+DECL|member|product
+id|unchar
+id|product
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* product string */
+DECL|member|revision
+id|unchar
+id|revision
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* revision */
+DECL|member|sy_rate
+id|ulong32
+id|sy_rate
+suffix:semicolon
+multiline_comment|/* current rate for sync. tr. */
+DECL|member|sy_max_rate
+id|ulong32
+id|sy_max_rate
+suffix:semicolon
+multiline_comment|/* max. rate for sync. tr. */
+DECL|member|no_ldrive
+id|ulong32
+id|no_ldrive
+suffix:semicolon
+multiline_comment|/* belongs to this logical drv.*/
+DECL|member|blkcnt
+id|ulong32
+id|blkcnt
+suffix:semicolon
+multiline_comment|/* number of blocks */
+DECL|member|blksize
+id|ushort
+id|blksize
+suffix:semicolon
+multiline_comment|/* size of block in bytes */
+DECL|member|available
+id|unchar
+id|available
+suffix:semicolon
+multiline_comment|/* flag: access is available */
+DECL|member|init
+id|unchar
+id|init
+suffix:semicolon
+multiline_comment|/* medium is initialized */
+DECL|member|devtype
+id|unchar
+id|devtype
+suffix:semicolon
+multiline_comment|/* SCSI devicetype */
+DECL|member|rm_medium
+id|unchar
+id|rm_medium
+suffix:semicolon
+multiline_comment|/* medium is removable */
+DECL|member|wp_medium
+id|unchar
+id|wp_medium
+suffix:semicolon
+multiline_comment|/* medium is write protected */
+DECL|member|ansi
+id|unchar
+id|ansi
+suffix:semicolon
+multiline_comment|/* SCSI I/II or III? */
+DECL|member|protocol
+id|unchar
+id|protocol
+suffix:semicolon
+multiline_comment|/* same as ansi */
+DECL|member|sync
+id|unchar
+id|sync
+suffix:semicolon
+multiline_comment|/* flag: sync. transfer enab. */
+DECL|member|disc
+id|unchar
+id|disc
+suffix:semicolon
+multiline_comment|/* flag: disconnect enabled */
+DECL|member|queueing
+id|unchar
+id|queueing
+suffix:semicolon
+multiline_comment|/* flag: command queing enab. */
+DECL|member|cached
+id|unchar
+id|cached
+suffix:semicolon
+multiline_comment|/* flag: caching enabled */
+DECL|member|target_id
+id|unchar
+id|target_id
+suffix:semicolon
+multiline_comment|/* target ID of device */
+DECL|member|lun
+id|unchar
+id|lun
+suffix:semicolon
+multiline_comment|/* LUN id of device */
+DECL|member|orphan
+id|unchar
+id|orphan
+suffix:semicolon
+multiline_comment|/* flag: drive fragment */
+DECL|member|last_error
+id|ulong32
+id|last_error
+suffix:semicolon
+multiline_comment|/* sense key or drive state */
+DECL|member|last_result
+id|ulong32
+id|last_result
+suffix:semicolon
+multiline_comment|/* result of last command */
+DECL|member|check_errors
+id|ulong32
+id|check_errors
+suffix:semicolon
+multiline_comment|/* err. in last surface check */
+DECL|member|percent
+id|unchar
+id|percent
+suffix:semicolon
+multiline_comment|/* progress for surface check */
+DECL|member|last_check
+id|unchar
+id|last_check
+suffix:semicolon
+multiline_comment|/* IOCTRL operation */
+DECL|member|res
+id|unchar
+id|res
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|member|flags
+id|ulong32
+id|flags
+suffix:semicolon
+multiline_comment|/* from 1.19/2.19: raw reserv.*/
+DECL|member|multi_bus
+id|unchar
+id|multi_bus
+suffix:semicolon
+multiline_comment|/* multi bus dev? (fibre ch.) */
+DECL|member|mb_status
+id|unchar
+id|mb_status
+suffix:semicolon
+multiline_comment|/* status: available? */
+DECL|member|res2
+id|unchar
+id|res2
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|member|mb_alt_status
+id|unchar
+id|mb_alt_status
+suffix:semicolon
+multiline_comment|/* status on second bus */
+DECL|member|mb_alt_bid
+id|unchar
+id|mb_alt_bid
+suffix:semicolon
+multiline_comment|/* number of second bus */
+DECL|member|mb_alt_tid
+id|unchar
+id|mb_alt_tid
+suffix:semicolon
+multiline_comment|/* target id on second bus */
+DECL|member|res3
+id|unchar
+id|res3
+suffix:semicolon
+DECL|member|fc_flag
+id|unchar
+id|fc_flag
+suffix:semicolon
+multiline_comment|/* from 1.22/2.22: info valid?*/
+DECL|member|res4
+id|unchar
+id|res4
+suffix:semicolon
+DECL|member|fc_frame_size
+id|ushort
+id|fc_frame_size
+suffix:semicolon
+multiline_comment|/* frame size (bytes) */
+DECL|member|wwn
+r_char
+id|wwn
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* world wide name */
+DECL|typedef|gdth_diskinfo_str
+)brace
+id|PACKED
+id|gdth_diskinfo_str
+suffix:semicolon
+multiline_comment|/* get SCSI channel count  */
 r_typedef
 r_struct
 (brace
@@ -447,7 +699,7 @@ DECL|member|drive_cnt
 id|ulong32
 id|drive_cnt
 suffix:semicolon
-multiline_comment|/* number of drives */
+multiline_comment|/* drive count */
 DECL|member|siop_id
 id|unchar
 id|siop_id
@@ -463,7 +715,163 @@ DECL|typedef|gdth_getch_str
 id|PACKED
 id|gdth_getch_str
 suffix:semicolon
-multiline_comment|/* get raw channel count IOCTL (NEW!) */
+multiline_comment|/* get SCSI drive numbers */
+r_typedef
+r_struct
+(brace
+DECL|member|sc_no
+id|ulong32
+id|sc_no
+suffix:semicolon
+multiline_comment|/* SCSI channel */
+DECL|member|sc_cnt
+id|ulong32
+id|sc_cnt
+suffix:semicolon
+multiline_comment|/* sc_list[] elements */
+DECL|member|sc_list
+id|ulong32
+id|sc_list
+(braket
+id|MAXID
+)braket
+suffix:semicolon
+multiline_comment|/* minor device numbers */
+DECL|typedef|gdth_drlist_str
+)brace
+id|PACKED
+id|gdth_drlist_str
+suffix:semicolon
+multiline_comment|/* get grown/primary defect count */
+r_typedef
+r_struct
+(brace
+DECL|member|sddc_type
+id|unchar
+id|sddc_type
+suffix:semicolon
+multiline_comment|/* 0x08: grown, 0x10: prim. */
+DECL|member|sddc_format
+id|unchar
+id|sddc_format
+suffix:semicolon
+multiline_comment|/* list entry format */
+DECL|member|sddc_len
+id|unchar
+id|sddc_len
+suffix:semicolon
+multiline_comment|/* list entry length */
+DECL|member|sddc_res
+id|unchar
+id|sddc_res
+suffix:semicolon
+DECL|member|sddc_cnt
+id|ulong32
+id|sddc_cnt
+suffix:semicolon
+multiline_comment|/* entry count */
+DECL|typedef|gdth_defcnt_str
+)brace
+id|PACKED
+id|gdth_defcnt_str
+suffix:semicolon
+multiline_comment|/* disk statistics */
+r_typedef
+r_struct
+(brace
+DECL|member|bid
+id|ulong32
+id|bid
+suffix:semicolon
+multiline_comment|/* SCSI channel */
+DECL|member|first
+id|ulong32
+id|first
+suffix:semicolon
+multiline_comment|/* first SCSI disk */
+DECL|member|entries
+id|ulong32
+id|entries
+suffix:semicolon
+multiline_comment|/* number of elements */
+DECL|member|count
+id|ulong32
+id|count
+suffix:semicolon
+multiline_comment|/* (R) number of init. el. */
+DECL|member|mon_time
+id|ulong32
+id|mon_time
+suffix:semicolon
+multiline_comment|/* time stamp */
+r_struct
+(brace
+DECL|member|tid
+id|unchar
+id|tid
+suffix:semicolon
+multiline_comment|/* target ID */
+DECL|member|lun
+id|unchar
+id|lun
+suffix:semicolon
+multiline_comment|/* LUN */
+DECL|member|res
+id|unchar
+id|res
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|member|blk_size
+id|ulong32
+id|blk_size
+suffix:semicolon
+multiline_comment|/* block size in bytes */
+DECL|member|rd_count
+id|ulong32
+id|rd_count
+suffix:semicolon
+multiline_comment|/* bytes read */
+DECL|member|wr_count
+id|ulong32
+id|wr_count
+suffix:semicolon
+multiline_comment|/* bytes written */
+DECL|member|rd_blk_count
+id|ulong32
+id|rd_blk_count
+suffix:semicolon
+multiline_comment|/* blocks read */
+DECL|member|wr_blk_count
+id|ulong32
+id|wr_blk_count
+suffix:semicolon
+multiline_comment|/* blocks written */
+DECL|member|retries
+id|ulong32
+id|retries
+suffix:semicolon
+multiline_comment|/* retries */
+DECL|member|reassigns
+id|ulong32
+id|reassigns
+suffix:semicolon
+multiline_comment|/* reassigns */
+DECL|member|list
+)brace
+id|PACKED
+id|list
+(braket
+l_int|1
+)braket
+suffix:semicolon
+DECL|typedef|gdth_dskstat_str
+)brace
+id|PACKED
+id|gdth_dskstat_str
+suffix:semicolon
+multiline_comment|/* IO channel header */
 r_typedef
 r_struct
 (brace
@@ -471,7 +879,7 @@ DECL|member|version
 id|ulong32
 id|version
 suffix:semicolon
-multiline_comment|/* version of information (-1UL: newest) */
+multiline_comment|/* version (-1UL: newest) */
 DECL|member|list_entries
 id|unchar
 id|list_entries
@@ -497,6 +905,62 @@ id|ulong32
 id|list_offset
 suffix:semicolon
 multiline_comment|/* offset of list[0] */
+DECL|typedef|gdth_iochan_header
+)brace
+id|PACKED
+id|gdth_iochan_header
+suffix:semicolon
+multiline_comment|/* get IO channel description */
+r_typedef
+r_struct
+(brace
+DECL|member|hdr
+id|gdth_iochan_header
+id|hdr
+suffix:semicolon
+r_struct
+(brace
+DECL|member|address
+id|ulong32
+id|address
+suffix:semicolon
+multiline_comment|/* channel address */
+DECL|member|type
+id|unchar
+id|type
+suffix:semicolon
+multiline_comment|/* type (SCSI, FCAL) */
+DECL|member|local_no
+id|unchar
+id|local_no
+suffix:semicolon
+multiline_comment|/* local number */
+DECL|member|features
+id|ushort
+id|features
+suffix:semicolon
+multiline_comment|/* channel features */
+DECL|member|list
+)brace
+id|PACKED
+id|list
+(braket
+id|MAXBUS
+)braket
+suffix:semicolon
+DECL|typedef|gdth_iochan_str
+)brace
+id|PACKED
+id|gdth_iochan_str
+suffix:semicolon
+multiline_comment|/* get raw IO channel description */
+r_typedef
+r_struct
+(brace
+DECL|member|hdr
+id|gdth_iochan_header
+id|hdr
+suffix:semicolon
 r_struct
 (brace
 DECL|member|proc_id
@@ -524,10 +988,209 @@ id|list
 id|MAXBUS
 )braket
 suffix:semicolon
-DECL|typedef|gdth_iochan_str
+DECL|typedef|gdth_raw_iochan_str
 )brace
 id|PACKED
-id|gdth_iochan_str
+id|gdth_raw_iochan_str
+suffix:semicolon
+multiline_comment|/* array drive component */
+r_typedef
+r_struct
+(brace
+DECL|member|al_controller
+id|ulong32
+id|al_controller
+suffix:semicolon
+multiline_comment|/* controller ID */
+DECL|member|al_cache_drive
+id|unchar
+id|al_cache_drive
+suffix:semicolon
+multiline_comment|/* cache drive number */
+DECL|member|al_status
+id|unchar
+id|al_status
+suffix:semicolon
+multiline_comment|/* cache drive state */
+DECL|member|al_res
+id|unchar
+id|al_res
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|typedef|gdth_arraycomp_str
+)brace
+id|PACKED
+id|gdth_arraycomp_str
+suffix:semicolon
+multiline_comment|/* array drive information */
+r_typedef
+r_struct
+(brace
+DECL|member|ai_type
+id|unchar
+id|ai_type
+suffix:semicolon
+multiline_comment|/* array type (RAID0,4,5) */
+DECL|member|ai_cache_drive_cnt
+id|unchar
+id|ai_cache_drive_cnt
+suffix:semicolon
+multiline_comment|/* active cachedrives */
+DECL|member|ai_state
+id|unchar
+id|ai_state
+suffix:semicolon
+multiline_comment|/* array drive state */
+DECL|member|ai_master_cd
+id|unchar
+id|ai_master_cd
+suffix:semicolon
+multiline_comment|/* master cachedrive */
+DECL|member|ai_master_controller
+id|ulong32
+id|ai_master_controller
+suffix:semicolon
+multiline_comment|/* ID of master controller */
+DECL|member|ai_size
+id|ulong32
+id|ai_size
+suffix:semicolon
+multiline_comment|/* user capacity [sectors] */
+DECL|member|ai_striping_size
+id|ulong32
+id|ai_striping_size
+suffix:semicolon
+multiline_comment|/* striping size [sectors] */
+DECL|member|ai_secsize
+id|ulong32
+id|ai_secsize
+suffix:semicolon
+multiline_comment|/* sector size [bytes] */
+DECL|member|ai_err_info
+id|ulong32
+id|ai_err_info
+suffix:semicolon
+multiline_comment|/* failed cache drive */
+DECL|member|ai_name
+id|unchar
+id|ai_name
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* name of the array drive */
+DECL|member|ai_controller_cnt
+id|unchar
+id|ai_controller_cnt
+suffix:semicolon
+multiline_comment|/* number of controllers */
+DECL|member|ai_removable
+id|unchar
+id|ai_removable
+suffix:semicolon
+multiline_comment|/* flag: removable */
+DECL|member|ai_write_protected
+id|unchar
+id|ai_write_protected
+suffix:semicolon
+multiline_comment|/* flag: write protected */
+DECL|member|ai_devtype
+id|unchar
+id|ai_devtype
+suffix:semicolon
+multiline_comment|/* type: always direct access */
+DECL|member|ai_drives
+id|gdth_arraycomp_str
+id|ai_drives
+(braket
+l_int|35
+)braket
+suffix:semicolon
+multiline_comment|/* drive components: */
+DECL|member|ai_drive_entries
+id|unchar
+id|ai_drive_entries
+suffix:semicolon
+multiline_comment|/* number of drive components */
+DECL|member|ai_protected
+id|unchar
+id|ai_protected
+suffix:semicolon
+multiline_comment|/* protection flag */
+DECL|member|ai_verify_state
+id|unchar
+id|ai_verify_state
+suffix:semicolon
+multiline_comment|/* state of a parity verify */
+DECL|member|ai_ext_state
+id|unchar
+id|ai_ext_state
+suffix:semicolon
+multiline_comment|/* extended array drive state */
+DECL|member|ai_expand_state
+id|unchar
+id|ai_expand_state
+suffix:semicolon
+multiline_comment|/* array expand state (&gt;=2.18)*/
+DECL|member|ai_reserved
+id|unchar
+id|ai_reserved
+(braket
+l_int|3
+)braket
+suffix:semicolon
+DECL|typedef|gdth_arrayinf_str
+)brace
+id|PACKED
+id|gdth_arrayinf_str
+suffix:semicolon
+multiline_comment|/* get array drive list */
+r_typedef
+r_struct
+(brace
+DECL|member|controller_no
+id|ulong32
+id|controller_no
+suffix:semicolon
+multiline_comment|/* controller no. */
+DECL|member|cd_handle
+id|unchar
+id|cd_handle
+suffix:semicolon
+multiline_comment|/* master cachedrive */
+DECL|member|is_arrayd
+id|unchar
+id|is_arrayd
+suffix:semicolon
+multiline_comment|/* Flag: is array drive? */
+DECL|member|is_master
+id|unchar
+id|is_master
+suffix:semicolon
+multiline_comment|/* Flag: is array master? */
+DECL|member|is_parity
+id|unchar
+id|is_parity
+suffix:semicolon
+multiline_comment|/* Flag: is parity drive? */
+DECL|member|is_hotfix
+id|unchar
+id|is_hotfix
+suffix:semicolon
+multiline_comment|/* Flag: is hotfix drive? */
+DECL|member|res
+id|unchar
+id|res
+(braket
+l_int|3
+)braket
+suffix:semicolon
+DECL|typedef|gdth_arraylist_str
+)brace
+id|PACKED
+id|gdth_arraylist_str
 suffix:semicolon
 multiline_comment|/* cache info/config IOCTL */
 r_typedef
@@ -614,6 +1277,130 @@ DECL|typedef|gdth_cinfo_str
 )brace
 id|PACKED
 id|gdth_cinfo_str
+suffix:semicolon
+multiline_comment|/* cache drive info */
+r_typedef
+r_struct
+(brace
+DECL|member|cd_name
+id|unchar
+id|cd_name
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* cache drive name */
+DECL|member|cd_devtype
+id|ulong32
+id|cd_devtype
+suffix:semicolon
+multiline_comment|/* SCSI devicetype */
+DECL|member|cd_ldcnt
+id|ulong32
+id|cd_ldcnt
+suffix:semicolon
+multiline_comment|/* number of log. drives */
+DECL|member|cd_last_error
+id|ulong32
+id|cd_last_error
+suffix:semicolon
+multiline_comment|/* last error */
+DECL|member|cd_initialized
+id|unchar
+id|cd_initialized
+suffix:semicolon
+multiline_comment|/* drive is initialized */
+DECL|member|cd_removable
+id|unchar
+id|cd_removable
+suffix:semicolon
+multiline_comment|/* media is removable */
+DECL|member|cd_write_protected
+id|unchar
+id|cd_write_protected
+suffix:semicolon
+multiline_comment|/* write protected */
+DECL|member|cd_flags
+id|unchar
+id|cd_flags
+suffix:semicolon
+multiline_comment|/* Pool Hot Fix? */
+DECL|member|ld_blkcnt
+id|ulong32
+id|ld_blkcnt
+suffix:semicolon
+multiline_comment|/* number of blocks */
+DECL|member|ld_blksize
+id|ulong32
+id|ld_blksize
+suffix:semicolon
+multiline_comment|/* blocksize */
+DECL|member|ld_dcnt
+id|ulong32
+id|ld_dcnt
+suffix:semicolon
+multiline_comment|/* number of disks */
+DECL|member|ld_slave
+id|ulong32
+id|ld_slave
+suffix:semicolon
+multiline_comment|/* log. drive index */
+DECL|member|ld_dtype
+id|ulong32
+id|ld_dtype
+suffix:semicolon
+multiline_comment|/* type of logical drive */
+DECL|member|ld_last_error
+id|ulong32
+id|ld_last_error
+suffix:semicolon
+multiline_comment|/* last error */
+DECL|member|ld_name
+id|unchar
+id|ld_name
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* log. drive name */
+DECL|member|ld_error
+id|unchar
+id|ld_error
+suffix:semicolon
+multiline_comment|/* error */
+DECL|typedef|gdth_cdrinfo_str
+)brace
+id|PACKED
+id|gdth_cdrinfo_str
+suffix:semicolon
+multiline_comment|/* board features */
+r_typedef
+r_struct
+(brace
+DECL|member|chaining
+id|unchar
+id|chaining
+suffix:semicolon
+multiline_comment|/* Chaining supported */
+DECL|member|striping
+id|unchar
+id|striping
+suffix:semicolon
+multiline_comment|/* Striping (RAID-0) supp. */
+DECL|member|mirroring
+id|unchar
+id|mirroring
+suffix:semicolon
+multiline_comment|/* Mirroring (RAID-1) supp. */
+DECL|member|raid
+id|unchar
+id|raid
+suffix:semicolon
+multiline_comment|/* RAID-4/5/10 supported */
+DECL|typedef|gdth_bfeat_str
+)brace
+id|PACKED
+id|gdth_bfeat_str
 suffix:semicolon
 multiline_comment|/* board info IOCTL */
 r_typedef
@@ -757,6 +1544,102 @@ DECL|typedef|gdth_binfo_str
 )brace
 id|PACKED
 id|gdth_binfo_str
+suffix:semicolon
+multiline_comment|/* get host drive info */
+r_typedef
+r_struct
+(brace
+DECL|member|name
+r_char
+id|name
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* host drive name */
+DECL|member|size
+id|ulong32
+id|size
+suffix:semicolon
+multiline_comment|/* size (sectors) */
+DECL|member|host_drive
+id|unchar
+id|host_drive
+suffix:semicolon
+multiline_comment|/* host drive number */
+DECL|member|log_drive
+id|unchar
+id|log_drive
+suffix:semicolon
+multiline_comment|/* log. drive (master) */
+DECL|member|reserved
+id|unchar
+id|reserved
+suffix:semicolon
+DECL|member|rw_attribs
+id|unchar
+id|rw_attribs
+suffix:semicolon
+multiline_comment|/* r/w attribs */
+DECL|member|start_sec
+id|ulong32
+id|start_sec
+suffix:semicolon
+multiline_comment|/* start sector */
+DECL|typedef|gdth_hentry_str
+)brace
+id|PACKED
+id|gdth_hentry_str
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|entries
+id|ulong32
+id|entries
+suffix:semicolon
+multiline_comment|/* entry count */
+DECL|member|offset
+id|ulong32
+id|offset
+suffix:semicolon
+multiline_comment|/* offset of entries */
+DECL|member|secs_p_head
+id|unchar
+id|secs_p_head
+suffix:semicolon
+multiline_comment|/* sectors/head */
+DECL|member|heads_p_cyl
+id|unchar
+id|heads_p_cyl
+suffix:semicolon
+multiline_comment|/* heads/cylinder */
+DECL|member|reserved
+id|unchar
+id|reserved
+suffix:semicolon
+DECL|member|clust_drvtype
+id|unchar
+id|clust_drvtype
+suffix:semicolon
+multiline_comment|/* cluster drive type */
+DECL|member|location
+id|ulong32
+id|location
+suffix:semicolon
+multiline_comment|/* controller number */
+DECL|member|entry
+id|gdth_hentry_str
+id|entry
+(braket
+id|MAX_HDRIVES
+)braket
+suffix:semicolon
+multiline_comment|/* entries */
+DECL|typedef|gdth_hget_str
+)brace
+id|PACKED
+id|gdth_hget_str
 suffix:semicolon
 multiline_comment|/* scatter/gather element */
 r_typedef
@@ -2066,7 +2949,37 @@ DECL|member|present
 id|unchar
 id|present
 suffix:semicolon
-multiline_comment|/* host drive present? */
+multiline_comment|/* Flag: host drive present? */
+DECL|member|is_logdrv
+id|unchar
+id|is_logdrv
+suffix:semicolon
+multiline_comment|/* Flag: logical drive (master)? */
+DECL|member|is_arraydrv
+id|unchar
+id|is_arraydrv
+suffix:semicolon
+multiline_comment|/* Flag: array drive? */
+DECL|member|is_master
+id|unchar
+id|is_master
+suffix:semicolon
+multiline_comment|/* Flag: array drive master? */
+DECL|member|is_parity
+id|unchar
+id|is_parity
+suffix:semicolon
+multiline_comment|/* Flag: parity drive? */
+DECL|member|is_hotfix
+id|unchar
+id|is_hotfix
+suffix:semicolon
+multiline_comment|/* Flag: hotfix drive? */
+DECL|member|master_no
+id|unchar
+id|master_no
+suffix:semicolon
+multiline_comment|/* number of master drive */
 DECL|member|lock
 id|unchar
 id|lock
@@ -2091,11 +3004,26 @@ id|ulong32
 id|size
 suffix:semicolon
 multiline_comment|/* capacity */
+DECL|member|ldr_no
+id|unchar
+id|ldr_no
+suffix:semicolon
+multiline_comment|/* log. drive no. */
+DECL|member|rw_attribs
+id|unchar
+id|rw_attribs
+suffix:semicolon
+multiline_comment|/* r/w attributes */
+DECL|member|start_sec
+id|ulong32
+id|start_sec
+suffix:semicolon
+multiline_comment|/* start sector */
 DECL|member|hdr
 )brace
 id|hdr
 (braket
-id|MAXID
+id|MAX_HDRIVES
 )braket
 suffix:semicolon
 multiline_comment|/* host drives */
@@ -2106,6 +3034,37 @@ id|unchar
 id|lock
 suffix:semicolon
 multiline_comment|/* channel locked? (hot plug) */
+DECL|member|pdev_cnt
+id|unchar
+id|pdev_cnt
+suffix:semicolon
+multiline_comment|/* physical device count */
+DECL|member|local_no
+id|unchar
+id|local_no
+suffix:semicolon
+multiline_comment|/* local channel number */
+DECL|member|io_cnt
+id|unchar
+id|io_cnt
+(braket
+id|MAXID
+)braket
+suffix:semicolon
+multiline_comment|/* current IO count */
+DECL|member|address
+id|ulong32
+id|address
+suffix:semicolon
+multiline_comment|/* channel address */
+DECL|member|id_list
+id|ulong32
+id|id_list
+(braket
+id|MAXID
+)braket
+suffix:semicolon
+multiline_comment|/* IDs of the phys. devices */
 DECL|member|raw
 )brace
 id|raw
@@ -2113,7 +3072,7 @@ id|raw
 id|MAXBUS
 )braket
 suffix:semicolon
-multiline_comment|/* raw devices */
+multiline_comment|/* SCSI channels */
 r_struct
 (brace
 DECL|member|cmnd
@@ -2153,6 +3112,16 @@ id|MAXBUS
 )braket
 suffix:semicolon
 multiline_comment|/* IOP IDs */
+DECL|member|virt_bus
+id|unchar
+id|virt_bus
+suffix:semicolon
+multiline_comment|/* number of virtual bus */
+DECL|member|more_proc
+id|unchar
+id|more_proc
+suffix:semicolon
+multiline_comment|/* more /proc info supported */
 DECL|member|cmd_cnt
 id|ushort
 id|cmd_cnt
@@ -2178,14 +3147,16 @@ id|gdth_cpar_str
 id|cpar
 suffix:semicolon
 multiline_comment|/* controller cache par. */
-DECL|member|ctr_name
-r_char
-id|ctr_name
-(braket
-l_int|16
-)braket
+DECL|member|bfeat
+id|gdth_bfeat_str
+id|bfeat
 suffix:semicolon
-multiline_comment|/* controller name */
+multiline_comment|/* controller features */
+DECL|member|binfo
+id|gdth_binfo_str
+id|binfo
+suffix:semicolon
+multiline_comment|/* controller info */
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x02015F
 DECL|member|smp_lock
 id|spinlock_t

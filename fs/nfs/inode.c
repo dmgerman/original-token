@@ -806,6 +806,11 @@ c_func
 id|sb
 )paren
 suffix:semicolon
+id|sb-&gt;s_flags
+op_or_assign
+id|MS_ODD_RENAME
+suffix:semicolon
+multiline_comment|/* This should go away */
 id|sb-&gt;s_magic
 op_assign
 id|NFS_SUPER_MAGIC

@@ -126,17 +126,13 @@ id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
-l_string|&quot;put inode %p (%lu) owner %lu pos %lu dir %lu count=%d&bslash;n&quot;
+l_string|&quot;put inode %p (%lu) pos %lu count=%d&bslash;n&quot;
 comma
 id|inode
 comma
 id|inode-&gt;i_ino
 comma
-id|inode-&gt;u.umsdos_i.i_emd_owner
-comma
 id|inode-&gt;u.umsdos_i.pos
-comma
-id|inode-&gt;u.umsdos_i.i_emd_dir
 comma
 id|inode-&gt;i_count
 )paren
@@ -269,10 +265,6 @@ comma
 id|dir-&gt;d_name.name
 )paren
 suffix:semicolon
-id|inode-&gt;u.umsdos_i.i_emd_dir
-op_assign
-l_int|0
-suffix:semicolon
 id|inode-&gt;i_op
 op_assign
 op_amp
@@ -334,10 +326,6 @@ id|dentry
 op_star
 id|demd
 suffix:semicolon
-id|inode-&gt;u.umsdos_i.i_emd_owner
-op_assign
-l_int|0
-suffix:semicolon
 id|inode-&gt;u.umsdos_i.pos
 op_assign
 id|f_pos
@@ -362,15 +350,6 @@ id|demd
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|demd-&gt;d_inode
-)paren
-id|inode-&gt;u.umsdos_i.i_emd_owner
-op_assign
-id|demd-&gt;d_inode-&gt;i_ino
-suffix:semicolon
 id|dput
 c_func
 (paren
@@ -432,10 +411,6 @@ id|dentry
 comma
 id|f_pos
 )paren
-suffix:semicolon
-id|inode-&gt;u.umsdos_i.i_emd_dir
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -1130,15 +1105,6 @@ id|inode
 r_struct
 id|iattr
 id|newattrs
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-l_string|&quot;UMSDOS_write_inode emd %d (FIXME: missing notify_change)&bslash;n&quot;
-comma
-id|inode-&gt;u.umsdos_i.i_emd_owner
-)paren
-)paren
 suffix:semicolon
 id|fat_write_inode
 (paren

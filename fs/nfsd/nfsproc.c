@@ -1559,6 +1559,12 @@ c_cond
 op_logical_neg
 id|nfserr
 )paren
+(brace
+id|argp-&gt;attrs.ia_valid
+op_and_assign
+op_complement
+id|ATTR_SIZE
+suffix:semicolon
 id|nfserr
 op_assign
 id|nfsd_setattr
@@ -1573,6 +1579,7 @@ op_amp
 id|argp-&gt;attrs
 )paren
 suffix:semicolon
+)brace
 id|fh_put
 c_func
 (paren
@@ -1649,6 +1656,11 @@ l_string|&quot;nfsd_proc_mkdir: response already verified??&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+id|argp-&gt;attrs.ia_valid
+op_and_assign
+op_complement
+id|ATTR_SIZE
+suffix:semicolon
 id|nfserr
 op_assign
 id|nfsd_create

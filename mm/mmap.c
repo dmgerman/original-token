@@ -1746,7 +1746,9 @@ suffix:semicolon
 multiline_comment|/* Normal function to fix up a mapping&n; * This function is the default for when an area has no specific&n; * function.  This may be used as part of a more specific routine.&n; * This function works out what part of an area is affected and&n; * adjusts the mapping information.  Since the actual page&n; * manipulation is done in do_mmap(), none need be done here,&n; * though it would probably be more appropriate.&n; *&n; * By the time this function is called, the area struct has been&n; * removed from the process mapping list, so it needs to be&n; * reinserted if necessary.&n; *&n; * The 4 main cases are:&n; *    Unmapping the whole area&n; *    Unmapping from the start of the segment to a point in it&n; *    Unmapping from an intermediate point to the end&n; *    Unmapping between to intermediate points, making a hole.&n; *&n; * Case 4 involves the creation of 2 new areas, for each side of&n; * the hole.  If possible, we reuse the existing area rather than&n; * allocate a new one, and the return indicates whether the old&n; * area was reused.&n; */
 DECL|function|unmap_fixup
 r_static
-r_int
+r_struct
+id|vm_area_struct
+op_star
 id|unmap_fixup
 c_func
 (paren
@@ -1764,7 +1766,6 @@ id|len
 comma
 r_struct
 id|vm_area_struct
-op_star
 op_star
 id|extra
 )paren
@@ -1840,8 +1841,16 @@ c_func
 id|area-&gt;vm_file
 )paren
 suffix:semicolon
+id|kmem_cache_free
+c_func
+(paren
+id|vm_area_cachep
+comma
+id|area
+)paren
+suffix:semicolon
 r_return
-l_int|0
+id|extra
 suffix:semicolon
 )brace
 multiline_comment|/* Work out to one of the ends. */
@@ -1884,10 +1893,8 @@ multiline_comment|/* Unmapping a hole: area-&gt;vm_start &lt; addr &lt;= end &lt
 multiline_comment|/* Add end mapping -- leave beginning for below */
 id|mpnt
 op_assign
-op_star
 id|extra
 suffix:semicolon
-op_star
 id|extra
 op_assign
 l_int|NULL
@@ -1980,7 +1987,7 @@ id|area
 )paren
 suffix:semicolon
 r_return
-l_int|1
+id|extra
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Try to free as many page directory entries as we can,&n; * without having to work very hard at actually scanning&n; * the page tables themselves.&n; *&n; * Right now we try to free page tables if we have a nice&n; * PGDIR-aligned area that got free&squot;d up. We could be more&n; * granular if we want to, but this is fast and simple,&n; * and covers the bad cases.&n; *&n; * &quot;prev&quot;, if it exists, points to a vma before the one&n; * we just free&squot;d - but there&squot;s no telling how much before.&n; */
@@ -2516,10 +2523,8 @@ id|end
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Fix the mapping, and free the old area if it wasn&squot;t reused.&n;&t;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
+id|extra
+op_assign
 id|unmap_fixup
 c_func
 (paren
@@ -2529,16 +2534,7 @@ id|st
 comma
 id|size
 comma
-op_amp
 id|extra
-)paren
-)paren
-id|kmem_cache_free
-c_func
-(paren
-id|vm_area_cachep
-comma
-id|mpnt
 )paren
 suffix:semicolon
 )brace

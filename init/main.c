@@ -949,6 +949,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|sym53c8xx_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|eata2x_setup
 c_func
 (paren
@@ -3251,6 +3265,14 @@ macro_line|#ifdef CONFIG_SCSI_NCR53C8XX
 l_string|&quot;ncr53c8xx=&quot;
 comma
 id|ncr53c8xx_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_SYM53C8XX
+(brace
+l_string|&quot;sym53c8xx=&quot;
+comma
+id|sym53c8xx_setup
 )brace
 comma
 macro_line|#endif

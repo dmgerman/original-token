@@ -137,16 +137,6 @@ id|s_block_bitmap
 id|EXT2_MAX_GROUP_LOADED
 )braket
 suffix:semicolon
-DECL|member|s_rename_lock
-r_int
-id|s_rename_lock
-suffix:semicolon
-DECL|member|s_rename_wait
-r_struct
-id|wait_queue
-op_star
-id|s_rename_wait
-suffix:semicolon
 DECL|member|s_mount_opt
 r_int
 r_int

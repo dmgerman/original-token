@@ -960,6 +960,13 @@ id|lbus
 )braket
 op_eq
 id|MP_BUS_ISA
+op_logical_or
+id|mp_bus_id_to_type
+(braket
+id|lbus
+)braket
+op_eq
+id|MP_BUS_EISA
 )paren
 op_logical_and
 (paren
@@ -1135,11 +1142,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Unclear documentation on what a &quot;conforming ISA interrupt&quot; means.&n; *&n; * Should we, or should we not, take the ELCR register into account?&n; * It&squot;s part of the EISA specification, but maybe it should only be&n; * used if the interrupt is actually marked as EISA?&n; *&n; * Oh, well. Don&squot;t do it until somebody tells us what the right thing&n; * to do is..&n; */
-DECL|macro|USE_ELCR_TRIGGER_LEVEL
-macro_line|#undef USE_ELCR_TRIGGER_LEVEL
-macro_line|#ifdef USE_ELCR_TRIGGER_LEVEL
-multiline_comment|/*&n; * ISA Edge/Level control register, ELCR&n; */
+multiline_comment|/*&n; * EISA Edge/Level control register, ELCR&n; */
 DECL|function|EISA_ELCR
 r_static
 r_int
@@ -1202,16 +1205,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|macro|default_ISA_trigger
-mdefine_line|#define default_ISA_trigger(idx)&t;(EISA_ELCR(mp_irqs[idx].mpc_dstirq))
-DECL|macro|default_ISA_polarity
-mdefine_line|#define default_ISA_polarity(idx)&t;(0)
-macro_line|#else
+multiline_comment|/* EISA interrupts are always polarity zero and can be edge or level&n; * trigger depending on the ELCR value.  If an interrupt is listed as&n; * EISA conforming in the MP table, that means its trigger type must&n; * be read in from the ELCR */
+DECL|macro|default_EISA_trigger
+mdefine_line|#define default_EISA_trigger(idx)&t;(EISA_ELCR(mp_irqs[idx].mpc_dstirq))
+DECL|macro|default_EISA_polarity
+mdefine_line|#define default_EISA_polarity(idx)&t;(0)
+multiline_comment|/* ISA interrupts are always polarity zero edge triggered, even when&n; * listed as conforming in the MP table. */
 DECL|macro|default_ISA_trigger
 mdefine_line|#define default_ISA_trigger(idx)&t;(0)
 DECL|macro|default_ISA_polarity
 mdefine_line|#define default_ISA_polarity(idx)&t;(0)
-macro_line|#endif
 DECL|function|MPBIOS_polarity
 r_static
 r_int
@@ -1272,6 +1275,21 @@ multiline_comment|/* ISA pin */
 id|polarity
 op_assign
 id|default_ISA_polarity
+c_func
+(paren
+id|idx
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_case
+id|MP_BUS_EISA
+suffix:colon
+(brace
+id|polarity
+op_assign
+id|default_EISA_polarity
 c_func
 (paren
 id|idx
@@ -1443,6 +1461,21 @@ suffix:colon
 id|trigger
 op_assign
 id|default_ISA_trigger
+c_func
+(paren
+id|idx
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_case
+id|MP_BUS_EISA
+suffix:colon
+(brace
+id|trigger
+op_assign
+id|default_EISA_trigger
 c_func
 (paren
 id|idx
@@ -1648,6 +1681,9 @@ r_case
 id|MP_BUS_ISA
 suffix:colon
 multiline_comment|/* ISA pin */
+r_case
+id|MP_BUS_EISA
+suffix:colon
 (brace
 id|irq
 op_assign
@@ -3364,6 +3400,29 @@ id|pos
 op_assign
 l_int|0
 suffix:semicolon
+r_const
+r_int
+id|bus_type
+op_assign
+(paren
+id|mpc_default_type
+op_eq
+l_int|2
+op_logical_or
+id|mpc_default_type
+op_eq
+l_int|3
+op_logical_or
+id|mpc_default_type
+op_eq
+l_int|6
+)paren
+ques
+c_cond
+id|MP_BUS_EISA
+suffix:colon
+id|MP_BUS_ISA
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3417,7 +3476,7 @@ id|pos
 dot
 id|mpc_srcbus
 op_assign
-id|MP_BUS_ISA
+id|bus_type
 suffix:semicolon
 id|mp_irqs
 (braket
@@ -3459,7 +3518,7 @@ id|mp_bus_id_to_type
 l_int|0
 )braket
 op_assign
-id|MP_BUS_ISA
+id|bus_type
 suffix:semicolon
 multiline_comment|/*&n;&t; * MP specification 1.4 defines some extra rules for default&n;&t; * configurations, fix them up here:&n;&t; */
 r_switch

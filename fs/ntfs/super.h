@@ -19,6 +19,10 @@ c_func
 id|ntfs_volume
 op_star
 id|vol
+comma
+r_int
+op_star
+id|vol_size
 )paren
 suffix:semicolon
 r_int

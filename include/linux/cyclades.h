@@ -616,6 +616,8 @@ DECL|macro|C_IN_RXOFL
 mdefine_line|#define C_IN_RXOFL&t;0x00010000      /* RX buffer overflow */
 DECL|macro|C_IN_IOCTLW
 mdefine_line|#define C_IN_IOCTLW&t;0x00020000      /* I/O control w/ wait */
+DECL|macro|C_IN_MRTS
+mdefine_line|#define C_IN_MRTS&t;0x00040000&t;/* modem RTS drop */
 multiline_comment|/* flow control */
 DECL|macro|C_FL_OXX
 mdefine_line|#define&t;C_FL_OXX&t;0x00000001&t;/* output Xon/Xoff flow control */
@@ -633,6 +635,12 @@ mdefine_line|#define&t;C_FS_SENDING&t;0x00000001&t;/* UART is sending data */
 DECL|macro|C_FS_SWFLOW
 mdefine_line|#define&t;C_FS_SWFLOW&t;0x00000002&t;/* Tx is stopped by received Xoff */
 multiline_comment|/* rs_control/rs_status RS-232 signals */
+DECL|macro|C_RS_PARAM
+mdefine_line|#define C_RS_PARAM&t;0x80000000&t;/* Indicates presence of parameter in &n;&t;&t;&t;&t;&t;   IOCTLM command */
+DECL|macro|C_RS_RTS
+mdefine_line|#define&t;C_RS_RTS&t;0x00000001&t;/* RTS */
+DECL|macro|C_RS_DTR
+mdefine_line|#define&t;C_RS_DTR&t;0x00000004&t;/* DTR */
 DECL|macro|C_RS_DCD
 mdefine_line|#define&t;C_RS_DCD&t;0x00000100&t;/* CD */
 DECL|macro|C_RS_DSR
@@ -641,10 +649,6 @@ DECL|macro|C_RS_RI
 mdefine_line|#define&t;C_RS_RI&t;&t;0x00000400&t;/* RI */
 DECL|macro|C_RS_CTS
 mdefine_line|#define&t;C_RS_CTS&t;0x00000800&t;/* CTS */
-DECL|macro|C_RS_RTS
-mdefine_line|#define&t;C_RS_RTS&t;0x00000001&t;/* RTS */
-DECL|macro|C_RS_DTR
-mdefine_line|#define&t;C_RS_DTR&t;0x00000004&t;/* DTR */
 multiline_comment|/* commands Host &lt;-&gt; Board */
 DECL|macro|C_CM_RESET
 mdefine_line|#define&t;C_CM_RESET&t;0x01&t;&t;/* reset/flush buffers */
@@ -670,6 +674,8 @@ DECL|macro|C_CM_CLR_BREAK
 mdefine_line|#define&t;C_CM_CLR_BREAK&t;0x44&t;&t;/* Tx break off */
 DECL|macro|C_CM_CMD_DONE
 mdefine_line|#define&t;C_CM_CMD_DONE&t;0x45&t;&t;/* Previous command done */
+DECL|macro|C_CM_INTBACK2
+mdefine_line|#define C_CM_INTBACK2&t;0x46&t;&t;/* Alternate Interrupt back */
 DECL|macro|C_CM_TINACT
 mdefine_line|#define&t;C_CM_TINACT&t;0x51&t;&t;/* set inactivity detection */
 DECL|macro|C_CM_IRQ_ENBL
@@ -677,13 +683,17 @@ mdefine_line|#define&t;C_CM_IRQ_ENBL&t;0x52&t;&t;/* enable generation of interru
 DECL|macro|C_CM_IRQ_DSBL
 mdefine_line|#define&t;C_CM_IRQ_DSBL&t;0x53&t;&t;/* disable generation of interrupts */
 DECL|macro|C_CM_ACK_ENBL
-mdefine_line|#define&t;C_CM_ACK_ENBL&t;0x54&t;&t;/* enable acknolowdged interrupt mode */
+mdefine_line|#define&t;C_CM_ACK_ENBL&t;0x54&t;&t;/* enable acknowledged interrupt mode */
 DECL|macro|C_CM_ACK_DSBL
-mdefine_line|#define&t;C_CM_ACK_DSBL&t;0x55&t;&t;/* disable acknolowdged intr mode */
+mdefine_line|#define&t;C_CM_ACK_DSBL&t;0x55&t;&t;/* disable acknowledged intr mode */
 DECL|macro|C_CM_FLUSH_RX
 mdefine_line|#define&t;C_CM_FLUSH_RX&t;0x56&t;&t;/* flushes Rx buffer */
 DECL|macro|C_CM_FLUSH_TX
 mdefine_line|#define&t;C_CM_FLUSH_TX&t;0x57&t;&t;/* flushes Tx buffer */
+DECL|macro|C_CM_Q_ENABLE
+mdefine_line|#define C_CM_Q_ENABLE&t;0x58&t;&t;/* enables queue access from the &n;&t;&t;&t;&t;&t;   driver */
+DECL|macro|C_CM_Q_DISABLE
+mdefine_line|#define C_CM_Q_DISABLE  0x59            /* disables queue access from the &n;&t;&t;&t;&t;&t;   driver */
 DECL|macro|C_CM_TXBEMPTY
 mdefine_line|#define&t;C_CM_TXBEMPTY&t;0x60&t;&t;/* Tx buffer is empty */
 DECL|macro|C_CM_TXLOWWM
@@ -700,6 +710,8 @@ DECL|macro|C_CM_MRI
 mdefine_line|#define&t;C_CM_MRI&t;0x72&t;&t;/* modem RI change */
 DECL|macro|C_CM_MCTS
 mdefine_line|#define&t;C_CM_MCTS&t;0x73&t;&t;/* modem CTS change */
+DECL|macro|C_CM_MRTS
+mdefine_line|#define C_CM_MRTS&t;0x74&t;&t;/* modem RTS drop */
 DECL|macro|C_CM_RXBRK
 mdefine_line|#define&t;C_CM_RXBRK&t;0x84&t;&t;/* Break received */
 DECL|macro|C_CM_PR_ERROR
@@ -928,13 +940,61 @@ id|uclong
 id|fwcmd_param
 suffix:semicolon
 multiline_comment|/* pointer to parameters */
+DECL|member|zf_int_queue_addr
+id|uclong
+id|zf_int_queue_addr
+suffix:semicolon
+multiline_comment|/* offset for INT_QUEUE structure */
 multiline_comment|/* filler so the structures are aligned */
 DECL|member|filler
 id|uclong
 id|filler
 (braket
-l_int|7
+l_int|6
 )braket
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* Host Interrupt Queue */
+DECL|macro|QUEUE_SIZE
+mdefine_line|#define QUEUE_SIZE&t;(10*MAX_CHAN)
+DECL|struct|INT_QUEUE
+r_struct
+id|INT_QUEUE
+(brace
+DECL|member|intr_code
+r_int
+r_char
+id|intr_code
+(braket
+id|QUEUE_SIZE
+)braket
+suffix:semicolon
+DECL|member|channel
+r_int
+r_int
+id|channel
+(braket
+id|QUEUE_SIZE
+)braket
+suffix:semicolon
+DECL|member|param
+r_int
+r_int
+id|param
+(braket
+id|QUEUE_SIZE
+)braket
+suffix:semicolon
+DECL|member|put
+r_int
+r_int
+id|put
+suffix:semicolon
+DECL|member|get
+r_int
+r_int
+id|get
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1300,6 +1360,8 @@ DECL|macro|CyPCI_Zwin
 mdefine_line|#define CyPCI_Zwin &t;0x80000
 DECL|macro|CyPCI_Ze_win
 mdefine_line|#define CyPCI_Ze_win &t;(2 * CyPCI_Zwin)
+DECL|macro|PCI_DEVICE_ID_MASK
+mdefine_line|#define PCI_DEVICE_ID_MASK&t;0x06
 multiline_comment|/**** CD1400 registers ****/
 DECL|macro|CD1400_REV_G
 mdefine_line|#define CD1400_REV_G&t;0x46

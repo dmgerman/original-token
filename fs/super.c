@@ -2617,6 +2617,15 @@ id|s-&gt;s_dirt
 op_assign
 l_int|0
 suffix:semicolon
+id|sema_init
+c_func
+(paren
+op_amp
+id|s-&gt;s_vfs_rename_sem
+comma
+l_int|1
+)paren
+suffix:semicolon
 multiline_comment|/* N.B. Should lock superblock now ... */
 r_if
 c_cond

@@ -1,7 +1,7 @@
 macro_line|#ifndef _GDTH_PROC_H
 DECL|macro|_GDTH_PROC_H
 mdefine_line|#define _GDTH_PROC_H
-multiline_comment|/* gdth_proc.h &n; * $Id: gdth_proc.h,v 1.5 1998/12/17 15:43:53 achim Exp $&n; */
+multiline_comment|/* gdth_proc.h &n; * $Id: gdth_proc.h,v 1.6 1999/03/05 14:32:36 achim Exp $&n; */
 r_static
 r_int
 id|gdth_set_info
@@ -169,6 +169,23 @@ comma
 id|Scsi_Cmnd
 op_star
 id|scp
+comma
+r_int
+id|timeout
+)paren
+suffix:semicolon
+r_static
+r_void
+id|gdth_do_cmd
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|scp
+comma
+id|gdth_cmd_str
+op_star
+id|cmd
 comma
 r_int
 id|timeout

@@ -2734,14 +2734,6 @@ c_func
 id|es-&gt;s_state
 )paren
 suffix:semicolon
-id|sb-&gt;u.ext2_sb.s_rename_lock
-op_assign
-l_int|0
-suffix:semicolon
-id|sb-&gt;u.ext2_sb.s_rename_wait
-op_assign
-l_int|NULL
-suffix:semicolon
 id|sb-&gt;u.ext2_sb.s_addr_per_block_bits
 op_assign
 id|log2

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  dir.c&n; *&n; *  Copyright (C) 1995-1997 Martin von L&#xfffd;wis&n; */
+multiline_comment|/*&n; *  dir.c&n; *&n; *  Copyright (C) 1995-1997, 1999 Martin von L&#xfffd;wis&n; *  Copyright (C) 1999 Steve Dodd&n; *  Copyright (C) 1999 Joseph Malicki&n; */
 macro_line|#include &quot;ntfstypes.h&quot;
 macro_line|#include &quot;struct.h&quot;
 macro_line|#include &quot;dir.h&quot;
@@ -372,7 +372,13 @@ l_string|&quot;Too many entries&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-l_int|0xFFFFFFFFFFFFFFFF
+op_complement
+(paren
+(paren
+id|ntfs_u64
+)paren
+l_int|0
+)paren
 suffix:semicolon
 )brace
 macro_line|#if 0
@@ -957,6 +963,17 @@ c_func
 id|s1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|record
+)paren
+(brace
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
 id|ntfs_bzero
 c_func
 (paren
@@ -2137,6 +2154,8 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|error
+op_assign
 id|ntfs_index_writeback
 c_func
 (paren
@@ -2149,6 +2168,16 @@ comma
 id|usedsize
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+(brace
+r_return
+id|error
+suffix:semicolon
+)brace
 )brace
 r_return
 l_int|0
@@ -2351,6 +2380,10 @@ op_logical_neg
 id|index
 )paren
 (brace
+id|error
+op_assign
+id|ENOMEM
+suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
@@ -2758,10 +2791,13 @@ c_func
 (paren
 id|vol
 comma
+id|NTFS_GETU16
+c_func
+(paren
 id|name
-(braket
+op_plus
 id|i
-)braket
+)paren
 )paren
 op_ne
 id|ntfs_my_toupper
@@ -2769,10 +2805,13 @@ c_func
 (paren
 id|vol
 comma
+id|NTFS_GETU16
+c_func
+(paren
 id|walk-&gt;name
-(braket
+op_plus
 id|i
-)braket
+)paren
 )paren
 )paren
 (brace
@@ -2828,10 +2867,13 @@ c_func
 (paren
 id|vol
 comma
+id|NTFS_GETU16
+c_func
+(paren
 id|name
-(braket
+op_plus
 id|i
-)braket
+)paren
 )paren
 OL
 id|ntfs_my_toupper
@@ -2839,10 +2881,13 @@ c_func
 (paren
 id|vol
 comma
+id|NTFS_GETU16
+c_func
+(paren
 id|walk-&gt;name
-(braket
+op_plus
 id|i
-)braket
+)paren
 )paren
 )paren
 (brace
@@ -2923,6 +2968,17 @@ suffix:semicolon
 id|ntfs_io
 id|io
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|record
+)paren
+(brace
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
 id|io.fn_put
 op_assign
 id|ntfs_put
@@ -3533,11 +3589,6 @@ r_int
 id|length
 suffix:semicolon
 r_int
-id|retval
-op_assign
-l_int|0
-suffix:semicolon
-r_int
 id|cmp
 suffix:semicolon
 r_if
@@ -3756,7 +3807,7 @@ l_int|1
 )paren
 suffix:semicolon
 r_return
-id|retval
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&t;Tree walking is done using position numbers. The following numbers have&n;    a special meaning:&n;        0    start (.)&n;        -1   no more entries&n;        -2   ..&n;    All other numbers encode sequences of indices. The sequence a,b,c is &n;    encoded as &lt;stop&gt;&lt;c&gt;&lt;b&gt;&lt;a&gt;, where &lt;foo&gt; is the encoding of foo. The&n;    first few integers are encoded as follows:&n;        0:    0000    1:    0010    2:    0100    3:    0110&n;        4:    1000    5:    1010    6:    1100 stop:    1110&n;        7:  000001    8:  000101&t;9:  001001   10:  001101&n;    The least significant bits give the width of this encoding, the&n;    other bits encode the value, starting from the first value of the &n;    interval.&n;     tag     width  first value  last value&n;     0       3      0            6&n;     01      4      7            22&n;     011     5      23           54&n;     0111    6      55           119&n;     More values are hopefully not needed, as the file position has currently&n;     64 bits in total.&n;*/
@@ -3795,6 +3846,17 @@ suffix:semicolon
 id|ntfs_io
 id|io
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|root
+)paren
+(brace
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
 id|io.fn_put
 op_assign
 id|ntfs_put
@@ -4080,6 +4142,17 @@ op_assign
 id|vol-&gt;mft_recordsize
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|buf
+)paren
+(brace
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
 id|io.fn_put
 op_assign
 id|ntfs_put
@@ -4175,6 +4248,17 @@ c_func
 id|length
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|buf
+)paren
+(brace
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
 id|io.fn_put
 op_assign
 id|ntfs_put
@@ -4490,6 +4574,17 @@ op_assign
 id|attr-&gt;size
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|buf
+)paren
+(brace
+r_return
+id|ENOMEM
+suffix:semicolon
+)brace
 id|io.param
 op_assign
 id|buf
@@ -5111,10 +5206,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Fills out and creates an INDEX_ROOT attribute. */
-r_static
 r_int
-DECL|function|add_index_root
-id|add_index_root
+DECL|function|ntfs_add_index_root
+id|ntfs_add_index_root
 (paren
 id|ntfs_inode
 op_star
@@ -5341,7 +5435,7 @@ suffix:semicolon
 )brace
 id|error
 op_assign
-id|add_index_root
+id|ntfs_add_index_root
 c_func
 (paren
 id|result

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  types.h&n; *  This file defines four things:&n; *   - generic platform independent fixed-size types (e.g. ntfs_u32)&n; *   - specific fixed-size types (e.g. ntfs_offset_t)&n; *   - macros that read and write those types from and to byte arrays&n; *   - types derived from OS specific ones&n; *&n; *  Copyright (C) 1996,1998 Martin von L&#xfffd;wis&n; */
+multiline_comment|/*&n; *  ntfstypes.h&n; *  This file defines four things:&n; *   - generic platform independent fixed-size types (e.g. ntfs_u32)&n; *   - specific fixed-size types (e.g. ntfs_offset_t)&n; *   - macros that read and write those types from and to byte arrays&n; *   - types derived from OS specific ones&n; *&n; *  Copyright (C) 1996,1998, 1999 Martin von L&#xfffd;wis&n; */
 macro_line|#ifdef NTFS_IN_LINUX_KERNEL
 multiline_comment|/* get installed types if we compile the kernel*/
 macro_line|#include &lt;linux/fs.h&gt;
@@ -90,6 +90,10 @@ r_typedef
 id|u32
 id|ntfs_cluster_t
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef MAX_CLUSTER_T
+DECL|macro|MAX_CLUSTER_T
+mdefine_line|#define MAX_CLUSTER_T (~((ntfs_cluster_t)0))
 macro_line|#endif
 multiline_comment|/* architecture independent macros */
 multiline_comment|/* PUTU32 would not clear all bytes */

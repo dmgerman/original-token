@@ -3685,7 +3685,12 @@ c_func
 (paren
 id|dest
 )paren
-multiline_comment|/* || IS_APPEND(dest) */
+op_logical_or
+id|IS_APPEND
+c_func
+(paren
+id|dest
+)paren
 )paren
 r_goto
 id|out_unlock

@@ -386,6 +386,9 @@ id|mp_bustype
 DECL|enumerator|MP_BUS_ISA
 id|MP_BUS_ISA
 comma
+DECL|enumerator|MP_BUS_EISA
+id|MP_BUS_EISA
+comma
 DECL|enumerator|MP_BUS_PCI
 id|MP_BUS_PCI
 )brace

@@ -119,6 +119,8 @@ DECL|macro|MS_NOATIME
 mdefine_line|#define MS_NOATIME&t;1024&t;/* Do not update access times. */
 DECL|macro|MS_NODIRATIME
 mdefine_line|#define MS_NODIRATIME   2048    /* Do not update directory access times */
+DECL|macro|MS_ODD_RENAME
+mdefine_line|#define MS_ODD_RENAME   32768    /* Temporary stuff; will go away as soon&n;&t;&t;&t;&t;  * as nfs_rename() will be cleaned up&n;&t;&t;&t;&t;  */
 multiline_comment|/*&n; * Flags that can be altered by MS_REMOUNT&n; */
 DECL|macro|MS_RMT_MASK
 mdefine_line|#define MS_RMT_MASK (MS_RDONLY|MS_NOSUID|MS_NODEV|MS_NOEXEC|MS_SYNCHRONOUS|MS_MANDLOCK|MS_NOATIME|MS_NODIRATIME)
@@ -1618,6 +1620,13 @@ DECL|member|u
 )brace
 id|u
 suffix:semicolon
+multiline_comment|/*&n;&t; * The next field is for VFS *only*. No filesystems have any business&n;&t; * even looking at it. You had been warned.&n;&t; */
+DECL|member|s_vfs_rename_sem
+r_struct
+id|semaphore
+id|s_vfs_rename_sem
+suffix:semicolon
+multiline_comment|/* Kludge */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * VFS helper functions..&n; */

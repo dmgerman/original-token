@@ -786,17 +786,8 @@ comma
 id|err
 )paren
 suffix:semicolon
-r_goto
-id|out_dput
-suffix:semicolon
 )brace
 id|out_set
-suffix:colon
-id|parent-&gt;d_inode-&gt;u.umsdos_i.i_emd_dir
-op_assign
-id|demd-&gt;d_inode-&gt;i_ino
-suffix:semicolon
-id|out_dput
 suffix:colon
 id|dput
 c_func
