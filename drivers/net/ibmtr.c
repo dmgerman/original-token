@@ -1279,6 +1279,8 @@ r_int
 r_int
 )paren
 (paren
+op_star
+(paren
 id|ti-&gt;mmio
 op_plus
 id|ACA_OFFSET
@@ -1286,6 +1288,7 @@ op_plus
 id|ACA_RW
 op_plus
 id|RRR_EVEN
+)paren
 )paren
 op_lshift
 l_int|12

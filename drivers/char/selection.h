@@ -330,7 +330,7 @@ r_int
 r_int
 id|video_mem_term
 suffix:semicolon
-multiline_comment|/*&n; * TGA console screen memory access&n; * &n; * TGA is *not* a character/attribute cell device; font bitmaps must be rendered&n; * to the screen pixels.&n; *&n; * The &quot;unsigned short * addr&quot; is *ALWAYS* a kernel virtual address, either&n; * of the VC&squot;s backing store, or the &quot;shadow screen&quot; memory where the screen&n; * contents are kept, as the TGA frame buffer is *not* char/attr cells.&n; *&n; * The &quot;(unsigned long) addr &lt; video_mem_term&quot; tests for an Alpha kernel&n; *  virtual address less than the end of the &quot;shadow scrren&quot; memory. This&n; *  indicates we really want to write to the screen, so, we do... :-)&n; *&n; * NOTE: we must guarantee that video_mem_term is less than *any* VC&squot;s backing&n; * store; to do that, we must allocate it earlier than any VC&squot;s are done.&n; *&n; * NOTE also: there&squot;s only *TWO* operations: to put/get a character/attribute.&n; *  All the others needed by VGA support go away, as Not Applicable for TGA.&n; */
+multiline_comment|/*&n; * TGA console screen memory access&n; * &n; * TGA is *not* a character/attribute cell device; font bitmaps must be rendered&n; * to the screen pixels.&n; *&n; * The &quot;unsigned short * addr&quot; is *ALWAYS* a kernel virtual address, either&n; * of the VC&squot;s backing store, or the &quot;shadow screen&quot; memory where the screen&n; * contents are kept, as the TGA frame buffer is *not* char/attr cells.&n; *&n; * We must test for an Alpha kernel virtual address that falls within&n; *  the &quot;shadow screen&quot; memory. This condition indicates we really want &n; *  to write to the screen, so, we do... :-)&n; *&n; * NOTE also: there&squot;s only *TWO* operations: to put/get a character/attribute.&n; *  All the others needed by VGA support go away, as Not Applicable for TGA.&n; */
 DECL|function|scr_writew
 r_static
 r_inline
@@ -364,6 +364,14 @@ r_int
 id|addr
 OL
 id|video_mem_term
+op_logical_and
+(paren
+r_int
+r_int
+)paren
+id|addr
+op_ge
+id|video_mem_base
 )paren
 (brace
 id|tga_blitc

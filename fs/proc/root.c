@@ -1221,7 +1221,6 @@ op_amp
 id|proc_net
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SCSI
 id|proc_register
 c_func
 (paren
@@ -1232,7 +1231,6 @@ op_amp
 id|proc_scsi
 )paren
 suffix:semicolon
-macro_line|#endif
 id|proc_register
 c_func
 (paren

@@ -83,11 +83,6 @@ r_int
 r_char
 id|buttons
 suffix:semicolon
-id|MSE_INT_OFF
-c_func
-(paren
-)paren
-suffix:semicolon
 id|outb
 c_func
 (paren
@@ -573,6 +568,7 @@ r_int
 r_char
 id|buttons
 suffix:semicolon
+multiline_comment|/* long flags; */
 r_if
 c_cond
 (paren
@@ -615,9 +611,11 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 multiline_comment|/*&n;&t; * Obtain the current mouse parameters and limit as appropriate for&n;&t; * the return data format.  Interrupts are only disabled while &n;&t; * obtaining the parameters, NOT during the puts_fs_byte() calls,&n;&t; * so paging in put_user() does not effect mouse tracking.&n;&t; */
-id|MSE_INT_OFF
+multiline_comment|/* save_flags(flags); cli(); */
+id|disable_irq
 c_func
 (paren
+id|mouse_irq
 )paren
 suffix:semicolon
 id|dx
@@ -692,11 +690,13 @@ id|mouse.ready
 op_assign
 l_int|0
 suffix:semicolon
-id|MSE_INT_ON
+id|enable_irq
 c_func
 (paren
+id|mouse_irq
 )paren
 suffix:semicolon
+multiline_comment|/* restore_flags(flags); */
 id|put_user
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/mm/vmscan.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  Swap reorganised 29.12.95, Stephen Tweedie.&n; *  kswapd added: 7.1.96  sct&n; *  Version: $Id: vmscan.c,v 1.3.2.3 1996/01/17 02:43:11 linux Exp $&n; */
+multiline_comment|/*&n; *  linux/mm/vmscan.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  Swap reorganised 29.12.95, Stephen Tweedie.&n; *  kswapd added: 7.1.96  sct&n; *  Version: $Id: vmscan.c,v 1.4.2.2 1996/01/20 18:22:47 linux Exp $&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -109,6 +109,9 @@ comma
 r_int
 r_int
 id|limit
+comma
+r_int
+id|wait
 )paren
 (brace
 id|pte_t
@@ -370,9 +373,11 @@ suffix:semicolon
 id|tsk-&gt;nswap
 op_increment
 suffix:semicolon
-id|write_swap_page
+id|rw_swap_page
 c_func
 (paren
+id|WRITE
+comma
 id|entry
 comma
 (paren
@@ -380,6 +385,8 @@ r_char
 op_star
 )paren
 id|page
+comma
+id|wait
 )paren
 suffix:semicolon
 )brace
@@ -539,6 +546,9 @@ comma
 r_int
 r_int
 id|limit
+comma
+r_int
+id|wait
 )paren
 (brace
 id|pte_t
@@ -652,6 +662,8 @@ comma
 id|pte
 comma
 id|limit
+comma
+id|wait
 )paren
 suffix:semicolon
 r_if
@@ -714,6 +726,9 @@ comma
 r_int
 r_int
 id|limit
+comma
+r_int
+id|wait
 )paren
 (brace
 id|pmd_t
@@ -821,6 +836,8 @@ comma
 id|end
 comma
 id|limit
+comma
+id|wait
 )paren
 suffix:semicolon
 r_if
@@ -884,6 +901,9 @@ comma
 r_int
 r_int
 id|limit
+comma
+r_int
+id|wait
 )paren
 (brace
 r_int
@@ -934,6 +954,8 @@ comma
 id|end
 comma
 id|limit
+comma
+id|wait
 )paren
 suffix:semicolon
 r_if
@@ -976,6 +998,9 @@ comma
 r_int
 r_int
 id|limit
+comma
+r_int
+id|wait
 )paren
 (brace
 r_int
@@ -1055,6 +1080,8 @@ comma
 id|address
 comma
 id|limit
+comma
+id|wait
 )paren
 suffix:semicolon
 r_if
@@ -1103,6 +1130,9 @@ comma
 r_int
 r_int
 id|limit
+comma
+r_int
+id|wait
 )paren
 (brace
 r_static
@@ -1241,6 +1271,8 @@ c_func
 id|p
 comma
 id|limit
+comma
+id|wait
 )paren
 )paren
 (brace
@@ -1285,6 +1317,9 @@ comma
 r_int
 r_int
 id|limit
+comma
+r_int
+id|wait
 )paren
 (brace
 r_static
@@ -1361,6 +1396,8 @@ c_func
 id|i
 comma
 id|limit
+comma
+id|wait
 )paren
 )paren
 r_return
@@ -1403,7 +1440,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.3.2.3 $&quot;
+l_string|&quot;$Revision: 1.4.2.2 $&quot;
 comma
 op_star
 id|s
@@ -1563,6 +1600,8 @@ id|GFP_KERNEL
 comma
 op_complement
 l_int|0UL
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -1579,12 +1618,20 @@ r_void
 r_if
 c_cond
 (paren
+(paren
 id|nr_free_pages
+op_plus
+id|nr_async_pages
+)paren
 OL
 id|free_pages_low
 op_logical_or
 (paren
+(paren
 id|nr_free_pages
+op_plus
+id|nr_async_pages
+)paren
 OL
 id|free_pages_high
 op_logical_and

@@ -1,7 +1,41 @@
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+multiline_comment|/*&n; * This is all required so that if we load all of scsi as a module,&n; * that the scsi code will be able to talk to the /proc/scsi handling&n; * in the procfs.&n; */
+r_extern
+r_int
+(paren
+op_star
+id|dispatch_scsi_info_ptr
+)paren
+(paren
+r_int
+id|ino
+comma
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+comma
+r_int
+id|inout
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
+id|proc_scsi_inode_operations
+suffix:semicolon
 DECL|variable|procfs_syms
 r_static
 r_struct
@@ -47,7 +81,7 @@ c_func
 id|proc_net
 )paren
 comma
-macro_line|#ifdef CONFIG_SCSI /* Ugh... */
+multiline_comment|/*&n;&t; * This is required so that if we load scsi later, that the&n;&t; * scsi code can attach to /proc/scsi in the correct manner.&n;&t; */
 id|X
 c_func
 (paren
@@ -66,7 +100,6 @@ c_func
 id|dispatch_scsi_info_ptr
 )paren
 comma
-macro_line|#endif
 macro_line|#include &lt;linux/symtab_end.h&gt;
 )brace
 suffix:semicolon

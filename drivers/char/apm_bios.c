@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*-&n; * APM BIOS driver for Linux&n; * Copyright 1994, 1995 Stephen Rothwell (Stephen.Rothwell@pd.necisa.oz.au)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * $Id: apm_bios.c,v 0.22 1995/03/09 14:12:02 sfr Exp $&n; *&n; * October 1995, Rik Faith (faith@cs.unc.edu):&n; *    Minor enhancements and updates (to the patch set) for 1.3.x&n; *    Documentation&n; * January 1996, Rik Faith (faith@cs.unc.edu):&n; *    Make /proc/apm easy to format (bump driver version)&n; *&n; *&n; * Reference:&n; *&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.1, September 1993.&n; *   Intel Order Number 241704-001.  Microsoft Part Number 781-110-X01.&n; *&n; * [This document is available free from Intel by calling 800.628.8686 (fax&n; * 916.356.6100) or 800.548.4725; or via anonymous ftp from&n; * ftp://ftp.intel.com/pub/IAL/software_specs/apmv11.doc.  It is also&n; * available from Microsoft by calling 206.882.8080.]&n; *&n; */
+multiline_comment|/* -*- linux-c -*-&n; * APM BIOS driver for Linux&n; * Copyright 1994, 1995 Stephen Rothwell (Stephen.Rothwell@pd.necisa.oz.au)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * $Id: apm_bios.c,v 0.22 1995/03/09 14:12:02 sfr Exp $&n; *&n; * October 1995, Rik Faith (faith@cs.unc.edu):&n; *    Minor enhancements and updates (to the patch set) for 1.3.x&n; *    Documentation&n; * January 1996, Rik Faith (faith@cs.unc.edu):&n; *    Make /proc/apm easy to format (bump driver version)&n; *&n; * History:&n; *    0.6b: first version in official kernel, Linux 1.3.46&n; *    0.7: changed /proc/apm format, Linux 1.3.58&n; *    0.8: fixed gcc 2.7.[12] compilation problems, Linux 1.3.59&n; *&n; * Reference:&n; *&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.1, September 1993.&n; *   Intel Order Number 241704-001.  Microsoft Part Number 781-110-X01.&n; *&n; * [This document is available free from Intel by calling 800.628.8686 (fax&n; * 916.356.6100) or 800.548.4725; or via anonymous ftp from&n; * ftp://ftp.intel.com/pub/IAL/software_specs/apmv11.doc.  It is also&n; * available from Microsoft by calling 206.882.8080.]&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -44,18 +44,21 @@ r_void
 suffix:semicolon
 multiline_comment|/* Configurable options:&n; *  &n; * CONFIG_APM_IGNORE_USER_SUSPEND: define to ignore USER SUSPEND requests.&n; * This is necessary on the NEC Versa M series, which generates these when&n; * resuming from SYSTEM SUSPEND.  However, enabling this on other laptops&n; * will cause the laptop to generate a CRITICAL SUSPEND when an appropriate&n; * USER SUSPEND is ignored -- this may prevent the APM driver from updating&n; * the system time on a RESUME.&n; *&n; * CONFIG_APM_DO_ENABLE: enable APM features at boot time.  From page 36 of&n; * the specification: &quot;When disabled, the APM BIOS does not automatically&n; * power manage devices, enter the Standby State, enter the Suspend State,&n; * or take power saving steps in response to CPU Idle calls.&quot;  This driver&n; * will make CPU Idle calls when Linux is idle (unless this feature is&n; * turned off -- see below).  This should always save battery power, but&n; * more complicated APM features will be dependent on your BIOS&n; * implementation.  You may need to turn this option off if your computer&n; * hangs at boot time when using APM support, or if it beeps continuously&n; * instead of suspending.  Turn this off if you have a NEC UltraLite Versa&n; * 33/C or a Toshiba T400CDT.  This is off by default since most machines&n; * do fine without this feature.&n; *&n; * CONFIG_APM_CPU_IDLE: enable calls to APM CPU Idle/CPU Busy inside the&n; * idle loop.  On some machines, this can activate improved power savings,&n; * such as a slowed CPU clock rate, when the machine is idle.  These idle&n; * call is made after the idle loop has run for some length of time (e.g.,&n; * 333 mS).  On some machines, this will cause a hang at boot time or&n; * whenever the CPU becomes idle.&n; *&n; * CONFIG_APM_DISPLAY_BLANK: enable console blanking using the APM.  Some&n; * laptops can use this to turn of the LCD backlight when the VC screen&n; * blanker blanks the screen.  Note that this is only used by the VC screen&n; * blanker, and probably won&squot;t turn off the backlight when using X11.&n; *&n; * If you are debugging the APM support for your laptop, note that code for&n; * all of these options is contained in this file, so you can #define or&n; * #undef these on the next line to avoid recompiling the whole kernel.&n; *&n; */
 multiline_comment|/* KNOWN PROBLEM MACHINES:&n; *&n; * U: TI 4000M TravelMate: BIOS is *NOT* APM compliant&n; *                         [Confirmed by TI representative]&n; * U: ACER 486DX4/75: uses dseg 0040, in violation of APM specification&n; *                    [Confirmed by BIOS disassembly]&n; * P: Toshiba 1950S: battery life information only gets updated after resume&n; *&n; * Legend: U = unusable with APM patches&n; *         P = partially usable with APM patches&n; */
-multiline_comment|/*&n; * define to have debug messages&n; */
+multiline_comment|/*&n; * Define to have debug messages.&n; */
 DECL|macro|APM_DEBUG
 macro_line|#undef APM_DEBUG
-multiline_comment|/*&n; * define to always call the APM BIOS busy routine even if the clock was&n; * not slowed by the idle routine&n; */
+multiline_comment|/*&n; * Define to always call the APM BIOS busy routine even if the clock was&n; * not slowed by the idle routine.&n; */
 DECL|macro|ALWAYS_CALL_BUSY
 mdefine_line|#define ALWAYS_CALL_BUSY
-multiline_comment|/*&n; * define to disable interrupts in APM BIOS calls (the CPU Idle BIOS call&n; * should turn interrupts on before it does a &squot;hlt&squot;)&n; */
+multiline_comment|/*&n; * Define to disable interrupts in APM BIOS calls (the CPU Idle BIOS call&n; * should turn interrupts on before it does a &squot;hlt&squot;).&n; */
 DECL|macro|APM_NOINTS
 mdefine_line|#define APM_NOINTS
-multiline_comment|/*&n; * define to make the APM BIOS calls zero all data segment registers (do&n; * that an incorrect BIOS implementation will cause a kernel panic if it&n; * tries to write to arbitrary memory)&n; */
+multiline_comment|/*&n; * Define to make the APM BIOS calls zero all data segment registers (do&n; * that if an incorrect BIOS implementation will cause a kernel panic if it&n; * tries to write to arbitrary memory).&n; */
 DECL|macro|APM_ZERO_SEGS
 mdefine_line|#define APM_ZERO_SEGS
+multiline_comment|/*&n; * Define to make all set_limit calls use 64k limits.  The APM 1.1 BIOS is&n; * supposed to provide limit information that it recognizes.  Many machines&n; * do this correctly, but many others do not restrict themselves to their&n; * claimed limit.  When this happens, they will cause a segmentation&n; * violation in the kernel at boot time.  Most BIOS&squot;s, however, will&n; * respect a 64k limit, so we use that.  If you want to be pedantic and&n; * hold your BIOS to its claims, then undefine this.&n; */
+DECL|macro|APM_RELAX_SEGMENTS
+mdefine_line|#define APM_RELAX_SEGMENTS
 multiline_comment|/*&n; * Need to poll the APM BIOS every second&n; */
 DECL|macro|APM_CHECK_TIMEOUT
 mdefine_line|#define APM_CHECK_TIMEOUT&t;(HZ)
@@ -84,28 +87,28 @@ DECL|macro|APM_BIOS_CALL_END
 mdefine_line|#define APM_BIOS_CALL_END &bslash;&n;&t;&t;: &quot;ax&quot;, &quot;bx&quot;, &quot;cx&quot;, &quot;dx&quot;, &quot;si&quot;, &quot;di&quot;, &quot;bp&quot;, &quot;memory&quot;)
 macro_line|#ifdef CONFIG_APM_CPU_IDLE
 DECL|macro|APM_SET_CPU_IDLE
-mdefine_line|#define APM_SET_CPU_IDLE(error) &bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error) &bslash;&n;&t;: &quot;0&quot; (0x5305) &bslash;&n;&t;APM_BIOS_CALL_END
+mdefine_line|#define APM_SET_CPU_IDLE(error) &bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error) &bslash;&n;&t;: &quot;a&quot; (0x5305) &bslash;&n;&t;APM_BIOS_CALL_END
 macro_line|#endif
 DECL|macro|APM_SET_CPU_BUSY
-mdefine_line|#define APM_SET_CPU_BUSY(error) &bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error) &bslash;&n;&t;: &quot;0&quot; (0x5306) &bslash;&n;&t;APM_BIOS_CALL_END
+mdefine_line|#define APM_SET_CPU_BUSY(error) &bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error) &bslash;&n;&t;: &quot;a&quot; (0x5306) &bslash;&n;&t;APM_BIOS_CALL_END
 DECL|macro|APM_SET_POWER_STATE
-mdefine_line|#define APM_SET_POWER_STATE(state, error) &bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error) &bslash;&n;&t;: &quot;0&quot; (0x5307), &quot;b&quot; (0x0001), &quot;c&quot; (state) &bslash;&n;&t;APM_BIOS_CALL_END
+mdefine_line|#define APM_SET_POWER_STATE(state, error) &bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error) &bslash;&n;&t;: &quot;a&quot; (0x5307), &quot;b&quot; (0x0001), &quot;c&quot; (state) &bslash;&n;&t;APM_BIOS_CALL_END
 macro_line|#ifdef CONFIG_APM_DISPLAY_BLANK
 DECL|macro|APM_SET_DISPLAY_POWER_STATE
-mdefine_line|#define APM_SET_DISPLAY_POWER_STATE(state, error) &bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error) &bslash;&n;&t;: &quot;0&quot; (0x5307), &quot;b&quot; (0x01ff), &quot;c&quot; (state) &bslash;&n;&t;APM_BIOS_CALL_END
+mdefine_line|#define APM_SET_DISPLAY_POWER_STATE(state, error) &bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error) &bslash;&n;&t;: &quot;a&quot; (0x5307), &quot;b&quot; (0x01ff), &quot;c&quot; (state) &bslash;&n;&t;APM_BIOS_CALL_END
 macro_line|#endif
 macro_line|#ifdef CONFIG_APM_DO_ENABLE
 DECL|macro|APM_ENABLE_POWER_MANAGEMENT
-mdefine_line|#define APM_ENABLE_POWER_MANAGEMENT(device, error) &bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error) &bslash;&n;&t;: &quot;0&quot; (0x5308), &quot;b&quot; (device), &quot;c&quot; (1) &bslash;&n;&t;APM_BIOS_CALL_END
+mdefine_line|#define APM_ENABLE_POWER_MANAGEMENT(device, error) &bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error) &bslash;&n;&t;: &quot;a&quot; (0x5308), &quot;b&quot; (device), &quot;c&quot; (1) &bslash;&n;&t;APM_BIOS_CALL_END
 macro_line|#endif
 DECL|macro|APM_GET_POWER_STATUS
-mdefine_line|#define APM_GET_POWER_STATUS(bx, cx, dx, error) &bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error), &quot;=b&quot; (bx), &quot;=c&quot; (cx), &quot;=d&quot; (dx) &bslash;&n;&t;: &quot;0&quot; (0x530a), &quot;1&quot; (1) &bslash;&n;&t;APM_BIOS_CALL_END
+mdefine_line|#define APM_GET_POWER_STATUS(bx, cx, dx, error) &bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error), &quot;=b&quot; (bx), &quot;=c&quot; (cx), &quot;=d&quot; (dx) &bslash;&n;&t;: &quot;a&quot; (0x530a), &quot;b&quot; (1) &bslash;&n;&t;APM_BIOS_CALL_END
 DECL|macro|APM_GET_EVENT
-mdefine_line|#define APM_GET_EVENT(event, error)&t;&bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error), &quot;=b&quot; (event) &bslash;&n;&t;: &quot;0&quot; (0x530b) &bslash;&n;&t;APM_BIOS_CALL_END
+mdefine_line|#define APM_GET_EVENT(event, error)&t;&bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error), &quot;=b&quot; (event) &bslash;&n;&t;: &quot;a&quot; (0x530b) &bslash;&n;&t;APM_BIOS_CALL_END
 DECL|macro|APM_DRIVER_VERSION
-mdefine_line|#define APM_DRIVER_VERSION(ver, ax, error) &bslash;&n;&t;APM_BIOS_CALL(bl) &bslash;&n;&t;: &quot;=a&quot; (ax), &quot;=b&quot; (error) &bslash;&n;&t;: &quot;0&quot; (0x530e), &quot;1&quot; (0), &quot;c&quot; (ver) &bslash;&n;&t;APM_BIOS_CALL_END
+mdefine_line|#define APM_DRIVER_VERSION(ver, ax, error) &bslash;&n;&t;APM_BIOS_CALL(bl) &bslash;&n;&t;: &quot;=a&quot; (ax), &quot;=b&quot; (error) &bslash;&n;&t;: &quot;a&quot; (0x530e), &quot;b&quot; (0), &quot;c&quot; (ver) &bslash;&n;&t;APM_BIOS_CALL_END
 DECL|macro|APM_ENGAGE_POWER_MANAGEMENT
-mdefine_line|#define APM_ENGAGE_POWER_MANAGEMENT(device, error) &bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error) &bslash;&n;&t;: &quot;0&quot; (0x530f), &quot;b&quot; (device), &quot;c&quot; (1) &bslash;&n;&t;APM_BIOS_CALL_END
+mdefine_line|#define APM_ENGAGE_POWER_MANAGEMENT(device, error) &bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error) &bslash;&n;&t;: &quot;a&quot; (0x530f), &quot;b&quot; (device), &quot;c&quot; (1) &bslash;&n;&t;APM_BIOS_CALL_END
 multiline_comment|/*&n; * Forward declarations&n; */
 r_static
 r_void
@@ -357,7 +360,7 @@ id|driver_version
 (braket
 )braket
 op_assign
-l_string|&quot;0.7&quot;
+l_string|&quot;0.8&quot;
 suffix:semicolon
 multiline_comment|/* no spaces */
 macro_line|#ifdef APM_DEBUG
@@ -3421,6 +3424,56 @@ suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#ifdef APM_RELAX_SEGMENTS
+multiline_comment|/* For ASUS motherboard, Award BIOS rev 110 (and others?) */
+id|set_limit
+c_func
+(paren
+id|gdt
+(braket
+id|APM_CS
+op_rshift
+l_int|3
+)braket
+comma
+l_int|64
+op_star
+l_int|1024
+)paren
+suffix:semicolon
+multiline_comment|/* For some unknown machine. */
+id|set_limit
+c_func
+(paren
+id|gdt
+(braket
+id|APM_CS_16
+op_rshift
+l_int|3
+)braket
+comma
+l_int|64
+op_star
+l_int|1024
+)paren
+suffix:semicolon
+multiline_comment|/* For the DEC Hinote Ultra CT475 (and others?) */
+id|set_limit
+c_func
+(paren
+id|gdt
+(braket
+id|APM_DS
+op_rshift
+l_int|3
+)braket
+comma
+l_int|64
+op_star
+l_int|1024
+)paren
+suffix:semicolon
+macro_line|#else
 id|set_limit
 c_func
 (paren
@@ -3434,7 +3487,6 @@ comma
 id|apm_bios_info.cseg_len
 )paren
 suffix:semicolon
-multiline_comment|/* This is not clear from the spec, but at least one&n;&t;&t;   machine needs CS_16 to be a 64k segment, and the DEC&n;&t;&t;   Hinote Ultra CT475 (and others?) needs DS to be a 64k&n;&t;&t;   segment. */
 id|set_limit
 c_func
 (paren
@@ -3460,11 +3512,10 @@ op_rshift
 l_int|3
 )braket
 comma
-l_int|64
-op_star
-l_int|1024
+id|apm_bios_info.dseg_len
 )paren
 suffix:semicolon
+macro_line|#endif
 id|apm_bios_info.version
 op_assign
 l_int|0x0101

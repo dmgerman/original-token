@@ -77,45 +77,6 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#ifdef __SMP__
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#endif
-macro_line|#ifndef CONFIG_SCSI
-macro_line|#if defined(CONFIG_PROC_FS)
-multiline_comment|/*&n; * This is all required so that if we load all of scsi as a module,&n; * that the scsi code will be able to talk to the /proc/scsi handling&n; * in the procfs.&n; */
-r_extern
-r_int
-(paren
-op_star
-id|dispatch_scsi_info_ptr
-)paren
-(paren
-r_int
-id|ino
-comma
-r_char
-op_star
-id|buffer
-comma
-r_char
-op_star
-op_star
-id|start
-comma
-id|off_t
-id|offset
-comma
-r_int
-id|length
-comma
-r_int
-id|inout
-)paren
-suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
-id|proc_scsi_inode_operations
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 r_extern
 r_char
 op_star
@@ -608,6 +569,12 @@ id|X
 c_func
 (paren
 id|__wait_on_buffer
+)paren
+comma
+id|X
+c_func
+(paren
+id|unlock_buffer
 )paren
 comma
 id|X
@@ -1568,21 +1535,6 @@ c_func
 id|resetup_one_dev
 )paren
 comma
-macro_line|#if defined(CONFIG_PROC_FS)
-multiline_comment|/*&n;&t; * This is required so that if we load scsi later, that the&n;&t; * scsi code can attach to /proc/scsi in the correct manner.&n;&t; */
-id|X
-c_func
-(paren
-id|proc_scsi_inode_operations
-)paren
-comma
-id|X
-c_func
-(paren
-id|dispatch_scsi_info_ptr
-)paren
-comma
-macro_line|#endif
 macro_line|#endif
 multiline_comment|/* Added to make file system as module */
 id|X

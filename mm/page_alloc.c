@@ -638,6 +638,8 @@ c_func
 id|priority
 comma
 id|limit
+comma
+l_int|1
 )paren
 )paren
 r_goto

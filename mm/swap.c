@@ -36,6 +36,13 @@ id|free_pages_high
 op_assign
 l_int|40
 suffix:semicolon
+multiline_comment|/* We track the number of pages currently being asynchronously swapped&n;   out, so that we don&squot;t try to swap TOO many pages out at once */
+DECL|variable|nr_async_pages
+r_int
+id|nr_async_pages
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n; * Constants for the page aging mechanism: the maximum age (actually,&n; * the maximum &quot;youthfulness&quot;); the quanta by which pages rejuvinate&n; * and age; and the initial age for new pages. &n; */
 DECL|variable|swap_control
 id|swap_control_t

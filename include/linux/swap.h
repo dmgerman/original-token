@@ -14,6 +14,8 @@ DECL|macro|SWP_USED
 mdefine_line|#define SWP_USED&t;1
 DECL|macro|SWP_WRITEOK
 mdefine_line|#define SWP_WRITEOK&t;3
+DECL|macro|SWAP_CLUSTER_MAX
+mdefine_line|#define SWAP_CLUSTER_MAX 32
 DECL|struct|swap_info_struct
 r_struct
 id|swap_info_struct
@@ -53,6 +55,14 @@ DECL|member|highest_bit
 r_int
 id|highest_bit
 suffix:semicolon
+DECL|member|cluster_next
+r_int
+id|cluster_next
+suffix:semicolon
+DECL|member|cluster_nr
+r_int
+id|cluster_nr
+suffix:semicolon
 DECL|member|prio
 r_int
 id|prio
@@ -81,6 +91,10 @@ suffix:semicolon
 r_extern
 r_int
 id|nr_free_pages
+suffix:semicolon
+r_extern
+r_int
+id|nr_async_pages
 suffix:semicolon
 r_extern
 r_int
@@ -115,7 +129,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* linux/mm/swap_clock.c */
+multiline_comment|/* linux/mm/vmscan.c */
 r_extern
 r_int
 id|try_to_free_page
@@ -125,9 +139,11 @@ r_int
 comma
 r_int
 r_int
+comma
+r_int
 )paren
 suffix:semicolon
-multiline_comment|/* linux/mm/swap_io.c */
+multiline_comment|/* linux/mm/page_io.c */
 r_extern
 r_void
 id|rw_swap_page
@@ -140,13 +156,15 @@ r_int
 comma
 r_char
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|macro|read_swap_page
-mdefine_line|#define read_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(READ,(nr),(buf))
+mdefine_line|#define read_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(READ,(nr),(buf),1)
 DECL|macro|write_swap_page
-mdefine_line|#define write_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(WRITE,(nr),(buf))
-multiline_comment|/* linux/mm/swap_mman.c */
+mdefine_line|#define write_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(WRITE,(nr),(buf),1)
+multiline_comment|/* linux/mm/page_alloc.c */
 r_extern
 r_void
 id|swap_in

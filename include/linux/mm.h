@@ -405,10 +405,15 @@ id|locked
 suffix:colon
 l_int|1
 comma
+DECL|member|free_after
+id|free_after
+suffix:colon
+l_int|1
+comma
 DECL|member|unused
 id|unused
 suffix:colon
-l_int|3
+l_int|2
 comma
 DECL|member|reserved
 id|reserved

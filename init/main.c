@@ -363,6 +363,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|AM53C974_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|BusLogic_Setup
 c_func
 (paren
@@ -1185,6 +1199,14 @@ macro_line|#ifdef CONFIG_SCSI_BUSLOGIC
 l_string|&quot;BusLogic=&quot;
 comma
 id|BusLogic_Setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_AM53C974
+(brace
+l_string|&quot;AM53C974=&quot;
+comma
+id|AM53C974_setup
 )brace
 comma
 macro_line|#endif

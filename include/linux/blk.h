@@ -7,9 +7,9 @@ macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; */
 DECL|macro|NR_REQUEST
 mdefine_line|#define NR_REQUEST&t;64
-multiline_comment|/*&n; * This is used in the elevator algorithm: Note that&n; * reads always go before writes. This is natural: reads&n; * are much more time-critical than writes.&n; */
+multiline_comment|/*&n; * This is used in the elevator algorithm.  We don&squot;t prioritise reads&n; * over writes any more --- although reads are more time-critical than&n; * writes, by treating them equally we increase filesystem throughput.&n; * This turns out to give better overall performance.  -- sct&n; */
 DECL|macro|IN_ORDER
-mdefine_line|#define IN_ORDER(s1,s2) &bslash;&n;((s1)-&gt;cmd &lt; (s2)-&gt;cmd || ((s1)-&gt;cmd == (s2)-&gt;cmd &amp;&amp; &bslash;&n;((s1)-&gt;rq_dev &lt; (s2)-&gt;rq_dev || (((s1)-&gt;rq_dev == (s2)-&gt;rq_dev &amp;&amp; &bslash;&n;(s1)-&gt;sector &lt; (s2)-&gt;sector)))))
+mdefine_line|#define IN_ORDER(s1,s2) &bslash;&n;((s1)-&gt;rq_dev &lt; (s2)-&gt;rq_dev || (((s1)-&gt;rq_dev == (s2)-&gt;rq_dev &amp;&amp; &bslash;&n;(s1)-&gt;sector &lt; (s2)-&gt;sector)))
 multiline_comment|/*&n; * These will have to be changed to be aware of different buffer&n; * sizes etc.. It actually needs a major cleanup.&n; */
 macro_line|#ifdef IDE_DRIVER
 DECL|macro|SECTOR_MASK
