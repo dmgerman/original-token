@@ -6933,9 +6933,7 @@ id|scsidp-&gt;de
 comma
 l_string|&quot;generic&quot;
 comma
-l_int|7
-comma
-id|DEVFS_FL_NONE
+id|DEVFS_FL_DEFAULT
 comma
 id|SCSI_GENERIC_MAJOR
 comma
@@ -6948,10 +6946,6 @@ op_or
 id|S_IWUSR
 op_or
 id|S_IRGRP
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|sg_fops

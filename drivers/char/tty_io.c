@@ -8292,16 +8292,6 @@ id|S_IRUSR
 op_or
 id|S_IWUSR
 suffix:semicolon
-id|uid_t
-id|uid
-op_assign
-l_int|0
-suffix:semicolon
-id|gid_t
-id|gid
-op_assign
-l_int|0
-suffix:semicolon
 r_struct
 id|tty_struct
 id|tty
@@ -8425,16 +8415,10 @@ op_plus
 id|UNIX98_NR_MAJORS
 )paren
 )paren
-(brace
-id|uid
-op_assign
-id|current-&gt;uid
+id|flags
+op_or_assign
+id|DEVFS_FL_CURRENT_OWNER
 suffix:semicolon
-id|gid
-op_assign
-id|current-&gt;gid
-suffix:semicolon
-)brace
 macro_line|#  endif
 id|devfs_register
 (paren
@@ -8448,8 +8432,6 @@ comma
 id|buf
 )paren
 comma
-l_int|0
-comma
 id|flags
 op_or
 id|DEVFS_FL_DEFAULT
@@ -8459,10 +8441,6 @@ comma
 id|minor
 comma
 id|mode
-comma
-id|uid
-comma
-id|gid
 comma
 op_amp
 id|tty_fops

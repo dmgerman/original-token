@@ -27,6 +27,8 @@ DECL|macro|DEVFS_FL_WAIT
 mdefine_line|#define DEVFS_FL_WAIT           0x040 /* Wait for devfsd to finish           */
 DECL|macro|DEVFS_FL_NO_PERSISTENCE
 mdefine_line|#define DEVFS_FL_NO_PERSISTENCE 0x080 /* Forget changes after unregister     */
+DECL|macro|DEVFS_FL_CURRENT_OWNER
+mdefine_line|#define DEVFS_FL_CURRENT_OWNER  0x100 /* Set initial ownership to current    */
 DECL|macro|DEVFS_FL_DEFAULT
 mdefine_line|#define DEVFS_FL_DEFAULT        DEVFS_FL_NONE
 DECL|macro|DEVFS_SPECIAL_CHR
@@ -62,10 +64,6 @@ id|name
 comma
 r_int
 r_int
-id|namelen
-comma
-r_int
-r_int
 id|flags
 comma
 r_int
@@ -78,12 +76,6 @@ id|minor
 comma
 id|umode_t
 id|mode
-comma
-id|uid_t
-id|uid
-comma
-id|gid_t
-id|gid
 comma
 r_void
 op_star
@@ -465,12 +457,6 @@ comma
 id|umode_t
 id|mode
 comma
-id|uid_t
-id|uid
-comma
-id|gid_t
-id|gid
-comma
 r_void
 op_star
 id|ops
@@ -521,10 +507,6 @@ id|name
 comma
 r_int
 r_int
-id|namelen
-comma
-r_int
-r_int
 id|flags
 comma
 r_int
@@ -537,12 +519,6 @@ id|minor
 comma
 id|umode_t
 id|mode
-comma
-id|uid_t
-id|uid
-comma
-id|gid_t
-id|gid
 comma
 r_void
 op_star
@@ -1100,12 +1076,6 @@ id|minor_start
 comma
 id|umode_t
 id|mode
-comma
-id|uid_t
-id|uid
-comma
-id|gid_t
-id|gid
 comma
 r_void
 op_star

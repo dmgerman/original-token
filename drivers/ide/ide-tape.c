@@ -25543,8 +25543,6 @@ id|drive-&gt;de
 comma
 l_string|&quot;mt&quot;
 comma
-l_int|2
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|HWIF
@@ -25563,10 +25561,6 @@ id|S_IRUGO
 op_or
 id|S_IWUGO
 comma
-l_int|0
-comma
-l_int|0
-comma
 op_amp
 id|idetape_fops
 comma
@@ -25580,8 +25574,6 @@ id|devfs_register
 id|drive-&gt;de
 comma
 l_string|&quot;mtn&quot;
-comma
-l_int|3
 comma
 id|DEVFS_FL_DEFAULT
 comma
@@ -25602,10 +25594,6 @@ op_or
 id|S_IRUGO
 op_or
 id|S_IWUGO
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|idetape_fops

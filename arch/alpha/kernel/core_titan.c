@@ -16,10 +16,6 @@ DECL|macro|__EXTERN_INLINE
 macro_line|#undef __EXTERN_INLINE
 macro_line|#include &quot;proto.h&quot;
 macro_line|#include &quot;pci_impl.h&quot;
-DECL|variable|TITAN_bootcpu
-r_int
-id|TITAN_bootcpu
-suffix:semicolon
 DECL|variable|TITAN_agp
 r_int
 id|TITAN_agp
@@ -1284,6 +1280,11 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|hose-&gt;sg_isa-&gt;align_entry
+op_assign
+l_int|8
+suffix:semicolon
+multiline_comment|/* 64KB for ISA */
 id|hose-&gt;sg_pci
 op_assign
 id|iommu_arena_new
@@ -1298,6 +1299,11 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|hose-&gt;sg_pci-&gt;align_entry
+op_assign
+l_int|4
+suffix:semicolon
+multiline_comment|/* Titan caches 4 PTEs at a time */
 id|__direct_map_base
 op_assign
 l_int|0x40000000
@@ -1688,7 +1694,7 @@ id|TITAN_dchip-&gt;drev.csr
 )paren
 suffix:semicolon
 macro_line|#endif
-id|TITAN_bootcpu
+id|boot_cpuid
 op_assign
 id|__hard_smp_processor_id
 c_func

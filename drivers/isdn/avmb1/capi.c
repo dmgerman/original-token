@@ -8942,10 +8942,6 @@ id|S_IRUSR
 op_or
 id|S_IWUSR
 comma
-l_int|0
-comma
-l_int|0
-comma
 op_amp
 id|capinc_raw_fops
 comma
@@ -8959,8 +8955,6 @@ l_int|NULL
 comma
 l_string|&quot;isdn/capi20&quot;
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|capi_major
@@ -8972,10 +8966,6 @@ op_or
 id|S_IRUSR
 op_or
 id|S_IWUSR
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|capi_fops

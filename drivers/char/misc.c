@@ -712,8 +712,6 @@ id|devfs_handle
 comma
 id|misc-&gt;name
 comma
-l_int|0
-comma
 id|DEVFS_FL_NONE
 comma
 id|MISC_MAJOR
@@ -727,10 +725,6 @@ op_or
 id|S_IWUSR
 op_or
 id|S_IRGRP
-comma
-l_int|0
-comma
-l_int|0
 comma
 id|misc-&gt;fops
 comma

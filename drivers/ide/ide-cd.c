@@ -7918,8 +7918,6 @@ id|drive-&gt;de
 comma
 l_string|&quot;cd&quot;
 comma
-l_int|2
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|HWIF
@@ -7937,10 +7935,6 @@ op_or
 id|S_IRUGO
 op_or
 id|S_IWUGO
-comma
-l_int|0
-comma
-l_int|0
 comma
 id|ide_fops
 comma

@@ -3351,8 +3351,6 @@ l_int|NULL
 comma
 l_string|&quot;gscd&quot;
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|MAJOR_NR
@@ -3364,10 +3362,6 @@ op_or
 id|S_IRUGO
 op_or
 id|S_IWUGO
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|gscd_fops

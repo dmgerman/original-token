@@ -6344,8 +6344,6 @@ l_int|NULL
 comma
 l_string|&quot;sjcd&quot;
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|MAJOR_NR
@@ -6357,10 +6355,6 @@ op_or
 id|S_IRUGO
 op_or
 id|S_IWUGO
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|sjcd_fops

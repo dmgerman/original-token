@@ -3436,9 +3436,7 @@ id|devfs_handle
 comma
 id|name_buf
 comma
-l_int|0
-comma
-id|DEVFS_FL_NONE
+id|DEVFS_FL_DEFAULT
 comma
 id|FB_MAJOR
 comma
@@ -3449,10 +3447,6 @@ op_or
 id|S_IRUGO
 op_or
 id|S_IWUGO
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|fb_fops

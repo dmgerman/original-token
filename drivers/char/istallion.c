@@ -23129,10 +23129,6 @@ id|S_IRUSR
 op_or
 id|S_IWUSR
 comma
-l_int|0
-comma
-l_int|0
-comma
 op_amp
 id|stli_fsiomem
 comma

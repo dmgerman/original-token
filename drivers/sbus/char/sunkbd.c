@@ -7018,9 +7018,7 @@ l_int|NULL
 comma
 l_string|&quot;kbd&quot;
 comma
-l_int|0
-comma
-id|DEVFS_FL_NONE
+id|DEVFS_FL_DEFAULT
 comma
 id|KBD_MAJOR
 comma
@@ -7035,10 +7033,6 @@ op_or
 id|S_IRGRP
 op_or
 id|S_IROTH
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|kbd_fops

@@ -11198,8 +11198,6 @@ id|devfs_handle
 comma
 id|buf
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|ISDN_MAJOR
@@ -11211,10 +11209,6 @@ comma
 l_int|0600
 op_or
 id|S_IFCHR
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|isdn_fops
@@ -11242,8 +11236,6 @@ id|devfs_handle
 comma
 id|buf
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|ISDN_MAJOR
@@ -11255,10 +11247,6 @@ comma
 l_int|0600
 op_or
 id|S_IFCHR
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|isdn_fops
@@ -11363,8 +11351,6 @@ id|devfs_handle
 comma
 id|buf
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|ISDN_MAJOR
@@ -11376,10 +11362,6 @@ comma
 l_int|0600
 op_or
 id|S_IFCHR
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|isdn_fops
@@ -11397,8 +11379,6 @@ id|devfs_handle
 comma
 l_string|&quot;isdninfo&quot;
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|ISDN_MAJOR
@@ -11408,10 +11388,6 @@ comma
 l_int|0600
 op_or
 id|S_IFCHR
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|isdn_fops
@@ -11427,8 +11403,6 @@ id|devfs_handle
 comma
 l_string|&quot;isdnctrl&quot;
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|ISDN_MAJOR
@@ -11438,10 +11412,6 @@ comma
 l_int|0600
 op_or
 id|S_IFCHR
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|isdn_fops

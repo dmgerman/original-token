@@ -16984,8 +16984,6 @@ id|devfs_handle
 comma
 id|name
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|MAJOR_NR
@@ -17013,10 +17011,6 @@ op_or
 id|S_IRGRP
 op_or
 id|S_IWGRP
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|floppy_fops

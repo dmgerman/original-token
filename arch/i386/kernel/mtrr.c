@@ -7431,8 +7431,6 @@ l_int|NULL
 comma
 l_string|&quot;cpu/mtrr&quot;
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 l_int|0
@@ -7444,10 +7442,6 @@ op_or
 id|S_IRUGO
 op_or
 id|S_IWUSR
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|mtrr_fops

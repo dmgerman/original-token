@@ -552,8 +552,6 @@ id|devfs_handle
 comma
 id|name_buf
 comma
-l_int|0
-comma
 id|DEVFS_FL_NONE
 comma
 id|SOUND_MAJOR
@@ -563,10 +561,6 @@ comma
 id|S_IFCHR
 op_or
 id|mode
-comma
-l_int|0
-comma
-l_int|0
 comma
 id|fops
 comma

@@ -772,8 +772,6 @@ id|devfs_handle
 comma
 id|vname
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|MAJOR
@@ -791,10 +789,6 @@ op_or
 id|S_IRUGO
 op_or
 id|S_IWUGO
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|cdrom_fops

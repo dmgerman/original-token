@@ -2490,9 +2490,7 @@ l_int|NULL
 comma
 l_string|&quot;dsp56k&quot;
 comma
-l_int|0
-comma
-id|DEVFS_FL_NONE
+id|DEVFS_FL_DEFAULT
 comma
 id|DSP56K_MAJOR
 comma
@@ -2503,10 +2501,6 @@ op_or
 id|S_IRUSR
 op_or
 id|S_IWUSR
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|dsp56k_fops

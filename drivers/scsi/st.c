@@ -18810,8 +18810,6 @@ id|SDp-&gt;de
 comma
 id|name
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|MAJOR_NR
@@ -18829,10 +18827,6 @@ op_or
 id|S_IRUGO
 op_or
 id|S_IWUGO
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|st_fops
@@ -18864,8 +18858,6 @@ id|SDp-&gt;de
 comma
 id|name
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|MAJOR_NR
@@ -18885,10 +18877,6 @@ op_or
 id|S_IRUGO
 op_or
 id|S_IWUGO
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|st_fops

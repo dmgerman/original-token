@@ -3632,8 +3632,6 @@ id|device-&gt;de
 comma
 l_string|&quot;cd&quot;
 comma
-l_int|2
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|MAJOR_NR
@@ -3645,10 +3643,6 @@ op_or
 id|S_IRUGO
 op_or
 id|S_IWUGO
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|cdrom_fops

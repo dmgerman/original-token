@@ -9305,8 +9305,6 @@ id|devfs_handle
 comma
 id|name_buf
 comma
-l_int|0
-comma
 id|DEVFS_FL_NONE
 comma
 id|SOUND_MAJOR
@@ -9321,10 +9319,6 @@ id|i
 )braket
 dot
 id|mode
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|sparcaudio_fops

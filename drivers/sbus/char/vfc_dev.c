@@ -662,8 +662,6 @@ id|devfs_handle
 comma
 id|devname
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|VFC_MAJOR
@@ -675,10 +673,6 @@ op_or
 id|S_IRUSR
 op_or
 id|S_IWUSR
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|vfc_fops

@@ -1,4 +1,4 @@
-multiline_comment|/*  devfs (Device FileSystem) utilities.&n;&n;    Copyright (C) 1999-2000  Richard Gooch&n;&n;    This library is free software; you can redistribute it and/or&n;    modify it under the terms of the GNU Library General Public&n;    License as published by the Free Software Foundation; either&n;    version 2 of the License, or (at your option) any later version.&n;&n;    This library is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n;    Library General Public License for more details.&n;&n;    You should have received a copy of the GNU Library General Public&n;    License along with this library; if not, write to the Free&n;    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;    Richard Gooch may be reached by email at  rgooch@atnf.csiro.au&n;    The postal address is:&n;      Richard Gooch, c/o ATNF, P. O. Box 76, Epping, N.S.W., 2121, Australia.&n;&n;    ChangeLog&n;&n;    19991031   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Created.&n;    19991103   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Created &lt;_devfs_convert_name&gt; and supported SCSI and IDE CD-ROMs&n;    20000203   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Changed operations pointer type to void *.&n;*/
+multiline_comment|/*  devfs (Device FileSystem) utilities.&n;&n;    Copyright (C) 1999-2000  Richard Gooch&n;&n;    This library is free software; you can redistribute it and/or&n;    modify it under the terms of the GNU Library General Public&n;    License as published by the Free Software Foundation; either&n;    version 2 of the License, or (at your option) any later version.&n;&n;    This library is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n;    Library General Public License for more details.&n;&n;    You should have received a copy of the GNU Library General Public&n;    License along with this library; if not, write to the Free&n;    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;    Richard Gooch may be reached by email at  rgooch@atnf.csiro.au&n;    The postal address is:&n;      Richard Gooch, c/o ATNF, P. O. Box 76, Epping, N.S.W., 2121, Australia.&n;&n;    ChangeLog&n;&n;    19991031   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Created.&n;    19991103   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Created &lt;_devfs_convert_name&gt; and supported SCSI and IDE CD-ROMs&n;    20000203   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Changed operations pointer type to void *.&n;    20000621   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Changed interface to &lt;devfs_register_series&gt;.&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
@@ -535,7 +535,7 @@ c_func
 id|devfs_register_tape
 )paren
 suffix:semicolon
-multiline_comment|/**&n; *&t;devfs_register_series - Register a sequence of device entries.&n; *&t;@dir: The handle to the parent devfs directory entry. If this is %NULL the&n; *&t;&t;new names are relative to the root of the devfs.&n; *&t;@format: The printf-style format string. A single &quot;&bslash;%u&quot; is allowed.&n; *&t;@flags: A set of bitwise-ORed flags (DEVFS_FL_*).&n; *&t;@major: The major number. Not needed for regular files.&n; *&t;@minor_start: The starting minor number. Not needed for regular files.&n; *&t;@mode: The default file mode.&n; *&t;@uid: The default UID of the file.&n; *&t;@guid: The default GID of the file.&n; *&t;@ops: The &amp;file_operations or &amp;block_device_operations structure.&n; *&t;&t;This must not be externally deallocated.&n; *&t;@info: An arbitrary pointer which will be written to the private_data&n; *&t;&t;field of the &amp;file structure passed to the device driver. You can set&n; *&t;&t;this to whatever you like, and change it once the file is opened (the next&n; *&t;&t;file opened will not see this change).&n; */
+multiline_comment|/**&n; *&t;devfs_register_series - Register a sequence of device entries.&n; *&t;@dir: The handle to the parent devfs directory entry. If this is %NULL the&n; *&t;&t;new names are relative to the root of the devfs.&n; *&t;@format: The printf-style format string. A single &quot;&bslash;%u&quot; is allowed.&n; *&t;@flags: A set of bitwise-ORed flags (DEVFS_FL_*).&n; *&t;@major: The major number. Not needed for regular files.&n; *&t;@minor_start: The starting minor number. Not needed for regular files.&n; *&t;@mode: The default file mode.&n; *&t;@ops: The &amp;file_operations or &amp;block_device_operations structure.&n; *&t;&t;This must not be externally deallocated.&n; *&t;@info: An arbitrary pointer which will be written to the private_data&n; *&t;&t;field of the &amp;file structure passed to the device driver. You can set&n; *&t;&t;this to whatever you like, and change it once the file is opened (the next&n; *&t;&t;file opened will not see this change).&n; */
 DECL|function|devfs_register_series
 r_void
 id|devfs_register_series
@@ -566,12 +566,6 @@ id|minor_start
 comma
 id|umode_t
 id|mode
-comma
-id|uid_t
-id|uid
-comma
-id|gid_t
-id|gid
 comma
 r_void
 op_star
@@ -622,8 +616,6 @@ id|dir
 comma
 id|devname
 comma
-l_int|0
-comma
 id|flags
 comma
 id|major
@@ -633,10 +625,6 @@ op_plus
 id|count
 comma
 id|mode
-comma
-id|uid
-comma
-id|gid
 comma
 id|ops
 comma

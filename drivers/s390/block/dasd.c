@@ -3450,13 +3450,7 @@ multiline_comment|/* dir */
 comma
 id|name
 comma
-id|strlen
-c_func
-(paren
-id|name
-)paren
-comma
-l_int|0
+id|DEVFS_FL_DEFAULT
 multiline_comment|/* flags */
 comma
 id|DASD_MAJOR
@@ -3465,12 +3459,6 @@ id|minor
 comma
 l_int|0755
 multiline_comment|/* mode */
-comma
-l_int|0
-multiline_comment|/* uid */
-comma
-l_int|0
-multiline_comment|/* gid */
 comma
 op_amp
 id|dasd_device_operations

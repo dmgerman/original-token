@@ -3218,9 +3218,7 @@ id|devfs_handle
 comma
 id|name
 comma
-l_int|0
-comma
-id|DEVFS_FL_NONE
+id|DEVFS_FL_DEFAULT
 comma
 id|IP2_IPL_MAJOR
 comma
@@ -3235,10 +3233,6 @@ op_or
 id|S_IRGRP
 op_or
 id|S_IFCHR
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|ip2_ipl
@@ -3269,9 +3263,7 @@ id|devfs_handle
 comma
 id|name
 comma
-l_int|0
-comma
-id|DEVFS_FL_NONE
+id|DEVFS_FL_DEFAULT
 comma
 id|IP2_IPL_MAJOR
 comma
@@ -3288,10 +3280,6 @@ op_or
 id|S_IRGRP
 op_or
 id|S_IFCHR
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|ip2_ipl

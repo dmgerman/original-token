@@ -3571,10 +3571,6 @@ id|S_IWUSR
 op_or
 id|S_IRGRP
 comma
-l_int|0
-comma
-l_int|0
-comma
 op_amp
 id|lo_fops
 comma

@@ -839,9 +839,7 @@ l_int|NULL
 comma
 l_string|&quot;socksys&quot;
 comma
-l_int|0
-comma
-id|DEVFS_FL_NONE
+id|DEVFS_FL_DEFAULT
 comma
 l_int|30
 comma
@@ -852,10 +850,6 @@ op_or
 id|S_IRUSR
 op_or
 id|S_IWUSR
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|socksys_fops

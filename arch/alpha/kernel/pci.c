@@ -1720,6 +1720,8 @@ l_int|4
 op_star
 l_int|1024
 )paren
+op_minus
+l_int|1
 suffix:semicolon
 id|inner.mem_end
 op_assign
@@ -1734,6 +1736,8 @@ l_int|1024
 op_star
 l_int|1024
 )paren
+op_minus
+l_int|1
 suffix:semicolon
 multiline_comment|/* Adjust the bridge&squot;s allocation requirements */
 id|bridge-&gt;resource

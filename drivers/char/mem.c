@@ -2580,8 +2580,6 @@ id|i
 dot
 id|name
 comma
-l_int|0
-comma
 id|DEVFS_FL_NONE
 comma
 id|MEM_MAJOR
@@ -2601,10 +2599,6 @@ dot
 id|mode
 op_or
 id|S_IFCHR
-comma
-l_int|0
-comma
-l_int|0
 comma
 id|list
 (braket

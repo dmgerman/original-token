@@ -29,12 +29,6 @@ macro_line|# define DBG_CFG(args)
 macro_line|#endif
 DECL|macro|MCPCIA_MAX_HOSES
 mdefine_line|#define MCPCIA_MAX_HOSES 4
-DECL|variable|mcpcia_hose_count
-r_static
-r_int
-id|mcpcia_hose_count
-suffix:semicolon
-multiline_comment|/* Actual number found. */
 multiline_comment|/*&n; * Given a bus, device, and function number, compute resulting&n; * configuration space address and setup the MCPCIA_HAXR2 register&n; * accordingly.  It is therefore not safe to have concurrent&n; * invocations to configuration space access routines, but there&n; * really shouldn&squot;t be any need for this.&n; *&n; * Type 0:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | |D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:11&t;Device select bit.&n; * &t;10:8&t;Function number&n; * &t; 7:2&t;Register number&n; *&n; * Type 1:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | |B|B|B|B|B|B|B|B|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|1|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:24&t;reserved&n; *&t;23:16&t;bus number (8 bits = 128 possible buses)&n; *&t;15:11&t;Device number (5 bits)&n; *&t;10:8&t;function number&n; *&t; 7:2&t;register number&n; *  &n; * Notes:&n; *&t;The function number selects which function of a multi-function device &n; *&t;(e.g., SCSI and Ethernet).&n; * &n; *&t;The register selects a DWORD (32 bit) register offset.  Hence it&n; *&t;doesn&squot;t get shifted by 2 bits as we want to &quot;drop&quot; the bottom two&n; *&t;bits.&n; */
 r_static
 r_int
@@ -1694,7 +1688,6 @@ id|mid
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t; *&n;&t; * Window 0 is scatter-gather 8MB at 8MB (for isa)&n;&t; * Window 1 is scatter-gather 128MB at 1GB&n;&t; * Window 2 is direct access 2GB at 2GB&n;&t; * ??? We ought to scale window 1 with memory.&n;&t; */
-multiline_comment|/* Make sure to align the arenas. */
 id|hose-&gt;sg_isa
 op_assign
 id|iommu_arena_new
@@ -1706,7 +1699,7 @@ l_int|0x00800000
 comma
 l_int|0x00800000
 comma
-l_int|1
+l_int|0
 )paren
 suffix:semicolon
 id|hose-&gt;sg_pci
@@ -1720,7 +1713,7 @@ l_int|0x40000000
 comma
 l_int|0x08000000
 comma
-l_int|1
+l_int|0
 )paren
 suffix:semicolon
 id|__direct_map_base
@@ -2016,13 +2009,16 @@ op_star
 id|hose
 suffix:semicolon
 r_int
+id|hose_count
+suffix:semicolon
+r_int
 id|h
 suffix:semicolon
-id|mcpcia_hose_count
+multiline_comment|/* First, find how many hoses we have.  */
+id|hose_count
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* First, find how many hoses we have.  */
 r_for
 c_loop
 (paren
@@ -2061,7 +2057,7 @@ c_func
 id|h
 )paren
 suffix:semicolon
-id|mcpcia_hose_count
+id|hose_count
 op_increment
 suffix:semicolon
 )brace
@@ -2071,7 +2067,7 @@ c_func
 (paren
 l_string|&quot;mcpcia_init_hoses: found %d hoses&bslash;n&quot;
 comma
-id|mcpcia_hose_count
+id|hose_count
 )paren
 suffix:semicolon
 multiline_comment|/* Now do init for each hose.  */
@@ -2429,8 +2425,10 @@ id|el_common
 op_star
 id|frame
 suffix:semicolon
-r_int
-id|i
+r_struct
+id|pci_controler
+op_star
+id|hose
 suffix:semicolon
 r_struct
 id|IOD_subpacket
@@ -2556,16 +2554,15 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|i
+id|hose
 op_assign
-l_int|0
+id|hose_head
 suffix:semicolon
-id|i
-OL
-id|mcpcia_hose_count
+id|hose
 suffix:semicolon
-id|i
-op_increment
+id|hose
+op_assign
+id|hose-&gt;next
 comma
 id|iodpp
 op_increment
@@ -2576,7 +2573,7 @@ c_func
 (paren
 l_string|&quot;IOD %d Register Subpacket - Bridge Base Address %16lx&bslash;n&quot;
 comma
-id|i
+id|hose-&gt;index
 comma
 id|iodpp-&gt;base
 )paren

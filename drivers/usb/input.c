@@ -1639,8 +1639,6 @@ id|input_devfs_handle
 comma
 id|devfs_name
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|INPUT_MAJOR
@@ -1654,10 +1652,6 @@ op_or
 id|S_IRUGO
 op_or
 id|S_IWUSR
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|input_fops

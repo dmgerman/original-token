@@ -1963,8 +1963,6 @@ id|name
 op_plus
 l_int|1
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|VCS_MAJOR
@@ -1979,10 +1977,6 @@ id|S_IRUSR
 op_or
 id|S_IWUSR
 comma
-l_int|0
-comma
-l_int|0
-comma
 op_amp
 id|vcs_fops
 comma
@@ -1994,8 +1988,6 @@ id|devfs_register
 id|devfs_handle
 comma
 id|name
-comma
-l_int|0
 comma
 id|DEVFS_FL_DEFAULT
 comma
@@ -2010,10 +2002,6 @@ op_or
 id|S_IRUSR
 op_or
 id|S_IWUSR
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|vcs_fops
@@ -2081,8 +2069,6 @@ id|devfs_handle
 comma
 l_string|&quot;0&quot;
 comma
-l_int|1
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|VCS_MAJOR
@@ -2094,10 +2080,6 @@ op_or
 id|S_IRUSR
 op_or
 id|S_IWUSR
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|vcs_fops
@@ -2111,8 +2093,6 @@ id|devfs_handle
 comma
 l_string|&quot;a&quot;
 comma
-l_int|1
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|VCS_MAJOR
@@ -2124,10 +2104,6 @@ op_or
 id|S_IRUSR
 op_or
 id|S_IWUSR
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|vcs_fops

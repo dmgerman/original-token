@@ -277,8 +277,6 @@ l_int|NULL
 comma
 l_string|&quot;cpu/microcode&quot;
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 l_int|0
@@ -290,10 +288,6 @@ op_or
 id|S_IRUSR
 op_or
 id|S_IWUSR
-comma
-l_int|0
-comma
-l_int|0
 comma
 op_amp
 id|microcode_fops

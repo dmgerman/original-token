@@ -813,8 +813,6 @@ id|irq
 r_static
 r_int
 id|last_cpu
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|cpu
