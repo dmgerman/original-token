@@ -4,6 +4,7 @@ DECL|macro|_LINUX_QUOTAOPS_
 mdefine_line|#define _LINUX_QUOTAOPS_
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_QUOTA)
+macro_line|#include &lt;linux/smp_lock.h&gt;
 multiline_comment|/*&n; * declaration of quota_function calls in kernel.&n; */
 r_extern
 r_void
@@ -504,6 +505,11 @@ c_cond
 id|dentry-&gt;d_inode-&gt;i_sb-&gt;dq_op
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dentry-&gt;d_inode-&gt;i_sb-&gt;dq_op
 op_member_access_from_pointer
 id|initialize
@@ -525,6 +531,11 @@ c_func
 id|dentry
 comma
 id|iattr
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

@@ -359,6 +359,10 @@ id|super_block
 op_star
 comma
 r_struct
+id|vfsmount
+op_star
+comma
+r_struct
 id|autofs_sb_info
 op_star
 comma
@@ -373,6 +377,10 @@ c_func
 (paren
 r_struct
 id|super_block
+op_star
+comma
+r_struct
+id|vfsmount
 op_star
 comma
 r_struct

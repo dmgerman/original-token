@@ -1,6 +1,8 @@
 macro_line|#ifndef _LINUX_PIPE_FS_I_H
 DECL|macro|_LINUX_PIPE_FS_I_H
 mdefine_line|#define _LINUX_PIPE_FS_I_H
+DECL|macro|PIPEFS_MAGIC
+mdefine_line|#define PIPEFS_MAGIC 0x50495045
 DECL|struct|pipe_inode_info
 r_struct
 id|pipe_inode_info

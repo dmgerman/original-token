@@ -563,7 +563,7 @@ op_assign
 id|autofs4_dentry_ino
 c_func
 (paren
-id|dentry-&gt;d_covers
+id|dentry
 )paren
 suffix:semicolon
 r_if
@@ -2421,6 +2421,8 @@ c_func
 (paren
 id|inode-&gt;i_sb
 comma
+id|filp-&gt;f_vfsmnt
+comma
 id|sbi
 comma
 (paren
@@ -2440,6 +2442,8 @@ id|autofs4_expire_multi
 c_func
 (paren
 id|inode-&gt;i_sb
+comma
+id|filp-&gt;f_vfsmnt
 comma
 id|sbi
 comma

@@ -479,6 +479,12 @@ c_func
 id|inode
 )paren
 suffix:semicolon
+id|dput
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -488,12 +494,6 @@ id|mntput
 c_func
 (paren
 id|mnt
-)paren
-suffix:semicolon
-id|dput
-c_func
-(paren
-id|dentry
 )paren
 suffix:semicolon
 )brace

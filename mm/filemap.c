@@ -759,10 +759,6 @@ id|priority
 comma
 r_int
 id|gfp_mask
-comma
-id|zone_t
-op_star
-id|zone
 )paren
 (brace
 r_int
@@ -805,37 +801,21 @@ id|page
 op_assign
 l_int|NULL
 suffix:semicolon
-r_struct
-id|zone_struct
-op_star
-id|p_zone
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|zone
-)paren
-id|BUG
-c_func
-(paren
-)paren
-suffix:semicolon
 id|count
 op_assign
-id|nr_lru_pages
-op_rshift
-id|priority
-suffix:semicolon
-r_if
-c_cond
 (paren
-op_logical_neg
-id|count
+id|nr_lru_pages
+op_lshift
+l_int|1
 )paren
-r_return
-id|ret
+op_rshift
+(paren
+id|priority
+op_rshift
+l_int|1
+)paren
 suffix:semicolon
+multiline_comment|/* we need pagemap_lru_lock for list_del() ... subtle code below */
 id|spin_lock
 c_func
 (paren
@@ -843,9 +823,6 @@ op_amp
 id|pagemap_lru_lock
 )paren
 suffix:semicolon
-id|again
-suffix:colon
-multiline_comment|/* we need pagemap_lru_lock for list_del() ... subtle code below */
 r_while
 c_loop
 (paren
@@ -882,28 +859,14 @@ c_func
 id|page_lru
 )paren
 suffix:semicolon
-id|p_zone
-op_assign
-id|page-&gt;zone
+id|count
+op_decrement
 suffix:semicolon
-multiline_comment|/* This LRU list only contains a few pages from the system,&n;&t;&t; * so we must fail and let swap_out() refill the list if&n;&t;&t; * there aren&squot;t enough freeable pages on the list */
-multiline_comment|/* The page is in use, or was used very recently, put it in&n;&t;&t; * &amp;young to make sure that we won&squot;t try to free it the next&n;&t;&t; * time */
+multiline_comment|/*&n;&t;&t; * Any page we can&squot;t touch (because it is&n;&t;&t; * locked or shared or something), gets&n;&t;&t; * put on the old list (maybe we can touch&n;&t;&t; * it next time).&n;&t;&t; *&n;&t;&t; * We leave the Reference bit untouched,&n;&t;&t; * so that it can stay &quot;young&quot; despite being&n;&t;&t; * moved to the back of the queue.&n;&t;&t; *&n;&t;&t; * Avoid unscalable SMP locking for pages we can&n;&t;&t; * immediate tell are untouchable..&n;&t;&t; */
 id|dispose
 op_assign
 op_amp
-id|young
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|PageTestandClearReferenced
-c_func
-(paren
-id|page
-)paren
-)paren
-r_goto
-id|dispose_continue
+id|old
 suffix:semicolon
 r_if
 c_cond
@@ -922,26 +885,6 @@ l_int|1
 r_goto
 id|dispose_continue
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Ok, it wasn&squot;t young, so leave it at the end of&n;&t;&t; * the list (&quot;old&quot;).&n;&t;&t; */
-id|dispose
-op_assign
-op_amp
-id|old
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|p_zone-&gt;free_pages
-OG
-id|p_zone-&gt;pages_high
-)paren
-r_goto
-id|dispose_continue
-suffix:semicolon
-id|count
-op_decrement
-suffix:semicolon
-multiline_comment|/* Page not used -&gt; free it or put it on the old list&n;&t;&t; * so it gets freed first the next time */
 r_if
 c_cond
 (paren
@@ -969,7 +912,7 @@ c_func
 id|page
 )paren
 suffix:semicolon
-multiline_comment|/* Is it a buffer page? */
+multiline_comment|/*&n;&t;&t; * Is it a buffer page? Try to clean it up regardless&n;&t;&t; * of zone and Reference bits..&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1009,6 +952,35 @@ id|made_buffer_progress
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;&t;&t; * Page is from a zone we don&squot;t care about.&n;&t;&t; * Put it on the old list, but leave the reference&n;&t;&t; * bit untouched - which may end up keeping&n;&t;&t; * it young (so that the LRU for that zone is&n;&t;&t; * not destroyed completely).&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|page-&gt;zone-&gt;free_pages
+OG
+id|page-&gt;zone-&gt;pages_high
+)paren
+r_goto
+id|unlock_continue
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * The page is in use, or was used very recently, put it in&n;&t;&t; * back at the top (it&squot;s young).. We may touch it after a&n;&t;&t; * second pass if we haven&squot;t found anything else.&n;&t;&t; */
+id|dispose
+op_assign
+op_amp
+id|lru_cache
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|PageTestandClearReferenced
+c_func
+(paren
+id|page
+)paren
+)paren
+r_goto
+id|unlock_continue
+suffix:semicolon
 multiline_comment|/* Take the pagecache_lock spinlock held to avoid&n;&t;&t;   other tasks to notice the page while we are looking at its&n;&t;&t;   page count. If it&squot;s a pagecache-page we&squot;ll free it&n;&t;&t;   in one atomic transaction after checking its page count. */
 id|spin_lock
 c_func
@@ -1016,6 +988,11 @@ c_func
 op_amp
 id|pagecache_lock
 )paren
+suffix:semicolon
+id|dispose
+op_assign
+op_amp
+id|old
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * We can&squot;t free pages unless there&squot;s just one user&n;&t;&t; * (count == 2 because we added one ourselves above).&n;&t;&t; */
 r_if
@@ -1218,19 +1195,6 @@ suffix:semicolon
 multiline_comment|/* nr_lru_pages needs the spinlock */
 id|nr_lru_pages
 op_decrement
-suffix:semicolon
-multiline_comment|/* wrong zone?  not looped too often?    roll again... */
-r_if
-c_cond
-(paren
-id|page-&gt;zone
-op_ne
-id|zone
-op_logical_and
-id|count
-)paren
-r_goto
-id|again
 suffix:semicolon
 id|out
 suffix:colon
@@ -2261,7 +2225,7 @@ op_member_access_from_pointer
 id|readpage
 c_func
 (paren
-id|file-&gt;f_dentry
+id|file
 comma
 id|page
 )paren
@@ -3846,7 +3810,7 @@ op_member_access_from_pointer
 id|readpage
 c_func
 (paren
-id|filp-&gt;f_dentry
+id|filp
 comma
 id|page
 )paren
@@ -5367,7 +5331,7 @@ op_member_access_from_pointer
 id|readpage
 c_func
 (paren
-id|file-&gt;f_dentry
+id|file
 comma
 id|page
 )paren
@@ -5434,7 +5398,7 @@ op_member_access_from_pointer
 id|readpage
 c_func
 (paren
-id|file-&gt;f_dentry
+id|file
 comma
 id|page
 )paren
@@ -5481,10 +5445,6 @@ id|file
 op_star
 id|file
 comma
-r_int
-r_int
-id|index
-comma
 r_struct
 id|page
 op_star
@@ -5494,30 +5454,14 @@ r_int
 id|wait
 )paren
 (brace
-r_struct
-id|dentry
-op_star
-id|dentry
-op_assign
-id|file-&gt;f_dentry
-suffix:semicolon
-r_struct
-id|inode
-op_star
-id|inode
-op_assign
-id|dentry-&gt;d_inode
-suffix:semicolon
 multiline_comment|/*&n;&t; * If a task terminates while we&squot;re swapping the page, the vma and&n;&t; * and file could be released: try_to_swap_out has done a get_file.&n;&t; * vma/file is guaranteed to exist in the unmap/sync cases because&n;&t; * mmap_sem is held.&n;&t; */
 r_return
-id|inode-&gt;i_mapping-&gt;a_ops
+id|page-&gt;mapping-&gt;a_ops
 op_member_access_from_pointer
 id|writepage
 c_func
 (paren
 id|file
-comma
-id|dentry
 comma
 id|page
 )paren
@@ -5555,8 +5499,6 @@ id|filemap_write_page
 c_func
 (paren
 id|file
-comma
-id|page-&gt;index
 comma
 id|page
 comma
@@ -5852,8 +5794,6 @@ id|filemap_write_page
 c_func
 (paren
 id|vma-&gt;vm_file
-comma
-id|pgoff
 comma
 id|page
 comma

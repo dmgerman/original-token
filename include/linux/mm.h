@@ -1482,9 +1482,6 @@ c_func
 r_int
 comma
 r_int
-comma
-id|zone_t
-op_star
 )paren
 suffix:semicolon
 r_extern

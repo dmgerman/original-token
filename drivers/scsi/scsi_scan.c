@@ -1805,6 +1805,23 @@ id|oldSDpnt
 )paren
 (brace
 multiline_comment|/* it could happen the blockdevice hasn&squot;t yet been inited */
+multiline_comment|/* queue_depth() moved from scsi_proc_info() so that&n;&t;&t;&t;   it is called before scsi_build_commandblocks() */
+r_if
+c_cond
+(paren
+id|shpnt-&gt;select_queue_depths
+op_ne
+l_int|NULL
+)paren
+(paren
+id|shpnt-&gt;select_queue_depths
+)paren
+(paren
+id|shpnt
+comma
+id|shpnt-&gt;host_queue
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren

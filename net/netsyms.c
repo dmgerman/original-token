@@ -706,13 +706,6 @@ c_func
 id|max_files
 )paren
 suffix:semicolon
-DECL|variable|do_mknod
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|do_mknod
-)paren
-suffix:semicolon
 DECL|variable|memcpy_toiovec
 id|EXPORT_SYMBOL
 c_func

@@ -74,6 +74,12 @@ id|dentry
 op_star
 id|dentry
 suffix:semicolon
+DECL|member|mnt
+r_struct
+id|vfsmount
+op_star
+id|mnt
+suffix:semicolon
 DECL|member|readsem
 r_struct
 id|semaphore

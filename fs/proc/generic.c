@@ -1544,27 +1544,10 @@ r_struct
 id|super_block
 op_star
 id|sb
-suffix:semicolon
-multiline_comment|/*&n;&t; * Actually it&squot;s a partial revoke(). We have to go through all&n;&t; * copies of procfs. proc_super_blocks is protected by the big&n;&t; * lock for the time being.&n;&t; */
-r_for
-c_loop
-(paren
-id|sb
 op_assign
-id|proc_super_blocks
+id|proc_mnt-&gt;mnt_sb
 suffix:semicolon
-id|sb
-suffix:semicolon
-id|sb
-op_assign
-(paren
-r_struct
-id|super_block
-op_star
-)paren
-id|sb-&gt;u.generic_sbp
-)paren
-(brace
+multiline_comment|/*&n;&t; * Actually it&squot;s a partial revoke().&n;&t; */
 id|file_list_lock
 c_func
 (paren
@@ -1666,7 +1649,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|function|proc_symlink
 r_struct

@@ -3116,6 +3116,7 @@ id|priv
 op_assign
 id|pp-&gt;private_data
 suffix:semicolon
+macro_line|#if 0
 id|usb_release_irq
 c_func
 (paren
@@ -3126,6 +3127,7 @@ comma
 id|priv-&gt;irqpipe
 )paren
 suffix:semicolon
+macro_line|#endif
 id|priv-&gt;usbdev
 op_assign
 l_int|NULL

@@ -48,15 +48,22 @@ op_star
 id|mnt_sb
 suffix:semicolon
 multiline_comment|/* pointer to superblock */
+DECL|member|mnt_mounts
+r_struct
+id|list_head
+id|mnt_mounts
+suffix:semicolon
+multiline_comment|/* list of children, anchored here */
+DECL|member|mnt_child
+r_struct
+id|list_head
+id|mnt_child
+suffix:semicolon
+multiline_comment|/* and going through their mnt_child */
 DECL|member|mnt_count
 id|atomic_t
 id|mnt_count
 suffix:semicolon
-DECL|member|mnt_dev
-id|kdev_t
-id|mnt_dev
-suffix:semicolon
-multiline_comment|/* Device this applies to */
 DECL|member|mnt_devname
 r_char
 op_star

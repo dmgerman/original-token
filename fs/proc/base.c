@@ -1853,16 +1853,10 @@ id|nd-&gt;mnt
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* We don&squot;t need a base pointer in the /proc filesystem */
-id|dput
+id|path_release
 c_func
 (paren
-id|nd-&gt;dentry
-)paren
-suffix:semicolon
-id|mntput
-c_func
-(paren
-id|nd-&gt;mnt
+id|nd
 )paren
 suffix:semicolon
 id|error

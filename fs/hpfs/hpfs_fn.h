@@ -2130,7 +2130,7 @@ id|hpfs_symlink_readpage
 c_func
 (paren
 r_struct
-id|dentry
+id|file
 op_star
 comma
 r_struct

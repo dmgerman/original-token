@@ -358,10 +358,6 @@ op_star
 id|file
 comma
 r_struct
-id|dentry
-op_star
-comma
-r_struct
 id|page
 op_star
 )paren
@@ -695,7 +691,7 @@ id|nfs_readpage
 c_func
 (paren
 r_struct
-id|dentry
+id|file
 op_star
 comma
 r_struct

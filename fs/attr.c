@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/fs/attr.c&n; *&n; *  Copyright (C) 1991, 1992  
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 multiline_comment|/* Taken over from the old code... */
 multiline_comment|/* POSIX UID/GID verification for setting inode attributes. */
 DECL|function|inode_change_ok
@@ -413,6 +414,11 @@ id|attr-&gt;ia_mtime
 op_assign
 id|now
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -461,6 +467,11 @@ id|attr
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon

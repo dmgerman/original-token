@@ -362,9 +362,9 @@ id|parent
 suffix:semicolon
 r_extern
 r_struct
-id|super_block
+id|vfsmount
 op_star
-id|proc_super_blocks
+id|proc_mnt
 suffix:semicolon
 r_extern
 r_struct

@@ -255,19 +255,18 @@ multiline_comment|/* linux/ipc/shm.c */
 r_extern
 r_int
 id|shm_swap
+c_func
 (paren
 r_int
 comma
 r_int
-comma
-id|zone_t
-op_star
 )paren
 suffix:semicolon
 multiline_comment|/* linux/mm/swap.c */
 r_extern
 r_void
 id|swap_setup
+c_func
 (paren
 r_void
 )paren
@@ -281,23 +280,6 @@ c_func
 r_int
 r_int
 id|gfp_mask
-comma
-id|zone_t
-op_star
-id|zone
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|swap_out
-c_func
-(paren
-r_int
-r_int
-id|gfp_mask
-comma
-r_int
-id|priority
 )paren
 suffix:semicolon
 multiline_comment|/* linux/mm/page_io.c */

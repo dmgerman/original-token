@@ -217,6 +217,8 @@ r_while
 c_loop
 (paren
 id|nr
+op_minus
+l_int|2
 OL
 id|sbi-&gt;max_ptys
 )paren

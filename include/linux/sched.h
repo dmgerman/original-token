@@ -766,12 +766,6 @@ id|swappable
 suffix:colon
 l_int|1
 suffix:semicolon
-DECL|member|hog
-r_int
-id|hog
-suffix:colon
-l_int|1
-suffix:semicolon
 multiline_comment|/* process credentials */
 DECL|member|uid
 DECL|member|euid

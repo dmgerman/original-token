@@ -28,7 +28,7 @@ mdefine_line|#define&t;SROM_READ&t;&t;0x02
 DECL|macro|PEGASUS_TX_TIMEOUT
 mdefine_line|#define&t;PEGASUS_TX_TIMEOUT&t;(HZ*5)
 DECL|macro|ALIGN
-mdefine_line|#define&t;ALIGN(x)&t;&t;x __attribute__((aligned(16)))
+mdefine_line|#define&t;ALIGN(x)&t;&t;x __attribute__((aligned(L1_CACHE_BYTES)))
 DECL|struct|pegasus
 r_struct
 id|pegasus
@@ -273,6 +273,26 @@ comma
 l_int|0x083a
 comma
 l_int|0x1046
+comma
+l_int|NULL
+)brace
+comma
+(brace
+l_string|&quot;IO DATA USB ET/TX&quot;
+comma
+l_int|0x04bb
+comma
+l_int|0x0904
+comma
+l_int|NULL
+)brace
+comma
+(brace
+l_string|&quot;LANEED USB Ethernet LD-USB/TX&quot;
+comma
+l_int|0x056e
+comma
+l_int|0x4002
 comma
 l_int|NULL
 )brace

@@ -26,9 +26,9 @@ id|efs_readpage
 c_func
 (paren
 r_struct
-id|dentry
+id|file
 op_star
-id|dentry
+id|file
 comma
 r_struct
 id|page

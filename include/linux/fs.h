@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/dcache.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/cache.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 r_struct
@@ -89,6 +90,10 @@ DECL|macro|FS_NO_DCACHE
 mdefine_line|#define FS_NO_DCACHE&t;2 /* Only dcache the necessary things. */
 DECL|macro|FS_NO_PRELIM
 mdefine_line|#define FS_NO_PRELIM&t;4 /* prevent preloading of dentries, even if&n;&t;&t;&t;   * FS_NO_DCACHE is not set.&n;&t;&t;&t;   */
+DECL|macro|FS_SINGLE
+mdefine_line|#define FS_SINGLE&t;8 /*&n;&t;&t;&t;   * Filesystem that can have only one superblock;&n;&t;&t;&t;   * kernel-wide vfsmnt is kept in -&gt;kern_mnt.&n;&t;&t;&t;   */
+DECL|macro|FS_NOMOUNT
+mdefine_line|#define FS_NOMOUNT&t;16 /* Never mount from userland */
 multiline_comment|/*&n; * These are the fs-independent mount-flags: up to 16 flags are supported&n; */
 DECL|macro|MS_RDONLY
 mdefine_line|#define MS_RDONLY&t; 1&t;/* Mount read-only */
@@ -603,10 +608,6 @@ id|file
 op_star
 comma
 r_struct
-id|dentry
-op_star
-comma
-r_struct
 id|page
 op_star
 )paren
@@ -619,7 +620,7 @@ id|readpage
 )paren
 (paren
 r_struct
-id|dentry
+id|file
 op_star
 comma
 r_struct
@@ -3036,6 +3037,13 @@ id|module
 op_star
 id|owner
 suffix:semicolon
+DECL|member|kern_mnt
+r_struct
+id|vfsmount
+op_star
+id|kern_mnt
+suffix:semicolon
+multiline_comment|/* For kernel mount, if it&squot;s FS_SINGLE fs */
 DECL|member|next
 r_struct
 id|file_system_type
@@ -3069,6 +3077,28 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_struct
+id|vfsmount
+op_star
+id|kern_mount
+c_func
+(paren
+r_struct
+id|file_system_type
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|kern_umount
+c_func
+(paren
+r_struct
+id|vfsmount
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|may_umount
 c_func
@@ -3078,9 +3108,7 @@ id|vfsmount
 op_star
 )paren
 suffix:semicolon
-DECL|function|vfs_statfs
-r_static
-r_inline
+r_extern
 r_int
 id|vfs_statfs
 c_func
@@ -3088,63 +3116,12 @@ c_func
 r_struct
 id|super_block
 op_star
-id|sb
 comma
 r_struct
 id|statfs
 op_star
-id|buf
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|sb
-)paren
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|sb-&gt;s_op
-op_logical_or
-op_logical_neg
-id|sb-&gt;s_op-&gt;statfs
-)paren
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|buf
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|statfs
-)paren
 )paren
 suffix:semicolon
-r_return
-id|sb-&gt;s_op
-op_member_access_from_pointer
-id|statfs
-c_func
-(paren
-id|sb
-comma
-id|buf
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Return value for VFS lock functions - tells locks.c to lock conventionally&n; * REALLY kosha for root NFS and nfs_lock&n; */
 DECL|macro|LOCK_USE_CLNT
 mdefine_line|#define LOCK_USE_CLNT 1
@@ -4187,22 +4164,6 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_struct
-id|dentry
-op_star
-id|do_mknod
-c_func
-(paren
-r_const
-r_char
-op_star
-comma
-r_int
-comma
-id|dev_t
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|do_pipe
 c_func
@@ -4391,23 +4352,8 @@ id|origin
 )paren
 suffix:semicolon
 r_extern
-r_struct
-id|dentry
-op_star
-id|lookup_dentry
-c_func
-(paren
-r_const
-r_char
-op_star
-comma
 r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|walk_init
+id|__user_walk
 c_func
 (paren
 r_const
@@ -4423,13 +4369,39 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|walk_name
+id|path_init
 c_func
 (paren
 r_const
 r_char
 op_star
 comma
+r_int
+comma
+r_struct
+id|nameidata
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|path_walk
+c_func
+(paren
+r_const
+r_char
+op_star
+comma
+r_struct
+id|nameidata
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|path_release
+c_func
+(paren
 r_struct
 id|nameidata
 op_star
@@ -4438,6 +4410,22 @@ suffix:semicolon
 r_extern
 r_int
 id|follow_down
+c_func
+(paren
+r_struct
+id|vfsmount
+op_star
+op_star
+comma
+r_struct
+id|dentry
+op_star
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|follow_up
 c_func
 (paren
 r_struct
@@ -4471,21 +4459,22 @@ r_extern
 r_struct
 id|dentry
 op_star
-id|__namei
+id|lookup_hash
 c_func
 (paren
-r_const
-r_char
+r_struct
+id|qstr
 op_star
 comma
-r_int
-r_int
+r_struct
+id|dentry
+op_star
 )paren
 suffix:semicolon
-DECL|macro|namei
-mdefine_line|#define namei(pathname)&t;&t;__namei(pathname, LOOKUP_FOLLOW)
-DECL|macro|lnamei
-mdefine_line|#define lnamei(pathname)&t;__namei(pathname, 0)
+DECL|macro|user_path_walk
+mdefine_line|#define user_path_walk(name,nd)&t; __user_walk(name, LOOKUP_FOLLOW|LOOKUP_POSITIVE, nd)
+DECL|macro|user_path_walk_link
+mdefine_line|#define user_path_walk_link(name,nd) __user_walk(name, LOOKUP_POSITIVE, nd)
 r_extern
 r_void
 id|iput
@@ -4877,33 +4866,6 @@ r_int
 )braket
 comma
 r_int
-)paren
-suffix:semicolon
-DECL|typedef|writepage_t
-r_typedef
-r_int
-(paren
-op_star
-id|writepage_t
-)paren
-(paren
-r_struct
-id|file
-op_star
-comma
-r_struct
-id|page
-op_star
-comma
-r_int
-r_int
-comma
-r_int
-r_int
-comma
-r_const
-r_char
-op_star
 )paren
 suffix:semicolon
 DECL|typedef|get_block_t

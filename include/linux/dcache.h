@@ -213,19 +213,6 @@ op_star
 id|d_parent
 suffix:semicolon
 multiline_comment|/* parent directory */
-DECL|member|d_mounts
-r_struct
-id|dentry
-op_star
-id|d_mounts
-suffix:semicolon
-multiline_comment|/* mount information */
-DECL|member|d_covers
-r_struct
-id|dentry
-op_star
-id|d_covers
-suffix:semicolon
 DECL|member|d_vfsmnt
 r_struct
 id|list_head
@@ -548,10 +535,6 @@ r_int
 comma
 r_int
 r_int
-comma
-r_struct
-id|zone_struct
-op_star
 )paren
 suffix:semicolon
 r_extern
@@ -571,10 +554,6 @@ c_func
 r_int
 comma
 r_int
-comma
-r_struct
-id|zone_struct
-op_star
 )paren
 suffix:semicolon
 r_extern

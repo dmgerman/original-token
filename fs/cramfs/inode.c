@@ -1313,9 +1313,9 @@ id|cramfs_readpage
 c_func
 (paren
 r_struct
-id|dentry
+id|file
 op_star
-id|dentry
+id|file
 comma
 r_struct
 id|page
@@ -1328,7 +1328,12 @@ id|inode
 op_star
 id|inode
 op_assign
-id|dentry-&gt;d_inode
+(paren
+r_struct
+id|inode
+op_star
+)paren
+id|page-&gt;mapping-&gt;host
 suffix:semicolon
 id|u32
 id|maxblock

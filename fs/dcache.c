@@ -1346,10 +1346,6 @@ comma
 r_int
 r_int
 id|gfp_mask
-comma
-id|zone_t
-op_star
-id|zone
 )paren
 (brace
 r_int
@@ -1567,14 +1563,6 @@ c_func
 op_amp
 id|dentry-&gt;d_child
 )paren
-suffix:semicolon
-id|dentry-&gt;d_mounts
-op_assign
-id|dentry
-suffix:semicolon
-id|dentry-&gt;d_covers
-op_assign
-id|dentry
 suffix:semicolon
 id|INIT_LIST_HEAD
 c_func

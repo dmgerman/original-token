@@ -130,6 +130,12 @@ DECL|member|ex_flags
 r_int
 id|ex_flags
 suffix:semicolon
+DECL|member|ex_mnt
+r_struct
+id|vfsmount
+op_star
+id|ex_mnt
+suffix:semicolon
 DECL|member|ex_dentry
 r_struct
 id|dentry

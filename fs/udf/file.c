@@ -16,9 +16,9 @@ id|udf_adinicb_readpage
 c_func
 (paren
 r_struct
-id|dentry
+id|file
 op_star
-id|dentry
+id|file
 comma
 r_struct
 id|page
@@ -169,11 +169,6 @@ r_struct
 id|file
 op_star
 id|file
-comma
-r_struct
-id|dentry
-op_star
-id|dentry
 comma
 r_struct
 id|page
