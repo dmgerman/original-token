@@ -334,17 +334,10 @@ DECL|member|_f
 r_char
 id|_f
 (braket
-l_int|22
-op_minus
-l_int|2
-op_star
-r_sizeof
-(paren
-r_int
-)paren
+l_int|12
 )braket
 suffix:semicolon
-multiline_comment|/* Padding: libc5 uses this.. */
+multiline_comment|/* Padding to 64 bytes: libc5 uses this.. */
 )brace
 suffix:semicolon
 macro_line|#endif
