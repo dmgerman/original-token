@@ -2,7 +2,6 @@ DECL|macro|LINUX_21
 mdefine_line|#define LINUX_21
 multiline_comment|/*&n; *&t;Comtrol SV11 card driver&n; *&n; *&t;This is a slightly odd Z85230 synchronous driver. All you need to&n; *&t;know basically is&n; *&n; *&t;Its a genuine Z85230&n; *&n; *&t;It supports DMA using two DMA channels in SYNC mode. The driver doesn&squot;t&n; *&t;use these facilities&n; *&t;&n; *&t;The control port is at io+1, the data at io+3 and turning off the DMA&n; *&t;is done by writing 0 to io+4&n; *&n; *&t;The hardware does the bus handling to avoid the need for delays between&n; *&t;touching control registers.&n; *&n; *&t;Port B isnt wired (why - beats me)&n; */
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/net.h&gt;

@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;eepro100.c:v1.04 10/8/98 Donald Becker http://cesdis.gsfc.nasa.gov/linux/drivers/eepro100.html&bslash;n&quot;
+l_string|&quot;eepro100.c:v1.06 10/16/98 Donald Becker http://cesdis.gsfc.nasa.gov/linux/drivers/eepro100.html&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* A few user-configurable values that apply to all boards.&n;   First set are undocumented and spelled per Intel recommendations. */
 DECL|variable|congenb
@@ -63,7 +63,7 @@ r_static
 r_int
 id|max_interrupt_work
 op_assign
-l_int|20
+l_int|200
 suffix:semicolon
 multiline_comment|/* Maximum number of multicast addresses to filter (vs. rx-all-multicast) */
 DECL|variable|multicast_filter_limit
@@ -83,12 +83,14 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+multiline_comment|/*&n; * Module documentation&n; */
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -675,6 +677,10 @@ id|device
 op_star
 id|next_module
 suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 DECL|member|tx_ring
 r_struct
 id|TxFD
@@ -783,11 +789,6 @@ r_int
 id|mc_setup_busy
 suffix:semicolon
 multiline_comment|/* Avoid double-use of setup frame. */
-DECL|member|in_interrupt
-r_int
-id|in_interrupt
-suffix:semicolon
-multiline_comment|/* Word-aligned dev-&gt;interrupt */
 DECL|member|rx_mode
 r_char
 id|rx_mode
@@ -2522,16 +2523,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif  /* kernel_bloat */
-id|outl
-c_func
-(paren
-l_int|0
-comma
-id|ioaddr
-op_plus
-id|SCBPort
-)paren
-suffix:semicolon
 multiline_comment|/* We do a request_region() only to register /proc/ioports info. */
 id|request_region
 c_func
@@ -3220,6 +3211,7 @@ id|dev-&gt;base_addr
 suffix:semicolon
 macro_line|#ifdef notdef
 multiline_comment|/* We could reset the chip, but should not need to. */
+multiline_comment|/* In fact we MUST NOT, unless we also re-do the init */
 id|outl
 c_func
 (paren
@@ -3237,30 +3229,14 @@ l_int|10
 )paren
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
+multiline_comment|/* This had better be initialized before we initialize the interrupt! */
+id|sp-&gt;lock
+op_assign
 (paren
-id|request_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-op_amp
-id|speedo_interrupt
-comma
-id|SA_SHIRQ
-comma
-l_string|&quot;Intel EtherExpress Pro 10/100 Ethernet&quot;
-comma
-id|dev
+id|spinlock_t
 )paren
-)paren
-(brace
-r_return
-op_minus
-id|EAGAIN
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3279,8 +3255,7 @@ comma
 id|dev-&gt;irq
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
+macro_line|#ifdef oh_no_you_dont_unless_you_honour_the_options_passed_in_to_us
 multiline_comment|/* Retrigger negotiation to reset previous errors. */
 r_if
 c_cond
@@ -3341,6 +3316,7 @@ l_int|0x3300
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#endif
 multiline_comment|/* Load the statistics block address. */
 id|wait_for_cmd_done
 c_func
@@ -3611,10 +3587,6 @@ id|dev-&gt;if_port
 op_assign
 id|sp-&gt;default_port
 suffix:semicolon
-id|sp-&gt;in_interrupt
-op_assign
-l_int|0
-suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -3716,6 +3688,81 @@ id|SCBStatus
 )paren
 suffix:semicolon
 )brace
+id|wait_for_cmd_done
+c_func
+(paren
+id|ioaddr
+op_plus
+id|SCBCmd
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|CU_DUMPSTATS
+comma
+id|ioaddr
+op_plus
+id|SCBCmd
+)paren
+suffix:semicolon
+multiline_comment|/* No need to wait for the command unit to accept here. */
+r_if
+c_cond
+(paren
+(paren
+id|sp-&gt;phy
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x8000
+)paren
+op_eq
+l_int|0
+)paren
+id|mdio_read
+c_func
+(paren
+id|ioaddr
+comma
+id|sp-&gt;phy
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x1f
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Request the IRQ last, after we have set up all data structures.&n;&t; * It would be bad to get an interrupt before we&squot;re ready.&n;&t; */
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+id|dev-&gt;irq
+comma
+op_amp
+id|speedo_interrupt
+comma
+id|SA_SHIRQ
+comma
+l_string|&quot;Intel EtherExpress Pro 10/100 Ethernet&quot;
+comma
+id|dev
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|EAGAIN
+suffix:semicolon
+)brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 multiline_comment|/* Set the timer.  The timer serves a dual purpose:&n;&t;   1) to monitor the media interface (e.g. link beat) and perhaps switch&n;&t;   to an alternate media type&n;&t;   2) to monitor Rx activity, and restart the Rx process if the receiver&n;&t;   hangs. */
 id|init_timer
 c_func
@@ -3758,24 +3805,6 @@ c_func
 (paren
 op_amp
 id|sp-&gt;timer
-)paren
-suffix:semicolon
-id|wait_for_cmd_done
-c_func
-(paren
-id|ioaddr
-op_plus
-id|SCBCmd
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-id|CU_DUMPSTATS
-comma
-id|ioaddr
-op_plus
-id|SCBCmd
 )paren
 suffix:semicolon
 r_return
@@ -4457,15 +4486,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|sp-&gt;lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 multiline_comment|/* Calculate the Tx descriptor entry. */
@@ -4594,12 +4621,6 @@ id|sp-&gt;tx_ring
 id|entry
 )braket
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 multiline_comment|/* Trigger the command unit resume. */
 id|wait_for_cmd_done
 c_func
@@ -4617,6 +4638,15 @@ comma
 id|ioaddr
 op_plus
 id|SCBCmd
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|sp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -4741,42 +4771,14 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-macro_line|#ifndef final_version
-multiline_comment|/* A lock to prevent simultaneous entry on SMP machines. */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
+id|spin_lock
 c_func
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
 op_amp
-id|sp-&gt;in_interrupt
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: SMP simultaneous entry of an interrupt handler.&bslash;n&quot;
-comma
-id|dev-&gt;name
+id|sp-&gt;lock
 )paren
 suffix:semicolon
-id|sp-&gt;in_interrupt
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Avoid halting machine. */
-r_return
-suffix:semicolon
-)brace
+macro_line|#ifndef final_version
 id|dev-&gt;interrupt
 op_assign
 l_int|1
@@ -5209,17 +5211,11 @@ id|dev-&gt;interrupt
 op_assign
 l_int|0
 suffix:semicolon
-id|clear_bit
+id|spin_unlock
 c_func
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
 op_amp
-id|sp-&gt;in_interrupt
+id|sp-&gt;lock
 )paren
 suffix:semicolon
 r_return
@@ -5307,6 +5303,16 @@ op_amp
 id|RxComplete
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_decrement
+id|rx_work_limit
+OL
+l_int|0
+)paren
+r_break
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5641,16 +5647,6 @@ id|sp-&gt;cur_rx
 )paren
 op_mod
 id|RX_RING_SIZE
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_decrement
-id|rx_work_limit
-OL
-l_int|0
-)paren
-r_break
 suffix:semicolon
 )brace
 multiline_comment|/* Refill the Rx ring buffers. */
@@ -6570,16 +6566,13 @@ id|u8
 op_star
 id|config_cmd_data
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|sp-&gt;lock
+comma
 id|flags
-)paren
-suffix:semicolon
-multiline_comment|/* Lock to protect sp-&gt;cur_tx. */
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|entry
@@ -6605,12 +6598,6 @@ id|sp-&gt;tx_ring
 (braket
 id|entry
 )braket
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
 suffix:semicolon
 id|sp-&gt;tx_skbuff
 (braket
@@ -6810,6 +6797,15 @@ op_plus
 id|SCBCmd
 )paren
 suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|sp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -6836,16 +6832,13 @@ comma
 op_star
 id|eaddrs
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|sp-&gt;lock
+comma
 id|flags
-)paren
-suffix:semicolon
-multiline_comment|/* Lock to protect sp-&gt;cur_tx. */
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|entry
@@ -6871,12 +6864,6 @@ id|sp-&gt;tx_ring
 (braket
 id|entry
 )braket
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
 suffix:semicolon
 id|sp-&gt;tx_skbuff
 (braket
@@ -7034,6 +7021,15 @@ comma
 id|ioaddr
 op_plus
 id|SCBCmd
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|sp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -7274,15 +7270,13 @@ op_increment
 suffix:semicolon
 )brace
 multiline_comment|/* Disable interrupts while playing with the Tx Cmd list. */
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|sp-&gt;lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|entry
@@ -7302,12 +7296,6 @@ id|mc_setup_frm
 suffix:semicolon
 id|sp-&gt;mc_setup_busy
 op_increment
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
 suffix:semicolon
 multiline_comment|/* Change the command to a NoOp, pointing to the CmdMulti command. */
 id|sp-&gt;tx_skbuff
@@ -7384,6 +7372,15 @@ comma
 id|ioaddr
 op_plus
 id|SCBCmd
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|sp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
