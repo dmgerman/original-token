@@ -251,6 +251,10 @@ id|tmp-&gt;ops
 op_assign
 id|ops
 suffix:semicolon
+id|tmp-&gt;number
+op_assign
+id|portcount
+suffix:semicolon
 id|spin_lock_init
 (paren
 op_amp

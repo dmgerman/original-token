@@ -108,6 +108,11 @@ r_int
 id|s_partition_size
 suffix:semicolon
 multiline_comment|/* Partition size in blocks. */
+DECL|member|s_blksize
+r_int
+id|s_blksize
+suffix:semicolon
+multiline_comment|/* Initial device blksize */
 DECL|member|s_root_block
 id|s32
 id|s_root_block

@@ -239,7 +239,7 @@ r_return
 id|isn
 suffix:semicolon
 )brace
-multiline_comment|/* This value should be dependant on TCP_TIMEOUT_INIT and &n; * sysctl_tcp_retries1. It&squot;s a rather complicated formula &n; * (exponential backoff) to compute at runtime so it&squot;s currently hardcoded&n; * here.&n; */
+multiline_comment|/* This value should be dependent on TCP_TIMEOUT_INIT and &n; * sysctl_tcp_retries1. It&squot;s a rather complicated formula &n; * (exponential backoff) to compute at runtime so it&squot;s currently hardcoded&n; * here.&n; */
 DECL|macro|COUNTER_TRIES
 mdefine_line|#define COUNTER_TRIES 4
 multiline_comment|/*  &n; * Check if a ack sequence number is a valid syncookie. &n; */

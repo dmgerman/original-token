@@ -904,6 +904,15 @@ c_func
 id|is_subdir
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_AUTOFS_FS_MODULE
+DECL|variable|locks_remove_flock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|locks_remove_flock
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#if !defined(CONFIG_NFSD) &amp;&amp; defined(CONFIG_NFSD_MODULE)
 DECL|variable|do_nfsservctl
 id|EXPORT_SYMBOL

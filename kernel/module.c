@@ -1338,7 +1338,7 @@ id|d
 op_assign
 id|dep-&gt;dep
 suffix:semicolon
-multiline_comment|/* Make sure the indicated dependancies are really modules.  */
+multiline_comment|/* Make sure the indicated dependencies are really modules.  */
 r_if
 c_cond
 (paren
@@ -1352,7 +1352,7 @@ c_func
 (paren
 id|KERN_ERR
 l_string|&quot;init_module: self-referential &quot;
-l_string|&quot;dependancy in mod-&gt;deps.&bslash;n&quot;
+l_string|&quot;dependency in mod-&gt;deps.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -1389,7 +1389,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;init_module: found dependancy that is &quot;
+l_string|&quot;init_module: found dependency that is &quot;
 l_string|&quot;(no longer?) a module.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3598,7 +3598,7 @@ op_complement
 id|MOD_RUNNING
 suffix:semicolon
 )brace
-multiline_comment|/* Remove the module from the dependancy lists.  */
+multiline_comment|/* Remove the module from the dependency lists.  */
 r_for
 c_loop
 (paren

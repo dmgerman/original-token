@@ -727,6 +727,14 @@ id|page-&gt;offset
 op_assign
 id|entry
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|page-&gt;count
+)paren
+suffix:semicolon
+multiline_comment|/* Protect from shrink_mmap() */
 id|rw_swap_page
 c_func
 (paren
@@ -737,6 +745,13 @@ comma
 id|buffer
 comma
 l_int|1
+)paren
+suffix:semicolon
+id|atomic_dec
+c_func
+(paren
+op_amp
+id|page-&gt;count
 )paren
 suffix:semicolon
 id|page-&gt;inode

@@ -190,7 +190,7 @@ DECL|member|status
 id|__u8
 id|status
 suffix:semicolon
-multiline_comment|/* Status&n;&t;&t;&t;&t;&t; * - device dependant for now */
+multiline_comment|/* Status&n;&t;&t;&t;&t;&t; * - device dependent for now */
 DECL|member|qual
 r_struct
 id|iw_quality

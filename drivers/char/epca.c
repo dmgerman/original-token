@@ -218,7 +218,7 @@ id|MAXCARDS
 )braket
 suffix:semicolon
 multiline_comment|/* ---------------------- Begin function prototypes --------------------- */
-multiline_comment|/* ----------------------------------------------------------------------&n;&t;Begin generic memory functions.  These functions will be alias&n;&t;(point at) more specific functions dependant on the board being&n;&t;configured.&n;----------------------------------------------------------------------- */
+multiline_comment|/* ----------------------------------------------------------------------&n;&t;Begin generic memory functions.  These functions will be alias&n;&t;(point at) more specific functions dependent on the board being&n;&t;configured.&n;----------------------------------------------------------------------- */
 macro_line|#ifdef MODULE
 r_int
 id|init_module
@@ -1979,7 +1979,7 @@ l_string|&quot;Memory on&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* ----------------------------------------------------------------------&n;&t;Not all of the cards need specific memory windowing routines.  Some&n;&t;cards (Such as PCI) needs no windowing routines at all.  We provide&n;&t;these do nothing routines so that the same code base can be used.&n;&t;The driver will ALWAYS call a windowing routine if it thinks it needs&n;&t;to; regardless of the card.  However, dependant on the card the routine&n;&t;may or may not do anything.&n;---------------------------------------------------------------------------*/
+multiline_comment|/* ----------------------------------------------------------------------&n;&t;Not all of the cards need specific memory windowing routines.  Some&n;&t;cards (Such as PCI) needs no windowing routines at all.  We provide&n;&t;these do nothing routines so that the same code base can be used.&n;&t;The driver will ALWAYS call a windowing routine if it thinks it needs&n;&t;to; regardless of the card.  However, dependent on the card the routine&n;&t;may or may not do anything.&n;---------------------------------------------------------------------------*/
 DECL|function|dummy_memwinon
 r_static
 r_inline
@@ -13117,7 +13117,7 @@ comma
 id|base_addr5
 )paren
 suffix:semicolon
-multiline_comment|/* ------------------------------------------------------------------------&n;&t;&t;&t; NOTE - The code below mask out either the 2 or 4 bits dependant on the&n;&t;&t;&t;&t;space being addressed. (base_addr value reflecting io space, have their&n;&t;&t;&t;&t;first 2 bits mask out, while base_addr value reflecting mem space, have&n;&t;&t;&t;&t;their first 4 bits mask out.)  These bits are flag bits and should always&n;&t;&t;&t;&t;be 0 when used as an address.&n;&t;---------------------------------------------------------------------------- */
+multiline_comment|/* ------------------------------------------------------------------------&n;&t;&t;&t; NOTE - The code below mask out either the 2 or 4 bits dependent on the&n;&t;&t;&t;&t;space being addressed. (base_addr value reflecting io space, have their&n;&t;&t;&t;&t;first 2 bits mask out, while base_addr value reflecting mem space, have&n;&t;&t;&t;&t;their first 4 bits mask out.)  These bits are flag bits and should always&n;&t;&t;&t;&t;be 0 when used as an address.&n;&t;---------------------------------------------------------------------------- */
 r_if
 c_cond
 (paren

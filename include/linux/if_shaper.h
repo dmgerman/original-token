@@ -4,7 +4,7 @@ mdefine_line|#define __LINUX_SHAPER_H
 macro_line|#ifdef __KERNEL__
 DECL|macro|SHAPER_QLEN
 mdefine_line|#define SHAPER_QLEN&t;10
-multiline_comment|/*&n; *&t;This is a bit speed dependant (read it shouldnt be a constant!)&n; *&n; *&t;5 is about right for 28.8 upwards. Below that double for every&n; *&t;halving of speed or so. - ie about 20 for 9600 baud.&n; */
+multiline_comment|/*&n; *&t;This is a bit speed dependent (read it shouldn&squot;t be a constant!)&n; *&n; *&t;5 is about right for 28.8 upwards. Below that double for every&n; *&t;halving of speed or so. - ie about 20 for 9600 baud.&n; */
 DECL|macro|SHAPER_LATENCY
 mdefine_line|#define SHAPER_LATENCY&t;(5*HZ)
 DECL|macro|SHAPER_MAXSLIP

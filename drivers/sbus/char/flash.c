@@ -507,7 +507,7 @@ id|flash_read
 comma
 l_int|NULL
 comma
-multiline_comment|/* no write to the Flash, use mmap&n;&t;&t;&t; * and play flash dependant tricks.&n;&t;&t;&t; */
+multiline_comment|/* no write to the Flash, use mmap&n;&t;&t;&t; * and play flash dependent tricks.&n;&t;&t;&t; */
 l_int|NULL
 comma
 multiline_comment|/* readdir */

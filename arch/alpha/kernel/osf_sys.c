@@ -3737,7 +3737,7 @@ id|FPCR_DYN_MASK
 )paren
 suffix:semicolon
 id|fpcr
-op_assign
+op_or_assign
 id|ieee_swcr_to_fpcr
 c_func
 (paren

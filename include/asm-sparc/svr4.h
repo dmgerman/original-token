@@ -236,7 +236,7 @@ DECL|typedef|svr4_xrs_t
 )brace
 id|svr4_xrs_t
 suffix:semicolon
-multiline_comment|/* Machine dependant context */
+multiline_comment|/* Machine dependent context */
 r_typedef
 r_struct
 (brace

@@ -283,7 +283,7 @@ id|__GFP_WAIT
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; *&t;FIXME: We could do with an architecture dependant&n;&t; *&t;&squot;alignment mask&squot;.&n;&t; */
+multiline_comment|/*&n;&t; *&t;FIXME: We could do with an architecture dependent&n;&t; *&t;&squot;alignment mask&squot;.&n;&t; */
 multiline_comment|/* Allow for alignments. Make a multiple of 16 bytes */
 id|size
 op_assign

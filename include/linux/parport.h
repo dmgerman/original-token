@@ -2,6 +2,114 @@ multiline_comment|/* $Id: parport.h,v 1.6 1997/12/29 12:31:05 phil Exp $ */
 macro_line|#ifndef _PARPORT_H_
 DECL|macro|_PARPORT_H_
 mdefine_line|#define _PARPORT_H_
+multiline_comment|/* Start off with user-visible constants */
+multiline_comment|/* Maximum of 8 ports per machine */
+DECL|macro|PARPORT_MAX
+mdefine_line|#define PARPORT_MAX  8 
+multiline_comment|/* Magic numbers */
+DECL|macro|PARPORT_IRQ_NONE
+mdefine_line|#define PARPORT_IRQ_NONE  -1
+DECL|macro|PARPORT_DMA_NONE
+mdefine_line|#define PARPORT_DMA_NONE  -1
+DECL|macro|PARPORT_IRQ_AUTO
+mdefine_line|#define PARPORT_IRQ_AUTO  -2
+DECL|macro|PARPORT_DMA_AUTO
+mdefine_line|#define PARPORT_DMA_AUTO  -2
+DECL|macro|PARPORT_DISABLE
+mdefine_line|#define PARPORT_DISABLE   -2
+DECL|macro|PARPORT_CONTROL_STROBE
+mdefine_line|#define PARPORT_CONTROL_STROBE    0x1
+DECL|macro|PARPORT_CONTROL_AUTOFD
+mdefine_line|#define PARPORT_CONTROL_AUTOFD    0x2
+DECL|macro|PARPORT_CONTROL_INIT
+mdefine_line|#define PARPORT_CONTROL_INIT      0x4
+DECL|macro|PARPORT_CONTROL_SELECT
+mdefine_line|#define PARPORT_CONTROL_SELECT    0x8
+DECL|macro|PARPORT_CONTROL_INTEN
+mdefine_line|#define PARPORT_CONTROL_INTEN     0x10
+DECL|macro|PARPORT_CONTROL_DIRECTION
+mdefine_line|#define PARPORT_CONTROL_DIRECTION 0x20
+DECL|macro|PARPORT_STATUS_ERROR
+mdefine_line|#define PARPORT_STATUS_ERROR      0x8
+DECL|macro|PARPORT_STATUS_SELECT
+mdefine_line|#define PARPORT_STATUS_SELECT     0x10
+DECL|macro|PARPORT_STATUS_PAPEROUT
+mdefine_line|#define PARPORT_STATUS_PAPEROUT   0x20
+DECL|macro|PARPORT_STATUS_ACK
+mdefine_line|#define PARPORT_STATUS_ACK        0x40
+DECL|macro|PARPORT_STATUS_BUSY
+mdefine_line|#define PARPORT_STATUS_BUSY       0x80
+multiline_comment|/* Type classes for Plug-and-Play probe.  */
+r_typedef
+r_enum
+(brace
+DECL|enumerator|PARPORT_CLASS_LEGACY
+id|PARPORT_CLASS_LEGACY
+op_assign
+l_int|0
+comma
+multiline_comment|/* Non-IEEE1284 device */
+DECL|enumerator|PARPORT_CLASS_PRINTER
+id|PARPORT_CLASS_PRINTER
+comma
+DECL|enumerator|PARPORT_CLASS_MODEM
+id|PARPORT_CLASS_MODEM
+comma
+DECL|enumerator|PARPORT_CLASS_NET
+id|PARPORT_CLASS_NET
+comma
+DECL|enumerator|PARPORT_CLASS_HDC
+id|PARPORT_CLASS_HDC
+comma
+multiline_comment|/* Hard disk controller */
+DECL|enumerator|PARPORT_CLASS_PCMCIA
+id|PARPORT_CLASS_PCMCIA
+comma
+DECL|enumerator|PARPORT_CLASS_MEDIA
+id|PARPORT_CLASS_MEDIA
+comma
+multiline_comment|/* Multimedia device */
+DECL|enumerator|PARPORT_CLASS_FDC
+id|PARPORT_CLASS_FDC
+comma
+multiline_comment|/* Floppy disk controller */
+DECL|enumerator|PARPORT_CLASS_PORTS
+id|PARPORT_CLASS_PORTS
+comma
+DECL|enumerator|PARPORT_CLASS_SCANNER
+id|PARPORT_CLASS_SCANNER
+comma
+DECL|enumerator|PARPORT_CLASS_DIGCAM
+id|PARPORT_CLASS_DIGCAM
+comma
+DECL|enumerator|PARPORT_CLASS_OTHER
+id|PARPORT_CLASS_OTHER
+comma
+multiline_comment|/* Anything else */
+DECL|enumerator|PARPORT_CLASS_UNSPEC
+id|PARPORT_CLASS_UNSPEC
+multiline_comment|/* No CLS field in ID */
+DECL|typedef|parport_device_class
+)brace
+id|parport_device_class
+suffix:semicolon
+multiline_comment|/* The &quot;modes&quot; entry in parport is a bit field representing the following&n; * modes.&n; * Note that PARPORT_MODE_PCECPEPP is for the SMC EPP+ECP mode which is NOT&n; * 100% compatible with EPP.&n; */
+DECL|macro|PARPORT_MODE_PCSPP
+mdefine_line|#define PARPORT_MODE_PCSPP&t;        0x0001
+DECL|macro|PARPORT_MODE_PCPS2
+mdefine_line|#define PARPORT_MODE_PCPS2&t;&t;0x0002
+DECL|macro|PARPORT_MODE_PCEPP
+mdefine_line|#define PARPORT_MODE_PCEPP&t;&t;0x0004
+DECL|macro|PARPORT_MODE_PCECP
+mdefine_line|#define PARPORT_MODE_PCECP&t;&t;0x0008
+DECL|macro|PARPORT_MODE_PCECPEPP
+mdefine_line|#define PARPORT_MODE_PCECPEPP&t;&t;0x0010
+DECL|macro|PARPORT_MODE_PCECR
+mdefine_line|#define PARPORT_MODE_PCECR&t;&t;0x0020  /* ECR Register Exists */
+DECL|macro|PARPORT_MODE_PCECPPS2
+mdefine_line|#define PARPORT_MODE_PCECPPS2&t;&t;0x0040
+multiline_comment|/* The rest is for the kernel only */
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
@@ -9,20 +117,6 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|PARPORT_NEED_GENERIC_OPS
 mdefine_line|#define PARPORT_NEED_GENERIC_OPS
-multiline_comment|/* Maximum of 8 ports per machine */
-DECL|macro|PARPORT_MAX
-mdefine_line|#define PARPORT_MAX  8 
-multiline_comment|/* Magic numbers */
-DECL|macro|PARPORT_IRQ_NONE
-mdefine_line|#define PARPORT_IRQ_NONE  -2
-DECL|macro|PARPORT_DMA_NONE
-mdefine_line|#define PARPORT_DMA_NONE  -2
-DECL|macro|PARPORT_IRQ_AUTO
-mdefine_line|#define PARPORT_IRQ_AUTO  -1
-DECL|macro|PARPORT_DMA_AUTO
-mdefine_line|#define PARPORT_DMA_AUTO  -1
-DECL|macro|PARPORT_DISABLE
-mdefine_line|#define PARPORT_DISABLE   -2
 multiline_comment|/* Define this later. */
 r_struct
 id|parport
@@ -83,12 +177,12 @@ id|parport
 op_star
 comma
 r_int
-r_int
+r_char
 )paren
 suffix:semicolon
 DECL|member|read_data
 r_int
-r_int
+r_char
 (paren
 op_star
 id|read_data
@@ -111,12 +205,12 @@ id|parport
 op_star
 comma
 r_int
-r_int
+r_char
 )paren
 suffix:semicolon
 DECL|member|read_control
 r_int
-r_int
+r_char
 (paren
 op_star
 id|read_control
@@ -129,7 +223,7 @@ op_star
 suffix:semicolon
 DECL|member|frob_control
 r_int
-r_int
+r_char
 (paren
 op_star
 id|frob_control
@@ -140,11 +234,11 @@ id|parport
 op_star
 comma
 r_int
-r_int
+r_char
 id|mask
 comma
 r_int
-r_int
+r_char
 id|val
 )paren
 suffix:semicolon
@@ -160,12 +254,12 @@ id|parport
 op_star
 comma
 r_int
-r_int
+r_char
 )paren
 suffix:semicolon
 DECL|member|read_econtrol
 r_int
-r_int
+r_char
 (paren
 op_star
 id|read_econtrol
@@ -178,7 +272,7 @@ op_star
 suffix:semicolon
 DECL|member|frob_econtrol
 r_int
-r_int
+r_char
 (paren
 op_star
 id|frob_econtrol
@@ -189,11 +283,11 @@ id|parport
 op_star
 comma
 r_int
-r_int
+r_char
 id|mask
 comma
 r_int
-r_int
+r_char
 id|val
 )paren
 suffix:semicolon
@@ -209,12 +303,12 @@ id|parport
 op_star
 comma
 r_int
-r_int
+r_char
 )paren
 suffix:semicolon
 DECL|member|read_status
 r_int
-r_int
+r_char
 (paren
 op_star
 id|read_status
@@ -237,12 +331,12 @@ id|parport
 op_star
 comma
 r_int
-r_int
+r_char
 )paren
 suffix:semicolon
 DECL|member|read_fifo
 r_int
-r_int
+r_char
 (paren
 op_star
 id|read_fifo
@@ -293,7 +387,6 @@ op_star
 suffix:semicolon
 DECL|member|epp_write_block
 r_int
-r_int
 (paren
 op_star
 id|epp_write_block
@@ -307,11 +400,9 @@ r_void
 op_star
 comma
 r_int
-r_int
 )paren
 suffix:semicolon
 DECL|member|epp_read_block
-r_int
 r_int
 (paren
 op_star
@@ -326,11 +417,9 @@ r_void
 op_star
 comma
 r_int
-r_int
 )paren
 suffix:semicolon
 DECL|member|ecp_write_block
-r_int
 r_int
 (paren
 op_star
@@ -345,7 +434,6 @@ r_void
 op_star
 comma
 r_int
-r_int
 comma
 r_void
 (paren
@@ -361,7 +449,6 @@ r_void
 op_star
 comma
 r_int
-r_int
 )paren
 comma
 r_void
@@ -369,7 +456,6 @@ op_star
 )paren
 suffix:semicolon
 DECL|member|ecp_read_block
-r_int
 r_int
 (paren
 op_star
@@ -384,7 +470,6 @@ r_void
 op_star
 comma
 r_int
-r_int
 comma
 r_void
 (paren
@@ -399,7 +484,6 @@ comma
 r_void
 op_star
 comma
-r_int
 r_int
 )paren
 comma
@@ -496,82 +580,6 @@ r_void
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
-DECL|macro|PARPORT_CONTROL_STROBE
-mdefine_line|#define PARPORT_CONTROL_STROBE    0x1
-DECL|macro|PARPORT_CONTROL_AUTOFD
-mdefine_line|#define PARPORT_CONTROL_AUTOFD    0x2
-DECL|macro|PARPORT_CONTROL_INIT
-mdefine_line|#define PARPORT_CONTROL_INIT      0x4
-DECL|macro|PARPORT_CONTROL_SELECT
-mdefine_line|#define PARPORT_CONTROL_SELECT    0x8
-DECL|macro|PARPORT_CONTROL_INTEN
-mdefine_line|#define PARPORT_CONTROL_INTEN     0x10
-DECL|macro|PARPORT_CONTROL_DIRECTION
-mdefine_line|#define PARPORT_CONTROL_DIRECTION 0x20
-DECL|macro|PARPORT_STATUS_ERROR
-mdefine_line|#define PARPORT_STATUS_ERROR      0x8
-DECL|macro|PARPORT_STATUS_SELECT
-mdefine_line|#define PARPORT_STATUS_SELECT     0x10
-DECL|macro|PARPORT_STATUS_PAPEROUT
-mdefine_line|#define PARPORT_STATUS_PAPEROUT   0x20
-DECL|macro|PARPORT_STATUS_ACK
-mdefine_line|#define PARPORT_STATUS_ACK        0x40
-DECL|macro|PARPORT_STATUS_BUSY
-mdefine_line|#define PARPORT_STATUS_BUSY       0x80
-multiline_comment|/* Type classes for Plug-and-Play probe.  */
-r_typedef
-r_enum
-(brace
-DECL|enumerator|PARPORT_CLASS_LEGACY
-id|PARPORT_CLASS_LEGACY
-op_assign
-l_int|0
-comma
-multiline_comment|/* Non-IEEE1284 device */
-DECL|enumerator|PARPORT_CLASS_PRINTER
-id|PARPORT_CLASS_PRINTER
-comma
-DECL|enumerator|PARPORT_CLASS_MODEM
-id|PARPORT_CLASS_MODEM
-comma
-DECL|enumerator|PARPORT_CLASS_NET
-id|PARPORT_CLASS_NET
-comma
-DECL|enumerator|PARPORT_CLASS_HDC
-id|PARPORT_CLASS_HDC
-comma
-multiline_comment|/* Hard disk controller */
-DECL|enumerator|PARPORT_CLASS_PCMCIA
-id|PARPORT_CLASS_PCMCIA
-comma
-DECL|enumerator|PARPORT_CLASS_MEDIA
-id|PARPORT_CLASS_MEDIA
-comma
-multiline_comment|/* Multimedia device */
-DECL|enumerator|PARPORT_CLASS_FDC
-id|PARPORT_CLASS_FDC
-comma
-multiline_comment|/* Floppy disk controller */
-DECL|enumerator|PARPORT_CLASS_PORTS
-id|PARPORT_CLASS_PORTS
-comma
-DECL|enumerator|PARPORT_CLASS_SCANNER
-id|PARPORT_CLASS_SCANNER
-comma
-DECL|enumerator|PARPORT_CLASS_DIGCAM
-id|PARPORT_CLASS_DIGCAM
-comma
-DECL|enumerator|PARPORT_CLASS_OTHER
-id|PARPORT_CLASS_OTHER
-comma
-multiline_comment|/* Anything else */
-DECL|enumerator|PARPORT_CLASS_UNSPEC
-id|PARPORT_CLASS_UNSPEC
-multiline_comment|/* No CLS field in ID */
-DECL|typedef|parport_device_class
-)brace
-id|parport_device_class
 suffix:semicolon
 DECL|struct|parport_device_info
 r_struct
@@ -868,6 +876,11 @@ op_star
 id|private_data
 suffix:semicolon
 multiline_comment|/* for lowlevel driver */
+DECL|member|number
+r_int
+id|number
+suffix:semicolon
+multiline_comment|/* port index - the `n&squot; in `parportn&squot; */
 DECL|member|lock
 id|spinlock_t
 id|lock
@@ -1042,6 +1055,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* parport_yield relinquishes the port if it would be helpful to other&n; * drivers.  The return value is the same as for parport_claim.&n; */
 DECL|function|parport_yield
 r_extern
 id|__inline__
@@ -1054,10 +1068,6 @@ r_struct
 id|pardevice
 op_star
 id|dev
-comma
-r_int
-r_int
-id|block
 )paren
 (brace
 r_int
@@ -1087,7 +1097,7 @@ id|dev-&gt;timeslice
 )paren
 )paren
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 id|parport_release
 c_func
@@ -1096,17 +1106,6 @@ id|dev
 )paren
 suffix:semicolon
 r_return
-(paren
-id|block
-)paren
-ques
-c_cond
-id|parport_claim_or_block
-c_func
-(paren
-id|dev
-)paren
-suffix:colon
 id|parport_claim
 c_func
 (paren
@@ -1114,21 +1113,64 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* The &quot;modes&quot; entry in parport is a bit field representing the following&n; * modes.&n; * Note that LP_ECPEPP is for the SMC EPP+ECP mode which is NOT&n; * 100% compatible with EPP.&n; */
-DECL|macro|PARPORT_MODE_PCSPP
-mdefine_line|#define PARPORT_MODE_PCSPP&t;        0x0001
-DECL|macro|PARPORT_MODE_PCPS2
-mdefine_line|#define PARPORT_MODE_PCPS2&t;&t;0x0002
-DECL|macro|PARPORT_MODE_PCEPP
-mdefine_line|#define PARPORT_MODE_PCEPP&t;&t;0x0004
-DECL|macro|PARPORT_MODE_PCECP
-mdefine_line|#define PARPORT_MODE_PCECP&t;&t;0x0008
-DECL|macro|PARPORT_MODE_PCECPEPP
-mdefine_line|#define PARPORT_MODE_PCECPEPP&t;&t;0x0010
-DECL|macro|PARPORT_MODE_PCECR
-mdefine_line|#define PARPORT_MODE_PCECR&t;&t;0x0020  /* ECR Register Exists */
-DECL|macro|PARPORT_MODE_PCECPPS2
-mdefine_line|#define PARPORT_MODE_PCECPPS2&t;&t;0x0040
+multiline_comment|/* parport_yield_blocking is the same but uses parport_claim_or_block&n; * instead of parport_claim.&n; */
+DECL|function|parport_yield_blocking
+r_extern
+id|__inline__
+r_int
+r_int
+id|parport_yield_blocking
+c_func
+(paren
+r_struct
+id|pardevice
+op_star
+id|dev
+)paren
+(brace
+r_int
+r_int
+r_int
+id|timeslip
+op_assign
+(paren
+id|jiffies
+op_minus
+id|dev-&gt;time
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|dev-&gt;port-&gt;waithead
+op_eq
+l_int|NULL
+)paren
+op_logical_or
+(paren
+id|timeslip
+OL
+id|dev-&gt;timeslice
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|parport_release
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_return
+id|parport_claim_or_block
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Flags used to identify what a device does. */
 DECL|macro|PARPORT_DEV_TRAN
 mdefine_line|#define PARPORT_DEV_TRAN&t;        0x0000  /* We&squot;re transient. */
@@ -1331,5 +1373,6 @@ mdefine_line|#define parport_release_resources(p)       (p)-&gt;ops-&gt;release_
 DECL|macro|parport_claim_resources
 mdefine_line|#define parport_claim_resources(p)         (p)-&gt;ops-&gt;claim_resources(p)
 macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _PARPORT_H_ */
 eof

@@ -18,7 +18,7 @@ multiline_comment|/* ARC can&squot;t read from the data latch, so we must use a 
 DECL|variable|data_copy
 r_static
 r_int
-r_int
+r_char
 id|data_copy
 suffix:semicolon
 DECL|function|arc_write_data
@@ -33,7 +33,7 @@ op_star
 id|p
 comma
 r_int
-r_int
+r_char
 id|data
 )paren
 (brace
@@ -53,7 +53,7 @@ suffix:semicolon
 DECL|function|arc_read_data
 r_static
 r_int
-r_int
+r_char
 id|arc_read_data
 c_func
 (paren

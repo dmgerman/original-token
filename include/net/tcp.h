@@ -56,7 +56,7 @@ r_extern
 r_int
 id|sysctl_tcp_window_scaling
 suffix:semicolon
-multiline_comment|/* These are AF independant. */
+multiline_comment|/* These are AF independent. */
 DECL|function|tcp_bhashfn
 r_static
 id|__inline__

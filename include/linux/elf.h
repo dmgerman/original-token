@@ -234,7 +234,7 @@ mdefine_line|#define AT_EGID   14&t;/* effective gid */
 DECL|macro|AT_PLATFORM
 mdefine_line|#define AT_PLATFORM 15  /* string identifying cpu for optimizations */
 DECL|macro|AT_HWCAP
-mdefine_line|#define AT_HWCAP  16    /* arch dependant hints at cpu capabilities */
+mdefine_line|#define AT_HWCAP  16    /* arch dependent hints at cpu capabilities */
 DECL|struct|dynamic
 r_typedef
 r_struct

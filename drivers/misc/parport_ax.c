@@ -67,7 +67,7 @@ op_star
 id|p
 comma
 r_int
-r_int
+r_char
 id|d
 )paren
 (brace
@@ -83,7 +83,7 @@ id|EPPREG
 suffix:semicolon
 )brace
 r_int
-r_int
+r_char
 DECL|function|parport_ax_read_epp
 id|parport_ax_read_epp
 c_func
@@ -95,10 +95,6 @@ id|p
 )paren
 (brace
 r_return
-(paren
-r_int
-r_int
-)paren
 id|inb
 c_func
 (paren
@@ -109,7 +105,7 @@ id|EPPREG
 suffix:semicolon
 )brace
 r_int
-r_int
+r_char
 DECL|function|parport_ax_read_configb
 id|parport_ax_read_configb
 c_func
@@ -121,10 +117,6 @@ id|p
 )paren
 (brace
 r_return
-(paren
-r_int
-r_int
-)paren
 id|inb
 c_func
 (paren
@@ -145,7 +137,7 @@ op_star
 id|p
 comma
 r_int
-r_int
+r_char
 id|d
 )paren
 (brace
@@ -161,7 +153,7 @@ id|DATA
 suffix:semicolon
 )brace
 r_int
-r_int
+r_char
 DECL|function|parport_ax_read_data
 id|parport_ax_read_data
 c_func
@@ -173,10 +165,6 @@ id|p
 )paren
 (brace
 r_return
-(paren
-r_int
-r_int
-)paren
 id|inb
 c_func
 (paren
@@ -197,7 +185,7 @@ op_star
 id|p
 comma
 r_int
-r_int
+r_char
 id|d
 )paren
 (brace
@@ -213,7 +201,7 @@ id|CONTROL
 suffix:semicolon
 )brace
 r_int
-r_int
+r_char
 DECL|function|parport_ax_read_control
 id|parport_ax_read_control
 c_func
@@ -225,10 +213,6 @@ id|p
 )paren
 (brace
 r_return
-(paren
-r_int
-r_int
-)paren
 id|inb
 c_func
 (paren
@@ -239,7 +223,7 @@ id|CONTROL
 suffix:semicolon
 )brace
 r_int
-r_int
+r_char
 DECL|function|parport_ax_frob_control
 id|parport_ax_frob_control
 c_func
@@ -250,22 +234,18 @@ op_star
 id|p
 comma
 r_int
-r_int
+r_char
 id|mask
 comma
 r_int
-r_int
+r_char
 id|val
 )paren
 (brace
 r_int
-r_int
+r_char
 id|old
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|inb
 c_func
 (paren
@@ -308,7 +288,7 @@ op_star
 id|p
 comma
 r_int
-r_int
+r_char
 id|d
 )paren
 (brace
@@ -324,7 +304,7 @@ id|STATUS
 suffix:semicolon
 )brace
 r_int
-r_int
+r_char
 DECL|function|parport_ax_read_status
 id|parport_ax_read_status
 c_func
@@ -336,10 +316,6 @@ id|p
 )paren
 (brace
 r_return
-(paren
-r_int
-r_int
-)paren
 id|inb
 c_func
 (paren
@@ -360,7 +336,7 @@ op_star
 id|p
 comma
 r_int
-r_int
+r_char
 id|d
 )paren
 (brace
@@ -376,7 +352,7 @@ id|ECONTROL
 suffix:semicolon
 )brace
 r_int
-r_int
+r_char
 DECL|function|parport_ax_read_econtrol
 id|parport_ax_read_econtrol
 c_func
@@ -388,10 +364,6 @@ id|p
 )paren
 (brace
 r_return
-(paren
-r_int
-r_int
-)paren
 id|inb
 c_func
 (paren
@@ -402,7 +374,7 @@ id|ECONTROL
 suffix:semicolon
 )brace
 r_int
-r_int
+r_char
 DECL|function|parport_ax_frob_econtrol
 id|parport_ax_frob_econtrol
 c_func
@@ -413,22 +385,18 @@ op_star
 id|p
 comma
 r_int
-r_int
+r_char
 id|mask
 comma
 r_int
-r_int
+r_char
 id|val
 )paren
 (brace
 r_int
-r_int
+r_char
 id|old
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|inb
 c_func
 (paren
@@ -498,7 +466,7 @@ op_star
 id|p
 comma
 r_int
-r_int
+r_char
 id|v
 )paren
 (brace
@@ -514,7 +482,7 @@ id|DFIFO
 suffix:semicolon
 )brace
 r_int
-r_int
+r_char
 DECL|function|parport_ax_read_fifo
 id|parport_ax_read_fifo
 c_func
@@ -879,7 +847,6 @@ id|s-&gt;u.pc.ecr
 suffix:semicolon
 )brace
 r_int
-r_int
 DECL|function|parport_ax_epp_read_block
 id|parport_ax_epp_read_block
 c_func
@@ -894,7 +861,6 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|length
 )paren
 (brace
@@ -903,7 +869,6 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
-r_int
 r_int
 DECL|function|parport_ax_epp_write_block
 id|parport_ax_epp_write_block
@@ -919,7 +884,6 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|length
 )paren
 (brace
@@ -928,7 +892,6 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
-r_int
 r_int
 DECL|function|parport_ax_ecp_read_block
 id|parport_ax_ecp_read_block
@@ -944,7 +907,6 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|length
 comma
 r_void
@@ -961,7 +923,6 @@ r_void
 op_star
 comma
 r_int
-r_int
 )paren
 comma
 r_void
@@ -974,7 +935,6 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
-r_int
 r_int
 DECL|function|parport_ax_ecp_write_block
 id|parport_ax_ecp_write_block
@@ -990,7 +950,6 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|length
 comma
 r_void
@@ -1006,7 +965,6 @@ comma
 r_void
 op_star
 comma
-r_int
 r_int
 )paren
 comma
@@ -1139,7 +1097,9 @@ id|pb
 r_int
 r_int
 id|r
-comma
+suffix:semicolon
+r_int
+r_char
 id|octr
 op_assign
 id|pb-&gt;ops
@@ -1337,7 +1297,9 @@ id|pb
 (brace
 r_int
 id|i
-comma
+suffix:semicolon
+r_int
+r_char
 id|oecr
 op_assign
 id|pb-&gt;ops
@@ -1450,7 +1412,9 @@ r_int
 id|ok
 op_assign
 l_int|0
-comma
+suffix:semicolon
+r_int
+r_char
 id|octr
 op_assign
 id|pb-&gt;ops
@@ -1560,7 +1524,9 @@ id|pb
 (brace
 r_int
 id|mode
-comma
+suffix:semicolon
+r_int
+r_char
 id|oecr
 op_assign
 id|pb-&gt;ops

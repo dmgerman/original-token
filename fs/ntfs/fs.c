@@ -3242,12 +3242,25 @@ op_star
 id|ino
 )paren
 (brace
+)brace
+DECL|function|_ntfs_clear_inode
+r_static
+r_void
+id|_ntfs_clear_inode
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|ino
+)paren
+(brace
 id|ntfs_debug
 c_func
 (paren
 id|DEBUG_OTHER
 comma
-l_string|&quot;ntfs_put_inode %lx&bslash;n&quot;
+l_string|&quot;ntfs_clear_inode %lx&bslash;n&quot;
 comma
 id|ino-&gt;i_ino
 )paren
@@ -3298,11 +3311,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-id|clear_inode
-c_func
-(paren
-id|ino
-)paren
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Called when umounting a filesystem by do_umount() in fs/super.c */
@@ -3614,6 +3623,9 @@ comma
 id|ntfs_remount_fs
 comma
 multiline_comment|/* remount */
+id|_ntfs_clear_inode
+comma
+multiline_comment|/* clear_inode */
 )brace
 suffix:semicolon
 multiline_comment|/* Called to mount a filesystem by read_super() in fs/super.c&n; * Return a super block, the main structure of a filesystem&n; *&n; * NOTE : Don&squot;t store a pointer to an option, as the page containing the&n; * options is freed after ntfs_read_super() returns.&n; *&n; * NOTE : A context switch can happen in kernel code only if the code blocks&n; * (= calls schedule() in kernel/sched.c).&n; */

@@ -8148,20 +8148,25 @@ id|kmem_start
 suffix:semicolon
 )brace
 DECL|variable|dev_tty_driver
-DECL|variable|dev_console_driver
+DECL|variable|dev_syscons_driver
+DECL|variable|dev_ptmx_driver
 r_static
 r_struct
 id|tty_driver
 id|dev_tty_driver
 comma
-id|dev_console_driver
-comma
-DECL|variable|dev_syscons_driver
-DECL|variable|dev_ptmx_driver
 id|dev_syscons_driver
 comma
 id|dev_ptmx_driver
 suffix:semicolon
+macro_line|#ifdef CONFIG_VT
+DECL|variable|dev_console_driver
+r_static
+r_struct
+id|tty_driver
+id|dev_console_driver
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Ok, now we can initialize the rest of the tty devices and can count&n; * on memory allocations, interrupts etc..&n; */
 DECL|function|__initfunc
 id|__initfunc

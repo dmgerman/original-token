@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*-&n; * APM BIOS driver for Linux&n; * Copyright 1994, 1995, 1996 Stephen Rothwell&n; *                           (Stephen.Rothwell@canb.auug.org.au)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * $Id: apm_bios.c,v 0.22 1995/03/09 14:12:02 sfr Exp $&n; *&n; * October 1995, Rik Faith (faith@cs.unc.edu):&n; *    Minor enhancements and updates (to the patch set) for 1.3.x&n; *    Documentation&n; * January 1996, Rik Faith (faith@cs.unc.edu):&n; *    Make /proc/apm easy to format (bump driver version)&n; * March 1996, Rik Faith (faith@cs.unc.edu):&n; *    Prohibit APM BIOS calls unless apm_enabled.&n; *    (Thanks to Ulrich Windl &lt;Ulrich.Windl@rz.uni-regensburg.de&gt;)&n; * April 1996, Stephen Rothwell (Stephen.Rothwell@canb.auug.org.au)&n; *    Version 1.0 and 1.1&n; * May 1996, Version 1.2&n; * Feb 1998, Version 1.3&n; *&n; * History:&n; *    0.6b: first version in official kernel, Linux 1.3.46&n; *    0.7: changed /proc/apm format, Linux 1.3.58&n; *    0.8: fixed gcc 2.7.[12] compilation problems, Linux 1.3.59&n; *    0.9: only call bios if bios is present, Linux 1.3.72&n; *    1.0: use fixed device number, consolidate /proc/apm into this file,&n; *         Linux 1.3.85&n; *    1.1: support user-space standby and suspend, power off after system&n; *         halted, Linux 1.3.98&n; *    1.2: When resetting RTC after resume, take care so that the the time&n; *         is only incorrect by 30-60mS (vs. 1S previously) (Gabor J. Toth&n; *         &lt;jtoth@princeton.edu&gt;); improve interaction between&n; *         screen-blanking and gpm (Stephen Rothwell); Linux 1.99.4&n; *    1.2a:Simple change to stop mysterious bug reports with SMP also added&n; *&t;   levels to the printk calls. APM is not defined for SMP machines.&n; *         The new replacment for it is, but Linux doesn&squot;t yet support this.&n; *         Alan Cox Linux 2.1.55&n; *    1.3: Set up a valid data descriptor 0x40 for buggy BIOS&squot;s&n; *&n; * Reference:&n; *&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.1, September 1993.&n; *   Intel Order Number 241704-001.  Microsoft Part Number 781-110-X01.&n; *&n; * [This document is available free from Intel by calling 800.628.8686 (fax&n; * 916.356.6100) or 800.548.4725; or via anonymous ftp from&n; * ftp://ftp.intel.com/pub/IAL/software_specs/apmv11.doc.  It is also&n; * available from Microsoft by calling 206.882.8080.]&n; *&n; */
+multiline_comment|/* -*- linux-c -*-&n; * APM BIOS driver for Linux&n; * Copyright 1994, 1995, 1996 Stephen Rothwell&n; *                           (Stephen.Rothwell@canb.auug.org.au)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * $Id: apm_bios.c,v 0.22 1995/03/09 14:12:02 sfr Exp $&n; *&n; * October 1995, Rik Faith (faith@cs.unc.edu):&n; *    Minor enhancements and updates (to the patch set) for 1.3.x&n; *    Documentation&n; * January 1996, Rik Faith (faith@cs.unc.edu):&n; *    Make /proc/apm easy to format (bump driver version)&n; * March 1996, Rik Faith (faith@cs.unc.edu):&n; *    Prohibit APM BIOS calls unless apm_enabled.&n; *    (Thanks to Ulrich Windl &lt;Ulrich.Windl@rz.uni-regensburg.de&gt;)&n; * April 1996, Stephen Rothwell (Stephen.Rothwell@canb.auug.org.au)&n; *    Version 1.0 and 1.1&n; * May 1996, Version 1.2&n; * Feb 1998, Version 1.3&n; * Feb 1998, Version 1.4&n; *&n; * History:&n; *    0.6b: first version in official kernel, Linux 1.3.46&n; *    0.7: changed /proc/apm format, Linux 1.3.58&n; *    0.8: fixed gcc 2.7.[12] compilation problems, Linux 1.3.59&n; *    0.9: only call bios if bios is present, Linux 1.3.72&n; *    1.0: use fixed device number, consolidate /proc/apm into this file,&n; *         Linux 1.3.85&n; *    1.1: support user-space standby and suspend, power off after system&n; *         halted, Linux 1.3.98&n; *    1.2: When resetting RTC after resume, take care so that the the time&n; *         is only incorrect by 30-60mS (vs. 1S previously) (Gabor J. Toth&n; *         &lt;jtoth@princeton.edu&gt;); improve interaction between&n; *         screen-blanking and gpm (Stephen Rothwell); Linux 1.99.4&n; *    1.2a:Simple change to stop mysterious bug reports with SMP also added&n; *&t;   levels to the printk calls. APM is not defined for SMP machines.&n; *         The new replacment for it is, but Linux doesn&squot;t yet support this.&n; *         Alan Cox Linux 2.1.55&n; *    1.3: Set up a valid data descriptor 0x40 for buggy BIOS&squot;s&n; *    1.4: Upgraded to support APM 1.2. Integrated ThinkPad suspend patch by &n; *         Dean Gaudet &lt;dgaudet@arctic.org&gt;.&n; *         C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt; Linux 2.1.87&n; *&n; * APM 1.1 Reference:&n; *&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.1, September 1993.&n; *   Intel Order Number 241704-001.  Microsoft Part Number 781-110-X01.&n; *&n; * [This document is available free from Intel by calling 800.628.8686 (fax&n; * 916.356.6100) or 800.548.4725; or via anonymous ftp from&n; * ftp://ftp.intel.com/pub/IAL/software_specs/apmv11.doc.  It is also&n; * available from Microsoft by calling 206.882.8080.]&n; *&n; * APM 1.2 Reference:&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.2, February 1996.&n; *&n; * [This document is available from Intel at:&n; *    http://www.intel.com/IAL/powermgm&n; *  or Microsoft at&n; *    http://www.microsoft.com/windows/thirdparty/hardware/pcfuture.htm&n; * ]&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -43,7 +43,7 @@ suffix:semicolon
 multiline_comment|/*&n; * The apm_bios device is one of the misc char devices.&n; * This is its minor number.&n; */
 DECL|macro|APM_MINOR_DEV
 mdefine_line|#define&t;APM_MINOR_DEV&t;134
-multiline_comment|/* Configurable options:&n; *&n; * CONFIG_APM_IGNORE_USER_SUSPEND: define to ignore USER SUSPEND requests.&n; * This is necessary on the NEC Versa M series, which generates these when&n; * resuming from SYSTEM SUSPEND.  However, enabling this on other laptops&n; * will cause the laptop to generate a CRITICAL SUSPEND when an appropriate&n; * USER SUSPEND is ignored -- this may prevent the APM driver from updating&n; * the system time on a RESUME.&n; *&n; * CONFIG_APM_DO_ENABLE: enable APM features at boot time.  From page 36 of&n; * the specification: &quot;When disabled, the APM BIOS does not automatically&n; * power manage devices, enter the Standby State, enter the Suspend State,&n; * or take power saving steps in response to CPU Idle calls.&quot;  This driver&n; * will make CPU Idle calls when Linux is idle (unless this feature is&n; * turned off -- see below).  This should always save battery power, but&n; * more complicated APM features will be dependent on your BIOS&n; * implementation.  You may need to turn this option off if your computer&n; * hangs at boot time when using APM support, or if it beeps continuously&n; * instead of suspending.  Turn this off if you have a NEC UltraLite Versa&n; * 33/C or a Toshiba T400CDT.  This is off by default since most machines&n; * do fine without this feature.&n; *&n; * CONFIG_APM_CPU_IDLE: enable calls to APM CPU Idle/CPU Busy inside the&n; * idle loop.  On some machines, this can activate improved power savings,&n; * such as a slowed CPU clock rate, when the machine is idle.  These idle&n; * call is made after the idle loop has run for some length of time (e.g.,&n; * 333 mS).  On some machines, this will cause a hang at boot time or&n; * whenever the CPU becomes idle.&n; *&n; * CONFIG_APM_DISPLAY_BLANK: enable console blanking using the APM.  Some&n; * laptops can use this to turn of the LCD backlight when the VC screen&n; * blanker blanks the screen.  Note that this is only used by the VC screen&n; * blanker, and probably won&squot;t turn off the backlight when using X11.  Some&n; * problems have been reported when using this option with gpm (if you&squot;d&n; * like to debug this, please do so).&n; *&n; * If you are debugging the APM support for your laptop, note that code for&n; * all of these options is contained in this file, so you can #define or&n; * #undef these on the next line to avoid recompiling the whole kernel.&n; *&n; */
+multiline_comment|/* Configurable options:&n; *&n; * CONFIG_APM_IGNORE_USER_SUSPEND: define to ignore USER SUSPEND requests.&n; * This is necessary on the NEC Versa M series, which generates these when&n; * resuming from SYSTEM SUSPEND.  However, enabling this on other laptops&n; * will cause the laptop to generate a CRITICAL SUSPEND when an appropriate&n; * USER SUSPEND is ignored -- this may prevent the APM driver from updating&n; * the system time on a RESUME.&n; *&n; * CONFIG_APM_DO_ENABLE: enable APM features at boot time.  From page 36 of&n; * the specification: &quot;When disabled, the APM BIOS does not automatically&n; * power manage devices, enter the Standby State, enter the Suspend State,&n; * or take power saving steps in response to CPU Idle calls.&quot;  This driver&n; * will make CPU Idle calls when Linux is idle (unless this feature is&n; * turned off -- see below).  This should always save battery power, but&n; * more complicated APM features will be dependent on your BIOS&n; * implementation.  You may need to turn this option off if your computer&n; * hangs at boot time when using APM support, or if it beeps continuously&n; * instead of suspending.  Turn this off if you have a NEC UltraLite Versa&n; * 33/C or a Toshiba T400CDT.  This is off by default since most machines&n; * do fine without this feature.&n; *&n; * CONFIG_APM_CPU_IDLE: enable calls to APM CPU Idle/CPU Busy inside the&n; * idle loop.  On some machines, this can activate improved power savings,&n; * such as a slowed CPU clock rate, when the machine is idle.  These idle&n; * call is made after the idle loop has run for some length of time (e.g.,&n; * 333 mS).  On some machines, this will cause a hang at boot time or&n; * whenever the CPU becomes idle.&n; *&n; * CONFIG_APM_DISPLAY_BLANK: enable console blanking using the APM.  Some&n; * laptops can use this to turn of the LCD backlight when the VC screen&n; * blanker blanks the screen.  Note that this is only used by the VC screen&n; * blanker, and probably won&squot;t turn off the backlight when using X11.  Some&n; * problems have been reported when using this option with gpm (if you&squot;d&n; * like to debug this, please do so).&n; *&n; * CONFIG_APM_IGNORE_MULTIPLE_SUSPEND: The IBM TP560 bios seems to insist&n; * on returning multiple suspend/standby events whenever one occurs.  We&n; * really only need one at a time, so just ignore any beyond the first.&n; * This is probably safe on most laptops.&n; *&n; * If you are debugging the APM support for your laptop, note that code for&n; * all of these options is contained in this file, so you can #define or&n; * #undef these on the next line to avoid recompiling the whole kernel.&n; *&n; */
 multiline_comment|/* KNOWN PROBLEM MACHINES:&n; *&n; * U: TI 4000M TravelMate: BIOS is *NOT* APM compliant&n; *                         [Confirmed by TI representative]&n; * U: ACER 486DX4/75: uses dseg 0040, in violation of APM specification&n; *                    [Confirmed by BIOS disassembly]&n; * P: Toshiba 1950S: battery life information only gets updated after resume&n; * P: Midwest Micro Soundbook Elite DX2/66 monochrome: screen blanking&n; * &t;broken in BIOS [Reported by Garst R. Reese &lt;reese@isn.net&gt;]&n; *&n; * Legend: U = unusable with APM patches&n; *         P = partially usable with APM patches&n; */
 multiline_comment|/*&n; * Define to have debug messages.&n; */
 DECL|macro|APM_DEBUG
@@ -330,6 +330,15 @@ id|standbys_pending
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_APM_IGNORE_MULTIPLE_SUSPEND
+DECL|variable|waiting_for_resume
+r_static
+r_int
+id|waiting_for_resume
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 DECL|variable|clock_cmos_diff
 r_static
 r_int
@@ -373,7 +382,7 @@ id|driver_version
 (braket
 )braket
 op_assign
-l_string|&quot;1.3&quot;
+l_string|&quot;1.4&quot;
 suffix:semicolon
 multiline_comment|/* no spaces */
 macro_line|#ifdef APM_DEBUG
@@ -1500,6 +1509,30 @@ id|as-&gt;event_head
 op_eq
 id|as-&gt;event_tail
 )paren
+(brace
+r_static
+r_int
+id|notified
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|notified
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;apm_bios: an event queue overflowed&bslash;n&quot;
+)paren
+suffix:semicolon
+id|notified
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 id|as-&gt;event_tail
 op_assign
 (paren
@@ -1510,6 +1543,7 @@ l_int|1
 op_mod
 id|APM_MAX_EVENTS
 suffix:semicolon
+)brace
 id|as-&gt;events
 (braket
 id|as-&gt;event_head
@@ -1939,6 +1973,40 @@ op_ne
 l_int|0
 )paren
 (brace
+macro_line|#ifdef APM_DEBUG
+r_if
+c_cond
+(paren
+id|event
+op_le
+id|NR_APM_EVENT_NAME
+)paren
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;APM BIOS received %s notify&bslash;n&quot;
+comma
+id|apm_event_name
+(braket
+id|event
+op_minus
+l_int|1
+)braket
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;APM BIOS received unknown &quot;
+l_string|&quot;event 0x%02x&bslash;n&quot;
+comma
+id|event
+)paren
+suffix:semicolon
+macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -1951,6 +2019,21 @@ suffix:colon
 r_case
 id|APM_USER_STANDBY
 suffix:colon
+macro_line|#ifdef CONFIG_APM_IGNORE_MULTIPLE_SUSPEND
+r_if
+c_cond
+(paren
+id|waiting_for_resume
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+id|waiting_for_resume
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 id|send_event
 c_func
 (paren
@@ -1998,6 +2081,21 @@ macro_line|#endif
 r_case
 id|APM_SYS_SUSPEND
 suffix:colon
+macro_line|#ifdef CONFIG_APM_IGNORE_MULTIPLE_SUSPEND
+r_if
+c_cond
+(paren
+id|waiting_for_resume
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+id|waiting_for_resume
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 id|send_event
 c_func
 (paren
@@ -2031,6 +2129,12 @@ suffix:colon
 r_case
 id|APM_STANDBY_RESUME
 suffix:colon
+macro_line|#ifdef CONFIG_APM_IGNORE_MULTIPLE_SUSPEND
+id|waiting_for_resume
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 id|set_time
 c_func
 (paren
@@ -2090,39 +2194,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#ifdef APM_DEBUG
-r_if
-c_cond
-(paren
-id|event
-op_le
-id|NR_APM_EVENT_NAME
-)paren
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;APM BIOS received %s notify&bslash;n&quot;
-comma
-id|apm_event_name
-(braket
-id|event
-op_minus
-l_int|1
-)braket
-)paren
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;APM BIOS received unknown event 0x%02x&bslash;n&quot;
-comma
-id|event
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 DECL|function|do_apm_timer

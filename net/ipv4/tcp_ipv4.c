@@ -454,7 +454,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Find a &quot;good&quot; local port, this is family independant.&n; * There are several strategies working in unison here to&n; * get the best possible performance.  The current socket&n; * load is kept track of, if it is zero there is a strong&n; * likely hood that there is a zero length chain we will&n; * find with a small amount of searching, else the load is&n; * what we shoot for for when the chains all have at least&n; * one entry.  The base helps us walk the chains in an&n; * order such that a good chain is found as quickly as possible.  -DaveM&n; */
+multiline_comment|/* Find a &quot;good&quot; local port, this is family independent.&n; * There are several strategies working in unison here to&n; * get the best possible performance.  The current socket&n; * load is kept track of, if it is zero there is a strong&n; * likely hood that there is a zero length chain we will&n; * find with a small amount of searching, else the load is&n; * what we shoot for for when the chains all have at least&n; * one entry.  The base helps us walk the chains in an&n; * order such that a good chain is found as quickly as possible.  -DaveM&n; */
 DECL|function|tcp_good_socknum
 r_int
 r_int

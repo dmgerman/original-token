@@ -894,7 +894,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Start dependant function:&bslash;n&quot;
+l_string|&quot;Start dependent function:&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -905,7 +905,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;End dependant function&bslash;n&quot;
+l_string|&quot;End dependent function&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
