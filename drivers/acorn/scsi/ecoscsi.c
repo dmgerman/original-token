@@ -306,7 +306,7 @@ c_func
 (paren
 id|instance-&gt;irq
 comma
-id|ecoscsi_intr
+id|do_ecoscsi_intr
 comma
 id|SA_INTERRUPT
 comma

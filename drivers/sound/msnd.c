@@ -729,7 +729,7 @@ r_register
 r_int
 id|timeout
 op_assign
-l_int|5000
+l_int|100
 suffix:semicolon
 r_while
 c_loop
@@ -781,7 +781,7 @@ r_register
 r_int
 id|timeout
 op_assign
-l_int|25000
+l_int|100
 suffix:semicolon
 r_while
 c_loop
@@ -1111,7 +1111,7 @@ id|dev
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_DEBUG
 id|LOGNAME
 l_string|&quot;: enable_irq: count %d&bslash;n&quot;
 comma
@@ -1304,6 +1304,12 @@ c_func
 id|KERN_DEBUG
 id|LOGNAME
 l_string|&quot;: Disabling IRQ&bslash;n&quot;
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|50
 )paren
 suffix:semicolon
 id|spin_lock_irqsave

@@ -285,6 +285,8 @@ DECL|macro|PTRS_PER_PMD
 mdefine_line|#define PTRS_PER_PMD    1
 DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD    32
+DECL|macro|USER_PTRS_PER_PGD
+mdefine_line|#define USER_PTRS_PER_PGD&t;(TASK_SIZE/PGDIR_SIZE)
 multiline_comment|/* Just any arbitrary offset to the start of the vmalloc VM area: the&n; * current 8MB value just means that there will be a 8MB &quot;hole&quot; after the&n; * physical memory until the kernel virtual memory starts.  That means that&n; * any out-of-bounds memory accesses will hopefully be caught.&n; * The vmalloc() routines leaves a hole of 4kB between each vmalloced&n; * area for the same reason. ;)&n; */
 DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START&t;0x01a00000
@@ -1655,7 +1657,7 @@ DECL|macro|pmd_alloc_kernel
 mdefine_line|#define pmd_alloc_kernel        pmd_alloc
 DECL|macro|pte_alloc_kernel
 mdefine_line|#define pte_alloc_kernel        pte_alloc
-macro_line|#if 0
+DECL|function|set_pgdir
 r_extern
 id|__inline__
 r_void
@@ -1756,7 +1758,6 @@ op_assign
 id|entry
 suffix:semicolon
 )brace
-macro_line|#endif
 r_extern
 id|pgd_t
 id|swapper_pg_dir

@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &quot;fbcon.h&quot;
 macro_line|#include &quot;fbcon-cfb8.h&quot;
 macro_line|#include &quot;fbcon-cfb32.h&quot;
 multiline_comment|/* TGA hardware description (minimal) */
@@ -3823,6 +3824,10 @@ op_assign
 op_amp
 id|fbcon_cfb8
 suffix:semicolon
+id|disp.scrollmode
+op_assign
+id|SCROLL_YREDRAW
+suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
@@ -3839,6 +3844,10 @@ id|disp.dispsw
 op_assign
 op_amp
 id|fbcon_cfb32
+suffix:semicolon
+id|disp.scrollmode
+op_assign
+id|SCROLL_YREDRAW
 suffix:semicolon
 r_break
 suffix:semicolon

@@ -2,10 +2,23 @@ multiline_comment|/*&n; * arch/arm/kernel/dma-a5k.c&n; *&n; * Copyright (C) 1998
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;asm/fiq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &quot;dma.h&quot;
+DECL|variable|fh
+r_static
+r_struct
+id|fiq_handler
+id|fh
+op_assign
+(brace
+l_string|&quot;floppydma&quot;
+comma
+l_int|NULL
+)brace
+suffix:semicolon
 DECL|function|arch_request_dma
 r_int
 id|arch_request_dma
@@ -61,6 +74,7 @@ op_ne
 id|DMA_VIRTUAL_FLOPPY
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;arch_free_dma: invalid channel %d&bslash;n&quot;
 comma
@@ -89,6 +103,7 @@ op_ne
 id|DMA_VIRTUAL_FLOPPY
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;arch_dma_count: invalid channel %d&bslash;n&quot;
 comma
@@ -137,6 +152,7 @@ op_ne
 id|DMA_VIRTUAL_FLOPPY
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;arch_enable_dma: invalid channel %d&bslash;n&quot;
 comma
@@ -156,6 +172,7 @@ suffix:semicolon
 r_extern
 r_void
 id|floppy_fiqsetup
+c_func
 (paren
 r_int
 r_int
@@ -222,7 +239,28 @@ op_amp
 id|floppy_fiqout_start
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|claim_fiq
+c_func
+(paren
+op_amp
+id|fh
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;floppydma: couldn&squot;t claim FIQ.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|memcpy
+c_func
 (paren
 (paren
 r_void
@@ -242,6 +280,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|floppy_fiqsetup
+c_func
 (paren
 id|dma-&gt;buf.length
 comma
@@ -258,6 +297,7 @@ id|PCIO_FLOPPYDMABASE
 )paren
 suffix:semicolon
 id|enable_irq
+c_func
 (paren
 id|dma-&gt;dma_irq
 )paren
@@ -285,6 +325,7 @@ op_ne
 id|DMA_VIRTUAL_FLOPPY
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;arch_disable_dma: invalid channel %d&bslash;n&quot;
 comma
@@ -292,11 +333,21 @@ id|channel
 )paren
 suffix:semicolon
 r_else
+(brace
 id|disable_irq
+c_func
 (paren
 id|dma-&gt;dma_irq
 )paren
 suffix:semicolon
+id|release_fiq
+c_func
+(paren
+op_amp
+id|fh
+)paren
+suffix:semicolon
+)brace
 )brace
 DECL|function|__initfunc
 id|__initfunc

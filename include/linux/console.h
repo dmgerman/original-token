@@ -191,6 +191,10 @@ op_star
 id|con_blank
 )paren
 (paren
+r_struct
+id|vc_data
+op_star
+comma
 r_int
 )paren
 suffix:semicolon
@@ -326,6 +330,25 @@ id|consw
 id|prom_con
 suffix:semicolon
 multiline_comment|/* SPARC PROM console */
+r_void
+id|take_over_console
+c_func
+(paren
+r_struct
+id|consw
+op_star
+id|sw
+comma
+r_int
+id|first
+comma
+r_int
+id|last
+comma
+r_int
+id|deflt
+)paren
+suffix:semicolon
 multiline_comment|/* flag bits */
 DECL|macro|CON_INITED
 mdefine_line|#define CON_INITED  (1)

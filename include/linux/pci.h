@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: pci.h,v 1.72 1998/05/12 07:35:54 mj Exp $&n; *&n; *&t;PCI defines and function prototypes&n; *&t;Copyright 1994, Drew Eckhardt&n; *&t;Copyright 1997, 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *&t;For more information, please consult the following manuals (look at&n; *&t;http://www.pcisig.com/ for how to get them):&n; *&n; *&t;PCI BIOS Specification&n; *&t;PCI Local Bus Specification&n; *&t;PCI to PCI Bridge Specification&n; *&t;PCI System Design Guide&n; */
+multiline_comment|/*&n; *&t;$Id: pci.h,v 1.76 1998/07/15 20:34:50 mj Exp $&n; *&n; *&t;PCI defines and function prototypes&n; *&t;Copyright 1994, Drew Eckhardt&n; *&t;Copyright 1997, 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *&t;For more information, please consult the following manuals (look at&n; *&t;http://www.pcisig.com/ for how to get them):&n; *&n; *&t;PCI BIOS Specification&n; *&t;PCI Local Bus Specification&n; *&t;PCI to PCI Bridge Specification&n; *&t;PCI System Design Guide&n; */
 macro_line|#ifndef LINUX_PCI_H
 DECL|macro|LINUX_PCI_H
 mdefine_line|#define LINUX_PCI_H
@@ -89,7 +89,7 @@ multiline_comment|/*&n; * Base addresses specify locations in memory or I/O spac
 DECL|macro|PCI_BASE_ADDRESS_0
 mdefine_line|#define PCI_BASE_ADDRESS_0&t;0x10&t;/* 32 bits */
 DECL|macro|PCI_BASE_ADDRESS_1
-mdefine_line|#define PCI_BASE_ADDRESS_1&t;0x14&t;/* 32 bits */
+mdefine_line|#define PCI_BASE_ADDRESS_1&t;0x14&t;/* 32 bits [htype 0,1 only] */
 DECL|macro|PCI_BASE_ADDRESS_2
 mdefine_line|#define PCI_BASE_ADDRESS_2&t;0x18&t;/* 32 bits [htype 0 only] */
 DECL|macro|PCI_BASE_ADDRESS_3
@@ -212,26 +212,18 @@ DECL|macro|PCI_BRIDGE_CTL_BUS_RESET
 mdefine_line|#define  PCI_BRIDGE_CTL_BUS_RESET 0x40&t;/* Secondary bus reset */
 DECL|macro|PCI_BRIDGE_CTL_FAST_BACK
 mdefine_line|#define  PCI_BRIDGE_CTL_FAST_BACK 0x80&t;/* Fast Back2Back enabled on secondary interface */
-multiline_comment|/* Header type 2 (CardBus bridges) -- detailed info welcome */
-DECL|macro|PCI_CB_CARDBUS_BASE
-mdefine_line|#define PCI_CB_CARDBUS_BASE&t;0x10&t;/* CardBus Socket/ExCa base address */
-DECL|macro|PCI_CB_CARDBUS_BASE_TYPE_MASK
-mdefine_line|#define  PCI_CB_CARDBUS_BASE_TYPE_MASK 0xfff
-DECL|macro|PCI_CB_CARDBUS_BASE_MASK
-mdefine_line|#define  PCI_CB_CARDBUS_BASE_MASK ~0xfff
-DECL|macro|PCI_CB_CAPABILITIES
-mdefine_line|#define PCI_CB_CAPABILITIES&t;0x14&t;/* Offset of list of capabilities in cfg space */
-multiline_comment|/* 0x15 reserved */
+multiline_comment|/* Header type 2 (CardBus bridges) */
+multiline_comment|/* 0x14-0x15 reserved */
 DECL|macro|PCI_CB_SEC_STATUS
 mdefine_line|#define PCI_CB_SEC_STATUS&t;0x16&t;/* Secondary status */
-DECL|macro|PCI_CB_BUS_NUMBER
-mdefine_line|#define PCI_CB_BUS_NUMBER&t;0x18&t;/* PCI bus number */
-DECL|macro|PCI_CB_CARDBUS_NUMBER
-mdefine_line|#define PCI_CB_CARDBUS_NUMBER&t;0x19&t;/* CardBus bus number */
+DECL|macro|PCI_CB_PRIMARY_BUS
+mdefine_line|#define PCI_CB_PRIMARY_BUS&t;0x18&t;/* PCI bus number */
+DECL|macro|PCI_CB_CARD_BUS
+mdefine_line|#define PCI_CB_CARD_BUS&t;&t;0x19&t;/* CardBus bus number */
 DECL|macro|PCI_CB_SUBORDINATE_BUS
 mdefine_line|#define PCI_CB_SUBORDINATE_BUS&t;0x1a&t;/* Subordinate bus number */
-DECL|macro|PCI_CB_CARDBUS_LATENCY
-mdefine_line|#define PCI_CB_CARDBUS_LATENCY&t;0x1b&t;/* CardBus latency timer */
+DECL|macro|PCI_CB_LATENCY_TIMER
+mdefine_line|#define PCI_CB_LATENCY_TIMER&t;0x1b&t;/* CardBus latency timer */
 DECL|macro|PCI_CB_MEMORY_BASE_0
 mdefine_line|#define PCI_CB_MEMORY_BASE_0&t;0x1c
 DECL|macro|PCI_CB_MEMORY_LIMIT_0
@@ -256,8 +248,31 @@ DECL|macro|PCI_CB_IO_LIMIT_1
 mdefine_line|#define PCI_CB_IO_LIMIT_1&t;0x38
 DECL|macro|PCI_CB_IO_LIMIT_1_HI
 mdefine_line|#define PCI_CB_IO_LIMIT_1_HI&t;0x3a
+DECL|macro|PCI_CB_IO_RANGE_MASK
+mdefine_line|#define  PCI_CB_IO_RANGE_MASK&t;~0x03
 multiline_comment|/* 0x3c-0x3d are same as for htype 0 */
-multiline_comment|/* 0x3e-0x3f are same as for htype 1 */
+DECL|macro|PCI_CB_BRIDGE_CONTROL
+mdefine_line|#define PCI_CB_BRIDGE_CONTROL&t;0x3e
+DECL|macro|PCI_CB_BRIDGE_CTL_PARITY
+mdefine_line|#define  PCI_CB_BRIDGE_CTL_PARITY&t;0x01&t;/* Similar to standard bridge control register */
+DECL|macro|PCI_CB_BRIDGE_CTL_SERR
+mdefine_line|#define  PCI_CB_BRIDGE_CTL_SERR&t;&t;0x02
+DECL|macro|PCI_CB_BRIDGE_CTL_ISA
+mdefine_line|#define  PCI_CB_BRIDGE_CTL_ISA&t;&t;0x04
+DECL|macro|PCI_CB_BRIDGE_CTL_VGA
+mdefine_line|#define  PCI_CB_BRIDGE_CTL_VGA&t;&t;0x08
+DECL|macro|PCI_CB_BRIDGE_CTL_MASTER_ABORT
+mdefine_line|#define  PCI_CB_BRIDGE_CTL_MASTER_ABORT&t;0x20
+DECL|macro|PCI_CB_BRIDGE_CTL_CB_RESET
+mdefine_line|#define  PCI_CB_BRIDGE_CTL_CB_RESET&t;0x40&t;/* CardBus reset */
+DECL|macro|PCI_CB_BRIDGE_CTL_16BIT_INT
+mdefine_line|#define  PCI_CB_BRIDGE_CTL_16BIT_INT&t;0x80&t;/* Enable interrupt for 16-bit cards */
+DECL|macro|PCI_CB_BRIDGE_CTL_PREFETCH_MEM0
+mdefine_line|#define  PCI_CB_BRIDGE_CTL_PREFETCH_MEM0 0x100&t;/* Prefetch enable for both memory regions */
+DECL|macro|PCI_CB_BRIDGE_CTL_PREFETCH_MEM1
+mdefine_line|#define  PCI_CB_BRIDGE_CTL_PREFETCH_MEM1 0x200
+DECL|macro|PCI_CB_BRIDGE_CTL_POST_WRITES
+mdefine_line|#define  PCI_CB_BRIDGE_CTL_POST_WRITES&t;0x400
 DECL|macro|PCI_CB_SUBSYSTEM_VENDOR_ID
 mdefine_line|#define PCI_CB_SUBSYSTEM_VENDOR_ID 0x40
 DECL|macro|PCI_CB_SUBSYSTEM_ID
@@ -1667,223 +1682,6 @@ DECL|macro|PCI_FUNC
 mdefine_line|#define PCI_FUNC(devfn)&t;&t;((devfn) &amp; 0x07)
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
-multiline_comment|/*&n; * Error values that may be returned by the PCI bios.&n; */
-DECL|macro|PCIBIOS_SUCCESSFUL
-mdefine_line|#define PCIBIOS_SUCCESSFUL&t;&t;0x00
-DECL|macro|PCIBIOS_FUNC_NOT_SUPPORTED
-mdefine_line|#define PCIBIOS_FUNC_NOT_SUPPORTED&t;0x81
-DECL|macro|PCIBIOS_BAD_VENDOR_ID
-mdefine_line|#define PCIBIOS_BAD_VENDOR_ID&t;&t;0x83
-DECL|macro|PCIBIOS_DEVICE_NOT_FOUND
-mdefine_line|#define PCIBIOS_DEVICE_NOT_FOUND&t;0x86
-DECL|macro|PCIBIOS_BAD_REGISTER_NUMBER
-mdefine_line|#define PCIBIOS_BAD_REGISTER_NUMBER&t;0x87
-DECL|macro|PCIBIOS_SET_FAILED
-mdefine_line|#define PCIBIOS_SET_FAILED&t;&t;0x88
-DECL|macro|PCIBIOS_BUFFER_TOO_SMALL
-mdefine_line|#define PCIBIOS_BUFFER_TOO_SMALL&t;0x89
-multiline_comment|/* Direct configuration space access */
-r_int
-id|pcibios_present
-(paren
-r_void
-)paren
-suffix:semicolon
-r_void
-id|pcibios_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_void
-id|pcibios_fixup
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_char
-op_star
-id|pcibios_setup
-(paren
-r_char
-op_star
-id|str
-)paren
-suffix:semicolon
-r_int
-id|pcibios_read_config_byte
-(paren
-r_int
-r_char
-id|bus
-comma
-r_int
-r_char
-id|dev_fn
-comma
-r_int
-r_char
-id|where
-comma
-r_int
-r_char
-op_star
-id|val
-)paren
-suffix:semicolon
-r_int
-id|pcibios_read_config_word
-(paren
-r_int
-r_char
-id|bus
-comma
-r_int
-r_char
-id|dev_fn
-comma
-r_int
-r_char
-id|where
-comma
-r_int
-r_int
-op_star
-id|val
-)paren
-suffix:semicolon
-r_int
-id|pcibios_read_config_dword
-(paren
-r_int
-r_char
-id|bus
-comma
-r_int
-r_char
-id|dev_fn
-comma
-r_int
-r_char
-id|where
-comma
-r_int
-r_int
-op_star
-id|val
-)paren
-suffix:semicolon
-r_int
-id|pcibios_write_config_byte
-(paren
-r_int
-r_char
-id|bus
-comma
-r_int
-r_char
-id|dev_fn
-comma
-r_int
-r_char
-id|where
-comma
-r_int
-r_char
-id|val
-)paren
-suffix:semicolon
-r_int
-id|pcibios_write_config_word
-(paren
-r_int
-r_char
-id|bus
-comma
-r_int
-r_char
-id|dev_fn
-comma
-r_int
-r_char
-id|where
-comma
-r_int
-r_int
-id|val
-)paren
-suffix:semicolon
-r_int
-id|pcibios_write_config_dword
-(paren
-r_int
-r_char
-id|bus
-comma
-r_int
-r_char
-id|dev_fn
-comma
-r_int
-r_char
-id|where
-comma
-r_int
-r_int
-id|val
-)paren
-suffix:semicolon
-multiline_comment|/* Don&squot;t use these in new code, use pci_find_... instead */
-r_int
-id|pcibios_find_class
-(paren
-r_int
-r_int
-id|class_code
-comma
-r_int
-r_int
-id|index
-comma
-r_int
-r_char
-op_star
-id|bus
-comma
-r_int
-r_char
-op_star
-id|dev_fn
-)paren
-suffix:semicolon
-r_int
-id|pcibios_find_device
-(paren
-r_int
-r_int
-id|vendor
-comma
-r_int
-r_int
-id|dev_id
-comma
-r_int
-r_int
-id|index
-comma
-r_int
-r_char
-op_star
-id|bus
-comma
-r_int
-r_char
-op_star
-id|dev_fn
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * There is one pci_dev structure for each slot-number/function-number&n; * combination:&n; */
 DECL|struct|pci_dev
 r_struct
@@ -2073,6 +1871,233 @@ op_star
 id|pci_devices
 suffix:semicolon
 multiline_comment|/* list of all devices */
+multiline_comment|/*&n; * Error values that may be returned by the PCI bios.&n; */
+DECL|macro|PCIBIOS_SUCCESSFUL
+mdefine_line|#define PCIBIOS_SUCCESSFUL&t;&t;0x00
+DECL|macro|PCIBIOS_FUNC_NOT_SUPPORTED
+mdefine_line|#define PCIBIOS_FUNC_NOT_SUPPORTED&t;0x81
+DECL|macro|PCIBIOS_BAD_VENDOR_ID
+mdefine_line|#define PCIBIOS_BAD_VENDOR_ID&t;&t;0x83
+DECL|macro|PCIBIOS_DEVICE_NOT_FOUND
+mdefine_line|#define PCIBIOS_DEVICE_NOT_FOUND&t;0x86
+DECL|macro|PCIBIOS_BAD_REGISTER_NUMBER
+mdefine_line|#define PCIBIOS_BAD_REGISTER_NUMBER&t;0x87
+DECL|macro|PCIBIOS_SET_FAILED
+mdefine_line|#define PCIBIOS_SET_FAILED&t;&t;0x88
+DECL|macro|PCIBIOS_BUFFER_TOO_SMALL
+mdefine_line|#define PCIBIOS_BUFFER_TOO_SMALL&t;0x89
+multiline_comment|/* Low-level architecture-dependent routines */
+r_int
+id|pcibios_present
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|pcibios_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|pcibios_fixup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|pcibios_fixup_bus
+c_func
+(paren
+r_struct
+id|pci_bus
+op_star
+)paren
+suffix:semicolon
+r_char
+op_star
+id|pcibios_setup
+(paren
+r_char
+op_star
+id|str
+)paren
+suffix:semicolon
+r_int
+id|pcibios_read_config_byte
+(paren
+r_int
+r_char
+id|bus
+comma
+r_int
+r_char
+id|dev_fn
+comma
+r_int
+r_char
+id|where
+comma
+r_int
+r_char
+op_star
+id|val
+)paren
+suffix:semicolon
+r_int
+id|pcibios_read_config_word
+(paren
+r_int
+r_char
+id|bus
+comma
+r_int
+r_char
+id|dev_fn
+comma
+r_int
+r_char
+id|where
+comma
+r_int
+r_int
+op_star
+id|val
+)paren
+suffix:semicolon
+r_int
+id|pcibios_read_config_dword
+(paren
+r_int
+r_char
+id|bus
+comma
+r_int
+r_char
+id|dev_fn
+comma
+r_int
+r_char
+id|where
+comma
+r_int
+r_int
+op_star
+id|val
+)paren
+suffix:semicolon
+r_int
+id|pcibios_write_config_byte
+(paren
+r_int
+r_char
+id|bus
+comma
+r_int
+r_char
+id|dev_fn
+comma
+r_int
+r_char
+id|where
+comma
+r_int
+r_char
+id|val
+)paren
+suffix:semicolon
+r_int
+id|pcibios_write_config_word
+(paren
+r_int
+r_char
+id|bus
+comma
+r_int
+r_char
+id|dev_fn
+comma
+r_int
+r_char
+id|where
+comma
+r_int
+r_int
+id|val
+)paren
+suffix:semicolon
+r_int
+id|pcibios_write_config_dword
+(paren
+r_int
+r_char
+id|bus
+comma
+r_int
+r_char
+id|dev_fn
+comma
+r_int
+r_char
+id|where
+comma
+r_int
+r_int
+id|val
+)paren
+suffix:semicolon
+multiline_comment|/* Don&squot;t use these in new code, use pci_find_... instead */
+r_int
+id|pcibios_find_class
+(paren
+r_int
+r_int
+id|class_code
+comma
+r_int
+r_int
+id|index
+comma
+r_int
+r_char
+op_star
+id|bus
+comma
+r_int
+r_char
+op_star
+id|dev_fn
+)paren
+suffix:semicolon
+r_int
+id|pcibios_find_device
+(paren
+r_int
+r_int
+id|vendor
+comma
+r_int
+r_int
+id|dev_id
+comma
+r_int
+r_int
+id|index
+comma
+r_int
+r_char
+op_star
+id|bus
+comma
+r_int
+r_char
+op_star
+id|dev_fn
+)paren
+suffix:semicolon
+multiline_comment|/* Generic PCI interface functions */
 r_void
 id|pci_init
 c_func

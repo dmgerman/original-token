@@ -2,6 +2,7 @@ multiline_comment|/*&n; * console_struct.h&n; *&n; * Data structure and defines 
 multiline_comment|/*&n; * You can set here how should the cursor look by default.&n; * In case you set CONFIG_SOFTCURSOR, this might be really interesting.&n; */
 DECL|macro|CUR_DEFAULT
 mdefine_line|#define CUR_DEFAULT CUR_UNDERLINE
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|NPAR
 mdefine_line|#define NPAR 16
 DECL|struct|vc_data
@@ -423,6 +424,14 @@ r_int
 r_int
 id|vc_cursor_type
 suffix:semicolon
+DECL|member|vc_display_fg
+r_struct
+id|vc_data
+op_star
+op_star
+id|vc_display_fg
+suffix:semicolon
+multiline_comment|/* Ptr to var holding fg console for this display */
 multiline_comment|/* additional information is in vt_kern.h */
 )brace
 suffix:semicolon

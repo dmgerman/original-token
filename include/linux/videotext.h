@@ -239,7 +239,7 @@ id|hamming
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* hamming-error occured */
+multiline_comment|/* hamming-error occurred */
 )brace
 DECL|typedef|vtx_pageinfo_t
 id|vtx_pageinfo_t

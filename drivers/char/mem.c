@@ -2217,6 +2217,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_VIDEO_BT848
+id|i2c_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_VIDEO_DEV
 id|videodev_init
 c_func

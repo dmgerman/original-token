@@ -6,10 +6,23 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;asm/fiq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;dma.h&quot;
+DECL|variable|fh
+r_static
+r_struct
+id|fiq_handler
+id|fh
+op_assign
+(brace
+l_string|&quot;floppydma&quot;
+comma
+l_int|NULL
+)brace
+suffix:semicolon
 macro_line|#if 0
 r_typedef
 r_enum
@@ -1028,6 +1041,26 @@ id|floppy_fiqout_end
 op_minus
 op_amp
 id|floppy_fiqout_start
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|claim_fiq
+c_func
+(paren
+op_amp
+id|fh
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;floppydma: couldn&squot;t claim FIQ.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Allow access to page 0 via domains */

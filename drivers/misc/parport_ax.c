@@ -1130,6 +1130,34 @@ id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
 )brace
+DECL|function|parport_ax_fill_inode
+r_static
+r_void
+id|parport_ax_fill_inode
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_int
+id|fill
+)paren
+(brace
+macro_line|#ifdef MODULE
+r_if
+c_cond
+(paren
+id|fill
+)paren
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_else
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
+)brace
 DECL|variable|parport_ax_ops
 r_static
 r_struct
@@ -1200,6 +1228,8 @@ comma
 id|parport_ax_inc_use_count
 comma
 id|parport_ax_dec_use_count
+comma
+id|parport_ax_fill_inode
 )brace
 suffix:semicolon
 multiline_comment|/******************************************************&n; *  MODE detection section:&n; */

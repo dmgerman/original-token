@@ -10,6 +10,7 @@ macro_line|#include &quot;i2c.h&quot;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &quot;tuner.h&quot;
 DECL|variable|debug
+r_static
 r_int
 id|debug
 op_assign
@@ -17,6 +18,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* insmod parameter */
 DECL|variable|type
+r_static
 r_int
 id|type
 op_assign
@@ -1159,7 +1161,7 @@ r_void
 )paren
 macro_line|#else
 r_int
-id|msp3400c_init
+id|i2c_tuner_init
 c_func
 (paren
 r_void

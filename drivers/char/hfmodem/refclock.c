@@ -70,7 +70,6 @@ id|boot_cpu_data.x86_capability
 op_amp
 id|X86_FEATURE_TSC
 )paren
-)paren
 id|rdtsc_ok
 op_assign
 l_int|1

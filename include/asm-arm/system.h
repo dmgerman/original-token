@@ -46,5 +46,14 @@ DECL|macro|mb
 mdefine_line|#define mb() __asm__ __volatile__ (&quot;&quot; : : : &quot;memory&quot;)
 DECL|macro|nop
 mdefine_line|#define nop() __asm__ __volatile__(&quot;mov r0,r0&bslash;n&bslash;t&quot;);
+r_extern
+id|asmlinkage
+r_void
+id|__backtrace
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif
 eof

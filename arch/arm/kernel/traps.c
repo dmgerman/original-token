@@ -13,6 +13,12 @@ macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 r_extern
+r_struct
+id|task_struct
+op_star
+id|last_task_used_math
+suffix:semicolon
+r_extern
 r_void
 id|fpe_save
 c_func
@@ -1429,7 +1435,7 @@ l_string|&quot;old system call&quot;
 comma
 id|regs
 comma
-l_int|0
+id|n
 )paren
 suffix:semicolon
 id|force_sig

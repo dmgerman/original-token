@@ -18,6 +18,8 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
+macro_line|#include &lt;asm/elf.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -45,6 +47,32 @@ DECL|variable|screen_info
 r_struct
 id|screen_info
 id|screen_info
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|8
+)brace
 suffix:semicolon
 DECL|variable|processor
 r_struct
@@ -92,7 +120,15 @@ r_struct
 id|processor
 id|sa110_processor_functions
 suffix:semicolon
+DECL|variable|elf_platform
+r_char
+id|elf_platform
+(braket
+id|ELF_PLATFORM_SIZE
+)braket
+suffix:semicolon
 DECL|variable|armidlist
+r_const
 r_struct
 id|armversions
 id|armidlist
@@ -100,22 +136,25 @@ id|armidlist
 )braket
 op_assign
 (brace
+multiline_comment|/*-- Match -- --- Mask -- -- Manu --  Processor  uname -m   --- ELF STUFF ---&n;&t;--- processor asm funcs --- */
 macro_line|#if defined(CONFIG_CPU_26)
 (brace
 l_int|0x41560200
 comma
 l_int|0xfffffff0
 comma
-id|F_MEMC
-comma
 l_string|&quot;ARM/VLSI&quot;
 comma
 l_string|&quot;arm2&quot;
 comma
+l_string|&quot;armv1&quot;
+comma
+l_string|&quot;v1&quot;
+comma
+l_int|0
+comma
 op_amp
 id|arm2_processor_functions
-comma
-l_string|&quot;arm2&quot;
 )brace
 comma
 (brace
@@ -123,16 +162,18 @@ l_int|0x41560250
 comma
 l_int|0xfffffff0
 comma
-id|F_MEMC
-comma
 l_string|&quot;ARM/VLSI&quot;
 comma
 l_string|&quot;arm250&quot;
 comma
+l_string|&quot;armv2&quot;
+comma
+l_string|&quot;v2&quot;
+comma
+id|HWCAP_SWP
+comma
 op_amp
 id|arm250_processor_functions
-comma
-l_string|&quot;arm3&quot;
 )brace
 comma
 (brace
@@ -140,18 +181,18 @@ l_int|0x41560300
 comma
 l_int|0xfffffff0
 comma
-id|F_MEMC
-op_or
-id|F_CACHE
-comma
 l_string|&quot;ARM/VLSI&quot;
 comma
 l_string|&quot;arm3&quot;
 comma
+l_string|&quot;armv2&quot;
+comma
+l_string|&quot;v2&quot;
+comma
+id|HWCAP_SWP
+comma
 op_amp
 id|arm3_processor_functions
-comma
-l_string|&quot;arm3&quot;
 )brace
 comma
 macro_line|#elif defined(CONFIG_CPU_32)
@@ -160,18 +201,18 @@ l_int|0x41560600
 comma
 l_int|0xfffffff0
 comma
-id|F_MMU
-op_or
-id|F_32BIT
-comma
 l_string|&quot;ARM/VLSI&quot;
 comma
 l_string|&quot;arm6&quot;
 comma
+l_string|&quot;armv3&quot;
+comma
+l_string|&quot;v3&quot;
+comma
+id|HWCAP_SWP
+comma
 op_amp
 id|arm6_processor_functions
-comma
-l_string|&quot;arm6&quot;
 )brace
 comma
 (brace
@@ -179,18 +220,18 @@ l_int|0x41560610
 comma
 l_int|0xfffffff0
 comma
-id|F_MMU
-op_or
-id|F_32BIT
-comma
 l_string|&quot;ARM/VLSI&quot;
 comma
 l_string|&quot;arm610&quot;
 comma
+l_string|&quot;armv3&quot;
+comma
+l_string|&quot;v3&quot;
+comma
+id|HWCAP_SWP
+comma
 op_amp
 id|arm6_processor_functions
-comma
-l_string|&quot;arm6&quot;
 )brace
 comma
 (brace
@@ -198,37 +239,38 @@ l_int|0x41007000
 comma
 l_int|0xffffff00
 comma
-id|F_MMU
-op_or
-id|F_32BIT
-comma
 l_string|&quot;ARM/VLSI&quot;
 comma
 l_string|&quot;arm7&quot;
 comma
+l_string|&quot;armv3&quot;
+comma
+l_string|&quot;v3&quot;
+comma
+id|HWCAP_SWP
+comma
 op_amp
 id|arm7_processor_functions
-comma
-l_string|&quot;arm6&quot;
 )brace
 comma
+multiline_comment|/* ARM710 IDs are non-standard */
 (brace
 l_int|0x41007100
 comma
-l_int|0xffffff00
-comma
-id|F_MMU
-op_or
-id|F_32BIT
+l_int|0xfff8ff00
 comma
 l_string|&quot;ARM/VLSI&quot;
 comma
 l_string|&quot;arm710&quot;
 comma
+l_string|&quot;armv3&quot;
+comma
+l_string|&quot;v3&quot;
+comma
+id|HWCAP_SWP
+comma
 op_amp
 id|arm7_processor_functions
-comma
-l_string|&quot;arm6&quot;
 )brace
 comma
 (brace
@@ -236,18 +278,20 @@ l_int|0x4401a100
 comma
 l_int|0xfffffff0
 comma
-id|F_MMU
-op_or
-id|F_32BIT
-comma
 l_string|&quot;DEC&quot;
 comma
 l_string|&quot;sa110&quot;
 comma
+l_string|&quot;armv4&quot;
+comma
+l_string|&quot;v3&quot;
+comma
+id|HWCAP_SWP
+op_or
+id|HWCAP_HALF
+comma
 op_amp
 id|sa110_processor_functions
-comma
-l_string|&quot;sa1x&quot;
 )brace
 comma
 macro_line|#endif
@@ -256,13 +300,15 @@ l_int|0x00000000
 comma
 l_int|0x00000000
 comma
-l_int|0
-comma
 l_string|&quot;***&quot;
 comma
-l_string|&quot;*unknown*&quot;
+l_string|&quot;unknown&quot;
 comma
-l_int|NULL
+l_string|&quot;unknown&quot;
+comma
+l_string|&quot;**&quot;
+comma
+l_int|0
 comma
 l_int|NULL
 )brace
@@ -270,6 +316,7 @@ l_int|NULL
 suffix:semicolon
 DECL|variable|params
 r_static
+r_const
 r_struct
 id|param_struct
 op_star
@@ -295,10 +342,6 @@ suffix:semicolon
 DECL|variable|armidindex
 r_int
 id|armidindex
-suffix:semicolon
-DECL|variable|ioebpresent
-r_int
-id|ioebpresent
 suffix:semicolon
 DECL|variable|memc_ctrl_reg
 r_int
@@ -345,17 +388,20 @@ r_void
 id|init_dram_banks
 c_func
 (paren
+r_const
 r_struct
 id|param_struct
 op_star
 id|params
 )paren
 suffix:semicolon
-DECL|function|setup_rpc
 r_static
 r_void
+DECL|function|setup_rpc
 id|setup_rpc
+c_func
 (paren
+r_const
 r_struct
 id|param_struct
 op_star
@@ -423,11 +469,13 @@ r_int
 id|rd_image_start
 suffix:semicolon
 multiline_comment|/* starting block # of image */
-DECL|function|setup_ramdisk
 r_static
 r_void
+DECL|function|setup_ramdisk
 id|setup_ramdisk
+c_func
 (paren
+r_const
 r_struct
 id|param_struct
 op_star
@@ -465,11 +513,13 @@ mdefine_line|#define setup_ramdisk(p)
 macro_line|#endif
 multiline_comment|/*&n; * initial ram disk&n; */
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
-DECL|function|setup_initrd
 r_static
 r_void
+DECL|function|setup_initrd
 id|setup_initrd
+c_func
 (paren
+r_const
 r_struct
 id|param_struct
 op_star
@@ -480,16 +530,34 @@ r_int
 id|memory_end
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|params-&gt;u1.s.initrd_start
+)paren
+(brace
 id|initrd_start
 op_assign
 id|params-&gt;u1.s.initrd_start
 suffix:semicolon
 id|initrd_end
 op_assign
-id|params-&gt;u1.s.initrd_start
+id|initrd_start
 op_plus
 id|params-&gt;u1.s.initrd_size
 suffix:semicolon
+)brace
+r_else
+(brace
+id|initrd_start
+op_assign
+l_int|0
+suffix:semicolon
+id|initrd_end
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -518,50 +586,12 @@ macro_line|#else
 DECL|macro|setup_initrd
 mdefine_line|#define setup_initrd(p,m)
 macro_line|#endif
-macro_line|#ifdef IOEB_BASE
-DECL|function|check_ioeb_present
 r_static
 r_inline
 r_void
-id|check_ioeb_present
-c_func
-(paren
-r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-(paren
-op_star
-id|IOEB_BASE
-)paren
-op_amp
-l_int|15
-)paren
-op_eq
-l_int|5
-)paren
-id|armidlist
-(braket
-id|armidindex
-)braket
-dot
-id|features
-op_or_assign
-id|F_IOEB
-suffix:semicolon
-)brace
-macro_line|#else
-DECL|macro|check_ioeb_present
-mdefine_line|#define check_ioeb_present()
-macro_line|#endif
 DECL|function|get_processor_type
-r_static
-r_inline
-r_void
 id|get_processor_type
+c_func
 (paren
 r_void
 )paren
@@ -668,13 +698,14 @@ suffix:semicolon
 DECL|macro|COMMAND_LINE_SIZE
 mdefine_line|#define COMMAND_LINE_SIZE 256
 multiline_comment|/* Can this be initdata?  --pb&n; *  command_line can be, saved_command_line can&squot;t though&n; */
-DECL|variable|command_line
+DECL|variable|__initdata
 r_static
 r_char
 id|command_line
 (braket
 id|COMMAND_LINE_SIZE
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0
@@ -725,6 +756,10 @@ comma
 id|memory_end
 suffix:semicolon
 r_char
+id|endian
+op_assign
+l_char|&squot;l&squot;
+comma
 id|c
 op_assign
 l_char|&squot; &squot;
@@ -733,7 +768,8 @@ op_star
 id|to
 op_assign
 id|command_line
-comma
+suffix:semicolon
+r_char
 op_star
 id|from
 suffix:semicolon
@@ -759,14 +795,11 @@ id|get_processor_type
 (paren
 )paren
 suffix:semicolon
-id|check_ioeb_present
-(paren
-)paren
-suffix:semicolon
 id|processor._proc_init
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_FB
 id|bytes_per_char_h
 op_assign
 id|params-&gt;u1.s.bytes_per_char_h
@@ -775,8 +808,13 @@ id|bytes_per_char_v
 op_assign
 id|params-&gt;u1.s.bytes_per_char_v
 suffix:semicolon
+macro_line|#endif
 id|from
 op_assign
+(paren
+r_char
+op_star
+)paren
 id|params-&gt;commandline
 suffix:semicolon
 id|ROOT_DEV
@@ -827,11 +865,13 @@ op_amp
 l_int|3
 suffix:semicolon
 id|setup_rpc
+c_func
 (paren
 id|params
 )paren
 suffix:semicolon
 id|setup_ramdisk
+c_func
 (paren
 id|params
 )paren
@@ -1095,27 +1135,115 @@ op_assign
 id|memory_end
 suffix:semicolon
 id|setup_initrd
+c_func
 (paren
 id|params
 comma
 id|memory_end
 )paren
 suffix:semicolon
-id|strcpy
+id|sprintf
+c_func
 (paren
 id|system_utsname.machine
+comma
+l_string|&quot;%s%c&quot;
 comma
 id|armidlist
 (braket
 id|armidindex
 )braket
 dot
-id|name
+id|arch_vsn
+comma
+id|endian
 )paren
 suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|elf_platform
+comma
+l_string|&quot;%s%c&quot;
+comma
+id|armidlist
+(braket
+id|armidindex
+)braket
+dot
+id|elf_vsn
+comma
+id|endian
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_FB
+id|conswitchp
+op_assign
+op_amp
+id|fb_con
+suffix:semicolon
+macro_line|#endif
 )brace
-DECL|macro|ISSET
-mdefine_line|#define ISSET(bit) (armidlist[armidindex].features &amp; bit)
+macro_line|#if defined(CONFIG_ARCH_ARC)
+DECL|macro|HARDWARE
+mdefine_line|#define HARDWARE &quot;Acorn-Archimedes&quot;
+DECL|macro|IO_BUS
+mdefine_line|#define IO_BUS&t; &quot;Acorn&quot;
+macro_line|#elif defined(CONFIG_ARCH_A5K)
+DECL|macro|HARDWARE
+mdefine_line|#define HARDWARE &quot;Acorn-A5000&quot;
+DECL|macro|IO_BUS
+mdefine_line|#define IO_BUS&t; &quot;Acorn&quot;
+macro_line|#elif defined(CONFIG_ARCH_RPC)
+DECL|macro|HARDWARE
+mdefine_line|#define HARDWARE &quot;Acorn-RiscPC&quot;
+DECL|macro|IO_BUS
+mdefine_line|#define IO_BUS&t; &quot;Acorn&quot;
+macro_line|#elif defined(CONFIG_ARCH_EBSA110)
+DECL|macro|HARDWARE
+mdefine_line|#define HARDWARE &quot;DEC-EBSA110&quot;
+DECL|macro|IO_BUS
+mdefine_line|#define IO_BUS&t; &quot;DEC&quot;
+macro_line|#elif defined(CONFIG_ARCH_EBSA285)
+DECL|macro|HARDWARE
+mdefine_line|#define HARDWARE &quot;DEC-EBSA285&quot;
+DECL|macro|IO_BUS
+mdefine_line|#define IO_BUS   &quot;PCI&quot;
+macro_line|#elif defined(CONFIG_ARCH_NEXUSPCI)
+DECL|macro|HARDWARE
+mdefine_line|#define HARDWARE &quot;Nexus-NexusPCI&quot;
+DECL|macro|IO_BUS
+mdefine_line|#define IO_BUS   &quot;PCI&quot;
+macro_line|#elif defined(CONFIG_ARCH_VNC)
+DECL|macro|HARDWARE
+mdefine_line|#define HARDWARE &quot;Corel-VNC&quot;
+DECL|macro|IO_BUS
+mdefine_line|#define IO_BUS   &quot;PCI&quot;
+macro_line|#else
+DECL|macro|HARDWARE
+mdefine_line|#define HARDWARE &quot;unknown&quot;
+DECL|macro|IO_BUS
+mdefine_line|#define IO_BUS   &quot;unknown&quot;
+macro_line|#endif
+macro_line|#if defined(CONFIG_CPU_ARM2)
+DECL|macro|OPTIMISATION
+mdefine_line|#define OPTIMISATION &quot;ARM2&quot;
+macro_line|#elif defined(CONFIG_CPU_ARM3)
+DECL|macro|OPTIMISATION
+mdefine_line|#define OPTIMISATION &quot;ARM3&quot;
+macro_line|#elif defined(CONFIG_CPU_ARM6)
+DECL|macro|OPTIMISATION
+mdefine_line|#define OPTIMISATION &quot;ARM6&quot;
+macro_line|#elif defined(CONFIG_CPU_ARM7)
+DECL|macro|OPTIMISATION
+mdefine_line|#define OPTIMISATION &quot;ARM7&quot;
+macro_line|#elif defined(CONFIG_CPU_SA110)
+DECL|macro|OPTIMISATION
+mdefine_line|#define OPTIMISATION &quot;StrongARM&quot;
+macro_line|#else
+DECL|macro|OPTIMISATION
+mdefine_line|#define OPTIMISATION &quot;unknown&quot;
+macro_line|#endif
 DECL|function|get_cpuinfo
 r_int
 id|get_cpuinfo
@@ -1132,15 +1260,22 @@ suffix:semicolon
 id|len
 op_assign
 id|sprintf
+c_func
 (paren
 id|buffer
 comma
-l_string|&quot;CPU:&bslash;n&quot;
-l_string|&quot;Type&bslash;t&bslash;t: %s&bslash;n&quot;
-l_string|&quot;Revision&bslash;t: %d&bslash;n&quot;
-l_string|&quot;Manufacturer&bslash;t: %s&bslash;n&quot;
-l_string|&quot;32bit modes&bslash;t: %s&bslash;n&quot;
+l_string|&quot;Processor&bslash;t: %s %s rev %d&bslash;n&quot;
 l_string|&quot;BogoMips&bslash;t: %lu.%02lu&bslash;n&quot;
+l_string|&quot;Hardware&bslash;t: %s&bslash;n&quot;
+l_string|&quot;Optimisation&bslash;t: %s&bslash;n&quot;
+l_string|&quot;IO Bus&bslash;t: %s&bslash;n&quot;
+comma
+id|armidlist
+(braket
+id|armidindex
+)braket
+dot
+id|manu
 comma
 id|armidlist
 (braket
@@ -1155,23 +1290,6 @@ r_int
 id|arm_id
 op_amp
 l_int|15
-comma
-id|armidlist
-(braket
-id|armidindex
-)braket
-dot
-id|manu
-comma
-id|ISSET
-(paren
-id|F_32BIT
-)paren
-ques
-c_cond
-l_string|&quot;yes&quot;
-suffix:colon
-l_string|&quot;no&quot;
 comma
 (paren
 id|loops_per_sec
@@ -1192,50 +1310,12 @@ l_int|5000
 )paren
 op_mod
 l_int|100
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-(paren
-id|buffer
-op_plus
-id|len
 comma
-l_string|&quot;&bslash;nHardware:&bslash;n&quot;
-l_string|&quot;Mem System&bslash;t: %s&bslash;n&quot;
-l_string|&quot;IOEB&bslash;t&bslash;t: %s&bslash;n&quot;
+id|HARDWARE
 comma
-id|ISSET
-c_func
-(paren
-id|F_MEMC
-)paren
-ques
-c_cond
-l_string|&quot;MEMC&quot;
-suffix:colon
-id|ISSET
-c_func
-(paren
-id|F_MMU
-)paren
-ques
-c_cond
-l_string|&quot;MMU&quot;
-suffix:colon
-l_string|&quot;*unknown*&quot;
+id|OPTIMISATION
 comma
-id|ISSET
-c_func
-(paren
-id|F_IOEB
-)paren
-ques
-c_cond
-l_string|&quot;present&quot;
-suffix:colon
-l_string|&quot;absent&quot;
+id|IO_BUS
 )paren
 suffix:semicolon
 r_return

@@ -183,8 +183,39 @@ r_int
 id|yy
 )paren
 suffix:semicolon
+DECL|member|set_font
+r_int
+(paren
+op_star
+id|set_font
+)paren
+(paren
+r_struct
+id|display
+op_star
+id|p
+comma
+r_int
+id|width
+comma
+r_int
+id|height
+)paren
+suffix:semicolon
+DECL|member|fontwidthmask
+r_int
+r_int
+id|fontwidthmask
+suffix:semicolon
+multiline_comment|/* 1 at (1 &lt;&lt; (width - 1)) if width is supported */
 )brace
 suffix:semicolon
+multiline_comment|/* fontwidth w is supported by dispsw */
+DECL|macro|FONTWIDTH
+mdefine_line|#define FONTWIDTH(w)&t;(1 &lt;&lt; ((w) - 1))
+multiline_comment|/* fontwidths w1-w2 inclusive are supported by dispsw */
+DECL|macro|FONTWIDTHRANGE
+mdefine_line|#define FONTWIDTHRANGE(w1,w2)&t;(FONTWIDTH(w2+1) - FONTWIDTH(w1))
 multiline_comment|/*&n;     *  Attribute Decoding&n;     */
 multiline_comment|/* Color */
 DECL|macro|attr_fgcol
@@ -211,6 +242,28 @@ DECL|macro|SCROLL_YMOVE
 mdefine_line|#define SCROLL_YMOVE&t;(2)
 DECL|macro|SCROLL_YREDRAW
 mdefine_line|#define SCROLL_YREDRAW&t;(3)
+r_extern
+r_void
+id|fbcon_redraw_bmove
+c_func
+(paren
+r_struct
+id|display
+op_star
+comma
+r_int
+comma
+r_int
+comma
+r_int
+comma
+r_int
+comma
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
 multiline_comment|/* ================================================================= */
 multiline_comment|/*                      Utility Assembler Functions                  */
 multiline_comment|/* ================================================================= */

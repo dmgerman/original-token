@@ -42,6 +42,10 @@ r_int
 r_int
 id|curfreq
 suffix:semicolon
+DECL|member|muted
+r_int
+id|muted
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* local things */
@@ -61,9 +65,11 @@ id|d
 op_assign
 id|n
 op_div
+(paren
 l_int|1000000
 op_div
 id|HZ
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -182,29 +188,20 @@ r_void
 id|rt_mute
 c_func
 (paren
-r_void
+r_struct
+id|rt_device
+op_star
+id|dev
 )paren
 (brace
+id|dev-&gt;muted
+op_assign
+l_int|1
+suffix:semicolon
 id|outb
 c_func
 (paren
-l_int|0x48
-comma
-id|io
-)paren
-suffix:semicolon
-multiline_comment|/* volume down but still &quot;on&quot;&t;*/
-id|sleep_delay
-c_func
-(paren
-l_int|2000000
-)paren
-suffix:semicolon
-multiline_comment|/* make sure it&squot;s totally down&t;*/
-id|outb
-c_func
-(paren
-l_int|0xc0
+l_int|0xd0
 comma
 id|io
 )paren
@@ -237,7 +234,27 @@ op_eq
 id|dev-&gt;curvol
 )paren
 (brace
-multiline_comment|/* no change needed */
+multiline_comment|/* requested volume = current */
+r_if
+c_cond
+(paren
+id|dev-&gt;muted
+)paren
+(brace
+multiline_comment|/* user is unmuting the card  */
+id|dev-&gt;muted
+op_assign
+l_int|0
+suffix:semicolon
+id|outb
+(paren
+l_int|0xd8
+comma
+id|io
+)paren
+suffix:semicolon
+multiline_comment|/* enable card */
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -251,19 +268,39 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* volume = 0 means mute the card */
-id|rt_mute
+id|outb
 c_func
 (paren
+l_int|0x48
+comma
+id|io
 )paren
 suffix:semicolon
-id|dev-&gt;curvol
-op_assign
-l_int|0
+multiline_comment|/* volume down but still &quot;on&quot;&t;*/
+id|sleep_delay
+c_func
+(paren
+l_int|2000000
+)paren
 suffix:semicolon
+multiline_comment|/* make sure it&squot;s totally down&t;*/
+id|outb
+c_func
+(paren
+l_int|0xd0
+comma
+id|io
+)paren
+suffix:semicolon
+multiline_comment|/* volume steady, off&t;&t;*/
 r_return
 l_int|0
 suffix:semicolon
 )brace
+id|dev-&gt;muted
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -340,9 +377,15 @@ id|dev
 r_if
 c_cond
 (paren
+(paren
 id|dev-&gt;curvol
 op_eq
 l_int|0
+)paren
+op_logical_or
+(paren
+id|dev-&gt;muted
+)paren
 )paren
 (brace
 id|outb_p
@@ -441,9 +484,15 @@ id|dev
 r_if
 c_cond
 (paren
+(paren
 id|dev-&gt;curvol
 op_eq
 l_int|0
+)paren
+op_logical_or
+(paren
+id|dev-&gt;muted
+)paren
 )paren
 (brace
 id|outb_p
@@ -706,9 +755,15 @@ multiline_comment|/* 23: AM/FM (FM = 1, always) */
 r_if
 c_cond
 (paren
+(paren
 id|dev-&gt;curvol
 op_eq
 l_int|0
+)paren
+op_logical_or
+(paren
+id|dev-&gt;muted
+)paren
 )paren
 id|outb
 (paren
@@ -1208,11 +1263,8 @@ id|VIDEO_AUDIO_MUTE
 id|rt_mute
 c_func
 (paren
+id|rt
 )paren
-suffix:semicolon
-id|rt-&gt;curvol
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -1412,11 +1464,32 @@ l_string|&quot;AIMSlab Radiotrack/radioreveal card driver.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* mute card - prevents noisy bootups */
-id|rt_mute
+multiline_comment|/* this ensures that the volume is all the way down  */
+id|outb
 c_func
 (paren
+l_int|0x48
+comma
+id|io
 )paren
 suffix:semicolon
+multiline_comment|/* volume down but still &quot;on&quot;&t;*/
+id|sleep_delay
+c_func
+(paren
+l_int|2000000
+)paren
+suffix:semicolon
+multiline_comment|/* make sure it&squot;s totally down&t;*/
+id|outb
+c_func
+(paren
+l_int|0xc0
+comma
+id|io
+)paren
+suffix:semicolon
+multiline_comment|/* steady volume, mute card&t;*/
 id|rtrack_unit.curvol
 op_assign
 l_int|0

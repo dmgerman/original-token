@@ -7,6 +7,18 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &quot;../../scsi/scsi.h&quot;
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Russell King&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;SCSI command queueing&quot;
+)paren
+suffix:semicolon
 DECL|struct|queue_entry
 r_typedef
 r_struct

@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * linux/arch/arm/kernel/iic.c&n; *&n; * Copyright (C) 1995, 1996 Russell King&n; *&n; * IIC is used to get the current time from the CMOS rtc.&n; */
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 multiline_comment|/*&n; * if delay loop has been calibrated then us that,&n; * else use IOC timer 1.&n; */

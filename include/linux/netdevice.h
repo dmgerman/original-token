@@ -383,18 +383,21 @@ r_volatile
 r_int
 r_char
 id|start
-comma
+suffix:semicolon
 multiline_comment|/* start an operation&t;*/
+multiline_comment|/*&n;&t; * These two are just single-bit flags, but due to atomicity&n;&t; * reasons they have to be inside a &quot;unsigned long&quot;. However,&n;&t; * they should be inside the SAME unsigned long instead of&n;&t; * this wasteful use of memory..&n;&t; */
 DECL|member|interrupt
+r_int
+r_int
 id|interrupt
 suffix:semicolon
-multiline_comment|/* interrupt arrived&t;*/
+multiline_comment|/* bitops.. */
 DECL|member|tbusy
 r_int
 r_int
 id|tbusy
 suffix:semicolon
-multiline_comment|/* transmitter busy must be&n;&t;&t;&t;&t;&t;&t;   long for bitops&t;*/
+multiline_comment|/* transmitter busy */
 DECL|member|next
 r_struct
 id|device

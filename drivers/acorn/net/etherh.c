@@ -14,10 +14,10 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;../../net/8390.h&quot;
@@ -2049,9 +2049,10 @@ id|ec
 id|MAX_ETHERH_CARDS
 )braket
 suffix:semicolon
+r_static
 r_int
-DECL|function|init_module
-id|init_module
+DECL|function|init_all_cards
+id|init_all_cards
 c_func
 (paren
 r_void
@@ -2296,11 +2297,9 @@ r_if
 c_cond
 (paren
 id|register_netdev
+c_func
 (paren
-id|my_ethers
-(braket
-id|i
-)braket
+id|dev
 )paren
 op_ne
 l_int|0
@@ -2403,18 +2402,66 @@ id|i
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|found
-)paren
 r_return
+id|found
+ques
+c_cond
+l_int|0
+suffix:colon
 op_minus
 id|ENODEV
 suffix:semicolon
+)brace
+r_int
+DECL|function|init_module
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|ret
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|load_8390_module
+c_func
+(paren
+id|__FILE__
+)paren
+)paren
 r_return
-l_int|0
+op_minus
+id|ENOSYS
+suffix:semicolon
+id|lock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|init_all_cards
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+(brace
+id|unlock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_return
+id|ret
 suffix:semicolon
 )brace
 r_void
@@ -2525,6 +2572,11 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
+id|unlock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 eof

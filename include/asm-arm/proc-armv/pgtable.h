@@ -69,6 +69,8 @@ DECL|macro|PTRS_PER_PMD
 mdefine_line|#define PTRS_PER_PMD    1
 DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD    4096
+DECL|macro|USER_PTRS_PER_PGD
+mdefine_line|#define USER_PTRS_PER_PGD&t;(TASK_SIZE/PGDIR_SIZE)
 multiline_comment|/* Just any arbitrary offset to the start of the vmalloc VM area: the&n; * current 8MB value just means that there will be a 8MB &quot;hole&quot; after the&n; * physical memory until the kernel virtual memory starts.  That means that&n; * any out-of-bounds memory accesses will hopefully be caught.&n; * The vmalloc() routines leaves a hole of 4kB between each vmalloced&n; * area for the same reason. ;)&n; */
 DECL|macro|VMALLOC_OFFSET
 mdefine_line|#define VMALLOC_OFFSET&t;  (8*1024*1024)
@@ -125,22 +127,15 @@ DECL|macro|DOMAIN_IO
 mdefine_line|#define DOMAIN_IO&t;2
 DECL|macro|_PAGE_CHG_MASK
 mdefine_line|#define _PAGE_CHG_MASK  (0xfffff00c | PTE_TYPE_MASK)
-multiline_comment|/*&n; * We define the bits in the page tables as follows:&n; *  PTE_BUFFERABLE&t;page is writable&n; *  PTE_AP_WRITE&t;page is dirty&n; *  PTE_AP_READ&t;&t;page is a young (unsetting this causes faults for any access)&n; *&n; * Any page that is mapped in is assumed to be readable...&n; */
-macro_line|#if 0
-mdefine_line|#define _PTE_YOUNG&t;PTE_AP_READ
-mdefine_line|#define _PTE_DIRTY&t;PTE_AP_WRITE
-mdefine_line|#define _PTE_READ&t;PTE_CACHEABLE
-mdefine_line|#define _PTE_WRITE&t;PTE_BUFFERABLE
-macro_line|#else
+multiline_comment|/*&n; * We define the bits in the page tables as follows:&n; *  PTE_BUFFERABLE&t;page is dirty&n; *  PTE_AP_WRITE&t;page is writable&n; *  PTE_AP_READ&t;&t;page is a young (unsetting this causes faults for any access)&n; *  PTE_CACHEABLE       page is readable&n; *&n; * A page will not be made writable without the dirty bit set.&n; * It is not legal to have a writable non-dirty page though (it breaks).&n; *&n; * A readable page is marked as being cacheable.&n; * Youngness is indicated by hardware read.  If the page is old,&n; * then we will fault and make the page young again.&n; */
 DECL|macro|_PTE_YOUNG
-mdefine_line|#define _PTE_YOUNG&t;PTE_CACHEABLE
+mdefine_line|#define _PTE_YOUNG&t;PTE_AP_READ
 DECL|macro|_PTE_DIRTY
 mdefine_line|#define _PTE_DIRTY&t;PTE_BUFFERABLE
 DECL|macro|_PTE_READ
-mdefine_line|#define _PTE_READ&t;PTE_AP_READ
+mdefine_line|#define _PTE_READ&t;PTE_CACHEABLE
 DECL|macro|_PTE_WRITE
 mdefine_line|#define _PTE_WRITE&t;PTE_AP_WRITE
-macro_line|#endif
 DECL|macro|PAGE_NONE
 mdefine_line|#define PAGE_NONE       __pgprot(PTE_TYPE_SMALL | _PTE_YOUNG)
 DECL|macro|PAGE_SHARED
@@ -478,7 +473,7 @@ c_func
 id|pte
 )paren
 op_amp
-id|PTE_AP_WRITE
+id|_PTE_WRITE
 suffix:semicolon
 )brace
 DECL|function|pte_dirty
@@ -541,7 +536,7 @@ id|pte
 )paren
 op_and_assign
 op_complement
-id|PTE_AP_WRITE
+id|_PTE_WRITE
 suffix:semicolon
 r_return
 id|pte
@@ -589,7 +584,7 @@ id|pte
 )paren
 op_and_assign
 op_complement
-id|PTE_BUFFERABLE
+id|_PTE_DIRTY
 suffix:semicolon
 r_return
 id|pte
@@ -613,7 +608,7 @@ id|pte
 )paren
 op_and_assign
 op_complement
-id|PTE_AP_READ
+id|_PTE_YOUNG
 suffix:semicolon
 r_return
 id|pte
@@ -636,7 +631,7 @@ c_func
 id|pte
 )paren
 op_or_assign
-id|PTE_AP_WRITE
+id|_PTE_WRITE
 suffix:semicolon
 r_return
 id|pte
@@ -659,7 +654,7 @@ c_func
 id|pte
 )paren
 op_or_assign
-id|PTE_BUFFERABLE
+id|_PTE_DIRTY
 suffix:semicolon
 r_return
 id|pte
@@ -682,7 +677,7 @@ c_func
 id|pte
 )paren
 op_or_assign
-id|PTE_AP_READ
+id|_PTE_YOUNG
 suffix:semicolon
 r_return
 id|pte
@@ -1902,7 +1897,7 @@ DECL|macro|pmd_free_kernel
 mdefine_line|#define pmd_free_kernel&t;&t;pmd_free
 DECL|macro|pmd_alloc_kernel
 mdefine_line|#define pmd_alloc_kernel&t;pmd_alloc
-macro_line|#if 0
+DECL|function|set_pgdir
 r_extern
 id|__inline__
 r_void
@@ -2003,7 +1998,6 @@ op_assign
 id|entry
 suffix:semicolon
 )brace
-macro_line|#endif
 r_extern
 id|pgd_t
 id|swapper_pg_dir

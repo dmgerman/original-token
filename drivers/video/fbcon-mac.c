@@ -2579,6 +2579,16 @@ comma
 id|fbcon_mac_revc
 comma
 l_int|NULL
+comma
+l_int|NULL
+comma
+id|FONTWIDTHRANGE
+c_func
+(paren
+l_int|1
+comma
+l_int|8
+)paren
 )brace
 suffix:semicolon
 macro_line|#ifdef MODULE

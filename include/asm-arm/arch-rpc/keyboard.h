@@ -65,8 +65,13 @@ multiline_comment|/* Prototype: int kbd_pretranslate(scancode, raw_mode)&n; * Re
 DECL|macro|kbd_pretranslate
 mdefine_line|#define kbd_pretranslate(sc,rm)&t;&t;ps2kbd_pretranslate(sc)
 multiline_comment|/* Prototype: int kbd_translate(scancode, *keycode, *up_flag, raw_mode)&n; * Returns  : 0 to ignore scancode, *keycode set to keycode, *up_flag&n; *            set to 0200 if scancode indicates release&n; */
+macro_line|#ifdef NEW_KEYBOARD
 DECL|macro|kbd_translate
 mdefine_line|#define kbd_translate(sc, kcp, ufp, rm)&t;ps2kbd_translate(sc, kcp, ufp)
+macro_line|#else
+DECL|macro|kbd_translate
+mdefine_line|#define kbd_translate(sc, kcp, rm) ({ unsigned int up_flag; ps2kbd_translate(sc, kcp, &amp;up_flag); })
+macro_line|#endif
 DECL|macro|kbd_unexpected_up
 mdefine_line|#define kbd_unexpected_up(kc)&t;&t;(0200)
 DECL|macro|kbd_leds

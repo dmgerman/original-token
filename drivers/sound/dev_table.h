@@ -20,6 +20,8 @@ DECL|macro|SNDCARD_SOFTOSS
 mdefine_line|#define SNDCARD_SOFTOSS&t;&t;&t;36
 DECL|macro|SNDCARD_VMIDI
 mdefine_line|#define SNDCARD_VMIDI&t;&t;&t;37
+DECL|macro|SNDCARD_WAVEFRONT
+mdefine_line|#define SNDCARD_WAVEFRONT               41
 r_void
 id|attach_opl3sa_wss
 (paren
@@ -2091,6 +2093,8 @@ comma
 id|unload_cs4232
 )brace
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_CS4232_MPU_BASE
 (brace
 l_string|&quot;CS4232MPU&quot;
 comma
@@ -2195,6 +2199,24 @@ comma
 id|probe_uart401
 comma
 id|unload_uart401
+)brace
+comma
+macro_line|#endif
+macro_line|#if defined(CONFIG_SOUND_WAVEFRONT)
+(brace
+l_string|&quot;WAVEFRONT&quot;
+comma
+l_int|0
+comma
+id|SNDCARD_WAVEFRONT
+comma
+l_string|&quot;TB WaveFront&quot;
+comma
+id|attach_wavefront
+comma
+id|probe_wavefront
+comma
+id|unload_wavefront
 )brace
 comma
 macro_line|#endif
@@ -2943,6 +2965,25 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
+macro_line|#endif
+macro_line|#if defined(CONFIG_WAVEFRONT) 
+(brace
+id|SNDCARD_WAVEFRONT
+comma
+(brace
+id|WAVEFRONT_BASE
+comma
+id|WAVEFRONT_IRQ
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+)brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SOUND_MAUI
 (brace

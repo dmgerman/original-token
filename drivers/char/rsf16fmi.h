@@ -2,7 +2,6 @@ multiline_comment|/* SF16FMI FMRadio include file.&n; * (c) 1998 Petr Vandrovec&
 macro_line|#ifndef __RSF16FMI_H
 DECL|macro|__RSF16FMI_H
 mdefine_line|#define __RSF16FMI_H
-macro_line|#include &lt;linux/radio.h&gt;
 r_int
 id|radiosf16fmi_init
 c_func

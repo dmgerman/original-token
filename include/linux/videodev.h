@@ -658,6 +658,10 @@ DECL|macro|VID_HARDWARE_SF16MI
 mdefine_line|#define VID_HARDWARE_SF16MI&t;8
 DECL|macro|VID_HARDWARE_RTRACK
 mdefine_line|#define VID_HARDWARE_RTRACK&t;9
+DECL|macro|VID_HARDWARE_ZOLTRIX
+mdefine_line|#define VID_HARDWARE_ZOLTRIX&t;10
+DECL|macro|VID_HARDWARE_SAA7146
+mdefine_line|#define VID_HARDWARE_SAA7146    11
 multiline_comment|/*&n; *&t;Initialiser list&n; */
 DECL|struct|video_init
 r_struct

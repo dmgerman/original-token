@@ -102,6 +102,25 @@ id|fontdata_sun8x16
 (braket
 )braket
 suffix:semicolon
+multiline_comment|/* SUN12x22 */
+r_extern
+r_char
+id|fontname_sun12x22
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_int
+id|fontwidth_sun12x22
+comma
+id|fontheight_sun12x22
+suffix:semicolon
+r_extern
+id|u8
+id|fontdata_sun12x22
+(braket
+)braket
+suffix:semicolon
 multiline_comment|/*&n;    *    Font Descriptor Array&n;    */
 DECL|struct|softfontdesc
 r_struct
@@ -143,6 +162,8 @@ DECL|macro|VGA6x11_IDX
 mdefine_line|#define VGA6x11_IDX&t;3
 DECL|macro|SUN8x16_IDX
 mdefine_line|#define SUN8x16_IDX&t;4
+DECL|macro|SUN12x22_IDX
+mdefine_line|#define SUN12x22_IDX&t;5
 DECL|variable|softfonts
 r_static
 r_struct
@@ -224,6 +245,20 @@ comma
 id|fontdata_sun8x16
 )brace
 comma
+(brace
+id|SUN12x22_IDX
+comma
+id|fontname_sun12x22
+comma
+op_amp
+id|fontwidth_sun12x22
+comma
+op_amp
+id|fontheight_sun12x22
+comma
+id|fontdata_sun12x22
+)brace
+comma
 macro_line|#endif
 )brace
 suffix:semicolon
@@ -255,9 +290,11 @@ op_star
 id|name
 comma
 r_int
+r_int
 op_star
 id|width
 comma
+r_int
 r_int
 op_star
 id|height
@@ -379,9 +416,11 @@ id|name
 )braket
 comma
 r_int
+r_int
 op_star
 id|width
 comma
+r_int
 r_int
 op_star
 id|height

@@ -1070,6 +1070,13 @@ id|ipx_opt
 id|af_ipx
 suffix:semicolon
 macro_line|#endif
+macro_line|#if defined (CONFIG_DECNET) || defined(CONFIG_DECNET_MODULE)
+DECL|member|dn
+r_struct
+id|dn_scp
+id|dn
+suffix:semicolon
+macro_line|#endif
 macro_line|#if defined (CONFIG_PACKET) || defined(CONFIG_PACKET_MODULE)
 DECL|member|af_packet
 r_struct
@@ -1091,6 +1098,7 @@ id|ax25_cb
 op_star
 id|ax25
 suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
 DECL|member|nr
 id|nr_cb
@@ -1103,14 +1111,6 @@ DECL|member|rose
 id|rose_cb
 op_star
 id|rose
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
-macro_line|#if defined(CONFIG_DECNET) || defined(CONFIG_DECNET_MODULE)
-DECL|member|dn
-id|dn_cb
-op_star
-id|dn
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_NETLINK

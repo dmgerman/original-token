@@ -93,6 +93,10 @@ id|req.port
 op_assign
 id|port
 suffix:semicolon
+id|req.flags
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 id|register_serial
 c_func

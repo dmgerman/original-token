@@ -997,6 +997,10 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+id|skb-&gt;nh.raw
+op_assign
+id|skb-&gt;data
+suffix:semicolon
 id|dev
 op_member_access_from_pointer
 id|hard_header

@@ -1,11 +1,11 @@
-multiline_comment|/*&n; * linux/drivers/net/ether3.c&n; *&n; * SEEQ nq8005 ethernet driver for Acorn/ANT Ether3 card&n; *  for Acorn machines&n; *&n; * By Russell King, with some suggestions from borris@ant.co.uk&n; *&n; * Changelog:&n; * 1.04&t;RMK&t;29/02/1996&t;Won&squot;t pass packets that are from our ethernet&n; *&t;&t;&t;&t;address up to the higher levels - they&squot;re&n; *&t;&t;&t;&t;silently ignored.  I/F can now be put into&n; *&t;&t;&t;&t;multicast mode.  Receiver routine optimised.&n; * 1.05&t;RMK&t;30/02/1996&t;Now claims interrupt at open when part of&n; *&t;&t;&t;&t;the kernel rather than when a module.&n; * 1.06&t;RMK&t;02/03/1996&t;Various code cleanups&n; * 1.07&t;RMK&t;13/10/1996&t;Optimised interrupt routine and transmit&n; *&t;&t;&t;&t;routines.&n; * 1.08&t;RMK&t;14/10/1996&t;Fixed problem with too many packets,&n; *&t;&t;&t;&t;prevented the kernel message about dropped&n; *&t;&t;&t;&t;packets appearing too many times a second.&n; *&t;&t;&t;&t;Now does not disable all IRQs, only the IRQ&n; *&t;&t;&t;&t;used by this card.&n; * 1.09&t;RMK&t;10/11/1996&t;Only enables TX irq when buffer space is low,&n; *&t;&t;&t;&t;but we still service the TX queue if we get a&n; *&t;&t;&t;&t;RX interrupt.&n; * 1.10&t;RMK&t;15/07/1997&t;Fixed autoprobing of NQ8004.&n; * 1.11&t;RMK&t;16/11/1997&t;Fixed autoprobing of NQ8005A.&n; * 1.12&t;RMK&t;31/12/1997&t;Removed reference to dev_tint for Linux 2.1.&n; *&n; * TODO:&n; *  When we detect a fatal error on the interface, we should restart it.&n; *  Reap transmit packets after some time even if the buffer never filled.&n; */
+multiline_comment|/*&n; * linux/drivers/net/ether3.c&n; *&n; * SEEQ nq8005 ethernet driver for Acorn/ANT Ether3 card&n; *  for Acorn machines&n; *&n; * By Russell King, with some suggestions from borris@ant.co.uk&n; *&n; * Changelog:&n; * 1.04&t;RMK&t;29/02/1996&t;Won&squot;t pass packets that are from our ethernet&n; *&t;&t;&t;&t;address up to the higher levels - they&squot;re&n; *&t;&t;&t;&t;silently ignored.  I/F can now be put into&n; *&t;&t;&t;&t;multicast mode.  Receiver routine optimised.&n; * 1.05&t;RMK&t;30/02/1996&t;Now claims interrupt at open when part of&n; *&t;&t;&t;&t;the kernel rather than when a module.&n; * 1.06&t;RMK&t;02/03/1996&t;Various code cleanups&n; * 1.07&t;RMK&t;13/10/1996&t;Optimised interrupt routine and transmit&n; *&t;&t;&t;&t;routines.&n; * 1.08&t;RMK&t;14/10/1996&t;Fixed problem with too many packets,&n; *&t;&t;&t;&t;prevented the kernel message about dropped&n; *&t;&t;&t;&t;packets appearing too many times a second.&n; *&t;&t;&t;&t;Now does not disable all IRQs, only the IRQ&n; *&t;&t;&t;&t;used by this card.&n; * 1.09&t;RMK&t;10/11/1996&t;Only enables TX irq when buffer space is low,&n; *&t;&t;&t;&t;but we still service the TX queue if we get a&n; *&t;&t;&t;&t;RX interrupt.&n; * 1.10&t;RMK&t;15/07/1997&t;Fixed autoprobing of NQ8004.&n; * 1.11&t;RMK&t;16/11/1997&t;Fixed autoprobing of NQ8005A.&n; * 1.12&t;RMK&t;31/12/1997&t;Removed reference to dev_tint for Linux 2.1.&n; *      RMK&t;27/06/1998&t;Changed asm/delay.h to linux/delay.h.&n; * 1.13&t;RMK&t;29/06/1998&t;Fixed problem with transmission of packets.&n; *&t;&t;&t;&t;Chip seems to have a bug in, whereby if the&n; *&t;&t;&t;&t;packet starts two bytes from the end of the&n; *&t;&t;&t;&t;buffer, it corrupts the receiver chain, and&n; *&t;&t;&t;&t;never updates the transmit status correctly.&n; * TODO:&n; *  When we detect a fatal error on the interface, we should restart it.&n; *  Reap transmit packets after some time even if the buffer never filled.&n; */
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;ether3 ethernet driver (c) 1995-1998 R.M.King v1.12&bslash;n&quot;
+l_string|&quot;ether3 ethernet driver (c) 1995-1998 R.M.King v1.13&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -23,17 +23,13 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;ether3.h&quot;
-macro_line|#ifndef MODULE
-DECL|macro|CLAIM_IRQ_AT_OPEN
-mdefine_line|#define CLAIM_IRQ_AT_OPEN
-macro_line|#endif
 DECL|variable|net_debug
 r_static
 r_int
@@ -358,7 +354,7 @@ mdefine_line|#define ether3_writebuffer(dev,data,length)&t;&t;&t;&bslash;&n;&t;o
 DECL|macro|ether3_writeword
 mdefine_line|#define ether3_writeword(dev,data)&t;&t;&t;&t;&bslash;&n;&t;outw((data), REG_BUFWIN)
 DECL|macro|ether3_writelong
-mdefine_line|#define ether3_writelong(dev,data)&t;{&t;&t;&t;&bslash;&n;&t;unsigned long reg_bufwin = REG_BUFWIN;&t;&t;&t;&bslash;&n;&t;outw((data), reg_bufwin);&t;&t;&t;&t;&bslash;&n;&t;outw((data) &gt;&gt; 16, reg_bufwin);&t;&t;&t;&bslash;&n;}
+mdefine_line|#define ether3_writelong(dev,data)&t;{&t;&t;&t;&bslash;&n;&t;unsigned long reg_bufwin = REG_BUFWIN;&t;&t;&t;&bslash;&n;&t;outw((data), reg_bufwin);&t;&t;&t;&t;&bslash;&n;&t;outw((data) &gt;&gt; 16, reg_bufwin);&t;&t;&t;&t;&bslash;&n;}
 multiline_comment|/*&n; * read data from the buffer memory&n; */
 DECL|macro|ether3_readbuffer
 mdefine_line|#define ether3_readbuffer(dev,data,length)&t;&t;&t;&bslash;&n;&t;inswb(REG_BUFWIN, (data), (length))
@@ -1230,6 +1226,21 @@ id|enet_statistics
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Reset the chip */
+id|outw
+c_func
+(paren
+id|CFG2_RESET
+comma
+id|REG_CONFIG2
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|4
+)paren
+suffix:semicolon
 id|priv-&gt;regs.command
 op_assign
 l_int|0
@@ -1830,30 +1841,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifndef CLAIM_IRQ_AT_OPEN
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-id|ether3_interrupt
-comma
-l_int|0
-comma
-l_string|&quot;ether3&quot;
-comma
-id|dev
-)paren
-)paren
-id|error
-op_assign
-id|EAGAIN
-suffix:semicolon
-r_else
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -1989,15 +1976,8 @@ op_star
 id|dev
 )paren
 (brace
-id|ether3_init_for_open
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#ifdef CLAIM_IRQ_AT_OPEN
 r_if
 c_cond
 (paren
@@ -2023,7 +2003,6 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-macro_line|#endif
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -2035,6 +2014,12 @@ suffix:semicolon
 id|dev-&gt;start
 op_assign
 l_int|1
+suffix:semicolon
+id|ether3_init_for_open
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -2127,13 +2112,6 @@ comma
 id|REG_COMMAND
 )paren
 suffix:semicolon
-id|enable_irq
-c_func
-(paren
-id|dev-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#ifdef CLAIM_IRQ_AT_OPEN
 id|free_irq
 c_func
 (paren
@@ -2142,7 +2120,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
@@ -2341,11 +2318,11 @@ op_assign
 (paren
 id|length
 op_plus
-l_int|1
+l_int|3
 )paren
 op_amp
 op_complement
-l_int|1
+l_int|3
 suffix:semicolon
 r_if
 c_cond
@@ -2412,6 +2389,8 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+DECL|macro|TXHDR_FLAGS
+mdefine_line|#define TXHDR_FLAGS (TXHDR_TRANSMIT|TXHDR_CHAINCONTINUE|TXHDR_DATAFOLLOWS|TXHDR_ENSUCCESS)
 id|ether3_setbuffer
 c_func
 (paren
@@ -2488,8 +2467,6 @@ comma
 id|ptr
 )paren
 suffix:semicolon
-DECL|macro|TXHDR_FLAGS
-mdefine_line|#define TXHDR_FLAGS (TXHDR_TRANSMIT|TXHDR_CHAINCONTINUE|TXHDR_DATAFOLLOWS|TXHDR_ENSUCCESS)
 id|ether3_writeword
 c_func
 (paren
@@ -2511,11 +2488,9 @@ c_func
 (paren
 id|dev
 comma
-(paren
 id|TXHDR_FLAGS
 op_rshift
 l_int|16
-)paren
 )paren
 suffix:semicolon
 id|ether3_ledon
@@ -2528,17 +2503,6 @@ id|priv
 suffix:semicolon
 id|priv-&gt;tx_used
 op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|priv-&gt;tx_used
-OL
-id|MAX_TX_BUFFERED
-)paren
-id|dev-&gt;tbusy
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2567,22 +2531,6 @@ id|REG_COMMAND
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2617,6 +2565,33 @@ id|REG_COMMAND
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|priv-&gt;tx_used
+OL
+id|MAX_TX_BUFFERED
+)paren
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2646,6 +2621,10 @@ id|jiffies
 op_minus
 id|dev-&gt;trans_start
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2663,12 +2642,117 @@ op_amp
 id|priv-&gt;timer
 )paren
 suffix:semicolon
+id|save_flags_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: transmit timed out, network cable problem?&bslash;n&quot;
 comma
 id|dev-&gt;name
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: state: { status=%04X cfg1=%04X cfg2=%04X }&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|inw
+c_func
+(paren
+id|REG_STATUS
+)paren
+comma
+id|inw
+c_func
+(paren
+id|REG_CONFIG1
+)paren
+comma
+id|inw
+c_func
+(paren
+id|REG_CONFIG2
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: { rpr=%04X rea=%04X tpr=%04X }&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|inw
+c_func
+(paren
+id|REG_RECVPTR
+)paren
+comma
+id|inw
+c_func
+(paren
+id|REG_RECVEND
+)paren
+comma
+id|inw
+c_func
+(paren
+id|REG_TRANSMITPTR
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: tx head=%04X tx tail=%04X&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|priv-&gt;tx_head
+comma
+id|priv-&gt;tx_tail
+)paren
+suffix:semicolon
+id|ether3_setbuffer
+c_func
+(paren
+id|dev
+comma
+id|buffer_read
+comma
+id|priv-&gt;tx_tail
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: packet status = %08X&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|ether3_readlong
+c_func
+(paren
+id|dev
+)paren
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|dev-&gt;tbusy
@@ -2678,6 +2762,10 @@ suffix:semicolon
 id|priv-&gt;regs.config2
 op_or_assign
 id|CFG2_CTRLO
+suffix:semicolon
+id|priv-&gt;stats.tx_errors
+op_add_assign
+l_int|1
 suffix:semicolon
 id|outw
 c_func
@@ -2967,11 +3055,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 (paren
 id|status
 op_amp
+(paren
 id|RXSTAT_DONE
+op_or
+id|RXHDR_CHAINCONTINUE
+op_or
+id|RXHDR_RECEIVE
+)paren
+)paren
+op_ne
+(paren
+id|RXSTAT_DONE
+op_or
+id|RXHDR_CHAINCONTINUE
 )paren
 op_logical_or
 op_logical_neg
@@ -3355,7 +3454,7 @@ id|status
 op_amp
 id|RXSTAT_OVERSIZE
 )paren
-id|stats-&gt;rx_length_errors
+id|stats-&gt;rx_over_errors
 op_increment
 suffix:semicolon
 r_if
@@ -3556,17 +3655,19 @@ multiline_comment|/*&n;&t;&t; * Check to see if this packet has been transmitted
 r_if
 c_cond
 (paren
-op_logical_neg
 (paren
 id|status
 op_amp
+(paren
 id|TXSTAT_DONE
+op_or
+id|TXHDR_TRANSMIT
 )paren
-op_logical_or
-op_logical_neg
+)paren
+op_ne
 (paren
-id|status
-op_amp
+id|TXSTAT_DONE
+op_or
 id|TXHDR_TRANSMIT
 )paren
 )paren

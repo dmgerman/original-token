@@ -264,7 +264,7 @@ c_func
 (paren
 id|instance-&gt;irq
 comma
-id|cumanascsi_intr
+id|do_cumanascsi_intr
 comma
 id|SA_INTERRUPT
 comma

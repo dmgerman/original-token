@@ -153,5 +153,58 @@ DECL|macro|ARCH_IO_DELAY
 macro_line|#undef ARCH_IO_DELAY
 DECL|macro|ARCH_IO_CONSTANT
 macro_line|#undef ARCH_IO_CONSTANT
+macro_line|#ifdef __KERNEL__
+multiline_comment|/*&n; * String version of IO memory access ops:&n; */
+r_extern
+r_void
+id|_memcpy_fromio
+c_func
+(paren
+r_void
+op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_memcpy_toio
+c_func
+(paren
+r_int
+r_int
+comma
+r_void
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_memset_io
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|macro|memcpy_fromio
+mdefine_line|#define memcpy_fromio(to,from,len)&t;_memcpy_fromio((to),(unsigned long)(from),(len))
+DECL|macro|memcpy_toio
+mdefine_line|#define memcpy_toio(to,from,len)&t;_memcpy_toio((unsigned long)(to),(from),(len))
+DECL|macro|memset_io
+mdefine_line|#define memset_io(addr,c,len)&t;&t;_memset_io((unsigned long)(addr),(c),(len))
+macro_line|#endif
 macro_line|#endif
 eof

@@ -245,11 +245,11 @@ c_func
 id|_memcpy_toio
 )paren
 suffix:semicolon
-DECL|variable|_memset_c_io
+DECL|variable|_memset_io
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|_memset_c_io
+id|_memset_io
 )paren
 suffix:semicolon
 DECL|variable|insb
@@ -404,13 +404,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__memset
-)paren
-suffix:semicolon
-DECL|variable|__memsetw
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__memsetw
 )paren
 suffix:semicolon
 DECL|variable|__constant_c_memset

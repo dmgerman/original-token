@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/eesox.c&n; *&n; * Copyright (C) 1997-1998 Russell King&n; *&n; * This driver is based on experimentation.  Hence, it may have made&n; * assumptions about the particular card that I have available, and&n; * may not be reliable!&n; *&n; * Changelog:&n; *  01-10-1997&t;RMK&t;Created, READONLY version&n; *  15-02-1998&t;RMK&t;READ/WRITE version&n; *&t;&t;&t;added DMA support and hardware definitions&n; *  14-03-1998&t;RMK&t;Updated DMA support&n; *&t;&t;&t;Added terminator control&n; *  15-04-1998&t;RMK&t;Only do PIO if FAS216 will allow it.&n; */
+multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/eesox.c&n; *&n; * Copyright (C) 1997-1998 Russell King&n; *&n; * This driver is based on experimentation.  Hence, it may have made&n; * assumptions about the particular card that I have available, and&n; * may not be reliable!&n; *&n; * Changelog:&n; *  01-10-1997&t;RMK&t;Created, READONLY version&n; *  15-02-1998&t;RMK&t;READ/WRITE version&n; *&t;&t;&t;added DMA support and hardware definitions&n; *  14-03-1998&t;RMK&t;Updated DMA support&n; *&t;&t;&t;Added terminator control&n; *  15-04-1998&t;RMK&t;Only do PIO if FAS216 will allow it.&n; *  27-06-1998&t;RMK&t;Changed asm/delay.h to linux/delay.h&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -67,6 +67,34 @@ id|ecs
 (braket
 id|MAX_ECARDS
 )braket
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Russell King&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;EESOX SCSI driver&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|term
+comma
+l_string|&quot;1-8i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|term
+comma
+l_string|&quot;SCSI bus termination&quot;
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * Use term=0,1,0,0,0 to turn terminators on/off&n; */
 DECL|variable|term
@@ -1441,6 +1469,10 @@ op_or
 id|CNTL3_FASTSCSI
 op_or
 id|CNTL3_FASTCLK
+suffix:semicolon
+id|info-&gt;info.ifcfg.disconnect_ok
+op_assign
+l_int|1
 suffix:semicolon
 id|info-&gt;info.dma.setup
 op_assign

@@ -121,8 +121,8 @@ DECL|macro|NCR5380_read
 mdefine_line|#define NCR5380_read(reg)&t;&t;oakscsi_read(_instance, reg)
 DECL|macro|NCR5380_write
 mdefine_line|#define NCR5380_write(reg, value)&t;oakscsi_write(_instance, reg, value)
-DECL|macro|NCR5380_intr
-mdefine_line|#define NCR5380_intr&t;&t;&t;oakscsi_intr
+DECL|macro|do_NCR5380_intr
+mdefine_line|#define do_NCR5380_intr&t;&t;&t;do_oakscsi_intr
 DECL|macro|NCR5380_queue_command
 mdefine_line|#define NCR5380_queue_command&t;&t;oakscsi_queue_command
 DECL|macro|NCR5380_abort

@@ -5624,6 +5624,14 @@ comma
 id|fbcon_cyber8_revc
 comma
 l_int|NULL
+comma
+l_int|NULL
+comma
+id|FONTWIDTH
+c_func
+(paren
+l_int|8
+)paren
 )brace
 suffix:semicolon
 macro_line|#endif

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/cs4232.c&n; *&n; * The low level driver for Crystal CS4232 based cards. The CS4232 is&n; * a PnP compatible chip which contains a CS4231A codec, SB emulation,&n; * a MPU401 compatible MIDI port, joystick and synthesizer and IDE CD-ROM &n; * interfaces. This is just a temporary driver until full PnP support&n; * gets implemented. Just the WSS codec, FM synth and the MIDI ports are&n; * supported. Other interfaces are left uninitialized.&n; *&n; * Supported chips are:&n; *      CS4232&n; *      CS4236&n; *      CS4236B&n; *&n; * Note: You will need a PnP config setup to initialise some CS4232 boards&n; * anyway.&n; *&n; * Changes&n; *&t;Alan Cox&t;Modularisation, Basic cleanups.&n; */
+multiline_comment|/*&n; * sound/cs4232.c&n; *&n; * The low level driver for Crystal CS4232 based cards. The CS4232 is&n; * a PnP compatible chip which contains a CS4231A codec, SB emulation,&n; * a MPU401 compatible MIDI port, joystick and synthesizer and IDE CD-ROM &n; * interfaces. This is just a temporary driver until full PnP support&n; * gets implemented. Just the WSS codec, FM synth and the MIDI ports are&n; * supported. Other interfaces are left uninitialized.&n; *&n; * ifdef ...WAVEFRONT...&n; * &n; *   Support is provided for initializing the WaveFront synth&n; *   interface as well, which is logical device #4. Note that if&n; *   you have a Tropez+ card, you probably don&squot;t need to setup&n; *   the CS4232-supported MIDI interface, since it corresponds to&n; *   the internal 26-pin header that&squot;s hard to access. Using this&n; *   requires an additional IRQ, a resource none too plentiful in&n; *   this environment. Just don&squot;t set module parameters mpuio and&n; *   mpuirq, and the MIDI port will be left uninitialized. You can&n; *   still use the ICS2115 hosted MIDI interface which corresponds&n; *   to the 9-pin D connector on the back of the card.&n; *&n; * endif  ...WAVEFRONT...&n; *&n; * Supported chips are:&n; *      CS4232&n; *      CS4236&n; *      CS4236B&n; *&n; * Note: You will need a PnP config setup to initialise some CS4232 boards&n; * anyway.&n; *&n; * Changes&n; *&t;Alan Cox&t;&t;Modularisation, Basic cleanups.&n; *      Paul Barton-Davis&t;Separated MPU configuration, added&n; *                                       Tropez+ (WaveFront) support&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -44,6 +44,20 @@ id|mpu_irq
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_SOUND_WAVEFRONT_MODULE
+DECL|variable|synth_base
+DECL|variable|synth_irq
+r_static
+r_int
+id|synth_base
+op_assign
+l_int|0
+comma
+id|synth_irq
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif CONFIG_SOUND_WAVEFRONT_MODULE
 DECL|variable|mpu_detected
 r_static
 r_int
@@ -525,6 +539,52 @@ suffix:semicolon
 multiline_comment|/* Activate logical dev 3 */
 )brace
 macro_line|#endif
+macro_line|#if defined(CONFIG_SOUND_WAVEFRONT) || defined(CONFIG_SOUND_WAVEFRONT_MODULE)
+(brace
+id|CS_OUT2
+(paren
+l_int|0x15
+comma
+l_int|0x04
+)paren
+suffix:semicolon
+multiline_comment|/* logical device 4 (WaveFront) */
+id|CS_OUT3
+(paren
+l_int|0x47
+comma
+(paren
+id|synth_base
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xff
+comma
+id|synth_base
+op_amp
+l_int|0xff
+)paren
+suffix:semicolon
+multiline_comment|/* base */
+id|CS_OUT2
+(paren
+l_int|0x22
+comma
+id|synth_irq
+)paren
+suffix:semicolon
+multiline_comment|/* IRQ */
+id|CS_OUT2
+(paren
+l_int|0x33
+comma
+l_int|0x01
+)paren
+suffix:semicolon
+multiline_comment|/* Activate logical dev 4 */
+)brace
+macro_line|#endif
 multiline_comment|/*&n;&t;&t; * Finally activate the chip&n;&t;&t; */
 id|CS_OUT
 c_func
@@ -821,6 +881,19 @@ id|dma2
 op_assign
 id|hw_config-&gt;dma2
 suffix:semicolon
+r_int
+id|mixer
+op_assign
+id|audio_devs
+(braket
+id|hw_config-&gt;slots
+(braket
+l_int|0
+)braket
+)braket
+op_member_access_from_pointer
+id|mixer_dev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -849,6 +922,20 @@ multiline_comment|/* Capture DMA */
 l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mixer
+op_ge
+l_int|0
+)paren
+(brace
+id|sound_unload_mixerdev
+(paren
+id|mixer
+)paren
+suffix:semicolon
+)brace
 id|sound_unload_audiodev
 c_func
 (paren
@@ -983,6 +1070,20 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+DECL|variable|mpuio
+r_int
+id|mpuio
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|mpuirq
+r_int
+id|mpuirq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
@@ -1015,12 +1116,65 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mpuio
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mpuirq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_SOUND_WAVEFRONT_MODULE
+DECL|variable|synthio
+r_int
+id|synthio
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|synthirq
+r_int
+id|synthirq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|synthio
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|synthirq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_SOUND_WAVEFRONT_MODULE
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
 DECL|variable|cfg
 r_struct
 id|address_info
 id|cfg
+suffix:semicolon
+DECL|variable|mpu_cfg
+r_struct
+id|address_info
+id|mpu_cfg
 suffix:semicolon
 multiline_comment|/*&n; *&t;Install a CS4232 based card. Need to have ad1848 and mpu401&n; *&t;loaded ready.&n; */
 DECL|function|init_module
@@ -1031,6 +1185,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifndef CONFIG_SOUND_WAVEFRONT_MODULE
 r_if
 c_cond
 (paren
@@ -1067,6 +1222,55 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+macro_line|#else 
+r_if
+c_cond
+(paren
+id|synthio
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|synthirq
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|io
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|irq
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|dma
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|dma2
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;cs4232: synthio, synthirq, dma, dma2, &quot;
+l_string|&quot;irq and io must be set.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+macro_line|#endif CONFIG_SOUND_WAVEFRONT_MODULE
 id|cfg.io_base
 op_assign
 id|io
@@ -1083,6 +1287,16 @@ id|cfg.dma2
 op_assign
 id|dma2
 suffix:semicolon
+macro_line|#ifdef CONFIG_SOUND_WAVEFRONT_MODULE
+id|synth_base
+op_assign
+id|synthio
+suffix:semicolon
+id|synth_irq
+op_assign
+id|synthirq
+suffix:semicolon
+macro_line|#endif CONFIG_SOUND_WAVEFRONT_MODULE&t;
 r_if
 c_cond
 (paren
@@ -1099,14 +1313,47 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+id|mpu_cfg.io_base
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|mpu_cfg.irq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mpuio
+op_ne
+op_minus
+l_int|1
+op_logical_and
+id|mpuirq
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
+id|mpu_cfg.io_base
+op_assign
+id|mpuio
+suffix:semicolon
+id|mpu_cfg.irq
+op_assign
+id|mpuirq
+suffix:semicolon
 id|probe_cs4232_mpu
 c_func
 (paren
 op_amp
-id|cfg
+id|mpu_cfg
 )paren
 suffix:semicolon
 multiline_comment|/* Bug always returns 0 not OK -- AC */
+)brace
 id|attach_cs4232
 c_func
 (paren
@@ -1114,13 +1361,28 @@ op_amp
 id|cfg
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mpuio
+op_ne
+op_minus
+l_int|1
+op_logical_and
+id|mpuirq
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
 id|attach_cs4232_mpu
 c_func
 (paren
 op_amp
-id|cfg
+id|mpu_cfg
 )paren
 suffix:semicolon
+)brace
 id|SOUND_LOCK
 suffix:semicolon
 r_return
@@ -1135,13 +1397,6 @@ c_func
 r_void
 )paren
 (brace
-id|unload_cs4232_mpu
-c_func
-(paren
-op_amp
-id|cfg
-)paren
-suffix:semicolon
 id|unload_cs4232
 c_func
 (paren
@@ -1149,6 +1404,7 @@ op_amp
 id|cfg
 )paren
 suffix:semicolon
+multiline_comment|/* unloads MPU as well, if needed */
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace

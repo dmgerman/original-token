@@ -577,6 +577,14 @@ r_int
 id|asyncperiod
 suffix:semicolon
 multiline_comment|/* Async transfer period (ns)&t;&t;*/
+DECL|member|disconnect_ok
+r_int
+r_int
+id|disconnect_ok
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Disconnects allowed?&t;&t;&t;*/
 DECL|member|ifcfg
 )brace
 id|ifcfg
@@ -609,6 +617,12 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* device can disconnect&t;&t;*/
+DECL|member|period
+r_int
+r_int
+id|period
+suffix:semicolon
+multiline_comment|/* sync xfer period (*4ns)&t;&t;*/
 DECL|member|stp
 r_int
 r_char

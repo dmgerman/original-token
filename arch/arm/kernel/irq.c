@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/arm/kernel/irq.c&n; *&n; *  Copyright (C) 1992 Linus Torvalds&n; *  Modifications for ARM processor Copyright (C) 1995, 1996 Russell King.&n; *&n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; */
+multiline_comment|/*&n; *  linux/arch/arm/kernel/irq.c&n; *&n; *  Copyright (C) 1992 Linus Torvalds&n; *  Modifications for ARM processor Copyright (C) 1995-1998 Russell King.&n; *  FIQ support written by Philip Blundell &lt;philb@gnu.org&gt;, 1998.&n; *&n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; */
 multiline_comment|/*&n; * IRQ&squot;s are in fact implemented a bit like signal handlers for the kernel.&n; * Naturally it&squot;s not a 1:1 relation, but there are similarities.&n; */
 macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_DEBUG_ERRORS */
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -14,9 +14,11 @@ macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/fiq.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/arch/irq.h&gt;
 DECL|variable|local_bh_count
 r_int
@@ -38,6 +40,21 @@ DECL|variable|irq_controller_lock
 id|spinlock_t
 id|irq_controller_lock
 suffix:semicolon
+DECL|variable|current_fiq
+r_static
+r_struct
+id|fiq_handler
+op_star
+id|current_fiq
+suffix:semicolon
+DECL|variable|no_fiq_insn
+r_static
+r_int
+r_int
+id|no_fiq_insn
+suffix:semicolon
+DECL|macro|FIQ_VECTOR
+mdefine_line|#define FIQ_VECTOR ((unsigned long *)0x1c)
 macro_line|#ifndef SMP
 DECL|macro|irq_enter
 mdefine_line|#define irq_enter(cpu, irq)&t;(++local_irq_count[cpu])
@@ -45,6 +62,34 @@ DECL|macro|irq_exit
 mdefine_line|#define irq_exit(cpu, irq)&t;(--local_irq_count[cpu])
 macro_line|#else
 macro_line|#error SMP not supported
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_ACORN
+multiline_comment|/* Bitmask indicating valid interrupt numbers&n; * (to be moved to include/asm-arm/arch-*)&n; */
+DECL|variable|validirqs
+r_int
+r_int
+id|validirqs
+(braket
+id|NR_IRQS
+op_div
+l_int|32
+)braket
+op_assign
+(brace
+l_int|0x003ffe7f
+comma
+l_int|0x000001ff
+comma
+l_int|0x000000ff
+comma
+l_int|0x00000000
+)brace
+suffix:semicolon
+DECL|macro|valid_irq
+mdefine_line|#define valid_irq(x) ((x) &lt; NR_IRQS &amp;&amp; validirqs[(x) &gt;&gt; 5] &amp; (1 &lt;&lt; ((x) &amp; 31)))
+macro_line|#else
+DECL|macro|valid_irq
+mdefine_line|#define valid_irq(x) ((x) &lt; NR_IRQS)
 macro_line|#endif
 DECL|function|disable_irq
 r_void
@@ -158,34 +203,6 @@ id|irq_action
 id|NR_IRQS
 )braket
 suffix:semicolon
-macro_line|#ifdef CONFIG_ARCH_ACORN
-multiline_comment|/* Bitmask indicating valid interrupt numbers&n; * (to be moved to include/asm-arm/arch-*)&n; */
-DECL|variable|validirqs
-r_int
-r_int
-id|validirqs
-(braket
-id|NR_IRQS
-op_div
-l_int|32
-)braket
-op_assign
-(brace
-l_int|0x003ffe7f
-comma
-l_int|0x000001ff
-comma
-l_int|0x000000ff
-comma
-l_int|0x00000000
-)brace
-suffix:semicolon
-DECL|macro|valid_irq
-mdefine_line|#define valid_irq(x) ((x) &lt; NR_IRQS &amp;&amp; validirqs[(x) &gt;&gt; 5] &amp; (1 &lt;&lt; ((x) &amp; 31)))
-macro_line|#else
-DECL|macro|valid_irq
-mdefine_line|#define valid_irq(x) ((x) &lt; NR_IRQS)
-macro_line|#endif
 DECL|function|get_irq_list
 r_int
 id|get_irq_list
@@ -294,6 +311,23 @@ op_assign
 l_char|&squot;&bslash;n&squot;
 suffix:semicolon
 )brace
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;FIQ:              %s&bslash;n&quot;
+comma
+id|current_fiq
+ques
+c_cond
+id|current_fiq-&gt;name
+suffix:colon
+l_string|&quot;unused&quot;
+)paren
+suffix:semicolon
 r_return
 id|p
 op_minus
@@ -555,7 +589,7 @@ c_func
 suffix:semicolon
 )brace
 )brace
-macro_line|#if defined(HAS_IOMD) || defined(HAS_IOC)
+macro_line|#if defined(CONFIG_ARCH_ACORN)
 DECL|function|do_ecard_IRQ
 r_void
 id|do_ecard_IRQ
@@ -1239,6 +1273,104 @@ r_return
 id|i
 suffix:semicolon
 )brace
+DECL|function|claim_fiq
+r_int
+id|claim_fiq
+c_func
+(paren
+r_struct
+id|fiq_handler
+op_star
+id|f
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|current_fiq
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|current_fiq-&gt;callback
+op_eq
+l_int|NULL
+op_logical_or
+(paren
+op_star
+id|current_fiq-&gt;callback
+)paren
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
+id|current_fiq
+op_assign
+id|f
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|release_fiq
+r_void
+id|release_fiq
+c_func
+(paren
+r_struct
+id|fiq_handler
+op_star
+id|f
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|current_fiq
+op_ne
+id|f
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s tried to release FIQ when not owner!&bslash;n&quot;
+comma
+id|f-&gt;name
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_DEBUG_ERRORS
+id|__backtrace
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+suffix:semicolon
+)brace
+id|current_fiq
+op_assign
+l_int|NULL
+suffix:semicolon
+op_star
+id|FIQ_VECTOR
+op_assign
+id|no_fiq_insn
+suffix:semicolon
+id|__flush_entry_to_ram
+c_func
+(paren
+id|FIQ_VECTOR
+)paren
+suffix:semicolon
+)brace
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1263,6 +1395,15 @@ id|irq_init_irq
 c_func
 (paren
 )paren
+suffix:semicolon
+id|current_fiq
+op_assign
+l_int|NULL
+suffix:semicolon
+id|no_fiq_insn
+op_assign
+op_star
+id|FIQ_VECTOR
 suffix:semicolon
 id|init_dma
 c_func

@@ -51,13 +51,21 @@ mdefine_line|#define ELF_EXEC_PAGESIZE&t;32768
 multiline_comment|/* This is the location that an ET_DYN program is loaded if exec&squot;ed.  Typical&n;   use of this is to invoke &quot;./ld.so someprog&quot; to test out a new version of&n;   the loader.  We need to make sure that it is out of the way of the program&n;   that it will &quot;exec&quot;, and that there is sufficient room for the brk.  */
 DECL|macro|ELF_ET_DYN_BASE
 mdefine_line|#define ELF_ET_DYN_BASE&t;(2 * TASK_SIZE / 3)
-multiline_comment|/* This yields a mask that user programs can use to figure out what&n;   instruction set this cpu supports.  This could be done in userspace,&n;   but it&squot;s not easy, and we&squot;ve already done it here.  */
+multiline_comment|/* This yields a mask that user programs can use to figure out what&n;   instruction set this cpu supports. */
 DECL|macro|ELF_HWCAP
-mdefine_line|#define ELF_HWCAP&t;(0)
+mdefine_line|#define ELF_HWCAP&t;(armidlist[armidindex].hwcap)
 multiline_comment|/* This yields a string that ld.so will use to load implementation&n;   specific libraries for optimization.  This is more specific in&n;   intent than poking at uname or /proc/cpuinfo. */
-multiline_comment|/* For now we just provide a fairly general string that describes the&n;   processor family.  This could be made more specific later if someone&n;   implemented optimisations that require it.  26-bit CPUs give you&n;   &quot;arm2&quot; for ARM2 (no SWP) and &quot;arm3&quot; for anything else (ARM1 isn&squot;t&n;   supported).  32-bit CPUs give you &quot;arm6&quot; for anything based on an&n;   ARM6 or ARM7 core and &quot;sa1x&quot; for anything based on a StrongARM-1&n;   core.  */
+multiline_comment|/* For now we just provide a fairly general string that describes the&n;   processor family.  This could be made more specific later if someone&n;   implemented optimisations that require it.  26-bit CPUs give you&n;   &quot;v1l&quot; for ARM2 (no SWP) and &quot;v2l&quot; for anything else (ARM1 isn&squot;t&n;   supported).  32-bit CPUs give you &quot;v3[lb]&quot; for anything based on an&n;   ARM6 or ARM7 core and &quot;armv4[lb]&quot; for anything based on a StrongARM-1&n;   core.  */
+DECL|macro|ELF_PLATFORM_SIZE
+mdefine_line|#define ELF_PLATFORM_SIZE 8
+r_extern
+r_char
+id|elf_platform
+(braket
+)braket
+suffix:semicolon
 DECL|macro|ELF_PLATFORM
-mdefine_line|#define ELF_PLATFORM&t;(armidlist[armidindex].optname)
+mdefine_line|#define ELF_PLATFORM&t;(elf_platform)
 macro_line|#ifdef __KERNEL__
 DECL|macro|SET_PERSONALITY
 mdefine_line|#define SET_PERSONALITY(ex,ibcs2) &bslash;&n;&t;current-&gt;personality = PER_LINUX_32BIT

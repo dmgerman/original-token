@@ -374,6 +374,9 @@ comma
 DECL|enumerator|PROC_NET_DN_L2
 id|PROC_NET_DN_L2
 comma
+DECL|enumerator|PROC_NET_DN_CACHE
+id|PROC_NET_DN_CACHE
+comma
 DECL|enumerator|PROC_NET_DN_SKT
 id|PROC_NET_DN_SKT
 comma

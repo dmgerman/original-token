@@ -825,10 +825,12 @@ suffix:semicolon
 multiline_comment|/* number of virtual rows */
 DECL|member|cursor_x
 r_int
+r_int
 id|cursor_x
 suffix:semicolon
 multiline_comment|/* current cursor position */
 DECL|member|cursor_y
+r_int
 r_int
 id|cursor_y
 suffix:semicolon
@@ -857,11 +859,23 @@ op_star
 id|fontdata
 suffix:semicolon
 multiline_comment|/* Font associated to this display */
+DECL|member|fontheightlog
+r_int
+r_int
+id|fontheightlog
+suffix:semicolon
+DECL|member|fontwidthlog
+r_int
+r_int
+id|fontwidthlog
+suffix:semicolon
 DECL|member|fontheight
+r_int
 r_int
 id|fontheight
 suffix:semicolon
 DECL|member|fontwidth
+r_int
 r_int
 id|fontwidth
 suffix:semicolon
@@ -923,6 +937,13 @@ op_star
 id|disp
 suffix:semicolon
 multiline_comment|/* initial display variable */
+DECL|member|display_fg
+r_struct
+id|vc_data
+op_star
+id|display_fg
+suffix:semicolon
+multiline_comment|/* Console visible on this display */
 DECL|member|fontname
 r_char
 id|fontname

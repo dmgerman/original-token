@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/procinfo.h&gt;
@@ -117,13 +118,14 @@ id|_edata
 comma
 id|_end
 suffix:semicolon
-DECL|variable|command_line
+DECL|variable|__initdata
 r_static
 r_char
 id|command_line
 (braket
 id|COMMAND_LINE_SIZE
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0
@@ -634,6 +636,13 @@ comma
 l_string|&quot;sa110&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_FB
+id|conswitchp
+op_assign
+op_amp
+id|fb_con
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|get_cpuinfo
 r_int

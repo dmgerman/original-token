@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|##include &lt;asm/smp.h&gt;
 multiline_comment|/*&n; * BIOS32-style PCI interface:&n; */
 DECL|macro|vulp
 mdefine_line|#define vulp&t;volatile unsigned long *

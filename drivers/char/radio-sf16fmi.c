@@ -47,7 +47,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* local things */
 DECL|macro|RSF16_ENCODE
-mdefine_line|#define RSF16_ENCODE(x)&t;((x*(1000/RADIO_FM_RES)+10700)/50)
+mdefine_line|#define RSF16_ENCODE(x)&t;((x*(1000/4)+10700)/50)
 DECL|function|outbits
 r_static
 r_void

@@ -230,7 +230,7 @@ c_func
 (paren
 id|instance-&gt;irq
 comma
-id|oakscsi_intr
+id|do_oakscsi_intr
 comma
 id|SA_INTERRUPT
 comma

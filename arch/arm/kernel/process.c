@@ -27,6 +27,12 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+DECL|variable|last_task_used_math
+r_struct
+id|task_struct
+op_star
+id|last_task_used_math
+suffix:semicolon
 r_extern
 r_void
 id|fpe_save
@@ -531,18 +537,6 @@ op_complement
 id|PF_USEDFPU
 suffix:semicolon
 )brace
-DECL|function|release_segments
-r_void
-id|release_segments
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-)paren
-(brace
-)brace
 DECL|function|release_thread
 r_void
 id|release_thread
@@ -552,26 +546,6 @@ r_struct
 id|task_struct
 op_star
 id|dead_task
-)paren
-(brace
-)brace
-DECL|function|copy_segments
-r_void
-id|copy_segments
-c_func
-(paren
-r_int
-id|nr
-comma
-r_struct
-id|task_struct
-op_star
-id|p
-comma
-r_struct
-id|mm_struct
-op_star
-id|new_mm
 )paren
 (brace
 )brace

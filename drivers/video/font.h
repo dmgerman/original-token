@@ -14,9 +14,11 @@ op_star
 id|name
 comma
 r_int
+r_int
 op_star
 id|width
 comma
+r_int
 r_int
 op_star
 id|height
@@ -47,9 +49,11 @@ id|name
 )braket
 comma
 r_int
+r_int
 op_star
 id|width
 comma
+r_int
 r_int
 op_star
 id|height

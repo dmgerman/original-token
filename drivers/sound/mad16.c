@@ -3988,6 +3988,13 @@ id|config_mpu.irq
 op_assign
 id|mpu_irq
 suffix:semicolon
+id|attach_mad16
+c_func
+(paren
+op_amp
+id|config
+)paren
+suffix:semicolon
 id|found_mpu
 op_assign
 id|probe_mad16_mpu
@@ -3995,13 +4002,6 @@ c_func
 (paren
 op_amp
 id|config_mpu
-)paren
-suffix:semicolon
-id|attach_mad16
-c_func
-(paren
-op_amp
-id|config
 )paren
 suffix:semicolon
 r_if
@@ -4039,7 +4039,7 @@ id|unload_mad16_mpu
 c_func
 (paren
 op_amp
-id|config
+id|config_mpu
 )paren
 suffix:semicolon
 id|unload_mad16

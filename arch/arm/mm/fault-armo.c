@@ -23,8 +23,6 @@ DECL|macro|FAULT_CODE_WRITE
 mdefine_line|#define FAULT_CODE_WRITE&t;0x02
 DECL|macro|FAULT_CODE_USER
 mdefine_line|#define FAULT_CODE_USER&t;&t;0x01
-DECL|macro|USER_PTRS_PER_PGD
-mdefine_line|#define USER_PTRS_PER_PGD (TASK_SIZE / PGDIR_SIZE)
 DECL|variable|quicklists
 r_struct
 id|pgtable_cache_struct

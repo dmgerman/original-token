@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/powertec.c&n; *&n; * Copyright (C) 1997-1998 Russell King&n; *&n; * This driver is based on experimentation.  Hence, it may have made&n; * assumptions about the particular card that I have available, and&n; * may not be reliable!&n; *&n; * Changelog:&n; *  01-10-1997&t;RMK&t;Created, READONLY version.&n; *  15-02-1998&t;RMK&t;Added DMA support and hardware definitions.&n; *  15-04-1998&t;RMK&t;Only do PIO if FAS216 will allow it.&n; *  02-05-1998&t;RMK&t;Moved DMA sg list into per-interface structure.&n; */
+multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/powertec.c&n; *&n; * Copyright (C) 1997-1998 Russell King&n; *&n; * This driver is based on experimentation.  Hence, it may have made&n; * assumptions about the particular card that I have available, and&n; * may not be reliable!&n; *&n; * Changelog:&n; *  01-10-1997&t;RMK&t;Created, READONLY version.&n; *  15-02-1998&t;RMK&t;Added DMA support and hardware definitions.&n; *  15-04-1998&t;RMK&t;Only do PIO if FAS216 will allow it.&n; *  02-05-1998&t;RMK&t;Moved DMA sg list into per-interface structure.&n; *  27-06-1998&t;RMK&t;Changed asm/delay.h to linux/delay.h&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -56,6 +56,34 @@ DECL|macro|VER_MINOR
 mdefine_line|#define VER_MINOR&t;0
 DECL|macro|VER_PATCH
 mdefine_line|#define VER_PATCH&t;2
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Russell King&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Powertec SCSI driver&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|term
+comma
+l_string|&quot;1-8i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|term
+comma
+l_string|&quot;SCSI bus termination&quot;
+)paren
+suffix:semicolon
 DECL|variable|ecs
 r_static
 r_struct
@@ -857,6 +885,10 @@ op_or
 id|CNTL3_FASTSCSI
 op_or
 id|CNTL3_FASTCLK
+suffix:semicolon
+id|info-&gt;info.ifcfg.disconnect_ok
+op_assign
+l_int|1
 suffix:semicolon
 id|info-&gt;info.dma.setup
 op_assign

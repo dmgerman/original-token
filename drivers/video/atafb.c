@@ -12062,7 +12062,7 @@ id|default_par
 id|panic
 c_func
 (paren
-l_string|&quot;can&squot;t set default video mode&bslash;n&quot;
+l_string|&quot;can&squot;t set default video mode&quot;
 )paren
 suffix:semicolon
 id|var
@@ -12470,7 +12470,7 @@ multiline_comment|/* Nobody will ever see this message :-) */
 id|panic
 c_func
 (paren
-l_string|&quot;Cannot initialize video hardware&bslash;n&quot;
+l_string|&quot;Cannot initialize video hardware&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -12570,6 +12570,18 @@ comma
 l_int|NULL
 comma
 l_string|&quot;atafb&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|screen_base
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Cannot allocate screen memory&quot;
 )paren
 suffix:semicolon
 id|memset

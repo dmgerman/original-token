@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: pci.c,v 1.85 1998/05/12 07:36:01 mj Exp $&n; *&n; *&t;PCI Bus Services, see include/linux/pci.h for further explanation.&n; *&n; *&t;Copyright 1993 -- 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang&n; *&n; *&t;Copyright 1997 -- 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; */
+multiline_comment|/*&n; *&t;$Id: pci.c,v 1.86 1998/07/15 20:34:47 mj Exp $&n; *&n; *&t;PCI Bus Services, see include/linux/pci.h for further explanation.&n; *&n; *&t;Copyright 1993 -- 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang&n; *&n; *&t;Copyright 1997 -- 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -712,9 +712,6 @@ id|pci_bus
 op_star
 id|child
 suffix:semicolon
-r_int
-id|reg
-suffix:semicolon
 id|DBG
 c_func
 (paren
@@ -1143,57 +1140,14 @@ id|PCI_CLASS_BRIDGE_CARDBUS
 r_goto
 id|bad
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|reg
-op_assign
-l_int|0
-suffix:semicolon
-id|reg
-OL
-l_int|2
-suffix:semicolon
-id|reg
-op_increment
-)paren
-(brace
-id|pcibios_read_config_dword
+id|pci_read_bases
 c_func
 (paren
-id|bus-&gt;number
+id|dev
 comma
-id|devfn
-comma
-id|PCI_CB_MEMORY_BASE_0
-op_plus
-(paren
-id|reg
-op_lshift
-l_int|3
-)paren
-comma
-op_amp
-id|l
+l_int|1
 )paren
 suffix:semicolon
-id|dev-&gt;base_address
-(braket
-id|reg
-)braket
-op_assign
-(paren
-id|l
-op_eq
-l_int|0xffffffff
-)paren
-ques
-c_cond
-l_int|0
-suffix:colon
-id|l
-suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_default
@@ -1313,11 +1267,38 @@ l_int|32
 )paren
 suffix:semicolon
 macro_line|#endif
+)brace
+multiline_comment|/*&n;&t; * After performing arch-dependent fixup of the bus, look behind&n;&t; * all PCI-to-PCI bridges on this bus.&n;&t; */
+id|pcibios_fixup_bus
+c_func
+(paren
+id|bus
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|dev
+op_assign
+id|bus-&gt;devices
+suffix:semicolon
+id|dev
+suffix:semicolon
+id|dev
+op_assign
+id|dev-&gt;sibling
+)paren
 multiline_comment|/*&n;&t;&t; * If it&squot;s a bridge, scan the bus behind it.&n;&t;&t; */
 r_if
 c_cond
 (paren
+(paren
+id|dev
+op_member_access_from_pointer
 r_class
+op_rshift
+l_int|8
+)paren
 op_eq
 id|PCI_CLASS_BRIDGE_PCI
 )paren
@@ -1325,6 +1306,12 @@ id|PCI_CLASS_BRIDGE_PCI
 r_int
 r_int
 id|buses
+suffix:semicolon
+r_int
+r_int
+id|devfn
+op_assign
+id|dev-&gt;devfn
 suffix:semicolon
 r_int
 r_int
@@ -1627,7 +1614,6 @@ comma
 id|cr
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n;&t; * We&squot;ve scanned the bus and so we know all about what&squot;s on&n;&t; * the other side of any bridges that may be on this bus plus&n;&t; * any devices.&n;&t; *&n;&t; * Return how far we&squot;ve got finding sub-buses.&n;&t; */
 id|DBG

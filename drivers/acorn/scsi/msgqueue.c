@@ -1,8 +1,20 @@
-multiline_comment|/*&n; * drivers/acorn/scsi/msgqueue.c: message queue handling&n; *&n; * Copyright (C) 1997,8 Russell King&n; */
+multiline_comment|/*&n; * drivers/acorn/scsi/msgqueue.c: message queue handling&n; *&n; * Copyright (C) 1997-1998 Russell King&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &quot;msgqueue.h&quot;
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Russell King&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;SCSI message queue handling&quot;
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Function: struct msgqueue_entry *mqe_alloc(MsgQueue_t *msgq)&n; * Purpose : Allocate a message queue entry&n; * Params  : msgq - message queue to claim entry for&n; * Returns : message queue entry or NULL.&n; */
 DECL|function|mqe_alloc
 r_static

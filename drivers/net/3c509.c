@@ -17,11 +17,9 @@ DECL|macro|INTR_WORK
 mdefine_line|#define INTR_WORK      10
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_MCA */
-macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -433,9 +431,6 @@ r_void
 id|update_stats
 c_func
 (paren
-r_int
-id|addr
-comma
 r_struct
 id|device
 op_star
@@ -2547,6 +2542,14 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|el3_debug
+OG
+l_int|4
+)paren
+(brace
 id|status
 op_assign
 id|inw
@@ -2557,13 +2560,6 @@ op_plus
 id|EL3_STATUS
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|el3_debug
-OG
-l_int|4
-)paren
 id|printk
 c_func
 (paren
@@ -2574,6 +2570,7 @@ comma
 id|status
 )paren
 suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -2682,8 +2679,6 @@ multiline_comment|/* Empty statistics. */
 id|update_stats
 c_func
 (paren
-id|ioaddr
-comma
 id|dev
 )paren
 suffix:semicolon
@@ -2924,8 +2919,6 @@ suffix:semicolon
 id|update_stats
 c_func
 (paren
-id|dev-&gt;base_addr
-comma
 id|dev
 )paren
 suffix:semicolon
@@ -2947,9 +2940,6 @@ r_void
 id|update_stats
 c_func
 (paren
-r_int
-id|ioaddr
-comma
 r_struct
 id|device
 op_star
@@ -2967,6 +2957,11 @@ id|el3_private
 op_star
 )paren
 id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
 suffix:semicolon
 r_if
 c_cond
@@ -3770,8 +3765,6 @@ suffix:semicolon
 id|update_stats
 c_func
 (paren
-id|ioaddr
-comma
 id|dev
 )paren
 suffix:semicolon
@@ -3856,6 +3849,30 @@ comma
 op_minus
 l_int|1
 )brace
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|debug
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;1-8i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|xcvr
+comma
+l_string|&quot;1-8i&quot;
+)paren
 suffix:semicolon
 r_int
 DECL|function|init_module

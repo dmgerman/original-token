@@ -1,15 +1,15 @@
-multiline_comment|/*********************************************************************&n; *&n; * msnd.h&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Some parts of this header file were derived from the Turtle Beach&n; * MultiSound Driver Development Kit.&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; * Copyright (C) 1993 Turtle Beach Systems, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd.h,v 1.3 1998/06/09 20:39:34 andrewtv Exp $&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *&n; * msnd.h&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Some parts of this header file were derived from the Turtle Beach&n; * MultiSound Driver Development Kit.&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; * Copyright (C) 1993 Turtle Beach Systems, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd.h,v 1.4 1998/07/14 22:59:25 andrewtv Exp $&n; *&n; ********************************************************************/
 macro_line|#ifndef __MSND_H
 DECL|macro|__MSND_H
 mdefine_line|#define __MSND_H
 DECL|macro|VERSION
-mdefine_line|#define VERSION&t;&t;&t;&quot;0.6&quot;
+mdefine_line|#define VERSION&t;&t;&t;&quot;0.6.2&quot;
 DECL|macro|DEFSAMPLERATE
-mdefine_line|#define DEFSAMPLERATE&t;&t;44100
+mdefine_line|#define DEFSAMPLERATE&t;&t;DSP_DEFAULT_SPEED
 DECL|macro|DEFSAMPLESIZE
-mdefine_line|#define DEFSAMPLESIZE&t;&t;16
+mdefine_line|#define DEFSAMPLESIZE&t;&t;8
 DECL|macro|DEFCHANNELS
-mdefine_line|#define DEFCHANNELS&t;&t;2
+mdefine_line|#define DEFCHANNELS&t;&t;1
 DECL|macro|DEFFIFOSIZE
 mdefine_line|#define DEFFIFOSIZE&t;&t;64
 DECL|macro|SNDCARD_MSND
@@ -164,6 +164,30 @@ DECL|macro|HIMT_MIDI_IN_UCHAR
 mdefine_line|#define&t;HIMT_MIDI_IN_UCHAR&t;0x0E
 DECL|macro|HIMT_DSP
 mdefine_line|#define&t;HIMT_DSP&t;&t;0x0F
+DECL|macro|HDEX_BASE
+mdefine_line|#define&t;HDEX_BASE&t;       &t;0x92
+DECL|macro|HDEX_PLAY_START
+mdefine_line|#define&t;HDEX_PLAY_START&t;&t;(0 + HDEX_BASE)
+DECL|macro|HDEX_PLAY_STOP
+mdefine_line|#define&t;HDEX_PLAY_STOP&t;&t;(1 + HDEX_BASE)
+DECL|macro|HDEX_PLAY_PAUSE
+mdefine_line|#define&t;HDEX_PLAY_PAUSE&t;&t;(2 + HDEX_BASE)
+DECL|macro|HDEX_PLAY_RESUME
+mdefine_line|#define&t;HDEX_PLAY_RESUME&t;(3 + HDEX_BASE)
+DECL|macro|HDEX_RECORD_START
+mdefine_line|#define&t;HDEX_RECORD_START&t;(4 + HDEX_BASE)
+DECL|macro|HDEX_RECORD_STOP
+mdefine_line|#define&t;HDEX_RECORD_STOP&t;(5 + HDEX_BASE)
+DECL|macro|HDEX_MIDI_IN_START
+mdefine_line|#define&t;HDEX_MIDI_IN_START &t;(6 + HDEX_BASE)
+DECL|macro|HDEX_MIDI_IN_STOP
+mdefine_line|#define&t;HDEX_MIDI_IN_STOP&t;(7 + HDEX_BASE)
+DECL|macro|HDEX_MIDI_OUT_START
+mdefine_line|#define&t;HDEX_MIDI_OUT_START&t;(8 + HDEX_BASE)
+DECL|macro|HDEX_MIDI_OUT_STOP
+mdefine_line|#define&t;HDEX_MIDI_OUT_STOP&t;(9 + HDEX_BASE)
+DECL|macro|HDEX_AUX_REQ
+mdefine_line|#define&t;HDEX_AUX_REQ&t;&t;(10 + HDEX_BASE)
 DECL|macro|HIWORD
 mdefine_line|#define HIWORD(l)&t;&t;((WORD)((((DWORD)(l)) &gt;&gt; 16) &amp; 0xFFFF ))
 DECL|macro|LOWORD
@@ -181,6 +205,10 @@ mdefine_line|#define PCTODSP_OFFSET(w)&t;(USHORT)((w)/2)
 DECL|macro|PCTODSP_BASED
 mdefine_line|#define PCTODSP_BASED(w)&t;(USHORT)(((w)/2) + DSP_BASE_ADDR)
 macro_line|#ifdef SLOWIO
+DECL|macro|outb
+macro_line|#  undef outb
+DECL|macro|inb
+macro_line|#  undef inb
 DECL|macro|outb
 macro_line|#  define outb&t;&t;&t;outb_p
 DECL|macro|inb
@@ -397,6 +425,7 @@ suffix:semicolon
 DECL|member|pwDSPQData
 DECL|member|pwMIDQData
 DECL|member|pwMODQData
+r_volatile
 id|WORD
 op_star
 id|pwDSPQData
@@ -412,6 +441,7 @@ DECL|member|DARQ
 DECL|member|MODQ
 DECL|member|MIDQ
 DECL|member|DSPQ
+r_volatile
 r_struct
 id|JobQueueStruct
 op_star
@@ -428,6 +458,10 @@ id|MIDQ
 comma
 op_star
 id|DSPQ
+suffix:semicolon
+DECL|member|bCurrentMidiPatch
+id|BYTE
+id|bCurrentMidiPatch
 suffix:semicolon
 multiline_comment|/* State variables */
 DECL|member|mode
@@ -457,6 +491,8 @@ DECL|macro|F_EXT_MIDI_INUSE
 mdefine_line|#define F_EXT_MIDI_INUSE&t;&t;7
 DECL|macro|F_INT_MIDI_INUSE
 mdefine_line|#define F_INT_MIDI_INUSE&t;&t;8
+DECL|macro|F_WRITEFLUSH
+mdefine_line|#define F_WRITEFLUSH&t;&t;&t;9
 DECL|member|writeblock
 DECL|member|readblock
 r_struct
@@ -466,6 +502,12 @@ id|writeblock
 comma
 op_star
 id|readblock
+suffix:semicolon
+DECL|member|writeflush
+r_struct
+id|wait_queue
+op_star
+id|writeflush
 suffix:semicolon
 DECL|member|recsrc
 r_int

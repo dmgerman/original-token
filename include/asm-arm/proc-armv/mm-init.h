@@ -49,6 +49,8 @@ suffix:semicolon
 id|pmd_t
 op_star
 id|pmdp
+comma
+id|pmd
 suffix:semicolon
 id|pgdp
 op_assign
@@ -71,8 +73,7 @@ suffix:semicolon
 id|pmd_val
 c_func
 (paren
-op_star
-id|pmdp
+id|pmd
 )paren
 op_assign
 id|phys
@@ -86,6 +87,14 @@ id|domain
 )paren
 op_or
 id|prot
+suffix:semicolon
+id|set_pmd
+c_func
+(paren
+id|pmdp
+comma
+id|pmd
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Clear any mapping&n; */
@@ -169,6 +178,8 @@ suffix:semicolon
 id|pmd_t
 op_star
 id|pmdp
+comma
+id|pmd
 suffix:semicolon
 id|pte_t
 op_star
@@ -246,8 +257,7 @@ suffix:semicolon
 id|pmd_val
 c_func
 (paren
-op_star
-id|pmdp
+id|pmd
 )paren
 op_assign
 id|__virt_to_phys
@@ -262,6 +272,14 @@ id|PMD_DOMAIN
 c_func
 (paren
 id|domain
+)paren
+suffix:semicolon
+id|set_pmd
+c_func
+(paren
+id|pmdp
+comma
+id|pmd
 )paren
 suffix:semicolon
 op_star

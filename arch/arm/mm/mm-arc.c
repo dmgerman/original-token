@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * arch/arm/mm/mm-arc.c&n; *&n; * Extra MM routines for the Archimedes architecture&n; *&n; * Copyright (C) 1998 Russell King&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|variable|phys_screen_end
@@ -7,7 +8,10 @@ r_int
 id|phys_screen_end
 suffix:semicolon
 multiline_comment|/*&n; * This routine needs more work to make it dynamically release/allocate mem!&n; */
-DECL|function|map_screen_mem
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
 id|map_screen_mem
@@ -23,6 +27,7 @@ id|kmem
 comma
 r_int
 id|update
+)paren
 )paren
 (brace
 r_static
@@ -320,7 +325,7 @@ id|flush_tlb_all
 (paren
 )paren
 suffix:semicolon
-id|update_mm_cache_all
+id|update_memc_all
 (paren
 )paren
 suffix:semicolon

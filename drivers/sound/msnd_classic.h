@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *&n; * msnd_classic.h&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Some parts of this header file were derived from the Turtle Beach&n; * MultiSound Driver Development Kit.&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; * Copyright (C) 1993 Turtle Beach Systems, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; * &n; * $Id: msnd_classic.h,v 1.3 1998/06/09 20:39:34 andrewtv Exp $&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *&n; * msnd_classic.h&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Some parts of this header file were derived from the Turtle Beach&n; * MultiSound Driver Development Kit.&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; * Copyright (C) 1993 Turtle Beach Systems, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; * &n; * $Id: msnd_classic.h,v 1.4 1998/07/14 22:59:25 andrewtv Exp $&n; *&n; ********************************************************************/
 macro_line|#ifndef __MSND_CLASSIC_H
 DECL|macro|__MSND_CLASSIC_H
 mdefine_line|#define __MSND_CLASSIC_H
@@ -47,30 +47,6 @@ DECL|macro|HIDSP_MIDI_IN_OVER
 mdefine_line|#define&t;HIDSP_MIDI_IN_OVER&t;0x10
 DECL|macro|HIDSP_MIDI_OVERRUN_ERR
 mdefine_line|#define&t;HIDSP_MIDI_OVERRUN_ERR  0x13
-DECL|macro|HDEX_BASE
-mdefine_line|#define&t;HDEX_BASE&t;       &t;0x92
-DECL|macro|HDEX_PLAY_START
-mdefine_line|#define&t;HDEX_PLAY_START&t;&t;(0 + HDEX_BASE)
-DECL|macro|HDEX_PLAY_STOP
-mdefine_line|#define&t;HDEX_PLAY_STOP&t;&t;(1 + HDEX_BASE)
-DECL|macro|HDEX_PLAY_PAUSE
-mdefine_line|#define&t;HDEX_PLAY_PAUSE&t;&t;(2 + HDEX_BASE)
-DECL|macro|HDEX_PLAY_RESUME
-mdefine_line|#define&t;HDEX_PLAY_RESUME&t;(3 + HDEX_BASE)
-DECL|macro|HDEX_RECORD_START
-mdefine_line|#define&t;HDEX_RECORD_START&t;(4 + HDEX_BASE)
-DECL|macro|HDEX_RECORD_STOP
-mdefine_line|#define&t;HDEX_RECORD_STOP&t;(5 + HDEX_BASE)
-DECL|macro|HDEX_MIDI_IN_START
-mdefine_line|#define&t;HDEX_MIDI_IN_START &t;(6 + HDEX_BASE)
-DECL|macro|HDEX_MIDI_IN_STOP
-mdefine_line|#define&t;HDEX_MIDI_IN_STOP&t;(7 + HDEX_BASE)
-DECL|macro|HDEX_MIDI_OUT_START
-mdefine_line|#define&t;HDEX_MIDI_OUT_START&t;(8 + HDEX_BASE)
-DECL|macro|HDEX_MIDI_OUT_STOP
-mdefine_line|#define&t;HDEX_MIDI_OUT_STOP&t;(9 + HDEX_BASE)
-DECL|macro|HDEX_AUX_REQ
-mdefine_line|#define&t;HDEX_AUX_REQ&t;&t;(10 + HDEX_BASE)
 DECL|macro|HDEXAR_CLEAR_PEAKS
 mdefine_line|#define&t;HDEXAR_CLEAR_PEAKS&t;1
 DECL|macro|HDEXAR_IN_SET_POTS
@@ -335,6 +311,14 @@ macro_line|#  define PERMCODESIZE&t;&t;sizeof(msndperm)
 DECL|macro|INITCODESIZE
 macro_line|#  define INITCODESIZE&t;&t;sizeof(msndinit)
 macro_line|#else
+macro_line|#  ifndef CONFIG_MSNDCLAS_INIT_FILE
+DECL|macro|CONFIG_MSNDCLAS_INIT_FILE
+macro_line|#    define CONFIG_MSNDCLAS_INIT_FILE&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&quot;/etc/sound/msndinit.bin&quot;
+macro_line|#  endif
+macro_line|#  ifndef CONFIG_MSNDCLAS_PERM_FILE
+DECL|macro|CONFIG_MSNDCLAS_PERM_FILE
+macro_line|#    define CONFIG_MSNDCLAS_PERM_FILE&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&quot;/etc/sound/msndperm.bin&quot;
+macro_line|#  endif
 DECL|macro|PERMCODEFILE
 macro_line|#  define PERMCODEFILE&t;&t;CONFIG_MSNDCLAS_PERM_FILE
 DECL|macro|INITCODEFILE

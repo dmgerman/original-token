@@ -3144,6 +3144,14 @@ comma
 id|fbcon_vga_revc
 comma
 id|fbcon_vgafb_cursor
+comma
+l_int|NULL
+comma
+id|FONTWIDTH
+c_func
+(paren
+l_int|8
+)paren
 )brace
 suffix:semicolon
 macro_line|#ifdef MODULE

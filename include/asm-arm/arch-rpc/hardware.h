@@ -48,7 +48,7 @@ DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;0xe0010000
 multiline_comment|/*&n; * Mapping areas&n; */
 DECL|macro|IO_END
-mdefine_line|#define IO_END&t;&t;&t;0xe0ffffff
+mdefine_line|#define IO_END&t;&t;&t;0xe1000000
 DECL|macro|IO_BASE
 mdefine_line|#define IO_BASE&t;&t;&t;0xe0000000
 DECL|macro|IO_SIZE

@@ -126,6 +126,8 @@ DECL|macro|bell_duration
 mdefine_line|#define bell_duration&t;(vc_cons[currcons].d-&gt;vc_bell_duration)
 DECL|macro|cursor_type
 mdefine_line|#define cursor_type&t;(vc_cons[currcons].d-&gt;vc_cursor_type)
+DECL|macro|display_fg
+mdefine_line|#define display_fg&t;(vc_cons[currcons].d-&gt;vc_display_fg)
 DECL|macro|vcmode
 mdefine_line|#define vcmode&t;&t;(vt_cons[currcons]-&gt;vc_mode)
 DECL|macro|structsize

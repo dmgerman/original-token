@@ -1576,7 +1576,7 @@ c_func
 (paren
 id|portarg
 comma
-l_string|&quot;%d&quot;
+l_string|&quot;%ld&quot;
 comma
 id|bc-&gt;pdev-&gt;port-&gt;base
 )paren

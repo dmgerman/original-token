@@ -10,6 +10,9 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
+macro_line|#endif
 DECL|macro|VIDEO_NUM_DEVICES
 mdefine_line|#define VIDEO_NUM_DEVICES&t;256 
 multiline_comment|/*&n; *&t;Active devices &n; */
@@ -27,6 +30,16 @@ macro_line|#ifdef CONFIG_VIDEO_BT848
 r_extern
 r_int
 id|init_bttv_cards
+c_func
+(paren
+r_struct
+id|video_init
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|i2c_tuner_init
 c_func
 (paren
 r_struct
@@ -317,6 +330,45 @@ op_eq
 l_int|NULL
 )paren
 (brace
+macro_line|#ifdef CONFIG_KMOD
+r_char
+id|modname
+(braket
+l_int|20
+)braket
+suffix:semicolon
+id|sprintf
+(paren
+id|modname
+comma
+l_string|&quot;char-major-%d-%d&quot;
+comma
+id|VIDEO_MAJOR
+comma
+id|minor
+)paren
+suffix:semicolon
+id|request_module
+c_func
+(paren
+id|modname
+)paren
+suffix:semicolon
+id|vfl
+op_assign
+id|video_device
+(braket
+id|minor
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|vfl
+op_eq
+l_int|NULL
+)paren
+macro_line|#endif
 r_return
 op_minus
 id|ENODEV

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/fas216.c&n; *&n; * Copyright (C) 1997 Russell King&n; *&n; * Based on information in qlogicfas.c by Tom Zerucha, Michael Griffith, and&n; * other sources, including:&n; *   the AMD Am53CF94 data sheet&n; *&n; * This is a generic driver.  To use it, have a look at cumana_2.c.  You&n; * should define your own structure that overlays FAS216_Info, eg:&n; * struct my_host_data {&n; *    FAS216_Info info;&n; *    ... my host specific data ...&n; * };&n; *&n; * Changelog:&n; *  30-08-1997&t;RMK&t;Created&n; *  14-09-1997&t;RMK&t;Started disconnect support&n; *  08-02-1998&t;RMK&t;Corrected real DMA support&n; *  15-02-1998&t;RMK&t;Started sync xfer support&n; *  06-04-1998&t;RMK&t;Tightened conditions for printing incomplete&n; *&t;&t;&t;transfers&n; *  02-05-1998&t;RMK&t;Added extra checks in fas216_reset&n; *&n; * Todo:&n; *  - tighten up the MESSAGE_REJECT support.&n; *  - allow individual devices to enable sync xfers.&n; */
+multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/fas216.c&n; *&n; * Copyright (C) 1997 Russell King&n; *&n; * Based on information in qlogicfas.c by Tom Zerucha, Michael Griffith, and&n; * other sources, including:&n; *   the AMD Am53CF94 data sheet&n; *&n; * This is a generic driver.  To use it, have a look at cumana_2.c.  You&n; * should define your own structure that overlays FAS216_Info, eg:&n; * struct my_host_data {&n; *    FAS216_Info info;&n; *    ... my host specific data ...&n; * };&n; *&n; * Changelog:&n; *  30-08-1997&t;RMK&t;Created&n; *  14-09-1997&t;RMK&t;Started disconnect support&n; *  08-02-1998&t;RMK&t;Corrected real DMA support&n; *  15-02-1998&t;RMK&t;Started sync xfer support&n; *  06-04-1998&t;RMK&t;Tightened conditions for printing incomplete&n; *&t;&t;&t;transfers&n; *  02-05-1998&t;RMK&t;Added extra checks in fas216_reset&n; *  24-05-1998&t;RMK&t;Fixed synchronous transfers with period &gt;= 200ns&n; *  27-06-1998&t;RMK&t;Changed asm/delay.h to linux/delay.h&n; *&n; * Todo:&n; *  - tighten up the MESSAGE_REJECT support.&n; *  - allow individual devices to enable sync xfers.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -18,19 +18,29 @@ mdefine_line|#define FAS216_C
 macro_line|#include &quot;../../scsi/scsi.h&quot;
 macro_line|#include &quot;../../scsi/hosts.h&quot;
 macro_line|#include &quot;fas216.h&quot;
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Russell King&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Generic FAS216/NCR53C9x driver&quot;
+)paren
+suffix:semicolon
 DECL|macro|VER_MAJOR
 mdefine_line|#define VER_MAJOR&t;0
 DECL|macro|VER_MINOR
 mdefine_line|#define VER_MINOR&t;0
 DECL|macro|VER_PATCH
-mdefine_line|#define VER_PATCH&t;3
+mdefine_line|#define VER_PATCH&t;4
 DECL|macro|SCSI2_TAG
 mdefine_line|#define SCSI2_TAG
 multiline_comment|/* NOTE: SCSI2 Synchronous transfers *require* DMA according to&n; *  the data sheet.  This restriction is crazy, especially when&n; *  you only want to send 16 bytes!  What were the guys who&n; *  designed this chip on at that time?  Did they read the SCSI2&n; *  spec at all?  The following sections are taken from the SCSI2&n; *  standard (s2r10) concerning this:&n; *&n; * &gt; IMPLEMENTORS NOTES:&n; * &gt;   (1)  Re-negotiation at every selection is not recommended, since a&n; * &gt;   significant performance impact is likely.&n; *&n; * &gt;  The implied synchronous agreement shall remain in effect until a BUS DEVICE&n; * &gt;  RESET message is received, until a hard reset condition occurs, or until one&n; * &gt;  of the two SCSI devices elects to modify the agreement.  The default data&n; * &gt;  transfer mode is asynchronous data transfer mode.  The default data transfer&n; * &gt;  mode is entered at power on, after a BUS DEVICE RESET message, or after a hard&n; * &gt;  reset condition.&n; *&n; *  In total, this means that once you have elected to use synchronous&n; *  transfers, you must always use DMA.&n; *&n; *  I was thinking that this was a good chip until I found this restriction ;(&n; */
 DECL|macro|SCSI2_SYNC
 mdefine_line|#define SCSI2_SYNC
-DECL|macro|NO_DISCONNECTS
-macro_line|#undef NO_DISCONNECTS
 DECL|macro|DEBUG_CONNECT
 macro_line|#undef DEBUG_CONNECT
 DECL|macro|DEBUG_BUSSERVICE
@@ -83,13 +93,7 @@ id|info
 id|printk
 c_func
 (paren
-l_string|&quot;FAS216 registers:&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;    CTCL=%02X CTCM=%02X CMD=%02X STAT=%02X&quot;
+l_string|&quot;FAS216: CTCL=%02X CTCM=%02X CMD=%02X STAT=%02X&quot;
 l_string|&quot; INST=%02X IS=%02X CFIS=%02X&quot;
 comma
 id|inb
@@ -241,7 +245,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;FAS216_Info = &bslash;n&quot;
+l_string|&quot;FAS216_Info=&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
@@ -293,7 +297,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;           type=%p phase=%X reconnected = { target=%d lun=%d tag=%d }&bslash;n&quot;
+l_string|&quot;           type=%p phase=%X reconnected={ target=%d lun=%d tag=%d }&bslash;n&quot;
 comma
 id|info-&gt;scsi.type
 comma
@@ -309,7 +313,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;           SCp = { ptr=%p this_residual=%X buffer=%p buffers_residual=%X }&bslash;n&quot;
+l_string|&quot;           SCp={ ptr=%p this_residual=%X buffer=%p buffers_residual=%X }&bslash;n&quot;
 comma
 id|info-&gt;scsi.SCp.ptr
 comma
@@ -337,7 +341,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;    stats={ queues=%X removes=%X fins=%X reads=%X writes=%X miscs=%X disconnects=%X aborts=%X resets=%X }&bslash;n&quot;
+l_string|&quot;    stats={ queues=%X removes=%X fins=%X reads=%X writes=%X miscs=%X&bslash;n&quot;
+l_string|&quot;            disconnects=%X aborts=%X resets=%X }&bslash;n&quot;
 comma
 id|info-&gt;stats.queues
 comma
@@ -448,7 +453,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;    internal_done=%X magic_end=%lX&bslash;n&quot;
+l_string|&quot;    internal_done=%X magic_end=%lX }&bslash;n&quot;
 comma
 id|info-&gt;internal_done
 comma
@@ -799,7 +804,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;SCSI state trail: &quot;
+l_string|&quot;SCSI IRQ trail: &quot;
 )paren
 suffix:semicolon
 r_do
@@ -807,7 +812,7 @@ r_do
 id|printk
 c_func
 (paren
-l_string|&quot;%02X:%02X:%02X:%02X &quot;
+l_string|&quot;%02X:%02X:%02X:%1X &quot;
 comma
 id|list
 (braket
@@ -936,9 +941,9 @@ id|clock
 suffix:semicolon
 )brace
 multiline_comment|/* Function: int fas216_syncperiod(FAS216_Info *info, int ns)&n; * Purpose : Calculate value to be loaded into the STP register&n; *           for a given period in ns&n; * Params  : info - state structure for interface connected to device&n; *         : ns   - period in ns (between subsequent bytes)&n; * Returns : Value suitable for REG_STP&n; */
-DECL|function|fas216_syncperiod
 r_static
 r_int
+DECL|function|fas216_syncperiod
 id|fas216_syncperiod
 c_func
 (paren
@@ -996,6 +1001,106 @@ r_return
 id|value
 op_amp
 l_int|31
+suffix:semicolon
+)brace
+multiline_comment|/* Function: void fas216_set_sync(FAS216_Info *info, int target)&n; * Purpose : Correctly setup FAS216 chip for specified transfer period.&n; * Params  : info   - state structure for interface&n; *         : target - target&n; * Notes   : we need to switch the chip out of FASTSCSI mode if we have&n; *           a transfer period &gt;= 200ns - otherwise the chip will violate&n; *           the SCSI timings.&n; */
+r_static
+r_void
+DECL|function|fas216_set_sync
+id|fas216_set_sync
+c_func
+(paren
+id|FAS216_Info
+op_star
+id|info
+comma
+r_int
+id|target
+)paren
+(brace
+id|outb
+c_func
+(paren
+id|info-&gt;device
+(braket
+id|target
+)braket
+dot
+id|sof
+comma
+id|REG_SOF
+c_func
+(paren
+id|info
+)paren
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|info-&gt;device
+(braket
+id|target
+)braket
+dot
+id|stp
+comma
+id|REG_STP
+c_func
+(paren
+id|info
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;device
+(braket
+id|target
+)braket
+dot
+id|period
+op_ge
+(paren
+l_int|200
+op_div
+l_int|4
+)paren
+)paren
+id|outb
+c_func
+(paren
+id|info-&gt;scsi.cfg
+(braket
+l_int|2
+)braket
+op_amp
+op_complement
+id|CNTL3_FASTSCSI
+comma
+id|REG_CNTL3
+c_func
+(paren
+id|info
+)paren
+)paren
+suffix:semicolon
+r_else
+id|outb
+c_func
+(paren
+id|info-&gt;scsi.cfg
+(braket
+l_int|2
+)braket
+comma
+id|REG_CNTL3
+c_func
+(paren
+id|info
+)paren
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Function: void fas216_updateptrs(FAS216_Info *info, int bytes_transferred)&n; * Purpose : update data pointers after transfer suspended/paused&n; * Params  : info              - interface&squot;s local pointer to update&n; *           bytes_transferred - number of bytes transferred&n; */
@@ -2072,6 +2177,25 @@ op_assign
 id|fasdma_none
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|info-&gt;scsi.phase
+op_eq
+id|PHASE_DATAOUT
+)paren
+id|outb
+c_func
+(paren
+id|CMD_FLUSHFIFO
+comma
+id|REG_CMD
+c_func
+(paren
+id|info
+)paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Function: void fas216_disconnected_intr(FAS216_Info *info)&n; * Purpose : handle device disconnection&n; * Params  : info - interface from which device disconnected from&n; */
 r_static
@@ -3719,6 +3843,18 @@ id|info-&gt;device
 id|info-&gt;SCpnt-&gt;target
 )braket
 dot
+id|period
+op_assign
+id|message
+(braket
+l_int|3
+)braket
+suffix:semicolon
+id|info-&gt;device
+(braket
+id|info-&gt;SCpnt-&gt;target
+)braket
+dot
 id|sof
 op_assign
 id|message
@@ -3773,38 +3909,12 @@ op_star
 l_int|4
 )paren
 suffix:semicolon
-id|outb
-c_func
-(paren
-id|info-&gt;device
-(braket
-id|info-&gt;SCpnt-&gt;target
-)braket
-dot
-id|sof
-comma
-id|REG_SOF
+id|fas216_set_sync
 c_func
 (paren
 id|info
-)paren
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|info-&gt;device
-(braket
-id|info-&gt;SCpnt-&gt;target
-)braket
-dot
-id|stp
 comma
-id|REG_STP
-c_func
-(paren
-id|info
-)paren
+id|info-&gt;SCpnt-&gt;target
 )paren
 suffix:semicolon
 r_break
@@ -6205,38 +6315,12 @@ id|info
 )paren
 suffix:semicolon
 multiline_comment|/* synchronous transfers */
-id|outb
-c_func
-(paren
-id|info-&gt;device
-(braket
-id|SCpnt-&gt;target
-)braket
-dot
-id|sof
-comma
-id|REG_SOF
+id|fas216_set_sync
 c_func
 (paren
 id|info
-)paren
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|info-&gt;device
-(braket
-id|SCpnt-&gt;target
-)braket
-dot
-id|stp
 comma
-id|REG_STP
-c_func
-(paren
-id|info
-)paren
+id|SCpnt-&gt;target
 )paren
 suffix:semicolon
 id|msglen
@@ -7280,13 +7364,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|fas216_dumpinfo
+id|fas216_dumpstate
 c_func
 (paren
 id|info
 )paren
 suffix:semicolon
-id|fas216_dumpstate
+id|fas216_dumpinfo
 c_func
 (paren
 id|info
@@ -7560,7 +7644,6 @@ id|i
 op_increment
 )paren
 (brace
-macro_line|#ifndef NO_DISCONNECTS
 id|info-&gt;device
 (braket
 id|i
@@ -7568,19 +7651,8 @@ id|i
 dot
 id|disconnect_ok
 op_assign
-l_int|1
+id|info-&gt;ifcfg.disconnect_ok
 suffix:semicolon
-macro_line|#else
-id|info-&gt;device
-(braket
-id|i
-)braket
-dot
-id|disconnect_ok
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 id|info-&gt;device
 (braket
 id|i
@@ -7589,6 +7661,17 @@ dot
 id|negstate
 op_assign
 id|negstate
+suffix:semicolon
+id|info-&gt;device
+(braket
+id|i
+)braket
+dot
+id|period
+op_assign
+id|info-&gt;ifcfg.asyncperiod
+op_div
+l_int|4
 suffix:semicolon
 id|info-&gt;device
 (braket
@@ -8270,6 +8353,18 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+id|outb
+c_func
+(paren
+id|CMD_RESETCHIP
+comma
+id|REG_CMD
+c_func
+(paren
+id|info
+)paren
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
