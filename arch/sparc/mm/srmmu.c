@@ -7994,9 +7994,9 @@ op_star
 id|file
 suffix:semicolon
 r_struct
-id|inode
+id|address_space
 op_star
-id|inode
+id|mapping
 suffix:semicolon
 r_int
 r_int
@@ -8044,9 +8044,9 @@ id|file
 r_goto
 id|done
 suffix:semicolon
-id|inode
+id|mapping
 op_assign
-id|file-&gt;f_dentry-&gt;d_inode
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_mapping
 suffix:semicolon
 id|offset
 op_assign
@@ -8062,12 +8062,12 @@ id|spin_lock
 c_func
 (paren
 op_amp
-id|inode-&gt;i_shared_lock
+id|mapping-&gt;i_shared_lock
 )paren
 suffix:semicolon
 id|vmaring
 op_assign
-id|inode-&gt;i_mmap
+id|mapping-&gt;i_mmap
 suffix:semicolon
 r_do
 (brace
@@ -8272,7 +8272,7 @@ id|spin_unlock
 c_func
 (paren
 op_amp
-id|inode-&gt;i_shared_lock
+id|mapping-&gt;i_shared_lock
 )paren
 suffix:semicolon
 r_if

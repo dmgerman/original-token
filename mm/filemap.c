@@ -352,9 +352,9 @@ id|truncate_inode_pages
 c_func
 (paren
 r_struct
-id|inode
+id|address_space
 op_star
-id|inode
+id|mapping
 comma
 id|loff_t
 id|lstart
@@ -405,7 +405,7 @@ suffix:colon
 id|head
 op_assign
 op_amp
-id|inode-&gt;i_mapping-&gt;pages
+id|mapping-&gt;pages
 suffix:semicolon
 id|spin_lock
 c_func

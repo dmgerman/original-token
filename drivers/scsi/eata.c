@@ -2288,7 +2288,7 @@ id|EATA_2_0A_SIZE
 id|printk
 c_func
 (paren
-l_string|&quot;%s: config structure size (%ld bytes) too short, detaching.&bslash;n&quot;
+l_string|&quot;%s: config structure size (%d bytes) too short, detaching.&bslash;n&quot;
 comma
 id|name
 comma

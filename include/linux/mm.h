@@ -1477,7 +1477,7 @@ id|truncate_inode_pages
 c_func
 (paren
 r_struct
-id|inode
+id|address_space
 op_star
 comma
 id|loff_t

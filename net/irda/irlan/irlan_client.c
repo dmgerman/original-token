@@ -324,7 +324,14 @@ multiline_comment|/* Before we try to connect, we check if network device is up.
 r_if
 c_cond
 (paren
-id|self-&gt;dev.start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|self-&gt;dev.state
+)paren
 )paren
 (brace
 multiline_comment|/* Open TSAPs */

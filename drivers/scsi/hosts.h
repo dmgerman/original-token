@@ -1002,6 +1002,18 @@ mdefine_line|#define MODULE_SCSI_IOCTL 3
 DECL|macro|MODULE_SCSI_DEV
 mdefine_line|#define MODULE_SCSI_DEV 4
 multiline_comment|/*&n; * This is an ugly hack.  If we expect to be able to load devices at run time,&n; * we need to leave extra room in some of the data structures.&t;Doing a&n; * realloc to enlarge the structures would be riddled with race conditions,&n; * so until a better solution is discovered, we use this crude approach&n; *&n; * Even bigger hack for SparcSTORAGE arrays. Those are at least 6 disks, but&n; * usually up to 30 disks, so everyone would need to change this. -jj&n; *&n; * Note: These things are all evil and all need to go away.  My plan is to&n; * tackle the character devices first, as there aren&squot;t any locking implications&n; * in the block device layer.   The block devices will require more work.&n; */
+macro_line|#ifndef CONFIG_SD_EXTRA_DEVS
+DECL|macro|CONFIG_SD_EXTRA_DEVS
+mdefine_line|#define CONFIG_SD_EXTRA_DEVS 2
+macro_line|#endif
+macro_line|#ifndef CONFIG_ST_EXTRA_DEVS
+DECL|macro|CONFIG_ST_EXTRA_DEVS
+mdefine_line|#define CONFIG_ST_EXTRA_DEVS 2
+macro_line|#endif
+macro_line|#ifndef CONFIG_SR_EXTRA_DEVS
+DECL|macro|CONFIG_SR_EXTRA_DEVS
+mdefine_line|#define CONFIG_SR_EXTRA_DEVS 2
+macro_line|#endif
 DECL|macro|SD_EXTRA_DEVS
 mdefine_line|#define SD_EXTRA_DEVS CONFIG_SD_EXTRA_DEVS
 DECL|macro|ST_EXTRA_DEVS

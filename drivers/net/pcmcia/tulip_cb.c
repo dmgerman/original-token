@@ -201,17 +201,7 @@ macro_line|#warning  See the last lines of the source file.
 macro_line|#error You must compile this driver with &quot;-O&quot;.
 macro_line|#endif
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#ifdef MODULE
-macro_line|#ifdef MODVERSIONS
-macro_line|#include &lt;linux/modversions.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -313,10 +303,6 @@ l_string|&quot;i&quot;
 suffix:semicolon
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
-DECL|macro|NETSTATS_VER2
-mdefine_line|#define NETSTATS_VER2
-DECL|macro|PCI_SUPPORT_VER3
-mdefine_line|#define PCI_SUPPORT_VER3
 DECL|macro|tulip_debug
 mdefine_line|#define tulip_debug debug
 macro_line|#ifdef TULIP_DEBUG
@@ -14278,10 +14264,13 @@ id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
+id|netif_wake_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|tp-&gt;stats.tx_errors
 op_increment
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the Rx and Tx rings, along with various &squot;dev&squot; bits. */

@@ -729,6 +729,11 @@ r_char
 id|hcr_val
 suffix:semicolon
 multiline_comment|/* what we think the HCR contains */
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+multiline_comment|/* Interrupt v tx lock */
 DECL|typedef|elp_device
 )brace
 id|elp_device

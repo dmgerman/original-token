@@ -96,6 +96,14 @@ r_typedef
 r_struct
 id|ppp_private_area
 (brace
+multiline_comment|/* This member must be first. */
+DECL|member|slave
+r_struct
+id|net_device
+op_star
+id|slave
+suffix:semicolon
+multiline_comment|/* WAN slave */
 DECL|member|card
 id|sdla_t
 op_star

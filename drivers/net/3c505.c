@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -1147,7 +1148,14 @@ id|adapter-&gt;rx_active
 OL
 id|ELP_RX_PCBS
 op_logical_and
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 (brace
 r_if
@@ -2339,48 +2347,10 @@ suffix:semicolon
 r_int
 id|timeout
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|irq
-template_param
-l_int|15
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;elp_interrupt(): illegal IRQ number found in interrupt routine (%i)&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|dev
 op_assign
 id|dev_id
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;elp_interrupt(): irq %d for unknown device.&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|adapter
 op_assign
 (paren
@@ -2389,26 +2359,12 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-)paren
-(brace
-id|printk
+id|spin_lock
 c_func
 (paren
-l_string|&quot;%s: re-entering the interrupt handler!&bslash;n&quot;
-comma
-id|dev-&gt;name
+op_amp
+id|adapter-&gt;lock
 )paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|dev-&gt;interrupt
-op_assign
-l_int|1
 suffix:semicolon
 r_do
 (brace
@@ -2628,11 +2584,6 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t;&t; * receive a PCB from the adapter&n;&t;&t; */
 id|timeout
 op_assign
@@ -2703,16 +2654,18 @@ multiline_comment|/* if the device isn&squot;t open, don&squot;t pass packets up
 r_if
 c_cond
 (paren
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 op_eq
 l_int|0
 )paren
 r_break
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
 suffix:semicolon
 id|len
 op_assign
@@ -2733,14 +2686,10 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: interrupt - packet not received correctly&bslash;n&quot;
 comma
 id|dev-&gt;name
-)paren
-suffix:semicolon
-id|sti
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -2754,11 +2703,6 @@ op_ge
 l_int|3
 )paren
 (brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2769,11 +2713,6 @@ comma
 id|len
 comma
 id|dlen
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -2829,11 +2768,6 @@ id|dlen
 )paren
 suffix:semicolon
 )brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3059,7 +2993,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 op_eq
 l_int|0
 )paren
@@ -3106,14 +3047,10 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 r_break
@@ -3185,9 +3122,12 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * indicate no longer in interrupt routine&n;&t; */
-id|dev-&gt;interrupt
-op_assign
-l_int|0
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|adapter-&gt;lock
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/******************************************************&n; *&n; * open the board&n; *&n; ******************************************************/
@@ -3270,16 +3210,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * interrupt routine not entered&n;&t; */
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/*&n;&t; *  transmitter not busy&n;&t; */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/*&n;&t; * no receive PCBs active&n;&t; */
 id|adapter-&gt;rx_active
 op_assign
@@ -3300,6 +3230,13 @@ suffix:semicolon
 id|adapter-&gt;rx_backlog.out
 op_assign
 l_int|0
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|adapter-&gt;lock
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * install our interrupt service routine&n;&t; */
 r_if
@@ -3647,9 +3584,11 @@ id|adapter-&gt;rx_active
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * device is now officially open!&n;&t; */
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -3968,55 +3907,23 @@ r_return
 id|TRUE
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************&n; *&n; * start the transmitter&n; *    return 0 if sent OK, else return 1&n; *&n; ******************************************************/
-DECL|function|elp_start_xmit
+multiline_comment|/*&n; *&t;The upper layer thinks we timed out&n; */
+DECL|function|elp_timeout
 r_static
-r_int
-id|elp_start_xmit
+r_void
+id|elp_timeout
 c_func
 (paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
 r_struct
 id|net_device
 op_star
 id|dev
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: start_xmit aborted (in irq)&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
+r_int
+r_int
+id|flags
 suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-id|check_3c505_dma
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * if the transmitter is still busy, we have a transmit timeout...&n;&t; */
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
 id|elp_device
 op_star
 id|adapter
@@ -4024,24 +3931,7 @@ op_assign
 id|dev-&gt;priv
 suffix:semicolon
 r_int
-id|tickssofar
-op_assign
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-suffix:semicolon
-r_int
 id|stat
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-l_int|1000
-)paren
-r_return
-l_int|1
 suffix:semicolon
 id|stat
 op_assign
@@ -4054,6 +3944,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: transmit timed out, lost %s?&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4091,14 +3982,59 @@ id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 id|adapter-&gt;stats.tx_dropped
 op_increment
 suffix:semicolon
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 )brace
+multiline_comment|/******************************************************&n; *&n; * start the transmitter&n; *    return 0 if sent OK, else return 1&n; *&n; ******************************************************/
+DECL|function|elp_start_xmit
+r_static
+r_int
+id|elp_start_xmit
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|elp_device
+op_star
+id|adapter
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|adapter-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|check_3c505_dma
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4119,35 +4055,12 @@ r_int
 id|skb-&gt;len
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|test_and_set_bit
+id|netif_stop_queue
 c_func
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: transmitter access conflict&bslash;n&quot;
-comma
-id|dev-&gt;name
+id|dev
 )paren
 suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * send the packet at skb-&gt;data for skb-&gt;len&n;&t; */
 r_if
 c_cond
@@ -4179,9 +4092,14 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|adapter-&gt;lock
+comma
+id|flags
+)paren
 suffix:semicolon
 r_return
 l_int|1
@@ -4213,6 +4131,21 @@ op_assign
 id|jiffies
 suffix:semicolon
 id|prime_rx
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|adapter-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|netif_start_queue
 c_func
 (paren
 id|dev
@@ -4267,7 +4200,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 r_return
 op_amp
@@ -4404,6 +4344,12 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* Someone may request the device statistic information even when&n;&t; * the interface is closed. The following will update the statistics&n;&t; * structure in the driver, so we&squot;ll be able to give current statistics.&n;&t; */
 (paren
 r_void
@@ -4422,16 +4368,6 @@ l_int|0
 comma
 id|dev
 )paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *  flag transmitter as busy (i.e. not available)&n;&t; */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/*&n;&t; *  indicate device is closed&n;&t; */
-id|dev-&gt;start
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * release the IRQ&n;&t; */
 id|free_irq
@@ -4503,6 +4439,10 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4516,6 +4456,15 @@ c_func
 l_string|&quot;%s: request to set multicast list&bslash;n&quot;
 comma
 id|dev-&gt;name
+)paren
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|adapter-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -4727,6 +4676,16 @@ op_amp
 id|adapter-&gt;tx_pcb
 )paren
 )paren
+(brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4735,6 +4694,7 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+)brace
 r_else
 (brace
 r_int
@@ -4743,6 +4703,15 @@ op_assign
 id|jiffies
 op_plus
 id|TIMEOUT
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
+)paren
 suffix:semicolon
 r_while
 c_loop
@@ -4823,6 +4792,17 @@ op_assign
 id|elp_start_xmit
 suffix:semicolon
 multiline_comment|/* local */
+id|dev-&gt;tx_timeout
+op_assign
+id|elp_timeout
+suffix:semicolon
+multiline_comment|/* local */
+id|dev-&gt;watchdog_timeo
+op_assign
+l_int|10
+op_star
+id|HZ
+suffix:semicolon
 id|dev-&gt;set_multicast_list
 op_assign
 id|elp_set_mc_list

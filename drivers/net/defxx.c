@@ -153,9 +153,10 @@ r_void
 id|dfx_int_common
 c_func
 (paren
-id|DFX_board_t
+r_struct
+id|net_device
 op_star
-id|bp
+id|dev
 )paren
 suffix:semicolon
 r_static
@@ -341,7 +342,7 @@ id|dev
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|dfx_xmt_done
 c_func
 (paren
@@ -2969,17 +2970,11 @@ id|EAGAIN
 suffix:semicolon
 )brace
 multiline_comment|/* Set device structure info */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-id|DFX_UNMASK_INTERRUPTS
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -3072,13 +3067,11 @@ id|PI_CONSUMER_BLOCK
 )paren
 suffix:semicolon
 multiline_comment|/* Clear device structure flags */
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Deregister (free) IRQ */
 id|free_irq
@@ -3615,23 +3608,45 @@ r_void
 id|dfx_int_common
 c_func
 (paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
 id|DFX_board_t
 op_star
 id|bp
+op_assign
+(paren
+id|DFX_board_t
+op_star
 )paren
-(brace
+id|dev-&gt;priv
+suffix:semicolon
 id|PI_UINT32
 id|port_status
 suffix:semicolon
 multiline_comment|/* Port Status register */
 multiline_comment|/* Process xmt interrupts - frequent case, so always call this routine */
+r_if
+c_cond
+(paren
 id|dfx_xmt_done
 c_func
 (paren
 id|bp
 )paren
-suffix:semicolon
+)paren
+(brace
 multiline_comment|/* free consumed xmt packets */
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Process rcv interrupts - frequent case, so always call this routine */
 id|dfx_rcv_queue_process
 c_func
@@ -3723,25 +3738,6 @@ id|tmp
 suffix:semicolon
 multiline_comment|/* used for disabling/enabling ints */
 multiline_comment|/* Get board pointer only if device structure is valid */
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;dfx_interrupt(): irq %d for unknown device!&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|bp
 op_assign
 (paren
@@ -3758,24 +3754,6 @@ id|bp-&gt;lock
 )paren
 suffix:semicolon
 multiline_comment|/* See if we&squot;re already servicing an interrupt */
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Re-entering the interrupt handler!&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-id|DFX_MASK_INTERRUPTS
-suffix:semicolon
-multiline_comment|/* ensure non reentrancy */
 multiline_comment|/* Service adapter interrupts */
 r_if
 c_cond
@@ -3800,7 +3778,7 @@ multiline_comment|/* Call interrupt service routine for this adapter */
 id|dfx_int_common
 c_func
 (paren
-id|bp
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Clear PDQ interrupt status bit and reenable interrupts */
@@ -3862,7 +3840,7 @@ multiline_comment|/* Call interrupt service routine for this adapter */
 id|dfx_int_common
 c_func
 (paren
-id|bp
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Reenable interrupts at the ESIC */
@@ -3892,10 +3870,6 @@ id|tmp
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;interrupt
-op_assign
-id|DFX_UNMASK_INTERRUPTS
-suffix:semicolon
 id|spin_unlock
 c_func
 (paren
@@ -6907,6 +6881,12 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Verify that incoming transmit request is OK&n;&t; *&n;&t; * Note: The packet size check is consistent with other&n;&t; *&t;&t; Linux device drivers, although the correct packet&n;&t; *&t;&t; size should be verified before calling the&n;&t; *&t;&t; transmit routine.&n;&t; */
 r_if
 c_cond
@@ -6937,10 +6917,10 @@ id|bp-&gt;xmt_length_errors
 op_increment
 suffix:semicolon
 multiline_comment|/* bump error counter */
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 id|dev_kfree_skb
@@ -6993,6 +6973,12 @@ id|skb
 )paren
 suffix:semicolon
 multiline_comment|/* free sk_buff now */
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -7160,6 +7146,12 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -7168,7 +7160,7 @@ multiline_comment|/* packet queued to adapter */
 "&f;"
 multiline_comment|/*&n; * ================&n; * = dfx_xmt_done =&n; * ================&n; *   &n; * Overview:&n; *   Processes all frames that have been transmitted.&n; *  &n; * Returns:&n; *   None&n; *       &n; * Arguments:&n; *   bp - pointer to board information&n; *&n; * Functional Description:&n; *   For all consumed transmit descriptors that have not&n; *   yet been completed, we&squot;ll free the skb we were holding&n; *   onto using dev_kfree_skb and bump the appropriate&n; *   counters.&n; *&n; * Return Codes:&n; *   None&n; *&n; * Assumptions:&n; *   The Type 2 register is not updated in this routine.  It is&n; *   assumed that it will be updated in the ISR when dfx_xmt_done&n; *   returns.&n; *&n; * Side Effects:&n; *   None&n; */
 DECL|function|dfx_xmt_done
-r_void
+r_int
 id|dfx_xmt_done
 c_func
 (paren
@@ -7187,6 +7179,12 @@ op_star
 id|p_type_2_cons
 suffix:semicolon
 multiline_comment|/* ptr to rcv/xmt consumer block register */
+r_int
+id|freed
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* buffers freed */
 multiline_comment|/* Service all consumed transmit frames */
 id|p_type_2_cons
 op_assign
@@ -7238,8 +7236,12 @@ id|bp-&gt;rcv_xmt_reg.index.xmt_comp
 op_add_assign
 l_int|1
 suffix:semicolon
+id|freed
+op_increment
+suffix:semicolon
 )brace
 r_return
+id|freed
 suffix:semicolon
 )brace
 "&f;"

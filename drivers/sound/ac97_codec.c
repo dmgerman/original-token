@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * ac97_codec.c: Generic AC97 mixer module&n; *&n; * Derived from ac97 mixer in maestro and trident driver.&n; *&n; * Copyright 2000 Silicon Integrated System Corporation&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History&n; *&t;Jan 14 2000 Ollie Lho &lt;ollie@sis.com.tw&gt; &n; *&t;Isloated from trident.c to support multiple ac97 codec&n; */
+multiline_comment|/*&n; * ac97_codec.c: Generic AC97 mixer module&n; *&n; * Derived from ac97 mixer in maestro and trident driver.&n; *&n; * Copyright 2000 Silicon Integrated System Corporation&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * History&n; * v0.2 Feb 10 2000 Ollie Lho&n; *&t;add ac97_read_proc for /proc/driver/vnedor/ac97&n; * v0.1 Jan 14 2000 Ollie Lho &lt;ollie@sis.com.tw&gt; &n; *&t;Isolated from trident.c to support multiple ac97 codec&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -120,9 +120,9 @@ op_star
 id|codec
 )paren
 suffix:semicolon
-DECL|variable|snd_ac97_codec_ids
+DECL|variable|ac97_codec_ids
 )brace
-id|snd_ac97_codec_ids
+id|ac97_codec_ids
 (braket
 )braket
 op_assign
@@ -216,12 +216,135 @@ l_int|NULL
 )brace
 comma
 (brace
+l_int|0x54524108
+comma
+l_string|&quot;TriTech TR28028&quot;
+comma
+l_int|NULL
+)brace
+comma
+(brace
+l_int|0x574D4C00
+comma
+l_string|&quot;Wolfson WM9704&quot;
+comma
+l_int|NULL
+)brace
+comma
+(brace
 l_int|0x00000000
 comma
 l_int|NULL
 comma
 l_int|NULL
 )brace
+)brace
+suffix:semicolon
+DECL|variable|ac97_stereo_enhancements
+r_static
+r_const
+r_char
+op_star
+id|ac97_stereo_enhancements
+(braket
+)braket
+op_assign
+(brace
+multiline_comment|/*   0 */
+l_string|&quot;No 3D Stereo Enhancement&quot;
+comma
+multiline_comment|/*   1 */
+l_string|&quot;Analog Devices Phat Stereo&quot;
+comma
+multiline_comment|/*   2 */
+l_string|&quot;Creative Stereo Enhancement&quot;
+comma
+multiline_comment|/*   3 */
+l_string|&quot;National Semi 3D Stereo Enhancement&quot;
+comma
+multiline_comment|/*   4 */
+l_string|&quot;YAMAHA Ymersion&quot;
+comma
+multiline_comment|/*   5 */
+l_string|&quot;BBE 3D Stereo Enhancement&quot;
+comma
+multiline_comment|/*   6 */
+l_string|&quot;Crystal Semi 3D Stereo Enhancement&quot;
+comma
+multiline_comment|/*   7 */
+l_string|&quot;Qsound QXpander&quot;
+comma
+multiline_comment|/*   8 */
+l_string|&quot;Spatializer 3D Stereo Enhancement&quot;
+comma
+multiline_comment|/*   9 */
+l_string|&quot;SRS 3D Stereo Enhancement&quot;
+comma
+multiline_comment|/*  10 */
+l_string|&quot;Platform Tech 3D Stereo Enhancement&quot;
+comma
+multiline_comment|/*  11 */
+l_string|&quot;AKM 3D Audio&quot;
+comma
+multiline_comment|/*  12 */
+l_string|&quot;Aureal Stereo Enhancement&quot;
+comma
+multiline_comment|/*  13 */
+l_string|&quot;Aztech 3D Enhancement&quot;
+comma
+multiline_comment|/*  14 */
+l_string|&quot;Binaura 3D Audio Enhancement&quot;
+comma
+multiline_comment|/*  15 */
+l_string|&quot;ESS Technology Stereo Enhancement&quot;
+comma
+multiline_comment|/*  16 */
+l_string|&quot;Harman International VMAx&quot;
+comma
+multiline_comment|/*  17 */
+l_string|&quot;Nvidea 3D Stereo Enhancement&quot;
+comma
+multiline_comment|/*  18 */
+l_string|&quot;Philips Incredible Sound&quot;
+comma
+multiline_comment|/*  19 */
+l_string|&quot;Texas Instruments 3D Stereo Enhancement&quot;
+comma
+multiline_comment|/*  20 */
+l_string|&quot;VLSI Technology 3D Stereo Enhancement&quot;
+comma
+multiline_comment|/*  21 */
+l_string|&quot;TriTech 3D Stereo Enhancement&quot;
+comma
+multiline_comment|/*  22 */
+l_string|&quot;Realtek 3D Stereo Enhancement&quot;
+comma
+multiline_comment|/*  23 */
+l_string|&quot;Samsung 3D Stereo Enhancement&quot;
+comma
+multiline_comment|/*  24 */
+l_string|&quot;Wolfson Microelectronics 3D Enhancement&quot;
+comma
+multiline_comment|/*  25 */
+l_string|&quot;Delta Integration 3D Enhancement&quot;
+comma
+multiline_comment|/*  26 */
+l_string|&quot;SigmaTel 3D Enhancement&quot;
+comma
+multiline_comment|/*  27 */
+l_string|&quot;Reserved 27&quot;
+comma
+multiline_comment|/*  28 */
+l_string|&quot;Rockwell 3D Stereo Enhancement&quot;
+comma
+multiline_comment|/*  29 */
+l_string|&quot;Reserved 29&quot;
+comma
+multiline_comment|/*  30 */
+l_string|&quot;Reserved 30&quot;
+comma
+multiline_comment|/*  31 */
+l_string|&quot;Reserved 31&quot;
 )brace
 suffix:semicolon
 multiline_comment|/* this table has default mixer values for all OSS mixers. */
@@ -822,6 +945,62 @@ c_cond
 (paren
 id|oss_channel
 op_eq
+id|SOUND_MIXER_PHONEIN
+)paren
+(brace
+id|ret
+op_assign
+l_int|100
+op_minus
+(paren
+(paren
+(paren
+id|val
+op_amp
+l_int|0x1f
+)paren
+op_star
+l_int|100
+)paren
+op_div
+id|mh-&gt;scale
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|oss_channel
+op_eq
+id|SOUND_MIXER_PHONEOUT
+)paren
+(brace
+id|ret
+op_assign
+l_int|100
+op_minus
+(paren
+(paren
+(paren
+id|val
+op_amp
+l_int|0x1f
+)paren
+op_star
+l_int|100
+)paren
+op_div
+id|mh-&gt;scale
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|oss_channel
+op_eq
 id|SOUND_MIXER_MIC
 )paren
 (brace
@@ -1100,6 +1279,58 @@ l_int|100
 )paren
 op_lshift
 l_int|1
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|oss_channel
+op_eq
+id|SOUND_MIXER_PHONEIN
+)paren
+(brace
+id|val
+op_assign
+(paren
+(paren
+(paren
+l_int|100
+op_minus
+id|left
+)paren
+op_star
+id|mh-&gt;scale
+)paren
+op_div
+l_int|100
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|oss_channel
+op_eq
+id|SOUND_MIXER_PHONEOUT
+)paren
+(brace
+id|val
+op_assign
+(paren
+(paren
+(paren
+l_int|100
+op_minus
+id|left
+)paren
+op_star
+id|mh-&gt;scale
+)paren
+op_div
+l_int|100
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -1813,14 +2044,19 @@ op_minus
 id|EINVAL
 suffix:semicolon
 multiline_comment|/* do we ever want to touch the hardware? */
-multiline_comment|/* val = codec-&gt;read_mixer(card,i); */
 id|val
 op_assign
-id|codec-&gt;mixer_state
-(braket
+id|codec
+op_member_access_from_pointer
+id|read_mixer
+c_func
+(paren
+id|card
+comma
 id|i
-)braket
+)paren
 suffix:semicolon
+multiline_comment|/* val = codec-&gt;mixer_state[i]; */
 r_break
 suffix:semicolon
 )brace
@@ -1972,6 +2208,546 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+multiline_comment|/* entry point for /proc/driver/controller_vendor/ac97/%d */
+DECL|function|ac97_read_proc
+r_int
+id|ac97_read_proc
+(paren
+r_char
+op_star
+id|page
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|off
+comma
+r_int
+id|count
+comma
+r_int
+op_star
+id|eof
+comma
+r_void
+op_star
+id|data
+)paren
+(brace
+r_int
+id|len
+op_assign
+l_int|0
+comma
+id|cap
+comma
+id|extid
+comma
+id|val
+comma
+id|id1
+comma
+id|id2
+suffix:semicolon
+r_struct
+id|ac97_codec
+op_star
+id|codec
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|codec
+op_assign
+id|data
+)paren
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+id|id1
+op_assign
+id|codec
+op_member_access_from_pointer
+id|codec_read
+c_func
+(paren
+id|codec
+comma
+id|AC97_VENDOR_ID1
+)paren
+suffix:semicolon
+id|id2
+op_assign
+id|codec
+op_member_access_from_pointer
+id|codec_read
+c_func
+(paren
+id|codec
+comma
+id|AC97_VENDOR_ID2
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+(paren
+id|page
+op_plus
+id|len
+comma
+l_string|&quot;Vendor name      : %s&bslash;n&quot;
+comma
+id|codec-&gt;name
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+(paren
+id|page
+op_plus
+id|len
+comma
+l_string|&quot;Vendor id        : %04X %04X&bslash;n&quot;
+comma
+id|id1
+comma
+id|id2
+)paren
+suffix:semicolon
+id|extid
+op_assign
+id|codec
+op_member_access_from_pointer
+id|codec_read
+c_func
+(paren
+id|codec
+comma
+id|AC97_EXTENDED_ID
+)paren
+suffix:semicolon
+id|extid
+op_and_assign
+op_complement
+(paren
+(paren
+l_int|1
+op_lshift
+l_int|2
+)paren
+op_or
+(paren
+l_int|1
+op_lshift
+l_int|4
+)paren
+op_or
+(paren
+l_int|1
+op_lshift
+l_int|5
+)paren
+op_or
+(paren
+l_int|1
+op_lshift
+l_int|10
+)paren
+op_or
+(paren
+l_int|1
+op_lshift
+l_int|11
+)paren
+op_or
+(paren
+l_int|1
+op_lshift
+l_int|12
+)paren
+op_or
+(paren
+l_int|1
+op_lshift
+l_int|13
+)paren
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+(paren
+id|page
+op_plus
+id|len
+comma
+l_string|&quot;AC97 Version     : %s&bslash;n&quot;
+comma
+id|extid
+ques
+c_cond
+l_string|&quot;2.0 or later&quot;
+suffix:colon
+l_string|&quot;1.0&quot;
+)paren
+suffix:semicolon
+id|cap
+op_assign
+id|codec
+op_member_access_from_pointer
+id|codec_read
+c_func
+(paren
+id|codec
+comma
+id|AC97_RESET
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+(paren
+id|page
+op_plus
+id|len
+comma
+l_string|&quot;Capabilities     :%s%s%s%s%s%s&bslash;n&quot;
+comma
+id|cap
+op_amp
+l_int|0x0001
+ques
+c_cond
+l_string|&quot; -dedicated MIC PCM IN channel-&quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+id|cap
+op_amp
+l_int|0x0002
+ques
+c_cond
+l_string|&quot; -reserved1-&quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+id|cap
+op_amp
+l_int|0x0004
+ques
+c_cond
+l_string|&quot; -bass &amp; treble-&quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+id|cap
+op_amp
+l_int|0x0008
+ques
+c_cond
+l_string|&quot; -simulated stereo-&quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+id|cap
+op_amp
+l_int|0x0010
+ques
+c_cond
+l_string|&quot; -headphone out-&quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+id|cap
+op_amp
+l_int|0x0020
+ques
+c_cond
+l_string|&quot; -loudness-&quot;
+suffix:colon
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|val
+op_assign
+id|cap
+op_amp
+l_int|0x00c0
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+(paren
+id|page
+op_plus
+id|len
+comma
+l_string|&quot;DAC resolutions  :%s%s%s&bslash;n&quot;
+comma
+l_string|&quot; -16-bit-&quot;
+comma
+id|val
+op_amp
+l_int|0x0040
+ques
+c_cond
+l_string|&quot; -18-bit-&quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+id|val
+op_amp
+l_int|0x0080
+ques
+c_cond
+l_string|&quot; -20-bit-&quot;
+suffix:colon
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|val
+op_assign
+id|cap
+op_amp
+l_int|0x0300
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+(paren
+id|page
+op_plus
+id|len
+comma
+l_string|&quot;ADC resolutions  :%s%s%s&bslash;n&quot;
+comma
+l_string|&quot; -16-bit-&quot;
+comma
+id|val
+op_amp
+l_int|0x0100
+ques
+c_cond
+l_string|&quot; -18-bit-&quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+id|val
+op_amp
+l_int|0x0200
+ques
+c_cond
+l_string|&quot; -20-bit-&quot;
+suffix:colon
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+(paren
+id|page
+op_plus
+id|len
+comma
+l_string|&quot;3D enhancement   : %s&bslash;n&quot;
+comma
+id|ac97_stereo_enhancements
+(braket
+(paren
+id|cap
+op_rshift
+l_int|10
+)paren
+op_amp
+l_int|0x1f
+)braket
+)paren
+suffix:semicolon
+id|val
+op_assign
+id|codec
+op_member_access_from_pointer
+id|codec_read
+c_func
+(paren
+id|codec
+comma
+id|AC97_GENERAL_PURPOSE
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+(paren
+id|page
+op_plus
+id|len
+comma
+l_string|&quot;POP path         : %s 3D&bslash;n&quot;
+l_string|&quot;Sim. stereo      : %s&bslash;n&quot;
+l_string|&quot;3D enhancement   : %s&bslash;n&quot;
+l_string|&quot;Loudness         : %s&bslash;n&quot;
+l_string|&quot;Mono output      : %s&bslash;n&quot;
+l_string|&quot;MIC select       : %s&bslash;n&quot;
+l_string|&quot;ADC/DAC loopback : %s&bslash;n&quot;
+comma
+id|val
+op_amp
+l_int|0x8000
+ques
+c_cond
+l_string|&quot;post&quot;
+suffix:colon
+l_string|&quot;pre&quot;
+comma
+id|val
+op_amp
+l_int|0x4000
+ques
+c_cond
+l_string|&quot;on&quot;
+suffix:colon
+l_string|&quot;off&quot;
+comma
+id|val
+op_amp
+l_int|0x2000
+ques
+c_cond
+l_string|&quot;on&quot;
+suffix:colon
+l_string|&quot;off&quot;
+comma
+id|val
+op_amp
+l_int|0x1000
+ques
+c_cond
+l_string|&quot;on&quot;
+suffix:colon
+l_string|&quot;off&quot;
+comma
+id|val
+op_amp
+l_int|0x0200
+ques
+c_cond
+l_string|&quot;MIC&quot;
+suffix:colon
+l_string|&quot;MIX&quot;
+comma
+id|val
+op_amp
+l_int|0x0100
+ques
+c_cond
+l_string|&quot;MIC2&quot;
+suffix:colon
+l_string|&quot;MIC1&quot;
+comma
+id|val
+op_amp
+l_int|0x0080
+ques
+c_cond
+l_string|&quot;on&quot;
+suffix:colon
+l_string|&quot;off&quot;
+)paren
+suffix:semicolon
+id|cap
+op_assign
+id|extid
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+(paren
+id|page
+op_plus
+id|len
+comma
+l_string|&quot;Ext Capabilities :%s%s%s%s%s%s%s&bslash;n&quot;
+comma
+id|cap
+op_amp
+l_int|0x0001
+ques
+c_cond
+l_string|&quot; -var rate PCM audio-&quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+id|cap
+op_amp
+l_int|0x0002
+ques
+c_cond
+l_string|&quot; -2x PCM audio out-&quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+id|cap
+op_amp
+l_int|0x0008
+ques
+c_cond
+l_string|&quot; -var rate MIC in-&quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+id|cap
+op_amp
+l_int|0x0040
+ques
+c_cond
+l_string|&quot; -PCM center DAC-&quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+id|cap
+op_amp
+l_int|0x0080
+ques
+c_cond
+l_string|&quot; -PCM surround DAC-&quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+id|cap
+op_amp
+l_int|0x0100
+ques
+c_cond
+l_string|&quot; -PCM LFE DAC-&quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+id|cap
+op_amp
+l_int|0x0200
+ques
+c_cond
+l_string|&quot; -slot/DAC mappings-&quot;
+suffix:colon
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+r_return
+id|len
+suffix:semicolon
+)brace
 DECL|function|ac97_probe_codec
 r_int
 id|ac97_probe_codec
@@ -2058,12 +2834,19 @@ c_loop
 id|i
 op_assign
 l_int|0
+comma
+id|codec-&gt;name
+op_assign
+l_int|NULL
 suffix:semicolon
 id|i
 OL
-r_sizeof
+id|arraysize
 (paren
-id|snd_ac97_codec_ids
+id|ac97_codec_ids
+(braket
+id|i
+)braket
 )paren
 suffix:semicolon
 id|i
@@ -2073,7 +2856,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|snd_ac97_codec_ids
+id|ac97_codec_ids
 (braket
 id|i
 )braket
@@ -2093,7 +2876,7 @@ id|id2
 (brace
 id|codec-&gt;name
 op_assign
-id|snd_ac97_codec_ids
+id|ac97_codec_ids
 (braket
 id|i
 )braket
@@ -2102,7 +2885,7 @@ id|name
 suffix:semicolon
 id|codec-&gt;codec_init
 op_assign
-id|snd_ac97_codec_ids
+id|ac97_codec_ids
 (braket
 id|i
 )braket
@@ -2135,15 +2918,6 @@ comma
 id|id2
 comma
 id|codec-&gt;name
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;ac97_codec: capability: 0x%04x&bslash;n&quot;
-comma
-id|cap
 )paren
 suffix:semicolon
 multiline_comment|/* mixer masks */
@@ -2349,6 +3123,13 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|variable|ac97_read_proc
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ac97_read_proc
+)paren
+suffix:semicolon
 DECL|variable|ac97_probe_codec
 id|EXPORT_SYMBOL
 c_func

@@ -200,7 +200,7 @@ id|spin_lock_init
 c_func
 (paren
 op_amp
-id|inode-&gt;i_shared_lock
+id|inode-&gt;i_data.i_shared_lock
 )paren
 suffix:semicolon
 )brace
@@ -947,7 +947,8 @@ id|inode-&gt;i_data.nrpages
 id|truncate_inode_pages
 c_func
 (paren
-id|inode
+op_amp
+id|inode-&gt;i_data
 comma
 l_int|0
 )paren
@@ -2608,7 +2609,8 @@ id|inode-&gt;i_data.nrpages
 id|truncate_inode_pages
 c_func
 (paren
-id|inode
+op_amp
+id|inode-&gt;i_data
 comma
 l_int|0
 )paren

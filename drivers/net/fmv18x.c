@@ -299,27 +299,9 @@ id|dev
 suffix:semicolon
 "&f;"
 multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, allocate space for the device and return success&n;   (detachable devices only).&n;   */
-macro_line|#ifdef HAVE_DEVLIST
-multiline_comment|/* Support for an alternate probe manager, which will eliminate the&n;   boilerplate below. */
-DECL|variable|fmv18x_drv
-r_struct
-id|netdev_entry
-id|fmv18x_drv
-op_assign
-(brace
-l_string|&quot;fmv18x&quot;
-comma
-id|fmv18x_probe1
-comma
-id|FMV18X_IO_EXTENT
-comma
-id|fmv18x_probe_list
-)brace
-suffix:semicolon
-macro_line|#else
+DECL|function|fmv18x_probe
 r_int
 id|__init
-DECL|function|fmv18x_probe
 id|fmv18x_probe
 c_func
 (paren
@@ -429,7 +411,6 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* The Fujitsu datasheet suggests that the NIC be probed for by checking its&n;   &quot;signature&quot;, the default bit pattern after a reset.  This *doesn&squot;t* work --&n;   there is no way to reset the bus interface without a complete power-cycle!&n;&n;   It turns out that ATI came to the same conclusion I did: the only thing&n;   that can be done is checking a few bits and then diving right into MAC&n;   address check. */
 DECL|function|fmv18x_probe1
 r_int
@@ -2606,17 +2587,6 @@ id|net_local
 op_star
 )paren
 id|dev-&gt;priv
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* ToDo: Update the statistics from the device registers. */
-id|sti
-c_func
-(paren
-)paren
 suffix:semicolon
 r_return
 op_amp

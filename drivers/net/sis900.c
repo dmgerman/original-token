@@ -1,4 +1,4 @@
-multiline_comment|/* sis900.c: A SiS 900/7016 PCI Fast Ethernet driver for Linux.&n;   Copyright 1999 Silicon Integrated System Corporation &n;   Revision:&t;1.06.03&t;Dec 23 1999&n;   &n;   Modified from the driver which is originally written by Donald Becker. &n;   &n;   This software may be used and distributed according to the terms&n;   of the GNU Public License (GPL), incorporated herein by reference.&n;   Drivers based on this skeleton fall under the GPL and must retain&n;   the authorship (implicit copyright) notice.&n;   &n;   References:&n;   SiS 7016 Fast Ethernet PCI Bus 10/100 Mbps LAN Controller with OnNow Support,&n;   preliminary Rev. 1.0 Jan. 14, 1998&n;   SiS 900 Fast Ethernet PCI Bus 10/100 Mbps LAN Single Chip with OnNow Support,&n;   preliminary Rev. 1.0 Nov. 10, 1998&n;   SiS 7014 Single Chip 100BASE-TX/10BASE-T Physical Layer Solution,&n;   preliminary Rev. 1.0 Jan. 18, 1998&n;   http://www.sis.com.tw/support/databook.htm&n;&n;   Rev 1.06.04 Feb. 11 2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt; softnet and init for kernel 2.4&n;   Rev 1.06.03 Dec. 23 1999 Ollie Lho Third release&n;   Rev 1.06.02 Nov. 23 1999 Ollie Lho bug in mac probing fixed &n;   Rev 1.06.01 Nov. 16 1999 Ollie Lho CRC calculation provide by Joseph Zbiciak (im14u2c@primenet.com)&n;   Rev 1.06 Nov. 4 1999 Ollie Lho (ollie@sis.com.tw) Second release&n;   Rev 1.05.05 Oct. 29 1999 Ollie Lho (ollie@sis.com.tw) Single buffer Tx/Rx  &n;   Chin-Shan Li (lcs@sis.com.tw) Added AMD Am79c901 HomePNA PHY support&n;   Rev 1.05 Aug. 7 1999 Jim Huang (cmhuang@sis.com.tw) Initial release&n;*/
+multiline_comment|/* sis900.c: A SiS 900/7016 PCI Fast Ethernet driver for Linux.&n;   Copyright 1999 Silicon Integrated System Corporation &n;   Revision:&t;1.06.04&t;Feb 11 2000&n;   &n;   Modified from the driver which is originally written by Donald Becker. &n;   &n;   This software may be used and distributed according to the terms&n;   of the GNU Public License (GPL), incorporated herein by reference.&n;   Drivers based on this skeleton fall under the GPL and must retain&n;   the authorship (implicit copyright) notice.&n;   &n;   References:&n;   SiS 7016 Fast Ethernet PCI Bus 10/100 Mbps LAN Controller with OnNow Support,&n;   preliminary Rev. 1.0 Jan. 14, 1998&n;   SiS 900 Fast Ethernet PCI Bus 10/100 Mbps LAN Single Chip with OnNow Support,&n;   preliminary Rev. 1.0 Nov. 10, 1998&n;   SiS 7014 Single Chip 100BASE-TX/10BASE-T Physical Layer Solution,&n;   preliminary Rev. 1.0 Jan. 18, 1998&n;   http://www.sis.com.tw/support/databook.htm&n;&n;   Rev 1.06.04 Feb. 11 2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt; softnet and init for kernel 2.4&n;   Rev 1.06.03 Dec. 23 1999 Ollie Lho Third release&n;   Rev 1.06.02 Nov. 23 1999 Ollie Lho bug in mac probing fixed &n;   Rev 1.06.01 Nov. 16 1999 Ollie Lho CRC calculation provide by Joseph Zbiciak (im14u2c@primenet.com)&n;   Rev 1.06 Nov. 4 1999 Ollie Lho (ollie@sis.com.tw) Second release&n;   Rev 1.05.05 Oct. 29 1999 Ollie Lho (ollie@sis.com.tw) Single buffer Tx/Rx  &n;   Chin-Shan Li (lcs@sis.com.tw) Added AMD Am79c901 HomePNA PHY support&n;   Rev 1.05 Aug. 7 1999 Jim Huang (cmhuang@sis.com.tw) Initial release&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -476,7 +476,7 @@ suffix:semicolon
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Jim Huang &lt;cmhuang@sis.com.tw&gt;&quot;
+l_string|&quot;Jim Huang &lt;cmhuang@sis.com.tw&gt;, Ollie Lho &lt;ollie@sis.com.tw&gt;&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
@@ -1266,9 +1266,12 @@ id|sis_priv-&gt;mac
 op_assign
 id|mac
 suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
 id|sis_priv-&gt;lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
+)paren
 suffix:semicolon
 multiline_comment|/* probe for mii transciver */
 r_if
@@ -4050,7 +4053,7 @@ op_plus
 id|imr
 )paren
 suffix:semicolon
-multiline_comment|/* discard unsent packets, should this code section be protected by&n;&t;   cli(), sti() ?? */
+multiline_comment|/* use spinlock to prevent interrupt handler accessing buffer ring */
 id|spin_lock_irqsave
 c_func
 (paren
@@ -4060,6 +4063,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* discard unsent packets */
 id|sis_priv-&gt;dirty_tx
 op_assign
 id|sis_priv-&gt;cur_tx
@@ -4131,6 +4135,16 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+id|sis_priv-&gt;tx_full
+op_assign
+l_int|0
+suffix:semicolon
+id|netif_wake_queue
+c_func
+(paren
+id|net_dev
+)paren
+suffix:semicolon
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -4144,17 +4158,17 @@ id|net_dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-id|sis_priv-&gt;tx_full
-op_assign
-l_int|0
-suffix:semicolon
-id|netif_start_queue
+multiline_comment|/* FIXME: Should we restart the transmission thread here  ?? */
+id|outl
 c_func
 (paren
-id|net_dev
+id|TxENA
+comma
+id|ioaddr
+op_plus
+id|cr
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: Should we restart the transmission thread here  ?? */
 multiline_comment|/* Enable all known interrupts by setting the interrupt mask. */
 id|outl
 c_func
@@ -4221,6 +4235,19 @@ r_int
 r_int
 id|entry
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|sis_priv-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* Calculate the next Tx descriptor entry. */
 id|entry
 op_assign
@@ -4283,7 +4310,7 @@ OL
 id|NUM_TX_DESC
 )paren
 (brace
-multiline_comment|/* Typical path, clear tbusy to indicate more &n;&t;&t;   transmission is possible */
+multiline_comment|/* Typical path, tell upper layer that more transmission is possible */
 id|netif_start_queue
 c_func
 (paren
@@ -4293,12 +4320,27 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* no more transmit descriptor avaiable, tbusy remain set */
+multiline_comment|/* buffer full, tell upper layer no more transmission */
 id|sis_priv-&gt;tx_full
 op_assign
 l_int|1
 suffix:semicolon
+id|netif_stop_queue
+c_func
+(paren
+id|net_dev
+)paren
+suffix:semicolon
 )brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|sis_priv-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|net_dev-&gt;trans_start
 op_assign
 id|jiffies
@@ -5246,7 +5288,7 @@ op_minus
 l_int|4
 )paren
 (brace
-multiline_comment|/* The ring is no longer full, clear tbusy, tx_full and&n;&t;&t;   schedule more transmission by marking NET_BH */
+multiline_comment|/* The ring is no longer full, clear tx_full and schedule more transmission&n;&t;&t;   by netif_wake_queue(net_dev) */
 id|sis_priv-&gt;tx_full
 op_assign
 l_int|0

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/cs5530.c&t;&t;Version 0.2&t;Jan 30, 2000&n; *&n; * Copyright (C) 2000&t;&t;&t;Mark Lord &lt;mlord@pobox.com&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Development of this chipset driver was funded&n; * by the nice folks at National Semiconductor.&n; */
+multiline_comment|/*&n; * linux/drivers/block/cs5530.c&t;&t;Version 0.5&t;Feb 13, 2000&n; *&n; * Copyright (C) 2000&t;&t;&t;Mark Lord &lt;mlord@pobox.com&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Development of this chipset driver was funded&n; * by the nice folks at National Semiconductor.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -1297,22 +1297,6 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* set DMA_capable bit */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|strcmp
-c_func
-(paren
-id|drive-&gt;name
-comma
-l_string|&quot;hdc&quot;
-)paren
-)paren
-multiline_comment|/* FIXME */
-r_return
-l_int|0
-suffix:semicolon
 multiline_comment|/*&n;&t; * Finally, turn DMA on in software, and exit.&n;&t; */
 r_return
 id|hwif

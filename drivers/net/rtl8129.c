@@ -1,5 +1,5 @@
-multiline_comment|/* rtl8139.c: A RealTek RTL8129/8139 Fast Ethernet driver for Linux. */
-multiline_comment|/*&n;&t;Written 1997-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;    All other rights reserved.&n;&n;&t;This driver is for boards based on the RTL8129 and RTL8139 PCI ethernet&n;&t;chips.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;Support and updates available at&n;&t;http://cesdis.gsfc.nasa.gov/linux/drivers/rtl8139.html&n;&n;&t;Twister-tuning table provided by Kinston &lt;shangh@realtek.com.tw&gt;.&n;*/
+multiline_comment|/* rtl8129.c: A RealTek RTL8129 Fast Ethernet driver for Linux. */
+multiline_comment|/*&n;&t;Written 1997-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;    All other rights reserved.&n;&n;&t;This driver is for boards based on the RTL8129 PCI ethernet chip.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;Support and updates available at&n;&t;http://cesdis.gsfc.nasa.gov/linux/drivers/rtl8139.html&n;&n;&t;Twister-tuning table provided by Kinston &lt;shangh@realtek.com.tw&gt;.&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;rtl8139.c:v1.07 5/6/99 Donald Becker http://cesdis.gsfc.nasa.gov/linux/drivers/rtl8139.html&bslash;n&quot;
+l_string|&quot;rtl8129.c:v1.07 5/6/99 Donald Becker http://cesdis.gsfc.nasa.gov/linux/drivers/rtl8139.html&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* A few user-configurable values. */
 multiline_comment|/* Maximum events (Rx packets, etc.) to handle at each interrupt. */
@@ -138,6 +138,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -1063,8 +1064,6 @@ suffix:semicolon
 multiline_comment|/* Media sensing in progress. */
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20115
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -1074,7 +1073,7 @@ suffix:semicolon
 id|MODULE_DESCRIPTION
 c_func
 (paren
-l_string|&quot;RealTek RTL8129/8139 Fast Ethernet driver&quot;
+l_string|&quot;RealTek RTL8129 Fast Ethernet driver&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -1129,8 +1128,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 r_static
 r_int
 id|rtl8129_open
@@ -1349,9 +1346,11 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Ideally we would detect all network cards in slot order.  That would&n;   be best done a central PCI probe dispatch, which wouldn&squot;t work&n;   well when dynamically adding drivers.  So instead we detect just the&n;   Rtl81*9 cards in slot order. */
-DECL|function|rtl8139_probe
+DECL|function|rtl8129_probe
+r_static
 r_int
-id|rtl8139_probe
+id|__init
+id|rtl8129_probe
 c_func
 (paren
 r_void
@@ -4004,7 +4003,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: RTL8139 Interrupt line blocked, status %x.&bslash;n&quot;
+l_string|&quot;%s: RTL8129 Interrupt line blocked, status %x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -8039,26 +8038,11 @@ r_return
 suffix:semicolon
 )brace
 "&f;"
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|rtl8129_cleanup
+r_static
 r_void
-)paren
-(brace
-r_return
-id|rtl8139_probe
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_void
-DECL|function|cleanup_module
-id|cleanup_module
-c_func
+id|__exit
+id|rtl8129_cleanup
 (paren
 r_void
 )paren
@@ -8128,7 +8112,19 @@ id|next_dev
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif  /* MODULE */
-"&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c rtl8139.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  SMP-compile-command: &quot;gcc -D__SMP__ -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c rtl8139.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
+DECL|variable|rtl8129_probe
+id|module_init
+c_func
+(paren
+id|rtl8129_probe
+)paren
+suffix:semicolon
+DECL|variable|rtl8129_cleanup
+id|module_exit
+c_func
+(paren
+id|rtl8129_cleanup
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c rtl8129.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  SMP-compile-command: &quot;gcc -D__SMP__ -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c rtl8129.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

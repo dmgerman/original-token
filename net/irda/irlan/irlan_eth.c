@@ -83,10 +83,6 @@ id|dev-&gt;set_multicast_list
 op_assign
 id|irlan_eth_set_multicast_list
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
 id|ether_setup
 c_func
 (paren
@@ -249,16 +245,8 @@ suffix:semicolon
 )paren
 suffix:semicolon
 multiline_comment|/* Ready to play! */
-multiline_comment|/* &t;dev-&gt;tbusy = 0; */
+multiline_comment|/* &t;netif_start_queue(dev) */
 multiline_comment|/* Wait until data link is ready */
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
 id|self-&gt;notify_irmanager
 op_assign
 id|TRUE
@@ -317,13 +305,11 @@ l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Stop device */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|irlan_mod_dec_use_count
 c_func
@@ -446,16 +432,6 @@ r_return
 l_int|0
 suffix:semicolon
 )paren
-suffix:semicolon
-multiline_comment|/* Check if IrTTP can accept more frames */
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-r_return
-op_minus
-id|EBUSY
 suffix:semicolon
 multiline_comment|/* skb headroom large enough to contain all IrDA-headers? */
 r_if
@@ -677,7 +653,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlan_eth_flow (status)&n; *&n; *    Do flow control between IP/Ethernet and IrLAN/IrTTP. This is done by &n; *    controlling the dev-&gt;tbusy variable.&n; */
+multiline_comment|/*&n; * Function irlan_eth_flow (status)&n; *&n; *    Do flow control between IP/Ethernet and IrLAN/IrTTP. This is done by &n; *    controlling the queue stop/start.&n; */
 DECL|function|irlan_eth_flow_indication
 r_void
 id|irlan_eth_flow_indication
@@ -761,9 +737,11 @@ id|flow
 r_case
 id|FLOW_STOP
 suffix:colon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -773,15 +751,11 @@ suffix:colon
 r_default
 suffix:colon
 multiline_comment|/* Tell upper layers that its time to transmit frames again */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* Schedule network layer */
-id|mark_bh
+id|netif_start_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 r_break

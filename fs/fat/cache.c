@@ -1693,6 +1693,7 @@ c_cond
 (paren
 id|sector
 op_ge
+(paren
 id|MSDOS_I
 c_func
 (paren
@@ -1700,6 +1701,9 @@ id|inode
 )paren
 op_member_access_from_pointer
 id|mmu_private
+op_plus
+l_int|511
+)paren
 op_rshift
 l_int|9
 )paren

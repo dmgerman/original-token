@@ -2070,6 +2070,11 @@ id|dev-&gt;watchdog_timeo
 op_assign
 id|TX_TIMEOUT
 suffix:semicolon
+id|netif_stop_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 id|dev
 suffix:semicolon
@@ -2561,6 +2566,8 @@ id|ep-&gt;full_duplex
 op_assign
 id|ep-&gt;force_fd
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 multiline_comment|/* Soft reset the chip. */
 id|outl
 c_func
@@ -2590,12 +2597,14 @@ comma
 id|dev
 )paren
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
-id|EAGAIN
+id|EBUSY
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
+)brace
 id|epic_init_ring
 c_func
 (paren
@@ -2908,12 +2917,6 @@ op_plus
 id|COMMAND
 )paren
 suffix:semicolon
-id|netif_start_queue
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 multiline_comment|/* Enable interrupts by setting the interrupt mask. */
 id|outl
 c_func
@@ -2986,6 +2989,12 @@ suffix:colon
 l_string|&quot;half&quot;
 )paren
 suffix:semicolon
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* Set the timer to switch to check for link beat and perhaps switch&n;&t;   to an alternate media type. */
 id|init_timer
 c_func
@@ -2999,16 +3008,12 @@ op_assign
 id|RUN_AT
 c_func
 (paren
-(paren
-l_int|24
+l_int|3
 op_star
 id|HZ
 )paren
-op_div
-l_int|10
-)paren
 suffix:semicolon
-multiline_comment|/* 2.4 sec. */
+multiline_comment|/* 3 sec. */
 id|ep-&gt;timer.data
 op_assign
 (paren
@@ -3063,6 +3068,11 @@ id|epic_private
 op_star
 )paren
 id|dev-&gt;priv
+suffix:semicolon
+id|netif_stop_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Disable interrupts by clearing the interrupt mask. */
 id|outl
@@ -3447,6 +3457,11 @@ op_plus
 id|INTMASK
 )paren
 suffix:semicolon
+id|netif_start_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -3480,8 +3495,6 @@ op_plus
 id|INTSTAT
 )paren
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 DECL|function|epic_timer
@@ -3842,7 +3855,10 @@ suffix:semicolon
 id|ep-&gt;stats.tx_errors
 op_increment
 suffix:semicolon
-r_return
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the Rx and Tx rings, along with various &squot;dev&squot; bits. */
@@ -4130,6 +4146,11 @@ suffix:semicolon
 id|u32
 id|flag
 suffix:semicolon
+id|netif_stop_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* Caution: the write order is important here, set the base address&n;&t;   with the &quot;ownership&quot; bits last. */
 multiline_comment|/* Calculate the next Tx descriptor entry. */
 id|entry
@@ -4213,12 +4234,6 @@ op_assign
 l_int|0x10
 suffix:semicolon
 multiline_comment|/* No interrupt */
-id|netif_start_queue
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 )brace
 r_else
 r_if
@@ -4238,12 +4253,6 @@ op_assign
 l_int|0x14
 suffix:semicolon
 multiline_comment|/* Tx-done intr. */
-id|netif_start_queue
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 )brace
 r_else
 r_if
@@ -4263,12 +4272,6 @@ op_assign
 l_int|0x10
 suffix:semicolon
 multiline_comment|/* No Tx-done intr. */
-id|netif_start_queue
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -4319,6 +4322,17 @@ suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ep-&gt;tx_full
+)paren
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4755,12 +4769,23 @@ id|ep-&gt;tx_full
 op_assign
 l_int|0
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|ep-&gt;tx_full
+)paren
+id|netif_stop_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_else
 id|netif_wake_queue
 (paren
 id|dev
 )paren
 suffix:semicolon
-)brace
 id|ep-&gt;dirty_tx
 op_assign
 id|dirty_tx

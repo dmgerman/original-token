@@ -397,6 +397,17 @@ id|ioaddr
 )paren
 suffix:semicolon
 r_static
+r_void
+id|SK_timeout
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
 r_int
 id|SK_open
 c_func
@@ -1467,28 +1478,33 @@ suffix:semicolon
 multiline_comment|/* Assign our Device Driver functions */
 id|dev-&gt;open
 op_assign
-op_amp
 id|SK_open
 suffix:semicolon
 id|dev-&gt;stop
 op_assign
-op_amp
 id|SK_close
 suffix:semicolon
 id|dev-&gt;hard_start_xmit
 op_assign
-op_amp
 id|SK_send_packet
 suffix:semicolon
 id|dev-&gt;get_stats
 op_assign
-op_amp
 id|SK_get_stats
 suffix:semicolon
 id|dev-&gt;set_multicast_list
 op_assign
-op_amp
 id|set_multicast_list
+suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+id|SK_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|HZ
+op_div
+l_int|7
 suffix:semicolon
 multiline_comment|/* Set the generic fields of the device structure */
 id|ether_setup
@@ -2685,6 +2701,49 @@ multiline_comment|/* LANCE is up and running */
 multiline_comment|/* End of SK_lance_init() */
 "&f;"
 multiline_comment|/*-&n; * Function       : SK_send_packet&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/27&n; *&n; * Description    : Writes an socket buffer into a transmit descriptor&n; *                  and starts transmission.&n; *&n; * Parameters     : I : struct sk_buff *skb - packet to transfer&n; *                  I : struct net_device *dev  - SK_G16 device structure&n; * Return Value   : 0 - OK&n; *                  1 - Could not transmit (dev_queue_xmit will queue it)&n; *                      and try to sent it later&n; * Globals        : None&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+DECL|function|SK_timeout
+r_static
+r_int
+id|SK_timeout
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: xmitter timed out, try to restart!&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|SK_lance_init
+c_func
+(paren
+id|dev
+comma
+id|MODE_NORMAL
+)paren
+suffix:semicolon
+multiline_comment|/* Reinit LANCE */
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Clear Transmitter flag */
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+multiline_comment|/* Mark Start of transmission */
+)brace
 DECL|function|SK_send_packet
 r_static
 r_int
@@ -2719,70 +2778,6 @@ id|tmd
 op_star
 id|tmdp
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|test_bit
-c_func
-(paren
-id|LINK_STATE_XOFF
-comma
-op_amp
-id|dev-&gt;flags
-)paren
-)paren
-(brace
-multiline_comment|/* if Transmitter more than 150ms busy -&gt; time_out */
-r_int
-id|tickssofar
-op_assign
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-l_int|15
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-multiline_comment|/* We have to try transmit later */
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: xmitter timed out, try to restart!&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|SK_lance_init
-c_func
-(paren
-id|dev
-comma
-id|MODE_NORMAL
-)paren
-suffix:semicolon
-multiline_comment|/* Reinit LANCE */
-id|netif_start_queue
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-multiline_comment|/* Clear Transmitter flag */
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-multiline_comment|/* Mark Start of transmission */
-)brace
 id|PRINTK2
 c_func
 (paren

@@ -190,12 +190,6 @@ macro_line|#else
 DECL|macro|IRQ
 mdefine_line|#define IRQ(irq, dev_id, pt_regs) (irq, pt_regs)
 macro_line|#endif
-multiline_comment|/* This my implementation of shared IRQs, now only used for 1.2.13. */
-macro_line|#ifdef HAVE_SHARED_IRQ
-DECL|macro|USE_SHARED_IRQ
-mdefine_line|#define USE_SHARED_IRQ
-macro_line|#include &lt;linux/shared_irq.h&gt;
-macro_line|#endif
 multiline_comment|/* The total size is unusually large: The 21040 aligns each of its 16&n;   longword-wide registers on a quadword boundary. */
 DECL|macro|TULIP_TOTAL_SIZE
 mdefine_line|#define TULIP_TOTAL_SIZE 0x80

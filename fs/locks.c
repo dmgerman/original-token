@@ -1336,11 +1336,18 @@ id|vm_area_struct
 op_star
 id|vma
 suffix:semicolon
+r_struct
+id|address_space
+op_star
+id|mapping
+op_assign
+id|inode-&gt;i_mapping
+suffix:semicolon
 id|spin_lock
 c_func
 (paren
 op_amp
-id|inode-&gt;i_shared_lock
+id|mapping-&gt;i_shared_lock
 )paren
 suffix:semicolon
 r_for
@@ -1348,7 +1355,7 @@ c_loop
 (paren
 id|vma
 op_assign
-id|inode-&gt;i_mmap
+id|mapping-&gt;i_mmap
 suffix:semicolon
 id|vma
 suffix:semicolon
@@ -1373,7 +1380,7 @@ id|spin_unlock
 c_func
 (paren
 op_amp
-id|inode-&gt;i_shared_lock
+id|mapping-&gt;i_shared_lock
 )paren
 suffix:semicolon
 id|error
@@ -1389,7 +1396,7 @@ id|spin_unlock
 c_func
 (paren
 op_amp
-id|inode-&gt;i_shared_lock
+id|mapping-&gt;i_shared_lock
 )paren
 suffix:semicolon
 )brace

@@ -63,6 +63,14 @@ r_typedef
 r_struct
 id|fr_channel
 (brace
+multiline_comment|/* This member must be first. */
+DECL|member|slave
+r_struct
+id|net_device
+op_star
+id|slave
+suffix:semicolon
+multiline_comment|/* WAN slave */
 DECL|member|name
 r_char
 id|name
@@ -6917,7 +6925,7 @@ id|TMR_INT_ENABLED_UPDATE
 suffix:semicolon
 )brace
 singleline_comment|//FIXME: Fix the dynamic IP addressing
-multiline_comment|/*&n;goto L4;&n;&n;&t;// Used to send inarp request at given interval &n;&t;if (card-&gt;wandev.state == WAN_CONNECTED) {&n;        &t;int num_remaining = 0;&n;                for (dev=card-&gt;wandev.dev;dev;dev=dev-&gt;slave) {&n;                &t;fr_channel_t *chan = dev-&gt;priv;&n;&n;                        if (chan-&gt;inarp == INARP_REQUEST &amp;&amp;&n;                        &t;chan-&gt;state == WAN_CONNECTED) {&n;                                num_remaining++;&n;&n;                                if ((jiffies - chan-&gt;inarp_tick) &gt; (chan-&gt;inarp_interval * HZ)) {&n;                                &t;send_inarp_request(card,dev);&n;                                &t;chan-&gt;inarp_tick = jiffies;&n;                                }&n;&t;&t;&t;}&n;&t;&t;}&n;&t;&t;if (!num_remaining) {   // no more to process &n;                        flags-&gt;imask &amp;= ~FR_INTR_TIMER;&n;&t;&t;}&n;&t;}&n;L4:&n;&t;;&n;*/
+multiline_comment|/*&n;goto L4;&n;&n;&t;// Used to send inarp request at given interval &n;&t;if (card-&gt;wandev.state == WAN_CONNECTED) {&n;        &t;int num_remaining = 0;&n;&n;&t;&t;dev = card-&gt;wandev.dev;&n;&t;&t;while (dev) {&n;                &t;fr_channel_t *chan = dev-&gt;priv;&n;&n;                        if (chan-&gt;inarp == INARP_REQUEST &amp;&amp;&n;                        &t;chan-&gt;state == WAN_CONNECTED) {&n;                                num_remaining++;&n;&n;                                if ((jiffies - chan-&gt;inarp_tick) &gt; (chan-&gt;inarp_interval * HZ)) {&n;                                &t;send_inarp_request(card,dev);&n;                                &t;chan-&gt;inarp_tick = jiffies;&n;                                }&n;&t;&t;&t;}&n;&t;&t;&t;dev = chan-&gt;slave;&n;&t;&t;}&n;&t;&t;if (!num_remaining) {   // no more to process &n;                        flags-&gt;imask &amp;= ~FR_INTR_TIMER;&n;&t;&t;}&n;&t;}&n;L4:&n;&t;;&n;*/
 r_if
 c_cond
 (paren
@@ -7591,44 +7599,30 @@ id|mm_segment_t
 id|fs
 suffix:semicolon
 multiline_comment|/* Dynamic Route adding/removing */
-r_for
-c_loop
-(paren
 id|dev
 op_assign
 id|card-&gt;wandev.dev
 suffix:semicolon
+r_while
+c_loop
+(paren
 id|dev
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;slave
 )paren
 (brace
+id|fr_channel_t
+op_star
+id|chan
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-(paren
-id|fr_channel_t
-op_star
-)paren
-id|dev-&gt;priv
-)paren
-op_member_access_from_pointer
-id|route_flag
+id|chan-&gt;route_flag
 op_eq
 id|ADD_ROUTE
 op_logical_or
-(paren
-(paren
-id|fr_channel_t
-op_star
-)paren
-id|dev-&gt;priv
-)paren
-op_member_access_from_pointer
-id|route_flag
+id|chan-&gt;route_flag
 op_eq
 id|REMOVE_ROUTE
 )paren
@@ -7745,15 +7739,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-(paren
-(paren
-id|fr_channel_t
-op_star
-)paren
-id|dev-&gt;priv
-)paren
-op_member_access_from_pointer
-id|route_flag
+id|chan-&gt;route_flag
 )paren
 (brace
 r_case
@@ -7810,15 +7796,7 @@ c_func
 id|KERN_INFO
 l_string|&quot;%s: Address: %s&bslash;n&quot;
 comma
-(paren
-(paren
-id|fr_channel_t
-op_star
-)paren
-id|dev-&gt;priv
-)paren
-op_member_access_from_pointer
-id|name
+id|chan-&gt;name
 comma
 id|in_ntoa
 c_func
@@ -7830,15 +7808,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-(paren
-(paren
-id|fr_channel_t
-op_star
-)paren
-id|dev-&gt;priv
-)paren
-op_member_access_from_pointer
-id|route_flag
+id|chan-&gt;route_flag
 op_assign
 id|ROUTE_ADDED
 suffix:semicolon
@@ -7917,26 +7887,10 @@ c_func
 id|KERN_INFO
 l_string|&quot;%s: Removed route.&bslash;n&quot;
 comma
-(paren
-(paren
-id|fr_channel_t
-op_star
-)paren
-id|dev-&gt;priv
-)paren
-op_member_access_from_pointer
-id|name
+id|chan-&gt;name
 )paren
 suffix:semicolon
-(paren
-(paren
-id|fr_channel_t
-op_star
-)paren
-id|dev-&gt;priv
-)paren
-op_member_access_from_pointer
-id|route_flag
+id|chan-&gt;route_flag
 op_assign
 id|NO_ROUTE
 suffix:semicolon
@@ -7948,8 +7902,12 @@ multiline_comment|/* Case Statement */
 )brace
 )brace
 multiline_comment|/* If ADD/DELETE ROUTE */
+id|dev
+op_assign
+id|chan-&gt;slave
+suffix:semicolon
 )brace
-multiline_comment|/* Device &squot;For&squot; Loop */
+multiline_comment|/* Device &squot;While&squot; Loop */
 id|card-&gt;poll
 op_assign
 l_int|NULL
@@ -9454,18 +9412,14 @@ op_star
 id|dev
 suffix:semicolon
 multiline_comment|/* Remove all routes from associated DLCI&squot;s */
-r_for
-c_loop
-(paren
 id|dev
 op_assign
 id|card-&gt;wandev.dev
 suffix:semicolon
+r_while
+c_loop
+(paren
 id|dev
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;slave
 )paren
 (brace
 id|fr_channel_t
@@ -9505,6 +9459,10 @@ op_assign
 id|INARP_REQUEST
 suffix:semicolon
 )brace
+id|dev
+op_assign
+id|chan-&gt;slave
+suffix:semicolon
 )brace
 id|wanpipe_set_state
 c_func
@@ -9533,18 +9491,14 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Remove all routes from associated DLCI&squot;s */
-r_for
-c_loop
-(paren
 id|dev
 op_assign
 id|card-&gt;wandev.dev
 suffix:semicolon
+r_while
+c_loop
+(paren
 id|dev
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;slave
 )paren
 (brace
 id|fr_channel_t
@@ -9569,6 +9523,10 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
+id|dev
+op_assign
+id|chan-&gt;slave
+suffix:semicolon
 )brace
 multiline_comment|/* Allow timer interrupts */
 r_if
@@ -10021,18 +9979,14 @@ suffix:semicolon
 )brace
 )brace
 )brace
-r_for
-c_loop
-(paren
 id|dev2
 op_assign
 id|card-&gt;wandev.dev
 suffix:semicolon
+r_while
+c_loop
+(paren
 id|dev2
-suffix:semicolon
-id|dev2
-op_assign
-id|dev2-&gt;slave
 )paren
 (brace
 id|chan
@@ -10064,6 +10018,10 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+id|dev2
+op_assign
+id|chan-&gt;slave
+suffix:semicolon
 )brace
 r_return
 l_int|1

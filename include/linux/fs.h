@@ -706,12 +706,18 @@ op_star
 id|host
 suffix:semicolon
 multiline_comment|/* owner: inode, block_device */
-DECL|member|private
-r_void
+DECL|member|i_mmap
+r_struct
+id|vm_area_struct
 op_star
-r_private
+id|i_mmap
 suffix:semicolon
-multiline_comment|/* private data */
+multiline_comment|/* list of mappings */
+DECL|member|i_shared_lock
+id|spinlock_t
+id|i_shared_lock
+suffix:semicolon
+multiline_comment|/* and spinlock protecting it */
 )brace
 suffix:semicolon
 DECL|struct|block_device
@@ -863,12 +869,6 @@ id|file_lock
 op_star
 id|i_flock
 suffix:semicolon
-DECL|member|i_mmap
-r_struct
-id|vm_area_struct
-op_star
-id|i_mmap
-suffix:semicolon
 DECL|member|i_mapping
 r_struct
 id|address_space
@@ -879,10 +879,6 @@ DECL|member|i_data
 r_struct
 id|address_space
 id|i_data
-suffix:semicolon
-DECL|member|i_shared_lock
-id|spinlock_t
-id|i_shared_lock
 suffix:semicolon
 DECL|member|i_dquot
 r_struct

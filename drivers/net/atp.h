@@ -5,13 +5,11 @@ DECL|struct|net_local
 r_struct
 id|net_local
 (brace
-macro_line|#ifdef __KERNEL__
 DECL|member|stats
 r_struct
 id|net_device_stats
 id|stats
 suffix:semicolon
-macro_line|#endif
 DECL|member|saved_tx_size
 id|ushort
 id|saved_tx_size
@@ -32,6 +30,11 @@ multiline_comment|/* Current Rx filter e.g. promiscuous, etc. */
 DECL|member|pac_cnt_in_tx_buf
 id|pac_cnt_in_tx_buf
 suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+multiline_comment|/* Safety lock */
 )brace
 suffix:semicolon
 DECL|struct|rx_header
@@ -181,10 +184,10 @@ comma
 )brace
 suffix:semicolon
 DECL|enum|eepage_regs
-r_enum
-id|eepage_regs
 DECL|enumerator|PROM_CMD
 DECL|enumerator|PROM_DATA
+r_enum
+id|eepage_regs
 (brace
 id|PROM_CMD
 op_assign

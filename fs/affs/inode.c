@@ -1234,6 +1234,10 @@ c_func
 id|attr-&gt;ia_mode
 )paren
 suffix:semicolon
+id|error
+op_assign
+l_int|0
+suffix:semicolon
 id|inode_setattr
 c_func
 (paren
@@ -1241,16 +1245,6 @@ id|inode
 comma
 id|attr
 )paren
-suffix:semicolon
-id|mark_inode_dirty
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-id|error
-op_assign
-l_int|0
 suffix:semicolon
 id|out
 suffix:colon

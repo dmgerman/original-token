@@ -986,6 +986,13 @@ c_cond
 id|file
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
 id|get_file
 c_func
 (paren
@@ -1003,7 +1010,7 @@ id|atomic_dec
 c_func
 (paren
 op_amp
-id|file-&gt;f_dentry-&gt;d_inode-&gt;i_writecount
+id|inode-&gt;i_writecount
 )paren
 suffix:semicolon
 multiline_comment|/* insert tmp into the share list, just after mpnt */
@@ -1011,7 +1018,7 @@ id|spin_lock
 c_func
 (paren
 op_amp
-id|file-&gt;f_dentry-&gt;d_inode-&gt;i_shared_lock
+id|inode-&gt;i_mapping-&gt;i_shared_lock
 )paren
 suffix:semicolon
 r_if
@@ -1045,7 +1052,7 @@ id|spin_unlock
 c_func
 (paren
 op_amp
-id|file-&gt;f_dentry-&gt;d_inode-&gt;i_shared_lock
+id|inode-&gt;i_mapping-&gt;i_shared_lock
 )paren
 suffix:semicolon
 )brace

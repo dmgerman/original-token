@@ -266,7 +266,14 @@ multiline_comment|/* Check if device still configured */
 r_if
 c_cond
 (paren
-id|self-&gt;dev.start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|self-&gt;dev.state
+)paren
 )paren
 (brace
 id|IRDA_DEBUG
@@ -1049,7 +1056,14 @@ multiline_comment|/* Check if device is still configured */
 r_if
 c_cond
 (paren
-id|self-&gt;dev.start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|self-&gt;dev.state
+)paren
 )paren
 (brace
 id|IRDA_DEBUG
@@ -1281,9 +1295,12 @@ id|self
 suffix:semicolon
 )brace
 multiline_comment|/* Ready to transfer Ethernet frames (at last) */
-id|self-&gt;dev.tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+op_amp
+id|self-&gt;dev
+)paren
 suffix:semicolon
 )brace
 DECL|function|irlan_connect_confirm
@@ -1407,9 +1424,12 @@ id|TRUE
 )paren
 suffix:semicolon
 multiline_comment|/* Ready to transfer Ethernet frames */
-id|self-&gt;dev.tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+op_amp
+id|self-&gt;dev
+)paren
 suffix:semicolon
 id|irlan_eth_send_gratuitous_arp
 c_func
@@ -4425,7 +4445,14 @@ id|len
 comma
 l_string|&quot;tx busy: %s&bslash;n&quot;
 comma
-id|self-&gt;dev.tbusy
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_XOFF
+comma
+op_amp
+id|self-&gt;dev.state
+)paren
 ques
 c_cond
 l_string|&quot;TRUE&quot;

@@ -372,6 +372,17 @@ id|dev
 suffix:semicolon
 r_static
 r_void
+id|ewrk3_timeout
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_void
 id|EthwrkSignature
 c_func
 (paren
@@ -1990,33 +2001,35 @@ suffix:semicolon
 multiline_comment|/* The EWRK3-specific entries in the device structure. */
 id|dev-&gt;open
 op_assign
-op_amp
 id|ewrk3_open
 suffix:semicolon
 id|dev-&gt;hard_start_xmit
 op_assign
-op_amp
 id|ewrk3_queue_pkt
 suffix:semicolon
 id|dev-&gt;stop
 op_assign
-op_amp
 id|ewrk3_close
 suffix:semicolon
 id|dev-&gt;get_stats
 op_assign
-op_amp
 id|ewrk3_get_stats
 suffix:semicolon
 id|dev-&gt;set_multicast_list
 op_assign
-op_amp
 id|set_multicast_list
 suffix:semicolon
 id|dev-&gt;do_ioctl
 op_assign
-op_amp
 id|ewrk3_ioctl
+suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+id|ewrk3_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|QUEUE_PKT_TIMEOUT
 suffix:semicolon
 id|dev-&gt;mem_start
 op_assign
@@ -2326,17 +2339,11 @@ id|EWRK3_FMQC
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-id|UNMASK_INTERRUPTS
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;   ** Unmask EWRK3 board interrupts&n;&t;&t;&t; */
 id|icr
@@ -2353,17 +2360,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: ewrk3 available for hard strapped set up only.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2372,8 +2372,13 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;      Run the &squot;ewrk3setup&squot; utility or remove the hard straps.&bslash;n&quot;
 )paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 id|MOD_INC_USE_COUNT
@@ -2501,6 +2506,90 @@ id|START_EWRK3
 suffix:semicolon
 multiline_comment|/* Enable the TX and/or RX */
 )brace
+multiline_comment|/*&n; *  Transmit timeout&n; */
+DECL|function|ewrk3_timeout
+r_static
+r_void
+id|ewrk3_timeout
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|ewrk3_private
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|ewrk3_private
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+id|u_char
+id|icr
+comma
+id|csr
+suffix:semicolon
+id|u_long
+id|iobase
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lp-&gt;hard_strapped
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: transmit timed/locked out, status %04x, resetting.&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|inb
+c_func
+(paren
+id|EWRK3_CSR
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;   ** Mask all board interrupts&n;&t;&t; */
+id|DISABLE_IRQs
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;   ** Stop the TX and RX...&n;&t;&t; */
+id|STOP_EWRK3
+suffix:semicolon
+id|ewrk3_init
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;   ** Unmask EWRK3 board interrupts&n;&t;&t; */
+id|ENABLE_IRQs
+suffix:semicolon
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/*&n;   ** Writes a socket buffer to the free page queue&n; */
 DECL|function|ewrk3_queue_pkt
 r_static
@@ -2543,126 +2632,20 @@ l_int|0
 suffix:semicolon
 id|u_char
 id|icr
-comma
-id|csr
 suffix:semicolon
-multiline_comment|/* Transmitter timeout, serious problems. */
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-op_logical_or
-id|lp-&gt;lock
-)paren
-(brace
-r_int
-id|tickssofar
-op_assign
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-id|QUEUE_PKT_TIMEOUT
-)paren
-(brace
-id|status
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-op_logical_neg
-id|lp-&gt;hard_strapped
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: transmit timed/locked out, status %04x, resetting.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|inb
-c_func
-(paren
-id|EWRK3_CSR
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;   ** Mask all board interrupts&n;&t;&t;&t; */
-id|DISABLE_IRQs
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;   ** Stop the TX and RX...&n;&t;&t;&t; */
-id|STOP_EWRK3
-suffix:semicolon
-id|ewrk3_init
+id|netif_stop_queue
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;   ** Unmask EWRK3 board interrupts&n;&t;&t;&t; */
-id|ENABLE_IRQs
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-)brace
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|skb-&gt;len
-OG
-l_int|0
-)paren
-(brace
-multiline_comment|/*&n;&t;&t;   ** Block a timer-based transmit from overlapping.  This could better be&n;&t;&t;   ** done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+macro_line|#error &quot;This needs spinlocks&quot;
+macro_line|#endif
 id|DISABLE_IRQs
 suffix:semicolon
 multiline_comment|/* So that the page # remains correct */
-multiline_comment|/*&n;&t;&t;   ** Get a free page from the FMQ when resources are available&n;&t;&t; */
+multiline_comment|/*&n;&t;   ** Get a free page from the FMQ when resources are available&n;&t; */
 r_if
 c_cond
 (paren
@@ -2699,7 +2682,7 @@ OL
 id|lp-&gt;mPage
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;   ** Set up shared memory window and pointer into the window&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;   ** Set up shared memory window and pointer into the window&n;&t;&t;&t; */
 r_while
 c_loop
 (paren
@@ -2851,6 +2834,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: Oops - your private data area is hosed!&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2864,7 +2848,7 @@ op_logical_neg
 id|status
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;&t;   ** Set up the buffer control structures and copy the data from&n;&t;&t;&t;&t;&t;   ** the socket buffer to the shared memory .&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   ** Set up the buffer control structures and copy the data from&n;&t;&t;&t;&t;   ** the socket buffer to the shared memory .&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3274,13 +3258,19 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;ewrk3_queue_pkt(): No free resources...&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;%s: ewrk3_queue_pkt(): No free resources...&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ewrk3_queue_pkt(): CSR: %02x ICR: %02x FMQC: %02x&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;%s: ewrk3_queue_pkt(): CSR: %02x ICR: %02x FMQC: %02x&bslash;n&quot;
+comma
+id|dev-&gt;name
 comma
 id|inb
 c_func
@@ -3315,14 +3305,15 @@ OG
 l_int|0
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 id|ENABLE_IRQs
 suffix:semicolon
-)brace
 r_return
 id|status
 suffix:semicolon
@@ -3369,25 +3360,6 @@ id|cr
 comma
 id|csr
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;ewrk3_interrupt(): irq %d for unknown device.&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
 id|lp
 op_assign
 (paren
@@ -3401,23 +3373,6 @@ id|iobase
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Re-entering the interrupt handler.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-id|MASK_INTERRUPTS
-suffix:semicolon
 multiline_comment|/* get the interrupt information */
 id|csr
 op_assign
@@ -3427,7 +3382,7 @@ c_func
 id|EWRK3_CSR
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;   ** Mask the EWRK3 board interrupts and turn on the LED&n;&t;&t; */
+multiline_comment|/*&n;&t; ** Mask the EWRK3 board interrupts and turn on the LED&n;&t; */
 id|DISABLE_IRQs
 suffix:semicolon
 id|cr
@@ -3478,7 +3433,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;   ** Now deal with the TX/RX disable flags. These are set when there&n;&t;&t;   ** are no more resources. If resources free up then enable these&n;&t;&t;   ** interrupts, otherwise mask them - failure to do this will result&n;&t;&t;   ** in the system hanging in an interrupt loop.&n;&t;&t; */
+multiline_comment|/*&n;&t; ** Now deal with the TX/RX disable flags. These are set when there&n;&t; ** are no more resources. If resources free up then enable these&n;&t; ** interrupts, otherwise mask them - failure to do this will result&n;&t; ** in the system hanging in an interrupt loop.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3515,15 +3470,10 @@ comma
 id|EWRK3_CSR
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* clear TX busy flag */
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -3554,14 +3504,7 @@ comma
 id|EWRK3_CR
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-id|UNMASK_INTERRUPTS
-suffix:semicolon
 id|ENABLE_IRQs
-suffix:semicolon
-)brace
-r_return
 suffix:semicolon
 )brace
 DECL|function|ewrk3_rx
@@ -4605,13 +4548,11 @@ id|icr
 comma
 id|csr
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -5833,12 +5774,12 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   ** Search the entire &squot;eth&squot; device list for a fixed probe. If a match isn&squot;t&n;   ** found then check for an autoprobe or unused device location. If they&n;   ** are not available then insert a new device structure at the end of&n;   ** the current list.&n; */
+DECL|function|alloc_device
 r_static
 r_struct
 id|net_device
 op_star
 id|__init
-DECL|function|alloc_device
 id|alloc_device
 c_func
 (paren

@@ -179,7 +179,7 @@ mdefine_line|#define AC97_STEREO_MASK (SOUND_MASK_VOLUME|SOUND_MASK_PCM|&bslash;
 DECL|macro|AC97_SUPPORTED_MASK
 mdefine_line|#define AC97_SUPPORTED_MASK (AC97_STEREO_MASK | &bslash;&n;&t;SOUND_MASK_BASS|SOUND_MASK_TREBLE|&bslash;&n;&t;SOUND_MASK_SPEAKER|SOUND_MASK_MIC|&bslash;&n;&t;SOUND_MIXER_PHONEIN|SOUND_MIXER_PHONEOUT)
 DECL|macro|AC97_RECORD_MASK
-mdefine_line|#define AC97_RECORD_MASK (SOUND_MASK_MIC|&bslash;&n;&t;SOUND_MASK_CD| SOUND_MASK_VIDEO| SOUND_MASK_LINE1| SOUND_MASK_LINE|&bslash;&n;&t;SOUND_MASK_PHONEIN)
+mdefine_line|#define AC97_RECORD_MASK (SOUND_MASK_MIC|&bslash;&n;&t;SOUND_MASK_CD|SOUND_MASK_VIDEO|&bslash;&n;&t;SOUND_MASK_LINE1| SOUND_MASK_LINE|&bslash;&n;&t;SOUND_MASK_PHONEIN)
 DECL|macro|supported_mixer
 mdefine_line|#define supported_mixer(CODEC,FOO) ( CODEC-&gt;supported_mixers &amp; (1&lt;&lt;FOO) )
 DECL|struct|ac97_codec
@@ -363,6 +363,34 @@ id|SOUND_MIXER_NRDEVICES
 )braket
 suffix:semicolon
 )brace
+suffix:semicolon
+r_extern
+r_int
+id|ac97_read_proc
+(paren
+r_char
+op_star
+id|page_out
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|off
+comma
+r_int
+id|count
+comma
+r_int
+op_star
+id|eof
+comma
+r_void
+op_star
+id|data
+)paren
 suffix:semicolon
 r_extern
 r_int
