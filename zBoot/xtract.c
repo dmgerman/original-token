@@ -9,8 +9,19 @@ macro_line|#include &lt;unistd.h&gt;&t;/* contains read/write */
 macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;a.out.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-DECL|macro|GCC_HEADER
-mdefine_line|#define GCC_HEADER 1024
+DECL|macro|N_MAGIC_OFFSET
+mdefine_line|#define N_MAGIC_OFFSET 1024
+DECL|variable|GCC_HEADER
+r_static
+r_int
+id|GCC_HEADER
+op_assign
+r_sizeof
+(paren
+r_struct
+id|exec
+)paren
+suffix:semicolon
 DECL|macro|STRINGIFY
 mdefine_line|#define STRINGIFY(x) #x
 DECL|function|die
@@ -174,8 +185,37 @@ c_func
 op_star
 id|ex
 )paren
-op_ne
+op_eq
 id|ZMAGIC
+)paren
+(brace
+id|GCC_HEADER
+op_assign
+id|N_MAGIC_OFFSET
+suffix:semicolon
+id|lseek
+c_func
+(paren
+id|id
+comma
+id|GCC_HEADER
+comma
+id|SEEK_SET
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|N_MAGIC
+c_func
+(paren
+op_star
+id|ex
+)paren
+op_ne
+id|QMAGIC
 )paren
 id|die
 c_func

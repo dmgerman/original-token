@@ -4192,6 +4192,7 @@ r_struct
 id|plipconf
 op_star
 )paren
+op_amp
 id|rq-&gt;ifr_data
 suffix:semicolon
 r_switch

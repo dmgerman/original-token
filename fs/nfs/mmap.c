@@ -33,7 +33,7 @@ r_int
 id|page
 comma
 r_int
-id|error_code
+id|no_share
 )paren
 (brace
 r_struct

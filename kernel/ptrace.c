@@ -569,7 +569,7 @@ c_loop
 (paren
 id|vma
 op_assign
-id|current-&gt;mm-&gt;mmap
+id|tsk-&gt;mm-&gt;mmap
 suffix:semicolon
 suffix:semicolon
 id|vma

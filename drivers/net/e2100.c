@@ -1,12 +1,12 @@
 multiline_comment|/* e2100.c: A Cabletron E2100 series ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1993 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is a driver for the Cabletron E2100 series ethercards.&n;&n;    The Author may be reached as becker@cesdis.gsfc.nasa.gov, or&n;    C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;The E2100 series ethercard is a fairly generic shared memory 8390&n;&t;implementation.  The only unusual aspect is the way the shared memory&n;&t;registers are set: first you do an inb() in what is normally the&n;&t;station address region, and the low four bits of next outb() is used&n;&t;as the write value for that register.  Either someone wasn&squot;t too used&n;&t;to dem bit en bites, or they were trying to obfusicate the programming&n;&t;interface.&n;&n;&t;There is an additional complication when setting the window on the packet&n;&t;buffer.  You must first do a read into the packet buffer region with the&n;&t;low 8 address bits the address setting the page for the start of the packet&n;&t;buffer window, and then do the above operation.  See mem_on() for details.&n;&n;&t;One bug on the chip is that even a hard reset won&squot;t disable the memory&n;&t;window, usually resulting in a hung machine if mem_off() isn&squot;t called.&n;&t;If this happens, you must power down the machine for about 30 seconds.&n;*/
+multiline_comment|/*&n;&t;Written 1993-1994 by Donald Becker.&n;&n;&t;Copyright 1994 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.  This software may be used and&n;&t;distributed according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&n;&t;This is a driver for the Cabletron E2100 series ethercards.&n;&n;&t;The Author may be reached as becker@cesdis.gsfc.nasa.gov, or&n;&t;C/O Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;The E2100 series ethercard is a fairly generic shared memory 8390&n;&t;implementation.  The only unusual aspect is the way the shared memory&n;&t;registers are set: first you do an inb() in what is normally the&n;&t;station address region, and the low three bits of next outb() *address*&n;&t;is used&t;as the write value for that register.  Either someone wasn&squot;t&n;&t;too used to dem bit en bites, or they were trying to obfusicate the&n;&t;programming&t;interface.&n;&n;&t;There is an additional complication when setting the window on the packet&n;&t;buffer.  You must first do a read into the packet buffer region with the&n;&t;low 8 address bits the address setting the page for the start of the packet&n;&t;buffer window, and then do the above operation.  See mem_on() for details.&n;&n;&t;One bug on the chip is that even a hard reset won&squot;t disable the memory&n;&t;window, usually resulting in a hung machine if mem_off() isn&squot;t called.&n;&t;If this happens, you must power down the machine for about 30 seconds.&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;e2100.c:v0.01 11/21/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;e2100.c:v1.01 7/21/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -15,52 +15,31 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#ifndef PRE_PL13
-macro_line|#include &lt;linux/ioport.h&gt;       /* Delete if your kernel doesn&squot;t have it. */
-macro_line|#endif
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;8390.h&quot;
-multiline_comment|/* Compatibility definitions for earlier kernel versions. */
-macro_line|#ifndef HAVE_PORTRESERVE
-DECL|macro|check_region
-mdefine_line|#define check_region(ioaddr, size)              0
-DECL|macro|snarf_region
-mdefine_line|#define snarf_region(ioaddr, size);             do ; while (0)
-macro_line|#endif
-macro_line|#ifndef HAVE_AUTOIRQ
-multiline_comment|/* From auto_irq.c, in ioport.h for later versions. */
-r_extern
-r_void
-id|autoirq_setup
-c_func
-(paren
+DECL|variable|e21_probe_list
+r_static
 r_int
-id|waittime
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|autoirq_report
-c_func
-(paren
-r_int
-id|waittime
-)paren
-suffix:semicolon
-multiline_comment|/* The map from IRQ number (as passed to the interrupt handler) to&n;   &squot;struct device&squot;. */
-r_extern
-r_struct
-id|device
-op_star
-id|irq2dev_map
+id|e21_probe_list
 (braket
-l_int|16
 )braket
+op_assign
+(brace
+l_int|0x300
+comma
+l_int|0x280
+comma
+l_int|0x380
+comma
+l_int|0x220
+comma
+l_int|0
+)brace
 suffix:semicolon
-macro_line|#endif
-multiline_comment|/* Offsets from the base_addr.&n;   Read from the ASIC register, and the low 3(?) bits of the next outb() address&n;   is used to set the cooresponding register. */
+multiline_comment|/* Offsets from the base_addr.&n;   Read from the ASIC register, and the low three bits of the next outb()&n;   address is used to set the cooresponding register. */
 DECL|macro|E21_NIC_OFFSET
-mdefine_line|#define E21_NIC_OFFSET  0       /* Offset to the 8390 NIC. */
+mdefine_line|#define E21_NIC_OFFSET  0&t;&t;/* Offset to the 8390 NIC. */
 DECL|macro|E21_ASIC
 mdefine_line|#define E21_ASIC&t;&t;0x10
 DECL|macro|E21_MEM_ENABLE
@@ -74,15 +53,17 @@ mdefine_line|#define E21_MEM_BASE&t;0x11&t;
 DECL|macro|E21_IRQ_LOW
 mdefine_line|#define E21_IRQ_LOW&t;&t;0x12&t;/* The low three bits of the IRQ number. */
 DECL|macro|E21_IRQ_HIGH
-mdefine_line|#define E21_IRQ_HIGH&t;0x14&t;/* The high IRQ bit, and ...  */
+mdefine_line|#define E21_IRQ_HIGH&t;0x14&t;/* The high IRQ bit and media select ...  */
+DECL|macro|E21_MEDIA
+mdefine_line|#define E21_MEDIA&t;&t;0x14&t;/* (alias). */
 DECL|macro|E21_ALT_IFPORT
 mdefine_line|#define  E21_ALT_IFPORT 0x02&t;/* Set to use the other (BNC,AUI) port. */
 DECL|macro|E21_BIG_MEM
 mdefine_line|#define  E21_BIG_MEM&t;0x04&t;/* Use a bigger (64K) buffer (we don&squot;t) */
 DECL|macro|E21_SAPROM
-mdefine_line|#define E21_SAPROM      0x10    /* Offset to station address data. */
-DECL|macro|ETHERCARD_TOTAL_SIZE
-mdefine_line|#define ETHERCARD_TOTAL_SIZE    0x20
+mdefine_line|#define E21_SAPROM&t;&t;0x10&t;/* Offset to station address data. */
+DECL|macro|E21_IO_EXTENT
+mdefine_line|#define E21_IO_EXTENT&t; 0x20
 DECL|function|mem_on
 r_extern
 r_inline
@@ -162,13 +143,13 @@ suffix:semicolon
 )brace
 multiline_comment|/* In other drivers I put the TX pages first, but the E2100 window circuitry&n;   is designed to have a 4K Tx region last. The windowing circuitry wraps the&n;   window at 0x2fff-&gt;0x0000 so that the packets at e.g. 0x2f00 in the RX ring&n;   appear contiguously in the window. */
 DECL|macro|E21_RX_START_PG
-mdefine_line|#define E21_RX_START_PG    0x00    /* First page of RX buffer */
+mdefine_line|#define E21_RX_START_PG&t;&t;0x00&t;/* First page of RX buffer */
 DECL|macro|E21_RX_STOP_PG
-mdefine_line|#define E21_RX_STOP_PG     0x30    /* Last page +1 of RX ring */
+mdefine_line|#define E21_RX_STOP_PG&t;&t;0x30&t;/* Last page +1 of RX ring */
 DECL|macro|E21_BIG_RX_STOP_PG
-mdefine_line|#define E21_BIG_RX_STOP_PG 0xF0    /* Last page +1 of RX ring */
+mdefine_line|#define E21_BIG_RX_STOP_PG&t;0xF0&t;/* Last page +1 of RX ring */
 DECL|macro|E21_TX_START_PG
-mdefine_line|#define E21_TX_START_PG  E21_RX_STOP_PG    /* First page of TX buffer */
+mdefine_line|#define E21_TX_START_PG&t;&t;E21_RX_STOP_PG&t;/* First page of TX buffer */
 r_int
 id|e2100_probe
 c_func
@@ -285,22 +266,6 @@ id|dev
 r_int
 op_star
 id|port
-comma
-id|ports
-(braket
-)braket
-op_assign
-(brace
-l_int|0x300
-comma
-l_int|0x280
-comma
-l_int|0x380
-comma
-l_int|0x220
-comma
-l_int|0
-)brace
 suffix:semicolon
 r_int
 id|base_addr
@@ -329,7 +294,7 @@ r_if
 c_cond
 (paren
 id|base_addr
-OG
+op_ne
 l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
@@ -341,11 +306,7 @@ c_loop
 (paren
 id|port
 op_assign
-op_amp
-id|ports
-(braket
-l_int|0
-)braket
+id|e21_probe_list
 suffix:semicolon
 op_star
 id|port
@@ -354,21 +315,16 @@ id|port
 op_increment
 )paren
 (brace
-id|ushort
-id|ioaddr
-op_assign
-op_star
-id|port
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|check_region
 c_func
 (paren
-id|ioaddr
+op_star
+id|port
 comma
-id|ETHERCARD_TOTAL_SIZE
+id|E21_IO_EXTENT
 )paren
 )paren
 r_continue
@@ -376,48 +332,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-id|E21_SAPROM
-op_plus
-l_int|0
-)paren
-op_eq
-l_int|0x00
-op_logical_and
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-id|E21_SAPROM
-op_plus
-l_int|1
-)paren
-op_eq
-l_int|0x00
-op_logical_and
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-id|E21_SAPROM
-op_plus
-l_int|2
-)paren
-op_eq
-l_int|0x1d
-op_logical_and
 id|e21_probe1
 c_func
 (paren
 id|dev
 comma
-id|ioaddr
+op_star
+id|port
 )paren
 op_eq
 l_int|0
@@ -427,7 +348,6 @@ l_int|0
 suffix:semicolon
 )brace
 r_return
-op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -457,7 +377,50 @@ id|station_addr
 op_assign
 id|dev-&gt;dev_addr
 suffix:semicolon
-multiline_comment|/* We&squot;ve already checked the station address prefix, now verify by making&n;&t;   certain that there is a 8390 at the expected location. */
+multiline_comment|/* First check the station address for the Ctron prefix. */
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|E21_SAPROM
+op_plus
+l_int|0
+)paren
+op_ne
+l_int|0x00
+op_logical_or
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|E21_SAPROM
+op_plus
+l_int|1
+)paren
+op_ne
+l_int|0x00
+op_logical_or
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|E21_SAPROM
+op_plus
+l_int|2
+)paren
+op_ne
+l_int|0x1d
+)paren
+r_return
+id|ENODEV
+suffix:semicolon
+multiline_comment|/* Verify by making certain that there is a 8390 at there. */
 id|outb
 c_func
 (paren
@@ -490,57 +453,17 @@ op_ne
 l_int|0x23
 )paren
 r_return
-op_minus
 id|ENODEV
 suffix:semicolon
-macro_line|#ifdef testing_only
-id|printk
-c_func
-(paren
-l_string|&quot;%s: E21xx at %#3x (PAXI backwards): &quot;
-comma
-id|dev-&gt;name
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|16
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot; %02X&quot;
-comma
-id|inb
+multiline_comment|/* Grab the region so we can find a different board if IRQ select fails. */
+id|snarf_region
 c_func
 (paren
 id|ioaddr
-op_plus
-l_int|0x1f
-op_minus
-id|i
-)paren
+comma
+id|E21_IO_EXTENT
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Read the station address PROM.  */
 r_for
 c_loop
@@ -571,19 +494,30 @@ op_plus
 id|i
 )paren
 suffix:semicolon
-multiline_comment|/* Grab the region so we can find another board if needed . */
-id|snarf_region
+id|inb
 c_func
 (paren
 id|ioaddr
-comma
-id|ETHERCARD_TOTAL_SIZE
+op_plus
+id|E21_MEDIA
 )paren
 suffix:semicolon
+multiline_comment|/* Point to media selection. */
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|ioaddr
+op_plus
+id|E21_ASIC
+)paren
+suffix:semicolon
+multiline_comment|/* and disable the secondary interface. */
 id|printk
 c_func
 (paren
-l_string|&quot;%s: E21xx at %#3x, &quot;
+l_string|&quot;%s: E21** at %#3x,&quot;
 comma
 id|dev-&gt;name
 comma
@@ -689,6 +623,26 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|i
+op_ge
+l_int|8
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; unable to get IRQ %d.&bslash;n&quot;
+comma
+id|dev-&gt;irq
+)paren
+suffix:semicolon
+r_return
+id|EAGAIN
+suffix:semicolon
+)brace
 )brace
 r_else
 r_if
@@ -698,36 +652,11 @@ id|dev-&gt;irq
 op_eq
 l_int|2
 )paren
-multiline_comment|/* Fixup bogosity: IRQ2 is really IRQ9 */
+multiline_comment|/* Fixup luser bogosity: IRQ2 is really IRQ9 */
 id|dev-&gt;irq
 op_assign
 l_int|9
 suffix:semicolon
-multiline_comment|/* Snarf the interrupt now. */
-r_if
-c_cond
-(paren
-id|irqaction
-(paren
-id|dev-&gt;irq
-comma
-op_amp
-id|ei_sigaction
-)paren
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot; unable to get IRQ %d.&bslash;n&quot;
-comma
-id|dev-&gt;irq
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-)brace
 multiline_comment|/* The 8390 is at the base address. */
 id|dev-&gt;base_addr
 op_assign
@@ -759,6 +688,10 @@ id|ei_status.stop_page
 op_assign
 id|E21_RX_STOP_PG
 suffix:semicolon
+id|ei_status.saved_irq
+op_assign
+id|dev-&gt;irq
+suffix:semicolon
 multiline_comment|/* Check the media port used.  The port can be passed in on the&n;&t;   low mem_end bits. */
 r_if
 c_cond
@@ -779,15 +712,15 @@ id|dev-&gt;if_port
 op_assign
 l_int|0
 suffix:semicolon
-id|inb_p
+id|inb
 c_func
 (paren
 id|ioaddr
 op_plus
-id|E21_IRQ_HIGH
+id|E21_MEDIA
 )paren
 suffix:semicolon
-multiline_comment|/* Select if_port detect. */
+multiline_comment|/* Turn automatic media detection on. */
 r_for
 c_loop
 (paren
@@ -816,12 +749,20 @@ c_func
 id|ioaddr
 op_plus
 id|E21_SAPROM
+op_plus
+l_int|8
+op_plus
+id|i
 )paren
 )paren
+(brace
 id|dev-&gt;if_port
 op_assign
 l_int|1
 suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Never map in the E21 shared memory unless you are actively using it.&n;&t;   Also, the shared memory has effective only one setting -- spread all&n;&t;   over the 128K region! */
 r_if
@@ -859,7 +800,7 @@ macro_line|#endif
 id|printk
 c_func
 (paren
-l_string|&quot; IRQ %d, %s interface,  memory at %#x-%#x.&bslash;n&quot;
+l_string|&quot;, IRQ %d, %s media, memory @ %#lx.&bslash;n&quot;
 comma
 id|dev-&gt;irq
 comma
@@ -871,14 +812,6 @@ suffix:colon
 l_string|&quot;primary&quot;
 comma
 id|dev-&gt;mem_start
-comma
-id|dev-&gt;mem_start
-op_plus
-l_int|2
-op_star
-l_int|1024
-op_minus
-l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -948,8 +881,31 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|irqaction
+(paren
+id|dev-&gt;irq
+comma
+op_amp
+id|ei_sigaction
+)paren
+)paren
+(brace
+r_return
+id|EBUSY
+suffix:semicolon
+)brace
+id|irq2dev_map
+(braket
+id|dev-&gt;irq
+)braket
+op_assign
+id|dev
+suffix:semicolon
 multiline_comment|/* Set the interrupt line and memory base on the hardware. */
-id|inb_p
+id|inb
 c_func
 (paren
 id|ioaddr
@@ -957,7 +913,7 @@ op_plus
 id|E21_IRQ_LOW
 )paren
 suffix:semicolon
-id|outb_p
+id|outb
 c_func
 (paren
 l_int|0
@@ -973,7 +929,7 @@ l_int|7
 )paren
 )paren
 suffix:semicolon
-id|inb_p
+id|inb
 c_func
 (paren
 id|ioaddr
@@ -982,7 +938,7 @@ id|E21_IRQ_HIGH
 )paren
 suffix:semicolon
 multiline_comment|/* High IRQ bit, and if_port. */
-id|outb_p
+id|outb
 c_func
 (paren
 l_int|0
@@ -1012,7 +968,7 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
-id|inb_p
+id|inb
 c_func
 (paren
 id|ioaddr
@@ -1020,7 +976,7 @@ op_plus
 id|E21_MEM_BASE
 )paren
 suffix:semicolon
-id|outb_p
+id|outb
 c_func
 (paren
 l_int|0
@@ -1083,7 +1039,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;resetting the E2180x3 t=%d...&quot;
+l_string|&quot;resetting the E2180x3 t=%ld...&quot;
 comma
 id|jiffies
 )paren
@@ -1109,7 +1065,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Block input and output are easy on shared memory ethercards.  The E21xx makes&n;   block_input() especially easy by wrapping the top ring buffer to the bottom&n;   automatically. */
+multiline_comment|/*  Block input and output are easy on shared memory ethercards.&n;&t;The E21xx makes block_input() especially easy by wrapping the top&n;&t;ring buffer to the bottom automatically. */
 r_static
 r_int
 DECL|function|e21_block_input
@@ -1335,6 +1291,61 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|dev-&gt;irq
+)paren
+suffix:semicolon
+id|dev-&gt;irq
+op_assign
+id|ei_status.saved_irq
+suffix:semicolon
+multiline_comment|/* Shut off the interrupt line and secondary interface. */
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|E21_IRQ_LOW
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|ioaddr
+op_plus
+id|E21_ASIC
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|E21_IRQ_HIGH
+)paren
+suffix:semicolon
+multiline_comment|/* High IRQ bit, and if_port. */
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|ioaddr
+op_plus
+id|E21_ASIC
+)paren
+suffix:semicolon
+id|irq2dev_map
+(braket
+id|dev-&gt;irq
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
 id|NS8390_init
 c_func
 (paren
@@ -1343,6 +1354,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* Double-check that the memory has been turned off, because really&n;&t;   really bad things happen if it isn&squot;t. */
 id|mem_off
 c_func
 (paren
@@ -1353,6 +1365,23 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef HAVE_DEVLIST
+DECL|variable|e21_drv
+r_struct
+id|netdev_entry
+id|e21_drv
+op_assign
+(brace
+l_string|&quot;e21&quot;
+comma
+id|e21_probe1
+comma
+id|E21_IO_EXTENT
+comma
+id|e21_probe_list
+)brace
+suffix:semicolon
+macro_line|#endif
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c e2100.c&quot;&n; *  version-control: t&n; *  tab-width: 4&n; *  kept-new-versions: 5&n; * End:&n; */
 eof

@@ -5434,7 +5434,7 @@ r_int
 id|size
 comma
 r_int
-id|share
+id|no_share
 )paren
 (brace
 r_struct
@@ -5457,7 +5457,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|share
+op_logical_neg
+id|no_share
 )paren
 (brace
 id|where
@@ -5577,7 +5578,7 @@ id|j
 op_add_assign
 id|size
 comma
-id|address
+id|where
 op_add_assign
 id|size
 )paren
@@ -5617,7 +5618,7 @@ id|i
 op_member_access_from_pointer
 id|b_data
 comma
-id|address
+id|where
 )paren
 suffix:semicolon
 id|brelse
@@ -5632,7 +5633,7 @@ suffix:semicolon
 )brace
 )brace
 r_return
-id|where
+id|address
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Try to increase the number of buffers available: the size argument&n; * is used to determine what kind of buffers we want.&n; */
