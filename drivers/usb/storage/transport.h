@@ -2,6 +2,7 @@ multiline_comment|/* Driver for USB Mass Storage compliant devices&n; * Transpor
 macro_line|#ifndef _TRANSPORT_H_
 DECL|macro|_TRANSPORT_H_
 mdefine_line|#define _TRANSPORT_H_
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;scsi.h&quot;

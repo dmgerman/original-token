@@ -66,7 +66,7 @@ mdefine_line|#define irq_enter(cpu, irq)&t;br_read_lock(BR_GLOBALIRQ_LOCK)
 DECL|macro|irq_exit
 mdefine_line|#define irq_exit(cpu, irq)&t;br_read_unlock(BR_GLOBALIRQ_LOCK)
 macro_line|#endif
-multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?  On any cpu?&n; */
+multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
 DECL|macro|in_interrupt
 mdefine_line|#define in_interrupt() ((local_irq_count(smp_processor_id()) + &bslash;&n;&t;&t;         local_bh_count(smp_processor_id())) != 0)
 multiline_comment|/* This tests only the local processors hw IRQ context disposition.  */
@@ -77,10 +77,6 @@ DECL|macro|hardirq_trylock
 mdefine_line|#define hardirq_trylock(cpu)&t;((void)(cpu), local_irq_count(smp_processor_id()) == 0)
 DECL|macro|hardirq_endlock
 mdefine_line|#define hardirq_endlock(cpu)&t;do { (void)(cpu); } while(0)
-DECL|macro|hardirq_enter
-mdefine_line|#define hardirq_enter(cpu)&t;((void)(cpu), local_irq_count(smp_processor_id())++)
-DECL|macro|hardirq_exit
-mdefine_line|#define hardirq_exit(cpu)&t;((void)(cpu), local_irq_count(smp_processor_id())--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;barrier()
 macro_line|#else /* (CONFIG_SMP) */
@@ -94,18 +90,8 @@ c_func
 r_void
 )paren
 (brace
-r_enum
-id|brlock_indices
-id|idx
-op_assign
-id|BR_GLOBALIRQ_LOCK
-suffix:semicolon
 r_int
 id|i
-comma
-id|count
-op_assign
-l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -121,26 +107,24 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|count
-op_add_assign
+r_if
+c_cond
 (paren
-id|__brlock_array
-(braket
+id|local_irq_count
+c_func
+(paren
 id|cpu_logical_map
 c_func
 (paren
 id|i
 )paren
-)braket
-(braket
-id|idx
-)braket
-op_ne
-l_int|0
 )paren
+)paren
+r_return
+l_int|1
 suffix:semicolon
 r_return
-id|count
+l_int|0
 suffix:semicolon
 )brace
 r_extern
@@ -210,9 +194,10 @@ suffix:semicolon
 r_return
 (paren
 op_logical_neg
-id|irqs_running
+id|local_irq_count
 c_func
 (paren
+id|cpu
 )paren
 op_logical_and
 op_logical_neg

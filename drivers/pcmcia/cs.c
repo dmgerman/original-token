@@ -2441,6 +2441,12 @@ comma
 id|CS_EVENT_PRI_LOW
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|s-&gt;reset_handle
+)paren
+(brace
 id|s-&gt;reset_handle-&gt;event_callback_args.info
 op_assign
 l_int|NULL
@@ -2455,6 +2461,7 @@ comma
 id|CS_EVENT_PRI_LOW
 )paren
 suffix:semicolon
+)brace
 id|s-&gt;state
 op_and_assign
 op_complement

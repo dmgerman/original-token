@@ -54,7 +54,7 @@ suffix:semicolon
 r_int
 id|res
 suffix:semicolon
-id|write_lock
+id|read_lock
 c_func
 (paren
 op_amp
@@ -71,7 +71,7 @@ comma
 id|files-&gt;close_on_exec
 )paren
 suffix:semicolon
-id|write_unlock
+id|read_unlock
 c_func
 (paren
 op_amp

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU type detection by Mike Jagdis, Patrick St. Jean&n; *  and Martin Mares, November 1997.&n; *&n; *  Force Cyrix 6x86(MX) and M II processors to report MTRR capability&n; *  and Cyrix &quot;coma bug&quot; recognition by&n; *      Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt; February 1999.&n; * &n; *  Force Centaur C6 processors to report MTRR capability.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, May 1999.&n; *&n; *  Intel Mobile Pentium II detection fix. Sean Gilley, June 1999.&n; *&n; *  IDT Winchip tweaks, misc clean ups.&n; *&t;Dave Jones &lt;dave@powertweak.com&gt;, August 1999&n; *&n; *  Support of BIGMEM added by Gerhard Wichert, Siemens AG, July 1999&n; *&n; *  Better detection of Centaur/IDT WinChip models.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, August 1999.&n; *&n; *  Memory region support&n; *&t;David Parsons &lt;orc@pell.chi.il.us&gt;, July-August 1999&n; *&n; *  Cleaned up cache-detection code&n; *&t;Dave Jones &lt;dave@powertweak.com&gt;, October 1999&n; *&n; *&t;Added proper L2 cache detection for Coppermine&n; *&t;Dragan Stancevic &lt;visitor@valinux.com&gt;, October 1999&n; *&n; *  Added the original array for capability flags but forgot to credit &n; *  myself :) (~1998) Fixed/cleaned up some cpu_model_info and other stuff&n; *  &t;Jauder Ho &lt;jauderho@carumba.com&gt;, January 2000&n; *&n; *  Detection for Celeron coppermine, identify_cpu() overhauled,&n; *  and a few other clean ups.&n; *  Dave Jones &lt;dave@powertweak.com&gt;, April 2000&n; *&n; *  Pentium III FXSR, SSE support&n; *  General FPU state handling cleanups&n; *&t;Gareth Hughes &lt;gareth@valinux.com&gt;, May 2000&n; *&n; *  Added proper Cascades CPU and L2 cache detection for Cascades&n; *  and 8-way type cache happy bunch from Intel:^)&n; *  Dragan Stancevic &lt;visitor@valinux.com&gt;, May 2000 &n; *&n; */
+multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU type detection by Mike Jagdis, Patrick St. Jean&n; *  and Martin Mares, November 1997.&n; *&n; *  Force Cyrix 6x86(MX) and M II processors to report MTRR capability&n; *  and Cyrix &quot;coma bug&quot; recognition by&n; *      Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt; February 1999.&n; * &n; *  Force Centaur C6 processors to report MTRR capability.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, May 1999.&n; *&n; *  Intel Mobile Pentium II detection fix. Sean Gilley, June 1999.&n; *&n; *  IDT Winchip tweaks, misc clean ups.&n; *&t;Dave Jones &lt;davej@suse.de&gt;, August 1999&n; *&n; *  Support of BIGMEM added by Gerhard Wichert, Siemens AG, July 1999&n; *&n; *  Better detection of Centaur/IDT WinChip models.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, August 1999.&n; *&n; *  Memory region support&n; *&t;David Parsons &lt;orc@pell.chi.il.us&gt;, July-August 1999&n; *&n; *  Cleaned up cache-detection code&n; *&t;Dave Jones &lt;davej@suse.de&gt;, October 1999&n; *&n; *&t;Added proper L2 cache detection for Coppermine&n; *&t;Dragan Stancevic &lt;visitor@valinux.com&gt;, October 1999&n; *&n; *  Added the original array for capability flags but forgot to credit &n; *  myself :) (~1998) Fixed/cleaned up some cpu_model_info and other stuff&n; *  &t;Jauder Ho &lt;jauderho@carumba.com&gt;, January 2000&n; *&n; *  Detection for Celeron coppermine, identify_cpu() overhauled,&n; *  and a few other clean ups.&n; *  Dave Jones &lt;davej@suse.de&gt;, April 2000&n; *&n; *  Pentium III FXSR, SSE support&n; *  General FPU state handling cleanups&n; *&t;Gareth Hughes &lt;gareth@valinux.com&gt;, May 2000&n; *&n; *  Added proper Cascades CPU and L2 cache detection for Cascades&n; *  and 8-way type cache happy bunch from Intel:^)&n; *  Dragan Stancevic &lt;visitor@valinux.com&gt;, May 2000 &n; *&n; *  Forward port AMD Duron errata T13 from 2.2.17pre&n; *  Dave Jones &lt;davej@suse.de&gt;, August 2000&n; *&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of initialization&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -3456,7 +3456,7 @@ suffix:semicolon
 r_case
 l_int|6
 suffix:colon
-multiline_comment|/* An Athlon. We can trust the BIOS probably */
+multiline_comment|/* An Athlon/Duron. We can trust the BIOS probably */
 r_break
 suffix:semicolon
 )brace
@@ -3537,6 +3537,36 @@ l_int|24
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* AMD errata T13 (order #21922) */
+r_if
+c_cond
+(paren
+id|boot_cpu_data.x86
+op_eq
+l_int|6
+op_logical_and
+id|boot_cpu_data.x86_model
+op_eq
+l_int|3
+op_logical_and
+id|boot_cpu_data.x86_mask
+op_eq
+l_int|0
+)paren
+(brace
+id|c-&gt;x86_cache_size
+op_assign
+l_int|64
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CPU: L2 Cache: 64K&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 r_if
 c_cond
 (paren
@@ -3581,6 +3611,7 @@ op_rshift
 l_int|16
 )paren
 suffix:semicolon
+)brace
 )brace
 r_return
 id|r

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/elevator.c&n; *&n; *  Block device elevator/IO-scheduler.&n; *&n; *  Copyright (C) 2000 Andrea Arcangeli &lt;andrea@suse.de&gt; SuSE&n; *&n; * 30042000 Jens Axboe &lt;axboe@suse.de&gt; :&n; *&n; * Split the elevator a bit so that it is possible to choose a different&n; * one or even write a new &quot;plug in&quot;. There are three pieces:&n; * - elevator_fn, inserts a new request in the queue list&n; * - elevator_merge_fn, decides whether a new buffer can be merged with&n; *   an existing request&n; * - elevator_dequeue_fn, called when a request is taken off the active list&n; *&n; */
+multiline_comment|/*&n; *  linux/drivers/block/elevator.c&n; *&n; *  Block device elevator/IO-scheduler.&n; *&n; *  Copyright (C) 2000 Andrea Arcangeli &lt;andrea@suse.de&gt; SuSE&n; *&n; * 30042000 Jens Axboe &lt;axboe@suse.de&gt; :&n; *&n; * Split the elevator a bit so that it is possible to choose a different&n; * one or even write a new &quot;plug in&quot;. There are three pieces:&n; * - elevator_fn, inserts a new request in the queue list&n; * - elevator_merge_fn, decides whether a new buffer can be merged with&n; *   an existing request&n; * - elevator_dequeue_fn, called when a request is taken off the active list&n; *&n; * 20082000 Dave Jones &lt;davej@suse.de&gt; :&n; * Removed tests for max-bomb-segments, which was breaking elvtune&n; *  when run without -bN&n; *&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/elevator.h&gt;
@@ -572,7 +572,7 @@ id|elevator-&gt;write_latency
 suffix:semicolon
 id|output.max_bomb_segments
 op_assign
-id|elevator-&gt;max_bomb_segments
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -660,17 +660,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|input.max_bomb_segments
-op_le
-l_int|0
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
 id|elevator-&gt;read_latency
 op_assign
 id|input.read_latency
@@ -678,10 +667,6 @@ suffix:semicolon
 id|elevator-&gt;write_latency
 op_assign
 id|input.write_latency
-suffix:semicolon
-id|elevator-&gt;max_bomb_segments
-op_assign
-id|input.max_bomb_segments
 suffix:semicolon
 r_return
 l_int|0

@@ -2254,11 +2254,6 @@ op_assign
 op_star
 id|current
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|retval
 op_assign
 op_minus
@@ -2758,13 +2753,6 @@ multiline_comment|/* do this last */
 op_increment
 id|total_forks
 suffix:semicolon
-id|bad_fork
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|fork_out
 suffix:colon
 r_if
@@ -2863,7 +2851,7 @@ id|p
 )paren
 suffix:semicolon
 r_goto
-id|bad_fork
+id|fork_out
 suffix:semicolon
 )brace
 multiline_comment|/* SLAB cache for signal_struct structures (tsk-&gt;sig) */

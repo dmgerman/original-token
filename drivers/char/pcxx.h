@@ -117,6 +117,11 @@ DECL|member|first_minor
 id|ushort
 id|first_minor
 suffix:semicolon
+DECL|member|region
+r_void
+op_star
+id|region
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|TXSTOPPED

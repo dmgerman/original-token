@@ -1020,9 +1020,7 @@ id|usb_kbd
 op_star
 id|kbd
 op_assign
-id|urb
-op_member_access_from_pointer
-r_private
+id|urb-&gt;context
 suffix:semicolon
 r_if
 c_cond
@@ -1045,7 +1043,6 @@ op_eq
 id|kbd-&gt;newleds
 )paren
 r_return
-l_int|0
 suffix:semicolon
 id|kbd-&gt;leds
 op_assign
