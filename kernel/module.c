@@ -6,7 +6,9 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-multiline_comment|/*&n; * Originally by Anonymous (as far as I know...)&n; * Linux version by Bas Laarhoven &lt;bas@vimec.nl&gt;&n; * 0.99.14 version by Jon Tombs &lt;jon@gtex02.us.es&gt;,&n; *&n; * Heavily modified by Bjorn Ekwall &lt;bj0rn@blox.se&gt; May 1994 (C)&n; * This source is covered by the GNU GPL, the same as all kernel sources.&n; *&n; * Features:&n; *&t;- Supports stacked modules (removable only of there are no dependents).&n; *&t;- Supports table of symbols defined by the modules.&n; *&t;- Supports /proc/ksyms, showing value, name and owner of all&n; *&t;  the symbols defined by all modules (in stack order).&n; *&t;- Added module dependencies information into /proc/modules&n; *&t;- Supports redefines of all symbols, for streams-like behaviour.&n; *&t;- Compatible with older versions of insmod.&n; *&n; * New addition in December 1994: (Bjorn Ekwall, idea from Jacques Gelinas)&n; *&t;- Externally callable function:&n; *&n; *&t;&t;&quot;int register_symtab(struct symbol_table *)&quot;&n; *&n; *&t;  This function can be called from within the kernel,&n; *&t;  and ALSO from loadable modules.&n; *&t;  The goal is to assist in modularizing the kernel even more,&n; *&t;  and finally: reducing the number of entries in ksyms.c&n; *&t;  since every subsystem should now be able to decide and&n; *&t;  control exactly what symbols it wants to export, locally!&n; *&n; * On 1-Aug-95:  &lt;Matti.Aarnio@utu.fi&gt;  altered code to use same style as&n; *&t;&t; do  /proc/net/XXX  &quot;files&quot;.  Namely allow more than 4kB&n; *&t;&t; (or what the block size if) output.&n; */
+macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*&n; * Originally by Anonymous (as far as I know...)&n; * Linux version by Bas Laarhoven &lt;bas@vimec.nl&gt;&n; * 0.99.14 version by Jon Tombs &lt;jon@gtex02.us.es&gt;,&n; *&n; * Heavily modified by Bjorn Ekwall &lt;bj0rn@blox.se&gt; May 1994 (C)&n; * This source is covered by the GNU GPL, the same as all kernel sources.&n; *&n; * Features:&n; *&t;- Supports stacked modules (removable only of there are no dependents).&n; *&t;- Supports table of symbols defined by the modules.&n; *&t;- Supports /proc/ksyms, showing value, name and owner of all&n; *&t;  the symbols defined by all modules (in stack order).&n; *&t;- Added module dependencies information into /proc/modules&n; *&t;- Supports redefines of all symbols, for streams-like behaviour.&n; *&t;- Compatible with older versions of insmod.&n; *&n; * New addition in December 1994: (Bjorn Ekwall, idea from Jacques Gelinas)&n; *&t;- Externally callable function:&n; *&n; *&t;&t;&quot;int register_symtab(struct symbol_table *)&quot;&n; *&n; *&t;  This function can be called from within the kernel,&n; *&t;  and ALSO from loadable modules.&n; *&t;  The goal is to assist in modularizing the kernel even more,&n; *&t;  and finally: reducing the number of entries in ksyms.c&n; *&t;  since every subsystem should now be able to decide and&n; *&t;  control exactly what symbols it wants to export, locally!&n; *&n; * On 1-Aug-95:  &lt;Matti.Aarnio@utu.fi&gt;  altered code to use same style as&n; *&t;&t; do  /proc/net/XXX  &quot;files&quot;.  Namely allow more than 4kB&n; *&t;&t; (or what the block size if) output.&n; *&n; *&t;- Use dummy syscall functions for users who disable all&n; *&t;  module support. Similar to kernel/sys.c (Paul Gortmaker)&n; */
+macro_line|#ifdef CONFIG_MODULES&t;&t;/* a *big* #ifdef block... */
 macro_line|#ifdef DEBUG_MODULE
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(a) printk a
@@ -3056,4 +3058,64 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#else&t;&t;/* CONFIG_MODULES */
+multiline_comment|/* Dummy syscalls for people who don&squot;t want modules */
+DECL|function|sys_create_module
+id|asmlinkage
+r_int
+r_int
+id|sys_create_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
+)brace
+DECL|function|sys_init_module
+id|asmlinkage
+r_int
+id|sys_init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
+)brace
+DECL|function|sys_delete_module
+id|asmlinkage
+r_int
+id|sys_delete_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
+)brace
+DECL|function|sys_get_kernel_syms
+id|asmlinkage
+r_int
+id|sys_get_kernel_syms
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
+)brace
+macro_line|#endif&t;/* CONFIG_MODULES */
 eof

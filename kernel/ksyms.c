@@ -27,6 +27,7 @@ macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+macro_line|#include &lt;linux/mount.h&gt;
 r_extern
 r_int
 r_char
@@ -136,6 +137,7 @@ macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/route.h&gt;
+macro_line|#include &lt;linux/net_alias.h&gt;
 macro_line|#if defined(CONFIG_PPP) || defined(CONFIG_SLIP)
 macro_line|#include &quot;../drivers/net/slhc.h&quot;
 macro_line|#endif
@@ -209,6 +211,7 @@ macro_line|#include &quot;../drivers/scsi/scsi.h&quot;
 macro_line|#include &quot;../drivers/scsi/scsi_ioctl.h&quot;
 macro_line|#include &quot;../drivers/scsi/hosts.h&quot;
 macro_line|#include &quot;../drivers/scsi/constants.h&quot;
+macro_line|#include &quot;../drivers/scsi/sd.h&quot;
 macro_line|#include &lt;linux/scsicam.h&gt;
 r_extern
 r_int
@@ -232,41 +235,6 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|variable|dispatch_scsi_info_ptr
-r_int
-(paren
-op_star
-id|dispatch_scsi_info_ptr
-)paren
-(paren
-r_int
-id|ino
-comma
-r_char
-op_star
-id|buffer
-comma
-r_char
-op_star
-op_star
-id|start
-comma
-id|off_t
-id|offset
-comma
-r_int
-id|length
-comma
-r_int
-id|inode
-comma
-r_int
-id|func
-)paren
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Dirty hack */
 r_extern
 r_int
 id|sys_tz
@@ -1930,12 +1898,6 @@ comma
 id|X
 c_func
 (paren
-id|dispatch_scsi_info_ptr
-)paren
-comma
-id|X
-c_func
-(paren
 id|generic_proc_info
 )paren
 comma
@@ -1979,12 +1941,6 @@ id|X
 c_func
 (paren
 id|resetup_one_dev
-)paren
-comma
-id|X
-c_func
-(paren
-id|dispatch_scsi_info_ptr
 )paren
 comma
 macro_line|#endif
@@ -2239,6 +2195,7 @@ c_func
 id|generate_cluster
 )paren
 comma
+macro_line|#ifdef CONFIG_SCSI
 id|X
 c_func
 (paren
@@ -2251,6 +2208,7 @@ c_func
 id|proc_scsi_inode_operations
 )paren
 comma
+macro_line|#endif
 id|X
 c_func
 (paren

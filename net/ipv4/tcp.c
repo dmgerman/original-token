@@ -15512,14 +15512,14 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Find the first data byte.&n;&t;&t; */
 id|tcp_data_start
 op_assign
-id|skb-&gt;ip_hdr
-op_plus
 (paren
-(paren
-id|iph-&gt;ihl
-op_plus
-id|th-&gt;doff
+r_char
+op_star
 )paren
+id|th
+op_plus
+(paren
+id|th-&gt;doff
 op_lshift
 l_int|2
 )paren

@@ -81,7 +81,7 @@ id|uint
 )paren
 suffix:semicolon
 multiline_comment|/* the *_get_info() functions are in the respective scsi driver code */
-r_extern
+DECL|variable|dispatch_scsi_info_ptr
 r_int
 (paren
 op_star
@@ -89,20 +89,28 @@ id|dispatch_scsi_info_ptr
 )paren
 (paren
 r_int
+id|ino
 comma
 r_char
 op_star
+id|buffer
 comma
 r_char
 op_star
 op_star
+id|start
 comma
 id|off_t
+id|offset
 comma
 r_int
+id|length
 comma
 r_int
+id|inout
 )paren
+op_assign
+l_int|0
 suffix:semicolon
 DECL|variable|proc_scsi_operations
 r_static

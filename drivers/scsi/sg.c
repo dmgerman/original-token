@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  History:&n; *  Started: Aug 9 by Lawrence Foard (entropy@world.std.com), &n; *           to allow user process control of SCSI devices.&n; *  Development Sponsored by Killy Corp. NY NY&n; *   &n; *  Borrows code from st driver.&n; */
+multiline_comment|/*&n; *  History:&n; *  Started: Aug 9 by Lawrence Foard (entropy@world.std.com), &n; *           to allow user process control of SCSI devices.&n; *  Development Sponsored by Killy Corp. NY NY&n; *   &n; *  Borrows code from st driver.&n; *&n; *  Version from 1.3.51 modified by Rick Richardson to fix problem in&n; *  detecting whether its a send or a recieve style command (see sg_write)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1458,7 +1458,7 @@ id|sg_header
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * fix input size, and see if we are sending data.&n;     */
+multiline_comment|/*&n;     * fix input size, and see if we are sending data.&n;     *&n;     * Mod by Rick Richardson (rick@dgii.com):&n;     * The original test to see if its a SEND/REC was:&n;     *     if( device-&gt;header.pack_len &gt; device-&gt;header.reply_len )&n;     * I haven&squot;t a clue why the author thought this would work.  Instead,&n;     * I&squot;ve changed it to see if there is any additional data in this&n;     * packet beyond the length of the SCSI command itself.&n;     */
 id|device-&gt;header.pack_len
 op_assign
 id|count
@@ -1471,12 +1471,30 @@ r_struct
 id|sg_header
 )paren
 suffix:semicolon
+id|size
+op_assign
+id|COMMAND_SIZE
+c_func
+(paren
+id|get_user
+c_func
+(paren
+id|buf
+)paren
+)paren
+op_plus
+r_sizeof
+(paren
+r_struct
+id|sg_header
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|device-&gt;header.pack_len
 OG
-id|device-&gt;header.reply_len
+id|size
 )paren
 (brace
 id|bsize

@@ -901,6 +901,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_MODULES
 DECL|function|register_netdev
 r_int
 id|register_netdev
@@ -1373,6 +1374,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif&t;&t;/* CONFIG_MODULES */
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c net_init.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; * End:&n; */
 eof

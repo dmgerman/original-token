@@ -321,6 +321,16 @@ c_func
 (paren
 id|CIRRUS
 comma
+id|CIRRUS_5436
+comma
+l_string|&quot;GD 5436&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CIRRUS
+comma
 id|CIRRUS_6729
 comma
 l_string|&quot;CL 6729&quot;
@@ -344,6 +354,16 @@ comma
 id|CIRRUS_7543
 comma
 l_string|&quot;CL 7543&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|WD
+comma
+id|WD_7197
+comma
+l_string|&quot;WD 7197&quot;
 )paren
 comma
 id|DEVICE
@@ -454,6 +474,16 @@ comma
 id|FD_36C70
 comma
 l_string|&quot;TMC-18C30&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|SI
+comma
+id|SI_6202
+comma
+l_string|&quot;6202&quot;
 )paren
 comma
 id|DEVICE
@@ -663,6 +693,16 @@ c_func
 (paren
 id|UMC
 comma
+id|UMC_UM8886BF
+comma
+l_string|&quot;UM8886BF&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|UMC
+comma
 id|UMC_UM8886A
 comma
 l_string|&quot;UM8886A&quot;
@@ -698,6 +738,26 @@ comma
 id|UMC_UM9017F
 comma
 l_string|&quot;UM9017F&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|UMC
+comma
+id|UMC_UM8886N
+comma
+l_string|&quot;UM8886N&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|UMC
+comma
+id|UMC_UM8891N
+comma
+l_string|&quot;UM8891N&quot;
 )paren
 comma
 id|DEVICE
@@ -903,6 +963,16 @@ c_func
 (paren
 id|AL
 comma
+id|AL_M1489
+comma
+l_string|&quot;M1489&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|AL
+comma
 id|AL_M4803
 comma
 l_string|&quot;M4803&quot;
@@ -1026,6 +1096,16 @@ comma
 id|PLX_9060
 comma
 l_string|&quot;PCI9060 i960 bridge&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ALLIANCE
+comma
+id|ALLIANCE_PROMOTIO
+comma
+l_string|&quot;Promotion-6410&quot;
 )paren
 comma
 id|DEVICE
@@ -2297,6 +2377,12 @@ r_return
 l_string|&quot;IBM&quot;
 suffix:semicolon
 r_case
+id|PCI_VENDOR_ID_WD
+suffix:colon
+r_return
+l_string|&quot;Western Digital&quot;
+suffix:semicolon
+r_case
 id|PCI_VENDOR_ID_AMD
 suffix:colon
 r_return
@@ -2411,6 +2497,12 @@ r_return
 l_string|&quot;Contaq&quot;
 suffix:semicolon
 r_case
+id|PCI_VENDOR_ID_FOREX
+suffix:colon
+r_return
+l_string|&quot;Forex&quot;
+suffix:semicolon
+r_case
 id|PCI_VENDOR_ID_OLICOM
 suffix:colon
 r_return
@@ -2475,6 +2567,12 @@ id|PCI_VENDOR_ID_TEKRAM2
 suffix:colon
 r_return
 l_string|&quot;Tekram&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_AMCC
+suffix:colon
+r_return
+l_string|&quot;AMCC&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_REALTEK

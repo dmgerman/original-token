@@ -2721,11 +2721,13 @@ c_func
 id|command_line
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_MODULES
 id|init_modules
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_PROFILE
 r_if
 c_cond

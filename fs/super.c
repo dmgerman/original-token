@@ -747,6 +747,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_MODULES
 DECL|function|unregister_filesystem
 r_int
 id|unregister_filesystem
@@ -814,6 +815,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|fs_index
 r_static
 r_int

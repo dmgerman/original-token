@@ -77,7 +77,7 @@ id|user
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Here are the actual binaries that will be accepted:&n; * add more with &quot;register_binfmt()&quot;..&n; */
+multiline_comment|/*&n; * Here are the actual binaries that will be accepted:&n; * add more with &quot;register_binfmt()&quot; if using modules...&n; */
 r_extern
 r_struct
 id|linux_binfmt
@@ -124,6 +124,7 @@ op_assign
 op_amp
 id|aout_format
 suffix:semicolon
+macro_line|#ifdef CONFIG_MODULES
 DECL|function|register_binfmt
 r_int
 id|register_binfmt
@@ -266,6 +267,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+macro_line|#endif&t;/* CONFIG_MODULES */
 DECL|function|open_inode
 r_int
 id|open_inode

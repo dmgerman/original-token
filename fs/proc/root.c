@@ -333,6 +333,7 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_SCSI
 DECL|variable|proc_scsi
 r_struct
 id|proc_dir_entry
@@ -374,6 +375,7 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|function|proc_register
 r_int
 id|proc_register
@@ -1009,6 +1011,7 @@ op_amp
 id|proc_net
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SCSI
 id|proc_register
 c_func
 (paren
@@ -1019,6 +1022,7 @@ op_amp
 id|proc_scsi
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_DEBUG_MALLOC
 id|proc_register
 c_func
@@ -1083,6 +1087,7 @@ comma
 )brace
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_MODULES
 id|proc_register
 c_func
 (paren
@@ -1114,6 +1119,38 @@ comma
 )brace
 )paren
 suffix:semicolon
+id|proc_register
+c_func
+(paren
+op_amp
+id|proc_root
+comma
+op_amp
+(paren
+r_struct
+id|proc_dir_entry
+)paren
+(brace
+id|PROC_KSYMS
+comma
+l_int|5
+comma
+l_string|&quot;ksyms&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+)brace
+)paren
+suffix:semicolon
+macro_line|#endif
 id|proc_register
 c_func
 (paren
@@ -1224,37 +1261,6 @@ comma
 l_int|11
 comma
 l_string|&quot;filesystems&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-)brace
-)paren
-suffix:semicolon
-id|proc_register
-c_func
-(paren
-op_amp
-id|proc_root
-comma
-op_amp
-(paren
-r_struct
-id|proc_dir_entry
-)paren
-(brace
-id|PROC_KSYMS
-comma
-l_int|5
-comma
-l_string|&quot;ksyms&quot;
 comma
 id|S_IFREG
 op_or

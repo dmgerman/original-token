@@ -3173,13 +3173,22 @@ op_star
 id|entry
 )paren
 (brace
-id|entry-&gt;next-&gt;prev
-op_assign
-id|entry-&gt;prev
-suffix:semicolon
-id|entry-&gt;prev-&gt;next
+r_struct
+id|mem_list
+op_star
+id|next
 op_assign
 id|entry-&gt;next
+suffix:semicolon
+(paren
+id|next-&gt;prev
+op_assign
+id|entry-&gt;prev
+)paren
+op_member_access_from_pointer
+id|next
+op_assign
+id|next
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Free_page() adds the page to the free lists. This is optimized for&n; * fast normal cases (no error jumps taken normally).&n; *&n; * The way to optimize jumps for gcc-2.2.2 is to:&n; *  - select the &quot;normal&quot; case and put it inside the if () { XXX }&n; *  - no else-statements if you can avoid them&n; *&n; * With the above two rules, you get a straight-line execution path&n; * for the normal case, giving better asm-code.&n; *&n; * free_page() may sleep since the page being freed may be a buffer&n; * page or present in the swap cache. It will not sleep, however,&n; * for a freshly allocated page (get_free_page()).&n; */

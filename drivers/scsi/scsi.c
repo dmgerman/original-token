@@ -7821,6 +7821,7 @@ suffix:semicolon
 )brace
 DECL|macro|MALLOC_PAGEBITS
 mdefine_line|#define MALLOC_PAGEBITS 12
+macro_line|#ifdef CONFIG_MODULES
 r_static
 r_int
 id|scsi_register_host
@@ -7839,6 +7840,7 @@ id|Scsi_Host_Template
 op_star
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|function|scsi_malloc
 r_void
 op_star
@@ -10319,6 +10321,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_MODULES&t;&t;/* a big #ifdef block... */
 multiline_comment|/*&n; * This entry point should be called by a loadable module if it is trying&n; * add a low level scsi driver to the system.&n; */
 DECL|function|scsi_register_host
 r_static
@@ -11897,6 +11900,7 @@ suffix:colon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif&t;&t;/* CONFIG_MODULES */
 macro_line|#ifdef DEBUG_TIMEOUT
 r_static
 r_void
