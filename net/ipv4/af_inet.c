@@ -1197,8 +1197,9 @@ r_else
 (brace
 multiline_comment|/* this should never happen. */
 multiline_comment|/* actually it can if an ack has just been sent. */
-multiline_comment|/*&n;&t;&t; *&t;Make this a NETDEBUG at 2.0pre&n;&t;&t; */
-multiline_comment|/*NETDEBUG(*/
+id|NETDEBUG
+c_func
+(paren
 id|printk
 c_func
 (paren
@@ -1208,7 +1209,7 @@ id|sk-&gt;rmem_alloc
 comma
 id|sk-&gt;wmem_alloc
 )paren
-multiline_comment|/*)*/
+)paren
 suffix:semicolon
 id|sk-&gt;destroy
 op_assign

@@ -4873,8 +4873,6 @@ multiline_comment|/* delay 20ms */
 r_int
 r_int
 id|ofs
-comma
-id|i
 suffix:semicolon
 r_for
 c_loop
@@ -4892,6 +4890,10 @@ op_add_assign
 l_int|32
 )paren
 (brace
+r_int
+r_int
+id|i
+suffix:semicolon
 id|outw_p
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdnl3.c,v 1.6 1996/05/21 11:33:50 keil Exp $&n; *&n; * $Log: isdnl3.c,v $&n; * Revision 1.6  1996/05/21 11:33:50  keil&n; * Adding SETUP_ACKNOWLEDGE as answer of a SETUP message.&n; *&n; * Revision 1.5  1996/05/18 01:37:16  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.4  1996/05/17 03:46:16  fritz&n; * General cleanup.&n; *&n; * Revision 1.3  1996/04/30 21:57:53  isdn4dev&n; * remove some debugging code, improve callback   Karsten Keil&n; *&n; * Revision 1.2  1996/04/20 16:45:05  fritz&n; * Changed to report all incoming calls to Linklevel, not just those&n; * with Service 7.&n; * Misc. typos&n; *&n; * Revision 1.1  1996/04/13 10:24:45  fritz&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: isdnl3.c,v 1.9 1996/06/06 14:22:27 fritz Exp $&n; *&n; * $Log: isdnl3.c,v $&n; * Revision 1.9  1996/06/06 14:22:27  fritz&n; * Changed level of &quot;non-digital call...&quot; message, since&n; * with audio support, this is quite normal.&n; *&n; * Revision 1.8  1996/06/03 20:35:04  fritz&n; * Fixed typos.&n; *&n; * Revision 1.7  1996/06/03 20:03:39  fritz&n; * Fixed typos.&n; *&n; * Revision 1.6  1996/05/21 11:33:50  keil&n; * Adding SETUP_ACKNOWLEDGE as answer of a SETUP message.&n; *&n; * Revision 1.5  1996/05/18 01:37:16  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.4  1996/05/17 03:46:16  fritz&n; * General cleanup.&n; *&n; * Revision 1.3  1996/04/30 21:57:53  isdn4dev&n; * remove some debugging code, improve callback   Karsten Keil&n; *&n; * Revision 1.2  1996/04/20 16:45:05  fritz&n; * Changed to report all incoming calls to Linklevel, not just those&n; * with Service 7.&n; * Misc. typos&n; *&n; * Revision 1.1  1996/04/13 10:24:45  fritz&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 DECL|macro|P_1TR6
@@ -1345,7 +1345,7 @@ l_int|7
 id|printk
 c_func
 (paren
-id|KERN_WARNING
+id|KERN_DEBUG
 l_string|&quot;non-digital call: %s -&gt; %s&bslash;n&quot;
 comma
 id|st-&gt;pa-&gt;calling

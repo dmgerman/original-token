@@ -1579,15 +1579,6 @@ id|bios32_entry
 suffix:semicolon
 )brace
 )brace
-r_else
-(brace
-id|printk
-(paren
-l_string|&quot;pcibios_init : multiple entries, mail drew@colorado.edu&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Jeremy Fitzhardinge reports at least one PCI BIOS&n;&t;&t;&t; * with two different service directories, and as both&n;&t;&t;&t; * worked for him, we&squot;ll just mention the fact, and&n;&t;&t;&t; * not actually disallow it..&n;&t;&t;&t; */
-)brace
 )brace
 macro_line|#ifdef CONFIG_PCI
 r_if

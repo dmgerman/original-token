@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdnif.h,v 1.8 1996/05/18 01:45:37 fritz Exp $&n; *&n; * Linux ISDN subsystem&n; *&n; * Definition of the interface between the subsystem and its low-level drivers.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdnif.h,v $&n; * Revision 1.8  1996/05/18 01:45:37  fritz&n; * More spelling corrections.&n; *&n; * Revision 1.7  1996/05/18 01:37:19  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.6  1996/05/17 03:59:28  fritz&n; * Marked rcvcallb and writebuf obsolete.&n; *&n; * Revision 1.5  1996/05/01 11:43:54  fritz&n; * Removed STANDALONE&n; *&n; * Revision 1.4  1996/05/01 11:38:40  fritz&n; * Added ISDN_FEATURE_L2_TRANS&n; *&n; * Revision 1.3  1996/04/29 22:57:54  fritz&n; * Added driverId and channel parameters to&n; * writecmd() and readstat().&n; * Added constant for voice-support.&n; *&n; * Revision 1.2  1996/04/20 17:02:40  fritz&n; * Changes to support skbuffs for Lowlevel-Drivers.&n; * Misc. typos&n; *&n; * Revision 1.1  1996/01/09 05:50:51  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdnif.h,v 1.9 1996/06/06 21:24:24 fritz Exp $&n; *&n; * Linux ISDN subsystem&n; *&n; * Definition of the interface between the subsystem and its low-level drivers.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdnif.h,v $&n; * Revision 1.9  1996/06/06 21:24:24  fritz&n; * Started adding support for suspend/resume.&n; *&n; * Revision 1.8  1996/05/18 01:45:37  fritz&n; * More spelling corrections.&n; *&n; * Revision 1.7  1996/05/18 01:37:19  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.6  1996/05/17 03:59:28  fritz&n; * Marked rcvcallb and writebuf obsolete.&n; *&n; * Revision 1.5  1996/05/01 11:43:54  fritz&n; * Removed STANDALONE&n; *&n; * Revision 1.4  1996/05/01 11:38:40  fritz&n; * Added ISDN_FEATURE_L2_TRANS&n; *&n; * Revision 1.3  1996/04/29 22:57:54  fritz&n; * Added driverId and channel parameters to&n; * writecmd() and readstat().&n; * Added constant for voice-support.&n; *&n; * Revision 1.2  1996/04/20 17:02:40  fritz&n; * Changes to support skbuffs for Lowlevel-Drivers.&n; * Misc. typos&n; *&n; * Revision 1.1  1996/01/09 05:50:51  fritz&n; * Initial revision&n; *&n; */
 macro_line|#ifndef isdnif_h
 DECL|macro|isdnif_h
 mdefine_line|#define isdnif_h
@@ -29,35 +29,39 @@ multiline_comment|/*&n; * Commands from linklevel to lowlevel&n; *&n; */
 DECL|macro|ISDN_CMD_IOCTL
 mdefine_line|#define ISDN_CMD_IOCTL   0       /* Perform ioctl                         */
 DECL|macro|ISDN_CMD_DIAL
-mdefine_line|#define ISDN_CMD_DIAL    1       /* Dial out                              */
+mdefine_line|#define ISDN_CMD_DIAL     1       /* Dial out                              */
 DECL|macro|ISDN_CMD_ACCEPTD
-mdefine_line|#define ISDN_CMD_ACCEPTD 2       /* Accept an incoming call on D-Chan.    */
+mdefine_line|#define ISDN_CMD_ACCEPTD  2       /* Accept an incoming call on D-Chan.    */
 DECL|macro|ISDN_CMD_ACCEPTB
-mdefine_line|#define ISDN_CMD_ACCEPTB 3       /* Request B-Channel connect.            */
+mdefine_line|#define ISDN_CMD_ACCEPTB  3       /* Request B-Channel connect.            */
 DECL|macro|ISDN_CMD_HANGUP
-mdefine_line|#define ISDN_CMD_HANGUP  4       /* Hangup                                */
+mdefine_line|#define ISDN_CMD_HANGUP   4       /* Hangup                                */
 DECL|macro|ISDN_CMD_CLREAZ
-mdefine_line|#define ISDN_CMD_CLREAZ  5       /* Clear EAZ(s) of channel               */
+mdefine_line|#define ISDN_CMD_CLREAZ   5       /* Clear EAZ(s) of channel               */
 DECL|macro|ISDN_CMD_SETEAZ
-mdefine_line|#define ISDN_CMD_SETEAZ  6       /* Set EAZ(s) of channel                 */
+mdefine_line|#define ISDN_CMD_SETEAZ   6       /* Set EAZ(s) of channel                 */
 DECL|macro|ISDN_CMD_GETEAZ
-mdefine_line|#define ISDN_CMD_GETEAZ  7       /* Get EAZ(s) of channel                 */
+mdefine_line|#define ISDN_CMD_GETEAZ   7       /* Get EAZ(s) of channel                 */
 DECL|macro|ISDN_CMD_SETSIL
-mdefine_line|#define ISDN_CMD_SETSIL  8       /* Set Service-Indicator-List of channel */
+mdefine_line|#define ISDN_CMD_SETSIL   8       /* Set Service-Indicator-List of channel */
 DECL|macro|ISDN_CMD_GETSIL
-mdefine_line|#define ISDN_CMD_GETSIL  9       /* Get Service-Indicator-List of channel */
+mdefine_line|#define ISDN_CMD_GETSIL   9       /* Get Service-Indicator-List of channel */
 DECL|macro|ISDN_CMD_SETL2
-mdefine_line|#define ISDN_CMD_SETL2  10       /* Set B-Chan. Layer2-Parameter          */
+mdefine_line|#define ISDN_CMD_SETL2   10       /* Set B-Chan. Layer2-Parameter          */
 DECL|macro|ISDN_CMD_GETL2
-mdefine_line|#define ISDN_CMD_GETL2  11       /* Get B-Chan. Layer2-Parameter          */
+mdefine_line|#define ISDN_CMD_GETL2   11       /* Get B-Chan. Layer2-Parameter          */
 DECL|macro|ISDN_CMD_SETL3
-mdefine_line|#define ISDN_CMD_SETL3  12       /* Set B-Chan. Layer3-Parameter          */
+mdefine_line|#define ISDN_CMD_SETL3   12       /* Set B-Chan. Layer3-Parameter          */
 DECL|macro|ISDN_CMD_GETL3
-mdefine_line|#define ISDN_CMD_GETL3  13       /* Get B-Chan. Layer3-Parameter          */
+mdefine_line|#define ISDN_CMD_GETL3   13       /* Get B-Chan. Layer3-Parameter          */
 DECL|macro|ISDN_CMD_LOCK
-mdefine_line|#define ISDN_CMD_LOCK   14       /* Signal usage by upper levels          */
+mdefine_line|#define ISDN_CMD_LOCK    14       /* Signal usage by upper levels          */
 DECL|macro|ISDN_CMD_UNLOCK
-mdefine_line|#define ISDN_CMD_UNLOCK 15       /* Release usage-lock                    */
+mdefine_line|#define ISDN_CMD_UNLOCK  15       /* Release usage-lock                    */
+DECL|macro|ISDN_CMD_SUSPEND
+mdefine_line|#define ISDN_CMD_SUSPEND 16       /* Suspend connection                    */
+DECL|macro|ISDN_CMD_RESUME
+mdefine_line|#define ISDN_CMD_RESUME  17       /* Resume connection                     */
 multiline_comment|/*&n; * Status-Values delivered from lowlevel to linklevel via&n; * statcallb().&n; *&n; */
 DECL|macro|ISDN_STAT_STAVAIL
 mdefine_line|#define ISDN_STAT_STAVAIL 256    /* Raw status-data available             */

@@ -333,6 +333,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* This is the pointer to the /proc/scsi code. &n; * It is only initialized to !=0 if the scsi code is present &n; */
+macro_line|#if CONFIG_PROC_FS 
 r_extern
 r_int
 (paren
@@ -428,6 +429,7 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; *  As the scsi do command functions are intelligent, and may need to&n; *  redo a command, we need to keep track of the last command&n; *  executed on each one.&n; */
 DECL|macro|WAS_RESET
 mdefine_line|#define WAS_RESET       0x01
@@ -9289,10 +9291,12 @@ r_return
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Yes we&squot;re here... */
+macro_line|#if CONFIG_PROC_FS 
 id|dispatch_scsi_info_ptr
 op_assign
 id|dispatch_scsi_info
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Init a few things so we can &quot;malloc&quot; memory. */
 id|scsi_loadable_module_flag
 op_assign
@@ -13119,10 +13123,12 @@ r_int
 id|size
 suffix:semicolon
 multiline_comment|/*&n;     * This makes /proc/scsi visible.&n;     */
+macro_line|#if CONFIG_PROC_FS
 id|dispatch_scsi_info_ptr
 op_assign
 id|dispatch_scsi_info
 suffix:semicolon
+macro_line|#endif
 id|timer_table
 (braket
 id|SCSI_TIMER
@@ -13282,12 +13288,12 @@ comma
 id|PROC_SCSI_SCSI
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* No, we&squot;re not here anymore. Don&squot;t show the /proc/scsi files. */
 id|dispatch_scsi_info_ptr
 op_assign
 l_int|0L
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;     * Free up the DMA pool.&n;     */
 id|resize_dma_pool
 c_func

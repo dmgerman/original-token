@@ -566,6 +566,12 @@ id|fraglen
 suffix:semicolon
 multiline_comment|/* This is right as you can&squot;t frag&n;&t;&t;&t;&t;&t;   RAW packets */
 multiline_comment|/*&n;&t; &t; *&t;Deliberate breach of modularity to keep &n;&t; &t; *&t;ip_build_xmit clean (well less messy).&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|iph-&gt;id
+)paren
 id|iph-&gt;id
 op_assign
 id|htons

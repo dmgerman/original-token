@@ -2761,7 +2761,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Send an ack if one is backlogged at this point.&n; *&n; *&t;This is called for delayed acks also.&n; */
+multiline_comment|/*&n; *&t;Send an ack if one is backlogged at this point.&n; */
 DECL|function|tcp_read_wakeup
 r_void
 id|tcp_read_wakeup

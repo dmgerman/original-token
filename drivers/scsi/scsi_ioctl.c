@@ -1344,7 +1344,8 @@ id|dev-&gt;current_tag
 op_assign
 l_int|1
 suffix:semicolon
-r_break
+r_return
+l_int|0
 suffix:semicolon
 r_case
 id|SCSI_IOCTL_TAGGED_DISABLE
@@ -1384,7 +1385,8 @@ id|dev-&gt;current_tag
 op_assign
 l_int|0
 suffix:semicolon
-r_break
+r_return
+l_int|0
 suffix:semicolon
 r_case
 id|SCSI_IOCTL_PROBE_HOST

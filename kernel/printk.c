@@ -33,7 +33,7 @@ DECL|macro|DEFAULT_MESSAGE_LOGLEVEL
 mdefine_line|#define DEFAULT_MESSAGE_LOGLEVEL 4 /* KERN_WARNING */
 multiline_comment|/* We show everything that is MORE important than this.. */
 DECL|macro|MINIMUM_CONSOLE_LOGLEVEL
-mdefine_line|#define MINIMUM_CONSOLE_LOGLEVEL 5 /* Minimum loglevel we let people use */
+mdefine_line|#define MINIMUM_CONSOLE_LOGLEVEL 1 /* Minimum loglevel we let people use */
 DECL|macro|DEFAULT_CONSOLE_LOGLEVEL
 mdefine_line|#define DEFAULT_CONSOLE_LOGLEVEL 7 /* anything MORE serious than KERN_DEBUG */
 DECL|variable|log_size

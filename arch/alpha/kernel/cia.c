@@ -375,6 +375,11 @@ l_string|&quot;conf_read: TYPE1 access&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|draina
 c_func
 (paren
@@ -447,7 +452,7 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * david.rusling@reo.mts.dec.com.  This code is needed for the&n;&t; * EB64+ as it does not generate a machine check (why I don&squot;t&n;&t; * know).  When we build kernels for one particular platform&n;&t; * then we can make this conditional on the type.&n;&t; */
-macro_line|#if 1
+macro_line|#if 0
 id|draina
 c_func
 (paren
@@ -767,7 +772,7 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * david.rusling@reo.mts.dec.com.  This code is needed for the&n;&t; * EB64+ as it does not generate a machine check (why I don&squot;t&n;&t; * know).  When we build kernels for one particular platform&n;&t; * then we can make this conditional on the type.&n;&t; */
-macro_line|#if 1
+macro_line|#if 0
 id|draina
 c_func
 (paren
@@ -1763,11 +1768,11 @@ op_star
 id|regs
 )paren
 (brace
-macro_line|#if 1
+macro_line|#if 0
 id|printk
 c_func
 (paren
-l_string|&quot;CIA machine check&bslash;n&quot;
+l_string|&quot;CIA machine check ignored&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#else
@@ -1914,18 +1919,31 @@ suffix:semicolon
 )brace
 macro_line|#endif /* DEBUG */
 multiline_comment|/*&n;&t; * Check if machine check is due to a badaddr() and if so,&n;&t; * ignore the machine check.&n;&t; */
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|CIA_mcheck_expected
-op_logical_and
-(paren
-id|mchk_sysdata-&gt;epic_dcsr
-op_logical_and
-l_int|0x0c00UL
-)paren
+multiline_comment|/* &amp;&amp; (mchk_sysdata-&gt;epic_dcsr &amp;&amp; 0x0c00UL)*/
 )paren
 (brace
+id|DBG
+c_func
+(paren
+(paren
+l_string|&quot;CIA machine check expected&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|CIA_mcheck_expected
 op_assign
 l_int|0
@@ -1940,6 +1958,11 @@ c_func
 )paren
 suffix:semicolon
 id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|draina
 c_func
 (paren
 )paren
@@ -1960,12 +1983,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|draina
+)brace
+macro_line|#if 1
+r_else
+id|printk
 c_func
 (paren
+l_string|&quot;CIA machine check NOT expected&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
+macro_line|#endif
 macro_line|#endif
 )brace
 macro_line|#endif /* CONFIG_ALPHA_CIA */

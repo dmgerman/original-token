@@ -1640,7 +1640,11 @@ multiline_comment|/* Wildcard redirection.&n;&t;&t;&t;&t;&t;&t; * Note that redi
 op_star
 id|redirport
 op_assign
+id|htons
+c_func
+(paren
 id|dst_port
+)paren
 suffix:semicolon
 )brace
 id|answer

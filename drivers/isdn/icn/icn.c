@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: icn.c,v 1.22 1996/05/17 15:46:41 fritz Exp $&n; *&n; * ISDN low-level module for the ICN active ISDN-Card.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: icn.c,v $&n; * Revision 1.22  1996/05/17 15:46:41  fritz&n; * Removed own queue management.&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.21  1996/05/02 04:01:20  fritz&n; * Bugfix:&n; *  - icn_addcard() evaluated wrong driverId.&n; *&n; * Revision 1.20  1996/05/02 00:40:27  fritz&n; * Major rewrite to support more than one card&n; * with a single module.&n; * Support for new firmware.&n; *&n; * Revision 1.19  1996/04/21 17:43:32  fritz&n; * Changes for Support of new Firmware BRV3.02&n; *&n; * Revision 1.18  1996/04/20 16:50:26  fritz&n; * Fixed status-buffer overrun.&n; * Misc. typos&n; *&n; * Revision 1.17  1996/02/11 02:39:04  fritz&n; * Increased Buffer for status-messages.&n; * Removed conditionals for HDLC-firmware.&n; *&n; * Revision 1.16  1996/01/22 05:01:55  fritz&n; * Revert to GPL.&n; *&n; * Revision 1.15  1996/01/10 20:57:39  fritz&n; * Bugfix: Loading firmware twice caused the device stop working.&n; *&n; * Revision 1.14  1995/12/18  18:23:37  fritz&n; * Support for ICN-2B Cards.&n; * Change for supporting user-settable service-octet.&n; *&n; * Revision 1.13  1995/10/29  21:41:07  fritz&n; * Added support for DriverId&squot;s, added Jan&squot;s patches for Kernel versions.&n; *&n; * Revision 1.12  1995/04/29  13:07:35  fritz&n; * Added support for new Euro-ISDN-firmware&n; *&n; * Revision 1.11  1995/04/23  13:40:45  fritz&n; * Added support for SPV&squot;s.&n; * Changed Dial-Command to support MSN&squot;s on DSS1-Lines.&n; *&n; * Revision 1.10  1995/03/25  23:23:24  fritz&n; * Changed configurable Ports, to allow settings for DIP-Switch Cardversions.&n; *&n; * Revision 1.9  1995/03/25  23:17:30  fritz&n; * Fixed race-condition in pollbchan_send&n; *&n; * Revision 1.8  1995/03/15  12:49:44  fritz&n; * Added support for SPV&squot;s&n; * Split pollbchan_work for calling send-routine directly&n; *&n; * Revision 1.7  1995/02/20  03:48:03  fritz&n; * Added support of new request_region-function.&n; * Minor bugfixes.&n; *&n; * Revision 1.6  1995/01/31  15:48:45  fritz&n; * Added Cause-Messages to be signaled to upper layers.&n; * Added Revision-Info on load.&n; *&n; * Revision 1.5  1995/01/29  23:34:59  fritz&n; * Added stopdriver() and appropriate calls.&n; * Changed printk-statements to support loglevels.&n; *&n; * Revision 1.4  1995/01/09  07:40:46  fritz&n; * Added GPL-Notice&n; *&n; * Revision 1.3  1995/01/04  05:15:18  fritz&n; * Added undocumented &quot;bootload-finished&quot;-command in download-code&n; * to satisfy some brain-damaged icn card-versions.&n; *&n; * Revision 1.2  1995/01/02  02:14:45  fritz&n; * Misc Bugfixes&n; *&n; * Revision 1.1  1994/12/14  17:56:06  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: icn.c,v 1.24 1996/06/06 13:58:33 fritz Exp $&n; *&n; * ISDN low-level module for the ICN active ISDN-Card.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: icn.c,v $&n; * Revision 1.24  1996/06/06 13:58:33  fritz&n; * Changed code to be architecture independent&n; *&n; * Revision 1.23  1996/06/03 19:59:00  fritz&n; * Fixed typos.&n; *&n; * Revision 1.22  1996/05/17 15:46:41  fritz&n; * Removed own queue management.&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.21  1996/05/02 04:01:20  fritz&n; * Bugfix:&n; *  - icn_addcard() evaluated wrong driverId.&n; *&n; * Revision 1.20  1996/05/02 00:40:27  fritz&n; * Major rewrite to support more than one card&n; * with a single module.&n; * Support for new firmware.&n; *&n; * Revision 1.19  1996/04/21 17:43:32  fritz&n; * Changes for Support of new Firmware BRV3.02&n; *&n; * Revision 1.18  1996/04/20 16:50:26  fritz&n; * Fixed status-buffer overrun.&n; * Misc. typos&n; *&n; * Revision 1.17  1996/02/11 02:39:04  fritz&n; * Increased Buffer for status-messages.&n; * Removed conditionals for HDLC-firmware.&n; *&n; * Revision 1.16  1996/01/22 05:01:55  fritz&n; * Revert to GPL.&n; *&n; * Revision 1.15  1996/01/10 20:57:39  fritz&n; * Bugfix: Loading firmware twice caused the device stop working.&n; *&n; * Revision 1.14  1995/12/18  18:23:37  fritz&n; * Support for ICN-2B Cards.&n; * Change for supporting user-settable service-octet.&n; *&n; * Revision 1.13  1995/10/29  21:41:07  fritz&n; * Added support for DriverId&squot;s, added Jan&squot;s patches for Kernel versions.&n; *&n; * Revision 1.12  1995/04/29  13:07:35  fritz&n; * Added support for new Euro-ISDN-firmware&n; *&n; * Revision 1.11  1995/04/23  13:40:45  fritz&n; * Added support for SPV&squot;s.&n; * Changed Dial-Command to support MSN&squot;s on DSS1-Lines.&n; *&n; * Revision 1.10  1995/03/25  23:23:24  fritz&n; * Changed configurable Ports, to allow settings for DIP-Switch Cardversions.&n; *&n; * Revision 1.9  1995/03/25  23:17:30  fritz&n; * Fixed race-condition in pollbchan_send&n; *&n; * Revision 1.8  1995/03/15  12:49:44  fritz&n; * Added support for SPV&squot;s&n; * Split pollbchan_work for calling send-routine directly&n; *&n; * Revision 1.7  1995/02/20  03:48:03  fritz&n; * Added support of new request_region-function.&n; * Minor bugfixes.&n; *&n; * Revision 1.6  1995/01/31  15:48:45  fritz&n; * Added Cause-Messages to be signaled to upper layers.&n; * Added Revision-Info on load.&n; *&n; * Revision 1.5  1995/01/29  23:34:59  fritz&n; * Added stopdriver() and appropriate calls.&n; * Changed printk-statements to support loglevels.&n; *&n; * Revision 1.4  1995/01/09  07:40:46  fritz&n; * Added GPL-Notice&n; *&n; * Revision 1.3  1995/01/04  05:15:18  fritz&n; * Added undocumented &quot;bootload-finished&quot;-command in download-code&n; * to satisfy some brain-damaged icn card-versions.&n; *&n; * Revision 1.2  1995/01/02  02:14:45  fritz&n; * Misc Bugfixes&n; *&n; * Revision 1.1  1994/12/14  17:56:06  fritz&n; * Initial revision&n; *&n; */
 macro_line|#include &quot;icn.h&quot;
 multiline_comment|/*&n; * Verbose bootcode- and protocol-downloading.&n; */
 DECL|macro|BOOT_DEBUG
@@ -12,7 +12,7 @@ DECL|variable|revision
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.22 $&quot;
+l_string|&quot;$Revision: 1.24 $&quot;
 suffix:semicolon
 r_static
 r_int
@@ -773,7 +773,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|memcpy
+id|memcpy_fromio
 c_func
 (paren
 op_amp
@@ -2035,7 +2035,12 @@ id|avail
 comma
 id|i
 op_assign
+id|readb
+c_func
+(paren
+op_amp
 id|msg_o
+)paren
 suffix:semicolon
 id|left
 OG
@@ -2050,12 +2055,17 @@ op_decrement
 (brace
 id|c
 op_assign
+id|readb
+c_func
+(paren
+op_amp
 id|dev.shmem-&gt;comm_buffers.iopc_buf
 (braket
 id|i
 op_amp
 l_int|0xff
 )braket
+)paren
 suffix:semicolon
 id|save_flags
 c_func
@@ -2424,15 +2434,25 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-id|msg_o
-op_assign
+id|writeb
+c_func
 (paren
+(paren
+id|readb
+c_func
+(paren
+op_amp
 id|msg_o
+)paren
 op_plus
 id|avail
 )paren
 op_amp
 l_int|0xff
+comma
+op_amp
+id|msg_o
+)paren
 suffix:semicolon
 id|icn_release_channel
 c_func
@@ -2802,9 +2822,19 @@ macro_line|#endif
 r_if
 c_cond
 (paren
+id|readb
+c_func
+(paren
+op_amp
 id|dev.shmem-&gt;data_control.scns
+)paren
 op_logical_or
+id|readb
+c_func
+(paren
+op_amp
 id|dev.shmem-&gt;data_control.scnr
+)paren
 )paren
 (brace
 r_if
@@ -2914,6 +2944,13 @@ id|ret
 suffix:semicolon
 id|ulong
 id|flags
+suffix:semicolon
+r_int
+r_char
+id|codebuf
+(braket
+id|ICN_CODE_STAGE1
+)braket
 suffix:semicolon
 macro_line|#ifdef BOOT_DEBUG
 id|printk
@@ -3181,15 +3218,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|dev.channel
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* Force Mapping    */
-id|dev.mcard
-op_assign
-l_int|NULL
-suffix:semicolon
 macro_line|#ifdef BOOT_DEBUG
 id|printk
 c_func
@@ -3232,7 +3260,7 @@ suffix:semicolon
 id|memcpy_fromfs
 c_func
 (paren
-id|dev.shmem
+id|codebuf
 comma
 id|buffer
 comma
@@ -3240,6 +3268,16 @@ id|ICN_CODE_STAGE1
 )paren
 suffix:semicolon
 multiline_comment|/* Copy code        */
+id|memcpy_toio
+c_func
+(paren
+id|dev.shmem
+comma
+id|codebuf
+comma
+id|ICN_CODE_STAGE1
+)paren
+suffix:semicolon
 macro_line|#ifdef BOOT_DEBUG
 id|printk
 c_func
@@ -3319,14 +3357,24 @@ suffix:semicolon
 id|memcpy_fromfs
 c_func
 (paren
-id|dev.shmem
+id|codebuf
 comma
 id|buffer
 comma
 id|ICN_CODE_STAGE1
 )paren
 suffix:semicolon
-multiline_comment|/* Copy code       */
+multiline_comment|/* Copy code        */
+id|memcpy_toio
+c_func
+(paren
+id|dev.shmem
+comma
+id|codebuf
+comma
+id|ICN_CODE_STAGE1
+)paren
+suffix:semicolon
 macro_line|#ifdef BOOT_DEBUG
 id|printk
 c_func
@@ -3697,9 +3745,19 @@ l_int|1
 r_if
 c_cond
 (paren
+id|readb
+c_func
+(paren
+op_amp
 id|cmd_o
+)paren
 op_logical_or
+id|readb
+c_func
+(paren
+op_amp
 id|cmd_i
+)paren
 )paren
 (brace
 macro_line|#ifdef BOOT_DEBUG
@@ -4180,7 +4238,12 @@ id|msg
 comma
 id|pp
 op_assign
+id|readb
+c_func
+(paren
+op_amp
 id|cmd_i
+)paren
 comma
 id|i
 op_assign
@@ -4200,13 +4263,9 @@ id|pp
 op_increment
 )paren
 (brace
-id|dev.shmem-&gt;comm_buffers.pcio_buf
-(braket
-id|pp
-op_amp
-l_int|0xff
-)braket
-op_assign
+id|writeb
+c_func
+(paren
 (paren
 op_star
 id|p
@@ -4219,6 +4278,15 @@ l_int|0xff
 suffix:colon
 op_star
 id|p
+comma
+op_amp
+id|dev.shmem-&gt;comm_buffers.pcio_buf
+(braket
+id|pp
+op_amp
+l_int|0xff
+)braket
+)paren
 suffix:semicolon
 op_star
 id|card-&gt;msg_buf_write
@@ -4308,15 +4376,25 @@ op_amp
 id|cmd
 )paren
 suffix:semicolon
-id|cmd_i
-op_assign
+id|writeb
+c_func
 (paren
+(paren
+id|readb
+c_func
+(paren
+op_amp
 id|cmd_i
+)paren
 op_plus
 id|count
 )paren
 op_amp
 l_int|0xff
+comma
+op_amp
+id|cmd_i
+)paren
 suffix:semicolon
 id|icn_release_channel
 c_func
@@ -7310,6 +7388,15 @@ id|membase
 op_amp
 l_int|0x0ffc000
 )paren
+suffix:semicolon
+id|dev.channel
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|dev.mcard
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* No symbols to export, hide all symbols */
 id|register_symtab

@@ -2756,7 +2756,18 @@ c_cond
 id|timeout
 OG
 id|max_timeout
-op_logical_or
+)paren
+id|timeout
+op_assign
+id|max_timeout
+suffix:semicolon
+id|timeout
+op_add_assign
+id|now
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|sk-&gt;bytes_rcv
 op_ge
 id|sk-&gt;max_unacked
@@ -2771,13 +2782,6 @@ c_func
 (paren
 id|TIMER_BH
 )paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|timeout
-op_add_assign
-id|now
 suffix:semicolon
 )brace
 multiline_comment|/* Use new timeout only if there wasn&squot;t a older one earlier  */

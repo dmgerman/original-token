@@ -366,7 +366,7 @@ r_else
 id|fail
 op_increment
 suffix:semicolon
-id|printk
+id|dprintk
 c_func
 (paren
 l_string|&quot;BIO: %d successful reads, %d failures&bslash;n&quot;

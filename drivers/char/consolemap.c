@@ -630,7 +630,7 @@ l_int|0x2193
 comma
 l_int|0x002f
 comma
-l_int|0x0030
+l_int|0x2588
 comma
 l_int|0x0031
 comma
@@ -742,7 +742,7 @@ l_int|0x00b0
 comma
 l_int|0x00b1
 comma
-l_int|0x2424
+l_int|0x2591
 comma
 l_int|0x240b
 comma

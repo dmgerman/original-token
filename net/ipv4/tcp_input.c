@@ -62,23 +62,18 @@ id|m
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/* This used to test against sk-&gt;rtt.&n;&t;&t; * On a purely receiving link, there is no rtt measure.&n;&t;&t; * The result is that we loose delayed ACKs on one way links.&n;&t;&t; * Therefore we test against sk-&gt;rto, which will always&n;&t;&t; * at least have a default value.&n;&t;&t; */
 r_if
 c_cond
 (paren
 id|m
 OG
-(paren
-id|sk-&gt;rtt
-op_rshift
-l_int|3
-)paren
+id|sk-&gt;rto
 )paren
 (brace
 id|sk-&gt;ato
 op_assign
-id|sk-&gt;rtt
-op_rshift
-l_int|3
+id|sk-&gt;rto
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * printk(KERN_DEBUG &quot;ato: rtt %lu&bslash;n&quot;, sk-&gt;ato);&n;&t;&t;&t; */
 )brace
@@ -212,6 +207,7 @@ suffix:semicolon
 multiline_comment|/* make sure rto = 3*rtt */
 )brace
 multiline_comment|/*&n;&t; *&t;Now update timeout.  Note that this removes any backoff.&n;&t; */
+multiline_comment|/* Jacobson&squot;s algorithm calls for rto = R + 4V.&n;&t; * We diverge from Jacobson&squot;s algorithm here. See the commentary&n;&t; * in tcp_ack to understand why.&n;&t; */
 id|sk-&gt;rto
 op_assign
 (paren
@@ -221,6 +217,24 @@ l_int|3
 )paren
 op_plus
 id|sk-&gt;mdev
+suffix:semicolon
+id|sk-&gt;rto
+op_add_assign
+(paren
+id|sk-&gt;rto
+op_rshift
+l_int|2
+)paren
+op_plus
+(paren
+id|sk-&gt;rto
+op_rshift
+(paren
+id|sk-&gt;cong_window
+op_minus
+l_int|1
+)paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -488,7 +502,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * &t;This packet is old news. Usually this is just a resend&n;&t; * &t;from the far end, but sometimes it means the far end lost&n;&t; *&t;an ACK we send, so we better send an ACK.&n;&t; */
+multiline_comment|/*&n;&t; * &t;This packet is old news. Usually this is just a resend&n;&t; * &t;from the far end, but sometimes it means the far end lost&n;&t; *&t;an ACK we sent, so we better send an ACK.&n;&t; */
 id|tcp_send_ack
 c_func
 (paren
@@ -2348,7 +2362,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Recompute rto from rtt.  this eliminates any backoff.&n;&t;&t;&t; */
-multiline_comment|/*&n;&t;&t;&t; * Appendix C of Van Jacobson&squot;s final version of&n;&t;&t;&t; * the SIGCOMM 88 paper states that although&n;&t;&t;&t; * the original paper suggested that&n;&t;&t;&t; *  RTO = R*2V&n;&t;&t;&t; * was the correct calculation experience showed&n;&t;&t;&t; * better results using&n;&t;&t;&t; *  RTO = R*4V&n;&t;&t;&t; * In particular this gives better performance over&n;&t;&t;&t; * slow links, and should not effect fast links.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Appendix C of Van Jacobson&squot;s final version of&n;&t;&t;&t; * the SIGCOMM 88 paper states that although&n;&t;&t;&t; * the original paper suggested that&n;&t;&t;&t; *  RTO = R*2V&n;&t;&t;&t; * was the correct calculation experience showed&n;&t;&t;&t; * better results using&n;&t;&t;&t; *  RTO = R*4V&n;&t;&t;&t; * In particular this gives better performance over&n;&t;&t;&t; * slow links, and should not effect fast links.&n;&t;&t;&t; *&n;&t;&t;&t; * Note: Jacobson&squot;s algorithm is fine on BSD which&n;&t;&t;&t; * has a 1/2 second granularity clock, but with our&n;&t;&t;&t; * 1/100 second granularity clock we become too&n;&t; &t;&t; * sensitive to minor changes in the round trip time.&n;&t;&t;&t; * We add in two compensating factors.&n;&t;&t;&t; * First we multiply by 5/4. For large congestion&n;&t;&t;&t; * windows this allows us to tollerate burst traffic&n;&t;&t;&t; * delaying up to 1/4 of our packets.&n;&t;&t;&t; * We also add in a rtt / cong_window term.&n;&t;&t;&t; * For small congestion windows this allows&n;&t;&t;&t; * a single packet delay, but has neglibible effect&n;&t;&t;&t; * on the compensation for large windows.&n;&t; &t;&t; */
 id|sk-&gt;rto
 op_assign
 (paren
@@ -2358,6 +2372,24 @@ l_int|3
 )paren
 op_plus
 id|sk-&gt;mdev
+suffix:semicolon
+id|sk-&gt;rto
+op_add_assign
+(paren
+id|sk-&gt;rto
+op_rshift
+l_int|2
+)paren
+op_plus
+(paren
+id|sk-&gt;rto
+op_rshift
+(paren
+id|sk-&gt;cong_window
+op_minus
+l_int|1
+)paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3274,13 +3306,30 @@ id|sk-&gt;rto
 )paren
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+id|sk-&gt;ip_xmit_timeout
+op_ne
+id|TIME_PROBE0
+op_logical_or
+id|skb_queue_empty
+c_func
+(paren
+op_amp
+id|sk-&gt;write_queue
+)paren
+)paren
+(brace
+multiline_comment|/* BUG check case.&n;&t;&t;&t;&t;&t; * We have a problem here if there&n;&t;&t;&t;&t;&t; * is no timer running [leads to&n;&t;&t;&t;&t;&t; * frozen socket] or no data in the&n;&t;&t;&t;&t;&t; * write queue [means we sent a fin&n;&t;&t;&t;&t;&t; * and lost it from the queue before&n;&t;&t;&t;&t;&t; * changing the ack properly].&n;&t;&t;&t;&t;&t; */
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;send_head NULL in FIN_WAIT1&bslash;n&quot;
+l_string|&quot;Lost timer or fin packet in tcp_fin.&quot;
 )paren
 suffix:semicolon
+)brace
 )brace
 id|tcp_set_state
 c_func
@@ -5055,21 +5104,24 @@ c_cond
 id|th-&gt;ack
 )paren
 (brace
-multiline_comment|/* We got an ack, but it&squot;s not a good ack */
+multiline_comment|/* We got an ack, but it&squot;s not a good ack.&n;&t;&t;&t;&t; * We used to test this with a call to tcp_ack,&n;&t;&t;&t;&t; * but this looses, because it takes the SYN&n;&t;&t;&t;&t; * packet out of the send queue, even if&n;&t;&t;&t;&t; * the ACK doesn&squot;t have the SYN bit sent, and&n;&t;&t;&t;&t; * therefore isn&squot;t the one we are waiting for.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
-op_logical_neg
-id|tcp_ack
+id|after
 c_func
 (paren
-id|sk
-comma
-id|th
-comma
 id|skb-&gt;ack_seq
 comma
-id|len
+id|sk-&gt;sent_seq
+)paren
+op_logical_or
+id|before
+c_func
+(paren
+id|skb-&gt;ack_seq
+comma
+id|sk-&gt;rcv_ack_seq
 )paren
 )paren
 (brace
@@ -5168,6 +5220,19 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* process the ACK, get the SYN packet out&n;&t;&t;&t;&t; * of the send queue, do other initial&n;&t;&t;&t;&t; * processing stuff. [We know its good, and&n;&t;&t;&t;&t; * we know it&squot;s the SYN,ACK we want.]&n;&t;&t;&t;&t; */
+id|tcp_ack
+c_func
+(paren
+id|sk
+comma
+id|th
+comma
+id|skb-&gt;ack_seq
+comma
+id|len
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; *&t;Ok.. it&squot;s good. Set up sequence numbers and&n;&t;&t;&t;&t; *&t;move to established.&n;&t;&t;&t;&t; */
 id|syn_ok
 op_assign

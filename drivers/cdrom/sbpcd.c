@@ -26329,9 +26329,12 @@ id|CURRENT-&gt;rq_status
 op_eq
 id|RQ_INACTIVE
 )paren
-r_goto
-id|err_done
+(brace
+id|CLEAR_INTR
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

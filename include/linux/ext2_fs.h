@@ -718,11 +718,16 @@ id|__u32
 id|s_feature_incompat
 suffix:semicolon
 multiline_comment|/* incompatible feature set */
+DECL|member|s_feature_ro_compat
+id|__u32
+id|s_feature_ro_compat
+suffix:semicolon
+multiline_comment|/* readonly-compatible feature set */
 DECL|member|s_reserved
 id|__u32
 id|s_reserved
 (braket
-l_int|231
+l_int|230
 )braket
 suffix:semicolon
 multiline_comment|/* Padding to the end of the block */
@@ -799,6 +804,8 @@ DECL|macro|EXT2_FEATURE_COMPAT_SUPP
 mdefine_line|#define EXT2_FEATURE_COMPAT_SUPP&t;0
 DECL|macro|EXT2_FEATURE_INCOMPAT_SUPP
 mdefine_line|#define EXT2_FEATURE_INCOMPAT_SUPP&t;0
+DECL|macro|EXT2_FEATURE_RO_COMPAT_SUPP
+mdefine_line|#define EXT2_FEATURE_RO_COMPAT_SUPP&t;0
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Function prototypes&n; */
 multiline_comment|/*&n; * Ok, these declarations are also in &lt;linux/kernel.h&gt; but none of the&n; * ext2 source programs needs to include it so they are duplicated here.&n; */

@@ -1071,13 +1071,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|count
-OL
-l_int|5
 )paren
 (brace
 id|count
-op_increment
+op_assign
+l_int|1
 suffix:semicolon
 id|printk
 c_func

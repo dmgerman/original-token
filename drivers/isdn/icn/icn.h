@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: icn.h,v 1.17 1996/05/18 00:47:04 fritz Exp $&n; *&n; * ISDN lowlevel-module for the ICN active ISDN-Card.&n; *&n; * Copyright 1994 by Fritz Elfert (fritz@wuemaus.franken.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: icn.h,v $&n; * Revision 1.17  1996/05/18 00:47:04  fritz&n; * Removed callback debug code.&n; *&n; * Revision 1.16  1996/05/17 15:46:43  fritz&n; * Removed own queue management.&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.15  1996/05/02 04:01:57  fritz&n; * Removed ICN_MAXCARDS&n; *&n; * Revision 1.14  1996/05/02 00:40:29  fritz&n; * Major rewrite to support more than one card&n; * with a single module.&n; * Support for new firmware.&n; *&n; * Revision 1.13  1996/04/20 16:51:41  fritz&n; * Increased status buffer.&n; * Misc. typos&n; *&n; * Revision 1.12  1996/01/22 05:01:22  fritz&n; * Revert to GPL.&n; *&n; * Revision 1.11  1995/12/18  18:25:00  fritz&n; * Support for ICN-2B Cards.&n; * Change for supporting user-settable service-octet.&n; *&n; * Revision 1.10  1995/10/29  21:43:10  fritz&n; * Added support for leased lines.&n; *&n; * Revision 1.9  1995/04/23  13:42:10  fritz&n; * Added some constants for distinguishing 1TR6 and DSS1&n; *&n; * Revision 1.8  1995/03/25  23:18:55  fritz&n; * Changed ICN_PORTLEN to reflect correct number of ports.&n; *&n; * Revision 1.7  1995/03/15  12:52:06  fritz&n; * Some cleanup&n; *&n; * Revision 1.6  1995/02/20  03:49:22  fritz&n; * Fixed ICN_MAX_SQUEUE to correctly reflect outstanding bytes, not number&n; * of buffers.&n; *&n; * Revision 1.5  1995/01/29  23:36:50  fritz&n; * Minor cleanup.&n; *&n; * Revision 1.4  1995/01/09  07:41:20  fritz&n; * Added GPL-Notice&n; *&n; * Revision 1.3  1995/01/04  05:14:20  fritz&n; * removed include of linux/asm/string.h for compiling with Linux 1.1.76&n; *&n; * Revision 1.2  1995/01/02  02:15:57  fritz&n; * Misc. Bugfixes&n; *&n; * Revision 1.1  1994/12/14  18:02:38  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: icn.h,v 1.19 1996/06/06 13:58:35 fritz Exp $&n; *&n; * ISDN lowlevel-module for the ICN active ISDN-Card.&n; *&n; * Copyright 1994 by Fritz Elfert (fritz@wuemaus.franken.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: icn.h,v $&n; * Revision 1.19  1996/06/06 13:58:35  fritz&n; * Changed code to be architecture independent&n; *&n; * Revision 1.18  1996/06/03 19:59:30  fritz&n; * Removed include of config.h&n; *&n; * Revision 1.17  1996/05/18 00:47:04  fritz&n; * Removed callback debug code.&n; *&n; * Revision 1.16  1996/05/17 15:46:43  fritz&n; * Removed own queue management.&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.15  1996/05/02 04:01:57  fritz&n; * Removed ICN_MAXCARDS&n; *&n; * Revision 1.14  1996/05/02 00:40:29  fritz&n; * Major rewrite to support more than one card&n; * with a single module.&n; * Support for new firmware.&n; *&n; * Revision 1.13  1996/04/20 16:51:41  fritz&n; * Increased status buffer.&n; * Misc. typos&n; *&n; * Revision 1.12  1996/01/22 05:01:22  fritz&n; * Revert to GPL.&n; *&n; * Revision 1.11  1995/12/18  18:25:00  fritz&n; * Support for ICN-2B Cards.&n; * Change for supporting user-settable service-octet.&n; *&n; * Revision 1.10  1995/10/29  21:43:10  fritz&n; * Added support for leased lines.&n; *&n; * Revision 1.9  1995/04/23  13:42:10  fritz&n; * Added some constants for distinguishing 1TR6 and DSS1&n; *&n; * Revision 1.8  1995/03/25  23:18:55  fritz&n; * Changed ICN_PORTLEN to reflect correct number of ports.&n; *&n; * Revision 1.7  1995/03/15  12:52:06  fritz&n; * Some cleanup&n; *&n; * Revision 1.6  1995/02/20  03:49:22  fritz&n; * Fixed ICN_MAX_SQUEUE to correctly reflect outstanding bytes, not number&n; * of buffers.&n; *&n; * Revision 1.5  1995/01/29  23:36:50  fritz&n; * Minor cleanup.&n; *&n; * Revision 1.4  1995/01/09  07:41:20  fritz&n; * Added GPL-Notice&n; *&n; * Revision 1.3  1995/01/04  05:14:20  fritz&n; * removed include of linux/asm/string.h for compiling with Linux 1.1.76&n; *&n; * Revision 1.2  1995/01/02  02:15:57  fritz&n; * Misc. Bugfixes&n; *&n; * Revision 1.1  1994/12/14  18:02:38  fritz&n; * Initial revision&n; *&n; */
 macro_line|#ifndef icn_h
 DECL|macro|icn_h
 mdefine_line|#define icn_h
@@ -607,34 +607,34 @@ DECL|macro|ICN_BANK
 mdefine_line|#define ICN_BANK   (card-&gt;port+3)
 multiline_comment|/* Return true, if there is a free transmit-buffer */
 DECL|macro|sbfree
-mdefine_line|#define sbfree (((dev.shmem-&gt;data_control.scns+1) &amp; 0xf) != &bslash;&n;                dev.shmem-&gt;data_control.scnr)
+mdefine_line|#define sbfree (((readb(&amp;dev.shmem-&gt;data_control.scns)+1) &amp; 0xf) != &bslash;&n;                readb(&amp;dev.shmem-&gt;data_control.scnr))
 multiline_comment|/* Switch to next transmit-buffer */
 DECL|macro|sbnext
-mdefine_line|#define sbnext (dev.shmem-&gt;data_control.scns = &bslash;&n;               ((dev.shmem-&gt;data_control.scns+1) &amp; 0xf))
+mdefine_line|#define sbnext (writeb((readb(&amp;dev.shmem-&gt;data_control.scns)+1) &amp; 0xf, &bslash;&n;                       &amp;dev.shmem-&gt;data_control.scns))
 multiline_comment|/* Shortcuts for transmit-buffer-access */
 DECL|macro|sbuf_n
 mdefine_line|#define sbuf_n dev.shmem-&gt;data_control.scns
 DECL|macro|sbuf_d
-mdefine_line|#define sbuf_d dev.shmem-&gt;data_buffers.send_buf[sbuf_n].data
+mdefine_line|#define sbuf_d dev.shmem-&gt;data_buffers.send_buf[readb(&amp;sbuf_n)].data
 DECL|macro|sbuf_l
-mdefine_line|#define sbuf_l dev.shmem-&gt;data_buffers.send_buf[sbuf_n].length
+mdefine_line|#define sbuf_l dev.shmem-&gt;data_buffers.send_buf[readb(&amp;sbuf_n)].length
 DECL|macro|sbuf_f
-mdefine_line|#define sbuf_f dev.shmem-&gt;data_buffers.send_buf[sbuf_n].endflag
+mdefine_line|#define sbuf_f dev.shmem-&gt;data_buffers.send_buf[readb(&amp;sbuf_n)].endflag
 multiline_comment|/* Return true, if there is receive-data is available */
 DECL|macro|rbavl
-mdefine_line|#define rbavl  (dev.shmem-&gt;data_control.ecnr != &bslash;&n;                dev.shmem-&gt;data_control.ecns)
+mdefine_line|#define rbavl  (readb(&amp;dev.shmem-&gt;data_control.ecnr) != &bslash;&n;                readb(&amp;dev.shmem-&gt;data_control.ecns))
 multiline_comment|/* Switch to next receive-buffer */
 DECL|macro|rbnext
-mdefine_line|#define rbnext (dev.shmem-&gt;data_control.ecnr = &bslash;&n;               ((dev.shmem-&gt;data_control.ecnr+1) &amp; 0xf))
+mdefine_line|#define rbnext (writeb((readb(&amp;dev.shmem-&gt;data_control.ecnr)+1) &amp; 0xf, &bslash;&n;                       &amp;dev.shmem-&gt;data_control.ecnr))
 multiline_comment|/* Shortcuts for receive-buffer-access */
 DECL|macro|rbuf_n
 mdefine_line|#define rbuf_n dev.shmem-&gt;data_control.ecnr
 DECL|macro|rbuf_d
-mdefine_line|#define rbuf_d dev.shmem-&gt;data_buffers.receive_buf[rbuf_n].data
+mdefine_line|#define rbuf_d dev.shmem-&gt;data_buffers.receive_buf[readb(&amp;rbuf_n)].data
 DECL|macro|rbuf_l
-mdefine_line|#define rbuf_l dev.shmem-&gt;data_buffers.receive_buf[rbuf_n].length
+mdefine_line|#define rbuf_l dev.shmem-&gt;data_buffers.receive_buf[readb(&amp;rbuf_n)].length
 DECL|macro|rbuf_f
-mdefine_line|#define rbuf_f dev.shmem-&gt;data_buffers.receive_buf[rbuf_n].endflag
+mdefine_line|#define rbuf_f dev.shmem-&gt;data_buffers.receive_buf[readb(&amp;rbuf_n)].endflag
 multiline_comment|/* Shortcuts for command-buffer-access */
 DECL|macro|cmd_o
 mdefine_line|#define cmd_o (dev.shmem-&gt;comm_control.pcio_o)
@@ -642,7 +642,7 @@ DECL|macro|cmd_i
 mdefine_line|#define cmd_i (dev.shmem-&gt;comm_control.pcio_i)
 multiline_comment|/* Return free space in command-buffer */
 DECL|macro|cmd_free
-mdefine_line|#define cmd_free ((cmd_i&gt;=cmd_o)?0x100-cmd_i+cmd_o:cmd_o-cmd_i)
+mdefine_line|#define cmd_free ((readb(&amp;cmd_i)&gt;=readb(&amp;cmd_o))? &bslash;&n;                  0x100-readb(&amp;cmd_i)+readb(&amp;cmd_o): &bslash;&n;                  readb(&amp;cmd_o)-readb(&amp;cmd_i))
 multiline_comment|/* Shortcuts for message-buffer-access */
 DECL|macro|msg_o
 mdefine_line|#define msg_o (dev.shmem-&gt;comm_control.iopc_o)
@@ -650,7 +650,7 @@ DECL|macro|msg_i
 mdefine_line|#define msg_i (dev.shmem-&gt;comm_control.iopc_i)
 multiline_comment|/* Return length of Message, if avail. */
 DECL|macro|msg_avail
-mdefine_line|#define msg_avail ((msg_o&gt;msg_i)?0x100-msg_o+msg_i:msg_i-msg_o)
+mdefine_line|#define msg_avail ((readb(&amp;msg_o)&gt;readb(&amp;msg_i))? &bslash;&n;                   0x100-readb(&amp;msg_o)+readb(&amp;msg_i): &bslash;&n;                   readb(&amp;msg_i)-readb(&amp;msg_o))
 DECL|macro|CID
 mdefine_line|#define CID (card-&gt;interface.id)
 DECL|macro|MIN

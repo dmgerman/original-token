@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_common.c,v 1.15 1996/05/31 01:10:54 fritz Exp $&n; *&n; * Linux ISDN subsystem, common used functions (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_common.c,v $&n; * Revision 1.15  1996/05/31 01:10:54  fritz&n; * Bugfixes:&n; *   Lowlevel modules did not get locked correctly.&n; *   Did show wrong revision when initializing.&n; *   Minor fixes in ioctl code.&n; *   sk_buff did not get freed, if error in writebuf_stub.&n; *&n; * Revision 1.14  1996/05/18 01:36:55  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.13  1996/05/17 15:43:30  fritz&n; * Bugfix: decrement of rcvcount in readbchan() corrected.&n; *&n; * Revision 1.12  1996/05/17 03:55:43  fritz&n; * Changed DLE handling for audio receive.&n; * Some cleanup.&n; * Added display of isdn_audio_revision.&n; *&n; * Revision 1.11  1996/05/11 21:51:32  fritz&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.10  1996/05/10 08:49:16  fritz&n; * Checkin before major changes of tty-code.&n; *&n; * Revision 1.9  1996/05/07 09:19:41  fritz&n; * Adapted to changes in isdn_tty.c&n; *&n; * Revision 1.8  1996/05/06 11:34:51  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.7  1996/05/02 03:55:17  fritz&n; * Bugfixes:&n; *  - B-channel connect message for modem devices&n; *    sometimes did not result in a CONNECT-message.&n; *  - register_isdn did not check for driverId-conflicts.&n; *&n; * Revision 1.6  1996/04/30 20:57:21  fritz&n; * Commit test&n; *&n; * Revision 1.5  1996/04/20 16:19:07  fritz&n; * Changed slow timer handlers to increase accuracy.&n; * Added statistic information for usage by xisdnload.&n; * Fixed behaviour of isdnctrl-device on non-blocked io.&n; * Fixed all io to go through generic writebuf-function without&n; * bypassing. Same for incoming data.&n; * Fixed bug: Last channel had been unusable.&n; * Fixed kfree of tty xmit_buf on ppp initialization failure.&n; *&n; * Revision 1.4  1996/02/11 02:33:26  fritz&n; * Fixed bug in main timer-dispatcher.&n; * Bugfix: Lot of tty-callbacks got called regardless of the events already&n; * been handled by network-devices.&n; * Changed ioctl-names.&n; *&n; * Revision 1.3  1996/01/22 05:16:11  fritz&n; * Changed ioctl-names.&n; * Fixed bugs in isdn_open and isdn_close regarding PPP_MINOR.&n; *&n; * Revision 1.2  1996/01/21 16:52:40  fritz&n; * Support for sk_buffs added, changed header-stuffing.&n; *&n; * Revision 1.1  1996/01/09 04:12:52  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn_common.c,v 1.18 1996/06/06 14:51:51 fritz Exp $&n; *&n; * Linux ISDN subsystem, common used functions (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_common.c,v $&n; * Revision 1.18  1996/06/06 14:51:51  fritz&n; * Changed to support DTMF decoding on audio playback also.&n; *&n; * Revision 1.17  1996/06/05 02:24:10  fritz&n; * Added DTMF decoder for audio mode.&n; *&n; * Revision 1.16  1996/06/03 20:09:05  fritz&n; * Bugfix: called wrong function pointer for locking in&n; *         isdn_get_free_channel().&n; *&n; * Revision 1.15  1996/05/31 01:10:54  fritz&n; * Bugfixes:&n; *   Lowlevel modules did not get locked correctly.&n; *   Did show wrong revision when initializing.&n; *   Minor fixes in ioctl code.&n; *   sk_buff did not get freed, if error in writebuf_stub.&n; *&n; * Revision 1.14  1996/05/18 01:36:55  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.13  1996/05/17 15:43:30  fritz&n; * Bugfix: decrement of rcvcount in readbchan() corrected.&n; *&n; * Revision 1.12  1996/05/17 03:55:43  fritz&n; * Changed DLE handling for audio receive.&n; * Some cleanup.&n; * Added display of isdn_audio_revision.&n; *&n; * Revision 1.11  1996/05/11 21:51:32  fritz&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.10  1996/05/10 08:49:16  fritz&n; * Checkin before major changes of tty-code.&n; *&n; * Revision 1.9  1996/05/07 09:19:41  fritz&n; * Adapted to changes in isdn_tty.c&n; *&n; * Revision 1.8  1996/05/06 11:34:51  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.7  1996/05/02 03:55:17  fritz&n; * Bugfixes:&n; *  - B-channel connect message for modem devices&n; *    sometimes did not result in a CONNECT-message.&n; *  - register_isdn did not check for driverId-conflicts.&n; *&n; * Revision 1.6  1996/04/30 20:57:21  fritz&n; * Commit test&n; *&n; * Revision 1.5  1996/04/20 16:19:07  fritz&n; * Changed slow timer handlers to increase accuracy.&n; * Added statistic information for usage by xisdnload.&n; * Fixed behaviour of isdnctrl-device on non-blocked io.&n; * Fixed all io to go through generic writebuf-function without&n; * bypassing. Same for incoming data.&n; * Fixed bug: Last channel had been unusable.&n; * Fixed kfree of tty xmit_buf on ppp initialization failure.&n; *&n; * Revision 1.4  1996/02/11 02:33:26  fritz&n; * Fixed bug in main timer-dispatcher.&n; * Bugfix: Lot of tty-callbacks got called regardless of the events already&n; * been handled by network-devices.&n; * Changed ioctl-names.&n; *&n; * Revision 1.3  1996/01/22 05:16:11  fritz&n; * Changed ioctl-names.&n; * Fixed bugs in isdn_open and isdn_close regarding PPP_MINOR.&n; *&n; * Revision 1.2  1996/01/21 16:52:40  fritz&n; * Support for sk_buffs added, changed header-stuffing.&n; *&n; * Revision 1.1  1996/01/09 04:12:52  fritz&n; * Initial revision&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -40,7 +40,7 @@ r_char
 op_star
 id|isdn_revision
 op_assign
-l_string|&quot;$Revision: 1.15 $&quot;
+l_string|&quot;$Revision: 1.18 $&quot;
 suffix:semicolon
 r_extern
 r_char
@@ -683,6 +683,11 @@ suffix:semicolon
 r_int
 id|midx
 suffix:semicolon
+macro_line|#ifdef CONFIG_ISDN_AUDIO
+r_int
+id|ifmt
+suffix:semicolon
+macro_line|#endif
 id|modem_info
 op_star
 id|info
@@ -781,6 +786,29 @@ id|dev-&gt;mdm.info
 id|midx
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_ISDN_AUDIO
+id|ifmt
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;vonline
+)paren
+id|isdn_audio_calc_dtmf
+c_func
+(paren
+id|info
+comma
+id|skb-&gt;data
+comma
+id|skb-&gt;len
+comma
+id|ifmt
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -877,11 +905,6 @@ op_amp
 l_int|1
 )paren
 (brace
-r_int
-id|ifmt
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/* voice conversion/compression */
 r_switch
 c_cond
@@ -9328,7 +9351,7 @@ r_void
 )paren
 id|dev-&gt;drv
 (braket
-id|i
+id|d
 )braket
 op_member_access_from_pointer
 id|interface
@@ -9407,7 +9430,7 @@ r_void
 )paren
 id|dev-&gt;drv
 (braket
-id|i
+id|d
 )braket
 op_member_access_from_pointer
 id|interface

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_net.c,v 1.11 1996/05/18 01:36:59 fritz Exp $&n; *&n; * Linux ISDN subsystem, network interfaces and related functions (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_net.c,v $&n; * Revision 1.11  1996/05/18 01:36:59  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.10  1996/05/17 03:49:01  fritz&n; * Some cleanup.&n; *&n; * Revision 1.9  1996/05/06 11:34:57  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.8  1996/04/30 21:04:40  fritz&n; * Test commit&n; *&n; * Revision 1.7  1996/04/30 11:10:42  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.6  1996/04/30 09:34:35  fritz&n; * Removed compatibility-macros.&n; *&n; * Revision 1.5  1996/04/20 16:28:38  fritz&n; * Made more parameters of the dial statemachine user-configurable and&n; * added hangup after dial for more reliability using callback.&n; * Changed all io going through generic routines in isdn_common.c&n; * Added missing call to dev_free_skb on failed dialing.&n; * Added uihdlc encapsulation.&n; * Fixed isdn_net_setcfg not to destroy interface-flags anymore.&n; * Misc. typos.&n; *&n; * Revision 1.4  1996/02/19 15:23:38  fritz&n; * Bugfix: Sync-PPP packets got compressed twice, when resent due to&n; *         send-queue-full reject.&n; *&n; * Revision 1.3  1996/02/11 02:22:28  fritz&n; * Changed status- receive-callbacks to use pointer-arrays for finding&n; * a corresponding interface instead of looping over all interfaces.&n; * Activate Auto-hangup-timer only when interface is online.&n; * Some bugfixes in the dialing-statemachine.&n; * Lot of bugfixes in sk_buff&squot;ized encapsulation handling.&n; * For speedup connection-setup after dialing, remember sk_buf that triggered&n; * dialing.&n; * Fixed isdn_net_log_packet according to different encapsulations.&n; * Correct ARP-handling for ETHERNET-encapsulation.&n; *&n; * Revision 1.2  1996/01/22 05:05:12  fritz&n; * Changed returncode-logic for isdn_net_start_xmit() and its&n; * helper-functions.&n; * Changed handling of buildheader for RAWIP and ETHERNET-encapsulation.&n; *&n; * Revision 1.1  1996/01/09 04:12:34  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn_net.c,v 1.13 1996/06/06 14:25:44 fritz Exp $&n; *&n; * Linux ISDN subsystem, network interfaces and related functions (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_net.c,v $&n; * Revision 1.13  1996/06/06 14:25:44  fritz&n; * Changed loglevel of &quot;incoming ... without OAD&quot; message, since&n; * with audio support this is quite normal.&n; *&n; * Revision 1.12  1996/06/05 02:36:45  fritz&n; * Minor bugfixes by M. Hipp.&n; *&n; * Revision 1.11  1996/05/18 01:36:59  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.10  1996/05/17 03:49:01  fritz&n; * Some cleanup.&n; *&n; * Revision 1.9  1996/05/06 11:34:57  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.8  1996/04/30 21:04:40  fritz&n; * Test commit&n; *&n; * Revision 1.7  1996/04/30 11:10:42  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.6  1996/04/30 09:34:35  fritz&n; * Removed compatibility-macros.&n; *&n; * Revision 1.5  1996/04/20 16:28:38  fritz&n; * Made more parameters of the dial statemachine user-configurable and&n; * added hangup after dial for more reliability using callback.&n; * Changed all io going through generic routines in isdn_common.c&n; * Added missing call to dev_free_skb on failed dialing.&n; * Added uihdlc encapsulation.&n; * Fixed isdn_net_setcfg not to destroy interface-flags anymore.&n; * Misc. typos.&n; *&n; * Revision 1.4  1996/02/19 15:23:38  fritz&n; * Bugfix: Sync-PPP packets got compressed twice, when resent due to&n; *         send-queue-full reject.&n; *&n; * Revision 1.3  1996/02/11 02:22:28  fritz&n; * Changed status- receive-callbacks to use pointer-arrays for finding&n; * a corresponding interface instead of looping over all interfaces.&n; * Activate Auto-hangup-timer only when interface is online.&n; * Some bugfixes in the dialing-statemachine.&n; * Lot of bugfixes in sk_buff&squot;ized encapsulation handling.&n; * For speedup connection-setup after dialing, remember sk_buf that triggered&n; * dialing.&n; * Fixed isdn_net_log_packet according to different encapsulations.&n; * Correct ARP-handling for ETHERNET-encapsulation.&n; *&n; * Revision 1.2  1996/01/22 05:05:12  fritz&n; * Changed returncode-logic for isdn_net_start_xmit() and its&n; * helper-functions.&n; * Changed handling of buildheader for RAWIP and ETHERNET-encapsulation.&n; *&n; * Revision 1.1  1996/01/09 04:12:34  fritz&n; * Initial revision&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -104,7 +104,7 @@ r_char
 op_star
 id|isdn_net_revision
 op_assign
-l_string|&quot;$Revision: 1.11 $&quot;
+l_string|&quot;$Revision: 1.13 $&quot;
 suffix:semicolon
 multiline_comment|/*&n;  * Code for raw-networking over ISDN&n;  */
 r_static
@@ -742,6 +742,56 @@ id|lp-&gt;dialstate
 id|lp-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|lp-&gt;p_encap
+op_eq
+id|ISDN_NET_ENCAP_SYNCPPP
+op_logical_and
+id|lp-&gt;first_skb
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|isdn_net_send_skb
+c_func
+(paren
+op_amp
+id|lp-&gt;netdev-&gt;dev
+comma
+id|lp
+comma
+id|lp-&gt;first_skb
+)paren
+)paren
+(brace
+id|dev_kfree_skb
+c_func
+(paren
+id|lp-&gt;first_skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+id|lp-&gt;first_skb
+op_assign
+l_int|NULL
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
+)brace
+r_else
+r_return
+l_int|1
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2826,6 +2876,7 @@ id|ret
 op_eq
 id|skb-&gt;len
 )paren
+(brace
 id|clear_bit
 c_func
 (paren
@@ -2842,10 +2893,11 @@ id|ndev-&gt;tbusy
 )paren
 suffix:semicolon
 r_return
-(paren
-op_logical_neg
-id|ret
-)paren
+l_int|0
+suffix:semicolon
+)brace
+r_return
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Helper function for isdn_net_start_xmit.&n; *  When called, the connection is already established.&n; *  Based on cps-calculation, check if device is overloaded.&n; *  If so, and if a slave exists, trigger dialing for it.&n; *  If any slave is online, deliver packets using a simple round robin&n; *  scheme.&n; *&n; *  Return: 0 on success, !0 on failure.&n; */
@@ -5684,7 +5736,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_WARNING
+id|KERN_INFO
 l_string|&quot;isdn_net: Incoming call without OAD, assuming &squot;0&squot;&bslash;n&quot;
 )paren
 suffix:semicolon

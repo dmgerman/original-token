@@ -314,6 +314,8 @@ DECL|macro|__NR_uname
 mdefine_line|#define __NR_uname&t;&t;&t;339
 DECL|macro|__NR_nanosleep
 mdefine_line|#define __NR_nanosleep&t;&t;&t;340
+DECL|macro|__NR_mremap
+mdefine_line|#define __NR_mremap&t;&t;&t;341
 macro_line|#ifdef __LIBRARY__
 multiline_comment|/*&n; * Duh, the alpha gcc compiler doesn&squot;t allow us to specify regs&n; * yet. I&squot;ll have to see about this later..&n; */
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */

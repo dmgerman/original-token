@@ -2024,6 +2024,6 @@ r_int
 suffix:semicolon
 multiline_comment|/* &n; *&t;Enable debug/info messages &n; */
 DECL|macro|NETDEBUG
-mdefine_line|#define NETDEBUG(x)&t;&t;x
+mdefine_line|#define NETDEBUG(x)&t;do { } while (0)
 macro_line|#endif&t;/* _SOCK_H */
 eof

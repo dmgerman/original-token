@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: l3_1TR6.c,v 1.3 1996/04/30 21:54:42 isdn4dev Exp $&n; *&n; * $Log: l3_1TR6.c,v $&n; * Revision 1.3  1996/04/30 21:54:42  isdn4dev&n; * SPV, callback , remove some debugging code  Karsten Keil&n; *&n; * Revision 1.2  1996/04/20 16:47:23  fritz&n; * Changed statemachine to allow reject of an incoming call.&n; * Report all incoming calls, not just those with Service = 7.&n; * Misc. typos&n; *&n; * Revision 1.1  1996/04/13 10:25:16  fritz&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: l3_1TR6.c,v 1.4 1996/06/06 14:22:28 fritz Exp $&n; *&n; * $Log: l3_1TR6.c,v $&n; * Revision 1.4  1996/06/06 14:22:28  fritz&n; * Changed level of &quot;non-digital call...&quot; message, since&n; * with audio support, this is quite normal.&n; *&n; * Revision 1.3  1996/04/30 21:54:42  isdn4dev&n; * SPV, callback , remove some debugging code  Karsten Keil&n; *&n; * Revision 1.2  1996/04/20 16:47:23  fritz&n; * Changed statemachine to allow reject of an incoming call.&n; * Report all incoming calls, not just those with Service = 7.&n; * Misc. typos&n; *&n; * Revision 1.1  1996/04/13 10:25:16  fritz&n; * Initial revision&n; *&n; *&n; */
 r_static
 r_void
 DECL|function|l3_1TR6_message
@@ -839,7 +839,7 @@ l_int|7
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_DEBUG
 l_string|&quot;non-digital call: %s -&gt; %s&bslash;n&quot;
 comma
 id|st-&gt;pa-&gt;calling

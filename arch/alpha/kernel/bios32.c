@@ -50,8 +50,8 @@ op_star
 id|hwrpb
 suffix:semicolon
 macro_line|#if PCI_MODIFY
-macro_line|#if defined(CONFIG_ALPHA_MIKASA) || defined(CONFIG_ALPHA_ALCOR)
-DECL|variable|io_base
+multiline_comment|/* NOTE: we can&squot;t just blindly use 64K for machines with EISA busses; they&n;   may also have PCI-PCI bridges present, and then we&squot;d configure the bridge&n;   incorrectly */
+macro_line|#if 0
 r_static
 r_int
 r_int
@@ -137,7 +137,7 @@ id|DBG_DEVS
 c_func
 (paren
 (paren
-l_string|&quot;disable_dev: ignoring...&bslash;n&quot;
+l_string|&quot;disable_dev: ignoring PCEB...&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -227,6 +227,32 @@ r_int
 r_int
 id|alignto
 suffix:semicolon
+macro_line|#if defined(CONFIG_ALPHA_MIKASA) || defined(CONFIG_ALPHA_ALCOR)
+multiline_comment|/*&n;&t; * HACK: the PCI-to-EISA bridge does not seem to identify&n;&t; *       itself as a bridge... :-(&n;&t; */
+r_if
+c_cond
+(paren
+id|dev-&gt;vendor
+op_eq
+l_int|0x8086
+op_logical_and
+id|dev-&gt;device
+op_eq
+l_int|0x0482
+)paren
+(brace
+id|DBG_DEVS
+c_func
+(paren
+(paren
+l_string|&quot;layout_dev: ignoring PCEB...&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
 id|bus
 op_assign
 id|dev-&gt;bus
@@ -1016,9 +1042,13 @@ l_int|0xffff0000
 )paren
 op_or
 (paren
+(paren
 id|bio
 op_rshift
 l_int|8
+)paren
+op_amp
+l_int|0x00f0
 )paren
 op_or
 (paren

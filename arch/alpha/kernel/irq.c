@@ -806,6 +806,37 @@ l_int|0x20
 )paren
 suffix:semicolon
 )brace
+macro_line|#if defined(CONFIG_ALPHA_ALCOR)
+multiline_comment|/* on ALCOR, need to dismiss interrupt via GRU */
+op_star
+(paren
+r_int
+op_star
+)paren
+id|GRU_INT_CLEAR
+op_assign
+l_int|0x80000000
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+op_star
+(paren
+r_int
+op_star
+)paren
+id|GRU_INT_CLEAR
+op_assign
+l_int|0x00000000
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_ALPHA_ALCOR */
 )brace
 DECL|function|request_irq
 r_int
