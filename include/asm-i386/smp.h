@@ -541,6 +541,15 @@ suffix:semicolon
 r_extern
 r_volatile
 r_int
+r_int
+id|cpu_callin_map
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
+r_extern
+r_volatile
+r_int
 r_char
 id|active_kernel_processor
 suffix:semicolon

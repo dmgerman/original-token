@@ -1287,6 +1287,11 @@ c_cond
 (paren
 op_logical_neg
 id|mm
+op_logical_or
+id|mm
+op_eq
+op_amp
+id|init_mm
 )paren
 r_return
 l_int|0

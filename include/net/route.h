@@ -532,6 +532,17 @@ id|rt
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|ip_rt_kill
+c_func
+(paren
+r_struct
+id|rtentry
+op_star
+id|rt
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|ip_rt_check_expire
 c_func

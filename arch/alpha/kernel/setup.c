@@ -391,6 +391,40 @@ l_int|1
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
+multiline_comment|/* Hack for Jensen... since we&squot;re restricted to 8 or 16 &n;&t; * chars for boot flags depending on the boot mode,&n;&t; * we need some shorthand.  This should do for &n;&t; * installation.  Later we&squot;ll add other abbreviaitions&n;&t; * as well...&n;&t; */
+r_if
+c_cond
+(paren
+id|strcmp
+c_func
+(paren
+id|COMMAND_LINE
+comma
+l_string|&quot;INSTALL&quot;
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|strcpy
+c_func
+(paren
+id|command_line
+comma
+l_string|&quot;root=/dev/fd0 load_ramdisk=1&quot;
+)paren
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|saved_command_line
+comma
+id|command_line
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|strcpy
 c_func
 (paren
@@ -405,6 +439,15 @@ c_func
 id|saved_command_line
 comma
 id|COMMAND_LINE
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;Command line: %s&bslash;n&quot;
+comma
+id|command_line
 )paren
 suffix:semicolon
 op_star

@@ -55,7 +55,7 @@ macro_line|#undef REALLY_FAST_IO
 macro_line|#endif
 multiline_comment|/*&n; * Definitions for accessing IDE controller registers&n; */
 DECL|macro|HWIF
-mdefine_line|#define HWIF(drive)&t;&t;((ide_hwif_t *)drive-&gt;hwif)
+mdefine_line|#define HWIF(drive)&t;&t;((ide_hwif_t *)((drive)-&gt;hwif))
 DECL|macro|HWGROUP
 mdefine_line|#define HWGROUP(drive)&t;&t;((ide_hwgroup_t *)(HWIF(drive)-&gt;hwgroup))
 DECL|macro|IDE_DATA_OFFSET
@@ -104,12 +104,12 @@ DECL|macro|IDE_ALTSTATUS_REG
 mdefine_line|#define IDE_ALTSTATUS_REG&t;IDE_CONTROL_REG
 macro_line|#ifdef REALLY_FAST_IO
 DECL|macro|OUT_BYTE
-mdefine_line|#define OUT_BYTE(b,p)&t;&t;outb((b),p)
+mdefine_line|#define OUT_BYTE(b,p)&t;&t;outb((b),(p))
 DECL|macro|IN_BYTE
 mdefine_line|#define IN_BYTE(p)&t;&t;(byte)inb(p)
 macro_line|#else
 DECL|macro|OUT_BYTE
-mdefine_line|#define OUT_BYTE(b,p)&t;&t;outb_p((b),p)
+mdefine_line|#define OUT_BYTE(b,p)&t;&t;outb_p((b),(p))
 DECL|macro|IN_BYTE
 mdefine_line|#define IN_BYTE(p)&t;&t;(byte)inb_p(p)
 macro_line|#endif /* REALLY_FAST_IO */
@@ -157,6 +157,13 @@ DECL|macro|WAIT_WORSTCASE
 mdefine_line|#define WAIT_WORSTCASE&t;(30*HZ)&t;/* 30sec  - worst case when spinning up */
 DECL|macro|WAIT_CMD
 mdefine_line|#define WAIT_CMD&t;(10*HZ)&t;/* 10sec  - maximum wait for an IRQ to happen */
+macro_line|#if defined(CONFIG_BLK_DEV_HT6560B) || defined(CONFIG_BLK_DEV_PROMISE)
+DECL|macro|SELECT_DRIVE
+mdefine_line|#define SELECT_DRIVE(hwif,drive)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (hwif-&gt;selectproc)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;hwif-&gt;selectproc(drive);&t;&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;OUT_BYTE((drive)-&gt;select.all, hwif-&gt;io_base+IDE_SELECT_OFFSET); &bslash;&n;}
+macro_line|#else
+DECL|macro|SELECT_DRIVE
+mdefine_line|#define SELECT_DRIVE(hwif,drive)  OUT_BYTE((drive)-&gt;select.all, hwif-&gt;io_base+IDE_SELECT_OFFSET);
+macro_line|#endif&t;/* CONFIG_BLK_DEV_HT6560B || CONFIG_BLK_DEV_PROMISE */
 macro_line|#ifdef CONFIG_BLK_DEV_IDETAPE
 macro_line|#include &quot;ide-tape.h&quot;
 macro_line|#endif /* CONFIG_BLK_DEV_IDETAPE */
@@ -961,7 +968,7 @@ comma
 id|byte
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This is used to provide HT6560B interface support.&n; * It will probably also be used by the DC4030VL driver.&n; */
+multiline_comment|/*&n; * This is used to provide HT6560B &amp; PROMISE interface support.&n; */
 DECL|typedef|ide_selectproc_t
 r_typedef
 r_void
@@ -1003,6 +1010,9 @@ comma
 id|ide_umc8672
 comma
 id|ide_ht6560b
+comma
+DECL|enumerator|ide_promise
+id|ide_promise
 )brace
 DECL|typedef|hwif_chipset_t
 id|hwif_chipset_t
@@ -1058,14 +1068,14 @@ op_star
 id|tuneproc
 suffix:semicolon
 multiline_comment|/* routine to tune PIO mode for drives */
-macro_line|#ifdef CONFIG_BLK_DEV_HT6560B
+macro_line|#if defined(CONFIG_BLK_DEV_HT6560B) || defined(CONFIG_BLK_DEV_PROMISE)
 DECL|member|selectproc
 id|ide_selectproc_t
 op_star
 id|selectproc
 suffix:semicolon
 multiline_comment|/* tweaks hardware to select drive */
-macro_line|#endif /* CONFIG_BLK_DEV_HT6560B */
+macro_line|#endif
 DECL|member|dmaproc
 id|ide_dmaproc_t
 op_star
@@ -1133,7 +1143,7 @@ id|serialized
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* valid only for ide_hwifs[0] */
+multiline_comment|/* serialized operation with mate hwif */
 DECL|member|no_unmask
 r_int
 id|no_unmask
@@ -1141,6 +1151,22 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* disallow setting unmask bits */
+DECL|member|got_irq
+r_int
+id|got_irq
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* 1 = already alloc&squot;d our irq */
+macro_line|#ifdef CONFIG_BLK_DEV_PROMISE
+DECL|member|is_promise2
+r_int
+id|is_promise2
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* 2nd i/f on promose DC4030 */
+macro_line|#endif /* CONFIG_BLK_DEV_PROMISE */
 macro_line|#if (DISK_RECOVERY_TIME &gt; 0)
 DECL|member|last_time
 r_int
@@ -1210,6 +1236,12 @@ op_star
 id|hwif
 suffix:semicolon
 multiline_comment|/* ptr to current hwif in linked-list */
+DECL|member|next_hwif
+id|ide_hwif_t
+op_star
+id|next_hwif
+suffix:semicolon
+multiline_comment|/* next selected hwif (for tape) */
 DECL|member|rq
 r_struct
 id|request
@@ -1480,6 +1512,19 @@ id|stat
 comma
 id|byte
 id|err
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * ide_multwrite() transfers a block of up to mcount sectors of data&n; * to a drive as part of a disk multwrite operation.&n; */
+r_void
+id|ide_multwrite
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_int
+r_int
+id|mcount
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDECD

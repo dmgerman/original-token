@@ -6,9 +6,13 @@ multiline_comment|/*&n; * These have to be done with inline assembly: that way t
 macro_line|#ifdef __SMP__
 DECL|macro|LOCK_PREFIX
 mdefine_line|#define LOCK_PREFIX &quot;lock ; &quot;
+DECL|macro|SMPVOL
+mdefine_line|#define SMPVOL volatile
 macro_line|#else
 DECL|macro|LOCK_PREFIX
 mdefine_line|#define LOCK_PREFIX &quot;&quot;
+DECL|macro|SMPVOL
+mdefine_line|#define SMPVOL
 macro_line|#endif
 multiline_comment|/*&n; * Some hacks to defeat gcc over-optimizations..&n; */
 DECL|struct|__dummy
@@ -39,6 +43,7 @@ c_func
 r_int
 id|nr
 comma
+id|SMPVOL
 r_void
 op_star
 id|addr
@@ -84,6 +89,7 @@ c_func
 r_int
 id|nr
 comma
+id|SMPVOL
 r_void
 op_star
 id|addr
@@ -129,6 +135,7 @@ c_func
 r_int
 id|nr
 comma
+id|SMPVOL
 r_void
 op_star
 id|addr
@@ -176,6 +183,7 @@ r_int
 id|nr
 comma
 r_const
+id|SMPVOL
 r_void
 op_star
 id|addr

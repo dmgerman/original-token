@@ -2245,7 +2245,7 @@ l_int|4
 suffix:semicolon
 id|sk-&gt;ip_ttl
 op_assign
-l_int|64
+id|ip_statistics.IpDefaultTTL
 suffix:semicolon
 r_if
 c_cond

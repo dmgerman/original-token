@@ -100,8 +100,6 @@ DECL|macro|ORIG_X
 mdefine_line|#define ORIG_X&t;&t;&t;(screen_info.orig_x)
 DECL|macro|ORIG_Y
 mdefine_line|#define ORIG_Y&t;&t;&t;(screen_info.orig_y)
-DECL|macro|ORIG_VIDEO_PAGE
-mdefine_line|#define ORIG_VIDEO_PAGE&t;&t;(screen_info.orig_video_page)
 DECL|macro|ORIG_VIDEO_MODE
 mdefine_line|#define ORIG_VIDEO_MODE&t;&t;(screen_info.orig_video_mode)
 DECL|macro|ORIG_VIDEO_COLS

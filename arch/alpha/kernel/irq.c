@@ -1280,10 +1280,6 @@ c_func
 r_int
 id|irq
 comma
-r_void
-op_star
-id|dev_id
-comma
 r_struct
 id|pt_regs
 op_star
@@ -1521,6 +1517,7 @@ id|ack
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PCI
 multiline_comment|/*&n; * Handle ISA interrupt via the PICs.&n; */
 DECL|function|isa_device_interrupt
 r_static
@@ -1970,6 +1967,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_PCI */
 multiline_comment|/*&n; * Jensen is special: the vector is 0x8X0 for EISA interrupt X, and&n; * 0x9X0 for the local motherboard interrupts..&n; *&n; *&t;0x660 - NMI&n; *&n; *&t;0x800 - IRQ0  interval timer (not used, as we use the RTC timer)&n; *&t;0x810 - IRQ1  line printer (duh..)&n; *&t;0x860 - IRQ6  floppy disk&n; *&t;0x8E0 - IRQ14 SCSI controller&n; *&n; *&t;0x900 - COM1&n; *&t;0x920 - COM2&n; *&t;0x980 - keyboard&n; *&t;0x990 - mouse&n; *&n; * PCI-based systems are more sane: they don&squot;t have the local&n; * interrupts at all, and have only normal PCI interrupts from&n; * devices.  Happily it&squot;s easy enough to do a sane mapping from the&n; * Jensen..  Note that this means that we may have to do a hardware&n; * &quot;ack&quot; to a different interrupt than we report to the rest of the&n; * world.&n; */
 DECL|function|srm_device_interrupt
 r_static

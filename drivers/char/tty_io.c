@@ -1832,6 +1832,10 @@ r_if
 c_cond
 (paren
 id|on_exit
+op_logical_and
+id|tty-&gt;driver.type
+op_ne
+id|TTY_DRIVER_TYPE_PTY
 )paren
 id|tty_vhangup
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;PACKET - implements raw packet sockets.&n; *&n; * Version:&t;@(#)packet.c&t;1.0.6&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;verify_area() now used correctly&n; *&t;&t;Alan Cox&t;:&t;new skbuff lists, look ma no backlogs!&n; *&t;&t;Alan Cox&t;:&t;tidied skbuff lists.&n; *&t;&t;Alan Cox&t;:&t;Now uses generic datagram routines I&n; *&t;&t;&t;&t;&t;added. Also fixed the peek/read crash&n; *&t;&t;&t;&t;&t;from all old Linux datagram code.&n; *&t;&t;Alan Cox&t;:&t;Uses the improved datagram code.&n; *&t;&t;Alan Cox&t;:&t;Added NULL&squot;s for socket options.&n; *&t;&t;Alan Cox&t;:&t;Re-commented the code.&n; *&t;&t;Alan Cox&t;:&t;Use new kernel side addressing&n; *&t;&t;Rob Janssen&t;:&t;Correct MTU usage.&n; *&t;&t;Dave Platt&t;:&t;Counter leaks caused by incorrect&n; *&t;&t;&t;&t;&t;interrupt locking and some slightly&n; *&t;&t;&t;&t;&t;dubious gcc output. Can you read&n; *&t;&t;&t;&t;&t;compiler: it said _VOLATILE_&n; *&t;Richard Kooijman&t;:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;New buffers. Use sk-&gt;mac.raw.&n; *&t;&t;Alan Cox&t;:&t;sendmsg/recvmsg support.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;PACKET - implements raw packet sockets.&n; *&n; *&t;&t;Doesn&squot;t belong in IP but its currently too hooked into ip&n; *&t;&t;to seperate.&n; *&n; * Version:&t;@(#)packet.c&t;1.0.6&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;verify_area() now used correctly&n; *&t;&t;Alan Cox&t;:&t;new skbuff lists, look ma no backlogs!&n; *&t;&t;Alan Cox&t;:&t;tidied skbuff lists.&n; *&t;&t;Alan Cox&t;:&t;Now uses generic datagram routines I&n; *&t;&t;&t;&t;&t;added. Also fixed the peek/read crash&n; *&t;&t;&t;&t;&t;from all old Linux datagram code.&n; *&t;&t;Alan Cox&t;:&t;Uses the improved datagram code.&n; *&t;&t;Alan Cox&t;:&t;Added NULL&squot;s for socket options.&n; *&t;&t;Alan Cox&t;:&t;Re-commented the code.&n; *&t;&t;Alan Cox&t;:&t;Use new kernel side addressing&n; *&t;&t;Rob Janssen&t;:&t;Correct MTU usage.&n; *&t;&t;Dave Platt&t;:&t;Counter leaks caused by incorrect&n; *&t;&t;&t;&t;&t;interrupt locking and some slightly&n; *&t;&t;&t;&t;&t;dubious gcc output. Can you read&n; *&t;&t;&t;&t;&t;compiler: it said _VOLATILE_&n; *&t;Richard Kooijman&t;:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;New buffers. Use sk-&gt;mac.raw.&n; *&t;&t;Alan Cox&t;:&t;sendmsg/recvmsg support.&n; *&t;&t;Alan Cox&t;:&t;Protocol setting support&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/if_packet.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -173,16 +174,22 @@ op_star
 id|dev
 suffix:semicolon
 r_struct
-id|sockaddr
+id|sockaddr_pkt
 op_star
 id|saddr
 op_assign
 (paren
 r_struct
-id|sockaddr
+id|sockaddr_pkt
 op_star
 )paren
 id|msg-&gt;msg_name
+suffix:semicolon
+r_int
+r_int
+id|proto
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Check the flags. &n;&t; */
 r_if
@@ -208,13 +215,28 @@ id|msg-&gt;msg_namelen
 OL
 r_sizeof
 (paren
-op_star
-id|saddr
+r_struct
+id|sockaddr
 )paren
 )paren
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|msg-&gt;msg_namelen
+op_eq
+r_sizeof
+(paren
+r_struct
+id|sockaddr_pkt
+)paren
+)paren
+id|proto
+op_assign
+id|saddr-&gt;spkt_protocol
 suffix:semicolon
 )brace
 r_else
@@ -224,7 +246,7 @@ id|ENOTCONN
 suffix:semicolon
 multiline_comment|/* SOCK_PACKET must be sent giving an address */
 multiline_comment|/*&n;&t; *&t;Find the device first to size check it &n;&t; */
-id|saddr-&gt;sa_data
+id|saddr-&gt;spkt_device
 (braket
 l_int|13
 )braket
@@ -236,7 +258,7 @@ op_assign
 id|dev_get
 c_func
 (paren
-id|saddr-&gt;sa_data
+id|saddr-&gt;spkt_device
 )paren
 suffix:semicolon
 r_if
@@ -326,6 +348,10 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* No ARP needs doing on this (complete) frame */
+id|skb-&gt;protocol
+op_assign
+id|proto
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now send it&n;&t; */
 r_if
 c_cond
@@ -900,13 +926,13 @@ op_star
 id|skb
 suffix:semicolon
 r_struct
-id|sockaddr
+id|sockaddr_pkt
 op_star
 id|saddr
 op_assign
 (paren
 r_struct
-id|sockaddr
+id|sockaddr_pkt
 op_star
 )paren
 id|msg-&gt;msg_name
@@ -1015,19 +1041,23 @@ c_cond
 id|saddr
 )paren
 (brace
-id|saddr-&gt;sa_family
+id|saddr-&gt;spkt_family
 op_assign
 id|skb-&gt;dev-&gt;type
 suffix:semicolon
 id|strncpy
 c_func
 (paren
-id|saddr-&gt;sa_data
+id|saddr-&gt;spkt_device
 comma
 id|skb-&gt;dev-&gt;name
 comma
 l_int|15
 )paren
+suffix:semicolon
+id|saddr-&gt;spkt_protocol
+op_assign
+id|skb-&gt;protocol
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Free or return the buffer as appropriate. Again this hides all the&n;&t; *&t;races and re-entrancy issues from us.&n;&t; */

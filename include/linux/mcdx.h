@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Definitions for the Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 1.7&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harris (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software Gmbh, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  Andreas Kies (testing the mysterious hang up&squot;s)&n; *  ... somebody forgotten?&n; *  &n; */
+multiline_comment|/*&n; * Definitions for the Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 1.8&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harris (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software Gmbh, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  Andreas Kies (testing the mysterious hang up&squot;s)&n; *  ... somebody forgotten?&n; *  &n; */
 multiline_comment|/*&n; *&t;The following lines are for user configuration&n; *&t;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&n; *&n; *&t;{0|1} -- 1 if you want the driver detect your drive, may crash and&n; *&t;needs a long time to seek.  The higher the address the longer the&n; *&t;seek.&n; *&n; *  WARNING: AUTOPROBE doesn&squot;t work.&n; */
 DECL|macro|MCDX_AUTOPROBE
 mdefine_line|#define MCDX_AUTOPROBE 0
@@ -27,14 +27,20 @@ mdefine_line|#define MCDX &quot;mcdx&quot;&t;
 macro_line|#if MCDX_QUIET == 1
 DECL|macro|INFO
 mdefine_line|#define INFO(x)  
-DECL|macro|WARN
-mdefine_line|#define WARN(x) warn x
+DECL|macro|xinfo
+mdefine_line|#define xinfo(fmt, args...)
 macro_line|#else
 DECL|macro|INFO
 mdefine_line|#define INFO(x) warn x
+DECL|macro|xinfo
+mdefine_line|#define xinfo(fmt, args...) _warn(fmt, ## args)
+macro_line|#endif
 DECL|macro|WARN
 mdefine_line|#define WARN(x) warn x
-macro_line|#endif
+DECL|macro|xwarn
+mdefine_line|#define xwarn(fmt, args...) _warn(fmt, ## args)
+DECL|macro|_warn
+mdefine_line|#define _warn warn
 macro_line|#if MCDX_DEBUG == 1
 DECL|macro|TRACE
 mdefine_line|#define TRACE(x) trace x

@@ -708,6 +708,6 @@ id|idetape_tape_t
 suffix:semicolon
 multiline_comment|/*&n; *&t;The following is used to have a quick look at the tape&squot;s status&n; *&t;register between requests of the other device.&n; */
 DECL|macro|POLL_HWIF_TAPE_DRIVE
-mdefine_line|#define POLL_HWIF_TAPE_DRIVE&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (hwif-&gt;tape_drive != NULL) {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (hwif-&gt;tape_drive-&gt;tape.request_status) {&t;&t;&t;&bslash;&n;&t;&t;&t;OUT_BYTE(hwif-&gt;tape_drive-&gt;select.all,IDE_SELECT_REG);&t;&bslash;&n;&t;&t;&t;hwif-&gt;tape_drive-&gt;tape.last_status=GET_STAT();&t;&t;&bslash;&n;&t;&t;&t;hwif-&gt;tape_drive-&gt;tape.request_status=0;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}
+mdefine_line|#define POLL_HWIF_TAPE_DRIVE&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (hwif-&gt;tape_drive != NULL) {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (hwif-&gt;tape_drive-&gt;tape.request_status) {&t;&t;&t;&bslash;&n;&t;&t;&t;SELECT_DRIVE(hwif,hwif-&gt;tape_drive);&t;&t;&t;&bslash;&n;&t;&t;&t;hwif-&gt;tape_drive-&gt;tape.last_status=GET_STAT();&t;&t;&bslash;&n;&t;&t;&t;hwif-&gt;tape_drive-&gt;tape.request_status=0;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}
 macro_line|#endif /* IDETAPE_H */
 eof

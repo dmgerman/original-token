@@ -614,9 +614,10 @@ l_int|NULL
 comma
 l_int|NULL
 )brace
-suffix:colon
+suffix:semicolon
 macro_line|#else
 multiline_comment|/*&n; * Note that on a 486, we don&squot;t want to do a SIGFPE on a irq13&n; * as the irq is unreliable, and exception 16 works correctly&n; * (ie as explained in the intel literature). On a 386, you&n; * can&squot;t use exception 16 due to bad IBM design, so we have to&n; * rely on the less exact irq13.&n; *&n; * Careful.. Not only is IRQ13 unreliable, but it is also&n; * leads to races. IBM designers who came up with it should&n; * be shot.&n; */
+DECL|function|math_error_irq
 r_static
 r_void
 id|math_error_irq
@@ -659,6 +660,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|variable|irq13
 r_static
 r_struct
 id|irqaction

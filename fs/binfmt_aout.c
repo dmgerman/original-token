@@ -818,9 +818,6 @@ r_struct
 id|linux_binprm
 op_star
 id|bprm
-comma
-r_int
-id|ibcs
 )paren
 (brace
 r_int
@@ -977,13 +974,6 @@ op_assign
 id|sp
 suffix:semicolon
 macro_line|#ifdef __i386__
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ibcs
-)paren
-(brace
 id|put_user
 c_func
 (paren
@@ -1002,7 +992,6 @@ op_decrement
 id|sp
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|put_user
 c_func
@@ -1898,10 +1887,6 @@ op_star
 id|p
 comma
 id|bprm
-comma
-id|current-&gt;personality
-op_ne
-id|PER_LINUX
 )paren
 suffix:semicolon
 id|current-&gt;mm-&gt;start_stack

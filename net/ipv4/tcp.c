@@ -2289,6 +2289,29 @@ id|copy
 op_assign
 id|seglen
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|copy
+op_le
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;TCP: **bug**: copy=%d, sk-&gt;mss=%d&bslash;n&quot;
+comma
+id|copy
+comma
+id|sk-&gt;mss
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t; *&t;We should really check the window here also. &n;&t;&t; */
 id|send_tmp
 op_assign

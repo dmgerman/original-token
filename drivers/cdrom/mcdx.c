@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 1.7&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  Andreas Kies (testing the mysterious hang up&squot;s)&n; *  ... somebody forgotten?&n; *  &n; */
+multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 1.8&n; *&n; ****************** H E L P *********************************&n; * If you ever plan to update your CD ROM drive and perhaps&n; * want to sell or simply give away your Mitsumi FX-001[DS] &n; * -- Please, Please --&n; * mail me (heiko@lotte.sax.de).  When my last drive goes &n; * ballistic no more driver support will be available from me !!!&n; *************************************************************&n; *&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  Andreas Kies (testing the mysterious hang up&squot;s)&n; *  ... somebody forgotten?&n; *  &n; */
 macro_line|#if RCS
 DECL|variable|mcdx_c_version
 r_static
@@ -7,7 +7,7 @@ r_char
 op_star
 id|mcdx_c_version
 op_assign
-l_string|&quot;mcdx.c,v 1.31 1996/03/02 00:21:18 heiko Exp&quot;
+l_string|&quot;$Id: mcdx.c,v 1.39 1996/03/15 00:00:59 heiko Exp $&quot;
 suffix:semicolon
 macro_line|#endif
 macro_line|#include &lt;linux/version.h&gt;
@@ -2947,12 +2947,11 @@ id|CURRENT-&gt;nr_sectors
 )paren
 )paren
 (brace
-id|INFO
+multiline_comment|/*INFO((&quot;do_request() read error&bslash;n&quot;));*/
+id|xwarn
 c_func
 (paren
-(paren
-l_string|&quot;do_request() read error&bslash;n&quot;
-)paren
+l_string|&quot;do_requst() read error&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -2972,13 +2971,18 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|invalidate_buffers
+c_func
+(paren
+id|CURRENT-&gt;rq_dev
+)paren
+suffix:semicolon
 id|end_request
 c_func
 (paren
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* return; */
 r_goto
 id|again
 suffix:semicolon
@@ -3907,26 +3911,8 @@ id|stuffp-&gt;yyy
 op_eq
 l_int|0
 )paren
-(brace
-id|INFO
-c_func
-(paren
-(paren
-l_string|&quot; ... not changed&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-)brace
-id|INFO
-c_func
-(paren
-(paren
-l_string|&quot; ... changed&bslash;n&quot;
-)paren
-)paren
 suffix:semicolon
 id|stuffp-&gt;yyy
 op_assign
@@ -4022,16 +4008,19 @@ id|jiffies
 op_plus
 id|jifs
 suffix:semicolon
-multiline_comment|/* TRACE((INIT, &quot;mcdx_delay %d&bslash;n&quot;, jifs)); */
 r_if
 c_cond
 (paren
 id|jifs
-op_le
+OL
 l_int|0
 )paren
-r_return
+id|printk
+(paren
+l_string|&quot;********&bslash;n&quot;
+)paren
 suffix:semicolon
+multiline_comment|/* TRACE((INIT, &quot;mcdx_delay %d&bslash;n&quot;, jifs)); */
 r_if
 c_cond
 (paren
@@ -4140,14 +4129,12 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|WARN
+id|xwarn
 c_func
-(paren
 (paren
 l_string|&quot;mcdx: no device for intr %d&bslash;n&quot;
 comma
 id|irq
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -4205,9 +4192,8 @@ op_amp
 id|MCDX_RBIT_STEN
 )paren
 (brace
-id|INFO
+id|xinfo
 c_func
-(paren
 (paren
 l_string|&quot;intr() irq %d    status 0x%02x&bslash;n&quot;
 comma
@@ -4223,19 +4209,16 @@ r_int
 id|stuffp-&gt;rreg_data
 )paren
 )paren
-)paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|INFO
+id|xinfo
 c_func
-(paren
 (paren
 l_string|&quot;intr() irq %d ambigous hw status&bslash;n&quot;
 comma
 id|irq
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -4695,8 +4678,7 @@ id|stuffp
 comma
 id|timeout
 comma
-op_minus
-l_int|1
+l_int|0
 comma
 id|bp
 )paren
@@ -5236,21 +5218,32 @@ r_void
 r_int
 id|drive
 suffix:semicolon
+macro_line|#ifdef MODULE
 id|WARN
 c_func
 (paren
 (paren
-l_string|&quot;Version 1.7 for %s&bslash;n&quot;
+l_string|&quot;Version 1.8 for %s&bslash;n&quot;
 comma
 id|kernel_version
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
 id|WARN
 c_func
 (paren
 (paren
-l_string|&quot;mcdx.c,v 1.31 1996/03/02 00:21:18 heiko Exp&bslash;n&quot;
+l_string|&quot;Version 1.8&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|WARN
+c_func
+(paren
+(paren
+l_string|&quot;$Id: mcdx.c,v 1.39 1996/03/15 00:00:59 heiko Exp $&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -8278,7 +8271,7 @@ r_sizeof
 id|buf
 )paren
 comma
-l_int|1
+l_int|2
 op_star
 id|HZ
 comma
@@ -8375,7 +8368,7 @@ r_sizeof
 id|buf
 )paren
 comma
-l_int|1
+l_int|2
 op_star
 id|HZ
 comma
@@ -8927,7 +8920,7 @@ r_sizeof
 id|buf
 )paren
 comma
-l_int|1
+l_int|2
 op_star
 id|HZ
 comma

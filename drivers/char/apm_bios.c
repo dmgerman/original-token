@@ -3877,6 +3877,17 @@ comma
 id|error
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+op_eq
+id|APM_DISABLED
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 macro_line|#endif
 id|init_timer
 c_func

@@ -148,58 +148,6 @@ r_int
 id|req_len
 )paren
 suffix:semicolon
-r_static
-r_int
-id|ftape_lseek
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|filep
-comma
-id|off_t
-id|offset
-comma
-r_int
-id|origin
-)paren
-suffix:semicolon
-macro_line|#if 0
-r_static
-r_int
-id|ftape_select
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_static
-r_int
-id|ftape_mmap
-c_func
-(paren
-r_int
-id|dev
-comma
-r_int
-id|off
-comma
-r_int
-id|prot
-)paren
-suffix:semicolon
-macro_line|#else
-DECL|macro|ftape_select
-mdefine_line|#define ftape_select NULL
-DECL|macro|ftape_mmap
-mdefine_line|#define ftape_mmap NULL
-macro_line|#endif
 DECL|variable|ftape_cdev
 r_static
 r_struct
@@ -207,7 +155,7 @@ id|file_operations
 id|ftape_cdev
 op_assign
 (brace
-id|ftape_lseek
+l_int|NULL
 comma
 multiline_comment|/* lseek */
 id|ftape_read
@@ -219,13 +167,13 @@ multiline_comment|/* write */
 l_int|NULL
 comma
 multiline_comment|/* readdir */
-id|ftape_select
+l_int|NULL
 comma
 multiline_comment|/* select */
 id|ftape_ioctl
 comma
 multiline_comment|/* ioctl */
-id|ftape_mmap
+l_int|NULL
 comma
 multiline_comment|/* mmap */
 id|ftape_open
@@ -240,13 +188,15 @@ multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * DMA&squot;able memory allocation stuff.&n; */
+multiline_comment|/* Pure 2^n version of get_order */
+DECL|function|__get_order
 r_static
 r_inline
-DECL|function|__get_order
 r_int
 id|__get_order
 c_func
 (paren
+r_int
 r_int
 id|size
 )paren
@@ -254,37 +204,37 @@ id|size
 r_int
 id|order
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|order
-op_assign
-l_int|0
-suffix:semicolon
-id|order
-OL
-id|NR_MEM_LISTS
-suffix:semicolon
-op_increment
-id|order
-)paren
-r_if
-c_cond
-(paren
 id|size
-op_le
+op_rshift_assign
 (paren
-id|PAGE_SIZE
-op_lshift
-id|order
-)paren
-)paren
-r_return
-id|order
-suffix:semicolon
-r_return
+id|PAGE_SHIFT
 op_minus
 l_int|1
+)paren
+suffix:semicolon
+id|order
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_do
+(brace
+id|size
+op_rshift_assign
+l_int|1
+suffix:semicolon
+id|order
+op_increment
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|size
+)paren
+suffix:semicolon
+r_return
+id|order
 suffix:semicolon
 )brace
 r_static
@@ -365,7 +315,7 @@ c_func
 (paren
 l_int|5
 comma
-l_string|&quot;init_module&quot;
+l_string|&quot;ftape_init&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef MODULE
@@ -373,7 +323,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;ftape-2.07 960304&bslash;n&quot;
+l_string|&quot;ftape-2.08 960314&bslash;n&quot;
 id|KERN_INFO
 l_string|&quot; (c) 1993-1995 Bas Laarhoven (bas@vimec.nl)&bslash;n&quot;
 id|KERN_INFO
@@ -390,12 +340,12 @@ comma
 id|kernel_version
 )paren
 suffix:semicolon
-macro_line|#else&t;&t;&t;&t;/* !MODULE */
+macro_line|#else /* !MODULE */
 multiline_comment|/* print a short no-nonsense boot message */
 id|printk
 c_func
 (paren
-l_string|&quot;ftape-2.07 960304 for Linux 1.3.70&bslash;n&quot;
+l_string|&quot;ftape-2.08 960314 for Linux 1.3.70&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif&t;&t;&t;&t;/* MODULE */
@@ -415,7 +365,7 @@ c_func
 (paren
 id|QIC117_TAPE_MAJOR
 comma
-l_string|&quot;ftape&quot;
+l_string|&quot;ft&quot;
 comma
 op_amp
 id|ftape_cdev
@@ -442,9 +392,9 @@ c_func
 (paren
 l_int|3
 comma
-l_string|&quot;init_module @ 0x%p&quot;
+l_string|&quot;ftape_init @ 0x%p&quot;
 comma
-id|init_module
+id|ftape_init
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Allocate the DMA buffers. They are deallocated at cleanup() time.&n;&t; */
@@ -456,50 +406,6 @@ c_func
 id|BUFF_SIZE
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|order
-OL
-l_int|0
-)paren
-(brace
-id|TRACE
-c_func
-(paren
-l_int|1
-comma
-l_string|&quot;__get_order failed (no memory?)&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|unregister_chrdev
-c_func
-(paren
-id|QIC117_TAPE_MAJOR
-comma
-l_string|&quot;ftape&quot;
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|TRACE
-c_func
-(paren
-l_int|3
-comma
-l_string|&quot;unregister_chrdev failed&quot;
-)paren
-suffix:semicolon
-)brace
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -605,7 +511,7 @@ c_func
 (paren
 id|QIC117_TAPE_MAJOR
 comma
-l_string|&quot;ftape&quot;
+l_string|&quot;ft&quot;
 )paren
 op_ne
 l_int|0
@@ -718,7 +624,7 @@ c_func
 (paren
 id|QIC117_TAPE_MAJOR
 comma
-l_string|&quot;ftape&quot;
+l_string|&quot;ft&quot;
 )paren
 op_ne
 l_int|0
@@ -752,25 +658,6 @@ c_func
 id|BUFF_SIZE
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|order
-OL
-l_int|0
-)paren
-(brace
-id|TRACE
-c_func
-(paren
-l_int|1
-comma
-l_string|&quot;__get_order failed (but why?!)&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
 r_for
 c_loop
 (paren
@@ -836,7 +723,6 @@ comma
 id|n
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 id|TRACE_EXIT
@@ -1529,35 +1415,6 @@ id|TRACE_EXIT
 suffix:semicolon
 r_return
 id|result
-suffix:semicolon
-)brace
-multiline_comment|/*      Seek tape device - not implemented !&n; */
-DECL|function|ftape_lseek
-r_static
-r_int
-id|ftape_lseek
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|filep
-comma
-id|off_t
-id|offset
-comma
-r_int
-id|origin
-)paren
-(brace
-r_return
-op_minus
-id|ESPIPE
 suffix:semicolon
 )brace
 eof

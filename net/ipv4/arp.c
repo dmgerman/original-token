@@ -1,4 +1,4 @@
-multiline_comment|/* linux/net/inet/arp.c&n; *&n; * Copyright (C) 1994 by Florian  La Roche&n; *&n; * This module implements the Address Resolution Protocol ARP (RFC 826),&n; * which is used to convert IP addresses (or in the future maybe other&n; * high-level addresses into a low-level hardware address (like an Ethernet&n; * address).&n; *&n; * FIXME:&n; *&t;Experiment with better retransmit timers&n; *&t;Clean up the timer deletions&n; *&t;If you create a proxy entry set your interface address to the address&n; *&t;and then delete it, proxies may get out of sync with reality - check this&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Removed the ethernet assumptions in Florian&squot;s code&n; *&t;&t;Alan Cox&t;:&t;Fixed some small errors in the ARP logic&n; *&t;&t;Alan Cox&t;:&t;Allow &gt;4K in /proc&n; *&t;&t;Alan Cox&t;:&t;Make ARP add its own protocol entry&n; *&n; *&t;&t;Ross Martin     :       Rewrote arp_rcv() and arp_get_info()&n; *&t;&t;Stephen Henson&t;:&t;Add AX25 support to arp_get_info()&n; *&t;&t;Alan Cox&t;:&t;Drop data when a device is downed.&n; *&t;&t;Alan Cox&t;:&t;Use init_timer().&n; *&t;&t;Alan Cox&t;:&t;Double lock fixes.&n; *&t;&t;Martin Seine&t;:&t;Move the arphdr structure&n; *&t;&t;&t;&t;&t;to if_arp.h for compatibility.&n; *&t;&t;&t;&t;&t;with BSD based programs.&n; *&t;&t;Andrew Tridgell :       Added ARP netmask code and&n; *&t;&t;&t;&t;&t;re-arranged proxy handling.&n; *&t;&t;Alan Cox&t;:&t;Changed to use notifiers.&n; *&t;&t;Niibe Yutaka&t;:&t;Reply for this device or proxies only.&n; *&t;&t;Alan Cox&t;:&t;Don&squot;t proxy across hardware types!&n; *&t;&t;Jonathan Naylor :&t;Added support for NET/ROM.&n; *&t;&t;Mike Shaver     :       RFC1122 checks.&n; *&t;&t;Jonathan Naylor :&t;Only lookup the hardware address for&n; *&t;&t;&t;&t;&t;the correct hardware type.&n; *&t;&t;Germano Caronni&t;:&t;Assorted subtle races.&n; *&t;&t;Craig Schlenter :&t;Don&squot;t modify permanent entry &n; *&t;&t;&t;&t;&t;during arp_rcv.&n; *&t;&t;Russ Nelson&t;:&t;Tidied up a few bits.&n; *&t;&t;Alexey Kuznetsov:&t;Major changes to caching and behaviour,&n; *&t;&t;&t;&t;&t;eg intelligent arp probing and generation&n; *&t;&t;&t;&t;&t;of host down events.&n; *&t;&t;Alan Cox&t;:&t;Missing unlock in device events.&n; *&t;&t;Eckes&t;&t;:&t;ARP ioctl control errors.&n; *&t;&t;Alexey Kuznetsov:&t;Arp free fix.&n; */
+multiline_comment|/* linux/net/inet/arp.c&n; *&n; * Copyright (C) 1994 by Florian  La Roche&n; *&n; * This module implements the Address Resolution Protocol ARP (RFC 826),&n; * which is used to convert IP addresses (or in the future maybe other&n; * high-level addresses into a low-level hardware address (like an Ethernet&n; * address).&n; *&n; * FIXME:&n; *&t;Experiment with better retransmit timers&n; *&t;Clean up the timer deletions&n; *&t;If you create a proxy entry set your interface address to the address&n; *&t;and then delete it, proxies may get out of sync with reality - check this&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Removed the ethernet assumptions in Florian&squot;s code&n; *&t;&t;Alan Cox&t;:&t;Fixed some small errors in the ARP logic&n; *&t;&t;Alan Cox&t;:&t;Allow &gt;4K in /proc&n; *&t;&t;Alan Cox&t;:&t;Make ARP add its own protocol entry&n; *&n; *&t;&t;Ross Martin     :       Rewrote arp_rcv() and arp_get_info()&n; *&t;&t;Stephen Henson&t;:&t;Add AX25 support to arp_get_info()&n; *&t;&t;Alan Cox&t;:&t;Drop data when a device is downed.&n; *&t;&t;Alan Cox&t;:&t;Use init_timer().&n; *&t;&t;Alan Cox&t;:&t;Double lock fixes.&n; *&t;&t;Martin Seine&t;:&t;Move the arphdr structure&n; *&t;&t;&t;&t;&t;to if_arp.h for compatibility.&n; *&t;&t;&t;&t;&t;with BSD based programs.&n; *&t;&t;Andrew Tridgell :       Added ARP netmask code and&n; *&t;&t;&t;&t;&t;re-arranged proxy handling.&n; *&t;&t;Alan Cox&t;:&t;Changed to use notifiers.&n; *&t;&t;Niibe Yutaka&t;:&t;Reply for this device or proxies only.&n; *&t;&t;Alan Cox&t;:&t;Don&squot;t proxy across hardware types!&n; *&t;&t;Jonathan Naylor :&t;Added support for NET/ROM.&n; *&t;&t;Mike Shaver     :       RFC1122 checks.&n; *&t;&t;Jonathan Naylor :&t;Only lookup the hardware address for&n; *&t;&t;&t;&t;&t;the correct hardware type.&n; *&t;&t;Germano Caronni&t;:&t;Assorted subtle races.&n; *&t;&t;Craig Schlenter :&t;Don&squot;t modify permanent entry &n; *&t;&t;&t;&t;&t;during arp_rcv.&n; *&t;&t;Russ Nelson&t;:&t;Tidied up a few bits.&n; *&t;&t;Alexey Kuznetsov:&t;Major changes to caching and behaviour,&n; *&t;&t;&t;&t;&t;eg intelligent arp probing and generation&n; *&t;&t;&t;&t;&t;of host down events.&n; *&t;&t;Alan Cox&t;:&t;Missing unlock in device events.&n; *&t;&t;Eckes&t;&t;:&t;ARP ioctl control errors.&n; *&t;&t;Alexey Kuznetsov:&t;Arp free fix.&n; *&t;&t;Manuel Rodriguez:&t;Gratutious ARP.&n; */
 multiline_comment|/* RFC1122 Status:&n;   2.3.2.1 (ARP Cache Validation):&n;     MUST provide mechanism to flush stale cache entries (OK)&n;     SHOULD be able to configure cache timeout (NOT YET)&n;     MUST throttle ARP retransmits (OK)&n;   2.3.2.2 (ARP Packet Queue):&n;     SHOULD save at least one packet from each &quot;conversation&quot; with an&n;       unresolved IP address.  (OK)&n;   950727 -- MS&n;*/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -2342,6 +2342,10 @@ suffix:semicolon
 r_int
 r_int
 id|hash
+comma
+id|grat
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 r_char
@@ -2710,6 +2714,20 @@ id|dev-&gt;pa_addr
 )paren
 (brace
 multiline_comment|/*&n; * &t;To get in here, it is a request for someone else.  We need to&n; * &t;check if that someone else is one of our proxies.  If it isn&squot;t,&n; * &t;we can toss it.&n; */
+id|grat
+op_assign
+(paren
+id|sip
+op_eq
+id|tip
+)paren
+op_logical_and
+(paren
+id|sha
+op_eq
+id|tha
+)paren
+suffix:semicolon
 id|arp_fast_lock
 c_func
 (paren
@@ -2757,6 +2775,34 @@ c_cond
 id|proxy_entry
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|grat
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|proxy_entry-&gt;flags
+op_amp
+id|ATF_PERM
+)paren
+)paren
+(brace
+id|arp_destroy
+c_func
+(paren
+id|proxy_entry
+)paren
+suffix:semicolon
+)brace
+r_goto
+id|gratuitous
+suffix:semicolon
+)brace
 id|memcpy
 c_func
 (paren
@@ -2806,6 +2852,14 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_if
+c_cond
+(paren
+id|grat
+)paren
+r_goto
+id|gratuitous
+suffix:semicolon
 id|arp_unlock
 c_func
 (paren
@@ -2881,6 +2935,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|gratuitous
+suffix:colon
 id|hash
 op_assign
 id|HASH
@@ -2992,6 +3048,14 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/*&n; * &t;No entry found.  Need to add a new entry to the arp table.&n; */
+r_if
+c_cond
+(paren
+id|grat
+)paren
+r_goto
+id|end
+suffix:semicolon
 id|entry
 op_assign
 (paren
@@ -3163,6 +3227,8 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *&t;Replies have been sent, and entries have been added.  All done.&n; */
+id|end
+suffix:colon
 id|kfree_skb
 c_func
 (paren

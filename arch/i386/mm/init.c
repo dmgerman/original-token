@@ -18,6 +18,7 @@ macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
 multiline_comment|/*&n; * The SMP kernel can&squot;t handle the 4MB page table optimizations yet&n; */
 macro_line|#ifdef __SMP__
 DECL|macro|USE_PENTIUM_MM
@@ -867,11 +868,7 @@ c_cond
 (paren
 id|tmp
 op_ge
-l_int|16
-op_star
-l_int|1024
-op_star
-l_int|1024
+id|MAX_DMA_ADDRESS
 )paren
 id|mem_map
 (braket

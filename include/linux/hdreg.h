@@ -481,6 +481,7 @@ r_char
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDE_PCMCIA
 r_int
 id|ide_register
 c_func
@@ -500,9 +501,10 @@ id|ide_unregister
 c_func
 (paren
 r_int
-id|h
+r_int
 )paren
 suffix:semicolon
+macro_line|#endif  /* CONFIG_BLK_DEV_IDE_PCMCIA */
 macro_line|#endif&t;/* CONFIG_BLK_DEV_IDE */
 macro_line|#endif  /* __KERNEL__ */
 macro_line|#endif&t;/* _LINUX_HDREG_H */

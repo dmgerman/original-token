@@ -84,6 +84,56 @@ id|AX25_MAX_DIGIS
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|ax25_route_opt_struct
+r_struct
+id|ax25_route_opt_struct
+(brace
+DECL|member|port_addr
+id|ax25_address
+id|port_addr
+suffix:semicolon
+DECL|member|dest_addr
+id|ax25_address
+id|dest_addr
+suffix:semicolon
+DECL|member|cmd
+r_int
+id|cmd
+suffix:semicolon
+DECL|member|arg
+r_int
+id|arg
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|ax25_ctl_struct
+r_struct
+id|ax25_ctl_struct
+(brace
+DECL|member|port_addr
+id|ax25_address
+id|port_addr
+suffix:semicolon
+DECL|member|source_addr
+id|ax25_address
+id|source_addr
+suffix:semicolon
+DECL|member|dest_addr
+id|ax25_address
+id|dest_addr
+suffix:semicolon
+DECL|member|cmd
+r_int
+r_int
+id|cmd
+suffix:semicolon
+DECL|member|arg
+r_int
+r_int
+id|arg
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|ax25_bpqaddr_struct
 r_struct
 id|ax25_bpqaddr_struct
@@ -121,6 +171,8 @@ DECL|macro|AX25_IDLE
 mdefine_line|#define AX25_IDLE&t;9
 DECL|macro|AX25_PACLEN
 mdefine_line|#define AX25_PACLEN&t;10
+DECL|macro|AX25_KILL
+mdefine_line|#define AX25_KILL&t;99
 DECL|macro|SIOCAX25GETUID
 mdefine_line|#define SIOCAX25GETUID&t;&t;(SIOCPROTOPRIVATE)
 DECL|macro|SIOCAX25ADDUID
@@ -135,6 +187,24 @@ DECL|macro|SIOCAX25GETPARMS
 mdefine_line|#define&t;SIOCAX25GETPARMS&t;(SIOCPROTOPRIVATE+5)
 DECL|macro|SIOCAX25SETPARMS
 mdefine_line|#define&t;SIOCAX25SETPARMS&t;(SIOCPROTOPRIVATE+6)
+DECL|macro|SIOCAX25OPTRT
+mdefine_line|#define SIOCAX25OPTRT&t;&t;(SIOCPROTOPRIVATE+7)
+DECL|macro|SIOCAX25CTLCON
+mdefine_line|#define SIOCAX25CTLCON&t;&t;(SIOCPROTOPRIVATE+8)
+DECL|macro|AX25_SET_RT_PERMANENT
+mdefine_line|#define AX25_SET_RT_PERMANENT&t;1
+DECL|macro|AX25_SET_RT_IPMODE
+mdefine_line|#define AX25_SET_RT_IPMODE&t;2
+DECL|macro|AX25_RT_DYNAMIC
+mdefine_line|#define AX25_RT_DYNAMIC&t;&t;0
+DECL|macro|AX25_RT_PERMANENT
+mdefine_line|#define AX25_RT_PERMANENT&t;1
+DECL|macro|AX25_RT_IPMODE_DEFAULT
+mdefine_line|#define AX25_RT_IPMODE_DEFAULT&t;&squot; &squot;
+DECL|macro|AX25_RT_IPMODE_DATAGRAM
+mdefine_line|#define AX25_RT_IPMODE_DATAGRAM&t;&squot;D&squot;
+DECL|macro|AX25_RT_IPMODE_VC
+mdefine_line|#define AX25_RT_IPMODE_VC&t;&squot;V&squot;
 DECL|macro|AX25_NOUID_DEFAULT
 mdefine_line|#define AX25_NOUID_DEFAULT&t;0
 DECL|macro|AX25_NOUID_BLOCK

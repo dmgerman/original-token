@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/char/vga.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&t;&t;&t;1995  Jay Estabrook&n; */
-multiline_comment|/*&n; *&t;vga.c&n; *&n; * This module exports the console low-level io support for VGA&n; *&n; *     &squot;int con_get_font(char *data)&squot;&n; *     &squot;int con_set_font(char *data, int ch512)&squot;&n; *     &squot;int con_adjust_height(int fontheight)&squot;&n; *&n; *     &squot;int con_get_cmap(char *)&squot;&n; *     &squot;int con_set_cmap(char *)&squot;&n; *&n; *     &squot;int reset_palette(int currcons)&squot;&n; *     &squot;void set_palette(void)&squot;&n; *&n; * User definable mapping table and font loading by Eugene G. Crosser,&n; * &lt;crosser@pccross.msk.su&gt;&n; *&n; * Improved loadable font/UTF-8 support by H. Peter Anvin &n; * Feb-Sep 1995 &lt;peter.anvin@linux.org&gt;&n; *&n; * improved scrollback, plus colour palette handling, by Simon Tatham&n; * 17-Jun-95 &lt;sgt20@cam.ac.uk&gt;&n; *&n; */
+multiline_comment|/*&n; *&t;vga.c&n; *&n; * This module exports the console low-level io support for VGA&n; *&n; *     &squot;int con_get_font(char *data)&squot;&n; *     &squot;int con_set_font(char *data, int ch512)&squot;&n; *     &squot;int con_adjust_height(int fontheight)&squot;&n; *&n; *     &squot;int con_get_cmap(char *)&squot;&n; *     &squot;int con_set_cmap(char *)&squot;&n; *&n; *     &squot;int reset_palette(int currcons)&squot;&n; *     &squot;void set_palette(void)&squot;&n; *&n; * User definable mapping table and font loading by Eugene G. Crosser,&n; * &lt;crosser@pccross.msk.su&gt;&n; *&n; * Improved loadable font/UTF-8 support by H. Peter Anvin &n; * Feb-Sep 1995 &lt;peter.anvin@linux.org&gt;&n; *&n; * Colour palette handling, by Simon Tatham&n; * 17-Jun-95 &lt;sgt20@cam.ac.uk&gt;&n; *&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -630,7 +630,7 @@ l_int|0x3cf
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* normalise the palette registers, to point the&n;&t;&t;&t;&t; * 16 screen colours to the first 16 DAC entries */
+multiline_comment|/*&n;&t;&t;&t;&t; * Normalise the palette registers, to point&n;&t;&t;&t;&t; * the 16 screen colours to the first 16&n;&t;&t;&t;&t; * DAC entries.&n;&t;&t;&t;&t; */
 r_for
 c_loop
 (paren
@@ -673,7 +673,7 @@ comma
 l_int|0x3c0
 )paren
 suffix:semicolon
-multiline_comment|/* now set the DAC registers back to their default&n;&t;&t;&t;&t; * values */
+multiline_comment|/* now set the DAC registers back to their&n;&t;&t;&t;&t; * default values */
 r_for
 c_loop
 (paren
@@ -794,10 +794,6 @@ id|origin
 comma
 id|video_screen_size
 )paren
-suffix:semicolon
-id|__scrollback_mode
-op_assign
-l_int|0
 suffix:semicolon
 id|origin
 op_assign
@@ -1047,6 +1043,10 @@ id|x
 op_lshift
 l_int|1
 )paren
+suffix:semicolon
+id|has_wrapped
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * PIO_FONT support.&n; *&n; * The font loading code goes back to the codepage package by&n; * Joel Hoffman (joel@wam.umd.edu). (He reports that the original&n; * reference is: &quot;From: p. 307 of _Programmer&squot;s Guide to PC &amp; PS/2&n; * Video Systems_ by Richard Wilton. 1987.  Microsoft Press&quot;.)&n; *&n; * Change for certain monochrome monitors by Yury Shevchuck&n; * (sizif@botik.yaroslavl.su).&n; */

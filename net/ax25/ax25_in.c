@@ -1101,10 +1101,6 @@ id|ax25-&gt;state
 op_assign
 id|AX25_STATE_0
 suffix:semicolon
-id|ax25-&gt;dama_slave
-op_assign
-l_int|0
-suffix:semicolon
 id|ax25_dama_off
 c_func
 (paren
@@ -1162,10 +1158,6 @@ id|ax25-&gt;state
 op_assign
 id|AX25_STATE_0
 suffix:semicolon
-id|ax25-&gt;dama_slave
-op_assign
-l_int|0
-suffix:semicolon
 id|ax25_dama_off
 c_func
 (paren
@@ -1222,10 +1214,6 @@ id|pf
 id|ax25-&gt;state
 op_assign
 id|AX25_STATE_0
-suffix:semicolon
-id|ax25-&gt;dama_slave
-op_assign
-l_int|0
 suffix:semicolon
 id|ax25_dama_off
 c_func
@@ -1554,10 +1542,6 @@ id|ax25-&gt;state
 op_assign
 id|AX25_STATE_0
 suffix:semicolon
-id|ax25-&gt;dama_slave
-op_assign
-l_int|0
-suffix:semicolon
 id|ax25_dama_off
 c_func
 (paren
@@ -1617,10 +1601,6 @@ suffix:semicolon
 id|ax25-&gt;state
 op_assign
 id|AX25_STATE_0
-suffix:semicolon
-id|ax25-&gt;dama_slave
-op_assign
-l_int|0
 suffix:semicolon
 id|ax25_dama_off
 c_func
@@ -2442,10 +2422,6 @@ id|ax25-&gt;state
 op_assign
 id|AX25_STATE_0
 suffix:semicolon
-id|ax25-&gt;dama_slave
-op_assign
-l_int|0
-suffix:semicolon
 id|ax25_dama_off
 c_func
 (paren
@@ -2505,10 +2481,6 @@ suffix:semicolon
 id|ax25-&gt;state
 op_assign
 id|AX25_STATE_0
-suffix:semicolon
-id|ax25-&gt;dama_slave
-op_assign
-l_int|0
 suffix:semicolon
 id|ax25_dama_off
 c_func

@@ -1023,6 +1023,7 @@ c_cond
 (paren
 id|error
 op_ne
+op_minus
 id|ENOTDIR
 )paren
 r_return

@@ -1,0 +1,29 @@
+macro_line|#ifndef __LINUX_IF_PACKET_H
+DECL|macro|__LINUX_IF_PACKET_H
+mdefine_line|#define __LINUX_IF_PACKET_H
+DECL|struct|sockaddr_pkt
+r_struct
+id|sockaddr_pkt
+(brace
+DECL|member|spkt_family
+r_int
+r_int
+id|spkt_family
+suffix:semicolon
+DECL|member|spkt_device
+r_int
+r_char
+id|spkt_device
+(braket
+l_int|14
+)braket
+suffix:semicolon
+DECL|member|spkt_protocol
+r_int
+r_int
+id|spkt_protocol
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
+eof

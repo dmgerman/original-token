@@ -480,6 +480,12 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+id|ax25_reset_timer
+c_func
+(paren
+id|ax25
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -589,10 +595,6 @@ c_func
 (paren
 id|ax25
 )paren
-suffix:semicolon
-id|ax25-&gt;state
-op_assign
-id|AX25_STATE_2
 suffix:semicolon
 r_if
 c_cond

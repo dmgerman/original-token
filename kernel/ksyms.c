@@ -121,6 +121,17 @@ r_int
 suffix:semicolon
 r_extern
 r_void
+id|blkdev_release
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+suffix:semicolon
+r_extern
+r_void
 op_star
 id|sys_call_table
 suffix:semicolon
@@ -730,6 +741,18 @@ id|X
 c_func
 (paren
 id|get_blkfops
+)paren
+comma
+id|X
+c_func
+(paren
+id|blkdev_open
+)paren
+comma
+id|X
+c_func
+(paren
+id|blkdev_release
 )paren
 comma
 macro_line|#ifdef CONFIG_SERIAL&t;
@@ -1759,7 +1782,7 @@ id|tr_type_trans
 )paren
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_IDE
+macro_line|#ifdef CONFIG_BLK_DEV_IDE_PCMCIA
 id|X
 c_func
 (paren
@@ -1772,6 +1795,15 @@ c_func
 id|ide_unregister
 )paren
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_MD
+id|X
+c_func
+(paren
+id|disk_name
+)paren
+comma
+multiline_comment|/* for md.c */
 macro_line|#endif
 multiline_comment|/* bimfm_aout */
 id|X

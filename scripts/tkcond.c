@@ -233,14 +233,12 @@ id|cond2
 op_assign
 id|cond-&gt;next-&gt;next
 suffix:semicolon
-id|sprintf
+id|strcpy
 c_func
 (paren
 id|tmpbuf
 comma
-l_string|&quot;%d&quot;
-comma
-id|cond-&gt;variable.cfg-&gt;choice_value
+id|cond-&gt;variable.cfg-&gt;label
 )paren
 suffix:semicolon
 r_if

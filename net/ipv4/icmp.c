@@ -872,7 +872,7 @@ suffix:semicolon
 r_case
 id|ICMP_PROT_UNREACH
 suffix:colon
-multiline_comment|/*&t;&t;&t;&t;printk(KERN_INFO &quot;ICMP: %s:%d: protocol unreachable.&bslash;n&quot;,&n;&t;&t;&t;&t;&t;in_ntoa(iph-&gt;daddr), ntohs(iph-&gt;protocol));*/
+multiline_comment|/*&t;&t;&t;&t;printk(KERN_INFO &quot;ICMP: %s:%d: protocol unreachable.&bslash;n&quot;,&n;&t;&t;&t;&t;&t;in_ntoa(iph-&gt;daddr), (int)iph-&gt;protocol);*/
 r_break
 suffix:semicolon
 r_case

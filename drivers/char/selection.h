@@ -186,8 +186,8 @@ id|__origin
 suffix:semicolon
 r_extern
 r_int
-r_int
-id|__scrollback_mode
+r_char
+id|has_wrapped
 suffix:semicolon
 r_extern
 r_int

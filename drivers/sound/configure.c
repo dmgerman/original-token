@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *&t; PnP soundcard support is not included in this version.&n; *&n; *&t; AEDSP16 will not work without significant changes.&n; */
 DECL|macro|DISABLED_OPTIONS
-mdefine_line|#define DISABLED_OPTIONS &t;(B(OPT_PNP)|B(OPT_AEDSP16)|B(OPT_UNUSED1)|B(OPT_UNUSED2))
+mdefine_line|#define DISABLED_OPTIONS &t;(B(OPT_SPNP)|B(OPT_AEDSP16)|B(OPT_UNUSED1)|B(OPT_UNUSED2))
 multiline_comment|/*&n; * sound/configure.c  - Configuration program for the Linux Sound Driver&n; */
 DECL|macro|COPYING2
 mdefine_line|#define COPYING2
@@ -44,8 +44,8 @@ DECL|macro|OPT_CS4232
 mdefine_line|#define OPT_CS4232&t;13
 DECL|macro|OPT_MAUI
 mdefine_line|#define OPT_MAUI&t;14
-DECL|macro|OPT_PNP
-mdefine_line|#define OPT_PNP&t;&t;15
+DECL|macro|OPT_SPNP
+mdefine_line|#define OPT_SPNP&t;&t;15
 DECL|macro|OPT_HIGHLEVEL
 mdefine_line|#define OPT_HIGHLEVEL   16&t;/* This must be same than the next one */
 DECL|macro|OPT_UNUSED1
@@ -75,9 +75,9 @@ mdefine_line|#define AUDIO_CARDS (B (OPT_PSS) | B (OPT_SB) | B (OPT_PAS) | B (OP
 DECL|macro|MIDI_CARDS
 mdefine_line|#define MIDI_CARDS (B (OPT_PSS) | B (OPT_SB) | B (OPT_PAS) | B (OPT_MPU401) | &bslash;&n;&t;&t;    B (OPT_GUS) | B (OPT_TRIX) | B (OPT_SSCAPE)|B(OPT_MAD16) | &bslash;&n;&t;&t;    B (OPT_CS4232)|B(OPT_MAUI))
 DECL|macro|MPU_DEVS
-mdefine_line|#define MPU_DEVS (B(OPT_PSS)|B(OPT_SSCAPE)|B(OPT_TRIX)|B(OPT_MAD16)|&bslash;&n;&t;&t;  B(OPT_CS4232)|B(OPT_PNP)|B(OPT_MAUI))
+mdefine_line|#define MPU_DEVS (B(OPT_PSS)|B(OPT_SSCAPE)|B(OPT_TRIX)|B(OPT_MAD16)|&bslash;&n;&t;&t;  B(OPT_CS4232)|B(OPT_SPNP)|B(OPT_MAUI))
 DECL|macro|AD1848_DEVS
-mdefine_line|#define AD1848_DEVS (B(OPT_GUS16)|B(OPT_MSS)|B(OPT_PSS)|B(OPT_GUSMAX)|&bslash;&n;&t;&t;     B(OPT_SSCAPE)|B(OPT_TRIX)|B(OPT_MAD16)|B(OPT_CS4232)|&bslash;&n;&t;&t;     B(OPT_PNP))
+mdefine_line|#define AD1848_DEVS (B(OPT_GUS16)|B(OPT_MSS)|B(OPT_PSS)|B(OPT_GUSMAX)|&bslash;&n;&t;&t;     B(OPT_SSCAPE)|B(OPT_TRIX)|B(OPT_MAD16)|B(OPT_CS4232)|&bslash;&n;&t;&t;     B(OPT_SPNP))
 DECL|macro|SEQUENCER_DEVS
 mdefine_line|#define SEQUENCER_DEVS (OPT_MIDI|OPT_YM3812|OPT_ADLIB|OPT_GUS|OPT_MAUI|MIDI_CARDS)
 multiline_comment|/*&n; * Options that have been disabled for some reason (incompletely implemented&n; * and/or tested). Don&squot;t remove from this list before looking at file&n; * experimental.txt for further info.&n; */
@@ -358,7 +358,7 @@ l_int|0
 comma
 l_int|0
 comma
-l_string|&quot;PNP&quot;
+l_string|&quot;SPNP&quot;
 comma
 l_int|1
 comma
@@ -1295,6 +1295,19 @@ id|OPT_LAST
 suffix:semicolon
 id|i
 op_increment
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|DISABLED_OPTIONS
+op_amp
+id|B
+(paren
+id|i
+)paren
+)paren
 )paren
 r_if
 c_cond

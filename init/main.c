@@ -144,6 +144,20 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|no_scroll
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|swap_setup
 c_func
 (paren
@@ -1213,6 +1227,12 @@ comma
 l_string|&quot;panic=&quot;
 comma
 id|panic_setup
+)brace
+comma
+(brace
+l_string|&quot;no-scroll&quot;
+comma
+id|no_scroll
 )brace
 comma
 macro_line|#ifdef CONFIG_BUGi386
@@ -3556,6 +3576,11 @@ op_and_assign
 op_complement
 id|MS_RDONLY
 suffix:semicolon
+r_else
+id|mount_initrd
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#endif
 id|setup
 c_func
@@ -3606,6 +3631,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|mount_initrd
+op_logical_and
 id|ROOT_DEV
 op_ne
 id|real_root_dev

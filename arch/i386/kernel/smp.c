@@ -13,6 +13,37 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
+multiline_comment|/*&n; *&t;Why isnt this somewhere standard ??&n; */
+DECL|function|max
+r_extern
+id|__inline
+r_int
+id|max
+c_func
+(paren
+r_int
+id|a
+comma
+r_int
+id|b
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|a
+OG
+id|b
+)paren
+(brace
+r_return
+id|a
+suffix:semicolon
+)brace
+r_return
+id|b
+suffix:semicolon
+)brace
 DECL|variable|smp_found_config
 r_int
 id|smp_found_config
@@ -89,13 +120,20 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Internal processor count&t;&t;&t;&t;*/
+DECL|variable|smp_top_cpu
+r_int
+id|smp_top_cpu
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Highest used APIC id &t;&t;&t;&t;*/
 DECL|variable|io_apic_addr
 r_static
 r_int
 r_int
 id|io_apic_addr
 op_assign
-l_int|0
+l_int|0xFEC00000
 suffix:semicolon
 multiline_comment|/* Address of the I/O apic (not yet used) &t;&t;*/
 DECL|variable|boot_cpu_id
@@ -1400,10 +1438,13 @@ id|mpf-&gt;mpf_feature1
 r_case
 l_int|1
 suffix:colon
+r_case
+l_int|5
+suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;ISA&quot;
+l_string|&quot;ISA&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1414,40 +1455,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;EISA with no IRQ8 chaining&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|3
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;EISA&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|4
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;MCA&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|5
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;ISA&bslash;nBus#1 is PCI&quot;
+l_string|&quot;EISA with no IRQ8 chaining&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1455,21 +1463,27 @@ suffix:semicolon
 r_case
 l_int|6
 suffix:colon
+r_case
+l_int|3
+suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;EISA&bslash;nBus #1 is PCI&quot;
+l_string|&quot;EISA&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+l_int|4
+suffix:colon
 r_case
 l_int|7
 suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;MCA&bslash;nBus #1 is PCI&quot;
+l_string|&quot;MCA&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1492,7 +1506,22 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t;&t; *&t;Read the physical hardware table. If there isn&squot;t one&n;&t;&t;&t;&t; *&t;the processors present are 0 and 1.&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|mpf-&gt;mpf_feature1
+OG
+l_int|4
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Bus #1 is PCI&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Read the physical hardware table.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1511,10 +1540,97 @@ id|mpf-&gt;mpf_physptr
 suffix:semicolon
 )brace
 r_else
+(brace
+r_int
+r_int
+id|cfg
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;If no table present, determine&n;&t;&t;&t;&t;&t; *&t;what the CPU mapping is.&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n; *&n; *&t;HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK&n; *&n; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;Standard page mapping&n;&t;&t;&t;&t;&t; *&t;functions don&squot;t work yet.&n;&t;&t;&t;&t;&t; *&t;We know that page 0 is not&n;&t;&t;&t;&t;&t; *&t;used.  Steal it for now!&n;&t;&t;&t;&t;&t; */
+id|cfg
+op_assign
+id|pg0
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|pg0
+(braket
+l_int|0
+)braket
+op_assign
+(paren
+id|apic_addr
+op_or
+l_int|7
+)paren
+suffix:semicolon
+id|local_invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
+id|boot_cpu_id
+op_assign
+id|GET_APIC_ID
+c_func
+(paren
+op_star
+(paren
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+id|APIC_ID
+)paren
+)paren
+suffix:semicolon
+id|nlong
+op_assign
+id|boot_cpu_id
+op_lshift
+l_int|24
+suffix:semicolon
+multiline_comment|/* Dummy &squot;self&squot; for bootup */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;Give it back&n;&t;&t;&t;&t;&t; */
+id|pg0
+(braket
+l_int|0
+)braket
+op_assign
+id|cfg
+suffix:semicolon
+id|local_invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&n; *&t;END OF HACK   END OF HACK   END OF HACK   END OF HACK   END OF HACK&n; *&n; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;If boot CPU != 0, other CPU&n;&t;&t;&t;&t;&t; *&t;is 0, else other CPU is 1.&n;&t;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|boot_cpu_id
+)paren
+id|cpu_present_map
+op_assign
+l_int|1
+op_or
+(paren
+l_int|1
+op_lshift
+id|boot_cpu_id
+)paren
+suffix:semicolon
+r_else
 id|cpu_present_map
 op_assign
 l_int|3
 suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -2216,8 +2332,20 @@ id|i
 op_eq
 id|boot_cpu_id
 )paren
+(brace
+id|smp_top_cpu
+op_assign
+id|max
+c_func
+(paren
+id|smp_top_cpu
+comma
+id|i
+)paren
+suffix:semicolon
 r_continue
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2844,6 +2972,16 @@ id|i
 )braket
 op_assign
 id|cpucount
+suffix:semicolon
+id|smp_top_cpu
+op_assign
+id|max
+c_func
+(paren
+id|smp_top_cpu
+comma
+id|i
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -3777,18 +3915,7 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-id|cpu_callin_map
-(braket
-l_int|0
-)braket
-op_or_assign
-l_int|1
-op_lshift
-id|smp_processor_id
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/*&t;cpu_callin_map[0]|=1&lt;&lt;smp_processor_id();*/
 r_break
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Halt other CPU&squot;s for a panic or reboot&n;&t;&t; */

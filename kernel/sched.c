@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/resource.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -370,6 +371,16 @@ op_star
 id|p
 )paren
 (brace
+macro_line|#ifdef __SMP__
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 macro_line|#if 1&t;/* sanity tests */
 r_if
 c_cond
@@ -438,6 +449,11 @@ op_amp
 id|smp_process_available
 )paren
 )paren
+(brace
+suffix:semicolon
+)brace
+macro_line|#if 0&t;
+(brace
 r_while
 c_loop
 (paren
@@ -451,8 +467,40 @@ id|smp_process_available
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|clear_bit
+c_func
+(paren
+id|cpu
+comma
+op_amp
+id|smp_invalidate_needed
+)paren
+)paren
+(brace
+id|local_invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
+id|set_bit
+c_func
+(paren
+id|cpu
+comma
+op_amp
+id|cpu_callin_map
+(braket
+l_int|0
+)braket
+)paren
 suffix:semicolon
 )brace
+)brace
+)brace
+macro_line|#endif&t;
 id|smp_process_available
 op_increment
 suffix:semicolon
@@ -479,10 +527,6 @@ id|smp_threads_ready
 (brace
 r_int
 id|i
-comma
-id|found
-op_assign
-l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -492,12 +536,26 @@ op_assign
 l_int|0
 suffix:semicolon
 id|i
-OL
-id|smp_num_cpus
+op_le
+id|smp_top_cpu
 suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|cpu_number_map
+(braket
+id|i
+)braket
+op_eq
+op_minus
+l_int|1
+)paren
+r_continue
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -525,6 +583,7 @@ l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 )brace
 )brace
 macro_line|#endif
@@ -3420,22 +3479,28 @@ op_assign
 l_int|0
 suffix:semicolon
 id|i
-OL
-(paren
-l_int|0
-op_eq
-id|smp_num_cpus
-ques
-c_cond
-l_int|1
-suffix:colon
-id|smp_num_cpus
-)paren
+op_le
+id|smp_top_cpu
 suffix:semicolon
 id|i
 op_increment
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|cpu_number_map
+(braket
+id|i
+)braket
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 macro_line|#ifdef __SMP_PROF__
 r_if
 c_cond

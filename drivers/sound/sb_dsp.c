@@ -2851,16 +2851,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|sb_midi_busy
-)paren
-id|sb_reset_dsp
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|sb_no_recording
 op_logical_and
 id|mode
@@ -2890,7 +2880,7 @@ id|UART_MIDI
 (brace
 id|printk
 (paren
-l_string|&quot;SB: PCM not possible during MIDI input&bslash;n&quot;
+l_string|&quot;SB: Audio device or MIDI already in use&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2898,6 +2888,16 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sb_midi_busy
+)paren
+id|sb_reset_dsp
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp_input.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&n; * FIXES&n; *&t;&t;Pedro Roque&t;:&t;Double ACK bug&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 multiline_comment|/*&n; *&t;Policy code extracted so its now seperate&n; */
 multiline_comment|/*&n; *&t;Called each time to estimate the delayed ack timeout. This is&n; *&t;how it should be done so a fast link isnt impacted by ack delay.&n; */
 DECL|function|tcp_delack_estimator
@@ -2428,11 +2429,11 @@ l_int|NULL
 r_if
 c_cond
 (paren
-id|after
+op_logical_neg
+id|before
+c_func
 (paren
 id|sk-&gt;window_seq
-op_plus
-l_int|1
 comma
 id|sk-&gt;write_queue.next-&gt;end_seq
 )paren
@@ -2446,14 +2447,13 @@ id|sk-&gt;ip_xmit_timeout
 op_ne
 id|TIME_WRITE
 op_logical_or
-id|before
+op_logical_neg
+id|after
 c_func
 (paren
 id|sk-&gt;write_queue.next-&gt;end_seq
 comma
 id|sk-&gt;rcv_ack_seq
-op_plus
-l_int|1
 )paren
 )paren
 op_logical_and
@@ -3477,29 +3477,19 @@ op_assign
 id|next-&gt;next
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * Ok, we found new data, update acked_seq as&n;&t;&t; * necessary (and possibly send the actual&n;&t;&t; * ACK packet).&n;&t;&t; *&n;&t;&t; *      rules for delaying an ack:&n;&t;&t; *      - delay time &lt;= 0.5 HZ&n;&t;&t; *      - we don&squot;t have a window update to send&n;&t;&t; *      - must send at least every 2 full sized packets&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Ok, we found new data, update acked_seq as&n;&t;&t; * necessary (and possibly send the actual&n;&t;&t; * ACK packet).&n;&t;&t; */
 id|sk-&gt;acked_seq
 op_assign
 id|ack_seq
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *      rules for delaying an ack:&n;&t;&t; *      - delay time &lt;= 0.5 HZ&n;&t;&t; *      - must send at least every 2 full sized packets&n;&t;&t; *      - we don&squot;t have a window update to send&n;&t;&t; *&n;&t;&t; * We handle the window update in the actual read&n;&t;&t; * side, so we only have to worry about the first two.&n;&t;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|sk-&gt;delay_acks
 op_logical_or
-multiline_comment|/* sk-&gt;ack_backlog &gt;= sk-&gt;max_ack_backlog || */
-id|sk-&gt;bytes_rcv
-OG
-id|sk-&gt;max_unacked
-op_logical_or
 id|th-&gt;fin
-op_logical_or
-id|sk-&gt;ato
-OG
-id|HZ
-op_div
-l_int|2
 )paren
 (brace
 id|tcp_send_ack
@@ -3519,6 +3509,45 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_int
+id|timeout
+op_assign
+id|sk-&gt;ato
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|timeout
+OG
+id|HZ
+op_div
+l_int|2
+)paren
+id|timeout
+op_assign
+id|HZ
+op_div
+l_int|2
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;bytes_rcv
+OG
+id|sk-&gt;max_unacked
+)paren
+(brace
+id|timeout
+op_assign
+l_int|0
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|TIMER_BH
+)paren
+suffix:semicolon
+)brace
 id|sk-&gt;ack_backlog
 op_increment
 suffix:semicolon
@@ -3542,7 +3571,7 @@ id|sk
 comma
 id|TIME_WRITE
 comma
-id|sk-&gt;ato
+id|timeout
 )paren
 suffix:semicolon
 )brace

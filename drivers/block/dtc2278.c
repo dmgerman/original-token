@@ -300,6 +300,15 @@ l_int|1
 suffix:semicolon
 id|ide_hwifs
 (braket
+l_int|1
+)braket
+dot
+id|serialized
+op_assign
+l_int|1
+suffix:semicolon
+id|ide_hwifs
+(braket
 l_int|0
 )braket
 dot

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/triton.c&t;Version 1.06  Feb 6, 1996&n; *&n; *  Copyright (c) 1995-1996  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
+multiline_comment|/*&n; *  linux/drivers/block/triton.c&t;Version 1.08  Mar 13, 1996&n; *&n; *  Copyright (c) 1995-1996  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
 multiline_comment|/*&n; * This module provides support for the Bus Master IDE DMA function&n; * of the Intel PCI Triton chipset (82371FB).&n; *&n; * DMA is currently supported only for hard disk drives (not cdroms).&n; *&n; * Support for cdroms will likely be added at a later date,&n; * after broader experience has been obtained with hard disks.&n; *&n; * Up to four drives may be enabled for DMA, and the Triton chipset will&n; * (hopefully) arbitrate the PCI bus among them.  Note that the 82371FB chip&n; * provides a single &quot;line buffer&quot; for the BM IDE function, so performance of&n; * multiple (two) drives doing DMA simultaneously will suffer somewhat,&n; * as they contest for that resource bottleneck.  This is handled transparently&n; * inside the 82371FB chip.&n; *&n; * By default, DMA support is prepared for use, but is currently enabled only&n; * for drives which support multi-word DMA mode2 (mword2), or which are&n; * recognized as &quot;good&quot; (see table below).  Drives with only mode0 or mode1&n; * (single or multi) DMA should also work with this chipset/driver (eg. MC2112A)&n; * but are not enabled by default.  Use &quot;hdparm -i&quot; to view modes supported&n; * by a given drive.&n; *&n; * The hdparm-2.4 (or later) utility can be used for manually enabling/disabling&n; * DMA support, but must be (re-)compiled against this kernel version or later.&n; *&n; * To enable DMA, use &quot;hdparm -d1 /dev/hd?&quot; on a per-drive basis after booting.&n; * If problems arise, ide.c will disable DMA operation after a few retries.&n; * This error recovery mechanism works and has been extremely well exercised.&n; *&n; * IDE drives, depending on their vintage, may support several different modes&n; * of DMA operation.  The boot-time modes are indicated with a &quot;*&quot; in&n; * the &quot;hdparm -i&quot; listing, and can be changed with *knowledgeable* use of&n; * the &quot;hdparm -X&quot; feature.  There is seldom a need to do this, as drives&n; * normally power-up with their &quot;best&quot; PIO/DMA modes enabled.&n; *&n; * Testing was done with an ASUS P55TP4XE/100 system and the following drives:&n; *&n; *   Quantum Fireball 1080A (1Gig w/83kB buffer), DMA mode2, PIO mode4.&n; *&t;- DMA mode2 works well (7.4MB/sec), despite the tiny on-drive buffer.&n; *&t;- This drive also does PIO mode4, at about the same speed as DMA mode2.&n; *&t;  An awesome drive for the price!&n; *&n; *   Fujitsu M1606TA (1Gig w/256kB buffer), DMA mode2, PIO mode4.&n; *&t;- DMA mode2 gives horrible performance (1.6MB/sec), despite the good&n; *&t;  size of the on-drive buffer and a boasted 10ms average access time.&n; *&t;- PIO mode4 was better, but peaked at a mere 4.5MB/sec.&n; *&n; *   Micropolis MC2112A (1Gig w/508kB buffer), drive pre-dates EIDE and ATA2.&n; *&t;- DMA works fine (2.2MB/sec), probably due to the large on-drive buffer.&n; *&t;- This older drive can also be tweaked for fastPIO (3.7MB/sec) by using&n; *&t;  maximum clock settings (5,4) and setting all flags except prefetch.&n; *&n; *   Western Digital AC31000H (1Gig w/128kB buffer), DMA mode1, PIO mode3.&n; *&t;- DMA does not work reliably.  The drive appears to be somewhat tardy&n; *&t;  in deasserting DMARQ at the end of a sector.  This is evident in&n; *&t;  the observation that WRITEs work most of the time, depending on&n; *&t;  cache-buffer occupancy, but multi-sector reads seldom work.&n; *&n; * Testing was done with a Gigabyte GA-586 ATE system and the following drive:&n; * (Uwe Bonnes - bon@elektron.ikp.physik.th-darmstadt.de)&n; *&n; *   Western Digital AC31600H (1.6Gig w/128kB buffer), DMA mode2, PIO mode4.&n; *&t;- much better than its 1Gig cousin, this drive is reported to work&n; *&t;  very well with DMA (7.3MB/sec).&n; *&n; * Other drives:&n; *&n; *   Maxtor 7540AV (515Meg w/32kB buffer), DMA modes mword0/sword2, PIO mode3.&n; *&t;- a budget drive, with budget performance, around 3MB/sec.&n; *&n; *   Western Digital AC2850F (814Meg w/64kB buffer), DMA mode1, PIO mode3.&n; *&t;- another &quot;caviar&quot; drive, similar to the AC31000, except that this one&n; *&t;  worked with DMA in at least one system.  Throughput is about 3.8MB/sec&n; *&t;  for both DMA and PIO.&n; *&n; *   Conner CFS850A (812Meg w/64kB buffer), DMA mode2, PIO mode4.&n; *&t;- like most Conner models, this drive proves that even a fast interface&n; *&t;  cannot improve slow media.  Both DMA and PIO peak around 3.5MB/sec.&n; *&n; *   Maxtor 71260AT (1204Meg w/256kB buffer), DMA mword0/sword2, PIO mode3.&n; *&t;- works with DMA, giving 3-4MB/sec performance, about the same as mode3.&n; *&n; * If you have any drive models to add, email your results to:  mlord@pobox.com&n; * Keep an eye on /var/adm/messages for &quot;DMA disabled&quot; messages.&n; *&n; * Some people have reported trouble with Intel Zappa motherboards.&n; * This can be fixed by upgrading the AMI BIOS to version 1.00.04.BS0,&n; * available from ftp://ftp.intel.com/pub/bios/10004bs0.exe&n; * (thanks to Glen Morrell &lt;glen@spin.Stanford.edu&gt; for researching this).&n; *&n; * And, yes, Intel Zappa boards really *do* use the Triton IDE ports.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -36,6 +36,8 @@ DECL|macro|PRD_BYTES
 mdefine_line|#define PRD_BYTES&t;8
 DECL|macro|PRD_ENTRIES
 mdefine_line|#define PRD_ENTRIES&t;(PAGE_SIZE / (2 * PRD_BYTES))
+DECL|macro|DEFAULT_BMIBA
+mdefine_line|#define DEFAULT_BMIBA&t;0xe800&t;/* in case BIOS did not init it */
 multiline_comment|/*&n; * dma_intr() is the handler for disk read/write DMA interrupts&n; */
 DECL|function|dma_intr
 r_static
@@ -845,7 +847,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * print_triton_drive_flags() displays the currently programmed options&n; * in the Triton chipset for a given drive.&n; *&n; *&t;If fastDMA  is &quot;no&quot;, then slow ISA timings are used for DMA data xfers.&n; *&t;If fastPIO  is &quot;no&quot;, then slow ISA timings are used for PIO data xfers.&n; *&t;If IORDY    is &quot;no&quot;, then IORDY is assumed to always be asserted.&n; *&t;If PreFetch is &quot;no&quot;, then data pre-fetch/post are not used.&n; *&n; * When &quot;fastPIO&quot; and/or &quot;fastDMA&quot; are &quot;yes&quot;, then faster PCI timings and&n; * back-to-back 16-bit data transfers are enabled, using the sample_CLKs&n; * and recovery_CLKs (PCI clock cycles) timing parameters for that interface.&n; */
+multiline_comment|/*&n; * print_triton_drive_flags() displays the currently programmed options&n; * in the 430FX (Triton) chipset for a given drive.&n; *&n; *&t;If fastDMA  is &quot;no&quot;, then slow ISA timings are used for DMA data xfers.&n; *&t;If fastPIO  is &quot;no&quot;, then slow ISA timings are used for PIO data xfers.&n; *&t;If IORDY    is &quot;no&quot;, then IORDY is assumed to always be asserted.&n; *&t;If PreFetch is &quot;no&quot;, then data pre-fetch/post are not used.&n; *&n; * When &quot;fastPIO&quot; and/or &quot;fastDMA&quot; are &quot;yes&quot;, then faster PCI timings and&n; * back-to-back 16-bit data transfers are enabled, using the sample_CLKs&n; * and recovery_CLKs (PCI clock cycles) timing parameters for that interface.&n; */
 DECL|function|print_triton_drive_flags
 r_static
 r_void
@@ -969,7 +971,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;    %s: BusMaster DMA at 0x%04x-0x%04x&quot;
+l_string|&quot;    %s: BM-DMA at 0x%04x-0x%04x&quot;
 comma
 id|hwif-&gt;name
 comma
@@ -1008,7 +1010,7 @@ id|base
 comma
 l_int|8
 comma
-l_string|&quot;triton DMA&quot;
+l_string|&quot;IDE DMA&quot;
 )paren
 suffix:semicolon
 id|hwif-&gt;dma_base
@@ -1085,69 +1087,6 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * calc_mode() returns the ATA PIO mode number, based on the number&n; * of cycle clks passed in.  Assumes 33Mhz bus operation (30ns per clk).&n; */
-DECL|function|calc_mode
-id|byte
-id|calc_mode
-(paren
-id|byte
-id|clks
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|clks
-op_eq
-l_int|3
-)paren
-r_return
-l_int|5
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|clks
-op_eq
-l_int|4
-)paren
-r_return
-l_int|4
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|clks
-OL
-l_int|6
-)paren
-r_return
-l_int|3
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|clks
-OL
-l_int|8
-)paren
-r_return
-l_int|2
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|clks
-OL
-l_int|13
-)paren
-r_return
-l_int|1
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * ide_init_triton() prepares the IDE driver for DMA operation.&n; * This routine is called once, from ide.c during driver initialization,&n; * for each triton chipset which is found (unlikely to be more than one).&n; */
 DECL|function|ide_init_triton
 r_void
@@ -1185,7 +1124,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ide: Triton BM-IDE on PCI bus %d function %d&bslash;n&quot;
+l_string|&quot;ide: 430FX (Triton) on PCI bus %d function %d&bslash;n&quot;
 comma
 id|bus
 comma
@@ -1231,7 +1170,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;ide: Triton IDE ports are not enabled&bslash;n&quot;
+l_string|&quot;ide: ports are not enabled (BIOS)&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -1253,13 +1192,20 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;ide: Triton BM-DMA feature is not enabled -- upgrade your BIOS&bslash;n&quot;
+l_string|&quot;ide: BM-DMA feature is not enabled (BIOS)&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
 r_else
 (brace
 multiline_comment|/*&n;&t;&t; * Get the bmiba base address&n;&t;&t; */
+r_int
+id|try_again
+op_assign
+l_int|1
+suffix:semicolon
+r_do
+(brace
 r_if
 c_cond
 (paren
@@ -1288,9 +1234,79 @@ op_and_assign
 l_int|0xfff0
 suffix:semicolon
 multiline_comment|/* extract port base address */
+r_if
+c_cond
+(paren
+id|bmiba
+)paren
+(brace
 id|dma_enabled
 op_assign
 l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ide: BM-DMA base register is invalid (BIOS problem)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+id|DEFAULT_BMIBA
+)paren
+op_eq
+l_int|0xff
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ide: setting BM-DMA base register to 0x%04x&bslash;n&quot;
+comma
+id|DEFAULT_BMIBA
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|rc
+op_assign
+id|pcibios_write_config_word
+c_func
+(paren
+id|bus
+comma
+id|fn
+comma
+l_int|0x20
+comma
+id|DEFAULT_BMIBA
+)paren
+)paren
+)paren
+r_goto
+id|quit
+suffix:semicolon
+)brace
+)brace
+)brace
+r_while
+c_loop
+(paren
+op_logical_neg
+id|dma_enabled
+op_logical_and
+id|try_again
+op_decrement
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * See if ide port(s) are enabled&n;&t; */
@@ -1331,7 +1347,7 @@ l_int|0x80008000
 id|printk
 c_func
 (paren
-l_string|&quot;ide: neither Triton IDE port is enabled&bslash;n&quot;
+l_string|&quot;ide: neither port is enabled&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -1504,7 +1520,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;    %s timing: (0x%04x) sample_CLKs=%d, recovery_CLKs=%d (PIO mode%d)&bslash;n&quot;
+l_string|&quot;    %s timing: (0x%04x) sample_CLKs=%d, recovery_CLKs=%d&bslash;n&quot;
 comma
 id|hwif-&gt;name
 comma
@@ -1513,14 +1529,6 @@ comma
 id|s_clks
 comma
 id|r_clks
-comma
-id|calc_mode
-c_func
-(paren
-id|s_clks
-op_plus
-id|r_clks
-)paren
 )paren
 suffix:semicolon
 id|print_triton_drive_flags

@@ -1982,7 +1982,7 @@ id|unload_trix_mpu
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_PNP
+macro_line|#ifdef CONFIG_SPNP
 (brace
 l_string|&quot;AD1848&quot;
 comma

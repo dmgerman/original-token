@@ -614,7 +614,7 @@ op_star
 l_int|1000000
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *      This function returns the amount that we can raise the&n; *      usable window based on the following constraints&n; *  &n; *&t;1. The window can never be shrunk once it is offered (RFC 793)&n; *&t;2. We limit memory per socket&n; */
+multiline_comment|/*&n; *      This function returns the amount that we can raise the&n; *      usable window based on the following constraints&n; *  &n; *&t;1. The window can never be shrunk once it is offered (RFC 793)&n; *&t;2. We limit memory per socket&n; *&t;3. No reason to raise the window if the other side has&n; *&t;   lots of room to play with.&n; */
 DECL|function|tcp_raise_window
 r_static
 id|__inline__
@@ -631,15 +631,40 @@ id|sk
 (brace
 r_int
 id|free_space
+suffix:semicolon
+r_int
+id|window
+suffix:semicolon
+multiline_comment|/* &n;         * compute the actual window i.e. &n;         * old_window - received_bytes_on_that_win.&n;&t; *&n;&t; * Don&squot;t raise the window if we have lots left:&n;&t; * that only results in unnecessary packets.&n;&t; */
+id|window
+op_assign
+id|sk-&gt;window
+op_minus
+(paren
+id|sk-&gt;acked_seq
+op_minus
+id|sk-&gt;lastwin_seq
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|window
+op_ge
+id|MAX_WINDOW
+op_div
+l_int|2
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|free_space
 op_assign
 id|sock_rspace
 c_func
 (paren
 id|sk
 )paren
-suffix:semicolon
-r_int
-id|window
 suffix:semicolon
 r_if
 c_cond
@@ -671,17 +696,6 @@ id|free_space
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n;         * compute the actual window i.e. &n;         * old_window - received_bytes_on_that_win &n;&t; */
-id|window
-op_assign
-id|sk-&gt;window
-op_minus
-(paren
-id|sk-&gt;acked_seq
-op_minus
-id|sk-&gt;lastwin_seq
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
