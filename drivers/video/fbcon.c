@@ -6916,6 +6916,13 @@ c_cond
 id|softback_top
 )paren
 (brace
+r_int
+id|l
+op_assign
+id|fbcon_softback_size
+op_div
+id|conp-&gt;vc_size_row
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6939,6 +6946,29 @@ id|softback_lines
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|l
+OG
+l_int|5
+)paren
+id|softback_end
+op_assign
+id|softback_buf
+op_plus
+id|l
+op_star
+id|conp-&gt;vc_size_row
+suffix:semicolon
+r_else
+(brace
+multiline_comment|/* Smaller scrollback makes no sense, and 0 would screw&n;&t;       the operation totally */
+id|softback_top
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -8722,11 +8752,6 @@ id|i
 comma
 id|k
 suffix:semicolon
-macro_line|#ifndef CONFIG_FBCON_FONTWIDTH8_ONLY
-r_int
-id|j
-suffix:semicolon
-macro_line|#endif
 id|u8
 op_star
 id|new_data
@@ -10384,10 +10409,6 @@ id|conp-&gt;vc_size_row
 )paren
 suffix:semicolon
 )brace
-id|softback_lines
-op_sub_assign
-id|i
-suffix:semicolon
 id|softback_in
 op_assign
 id|p

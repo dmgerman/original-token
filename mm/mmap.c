@@ -2251,7 +2251,8 @@ op_eq
 l_int|0
 )paren
 r_return
-l_int|0
+op_minus
+id|EINVAL
 suffix:semicolon
 multiline_comment|/* Check if this memory area is ok - put it on the temporary&n;&t; * list if so..  The checks here are pretty simple --&n;&t; * every area affected in some way (by any overlap) is put&n;&t; * on the list.  If nothing is put on, nothing is affected.&n;&t; */
 id|mm

@@ -15,6 +15,8 @@ DECL|macro|NBD_CLEAR_QUE
 mdefine_line|#define NBD_CLEAR_QUE&t;_IO( 0xab, 5 )
 DECL|macro|NBD_PRINT_DEBUG
 mdefine_line|#define NBD_PRINT_DEBUG&t;_IO( 0xab, 6 )
+DECL|macro|NBD_SET_SIZE_BLOCKS
+mdefine_line|#define NBD_SET_SIZE_BLOCKS&t;_IO( 0xab, 7 )
 macro_line|#ifdef MAJOR_NR
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
@@ -142,6 +144,7 @@ mdefine_line|#define NBD_REQUEST_MAGIC 0x25609513
 DECL|macro|NBD_REPLY_MAGIC
 mdefine_line|#define NBD_REPLY_MAGIC 0x67446698
 multiline_comment|/* Do *not* use magics: 0x12560953 0x96744668. */
+multiline_comment|/*&n; * This is packet used for communication between client and&n; * server. All data are in network byte order.&n; */
 DECL|struct|nbd_request
 r_struct
 id|nbd_request
@@ -171,6 +174,14 @@ id|u32
 id|len
 suffix:semicolon
 )brace
+macro_line|#ifdef __GNUC__
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+macro_line|#endif
 suffix:semicolon
 DECL|struct|nbd_reply
 r_struct

@@ -8173,10 +8173,6 @@ op_star
 )paren
 id|dev
 suffix:semicolon
-r_int
-r_int
-id|f
-suffix:semicolon
 id|btv-&gt;user
 op_decrement
 suffix:semicolon
@@ -8208,6 +8204,10 @@ id|BT848_I2C
 suffix:semicolon
 multiline_comment|/* This fixes the PCI posting delay */
 multiline_comment|/*&n;&t; *&t;This is sucky but right now I can&squot;t find a good way to&n;&t; *&t;be sure its safe to free the buffer. We wait 5-6 fields&n;&t; *&t;which is more than sufficient to be sure.&n;&t; */
+id|current-&gt;state
+op_assign
+id|TASK_UNINTERRUPTIBLE
+suffix:semicolon
 id|schedule_timeout
 c_func
 (paren

@@ -3374,6 +3374,7 @@ r_if
 c_cond
 (paren
 (paren
+(paren
 id|dev
 op_member_access_from_pointer
 r_class
@@ -3386,6 +3387,7 @@ op_logical_and
 id|idx
 OL
 l_int|4
+)paren
 op_logical_or
 (paren
 id|dev

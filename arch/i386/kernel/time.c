@@ -1454,6 +1454,10 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/* ------ Calibrate the TSC ------- &n; * Return 2^32 * (1 / (TSC clocks per usec)) for do_fast_gettimeoffset().&n; * Too much 64-bit arithmetic here to do this cleanly in C, and for&n; * accuracy&squot;s sake we want to keep the overhead on the CTC speaker (channel 2)&n; * output busy loop as low as possible. We avoid reading the CTC registers&n; * directly because of the awkward 8-bit access mechanism of the 82C54&n; * device.&n; */
+DECL|macro|CALIBRATE_LATCH
+mdefine_line|#define CALIBRATE_LATCH&t;(5 * LATCH)
+DECL|macro|CALIBRATE_TIME
+mdefine_line|#define CALIBRATE_TIME&t;(5 * 1000020/HZ)
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1468,101 +1472,248 @@ r_void
 )paren
 )paren
 (brace
+multiline_comment|/* Set the Gate high, disable speaker */
+id|outb
+c_func
+(paren
+(paren
+id|inb
+c_func
+(paren
+l_int|0x61
+)paren
+op_amp
+op_complement
+l_int|0x02
+)paren
+op_or
+l_int|0x01
+comma
+l_int|0x61
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Now let&squot;s take care of CTC channel 2&n;&t; *&n;&t; * Set the Gate high, program CTC channel 2 for mode 0,&n;&t; * (interrupt on terminal count mode), binary count,&n;&t; * load 5 * LATCH count, (LSB and MSB) to begin countdown.&n;&t; */
+id|outb
+c_func
+(paren
+l_int|0xb0
+comma
+l_int|0x43
+)paren
+suffix:semicolon
+multiline_comment|/* binary, mode 0, LSB/MSB, Ch 2 */
+id|outb
+c_func
+(paren
+id|CALIBRATE_LATCH
+op_amp
+l_int|0xff
+comma
+l_int|0x42
+)paren
+suffix:semicolon
+multiline_comment|/* LSB of count */
+id|outb
+c_func
+(paren
+id|CALIBRATE_LATCH
+op_rshift
+l_int|8
+comma
+l_int|0x42
+)paren
+suffix:semicolon
+multiline_comment|/* MSB of count */
+(brace
 r_int
 r_int
-id|retval
+id|startlow
+comma
+id|starthigh
+suffix:semicolon
+r_int
+r_int
+id|endlow
+comma
+id|endhigh
+suffix:semicolon
+r_int
+r_int
+id|count
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;rdtsc&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|startlow
+)paren
+comma
+l_string|&quot;=d&quot;
+(paren
+id|starthigh
+)paren
+)paren
+suffix:semicolon
+id|count
+op_assign
+l_int|0
+suffix:semicolon
+r_do
+(brace
+id|count
+op_increment
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+(paren
+id|inb
+c_func
+(paren
+l_int|0x61
+)paren
+op_amp
+l_int|0x20
+)paren
+op_eq
+l_int|0
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;rdtsc&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|endlow
+)paren
+comma
+l_string|&quot;=d&quot;
+(paren
+id|endhigh
+)paren
+)paren
+suffix:semicolon
+id|last_tsc_low
+op_assign
+id|endlow
+suffix:semicolon
+multiline_comment|/* Error: ECTCNEVERSET */
+r_if
+c_cond
+(paren
+id|count
+op_le
+l_int|1
+)paren
+r_goto
+id|bad_ctc
+suffix:semicolon
+multiline_comment|/* 64-bit subtract - gcc just messes up with long longs */
+id|__asm__
+c_func
+(paren
+l_string|&quot;subl %2,%0&bslash;n&bslash;t&quot;
+l_string|&quot;sbbl %3,%1&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|endlow
+)paren
+comma
+l_string|&quot;=d&quot;
+(paren
+id|endhigh
+)paren
+suffix:colon
+l_string|&quot;g&quot;
+(paren
+id|startlow
+)paren
+comma
+l_string|&quot;g&quot;
+(paren
+id|starthigh
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+id|endlow
+)paren
+comma
+l_string|&quot;1&quot;
+(paren
+id|endhigh
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Error: ECPUTOOFAST */
+r_if
+c_cond
+(paren
+id|endhigh
+)paren
+r_goto
+id|bad_ctc
+suffix:semicolon
+multiline_comment|/* Error: ECPUTOOSLOW */
+r_if
+c_cond
+(paren
+id|endlow
+op_le
+id|CALIBRATE_TIME
+)paren
+r_goto
+id|bad_ctc
 suffix:semicolon
 id|__asm__
 c_func
 (paren
-multiline_comment|/* set the Gate high, program CTC channel 2 for mode 0&n;&t;&t; * (interrupt on terminal count mode), binary count, &n;&t;&t; * load 5 * LATCH count, (LSB and MSB)&n;&t;&t; * to begin countdown, read the TSC and busy wait.&n;&t;&t; * BTW LATCH is calculated in timex.h from the HZ value&n;&t;&t; */
-multiline_comment|/* Set the Gate high, disable speaker */
-l_string|&quot;inb  $0x61, %%al&bslash;n&bslash;t&quot;
-multiline_comment|/* Read port */
-l_string|&quot;andb $0xfd, %%al&bslash;n&bslash;t&quot;
-multiline_comment|/* Turn off speaker Data */
-l_string|&quot;orb  $0x01, %%al&bslash;n&bslash;t&quot;
-multiline_comment|/* Set Gate high */
-l_string|&quot;outb %%al, $0x61&bslash;n&bslash;t&quot;
-multiline_comment|/* Write port */
-multiline_comment|/* Now let&squot;s take care of CTC channel 2 */
-l_string|&quot;movb $0xb0, %%al&bslash;n&bslash;t&quot;
-multiline_comment|/* binary, mode 0, LSB/MSB, ch 2*/
-l_string|&quot;outb %%al, $0x43&bslash;n&bslash;t&quot;
-multiline_comment|/* Write to CTC command port */
-l_string|&quot;movl %1, %%eax&bslash;n&bslash;t&quot;
-l_string|&quot;outb %%al, $0x42&bslash;n&bslash;t&quot;
-multiline_comment|/* LSB of count */
-l_string|&quot;shrl $8, %%eax&bslash;n&bslash;t&quot;
-l_string|&quot;outb %%al, $0x42&bslash;n&bslash;t&quot;
-multiline_comment|/* MSB of count */
-multiline_comment|/* Read the TSC; counting has just started */
-l_string|&quot;rdtsc&bslash;n&bslash;t&quot;
-multiline_comment|/* Move the value for safe-keeping. */
-l_string|&quot;movl %%eax, %%ebx&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%edx, %%ecx&bslash;n&bslash;t&quot;
-multiline_comment|/* Busy wait. Only 50 ms wasted at boot time. */
-l_string|&quot;0: inb $0x61, %%al&bslash;n&bslash;t&quot;
-multiline_comment|/* Read Speaker Output Port */
-l_string|&quot;testb $0x20, %%al&bslash;n&bslash;t&quot;
-multiline_comment|/* Check CTC channel 2 output (bit 5) */
-l_string|&quot;jz 0b&bslash;n&bslash;t&quot;
-multiline_comment|/* And read the TSC.  5 jiffies (50.00077ms) have elapsed. */
-l_string|&quot;rdtsc&bslash;n&bslash;t&quot;
-multiline_comment|/* Great.  So far so good.  Store last TSC reading in&n;                * last_tsc_low (only 32 lsb bits needed) */
-l_string|&quot;movl %%eax, last_tsc_low&bslash;n&bslash;t&quot;
-multiline_comment|/* And now calculate the difference between the readings. */
-l_string|&quot;subl %%ebx, %%eax&bslash;n&bslash;t&quot;
-l_string|&quot;sbbl %%ecx, %%edx&bslash;n&bslash;t&quot;
-multiline_comment|/* 64-bit subtract */
-multiline_comment|/* but probably edx = 0 at this point (see below). */
-multiline_comment|/* Now we have 5 * (TSC counts per jiffy) in eax.  We want&n;                * to calculate TSC-&gt;microsecond conversion factor. */
-multiline_comment|/* Note that edx (high 32-bits of difference) will now be &n;                * zero iff CPU clock speed is less than 85 GHz.  Moore&squot;s&n;                * law says that this is likely to be true for the next&n;                * 12 years or so.  You will have to change this code to&n;                * do a real 64-by-64 divide before that time&squot;s up. */
-l_string|&quot;movl %%eax, %%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;xorl %%eax, %%eax&bslash;n&bslash;t&quot;
-l_string|&quot;movl %2, %%edx&bslash;n&bslash;t&quot;
-l_string|&quot;divl %%ecx&bslash;n&bslash;t&quot;
-multiline_comment|/* eax= 2^32 / (1 * TSC counts per microsecond) */
-multiline_comment|/* Return eax for the use of fast_gettimeoffset */
-l_string|&quot;movl %%eax, %0&bslash;n&bslash;t&quot;
+l_string|&quot;divl %2&quot;
 suffix:colon
-l_string|&quot;=r&quot;
+l_string|&quot;=a&quot;
 (paren
-id|retval
+id|endlow
+)paren
+comma
+l_string|&quot;=d&quot;
+(paren
+id|endhigh
 )paren
 suffix:colon
 l_string|&quot;r&quot;
 (paren
-l_int|5
-op_star
-id|LATCH
+id|endlow
 )paren
 comma
-l_string|&quot;r&quot;
+l_string|&quot;0&quot;
 (paren
-l_int|5
-op_star
-l_int|1000020
-op_div
-id|HZ
+l_int|0
 )paren
-suffix:colon
-multiline_comment|/* we clobber: */
-l_string|&quot;ax&quot;
 comma
-l_string|&quot;bx&quot;
-comma
-l_string|&quot;cx&quot;
-comma
-l_string|&quot;dx&quot;
-comma
-l_string|&quot;cc&quot;
-comma
-l_string|&quot;memory&quot;
+l_string|&quot;1&quot;
+(paren
+id|CALIBRATE_TIME
+)paren
 )paren
 suffix:semicolon
 r_return
-id|retval
+id|endlow
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * The CTC wasn&squot;t reliable: we got a hit on the very first read,&n;&t; * or the CPU was so fast/slow that the quotient wouldn&squot;t fit in&n;&t; * 32 bits..&n;&t; */
+id|bad_ctc
+suffix:colon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|__initfunc
@@ -1603,6 +1754,29 @@ op_amp
 id|X86_FEATURE_TSC
 )paren
 (brace
+r_int
+r_int
+id|tsc_quotient
+op_assign
+id|calibrate_tsc
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tsc_quotient
+)paren
+(brace
+id|fast_gettimeoffset_quotient
+op_assign
+id|tsc_quotient
+suffix:semicolon
+id|use_tsc
+op_assign
+l_int|1
+suffix:semicolon
 macro_line|#ifndef do_gettimeoffset
 id|do_gettimeoffset
 op_assign
@@ -1613,18 +1787,7 @@ id|do_get_fast_time
 op_assign
 id|do_gettimeofday
 suffix:semicolon
-id|use_tsc
-op_assign
-l_int|1
-suffix:semicolon
-id|fast_gettimeoffset_quotient
-op_assign
-id|calibrate_tsc
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* report CPU clock rate in Hz.&n;&t;&t; * The formula is (10^6 * 2^32) / (2^32 * 1 / (clocks/us)) =&n;&t;&t; * clock/second. Our precision is about 100 ppm.&n;&t;&t; */
+multiline_comment|/* report CPU clock rate in Hz.&n;&t;&t;&t; * The formula is (10^6 * 2^32) / (2^32 * 1 / (clocks/us)) =&n;&t;&t;&t; * clock/second. Our precision is about 100 ppm.&n;&t;&t;&t; */
 (brace
 r_int
 r_int
@@ -1653,7 +1816,7 @@ id|edx
 suffix:colon
 l_string|&quot;r&quot;
 (paren
-id|fast_gettimeoffset_quotient
+id|tsc_quotient
 )paren
 comma
 l_string|&quot;0&quot;
@@ -1675,6 +1838,7 @@ comma
 id|cpu_hz
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 macro_line|#ifdef CONFIG_VISWS
