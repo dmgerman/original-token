@@ -48,7 +48,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|mm-&gt;segments
+id|mm-&gt;context.segments
 )paren
 r_goto
 id|out
@@ -82,7 +82,7 @@ c_func
 (paren
 id|ptr
 comma
-id|mm-&gt;segments
+id|mm-&gt;context.segments
 comma
 id|size
 )paren
@@ -235,7 +235,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|mm-&gt;segments
+id|mm-&gt;context.segments
 )paren
 (brace
 id|error
@@ -243,7 +243,7 @@ op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
-id|mm-&gt;segments
+id|mm-&gt;context.segments
 op_assign
 id|vmalloc
 c_func
@@ -257,7 +257,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|mm-&gt;segments
+id|mm-&gt;context.segments
 )paren
 r_goto
 id|out_unlock
@@ -265,7 +265,7 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|mm-&gt;segments
+id|mm-&gt;context.segments
 comma
 l_int|0
 comma
@@ -318,7 +318,7 @@ op_plus
 r_char
 op_star
 )paren
-id|mm-&gt;segments
+id|mm-&gt;context.segments
 )paren
 suffix:semicolon
 multiline_comment|/* Allow LDTs to be cleared by the user. */

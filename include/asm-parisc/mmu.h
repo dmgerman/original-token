@@ -3,6 +3,13 @@ macro_line|#ifndef _PARISC_MMU_H_
 DECL|macro|_PARISC_MMU_H_
 mdefine_line|#define _PARISC_MMU_H_
 macro_line|#ifndef __ASSEMBLY__
+multiline_comment|/* Default &quot;unsigned long&quot; context */
+DECL|typedef|mm_context_t
+r_typedef
+r_int
+r_int
+id|mm_context_t
+suffix:semicolon
 multiline_comment|/* Hardware Page Table Entry */
 DECL|struct|_PTE
 r_typedef

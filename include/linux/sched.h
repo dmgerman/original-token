@@ -19,6 +19,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/sem.h&gt;
@@ -407,11 +408,6 @@ DECL|member|page_table_lock
 id|spinlock_t
 id|page_table_lock
 suffix:semicolon
-DECL|member|context
-r_int
-r_int
-id|context
-suffix:semicolon
 DECL|member|start_code
 DECL|member|end_code
 DECL|member|start_data
@@ -483,16 +479,15 @@ r_int
 r_int
 id|swap_address
 suffix:semicolon
-multiline_comment|/*&n;&t; * This is an architecture-specific pointer: the portable&n;&t; * part of Linux does not know about any segments.&n;&t; */
-DECL|member|segments
-r_void
-op_star
-id|segments
+multiline_comment|/* Architecture-specific MM context */
+DECL|member|context
+id|mm_context_t
+id|context
 suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM(name) &bslash;&n;{&t;&t;&t; &t;&t;&t;&t;&bslash;&n;&t;mmap:&t;&t;&amp;init_mmap, &t;&t;&t;&bslash;&n;&t;mmap_avl:&t;NULL, &t;&t;&t;&t;&bslash;&n;&t;mmap_cache:&t;NULL, &t;&t;&t;&t;&bslash;&n;&t;pgd:&t;&t;swapper_pg_dir, &t;&t;&bslash;&n;&t;mm_users:&t;ATOMIC_INIT(2), &t;&t;&bslash;&n;&t;mm_count:&t;ATOMIC_INIT(1), &t;&t;&bslash;&n;&t;map_count:&t;1, &t;&t;&t;&t;&bslash;&n;&t;mmap_sem:&t;__MUTEX_INITIALIZER(name.mmap_sem), &bslash;&n;&t;page_table_lock: SPIN_LOCK_UNLOCKED, &t;&t;&bslash;&n;&t;segments:&t;NULL &t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define INIT_MM(name) &bslash;&n;{&t;&t;&t; &t;&t;&t;&t;&bslash;&n;&t;mmap:&t;&t;&amp;init_mmap, &t;&t;&t;&bslash;&n;&t;mmap_avl:&t;NULL, &t;&t;&t;&t;&bslash;&n;&t;mmap_cache:&t;NULL, &t;&t;&t;&t;&bslash;&n;&t;pgd:&t;&t;swapper_pg_dir, &t;&t;&bslash;&n;&t;mm_users:&t;ATOMIC_INIT(2), &t;&t;&bslash;&n;&t;mm_count:&t;ATOMIC_INIT(1), &t;&t;&bslash;&n;&t;map_count:&t;1, &t;&t;&t;&t;&bslash;&n;&t;mmap_sem:&t;__MUTEX_INITIALIZER(name.mmap_sem), &bslash;&n;&t;page_table_lock: SPIN_LOCK_UNLOCKED, &t;&t;&bslash;&n;}
 DECL|struct|signal_struct
 r_struct
 id|signal_struct

@@ -107,6 +107,10 @@ comma
 r_int
 comma
 r_int
+comma
+r_struct
+id|request_sense
+op_star
 )paren
 suffix:semicolon
 r_int

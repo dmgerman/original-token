@@ -73,6 +73,14 @@ r_int
 r_int
 id|last_asn
 suffix:semicolon
+DECL|member|need_new_asn
+r_int
+id|need_new_asn
+suffix:semicolon
+DECL|member|asn_lock
+r_int
+id|asn_lock
+suffix:semicolon
 DECL|member|pgd_cache
 r_int
 r_int

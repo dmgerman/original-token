@@ -2184,6 +2184,13 @@ l_int|12
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Give the other CPU some time to accept the IPI.&n;&t;&t; */
+id|udelay
+c_func
+(paren
+l_int|300
+)paren
+suffix:semicolon
 id|Dprintk
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: acinterp.h - Interpreter subcomponent prototypes and defines&n; *       $Revision: 79 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: acinterp.h - Interpreter subcomponent prototypes and defines&n; *       $Revision: 86 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __ACINTERP_H__
 DECL|macro|__ACINTERP_H__
@@ -174,8 +174,16 @@ multiline_comment|/*&n; * ammisc - ACPI AML (p-code) execution - specific opcode
 id|ACPI_STATUS
 id|acpi_aml_exec_create_field
 (paren
-id|u16
-id|opcode
+id|u8
+op_star
+id|aml_ptr
+comma
+id|u32
+id|aml_length
+comma
+id|ACPI_NAMESPACE_NODE
+op_star
+id|node
 comma
 id|ACPI_WALK_STATE
 op_star
@@ -267,7 +275,7 @@ comma
 id|u32
 id|acpi_aml_length
 comma
-id|u32
+id|u8
 id|region_space
 comma
 id|ACPI_WALK_STATE
@@ -609,6 +617,10 @@ id|ACPI_NAMESPACE_NODE
 op_star
 op_star
 id|stack_ptr
+comma
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
 )paren
 suffix:semicolon
 id|ACPI_STATUS
@@ -835,6 +847,18 @@ id|acpi_aml_exit_interpreter
 r_void
 )paren
 suffix:semicolon
+r_void
+id|acpi_aml_truncate_for32bit_table
+(paren
+id|ACPI_OPERAND_OBJECT
+op_star
+id|obj_desc
+comma
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
+)paren
+suffix:semicolon
 id|u8
 id|acpi_aml_validate_object_type
 (paren
@@ -857,15 +881,9 @@ id|locked
 )paren
 suffix:semicolon
 id|u32
-id|acpi_aml_buf_seq
-(paren
-r_void
-)paren
-suffix:semicolon
-id|u32
 id|acpi_aml_digits_needed
 (paren
-id|u32
+id|ACPI_INTEGER
 id|value
 comma
 id|u32
@@ -877,6 +895,17 @@ id|acpi_aml_eisa_id_to_string
 (paren
 id|u32
 id|numeric_id
+comma
+id|NATIVE_CHAR
+op_star
+id|out_string
+)paren
+suffix:semicolon
+id|ACPI_STATUS
+id|acpi_aml_unsigned_integer_to_string
+(paren
+id|ACPI_INTEGER
+id|value
 comma
 id|NATIVE_CHAR
 op_star
@@ -906,7 +935,7 @@ id|acpi_aml_system_memory_space_handler
 id|u32
 id|function
 comma
-id|u32
+id|ACPI_PHYSICAL_ADDRESS
 id|address
 comma
 id|u32
@@ -931,7 +960,7 @@ id|acpi_aml_system_io_space_handler
 id|u32
 id|function
 comma
-id|u32
+id|ACPI_PHYSICAL_ADDRESS
 id|address
 comma
 id|u32
@@ -956,7 +985,7 @@ id|acpi_aml_pci_config_space_handler
 id|u32
 id|function
 comma
-id|u32
+id|ACPI_PHYSICAL_ADDRESS
 id|address
 comma
 id|u32
@@ -981,7 +1010,7 @@ id|acpi_aml_embedded_controller_space_handler
 id|u32
 id|function
 comma
-id|u32
+id|ACPI_PHYSICAL_ADDRESS
 id|address
 comma
 id|u32
@@ -1006,7 +1035,7 @@ id|acpi_aml_sm_bus_space_handler
 id|u32
 id|function
 comma
-id|u32
+id|ACPI_PHYSICAL_ADDRESS
 id|address
 comma
 id|u32

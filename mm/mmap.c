@@ -3488,12 +3488,6 @@ id|vm_area_struct
 op_star
 id|mpnt
 suffix:semicolon
-id|release_segments
-c_func
-(paren
-id|mm
-)paren
-suffix:semicolon
 id|spin_lock
 c_func
 (paren

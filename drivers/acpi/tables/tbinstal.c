@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: tbinstal - ACPI table installation and removal&n; *              $Revision: 29 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: tbinstal - ACPI table installation and removal&n; *              $Revision: 34 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;achware.h&quot;
@@ -475,7 +475,7 @@ l_int|0
 suffix:semicolon
 id|type
 OL
-id|ACPI_TABLE_MAX
+id|NUM_ACPI_TABLES
 suffix:semicolon
 id|type
 op_increment
@@ -540,15 +540,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|ACPI_TABLE_APIC
-suffix:colon
-id|acpi_gbl_APIC
-op_assign
-l_int|NULL
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
 id|ACPI_TABLE_DSDT
 suffix:colon
 id|acpi_gbl_DSDT
@@ -558,9 +549,9 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|ACPI_TABLE_FACP
+id|ACPI_TABLE_FADT
 suffix:colon
-id|acpi_gbl_FACP
+id|acpi_gbl_FADT
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -576,14 +567,9 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|ACPI_TABLE_PSDT
+id|ACPI_TABLE_XSDT
 suffix:colon
-r_break
-suffix:semicolon
-r_case
-id|ACPI_TABLE_RSDT
-suffix:colon
-id|acpi_gbl_RSDT
+id|acpi_gbl_XSDT
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -592,15 +578,9 @@ suffix:semicolon
 r_case
 id|ACPI_TABLE_SSDT
 suffix:colon
-r_break
-suffix:semicolon
 r_case
-id|ACPI_TABLE_SBST
+id|ACPI_TABLE_PSDT
 suffix:colon
-id|acpi_gbl_SBST
-op_assign
-l_int|NULL
-suffix:semicolon
 r_default
 suffix:colon
 r_break
@@ -661,7 +641,7 @@ op_increment
 (brace
 id|table_desc
 op_assign
-id|acpi_tb_delete_single_table
+id|acpi_tb_uninstall_table
 (paren
 id|table_desc
 )paren
@@ -670,11 +650,74 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_delete_single_table&n; *&n; * PARAMETERS:  Table_info          - A table info struct&n; *&n; * RETURN:      None.&n; *&n; * DESCRIPTION: Free the memory associated with an internal ACPI table that&n; *              is either installed or has never been installed.&n; *              Table mutex should be locked.&n; *&n; ******************************************************************************/
-id|ACPI_TABLE_DESC
-op_star
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_delete_single_table&n; *&n; * PARAMETERS:  Table_info          - A table info struct&n; *&n; * RETURN:      None.&n; *&n; * DESCRIPTION: Low-level free for a single ACPI table.  Handles cases where&n; *              the table was allocated a buffer or was mapped.&n; *&n; ******************************************************************************/
+r_void
 DECL|function|acpi_tb_delete_single_table
 id|acpi_tb_delete_single_table
+(paren
+id|ACPI_TABLE_DESC
+op_star
+id|table_desc
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|table_desc
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|table_desc-&gt;pointer
+)paren
+(brace
+multiline_comment|/* Valid table, determine type of memory allocation */
+r_switch
+c_cond
+(paren
+id|table_desc-&gt;allocation
+)paren
+(brace
+r_case
+id|ACPI_MEM_NOT_ALLOCATED
+suffix:colon
+r_break
+suffix:semicolon
+r_case
+id|ACPI_MEM_ALLOCATED
+suffix:colon
+id|acpi_cm_free
+(paren
+id|table_desc-&gt;base_pointer
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ACPI_MEM_MAPPED
+suffix:colon
+id|acpi_os_unmap_memory
+(paren
+id|table_desc-&gt;base_pointer
+comma
+id|table_desc-&gt;length
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+)brace
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_tb_uninstall_table&n; *&n; * PARAMETERS:  Table_info          - A table info struct&n; *&n; * RETURN:      None.&n; *&n; * DESCRIPTION: Free the memory associated with an internal ACPI table that&n; *              is either installed or has never been installed.&n; *              Table mutex should be locked.&n; *&n; ******************************************************************************/
+id|ACPI_TABLE_DESC
+op_star
+DECL|function|acpi_tb_uninstall_table
+id|acpi_tb_uninstall_table
 (paren
 id|ACPI_TABLE_DESC
 op_star
@@ -722,48 +765,11 @@ id|table_desc-&gt;prev
 suffix:semicolon
 )brace
 multiline_comment|/* Free the memory allocated for the table itself */
-r_if
-c_cond
+id|acpi_tb_delete_single_table
 (paren
-id|table_desc-&gt;pointer
-)paren
-(brace
-multiline_comment|/* Valid table, determine type of memory allocation */
-r_switch
-c_cond
-(paren
-id|table_desc-&gt;allocation
-)paren
-(brace
-r_case
-id|ACPI_MEM_NOT_ALLOCATED
-suffix:colon
-r_break
-suffix:semicolon
-r_case
-id|ACPI_MEM_ALLOCATED
-suffix:colon
-id|acpi_cm_free
-(paren
-id|table_desc-&gt;base_pointer
+id|table_desc
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|ACPI_MEM_MAPPED
-suffix:colon
-id|acpi_os_unmap_memory
-(paren
-id|table_desc-&gt;base_pointer
-comma
-id|table_desc-&gt;length
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-)brace
 multiline_comment|/* Free the table descriptor (Don&squot;t delete the list head, tho) */
 r_if
 c_cond

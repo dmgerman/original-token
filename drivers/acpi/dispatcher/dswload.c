@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: dswload - Dispatcher namespace load callbacks&n; *              $Revision: 19 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: dswload - Dispatcher namespace load callbacks&n; *              $Revision: 24 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acparser.h&quot;
@@ -839,6 +839,7 @@ suffix:colon
 r_case
 id|AML_DWORD_FIELD_OP
 suffix:colon
+multiline_comment|/*&n;&t;&t; * Create the field object, but the field buffer and index must&n;&t;&t; * be evaluated later during the execution phase&n;&t;&t; */
 multiline_comment|/* Get the Name_string argument */
 r_if
 c_cond
@@ -910,8 +911,45 @@ id|op-&gt;node
 op_assign
 id|new_node
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * If this is NOT a control method, we need to evaluate this opcode now.&n;&t;&t;&t; */
-multiline_comment|/* THIS WON&quot;T WORK. Must execute all operands like Add().  =&gt; Must do an execute pass&n;&t;&t;&t;if (!Walk_state-&gt;Method_desc) {&n;&t;&t;&t;&t;Status = Acpi_ds_exec_end_op (Walk_state, Op);&n;&t;&t;&t;}&n;&t;&t;&t;*/
+multiline_comment|/*&n;&t;&t;&t; * If there is no object attached to the node, this node was just created and&n;&t;&t;&t; * we need to create the field object.  Otherwise, this was a lookup of an&n;&t;&t;&t; * existing node and we don&squot;t want to create the field object again.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|new_node-&gt;object
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t; * The Field definition is not fully parsed at this time.&n;&t;&t;&t;&t; * (We must save the address of the AML for the buffer and index operands)&n;&t;&t;&t;&t; */
+id|status
+op_assign
+id|acpi_aml_exec_create_field
+(paren
+(paren
+(paren
+id|ACPI_PARSE2_OBJECT
+op_star
+)paren
+id|op
+)paren
+op_member_access_from_pointer
+id|data
+comma
+(paren
+(paren
+id|ACPI_PARSE2_OBJECT
+op_star
+)paren
+id|op
+)paren
+op_member_access_from_pointer
+id|length
+comma
+id|new_node
+comma
+id|walk_state
+)paren
+suffix:semicolon
+)brace
 )brace
 r_break
 suffix:semicolon
@@ -1245,6 +1283,9 @@ id|op
 op_member_access_from_pointer
 id|length
 comma
+(paren
+id|ACPI_ADDRESS_SPACE_TYPE
+)paren
 id|arg-&gt;value.integer
 comma
 id|walk_state
@@ -1290,6 +1331,14 @@ suffix:semicolon
 r_case
 id|AML_NAME_OP
 suffix:colon
+multiline_comment|/*&n;&t;&t; * Because of the execution pass through the non-control-method&n;&t;&t; * parts of the table, we can arrive here twice.  Only init&n;&t;&t; * the named object node the first time through&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|node-&gt;object
+)paren
+(brace
 id|status
 op_assign
 id|acpi_ds_create_node
@@ -1301,6 +1350,7 @@ comma
 id|op
 )paren
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case

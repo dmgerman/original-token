@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: tbxface - Public interfaces to the ACPI subsystem&n; *                         ACPI table oriented interfaces&n; *              $Revision: 24 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: tbxface - Public interfaces to the ACPI subsystem&n; *                         ACPI table oriented interfaces&n; *              $Revision: 32 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acnamesp.h&quot;
@@ -10,12 +10,13 @@ id|MODULE_NAME
 (paren
 l_string|&quot;tbxface&quot;
 )paren
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_load_firmware_tables&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: This function is called to load the ACPI tables from BIOS&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_load_tables&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: This function is called to load the ACPI tables from the&n; *              provided RSDT&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
-DECL|function|acpi_load_firmware_tables
-id|acpi_load_firmware_tables
+DECL|function|acpi_load_tables
+id|acpi_load_tables
 (paren
-r_void
+id|ACPI_PHYSICAL_ADDRESS
+id|rsdp_physical_address
 )paren
 (brace
 id|ACPI_STATUS
@@ -28,7 +29,40 @@ id|number_of_tables
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Get the RSDT first */
+multiline_comment|/* Map and validate the RSDP */
+id|status
+op_assign
+id|acpi_tb_verify_rsdp
+(paren
+id|rsdp_physical_address
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+id|REPORT_ERROR
+(paren
+(paren
+l_string|&quot;Acpi_load_tables: RSDP Failed validation: %s&bslash;n&quot;
+comma
+id|acpi_cm_format_exception
+(paren
+id|status
+)paren
+)paren
+)paren
+suffix:semicolon
+r_goto
+id|error_exit
+suffix:semicolon
+)brace
+multiline_comment|/* Get the RSDT via the RSDP */
 id|status
 op_assign
 id|acpi_tb_get_table_rsdt
@@ -46,6 +80,18 @@ id|status
 )paren
 )paren
 (brace
+id|REPORT_ERROR
+(paren
+(paren
+l_string|&quot;Acpi_load_tables: Could not load RSDT: %s&bslash;n&quot;
+comma
+id|acpi_cm_format_exception
+(paren
+id|status
+)paren
+)paren
+)paren
+suffix:semicolon
 r_goto
 id|error_exit
 suffix:semicolon
@@ -69,6 +115,50 @@ id|status
 )paren
 )paren
 (brace
+id|REPORT_ERROR
+(paren
+(paren
+l_string|&quot;Acpi_load_tables: Error getting required tables (DSDT/FADT/FACS): %s&bslash;n&quot;
+comma
+id|acpi_cm_format_exception
+(paren
+id|status
+)paren
+)paren
+)paren
+suffix:semicolon
+r_goto
+id|error_exit
+suffix:semicolon
+)brace
+multiline_comment|/* Load the namespace from the tables */
+id|status
+op_assign
+id|acpi_ns_load_namespace
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+id|REPORT_ERROR
+(paren
+(paren
+l_string|&quot;Acpi_load_tables: Could not load namespace: %s&bslash;n&quot;
+comma
+id|acpi_cm_format_exception
+(paren
+id|status
+)paren
+)paren
+)paren
+suffix:semicolon
 r_goto
 id|error_exit
 suffix:semicolon
@@ -80,6 +170,18 @@ id|AE_OK
 suffix:semicolon
 id|error_exit
 suffix:colon
+id|REPORT_ERROR
+(paren
+(paren
+l_string|&quot;Acpi_load_tables: Could not load tables: %s&bslash;n&quot;
+comma
+id|acpi_cm_format_exception
+(paren
+id|status
+)paren
+)paren
+)paren
+suffix:semicolon
 r_return
 (paren
 id|status
@@ -120,7 +222,7 @@ id|status
 op_assign
 id|acpi_tb_get_table
 (paren
-l_int|NULL
+l_int|0
 comma
 id|table_ptr
 comma
@@ -163,7 +265,48 @@ id|status
 )paren
 )paren
 (brace
-multiline_comment|/* TBD: [Errors] must free table allocated by Acpi_tb_get_table */
+multiline_comment|/* Free table allocated by Acpi_tb_get_table */
+id|acpi_tb_delete_single_table
+(paren
+op_amp
+id|table_info
+)paren
+suffix:semicolon
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+id|status
+op_assign
+id|acpi_ns_load_table
+(paren
+id|table_info.installed_desc
+comma
+id|acpi_gbl_root_node
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+multiline_comment|/* Uninstall table and free the buffer */
+id|acpi_tb_uninstall_table
+(paren
+id|table_info.installed_desc
+)paren
+suffix:semicolon
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
 )brace
 r_return
 (paren
@@ -420,7 +563,7 @@ suffix:semicolon
 id|u32
 id|ret_buf_len
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Must have a buffer&n;&t; */
+multiline_comment|/*&n;&t; *  If we have a buffer, we must have a length too&n;&t; */
 r_if
 c_cond
 (paren
@@ -436,13 +579,14 @@ id|ret_buffer
 )paren
 op_logical_or
 (paren
+(paren
 op_logical_neg
 id|ret_buffer-&gt;pointer
 )paren
-op_logical_or
+op_logical_and
 (paren
-op_logical_neg
 id|ret_buffer-&gt;length
+)paren
 )paren
 )paren
 (brace
@@ -542,7 +686,7 @@ id|ret_buf_len
 op_assign
 r_sizeof
 (paren
-id|ROOT_SYSTEM_DESCRIPTOR_POINTER
+id|RSDP_DESCRIPTOR
 )paren
 suffix:semicolon
 )brace

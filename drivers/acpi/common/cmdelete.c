@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmdelete - object deletion and reference count utilities&n; *              $Revision: 53 $&n; *&n; *****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: cmdelete - object deletion and reference count utilities&n; *              $Revision: 60 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acinterp.h&quot;
@@ -11,7 +11,7 @@ id|MODULE_NAME
 (paren
 l_string|&quot;cmdelete&quot;
 )paren
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_delete_internal_obj&n; *&n; * PARAMETERS:  *Object        - Pointer to the list to be deleted&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Low level object deletion, after reference counts have been&n; *              updated (All reference counts, including sub-objects!)&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_delete_internal_obj&n; *&n; * PARAMETERS:  *Object        - Pointer to the list to be deleted&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Low level object deletion, after reference counts have been&n; *              updated (All reference counts, including sub-objects!)&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_cm_delete_internal_obj
 id|acpi_cm_delete_internal_obj
@@ -26,6 +26,10 @@ op_star
 id|obj_pointer
 op_assign
 l_int|NULL
+suffix:semicolon
+id|ACPI_OPERAND_OBJECT
+op_star
+id|handler_desc
 suffix:semicolon
 r_if
 c_cond
@@ -121,6 +125,65 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
+r_case
+id|ACPI_TYPE_REGION
+suffix:colon
+r_if
+c_cond
+(paren
+id|object-&gt;region.extra
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; * Free the Region_context if and only if the handler is one of the&n;&t;&t;&t; * default handlers -- and therefore, we created the context object&n;&t;&t;&t; * locally, it was not created by an external caller.&n;&t;&t;&t; */
+id|handler_desc
+op_assign
+id|object-&gt;region.addr_handler
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|handler_desc
+)paren
+op_logical_and
+(paren
+id|handler_desc-&gt;addr_handler.hflags
+op_eq
+id|ADDR_HANDLER_DEFAULT_INSTALLED
+)paren
+)paren
+(brace
+id|obj_pointer
+op_assign
+id|object-&gt;region.extra-&gt;extra.region_context
+suffix:semicolon
+)brace
+multiline_comment|/* Now we can free the Extra object */
+id|acpi_cm_delete_object_desc
+(paren
+id|object-&gt;region.extra
+)paren
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_case
+id|ACPI_TYPE_FIELD_UNIT
+suffix:colon
+r_if
+c_cond
+(paren
+id|object-&gt;field_unit.extra
+)paren
+(brace
+id|acpi_cm_delete_object_desc
+(paren
+id|object-&gt;field_unit.extra
+)paren
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 r_break
@@ -171,7 +234,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_delete_internal_object_list&n; *&n; * PARAMETERS:  *Obj_list       - Pointer to the list to be deleted&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function deletes an internal object list, including both&n; *              simple objects and package objects&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_delete_internal_object_list&n; *&n; * PARAMETERS:  *Obj_list       - Pointer to the list to be deleted&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function deletes an internal object list, including both&n; *              simple objects and package objects&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_cm_delete_internal_object_list
 id|acpi_cm_delete_internal_object_list
@@ -239,7 +302,8 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_update_ref_count&n; *&n; * PARAMETERS:  *Object         - Object whose ref count is to be updated&n; *              Count           - Current ref count&n; *              Action          - What to do&n; *&n; * RETURN:      New ref count&n; *&n; * DESCRIPTION: Modify the ref count and return it.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_update_ref_count&n; *&n; * PARAMETERS:  *Object         - Object whose ref count is to be updated&n; *              Action          - What to do&n; *&n; * RETURN:      New ref count&n; *&n; * DESCRIPTION: Modify the ref count and return it.&n; *&n; ******************************************************************************/
+r_static
 r_void
 DECL|function|acpi_cm_update_ref_count
 id|acpi_cm_update_ref_count
@@ -364,7 +428,7 @@ multiline_comment|/*&n;&t; * Sanity check the reference count, for debug purpose
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_update_object_reference&n; *&n; * PARAMETERS:  *Object             - Increment ref count for this object&n; *                                    and all sub-objects&n; *              Action              - Either REF_INCREMENT or REF_DECREMENT or&n; *                                    REF_FORCE_DELETE&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Increment the object reference count&n; *&n; * Object references are incremented when:&n; * 1) An object is attached to a Node (namespace object)&n; * 2) An object is copied (all subobjects must be incremented)&n; *&n; * Object references are decremented when:&n; * 1) An object is detached from an Node&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_update_object_reference&n; *&n; * PARAMETERS:  *Object             - Increment ref count for this object&n; *                                    and all sub-objects&n; *              Action              - Either REF_INCREMENT or REF_DECREMENT or&n; *                                    REF_FORCE_DELETE&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Increment the object reference count&n; *&n; * Object references are incremented when:&n; * 1) An object is attached to a Node (namespace object)&n; * 2) An object is copied (all subobjects must be incremented)&n; *&n; * Object references are decremented when:&n; * 1) An object is detached from an Node&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_cm_update_object_reference
 id|acpi_cm_update_object_reference
@@ -740,13 +804,6 @@ suffix:semicolon
 r_case
 id|ACPI_TYPE_REGION
 suffix:colon
-id|acpi_cm_update_ref_count
-(paren
-id|object-&gt;region.method
-comma
-id|action
-)paren
-suffix:semicolon
 multiline_comment|/* TBD: [Investigate]&n;&t;&t;&t;Acpi_cm_update_ref_count (Object-&gt;Region.Addr_handler, Action);&n;&t;*/
 multiline_comment|/*&n;&t;&t;&t;Status =&n;&t;&t;&t;&t;Acpi_cm_create_update_state_and_push (Object-&gt;Region.Addr_handler,&n;&t;&t;&t;&t;&t;&t;   Action, &amp;State_list);&n;&t;&t;&t;if (ACPI_FAILURE (Status)) {&n;&t;&t;&t;&t;return (Status);&n;&t;&t;&t;}&n;*/
 r_break
@@ -781,7 +838,7 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_add_reference&n; *&n; * PARAMETERS:  *Object        - Object whose reference count is to be&n; *                                  incremented&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Add one reference to an ACPI object&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_add_reference&n; *&n; * PARAMETERS:  *Object        - Object whose reference count is to be&n; *                                  incremented&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Add one reference to an ACPI object&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_cm_add_reference
 id|acpi_cm_add_reference
@@ -816,7 +873,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_remove_reference&n; *&n; * PARAMETERS:  *Object        - Object whose ref count will be decremented&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Decrement the reference count of an ACPI internal object&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_remove_reference&n; *&n; * PARAMETERS:  *Object        - Object whose ref count will be decremented&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Decrement the reference count of an ACPI internal object&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_cm_remove_reference
 id|acpi_cm_remove_reference
@@ -848,8 +905,6 @@ comma
 id|REF_DECREMENT
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * If the reference count has reached zero,&n;&t; * delete the object and all sub-objects contained within it&n;&t; */
-multiline_comment|/*&n;&t;if (Object-&gt;Common.Reference_count == 0) {&n;&t;&t;Acpi_cm_delete_internal_obj (Object);&n;&t;}&n;*/
 r_return
 suffix:semicolon
 )brace

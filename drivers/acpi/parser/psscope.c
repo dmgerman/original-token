@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: psscope - Parser scope stack management routines&n; *              $Revision: 18 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: psscope - Parser scope stack management routines&n; *              $Revision: 22 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acparser.h&quot;
@@ -120,7 +120,7 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_push_scope&n; *&n; * PARAMETERS:  Parser_state        - Current parser state object&n; *              Op                  - Current op to be pushed&n; *              Next_arg            - Next op argument (to be pushed)&n; *              Arg_count           - Fixed or variable number of args&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Push current op to begin parsing its argument&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_push_scope&n; *&n; * PARAMETERS:  Parser_state        - Current parser state object&n; *              Op                  - Current op to be pushed&n; *              Remaining_args      - List of args remaining&n; *              Arg_count           - Fixed or variable number of args&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Push current op to begin parsing its argument&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ps_push_scope
 id|acpi_ps_push_scope
@@ -216,7 +216,7 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_pop_scope&n; *&n; * PARAMETERS:  Parser_state        - Current parser state object&n; *              Op                  - Where the popped op is returned&n; *              Next_arg            - Where the popped &quot;next argument&quot; is&n; *                                    returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Return to parsing a previous op&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_pop_scope&n; *&n; * PARAMETERS:  Parser_state        - Current parser state object&n; *              Op                  - Where the popped op is returned&n; *              Arg_list            - Where the popped &quot;next argument&quot; is&n; *                                    returned&n; *              Arg_count           - Count of objects in Arg_list&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Return to parsing a previous op&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_ps_pop_scope
 id|acpi_ps_pop_scope
@@ -233,6 +233,10 @@ comma
 id|u32
 op_star
 id|arg_list
+comma
+id|u32
+op_star
+id|arg_count
 )paren
 (brace
 id|ACPI_GENERIC_STATE
@@ -267,6 +271,11 @@ id|arg_list
 op_assign
 id|scope-&gt;parse_scope.arg_list
 suffix:semicolon
+op_star
+id|arg_count
+op_assign
+id|scope-&gt;parse_scope.arg_count
+suffix:semicolon
 id|parser_state-&gt;pkg_end
 op_assign
 id|scope-&gt;parse_scope.pkg_end
@@ -288,6 +297,11 @@ l_int|NULL
 suffix:semicolon
 op_star
 id|arg_list
+op_assign
+l_int|0
+suffix:semicolon
+op_star
+id|arg_count
 op_assign
 l_int|0
 suffix:semicolon

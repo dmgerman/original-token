@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmobject - ACPI object create/delete/size/cache routines&n; *              $Revision: 27 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmobject - ACPI object create/delete/size/cache routines&n; *              $Revision: 32 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acinterp.h&quot;
@@ -247,7 +247,9 @@ id|line_number
 comma
 id|component_id
 comma
-l_string|&quot;Could not allocate Object Descriptor&quot;
+(paren
+l_string|&quot;Could not allocate an object descriptor&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -676,18 +678,6 @@ id|parent_obj
 (braket
 id|MAX_PACKAGE_DEPTH
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 id|ACPI_OPERAND_OBJECT
 op_star
@@ -701,18 +691,6 @@ id|index
 (braket
 id|MAX_PACKAGE_DEPTH
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 id|u32
 id|length
@@ -734,6 +712,27 @@ l_int|1
 suffix:semicolon
 id|ACPI_STATUS
 id|status
+suffix:semicolon
+multiline_comment|/* Init the package stack TBD: replace with linked list */
+id|MEMSET
+c_func
+(paren
+id|parent_obj
+comma
+l_int|0
+comma
+id|MAX_PACKAGE_DEPTH
+)paren
+suffix:semicolon
+id|MEMSET
+c_func
+(paren
+id|index
+comma
+l_int|0
+comma
+id|MAX_PACKAGE_DEPTH
+)paren
 suffix:semicolon
 id|parent_obj
 (braket
@@ -769,7 +768,7 @@ id|this_parent-&gt;package.elements
 id|this_index
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Check for 1) An unitialized package element.  It is completely&n;&t;&t; *              legal to declare a package and leave it uninitialized&n;&t;&t; *           2) Any type other than a package.  Packages are handled&n;&t;&t; *              below.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Check for 1) An uninitialized package element.  It is completely&n;&t;&t; *              legal to declare a package and leave it uninitialized&n;&t;&t; *           2) Any type other than a package.  Packages are handled&n;&t;&t; *              below.&n;&t;&t; */
 r_if
 c_cond
 (paren

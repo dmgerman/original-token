@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmcopy - Internal to external object translation utilities&n; *              $Revision: 56 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmcopy - Internal to external object translation utilities&n; *              $Revision: 59 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acinterp.h&quot;
@@ -41,6 +41,7 @@ id|MAX_PACKAGE_DEPTH
 )braket
 suffix:semicolon
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_build_external_simple_object&n; *&n; * PARAMETERS:  *Internal_obj   - Pointer to the object we are examining&n; *              *Buffer         - Where the object is returned&n; *              *Space_used     - Where the data length is returned&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to place a simple object in a user&n; *                  buffer.&n; *&n; *              The buffer is assumed to have sufficient space for the object.&n; *&n; ******************************************************************************/
+r_static
 id|ACPI_STATUS
 DECL|function|acpi_cm_build_external_simple_object
 id|acpi_cm_build_external_simple_object
@@ -278,6 +279,7 @@ id|AE_OK
 suffix:semicolon
 )brace
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_build_external_package_object&n; *&n; * PARAMETERS:  *Internal_obj   - Pointer to the object we are returning&n; *              *Buffer         - Where the object is returned&n; *              *Space_used     - Where the object length is returned&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to place a package object in a user&n; *              buffer.  A package object by definition contains other objects.&n; *&n; *              The buffer is assumed to have sufficient space for the object.&n; *              The caller must have verified the buffer length needed using the&n; *              Acpi_cm_get_object_size function before calling this function.&n; *&n; ******************************************************************************/
+r_static
 id|ACPI_STATUS
 DECL|function|acpi_cm_build_external_package_object
 id|acpi_cm_build_external_package_object
@@ -849,7 +851,10 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef ACPI_FUTURE_IMPLEMENTATION
+multiline_comment|/* Code to convert packages that are parameters to control methods */
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_build_internal_package_object&n; *&n; * PARAMETERS:  *Internal_obj   - Pointer to the object we are returning&n; *              *Buffer         - Where the object is returned&n; *              *Space_used     - Where the length of the object is returned&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to place a package object in a user&n; *              buffer.  A package object by definition contains other objects.&n; *&n; *              The buffer is assumed to have sufficient space for the object.&n; *              The caller must have verified the buffer length needed using the&n; *              Acpi_cm_get_object_size function before calling this function.&n; *&n; ******************************************************************************/
+r_static
 id|ACPI_STATUS
 DECL|function|acpi_cm_build_internal_package_object
 id|acpi_cm_build_internal_package_object
@@ -1183,6 +1188,7 @@ multiline_comment|/* else object is NOT a package */
 )brace
 multiline_comment|/* while (1)  */
 )brace
+macro_line|#endif /* Future implementation */
 multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_build_internal_object&n; *&n; * PARAMETERS:  *Internal_obj   - The external object to be converted&n; *              *Buffer_ptr     - Where the internal object is returned&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: Converts an external object to an internal object.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_cm_build_internal_object
@@ -1208,7 +1214,7 @@ op_eq
 id|ACPI_TYPE_PACKAGE
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Package objects contain other objects (which can be objects)&n;&t;&t; * buildpackage does it all&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Package objects contain other objects (which can be objects)&n;&t;&t; * buildpackage does it all&n;&t;&t; *&n;&t;&t; * TBD: Package conversion must be completed and tested&n;&t;&t; * NOTE: this code converts packages as input parameters to&n;&t;&t; * control methods only.  This is a very, very rare case.&n;&t;&t; */
 multiline_comment|/*&n;&t;&t;Status = Acpi_cm_build_internal_package_object(Internal_obj,&n;&t;&t;&t;&t; Ret_buffer-&gt;Pointer,&n;&t;&t;&t;&t; &amp;Ret_buffer-&gt;Length);&n;*/
 r_return
 (paren

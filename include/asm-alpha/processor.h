@@ -272,12 +272,6 @@ r_int
 id|flags
 )paren
 suffix:semicolon
-DECL|macro|copy_segments
-mdefine_line|#define copy_segments(tsk, mm)&t;&t;do { } while (0)
-DECL|macro|release_segments
-mdefine_line|#define release_segments(mm)&t;&t;do { } while (0)
-DECL|macro|forget_segments
-mdefine_line|#define forget_segments()&t;&t;do { } while (0)
 r_int
 r_int
 id|get_wchan

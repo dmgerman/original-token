@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: aclocal.h - Internal data types used across the ACPI subsystem&n; *       $Revision: 77 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: aclocal.h - Internal data types used across the ACPI subsystem&n; *       $Revision: 93 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __ACLOCAL_H__
 DECL|macro|__ACLOCAL_H__
@@ -144,7 +144,7 @@ DECL|macro|FIRST_TABLE_ID
 mdefine_line|#define FIRST_TABLE_ID              0x8000
 multiline_comment|/* TBD: [Restructure] get rid of the need for this! */
 DECL|macro|TABLE_ID_DSDT
-mdefine_line|#define TABLE_ID_DSDT               (ACPI_OWNER_ID) 0xD1D1
+mdefine_line|#define TABLE_ID_DSDT               (ACPI_OWNER_ID) 0x8000
 multiline_comment|/*****************************************************************************&n; *&n; * Namespace typedefs and structs&n; *&n; ****************************************************************************/
 multiline_comment|/* Operational modes of the AML interpreter/scanner */
 r_typedef
@@ -183,15 +183,15 @@ id|u8
 id|type
 suffix:semicolon
 multiline_comment|/* Type associated with this name */
+DECL|member|owner_id
+id|u16
+id|owner_id
+suffix:semicolon
 DECL|member|name
 id|u32
 id|name
 suffix:semicolon
 multiline_comment|/* ACPI Name, always 4 chars per ACPI spec */
-DECL|member|owner_id
-id|u16
-id|owner_id
-suffix:semicolon
 DECL|member|object
 r_void
 op_star
@@ -229,9 +229,15 @@ DECL|macro|ENTRY_NOT_FOUND
 mdefine_line|#define ENTRY_NOT_FOUND             NULL
 multiline_comment|/* Node flags */
 DECL|macro|ANOBJ_AML_ATTACHMENT
-mdefine_line|#define ANOBJ_AML_ATTACHMENT        0x1
+mdefine_line|#define ANOBJ_AML_ATTACHMENT        0x01
 DECL|macro|ANOBJ_END_OF_PEER_LIST
-mdefine_line|#define ANOBJ_END_OF_PEER_LIST      0x2
+mdefine_line|#define ANOBJ_END_OF_PEER_LIST      0x02
+DECL|macro|ANOBJ_DATA_WIDTH_32
+mdefine_line|#define ANOBJ_DATA_WIDTH_32         0x04     /* Parent table is 64-bits */
+DECL|macro|ANOBJ_METHOD_ARG
+mdefine_line|#define ANOBJ_METHOD_ARG            0x40
+DECL|macro|ANOBJ_METHOD_LOCAL
+mdefine_line|#define ANOBJ_METHOD_LOCAL          0x80
 multiline_comment|/*&n; * ACPI Table Descriptor.  One per ACPI table&n; */
 DECL|struct|acpi_table_desc
 r_typedef
@@ -270,6 +276,10 @@ DECL|member|aml_pointer
 id|u8
 op_star
 id|aml_pointer
+suffix:semicolon
+DECL|member|physical_address
+id|UINT64
+id|physical_address
 suffix:semicolon
 DECL|member|aml_length
 id|u32
@@ -633,6 +643,35 @@ DECL|typedef|ACPI_PSCOPE_STATE
 )brace
 id|ACPI_PSCOPE_STATE
 suffix:semicolon
+multiline_comment|/*&n; * Result values - used to accumulate the results of nested&n; * AML arguments&n; */
+DECL|struct|acpi_result_values
+r_typedef
+r_struct
+id|acpi_result_values
+(brace
+id|ACPI_STATE_COMMON
+DECL|member|obj_desc
+r_union
+id|acpi_operand_obj
+op_star
+id|obj_desc
+(braket
+id|OBJ_NUM_OPERANDS
+)braket
+suffix:semicolon
+DECL|member|num_results
+id|u8
+id|num_results
+suffix:semicolon
+DECL|member|last_insert
+id|u8
+id|last_insert
+suffix:semicolon
+DECL|typedef|ACPI_RESULT_VALUES
+)brace
+id|ACPI_RESULT_VALUES
+suffix:semicolon
+multiline_comment|/* Generic state is union of structs above */
 DECL|union|acpi_gen_state
 r_typedef
 r_union
@@ -657,6 +696,10 @@ suffix:semicolon
 DECL|member|parse_scope
 id|ACPI_PSCOPE_STATE
 id|parse_scope
+suffix:semicolon
+DECL|member|results
+id|ACPI_RESULT_VALUES
+id|results
 suffix:semicolon
 DECL|typedef|ACPI_GENERIC_STATE
 )brace
@@ -807,7 +850,7 @@ DECL|typedef|ACPI_PARSE_VALUE
 id|ACPI_PARSE_VALUE
 suffix:semicolon
 DECL|macro|ACPI_PARSE_COMMON
-mdefine_line|#define ACPI_PARSE_COMMON &bslash;&n;&t;u8                      data_type;      /* To differentiate various internal objs */&bslash;&n;&t;u8                      flags;          /* Type of Op */&bslash;&n;&t;u16                     opcode;         /* AML opcode */&bslash;&n;&t;u32                     aml_offset;     /* offset of declaration in AML */&bslash;&n;&t;struct acpi_parse_obj   *parent;        /* parent op */&bslash;&n;&t;struct acpi_parse_obj   *next;          /* next op */&bslash;&n;&t;DEBUG_ONLY_MEMBERS (&bslash;&n;&t;NATIVE_CHAR             op_name[16])    /* op name (debug only) */&bslash;&n;&t;&t;&t;  /* NON-DEBUG members below: */&bslash;&n;&t;ACPI_NAMESPACE_NODE     *node;/* for use by interpreter */&bslash;&n;&t;ACPI_PARSE_VALUE        value;          /* Value or args associated with the opcode */&bslash;&n;
+mdefine_line|#define ACPI_PARSE_COMMON &bslash;&n;&t;u8                      data_type;      /* To differentiate various internal objs */&bslash;&n;&t;u8                      flags;          /* Type of Op */&bslash;&n;&t;u16                     opcode;         /* AML opcode */&bslash;&n;&t;u32                     aml_offset;     /* offset of declaration in AML */&bslash;&n;&t;struct acpi_parse_obj   *parent;        /* parent op */&bslash;&n;&t;struct acpi_parse_obj   *next;          /* next op */&bslash;&n;&t;DEBUG_ONLY_MEMBERS (&bslash;&n;&t;NATIVE_CHAR             op_name[16])    /* op name (debug only) */&bslash;&n;&t;&t;&t;  /* NON-DEBUG members below: */&bslash;&n;&t;ACPI_NAMESPACE_NODE     *node;          /* for use by interpreter */&bslash;&n;&t;ACPI_PARSE_VALUE        value;          /* Value or args associated with the opcode */&bslash;&n;
 multiline_comment|/*&n; * generic operation (eg. If, While, Store)&n; */
 DECL|struct|acpi_parse_obj
 r_typedef
@@ -916,10 +959,12 @@ DECL|macro|NEXT_OP_DOWNWARD
 mdefine_line|#define NEXT_OP_DOWNWARD    1
 DECL|macro|NEXT_OP_UPWARD
 mdefine_line|#define NEXT_OP_UPWARD      2
-DECL|macro|WALK_METHOD
-mdefine_line|#define WALK_METHOD         1
 DECL|macro|WALK_NON_METHOD
 mdefine_line|#define WALK_NON_METHOD     0
+DECL|macro|WALK_METHOD
+mdefine_line|#define WALK_METHOD         1
+DECL|macro|WALK_METHOD_RESTART
+mdefine_line|#define WALK_METHOD_RESTART 2
 DECL|struct|acpi_walk_state
 r_typedef
 r_struct
@@ -951,11 +996,6 @@ id|u8
 id|num_operands
 suffix:semicolon
 multiline_comment|/* Stack pointer for Operands[] array */
-DECL|member|num_results
-id|u8
-id|num_results
-suffix:semicolon
-multiline_comment|/* Stack pointer for Results[] array */
 DECL|member|current_result
 id|u8
 id|current_result
@@ -973,7 +1013,7 @@ id|ACPI_PARSE_OBJECT
 op_star
 id|origin
 suffix:semicolon
-multiline_comment|/* Start of walk */
+multiline_comment|/* Start of walk [Obsolete] */
 multiline_comment|/* TBD: Obsolete with removal of WALK procedure ? */
 DECL|member|prev_op
 id|ACPI_PARSE_OBJECT
@@ -987,6 +1027,12 @@ op_star
 id|next_op
 suffix:semicolon
 multiline_comment|/* next op to be processed */
+DECL|member|results
+id|ACPI_GENERIC_STATE
+op_star
+id|results
+suffix:semicolon
+multiline_comment|/* Stack of accumulated results */
 DECL|member|control_state
 id|ACPI_GENERIC_STATE
 op_star
@@ -1062,16 +1108,6 @@ id|OBJ_NUM_OPERANDS
 )braket
 suffix:semicolon
 multiline_comment|/* Operands passed to the interpreter */
-DECL|member|results
-r_union
-id|acpi_operand_obj
-op_star
-id|results
-(braket
-id|OBJ_NUM_OPERANDS
-)braket
-suffix:semicolon
-multiline_comment|/* Accumulated results */
 DECL|member|arguments
 r_struct
 id|acpi_node
@@ -1131,27 +1167,74 @@ DECL|typedef|ACPI_WALK_LIST
 id|ACPI_WALK_LIST
 suffix:semicolon
 multiline_comment|/* Info used by Acpi_ps_init_objects */
-DECL|struct|init_walk_info
+DECL|struct|acpi_init_walk_info
 r_typedef
 r_struct
-id|init_walk_info
+id|acpi_init_walk_info
 (brace
 DECL|member|method_count
-id|u32
+id|u16
 id|method_count
 suffix:semicolon
 DECL|member|op_region_count
-id|u32
+id|u16
 id|op_region_count
+suffix:semicolon
+DECL|member|field_count
+id|u16
+id|field_count
+suffix:semicolon
+DECL|member|op_region_init
+id|u16
+id|op_region_init
+suffix:semicolon
+DECL|member|field_init
+id|u16
+id|field_init
+suffix:semicolon
+DECL|member|object_count
+id|u16
+id|object_count
 suffix:semicolon
 DECL|member|table_desc
 id|ACPI_TABLE_DESC
 op_star
 id|table_desc
 suffix:semicolon
-DECL|typedef|INIT_WALK_INFO
+DECL|typedef|ACPI_INIT_WALK_INFO
 )brace
-id|INIT_WALK_INFO
+id|ACPI_INIT_WALK_INFO
+suffix:semicolon
+multiline_comment|/* Info used by TBD */
+DECL|struct|acpi_device_walk_info
+r_typedef
+r_struct
+id|acpi_device_walk_info
+(brace
+DECL|member|flags
+id|u32
+id|flags
+suffix:semicolon
+DECL|member|device_count
+id|u16
+id|device_count
+suffix:semicolon
+DECL|member|num_STA
+id|u16
+id|num_STA
+suffix:semicolon
+DECL|member|num_INI
+id|u16
+id|num_INI
+suffix:semicolon
+DECL|member|table_desc
+id|ACPI_TABLE_DESC
+op_star
+id|table_desc
+suffix:semicolon
+DECL|typedef|ACPI_DEVICE_WALK_INFO
+)brace
+id|ACPI_DEVICE_WALK_INFO
 suffix:semicolon
 multiline_comment|/* TBD: [Restructure] Merge with struct above */
 DECL|struct|acpi_walk_info
@@ -1171,181 +1254,149 @@ DECL|typedef|ACPI_WALK_INFO
 )brace
 id|ACPI_WALK_INFO
 suffix:semicolon
+DECL|struct|acpi_get_devices_info
+r_typedef
+r_struct
+id|acpi_get_devices_info
+(brace
+DECL|member|user_function
+id|WALK_CALLBACK
+id|user_function
+suffix:semicolon
+DECL|member|context
+r_void
+op_star
+id|context
+suffix:semicolon
+DECL|member|hid
+id|NATIVE_CHAR
+op_star
+id|hid
+suffix:semicolon
+DECL|typedef|ACPI_GET_DEVICES_INFO
+)brace
+id|ACPI_GET_DEVICES_INFO
+suffix:semicolon
 multiline_comment|/*****************************************************************************&n; *&n; * Hardware and PNP&n; *&n; ****************************************************************************/
+multiline_comment|/* PCI */
+DECL|macro|PCI_ROOT_HID_STRING
+mdefine_line|#define PCI_ROOT_HID_STRING         &quot;PNP0A03&quot;
+DECL|macro|PCI_ROOT_HID_VALUE
+mdefine_line|#define PCI_ROOT_HID_VALUE          0x030AD041       /* EISAID(&quot;PNP0A03&quot;) */
 multiline_comment|/* Sleep states */
 DECL|macro|SLWA_DEBUG_LEVEL
-mdefine_line|#define SLWA_DEBUG_LEVEL    4
+mdefine_line|#define SLWA_DEBUG_LEVEL            4
 DECL|macro|GTS_CALL
-mdefine_line|#define GTS_CALL            0
+mdefine_line|#define GTS_CALL                    0
 DECL|macro|GTS_WAKE
-mdefine_line|#define GTS_WAKE            1
+mdefine_line|#define GTS_WAKE                    1
 multiline_comment|/* Cx States */
 DECL|macro|MAX_CX_STATE_LATENCY
-mdefine_line|#define MAX_CX_STATE_LATENCY 0xFFFFFFFF
+mdefine_line|#define MAX_CX_STATE_LATENCY        0xFFFFFFFF
 DECL|macro|MAX_CX_STATES
-mdefine_line|#define MAX_CX_STATES       4
+mdefine_line|#define MAX_CX_STATES               4
 multiline_comment|/*&n; * The #define&squot;s and enum below establish an abstract way of identifying what&n; * register block and register is to be accessed.  Do not change any of the&n; * values as they are used in switch statements and offset calculations.&n; */
 DECL|macro|REGISTER_BLOCK_MASK
-mdefine_line|#define REGISTER_BLOCK_MASK     0xFF00
+mdefine_line|#define REGISTER_BLOCK_MASK         0xFF00  /* Register Block Id    */
 DECL|macro|BIT_IN_REGISTER_MASK
-mdefine_line|#define BIT_IN_REGISTER_MASK    0x00FF
-DECL|macro|PM1_EVT
-mdefine_line|#define PM1_EVT                 0x0100
+mdefine_line|#define BIT_IN_REGISTER_MASK        0x00FF  /* Bit Id in the Register Block Id    */
+DECL|macro|BYTE_IN_REGISTER_MASK
+mdefine_line|#define BYTE_IN_REGISTER_MASK       0x00FF  /* Register Offset in the Register Block    */
+DECL|macro|REGISTER_BLOCK_ID
+mdefine_line|#define REGISTER_BLOCK_ID(reg_id)   (reg_id &amp; REGISTER_BLOCK_MASK)
+DECL|macro|REGISTER_BIT_ID
+mdefine_line|#define REGISTER_BIT_ID(reg_id)     (reg_id &amp; BIT_IN_REGISTER_MASK)
+DECL|macro|REGISTER_OFFSET
+mdefine_line|#define REGISTER_OFFSET(reg_id)     (reg_id &amp; BYTE_IN_REGISTER_MASK)
+multiline_comment|/*&n; * Access Rule&n; *  To access a Register Bit:&n; *  -&gt; Use Bit Name (= Register Block Id | Bit Id) defined in the enum.&n; *&n; *  To access a Register:&n; *  -&gt; Use Register Id (= Register Block Id | Register Offset)&n; */
+multiline_comment|/*&n; * Register Block Id&n; */
+DECL|macro|PM1_STS
+mdefine_line|#define PM1_STS                     0x0100
+DECL|macro|PM1_EN
+mdefine_line|#define PM1_EN                      0x0200
 DECL|macro|PM1_CONTROL
-mdefine_line|#define PM1_CONTROL             0x0200
+mdefine_line|#define PM1_CONTROL                 0x0300
 DECL|macro|PM2_CONTROL
-mdefine_line|#define PM2_CONTROL             0x0300
+mdefine_line|#define PM2_CONTROL                 0x0400
 DECL|macro|PM_TIMER
-mdefine_line|#define PM_TIMER                0x0400
+mdefine_line|#define PM_TIMER                    0x0500
 DECL|macro|PROCESSOR_BLOCK
-mdefine_line|#define PROCESSOR_BLOCK         0x0500
+mdefine_line|#define PROCESSOR_BLOCK             0x0600
 DECL|macro|GPE0_STS_BLOCK
-mdefine_line|#define GPE0_STS_BLOCK          0x0600
+mdefine_line|#define GPE0_STS_BLOCK              0x0700
 DECL|macro|GPE0_EN_BLOCK
-mdefine_line|#define GPE0_EN_BLOCK           0x0700
+mdefine_line|#define GPE0_EN_BLOCK               0x0800
 DECL|macro|GPE1_STS_BLOCK
-mdefine_line|#define GPE1_STS_BLOCK          0x0800
+mdefine_line|#define GPE1_STS_BLOCK              0x0900
 DECL|macro|GPE1_EN_BLOCK
-mdefine_line|#define GPE1_EN_BLOCK           0x0900
-r_enum
-(brace
-multiline_comment|/* PM1 status register ids */
-DECL|enumerator|TMR_STS
-id|TMR_STS
-op_assign
-(paren
-id|PM1_EVT
-op_or
-l_int|0x01
-)paren
-comma
-DECL|enumerator|BM_STS
-id|BM_STS
-comma
-DECL|enumerator|GBL_STS
-id|GBL_STS
-comma
-DECL|enumerator|PWRBTN_STS
-id|PWRBTN_STS
-comma
-DECL|enumerator|SLPBTN_STS
-id|SLPBTN_STS
-comma
-DECL|enumerator|RTC_STS
-id|RTC_STS
-comma
-DECL|enumerator|WAK_STS
-id|WAK_STS
-comma
-multiline_comment|/* PM1 enable register ids */
-DECL|enumerator|TMR_EN
-id|TMR_EN
-comma
-multiline_comment|/* need to skip 1 enable number since there&squot;s no bus master enable register */
-DECL|enumerator|GBL_EN
-id|GBL_EN
-op_assign
-(paren
-id|PM1_EVT
-op_or
-l_int|0x0A
-)paren
-comma
-DECL|enumerator|PWRBTN_EN
-id|PWRBTN_EN
-comma
-DECL|enumerator|SLPBTN_EN
-id|SLPBTN_EN
-comma
-DECL|enumerator|RTC_EN
-id|RTC_EN
-comma
-multiline_comment|/* PM1 control register ids */
-DECL|enumerator|SCI_EN
-id|SCI_EN
-op_assign
-(paren
-id|PM1_CONTROL
-op_or
-l_int|0x01
-)paren
-comma
-DECL|enumerator|BM_RLD
-id|BM_RLD
-comma
-DECL|enumerator|GBL_RLS
-id|GBL_RLS
-comma
-DECL|enumerator|SLP_TYPE_A
-id|SLP_TYPE_A
-comma
-DECL|enumerator|SLP_TYPE_B
-id|SLP_TYPE_B
-comma
-DECL|enumerator|SLP_EN
-id|SLP_EN
-comma
-multiline_comment|/* PM2 control register ids */
-DECL|enumerator|ARB_DIS
-id|ARB_DIS
-op_assign
-(paren
-id|PM2_CONTROL
-op_or
-l_int|0x01
-)paren
-comma
-multiline_comment|/* PM Timer register ids */
-DECL|enumerator|TMR_VAL
-id|TMR_VAL
-op_assign
-(paren
-id|PM_TIMER
-op_or
-l_int|0x01
-)paren
-comma
-DECL|enumerator|GPE0_STS
-id|GPE0_STS
-op_assign
-(paren
-id|GPE0_STS_BLOCK
-op_or
-l_int|0x01
-)paren
-comma
-DECL|enumerator|GPE0_EN
-id|GPE0_EN
-op_assign
-(paren
-id|GPE0_EN_BLOCK
-op_or
-l_int|0x01
-)paren
-comma
-DECL|enumerator|GPE1_STS
-id|GPE1_STS
-op_assign
-(paren
-id|GPE1_STS_BLOCK
-op_or
-l_int|0x01
-)paren
-comma
-DECL|enumerator|GPE1_EN
-id|GPE1_EN
-op_assign
-(paren
-id|GPE0_EN_BLOCK
-op_or
-l_int|0x01
-)paren
-comma
-multiline_comment|/* Last register value is one less than LAST_REG */
-DECL|enumerator|LAST_REG
-id|LAST_REG
-)brace
-suffix:semicolon
+mdefine_line|#define GPE1_EN_BLOCK               0x0A00
+DECL|macro|SMI_CMD_BLOCK
+mdefine_line|#define SMI_CMD_BLOCK               0x0B00
+multiline_comment|/*&n; * Address space bitmasks for mmio or io spaces&n; */
+DECL|macro|SMI_CMD_ADDRESS_SPACE
+mdefine_line|#define SMI_CMD_ADDRESS_SPACE       0x01
+DECL|macro|PM1_BLK_ADDRESS_SPACE
+mdefine_line|#define PM1_BLK_ADDRESS_SPACE       0x02
+DECL|macro|PM2_CNT_BLK_ADDRESS_SPACE
+mdefine_line|#define PM2_CNT_BLK_ADDRESS_SPACE   0x04
+DECL|macro|PM_TMR_BLK_ADDRESS_SPACE
+mdefine_line|#define PM_TMR_BLK_ADDRESS_SPACE    0x08
+DECL|macro|GPE0_BLK_ADDRESS_SPACE
+mdefine_line|#define GPE0_BLK_ADDRESS_SPACE      0x10
+DECL|macro|GPE1_BLK_ADDRESS_SPACE
+mdefine_line|#define GPE1_BLK_ADDRESS_SPACE      0x20
+multiline_comment|/*&n; * Control bit definitions&n; */
+DECL|macro|TMR_STS
+mdefine_line|#define TMR_STS     (PM1_STS | 0x01)
+DECL|macro|BM_STS
+mdefine_line|#define BM_STS      (PM1_STS | 0x02)
+DECL|macro|GBL_STS
+mdefine_line|#define GBL_STS     (PM1_STS | 0x03)
+DECL|macro|PWRBTN_STS
+mdefine_line|#define PWRBTN_STS  (PM1_STS | 0x04)
+DECL|macro|SLPBTN_STS
+mdefine_line|#define SLPBTN_STS  (PM1_STS | 0x05)
+DECL|macro|RTC_STS
+mdefine_line|#define RTC_STS     (PM1_STS | 0x06)
+DECL|macro|WAK_STS
+mdefine_line|#define WAK_STS     (PM1_STS | 0x07)
+DECL|macro|TMR_EN
+mdefine_line|#define TMR_EN      (PM1_EN | 0x01)
+multiline_comment|/* no BM_EN */
+DECL|macro|GBL_EN
+mdefine_line|#define GBL_EN      (PM1_EN | 0x03)
+DECL|macro|PWRBTN_EN
+mdefine_line|#define PWRBTN_EN   (PM1_EN | 0x04)
+DECL|macro|SLPBTN_EN
+mdefine_line|#define SLPBTN_EN   (PM1_EN | 0x05)
+DECL|macro|RTC_EN
+mdefine_line|#define RTC_EN      (PM1_EN | 0x06)
+DECL|macro|WAK_EN
+mdefine_line|#define WAK_EN      (PM1_EN | 0x07)
+DECL|macro|SCI_EN
+mdefine_line|#define SCI_EN      (PM1_CONTROL | 0x01)
+DECL|macro|BM_RLD
+mdefine_line|#define BM_RLD      (PM1_CONTROL | 0x02)
+DECL|macro|GBL_RLS
+mdefine_line|#define GBL_RLS     (PM1_CONTROL | 0x03)
+DECL|macro|SLP_TYPE_A
+mdefine_line|#define SLP_TYPE_A  (PM1_CONTROL | 0x04)
+DECL|macro|SLP_TYPE_B
+mdefine_line|#define SLP_TYPE_B  (PM1_CONTROL | 0x05)
+DECL|macro|SLP_EN
+mdefine_line|#define SLP_EN      (PM1_CONTROL | 0x06)
+DECL|macro|ARB_DIS
+mdefine_line|#define ARB_DIS     (PM2_CONTROL | 0x01)
+DECL|macro|TMR_VAL
+mdefine_line|#define TMR_VAL     (PM_TIMER | 0x01)
+DECL|macro|GPE0_STS
+mdefine_line|#define GPE0_STS    (GPE0_STS_BLOCK | 0x01)
+DECL|macro|GPE0_EN
+mdefine_line|#define GPE0_EN     (GPE0_EN_BLOCK  | 0x01)
+DECL|macro|GPE1_STS
+mdefine_line|#define GPE1_STS    (GPE1_STS_BLOCK | 0x01)
+DECL|macro|GPE1_EN
+mdefine_line|#define GPE1_EN     (GPE1_EN_BLOCK  | 0x01)
 DECL|macro|TMR_STS_MASK
 mdefine_line|#define TMR_STS_MASK        0x0001
 DECL|macro|BM_STS_MASK
@@ -1361,7 +1412,7 @@ mdefine_line|#define RTC_STS_MASK        0x0400
 DECL|macro|WAK_STS_MASK
 mdefine_line|#define WAK_STS_MASK        0x8000
 DECL|macro|ALL_FIXED_STS_BITS
-mdefine_line|#define ALL_FIXED_STS_BITS  (TMR_STS_MASK   | BM_STS_MASK  | GBL_STS_MASK | PWRBTN_STS_MASK |  &bslash;&n;&t;&t;&t; SLPBTN_STS_MASK | RTC_STS_MASK | WAK_STS_MASK)
+mdefine_line|#define ALL_FIXED_STS_BITS  (TMR_STS_MASK   | BM_STS_MASK  | GBL_STS_MASK &bslash;&n;&t;&t;&t;&t;&t;   | PWRBTN_STS_MASK | SLPBTN_STS_MASK &bslash;&n;&t;&t;&t;&t;&t;   | RTC_STS_MASK | WAK_STS_MASK)
 DECL|macro|TMR_EN_MASK
 mdefine_line|#define TMR_EN_MASK         0x0001
 DECL|macro|GBL_EN_MASK
@@ -1384,6 +1435,8 @@ DECL|macro|SLP_EN_MASK
 mdefine_line|#define SLP_EN_MASK         0x2000
 DECL|macro|ARB_DIS_MASK
 mdefine_line|#define ARB_DIS_MASK        0x0001
+DECL|macro|TMR_VAL_MASK
+mdefine_line|#define TMR_VAL_MASK        0xFFFFFFFF
 DECL|macro|GPE0_STS_MASK
 mdefine_line|#define GPE0_STS_MASK
 DECL|macro|GPE0_EN_MASK
@@ -1396,18 +1449,6 @@ DECL|macro|ACPI_READ
 mdefine_line|#define ACPI_READ           1
 DECL|macro|ACPI_WRITE
 mdefine_line|#define ACPI_WRITE          2
-DECL|macro|LOW_BYTE
-mdefine_line|#define LOW_BYTE            0x00FF
-DECL|macro|ONE_BYTE
-mdefine_line|#define ONE_BYTE            0x08
-macro_line|#ifndef SET
-DECL|macro|SET
-mdefine_line|#define SET             1
-macro_line|#endif
-macro_line|#ifndef CLEAR
-DECL|macro|CLEAR
-mdefine_line|#define CLEAR           0
-macro_line|#endif
 multiline_comment|/* Plug and play */
 multiline_comment|/* Pnp and ACPI data */
 DECL|macro|VERSION_NO
@@ -1463,49 +1504,17 @@ mdefine_line|#define WORD_ADDRESS_SPACE              0x88
 DECL|macro|EXTENDED_IRQ
 mdefine_line|#define EXTENDED_IRQ                    0x89
 multiline_comment|/* MUST HAVES */
-r_typedef
-r_enum
-(brace
-DECL|enumerator|DWORD_DEVICE_ID
-id|DWORD_DEVICE_ID
-comma
-DECL|enumerator|STRING_PTR_DEVICE_ID
-id|STRING_PTR_DEVICE_ID
-comma
-DECL|enumerator|STRING_DEVICE_ID
-id|STRING_DEVICE_ID
-DECL|typedef|DEVICE_ID_TYPE
-)brace
-id|DEVICE_ID_TYPE
-suffix:semicolon
+DECL|macro|DEVICE_ID_LENGTH
+mdefine_line|#define DEVICE_ID_LENGTH                0x09
 r_typedef
 r_struct
 (brace
-DECL|member|type
-id|DEVICE_ID_TYPE
-id|type
-suffix:semicolon
-r_union
-(brace
-DECL|member|number
-id|u32
-id|number
-suffix:semicolon
-DECL|member|string_ptr
-id|NATIVE_CHAR
-op_star
-id|string_ptr
-suffix:semicolon
 DECL|member|buffer
 id|NATIVE_CHAR
 id|buffer
 (braket
-l_int|9
+id|DEVICE_ID_LENGTH
 )braket
-suffix:semicolon
-DECL|member|data
-)brace
-id|data
 suffix:semicolon
 DECL|typedef|DEVICE_ID
 )brace

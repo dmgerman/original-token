@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: evmisc - ACPI device notification handler dispatch&n; *                       and ACPI Global Lock support&n; *              $Revision: 13 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: evmisc - ACPI device notification handler dispatch&n; *                       and ACPI Global Lock support&n; *              $Revision: 20 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acevents.h&quot;
@@ -184,6 +184,7 @@ id|handler_obj-&gt;notify_handler.context
 suffix:semicolon
 )brace
 multiline_comment|/***************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_global_lock_thread&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Invoked by SCI interrupt handler upon acquisition of the&n; *              Global Lock.  Simply signal all threads that are waiting&n; *              for the lock.&n; *&n; **************************************************************************/
+r_static
 r_void
 DECL|function|acpi_ev_global_lock_thread
 id|acpi_ev_global_lock_thread
@@ -211,6 +212,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/***************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_global_lock_handler&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Invoked directly from the SCI handler when a global lock&n; *              release interrupt occurs.  Grab the global lock and queue&n; *              the global lock thread for execution&n; *&n; **************************************************************************/
+r_static
 id|u32
 DECL|function|acpi_ev_global_lock_handler
 id|acpi_ev_global_lock_handler
@@ -232,7 +234,6 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Attempt to get the lock&n;&t; * If we don&squot;t get it now, it will be marked pending and we will&n;&t; * take another interrupt when it becomes free.&n;&t; */
 id|global_lock
 op_assign
-op_amp
 id|acpi_gbl_FACS-&gt;global_lock
 suffix:semicolon
 id|ACPI_ACQUIRE_GLOBAL_LOCK
@@ -352,10 +353,9 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* We must acquire the actualy hardware lock */
+multiline_comment|/* We must acquire the actual hardware lock */
 id|global_lock
 op_assign
-op_amp
 id|acpi_gbl_FACS-&gt;global_lock
 suffix:semicolon
 id|ACPI_ACQUIRE_GLOBAL_LOCK
@@ -384,10 +384,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Did not get the lock.  The pending bit was set above, and we must now&n;&t; * wait until we get the global lock released interrupt.&n;&t; */
 multiline_comment|/*&n;&t;  * Acquire the global lock semaphore first.&n;&t;  * Since this wait will block, we must release the interpreter&n;&t;  */
-id|acpi_aml_exit_interpreter
-(paren
-)paren
-suffix:semicolon
 id|status
 op_assign
 id|acpi_aml_system_wait_semaphore
@@ -395,10 +391,6 @@ id|acpi_aml_system_wait_semaphore
 id|acpi_gbl_global_lock_semaphore
 comma
 id|ACPI_UINT32_MAX
-)paren
-suffix:semicolon
-id|acpi_aml_enter_interpreter
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -428,9 +420,17 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|acpi_gbl_FACS
+id|acpi_gbl_global_lock_thread_count
 )paren
 (brace
+id|REPORT_WARNING
+c_func
+(paren
+(paren
+l_string|&quot;Releasing a non-acquired Global Lock&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -449,7 +449,6 @@ id|acpi_gbl_global_lock_thread_count
 multiline_comment|/*&n;&t;&t; * No more threads holding lock, we can do the actual hardware&n;&t;&t; * release&n;&t;&t; */
 id|global_lock
 op_assign
-op_amp
 id|acpi_gbl_FACS-&gt;global_lock
 suffix:semicolon
 id|ACPI_RELEASE_GLOBAL_LOCK
@@ -470,14 +469,12 @@ c_cond
 id|pending
 )paren
 (brace
-id|acpi_hw_register_access
+id|acpi_hw_register_bit_access
 (paren
 id|ACPI_WRITE
 comma
 id|ACPI_MTX_LOCK
 comma
-id|PM1_CONTROL
-op_or
 id|GBL_RLS
 comma
 l_int|1

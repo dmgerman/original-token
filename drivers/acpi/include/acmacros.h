@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: acmacros.h - C macros for the entire subsystem.&n; *       $Revision: 48 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: acmacros.h - C macros for the entire subsystem.&n; *       $Revision: 56 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __ACMACROS_H__
 DECL|macro|__ACMACROS_H__
@@ -98,6 +98,11 @@ DECL|macro|MUL_16
 mdefine_line|#define MUL_16(a)                       _MUL(a,4)
 DECL|macro|MOD_16
 mdefine_line|#define MOD_16(a)                       _MOD(a,16)
+multiline_comment|/*&n; * Divide and Modulo&n; */
+DECL|macro|ACPI_DIVIDE
+mdefine_line|#define ACPI_DIVIDE(n,d)                ((n) / (d))
+DECL|macro|ACPI_MODULO
+mdefine_line|#define ACPI_MODULO(n,d)                ((n) % (d))
 multiline_comment|/*&n; * Rounding macros (Power of two boundaries only)&n; */
 DECL|macro|ROUND_DOWN
 mdefine_line|#define ROUND_DOWN(value,boundary)      ((value) &amp; (~((boundary)-1)))
@@ -105,16 +110,41 @@ DECL|macro|ROUND_UP
 mdefine_line|#define ROUND_UP(value,boundary)        (((value) + ((boundary)-1)) &amp; (~((boundary)-1)))
 DECL|macro|ROUND_DOWN_TO_32_BITS
 mdefine_line|#define ROUND_DOWN_TO_32_BITS(a)        ROUND_DOWN(a,4)
+DECL|macro|ROUND_DOWN_TO_64_BITS
+mdefine_line|#define ROUND_DOWN_TO_64_BITS(a)        ROUND_DOWN(a,8)
 DECL|macro|ROUND_DOWN_TO_NATIVE_WORD
 mdefine_line|#define ROUND_DOWN_TO_NATIVE_WORD(a)    ROUND_DOWN(a,ALIGNED_ADDRESS_BOUNDARY)
 DECL|macro|ROUND_UP_TO_32_bITS
 mdefine_line|#define ROUND_UP_TO_32_bITS(a)          ROUND_UP(a,4)
+DECL|macro|ROUND_UP_TO_64_bITS
+mdefine_line|#define ROUND_UP_TO_64_bITS(a)          ROUND_UP(a,8)
 DECL|macro|ROUND_UP_TO_NATIVE_WORD
 mdefine_line|#define ROUND_UP_TO_NATIVE_WORD(a)      ROUND_UP(a,ALIGNED_ADDRESS_BOUNDARY)
+DECL|macro|ROUND_PTR_UP_TO_4
+mdefine_line|#define ROUND_PTR_UP_TO_4(a,b)          ((b *)(((NATIVE_UINT)(a) + 3) &amp; ~3))
+DECL|macro|ROUND_PTR_UP_TO_8
+mdefine_line|#define ROUND_PTR_UP_TO_8(a,b)          ((b *)(((NATIVE_UINT)(a) + 7) &amp; ~7))
+DECL|macro|ROUND_UP_TO_1_k
+mdefine_line|#define ROUND_UP_TO_1_k(a)              (((a) + 1023) &gt;&gt; 10)
 macro_line|#ifdef DEBUG_ASSERT
 DECL|macro|DEBUG_ASSERT
 macro_line|#undef DEBUG_ASSERT
 macro_line|#endif
+multiline_comment|/* Macros for GAS addressing */
+DECL|macro|ACPI_PCI_DEVICE_MASK
+mdefine_line|#define ACPI_PCI_DEVICE_MASK            (UINT64) 0x0000FFFF00000000
+DECL|macro|ACPI_PCI_FUNCTION_MASK
+mdefine_line|#define ACPI_PCI_FUNCTION_MASK          (UINT64) 0x00000000FFFF0000
+DECL|macro|ACPI_PCI_REGISTER_MASK
+mdefine_line|#define ACPI_PCI_REGISTER_MASK          (UINT64) 0x000000000000FFFF
+DECL|macro|ACPI_PCI_FUNCTION
+mdefine_line|#define ACPI_PCI_FUNCTION(a)            (u32) ((((a) &amp; ACPI_PCI_FUNCTION_MASK) &gt;&gt; 16))
+DECL|macro|ACPI_PCI_DEVICE
+mdefine_line|#define ACPI_PCI_DEVICE(a)              (u32) ((((a) &amp; ACPI_PCI_DEVICE_MASK) &gt;&gt; 32))
+DECL|macro|ACPI_PCI_REGISTER
+mdefine_line|#define ACPI_PCI_REGISTER(a)            (u32) (((a) &amp; ACPI_PCI_REGISTER_MASK))
+DECL|macro|ACPI_PCI_DEVFUN
+mdefine_line|#define ACPI_PCI_DEVFUN(a)              (u32) ((ACPI_PCI_DEVICE(a) &lt;&lt; 16) | ACPI_PCI_FUNCTION(a))
 multiline_comment|/*&n; * An ACPI_HANDLE (which is actually an ACPI_NAMESPACE_NODE *) can appear in some contexts,&n; * such as on ap_obj_stack, where a pointer to an ACPI_OPERAND_OBJECT can also&n; * appear.  This macro is used to distinguish them.&n; *&n; * The Data_type field is the first field in both structures.&n; */
 DECL|macro|VALID_DESCRIPTOR_TYPE
 mdefine_line|#define VALID_DESCRIPTOR_TYPE(d,t)      (((ACPI_NAMESPACE_NODE *)d)-&gt;data_type == t)
@@ -179,33 +209,35 @@ mdefine_line|#define ARGP_LIST5(a,b,c,d,e)           (ARG_1(a)|ARG_2(b)|ARG_3(c)
 DECL|macro|ARGP_LIST6
 mdefine_line|#define ARGP_LIST6(a,b,c,d,e,f)         (ARG_1(a)|ARG_2(b)|ARG_3(c)|ARG_4(d)|ARG_5(e)|ARG_6(f))
 DECL|macro|GET_CURRENT_ARG_TYPE
-mdefine_line|#define GET_CURRENT_ARG_TYPE(list)      (list &amp; 0x1F)
+mdefine_line|#define GET_CURRENT_ARG_TYPE(list)      (list &amp; ((u32) 0x1F))
 DECL|macro|INCREMENT_ARG_LIST
-mdefine_line|#define INCREMENT_ARG_LIST(list)        (list &gt;&gt;= ARG_TYPE_WIDTH)
+mdefine_line|#define INCREMENT_ARG_LIST(list)        (list &gt;&gt;= ((u32) ARG_TYPE_WIDTH))
 multiline_comment|/*&n; * Reporting macros that are never compiled out&n; */
+DECL|macro|PARAM_LIST
+mdefine_line|#define PARAM_LIST(pl)                  pl
 multiline_comment|/*&n; * Error reporting.  These versions add callers module and line#.  Since&n; * _THIS_MODULE gets compiled out when ACPI_DEBUG isn&squot;t defined, only&n; * use it in debug mode.&n; */
 macro_line|#ifdef ACPI_DEBUG
 DECL|macro|REPORT_INFO
-mdefine_line|#define REPORT_INFO(a)                  _report_info(_THIS_MODULE,__LINE__,_COMPONENT,a)
+mdefine_line|#define REPORT_INFO(fp)                 {_report_info(_THIS_MODULE,__LINE__,_COMPONENT); &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;  debug_print_raw PARAM_LIST(fp);}
 DECL|macro|REPORT_ERROR
-mdefine_line|#define REPORT_ERROR(a)                 _report_error(_THIS_MODULE,__LINE__,_COMPONENT,a)
+mdefine_line|#define REPORT_ERROR(fp)                {_report_error(_THIS_MODULE,__LINE__,_COMPONENT); &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;debug_print_raw PARAM_LIST(fp);}
 DECL|macro|REPORT_WARNING
-mdefine_line|#define REPORT_WARNING(a)               _report_warning(_THIS_MODULE,__LINE__,_COMPONENT,a)
+mdefine_line|#define REPORT_WARNING(fp)              {_report_warning(_THIS_MODULE,__LINE__,_COMPONENT); &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;debug_print_raw PARAM_LIST(fp);}
 macro_line|#else
 DECL|macro|REPORT_INFO
-mdefine_line|#define REPORT_INFO(a)                  _report_info(&quot;&quot;,__LINE__,_COMPONENT,a)
+mdefine_line|#define REPORT_INFO(fp)                 {_report_info(&quot;ACPI&quot;,__LINE__,_COMPONENT); &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;debug_print_raw PARAM_LIST(fp);}
 DECL|macro|REPORT_ERROR
-mdefine_line|#define REPORT_ERROR(a)                 _report_error(&quot;&quot;,__LINE__,_COMPONENT,a)
+mdefine_line|#define REPORT_ERROR(fp)                {_report_error(&quot;ACPI&quot;,__LINE__,_COMPONENT); &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;debug_print_raw PARAM_LIST(fp);}
 DECL|macro|REPORT_WARNING
-mdefine_line|#define REPORT_WARNING(a)               _report_warning(&quot;&quot;,__LINE__,_COMPONENT,a)
+mdefine_line|#define REPORT_WARNING(fp)              {_report_warning(&quot;ACPI&quot;,__LINE__,_COMPONENT); &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;debug_print_raw PARAM_LIST(fp);}
 macro_line|#endif
 multiline_comment|/* Error reporting.  These versions pass thru the module and line# */
 DECL|macro|_REPORT_INFO
-mdefine_line|#define _REPORT_INFO(a,b,c,d)           _report_info(a,b,c,d)
+mdefine_line|#define _REPORT_INFO(a,b,c,fp)          {_report_info(a,b,c); &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;debug_print_raw PARAM_LIST(fp);}
 DECL|macro|_REPORT_ERROR
-mdefine_line|#define _REPORT_ERROR(a,b,c,d)          _report_error(a,b,c,d)
+mdefine_line|#define _REPORT_ERROR(a,b,c,fp)         {_report_error(a,b,c); &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;debug_print_raw PARAM_LIST(fp);}
 DECL|macro|_REPORT_WARNING
-mdefine_line|#define _REPORT_WARNING(a,b,c,d)        _report_warning(a,b,c,d)
+mdefine_line|#define _REPORT_WARNING(a,b,c,fp)       {_report_warning(a,b,c); &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;debug_print_raw PARAM_LIST(fp);}
 multiline_comment|/* Buffer dump macros */
 DECL|macro|DUMP_BUFFER
 mdefine_line|#define DUMP_BUFFER(a,b)                acpi_cm_dump_buffer((u8 *)a,b,DB_BYTE_DISPLAY,_COMPONENT)
@@ -215,7 +247,7 @@ DECL|macro|MODULE_NAME
 mdefine_line|#define MODULE_NAME(name)               static char *_THIS_MODULE = name;
 multiline_comment|/*&n; * Function entry tracing.&n; * The first parameter should be the procedure name as a quoted string.  This is declared&n; * as a local string (&quot;_Proc_name) so that it can be also used by the function exit macros below.&n; */
 DECL|macro|FUNCTION_TRACE
-mdefine_line|#define FUNCTION_TRACE(a)               char * _proc_name = a;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; function_trace(_THIS_MODULE,__LINE__,_COMPONENT,a)
+mdefine_line|#define FUNCTION_TRACE(a)               char * _proc_name = a;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;function_trace(_THIS_MODULE,__LINE__,_COMPONENT,a)
 DECL|macro|FUNCTION_TRACE_PTR
 mdefine_line|#define FUNCTION_TRACE_PTR(a,b)         char * _proc_name = a;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;function_trace_ptr(_THIS_MODULE,__LINE__,_COMPONENT,a,(void *)b)
 DECL|macro|FUNCTION_TRACE_U32
@@ -233,7 +265,7 @@ DECL|macro|return_PTR
 mdefine_line|#define return_PTR(s)                   {function_ptr_exit(_THIS_MODULE,__LINE__,_COMPONENT,_proc_name,(u8 *)s);return(s);}
 multiline_comment|/* Conditional execution */
 DECL|macro|DEBUG_EXEC
-mdefine_line|#define DEBUG_EXEC(a)                   a;
+mdefine_line|#define DEBUG_EXEC(a)                   a
 DECL|macro|NORMAL_EXEC
 mdefine_line|#define NORMAL_EXEC(a)
 DECL|macro|DEBUG_DEFINE
@@ -266,8 +298,6 @@ DECL|macro|BREAK_ON_ERROR
 mdefine_line|#define BREAK_ON_ERROR(lvl)
 macro_line|#endif
 multiline_comment|/*&n; * Master debug print macros&n; * Print iff:&n; *    1) Debug print for the current component is enabled&n; *    2) Debug error level or trace level for the print statement is enabled&n; *&n; */
-DECL|macro|PARAM_LIST
-mdefine_line|#define PARAM_LIST(pl)                  pl
 DECL|macro|TEST_DEBUG_SWITCH
 mdefine_line|#define TEST_DEBUG_SWITCH(lvl)          if (((lvl) &amp; acpi_dbg_level) &amp;&amp; (_COMPONENT &amp; acpi_dbg_layer))
 DECL|macro|DEBUG_PRINT
@@ -341,7 +371,7 @@ macro_line|#endif
 multiline_comment|/*&n; * Some code only gets executed when the debugger is built in.&n; * Note that this is entirely independent of whether the&n; * DEBUG_PRINT stuff (set by ACPI_DEBUG) is on, or not.&n; */
 macro_line|#ifdef ENABLE_DEBUGGER
 DECL|macro|DEBUGGER_EXEC
-mdefine_line|#define DEBUGGER_EXEC(a)                a;
+mdefine_line|#define DEBUGGER_EXEC(a)                a
 macro_line|#else
 DECL|macro|DEBUGGER_EXEC
 mdefine_line|#define DEBUGGER_EXEC(a)
@@ -355,7 +385,7 @@ mdefine_line|#define DEBUG_ONLY_MEMBERS(a)
 DECL|macro|OP_INFO_ENTRY
 macro_line|#undef OP_INFO_ENTRY
 DECL|macro|OP_INFO_ENTRY
-mdefine_line|#define OP_INFO_ENTRY(opcode,flags,name,Pargs,Iargs)     {opcode,flags,Pargs,Iargs}
+mdefine_line|#define OP_INFO_ENTRY(flags,name,Pargs,Iargs)     {flags,Pargs,Iargs}
 macro_line|#endif
 macro_line|#ifdef ACPI_DEBUG
 multiline_comment|/*&n; * 1) Set name to blanks&n; * 2) Copy the object name&n; */

@@ -5493,6 +5493,7 @@ id|method2
 op_assign
 id|INT_MAX
 suffix:semicolon
+macro_line|#if 0
 multiline_comment|/*&n;&t; * Attempt to add entries :-)&n;&t; */
 r_if
 c_cond
@@ -5675,6 +5676,7 @@ id|bh-&gt;b_count
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 id|PRINTK
 c_func
 (paren

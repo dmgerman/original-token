@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: actables.h - ACPI table management&n; *       $Revision: 20 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: actables.h - ACPI table management&n; *       $Revision: 27 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __ACTABLES_H__
 DECL|macro|__ACTABLES_H__
@@ -18,20 +18,34 @@ op_star
 id|table_desc
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_tbfac - FACP, FACS utilities&n; */
+multiline_comment|/*&n; * tbconvrt - Table conversion routines&n; */
 id|ACPI_STATUS
-id|acpi_tb_get_table_facs
+id|acpi_tb_convert_to_xsdt
 (paren
-id|ACPI_TABLE_HEADER
+id|ACPI_TABLE_DESC
 op_star
-id|buffer_ptr
+id|table_info
 comma
+id|u32
+op_star
+id|number_of_tables
+)paren
+suffix:semicolon
+id|ACPI_STATUS
+id|acpi_tb_convert_table_fadt
+(paren
+r_void
+)paren
+suffix:semicolon
+id|ACPI_STATUS
+id|acpi_tb_build_common_facs
+(paren
 id|ACPI_TABLE_DESC
 op_star
 id|table_info
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_tbget - Table &quot;get&quot; routines&n; */
+multiline_comment|/*&n; * tbget - Table &quot;get&quot; routines&n; */
 id|ACPI_STATUS
 id|acpi_tb_get_table_ptr
 (paren
@@ -50,8 +64,7 @@ suffix:semicolon
 id|ACPI_STATUS
 id|acpi_tb_get_table
 (paren
-r_void
-op_star
+id|ACPI_PHYSICAL_ADDRESS
 id|physical_address
 comma
 id|ACPI_TABLE_HEADER
@@ -63,7 +76,26 @@ op_star
 id|table_info
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_tbgetall - Get all firmware ACPI tables&n; */
+id|ACPI_STATUS
+id|acpi_tb_verify_rsdp
+(paren
+id|ACPI_PHYSICAL_ADDRESS
+id|RSDP_physical_address
+)paren
+suffix:semicolon
+id|ACPI_STATUS
+id|acpi_tb_get_table_facs
+(paren
+id|ACPI_TABLE_HEADER
+op_star
+id|buffer_ptr
+comma
+id|ACPI_TABLE_DESC
+op_star
+id|table_info
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * tbgetall - Get all firmware ACPI tables&n; */
 id|ACPI_STATUS
 id|acpi_tb_get_all_tables
 (paren
@@ -75,7 +107,7 @@ op_star
 id|buffer_ptr
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_tbinstall - Table installation&n; */
+multiline_comment|/*&n; * tbinstall - Table installation&n; */
 id|ACPI_STATUS
 id|acpi_tb_install_table
 (paren
@@ -111,7 +143,7 @@ op_star
 id|table_info
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_tbremove - Table removal and deletion&n; */
+multiline_comment|/*&n; * tbremove - Table removal and deletion&n; */
 r_void
 id|acpi_tb_delete_acpi_tables
 (paren
@@ -125,9 +157,17 @@ id|ACPI_TABLE_TYPE
 id|type
 )paren
 suffix:semicolon
+r_void
+id|acpi_tb_delete_single_table
+(paren
 id|ACPI_TABLE_DESC
 op_star
-id|acpi_tb_delete_single_table
+id|table_desc
+)paren
+suffix:semicolon
+id|ACPI_TABLE_DESC
+op_star
+id|acpi_tb_uninstall_table
 (paren
 id|ACPI_TABLE_DESC
 op_star
@@ -142,7 +182,7 @@ op_star
 id|table_info
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_tbrsd - RSDP, RSDT utilities&n; */
+multiline_comment|/*&n; * tbrsd - RSDP, RSDT utilities&n; */
 id|ACPI_STATUS
 id|acpi_tb_get_table_rsdt
 (paren
@@ -171,7 +211,7 @@ op_star
 id|table_info
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_tbutils - common table utilities&n; */
+multiline_comment|/*&n; * tbutils - common table utilities&n; */
 id|u8
 id|acpi_tb_system_table_pointer
 (paren
@@ -183,8 +223,7 @@ suffix:semicolon
 id|ACPI_STATUS
 id|acpi_tb_map_acpi_table
 (paren
-r_void
-op_star
+id|ACPI_PHYSICAL_ADDRESS
 id|physical_address
 comma
 id|u32

@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: acdebug.h - ACPI/AML debugger&n; *       $Revision: 35 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: acdebug.h - ACPI/AML debugger&n; *       $Revision: 37 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __ACDEBUG_H__
 DECL|macro|__ACDEBUG_H__
@@ -411,6 +411,10 @@ multiline_comment|/*&n; * dbdisasm - AML disassembler&n; */
 r_void
 id|acpi_db_display_op
 (paren
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
+comma
 id|ACPI_PARSE_OBJECT
 op_star
 id|origin
@@ -438,9 +442,21 @@ suffix:semicolon
 r_void
 id|acpi_db_display_opcode
 (paren
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
+comma
 id|ACPI_PARSE_OBJECT
 op_star
 id|op
+)paren
+suffix:semicolon
+r_void
+id|acpi_db_decode_internal_object
+(paren
+id|ACPI_OPERAND_OBJECT
+op_star
+id|obj_desc
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * dbdisply - debug display commands&n; */

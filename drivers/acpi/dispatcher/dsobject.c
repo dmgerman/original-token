@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: dsobject - Dispatcher object management routines&n; *              $Revision: 43 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: dsobject - Dispatcher object management routines&n; *              $Revision: 53 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acparser.h&quot;
@@ -39,15 +39,25 @@ suffix:semicolon
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|INIT_WALK_INFO
+id|ACPI_INIT_WALK_INFO
 op_star
 id|info
 op_assign
 (paren
-id|INIT_WALK_INFO
+id|ACPI_INIT_WALK_INFO
 op_star
 )paren
 id|context
+suffix:semicolon
+id|u8
+id|table_revision
+suffix:semicolon
+id|info-&gt;object_count
+op_increment
+suffix:semicolon
+id|table_revision
+op_assign
+id|info-&gt;table_desc-&gt;pointer-&gt;revision
 suffix:semicolon
 multiline_comment|/*&n;&t; * We are only interested in objects owned by the table that&n;&t; * was just loaded&n;&t; */
 r_if
@@ -105,6 +115,28 @@ suffix:colon
 id|info-&gt;method_count
 op_increment
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Set the execution data width (32 or 64) based upon the&n;&t;&t; * revision number of the parent ACPI table.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|table_revision
+op_eq
+l_int|1
+)paren
+(brace
+(paren
+(paren
+id|ACPI_NAMESPACE_NODE
+op_star
+)paren
+id|obj_handle
+)paren
+op_member_access_from_pointer
+id|flags
+op_or_assign
+id|ANOBJ_DATA_WIDTH_32
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t; * Always parse methods to detect errors, we may delete&n;&t;&t; * the parse tree below&n;&t;&t; */
 id|status
 op_assign
@@ -126,21 +158,12 @@ id|status
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * Keep the parse tree only if we are parsing all methods&n;&t;&t; * at init time (versus just-in-time)&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|acpi_gbl_when_to_parse_methods
-op_ne
-id|METHOD_PARSE_AT_INIT
-)paren
-(brace
+multiline_comment|/*&n;&t;&t; * Delete the parse tree.  We simple re-parse the method&n;&t;&t; * for every execution since there isn&squot;t much overhead&n;&t;&t; */
 id|acpi_ns_delete_namespace_subtree
 (paren
 id|obj_handle
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_default
@@ -172,7 +195,7 @@ id|start_node
 id|ACPI_STATUS
 id|status
 suffix:semicolon
-id|INIT_WALK_INFO
+id|ACPI_INIT_WALK_INFO
 id|info
 suffix:semicolon
 id|info.method_count
@@ -180,6 +203,10 @@ op_assign
 l_int|0
 suffix:semicolon
 id|info.op_region_count
+op_assign
+l_int|0
+suffix:semicolon
+id|info.object_count
 op_assign
 l_int|0
 suffix:semicolon
@@ -299,6 +326,8 @@ id|acpi_ds_create_operand
 id|walk_state
 comma
 id|op-&gt;value.arg
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|arg_desc
@@ -376,6 +405,9 @@ id|obj_desc
 op_member_access_from_pointer
 id|buffer.length
 op_assign
+(paren
+id|u32
+)paren
 id|arg_desc-&gt;number.value
 suffix:semicolon
 id|acpi_cm_remove_reference
@@ -384,6 +416,40 @@ id|arg_desc
 )paren
 suffix:semicolon
 multiline_comment|/* Allocate the buffer */
+r_if
+c_cond
+(paren
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|buffer.length
+op_eq
+l_int|0
+)paren
+(brace
+(paren
+op_star
+id|obj_desc
+)paren
+op_member_access_from_pointer
+id|buffer.pointer
+op_assign
+l_int|NULL
+suffix:semicolon
+id|REPORT_WARNING
+(paren
+(paren
+l_string|&quot;Buffer created with zero length in AML&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_else
+(brace
 (paren
 op_star
 id|obj_desc
@@ -418,6 +484,7 @@ r_return
 id|AE_NO_MEMORY
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n;&t;&t; * Second arg is the buffer data (optional)&n;&t;&t; * Byte_list can be either individual bytes or a&n;&t;&t; * string initializer!&n;&t;&t; */
 multiline_comment|/* skip first arg */
@@ -658,6 +725,7 @@ id|AE_OK
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_ds_build_internal_simple_obj&n; *&n; * PARAMETERS:  Op              - Parser object to be translated&n; *              Obj_desc_ptr    - Where the ACPI internal object is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Translate a parser Op object to the equivalent namespace object&n; *              Simple objects are any objects other than a package object!&n; *&n; ****************************************************************************/
+r_static
 id|ACPI_STATUS
 DECL|function|acpi_ds_build_internal_simple_obj
 id|acpi_ds_build_internal_simple_obj
@@ -685,6 +753,13 @@ id|type
 suffix:semicolon
 id|ACPI_STATUS
 id|status
+suffix:semicolon
+id|u32
+id|length
+suffix:semicolon
+r_char
+op_star
+id|name
 suffix:semicolon
 r_if
 c_cond
@@ -740,6 +815,74 @@ id|status
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|status
+op_eq
+id|AE_NOT_FOUND
+)paren
+(brace
+id|name
+op_assign
+l_int|NULL
+suffix:semicolon
+id|acpi_ns_externalize_name
+(paren
+id|ACPI_UINT32_MAX
+comma
+id|op-&gt;value.string
+comma
+op_amp
+id|length
+comma
+op_amp
+id|name
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|name
+)paren
+(brace
+id|REPORT_WARNING
+(paren
+(paren
+l_string|&quot;Reference %s AML %X not found&bslash;n&quot;
+comma
+id|name
+comma
+id|op-&gt;aml_offset
+)paren
+)paren
+suffix:semicolon
+id|acpi_cm_free
+(paren
+id|name
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|REPORT_WARNING
+(paren
+(paren
+l_string|&quot;Reference %s AML %X not found&bslash;n&quot;
+comma
+id|op-&gt;value.string
+comma
+id|op-&gt;aml_offset
+)paren
+)paren
+suffix:semicolon
+)brace
+op_star
+id|obj_desc_ptr
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 r_return
 (paren
 id|status
@@ -920,7 +1063,9 @@ id|obj_desc-&gt;package.elements
 multiline_comment|/* Package vector allocation failure   */
 id|REPORT_ERROR
 (paren
-l_string|&quot;Ds_build_internal_package_obj: Package vector allocation failure&quot;
+(paren
+l_string|&quot;Ds_build_internal_package_obj: Package vector allocation failure&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|acpi_cm_delete_object_desc
@@ -1125,8 +1270,10 @@ id|status
 )paren
 )paren
 (brace
-r_goto
-id|cleanup
+r_return
+(paren
+id|status
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Re-type the object according to it&squot;s argument */

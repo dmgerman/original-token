@@ -1,4 +1,4 @@
-multiline_comment|/*******************************************************************************&n; *&n; * Module Name: nsobject - Utilities for objects attached to namespace&n; *                         table entries&n; *              $Revision: 44 $&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: nsobject - Utilities for objects attached to namespace&n; *                         table entries&n; *              $Revision: 47 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
@@ -58,7 +58,9 @@ id|acpi_gbl_root_node
 multiline_comment|/* Name space not initialized  */
 id|REPORT_ERROR
 (paren
-l_string|&quot;Ns_attach_object: Name space not initialized&quot;
+(paren
+l_string|&quot;Ns_attach_object: Namespace not initialized&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -77,7 +79,9 @@ id|node
 multiline_comment|/* Invalid handle */
 id|REPORT_ERROR
 (paren
-l_string|&quot;Ns_attach_object: Null Named_obj handle&quot;
+(paren
+l_string|&quot;Ns_attach_object: Null Named_obj handle&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -102,8 +106,9 @@ id|type
 multiline_comment|/* Null object */
 id|REPORT_ERROR
 (paren
-l_string|&quot;Ns_attach_object: Null object, but type&quot;
-l_string|&quot;not ACPI_TYPE_ANY&quot;
+(paren
+l_string|&quot;Ns_attach_object: Null object, but type not ACPI_TYPE_ANY&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -127,7 +132,9 @@ id|ACPI_DESC_TYPE_NAMED
 multiline_comment|/* Not a name handle */
 id|REPORT_ERROR
 (paren
-l_string|&quot;Ns_attach_object: Invalid handle&quot;
+(paren
+l_string|&quot;Ns_attach_object: Invalid handle&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -532,11 +539,6 @@ id|handle
 )paren
 (brace
 multiline_comment|/* handle invalid */
-id|REPORT_WARNING
-(paren
-l_string|&quot;Ns_get_attached_object: Null handle&quot;
-)paren
-suffix:semicolon
 r_return
 (paren
 l_int|NULL

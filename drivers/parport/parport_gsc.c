@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *      Low-level parallel-support for PC-style hardware integrated in the &n; *&t;LASI-Controller (on GSC-Bus) for HP-PARISC Workstations&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *&t;by Helge Deller &lt;deller@gmx.de&gt;&n; *&n; * &n; * based on parport_pc.c by &n; * &t;    Grant Guenther &lt;grant@torque.net&gt;&n; * &t;    Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@torque.net&gt;&n; *          Andrea Arcangeli&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

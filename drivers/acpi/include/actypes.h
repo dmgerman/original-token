@@ -1,14 +1,10 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: actypes.h - Common data types for the entire ACPI subsystem&n; *       $Revision: 131 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: actypes.h - Common data types for the entire ACPI subsystem&n; *       $Revision: 155 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __ACTYPES_H__
 DECL|macro|__ACTYPES_H__
 mdefine_line|#define __ACTYPES_H__
 multiline_comment|/*! [Begin] no source code translation (keep the typedefs) */
 multiline_comment|/*&n; * Data types - Fixed across all compilation models&n; *&n; * BOOLEAN      Logical Boolean.&n; *              1 byte value containing a 0 for FALSE or a 1 for TRUE.&n; *              Other values are undefined.&n; *&n; * INT8         8-bit  (1 byte) signed value&n; * UINT8        8-bit  (1 byte) unsigned value&n; * INT16        16-bit (2 byte) signed value&n; * UINT16       16-bit (2 byte) unsigned value&n; * INT32        32-bit (4 byte) signed value&n; * UINT32       32-bit (4 byte) unsigned value&n; * INT64        64-bit (8 byte) signed value&n; * UINT64       64-bit (8 byte) unsigned value&n; * NATIVE_INT   32-bit on IA-32, 64-bit on IA-64 signed value&n; * NATIVE_UINT  32-bit on IA-32, 64-bit on IA-64 unsigned value&n; * UCHAR        Character. 1 byte unsigned value.&n; */
-macro_line|#ifdef __ia64__
-DECL|macro|_IA64
-mdefine_line|#define _IA64
-macro_line|#endif
 macro_line|#ifdef _IA64
 multiline_comment|/*&n; * 64-bit type definitions&n; */
 DECL|typedef|UINT8
@@ -46,15 +42,9 @@ r_int
 r_int
 id|UINT32
 suffix:semicolon
-DECL|typedef|INT64
-r_typedef
-r_int
-id|INT64
-suffix:semicolon
 DECL|typedef|UINT64
 r_typedef
-r_int
-r_int
+id|COMPILER_DEPENDENT_UINT64
 id|UINT64
 suffix:semicolon
 DECL|typedef|NATIVE_UINT
@@ -76,6 +66,11 @@ DECL|typedef|ACPI_IO_ADDRESS
 r_typedef
 id|UINT64
 id|ACPI_IO_ADDRESS
+suffix:semicolon
+DECL|typedef|ACPI_PHYSICAL_ADDRESS
+r_typedef
+id|UINT64
+id|ACPI_PHYSICAL_ADDRESS
 suffix:semicolon
 DECL|macro|ALIGNED_ADDRESS_BOUNDARY
 mdefine_line|#define ALIGNED_ADDRESS_BOUNDARY        0x00000008
@@ -111,6 +106,11 @@ r_typedef
 r_int
 id|INT32
 suffix:semicolon
+DECL|typedef|INT16
+r_typedef
+r_int
+id|INT16
+suffix:semicolon
 DECL|typedef|UINT32
 r_typedef
 r_int
@@ -137,10 +137,18 @@ r_typedef
 id|UINT32
 id|ACPI_IO_ADDRESS
 suffix:semicolon
+DECL|typedef|ACPI_PHYSICAL_ADDRESS
+r_typedef
+id|UINT32
+id|ACPI_PHYSICAL_ADDRESS
+suffix:semicolon
 DECL|macro|ALIGNED_ADDRESS_BOUNDARY
 mdefine_line|#define ALIGNED_ADDRESS_BOUNDARY        0x00000002
 DECL|macro|_HW_ALIGNMENT_SUPPORT
 mdefine_line|#define _HW_ALIGNMENT_SUPPORT
+multiline_comment|/*&n; * (16-bit only) internal integers must be 32-bits, so&n; * 64-bit integers cannot be supported&n; */
+DECL|macro|ACPI_NO_INTEGER64_SUPPORT
+mdefine_line|#define ACPI_NO_INTEGER64_SUPPORT
 macro_line|#else
 multiline_comment|/*&n; * 32-bit type definitions (default)&n; */
 DECL|typedef|UINT8
@@ -178,6 +186,11 @@ r_int
 r_int
 id|UINT32
 suffix:semicolon
+DECL|typedef|UINT64
+r_typedef
+id|COMPILER_DEPENDENT_UINT64
+id|UINT64
+suffix:semicolon
 DECL|typedef|NATIVE_UINT
 r_typedef
 id|UINT32
@@ -197,6 +210,11 @@ DECL|typedef|ACPI_IO_ADDRESS
 r_typedef
 id|UINT32
 id|ACPI_IO_ADDRESS
+suffix:semicolon
+DECL|typedef|ACPI_PHYSICAL_ADDRESS
+r_typedef
+id|UINT64
+id|ACPI_PHYSICAL_ADDRESS
 suffix:semicolon
 DECL|macro|ALIGNED_ADDRESS_BOUNDARY
 mdefine_line|#define ALIGNED_ADDRESS_BOUNDARY        0x00000004
@@ -220,10 +238,14 @@ r_char
 id|NATIVE_CHAR
 suffix:semicolon
 multiline_comment|/*&n; * Data type ranges&n; */
-DECL|macro|ACPI_UCHAR_MAX
-mdefine_line|#define ACPI_UCHAR_MAX                  (UCHAR)  0xFF
+DECL|macro|ACPI_UINT8_MAX
+mdefine_line|#define ACPI_UINT8_MAX                  (UINT8)  0xFF
+DECL|macro|ACPI_UINT16_MAX
+mdefine_line|#define ACPI_UINT16_MAX                 (UINT16) 0xFFFF
 DECL|macro|ACPI_UINT32_MAX
 mdefine_line|#define ACPI_UINT32_MAX                 (UINT32) 0xFFFFFFFF
+DECL|macro|ACPI_UINT64_MAX
+mdefine_line|#define ACPI_UINT64_MAX                 (UINT64) 0xFFFFFFFFFFFFFFFF
 macro_line|#ifdef DEFINE_ALTERNATE_TYPES
 multiline_comment|/*&n; * Types used only in translated source&n; */
 DECL|typedef|s32
@@ -245,6 +267,11 @@ DECL|typedef|u32
 r_typedef
 id|UINT32
 id|u32
+suffix:semicolon
+DECL|typedef|u64
+r_typedef
+id|UINT64
+id|u64
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*! [End] no source code translation !*/
@@ -292,9 +319,49 @@ op_star
 id|ACPI_HANDLE
 suffix:semicolon
 multiline_comment|/* Actually a ptr to an Node */
+multiline_comment|/*&n; * Acpi integer width. In ACPI version 1, integers are&n; * 32 bits.  In ACPI version 2, integers are 64 bits.&n; * Note that this pertains to the ACPI integer type only, not&n; * other integers used in the implementation of the ACPI CA&n; * subsystem.&n; */
+macro_line|#ifdef ACPI_NO_INTEGER64_SUPPORT
+multiline_comment|/* 32-bit Integers */
+DECL|typedef|ACPI_INTEGER
+r_typedef
+id|u32
+id|ACPI_INTEGER
+suffix:semicolon
+DECL|macro|ACPI_INTEGER_MAX
+mdefine_line|#define ACPI_INTEGER_MAX                ACPI_UINT32_MAX;
+DECL|macro|ACPI_INTEGER_BIT_SIZE
+mdefine_line|#define ACPI_INTEGER_BIT_SIZE           32
+macro_line|#else
+multiline_comment|/* 64-bit Integers */
+DECL|typedef|ACPI_INTEGER
+r_typedef
+id|UINT64
+id|ACPI_INTEGER
+suffix:semicolon
+DECL|macro|ACPI_INTEGER_MAX
+mdefine_line|#define ACPI_INTEGER_MAX                ACPI_UINT64_MAX;
+DECL|macro|ACPI_INTEGER_BIT_SIZE
+mdefine_line|#define ACPI_INTEGER_BIT_SIZE           64
+macro_line|#endif
 multiline_comment|/*&n; * Constants with special meanings&n; */
 DECL|macro|ACPI_ROOT_OBJECT
 mdefine_line|#define ACPI_ROOT_OBJECT                (ACPI_HANDLE)(-1)
+DECL|macro|ACPI_FULL_INITIALIZATION
+mdefine_line|#define ACPI_FULL_INITIALIZATION        0x00
+DECL|macro|ACPI_NO_ADDRESS_SPACE_INIT
+mdefine_line|#define ACPI_NO_ADDRESS_SPACE_INIT      0x01
+DECL|macro|ACPI_NO_HARDWARE_INIT
+mdefine_line|#define ACPI_NO_HARDWARE_INIT           0x02
+DECL|macro|ACPI_NO_EVENT_INIT
+mdefine_line|#define ACPI_NO_EVENT_INIT              0x04
+DECL|macro|ACPI_NO_ACPI_ENABLE
+mdefine_line|#define ACPI_NO_ACPI_ENABLE             0x08
+DECL|macro|ACPI_NO_DEVICE_INIT
+mdefine_line|#define ACPI_NO_DEVICE_INIT             0x10
+DECL|macro|ACPI_NO_PCI_INIT
+mdefine_line|#define ACPI_NO_PCI_INIT                0x20
+DECL|macro|ACPI_NO_OBJECT_INIT
+mdefine_line|#define ACPI_NO_OBJECT_INIT             0x40
 multiline_comment|/*&n; * Sleep state constants&n; */
 DECL|macro|ACPI_STATE_S0
 mdefine_line|#define ACPI_STATE_S0                   (u8) 0
@@ -320,28 +387,22 @@ id|ACPI_TABLE_TYPE
 suffix:semicolon
 DECL|macro|ACPI_TABLE_RSDP
 mdefine_line|#define ACPI_TABLE_RSDP                 (ACPI_TABLE_TYPE) 0
-DECL|macro|ACPI_TABLE_APIC
-mdefine_line|#define ACPI_TABLE_APIC                 (ACPI_TABLE_TYPE) 1
 DECL|macro|ACPI_TABLE_DSDT
-mdefine_line|#define ACPI_TABLE_DSDT                 (ACPI_TABLE_TYPE) 2
-DECL|macro|ACPI_TABLE_FACP
-mdefine_line|#define ACPI_TABLE_FACP                 (ACPI_TABLE_TYPE) 3
+mdefine_line|#define ACPI_TABLE_DSDT                 (ACPI_TABLE_TYPE) 1
+DECL|macro|ACPI_TABLE_FADT
+mdefine_line|#define ACPI_TABLE_FADT                 (ACPI_TABLE_TYPE) 2
 DECL|macro|ACPI_TABLE_FACS
-mdefine_line|#define ACPI_TABLE_FACS                 (ACPI_TABLE_TYPE) 4
+mdefine_line|#define ACPI_TABLE_FACS                 (ACPI_TABLE_TYPE) 3
 DECL|macro|ACPI_TABLE_PSDT
-mdefine_line|#define ACPI_TABLE_PSDT                 (ACPI_TABLE_TYPE) 5
-DECL|macro|ACPI_TABLE_RSDT
-mdefine_line|#define ACPI_TABLE_RSDT                 (ACPI_TABLE_TYPE) 6
+mdefine_line|#define ACPI_TABLE_PSDT                 (ACPI_TABLE_TYPE) 4
 DECL|macro|ACPI_TABLE_SSDT
-mdefine_line|#define ACPI_TABLE_SSDT                 (ACPI_TABLE_TYPE) 7
-DECL|macro|ACPI_TABLE_SBST
-mdefine_line|#define ACPI_TABLE_SBST                 (ACPI_TABLE_TYPE) 8
-DECL|macro|ACPI_TABLE_BOOT
-mdefine_line|#define ACPI_TABLE_BOOT                 (ACPI_TABLE_TYPE) 9
+mdefine_line|#define ACPI_TABLE_SSDT                 (ACPI_TABLE_TYPE) 5
+DECL|macro|ACPI_TABLE_XSDT
+mdefine_line|#define ACPI_TABLE_XSDT                 (ACPI_TABLE_TYPE) 6
 DECL|macro|ACPI_TABLE_MAX
-mdefine_line|#define ACPI_TABLE_MAX                  9
+mdefine_line|#define ACPI_TABLE_MAX                  6
 DECL|macro|NUM_ACPI_TABLES
-mdefine_line|#define NUM_ACPI_TABLES                 10
+mdefine_line|#define NUM_ACPI_TABLES                 (ACPI_TABLE_MAX+1)
 multiline_comment|/*&n; * Types associated with names.  The first group of&n; * values correspond to the definition of the ACPI&n; * Object_type operator (See the ACPI Spec). Therefore,&n; * only add to the first group if the spec changes!&n; *&n; * Types must be kept in sync with the Acpi_ns_properties&n; * and Acpi_ns_type_names arrays&n; */
 DECL|typedef|ACPI_OBJECT_TYPE
 r_typedef
@@ -406,29 +467,29 @@ DECL|macro|INTERNAL_TYPE_NOTIFY
 mdefine_line|#define INTERNAL_TYPE_NOTIFY            22 /* 0x16  */
 DECL|macro|INTERNAL_TYPE_ADDRESS_HANDLER
 mdefine_line|#define INTERNAL_TYPE_ADDRESS_HANDLER   23 /* 0x17  */
+DECL|macro|INTERNAL_TYPE_RESOURCE
+mdefine_line|#define INTERNAL_TYPE_RESOURCE          24 /* 0x18  */
 DECL|macro|INTERNAL_TYPE_NODE_MAX
-mdefine_line|#define INTERNAL_TYPE_NODE_MAX          23
+mdefine_line|#define INTERNAL_TYPE_NODE_MAX          24
 multiline_comment|/* These are pseudo-types because there are never any namespace nodes with these types */
 DECL|macro|INTERNAL_TYPE_DEF_FIELD_DEFN
-mdefine_line|#define INTERNAL_TYPE_DEF_FIELD_DEFN    24 /* 0x18  Name, Byte_const, multiple Field_element */
+mdefine_line|#define INTERNAL_TYPE_DEF_FIELD_DEFN    25 /* 0x19  Name, Byte_const, multiple Field_element */
 DECL|macro|INTERNAL_TYPE_BANK_FIELD_DEFN
-mdefine_line|#define INTERNAL_TYPE_BANK_FIELD_DEFN   25 /* 0x19  2 Name,DWord_const,Byte_const,multi Field_element */
+mdefine_line|#define INTERNAL_TYPE_BANK_FIELD_DEFN   26 /* 0x1A  2 Name,DWord_const,Byte_const,multi Field_element */
 DECL|macro|INTERNAL_TYPE_INDEX_FIELD_DEFN
-mdefine_line|#define INTERNAL_TYPE_INDEX_FIELD_DEFN  26 /* 0x1A  2 Name, Byte_const, multiple Field_element */
+mdefine_line|#define INTERNAL_TYPE_INDEX_FIELD_DEFN  27 /* 0x1B  2 Name, Byte_const, multiple Field_element */
 DECL|macro|INTERNAL_TYPE_IF
-mdefine_line|#define INTERNAL_TYPE_IF                27 /* 0x1B  Op_code, multiple Code */
+mdefine_line|#define INTERNAL_TYPE_IF                28 /* 0x1C  Op_code, multiple Code */
 DECL|macro|INTERNAL_TYPE_ELSE
-mdefine_line|#define INTERNAL_TYPE_ELSE              28 /* 0x1C  multiple Code */
+mdefine_line|#define INTERNAL_TYPE_ELSE              29 /* 0x1D  multiple Code */
 DECL|macro|INTERNAL_TYPE_WHILE
-mdefine_line|#define INTERNAL_TYPE_WHILE             29 /* 0x1D  Op_code, multiple Code */
+mdefine_line|#define INTERNAL_TYPE_WHILE             30 /* 0x1E  Op_code, multiple Code */
 DECL|macro|INTERNAL_TYPE_SCOPE
-mdefine_line|#define INTERNAL_TYPE_SCOPE             30 /* 0x1E  Name, multiple Node */
+mdefine_line|#define INTERNAL_TYPE_SCOPE             31 /* 0x1F  Name, multiple Node */
 DECL|macro|INTERNAL_TYPE_DEF_ANY
-mdefine_line|#define INTERNAL_TYPE_DEF_ANY           31 /* 0x1F  type is Any, suppress search of enclosing scopes */
-DECL|macro|INTERNAL_TYPE_METHOD_ARGUMENT
-mdefine_line|#define INTERNAL_TYPE_METHOD_ARGUMENT   32 /* 0x20  */
-DECL|macro|INTERNAL_TYPE_METHOD_LOCAL_VAR
-mdefine_line|#define INTERNAL_TYPE_METHOD_LOCAL_VAR  33 /* 0x21  */
+mdefine_line|#define INTERNAL_TYPE_DEF_ANY           32 /* 0x20  type is Any, suppress search of enclosing scopes */
+DECL|macro|INTERNAL_TYPE_EXTRA
+mdefine_line|#define INTERNAL_TYPE_EXTRA             33 /* 0x21  */
 DECL|macro|INTERNAL_TYPE_MAX
 mdefine_line|#define INTERNAL_TYPE_MAX               33
 DECL|macro|INTERNAL_TYPE_INVALID
@@ -481,6 +542,8 @@ r_typedef
 id|u32
 id|ACPI_EVENT_STATUS
 suffix:semicolon
+DECL|macro|ACPI_EVENT_FLAG_DISABLED
+mdefine_line|#define ACPI_EVENT_FLAG_DISABLED        (ACPI_EVENT_STATUS) 0x00
 DECL|macro|ACPI_EVENT_FLAG_ENABLED
 mdefine_line|#define ACPI_EVENT_FLAG_ENABLED         (ACPI_EVENT_STATUS) 0x01
 DECL|macro|ACPI_EVENT_FLAG_SET
@@ -497,7 +560,7 @@ mdefine_line|#define MAX_SYS_NOTIFY                  0x7f
 multiline_comment|/* Address Space (Operation Region) Types */
 DECL|typedef|ACPI_ADDRESS_SPACE_TYPE
 r_typedef
-id|u32
+id|u8
 id|ACPI_ADDRESS_SPACE_TYPE
 suffix:semicolon
 DECL|macro|ADDRESS_SPACE_SYSTEM_MEMORY
@@ -510,6 +573,10 @@ DECL|macro|ADDRESS_SPACE_EC
 mdefine_line|#define ADDRESS_SPACE_EC                (ACPI_ADDRESS_SPACE_TYPE) 3
 DECL|macro|ADDRESS_SPACE_SMBUS
 mdefine_line|#define ADDRESS_SPACE_SMBUS             (ACPI_ADDRESS_SPACE_TYPE) 4
+DECL|macro|ADDRESS_SPACE_CMOS
+mdefine_line|#define ADDRESS_SPACE_CMOS              (ACPI_ADDRESS_SPACE_TYPE) 5
+DECL|macro|ADDRESS_SPACE_PCI_BAR_TARGET
+mdefine_line|#define ADDRESS_SPACE_PCI_BAR_TARGET    (ACPI_ADDRESS_SPACE_TYPE) 6
 multiline_comment|/*&n; * External ACPI object definition&n; */
 DECL|union|acpi_obj
 r_typedef
@@ -528,7 +595,7 @@ id|ACPI_OBJECT_TYPE
 id|type
 suffix:semicolon
 DECL|member|value
-id|u32
+id|ACPI_INTEGER
 id|value
 suffix:semicolon
 multiline_comment|/* The actual number */
@@ -911,7 +978,7 @@ id|ADDRESS_SPACE_HANDLER
 id|u32
 id|function
 comma
-id|u32
+id|ACPI_PHYSICAL_ADDRESS
 id|address
 comma
 id|u32
@@ -999,7 +1066,7 @@ mdefine_line|#define ACPI_VALID_ADR                  0x4
 DECL|macro|ACPI_VALID_STA
 mdefine_line|#define ACPI_VALID_STA                  0x8
 DECL|macro|ACPI_COMMON_OBJ_INFO
-mdefine_line|#define ACPI_COMMON_OBJ_INFO &bslash;&n;&t;ACPI_OBJECT_TYPE            type;           /* ACPI object type */ &bslash;&n;&t;ACPI_NAME                   name;           /* ACPI object Name */ &bslash;&n;&t;/*  TBD: [Restructure] Do we want or need these next two??*/ &bslash;&n;&t;ACPI_HANDLE                 parent;         /* Parent object */ &bslash;&n;&t;ACPI_HANDLE                 children;       /* Linked list of children */ &bslash;&n;&t;u32                         valid           /* ?????    */
+mdefine_line|#define ACPI_COMMON_OBJ_INFO &bslash;&n;&t;ACPI_OBJECT_TYPE            type;           /* ACPI object type */ &bslash;&n;&t;ACPI_NAME                   name            /* ACPI object Name */
 r_typedef
 r_struct
 (brace
@@ -1016,7 +1083,11 @@ r_struct
 DECL|member|ACPI_COMMON_OBJ_INFO
 id|ACPI_COMMON_OBJ_INFO
 suffix:semicolon
-multiline_comment|/*&n;&t; *  TBD: [Restructure]: a HID or a _UID can return either a number or a string&n;&t; */
+DECL|member|valid
+id|u32
+id|valid
+suffix:semicolon
+multiline_comment|/*  Are the next bits legit? */
 DECL|member|hardware_id
 id|NATIVE_CHAR
 id|hardware_id
@@ -1034,7 +1105,7 @@ l_int|9
 suffix:semicolon
 multiline_comment|/*  _UID value if any */
 DECL|member|address
-id|u32
+id|ACPI_INTEGER
 id|address
 suffix:semicolon
 multiline_comment|/*  _ADR value if any */
@@ -1071,8 +1142,7 @@ r_typedef
 r_struct
 (brace
 DECL|member|mapped_physical_address
-id|u8
-op_star
+id|UINT64
 id|mapped_physical_address
 suffix:semicolon
 DECL|member|mapped_logical_address
@@ -1770,13 +1840,15 @@ DECL|macro|RESOURCE_LENGTH
 mdefine_line|#define RESOURCE_LENGTH                 12
 DECL|macro|RESOURCE_LENGTH_NO_DATA
 mdefine_line|#define RESOURCE_LENGTH_NO_DATA         8
+DECL|macro|NEXT_RESOURCE
+mdefine_line|#define NEXT_RESOURCE(res)    (RESOURCE*)((u8*) res + res-&gt;length)
 multiline_comment|/*&n; * END: Definitions for Resource Attributes&n; */
 multiline_comment|/*&n; * Definitions for PCI Routing tables&n; */
 r_typedef
 r_struct
 (brace
 DECL|member|address
-id|u32
+id|ACPI_INTEGER
 id|address
 suffix:semicolon
 DECL|member|pin

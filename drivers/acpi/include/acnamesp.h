@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: acnamesp.h - Namespace subcomponent prototypes and defines&n; *       $Revision: 94 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: acnamesp.h - Namespace subcomponent prototypes and defines&n; *       $Revision: 98 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __ACNAMESP_H__
 DECL|macro|__ACNAMESP_H__
@@ -37,6 +37,64 @@ DECL|macro|NS_WALK_UNLOCK
 mdefine_line|#define NS_WALK_UNLOCK          TRUE
 DECL|macro|NS_WALK_NO_UNLOCK
 mdefine_line|#define NS_WALK_NO_UNLOCK       FALSE
+id|ACPI_STATUS
+id|acpi_ns_load_namespace
+(paren
+r_void
+)paren
+suffix:semicolon
+id|ACPI_STATUS
+id|acpi_ns_initialize_objects
+(paren
+r_void
+)paren
+suffix:semicolon
+id|ACPI_STATUS
+id|acpi_ns_initialize_devices
+(paren
+id|u32
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/* Namespace init - nsxfinit */
+id|ACPI_STATUS
+id|acpi_ns_init_one_device
+(paren
+id|ACPI_HANDLE
+id|obj_handle
+comma
+id|u32
+id|nesting_level
+comma
+r_void
+op_star
+id|context
+comma
+r_void
+op_star
+op_star
+id|return_value
+)paren
+suffix:semicolon
+id|ACPI_STATUS
+id|acpi_ns_init_one_object
+(paren
+id|ACPI_HANDLE
+id|obj_handle
+comma
+id|u32
+id|level
+comma
+r_void
+op_star
+id|context
+comma
+r_void
+op_star
+op_star
+id|return_value
+)paren
+suffix:semicolon
 id|ACPI_STATUS
 id|acpi_ns_walk_namespace
 (paren
@@ -89,6 +147,17 @@ id|table_id
 )paren
 suffix:semicolon
 multiline_comment|/* Namespace loading - nsload */
+id|ACPI_STATUS
+id|acpi_ns_one_complete_parse
+(paren
+id|u32
+id|pass_number
+comma
+id|ACPI_TABLE_DESC
+op_star
+id|table_desc
+)paren
+suffix:semicolon
 id|ACPI_STATUS
 id|acpi_ns_parse_table
 (paren
@@ -547,14 +616,6 @@ id|ACPI_NAMESPACE_NODE
 op_star
 op_star
 id|ret_node
-)paren
-suffix:semicolon
-id|ACPI_NAMESPACE_NODE
-op_star
-id|acpi_ns_create_node
-(paren
-id|u32
-id|acpi_name
 )paren
 suffix:semicolon
 r_void

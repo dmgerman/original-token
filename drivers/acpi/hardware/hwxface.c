@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: hwxface.c - Hardware access external interfaces&n; *              $Revision: 31 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: hwxface.c - Hardware access external interfaces&n; *              $Revision: 36 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acnamesp.h&quot;
@@ -63,8 +63,6 @@ id|i
 suffix:semicolon
 id|u8
 id|duty_width
-op_assign
-l_int|0
 suffix:semicolon
 id|ACPI_NAMESPACE_NODE
 op_star
@@ -135,13 +133,11 @@ id|AE_NOT_FOUND
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef _IA64
-multiline_comment|/*&n;&t; * No Duty fields in IA64 tables&n;&t; */
+multiline_comment|/*&n;&t; * (Duty Width on IA-64 is zero)&n;&t; */
 id|duty_width
 op_assign
-id|acpi_gbl_FACP-&gt;duty_width
+id|acpi_gbl_FADT-&gt;duty_width
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; *  P0 must always have a P_BLK all others may be null&n;&t; *  in either case, we can&squot;t throttle a processor that has no P_BLK&n;&t; *&n;&t; *  Also if no Duty width, one state and it is 100%&n;&t; *&n;&t; */
 r_if
 c_cond
@@ -153,7 +149,7 @@ op_logical_neg
 id|duty_width
 op_logical_or
 (paren
-l_int|0xFFFF
+id|ACPI_UINT16_MAX
 OL
 id|cpu_obj-&gt;processor.address
 )paren
@@ -308,13 +304,9 @@ id|duty_cycle
 suffix:semicolon
 id|u8
 id|duty_offset
-op_assign
-l_int|0
 suffix:semicolon
 id|u8
 id|duty_width
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Convert and validate the device handle */
 id|cpu_node
@@ -364,17 +356,15 @@ id|AE_NOT_FOUND
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef _IA64
 multiline_comment|/*&n;&t; * No Duty fields in IA64 tables&n;&t; */
 id|duty_offset
 op_assign
-id|acpi_gbl_FACP-&gt;duty_offset
+id|acpi_gbl_FADT-&gt;duty_offset
 suffix:semicolon
 id|duty_width
 op_assign
-id|acpi_gbl_FACP-&gt;duty_width
+id|acpi_gbl_FADT-&gt;duty_width
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; *  Must have a valid P_BLK P0 must have a P_BLK all others may be null&n;&t; *  in either case, we can&squot;t thottle a processor that has no P_BLK&n;&t; *  that means we are in the only supported state (0 - 100%)&n;&t; *&n;&t; *  also, if Duty_width is zero there are no additional states&n;&t; */
 r_if
 c_cond
@@ -386,7 +376,7 @@ op_logical_neg
 id|duty_width
 op_logical_or
 (paren
-l_int|0xFFFF
+id|ACPI_UINT16_MAX
 OL
 id|cpu_obj-&gt;processor.address
 )paren
@@ -481,13 +471,9 @@ l_int|0
 suffix:semicolon
 id|u8
 id|duty_offset
-op_assign
-l_int|0
 suffix:semicolon
 id|u8
 id|duty_width
-op_assign
-l_int|0
 suffix:semicolon
 id|u32
 id|duty_cycle
@@ -539,17 +525,15 @@ id|AE_NOT_FOUND
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef _IA64
 multiline_comment|/*&n;&t; * No Duty fields in IA64 tables&n;&t; */
 id|duty_offset
 op_assign
-id|acpi_gbl_FACP-&gt;duty_offset
+id|acpi_gbl_FADT-&gt;duty_offset
 suffix:semicolon
 id|duty_width
 op_assign
-id|acpi_gbl_FACP-&gt;duty_width
+id|acpi_gbl_FADT-&gt;duty_width
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; *  Must have a valid P_BLK P0 must have a P_BLK all others may be null&n;&t; *  in either case, we can&squot;t thottle a processor that has no P_BLK&n;&t; *  that means we are in the only supported state (0 - 100%)&n;&t; *&n;&t; *  also, if Duty_width is zero there are no additional states&n;&t; */
 r_if
 c_cond
@@ -561,7 +545,7 @@ op_logical_neg
 id|duty_width
 op_logical_or
 (paren
-l_int|0xFFFF
+id|ACPI_UINT16_MAX
 OL
 id|cpu_obj-&gt;processor.address
 )paren
@@ -592,7 +576,7 @@ suffix:semicolon
 id|num_throttle_states
 op_assign
 (paren
-r_int
+id|u32
 )paren
 id|acpi_hw_local_pow
 (paren
@@ -1000,8 +984,7 @@ id|ACPI_STATUS
 DECL|function|acpi_set_firmware_waking_vector
 id|acpi_set_firmware_waking_vector
 (paren
-r_void
-op_star
+id|ACPI_PHYSICAL_ADDRESS
 id|physical_address
 )paren
 (brace
@@ -1020,31 +1003,47 @@ id|AE_NO_ACPI_TABLES
 suffix:semicolon
 )brace
 multiline_comment|/* Set the vector */
+r_if
+c_cond
+(paren
+id|acpi_gbl_FACS-&gt;vector_width
+op_eq
+l_int|32
+)paren
+(brace
 op_star
 (paren
-(paren
-r_void
-op_star
+id|u32
 op_star
 )paren
 id|acpi_gbl_FACS-&gt;firmware_waking_vector
+op_assign
+(paren
+id|u32
 )paren
+id|physical_address
+suffix:semicolon
+)brace
+r_else
+(brace
+op_star
+id|acpi_gbl_FACS-&gt;firmware_waking_vector
 op_assign
 id|physical_address
 suffix:semicolon
+)brace
 r_return
 (paren
 id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_get_firmware_waking_vector&n; *&n; * PARAMETERS:  *Physical_address   - Output buffer where contents of&n; *                                    the d_firmware_waking_vector field of&n; *                                    the FACS will be stored.&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Access function for d_firmware_waking_vector field in FACS&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_get_firmware_waking_vector&n; *&n; * PARAMETERS:  *Physical_address   - Output buffer where contents of&n; *                                    the Firmware_waking_vector field of&n; *                                    the FACS will be stored.&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Access function for d_firmware_waking_vector field in FACS&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_get_firmware_waking_vector
 id|acpi_get_firmware_waking_vector
 (paren
-r_void
-op_star
+id|ACPI_PHYSICAL_ADDRESS
 op_star
 id|physical_address
 )paren
@@ -1077,19 +1076,34 @@ id|AE_NO_ACPI_TABLES
 suffix:semicolon
 )brace
 multiline_comment|/* Get the vector */
+r_if
+c_cond
+(paren
+id|acpi_gbl_FACS-&gt;vector_width
+op_eq
+l_int|32
+)paren
+(brace
 op_star
 id|physical_address
 op_assign
 op_star
 (paren
-(paren
-r_void
-op_star
+id|u32
 op_star
 )paren
 id|acpi_gbl_FACS-&gt;firmware_waking_vector
-)paren
 suffix:semicolon
+)brace
+r_else
+(brace
+op_star
+id|physical_address
+op_assign
+op_star
+id|acpi_gbl_FACS-&gt;firmware_waking_vector
+suffix:semicolon
+)brace
 r_return
 (paren
 id|AE_OK

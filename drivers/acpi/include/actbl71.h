@@ -1,15 +1,72 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: actbl64.h - ACPI tables specific to IA64&n; *       $Revision: 12 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: actbl71.h - IA-64 Extensions to the ACPI Spec Rev. 0.71&n; *                   This file includes tables specific to this&n; *                   specification revision.&n; *       $Revision: 7 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
-macro_line|#ifndef __ACTBL64_H__
-DECL|macro|__ACTBL64_H__
-mdefine_line|#define __ACTBL64_H__
+macro_line|#ifndef __ACTBL71_H__
+DECL|macro|__ACTBL71_H__
+mdefine_line|#define __ACTBL71_H__
+multiline_comment|/* 0.71 FADT Address_space data item bitmasks defines */
+multiline_comment|/* If the associated bit is zero then it is in memory space else in io space */
+DECL|macro|SMI_CMD_ADDRESS_SPACE
+mdefine_line|#define SMI_CMD_ADDRESS_SPACE       0x01
+DECL|macro|PM1_BLK_ADDRESS_SPACE
+mdefine_line|#define PM1_BLK_ADDRESS_SPACE       0x02
+DECL|macro|PM2_CNT_BLK_ADDRESS_SPACE
+mdefine_line|#define PM2_CNT_BLK_ADDRESS_SPACE   0x04
+DECL|macro|PM_TMR_BLK_ADDRESS_SPACE
+mdefine_line|#define PM_TMR_BLK_ADDRESS_SPACE    0x08
+DECL|macro|GPE0_BLK_ADDRESS_SPACE
+mdefine_line|#define GPE0_BLK_ADDRESS_SPACE      0x10
+DECL|macro|GPE1_BLK_ADDRESS_SPACE
+mdefine_line|#define GPE1_BLK_ADDRESS_SPACE      0x20
+multiline_comment|/* Only for clarity in declarations */
 DECL|typedef|IO_ADDRESS
 r_typedef
 id|UINT64
 id|IO_ADDRESS
 suffix:semicolon
-multiline_comment|/* Only for clarity in declarations */
-multiline_comment|/* IA64 Root System Description Table */
+macro_line|#pragma pack(1)
+r_typedef
+r_struct
+multiline_comment|/* Root System Descriptor Pointer */
+(brace
+DECL|member|signature
+id|NATIVE_CHAR
+id|signature
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* contains &quot;RSD PTR &quot; */
+DECL|member|checksum
+id|u8
+id|checksum
+suffix:semicolon
+multiline_comment|/* to make sum of struct == 0 */
+DECL|member|oem_id
+id|NATIVE_CHAR
+id|oem_id
+(braket
+l_int|6
+)braket
+suffix:semicolon
+multiline_comment|/* OEM identification */
+DECL|member|reserved
+id|u8
+id|reserved
+suffix:semicolon
+multiline_comment|/* Must be 0 for 1.0, 2 for 2.0 */
+DECL|member|rsdt_physical_address
+id|UINT64
+id|rsdt_physical_address
+suffix:semicolon
+multiline_comment|/* 64-bit physical address of RSDT */
+DECL|typedef|RSDP_DESCRIPTOR_REV071
+)brace
+id|RSDP_DESCRIPTOR_REV071
+suffix:semicolon
+multiline_comment|/*****************************************/
+multiline_comment|/* IA64 Extensions to ACPI Spec Rev 0.71 */
+multiline_comment|/* for the Root System Description Table */
+multiline_comment|/*****************************************/
 r_typedef
 r_struct
 (brace
@@ -24,8 +81,7 @@ id|reserved_pad
 suffix:semicolon
 multiline_comment|/* IA64 alignment, must be 0 */
 DECL|member|table_offset_entry
-r_void
-op_star
+id|UINT64
 id|table_offset_entry
 (braket
 l_int|1
@@ -33,11 +89,14 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* Array of pointers to other */
 multiline_comment|/* tables&squot; headers */
-DECL|typedef|ROOT_SYSTEM_DESCRIPTION_TABLE
+DECL|typedef|RSDT_DESCRIPTOR_REV071
 )brace
-id|ROOT_SYSTEM_DESCRIPTION_TABLE
+id|RSDT_DESCRIPTOR_REV071
 suffix:semicolon
-multiline_comment|/* IA64 Firmware ACPI Control Structure */
+multiline_comment|/*******************************************/
+multiline_comment|/* IA64 Extensions to ACPI Spec Rev 0.71   */
+multiline_comment|/* for the Firmware ACPI Control Structure */
+multiline_comment|/*******************************************/
 r_typedef
 r_struct
 (brace
@@ -88,19 +147,22 @@ suffix:colon
 l_int|31
 suffix:semicolon
 multiline_comment|/* must be 0 */
-DECL|member|resverved3
+DECL|member|reserved3
 id|u8
-id|resverved3
+id|reserved3
 (braket
 l_int|28
 )braket
 suffix:semicolon
 multiline_comment|/* reserved - must be zero */
-DECL|typedef|FIRMWARE_ACPI_CONTROL_STRUCTURE
+DECL|typedef|FACS_DESCRIPTOR_REV071
 )brace
-id|FIRMWARE_ACPI_CONTROL_STRUCTURE
+id|FACS_DESCRIPTOR_REV071
 suffix:semicolon
-multiline_comment|/* IA64 Fixed ACPI Description Table */
+multiline_comment|/******************************************/
+multiline_comment|/* IA64 Extensions to ACPI Spec Rev 0.71  */
+multiline_comment|/* for the Fixed ACPI Description Table   */
+multiline_comment|/******************************************/
 r_typedef
 r_struct
 (brace
@@ -115,15 +177,15 @@ id|reserved_pad
 suffix:semicolon
 multiline_comment|/* IA64 alignment, must be 0 */
 DECL|member|firmware_ctrl
-id|ACPI_TBLPTR
+id|UINT64
 id|firmware_ctrl
 suffix:semicolon
-multiline_comment|/* Physical address of FACS */
+multiline_comment|/* 64-bit Physical address of FACS */
 DECL|member|dsdt
-id|ACPI_TBLPTR
+id|UINT64
 id|dsdt
 suffix:semicolon
-multiline_comment|/* Physical address of DSDT */
+multiline_comment|/* 64-bit Physical address of DSDT */
 DECL|member|model
 id|u8
 id|model
@@ -351,9 +413,10 @@ suffix:colon
 l_int|22
 suffix:semicolon
 multiline_comment|/* reserved - must be zero */
-DECL|typedef|FIXED_ACPI_DESCRIPTION_TABLE
+DECL|typedef|FADT_DESCRIPTOR_REV071
 )brace
-id|FIXED_ACPI_DESCRIPTION_TABLE
+id|FADT_DESCRIPTOR_REV071
 suffix:semicolon
-macro_line|#endif /* __ACTBL64_H__ */
+macro_line|#pragma pack()
+macro_line|#endif /* __ACTBL71_H__ */
 eof

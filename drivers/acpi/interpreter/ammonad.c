@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: ammonad - ACPI AML (p-code) execution for monadic operators&n; *              $Revision: 79 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: ammonad - ACPI AML (p-code) execution for monadic operators&n; *              $Revision: 85 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acparser.h&quot;
@@ -13,6 +13,7 @@ id|MODULE_NAME
 l_string|&quot;ammonad&quot;
 )paren
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_get_object_reference&n; *&n; * PARAMETERS:  Obj_desc        - Create a reference to this object&n; *              Ret_desc        - Where to store the reference&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Obtain and return a &quot;reference&quot; to the target object&n; *              Common code for the Ref_of_op and the Cond_ref_of_op.&n; *&n; ******************************************************************************/
+r_static
 id|ACPI_STATUS
 DECL|function|acpi_aml_get_object_reference
 id|acpi_aml_get_object_reference
@@ -284,6 +285,9 @@ id|AML_SLEEP_OP
 suffix:colon
 id|acpi_aml_system_do_suspend
 (paren
+(paren
+id|u32
+)paren
 id|obj_desc-&gt;number.value
 )paren
 suffix:semicolon
@@ -295,6 +299,9 @@ id|AML_STALL_OP
 suffix:colon
 id|acpi_aml_system_do_stall
 (paren
+(paren
+id|u32
+)paren
 id|obj_desc-&gt;number.value
 )paren
 suffix:semicolon
@@ -305,7 +312,11 @@ r_default
 suffix:colon
 id|REPORT_ERROR
 (paren
-l_string|&quot;Acpi_aml_exec_monadic1: Unknown monadic opcode&quot;
+(paren
+l_string|&quot;Acpi_aml_exec_monadic1: Unknown monadic opcode %X&bslash;n&quot;
+comma
+id|opcode
+)paren
 )paren
 suffix:semicolon
 id|status
@@ -507,7 +518,7 @@ id|ret_desc-&gt;number.value
 op_assign
 id|obj_desc-&gt;number.value
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Acpi x1.94 spec, Chapter 16 describes Integer as a 32-bit&n;&t;&t; *  little endian unsigned value, so this boundry condition&n;&t;&t; *  is valid.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Acpi specification describes Integer type as a little&n;&t;&t; * endian unsigned value, so this boundry condition is valid.&n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -519,7 +530,7 @@ id|ret_desc-&gt;number.value
 op_logical_and
 id|res_val
 OL
-l_int|32
+id|ACPI_INTEGER_BIT_SIZE
 suffix:semicolon
 op_increment
 id|res_val
@@ -544,7 +555,7 @@ id|ret_desc-&gt;number.value
 op_assign
 id|obj_desc-&gt;number.value
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Acpi x1.94 spec, Chapter 16 describes Integer as a 32-bit&n;&t;&t; *  little endian unsigned value, so this boundry condition&n;&t;&t; *  is valid.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Acpi specification describes Integer type as a little&n;&t;&t; * endian unsigned value, so this boundry condition is valid.&n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -556,7 +567,7 @@ id|ret_desc-&gt;number.value
 op_logical_and
 id|res_val
 OL
-l_int|32
+id|ACPI_INTEGER_BIT_SIZE
 suffix:semicolon
 op_increment
 id|res_val
@@ -567,7 +578,7 @@ op_lshift_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* Since returns must be 1-based, subtract from 33 */
+multiline_comment|/* Since returns must be 1-based, subtract from 33 (65) */
 id|ret_desc-&gt;number.value
 op_assign
 id|res_val
@@ -577,7 +588,11 @@ ques
 c_cond
 l_int|0
 suffix:colon
-l_int|33
+(paren
+id|ACPI_INTEGER_BIT_SIZE
+op_plus
+l_int|1
+)paren
 op_minus
 id|res_val
 suffix:semicolon
@@ -587,6 +602,7 @@ multiline_comment|/*  Def_from_bDC := From_bCDOp  BCDValue    Result  */
 r_case
 id|AML_FROM_BCD_OP
 suffix:colon
+multiline_comment|/* TBD: for ACPI 2.0, expand to 64 bits */
 id|d0
 op_assign
 (paren
@@ -687,6 +703,7 @@ multiline_comment|/*  Def_to_bDC  :=  To_bCDOp Operand Result */
 r_case
 id|AML_TO_BCD_OP
 suffix:colon
+multiline_comment|/* TBD: for ACPI 2.0, expand to 64 bits */
 r_if
 c_cond
 (paren
@@ -705,36 +722,57 @@ suffix:semicolon
 )brace
 id|ret_desc-&gt;number.value
 op_assign
-id|obj_desc-&gt;number.value
-op_mod
-l_int|10
-op_plus
+id|ACPI_MODULO
 (paren
 id|obj_desc-&gt;number.value
-op_div
+comma
 l_int|10
-op_mod
+)paren
+op_plus
+(paren
+id|ACPI_MODULO
+(paren
+id|ACPI_DIVIDE
+(paren
+id|obj_desc-&gt;number.value
+comma
 l_int|10
+)paren
+comma
+l_int|10
+)paren
 op_lshift
 l_int|4
 )paren
 op_plus
 (paren
+id|ACPI_MODULO
+(paren
+id|ACPI_DIVIDE
+(paren
 id|obj_desc-&gt;number.value
-op_div
+comma
 l_int|100
-op_mod
+)paren
+comma
 l_int|10
+)paren
 op_lshift
 l_int|8
 )paren
 op_plus
 (paren
+id|ACPI_MODULO
+(paren
+id|ACPI_DIVIDE
+(paren
 id|obj_desc-&gt;number.value
-op_div
+comma
 l_int|1000
-op_mod
+)paren
+comma
 l_int|10
+)paren
 op_lshift
 l_int|12
 )paren
@@ -813,12 +851,7 @@ suffix:semicolon
 multiline_comment|/* The object exists in the namespace, return TRUE */
 id|ret_desc-&gt;number.value
 op_assign
-(paren
-id|u32
-)paren
-op_minus
-l_int|1
-suffix:semicolon
+id|ACPI_INTEGER_MAX
 r_goto
 id|cleanup
 suffix:semicolon
@@ -909,7 +942,11 @@ r_default
 suffix:colon
 id|REPORT_ERROR
 (paren
-l_string|&quot;Acpi_aml_exec_monadic2_r: Unknown monadic opcode&quot;
+(paren
+l_string|&quot;Acpi_aml_exec_monadic2_r: Unknown monadic opcode %X&bslash;n&quot;
+comma
+id|opcode
+)paren
 )paren
 suffix:semicolon
 id|status
@@ -1025,7 +1062,7 @@ suffix:semicolon
 id|u32
 id|type
 suffix:semicolon
-id|u32
+id|ACPI_INTEGER
 id|value
 suffix:semicolon
 multiline_comment|/* Attempt to resolve the operands */
@@ -1361,7 +1398,11 @@ r_default
 suffix:colon
 id|REPORT_ERROR
 (paren
-l_string|&quot;Acpi_aml_exec_monadic2/Type_op:internal error: Unknown Reference subtype&quot;
+(paren
+l_string|&quot;Acpi_aml_exec_monadic2/Type_op: Internal error - Unknown Reference subtype %X&bslash;n&quot;
+comma
+id|obj_desc-&gt;reference.op_code
+)paren
 )paren
 suffix:semicolon
 id|status
@@ -1843,7 +1884,11 @@ r_default
 suffix:colon
 id|REPORT_ERROR
 (paren
-l_string|&quot;Acpi_aml_exec_monadic2: Internal error, unknown monadic opcode&quot;
+(paren
+l_string|&quot;Acpi_aml_exec_monadic2: Unknown monadic opcode %X&bslash;n&quot;
+comma
+id|opcode
+)paren
 )paren
 suffix:semicolon
 id|status

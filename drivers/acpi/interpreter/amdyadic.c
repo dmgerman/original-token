@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amdyadic - ACPI AML (p-code) execution for dyadic operators&n; *              $Revision: 63 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amdyadic - ACPI AML (p-code) execution for dyadic operators&n; *              $Revision: 68 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acparser.h&quot;
@@ -145,6 +145,9 @@ id|acpi_ev_notify_dispatch
 (paren
 id|node
 comma
+(paren
+id|u32
+)paren
 id|val_desc-&gt;number.value
 )paren
 suffix:semicolon
@@ -164,7 +167,11 @@ r_default
 suffix:colon
 id|REPORT_ERROR
 (paren
-l_string|&quot;Acpi_aml_exec_dyadic1: Unknown dyadic opcode&quot;
+(paren
+l_string|&quot;Acpi_aml_exec_dyadic1: Unknown dyadic opcode %X&bslash;n&quot;
+comma
+id|opcode
+)paren
 )paren
 suffix:semicolon
 id|status
@@ -249,9 +256,6 @@ id|ACPI_STATUS
 id|status
 op_assign
 id|AE_OK
-suffix:semicolon
-id|u32
-id|remainder
 suffix:semicolon
 id|u32
 id|num_operands
@@ -498,17 +502,15 @@ suffix:colon
 r_if
 c_cond
 (paren
-(paren
-id|u32
-)paren
-l_int|0
-op_eq
+op_logical_neg
 id|obj_desc2-&gt;number.value
 )paren
 (brace
 id|REPORT_ERROR
 (paren
-l_string|&quot;Aml_exec_dyadic2_r/Divide_op: Divide by zero&quot;
+(paren
+l_string|&quot;Aml_exec_dyadic2_r/Divide_op: Divide by zero&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|status
@@ -541,22 +543,25 @@ r_goto
 id|cleanup
 suffix:semicolon
 )brace
-id|remainder
-op_assign
-id|obj_desc-&gt;number.value
-op_mod
-id|obj_desc2-&gt;number.value
-suffix:semicolon
+multiline_comment|/* Remainder (modulo) */
 id|ret_desc-&gt;number.value
 op_assign
-id|remainder
+id|ACPI_MODULO
+(paren
+id|obj_desc-&gt;number.value
+comma
+id|obj_desc2-&gt;number.value
+)paren
 suffix:semicolon
 multiline_comment|/* Result (what we used to call the quotient) */
 id|ret_desc2-&gt;number.value
 op_assign
+id|ACPI_DIVIDE
+(paren
 id|obj_desc-&gt;number.value
-op_div
+comma
 id|obj_desc2-&gt;number.value
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -680,7 +685,9 @@ id|new_buf
 (brace
 id|REPORT_ERROR
 (paren
-l_string|&quot;Aml_exec_dyadic2_r/Concat_op: String allocation failure&quot;
+(paren
+l_string|&quot;Aml_exec_dyadic2_r/Concat_op: String allocation failure&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|status
@@ -762,7 +769,9 @@ id|new_buf
 (brace
 id|REPORT_ERROR
 (paren
-l_string|&quot;Aml_exec_dyadic2_r/Concat_op: Buffer allocation failure&quot;
+(paren
+l_string|&quot;Aml_exec_dyadic2_r/Concat_op: Buffer allocation failure&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|status
@@ -815,7 +824,11 @@ r_default
 suffix:colon
 id|REPORT_ERROR
 (paren
-l_string|&quot;Acpi_aml_exec_dyadic2_r: Unknown dyadic opcode&quot;
+(paren
+l_string|&quot;Acpi_aml_exec_dyadic2_r: Unknown dyadic opcode %X&bslash;n&quot;
+comma
+id|opcode
+)paren
 )paren
 suffix:semicolon
 id|status
@@ -1092,7 +1105,11 @@ r_default
 suffix:colon
 id|REPORT_ERROR
 (paren
-l_string|&quot;Acpi_aml_exec_dyadic2_s: Unknown dyadic synchronization opcode&quot;
+(paren
+l_string|&quot;Acpi_aml_exec_dyadic2_s: Unknown dyadic synchronization opcode %X&bslash;n&quot;
+comma
+id|opcode
+)paren
 )paren
 suffix:semicolon
 id|status
@@ -1114,13 +1131,7 @@ id|AE_TIME
 (brace
 id|ret_desc-&gt;number.value
 op_assign
-(paren
-id|u32
-)paren
-(paren
-op_minus
-l_int|1
-)paren
+id|ACPI_INTEGER_MAX
 suffix:semicolon
 multiline_comment|/* TRUE, op timed out */
 id|status
@@ -1385,7 +1396,11 @@ r_default
 suffix:colon
 id|REPORT_ERROR
 (paren
-l_string|&quot;Acpi_aml_exec_dyadic2: Unknown dyadic opcode&quot;
+(paren
+l_string|&quot;Acpi_aml_exec_dyadic2: Unknown dyadic opcode %X&bslash;n&quot;
+comma
+id|opcode
+)paren
 )paren
 suffix:semicolon
 id|status
@@ -1407,7 +1422,7 @@ id|lboolean
 (brace
 id|ret_desc-&gt;number.value
 op_assign
-l_int|0xffffffff
+id|ACPI_INTEGER_MAX
 suffix:semicolon
 )brace
 r_else

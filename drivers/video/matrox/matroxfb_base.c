@@ -7415,6 +7415,8 @@ DECL|macro|DEVF_MAVEN_CAPABLE
 mdefine_line|#define DEVF_MAVEN_CAPABLE&t;0x1000
 DECL|macro|DEVF_PANELLINK_CAPABLE
 mdefine_line|#define DEVF_PANELLINK_CAPABLE&t;0x2000
+DECL|macro|DEVF_G450DAC
+mdefine_line|#define DEVF_G450DAC&t;&t;0x4000
 DECL|macro|DEVF_GCORE
 mdefine_line|#define DEVF_GCORE&t;(DEVF_VIDEO64BIT | DEVF_SWAPS | DEVF_CROSS4MB | DEVF_DDC_8_2)
 DECL|macro|DEVF_G2CORE
@@ -7425,6 +7427,9 @@ DECL|macro|DEVF_G200
 mdefine_line|#define DEVF_G200&t;(DEVF_G2CORE)
 DECL|macro|DEVF_G400
 mdefine_line|#define DEVF_G400&t;(DEVF_G2CORE | DEVF_SUPPORT32MB | DEVF_TEXT16B | DEVF_CRTC2)
+multiline_comment|/* if you&squot;ll find how to drive DFP... */
+DECL|macro|DEVF_G450
+mdefine_line|#define DEVF_G450&t;(DEVF_GCORE | DEVF_ANY_VXRES | DEVF_SUPPORT32MB | DEVF_TEXT16B | DEVF_CRTC2 | DEVF_G450DAC)
 DECL|struct|board
 r_static
 r_struct
@@ -7897,7 +7902,7 @@ id|PCI_VENDOR_ID_MATROX
 comma
 id|PCI_DEVICE_ID_MATROX_G400_AGP
 comma
-l_int|0xFF
+l_int|0x80
 comma
 id|PCI_SS_VENDOR_ID_MATROX
 comma
@@ -7918,7 +7923,7 @@ id|PCI_VENDOR_ID_MATROX
 comma
 id|PCI_DEVICE_ID_MATROX_G400_AGP
 comma
-l_int|0xFF
+l_int|0x80
 comma
 l_int|0
 comma
@@ -7932,6 +7937,28 @@ op_amp
 id|vbG400
 comma
 l_string|&quot;unknown G400 (AGP)&quot;
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_MATROX
+comma
+id|PCI_DEVICE_ID_MATROX_G400_AGP
+comma
+l_int|0xFF
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|DEVF_G450
+comma
+l_int|500000
+comma
+multiline_comment|/* ??? vco goes up to 900MHz... */
+op_amp
+id|vbG400
+comma
+l_string|&quot;unknown G450 (AGP)&quot;
 )brace
 comma
 macro_line|#endif
@@ -8279,6 +8306,16 @@ op_or_assign
 id|MATROXFB_OUTPUT_CONN_DFP
 suffix:semicolon
 )brace
+id|ACCESS_FBINFO
+c_func
+(paren
+id|devflags.g450dac
+)paren
+op_assign
+id|b-&gt;flags
+op_amp
+id|DEVF_G450DAC
+suffix:semicolon
 id|ACCESS_FBINFO
 c_func
 (paren

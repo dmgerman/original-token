@@ -1159,7 +1159,7 @@ r_int
 r_char
 id|DACreg
 (braket
-l_int|64
+l_int|80
 )braket
 suffix:semicolon
 DECL|member|MiscOutReg
@@ -1805,6 +1805,10 @@ multiline_comment|/* 0 except for 6MB Millenium */
 DECL|member|memtype
 r_int
 id|memtype
+suffix:semicolon
+DECL|member|g450dac
+r_int
+id|g450dac
 suffix:semicolon
 DECL|member|devflags
 )brace

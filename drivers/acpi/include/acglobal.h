@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: acglobal.h - Declarations for global variables&n; *       $Revision: 84 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: acglobal.h - Declarations for global variables&n; *       $Revision: 92 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __ACGLOBAL_H__
 DECL|macro|__ACGLOBAL_H__
@@ -35,33 +35,21 @@ multiline_comment|/*************************************************************
 multiline_comment|/*&n; * Table pointers.&n; * Although these pointers are somewhat redundant with the global Acpi_table,&n; * they are convenient because they are typed pointers.&n; *&n; * These tables are single-table only; meaning that there can be at most one&n; * of each in the system.  Each global points to the actual table.&n; *&n; */
 DECL|variable|acpi_gbl_RSDP
 id|ACPI_EXTERN
-id|ROOT_SYSTEM_DESCRIPTOR_POINTER
+id|RSDP_DESCRIPTOR
 op_star
 id|acpi_gbl_RSDP
 suffix:semicolon
-DECL|variable|acpi_gbl_RSDT
+DECL|variable|acpi_gbl_XSDT
 id|ACPI_EXTERN
-id|ROOT_SYSTEM_DESCRIPTION_TABLE
+id|XSDT_DESCRIPTOR
 op_star
-id|acpi_gbl_RSDT
+id|acpi_gbl_XSDT
 suffix:semicolon
-DECL|variable|acpi_gbl_FACS
+DECL|variable|acpi_gbl_FADT
 id|ACPI_EXTERN
-id|FIRMWARE_ACPI_CONTROL_STRUCTURE
+id|FADT_DESCRIPTOR
 op_star
-id|acpi_gbl_FACS
-suffix:semicolon
-DECL|variable|acpi_gbl_FACP
-id|ACPI_EXTERN
-id|FIXED_ACPI_DESCRIPTION_TABLE
-op_star
-id|acpi_gbl_FACP
-suffix:semicolon
-DECL|variable|acpi_gbl_APIC
-id|ACPI_EXTERN
-id|APIC_TABLE
-op_star
-id|acpi_gbl_APIC
+id|acpi_gbl_FADT
 suffix:semicolon
 DECL|variable|acpi_gbl_DSDT
 id|ACPI_EXTERN
@@ -69,11 +57,11 @@ id|ACPI_TABLE_HEADER
 op_star
 id|acpi_gbl_DSDT
 suffix:semicolon
-DECL|variable|acpi_gbl_SBST
+DECL|variable|acpi_gbl_FACS
 id|ACPI_EXTERN
-id|ACPI_TABLE_HEADER
+id|ACPI_COMMON_FACS
 op_star
-id|acpi_gbl_SBST
+id|acpi_gbl_FACS
 suffix:semicolon
 multiline_comment|/*&n; * Since there may be multiple SSDTs and PSDTS, a single pointer is not&n; * sufficient; Therefore, there isn&squot;t one!&n; */
 multiline_comment|/*&n; * ACPI Table info arrays&n; */
@@ -99,10 +87,6 @@ id|acpi_gbl_acpi_mutex_info
 (braket
 id|NUM_MTX
 )braket
-suffix:semicolon
-r_extern
-id|ACPI_INIT_DATA
-id|acpi_gbl_acpi_init_data
 suffix:semicolon
 multiline_comment|/*****************************************************************************&n; *&n; * Miscellaneous globals&n; *&n; ****************************************************************************/
 DECL|variable|acpi_gbl_gpe0enable_register_save
@@ -336,6 +320,12 @@ r_extern
 id|u32
 id|acpi_gbl_startup_flags
 suffix:semicolon
+r_extern
+id|u8
+id|acpi_gbl_decode_to8bit
+(braket
+)braket
+suffix:semicolon
 multiline_comment|/*****************************************************************************&n; *&n; * Namespace globals&n; *&n; ****************************************************************************/
 DECL|macro|NUM_NS_TYPES
 mdefine_line|#define NUM_NS_TYPES                    INTERNAL_TYPE_INVALID+1
@@ -382,53 +372,12 @@ id|acpi_gbl_tail_alloc_ptr
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*****************************************************************************&n; *&n; * Interpreter globals&n; *&n; ****************************************************************************/
-DECL|variable|acpi_gbl_when_to_parse_methods
-id|ACPI_EXTERN
-id|u32
-id|acpi_gbl_when_to_parse_methods
-suffix:semicolon
 DECL|variable|acpi_gbl_current_walk_list
 id|ACPI_EXTERN
 id|ACPI_WALK_LIST
 op_star
 id|acpi_gbl_current_walk_list
 suffix:semicolon
-multiline_comment|/* Base of AML block, and pointer to current location in it */
-DECL|variable|acpi_gbl_Pcode_base
-id|ACPI_EXTERN
-id|u8
-op_star
-id|acpi_gbl_Pcode_base
-suffix:semicolon
-DECL|variable|acpi_gbl_Pcode
-id|ACPI_EXTERN
-id|u8
-op_star
-id|acpi_gbl_Pcode
-suffix:semicolon
-multiline_comment|/*&n; * Length of AML block, and remaining length of current package.&n; */
-DECL|variable|acpi_gbl_Pcode_block_len
-id|ACPI_EXTERN
-id|u32
-id|acpi_gbl_Pcode_block_len
-suffix:semicolon
-DECL|variable|acpi_gbl_Pcode_len
-id|ACPI_EXTERN
-id|u32
-id|acpi_gbl_Pcode_len
-suffix:semicolon
-DECL|variable|acpi_gbl_buf_seq
-id|ACPI_EXTERN
-id|u32
-id|acpi_gbl_buf_seq
-suffix:semicolon
-multiline_comment|/* Counts allocated Buffer descriptors */
-DECL|variable|acpi_gbl_node_err
-id|ACPI_EXTERN
-id|u32
-id|acpi_gbl_node_err
-suffix:semicolon
-multiline_comment|/* Indicate if inc_error should be called */
 multiline_comment|/*&n; * Handle to the last method found - used during pass1 of load&n; */
 DECL|variable|acpi_gbl_last_method
 id|ACPI_EXTERN
@@ -456,19 +405,6 @@ id|ACPI_EXTERN
 id|ACPI_PARSE_OBJECT
 op_star
 id|acpi_gbl_parsed_namespace_root
-suffix:semicolon
-r_extern
-id|ACPI_OPCODE_INFO
-id|acpi_gbl_aml_op_info
-(braket
-)braket
-suffix:semicolon
-r_extern
-id|u8
-id|acpi_gbl_aml_op_info_index
-(braket
-l_int|256
-)braket
 suffix:semicolon
 multiline_comment|/*****************************************************************************&n; *&n; * Hardware globals&n; *&n; ****************************************************************************/
 r_extern
@@ -534,6 +470,7 @@ id|NUM_FIXED_EVENTS
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*****************************************************************************&n; *&n; * Debugger globals&n; *&n; ****************************************************************************/
+macro_line|#ifdef ENABLE_DEBUGGER
 DECL|variable|acpi_gbl_method_executing
 id|ACPI_EXTERN
 id|u8
@@ -544,6 +481,7 @@ id|ACPI_EXTERN
 id|u8
 id|acpi_gbl_db_terminate_threads
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Memory allocation metrics - Debug Only! */
 macro_line|#ifdef ACPI_DEBUG
 DECL|variable|acpi_gbl_current_alloc_size

@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: rslist - Acpi_rs_byte_stream_to_list&n; *                       Acpi_list_to_byte_stream&n; *              $Revision: 6 $&n; *&n; *****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: rslist - Acpi_rs_byte_stream_to_list&n; *                       Acpi_list_to_byte_stream&n; *              $Revision: 8 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acresrc.h&quot;
@@ -8,7 +8,7 @@ id|MODULE_NAME
 (paren
 l_string|&quot;rslist&quot;
 )paren
-multiline_comment|/***************************************************************************&n; * FUNCTION:    Acpi_rs_byte_stream_to_list&n; *&n; * PARAMETERS:&n; *              Byte_stream_buffer      - Pointer to the resource byte stream&n; *              Byte_stream_buffer_length - Length of Byte_stream_buffer&n; *              Output_buffer           - Pointer to the buffer that will&n; *                                          contain the output structures&n; *&n; * RETURN:      Status  AE_OK if okay, else a valid ACPI_STATUS code&n; *&n; * DESCRIPTION: Takes the resource byte stream and parses it, creating a&n; *              linked list of resources in the caller&squot;s output buffer&n; *&n; ***************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_byte_stream_to_list&n; *&n; * PARAMETERS:  Byte_stream_buffer      - Pointer to the resource byte stream&n; *              Byte_stream_buffer_length - Length of Byte_stream_buffer&n; *              Output_buffer           - Pointer to the buffer that will&n; *                                          contain the output structures&n; *&n; * RETURN:      Status  AE_OK if okay, else a valid ACPI_STATUS code&n; *&n; * DESCRIPTION: Takes the resource byte stream and parses it, creating a&n; *              linked list of resources in the caller&squot;s output buffer&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_rs_byte_stream_to_list
 id|acpi_rs_byte_stream_to_list
@@ -249,7 +249,7 @@ id|structure_size
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/* 64-bit not currently supported */
+multiline_comment|/* TBD: [Future] 64-bit not currently supported */
 multiline_comment|/*&n;&t;&t;&t;case 0x8A:&n;&t;&t;&t;&t;break;&n;*/
 r_default
 suffix:colon
@@ -518,8 +518,7 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Acpi_rs_byte_stream_to_list */
-multiline_comment|/***************************************************************************&n; * FUNCTION:    Acpi_rs_list_to_byte_stream&n; *&n; * PARAMETERS:&n; *              Linked_list             - Pointer to the resource linked list&n; *              Byte_steam_size_needed  - Calculated size of the byte stream&n; *                                          needed from calling&n; *                                          Acpi_rs_calculate_byte_stream_length()&n; *                                          The size of the Output_buffer is&n; *                                          guaranteed to be &gt;=&n; *                                          Byte_stream_size_needed&n; *              Output_buffer           - Pointer to the buffer that will&n; *                                          contain the byte stream&n; *&n; * RETURN:      Status  AE_OK if okay, else a valid ACPI_STATUS code&n; *&n; * DESCRIPTION: Takes the resource linked list and parses it, creating a&n; *              byte stream of resources in the caller&squot;s output buffer&n; *&n; ***************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_list_to_byte_stream&n; *&n; * PARAMETERS:  Linked_list             - Pointer to the resource linked list&n; *              Byte_steam_size_needed  - Calculated size of the byte stream&n; *                                          needed from calling&n; *                                          Acpi_rs_calculate_byte_stream_length()&n; *                                          The size of the Output_buffer is&n; *                                          guaranteed to be &gt;=&n; *                                          Byte_stream_size_needed&n; *              Output_buffer           - Pointer to the buffer that will&n; *                                          contain the byte stream&n; *&n; * RETURN:      Status  AE_OK if okay, else a valid ACPI_STATUS code&n; *&n; * DESCRIPTION: Takes the resource linked list and parses it, creating a&n; *              byte stream of resources in the caller&squot;s output buffer&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_rs_list_to_byte_stream
 id|acpi_rs_list_to_byte_stream
@@ -884,5 +883,4 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Acpi_rs_list_to_byte_stream */
 eof

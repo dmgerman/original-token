@@ -382,7 +382,7 @@ op_logical_neg
 id|test_bit
 c_func
 (paren
-id|X86_FEATURE_TSC
+id|X86_FEATURE_MCE
 comma
 op_amp
 id|c-&gt;x86_capability

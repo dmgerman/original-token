@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: achware.h -- hardware specific interfaces&n; *       $Revision: 41 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: achware.h -- hardware specific interfaces&n; *       $Revision: 48 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __ACHWARE_H__
 DECL|macro|__ACHWARE_H__
@@ -6,21 +6,18 @@ mdefine_line|#define __ACHWARE_H__
 multiline_comment|/* Prototypes */
 id|ACPI_STATUS
 id|acpi_hw_initialize
-c_func
 (paren
 r_void
 )paren
 suffix:semicolon
 id|ACPI_STATUS
 id|acpi_hw_shutdown
-c_func
 (paren
 r_void
 )paren
 suffix:semicolon
 id|ACPI_STATUS
 id|acpi_hw_initialize_system_info
-c_func
 (paren
 r_void
 )paren
@@ -46,7 +43,7 @@ r_void
 suffix:semicolon
 multiline_comment|/* Register I/O Prototypes */
 id|u32
-id|acpi_hw_register_access
+id|acpi_hw_register_bit_access
 (paren
 id|NATIVE_UINT
 id|read_write
@@ -60,7 +57,61 @@ comma
 dot
 dot
 dot
-multiline_comment|/* DWORD Value */
+multiline_comment|/* DWORD Write Value */
+)paren
+suffix:semicolon
+id|u32
+id|acpi_hw_register_read
+(paren
+id|u8
+id|use_lock
+comma
+id|u32
+id|register_id
+)paren
+suffix:semicolon
+r_void
+id|acpi_hw_register_write
+(paren
+id|u8
+id|use_lock
+comma
+id|u32
+id|register_id
+comma
+id|u32
+id|value
+)paren
+suffix:semicolon
+id|u32
+id|acpi_hw_low_level_read
+(paren
+id|u32
+id|width
+comma
+id|ACPI_GAS
+op_star
+id|reg
+comma
+id|u32
+id|offset
+)paren
+suffix:semicolon
+r_void
+id|acpi_hw_low_level_write
+(paren
+id|u32
+id|width
+comma
+id|u32
+id|value
+comma
+id|ACPI_GAS
+op_star
+id|reg
+comma
+id|u32
+id|offset
 )paren
 suffix:semicolon
 r_void
@@ -182,6 +233,27 @@ id|cx_states
 )braket
 )paren
 suffix:semicolon
+id|ACPI_STATUS
+id|acpi_hw_get_cx_handler
+(paren
+id|u32
+id|cx_state
+comma
+id|ACPI_C_STATE_HANDLER
+op_star
+id|handler
+)paren
+suffix:semicolon
+id|ACPI_STATUS
+id|acpi_hw_set_cx_handler
+(paren
+id|u32
+id|cx_state
+comma
+id|ACPI_C_STATE_HANDLER
+id|handler
+)paren
+suffix:semicolon
 multiline_comment|/* Throttling Prototypes */
 r_void
 id|acpi_hw_enable_throttling
@@ -247,6 +319,14 @@ id|u32
 id|acpi_hw_pmt_resolution
 (paren
 r_void
+)paren
+suffix:semicolon
+id|ACPI_STATUS
+id|acpi_get_timer
+(paren
+id|u32
+op_star
+id|out_ticks
 )paren
 suffix:semicolon
 macro_line|#endif /* __ACHWARE_H__ */

@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amstoren - AML Interpreter object store support,&n; *                         Store to Node (namespace object)&n; *              $Revision: 21 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amstoren - AML Interpreter object store support,&n; *                         Store to Node (namespace object)&n; *              $Revision: 24 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acparser.h&quot;
@@ -827,6 +827,41 @@ suffix:semicolon
 r_case
 id|ACPI_TYPE_FIELD_UNIT
 suffix:colon
+multiline_comment|/*&n;&t;&t; * If the Field Buffer and Index have not been previously evaluated,&n;&t;&t; * evaluate them and save the results.&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|dest_desc-&gt;common.flags
+op_amp
+id|AOPOBJ_DATA_VALID
+)paren
+)paren
+(brace
+id|status
+op_assign
+id|acpi_ds_get_field_unit_arguments
+(paren
+id|dest_desc
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren
@@ -837,10 +872,6 @@ op_logical_or
 id|ACPI_TYPE_BUFFER
 op_ne
 id|dest_desc-&gt;field_unit.container-&gt;common.type
-op_logical_or
-id|dest_desc-&gt;field_unit.sequence
-op_ne
-id|dest_desc-&gt;field_unit.container-&gt;buffer.sequence
 )paren
 )paren
 (brace
@@ -949,6 +980,14 @@ suffix:colon
 id|dest_desc-&gt;number.value
 op_assign
 id|val_desc-&gt;number.value
+suffix:semicolon
+multiline_comment|/* Truncate value if we are executing from a 32-bit ACPI table */
+id|acpi_aml_truncate_for32bit_table
+(paren
+id|dest_desc
+comma
+id|walk_state
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon

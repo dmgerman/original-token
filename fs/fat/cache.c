@@ -364,8 +364,7 @@ c_func
 (paren
 (paren
 (paren
-r_int
-r_int
+id|__u32
 op_star
 )paren
 id|bh-&gt;b_data
@@ -448,8 +447,7 @@ c_func
 (paren
 (paren
 (paren
-r_int
-r_int
+id|__u16
 op_star
 )paren
 id|bh-&gt;b_data
@@ -489,8 +487,7 @@ op_assign
 op_amp
 (paren
 (paren
-r_int
-r_char
+id|__u8
 op_star
 )paren
 id|bh-&gt;b_data
@@ -510,8 +507,7 @@ op_assign
 op_amp
 (paren
 (paren
-r_int
-r_char
+id|__u8
 op_star
 )paren
 id|bh2-&gt;b_data
@@ -612,8 +608,7 @@ l_int|32
 (brace
 (paren
 (paren
-r_int
-r_int
+id|__u32
 op_star
 )paren
 id|bh-&gt;b_data
@@ -656,8 +651,7 @@ l_int|16
 (brace
 (paren
 (paren
-r_int
-r_int
+id|__u16
 op_star
 )paren
 id|bh-&gt;b_data

@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: dswscope - Scope stack manipulation&n; *              $Revision: 38 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: dswscope - Scope stack manipulation&n; *              $Revision: 40 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acinterp.h&quot;
@@ -78,7 +78,9 @@ id|node
 multiline_comment|/*  invalid scope   */
 id|REPORT_ERROR
 (paren
-l_string|&quot;Ds_scope_stack_push: null scope passed&quot;
+(paren
+l_string|&quot;Ds_scope_stack_push: null scope passed&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -100,7 +102,9 @@ id|type
 (brace
 id|REPORT_WARNING
 (paren
-l_string|&quot;Ds_scope_stack_push: type code out of range&quot;
+(paren
+l_string|&quot;Ds_scope_stack_push: type code out of range&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 )brace

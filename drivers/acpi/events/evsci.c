@@ -1,4 +1,4 @@
-multiline_comment|/*******************************************************************************&n; *&n; * Module Name: evsci - System Control Interrupt configuration and&n; *                      legacy to ACPI mode state transition functions&n; *              $Revision: 59 $&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: evsci - System Control Interrupt configuration and&n; *                      legacy to ACPI mode state transition functions&n; *              $Revision: 67 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acnamesp.h&quot;
@@ -11,7 +11,8 @@ id|MODULE_NAME
 l_string|&quot;evsci&quot;
 )paren
 multiline_comment|/*&n; * Elements correspond to counts for TMR, NOT_USED, GBL, PWR_BTN, SLP_BTN, RTC,&n; * and GENERAL respectively.  These counts are modified by the ACPI interrupt&n; * handler.&n; *&n; * TBD: [Investigate] Note that GENERAL should probably be split out into&n; * one element for each bit in the GPE registers&n; */
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_sci_handler&n; *&n; * PARAMETERS:  none&n; *&n; * RETURN:      Status code indicates whether interrupt was handled.&n; *&n; * DESCRIPTION: Interrupt handler that will figure out what function or&n; *              control method to call to deal with a SCI.  Installed&n; *              using BU interrupt support.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_sci_handler&n; *&n; * PARAMETERS:  Context   - Calling Context&n; *&n; * RETURN:      Status code indicates whether interrupt was handled.&n; *&n; * DESCRIPTION: Interrupt handler that will figure out what function or&n; *              control method to call to deal with a SCI.  Installed&n; *              using BU interrupt support.&n; *&n; ******************************************************************************/
+r_static
 id|u32
 DECL|function|acpi_ev_sci_handler
 id|acpi_ev_sci_handler
@@ -31,7 +32,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|acpi_hw_register_access
+id|acpi_hw_register_bit_access
 (paren
 id|ACPI_READ
 comma
@@ -88,7 +89,7 @@ id|acpi_os_install_interrupt_handler
 (paren
 id|u32
 )paren
-id|acpi_gbl_FACP-&gt;sci_int
+id|acpi_gbl_FADT-&gt;sci_int
 comma
 id|acpi_ev_sci_handler
 comma
@@ -216,7 +217,7 @@ id|acpi_os_remove_interrupt_handler
 (paren
 id|u32
 )paren
-id|acpi_gbl_FACP-&gt;sci_int
+id|acpi_gbl_FADT-&gt;sci_int
 comma
 id|acpi_ev_sci_handler
 )paren
@@ -252,59 +253,25 @@ multiline_comment|/* Restore the fixed events */
 r_if
 c_cond
 (paren
-id|acpi_os_in16
+id|acpi_hw_register_read
 (paren
-id|acpi_gbl_FACP-&gt;pm1a_evt_blk
-op_plus
-l_int|2
+id|ACPI_MTX_LOCK
+comma
+id|PM1_EN
 )paren
 op_ne
 id|acpi_gbl_pm1_enable_register_save
 )paren
 (brace
-id|acpi_os_out16
+id|acpi_hw_register_write
 (paren
-(paren
-id|acpi_gbl_FACP-&gt;pm1a_evt_blk
-op_plus
-l_int|2
-)paren
+id|ACPI_MTX_LOCK
+comma
+id|PM1_EN
 comma
 id|acpi_gbl_pm1_enable_register_save
 )paren
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|acpi_gbl_FACP-&gt;pm1b_evt_blk
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|acpi_os_in16
-(paren
-id|acpi_gbl_FACP-&gt;pm1b_evt_blk
-op_plus
-l_int|2
-)paren
-op_ne
-id|acpi_gbl_pm1_enable_register_save
-)paren
-(brace
-id|acpi_os_out16
-(paren
-(paren
-id|acpi_gbl_FACP-&gt;pm1b_evt_blk
-op_plus
-l_int|2
-)paren
-comma
-id|acpi_gbl_pm1_enable_register_save
-)paren
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/* Ensure that all status bits are clear */
 id|acpi_hw_clear_acpi_status
@@ -323,7 +290,7 @@ id|index
 OL
 id|DIV_2
 (paren
-id|acpi_gbl_FACP-&gt;gpe0blk_len
+id|acpi_gbl_FADT-&gt;gpe0blk_len
 )paren
 suffix:semicolon
 id|index
@@ -333,14 +300,13 @@ op_increment
 r_if
 c_cond
 (paren
-id|acpi_os_in8
+id|acpi_hw_register_read
 (paren
-id|acpi_gbl_FACP-&gt;gpe0blk
-op_plus
-id|DIV_2
-(paren
-id|acpi_gbl_FACP-&gt;gpe0blk_len
-)paren
+id|ACPI_MTX_LOCK
+comma
+id|GPE0_EN_BLOCK
+op_or
+id|index
 )paren
 op_ne
 id|acpi_gbl_gpe0enable_register_save
@@ -349,16 +315,13 @@ id|index
 )braket
 )paren
 (brace
-id|acpi_os_out8
+id|acpi_hw_register_write
 (paren
-(paren
-id|acpi_gbl_FACP-&gt;gpe0blk
-op_plus
-id|DIV_2
-(paren
-id|acpi_gbl_FACP-&gt;gpe0blk_len
-)paren
-)paren
+id|ACPI_MTX_LOCK
+comma
+id|GPE0_EN_BLOCK
+op_or
+id|index
 comma
 id|acpi_gbl_gpe0enable_register_save
 (braket
@@ -368,12 +331,11 @@ id|index
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* GPE 1 present? */
 r_if
 c_cond
 (paren
-id|acpi_gbl_FACP-&gt;gpe1_blk
-op_logical_and
-id|acpi_gbl_FACP-&gt;gpe1_blk_len
+id|acpi_gbl_FADT-&gt;gpe1_blk_len
 )paren
 (brace
 r_for
@@ -387,7 +349,7 @@ id|index
 OL
 id|DIV_2
 (paren
-id|acpi_gbl_FACP-&gt;gpe1_blk_len
+id|acpi_gbl_FADT-&gt;gpe1_blk_len
 )paren
 suffix:semicolon
 id|index
@@ -397,14 +359,13 @@ op_increment
 r_if
 c_cond
 (paren
-id|acpi_os_in8
+id|acpi_hw_register_read
 (paren
-id|acpi_gbl_FACP-&gt;gpe1_blk
-op_plus
-id|DIV_2
-(paren
-id|acpi_gbl_FACP-&gt;gpe1_blk_len
-)paren
+id|ACPI_MTX_LOCK
+comma
+id|GPE1_EN_BLOCK
+op_or
+id|index
 )paren
 op_ne
 id|acpi_gbl_gpe1_enable_register_save
@@ -413,16 +374,13 @@ id|index
 )braket
 )paren
 (brace
-id|acpi_os_out8
+id|acpi_hw_register_write
 (paren
-(paren
-id|acpi_gbl_FACP-&gt;gpe1_blk
-op_plus
-id|DIV_2
-(paren
-id|acpi_gbl_FACP-&gt;gpe1_blk_len
-)paren
-)paren
+id|ACPI_MTX_LOCK
+comma
+id|GPE1_EN_BLOCK
+op_or
+id|index
 comma
 id|acpi_gbl_gpe1_enable_register_save
 (braket

@@ -191,7 +191,7 @@ r_void
 op_star
 id|segments
 op_assign
-id|mm-&gt;segments
+id|mm-&gt;context.segments
 suffix:semicolon
 r_int
 id|count

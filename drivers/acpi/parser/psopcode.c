@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: psopcode - Parser opcode information table&n; *              $Revision: 20 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: psopcode - Parser opcode information table&n; *              $Revision: 24 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acparser.h&quot;
@@ -9,18 +9,6 @@ id|MODULE_NAME
 (paren
 l_string|&quot;psopcode&quot;
 )paren
-DECL|variable|acpi_gbl_aml_short_op_info_index
-id|u8
-id|acpi_gbl_aml_short_op_info_index
-(braket
-)braket
-suffix:semicolon
-DECL|variable|acpi_gbl_aml_long_op_info_index
-id|u8
-id|acpi_gbl_aml_long_op_info_index
-(braket
-)braket
-suffix:semicolon
 DECL|macro|_UNK
 mdefine_line|#define _UNK                        0x6B
 multiline_comment|/*&n; * Reserved ASCII characters.  Do not use any of these for&n; * internal opcodes, since they are used to differentiate&n; * name strings from AML opcodes&n; */
@@ -40,157 +28,6 @@ DECL|macro|MAX_INTERNAL_OPCODE
 mdefine_line|#define MAX_INTERNAL_OPCODE
 DECL|macro|NUM_INTERNAL_OPCODE
 mdefine_line|#define NUM_INTERNAL_OPCODE         MAX_INTERNAL_OPCODE + 1
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_get_opcode_info&n; *&n; * PARAMETERS:  Opcode              - The AML opcode&n; *&n; * RETURN:      A pointer to the info about the opcode.  NULL if the opcode was&n; *              not found in the table.&n; *&n; * DESCRIPTION: Find AML opcode description based on the opcode.&n; *              NOTE: This procedure must ALWAYS return a valid pointer!&n; *&n; ******************************************************************************/
-id|ACPI_OPCODE_INFO
-op_star
-DECL|function|acpi_ps_get_opcode_info
-id|acpi_ps_get_opcode_info
-(paren
-id|u16
-id|opcode
-)paren
-(brace
-id|ACPI_OPCODE_INFO
-op_star
-id|op_info
-suffix:semicolon
-id|u8
-id|upper_opcode
-suffix:semicolon
-id|u8
-id|lower_opcode
-suffix:semicolon
-multiline_comment|/* Split the 16-bit opcode into separate bytes */
-id|upper_opcode
-op_assign
-(paren
-id|u8
-)paren
-(paren
-id|opcode
-op_rshift
-l_int|8
-)paren
-suffix:semicolon
-id|lower_opcode
-op_assign
-(paren
-id|u8
-)paren
-id|opcode
-suffix:semicolon
-multiline_comment|/* Default is &quot;unknown opcode&quot; */
-id|op_info
-op_assign
-op_amp
-id|acpi_gbl_aml_op_info
-(braket
-id|_UNK
-)braket
-suffix:semicolon
-multiline_comment|/*&n;&t; * Detect normal 8-bit opcode or extended 16-bit opcode&n;&t; */
-r_switch
-c_cond
-(paren
-id|upper_opcode
-)paren
-(brace
-r_case
-l_int|0
-suffix:colon
-multiline_comment|/* Simple (8-bit) opcode: 0-255, can&squot;t index beyond table  */
-id|op_info
-op_assign
-op_amp
-id|acpi_gbl_aml_op_info
-(braket
-id|acpi_gbl_aml_short_op_info_index
-(braket
-id|lower_opcode
-)braket
-)braket
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|AML_EXTOP
-suffix:colon
-multiline_comment|/* Extended (16-bit, prefix+opcode) opcode */
-r_if
-c_cond
-(paren
-id|lower_opcode
-op_le
-id|MAX_EXTENDED_OPCODE
-)paren
-(brace
-id|op_info
-op_assign
-op_amp
-id|acpi_gbl_aml_op_info
-(braket
-id|acpi_gbl_aml_long_op_info_index
-(braket
-id|lower_opcode
-)braket
-)braket
-suffix:semicolon
-)brace
-r_break
-suffix:semicolon
-r_case
-id|AML_LNOT_OP
-suffix:colon
-multiline_comment|/* This case is for the bogus opcodes LNOTEQUAL, LLESSEQUAL, LGREATEREQUAL */
-multiline_comment|/* TBD: [Investigate] remove this case? */
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-r_break
-suffix:semicolon
-)brace
-multiline_comment|/* Get the Op info pointer for this opcode */
-r_return
-(paren
-id|op_info
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_get_opcode_name&n; *&n; * PARAMETERS:  Opcode              - The AML opcode&n; *&n; * RETURN:      A pointer to the name of the opcode (ASCII String)&n; *              Note: Never returns NULL.&n; *&n; * DESCRIPTION: Translate an opcode into a human-readable string&n; *&n; ******************************************************************************/
-id|NATIVE_CHAR
-op_star
-DECL|function|acpi_ps_get_opcode_name
-id|acpi_ps_get_opcode_name
-(paren
-id|u16
-id|opcode
-)paren
-(brace
-id|ACPI_OPCODE_INFO
-op_star
-id|op
-suffix:semicolon
-id|op
-op_assign
-id|acpi_ps_get_opcode_info
-(paren
-id|opcode
-)paren
-suffix:semicolon
-multiline_comment|/* Always guaranteed to return a valid pointer */
-id|DEBUG_ONLY_MEMBERS
-(paren
-r_return
-id|op-&gt;name
-)paren
-suffix:semicolon
-r_return
-(paren
-l_string|&quot;AE_NOT_CONFIGURED&quot;
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*******************************************************************************&n; *&n; * NAME:        Acpi_gbl_Aml_op_info&n; *&n; * DESCRIPTION: Opcode table. Each entry contains &lt;opcode, type, name, operands&gt;&n; *              The name is a simple ascii string, the operand specifier is an&n; *              ascii string with one letter per operand.  The letter specifies&n; *              the operand type.&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; * Flags byte: 0-4 (5 bits) = Opcode Type&n; *             5   (1 bit)  = Has arguments flag&n; *             6-7 (2 bits) = Reserved&n; */
 DECL|macro|AML_NO_ARGS
@@ -588,7 +425,7 @@ mdefine_line|#define ARGI_DEBUG_OP                   ARG_NONE
 DECL|macro|ARGI_FATAL_OP
 mdefine_line|#define ARGI_FATAL_OP                   ARGI_LIST3 (ARGI_NUMBER,     ARGI_NUMBER,        ARGI_NUMBER)
 DECL|macro|ARGI_REGION_OP
-mdefine_line|#define ARGI_REGION_OP                  ARGI_INVALID_OPCODE
+mdefine_line|#define ARGI_REGION_OP                  ARGI_LIST2 (ARGI_NUMBER,     ARGI_NUMBER)
 DECL|macro|ARGI_DEF_FIELD_OP
 mdefine_line|#define ARGI_DEF_FIELD_OP               ARGI_INVALID_OPCODE
 DECL|macro|ARGI_DEVICE_OP
@@ -624,9 +461,10 @@ mdefine_line|#define ARGI_ACCESSFIELD_OP             ARGI_INVALID_OPCODE
 DECL|macro|ARGI_STATICSTRING_OP
 mdefine_line|#define ARGI_STATICSTRING_OP            ARGI_INVALID_OPCODE
 multiline_comment|/*&n; * Master Opcode information table.  A summary of everything we know about each opcode, all in one place.&n; */
-DECL|variable|acpi_gbl_aml_op_info
+DECL|variable|aml_op_info
+r_static
 id|ACPI_OPCODE_INFO
-id|acpi_gbl_aml_op_info
+id|aml_op_info
 (braket
 )braket
 op_assign
@@ -2507,9 +2345,10 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This table is directly indexed by the opcodes, and returns an&n; * index into the table above&n; */
-DECL|variable|acpi_gbl_aml_short_op_info_index
+DECL|variable|aml_short_op_info_index
+r_static
 id|u8
-id|acpi_gbl_aml_short_op_info_index
+id|aml_short_op_info_index
 (braket
 l_int|256
 )braket
@@ -3062,9 +2901,10 @@ l_int|0x45
 comma
 )brace
 suffix:semicolon
-DECL|variable|acpi_gbl_aml_long_op_info_index
+DECL|variable|aml_long_op_info_index
+r_static
 id|u8
-id|acpi_gbl_aml_long_op_info_index
+id|aml_long_op_info_index
 (braket
 id|NUM_EXTENDED_OPCODE
 )braket
@@ -3364,4 +3204,149 @@ comma
 suffix:semicolon
 multiline_comment|/*              0     1     2     3     4     5     6     7  */
 multiline_comment|/* 0x00 */
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_get_opcode_info&n; *&n; * PARAMETERS:  Opcode              - The AML opcode&n; *&n; * RETURN:      A pointer to the info about the opcode.  NULL if the opcode was&n; *              not found in the table.&n; *&n; * DESCRIPTION: Find AML opcode description based on the opcode.&n; *              NOTE: This procedure must ALWAYS return a valid pointer!&n; *&n; ******************************************************************************/
+id|ACPI_OPCODE_INFO
+op_star
+DECL|function|acpi_ps_get_opcode_info
+id|acpi_ps_get_opcode_info
+(paren
+id|u16
+id|opcode
+)paren
+(brace
+id|ACPI_OPCODE_INFO
+op_star
+id|op_info
+suffix:semicolon
+id|u8
+id|upper_opcode
+suffix:semicolon
+id|u8
+id|lower_opcode
+suffix:semicolon
+multiline_comment|/* Split the 16-bit opcode into separate bytes */
+id|upper_opcode
+op_assign
+(paren
+id|u8
+)paren
+(paren
+id|opcode
+op_rshift
+l_int|8
+)paren
+suffix:semicolon
+id|lower_opcode
+op_assign
+(paren
+id|u8
+)paren
+id|opcode
+suffix:semicolon
+multiline_comment|/* Default is &quot;unknown opcode&quot; */
+id|op_info
+op_assign
+op_amp
+id|aml_op_info
+(braket
+id|_UNK
+)braket
+suffix:semicolon
+multiline_comment|/*&n;&t; * Detect normal 8-bit opcode or extended 16-bit opcode&n;&t; */
+r_switch
+c_cond
+(paren
+id|upper_opcode
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
+multiline_comment|/* Simple (8-bit) opcode: 0-255, can&squot;t index beyond table  */
+id|op_info
+op_assign
+op_amp
+id|aml_op_info
+(braket
+id|aml_short_op_info_index
+(braket
+id|lower_opcode
+)braket
+)braket
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|AML_EXTOP
+suffix:colon
+multiline_comment|/* Extended (16-bit, prefix+opcode) opcode */
+r_if
+c_cond
+(paren
+id|lower_opcode
+op_le
+id|MAX_EXTENDED_OPCODE
+)paren
+(brace
+id|op_info
+op_assign
+op_amp
+id|aml_op_info
+(braket
+id|aml_long_op_info_index
+(braket
+id|lower_opcode
+)braket
+)braket
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_case
+id|AML_LNOT_OP
+suffix:colon
+multiline_comment|/* This case is for the bogus opcodes LNOTEQUAL, LLESSEQUAL, LGREATEREQUAL */
+multiline_comment|/* TBD: [Investigate] remove this case? */
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* Get the Op info pointer for this opcode */
+r_return
+(paren
+id|op_info
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ps_get_opcode_name&n; *&n; * PARAMETERS:  Opcode              - The AML opcode&n; *&n; * RETURN:      A pointer to the name of the opcode (ASCII String)&n; *              Note: Never returns NULL.&n; *&n; * DESCRIPTION: Translate an opcode into a human-readable string&n; *&n; ******************************************************************************/
+id|NATIVE_CHAR
+op_star
+DECL|function|acpi_ps_get_opcode_name
+id|acpi_ps_get_opcode_name
+(paren
+id|u16
+id|opcode
+)paren
+(brace
+id|ACPI_OPCODE_INFO
+op_star
+id|op
+suffix:semicolon
+id|op
+op_assign
+id|acpi_ps_get_opcode_info
+(paren
+id|opcode
+)paren
+suffix:semicolon
+multiline_comment|/* Always guaranteed to return a valid pointer */
+r_return
+(paren
+l_string|&quot;AE_NOT_CONFIGURED&quot;
+)paren
+suffix:semicolon
+)brace
 eof

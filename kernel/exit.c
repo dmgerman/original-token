@@ -1500,10 +1500,10 @@ c_func
 (paren
 )paren
 )paren
-id|printk
+id|panic
 c_func
 (paren
-l_string|&quot;Aiee, killing interrupt handler&bslash;n&quot;
+l_string|&quot;Aiee, killing interrupt handler!&quot;
 )paren
 suffix:semicolon
 r_if

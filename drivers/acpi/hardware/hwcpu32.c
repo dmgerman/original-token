@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: hwcpu32.c - CPU support for IA32 (Throttling, Cx_states)&n; *              $Revision: 33 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: hwcpu32.c - CPU support for IA32 (Throttling, Cx_states)&n; *              $Revision: 39 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acnamesp.h&quot;
@@ -152,12 +152,11 @@ l_int|4
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Perform Dummy Op:&n;&t; * -----------------&n;&t; * We have to do something useless after reading LVL2 because chipsets&n;&t; * cannot guarantee that STPCLK# gets asserted in time to freeze execution.&n;&t; */
-id|acpi_os_in8
+id|acpi_hw_register_read
 (paren
-(paren
-id|ACPI_IO_ADDRESS
-)paren
-id|acpi_gbl_FACP-&gt;pm2_cnt_blk
+id|ACPI_MTX_DO_NOT_LOCK
+comma
+id|PM2_CONTROL
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Compute Time in C2:&n;&t; * -------------------&n;&t; */
@@ -204,11 +203,6 @@ id|timer
 op_assign
 l_int|0
 suffix:semicolon
-id|u8
-id|pm2_cnt_blk
-op_assign
-l_int|0
-suffix:semicolon
 id|u32
 id|bus_master_status
 op_assign
@@ -239,7 +233,7 @@ op_eq
 (paren
 id|bus_master_status
 op_assign
-id|acpi_hw_register_access
+id|acpi_hw_register_bit_access
 (paren
 id|ACPI_READ
 comma
@@ -251,7 +245,7 @@ id|BM_STS
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * Clear the BM_STS bit by setting it.&n;&t;&t; */
-id|acpi_hw_register_access
+id|acpi_hw_register_bit_access
 (paren
 id|ACPI_WRITE
 comma
@@ -280,28 +274,16 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Disable Bus Mastering:&n;&t; * ----------------------&n;&t; * Set the PM2_CNT.ARB_DIS bit (bit #0), preserving all other bits.&n;&t; */
-id|pm2_cnt_blk
-op_assign
-id|acpi_os_in8
+id|acpi_hw_register_bit_access
+c_func
 (paren
-(paren
-id|ACPI_IO_ADDRESS
-)paren
-id|acpi_gbl_FACP-&gt;pm2_cnt_blk
-)paren
-suffix:semicolon
-id|pm2_cnt_blk
-op_or_assign
-l_int|0x01
-suffix:semicolon
-id|acpi_os_out8
-(paren
-(paren
-id|ACPI_IO_ADDRESS
-)paren
-id|acpi_gbl_FACP-&gt;pm2_cnt_blk
+id|ACPI_WRITE
 comma
-id|pm2_cnt_blk
+id|ACPI_MTX_LOCK
+comma
+id|ARB_DIS
+comma
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Get the timer base before entering C state&n;&t; */
@@ -325,12 +307,11 @@ l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Perform Dummy Op:&n;&t; * -----------------&n;&t; * We have to do something useless after reading LVL3 because chipsets&n;&t; * cannot guarantee that STPCLK# gets asserted in time to freeze execution.&n;&t; */
-id|acpi_os_in8
+id|acpi_hw_register_read
 (paren
-(paren
-id|ACPI_IO_ADDRESS
-)paren
-id|acpi_gbl_FACP-&gt;pm2_cnt_blk
+id|ACPI_MTX_DO_NOT_LOCK
+comma
+id|PM2_CONTROL
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Immediately compute the time in the C state&n;&t; */
@@ -344,28 +325,16 @@ op_minus
 id|timer
 suffix:semicolon
 multiline_comment|/*&n;&t; * Re-Enable Bus Mastering:&n;&t; * ------------------------&n;&t; * Clear the PM2_CNT.ARB_DIS bit (bit #0), preserving all other bits.&n;&t; */
-id|pm2_cnt_blk
-op_assign
-id|acpi_os_in8
+id|acpi_hw_register_bit_access
+c_func
 (paren
-(paren
-id|ACPI_IO_ADDRESS
-)paren
-id|acpi_gbl_FACP-&gt;pm2_cnt_blk
-)paren
-suffix:semicolon
-id|pm2_cnt_blk
-op_and_assign
-l_int|0xFE
-suffix:semicolon
-id|acpi_os_out8
-(paren
-(paren
-id|ACPI_IO_ADDRESS
-)paren
-id|acpi_gbl_FACP-&gt;pm2_cnt_blk
+id|ACPI_WRITE
 comma
-id|pm2_cnt_blk
+id|ACPI_MTX_LOCK
+comma
+id|ARB_DIS
+comma
+l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* TBD: [Unhandled]: Support 24-bit timers (this algorithm assumes 32-bit) */
@@ -502,7 +471,7 @@ id|cx_state
 r_case
 l_int|3
 suffix:colon
-id|acpi_hw_register_access
+id|acpi_hw_register_bit_access
 (paren
 id|ACPI_WRITE
 comma
@@ -526,7 +495,7 @@ id|acpi_hw_active_cx_state
 r_case
 l_int|3
 suffix:colon
-id|acpi_hw_register_access
+id|acpi_hw_register_bit_access
 (paren
 id|ACPI_WRITE
 comma
@@ -612,7 +581,7 @@ multiline_comment|/*&n;&t; * C2 Supported?&n;&t; * -------------&n;&t; * We&squo
 r_if
 c_cond
 (paren
-id|acpi_gbl_FACP-&gt;plvl2_lat
+id|acpi_gbl_FADT-&gt;plvl2_lat
 op_le
 l_int|100
 )paren
@@ -636,7 +605,7 @@ id|cx_states
 l_int|2
 )braket
 op_assign
-id|acpi_gbl_FACP-&gt;plvl2_lat
+id|acpi_gbl_FADT-&gt;plvl2_lat
 suffix:semicolon
 )brace
 r_else
@@ -644,7 +613,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|acpi_gbl_FACP-&gt;plvl2_up
+id|acpi_gbl_FADT-&gt;plvl2_up
 )paren
 (brace
 id|acpi_hw_cx_handlers
@@ -659,7 +628,7 @@ id|cx_states
 l_int|2
 )braket
 op_assign
-id|acpi_gbl_FACP-&gt;plvl2_lat
+id|acpi_gbl_FADT-&gt;plvl2_lat
 suffix:semicolon
 )brace
 )brace
@@ -667,7 +636,7 @@ multiline_comment|/*&n;&t; * C3 Supported?&n;&t; * -------------&n;&t; * We&squo
 r_if
 c_cond
 (paren
-id|acpi_gbl_FACP-&gt;plvl3_lat
+id|acpi_gbl_FADT-&gt;plvl3_lat
 op_le
 l_int|1000
 )paren
@@ -679,9 +648,9 @@ op_logical_neg
 id|SMP_system
 op_logical_and
 (paren
-id|acpi_gbl_FACP-&gt;pm2_cnt_blk
+id|acpi_gbl_FADT-&gt;Xpm2_cnt_blk.address
 op_logical_and
-id|acpi_gbl_FACP-&gt;pm2_cnt_len
+id|acpi_gbl_FADT-&gt;pm2_cnt_len
 )paren
 )paren
 (brace
@@ -697,7 +666,7 @@ id|cx_states
 l_int|3
 )braket
 op_assign
-id|acpi_gbl_FACP-&gt;plvl3_lat
+id|acpi_gbl_FADT-&gt;plvl3_lat
 suffix:semicolon
 )brace
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: amlcode.h - Definitions for AML, as included in &quot;definition blocks&quot;&n; *                   Declarations and definitions contained herein are derived&n; *                   directly from the ACPI specification.&n; *       $Revision: 39 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: amlcode.h - Definitions for AML, as included in &quot;definition blocks&quot;&n; *                   Declarations and definitions contained herein are derived&n; *                   directly from the ACPI specification.&n; *       $Revision: 42 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __AMLCODE_H__
 DECL|macro|__AMLCODE_H__
@@ -24,12 +24,16 @@ DECL|macro|AML_DWORD_OP
 mdefine_line|#define AML_DWORD_OP                (u16) 0x0c
 DECL|macro|AML_STRING_OP
 mdefine_line|#define AML_STRING_OP               (u16) 0x0d
+DECL|macro|AML_QWORD_OP
+mdefine_line|#define AML_QWORD_OP                (u16) 0x0e     /* ACPI 2.0 */
 DECL|macro|AML_SCOPE_OP
 mdefine_line|#define AML_SCOPE_OP                (u16) 0x10
 DECL|macro|AML_BUFFER_OP
 mdefine_line|#define AML_BUFFER_OP               (u16) 0x11
 DECL|macro|AML_PACKAGE_OP
 mdefine_line|#define AML_PACKAGE_OP              (u16) 0x12
+DECL|macro|AML_VAR_PACKAGE_OP
+mdefine_line|#define AML_VAR_PACKAGE_OP          (u16) 0x13     /* ACPI 2.0 */
 DECL|macro|AML_METHOD_OP
 mdefine_line|#define AML_METHOD_OP               (u16) 0x14
 DECL|macro|AML_DUAL_NAME_PREFIX
@@ -120,6 +124,10 @@ DECL|macro|AML_FIND_SET_RIGHT_BIT_OP
 mdefine_line|#define AML_FIND_SET_RIGHT_BIT_OP   (u16) 0x82
 DECL|macro|AML_DEREF_OF_OP
 mdefine_line|#define AML_DEREF_OF_OP             (u16) 0x83
+DECL|macro|AML_CONCAT_RES_OP
+mdefine_line|#define AML_CONCAT_RES_OP           (u16) 0x84     /* ACPI 2.0 */
+DECL|macro|AML_MOD_OP
+mdefine_line|#define AML_MOD_OP                  (u16) 0x85     /* ACPI 2.0 */
 DECL|macro|AML_NOTIFY_OP
 mdefine_line|#define AML_NOTIFY_OP               (u16) 0x86
 DECL|macro|AML_SIZE_OF_OP
@@ -138,6 +146,8 @@ DECL|macro|AML_BIT_FIELD_OP
 mdefine_line|#define AML_BIT_FIELD_OP            (u16) 0x8d
 DECL|macro|AML_TYPE_OP
 mdefine_line|#define AML_TYPE_OP                 (u16) 0x8e
+DECL|macro|AML_QWORD_FIELD_OP
+mdefine_line|#define AML_QWORD_FIELD_OP          (u16) 0x8f     /* ACPI 2.0 */
 DECL|macro|AML_LAND_OP
 mdefine_line|#define AML_LAND_OP                 (u16) 0x90
 DECL|macro|AML_LOR_OP
@@ -150,6 +160,22 @@ DECL|macro|AML_LGREATER_OP
 mdefine_line|#define AML_LGREATER_OP             (u16) 0x94
 DECL|macro|AML_LLESS_OP
 mdefine_line|#define AML_LLESS_OP                (u16) 0x95
+DECL|macro|AML_TO_BUFFER_OP
+mdefine_line|#define AML_TO_BUFFER_OP            (u16) 0x96     /* ACPI 2.0 */
+DECL|macro|AML_TO_DECSTRING_OP
+mdefine_line|#define AML_TO_DECSTRING_OP         (u16) 0x97     /* ACPI 2.0 */
+DECL|macro|AML_TO_HEXSTRING_OP
+mdefine_line|#define AML_TO_HEXSTRING_OP         (u16) 0x98     /* ACPI 2.0 */
+DECL|macro|AML_TO_INTEGER_OP
+mdefine_line|#define AML_TO_INTEGER_OP           (u16) 0x99     /* ACPI 2.0 */
+DECL|macro|AML_TO_STRING_OP
+mdefine_line|#define AML_TO_STRING_OP            (u16) 0x9c     /* ACPI 2.0 */
+DECL|macro|AML_COPY_OP
+mdefine_line|#define AML_COPY_OP                 (u16) 0x9d     /* ACPI 2.0 */
+DECL|macro|AML_MID_OP
+mdefine_line|#define AML_MID_OP                  (u16) 0x9e     /* ACPI 2.0 */
+DECL|macro|AML_CONTINUE_OP
+mdefine_line|#define AML_CONTINUE_OP             (u16) 0x9f     /* ACPI 2.0 */
 DECL|macro|AML_IF_OP
 mdefine_line|#define AML_IF_OP                   (u16) 0xa0
 DECL|macro|AML_ELSE_OP
@@ -181,6 +207,8 @@ DECL|macro|AML_COND_REF_OF_OP
 mdefine_line|#define AML_COND_REF_OF_OP          (u16) 0x5b12
 DECL|macro|AML_CREATE_FIELD_OP
 mdefine_line|#define AML_CREATE_FIELD_OP         (u16) 0x5b13
+DECL|macro|AML_LOAD_TABLE_OP
+mdefine_line|#define AML_LOAD_TABLE_OP           (u16) 0x5b1f     /* ACPI 2.0 */
 DECL|macro|AML_LOAD_OP
 mdefine_line|#define AML_LOAD_OP                 (u16) 0x5b20
 DECL|macro|AML_STALL_OP
@@ -225,6 +253,8 @@ DECL|macro|AML_INDEX_FIELD_OP
 mdefine_line|#define AML_INDEX_FIELD_OP          (u16) 0x5b86
 DECL|macro|AML_BANK_FIELD_OP
 mdefine_line|#define AML_BANK_FIELD_OP           (u16) 0x5b87
+DECL|macro|AML_DATA_REGION_OP
+mdefine_line|#define AML_DATA_REGION_OP          (u16) 0x5b88     /* ACPI 2.0 */
 multiline_comment|/* Bogus opcodes (they are actually two separate opcodes) */
 DECL|macro|AML_LGREATEREQUAL_OP
 mdefine_line|#define AML_LGREATEREQUAL_OP        (u16) 0x9295
@@ -377,6 +407,36 @@ DECL|macro|OPTYPE_RETURN
 mdefine_line|#define OPTYPE_RETURN               21
 DECL|macro|OPTYPE_BOGUS
 mdefine_line|#define OPTYPE_BOGUS                22
+multiline_comment|/* Predefined Operation Region Space_iDs */
+r_typedef
+r_enum
+(brace
+DECL|enumerator|REGION_MEMORY
+id|REGION_MEMORY
+op_assign
+l_int|0
+comma
+DECL|enumerator|REGION_IO
+id|REGION_IO
+comma
+DECL|enumerator|REGION_PCI_CONFIG
+id|REGION_PCI_CONFIG
+comma
+DECL|enumerator|REGION_EC
+id|REGION_EC
+comma
+DECL|enumerator|REGION_SMBUS
+id|REGION_SMBUS
+comma
+DECL|enumerator|REGION_CMOS
+id|REGION_CMOS
+comma
+DECL|enumerator|REGION_PCI_BAR
+id|REGION_PCI_BAR
+DECL|typedef|AML_REGION_TYPES
+)brace
+id|AML_REGION_TYPES
+suffix:semicolon
 multiline_comment|/* Comparison operation codes for Match_op operator */
 r_typedef
 r_enum
@@ -516,7 +576,7 @@ DECL|macro|METHOD_FLAGS_SERIALIZED
 mdefine_line|#define METHOD_FLAGS_SERIALIZED 0x08
 multiline_comment|/* Array sizes.  Used for range checking also */
 DECL|macro|NUM_REGION_TYPES
-mdefine_line|#define NUM_REGION_TYPES        5
+mdefine_line|#define NUM_REGION_TYPES        7
 DECL|macro|NUM_ACCESS_TYPES
 mdefine_line|#define NUM_ACCESS_TYPES        7
 DECL|macro|NUM_UPDATE_RULES
@@ -527,6 +587,10 @@ DECL|macro|NUM_OPCODES
 mdefine_line|#define NUM_OPCODES             256
 DECL|macro|NUM_FIELD_NAMES
 mdefine_line|#define NUM_FIELD_NAMES         2
+DECL|macro|USER_REGION_BEGIN
+mdefine_line|#define USER_REGION_BEGIN       0x80
+multiline_comment|/*&n; * AML tables&n; */
+macro_line|#ifdef DEFINE_AML_GLOBALS
 multiline_comment|/* External declarations of the AML tables */
 r_extern
 id|u8
@@ -541,151 +605,6 @@ id|acpi_gbl_pfx
 (braket
 id|NUM_OPCODES
 )braket
-suffix:semicolon
-r_extern
-id|NATIVE_CHAR
-op_star
-id|acpi_gbl_region_types
-(braket
-id|NUM_REGION_TYPES
-)braket
-suffix:semicolon
-r_extern
-id|NATIVE_CHAR
-op_star
-id|acpi_gbl_match_ops
-(braket
-id|NUM_MATCH_OPS
-)braket
-suffix:semicolon
-r_extern
-id|NATIVE_CHAR
-op_star
-id|acpi_gbl_access_types
-(braket
-id|NUM_ACCESS_TYPES
-)braket
-suffix:semicolon
-r_extern
-id|NATIVE_CHAR
-op_star
-id|acpi_gbl_update_rules
-(braket
-id|NUM_UPDATE_RULES
-)braket
-suffix:semicolon
-r_extern
-id|NATIVE_CHAR
-op_star
-id|acpi_gbl_FEnames
-(braket
-id|NUM_FIELD_NAMES
-)braket
-suffix:semicolon
-multiline_comment|/*&n; * AML tables&n; */
-macro_line|#ifdef DEFINE_AML_GLOBALS
-multiline_comment|/* Data used in keeping track of fields */
-DECL|variable|acpi_gbl_FEnames
-id|NATIVE_CHAR
-op_star
-id|acpi_gbl_FEnames
-(braket
-id|NUM_FIELD_NAMES
-)braket
-op_assign
-(brace
-l_string|&quot;skip&quot;
-comma
-l_string|&quot;?access?&quot;
-)brace
-suffix:semicolon
-multiline_comment|/* FE = Field Element */
-multiline_comment|/* Region type decoding */
-DECL|variable|acpi_gbl_region_types
-id|NATIVE_CHAR
-op_star
-id|acpi_gbl_region_types
-(braket
-id|NUM_REGION_TYPES
-)braket
-op_assign
-(brace
-l_string|&quot;System_memory&quot;
-comma
-l_string|&quot;System_iO&quot;
-comma
-l_string|&quot;PCIConfig&quot;
-comma
-l_string|&quot;Embedded_control&quot;
-comma
-l_string|&quot;SMBus&quot;
-)brace
-suffix:semicolon
-DECL|variable|acpi_gbl_match_ops
-id|NATIVE_CHAR
-op_star
-id|acpi_gbl_match_ops
-(braket
-id|NUM_MATCH_OPS
-)braket
-op_assign
-(brace
-l_string|&quot;Error&quot;
-comma
-l_string|&quot;MTR&quot;
-comma
-l_string|&quot;MEQ&quot;
-comma
-l_string|&quot;MLE&quot;
-comma
-l_string|&quot;MLT&quot;
-comma
-l_string|&quot;MGE&quot;
-comma
-l_string|&quot;MGT&quot;
-)brace
-suffix:semicolon
-multiline_comment|/* Access type decoding */
-DECL|variable|acpi_gbl_access_types
-id|NATIVE_CHAR
-op_star
-id|acpi_gbl_access_types
-(braket
-id|NUM_ACCESS_TYPES
-)braket
-op_assign
-(brace
-l_string|&quot;Any_acc&quot;
-comma
-l_string|&quot;Byte_acc&quot;
-comma
-l_string|&quot;Word_acc&quot;
-comma
-l_string|&quot;DWord_acc&quot;
-comma
-l_string|&quot;Block_acc&quot;
-comma
-l_string|&quot;SMBSend_recv_acc&quot;
-comma
-l_string|&quot;SMBQuick_acc&quot;
-)brace
-suffix:semicolon
-multiline_comment|/* Update rule decoding */
-DECL|variable|acpi_gbl_update_rules
-id|NATIVE_CHAR
-op_star
-id|acpi_gbl_update_rules
-(braket
-id|NUM_UPDATE_RULES
-)braket
-op_assign
-(brace
-l_string|&quot;Preserve&quot;
-comma
-l_string|&quot;Write_as_ones&quot;
-comma
-l_string|&quot;Write_as_zeros&quot;
-)brace
 suffix:semicolon
 macro_line|#endif /* DEFINE_AML_GLOBALS */
 macro_line|#endif /* __AMLCODE_H__ */

@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amutils - interpreter/scanner utilities&n; *              $Revision: 53 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amutils - interpreter/scanner utilities&n; *              $Revision: 64 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acparser.h&quot;
@@ -157,20 +157,61 @@ id|TRUE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_buf_seq&n; *&n; * RETURN:      The next buffer descriptor sequence number&n; *&n; * DESCRIPTION: Provide a unique sequence number for each Buffer descriptor&n; *              allocated during the interpreter&squot;s existence.  These numbers&n; *              are used to relate Field_unit descriptors to the Buffers&n; *              within which the fields are defined.&n; *&n; *              Just increment the global counter and return it.&n; *&n; ******************************************************************************/
-id|u32
-DECL|function|acpi_aml_buf_seq
-id|acpi_aml_buf_seq
-(paren
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_truncate_for32bit_table&n; *&n; * PARAMETERS:  Obj_desc        - Object to be truncated&n; *              Walk_state      - Current walk state&n; *                                (A method must be executing)&n; *&n; * RETURN:      none&n; *&n; * DESCRIPTION: Truncate a number to 32-bits if the currently executing method&n; *              belongs to a 32-bit ACPI table.&n; *&n; ******************************************************************************/
 r_void
+DECL|function|acpi_aml_truncate_for32bit_table
+id|acpi_aml_truncate_for32bit_table
+(paren
+id|ACPI_OPERAND_OBJECT
+op_star
+id|obj_desc
+comma
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
+)paren
+(brace
+multiline_comment|/*&n;&t; * Object must be a valid number and we must be executing&n;&t; * a control method&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+op_logical_neg
+id|obj_desc
+)paren
+op_logical_or
+(paren
+id|obj_desc-&gt;common.type
+op_ne
+id|ACPI_TYPE_NUMBER
+)paren
+op_logical_or
+(paren
+op_logical_neg
+id|walk_state-&gt;method_node
+)paren
 )paren
 (brace
 r_return
-(paren
-op_increment
-id|acpi_gbl_buf_seq
-)paren
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|walk_state-&gt;method_node-&gt;flags
+op_amp
+id|ANOBJ_DATA_WIDTH_32
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * We are running a method that exists in a 32-bit ACPI table.&n;&t;&t; * Truncate the value to 32 bits by zeroing out the upper 32-bit field&n;&t;&t; */
+id|obj_desc-&gt;number.value
+op_and_assign
+(paren
+id|UINT64
+)paren
+id|ACPI_UINT32_MAX
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_acquire_global_lock&n; *&n; * PARAMETERS:  Rule            - Lock rule: Always_lock, Never_lock&n; *&n; * RETURN:      TRUE/FALSE indicating whether the lock was actually acquired&n; *&n; * DESCRIPTION: Obtain the global lock and keep track of this fact via two&n; *              methods.  A global variable keeps the state of the lock, and&n; *              the state is returned to the caller.&n; *&n; ******************************************************************************/
 id|u8
@@ -278,7 +319,7 @@ id|u32
 DECL|function|acpi_aml_digits_needed
 id|acpi_aml_digits_needed
 (paren
-id|u32
+id|ACPI_INTEGER
 id|val
 comma
 id|u32
@@ -298,10 +339,11 @@ OL
 l_int|1
 )paren
 (brace
-multiline_comment|/*  impossible base */
 id|REPORT_ERROR
 (paren
-l_string|&quot;Aml_digits_needed: Impossible base&quot;
+(paren
+l_string|&quot;Aml_digits_needed: Internal error - Invalid base&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -320,9 +362,16 @@ OL
 l_int|0
 )paren
 suffix:semicolon
+(paren
 id|val
-op_div_assign
+op_assign
+id|ACPI_DIVIDE
+(paren
+id|val
+comma
 id|base
+)paren
+)paren
 suffix:semicolon
 op_increment
 id|num_digits
@@ -337,7 +386,8 @@ id|num_digits
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    ntohl&n; *&n; * PARAMETERS:  Value           - Value to be converted&n; *&n; * RETURN:      Convert a 32-bit value to big-endian (swap the bytes)&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    ntohl&n; *&n; * PARAMETERS:  Value           - Value to be converted&n; *&n; * DESCRIPTION: Convert a 32-bit value to big-endian (swap the bytes)&n; *&n; ******************************************************************************/
+r_static
 id|u32
 DECL|function|_ntohl
 id|_ntohl
@@ -424,7 +474,7 @@ id|out.value
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_eisa_id_to_string&n; *&n; * PARAMETERS:  Numeric_id      - EISA ID to be converted&n; *              Out_string      - Where to put the converted string (8 bytes)&n; *&n; * RETURN:      Convert a numeric EISA ID to string representation&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_eisa_id_to_string&n; *&n; * PARAMETERS:  Numeric_id      - EISA ID to be converted&n; *              Out_string      - Where to put the converted string (8 bytes)&n; *&n; * DESCRIPTION: Convert a numeric EISA ID to string representation&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_eisa_id_to_string
 id|acpi_aml_eisa_id_to_string
@@ -587,6 +637,95 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_unsigned_integer_to_string&n; *&n; * PARAMETERS:  Value           - Value to be converted&n; *              Out_string      - Where to put the converted string (8 bytes)&n; *&n; * RETURN:      Convert a number to string representation&n; *&n; ******************************************************************************/
+id|ACPI_STATUS
+DECL|function|acpi_aml_unsigned_integer_to_string
+id|acpi_aml_unsigned_integer_to_string
+(paren
+id|ACPI_INTEGER
+id|value
+comma
+id|NATIVE_CHAR
+op_star
+id|out_string
+)paren
+(brace
+id|u32
+id|count
+suffix:semicolon
+id|u32
+id|digits_needed
+suffix:semicolon
+id|digits_needed
+op_assign
+id|acpi_aml_digits_needed
+(paren
+id|value
+comma
+l_int|10
+)paren
+suffix:semicolon
+id|out_string
+(braket
+id|digits_needed
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|count
+op_assign
+id|digits_needed
+suffix:semicolon
+id|count
+OG
+l_int|0
+suffix:semicolon
+id|count
+op_decrement
+)paren
+(brace
+id|out_string
+(braket
+id|count
+op_minus
+l_int|1
+)braket
+op_assign
+(paren
+id|NATIVE_CHAR
+)paren
+(paren
+l_char|&squot;0&squot;
+op_plus
+(paren
+id|ACPI_MODULO
+(paren
+id|value
+comma
+l_int|10
+)paren
+)paren
+)paren
+suffix:semicolon
+id|value
+op_assign
+id|ACPI_DIVIDE
+(paren
+id|value
+comma
+l_int|10
+)paren
+suffix:semicolon
+)brace
+r_return
+(paren
+id|AE_OK
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_build_copy_internal_package_object&n; *&n; * PARAMETERS:  *Source_obj     - Pointer to the source package object&n; *              *Dest_obj       - Where the internal object is returned&n; *&n; * RETURN:      Status          - the status of the call&n; *&n; * DESCRIPTION: This function is called to copy an internal package object&n; *              into another internal package object.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_aml_build_copy_internal_package_object
@@ -723,7 +862,9 @@ id|dest_obj-&gt;package.elements
 multiline_comment|/* Package vector allocation failure   */
 id|REPORT_ERROR
 (paren
-l_string|&quot;Aml_build_copy_internal_package_object: Package vector allocation failure&quot;
+(paren
+l_string|&quot;Aml_build_copy_internal_package_object: Package vector allocation failure&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return

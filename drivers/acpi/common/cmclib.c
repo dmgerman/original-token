@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmclib - Local implementation of C library functions&n; * $Revision: 24 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmclib - Local implementation of C library functions&n; * $Revision: 28 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acevents.h&quot;
@@ -13,9 +13,6 @@ id|MODULE_NAME
 (paren
 l_string|&quot;cmclib&quot;
 )paren
-macro_line|#ifdef _MSC_VER                 /* disable some level-4 warnings for VC++ */
-macro_line|#pragma warning(disable:4706)   /* warning C4706: assignment within conditional expression */
-macro_line|#endif
 macro_line|#ifndef ACPI_USE_SYSTEM_CLIBRARY
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    strlen&n; *&n; * PARAMETERS:  String              - Null terminated string&n; *&n; * RETURN:      Length&n; *&n; * DESCRIPTION: Returns the length of the input string&n; *&n; ******************************************************************************/
 id|NATIVE_UINT
@@ -615,473 +612,474 @@ DECL|macro|NEGATIVE
 mdefine_line|#define NEGATIVE    1
 DECL|macro|POSITIVE
 mdefine_line|#define POSITIVE    0
-DECL|macro|_XA
-mdefine_line|#define _XA     0x00    /* extra alphabetic - not supported */
-DECL|macro|_XS
-mdefine_line|#define _XS     0x40    /* extra space */
-DECL|macro|_BB
-mdefine_line|#define _BB     0x00    /* BEL, BS, etc. - not supported */
-DECL|macro|_CN
-mdefine_line|#define _CN     0x20    /* CR, FF, HT, NL, VT */
-DECL|macro|_DI
-mdefine_line|#define _DI     0x04    /* &squot;0&squot;-&squot;9&squot; */
-DECL|macro|_LO
-mdefine_line|#define _LO     0x02    /* &squot;a&squot;-&squot;z&squot; */
-DECL|macro|_PU
-mdefine_line|#define _PU     0x10    /* punctuation */
-DECL|macro|_SP
-mdefine_line|#define _SP     0x08    /* space */
-DECL|macro|_UP
-mdefine_line|#define _UP     0x01    /* &squot;A&squot;-&squot;Z&squot; */
-DECL|macro|_XD
-mdefine_line|#define _XD     0x80    /* &squot;0&squot;-&squot;9&squot;, &squot;A&squot;-&squot;F&squot;, &squot;a&squot;-&squot;f&squot; */
-DECL|variable|_ctype
+DECL|macro|_ACPI_XA
+mdefine_line|#define _ACPI_XA     0x00    /* extra alphabetic - not supported */
+DECL|macro|_ACPI_XS
+mdefine_line|#define _ACPI_XS     0x40    /* extra space */
+DECL|macro|_ACPI_BB
+mdefine_line|#define _ACPI_BB     0x00    /* BEL, BS, etc. - not supported */
+DECL|macro|_ACPI_CN
+mdefine_line|#define _ACPI_CN     0x20    /* CR, FF, HT, NL, VT */
+DECL|macro|_ACPI_DI
+mdefine_line|#define _ACPI_DI     0x04    /* &squot;0&squot;-&squot;9&squot; */
+DECL|macro|_ACPI_LO
+mdefine_line|#define _ACPI_LO     0x02    /* &squot;a&squot;-&squot;z&squot; */
+DECL|macro|_ACPI_PU
+mdefine_line|#define _ACPI_PU     0x10    /* punctuation */
+DECL|macro|_ACPI_SP
+mdefine_line|#define _ACPI_SP     0x08    /* space */
+DECL|macro|_ACPI_UP
+mdefine_line|#define _ACPI_UP     0x01    /* &squot;A&squot;-&squot;Z&squot; */
+DECL|macro|_ACPI_XD
+mdefine_line|#define _ACPI_XD     0x80    /* &squot;0&squot;-&squot;9&squot;, &squot;A&squot;-&squot;F&squot;, &squot;a&squot;-&squot;f&squot; */
+DECL|variable|_acpi_ctype
+r_static
 r_const
 id|u8
-id|_ctype
+id|_acpi_ctype
 (braket
 l_int|257
 )braket
 op_assign
 (brace
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x0      0.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x1      1.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x2      2.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x3      3.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x4      4.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x5      5.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x6      6.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x7      7.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x8      8.     */
-id|_CN
+id|_ACPI_CN
 op_or
-id|_SP
+id|_ACPI_SP
 comma
 multiline_comment|/* 0x9      9.     */
-id|_CN
+id|_ACPI_CN
 op_or
-id|_SP
+id|_ACPI_SP
 comma
 multiline_comment|/* 0xA     10.     */
-id|_CN
+id|_ACPI_CN
 op_or
-id|_SP
+id|_ACPI_SP
 comma
 multiline_comment|/* 0xB     11.     */
-id|_CN
+id|_ACPI_CN
 op_or
-id|_SP
+id|_ACPI_SP
 comma
 multiline_comment|/* 0xC     12.     */
-id|_CN
+id|_ACPI_CN
 op_or
-id|_SP
+id|_ACPI_SP
 comma
 multiline_comment|/* 0xD     13.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0xE     14.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0xF     15.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x10    16.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x11    17.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x12    18.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x13    19.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x14    20.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x15    21.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x16    22.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x17    23.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x18    24.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x19    25.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x1A    26.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x1B    27.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x1C    28.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x1D    29.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x1E    30.     */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x1F    31.     */
-id|_XS
+id|_ACPI_XS
 op_or
-id|_SP
+id|_ACPI_SP
 comma
 multiline_comment|/* 0x20    32. &squot; &squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x21    33. &squot;!&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x22    34. &squot;&quot;&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x23    35. &squot;#&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x24    36. &squot;$&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x25    37. &squot;%&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x26    38. &squot;&amp;&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x27    39. &squot;&squot;&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x28    40. &squot;(&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x29    41. &squot;)&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x2A    42. &squot;*&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x2B    43. &squot;+&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x2C    44. &squot;,&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x2D    45. &squot;-&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x2E    46. &squot;.&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x2F    47. &squot;/&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_DI
+id|_ACPI_DI
 comma
 multiline_comment|/* 0x30    48. &squot;0&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_DI
+id|_ACPI_DI
 comma
 multiline_comment|/* 0x31    49. &squot;1&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_DI
+id|_ACPI_DI
 comma
 multiline_comment|/* 0x32    50. &squot;2&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_DI
+id|_ACPI_DI
 comma
 multiline_comment|/* 0x33    51. &squot;3&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_DI
+id|_ACPI_DI
 comma
 multiline_comment|/* 0x34    52. &squot;4&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_DI
+id|_ACPI_DI
 comma
 multiline_comment|/* 0x35    53. &squot;5&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_DI
+id|_ACPI_DI
 comma
 multiline_comment|/* 0x36    54. &squot;6&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_DI
+id|_ACPI_DI
 comma
 multiline_comment|/* 0x37    55. &squot;7&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_DI
+id|_ACPI_DI
 comma
 multiline_comment|/* 0x38    56. &squot;8&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_DI
+id|_ACPI_DI
 comma
 multiline_comment|/* 0x39    57. &squot;9&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x3A    58. &squot;:&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x3B    59. &squot;;&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x3C    60. &squot;&lt;&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x3D    61. &squot;=&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x3E    62. &squot;&gt;&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x3F    63. &squot;?&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x40    64. &squot;@&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x41    65. &squot;A&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x42    66. &squot;B&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x43    67. &squot;C&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x44    68. &squot;D&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x45    69. &squot;E&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x46    70. &squot;F&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x47    71. &squot;G&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x48    72. &squot;H&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x49    73. &squot;I&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x4A    74. &squot;J&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x4B    75. &squot;K&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x4C    76. &squot;L&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x4D    77. &squot;M&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x4E    78. &squot;N&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x4F    79. &squot;O&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x50    80. &squot;P&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x51    81. &squot;Q&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x52    82. &squot;R&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x53    83. &squot;S&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x54    84. &squot;T&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x55    85. &squot;U&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x56    86. &squot;V&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x57    87. &squot;W&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x58    88. &squot;X&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x59    89. &squot;Y&squot; */
-id|_UP
+id|_ACPI_UP
 comma
 multiline_comment|/* 0x5A    90. &squot;Z&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x5B    91. &squot;[&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x5C    92. &squot;&bslash;&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x5D    93. &squot;]&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x5E    94. &squot;^&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x5F    95. &squot;_&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x60    96. &squot;`&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x61    97. &squot;a&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x62    98. &squot;b&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x63    99. &squot;c&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x64   100. &squot;d&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x65   101. &squot;e&squot; */
-id|_XD
+id|_ACPI_XD
 op_or
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x66   102. &squot;f&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x67   103. &squot;g&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x68   104. &squot;h&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x69   105. &squot;i&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x6A   106. &squot;j&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x6B   107. &squot;k&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x6C   108. &squot;l&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x6D   109. &squot;m&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x6E   110. &squot;n&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x6F   111. &squot;o&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x70   112. &squot;p&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x71   113. &squot;q&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x72   114. &squot;r&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x73   115. &squot;s&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x74   116. &squot;t&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x75   117. &squot;u&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x76   118. &squot;v&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x77   119. &squot;w&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x78   120. &squot;x&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x79   121. &squot;y&squot; */
-id|_LO
+id|_ACPI_LO
 comma
 multiline_comment|/* 0x7A   122. &squot;z&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x7B   123. &squot;{&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x7C   124. &squot;|&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x7D   125. &squot;}&squot; */
-id|_PU
+id|_ACPI_PU
 comma
 multiline_comment|/* 0x7E   126. &squot;~&squot; */
-id|_CN
+id|_ACPI_CN
 comma
 multiline_comment|/* 0x7F   127.     */
 l_int|0
@@ -1352,13 +1350,13 @@ multiline_comment|/* 0xF0 to 0x100   */
 )brace
 suffix:semicolon
 DECL|macro|IS_UPPER
-mdefine_line|#define IS_UPPER(c)  (_ctype[(unsigned char)(c)] &amp; (_UP))
+mdefine_line|#define IS_UPPER(c)  (_acpi_ctype[(unsigned char)(c)] &amp; (_ACPI_UP))
 DECL|macro|IS_LOWER
-mdefine_line|#define IS_LOWER(c)  (_ctype[(unsigned char)(c)] &amp; (_LO))
+mdefine_line|#define IS_LOWER(c)  (_acpi_ctype[(unsigned char)(c)] &amp; (_ACPI_LO))
 DECL|macro|IS_DIGIT
-mdefine_line|#define IS_DIGIT(c)  (_ctype[(unsigned char)(c)] &amp; (_DI))
+mdefine_line|#define IS_DIGIT(c)  (_acpi_ctype[(unsigned char)(c)] &amp; (_ACPI_DI))
 DECL|macro|IS_SPACE
-mdefine_line|#define IS_SPACE(c)  (_ctype[(unsigned char)(c)] &amp; (_SP))
+mdefine_line|#define IS_SPACE(c)  (_acpi_ctype[(unsigned char)(c)] &amp; (_ACPI_SP))
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_to_upper&n; *&n; * PARAMETERS:&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Convert character to uppercase&n; *&n; ******************************************************************************/
 id|u32
 DECL|function|acpi_cm_to_upper
@@ -1512,7 +1510,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Walk entire string, uppercasing the letters */
+multiline_comment|/* Walk entire string, comparing the letters */
 r_for
 c_loop
 (paren

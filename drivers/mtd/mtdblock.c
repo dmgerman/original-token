@@ -1,4 +1,5 @@
 multiline_comment|/* &n; * Direct MTD block device access&n; *&n; * $Id: mtdblock.c,v 1.38 2000/11/27 08:50:22 dwmw2 Exp $&n; *&n; * 02-nov-2000&t;Nicolas Pitre&t;&t;Added read-modify-write with cache&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

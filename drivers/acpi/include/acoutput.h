@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: acoutput.h -- debug output&n; *       $Revision: 63 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: acoutput.h -- debug output&n; *       $Revision: 66 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __ACOUTPUT_H__
 DECL|macro|__ACOUTPUT_H__
@@ -47,6 +47,8 @@ DECL|macro|DEBUGGER
 mdefine_line|#define DEBUGGER                    0x00100000
 DECL|macro|ALL_COMPONENTS
 mdefine_line|#define ALL_COMPONENTS              0x001FFFFF
+DECL|macro|COMPONENT_DEFAULT
+mdefine_line|#define COMPONENT_DEFAULT           (ALL_COMPONENTS)
 multiline_comment|/* Exception level -- used in the global &quot;Debug_level&quot; */
 DECL|macro|ACPI_OK
 mdefine_line|#define ACPI_OK                     0x00000001
@@ -113,10 +115,10 @@ mdefine_line|#define VERBOSE_TABLES              0x40000000
 DECL|macro|VERBOSE_EVENTS
 mdefine_line|#define VERBOSE_EVENTS              0x80000000
 DECL|macro|VERBOSE_ALL
-mdefine_line|#define VERBOSE_ALL                 0x70000000
+mdefine_line|#define VERBOSE_ALL                 0xF0000000
 multiline_comment|/* Defaults for Debug_level, debug and normal */
 DECL|macro|DEBUG_DEFAULT
-mdefine_line|#define DEBUG_DEFAULT               (ACPI_OK | ACPI_WARN | ACPI_ERROR | ACPI_DEBUG_OBJECT | TRACE_TABLES | TRACE_IO)
+mdefine_line|#define DEBUG_DEFAULT               (ACPI_OK | ACPI_WARN | ACPI_ERROR | ACPI_DEBUG_OBJECT)
 DECL|macro|NORMAL_DEFAULT
 mdefine_line|#define NORMAL_DEFAULT              (ACPI_OK | ACPI_WARN | ACPI_ERROR | ACPI_DEBUG_OBJECT)
 DECL|macro|DEBUG_ALL

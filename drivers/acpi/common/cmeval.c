@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmeval - Object evaluation&n; *              $Revision: 14 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmeval - Object evaluation&n; *              $Revision: 19 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acnamesp.h&quot;
@@ -9,7 +9,7 @@ id|MODULE_NAME
 (paren
 l_string|&quot;cmeval&quot;
 )paren
-multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_evaluate_numeric_object&n; *&n; * PARAMETERS:  Device_node         - Node for the device&n; *              *Address            - Where the value is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: evaluates a numeric namespace object for a selected device&n; *              and stores results in *Address.&n; *&n; *              NOTE: Internal function, no parameter validation&n; *&n; ***************************************************************************/
+multiline_comment|/****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_evaluate_numeric_object&n; *&n; * PARAMETERS:  *Object_name        - Object name to be evaluated&n; *              Device_node         - Node for the device&n; *              *Address            - Where the value is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: evaluates a numeric namespace object for a selected device&n; *              and stores results in *Address.&n; *&n; *              NOTE: Internal function, no parameter validation&n; *&n; ***************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_cm_evaluate_numeric_object
 id|acpi_cm_evaluate_numeric_object
@@ -22,7 +22,7 @@ id|ACPI_NAMESPACE_NODE
 op_star
 id|device_node
 comma
-id|u32
+id|ACPI_INTEGER
 op_star
 id|address
 )paren
@@ -213,26 +213,30 @@ id|ACPI_TYPE_NUMBER
 multiline_comment|/* Convert the Numeric HID to string */
 id|acpi_aml_eisa_id_to_string
 (paren
+(paren
+id|u32
+)paren
 id|obj_desc-&gt;number.value
 comma
-id|hid-&gt;data.buffer
+id|hid-&gt;buffer
 )paren
-suffix:semicolon
-id|hid-&gt;type
-op_assign
-id|STRING_DEVICE_ID
 suffix:semicolon
 )brace
 r_else
 (brace
 multiline_comment|/* Copy the String HID from the returned object */
-id|hid-&gt;data.string_ptr
-op_assign
+id|STRNCPY
+c_func
+(paren
+id|hid-&gt;buffer
+comma
 id|obj_desc-&gt;string.pointer
-suffix:semicolon
-id|hid-&gt;type
-op_assign
-id|STRING_PTR_DEVICE_ID
+comma
+r_sizeof
+(paren
+id|hid-&gt;buffer
+)paren
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -345,22 +349,30 @@ op_eq
 id|ACPI_TYPE_NUMBER
 )paren
 (brace
-multiline_comment|/* Convert the Numeric HID to string */
-id|uid-&gt;data.number
-op_assign
+multiline_comment|/* Convert the Numeric UID to string */
+id|acpi_aml_unsigned_integer_to_string
+(paren
 id|obj_desc-&gt;number.value
+comma
+id|uid-&gt;buffer
+)paren
 suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Copy the String HID from the returned object */
-id|uid-&gt;data.string_ptr
-op_assign
+multiline_comment|/* Copy the String UID from the returned object */
+id|STRNCPY
+c_func
+(paren
+id|uid-&gt;buffer
+comma
 id|obj_desc-&gt;string.pointer
-suffix:semicolon
-id|uid-&gt;type
-op_assign
-id|STRING_PTR_DEVICE_ID
+comma
+r_sizeof
+(paren
+id|uid-&gt;buffer
+)paren
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -415,18 +427,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ACPI_FAILURE
-(paren
+id|AE_NOT_FOUND
+op_eq
 id|status
-)paren
 )paren
 (brace
-r_return
-(paren
+op_star
+id|flags
+op_assign
+l_int|0x0F
+suffix:semicolon
 id|status
-)paren
+op_assign
+id|AE_OK
 suffix:semicolon
 )brace
+r_else
+multiline_comment|/* success */
+(brace
 multiline_comment|/* Did we get a return object? */
 r_if
 c_cond
@@ -461,6 +479,9 @@ multiline_comment|/* Extract the status flags */
 op_star
 id|flags
 op_assign
+(paren
+id|u32
+)paren
 id|obj_desc-&gt;number.value
 suffix:semicolon
 )brace
@@ -470,6 +491,7 @@ id|acpi_cm_remove_reference
 id|obj_desc
 )paren
 suffix:semicolon
+)brace
 r_return
 (paren
 id|status

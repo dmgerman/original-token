@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmxface - External interfaces for &quot;global&quot; ACPI functions&n; *              $Revision: 43 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmxface - External interfaces for &quot;global&quot; ACPI functions&n; *              $Revision: 55 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acevents.h&quot;
@@ -13,14 +13,12 @@ id|MODULE_NAME
 (paren
 l_string|&quot;cmxface&quot;
 )paren
-multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_initialize&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Initializes all global variables.  This is the first function&n; *              called, so any early initialization belongs here.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_initialize_subsystem&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Initializes all global variables.  This is the first function&n; *              called, so any early initialization belongs here.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
-DECL|function|acpi_initialize
-id|acpi_initialize
+DECL|function|acpi_initialize_subsystem
+id|acpi_initialize_subsystem
 (paren
-id|ACPI_INIT_DATA
-op_star
-id|init_data
+r_void
 )paren
 (brace
 id|ACPI_STATUS
@@ -29,7 +27,6 @@ suffix:semicolon
 multiline_comment|/* Initialize all globals used by the subsystem */
 id|acpi_cm_init_globals
 (paren
-id|init_data
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize the OS-Dependent layer */
@@ -50,7 +47,14 @@ id|status
 (brace
 id|REPORT_ERROR
 (paren
-l_string|&quot;OSD Initialization Failure&quot;
+(paren
+l_string|&quot;OSD failed to initialize, %s&bslash;n&quot;
+comma
+id|acpi_cm_format_exception
+(paren
+id|status
+)paren
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -77,7 +81,48 @@ id|status
 (brace
 id|REPORT_ERROR
 (paren
-l_string|&quot;Global Mutex Initialization Failure&quot;
+(paren
+l_string|&quot;Global mutex creation failure, %s&bslash;n&quot;
+comma
+id|acpi_cm_format_exception
+(paren
+id|status
+)paren
+)paren
+)paren
+suffix:semicolon
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Initialize the namespace manager and&n;&t; * the root of the namespace tree&n;&t; */
+id|status
+op_assign
+id|acpi_ns_root_initialize
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+id|REPORT_ERROR
+(paren
+(paren
+l_string|&quot;Namespace initialization failure, %s&bslash;n&quot;
+comma
+id|acpi_cm_format_exception
+(paren
+id|status
+)paren
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -100,6 +145,252 @@ id|status
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_enable_subsystem&n; *&n; * PARAMETERS:  Flags           - Init/enable Options&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Completes the subsystem initialization including hardware.&n; *              Puts system into ACPI mode if it isn&squot;t already.&n; *&n; ******************************************************************************/
+id|ACPI_STATUS
+DECL|function|acpi_enable_subsystem
+id|acpi_enable_subsystem
+(paren
+id|u32
+id|flags
+)paren
+(brace
+id|ACPI_STATUS
+id|status
+op_assign
+id|AE_OK
+suffix:semicolon
+multiline_comment|/* Sanity check the FADT for valid values */
+id|status
+op_assign
+id|acpi_cm_validate_fadt
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Install the default Op_region handlers. These are&n;&t; * installed unless other handlers have already been&n;&t; * installed via the Install_address_space_handler interface&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|flags
+op_amp
+id|ACPI_NO_ADDRESS_SPACE_INIT
+)paren
+)paren
+(brace
+id|status
+op_assign
+id|acpi_ev_install_default_address_space_handlers
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n;&t; * We must initialize the hardware before we can enable ACPI.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|flags
+op_amp
+id|ACPI_NO_HARDWARE_INIT
+)paren
+)paren
+(brace
+id|status
+op_assign
+id|acpi_hw_initialize
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n;&t; * Enable ACPI on this platform&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|flags
+op_amp
+id|ACPI_NO_ACPI_ENABLE
+)paren
+)paren
+(brace
+id|status
+op_assign
+id|acpi_enable
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+multiline_comment|/* TBD: workaround. Old Lions don&squot;t enable properly */
+multiline_comment|/*return (Status);*/
+)brace
+)brace
+multiline_comment|/*&n;&t; * Note:&n;&t; * We must have the hardware AND events initialized before we can execute&n;&t; * ANY control methods SAFELY.  Any control method can require ACPI hardware&n;&t; * support, so the hardware MUST be initialized before execution!&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|flags
+op_amp
+id|ACPI_NO_EVENT_INIT
+)paren
+)paren
+(brace
+id|status
+op_assign
+id|acpi_ev_initialize
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n;&t; * Initialize all device objects in the namespace&n;&t; * This runs the _STA, _INI, and _HID methods, and detects&n;&t; * the PCI root bus(es)&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|flags
+op_amp
+id|ACPI_NO_DEVICE_INIT
+)paren
+)paren
+(brace
+id|status
+op_assign
+id|acpi_ns_initialize_devices
+(paren
+id|flags
+op_amp
+id|ACPI_NO_PCI_INIT
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n;&t; * Initialize the objects that remain unitialized.  This&n;&t; * runs the executable AML that is part of the declaration of Op_regions&n;&t; * and Fields.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|flags
+op_amp
+id|ACPI_NO_OBJECT_INIT
+)paren
+)paren
+(brace
+id|status
+op_assign
+id|acpi_ns_initialize_objects
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+)brace
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_terminate&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Shutdown the ACPI subsystem.  Release all resources.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_terminate
@@ -109,9 +400,13 @@ r_void
 )paren
 (brace
 multiline_comment|/* Terminate the AML Debuger if present */
+id|DEBUGGER_EXEC
+c_func
+(paren
 id|acpi_gbl_db_terminate_threads
 op_assign
 id|TRUE
+)paren
 suffix:semicolon
 multiline_comment|/* TBD: [Investigate] This is no longer needed?*/
 multiline_comment|/*    Acpi_cm_release_mutex (ACPI_MTX_DEBUG_CMD_READY); */
@@ -269,7 +564,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-suffix:semicolon
 (brace
 id|info_ptr-&gt;table_info
 (braket

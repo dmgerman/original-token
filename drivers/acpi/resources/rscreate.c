@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: rscreate - Acpi_rs_create_resource_list&n; *                         Acpi_rs_create_pci_routing_table&n; *                         Acpi_rs_create_byte_stream&n; *              $Revision: 16 $&n; *&n; *****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: rscreate - Acpi_rs_create_resource_list&n; *                         Acpi_rs_create_pci_routing_table&n; *                         Acpi_rs_create_byte_stream&n; *              $Revision: 22 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acresrc.h&quot;
@@ -275,6 +275,15 @@ op_star
 )paren
 id|buffer
 suffix:semicolon
+id|buffer
+op_assign
+id|ROUND_PTR_UP_TO_8
+(paren
+id|buffer
+comma
+id|u8
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -378,6 +387,9 @@ id|common.type
 id|user_prt-&gt;data.pin
 op_assign
 (paren
+id|u32
+)paren
+(paren
 op_star
 id|sub_object_list
 )paren
@@ -432,13 +444,6 @@ id|sub_object_list
 op_member_access_from_pointer
 id|string.length
 suffix:semicolon
-id|user_prt-&gt;length
-op_assign
-id|ROUND_UP_TO_32_bITS
-(paren
-id|user_prt-&gt;length
-)paren
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -474,6 +479,14 @@ id|AE_BAD_DATA
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* Now align the current length */
+id|user_prt-&gt;length
+op_assign
+id|ROUND_UP_TO_64_bITS
+(paren
+id|user_prt-&gt;length
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Dereference the Source Index&n;&t;&t;&t; */
 id|sub_object_list
 op_increment
@@ -493,6 +506,9 @@ id|common.type
 (brace
 id|user_prt-&gt;data.source_index
 op_assign
+(paren
+id|u32
+)paren
 (paren
 op_star
 id|sub_object_list

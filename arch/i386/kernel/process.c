@@ -1236,9 +1236,9 @@ id|cr4
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * No need to lock the MM as we are the last user&n; */
-DECL|function|release_segments
+DECL|function|destroy_context
 r_void
-id|release_segments
+id|destroy_context
 c_func
 (paren
 r_struct
@@ -1251,7 +1251,7 @@ r_void
 op_star
 id|ldt
 op_assign
-id|mm-&gt;segments
+id|mm-&gt;context.segments
 suffix:semicolon
 multiline_comment|/*&n;&t; * free the LDT&n;&t; */
 r_if
@@ -1260,7 +1260,7 @@ c_cond
 id|ldt
 )paren
 (brace
-id|mm-&gt;segments
+id|mm-&gt;context.segments
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -1447,7 +1447,7 @@ r_void
 op_star
 id|ldt
 op_assign
-id|dead_task-&gt;mm-&gt;segments
+id|dead_task-&gt;mm-&gt;context.segments
 suffix:semicolon
 singleline_comment|// temporary debugging check
 r_if
@@ -1475,9 +1475,9 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * we do not have to muck with descriptors here, that is&n; * done in switch_mm() as needed.&n; */
-DECL|function|copy_segments
-r_void
-id|copy_segments
+DECL|function|init_new_context
+r_int
+id|init_new_context
 c_func
 (paren
 r_struct
@@ -1495,34 +1495,37 @@ r_struct
 id|mm_struct
 op_star
 id|old_mm
-op_assign
-id|current-&gt;mm
 suffix:semicolon
 r_void
 op_star
 id|old_ldt
-op_assign
-id|old_mm-&gt;segments
 comma
 op_star
 id|ldt
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|old_ldt
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * default LDT - use the one from init_task&n;&t;&t; */
-id|new_mm-&gt;segments
+id|ldt
 op_assign
 l_int|NULL
 suffix:semicolon
-r_return
+id|old_mm
+op_assign
+id|current-&gt;mm
 suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Completely new LDT, we initialize it from the parent:&n;&t; */
+r_if
+c_cond
+(paren
+id|old_mm
+op_logical_and
+(paren
+id|old_ldt
+op_assign
+id|old_mm-&gt;context.segments
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * Completely new LDT, we initialize it from the parent:&n;&t;&t; */
 id|ldt
 op_assign
 id|vmalloc
@@ -1539,14 +1542,10 @@ c_cond
 op_logical_neg
 id|ldt
 )paren
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;ldt allocation failed&bslash;n&quot;
-)paren
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
-r_else
 id|memcpy
 c_func
 (paren
@@ -1559,11 +1558,13 @@ op_star
 id|LDT_ENTRY_SIZE
 )paren
 suffix:semicolon
-id|new_mm-&gt;segments
+)brace
+id|new_mm-&gt;context.segments
 op_assign
 id|ldt
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Save a segment.&n; */

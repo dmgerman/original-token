@@ -1,4 +1,4 @@
-multiline_comment|/*******************************************************************************&n; *&n; * Module Name: nseval - Object evaluation interfaces -- includes control&n; *                       method lookup and execution.&n; *              $Revision: 76 $&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: nseval - Object evaluation interfaces -- includes control&n; *                       method lookup and execution.&n; *              $Revision: 79 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
@@ -133,7 +133,7 @@ suffix:semicolon
 multiline_comment|/* Lookup the name in the namespace */
 id|scope_info.scope.node
 op_assign
-id|prefix_node-&gt;child
+id|prefix_node
 suffix:semicolon
 id|status
 op_assign
@@ -701,60 +701,23 @@ r_goto
 id|unlock_and_exit
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; *  Just copy from the original to the return object&n;&t;&t; */
-r_switch
-c_cond
+multiline_comment|/*&n;&t;&t; * Just copy from the original to the return object&n;&t;&t; *&n;&t;&t; * TBD: [Future] - need a low-level object copy that handles&n;&t;&t; * the reference count automatically.  (Don&squot;t want to copy it)&n;&t;&t; */
+id|MEMCPY
 (paren
-id|node-&gt;type
+id|obj_desc
+comma
+id|val_desc
+comma
+r_sizeof
+(paren
+id|ACPI_OPERAND_OBJECT
 )paren
-(brace
-r_case
-id|ACPI_TYPE_PROCESSOR
-suffix:colon
-id|obj_desc-&gt;processor.proc_id
+)paren
+suffix:semicolon
+id|obj_desc-&gt;common.reference_count
 op_assign
-id|val_desc-&gt;processor.proc_id
+l_int|1
 suffix:semicolon
-id|obj_desc-&gt;processor.address
-op_assign
-id|val_desc-&gt;processor.address
-suffix:semicolon
-id|obj_desc-&gt;processor.sys_handler
-op_assign
-id|val_desc-&gt;processor.sys_handler
-suffix:semicolon
-id|obj_desc-&gt;processor.drv_handler
-op_assign
-id|val_desc-&gt;processor.drv_handler
-suffix:semicolon
-id|obj_desc-&gt;processor.addr_handler
-op_assign
-id|val_desc-&gt;processor.addr_handler
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|ACPI_TYPE_POWER
-suffix:colon
-id|obj_desc-&gt;power_resource.system_level
-op_assign
-id|val_desc-&gt;power_resource.system_level
-suffix:semicolon
-id|obj_desc-&gt;power_resource.resource_order
-op_assign
-id|val_desc-&gt;power_resource.resource_order
-suffix:semicolon
-id|obj_desc-&gt;power_resource.sys_handler
-op_assign
-id|val_desc-&gt;power_resource.sys_handler
-suffix:semicolon
-id|obj_desc-&gt;power_resource.drv_handler
-op_assign
-id|val_desc-&gt;power_resource.drv_handler
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n;&t; * Other objects require a reference object wrapper which we&n;&t; * then attempt to resolve.&n;&t; */
 r_else
@@ -798,7 +761,12 @@ op_star
 )paren
 id|node
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Use Acpi_aml_resolve_to_value() to get the associated value.&n;&t;&t; * The call to Acpi_aml_resolve_to_value causes&n;&t;&t; * Obj_desc (allocated above) to always be deleted.&n;&t;&t; *&n;&t;&t; * NOTE: we can get away with passing in NULL for a walk state&n;&t;&t; * because Obj_desc is guaranteed to not be a reference to either&n;&t;&t; * a method local or a method argument&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Use Acpi_aml_resolve_to_value() to get the associated value.&n;&t;&t; * The call to Acpi_aml_resolve_to_value causes&n;&t;&t; * Obj_desc (allocated above) to always be deleted.&n;&t;&t; *&n;&t;&t; * NOTE: we can get away with passing in NULL for a walk state&n;&t;&t; * because Obj_desc is guaranteed to not be a reference to either&n;&t;&t; * a method local or a method argument&n;&t;&t; *&n;&t;&t; * Even though we do not technically need to use the interpreter&n;&t;&t; * for this, we must enter it because we could hit an opregion.&n;&t;&t; * The opregion access code assumes it is in the interpreter.&n;&t;&t; */
+id|acpi_aml_enter_interpreter
+c_func
+(paren
+)paren
+suffix:semicolon
 id|status
 op_assign
 id|acpi_aml_resolve_to_value
@@ -807,6 +775,11 @@ op_amp
 id|obj_desc
 comma
 l_int|NULL
+)paren
+suffix:semicolon
+id|acpi_aml_exit_interpreter
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

@@ -1,41 +1,57 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: actbl.h - Table data structures defined in ACPI specification&n; *       $Revision: 34 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: actbl.h - Table data structures defined in ACPI specification&n; *       $Revision: 43 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __ACTBL_H__
 DECL|macro|__ACTBL_H__
 mdefine_line|#define __ACTBL_H__
 multiline_comment|/*&n; *  Values for description table header signatures&n; */
+DECL|macro|RSDP_NAME
+mdefine_line|#define RSDP_NAME               &quot;RSDP&quot;
 DECL|macro|RSDP_SIG
-mdefine_line|#define RSDP_SIG            &quot;RSD PTR &quot;              /* RSDT Pointer signature */
+mdefine_line|#define RSDP_SIG                &quot;RSD PTR &quot;  /* RSDT Pointer signature */
 DECL|macro|APIC_SIG
-mdefine_line|#define APIC_SIG            &quot;APIC&quot;                  /* Multiple APIC Description Table */
+mdefine_line|#define APIC_SIG                &quot;APIC&quot;      /* Multiple APIC Description Table */
 DECL|macro|DSDT_SIG
-mdefine_line|#define DSDT_SIG            &quot;DSDT&quot;                  /* Differentiated System Description Table */
-DECL|macro|FACP_SIG
-mdefine_line|#define FACP_SIG            &quot;FACP&quot;                  /* Fixed ACPI Description Table */
+mdefine_line|#define DSDT_SIG                &quot;DSDT&quot;      /* Differentiated System Description Table */
+DECL|macro|FADT_SIG
+mdefine_line|#define FADT_SIG                &quot;FACP&quot;      /* Fixed ACPI Description Table */
 DECL|macro|FACS_SIG
-mdefine_line|#define FACS_SIG            &quot;FACS&quot;                  /* Firmware ACPI Control Structure */
+mdefine_line|#define FACS_SIG                &quot;FACS&quot;      /* Firmware ACPI Control Structure */
 DECL|macro|PSDT_SIG
-mdefine_line|#define PSDT_SIG            &quot;PSDT&quot;                  /* Persistent System Description Table */
+mdefine_line|#define PSDT_SIG                &quot;PSDT&quot;      /* Persistent System Description Table */
 DECL|macro|RSDT_SIG
-mdefine_line|#define RSDT_SIG            &quot;RSDT&quot;                  /* Root System Description Table */
+mdefine_line|#define RSDT_SIG                &quot;RSDT&quot;      /* Root System Description Table */
+DECL|macro|XSDT_SIG
+mdefine_line|#define XSDT_SIG                &quot;XSDT&quot;      /* Extended  System Description Table */
 DECL|macro|SSDT_SIG
-mdefine_line|#define SSDT_SIG            &quot;SSDT&quot;                  /* Secondary System Description Table */
+mdefine_line|#define SSDT_SIG                &quot;SSDT&quot;      /* Secondary System Description Table */
 DECL|macro|SBST_SIG
-mdefine_line|#define SBST_SIG            &quot;SBST&quot;                  /* Smart Battery Specification Table */
+mdefine_line|#define SBST_SIG                &quot;SBST&quot;      /* Smart Battery Specification Table */
+DECL|macro|SPIC_SIG
+mdefine_line|#define SPIC_SIG                &quot;SPIC&quot;      /* iosapic table */
 DECL|macro|BOOT_SIG
-mdefine_line|#define BOOT_SIG            &quot;BOOT&quot;                  /* Boot table */
+mdefine_line|#define BOOT_SIG                &quot;BOOT&quot;      /* Boot table */
 DECL|macro|GL_OWNED
-mdefine_line|#define GL_OWNED            0x02                    /* Ownership of global lock is bit 1 */
+mdefine_line|#define GL_OWNED                0x02        /* Ownership of global lock is bit 1 */
 multiline_comment|/* values of Mapic.Model */
 DECL|macro|DUAL_PIC
-mdefine_line|#define DUAL_PIC            0
+mdefine_line|#define DUAL_PIC                0
 DECL|macro|MULTIPLE_APIC
-mdefine_line|#define MULTIPLE_APIC       1
+mdefine_line|#define MULTIPLE_APIC           1
 multiline_comment|/* values of Type in APIC_HEADER */
 DECL|macro|APIC_PROC
-mdefine_line|#define APIC_PROC           0
+mdefine_line|#define APIC_PROC               0
 DECL|macro|APIC_IO
-mdefine_line|#define APIC_IO             1
+mdefine_line|#define APIC_IO                 1
+multiline_comment|/*&n; * Common table types.  The base code can remain&n; * constant if the underlying tables are changed&n; */
+DECL|macro|RSDT_DESCRIPTOR
+mdefine_line|#define RSDT_DESCRIPTOR         RSDT_DESCRIPTOR_REV2
+DECL|macro|XSDT_DESCRIPTOR
+mdefine_line|#define XSDT_DESCRIPTOR         XSDT_DESCRIPTOR_REV2
+DECL|macro|FACS_DESCRIPTOR
+mdefine_line|#define FACS_DESCRIPTOR         FACS_DESCRIPTOR_REV2
+DECL|macro|FADT_DESCRIPTOR
+mdefine_line|#define FADT_DESCRIPTOR         FADT_DESCRIPTOR_REV2
+macro_line|#pragma pack(1)
 multiline_comment|/*&n; * Architecture-independent tables&n; * The architecture dependent tables are in separate files&n; */
 r_typedef
 r_struct
@@ -62,19 +78,42 @@ l_int|6
 )braket
 suffix:semicolon
 multiline_comment|/* OEM identification */
-DECL|member|reserved
+DECL|member|revision
 id|u8
-id|reserved
+id|revision
 suffix:semicolon
-multiline_comment|/* reserved - must be zero */
+multiline_comment|/* Must be 0 for 1.0, 2 for 2.0 */
 DECL|member|rsdt_physical_address
 id|u32
 id|rsdt_physical_address
 suffix:semicolon
-multiline_comment|/* physical address of RSDT */
-DECL|typedef|ROOT_SYSTEM_DESCRIPTOR_POINTER
+multiline_comment|/* 32-bit physical address of RSDT */
+DECL|member|length
+id|u32
+id|length
+suffix:semicolon
+multiline_comment|/* XSDT Length in bytes including hdr */
+DECL|member|xsdt_physical_address
+id|UINT64
+id|xsdt_physical_address
+suffix:semicolon
+multiline_comment|/* 64-bit physical address of XSDT */
+DECL|member|extended_checksum
+id|u8
+id|extended_checksum
+suffix:semicolon
+multiline_comment|/* Checksum of entire table */
+DECL|member|reserved
+id|NATIVE_CHAR
+id|reserved
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* reserved field must be 0 */
+DECL|typedef|RSDP_DESCRIPTOR
 )brace
-id|ROOT_SYSTEM_DESCRIPTOR_POINTER
+id|RSDP_DESCRIPTOR
 suffix:semicolon
 r_typedef
 r_struct
@@ -140,6 +179,28 @@ multiline_comment|/* ASL compiler revision number */
 DECL|typedef|ACPI_TABLE_HEADER
 )brace
 id|ACPI_TABLE_HEADER
+suffix:semicolon
+r_typedef
+r_struct
+multiline_comment|/* Common FACS for internal use */
+(brace
+DECL|member|global_lock
+id|u32
+op_star
+id|global_lock
+suffix:semicolon
+DECL|member|firmware_waking_vector
+id|UINT64
+op_star
+id|firmware_waking_vector
+suffix:semicolon
+DECL|member|vector_width
+id|u8
+id|vector_width
+suffix:semicolon
+DECL|typedef|ACPI_COMMON_FACS
+)brace
+id|ACPI_COMMON_FACS
 suffix:semicolon
 r_typedef
 r_struct
@@ -283,6 +344,7 @@ DECL|typedef|SMART_BATTERY_DESCRIPTION_TABLE
 )brace
 id|SMART_BATTERY_DESCRIPTION_TABLE
 suffix:semicolon
+macro_line|#pragma pack()
 multiline_comment|/*&n; * ACPI Table information.  We save the table address, length,&n; * and type of memory allocation (mapped or allocated) for each&n; * table for 1) when we exit, and 2) if a new table is installed&n; */
 DECL|macro|ACPI_MEM_NOT_ALLOCATED
 mdefine_line|#define ACPI_MEM_NOT_ALLOCATED  0
@@ -334,10 +396,8 @@ DECL|typedef|ACPI_TABLE_SUPPORT
 id|ACPI_TABLE_SUPPORT
 suffix:semicolon
 multiline_comment|/*&n; * Get the architecture-specific tables&n; */
-macro_line|#ifdef IA64
-macro_line|#include &quot;actbl64.h&quot;
-macro_line|#else
-macro_line|#include &quot;actbl32.h&quot;
-macro_line|#endif
+macro_line|#include &quot;actbl1.h&quot;   /* Acpi 1.0 table defintions */
+macro_line|#include &quot;actbl71.h&quot;  /* Acpi 0.71 IA-64 Extension table defintions */
+macro_line|#include &quot;actbl2.h&quot;   /* Acpi 2.0 table definitions */
 macro_line|#endif /* __ACTBL_H__ */
 eof

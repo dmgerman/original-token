@@ -133,15 +133,8 @@ mdefine_line|#define cpu_last_asn(cpuid)&t;last_asn
 macro_line|#endif /* CONFIG_SMP */
 DECL|macro|WIDTH_HARDWARE_ASN
 mdefine_line|#define WIDTH_HARDWARE_ASN&t;8
-macro_line|#ifdef CONFIG_SMP
-DECL|macro|WIDTH_THIS_PROCESSOR
-mdefine_line|#define WIDTH_THIS_PROCESSOR&t;5
-macro_line|#else
-DECL|macro|WIDTH_THIS_PROCESSOR
-mdefine_line|#define WIDTH_THIS_PROCESSOR&t;0
-macro_line|#endif
 DECL|macro|ASN_FIRST_VERSION
-mdefine_line|#define ASN_FIRST_VERSION (1UL &lt;&lt; (WIDTH_THIS_PROCESSOR + WIDTH_HARDWARE_ASN))
+mdefine_line|#define ASN_FIRST_VERSION (1UL &lt;&lt; WIDTH_HARDWARE_ASN)
 DECL|macro|HARDWARE_ASN_MASK
 mdefine_line|#define HARDWARE_ASN_MASK ((1UL &lt;&lt; WIDTH_HARDWARE_ASN) - 1)
 multiline_comment|/*&n; * NOTE! The way this is set up, the high bits of the &quot;asn_cache&quot; (and&n; * the &quot;mm-&gt;context&quot;) are the ASN _version_ code. A version of 0 is&n; * always considered invalid, so to invalidate another process you only&n; * need to do &quot;p-&gt;mm-&gt;context = 0&quot;.&n; *&n; * If we need more ASN&squot;s than the processor has, we invalidate the old&n; * user TLB&squot;s (tbiap()) and start a new ASN version. That will automatically&n; * force a new asn for any other processes the next time they want to&n; * run.&n; */
@@ -257,10 +250,31 @@ r_int
 id|cpu
 )paren
 (brace
-multiline_comment|/* Check if our ASN is of an older version, or on a different CPU,&n;&t;   and thus invalid.  */
-multiline_comment|/* ??? If we have two threads on different cpus, we&squot;ll continually&n;&t;   fight over the context.  Find a way to record a per-mm, per-cpu&n;&t;   value for the asn.  */
+multiline_comment|/* Check if our ASN is of an older version, and thus invalid. */
 r_int
 r_int
+id|asn
+suffix:semicolon
+r_int
+r_int
+id|mmc
+suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+id|cpu_data
+(braket
+id|cpu
+)braket
+dot
+id|asn_lock
+op_assign
+l_int|1
+suffix:semicolon
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|asn
 op_assign
 id|cpu_last_asn
@@ -269,11 +283,12 @@ c_func
 id|cpu
 )paren
 suffix:semicolon
-r_int
-r_int
 id|mmc
 op_assign
 id|next_mm-&gt;context
+(braket
+id|cpu
+)braket
 suffix:semicolon
 r_if
 c_cond
@@ -299,10 +314,25 @@ id|cpu
 )paren
 suffix:semicolon
 id|next_mm-&gt;context
+(braket
+id|cpu
+)braket
 op_assign
 id|mmc
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_SMP
+r_else
+id|cpu_data
+(braket
+id|cpu
+)braket
+dot
+id|need_new_asn
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Always update the PCB ASN.  Another thread may have allocated&n;&t;   a new mm-&gt;context (via flush_tlb_mm) without the ASN serial&n;&t;   number wrapping.  We have no way to detect when this is needed.  */
 id|next-&gt;thread.asn
 op_assign
@@ -374,6 +404,13 @@ id|mm_struct
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+DECL|macro|check_mmu_context
+mdefine_line|#define check_mmu_context()&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int cpu = smp_processor_id();&t;&t;&t;&t;&bslash;&n;&t;cpu_data[cpu].asn_lock = 0;&t;&t;&t;&t;&bslash;&n;&t;barrier();&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (cpu_data[cpu].need_new_asn) {&t;&t;&t;&bslash;&n;&t;&t;struct mm_struct * mm = current-&gt;active_mm;&t;&bslash;&n;&t;&t;cpu_data[cpu].need_new_asn = 0;&t;&t;&t;&bslash;&n;&t;&t;if (!mm-&gt;context[cpu])&t;&t;&t;&bslash;&n;&t;&t;&t;__load_new_mm_context(mm);&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while(0)
+macro_line|#else
+DECL|macro|check_mmu_context
+mdefine_line|#define check_mmu_context()  do { } while(0)
+macro_line|#endif
 id|__EXTERN_INLINE
 r_void
 DECL|function|ev5_activate_mm
@@ -463,7 +500,31 @@ op_star
 id|mm
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|i
+op_increment
+)paren
 id|mm-&gt;context
+(braket
+id|cpu_logical_map
+c_func
+(paren
+id|i
+)paren
+)braket
 op_assign
 l_int|0
 suffix:semicolon

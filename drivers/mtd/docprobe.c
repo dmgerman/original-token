@@ -7,6 +7,7 @@ multiline_comment|/* DOC_PASSIVE_PROBE:&n;   In order to ensure that the BIOS ch
 multiline_comment|/* DOC_SINGLE_DRIVER:&n;   Millennium driver has been merged into DOC2000 driver.&n;&n;   The newly-merged driver doesn&squot;t appear to work for writing. It&squot;s the&n;   same with the DiskOnChip 2000 and the Millennium. If you have a &n;   Millennium and you want write support to work, remove the definition&n;   of DOC_SINGLE_DRIVER below to use the old doc2001-specific driver.&n;&n;   Otherwise, it&squot;s left on in the hope that it&squot;ll annoy someone with&n;   a Millennium enough that they go through and work out what the &n;   difference is :)&n;*/
 DECL|macro|DOC_SINGLE_DRIVER
 mdefine_line|#define DOC_SINGLE_DRIVER
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/errno.h&gt;

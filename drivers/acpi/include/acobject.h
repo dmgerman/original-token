@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: acobject.h - Definition of ACPI_OPERAND_OBJECT  (Internal object only)&n; *       $Revision: 71 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: acobject.h - Definition of ACPI_OPERAND_OBJECT  (Internal object only)&n; *       $Revision: 75 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef _ACOBJECT_H
 DECL|macro|_ACOBJECT_H
@@ -7,7 +7,7 @@ multiline_comment|/*&n; * The ACPI_OPERAND_OBJECT  is used to pass AML operands 
 multiline_comment|/******************************************************************************&n; *&n; * Common Descriptors&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; * Common area for all objects.&n; *&n; * Data_type is used to differentiate between internal descriptors, and MUST&n; * be the first byte in this structure.&n; */
 DECL|macro|ACPI_OBJECT_COMMON_HEADER
-mdefine_line|#define ACPI_OBJECT_COMMON_HEADER           /* Two 32-bit fields, one pointer, 8-bit flag */&bslash;&n;&t;u8                          data_type;          /* To differentiate various internal objs */&bslash;&n;&t;u8                          type;               /* ACPI_OBJECT_TYPE */&bslash;&n;&t;u16                         reference_count;    /* For object deletion management */&bslash;&n;&t;u8                          flags; &bslash;&n;
+mdefine_line|#define ACPI_OBJECT_COMMON_HEADER           /* 32-bits plus 8-bit flag */&bslash;&n;&t;u8                          data_type;          /* To differentiate various internal objs */&bslash;&n;&t;u8                          type;               /* ACPI_OBJECT_TYPE */&bslash;&n;&t;u16                         reference_count;    /* For object deletion management */&bslash;&n;&t;u8                          flags; &bslash;&n;
 multiline_comment|/* Defines for flag byte above */
 DECL|macro|AOPOBJ_STATIC_ALLOCATION
 mdefine_line|#define AOPOBJ_STATIC_ALLOCATION    0x1
@@ -17,7 +17,7 @@ DECL|macro|AOPOBJ_INITIALIZED
 mdefine_line|#define AOPOBJ_INITIALIZED          0x4
 multiline_comment|/*&n; * Common bitfield for the field objects&n; */
 DECL|macro|ACPI_COMMON_FIELD_INFO
-mdefine_line|#define ACPI_COMMON_FIELD_INFO              /* Three 32-bit values */&bslash;&n;&t;u8                          granularity;&bslash;&n;&t;u16                         length; &bslash;&n;&t;u32                         offset;             /* Byte offset within containing object */&bslash;&n;&t;u8                          bit_offset;         /* Bit offset within min read/write data unit */&bslash;&n;&t;u8                          access;             /* Access_type */&bslash;&n;&t;u8                          lock_rule;&bslash;&n;&t;u8                          update_rule;&bslash;&n;&t;u8                          access_attribute;
+mdefine_line|#define ACPI_COMMON_FIELD_INFO              /* Three 32-bit values plus 8*/&bslash;&n;&t;u8                          granularity;&bslash;&n;&t;u16                         length; &bslash;&n;&t;u32                         offset;             /* Byte offset within containing object */&bslash;&n;&t;u8                          bit_offset;         /* Bit offset within min read/write data unit */&bslash;&n;&t;u8                          access;             /* Access_type */&bslash;&n;&t;u8                          lock_rule;&bslash;&n;&t;u8                          update_rule;&bslash;&n;&t;u8                          access_attribute;
 multiline_comment|/******************************************************************************&n; *&n; * Individual Object Descriptors&n; *&n; *****************************************************************************/
 r_typedef
 r_struct
@@ -50,7 +50,7 @@ multiline_comment|/* NUMBER - has value */
 (brace
 id|ACPI_OBJECT_COMMON_HEADER
 DECL|member|value
-id|u32
+id|ACPI_INTEGER
 id|value
 suffix:semicolon
 DECL|typedef|ACPI_OBJECT_NUMBER
@@ -136,11 +136,19 @@ multiline_comment|/* FIELD UNIT */
 (brace
 id|ACPI_OBJECT_COMMON_HEADER
 id|ACPI_COMMON_FIELD_INFO
-DECL|member|sequence
-id|u32
-id|sequence
+DECL|member|extra
+r_union
+id|acpi_operand_obj
+op_star
+id|extra
 suffix:semicolon
-multiline_comment|/* Container&squot;s sequence number */
+multiline_comment|/* Pointer to executable AML (in field definition) */
+DECL|member|node
+id|ACPI_NAMESPACE_NODE
+op_star
+id|node
+suffix:semicolon
+multiline_comment|/* containing object */
 DECL|member|container
 r_union
 id|acpi_operand_obj
@@ -273,23 +281,16 @@ id|u32
 id|length
 suffix:semicolon
 DECL|member|address
-id|u32
+id|ACPI_PHYSICAL_ADDRESS
 id|address
 suffix:semicolon
-DECL|member|region_context
-r_void
-op_star
-id|region_context
-suffix:semicolon
-multiline_comment|/* Region Specific data (Handler-&gt;Context&n;&t;&t;&t;  optional things like PCI _ADR) */
-multiline_comment|/* TBD: [Restructure] This field can go away when Pass3 is implemented */
-DECL|member|method
+DECL|member|extra
 r_union
 id|acpi_operand_obj
 op_star
-id|method
+id|extra
 suffix:semicolon
-multiline_comment|/* Associated control method */
+multiline_comment|/* Pointer to executable AML (in region definition) */
 DECL|member|addr_handler
 r_union
 id|acpi_operand_obj
@@ -297,12 +298,6 @@ op_star
 id|addr_handler
 suffix:semicolon
 multiline_comment|/* Handler for system notifies */
-DECL|member|REGmethod
-id|ACPI_NAMESPACE_NODE
-op_star
-id|REGmethod
-suffix:semicolon
-multiline_comment|/* _REG method for this region (if any) */
 DECL|member|node
 id|ACPI_NAMESPACE_NODE
 op_star
@@ -611,6 +606,45 @@ DECL|typedef|ACPI_OBJECT_REFERENCE
 )brace
 id|ACPI_OBJECT_REFERENCE
 suffix:semicolon
+multiline_comment|/*&n; * Extra object is used as additional storage for types that&n; * have AML code in their declarations (Term_args) that must be&n; * evaluated at run time.&n; *&n; * Currently: Region and Field_unit types&n; */
+r_typedef
+r_struct
+multiline_comment|/* EXTRA */
+(brace
+id|ACPI_OBJECT_COMMON_HEADER
+DECL|member|byte_fill1
+id|u8
+id|byte_fill1
+suffix:semicolon
+DECL|member|word_fill1
+id|u16
+id|word_fill1
+suffix:semicolon
+DECL|member|pcode_length
+id|u32
+id|pcode_length
+suffix:semicolon
+DECL|member|pcode
+id|u8
+op_star
+id|pcode
+suffix:semicolon
+DECL|member|method_REG
+id|ACPI_NAMESPACE_NODE
+op_star
+id|method_REG
+suffix:semicolon
+multiline_comment|/* _REG method for this region (if any) */
+DECL|member|region_context
+r_void
+op_star
+id|region_context
+suffix:semicolon
+multiline_comment|/* Region-specific data */
+DECL|typedef|ACPI_OBJECT_EXTRA
+)brace
+id|ACPI_OBJECT_EXTRA
+suffix:semicolon
 multiline_comment|/******************************************************************************&n; *&n; * ACPI_OPERAND_OBJECT  Descriptor - a giant union of all of the above&n; *&n; *****************************************************************************/
 DECL|union|acpi_operand_obj
 r_typedef
@@ -700,6 +734,10 @@ suffix:semicolon
 DECL|member|addr_handler
 id|ACPI_OBJECT_ADDR_HANDLER
 id|addr_handler
+suffix:semicolon
+DECL|member|extra
+id|ACPI_OBJECT_EXTRA
+id|extra
 suffix:semicolon
 DECL|typedef|ACPI_OPERAND_OBJECT
 )brace

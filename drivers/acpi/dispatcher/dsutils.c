@@ -1,4 +1,4 @@
-multiline_comment|/*******************************************************************************&n; *&n; * Module Name: dsutils - Dispatcher utilities&n; *              $Revision: 44 $&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: dsutils - Dispatcher utilities&n; *              $Revision: 50 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acparser.h&quot;
@@ -21,6 +21,10 @@ id|acpi_ds_is_result_used
 id|ACPI_PARSE_OBJECT
 op_star
 id|op
+comma
+id|ACPI_WALK_STATE
+op_star
+id|walk_state
 )paren
 (brace
 id|ACPI_OPCODE_INFO
@@ -80,21 +84,6 @@ id|FALSE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Never delete the return value associated with a return opcode */
-r_if
-c_cond
-(paren
-id|op-&gt;parent-&gt;opcode
-op_eq
-id|AML_RETURN_OP
-)paren
-(brace
-r_return
-(paren
-id|TRUE
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * Decide what to do with the result based on the parent.  If&n;&t; * the parent opcode will not use the result, delete the object.&n;&t; * Otherwise leave it as is, it will be deleted when it is used&n;&t; * as an operand later.&n;&t; */
 r_switch
 c_cond
@@ -110,10 +99,113 @@ r_case
 id|OPTYPE_CONTROL
 suffix:colon
 multiline_comment|/* IF, ELSE, WHILE only */
+r_switch
+c_cond
+(paren
+id|op-&gt;parent-&gt;opcode
+)paren
+(brace
+r_case
+id|AML_RETURN_OP
+suffix:colon
+multiline_comment|/* Never delete the return value associated with a return opcode */
+r_return
+(paren
+id|TRUE
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|AML_IF_OP
+suffix:colon
+r_case
+id|AML_WHILE_OP
+suffix:colon
+multiline_comment|/*&n;&t;&t;&t; * If we are executing the predicate AND this is the predicate op,&n;&t;&t;&t; * we will use the return value!&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|walk_state-&gt;control_state-&gt;common.state
+op_eq
+id|CONTROL_PREDICATE_EXECUTING
+)paren
+op_logical_and
+(paren
+id|walk_state-&gt;control_state-&gt;control.predicate_op
+op_eq
+id|op
+)paren
+)paren
+(brace
+r_return
+(paren
+id|TRUE
+)paren
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* Fall through to not used case below */
 r_case
 id|OPTYPE_NAMED_OBJECT
 suffix:colon
 multiline_comment|/* Scope, method, etc. */
+multiline_comment|/*&n;&t;&t; * These opcodes allow Term_arg(s) as operands and therefore&n;&t;&t; * method calls.  The result is used.&n;&t;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|op-&gt;parent-&gt;opcode
+op_eq
+id|AML_REGION_OP
+)paren
+op_logical_or
+(paren
+id|op-&gt;parent-&gt;opcode
+op_eq
+id|AML_CREATE_FIELD_OP
+)paren
+op_logical_or
+(paren
+id|op-&gt;parent-&gt;opcode
+op_eq
+id|AML_BIT_FIELD_OP
+)paren
+op_logical_or
+(paren
+id|op-&gt;parent-&gt;opcode
+op_eq
+id|AML_BYTE_FIELD_OP
+)paren
+op_logical_or
+(paren
+id|op-&gt;parent-&gt;opcode
+op_eq
+id|AML_WORD_FIELD_OP
+)paren
+op_logical_or
+(paren
+id|op-&gt;parent-&gt;opcode
+op_eq
+id|AML_DWORD_FIELD_OP
+)paren
+op_logical_or
+(paren
+id|op-&gt;parent-&gt;opcode
+op_eq
+id|AML_QWORD_FIELD_OP
+)paren
+)paren
+(brace
+r_return
+(paren
+id|TRUE
+)paren
+suffix:semicolon
+)brace
 r_return
 (paren
 id|FALSE
@@ -185,13 +277,15 @@ op_logical_neg
 id|acpi_ds_is_result_used
 (paren
 id|op
+comma
+id|walk_state
 )paren
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * Must pop the result stack (Obj_desc should be equal&n;&t;&t; *  to Result_obj)&n;&t;&t; */
 id|status
 op_assign
-id|acpi_ds_result_stack_pop
+id|acpi_ds_result_pop
 (paren
 op_amp
 id|obj_desc
@@ -230,6 +324,9 @@ comma
 id|ACPI_PARSE_OBJECT
 op_star
 id|arg
+comma
+id|u32
+id|arg_index
 )paren
 (brace
 id|ACPI_STATUS
@@ -330,6 +427,12 @@ op_logical_and
 id|parent_op-&gt;opcode
 op_ne
 id|AML_METHODCALL_OP
+)paren
+op_logical_and
+(paren
+id|parent_op-&gt;opcode
+op_ne
+id|AML_REGION_OP
 )paren
 op_logical_and
 (paren
@@ -555,7 +658,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Use value that was already previously returned&n;&t;&t;&t; * by the evaluation of this argument&n;&t;&t;&t; */
 id|status
 op_assign
-id|acpi_ds_result_stack_pop
+id|acpi_ds_result_pop_from_bottom
 (paren
 op_amp
 id|obj_desc
@@ -705,15 +808,15 @@ op_star
 id|arg
 suffix:semicolon
 id|u32
-id|args_pushed
+id|arg_count
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* For all arguments in the list... */
 id|arg
 op_assign
 id|first_arg
 suffix:semicolon
-multiline_comment|/* For all arguments in the list... */
 r_while
 c_loop
 (paren
@@ -727,6 +830,8 @@ id|acpi_ds_create_operand
 id|walk_state
 comma
 id|arg
+comma
+id|arg_count
 )paren
 suffix:semicolon
 r_if
@@ -747,7 +852,7 @@ id|arg
 op_assign
 id|arg-&gt;next
 suffix:semicolon
-id|args_pushed
+id|arg_count
 op_increment
 suffix:semicolon
 )brace
@@ -761,7 +866,7 @@ suffix:colon
 multiline_comment|/*&n;&t; * We must undo everything done above; meaning that we must&n;&t; * pop everything off of the operand stack and delete those&n;&t; * objects&n;&t; */
 id|acpi_ds_obj_stack_pop_and_delete
 (paren
-id|args_pushed
+id|arg_count
 comma
 id|walk_state
 )paren
@@ -942,6 +1047,10 @@ id|INTERNAL_TYPE_REFERENCE
 suffix:semicolon
 r_break
 suffix:semicolon
+r_default
+suffix:colon
+r_break
+suffix:semicolon
 )brace
 r_break
 suffix:semicolon
@@ -970,6 +1079,10 @@ id|data_type
 op_assign
 id|ACPI_TYPE_PACKAGE
 suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 r_break
 suffix:semicolon
 )brace

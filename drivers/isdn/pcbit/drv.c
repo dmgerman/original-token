@@ -531,13 +531,6 @@ id|dev-&gt;b2-&gt;id
 op_assign
 l_int|1
 suffix:semicolon
-id|INIT_LIST_HEAD
-c_func
-(paren
-op_amp
-id|dev-&gt;qdelivery.list
-)paren
-suffix:semicolon
 id|dev-&gt;qdelivery.sync
 op_assign
 l_int|0

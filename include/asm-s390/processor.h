@@ -245,13 +245,6 @@ r_int
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* Copy and release all segment info associated with a VM */
-DECL|macro|copy_segments
-mdefine_line|#define copy_segments(nr, mm)           do { } while (0)
-DECL|macro|release_segments
-mdefine_line|#define release_segments(mm)            do { } while (0)
-DECL|macro|forget_segments
-mdefine_line|#define forget_segments()               do { } while (0)
 multiline_comment|/*&n; * Return saved PC of a blocked thread. used in kernel/sched&n; */
 DECL|function|thread_saved_pc
 r_extern

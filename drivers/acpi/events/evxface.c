@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: evxface - External interfaces for ACPI events&n; *              $Revision: 88 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: evxface - External interfaces for ACPI events&n; *              $Revision: 97 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;achware.h&quot;
@@ -94,22 +94,24 @@ id|context
 op_assign
 id|context
 suffix:semicolon
+id|status
+op_assign
+id|acpi_enable_event
+c_func
+(paren
+id|event
+comma
+id|ACPI_EVENT_FIXED
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-l_int|1
-op_ne
-id|acpi_hw_register_access
+op_logical_neg
+id|ACPI_SUCCESS
+c_func
 (paren
-id|ACPI_WRITE
-comma
-id|ACPI_MTX_LOCK
-comma
-id|event
-op_plus
-id|TMR_EN
-comma
-l_int|1
+id|status
 )paren
 )paren
 (brace
@@ -191,22 +193,24 @@ id|ACPI_MTX_EVENTS
 )paren
 suffix:semicolon
 multiline_comment|/* Disable the event before removing the handler - just in case... */
+id|status
+op_assign
+id|acpi_disable_event
+c_func
+(paren
+id|event
+comma
+id|ACPI_EVENT_FIXED
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-l_int|0
-op_ne
-id|acpi_hw_register_access
+op_logical_neg
+id|ACPI_SUCCESS
+c_func
 (paren
-id|ACPI_WRITE
-comma
-id|ACPI_MTX_LOCK
-comma
-id|event
-op_plus
-id|TMR_EN
-comma
-l_int|0
+id|status
 )paren
 )paren
 (brace
@@ -214,8 +218,15 @@ id|status
 op_assign
 id|AE_ERROR
 suffix:semicolon
-r_goto
-id|cleanup
+id|acpi_cm_release_mutex
+(paren
+id|ACPI_MTX_EVENTS
+)paren
+suffix:semicolon
+r_return
+(paren
+id|status
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Remove the handler */
@@ -237,8 +248,6 @@ id|context
 op_assign
 l_int|NULL
 suffix:semicolon
-id|cleanup
-suffix:colon
 id|acpi_cm_release_mutex
 (paren
 id|ACPI_MTX_EVENTS
@@ -857,7 +866,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_install_gpe_handler&n; *&n; * PARAMETERS:  Gpe_number      - The GPE number.  The numbering scheme is&n; *                                bank 0 first, then bank 1.&n; *              Trigger         - Whether this GPE should be treated as an&n; *                                edge- or level-triggered interrupt.&n; *              Handler         - Address of the handler&n; *              Context         - Value passed to the handler on each GPE&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Install a handler for a General Purpose Acpi_event.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_install_gpe_handler&n; *&n; * PARAMETERS:  Gpe_number      - The GPE number.  The numbering scheme is&n; *                                bank 0 first, then bank 1.&n; *              Type            - Whether this GPE should be treated as an&n; *                                edge- or level-triggered interrupt.&n; *              Handler         - Address of the handler&n; *              Context         - Value passed to the handler on each GPE&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Install a handler for a General Purpose Event.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_install_gpe_handler
 id|acpi_install_gpe_handler
@@ -1129,12 +1138,7 @@ id|ACPI_STATUS
 DECL|function|acpi_acquire_global_lock
 id|acpi_acquire_global_lock
 (paren
-id|u32
-id|timeout
-comma
-id|u32
-op_star
-id|out_handle
+r_void
 )paren
 (brace
 id|ACPI_STATUS
@@ -1155,11 +1159,6 @@ id|acpi_aml_exit_interpreter
 (paren
 )paren
 suffix:semicolon
-op_star
-id|out_handle
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 (paren
 id|status
@@ -1171,11 +1170,9 @@ id|ACPI_STATUS
 DECL|function|acpi_release_global_lock
 id|acpi_release_global_lock
 (paren
-id|u32
-id|handle
+r_void
 )paren
 (brace
-multiline_comment|/* TBD: [Restructure] Validate handle */
 id|acpi_ev_release_global_lock
 (paren
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmalloc - local memory allocation routines&n; *              $Revision: 73 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmalloc - local memory allocation routines&n; *              $Revision: 79 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acparser.h&quot;
@@ -37,6 +37,12 @@ id|address
 op_assign
 l_int|NULL
 suffix:semicolon
+id|DEBUG_ONLY_MEMBERS
+(paren
+"&bslash;"
+id|ACPI_STATUS
+id|status
+)paren
 multiline_comment|/* Check for an inadvertent size of zero bytes */
 r_if
 c_cond
@@ -45,9 +51,17 @@ op_logical_neg
 id|size
 )paren
 (brace
-id|REPORT_ERROR
+id|_REPORT_ERROR
 (paren
-l_string|&quot;Cm_allocate: Attempt to allocate zero bytes&quot;
+id|module
+comma
+id|line
+comma
+id|component
+comma
+(paren
+l_string|&quot;Cm_allocate: Attempt to allocate zero bytes&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|size
@@ -78,7 +92,11 @@ id|line
 comma
 id|component
 comma
-l_string|&quot;Cm_allocate: Memory allocation failure&quot;
+(paren
+l_string|&quot;Cm_allocate: Could not allocate size %X&bslash;n&quot;
+comma
+id|size
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -119,6 +137,12 @@ id|address
 op_assign
 l_int|NULL
 suffix:semicolon
+id|DEBUG_ONLY_MEMBERS
+(paren
+"&bslash;"
+id|ACPI_STATUS
+id|status
+)paren
 multiline_comment|/* Check for an inadvertent size of zero bytes */
 r_if
 c_cond
@@ -127,9 +151,17 @@ op_logical_neg
 id|size
 )paren
 (brace
-id|REPORT_ERROR
+id|_REPORT_ERROR
 (paren
-l_string|&quot;Cm_callocate: Attempt to allocate zero bytes&quot;
+id|module
+comma
+id|line
+comma
+id|component
+comma
+(paren
+l_string|&quot;Cm_callocate: Attempt to allocate zero bytes&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -161,7 +193,11 @@ id|line
 comma
 id|component
 comma
-l_string|&quot;Cm_callocate: Memory allocation failure&quot;
+(paren
+l_string|&quot;Cm_callocate: Could not allocate size %X&bslash;n&quot;
+comma
+id|size
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -212,7 +248,9 @@ id|line
 comma
 id|component
 comma
-l_string|&quot;_Cm_free: Trying to delete a NULL address.&quot;
+(paren
+l_string|&quot;_Cm_free: Trying to delete a NULL address&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return

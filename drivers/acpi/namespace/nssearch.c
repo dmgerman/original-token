@@ -1,4 +1,4 @@
-multiline_comment|/*******************************************************************************&n; *&n; * Module Name: nssearch - Namespace search&n; *              $Revision: 57 $&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: nssearch - Namespace search&n; *              $Revision: 60 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
@@ -145,6 +145,7 @@ id|AE_NOT_FOUND
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_ns_search_parent_tree&n; *&n; * PARAMETERS:  *Target_name        - Ascii ACPI name to search for&n; *              *Node           - Starting table where search will begin&n; *              Type                - Object type to match&n; *              **Return_node   - Where the matched Named Obj is returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Called when a name has not been found in the current namespace&n; *              table.  Before adding it or giving up, ACPI scope rules require&n; *              searching enclosing scopes in cases identified by Acpi_ns_local().&n; *&n; *              &quot;A name is located by finding the matching name in the current&n; *              name space, and then in the parent name space. If the parent&n; *              name space does not contain the name, the search continues&n; *              recursively until either the name is found or the name space&n; *              does not have a parent (the root of the name space).  This&n; *              indicates that the name is not found&quot; (From ACPI Specification,&n; *              section 5.3)&n; *&n; ******************************************************************************/
+r_static
 id|ACPI_STATUS
 DECL|function|acpi_ns_search_parent_tree
 id|acpi_ns_search_parent_tree
@@ -310,7 +311,9 @@ id|return_node
 (brace
 id|REPORT_ERROR
 (paren
-l_string|&quot;Ns_search_and_enter: bad (null)parameter&quot;
+(paren
+l_string|&quot;Ns_search_and_enter: bad (null) parameter&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -332,7 +335,9 @@ id|target_name
 (brace
 id|REPORT_ERROR
 (paren
-l_string|&quot;Ns_search_and_enter: Bad character in ACPI Name&quot;
+(paren
+l_string|&quot;Ns_search_and_enter: Bad character in ACPI Name&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return

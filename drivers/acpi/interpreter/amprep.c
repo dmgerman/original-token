@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amprep - ACPI AML (p-code) execution - field prep utilities&n; *              $Revision: 67 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amprep - ACPI AML (p-code) execution - field prep utilities&n; *              $Revision: 69 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acinterp.h&quot;
@@ -12,6 +12,7 @@ id|MODULE_NAME
 l_string|&quot;amprep&quot;
 )paren
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_decode_field_access_type&n; *&n; * PARAMETERS:  Access          - Encoded field access bits&n; *&n; * RETURN:      Field granularity (8, 16, or 32)&n; *&n; * DESCRIPTION: Decode the Access_type bits of a field definition.&n; *&n; ******************************************************************************/
+r_static
 id|u32
 DECL|function|acpi_aml_decode_field_access_type
 id|acpi_aml_decode_field_access_type
@@ -77,6 +78,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_prep_common_field_objec&n; *&n; * PARAMETERS:  Obj_desc            - The field object&n; *              Field_flags         - Access, Lock_rule, or Update_rule.&n; *                                    The format of a Field_flag is described&n; *                                    in the ACPI specification&n; *              Field_position      - Field position&n; *              Field_length        - Field length&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Initialize the areas of the field object that are common&n; *              to the various types of fields.&n; *&n; ******************************************************************************/
+r_static
 id|ACPI_STATUS
 DECL|function|acpi_aml_prep_common_field_object
 id|acpi_aml_prep_common_field_object

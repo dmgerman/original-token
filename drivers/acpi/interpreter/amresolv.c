@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amresolv - AML Interpreter object resolution&n; *              $Revision: 74 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amresolv - AML Interpreter object resolution&n; *              $Revision: 78 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
@@ -59,7 +59,40 @@ op_assign
 id|AE_AML_NO_OPERAND
 suffix:semicolon
 )brace
-r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|field_desc-&gt;common.flags
+op_amp
+id|AOPOBJ_DATA_VALID
+)paren
+)paren
+(brace
+id|status
+op_assign
+id|acpi_ds_get_field_unit_arguments
+(paren
+id|field_desc
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACPI_FAILURE
+(paren
+id|status
+)paren
+)paren
+(brace
+r_return
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren
@@ -84,20 +117,6 @@ id|field_desc-&gt;field_unit.container-&gt;common.type
 id|status
 op_assign
 id|AE_AML_OPERAND_TYPE
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|field_desc-&gt;field_unit.sequence
-op_ne
-id|field_desc-&gt;field_unit.container-&gt;buffer.sequence
-)paren
-(brace
-id|status
-op_assign
-id|AE_AML_INTERNAL
 suffix:semicolon
 )brace
 r_else
@@ -173,7 +192,7 @@ r_else
 (brace
 id|mask
 op_assign
-l_int|0xFFFFFFFF
+id|ACPI_UINT32_MAX
 suffix:semicolon
 )brace
 id|result_desc-&gt;number.type
@@ -313,6 +332,8 @@ op_star
 op_star
 )paren
 id|stack_ptr
+comma
+id|walk_state
 )paren
 suffix:semicolon
 )brace
@@ -583,7 +604,15 @@ id|ACPI_TYPE_NUMBER
 suffix:semicolon
 id|stack_desc-&gt;number.value
 op_assign
-l_int|0xFFFFFFFF
+id|ACPI_INTEGER_MAX
+suffix:semicolon
+multiline_comment|/* Truncate value if we are executing from a 32-bit ACPI table */
+id|acpi_aml_truncate_for32bit_table
+(paren
+id|stack_desc
+comma
+id|walk_state
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon

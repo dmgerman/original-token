@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: acexcep.h - Exception codes returned by the ACPI subsystem&n; *       $Revision: 35 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: acexcep.h - Exception codes returned by the ACPI subsystem&n; *       $Revision: 37 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __ACEXCEP_H__
 DECL|macro|__ACEXCEP_H__
@@ -85,6 +85,8 @@ DECL|macro|AE_BAD_HEADER
 mdefine_line|#define AE_BAD_HEADER                   (ACPI_STATUS) (0x0002 | AE_CODE_ACPI_TABLES)
 DECL|macro|AE_BAD_CHECKSUM
 mdefine_line|#define AE_BAD_CHECKSUM                 (ACPI_STATUS) (0x0003 | AE_CODE_ACPI_TABLES)
+DECL|macro|AE_BAD_VALUE
+mdefine_line|#define AE_BAD_VALUE                    (ACPI_STATUS) (0x0004 | AE_CODE_ACPI_TABLES)
 DECL|macro|AE_CODE_TBL_MAX
 mdefine_line|#define AE_CODE_TBL_MAX                 0x0003
 multiline_comment|/*&n; * AML exceptions.  These are caused by problems with&n; * the actual AML byte stream&n; */
@@ -122,8 +124,10 @@ DECL|macro|AE_AML_NAME_NOT_FOUND
 mdefine_line|#define AE_AML_NAME_NOT_FOUND           (ACPI_STATUS) (0x0010 | AE_CODE_AML)
 DECL|macro|AE_AML_INTERNAL
 mdefine_line|#define AE_AML_INTERNAL                 (ACPI_STATUS) (0x0011 | AE_CODE_AML)
+DECL|macro|AE_AML_INVALID_SPACE_ID
+mdefine_line|#define AE_AML_INVALID_SPACE_ID         (ACPI_STATUS) (0x0012 | AE_CODE_AML)
 DECL|macro|AE_CODE_AML_MAX
-mdefine_line|#define AE_CODE_AML_MAX                 0x0011
+mdefine_line|#define AE_CODE_AML_MAX                 0x0012
 multiline_comment|/*&n; * Internal exceptions used for control&n; */
 DECL|macro|AE_CTRL_RETURN_VALUE
 mdefine_line|#define AE_CTRL_RETURN_VALUE            (ACPI_STATUS) (0x0001 | AE_CODE_CONTROL)
@@ -234,6 +238,8 @@ l_string|&quot;AE_BAD_HEADER&quot;
 comma
 l_string|&quot;AE_BAD_CHECKSUM&quot;
 comma
+l_string|&quot;AE_BAD_VALUE&quot;
+comma
 )brace
 suffix:semicolon
 DECL|variable|acpi_gbl_exception_names_aml
@@ -278,6 +284,8 @@ comma
 l_string|&quot;AE_AML_NAME_NOT_FOUND&quot;
 comma
 l_string|&quot;AE_AML_INTERNAL&quot;
+comma
+l_string|&quot;AE_AML_INVALID_SPACE_ID&quot;
 comma
 )brace
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: config.c,v 2.57.6.3 2000/11/29 17:48:59 kai Exp $&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: config.c,v 2.57.6.6 2000/12/10 23:39:19 kai Exp $&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -4231,13 +4231,6 @@ id|cs-&gt;event
 op_assign
 l_int|0
 suffix:semicolon
-id|INIT_LIST_HEAD
-c_func
-(paren
-op_amp
-id|cs-&gt;tqueue.list
-)paren
-suffix:semicolon
 id|cs-&gt;tqueue.sync
 op_assign
 l_int|0
@@ -7617,6 +7610,16 @@ comma
 id|PCI_VENDOR_ID_CCD
 comma
 id|PCI_DEVICE_ID_CCD_B100
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_ABOCOM
+comma
+id|PCI_DEVICE_ID_ABOCOM_2BD1
 comma
 id|PCI_ANY_ID
 comma

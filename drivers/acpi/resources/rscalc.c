@@ -1,13 +1,14 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: rscalc - Acpi_rs_calculate_byte_stream_length&n; *                       Acpi_rs_calculate_list_length&n; *              $Revision: 9 $&n; *&n; *****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: rscalc - Acpi_rs_calculate_byte_stream_length&n; *                       Acpi_rs_calculate_list_length&n; *              $Revision: 16 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
+macro_line|#include &quot;acresrc.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          RESOURCE_MANAGER
 id|MODULE_NAME
 (paren
 l_string|&quot;rscalc&quot;
 )paren
-multiline_comment|/***************************************************************************&n; * FUNCTION:    Acpi_rs_calculate_byte_stream_length&n; *&n; * PARAMETERS:&n; *              Linked_list         - Pointer to the resource linked list&n; *              Size_needed         - u32 pointer of the size buffer needed&n; *                                      to properly return the parsed data&n; *&n; * RETURN:      Status  AE_OK if okay, else a valid ACPI_STATUS code&n; *&n; * DESCRIPTION: Takes the resource byte stream and parses it once, calculating&n; *              the size buffer needed to hold the linked list that conveys&n; *              the resource data.&n; *&n; ***************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_calculate_byte_stream_length&n; *&n; * PARAMETERS:  Linked_list         - Pointer to the resource linked list&n; *              Size_needed         - u32 pointer of the size buffer needed&n; *                                      to properly return the parsed data&n; *&n; * RETURN:      Status  AE_OK if okay, else a valid ACPI_STATUS code&n; *&n; * DESCRIPTION: Takes the resource byte stream and parses it once, calculating&n; *              the size buffer needed to hold the linked list that conveys&n; *              the resource data.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_rs_calculate_byte_stream_length
 id|acpi_rs_calculate_byte_stream_length
@@ -346,8 +347,7 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Acpi_rs_calculate_byte_stream_length */
-multiline_comment|/***************************************************************************&n; * FUNCTION:    Acpi_rs_calculate_list_length&n; *&n; * PARAMETERS:&n; *              Byte_stream_buffer      - Pointer to the resource byte stream&n; *              Byte_stream_buffer_length - Size of Byte_stream_buffer&n; *              Size_needed             - u32 pointer of the size buffer&n; *                                          needed to properly return the&n; *                                          parsed data&n; *&n; * RETURN:      Status  AE_OK if okay, else a valid ACPI_STATUS code&n; *&n; * DESCRIPTION: Takes the resource byte stream and parses it once, calculating&n; *              the size buffer needed to hold the linked list that conveys&n; *              the resource data.&n; *&n; ***************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_calculate_list_length&n; *&n; * PARAMETERS:  Byte_stream_buffer      - Pointer to the resource byte stream&n; *              Byte_stream_buffer_length - Size of Byte_stream_buffer&n; *              Size_needed             - u32 pointer of the size buffer&n; *                                          needed to properly return the&n; *                                          parsed data&n; *&n; * RETURN:      Status  AE_OK if okay, else a valid ACPI_STATUS code&n; *&n; * DESCRIPTION: Takes the resource byte stream and parses it once, calculating&n; *              the size buffer needed to hold the linked list that conveys&n; *              the resource data.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_rs_calculate_list_length
 id|acpi_rs_calculate_list_length
@@ -845,7 +845,7 @@ id|u8
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/* 64-bit not currently supported */
+multiline_comment|/* TBD: [Future] 64-bit not currently supported */
 multiline_comment|/*&n;&t;&t;&t;case 0x8A:&n;&t;&t;&t;&t;break;&n;*/
 r_default
 suffix:colon
@@ -1258,8 +1258,7 @@ id|AE_OK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Acpi_rs_calculate_list_length */
-multiline_comment|/***************************************************************************&n; * FUNCTION:    Acpi_rs_calculate_pci_routing_table_length&n; *&n; * PARAMETERS:&n; *              Package_object          - Pointer to the package object&n; *              Buffer_size_needed      - u32 pointer of the size buffer&n; *                                          needed to properly return the&n; *                                          parsed data&n; *&n; * RETURN:      Status  AE_OK&n; *&n; * DESCRIPTION: Given a package representing a PCI routing table, this&n; *                calculates the size of the corresponding linked list of&n; *                descriptions.&n; *&n; ***************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_calculate_pci_routing_table_length&n; *&n; * PARAMETERS:  Package_object          - Pointer to the package object&n; *              Buffer_size_needed      - u32 pointer of the size buffer&n; *                                          needed to properly return the&n; *                                          parsed data&n; *&n; * RETURN:      Status  AE_OK&n; *&n; * DESCRIPTION: Given a package representing a PCI routing table, this&n; *                calculates the size of the corresponding linked list of&n; *                descriptions.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_rs_calculate_pci_routing_table_length
 id|acpi_rs_calculate_pci_routing_table_length
@@ -1278,6 +1277,8 @@ id|number_of_elements
 suffix:semicolon
 id|u32
 id|temp_size_needed
+op_assign
+l_int|0
 suffix:semicolon
 id|ACPI_OPERAND_OBJECT
 op_star
@@ -1287,28 +1288,26 @@ suffix:semicolon
 id|u32
 id|index
 suffix:semicolon
+id|ACPI_OPERAND_OBJECT
+op_star
+id|package_element
+suffix:semicolon
+id|ACPI_OPERAND_OBJECT
+op_star
+op_star
+id|sub_object_list
+suffix:semicolon
+id|u8
+id|name_found
+suffix:semicolon
+id|u32
+id|table_index
+suffix:semicolon
 id|number_of_elements
 op_assign
 id|package_object-&gt;package.count
 suffix:semicolon
 multiline_comment|/*&n;&t; * Calculate the size of the return buffer.&n;&t; * The base size is the number of elements * the sizes of the&n;&t; * structures.  Additional space for the strings is added below.&n;&t; * The minus one is to subtract the size of the u8 Source[1]&n;&t; * member because it is added below.&n;&t; *&n;&t; * NOTE: The Number_of_elements is incremented by one to add an end&n;&t; * table structure that is essentially a structure of zeros.&n;&t; */
-id|temp_size_needed
-op_assign
-(paren
-id|number_of_elements
-op_plus
-l_int|1
-)paren
-op_star
-(paren
-r_sizeof
-(paren
-id|PCI_ROUTING_TABLE
-)paren
-op_minus
-l_int|1
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * But each PRT_ENTRY structure has a pointer to a string and&n;&t; * the size of that string must be found.&n;&t; */
 id|top_object_list
 op_assign
@@ -1329,21 +1328,6 @@ id|index
 op_increment
 )paren
 (brace
-id|ACPI_OPERAND_OBJECT
-op_star
-id|package_element
-suffix:semicolon
-id|ACPI_OPERAND_OBJECT
-op_star
-op_star
-id|sub_object_list
-suffix:semicolon
-id|u8
-id|name_found
-suffix:semicolon
-id|u32
-id|table_index
-suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Dereference the sub-package&n;&t;&t; */
 id|package_element
 op_assign
@@ -1404,6 +1388,17 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+id|temp_size_needed
+op_add_assign
+(paren
+r_sizeof
+(paren
+id|PCI_ROUTING_TABLE
+)paren
+op_minus
+l_int|1
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Was a String type found?&n;&t;&t; */
 r_if
 c_cond
@@ -1423,13 +1418,6 @@ id|sub_object_list
 op_member_access_from_pointer
 id|string.length
 suffix:semicolon
-id|temp_size_needed
-op_assign
-id|ROUND_UP_TO_32_bITS
-(paren
-id|temp_size_needed
-)paren
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -1442,6 +1430,14 @@ id|u32
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Round up the size since each element must be aligned */
+id|temp_size_needed
+op_assign
+id|ROUND_UP_TO_64_bITS
+(paren
+id|temp_size_needed
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Point to the next ACPI_OPERAND_OBJECT&n;&t;&t; */
 id|top_object_list
 op_increment
@@ -1451,6 +1447,11 @@ op_star
 id|buffer_size_needed
 op_assign
 id|temp_size_needed
+op_plus
+r_sizeof
+(paren
+id|PCI_ROUTING_TABLE
+)paren
 suffix:semicolon
 r_return
 (paren

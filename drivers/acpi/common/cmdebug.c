@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmdebug - Debug print routines&n; *              $Revision: 60 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmdebug - Debug print routines&n; *              $Revision: 61 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 DECL|macro|_COMPONENT
@@ -112,7 +112,7 @@ id|component_id
 comma
 id|TRACE_FUNCTIONS
 comma
-l_string|&quot; %2.2ld Entered Function: %s, 0x%p&bslash;n&quot;
+l_string|&quot; %2.2ld Entered Function: %s, %p&bslash;n&quot;
 comma
 id|acpi_gbl_nesting_level
 comma
@@ -205,7 +205,7 @@ id|component_id
 comma
 id|TRACE_FUNCTIONS
 comma
-l_string|&quot; %2.2ld Entered Function: %s, 0x%lX&bslash;n&quot;
+l_string|&quot; %2.2ld Entered Function: %s, %lX&bslash;n&quot;
 comma
 id|acpi_gbl_nesting_level
 comma
@@ -338,7 +338,7 @@ id|component_id
 comma
 id|TRACE_FUNCTIONS
 comma
-l_string|&quot; %2.2ld Exiting Function: %s, 0x%X&bslash;n&quot;
+l_string|&quot; %2.2ld Exiting Function: %s, %X&bslash;n&quot;
 comma
 id|acpi_gbl_nesting_level
 comma
@@ -385,7 +385,7 @@ id|component_id
 comma
 id|TRACE_FUNCTIONS
 comma
-l_string|&quot; %2.2ld Exiting Function: %s, 0x%p&bslash;n&quot;
+l_string|&quot; %2.2ld Exiting Function: %s, %p&bslash;n&quot;
 comma
 id|acpi_gbl_nesting_level
 comma

@@ -511,6 +511,25 @@ op_amp
 id|MATROXFB_OUTPUT_CONN_SECONDARY
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|ACCESS_FBINFO
+c_func
+(paren
+id|devflags.g450dac
+)paren
+)paren
+(brace
+id|tmp
+op_or_assign
+l_int|0x00000006
+suffix:semicolon
+multiline_comment|/* source from secondary pixel PLL */
+multiline_comment|/* no vidrst */
+)brace
+r_else
+(brace
 id|tmp
 op_or_assign
 l_int|0x00000002
@@ -522,6 +541,7 @@ l_int|0xC0000000
 suffix:semicolon
 multiline_comment|/* enable vvidrst &amp; hvidrst */
 multiline_comment|/* MGA TVO is our clock source */
+)brace
 )brace
 r_else
 r_if

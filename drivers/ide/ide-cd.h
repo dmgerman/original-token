@@ -277,6 +277,10 @@ DECL|member|quiet
 r_int
 id|quiet
 suffix:semicolon
+DECL|member|timeout
+r_int
+id|timeout
+suffix:semicolon
 DECL|member|sense
 r_struct
 id|request_sense
@@ -2045,7 +2049,19 @@ comma
 (brace
 l_int|0x020404
 comma
-l_string|&quot;In process of becoming ready - writing&quot;
+l_string|&quot;Logical unit not ready - format in progress&quot;
+)brace
+comma
+(brace
+l_int|0x020407
+comma
+l_string|&quot;Logical unit not ready - operation in progress&quot;
+)brace
+comma
+(brace
+l_int|0x020408
+comma
+l_string|&quot;Logical unit not ready - long write in progress&quot;
 )brace
 comma
 (brace
@@ -2334,12 +2350,6 @@ comma
 l_int|0x052000
 comma
 l_string|&quot;Invalid command operation code&quot;
-)brace
-comma
-(brace
-l_int|0x052c00
-comma
-l_string|&quot;Command sequence error&quot;
 )brace
 comma
 (brace

@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: accommon.h -- prototypes for the common (subsystem-wide) procedures&n; *       $Revision: 74 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: accommon.h -- prototypes for the common (subsystem-wide) procedures&n; *       $Revision: 82 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef _ACCOMMON_H
 DECL|macro|_ACCOMMON_H
@@ -22,9 +22,7 @@ multiline_comment|/* Global initialization interfaces */
 r_void
 id|acpi_cm_init_globals
 (paren
-id|ACPI_INIT_DATA
-op_star
-id|init_data
+r_void
 )paren
 suffix:semicolon
 r_void
@@ -33,7 +31,7 @@ id|acpi_cm_terminate
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_cm_init - miscellaneous initialization and shutdown&n; */
+multiline_comment|/*&n; * Cm_init - miscellaneous initialization and shutdown&n; */
 id|ACPI_STATUS
 id|acpi_cm_hardware_initialize
 (paren
@@ -46,7 +44,14 @@ id|acpi_cm_subsystem_shutdown
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_cm_global - Global data structures and procedures&n; */
+id|ACPI_STATUS
+id|acpi_cm_validate_fadt
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Cm_global - Global data structures and procedures&n; */
+macro_line|#ifdef ACPI_DEBUG
 id|NATIVE_CHAR
 op_star
 id|acpi_cm_get_mutex_name
@@ -63,6 +68,15 @@ id|u32
 id|type
 )paren
 suffix:semicolon
+id|NATIVE_CHAR
+op_star
+id|acpi_cm_get_region_name
+(paren
+id|u8
+id|space_id
+)paren
+suffix:semicolon
+macro_line|#endif
 id|u8
 id|acpi_cm_valid_object_type
 (paren
@@ -77,7 +91,7 @@ id|u32
 id|id_type
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_cm_clib - Local implementations of C library functions&n; */
+multiline_comment|/*&n; * Cm_clib - Local implementations of C library functions&n; */
 id|NATIVE_UINT
 id|acpi_cm_strlen
 (paren
@@ -265,7 +279,7 @@ id|u32
 id|c
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_cm_copy - Object construction and conversion interfaces&n; */
+multiline_comment|/*&n; * Cm_copy - Object construction and conversion interfaces&n; */
 id|ACPI_STATUS
 id|acpi_cm_build_simple_object
 c_func
@@ -364,7 +378,7 @@ op_star
 id|dest_obj
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_cm_create - Object creation&n; */
+multiline_comment|/*&n; * Cm_create - Object creation&n; */
 id|ACPI_STATUS
 id|acpi_cm_update_object_reference
 (paren
@@ -394,7 +408,7 @@ id|OBJECT_TYPE_INTERNAL
 id|type
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_cm_debug - Debug interfaces&n; */
+multiline_comment|/*&n; * Cm_debug - Debug interfaces&n; */
 id|u32
 id|get_debug_level
 (paren
@@ -633,10 +647,6 @@ id|line_number
 comma
 id|u32
 id|component_id
-comma
-id|NATIVE_CHAR
-op_star
-id|message
 )paren
 suffix:semicolon
 r_void
@@ -651,10 +661,6 @@ id|line_number
 comma
 id|u32
 id|component_id
-comma
-id|NATIVE_CHAR
-op_star
-id|message
 )paren
 suffix:semicolon
 r_void
@@ -669,10 +675,6 @@ id|line_number
 comma
 id|u32
 id|component_id
-comma
-id|NATIVE_CHAR
-op_star
-id|message
 )paren
 suffix:semicolon
 r_void
@@ -692,7 +694,7 @@ id|u32
 id|component_id
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_cm_delete - Object deletion&n; */
+multiline_comment|/*&n; * Cm_delete - Object deletion&n; */
 r_void
 id|acpi_cm_delete_internal_obj
 (paren
@@ -726,7 +728,7 @@ op_star
 id|obj_list
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_cm_eval - object evaluation&n; */
+multiline_comment|/*&n; * Cm_eval - object evaluation&n; */
 multiline_comment|/* Method name strings */
 DECL|macro|METHOD_NAME__HID
 mdefine_line|#define METHOD_NAME__HID        &quot;_HID&quot;
@@ -747,13 +749,13 @@ id|acpi_cm_evaluate_numeric_object
 (paren
 id|NATIVE_CHAR
 op_star
-id|method_name
+id|object_name
 comma
 id|ACPI_NAMESPACE_NODE
 op_star
 id|device_node
 comma
-id|u32
+id|ACPI_INTEGER
 op_star
 id|address
 )paren
@@ -794,7 +796,7 @@ op_star
 id|uid
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_cm_error - exception interfaces&n; */
+multiline_comment|/*&n; * Cm_error - exception interfaces&n; */
 id|NATIVE_CHAR
 op_star
 id|acpi_cm_format_exception
@@ -803,7 +805,7 @@ id|ACPI_STATUS
 id|status
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_cm_mutex - mutual exclusion interfaces&n; */
+multiline_comment|/*&n; * Cm_mutex - mutual exclusion interfaces&n; */
 id|ACPI_STATUS
 id|acpi_cm_mutex_initialize
 (paren
@@ -844,7 +846,7 @@ id|ACPI_MUTEX_HANDLE
 id|mutex_id
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_cm_object - internal object create/delete/cache routines&n; */
+multiline_comment|/*&n; * Cm_object - internal object create/delete/cache routines&n; */
 r_void
 op_star
 id|_cm_allocate_object_desc
@@ -880,7 +882,7 @@ op_star
 id|object
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_cm_ref_cnt - Object reference count management&n; */
+multiline_comment|/*&n; * Cm_ref_cnt - Object reference count management&n; */
 r_void
 id|acpi_cm_add_reference
 (paren
@@ -897,7 +899,7 @@ op_star
 id|object
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_cm_size - Object size routines&n; */
+multiline_comment|/*&n; * Cm_size - Object size routines&n; */
 id|ACPI_STATUS
 id|acpi_cm_get_simple_object_size
 (paren
@@ -935,7 +937,7 @@ op_star
 id|obj_length
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_cm_state - Generic state creation/cache routines&n; */
+multiline_comment|/*&n; * Cm_state - Generic state creation/cache routines&n; */
 r_void
 id|acpi_cm_push_generic_state
 (paren
@@ -1021,7 +1023,7 @@ id|acpi_cm_delete_object_cache
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Acpi_cmutils&n; */
+multiline_comment|/*&n; * Cmutils&n; */
 id|u8
 id|acpi_cm_valid_acpi_name
 (paren
@@ -1034,6 +1036,14 @@ id|acpi_cm_valid_acpi_character
 (paren
 id|NATIVE_CHAR
 id|character
+)paren
+suffix:semicolon
+id|ACPI_STATUS
+id|acpi_cm_resolve_package_references
+(paren
+id|ACPI_OPERAND_OBJECT
+op_star
+id|obj_desc
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Memory allocation functions and related macros.&n; * Macros that expand to include filename and line number&n; */

@@ -1,4 +1,4 @@
-multiline_comment|/*******************************************************************************&n; *&n; * Module Name: nsaccess - Top-level functions for accessing ACPI namespace&n; *              $Revision: 108 $&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: nsaccess - Top-level functions for accessing ACPI namespace&n; *              $Revision: 115 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;amlcode.h&quot;
@@ -101,19 +101,6 @@ op_amp
 id|new_node
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ACPI_FAILURE
-(paren
-id|status
-)paren
-op_logical_or
-(paren
-op_logical_neg
-id|new_node
-)paren
-)paren
 multiline_comment|/*&n;&t;&t; * Name entered successfully.&n;&t;&t; * If entry in Pre_defined_names[] specifies an&n;&t;&t; * initial value, create the initial value.&n;&t;&t; */
 r_if
 c_cond
@@ -160,7 +147,7 @@ suffix:colon
 id|obj_desc-&gt;number.value
 op_assign
 (paren
-id|u32
+id|ACPI_INTEGER
 )paren
 id|STRTOUL
 (paren
@@ -205,12 +192,6 @@ op_logical_neg
 id|obj_desc-&gt;string.pointer
 )paren
 (brace
-id|REPORT_ERROR
-(paren
-l_string|&quot;Initial value string&quot;
-l_string|&quot;allocation failure&quot;
-)paren
-suffix:semicolon
 id|acpi_cm_remove_reference
 (paren
 id|obj_desc
@@ -330,7 +311,11 @@ r_default
 suffix:colon
 id|REPORT_ERROR
 (paren
-l_string|&quot;Unsupported initial type value&quot;
+(paren
+l_string|&quot;Unsupported initial type value %X&bslash;n&quot;
+comma
+id|init_val-&gt;type
+)paren
 )paren
 suffix:semicolon
 id|acpi_cm_remove_reference
@@ -444,6 +429,11 @@ suffix:semicolon
 id|OBJECT_TYPE_INTERNAL
 id|this_search_type
 suffix:semicolon
+id|DEBUG_ONLY_MEMBERS
+(paren
+id|u32
+id|i
+)paren
 r_if
 c_cond
 (paren
@@ -645,7 +635,9 @@ id|this_node
 multiline_comment|/* Current scope has no parent scope */
 id|REPORT_ERROR
 (paren
-l_string|&quot;Too many parent prefixes (^) - reached root&quot;
+(paren
+l_string|&quot;Too many parent prefixes (^) - reached root&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -743,7 +735,7 @@ op_assign
 id|type
 suffix:semicolon
 )brace
-multiline_comment|/* Pluck and ACPI name from the front of the pathname */
+multiline_comment|/* Pluck one ACPI name from the front of the pathname */
 id|MOVE_UNALIGNED32_TO_32
 (paren
 op_amp
@@ -798,7 +790,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * If 1) This is the last segment (Num_segments == 0)&n;&t;&t; *    2) and looking for a specific type&n;&t;&t; *       (Not checking for TYPE_ANY)&n;&t;&t; *    3) which is not a local type (TYPE_DEF_ANY)&n;&t;&t; *    4) which is not a local type (TYPE_SCOPE)&n;&t;&t; *    5) which is not a local type (TYPE_INDEX_FIELD_DEFN)&n;&t;&t; *    6) and type of object is known (not TYPE_ANY)&n;&t;&t; *    7) and object does not match request&n;&t;&t; *&n;&t;&t; * Then we have a type mismatch.  Just warn and ignore it.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * If 1) This is the last segment (Num_segments == 0)&n;&t;&t; *    2) and looking for a specific type&n;&t;&t; *       (Not checking for TYPE_ANY)&n;&t;&t; *    3) Which is not an alias&n;&t;&t; *    4) which is not a local type (TYPE_DEF_ANY)&n;&t;&t; *    5) which is not a local type (TYPE_SCOPE)&n;&t;&t; *    6) which is not a local type (TYPE_INDEX_FIELD_DEFN)&n;&t;&t; *    7) and type of object is known (not TYPE_ANY)&n;&t;&t; *    8) and object does not match request&n;&t;&t; *&n;&t;&t; * Then we have a type mismatch.  Just warn and ignore it.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -812,6 +804,12 @@ op_logical_and
 id|type_to_check_for
 op_ne
 id|ACPI_TYPE_ANY
+)paren
+op_logical_and
+(paren
+id|type_to_check_for
+op_ne
+id|INTERNAL_TYPE_ALIAS
 )paren
 op_logical_and
 (paren
@@ -848,7 +846,16 @@ id|type_to_check_for
 multiline_comment|/* Complain about a type mismatch */
 id|REPORT_WARNING
 (paren
-l_string|&quot;Type mismatch&quot;
+(paren
+l_string|&quot;Ns_lookup: %4.4s, type %X, checking for type %X&bslash;n&quot;
+comma
+op_amp
+id|simple_name
+comma
+id|this_node-&gt;type
+comma
+id|type_to_check_for
+)paren
 )paren
 suffix:semicolon
 )brace

@@ -131,6 +131,10 @@ DECL|macro|M1064_XPIXCLKCTRL_SRC_PLL
 mdefine_line|#define      M1064_XPIXCLKCTRL_SRC_PLL&t;&t;0x01
 DECL|macro|M1064_XPIXCLKCTRL_SRC_EXT
 mdefine_line|#define      M1064_XPIXCLKCTRL_SRC_EXT&t;&t;0x02
+DECL|macro|M1064_XPIXCLKCTRL_SRC_SYS
+mdefine_line|#define&t;     M1064_XPIXCLKCTRL_SRC_SYS&t;&t;0x03&t;/* G200/G400 */
+DECL|macro|M1064_XPIXCLKCTRL_SRC_PLL2
+mdefine_line|#define      M1064_XPIXCLKCTRL_SRC_PLL2&t;&t;0x03&t;/* G450 */
 DECL|macro|M1064_XPIXCLKCTRL_SRC_MASK
 mdefine_line|#define      M1064_XPIXCLKCTRL_SRC_MASK&t;&t;0x03
 DECL|macro|M1064_XPIXCLKCTRL_EN
@@ -267,6 +271,22 @@ DECL|macro|M1064_XPIXPLLCP
 mdefine_line|#define M1064_XPIXPLLCP&t;&t;0x4E
 DECL|macro|M1064_XPIXPLLSTAT
 mdefine_line|#define M1064_XPIXPLLSTAT&t;0x4F
+DECL|macro|M1064_XTVO_IDX
+mdefine_line|#define M1064_XTVO_IDX&t;&t;0x87
+DECL|macro|M1064_XTVO_DATA
+mdefine_line|#define M1064_XTVO_DATA&t;&t;0x88
+DECL|macro|M1064_XOUTPUTCONN
+mdefine_line|#define M1064_XOUTPUTCONN&t;0x8A
+DECL|macro|M1064_X8B
+mdefine_line|#define M1064_X8B&t;&t;0x8B
+DECL|macro|M1064_XPIXPLL2STAT
+mdefine_line|#define M1064_XPIXPLL2STAT&t;0x8C
+DECL|macro|M1064_XPIXPLL2P
+mdefine_line|#define M1064_XPIXPLL2P&t;&t;0x8D
+DECL|macro|M1064_XPIXPLL2N
+mdefine_line|#define M1064_XPIXPLL2N&t;&t;0x8E
+DECL|macro|M1064_XPIXPLL2M
+mdefine_line|#define M1064_XPIXPLL2M&t;&t;0x8F
 DECL|enum|POS1064
 r_enum
 id|POS1064
@@ -350,6 +370,9 @@ comma
 id|POS1064_XCOLKEYL
 comma
 id|POS1064_XCOLKEYH
+comma
+DECL|enumerator|POS1064_XOUTPUTCONN
+id|POS1064_XOUTPUTCONN
 )brace
 suffix:semicolon
 macro_line|#endif&t;/* __MATROXFB_DAC1064_H__ */

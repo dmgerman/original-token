@@ -80,6 +80,12 @@ c_func
 )paren
 suffix:semicolon
 id|next_mm-&gt;context
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
 op_assign
 id|mmc
 suffix:semicolon

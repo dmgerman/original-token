@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: evxfevnt - External Interfaces, ACPI event disable/enable&n; *              $Revision: 19 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: evxfevnt - External Interfaces, ACPI event disable/enable&n; *              $Revision: 26 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;achware.h&quot;
@@ -12,19 +12,7 @@ id|MODULE_NAME
 (paren
 l_string|&quot;evxfevnt&quot;
 )paren
-id|ACPI_STATUS
-id|acpi_ev_find_pci_root_buses
-(paren
-r_void
-)paren
-suffix:semicolon
-id|ACPI_STATUS
-id|acpi_ev_init_devices
-(paren
-r_void
-)paren
-suffix:semicolon
-multiline_comment|/**************************************************************************&n; *&n; * FUNCTION:    Acpi_enable&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Ensures that the system control interrupt (SCI) is properly&n; *              configured, disables SCI event sources, installs the SCI&n; *              handler, and transfers the system into ACPI mode.&n; *&n; *************************************************************************/
+multiline_comment|/**************************************************************************&n; *&n; * FUNCTION:    Acpi_enable&n; *&n; * PARAMETERS:  None&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Transfers the system into ACPI mode.&n; *&n; *************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_enable
 id|acpi_enable
@@ -49,29 +37,6 @@ id|AE_NO_ACPI_TABLES
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Init the hardware */
-multiline_comment|/*&n;&t; * With the advent of a 3-pass parser, we need to be&n;&t; *  prepared to execute on initialized HW before the&n;&t; *  namespace has completed its load.&n;&t; */
-id|status
-op_assign
-id|acpi_cm_hardware_initialize
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ACPI_FAILURE
-(paren
-id|status
-)paren
-)paren
-(brace
-r_return
-(paren
-id|status
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Make sure the BIOS supports ACPI mode */
 r_if
 c_cond
@@ -87,78 +52,6 @@ c_func
 r_return
 (paren
 id|AE_ERROR
-)paren
-suffix:semicolon
-)brace
-id|acpi_gbl_original_mode
-op_assign
-id|acpi_hw_get_mode
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Initialize the Fixed and General Purpose Acpi_events prior. This is&n;&t; * done prior to enabling SCIs to prevent interrupts from occuring&n;&t; * before handers are installed.&n;&t; */
-id|status
-op_assign
-id|acpi_ev_fixed_event_initialize
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ACPI_FAILURE
-(paren
-id|status
-)paren
-)paren
-(brace
-r_return
-(paren
-id|status
-)paren
-suffix:semicolon
-)brace
-id|status
-op_assign
-id|acpi_ev_gpe_initialize
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ACPI_FAILURE
-(paren
-id|status
-)paren
-)paren
-(brace
-r_return
-(paren
-id|status
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Install the SCI handler */
-id|status
-op_assign
-id|acpi_ev_install_sci_handler
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ACPI_FAILURE
-(paren
-id|status
-)paren
-)paren
-(brace
-r_return
-(paren
-id|status
 )paren
 suffix:semicolon
 )brace
@@ -185,28 +78,6 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Install handlers for control method GPE handlers (_Lxx, _Exx) */
-id|acpi_ev_init_gpe_control_methods
-(paren
-)paren
-suffix:semicolon
-id|status
-op_assign
-id|acpi_ev_init_global_lock_handler
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Perform additional initialization that may cause control methods&n;&t; * to be executed&n;&t; *&n;&t; * It may be wise to move this code to a new interface&n;&t; */
-multiline_comment|/*&n;&t; *  Install PCI config space handler for all PCI root bridges.  A PCI root&n;&t; *  bridge is found by searching for devices containing a HID with the value&n;&t; *  EISAID(&quot;PNP0A03&quot;)&n;&t; */
-id|acpi_ev_find_pci_root_buses
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Call _INI on all devices */
-id|acpi_ev_init_devices
-(paren
-)paren
-suffix:semicolon
 r_return
 (paren
 id|status
@@ -355,17 +226,39 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * Enable the requested fixed event (by writing a one to the&n;&t;&t; * enable register bit)&n;&t;&t; */
-id|acpi_hw_register_access
+id|acpi_hw_register_bit_access
 (paren
 id|ACPI_WRITE
 comma
-id|TRUE
+id|ACPI_MTX_LOCK
 comma
 id|register_id
 comma
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+l_int|1
+op_ne
+id|acpi_hw_register_bit_access
+c_func
+(paren
+id|ACPI_READ
+comma
+id|ACPI_MTX_LOCK
+comma
+id|register_id
+)paren
+)paren
+(brace
+r_return
+(paren
+id|AE_ERROR
+)paren
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -511,17 +404,39 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * Disable the requested fixed event (by writing a zero to the&n;&t;&t; * enable register bit)&n;&t;&t; */
-id|acpi_hw_register_access
+id|acpi_hw_register_bit_access
 (paren
 id|ACPI_WRITE
 comma
-id|TRUE
+id|ACPI_MTX_LOCK
 comma
 id|register_id
 comma
 l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+l_int|0
+op_ne
+id|acpi_hw_register_bit_access
+c_func
+(paren
+id|ACPI_READ
+comma
+id|ACPI_MTX_LOCK
+comma
+id|register_id
+)paren
+)paren
+(brace
+r_return
+(paren
+id|AE_ERROR
+)paren
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -667,11 +582,11 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * Clear the requested fixed event (By writing a one to the&n;&t;&t; * status register bit)&n;&t;&t; */
-id|acpi_hw_register_access
+id|acpi_hw_register_bit_access
 (paren
 id|ACPI_WRITE
 comma
-id|TRUE
+id|ACPI_MTX_LOCK
 comma
 id|register_id
 comma
@@ -842,11 +757,11 @@ multiline_comment|/* Get the status of the requested fixed event */
 op_star
 id|event_status
 op_assign
-id|acpi_hw_register_access
+id|acpi_hw_register_bit_access
 (paren
 id|ACPI_READ
 comma
-id|TRUE
+id|ACPI_MTX_LOCK
 comma
 id|register_id
 )paren

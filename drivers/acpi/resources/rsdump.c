@@ -1,13 +1,14 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: rsdump - Functions do dump out the resource structures.&n; *              $Revision: 10 $&n; *&n; *****************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * Module Name: rsdump - Functions do dump out the resource structures.&n; *              $Revision: 13 $&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
+macro_line|#include &quot;acresrc.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          RESOURCE_MANAGER
 id|MODULE_NAME
 (paren
 l_string|&quot;rsdump&quot;
 )paren
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_irq&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_irq&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_rs_dump_irq
 id|acpi_rs_dump_irq
@@ -81,7 +82,7 @@ l_string|&quot;Exclusive&quot;
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t%d Interrupts ( &quot;
+l_string|&quot;&bslash;t&bslash;t%X Interrupts ( &quot;
 comma
 id|irq_data-&gt;number_of_interrupts
 )paren
@@ -103,7 +104,7 @@ op_increment
 (brace
 id|acpi_os_printf
 (paren
-l_string|&quot;%d &quot;
+l_string|&quot;%X &quot;
 comma
 id|irq_data-&gt;interrupts
 (braket
@@ -120,7 +121,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_dma&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_dma&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_rs_dump_dma
 id|acpi_rs_dump_dma
@@ -268,7 +269,7 @@ suffix:semicolon
 )brace
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_number of Channels: %d ( &quot;
+l_string|&quot;&bslash;t&bslash;t_number of Channels: %X ( &quot;
 comma
 id|dma_data-&gt;number_of_channels
 )paren
@@ -290,7 +291,7 @@ op_increment
 (brace
 id|acpi_os_printf
 (paren
-l_string|&quot;%d &quot;
+l_string|&quot;%X &quot;
 comma
 id|dma_data-&gt;channels
 (braket
@@ -307,7 +308,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_start_dependent_functions&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_start_dependent_functions&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_rs_dump_start_dependent_functions
 id|acpi_rs_dump_start_dependent_functions
@@ -428,7 +429,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_io&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_io&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_rs_dump_io
 id|acpi_rs_dump_io
@@ -469,28 +470,28 @@ l_int|10
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_range minimum base: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_range minimum base: %08X&bslash;n&quot;
 comma
 id|io_data-&gt;min_base_address
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_range maximum base: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_range maximum base: %08X&bslash;n&quot;
 comma
 id|io_data-&gt;max_base_address
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_alignment: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_alignment: %08X&bslash;n&quot;
 comma
 id|io_data-&gt;alignment
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_range Length: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_range Length: %08X&bslash;n&quot;
 comma
 id|io_data-&gt;range_length
 )paren
@@ -498,7 +499,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_fixed_io&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_fixed_io&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_rs_dump_fixed_io
 id|acpi_rs_dump_fixed_io
@@ -525,14 +526,14 @@ l_string|&quot;&bslash;t_fixed Io Resource&bslash;n&quot;
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_range base address: 0x%08x&quot;
+l_string|&quot;&bslash;t&bslash;t_range base address: %08X&quot;
 comma
 id|fixed_io_data-&gt;base_address
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_range length: 0x%08x&quot;
+l_string|&quot;&bslash;t&bslash;t_range length: %08X&quot;
 comma
 id|fixed_io_data-&gt;range_length
 )paren
@@ -540,7 +541,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_vendor_specific&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_vendor_specific&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_rs_dump_vendor_specific
 id|acpi_rs_dump_vendor_specific
@@ -572,7 +573,7 @@ l_string|&quot;&bslash;t_vendor Specific Resource&bslash;n&quot;
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_length: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_length: %08X&bslash;n&quot;
 comma
 id|vendor_data-&gt;length
 )paren
@@ -594,7 +595,7 @@ op_increment
 (brace
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_byte %d: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_byte %X: %08X&bslash;n&quot;
 comma
 id|index
 comma
@@ -608,7 +609,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_memory24&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_memory24&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_rs_dump_memory24
 id|acpi_rs_dump_memory24
@@ -649,28 +650,28 @@ l_string|&quot; only&quot;
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_range minimum base: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_range minimum base: %08X&bslash;n&quot;
 comma
 id|memory24_data-&gt;min_base_address
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_range maximum base: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_range maximum base: %08X&bslash;n&quot;
 comma
 id|memory24_data-&gt;max_base_address
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_alignment: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_alignment: %08X&bslash;n&quot;
 comma
 id|memory24_data-&gt;alignment
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_range length: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_range length: %08X&bslash;n&quot;
 comma
 id|memory24_data-&gt;range_length
 )paren
@@ -678,7 +679,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_memory32&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_memory32&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_rs_dump_memory32
 id|acpi_rs_dump_memory32
@@ -719,28 +720,28 @@ l_string|&quot; only&quot;
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_range minimum base: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_range minimum base: %08X&bslash;n&quot;
 comma
 id|memory32_data-&gt;min_base_address
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_range maximum base: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_range maximum base: %08X&bslash;n&quot;
 comma
 id|memory32_data-&gt;max_base_address
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_alignment: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_alignment: %08X&bslash;n&quot;
 comma
 id|memory32_data-&gt;alignment
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_range length: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_range length: %08X&bslash;n&quot;
 comma
 id|memory32_data-&gt;range_length
 )paren
@@ -748,7 +749,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_fixed_memory32&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_fixed_memory32&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_rs_dump_fixed_memory32
 id|acpi_rs_dump_fixed_memory32
@@ -789,14 +790,14 @@ l_string|&quot; Only&quot;
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_range base address: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_range base address: %08X&bslash;n&quot;
 comma
 id|fixed_memory32_data-&gt;range_base_address
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_range length: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_range length: %08X&bslash;n&quot;
 comma
 id|fixed_memory32_data-&gt;range_length
 )paren
@@ -804,7 +805,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_address16&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_address16&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_rs_dump_address16
 id|acpi_rs_dump_address16
@@ -1063,35 +1064,35 @@ l_string|&quot;not&quot;
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_granularity: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_granularity: %08X&bslash;n&quot;
 comma
 id|address16_data-&gt;granularity
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_address range min: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_address range min: %08X&bslash;n&quot;
 comma
 id|address16_data-&gt;min_address_range
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_address range max: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_address range max: %08X&bslash;n&quot;
 comma
 id|address16_data-&gt;max_address_range
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_address translation offset: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_address translation offset: %08X&bslash;n&quot;
 comma
 id|address16_data-&gt;address_translation_offset
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_address Length: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_address Length: %08X&bslash;n&quot;
 comma
 id|address16_data-&gt;address_length
 )paren
@@ -1106,7 +1107,7 @@ id|address16_data-&gt;resource_source_index
 (brace
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_resource Source Index: %d&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_resource Source Index: %X&bslash;n&quot;
 comma
 id|address16_data-&gt;resource_source_index
 )paren
@@ -1122,7 +1123,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_address32&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_address32&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_rs_dump_address32
 id|acpi_rs_dump_address32
@@ -1376,35 +1377,35 @@ l_string|&quot;not &quot;
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_granularity: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_granularity: %08X&bslash;n&quot;
 comma
 id|address32_data-&gt;granularity
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_address range min: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_address range min: %08X&bslash;n&quot;
 comma
 id|address32_data-&gt;min_address_range
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_address range max: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_address range max: %08X&bslash;n&quot;
 comma
 id|address32_data-&gt;max_address_range
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_address translation offset: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_address translation offset: %08X&bslash;n&quot;
 comma
 id|address32_data-&gt;address_translation_offset
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_address Length: 0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_address Length: %08X&bslash;n&quot;
 comma
 id|address32_data-&gt;address_length
 )paren
@@ -1419,7 +1420,7 @@ id|address32_data-&gt;resource_source_index
 (brace
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_resource Source Index: %d&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_resource Source Index: %X&bslash;n&quot;
 comma
 id|address32_data-&gt;resource_source_index
 )paren
@@ -1435,7 +1436,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_extended_irq&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_extended_irq&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Prints out the various members of the Data structure type.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_rs_dump_extended_irq
 id|acpi_rs_dump_extended_irq
@@ -1523,7 +1524,7 @@ l_string|&quot;Exclusive&quot;
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_interrupts : %d ( &quot;
+l_string|&quot;&bslash;t&bslash;t_interrupts : %X ( &quot;
 comma
 id|ext_irq_data-&gt;number_of_interrupts
 )paren
@@ -1545,7 +1546,7 @@ op_increment
 (brace
 id|acpi_os_printf
 (paren
-l_string|&quot;%d &quot;
+l_string|&quot;%X &quot;
 comma
 id|ext_irq_data-&gt;interrupts
 (braket
@@ -1569,7 +1570,7 @@ id|ext_irq_data-&gt;resource_source_index
 (brace
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_resource Source Index: %d&quot;
+l_string|&quot;&bslash;t&bslash;t_resource Source Index: %X&quot;
 comma
 id|ext_irq_data-&gt;resource_source_index
 )paren
@@ -1585,7 +1586,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_resource_list&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Dispatches the structure to the correct dump routine.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_resource_list&n; *&n; * PARAMETERS:  Data            - pointer to the resource structure to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Dispatches the structure to the correct dump routine.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_rs_dump_resource_list
 id|acpi_rs_dump_resource_list
@@ -1829,7 +1830,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_irq_list&n; *&n; * PARAMETERS:  Data            - pointer to the routing table to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Dispatches the structures to the correct dump routine.&n; *&n; ******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_rs_dump_irq_list&n; *&n; * PARAMETERS:  Data            - pointer to the routing table to dump.&n; *&n; * RETURN:&n; *&n; * DESCRIPTION: Dispatches the structures to the correct dump routine.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_rs_dump_irq_list
 id|acpi_rs_dump_irq_list
@@ -1888,7 +1889,7 @@ id|done
 (brace
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t_pCI IRQ Routing Table structure %x.&bslash;n&quot;
+l_string|&quot;&bslash;t_pCI IRQ Routing Table structure %X.&bslash;n&quot;
 comma
 id|count
 op_increment
@@ -1896,14 +1897,14 @@ op_increment
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_address: 0x%x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_address: %X&bslash;n&quot;
 comma
 id|prt_element-&gt;data.address
 )paren
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_pin: 0x%x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_pin: %X&bslash;n&quot;
 comma
 id|prt_element-&gt;data.pin
 )paren
@@ -1917,7 +1918,7 @@ id|prt_element-&gt;data.source
 suffix:semicolon
 id|acpi_os_printf
 (paren
-l_string|&quot;&bslash;t&bslash;t_source_index: 0x%x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t_source_index: %X&bslash;n&quot;
 comma
 id|prt_element-&gt;data.source_index
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmglobal - Global variables for the ACPI subsystem&n; *              $Revision: 99 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cmglobal - Global variables for the ACPI subsystem&n; *              $Revision: 112 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 DECL|macro|DEFINE_ACPI_GLOBALS
 mdefine_line|#define DEFINE_ACPI_GLOBALS
@@ -6,6 +6,7 @@ macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acevents.h&quot;
 macro_line|#include &quot;acnamesp.h&quot;
 macro_line|#include &quot;acinterp.h&quot;
+macro_line|#include &quot;amlcode.h&quot;
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT          MISCELLANEOUS
 id|MODULE_NAME
@@ -26,7 +27,7 @@ DECL|variable|acpi_dbg_layer
 id|u32
 id|acpi_dbg_layer
 op_assign
-id|ALL_COMPONENTS
+id|COMPONENT_DEFAULT
 suffix:semicolon
 DECL|variable|acpi_gbl_nesting_level
 id|u32
@@ -66,6 +67,31 @@ id|u8
 id|acpi_gbl_shutdown
 op_assign
 id|TRUE
+suffix:semicolon
+DECL|variable|acpi_gbl_decode_to8bit
+id|u8
+id|acpi_gbl_decode_to8bit
+(braket
+l_int|8
+)braket
+op_assign
+(brace
+l_int|1
+comma
+l_int|2
+comma
+l_int|4
+comma
+l_int|8
+comma
+l_int|16
+comma
+l_int|32
+comma
+l_int|64
+comma
+l_int|128
+)brace
 suffix:semicolon
 multiline_comment|/******************************************************************************&n; *&n; * Namespace globals&n; *&n; ******************************************************************************/
 multiline_comment|/*&n; * Names built-in to the interpreter&n; *&n; * Initial values are currently supported only for types String and Number.&n; * To avoid type punning, both are specified as strings in this table.&n; */
@@ -228,41 +254,43 @@ multiline_comment|/* 22 Notify           */
 id|NSP_NORMAL
 comma
 multiline_comment|/* 23 Address Handler  */
-id|NSP_NORMAL
-comma
-multiline_comment|/* 24 Def_field_defn   */
-id|NSP_NORMAL
-comma
-multiline_comment|/* 25 Bank_field_defn  */
-id|NSP_NORMAL
-comma
-multiline_comment|/* 26 Index_field_defn */
-id|NSP_NORMAL
-comma
-multiline_comment|/* 27 If               */
-id|NSP_NORMAL
-comma
-multiline_comment|/* 28 Else             */
-id|NSP_NORMAL
-comma
-multiline_comment|/* 29 While            */
 id|NSP_NEWSCOPE
-comma
-multiline_comment|/* 30 Scope            */
+op_or
 id|NSP_LOCAL
 comma
-multiline_comment|/* 31 Def_any          */
+multiline_comment|/* 24 Resource         */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 32 Method Arg       */
+multiline_comment|/* 25 Def_field_defn   */
 id|NSP_NORMAL
 comma
-multiline_comment|/* 33 Method Local     */
+multiline_comment|/* 26 Bank_field_defn  */
+id|NSP_NORMAL
+comma
+multiline_comment|/* 27 Index_field_defn */
+id|NSP_NORMAL
+comma
+multiline_comment|/* 28 If               */
+id|NSP_NORMAL
+comma
+multiline_comment|/* 29 Else             */
+id|NSP_NORMAL
+comma
+multiline_comment|/* 30 While            */
+id|NSP_NEWSCOPE
+comma
+multiline_comment|/* 31 Scope            */
+id|NSP_LOCAL
+comma
+multiline_comment|/* 32 Def_any          */
+id|NSP_NORMAL
+comma
+multiline_comment|/* 33 Extra            */
 id|NSP_NORMAL
 multiline_comment|/* 34 Invalid          */
 )brace
 suffix:semicolon
-multiline_comment|/******************************************************************************&n; *&n; * Table globals&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Table globals&n; *&n; * NOTE: This table includes ONLY the ACPI tables that the subsystem consumes.&n; * it is NOT an exhaustive list of all possible ACPI tables.  All ACPI tables&n; * that are not used by the subsystem are simply ignored.&n; *&n; ******************************************************************************/
 DECL|variable|acpi_gbl_acpi_tables
 id|ACPI_TABLE_DESC
 id|acpi_gbl_acpi_tables
@@ -278,10 +306,10 @@ id|NUM_ACPI_TABLES
 )braket
 op_assign
 (brace
-multiline_comment|/* Name,   Signature,  Signature size,    How many allowed?,   Supported?  Global typed pointer */
+multiline_comment|/***********    Name,    Signature,  Signature size,    How many allowed?,   Supported?  Global typed pointer */
 multiline_comment|/* RSDP 0 */
 (brace
-l_string|&quot;RSDP&quot;
+id|RSDP_NAME
 comma
 id|RSDP_SIG
 comma
@@ -299,33 +327,7 @@ comma
 l_int|NULL
 )brace
 comma
-multiline_comment|/* APIC 1 */
-(brace
-id|APIC_SIG
-comma
-id|APIC_SIG
-comma
-r_sizeof
-(paren
-id|APIC_SIG
-)paren
-op_minus
-l_int|1
-comma
-id|ACPI_TABLE_SINGLE
-comma
-id|AE_OK
-comma
-(paren
-r_void
-op_star
-op_star
-)paren
-op_amp
-id|acpi_gbl_APIC
-)brace
-comma
-multiline_comment|/* DSDT 2 */
+multiline_comment|/* DSDT 1 */
 (brace
 id|DSDT_SIG
 comma
@@ -351,15 +353,15 @@ op_amp
 id|acpi_gbl_DSDT
 )brace
 comma
-multiline_comment|/* FACP 3 */
+multiline_comment|/* FADT 2 */
 (brace
-id|FACP_SIG
+id|FADT_SIG
 comma
-id|FACP_SIG
+id|FADT_SIG
 comma
 r_sizeof
 (paren
-id|FACP_SIG
+id|FADT_SIG
 )paren
 op_minus
 l_int|1
@@ -374,10 +376,10 @@ op_star
 op_star
 )paren
 op_amp
-id|acpi_gbl_FACP
+id|acpi_gbl_FADT
 )brace
 comma
-multiline_comment|/* FACS 4 */
+multiline_comment|/* FACS 3 */
 (brace
 id|FACS_SIG
 comma
@@ -403,7 +405,7 @@ op_amp
 id|acpi_gbl_FACS
 )brace
 comma
-multiline_comment|/* PSDT 5 */
+multiline_comment|/* PSDT 4 */
 (brace
 id|PSDT_SIG
 comma
@@ -423,27 +425,7 @@ comma
 l_int|NULL
 )brace
 comma
-multiline_comment|/* RSDT 6 */
-(brace
-id|RSDT_SIG
-comma
-id|RSDT_SIG
-comma
-r_sizeof
-(paren
-id|RSDT_SIG
-)paren
-op_minus
-l_int|1
-comma
-id|ACPI_TABLE_SINGLE
-comma
-id|AE_OK
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* SSDT 7 */
+multiline_comment|/* SSDT 5 */
 (brace
 id|SSDT_SIG
 comma
@@ -463,15 +445,15 @@ comma
 l_int|NULL
 )brace
 comma
-multiline_comment|/* SBST 8 */
+multiline_comment|/* XSDT 6 */
 (brace
-id|SBST_SIG
+id|XSDT_SIG
 comma
-id|SBST_SIG
+id|XSDT_SIG
 comma
 r_sizeof
 (paren
-id|SBST_SIG
+id|RSDT_SIG
 )paren
 op_minus
 l_int|1
@@ -480,39 +462,10 @@ id|ACPI_TABLE_SINGLE
 comma
 id|AE_OK
 comma
-(paren
-r_void
-op_star
-op_star
-)paren
-op_amp
-id|acpi_gbl_SBST
-)brace
-comma
-multiline_comment|/* BOOT 9 */
-(brace
-id|BOOT_SIG
-comma
-id|BOOT_SIG
-comma
-r_sizeof
-(paren
-id|BOOT_SIG
-)paren
-op_minus
-l_int|1
-comma
-id|ACPI_TABLE_SINGLE
-comma
-id|AE_SUPPORT
-comma
 l_int|NULL
 )brace
+comma
 )brace
-suffix:semicolon
-DECL|variable|acpi_gbl_acpi_init_data
-id|ACPI_INIT_DATA
-id|acpi_gbl_acpi_init_data
 suffix:semicolon
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_cm_valid_object_type&n; *&n; * PARAMETERS:  None.&n; *&n; * RETURN:      TRUE if valid object type&n; *&n; * DESCRIPTION: Validate an object type&n; *&n; ****************************************************************************/
 id|u8
@@ -812,50 +765,12 @@ r_void
 DECL|function|acpi_cm_init_globals
 id|acpi_cm_init_globals
 (paren
-id|ACPI_INIT_DATA
-op_star
-id|init_data
+r_void
 )paren
 (brace
 id|u32
 id|i
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|init_data
-)paren
-(brace
-id|MEMCPY
-(paren
-op_amp
-id|acpi_gbl_acpi_init_data
-comma
-id|init_data
-comma
-r_sizeof
-(paren
-id|ACPI_INIT_DATA
-)paren
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|MEMSET
-(paren
-op_amp
-id|acpi_gbl_acpi_init_data
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|ACPI_INIT_DATA
-)paren
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* ACPI table structure */
 r_for
 c_loop
@@ -866,7 +781,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|ACPI_TABLE_MAX
+id|NUM_ACPI_TABLES
 suffix:semicolon
 id|i
 op_increment
@@ -945,7 +860,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|ACPI_MAX_ADDRESS_SPACE
+id|ACPI_NUM_ADDRESS_SPACES
 suffix:semicolon
 id|i
 op_increment
@@ -1028,7 +943,7 @@ id|acpi_gbl_RSDP
 op_assign
 l_int|NULL
 suffix:semicolon
-id|acpi_gbl_RSDT
+id|acpi_gbl_XSDT
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -1036,19 +951,11 @@ id|acpi_gbl_FACS
 op_assign
 l_int|NULL
 suffix:semicolon
-id|acpi_gbl_FACP
-op_assign
-l_int|NULL
-suffix:semicolon
-id|acpi_gbl_APIC
+id|acpi_gbl_FADT
 op_assign
 l_int|NULL
 suffix:semicolon
 id|acpi_gbl_DSDT
-op_assign
-l_int|NULL
-suffix:semicolon
-id|acpi_gbl_SBST
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -1077,10 +984,6 @@ suffix:semicolon
 id|acpi_gbl_rsdp_original_location
 op_assign
 l_int|0
-suffix:semicolon
-id|acpi_gbl_when_to_parse_methods
-op_assign
-id|METHOD_PARSE_CONFIGURATION
 suffix:semicolon
 id|acpi_gbl_cm_single_step
 op_assign
@@ -1198,20 +1101,6 @@ suffix:semicolon
 id|acpi_gbl_walk_state_cache_hits
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/* Interpreter */
-id|acpi_gbl_buf_seq
-op_assign
-l_int|0
-suffix:semicolon
-id|acpi_gbl_node_err
-op_assign
-id|FALSE
-suffix:semicolon
-multiline_comment|/* Parser */
-id|acpi_gbl_parsed_namespace_root
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* Hardware oriented */
 id|acpi_gbl_gpe0enable_register_save

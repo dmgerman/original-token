@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc32.c,v 1.168 2000/12/11 18:59:35 davem Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
+multiline_comment|/* $Id: sys_sparc32.c,v 1.171 2000/12/13 16:34:55 davem Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -4845,12 +4845,10 @@ op_star
 id|arg
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
 id|old_fs
 op_assign
 id|get_fs
@@ -4896,27 +4894,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|f.l_start
-op_ge
-l_int|0x7fffffffUL
-op_logical_or
-id|f.l_len
-op_ge
-l_int|0x7fffffffUL
-op_logical_or
-id|f.l_start
-op_plus
-id|f.l_len
-op_ge
-l_int|0x7fffffffUL
-)paren
-r_return
-op_minus
-id|EOVERFLOW
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|put_flock
 c_func
 (paren
@@ -4931,12 +4908,10 @@ op_star
 id|arg
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -16713,18 +16688,6 @@ comma
 id|bytes_to_copy
 )paren
 suffix:semicolon
-id|flush_dcache_page
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
-id|flush_page_to_ram
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
 id|kunmap
 c_func
 (paren
@@ -19192,12 +19155,7 @@ id|i
 op_increment
 comma
 id|table
-op_add_assign
-r_sizeof
-(paren
-r_struct
-id|kernel_sym32
-)paren
+op_increment
 )paren
 (brace
 r_if

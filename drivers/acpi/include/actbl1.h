@@ -1,9 +1,13 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: actbl32.h - ACPI tables specific to IA32&n; *       $Revision: 11 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: actbl1.h - ACPI 1.0 tables&n; *       $Revision: 15 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
-macro_line|#ifndef __ACTBL32_H__
-DECL|macro|__ACTBL32_H__
-mdefine_line|#define __ACTBL32_H__
-multiline_comment|/* IA32 Root System Description Table */
+macro_line|#ifndef __ACTBL1_H__
+DECL|macro|__ACTBL1_H__
+mdefine_line|#define __ACTBL1_H__
+macro_line|#pragma pack(1)
+multiline_comment|/*************************************/
+multiline_comment|/* ACPI Specification Rev 1.0 for    */
+multiline_comment|/* the Root System Description Table */
+multiline_comment|/*************************************/
 r_typedef
 r_struct
 (brace
@@ -13,20 +17,22 @@ id|header
 suffix:semicolon
 multiline_comment|/* Table header */
 DECL|member|table_offset_entry
-r_void
-op_star
+id|u32
 id|table_offset_entry
 (braket
 l_int|1
 )braket
 suffix:semicolon
 multiline_comment|/* Array of pointers to other */
-multiline_comment|/* tables&squot; headers */
-DECL|typedef|ROOT_SYSTEM_DESCRIPTION_TABLE
+multiline_comment|/* ACPI tables */
+DECL|typedef|RSDT_DESCRIPTOR_REV1
 )brace
-id|ROOT_SYSTEM_DESCRIPTION_TABLE
+id|RSDT_DESCRIPTOR_REV1
 suffix:semicolon
-multiline_comment|/* IA32 Firmware ACPI Control Structure */
+multiline_comment|/***************************************/
+multiline_comment|/* ACPI Specification Rev 1.0 for      */
+multiline_comment|/* the Firmware ACPI Control Structure */
+multiline_comment|/***************************************/
 r_typedef
 r_struct
 (brace
@@ -80,11 +86,14 @@ l_int|40
 )braket
 suffix:semicolon
 multiline_comment|/* reserved - must be zero */
-DECL|typedef|FIRMWARE_ACPI_CONTROL_STRUCTURE
+DECL|typedef|FACS_DESCRIPTOR_REV1
 )brace
-id|FIRMWARE_ACPI_CONTROL_STRUCTURE
+id|FACS_DESCRIPTOR_REV1
 suffix:semicolon
-multiline_comment|/* IA32 Fixed ACPI Description Table */
+multiline_comment|/************************************/
+multiline_comment|/* ACPI Specification Rev 1.0 for   */
+multiline_comment|/* the Fixed ACPI Description Table */
+multiline_comment|/************************************/
 r_typedef
 r_struct
 (brace
@@ -94,12 +103,12 @@ id|header
 suffix:semicolon
 multiline_comment|/* table header */
 DECL|member|firmware_ctrl
-id|ACPI_TBLPTR
+id|u32
 id|firmware_ctrl
 suffix:semicolon
 multiline_comment|/* Physical address of FACS */
 DECL|member|dsdt
-id|ACPI_TBLPTR
+id|u32
 id|dsdt
 suffix:semicolon
 multiline_comment|/* Physical address of DSDT */
@@ -119,7 +128,7 @@ id|sci_int
 suffix:semicolon
 multiline_comment|/* System vector of SCI interrupt */
 DECL|member|smi_cmd
-id|ACPI_IO_ADDRESS
+id|u32
 id|smi_cmd
 suffix:semicolon
 multiline_comment|/* Port address of SMI command port */
@@ -144,42 +153,42 @@ id|reserved2
 suffix:semicolon
 multiline_comment|/* reserved - must be zero */
 DECL|member|pm1a_evt_blk
-id|ACPI_IO_ADDRESS
+id|u32
 id|pm1a_evt_blk
 suffix:semicolon
 multiline_comment|/* Port address of Power Mgt 1a Acpi_event Reg Blk */
 DECL|member|pm1b_evt_blk
-id|ACPI_IO_ADDRESS
+id|u32
 id|pm1b_evt_blk
 suffix:semicolon
 multiline_comment|/* Port address of Power Mgt 1b Acpi_event Reg Blk */
 DECL|member|pm1a_cnt_blk
-id|ACPI_IO_ADDRESS
+id|u32
 id|pm1a_cnt_blk
 suffix:semicolon
 multiline_comment|/* Port address of Power Mgt 1a Control Reg Blk */
 DECL|member|pm1b_cnt_blk
-id|ACPI_IO_ADDRESS
+id|u32
 id|pm1b_cnt_blk
 suffix:semicolon
 multiline_comment|/* Port address of Power Mgt 1b Control Reg Blk */
 DECL|member|pm2_cnt_blk
-id|ACPI_IO_ADDRESS
+id|u32
 id|pm2_cnt_blk
 suffix:semicolon
 multiline_comment|/* Port address of Power Mgt 2 Control Reg Blk */
 DECL|member|pm_tmr_blk
-id|ACPI_IO_ADDRESS
+id|u32
 id|pm_tmr_blk
 suffix:semicolon
 multiline_comment|/* Port address of Power Mgt Timer Ctrl Reg Blk */
 DECL|member|gpe0blk
-id|ACPI_IO_ADDRESS
+id|u32
 id|gpe0blk
 suffix:semicolon
 multiline_comment|/* Port addr of General Purpose Acpi_event 0 Reg Blk */
 DECL|member|gpe1_blk
-id|ACPI_IO_ADDRESS
+id|u32
 id|gpe1_blk
 suffix:semicolon
 multiline_comment|/* Port addr of General Purpose Acpi_event 1 Reg Blk */
@@ -353,9 +362,10 @@ suffix:colon
 l_int|23
 suffix:semicolon
 multiline_comment|/* reserved - must be zero */
-DECL|typedef|FIXED_ACPI_DESCRIPTION_TABLE
+DECL|typedef|FADT_DESCRIPTOR_REV1
 )brace
-id|FIXED_ACPI_DESCRIPTION_TABLE
+id|FADT_DESCRIPTOR_REV1
 suffix:semicolon
-macro_line|#endif /* __ACTBL32_H__ */
+macro_line|#pragma pack()
+macro_line|#endif /* __ACTBL1_H__ */
 eof

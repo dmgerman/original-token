@@ -77,9 +77,11 @@ comma
 multiline_comment|/* Length of request */
 DECL|member|wb_count
 id|wb_count
-comma
+suffix:semicolon
 multiline_comment|/* reference count */
 DECL|member|wb_flags
+r_int
+r_int
 id|wb_flags
 suffix:semicolon
 DECL|member|wb_verf

@@ -1,4 +1,4 @@
-singleline_comment|// $Id: l3ni1.c,v 2.5 2000/11/19 17:02:48 kai Exp $
+singleline_comment|// $Id: l3ni1.c,v 2.5.6.1 2000/12/06 16:59:19 kai Exp $
 singleline_comment|//
 singleline_comment|//-----------------------------------------------------------------------------
 singleline_comment|//
@@ -43,7 +43,7 @@ r_char
 op_star
 id|ni1_revision
 op_assign
-l_string|&quot;$Revision: 2.5 $&quot;
+l_string|&quot;$Revision: 2.5.6.1 $&quot;
 suffix:semicolon
 DECL|macro|EXT_BEARER_CAPS
 mdefine_line|#define EXT_BEARER_CAPS 1

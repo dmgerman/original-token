@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amfldio - Aml Field I/O&n; *              $Revision: 26 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amfldio - Aml Field I/O&n; *              $Revision: 32 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acinterp.h&quot;
@@ -41,7 +41,7 @@ id|rgn_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|u32
+id|ACPI_PHYSICAL_ADDRESS
 id|address
 suffix:semicolon
 id|u32
@@ -646,6 +646,7 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_write_field_data&n; *&n; * PARAMETERS:  *Obj_desc           - Field to be set&n; *              Value               - Value to store&n; *              Field_bit_width     - Field Width in bits (8, 16, or 32)&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Store the value into the given field&n; *&n; ******************************************************************************/
+r_static
 id|ACPI_STATUS
 DECL|function|acpi_aml_write_field_data
 id|acpi_aml_write_field_data
@@ -675,7 +676,7 @@ id|rgn_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|u32
+id|ACPI_PHYSICAL_ADDRESS
 id|address
 suffix:semicolon
 id|u32
@@ -763,6 +764,7 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_write_field_data_with_update_rule&n; *&n; * PARAMETERS:  *Obj_desc           - Field to be set&n; *              Value               - Value to store&n; *              Field_bit_width     - Field Width in bits (8, 16, or 32)&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Apply the field update rule to a field write&n; *&n; ****************************************************************************/
+r_static
 id|ACPI_STATUS
 DECL|function|acpi_aml_write_field_data_with_update_rule
 id|acpi_aml_write_field_data_with_update_rule

@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amregion - ACPI default Op_region (address space) handlers&n; *              $Revision: 35 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amregion - ACPI default Op_region (address space) handlers&n; *              $Revision: 41 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acinterp.h&quot;
@@ -20,10 +20,9 @@ id|acpi_aml_system_memory_space_handler
 id|u32
 id|function
 comma
-id|u32
+id|ACPI_PHYSICAL_ADDRESS
 id|address
 comma
-multiline_comment|/* TBD: [Future] Should this be A POINTER for 64-bit support? */
 id|u32
 id|bit_width
 comma
@@ -109,10 +108,6 @@ r_if
 c_cond
 (paren
 (paren
-(paren
-id|u8
-op_star
-)paren
 id|address
 OL
 id|mem_info-&gt;mapped_physical_address
@@ -120,10 +115,6 @@ id|mem_info-&gt;mapped_physical_address
 op_logical_or
 (paren
 (paren
-(paren
-id|u8
-op_star
-)paren
 id|address
 op_plus
 id|length
@@ -163,10 +154,6 @@ id|status
 op_assign
 id|acpi_os_map_memory
 (paren
-(paren
-r_void
-op_star
-)paren
 id|address
 comma
 id|SYSMEM_REGION_WINDOW_SIZE
@@ -195,12 +182,9 @@ id|status
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* TBD: should these pointers go to 64-bit in all cases ? */
 id|mem_info-&gt;mapped_physical_address
 op_assign
-(paren
-id|u8
-op_star
-)paren
 id|address
 suffix:semicolon
 id|mem_info-&gt;mapped_length
@@ -209,15 +193,12 @@ id|SYSMEM_REGION_WINDOW_SIZE
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Generate a logical pointer corresponding to the address we want to&n;&t; * access&n;&t; */
+multiline_comment|/* TBD: should these pointers go to 64-bit in all cases ? */
 id|logical_addr_ptr
 op_assign
 id|mem_info-&gt;mapped_logical_address
 op_plus
 (paren
-(paren
-id|u8
-op_star
-)paren
 id|address
 op_minus
 id|mem_info-&gt;mapped_physical_address
@@ -361,7 +342,7 @@ id|acpi_aml_system_io_space_handler
 id|u32
 id|function
 comma
-id|u32
+id|ACPI_PHYSICAL_ADDRESS
 id|address
 comma
 id|u32
@@ -561,7 +542,7 @@ id|acpi_aml_pci_config_space_handler
 id|u32
 id|function
 comma
-id|u32
+id|ACPI_PHYSICAL_ADDRESS
 id|address
 comma
 id|u32

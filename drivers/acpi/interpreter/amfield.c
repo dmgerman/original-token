@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amfield - ACPI AML (p-code) execution - field manipulation&n; *              $Revision: 70 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amfield - ACPI AML (p-code) execution - field manipulation&n; *              $Revision: 74 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acdispat.h&quot;
@@ -105,7 +105,7 @@ id|AE_AML_OPERAND_VALUE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * If the address and length have not been previously evaluated,&n;&t; * evaluate them and save the results.&n;&t; */
+multiline_comment|/*&n;&t; * If the Region Address and Length have not been previously evaluated,&n;&t; * evaluate them and save the results.&n;&t; */
 r_if
 c_cond
 (paren
@@ -139,6 +139,32 @@ id|status
 )paren
 suffix:semicolon
 )brace
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|obj_desc-&gt;common.type
+op_eq
+id|ACPI_TYPE_FIELD_UNIT
+)paren
+op_logical_and
+(paren
+op_logical_neg
+(paren
+id|obj_desc-&gt;common.flags
+op_amp
+id|AOPOBJ_DATA_VALID
+)paren
+)paren
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * Field Buffer and Index have not been previously evaluated,&n;&t;&t; */
+r_return
+(paren
+id|AE_AML_INTERNAL
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -346,6 +372,41 @@ id|byte_field_length
 )paren
 (brace
 id|actual_byte_length
+op_assign
+id|byte_field_length
+suffix:semicolon
+)brace
+multiline_comment|/* TBD: should these round down to a power of 2? */
+r_if
+c_cond
+(paren
+id|DIV_8
+c_func
+(paren
+id|bit_granularity
+)paren
+OG
+id|byte_field_length
+)paren
+(brace
+id|bit_granularity
+op_assign
+id|MUL_8
+c_func
+(paren
+id|byte_field_length
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|byte_granularity
+OG
+id|byte_field_length
+)paren
+(brace
+id|byte_granularity
 op_assign
 id|byte_field_length
 suffix:semicolon

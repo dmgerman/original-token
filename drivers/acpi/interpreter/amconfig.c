@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amconfig - Namespace reconfiguration (Load/Unload opcodes)&n; *              $Revision: 23 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amconfig - Namespace reconfiguration (Load/Unload opcodes)&n; *              $Revision: 26 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acparser.h&quot;
@@ -15,6 +15,7 @@ id|MODULE_NAME
 l_string|&quot;amconfig&quot;
 )paren
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_exec_load_table&n; *&n; * PARAMETERS:  Rgn_desc        - Op region where the table will be obtained&n; *              Ddb_handle      - Where a handle to the table will be returned&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Load an ACPI table&n; *&n; ****************************************************************************/
+r_static
 id|ACPI_STATUS
 DECL|function|acpi_aml_exec_load_table
 id|acpi_aml_exec_load_table
@@ -344,26 +345,10 @@ id|cleanup
 suffix:semicolon
 )brace
 multiline_comment|/* Add the table to the namespace */
-id|status
-op_assign
-id|acpi_load_namespace
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ACPI_FAILURE
-(paren
-id|status
-)paren
-)paren
-(brace
+multiline_comment|/* TBD: [Restructure] - change to whatever new interface is appropriate */
+multiline_comment|/*&n;&t;Status = Acpi_load_namespace ();&n;&t;if (ACPI_FAILURE (Status)) {&n;*/
 multiline_comment|/* TBD: [Errors] Unload the table on failure ? */
-r_goto
-id|cleanup
-suffix:semicolon
-)brace
+multiline_comment|/*&n;&t;&t;goto Cleanup;&n;&t;}&n;*/
 multiline_comment|/* TBD: [Investigate] we need a pointer to the table desc */
 multiline_comment|/* Init the table handle */
 id|table_desc-&gt;reference.op_code
@@ -403,6 +388,7 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************&n; *&n; * FUNCTION:    Acpi_aml_exec_unload_table&n; *&n; * PARAMETERS:  Ddb_handle          - Handle to a previously loaded table&n; *&n; * RETURN:      Status&n; *&n; * DESCRIPTION: Unload an ACPI table&n; *&n; ****************************************************************************/
+r_static
 id|ACPI_STATUS
 DECL|function|acpi_aml_exec_unload_table
 id|acpi_aml_exec_unload_table
@@ -504,7 +490,7 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/* Delete the table itself */
-id|acpi_tb_delete_single_table
+id|acpi_tb_uninstall_table
 (paren
 id|table_info-&gt;installed_desc
 )paren

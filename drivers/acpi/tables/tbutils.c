@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: tbutils - Table manipulation utilities&n; *              $Revision: 26 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: tbutils - Table manipulation utilities&n; *              $Revision: 31 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;actables.h&quot;
@@ -138,11 +138,17 @@ multiline_comment|/* Check for a pointer within the DSDT */
 r_if
 c_cond
 (paren
+(paren
+id|acpi_gbl_DSDT
+)paren
+op_logical_and
+(paren
 id|IS_IN_ACPI_TABLE
 (paren
 id|where
 comma
 id|acpi_gbl_DSDT
+)paren
 )paren
 )paren
 (brace
@@ -326,7 +332,9 @@ id|signature
 (brace
 id|REPORT_WARNING
 (paren
-l_string|&quot;Invalid table signature found&quot;
+(paren
+l_string|&quot;Invalid table signature found&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -349,7 +357,9 @@ id|ACPI_TABLE_HEADER
 (brace
 id|REPORT_WARNING
 (paren
-l_string|&quot;Invalid table header length found&quot;
+(paren
+l_string|&quot;Invalid table header length found&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -369,8 +379,7 @@ id|ACPI_STATUS
 DECL|function|acpi_tb_map_acpi_table
 id|acpi_tb_map_acpi_table
 (paren
-r_void
-op_star
+id|ACPI_PHYSICAL_ADDRESS
 id|physical_address
 comma
 id|u32
@@ -547,7 +556,7 @@ id|table_header
 )paren
 (brace
 id|u8
-id|check_sum
+id|checksum
 suffix:semicolon
 id|ACPI_STATUS
 id|status
@@ -555,7 +564,7 @@ op_assign
 id|AE_OK
 suffix:semicolon
 multiline_comment|/* Compute the checksum on the table */
-id|check_sum
+id|checksum
 op_assign
 id|acpi_tb_checksum
 (paren
@@ -568,12 +577,19 @@ multiline_comment|/* Return the appropriate exception */
 r_if
 c_cond
 (paren
-id|check_sum
+id|checksum
 )paren
 (brace
-id|REPORT_ERROR
+id|REPORT_WARNING
 (paren
-l_string|&quot;Invalid ACPI table checksum&quot;
+(paren
+l_string|&quot;Invalid checksum (%X) in table %4.4s&bslash;n&quot;
+comma
+id|checksum
+comma
+op_amp
+id|table_header-&gt;signature
+)paren
 )paren
 suffix:semicolon
 id|status
