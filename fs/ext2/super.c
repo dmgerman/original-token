@@ -1418,6 +1418,17 @@ c_cond
 (paren
 op_logical_neg
 (paren
+id|sb-&gt;s_flags
+op_amp
+id|MS_RDONLY
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
 id|sb-&gt;u.ext2_sb.s_mount_state
 op_amp
 id|EXT2_VALID_FS
@@ -1487,17 +1498,6 @@ l_string|&quot;EXT2-fs warning: checktime reached, &quot;
 l_string|&quot;running e2fsck is recommended&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|sb-&gt;s_flags
-op_amp
-id|MS_RDONLY
-)paren
-)paren
-(brace
 id|es-&gt;s_state
 op_and_assign
 op_complement

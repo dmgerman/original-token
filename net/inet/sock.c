@@ -3760,6 +3760,10 @@ op_complement
 id|current-&gt;blocked
 )paren
 (brace
+r_break
+suffix:semicolon
+macro_line|#if 0
+multiline_comment|/* not working now - closes can&squot;t be restarted */
 id|sti
 c_func
 (paren
@@ -3773,6 +3777,7 @@ r_return
 op_minus
 id|ERESTARTSYS
 suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 id|current-&gt;timeout
@@ -7828,7 +7833,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Swansea University Computer Society Net2Debugged [1.27]&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society Net2Debugged [1.30]&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Set up our UNIX VFS major device. */

@@ -4238,7 +4238,7 @@ id|len
 op_plus
 id|hlen
 comma
-id|GFP_KERNEL
+id|GFP_ATOMIC
 )paren
 )paren
 op_eq

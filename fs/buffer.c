@@ -3254,6 +3254,7 @@ id|bh
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* do any of the buffers already exist? punt if so.. */
 id|p
 op_assign
 id|b
@@ -3291,9 +3292,10 @@ id|block
 r_goto
 id|not_aligned
 suffix:semicolon
-id|tmp
-op_assign
-id|get_hash_table
+r_if
+c_cond
+(paren
+id|find_buffer
 c_func
 (paren
 id|dev
@@ -3302,23 +3304,10 @@ id|block
 comma
 id|size
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tmp
 )paren
-(brace
-id|brelse
-c_func
-(paren
-id|tmp
-)paren
-suffix:semicolon
 r_goto
 id|not_aligned
 suffix:semicolon
-)brace
 )brace
 id|tmp
 op_assign

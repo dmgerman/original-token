@@ -81,7 +81,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;btsl %1,%0&quot;
+l_string|&quot;orl %1,%0&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
@@ -90,6 +90,8 @@ id|bh_active
 suffix:colon
 l_string|&quot;ir&quot;
 (paren
+l_int|1
+op_lshift
 id|nr
 )paren
 )paren
@@ -110,7 +112,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;btcl %1,%0&quot;
+l_string|&quot;andl %1,%0&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
@@ -119,7 +121,12 @@ id|bh_mask
 suffix:colon
 l_string|&quot;ir&quot;
 (paren
+op_complement
+(paren
+l_int|1
+op_lshift
 id|nr
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -139,7 +146,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;btsl %1,%0&quot;
+l_string|&quot;orl %1,%0&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
@@ -148,6 +155,8 @@ id|bh_mask
 suffix:colon
 l_string|&quot;ir&quot;
 (paren
+l_int|1
+op_lshift
 id|nr
 )paren
 )paren

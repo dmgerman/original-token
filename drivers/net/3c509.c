@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c509.c:pl15i 2/23/94 becker@super.org&bslash;n&quot;
+l_string|&quot;3c509.c:pl15k 3/5/94 becker@super.org&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -763,7 +763,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: 3c509 at %#3.3x&t; tag %d, %s port, address &quot;
+l_string|&quot;%s: 3c509 at %#3.3x tag %d, %s port, address &quot;
 comma
 id|dev-&gt;name
 comma
@@ -2243,14 +2243,25 @@ comma
 id|status
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-multiline_comment|/* Clear the other interrupts we have handled. */
+multiline_comment|/* Clear all interrupts we have handled. */
 id|outw
 c_func
 (paren
-l_int|0x6899
+l_int|0x68FF
+comma
+id|ioaddr
+op_plus
+id|EL3_CMD
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* Acknowledge the IRQ. */
+id|outw
+c_func
+(paren
+l_int|0x6891
 comma
 id|ioaddr
 op_plus

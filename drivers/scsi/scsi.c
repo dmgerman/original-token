@@ -246,6 +246,15 @@ l_string|&quot;V&quot;
 comma
 multiline_comment|/* A cdrom that locks up when probed at lun != 0 */
 (brace
+l_string|&quot;IMS&quot;
+comma
+l_string|&quot;CDD521/10&quot;
+comma
+l_string|&quot;2.06&quot;
+)brace
+comma
+multiline_comment|/* Locks-up when LUN&gt;0 polled. */
+(brace
 l_string|&quot;MAXTOR&quot;
 comma
 l_string|&quot;XT-3280&quot;
@@ -281,6 +290,15 @@ l_string|&quot;B5A&quot;
 )brace
 comma
 multiline_comment|/* Locks-up sometimes when LUN&gt;0 polled. */
+(brace
+l_string|&quot;MAXTOR&quot;
+comma
+l_string|&quot;XT-8760S&quot;
+comma
+l_string|&quot;B7B&quot;
+)brace
+comma
+multiline_comment|/* guess what? */
 (brace
 l_string|&quot;NEC&quot;
 comma
