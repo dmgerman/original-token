@@ -204,6 +204,33 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_HPT366 */
+macro_line|#ifdef CONFIG_BLK_DEV_OSB4
+r_extern
+id|byte
+id|osb4_proc
+suffix:semicolon
+DECL|variable|osb4_display_info
+r_int
+(paren
+op_star
+id|osb4_display_info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_OSB4 */
 macro_line|#ifdef CONFIG_BLK_DEV_PDC202XX
 r_extern
 id|byte
@@ -4577,6 +4604,31 @@ id|hpt366_display_info
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_HPT366 */
+macro_line|#ifdef CONFIG_BLK_DEV_OSB4
+r_if
+c_cond
+(paren
+(paren
+id|osb4_display_info
+)paren
+op_logical_and
+(paren
+id|osb4_proc
+)paren
+)paren
+id|create_proc_info_entry
+c_func
+(paren
+l_string|&quot;osb4&quot;
+comma
+l_int|0
+comma
+id|proc_ide_root
+comma
+id|osb4_display_info
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_OSB4 */
 macro_line|#ifdef CONFIG_BLK_DEV_PDC202XX
 r_if
 c_cond
@@ -4859,6 +4911,27 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_HPT366 */
+macro_line|#ifdef CONFIG_BLK_DEV_OSB4
+r_if
+c_cond
+(paren
+(paren
+id|osb4_display_info
+)paren
+op_logical_and
+(paren
+id|osb4_proc
+)paren
+)paren
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;ide/osb4&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_OSB4 */
 macro_line|#ifdef CONFIG_BLK_DEV_PDC202XX
 r_if
 c_cond

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunhme.c,v 1.97 2000/09/05 23:12:36 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sunhme.c,v 1.98 2000/10/22 16:08:38 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
 DECL|variable|version
 r_static
 r_char
@@ -47,7 +47,6 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/pbm.h&gt;
 macro_line|#endif
 macro_line|#include &quot;sunhme.h&quot;
-macro_line|#ifdef MODULE
 DECL|variable|root_happy_dev
 r_static
 r_struct
@@ -57,7 +56,6 @@ id|root_happy_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif
 DECL|variable|qfe_sbus_list
 r_static
 r_struct
@@ -12709,8 +12707,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-multiline_comment|/* We are home free at this point, link us in to the happy&n;&t; * module device list.&n;&t; */
+multiline_comment|/* We are home free at this point, link us in to the happy&n;&t; * device list.&n;&t; */
 id|dev-&gt;ifindex
 op_assign
 id|dev_new_index
@@ -12726,7 +12723,6 @@ id|root_happy_dev
 op_assign
 id|hp
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -13625,8 +13621,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-multiline_comment|/* We are home free at this point, link us in to the happy&n;&t; * module device list.&n;&t; */
+multiline_comment|/* We are home free at this point, link us in to the happy&n;&t; * device list.&n;&t; */
 id|dev-&gt;ifindex
 op_assign
 id|dev_new_index
@@ -13642,7 +13637,6 @@ id|root_happy_dev
 op_assign
 id|hp
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -13898,12 +13892,10 @@ suffix:semicolon
 r_int
 id|cards
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|root_happy_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -13975,8 +13967,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef MODULE
-multiline_comment|/* No need to check MOD_IN_USE, as sys_delete_module() checks. */
 r_while
 c_loop
 (paren
@@ -14105,7 +14095,6 @@ op_assign
 id|next
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
 )brace
 DECL|variable|happy_meal_probe
 id|module_init

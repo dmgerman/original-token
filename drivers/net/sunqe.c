@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunqe.c,v 1.46 2000/06/19 06:24:46 davem Exp $&n; * sunqe.c: Sparc QuadEthernet 10baseT SBUS card driver.&n; *          Once again I am out to prove that every ethernet&n; *          controller out there can be most efficiently programmed&n; *          if you make it look like a LANCE.&n; *&n; * Copyright (C) 1996, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sunqe.c,v 1.47 2000/10/22 16:08:38 davem Exp $&n; * sunqe.c: Sparc QuadEthernet 10baseT SBUS card driver.&n; *          Once again I am out to prove that every ethernet&n; *          controller out there can be most efficiently programmed&n; *          if you make it look like a LANCE.&n; *&n; * Copyright (C) 1996, 1999 David S. Miller (davem@redhat.com)&n; */
 DECL|variable|version
 r_static
 r_char
@@ -37,7 +37,6 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sunqe.h&quot;
-macro_line|#ifdef MODULE
 DECL|variable|root_qec_dev
 r_static
 r_struct
@@ -47,7 +46,6 @@ id|root_qec_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif
 r_static
 r_void
 id|qe_set_multicast
@@ -4543,8 +4541,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-multiline_comment|/* We are home free at this point, link the qe&squot;s into&n;&t; * the master list for later module unloading.&n;&t; */
+multiline_comment|/* We are home free at this point, link the qe&squot;s into&n;&t; * the master list for later driver exit.&n;&t; */
 r_for
 c_loop
 (paren
@@ -4579,7 +4576,6 @@ id|root_qec_dev
 op_assign
 id|qecp
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -4896,12 +4892,10 @@ l_int|0
 comma
 id|v
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|root_qec_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4995,7 +4989,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef MODULE
 r_struct
 id|sunqec
 op_star
@@ -5004,7 +4997,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* No need to check MOD_IN_USE, as sys_delete_module() checks. */
 r_while
 c_loop
 (paren
@@ -5172,7 +5164,6 @@ op_assign
 id|next_qec
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
 )brace
 DECL|variable|qec_probe
 id|module_init

@@ -1,4 +1,4 @@
-multiline_comment|/* -*- c-mode -*-&n; * linux/include/linux/auto_fs4.h&n; *&n; * Copyright 1999-2000 Jeremy Fitzhardinge &lt;jeremy@goop.org&gt;&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; */
+multiline_comment|/* -*- c -*-&n; * linux/include/linux/auto_fs4.h&n; *&n; * Copyright 1999-2000 Jeremy Fitzhardinge &lt;jeremy@goop.org&gt;&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; */
 macro_line|#ifndef _LINUX_AUTO_FS4_H
 DECL|macro|_LINUX_AUTO_FS4_H
 mdefine_line|#define _LINUX_AUTO_FS4_H

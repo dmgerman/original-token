@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for the 3com 3c589 card.&n;    &n;    Copyright (C) 1999 David A. Hinds -- dahinds@users.sourceforge.net&n;&n;    3c589_cs.c 1.153 2000/06/12 21:27:25&n;&n;    The network driver code is based on Donald Becker&squot;s 3c589 code:&n;    &n;    Written 1994 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for the 3com 3c589 card.&n;    &n;    Copyright (C) 1999 David A. Hinds -- dahinds@users.sourceforge.net&n;&n;    3c589_cs.c 1.154 2000/09/30 17:39:04&n;&n;    The network driver code is based on Donald Becker&squot;s 3c589 code:&n;    &n;    Written 1994 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -377,7 +377,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c589_cs.c 1.153 2000/06/12 21:27:25 (David Hinds)&quot;
+l_string|&quot;3c589_cs.c 1.154 2000/09/30 17:39:04 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -5028,7 +5028,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Set or clear the multicast filter for this adapter.&n;   num_addrs == -1&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;best-effort filtering.&n; */
 DECL|function|set_multicast_list
 r_static
 r_void
@@ -5060,6 +5059,15 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+id|u_short
+id|opts
+op_assign
+id|SetRxFilter
+op_or
+id|RxStation
+op_or
+id|RxBroadcast
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5074,48 +5082,6 @@ id|link
 )paren
 r_return
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-OG
-l_int|2
-)paren
-(brace
-r_static
-r_int
-id|old
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|old
-op_ne
-id|dev-&gt;mc_count
-)paren
-(brace
-id|old
-op_assign
-id|dev-&gt;mc_count
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;%s: setting Rx mode to %d addresses.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|old
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -5123,23 +5089,11 @@ id|dev-&gt;flags
 op_amp
 id|IFF_PROMISC
 )paren
-id|outw
-c_func
-(paren
-id|SetRxFilter
-op_or
-id|RxStation
-op_or
+id|opts
+op_or_assign
 id|RxMulticast
 op_or
-id|RxBroadcast
-op_or
 id|RxProm
-comma
-id|ioaddr
-op_plus
-id|EL3_CMD
-)paren
 suffix:semicolon
 r_else
 r_if
@@ -5153,31 +5107,14 @@ op_amp
 id|IFF_ALLMULTI
 )paren
 )paren
-id|outw
-c_func
-(paren
-id|SetRxFilter
-op_or
-id|RxStation
-op_or
+id|opts
+op_or_assign
 id|RxMulticast
-op_or
-id|RxBroadcast
-comma
-id|ioaddr
-op_plus
-id|EL3_CMD
-)paren
 suffix:semicolon
-r_else
 id|outw
 c_func
 (paren
-id|SetRxFilter
-op_or
-id|RxStation
-op_or
-id|RxBroadcast
+id|opts
 comma
 id|ioaddr
 op_plus

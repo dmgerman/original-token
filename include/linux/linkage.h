@@ -9,7 +9,7 @@ macro_line|#else
 DECL|macro|CPP_ASMLINKAGE
 mdefine_line|#define CPP_ASMLINKAGE
 macro_line|#endif
-macro_line|#if defined __i386__ &amp;&amp; (__GNUC__ &gt; 2 || __GNUC_MINOR__ &gt; 7)
+macro_line|#if defined __i386__
 DECL|macro|asmlinkage
 mdefine_line|#define asmlinkage CPP_ASMLINKAGE __attribute__((regparm(0)))
 macro_line|#elif defined __ia64__

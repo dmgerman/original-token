@@ -394,8 +394,15 @@ id|mc_loop
 suffix:semicolon
 multiline_comment|/* Loopback */
 DECL|member|recverr
-id|__u8
+r_int
 id|recverr
+suffix:colon
+l_int|1
+comma
+DECL|member|freebind
+id|freebind
+suffix:colon
+l_int|1
 suffix:semicolon
 DECL|member|pmtudisc
 id|__u8

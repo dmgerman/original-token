@@ -688,7 +688,7 @@ c_func
 (paren
 id|skb
 comma
-id|count
+id|len
 )paren
 comma
 id|ptr

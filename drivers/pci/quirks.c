@@ -672,12 +672,12 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * PIIX3 USB: We have to disable USB interrupts that are&n; * hardwired to PIRQD# and may be shared with an&n; * external device.&n; *&n; * Legacy Support Register (LEGSUP):&n; *     bit13:  USB PIRQ Enable (USBPIRQDEN),&n; *     bit4:   Trap/SMI ON IRQ Enable (USBSMIEN).&n; *&n; * We mask out all r/wc bits, too.&n; */
-DECL|function|quirk_piix3usb
+multiline_comment|/*&n; * PIIX3 USB: We have to disable USB interrupts that are&n; * hardwired to PIRQD# and may be shared with an&n; * external device.&n; *&n; * Legacy Support Register (LEGSUP):&n; *     bit13:  USB PIRQ Enable (USBPIRQDEN),&n; *     bit4:   Trap/SMI On IRQ Enable (USBSMIEN).&n; *&n; * We mask out all r/wc bits, too.&n; */
+DECL|function|quirk_piix3_usb
 r_static
 r_void
 id|__init
-id|quirk_piix3usb
+id|quirk_piix3_usb
 c_func
 (paren
 r_struct
@@ -1010,7 +1010,17 @@ id|PCI_VENDOR_ID_INTEL
 comma
 id|PCI_DEVICE_ID_INTEL_82371SB_2
 comma
-id|quirk_piix3usb
+id|quirk_piix3_usb
+)brace
+comma
+(brace
+id|PCI_FIXUP_HEADER
+comma
+id|PCI_VENDOR_ID_INTEL
+comma
+id|PCI_DEVICE_ID_INTEL_82371AB_2
+comma
+id|quirk_piix3_usb
 )brace
 comma
 (brace

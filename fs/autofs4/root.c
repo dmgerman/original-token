@@ -1,4 +1,4 @@
-multiline_comment|/* -*- c -*- --------------------------------------------------------------- *&n; *&n; * linux/fs/autofs/root.c&n; *&n; *  Copyright 1997-1998 Transmeta Corporation -- All Rights Reserved&n; *  Copyright 1999 Jeremy Fitzhardinge &lt;jeremy@goop.org&gt;&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
+multiline_comment|/* -*- c -*- --------------------------------------------------------------- *&n; *&n; * linux/fs/autofs/root.c&n; *&n; *  Copyright 1997-1998 Transmeta Corporation -- All Rights Reserved&n; *  Copyright 1999-2000 Jeremy Fitzhardinge &lt;jeremy@goop.org&gt;&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
@@ -501,7 +501,6 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* status = autofs4_wait(sbi, &amp;dentry-&gt;d_name, NFY_MOUNT); */
 )brace
 multiline_comment|/* If this is an unused directory that isn&squot;t a mount point,&n;&t;   bitch at the daemon and fix it in user space */
 id|spin_lock
@@ -867,11 +866,10 @@ r_struct
 id|autofs_info
 op_star
 id|inf
-op_assign
-id|autofs4_dentry_ino
+suffix:semicolon
+id|lock_kernel
 c_func
 (paren
-id|de
 )paren
 suffix:semicolon
 id|DPRINTK
@@ -884,9 +882,12 @@ id|de
 )paren
 )paren
 suffix:semicolon
-id|lock_kernel
+id|inf
+op_assign
+id|autofs4_dentry_ino
 c_func
 (paren
+id|de
 )paren
 suffix:semicolon
 id|de-&gt;d_fsdata
@@ -932,7 +933,6 @@ id|d_revalidate
 suffix:colon
 id|autofs4_root_revalidate
 comma
-multiline_comment|/* d_revalidate */
 id|d_release
 suffix:colon
 id|autofs4_dentry_release
@@ -951,7 +951,6 @@ id|d_revalidate
 suffix:colon
 id|autofs4_revalidate
 comma
-multiline_comment|/* d_revalidate */
 id|d_release
 suffix:colon
 id|autofs4_dentry_release

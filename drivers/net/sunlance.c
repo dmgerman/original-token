@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunlance.c,v 1.104 2000/09/18 05:48:42 davem Exp $&n; * lance.c: Linux/Sparc/Lance driver&n; *&n; *&t;Written 1995, 1996 by Miguel de Icaza&n; * Sources:&n; *&t;The Linux  depca driver&n; *&t;The Linux  lance driver.&n; *&t;The Linux  skeleton driver.&n; *&t;The NetBSD Sparc/Lance driver.&n; *&t;Theo de Raadt (deraadt@openbsd.org)&n; *&t;NCR92C990 Lan Controller manual&n; *&n; * 1.4:&n; *&t;Added support to run with a ledma on the Sun4m&n; *&n; * 1.5:&n; *&t;Added multiple card detection.&n; *&n; *&t; 4/17/96: Burst sizes and tpe selection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/15/96: auto carrier detection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/17/96: lebuffer on scsi/ether cards now work David S. Miller&n; *&t;&t;  (davem@caip.rutgers.edu)&n; *&n; *&t; 5/29/96: override option &squot;tpe-link-test?&squot;, if it is &squot;false&squot;, as&n; *&t;&t;  this disables auto carrier detection on sun4m. Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.7:&n; *&t; 6/26/96: Bug fix for multiple ledmas, miguel.&n; *&n; * 1.8:&n; *&t;&t;  Stole multicast code from depca.c, fixed lance_tx.&n; *&n; * 1.9:&n; *&t; 8/21/96: Fixed the multicast code (Pedro Roque)&n; *&n; *&t; 8/28/96: Send fake packet in lance_open() if auto_select is true,&n; *&t;&t;  so we can detect the carrier loss condition in time.&n; *&t;&t;  Eddie C. Dost (ecd@skynet.be)&n; *&n; *&t; 9/15/96: Align rx_buf so that eth_copy_and_sum() won&squot;t cause an&n; *&t;&t;  MNA trap during chksum_partial_copy(). (ecd@skynet.be)&n; *&n; *&t;11/17/96: Handle LE_C0_MERR in lance_interrupt(). (ecd@skynet.be)&n; *&n; *&t;12/22/96: Don&squot;t loop forever in lance_rx() on incomplete packets.&n; *&t;&t;  This was the sun4c killer. Shit, stupid bug.&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.10:&n; *&t; 1/26/97: Modularize driver. (ecd@skynet.be)&n; *&n; * 1.11:&n; *&t;12/27/97: Added sun4d support. (jj@sunsite.mff.cuni.cz)&n; *&n; * 1.12:&n; * &t; 11/3/99: Fixed SMP race in lance_start_xmit found by davem.&n; * &t;          Anton Blanchard (anton@progsoc.uts.edu.au)&n; * 2.00: 11/9/99: Massive overhaul and port to new SBUS driver interfaces.&n; *&t;&t;  David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sunlance.c,v 1.105 2000/10/22 16:08:38 davem Exp $&n; * lance.c: Linux/Sparc/Lance driver&n; *&n; *&t;Written 1995, 1996 by Miguel de Icaza&n; * Sources:&n; *&t;The Linux  depca driver&n; *&t;The Linux  lance driver.&n; *&t;The Linux  skeleton driver.&n; *&t;The NetBSD Sparc/Lance driver.&n; *&t;Theo de Raadt (deraadt@openbsd.org)&n; *&t;NCR92C990 Lan Controller manual&n; *&n; * 1.4:&n; *&t;Added support to run with a ledma on the Sun4m&n; *&n; * 1.5:&n; *&t;Added multiple card detection.&n; *&n; *&t; 4/17/96: Burst sizes and tpe selection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/15/96: auto carrier detection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/17/96: lebuffer on scsi/ether cards now work David S. Miller&n; *&t;&t;  (davem@caip.rutgers.edu)&n; *&n; *&t; 5/29/96: override option &squot;tpe-link-test?&squot;, if it is &squot;false&squot;, as&n; *&t;&t;  this disables auto carrier detection on sun4m. Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.7:&n; *&t; 6/26/96: Bug fix for multiple ledmas, miguel.&n; *&n; * 1.8:&n; *&t;&t;  Stole multicast code from depca.c, fixed lance_tx.&n; *&n; * 1.9:&n; *&t; 8/21/96: Fixed the multicast code (Pedro Roque)&n; *&n; *&t; 8/28/96: Send fake packet in lance_open() if auto_select is true,&n; *&t;&t;  so we can detect the carrier loss condition in time.&n; *&t;&t;  Eddie C. Dost (ecd@skynet.be)&n; *&n; *&t; 9/15/96: Align rx_buf so that eth_copy_and_sum() won&squot;t cause an&n; *&t;&t;  MNA trap during chksum_partial_copy(). (ecd@skynet.be)&n; *&n; *&t;11/17/96: Handle LE_C0_MERR in lance_interrupt(). (ecd@skynet.be)&n; *&n; *&t;12/22/96: Don&squot;t loop forever in lance_rx() on incomplete packets.&n; *&t;&t;  This was the sun4c killer. Shit, stupid bug.&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.10:&n; *&t; 1/26/97: Modularize driver. (ecd@skynet.be)&n; *&n; * 1.11:&n; *&t;12/27/97: Added sun4d support. (jj@sunsite.mff.cuni.cz)&n; *&n; * 1.12:&n; * &t; 11/3/99: Fixed SMP race in lance_start_xmit found by davem.&n; * &t;          Anton Blanchard (anton@progsoc.uts.edu.au)&n; * 2.00: 11/9/99: Massive overhaul and port to new SBUS driver interfaces.&n; *&t;&t;  David S. Miller (davem@redhat.com)&n; */
 DECL|macro|DEBUG_DRIVER
 macro_line|#undef DEBUG_DRIVER
 DECL|variable|version
@@ -510,7 +510,6 @@ multiline_comment|/* On the Sun4m we have to instruct the ledma to provide them 
 multiline_comment|/* Even worse, on scsi/ether SBUS cards, the init block and the&n; * transmit/receive buffers are addresses as offsets from absolute&n; * zero on the lebuffer PIO area. -DaveM&n; */
 DECL|macro|LANCE_ADDR
 mdefine_line|#define LANCE_ADDR(x) ((long)(x) &amp; ~0xff000000)
-macro_line|#ifdef MODULE
 DECL|variable|root_lance_dev
 r_static
 r_struct
@@ -520,7 +519,6 @@ id|root_lance_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Load the CSR registers */
 DECL|function|load_csrs
 r_static
@@ -6816,7 +6814,6 @@ op_assign
 op_amp
 id|lance_set_multicast_retry
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|dev-&gt;ifindex
 op_assign
 id|dev_new_index
@@ -6832,7 +6829,6 @@ id|root_lance_dev
 op_assign
 id|lp
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -6922,12 +6918,10 @@ id|called
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|root_lance_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7065,12 +7059,10 @@ l_int|0
 comma
 id|v
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|root_lance_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7267,7 +7259,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef MODULE
 r_struct
 id|lance_private
 op_star
@@ -7306,7 +7297,6 @@ op_assign
 id|lp
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
 )brace
 DECL|variable|sparc_lance_probe
 id|module_init

@@ -4621,7 +4621,7 @@ c_func
 (paren
 id|current-&gt;comm
 comma
-l_string|&quot;kapmd&quot;
+l_string|&quot;kapm-idled&quot;
 )paren
 suffix:semicolon
 id|sigfillset

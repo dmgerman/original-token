@@ -116,8 +116,6 @@ DECL|macro|__FINIT
 mdefine_line|#define __FINIT
 DECL|macro|__INITDATA
 mdefine_line|#define __INITDATA
-multiline_comment|/* Not sure what version aliases were introduced in, but certainly in 2.91.66.  */
-macro_line|#if __GNUC__ &gt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 91)
 multiline_comment|/* These macros create a dummy inline: gcc 2.9x does not count alias&n; as usage, hence the `unused function&squot; warning when __init functions&n; are declared static. We use the dummy __*_module_inline functions&n; both to kill the warning and check the type of the init/cleanup&n; function. */
 DECL|typedef|__init_module_func_t
 r_typedef
@@ -145,22 +143,11 @@ DECL|macro|module_init
 mdefine_line|#define module_init(x) &bslash;&n;&t;int init_module(void) __attribute__((alias(#x))); &bslash;&n;&t;extern inline __init_module_func_t __init_module_inline(void) &bslash;&n;&t;{ return x; }
 DECL|macro|module_exit
 mdefine_line|#define module_exit(x) &bslash;&n;&t;void cleanup_module(void) __attribute__((alias(#x))); &bslash;&n;&t;extern inline __cleanup_module_func_t __cleanup_module_inline(void) &bslash;&n;&t;{ return x; }
-macro_line|#else
-DECL|macro|module_init
-mdefine_line|#define module_init(x)&t;int init_module(void) { return x(); }
-DECL|macro|module_exit
-mdefine_line|#define module_exit(x)&t;void cleanup_module(void) { x(); }
-macro_line|#endif
 DECL|macro|__setup
 mdefine_line|#define __setup(str,func) /* nothing */
 macro_line|#endif
-macro_line|#if __GNUC__ &gt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8)
 DECL|macro|__initlocaldata
 mdefine_line|#define __initlocaldata  __initdata
-macro_line|#else
-DECL|macro|__initlocaldata
-mdefine_line|#define __initlocaldata
-macro_line|#endif
 macro_line|#ifdef CONFIG_HOTPLUG
 DECL|macro|__devinit
 mdefine_line|#define __devinit

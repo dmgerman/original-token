@@ -83,7 +83,6 @@ op_star
 id|r11
 )paren
 (brace
-macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91
 r_const
 r_struct
 id|__una_u64
@@ -101,69 +100,6 @@ suffix:semicolon
 r_return
 id|ptr-&gt;x
 suffix:semicolon
-macro_line|#else
-r_int
-r_int
-id|r1
-comma
-id|r2
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;ldq_u %0,%3&bslash;n&bslash;t&quot;
-l_string|&quot;ldq_u %1,%4&bslash;n&bslash;t&quot;
-l_string|&quot;extql %0,%2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;extqh %1,%2,%1&quot;
-suffix:colon
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r1
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r2
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|r11
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-id|r11
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-(paren
-r_const
-r_int
-r_int
-op_star
-)paren
-(paren
-l_int|7
-op_plus
-(paren
-r_char
-op_star
-)paren
-id|r11
-)paren
-)paren
-)paren
-suffix:semicolon
-r_return
-id|r1
-op_or
-id|r2
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|__uldl
 r_extern
@@ -180,7 +116,6 @@ op_star
 id|r11
 )paren
 (brace
-macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91
 r_const
 r_struct
 id|__una_u32
@@ -198,69 +133,6 @@ suffix:semicolon
 r_return
 id|ptr-&gt;x
 suffix:semicolon
-macro_line|#else
-r_int
-r_int
-id|r1
-comma
-id|r2
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;ldq_u %0,%3&bslash;n&bslash;t&quot;
-l_string|&quot;ldq_u %1,%4&bslash;n&bslash;t&quot;
-l_string|&quot;extll %0,%2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;extlh %1,%2,%1&quot;
-suffix:colon
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r1
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r2
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|r11
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-id|r11
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-(paren
-r_const
-r_int
-r_int
-op_star
-)paren
-(paren
-l_int|3
-op_plus
-(paren
-r_char
-op_star
-)paren
-id|r11
-)paren
-)paren
-)paren
-suffix:semicolon
-r_return
-id|r1
-op_or
-id|r2
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|__uldw
 r_extern
@@ -277,7 +149,6 @@ op_star
 id|r11
 )paren
 (brace
-macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91
 r_const
 r_struct
 id|__una_u16
@@ -295,69 +166,6 @@ suffix:semicolon
 r_return
 id|ptr-&gt;x
 suffix:semicolon
-macro_line|#else
-r_int
-r_int
-id|r1
-comma
-id|r2
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;ldq_u %0,%3&bslash;n&bslash;t&quot;
-l_string|&quot;ldq_u %1,%4&bslash;n&bslash;t&quot;
-l_string|&quot;extwl %0,%2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;extwh %1,%2,%1&quot;
-suffix:colon
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r1
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r2
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|r11
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-id|r11
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-(paren
-r_const
-r_int
-r_int
-op_star
-)paren
-(paren
-l_int|1
-op_plus
-(paren
-r_char
-op_star
-)paren
-id|r11
-)paren
-)paren
-)paren
-suffix:semicolon
-r_return
-id|r1
-op_or
-id|r2
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * Elemental unaligned stores &n; */
 DECL|function|__ustq
@@ -377,7 +185,6 @@ op_star
 id|r11
 )paren
 (brace
-macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91
 r_struct
 id|__una_u64
 op_star
@@ -394,88 +201,6 @@ id|ptr-&gt;x
 op_assign
 id|r5
 suffix:semicolon
-macro_line|#else
-r_int
-r_int
-id|r1
-comma
-id|r2
-comma
-id|r3
-comma
-id|r4
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;ldq_u %3,%1&bslash;n&bslash;t&quot;
-l_string|&quot;ldq_u %2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;insqh %6,%7,%5&bslash;n&bslash;t&quot;
-l_string|&quot;insql %6,%7,%4&bslash;n&bslash;t&quot;
-l_string|&quot;mskqh %3,%7,%3&bslash;n&bslash;t&quot;
-l_string|&quot;mskql %2,%7,%2&bslash;n&bslash;t&quot;
-l_string|&quot;bis %3,%5,%3&bslash;n&bslash;t&quot;
-l_string|&quot;bis %2,%4,%2&bslash;n&bslash;t&quot;
-l_string|&quot;stq_u %3,%1&bslash;n&bslash;t&quot;
-l_string|&quot;stq_u %2,%0&quot;
-suffix:colon
-l_string|&quot;=m&quot;
-(paren
-op_star
-id|r11
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-(paren
-l_int|7
-op_plus
-(paren
-r_char
-op_star
-)paren
-id|r11
-)paren
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r1
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r2
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r3
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r4
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|r5
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|r11
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|__ustl
 r_extern
@@ -494,7 +219,6 @@ op_star
 id|r11
 )paren
 (brace
-macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91
 r_struct
 id|__una_u32
 op_star
@@ -511,88 +235,6 @@ id|ptr-&gt;x
 op_assign
 id|r5
 suffix:semicolon
-macro_line|#else
-r_int
-r_int
-id|r1
-comma
-id|r2
-comma
-id|r3
-comma
-id|r4
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;ldq_u %3,%1&bslash;n&bslash;t&quot;
-l_string|&quot;ldq_u %2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;inslh %6,%7,%5&bslash;n&bslash;t&quot;
-l_string|&quot;insll %6,%7,%4&bslash;n&bslash;t&quot;
-l_string|&quot;msklh %3,%7,%3&bslash;n&bslash;t&quot;
-l_string|&quot;mskll %2,%7,%2&bslash;n&bslash;t&quot;
-l_string|&quot;bis %3,%5,%3&bslash;n&bslash;t&quot;
-l_string|&quot;bis %2,%4,%2&bslash;n&bslash;t&quot;
-l_string|&quot;stq_u %3,%1&bslash;n&bslash;t&quot;
-l_string|&quot;stq_u %2,%0&quot;
-suffix:colon
-l_string|&quot;=m&quot;
-(paren
-op_star
-id|r11
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-(paren
-l_int|3
-op_plus
-(paren
-r_char
-op_star
-)paren
-id|r11
-)paren
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r1
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r2
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r3
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r4
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|r5
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|r11
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|__ustw
 r_extern
@@ -611,7 +253,6 @@ op_star
 id|r11
 )paren
 (brace
-macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91
 r_struct
 id|__una_u16
 op_star
@@ -628,88 +269,6 @@ id|ptr-&gt;x
 op_assign
 id|r5
 suffix:semicolon
-macro_line|#else
-r_int
-r_int
-id|r1
-comma
-id|r2
-comma
-id|r3
-comma
-id|r4
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;ldq_u %3,%1&bslash;n&bslash;t&quot;
-l_string|&quot;ldq_u %2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;inswh %6,%7,%5&bslash;n&bslash;t&quot;
-l_string|&quot;inswl %6,%7,%4&bslash;n&bslash;t&quot;
-l_string|&quot;mskwh %3,%7,%3&bslash;n&bslash;t&quot;
-l_string|&quot;mskwl %2,%7,%2&bslash;n&bslash;t&quot;
-l_string|&quot;bis %3,%5,%3&bslash;n&bslash;t&quot;
-l_string|&quot;bis %2,%4,%2&bslash;n&bslash;t&quot;
-l_string|&quot;stq_u %3,%1&bslash;n&bslash;t&quot;
-l_string|&quot;stq_u %2,%0&quot;
-suffix:colon
-l_string|&quot;=m&quot;
-(paren
-op_star
-id|r11
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-(paren
-l_int|1
-op_plus
-(paren
-r_char
-op_star
-)paren
-id|r11
-)paren
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r1
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r2
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r3
-)paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|r4
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|r5
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|r11
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|__get_unaligned
 r_extern

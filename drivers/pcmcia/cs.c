@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    PCMCIA Card Services -- core services&n;&n;    cs.c 1.267 2000/08/30 22:07:31&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dahinds@users.sourceforge.net&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    PCMCIA Card Services -- core services&n;&n;    cs.c 1.271 2000/10/02 20:27:49&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dahinds@users.sourceforge.net&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -51,7 +51,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;cs.c 1.267 2000/08/30 22:07:31 (David Hinds)&quot;
+l_string|&quot;cs.c 1.271 2000/10/02 20:27:49 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
@@ -7714,12 +7714,10 @@ op_amp
 id|c-&gt;Option
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
 l_int|40
-op_star
-l_int|1000
 )paren
 suffix:semicolon
 )brace
@@ -7833,7 +7831,8 @@ op_amp
 id|PRESENT_IOBASE_0
 )paren
 (brace
-id|i
+id|u_char
+id|b
 op_assign
 id|c-&gt;io.BasePort1
 op_amp
@@ -7857,10 +7856,10 @@ comma
 l_int|1
 comma
 op_amp
-id|i
+id|b
 )paren
 suffix:semicolon
-id|i
+id|b
 op_assign
 (paren
 id|c-&gt;io.BasePort1
@@ -7888,7 +7887,7 @@ comma
 l_int|1
 comma
 op_amp
-id|i
+id|b
 )paren
 suffix:semicolon
 )brace
@@ -7900,7 +7899,8 @@ op_amp
 id|PRESENT_IOSIZE
 )paren
 (brace
-id|i
+id|u_char
+id|b
 op_assign
 id|c-&gt;io.NumPorts1
 op_plus
@@ -7926,7 +7926,7 @@ comma
 l_int|1
 comma
 op_amp
-id|i
+id|b
 )paren
 suffix:semicolon
 )brace
@@ -8318,9 +8318,10 @@ suffix:semicolon
 )brace
 multiline_comment|/* request_io */
 multiline_comment|/*======================================================================&n;&n;    Request_irq() reserves an irq for this client.&n;&n;    Also, since Linux only reserves irq&squot;s when they are actually&n;    hooked, we don&squot;t guarantee that an irq will still be available&n;    when the configuration is locked.  Now that I think about it,&n;    there might be a way to fix this using a dummy handler.&n;    &n;======================================================================*/
-DECL|function|pcmcia_request_irq
+DECL|function|cs_request_irq
+r_static
 r_int
-id|pcmcia_request_irq
+id|cs_request_irq
 c_func
 (paren
 id|client_handle_t
@@ -8340,8 +8341,6 @@ op_star
 id|c
 suffix:semicolon
 r_int
-r_try
-comma
 id|ret
 op_assign
 l_int|0
@@ -8349,9 +8348,6 @@ comma
 id|irq
 op_assign
 l_int|0
-suffix:semicolon
-id|u_int
-id|mask
 suffix:semicolon
 r_if
 c_cond
@@ -8421,11 +8417,24 @@ c_cond
 op_logical_neg
 id|s-&gt;cap.irq_mask
 )paren
+(brace
 id|irq
 op_assign
 id|s-&gt;cap.pci_irq
 suffix:semicolon
+id|ret
+op_assign
+(paren
+id|irq
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
+id|CS_IN_USE
+suffix:semicolon
 macro_line|#ifdef CONFIG_ISA
+)brace
 r_else
 r_if
 c_cond
@@ -8448,6 +8457,7 @@ op_amp
 id|IRQ_INFO2_VALID
 )paren
 (brace
+id|u_int
 id|mask
 op_assign
 id|req-&gt;IRQInfo2
@@ -8505,6 +8515,9 @@ op_amp
 id|IRQ_INFO2_VALID
 )paren
 (brace
+id|u_int
+r_try
+comma
 id|mask
 op_assign
 id|req-&gt;IRQInfo2
@@ -8606,8 +8619,8 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-)brace
 macro_line|#endif
+)brace
 r_if
 c_cond
 (paren

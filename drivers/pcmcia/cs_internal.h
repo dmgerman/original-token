@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * cs_internal.h 1.52 2000/06/12 21:29:37&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dahinds@users.sourceforge.net&gt;.  Portions created by David A. Hinds&n; *  are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; */
+multiline_comment|/*&n; * cs_internal.h 1.54 2000/10/26 20:10:55&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dahinds@users.sourceforge.net&gt;.  Portions created by David A. Hinds&n; *  are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; */
 macro_line|#ifndef _LINUX_CS_INTERNAL_H
 DECL|macro|_LINUX_CS_INTERNAL_H
 mdefine_line|#define _LINUX_CS_INTERNAL_H
@@ -704,15 +704,6 @@ comma
 r_void
 op_star
 id|ptr
-)paren
-suffix:semicolon
-r_int
-id|setup_cis_mem
-c_func
-(paren
-id|socket_info_t
-op_star
-id|s
 )paren
 suffix:semicolon
 r_void

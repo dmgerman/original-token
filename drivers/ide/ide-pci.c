@@ -107,6 +107,8 @@ DECL|macro|DEVID_AMD7409
 mdefine_line|#define DEVID_AMD7409&t;((ide_pci_devid_t){PCI_VENDOR_ID_AMD,     PCI_DEVICE_ID_AMD_VIPER_7409})
 DECL|macro|DEVID_SLC90E66
 mdefine_line|#define DEVID_SLC90E66&t;((ide_pci_devid_t){PCI_VENDOR_ID_EFAR,    PCI_DEVICE_ID_EFAR_SLC90E66_1})
+DECL|macro|DEVID_OSB4
+mdefine_line|#define DEVID_OSB4&t;((ide_pci_devid_t){PCI_VENDOR_ID_SERVERWORKS, PCI_DEVICE_ID_SERVERWORKS_OSB4IDE})
 DECL|macro|IDE_IGNORE
 mdefine_line|#define&t;IDE_IGNORE&t;((void *)-1)
 macro_line|#ifdef CONFIG_BLK_DEV_AEC62XX
@@ -593,6 +595,55 @@ mdefine_line|#define INIT_OPTI621&t;&amp;ide_init_opti621
 macro_line|#else
 DECL|macro|INIT_OPTI621
 mdefine_line|#define INIT_OPTI621&t;NULL
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_OSB4
+r_extern
+r_int
+r_int
+id|pci_init_osb4
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|ata66_osb4
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ide_init_osb4
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+DECL|macro|PCI_OSB4
+mdefine_line|#define PCI_OSB4        &amp;pci_init_osb4
+DECL|macro|ATA66_OSB4
+mdefine_line|#define ATA66_OSB4      &amp;ata66_osb4
+DECL|macro|INIT_OSB4
+mdefine_line|#define INIT_OSB4       &amp;ide_init_osb4
+macro_line|#else
+DECL|macro|PCI_OSB4
+mdefine_line|#define PCI_OSB4        NULL
+DECL|macro|ATA66_OSB4
+mdefine_line|#define ATA66_OSB4      NULL
+DECL|macro|INIT_OSB4
+mdefine_line|#define INIT_OSB4       NULL
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_PDC202XX
 r_extern
@@ -2741,6 +2792,42 @@ l_int|0
 )brace
 comma
 (brace
+id|DEVID_OSB4
+comma
+l_string|&quot;ServerWorks OSB4&quot;
+comma
+id|PCI_OSB4
+comma
+id|ATA66_OSB4
+comma
+id|INIT_OSB4
+comma
+l_int|NULL
+comma
+(brace
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+)brace
+comma
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+)brace
+)brace
+comma
+id|ON_BOARD
+comma
+l_int|0
+)brace
+comma
+(brace
 id|IDE_PCI_DEVID_NULL
 comma
 l_string|&quot;PCI_IDE&quot;
@@ -4334,6 +4421,14 @@ c_func
 id|d-&gt;devid
 comma
 id|DEVID_CMD649
+)paren
+op_logical_or
+id|IDE_PCI_DEVID_EQ
+c_func
+(paren
+id|d-&gt;devid
+comma
+id|DEVID_OSB4
 )paren
 op_logical_or
 (paren

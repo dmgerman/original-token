@@ -14630,7 +14630,7 @@ id|num
 suffix:semicolon
 id|buff
 (braket
-id|count
+id|num
 )braket
 op_assign
 l_char|&squot;&bslash;0&squot;

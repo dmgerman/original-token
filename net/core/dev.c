@@ -7252,7 +7252,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/**&n; *&t;dev_new_index&t;-&t;allocate an ifindex&n; *&n; *&t;Returns a suitable unique value for a new device interface number.&n; *&t;The caller must hold the rtnl semaphore to be sure it remains &n; *&t;unique.&n; */
+multiline_comment|/**&n; *&t;dev_new_index&t;-&t;allocate an ifindex&n; *&n; *&t;Returns a suitable unique value for a new device interface&n; *&t;number.  The caller must hold the rtnl semaphore or the&n; *&t;dev_base_lock to be sure it remains unique.&n; */
 DECL|function|dev_new_index
 r_int
 id|dev_new_index
@@ -7307,7 +7307,7 @@ id|dev_boot_phase
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/**&n; *&t;register_netdevice&t;- register a network device&n; *&t;@dev: device to register&n; *&t;&n; *&t;Take a completed network device structure and add it to the kernel&n; *&t;interfaces. A %NETDEV_REGISTER message is sent to the netdev notifier&n; *&t;chain. 0 is returned on success. A negative errno code is returned&n; *&t;on a failure to set up the device, or if the name is a duplicate.&n; *&n; *&t;BUGS:&n; *&t;The locking appears insufficient to guarantee two parallel registers&n; *&t;will not get the same name.&n; */
+multiline_comment|/**&n; *&t;register_netdevice&t;- register a network device&n; *&t;@dev: device to register&n; *&t;&n; *&t;Take a completed network device structure and add it to the kernel&n; *&t;interfaces. A %NETDEV_REGISTER message is sent to the netdev notifier&n; *&t;chain. 0 is returned on success. A negative errno code is returned&n; *&t;on a failure to set up the device, or if the name is a duplicate.&n; *&n; *&t;Callers must hold the rtnl semaphore.  See the comment at the&n; *&t;end of Space.c for details about the locking.  You may want&n; *&t;register_netdev() instead of this.&n; *&n; *&t;BUGS:&n; *&t;The locking appears insufficient to guarantee two parallel registers&n; *&t;will not get the same name.&n; */
 DECL|function|register_netdevice
 r_int
 id|register_netdevice
@@ -7774,7 +7774,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;unregister_netdevice - remove device from the kernel&n; *&t;@dev: device&n; *&n; *&t;This function shuts down a device interface and removes it&n; *&t;from the kernel tables. On success 0 is returned, on a failure&n; *&t;a negative errno code is returned.&n; */
+multiline_comment|/**&n; *&t;unregister_netdevice - remove device from the kernel&n; *&t;@dev: device&n; *&n; *&t;This function shuts down a device interface and removes it&n; *&t;from the kernel tables. On success 0 is returned, on a failure&n; *&t;a negative errno code is returned.&n; *&n; *&t;Callers must hold the rtnl semaphore.  See the comment at the&n; *&t;end of Space.c for details about the locking.  You may want&n; *&t;unregister_netdev() instead of this.&n; */
 DECL|function|unregister_netdevice
 r_int
 id|unregister_netdevice
@@ -8205,6 +8205,7 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_NET_DIVERT */
+multiline_comment|/*&n; *       Callers must hold the rtnl semaphore.  See the comment at the&n; *       end of Space.c for details about the locking.&n; */
 DECL|function|net_dev_init
 r_int
 id|__init

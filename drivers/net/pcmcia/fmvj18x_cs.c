@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;    fmvj18x_cs.c,v 1.9 1996/08/06 03:13:53 root Exp&n;&n;    A fmvj18x (and its compatibles) PCMCIA client driver&n;&n;    Contributed by Shingo Fujimoto, shingo@flab.fujitsu.co.jp&n;&n;    TDK LAK-CD021 and CONTEC C-NET(PC)C support added by &n;    Nobuhiro Katayama, kata-n@po.iijnet.or.jp&n;&n;    The PCMCIA client code is based on code written by David Hinds.&n;    Network code is based on the &quot;FMV-18x driver&quot; by Yutaka TAMIYA&n;    but is actually largely Donald Becker&squot;s AT1700 driver, which&n;    carries the following attribution:&n;&n;    Written 1993-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;    &n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;    &n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;    Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;    fmvj18x_cs.c,v 2.0 2000/10/01  03:13:53 root Exp&n;&n;    A fmvj18x (and its compatibles) PCMCIA client driver&n;&n;    Contributed by Shingo Fujimoto, shingo@flab.fujitsu.co.jp&n;&n;    TDK LAK-CD021 and CONTEC C-NET(PC)C support added by &n;    Nobuhiro Katayama, kata-n@po.iijnet.or.jp&n;&n;    The PCMCIA client code is based on code written by David Hinds.&n;    Network code is based on the &quot;FMV-18x driver&quot; by Yutaka TAMIYA&n;    but is actually largely Donald Becker&squot;s AT1700 driver, which&n;    carries the following attribution:&n;&n;    Written 1993-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;    &n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;    &n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;    Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -110,7 +110,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;fmvj18x_cs.c,v 1.9 1996/08/06 03:13:53 root Exp&quot;
+l_string|&quot;fmvj18x_cs.c,v 2.0 2000/10/01 03:13:53 root Exp&quot;
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*====================================================================*/
@@ -319,6 +319,7 @@ DECL|enumerator|MBH10304
 DECL|enumerator|TDK
 DECL|enumerator|CONTEC
 DECL|enumerator|LA501
+DECL|enumerator|UNGERMANN
 DECL|typedef|cardtype_t
 r_typedef
 r_enum
@@ -332,9 +333,13 @@ comma
 id|CONTEC
 comma
 id|LA501
+comma
+id|UNGERMANN
 )brace
 id|cardtype_t
 suffix:semicolon
+DECL|macro|MANFID_UNGERMANN
+mdefine_line|#define MANFID_UNGERMANN 0x02c0
 multiline_comment|/*&n;    driver specific data structure&n;*/
 DECL|struct|local_info_t
 r_typedef
@@ -436,6 +441,8 @@ DECL|macro|LAN_CTRL
 mdefine_line|#define LAN_CTRL               16 /* LAN card control register */
 DECL|macro|MAC_ID
 mdefine_line|#define MAC_ID               0x1a /* hardware address */
+DECL|macro|UNGERMANN_MAC_ID
+mdefine_line|#define UNGERMANN_MAC_ID     0x18 /* UNGERMANN-BASS hardware address */
 multiline_comment|/* &n;    control bits &n; */
 DECL|macro|ENA_TMT_OK
 mdefine_line|#define ENA_TMT_OK           0x80
@@ -540,6 +547,12 @@ DECL|macro|INTR_ON
 mdefine_line|#define INTR_ON              0x1d /* LAN controler will catch interrupts */
 DECL|macro|TX_TIMEOUT
 mdefine_line|#define TX_TIMEOUT&t;&t;((400*HZ)/1000)
+DECL|macro|BANK_0U
+mdefine_line|#define BANK_0U              0x20 /* bank 0 (CONFIG_1) */
+DECL|macro|BANK_1U
+mdefine_line|#define BANK_1U              0x24 /* bank 1 (CONFIG_1) */
+DECL|macro|BANK_2U
+mdefine_line|#define BANK_2U              0x28 /* bank 2 (CONFIG_1) */
 multiline_comment|/*======================================================================&n;&n;    This bit of code is used to avoid unregistering network devices&n;    at inappropriate times.  2.2 and later kernels are fairly picky&n;    about when this can happen.&n;    &n;======================================================================*/
 DECL|function|flush_stale_links
 r_static
@@ -1169,6 +1182,8 @@ comma
 id|last_fn
 comma
 id|last_ret
+comma
+id|ret
 suffix:semicolon
 id|ioaddr_t
 id|ioaddr
@@ -1343,7 +1358,10 @@ id|tuple.DesiredTuple
 op_assign
 id|CISTPL_MANFID
 suffix:semicolon
-id|CS_CHECK
+r_if
+c_cond
+(paren
+id|CardServices
 c_func
 (paren
 id|GetFirstTuple
@@ -1353,7 +1371,9 @@ comma
 op_amp
 id|tuple
 )paren
-suffix:semicolon
+op_eq
+id|CS_SUCCESS
+)paren
 id|CS_CHECK
 c_func
 (paren
@@ -1364,6 +1384,14 @@ comma
 op_amp
 id|tuple
 )paren
+suffix:semicolon
+r_else
+id|buf
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0xffff
 suffix:semicolon
 r_switch
 c_cond
@@ -1454,6 +1482,136 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* old type card */
+id|tuple.DesiredTuple
+op_assign
+id|CISTPL_MANFID
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|CardServices
+c_func
+(paren
+id|GetFirstTuple
+comma
+id|handle
+comma
+op_amp
+id|tuple
+)paren
+op_eq
+id|CS_SUCCESS
+)paren
+id|CS_CHECK
+c_func
+(paren
+id|GetTupleData
+comma
+id|handle
+comma
+op_amp
+id|tuple
+)paren
+suffix:semicolon
+r_else
+id|buf
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0xffff
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|le16_to_cpu
+c_func
+(paren
+id|buf
+(braket
+l_int|0
+)braket
+)paren
+)paren
+(brace
+r_case
+id|MANFID_UNGERMANN
+suffix:colon
+id|cardtype
+op_assign
+id|UNGERMANN
+suffix:semicolon
+multiline_comment|/*&n;&t;       Ungermann-Bass Access/CARD accepts 0x300,0x320,0x340,0x360&n;&t;       0x380,0x3c0 only for ioport.&n;&t;    */
+r_for
+c_loop
+(paren
+id|link-&gt;io.BasePort1
+op_assign
+l_int|0x300
+suffix:semicolon
+id|link-&gt;io.BasePort1
+OL
+l_int|0x3e0
+suffix:semicolon
+id|link-&gt;io.BasePort1
+op_add_assign
+l_int|0x20
+)paren
+(brace
+id|ret
+op_assign
+id|CardServices
+c_func
+(paren
+id|RequestIO
+comma
+id|link-&gt;handle
+comma
+op_amp
+id|link-&gt;io
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+op_eq
+id|CS_SUCCESS
+)paren
+(brace
+multiline_comment|/* calculate ConfigIndex value */
+id|link-&gt;conf.ConfigIndex
+op_assign
+(paren
+(paren
+id|link-&gt;io.BasePort1
+op_amp
+l_int|0x0f0
+)paren
+op_rshift
+l_int|3
+)paren
+op_or
+l_int|0x22
+suffix:semicolon
+r_goto
+id|req_irq
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* if ioport allocation is failed, goto failed */
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;fmvj18x_cs: register_netdev() failed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_goto
+id|failed
+suffix:semicolon
+r_default
+suffix:colon
 id|cardtype
 op_assign
 id|MBH10302
@@ -1462,6 +1620,7 @@ id|link-&gt;conf.ConfigIndex
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 )brace
 id|CS_CHECK
 c_func
@@ -1474,6 +1633,8 @@ op_amp
 id|link-&gt;io
 )paren
 suffix:semicolon
+id|req_irq
+suffix:colon
 id|CS_CHECK
 c_func
 (paren
@@ -1532,6 +1693,26 @@ op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
 multiline_comment|/* Power On chip and select bank 0 */
+r_if
+c_cond
+(paren
+id|cardtype
+op_eq
+id|UNGERMANN
+)paren
+(brace
+id|outb
+c_func
+(paren
+id|BANK_0U
+comma
+id|ioaddr
+op_plus
+id|CONFIG_1
+)paren
+suffix:semicolon
+)brace
+r_else
 id|outb
 c_func
 (paren
@@ -1755,6 +1936,45 @@ id|node_id
 (braket
 id|i
 )braket
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|UNGERMANN
+suffix:colon
+multiline_comment|/* Read MACID from register */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|6
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|dev-&gt;dev_addr
+(braket
+id|i
+)braket
+op_assign
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|UNGERMANN_MAC_ID
+op_plus
+id|i
+)paren
+suffix:semicolon
+id|card_name
+op_assign
+l_string|&quot;Access/CARD&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3209,6 +3429,26 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 multiline_comment|/* Power On chip and select bank 0 */
+r_if
+c_cond
+(paren
+id|lp-&gt;cardtype
+op_eq
+id|UNGERMANN
+)paren
+(brace
+id|outb
+c_func
+(paren
+id|BANK_0U
+comma
+id|ioaddr
+op_plus
+id|CONFIG_1
+)paren
+suffix:semicolon
+)brace
+r_else
 id|outb
 c_func
 (paren
@@ -3303,6 +3543,24 @@ id|i
 )paren
 suffix:semicolon
 multiline_comment|/* Switch to bank 1 */
+r_if
+c_cond
+(paren
+id|lp-&gt;cardtype
+op_eq
+id|UNGERMANN
+)paren
+id|outb
+c_func
+(paren
+id|BANK_1U
+comma
+id|ioaddr
+op_plus
+id|CONFIG_1
+)paren
+suffix:semicolon
+r_else
 id|outb
 c_func
 (paren
@@ -3341,6 +3599,24 @@ id|i
 )paren
 suffix:semicolon
 multiline_comment|/* Switch to bank 2 (runtime mode) */
+r_if
+c_cond
+(paren
+id|lp-&gt;cardtype
+op_eq
+id|UNGERMANN
+)paren
+id|outb
+c_func
+(paren
+id|BANK_2U
+comma
+id|ioaddr
+op_plus
+id|CONFIG_1
+)paren
+suffix:semicolon
+r_else
 id|outb
 c_func
 (paren

@@ -3883,6 +3883,7 @@ comma
 id|loopback_init
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * The @dev_base list is protected by @dev_base_lock and the rtln&n; * semaphore.&n; *&n; * Pure readers hold dev_base_lock for reading.&n; *&n; * Writers must hold the rtnl semaphore while they loop through the&n; * dev_base list, and hold dev_base_lock for writing when they do the&n; * actual updates.  This allows pure readers to access the list even&n; * while a writer is preparing to update it.&n; *&n; * To put it another way, dev_base_lock is held for writing only to&n; * protect against pure readers; the rtnl semaphore provides the&n; * protection against other writers.&n; *&n; * See, for example usages, register_netdevice() and&n; * unregister_netdevice(), which must be called with the rtnl&n; * semaphore held.&n; */
 DECL|variable|dev_base
 r_struct
 id|net_device

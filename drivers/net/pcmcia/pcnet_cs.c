@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for NS8390-based cards&n;&n;    This driver supports the D-Link DE-650 and Linksys EthernetCard&n;    cards, the newer D-Link and Linksys combo cards, Accton EN2212&n;    cards, the RPTI EP400, and the PreMax PE-200 in non-shared-memory&n;    mode, and the IBM Credit Card Adapter, the NE4100, the Thomas&n;    Conrad ethernet card, and the Kingston KNE-PCM/x in shared-memory&n;    mode.  It will also handle the Socket EA card in either mode.&n;&n;    Copyright (C) 1999 David A. Hinds -- dahinds@users.sourceforge.net&n;&n;    pcnet_cs.c 1.124 2000/07/21 19:47:31&n;    &n;    The network driver code is based on Donald Becker&squot;s NE2000 code:&n;&n;    Written 1992,1993 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;    Based also on Keith Moore&squot;s changes to Don Becker&squot;s code, for IBM&n;    CCAE support.  Drivers merged back together, and shared-memory&n;    Socket EA support added, by Ken Raeburn, September 1995.&n;&n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for NS8390-based cards&n;&n;    This driver supports the D-Link DE-650 and Linksys EthernetCard&n;    cards, the newer D-Link and Linksys combo cards, Accton EN2212&n;    cards, the RPTI EP400, and the PreMax PE-200 in non-shared-memory&n;    mode, and the IBM Credit Card Adapter, the NE4100, the Thomas&n;    Conrad ethernet card, and the Kingston KNE-PCM/x in shared-memory&n;    mode.  It will also handle the Socket EA card in either mode.&n;&n;    Copyright (C) 1999 David A. Hinds -- dahinds@users.sourceforge.net&n;&n;    pcnet_cs.c 1.126 2000/10/02 20:38:23&n;    &n;    The network driver code is based on Donald Becker&squot;s NE2000 code:&n;&n;    Written 1992,1993 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;    Based also on Keith Moore&squot;s changes to Don Becker&squot;s code, for IBM&n;    CCAE support.  Drivers merged back together, and shared-memory&n;    Socket EA support added, by Ken Raeburn, September 1995.&n;&n;======================================================================*/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -78,7 +78,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;pcnet_cs.c 1.124 2000/07/21 19:47:31 (David Hinds)&quot;
+l_string|&quot;pcnet_cs.c 1.126 2000/10/02 20:38:23 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -86,13 +86,16 @@ mdefine_line|#define DEBUG(n, args...)
 macro_line|#endif
 multiline_comment|/*====================================================================*/
 multiline_comment|/* Parameters that can be set with &squot;insmod&squot; */
+DECL|macro|INT_MODULE_PARM
+mdefine_line|#define INT_MODULE_PARM(n, v) static int n = v; MODULE_PARM(n, &quot;i&quot;)
 multiline_comment|/* Bit map of interrupts to choose from */
-DECL|variable|irq_mask
-r_static
-id|u_int
+id|INT_MODULE_PARM
+c_func
+(paren
 id|irq_mask
-op_assign
+comma
 l_int|0xdeb8
+)paren
 suffix:semicolon
 DECL|variable|irq_list
 r_static
@@ -107,55 +110,69 @@ op_minus
 l_int|1
 )brace
 suffix:semicolon
-multiline_comment|/* Transceiver type, for Socket EA and IBM CC cards. */
-DECL|variable|if_port
-r_static
-r_int
+id|MODULE_PARM
+c_func
+(paren
+id|irq_list
+comma
+l_string|&quot;1-4i&quot;
+)paren
+suffix:semicolon
+id|INT_MODULE_PARM
+c_func
+(paren
 id|if_port
-op_assign
+comma
 l_int|1
+)paren
 suffix:semicolon
-multiline_comment|/* Use 64K packet buffer, for Socket EA cards. */
-DECL|variable|use_big_buf
-r_static
-r_int
+multiline_comment|/* Transceiver type */
+id|INT_MODULE_PARM
+c_func
+(paren
 id|use_big_buf
-op_assign
+comma
 l_int|1
+)paren
 suffix:semicolon
-multiline_comment|/* Shared memory speed, in ns */
-DECL|variable|mem_speed
-r_static
-r_int
+multiline_comment|/* use 64K packet buffer? */
+id|INT_MODULE_PARM
+c_func
+(paren
 id|mem_speed
-op_assign
+comma
 l_int|0
+)paren
 suffix:semicolon
-multiline_comment|/* Insert a pause in block_output after sending a packet */
-DECL|variable|delay_output
-r_static
-r_int
+multiline_comment|/* shared mem speed, in ns */
+id|INT_MODULE_PARM
+c_func
+(paren
 id|delay_output
-op_assign
+comma
 l_int|0
+)paren
 suffix:semicolon
-multiline_comment|/* Length of delay, in microseconds */
-DECL|variable|delay_time
-r_static
-r_int
+multiline_comment|/* pause after xmit? */
+id|INT_MODULE_PARM
+c_func
+(paren
 id|delay_time
-op_assign
+comma
 l_int|4
+)paren
 suffix:semicolon
-multiline_comment|/* Use shared memory, if available? */
-DECL|variable|use_shmem
-r_static
-r_int
+multiline_comment|/* in usec */
+id|INT_MODULE_PARM
+c_func
+(paren
 id|use_shmem
-op_assign
+comma
 op_minus
 l_int|1
+)paren
 suffix:semicolon
+multiline_comment|/* use shared memory? */
 multiline_comment|/* Ugh!  Let the user hardwire the hardware address for queer cards */
 DECL|variable|hw_addr
 r_static
@@ -170,70 +187,6 @@ l_int|0
 comma
 multiline_comment|/* ... */
 )brace
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|irq_mask
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|irq_list
-comma
-l_string|&quot;1-4i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|if_port
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|use_big_buf
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|mem_speed
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|delay_output
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|delay_time
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|use_shmem
-comma
-l_string|&quot;i&quot;
-)paren
 suffix:semicolon
 id|MODULE_PARM
 c_func
@@ -2181,10 +2134,10 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|10000
+l_int|10
 )paren
 suffix:semicolon
 r_for
@@ -5233,7 +5186,7 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|100L
+l_int|100
 )paren
 suffix:semicolon
 )brace

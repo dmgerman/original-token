@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    PCMCIA Card Information Structure parser&n;&n;    cistpl.c 1.90 2000/08/30 20:23:47&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dahinds@users.sourceforge.net&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    PCMCIA Card Information Structure parser&n;&n;    cistpl.c 1.91 2000/09/16 03:48:28&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dahinds@users.sourceforge.net&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -121,6 +121,16 @@ DECL|macro|IS_ATTR
 mdefine_line|#define IS_ATTR&t;&t;1
 DECL|macro|IS_INDIRECT
 mdefine_line|#define IS_INDIRECT&t;8
+r_static
+r_int
+id|setup_cis_mem
+c_func
+(paren
+id|socket_info_t
+op_star
+id|s
+)paren
+suffix:semicolon
 DECL|function|set_cis_map
 r_static
 r_void
@@ -262,15 +272,17 @@ suffix:semicolon
 id|mem-&gt;flags
 op_assign
 id|MAP_ACTIVE
-suffix:semicolon
-r_if
-c_cond
+op_or
+(paren
 (paren
 id|cis_width
 )paren
-id|mem-&gt;flags
-op_or_assign
+ques
+c_cond
 id|MAP_16BIT
+suffix:colon
+l_int|0
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -685,15 +697,17 @@ suffix:semicolon
 id|mem-&gt;flags
 op_assign
 id|MAP_ACTIVE
-suffix:semicolon
-r_if
-c_cond
+op_or
+(paren
 (paren
 id|cis_width
 )paren
-id|mem-&gt;flags
-op_or_assign
+ques
+c_cond
 id|MAP_16BIT
+suffix:colon
+l_int|0
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1324,6 +1338,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|setup_cis_mem
+r_static
 r_int
 id|setup_cis_mem
 c_func
@@ -1419,10 +1434,6 @@ op_plus
 id|s-&gt;cap.map_size
 op_minus
 l_int|1
-suffix:semicolon
-id|s-&gt;cis_mem.flags
-op_or_assign
-id|MAP_ACTIVE
 suffix:semicolon
 id|s-&gt;cis_virt
 op_assign

@@ -6416,16 +6416,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BRIDGE
-r_extern
-r_int
-id|br_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_WAN_ROUTER
 r_extern
 r_void
@@ -6493,14 +6483,6 @@ suffix:semicolon
 macro_line|#ifdef SLAB_SKB
 multiline_comment|/*&n;&t; *&t;Initialize skbuff SLAB cache &n;&t; */
 id|skb_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/*&n;&t; *&t;Ethernet bridge layer.&n;&t; */
-macro_line|#ifdef CONFIG_BRIDGE
-id|br_init
 c_func
 (paren
 )paren

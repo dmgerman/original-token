@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunbmac.c,v 1.20 2000/07/11 22:35:22 davem Exp $&n; * sunbmac.c: Driver for Sparc BigMAC 100baseT ethernet adapters.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sunbmac.c,v 1.21 2000/10/22 16:08:38 davem Exp $&n; * sunbmac.c: Driver for Sparc BigMAC 100baseT ethernet adapters.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
 DECL|variable|version
 r_static
 r_char
@@ -63,7 +63,6 @@ macro_line|#else
 DECL|macro|DIRQ
 mdefine_line|#define DIRQ(x)
 macro_line|#endif
-macro_line|#ifdef MODULE
 DECL|variable|root_bigmac_dev
 r_static
 r_struct
@@ -73,7 +72,6 @@ id|root_bigmac_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif
 DECL|macro|DEFAULT_JAMSIZE
 mdefine_line|#define DEFAULT_JAMSIZE    4 /* Toe jam */
 DECL|macro|QEC_RESET_TRIES
@@ -5866,8 +5864,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-multiline_comment|/* Put us into the list of instances attached for later module unloading. */
+multiline_comment|/* Put us into the list of instances attached for later driver&n;&t; * exit.&n;&t; */
 id|bp-&gt;next_module
 op_assign
 id|root_bigmac_dev
@@ -5876,7 +5873,6 @@ id|root_bigmac_dev
 op_assign
 id|bp
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -6085,12 +6081,10 @@ l_int|0
 comma
 id|v
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|root_bigmac_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6184,8 +6178,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef MODULE
-multiline_comment|/* No need to check MOD_IN_USE, as sys_delete_module() checks. */
 r_while
 c_loop
 (paren
@@ -6267,7 +6259,6 @@ op_assign
 id|bp_nxt
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
 )brace
 DECL|variable|bigmac_probe
 id|module_init

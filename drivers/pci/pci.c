@@ -2622,7 +2622,7 @@ id|limit
 )paren
 (brace
 id|res-&gt;flags
-op_or_assign
+op_assign
 (paren
 id|io_base_lo
 op_amp
@@ -2644,6 +2644,28 @@ suffix:semicolon
 id|res-&gt;name
 op_assign
 id|child-&gt;name
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/*&n;&t;&t; * Ugh. We don&squot;t know enough about this bridge. Just assume&n;&t;&t; * that it&squot;s entirely transparent.&n;&t;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;Unknown bridge resource %d: assuming transparent&bslash;n&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|child-&gt;resource
+(braket
+l_int|0
+)braket
+op_assign
+id|child-&gt;parent-&gt;resource
+(braket
+l_int|0
+)braket
 suffix:semicolon
 )brace
 id|res
@@ -2706,7 +2728,7 @@ id|limit
 )paren
 (brace
 id|res-&gt;flags
-op_or_assign
+op_assign
 (paren
 id|mem_base_lo
 op_amp
@@ -2728,6 +2750,28 @@ suffix:semicolon
 id|res-&gt;name
 op_assign
 id|child-&gt;name
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* See comment above. Same thing */
+id|printk
+c_func
+(paren
+l_string|&quot;Unknown bridge resource %d: assuming transparent&bslash;n&quot;
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|child-&gt;resource
+(braket
+l_int|1
+)braket
+op_assign
+id|child-&gt;parent-&gt;resource
+(braket
+l_int|1
+)braket
 suffix:semicolon
 )brace
 id|res
@@ -2857,7 +2901,7 @@ id|limit
 )paren
 (brace
 id|res-&gt;flags
-op_or_assign
+op_assign
 (paren
 id|mem_base_lo
 op_amp
@@ -2881,6 +2925,28 @@ suffix:semicolon
 id|res-&gt;name
 op_assign
 id|child-&gt;name
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* See comments above */
+id|printk
+c_func
+(paren
+l_string|&quot;Unknown bridge resource %d: assuming transparent&bslash;n&quot;
+comma
+l_int|2
+)paren
+suffix:semicolon
+id|child-&gt;resource
+(braket
+l_int|2
+)braket
+op_assign
+id|child-&gt;parent-&gt;resource
+(braket
+l_int|2
+)braket
 suffix:semicolon
 )brace
 )brace

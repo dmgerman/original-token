@@ -5192,15 +5192,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-multiline_comment|/* Update attributes as result of writeback. */
-id|nfs_write_attributes
-c_func
-(paren
-id|inode
-comma
-id|resp-&gt;fattr
-)paren
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -5384,6 +5375,15 @@ id|req
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Update attributes as result of writeback. */
+id|nfs_write_attributes
+c_func
+(paren
+id|inode
+comma
+id|resp-&gt;fattr
+)paren
+suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_NFS_V3
 multiline_comment|/*&n; * Set up the argument/result storage required for the RPC call.&n; */
@@ -5870,14 +5870,6 @@ comma
 id|task-&gt;tk_status
 )paren
 suffix:semicolon
-id|nfs_refresh_inode
-c_func
-(paren
-id|inode
-comma
-id|resp-&gt;fattr
-)paren
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -6023,6 +6015,14 @@ id|req
 )paren
 suffix:semicolon
 )brace
+id|nfs_write_attributes
+c_func
+(paren
+id|inode
+comma
+id|resp-&gt;fattr
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|nfs_flush_file
