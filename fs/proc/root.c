@@ -3199,7 +3199,6 @@ id|dentry
 suffix:semicolon
 )brace
 DECL|variable|proc_dentry_operations
-r_static
 r_struct
 id|dentry_operations
 id|proc_dentry_operations
