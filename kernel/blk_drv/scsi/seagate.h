@@ -172,5 +172,9 @@ DECL|macro|ST0X_SELECTION_DELAY
 mdefine_line|#define ST0X_SELECTION_DELAY 3
 DECL|macro|eoi
 mdefine_line|#define eoi() __asm__(&quot;push %%eax&bslash;nmovb $0x20, %%al&bslash;noutb %%al, $0x20&bslash;npop %%eax&quot;::)
+DECL|macro|SEAGATE
+mdefine_line|#define SEAGATE 1&t;/* these determine the type of the controller */
+DECL|macro|FD
+mdefine_line|#define FD&t;2
 macro_line|#endif
 eof

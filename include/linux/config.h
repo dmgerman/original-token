@@ -22,7 +22,7 @@ mdefine_line|#define DEF_SYSSEG&t;0x1000
 DECL|macro|DEF_SETUPSEG
 mdefine_line|#define DEF_SETUPSEG&t;0x9020
 DECL|macro|DEF_SYSSIZE
-mdefine_line|#define DEF_SYSSIZE&t;0x7000
+mdefine_line|#define DEF_SYSSIZE&t;0x8000
 multiline_comment|/* internal svga startup constants */
 DECL|macro|NORMAL_VGA
 mdefine_line|#define NORMAL_VGA&t;0xffff&t;&t;/* 80x25 mode */

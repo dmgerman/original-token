@@ -2,16 +2,19 @@ macro_line|#ifndef _LINUX_MINIX_FS_H
 DECL|macro|_LINUX_MINIX_FS_H
 mdefine_line|#define _LINUX_MINIX_FS_H
 multiline_comment|/*&n; * The minix filesystem constants/structures&n; */
+multiline_comment|/*&n; * Thanks to Kees J Bot for sending me the definitions of the new&n; * minix filesystem (aka V2) with bigger inodes and 32-bit block&n; * pointers. It&squot;s not actually implemented yet, but I&squot;ll look into&n; * it.&n; */
 DECL|macro|MINIX_NAME_LEN
 mdefine_line|#define MINIX_NAME_LEN 14
 DECL|macro|MINIX_ROOT_INO
 mdefine_line|#define MINIX_ROOT_INO 1
 DECL|macro|MINIX_I_MAP_SLOTS
-mdefine_line|#define MINIX_I_MAP_SLOTS 8
+mdefine_line|#define MINIX_I_MAP_SLOTS&t;8
 DECL|macro|MINIX_Z_MAP_SLOTS
-mdefine_line|#define MINIX_Z_MAP_SLOTS 8
+mdefine_line|#define MINIX_Z_MAP_SLOTS&t;8
 DECL|macro|MINIX_SUPER_MAGIC
-mdefine_line|#define MINIX_SUPER_MAGIC 0x137F
+mdefine_line|#define MINIX_SUPER_MAGIC&t;0x137F
+DECL|macro|NEW_MINIX_SUPER_MAGIC
+mdefine_line|#define NEW_MINIX_SUPER_MAGIC&t;0x2468
 DECL|macro|MINIX_INODES_PER_BLOCK
 mdefine_line|#define MINIX_INODES_PER_BLOCK ((BLOCK_SIZE)/(sizeof (struct minix_inode)))
 DECL|macro|MINIX_DIR_ENTRIES_PER_BLOCK
@@ -56,6 +59,61 @@ r_int
 id|i_zone
 (braket
 l_int|9
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * The new minix inode has all the time entries, as well as&n; * long block numbers and a third indirect block (7+1+1+1&n; * instead of 7+1+1). Also, some previously 8-bit values are&n; * now 16-bit. The inode is now 64 bytes instead of 32.&n; */
+DECL|struct|new_minix_inode
+r_struct
+id|new_minix_inode
+(brace
+DECL|member|i_mode
+r_int
+r_int
+id|i_mode
+suffix:semicolon
+DECL|member|i_nlinks
+r_int
+r_int
+id|i_nlinks
+suffix:semicolon
+DECL|member|i_uid
+r_int
+r_int
+id|i_uid
+suffix:semicolon
+DECL|member|i_gid
+r_int
+r_int
+id|i_gid
+suffix:semicolon
+DECL|member|i_size
+r_int
+r_int
+id|i_size
+suffix:semicolon
+DECL|member|i_atime
+r_int
+r_int
+id|i_atime
+suffix:semicolon
+DECL|member|i_mtime
+r_int
+r_int
+id|i_mtime
+suffix:semicolon
+DECL|member|i_ctime
+r_int
+r_int
+id|i_ctime
+suffix:semicolon
+DECL|member|i_zone
+r_int
+r_int
+id|i_zone
+(braket
+l_int|10
 )braket
 suffix:semicolon
 )brace

@@ -310,6 +310,8 @@ id|cpu_reg_ptr
 suffix:semicolon
 r_int
 id|offset
+op_assign
+l_int|0
 suffix:semicolon
 id|mod
 op_assign

@@ -87,6 +87,13 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* &n;&t;&t;&t;&t;&t;&t;set when we are aborted, ie by a time out, etc.&n;&t;&t;&t;&t;&t;*/
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;In theory, we have a nice auto&n;&t;&t;&t;&t;&t;&t;detect routine - but this &n;&t;&t;&t;&t;&t;&t;overides it. &n;&t;&t;&t;&t;&t;*/
+DECL|variable|controller_type
+r_static
+r_int
+r_char
+id|controller_type
+suffix:semicolon
+multiline_comment|/* set to SEAGATE for ST0x boards or FD for TMC-88x boards */
 DECL|macro|retcode
 mdefine_line|#define retcode(result) (((result) &lt;&lt; 16) | (message &lt;&lt; 8) | status) &t;&t;&t;
 DECL|macro|STATUS
@@ -165,6 +172,11 @@ DECL|member|length
 r_int
 id|length
 suffix:semicolon
+DECL|member|type
+r_int
+r_char
+id|type
+suffix:semicolon
 DECL|typedef|Signature
 )brace
 id|Signature
@@ -185,6 +197,8 @@ comma
 l_int|15
 comma
 l_int|40
+comma
+id|SEAGATE
 )brace
 comma
 multiline_comment|/*&n;&t;The following two lines are NOT mistakes.  One detects &n; &t;ROM revision 3.0.0, the other 3.2.  Since seagate&n;&t;has only one type of SCSI adapter, and this is not &n;&t;going to change, the &quot;SEAGATE&quot; and &quot;SCSI&quot; together&n;&t;are probably &quot;good enough&quot;&n;*/
@@ -194,6 +208,8 @@ comma
 l_int|16
 comma
 l_int|17
+comma
+id|SEAGATE
 )brace
 comma
 (brace
@@ -202,17 +218,39 @@ comma
 l_int|17
 comma
 l_int|17
+comma
+id|SEAGATE
 )brace
 comma
-macro_line|#endif
 multiline_comment|/*&n;&t;This is for the Future Domain 88x series.  I&squot;ve been told that&n;&t;the Seagate controllers are just repackages of these, and seeing&n;&t;early seagate BIOS bearing the Future Domain copyright,&n;&t;I believe it.&n;*/
-macro_line|#ifdef CONFIG_SCSI_FD_88x
 (brace
 l_string|&quot;FUTURE DOMAIN CORP. (C) 1986-1989 V6.0A7/28/90&quot;
 comma
 l_int|5
 comma
 l_int|46
+comma
+id|FD
+)brace
+comma
+(brace
+l_string|&quot;FUTURE DOMAIN CORP. (C) 1986-1990 V6.0105/31/90&quot;
+comma
+l_int|5
+comma
+l_int|47
+comma
+id|FD
+)brace
+comma
+(brace
+l_string|&quot;FUTURE DOMAIN CORP. (C) 1986-1990 V7.009/18/90&quot;
+comma
+l_int|5
+comma
+l_int|46
+comma
+id|FD
 )brace
 comma
 macro_line|#endif
@@ -407,6 +445,7 @@ dot
 id|length
 )paren
 )paren
+(brace
 id|base_address
 op_assign
 (paren
@@ -418,6 +457,16 @@ id|seagate_bases
 id|i
 )braket
 suffix:semicolon
+id|controller_type
+op_assign
+id|signatures
+(braket
+id|j
+)braket
+dot
+id|type
+suffix:semicolon
+)brace
 macro_line|#endif
 r_if
 c_cond
@@ -441,7 +490,16 @@ op_star
 id|base_address
 )paren
 op_plus
+(paren
+id|controller_type
+op_eq
+id|SEAGATE
+ques
+c_cond
 l_int|0x1a00
+suffix:colon
+l_int|0x1c00
+)paren
 )paren
 suffix:semicolon
 id|st0x_dr
@@ -460,7 +518,16 @@ op_star
 id|base_address
 )paren
 op_plus
+(paren
+id|controller_type
+op_eq
+id|SEAGATE
+ques
+c_cond
 l_int|0x1c00
+suffix:colon
+l_int|0x1e00
+)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG
@@ -1091,8 +1158,17 @@ r_if
 c_cond
 (paren
 id|target
-OG
+op_eq
+(paren
+id|controller_type
+op_eq
+id|SEAGATE
+ques
+c_cond
+l_int|7
+suffix:colon
 l_int|6
+)paren
 )paren
 r_return
 id|DID_BAD_TARGET
@@ -1183,7 +1259,16 @@ op_assign
 id|DATA
 )paren
 op_amp
+(paren
+id|controller_type
+op_eq
+id|SEAGATE
+ques
+c_cond
 l_int|0x80
+suffix:colon
+l_int|0x40
+)paren
 )paren
 )paren
 (brace
@@ -1453,7 +1538,16 @@ op_lshift
 id|target
 )paren
 op_or
+(paren
+id|controller_type
+op_eq
+id|SEAGATE
+ques
+c_cond
 l_int|0x80
+suffix:colon
+l_int|0x40
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;If we are allowing ourselves to reconnect, then I will keep &n; *&t;ATTN raised so we get MSG OUT. &n; */

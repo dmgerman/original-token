@@ -10,6 +10,8 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+DECL|macro|ROUND_UP
+mdefine_line|#define ROUND_UP(x,y) (((x)+(y)-1)/(y))
 multiline_comment|/*&n; * Ok, Peter made a complicated, but straightforward multiple_wait() function.&n; * I have rewritten this, taking some shortcuts: This code may not be easy to&n; * follow, but it should be free of race-conditions, and it&squot;s practical. If you&n; * understand what I&squot;m doing here, then you understand how the linux&n; * sleep/wakeup mechanism works.&n; *&n; * Two very simple procedures, select_wait() and free_wait() make all the work.&n; * select_wait() is a inline-function defined in &lt;linux/sched.h&gt;, as all select&n; * functions have to call it to add an entry to the select table.&n; */
 multiline_comment|/*&n; * I rewrote this again to make the select_table size variable, take some&n; * more shortcuts, improve responsiveness, and remove another race that&n; * Linus noticed.  -- jrs&n; */
 DECL|function|free_wait
@@ -892,6 +894,9 @@ id|jiffies
 suffix:semicolon
 id|timeout
 op_add_assign
+id|ROUND_UP
+c_func
+(paren
 id|get_fs_long
 c_func
 (paren
@@ -903,11 +908,12 @@ op_star
 op_amp
 id|tvp-&gt;tv_usec
 )paren
-op_div
+comma
 (paren
 l_int|1000000
 op_div
 id|HZ
+)paren
 )paren
 suffix:semicolon
 id|timeout

@@ -167,7 +167,7 @@ suffix:semicolon
 multiline_comment|/* Latest revision known to be bad.  Not used yet */
 )brace
 suffix:semicolon
-macro_line|#if 0
+DECL|variable|blacklist
 r_static
 r_struct
 id|blist
@@ -195,15 +195,6 @@ l_string|&quot;921&quot;
 comma
 multiline_comment|/* Responds to all lun */
 (brace
-l_string|&quot;NEWBURY&quot;
-comma
-l_string|&quot;NDR3380S&quot;
-comma
-l_string|&quot;2.10&quot;
-)brace
-comma
-multiline_comment|/* Responds to all lun */
-(brace
 l_int|NULL
 comma
 l_int|NULL
@@ -212,6 +203,7 @@ l_int|NULL
 )brace
 )brace
 suffix:semicolon
+DECL|function|blacklisted
 r_static
 r_int
 (def_block
@@ -336,7 +328,6 @@ suffix:semicolon
 )brace
 )def_block
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; *&t;As the actual SCSI command runs in the background, we must set up a &n; *&t;flag that tells scan_scsis() when the result it has is valid.  &n; *&t;scan_scsis can set the_result to -1, and watch for it to become the &n; *&t;actual return code for that call.  the scan_scsis_done function() is &n; *&t;our user specified completion function that is passed on to the  &n; *&t;scsi_do_cmd() function.&n; */
 DECL|variable|in_scan
 r_static
@@ -1276,7 +1267,6 @@ suffix:semicolon
 op_increment
 id|NR_SCSI_DEVICES
 suffix:semicolon
-macro_line|#if 0
 multiline_comment|/* Some scsi devices cannot be polled for lun != 0&n;&t;&t;&t;   due to firmware bugs */
 r_if
 c_cond
@@ -1291,7 +1281,6 @@ id|scsi_result
 r_break
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* Some scsi-1 peripherals do not handle lun != 0.&n;&t;&t;&t;   I am assuming that scsi-2 peripherals do better */
 r_if
 c_cond

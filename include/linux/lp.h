@@ -22,15 +22,15 @@ DECL|macro|LP_ERR
 mdefine_line|#define LP_ERR   0x0020
 DECL|macro|LP_ABORT
 mdefine_line|#define LP_ABORT 0x0040
-multiline_comment|/* timeout for each character.  This is relative to bus cycles -- it&n; * is the count in a busy loop.  THIS IS THE VALUE TO CHANGE if you&n; * have extremely slow printing, or if the machine seems to slow down&n; * a lot when you print.  If you have slow printing, increase this&n; * number and recompile, and if your system gets bogged down, decrease&n; * this number.  This can be changed with the tunelp(8) command.&n; */
+multiline_comment|/* timeout for each character.  This is relative to bus cycles -- it&n; * is the count in a busy loop.  THIS IS THE VALUE TO CHANGE if you&n; * have extremely slow printing, or if the machine seems to slow down&n; * a lot when you print.  If you have slow printing, increase this&n; * number and recompile, and if your system gets bogged down, decrease&n; * this number.  This can be changed with the tunelp(8) command as well.&n; */
 DECL|macro|LP_INIT_CHAR
-mdefine_line|#define LP_INIT_CHAR 250
-multiline_comment|/* The parallel port specs apparently say that there needs to be&n; * a .5usec wait before and after the strobe.  Since there are wildly&n; * different computers running linux, I can&squot;t come up with a perfect&n; * value, but since it worked well on most printers before without,&n; * and I have seen some improvement on my computer by making it a&n; * small number, I&squot;ll initialize it to 2.&n; */
+mdefine_line|#define LP_INIT_CHAR 1000
+multiline_comment|/* The parallel port specs apparently say that there needs to be&n; * a .5usec wait before and after the strobe.  Since there are wildly&n; * different computers running linux, I can&squot;t come up with a perfect&n; * value, but since it worked well on most printers before without,&n; * I&squot;ll initialize it to 0.&n; */
 DECL|macro|LP_INIT_WAIT
-mdefine_line|#define LP_INIT_WAIT 2
-multiline_comment|/* This is the amount of time that the driver waits for the printer to&n; * catch up when the printer&squot;s buffer appears to be filled.  If you&n; * want to tune this and have a fast printer (i.e. HPIIIP), decrease&n; * this number, and if you have a slow printer, increase this number.&n; * This is in hundredths of a second, the default 10 being .1 second.&n; * Or use the tunelp(8) command, which is especially nice if you want&n; * change back and forth between character and graphics printing, which&n; * are wildly different...&n; */
+mdefine_line|#define LP_INIT_WAIT 0
+multiline_comment|/* This is the amount of time that the driver waits for the printer to&n; * catch up when the printer&squot;s buffer appears to be filled.  If you&n; * want to tune this and have a fast printer (i.e. HPIIIP), decrease&n; * this number, and if you have a slow printer, increase this number.&n; * This is in hundredths of a second, the default 2 being .05 second.&n; * Or use the tunelp(8) command, which is especially nice if you want&n; * change back and forth between character and graphics printing, which&n; * are wildly different...&n; */
 DECL|macro|LP_INIT_TIME
-mdefine_line|#define LP_INIT_TIME 10
+mdefine_line|#define LP_INIT_TIME 2
 multiline_comment|/* IOCTL numbers */
 DECL|macro|LPCHAR
 mdefine_line|#define LPCHAR   0x0001  /* corresponds to LP_INIT_CHAR */

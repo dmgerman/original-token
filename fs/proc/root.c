@@ -185,6 +185,14 @@ l_int|5
 comma
 l_int|4
 comma
+l_string|&quot;kmsg&quot;
+)brace
+comma
+(brace
+l_int|6
+comma
+l_int|4
+comma
 l_string|&quot;self&quot;
 )brace
 multiline_comment|/* will change inode # */
@@ -332,7 +340,7 @@ c_cond
 (paren
 id|ino
 op_eq
-l_int|5
+l_int|6
 )paren
 multiline_comment|/* self modifying inode ... */
 id|ino

@@ -197,12 +197,6 @@ id|current
 )paren
 r_return
 suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;fwait&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -221,6 +215,12 @@ id|last_task_used_math-&gt;tss.i387
 )paren
 suffix:semicolon
 )brace
+id|__asm__
+c_func
+(paren
+l_string|&quot;fwait&quot;
+)paren
+suffix:semicolon
 id|last_task_used_math
 op_assign
 id|current

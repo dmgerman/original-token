@@ -202,10 +202,10 @@ r_typedef
 r_struct
 id|fd_set
 (brace
-DECL|member|__bits
+DECL|member|fds_bits
 r_int
 r_int
-id|__bits
+id|fds_bits
 (braket
 id|__FDSET_LONGS
 )braket

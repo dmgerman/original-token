@@ -1,3 +1,6 @@
+macro_line|#ifndef __ASM_SYSTEM_H
+DECL|macro|__ASM_SYSTEM_H
+mdefine_line|#define __ASM_SYSTEM_H
 DECL|macro|move_to_user_mode
 mdefine_line|#define move_to_user_mode() &bslash;&n;__asm__ __volatile__ (&quot;movl %%esp,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $0x17&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushfl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $0x0f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;iret&bslash;n&quot; &bslash;&n;&t;&quot;1:&bslash;tmovl $0x17,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%ds&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%es&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%fs&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%gs&quot; &bslash;&n;&t;:::&quot;ax&quot;)
 DECL|macro|sti
@@ -6,6 +9,47 @@ DECL|macro|cli
 mdefine_line|#define cli() __asm__ __volatile__ (&quot;cli&quot;::)
 DECL|macro|nop
 mdefine_line|#define nop() __asm__ __volatile__ (&quot;nop&quot;::)
+DECL|function|tas
+r_extern
+r_inline
+r_int
+id|tas
+c_func
+(paren
+r_char
+op_star
+id|m
+)paren
+(brace
+r_char
+id|res
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;xchg %0,%1&quot;
+suffix:colon
+l_string|&quot;=q&quot;
+(paren
+id|res
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+l_int|0x1
+)paren
+)paren
+suffix:semicolon
+r_return
+id|res
+suffix:semicolon
+)brace
 DECL|macro|save_flags
 mdefine_line|#define save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushfl ; popl %0&quot;:&quot;=r&quot; (x))
 DECL|macro|restore_flags
@@ -28,4 +72,5 @@ DECL|macro|set_tss_desc
 mdefine_line|#define set_tss_desc(n,addr) _set_tssldt_desc(((char *) (n)),((int)(addr)),231,&quot;0x89&quot;)
 DECL|macro|set_ldt_desc
 mdefine_line|#define set_ldt_desc(n,addr) _set_tssldt_desc(((char *) (n)),((int)(addr)),23,&quot;0x82&quot;)
+macro_line|#endif
 eof

@@ -135,6 +135,11 @@ suffix:semicolon
 r_extern
 r_struct
 id|inode_operations
+id|proc_kmsg_inode_operations
+suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
 id|proc_link_inode_operations
 suffix:semicolon
 r_extern

@@ -391,7 +391,7 @@ DECL|macro|CL_OFFSET
 mdefine_line|#define CL_OFFSET (*(unsigned short *) 0x90022)
 multiline_comment|/*&n; * Yeah, yeah, it&squot;s ugly, but I cannot find how to do this correctly&n; * and this seems to work. I anybody has more info on the real-time&n; * clock I&squot;d be interested. Most of this was trial and error, and some&n; * bios-listing reading. Urghh.&n; */
 DECL|macro|CMOS_READ
-mdefine_line|#define CMOS_READ(addr) ({ &bslash;&n;outb_p(0x80|addr,0x70); &bslash;&n;inb_p(0x71); &bslash;&n;})
+mdefine_line|#define CMOS_READ(addr) ({ &bslash;&n;outb_p(addr,0x70); &bslash;&n;inb_p(0x71); &bslash;&n;})
 DECL|macro|BCD_TO_BIN
 mdefine_line|#define BCD_TO_BIN(val) ((val)=((val)&amp;15) + ((val)&gt;&gt;4)*10)
 DECL|function|time_init
@@ -406,6 +406,39 @@ r_void
 r_struct
 id|mktime
 id|time
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|1000000
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|CMOS_READ
+c_func
+(paren
+l_int|10
+)paren
+op_amp
+l_int|0x80
+)paren
+)paren
+r_break
 suffix:semicolon
 r_do
 (brace

@@ -1190,26 +1190,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|MSDOS_CAN_BMAP
-c_func
-(paren
-id|MSDOS_SB
-c_func
-(paren
-id|s
-)paren
-)paren
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;No bmap support&bslash;n&quot;
-)paren
-suffix:semicolon
 id|s-&gt;s_magic
 op_assign
 id|MSDOS_SUPER_MAGIC

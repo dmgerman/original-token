@@ -12,4 +12,7 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_SOUND
+macro_line|#error The Sound Driver not installed.
+macro_line|#endif
 eof

@@ -148,7 +148,7 @@ id|device
 (brace
 r_return
 op_minus
-id|EACCES
+id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/* No such device */
@@ -3398,6 +3398,15 @@ id|memory_end
 r_int
 id|i
 suffix:semicolon
+id|blkdev_fops
+(braket
+id|MAJOR_NR
+)braket
+op_assign
+op_amp
+id|sd_fops
+suffix:semicolon
+multiline_comment|/* to get sd_open in table */
 r_if
 c_cond
 (paren
@@ -3521,14 +3530,6 @@ dot
 id|request_fn
 op_assign
 id|DEVICE_REQUEST
-suffix:semicolon
-id|blkdev_fops
-(braket
-id|MAJOR_NR
-)braket
-op_assign
-op_amp
-id|sd_fops
 suffix:semicolon
 multiline_comment|/* If our host adapter is capable of scatter-gather, then we increase&n;&t;   the read-ahead to 8 blocks (16 sectors).  If not, we use&n;&t;   a two block (4 sector) read ahead. */
 r_if

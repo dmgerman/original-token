@@ -641,7 +641,7 @@ DECL|member|comm
 r_char
 id|comm
 (braket
-l_int|8
+l_int|16
 )braket
 suffix:semicolon
 DECL|member|vm86_info

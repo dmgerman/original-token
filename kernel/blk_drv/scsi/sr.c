@@ -1123,7 +1123,7 @@ id|device
 (brace
 r_return
 op_minus
-id|EACCES
+id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/* No such device */
@@ -2929,6 +2929,14 @@ id|memory_end
 r_int
 id|i
 suffix:semicolon
+id|blkdev_fops
+(braket
+id|MAJOR_NR
+)braket
+op_assign
+op_amp
+id|sr_fops
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3097,14 +3105,6 @@ op_assign
 l_int|4
 suffix:semicolon
 multiline_comment|/* 4 sector read-ahead */
-id|blkdev_fops
-(braket
-id|MAJOR_NR
-)braket
-op_assign
-op_amp
-id|sr_fops
-suffix:semicolon
 r_return
 id|memory_start
 suffix:semicolon

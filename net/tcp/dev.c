@@ -777,11 +777,11 @@ id|backlog
 op_ne
 l_int|NULL
 )paren
-id|bh_active
-op_or_assign
-l_int|1
-op_lshift
+id|mark_bh
+c_func
+(paren
 id|INET_BH
+)paren
 suffix:semicolon
 r_return
 (paren
