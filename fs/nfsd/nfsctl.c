@@ -1,6 +1,4 @@
 multiline_comment|/*&n; * linux/fs/nfsd/nfsctl.c&n; *&n; * Syscall interface to knfsd.&n; *&n; * Copyright (C) 1995, 1996 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
-DECL|macro|NFS_GETFH_NEW
-mdefine_line|#define NFS_GETFH_NEW
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;

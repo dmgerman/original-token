@@ -11,9 +11,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
@@ -3373,12 +3371,6 @@ r_struct
 id|ex_ecid
 id|cid
 suffix:semicolon
-r_char
-id|buffer
-(braket
-l_int|200
-)braket
-suffix:semicolon
 r_int
 id|i
 comma
@@ -3761,7 +3753,6 @@ id|ec
 )paren
 suffix:semicolon
 r_else
-(brace
 id|slot_to_expcard
 (braket
 id|slot
@@ -3769,23 +3760,6 @@ id|slot
 op_assign
 id|ec
 suffix:semicolon
-id|ecard_prints
-c_func
-(paren
-id|buffer
-comma
-id|ec
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s&quot;
-comma
-id|buffer
-)paren
-suffix:semicolon
-)brace
 r_return
 id|rc
 suffix:semicolon
@@ -4056,7 +4030,7 @@ macro_line|#endif
 id|printk
 c_func
 (paren
-l_string|&quot;Probing expansion cards: (does not imply support)&bslash;n&quot;
+l_string|&quot;Probing expansion cards&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for

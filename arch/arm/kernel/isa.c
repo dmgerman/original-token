@@ -2,7 +2,6 @@ multiline_comment|/*&n; * arch/arm/kernel/isa.c&n; *&n; * ISA shared memory and 
 multiline_comment|/* &n; * Nothing about this is actually ARM specific.  One day we could move&n; * it into kernel/resource.c or some place like that.  &n; */
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

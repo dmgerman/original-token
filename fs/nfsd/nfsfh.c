@@ -1963,7 +1963,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|fhp-&gt;fh_dverified
+id|fhp-&gt;fh_dentry
 )paren
 (brace
 id|kdev_t
@@ -1992,7 +1992,6 @@ id|error
 op_assign
 id|nfserr_stale
 suffix:semicolon
-macro_line|#if CONFIG_NFSD_V3&t;&t;
 r_if
 c_cond
 (paren
@@ -2004,7 +2003,6 @@ id|error
 op_assign
 id|nfserr_badhandle
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2224,7 +2222,6 @@ id|error
 op_assign
 id|nfserr_stale
 suffix:semicolon
-macro_line|#if CONFIG_NFSD_V3&t;&t;
 r_if
 c_cond
 (paren
@@ -2236,7 +2233,6 @@ id|error
 op_assign
 id|nfserr_badhandle
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2453,10 +2449,6 @@ suffix:semicolon
 id|fhp-&gt;fh_export
 op_assign
 id|exp
-suffix:semicolon
-id|fhp-&gt;fh_dverified
-op_assign
-l_int|1
 suffix:semicolon
 id|nfsd_nr_verified
 op_increment
@@ -2924,8 +2916,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|fhp-&gt;fh_dverified
-op_logical_or
 id|fhp-&gt;fh_locked
 op_logical_or
 id|fhp-&gt;fh_dentry
@@ -3059,11 +3049,6 @@ l_int|1
 op_star
 l_int|4
 suffix:semicolon
-multiline_comment|/* We stuck it there, we know it&squot;s good. */
-id|fhp-&gt;fh_dverified
-op_assign
-l_int|1
-suffix:semicolon
 id|nfsd_nr_verified
 op_increment
 suffix:semicolon
@@ -3106,7 +3091,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|fhp-&gt;fh_dverified
+id|fhp-&gt;fh_dentry
 )paren
 r_goto
 id|out_bad
@@ -3245,7 +3230,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|fhp-&gt;fh_dverified
+id|dentry
 )paren
 (brace
 id|fh_unlock
@@ -3257,10 +3242,6 @@ suffix:semicolon
 id|fhp-&gt;fh_dentry
 op_assign
 l_int|NULL
-suffix:semicolon
-id|fhp-&gt;fh_dverified
-op_assign
-l_int|0
 suffix:semicolon
 id|dput
 c_func

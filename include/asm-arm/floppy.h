@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/floppy.h&n; *&n; * (C) 1996 Russell King&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/floppy.h&n; *&n; * (C) 1996-2000 Russell King&n; *&n; * Note that we don&squot;t touch FLOPPY_DMA nor FLOPPY_IRQ here&n; */
 macro_line|#ifndef __ASM_ARM_FLOPPY_H
 DECL|macro|__ASM_ARM_FLOPPY_H
 mdefine_line|#define __ASM_ARM_FLOPPY_H
@@ -18,21 +18,21 @@ mdefine_line|#define fd_disable_irq()&t;disable_irq(IRQ_FLOPPYDISK)
 DECL|macro|fd_enable_irq
 mdefine_line|#define fd_enable_irq()&t;&t;enable_irq(IRQ_FLOPPYDISK)
 DECL|macro|fd_request_dma
-mdefine_line|#define fd_request_dma()&t;request_dma(FLOPPY_DMA,&quot;floppy&quot;)
+mdefine_line|#define fd_request_dma()&t;request_dma(DMA_FLOPPY,&quot;floppy&quot;)
 DECL|macro|fd_free_dma
-mdefine_line|#define fd_free_dma()&t;&t;free_dma(FLOPPY_DMA)
+mdefine_line|#define fd_free_dma()&t;&t;free_dma(DMA_FLOPPY)
 DECL|macro|fd_disable_dma
-mdefine_line|#define fd_disable_dma()&t;disable_dma(FLOPPY_DMA)
+mdefine_line|#define fd_disable_dma()&t;disable_dma(DMA_FLOPPY)
 DECL|macro|fd_enable_dma
-mdefine_line|#define fd_enable_dma()&t;&t;enable_dma(FLOPPY_DMA)
+mdefine_line|#define fd_enable_dma()&t;&t;enable_dma(DMA_FLOPPY)
 DECL|macro|fd_clear_dma_ff
-mdefine_line|#define fd_clear_dma_ff()&t;clear_dma_ff(FLOPPY_DMA)
+mdefine_line|#define fd_clear_dma_ff()&t;clear_dma_ff(DMA_FLOPPY)
 DECL|macro|fd_set_dma_mode
-mdefine_line|#define fd_set_dma_mode(mode)&t;set_dma_mode(FLOPPY_DMA, (mode))
+mdefine_line|#define fd_set_dma_mode(mode)&t;set_dma_mode(DMA_FLOPPY, (mode))
 DECL|macro|fd_set_dma_addr
-mdefine_line|#define fd_set_dma_addr(addr)&t;set_dma_addr(FLOPPY_DMA, virt_to_bus((addr)))
+mdefine_line|#define fd_set_dma_addr(addr)&t;set_dma_addr(DMA_FLOPPY, virt_to_bus((addr)))
 DECL|macro|fd_set_dma_count
-mdefine_line|#define fd_set_dma_count(len)&t;set_dma_count(FLOPPY_DMA, (len))
+mdefine_line|#define fd_set_dma_count(len)&t;set_dma_count(DMA_FLOPPY, (len))
 DECL|macro|fd_cacheflush
 mdefine_line|#define fd_cacheflush(addr,sz)
 multiline_comment|/* need to clean up dma.h */
@@ -282,14 +282,6 @@ macro_line|#endif
 )brace
 DECL|macro|FDC1
 mdefine_line|#define FDC1 (0x3f0)
-DECL|variable|FDC2
-r_static
-r_int
-id|FDC2
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
 DECL|macro|FLOPPY0_TYPE
 mdefine_line|#define FLOPPY0_TYPE 4
 DECL|macro|FLOPPY1_TYPE
@@ -297,7 +289,7 @@ mdefine_line|#define FLOPPY1_TYPE 4
 DECL|macro|N_FDC
 mdefine_line|#define N_FDC 1
 DECL|macro|N_DRIVE
-mdefine_line|#define N_DRIVE 8
+mdefine_line|#define N_DRIVE 4
 DECL|macro|FLOPPY_MOTOR_MASK
 mdefine_line|#define FLOPPY_MOTOR_MASK 0xf0
 DECL|macro|CROSS_64KB

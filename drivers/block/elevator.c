@@ -632,6 +632,10 @@ id|request
 op_star
 id|tmp
 suffix:semicolon
+id|req-&gt;elevator_sequence
+op_assign
+id|orig_latency
+suffix:semicolon
 r_if
 c_cond
 (paren

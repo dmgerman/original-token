@@ -708,6 +708,12 @@ id|fmt
 r_goto
 id|_ret
 suffix:semicolon
+id|allow_write_access
+c_func
+(paren
+id|bprm-&gt;file
+)paren
+suffix:semicolon
 id|fput
 c_func
 (paren

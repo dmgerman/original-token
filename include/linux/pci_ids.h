@@ -568,19 +568,21 @@ mdefine_line|#define PCI_DEVICE_ID_SI_501&t;&t;0x0406
 DECL|macro|PCI_DEVICE_ID_SI_496
 mdefine_line|#define PCI_DEVICE_ID_SI_496&t;&t;0x0496
 DECL|macro|PCI_DEVICE_ID_SI_300
-mdefine_line|#define PCI_DEVICE_ID_SI_300        0x0300
+mdefine_line|#define PCI_DEVICE_ID_SI_300&t;&t;0x0300
 DECL|macro|PCI_DEVICE_ID_SI_530
 mdefine_line|#define PCI_DEVICE_ID_SI_530&t;&t;0x0530
 DECL|macro|PCI_DEVICE_ID_SI_540
-mdefine_line|#define PCI_DEVICE_ID_SI_540        0x5300
+mdefine_line|#define PCI_DEVICE_ID_SI_540&t;&t;0x0540
 DECL|macro|PCI_DEVICE_ID_SI_601
 mdefine_line|#define PCI_DEVICE_ID_SI_601&t;&t;0x0601
 DECL|macro|PCI_DEVICE_ID_SI_620
 mdefine_line|#define PCI_DEVICE_ID_SI_620&t;&t;0x0620
 DECL|macro|PCI_DEVICE_ID_SI_630
-mdefine_line|#define PCI_DEVICE_ID_SI_630        0x6300
+mdefine_line|#define PCI_DEVICE_ID_SI_630&t;&t;0x0630
 DECL|macro|PCI_DEVICE_ID_SI_5107
 mdefine_line|#define PCI_DEVICE_ID_SI_5107&t;&t;0x5107
+DECL|macro|PCI_DEVICE_ID_SI_5300
+mdefine_line|#define PCI_DEVICE_ID_SI_5300&t;&t;0x5300
 DECL|macro|PCI_DEVICE_ID_SI_5511
 mdefine_line|#define PCI_DEVICE_ID_SI_5511&t;&t;0x5511
 DECL|macro|PCI_DEVICE_ID_SI_5513
@@ -595,6 +597,8 @@ DECL|macro|PCI_DEVICE_ID_SI_5598
 mdefine_line|#define PCI_DEVICE_ID_SI_5598&t;&t;0x5598
 DECL|macro|PCI_DEVICE_ID_SI_5600
 mdefine_line|#define PCI_DEVICE_ID_SI_5600&t;&t;0x5600
+DECL|macro|PCI_DEVICE_ID_SI_6300
+mdefine_line|#define PCI_DEVICE_ID_SI_6300&t;&t;0x6300
 DECL|macro|PCI_DEVICE_ID_SI_6306
 mdefine_line|#define PCI_DEVICE_ID_SI_6306&t;&t;0x6306
 DECL|macro|PCI_DEVICE_ID_SI_6326

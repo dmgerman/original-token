@@ -2,18 +2,11 @@ multiline_comment|/*&n; * arch/arm/kernel/hw-footbridge.c&n; *&n; * Footbridge-d
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/ptrace.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/dec21285.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|IRDA_IO_BASE
@@ -22,6 +15,13 @@ DECL|macro|GP1_IO_BASE
 mdefine_line|#define GP1_IO_BASE&t;&t;0x338
 DECL|macro|GP2_IO_BASE
 mdefine_line|#define GP2_IO_BASE&t;&t;0x33a
+macro_line|#ifdef CONFIG_LEDS
+DECL|macro|DEFAULT_LEDS
+mdefine_line|#define DEFAULT_LEDS&t;0
+macro_line|#else
+DECL|macro|DEFAULT_LEDS
+mdefine_line|#define DEFAULT_LEDS&t;GPIO_GREEN_LED
+macro_line|#endif
 multiline_comment|/*&n; * Netwinder stuff&n; */
 macro_line|#ifdef CONFIG_ARCH_NETWINDER
 multiline_comment|/*&n; * Winbond WB83977F accessibility stuff&n; */
@@ -1185,10 +1185,10 @@ l_int|0x39
 suffix:semicolon
 macro_line|#ifndef DEBUG
 DECL|macro|dprintk
-mdefine_line|#define dprintk if (0) printk
+mdefine_line|#define dprintk(x...)
 macro_line|#else
 DECL|macro|dprintk
-mdefine_line|#define dprintk printk
+mdefine_line|#define dprintk(x...) printk(x)
 macro_line|#endif
 DECL|macro|WRITE_RWA
 mdefine_line|#define WRITE_RWA(r,v) do { outb((r), 0x279); udelay(10); outb((v), 0xa79); } while (0)
@@ -2267,13 +2267,86 @@ c_func
 id|cpld_modify
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_LEDS
-DECL|macro|DEFAULT_LEDS
-mdefine_line|#define DEFAULT_LEDS&t;0
-macro_line|#else
-DECL|macro|DEFAULT_LEDS
-mdefine_line|#define DEFAULT_LEDS&t;GPIO_GREEN_LED
+multiline_comment|/*&n; * Initialise any other hardware after we&squot;ve got the PCI bus&n; * initialised.  We may need the PCI bus to talk to this other&n; * hardware.&n; */
+DECL|function|nw_hw_init
+r_static
+r_int
+id|__init
+id|nw_hw_init
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/*&n;&t; * this ought to have a better home...&n;&t; * Since this calls the above routines, which are&n;&t; * compiled only if CONFIG_ARCH_NETWINDER is set,&n;&t; * these should only be parsed by the compiler&n;&t; * in the same circumstance.&n;&t; */
+r_if
+c_cond
+(paren
+id|machine_is_netwinder
+c_func
+(paren
+)paren
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|wb977_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|cpld_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|rwa010_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|gpio_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|gpio_modify_op
+c_func
+(paren
+id|GPIO_RED_LED
+op_or
+id|GPIO_GREEN_LED
+comma
+id|DEFAULT_LEDS
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|gpio_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|variable|nw_hw_init
+id|__initcall
+c_func
+(paren
+id|nw_hw_init
+)paren
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * CATS stuff&n; */
 macro_line|#ifdef CONFIG_ARCH_CATS
@@ -2285,12 +2358,21 @@ DECL|macro|DATA_PORT
 mdefine_line|#define DATA_PORT&t;(CONFIG_PORT + 1)
 DECL|function|cats_hw_init
 r_static
-r_void
+r_int
 id|__init
 id|cats_hw_init
 c_func
 (paren
 r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|machine_is_cats
+c_func
+(paren
+)paren
 )paren
 (brace
 multiline_comment|/* Set Aladdin to CONFIGURE mode */
@@ -2327,7 +2409,7 @@ comma
 id|DATA_PORT
 )paren
 suffix:semicolon
-multiline_comment|/* Set parallel port to DMA channel 3, ECP+EPP1.9, &n;&t;   enable EPP timeout */
+multiline_comment|/* Set parallel port to DMA channel 3, ECP+EPP1.9, &n;&t;&t;   enable EPP timeout */
 id|outb
 c_func
 (paren
@@ -2454,102 +2536,16 @@ id|CONFIG_PORT
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-multiline_comment|/*&n; * Initialise any other hardware after we&squot;ve got the PCI bus&n; * initialised.  We may need the PCI bus to talk to this other&n; * hardware.&n; */
-DECL|function|hw_init
-r_static
-r_int
-id|__init
-id|hw_init
-c_func
-(paren
-r_void
-)paren
-(brace
-macro_line|#ifdef CONFIG_ARCH_NETWINDER
-multiline_comment|/*&n;&t; * this ought to have a better home...&n;&t; * Since this calls the above routines, which are&n;&t; * compiled only if CONFIG_ARCH_NETWINDER is set,&n;&t; * these should only be parsed by the compiler&n;&t; * in the same circumstance.&n;&t; */
-r_if
-c_cond
-(paren
-id|machine_is_netwinder
-c_func
-(paren
-)paren
-)paren
-(brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|wb977_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cpld_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|rwa010_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|gpio_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-id|gpio_modify_op
-c_func
-(paren
-id|GPIO_RED_LED
-op_or
-id|GPIO_GREEN_LED
-comma
-id|DEFAULT_LEDS
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|gpio_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-macro_line|#ifdef CONFIG_ARCH_CATS
-r_if
-c_cond
-(paren
-id|machine_is_cats
-c_func
-(paren
-)paren
-)paren
-id|cats_hw_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|variable|hw_init
+DECL|variable|cats_hw_init
 id|__initcall
 c_func
 (paren
-id|hw_init
+id|cats_hw_init
 )paren
 suffix:semicolon
+macro_line|#endif
 eof

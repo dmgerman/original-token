@@ -5440,16 +5440,12 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|dz_serial_console_init
-r_int
+r_void
 id|__init
 id|dz_serial_console_init
 c_func
 (paren
-r_int
-id|kmem_start
-comma
-r_int
-id|kmem_end
+id|l
 )paren
 (brace
 id|register_console
@@ -5458,9 +5454,6 @@ c_func
 op_amp
 id|dz_sercons
 )paren
-suffix:semicolon
-r_return
-id|kmem_start
 suffix:semicolon
 )brace
 macro_line|#endif /* ifdef CONFIG_SERIAL_CONSOLE */

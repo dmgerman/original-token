@@ -2409,6 +2409,7 @@ id|irq
 op_assign
 id|irq
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
 r_for
 c_loop
 (paren
@@ -2436,6 +2437,7 @@ c_func
 id|i
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; *  Add DMA resource to resources list.&n; */
 DECL|function|isapnp_add_dma_resource

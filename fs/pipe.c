@@ -2749,6 +2749,14 @@ id|root-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+id|root-&gt;i_sb
+op_assign
+id|sb
+suffix:semicolon
+id|root-&gt;i_dev
+op_assign
+id|sb-&gt;s_dev
+suffix:semicolon
 id|sb-&gt;s_blocksize
 op_assign
 l_int|1024

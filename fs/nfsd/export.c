@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/fs/nfsd/export.c&n; *&n; * NFS exporting and validation.&n; *&n; * We maintain a list of clients, each of which has a list of&n; * exports. To export an fs to a given client, you first have&n; * to create the client entry with NFSCTL_ADDCLIENT, which&n; * creates a client control block and adds it to the hash&n; * table. Then, you call NFSCTL_EXPORT for each fs.&n; *&n; * You cannot currently read the export information from the&n; * kernel. It would be nice to have a /proc file though.&n; *&n; * Copyright (C) 1995, 1996 Olaf Kirch, &lt;okir@monad.swb.de&gt;&n; */
+multiline_comment|/*&n; * linux/fs/nfsd/export.c&n; *&n; * NFS exporting and validation.&n; *&n; * We maintain a list of clients, each of which has a list of&n; * exports. To export an fs to a given client, you first have&n; * to create the client entry with NFSCTL_ADDCLIENT, which&n; * creates a client control block and adds it to the hash&n; * table. Then, you call NFSCTL_EXPORT for each fs.&n; *&n; *&n; * Copyright (C) 1995, 1996 Olaf Kirch, &lt;okir@monad.swb.de&gt;&n; */
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
@@ -1528,10 +1528,6 @@ c_cond
 id|path
 )paren
 (brace
-id|err
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1545,9 +1541,7 @@ comma
 op_amp
 id|nd
 )paren
-)paren
-id|err
-op_assign
+op_logical_and
 id|path_walk
 c_func
 (paren
@@ -1556,11 +1550,6 @@ comma
 op_amp
 id|nd
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
 )paren
 (brace
 id|printk
@@ -1572,8 +1561,7 @@ id|path
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EPERM
+id|err
 suffix:semicolon
 )brace
 id|dev
@@ -1809,6 +1797,11 @@ id|fh
 suffix:semicolon
 id|out
 suffix:colon
+r_if
+c_cond
+(paren
+id|path
+)paren
 id|path_release
 c_func
 (paren

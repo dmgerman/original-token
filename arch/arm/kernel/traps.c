@@ -7,12 +7,14 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/atomic.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &quot;ptrace.h&quot;
 r_extern
 r_void
 id|c_backtrace
@@ -23,15 +25,6 @@ id|fp
 comma
 r_int
 id|pmode
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ptrace_cancel_bpt
-(paren
-r_struct
-id|task_struct
-op_star
 )paren
 suffix:semicolon
 DECL|variable|processor_modes
@@ -155,12 +148,6 @@ op_assign
 l_int|15
 suffix:semicolon
 )brace
-DECL|variable|kstack_depth_to_print
-r_int
-id|kstack_depth_to_print
-op_assign
-l_int|200
-suffix:semicolon
 multiline_comment|/*&n; * Stack pointers should always be within the kernels view of&n; * physical memory.  If it is not there, then we can&squot;t dump&n; * out any information relating to the stack.&n; */
 DECL|function|verify_stack
 r_static
@@ -955,50 +942,6 @@ id|err
 )paren
 suffix:semicolon
 )brace
-DECL|function|bad_user_access_alignment
-r_void
-id|bad_user_access_alignment
-c_func
-(paren
-r_const
-r_void
-op_star
-id|ptr
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;bad user access alignment: ptr = %p, pc = %p&bslash;n&quot;
-comma
-id|ptr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|current-&gt;thread.error_code
-op_assign
-l_int|0
-suffix:semicolon
-id|current-&gt;thread.trap_no
-op_assign
-l_int|11
-suffix:semicolon
-id|force_sig
-c_func
-(paren
-id|SIGBUS
-comma
-id|current
-)paren
-suffix:semicolon
-multiline_comment|/*&t;die_if_kernel(&quot;Oops - bad user access alignment&quot;, regs, mode);*/
-)brace
 DECL|function|do_undefinstr
 id|asmlinkage
 r_void
@@ -1017,6 +960,19 @@ r_int
 id|mode
 )paren
 (brace
+r_int
+r_int
+id|addr
+op_assign
+id|instruction_pointer
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+id|siginfo_t
+id|info
+suffix:semicolon
 macro_line|#ifdef CONFIG_DEBUG_USER
 id|printk
 c_func
@@ -1028,11 +984,7 @@ id|current-&gt;comm
 comma
 id|current-&gt;pid
 comma
-id|instruction_pointer
-c_func
-(paren
-id|regs
-)paren
+id|addr
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1044,10 +996,33 @@ id|current-&gt;thread.trap_no
 op_assign
 l_int|6
 suffix:semicolon
-id|force_sig
+id|info.si_signo
+op_assign
+id|SIGILL
+suffix:semicolon
+id|info.si_errno
+op_assign
+l_int|0
+suffix:semicolon
+id|info.si_code
+op_assign
+id|ILL_ILLOPC
+suffix:semicolon
+id|info.si_addr
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|addr
+suffix:semicolon
+id|force_sig_info
 c_func
 (paren
 id|SIGILL
+comma
+op_amp
+id|info
 comma
 id|current
 )paren
@@ -1081,6 +1056,9 @@ r_int
 id|mode
 )paren
 (brace
+id|siginfo_t
+id|info
+suffix:semicolon
 macro_line|#ifdef CONFIG_DEBUG_USER
 id|printk
 c_func
@@ -1108,10 +1086,33 @@ id|current-&gt;thread.trap_no
 op_assign
 l_int|11
 suffix:semicolon
-id|force_sig
+id|info.si_signo
+op_assign
+id|SIGBUS
+suffix:semicolon
+id|info.si_errno
+op_assign
+l_int|0
+suffix:semicolon
+id|info.si_code
+op_assign
+id|BUS_ADRERR
+suffix:semicolon
+id|info.si_addr
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|address
+suffix:semicolon
+id|force_sig_info
 c_func
 (paren
 id|SIGBUS
+comma
+op_amp
+id|info
 comma
 id|current
 )paren
@@ -1249,25 +1250,12 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * &squot;math_state_restore()&squot; saves the current math information in the&n; * old math state array, and gets the new ones from the current task.&n; *&n; * We no longer save/restore the math state on every context switch&n; * any more.  We only do this now if it actually gets used.&n; */
-DECL|function|math_state_restore
-id|asmlinkage
-r_void
-id|math_state_restore
-(paren
-r_void
-)paren
-(brace
-id|current-&gt;used_math
-op_assign
-l_int|1
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Handle some more esoteric system calls&n; */
 DECL|function|arm_syscall
 id|asmlinkage
 r_int
 id|arm_syscall
+c_func
 (paren
 r_int
 id|no
@@ -1278,6 +1266,9 @@ op_star
 id|regs
 )paren
 (brace
+id|siginfo_t
+id|info
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1288,10 +1279,29 @@ r_case
 l_int|0
 suffix:colon
 multiline_comment|/* branch through 0 */
-id|force_sig
+id|info.si_signo
+op_assign
+id|SIGSEGV
+suffix:semicolon
+id|info.si_errno
+op_assign
+l_int|0
+suffix:semicolon
+id|info.si_code
+op_assign
+id|SEGV_MAPERR
+suffix:semicolon
+id|info.si_addr
+op_assign
+l_int|NULL
+suffix:semicolon
+id|force_sig_info
 c_func
 (paren
 id|SIGSEGV
+comma
+op_amp
+id|info
 comma
 id|current
 )paren
@@ -1311,22 +1321,49 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
-multiline_comment|/* SWI_BREAK_POINT */
+multiline_comment|/* SWI BREAK_POINT */
+multiline_comment|/*&n;&t;&t; * The PC is always left pointing at the next&n;&t;&t; * instruction.  Fix this.&n;&t;&t; */
 id|regs-&gt;ARM_pc
 op_sub_assign
 l_int|4
 suffix:semicolon
-multiline_comment|/* Decrement PC by one instruction */
-id|ptrace_cancel_bpt
+id|__ptrace_cancel_bpt
 c_func
 (paren
 id|current
 )paren
 suffix:semicolon
-id|force_sig
+id|info.si_signo
+op_assign
+id|SIGTRAP
+suffix:semicolon
+id|info.si_errno
+op_assign
+l_int|0
+suffix:semicolon
+id|info.si_code
+op_assign
+id|TRAP_BRKPT
+suffix:semicolon
+id|info.si_addr
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|instruction_pointer
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+id|force_sig_info
 c_func
 (paren
 id|SIGTRAP
+comma
+op_amp
+id|info
 comma
 id|current
 )paren
@@ -1533,50 +1570,15 @@ id|n
 )paren
 suffix:semicolon
 )brace
-DECL|function|arm_malalignedptr
-id|asmlinkage
+DECL|function|__bad_xchg
 r_void
-id|arm_malalignedptr
+id|__bad_xchg
 c_func
 (paren
-r_const
-r_char
-op_star
-id|str
-comma
-r_void
-op_star
-id|pc
-comma
 r_volatile
 r_void
 op_star
 id|ptr
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Mal-aligned pointer in %s: %p (PC=%p)&bslash;n&quot;
-comma
-id|str
-comma
-id|ptr
-comma
-id|pc
-)paren
-suffix:semicolon
-)brace
-DECL|function|arm_invalidptr
-id|asmlinkage
-r_void
-id|arm_invalidptr
-c_func
-(paren
-r_const
-r_char
-op_star
-id|function
 comma
 r_int
 id|size
@@ -1585,9 +1587,7 @@ id|size
 id|printk
 c_func
 (paren
-l_string|&quot;Invalid pointer size in %s (pc=%p) size %d&bslash;n&quot;
-comma
-id|function
+l_string|&quot;xchg: bad data size: pc 0x%p, ptr 0x%p, size %d&bslash;n&quot;
 comma
 id|__builtin_return_address
 c_func
@@ -1595,11 +1595,18 @@ c_func
 l_int|0
 )paren
 comma
+id|ptr
+comma
 id|size
 )paren
 suffix:semicolon
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
-multiline_comment|/*&n; * A data abort trap was taken, but the instruction was not an instruction&n; * which should cause the trap to be taken.  Try to abort it.  Note that&n; * the while(1) is there because we cannot currently handle returning from&n; * this function.&n; */
+multiline_comment|/*&n; * A data abort trap was taken, but we did not handle the instruction.&n; * Try to abort the user program, or panic if it was the kernel.&n; */
 id|asmlinkage
 r_void
 DECL|function|baddataabort
@@ -1629,7 +1636,10 @@ c_func
 id|regs
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_DEBUG_ERRORS
+id|siginfo_t
+id|info
+suffix:semicolon
+macro_line|#ifdef CONFIG_DEBUG_USER
 id|dump_instr
 c_func
 (paren
@@ -1734,10 +1744,33 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
-id|force_sig
+id|info.si_signo
+op_assign
+id|SIGILL
+suffix:semicolon
+id|info.si_errno
+op_assign
+l_int|0
+suffix:semicolon
+id|info.si_code
+op_assign
+id|ILL_ILLOPC
+suffix:semicolon
+id|info.si_addr
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|addr
+suffix:semicolon
+id|force_sig_info
 c_func
 (paren
 id|SIGILL
+comma
+op_amp
+id|info
 comma
 id|current
 )paren
@@ -1750,12 +1783,6 @@ comma
 id|regs
 comma
 id|instr
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -1781,7 +1808,7 @@ id|printk
 c_func
 (paren
 id|KERN_CRIT
-l_string|&quot;kernel BUG at %s:%d!&bslash;n&quot;
+l_string|&quot;kernel BUG at %s:%d!&quot;
 comma
 id|file
 comma
@@ -1797,9 +1824,15 @@ id|printk
 c_func
 (paren
 id|KERN_CRIT
-l_string|&quot;extra data = %p&bslash;n&quot;
+l_string|&quot; - extra data = %p&quot;
 comma
 id|data
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|BUG

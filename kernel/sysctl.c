@@ -1501,7 +1501,7 @@ comma
 l_string|&quot;file-nr&quot;
 comma
 op_amp
-id|nr_files
+id|files_stat
 comma
 l_int|3
 op_star
@@ -1524,7 +1524,7 @@ comma
 l_string|&quot;file-max&quot;
 comma
 op_amp
-id|max_files
+id|files_stat.max_files
 comma
 r_sizeof
 (paren

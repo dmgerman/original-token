@@ -8,6 +8,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/fiq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/iomd.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;dma.h&quot;

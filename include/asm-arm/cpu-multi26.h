@@ -75,24 +75,6 @@ op_star
 id|ptr
 )paren
 suffix:semicolon
-DECL|member|_xchg_2
-r_int
-r_int
-(paren
-op_star
-id|_xchg_2
-)paren
-(paren
-r_int
-r_int
-id|x
-comma
-r_volatile
-r_void
-op_star
-id|ptr
-)paren
-suffix:semicolon
 DECL|member|_xchg_4
 r_int
 r_int
@@ -144,8 +126,6 @@ DECL|macro|cpu_switch_mm
 mdefine_line|#define cpu_switch_mm(pgd,tsk)&t;&t;&t;processor._set_pgd(pgd)
 DECL|macro|cpu_xchg_1
 mdefine_line|#define cpu_xchg_1(x,ptr)&t;&t;&t;processor._xchg_1(x,ptr)
-DECL|macro|cpu_xchg_2
-mdefine_line|#define cpu_xchg_2(x,ptr)&t;&t;&t;processor._xchg_2(x,ptr)
 DECL|macro|cpu_xchg_4
 mdefine_line|#define cpu_xchg_4(x,ptr)&t;&t;&t;processor._xchg_4(x,ptr)
 r_extern

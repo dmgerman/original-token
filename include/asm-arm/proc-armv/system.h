@@ -2,14 +2,6 @@ multiline_comment|/*&n; * linux/include/asm-arm/proc-armv/system.h&n; *&n; * Cop
 macro_line|#ifndef __ASM_PROC_SYSTEM_H
 DECL|macro|__ASM_PROC_SYSTEM_H
 mdefine_line|#define __ASM_PROC_SYSTEM_H
-macro_line|#include &lt;linux/config.h&gt;
-r_extern
-r_const
-r_char
-id|xchg_str
-(braket
-)braket
-suffix:semicolon
 DECL|function|__xchg
 r_extern
 id|__inline__
@@ -33,11 +25,11 @@ id|size
 (brace
 r_extern
 r_void
-id|arm_invalidptr
+id|__bad_xchg
 c_func
 (paren
-r_const
-r_char
+r_volatile
+r_void
 op_star
 comma
 r_int
@@ -107,10 +99,10 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|arm_invalidptr
+id|__bad_xchg
 c_func
 (paren
-id|xchg_str
+id|ptr
 comma
 id|size
 )paren
@@ -150,28 +142,5 @@ mdefine_line|#define __save_flags(x)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __vo
 multiline_comment|/*&n; * restore saved IRQ &amp; FIQ state&n; */
 DECL|macro|__restore_flags
 mdefine_line|#define __restore_flags(x)&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;msr&t;cpsr_c, %0&t;&t;@ restore_flags&bslash;n&quot;&t;&bslash;&n;&t;:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (x)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;memory&quot;)
-multiline_comment|/* For spinlocks etc */
-DECL|macro|local_irq_save
-mdefine_line|#define local_irq_save(x)&t;__save_flags_cli(x)
-DECL|macro|local_irq_restore
-mdefine_line|#define local_irq_restore(x)&t;__restore_flags(x)
-DECL|macro|local_irq_disable
-mdefine_line|#define local_irq_disable()&t;__cli()
-DECL|macro|local_irq_enable
-mdefine_line|#define local_irq_enable()&t;__sti()
-macro_line|#ifdef CONFIG_SMP
-macro_line|#error SMP not supported
-macro_line|#else
-DECL|macro|cli
-mdefine_line|#define cli() __cli()
-DECL|macro|sti
-mdefine_line|#define sti() __sti()
-DECL|macro|save_flags
-mdefine_line|#define save_flags(x)&t;&t;__save_flags(x)
-DECL|macro|restore_flags
-mdefine_line|#define restore_flags(x)&t;__restore_flags(x)
-DECL|macro|save_flags_cli
-mdefine_line|#define save_flags_cli(x)&t;__save_flags_cli(x)
-macro_line|#endif
 macro_line|#endif
 eof

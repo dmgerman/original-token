@@ -6988,6 +6988,7 @@ r_if
 c_cond
 (paren
 op_decrement
+op_star
 id|counter
 OL
 l_int|0

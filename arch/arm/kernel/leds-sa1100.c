@@ -1,7 +1,7 @@
 multiline_comment|/*&n; *  linux/arch/arm/kernel/leds-sa1100.c&n; *&n; *  Copyright (C) 2000 John Dorsey &lt;john+@cs.cmu.edu&gt;&n; *&n; *  Original (leds-footbridge.c) by Russell King&n; *&n; *  Added Brutus LEDs support&n; *&t;Nicolas Pitre, Mar 19, 2000&n; *&n; *  Added LART LED support&n; *      Erik Mouw (J.A.K.Mouw@its.tudelft.nl), April 21, 2000&n; *&n; *&n; *  Assabet uses the LEDs as follows:&n; *   - Green - toggles state every 50 timer interrupts&n; *   - Red   - on if system is not idle&n; *&n; *  Brutus uses the LEDs as follows:&n; *   - D3 (Green, GPIO9) - toggles state every 50 timer interrupts&n; *   - D17 (Red, GPIO20) - on if system is not idle&n; *   - D4 (Green, GPIO8) - misc function&n; *&n; *  LART uses the LED as follows:&n; *   - GPIO23 is the LED, on if system is not idle&n; *  You can use both CONFIG_LEDS_CPU and CONFIG_LEDS_TIMER at the same&n; *  time, but in that case the timer events will still dictate the&n; *  pace of the LED.&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;

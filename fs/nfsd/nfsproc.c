@@ -895,7 +895,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|newfhp-&gt;fh_dverified
+id|newfhp-&gt;fh_dentry
 )paren
 (brace
 id|printk
@@ -1636,7 +1636,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|resp-&gt;fh.fh_dverified
+id|resp-&gt;fh.fh_dentry
 )paren
 (brace
 id|printk

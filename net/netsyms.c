@@ -699,11 +699,11 @@ c_func
 id|scm_fp_dup
 )paren
 suffix:semicolon
-DECL|variable|max_files
+DECL|variable|files_stat
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|max_files
+id|files_stat
 )paren
 suffix:semicolon
 DECL|variable|memcpy_toiovec

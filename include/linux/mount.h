@@ -70,12 +70,6 @@ op_star
 id|mnt_devname
 suffix:semicolon
 multiline_comment|/* Name of device e.g. /dev/dsk/hda1 */
-DECL|member|mnt_dirname
-r_char
-op_star
-id|mnt_dirname
-suffix:semicolon
-multiline_comment|/* Name of directory mounted on */
 DECL|member|mnt_list
 r_struct
 id|list_head

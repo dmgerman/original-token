@@ -504,23 +504,6 @@ mdefine_line|#define xchg(ptr,x) &bslash;&n;&t;((__typeof__(*(ptr)))__xchg((unsi
 DECL|macro|tas
 mdefine_line|#define tas(ptr) (xchg((ptr),1))
 r_extern
-r_void
-id|arm_malalignedptr
-c_func
-(paren
-r_const
-r_char
-op_star
-comma
-r_void
-op_star
-comma
-r_volatile
-r_void
-op_star
-)paren
-suffix:semicolon
-r_extern
 id|asmlinkage
 r_void
 id|__backtrace
@@ -562,6 +545,29 @@ id|next
 suffix:semicolon
 DECL|macro|switch_to
 mdefine_line|#define switch_to(prev,next,last)&t;&t;&bslash;&n;&t;do {&t;&t;&t; &t;&t;&bslash;&n;&t;&t;last = __switch_to(prev,next);&t;&bslash;&n;&t;&t;mb();&t;&t;&t;&t;&bslash;&n;&t;} while (0)
+macro_line|#endif
+multiline_comment|/* For spinlocks etc */
+DECL|macro|local_irq_save
+mdefine_line|#define local_irq_save(x)&t;__save_flags_cli(x)
+DECL|macro|local_irq_restore
+mdefine_line|#define local_irq_restore(x)&t;__restore_flags(x)
+DECL|macro|local_irq_disable
+mdefine_line|#define local_irq_disable()&t;__cli()
+DECL|macro|local_irq_enable
+mdefine_line|#define local_irq_enable()&t;__sti()
+macro_line|#ifdef CONFIG_SMP
+macro_line|#error SMP not supported
+macro_line|#else
+DECL|macro|cli
+mdefine_line|#define cli()&t;&t;&t;__cli()
+DECL|macro|sti
+mdefine_line|#define sti()&t;&t;&t;__sti()
+DECL|macro|save_flags
+mdefine_line|#define save_flags(x)&t;&t;__save_flags(x)
+DECL|macro|restore_flags
+mdefine_line|#define restore_flags(x)&t;__restore_flags(x)
+DECL|macro|save_flags_cli
+mdefine_line|#define save_flags_cli(x)&t;__save_flags_cli(x)
 macro_line|#endif
 macro_line|#endif
 eof

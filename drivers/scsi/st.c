@@ -1,4 +1,4 @@
-multiline_comment|/*&n;   SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;   file README.st for more information.&n;&n;   History:&n;   Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;   Contribution and ideas from several people including (in alphabetical&n;   order) Klaus Ehrenfried, Eric Lee Green, Wolfgang Denk, Steve Hirsch,&n;   Andreas Koppenh&quot;ofer, Michael Leodolter, Eyal Lebedinsky, Michael Schaefer,&n;   J&quot;org Weule, and Eric Youngdale.&n;&n;   Copyright 1992 - 2000 Kai Makisara&n;   email Kai.Makisara@metla.fi&n;&n;   Last modified: Sun Apr 23 23:41:32 2000 by makisara@kai.makisara.local&n;   Some small formal changes - aeb, 950809&n;&n;   Last modified: 18-JAN-1998 Richard Gooch &lt;rgooch@atnf.csiro.au&gt; Devfs support&n; */
+multiline_comment|/*&n;   SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;   file README.st for more information.&n;&n;   History:&n;   Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;   Contribution and ideas from several people including (in alphabetical&n;   order) Klaus Ehrenfried, Eric Lee Green, Wolfgang Denk, Steve Hirsch,&n;   Andreas Koppenh&quot;ofer, Michael Leodolter, Eyal Lebedinsky, Michael Schaefer,&n;   J&quot;org Weule, and Eric Youngdale.&n;&n;   Copyright 1992 - 2000 Kai Makisara&n;   email Kai.Makisara@metla.fi&n;&n;   Last modified: Sat Jun 17 15:21:49 2000 by makisara@kai.makisara.local&n;   Some small formal changes - aeb, 950809&n;&n;   Last modified: 18-JAN-1998 Richard Gooch &lt;rgooch@atnf.csiro.au&gt; Devfs support&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -46,15 +46,11 @@ DECL|variable|buffer_kbs
 r_static
 r_int
 id|buffer_kbs
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|write_threshold_kbs
 r_static
 r_int
 id|write_threshold_kbs
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|max_buffers
 r_static
@@ -70,8 +66,6 @@ DECL|variable|max_sg_segs
 r_static
 r_int
 id|max_sg_segs
-op_assign
-l_int|0
 suffix:semicolon
 id|MODULE_AUTHOR
 c_func
@@ -273,8 +267,6 @@ DECL|variable|modes_defined
 r_static
 r_int
 id|modes_defined
-op_assign
-id|FALSE
 suffix:semicolon
 r_static
 id|ST_buffer
@@ -4366,7 +4358,6 @@ l_int|0
 comma
 id|result2
 suffix:semicolon
-r_static
 r_int
 r_char
 id|cmd
@@ -5212,7 +5203,6 @@ id|doing_write
 op_assign
 l_int|0
 suffix:semicolon
-r_static
 r_int
 r_char
 id|cmd
@@ -6983,7 +6973,6 @@ id|blks
 comma
 id|bytes
 suffix:semicolon
-r_static
 r_int
 r_char
 id|cmd
@@ -15615,12 +15604,18 @@ id|mtc.mt_count
 op_ge
 id|ST_NBR_PARTITIONS
 )paren
-r_return
+(brace
+id|retval
+op_assign
 (paren
 op_minus
 id|EINVAL
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -15640,12 +15635,18 @@ id|STp
 OL
 l_int|0
 )paren
-r_return
+(brace
+id|retval
+op_assign
 (paren
 op_minus
 id|EIO
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -15653,12 +15654,18 @@ id|mtc.mt_count
 op_ge
 id|STp-&gt;nbr_partitions
 )paren
-r_return
+(brace
+id|retval
+op_assign
 (paren
 op_minus
 id|EINVAL
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 id|STp-&gt;new_partition
 op_assign
 id|mtc.mt_count
@@ -15685,12 +15692,18 @@ c_cond
 op_logical_neg
 id|STp-&gt;can_partitions
 )paren
-r_return
+(brace
+id|retval
+op_assign
 (paren
 op_minus
 id|EINVAL
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -15724,9 +15737,15 @@ id|mtc.mt_count
 OL
 l_int|0
 )paren
-r_return
+(brace
+id|retval
+op_assign
 id|i
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren

@@ -994,7 +994,6 @@ id|nfserr
 )paren
 suffix:semicolon
 multiline_comment|/* Encode result.&n;&t; * For NFSv2, additional info is never returned in case of an error.&n;&t; */
-macro_line|#ifdef CONFIG_NFSD_V3
 r_if
 c_cond
 (paren
@@ -1056,58 +1055,6 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-macro_line|#else
-id|xdr
-op_assign
-id|proc-&gt;pc_encode
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|nfserr
-op_logical_and
-id|xdr
-op_logical_and
-op_logical_neg
-id|xdr
-c_func
-(paren
-id|rqstp
-comma
-id|rqstp-&gt;rq_resbuf.buf
-comma
-id|rqstp-&gt;rq_resp
-)paren
-)paren
-(brace
-multiline_comment|/* Failed to encode result. Release cache entry */
-id|dprintk
-c_func
-(paren
-l_string|&quot;nfsd: failed to encode result!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|nfsd_cache_update
-c_func
-(paren
-id|rqstp
-comma
-id|RC_NOCACHE
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-op_star
-id|statp
-op_assign
-id|rpc_system_err
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#endif /* CONFIG_NFSD_V3 */
 multiline_comment|/* Store reply in cache. */
 id|nfsd_cache_update
 c_func

@@ -1974,6 +1974,10 @@ op_amp
 id|nd-&gt;mnt
 )paren
 suffix:semicolon
+id|nd-&gt;last_type
+op_assign
+id|LAST_BIND
+suffix:semicolon
 id|out
 suffix:colon
 macro_line|#ifdef NULL_VFSMNT

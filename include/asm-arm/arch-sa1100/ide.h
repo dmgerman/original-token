@@ -22,6 +22,7 @@ r_int
 id|ctrl_port
 comma
 r_int
+op_star
 id|irq
 )paren
 (brace
@@ -108,9 +109,15 @@ op_lshift
 id|IO_SHIFT
 )paren
 suffix:semicolon
-id|hw-&gt;irq
-op_assign
+r_if
+c_cond
+(paren
 id|irq
+)paren
+op_star
+id|irq
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This registers the standard ports for this architecture with the IDE&n; * driver.&n; */
@@ -186,8 +193,12 @@ l_int|0x10
 comma
 l_int|0x1e
 comma
-id|EMPEG_IRQ_IDE2
+l_int|NULL
 )paren
+suffix:semicolon
+id|hw.irq
+op_assign
+id|EMPEG_IRQ_IDE2
 suffix:semicolon
 id|ide_register_hw
 c_func
@@ -208,8 +219,12 @@ l_int|0x00
 comma
 l_int|0x0e
 comma
-id|EMPEG_IRQ_IDE1
+l_int|NULL
 )paren
+suffix:semicolon
+id|hw.irq
+op_assign
+id|EMPEG_IRQ_IDE1
 suffix:semicolon
 id|ide_register_hw
 c_func
@@ -255,8 +270,12 @@ l_int|0x1f0
 comma
 l_int|0x3f6
 comma
-id|IRQ_GPIO7
+l_int|NULL
 )paren
+suffix:semicolon
+id|hw.irq
+op_assign
+id|IRQ_GPIO7
 suffix:semicolon
 id|ide_register_hw
 c_func

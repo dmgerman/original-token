@@ -5,7 +5,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/pal.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/*&n; * System defines.. Note that this is included both from .c and .S&n; * files, so it does only defines, not any C code.&n; */
-multiline_comment|/*&n; * We leave one page for the initial stack page, and one page for&n; * the initial process structure. Also, the console eats 3 MB for&n; * the initial bootloader (one of which we can reclaim later).&n; * With a few other pages for various reasons, we&squot;ll use an initial&n; * load address of PAGE_OFFSET+0x310000UL&n; */
+multiline_comment|/*&n; * We leave one page for the initial stack page, and one page for&n; * the initial process structure. Also, the console eats 3 MB for&n; * the initial bootloader (one of which we can reclaim later).&n; */
 DECL|macro|BOOT_PCB
 mdefine_line|#define BOOT_PCB&t;0x20000000
 DECL|macro|BOOT_ADDR
@@ -13,8 +13,13 @@ mdefine_line|#define BOOT_ADDR&t;0x20000000
 multiline_comment|/* Remove when official MILO sources have ELF support: */
 DECL|macro|BOOT_SIZE
 mdefine_line|#define BOOT_SIZE&t;(16*1024)
+macro_line|#ifdef CONFIG_ALPHA_LEGACY_START_ADDRESS
+DECL|macro|KERNEL_START_PHYS
+mdefine_line|#define KERNEL_START_PHYS&t;0x300000 /* Old bootloaders hardcoded this.  */
+macro_line|#else
 DECL|macro|KERNEL_START_PHYS
 mdefine_line|#define KERNEL_START_PHYS&t;0x800000 /* Wildfire has a huge console */
+macro_line|#endif
 DECL|macro|KERNEL_START
 mdefine_line|#define KERNEL_START&t;(PAGE_OFFSET+KERNEL_START_PHYS)
 DECL|macro|SWAPPER_PGD

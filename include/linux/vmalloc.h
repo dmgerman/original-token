@@ -73,6 +73,9 @@ id|size
 comma
 r_int
 id|gfp_mask
+comma
+id|pgprot_t
+id|prot
 )paren
 suffix:semicolon
 r_extern
@@ -122,6 +125,9 @@ id|size
 comma
 r_int
 id|gfp_mask
+comma
+id|pgprot_t
+id|prot
 )paren
 suffix:semicolon
 r_extern
@@ -152,6 +158,8 @@ comma
 id|GFP_KERNEL
 op_or
 id|__GFP_HIGHMEM
+comma
+id|PAGE_KERNEL
 )paren
 suffix:semicolon
 )brace
@@ -177,6 +185,8 @@ comma
 id|GFP_KERNEL
 op_or
 id|GFP_DMA
+comma
+id|PAGE_KERNEL
 )paren
 suffix:semicolon
 )brace
@@ -201,6 +211,8 @@ c_func
 id|size
 comma
 id|GFP_KERNEL
+comma
+id|PAGE_KERNEL
 )paren
 suffix:semicolon
 )brace

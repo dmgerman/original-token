@@ -19,6 +19,7 @@ r_int
 id|ctrl_port
 comma
 r_int
+op_star
 id|irq
 )paren
 (brace

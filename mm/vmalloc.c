@@ -458,6 +458,9 @@ id|size
 comma
 r_int
 id|gfp_mask
+comma
+id|pgprot_t
+id|prot
 )paren
 (brace
 r_int
@@ -539,7 +542,7 @@ c_func
 (paren
 id|page
 comma
-id|PAGE_KERNEL
+id|prot
 )paren
 )paren
 suffix:semicolon
@@ -584,6 +587,9 @@ id|size
 comma
 r_int
 id|gfp_mask
+comma
+id|pgprot_t
+id|prot
 )paren
 (brace
 r_int
@@ -651,6 +657,8 @@ op_minus
 id|address
 comma
 id|gfp_mask
+comma
+id|prot
 )paren
 )paren
 r_return
@@ -698,6 +706,9 @@ id|size
 comma
 r_int
 id|gfp_mask
+comma
+id|pgprot_t
+id|prot
 )paren
 (brace
 id|pgd_t
@@ -772,6 +783,8 @@ op_minus
 id|address
 comma
 id|gfp_mask
+comma
+id|prot
 )paren
 )paren
 r_return
@@ -1175,6 +1188,9 @@ id|size
 comma
 r_int
 id|gfp_mask
+comma
+id|pgprot_t
+id|prot
 )paren
 (brace
 r_void
@@ -1263,6 +1279,8 @@ comma
 id|size
 comma
 id|gfp_mask
+comma
+id|prot
 )paren
 )paren
 (brace

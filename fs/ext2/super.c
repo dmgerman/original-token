@@ -3090,10 +3090,6 @@ op_assign
 id|db_count
 suffix:semicolon
 multiline_comment|/*&n;&t; * set up enough so that it can read an inode&n;&t; */
-id|sb-&gt;s_dev
-op_assign
-id|dev
-suffix:semicolon
 id|sb-&gt;s_op
 op_assign
 op_amp

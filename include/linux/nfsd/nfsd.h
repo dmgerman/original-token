@@ -212,24 +212,6 @@ id|svc_fh
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NFSD_V3
-r_int
-id|nfsd_access
-c_func
-(paren
-r_struct
-id|svc_rqst
-op_star
-comma
-r_struct
-id|svc_fh
-op_star
-comma
-id|u32
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_NFSD_V3 */
 r_int
 id|nfsd_setattr
 c_func
@@ -285,6 +267,22 @@ id|res
 suffix:semicolon
 macro_line|#ifdef CONFIG_NFSD_V3
 r_int
+id|nfsd_access
+c_func
+(paren
+r_struct
+id|svc_rqst
+op_star
+comma
+r_struct
+id|svc_fh
+op_star
+comma
+id|u32
+op_star
+)paren
+suffix:semicolon
+r_int
 id|nfsd_create_v3
 c_func
 (paren
@@ -319,6 +317,24 @@ comma
 id|u32
 op_star
 id|verifier
+)paren
+suffix:semicolon
+r_int
+id|nfsd_commit
+c_func
+(paren
+r_struct
+id|svc_rqst
+op_star
+comma
+r_struct
+id|svc_fh
+op_star
+comma
+id|off_t
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_NFSD_V3 */
@@ -606,26 +622,6 @@ id|statfs
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NFSD_V3
-r_int
-id|nfsd_commit
-c_func
-(paren
-r_struct
-id|svc_rqst
-op_star
-comma
-r_struct
-id|svc_fh
-op_star
-comma
-id|off_t
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_NFSD_V3 */
 r_int
 id|nfsd_notify_change
 c_func

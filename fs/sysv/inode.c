@@ -2635,10 +2635,6 @@ op_assign
 id|sb-&gt;sv_block_size_bits
 suffix:semicolon
 multiline_comment|/* set up enough so that it can read an inode */
-id|sb-&gt;s_dev
-op_assign
-id|dev
-suffix:semicolon
 id|sb-&gt;s_op
 op_assign
 op_amp

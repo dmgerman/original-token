@@ -35,18 +35,30 @@ DECL|macro|pci64_unmap_single
 mdefine_line|#define pci64_unmap_single(d,a,s,dir) pci_unmap_single((d),(a),(s),(dir))
 DECL|macro|pci64_unmap_sg
 mdefine_line|#define pci64_unmap_sg(d,s,n,dir) pci_unmap_sg((d),(s),(n),(dir))
+macro_line|#if BITS_PER_LONG &gt; 32
+DECL|macro|pci64_dma_hi32
+mdefine_line|#define pci64_dma_hi32(a) ((u32) (0xffffffff &amp; (a&gt;&gt;32)))
+DECL|macro|pci64_dma_lo32
+mdefine_line|#define pci64_dma_lo32(a) ((u32) (0xffffffff &amp; (a)))
+macro_line|#else
 DECL|macro|pci64_dma_hi32
 mdefine_line|#define pci64_dma_hi32(a) 0
 DECL|macro|pci64_dma_lo32
 mdefine_line|#define pci64_dma_lo32(a) (a)
+macro_line|#endif&t;/* BITS_PER_LONG */
 DECL|macro|pci64_dma_build
 mdefine_line|#define pci64_dma_build(hi,lo) (lo)
 DECL|macro|sg_dma64_address
 mdefine_line|#define sg_dma64_address(s) sg_dma_address(s)
 DECL|macro|sg_dma64_len
 mdefine_line|#define sg_dma64_len(s) sg_dma_len(s)
+macro_line|#if BITS_PER_LONG &gt; 32
+DECL|macro|PCI64_DMA_BITS
+mdefine_line|#define PCI64_DMA_BITS 64
+macro_line|#else
 DECL|macro|PCI64_DMA_BITS
 mdefine_line|#define PCI64_DMA_BITS&t;32
+macro_line|#endif &t;/* BITS_PER_LONG */
 macro_line|#endif
 macro_line|#include &quot;qlogicfc.h&quot;
 multiline_comment|/* Configuration section **************************************************** */
@@ -61,8 +73,18 @@ multiline_comment|/* Set the following to 1 to include fabric support, fabric su
 DECL|macro|ISP2x00_FABRIC
 mdefine_line|#define ISP2x00_FABRIC          1
 multiline_comment|/*  Macros used for debugging */
-multiline_comment|/*&n;#define DEBUG_ISP2x00&t;&t;1&n;#define DEBUG_ISP2x00_INT&t;1&n;#define DEBUG_ISP2x00_INTR&t;1&n;#define DEBUG_ISP2x00_SETUP&t;1&n;&n;#define DEBUG_ISP2x00_FABRIC    1&n;*/
-multiline_comment|/* #define TRACE_ISP             1 */
+DECL|macro|DEBUG_ISP2x00
+mdefine_line|#define DEBUG_ISP2x00&t;&t;0
+DECL|macro|DEBUG_ISP2x00_INT
+mdefine_line|#define DEBUG_ISP2x00_INT&t;0
+DECL|macro|DEBUG_ISP2x00_INTR
+mdefine_line|#define DEBUG_ISP2x00_INTR&t;0
+DECL|macro|DEBUG_ISP2x00_SETUP
+mdefine_line|#define DEBUG_ISP2x00_SETUP&t;0
+DECL|macro|DEBUG_ISP2x00_FABRIC
+mdefine_line|#define DEBUG_ISP2x00_FABRIC    0
+DECL|macro|TRACE_ISP
+mdefine_line|#define TRACE_ISP &t;&t;0 
 DECL|macro|DEFAULT_LOOP_COUNT
 mdefine_line|#define DEFAULT_LOOP_COUNT&t;1000000000
 multiline_comment|/* End Configuration section ************************************************ */
@@ -5009,7 +5031,11 @@ id|i
 (brace
 id|cmd-&gt;handle
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|i
+)paren
 suffix:semicolon
 id|hostdata-&gt;handle_ptrs
 (braket
@@ -5752,6 +5778,16 @@ r_break
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;&t; * TEST_UNIT_READY commands from scsi_scan will fail due to &quot;overlapped&n;&t; * commands attempted&quot; unless we setup at least a simple queue (midlayer &n;&t; * will embelish this once it can do an INQUIRY command to the device)&n;&t; */
+r_else
+id|cmd-&gt;control_flags
+op_or_assign
+id|cpu_to_le16
+c_func
+(paren
+id|CFLAG_SIMPLE_TAG
+)paren
+suffix:semicolon
 id|outw
 c_func
 (paren
@@ -6803,6 +6839,9 @@ op_ne
 id|in_ptr
 )paren
 (brace
+r_int
+id|le_hand
+suffix:semicolon
 id|sts
 op_assign
 (paren
@@ -6848,6 +6887,14 @@ id|sts
 )paren
 )paren
 suffix:semicolon
+id|le_hand
+op_assign
+id|le32_to_cpu
+c_func
+(paren
+id|sts-&gt;handle
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6860,7 +6907,7 @@ id|Cmnd
 op_assign
 id|hostdata-&gt;handle_ptrs
 (braket
-id|sts-&gt;handle
+id|le_hand
 )braket
 )paren
 )paren
@@ -6938,7 +6985,7 @@ c_cond
 (paren
 id|hostdata-&gt;handle_serials
 (braket
-id|sts-&gt;handle
+id|le_hand
 )braket
 op_ne
 id|Cmnd-&gt;serial_number
@@ -6954,14 +7001,14 @@ id|CS_ABORTED
 (brace
 id|hostdata-&gt;handle_serials
 (braket
-id|sts-&gt;handle
+id|le_hand
 )braket
 op_assign
 l_int|0
 suffix:semicolon
 id|hostdata-&gt;handle_ptrs
 (braket
-id|sts-&gt;handle
+id|le_hand
 )braket
 op_assign
 l_int|NULL
@@ -7052,7 +7099,7 @@ suffix:semicolon
 )brace
 id|hostdata-&gt;handle_ptrs
 (braket
-id|sts-&gt;handle
+id|le_hand
 )braket
 op_assign
 l_int|NULL
@@ -8630,60 +8677,20 @@ id|hostdata-&gt;host_id
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef __BIG_ENDIAN
-(brace
+id|hostdata-&gt;wwn
+op_assign
+(paren
 id|u64
-id|val
-suffix:semicolon
-id|memcpy
+)paren
+(paren
+id|cpu_to_le16
 c_func
-(paren
-op_amp
-id|val
-comma
-op_amp
-id|hostdata-&gt;control_block.node_name
-comma
-r_sizeof
-(paren
-id|u64
-)paren
-)paren
-suffix:semicolon
-id|hostdata-&gt;wwn
-op_assign
-(paren
-(paren
-id|val
-op_amp
-l_int|0xff00ff00ff00ff00ULL
-)paren
-op_rshift
-l_int|8
-)paren
-op_or
-(paren
-(paren
-id|val
-op_amp
-l_int|0x00ff00ff00ff00ffULL
-)paren
-op_lshift
-l_int|8
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
-id|hostdata-&gt;wwn
-op_assign
-(paren
-id|u64
-)paren
 (paren
 id|hostdata-&gt;control_block.node_name
 (braket
 l_int|0
 )braket
+)paren
 )paren
 op_lshift
 l_int|56
@@ -8694,10 +8701,14 @@ op_or_assign
 id|u64
 )paren
 (paren
+id|cpu_to_le16
+c_func
+(paren
 id|hostdata-&gt;control_block.node_name
 (braket
 l_int|0
 )braket
+)paren
 op_amp
 l_int|0xff00
 )paren
@@ -8710,10 +8721,14 @@ op_or_assign
 id|u64
 )paren
 (paren
+id|cpu_to_le16
+c_func
+(paren
 id|hostdata-&gt;control_block.node_name
 (braket
 l_int|1
 )braket
+)paren
 op_amp
 l_int|0xff00
 )paren
@@ -8726,10 +8741,14 @@ op_or_assign
 id|u64
 )paren
 (paren
+id|cpu_to_le16
+c_func
+(paren
 id|hostdata-&gt;control_block.node_name
 (braket
 l_int|1
 )braket
+)paren
 op_amp
 l_int|0x00ff
 )paren
@@ -8742,10 +8761,14 @@ op_or_assign
 id|u64
 )paren
 (paren
+id|cpu_to_le16
+c_func
+(paren
 id|hostdata-&gt;control_block.node_name
 (braket
 l_int|2
 )braket
+)paren
 op_amp
 l_int|0x00ff
 )paren
@@ -8758,10 +8781,14 @@ op_or_assign
 id|u64
 )paren
 (paren
+id|cpu_to_le16
+c_func
+(paren
 id|hostdata-&gt;control_block.node_name
 (braket
 l_int|2
 )braket
+)paren
 op_amp
 l_int|0xff00
 )paren
@@ -8774,10 +8801,14 @@ op_or_assign
 id|u64
 )paren
 (paren
+id|cpu_to_le16
+c_func
+(paren
 id|hostdata-&gt;control_block.node_name
 (braket
 l_int|3
 )braket
+)paren
 op_amp
 l_int|0x00ff
 )paren
@@ -8790,17 +8821,20 @@ op_or_assign
 id|u64
 )paren
 (paren
+id|cpu_to_le16
+c_func
+(paren
 id|hostdata-&gt;control_block.node_name
 (braket
 l_int|3
 )braket
+)paren
 op_amp
 l_int|0xff00
 )paren
 op_rshift
 l_int|8
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* FIXME: If the DMA transfer goes one way only, this should use PCI_DMA_TODEVICE and below as well. */
 id|busaddr
 op_assign

@@ -97,6 +97,12 @@ DECL|member|write_wait
 id|wait_queue_head_t
 id|write_wait
 suffix:semicolon
+DECL|member|tqueue
+r_struct
+id|tq_struct
+id|tqueue
+suffix:semicolon
+multiline_comment|/* task queue for line discipline waking up */
 DECL|member|private
 r_void
 op_star

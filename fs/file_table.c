@@ -13,23 +13,19 @@ op_star
 id|filp_cache
 suffix:semicolon
 multiline_comment|/* sysctl tunables... */
-DECL|variable|nr_files
-r_int
-id|nr_files
-suffix:semicolon
-multiline_comment|/* read only */
-DECL|variable|nr_free_files
-r_int
-id|nr_free_files
-suffix:semicolon
-multiline_comment|/* read only */
-DECL|variable|max_files
-r_int
-id|max_files
+DECL|variable|files_stat
+r_struct
+id|files_stat_struct
+id|files_stat
 op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
 id|NR_FILE
+)brace
 suffix:semicolon
-multiline_comment|/* tunable */
 multiline_comment|/* Here the new files go */
 r_static
 id|LIST_HEAD
@@ -130,7 +126,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|nr_free_files
+id|files_stat.nr_free_files
 OG
 id|NR_RESERVED_FILES
 )paren
@@ -157,7 +153,7 @@ op_amp
 id|f-&gt;f_list
 )paren
 suffix:semicolon
-id|nr_free_files
+id|files_stat.nr_free_files
 op_decrement
 suffix:semicolon
 id|new_one
@@ -231,7 +227,7 @@ multiline_comment|/*&n;&t; * Use a reserved one if we&squot;re the superuser&n;&
 r_if
 c_cond
 (paren
-id|nr_free_files
+id|files_stat.nr_free_files
 op_logical_and
 op_logical_neg
 id|current-&gt;euid
@@ -243,9 +239,9 @@ multiline_comment|/*&n;&t; * Allocate a new one if we&squot;re below the limit.&
 r_if
 c_cond
 (paren
-id|nr_files
+id|files_stat.nr_files
 OL
-id|max_files
+id|files_stat.max_files
 )paren
 (brace
 id|file_list_unlock
@@ -274,7 +270,7 @@ c_cond
 id|f
 )paren
 (brace
-id|nr_files
+id|files_stat.nr_files
 op_increment
 suffix:semicolon
 r_goto
@@ -293,7 +289,7 @@ r_else
 r_if
 c_cond
 (paren
-id|max_files
+id|files_stat.max_files
 OG
 id|old_max
 )paren
@@ -303,12 +299,12 @@ c_func
 (paren
 l_string|&quot;VFS: file-max limit %d reached&bslash;n&quot;
 comma
-id|max_files
+id|files_stat.max_files
 )paren
 suffix:semicolon
 id|old_max
 op_assign
-id|max_files
+id|files_stat.max_files
 suffix:semicolon
 )brace
 id|file_list_unlock
@@ -557,7 +553,7 @@ op_amp
 id|free_list
 )paren
 suffix:semicolon
-id|nr_free_files
+id|files_stat.nr_free_files
 op_increment
 suffix:semicolon
 id|file_list_unlock
@@ -611,7 +607,7 @@ op_amp
 id|free_list
 )paren
 suffix:semicolon
-id|nr_free_files
+id|files_stat.nr_free_files
 op_increment
 suffix:semicolon
 id|file_list_unlock

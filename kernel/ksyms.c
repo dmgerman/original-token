@@ -436,6 +436,13 @@ c_func
 id|update_atime
 )paren
 suffix:semicolon
+DECL|variable|get_fs_type
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_fs_type
+)paren
+suffix:semicolon
 DECL|variable|get_super
 id|EXPORT_SYMBOL
 c_func
@@ -2585,13 +2592,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|get_write_access
-)paren
-suffix:semicolon
-DECL|variable|put_write_access
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|put_write_access
 )paren
 suffix:semicolon
 multiline_comment|/* dynamic registering of consoles */

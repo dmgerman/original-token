@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;asm/hwrpb.h&gt;
 DECL|macro|__EXTERN_INLINE
 mdefine_line|#define __EXTERN_INLINE inline
 macro_line|#include &lt;asm/io.h&gt;
@@ -2958,6 +2959,90 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* On pyxis machines we can precisely calculate the&n;&t;   CPU clock frequency using pyxis real time counter.&n;&t;   It&squot;s especially useful for SX164 with broken RTC.&n;&n;&t;   Both CPU and chipset are driven by the single 16.666M&n;&t;   or 16.667M crystal oscillator. PYXIS_RT_COUNT clock is&n;&t;   66.66 MHz. -ink */
+r_int
+r_int
+id|cc0
+comma
+id|cc1
+suffix:semicolon
+r_int
+r_int
+id|pyxis_cc
+suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;rpcc %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|cc0
+)paren
+)paren
+suffix:semicolon
+id|pyxis_cc
+op_assign
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_RT_COUNT
+suffix:semicolon
+r_do
+(brace
+)brace
+r_while
+c_loop
+(paren
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_RT_COUNT
+op_minus
+id|pyxis_cc
+OL
+l_int|4096
+)paren
+(brace
+suffix:semicolon
+)brace
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;rpcc %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|cc1
+)paren
+)paren
+suffix:semicolon
+id|cc1
+op_sub_assign
+id|cc0
+suffix:semicolon
+id|hwrpb-&gt;cycle_freq
+op_assign
+(paren
+(paren
+id|cc1
+op_rshift
+l_int|11
+)paren
+op_star
+l_int|100000000UL
+)paren
+op_div
+l_int|3
+suffix:semicolon
+id|hwrpb_update_checksum
+c_func
+(paren
+id|hwrpb
+)paren
+suffix:semicolon
 id|do_init_arch
 c_func
 (paren

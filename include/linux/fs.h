@@ -35,13 +35,31 @@ mdefine_line|#define BLOCK_SIZE_BITS 10
 DECL|macro|BLOCK_SIZE
 mdefine_line|#define BLOCK_SIZE (1&lt;&lt;BLOCK_SIZE_BITS)
 multiline_comment|/* And dynamically-tunable limits and defaults: */
-r_extern
+DECL|struct|files_stat_struct
+r_struct
+id|files_stat_struct
+(brace
+DECL|member|nr_files
+r_int
+id|nr_files
+suffix:semicolon
+multiline_comment|/* read only */
+DECL|member|nr_free_files
+r_int
+id|nr_free_files
+suffix:semicolon
+multiline_comment|/* read only */
+DECL|member|max_files
 r_int
 id|max_files
-comma
-id|nr_files
-comma
-id|nr_free_files
+suffix:semicolon
+multiline_comment|/* tunable */
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|files_stat_struct
+id|files_stat
 suffix:semicolon
 r_extern
 r_int
@@ -4188,6 +4206,18 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|deny_write_access
+c_func
+(paren
+r_struct
+id|file
+op_star
+)paren
+suffix:semicolon
+DECL|function|put_write_access
+r_static
+r_inline
 r_void
 id|put_write_access
 c_func
@@ -4195,8 +4225,43 @@ c_func
 r_struct
 id|inode
 op_star
+id|inode
+)paren
+(brace
+id|atomic_dec
+c_func
+(paren
+op_amp
+id|inode-&gt;i_writecount
 )paren
 suffix:semicolon
+)brace
+DECL|function|allow_write_access
+r_static
+r_inline
+r_void
+id|allow_write_access
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|file
+)paren
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_writecount
+)paren
+suffix:semicolon
+)brace
 r_extern
 r_int
 id|do_pipe
@@ -4309,6 +4374,7 @@ DECL|enumerator|LAST_NORM
 DECL|enumerator|LAST_ROOT
 DECL|enumerator|LAST_DOT
 DECL|enumerator|LAST_DOTDOT
+DECL|enumerator|LAST_BIND
 r_enum
 (brace
 id|LAST_NORM
@@ -4318,6 +4384,8 @@ comma
 id|LAST_DOT
 comma
 id|LAST_DOTDOT
+comma
+id|LAST_BIND
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * &quot;descriptor&quot; for what we&squot;re up to with a read for sendfile().&n; * This allows us to use the same read code yet&n; * have multiple different users of the data that&n; * we read from a file.&n; *&n; * The simplest case just copies the data to user&n; * mode.&n; */
@@ -5258,6 +5326,19 @@ id|filldir_t
 suffix:semicolon
 r_extern
 r_struct
+id|file_system_type
+op_star
+id|get_fs_type
+c_func
+(paren
+r_const
+r_char
+op_star
+id|name
+)paren
+suffix:semicolon
+r_extern
+r_struct
 id|super_block
 op_star
 id|get_super
@@ -5499,9 +5580,6 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Common dentry functions for inclusion in the VFS&n; * or in other stackable file systems.  Some of these&n; * functions were in linux/fs/ C (VFS) files.&n; *&n; */
-multiline_comment|/*&n; * We need to do a check-parent every time&n; * after we have locked the parent - to verify&n; * that the parent is still our parent and&n; * that we are still hashed onto it..&n; *&n; * This is required in case two processes race&n; * on removing (or moving) the same entry: the&n; * parent lock will serialize them, but the&n; * other process will be too late..&n; */
-DECL|macro|check_parent
-mdefine_line|#define check_parent(dir, dentry) &bslash;&n;&t;((dir) == (dentry)-&gt;d_parent &amp;&amp; !d_unhashed(dentry))
 multiline_comment|/*&n; * Locking the parent is needed to:&n; *  - serialize directory operations&n; *  - make sure the parent doesn&squot;t change from&n; *    under us in the middle of an operation.&n; *&n; * NOTE! Right now we&squot;d rather use a &quot;struct inode&quot;&n; * for this, but as I expect things to move toward&n; * using dentries instead for most things it is&n; * probably better to start with the conceptually&n; * better interface of relying on a path of dentries.&n; */
 DECL|function|lock_parent
 r_static

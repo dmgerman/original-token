@@ -541,6 +541,12 @@ c_func
 id|mounts
 )paren
 suffix:semicolon
+id|mntput
+c_func
+(paren
+id|mnt
+)paren
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; * Note: we compose the file handle now, but as the&n;&t; * dentry may be negative, it may need to be updated.&n;&t; */
@@ -870,9 +876,17 @@ c_cond
 (paren
 id|err
 )paren
+(brace
+id|put_write_access
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 r_goto
 id|out_nfserr
 suffix:semicolon
+)brace
 id|DQUOT_INIT
 c_func
 (paren
@@ -1157,7 +1171,6 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Don&squot;t unlock inode; the nfssvc_release functions are supposed&n;&t; * to do this. */
 id|out
 suffix:colon
 r_return
@@ -1502,7 +1515,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* CONFIG_NFSD_V3 */
 multiline_comment|/*&n; * Open an existing file or directory.&n; * The access argument indicates the type of open (read/write/lock)&n; * N.B. After this call fhp needs an fh_put&n; */
 r_int
 DECL|function|nfsd_open
@@ -2284,11 +2297,6 @@ c_func
 id|oldfs
 )paren
 suffix:semicolon
-id|nfsdstats.io_read
-op_add_assign
-op_star
-id|count
-suffix:semicolon
 multiline_comment|/* Write back readahead params */
 r_if
 c_cond
@@ -2347,6 +2355,10 @@ op_ge
 l_int|0
 )paren
 (brace
+id|nfsdstats.io_read
+op_add_assign
+id|err
+suffix:semicolon
 op_star
 id|count
 op_assign
@@ -2511,7 +2523,6 @@ op_assign
 id|fhp-&gt;fh_export
 suffix:semicolon
 multiline_comment|/*&n;&t; * Request sync writes if&n;&t; *  -&t;the sync export option has been set, or&n;&t; *  -&t;the client requested O_SYNC behavior (NFSv3 feature).&n;&t; *  -   The file system doesn&squot;t support fsync().&n;&t; * When gathered writes have been configured for this volume,&n;&t; * flushing the data to disk is handled separately below.&n;&t; */
-macro_line|#ifdef CONFIG_NFSD_V3
 r_if
 c_cond
 (paren
@@ -2562,36 +2573,6 @@ id|file.f_flags
 op_or_assign
 id|O_SYNC
 suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-(paren
-id|stable
-op_logical_or
-(paren
-id|stable
-op_assign
-id|EX_ISSYNC
-c_func
-(paren
-id|exp
-)paren
-)paren
-)paren
-op_logical_and
-op_logical_neg
-id|EX_WGATHER
-c_func
-(paren
-id|exp
-)paren
-)paren
-id|file.f_flags
-op_or_assign
-id|O_SYNC
-suffix:semicolon
-macro_line|#endif /* CONFIG_NFSD_V3 */
 id|file.f_pos
 op_assign
 id|offset
@@ -2663,6 +2644,13 @@ id|file.f_pos
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|err
+op_ge
+l_int|0
+)paren
 id|nfsdstats.io_write
 op_add_assign
 id|cnt
@@ -2835,6 +2823,12 @@ id|current-&gt;pid
 )paren
 suffix:semicolon
 multiline_comment|/* FIXME: Olaf commented this out [gam3] */
+id|set_current_state
+c_func
+(paren
+id|TASK_UNINTERRUPTIBLE
+)paren
+suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
@@ -2846,6 +2840,10 @@ l_int|99
 op_div
 l_int|100
 )paren
+suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_RUNNING
 suffix:semicolon
 id|dprintk
 c_func
@@ -2881,6 +2879,7 @@ id|file
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 0
 id|wake_up
 c_func
 (paren
@@ -2888,6 +2887,7 @@ op_amp
 id|inode-&gt;i_wait
 )paren
 suffix:semicolon
+macro_line|#endif
 id|last_ino
 op_assign
 id|inode-&gt;i_ino
@@ -2941,7 +2941,7 @@ id|err
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_NFSD_V3
-multiline_comment|/*&n; * Commit all pendig writes to stable storage.&n; * Strictly speaking, we could sync just indicated the file region here,&n; * but there&squot;s currently no way we can ask the VFS to do so.&n; *&n; * We lock the file to make sure we return full WCC data to the client.&n; */
+multiline_comment|/*&n; * Commit all pending writes to stable storage.&n; * Strictly speaking, we could sync just the indicated file region here,&n; * but there&squot;s currently no way we can ask the VFS to do so.&n; *&n; * Unfortunately we cannot lock the file to make sure we return full WCC&n; * data to the client, as locking happens lower down in the filesystem.&n; */
 r_int
 DECL|function|nfsd_commit
 id|nfsd_commit
@@ -3185,7 +3185,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|resfhp-&gt;fh_dverified
+id|resfhp-&gt;fh_dentry
 )paren
 (brace
 multiline_comment|/* called from nfsd_proc_mkdir, or possibly nfsd3_proc_create */
@@ -3580,6 +3580,20 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+id|__u32
+id|v_mtime
+op_assign
+l_int|0
+comma
+id|v_atime
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|v_mode
+op_assign
+l_int|0
+suffix:semicolon
 id|err
 op_assign
 id|nfserr_perm
@@ -3734,6 +3748,74 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|createmode
+op_eq
+id|NFS3_CREATE_EXCLUSIVE
+)paren
+(brace
+multiline_comment|/* while the verifier would fit in mtime+atime,&n;&t;&t; * solaris7 gets confused (bugid 4218508) if these have&n;&t;&t; * the high bit set, so we use the mode as well&n;&t;&t; */
+id|v_mtime
+op_assign
+id|verifier
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x7fffffff
+suffix:semicolon
+id|v_atime
+op_assign
+id|verifier
+(braket
+l_int|1
+)braket
+op_amp
+l_int|0x7fffffff
+suffix:semicolon
+id|v_mode
+op_assign
+id|S_IFREG
+op_or
+(paren
+(paren
+id|verifier
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x80000000
+)paren
+op_rshift
+(paren
+l_int|32
+op_minus
+l_int|7
+)paren
+)paren
+multiline_comment|/* u+x */
+op_or
+(paren
+(paren
+id|verifier
+(braket
+l_int|1
+)braket
+op_amp
+l_int|0x80000000
+)paren
+op_rshift
+(paren
+l_int|32
+op_minus
+l_int|9
+)paren
+)paren
+multiline_comment|/* u+r */
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|dchild-&gt;d_inode
 )paren
 (brace
@@ -3784,21 +3866,15 @@ c_cond
 (paren
 id|dchild-&gt;d_inode-&gt;i_mtime
 op_eq
-id|verifier
-(braket
-l_int|0
-)braket
+id|v_mtime
 op_logical_and
 id|dchild-&gt;d_inode-&gt;i_atime
 op_eq
-id|verifier
-(braket
-l_int|1
-)braket
+id|v_atime
 op_logical_and
 id|dchild-&gt;d_inode-&gt;i_mode
 op_eq
-id|S_IFREG
+id|v_mode
 op_logical_and
 id|dchild-&gt;d_inode-&gt;i_size
 op_eq
@@ -3884,7 +3960,7 @@ op_eq
 id|NFS3_CREATE_EXCLUSIVE
 )paren
 (brace
-multiline_comment|/* Cram the verifier into atime/mtime */
+multiline_comment|/* Cram the verifier into atime/mtime/mode */
 id|iap-&gt;ia_valid
 op_assign
 id|ATTR_MTIME
@@ -3894,23 +3970,23 @@ op_or
 id|ATTR_MTIME_SET
 op_or
 id|ATTR_ATIME_SET
+op_or
+id|ATTR_MODE
 suffix:semicolon
 id|iap-&gt;ia_mtime
 op_assign
-id|verifier
-(braket
-l_int|0
-)braket
+id|v_mtime
 suffix:semicolon
 id|iap-&gt;ia_atime
 op_assign
-id|verifier
-(braket
-l_int|1
-)braket
+id|v_atime
+suffix:semicolon
+id|iap-&gt;ia_mode
+op_assign
+id|v_mode
 suffix:semicolon
 )brace
-multiline_comment|/* Set file attributes. Mode has already been set and&n;&t; * setting uid/gid works only for root. Irix appears to&n;&t; * send along the gid when it tries to implement setgid&n;&t; * directories via NFS. Clear out all that cruft.&n;&t; */
+multiline_comment|/* Set file attributes.&n;&t; * Mode has already been set but we might need to reset it&n;&t; * for CREATE_EXCLUSIVE&n;&t; * Irix appears to send along the gid when it tries to&n;&t; * implement setgid directories via NFS. Clear out all that cruft.&n;&t; */
 id|set_attr
 suffix:colon
 r_if
@@ -3924,8 +4000,6 @@ op_complement
 id|ATTR_UID
 op_or
 id|ATTR_GID
-op_or
-id|ATTR_MODE
 )paren
 )paren
 op_ne
@@ -4896,6 +4970,7 @@ id|tlen
 r_goto
 id|out
 suffix:semicolon
+multiline_comment|/* cannot use fh_lock as we need deadlock protective ordering&n;&t; * so do it by hand */
 id|double_down
 c_func
 (paren
@@ -4904,6 +4979,24 @@ id|tdir-&gt;i_sem
 comma
 op_amp
 id|fdir-&gt;i_sem
+)paren
+suffix:semicolon
+id|ffhp-&gt;fh_locked
+op_assign
+id|tfhp-&gt;fh_locked
+op_assign
+l_int|1
+suffix:semicolon
+id|fill_pre_wcc
+c_func
+(paren
+id|ffhp
+)paren
+suffix:semicolon
+id|fill_pre_wcc
+c_func
+(paren
+id|tfhp
 )paren
 suffix:semicolon
 id|odentry
@@ -4980,21 +5073,6 @@ id|ndentry
 r_goto
 id|out_dput_old
 suffix:semicolon
-macro_line|#ifdef CONFIG_NFSD_V3
-multiline_comment|/* Fill in the pre-op attr for the wcc data for both &n;&t; * tdir and fdir&n;&t; */
-id|fill_pre_wcc
-c_func
-(paren
-id|ffhp
-)paren
-suffix:semicolon
-id|fill_pre_wcc
-c_func
-(paren
-id|tfhp
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_NFSD_V3 */
 id|err
 op_assign
 id|vfs_rename
@@ -5035,31 +5113,6 @@ id|fdentry
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_NFSD_V3
-multiline_comment|/* Fill in the post-op attr for the wcc data for both &n;         * tdir and fdir&n;         */
-id|fill_post_wcc
-c_func
-(paren
-id|ffhp
-)paren
-suffix:semicolon
-id|fill_post_wcc
-c_func
-(paren
-id|tfhp
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_NFSD_V3 */
-id|double_up
-c_func
-(paren
-op_amp
-id|tdir-&gt;i_sem
-comma
-op_amp
-id|fdir-&gt;i_sem
-)paren
-suffix:semicolon
 id|dput
 c_func
 (paren
@@ -5074,21 +5127,13 @@ c_func
 id|odentry
 )paren
 suffix:semicolon
+id|out_nfserr
+suffix:colon
 r_if
 c_cond
 (paren
 id|err
 )paren
-r_goto
-id|out_nfserr
-suffix:semicolon
-id|out
-suffix:colon
-r_return
-id|err
-suffix:semicolon
-id|out_nfserr
-suffix:colon
 id|err
 op_assign
 id|nfserrno
@@ -5097,8 +5142,39 @@ c_func
 id|err
 )paren
 suffix:semicolon
-r_goto
+multiline_comment|/* we cannot reply on fh_unlock on the two filehandles,&n;&t; * as that would do the wrong thing if the two directories&n;&t; * were the same, so again we do it by hand&n;&t; */
+id|fill_post_wcc
+c_func
+(paren
+id|ffhp
+)paren
+suffix:semicolon
+id|fill_post_wcc
+c_func
+(paren
+id|tfhp
+)paren
+suffix:semicolon
+id|double_up
+c_func
+(paren
+op_amp
+id|tdir-&gt;i_sem
+comma
+op_amp
+id|fdir-&gt;i_sem
+)paren
+suffix:semicolon
+id|ffhp-&gt;fh_locked
+op_assign
+id|tfhp-&gt;fh_locked
+op_assign
+l_int|0
+suffix:semicolon
 id|out
+suffix:colon
+r_return
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Unlink a file or directory&n; * N.B. After this call fhp needs an fh_put&n; */
@@ -5286,12 +5362,6 @@ id|rdentry
 )paren
 suffix:semicolon
 )brace
-id|fh_unlock
-c_func
-(paren
-id|fhp
-)paren
-suffix:semicolon
 id|dput
 c_func
 (paren
@@ -5315,28 +5385,12 @@ c_func
 id|fhp-&gt;fh_export
 )paren
 )paren
-(brace
-id|down
-c_func
-(paren
-op_amp
-id|dentry-&gt;d_inode-&gt;i_sem
-)paren
-suffix:semicolon
 id|nfsd_sync_dir
 c_func
 (paren
 id|dentry
 )paren
 suffix:semicolon
-id|up
-c_func
-(paren
-op_amp
-id|dentry-&gt;d_inode-&gt;i_sem
-)paren
-suffix:semicolon
-)brace
 id|out
 suffix:colon
 r_return
@@ -5417,24 +5471,6 @@ id|cd
 suffix:semicolon
 id|err
 op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|offset
-OG
-op_complement
-(paren
-id|u32
-)paren
-l_int|0
-)paren
-r_goto
-id|out
-suffix:semicolon
-id|err
-op_assign
 id|nfsd_open
 c_func
 (paren
@@ -5457,6 +5493,20 @@ id|err
 )paren
 r_goto
 id|out
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|offset
+OG
+op_complement
+(paren
+id|u32
+)paren
+l_int|0
+)paren
+r_goto
+id|out_close
 suffix:semicolon
 id|err
 op_assign
@@ -5596,7 +5646,6 @@ c_cond
 id|cd.offset
 )paren
 (brace
-macro_line|#ifdef CONFIG_NFSD_V3
 r_if
 c_cond
 (paren
@@ -5616,7 +5665,6 @@ id|file.f_pos
 )paren
 suffix:semicolon
 r_else
-macro_line|#endif /* CONFIG_NFSD_V3 */
 op_star
 id|cd.offset
 op_assign

@@ -1,7 +1,7 @@
 multiline_comment|/*&n; * linux/arch/arm/kernel/dma.c&n; *&n; * Copyright (C) 1995-1998 Russell King&n; *&n; * Front-end to the DMA handling.  You must provide the following&n; * architecture-specific routines:&n; *&n; *  int arch_request_dma(dmach_t channel, dma_t *dma, const char *dev_id);&n; *  void arch_free_dma(dmach_t channel, dma_t *dma);&n; *  void arch_enable_dma(dmach_t channel, dma_t *dma);&n; *  void arch_disable_dma(dmach_t channel, dma_t *dma);&n; *  int arch_get_dma_residue(dmach_t channel, dma_t *dma);&n; *&n; * Moved DMA resource allocation here...&n; */
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;

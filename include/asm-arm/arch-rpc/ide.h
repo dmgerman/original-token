@@ -19,6 +19,7 @@ r_int
 id|ctrl_port
 comma
 r_int
+op_star
 id|irq
 )paren
 (brace
@@ -84,9 +85,15 @@ id|ide_ioreg_t
 )paren
 id|ctrl_port
 suffix:semicolon
-id|hw-&gt;irq
-op_assign
+r_if
+c_cond
+(paren
 id|irq
+)paren
+op_star
+id|irq
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This registers the standard ports for this architecture with the IDE&n; * driver.&n; */
@@ -113,8 +120,12 @@ l_int|0x1f0
 comma
 l_int|0x3f6
 comma
-id|IRQ_HARDDISK
+l_int|NULL
 )paren
+suffix:semicolon
+id|hw.irq
+op_assign
+id|IRQ_HARDDISK
 suffix:semicolon
 id|ide_register_hw
 c_func

@@ -613,6 +613,7 @@ macro_line|#endif
 multiline_comment|/* Put I2O last so that host specific controllers always win */
 macro_line|#ifdef CONFIG_I2O_SCSI
 id|I2OSCSI
+comma
 macro_line|#endif
 multiline_comment|/* &quot;Removable host adapters&quot; below this line (Parallel Port/USB/other) */
 macro_line|#ifdef CONFIG_SCSI_PPA

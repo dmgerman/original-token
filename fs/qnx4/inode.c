@@ -1647,10 +1647,6 @@ id|s-&gt;s_blocksize_bits
 op_assign
 id|QNX4_BLOCK_SIZE_BITS
 suffix:semicolon
-id|s-&gt;s_dev
-op_assign
-id|dev
-suffix:semicolon
 multiline_comment|/* Check the boot signature. Since the qnx4 code is&n;&t;   dangerous, we should leave as quickly as possible&n;&t;   if we don&squot;t belong here... */
 id|bh
 op_assign

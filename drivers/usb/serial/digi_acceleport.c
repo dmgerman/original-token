@@ -1,4 +1,4 @@
-multiline_comment|/*&n;*  Digi AccelePort USB-4 Serial Converter&n;*&n;*  Copyright 2000 by Digi International&n;*&n;*  This program is free software; you can redistribute it and/or modify&n;*  it under the terms of the GNU General Public License as published by&n;*  the Free Software Foundation; either version 2 of the License, or&n;*  (at your option) any later version.&n;*&n;*  Shamelessly based on Brian Warner&squot;s keyspan_pda.c and Greg Kroah-Hartman&squot;s&n;*  usb-serial driver.&n;*&n;*  Peter Berger (pberger@brimson.com)&n;*  Al Borchers (borchers@steinerpoint.com)&n;*&n;*  (6/4/2000) pberger and borchers&n;*    -- Replaced separate calls to spin_unlock_irqrestore and&n;*       interruptible_sleep_on_interruptible with a new function&n;*       cond_wait_interruptible_timeout_irqrestore.  This eliminates&n;*       the race condition where the wake up could happen after&n;*       the unlock and before the sleep.&n;*    -- Close now waits for output to drain.&n;*    -- Open waits until any close in progress is finished.&n;*    -- All out of band responses are now processed, not just the&n;*       first in a USB packet.&n;*    -- Fixed a bug that prevented the driver from working when the&n;*       first Digi port was not the first USB serial port--the driver&n;*       was mistakenly using the external USB serial port number to&n;*       try to index into its internal ports.&n;*    -- Fixed an SMP bug -- write_bulk_callback is called directly from&n;*       an interrupt, so spin_lock_irqsave/spin_unlock_irqrestore are&n;*       needed for locks outside write_bulk_callback that are also&n;*       acquired by write_bulk_callback to prevent deadlocks.&n;*    -- Fixed support for select() by making digi_chars_in_buffer()&n;*       return 256 when -EINPROGRESS is set, as the line discipline&n;*       code in n_tty.c expects.&n;*    -- Fixed an include file ordering problem that prevented debugging&n;*       messages from working.&n;*    -- Fixed an intermittent timeout problem that caused writes to&n;*       sometimes get stuck on some machines on some kernels.  It turns&n;*       out in these circumstances write_chan() (in n_tty.c) was&n;*       asleep waiting for our wakeup call.  Even though we call&n;*       wake_up_interruptible() in digi_write_bulk_callback(), there is&n;*       a race condition that could cause the wakeup to fail: if our&n;*       wake_up_interruptible() call occurs between the time that our&n;*       driver write routine finishes and write_chan() sets current-&gt;state&n;*       to TASK_INTERRUPTIBLE, the effect of our wakeup setting the state&n;*       to TASK_RUNNING will be lost and write_chan&squot;s subsequent call to&n;*       schedule() will never return (unless it catches a signal).&n;*       This race condition occurs because write_bulk_callback() (and thus&n;*       the wakeup) are called asynchonously from an interrupt, rather than&n;*       from the scheduler.  We can avoid the race by calling the wakeup&n;*       from the scheduler queue and that&squot;s our fix:  Now, at the end of&n;*       write_bulk_callback() we queue up a wakeup call on the scheduler&n;*       task queue.  We still also invoke the wakeup directly since that&n;*       squeezes a bit more performance out of the driver, and any lost&n;*       race conditions will get cleaned up at the next scheduler run.&n;*&n;*       NOTE:  The problem also goes away if you comment out&n;*       the two code lines in write_chan() where current-&gt;state&n;*       is set to TASK_RUNNING just before calling driver.write() and to&n;*       TASK_INTERRUPTIBLE immediately afterwards.  This is why the&n;*       problem did not show up with the 2.2 kernels -- they do not&n;*       include that code.&n;*&n;*  (5/16/2000) pberger and borchers&n;*    -- Added timeouts to sleeps, to defend against lost wake ups.&n;*    -- Handle transition to/from B0 baud rate in digi_set_termios.&n;*&n;*  (5/13/2000) pberger and borchers&n;*    -- All commands now sent on out of band port, using&n;*       digi_write_oob_command.&n;*    -- Get modem control signals whenever they change, support TIOCMGET/&n;*       SET/BIS/BIC ioctls.&n;*    -- digi_set_termios now supports parity, word size, stop bits, and&n;*       receive enable.&n;*    -- Cleaned up open and close, use digi_set_termios and&n;*       digi_write_oob_command to set port parameters.&n;*    -- Added digi_startup_device to start read chains on all ports.&n;*    -- Write buffer is only used when count==1, to be sure put_char can&n;*       write a char (unless the buffer is full).&n;*&n;*  (5/10/2000) pberger and borchers&n;*    -- Added MOD_INC_USE_COUNT/MOD_DEC_USE_COUNT calls on open/close.&n;*    -- Fixed problem where the first incoming character is lost on&n;*       port opens after the first close on that port.  Now we keep&n;*       the read_urb chain open until shutdown.&n;*    -- Added more port conditioning calls in digi_open and digi_close.&n;*    -- Convert port-&gt;active to a use count so that we can deal with multiple&n;*       opens and closes properly.&n;*    -- Fixed some problems with the locking code.&n;*&n;*  (5/3/2000) pberger and borchers&n;*    -- First alpha version of the driver--many known limitations and bugs.&n;*&n;*&n;*  Locking and SMP&n;*&n;*  - Each port, including the out-of-band port, has a lock used to&n;*    serialize all access to the port&squot;s private structure.&n;*  - The port lock is also used to serialize all writes and access to&n;*    the port&squot;s URB.&n;*  - The port lock is also used for the port write_wait condition&n;*    variable.  Holding the port lock will prevent a wake up on the&n;*    port&squot;s write_wait; this can be used with cond_wait_... to be sure&n;*    the wake up is not lost in a race when dropping the lock and&n;*    sleeping waiting for the wakeup.&n;*  - digi_write() does not sleep, since it is sometimes called on&n;*    interrupt time.&n;*  - digi_write_bulk_callback() and digi_read_bulk_callback() are&n;*    called directly from interrupts.  Hence spin_lock_irqsave()&n;*    and spin_lock_irqrestore() are used in the rest of the code&n;*    for any locks they acquire.&n;*  - digi_write_bulk_callback() gets the port lock before waking up&n;*    processes sleeping on the port write_wait.  It also schedules&n;*    wake ups so they happen from the scheduler, because the tty&n;*    system can miss wake ups from interrupts.&n;*  - All sleeps use a timeout of DIGI_RETRY_TIMEOUT before looping to&n;*    recheck the condition they are sleeping on.  This is defensive,&n;*    in case a wake up is lost.&n;*    &n;*  $Id: digi_acceleport.c,v 1.56 2000/06/07 22:47:30 root Exp root $&n;*/
+multiline_comment|/*&n;*  Digi AccelePort USB-4 Serial Converter&n;*&n;*  Copyright 2000 by Digi International&n;*&n;*  This program is free software; you can redistribute it and/or modify&n;*  it under the terms of the GNU General Public License as published by&n;*  the Free Software Foundation; either version 2 of the License, or&n;*  (at your option) any later version.&n;*&n;*  Shamelessly based on Brian Warner&squot;s keyspan_pda.c and Greg Kroah-Hartman&squot;s&n;*  usb-serial driver.&n;*&n;*  Peter Berger (pberger@brimson.com)&n;*  Al Borchers (borchers@steinerpoint.com)&n;*&n;*  (6/22/2000) pberger and borchers&n;*    -- Made cond_wait_... inline--apparently on SPARC the flags arg&n;*       to spin_lock_irqsave cannot be passed to another function&n;*       to call spin_unlock_irqrestore.  Thanks to Pauline Middelink.&n;*    -- In digi_set_modem_signals the inner nested spin locks use just&n;*       spin_lock() rather than spin_lock_irqsave().  The old code&n;*       mistakenly left interrupts off.  Thanks to Pauline Middelink.&n;*    -- copy_from_user (which can sleep) is no longer called while a&n;*       spinlock is held.  We copy to a local buffer before getting&n;*       the spinlock--don&squot;t like the extra copy but the code is simpler.&n;*    -- Printk and dbg are no longer called while a spin lock is held.&n;*&n;*  (6/4/2000) pberger and borchers&n;*    -- Replaced separate calls to spin_unlock_irqrestore and&n;*       interruptible_sleep_on_interruptible with a new function&n;*       cond_wait_interruptible_timeout_irqrestore.  This eliminates&n;*       the race condition where the wake up could happen after&n;*       the unlock and before the sleep.&n;*    -- Close now waits for output to drain.&n;*    -- Open waits until any close in progress is finished.&n;*    -- All out of band responses are now processed, not just the&n;*       first in a USB packet.&n;*    -- Fixed a bug that prevented the driver from working when the&n;*       first Digi port was not the first USB serial port--the driver&n;*       was mistakenly using the external USB serial port number to&n;*       try to index into its internal ports.&n;*    -- Fixed an SMP bug -- write_bulk_callback is called directly from&n;*       an interrupt, so spin_lock_irqsave/spin_unlock_irqrestore are&n;*       needed for locks outside write_bulk_callback that are also&n;*       acquired by write_bulk_callback to prevent deadlocks.&n;*    -- Fixed support for select() by making digi_chars_in_buffer()&n;*       return 256 when -EINPROGRESS is set, as the line discipline&n;*       code in n_tty.c expects.&n;*    -- Fixed an include file ordering problem that prevented debugging&n;*       messages from working.&n;*    -- Fixed an intermittent timeout problem that caused writes to&n;*       sometimes get stuck on some machines on some kernels.  It turns&n;*       out in these circumstances write_chan() (in n_tty.c) was&n;*       asleep waiting for our wakeup call.  Even though we call&n;*       wake_up_interruptible() in digi_write_bulk_callback(), there is&n;*       a race condition that could cause the wakeup to fail: if our&n;*       wake_up_interruptible() call occurs between the time that our&n;*       driver write routine finishes and write_chan() sets current-&gt;state&n;*       to TASK_INTERRUPTIBLE, the effect of our wakeup setting the state&n;*       to TASK_RUNNING will be lost and write_chan&squot;s subsequent call to&n;*       schedule() will never return (unless it catches a signal).&n;*       This race condition occurs because write_bulk_callback() (and thus&n;*       the wakeup) are called asynchonously from an interrupt, rather than&n;*       from the scheduler.  We can avoid the race by calling the wakeup&n;*       from the scheduler queue and that&squot;s our fix:  Now, at the end of&n;*       write_bulk_callback() we queue up a wakeup call on the scheduler&n;*       task queue.  We still also invoke the wakeup directly since that&n;*       squeezes a bit more performance out of the driver, and any lost&n;*       race conditions will get cleaned up at the next scheduler run.&n;*&n;*       NOTE:  The problem also goes away if you comment out&n;*       the two code lines in write_chan() where current-&gt;state&n;*       is set to TASK_RUNNING just before calling driver.write() and to&n;*       TASK_INTERRUPTIBLE immediately afterwards.  This is why the&n;*       problem did not show up with the 2.2 kernels -- they do not&n;*       include that code.&n;*&n;*  (5/16/2000) pberger and borchers&n;*    -- Added timeouts to sleeps, to defend against lost wake ups.&n;*    -- Handle transition to/from B0 baud rate in digi_set_termios.&n;*&n;*  (5/13/2000) pberger and borchers&n;*    -- All commands now sent on out of band port, using&n;*       digi_write_oob_command.&n;*    -- Get modem control signals whenever they change, support TIOCMGET/&n;*       SET/BIS/BIC ioctls.&n;*    -- digi_set_termios now supports parity, word size, stop bits, and&n;*       receive enable.&n;*    -- Cleaned up open and close, use digi_set_termios and&n;*       digi_write_oob_command to set port parameters.&n;*    -- Added digi_startup_device to start read chains on all ports.&n;*    -- Write buffer is only used when count==1, to be sure put_char can&n;*       write a char (unless the buffer is full).&n;*&n;*  (5/10/2000) pberger and borchers&n;*    -- Added MOD_INC_USE_COUNT/MOD_DEC_USE_COUNT calls on open/close.&n;*    -- Fixed problem where the first incoming character is lost on&n;*       port opens after the first close on that port.  Now we keep&n;*       the read_urb chain open until shutdown.&n;*    -- Added more port conditioning calls in digi_open and digi_close.&n;*    -- Convert port-&gt;active to a use count so that we can deal with multiple&n;*       opens and closes properly.&n;*    -- Fixed some problems with the locking code.&n;*&n;*  (5/3/2000) pberger and borchers&n;*    -- First alpha version of the driver--many known limitations and bugs.&n;*&n;*&n;*  Locking and SMP&n;*&n;*  - Each port, including the out-of-band port, has a lock used to&n;*    serialize all access to the port&squot;s private structure.&n;*  - The port lock is also used to serialize all writes and access to&n;*    the port&squot;s URB.&n;*  - The port lock is also used for the port write_wait condition&n;*    variable.  Holding the port lock will prevent a wake up on the&n;*    port&squot;s write_wait; this can be used with cond_wait_... to be sure&n;*    the wake up is not lost in a race when dropping the lock and&n;*    sleeping waiting for the wakeup.&n;*  - digi_write() does not sleep, since it is sometimes called on&n;*    interrupt time.&n;*  - digi_write_bulk_callback() and digi_read_bulk_callback() are&n;*    called directly from interrupts.  Hence spin_lock_irqsave()&n;*    and spin_lock_irqrestore() are used in the rest of the code&n;*    for any locks they acquire.&n;*  - digi_write_bulk_callback() gets the port lock before waking up&n;*    processes sleeping on the port write_wait.  It also schedules&n;*    wake ups so they happen from the scheduler, because the tty&n;*    system can miss wake ups from interrupts.&n;*  - All sleeps use a timeout of DIGI_RETRY_TIMEOUT before looping to&n;*    recheck the condition they are sleeping on.  This is defensive,&n;*    in case a wake up is lost.&n;*  - Following Documentation/DocBook/kernel-locking.pdf no spin locks&n;*    are held when calling copy_to/from_user or printk.&n;*    &n;*  $Id: digi_acceleport.c,v 1.60 2000/06/23 17:43:17 root Exp root $&n;*/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -770,6 +770,7 @@ multiline_comment|/* Functions */
 multiline_comment|/*&n;*  Cond Wait Interruptible Timeout Irqrestore&n;*&n;*  Do spin_unlock_irqrestore and interruptible_sleep_on_timeout&n;*  so that wake ups are not lost if they occur between the unlock&n;*  and the sleep.  In other words, spin_lock_irqrestore and&n;*  interruptible_sleep_on_timeout are &quot;atomic&quot; with respect to&n;*  wake ups.  This is used to implement condition variables.&n;*/
 DECL|function|cond_wait_interruptible_timeout_irqrestore
 r_static
+r_inline
 r_int
 id|cond_wait_interruptible_timeout_irqrestore
 c_func
@@ -1152,19 +1153,6 @@ op_add_assign
 id|len
 suffix:semicolon
 )brace
-r_else
-(brace
-id|dbg
-c_func
-(paren
-l_string|&quot;digi_write_oob_command: usb_submit_urb failed, ret=%d&quot;
-comma
-id|ret
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 )brace
 id|spin_unlock_irqrestore
 c_func
@@ -1175,6 +1163,21 @@ comma
 id|flags
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+(brace
+id|dbg
+c_func
+(paren
+l_string|&quot;digi_write_oob_command: usb_submit_urb failed, ret=%d&quot;
+comma
+id|ret
+)paren
+suffix:semicolon
+)brace
 r_return
 id|ret
 suffix:semicolon
@@ -1311,8 +1314,8 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/* len must be a multiple of 4 and small enough to */
-multiline_comment|/* guarantee the write will send all data (or none), */
-multiline_comment|/* so commands are not split */
+multiline_comment|/* guarantee the write will send buffered data first, */
+multiline_comment|/* so commands are in order with data and not split */
 id|len
 op_assign
 id|MIN
@@ -1416,65 +1419,6 @@ op_assign
 id|len
 suffix:semicolon
 )brace
-macro_line|#ifdef DEBUG_DATA
-(brace
-r_int
-id|i
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-id|__FILE__
-l_string|&quot;: digi_write: port=%d, length=%d, data=&quot;
-comma
-id|priv-&gt;dp_port_num
-comma
-id|port-&gt;write_urb-&gt;transfer_buffer_length
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|port-&gt;write_urb-&gt;transfer_buffer_length
-suffix:semicolon
-op_increment
-id|i
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%.2x &quot;
-comma
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|port-&gt;write_urb-&gt;transfer_buffer
-)paren
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1504,19 +1448,6 @@ op_add_assign
 id|len
 suffix:semicolon
 )brace
-r_else
-(brace
-id|dbg
-c_func
-(paren
-l_string|&quot;digi_write_inb_command: usb_submit_urb failed, ret=%d&quot;
-comma
-id|ret
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 )brace
 id|spin_unlock_irqrestore
 c_func
@@ -1527,6 +1458,21 @@ comma
 id|flags
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+(brace
+id|dbg
+c_func
+(paren
+l_string|&quot;digi_write_inb_command: usb_submit_urb failed, ret=%d&quot;
+comma
+id|ret
+)paren
+suffix:semicolon
+)brace
 r_return
 id|ret
 suffix:semicolon
@@ -1611,13 +1557,11 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|spin_lock_irqsave
+id|spin_lock
 c_func
 (paren
 op_amp
 id|port_priv-&gt;dp_port_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_while
@@ -1629,13 +1573,11 @@ op_minus
 id|EINPROGRESS
 )paren
 (brace
-id|spin_unlock_irqrestore
+id|spin_unlock
 c_func
 (paren
 op_amp
 id|port_priv-&gt;dp_port_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|cond_wait_interruptible_timeout_irqrestore
@@ -1676,13 +1618,11 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|spin_lock_irqsave
+id|spin_lock
 c_func
 (paren
 op_amp
 id|port_priv-&gt;dp_port_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1804,24 +1744,11 @@ id|TIOCM_RTS
 )paren
 suffix:semicolon
 )brace
-r_else
-(brace
-id|dbg
-c_func
-(paren
-l_string|&quot;digi_set_modem_signals: usb_submit_urb failed, ret=%d&quot;
-comma
-id|ret
-)paren
-suffix:semicolon
-)brace
-id|spin_unlock_irqrestore
+id|spin_unlock
 c_func
 (paren
 op_amp
 id|port_priv-&gt;dp_port_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|spin_unlock_irqrestore
@@ -1833,6 +1760,21 @@ comma
 id|flags
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+(brace
+id|dbg
+c_func
+(paren
+l_string|&quot;digi_set_modem_signals: usb_submit_urb failed, ret=%d&quot;
+comma
+id|ret
+)paren
+suffix:semicolon
+)brace
 r_return
 id|ret
 suffix:semicolon
@@ -3399,6 +3341,14 @@ op_assign
 id|port-&gt;write_urb-&gt;transfer_buffer
 suffix:semicolon
 r_int
+r_char
+id|user_buf
+(braket
+l_int|64
+)braket
+suffix:semicolon
+multiline_comment|/* 64 bytes is max USB bulk packet */
+r_int
 r_int
 id|flags
 op_assign
@@ -3421,6 +3371,46 @@ c_func
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* copy user data (which can sleep) before getting spin lock */
+id|count
+op_assign
+id|MIN
+c_func
+(paren
+l_int|64
+comma
+id|MIN
+c_func
+(paren
+id|count
+comma
+id|port-&gt;bulk_out_size
+op_minus
+l_int|2
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|from_user
+op_logical_and
+id|copy_from_user
+c_func
+(paren
+id|user_buf
+comma
+id|buf
+comma
+id|count
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
 multiline_comment|/* be sure only one write proceeds at a time */
 multiline_comment|/* there are races on the port private buffer */
 multiline_comment|/* and races to check write_urb-&gt;status */
@@ -3578,113 +3568,21 @@ op_add_assign
 id|priv-&gt;dp_buf_len
 suffix:semicolon
 multiline_comment|/* copy in new data */
-r_if
-c_cond
-(paren
-id|from_user
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|copy_from_user
-c_func
-(paren
-id|data
-comma
-id|buf
-comma
-id|new_len
-)paren
-)paren
-(brace
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|priv-&gt;dp_port_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-)brace
-)brace
-r_else
-(brace
 id|memcpy
 c_func
 (paren
 id|data
 comma
+id|from_user
+ques
+c_cond
+id|user_buf
+suffix:colon
 id|buf
 comma
 id|new_len
 )paren
 suffix:semicolon
-)brace
-macro_line|#ifdef DEBUG_DATA
-(brace
-r_int
-id|i
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-id|__FILE__
-l_string|&quot;: digi_write: port=%d, length=%d, data=&quot;
-comma
-id|priv-&gt;dp_port_num
-comma
-id|port-&gt;write_urb-&gt;transfer_buffer_length
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|port-&gt;write_urb-&gt;transfer_buffer_length
-suffix:semicolon
-op_increment
-id|i
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%.2x &quot;
-comma
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|port-&gt;write_urb-&gt;transfer_buffer
-)paren
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3710,7 +3608,23 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_else
+multiline_comment|/* return length of new data written, or error */
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|priv-&gt;dp_port_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+OL
+l_int|0
+)paren
 (brace
 id|dbg
 c_func
@@ -3721,22 +3635,12 @@ id|ret
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* return length of new data written, or error */
 id|dbg
 c_func
 (paren
 l_string|&quot;digi_write: returning %d&quot;
 comma
 id|ret
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|priv-&gt;dp_port_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_return
@@ -3939,65 +3843,6 @@ comma
 id|priv-&gt;dp_buf_len
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG_DATA
-(brace
-r_int
-id|i
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-id|__FILE__
-l_string|&quot;: digi_write_bulk_callback: port=%d, length=%d, data=&quot;
-comma
-id|priv-&gt;dp_port_num
-comma
-id|port-&gt;write_urb-&gt;transfer_buffer_length
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|port-&gt;write_urb-&gt;transfer_buffer_length
-suffix:semicolon
-op_increment
-id|i
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%.2x &quot;
-comma
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|port-&gt;write_urb-&gt;transfer_buffer
-)paren
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4019,17 +3864,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_else
-(brace
-id|dbg
-c_func
-(paren
-l_string|&quot;digi_write_bulk_callback: usb_submit_urb failed, ret=%d&quot;
-comma
-id|ret
-)paren
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/* wake up processes sleeping on writes immediately */
 id|digi_wakeup_write
@@ -4045,6 +3879,21 @@ op_amp
 id|priv-&gt;dp_port_lock
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+(brace
+id|dbg
+c_func
+(paren
+l_string|&quot;digi_write_bulk_callback: usb_submit_urb failed, ret=%d&quot;
+comma
+id|ret
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* also queue up a wakeup at scheduler time, in case we */
 multiline_comment|/* lost the race in write_chan(). */
 id|priv-&gt;dp_tasks.routine
@@ -4110,14 +3959,6 @@ r_int
 id|flags
 op_assign
 l_int|0
-suffix:semicolon
-id|dbg
-c_func
-(paren
-l_string|&quot;digi_write_room: TOP: port=%d&quot;
-comma
-id|priv-&gt;dp_port_num
-)paren
 suffix:semicolon
 id|spin_lock_irqsave
 c_func
@@ -4198,14 +4039,6 @@ op_star
 id|port
 op_member_access_from_pointer
 r_private
-)paren
-suffix:semicolon
-id|dbg
-c_func
-(paren
-l_string|&quot;digi_chars_in_buffer: TOP: port=%d&quot;
-comma
-id|priv-&gt;dp_port_num
 )paren
 suffix:semicolon
 r_if
@@ -5097,6 +4930,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* be sure this happens exactly once */
 id|spin_lock
 c_func
 (paren
@@ -5104,7 +4938,6 @@ op_amp
 id|startup_lock
 )paren
 suffix:semicolon
-multiline_comment|/* be sure this happens exactly once */
 r_if
 c_cond
 (paren
@@ -5122,6 +4955,17 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|device_startup
+op_assign
+l_int|1
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|startup_lock
+)paren
+suffix:semicolon
 multiline_comment|/* start reading from each bulk in endpoint for the device */
 r_for
 c_loop
@@ -5175,17 +5019,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-id|device_startup
-op_assign
-l_int|1
-suffix:semicolon
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|startup_lock
-)paren
-suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -5679,67 +5512,6 @@ r_goto
 id|resubmit
 suffix:semicolon
 )brace
-macro_line|#ifdef DEBUG_DATA
-r_if
-c_cond
-(paren
-id|urb-&gt;actual_length
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-id|__FILE__
-l_string|&quot;: digi_read_bulk_callback: port=%d, length=%d, data=&quot;
-comma
-id|priv-&gt;dp_port_num
-comma
-id|urb-&gt;actual_length
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|urb-&gt;actual_length
-suffix:semicolon
-op_increment
-id|i
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%.2x &quot;
-comma
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|urb-&gt;transfer_buffer
-)paren
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren

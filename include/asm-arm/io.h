@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/io.h&n; *&n; * Copyright (C) 1996-1999 Russell King&n; *&n; * Modifications:&n; *  16-Sep-1996&t;RMK&t;Inlined the inx/outx functions &amp; optimised for both&n; *&t;&t;&t;constant addresses and variable addresses.&n; *  04-Dec-1997&t;RMK&t;Moved a lot of this stuff to the new architecture&n; *&t;&t;&t;specific IO header files.&n; *  27-Mar-1999&t;PJB&t;Second parameter of memcpy_toio is const..&n; *  04-Apr-1999&t;PJB&t;Added check_signature.&n; *  12-Dec-1999&t;RMK&t;More cleanups&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/io.h&n; *&n; * Copyright (C) 1996-2000 Russell King&n; *&n; * Modifications:&n; *  16-Sep-1996&t;RMK&t;Inlined the inx/outx functions &amp; optimised for both&n; *&t;&t;&t;constant addresses and variable addresses.&n; *  04-Dec-1997&t;RMK&t;Moved a lot of this stuff to the new architecture&n; *&t;&t;&t;specific IO header files.&n; *  27-Mar-1999&t;PJB&t;Second parameter of memcpy_toio is const..&n; *  04-Apr-1999&t;PJB&t;Added check_signature.&n; *  12-Dec-1999&t;RMK&t;More cleanups&n; *  18-Jun-2000 RMK&t;Removed virt_to_* and friends definitions&n; */
 macro_line|#ifndef __ASM_ARM_IO_H
 DECL|macro|__ASM_ARM_IO_H
 mdefine_line|#define __ASM_ARM_IO_H
@@ -136,73 +136,7 @@ mdefine_line|#define insw_p(port,to,len)&t;&t;insw(port,to,len)
 DECL|macro|insl_p
 mdefine_line|#define insl_p(port,to,len)&t;&t;insl(port,to,len)
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;asm/arch/memory.h&gt;
-DECL|function|virt_to_phys
-r_extern
-id|__inline__
-r_int
-r_int
-id|virt_to_phys
-c_func
-(paren
-r_volatile
-r_void
-op_star
-id|x
-)paren
-(brace
-r_return
-id|__virt_to_phys
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-(paren
-id|x
-)paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|phys_to_virt
-r_extern
-id|__inline__
-r_void
-op_star
-id|phys_to_virt
-c_func
-(paren
-r_int
-r_int
-id|x
-)paren
-(brace
-r_return
-(paren
-r_void
-op_star
-)paren
-(paren
-id|__phys_to_virt
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-(paren
-id|x
-)paren
-)paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Virtual &lt;-&gt; DMA view memory address translations&n; */
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus(x)&t;&t;(__virt_to_bus((unsigned long)(x)))
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt(x)&t;&t;((void *)(__bus_to_virt((unsigned long)(x))))
+macro_line|#include &lt;asm/memory.h&gt;
 multiline_comment|/* the following macro is depreciated */
 DECL|macro|ioaddr
 mdefine_line|#define ioaddr(port)&t;&t;&t;__ioaddr((port))

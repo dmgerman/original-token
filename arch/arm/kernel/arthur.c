@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * Arthur personality&n; * Copyright (C) 1998-1999 Philip Blundell&n; */
-macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

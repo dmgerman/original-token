@@ -2,7 +2,7 @@ multiline_comment|/*&n; * linux/include/asm-arm/arch-shark/hardware.h&n; *&n; * 
 macro_line|#ifndef __ASM_ARCH_HARDWARE_H
 DECL|macro|__ASM_ARCH_HARDWARE_H
 mdefine_line|#define __ASM_ARCH_HARDWARE_H
-macro_line|#ifndef __ASSEMBLER__
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * Mapping areas&n; */
 DECL|macro|IO_BASE
 mdefine_line|#define IO_BASE&t;&t;&t;0xe0000000

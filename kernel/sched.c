@@ -65,18 +65,18 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * The tasklist_lock protects the linked list of processes.&n; *&n; * The scheduler lock is protecting against multiple entry&n; * into the scheduling code, and doesn&squot;t need to worry&n; * about interrupts (because interrupts cannot call the&n; * scheduler).&n; *&n; * The run-queue lock locks the parts that actually access&n; * and change the run-queues, and have to be interrupt-safe.&n; */
-DECL|variable|runqueue_lock
-id|__cacheline_aligned
+DECL|variable|__cacheline_aligned
 id|spinlock_t
 id|runqueue_lock
+id|__cacheline_aligned
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/* second */
-DECL|variable|tasklist_lock
-id|__cacheline_aligned
+DECL|variable|__cacheline_aligned
 id|rwlock_t
 id|tasklist_lock
+id|__cacheline_aligned
 op_assign
 id|RW_LOCK_UNLOCKED
 suffix:semicolon

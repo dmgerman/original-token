@@ -14,6 +14,7 @@ macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/core_cia.h&gt;
+macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &quot;proto.h&quot;
 macro_line|#include &quot;irq_impl.h&quot;
 macro_line|#include &quot;pci_impl.h&quot;
@@ -291,6 +292,89 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+r_static
+r_void
+id|__init
+DECL|function|sx164_init_arch
+id|sx164_init_arch
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/*&n;&t; * OSF palcode v1.23 forgets to enable PCA56 Motion Video&n;&t; * Instructions. Let&squot;s enable it.&n;&t; * We have to check palcode revision because CSERVE interface&n;&t; * is subject to change without notice. For example, it&n;&t; * has been changed completely since v1.16 (found in MILO&n;&t; * distribution). -ink&n;&t; */
+r_struct
+id|percpu_struct
+op_star
+id|cpu
+op_assign
+(paren
+r_struct
+id|percpu_struct
+op_star
+)paren
+(paren
+(paren
+r_char
+op_star
+)paren
+id|hwrpb
+op_plus
+id|hwrpb-&gt;processor_offset
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|alpha_using_srm
+op_logical_and
+(paren
+id|cpu-&gt;pal_revision
+op_amp
+l_int|0xffff
+)paren
+op_eq
+l_int|0x117
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;lda&t;$16,8($31)&bslash;n&quot;
+l_string|&quot;call_pal 9&bslash;n&quot;
+multiline_comment|/* Allow PALRES insns in kernel mode */
+l_string|&quot;.long  0x64000118&bslash;n&bslash;n&quot;
+multiline_comment|/* hw_mfpr $0,icsr */
+l_string|&quot;ldah&t;$16,(1&lt;&lt;(19-16))($31)&bslash;n&quot;
+l_string|&quot;or&t;$0,$16,$0&bslash;n&quot;
+multiline_comment|/* set MVE bit */
+l_string|&quot;.long  0x74000118&bslash;n&quot;
+multiline_comment|/* hw_mtpr $0,icsr */
+l_string|&quot;lda&t;$16,9($31)&bslash;n&quot;
+l_string|&quot;call_pal 9&quot;
+multiline_comment|/* Disable PALRES insns */
+suffix:colon
+suffix:colon
+suffix:colon
+l_string|&quot;$0&quot;
+comma
+l_string|&quot;$16&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;PCA56 MVI set enabled&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|pyxis_init_arch
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * The System Vector&n; */
 DECL|variable|__initmv
 r_struct
@@ -337,7 +421,7 @@ id|pyxis_device_interrupt
 comma
 id|init_arch
 suffix:colon
-id|pyxis_init_arch
+id|sx164_init_arch
 comma
 id|init_irq
 suffix:colon

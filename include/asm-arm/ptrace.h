@@ -26,6 +26,10 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
+DECL|macro|predicate
+mdefine_line|#define predicate(x)&t;(x &amp; 0xf0000000)
+DECL|macro|PREDICATE_ALWAYS
+mdefine_line|#define PREDICATE_ALWAYS&t;0xe0000000
 macro_line|#endif
 macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif

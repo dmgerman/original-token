@@ -81,6 +81,12 @@ multiline_comment|/*&n;&t; * This section does the #! interpretation.&n;&t; * So
 id|bprm-&gt;sh_bang
 op_increment
 suffix:semicolon
+id|allow_write_access
+c_func
+(paren
+id|bprm-&gt;file
+)paren
+suffix:semicolon
 id|fput
 c_func
 (paren

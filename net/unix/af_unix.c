@@ -1502,7 +1502,7 @@ id|unix_nr_socks
 op_ge
 l_int|2
 op_star
-id|max_files
+id|files_stat.max_files
 )paren
 r_return
 l_int|NULL

@@ -1,8 +1,8 @@
 multiline_comment|/*&n; * arch/arm/kernel/hw-sa1100.c&n; *&n; * SA1100-dependent machine specifics&n; *&n; * Copyright (C) 2000 Nicolas Pitre &lt;nico@cam.org&gt;&n; *&n; * This will certainly contain more stuff with time... like power management,&n; * special hardware autodetection, etc.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;

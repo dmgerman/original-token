@@ -28,9 +28,7 @@ macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#endif
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
 macro_line|#include &quot;fore200e.h&quot;
 macro_line|#include &quot;suni.h&quot;
 macro_line|#if 1   /* ensure correct handling of 52-byte AAL0 SDUs used by atmdump-like apps */

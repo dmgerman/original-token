@@ -1041,13 +1041,6 @@ id|q-&gt;request_freelist
 )paren
 )paren
 (brace
-id|elevator_t
-op_star
-id|e
-op_assign
-op_amp
-id|q-&gt;elevator
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1093,22 +1086,6 @@ suffix:semicolon
 id|rq-&gt;q
 op_assign
 id|q
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rq-&gt;cmd
-op_eq
-id|READ
-)paren
-id|rq-&gt;elevator_sequence
-op_assign
-id|e-&gt;read_latency
-suffix:semicolon
-r_else
-id|rq-&gt;elevator_sequence
-op_assign
-id|e-&gt;write_latency
 suffix:semicolon
 id|q-&gt;queue_requests
 op_increment
@@ -2405,6 +2382,24 @@ r_goto
 id|get_rq
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * skip first entry, for devices with active queue head&n;&t; */
+id|head
+op_assign
+op_amp
+id|q-&gt;queue_head
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|q-&gt;head_active
+op_logical_and
+op_logical_neg
+id|q-&gt;plugged
+)paren
+id|head
+op_assign
+id|head-&gt;next
+suffix:semicolon
 id|el_ret
 op_assign
 id|elevator
@@ -2661,7 +2656,6 @@ op_amp
 id|io_request_lock
 )paren
 suffix:semicolon
-)brace
 id|head
 op_assign
 op_amp
@@ -2679,6 +2673,7 @@ id|head
 op_assign
 id|head-&gt;next
 suffix:semicolon
+)brace
 multiline_comment|/* fill up the request-info, and add it to the queue */
 id|req-&gt;cmd
 op_assign

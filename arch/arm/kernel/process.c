@@ -1,26 +1,20 @@
 multiline_comment|/*&n; *  linux/arch/arm/kernel/process.c&n; *&n; *  Copyright (C) 1996-2000 Russell King - Converted to ARM.&n; *  Origional Copyright (C) 1995  Linus Torvalds&n; */
 macro_line|#include &lt;stdarg.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
-macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
-macro_line|#include &lt;linux/a.out.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * Values for cpu_do_idle()&n; */
 DECL|macro|IDLE_WAIT_SLOW
 mdefine_line|#define IDLE_WAIT_SLOW&t;0

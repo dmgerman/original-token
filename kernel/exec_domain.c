@@ -495,6 +495,9 @@ r_struct
 id|exec_domain
 op_star
 id|it
+comma
+op_star
+id|prev
 suffix:semicolon
 id|it
 op_assign
@@ -508,8 +511,25 @@ r_if
 c_cond
 (paren
 id|it
+op_eq
+id|current-&gt;exec_domain
 )paren
 (brace
+id|current-&gt;personality
+op_assign
+id|personality
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|it
+)paren
+r_return
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -582,10 +602,14 @@ id|old
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * At that point we are guaranteed to be the sole owner of&n;&t;&t; * current-&gt;fs.&n;&t;&t; */
+multiline_comment|/*&n;&t; * At that point we are guaranteed to be the sole owner of&n;&t; * current-&gt;fs.&n;&t; */
 id|current-&gt;personality
 op_assign
 id|personality
+suffix:semicolon
+id|prev
+op_assign
+id|current-&gt;exec_domain
 suffix:semicolon
 id|current-&gt;exec_domain
 op_assign
@@ -599,10 +623,9 @@ suffix:semicolon
 id|put_exec_domain
 c_func
 (paren
-id|current-&gt;exec_domain
+id|prev
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|function|sys_personality
 id|asmlinkage

@@ -7134,10 +7134,6 @@ id|sb
 suffix:semicolon
 id|error_out
 suffix:colon
-id|sb-&gt;s_dev
-op_assign
-id|NODEV
-suffix:semicolon
 r_if
 c_cond
 (paren

@@ -620,6 +620,12 @@ c_func
 id|page
 )paren
 suffix:semicolon
+id|ClearPageDirty
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|UnlockPage
 c_func
 (paren
@@ -1747,7 +1753,7 @@ id|pagecache_lock
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This adds a page to the page cache, starting out as locked,&n; * owned by us, referenced, but not uptodate and with no errors.&n; */
+multiline_comment|/*&n; * This adds a page to the page cache, starting out as locked,&n; * owned by us, but unreferenced, not uptodate and with no errors.&n; */
 DECL|function|__add_to_page_cache
 r_static
 r_inline
@@ -1822,6 +1828,12 @@ l_int|1
 op_lshift
 id|PG_dirty
 )paren
+op_or
+(paren
+l_int|1
+op_lshift
+id|PG_referenced
+)paren
 )paren
 suffix:semicolon
 id|page-&gt;flags
@@ -1832,12 +1844,6 @@ op_or
 l_int|1
 op_lshift
 id|PG_locked
-)paren
-op_or
-(paren
-l_int|1
-op_lshift
-id|PG_referenced
 )paren
 suffix:semicolon
 id|page_cache_get

@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
+macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/sunrpc/types.h&gt;
@@ -1292,6 +1293,67 @@ op_minus
 id|err
 )paren
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|skb-&gt;ip_summed
+op_ne
+id|CHECKSUM_UNNECESSARY
+)paren
+(brace
+r_int
+r_int
+id|csum
+op_assign
+id|skb-&gt;csum
+suffix:semicolon
+id|csum
+op_assign
+id|csum_partial
+c_func
+(paren
+id|skb-&gt;h.raw
+comma
+id|skb-&gt;len
+comma
+id|csum
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_int
+)paren
+id|csum_fold
+c_func
+(paren
+id|csum
+)paren
+)paren
+(brace
+id|skb_free_datagram
+c_func
+(paren
+id|svsk-&gt;sk_sk
+comma
+id|skb
+)paren
+suffix:semicolon
+id|svc_sock_received
+c_func
+(paren
+id|svsk
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* There may be more data */
 id|svsk-&gt;sk_data

@@ -269,7 +269,7 @@ comma
 (brace
 id|PCI_VENDOR_ID_SI
 comma
-id|PCI_DEVICE_ID_SI_540
+id|PCI_DEVICE_ID_SI_5300
 comma
 l_string|&quot;SIS 540&quot;
 )brace
@@ -277,7 +277,7 @@ comma
 (brace
 id|PCI_VENDOR_ID_SI
 comma
-id|PCI_DEVICE_ID_SI_630
+id|PCI_DEVICE_ID_SI_6300
 comma
 l_string|&quot;SIS 630&quot;
 )brace

@@ -649,6 +649,10 @@ id|si.si_signo
 op_assign
 id|SIGSEGV
 suffix:semicolon
+id|si.si_errno
+op_assign
+l_int|0
+suffix:semicolon
 id|si.si_code
 op_assign
 id|fault

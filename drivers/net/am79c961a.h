@@ -118,8 +118,10 @@ DECL|macro|MODE_DRETRY
 mdefine_line|#define MODE_DRETRY&t;0x0020
 DECL|macro|MODE_INTLOOP
 mdefine_line|#define MODE_INTLOOP&t;0x0040
-DECL|macro|MODE_PORT0
-mdefine_line|#define MODE_PORT0&t;0x0080
+DECL|macro|MODE_PORT_AUI
+mdefine_line|#define MODE_PORT_AUI&t;0x0000
+DECL|macro|MODE_PORT_10BT
+mdefine_line|#define MODE_PORT_10BT&t;0x0080
 DECL|macro|MODE_DRXPA
 mdefine_line|#define MODE_DRXPA&t;0x2000
 DECL|macro|MODE_DRXBA
@@ -170,6 +172,8 @@ DECL|macro|TST_LCOL
 mdefine_line|#define TST_LCOL&t;0x1000
 DECL|macro|TST_UFLO
 mdefine_line|#define TST_UFLO&t;0x4000
+DECL|macro|TST_BUFF
+mdefine_line|#define TST_BUFF&t;0x8000
 DECL|struct|dev_priv
 r_struct
 id|dev_priv

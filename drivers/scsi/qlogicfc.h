@@ -6,7 +6,7 @@ macro_line|#ifndef _QLOGICFC_H
 DECL|macro|_QLOGICFC_H
 mdefine_line|#define _QLOGICFC_H
 multiline_comment|/*&n; * With the qlogic interface, every queue slot can hold a SCSI&n; * command with up to 2 scatter/gather entries.  If we need more&n; * than 2 entries, continuation entries can be used that hold&n; * another 5 entries each.  Unlike for other drivers, this means&n; * that the maximum number of scatter/gather entries we can&n; * support at any given time is a function of the number of queue&n; * slots available.  That is, host-&gt;can_queue and host-&gt;sg_tablesize&n; * are dynamic and _not_ independent.  This all works fine because&n; * requests are queued serially and the scatter/gather limit is&n; * determined for each queue request anew.&n; */
-macro_line|#if PCI64_DMA_BITS &gt; 32
+macro_line|#if BITS_PER_LONG &gt; 32
 DECL|macro|DATASEGS_PER_COMMAND
 mdefine_line|#define DATASEGS_PER_COMMAND 2
 DECL|macro|DATASEGS_PER_CONT

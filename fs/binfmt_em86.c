@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/elf.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 DECL|macro|EM86_INTERP
 mdefine_line|#define EM86_INTERP&t;&quot;/usr/bin/em86&quot;
 DECL|macro|EM86_I_NAME
@@ -132,6 +133,12 @@ id|bprm-&gt;sh_bang
 op_increment
 suffix:semicolon
 multiline_comment|/* Well, the bang-shell is implicit... */
+id|allow_write_access
+c_func
+(paren
+id|bprm-&gt;file
+)paren
+suffix:semicolon
 id|fput
 c_func
 (paren

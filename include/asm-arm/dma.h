@@ -10,7 +10,8 @@ suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/memory.h&gt;
 macro_line|#include &lt;asm/arch/dma.h&gt;
 multiline_comment|/*&n; * DMA modes&n; */
 DECL|typedef|dmamode_t

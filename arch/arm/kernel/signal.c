@@ -5,17 +5,17 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
-macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
-macro_line|#include &lt;linux/binfmts.h&gt;
+macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/ucontext.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/pgalloc.h&gt;
+macro_line|#include &quot;ptrace.h&quot;
 DECL|macro|_BLOCKABLE
 mdefine_line|#define _BLOCKABLE (~(sigmask(SIGKILL) | sigmask(SIGSTOP)))
 DECL|macro|SWI_SYS_SIGRETURN
@@ -60,24 +60,6 @@ id|regs
 comma
 r_int
 id|syscall
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ptrace_cancel_bpt
-(paren
-r_struct
-id|task_struct
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ptrace_set_bpt
-(paren
-r_struct
-id|task_struct
-op_star
 )paren
 suffix:semicolon
 DECL|function|copy_siginfo_to_user
@@ -1146,6 +1128,7 @@ r_if
 c_cond
 (paren
 id|ptrace_cancel_bpt
+c_func
 (paren
 id|current
 )paren
@@ -1312,6 +1295,7 @@ r_if
 c_cond
 (paren
 id|ptrace_cancel_bpt
+c_func
 (paren
 id|current
 )paren
@@ -2430,6 +2414,7 @@ suffix:semicolon
 id|single_stepping
 op_assign
 id|ptrace_cancel_bpt
+c_func
 (paren
 id|current
 )paren
@@ -2516,6 +2501,7 @@ suffix:semicolon
 id|single_stepping
 op_or_assign
 id|ptrace_cancel_bpt
+c_func
 (paren
 id|current
 )paren
@@ -2926,6 +2912,7 @@ c_cond
 id|single_stepping
 )paren
 id|ptrace_set_bpt
+c_func
 (paren
 id|current
 )paren
@@ -2972,6 +2959,7 @@ c_cond
 id|single_stepping
 )paren
 id|ptrace_set_bpt
+c_func
 (paren
 id|current
 )paren

@@ -91,6 +91,7 @@ id|knfsd_fh
 (brace
 DECL|member|fh_size
 r_int
+r_int
 id|fh_size
 suffix:semicolon
 multiline_comment|/* significant for NFSv3.&n;&t;&t;&t;&t;&t; * Points to the current size while building&n;&t;&t;&t;&t;&t; * a new file handle&n;&t;&t;&t;&t;&t; */
@@ -250,6 +251,12 @@ r_int
 id|fh_maxsize
 suffix:semicolon
 multiline_comment|/* max size for fh_handle */
+DECL|member|fh_locked
+r_int
+r_char
+id|fh_locked
+suffix:semicolon
+multiline_comment|/* inode locked by us */
 macro_line|#ifdef CONFIG_NFSD_V3
 DECL|member|fh_post_saved
 r_int
@@ -263,20 +270,6 @@ r_char
 id|fh_pre_saved
 suffix:semicolon
 multiline_comment|/* pre-op attrs saved */
-macro_line|#endif /* CONFIG_NFSD_V3 */
-DECL|member|fh_locked
-r_int
-r_char
-id|fh_locked
-suffix:semicolon
-multiline_comment|/* inode locked by us */
-DECL|member|fh_dverified
-r_int
-r_char
-id|fh_dverified
-suffix:semicolon
-multiline_comment|/* dentry has been checked */
-macro_line|#ifdef CONFIG_NFSD_V3
 multiline_comment|/* Pre-op attributes saved during fh_lock */
 DECL|member|fh_pre_size
 id|__u64
@@ -506,7 +499,7 @@ id|src
 r_if
 c_cond
 (paren
-id|src-&gt;fh_dverified
+id|src-&gt;fh_dentry
 op_logical_or
 id|src-&gt;fh_locked
 )paren
@@ -628,10 +621,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|fhp-&gt;fh_locked
-op_assign
-l_int|1
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Fill in the post_op attr for the wcc data&n; */
 r_static
@@ -738,13 +727,14 @@ id|fhp-&gt;fh_post_saved
 op_assign
 l_int|1
 suffix:semicolon
-id|fhp-&gt;fh_locked
-op_assign
-l_int|0
-suffix:semicolon
 )brace
+macro_line|#else
+DECL|macro|fill_pre_wcc
+mdefine_line|#define&t;fill_pre_wcc(ignored)
+DECL|macro|fill_post_wcc
+mdefine_line|#define fill_post_wcc(notused)
 macro_line|#endif /* CONFIG_NFSD_V3 */
-multiline_comment|/*&n; * Lock a file handle/inode&n; */
+multiline_comment|/*&n; * Lock a file handle/inode&n; * NOTE: both fh_lock and fh_unlock are done &quot;by hand&quot; in&n; * vfs.c:nfsd_rename as it needs to grab 2 i_sem&squot;s at once&n; * so, any changes here should be reflected there.&n; */
 r_static
 r_inline
 r_void
@@ -790,7 +780,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|fhp-&gt;fh_dverified
+id|fhp-&gt;fh_dentry
 )paren
 (brace
 id|printk
@@ -834,19 +824,16 @@ op_amp
 id|inode-&gt;i_sem
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NFSD_V3
 id|fill_pre_wcc
 c_func
 (paren
 id|fhp
 )paren
 suffix:semicolon
-macro_line|#else
 id|fhp-&gt;fh_locked
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif /* CONFIG_NFSD_V3 */
 )brace
 multiline_comment|/*&n; * Unlock a file handle/inode&n; */
 r_static
@@ -866,7 +853,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|fhp-&gt;fh_dverified
+id|fhp-&gt;fh_dentry
 )paren
 id|printk
 c_func
@@ -881,7 +868,6 @@ c_cond
 id|fhp-&gt;fh_locked
 )paren
 (brace
-macro_line|#ifdef CONFIG_NFSD_V3
 id|fill_post_wcc
 c_func
 (paren
@@ -895,33 +881,10 @@ op_amp
 id|fhp-&gt;fh_dentry-&gt;d_inode-&gt;i_sem
 )paren
 suffix:semicolon
-macro_line|#else
-r_struct
-id|dentry
-op_star
-id|dentry
-op_assign
-id|fhp-&gt;fh_dentry
-suffix:semicolon
-r_struct
-id|inode
-op_star
-id|inode
-op_assign
-id|dentry-&gt;d_inode
-suffix:semicolon
 id|fhp-&gt;fh_locked
 op_assign
 l_int|0
 suffix:semicolon
-id|up
-c_func
-(paren
-op_amp
-id|inode-&gt;i_sem
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_NFSD_V3 */
 )brace
 )brace
 macro_line|#endif /* __KERNEL__ */

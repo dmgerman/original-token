@@ -490,6 +490,8 @@ DECL|macro|PageDirty
 mdefine_line|#define PageDirty(page)&t;&t;test_bit(PG_dirty, &amp;(page)-&gt;flags)
 DECL|macro|SetPageDirty
 mdefine_line|#define SetPageDirty(page)&t;set_bit(PG_dirty, &amp;(page)-&gt;flags)
+DECL|macro|ClearPageDirty
+mdefine_line|#define ClearPageDirty(page)&t;clear_bit(PG_dirty, &amp;(page)-&gt;flags)
 DECL|macro|PageLocked
 mdefine_line|#define PageLocked(page)&t;test_bit(PG_locked, &amp;(page)-&gt;flags)
 DECL|macro|LockPage

@@ -1419,11 +1419,15 @@ c_cond
 (paren
 id|mod-&gt;init
 op_logical_and
+(paren
+id|error
+op_assign
 id|mod
 op_member_access_from_pointer
 id|init
 c_func
 (paren
+)paren
 )paren
 op_ne
 l_int|0
@@ -1443,6 +1447,14 @@ op_and_assign
 op_complement
 id|MOD_INITIALIZING
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+OG
+l_int|0
+)paren
+multiline_comment|/* Buggy module */
 id|error
 op_assign
 op_minus
