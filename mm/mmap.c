@@ -891,6 +891,13 @@ r_if
 c_cond
 (paren
 op_logical_neg
+(paren
+id|flags
+op_amp
+id|MAP_NORESERVE
+)paren
+op_logical_and
+op_logical_neg
 id|vm_enough_memory
 c_func
 (paren

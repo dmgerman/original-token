@@ -24,7 +24,7 @@ mdefine_line|#define MAP_GROWSDOWN&t;0x0100&t;&t;/* stack-like segment */
 DECL|macro|MAP_DENYWRITE
 mdefine_line|#define MAP_DENYWRITE&t;0x0800&t;&t;/* ETXTBSY */
 DECL|macro|MAP_EXECUTABLE
-mdefine_line|#define MAP_EXECUTABLE&t;0x1000&t;&t;/* mark it as a executable */
+mdefine_line|#define MAP_EXECUTABLE&t;0x1000&t;&t;/* mark it as an executable */
 DECL|macro|MAP_LOCKED
 mdefine_line|#define MAP_LOCKED&t;0x2000&t;&t;/* pages are locked */
 DECL|macro|MS_ASYNC

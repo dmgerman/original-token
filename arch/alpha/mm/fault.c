@@ -287,6 +287,27 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
+multiline_comment|/* Did we have an exception handler installed? */
+r_if
+c_cond
+(paren
+id|current-&gt;tss.ex.count
+op_eq
+l_int|1
+)paren
+(brace
+id|current-&gt;tss.ex.count
+op_assign
+l_int|0
+suffix:semicolon
+id|__handle_exception
+c_func
+(paren
+op_amp
+id|current-&gt;tss.ex
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

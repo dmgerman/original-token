@@ -106,7 +106,7 @@ mdefine_line|#define invalidate_mm(mm_struct) &bslash;&n;do { if ((mm_struct) ==
 mdefine_line|#define invalidate_page(mm_struct,addr) &bslash;&n;do { if ((mm_struct) == current-&gt;mm) invalidate(); else printk(&quot;Can&squot;t invalidate_page(%x,%x)&bslash;n&quot;, mm_struct, addr);} while (0)
 mdefine_line|#define invalidate_range(mm_struct,start,end) &bslash;&n;do { if ((mm_struct) == current-&gt;mm) invalidate(); else printk(&quot;Can&squot;t invalidate_range(%x,%x,%x)&bslash;n&quot;, mm_struct, start, end);} while (0)
 macro_line|#endif
-multiline_comment|/*&n; * Define this if things work differently on a i386 and a i486:&n; * it will (on a i486) warn about kernel memory accesses that are&n; * done without a &squot;verify_area(VERIFY_WRITE,..)&squot;&n; */
+multiline_comment|/*&n; * Define this if things work differently on an i386 and an i486:&n; * it will (on an i486) warn about kernel memory accesses that are&n; * done without a &squot;verify_area(VERIFY_WRITE,..)&squot;&n; */
 DECL|macro|CONFIG_TEST_VERIFY_AREA
 macro_line|#undef CONFIG_TEST_VERIFY_AREA
 multiline_comment|/* page table for 0-4MB for everybody */

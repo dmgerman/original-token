@@ -308,12 +308,6 @@ r_int
 id|es
 comma
 r_int
-id|fs
-comma
-r_int
-id|gs
-comma
-r_int
 id|orig_eax
 comma
 r_int

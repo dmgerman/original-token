@@ -4933,6 +4933,23 @@ c_func
 l_string|&quot;Unable to allocate pcxe_termios struct&quot;
 )paren
 suffix:semicolon
+id|memset
+c_func
+(paren
+id|pcxe_termios
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|termios
+op_star
+)paren
+op_star
+id|nbdevs
+)paren
+suffix:semicolon
 id|pcxe_termios_locked
 op_assign
 id|kmalloc
@@ -4960,6 +4977,23 @@ id|panic
 c_func
 (paren
 l_string|&quot;Unable to allocate pcxe_termios_locked struct&quot;
+)paren
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|pcxe_termios_locked
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|termios
+op_star
+)paren
+op_star
+id|nbdevs
 )paren
 suffix:semicolon
 id|init_bh

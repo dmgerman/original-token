@@ -353,7 +353,7 @@ macro_line|#ifndef outl_p
 DECL|macro|outl_p
 macro_line|# define outl_p&t;&t;outl
 macro_line|#endif
-multiline_comment|/*&n; * The &quot;address&quot; in IO memory space is not clearly either a integer or a&n; * pointer. We will accept both, thus the casts.&n; *&n; * On the alpha, we have the whole physical address space mapped at all&n; * times, so &quot;ioremap()&quot; and &quot;iounmap()&quot; do not need to do anything.&n; */
+multiline_comment|/*&n; * The &quot;address&quot; in IO memory space is not clearly either an integer or a&n; * pointer. We will accept both, thus the casts.&n; *&n; * On the alpha, we have the whole physical address space mapped at all&n; * times, so &quot;ioremap()&quot; and &quot;iounmap()&quot; do not need to do anything.&n; */
 DECL|function|ioremap
 r_extern
 r_inline

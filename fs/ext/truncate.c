@@ -1181,7 +1181,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Called when a inode is released. Note that this is different&n; * from ext_open: open gets called at every open, but release&n; * gets called only when /all/ the files are closed.&n; */
+multiline_comment|/*&n; * Called when an inode is released. Note that this is different&n; * from ext_open: open gets called at every open, but release&n; * gets called only when /all/ the files are closed.&n; */
 DECL|function|ext_release
 r_void
 id|ext_release

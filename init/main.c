@@ -3736,7 +3736,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * task[0] is meant to be used as an &quot;idle&quot; task: it may not sleep, but&n; * it might do some general things like count free pages or it could be&n; * used to implement a reasonable LRU algorithm for the paging routines:&n; * anything that can be useful, but shouldn&squot;t take time from the real&n; * processes.&n; *&n; * Right now task[0] just does a infinite idle loop.&n; */
+multiline_comment|/*&n; * task[0] is meant to be used as an &quot;idle&quot; task: it may not sleep, but&n; * it might do some general things like count free pages or it could be&n; * used to implement a reasonable LRU algorithm for the paging routines:&n; * anything that can be useful, but shouldn&squot;t take time from the real&n; * processes.&n; *&n; * Right now task[0] just does an infinite idle loop.&n; */
 id|cpu_idle
 c_func
 (paren

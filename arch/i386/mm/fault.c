@@ -353,6 +353,13 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
+id|handle_exception
+c_func
+(paren
+op_amp
+id|tsk-&gt;tss.ex
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

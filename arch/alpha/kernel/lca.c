@@ -1497,6 +1497,11 @@ op_star
 id|regs
 )paren
 (brace
+r_int
+r_int
+op_star
+id|ptr
+suffix:semicolon
 r_const
 r_char
 op_star
@@ -1512,9 +1517,13 @@ id|buf
 l_int|128
 )braket
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;lca: machine check (la=0x%lx,pc=0x%lx)&bslash;n&quot;
 comma
 id|la
@@ -1535,7 +1544,7 @@ multiline_comment|/*&n;&t; * The first quadword after the common header always s
 r_switch
 c_cond
 (paren
-id|el.s-&gt;reason
+id|el.c-&gt;code
 op_amp
 l_int|0xffffffff
 )paren
@@ -1554,7 +1563,7 @@ id|MCHK_K_TCPERR
 suffix:colon
 id|reason
 op_assign
-l_string|&quot;tag something parity error&quot;
+l_string|&quot;tag control parity error&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1670,7 +1679,7 @@ id|buf
 comma
 l_string|&quot;reason for machine-check unknown (0x%lx)&quot;
 comma
-id|el.s-&gt;reason
+id|el.c-&gt;code
 op_amp
 l_int|0xffffffff
 )paren
@@ -1708,7 +1717,8 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;  Reason: %s (short frame%s, dc_stat=%lx):&bslash;n&quot;
+id|KERN_CRIT
+l_string|&quot;  Reason: %s (short frame%s, dc_stat=%lx):&bslash;pn&quot;
 comma
 id|reason
 comma
@@ -1768,6 +1778,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;  Reason: %s (long frame%s):&bslash;n&quot;
 comma
 id|reason
@@ -1783,6 +1794,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;    reason: %lx  exc_addr: %lx  dc_stat: %lx&bslash;n&quot;
 comma
 id|el.l-&gt;pt
@@ -1798,6 +1810,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;    car: %lx&bslash;n&quot;
 comma
 id|el.l-&gt;car
@@ -1844,9 +1857,68 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;  Unknown errorlog size %d&bslash;n&quot;
 comma
 id|el.c-&gt;size
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* dump the the logout area to give all info: */
+id|ptr
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|la
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|el.c-&gt;size
+op_div
+r_sizeof
+(paren
+r_int
+)paren
+suffix:semicolon
+id|i
+op_add_assign
+l_int|2
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot; +%8lx %016lx %016lx&bslash;n&quot;
+comma
+id|i
+op_star
+r_sizeof
+(paren
+r_int
+)paren
+comma
+id|ptr
+(braket
+id|i
+)braket
+comma
+id|ptr
+(braket
+id|i
+op_plus
+l_int|1
+)braket
 )paren
 suffix:semicolon
 )brace

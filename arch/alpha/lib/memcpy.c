@@ -209,7 +209,7 @@ id|n
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Hmm.. Strange. The __asm__ here is there to make gcc use a integer register&n; * for the load-store. I don&squot;t know why, but it would seem that using a floating&n; * point register for the move seems to slow things down (very small difference,&n; * though).&n; *&n; * Note the ordering to try to avoid load (and address generation) latencies.&n; */
+multiline_comment|/*&n; * Hmm.. Strange. The __asm__ here is there to make gcc use an integer register&n; * for the load-store. I don&squot;t know why, but it would seem that using a floating&n; * point register for the move seems to slow things down (very small difference,&n; * though).&n; *&n; * Note the ordering to try to avoid load (and address generation) latencies.&n; */
 DECL|function|__memcpy_aligned
 r_static
 r_inline

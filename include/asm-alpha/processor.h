@@ -19,6 +19,80 @@ DECL|macro|wp_works_ok
 mdefine_line|#define wp_works_ok 1
 DECL|macro|wp_works_ok__is_a_macro
 mdefine_line|#define wp_works_ok__is_a_macro /* for versions in ksyms.c */
+multiline_comment|/*&n; * The VM exception save area. We need to save&n; *&t;return address (r26)&n; *&t;PC (r30)&n; *&t;function-call-saved regs (r9-r15)&n; * Count is used to do some basic sanity checking, and&n; * to handle the case where a kernel service itself sets&n; * up exceptions while another exception is active.&n; *&n; * NOTE: Exceptions are not &quot;recursive&quot;: in the case above&n; * the oldest exception is the one that is left active, but&n; * the VM fault handler will notice a count != 1 and abort&n; * because exceptions within exceptions are an error.&n; */
+DECL|struct|exception_struct
+r_struct
+id|exception_struct
+(brace
+DECL|member|count
+r_int
+r_int
+id|count
+suffix:semicolon
+DECL|member|r9
+DECL|member|r10
+DECL|member|r11
+DECL|member|r12
+DECL|member|r13
+DECL|member|r14
+DECL|member|r15
+r_int
+r_int
+id|r9
+comma
+id|r10
+comma
+id|r11
+comma
+id|r12
+comma
+id|r13
+comma
+id|r14
+comma
+id|r15
+suffix:semicolon
+DECL|member|r26
+DECL|member|r30
+r_int
+r_int
+id|r26
+comma
+id|r30
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_int
+id|__exception
+c_func
+(paren
+r_struct
+id|exception_struct
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__handle_exception
+c_func
+(paren
+r_struct
+id|exception_struct
+op_star
+)paren
+id|__attribute__
+c_func
+(paren
+(paren
+id|noreturn
+)paren
+)paren
+suffix:semicolon
+DECL|macro|exception
+mdefine_line|#define exception()&t;__exception(&amp;current-&gt;tss.ex)
+DECL|macro|end_exception
+mdefine_line|#define end_exception()&t;(current-&gt;tss.ex.count--)
 DECL|struct|thread_struct
 r_struct
 id|thread_struct
@@ -75,12 +149,17 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+DECL|member|ex
+r_struct
+id|exception_struct
+id|ex
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xfffffc0000000000,  0xfffffc0010000000, &bslash;&n;&t;PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0 &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, &bslash;&n;&t;{ 0, } &bslash;&n;}
 DECL|macro|alloc_kernel_stack
 mdefine_line|#define alloc_kernel_stack()    __get_free_page(GFP_KERNEL)
 DECL|macro|free_kernel_stack

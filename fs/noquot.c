@@ -44,7 +44,7 @@ id|type
 )paren
 (brace
 )brace
-multiline_comment|/*&n; * Initialize pointer in a inode to the right dquots.&n; */
+multiline_comment|/*&n; * Initialize pointer in an inode to the right dquots.&n; */
 DECL|function|dquot_initialize
 r_void
 id|dquot_initialize

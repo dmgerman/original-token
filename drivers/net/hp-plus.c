@@ -343,7 +343,7 @@ suffix:semicolon
 "&f;"
 multiline_comment|/*&t;Probe a list of addresses for an HP LAN+ adaptor.&n;&t;This routine is almost boilerplate. */
 macro_line|#ifdef HAVE_DEVLIST
-multiline_comment|/* Support for a alternate probe manager, which will eliminate the&n;   boilerplate below. */
+multiline_comment|/* Support for an alternate probe manager, which will eliminate the&n;   boilerplate below. */
 DECL|variable|hpplus_drv
 r_struct
 id|netdev_entry

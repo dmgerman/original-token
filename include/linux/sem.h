@@ -32,12 +32,12 @@ id|sem_perm
 suffix:semicolon
 multiline_comment|/* permissions .. see ipc.h */
 DECL|member|sem_otime
-id|time_t
+id|__kernel_time_t
 id|sem_otime
 suffix:semicolon
 multiline_comment|/* last semop time */
 DECL|member|sem_ctime
-id|time_t
+id|__kernel_time_t
 id|sem_ctime
 suffix:semicolon
 multiline_comment|/* last change time */
@@ -71,7 +71,8 @@ id|undo
 suffix:semicolon
 multiline_comment|/* undo requests on this array */
 DECL|member|sem_nsems
-id|ushort
+r_int
+r_int
 id|sem_nsems
 suffix:semicolon
 multiline_comment|/* no. of semaphores in array */
@@ -83,7 +84,8 @@ r_struct
 id|sembuf
 (brace
 DECL|member|sem_num
-id|ushort
+r_int
+r_int
 id|sem_num
 suffix:semicolon
 multiline_comment|/* semaphore index in array */
@@ -117,7 +119,8 @@ id|buf
 suffix:semicolon
 multiline_comment|/* buffer for IPC_STAT &amp; IPC_SET */
 DECL|member|array
-id|ushort
+r_int
+r_int
 op_star
 id|array
 suffix:semicolon

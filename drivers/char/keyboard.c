@@ -4260,7 +4260,7 @@ id|value
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * send_data sends a character to the keyboard and waits&n; * for a acknowledge, possibly retrying if asked to. Returns&n; * the success status.&n; */
+multiline_comment|/*&n; * send_data sends a character to the keyboard and waits&n; * for an acknowledge, possibly retrying if asked to. Returns&n; * the success status.&n; */
 DECL|function|send_data
 r_static
 r_int

@@ -1225,6 +1225,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/*&t;At this point, wordlength *only* tells us if the SA_prom is doubled&n;&t;up or not because some broken PCI cards don&squot;t respect the byte-wide&n;&t;request in program_seq above, and hence don&squot;t have doubled up values. &n;&t;These broken cards would otherwise be detected as an ne1000.  */
 r_if
 c_cond
 (paren
@@ -1232,20 +1233,6 @@ id|wordlength
 op_eq
 l_int|2
 )paren
-(brace
-multiline_comment|/* We must set the 8390 for word mode. */
-id|outb_p
-c_func
-(paren
-l_int|0x49
-comma
-id|ioaddr
-op_plus
-id|EN0_DCFG
-)paren
-suffix:semicolon
-multiline_comment|/* We used to reset the ethercard here, but it doesn&squot;t seem&n;&t;   to be necessary. */
-multiline_comment|/* Un-double the SA_prom values. */
 r_for
 c_loop
 (paren
@@ -1271,6 +1258,35 @@ id|i
 op_plus
 id|i
 )braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pci_irq_line
+)paren
+id|wordlength
+op_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* Catch broken cards mentioned above. */
+r_if
+c_cond
+(paren
+id|wordlength
+op_eq
+l_int|2
+)paren
+(brace
+multiline_comment|/* We must set the 8390 for word mode. */
+id|outb_p
+c_func
+(paren
+l_int|0x49
+comma
+id|ioaddr
+op_plus
+id|EN0_DCFG
+)paren
 suffix:semicolon
 id|start_page
 op_assign

@@ -978,12 +978,6 @@ id|el_common
 id|h
 suffix:semicolon
 multiline_comment|/* common logout header */
-DECL|member|reason
-r_int
-r_int
-id|reason
-suffix:semicolon
-multiline_comment|/* reason for machine check */
 DECL|member|esr
 r_int
 r_int
@@ -1031,10 +1025,10 @@ r_int
 r_int
 id|pt
 (braket
-l_int|32
+l_int|31
 )braket
 suffix:semicolon
-multiline_comment|/* PAL temps (pt[0] is reason) */
+multiline_comment|/* PAL temps */
 DECL|member|exc_addr
 r_int
 r_int

@@ -418,7 +418,7 @@ r_void
 )paren
 (brace
 macro_line|#ifndef CONFIG_M386
-multiline_comment|/*&n;&t; * The 386 chips don&squot;t support TLB finegrained invalidation.&n;&t; * They will fault when they hit a invlpg instruction.&n;&t; */
+multiline_comment|/*&n;&t; * The 386 chips don&squot;t support TLB finegrained invalidation.&n;&t; * They will fault when they hit an invlpg instruction.&n;&t; */
 r_if
 c_cond
 (paren

@@ -32,17 +32,17 @@ id|msg_last
 suffix:semicolon
 multiline_comment|/* last message in queue */
 DECL|member|msg_stime
-id|time_t
+id|__kernel_time_t
 id|msg_stime
 suffix:semicolon
 multiline_comment|/* last msgsnd time */
 DECL|member|msg_rtime
-id|time_t
+id|__kernel_time_t
 id|msg_rtime
 suffix:semicolon
 multiline_comment|/* last msgrcv time */
 DECL|member|msg_ctime
-id|time_t
+id|__kernel_time_t
 id|msg_ctime
 suffix:semicolon
 multiline_comment|/* last change time */
@@ -59,27 +59,30 @@ op_star
 id|rwait
 suffix:semicolon
 DECL|member|msg_cbytes
-id|ushort
+r_int
+r_int
 id|msg_cbytes
 suffix:semicolon
 multiline_comment|/* current number of bytes on queue */
 DECL|member|msg_qnum
-id|ushort
+r_int
+r_int
 id|msg_qnum
 suffix:semicolon
 multiline_comment|/* number of messages in queue */
 DECL|member|msg_qbytes
-id|ushort
+r_int
+r_int
 id|msg_qbytes
 suffix:semicolon
 multiline_comment|/* max number of bytes on queue */
 DECL|member|msg_lspid
-id|ushort
+id|__kernel_pid_t
 id|msg_lspid
 suffix:semicolon
 multiline_comment|/* pid of last msgsnd */
 DECL|member|msg_lrpid
-id|ushort
+id|__kernel_pid_t
 id|msg_lrpid
 suffix:semicolon
 multiline_comment|/* last receive pid */
@@ -139,7 +142,8 @@ r_int
 id|msgtql
 suffix:semicolon
 DECL|member|msgseg
-id|ushort
+r_int
+r_int
 id|msgseg
 suffix:semicolon
 )brace

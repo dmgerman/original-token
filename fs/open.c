@@ -2685,7 +2685,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Find a empty file descriptor entry, and mark it busy&n; */
+multiline_comment|/*&n; * Find an empty file descriptor entry, and mark it busy&n; */
 DECL|function|get_unused_fd
 r_int
 id|get_unused_fd

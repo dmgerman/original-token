@@ -3370,7 +3370,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Initialize pointer in a inode to the right dquots.&n; */
+multiline_comment|/*&n; * Initialize pointer in an inode to the right dquots.&n; */
 DECL|function|dquot_initialize
 r_void
 id|dquot_initialize
@@ -3622,7 +3622,7 @@ op_complement
 id|S_WRITE
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is a simple algorithm that calculates the size of a file in blocks.&n; * This is only used on filesystems that do not have a i_blocks count.&n; */
+multiline_comment|/*&n; * This is a simple algorithm that calculates the size of a file in blocks.&n; * This is only used on filesystems that do not have an i_blocks count.&n; */
 DECL|function|isize_to_blocks
 r_static
 id|u_long

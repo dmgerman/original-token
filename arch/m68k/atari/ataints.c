@@ -785,7 +785,7 @@ id|MICROWIRE
 )paren
 )paren
 (brace
-multiline_comment|/* Initialize the LM1992 Sound Controller to enable&n;&t;&t;   the PSG sound.  This is misplaced here, it should&n;&t;&t;   be in a atasound_init(), that doesn&squot;t exist yet. */
+multiline_comment|/* Initialize the LM1992 Sound Controller to enable&n;&t;&t;   the PSG sound.  This is misplaced here, it should&n;&t;&t;   be in an atasound_init(), that doesn&squot;t exist yet. */
 id|atari_microwire_cmd
 c_func
 (paren

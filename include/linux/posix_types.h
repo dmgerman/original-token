@@ -45,6 +45,24 @@ DECL|typedef|__kernel_fd_set
 )brace
 id|__kernel_fd_set
 suffix:semicolon
+multiline_comment|/* Type of a signal handler.  */
+DECL|typedef|__kernel_sighandler_t
+r_typedef
+r_void
+(paren
+op_star
+id|__kernel_sighandler_t
+)paren
+(paren
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* Type of a SYSV IPC key.  */
+DECL|typedef|__kernel_key_t
+r_typedef
+r_int
+id|__kernel_key_t
+suffix:semicolon
 macro_line|#include &lt;asm/posix_types.h&gt;
 macro_line|#endif /* _LINUX_POSIX_TYPES_H */
 eof

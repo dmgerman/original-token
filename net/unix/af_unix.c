@@ -3570,12 +3570,14 @@ l_int|2
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; *&t;Keep to page sized kmalloc()&squot;s as various people&n;&t;&t; *&t;have suggested. Big mallocs stress the vm too&n;&t;&t; *&t;much.&n;&t;&t; */
+DECL|macro|MAX_ALLOC
+mdefine_line|#define MAX_ALLOC (PAGE_SIZE*7/8)
 r_if
 c_cond
 (paren
 id|size
 OG
-l_int|4000
+id|MAX_ALLOC
 op_logical_and
 id|sock-&gt;type
 op_ne
@@ -3584,7 +3586,7 @@ id|SOCK_DGRAM
 (brace
 id|limit
 op_assign
-l_int|4000
+id|MAX_ALLOC
 suffix:semicolon
 )brace
 multiline_comment|/* Fall back to 4K if we can&squot;t grab a big buffer this instant */

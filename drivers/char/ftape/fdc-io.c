@@ -1641,7 +1641,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Read back the Drive Specification regs on a i82078, so that we&n; * are able to restore them later&n; */
+multiline_comment|/* Read back the Drive Specification regs on an i82078, so that we&n; * are able to restore them later&n; */
 DECL|function|fdc_save_drive_specs
 r_void
 id|fdc_save_drive_specs
@@ -4821,7 +4821,7 @@ l_string|&quot;FDC is already locked&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Test for a i82078 FDC */
+multiline_comment|/* Test for an i82078 FDC */
 id|cmd
 (braket
 l_int|0
@@ -4858,7 +4858,7 @@ op_eq
 l_int|0x80
 )paren
 (brace
-multiline_comment|/* invalid command: not a i82078xx type FDC */
+multiline_comment|/* invalid command: not an i82078xx type FDC */
 id|result
 op_assign
 id|no_fdc
@@ -4998,7 +4998,7 @@ comma
 l_string|&quot;FDC_SAVE failed. Dunno why&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* guess we better claim the fdc to be a i82078 */
+multiline_comment|/* guess we better claim the fdc to be an i82078 */
 id|result
 op_assign
 id|i82078
@@ -5027,7 +5027,7 @@ id|FDC_SEL3V_BIT
 )paren
 )paren
 (brace
-multiline_comment|/* fdc running off 5Volts; Pray that it&squot;s a i82078-1&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* fdc running off 5Volts; Pray that it&squot;s an i82078-1&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|TRACE
 c_func
 (paren

@@ -1,11 +1,11 @@
 macro_line|#ifndef _ASMAXP_SHMPARAM_H
 DECL|macro|_ASMAXP_SHMPARAM_H
 mdefine_line|#define _ASMAXP_SHMPARAM_H
-multiline_comment|/*&n; * Address range for shared memory attaches if no address passed to&n; * shmat().  These ought to be changed to something &gt;4GB so 32-bit&n; * errors are caught more easily.  However, they don&squot;t seem to be used&n; * except for ELF stuff, so it&squot;s not really critical until we get ELF&n; * support for the Alpha.&n; */
+multiline_comment|/*&n; * Address range for shared memory attaches if no address passed to shmat().&n; */
 DECL|macro|SHM_RANGE_START
-mdefine_line|#define SHM_RANGE_START&t;0x50000000
+mdefine_line|#define SHM_RANGE_START&t;0x14000000000
 DECL|macro|SHM_RANGE_END
-mdefine_line|#define SHM_RANGE_END&t;0x60000000
+mdefine_line|#define SHM_RANGE_END&t;0x15000000000
 multiline_comment|/*&n; * Format of a swap-entry for shared memory pages currently out in&n; * swap space (see also mm/swap.c).&n; *&n; * SWP_TYPE = SHM_SWP_TYPE&n; * SWP_OFFSET is used as follows:&n; *&n; *  bits 0..6 : id of shared memory segment page belongs to (SHM_ID)&n; *  bits 7..21: index of page within shared memory segment (SHM_IDX)&n; *&t;&t;(actually fewer bits get used since SHMMAX is so low)&n; */
 multiline_comment|/*&n; * Keep _SHM_ID_BITS as low as possible since SHMMNI depends on it and&n; * there is a static array of size SHMMNI.&n; */
 DECL|macro|_SHM_ID_BITS

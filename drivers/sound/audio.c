@@ -1725,7 +1725,8 @@ id|OPEN_WRITE
 )paren
 )paren
 r_return
-l_int|0
+op_minus
+id|EPERM
 suffix:semicolon
 r_if
 c_cond
@@ -1823,9 +1824,7 @@ op_ge
 l_int|0
 )paren
 id|info.bytes
-op_add_assign
-id|buf_size
-op_minus
+op_sub_assign
 id|buf_ptr
 suffix:semicolon
 id|memcpy_tofs

@@ -7690,7 +7690,7 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* really srb busy... */
 )brace
-multiline_comment|/* tok_get_stats():  Basically a scaffold routine which will return&n;   the address of the tr_statistics structure associated with&n;   this device -- the tr.... structure is a ethnet look-alike&n;   so at least for this iteration may suffice.   */
+multiline_comment|/* tok_get_stats():  Basically a scaffold routine which will return&n;   the address of the tr_statistics structure associated with&n;   this device -- the tr.... structure is an ethnet look-alike&n;   so at least for this iteration may suffice.   */
 DECL|function|tok_get_stats
 r_static
 r_struct

@@ -71,6 +71,151 @@ mdefine_line|#define MCA_bus__is_a_macro /* for versions in ksyms.c */
 multiline_comment|/*&n; * User space process size: 3GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0xC0000000UL)
+multiline_comment|/*&n; * VM exception register save area..&n; *&n; * When no exceptions are active, count = -1.&n; */
+DECL|struct|exception_struct
+r_struct
+id|exception_struct
+(brace
+DECL|member|count
+r_int
+r_int
+id|count
+suffix:semicolon
+DECL|member|ebx
+r_int
+r_int
+id|ebx
+suffix:semicolon
+DECL|member|esi
+r_int
+r_int
+id|esi
+suffix:semicolon
+DECL|member|edi
+r_int
+r_int
+id|edi
+suffix:semicolon
+DECL|member|ebp
+r_int
+r_int
+id|ebp
+suffix:semicolon
+DECL|member|esp
+r_int
+r_int
+id|esp
+suffix:semicolon
+DECL|member|eip
+r_int
+r_int
+id|eip
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|function|__exception
+r_extern
+r_inline
+r_int
+id|__exception
+c_func
+(paren
+r_struct
+id|exception_struct
+op_star
+id|ex
+)paren
+(brace
+r_int
+id|result
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;incl 0(%2)&bslash;n&bslash;t&quot;
+l_string|&quot;jne 1f&bslash;n&bslash;t&quot;
+l_string|&quot;movl %%ebx,4(%2)&bslash;n&bslash;t&quot;
+l_string|&quot;movl %%esi,8(%2)&bslash;n&bslash;t&quot;
+l_string|&quot;movl %%edi,12(%2)&bslash;n&bslash;t&quot;
+l_string|&quot;movl %%ebp,16(%2)&bslash;n&bslash;t&quot;
+l_string|&quot;movl %%esp,20(%2)&bslash;n&bslash;t&quot;
+l_string|&quot;movl $1f,24(%2)&bslash;n&quot;
+l_string|&quot;1:&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|result
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+l_int|0
+)paren
+comma
+l_string|&quot;d&quot;
+(paren
+id|ex
+)paren
+suffix:colon
+l_string|&quot;cx&quot;
+comma
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|result
+suffix:semicolon
+)brace
+DECL|function|handle_exception
+r_extern
+r_inline
+r_void
+id|handle_exception
+c_func
+(paren
+r_struct
+id|exception_struct
+op_star
+id|ex
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ex-&gt;count
+)paren
+(brace
+id|ex-&gt;count
+op_decrement
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;movl  4(%0),%%ebx&bslash;n&bslash;t&quot;
+l_string|&quot;movl  8(%0),%%esi&bslash;n&bslash;t&quot;
+l_string|&quot;movl 12(%0),%%edi&bslash;n&bslash;t&quot;
+l_string|&quot;movl 16(%0),%%ebp&bslash;n&bslash;t&quot;
+l_string|&quot;movl 20(%0),%%esp&bslash;n&bslash;t&quot;
+l_string|&quot;movl 24(%0),%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;jmp *%%eax&quot;
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;d&quot;
+(paren
+id|ex
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+DECL|macro|exception
+mdefine_line|#define exception()&t;__exception(&amp;current-&gt;tss.ex)
+DECL|macro|end_exception
+mdefine_line|#define end_exception()&t;(current-&gt;tss.ex.count--)
 multiline_comment|/*&n; * Size of io_bitmap in longwords: 32 is ports 0-0x3ff.&n; */
 DECL|macro|IO_BITMAP_SIZE
 mdefine_line|#define IO_BITMAP_SIZE&t;32
@@ -422,18 +567,23 @@ id|v86mask
 comma
 id|v86mode
 suffix:semicolon
+DECL|member|ex
+r_struct
+id|exception_struct
+id|ex
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xC0000000, 0xFFFFF000, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0,0, &bslash;&n;&t;sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, &bslash;&n;&t;KERNEL_DS, 0, &bslash;&n;&t;0,0,0,0,0,0, &bslash;&n;&t;(long) &amp;swapper_pg_dir - PAGE_OFFSET, &bslash;&n;&t;0,0,0,0,0,0,0,0,0,0, &bslash;&n;&t;USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0, &bslash;&n;&t;_LDT(0),0, &bslash;&n;&t;0, 0x8000, &bslash;&n;&t;{~0, }, /* ioperm */ &bslash;&n;&t;_TSS(0), 0, 0, 0, KERNEL_DS, &bslash;&n;&t;{ { 0, }, },  /* 387 state */ &bslash;&n;&t;NULL, 0, 0, 0, 0 /* vm86_info */ &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0,0, &bslash;&n;&t;sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, &bslash;&n;&t;KERNEL_DS, 0, &bslash;&n;&t;0,0,0,0,0,0, &bslash;&n;&t;(long) &amp;swapper_pg_dir - PAGE_OFFSET, &bslash;&n;&t;0,0,0,0,0,0,0,0,0,0, &bslash;&n;&t;USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0, &bslash;&n;&t;_LDT(0),0, &bslash;&n;&t;0, 0x8000, &bslash;&n;&t;{~0, }, /* ioperm */ &bslash;&n;&t;_TSS(0), 0, 0, 0, KERNEL_DS, &bslash;&n;&t;{ { 0, }, },  /* 387 state */ &bslash;&n;&t;NULL, 0, 0, 0, 0 /* vm86_info */, &bslash;&n;&t;{ -1, } &bslash;&n;}
 DECL|macro|alloc_kernel_stack
 mdefine_line|#define alloc_kernel_stack()    __get_free_page(GFP_KERNEL)
 DECL|macro|free_kernel_stack
 mdefine_line|#define free_kernel_stack(page) free_page((page))
 DECL|macro|start_thread
-mdefine_line|#define start_thread(regs, new_eip, new_esp) do {&bslash;&n;&t;set_fs(USER_DS); &bslash;&n;&t;regs-&gt;cs = USER_CS; &bslash;&n;&t;regs-&gt;ds = regs-&gt;es = regs-&gt;ss = regs-&gt;fs = regs-&gt;gs = USER_DS; &bslash;&n;&t;regs-&gt;eip = new_eip; &bslash;&n;&t;regs-&gt;esp = new_esp; &bslash;&n;} while (0)
+mdefine_line|#define start_thread(regs, new_eip, new_esp) do {&bslash;&n;&t;unsigned long seg = USER_DS; &bslash;&n;&t;__asm__(&quot;mov %w0,%%fs ; mov %w0,%%gs&quot;:&quot;=r&quot; (seg) :&quot;0&quot; (seg)); &bslash;&n;&t;set_fs(seg); &bslash;&n;&t;regs-&gt;xds = seg; &bslash;&n;&t;regs-&gt;xes = seg; &bslash;&n;&t;regs-&gt;xss = seg; &bslash;&n;&t;regs-&gt;xcs = USER_CS; &bslash;&n;&t;regs-&gt;eip = new_eip; &bslash;&n;&t;regs-&gt;esp = new_esp; &bslash;&n;} while (0)
 multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */
 DECL|function|thread_saved_pc
 r_extern

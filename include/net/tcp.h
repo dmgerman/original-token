@@ -564,11 +564,11 @@ id|tcp_enqueue_partial
 c_func
 (paren
 r_struct
-id|sk_buff
+id|sock
 op_star
 comma
 r_struct
-id|sock
+id|sk_buff
 op_star
 )paren
 suffix:semicolon

@@ -20,7 +20,7 @@ DECL|macro|SHIFT_KH
 mdefine_line|#define SHIFT_KH 2&t;&t;/* FLL frequency factor (shift) */
 DECL|macro|MAXTC
 mdefine_line|#define MAXTC 6&t;&t;&t;/* maximum time constant (shift) */
-multiline_comment|/*&n; * The SHIFT_SCALE define establishes the decimal point of the time_phase&n; * variable which serves as a an extension to the low-order bits of the&n; * system clock variable. The SHIFT_UPDATE define establishes the decimal&n; * point of the time_offset variable which represents the current offset&n; * with respect to standard time. The FINEUSEC define represents 1 usec in&n; * scaled units.&n; *&n; * SHIFT_USEC defines the scaling (shift) of the time_freq and&n; * time_tolerance variables, which represent the current frequency&n; * offset and maximum frequency tolerance.&n; *&n; * FINEUSEC is 1 us in SHIFT_UPDATE units of the time_phase variable.&n; */
+multiline_comment|/*&n; * The SHIFT_SCALE define establishes the decimal point of the time_phase&n; * variable which serves as an extension to the low-order bits of the&n; * system clock variable. The SHIFT_UPDATE define establishes the decimal&n; * point of the time_offset variable which represents the current offset&n; * with respect to standard time. The FINEUSEC define represents 1 usec in&n; * scaled units.&n; *&n; * SHIFT_USEC defines the scaling (shift) of the time_freq and&n; * time_tolerance variables, which represent the current frequency&n; * offset and maximum frequency tolerance.&n; *&n; * FINEUSEC is 1 us in SHIFT_UPDATE units of the time_phase variable.&n; */
 DECL|macro|SHIFT_SCALE
 mdefine_line|#define SHIFT_SCALE 22&t;&t;/* phase scale (shift) */
 DECL|macro|SHIFT_UPDATE

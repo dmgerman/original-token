@@ -285,7 +285,7 @@ multiline_comment|/* process memory management */
 id|X
 c_func
 (paren
-id|verify_area
+id|__verify_write
 )paren
 comma
 id|X

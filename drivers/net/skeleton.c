@@ -258,7 +258,7 @@ id|startp
 suffix:semicolon
 multiline_comment|/*&n; * Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n; * If dev-&gt;base_addr == 0, probe all likely locations.&n; * If dev-&gt;base_addr == 1, always return failure.&n; * If dev-&gt;base_addr == 2, allocate space for the device and return success&n; * (detachable devices only).&n; */
 macro_line|#ifdef HAVE_DEVLIST
-multiline_comment|/*&n; * Support for a alternate probe manager,&n; * which will eliminate the boilerplate below.&n; */
+multiline_comment|/*&n; * Support for an alternate probe manager,&n; * which will eliminate the boilerplate below.&n; */
 DECL|variable|netcard_drv
 r_struct
 id|netdev_entry

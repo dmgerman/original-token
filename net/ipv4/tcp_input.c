@@ -435,7 +435,7 @@ r_return
 id|sk
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * React to a out-of-window TCP sequence number in an incoming packet&n; */
+multiline_comment|/*&n; * React to an out-of-window TCP sequence number in an incoming packet&n; */
 DECL|function|bad_tcp_sequence
 r_static
 r_void

@@ -19,33 +19,32 @@ id|shm_segsz
 suffix:semicolon
 multiline_comment|/* size of segment (bytes) */
 DECL|member|shm_atime
-id|time_t
+id|__kernel_time_t
 id|shm_atime
 suffix:semicolon
 multiline_comment|/* last attach time */
 DECL|member|shm_dtime
-id|time_t
+id|__kernel_time_t
 id|shm_dtime
 suffix:semicolon
 multiline_comment|/* last detach time */
 DECL|member|shm_ctime
-id|time_t
+id|__kernel_time_t
 id|shm_ctime
 suffix:semicolon
 multiline_comment|/* last change time */
 DECL|member|shm_cpid
-r_int
-r_int
+id|__kernel_pid_t
 id|shm_cpid
 suffix:semicolon
 multiline_comment|/* pid of creator */
 DECL|member|shm_lpid
-r_int
-r_int
+id|__kernel_pid_t
 id|shm_lpid
 suffix:semicolon
 multiline_comment|/* pid of last operator */
 DECL|member|shm_nattch
+r_int
 r_int
 id|shm_nattch
 suffix:semicolon
@@ -136,26 +135,31 @@ r_int
 id|used_ids
 suffix:semicolon
 DECL|member|shm_tot
-id|ulong
+r_int
+r_int
 id|shm_tot
 suffix:semicolon
 multiline_comment|/* total allocated shm */
 DECL|member|shm_rss
-id|ulong
+r_int
+r_int
 id|shm_rss
 suffix:semicolon
 multiline_comment|/* total resident shm */
 DECL|member|shm_swp
-id|ulong
+r_int
+r_int
 id|shm_swp
 suffix:semicolon
 multiline_comment|/* total swapped shm */
 DECL|member|swap_attempts
-id|ulong
+r_int
+r_int
 id|swap_attempts
 suffix:semicolon
 DECL|member|swap_successes
-id|ulong
+r_int
+r_int
 id|swap_successes
 suffix:semicolon
 )brace
@@ -188,7 +192,8 @@ comma
 r_int
 id|shmflg
 comma
-id|ulong
+r_int
+r_int
 op_star
 id|addr
 )paren

@@ -273,7 +273,7 @@ suffix:semicolon
 "&f;"
 multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, allocate space for the device and return success&n;   (detachable devices only).&n;   */
 macro_line|#ifdef HAVE_DEVLIST
-multiline_comment|/* Support for a alternate probe manager, which will eliminate the&n;   boilerplate below. */
+multiline_comment|/* Support for an alternate probe manager, which will eliminate the&n;   boilerplate below. */
 DECL|variable|fmv18x_drv
 r_struct
 id|netdev_entry

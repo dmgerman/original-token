@@ -2214,10 +2214,7 @@ op_logical_and
 r_int
 r_int
 )paren
-id|mchk_procdata-&gt;paltemp
-(braket
-l_int|0
-)braket
+id|mchk_header-&gt;code
 op_eq
 id|MCHK_NO_DEVSEL
 )paren
@@ -2227,10 +2224,7 @@ op_logical_or
 r_int
 r_int
 )paren
-id|mchk_procdata-&gt;paltemp
-(braket
-l_int|0
-)braket
+id|mchk_header-&gt;code
 op_eq
 id|MCHK_NO_TABT
 )paren
@@ -2343,12 +2337,14 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;APECS machine check:&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;  vector=0x%lx la_ptr=0x%lx&bslash;n&quot;
 comma
 id|vector
@@ -2359,6 +2355,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;  pc=0x%lx size=0x%x procoffset=0x%x sysoffset 0x%x&bslash;n&quot;
 comma
 id|regs-&gt;pc
@@ -2373,6 +2370,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;  expected %d DCSR 0x%lx PEAR 0x%lx&bslash;n&quot;
 comma
 id|apecs_mcheck_expected
@@ -2415,6 +2413,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot; +%lx %lx %lx&bslash;n&quot;
 comma
 id|i

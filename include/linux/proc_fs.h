@@ -411,7 +411,7 @@ DECL|macro|PROC_NDYNAMIC
 mdefine_line|#define PROC_NDYNAMIC      4096
 DECL|macro|PROC_SUPER_MAGIC
 mdefine_line|#define PROC_SUPER_MAGIC 0x9fa0
-multiline_comment|/*&n; * This is not completely implemented yet. The idea is to&n; * create a in-memory tree (like the actual /proc filesystem&n; * tree) of these proc_dir_entries, so that we can dynamically&n; * add new files to /proc.&n; *&n; * The &quot;next&quot; pointer creates a linked list of one /proc directory,&n; * while parent/subdir create the directory structure (every&n; * /proc file has a parent, but &quot;subdir&quot; is NULL for all&n; * non-directory entries).&n; *&n; * &quot;get_info&quot; is called at &quot;read&quot;, while &quot;fill_inode&quot; is used to&n; * fill in file type/protection/owner information specific to the&n; * particular /proc file.&n; */
+multiline_comment|/*&n; * This is not completely implemented yet. The idea is to&n; * create an in-memory tree (like the actual /proc filesystem&n; * tree) of these proc_dir_entries, so that we can dynamically&n; * add new files to /proc.&n; *&n; * The &quot;next&quot; pointer creates a linked list of one /proc directory,&n; * while parent/subdir create the directory structure (every&n; * /proc file has a parent, but &quot;subdir&quot; is NULL for all&n; * non-directory entries).&n; *&n; * &quot;get_info&quot; is called at &quot;read&quot;, while &quot;fill_inode&quot; is used to&n; * fill in file type/protection/owner information specific to the&n; * particular /proc file.&n; */
 DECL|struct|proc_dir_entry
 r_struct
 id|proc_dir_entry

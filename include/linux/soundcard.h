@@ -246,7 +246,7 @@ comma
 id|loop_end
 suffix:semicolon
 multiline_comment|/* Byte offsets from the beginning */
-multiline_comment|/* &n; * The base_freq and base_note fields are used when computing the&n; * playback speed for a note. The base_note defines the tone frequency&n; * which is heard if the sample is played using the base_freq as the&n; * playback speed.&n; *&n; * The low_note and high_note fields define the minimum and maximum note&n; * frequencies for which this sample is valid. It is possible to define&n; * more than one samples for a instrument number at the same time. The&n; * low_note and high_note fields are used to select the most suitable one.&n; *&n; * The fields base_note, high_note and low_note should contain&n; * the note frequency multiplied by 1000. For example value for the&n; * middle A is 440*1000.&n; */
+multiline_comment|/* &n; * The base_freq and base_note fields are used when computing the&n; * playback speed for a note. The base_note defines the tone frequency&n; * which is heard if the sample is played using the base_freq as the&n; * playback speed.&n; *&n; * The low_note and high_note fields define the minimum and maximum note&n; * frequencies for which this sample is valid. It is possible to define&n; * more than one samples for an instrument number at the same time. The&n; * low_note and high_note fields are used to select the most suitable one.&n; *&n; * The fields base_note, high_note and low_note should contain&n; * the note frequency multiplied by 1000. For example value for the&n; * middle A is 440*1000.&n; */
 DECL|member|base_freq
 r_int
 r_int
@@ -421,7 +421,7 @@ multiline_comment|/* Don&squot;t worry. Reserved for communication&n;&t;  &t;&t;
 DECL|macro|PM_K_EVENT
 mdefine_line|#define PM_K_EVENT&t;&t;1 /* Event from the /dev/sequencer driver */
 DECL|macro|PM_K_COMMAND
-mdefine_line|#define PM_K_COMMAND&t;&t;2 /* Request from a application */
+mdefine_line|#define PM_K_COMMAND&t;&t;2 /* Request from an application */
 DECL|macro|PM_K_RESPONSE
 mdefine_line|#define PM_K_RESPONSE&t;&t;3 /* From patmgr to application */
 DECL|macro|PM_ERROR

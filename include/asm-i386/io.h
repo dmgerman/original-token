@@ -226,7 +226,7 @@ c_func
 (paren
 id|l
 )paren
-multiline_comment|/*&n; * Note that due to the way __builtin_constant_p() works, you&n; *  - can&squot;t use it inside a inline function (it will never be true)&n; *  - you don&squot;t have to worry about side effects within the __builtin..&n; */
+multiline_comment|/*&n; * Note that due to the way __builtin_constant_p() works, you&n; *  - can&squot;t use it inside an inline function (it will never be true)&n; *  - you don&squot;t have to worry about side effects within the __builtin..&n; */
 DECL|macro|outb
 mdefine_line|#define outb(val,port) &bslash;&n;((__builtin_constant_p((port)) &amp;&amp; (port) &lt; 256) ? &bslash;&n;&t;__outbc((val),(port)) : &bslash;&n;&t;__outb((val),(port)))
 DECL|macro|inb

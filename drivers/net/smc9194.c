@@ -4097,7 +4097,7 @@ id|packet_length
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; . the packet length contains 3 extra words : &n;&t; . status, length, and a extra word with an odd byte .&n;&t;*/
+multiline_comment|/* &n;&t; . the packet length contains 3 extra words : &n;&t; . status, length, and an extra word with an odd byte .&n;&t;*/
 id|packet_length
 op_sub_assign
 l_int|6

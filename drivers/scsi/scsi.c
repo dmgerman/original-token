@@ -972,6 +972,18 @@ comma
 id|BLIST_SPARSELUN
 )brace
 comma
+(brace
+l_string|&quot;MATSHITA&quot;
+comma
+l_string|&quot;PD&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_FORCELUN
+op_or
+id|BLIST_SINGLELUN
+)brace
+comma
 multiline_comment|/*&n; * Must be at end of list...&n; */
 (brace
 l_int|NULL

@@ -635,14 +635,14 @@ id|tcp_enqueue_partial
 c_func
 (paren
 r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
 id|sock
 op_star
 id|sk
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
 )paren
 (brace
 r_struct
@@ -2792,7 +2792,7 @@ id|timeout
 op_add_assign
 id|jiffies
 suffix:semicolon
-multiline_comment|/* Use new timeout only if there wasn&squot;t a older one earlier  */
+multiline_comment|/* Use new timeout only if there wasn&squot;t an older one earlier  */
 r_if
 c_cond
 (paren

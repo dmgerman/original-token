@@ -36,7 +36,7 @@ mdefine_line|#define MAP_GROWSDOWN&t;0x0100&t;&t;/* stack-like segment */
 DECL|macro|MAP_DENYWRITE
 mdefine_line|#define MAP_DENYWRITE&t;0x0800&t;&t;/* ETXTBSY */
 DECL|macro|MAP_EXECUTABLE
-mdefine_line|#define MAP_EXECUTABLE&t;0x1000&t;&t;/* mark it as a executable */
+mdefine_line|#define MAP_EXECUTABLE&t;0x1000&t;&t;/* mark it as an executable */
 DECL|macro|MS_ASYNC
 mdefine_line|#define MS_ASYNC&t;1&t;&t;/* sync memory asynchronously */
 DECL|macro|MS_INVALIDATE
