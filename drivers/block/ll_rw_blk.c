@@ -1438,24 +1438,20 @@ id|sector
 op_assign
 id|bh-&gt;b_rsector
 suffix:semicolon
-multiline_comment|/* Uhhuh.. Nasty dead-lock possible here.. */
+multiline_comment|/* Only one thread can actually submit the I/O. */
 r_if
 c_cond
 (paren
-id|buffer_locked
+id|test_and_set_bit
 c_func
 (paren
-id|bh
+id|BH_Lock
+comma
+op_amp
+id|bh-&gt;b_state
 )paren
 )paren
 r_return
-suffix:semicolon
-multiline_comment|/* Maybe the above fixes it, and maybe it doesn&squot;t boot. Life is interesting */
-id|lock_buffer
-c_func
-(paren
-id|bh
-)paren
 suffix:semicolon
 r_if
 c_cond

@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &quot;hpfs.h&quot;
 DECL|macro|memcpy_tofs
@@ -1716,6 +1717,18 @@ comma
 r_int
 comma
 id|loff_t
+op_star
+)paren
+suffix:semicolon
+r_int
+id|hpfs_writepage
+(paren
+r_struct
+id|file
+op_star
+comma
+r_struct
+id|page
 op_star
 )paren
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.128 1999/05/25 16:53:24 jj Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.129 1999/06/25 10:32:08 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -2061,6 +2061,19 @@ c_cond
 id|iommu-&gt;strbuf_enabled
 )paren
 (brace
+r_volatile
+id|u64
+op_star
+id|sbuf_pflush
+op_assign
+(paren
+r_volatile
+id|u64
+op_star
+)paren
+op_amp
+id|sregs-&gt;sbuf_pflush
+suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren
@@ -2082,7 +2095,8 @@ OL
 id|end
 )paren
 (brace
-id|sregs-&gt;sbuf_pflush
+op_star
+id|sbuf_pflush
 op_assign
 id|start
 suffix:semicolon
@@ -2223,6 +2237,19 @@ c_cond
 id|iommu-&gt;strbuf_enabled
 )paren
 (brace
+r_volatile
+id|u64
+op_star
+id|sbuf_pflush
+op_assign
+(paren
+r_volatile
+id|u64
+op_star
+)paren
+op_amp
+id|sregs-&gt;sbuf_pflush
+suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren
@@ -2246,7 +2273,8 @@ OL
 id|end
 )paren
 (brace
-id|sregs-&gt;sbuf_pflush
+op_star
+id|sbuf_pflush
 op_assign
 id|start
 suffix:semicolon
@@ -2358,6 +2386,19 @@ c_cond
 id|iommu-&gt;strbuf_enabled
 )paren
 (brace
+r_volatile
+id|u64
+op_star
+id|sbuf_pflush
+op_assign
+(paren
+r_volatile
+id|u64
+op_star
+)paren
+op_amp
+id|sregs-&gt;sbuf_pflush
+suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren
@@ -2471,7 +2512,8 @@ OL
 id|end
 )paren
 (brace
-id|sregs-&gt;sbuf_pflush
+op_star
+id|sbuf_pflush
 op_assign
 id|start
 suffix:semicolon
@@ -2674,6 +2716,19 @@ c_cond
 id|iommu-&gt;strbuf_enabled
 )paren
 (brace
+r_volatile
+id|u64
+op_star
+id|sbuf_pflush
+op_assign
+(paren
+r_volatile
+id|u64
+op_star
+)paren
+op_amp
+id|sregs-&gt;sbuf_pflush
+suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren
@@ -2737,7 +2792,8 @@ OL
 id|end
 )paren
 (brace
-id|sregs-&gt;sbuf_pflush
+op_star
+id|sbuf_pflush
 op_assign
 id|start
 suffix:semicolon

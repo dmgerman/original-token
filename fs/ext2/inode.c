@@ -2411,7 +2411,6 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
-singleline_comment|// -ENOSPC;
 id|b
 op_assign
 id|block

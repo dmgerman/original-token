@@ -11,7 +11,7 @@ op_assign
 l_int|NULL
 comma
 multiline_comment|/* lseek - default */
-id|hpfs_file_read
+id|generic_file_read
 comma
 multiline_comment|/* read */
 id|hpfs_file_write
@@ -125,13 +125,12 @@ multiline_comment|/* bmap */
 id|block_read_full_page
 comma
 multiline_comment|/* readpage */
-l_int|NULL
+id|hpfs_writepage
 comma
 multiline_comment|/* writepage */
-l_int|NULL
+id|block_flushpage
 comma
 multiline_comment|/* flushpage */
-op_amp
 id|hpfs_truncate
 comma
 multiline_comment|/* truncate */
@@ -272,7 +271,6 @@ l_int|NULL
 comma
 multiline_comment|/* smap */
 l_int|NULL
-comma
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
@@ -341,7 +339,6 @@ l_int|NULL
 comma
 multiline_comment|/* smap */
 l_int|NULL
-comma
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
@@ -385,7 +382,6 @@ id|i-&gt;i_op
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*i-&gt;i_hpfs_sem = MUTEX;*/
 id|init_MUTEX
 c_func
 (paren

@@ -253,6 +253,8 @@ DECL|macro|BH_Lock
 mdefine_line|#define BH_Lock&t;&t;2&t;/* 1 if the buffer is locked */
 DECL|macro|BH_Req
 mdefine_line|#define BH_Req&t;&t;3&t;/* 0 if the buffer has been invalidated */
+DECL|macro|BH_Allocated
+mdefine_line|#define BH_Allocated&t;4&t;/* 1 if the buffer has allocated backing store */
 DECL|macro|BH_Protected
 mdefine_line|#define BH_Protected&t;6&t;/* 1 if the buffer is protected */
 multiline_comment|/*&n; * Try to keep the most commonly used fields in single cache lines (16&n; * bytes) to improve performance.  This ordering should be&n; * particularly beneficial on 32-bit processors.&n; * &n; * We use the first 16 bytes for the data which is used in searches&n; * over the block hash lists (ie. getblk(), find_buffer() and&n; * friends).&n; * &n; * The second 16 bytes we use for lru buffer scans, as used by&n; * sync_buffers() and refill_freelist().  -- sct&n; */
@@ -414,10 +416,6 @@ r_struct
 id|buffer_head
 op_star
 comma
-id|kdev_t
-comma
-r_int
-comma
 id|bh_end_io_t
 op_star
 comma
@@ -435,6 +433,8 @@ DECL|macro|buffer_locked
 mdefine_line|#define buffer_locked(bh)&t;__buffer_state(bh,Lock)
 DECL|macro|buffer_req
 mdefine_line|#define buffer_req(bh)&t;&t;__buffer_state(bh,Req)
+DECL|macro|buffer_allocated
+mdefine_line|#define buffer_allocated(bh)&t;__buffer_state(bh,Allocated)
 DECL|macro|buffer_protected
 mdefine_line|#define buffer_protected(bh)&t;__buffer_state(bh,Protected)
 DECL|macro|buffer_page
@@ -3860,8 +3860,13 @@ id|buffer_head
 op_star
 comma
 r_int
+r_int
 )paren
 suffix:semicolon
+DECL|macro|FS_GETBLK_ALLOCATE
+mdefine_line|#define FS_GETBLK_ALLOCATE&t;1
+DECL|macro|FS_GETBLK_UPDATE
+mdefine_line|#define FS_GETBLK_UPDATE&t;2
 multiline_comment|/* Generic buffer handling for block filesystems.. */
 r_extern
 r_int
