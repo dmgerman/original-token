@@ -667,7 +667,7 @@ suffix:semicolon
 r_int
 id|window
 suffix:semicolon
-multiline_comment|/* &n;         * compute the actual window i.e. &n;         * old_window - received_bytes_on_that_win.&n;&t; *&n;&t; * Don&squot;t raise the window if we have lots left:&n;&t; * that only results in unnecessary packets.&n;&t; */
+multiline_comment|/* &n;         * compute the actual window i.e. &n;         * old_window - received_bytes_on_that_win.&n;&t; */
 id|window
 op_assign
 id|sk-&gt;window
@@ -677,18 +677,6 @@ id|sk-&gt;acked_seq
 op_minus
 id|sk-&gt;lastwin_seq
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|window
-op_ge
-id|MAX_WINDOW
-op_div
-l_int|2
-)paren
-r_return
-l_int|0
 suffix:semicolon
 id|free_space
 op_assign

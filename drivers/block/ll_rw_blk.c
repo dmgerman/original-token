@@ -21,6 +21,14 @@ id|all_requests
 id|NR_REQUEST
 )braket
 suffix:semicolon
+multiline_comment|/*&n; * The &quot;disk&quot; task queue is used to start the actual requests&n; * after a plug&n; */
+DECL|variable|tq_disk
+id|DECLARE_TASK_QUEUE
+c_func
+(paren
+id|tq_disk
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * used to wait on when there are no free requests&n; */
 DECL|variable|wait_for_request
 r_struct
@@ -187,7 +195,7 @@ op_amp
 id|dev-&gt;plug_tq
 comma
 op_amp
-id|tq_scheduler
+id|tq_disk
 )paren
 suffix:semicolon
 )brace
@@ -411,6 +419,13 @@ c_cond
 id|req
 )paren
 r_break
+suffix:semicolon
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_disk
+)paren
 suffix:semicolon
 id|schedule
 c_func
@@ -2619,6 +2634,13 @@ id|j
 )paren
 suffix:semicolon
 )brace
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_disk
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren

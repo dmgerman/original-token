@@ -6883,6 +6883,14 @@ id|rq-&gt;rq_status
 op_ne
 id|RQ_INACTIVE
 )paren
+(brace
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_disk
+)paren
+suffix:semicolon
 id|down
 c_func
 (paren
@@ -6891,6 +6899,7 @@ id|sem
 )paren
 suffix:semicolon
 multiline_comment|/* wait for it to be serviced */
+)brace
 id|restore_flags
 c_func
 (paren

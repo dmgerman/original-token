@@ -9112,6 +9112,13 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif /* IDETAPE_DEBUG_BUGS */
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_disk
+)paren
+suffix:semicolon
 id|rq-&gt;sem
 op_assign
 op_amp

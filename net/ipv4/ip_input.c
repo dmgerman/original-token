@@ -414,7 +414,7 @@ c_func
 (paren
 id|PF_INET
 comma
-id|skb
+id|skb-&gt;dev
 comma
 id|iph
 )paren

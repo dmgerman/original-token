@@ -170,15 +170,6 @@ id|apm_event_t
 suffix:semicolon
 r_extern
 r_int
-id|apm_proc
-c_func
-(paren
-r_char
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|apm_display_blank
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* Generate tk script based upon config.in&n; *&n; * Version 1.0&n; * Eric Youngdale&n; * 10/95&n; *&n; * 1996 01 04&n; * Avery Pennarun - Aesthetic improvements.&n; *&n; * 1996 01 24&n; * Avery Pennarun - Bugfixes and more aesthetics.&n; *&n; * 1996 03 08&n; * Avery Pennarun - The int and hex config.in commands work right.&n; *                - Choice buttons are more user-friendly.&n; *                - Disabling a text entry line greys it out properly.&n; *                - dep_tristate now works like in Configure. (not pretty)&n; *                - No warnings in gcc -Wall. (Fixed some &quot;interesting&quot; bugs.)&n; *                - Faster/prettier &quot;Help&quot; lookups.&n; *&n; * 1996 03 15&n; * Avery Pennarun - Added new sed script from Axel Boldt to make help even&n; *                  faster. (Actually awk is downright slow on some machines.)&n; *                - Fixed a bug I introduced into Choice dependencies.  Thanks&n; *                  to Robert Krawitz for pointing this out.&n; *&n; * 1996 03 16&n; * Avery Pennarun - basic &quot;do_make&quot; support added to let sound config work.&n; *&n; * TO DO:&n; *   - clean up - there are useless ifdef&squot;s everywhere.&n; *   - do more sensible things with the &squot;config -resizable&quot; business.&n; *   - better comments throughout - C code generating tcl is really cryptic.&n; *   - eliminate silly &quot;update idletasks&quot; hack to improve display speed.&n; *   - make tabstops work left-&gt;right instead of right-&gt;left.&n; *   - make canvas contents resize with the window (good luck).&n; *   - make next/prev buttons go to next/previous menu.&n; *   - some way to make submenus inside of submenus (ie. Main-&gt;Networking-&gt;IP)&n; *           (perhaps a button where the description would be)&n; *   - make the main menu use the same tcl code as the submenus.&n; *   - make choice and int/hex input types line up vertically with&n; *           bool/tristate.&n; *   - general speedups - how?  The canvas seems to slow it down a lot.&n; *   - choice buttons should default to the first menu option, rather than a&n; *           blank.  Also look up the right variable when the help button&n; *           is pressed.&n; *   - remove the remaining bits of the now-unnecessary &quot;next/prev&quot; submenu&n; *           code.&n; *   - clean up +/- 16 confusion for enabling/disabling variables; causes&n; *           problems with dependencies.&n; *   &n; */
+multiline_comment|/* Generate tk script based upon config.in&n; *&n; * Version 1.0&n; * Eric Youngdale&n; * 10/95&n; *&n; * 1996 01 04&n; * Avery Pennarun - Aesthetic improvements.&n; *&n; * 1996 01 24&n; * Avery Pennarun - Bugfixes and more aesthetics.&n; *&n; * 1996 03 08&n; * Avery Pennarun - The int and hex config.in commands work right.&n; *                - Choice buttons are more user-friendly.&n; *                - Disabling a text entry line greys it out properly.&n; *                - dep_tristate now works like in Configure. (not pretty)&n; *                - No warnings in gcc -Wall. (Fixed some &quot;interesting&quot; bugs.)&n; *                - Faster/prettier &quot;Help&quot; lookups.&n; *&n; * 1996 03 15&n; * Avery Pennarun - Added new sed script from Axel Boldt to make help even&n; *                  faster. (Actually awk is downright slow on some machines.)&n; *                - Fixed a bug I introduced into Choice dependencies.  Thanks&n; *                  to Robert Krawitz for pointing this out.&n; *&n; * 1996 03 16&n; * Avery Pennarun - basic &quot;do_make&quot; support added to let sound config work.&n; *&n; * 1996 03 25&n; *     Axel Boldt - Help now works on &quot;choice&quot; buttons.&n; *&n; * 1996 04 06&n; * Avery Pennarun - Improved sound config stuff. (I think it actually works&n; *                  now!)&n; *                - Window-resize-limits don&squot;t use ugly /usr/lib/tk4.0 hack.&n; *                - int/hex work with tk3 again. (The &quot;cget&quot; error.)&n; *                - Next/Prev buttons switch between menus.  I can&squot;t take&n; *                  much credit for this; the code was already there, but&n; *                  ifdef&squot;d out for some reason.  It flickers a lot, but&n; *                  I suspect there&squot;s no &quot;easy&quot; fix for that.&n; *                - Labels no longer highlight as you move the mouse over&n; *                  them (although you can still press them... oh well.)&n; *                - Got rid of the last of the literal color settings, to&n; *                  help out people with mono X-Windows systems. &n; *                  (Apparently there still are some out there!)&n; *                - Tabstops seem sensible now.&n; *&n; * TO DO:&n; *   - clean up - there are useless ifdef&squot;s everywhere.&n; *   - better comments throughout - C code generating tcl is really cryptic.&n; *   - eliminate silly &quot;update idletasks&quot; hack to improve display speed and&n; *     reduce flicker.  But how?&n; *   - make canvas contents resize with the window (good luck).&n; *   - some way to make submenus inside of submenus (ie. Main-&gt;Networking-&gt;IP)&n; *           (perhaps a button where the description would be)&n; *   - make the main menu use the same tcl code as the submenus.&n; *   - make choice and int/hex input types line up vertically with&n; *           bool/tristate.&n; *   - general speedups - how?  The canvas seems to slow it down a lot.&n; *   - choice buttons should default to the first menu option, rather than a&n; *           blank.  Also look up the right variable when the help button&n; *           is pressed.&n; *   - clean up +/- 16 confusion for enabling/disabling variables; causes&n; *           (theoretical, at the moment) problems with dependencies.&n; *   &n; */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &quot;tkparse.h&quot;
@@ -10,9 +10,6 @@ macro_line|#ifndef FALSE
 DECL|macro|FALSE
 mdefine_line|#define FALSE (0)
 macro_line|#endif
-multiline_comment|/*&n; * This prevents the Prev/Next buttons from going through the entire sequence&n; * of submenus.  I need to fix the window titles before it would really be&n; * appropriate to enable this.&n; */
-DECL|macro|PREVLAST_LIMITED_RANGE
-mdefine_line|#define PREVLAST_LIMITED_RANGE
 multiline_comment|/*&n; * This is the total number of submenus that we have.&n; */
 DECL|variable|tot_menu_num
 r_static
@@ -106,6 +103,95 @@ comma
 id|label
 )paren
 suffix:semicolon
+multiline_comment|/*&n;   * Attach the &quot;Prev&quot;, &quot;Next&quot; and &quot;OK&quot; buttons at the end of the window.&n;   */
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tset oldFocus [focus]&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tframe $w.f&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tbutton $w.f.back -text &bslash;&quot;Main Menu&bslash;&quot; &bslash;&bslash;&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t-width 15 -command &bslash;&quot;destroy $w; focus $oldFocus; update_mainmenu $w&bslash;&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tbutton $w.f.next -text &bslash;&quot;Next&bslash;&quot; &bslash;&bslash;&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t-width 15 -command &bslash;&quot; destroy $w; focus $oldFocus;  menu%d .menu%d &bslash;&bslash;&bslash;&quot;$title&bslash;&bslash;&bslash;&quot;&bslash;&quot;&bslash;n&quot;
+comma
+id|menu_num
+op_plus
+l_int|1
+comma
+id|menu_num
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|menu_num
+op_eq
+id|tot_menu_num
+)paren
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;t$w.f.next configure -state disabled&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tbutton $w.f.prev -text &bslash;&quot;Prev&bslash;&quot; &bslash;&bslash;&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t-width 15 -command &bslash;&quot; destroy $w; focus $oldFocus; menu%d .menu%d &bslash;&bslash;&bslash;&quot;$title&bslash;&bslash;&bslash;&quot;&bslash;&quot;&bslash;n&quot;
+comma
+id|menu_num
+op_minus
+l_int|1
+comma
+id|menu_num
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+l_int|1
+op_eq
+id|menu_num
+)paren
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;t$w.f.prev configure -state disabled&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tpack $w.f.back $w.f.next $w.f.prev -side left -expand on&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tpack $w.f -pady 10 -side bottom -anchor w -fill x&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n;   * Lines between canvas and other areas of the window.&n;   */
 id|printf
 c_func
 (paren
@@ -118,6 +204,19 @@ c_func
 l_string|&quot;&bslash;tpack $w.topline -side top -fill x&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tframe $w.botline -relief ridge -borderwidth 2 -height 2&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tpack $w.botline -side bottom -fill x&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n;   * The &quot;config&quot; frame contains the canvas and a scrollbar.&n;   */
 id|printf
 c_func
 (paren
@@ -142,18 +241,7 @@ c_func
 l_string|&quot;&bslash;tpack $w.config.vscroll -side right -fill y&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tframe $w.botline -relief ridge -borderwidth 2 -height 2&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tpack $w.botline -side top -fill x&bslash;n&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&n;   * The scrollable canvas itself, where the real work (and mess) gets done.&n;   */
 id|printf
 c_func
 (paren
@@ -213,6 +301,29 @@ id|GLOBAL_WRITTEN
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n; * Output a &quot;global&quot; line for a given variable.  Also include the&n; * call to &quot;vfix&quot;.  (If vfix is not needed, then it&squot;s fine to just printf&n; * a &quot;global&quot; line).&n; */
+DECL|function|global
+r_void
+r_inline
+id|global
+c_func
+(paren
+r_char
+op_star
+id|var
+)paren
+(brace
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tglobal %s; vfix %s&bslash;n&quot;
+comma
+id|var
+comma
+id|var
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * This function walks the chain of conditions that we got from cond.c,&n; * and creates a wish conditional to enable/disable a given widget.&n; */
 DECL|function|generate_if
 r_void
@@ -263,11 +374,9 @@ id|cond-&gt;op
 r_case
 id|op_variable
 suffix:colon
-id|printf
+id|global
 c_func
 (paren
-l_string|&quot;&bslash;tglobal %s&bslash;n&quot;
-comma
 id|cond-&gt;variable.str
 )paren
 suffix:semicolon
@@ -291,11 +400,9 @@ id|cond-&gt;variable.cfg-&gt;flags
 op_or_assign
 id|GLOBAL_WRITTEN
 suffix:semicolon
-id|printf
+id|global
 c_func
 (paren
-l_string|&quot;&bslash;tglobal %s&bslash;n&quot;
-comma
 id|cond-&gt;variable.cfg-&gt;optionname
 )paren
 suffix:semicolon
@@ -330,11 +437,9 @@ l_int|NULL
 )paren
 )paren
 (brace
-id|printf
+id|global
 c_func
 (paren
-l_string|&quot;&bslash;tglobal %s&bslash;n&quot;
-comma
 id|item-&gt;optionname
 )paren
 suffix:semicolon
@@ -628,7 +733,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.config.f.x%d.x configure -state normal -fore [ .ref cget -foreground ]; &quot;
+l_string|&quot;.menu%d.config.f.x%d.x configure -state normal -fore [ cget .ref -foreground ]; &quot;
 comma
 id|menu_num
 comma
@@ -654,7 +759,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.config.f.x%d.x configure -state disabled -fore [ .ref cget -disabledforeground ];&quot;
+l_string|&quot;.menu%d.config.f.x%d.x configure -state disabled -fore [ cget .ref -disabledforeground ];&quot;
 comma
 id|menu_num
 comma
@@ -821,11 +926,9 @@ op_eq
 id|tok_dep_tristate
 )paren
 (brace
-id|printf
+id|global
 c_func
 (paren
-l_string|&quot;global %s;&quot;
-comma
 id|item-&gt;depend.str
 )paren
 suffix:semicolon
@@ -1065,11 +1168,9 @@ id|cond-&gt;op
 r_case
 id|op_variable
 suffix:colon
-id|printf
+id|global
 c_func
 (paren
-l_string|&quot;&bslash;tglobal %s&bslash;n&quot;
-comma
 id|cond-&gt;variable.str
 )paren
 suffix:semicolon
@@ -1093,11 +1194,9 @@ id|cond-&gt;variable.cfg-&gt;flags
 op_or_assign
 id|GLOBAL_WRITTEN
 suffix:semicolon
-id|printf
+id|global
 c_func
 (paren
-l_string|&quot;&bslash;tglobal %s&bslash;n&quot;
-comma
 id|cond-&gt;variable.cfg-&gt;optionname
 )paren
 suffix:semicolon
@@ -1489,12 +1588,6 @@ c_func
 (paren
 r_int
 id|menu_num
-comma
-r_int
-id|first
-comma
-r_int
-id|last
 )paren
 (brace
 r_struct
@@ -1506,149 +1599,6 @@ id|printf
 c_func
 (paren
 l_string|&quot;&bslash;n&bslash;n&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tset oldFocus [focus]&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tframe $w.f&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/*&n;   * Attach the &quot;Prev&quot;, &quot;Next&quot; and &quot;OK&quot; buttons at the end of the window.&n;   */
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tbutton $w.f.prev -text &bslash;&quot;Prev&bslash;&quot; -activebackground green &bslash;&bslash;&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;t&bslash;t-width 15 -command &bslash;&quot; destroy $w; focus $oldFocus; menu%d .menu%d &bslash;&bslash;&bslash;&quot;$title&bslash;&bslash;&bslash;&quot;&bslash;&quot;&bslash;n&quot;
-comma
-id|menu_num
-op_minus
-l_int|1
-comma
-id|menu_num
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-macro_line|#ifdef PREVLAST_LIMITED_RANGE
-r_if
-c_cond
-(paren
-id|first
-op_eq
-id|menu_num
-)paren
-(brace
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;t$w.f.prev configure -state disabled&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
-r_if
-c_cond
-(paren
-l_int|1
-op_eq
-id|menu_num
-)paren
-(brace
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;t$w.f.prev configure -state disabled&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tbutton $w.f.next -text &bslash;&quot;Next&bslash;&quot; -activebackground green &bslash;&bslash;&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;t&bslash;t-width 15 -command &bslash;&quot; destroy $w; focus $oldFocus;  menu%d .menu%d &bslash;&bslash;&bslash;&quot;$title&bslash;&bslash;&bslash;&quot;&bslash;&quot;&bslash;n&quot;
-comma
-id|menu_num
-op_plus
-l_int|1
-comma
-id|menu_num
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-macro_line|#ifdef PREVLAST_LIMITED_RANGE
-r_if
-c_cond
-(paren
-id|last
-op_eq
-id|menu_num
-)paren
-(brace
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;t$w.f.next configure -state disabled&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|last
-op_eq
-id|tot_menu_num
-)paren
-(brace
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;t$w.f.next configure -state disabled&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tbutton $w.f.back -text &bslash;&quot;Main Menu&bslash;&quot; -activebackground green &bslash;&bslash;&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;t&bslash;t-width 15 -command &bslash;&quot;destroy $w; focus $oldFocus; update_mainmenu $w&bslash;&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tpack $w.f.back $w.f.next $w.f.prev -side left -expand on&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tpack $w.f -pady 10 -side bottom -anchor w -fill x&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
@@ -1683,28 +1633,6 @@ c_func
 l_string|&quot;&bslash;twm geometry $w +$winx+$winy&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   *&t;We have a cunning plan....&n;   */
-r_if
-c_cond
-(paren
-id|access
-c_func
-(paren
-l_string|&quot;/usr/lib/tk4.0&quot;
-comma
-l_int|0
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;twm resizable $w no yes&bslash;n&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n;   * Now that the whole window is in place, we need to wait for an &quot;update&quot;&n;   * so we can tell the canvas what its virtual size should be.&n;   *&n;   * Unfortunately, this causes some ugly screen-flashing because the whole&n;   * window is drawn, and then it is immediately resized.  It seems&n;   * unavoidable, though, since &quot;frame&quot; objects won&squot;t tell us their size&n;   * until after an update, and &quot;canvas&quot; objects can&squot;t automatically pack&n;   * around frames.  Sigh.&n;   */
 id|printf
 c_func
@@ -1760,6 +1688,25 @@ l_string|&quot;&bslash;t&bslash;t$w.config.canvas configure -height $canvtotal&b
 l_string|&quot;&bslash;t} else {&bslash;n&quot;
 l_string|&quot;&bslash;t&bslash;t$w.config.canvas configure -height [expr $scry - $winy]&bslash;n&quot;
 l_string|&quot;&bslash;t}&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n;   * Limit the min/max window size.  Height can vary, but not width,&n;   * because of the limitations of canvas and our laziness.&n;   */
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tupdate idletasks&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;twm maxsize $w [winfo width $w] [winfo screenheight $w]&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;twm minsize $w [winfo width $w] 100&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
@@ -1930,11 +1877,9 @@ op_eq
 id|tok_dep_tristate
 )paren
 (brace
-id|printf
+id|global
 c_func
 (paren
-l_string|&quot;&bslash;tglobal %s;&quot;
-comma
 id|cfg-&gt;depend.str
 )paren
 suffix:semicolon
@@ -2319,10 +2264,6 @@ id|end_proc
 c_func
 (paren
 id|menu_num
-comma
-id|menu_min
-comma
-id|menu_max
 )paren
 suffix:semicolon
 )brace
@@ -2370,10 +2311,6 @@ id|end_proc
 c_func
 (paren
 id|menu_num
-comma
-id|menu_min
-comma
-id|menu_max
 )paren
 suffix:semicolon
 id|start_proc
@@ -2445,10 +2382,6 @@ id|end_proc
 c_func
 (paren
 id|menu_num
-comma
-id|menu_min
-comma
-id|menu_max
 )paren
 suffix:semicolon
 id|start_proc
@@ -2477,7 +2410,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tminimenu $w.config.f %d %d &bslash;&quot;%s&bslash;&quot; %s&bslash;n&quot;
+l_string|&quot;&bslash;tminimenu $w.config.f %d %d &bslash;&quot;%s&bslash;&quot; %s %s&bslash;n&quot;
 comma
 id|cfg-&gt;menu_number
 comma
@@ -2486,6 +2419,9 @@ comma
 id|cfg-&gt;label
 comma
 id|cfg-&gt;optionname
+comma
+multiline_comment|/*&n;&t;  &t; * We rely on the fact that the first tok_choice corresponding&n;&t;  &t; * to the current tok_choose is cfg-&gt;next (compare parse() in&n;&t;  &t; * tkparse.c).  We need its name to pick out the right help&n;&t;  &t; * text from Configure.help.&n;&t;  &t; */
+id|cfg-&gt;next-&gt;optionname
 )paren
 suffix:semicolon
 id|printf
@@ -2517,10 +2453,6 @@ id|end_proc
 c_func
 (paren
 id|menu_num
-comma
-id|menu_min
-comma
-id|menu_max
 )paren
 suffix:semicolon
 id|start_proc
@@ -2569,10 +2501,6 @@ id|end_proc
 c_func
 (paren
 id|menu_num
-comma
-id|menu_min
-comma
-id|menu_max
 )paren
 suffix:semicolon
 id|start_proc
@@ -2623,10 +2551,6 @@ id|end_proc
 c_func
 (paren
 id|menu_num
-comma
-id|menu_min
-comma
-id|menu_max
 )paren
 suffix:semicolon
 id|start_proc
@@ -2675,10 +2599,6 @@ id|end_proc
 c_func
 (paren
 id|menu_num
-comma
-id|menu_min
-comma
-id|menu_max
 )paren
 suffix:semicolon
 id|start_proc
@@ -2723,10 +2643,6 @@ id|end_proc
 c_func
 (paren
 id|menu_num
-comma
-id|menu_min
-comma
-id|menu_max
 )paren
 suffix:semicolon
 macro_line|#ifdef ERIC_DONT_DEF
@@ -2780,10 +2696,6 @@ multiline_comment|/*&n;   * Close out the last menu.&n;   */
 id|end_proc
 c_func
 (paren
-id|menu_num
-comma
-id|menu_num
-comma
 id|menu_num
 )paren
 suffix:semicolon

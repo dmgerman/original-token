@@ -814,7 +814,7 @@ DECL|macro|PCI_DEVICE_ID_HER_STING
 mdefine_line|#define PCI_DEVICE_ID_HER_STING&t;&t;0xa091
 DECL|macro|PCI_DEVICE_ID_HER_STINGARK
 mdefine_line|#define PCI_DEVICE_ID_HER_STINGARK&t;0xa099
-multiline_comment|/*&n; * The PCI interface treats multi-function devices as independent&n; * devices.  The slot/function address of each device is encoded&n; * in a single byte as follows:&n; *&n; *&t;7:4 = slot&n; *&t;3:0 = function&n; */
+multiline_comment|/*&n; * The PCI interface treats multi-function devices as independent&n; * devices.  The slot/function address of each device is encoded&n; * in a single byte as follows:&n; *&n; *&t;7:3 = slot&n; *&t;2:0 = function&n; */
 DECL|macro|PCI_DEVFN
 mdefine_line|#define PCI_DEVFN(slot,func)&t;((((slot) &amp; 0x1f) &lt;&lt; 3) | ((func) &amp; 0x07))
 DECL|macro|PCI_SLOT

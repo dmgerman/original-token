@@ -1985,12 +1985,25 @@ id|bprm-&gt;inode-&gt;i_uid
 suffix:colon
 id|current-&gt;euid
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * If setgid is set but no group execute bit then this&n;&t;&t; * is a candidate for mandatory locking, not a setgid&n;&t;&t; * executable.&n;&t;&t; */
 id|bprm-&gt;e_gid
 op_assign
 (paren
+(paren
 id|i
 op_amp
+(paren
 id|S_ISGID
+op_or
+id|S_IXGRP
+)paren
+)paren
+op_eq
+(paren
+id|S_ISGID
+op_or
+id|S_IXGRP
+)paren
 )paren
 ques
 c_cond

@@ -2824,7 +2824,7 @@ c_func
 (paren
 id|PF_NETROM
 comma
-id|skb
+id|skb-&gt;dev
 comma
 id|skb-&gt;data
 )paren
@@ -2847,7 +2847,7 @@ c_func
 (paren
 id|PF_NETROM
 comma
-id|skb
+id|skb-&gt;dev
 comma
 id|skb-&gt;data
 )paren
@@ -3075,7 +3075,7 @@ c_func
 (paren
 id|PF_NETROM
 comma
-id|skb
+id|skb-&gt;dev
 comma
 id|skb-&gt;data
 )paren

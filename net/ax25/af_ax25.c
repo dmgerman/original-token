@@ -6434,7 +6434,7 @@ c_func
 (paren
 id|PF_AX25
 comma
-id|skb
+id|skb-&gt;dev
 comma
 id|skb-&gt;h.raw
 )paren
@@ -6744,7 +6744,7 @@ c_func
 (paren
 id|PF_AX25
 comma
-id|skb
+id|skb-&gt;dev
 comma
 id|skb-&gt;data
 )paren
@@ -10402,7 +10402,7 @@ c_func
 (paren
 id|PF_AX25
 comma
-id|skb
+id|skb-&gt;dev
 comma
 id|skb-&gt;data
 )paren

@@ -3634,14 +3634,6 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|dec21040_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|sdla_setup
 c_func
@@ -3711,13 +3703,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_DEC_ELCP)
-id|dec21040_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;
 macro_line|#if defined(CONFIG_DLCI)
 id|dlci_setup
 c_func

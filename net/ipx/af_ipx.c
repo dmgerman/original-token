@@ -2189,7 +2189,7 @@ c_func
 (paren
 id|PF_IPX
 comma
-id|skb
+id|skb-&gt;dev
 comma
 id|ipx
 )paren
@@ -2344,7 +2344,7 @@ c_func
 (paren
 id|PF_IPX
 comma
-id|skb
+id|skb-&gt;dev
 comma
 id|ipx
 )paren
@@ -4827,7 +4827,7 @@ c_func
 (paren
 id|PF_IPX
 comma
-id|skb
+id|skb-&gt;dev
 comma
 id|ipx
 )paren

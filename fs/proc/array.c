@@ -14,9 +14,6 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
-macro_line|#ifdef CONFIG_APM
-macro_line|#include &lt;linux/apm_bios.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -4651,18 +4648,6 @@ id|PROC_MD
 suffix:colon
 r_return
 id|get_md_status
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_APM
-r_case
-id|PROC_APM
-suffix:colon
-r_return
-id|apm_proc
 c_func
 (paren
 id|page

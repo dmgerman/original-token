@@ -151,8 +151,9 @@ DECL|macro|FDC_765ED
 mdefine_line|#define FDC_765ED&t;0x30&t;/* Non-Intel 1MB-compatible FDC, can&squot;t detect */
 DECL|macro|FDC_82072
 mdefine_line|#define FDC_82072&t;0x40&t;/* Intel 82072; 8272a + FIFO + DUMPREGS */
-DECL|macro|FDC_82077_ORIG
-mdefine_line|#define FDC_82077_ORIG&t;0x50&t;/* Original version of 82077AA, sans LOCK */
+DECL|macro|FDC_82072A
+mdefine_line|#define FDC_82072A&t;0x50&t;/* 82072 on a Sparc */
+multiline_comment|/* Was: Original version of 82077AA, sans LOCK */
 DECL|macro|FDC_82077
 mdefine_line|#define FDC_82077&t;0x52&t;/* 82077AA-1 */
 DECL|macro|FDC_82077_UNKN

@@ -721,5 +721,8 @@ multiline_comment|/* send a raw command to the fdc. Structure size not included,
 DECL|macro|FDTWADDLE
 mdefine_line|#define FDTWADDLE _IO(2, 0x59)
 multiline_comment|/* flicker motor-on bit before reading a sector. Experimental */
+DECL|macro|FDEJECT
+mdefine_line|#define FDEJECT _IO(2, 0x5a)
+multiline_comment|/* eject the disk */
 macro_line|#endif
 eof

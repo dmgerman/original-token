@@ -87,7 +87,6 @@ DECL|member|link3
 r_struct
 id|sk_buff
 op_star
-r_volatile
 id|link3
 suffix:semicolon
 multiline_comment|/* Link for IP protocol level buffer chains &t;*/

@@ -7,6 +7,17 @@ mdefine_line|#define&t;NEXT_DEV&t;NULL
 multiline_comment|/* A unified ethernet device probe.  This is the easiest way to have every&n;   ethernet adaptor have the name &quot;eth[0123...]&quot;.&n;   */
 r_extern
 r_int
+id|tulip_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|hp100_probe
 c_func
 (paren
@@ -406,6 +417,14 @@ macro_line|#endif
 macro_line|#if defined(CONFIG_SEEQ8005)
 op_logical_and
 id|seeq8005_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#if defined(CONFIG_DEC_ELCP)
+op_logical_and
+id|tulip_probe
 c_func
 (paren
 id|dev

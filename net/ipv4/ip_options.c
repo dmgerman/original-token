@@ -1341,6 +1341,9 @@ c_cond
 (paren
 id|l
 id|l
+op_logical_or
+op_logical_neg
+id|optlen
 )paren
 (brace
 id|pp_ptr

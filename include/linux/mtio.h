@@ -81,6 +81,8 @@ DECL|macro|MTLOAD
 mdefine_line|#define MTLOAD  30&t;/* execute the SCSI load command */
 DECL|macro|MTUNLOAD
 mdefine_line|#define MTUNLOAD 31&t;/* execute the SCSI unload command */
+DECL|macro|MTCOMPRESSION
+mdefine_line|#define MTCOMPRESSION 32/* control compression with SCSI mode page 15 */
 multiline_comment|/* structure for MTIOCGET - mag tape get status command */
 DECL|struct|mtget
 r_struct
@@ -360,8 +362,8 @@ multiline_comment|/* #define GMT_ ? &t;&t;((x) &amp; 0x00020000) */
 DECL|macro|GMT_IM_REP_EN
 mdefine_line|#define GMT_IM_REP_EN(x)        ((x) &amp; 0x00010000)  /* immediate report mode */
 multiline_comment|/* 16 generic status bits unused */
-multiline_comment|/* DDS drives have &squot;setmarks&squot;, sort of like filemarks but used to group&n; * files, rather than blocks. Not used. Not supported.&n; * I think DDS drives are DAT drives.&n; */
 multiline_comment|/* SCSI-tape specific definitions */
+multiline_comment|/* Bitfield shifts in the status  */
 DECL|macro|MT_ST_BLKSIZE_SHIFT
 mdefine_line|#define MT_ST_BLKSIZE_SHIFT&t;0
 DECL|macro|MT_ST_BLKSIZE_MASK
@@ -374,12 +376,21 @@ DECL|macro|MT_ST_SOFTERR_SHIFT
 mdefine_line|#define MT_ST_SOFTERR_SHIFT&t;0
 DECL|macro|MT_ST_SOFTERR_MASK
 mdefine_line|#define MT_ST_SOFTERR_MASK&t;0xffff
+multiline_comment|/* Bitfields for the MTSETDRVBUFFER ioctl */
 DECL|macro|MT_ST_OPTIONS
 mdefine_line|#define MT_ST_OPTIONS&t;&t;0xf0000000
 DECL|macro|MT_ST_BOOLEANS
 mdefine_line|#define MT_ST_BOOLEANS&t;&t;0x10000000
+DECL|macro|MT_ST_SETBOOLEANS
+mdefine_line|#define MT_ST_SETBOOLEANS&t;0x30000000
+DECL|macro|MT_ST_CLEARBOOLEANS
+mdefine_line|#define MT_ST_CLEARBOOLEANS&t;0x40000000
 DECL|macro|MT_ST_WRITE_THRESHOLD
 mdefine_line|#define MT_ST_WRITE_THRESHOLD&t;0x20000000
+DECL|macro|MT_ST_DEF_BLKSIZE
+mdefine_line|#define MT_ST_DEF_BLKSIZE&t;0x50000000
+DECL|macro|MT_ST_DEF_OPTIONS
+mdefine_line|#define MT_ST_DEF_OPTIONS&t;0x60000000
 DECL|macro|MT_ST_BUFFER_WRITES
 mdefine_line|#define MT_ST_BUFFER_WRITES&t;0x1
 DECL|macro|MT_ST_ASYNC_WRITES
@@ -394,5 +405,18 @@ DECL|macro|MT_ST_FAST_MTEOM
 mdefine_line|#define MT_ST_FAST_MTEOM&t;0x20
 DECL|macro|MT_ST_AUTO_LOCK
 mdefine_line|#define MT_ST_AUTO_LOCK&t;&t;0x40
+DECL|macro|MT_ST_DEF_WRITES
+mdefine_line|#define MT_ST_DEF_WRITES&t;0x80
+DECL|macro|MT_ST_CAN_BSR
+mdefine_line|#define MT_ST_CAN_BSR&t;&t;0x100
+multiline_comment|/* The mode parameters to be controlled. Parameter chosen with bits 20-28 */
+DECL|macro|MT_ST_CLEAR_DEFAULT
+mdefine_line|#define MT_ST_CLEAR_DEFAULT&t;0xfffff
+DECL|macro|MT_ST_DEF_DENSITY
+mdefine_line|#define MT_ST_DEF_DENSITY&t;(MT_ST_DEF_OPTIONS | 0x100000)
+DECL|macro|MT_ST_DEF_COMPRESSION
+mdefine_line|#define MT_ST_DEF_COMPRESSION&t;(MT_ST_DEF_OPTIONS | 0x200000)
+DECL|macro|MT_ST_DEF_DRVBUFFER
+mdefine_line|#define MT_ST_DEF_DRVBUFFER&t;(MT_ST_DEF_OPTIONS | 0x300000)
 macro_line|#endif /* _LINUX_MTIO_H */
 eof

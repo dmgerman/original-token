@@ -1,7 +1,7 @@
-multiline_comment|/* $Id: plip.c,v 1.15 1995/10/03 01:47:09 gniibe Exp $ */
+multiline_comment|/* $Id: plip.c,v 1.16 1996-04-06 15:36:57+09 gniibe Exp $ */
 multiline_comment|/* PLIP: A parallel port &quot;network&quot; driver for Linux. */
 multiline_comment|/* This driver is for parallel port with 5-bit cable (LapLink (R) cable). */
-multiline_comment|/*&n; * Authors:&t;Donald Becker,  &lt;becker@super.org&gt;&n; *&t;&t;Tommy Thorn, &lt;thorn@daimi.aau.dk&gt;&n; *&t;&t;Tanabe Hiroyasu, &lt;hiro@sanpo.t.u-tokyo.ac.jp&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Peter Bauer, &lt;100136.3530@compuserve.com&gt;&n; *&t;&t;Niibe Yutaka, &lt;gniibe@mri.co.jp&gt;&n; *&n; *&t;&t;Modularization and ifreq/ifmap support by Alan Cox.&n; *&t;&t;Rewritten by Niibe Yutaka.&n; *&n; * Fixes:&n; *&t;&t;9-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; *&t;&t;  - only claim 3 bytes of I/O space for port at 0x3bc&n; *&t;&t;  - treat NULL return from register_netdev() as success in&n; *&t;&t;    init_module()&n; *&t;&t;  - added message if driver loaded as a module but no&n; *&t;&t;    interfaces present.&n; *&t;&t;  - release claimed I/O ports if malloc() fails during init.&n; *&t;&t;&n; *&t;&t;Niibe Yutaka&n; *&t;&t;  - Module initialization.  You can specify I/O addr and IRQ:&n; *&t;&t;&t;# insmod plip.o io=0x3bc irq=7&n; *&t;&t;  - MTU fix.&n; *&t;&t;  - Make sure other end is OK, before sending a packet.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * Authors:&t;Donald Becker,  &lt;becker@super.org&gt;&n; *&t;&t;Tommy Thorn, &lt;thorn@daimi.aau.dk&gt;&n; *&t;&t;Tanabe Hiroyasu, &lt;hiro@sanpo.t.u-tokyo.ac.jp&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Peter Bauer, &lt;100136.3530@compuserve.com&gt;&n; *&t;&t;Niibe Yutaka, &lt;gniibe@mri.co.jp&gt;&n; *&n; *&t;&t;Modularization and ifreq/ifmap support by Alan Cox.&n; *&t;&t;Rewritten by Niibe Yutaka.&n; *&n; * Fixes:&n; *&t;&t;9-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; *&t;&t;  - only claim 3 bytes of I/O space for port at 0x3bc&n; *&t;&t;  - treat NULL return from register_netdev() as success in&n; *&t;&t;    init_module()&n; *&t;&t;  - added message if driver loaded as a module but no&n; *&t;&t;    interfaces present.&n; *&t;&t;  - release claimed I/O ports if malloc() fails during init.&n; *&t;&t;&n; *&t;&t;Niibe Yutaka&n; *&t;&t;  - Module initialization.  You can specify I/O addr and IRQ:&n; *&t;&t;&t;# insmod plip.o io=0x3bc irq=7&n; *&t;&t;  - MTU fix.&n; *&t;&t;  - Make sure other end is OK, before sending a packet.&n; *&t;&t;  - Fix immediate timer problem.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; * Original version and the name &squot;PLIP&squot; from Donald Becker &lt;becker@super.org&gt;&n; * inspired by Russ Nelson&squot;s parallel port packet driver.&n; *&n; * NOTE:&n; *     Tanabe Hiroyasu had changed the protocol, and it was in Linux v1.0.&n; *     Because of the necessity to communicate to DOS machines with the&n; *     Crynwr packet driver, Peter Bauer changed the protocol again&n; *     back to original protocol.&n; *&n; *     This version follows original PLIP protocol. &n; *     So, this PLIP can&squot;t communicate the PLIP of Linux v1.0.&n; */
 multiline_comment|/*&n; *     To use with DOS box, please do (Turn on ARP switch):&n; *&t;# ifconfig plip[0-2] arp&n; */
 DECL|variable|version
@@ -11,7 +11,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;NET3 PLIP version 2.1 gniibe@mri.co.jp&bslash;n&quot;
+l_string|&quot;NET3 PLIP version 2.2 gniibe@mri.co.jp&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n;  Sources:&n;&t;Ideas and protocols came from Russ Nelson&squot;s &lt;nelson@crynwr.com&gt;&n;&t;&quot;parallel.asm&quot; parallel port packet driver.&n;&n;  The &quot;Crynwr&quot; parallel port standard specifies the following protocol:&n;    Trigger by sending &squot;0x08&squot; (this cause interrupt on other end)&n;    count-low octet&n;    count-high octet&n;    ... data octets&n;    checksum octet&n;  Each octet is sent as &lt;wait for rx. &squot;0x1?&squot;&gt; &lt;send 0x10+(octet&amp;0x0F)&gt;&n;&t;&t;&t;&lt;wait for rx. &squot;0x0?&squot;&gt; &lt;send 0x00+((octet&gt;&gt;4)&amp;0x0F)&gt;&n;&n;  The packet is encapsulated as if it were ethernet.&n;&n;  The cable used is a de facto standard parallel null cable -- sold as&n;  a &quot;LapLink&quot; cable by various places.  You&squot;ll need a 12-conductor cable to&n;  make one yourself.  The wiring is:&n;    SLCTIN&t;17 - 17&n;    GROUND&t;25 - 25&n;    D0-&gt;ERROR&t;2 - 15&t;&t;15 - 2&n;    D1-&gt;SLCT&t;3 - 13&t;&t;13 - 3&n;    D2-&gt;PAPOUT&t;4 - 12&t;&t;12 - 4&n;    D3-&gt;ACK&t;5 - 10&t;&t;10 - 5&n;    D4-&gt;BUSY&t;6 - 11&t;&t;11 - 6&n;  Do not connect the other pins.  They are&n;    D5,D6,D7 are 7,8,9&n;    STROBE is 1, FEED is 14, INIT is 16&n;    extra grounds are 18,19,20,21,22,23,24&n;*/
 macro_line|#include &lt;linux/module.h&gt;
@@ -2345,6 +2345,12 @@ id|nl-&gt;immediate
 comma
 op_amp
 id|tq_immediate
+)paren
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|IMMEDIATE_BH
 )paren
 suffix:semicolon
 id|outb

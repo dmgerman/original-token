@@ -471,14 +471,14 @@ r_if
 c_cond
 (paren
 id|address
-op_le
-id|end_mem
 op_plus
 l_int|4
 op_star
 l_int|1024
 op_star
 l_int|1024
+op_le
+id|end_mem
 op_logical_and
 (paren
 id|x86_capability

@@ -139,6 +139,15 @@ macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR FLOPPY_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/cdrom.h&gt; /* for the compatibility eject ioctl */
+macro_line|#ifndef FLOPPY_MOTOR_MASK
+DECL|macro|FLOPPY_MOTOR_MASK
+mdefine_line|#define FLOPPY_MOTOR_MASK 0xf0
+macro_line|#endif
+macro_line|#ifndef fd_eject
+DECL|macro|fd_eject
+mdefine_line|#define fd_eject(x) -EINVAL
+macro_line|#endif
 multiline_comment|/* Dma Memory related stuff */
 multiline_comment|/* Pure 2^n version of get_order */
 DECL|function|__get_order
@@ -241,6 +250,16 @@ id|initialising
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#ifdef __sparc__
+multiline_comment|/* We hold the FIFO configuration here.  We want to have Polling and&n; * Implied Seek enabled on Sun controllers.&n; */
+DECL|variable|fdc_cfg
+r_int
+r_char
+id|fdc_cfg
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 DECL|function|TYPE
 r_static
 r_inline
@@ -3064,7 +3083,7 @@ c_cond
 (paren
 id|newdor
 op_amp
-l_int|0xf0
+id|FLOPPY_MOTOR_MASK
 )paren
 id|floppy_grab_irq_and_dma
 c_func
@@ -3076,7 +3095,7 @@ c_cond
 (paren
 id|olddor
 op_amp
-l_int|0xf0
+id|FLOPPY_MOTOR_MASK
 )paren
 id|floppy_release_irq_and_dma
 c_func
@@ -3274,6 +3293,7 @@ comma
 l_int|8
 )paren
 suffix:semicolon
+macro_line|#if N_FDC &gt; 1
 id|set_dor
 c_func
 (paren
@@ -3287,6 +3307,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4841,7 +4862,7 @@ c_cond
 (paren
 id|FDCS-&gt;version
 op_ge
-id|FDC_82077_ORIG
+id|FDC_82072A
 op_logical_and
 id|FDCS-&gt;has_fifo
 )paren
@@ -4941,6 +4962,35 @@ id|FDCS-&gt;reset
 )paren
 r_return
 suffix:semicolon
+macro_line|#ifdef __sparc__ 
+id|output_byte
+c_func
+(paren
+id|FD_CONFIGURE
+)paren
+suffix:semicolon
+id|output_byte
+c_func
+(paren
+l_int|0x64
+)paren
+suffix:semicolon
+multiline_comment|/* Motor off timeout */
+id|output_byte
+c_func
+(paren
+id|fdc_cfg
+op_or
+l_int|0x0A
+)paren
+suffix:semicolon
+id|output_byte
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#else
 multiline_comment|/* Turn on FIFO for 82077-class FDC (improves performance) */
 multiline_comment|/* TODO: lock this in via LOCK during initialization */
 id|output_byte
@@ -4982,12 +5032,27 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
 id|FDCS-&gt;need_configure
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*DPRINT(&quot;FIFO enabled&bslash;n&quot;);*/
 )brace
+macro_line|#ifdef __sparc__
+multiline_comment|/* If doing implied seeks, no specify necessary */
+r_if
+c_cond
+(paren
+id|fdc_cfg
+op_amp
+l_int|0x40
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -6383,6 +6448,29 @@ r_return
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef __sparc__
+r_if
+c_cond
+(paren
+id|fdc_cfg
+op_amp
+l_int|0x40
+)paren
+(brace
+multiline_comment|/* Implied seeks being done... */
+id|DRS-&gt;track
+op_assign
+id|raw_cmd-&gt;track
+suffix:semicolon
+id|setup_rw_floppy
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
 id|SET_INTR
 c_func
 (paren
@@ -6765,6 +6853,11 @@ id|interruptjiffies
 op_assign
 id|jiffies
 suffix:semicolon
+id|fd_disable_dma
+c_func
+(paren
+)paren
+suffix:semicolon
 id|floppy_enable_hlt
 c_func
 (paren
@@ -6984,7 +7077,6 @@ l_string|&quot;reset interrupt:&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* fdc_specify();&t;   reprogram fdc */
 id|result
 c_func
 (paren
@@ -7048,12 +7140,19 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* Pseudo-DMA may intercept &squot;reset finished&squot; interrupt.  */
+multiline_comment|/* Irrelevant for systems with true DMA (i386).          */
+id|fd_disable_dma
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|FDCS-&gt;version
 op_ge
-id|FDC_82077
+id|FDC_82072A
 )paren
 id|fd_outb
 c_func
@@ -7088,7 +7187,7 @@ c_func
 id|FD_RESET_DELAY
 )paren
 suffix:semicolon
-id|outb
+id|fd_outb
 c_func
 (paren
 id|FDCS-&gt;dor
@@ -13882,6 +13981,14 @@ l_int|0
 )brace
 comma
 (brace
+id|FDEJECT
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+(brace
 id|FDTWADDLE
 comma
 l_int|40
@@ -14276,6 +14383,38 @@ c_func
 id|device
 )paren
 suffix:semicolon
+multiline_comment|/* convert compatibility eject ioctls into floppy eject ioctl.&n;&t; * We do this in order to provide a means to eject floppy disks before&n;&t; * installing the new fdutils package */
+r_if
+c_cond
+(paren
+id|cmd
+op_eq
+id|CDROMEJECT
+op_logical_or
+multiline_comment|/* CD-Rom eject */
+id|cmd
+op_eq
+l_int|0x6470
+multiline_comment|/* SunOS floppy eject */
+)paren
+(brace
+id|DPRINT
+c_func
+(paren
+l_string|&quot;obsolete eject ioctl&bslash;n&quot;
+)paren
+suffix:semicolon
+id|DPRINT
+c_func
+(paren
+l_string|&quot;please use floppycontrol --eject&bslash;n&quot;
+)paren
+suffix:semicolon
+id|cmd
+op_assign
+id|FDEJECT
+suffix:semicolon
+)brace
 multiline_comment|/* convert the old style command into a new style command */
 r_if
 c_cond
@@ -14443,6 +14582,71 @@ c_cond
 id|cmd
 )paren
 (brace
+r_case
+id|FDEJECT
+suffix:colon
+r_if
+c_cond
+(paren
+id|UDRS-&gt;fd_ref
+op_ne
+l_int|1
+)paren
+(brace
+multiline_comment|/* somebody else has this drive open */
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
+id|LOCK_FDC
+c_func
+(paren
+id|drive
+comma
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* do the actual eject. Fails on&n;&t;&t;&t; * non-Sparc archtitectures */
+id|ret
+op_assign
+id|fd_eject
+c_func
+(paren
+id|UNIT
+c_func
+(paren
+id|drive
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* switch the motor off, in order to make the&n;&t;&t;&t; * cached DOR status match the hard DOS status&n;&t;&t;&t; */
+id|motor_off_callback
+c_func
+(paren
+id|drive
+)paren
+suffix:semicolon
+id|USETF
+c_func
+(paren
+id|FD_DISK_CHANGED
+)paren
+suffix:semicolon
+id|USETF
+c_func
+(paren
+id|FD_VERIFY
+)paren
+suffix:semicolon
+id|process_fd_request
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
 r_case
 id|FDCLRPRM
 suffix:colon
@@ -16653,15 +16857,15 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;FDC %d is a pre-1991 82077&bslash;n&quot;
+l_string|&quot;FDC %d is a 82072A&bslash;n&quot;
 comma
 id|fdc
 )paren
 suffix:semicolon
 r_return
-id|FDC_82077_ORIG
+id|FDC_82072A
 suffix:semicolon
-multiline_comment|/* Pre-1991 82077 doesn&squot;t know LOCK/UNLOCK */
+multiline_comment|/* Pre-1991 82077 or 82072A as found&n;&t;&t;&t;&t;&t; * on Sparcs. These doesn&squot;t know &n;&t;&t;&t;&t;&t; * LOCK/UNLOCK */
 )brace
 r_if
 c_cond
@@ -17681,6 +17885,17 @@ comma
 id|MAXTIMEOUT
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc__
+id|fdc_cfg
+op_assign
+(paren
+l_int|0x40
+op_or
+l_int|0x10
+)paren
+suffix:semicolon
+multiline_comment|/* ImplSeek+Polling+FIFO */
+macro_line|#endif
 id|config_types
 c_func
 (paren
@@ -17950,7 +18165,7 @@ id|FDCS-&gt;has_fifo
 op_assign
 id|FDCS-&gt;version
 op_ge
-id|FDC_82077_ORIG
+id|FDC_82072A
 suffix:semicolon
 id|user_reset_fdc
 c_func
@@ -18781,6 +18996,13 @@ dot
 id|request_fn
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/* eject disk, if any */
+id|fd_eject
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 )brace
 macro_line|#ifdef __cplusplus

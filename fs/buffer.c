@@ -525,6 +525,13 @@ id|wait
 suffix:semicolon
 id|repeat
 suffix:colon
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_disk
+)paren
+suffix:semicolon
 id|current-&gt;state
 op_assign
 id|TASK_UNINTERRUPTIBLE
@@ -4824,6 +4831,13 @@ id|bh
 r_break
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Uhhuh. We&squot;re _really_ low on memory. Now we just&n;&t;&t; * wait for old buffer heads to become free due to&n;&t;&t; * finishing IO..&n;&t;&t; */
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_disk
+)paren
+suffix:semicolon
 id|sleep_on
 c_func
 (paren
@@ -8590,6 +8604,13 @@ r_int
 id|wait
 )paren
 (brace
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_disk
+)paren
+suffix:semicolon
 id|wake_up
 c_func
 (paren
@@ -9111,7 +9132,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-suffix:semicolon
 multiline_comment|/* Having func 0 used to launch the actual bdflush and then never&n;&t;return (unless explicitly killed). We return zero here to &n;&t;remain semi-compatible with present update(8) programs. */
 r_return
 l_int|0
@@ -9419,6 +9439,13 @@ l_string|&quot;sleeping again.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_disk
+)paren
+suffix:semicolon
 id|wake_up
 c_func
 (paren

@@ -544,6 +544,12 @@ c_func
 id|kill_fasync
 )paren
 comma
+id|X
+c_func
+(paren
+id|arp_query
+)paren
+comma
 macro_line|#ifdef CONFIG_FIREWALL
 id|X
 c_func

@@ -24,12 +24,19 @@ DECL|macro|FEPMASK
 mdefine_line|#define&t;FEPMASK     0x0e
 DECL|macro|FEPWIN
 mdefine_line|#define&t;FEPWIN      0x80
+multiline_comment|/* Maximum Number of Boards supported */
+DECL|macro|MAX_DIGI_BOARDS
+mdefine_line|#define MAX_DIGI_BOARDS 4
+DECL|macro|PCXX_NUM_TYPES
+mdefine_line|#define PCXX_NUM_TYPES&t;4
 DECL|macro|PCXI
-mdefine_line|#define PCXI    0
+mdefine_line|#define PCXI&t;&t;0
 DECL|macro|PCXE
-mdefine_line|#define PCXE    1
+mdefine_line|#define PCXE&t;&t;1
 DECL|macro|PCXEVE
-mdefine_line|#define&t;PCXEVE&t;2
+mdefine_line|#define&t;PCXEVE&t;&t;2
+DECL|macro|PCXEM
+mdefine_line|#define PCXEM&t;&t;3
 DECL|variable|board_desc
 r_static
 r_char
@@ -39,11 +46,32 @@ id|board_desc
 )braket
 op_assign
 (brace
-l_string|&quot;PC/Xi (64K)&quot;
+l_string|&quot;PC/Xi&quot;
 comma
-l_string|&quot;PC/Xe (64K)&quot;
+l_string|&quot;PC/Xe&quot;
 comma
-l_string|&quot;PC/Xe (8K) &quot;
+l_string|&quot;PC/Xeve&quot;
+comma
+l_string|&quot;PC/Xem&quot;
+comma
+)brace
+suffix:semicolon
+DECL|variable|board_mem
+r_static
+r_char
+op_star
+id|board_mem
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;64k&quot;
+comma
+l_string|&quot;64k&quot;
+comma
+l_string|&quot;8k&quot;
+comma
+l_string|&quot;32k&quot;
 comma
 )brace
 suffix:semicolon
@@ -80,6 +108,10 @@ suffix:semicolon
 DECL|member|membase
 id|ulong
 id|membase
+suffix:semicolon
+DECL|member|first_minor
+id|ushort
+id|first_minor
 suffix:semicolon
 )brace
 suffix:semicolon

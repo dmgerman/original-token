@@ -2206,26 +2206,40 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* &n;&t; *&t;See if we can take anything off of the retransmit queue.&n;&t; */
-r_while
+r_for
 c_loop
 (paren
-id|sk-&gt;send_head
-op_ne
-l_int|NULL
+suffix:semicolon
+suffix:semicolon
 )paren
 (brace
+r_struct
+id|sk_buff
+op_star
+id|skb
+op_assign
+id|sk-&gt;send_head
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|skb
+)paren
+r_break
+suffix:semicolon
 multiline_comment|/* Check for a bug. */
 r_if
 c_cond
 (paren
-id|sk-&gt;send_head-&gt;link3
+id|skb-&gt;link3
 op_logical_and
 id|after
 c_func
 (paren
-id|sk-&gt;send_head-&gt;end_seq
+id|skb-&gt;end_seq
 comma
-id|sk-&gt;send_head-&gt;link3-&gt;end_seq
+id|skb-&gt;link3-&gt;end_seq
 )paren
 )paren
 id|printk
@@ -2238,21 +2252,15 @@ multiline_comment|/*&n;&t;&t; *&t;If our packet is before the ack sequence we ca
 r_if
 c_cond
 (paren
-id|before
+id|after
 c_func
 (paren
-id|sk-&gt;send_head-&gt;end_seq
+id|skb-&gt;end_seq
 comma
 id|ack
-op_plus
-l_int|1
 )paren
 )paren
-(brace
-r_struct
-id|sk_buff
-op_star
-id|oskb
+r_break
 suffix:semicolon
 r_if
 c_cond
@@ -2260,30 +2268,35 @@ c_cond
 id|sk-&gt;retransmits
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; *&t;We were retransmitting.  don&squot;t count this in RTT est &n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;We were retransmitting.  don&squot;t count this in RTT est &n;&t;&t;&t; */
 id|flag
 op_or_assign
 l_int|2
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * even though we&squot;ve gotten an ack, we&squot;re still&n;&t;&t;&t;&t; * retransmitting as long as we&squot;re sending from&n;&t;&t;&t;&t; * the retransmit queue.  Keeping retransmits non-zero&n;&t;&t;&t;&t; * prevents us from getting new data interspersed with&n;&t;&t;&t;&t; * retransmissions.&n;&t;&t;&t;&t; */
+)brace
 r_if
 c_cond
 (paren
-id|sk-&gt;send_head-&gt;link3
-)paren
-multiline_comment|/* Any more queued retransmits? */
-id|sk-&gt;retransmits
+(paren
+id|sk-&gt;send_head
 op_assign
-l_int|1
+id|skb-&gt;link3
+)paren
+op_eq
+l_int|NULL
+)paren
+(brace
+id|sk-&gt;send_tail
+op_assign
+l_int|NULL
 suffix:semicolon
-r_else
 id|sk-&gt;retransmits
 op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; * Note that we only reset backoff and rto in the&n;&t;&t;&t; * rtt recomputation code.  And that doesn&squot;t happen&n;&t;&t;&t; * if there were retransmissions in effect.  So the&n;&t;&t;&t; * first new packet after the retransmissions is&n;&t;&t;&t; * sent with the backoff still in effect.  Not until&n;&t;&t;&t; * we get an ack from a non-retransmitted packet do&n;&t;&t;&t; * we reset the backoff and rto.  This allows us to deal&n;&t;&t;&t; * with a situation where the network delay has increased&n;&t;&t;&t; * suddenly.  I.e. Karn&squot;s algorithm. (SIGCOMM &squot;87, p5.)&n;&t;&t;&t; */
-multiline_comment|/*&n;&t;&t;&t; *&t;We have one less packet out there. &n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Note that we only reset backoff and rto in the&n;&t;&t; * rtt recomputation code.  And that doesn&squot;t happen&n;&t;&t; * if there were retransmissions in effect.  So the&n;&t;&t; * first new packet after the retransmissions is&n;&t;&t; * sent with the backoff still in effect.  Not until&n;&t;&t; * we get an ack from a non-retransmitted packet do&n;&t;&t; * we reset the backoff and rto.  This allows us to deal&n;&t;&t; * with a situation where the network delay has increased&n;&t;&t; * suddenly.  I.e. Karn&squot;s algorithm. (SIGCOMM &squot;87, p5.)&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;We have one less packet out there. &n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2293,10 +2306,6 @@ l_int|0
 )paren
 id|sk-&gt;packets_out
 op_decrement
-suffix:semicolon
-id|oskb
-op_assign
-id|sk-&gt;send_head
 suffix:semicolon
 r_if
 c_cond
@@ -2314,7 +2323,7 @@ c_func
 (paren
 id|sk
 comma
-id|oskb
+id|skb
 )paren
 suffix:semicolon
 id|flag
@@ -2325,49 +2334,28 @@ op_or
 l_int|4
 )paren
 suffix:semicolon
-multiline_comment|/* 2 is really more like &squot;don&squot;t adjust the rtt &n;&t;&t;&t;&t;&t;   In this case as we just set it up */
+multiline_comment|/* 2 is really more like &squot;don&squot;t adjust the rtt &n;&t;&t;&t;&t;   In this case as we just set it up */
+id|IS_SKB
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;We may need to remove this from the dev send list. &n;&t;&t; */
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
-id|oskb
-op_assign
-id|sk-&gt;send_head
-suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|oskb
-)paren
-suffix:semicolon
-id|sk-&gt;send_head
-op_assign
-id|oskb-&gt;link3
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;send_head
-op_eq
-l_int|NULL
-)paren
-(brace
-id|sk-&gt;send_tail
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;&t; *&t;We may need to remove this from the dev send list. &n;&t;&t; */
-r_if
-c_cond
-(paren
-id|oskb-&gt;next
+id|skb-&gt;next
 )paren
 id|skb_unlink
 c_func
 (paren
-id|oskb
+id|skb
 )paren
 suffix:semicolon
 id|sti
@@ -2378,7 +2366,7 @@ suffix:semicolon
 id|kfree_skb
 c_func
 (paren
-id|oskb
+id|skb
 comma
 id|FREE_WRITE
 )paren
@@ -2398,12 +2386,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
-r_break
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n;&t; * XXX someone ought to look at this too.. at the moment, if skb_peek()&n;&t; * returns non-NULL, we complete ignore the timer stuff in the else&n;&t; * clause.  We ought to organize the code so that else clause can&n;&t; * (should) be executed regardless, possibly moving the PROBE timer&n;&t; * reset over.  The skb_peek() thing should only move stuff to the&n;&t; * write queue, NOT also manage the timer functions.&n;&t; */
 multiline_comment|/*&n;&t; * Maybe we can take some stuff off of the write queue,&n;&t; * and put it onto the xmit queue.&n;&t; */

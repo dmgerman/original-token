@@ -290,6 +290,29 @@ l_int|12
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* Structure of a MSF cdrom address. */
+DECL|struct|atapi_msf
+r_struct
+id|atapi_msf
+(brace
+DECL|member|reserved
+id|byte
+id|reserved
+suffix:semicolon
+DECL|member|minute
+id|byte
+id|minute
+suffix:semicolon
+DECL|member|second
+id|byte
+id|second
+suffix:semicolon
+DECL|member|frame
+id|byte
+id|frame
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* Space to hold the disk TOC. */
 DECL|macro|MAX_TRACKS
 mdefine_line|#define MAX_TRACKS 99
@@ -346,26 +369,9 @@ DECL|member|lba
 r_int
 id|lba
 suffix:semicolon
-r_struct
-(brace
-DECL|member|reserved3
-id|byte
-id|reserved3
-suffix:semicolon
-DECL|member|m
-id|byte
-id|m
-suffix:semicolon
-DECL|member|s
-id|byte
-id|s
-suffix:semicolon
-DECL|member|f
-id|byte
-id|f
-suffix:semicolon
 DECL|member|msf
-)brace
+r_struct
+id|atapi_msf
 id|msf
 suffix:semicolon
 DECL|member|addr
@@ -451,26 +457,9 @@ id|acdsc_ind
 suffix:semicolon
 r_union
 (brace
-r_struct
-(brace
-DECL|member|reserved
-id|u_char
-id|reserved
-suffix:semicolon
-DECL|member|minute
-id|u_char
-id|minute
-suffix:semicolon
-DECL|member|second
-id|u_char
-id|second
-suffix:semicolon
-DECL|member|frame
-id|u_char
-id|frame
-suffix:semicolon
 DECL|member|msf
-)brace
+r_struct
+id|atapi_msf
 id|msf
 suffix:semicolon
 DECL|member|lba
@@ -483,26 +472,9 @@ id|acdsc_absaddr
 suffix:semicolon
 r_union
 (brace
-r_struct
-(brace
-DECL|member|reserved
-id|u_char
-id|reserved
-suffix:semicolon
-DECL|member|minute
-id|u_char
-id|minute
-suffix:semicolon
-DECL|member|second
-id|u_char
-id|second
-suffix:semicolon
-DECL|member|frame
-id|u_char
-id|frame
-suffix:semicolon
 DECL|member|msf
-)brace
+r_struct
+id|atapi_msf
 id|msf
 suffix:semicolon
 DECL|member|lba
@@ -520,14 +492,14 @@ DECL|struct|cdrom_info
 r_struct
 id|cdrom_info
 (brace
-multiline_comment|/* Buffer for table of contents.  NULL if we haven&squot;t allocated&n;     a TOC buffer for this device yet. */
+multiline_comment|/* Buffer for table of contents.  NULL if we haven&squot;t allocated&n;&t;   a TOC buffer for this device yet. */
 DECL|member|toc
 r_struct
 id|atapi_toc
 op_star
 id|toc
 suffix:semicolon
-multiline_comment|/* Sector buffer.  If a read request wants only the first part of a cdrom&n;     block, we cache the rest of the block here, in the expectation that that&n;     data is going to be wanted soon.  SECTOR_BUFFERED is the number of the&n;     first buffered sector, and NSECTORS_BUFFERED is the number of sectors&n;     in the buffer.  Before the buffer is allocated, we should have&n;     SECTOR_BUFFER == NULL and NSECTORS_BUFFERED == 0. */
+multiline_comment|/* Sector buffer.  If a read request wants only the first part&n;&t;   of a cdrom block, we cache the rest of the block here,&n;&t;   in the expectation that that data is going to be wanted soon.&n;&t;   SECTOR_BUFFERED is the number of the first buffered sector,&n;&t;   and NSECTORS_BUFFERED is the number of sectors in the buffer.&n;&t;   Before the buffer is allocated, we should have&n;&t;   SECTOR_BUFFER == NULL and NSECTORS_BUFFERED == 0. */
 DECL|member|sector_buffered
 r_int
 r_int
@@ -543,7 +515,7 @@ r_char
 op_star
 id|sector_buffer
 suffix:semicolon
-multiline_comment|/* The result of the last successful request sense command&n;     on this device. */
+multiline_comment|/* The result of the last successful request sense command&n;&t;   on this device. */
 DECL|member|sense_data
 r_struct
 id|atapi_request_sense

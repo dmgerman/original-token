@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-cd.c&n; *&n; * 1.00  Oct 31, 1994 -- Initial version.&n; * 1.01  Nov  2, 1994 -- Fixed problem with starting request in&n; *                       cdrom_check_status.&n; * 1.03  Nov 25, 1994 -- leaving unmask_intr[] as a user-setting (as for disks)&n; * (from mlord)       -- minor changes to cdrom_setup()&n; *                    -- renamed ide_dev_s to ide_drive_t, enable irq on command&n; * 2.00  Nov 27, 1994 -- Generalize packet command interface;&n; *                       add audio ioctls.&n; * 2.01  Dec  3, 1994 -- Rework packet command interface to handle devices&n; *                       which send an interrupt when ready for a command.&n; * 2.02  Dec 11, 1994 -- Cache the TOC in the driver.&n; *                       Don&squot;t use SCMD_PLAYAUDIO_TI; it&squot;s not included&n; *                       in the current version of ATAPI.&n; *                       Try to use LBA instead of track or MSF addressing&n; *                       when possible.&n; *                       Don&squot;t wait for READY_STAT.&n; * 2.03  Jan 10, 1995 -- Rewrite block read routines to handle block sizes&n; *                       other than 2k and to move multiple sectors in a&n; *                       single transaction.&n; * 2.04  Apr 21, 1995 -- Add work-around for Creative Labs CD220E drives.&n; *                       Thanks to Nick Saw &lt;cwsaw@pts7.pts.mot.com&gt; for&n; *                       help in figuring this out.  Ditto for Acer and&n; *                       Aztech drives, which seem to have the same problem.&n; * 2.04b May 30, 1995 -- Fix to match changes in ide.c version 3.16 -ml&n; * 2.05  Jun  8, 1995 -- Don&squot;t attempt to retry after an illegal request&n; *                        or data protect error.&n; *                       Use HWIF and DEV_HWIF macros as in ide.c.&n; *                       Always try to do a request_sense after&n; *                        a failed command.&n; *                       Include an option to give textual descriptions&n; *                        of ATAPI errors.&n; *                       Fix a bug in handling the sector cache which&n; *                        showed up if the drive returned data in 512 byte&n; *                        blocks (like Pioneer drives).  Thanks to&n; *                        Richard Hirst &lt;srh@gpt.co.uk&gt; for diagnosing this.&n; *                       Properly supply the page number field in the&n; *                        MODE_SELECT command.&n; *                       PLAYAUDIO12 is broken on the Aztech; work around it.&n; * 2.05x Aug 11, 1995 -- lots of data structure renaming/restructuring in ide.c&n; *                       (my apologies to Scott, but now ide-cd.c is independent)&n; * 3.00  Aug 22, 1995 -- Implement CDROMMULTISESSION ioctl.&n; *                       Implement CDROMREADAUDIO ioctl (UNTESTED).&n; *                       Use input_ide_data() and output_ide_data().&n; *                       Add door locking.&n; *                       Fix usage count leak in cdrom_open, which happened&n; *                        when a read-write mount was attempted.&n; *                       Try to load the disk on open.&n; *                       Implement CDROMEJECT_SW ioctl (off by default).&n; *                       Read total cdrom capacity during open.&n; *                       Rearrange logic in cdrom_decode_status.  Issue&n; *                        request sense commands for failed packet commands&n; *                        from here instead of from cdrom_queue_packet_command.&n; *                        Fix a race condition in retrieving error information.&n; *                       Suppress printing normal unit attention errors and&n; *                        some drive not ready errors.&n; *                       Implement CDROMVOLREAD ioctl.&n; *                       Implement CDROMREADMODE1/2 ioctls.&n; *                       Fix race condition in setting up interrupt handlers&n; *                        when the `serialize&squot; option is used.&n; * 3.01  Sep  2, 1995 -- Fix ordering of reenabling interrupts in&n; *                        cdrom_queue_request.&n; *                       Another try at using ide_[input,output]_data.&n; * 3.02  Sep 16, 1995 -- Stick total disk capacity in partition table as well.&n; *                       Make VERBOSE_IDE_CD_ERRORS dump failed command again.&n; *                       Dump out more information for ILLEGAL REQUEST errs.&n; *                       Fix handling of errors occuring before the&n; *                        packet command is transferred.&n; *                       Fix transfers with odd bytelengths.&n; * 3.03  Oct 27, 1995 -- Some Creative drives have an id of just `CD&squot;.&n; *                       `DCI-2S10&squot; drives are broken too.&n; * 3.04  Nov 20, 1995 -- So are Vertos drives.&n; * 3.05  Dec  1, 1995 -- Changes to go with overhaul of ide.c and ide-tape.c&n; * 3.06  Dec 16, 1995 -- Add support needed for partitions.&n; *                       More workarounds for Vertos bugs (based on patches&n; *                        from Holger Dietze &lt;dietze@aix520.informatik.uni-leipzig.de&gt;).&n; *                       Try to eliminate byteorder assumptions.&n; *                       Use atapi_cdrom_subchnl struct definition.&n; *                       Add STANDARD_ATAPI compilation option.&n; * 3.07  Jan 29, 1996 -- More twiddling for broken drives: Sony 55D,&n; *                        Vertos 300.&n; *                       Add NO_DOOR_LOCKING configuration option.&n; *                       Handle drive_cmd requests w/NULL args (for hdparm -t).&n; *                       Work around sporadic Sony55e audio play problem.&n; * 3.07a Feb 11, 1996 -- check drive-&gt;id for NULL before dereferencing, to fix&n; *                        problem with &quot;hde=cdrom&quot; with no drive present.  -ml&n; * 3.08  Mar  6, 1996 -- More Vertos workarounds.&n; *&n; * NOTE: Direct audio reads will only work on some types of drive.&n; * So far, i&squot;ve received reports of success for Sony and Toshiba drives.&n; *&n; * ATAPI cd-rom driver.  To be used with ide.c.&n; *&n; * Copyright (C) 1994, 1995, 1996  scott snyder  &lt;snyder@fnald0.fnal.gov&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; * (../../COPYING).&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-cd.c&n; *&n; * 1.00  Oct 31, 1994 -- Initial version.&n; * 1.01  Nov  2, 1994 -- Fixed problem with starting request in&n; *                       cdrom_check_status.&n; * 1.03  Nov 25, 1994 -- leaving unmask_intr[] as a user-setting (as for disks)&n; * (from mlord)       -- minor changes to cdrom_setup()&n; *                    -- renamed ide_dev_s to ide_drive_t, enable irq on command&n; * 2.00  Nov 27, 1994 -- Generalize packet command interface;&n; *                       add audio ioctls.&n; * 2.01  Dec  3, 1994 -- Rework packet command interface to handle devices&n; *                       which send an interrupt when ready for a command.&n; * 2.02  Dec 11, 1994 -- Cache the TOC in the driver.&n; *                       Don&squot;t use SCMD_PLAYAUDIO_TI; it&squot;s not included&n; *                       in the current version of ATAPI.&n; *                       Try to use LBA instead of track or MSF addressing&n; *                       when possible.&n; *                       Don&squot;t wait for READY_STAT.&n; * 2.03  Jan 10, 1995 -- Rewrite block read routines to handle block sizes&n; *                       other than 2k and to move multiple sectors in a&n; *                       single transaction.&n; * 2.04  Apr 21, 1995 -- Add work-around for Creative Labs CD220E drives.&n; *                       Thanks to Nick Saw &lt;cwsaw@pts7.pts.mot.com&gt; for&n; *                       help in figuring this out.  Ditto for Acer and&n; *                       Aztech drives, which seem to have the same problem.&n; * 2.04b May 30, 1995 -- Fix to match changes in ide.c version 3.16 -ml&n; * 2.05  Jun  8, 1995 -- Don&squot;t attempt to retry after an illegal request&n; *                        or data protect error.&n; *                       Use HWIF and DEV_HWIF macros as in ide.c.&n; *                       Always try to do a request_sense after&n; *                        a failed command.&n; *                       Include an option to give textual descriptions&n; *                        of ATAPI errors.&n; *                       Fix a bug in handling the sector cache which&n; *                        showed up if the drive returned data in 512 byte&n; *                        blocks (like Pioneer drives).  Thanks to&n; *                        Richard Hirst &lt;srh@gpt.co.uk&gt; for diagnosing this.&n; *                       Properly supply the page number field in the&n; *                        MODE_SELECT command.&n; *                       PLAYAUDIO12 is broken on the Aztech; work around it.&n; * 2.05x Aug 11, 1995 -- lots of data structure renaming/restructuring in ide.c&n; *                       (my apologies to Scott, but now ide-cd.c is independent)&n; * 3.00  Aug 22, 1995 -- Implement CDROMMULTISESSION ioctl.&n; *                       Implement CDROMREADAUDIO ioctl (UNTESTED).&n; *                       Use input_ide_data() and output_ide_data().&n; *                       Add door locking.&n; *                       Fix usage count leak in cdrom_open, which happened&n; *                        when a read-write mount was attempted.&n; *                       Try to load the disk on open.&n; *                       Implement CDROMEJECT_SW ioctl (off by default).&n; *                       Read total cdrom capacity during open.&n; *                       Rearrange logic in cdrom_decode_status.  Issue&n; *                        request sense commands for failed packet commands&n; *                        from here instead of from cdrom_queue_packet_command.&n; *                        Fix a race condition in retrieving error information.&n; *                       Suppress printing normal unit attention errors and&n; *                        some drive not ready errors.&n; *                       Implement CDROMVOLREAD ioctl.&n; *                       Implement CDROMREADMODE1/2 ioctls.&n; *                       Fix race condition in setting up interrupt handlers&n; *                        when the `serialize&squot; option is used.&n; * 3.01  Sep  2, 1995 -- Fix ordering of reenabling interrupts in&n; *                        cdrom_queue_request.&n; *                       Another try at using ide_[input,output]_data.&n; * 3.02  Sep 16, 1995 -- Stick total disk capacity in partition table as well.&n; *                       Make VERBOSE_IDE_CD_ERRORS dump failed command again.&n; *                       Dump out more information for ILLEGAL REQUEST errs.&n; *                       Fix handling of errors occuring before the&n; *                        packet command is transferred.&n; *                       Fix transfers with odd bytelengths.&n; * 3.03  Oct 27, 1995 -- Some Creative drives have an id of just `CD&squot;.&n; *                       `DCI-2S10&squot; drives are broken too.&n; * 3.04  Nov 20, 1995 -- So are Vertos drives.&n; * 3.05  Dec  1, 1995 -- Changes to go with overhaul of ide.c and ide-tape.c&n; * 3.06  Dec 16, 1995 -- Add support needed for partitions.&n; *                       More workarounds for Vertos bugs (based on patches&n; *                        from Holger Dietze &lt;dietze@aix520.informatik.uni-leipzig.de&gt;).&n; *                       Try to eliminate byteorder assumptions.&n; *                       Use atapi_cdrom_subchnl struct definition.&n; *                       Add STANDARD_ATAPI compilation option.&n; * 3.07  Jan 29, 1996 -- More twiddling for broken drives: Sony 55D,&n; *                        Vertos 300.&n; *                       Add NO_DOOR_LOCKING configuration option.&n; *                       Handle drive_cmd requests w/NULL args (for hdparm -t).&n; *                       Work around sporadic Sony55e audio play problem.&n; * 3.07a Feb 11, 1996 -- check drive-&gt;id for NULL before dereferencing, to fix&n; *                        problem with &quot;hde=cdrom&quot; with no drive present.  -ml&n; * 3.08  Mar  6, 1996 -- More Vertos workarounds.&n; * 3.09  Apr  5, 1996 -- Add CDROMCLOSETRAY ioctl.&n; *                       Switch to using MSF addressing for audio commands.&n; *                       Reformat to match kernel tabbing style.&n; *                       Add CDROM_GET_UPC ioctl.&n; *&n; * NOTE: Direct audio reads will only work on some types of drive.&n; * So far, i&squot;ve received reports of success for Sony and Toshiba drives.&n; *&n; * ATAPI cd-rom driver.  To be used with ide.c.&n; *&n; * Copyright (C) 1994, 1995, 1996  scott snyder  &lt;snyder@fnald0.fnal.gov&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; * (../../COPYING).&n; */
 multiline_comment|/***************************************************************************/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -102,7 +102,7 @@ id|drq_interrupt
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Device sends an interrupt when ready&n;                                 for a packet command. */
+multiline_comment|/* Device sends an interrupt when ready&n;&t;&t;&t;&t;      for a packet command. */
 DECL|member|no_doorlock
 id|__u8
 id|no_doorlock
@@ -111,27 +111,6 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* Drive cannot lock the door. */
 macro_line|#if ! STANDARD_ATAPI
-DECL|member|no_playaudio12
-id|__u8
-id|no_playaudio12
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* The PLAYAUDIO12 command is not supported. */
-DECL|member|no_lba_toc
-id|__u8
-id|no_lba_toc
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* Drive cannot return TOC info in LBA format. */
-DECL|member|playmsf_uses_bcd
-id|__u8
-id|playmsf_uses_bcd
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* Drive uses BCD in PLAYAUDIO_MSF. */
 DECL|member|old_readcd
 id|__u8
 id|old_readcd
@@ -139,13 +118,34 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive uses old READ CD opcode. */
-DECL|member|vertos_lossage
+DECL|member|playmsf_as_bcd
 id|__u8
-id|vertos_lossage
+id|playmsf_as_bcd
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Drive is a Vertos 300,&n;&t;&t;&t;&t; and likes to speak BCD. */
+multiline_comment|/* PLAYMSF command takes BCD args. */
+DECL|member|tocaddr_as_bcd
+id|__u8
+id|tocaddr_as_bcd
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* TOC addresses are in BCD. */
+DECL|member|toctracks_as_bcd
+id|__u8
+id|toctracks_as_bcd
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* TOC track numbers are in BCD. */
+DECL|member|subchan_as_bcd
+id|__u8
+id|subchan_as_bcd
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Subchannel info is in BCD. */
 macro_line|#endif  /* not STANDARD_ATAPI */
 DECL|member|reserved
 id|__u8
@@ -847,7 +847,7 @@ op_star
 id|failed_command
 )paren
 (brace
-multiline_comment|/* Don&squot;t print not ready or unit attention errors for READ_SUBCHANNEL.&n;     Workman (and probably other programs) uses this command to poll&n;     the drive, and we don&squot;t want to fill the syslog with useless errors. */
+multiline_comment|/* Don&squot;t print not ready or unit attention errors for READ_SUBCHANNEL.&n;&t;   Workman (and probably other programs) uses this command to poll&n;&t;   the drive, and we don&squot;t want to fill the syslog&n;&t;   with useless errors. */
 r_if
 c_cond
 (paren
@@ -1248,8 +1248,8 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-macro_line|#else
-multiline_comment|/* Suppress printing unit attention and `in progress of becoming ready&squot;&n;     errors when we&squot;re not being verbose. */
+macro_line|#else /* not VERBOSE_IDE_CD_ERRORS */
+multiline_comment|/* Suppress printing unit attention and `in progress of becoming ready&squot;&n;&t;   errors when we&squot;re not being verbose. */
 r_if
 c_cond
 (paren
@@ -1290,7 +1290,7 @@ comma
 id|reqbuf-&gt;ascq
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* not VERBOSE_IDE_CD_ERRORS */
 )brace
 multiline_comment|/* Fix up a possibly partially-processed request so that we can&n;   start it over entirely, or even put it back on the request queue. */
 DECL|function|restore_request
@@ -1381,7 +1381,7 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
-multiline_comment|/* If the request didn&squot;t explicitly specify where to put the sense data,&n;     use the statically allocated structure. */
+multiline_comment|/* If the request didn&squot;t explicitly specify where&n;&t;   to put the sense data, use the statically allocated structure. */
 r_if
 c_cond
 (paren
@@ -1419,7 +1419,7 @@ id|pc
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* The request_sense structure has an odd number of (16-bit) words,&n;     which won&squot;t work well with 32-bit transfers.  However, we don&squot;t care&n;     about the last two bytes, so just truncate the structure down&n;     to an even length. */
+multiline_comment|/* The request_sense structure has an odd number of (16-bit) words,&n;&t;   which won&squot;t work well with 32-bit transfers.  However, we don&squot;t care&n;&t;   about the last two bytes, so just truncate the structure down&n;&t;   to an even length. */
 id|len
 op_assign
 r_sizeof
@@ -1541,7 +1541,7 @@ id|drive
 op_member_access_from_pointer
 id|rq
 suffix:semicolon
-multiline_comment|/* The code in blk.h can screw us up on error recovery if the block&n;     size is larger than 1k.  Fix that up here. */
+multiline_comment|/* The code in blk.h can screw us up on error recovery if the block&n;&t;   size is larger than 1k.  Fix that up here. */
 r_if
 c_cond
 (paren
@@ -1774,7 +1774,7 @@ op_eq
 id|REQUEST_SENSE_COMMAND
 )paren
 (brace
-multiline_comment|/* We got an error trying to get sense info from the drive&n;&t;     (probably while trying to recover from a former error).&n;&t;     Just give up. */
+multiline_comment|/* We got an error trying to get sense info&n;&t;&t;&t;   from the drive (probably while trying&n;&t;&t;&t;   to recover from a former error).  Just give up. */
 r_struct
 id|packet_command
 op_star
@@ -1854,7 +1854,7 @@ id|cdrom_saw_media_change
 id|drive
 )paren
 suffix:semicolon
-multiline_comment|/* Print an error message to the syslog.&n;&t;&t; Exception: don&squot;t print anything if this is a read subchannel&n;&t;&t; command.  This is because workman constantly polls the drive&n;&t;&t; with this command, and we don&squot;t want to uselessly fill up&n;&t;&t; the syslog. */
+multiline_comment|/* Print an error message to the syslog.&n;&t;&t;&t;&t;   Exception: don&squot;t print anything if this&n;&t;&t;&t;&t;   is a read subchannel command.  This is&n;&t;&t;&t;&t;   because workman constantly polls the drive&n;&t;&t;&t;&t;   with this command, and we don&squot;t want&n;&t;&t;&t;&t;   to uselessly fill up the syslog. */
 r_if
 c_cond
 (paren
@@ -1873,7 +1873,6 @@ id|drive-&gt;name
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Check for media change. */
 r_else
 r_if
 c_cond
@@ -1883,6 +1882,7 @@ op_eq
 id|UNIT_ATTENTION
 )paren
 (brace
+multiline_comment|/* Check for media change. */
 id|cdrom_saw_media_change
 (paren
 id|drive
@@ -1896,9 +1896,9 @@ id|drive-&gt;name
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Otherwise, print an error. */
 r_else
 (brace
+multiline_comment|/* Otherwise, print an error. */
 id|ide_dump_status
 (paren
 id|drive
@@ -1909,7 +1909,7 @@ id|stat
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Set the error flag and complete the request.&n;&t;     Then, if we have a CHECK CONDITION status, queue a request&n;&t;     sense command.  We must be careful, though: we don&squot;t want&n;&t;     the thread in cdrom_queue_packet_command to wake up until&n;&t;     the request sense has completed.  We do this by transferring&n;&t;     the semaphore from the packet command request to the&n;&t;     request sense request. */
+multiline_comment|/* Set the error flag and complete the request.&n;&t;&t;&t;   Then, if we have a CHECK CONDITION status,&n;&t;&t;&t;   queue a request sense command.  We must be careful,&n;&t;&t;&t;   though: we don&squot;t want the thread in&n;&t;&t;&t;   cdrom_queue_packet_command to wake up until&n;&t;&t;&t;   the request sense has completed.  We do this&n;&t;&t;&t;   by transferring the semaphore from the packet&n;&t;&t;&t;   command request to the request sense request. */
 r_if
 c_cond
 (paren
@@ -1968,7 +1968,6 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Handle errors from READ requests. */
-multiline_comment|/* Check for tray open. */
 r_if
 c_cond
 (paren
@@ -1977,6 +1976,7 @@ op_eq
 id|NOT_READY
 )paren
 (brace
+multiline_comment|/* Tray open. */
 id|cdrom_saw_media_change
 (paren
 id|drive
@@ -1998,7 +1998,6 @@ id|drive
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Check for media change. */
 r_else
 r_if
 c_cond
@@ -2008,12 +2007,13 @@ op_eq
 id|UNIT_ATTENTION
 )paren
 (brace
+multiline_comment|/* Media change. */
 id|cdrom_saw_media_change
 (paren
 id|drive
 )paren
 suffix:semicolon
-multiline_comment|/* Arrange to retry the request.&n;&t;         But be sure to give up if we&squot;ve retried too many times. */
+multiline_comment|/* Arrange to retry the request.&n;&t;&t;&t;&t;   But be sure to give up if we&squot;ve retried&n;&t;&t;&t;&t;   too many times. */
 r_if
 c_cond
 (paren
@@ -2022,7 +2022,6 @@ id|rq-&gt;errors
 OG
 id|ERROR_MAX
 )paren
-(brace
 id|cdrom_end_request
 (paren
 l_int|0
@@ -2031,8 +2030,6 @@ id|drive
 )paren
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/* No point in retrying after an illegal request or&n;&t;     data protect error.*/
 r_else
 r_if
 c_cond
@@ -2046,6 +2043,7 @@ op_eq
 id|DATA_PROTECT
 )paren
 (brace
+multiline_comment|/* No point in retrying after an illegal&n;&t;&t;&t;&t;   request or data protect error.*/
 id|ide_dump_status
 (paren
 id|drive
@@ -2063,7 +2061,6 @@ id|drive
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* If there were other errors, go to the default handler. */
 r_else
 r_if
 c_cond
@@ -2078,6 +2075,7 @@ op_ne
 l_int|0
 )paren
 (brace
+multiline_comment|/* Go to the default handler&n;&t;&t;&t;&t;   for other errors. */
 id|ide_error
 (paren
 id|drive
@@ -2091,7 +2089,6 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* Else, abort if we&squot;ve racked up too many retries. */
 r_else
 r_if
 c_cond
@@ -2104,6 +2101,7 @@ id|ERROR_MAX
 )paren
 )paren
 (brace
+multiline_comment|/* We&squot;ve racked up too many retries.  Abort. */
 id|cdrom_end_request
 (paren
 l_int|0
@@ -2112,7 +2110,7 @@ id|drive
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* If we got a CHECK_CONDITION status, queue a request sense&n;&t;     command. */
+multiline_comment|/* If we got a CHECK_CONDITION status,&n;&t;&t;&t;   queue a request sense command. */
 r_if
 c_cond
 (paren
@@ -2310,7 +2308,7 @@ op_member_access_from_pointer
 id|drq_interrupt
 )paren
 (brace
-multiline_comment|/* Here we should have been called after receiving an interrupt&n;         from the device.  DRQ should how be set. */
+multiline_comment|/* Here we should have been called after receiving an interrupt&n;&t;&t;   from the device.  DRQ should how be set. */
 r_int
 id|stat_dum
 suffix:semicolon
@@ -2426,7 +2424,7 @@ r_char
 op_star
 id|dest
 suffix:semicolon
-multiline_comment|/* If we don&squot;t yet have a sector buffer, try to allocate one.&n;     If we can&squot;t get one atomically, it&squot;s not fatal -- we&squot;ll just throw&n;     the data away rather than caching it. */
+multiline_comment|/* If we don&squot;t yet have a sector buffer, try to allocate one.&n;&t;   If we can&squot;t get one atomically, it&squot;s not fatal -- we&squot;ll just throw&n;&t;   the data away rather than caching it. */
 r_if
 c_cond
 (paren
@@ -2448,7 +2446,7 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
-multiline_comment|/* If we couldn&squot;t get a buffer, don&squot;t try to buffer anything... */
+multiline_comment|/* If we couldn&squot;t get a buffer,&n;&t;&t;   don&squot;t try to buffer anything... */
 r_if
 c_cond
 (paren
@@ -2594,7 +2592,7 @@ comma
 id|drive-&gt;name
 )paren
 suffix:semicolon
-multiline_comment|/* Throw some data at the drive so it doesn&squot;t hang&n;         and quit this request. */
+multiline_comment|/* Throw some data at the drive so it doesn&squot;t hang&n;&t;&t;   and quit this request. */
 r_while
 c_loop
 (paren
@@ -2742,7 +2740,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* If we&squot;re not done filling the current buffer, complain.&n;         Otherwise, complete the command normally. */
+multiline_comment|/* If we&squot;re not done filling the current buffer, complain.&n;&t;&t;   Otherwise, complete the command normally. */
 r_if
 c_cond
 (paren
@@ -2779,7 +2777,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Check that the drive is expecting to do the same thing that we are. */
+multiline_comment|/* Check that the drive is expecting to do the same thing we are. */
 r_if
 c_cond
 (paren
@@ -2794,7 +2792,7 @@ id|ireason
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* Assume that the drive will always provide data in multiples of at least&n;     SECTOR_SIZE, as it gets hairy to keep track of the transfers otherwise. */
+multiline_comment|/* Assume that the drive will always provide data in multiples&n;&t;   of at least SECTOR_SIZE, as it gets hairy to keep track&n;&t;   of the transfers otherwise. */
 r_if
 c_cond
 (paren
@@ -2838,7 +2836,7 @@ id|len
 op_div
 id|SECTOR_SIZE
 suffix:semicolon
-multiline_comment|/* First, figure out if we need to bit-bucket any of the leading sectors. */
+multiline_comment|/* First, figure out if we need to bit-bucket&n;&t;   any of the leading sectors. */
 id|nskip
 op_assign
 id|MIN
@@ -2908,7 +2906,7 @@ l_int|0
 r_int
 id|this_transfer
 suffix:semicolon
-multiline_comment|/* If we&squot;ve filled the present buffer but there&squot;s another chained&n;         buffer after it, move on. */
+multiline_comment|/* If we&squot;ve filled the present buffer but there&squot;s another&n;&t;&t;   chained buffer after it, move on. */
 r_if
 c_cond
 (paren
@@ -2927,7 +2925,7 @@ comma
 id|drive
 )paren
 suffix:semicolon
-multiline_comment|/* If the buffers are full, cache the rest of the data in our&n;         internal buffer. */
+multiline_comment|/* If the buffers are full, cache the rest of the data in our&n;&t;&t;   internal buffer. */
 r_if
 c_cond
 (paren
@@ -2952,7 +2950,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Transfer data to the buffers.&n;             Figure out how many sectors we can transfer&n;             to the current buffer. */
+multiline_comment|/* Transfer data to the buffers.&n;&t;&t;&t;   Figure out how many sectors we can transfer&n;&t;&t;&t;   to the current buffer. */
 id|this_transfer
 op_assign
 id|MIN
@@ -2962,7 +2960,7 @@ comma
 id|rq-&gt;current_nr_sectors
 )paren
 suffix:semicolon
-multiline_comment|/* Read this_transfer sectors into the current buffer. */
+multiline_comment|/* Read this_transfer sectors&n;&t;&t;&t;   into the current buffer. */
 r_while
 c_loop
 (paren
@@ -3002,7 +3000,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/* Done moving data!&n;     Wait for another interrupt. */
+multiline_comment|/* Done moving data!&n;&t;   Wait for another interrupt. */
 id|ide_set_handler
 (paren
 id|drive
@@ -3057,7 +3055,7 @@ l_int|NULL
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Loop while this request needs data and the next block is present&n;     in our cache. */
+multiline_comment|/* Loop while this request needs data and the next block is present&n;&t;   in our cache. */
 r_while
 c_loop
 (paren
@@ -3121,7 +3119,7 @@ op_increment
 id|rq-&gt;sector
 suffix:semicolon
 )brace
-multiline_comment|/* If we&squot;ve satisfied the current request, terminate it successfully. */
+multiline_comment|/* If we&squot;ve satisfied the current request,&n;&t;   terminate it successfully. */
 r_if
 c_cond
 (paren
@@ -3157,7 +3155,7 @@ comma
 id|drive
 )paren
 suffix:semicolon
-multiline_comment|/* If this condition does not hold, then the kluge i use to&n;     represent the number of sectors to skip at the start of a transfer&n;     will fail.  I think that this will never happen, but let&squot;s be&n;     paranoid and check. */
+multiline_comment|/* If this condition does not hold, then the kluge i use to&n;&t;   represent the number of sectors to skip at the start of a transfer&n;&t;   will fail.  I think that this will never happen, but let&squot;s be&n;&t;   paranoid and check. */
 r_if
 c_cond
 (paren
@@ -3252,7 +3250,7 @@ id|sector
 op_assign
 id|rq-&gt;sector
 suffix:semicolon
-multiline_comment|/* If the requested sector doesn&squot;t start on a cdrom block boundary,&n;     we must adjust the start of the transfer so that it does,&n;     and remember to skip the first few sectors.  If the CURRENT_NR_SECTORS&n;     field is larger than the size of the buffer, it will mean that&n;     we&squot;re to skip a number of sectors equal to the amount by which&n;     CURRENT_NR_SECTORS is larger than the buffer size. */
+multiline_comment|/* If the requested sector doesn&squot;t start on a cdrom block boundary,&n;&t;   we must adjust the start of the transfer so that it does,&n;&t;   and remember to skip the first few sectors.&n;&t;   If the CURRENT_NR_SECTORS field is larger than the size&n;&t;   of the buffer, it will mean that we&squot;re to skip a number&n;&t;   of sectors equal to the amount by which CURRENT_NR_SECTORS&n;&t;   is larger than the buffer size. */
 id|nskip
 op_assign
 (paren
@@ -3314,7 +3312,7 @@ op_add_assign
 id|nskip
 suffix:semicolon
 )brace
-multiline_comment|/* Convert from sectors to cdrom blocks, rounding up the transfer&n;     length if needed. */
+multiline_comment|/* Convert from sectors to cdrom blocks, rounding up the transfer&n;&t;   length if needed. */
 id|nframes
 op_assign
 (paren
@@ -3482,7 +3480,7 @@ id|MINOR
 id|rq-&gt;rq_dev
 )paren
 suffix:semicolon
-multiline_comment|/* If the request is relative to a partition, fix it up to refer to the&n;     absolute address.  */
+multiline_comment|/* If the request is relative to a partition, fix it up to refer to the&n;&t;   absolute address.  */
 r_if
 c_cond
 (paren
@@ -3518,7 +3516,7 @@ id|minor
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* We may be retrying this request after an error.&n;     Fix up any weirdness which might be present in the request packet. */
+multiline_comment|/* We may be retrying this request after an error.  Fix up&n;&t;   any weirdness which might be present in the request packet. */
 id|restore_request
 (paren
 id|rq
@@ -3654,7 +3652,7 @@ id|IN_BYTE
 id|IDE_HCYL_REG
 )paren
 suffix:semicolon
-multiline_comment|/* If DRQ is clear, the command has completed.&n;     Complain if we still have data left to transfer. */
+multiline_comment|/* If DRQ is clear, the command has completed.&n;&t;   Complain if we still have data left to transfer. */
 r_if
 c_cond
 (paren
@@ -3667,7 +3665,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* Some of the trailing request sense fields are optional, and&n;&t; some drives don&squot;t send them.  Sigh. */
+multiline_comment|/* Some of the trailing request sense fields are optional, and&n;&t;&t;   some drives don&squot;t send them.  Sigh. */
 r_if
 c_cond
 (paren
@@ -3798,7 +3796,8 @@ l_int|0
 (brace
 id|printk
 (paren
-l_string|&quot;%s: cdrom_pc_intr: Drive wants to transfer data the wrong way!&bslash;n&quot;
+l_string|&quot;%s: cdrom_pc_intr: Drive wants &quot;
+l_string|&quot;to transfer data the wrong way!&bslash;n&quot;
 comma
 id|drive-&gt;name
 )paren
@@ -3822,7 +3821,7 @@ comma
 id|thislen
 )paren
 suffix:semicolon
-multiline_comment|/* If we haven&squot;t moved enough data to satisfy the drive,&n;         add some padding. */
+multiline_comment|/* If we haven&squot;t moved enough data to satisfy the drive,&n;&t;&t;   add some padding. */
 r_while
 c_loop
 (paren
@@ -3892,7 +3891,8 @@ l_int|0
 (brace
 id|printk
 (paren
-l_string|&quot;%s: cdrom_pc_intr: Drive wants to transfer data the wrong way!&bslash;n&quot;
+l_string|&quot;%s: cdrom_pc_intr: Drive wants to &quot;
+l_string|&quot;transfer data the wrong way!&bslash;n&quot;
 comma
 id|drive-&gt;name
 )paren
@@ -3916,7 +3916,7 @@ comma
 id|thislen
 )paren
 suffix:semicolon
-multiline_comment|/* If we haven&squot;t moved enough data to satisfy the drive,&n;         add some padding. */
+multiline_comment|/* If we haven&squot;t moved enough data to satisfy the drive,&n;&t;&t;   add some padding. */
 r_while
 c_loop
 (paren
@@ -3965,7 +3965,8 @@ r_else
 (brace
 id|printk
 (paren
-l_string|&quot;%s: cdrom_pc_intr: The drive appears confused (ireason = 0x%2x)&bslash;n&quot;
+l_string|&quot;%s: cdrom_pc_intr: The drive &quot;
+l_string|&quot;appears confused (ireason = 0x%2x)&bslash;n&quot;
 comma
 id|drive-&gt;name
 comma
@@ -4163,7 +4164,7 @@ r_struct
 id|request
 id|req
 suffix:semicolon
-multiline_comment|/* If our caller has not provided a place to stick any sense data,&n;     use our own area. */
+multiline_comment|/* If our caller has not provided a place to stick any sense data,&n;&t;   use our own area. */
 r_if
 c_cond
 (paren
@@ -4222,7 +4223,7 @@ op_ne
 l_int|0
 )paren
 (brace
-multiline_comment|/* The request failed.  Retry if it was due to a unit attention status&n;&t;   (usually means media was changed). */
+multiline_comment|/* The request failed.  Retry if it was due to a unit&n;&t;&t;&t;   attention status&n;&t;&t;&t;   (usually means media was changed). */
 r_struct
 id|atapi_request_sense
 op_star
@@ -4238,7 +4239,6 @@ op_eq
 id|UNIT_ATTENTION
 )paren
 suffix:semicolon
-multiline_comment|/* Also retry if the drive is in the process of loading a disk.&n;&t;   This time, however, wait a little between retries to give&n;&t;   the drive time. */
 r_else
 r_if
 c_cond
@@ -4252,14 +4252,15 @@ op_eq
 l_int|4
 )paren
 (brace
+multiline_comment|/* The drive is in the process of loading&n;&t;&t;&t;&t;   a disk.  Retry, but wait a little to give&n;&t;&t;&t;&t;   the drive time to complete the load. */
 id|cdrom_sleep
 (paren
 id|HZ
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Otherwise, don&squot;t retry. */
 r_else
+multiline_comment|/* Otherwise, don&squot;t retry. */
 id|retries
 op_assign
 l_int|0
@@ -4296,7 +4297,7 @@ id|EIO
 suffix:semicolon
 r_else
 (brace
-multiline_comment|/* The command succeeded.  If it was anything other than a request sense,&n;&t; eject, or door lock command, and we think that the door is presently&n;&t; unlocked, lock it again.  (The door was probably unlocked via&n;&t; an explicit CDROMEJECT ioctl.) */
+multiline_comment|/* The command succeeded.  If it was anything other than&n;&t;&t;   a request sense, eject, or door lock command,&n;&t;&t;   and we think that the door is presently, lock it again.&n;&t;&t;   (The door was probably unlocked via an explicit&n;&t;&t;   CDROMEJECT ioctl.) */
 r_if
 c_cond
 (paren
@@ -4466,6 +4467,7 @@ suffix:semicolon
 multiline_comment|/****************************************************************************&n; * Ioctl handling.&n; *&n; * Routines which queue packet commands take as a final argument a pointer&n; * to an atapi_request_sense struct.  If execution of the command results&n; * in an error with a CHECK CONDITION status, this structure will be filled&n; * with the results of the subsequent request sense command.  The pointer&n; * can also be NULL, in which case no sense information is returned.&n; */
 macro_line|#if ! STANDARD_ATAPI
 r_static
+r_inline
 DECL|function|bin2bcd
 r_int
 id|bin2bcd
@@ -4493,6 +4495,7 @@ l_int|4
 suffix:semicolon
 )brace
 r_static
+r_inline
 DECL|function|bcd2bin
 r_int
 id|bcd2bin
@@ -4514,6 +4517,39 @@ op_plus
 id|x
 op_amp
 l_int|0x0f
+)paren
+suffix:semicolon
+)brace
+r_static
+DECL|function|msf_from_bcd
+r_void
+id|msf_from_bcd
+(paren
+r_struct
+id|atapi_msf
+op_star
+id|msf
+)paren
+(brace
+id|msf-&gt;minute
+op_assign
+id|bcd2bin
+(paren
+id|msf-&gt;minute
+)paren
+suffix:semicolon
+id|msf-&gt;second
+op_assign
+id|bcd2bin
+(paren
+id|msf-&gt;second
+)paren
+suffix:semicolon
+id|msf-&gt;frame
+op_assign
+id|bcd2bin
+(paren
+id|msf-&gt;frame
 )paren
 suffix:semicolon
 )brace
@@ -4795,7 +4831,7 @@ id|lockflag
 suffix:semicolon
 r_else
 (brace
-multiline_comment|/* If we got an illegal field error, the drive&n;&t; probably cannot lock the door. */
+multiline_comment|/* If we got an illegal field error, the drive&n;&t;&t;   probably cannot lock the door. */
 r_if
 c_cond
 (paren
@@ -5141,7 +5177,6 @@ id|stat
 op_eq
 l_int|0
 )paren
-(brace
 op_star
 id|capacity
 op_assign
@@ -5150,7 +5185,6 @@ id|ntohl
 id|capbuf.lba
 )paren
 suffix:semicolon
-)brace
 r_return
 id|stat
 suffix:semicolon
@@ -5301,9 +5335,6 @@ id|reqbuf
 )paren
 (brace
 r_int
-id|msf_flag
-suffix:semicolon
-r_int
 id|stat
 comma
 id|ntracks
@@ -5382,7 +5413,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-multiline_comment|/* Check to see if the existing data is still valid.&n;     If it is, just return. */
+multiline_comment|/* Check to see if the existing data is still valid.&n;&t;   If it is, just return. */
 r_if
 c_cond
 (paren
@@ -5416,25 +5447,6 @@ id|toc_valid
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#if STANDARD_ATAPI
-id|msf_flag
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#else  /* not STANDARD_ATAPI */
-multiline_comment|/* Some drives can&squot;t return TOC data in LBA format. */
-id|msf_flag
-op_assign
-(paren
-id|CDROM_CONFIG_FLAGS
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|no_lba_toc
-)paren
-suffix:semicolon
-macro_line|#endif  /* not STANDARD_ATAPI */
 multiline_comment|/* First read just the header, so we know how long the TOC is. */
 id|stat
 op_assign
@@ -5444,7 +5456,7 @@ id|drive
 comma
 l_int|0
 comma
-id|msf_flag
+l_int|1
 comma
 l_int|0
 comma
@@ -5487,7 +5499,7 @@ id|CDROM_CONFIG_FLAGS
 id|drive
 )paren
 op_member_access_from_pointer
-id|vertos_lossage
+id|toctracks_as_bcd
 )paren
 (brace
 id|toc-&gt;hdr.first_track
@@ -5504,7 +5516,6 @@ id|bcd2bin
 id|toc-&gt;hdr.last_track
 )paren
 suffix:semicolon
-multiline_comment|/* hopefully the length is not BCD, too ;-| */
 )brace
 macro_line|#endif  /* not STANDARD_ATAPI */
 id|ntracks
@@ -5546,7 +5557,7 @@ id|drive
 comma
 l_int|0
 comma
-id|msf_flag
+l_int|1
 comma
 l_int|0
 comma
@@ -5602,7 +5613,7 @@ id|CDROM_CONFIG_FLAGS
 id|drive
 )paren
 op_member_access_from_pointer
-id|vertos_lossage
+id|toctracks_as_bcd
 )paren
 (brace
 id|toc-&gt;hdr.first_track
@@ -5619,7 +5630,6 @@ id|bcd2bin
 id|toc-&gt;hdr.last_track
 )paren
 suffix:semicolon
-multiline_comment|/* hopefully the length is not BCD, too ;-| */
 )brace
 macro_line|#endif  /* not STANDARD_ATAPI */
 r_for
@@ -5641,7 +5651,12 @@ macro_line|#if ! STANDARD_ATAPI
 r_if
 c_cond
 (paren
-id|msf_flag
+id|CDROM_CONFIG_FLAGS
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|tocaddr_as_bcd
 )paren
 (brace
 r_if
@@ -5652,9 +5667,8 @@ id|CDROM_CONFIG_FLAGS
 id|drive
 )paren
 op_member_access_from_pointer
-id|vertos_lossage
+id|toctracks_as_bcd
 )paren
-(brace
 id|toc-&gt;ent
 (braket
 id|i
@@ -5672,58 +5686,19 @@ dot
 id|track
 )paren
 suffix:semicolon
-id|toc-&gt;ent
-(braket
-id|i
-)braket
-dot
-id|addr.msf.m
-op_assign
-id|bcd2bin
+id|msf_from_bcd
 (paren
+op_amp
 id|toc-&gt;ent
 (braket
 id|i
 )braket
 dot
-id|addr.msf.m
-)paren
-suffix:semicolon
-id|toc-&gt;ent
-(braket
-id|i
-)braket
-dot
-id|addr.msf.s
-op_assign
-id|bcd2bin
-(paren
-id|toc-&gt;ent
-(braket
-id|i
-)braket
-dot
-id|addr.msf.s
-)paren
-suffix:semicolon
-id|toc-&gt;ent
-(braket
-id|i
-)braket
-dot
-id|addr.msf.f
-op_assign
-id|bcd2bin
-(paren
-id|toc-&gt;ent
-(braket
-id|i
-)braket
-dot
-id|addr.msf.f
+id|addr.msf
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif  /* not STANDARD_ATAPI */
 id|toc-&gt;ent
 (braket
 id|i
@@ -5738,41 +5713,21 @@ id|toc-&gt;ent
 id|i
 )braket
 dot
-id|addr.msf.m
+id|addr.msf.minute
 comma
 id|toc-&gt;ent
 (braket
 id|i
 )braket
 dot
-id|addr.msf.s
+id|addr.msf.second
 comma
 id|toc-&gt;ent
 (braket
 id|i
 )braket
 dot
-id|addr.msf.f
-)paren
-suffix:semicolon
-)brace
-r_else
-macro_line|#endif  /* not STANDARD_ATAPI */
-id|toc-&gt;ent
-(braket
-id|i
-)braket
-dot
-id|addr.lba
-op_assign
-id|ntohl
-(paren
-id|toc-&gt;ent
-(braket
-id|i
-)braket
-dot
-id|addr.lba
+id|addr.msf.frame
 )paren
 suffix:semicolon
 )brace
@@ -5785,7 +5740,7 @@ id|drive
 comma
 l_int|0
 comma
-id|msf_flag
+l_int|1
 comma
 l_int|1
 comma
@@ -5816,26 +5771,29 @@ macro_line|#if ! STANDARD_ATAPI
 r_if
 c_cond
 (paren
-id|msf_flag
+id|CDROM_CONFIG_FLAGS
+(paren
+id|drive
 )paren
+op_member_access_from_pointer
+id|tocaddr_as_bcd
+)paren
+id|msf_from_bcd
+(paren
+op_amp
+id|ms_tmp.ent.addr.msf
+)paren
+suffix:semicolon
+macro_line|#endif  /* not STANDARD_ATAPI */
 id|toc-&gt;last_session_lba
 op_assign
 id|msf_to_lba
 (paren
-id|ms_tmp.ent.addr.msf.m
+id|ms_tmp.ent.addr.msf.minute
 comma
-id|ms_tmp.ent.addr.msf.s
+id|ms_tmp.ent.addr.msf.second
 comma
-id|ms_tmp.ent.addr.msf.f
-)paren
-suffix:semicolon
-r_else
-macro_line|#endif  /* not STANDARD_ATAPI */
-id|toc-&gt;last_session_lba
-op_assign
-id|ntohl
-(paren
-id|ms_tmp.ent.addr.lba
+id|ms_tmp.ent.addr.msf.frame
 )paren
 suffix:semicolon
 id|toc-&gt;xa_flag
@@ -5919,6 +5877,9 @@ id|ide_drive_t
 op_star
 id|drive
 comma
+r_int
+id|format
+comma
 r_char
 op_star
 id|buf
@@ -5970,6 +5931,14 @@ id|SCMD_READ_SUBCHANNEL
 suffix:semicolon
 id|pc.c
 (braket
+l_int|1
+)braket
+op_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* MSF addressing */
+id|pc.c
+(braket
 l_int|2
 )braket
 op_assign
@@ -5981,9 +5950,8 @@ id|pc.c
 l_int|3
 )braket
 op_assign
-l_int|0x01
-suffix:semicolon
-multiline_comment|/* Format 1: current position */
+id|format
+comma
 id|pc.c
 (braket
 l_int|7
@@ -6236,144 +6204,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|cdrom_play_lba_range_play12
-id|cdrom_play_lba_range_play12
-(paren
-id|ide_drive_t
-op_star
-id|drive
-comma
-r_int
-id|lba_start
-comma
-r_int
-id|lba_end
-comma
-r_struct
-id|atapi_request_sense
-op_star
-id|reqbuf
-)paren
-(brace
-r_struct
-id|packet_command
-id|pc
-suffix:semicolon
-id|memset
-(paren
-op_amp
-id|pc
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|pc
-)paren
-)paren
-suffix:semicolon
-id|pc.sense_data
-op_assign
-id|reqbuf
-suffix:semicolon
-id|pc.c
-(braket
-l_int|0
-)braket
-op_assign
-id|SCMD_PLAYAUDIO12
-suffix:semicolon
-macro_line|#ifdef __alpha__
-id|stq_u
-c_func
-(paren
-(paren
-(paren
-r_int
-)paren
-id|htonl
-(paren
-id|lba_end
-op_minus
-id|lba_start
-)paren
-op_lshift
-l_int|32
-)paren
-op_or
-id|htonl
-c_func
-(paren
-id|lba_start
-)paren
-comma
-(paren
-r_int
-r_int
-op_star
-)paren
-op_amp
-id|pc.c
-(braket
-l_int|2
-)braket
-)paren
-suffix:semicolon
-macro_line|#else
-op_star
-(paren
-r_int
-op_star
-)paren
-(paren
-op_amp
-id|pc.c
-(braket
-l_int|2
-)braket
-)paren
-op_assign
-id|htonl
-(paren
-id|lba_start
-)paren
-suffix:semicolon
-op_star
-(paren
-r_int
-op_star
-)paren
-(paren
-op_amp
-id|pc.c
-(braket
-l_int|6
-)braket
-)paren
-op_assign
-id|htonl
-(paren
-id|lba_end
-op_minus
-id|lba_start
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-id|cdrom_queue_packet_command
-(paren
-id|drive
-comma
-op_amp
-id|pc
-)paren
-suffix:semicolon
-)brace
-macro_line|#if !  STANDARD_ATAPI
-r_static
-r_int
-DECL|function|cdrom_play_lba_range_msf
-id|cdrom_play_lba_range_msf
+DECL|function|cdrom_play_lba_range_1
+id|cdrom_play_lba_range_1
 (paren
 id|ide_drive_t
 op_star
@@ -6467,6 +6299,7 @@ l_int|8
 )braket
 )paren
 suffix:semicolon
+macro_line|#if ! STANDARD_ATAPI
 r_if
 c_cond
 (paren
@@ -6475,7 +6308,7 @@ id|CDROM_CONFIG_FLAGS
 id|drive
 )paren
 op_member_access_from_pointer
-id|playmsf_uses_bcd
+id|playmsf_as_bcd
 )paren
 (brace
 id|pc.c
@@ -6557,6 +6390,7 @@ l_int|8
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* not STANDARD_ATAPI */
 r_return
 id|cdrom_queue_packet_command
 (paren
@@ -6566,158 +6400,6 @@ op_amp
 id|pc
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif  /* not STANDARD_ATAPI */
-r_static
-r_int
-DECL|function|cdrom_play_lba_range_1
-id|cdrom_play_lba_range_1
-(paren
-id|ide_drive_t
-op_star
-id|drive
-comma
-r_int
-id|lba_start
-comma
-r_int
-id|lba_end
-comma
-r_struct
-id|atapi_request_sense
-op_star
-id|reqbuf
-)paren
-(brace
-multiline_comment|/* This is rather annoying.&n;     My NEC-260 won&squot;t recognize group 5 commands such as PLAYAUDIO12;&n;     the only way to get it to play more than 64k of blocks at once&n;     seems to be the PLAYAUDIO_MSF command.  However, the parameters&n;     the NEC 260 wants for the PLAYMSF command are incompatible with&n;     the new version of the spec.&n;&n;     So what i&squot;ll try is this.  First try for PLAYAUDIO12.  If it works,&n;     great.  Otherwise, if the drive reports an illegal command code,&n;     try PLAYAUDIO_MSF using the NEC 260-style bcd parameters. */
-macro_line|#if ! STANDARD_ATAPI
-r_if
-c_cond
-(paren
-id|CDROM_CONFIG_FLAGS
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|no_playaudio12
-)paren
-r_return
-id|cdrom_play_lba_range_msf
-(paren
-id|drive
-comma
-id|lba_start
-comma
-id|lba_end
-comma
-id|reqbuf
-)paren
-suffix:semicolon
-r_else
-macro_line|#endif  /* not STANDARD_ATAPI */
-(brace
-r_int
-id|stat
-suffix:semicolon
-r_struct
-id|atapi_request_sense
-id|my_reqbuf
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|reqbuf
-op_eq
-l_int|NULL
-)paren
-id|reqbuf
-op_assign
-op_amp
-id|my_reqbuf
-suffix:semicolon
-id|stat
-op_assign
-id|cdrom_play_lba_range_play12
-(paren
-id|drive
-comma
-id|lba_start
-comma
-id|lba_end
-comma
-id|reqbuf
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|stat
-op_eq
-l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#if ! STANDARD_ATAPI
-multiline_comment|/* It failed.  Try to find out why. */
-r_if
-c_cond
-(paren
-id|reqbuf-&gt;sense_key
-op_eq
-id|ILLEGAL_REQUEST
-op_logical_and
-id|reqbuf-&gt;asc
-op_eq
-l_int|0x20
-)paren
-(brace
-multiline_comment|/* The drive didn&squot;t recognize the command.&n;             Retry with the MSF variant. */
-id|printk
-(paren
-l_string|&quot;%s: Drive does not support PLAYAUDIO12; &quot;
-l_string|&quot;trying PLAYAUDIO_MSF&bslash;n&quot;
-comma
-id|drive-&gt;name
-)paren
-suffix:semicolon
-id|CDROM_CONFIG_FLAGS
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|no_playaudio12
-op_assign
-l_int|1
-suffix:semicolon
-id|CDROM_CONFIG_FLAGS
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|playmsf_uses_bcd
-op_assign
-l_int|1
-suffix:semicolon
-r_return
-id|cdrom_play_lba_range_msf
-(paren
-id|drive
-comma
-id|lba_start
-comma
-id|lba_end
-comma
-id|reqbuf
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif  /* not STANDARD_ATAPI */
-multiline_comment|/* Failed for some other reason.  Give up. */
-r_return
-id|stat
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/* Play audio starting at LBA LBA_START and finishing with the&n;   LBA before LBA_END. */
 r_static
@@ -6762,7 +6444,7 @@ op_assign
 op_amp
 id|my_reqbuf
 suffix:semicolon
-multiline_comment|/* Some drives, will, for certain audio cds,&n;     give an error if you ask them to play the entire cd using the&n;     values which are returned in the TOC.  The play will succeed, however,&n;     if the ending address is adjusted downwards by a few frames. */
+multiline_comment|/* Some drives, will, for certain audio cds,&n;&t;   give an error if you ask them to play the entire cd using the&n;&t;   values which are returned in the TOC.  The play will succeed,&n;&t;   however, if the ending address is adjusted downwards&n;&t;   by a few frames. */
 r_for
 c_loop
 (paren
@@ -7119,7 +6801,7 @@ id|pc
 )paren
 suffix:semicolon
 macro_line|#if ! STANDARD_ATAPI
-multiline_comment|/* If the drive doesn&squot;t recognize the READ CD opcode, retry the command&n;     with an older opcode for that command. */
+multiline_comment|/* If the drive doesn&squot;t recognize the READ CD opcode, retry the command&n;&t;   with an older opcode for that command. */
 r_if
 c_cond
 (paren
@@ -7145,7 +6827,8 @@ l_int|0
 (brace
 id|printk
 (paren
-l_string|&quot;%s: Drive does not recognize READ_CD; trying opcode 0xd4&bslash;n&quot;
+l_string|&quot;%s: Drive does not recognize READ_CD;&quot;
+l_string|&quot;trying opcode 0xd4&bslash;n&quot;
 comma
 id|drive-&gt;name
 )paren
@@ -7263,6 +6946,54 @@ l_int|NULL
 suffix:semicolon
 )brace
 r_case
+id|CDROMCLOSETRAY
+suffix:colon
+(brace
+r_int
+id|stat
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|drive-&gt;usage
+OG
+l_int|1
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+id|stat
+op_assign
+id|cdrom_eject
+(paren
+id|drive
+comma
+l_int|1
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|stat
+)paren
+r_return
+id|stat
+suffix:semicolon
+r_return
+id|cdrom_lockdoor
+(paren
+id|drive
+comma
+l_int|1
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
+r_case
 id|CDROMEJECT_SW
 suffix:colon
 (brace
@@ -7277,32 +7008,6 @@ id|arg
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-)brace
-r_case
-id|CDROMCLOSETRAY
-suffix:colon
-(brace
-r_if
-c_cond
-(paren
-id|drive-&gt;usage
-OG
-l_int|1
-)paren
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-r_return
-id|cdrom_eject
-(paren
-id|drive
-comma
-l_int|1
-comma
-l_int|NULL
-)paren
 suffix:semicolon
 )brace
 r_case
@@ -7488,7 +7193,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Like just about every other Linux cdrom driver, we ignore the&n;       index part of the request here. */
+multiline_comment|/* Like just about every other Linux cdrom driver, we ignore the&n;&t;   index part of the request here. */
 r_case
 id|CDROMPLAYTRKIND
 suffix:colon
@@ -7910,9 +7615,7 @@ suffix:semicolon
 r_int
 id|stat
 comma
-id|abs_lba
-comma
-id|rel_lba
+id|msf_flag
 suffix:semicolon
 r_struct
 id|cdrom_subchnl
@@ -7993,6 +7696,9 @@ id|cdrom_read_subchannel
 (paren
 id|drive
 comma
+l_int|1
+comma
+multiline_comment|/* current position */
 (paren
 r_char
 op_star
@@ -8025,75 +7731,40 @@ id|CDROM_CONFIG_FLAGS
 id|drive
 )paren
 op_member_access_from_pointer
-id|vertos_lossage
+id|subchan_as_bcd
 )paren
 (brace
-id|abs_lba
-op_assign
-id|msf_to_lba
+id|msf_from_bcd
 (paren
-id|bcd2bin
-(paren
-id|scbuf.acdsc_absaddr.msf.minute
-)paren
-comma
-id|bcd2bin
-(paren
-id|scbuf.acdsc_absaddr.msf.second
-)paren
-comma
-id|bcd2bin
-(paren
-id|scbuf.acdsc_absaddr.msf.frame
-)paren
+op_amp
+id|scbuf.acdsc_absaddr.msf
 )paren
 suffix:semicolon
-id|rel_lba
-op_assign
-id|msf_to_lba
+id|msf_from_bcd
 (paren
-id|bcd2bin
-(paren
-id|scbuf.acdsc_reladdr.msf.minute
-)paren
-comma
-id|bcd2bin
-(paren
-id|scbuf.acdsc_reladdr.msf.second
-)paren
-comma
-id|bcd2bin
-(paren
-id|scbuf.acdsc_reladdr.msf.frame
-)paren
-)paren
-suffix:semicolon
-id|scbuf.acdsc_trk
-op_assign
-id|bcd2bin
-(paren
-id|scbuf.acdsc_trk
+op_amp
+id|scbuf.acdsc_reladdr.msf
 )paren
 suffix:semicolon
 )brace
-r_else
+r_if
+c_cond
+(paren
+id|CDROM_CONFIG_FLAGS
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|tocaddr_as_bcd
+)paren
+id|scbuf.acdsc_trk
+op_assign
+id|bcd2bin
+(paren
+id|scbuf.acdsc_trk
+)paren
+suffix:semicolon
 macro_line|#endif /* not STANDARD_ATAPI */
-(brace
-id|abs_lba
-op_assign
-id|ntohl
-(paren
-id|scbuf.acdsc_absaddr.lba
-)paren
-suffix:semicolon
-id|rel_lba
-op_assign
-id|ntohl
-(paren
-id|scbuf.acdsc_reladdr.lba
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -8102,44 +7773,54 @@ op_eq
 id|CDROM_MSF
 )paren
 (brace
-id|lba_to_msf
-(paren
-id|abs_lba
-comma
-op_amp
 id|subchnl.cdsc_absaddr.msf.minute
-comma
-op_amp
-id|subchnl.cdsc_absaddr.msf.second
-comma
-op_amp
-id|subchnl.cdsc_absaddr.msf.frame
-)paren
+op_assign
+id|scbuf.acdsc_absaddr.msf.minute
 suffix:semicolon
-id|lba_to_msf
-(paren
-id|rel_lba
-comma
-op_amp
+id|subchnl.cdsc_absaddr.msf.second
+op_assign
+id|scbuf.acdsc_absaddr.msf.second
+suffix:semicolon
+id|subchnl.cdsc_absaddr.msf.frame
+op_assign
+id|scbuf.acdsc_absaddr.msf.frame
+suffix:semicolon
 id|subchnl.cdsc_reladdr.msf.minute
-comma
-op_amp
+op_assign
+id|scbuf.acdsc_reladdr.msf.minute
+suffix:semicolon
 id|subchnl.cdsc_reladdr.msf.second
-comma
-op_amp
+op_assign
+id|scbuf.acdsc_reladdr.msf.second
+suffix:semicolon
 id|subchnl.cdsc_reladdr.msf.frame
-)paren
+op_assign
+id|scbuf.acdsc_reladdr.msf.frame
 suffix:semicolon
 )brace
 r_else
 (brace
 id|subchnl.cdsc_absaddr.lba
 op_assign
-id|abs_lba
+id|msf_to_lba
+(paren
+id|scbuf.acdsc_absaddr.msf.minute
+comma
+id|scbuf.acdsc_absaddr.msf.second
+comma
+id|scbuf.acdsc_absaddr.msf.frame
+)paren
 suffix:semicolon
 id|subchnl.cdsc_reladdr.lba
 op_assign
-id|rel_lba
+id|msf_to_lba
+(paren
+id|scbuf.acdsc_reladdr.msf.minute
+comma
+id|scbuf.acdsc_reladdr.msf.second
+comma
+id|scbuf.acdsc_reladdr.msf.frame
+)paren
 suffix:semicolon
 )brace
 id|subchnl.cdsc_audiostatus
@@ -9127,6 +8808,125 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_case
+id|CDROM_GET_UPC
+suffix:colon
+(brace
+r_int
+id|stat
+suffix:semicolon
+r_char
+id|mcnbuf
+(braket
+l_int|24
+)braket
+suffix:semicolon
+r_struct
+id|cdrom_mcn
+id|mcn
+suffix:semicolon
+id|stat
+op_assign
+id|verify_area
+(paren
+id|VERIFY_WRITE
+comma
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+id|mcn
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|stat
+)paren
+r_return
+id|stat
+suffix:semicolon
+id|stat
+op_assign
+id|cdrom_read_subchannel
+(paren
+id|drive
+comma
+l_int|2
+comma
+multiline_comment|/* get MCN */
+id|mcnbuf
+comma
+r_sizeof
+(paren
+id|mcnbuf
+)paren
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|stat
+)paren
+r_return
+id|stat
+suffix:semicolon
+id|memcpy
+(paren
+id|mcn.medium_catalog_number
+comma
+id|mcnbuf
+op_plus
+l_int|9
+comma
+r_sizeof
+(paren
+id|mcn.medium_catalog_number
+)paren
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|mcn.medium_catalog_number
+(braket
+r_sizeof
+(paren
+id|mcn.medium_catalog_number
+)paren
+op_minus
+l_int|1
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+id|memcpy_tofs
+(paren
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+op_amp
+id|mcn
+comma
+r_sizeof
+(paren
+id|mcn
+)paren
+)paren
+suffix:semicolon
+r_return
+id|stat
+suffix:semicolon
+)brace
 macro_line|#if 0 /* Doesn&squot;t work reliably yet. */
 r_case
 id|CDROMRESET
@@ -9772,7 +9572,6 @@ id|drive-&gt;id
 op_ne
 l_int|NULL
 )paren
-(brace
 id|CDROM_CONFIG_FLAGS
 (paren
 id|drive
@@ -9790,26 +9589,13 @@ op_eq
 l_int|0x20
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 id|CDROM_CONFIG_FLAGS
 (paren
 id|drive
 )paren
 op_member_access_from_pointer
 id|drq_interrupt
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#if ! STANDARD_ATAPI
-id|CDROM_CONFIG_FLAGS
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|no_playaudio12
 op_assign
 l_int|0
 suffix:semicolon
@@ -9827,7 +9613,7 @@ id|CDROM_CONFIG_FLAGS
 id|drive
 )paren
 op_member_access_from_pointer
-id|no_lba_toc
+id|toctracks_as_bcd
 op_assign
 l_int|0
 suffix:semicolon
@@ -9836,7 +9622,7 @@ id|CDROM_CONFIG_FLAGS
 id|drive
 )paren
 op_member_access_from_pointer
-id|playmsf_uses_bcd
+id|tocaddr_as_bcd
 op_assign
 l_int|0
 suffix:semicolon
@@ -9845,10 +9631,20 @@ id|CDROM_CONFIG_FLAGS
 id|drive
 )paren
 op_member_access_from_pointer
-id|vertos_lossage
+id|playmsf_as_bcd
 op_assign
 l_int|0
 suffix:semicolon
+id|CDROM_CONFIG_FLAGS
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|subchan_as_bcd
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#if ! STANDARD_ATAPI
 r_if
 c_cond
 (paren
@@ -9857,130 +9653,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* Accommodate some broken drives... */
-r_if
-c_cond
-(paren
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;CD220E&quot;
-)paren
-op_eq
-l_int|0
-op_logical_or
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;CD&quot;
-)paren
-op_eq
-l_int|0
-)paren
-multiline_comment|/* Creative Labs */
-id|CDROM_CONFIG_FLAGS
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|no_lba_toc
-op_assign
-l_int|1
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;TO-ICSLYAL&quot;
-)paren
-op_eq
-l_int|0
-op_logical_or
-multiline_comment|/* Acer CD525E */
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;OTI-SCYLLA&quot;
-)paren
-op_eq
-l_int|0
-)paren
-id|CDROM_CONFIG_FLAGS
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|no_lba_toc
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* I don&squot;t know who makes this.&n;       Francesco Messineo &lt;sidera@ccii.unipi.it&gt; says this one&squot;s broken too. */
-r_else
-r_if
-c_cond
-(paren
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;DCI-2S10&quot;
-)paren
-op_eq
-l_int|0
-)paren
-id|CDROM_CONFIG_FLAGS
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|no_lba_toc
-op_assign
-l_int|1
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;CDA26803I SE&quot;
-)paren
-op_eq
-l_int|0
-)paren
-multiline_comment|/* Aztech */
-(brace
-id|CDROM_CONFIG_FLAGS
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|no_lba_toc
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* This drive _also_ does not implement PLAYAUDIO12 correctly. */
-id|CDROM_CONFIG_FLAGS
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|no_playaudio12
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* Vertos 300. */
-r_else
 r_if
 c_cond
 (paren
@@ -9992,21 +9664,7 @@ l_string|&quot;V003S0DS&quot;
 )paren
 op_eq
 l_int|0
-)paren
-(brace
-id|CDROM_CONFIG_FLAGS
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|no_lba_toc
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* Some versions of this drive like to talk BCD. */
-r_if
-c_cond
-(paren
+op_logical_and
 id|drive-&gt;id-&gt;fw_rev
 (braket
 l_int|4
@@ -10022,12 +9680,13 @@ op_le
 l_char|&squot;2&squot;
 )paren
 (brace
+multiline_comment|/* Vertos 300.&n;&t;&t;&t;   Some versions of this drive like to talk BCD. */
 id|CDROM_CONFIG_FLAGS
 (paren
 id|drive
 )paren
 op_member_access_from_pointer
-id|vertos_lossage
+id|toctracks_as_bcd
 op_assign
 l_int|1
 suffix:semicolon
@@ -10036,168 +9695,126 @@ id|CDROM_CONFIG_FLAGS
 id|drive
 )paren
 op_member_access_from_pointer
-id|playmsf_uses_bcd
+id|tocaddr_as_bcd
+op_assign
+l_int|1
+suffix:semicolon
+id|CDROM_CONFIG_FLAGS
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|playmsf_as_bcd
+op_assign
+l_int|1
+suffix:semicolon
+id|CDROM_CONFIG_FLAGS
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|subchan_as_bcd
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|drive-&gt;id-&gt;model
+comma
+l_string|&quot;NEC CD-ROM DRIVE:260&quot;
+)paren
+op_eq
+l_int|0
+op_logical_and
+id|strcmp
+(paren
+id|drive-&gt;id-&gt;fw_rev
+comma
+l_string|&quot;1.01&quot;
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* Old NEC260 (not R). */
+id|CDROM_CONFIG_FLAGS
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|tocaddr_as_bcd
+op_assign
+l_int|1
+suffix:semicolon
+id|CDROM_CONFIG_FLAGS
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|playmsf_as_bcd
+op_assign
+l_int|1
+suffix:semicolon
+id|CDROM_CONFIG_FLAGS
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|subchan_as_bcd
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|drive-&gt;id-&gt;model
+comma
+l_string|&quot;WEARNES CDD-120&quot;
+)paren
+op_eq
+l_int|0
+op_logical_and
+id|strcmp
+(paren
+id|drive-&gt;id-&gt;fw_rev
+comma
+l_string|&quot;A1.1&quot;
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* Wearnes */
+id|CDROM_CONFIG_FLAGS
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|playmsf_as_bcd
+op_assign
+l_int|1
+suffix:semicolon
+id|CDROM_CONFIG_FLAGS
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|subchan_as_bcd
 op_assign
 l_int|1
 suffix:semicolon
 )brace
 )brace
-r_else
-r_if
-c_cond
-(paren
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;0V300SSD&quot;
-)paren
-op_eq
-l_int|0
-op_logical_or
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;V003M0DP&quot;
-)paren
-op_eq
-l_int|0
-op_logical_or
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;0V300MPD&quot;
-)paren
-op_eq
-l_int|0
-op_logical_or
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;0V300HPD&quot;
-)paren
-op_eq
-l_int|0
-op_logical_or
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;V003H0DP&quot;
-)paren
-op_eq
-l_int|0
-)paren
-id|CDROM_CONFIG_FLAGS
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|no_lba_toc
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* Vertos 400. */
-r_else
-r_if
-c_cond
-(paren
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;V004E0DT&quot;
-)paren
-op_eq
-l_int|0
-op_logical_or
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;0V400ETD&quot;
-)paren
-op_eq
-l_int|0
-op_logical_or
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;V004H0DT&quot;
-)paren
-op_eq
-l_int|0
-op_logical_or
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;0V400HTD&quot;
-)paren
-op_eq
-l_int|0
-)paren
-id|CDROM_CONFIG_FLAGS
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|no_lba_toc
-op_assign
-l_int|1
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;CD-ROM CDU55D&quot;
-)paren
-op_eq
-l_int|0
-)paren
-multiline_comment|/*sony cdu55d */
-id|CDROM_CONFIG_FLAGS
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|no_playaudio12
-op_assign
-l_int|1
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;CD-ROM CDU55E&quot;
-)paren
-op_eq
-l_int|0
-)paren
-id|CDROM_CONFIG_FLAGS
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|no_playaudio12
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* drive-id != NULL */
-macro_line|#endif  /* not STANDARD_ATAPI */
+macro_line|#endif /* not STANDARD_ATAPI */
 id|drive-&gt;cdrom_info.toc
 op_assign
 l_int|NULL
@@ -10215,5 +9832,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * TODO:&n; *  CDROM_GET_UPC&n; *  CDROMRESET&n; *  Lock the door when a read request completes successfully and the&n; *   door is not already locked.  Also try to reorganize to reduce&n; *   duplicated functionality between read and ioctl paths?&n; *  Establish interfaces for an IDE port driver, and break out the cdrom&n; *   code into a loadable module.&n; *  Support changers.&n; *  Write some real documentation.&n; */
+multiline_comment|/*&n; * TODO:&n; *  CDROMRESET&n; *  Lock the door when a read request completes successfully and the&n; *   door is not already locked.  Also try to reorganize to reduce&n; *   duplicated functionality between read and ioctl paths?&n; *  Establish interfaces for an IDE port driver, and break out the cdrom&n; *   code into a loadable module.&n; *  Support changers.&n; *  Write some real documentation.&n; */
+multiline_comment|/*==========================================================================*/
+multiline_comment|/*&n; * Local variables:&n; * c-basic-offset: 8&n; * End:&n; */
 eof

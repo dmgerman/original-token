@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*-&n; * APM BIOS driver for Linux&n; * Copyright 1994, 1995 Stephen Rothwell (Stephen.Rothwell@pd.necisa.oz.au)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * $Id: apm_bios.c,v 0.22 1995/03/09 14:12:02 sfr Exp $&n; *&n; * October 1995, Rik Faith (faith@cs.unc.edu):&n; *    Minor enhancements and updates (to the patch set) for 1.3.x&n; *    Documentation&n; * January 1996, Rik Faith (faith@cs.unc.edu):&n; *    Make /proc/apm easy to format (bump driver version)&n; * March 1996, Rik Faith (faith@cs.unc.edu):&n; *    Prohibit APM BIOS calls unless apm_enabled.&n; *    (Thanks to Ulrich Windl &lt;Ulrich.Windl@rz.uni-regensburg.de&gt;)&n; *&n; * History:&n; *    0.6b: first version in official kernel, Linux 1.3.46&n; *    0.7: changed /proc/apm format, Linux 1.3.58&n; *    0.8: fixed gcc 2.7.[12] compilation problems, Linux 1.3.59&n; *    0.9: only call bios if bios is present, Linux 1.3.72&n; *&n; * Reference:&n; *&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.1, September 1993.&n; *   Intel Order Number 241704-001.  Microsoft Part Number 781-110-X01.&n; *&n; * [This document is available free from Intel by calling 800.628.8686 (fax&n; * 916.356.6100) or 800.548.4725; or via anonymous ftp from&n; * ftp://ftp.intel.com/pub/IAL/software_specs/apmv11.doc.  It is also&n; * available from Microsoft by calling 206.882.8080.]&n; *&n; */
+multiline_comment|/* -*- linux-c -*-&n; * APM BIOS driver for Linux&n; * Copyright 1994, 1995, 1996 Stephen Rothwell&n; *                           (Stephen.Rothwell@canb.auug.org.au)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * $Id: apm_bios.c,v 0.22 1995/03/09 14:12:02 sfr Exp $&n; *&n; * October 1995, Rik Faith (faith@cs.unc.edu):&n; *    Minor enhancements and updates (to the patch set) for 1.3.x&n; *    Documentation&n; * January 1996, Rik Faith (faith@cs.unc.edu):&n; *    Make /proc/apm easy to format (bump driver version)&n; * March 1996, Rik Faith (faith@cs.unc.edu):&n; *    Prohibit APM BIOS calls unless apm_enabled.&n; *    (Thanks to Ulrich Windl &lt;Ulrich.Windl@rz.uni-regensburg.de&gt;)&n; * April 1996, Stephen Rothwell (Stephen.Rothwell@canb.auug.org.au)&n; *    Version 1.0&n; *&n; * History:&n; *    0.6b: first version in official kernel, Linux 1.3.46&n; *    0.7: changed /proc/apm format, Linux 1.3.58&n; *    0.8: fixed gcc 2.7.[12] compilation problems, Linux 1.3.59&n; *    0.9: only call bios if bios is present, Linux 1.3.72&n; *    1.0: use fixed device number, consolidate /proc/apm into&n; *         this file, Linux 1.3.85&n; *&n; * Reference:&n; *&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.1, September 1993.&n; *   Intel Order Number 241704-001.  Microsoft Part Number 781-110-X01.&n; *&n; * [This document is available free from Intel by calling 800.628.8686 (fax&n; * 916.356.6100) or 800.548.4725; or via anonymous ftp from&n; * ftp://ftp.intel.com/pub/IAL/software_specs/apmv11.doc.  It is also&n; * available from Microsoft by calling 206.882.8080.]&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -9,6 +9,11 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
+macro_line|#ifdef CONFIG_PROC_FS
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#endif
+macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/apm_bios.h&gt;
 DECL|variable|apm_syms
 r_static
@@ -42,6 +47,9 @@ c_func
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * The apm_bios device is one of the misc char devices.&n; * This is its minor number.&n; */
+DECL|macro|APM_MINOR_DEV
+mdefine_line|#define&t;APM_MINOR_DEV&t;134
 multiline_comment|/* Configurable options:&n; *  &n; * CONFIG_APM_IGNORE_USER_SUSPEND: define to ignore USER SUSPEND requests.&n; * This is necessary on the NEC Versa M series, which generates these when&n; * resuming from SYSTEM SUSPEND.  However, enabling this on other laptops&n; * will cause the laptop to generate a CRITICAL SUSPEND when an appropriate&n; * USER SUSPEND is ignored -- this may prevent the APM driver from updating&n; * the system time on a RESUME.&n; *&n; * CONFIG_APM_DO_ENABLE: enable APM features at boot time.  From page 36 of&n; * the specification: &quot;When disabled, the APM BIOS does not automatically&n; * power manage devices, enter the Standby State, enter the Suspend State,&n; * or take power saving steps in response to CPU Idle calls.&quot;  This driver&n; * will make CPU Idle calls when Linux is idle (unless this feature is&n; * turned off -- see below).  This should always save battery power, but&n; * more complicated APM features will be dependent on your BIOS&n; * implementation.  You may need to turn this option off if your computer&n; * hangs at boot time when using APM support, or if it beeps continuously&n; * instead of suspending.  Turn this off if you have a NEC UltraLite Versa&n; * 33/C or a Toshiba T400CDT.  This is off by default since most machines&n; * do fine without this feature.&n; *&n; * CONFIG_APM_CPU_IDLE: enable calls to APM CPU Idle/CPU Busy inside the&n; * idle loop.  On some machines, this can activate improved power savings,&n; * such as a slowed CPU clock rate, when the machine is idle.  These idle&n; * call is made after the idle loop has run for some length of time (e.g.,&n; * 333 mS).  On some machines, this will cause a hang at boot time or&n; * whenever the CPU becomes idle.&n; *&n; * CONFIG_APM_DISPLAY_BLANK: enable console blanking using the APM.  Some&n; * laptops can use this to turn of the LCD backlight when the VC screen&n; * blanker blanks the screen.  Note that this is only used by the VC screen&n; * blanker, and probably won&squot;t turn off the backlight when using X11.&n; *&n; * If you are debugging the APM support for your laptop, note that code for&n; * all of these options is contained in this file, so you can #define or&n; * #undef these on the next line to avoid recompiling the whole kernel.&n; *&n; */
 multiline_comment|/* KNOWN PROBLEM MACHINES:&n; *&n; * U: TI 4000M TravelMate: BIOS is *NOT* APM compliant&n; *                         [Confirmed by TI representative]&n; * U: ACER 486DX4/75: uses dseg 0040, in violation of APM specification&n; *                    [Confirmed by BIOS disassembly]&n; * P: Toshiba 1950S: battery life information only gets updated after resume&n; *&n; * Legend: U = unusable with APM patches&n; *         P = partially usable with APM patches&n; */
 multiline_comment|/*&n; * Define to have debug messages.&n; */
@@ -235,6 +243,27 @@ comma
 id|u_long
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
+r_static
+r_int
+id|apm_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_int
 id|apm_register_callback
@@ -360,7 +389,7 @@ id|driver_version
 (braket
 )braket
 op_assign
-l_string|&quot;0.9&quot;
+l_string|&quot;1.0&quot;
 suffix:semicolon
 multiline_comment|/* no spaces */
 macro_line|#ifdef APM_DEBUG
@@ -435,6 +464,53 @@ l_int|NULL
 multiline_comment|/* fasync */
 )brace
 suffix:semicolon
+DECL|variable|apm_device
+r_static
+r_struct
+id|miscdevice
+id|apm_device
+op_assign
+(brace
+id|APM_MINOR_DEV
+comma
+l_string|&quot;apm&quot;
+comma
+op_amp
+id|apm_bios_fops
+)brace
+suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
+DECL|variable|apm_proc_entry
+r_static
+r_struct
+id|proc_dir_entry
+id|apm_proc_entry
+op_assign
+(brace
+l_int|0
+comma
+l_int|3
+comma
+l_string|&quot;apm&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|apm_get_info
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|struct|callback_list_t
 r_typedef
 r_struct
@@ -975,10 +1051,6 @@ c_cond
 (paren
 op_logical_neg
 id|apm_enabled
-op_logical_or
-id|apm_bios_info.version
-op_eq
-l_int|0
 )paren
 r_return
 l_int|0
@@ -1032,10 +1104,6 @@ c_cond
 (paren
 op_logical_neg
 id|apm_enabled
-op_logical_or
-id|apm_bios_info.version
-op_eq
-l_int|0
 )paren
 r_return
 l_int|0
@@ -2924,14 +2992,29 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|apm_proc
+macro_line|#ifdef CONFIG_PROC_FS
+DECL|function|apm_get_info
 r_int
-id|apm_proc
+id|apm_get_info
 c_func
 (paren
 r_char
 op_star
 id|buf
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|fpos
+comma
+r_int
+id|length
+comma
+r_int
+id|dummy
 )paren
 (brace
 r_char
@@ -2973,7 +3056,6 @@ op_assign
 l_int|0xff
 suffix:semicolon
 r_int
-r_int
 id|percentage
 op_assign
 op_minus
@@ -2994,9 +3076,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|apm_bios_info.version
-op_eq
-l_int|0
+op_logical_neg
+id|apm_enabled
 )paren
 r_return
 l_int|0
@@ -3005,18 +3086,6 @@ id|p
 op_assign
 id|buf
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|apm_bios_info.flags
-op_amp
-id|APM_32_BIT_SUPPORT
-)paren
-op_ne
-l_int|0
-)paren
-(brace
 r_if
 c_cond
 (paren
@@ -3137,7 +3206,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-)brace
 multiline_comment|/* Arguments, with symbols from linux/apm_bios.h.  Information is&n;&t;   from the Get Power Status (0x0a) call unless otherwise noted.&n;&n;&t;   0) Linux driver version (this will change if format changes)&n;&t;   1) APM BIOS Version.  Usually 1.0 or 1.1.&n;&t;   2) APM flags from APM Installation Check (0x00):&n;&t;      bit 0: APM_16_BIT_SUPPORT&n;&t;      bit 1: APM_32_BIT_SUPPORT&n;&t;      bit 2: APM_IDLE_SLOWS_CLOCK&n;&t;      bit 3: APM_BIOS_DISABLED&n;&t;      bit 4: APM_BIOS_DISENGAGED&n;&t;   3) AC line status&n;&t;      0x00: Off-line&n;&t;      0x01: On-line&n;&t;      0x02: On backup power (APM BIOS 1.1 only)&n;&t;      0xff: Unknown&n;&t;   4) Battery status&n;&t;      0x00: High&n;&t;      0x01: Low&n;&t;      0x02: Critical&n;&t;      0x03: Charging&n;&t;      0xff: Unknown&n;&t;   5) Battery flag&n;&t;      bit 0: High&n;&t;      bit 1: Low&n;&t;      bit 2: Critical&n;&t;      bit 3: Charging&n;&t;      bit 7: No system battery&n;&t;      0xff: Unknown&n;&t;   6) Remaining battery life (percentage of charge):&n;&t;      0-100: valid&n;&t;      -1: Unknown&n;&t;   7) Remaining battery life (time units):&n;&t;      Number of remaining minutes or seconds&n;&t;      -1: Unknown&n;&t;   8) min = minutes; sec = seconds */
 id|p
 op_add_assign
@@ -3183,10 +3251,10 @@ op_minus
 id|buf
 suffix:semicolon
 )brace
-DECL|function|apm_setup
-r_static
-r_int
-id|apm_setup
+macro_line|#endif
+DECL|function|apm_bios_init
+r_void
+id|apm_bios_init
 c_func
 (paren
 r_void
@@ -3231,8 +3299,6 @@ l_string|&quot;APM BIOS not found.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
 suffix:semicolon
 )brace
 id|printk
@@ -3284,8 +3350,6 @@ l_string|&quot;    No 32 bit BIOS support&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Fix for the Compaq Contura 3/25c which reports BIOS version 0.1&n;&t; * but is reportedly a 1.0 BIOS.&n;&t; */
@@ -3885,8 +3949,6 @@ op_eq
 id|APM_DISABLED
 )paren
 r_return
-op_minus
-l_int|1
 suffix:semicolon
 macro_line|#endif
 id|init_timer
@@ -3920,52 +3982,28 @@ op_amp
 id|apm_syms
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
+id|proc_register_dynamic
+c_func
+(paren
+op_amp
+id|proc_root
+comma
+op_amp
+id|apm_proc_entry
+)paren
+suffix:semicolon
+macro_line|#endif
+id|misc_register
+c_func
+(paren
+op_amp
+id|apm_device
+)paren
+suffix:semicolon
 id|apm_enabled
 op_assign
 l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|apm_major
-op_assign
-id|register_chrdev
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;apm_bios&quot;
-comma
-op_amp
-id|apm_bios_fops
-)paren
-)paren
-OL
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;APM BIOS: Cannot allocate major device number&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|apm_bios_init
-r_void
-id|apm_bios_init
-c_func
-(paren
-r_void
-)paren
-(brace
-id|apm_setup
-c_func
-(paren
-)paren
 suffix:semicolon
 )brace
 eof

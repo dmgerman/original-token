@@ -168,6 +168,10 @@ DECL|macro|fd_request_irq
 mdefine_line|#define fd_request_irq()          sun_fd_request_irq()
 DECL|macro|fd_free_irq
 mdefine_line|#define fd_free_irq()             /* nothing... */
+DECL|macro|fd_eject
+mdefine_line|#define fd_eject(x)               sun_fd_eject()
+DECL|macro|FLOPPY_MOTOR_MASK
+mdefine_line|#define FLOPPY_MOTOR_MASK         0x10
 multiline_comment|/* It&squot;s all the same... */
 DECL|macro|virt_to_bus
 mdefine_line|#define virt_to_bus(x)            (x)
@@ -552,10 +556,24 @@ r_int
 id|pdma_size
 suffix:semicolon
 DECL|variable|doing_pdma
+r_volatile
 r_int
 id|doing_pdma
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/* This is software state */
+DECL|variable|pdma_base
+r_char
+op_star
+id|pdma_base
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|pdma_areasize
+r_int
+r_int
+id|pdma_areasize
 suffix:semicolon
 multiline_comment|/* Common routines to all controller types on the Sparc. */
 DECL|function|virtual_dma_init
@@ -584,6 +602,25 @@ id|doing_pdma
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pdma_base
+)paren
+(brace
+id|mmu_unlockarea
+c_func
+(paren
+id|pdma_base
+comma
+id|pdma_areasize
+)paren
+suffix:semicolon
+id|pdma_base
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 )brace
 DECL|function|sun_fd_set_dma_mode
 r_static
@@ -681,7 +718,6 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* We&squot;re about to let it rip, lock any tlb entries necessary. */
 id|pdma_vaddr
 op_assign
 id|mmu_lockarea
@@ -691,6 +727,49 @@ id|pdma_vaddr
 comma
 id|pdma_size
 )paren
+suffix:semicolon
+id|pdma_base
+op_assign
+id|pdma_vaddr
+suffix:semicolon
+id|pdma_areasize
+op_assign
+id|pdma_size
+suffix:semicolon
+)brace
+DECL|function|sun_fd_eject
+r_static
+r_int
+id|sun_fd_eject
+c_func
+(paren
+r_void
+)paren
+(brace
+id|set_auxio
+c_func
+(paren
+id|AUXIO_FLPY_DSEL
+comma
+id|AUXIO_FLPY_EJCT
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
+id|set_auxio
+c_func
+(paren
+id|AUXIO_FLPY_EJCT
+comma
+id|AUXIO_FLPY_DSEL
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Our low-level entry point in arch/sparc/kernel/entry.S */
@@ -1115,7 +1194,7 @@ id|sun_fdc-&gt;status_82072
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* P3: The only realiable way which I found for ejection&n;&t; * of boot floppy. AUXIO_FLPY_EJCT is not enougth alone.&n;&t; */
+multiline_comment|/* P3: The only reliable way which I found for ejection&n;&t; * of boot floppy. AUXIO_FLPY_EJCT is not enougth alone.&n;&t; */
 id|set_auxio
 c_func
 (paren
@@ -1124,34 +1203,20 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* Bring EJECT line to normal. */
 id|udelay
 c_func
 (paren
 l_int|1000
 )paren
 suffix:semicolon
-id|set_auxio
-c_func
-(paren
-id|AUXIO_FLPY_DSEL
-comma
-id|AUXIO_FLPY_EJCT
-)paren
-suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|1000
-)paren
-suffix:semicolon
-id|set_auxio
+id|sun_fd_eject
 c_func
 (paren
 l_int|0
-comma
-id|AUXIO_FLPY_DSEL
 )paren
 suffix:semicolon
+multiline_comment|/* Send Eject Pulse. */
 multiline_comment|/* Success... */
 r_return
 (paren

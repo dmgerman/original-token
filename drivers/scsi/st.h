@@ -5,6 +5,7 @@ multiline_comment|/*&n;&t;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/st.h,v
 macro_line|#ifndef _SCSI_H
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#endif
+multiline_comment|/* The tape buffer descriptor. */
 r_typedef
 r_struct
 (brace
@@ -67,6 +68,59 @@ DECL|typedef|ST_buffer
 )brace
 id|ST_buffer
 suffix:semicolon
+multiline_comment|/* The tape mode definition */
+r_typedef
+r_struct
+(brace
+DECL|member|defined
+r_int
+r_char
+id|defined
+suffix:semicolon
+DECL|member|do_async_writes
+r_int
+r_char
+id|do_async_writes
+suffix:semicolon
+DECL|member|do_buffer_writes
+r_int
+r_char
+id|do_buffer_writes
+suffix:semicolon
+DECL|member|defaults_for_writes
+r_int
+r_char
+id|defaults_for_writes
+suffix:semicolon
+DECL|member|default_compression
+r_int
+r_char
+id|default_compression
+suffix:semicolon
+multiline_comment|/* 0 = don&squot;t touch, etc */
+DECL|member|default_density
+r_int
+id|default_density
+suffix:semicolon
+multiline_comment|/* Forced density, -1 = no value */
+DECL|member|default_blksize
+r_int
+id|default_blksize
+suffix:semicolon
+multiline_comment|/* Forced blocksize, -1 = no value */
+DECL|typedef|ST_mode
+)brace
+id|ST_mode
+suffix:semicolon
+DECL|macro|ST_NBR_MODE_BITS
+mdefine_line|#define ST_NBR_MODE_BITS 2
+DECL|macro|ST_NBR_MODES
+mdefine_line|#define ST_NBR_MODES (1 &lt;&lt; ST_NBR_MODE_BITS)
+DECL|macro|ST_MODE_SHIFT
+mdefine_line|#define ST_MODE_SHIFT (7 - ST_NBR_MODE_BITS)
+DECL|macro|ST_MODE_MASK
+mdefine_line|#define ST_MODE_MASK ((ST_NBR_MODES - 1) &lt;&lt; ST_MODE_SHIFT)
+multiline_comment|/* The tape drive descriptor */
 r_typedef
 r_struct
 (brace
@@ -89,6 +143,74 @@ id|Scsi_Device
 op_star
 id|device
 suffix:semicolon
+DECL|member|SCpnt
+id|Scsi_Cmnd
+id|SCpnt
+suffix:semicolon
+DECL|member|sem
+r_struct
+id|semaphore
+id|sem
+suffix:semicolon
+DECL|member|buffer
+id|ST_buffer
+op_star
+id|buffer
+suffix:semicolon
+multiline_comment|/* Drive characteristics */
+DECL|member|do_read_ahead
+r_int
+r_char
+id|do_read_ahead
+suffix:semicolon
+DECL|member|do_auto_lock
+r_int
+r_char
+id|do_auto_lock
+suffix:semicolon
+DECL|member|can_bsr
+r_int
+r_char
+id|can_bsr
+suffix:semicolon
+DECL|member|two_fm
+r_int
+r_char
+id|two_fm
+suffix:semicolon
+DECL|member|fast_mteom
+r_int
+r_char
+id|fast_mteom
+suffix:semicolon
+DECL|member|restr_dma
+r_int
+r_char
+id|restr_dma
+suffix:semicolon
+DECL|member|default_drvbuffer
+r_int
+r_char
+id|default_drvbuffer
+suffix:semicolon
+multiline_comment|/* 0xff = don&squot;t touch, value 3 bits */
+DECL|member|write_threshold
+r_int
+id|write_threshold
+suffix:semicolon
+multiline_comment|/* Mode characteristics */
+DECL|member|modes
+id|ST_mode
+id|modes
+(braket
+id|ST_NBR_MODES
+)braket
+suffix:semicolon
+DECL|member|current_mode
+r_int
+id|current_mode
+suffix:semicolon
+multiline_comment|/* Status variables */
 DECL|member|dirty
 r_int
 r_char
@@ -129,45 +251,35 @@ r_int
 r_char
 id|eof_hit
 suffix:semicolon
+DECL|member|moves_after_eof
+r_int
+r_char
+id|moves_after_eof
+suffix:semicolon
+DECL|member|at_sm
+r_int
+r_char
+id|at_sm
+suffix:semicolon
+DECL|member|blksize_changed
+r_int
+r_char
+id|blksize_changed
+suffix:semicolon
+DECL|member|density_changed
+r_int
+r_char
+id|density_changed
+suffix:semicolon
+DECL|member|compression_changed
+r_int
+r_char
+id|compression_changed
+suffix:semicolon
 DECL|member|drv_buffer
 r_int
 r_char
 id|drv_buffer
-suffix:semicolon
-DECL|member|restr_dma
-r_int
-r_char
-id|restr_dma
-suffix:semicolon
-DECL|member|do_buffer_writes
-r_int
-r_char
-id|do_buffer_writes
-suffix:semicolon
-DECL|member|do_async_writes
-r_int
-r_char
-id|do_async_writes
-suffix:semicolon
-DECL|member|do_read_ahead
-r_int
-r_char
-id|do_read_ahead
-suffix:semicolon
-DECL|member|do_auto_lock
-r_int
-r_char
-id|do_auto_lock
-suffix:semicolon
-DECL|member|two_fm
-r_int
-r_char
-id|two_fm
-suffix:semicolon
-DECL|member|fast_mteom
-r_int
-r_char
-id|fast_mteom
 suffix:semicolon
 DECL|member|density
 r_int
@@ -184,16 +296,6 @@ r_int
 r_char
 id|rew_at_close
 suffix:semicolon
-DECL|member|buffer
-id|ST_buffer
-op_star
-id|buffer
-suffix:semicolon
-DECL|member|sem
-r_struct
-id|semaphore
-id|sem
-suffix:semicolon
 DECL|member|block_size
 r_int
 id|block_size
@@ -206,10 +308,6 @@ DECL|member|max_block
 r_int
 id|max_block
 suffix:semicolon
-DECL|member|write_threshold
-r_int
-id|write_threshold
-suffix:semicolon
 DECL|member|recover_count
 r_int
 id|recover_count
@@ -219,25 +317,11 @@ r_int
 id|drv_block
 suffix:semicolon
 multiline_comment|/* The block where the drive head is */
-DECL|member|moves_after_eof
-r_int
-r_char
-id|moves_after_eof
-suffix:semicolon
-DECL|member|at_sm
-r_int
-r_char
-id|at_sm
-suffix:semicolon
 DECL|member|mt_status
 r_struct
 id|mtget
 op_star
 id|mt_status
-suffix:semicolon
-DECL|member|SCpnt
-id|Scsi_Cmnd
-id|SCpnt
 suffix:semicolon
 macro_line|#if DEBUG
 DECL|member|write_pending
@@ -302,5 +386,12 @@ DECL|macro|QFA_REQUEST_BLOCK
 mdefine_line|#define&t;QFA_REQUEST_BLOCK&t;0x02
 DECL|macro|QFA_SEEK_BLOCK
 mdefine_line|#define&t;QFA_SEEK_BLOCK&t;&t;0x0c
+multiline_comment|/* Setting the binary options */
+DECL|macro|ST_DONT_TOUCH
+mdefine_line|#define ST_DONT_TOUCH  0
+DECL|macro|ST_NO
+mdefine_line|#define ST_NO          1
+DECL|macro|ST_YES
+mdefine_line|#define ST_YES         2
 macro_line|#endif
 eof

@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * linux/fs/nfs/nfsiod.c&n; *&n; * Async NFS RPC call support.&n; *&n; * When a process wants to place an asynchronous RPC call, it reserves&n; * an nfsiod slot, fills in all necessary fields including the callback&n; * handler field, and enqueues the request.&n; *&n; * This will wake up nfsiod, which calls nfs_rpc_doio to collect the&n; * reply. It then dispatches the result to the caller via the callback&n; * function, including result value and request pointer. It then re-inserts&n; * itself into the free list.&n; *&n; * Copyright (C) 1996, Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/rpcsock.h&gt;
 macro_line|#include &lt;linux/nfsiod.h&gt;

@@ -21,7 +21,6 @@ macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
-macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
@@ -1792,13 +1791,14 @@ comma
 id|len
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Allow the more recent &quot;minimise cost&quot; flag to be&n;&t; *&t;set. [Rob van Nieuwkerk]&n;&t; */
 id|ftmp-&gt;fw_tosand
 op_or_assign
-l_int|0x03
+l_int|0x01
 suffix:semicolon
 id|ftmp-&gt;fw_tosxor
 op_and_assign
-l_int|0xFC
+l_int|0xFE
 suffix:semicolon
 id|ftmp-&gt;fw_pcnt
 op_assign
@@ -3705,9 +3705,9 @@ r_int
 id|pf
 comma
 r_struct
-id|sk_buff
+id|device
 op_star
-id|skb
+id|dev
 comma
 r_void
 op_star
@@ -3720,7 +3720,7 @@ c_func
 (paren
 id|phdr
 comma
-id|skb-&gt;dev
+id|dev
 comma
 id|ip_fw_in_chain
 comma
@@ -3744,9 +3744,9 @@ r_int
 id|pf
 comma
 r_struct
-id|sk_buff
+id|device
 op_star
-id|skb
+id|dev
 comma
 r_void
 op_star
@@ -3759,7 +3759,7 @@ c_func
 (paren
 id|phdr
 comma
-id|skb-&gt;dev
+id|dev
 comma
 id|ip_fw_out_chain
 comma
@@ -3783,9 +3783,9 @@ r_int
 id|pf
 comma
 r_struct
-id|sk_buff
+id|device
 op_star
-id|skb
+id|dev
 comma
 r_void
 op_star
@@ -3798,7 +3798,7 @@ c_func
 (paren
 id|phdr
 comma
-id|skb-&gt;dev
+id|dev
 comma
 id|ip_fw_fwd_chain
 comma

@@ -5422,7 +5422,7 @@ c_func
 (paren
 id|AF_APPLETALK
 comma
-id|skb
+id|skb-&gt;dev
 comma
 id|ddp
 )paren
@@ -5528,7 +5528,7 @@ c_func
 (paren
 id|AF_APPLETALK
 comma
-id|skb
+id|skb-&gt;dev
 comma
 id|ddp
 )paren
@@ -6552,7 +6552,7 @@ c_func
 (paren
 id|AF_APPLETALK
 comma
-id|skb
+id|skb-&gt;dev
 comma
 id|ddp
 )paren

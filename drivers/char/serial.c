@@ -580,6 +580,7 @@ id|BOCA_FLAGS
 comma
 multiline_comment|/* ttyS31 */
 multiline_comment|/* You can have up to four HUB6&squot;s in the system, but I&squot;ve only&n; * included two cards here for a total of twelve ports.&n; */
+macro_line|#ifdef CONFIG_HUB6
 (brace
 l_int|0
 comma
@@ -726,7 +727,7 @@ l_int|0
 )paren
 )brace
 comma
-multiline_comment|/* ttyS32 */
+multiline_comment|/* ttyS38 */
 (brace
 l_int|0
 comma
@@ -747,7 +748,7 @@ l_int|1
 )paren
 )brace
 comma
-multiline_comment|/* ttyS33 */
+multiline_comment|/* ttyS39 */
 (brace
 l_int|0
 comma
@@ -768,7 +769,7 @@ l_int|2
 )paren
 )brace
 comma
-multiline_comment|/* ttyS34 */
+multiline_comment|/* ttyS40 */
 (brace
 l_int|0
 comma
@@ -789,7 +790,7 @@ l_int|3
 )paren
 )brace
 comma
-multiline_comment|/* ttyS35 */
+multiline_comment|/* ttyS41 */
 (brace
 l_int|0
 comma
@@ -810,7 +811,7 @@ l_int|4
 )paren
 )brace
 comma
-multiline_comment|/* ttyS36 */
+multiline_comment|/* ttyS42 */
 (brace
 l_int|0
 comma
@@ -831,7 +832,8 @@ l_int|5
 )paren
 )brace
 comma
-multiline_comment|/* ttyS37 */
+multiline_comment|/* ttyS43 */
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|macro|NR_PORTS
@@ -10716,7 +10718,7 @@ r_void
 id|printk
 c_func
 (paren
-l_string|&quot;Serial driver version 4.11 with&quot;
+l_string|&quot;Serial driver version 4.11a with&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_HUB6

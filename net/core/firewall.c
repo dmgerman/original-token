@@ -282,9 +282,9 @@ r_int
 id|pf
 comma
 r_struct
-id|sk_buff
+id|device
 op_star
-id|skb
+id|dev
 comma
 r_void
 op_star
@@ -321,7 +321,7 @@ id|fw
 comma
 id|pf
 comma
-id|skb
+id|dev
 comma
 id|phdr
 )paren
@@ -360,9 +360,9 @@ r_int
 id|pf
 comma
 r_struct
-id|sk_buff
+id|device
 op_star
-id|skb
+id|dev
 comma
 r_void
 op_star
@@ -399,7 +399,7 @@ id|fw
 comma
 id|pf
 comma
-id|skb
+id|dev
 comma
 id|phdr
 )paren
@@ -437,9 +437,9 @@ r_int
 id|pf
 comma
 r_struct
-id|sk_buff
+id|device
 op_star
-id|skb
+id|dev
 comma
 r_void
 op_star
@@ -476,7 +476,7 @@ id|fw
 comma
 id|pf
 comma
-id|skb
+id|dev
 comma
 id|phdr
 )paren

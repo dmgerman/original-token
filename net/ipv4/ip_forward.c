@@ -281,8 +281,10 @@ op_assign
 id|skb
 suffix:semicolon
 multiline_comment|/* So we can remember if the masquerader did some swaps */
-macro_line|#endif
+macro_line|#endif /* CONFIG_IP_MASQUERADE */
+macro_line|#endif /* CONFIG_FIREWALL */
 multiline_comment|/* &n;&t; *&t;See if we are allowed to forward this.&n; &t; *&t;Note: demasqueraded fragments are always &squot;back&squot;warded.&n;&t; */
+macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
@@ -301,7 +303,7 @@ c_func
 (paren
 id|PF_INET
 comma
-id|skb
+id|dev
 comma
 id|skb-&gt;h.iph
 )paren
@@ -512,7 +514,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; *&t;Having picked a route we can now send the frame out.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Having picked a route we can now send the frame out&n;&t;&t; *&t;after asking the firewall permission to do so.&n;&t;&t; */
 id|dev2
 op_assign
 id|rt-&gt;rt_dev
@@ -1061,7 +1063,7 @@ c_func
 (paren
 id|PF_INET
 comma
-id|skb2
+id|skb2-&gt;dev
 comma
 id|iph
 )paren

@@ -9,6 +9,9 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#ifdef CONFIG_APM
+macro_line|#include &lt;linux/apm_bios.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/tty.h&gt; /* needed by selection.h */
 macro_line|#include &quot;selection.h&quot; /* export its symbols */
 macro_line|#ifdef CONFIG_KERNELD
@@ -709,6 +712,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif&t;
+macro_line|#ifdef CONFIG_APM
+id|apm_bios_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* !MODULE */
 r_if
 c_cond

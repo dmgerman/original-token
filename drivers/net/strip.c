@@ -518,15 +518,23 @@ id|code_ptr
 multiline_comment|/*&n;&t;&t; *&t;Recover state from last call, if applicable &n;&t;&t; */
 id|code
 op_assign
+(paren
 op_star
 id|code_ptr
+op_xor
+id|Stuff_Magic
+)paren
 op_amp
 id|Stuff_CodeMask
 suffix:semicolon
 id|count
 op_assign
+(paren
 op_star
 id|code_ptr
+op_xor
+id|Stuff_Magic
+)paren
 op_amp
 id|Stuff_CountMask
 suffix:semicolon
