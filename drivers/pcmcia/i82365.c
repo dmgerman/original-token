@@ -107,7 +107,7 @@ id|flags
 comma
 l_string|&quot;x&quot;
 comma
-l_int|NULL
+id|irq_count
 )paren
 op_ne
 l_int|0
@@ -121,7 +121,7 @@ c_func
 (paren
 id|irq
 comma
-l_int|NULL
+id|irq_count
 )paren
 suffix:semicolon
 r_return
@@ -2543,36 +2543,14 @@ id|sock
 comma
 r_int
 id|irq
-comma
-r_int
-id|pci
 )paren
 (brace
-id|u_char
-id|csc
-op_assign
-(paren
-id|pci
-)paren
-ques
-c_cond
-l_int|0
-suffix:colon
-id|irq
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
 l_int|2
 comma
-l_string|&quot;  testing %s irq %d&bslash;n&quot;
-comma
-id|pci
-ques
-c_cond
-l_string|&quot;PCI&quot;
-suffix:colon
-l_string|&quot;ISA&quot;
+l_string|&quot;  testing ISA irq %d&bslash;n&quot;
 comma
 id|irq
 )paren
@@ -2587,18 +2565,11 @@ id|irq
 comma
 id|irq_count
 comma
-(paren
-id|pci
-ques
-c_cond
-id|SA_SHIRQ
-suffix:colon
 l_int|0
-)paren
 comma
 l_string|&quot;scan&quot;
 comma
-l_int|NULL
+id|irq_count
 )paren
 op_ne
 l_int|0
@@ -2639,7 +2610,7 @@ c_func
 (paren
 id|irq
 comma
-l_int|NULL
+id|irq_count
 )paren
 suffix:semicolon
 id|DEBUG
@@ -2665,7 +2636,7 @@ comma
 id|I365_CSC_DETECT
 op_or
 (paren
-id|csc
+id|irq
 op_lshift
 l_int|4
 )paren
@@ -2692,7 +2663,7 @@ c_func
 (paren
 id|irq
 comma
-l_int|NULL
+id|irq_count
 )paren
 suffix:semicolon
 multiline_comment|/* mask all interrupts */
@@ -2831,8 +2802,6 @@ c_func
 id|sock
 comma
 id|i
-comma
-l_int|0
 )paren
 op_eq
 l_int|0
@@ -2880,8 +2849,6 @@ c_func
 id|sock
 comma
 id|i
-comma
-l_int|0
 )paren
 op_ne
 l_int|0
@@ -8476,7 +8443,7 @@ l_int|0
 comma
 l_string|&quot;i82365&quot;
 comma
-l_int|NULL
+id|pcic_interrupt
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -8612,7 +8579,7 @@ c_func
 (paren
 id|cs_irq
 comma
-l_int|NULL
+id|pcic_interrupt
 )paren
 suffix:semicolon
 macro_line|#endif

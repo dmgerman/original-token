@@ -1851,7 +1851,7 @@ id|s-&gt;hdlctx.numflags
 op_assign
 l_int|1
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|skb
@@ -1872,7 +1872,7 @@ comma
 id|pkt_len
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|skb

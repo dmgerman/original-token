@@ -308,6 +308,18 @@ suffix:semicolon
 DECL|macro|flush_page_to_ram
 mdefine_line|#define flush_page_to_ram(page)&t;__flush_page_to_ram(page_address(page))
 r_extern
+r_void
+id|__flush_icache_page
+c_func
+(paren
+r_int
+r_int
+id|page_va
+)paren
+suffix:semicolon
+DECL|macro|flush_icache_page
+mdefine_line|#define flush_icache_page(vma, page) __flush_icache_page(page_address(page))
+r_extern
 r_int
 r_int
 id|va_to_phys

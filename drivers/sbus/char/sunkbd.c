@@ -2085,10 +2085,11 @@ id|do_poke_blanked_console
 op_assign
 l_int|1
 suffix:semicolon
-id|mark_bh
+id|tasklet_schedule
 c_func
 (paren
-id|CONSOLE_BH
+op_amp
+id|console_tasklet
 )paren
 suffix:semicolon
 id|add_keyboard_randomness
@@ -2550,7 +2551,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|tty_schedule_flip
+id|con_schedule_flip
 c_func
 (paren
 id|tty
@@ -2606,7 +2607,7 @@ id|cp
 op_increment
 suffix:semicolon
 )brace
-id|tty_schedule_flip
+id|con_schedule_flip
 c_func
 (paren
 id|tty
@@ -3038,7 +3039,7 @@ comma
 id|TTY_BREAK
 )paren
 suffix:semicolon
-id|tty_schedule_flip
+id|con_schedule_flip
 c_func
 (paren
 id|tty

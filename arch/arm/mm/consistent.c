@@ -7,61 +7,6 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
-multiline_comment|/* Pure 2^n version of get_order */
-DECL|function|__get_order
-r_extern
-id|__inline__
-r_int
-id|__get_order
-c_func
-(paren
-r_int
-r_int
-id|size
-)paren
-(brace
-r_int
-id|order
-suffix:semicolon
-id|size
-op_assign
-(paren
-id|size
-op_minus
-l_int|1
-)paren
-op_rshift
-(paren
-id|PAGE_SHIFT
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-id|order
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-r_do
-(brace
-id|size
-op_rshift_assign
-l_int|1
-suffix:semicolon
-id|order
-op_increment
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|size
-)paren
-suffix:semicolon
-r_return
-id|order
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * This allocates one page of cache-coherent memory space and returns&n; * both the virtual and a &quot;dma&quot; address to that space.  It is not clear&n; * whether this could be called from an interrupt context or not.  For&n; * now, we expressly forbid it, especially as some of the stuff we do&n; * here is not interrupt context safe.&n; */
 DECL|function|consistent_alloc
 r_void
@@ -111,7 +56,7 @@ c_func
 suffix:semicolon
 id|order
 op_assign
-id|__get_order
+id|get_order
 c_func
 (paren
 id|size

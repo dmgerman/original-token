@@ -16,6 +16,9 @@ macro_line|#include &quot;../scsi/hosts.h&quot;
 macro_line|#include &quot;../scsi/sd.h&quot;
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;usb_storage.h&quot;
+multiline_comment|/*&n; * This is the size of the structure Scsi_Host_Template.  We create&n; * an instance of this structure in this file and this is a check&n; * to see if this structure may have changed within the SCSI module.&n; * This is by no means foolproof, but it does help us some.&n; */
+DECL|macro|SCSI_HOST_TEMPLATE_SIZE
+mdefine_line|#define SCSI_HOST_TEMPLATE_SIZE&t;&t;&t;(104)
 multiline_comment|/* direction table -- this indicates the direction of the data&n; * transfer for each command code -- a 1 indicates input&n; */
 DECL|variable|us_direction
 r_int
@@ -5201,6 +5204,9 @@ multiline_comment|/* slave_attach */
 l_int|NULL
 comma
 multiline_comment|/* bios_param */
+l_int|NULL
+comma
+multiline_comment|/* select_queue_depths */
 l_int|1
 comma
 multiline_comment|/* can_queue */
@@ -7035,7 +7041,9 @@ singleline_comment|//  MOD_DEC_USE_COUNT;
 )brace
 multiline_comment|/***********************************************************************&n; * Initialization and registration&n; ***********************************************************************/
 DECL|function|usb_stor_init
+r_static
 r_int
+id|__init
 id|usb_stor_init
 c_func
 (paren
@@ -7043,6 +7051,43 @@ r_void
 )paren
 (brace
 singleline_comment|//  MOD_INC_USE_COUNT;
+r_if
+c_cond
+(paren
+r_sizeof
+(paren
+id|my_host_template
+)paren
+op_ne
+id|SCSI_HOST_TEMPLATE_SIZE
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;usb-storage: SCSI_HOST_TEMPLATE_SIZE does not match&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;usb-storage: expected %d bytes, got %d bytes&bslash;n&quot;
+comma
+id|SCSI_HOST_TEMPLATE_SIZE
+comma
+r_sizeof
+(paren
+id|my_host_template
+)paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/* register the driver, return -1 if error */
 r_if
 c_cond
@@ -7071,26 +7116,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|usb_stor_exit
+r_static
 r_void
-)paren
-(brace
-multiline_comment|/* MDD: Perhaps we should register the host here */
-r_return
-id|usb_stor_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|usb_stor_exit
 c_func
 (paren
 r_void
@@ -7104,5 +7134,18 @@ id|storage_driver
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|usb_stor_init
+id|module_init
+c_func
+(paren
+id|usb_stor_init
+)paren
+suffix:semicolon
+DECL|variable|usb_stor_exit
+id|module_exit
+c_func
+(paren
+id|usb_stor_exit
+)paren
+suffix:semicolon
 eof

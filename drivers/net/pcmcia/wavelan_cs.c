@@ -17650,6 +17650,15 @@ id|netif_stop_queue
 id|dev
 )paren
 suffix:semicolon
+id|clear_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
+suffix:semicolon
 multiline_comment|/* Release the card */
 id|wv_pcmcia_release
 c_func
@@ -17756,6 +17765,15 @@ id|netif_stop_queue
 id|dev
 )paren
 suffix:semicolon
+id|clear_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
+suffix:semicolon
 )brace
 id|CardServices
 c_func
@@ -17810,6 +17828,15 @@ id|wv_hw_reset
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|set_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
 )paren
 suffix:semicolon
 id|netif_start_queue

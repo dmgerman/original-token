@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: elsa.c,v 2.19 1999/09/04 06:20:06 keil Exp $&n;&n; * elsa.c     low level stuff for Elsa isdn cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Elsa GmbH for documents and informations&n; *&n; *              Klaus Lichtenwalder (Klaus.Lichtenwalder@WebForum.DE)&n; *              for ELSA PCMCIA support&n; *&n; * $Log: elsa.c,v $&n; * Revision 2.19  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 2.18  1999/08/25 16:50:54  keil&n; * Fix bugs which cause 2.3.14 hangs (waitqueue init)&n; *&n; * Revision 2.17  1999/08/11 20:57:40  keil&n; * bugfix IPAC version 1.1&n; * new PCI codefix&n; *&n; * Revision 2.16  1999/08/10 16:01:51  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 2.15  1999/08/09 19:25:21  keil&n; * Support (alpha version) for the &squot;98 model of ELSA Microlink ISDN/MC&n; * by Christer Weinigel, Cendio Systems AB &lt;wingel@cendio.se&gt;&n; * Add support for IPAC 1.2&n; *&n; * Revision 2.14  1999/07/12 21:05:07  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.13  1999/07/01 08:11:31  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.12  1998/11/15 23:54:35  keil&n; * changes from 2.0&n; *&n; * Revision 2.11  1998/08/20 13:50:34  keil&n; * More support for hybrid modem (not working yet)&n; *&n; * Revision 2.10  1998/08/13 23:36:22  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 2.9  1998/05/25 12:57:48  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.8  1998/04/15 16:41:42  keil&n; * QS3000 PCI support&n; * new init code&n; * new PCI init (2.1.94)&n; *&n; * Revision 2.7  1998/03/07 22:56:58  tsbogend&n; * made HiSax working on Linux/Alpha&n; *&n; * Revision 2.6  1998/02/02 13:29:40  keil&n; * fast io&n; *&n; * Revision 2.5  1998/01/31 21:41:45  keil&n; * changes for newer 2.1 kernels&n; *&n; * Revision 2.4  1997/11/08 21:35:46  keil&n; * new l1 init&n; *&n; * Revision 2.3  1997/11/06 17:15:09  keil&n; * New 2.1 init; PCMCIA wrapper changes&n; *&n; * Revision 2.2  1997/10/29 18:57:09  keil&n; * changes for 2.1.60, arcofi support&n; *&n; * Revision 2.1  1997/07/27 21:47:08  keil&n; * new interface structures&n; *&n; * Revision 2.0  1997/06/26 11:02:40  keil&n; * New Layer and card interface&n; *&n; * old changes removed KKe&n; *&n; */
+multiline_comment|/* $Id: elsa.c,v 2.20 1999/12/19 13:09:42 keil Exp $&n;&n; * elsa.c     low level stuff for Elsa isdn cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Elsa GmbH for documents and informations&n; *&n; *              Klaus Lichtenwalder (Klaus.Lichtenwalder@WebForum.DE)&n; *              for ELSA PCMCIA support&n; *&n; * $Log: elsa.c,v $&n; * Revision 2.20  1999/12/19 13:09:42  keil&n; * changed TASK_INTERRUPTIBLE into TASK_UNINTERRUPTIBLE for&n; * signal proof delays&n; *&n; * Revision 2.19  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 2.18  1999/08/25 16:50:54  keil&n; * Fix bugs which cause 2.3.14 hangs (waitqueue init)&n; *&n; * Revision 2.17  1999/08/11 20:57:40  keil&n; * bugfix IPAC version 1.1&n; * new PCI codefix&n; *&n; * Revision 2.16  1999/08/10 16:01:51  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 2.15  1999/08/09 19:25:21  keil&n; * Support (alpha version) for the &squot;98 model of ELSA Microlink ISDN/MC&n; * by Christer Weinigel, Cendio Systems AB &lt;wingel@cendio.se&gt;&n; * Add support for IPAC 1.2&n; *&n; * Revision 2.14  1999/07/12 21:05:07  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.13  1999/07/01 08:11:31  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.12  1998/11/15 23:54:35  keil&n; * changes from 2.0&n; *&n; * Revision 2.11  1998/08/20 13:50:34  keil&n; * More support for hybrid modem (not working yet)&n; *&n; * Revision 2.10  1998/08/13 23:36:22  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 2.9  1998/05/25 12:57:48  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.8  1998/04/15 16:41:42  keil&n; * QS3000 PCI support&n; * new init code&n; * new PCI init (2.1.94)&n; *&n; * Revision 2.7  1998/03/07 22:56:58  tsbogend&n; * made HiSax working on Linux/Alpha&n; *&n; * Revision 2.6  1998/02/02 13:29:40  keil&n; * fast io&n; *&n; * Revision 2.5  1998/01/31 21:41:45  keil&n; * changes for newer 2.1 kernels&n; *&n; * Revision 2.4  1997/11/08 21:35:46  keil&n; * new l1 init&n; *&n; * Revision 2.3  1997/11/06 17:15:09  keil&n; * New 2.1 init; PCMCIA wrapper changes&n; *&n; * Revision 2.2  1997/10/29 18:57:09  keil&n; * changes for 2.1.60, arcofi support&n; *&n; * Revision 2.1  1997/07/27 21:47:08  keil&n; * new interface structures&n; *&n; * Revision 2.0  1997/06/26 11:02:40  keil&n; * New Layer and card interface&n; *&n; * old changes removed KKe&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -25,7 +25,7 @@ r_char
 op_star
 id|Elsa_revision
 op_assign
-l_string|&quot;$Revision: 2.19 $&quot;
+l_string|&quot;$Revision: 2.20 $&quot;
 suffix:semicolon
 DECL|variable|Elsa_Types
 r_const
@@ -2565,7 +2565,7 @@ suffix:semicolon
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 id|schedule_timeout
@@ -2596,7 +2596,7 @@ suffix:semicolon
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 id|writereg
@@ -3699,7 +3699,7 @@ suffix:semicolon
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 id|schedule_timeout

@@ -1905,7 +1905,7 @@ suffix:semicolon
 )brace
 id|aops
 op_assign
-id|lo-&gt;lo_dentry-&gt;d_inode-&gt;i_mapping-&gt;a_ops
+id|inode-&gt;i_mapping-&gt;a_ops
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * If we can&squot;t read - sorry. If we only can&squot;t write - well,&n;&t;&t; * it&squot;s going to be read-only.&n;&t;&t; */
 r_if

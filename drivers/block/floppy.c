@@ -154,17 +154,6 @@ r_char
 id|data
 )paren
 suffix:semicolon
-r_static
-r_inline
-r_int
-id|__get_order
-c_func
-(paren
-r_int
-r_int
-id|size
-)paren
-suffix:semicolon
 DECL|macro|K_64
 mdefine_line|#define K_64&t;0x10000&t;&t;/* 64KB */
 macro_line|#include &lt;asm/floppy.h&gt;
@@ -178,68 +167,13 @@ DECL|macro|fd_get_dma_residue
 mdefine_line|#define fd_get_dma_residue() get_dma_residue(FLOPPY_DMA)
 macro_line|#endif
 multiline_comment|/* Dma Memory related stuff */
-multiline_comment|/* Pure 2^n version of get_order */
-DECL|function|__get_order
-r_static
-r_inline
-r_int
-id|__get_order
-c_func
-(paren
-r_int
-r_int
-id|size
-)paren
-(brace
-r_int
-id|order
-suffix:semicolon
-id|size
-op_assign
-(paren
-id|size
-op_minus
-l_int|1
-)paren
-op_rshift
-(paren
-id|PAGE_SHIFT
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-id|order
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-r_do
-(brace
-id|size
-op_rshift_assign
-l_int|1
-suffix:semicolon
-id|order
-op_increment
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|size
-)paren
-suffix:semicolon
-r_return
-id|order
-suffix:semicolon
-)brace
 macro_line|#ifndef fd_dma_mem_free
 DECL|macro|fd_dma_mem_free
-mdefine_line|#define fd_dma_mem_free(addr, size) free_pages(addr, __get_order(size))
+mdefine_line|#define fd_dma_mem_free(addr, size) free_pages(addr, get_order(size))
 macro_line|#endif
 macro_line|#ifndef fd_dma_mem_alloc
 DECL|macro|fd_dma_mem_alloc
-mdefine_line|#define fd_dma_mem_alloc(size) __get_dma_pages(GFP_KERNEL,__get_order(size))
+mdefine_line|#define fd_dma_mem_alloc(size) __get_dma_pages(GFP_KERNEL,get_order(size))
 macro_line|#endif
 DECL|function|fallback_on_nodma_alloc
 r_static

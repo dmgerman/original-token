@@ -13036,6 +13036,7 @@ mdefine_line|#define RSRCADDRESS(dev,num) ((dev)-&gt;resource[(num)].start)
 DECL|function|solo1_probe
 r_static
 r_int
+id|__devinit
 id|solo1_probe
 c_func
 (paren
@@ -13055,11 +13056,6 @@ r_struct
 id|solo1_state
 op_star
 id|s
-suffix:semicolon
-r_struct
-id|pm_dev
-op_star
-id|pmdev
 suffix:semicolon
 r_if
 c_cond
@@ -13709,6 +13705,7 @@ suffix:semicolon
 DECL|function|solo1_remove
 r_static
 r_void
+id|__devinit
 id|solo1_remove
 c_func
 (paren
@@ -13879,7 +13876,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-DECL|variable|id_table
+DECL|variable|__devinitdata
 r_static
 r_const
 r_struct
@@ -13887,6 +13884,7 @@ id|pci_device_id
 id|id_table
 (braket
 )braket
+id|__devinitdata
 op_assign
 (brace
 (brace

@@ -2861,6 +2861,10 @@ comma
 id|acpi_init_via
 )brace
 comma
+(brace
+id|acpi_init_via
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|variable|acpi_pci_tbl

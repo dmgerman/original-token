@@ -311,6 +311,61 @@ mdefine_line|#define __pgprot(x)&t;((pgprot_t) { (x) } )
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
+multiline_comment|/* Pure 2^n version of get_order */
+DECL|function|get_order
+r_extern
+id|__inline__
+r_int
+id|get_order
+c_func
+(paren
+r_int
+r_int
+id|size
+)paren
+(brace
+r_int
+id|order
+suffix:semicolon
+id|size
+op_assign
+(paren
+id|size
+op_minus
+l_int|1
+)paren
+op_rshift
+(paren
+id|PAGE_SHIFT
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|order
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_do
+(brace
+id|size
+op_rshift_assign
+l_int|1
+suffix:semicolon
+id|order
+op_increment
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|size
+)paren
+suffix:semicolon
+r_return
+id|order
+suffix:semicolon
+)brace
 macro_line|#endif /* !__ASSEMBLY__ */
 macro_line|#include &lt;asm/page_offset.h&gt;
 DECL|macro|PAGE_OFFSET

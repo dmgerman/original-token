@@ -1687,12 +1687,6 @@ l_int|1
 op_lshift
 id|PG_error
 )paren
-op_or
-(paren
-l_int|1
-op_lshift
-id|PG_referenced
-)paren
 )paren
 suffix:semicolon
 id|page-&gt;flags
@@ -1703,6 +1697,12 @@ op_or
 l_int|1
 op_lshift
 id|PG_locked
+)paren
+op_or
+(paren
+l_int|1
+op_lshift
+id|PG_referenced
 )paren
 suffix:semicolon
 id|get_page

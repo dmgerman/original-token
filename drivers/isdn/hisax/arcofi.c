@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: arcofi.c,v 1.8 1999/08/25 16:50:51 keil Exp $&n;&n; * arcofi.c   Ansteuerung ARCOFI 2165&n; *&n; * Author     Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; *&n; *&n; * $Log: arcofi.c,v $&n; * Revision 1.8  1999/08/25 16:50:51  keil&n; * Fix bugs which cause 2.3.14 hangs (waitqueue init)&n; *&n; * Revision 1.7  1999/07/01 08:11:17  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.6  1998/09/30 22:21:56  keil&n; * cosmetics&n; *&n; * Revision 1.5  1998/09/27 12:52:57  keil&n; * cosmetics&n; *&n; * Revision 1.4  1998/08/20 13:50:24  keil&n; * More support for hybrid modem (not working yet)&n; *&n; * Revision 1.3  1998/05/25 12:57:38  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 1.2  1998/04/15 16:47:16  keil&n; * new interface&n; *&n; * Revision 1.1  1997/10/29 18:51:20  keil&n; * New files&n; *&n; */
+multiline_comment|/* $Id: arcofi.c,v 1.10 1999/12/23 15:09:32 keil Exp $&n;&n; * arcofi.c   Ansteuerung ARCOFI 2165&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; *&n; * $Log: arcofi.c,v $&n; * Revision 1.10  1999/12/23 15:09:32  keil&n; * change email&n; *&n; * Revision 1.9  1999/12/19 13:09:41  keil&n; * changed TASK_INTERRUPTIBLE into TASK_UNINTERRUPTIBLE for&n; * signal proof delays&n; *&n; * Revision 1.8  1999/08/25 16:50:51  keil&n; * Fix bugs which cause 2.3.14 hangs (waitqueue init)&n; *&n; * Revision 1.7  1999/07/01 08:11:17  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.6  1998/09/30 22:21:56  keil&n; * cosmetics&n; *&n; * Revision 1.5  1998/09/27 12:52:57  keil&n; * cosmetics&n; *&n; * Revision 1.4  1998/08/20 13:50:24  keil&n; * More support for hybrid modem (not working yet)&n; *&n; * Revision 1.3  1998/05/25 12:57:38  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 1.2  1998/04/15 16:47:16  keil&n; * new interface&n; *&n; * Revision 1.1  1997/10/29 18:51:20  keil&n; * New files&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -261,7 +261,7 @@ op_amp
 id|cs-&gt;HW_Flags
 )paren
 suffix:semicolon
-id|wake_up_interruptible
+id|wake_up
 c_func
 (paren
 op_amp
@@ -380,7 +380,7 @@ id|cs-&gt;dc.isac.arcofi_state
 op_assign
 id|ARCOFI_NOP
 suffix:semicolon
-id|wake_up_interruptible
+id|wake_up
 c_func
 (paren
 op_amp
@@ -451,7 +451,7 @@ id|cs-&gt;dc.isac.arcofi_state
 op_assign
 id|ARCOFI_NOP
 suffix:semicolon
-id|wake_up_interruptible
+id|wake_up
 c_func
 (paren
 op_amp

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunlance.c,v 1.95 2000/02/10 21:14:24 davem Exp $&n; * lance.c: Linux/Sparc/Lance driver&n; *&n; *&t;Written 1995, 1996 by Miguel de Icaza&n; * Sources:&n; *&t;The Linux  depca driver&n; *&t;The Linux  lance driver.&n; *&t;The Linux  skeleton driver.&n; *&t;The NetBSD Sparc/Lance driver.&n; *&t;Theo de Raadt (deraadt@openbsd.org)&n; *&t;NCR92C990 Lan Controller manual&n; *&n; * 1.4:&n; *&t;Added support to run with a ledma on the Sun4m&n; *&n; * 1.5:&n; *&t;Added multiple card detection.&n; *&n; *&t; 4/17/96: Burst sizes and tpe selection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/15/96: auto carrier detection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/17/96: lebuffer on scsi/ether cards now work David S. Miller&n; *&t;&t;  (davem@caip.rutgers.edu)&n; *&n; *&t; 5/29/96: override option &squot;tpe-link-test?&squot;, if it is &squot;false&squot;, as&n; *&t;&t;  this disables auto carrier detection on sun4m. Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.7:&n; *&t; 6/26/96: Bug fix for multiple ledmas, miguel.&n; *&n; * 1.8:&n; *&t;&t;  Stole multicast code from depca.c, fixed lance_tx.&n; *&n; * 1.9:&n; *&t; 8/21/96: Fixed the multicast code (Pedro Roque)&n; *&n; *&t; 8/28/96: Send fake packet in lance_open() if auto_select is true,&n; *&t;&t;  so we can detect the carrier loss condition in time.&n; *&t;&t;  Eddie C. Dost (ecd@skynet.be)&n; *&n; *&t; 9/15/96: Align rx_buf so that eth_copy_and_sum() won&squot;t cause an&n; *&t;&t;  MNA trap during chksum_partial_copy(). (ecd@skynet.be)&n; *&n; *&t;11/17/96: Handle LE_C0_MERR in lance_interrupt(). (ecd@skynet.be)&n; *&n; *&t;12/22/96: Don&squot;t loop forever in lance_rx() on incomplete packets.&n; *&t;&t;  This was the sun4c killer. Shit, stupid bug.&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.10:&n; *&t; 1/26/97: Modularize driver. (ecd@skynet.be)&n; *&n; * 1.11:&n; *&t;12/27/97: Added sun4d support. (jj@sunsite.mff.cuni.cz)&n; *&n; * 1.12:&n; * &t; 11/3/99: Fixed SMP race in lance_start_xmit found by davem.&n; * &t;          Anton Blanchard (anton@progsoc.uts.edu.au)&n; * 2.00: 11/9/99: Massive overhaul and port to new SBUS driver interfaces.&n; *&t;&t;  David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sunlance.c,v 1.97 2000/02/14 09:02:32 davem Exp $&n; * lance.c: Linux/Sparc/Lance driver&n; *&n; *&t;Written 1995, 1996 by Miguel de Icaza&n; * Sources:&n; *&t;The Linux  depca driver&n; *&t;The Linux  lance driver.&n; *&t;The Linux  skeleton driver.&n; *&t;The NetBSD Sparc/Lance driver.&n; *&t;Theo de Raadt (deraadt@openbsd.org)&n; *&t;NCR92C990 Lan Controller manual&n; *&n; * 1.4:&n; *&t;Added support to run with a ledma on the Sun4m&n; *&n; * 1.5:&n; *&t;Added multiple card detection.&n; *&n; *&t; 4/17/96: Burst sizes and tpe selection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/15/96: auto carrier detection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/17/96: lebuffer on scsi/ether cards now work David S. Miller&n; *&t;&t;  (davem@caip.rutgers.edu)&n; *&n; *&t; 5/29/96: override option &squot;tpe-link-test?&squot;, if it is &squot;false&squot;, as&n; *&t;&t;  this disables auto carrier detection on sun4m. Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.7:&n; *&t; 6/26/96: Bug fix for multiple ledmas, miguel.&n; *&n; * 1.8:&n; *&t;&t;  Stole multicast code from depca.c, fixed lance_tx.&n; *&n; * 1.9:&n; *&t; 8/21/96: Fixed the multicast code (Pedro Roque)&n; *&n; *&t; 8/28/96: Send fake packet in lance_open() if auto_select is true,&n; *&t;&t;  so we can detect the carrier loss condition in time.&n; *&t;&t;  Eddie C. Dost (ecd@skynet.be)&n; *&n; *&t; 9/15/96: Align rx_buf so that eth_copy_and_sum() won&squot;t cause an&n; *&t;&t;  MNA trap during chksum_partial_copy(). (ecd@skynet.be)&n; *&n; *&t;11/17/96: Handle LE_C0_MERR in lance_interrupt(). (ecd@skynet.be)&n; *&n; *&t;12/22/96: Don&squot;t loop forever in lance_rx() on incomplete packets.&n; *&t;&t;  This was the sun4c killer. Shit, stupid bug.&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.10:&n; *&t; 1/26/97: Modularize driver. (ecd@skynet.be)&n; *&n; * 1.11:&n; *&t;12/27/97: Added sun4d support. (jj@sunsite.mff.cuni.cz)&n; *&n; * 1.12:&n; * &t; 11/3/99: Fixed SMP race in lance_start_xmit found by davem.&n; * &t;          Anton Blanchard (anton@progsoc.uts.edu.au)&n; * 2.00: 11/9/99: Massive overhaul and port to new SBUS driver interfaces.&n; *&t;&t;  David S. Miller (davem@redhat.com)&n; */
 DECL|macro|DEBUG_DRIVER
 macro_line|#undef DEBUG_DRIVER
 DECL|variable|version
@@ -2272,7 +2272,8 @@ c_func
 id|lp
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 )brace
@@ -2327,7 +2328,8 @@ c_func
 id|lp
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 )brace
@@ -2416,6 +2418,8 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+id|out
+suffix:colon
 id|spin_unlock
 c_func
 (paren
@@ -3142,7 +3146,8 @@ c_func
 id|lp
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 )brace
@@ -3197,7 +3202,8 @@ c_func
 id|lp
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 )brace
@@ -3291,6 +3297,8 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+id|out
+suffix:colon
 id|spin_unlock
 c_func
 (paren
@@ -4369,6 +4377,7 @@ r_void
 op_star
 id|dest
 comma
+r_int
 r_char
 op_star
 id|src
@@ -4974,16 +4983,16 @@ id|ETH_ZLEN
 suffix:colon
 id|skblen
 suffix:semicolon
-id|lp-&gt;stats.tx_bytes
-op_add_assign
-id|len
-suffix:semicolon
 id|spin_lock_irq
 c_func
 (paren
 op_amp
 id|lp-&gt;lock
 )paren
+suffix:semicolon
+id|lp-&gt;stats.tx_bytes
+op_add_assign
+id|len
 suffix:semicolon
 id|entry
 op_assign
@@ -5199,13 +5208,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|spin_unlock_irq
-c_func
-(paren
-op_amp
-id|lp-&gt;lock
-)paren
-suffix:semicolon
 multiline_comment|/* Kick the lance: transmit now */
 id|sbus_writew
 c_func
@@ -5217,16 +5219,6 @@ comma
 id|lp-&gt;lregs
 op_plus
 id|RDP
-)paren
-suffix:semicolon
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
 )paren
 suffix:semicolon
 multiline_comment|/* Read back CSR to invalidate the E-Cache.&n;&t; * This is needed, because DMA_DSBL_WR_INV is set.&n;&t; */
@@ -5241,6 +5233,23 @@ c_func
 id|lp-&gt;lregs
 op_plus
 id|RDP
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
+suffix:semicolon
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 r_return

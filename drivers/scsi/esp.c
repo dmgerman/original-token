@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: esp.c,v 1.90 2000/01/28 13:42:56 jj Exp $&n; * esp.c:  EnhancedScsiProcessor Sun SCSI driver code.&n; *&n; * Copyright (C) 1995, 1998 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: esp.c,v 1.91 2000/02/14 08:46:24 jj Exp $&n; * esp.c:  EnhancedScsiProcessor Sun SCSI driver code.&n; *&n; * Copyright (C) 1995, 1998 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/* TODO:&n; *&n; * 1) Maybe disable parity checking in config register one for SCSI1&n; *    targets.  (Gilmore says parity error on the SBus can lock up&n; *    old sun4c&squot;s)&n; * 2) Add support for DMA2 pipelining.&n; * 3) Add tagged queueing.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -5698,6 +5698,12 @@ id|sp-&gt;SCp.buffers_residual
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sp-&gt;request_bufflen
+)paren
+(brace
 id|sp-&gt;SCp.have_data_in
 op_assign
 id|sbus_map_single
@@ -5724,6 +5730,14 @@ r_int
 id|sp-&gt;SCp.have_data_in
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|sp-&gt;SCp.ptr
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -5796,8 +5810,24 @@ r_if
 c_cond
 (paren
 id|sp-&gt;use_sg
-op_eq
-l_int|0
+)paren
+(brace
+id|sbus_unmap_sg
+c_func
+(paren
+id|esp-&gt;sdev
+comma
+id|sp-&gt;buffer
+comma
+id|sp-&gt;use_sg
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|sp-&gt;request_bufflen
 )paren
 (brace
 id|sbus_unmap_single
@@ -5808,19 +5838,6 @@ comma
 id|sp-&gt;SCp.have_data_in
 comma
 id|sp-&gt;request_bufflen
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|sbus_unmap_sg
-c_func
-(paren
-id|esp-&gt;sdev
-comma
-id|sp-&gt;buffer
-comma
-id|sp-&gt;use_sg
 )paren
 suffix:semicolon
 )brace

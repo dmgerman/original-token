@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sportster.c,v 1.10 1999/09/04 06:20:06 keil Exp $&n;&n; * sportster.c     low level stuff for USR Sportster internal TA&n; *&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; * Thanks to Christian &quot;naddy&quot; Weisgerber (3Com, US Robotics) for documentation&n; *&n; * $Log: sportster.c,v $&n; * Revision 1.10  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.9  1999/07/12 21:05:29  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.8  1999/07/01 08:12:10  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.7  1998/11/15 23:55:22  keil&n; * changes from 2.0&n; *&n; * Revision 1.6  1998/04/15 16:44:35  keil&n; * new init code&n; *&n; * Revision 1.5  1998/02/02 13:29:46  keil&n; * fast io&n; *&n; * Revision 1.4  1997/11/08 21:35:52  keil&n; * new l1 init&n; *&n; * Revision 1.3  1997/11/06 17:09:29  keil&n; * New 2.1 init code&n; *&n; * Revision 1.2  1997/10/29 18:51:18  keil&n; * New files&n; *&n; * Revision 1.1.2.1  1997/10/17 22:10:58  keil&n; * new files on 2.0&n; *&n; */
+multiline_comment|/* $Id: sportster.c,v 1.12 1999/12/23 15:09:32 keil Exp $&n;&n; * sportster.c     low level stuff for USR Sportster internal TA&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * Thanks to Christian &quot;naddy&quot; Weisgerber (3Com, US Robotics) for documentation&n; *&n; * $Log: sportster.c,v $&n; * Revision 1.12  1999/12/23 15:09:32  keil&n; * change email&n; *&n; * Revision 1.11  1999/12/19 13:09:42  keil&n; * changed TASK_INTERRUPTIBLE into TASK_UNINTERRUPTIBLE for&n; * signal proof delays&n; *&n; * Revision 1.10  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.9  1999/07/12 21:05:29  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.8  1999/07/01 08:12:10  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.7  1998/11/15 23:55:22  keil&n; * changes from 2.0&n; *&n; * Revision 1.6  1998/04/15 16:44:35  keil&n; * new init code&n; *&n; * Revision 1.5  1998/02/02 13:29:46  keil&n; * fast io&n; *&n; * Revision 1.4  1997/11/08 21:35:52  keil&n; * new l1 init&n; *&n; * Revision 1.3  1997/11/06 17:09:29  keil&n; * New 2.1 init code&n; *&n; * Revision 1.2  1997/10/29 18:51:18  keil&n; * New files&n; *&n; * Revision 1.1.2.1  1997/10/17 22:10:58  keil&n; * new files on 2.0&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -19,7 +19,7 @@ r_char
 op_star
 id|sportster_revision
 op_assign
-l_string|&quot;$Revision: 1.10 $&quot;
+l_string|&quot;$Revision: 1.12 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -631,7 +631,7 @@ suffix:semicolon
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 id|schedule_timeout
@@ -665,7 +665,7 @@ suffix:semicolon
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 id|schedule_timeout

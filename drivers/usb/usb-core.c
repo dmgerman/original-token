@@ -90,6 +90,13 @@ r_void
 )paren
 suffix:semicolon
 r_int
+id|plusb_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
 id|usb_mouse_init
 c_func
 (paren
@@ -235,6 +242,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_USB_DABUSB
 id|dabusb_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_PLUSB
+id|plusb_init
 c_func
 (paren
 )paren

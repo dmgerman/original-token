@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: netjet.c,v 1.16 1999/10/14 20:25:29 keil Exp $&n;&n; * netjet.c     low level stuff for Traverse Technologie NETJet ISDN cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * Thanks to Traverse Technologie Australia for documents and informations&n; *&n; * $Log: netjet.c,v $&n; * Revision 1.16  1999/10/14 20:25:29  keil&n; * add a statistic for error monitoring&n; *&n; * Revision 1.15  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.14  1999/08/31 11:20:25  paul&n; * various spelling corrections (new checksums may be needed, Karsten!)&n; *&n; * Revision 1.13  1999/08/11 21:01:31  keil&n; * new PCI codefix&n; *&n; * Revision 1.12  1999/08/10 16:02:00  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.11  1999/08/07 17:32:00  keil&n; * Asymetric buffers for improved ping times.  Interframe spacing&n; * fix for NJ&lt;-&gt;NJ thoughput.  Matt Henderson - www.traverse.com.au&n; *&n; *&n; * Revision 1.10  1999/07/12 21:05:22  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.9  1999/07/01 08:12:05  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.8  1998/11/15 23:55:14  keil&n; * changes from 2.0&n; *&n; * Revision 1.7  1998/09/30 22:24:48  keil&n; * Fix missing line in setstack*&n; *&n; * Revision 1.6  1998/08/13 23:36:54  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 1.5  1998/05/25 12:58:21  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 1.4  1998/04/15 16:42:35  keil&n; * new init code&n; * new PCI init (2.1.94)&n; *&n; * Revision 1.3  1998/02/12 23:08:05  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.2  1998/02/02 13:32:06  keil&n; * New&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: netjet.c,v 1.17 1999/12/19 13:09:42 keil Exp $&n;&n; * netjet.c     low level stuff for Traverse Technologie NETJet ISDN cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * Thanks to Traverse Technologie Australia for documents and informations&n; *&n; * $Log: netjet.c,v $&n; * Revision 1.17  1999/12/19 13:09:42  keil&n; * changed TASK_INTERRUPTIBLE into TASK_UNINTERRUPTIBLE for&n; * signal proof delays&n; *&n; * Revision 1.16  1999/10/14 20:25:29  keil&n; * add a statistic for error monitoring&n; *&n; * Revision 1.15  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.14  1999/08/31 11:20:25  paul&n; * various spelling corrections (new checksums may be needed, Karsten!)&n; *&n; * Revision 1.13  1999/08/11 21:01:31  keil&n; * new PCI codefix&n; *&n; * Revision 1.12  1999/08/10 16:02:00  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.11  1999/08/07 17:32:00  keil&n; * Asymetric buffers for improved ping times.  Interframe spacing&n; * fix for NJ&lt;-&gt;NJ thoughput.  Matt Henderson - www.traverse.com.au&n; *&n; *&n; * Revision 1.10  1999/07/12 21:05:22  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.9  1999/07/01 08:12:05  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.8  1998/11/15 23:55:14  keil&n; * changes from 2.0&n; *&n; * Revision 1.7  1998/09/30 22:24:48  keil&n; * Fix missing line in setstack*&n; *&n; * Revision 1.6  1998/08/13 23:36:54  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 1.5  1998/05/25 12:58:21  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 1.4  1998/04/15 16:42:35  keil&n; * new init code&n; * new PCI init (2.1.94)&n; *&n; * Revision 1.3  1998/02/12 23:08:05  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.2  1998/02/02 13:32:06  keil&n; * New&n; *&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -31,7 +31,7 @@ r_char
 op_star
 id|NETjet_revision
 op_assign
-l_string|&quot;$Revision: 1.16 $&quot;
+l_string|&quot;$Revision: 1.17 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -5590,7 +5590,7 @@ suffix:semicolon
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 id|schedule_timeout
@@ -5624,7 +5624,7 @@ suffix:semicolon
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 id|schedule_timeout

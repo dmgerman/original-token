@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    PCMCIA Card Services -- core services&n;&n;    cs.c 1.247 2000/01/15 04:30:35&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    PCMCIA Card Services -- core services&n;&n;    cs.c 1.249 2000/02/10 23:26:11&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -70,7 +70,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;cs.c 1.247 2000/01/15 04:30:35 (David Hinds)&quot;
+l_string|&quot;cs.c 1.249 2000/02/10 23:26:11 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
@@ -1355,6 +1355,10 @@ op_assign
 op_amp
 id|setup_socket
 suffix:semicolon
+id|s-&gt;setup_timeout
+op_assign
+l_int|0
+suffix:semicolon
 id|s-&gt;shutdown.data
 op_assign
 id|sockets
@@ -2033,6 +2037,65 @@ c_cond
 (paren
 id|val
 op_amp
+id|SS_PENDING
+)paren
+(brace
+multiline_comment|/* Does the socket need more time? */
+id|DEBUG
+c_func
+(paren
+l_int|2
+comma
+l_string|&quot;cs: setup_socket(%ld): status pending&bslash;n&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_increment
+id|s-&gt;setup_timeout
+OG
+l_int|100
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;cs: socket %ld voltage interrogation&quot;
+l_string|&quot; timed out&bslash;n&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|s-&gt;setup.expires
+op_assign
+id|jiffies
+op_plus
+id|HZ
+op_div
+l_int|10
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+id|s-&gt;setup
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|val
+op_amp
 id|SS_DETECT
 )paren
 (brace
@@ -2232,7 +2295,7 @@ op_amp
 id|s-&gt;socket
 )paren
 suffix:semicolon
-id|s-&gt;unreset_timeout
+id|s-&gt;setup_timeout
 op_assign
 l_int|0
 suffix:semicolon
@@ -2439,7 +2502,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|s-&gt;unreset_timeout
+op_increment
+id|s-&gt;setup_timeout
 OG
 id|unreset_limit
 )paren
@@ -2462,9 +2526,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|s-&gt;unreset_timeout
-op_increment
-suffix:semicolon
 id|s-&gt;setup.expires
 op_assign
 id|jiffies

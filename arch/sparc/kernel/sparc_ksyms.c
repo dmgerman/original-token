@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.89 2000/02/09 11:15:03 davem Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.90 2000/02/13 09:52:54 anton Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -544,20 +544,6 @@ c_func
 id|global_bh_lock
 )paren
 suffix:semicolon
-DECL|variable|global_bh_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|global_bh_count
-)paren
-suffix:semicolon
-DECL|variable|sparc_bh_lock
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|sparc_bh_lock
-)paren
-suffix:semicolon
 DECL|variable|global_irq_count
 id|EXPORT_SYMBOL
 c_func
@@ -570,13 +556,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|synchronize_irq
-)paren
-suffix:semicolon
-DECL|variable|synchronize_bh
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|synchronize_bh
 )paren
 suffix:semicolon
 macro_line|#endif

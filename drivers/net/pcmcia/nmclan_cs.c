@@ -3395,6 +3395,34 @@ multiline_comment|/* WARNING: MACE_IR has been read! */
 r_return
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|2
+comma
+l_string|&quot;%s: interrupt from dead card&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+r_goto
+id|exception
+suffix:semicolon
+)brace
 r_do
 (brace
 multiline_comment|/* WARNING: MACE_IR is a READ/CLEAR port! */

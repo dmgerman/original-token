@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -774,6 +775,22 @@ id|chrp_ide_probe
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_PCI
+DECL|variable|pci_alloc_consistent
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_alloc_consistent
+)paren
+suffix:semicolon
+DECL|variable|pci_free_consistent
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_free_consistent
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_PCI */
 DECL|variable|start_thread
 id|EXPORT_SYMBOL
 c_func

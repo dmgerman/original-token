@@ -10117,7 +10117,7 @@ c_func
 id|HZ
 )paren
 suffix:semicolon
-id|disable_bh
+id|remove_bh
 c_func
 (paren
 id|ISICOM_BH

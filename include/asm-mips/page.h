@@ -150,6 +150,61 @@ mdefine_line|#define __pgd(x)&t;(x)
 DECL|macro|__pgprot
 mdefine_line|#define __pgprot(x)&t;(x)
 macro_line|#endif /* !defined (STRICT_MM_TYPECHECKS) */
+multiline_comment|/* Pure 2^n version of get_order */
+DECL|function|get_order
+r_extern
+id|__inline__
+r_int
+id|get_order
+c_func
+(paren
+r_int
+r_int
+id|size
+)paren
+(brace
+r_int
+id|order
+suffix:semicolon
+id|size
+op_assign
+(paren
+id|size
+op_minus
+l_int|1
+)paren
+op_rshift
+(paren
+id|PAGE_SHIFT
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|order
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_do
+(brace
+id|size
+op_rshift_assign
+l_int|1
+suffix:semicolon
+id|order
+op_increment
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|size
+)paren
+suffix:semicolon
+r_return
+id|order
+suffix:semicolon
+)brace
 macro_line|#endif /* _LANGUAGE_ASSEMBLY */
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN

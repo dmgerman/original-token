@@ -477,7 +477,7 @@ id|err
 id|dprintf
 c_func
 (paren
-l_string|&quot;failed to move ino=%08lx -&gt; possible fs corruption&bslash;n&quot;
+l_string|&quot;failed to move ino=%08lx -&gt; fs corruption&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren

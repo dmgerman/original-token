@@ -13,12 +13,6 @@ macro_line|#undef MATROXFB_DEBUG_LOOP
 multiline_comment|/* Debug register calls, too? */
 DECL|macro|MATROXFB_DEBUG_REG
 macro_line|#undef MATROXFB_DEBUG_REG
-multiline_comment|/* Log reentrancy attempts - you must have printstate() patch applied */
-DECL|macro|MATROXFB_DEBUG_REENTER
-macro_line|#undef MATROXFB_DEBUG_REENTER
-multiline_comment|/* you must define DEBUG_REENTER to get debugged CONSOLEBH... */
-DECL|macro|MATROXFB_DEBUG_CONSOLEBH
-macro_line|#undef MATROXFB_DEBUG_CONSOLEBH
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2622,157 +2616,6 @@ mdefine_line|#define isMillenium(x)&t; (0)
 DECL|macro|isMilleniumII
 mdefine_line|#define isMilleniumII(x) (0)
 macro_line|#endif
-macro_line|#ifdef MATROXFB_DEBUG_REENTER
-DECL|variable|guard_counter
-r_static
-id|atomic_t
-id|guard_counter
-op_assign
-id|ATOMIC_INIT
-c_func
-(paren
-l_int|1
-)paren
-suffix:semicolon
-DECL|variable|guard_printing
-r_static
-id|atomic_t
-id|guard_printing
-op_assign
-id|ATOMIC_INIT
-c_func
-(paren
-l_int|1
-)paren
-suffix:semicolon
-DECL|function|guard_start
-r_static
-r_void
-id|guard_start
-c_func
-(paren
-r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|atomic_dec_and_test
-c_func
-(paren
-op_amp
-id|guard_counter
-)paren
-)paren
-(brace
-multiline_comment|/* first level */
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|bh_mask
-op_amp
-(paren
-l_int|1
-op_lshift
-id|CONSOLE_BH
-)paren
-)paren
-)paren
-multiline_comment|/* and CONSOLE_BH disabled */
-r_return
-suffix:semicolon
-multiline_comment|/* is OK */
-multiline_comment|/* otherwise it is first level with CONSOLE_BH enabled -&n;&t;&t;   - if we are __sti or SMP, reentering from console_bh possible */
-id|atomic_dec
-c_func
-(paren
-op_amp
-id|guard_printing
-)paren
-suffix:semicolon
-multiline_comment|/* disable reentrancy warning */
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;matroxfb entered without CONSOLE_BH disabled&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#ifdef printstate
-id|printstate
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|guard_printing
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/* real reentering... You should be already warned by code above */
-r_if
-c_cond
-(paren
-id|atomic_dec_and_test
-c_func
-(paren
-op_amp
-id|guard_printing
-)paren
-)paren
-(brace
-macro_line|#ifdef printstate
-id|printstate
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|guard_printing
-)paren
-suffix:semicolon
-)brace
-DECL|function|guard_end
-r_static
-r_inline
-r_void
-id|guard_end
-c_func
-(paren
-r_void
-)paren
-(brace
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|guard_counter
-)paren
-suffix:semicolon
-)brace
-DECL|macro|CRITBEGIN
-mdefine_line|#define CRITBEGIN guard_start();
-DECL|macro|CRITEND
-mdefine_line|#define CRITEND   guard_end();
-macro_line|#else
-DECL|macro|CRITBEGIN
-mdefine_line|#define CRITBEGIN
-DECL|macro|CRITEND
-mdefine_line|#define CRITEND
-macro_line|#endif
 DECL|macro|mga_ydstlen
 mdefine_line|#define mga_ydstlen(y,l) mga_outl(M_YDSTLEN | M_EXEC, ((y) &lt;&lt; 16) | (l))
 DECL|function|matrox_cfbX_init
@@ -3122,7 +2965,6 @@ c_func
 (paren
 l_string|&quot;matrox_cfbX_bmove&quot;
 )paren
-id|CRITBEGIN
 id|sx
 op_mul_assign
 id|fontwidth
@@ -3377,7 +3219,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|CRITEND
 )brace
 macro_line|#ifdef FBCON_HAS_CFB4
 DECL|function|matrox_cfb4_bmove
@@ -3429,7 +3270,6 @@ c_func
 (paren
 l_string|&quot;matrox_cfb4_bmove&quot;
 )paren
-id|CRITBEGIN
 r_if
 c_cond
 (paren
@@ -3757,7 +3597,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|CRITEND
 )brace
 macro_line|#endif
 DECL|function|matroxfb_accel_clear
@@ -3788,7 +3627,6 @@ c_func
 (paren
 l_string|&quot;matroxfb_accel_clear&quot;
 )paren
-id|CRITBEGIN
 id|mga_fifo
 c_func
 (paren
@@ -3848,7 +3686,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|CRITEND
 )brace
 DECL|function|matrox_cfbX_clear
 r_static
@@ -3973,7 +3810,6 @@ c_func
 (paren
 l_string|&quot;matrox_cfb4_clear&quot;
 )paren
-id|CRITBEGIN
 id|whattodo
 op_assign
 l_int|0
@@ -4335,7 +4171,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|CRITEND
 )brace
 macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB8
@@ -4643,7 +4478,6 @@ c_func
 id|p
 )paren
 suffix:semicolon
-id|CRITBEGIN
 id|mga_fifo
 c_func
 (paren
@@ -4765,7 +4599,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|CRITEND
 )brace
 DECL|function|matrox_cfbX_putc
 r_static
@@ -4828,7 +4661,6 @@ c_func
 id|p
 )paren
 suffix:semicolon
-id|CRITBEGIN
 macro_line|#ifdef __BIG_ENDIAN
 id|WaitTillIdle
 c_func
@@ -5301,7 +5133,6 @@ id|accel.m_opmode
 )paren
 suffix:semicolon
 macro_line|#endif
-id|CRITEND
 )brace
 macro_line|#ifdef FBCON_HAS_CFB8
 DECL|function|matrox_cfb8_putc
@@ -5715,7 +5546,6 @@ c_func
 id|p
 )paren
 suffix:semicolon
-id|CRITBEGIN
 id|mga_fifo
 c_func
 (paren
@@ -5865,7 +5695,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|CRITEND
 )brace
 DECL|function|matrox_cfbX_putcs
 r_static
@@ -6075,7 +5904,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|CRITBEGIN
 macro_line|#ifdef __BIG_ENDIAN
 id|WaitTillIdle
 c_func
@@ -6484,7 +6312,6 @@ id|accel.m_opmode
 )paren
 suffix:semicolon
 macro_line|#endif
-id|CRITEND
 )brace
 macro_line|#ifdef FBCON_HAS_CFB8
 DECL|function|matrox_cfb8_putcs
@@ -6963,7 +6790,6 @@ id|xx
 op_rshift_assign
 l_int|1
 suffix:semicolon
-id|CRITBEGIN
 id|mga_fifo
 c_func
 (paren
@@ -7031,7 +6857,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|CRITEND
 )brace
 macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB8
@@ -7080,7 +6905,6 @@ c_func
 id|p
 )paren
 suffix:semicolon
-id|CRITBEGIN
 id|mga_fifo
 c_func
 (paren
@@ -7148,7 +6972,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|CRITEND
 )brace
 macro_line|#endif
 DECL|function|matrox_cfbX_revc
@@ -7196,7 +7019,6 @@ c_func
 id|p
 )paren
 suffix:semicolon
-id|CRITBEGIN
 id|mga_fifo
 c_func
 (paren
@@ -7264,7 +7086,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|CRITEND
 )brace
 DECL|function|matrox_cfbX_clear_margins
 r_static
@@ -8823,7 +8644,6 @@ c_func
 id|features.DAC1064.cursorimage
 )paren
 suffix:semicolon
-id|CRITBEGIN
 macro_line|#ifdef __BIG_ENDIAN
 id|WaitTillIdle
 c_func
@@ -9067,7 +8887,6 @@ id|accel.m_opmode
 )paren
 suffix:semicolon
 macro_line|#endif
-id|CRITEND
 )brace
 DECL|function|matroxfb_DAC1064_cursor
 r_static
@@ -9573,7 +9392,6 @@ id|fastfont.size
 r_return
 l_int|0
 suffix:semicolon
-id|CRITBEGIN
 id|mga_outl
 c_func
 (paren
@@ -10147,7 +9965,6 @@ id|accel.m_opmode
 )paren
 )paren
 suffix:semicolon
-id|CRITEND
 r_return
 l_int|1
 suffix:semicolon
@@ -10259,7 +10076,6 @@ c_func
 id|p
 )paren
 suffix:semicolon
-id|CRITBEGIN
 id|step
 op_assign
 id|ACCESS_FBINFO
@@ -10492,7 +10308,6 @@ op_decrement
 suffix:semicolon
 )brace
 )brace
-id|CRITEND
 )brace
 DECL|function|matrox_text_clear
 r_static
@@ -10591,7 +10406,6 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
-id|CRITBEGIN
 r_while
 c_loop
 (paren
@@ -10647,7 +10461,6 @@ id|height
 op_decrement
 suffix:semicolon
 )brace
-id|CRITEND
 )brace
 DECL|function|matrox_text_putc
 r_static
@@ -10754,7 +10567,6 @@ id|chr
 op_or_assign
 l_int|0x08
 suffix:semicolon
-id|CRITBEGIN
 id|mga_writew
 c_func
 (paren
@@ -10773,7 +10585,6 @@ id|chr
 )paren
 )paren
 suffix:semicolon
-id|CRITEND
 )brace
 DECL|function|matrox_text_putcs
 r_static
@@ -10873,7 +10684,6 @@ op_lshift
 l_int|4
 )paren
 suffix:semicolon
-id|CRITBEGIN
 r_while
 c_loop
 (paren
@@ -10938,7 +10748,6 @@ op_add_assign
 id|step
 suffix:semicolon
 )brace
-id|CRITEND
 )brace
 DECL|function|matrox_text_revc
 r_static
@@ -10992,7 +10801,6 @@ id|step
 op_plus
 l_int|1
 suffix:semicolon
-id|CRITBEGIN
 id|mga_writeb
 c_func
 (paren
@@ -11019,7 +10827,6 @@ op_xor
 l_int|0x77
 )paren
 suffix:semicolon
-id|CRITEND
 )brace
 DECL|function|matrox_text_loadfont
 r_static
@@ -11106,7 +10913,6 @@ op_star
 )paren
 id|p-&gt;fontdata
 suffix:semicolon
-id|CRITBEGIN
 id|mga_setr
 c_func
 (paren
@@ -11210,7 +11016,6 @@ comma
 l_int|0x03
 )paren
 suffix:semicolon
-id|CRITEND
 r_return
 l_int|1
 suffix:semicolon
@@ -11250,7 +11055,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|CRITBEGIN
 id|mga_setr
 c_func
 (paren
@@ -11281,7 +11085,6 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|CRITEND
 )brace
 DECL|function|matrox_text_cursor
 r_static
@@ -11347,7 +11150,6 @@ op_ne
 id|CM_ERASE
 )paren
 (brace
-id|CRITBEGIN
 id|mga_setr
 c_func
 (paren
@@ -11358,7 +11160,6 @@ comma
 l_int|0x20
 )paren
 suffix:semicolon
-id|CRITEND
 id|ACCESS_FBINFO
 c_func
 (paren
@@ -11424,7 +11225,6 @@ id|y
 op_plus
 id|x
 suffix:semicolon
-id|CRITBEGIN
 id|mga_setr
 c_func
 (paren
@@ -11461,7 +11261,6 @@ id|cursor.u
 )paren
 )paren
 suffix:semicolon
-id|CRITEND
 id|ACCESS_FBINFO
 c_func
 (paren
@@ -12731,7 +12530,6 @@ op_rshift
 l_int|21
 suffix:semicolon
 macro_line|#endif&t;
-id|CRITBEGIN
 id|mga_setr
 c_func
 (paren
@@ -12783,7 +12581,6 @@ comma
 id|p2
 )paren
 suffix:semicolon
-id|CRITEND
 )brace
 multiline_comment|/*&n;&t; * Open/Release the frame buffer device&n;&t; */
 DECL|function|matroxfb_open
@@ -17178,7 +16975,6 @@ c_func
 (paren
 l_string|&quot;DAC1064_restore_1&quot;
 )paren
-id|CRITBEGIN
 id|outDAC1064
 c_func
 (paren
@@ -17272,7 +17068,6 @@ id|i
 )paren
 suffix:semicolon
 )brace
-id|CRITEND
 )brace
 DECL|function|DAC1064_restore_2
 r_static
@@ -17312,7 +17107,6 @@ c_func
 (paren
 l_string|&quot;DAC1064_restore_2&quot;
 )paren
-id|CRITBEGIN
 r_for
 c_loop
 (paren
@@ -17375,8 +17169,6 @@ l_int|10
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
-id|CRITEND
 r_if
 c_cond
 (paren
@@ -21986,7 +21778,6 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|CRITBEGIN
 id|mga_inb
 c_func
 (paren
@@ -22201,7 +21992,6 @@ comma
 l_int|0x20
 )paren
 suffix:semicolon
-id|CRITEND
 )brace
 DECL|function|matrox_setcolreg
 r_static
@@ -22677,7 +22467,6 @@ c_func
 (paren
 l_string|&quot;MGA1064_restore&quot;
 )paren
-id|CRITBEGIN
 id|pci_write_config_dword
 c_func
 (paren
@@ -22708,7 +22497,6 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-id|CRITEND
 id|DAC1064_restore_1
 c_func
 (paren
@@ -22799,7 +22587,6 @@ c_func
 (paren
 l_string|&quot;MGAG100_restore&quot;
 )paren
-id|CRITBEGIN
 id|pci_write_config_dword
 c_func
 (paren
@@ -22814,7 +22601,6 @@ comma
 id|hw-&gt;MXoptionReg
 )paren
 suffix:semicolon
-id|CRITEND
 id|DAC1064_restore_1
 c_func
 (paren
@@ -22967,7 +22753,6 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|CRITBEGIN
 id|pci_write_config_dword
 c_func
 (paren
@@ -22982,7 +22767,6 @@ comma
 id|hw-&gt;MXoptionReg
 )paren
 suffix:semicolon
-id|CRITEND
 id|vgaHWrestore
 c_func
 (paren
@@ -22992,7 +22776,6 @@ comma
 id|oldhw
 )paren
 suffix:semicolon
-id|CRITBEGIN
 r_for
 c_loop
 (paren
@@ -23157,7 +22940,6 @@ id|TVP3026_XLOOPPLLDATA
 )paren
 suffix:semicolon
 )brace
-id|CRITEND
 r_if
 c_cond
 (paren
@@ -23178,7 +22960,6 @@ l_int|6
 multiline_comment|/* agrhh... setting up PLL is very slow on Millenium... */
 multiline_comment|/* Mystique PLL is locked in few ms, but Millenium PLL lock takes about 0.15 s... */
 multiline_comment|/* Maybe even we should call schedule() ? */
-id|CRITBEGIN
 id|outTi3026
 c_func
 (paren
@@ -23308,7 +23089,6 @@ l_int|10
 )paren
 suffix:semicolon
 )brace
-id|CRITEND
 r_if
 c_cond
 (paren
@@ -23334,7 +23114,6 @@ op_minus
 id|tmout
 )paren
 suffix:semicolon
-id|CRITBEGIN
 )brace
 id|outTi3026
 c_func
@@ -23383,7 +23162,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-id|CRITEND
 r_if
 c_cond
 (paren
@@ -23410,7 +23188,6 @@ l_int|0x80
 r_int
 id|tmout
 suffix:semicolon
-id|CRITBEGIN
 id|outTi3026
 c_func
 (paren
@@ -23454,7 +23231,6 @@ l_int|10
 )paren
 suffix:semicolon
 )brace
-id|CRITEND
 r_if
 c_cond
 (paren
@@ -25784,7 +25560,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|CRITBEGIN
 id|mga_outb
 c_func
 (paren
@@ -25839,7 +25614,6 @@ op_or
 id|crtc
 )paren
 suffix:semicolon
-id|CRITEND
 DECL|macro|minfo
 macro_line|#undef minfo
 )brace

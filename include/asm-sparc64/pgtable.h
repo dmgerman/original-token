@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.118 1999/12/21 21:24:35 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.119 2000/02/14 02:53:44 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
@@ -502,7 +502,7 @@ mdefine_line|#define mmu_unlockarea(vaddr, len)&t;&t;do { } while(0)
 multiline_comment|/* There used to be some funny code here which tried to guess which&n; * TLB wanted the mapping, that wasn&squot;t accurate enough to justify it&squot;s&n; * existance.  The real way to do that is to have each TLB miss handler&n; * pass in a distinct code to do_sparc64_fault() and do it more accurately&n; * there.&n; *&n; * What we do need to handle here is prevent I-cache corruption.  The&n; * deal is that the I-cache snoops stores from other CPUs and all DMA&n; * activity, however stores from the local processor are not snooped.&n; * The dynamic linker and our signal handler mechanism take care of&n; * the cases where they write into instruction space, but when a page&n; * is copied in the kernel and then executed in user-space is not handled&n; * right.  This leads to corruptions if things are &quot;just right&quot;, consider&n; * the following scenerio:&n; * 1) Process 1 frees up a page that was used for the PLT of libc in&n; *    it&squot;s address space.&n; * 2) Process 2 writes into a page in the PLT of libc for the first&n; *    time.  do_wp_page() copies the page locally, the local I-cache of&n; *    the processor does not notice the writes during the page copy.&n; *    The new page used just so happens to be the one just freed in #1.&n; * 3) After the PLT write, later the cpu calls into an unresolved PLT&n; *    entry, the CPU executes old instructions from process 1&squot;s PLT&n; *    table.&n; * 4) Splat.&n; */
 r_extern
 r_void
-id|flush_icache_page
+id|__flush_icache_page
 c_func
 (paren
 r_int
@@ -511,7 +511,9 @@ id|phys_page
 )paren
 suffix:semicolon
 DECL|macro|update_mmu_cache
-mdefine_line|#define update_mmu_cache(__vma, __address, _pte) &bslash;&n;do { &bslash;&n;&t;unsigned short __flags = ((__vma)-&gt;vm_flags); &bslash;&n;&t;if ((__flags &amp; VM_EXEC) != 0 &amp;&amp; &bslash;&n;&t;    ((pte_val(_pte) &amp; (_PAGE_PRESENT | _PAGE_WRITE | _PAGE_MODIFIED)) == &bslash;&n;&t;     (_PAGE_PRESENT | _PAGE_WRITE | _PAGE_MODIFIED))) { &bslash;&n;&t;&t;flush_icache_page(pte_pagenr(_pte) &lt;&lt; PAGE_SHIFT); &bslash;&n;&t;} &bslash;&n;} while(0)
+mdefine_line|#define update_mmu_cache(__vma, __address, _pte) &bslash;&n;do { &bslash;&n;&t;unsigned short __flags = ((__vma)-&gt;vm_flags); &bslash;&n;&t;if ((__flags &amp; VM_EXEC) != 0 &amp;&amp; &bslash;&n;&t;    ((pte_val(_pte) &amp; (_PAGE_PRESENT | _PAGE_WRITE | _PAGE_MODIFIED)) == &bslash;&n;&t;     (_PAGE_PRESENT | _PAGE_WRITE | _PAGE_MODIFIED))) { &bslash;&n;&t;&t;__flush_icache_page(pte_pagenr(_pte) &lt;&lt; PAGE_SHIFT); &bslash;&n;&t;} &bslash;&n;} while(0)
+DECL|macro|flush_icache_page
+mdefine_line|#define flush_icache_page(vma, pg)&t;do { } while(0)
 multiline_comment|/* Make a non-present pseudo-TTE. */
 DECL|function|mk_pte_io
 r_extern
@@ -763,5 +765,8 @@ id|space
 )paren
 suffix:semicolon
 macro_line|#endif /* !(__ASSEMBLY__) */
+multiline_comment|/* We provide our own get_unmapped_area to cope with VA holes for userland */
+DECL|macro|HAVE_ARCH_UNMAPPED_AREA
+mdefine_line|#define HAVE_ARCH_UNMAPPED_AREA
 macro_line|#endif /* !(_SPARC64_PGTABLE_H) */
 eof

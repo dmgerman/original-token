@@ -1634,5 +1634,8 @@ id|space
 )paren
 suffix:semicolon
 macro_line|#endif /* !(__ASSEMBLY__) */
+multiline_comment|/* We provide our own get_unmapped_area to cope with VA holes for userland */
+DECL|macro|HAVE_ARCH_UNMAPPED_AREA
+mdefine_line|#define HAVE_ARCH_UNMAPPED_AREA
 macro_line|#endif /* !(_SPARC_PGTABLE_H) */
 eof

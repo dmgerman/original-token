@@ -4,62 +4,6 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-multiline_comment|/* Pure 2^n version of get_order */
-r_extern
-id|__inline__
-r_int
-r_int
-DECL|function|get_order
-id|get_order
-(paren
-r_int
-r_int
-id|size
-)paren
-(brace
-r_int
-r_int
-id|order
-op_assign
-id|ia64_fls
-c_func
-(paren
-id|size
-op_minus
-l_int|1
-)paren
-op_plus
-l_int|1
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;get_order: size=%lu, order=%lu&bslash;n&quot;
-comma
-id|size
-comma
-id|order
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|order
-OG
-id|PAGE_SHIFT
-)paren
-id|order
-op_sub_assign
-id|PAGE_SHIFT
-suffix:semicolon
-r_else
-id|order
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-id|order
-suffix:semicolon
-)brace
 r_void
 op_star
 DECL|function|pci_alloc_consistent

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: config.c,v 2.40 1999/10/30 13:09:45 keil Exp $&n;&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&n; * $Log: config.c,v $&n; * Revision 2.40  1999/10/30 13:09:45  keil&n; * Version 3.3c&n; *&n; * Revision 2.39  1999/10/16 14:44:45  keil&n; * Fix module parm if only NICCY was selected&n; *&n; * Revision 2.38  1999/10/14 20:25:28  keil&n; * add a statistic for error monitoring&n; *&n; * Revision 2.37  1999/09/20 12:11:08  keil&n; * Fix hang if no protocol was selected&n; *&n; * Revision 2.36  1999/09/07 05:43:58  werner&n; *&n; * Added io as parameter 0 for HFC-PCI cards, if manual selection needed.&n; *&n; * Revision 2.35  1999/09/04 06:35:09  keil&n; * Winbond W6692 support&n; *&n; * Revision 2.34  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 2.33  1999/08/30 11:57:52  keil&n; * Fix broken avm pcmcia&n; *&n; * Revision 2.32  1999/08/28 22:11:10  keil&n; * __setup function should be static&n; *&n; * Revision 2.31  1999/08/25 16:47:43  keil&n; * Support new __setup; allow to add FEATURES after register_isdn&n; *&n; * Revision 2.30  1999/08/05 20:43:14  keil&n; * ISAR analog modem support&n; *&n; * Revision 2.29  1999/07/21 14:46:00  keil&n; * changes from EICON certification&n; *&n; * Revision 2.28  1999/07/14 12:38:36  werner&n; * Added changes for echo channel handling&n; *&n; * Revision 2.27  1999/07/12 21:05:00  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.26  1999/07/08 21:27:17  keil&n; * version 3.2&n; *&n; * Revision 2.25  1999/07/05 23:51:44  werner&n; * Allow limiting of available HiSax B-chans per card. Controlled by hisaxctrl&n; * hisaxctrl id 10 &lt;nr. of chans 0-2&gt;&n; *&n; * Revision 2.24  1999/07/01 08:11:26  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.23  1999/02/17 10:53:02  cpetig&n; * Added Hisax_closecard to exported symbols.&n; * As indicated by Oliver Schoett &lt;os@sdm.de&gt;.&n; *&n; * If anyone is annoyed by exporting symbols deep inside the code, please&n; * contact me.&n; *&n; * Revision 2.22  1999/02/04 21:41:53  keil&n; * Fix printk msg&n; *&n; * Revision 2.21  1999/02/04 10:48:52  keil&n; * Fix readstat bug&n; *&n; * Revision 2.20  1998/11/15 23:54:28  keil&n; * changes from 2.0&n; *&n; * Revision 2.19  1998/08/13 23:36:18  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 2.18  1998/07/30 21:01:37  niemann&n; * Fixed Sedlbauer Speed Fax PCMCIA missing isdnl3new&n; *&n; * Revision 2.17  1998/07/15 15:01:26  calle&n; * Support for AVM passive PCMCIA cards:&n; *    A1 PCMCIA, FRITZ!Card PCMCIA and FRITZ!Card PCMCIA 2.0&n; *&n; * Revision 2.16  1998/05/25 14:10:03  keil&n; * HiSax 3.0&n; * X.75 and leased are working again.&n; *&n; * Revision 2.15  1998/05/25 12:57:43  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.14  1998/04/15 16:38:25  keil&n; * Add S0Box and Teles PCI support&n; *&n; * Revision 2.13  1998/03/09 23:19:23  keil&n; * Changes for PCMCIA&n; *&n; * Revision 2.12  1998/02/11 17:28:02  keil&n; * Niccy PnP/PCI support&n; *&n; * Revision 2.11  1998/02/09 21:26:13  keil&n; * fix export module for 2.1&n; *&n; * Revision 2.10  1998/02/09 18:46:05  keil&n; * Support for Sedlbauer PCMCIA (Marcus Niemann)&n; *&n; * Revision 2.9  1998/02/03 23:31:28  keil&n; * add AMD7930 support&n; *&n; * Revision 2.8  1998/02/02 13:32:59  keil&n; * New card support&n; *&n; * Revision 2.7  1998/01/31 21:41:44  keil&n; * changes for newer 2.1 kernels&n; *&n; * Revision 2.6  1997/11/08 21:35:43  keil&n; * new l1 init&n; *&n; * Revision 2.5  1997/11/06 17:15:08  keil&n; * New 2.1 init; PCMCIA wrapper changes&n; *&n; * Revision 2.4  1997/10/29 19:07:52  keil&n; * changes for 2.1&n; *&n; * Revision 2.3  1997/10/01 09:21:33  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 2.2  1997/09/11 17:24:46  keil&n; * Add new cards&n; *&n; * Revision 2.1  1997/07/27 21:41:35  keil&n; * version change&n; *&n; * Revision 2.0  1997/06/26 11:06:28  keil&n; * New card and L1 interface.&n; * Eicon.Diehl Diva and Dynalink IS64PH support&n; *&n; * old changes removed /KKe&n; *&n; */
+multiline_comment|/* $Id: config.c,v 2.43 2000/01/20 19:49:36 keil Exp $&n;&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&n; * $Log: config.c,v $&n; * Revision 2.43  2000/01/20 19:49:36  keil&n; * Support teles 13.3c vendor version 2.1&n; *&n; * Revision 2.42  1999/12/19 13:09:41  keil&n; * changed TASK_INTERRUPTIBLE into TASK_UNINTERRUPTIBLE for&n; * signal proof delays&n; *&n; * Revision 2.41  1999/11/18 00:00:43  werner&n; *&n; * Added support for HFC-S+ and HFC-SP cards&n; *&n; * Revision 2.40  1999/10/30 13:09:45  keil&n; * Version 3.3c&n; *&n; * Revision 2.39  1999/10/16 14:44:45  keil&n; * Fix module parm if only NICCY was selected&n; *&n; * Revision 2.38  1999/10/14 20:25:28  keil&n; * add a statistic for error monitoring&n; *&n; * Revision 2.37  1999/09/20 12:11:08  keil&n; * Fix hang if no protocol was selected&n; *&n; * Revision 2.36  1999/09/07 05:43:58  werner&n; *&n; * Added io as parameter 0 for HFC-PCI cards, if manual selection needed.&n; *&n; * Revision 2.35  1999/09/04 06:35:09  keil&n; * Winbond W6692 support&n; *&n; * Revision 2.34  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 2.33  1999/08/30 11:57:52  keil&n; * Fix broken avm pcmcia&n; *&n; * Revision 2.32  1999/08/28 22:11:10  keil&n; * __setup function should be static&n; *&n; * Revision 2.31  1999/08/25 16:47:43  keil&n; * Support new __setup; allow to add FEATURES after register_isdn&n; *&n; * Revision 2.30  1999/08/05 20:43:14  keil&n; * ISAR analog modem support&n; *&n; * Revision 2.29  1999/07/21 14:46:00  keil&n; * changes from EICON certification&n; *&n; * Revision 2.28  1999/07/14 12:38:36  werner&n; * Added changes for echo channel handling&n; *&n; * Revision 2.27  1999/07/12 21:05:00  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.26  1999/07/08 21:27:17  keil&n; * version 3.2&n; *&n; * Revision 2.25  1999/07/05 23:51:44  werner&n; * Allow limiting of available HiSax B-chans per card. Controlled by hisaxctrl&n; * hisaxctrl id 10 &lt;nr. of chans 0-2&gt;&n; *&n; * Revision 2.24  1999/07/01 08:11:26  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.23  1999/02/17 10:53:02  cpetig&n; * Added Hisax_closecard to exported symbols.&n; * As indicated by Oliver Schoett &lt;os@sdm.de&gt;.&n; *&n; * If anyone is annoyed by exporting symbols deep inside the code, please&n; * contact me.&n; *&n; * Revision 2.22  1999/02/04 21:41:53  keil&n; * Fix printk msg&n; *&n; * Revision 2.21  1999/02/04 10:48:52  keil&n; * Fix readstat bug&n; *&n; * Revision 2.20  1998/11/15 23:54:28  keil&n; * changes from 2.0&n; *&n; * Revision 2.19  1998/08/13 23:36:18  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 2.18  1998/07/30 21:01:37  niemann&n; * Fixed Sedlbauer Speed Fax PCMCIA missing isdnl3new&n; *&n; * Revision 2.17  1998/07/15 15:01:26  calle&n; * Support for AVM passive PCMCIA cards:&n; *    A1 PCMCIA, FRITZ!Card PCMCIA and FRITZ!Card PCMCIA 2.0&n; *&n; * Revision 2.16  1998/05/25 14:10:03  keil&n; * HiSax 3.0&n; * X.75 and leased are working again.&n; *&n; * Revision 2.15  1998/05/25 12:57:43  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.14  1998/04/15 16:38:25  keil&n; * Add S0Box and Teles PCI support&n; *&n; * Revision 2.13  1998/03/09 23:19:23  keil&n; * Changes for PCMCIA&n; *&n; * Revision 2.12  1998/02/11 17:28:02  keil&n; * Niccy PnP/PCI support&n; *&n; * Revision 2.11  1998/02/09 21:26:13  keil&n; * fix export module for 2.1&n; *&n; * Revision 2.10  1998/02/09 18:46:05  keil&n; * Support for Sedlbauer PCMCIA (Marcus Niemann)&n; *&n; * Revision 2.9  1998/02/03 23:31:28  keil&n; * add AMD7930 support&n; *&n; * Revision 2.8  1998/02/02 13:32:59  keil&n; * New card support&n; *&n; * Revision 2.7  1998/01/31 21:41:44  keil&n; * changes for newer 2.1 kernels&n; *&n; * Revision 2.6  1997/11/08 21:35:43  keil&n; * new l1 init&n; *&n; * Revision 2.5  1997/11/06 17:15:08  keil&n; * New 2.1 init; PCMCIA wrapper changes&n; *&n; * Revision 2.4  1997/10/29 19:07:52  keil&n; * changes for 2.1&n; *&n; * Revision 2.3  1997/10/01 09:21:33  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 2.2  1997/09/11 17:24:46  keil&n; * Add new cards&n; *&n; * Revision 2.1  1997/07/27 21:41:35  keil&n; * version change&n; *&n; * Revision 2.0  1997/06/26 11:06:28  keil&n; * New card and L1 interface.&n; * Eicon.Diehl Diva and Dynalink IS64PH support&n; *&n; * old changes removed /KKe&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -13,7 +13,7 @@ DECL|macro|HISAX_STATUS_BUFSIZE
 mdefine_line|#define HISAX_STATUS_BUFSIZE 4096
 DECL|macro|INCLUDE_INLINE_FUNCS
 mdefine_line|#define INCLUDE_INLINE_FUNCS
-multiline_comment|/*&n; * This structure array contains one entry per card. An entry looks&n; * like this:&n; *&n; * { type, protocol, p0, p1, p2, NULL }&n; *&n; * type&n; *    1 Teles 16.0       p0=irq p1=membase p2=iobase&n; *    2 Teles  8.0       p0=irq p1=membase&n; *    3 Teles 16.3       p0=irq p1=iobase&n; *    4 Creatix PNP      p0=irq p1=IO0 (ISAC)  p2=IO1 (HSCX)&n; *    5 AVM A1 (Fritz)   p0=irq p1=iobase&n; *    6 ELSA PC          [p0=iobase] or nothing (autodetect)&n; *    7 ELSA Quickstep   p0=irq p1=iobase&n; *    8 Teles PCMCIA     p0=irq p1=iobase&n; *    9 ITK ix1-micro    p0=irq p1=iobase&n; *   10 ELSA PCMCIA      p0=irq p1=iobase&n; *   11 Eicon.Diehl Diva p0=irq p1=iobase&n; *   12 Asuscom ISDNLink p0=irq p1=iobase&n; *   13 Teleint          p0=irq p1=iobase&n; *   14 Teles 16.3c      p0=irq p1=iobase&n; *   15 Sedlbauer speed  p0=irq p1=iobase&n; *   15 Sedlbauer PC/104&t;p0=irq p1=iobase&n; *   15 Sedlbauer speed pci&t;no parameter&n; *   16 USR Sportster internal  p0=irq  p1=iobase&n; *   17 MIC card                p0=irq  p1=iobase&n; *   18 ELSA Quickstep 1000PCI  no parameter&n; *   19 Compaq ISDN S0 ISA card p0=irq  p1=IO0 (HSCX)  p2=IO1 (ISAC) p3=IO2&n; *   20 Travers Technologies NETjet PCI card&n; *   21 TELES PCI               no parameter&n; *   22 Sedlbauer Speed Star    p0=irq p1=iobase&n; *   23 reserved&n; *   24 Dr Neuhaus Niccy PnP/PCI card p0=irq p1=IO0 p2=IO1 (PnP only)&n; *   25 Teles S0Box             p0=irq p1=iobase (from isapnp setup)&n; *   26 AVM A1 PCMCIA (Fritz)   p0=irq p1=iobase&n; *   27 AVM PnP/PCI &t;&t;p0=irq p1=iobase (PCI no parameter)&n; *   28 Sedlbauer Speed Fax+ &t;p0=irq p1=iobase (from isapnp setup)&n; *   29 Siemens I-Surf          p0=irq p1=iobase p2=memory (from isapnp setup)   &n; *   30 ACER P10                p0=irq p1=iobase (from isapnp setup)   &n; *   31 HST Saphir              p0=irq  p1=iobase&n; *   32 Telekom A4T             none&n; *   33 Scitel Quadro&t;&t;p0=subcontroller (4*S0, subctrl 1...4)&n; *   34&t;Gazel ISDN cards&n; *   35 HFC 2BDS0 PCI           none&n; *   36 Winbond 6692 PCI        none&n; *&n; * protocol can be either ISDN_PTYPE_EURO or ISDN_PTYPE_1TR6 or ISDN_PTYPE_NI1&n; *&n; *&n; */
+multiline_comment|/*&n; * This structure array contains one entry per card. An entry looks&n; * like this:&n; *&n; * { type, protocol, p0, p1, p2, NULL }&n; *&n; * type&n; *    1 Teles 16.0       p0=irq p1=membase p2=iobase&n; *    2 Teles  8.0       p0=irq p1=membase&n; *    3 Teles 16.3       p0=irq p1=iobase&n; *    4 Creatix PNP      p0=irq p1=IO0 (ISAC)  p2=IO1 (HSCX)&n; *    5 AVM A1 (Fritz)   p0=irq p1=iobase&n; *    6 ELSA PC          [p0=iobase] or nothing (autodetect)&n; *    7 ELSA Quickstep   p0=irq p1=iobase&n; *    8 Teles PCMCIA     p0=irq p1=iobase&n; *    9 ITK ix1-micro    p0=irq p1=iobase&n; *   10 ELSA PCMCIA      p0=irq p1=iobase&n; *   11 Eicon.Diehl Diva p0=irq p1=iobase&n; *   12 Asuscom ISDNLink p0=irq p1=iobase&n; *   13 Teleint          p0=irq p1=iobase&n; *   14 Teles 16.3c      p0=irq p1=iobase&n; *   15 Sedlbauer speed  p0=irq p1=iobase&n; *   15 Sedlbauer PC/104&t;p0=irq p1=iobase&n; *   15 Sedlbauer speed pci&t;no parameter&n; *   16 USR Sportster internal  p0=irq  p1=iobase&n; *   17 MIC card                p0=irq  p1=iobase&n; *   18 ELSA Quickstep 1000PCI  no parameter&n; *   19 Compaq ISDN S0 ISA card p0=irq  p1=IO0 (HSCX)  p2=IO1 (ISAC) p3=IO2&n; *   20 Travers Technologies NETjet PCI card&n; *   21 TELES PCI               no parameter&n; *   22 Sedlbauer Speed Star    p0=irq p1=iobase&n; *   23 reserved&n; *   24 Dr Neuhaus Niccy PnP/PCI card p0=irq p1=IO0 p2=IO1 (PnP only)&n; *   25 Teles S0Box             p0=irq p1=iobase (from isapnp setup)&n; *   26 AVM A1 PCMCIA (Fritz)   p0=irq p1=iobase&n; *   27 AVM PnP/PCI &t;&t;p0=irq p1=iobase (PCI no parameter)&n; *   28 Sedlbauer Speed Fax+ &t;p0=irq p1=iobase (from isapnp setup)&n; *   29 Siemens I-Surf          p0=irq p1=iobase p2=memory (from isapnp setup)   &n; *   30 ACER P10                p0=irq p1=iobase (from isapnp setup)   &n; *   31 HST Saphir              p0=irq  p1=iobase&n; *   32 Telekom A4T             none&n; *   33 Scitel Quadro&t;&t;p0=subcontroller (4*S0, subctrl 1...4)&n; *   34&t;Gazel ISDN cards&n; *   35 HFC 2BDS0 PCI           none&n; *   36 Winbond 6692 PCI        none&n; *   37 HFC 2BDS0 S+/SP         p0=irq p1=iobase&n; *&n; * protocol can be either ISDN_PTYPE_EURO or ISDN_PTYPE_1TR6 or ISDN_PTYPE_NI1&n; *&n; *&n; */
 DECL|variable|CardType
 r_const
 r_char
@@ -96,6 +96,8 @@ comma
 l_string|&quot;HFC 2BDS0 PCI&quot;
 comma
 l_string|&quot;Winbond 6692&quot;
+comma
+l_string|&quot;HFC 2BDS0 SX&quot;
 comma
 )brace
 suffix:semicolon
@@ -355,6 +357,16 @@ DECL|macro|DEFAULT_CARD
 mdefine_line|#define DEFAULT_CARD ISDN_CTYPE_HFC_PCI
 DECL|macro|DEFAULT_CFG
 mdefine_line|#define DEFAULT_CFG {0,0,0,0}
+macro_line|#endif
+macro_line|#ifdef CONFIG_HISAX_HFC_SX
+DECL|macro|DEFAULT_CARD
+macro_line|#undef DEFAULT_CARD
+DECL|macro|DEFAULT_CFG
+macro_line|#undef DEFAULT_CFG
+DECL|macro|DEFAULT_CARD
+mdefine_line|#define DEFAULT_CARD ISDN_CTYPE_HFC_SX
+DECL|macro|DEFAULT_CFG
+mdefine_line|#define DEFAULT_CFG {5,0x2E0,0,0}
 macro_line|#endif
 macro_line|#ifdef CONFIG_HISAX_AMD7930
 DECL|macro|DEFAULT_CARD
@@ -935,7 +947,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;HiSax: Version 3.3c (module)&bslash;n&quot;
+l_string|&quot;HiSax: Version 3.3d (module)&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#else
@@ -943,7 +955,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;HiSax: Version 3.3c (kernel)&bslash;n&quot;
+l_string|&quot;HiSax: Version 3.3d (kernel)&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1582,6 +1594,19 @@ macro_line|#if CARD_HFC_PCI
 r_extern
 r_int
 id|setup_hfcpci
+c_func
+(paren
+r_struct
+id|IsdnCard
+op_star
+id|card
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if CARD_HFC_SX
+r_extern
+r_int
+id|setup_hfcsx
 c_func
 (paren
 r_struct
@@ -3065,7 +3090,7 @@ suffix:semicolon
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 multiline_comment|/* Timeout 10ms */
@@ -3923,6 +3948,21 @@ suffix:colon
 id|ret
 op_assign
 id|setup_hfcpci
+c_func
+(paren
+id|card
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#if CARD_HFC_SX
+r_case
+id|ISDN_CTYPE_HFC_SX
+suffix:colon
+id|ret
+op_assign
+id|setup_hfcsx
 c_func
 (paren
 id|card
@@ -5567,6 +5607,9 @@ id|ISDN_CTYPE_HSTSAPHIR
 suffix:colon
 r_case
 id|ISDN_CTYPE_GAZEL
+suffix:colon
+r_case
+id|ISDN_CTYPE_HFC_SX
 suffix:colon
 id|cards
 (braket

@@ -4918,7 +4918,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * -------------------------------------------------------------------&n; * dz_console_print ()&n; *&n; * dz_console_print is registered for printk.&n; * ------------------------------------------------------------------- &n; */
+multiline_comment|/* &n; * -------------------------------------------------------------------&n; * dz_console_print ()&n; *&n; * dz_console_print is registered for printk.&n; * The console_lock must be held when we get here.&n; * ------------------------------------------------------------------- &n; */
 DECL|function|dz_console_print
 r_static
 r_void

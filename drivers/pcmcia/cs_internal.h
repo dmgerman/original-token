@@ -409,9 +409,9 @@ id|setup
 comma
 id|shutdown
 suffix:semicolon
-DECL|member|unreset_timeout
+DECL|member|setup_timeout
 id|u_long
-id|unreset_timeout
+id|setup_timeout
 suffix:semicolon
 DECL|member|cis_mem
 id|pccard_mem_map

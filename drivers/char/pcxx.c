@@ -5490,12 +5490,6 @@ comma
 id|do_pcxe_bh
 )paren
 suffix:semicolon
-id|enable_bh
-c_func
-(paren
-id|DIGI_BH
-)paren
-suffix:semicolon
 id|timer_table
 (braket
 id|DIGI_TIMER

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: eicon_io.c,v 1.8 1999/10/08 22:09:34 armin Exp $&n; *&n; * ISDN low-level module for Eicon.Diehl active ISDN-Cards.&n; * Code for communicating with hardware.&n; *&n; * Copyright 1999    by Armin Schindler (mac@melware.de)&n; * Copyright 1999    Cytronics &amp; Melware (info@melware.de)&n; *&n; * Thanks to&t;Eicon Technology Diehl GmbH &amp; Co. oHG for &n; *&t;&t;documents, informations and hardware. &n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon_io.c,v $&n; * Revision 1.8  1999/10/08 22:09:34  armin&n; * Some fixes of cards interface handling.&n; * Bugfix of NULL pointer occurence.&n; * Changed a few log outputs.&n; *&n; * Revision 1.7  1999/09/26 14:17:53  armin&n; * Improved debug and log via readstat()&n; *&n; * Revision 1.6  1999/09/21 20:35:43  armin&n; * added more error checking.&n; *&n; * Revision 1.5  1999/08/31 11:20:11  paul&n; * various spelling corrections (new checksums may be needed, Karsten!)&n; *&n; * Revision 1.4  1999/08/22 20:26:47  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.3  1999/08/18 20:17:01  armin&n; * Added XLOG function for all cards.&n; * Bugfix of alloc_skb NULL pointer.&n; *&n; * Revision 1.2  1999/07/25 15:12:05  armin&n; * fix of some debug logs.&n; * enabled ISA-cards option.&n; *&n; * Revision 1.1  1999/03/29 11:19:45  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; *&n; */
+multiline_comment|/* $Id: eicon_io.c,v 1.10 2000/01/23 21:21:23 armin Exp $&n; *&n; * ISDN low-level module for Eicon active ISDN-Cards.&n; * Code for communicating with hardware.&n; *&n; * Copyright 1999,2000  by Armin Schindler (mac@melware.de)&n; * Copyright 1999,2000  Cytronics &amp; Melware (info@melware.de)&n; *&n; * Thanks to&t;Eicon Technology GmbH &amp; Co. oHG for &n; *&t;&t;documents, informations and hardware. &n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon_io.c,v $&n; * Revision 1.10  2000/01/23 21:21:23  armin&n; * Added new trace capability and some updates.&n; * DIVA Server BRI now supports data for ISDNLOG.&n; *&n; * Revision 1.9  1999/11/18 20:55:25  armin&n; * Ready_Int fix of ISA cards.&n; *&n; * Revision 1.8  1999/10/08 22:09:34  armin&n; * Some fixes of cards interface handling.&n; * Bugfix of NULL pointer occurence.&n; * Changed a few log outputs.&n; *&n; * Revision 1.7  1999/09/26 14:17:53  armin&n; * Improved debug and log via readstat()&n; *&n; * Revision 1.6  1999/09/21 20:35:43  armin&n; * added more error checking.&n; *&n; * Revision 1.5  1999/08/31 11:20:11  paul&n; * various spelling corrections (new checksums may be needed, Karsten!)&n; *&n; * Revision 1.4  1999/08/22 20:26:47  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.3  1999/08/18 20:17:01  armin&n; * Added XLOG function for all cards.&n; * Bugfix of alloc_skb NULL pointer.&n; *&n; * Revision 1.2  1999/07/25 15:12:05  armin&n; * fix of some debug logs.&n; * enabled ISA-cards option.&n; *&n; * Revision 1.1  1999/03/29 11:19:45  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;eicon.h&quot;
 r_void
@@ -2028,6 +2028,7 @@ id|scom
 r_if
 c_cond
 (paren
+(paren
 id|ram_inb
 c_func
 (paren
@@ -2035,6 +2036,11 @@ id|ccard
 comma
 op_amp
 id|com-&gt;Req
+)paren
+)paren
+op_logical_or
+(paren
+id|ccard-&gt;ReadyInt
 )paren
 )paren
 (brace
@@ -2620,6 +2626,20 @@ l_string|&quot;eicon: Req=%d Id=%x Ch=%d Len=%d Ref=%d&bslash;n&quot;
 comma
 id|reqbuf-&gt;Req
 comma
+(paren
+id|scom
+)paren
+ques
+c_cond
+id|ram_inb
+c_func
+(paren
+id|ccard
+comma
+op_amp
+id|com-&gt;ReqId
+)paren
+suffix:colon
 id|ram_inb
 c_func
 (paren
@@ -3527,6 +3547,12 @@ op_amp
 id|com-&gt;Rc
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|eicon_schedule_tx
+c_func
+(paren
+id|ccard
 )paren
 suffix:semicolon
 )brace

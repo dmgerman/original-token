@@ -1274,6 +1274,7 @@ id|error
 suffix:semicolon
 )brace
 multiline_comment|/* Get an address range which is currently unmapped.&n; * For mmap() without MAP_FIXED and shmat() with addr=0.&n; * Return value 0 means ENOMEM.&n; */
+macro_line|#ifndef HAVE_ARCH_UNMAPPED_AREA
 DECL|function|get_unmapped_area
 r_int
 r_int
@@ -1375,6 +1376,7 @@ id|vmm-&gt;vm_end
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 DECL|macro|vm_avl_empty
 mdefine_line|#define vm_avl_empty&t;(struct vm_area_struct *) NULL
 macro_line|#include &quot;mmap_avl.c&quot;
@@ -2206,15 +2208,11 @@ r_int
 r_int
 id|last
 op_assign
-(paren
 id|end
 op_plus
 id|PGDIR_SIZE
 op_minus
 l_int|1
-)paren
-op_amp
-id|PGDIR_MASK
 suffix:semicolon
 r_int
 r_int
@@ -2357,6 +2355,7 @@ id|end_index
 OG
 id|start_index
 )paren
+(brace
 id|clear_page_tables
 c_func
 (paren
@@ -2369,6 +2368,21 @@ op_minus
 id|start_index
 )paren
 suffix:semicolon
+id|flush_tlb_pgtables
+c_func
+(paren
+id|mm
+comma
+id|first
+op_amp
+id|PGDIR_MASK
+comma
+id|last
+op_amp
+id|PGDIR_MASK
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Munmap is split into 2 main parts -- this part which finds&n; * what needs doing, and the areas themselves, which do the&n; * work.  This now handles partial unmappings.&n; * Jeremy Fitzhardine &lt;jeremy@sw.oz.au&gt;&n; */
 DECL|function|do_munmap

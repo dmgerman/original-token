@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: eicon_isa.c,v 1.9 1999/09/08 20:17:31 armin Exp $&n; *&n; * ISDN low-level module for Eicon.Diehl active ISDN-Cards.&n; * Hardware-specific code for old ISA cards.&n; *&n; * Copyright 1998    by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1998,99 by Armin Schindler (mac@melware.de)&n; * Copyright 1999    Cytronics &amp; Melware (info@melware.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon_isa.c,v $&n; * Revision 1.9  1999/09/08 20:17:31  armin&n; * Added microchannel patch from Erik Weber.&n; *&n; * Revision 1.8  1999/09/06 07:29:35  fritz&n; * Changed my mail-address.&n; *&n; * Revision 1.7  1999/08/22 20:26:48  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.6  1999/07/25 15:12:06  armin&n; * fix of some debug logs.&n; * enabled ISA-cards option.&n; *&n; * Revision 1.5  1999/04/01 12:48:33  armin&n; * Changed some log outputs.&n; *&n; * Revision 1.4  1999/03/29 11:19:46  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; * Revision 1.3  1999/03/02 12:37:45  armin&n; * Added some important checks.&n; * Analog Modem with DSP.&n; * Channels will be added to Link-Level after loading firmware.&n; *&n; * Revision 1.2  1999/01/24 20:14:19  armin&n; * Changed and added debug stuff.&n; * Better data sending. (still problems with tty&squot;s flip buffer)&n; *&n; * Revision 1.1  1999/01/01 18:09:43  armin&n; * First checkin of new eicon driver.&n; * DIVA-Server BRI/PCI and PRI/PCI are supported.&n; * Old diehl code is obsolete.&n; *&n; *&n; */
+multiline_comment|/* $Id: eicon_isa.c,v 1.13 2000/01/23 21:21:23 armin Exp $&n; *&n; * ISDN low-level module for Eicon active ISDN-Cards.&n; * Hardware-specific code for old ISA cards.&n; *&n; * Copyright 1998      by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1998-2000 by Armin Schindler (mac@melware.de)&n; * Copyright 1999,2000 Cytronics &amp; Melware (info@melware.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon_isa.c,v $&n; * Revision 1.13  2000/01/23 21:21:23  armin&n; * Added new trace capability and some updates.&n; * DIVA Server BRI now supports data for ISDNLOG.&n; *&n; * Revision 1.12  1999/11/27 12:56:19  armin&n; * Forgot some iomem changes for last ioremap compat.&n; *&n; * Revision 1.11  1999/11/25 11:33:09  armin&n; * Microchannel fix from Erik Weber (exrz73@ibm.net).&n; *&n; * Revision 1.10  1999/11/18 21:14:30  armin&n; * New ISA memory mapped IO&n; *&n; * Revision 1.9  1999/09/08 20:17:31  armin&n; * Added microchannel patch from Erik Weber (exrz73@ibm.net).&n; *&n; * Revision 1.8  1999/09/06 07:29:35  fritz&n; * Changed my mail-address.&n; *&n; * Revision 1.7  1999/08/22 20:26:48  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.6  1999/07/25 15:12:06  armin&n; * fix of some debug logs.&n; * enabled ISA-cards option.&n; *&n; * Revision 1.5  1999/04/01 12:48:33  armin&n; * Changed some log outputs.&n; *&n; * Revision 1.4  1999/03/29 11:19:46  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; * Revision 1.3  1999/03/02 12:37:45  armin&n; * Added some important checks.&n; * Analog Modem with DSP.&n; * Channels will be added to Link-Level after loading firmware.&n; *&n; * Revision 1.2  1999/01/24 20:14:19  armin&n; * Changed and added debug stuff.&n; * Better data sending. (still problems with tty&squot;s flip buffer)&n; *&n; * Revision 1.1  1999/01/01 18:09:43  armin&n; * First checkin of new eicon driver.&n; * DIVA-Server BRI/PCI and PRI/PCI are supported.&n; * Old diehl code is obsolete.&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;eicon.h&quot;
 macro_line|#include &quot;eicon_isa.h&quot;
@@ -13,7 +13,7 @@ r_char
 op_star
 id|eicon_isa_revision
 op_assign
-l_string|&quot;$Revision: 1.9 $&quot;
+l_string|&quot;$Revision: 1.13 $&quot;
 suffix:semicolon
 DECL|macro|EICON_MCA_DEBUG
 macro_line|#undef EICON_MCA_DEBUG
@@ -59,18 +59,22 @@ c_cond
 (paren
 id|card-&gt;mvalid
 )paren
-id|release_shmem
+(brace
+id|iounmap
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|card-&gt;shmem
+)paren
+suffix:semicolon
+id|release_mem_region
+c_func
+(paren
+id|card-&gt;physmem
 comma
 id|card-&gt;ramsize
 )paren
 suffix:semicolon
+)brace
 id|card-&gt;mvalid
 op_assign
 l_int|0
@@ -178,11 +182,7 @@ id|eicon_ctype_name
 id|card-&gt;type
 )braket
 comma
-(paren
-r_int
-r_int
-)paren
-id|card-&gt;shmem
+id|card-&gt;physmem
 comma
 id|card-&gt;irq
 )paren
@@ -209,6 +209,10 @@ r_int
 id|primary
 op_assign
 l_int|1
+suffix:semicolon
+r_int
+r_int
+id|amem
 suffix:semicolon
 r_if
 c_cond
@@ -266,7 +270,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_shmem
+id|check_mem_region
 c_func
 (paren
 id|Mem
@@ -289,12 +293,26 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+id|amem
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|ioremap
+c_func
+(paren
+id|Mem
+comma
+id|RAMSIZE
+)paren
+suffix:semicolon
 id|writew
 c_func
 (paren
 l_int|0x55aa
 comma
-id|Mem
+id|amem
 op_plus
 l_int|0x402
 )paren
@@ -305,7 +323,7 @@ c_cond
 id|readw
 c_func
 (paren
-id|Mem
+id|amem
 op_plus
 l_int|0x402
 )paren
@@ -321,7 +339,7 @@ c_func
 (paren
 l_int|0
 comma
-id|Mem
+id|amem
 op_plus
 l_int|0x402
 )paren
@@ -332,7 +350,7 @@ c_cond
 id|readw
 c_func
 (paren
-id|Mem
+id|amem
 op_plus
 l_int|0x402
 )paren
@@ -372,9 +390,20 @@ c_func
 (paren
 l_int|0
 comma
-id|Mem
+id|amem
 op_plus
 l_int|0x3ffe
+)paren
+suffix:semicolon
+id|iounmap
+c_func
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|amem
 )paren
 suffix:semicolon
 r_return
@@ -397,9 +426,20 @@ c_func
 (paren
 l_int|0
 comma
-id|Mem
+id|amem
 op_plus
 l_int|0x400
+)paren
+suffix:semicolon
+id|iounmap
+c_func
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|amem
 )paren
 suffix:semicolon
 r_return
@@ -542,6 +582,93 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|card-&gt;type
+op_eq
+id|EICON_CTYPE_ISAPRI
+)paren
+id|card-&gt;ramsize
+op_assign
+id|RAMSIZE_P
+suffix:semicolon
+r_else
+id|card-&gt;ramsize
+op_assign
+id|RAMSIZE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_mem_region
+c_func
+(paren
+id|card-&gt;physmem
+comma
+id|card-&gt;ramsize
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;eicon_isa_boot: memory at 0x%lx already in use.&bslash;n&quot;
+comma
+id|card-&gt;physmem
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|code
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
+id|request_mem_region
+c_func
+(paren
+id|card-&gt;physmem
+comma
+id|card-&gt;ramsize
+comma
+l_string|&quot;Eicon ISA ISDN&quot;
+)paren
+suffix:semicolon
+id|card-&gt;shmem
+op_assign
+(paren
+id|eicon_isa_shmem
+op_star
+)paren
+id|ioremap
+c_func
+(paren
+id|card-&gt;physmem
+comma
+id|card-&gt;ramsize
+)paren
+suffix:semicolon
+macro_line|#ifdef EICON_MCA_DEBUG
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;eicon_isa_boot: card-&gt;ramsize = %d.&bslash;n&quot;
+comma
+id|card-&gt;ramsize
+)paren
+suffix:semicolon
+macro_line|#endif
+id|card-&gt;mvalid
+op_assign
+l_int|1
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -563,10 +690,6 @@ suffix:colon
 r_case
 id|EICON_CTYPE_ISABRI
 suffix:colon
-id|card-&gt;ramsize
-op_assign
-id|RAMSIZE
-suffix:semicolon
 id|card-&gt;intack
 op_assign
 (paren
@@ -605,10 +728,6 @@ suffix:colon
 r_case
 id|EICON_CTYPE_ISAPRI
 suffix:colon
-id|card-&gt;ramsize
-op_assign
-id|RAMSIZE_P
-suffix:semicolon
 id|card-&gt;intack
 op_assign
 (paren
@@ -652,39 +771,10 @@ comma
 id|card-&gt;type
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-multiline_comment|/* Register shmem */
-r_if
-c_cond
-(paren
-id|check_shmem
+id|eicon_isa_release_shmem
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
-id|card-&gt;shmem
-comma
-id|card-&gt;ramsize
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;eicon_isa_boot: memory at 0x%lx already in use.&bslash;n&quot;
-comma
-(paren
-r_int
-r_int
-)paren
-id|card-&gt;shmem
+id|card
 )paren
 suffix:semicolon
 id|kfree
@@ -695,38 +785,9 @@ id|code
 suffix:semicolon
 r_return
 op_minus
-id|EBUSY
+id|EINVAL
 suffix:semicolon
 )brace
-id|request_shmem
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-id|card-&gt;shmem
-comma
-id|card-&gt;ramsize
-comma
-l_string|&quot;Eicon ISA ISDN&quot;
-)paren
-suffix:semicolon
-macro_line|#ifdef EICON_MCA_DEBUG
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;eicon_isa_boot: card-&gt;ramsize = %d.&bslash;n&quot;
-comma
-id|card-&gt;ramsize
-)paren
-suffix:semicolon
-macro_line|#endif
-id|card-&gt;mvalid
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/* clear any pending irq&squot;s */
 id|readb
 c_func
@@ -735,6 +796,12 @@ id|card-&gt;intack
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_MCA
+r_if
+c_cond
+(paren
+id|MCA_bus
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -760,7 +827,13 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;eicon_isa_boot: Card type yet not supported.&bslash;n&quot;
+l_string|&quot;eicon_isa_boot: Card type not supported yet.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|eicon_isa_release_shmem
+c_func
+(paren
+id|card
 )paren
 suffix:semicolon
 r_return
@@ -792,6 +865,7 @@ id|card-&gt;irq
 )paren
 suffix:semicolon
 macro_line|#endif
+)brace
 macro_line|#else
 multiline_comment|/* set reset-line active */
 id|writeb
@@ -932,6 +1006,12 @@ id|boot-&gt;ctrl
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_MCA
+r_if
+c_cond
+(paren
+id|MCA_bus
+)paren
+(brace
 id|outb_p
 c_func
 (paren
@@ -940,6 +1020,7 @@ comma
 id|card-&gt;io
 )paren
 suffix:semicolon
+)brace
 macro_line|#else 
 id|writeb
 c_func
@@ -1235,11 +1316,7 @@ c_func
 (paren
 id|card-&gt;type
 comma
-(paren
-r_int
-r_int
-)paren
-id|card-&gt;shmem
+id|card-&gt;physmem
 comma
 id|card-&gt;irq
 comma

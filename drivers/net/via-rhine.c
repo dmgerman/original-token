@@ -4067,7 +4067,7 @@ op_increment
 suffix:semicolon
 )brace
 multiline_comment|/* Free the original skb. */
-id|kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|np-&gt;tx_skbuff
@@ -5679,7 +5679,7 @@ id|i
 )braket
 )paren
 (brace
-id|kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|np-&gt;rx_skbuff
@@ -5720,7 +5720,7 @@ id|np-&gt;tx_skbuff
 id|i
 )braket
 )paren
-id|kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|np-&gt;tx_skbuff

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: eicon.h,v 1.17 1999/10/26 21:15:33 armin Exp $&n; *&n; * ISDN low-level module for Eicon.Diehl active ISDN-Cards.&n; *&n; * Copyright 1998    by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1998,99 by Armin Schindler (mac@melware.de) &n; * Copyright 1999    Cytronics &amp; Melware (info@melware.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon.h,v $&n; * Revision 1.17  1999/10/26 21:15:33  armin&n; * using define for checking phone number len to avoid buffer overflow.&n; *&n; * Revision 1.16  1999/10/08 22:09:33  armin&n; * Some fixes of cards interface handling.&n; * Bugfix of NULL pointer occurence.&n; * Changed a few log outputs.&n; *&n; * Revision 1.15  1999/09/26 14:17:53  armin&n; * Improved debug and log via readstat()&n; *&n; * Revision 1.14  1999/09/08 20:17:31  armin&n; * Added microchannel patch from Erik Weber.&n; *&n; * Revision 1.13  1999/09/06 07:29:35  fritz&n; * Changed my mail-address.&n; *&n; * Revision 1.12  1999/09/04 06:20:05  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.11  1999/08/29 17:23:44  armin&n; * New setup compat.&n; * Bugfix if compile as not module.&n; *&n; * Revision 1.10  1999/08/22 20:26:41  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.9  1999/08/18 20:16:57  armin&n; * Added XLOG function for all cards.&n; * Bugfix of alloc_skb NULL pointer.&n; *&n; * Revision 1.8  1999/07/25 15:12:01  armin&n; * fix of some debug logs.&n; * enabled ISA-cards option.&n; *&n; * Revision 1.7  1999/07/11 17:16:23  armin&n; * Bugfixes in queue handling.&n; * Added DSP-DTMF decoder functions.&n; * Reorganized ack_handler.&n; *&n; * Revision 1.6  1999/06/09 19:31:24  armin&n; * Wrong PLX size for request_region() corrected.&n; * Added first MCA code from Erik Weber.&n; *&n; * Revision 1.5  1999/03/29 11:19:41  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; * Revision 1.4  1999/03/02 12:37:42  armin&n; * Added some important checks.&n; * Analog Modem with DSP.&n; * Channels will be added to Link-Level after loading firmware.&n; *&n; * Revision 1.3  1999/01/24 20:14:07  armin&n; * Changed and added debug stuff.&n; * Better data sending. (still problems with tty&squot;s flip buffer)&n; *&n; * Revision 1.2  1999/01/10 18:46:04  armin&n; * Bug with wrong values in HLC fixed.&n; * Bytes to send are counted and limited now.&n; *&n; * Revision 1.1  1999/01/01 18:09:41  armin&n; * First checkin of new eicon driver.&n; * DIVA-Server BRI/PCI and PRI/PCI are supported.&n; * Old diehl code is obsolete.&n; *&n; *&n; */
+multiline_comment|/* $Id: eicon.h,v 1.19 2000/01/23 21:21:23 armin Exp $&n; *&n; * ISDN low-level module for Eicon active ISDN-Cards.&n; *&n; * Copyright 1998    by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1998-2000  by Armin Schindler (mac@melware.de) &n; * Copyright 1999,2000  Cytronics &amp; Melware (info@melware.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon.h,v $&n; * Revision 1.19  2000/01/23 21:21:23  armin&n; * Added new trace capability and some updates.&n; * DIVA Server BRI now supports data for ISDNLOG.&n; *&n; * Revision 1.18  1999/11/25 11:43:27  armin&n; * Fixed statectrl and connect message.&n; * X.75 fix and HDLC/transparent with autoconnect.&n; * Minor cleanup.&n; *&n; * Revision 1.17  1999/10/26 21:15:33  armin&n; * using define for checking phone number len to avoid buffer overflow.&n; *&n; * Revision 1.16  1999/10/08 22:09:33  armin&n; * Some fixes of cards interface handling.&n; * Bugfix of NULL pointer occurence.&n; * Changed a few log outputs.&n; *&n; * Revision 1.15  1999/09/26 14:17:53  armin&n; * Improved debug and log via readstat()&n; *&n; * Revision 1.14  1999/09/08 20:17:31  armin&n; * Added microchannel patch from Erik Weber.&n; *&n; * Revision 1.13  1999/09/06 07:29:35  fritz&n; * Changed my mail-address.&n; *&n; * Revision 1.12  1999/09/04 06:20:05  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.11  1999/08/29 17:23:44  armin&n; * New setup compat.&n; * Bugfix if compile as not module.&n; *&n; * Revision 1.10  1999/08/22 20:26:41  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.9  1999/08/18 20:16:57  armin&n; * Added XLOG function for all cards.&n; * Bugfix of alloc_skb NULL pointer.&n; *&n; * Revision 1.8  1999/07/25 15:12:01  armin&n; * fix of some debug logs.&n; * enabled ISA-cards option.&n; *&n; * Revision 1.7  1999/07/11 17:16:23  armin&n; * Bugfixes in queue handling.&n; * Added DSP-DTMF decoder functions.&n; * Reorganized ack_handler.&n; *&n; * Revision 1.6  1999/06/09 19:31:24  armin&n; * Wrong PLX size for request_region() corrected.&n; * Added first MCA code from Erik Weber.&n; *&n; * Revision 1.5  1999/03/29 11:19:41  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; * Revision 1.4  1999/03/02 12:37:42  armin&n; * Added some important checks.&n; * Analog Modem with DSP.&n; * Channels will be added to Link-Level after loading firmware.&n; *&n; * Revision 1.3  1999/01/24 20:14:07  armin&n; * Changed and added debug stuff.&n; * Better data sending. (still problems with tty&squot;s flip buffer)&n; *&n; * Revision 1.2  1999/01/10 18:46:04  armin&n; * Bug with wrong values in HLC fixed.&n; * Bytes to send are counted and limited now.&n; *&n; * Revision 1.1  1999/01/01 18:09:41  armin&n; * First checkin of new eicon driver.&n; * DIVA-Server BRI/PCI and PRI/PCI are supported.&n; * Old diehl code is obsolete.&n; *&n; *&n; */
 macro_line|#ifndef eicon_h
 DECL|macro|eicon_h
 mdefine_line|#define eicon_h
@@ -470,7 +470,7 @@ suffix:semicolon
 macro_line|#include &quot;eicon_isa.h&quot;
 multiline_comment|/* Macro for delay via schedule() */
 DECL|macro|SLEEP
-mdefine_line|#define SLEEP(j) {                     &bslash;&n;  set_current_state(TASK_INTERRUPTIBLE); &bslash;&n;  schedule_timeout(j);                 &bslash;&n;}
+mdefine_line|#define SLEEP(j) {                     &bslash;&n;  set_current_state(TASK_UNINTERRUPTIBLE); &bslash;&n;  schedule_timeout(j);                 &bslash;&n;}
 macro_line|#endif /* KERNEL */
 DECL|macro|DIVAS_SHARED_OFFSET
 mdefine_line|#define DIVAS_SHARED_OFFSET&t;(0x1000)
@@ -492,6 +492,8 @@ DECL|macro|XLOG_ERR_UNKNOWN
 mdefine_line|#define XLOG_ERR_UNKNOWN        (18)
 DECL|macro|XLOG_OK
 mdefine_line|#define XLOG_OK                  (0)
+DECL|macro|TRACE_OK
+mdefine_line|#define TRACE_OK                 (1)
 r_typedef
 r_struct
 (brace
@@ -1719,6 +1721,12 @@ r_int
 id|fsm_state
 suffix:semicolon
 multiline_comment|/* Current D-Channel state     */
+DECL|member|statectrl
+r_int
+r_int
+id|statectrl
+suffix:semicolon
+multiline_comment|/* State controling bits&t;*/
 DECL|member|eazmask
 r_int
 r_int
@@ -1740,16 +1748,20 @@ r_int
 id|waitpq
 suffix:semicolon
 multiline_comment|/* User-Data Bytes in packet queue */
-DECL|member|plci
-r_int
-r_int
-id|plci
+DECL|member|tskb1
+r_struct
+id|sk_buff
+op_star
+id|tskb1
 suffix:semicolon
-DECL|member|ncci
-r_int
-r_int
-id|ncci
+multiline_comment|/* temp skb 1&t;&t;&t;*/
+DECL|member|tskb2
+r_struct
+id|sk_buff
+op_star
+id|tskb2
 suffix:semicolon
+multiline_comment|/* temp skb 2&t;&t;&t;*/
 DECL|member|l2prot
 r_int
 r_char
@@ -2073,12 +2085,6 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* Statusflags                      */
-DECL|member|ilock
-r_int
-r_int
-id|ilock
-suffix:semicolon
-multiline_comment|/* Semaphores for IRQ-Routines      */
 DECL|member|rcvq
 r_struct
 id|sk_buff_head
@@ -2113,24 +2119,6 @@ DECL|member|statq_entries
 r_int
 id|statq_entries
 suffix:semicolon
-DECL|member|ack_msg
-id|u_char
-op_star
-id|ack_msg
-suffix:semicolon
-multiline_comment|/* Ptr to User Data in User skb     */
-DECL|member|need_b3ack
-id|__u16
-id|need_b3ack
-suffix:semicolon
-multiline_comment|/* Flag: Need ACK for current skb   */
-DECL|member|sbuf
-r_struct
-id|sk_buff
-op_star
-id|sbuf
-suffix:semicolon
-multiline_comment|/* skb which is currently sent      */
 DECL|member|snd_tq
 r_struct
 id|tq_struct
@@ -2154,12 +2142,6 @@ id|msn_entry
 op_star
 id|msn_list
 suffix:semicolon
-DECL|member|msgnum
-r_int
-r_int
-id|msgnum
-suffix:semicolon
-multiline_comment|/* Message number for sending       */
 DECL|member|IdTable
 id|eicon_chan
 op_star
@@ -2539,6 +2521,20 @@ comma
 dot
 dot
 dot
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|eicon_putstatus
+c_func
+(paren
+id|eicon_card
+op_star
+id|card
+comma
+r_char
+op_star
+id|buf
 )paren
 suffix:semicolon
 macro_line|#endif  /* __KERNEL__ */

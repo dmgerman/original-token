@@ -4,6 +4,7 @@ DECL|macro|_LINUX_CONSOLE_H_
 mdefine_line|#define _LINUX_CONSOLE_H_ 1
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 r_struct
 id|vc_data
 suffix:semicolon
@@ -470,6 +471,10 @@ DECL|macro|CON_CONSDEV
 mdefine_line|#define CON_CONSDEV&t;(2) /* Last on the command line */
 DECL|macro|CON_ENABLED
 mdefine_line|#define CON_ENABLED&t;(4)
+r_extern
+id|spinlock_t
+id|console_lock
+suffix:semicolon
 DECL|struct|console
 r_struct
 id|console

@@ -279,7 +279,63 @@ id|sparc_unmapped_base
 )paren
 DECL|macro|TASK_UNMAPPED_BASE
 mdefine_line|#define TASK_UNMAPPED_BASE&t;BTFIXUP_SETHI(sparc_unmapped_base)
+multiline_comment|/* Pure 2^n version of get_order */
+DECL|function|get_order
+r_extern
+id|__inline__
+r_int
+id|get_order
+c_func
+(paren
+r_int
+r_int
+id|size
+)paren
+(brace
+r_int
+id|order
+suffix:semicolon
+id|size
+op_assign
+(paren
+id|size
+op_minus
+l_int|1
+)paren
+op_rshift
+(paren
+id|PAGE_SHIFT
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|order
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_do
+(brace
+id|size
+op_rshift_assign
+l_int|1
+suffix:semicolon
+id|order
+op_increment
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|size
+)paren
+suffix:semicolon
+r_return
+id|order
+suffix:semicolon
+)brace
 macro_line|#else /* !(__ASSEMBLY__) */
+DECL|macro|__pgprot
 mdefine_line|#define __pgprot(x)&t;(x)
 macro_line|#endif /* !(__ASSEMBLY__) */
 multiline_comment|/* to align the pointer to the (next) page boundary */

@@ -5451,6 +5451,11 @@ suffix:semicolon
 )brace
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|Cmnd-&gt;request_bufflen
+)paren
 (brace
 id|Cmnd-&gt;SCp.ptr
 op_assign
@@ -5503,6 +5508,32 @@ id|cmd-&gt;segment_cnt
 op_assign
 l_int|1
 suffix:semicolon
+)brace
+r_else
+(brace
+id|cmd-&gt;dataseg
+(braket
+l_int|0
+)braket
+dot
+id|d_base
+op_assign
+l_int|0
+suffix:semicolon
+id|cmd-&gt;dataseg
+(braket
+l_int|0
+)braket
+dot
+id|d_count
+op_assign
+l_int|0
+suffix:semicolon
+id|cmd-&gt;segment_cnt
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Shouldn&squot;t this be 0? */
 )brace
 multiline_comment|/* Committed, record Scsi_Cmd so we can find it later. */
 id|cmd-&gt;handle

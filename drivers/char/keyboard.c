@@ -771,10 +771,11 @@ id|do_poke_blanked_console
 op_assign
 l_int|1
 suffix:semicolon
-id|mark_bh
+id|tasklet_schedule
 c_func
 (paren
-id|CONSOLE_BH
+op_amp
+id|console_tasklet
 )paren
 suffix:semicolon
 id|add_keyboard_randomness

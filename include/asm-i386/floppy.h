@@ -684,7 +684,7 @@ c_func
 (paren
 id|GFP_KERNEL
 comma
-id|__get_order
+id|get_order
 c_func
 (paren
 id|size
@@ -767,7 +767,7 @@ c_func
 (paren
 id|addr
 comma
-id|__get_order
+id|get_order
 c_func
 (paren
 id|size

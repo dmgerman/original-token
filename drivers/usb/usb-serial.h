@@ -65,14 +65,6 @@ l_string|&quot;User specified USB idProduct&quot;
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* USB Serial devices vendor ids and device ids that this driver supports */
-DECL|macro|BELKIN_VENDOR_ID
-mdefine_line|#define BELKIN_VENDOR_ID&t;&t;0x056c
-DECL|macro|BELKIN_SERIAL_CONVERTER_ID
-mdefine_line|#define BELKIN_SERIAL_CONVERTER_ID&t;0x8007
-DECL|macro|PERACOM_VENDOR_ID
-mdefine_line|#define PERACOM_VENDOR_ID&t;&t;0x0565
-DECL|macro|PERACOM_SERIAL_CONVERTER_ID
-mdefine_line|#define PERACOM_SERIAL_CONVERTER_ID&t;0x0001
 DECL|macro|CONNECT_TECH_VENDOR_ID
 mdefine_line|#define CONNECT_TECH_VENDOR_ID&t;&t;0x0710
 DECL|macro|CONNECT_TECH_FAKE_WHITE_HEAT_ID
@@ -85,8 +77,8 @@ DECL|macro|HANDSPRING_VISOR_ID
 mdefine_line|#define HANDSPRING_VISOR_ID&t;&t;0x0100
 DECL|macro|FTDI_VENDOR_ID
 mdefine_line|#define FTDI_VENDOR_ID&t;&t;&t;0x0403
-DECL|macro|FTDI_SERIAL_CONVERTER_ID
-mdefine_line|#define FTDI_SERIAL_CONVERTER_ID&t;0x8372
+DECL|macro|FTDI_SIO_SERIAL_CONVERTER_ID
+mdefine_line|#define FTDI_SIO_SERIAL_CONVERTER_ID&t;0x8372
 DECL|macro|KEYSPAN_VENDOR_ID
 mdefine_line|#define KEYSPAN_VENDOR_ID&t;&t;0x06cd
 DECL|macro|KEYSPAN_PDA_FAKE_ID
@@ -516,6 +508,32 @@ op_star
 id|tty
 )paren
 suffix:semicolon
+DECL|member|read_bulk_callback
+r_void
+(paren
+op_star
+id|read_bulk_callback
+)paren
+(paren
+r_struct
+id|urb
+op_star
+id|urb
+)paren
+suffix:semicolon
+DECL|member|write_bulk_callback
+r_void
+(paren
+op_star
+id|write_bulk_callback
+)paren
+(paren
+r_struct
+id|urb
+op_star
+id|urb
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* function prototypes for a &quot;generic&quot; type serial converter (no flow control, not all endpoints needed) */
@@ -590,6 +608,26 @@ r_struct
 id|tty_struct
 op_star
 id|tty
+)paren
+suffix:semicolon
+r_static
+r_void
+id|generic_read_bulk_callback
+(paren
+r_struct
+id|urb
+op_star
+id|urb
+)paren
+suffix:semicolon
+r_static
+r_void
+id|generic_write_bulk_callback
+(paren
+r_struct
+id|urb
+op_star
+id|urb
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_USB_SERIAL_GENERIC
@@ -668,225 +706,13 @@ id|chars_in_buffer
 suffix:colon
 id|generic_chars_in_buffer
 comma
-)brace
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_USB_SERIAL_BELKIN) || defined(CONFIG_USB_SERIAL_PERACOM)
-multiline_comment|/* function prototypes for the eTek type converters (this includes Belkin and Peracom) */
-r_static
-r_int
-id|etek_serial_open
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_struct
-id|file
-op_star
-id|filp
-)paren
-suffix:semicolon
-r_static
-r_void
-id|etek_serial_close
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_struct
-id|file
-op_star
-id|filp
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_SERIAL_BELKIN
-multiline_comment|/* All of the device info needed for the Belkin Serial Converter */
-DECL|variable|belkin_vendor_id
-r_static
-id|__u16
-id|belkin_vendor_id
-op_assign
-id|BELKIN_VENDOR_ID
-suffix:semicolon
-DECL|variable|belkin_product_id
-r_static
-id|__u16
-id|belkin_product_id
-op_assign
-id|BELKIN_SERIAL_CONVERTER_ID
-suffix:semicolon
-DECL|variable|belkin_device
-r_static
-r_struct
-id|usb_serial_device_type
-id|belkin_device
-op_assign
-(brace
-id|name
+id|read_bulk_callback
 suffix:colon
-l_string|&quot;Belkin&quot;
+id|generic_read_bulk_callback
 comma
-id|idVendor
+id|write_bulk_callback
 suffix:colon
-op_amp
-id|belkin_vendor_id
-comma
-multiline_comment|/* the Belkin vendor id */
-id|idProduct
-suffix:colon
-op_amp
-id|belkin_product_id
-comma
-multiline_comment|/* the Belkin serial converter product id */
-id|needs_interrupt_in
-suffix:colon
-id|MUST_HAVE
-comma
-multiline_comment|/* this device must have an interrupt in endpoint */
-id|needs_bulk_in
-suffix:colon
-id|MUST_HAVE
-comma
-multiline_comment|/* this device must have a bulk in endpoint */
-id|needs_bulk_out
-suffix:colon
-id|MUST_HAVE
-comma
-multiline_comment|/* this device must have a bulk out endpoint */
-id|num_interrupt_in
-suffix:colon
-l_int|1
-comma
-id|num_bulk_in
-suffix:colon
-l_int|1
-comma
-id|num_bulk_out
-suffix:colon
-l_int|1
-comma
-id|num_ports
-suffix:colon
-l_int|1
-comma
-id|open
-suffix:colon
-id|etek_serial_open
-comma
-id|close
-suffix:colon
-id|etek_serial_close
-comma
-id|write
-suffix:colon
-id|generic_serial_write
-comma
-id|write_room
-suffix:colon
-id|generic_write_room
-comma
-id|chars_in_buffer
-suffix:colon
-id|generic_chars_in_buffer
-comma
-)brace
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_SERIAL_PERACOM
-multiline_comment|/* All of the device info needed for the Peracom Serial Converter */
-DECL|variable|peracom_vendor_id
-r_static
-id|__u16
-id|peracom_vendor_id
-op_assign
-id|PERACOM_VENDOR_ID
-suffix:semicolon
-DECL|variable|peracom_product_id
-r_static
-id|__u16
-id|peracom_product_id
-op_assign
-id|PERACOM_SERIAL_CONVERTER_ID
-suffix:semicolon
-DECL|variable|peracom_device
-r_static
-r_struct
-id|usb_serial_device_type
-id|peracom_device
-op_assign
-(brace
-id|name
-suffix:colon
-l_string|&quot;Peracom&quot;
-comma
-id|idVendor
-suffix:colon
-op_amp
-id|peracom_vendor_id
-comma
-multiline_comment|/* the Peracom vendor id */
-id|idProduct
-suffix:colon
-op_amp
-id|peracom_product_id
-comma
-multiline_comment|/* the Peracom serial converter product id */
-id|needs_interrupt_in
-suffix:colon
-id|MUST_HAVE
-comma
-multiline_comment|/* this device must have an interrupt in endpoint */
-id|needs_bulk_in
-suffix:colon
-id|MUST_HAVE
-comma
-multiline_comment|/* this device must have a bulk in endpoint */
-id|needs_bulk_out
-suffix:colon
-id|MUST_HAVE
-comma
-multiline_comment|/* this device must have a bulk out endpoint */
-id|num_ports
-suffix:colon
-l_int|1
-comma
-id|num_interrupt_in
-suffix:colon
-l_int|1
-comma
-id|num_bulk_in
-suffix:colon
-l_int|1
-comma
-id|num_bulk_out
-suffix:colon
-l_int|1
-comma
-id|open
-suffix:colon
-id|etek_serial_open
-comma
-id|close
-suffix:colon
-id|etek_serial_close
-comma
-id|write
-suffix:colon
-id|generic_serial_write
-comma
-id|write_room
-suffix:colon
-id|generic_write_room
-comma
-id|chars_in_buffer
-suffix:colon
-id|generic_chars_in_buffer
-comma
+id|generic_write_bulk_callback
 )brace
 suffix:semicolon
 macro_line|#endif
@@ -1329,14 +1155,22 @@ comma
 id|startup
 suffix:colon
 id|visor_startup
+comma
+id|read_bulk_callback
+suffix:colon
+id|generic_read_bulk_callback
+comma
+id|write_bulk_callback
+suffix:colon
+id|generic_write_bulk_callback
 )brace
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_USB_SERIAL_FTDI
+macro_line|#ifdef CONFIG_USB_SERIAL_FTDI_SIO
 multiline_comment|/* function prototypes for a FTDI serial converter */
 r_static
 r_int
-id|ftdi_serial_open
+id|ftdi_sio_serial_open
 (paren
 r_struct
 id|tty_struct
@@ -1351,7 +1185,7 @@ id|filp
 suffix:semicolon
 r_static
 r_void
-id|ftdi_serial_close
+id|ftdi_sio_serial_close
 (paren
 r_struct
 id|tty_struct
@@ -1372,23 +1206,23 @@ id|ftdi_vendor_id
 op_assign
 id|FTDI_VENDOR_ID
 suffix:semicolon
-DECL|variable|ftdi_product_id
+DECL|variable|ftdi_sio_product_id
 r_static
 id|__u16
-id|ftdi_product_id
+id|ftdi_sio_product_id
 op_assign
-id|FTDI_SERIAL_CONVERTER_ID
+id|FTDI_SIO_SERIAL_CONVERTER_ID
 suffix:semicolon
-DECL|variable|ftdi_device
+DECL|variable|ftdi_sio_device
 r_static
 r_struct
 id|usb_serial_device_type
-id|ftdi_device
+id|ftdi_sio_device
 op_assign
 (brace
 id|name
 suffix:colon
-l_string|&quot;FTDI&quot;
+l_string|&quot;FTDI SIO&quot;
 comma
 id|idVendor
 suffix:colon
@@ -1399,9 +1233,9 @@ multiline_comment|/* the FTDI vendor ID */
 id|idProduct
 suffix:colon
 op_amp
-id|ftdi_product_id
+id|ftdi_sio_product_id
 comma
-multiline_comment|/* the FTDI product id */
+multiline_comment|/* the FTDI SIO product id */
 id|needs_interrupt_in
 suffix:colon
 id|MUST_HAVE_NOT
@@ -1435,11 +1269,11 @@ l_int|1
 comma
 id|open
 suffix:colon
-id|ftdi_serial_open
+id|ftdi_sio_serial_open
 comma
 id|close
 suffix:colon
-id|ftdi_serial_close
+id|ftdi_sio_serial_close
 comma
 id|write
 suffix:colon
@@ -1452,6 +1286,14 @@ comma
 id|chars_in_buffer
 suffix:colon
 id|generic_chars_in_buffer
+comma
+id|read_bulk_callback
+suffix:colon
+id|generic_read_bulk_callback
+comma
+id|write_bulk_callback
+suffix:colon
+id|generic_write_bulk_callback
 )brace
 suffix:semicolon
 macro_line|#endif
@@ -1647,6 +1489,14 @@ comma
 id|chars_in_buffer
 suffix:colon
 id|generic_chars_in_buffer
+comma
+id|read_bulk_callback
+suffix:colon
+id|generic_read_bulk_callback
+comma
+id|write_bulk_callback
+suffix:colon
+id|generic_write_bulk_callback
 )brace
 suffix:semicolon
 macro_line|#endif
@@ -1674,24 +1524,14 @@ op_amp
 id|whiteheat_device
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_USB_SERIAL_BELKIN
-op_amp
-id|belkin_device
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_SERIAL_PERACOM
-op_amp
-id|peracom_device
-comma
-macro_line|#endif
 macro_line|#ifdef CONFIG_USB_SERIAL_VISOR
 op_amp
 id|handspring_device
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_USB_SERIAL_FTDI
+macro_line|#ifdef CONFIG_USB_SERIAL_FTDI_SIO
 op_amp
-id|ftdi_device
+id|ftdi_sio_device
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_USB_SERIAL_KEYSPAN_PDA

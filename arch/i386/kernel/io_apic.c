@@ -5238,10 +5238,6 @@ id|smp_found_config
 )paren
 r_return
 suffix:semicolon
-id|phys_cpu_present_map
-op_assign
-l_int|0xff
-suffix:semicolon
 id|setup_local_APIC
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hisax.h,v 2.38 1999/11/14 23:37:03 keil Exp $&n;&n; *   Basic declarations, defines and prototypes&n; *&n; * $Log: hisax.h,v $&n; * Revision 2.38  1999/11/14 23:37:03  keil&n; * new ISA memory mapped IO&n; *&n; * Revision 2.37  1999/10/14 20:25:28  keil&n; * add a statistic for error monitoring&n; *&n; * Revision 2.36  1999/10/10 20:16:15  werner&n; *&n; * Added variable to hfcpci union.&n; *&n; * Revision 2.35  1999/09/04 06:35:09  keil&n; * Winbond W6692 support&n; *&n; * Revision 2.34  1999/08/25 17:00:04  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 2.33  1999/08/05 20:43:16  keil&n; * ISAR analog modem support&n; *&n; * Revision 2.31  1999/07/21 14:46:11  keil&n; * changes from EICON certification&n; *&n; * Revision 2.30  1999/07/14 12:38:38  werner&n; * Added changes for echo channel handling&n; *&n; * Revision 2.29  1999/07/12 21:05:14  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.28  1999/07/05 23:51:46  werner&n; * Allow limiting of available HiSax B-chans per card. Controlled by hisaxctrl&n; * hisaxctrl id 10 &lt;nr. of chans 0-2&gt;&n; *&n; * Revision 2.27  1999/07/01 08:11:38  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.26  1998/11/15 23:54:45  keil&n; * changes from 2.0&n; *&n; * Revision 2.25  1998/09/30 22:28:42  keil&n; * More work for ISAR support&n; *&n; * Revision 2.24  1998/08/20 13:50:39  keil&n; * More support for hybrid modem (not working yet)&n; *&n; * Revision 2.23  1998/08/13 23:36:31  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 2.22  1998/07/15 15:01:28  calle&n; * Support for AVM passive PCMCIA cards:&n; *    A1 PCMCIA, FRITZ!Card PCMCIA and FRITZ!Card PCMCIA 2.0&n; *&n; * Revision 2.21  1998/05/25 14:10:05  keil&n; * HiSax 3.0&n; * X.75 and leased are working again.&n; *&n; * Revision 2.20  1998/05/25 12:57:57  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.19  1998/04/15 16:39:15  keil&n; * Add S0Box and Teles PCI support&n; *&n; * Revision 2.18  1998/03/26 07:10:04  paul&n; * The jumpmatrix table in struct Fsm was an array of &quot;int&quot;. This is not&n; * large enough for pointers to functions on Linux/Alpha (instant crash&n; * on &quot;insmod hisax). Now there is a typedef for the pointer to function.&n; * This also prevents warnings about &quot;incompatible pointer types&quot;.&n; *&n; * Revision 2.17  1998/03/19 13:18:43  keil&n; * Start of a CAPI like interface for supplementary Service&n; * first service: SUSPEND&n; *&n; * Revision 2.16  1998/03/09 23:19:25  keil&n; * Changes for PCMCIA&n; *&n; * Revision 2.14  1998/02/11 17:28:04  keil&n; * Niccy PnP/PCI support&n; *&n; * Revision 2.13  1998/02/09 18:46:02  keil&n; * Support for Sedlbauer PCMCIA (Marcus Niemann)&n; *&n; * Revision 2.12  1998/02/03 23:31:30  keil&n; * add AMD7930 support&n; *&n; * Revision 2.11  1998/02/02 13:33:00  keil&n; * New card support&n; *&n; * Revision 2.10  1997/11/08 21:37:52  keil&n; * new l1 init;new Compaq card&n; *&n; * Revision 2.9  1997/11/06 17:09:09  keil&n; * New 2.1 init code&n; *&n; * Revision 2.8  1997/10/29 19:04:13  keil&n; * new L1; changes for 2.1&n; *&n; * Revision 2.7  1997/10/10 20:56:47  fritz&n; * New HL interface.&n; *&n; * Revision 2.6  1997/09/11 17:25:51  keil&n; * Add new cards&n; *&n; * Revision 2.5  1997/08/03 14:36:31  keil&n; * Implement RESTART procedure&n; *&n; * Revision 2.4  1997/07/31 19:25:20  keil&n; * PTP_DATA_LINK support&n; *&n; * Revision 2.3  1997/07/31 11:50:17  keil&n; * ONE TEI and FIXED TEI handling&n; *&n; * Revision 2.2  1997/07/30 17:13:02  keil&n; * more changes for &squot;One TEI per card&squot;&n; *&n; * Revision 2.1  1997/07/27 21:45:13  keil&n; * new main structures&n; *&n; * Revision 2.0  1997/06/26 11:06:27  keil&n; * New card and L1 interface.&n; * Eicon.Diehl Diva and Dynalink IS64PH support&n; *&n; * old changes removed KKe&n; *&n; */
+multiline_comment|/* $Id: hisax.h,v 2.40 2000/01/20 19:51:46 keil Exp $&n;&n; *   Basic declarations, defines and prototypes&n; *&n; * $Log: hisax.h,v $&n; * Revision 2.40  2000/01/20 19:51:46  keil&n; * Fix AddTimer message&n; * Change CONFIG defines&n; *&n; * Revision 2.39  1999/11/18 00:00:43  werner&n; *&n; * Added support for HFC-S+ and HFC-SP cards&n; *&n; * Revision 2.38  1999/11/14 23:37:03  keil&n; * new ISA memory mapped IO&n; *&n; * Revision 2.37  1999/10/14 20:25:28  keil&n; * add a statistic for error monitoring&n; *&n; * Revision 2.36  1999/10/10 20:16:15  werner&n; *&n; * Added variable to hfcpci union.&n; *&n; * Revision 2.35  1999/09/04 06:35:09  keil&n; * Winbond W6692 support&n; *&n; * Revision 2.34  1999/08/25 17:00:04  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 2.33  1999/08/05 20:43:16  keil&n; * ISAR analog modem support&n; *&n; * Revision 2.31  1999/07/21 14:46:11  keil&n; * changes from EICON certification&n; *&n; * Revision 2.30  1999/07/14 12:38:38  werner&n; * Added changes for echo channel handling&n; *&n; * Revision 2.29  1999/07/12 21:05:14  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.28  1999/07/05 23:51:46  werner&n; * Allow limiting of available HiSax B-chans per card. Controlled by hisaxctrl&n; * hisaxctrl id 10 &lt;nr. of chans 0-2&gt;&n; *&n; * Revision 2.27  1999/07/01 08:11:38  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.26  1998/11/15 23:54:45  keil&n; * changes from 2.0&n; *&n; * Revision 2.25  1998/09/30 22:28:42  keil&n; * More work for ISAR support&n; *&n; * Revision 2.24  1998/08/20 13:50:39  keil&n; * More support for hybrid modem (not working yet)&n; *&n; * Revision 2.23  1998/08/13 23:36:31  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 2.22  1998/07/15 15:01:28  calle&n; * Support for AVM passive PCMCIA cards:&n; *    A1 PCMCIA, FRITZ!Card PCMCIA and FRITZ!Card PCMCIA 2.0&n; *&n; * Revision 2.21  1998/05/25 14:10:05  keil&n; * HiSax 3.0&n; * X.75 and leased are working again.&n; *&n; * Revision 2.20  1998/05/25 12:57:57  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.19  1998/04/15 16:39:15  keil&n; * Add S0Box and Teles PCI support&n; *&n; * Revision 2.18  1998/03/26 07:10:04  paul&n; * The jumpmatrix table in struct Fsm was an array of &quot;int&quot;. This is not&n; * large enough for pointers to functions on Linux/Alpha (instant crash&n; * on &quot;insmod hisax). Now there is a typedef for the pointer to function.&n; * This also prevents warnings about &quot;incompatible pointer types&quot;.&n; *&n; * Revision 2.17  1998/03/19 13:18:43  keil&n; * Start of a CAPI like interface for supplementary Service&n; * first service: SUSPEND&n; *&n; * Revision 2.16  1998/03/09 23:19:25  keil&n; * Changes for PCMCIA&n; *&n; * Revision 2.14  1998/02/11 17:28:04  keil&n; * Niccy PnP/PCI support&n; *&n; * Revision 2.13  1998/02/09 18:46:02  keil&n; * Support for Sedlbauer PCMCIA (Marcus Niemann)&n; *&n; * Revision 2.12  1998/02/03 23:31:30  keil&n; * add AMD7930 support&n; *&n; * Revision 2.11  1998/02/02 13:33:00  keil&n; * New card support&n; *&n; * Revision 2.10  1997/11/08 21:37:52  keil&n; * new l1 init;new Compaq card&n; *&n; * Revision 2.9  1997/11/06 17:09:09  keil&n; * New 2.1 init code&n; *&n; * Revision 2.8  1997/10/29 19:04:13  keil&n; * new L1; changes for 2.1&n; *&n; * Revision 2.7  1997/10/10 20:56:47  fritz&n; * New HL interface.&n; *&n; * Revision 2.6  1997/09/11 17:25:51  keil&n; * Add new cards&n; *&n; * Revision 2.5  1997/08/03 14:36:31  keil&n; * Implement RESTART procedure&n; *&n; * Revision 2.4  1997/07/31 19:25:20  keil&n; * PTP_DATA_LINK support&n; *&n; * Revision 2.3  1997/07/31 11:50:17  keil&n; * ONE TEI and FIXED TEI handling&n; *&n; * Revision 2.2  1997/07/30 17:13:02  keil&n; * more changes for &squot;One TEI per card&squot;&n; *&n; * Revision 2.1  1997/07/27 21:45:13  keil&n; * new main structures&n; *&n; * Revision 2.0  1997/06/26 11:06:27  keil&n; * New card and L1 interface.&n; * Eicon.Diehl Diva and Dynalink IS64PH support&n; *&n; * old changes removed KKe&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -2464,6 +2464,120 @@ id|timer
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|hfcSX_hw
+r_struct
+id|hfcSX_hw
+(brace
+DECL|member|base
+r_int
+r_int
+id|base
+suffix:semicolon
+DECL|member|cirm
+r_int
+r_char
+id|cirm
+suffix:semicolon
+DECL|member|ctmt
+r_int
+r_char
+id|ctmt
+suffix:semicolon
+DECL|member|conn
+r_int
+r_char
+id|conn
+suffix:semicolon
+DECL|member|mst_m
+r_int
+r_char
+id|mst_m
+suffix:semicolon
+DECL|member|int_m1
+r_int
+r_char
+id|int_m1
+suffix:semicolon
+DECL|member|int_m2
+r_int
+r_char
+id|int_m2
+suffix:semicolon
+DECL|member|int_s1
+r_int
+r_char
+id|int_s1
+suffix:semicolon
+DECL|member|sctrl
+r_int
+r_char
+id|sctrl
+suffix:semicolon
+DECL|member|sctrl_r
+r_int
+r_char
+id|sctrl_r
+suffix:semicolon
+DECL|member|sctrl_e
+r_int
+r_char
+id|sctrl_e
+suffix:semicolon
+DECL|member|trm
+r_int
+r_char
+id|trm
+suffix:semicolon
+DECL|member|stat
+r_int
+r_char
+id|stat
+suffix:semicolon
+DECL|member|fifo
+r_int
+r_char
+id|fifo
+suffix:semicolon
+DECL|member|bswapped
+r_int
+r_char
+id|bswapped
+suffix:semicolon
+DECL|member|nt_mode
+r_int
+r_char
+id|nt_mode
+suffix:semicolon
+DECL|member|chip
+r_int
+r_char
+id|chip
+suffix:semicolon
+DECL|member|b_fifo_size
+r_int
+id|b_fifo_size
+suffix:semicolon
+DECL|member|last_fifo
+r_int
+r_char
+id|last_fifo
+suffix:semicolon
+DECL|member|extra
+r_void
+op_star
+id|extra
+suffix:semicolon
+DECL|member|nt_timer
+r_int
+id|nt_timer
+suffix:semicolon
+DECL|member|timer
+r_struct
+id|timer_list
+id|timer
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|hfcD_hw
 r_struct
 id|hfcD_hw
@@ -2901,6 +3015,16 @@ id|ph_state
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|hfcsx_chip
+r_struct
+id|hfcsx_chip
+(brace
+DECL|member|ph_state
+r_int
+id|ph_state
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|w6692_chip
 r_struct
 id|w6692_chip
@@ -3049,6 +3173,11 @@ DECL|member|hfcpci
 r_struct
 id|hfcPCI_hw
 id|hfcpci
+suffix:semicolon
+DECL|member|hfcsx
+r_struct
+id|hfcSX_hw
+id|hfcsx
 suffix:semicolon
 DECL|member|niccy
 r_struct
@@ -3371,6 +3500,11 @@ r_struct
 id|hfcpci_chip
 id|hfcpci
 suffix:semicolon
+DECL|member|hfcsx
+r_struct
+id|hfcsx_chip
+id|hfcsx
+suffix:semicolon
 DECL|member|w6692
 r_struct
 id|w6692_chip
@@ -3511,8 +3645,10 @@ DECL|macro|ISDN_CTYPE_HFC_PCI
 mdefine_line|#define  ISDN_CTYPE_HFC_PCI&t;35
 DECL|macro|ISDN_CTYPE_W6692
 mdefine_line|#define  ISDN_CTYPE_W6692&t;36
+DECL|macro|ISDN_CTYPE_HFC_SX
+mdefine_line|#define  ISDN_CTYPE_HFC_SX      37
 DECL|macro|ISDN_CTYPE_COUNT
-mdefine_line|#define  ISDN_CTYPE_COUNT&t;36
+mdefine_line|#define  ISDN_CTYPE_COUNT&t;37
 macro_line|#ifdef ISDN_CHIP_ISAC
 DECL|macro|ISDN_CHIP_ISAC
 macro_line|#undef ISDN_CHIP_ISAC
@@ -3716,6 +3852,13 @@ macro_line|#else
 DECL|macro|CARD_HFC_PCI
 mdefine_line|#define  CARD_HFC_PCI 0
 macro_line|#endif
+macro_line|#ifdef&t;CONFIG_HISAX_HFC_SX
+DECL|macro|CARD_HFC_SX
+mdefine_line|#define  CARD_HFC_SX 1
+macro_line|#else
+DECL|macro|CARD_HFC_SX
+mdefine_line|#define  CARD_HFC_SX 0
+macro_line|#endif
 macro_line|#ifdef  CONFIG_HISAX_AMD7930
 DECL|macro|CARD_AMD7930
 mdefine_line|#define CARD_AMD7930 1
@@ -3837,26 +3980,6 @@ DECL|macro|TEI_PER_CARD
 macro_line|#undef TEI_PER_CARD
 DECL|macro|TEI_PER_CARD
 mdefine_line|#define TEI_PER_CARD 1
-DECL|macro|HISAX_EURO_SENDCOMPLETE
-mdefine_line|#define HISAX_EURO_SENDCOMPLETE 1
-DECL|macro|EXT_BEARER_CAPS
-mdefine_line|#define EXT_BEARER_CAPS 1
-DECL|macro|HISAX_SEND_STD_LLC_IE
-mdefine_line|#define HISAX_SEND_STD_LLC_IE 1
-macro_line|#ifdef&t;CONFIG_HISAX_NO_SENDCOMPLETE
-DECL|macro|HISAX_EURO_SENDCOMPLETE
-macro_line|#undef HISAX_EURO_SENDCOMPLETE
-macro_line|#endif
-macro_line|#ifdef&t;CONFIG_HISAX_NO_LLC
-DECL|macro|HISAX_SEND_STD_LLC_IE
-macro_line|#undef HISAX_SEND_STD_LLC_IE
-macro_line|#endif
-DECL|macro|HISAX_DE_AOC
-macro_line|#undef HISAX_DE_AOC
-macro_line|#ifdef CONFIG_DE_AOC
-DECL|macro|HISAX_DE_AOC
-mdefine_line|#define HISAX_DE_AOC 1
-macro_line|#endif
 macro_line|#endif
 multiline_comment|/* L1 Debug */
 DECL|macro|L1_DEB_WARN

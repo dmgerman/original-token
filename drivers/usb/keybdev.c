@@ -257,7 +257,7 @@ l_int|65
 comma
 l_int|42
 comma
-l_int|105
+l_int|0
 comma
 l_int|10
 comma
@@ -285,7 +285,7 @@ l_int|125
 comma
 l_int|75
 comma
-l_int|0
+l_int|105
 comma
 l_int|124
 comma
@@ -321,7 +321,7 @@ l_int|0
 comma
 l_int|127
 comma
-l_int|24
+l_int|81
 comma
 l_int|0
 comma
@@ -340,8 +340,6 @@ comma
 l_int|55
 comma
 l_int|55
-comma
-l_int|0
 )brace
 suffix:semicolon
 macro_line|#endif

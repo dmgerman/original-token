@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * $Id: divert_procfs.c,v 1.5 1999/09/14 20:31:01 werner Exp $&n; *&n; * Filesystem handling for the diversion supplementary services.&n; *&n; * Copyright 1998       by Werner Cornelius (werner@isdn4linux.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: divert_procfs.c,v $&n; * Revision 1.5  1999/09/14 20:31:01  werner&n; *&n; * Removed obsoleted functions for proc fs and synced with new ones.&n; *&n; * Revision 1.4  1999/08/06 07:42:48  calle&n; * Added COMPAT_HAS_NEW_WAITQ for rd_queue for newer kernels.&n; *&n; * Revision 1.3  1999/07/05 20:21:41  werner&n; * changes to use diversion sources for all kernel versions.&n; * removed static device, only proc filesystem used&n; *&n; * Revision 1.2  1999/07/04 21:37:31  werner&n; * Ported from kernel version 2.0&n; *&n; *&n; *&n; */
+multiline_comment|/*&n; * $Id: divert_procfs.c,v 1.6 2000/02/14 19:23:03 werner Exp $&n; *&n; * Filesystem handling for the diversion supplementary services.&n; *&n; * Copyright 1998       by Werner Cornelius (werner@isdn4linux.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: divert_procfs.c,v $&n; * Revision 1.6  2000/02/14 19:23:03  werner&n; *&n; * Changed handling of proc filesystem tables to a more portable version&n; *&n; * Revision 1.5  1999/09/14 20:31:01  werner&n; *&n; * Removed obsoleted functions for proc fs and synced with new ones.&n; *&n; * Revision 1.4  1999/08/06 07:42:48  calle&n; * Added COMPAT_HAS_NEW_WAITQ for rd_queue for newer kernels.&n; *&n; * Revision 1.3  1999/07/05 20:21:41  werner&n; * changes to use diversion sources for all kernel versions.&n; * removed static device, only proc filesystem used&n; *&n; * Revision 1.2  1999/07/04 21:37:31  werner&n; * Ported from kernel version 2.0&n; *&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -50,8 +50,8 @@ suffix:semicolon
 multiline_comment|/*********************************/
 multiline_comment|/* put an info buffer into queue */
 multiline_comment|/*********************************/
-DECL|function|put_info_buffer
 r_void
+DECL|function|put_info_buffer
 id|put_info_buffer
 c_func
 (paren
@@ -241,9 +241,9 @@ multiline_comment|/* put_info_buffer */
 multiline_comment|/**********************************/
 multiline_comment|/* deflection device read routine */
 multiline_comment|/**********************************/
-DECL|function|isdn_divert_read
 r_static
 id|ssize_t
+DECL|function|isdn_divert_read
 id|isdn_divert_read
 c_func
 (paren
@@ -329,7 +329,9 @@ id|file-&gt;private_data
 )paren
 )paren
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 id|inf-&gt;usage_cnt
 op_decrement
@@ -385,20 +387,24 @@ op_add_assign
 id|len
 suffix:semicolon
 r_return
+(paren
 id|len
+)paren
 suffix:semicolon
 )brace
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* isdn_divert_read */
 multiline_comment|/**********************************/
 multiline_comment|/* deflection device write routine */
 multiline_comment|/**********************************/
-DECL|function|isdn_divert_write
 r_static
 id|ssize_t
+DECL|function|isdn_divert_write
 id|isdn_divert_write
 c_func
 (paren
@@ -421,18 +427,20 @@ id|off
 )paren
 (brace
 r_return
+(paren
 op_minus
 id|ENODEV
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* isdn_divert_write */
 multiline_comment|/***************************************/
 multiline_comment|/* select routines for various kernels */
 multiline_comment|/***************************************/
-DECL|function|isdn_divert_poll
 r_static
 r_int
 r_int
+DECL|function|isdn_divert_poll
 id|isdn_divert_poll
 c_func
 (paren
@@ -496,9 +504,9 @@ multiline_comment|/* isdn_divert_poll */
 multiline_comment|/****************/
 multiline_comment|/* Open routine */
 multiline_comment|/****************/
-DECL|function|isdn_divert_open
 r_static
 r_int
+DECL|function|isdn_divert_open
 id|isdn_divert_open
 c_func
 (paren
@@ -570,16 +578,18 @@ id|flags
 suffix:semicolon
 multiline_comment|/*  start_divert(); */
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* isdn_divert_open */
 multiline_comment|/*******************/
 multiline_comment|/* close routine   */
 multiline_comment|/*******************/
-DECL|function|isdn_divert_close
 r_static
 r_int
+DECL|function|isdn_divert_close
 id|isdn_divert_close
 c_func
 (paren
@@ -680,16 +690,18 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* isdn_divert_close */
 multiline_comment|/*********/
 multiline_comment|/* IOCTL */
 multiline_comment|/*********/
-DECL|function|isdn_divert_ioctl
 r_static
 r_int
+DECL|function|isdn_divert_ioctl
 id|isdn_divert_ioctl
 c_func
 (paren
@@ -752,7 +764,9 @@ id|dioctl
 )paren
 )paren
 r_return
+(paren
 id|i
+)paren
 suffix:semicolon
 r_switch
 c_cond
@@ -791,8 +805,10 @@ OL
 l_int|0
 )paren
 r_return
+(paren
 op_minus
 id|EINVAL
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -816,8 +832,10 @@ op_logical_neg
 id|cp
 )paren
 r_return
+(paren
 op_minus
 id|EINVAL
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -827,8 +845,10 @@ op_star
 id|cp
 )paren
 r_return
+(paren
 op_minus
 id|EINVAL
+)paren
 suffix:semicolon
 id|strcpy
 c_func
@@ -858,8 +878,10 @@ id|dioctl.getsetrule.ruleidx
 )paren
 )paren
 r_return
+(paren
 op_minus
 id|EINVAL
+)paren
 suffix:semicolon
 id|dioctl.getsetrule.rule
 op_assign
@@ -887,8 +909,10 @@ id|dioctl.getsetrule.ruleidx
 )paren
 )paren
 r_return
+(paren
 op_minus
 id|EINVAL
+)paren
 suffix:semicolon
 id|save_flags
 c_func
@@ -914,7 +938,9 @@ id|flags
 )paren
 suffix:semicolon
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 multiline_comment|/* no copy required */
 r_break
@@ -923,6 +949,7 @@ r_case
 id|IIOCINSRULE
 suffix:colon
 r_return
+(paren
 id|insertrule
 c_func
 (paren
@@ -931,6 +958,7 @@ comma
 op_amp
 id|dioctl.getsetrule.rule
 )paren
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -938,10 +966,12 @@ r_case
 id|IIOCDELRULE
 suffix:colon
 r_return
+(paren
 id|deleterule
 c_func
 (paren
 id|dioctl.getsetrule.ruleidx
+)paren
 )paren
 suffix:semicolon
 r_break
@@ -950,6 +980,7 @@ r_case
 id|IIOCDODFACT
 suffix:colon
 r_return
+(paren
 id|deflect_extern_action
 c_func
 (paren
@@ -958,6 +989,7 @@ comma
 id|dioctl.fwd_ctrl.callid
 comma
 id|dioctl.fwd_ctrl.to_nr
+)paren
 )paren
 suffix:semicolon
 r_case
@@ -982,8 +1014,10 @@ id|dioctl.cf_ctrl.drvid
 )paren
 )paren
 r_return
+(paren
 op_minus
 id|EINVAL
+)paren
 suffix:semicolon
 multiline_comment|/* invalid driver */
 r_if
@@ -1031,19 +1065,24 @@ id|dioctl.cf_ctrl.procid
 )paren
 )paren
 r_return
+(paren
 id|i
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
 r_default
 suffix:colon
 r_return
+(paren
 op_minus
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* switch cmd */
 r_return
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -1059,6 +1098,7 @@ comma
 r_sizeof
 (paren
 id|dioctl
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -1096,47 +1136,39 @@ id|file_operations
 id|isdn_fops
 op_assign
 (brace
-id|llseek
-suffix:colon
 id|isdn_divert_lseek
 comma
-id|read
-suffix:colon
 id|isdn_divert_read
 comma
-id|write
-suffix:colon
 id|isdn_divert_write
 comma
-id|poll
-suffix:colon
+l_int|NULL
+comma
+multiline_comment|/* isdn_readdir */
 id|isdn_divert_poll
 comma
-id|ioctl
-suffix:colon
+multiline_comment|/* isdn_poll */
 id|isdn_divert_ioctl
 comma
-id|open
-suffix:colon
+multiline_comment|/* isdn_ioctl */
+l_int|NULL
+comma
+multiline_comment|/* isdn_mmap */
 id|isdn_divert_open
 comma
-id|release
-suffix:colon
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|isdn_divert_close
 comma
+l_int|NULL
+multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|variable|divert_file_inode_operations
 r_struct
 id|inode_operations
 id|divert_file_inode_operations
-op_assign
-(brace
-op_amp
-id|isdn_fops
-comma
-multiline_comment|/* default proc file-ops */
-)brace
 suffix:semicolon
 multiline_comment|/****************************/
 multiline_comment|/* isdn subdir in /proc/net */
@@ -1159,21 +1191,18 @@ id|isdn_divert_entry
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif CONFIG_PROC_FS
+macro_line|#endif&t;/* CONFIG_PROC_FS */
 multiline_comment|/***************************************************************************/
 multiline_comment|/* divert_dev_init must be called before the proc filesystem may be used   */
 multiline_comment|/***************************************************************************/
-DECL|function|divert_dev_init
 r_int
+DECL|function|divert_dev_init
 id|divert_dev_init
 c_func
 (paren
 r_void
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 id|init_waitqueue_head
 c_func
 (paren
@@ -1184,10 +1213,16 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 id|isdn_proc_entry
 op_assign
-id|proc_mkdir
+id|create_proc_entry
 c_func
 (paren
 l_string|&quot;isdn&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
 comma
 id|proc_net
 )paren
@@ -1199,8 +1234,10 @@ op_logical_neg
 id|isdn_proc_entry
 )paren
 r_return
+(paren
 op_minus
 l_int|1
+)paren
 suffix:semicolon
 id|isdn_divert_entry
 op_assign
@@ -1209,7 +1246,9 @@ c_func
 (paren
 l_string|&quot;divert&quot;
 comma
-l_int|0
+id|S_IFREG
+op_or
+id|S_IRUGO
 comma
 id|isdn_proc_entry
 )paren
@@ -1230,18 +1269,42 @@ id|proc_net
 )paren
 suffix:semicolon
 r_return
+(paren
 op_minus
 l_int|1
+)paren
 suffix:semicolon
 )brace
+id|memset
+c_func
+(paren
+op_amp
+id|divert_file_inode_operations
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|inode_operations
+)paren
+)paren
+suffix:semicolon
+id|divert_file_inode_operations.default_file_ops
+op_assign
+op_amp
+id|isdn_fops
+suffix:semicolon
 id|isdn_divert_entry-&gt;ops
 op_assign
 op_amp
 id|divert_file_inode_operations
 suffix:semicolon
-macro_line|#endif CONFIG_PROC_FS
+macro_line|#endif&t;/* CONFIG_PROC_FS */
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* divert_dev_init */
@@ -1249,17 +1312,14 @@ multiline_comment|/*************************************************************
 multiline_comment|/* divert_dev_deinit must be called before leaving isdn when included as   */
 multiline_comment|/* a module.                                                               */
 multiline_comment|/***************************************************************************/
-DECL|function|divert_dev_deinit
 r_int
+DECL|function|divert_dev_deinit
 id|divert_dev_deinit
 c_func
 (paren
 r_void
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 id|remove_proc_entry
 c_func
@@ -1277,9 +1337,11 @@ comma
 id|proc_net
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_PROC_FS
+macro_line|#endif&t;/* CONFIG_PROC_FS */
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* divert_dev_deinit */

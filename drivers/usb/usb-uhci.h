@@ -1,7 +1,7 @@
 macro_line|#ifndef __LINUX_UHCI_H
 DECL|macro|__LINUX_UHCI_H
 mdefine_line|#define __LINUX_UHCI_H
-multiline_comment|/*&n;   $Id: usb-uhci.h,v 1.39 2000/02/05 20:25:27 acher Exp $&n; */
+multiline_comment|/*&n;   $Id: usb-uhci.h,v 1.41 2000/02/13 21:37:38 acher Exp $&n; */
 DECL|macro|MODNAME
 mdefine_line|#define MODNAME &quot;usb-uhci&quot;
 DECL|macro|VERSTR
@@ -328,6 +328,15 @@ DECL|member|short_control_packet
 r_int
 id|short_control_packet
 suffix:semicolon
+DECL|member|started
+r_int
+r_int
+id|started
+suffix:semicolon
+DECL|member|use_loop
+r_int
+id|use_loop
+suffix:semicolon
 DECL|typedef|urb_priv_t
 DECL|typedef|purb_priv_t
 )brace
@@ -495,6 +504,11 @@ id|virt_root_hub
 id|rh
 suffix:semicolon
 singleline_comment|//private data of the virtual root hub
+DECL|member|loop_usage
+r_int
+id|loop_usage
+suffix:semicolon
+singleline_comment|// URBs using bandwidth reclamation
 DECL|typedef|uhci_t
 DECL|typedef|puhci_t
 )brace

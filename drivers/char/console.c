@@ -303,7 +303,7 @@ id|master_display_fg
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n; * Unfortunately, we need to delay tty echo when we&squot;re currently writing to the&n; * console since the code is (and always was) not re-entrant, so we insert&n; * all filp requests to con_task_queue instead of tq_timer and run it from&n; * the console_bh.&n; */
+multiline_comment|/*&n; * Unfortunately, we need to delay tty echo when we&squot;re currently writing to the&n; * console since the code is (and always was) not re-entrant, so we insert&n; * all filp requests to con_task_queue instead of tq_timer and run it from&n; * the console_tasklet.  The console_tasklet is protected by the IRQ&n; * protected console_lock.&n; */
 DECL|variable|con_task_queue
 id|DECLARE_TASK_QUEUE
 c_func
@@ -311,7 +311,7 @@ c_func
 id|con_task_queue
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * For the same reason, we defer scrollback to the console_bh.&n; */
+multiline_comment|/*&n; * For the same reason, we defer scrollback to the console tasklet.&n; */
 DECL|variable|scrollback_delta
 r_static
 r_int
@@ -471,10 +471,11 @@ id|scrollback_delta
 op_add_assign
 id|lines
 suffix:semicolon
-id|mark_bh
+id|tasklet_schedule
 c_func
 (paren
-id|CONSOLE_BH
+op_amp
+id|console_tasklet
 )paren
 suffix:semicolon
 )brace
@@ -2608,19 +2609,6 @@ id|currcons
 comma
 id|old_console
 suffix:semicolon
-r_static
-r_int
-id|lock
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|lock
-)paren
-r_return
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2633,23 +2621,10 @@ id|new_console
 )paren
 (brace
 multiline_comment|/* strange ... */
-id|printk
-c_func
-(paren
-l_string|&quot;redraw_screen: tty %d not allocated ??&bslash;n&quot;
-comma
-id|new_console
-op_plus
-l_int|1
-)paren
-suffix:semicolon
+multiline_comment|/* printk(&quot;redraw_screen: tty %d not allocated ??&bslash;n&quot;, new_console+1); */
 r_return
 suffix:semicolon
 )brace
-id|lock
-op_assign
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2847,10 +2822,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|lock
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Allocation, freeing and resizing of VTs.&n; */
 DECL|function|vc_cons_allocated
@@ -8995,6 +8966,23 @@ id|ESnormal
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* This is a temporary buffer used to prepare a tty console write&n; * so that we can easily avoid touching user space while holding the&n; * console spinlock.  It is allocated in con_init and is shared by&n; * this code and the vc_screen read/write tty calls.&n; *&n; * We have to allocate this statically in the kernel data section&n; * since console_init (and thus con_init) are called before any&n; * kernel memory allocation is available.&n; */
+DECL|variable|con_buf
+r_char
+id|con_buf
+(braket
+id|PAGE_SIZE
+)braket
+suffix:semicolon
+DECL|macro|CON_BUF_SIZE
+mdefine_line|#define CON_BUF_SIZE&t;PAGE_SIZE
+DECL|variable|con_buf_sem
+id|DECLARE_MUTEX
+c_func
+(paren
+id|con_buf_sem
+)paren
+suffix:semicolon
 DECL|function|do_con_write
 r_static
 r_int
@@ -9120,31 +9108,66 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|down
+c_func
+(paren
+op_amp
+id|con_buf_sem
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|from_user
 )paren
 (brace
-multiline_comment|/* just to make sure that noone lurks at places he shouldn&squot;t see. */
 r_if
 c_cond
 (paren
-id|verify_area
+id|count
+OG
+id|CON_BUF_SIZE
+)paren
+id|count
+op_assign
+id|CON_BUF_SIZE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|copy_from_user
 c_func
 (paren
-id|VERIFY_READ
+id|con_buf
 comma
 id|buf
 comma
 id|count
 )paren
 )paren
-r_return
+(brace
+id|n
+op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* ?? are error codes legal here ?? */
+r_goto
+id|out
+suffix:semicolon
 )brace
+id|buf
+op_assign
+id|con_buf
+suffix:semicolon
+)brace
+multiline_comment|/* At this point &squot;buf&squot; is guarenteed to be a kernel buffer&n;&t; * and therefore no access to userspace (and therefore sleeping)&n;&t; * will be needed.  The con_buf_sem serializes all tty based&n;&t; * console rendering and vcs write/read operations.  We hold&n;&t; * the console spinlock during the entire write.&n;&t; */
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|console_lock
+)paren
+suffix:semicolon
 id|himask
 op_assign
 id|hi_font_mask
@@ -9170,12 +9193,6 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-id|disable_bh
-c_func
-(paren
-id|CONSOLE_BH
-)paren
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -9185,26 +9202,6 @@ op_logical_and
 id|count
 )paren
 (brace
-id|enable_bh
-c_func
-(paren
-id|CONSOLE_BH
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|from_user
-)paren
-id|__get_user
-c_func
-(paren
-id|c
-comma
-id|buf
-)paren
-suffix:semicolon
-r_else
 id|c
 op_assign
 op_star
@@ -9218,12 +9215,6 @@ op_increment
 suffix:semicolon
 id|count
 op_decrement
-suffix:semicolon
-id|disable_bh
-c_func
-(paren
-id|CONSOLE_BH
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -9766,10 +9757,20 @@ id|c
 suffix:semicolon
 )brace
 id|FLUSH
-id|enable_bh
+id|spin_unlock_irq
 c_func
 (paren
-id|CONSOLE_BH
+op_amp
+id|console_lock
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|con_buf_sem
 )paren
 suffix:semicolon
 r_return
@@ -9778,21 +9779,31 @@ suffix:semicolon
 DECL|macro|FLUSH
 macro_line|#undef FLUSH
 )brace
-multiline_comment|/*&n; * This is the console switching bottom half handler.&n; *&n; * Doing console switching in a bottom half handler allows&n; * us to do the switches asynchronously (needed when we want&n; * to switch due to a keyboard interrupt), while still giving&n; * us the option to easily disable it to avoid races when we&n; * need to write to the console.&n; */
-DECL|function|console_bh
+multiline_comment|/*&n; * This is the console switching tasklet.&n; *&n; * Doing console switching in a tasklet allows&n; * us to do the switches asynchronously (needed when we want&n; * to switch due to a keyboard interrupt).  Synchronization&n; * with other console code and prevention of re-entrancy is&n; * ensured with console_lock.&n; */
+DECL|function|console_softint
 r_static
 r_void
-id|console_bh
+id|console_softint
 c_func
 (paren
-r_void
+r_int
+r_int
+id|ignored
 )paren
 (brace
+multiline_comment|/* Runs the task queue outside of the console lock.  These&n;&t; * callbacks can come back into the console code and thus&n;&t; * will perform their own locking.&n;&t; */
 id|run_task_queue
 c_func
 (paren
 op_amp
 id|con_task_queue
+)paren
+suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|console_lock
 )paren
 suffix:semicolon
 r_if
@@ -9897,9 +9908,16 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|console_lock
+)paren
+suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_VT_CONSOLE
-multiline_comment|/*&n; *&t;Console on virtual terminal&n; *&n; * NOTE NOTE NOTE! This code can do no global locking. In particular,&n; * we can&squot;t disable interrupts or bottom half handlers globally, because&n; * we can be called from contexts that hold critical spinlocks, and&n; * trying do get a global lock at this point will lead to deadlocks.&n; */
+multiline_comment|/*&n; *&t;Console on virtual terminal&n; *&n; * The console_lock must be held when we get here.&n; */
 DECL|function|vt_console_print
 r_void
 id|vt_console_print
@@ -10008,16 +10026,7 @@ id|currcons
 )paren
 (brace
 multiline_comment|/* impossible */
-id|printk
-c_func
-(paren
-l_string|&quot;vt_console_print: tty %d not allocated ??&bslash;n&quot;
-comma
-id|currcons
-op_plus
-l_int|1
-)paren
-suffix:semicolon
+multiline_comment|/* printk(&quot;vt_console_print: tty %d not allocated ??&bslash;n&quot;, currcons+1); */
 r_goto
 id|quit
 suffix:semicolon
@@ -11270,6 +11279,16 @@ r_static
 r_int
 id|console_refcount
 suffix:semicolon
+id|DECLARE_TASKLET_DISABLED
+c_func
+(paren
+id|console_tasklet
+comma
+id|console_softint
+comma
+l_int|0
+)paren
+suffix:semicolon
 DECL|function|con_init
 r_void
 id|__init
@@ -11755,12 +11774,18 @@ id|vt_console_driver
 )paren
 suffix:semicolon
 macro_line|#endif
-id|init_bh
+id|tasklet_enable
 c_func
 (paren
-id|CONSOLE_BH
-comma
-id|console_bh
+op_amp
+id|console_tasklet
+)paren
+suffix:semicolon
+id|tasklet_schedule
+c_func
+(paren
+op_amp
+id|console_tasklet
 )paren
 suffix:semicolon
 )brace
@@ -13497,10 +13522,11 @@ op_assign
 id|temp
 suffix:semicolon
 )brace
-id|disable_bh
+id|spin_lock_irq
 c_func
 (paren
-id|CONSOLE_BH
+op_amp
+id|console_lock
 )paren
 suffix:semicolon
 id|rc
@@ -13520,10 +13546,11 @@ comma
 id|op
 )paren
 suffix:semicolon
-id|enable_bh
+id|spin_unlock_irq
 c_func
 (paren
-id|CONSOLE_BH
+op_amp
+id|console_lock
 )paren
 suffix:semicolon
 id|op-&gt;data

@@ -196,7 +196,7 @@ r_if
 c_cond
 (paren
 id|size
-op_ge
+OG
 l_int|0x100
 )paren
 (brace

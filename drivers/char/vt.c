@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/kbd_kern.h&gt;
@@ -3398,11 +3399,12 @@ id|i
 r_return
 id|i
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * When we actually do the console switch,&n;&t;&t;&t;&t; * make sure we are atomic with respect to&n;&t;&t;&t;&t; * other console switches..&n;&t;&t;&t;&t; *&n;&t;&t;&t;&t; * Damn! Was it difficult to make this clean?&n;&t;&t;&t;&t; */
-id|disable_bh
+multiline_comment|/*&n;&t;&t;&t;&t; * When we actually do the console switch,&n;&t;&t;&t;&t; * make sure we are atomic with respect to&n;&t;&t;&t;&t; * other console switches..&n;&t;&t;&t;&t; */
+id|spin_lock_irq
 c_func
 (paren
-id|CONSOLE_BH
+op_amp
+id|console_lock
 )paren
 suffix:semicolon
 id|complete_change_console
@@ -3411,10 +3413,11 @@ c_func
 id|newvt
 )paren
 suffix:semicolon
-id|enable_bh
+id|spin_unlock_irq
 c_func
 (paren
-id|CONSOLE_BH
+op_amp
+id|console_lock
 )paren
 suffix:semicolon
 )brace

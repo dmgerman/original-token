@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: kernelcapi.h,v 1.4 1999/09/10 17:24:19 calle Exp $&n; * &n; * Kernel CAPI 2.0 Interface for Linux&n; * &n; * (c) Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: kernelcapi.h,v $&n; * Revision 1.4  1999/09/10 17:24:19  calle&n; * Changes for proposed standard for CAPI2.0:&n; * - AK148 &quot;Linux Exention&quot;&n; *&n; * Revision 1.3  1999/07/01 15:26:56  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; * Revision 1.2  1999/06/21 15:24:26  calle&n; * extend information in /proc.&n; *&n; * Revision 1.1  1997/03/04 21:27:33  calle&n; * First version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; * &n; */
+multiline_comment|/*&n; * $Id: kernelcapi.h,v 1.5 2000/01/28 16:45:40 calle Exp $&n; * &n; * Kernel CAPI 2.0 Interface for Linux&n; * &n; * (c) Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: kernelcapi.h,v $&n; * Revision 1.5  2000/01/28 16:45:40  calle&n; * new manufacturer command KCAPI_CMD_ADDCARD (generic addcard),&n; * will search named driver and call the add_card function if one exist.&n; *&n; * Revision 1.4  1999/09/10 17:24:19  calle&n; * Changes for proposed standard for CAPI2.0:&n; * - AK148 &quot;Linux Exention&quot;&n; *&n; * Revision 1.3  1999/07/01 15:26:56  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; * Revision 1.2  1999/06/21 15:24:26  calle&n; * extend information in /proc.&n; *&n; * Revision 1.1  1997/03/04 21:27:33  calle&n; * First version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; * &n; */
 macro_line|#ifndef __KERNELCAPI_H__
 DECL|macro|__KERNELCAPI_H__
 mdefine_line|#define __KERNELCAPI_H__
@@ -25,9 +25,45 @@ DECL|typedef|kcapi_flagdef
 )brace
 id|kcapi_flagdef
 suffix:semicolon
+DECL|struct|kcapi_carddef
+r_typedef
+r_struct
+id|kcapi_carddef
+(brace
+DECL|member|driver
+r_char
+id|driver
+(braket
+l_int|32
+)braket
+suffix:semicolon
+DECL|member|port
+r_int
+r_int
+id|port
+suffix:semicolon
+DECL|member|irq
+r_int
+id|irq
+suffix:semicolon
+DECL|member|membase
+r_int
+r_int
+id|membase
+suffix:semicolon
+DECL|member|cardnr
+r_int
+id|cardnr
+suffix:semicolon
+DECL|typedef|kcapi_carddef
+)brace
+id|kcapi_carddef
+suffix:semicolon
 multiline_comment|/* new ioctls &gt;= 10 */
 DECL|macro|KCAPI_CMD_TRACE
 mdefine_line|#define KCAPI_CMD_TRACE&t;&t;10
+DECL|macro|KCAPI_CMD_ADDCARD
+mdefine_line|#define KCAPI_CMD_ADDCARD&t;11&t;/* add card to named driver */
 multiline_comment|/* &n; * flag &gt; 2 =&gt; trace also data&n; * flag &amp; 1 =&gt; show trace&n; */
 DECL|macro|KCAPI_TRACE_OFF
 mdefine_line|#define KCAPI_TRACE_OFF&t;&t;&t;0

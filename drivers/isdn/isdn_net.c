@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_net.c,v 1.95 1999/10/27 21:21:17 detabc Exp $&n;&n; * Linux ISDN subsystem, network interfaces and related functions (linklevel).&n; *&n; * Copyright 1994-1998  by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_net.c,v $&n; * Revision 1.95  1999/10/27 21:21:17  detabc&n; * Added support for building logically-bind-group&squot;s per interface.&n; * usefull for outgoing call&squot;s with more then one isdn-card.&n; *&n; * Switchable support to dont reset the hangup-timeout for&n; * receive frames. Most part&squot;s of the timru-rules for receiving frames&n; * are now obsolete. If the input- or forwarding-firewall deny&n; * the frame, the line will be not hold open.&n; *&n; * Revision 1.94  1999/10/02 11:07:02  he&n; * Changed tbusy logic in indn_net.c&n; *&n; * Revision 1.93  1999/09/23 22:22:41  detabc&n; * added tcp-keepalive-detect with local response (ipv4 only)&n; * added host-only-interface support&n; * (source ipaddr == interface ipaddr) (ipv4 only)&n; * ok with kernel 2.3.18 and 2.2.12&n; *&n; * Revision 1.92  1999/09/13 23:25:17  he&n; * serialized xmitting frames from isdn_ppp and BSENT statcallb&n; *&n; * Revision 1.91  1999/09/12 16:19:39  detabc&n; * added abc features&n; * low cost routing for net-interfaces (only the HL side).&n; * need more implementation in the isdnlog-utility&n; * udp info support (first part).&n; * different EAZ on outgoing call&squot;s.&n; * more checks on D-Channel callbacks (double use of channels).&n; * tested and running with kernel 2.3.17&n; *&n; * Revision 1.90  1999/09/04 22:21:39  detabc&n; *&n; * Revision 1.89  1999/08/22 20:26:03  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.88  1999/07/07 10:13:31  detabc&n; * remove unused messages&n; *&n; * Revision 1.87  1999/07/06 07:53:53  calle&n; * calls to dev_alloc_skb waste 16 bytes of memory, if we calculate the&n; * right header space for the lowlevel driver. using alloc_skb instead.&n; *&n; * Revision 1.86  1999/06/09 10:12:05  paul&n; * thinko in previous patch&n; *&n; * Revision 1.85  1999/06/07 19:42:39  paul&n; * isdn_net_getpeer() fixed to return correct `outgoing&squot; flag&n; *&n; * Revision 1.84  1999/04/18 14:06:55  fritz&n; * Removed TIMRU stuff.&n; *&n; * Revision 1.83  1999/04/12 12:33:23  fritz&n; * Changes from 2.0 tree.&n; *&n; * Revision 1.82  1999/01/17 00:55:58  he&n; * added mark_bh in BCONN statcallb and cleaned up some dead code&n; *&n; * Revision 1.81  1999/01/15 16:36:52  he&n; * replaced icmp_send() by dst_link_failure()&n; *&n; * Revision 1.80  1998/12/01 13:06:22  paul&n; * Also huptimeout with dialmode == manual&n; *&n; * Revision 1.79  1998/10/30 17:55:27  he&n; * dialmode for x25iface and multulink ppp&n; *&n; * Revision 1.78  1998/10/26 18:20:46  he&n; * re-inserted p=p-&gt;next in isdn_net_find_icall() (fixes kernel lock up&n; * on incoming call not matching the first interface)&n; *&n; * Revision 1.77  1998/10/23 10:18:44  paul&n; * Implementation of &quot;dialmode&quot; (successor of &quot;status&quot;)&n; * You also need current isdnctrl for this!&n; *&n; * Revision 1.76  1998/09/07 22:00:05  he&n; * flush method for 2.1.118 and above&n; * updated IIOCTLNETGPN&n; *&n; * Revision 1.75  1998/08/31 21:09:50  he&n; * new ioctl IIOCNETGPN for /dev/isdninfo (get network interface&squot;&n; *     peer phone number)&n; *&n; * Revision 1.74  1998/07/30 11:28:32  paul&n; * printk message only appeared when status is off and interface is rawIP,&n; * which is confusing for people who don&squot;t know about &quot;isdnctrl status &lt;if&gt; on&quot;.&n; *&n; * Revision 1.73  1998/06/26 22:01:37  keil&n; * tx_queue_len = 5 was too small&n; *&n; * Revision 1.72  1998/06/26 15:12:31  fritz&n; * Added handling of STAT_ICALL with incomplete CPN.&n; * Added AT&amp;L for ttyI emulator.&n; * Added more locking stuff in tty_write.&n; *&n; * Revision 1.71  1998/06/18 22:43:08  fritz&n; * Bugfix: Setting ndev-&gt;do_ioctl had beed accidetly removed at cleanup.&n; *&n; * Revision 1.70  1998/06/17 19:50:49  he&n; * merged with 2.1.10[34] (cosmetics and udelay() -&gt; mdelay())&n; * brute force fix to avoid Ugh&squot;s in isdn_tty_write()&n; * cleaned up some dead code&n; *&n; * Revision 1.69  1998/06/09 12:27:37  cal&n; * Changed default of local netdev flags: ISDN_NET_STOPPED is default now,&n; * so autodial is suppressed for that device until it is switched on using&n; * &squot;isdnctrl status dev-name on&squot;.&n; *&n; *&n; *&n; * Revision 1.66  1998/05/26 22:39:24  he&n; * sync&squot;ed with 2.1.102 where appropriate (CAPABILITY changes)&n; * concap typo&n; * cleared dev.tbusy in isdn_net BCONN status callback&n; *&n; * Revision 1.61  1998/04/16 19:19:42  keil&n; * Fix from vger (tx max qlength)&n; *&n; * Revision 1.60  1998/04/14 16:28:49  he&n; * Fixed user space access with interrupts off and remaining&n; * copy_{to,from}_user() -&gt; -EFAULT return codes&n; *&n; * Revision 1.59  1998/03/07 22:37:33  fritz&n; * Bugfix: restore_flags missing.&n; *&n; * Revision 1.58  1998/03/07 18:21:05  cal&n; * Dynamic Timeout-Rule-Handling vs. 971110 included&n; *&n; * Revision 1.57  1998/02/25 18:31:13  fritz&n; * Added debugging output in adjust_header.&n; *&n; * Revision 1.56  1998/02/25 17:49:42  he&n; * Changed return codes caused be failing copy_{to,from}_user to -EFAULT&n; *&n; * Revision 1.55  1998/02/23 19:38:22  fritz&n; * Corrected check for modified feature-flags.&n; *&n; * Revision 1.54  1998/02/20 17:15:07  fritz&n; * Changes for recent kernels.&n; * Ugly workaround for adjusting Ethernet frames with recent kernels.&n; * replaced direct calls to lowlevel-driver command by common hook.&n; *&n; * Revision 1.53  1998/01/31 22:05:54  keil&n; * Lots of changes for X.25 support:&n; * Added generic support for connection-controlling encapsulation protocols&n; * Added support of BHUP status message&n; * Added support for additional p_encap X25IFACE&n; * Added support for kernels &gt;= 2.1.72&n; *&n; * Revision 1.52  1998/01/31 19:29:51  calle&n; * Merged changes from and for 2.1.82, not tested only compiled ...&n; *&n; * Revision 1.51  1997/10/09 21:28:50  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *   New L1 error status (not yet in use).&n; *   Cleaned up obsolete structures.&n; * Implemented Cisco-SLARP.&n; * Changed local net-interface data to be dynamically allocated.&n; * Removed old 2.0 compatibility stuff.&n; *&n; * Revision 1.50  1997/10/01 09:20:32  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.49  1997/08/21 14:38:13  fritz&n; * Bugfix: Did not compile without SyncPPP.&n; *&n; * Revision 1.48  1997/06/22 11:57:15  fritz&n; * Added ability to adjust slave triggerlevel.&n; *&n; * Revision 1.47  1997/06/21 10:52:05  fritz&n; * Removed wrong SET_SKB_FREE in isdn_net_send_skb()&n; *&n; * Revision 1.46  1997/06/17 13:05:24  hipp&n; * Applied Eric&squot;s underflow-patches (slightly modified)&n; *&n; * Revision 1.45  1997/06/10 16:24:22  hipp&n; * hard_header changes for syncPPP (now behaves like RAWIP)&n; *&n; * Revision 1.44  1997/05/27 15:17:26  fritz&n; * Added changes for recent 2.1.x kernels:&n; *   changed return type of isdn_close&n; *   queue_task_* -&gt; queue_task&n; *   clear/set_bit -&gt; test_and_... where apropriate.&n; *   changed type of hard_header_cache parameter.&n; *&n; * Revision 1.43  1997/03/30 16:51:13  calle&n; * changed calls to copy_from_user/copy_to_user and removed verify_area&n; * were possible.&n; *&n; * Revision 1.42  1997/03/11 08:43:51  fritz&n; * Perform a hangup if number is deleted while dialing.&n; *&n; * Revision 1.41  1997/03/08 08:16:31  fritz&n; * Bugfix: Deleting a phone number during dial gave unpredictable results.&n; *&n; * Revision 1.40  1997/03/05 21:16:08  fritz&n; * Fix: did not compile with 2.1.27&n; *&n; * Revision 1.39  1997/03/04 21:36:52  fritz&n; * Added sending ICMP messages when no connetion is possible.&n; *&n; * Revision 1.38  1997/02/23 23:41:14  fritz&n; * Bugfix: Slave interfaces have to be hung up before master.&n; *&n; * Revision 1.37  1997/02/11 18:32:51  fritz&n; * Bugfix in isdn_ppp_free_mpqueue().&n; *&n; * Revision 1.36  1997/02/10 21:31:11  fritz&n; * Changed setup-interface (incoming and outgoing).&n; *&n; * Revision 1.35  1997/02/10 20:12:45  fritz&n; * Changed interface for reporting incoming calls.&n; *&n; * Revision 1.34  1997/02/03 23:15:07  fritz&n; * Reformatted according CodingStyle.&n; * replaced arp_find prototype by proper include.&n; * made dev_purge_queues static.&n; * Bugfix in bogocps calculation.&n; * removed isdn_net_receive_callback - was never used ;-)&n; * Misc. fixes for Kernel 2.1.X comaptibility.&n; *&n; * Revision 1.33  1997/01/17 01:19:25  fritz&n; * Applied chargeint patch.&n; *&n; * Revision 1.32  1997/01/14 01:29:31  fritz&n; * Bugfix: isdn_net_hangup() did not reset ISDN_NET_CONNECTED.&n; *&n; * Revision 1.31  1997/01/11 23:30:42  fritz&n; * Speed up dial statemachine.&n; *&n; * Revision 1.30  1996/11/25 17:20:50  hipp&n; * fixed pppbind bug in isdn_net_find_icall()&n; *&n; * Revision 1.29  1996/11/13 02:31:38  fritz&n; * Minor cleanup.&n; *&n; * Revision 1.28  1996/10/27 20:49:06  keil&n; * bugfix to compile without MPP&n; *&n; * Revision 1.27  1996/10/25 18:46:01  fritz&n; * Another bugfix in isdn_net_autohup()&n; *&n; * Revision 1.26  1996/10/23 23:05:36  fritz&n; * Bugfix: Divide by zero in isdn_net_autohup()&n; *&n; * Revision 1.25  1996/10/22 23:13:58  fritz&n; * Changes for compatibility to 2.0.X and 2.1.X kernels.&n; *&n; * Revision 1.24  1996/10/11 13:57:40  fritz&n; * Bugfix: Error in BogoCPS calculation.&n; *&n; * Revision 1.23  1996/09/23 01:58:08  fritz&n; * Fix: With syncPPP encapsulation, discard LCP packets&n; *      when calculating hangup timeout.&n; *&n; * Revision 1.22  1996/09/23 00:03:37  fritz&n; * Fix: did not compile without CONFIG_ISDN_PPP&n; *&n; * Revision 1.21  1996/09/07 12:44:50  hipp&n; * (hopefully) fixed callback problem with syncPPP&n; * syncPPP network devices now show PPP link encap&n; *&n; * Revision 1.20  1996/08/29 20:06:03  fritz&n; * Bugfix: Transmission timeout had been much to low.&n; *&n; * Revision 1.19  1996/08/12 16:24:32  hipp&n; * removed some (now) obsolete functions for syncPPP in rebuild_header etc.&n; *&n; * Revision 1.18  1996/07/03 13:48:51  hipp&n; * bugfix: Call dev_purge_queues() only for master device&n; *&n; * Revision 1.17  1996/06/25 18:37:37  fritz&n; * Fixed return count for empty return string in isdn_net_getphones().&n; *&n; * Revision 1.16  1996/06/24 17:48:08  fritz&n; * Bugfixes:&n; *   - Did not free channel on unbinding.&n; *   - ioctl returned wrong callback settings.&n; *&n; * Revision 1.15  1996/06/16 17:42:54  tsbogend&n; * fixed problem with IP addresses on Linux/Alpha (long is 8 byte there)&n; *&n; * Revision 1.14  1996/06/11 14:54:08  hipp&n; * minor bugfix in isdn_net_send_skb&n; * changes in BSENT callback handler for syncPPP&n; * added lp-&gt;sav_skb stuff&n; *&n; * Revision 1.13  1996/06/06 14:25:44  fritz&n; * Changed loglevel of &quot;incoming ... without OAD&quot; message, since&n; * with audio support this is quite normal.&n; *&n; * Revision 1.12  1996/06/05 02:36:45  fritz&n; * Minor bugfixes by M. Hipp.&n; *&n; * Revision 1.11  1996/05/18 01:36:59  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.10  1996/05/17 03:49:01  fritz&n; * Some cleanup.&n; *&n; * Revision 1.9  1996/05/06 11:34:57  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.8  1996/04/30 21:04:40  fritz&n; * Test commit&n; *&n; * Revision 1.7  1996/04/30 11:10:42  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.6  1996/04/30 09:34:35  fritz&n; * Removed compatibility-macros.&n; *&n; * Revision 1.5  1996/04/20 16:28:38  fritz&n; * Made more parameters of the dial statemachine user-configurable and&n; * added hangup after dial for more reliability using callback.&n; * Changed all io going through generic routines in isdn_common.c&n; * Added missing call to dev_free_skb on failed dialing.&n; * Added uihdlc encapsulation.&n; * Fixed isdn_net_setcfg not to destroy interface-flags anymore.&n; * Misc. typos.&n; *&n; * Revision 1.4  1996/02/19 15:23:38  fritz&n; * Bugfix: Sync-PPP packets got compressed twice, when resent due to&n; *         send-queue-full reject.&n; *&n; * Revision 1.3  1996/02/11 02:22:28  fritz&n; * Changed status- receive-callbacks to use pointer-arrays for finding&n; * a corresponding interface instead of looping over all interfaces.&n; * Activate Auto-hangup-timer only when interface is online.&n; * Some bugfixes in the dialing-statemachine.&n; * Lot of bugfixes in sk_buff&squot;ized encapsulation handling.&n; * For speedup connection-setup after dialing, remember sk_buf that triggered&n; * dialing.&n; * Fixed isdn_net_log_packet according to different encapsulations.&n; * Correct ARP-handling for ETHERNET-encapsulation.&n; *&n; * Revision 1.2  1996/01/22 05:05:12  fritz&n; * Changed returncode-logic for isdn_net_start_xmit() and its&n; * helper-functions.&n; * Changed handling of buildheader for RAWIP and ETHERNET-encapsulation.&n; *&n; * Revision 1.1  1996/01/09 04:12:34  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn_net.c,v 1.107 2000/02/13 09:52:05 kai Exp $&n;&n; * Linux ISDN subsystem, network interfaces and related functions (linklevel).&n; *&n; * Copyright 1994-1998  by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_net.c,v $&n; * Revision 1.107  2000/02/13 09:52:05  kai&n; * increased TX_TIMEOUT to 20sec&n; *&n; * Revision 1.106  2000/02/12 19:26:55  kai&n; * adopted to latest 2.3 softnet changes.&n; *&n; * tested with PPP and MPPP, it works here.&n; * can somebody check raw-ip?&n; *&n; * also changed std2kern, stddiff for bash-1 compatibility,&n; * hope this doesn&squot;t break anything.&n; *&n; * Revision 1.105  2000/02/12 11:43:26  he&n; * SOFTNET related changes, first try. Compatible with linux 2.2.x, but&n; * not tested for kernels with softnet (&gt;= 2.3.43) yet.&n; *&n; * Revision 1.104  2000/02/06 21:49:59  detabc&n; * add rewriting of socket&squot;s and frame&squot;s saddr for udp-ipv4 dynip-connections.&n; * Include checksum-recompute of ip- and udp-header&squot;s.&n; *&n; * Revision 1.103  2000/01/23 18:45:37  keil&n; * Change EAZ mapping to forbit the use of cards (insert a &quot;-&quot; for the MSN)&n; *&n; * Revision 1.102  2000/01/09 20:43:14  detabc&n; * exand logical bind-group&squot;s for both call&squot;s (in and out).&n; * add first part of kernel-config-help for abc-extension.&n; *&n; * Revision 1.101  1999/12/05 16:06:08  detabc&n; * add resethandling for rawip-compression.&n; * at now all B2-Protocols are usable with rawip-compression&n; *&n; * Revision 1.100  1999/12/04 15:05:25  detabc&n; * bugfix abc-rawip-bsdcompress with channel-bundeling&n; *&n; * Revision 1.99  1999/11/30 11:29:06  detabc&n; * add a on the fly frame-counter and limit&n; *&n; * Revision 1.98  1999/11/28 14:49:07  detabc&n; * In case of rawip-compress adjust dev[x]-&gt;ibytes/obytes to reflect the&n; * uncompressed size.&n; *&n; * Revision 1.97  1999/11/26 15:54:59  detabc&n; * added compression (isdn_bsdcompress) for rawip interfaces with x75i B2-protocol.&n; *&n; * Revision 1.96  1999/11/20 22:14:13  detabc&n; * added channel dial-skip in case of external use&n; * (isdn phone or another isdn device) on the same NTBA.&n; * usefull with two or more card&squot;s connected the different NTBA&squot;s.&n; * global switchable in kernel-config and also per netinterface.&n; *&n; * add auto disable of netinterface&squot;s in case of:&n; * &t;to many connection&squot;s in short time.&n; * &t;config mistakes (wrong encapsulation, B2-protokoll or so on) on local&n; * &t;or remote side.&n; * &t;wrong password&squot;s or something else to a ISP (syncppp).&n; *&n; * possible encapsulations for this future are:&n; * ISDN_NET_ENCAP_SYNCPPP, ISDN_NET_ENCAP_UIHDLC, ISDN_NET_ENCAP_RAWIP,&n; * and ISDN_NET_ENCAP_CISCOHDLCK.&n; *&n; * Revision 1.95  1999/10/27 21:21:17  detabc&n; * Added support for building logically-bind-group&squot;s per interface.&n; * usefull for outgoing call&squot;s with more then one isdn-card.&n; *&n; * Switchable support to dont reset the hangup-timeout for&n; * receive frames. Most part&squot;s of the timru-rules for receiving frames&n; * are now obsolete. If the input- or forwarding-firewall deny&n; * the frame, the line will be not hold open.&n; *&n; * Revision 1.94  1999/10/02 11:07:02  he&n; * Changed tbusy logic in indn_net.c&n; *&n; * Revision 1.93  1999/09/23 22:22:41  detabc&n; * added tcp-keepalive-detect with local response (ipv4 only)&n; * added host-only-interface support&n; * (source ipaddr == interface ipaddr) (ipv4 only)&n; * ok with kernel 2.3.18 and 2.2.12&n; *&n; * Revision 1.92  1999/09/13 23:25:17  he&n; * serialized xmitting frames from isdn_ppp and BSENT statcallb&n; *&n; * Revision 1.91  1999/09/12 16:19:39  detabc&n; * added abc features&n; * low cost routing for net-interfaces (only the HL side).&n; * need more implementation in the isdnlog-utility&n; * udp info support (first part).&n; * different EAZ on outgoing call&squot;s.&n; * more checks on D-Channel callbacks (double use of channels).&n; * tested and running with kernel 2.3.17&n; *&n; * Revision 1.90  1999/09/04 22:21:39  detabc&n; *&n; * Revision 1.89  1999/08/22 20:26:03  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.88  1999/07/07 10:13:31  detabc&n; * remove unused messages&n; *&n; * Revision 1.87  1999/07/06 07:53:53  calle&n; * calls to dev_alloc_skb waste 16 bytes of memory, if we calculate the&n; * right header space for the lowlevel driver. using alloc_skb instead.&n; *&n; * Revision 1.86  1999/06/09 10:12:05  paul&n; * thinko in previous patch&n; *&n; * Revision 1.85  1999/06/07 19:42:39  paul&n; * isdn_net_getpeer() fixed to return correct `outgoing&squot; flag&n; *&n; * Revision 1.84  1999/04/18 14:06:55  fritz&n; * Removed TIMRU stuff.&n; *&n; * Revision 1.83  1999/04/12 12:33:23  fritz&n; * Changes from 2.0 tree.&n; *&n; * Revision 1.82  1999/01/17 00:55:58  he&n; * added mark_bh in BCONN statcallb and cleaned up some dead code&n; *&n; * Revision 1.81  1999/01/15 16:36:52  he&n; * replaced icmp_send() by dst_link_failure()&n; *&n; * Revision 1.80  1998/12/01 13:06:22  paul&n; * Also huptimeout with dialmode == manual&n; *&n; * Revision 1.79  1998/10/30 17:55:27  he&n; * dialmode for x25iface and multulink ppp&n; *&n; * Revision 1.78  1998/10/26 18:20:46  he&n; * re-inserted p=p-&gt;next in isdn_net_find_icall() (fixes kernel lock up&n; * on incoming call not matching the first interface)&n; *&n; * Revision 1.77  1998/10/23 10:18:44  paul&n; * Implementation of &quot;dialmode&quot; (successor of &quot;status&quot;)&n; * You also need current isdnctrl for this!&n; *&n; * Revision 1.76  1998/09/07 22:00:05  he&n; * flush method for 2.1.118 and above&n; * updated IIOCTLNETGPN&n; *&n; * Revision 1.75  1998/08/31 21:09:50  he&n; * new ioctl IIOCNETGPN for /dev/isdninfo (get network interface&squot;&n; *     peer phone number)&n; *&n; * Revision 1.74  1998/07/30 11:28:32  paul&n; * printk message only appeared when status is off and interface is rawIP,&n; * which is confusing for people who don&squot;t know about &quot;isdnctrl status &lt;if&gt; on&quot;.&n; *&n; * Revision 1.73  1998/06/26 22:01:37  keil&n; * tx_queue_len = 5 was too small&n; *&n; * Revision 1.72  1998/06/26 15:12:31  fritz&n; * Added handling of STAT_ICALL with incomplete CPN.&n; * Added AT&amp;L for ttyI emulator.&n; * Added more locking stuff in tty_write.&n; *&n; * Revision 1.71  1998/06/18 22:43:08  fritz&n; * Bugfix: Setting ndev-&gt;do_ioctl had beed accidetly removed at cleanup.&n; *&n; * Revision 1.70  1998/06/17 19:50:49  he&n; * merged with 2.1.10[34] (cosmetics and udelay() -&gt; mdelay())&n; * brute force fix to avoid Ugh&squot;s in isdn_tty_write()&n; * cleaned up some dead code&n; *&n; * Revision 1.69  1998/06/09 12:27:37  cal&n; * Changed default of local netdev flags: ISDN_NET_STOPPED is default now,&n; * so autodial is suppressed for that device until it is switched on using&n; * &squot;isdnctrl status dev-name on&squot;.&n; *&n; *&n; *&n; * Revision 1.66  1998/05/26 22:39:24  he&n; * sync&squot;ed with 2.1.102 where appropriate (CAPABILITY changes)&n; * concap typo&n; * cleared dev.tbusy in isdn_net BCONN status callback&n; *&n; * Revision 1.61  1998/04/16 19:19:42  keil&n; * Fix from vger (tx max qlength)&n; *&n; * Revision 1.60  1998/04/14 16:28:49  he&n; * Fixed user space access with interrupts off and remaining&n; * copy_{to,from}_user() -&gt; -EFAULT return codes&n; *&n; * Revision 1.59  1998/03/07 22:37:33  fritz&n; * Bugfix: restore_flags missing.&n; *&n; * Revision 1.58  1998/03/07 18:21:05  cal&n; * Dynamic Timeout-Rule-Handling vs. 971110 included&n; *&n; * Revision 1.57  1998/02/25 18:31:13  fritz&n; * Added debugging output in adjust_header.&n; *&n; * Revision 1.56  1998/02/25 17:49:42  he&n; * Changed return codes caused be failing copy_{to,from}_user to -EFAULT&n; *&n; * Revision 1.55  1998/02/23 19:38:22  fritz&n; * Corrected check for modified feature-flags.&n; *&n; * Revision 1.54  1998/02/20 17:15:07  fritz&n; * Changes for recent kernels.&n; * Ugly workaround for adjusting Ethernet frames with recent kernels.&n; * replaced direct calls to lowlevel-driver command by common hook.&n; *&n; * Revision 1.53  1998/01/31 22:05:54  keil&n; * Lots of changes for X.25 support:&n; * Added generic support for connection-controlling encapsulation protocols&n; * Added support of BHUP status message&n; * Added support for additional p_encap X25IFACE&n; * Added support for kernels &gt;= 2.1.72&n; *&n; * Revision 1.52  1998/01/31 19:29:51  calle&n; * Merged changes from and for 2.1.82, not tested only compiled ...&n; *&n; * Revision 1.51  1997/10/09 21:28:50  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *   New L1 error status (not yet in use).&n; *   Cleaned up obsolete structures.&n; * Implemented Cisco-SLARP.&n; * Changed local net-interface data to be dynamically allocated.&n; * Removed old 2.0 compatibility stuff.&n; *&n; * Revision 1.50  1997/10/01 09:20:32  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.49  1997/08/21 14:38:13  fritz&n; * Bugfix: Did not compile without SyncPPP.&n; *&n; * Revision 1.48  1997/06/22 11:57:15  fritz&n; * Added ability to adjust slave triggerlevel.&n; *&n; * Revision 1.47  1997/06/21 10:52:05  fritz&n; * Removed wrong SET_SKB_FREE in isdn_net_send_skb()&n; *&n; * Revision 1.46  1997/06/17 13:05:24  hipp&n; * Applied Eric&squot;s underflow-patches (slightly modified)&n; *&n; * Revision 1.45  1997/06/10 16:24:22  hipp&n; * hard_header changes for syncPPP (now behaves like RAWIP)&n; *&n; * Revision 1.44  1997/05/27 15:17:26  fritz&n; * Added changes for recent 2.1.x kernels:&n; *   changed return type of isdn_close&n; *   queue_task_* -&gt; queue_task&n; *   clear/set_bit -&gt; test_and_... where apropriate.&n; *   changed type of hard_header_cache parameter.&n; *&n; * Revision 1.43  1997/03/30 16:51:13  calle&n; * changed calls to copy_from_user/copy_to_user and removed verify_area&n; * were possible.&n; *&n; * Revision 1.42  1997/03/11 08:43:51  fritz&n; * Perform a hangup if number is deleted while dialing.&n; *&n; * Revision 1.41  1997/03/08 08:16:31  fritz&n; * Bugfix: Deleting a phone number during dial gave unpredictable results.&n; *&n; * Revision 1.40  1997/03/05 21:16:08  fritz&n; * Fix: did not compile with 2.1.27&n; *&n; * Revision 1.39  1997/03/04 21:36:52  fritz&n; * Added sending ICMP messages when no connetion is possible.&n; *&n; * Revision 1.38  1997/02/23 23:41:14  fritz&n; * Bugfix: Slave interfaces have to be hung up before master.&n; *&n; * Revision 1.37  1997/02/11 18:32:51  fritz&n; * Bugfix in isdn_ppp_free_mpqueue().&n; *&n; * Revision 1.36  1997/02/10 21:31:11  fritz&n; * Changed setup-interface (incoming and outgoing).&n; *&n; * Revision 1.35  1997/02/10 20:12:45  fritz&n; * Changed interface for reporting incoming calls.&n; *&n; * Revision 1.34  1997/02/03 23:15:07  fritz&n; * Reformatted according CodingStyle.&n; * replaced arp_find prototype by proper include.&n; * made dev_purge_queues static.&n; * Bugfix in bogocps calculation.&n; * removed isdn_net_receive_callback - was never used ;-)&n; * Misc. fixes for Kernel 2.1.X comaptibility.&n; *&n; * Revision 1.33  1997/01/17 01:19:25  fritz&n; * Applied chargeint patch.&n; *&n; * Revision 1.32  1997/01/14 01:29:31  fritz&n; * Bugfix: isdn_net_hangup() did not reset ISDN_NET_CONNECTED.&n; *&n; * Revision 1.31  1997/01/11 23:30:42  fritz&n; * Speed up dial statemachine.&n; *&n; * Revision 1.30  1996/11/25 17:20:50  hipp&n; * fixed pppbind bug in isdn_net_find_icall()&n; *&n; * Revision 1.29  1996/11/13 02:31:38  fritz&n; * Minor cleanup.&n; *&n; * Revision 1.28  1996/10/27 20:49:06  keil&n; * bugfix to compile without MPP&n; *&n; * Revision 1.27  1996/10/25 18:46:01  fritz&n; * Another bugfix in isdn_net_autohup()&n; *&n; * Revision 1.26  1996/10/23 23:05:36  fritz&n; * Bugfix: Divide by zero in isdn_net_autohup()&n; *&n; * Revision 1.25  1996/10/22 23:13:58  fritz&n; * Changes for compatibility to 2.0.X and 2.1.X kernels.&n; *&n; * Revision 1.24  1996/10/11 13:57:40  fritz&n; * Bugfix: Error in BogoCPS calculation.&n; *&n; * Revision 1.23  1996/09/23 01:58:08  fritz&n; * Fix: With syncPPP encapsulation, discard LCP packets&n; *      when calculating hangup timeout.&n; *&n; * Revision 1.22  1996/09/23 00:03:37  fritz&n; * Fix: did not compile without CONFIG_ISDN_PPP&n; *&n; * Revision 1.21  1996/09/07 12:44:50  hipp&n; * (hopefully) fixed callback problem with syncPPP&n; * syncPPP network devices now show PPP link encap&n; *&n; * Revision 1.20  1996/08/29 20:06:03  fritz&n; * Bugfix: Transmission timeout had been much to low.&n; *&n; * Revision 1.19  1996/08/12 16:24:32  hipp&n; * removed some (now) obsolete functions for syncPPP in rebuild_header etc.&n; *&n; * Revision 1.18  1996/07/03 13:48:51  hipp&n; * bugfix: Call dev_purge_queues() only for master device&n; *&n; * Revision 1.17  1996/06/25 18:37:37  fritz&n; * Fixed return count for empty return string in isdn_net_getphones().&n; *&n; * Revision 1.16  1996/06/24 17:48:08  fritz&n; * Bugfixes:&n; *   - Did not free channel on unbinding.&n; *   - ioctl returned wrong callback settings.&n; *&n; * Revision 1.15  1996/06/16 17:42:54  tsbogend&n; * fixed problem with IP addresses on Linux/Alpha (long is 8 byte there)&n; *&n; * Revision 1.14  1996/06/11 14:54:08  hipp&n; * minor bugfix in isdn_net_send_skb&n; * changes in BSENT callback handler for syncPPP&n; * added lp-&gt;sav_skb stuff&n; *&n; * Revision 1.13  1996/06/06 14:25:44  fritz&n; * Changed loglevel of &quot;incoming ... without OAD&quot; message, since&n; * with audio support this is quite normal.&n; *&n; * Revision 1.12  1996/06/05 02:36:45  fritz&n; * Minor bugfixes by M. Hipp.&n; *&n; * Revision 1.11  1996/05/18 01:36:59  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.10  1996/05/17 03:49:01  fritz&n; * Some cleanup.&n; *&n; * Revision 1.9  1996/05/06 11:34:57  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.8  1996/04/30 21:04:40  fritz&n; * Test commit&n; *&n; * Revision 1.7  1996/04/30 11:10:42  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.6  1996/04/30 09:34:35  fritz&n; * Removed compatibility-macros.&n; *&n; * Revision 1.5  1996/04/20 16:28:38  fritz&n; * Made more parameters of the dial statemachine user-configurable and&n; * added hangup after dial for more reliability using callback.&n; * Changed all io going through generic routines in isdn_common.c&n; * Added missing call to dev_free_skb on failed dialing.&n; * Added uihdlc encapsulation.&n; * Fixed isdn_net_setcfg not to destroy interface-flags anymore.&n; * Misc. typos.&n; *&n; * Revision 1.4  1996/02/19 15:23:38  fritz&n; * Bugfix: Sync-PPP packets got compressed twice, when resent due to&n; *         send-queue-full reject.&n; *&n; * Revision 1.3  1996/02/11 02:22:28  fritz&n; * Changed status- receive-callbacks to use pointer-arrays for finding&n; * a corresponding interface instead of looping over all interfaces.&n; * Activate Auto-hangup-timer only when interface is online.&n; * Some bugfixes in the dialing-statemachine.&n; * Lot of bugfixes in sk_buff&squot;ized encapsulation handling.&n; * For speedup connection-setup after dialing, remember sk_buf that triggered&n; * dialing.&n; * Fixed isdn_net_log_packet according to different encapsulations.&n; * Correct ARP-handling for ETHERNET-encapsulation.&n; *&n; * Revision 1.2  1996/01/22 05:05:12  fritz&n; * Changed returncode-logic for isdn_net_start_xmit() and its&n; * helper-functions.&n; * Changed handling of buildheader for RAWIP and ETHERNET-encapsulation.&n; *&n; * Revision 1.1  1996/01/09 04:12:34  fritz&n; * Initial revision&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -17,37 +17,59 @@ macro_line|#ifdef CONFIG_ISDN_X25
 macro_line|#include &lt;linux/concap.h&gt;
 macro_line|#include &quot;isdn_concap.h&quot;
 macro_line|#endif
-macro_line|#ifndef ISDN_NEW_TBUSY
-DECL|macro|ISDN_NEW_TBUSY
-mdefine_line|#define ISDN_NEW_TBUSY
-macro_line|#endif
-macro_line|#ifdef ISDN_NEW_TBUSY
 multiline_comment|/*&n; * Outline of new tbusy handling: &n; *&n; * Old method, roughly spoken, consisted of setting tbusy when entering&n; * isdn_net_start_xmit() and at several other locations and clearing&n; * it from isdn_net_start_xmit() thread when sending was successful.&n; *&n; * With 2.3.x multithreaded network core, to prevent problems, tbusy should&n; * only be set by the isdn_net_start_xmit() thread and only when a tx-busy&n; * condition is detected. Other threads (in particular isdn_net_stat_callb())&n; * are only allowed to clear tbusy.&n; *&n; * -HE&n; */
-multiline_comment|/*&n; * Tell upper layers that the network device is ready to xmit more frames.&n; */
-DECL|function|isdn_net_dev_xon
+multiline_comment|/*&n; * About SOFTNET:&n; * Most of the changes were pretty obvious and basically done by HE already.&n; *&n; * One problem of the isdn net device code is that is uses struct net_device&n; * for masters and slaves. However, only master interface are registered to &n; * the network layer, and therefore, it only makes sense to call netif_* &n; * functions on them.&n; *&n; * The old code abused the slaves dev-&gt;start to remember the corresponding &n; * master&squot;s interface state (ifup&squot;ed or not). This does not work with SOFTNET &n; * any more, because there&squot;s now dev-&gt;start anymore.&n; * Instead I chose to add isdn_net_started() which gives the state of the &n; * master in case of slaves.&n; * I&squot;m still not sure if this is how it&squot;s supposed to be done this way&n; * because it uses test_bit(LINK_STATE_START, &amp;dev-&gt;state) which might be &n; * considered private to the network layer. However, it works for now.&n; * Alternative: set a flag in _open() and clear it in _close() &n; *&n; * I left some dead code around in #if 0 which I&squot;m not absolutely sure about.&n; * If no problems turn up, it should be removed later&n; *&n; * --KG&n; */
+multiline_comment|/* &n; * Find out if the netdevice has been ifup-ed yet.&n; * For slaves, look at the corresponding master.&n; */
+DECL|function|isdn_net_started
 r_static
-r_void
+r_int
 id|__inline__
-id|isdn_net_dev_xon
+id|isdn_net_started
 c_func
 (paren
+id|isdn_net_dev
+op_star
+id|n
+)paren
+(brace
+id|isdn_net_local
+op_star
+id|lp
+op_assign
+id|n-&gt;local
+suffix:semicolon
 r_struct
 id|net_device
 op_star
 id|dev
-)paren
-(brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
 suffix:semicolon
-id|mark_bh
+r_if
+c_cond
+(paren
+id|lp-&gt;master
+)paren
+id|dev
+op_assign
+id|lp-&gt;master
+suffix:semicolon
+r_else
+id|dev
+op_assign
+op_amp
+id|n-&gt;dev
+suffix:semicolon
+r_return
+id|test_bit
 c_func
 (paren
-id|NET_BH
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * wake up the network -&gt; net_device queue.&n; * For slaves, wake the corresponding master interface.&n; */
 DECL|function|isdn_net_lp_xon
 r_static
 r_void
@@ -60,48 +82,28 @@ op_star
 id|lp
 )paren
 (brace
-id|lp-&gt;netdev-&gt;dev.tbusy
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|lp-&gt;master
 )paren
-(brace
-id|lp-&gt;master-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|lp-&gt;master
+)paren
+suffix:semicolon
+r_else
+id|netif_wake_queue
+c_func
+(paren
+op_amp
+id|lp-&gt;netdev-&gt;dev
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Ask upper layers to temporarily cease passing us more xmit frames.&n; */
-DECL|function|isdn_net_dev_xoff
-r_static
-r_void
-id|__inline__
-id|isdn_net_dev_xoff
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-(brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#endif
+DECL|macro|ISDN_NET_TX_TIMEOUT
+mdefine_line|#define ISDN_NET_TX_TIMEOUT (20*HZ) 
 multiline_comment|/* Prototypes */
 r_int
 id|isdn_net_force_dial_lp
@@ -147,7 +149,7 @@ r_char
 op_star
 id|isdn_net_revision
 op_assign
-l_string|&quot;$Revision: 1.95 $&quot;
+l_string|&quot;$Revision: 1.107 $&quot;
 suffix:semicolon
 multiline_comment|/*&n;  * Code for raw-networking over ISDN&n;  */
 r_static
@@ -298,6 +300,7 @@ macro_line|#endif
 id|ulong
 id|flags
 suffix:semicolon
+multiline_comment|/* not sure if the cli() is needed at all --KG */
 id|save_flags
 c_func
 (paren
@@ -310,23 +313,6 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Avoid glitch on writes to CMD regs */
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#ifdef ISDN_NEW_TBUSY
-id|isdn_net_dev_xon
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-macro_line|#else
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_ISDN_X25
 r_if
 c_cond
@@ -388,15 +374,18 @@ id|in_device
 op_star
 id|in_dev
 suffix:semicolon
-id|isdn_net_reset
+multiline_comment|/* moved here from isdn_net_reset, because only the master has an&n;&t;   interface associated which is supposed to be started. BTW:&n;&t;   we need to call netif_start_queue, not netif_wake_queue here */
+id|netif_start_queue
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|isdn_net_reset
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Fill in the MAC-level header (not needed, but for compatibility... */
 r_for
@@ -498,10 +487,6 @@ c_func
 (paren
 id|p
 )paren
-suffix:semicolon
-id|p-&gt;start
-op_assign
-l_int|1
 suffix:semicolon
 id|p
 op_assign
@@ -1220,14 +1205,6 @@ id|lp-&gt;sav_skb
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifndef ISDN_NEW_TBUSY
-id|mark_bh
-c_func
-(paren
-id|NET_BH
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 (brace
@@ -1236,39 +1213,12 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef ISDN_NEW_TBUSY
 id|isdn_net_lp_xon
 c_func
 (paren
 id|lp
 )paren
 suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-id|test_and_clear_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-(paren
-id|p-&gt;dev.tbusy
-)paren
-)paren
-)paren
-id|mark_bh
-c_func
-(paren
-id|NET_BH
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 r_return
 l_int|1
@@ -1626,7 +1576,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#ifdef ISDN_NEW_TBUSY
 r_if
 c_cond
 (paren
@@ -1641,22 +1590,6 @@ id|lp
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-r_else
-(brace
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * dev.tbusy is usually cleared implicitly by isdn_net_xmit(,,lp-&gt;first_skb).&n;&t;&t;&t;&t;&t;&t;&t; * With an empty lp-&gt;first_skb, we need to do this ourselves&n;&t;&t;&t;&t;&t;&t;&t; */
-id|lp-&gt;netdev-&gt;dev.tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|NET_BH
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif /* ISDN_NEW_TBUSY */
 r_return
 l_int|1
 suffix:semicolon
@@ -3615,13 +3548,9 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Generic routine to send out an skbuf.&n; * If lowlevel-device does not support support skbufs, use&n; * standard send-routine, else send directly.&n; *&n; * Return: 0 on success, !0 on failure.&n; */
-macro_line|#ifndef ISDN_NEW_TBUSY
-multiline_comment|/*&n; * Side-effects: ndev-&gt;tbusy is cleared on success.&n; */
-macro_line|#endif
-r_int
 DECL|function|isdn_net_send_skb
+r_int
 id|isdn_net_send_skb
-c_func
 (paren
 r_struct
 id|net_device
@@ -3673,23 +3602,6 @@ id|lp-&gt;transcount
 op_add_assign
 id|len
 suffix:semicolon
-macro_line|#ifndef ISDN_NEW_TBUSY
-id|clear_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-(paren
-id|ndev-&gt;tbusy
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3711,23 +3623,6 @@ suffix:semicolon
 id|lp-&gt;stats.tx_errors
 op_increment
 suffix:semicolon
-macro_line|#ifndef ISDN_NEW_TBUSY
-id|clear_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-(paren
-id|ndev-&gt;tbusy
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3850,7 +3745,6 @@ id|skb
 )paren
 suffix:semicolon
 r_else
-macro_line|#ifdef ISDN_NEW_TBUSY
 id|ret
 op_assign
 id|isdn_net_start_xmit
@@ -3861,20 +3755,6 @@ comma
 id|lp-&gt;srobin
 )paren
 suffix:semicolon
-macro_line|#else
-id|ret
-op_assign
-id|ndev-&gt;tbusy
-op_assign
-id|isdn_net_start_xmit
-c_func
-(paren
-id|skb
-comma
-id|lp-&gt;srobin
-)paren
-suffix:semicolon
-macro_line|#endif
 id|lp-&gt;srobin
 op_assign
 (paren
@@ -4103,6 +3983,61 @@ suffix:semicolon
 )brace
 )brace
 )brace
+DECL|function|isdn_net_tx_timeout
+r_void
+id|isdn_net_tx_timeout
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|ndev
+)paren
+(brace
+id|isdn_net_local
+op_star
+id|lp
+op_assign
+(paren
+id|isdn_net_local
+op_star
+)paren
+id|ndev-&gt;priv
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;isdn_tx_timeout dev %s dialstate %d&bslash;n&quot;
+comma
+id|ndev-&gt;name
+comma
+id|lp-&gt;dialstate
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lp-&gt;dialstate
+)paren
+(brace
+id|lp-&gt;stats.tx_errors
+op_increment
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * There is a certain probability that this currently&n;&t;&t; * works at all because if we always wake up the interface,&n;&t;&t; * then upper layer will try to send the next packet&n;&t;&t; * immediately. And then, the old clean_up logic in the&n;&t;&t; * driver will hopefully continue to work as it used to do.&n;&t;&t; *&n;&t;&t; * This is rather primitive right know, we better should&n;&t;&t; * clean internal queues here, in particular for multilink and&n;&t;&t; * ppp, and reset HL driver&squot;s channel, too.   --HE&n;&t;&t; *&n;&t;&t; * actually, this may not matter at all, because ISDN hardware&n;&t;&t; * should not see transmitter hangs at all IMO&n;&t;&t; * changed KERN_DEBUG to KERN_WARNING to find out if this is &n;&t;&t; * ever called&n;&t;&t; */
+)brace
+id|ndev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+id|netif_wake_queue
+c_func
+(paren
+id|ndev
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Try sending a packet.&n; * If this interface isn&squot;t connected to a ISDN-Channel, find a free channel,&n; * and start dialing.&n; */
 r_static
 r_int
@@ -4144,57 +4079,6 @@ op_member_access_from_pointer
 id|cprot
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
-(paren
-id|ndev-&gt;tbusy
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|jiffies
-op_minus
-id|ndev-&gt;trans_start
-OL
-(paren
-l_int|2
-op_star
-id|HZ
-)paren
-)paren
-r_return
-l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|lp-&gt;dialstate
-)paren
-id|lp-&gt;stats.tx_errors
-op_increment
-suffix:semicolon
-id|ndev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-macro_line|#ifdef ISDN_NEW_TBUSY
-id|isdn_net_dev_xon
-c_func
-(paren
-id|ndev
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-macro_line|#ifndef ISDN_NEW_TBUSY
-id|ndev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* left instead of obsolete test_and_set_bit() */
-macro_line|#endif
 macro_line|#ifdef CONFIG_ISDN_X25
 multiline_comment|/* At this point hard_start_xmit() passes control to the encapsulation&n;   protocol (if present).&n;   For X.25 auto-dialing is completly bypassed because:&n;   - It does not conform with the semantics of a reliable datalink&n;     service as needed by X.25 PLP.&n;   - I don&squot;t want that the interface starts dialing when the network layer&n;     sends a message which requests to disconnect the lapb link (or if it&n;     sends any other message not resulting in data transmission).&n;   Instead, dialing will be initiated by the encapsulation protocol entity&n;   when a dl_establish request is received from the upper layer.&n;*/
 r_if
@@ -4217,21 +4101,19 @@ comma
 id|skb
 )paren
 suffix:semicolon
-macro_line|#ifdef ISDN_NEW_TBUSY
 r_if
 c_cond
 (paren
 id|ret
 )paren
 (brace
-id|isdn_net_dev_xoff
+id|netif_stop_queue
 c_func
 (paren
 id|ndev
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_return
 id|ret
 suffix:semicolon
@@ -4319,12 +4201,6 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-macro_line|#ifndef ISDN_NEW_TBUSY
-id|ndev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -4420,12 +4296,6 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-macro_line|#ifndef ISDN_NEW_TBUSY
-id|ndev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 id|restore_flags
 c_func
 (paren
@@ -4462,6 +4332,8 @@ comma
 id|lp-&gt;pre_device
 comma
 id|lp-&gt;pre_channel
+comma
+id|lp-&gt;msn
 )paren
 )paren
 OL
@@ -4486,6 +4358,8 @@ comma
 id|lp-&gt;pre_channel
 op_xor
 l_int|1
+comma
+id|lp-&gt;msn
 )paren
 )paren
 OL
@@ -4515,12 +4389,6 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-macro_line|#ifndef ISDN_NEW_TBUSY
-id|ndev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -4609,14 +4477,12 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Initiate dialing */
-macro_line|#ifdef ISDN_NEW_TBUSY
-id|isdn_net_dev_xoff
+id|netif_stop_queue
 c_func
 (paren
 id|ndev
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon
@@ -4653,12 +4519,6 @@ op_assign
 id|skb
 suffix:semicolon
 multiline_comment|/* Initiate dialing */
-macro_line|#ifndef ISDN_NEW_TBUSY
-id|ndev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 id|restore_flags
 c_func
 (paren
@@ -4692,12 +4552,6 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-macro_line|#ifndef ISDN_NEW_TBUSY
-id|ndev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -4741,14 +4595,12 @@ id|lp-&gt;first_skb
 )paren
 )paren
 (brace
-macro_line|#ifdef ISDN_NEW_TBUSY
-id|isdn_net_dev_xoff
+id|netif_stop_queue
 c_func
 (paren
 id|ndev
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon
@@ -4772,39 +4624,30 @@ id|skb
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef ISDN_NEW_TBUSY
 r_if
 c_cond
 (paren
 id|ret
 )paren
 (brace
-id|isdn_net_dev_xoff
+id|netif_stop_queue
 c_func
 (paren
 id|ndev
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_return
 id|ret
 suffix:semicolon
 )brace
 r_else
-macro_line|#ifdef ISDN_NEW_TBUSY
-id|isdn_net_dev_xoff
+id|netif_stop_queue
 c_func
 (paren
 id|ndev
 )paren
 suffix:semicolon
-macro_line|#else
-id|ndev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 r_return
@@ -4872,13 +4715,11 @@ id|cprot
 suffix:semicolon
 )brace
 macro_line|#endif
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4949,14 +4790,6 @@ c_func
 (paren
 id|p
 )paren
-suffix:semicolon
-id|p-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|p-&gt;start
-op_assign
-l_int|0
 suffix:semicolon
 id|p
 op_assign
@@ -7939,7 +7772,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|p-&gt;dev.start
+id|isdn_net_started
+c_func
+(paren
+id|p
+)paren
 )paren
 (brace
 id|restore_flags
@@ -8169,6 +8006,8 @@ comma
 id|lp-&gt;pre_device
 comma
 id|lp-&gt;pre_channel
+comma
+id|lp-&gt;msn
 )paren
 )paren
 OL
@@ -8653,6 +8492,8 @@ comma
 id|lp-&gt;pre_device
 comma
 id|lp-&gt;pre_channel
+comma
+id|lp-&gt;msn
 )paren
 )paren
 OL
@@ -9095,22 +8936,19 @@ op_amp
 id|netdev-&gt;dev
 )paren
 suffix:semicolon
-id|q-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|q-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|q-&gt;start
-op_assign
-id|master-&gt;start
-suffix:semicolon
 )brace
 r_else
 (brace
 multiline_comment|/* Device shall be a master */
+multiline_comment|/*&n;&t;&t; * Watchdog timer (currently) for master only.&n;&t;&t; */
+id|netdev-&gt;dev.tx_timeout
+op_assign
+id|isdn_net_tx_timeout
+suffix:semicolon
+id|netdev-&gt;dev.watchdog_timeo
+op_assign
+id|ISDN_NET_TX_TIMEOUT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9416,7 +9254,11 @@ multiline_comment|/* Master must not be started yet */
 r_if
 c_cond
 (paren
-id|n-&gt;dev.start
+id|isdn_net_started
+c_func
+(paren
+id|n
+)paren
 )paren
 r_return
 l_int|NULL
@@ -9601,7 +9443,11 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|p-&gt;dev.start
+id|isdn_net_started
+c_func
+(paren
+id|p
+)paren
 )paren
 (brace
 id|printk
@@ -10008,6 +9854,8 @@ comma
 id|drvidx
 comma
 id|chidx
+comma
+id|lp-&gt;msn
 )paren
 )paren
 OL
@@ -11575,26 +11423,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;local-&gt;master
-)paren
-(brace
-multiline_comment|/* If it&squot;s a slave, it may be removed even if it is busy. However&n;&t;&t; * it has to be hung up first.&n;&t;&t; */
-id|isdn_net_hangup
+id|isdn_net_started
 c_func
 (paren
-op_amp
-id|p-&gt;dev
+id|p
 )paren
-suffix:semicolon
-id|p-&gt;dev.start
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|p-&gt;dev.start
 )paren
 (brace
 id|restore_flags

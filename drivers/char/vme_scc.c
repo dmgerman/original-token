@@ -4608,6 +4608,7 @@ op_assign
 id|ch
 suffix:semicolon
 )brace
+multiline_comment|/* The console_lock must be held when we get here. */
 DECL|function|scc_console_write
 r_static
 r_void

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: avm_pci.c,v 1.12 1999/09/04 06:20:05 keil Exp $&n;&n; * avm_pci.c    low level stuff for AVM Fritz!PCI and ISA PnP isdn cards&n; *              Thanks to AVM, Berlin for informations&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: avm_pci.c,v $&n; * Revision 1.12  1999/09/04 06:20:05  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.11  1999/08/11 21:01:18  keil&n; * new PCI codefix&n; *&n; * Revision 1.10  1999/08/10 16:01:44  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.9  1999/07/12 21:04:57  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.8  1999/07/01 08:11:19  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.7  1999/02/22 18:26:30  keil&n; * Argh ! ISAC address was only set with PCI&n; *&n; * Revision 1.6  1998/11/27 19:59:28  keil&n; * set subtype for Fritz!PCI&n; *&n; * Revision 1.5  1998/11/27 12:56:45  keil&n; * forgot to update setup function name&n; *&n; * Revision 1.4  1998/11/15 23:53:19  keil&n; * Fritz!PnP; changes from 2.0&n; *&n; * Revision 1.3  1998/09/27 23:53:39  keil&n; * Fix error handling&n; *&n; * Revision 1.2  1998/09/27 12:54:55  keil&n; * bcs assign was lost in setstack, very bad results&n; *&n; * Revision 1.1  1998/08/20 13:47:30  keil&n; * first version&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: avm_pci.c,v 1.14 1999/12/19 13:09:41 keil Exp $&n;&n; * avm_pci.c    low level stuff for AVM Fritz!PCI and ISA PnP isdn cards&n; *              Thanks to AVM, Berlin for informations&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: avm_pci.c,v $&n; * Revision 1.14  1999/12/19 13:09:41  keil&n; * changed TASK_INTERRUPTIBLE into TASK_UNINTERRUPTIBLE for&n; * signal proof delays&n; *&n; * Revision 1.13  1999/12/03 12:10:14  keil&n; * Bugfix: Wrong channel use on hangup of channel 2&n; *&n; * Revision 1.12  1999/09/04 06:20:05  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.11  1999/08/11 21:01:18  keil&n; * new PCI codefix&n; *&n; * Revision 1.10  1999/08/10 16:01:44  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.9  1999/07/12 21:04:57  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.8  1999/07/01 08:11:19  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.7  1999/02/22 18:26:30  keil&n; * Argh ! ISAC address was only set with PCI&n; *&n; * Revision 1.6  1998/11/27 19:59:28  keil&n; * set subtype for Fritz!PCI&n; *&n; * Revision 1.5  1998/11/27 12:56:45  keil&n; * forgot to update setup function name&n; *&n; * Revision 1.4  1998/11/15 23:53:19  keil&n; * Fritz!PnP; changes from 2.0&n; *&n; * Revision 1.3  1998/09/27 23:53:39  keil&n; * Fix error handling&n; *&n; * Revision 1.2  1998/09/27 12:54:55  keil&n; * bcs assign was lost in setstack, very bad results&n; *&n; * Revision 1.1  1998/08/20 13:47:30  keil&n; * first version&n; *&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -22,7 +22,7 @@ r_char
 op_star
 id|avm_pci_rev
 op_assign
-l_string|&quot;$Revision: 1.12 $&quot;
+l_string|&quot;$Revision: 1.14 $&quot;
 suffix:semicolon
 DECL|macro|AVM_FRITZ_PCI
 mdefine_line|#define  AVM_FRITZ_PCI&t;&t;1
@@ -1009,24 +1009,20 @@ c_func
 (paren
 id|cs
 comma
-l_string|&quot;hdlc %c mode %d ichan %d&quot;
+l_string|&quot;hdlc %c mode %d --&gt; %d ichan %d --&gt; %d&quot;
 comma
 l_char|&squot;A&squot;
 op_plus
 id|hdlc
 comma
+id|bcs-&gt;mode
+comma
 id|mode
+comma
+id|hdlc
 comma
 id|bc
 )paren
-suffix:semicolon
-id|bcs-&gt;mode
-op_assign
-id|mode
-suffix:semicolon
-id|bcs-&gt;channel
-op_assign
-id|bc
 suffix:semicolon
 id|bcs-&gt;hw.hdlc.ctrl.ctrl
 op_assign
@@ -1040,9 +1036,37 @@ id|mode
 (brace
 r_case
 (paren
+op_minus
+l_int|1
+)paren
+suffix:colon
+multiline_comment|/* used for init */
+id|bcs-&gt;mode
+op_assign
+l_int|1
+suffix:semicolon
+id|bcs-&gt;channel
+op_assign
+id|bc
+suffix:semicolon
+id|bc
+op_assign
+l_int|0
+suffix:semicolon
+r_case
+(paren
 id|L1_MODE_NULL
 )paren
 suffix:colon
+r_if
+c_cond
+(paren
+id|bcs-&gt;mode
+op_eq
+id|L1_MODE_NULL
+)paren
+r_return
+suffix:semicolon
 id|bcs-&gt;hw.hdlc.ctrl.sr.cmd
 op_assign
 id|HDLC_CMD_XRS
@@ -1061,6 +1085,14 @@ comma
 l_int|5
 )paren
 suffix:semicolon
+id|bcs-&gt;mode
+op_assign
+id|L1_MODE_NULL
+suffix:semicolon
+id|bcs-&gt;channel
+op_assign
+id|bc
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -1068,6 +1100,14 @@ r_case
 id|L1_MODE_TRANS
 )paren
 suffix:colon
+id|bcs-&gt;mode
+op_assign
+id|mode
+suffix:semicolon
+id|bcs-&gt;channel
+op_assign
+id|bc
+suffix:semicolon
 id|bcs-&gt;hw.hdlc.ctrl.sr.cmd
 op_assign
 id|HDLC_CMD_XRS
@@ -1117,6 +1157,14 @@ r_case
 id|L1_MODE_HDLC
 )paren
 suffix:colon
+id|bcs-&gt;mode
+op_assign
+id|mode
+suffix:semicolon
+id|bcs-&gt;channel
+op_assign
+id|bc
+suffix:semicolon
 id|bcs-&gt;hw.hdlc.ctrl.sr.cmd
 op_assign
 id|HDLC_CMD_XRS
@@ -3533,7 +3581,8 @@ c_func
 (paren
 id|cs-&gt;bcs
 comma
-l_int|0
+op_minus
+l_int|1
 comma
 l_int|0
 )paren
@@ -3545,9 +3594,10 @@ id|cs-&gt;bcs
 op_plus
 l_int|1
 comma
-l_int|0
+op_minus
+l_int|1
 comma
-l_int|0
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -3741,7 +3791,7 @@ suffix:semicolon
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 id|schedule_timeout
@@ -3786,7 +3836,7 @@ suffix:semicolon
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 id|schedule_timeout

@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for the 3com 3c589 card.&n;    &n;    Copyright (C) 1999 David A. Hinds -- dhinds@pcmcia.sourceforge.org&n;&n;    3c589_cs.c 1.143 1999/12/30 21:28:10&n;&n;    The network driver code is based on Donald Becker&squot;s 3c589 code:&n;    &n;    Written 1994 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for the 3com 3c589 card.&n;    &n;    Copyright (C) 1999 David A. Hinds -- dhinds@pcmcia.sourceforge.org&n;&n;    3c589_cs.c 1.145 2000/02/11 03:11:51&n;&n;    The network driver code is based on Donald Becker&squot;s 3c589 code:&n;    &n;    Written 1994 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -377,7 +377,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c589_cs.c 1.143 1999/12/30 21:28:10 (David Hinds)&quot;
+l_string|&quot;3c589_cs.c 1.145 2000/02/11 03:11:51 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -2203,6 +2203,15 @@ id|netif_stop_queue
 id|dev
 )paren
 suffix:semicolon
+id|clear_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
+suffix:semicolon
 id|link-&gt;release.expires
 op_assign
 id|jiffies
@@ -2268,6 +2277,15 @@ id|netif_stop_queue
 id|dev
 )paren
 suffix:semicolon
+id|clear_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
+suffix:semicolon
 )brace
 id|CardServices
 c_func
@@ -2321,6 +2339,15 @@ id|tc589_reset
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|set_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
 )paren
 suffix:semicolon
 id|netif_start_queue
@@ -3504,11 +3531,6 @@ id|netif_stop_queue
 id|dev
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-l_int|1
-)paren
 (brace
 r_struct
 id|el3_private
@@ -3526,6 +3548,7 @@ id|lp-&gt;stats.tx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
+)brace
 multiline_comment|/* Put out the doubleword header... */
 id|outw
 c_func
@@ -3604,7 +3627,6 @@ op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-)brace
 id|dev_kfree_skb
 c_func
 (paren
@@ -3669,38 +3691,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|lp
-op_eq
-l_int|NULL
+op_logical_neg
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 r_return
 suffix:semicolon
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
-suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_NOTICE
-l_string|&quot;%s: re-entering the interrupt handler.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|dev-&gt;interrupt
-op_assign
-l_int|1
 suffix:semicolon
 id|DEBUG
 c_func
@@ -3720,7 +3725,6 @@ id|EL3_STATUS
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_while
 c_loop
 (paren
@@ -3745,14 +3749,17 @@ id|StatsFull
 )paren
 )paren
 (brace
-macro_line|#if 0
 r_if
 c_cond
 (paren
+op_logical_neg
+id|test_bit
+c_func
 (paren
-id|dev-&gt;start
-op_eq
-l_int|0
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
 )paren
 op_logical_or
 (paren
@@ -3779,7 +3786,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4084,7 +4090,6 @@ id|lp-&gt;last_irq
 op_assign
 id|jiffies
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
 id|DEBUG
 c_func
 (paren
@@ -4103,11 +4108,6 @@ id|EL3_STATUS
 )paren
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -4156,18 +4156,22 @@ suffix:semicolon
 id|u_long
 id|flags
 suffix:semicolon
-macro_line|#if 0
 r_if
 c_cond
 (paren
-id|dev-&gt;start
-op_eq
-l_int|0
+op_logical_neg
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 r_goto
 id|reschedule
 suffix:semicolon
-macro_line|#endif
 id|EL3WINDOW
 c_func
 (paren

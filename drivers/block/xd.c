@@ -33,65 +33,10 @@ id|XD_MAXDRIVES
 suffix:semicolon
 multiline_comment|/* If you try this driver and find that your card is not detected by the driver at bootup, you need to add your BIOS&n;   signature and details to the following list of signatures. A BIOS signature is a string embedded into the first&n;   few bytes of your controller&squot;s on-board ROM BIOS. To find out what yours is, use something like MS-DOS&squot;s DEBUG&n;   command. Run DEBUG, and then you can examine your BIOS signature with:&n;&n;&t;d xxxx:0000&n;&n;   where xxxx is the segment of your controller (like C800 or D000 or something). On the ASCII dump at the right, you should&n;   be able to see a string mentioning the manufacturer&squot;s copyright etc. Add this string into the table below. The parameters&n;   in the table are, in order:&n;&n;&t;offset&t;&t;&t;; this is the offset (in bytes) from the start of your ROM where the signature starts&n;&t;signature&t;&t;; this is the actual text of the signature&n;&t;xd_?_init_controller&t;; this is the controller init routine used by your controller&n;&t;xd_?_init_drive&t;&t;; this is the drive init routine used by your controller&n;&n;   The controllers directly supported at the moment are: DTC 5150x, WD 1004A27X, ST11M/R and override. If your controller is&n;   made by the same manufacturer as one of these, try using the same init routines as they do. If that doesn&squot;t work, your&n;   best bet is to use the &quot;override&quot; routines. These routines use a &quot;portable&quot; method of getting the disk&squot;s geometry, and&n;   may work with your card. If none of these seem to work, try sending me some email and I&squot;ll see what I can do &lt;grin&gt;.&n;&n;   NOTE: You can now specify your XT controller&squot;s parameters from the command line in the form xd=TYPE,IRQ,IO,DMA. The driver&n;   should be able to detect your drive&squot;s geometry from this info. (eg: xd=0,5,0x320,3 is the &quot;standard&quot;). */
 macro_line|#include &lt;asm/page.h&gt;
-multiline_comment|/* coppied from floppy.c */
-DECL|function|__get_order
-r_static
-r_inline
-r_int
-id|__get_order
-c_func
-(paren
-r_int
-r_int
-id|size
-)paren
-(brace
-r_int
-id|order
-suffix:semicolon
-id|size
-op_assign
-(paren
-id|size
-op_minus
-l_int|1
-)paren
-op_rshift
-(paren
-id|PAGE_SHIFT
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-id|order
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-r_do
-(brace
-id|size
-op_rshift_assign
-l_int|1
-suffix:semicolon
-id|order
-op_increment
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|size
-)paren
-suffix:semicolon
-r_return
-id|order
-suffix:semicolon
-)brace
 DECL|macro|xd_dma_mem_alloc
-mdefine_line|#define xd_dma_mem_alloc(size) __get_dma_pages(GFP_KERNEL,__get_order(size))
+mdefine_line|#define xd_dma_mem_alloc(size) __get_dma_pages(GFP_KERNEL,get_order(size))
 DECL|macro|xd_dma_mem_free
-mdefine_line|#define xd_dma_mem_free(addr, size) free_pages(addr, __get_order(size))
+mdefine_line|#define xd_dma_mem_free(addr, size) free_pages(addr, get_order(size))
 DECL|variable|xd_dma_buffer
 r_static
 r_char

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: l3dss1.h,v 1.7 1999/07/01 08:12:02 keil Exp $&n; *&n; *  DSS1 (Euro) D-channel protocol defines&n; *&n; * $Log: l3dss1.h,v $&n; * Revision 1.7  1999/07/01 08:12:02  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.6  1998/03/19 13:18:50  keil&n; * Start of a CAPI like interface for supplementary Service&n; * first service: SUSPEND&n; *&n; * Revision 1.5  1998/02/02 13:34:30  keil&n; * Support australian Microlink net and german AOCD&n; *&n; * Revision 1.4  1997/10/29 19:07:54  keil&n; * changes for 2.1&n; *&n; * Revision 1.3  1997/08/07 17:44:37  keil&n; * Fix RESTART&n; *&n; * Revision 1.2  1997/08/03 14:36:34  keil&n; * Implement RESTART procedure&n; *&n; * Revision 1.1  1997/07/27 21:08:38  keil&n; * new&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: l3dss1.h,v 1.8 2000/01/20 19:46:15 keil Exp $&n; *&n; *  DSS1 (Euro) D-channel protocol defines&n; *&n; * $Log: l3dss1.h,v $&n; * Revision 1.8  2000/01/20 19:46:15  keil&n; * Changes from certification&n; *&n; * Revision 1.7  1999/07/01 08:12:02  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.6  1998/03/19 13:18:50  keil&n; * Start of a CAPI like interface for supplementary Service&n; * first service: SUSPEND&n; *&n; * Revision 1.5  1998/02/02 13:34:30  keil&n; * Support australian Microlink net and german AOCD&n; *&n; * Revision 1.4  1997/10/29 19:07:54  keil&n; * changes for 2.1&n; *&n; * Revision 1.3  1997/08/07 17:44:37  keil&n; * Fix RESTART&n; *&n; * Revision 1.2  1997/08/03 14:36:34  keil&n; * Implement RESTART procedure&n; *&n; * Revision 1.1  1997/07/27 21:08:38  keil&n; * new&n; *&n; *&n; *&n; */
 macro_line|#ifndef l3dss1_process
 DECL|macro|T303
 mdefine_line|#define T303&t;4000
@@ -8,6 +8,8 @@ DECL|macro|T305
 mdefine_line|#define T305&t;30000
 DECL|macro|T308
 mdefine_line|#define T308&t;4000
+multiline_comment|/* for layer 1 certification T309 &lt; layer1 T3 (e.g. 4000) */
+multiline_comment|/* This makes some tests easier and quicker */
 DECL|macro|T309
 mdefine_line|#define T309&t;40000
 DECL|macro|T310

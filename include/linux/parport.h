@@ -1235,7 +1235,7 @@ id|parport_driver
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* parport_register_device declares that a device is connected to a&n;   port, and tells the kernel all it needs to know.  pf is the&n;   preemption function (may be NULL for no callback) kf is the wake-up&n;   function (may be NULL for no callback) irq_func is the interrupt&n;   handler (may be NULL for no interrupts) handle is a user pointer&n;   that gets handed to callback functions.  */
+multiline_comment|/* parport_register_device declares that a device is connected to a&n;   port, and tells the kernel all it needs to know.&n;   - pf is the preemption function (may be NULL for no callback)&n;   - kf is the wake-up function (may be NULL for no callback)&n;   - irq_func is the interrupt handler (may be NULL for no interrupts)&n;   - handle is a user pointer that gets handed to callback functions.  */
 r_struct
 id|pardevice
 op_star

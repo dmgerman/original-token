@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for NS8390-based cards&n;&n;    This driver supports the D-Link DE-650 and Linksys EthernetCard&n;    cards, the newer D-Link and Linksys combo cards, Accton EN2212&n;    cards, the RPTI EP400, and the PreMax PE-200 in non-shared-memory&n;    mode, and the IBM Credit Card Adapter, the NE4100, the Thomas&n;    Conrad ethernet card, and the Kingston KNE-PCM/x in shared-memory&n;    mode.  It will also handle the Socket EA card in either mode.&n;&n;    Copyright (C) 1999 David A. Hinds -- dhinds@pcmcia.sourceforge.org&n;&n;    pcnet_cs.c 1.110 1999/12/06 21:39:18&n;    &n;    The network driver code is based on Donald Becker&squot;s NE2000 code:&n;&n;    Written 1992,1993 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;    Based also on Keith Moore&squot;s changes to Don Becker&squot;s code, for IBM&n;    CCAE support.  Drivers merged back together, and shared-memory&n;    Socket EA support added, by Ken Raeburn, September 1995.&n;&n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for NS8390-based cards&n;&n;    This driver supports the D-Link DE-650 and Linksys EthernetCard&n;    cards, the newer D-Link and Linksys combo cards, Accton EN2212&n;    cards, the RPTI EP400, and the PreMax PE-200 in non-shared-memory&n;    mode, and the IBM Credit Card Adapter, the NE4100, the Thomas&n;    Conrad ethernet card, and the Kingston KNE-PCM/x in shared-memory&n;    mode.  It will also handle the Socket EA card in either mode.&n;&n;    Copyright (C) 1999 David A. Hinds -- dhinds@pcmcia.sourceforge.org&n;&n;    pcnet_cs.c 1.112 2000/02/11 01:24:44&n;    &n;    The network driver code is based on Donald Becker&squot;s NE2000 code:&n;&n;    Written 1992,1993 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;    Based also on Keith Moore&squot;s changes to Don Becker&squot;s code, for IBM&n;    CCAE support.  Drivers merged back together, and shared-memory&n;    Socket EA support added, by Ken Raeburn, September 1995.&n;&n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -78,7 +78,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;pcnet_cs.c 1.110 1999/12/06 21:39:18 (David Hinds)&quot;
+l_string|&quot;pcnet_cs.c 1.112 2000/02/11 01:24:44 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -1024,6 +1024,17 @@ l_int|0x4c
 comma
 l_int|0
 )brace
+comma
+(brace
+multiline_comment|/* PCMCIA Technology OEM */
+l_int|0x01c8
+comma
+l_int|0xa0
+comma
+l_int|0x0c
+comma
+l_int|0
+)brace
 )brace
 suffix:semicolon
 DECL|macro|NR_INFO
@@ -1377,10 +1388,6 @@ suffix:semicolon
 id|link-&gt;conf.Attributes
 op_assign
 id|CONF_ENABLE_IRQ
-suffix:semicolon
-id|link-&gt;conf.Vcc
-op_assign
-l_int|50
 suffix:semicolon
 id|link-&gt;conf.IntType
 op_assign
@@ -2807,6 +2814,9 @@ id|buf
 l_int|64
 )braket
 suffix:semicolon
+id|config_info_t
+id|conf
+suffix:semicolon
 id|hw_info_t
 op_star
 id|hw_info
@@ -2899,6 +2909,22 @@ multiline_comment|/* Configure card */
 id|link-&gt;state
 op_or_assign
 id|DEV_CONFIG
+suffix:semicolon
+multiline_comment|/* Look up current Vcc */
+id|CS_CHECK
+c_func
+(paren
+id|GetConfigurationInfo
+comma
+id|handle
+comma
+op_amp
+id|conf
+)paren
+suffix:semicolon
+id|link-&gt;conf.Vcc
+op_assign
+id|conf.Vcc
 suffix:semicolon
 id|tuple.DesiredTuple
 op_assign
@@ -4356,15 +4382,6 @@ id|dev
 suffix:semicolon
 id|link-&gt;open
 op_decrement
-suffix:semicolon
-id|clear_bit
-c_func
-(paren
-id|LINK_STATE_START
-comma
-op_amp
-id|dev-&gt;state
-)paren
 suffix:semicolon
 id|del_timer
 c_func

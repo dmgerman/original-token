@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgsixfb.c,v 1.21 1999/11/19 09:56:57 davem Exp $&n; * cgsixfb.c: CGsix (GX,GXplus) frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: cgsixfb.c,v 1.22 2000/02/14 08:44:26 jj Exp $&n; * cgsixfb.c: CGsix (GX,GXplus) frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -3309,11 +3309,16 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|bt-&gt;addr
-op_assign
+id|sbus_writel
+c_func
+(paren
 id|index
 op_lshift
 l_int|24
+comma
+op_amp
+id|bt-&gt;addr
+)paren
 suffix:semicolon
 r_for
 c_loop

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bkm_a4t.c,v 1.8 1999/09/04 06:20:05 keil Exp $&n; * bkm_a4t.c    low level stuff for T-Berkom A4T&n; *              derived from the original file sedlbauer.c&n; *              derived from the original file niccy.c&n; *              derived from the original file netjet.c&n; *&n; * Author       Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * $Log: bkm_a4t.c,v $&n; * Revision 1.8  1999/09/04 06:20:05  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.7  1999/08/22 20:26:55  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.6  1999/08/11 21:01:22  keil&n; * new PCI codefix&n; *&n; * Revision 1.5  1999/08/10 16:01:46  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.4  1999/07/14 11:43:14  keil&n; * correct PCI_SUBSYSTEM_VENDOR_ID&n; *&n; * Revision 1.3  1999/07/12 21:04:58  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.2  1999/07/01 08:07:53  keil&n; * Initial version&n; *&n; *&n; */
+multiline_comment|/* $Id: bkm_a4t.c,v 1.9 1999/12/19 13:09:41 keil Exp $&n; * bkm_a4t.c    low level stuff for T-Berkom A4T&n; *              derived from the original file sedlbauer.c&n; *              derived from the original file niccy.c&n; *              derived from the original file netjet.c&n; *&n; * Author       Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * $Log: bkm_a4t.c,v $&n; * Revision 1.9  1999/12/19 13:09:41  keil&n; * changed TASK_INTERRUPTIBLE into TASK_UNINTERRUPTIBLE for&n; * signal proof delays&n; *&n; * Revision 1.8  1999/09/04 06:20:05  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.7  1999/08/22 20:26:55  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.6  1999/08/11 21:01:22  keil&n; * new PCI codefix&n; *&n; * Revision 1.5  1999/08/10 16:01:46  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.4  1999/07/14 11:43:14  keil&n; * correct PCI_SUBSYSTEM_VENDOR_ID&n; *&n; * Revision 1.3  1999/07/12 21:04:58  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.2  1999/07/01 08:07:53  keil&n; * Initial version&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -23,7 +23,7 @@ r_char
 op_star
 id|bkm_a4t_revision
 op_assign
-l_string|&quot;$Revision: 1.8 $&quot;
+l_string|&quot;$Revision: 1.9 $&quot;
 suffix:semicolon
 r_static
 r_inline
@@ -909,7 +909,7 @@ multiline_comment|/* all in */
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 id|schedule_timeout
@@ -934,7 +934,7 @@ suffix:semicolon
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 id|schedule_timeout
@@ -974,7 +974,7 @@ suffix:semicolon
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 id|schedule_timeout
@@ -1004,7 +1004,7 @@ suffix:semicolon
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 id|schedule_timeout

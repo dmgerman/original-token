@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isar.h,v 1.6 1999/10/14 20:25:29 keil Exp $&n; * isar.h   ISAR (Siemens PSB 7110) specific defines&n; *&n; * Author Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: isar.h,v $&n; * Revision 1.6  1999/10/14 20:25:29  keil&n; * add a statistic for error monitoring&n; *&n; * Revision 1.5  1999/08/25 16:59:59  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 1.4  1999/08/05 20:43:20  keil&n; * ISAR analog modem support&n; *&n; * Revision 1.3  1999/07/01 08:11:46  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.2  1998/11/15 23:54:54  keil&n; * changes from 2.0&n; *&n; * Revision 1.1  1998/08/13 23:33:48  keil&n; * First version, only init&n; *&n; *&n; */
+multiline_comment|/* $Id: isar.h,v 1.7 2000/01/20 19:47:45 keil Exp $&n; * isar.h   ISAR (Siemens PSB 7110) specific defines&n; *&n; * Author Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: isar.h,v $&n; * Revision 1.7  2000/01/20 19:47:45  keil&n; * Add Fax Class 1 support&n; *&n; * Revision 1.6  1999/10/14 20:25:29  keil&n; * add a statistic for error monitoring&n; *&n; * Revision 1.5  1999/08/25 16:59:59  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 1.4  1999/08/05 20:43:20  keil&n; * ISAR analog modem support&n; *&n; * Revision 1.3  1999/07/01 08:11:46  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.2  1998/11/15 23:54:54  keil&n; * changes from 2.0&n; *&n; * Revision 1.1  1998/08/13 23:33:48  keil&n; * First version, only init&n; *&n; *&n; */
 DECL|macro|ISAR_IRQMSK
 mdefine_line|#define ISAR_IRQMSK&t;0x04
 DECL|macro|ISAR_IRQSTA
@@ -212,6 +212,46 @@ DECL|macro|PSEV_REM_REN
 mdefine_line|#define PSEV_REM_REN&t;0xcd
 DECL|macro|PSEV_GSTN_CLR
 mdefine_line|#define PSEV_GSTN_CLR&t;0xd4
+DECL|macro|PSEV_RSP_READY
+mdefine_line|#define PSEV_RSP_READY&t;0xbc
+DECL|macro|PSEV_LINE_TX_H
+mdefine_line|#define PSEV_LINE_TX_H&t;0xb3
+DECL|macro|PSEV_LINE_TX_B
+mdefine_line|#define PSEV_LINE_TX_B&t;0xb2
+DECL|macro|PSEV_LINE_RX_H
+mdefine_line|#define PSEV_LINE_RX_H&t;0xb1
+DECL|macro|PSEV_LINE_RX_B
+mdefine_line|#define PSEV_LINE_RX_B&t;0xb0
+DECL|macro|PSEV_RSP_CONN
+mdefine_line|#define PSEV_RSP_CONN&t;0xb5
+DECL|macro|PSEV_RSP_DISC
+mdefine_line|#define PSEV_RSP_DISC&t;0xb7
+DECL|macro|PSEV_RSP_FCERR
+mdefine_line|#define PSEV_RSP_FCERR&t;0xb9
+DECL|macro|PSEV_RSP_SILDET
+mdefine_line|#define PSEV_RSP_SILDET&t;0xbe
+DECL|macro|PSEV_RSP_SILOFF
+mdefine_line|#define PSEV_RSP_SILOFF&t;0xab
+DECL|macro|PSEV_FLAGS_DET
+mdefine_line|#define PSEV_FLAGS_DET&t;0xba
+DECL|macro|PCTRL_CMD_FTH
+mdefine_line|#define PCTRL_CMD_FTH&t;0xa7
+DECL|macro|PCTRL_CMD_FRH
+mdefine_line|#define PCTRL_CMD_FRH&t;0xa5
+DECL|macro|PCTRL_CMD_FTM
+mdefine_line|#define PCTRL_CMD_FTM&t;0xa8
+DECL|macro|PCTRL_CMD_FRM
+mdefine_line|#define PCTRL_CMD_FRM&t;0xa6
+DECL|macro|PCTRL_CMD_SILON
+mdefine_line|#define PCTRL_CMD_SILON&t;0xac
+DECL|macro|PCTRL_CMD_CONT
+mdefine_line|#define PCTRL_CMD_CONT&t;0xa2
+DECL|macro|PCTRL_CMD_ESC
+mdefine_line|#define PCTRL_CMD_ESC&t;0xa4
+DECL|macro|PCTRL_CMD_SILOFF
+mdefine_line|#define PCTRL_CMD_SILOFF 0xab
+DECL|macro|PCTRL_CMD_HALT
+mdefine_line|#define PCTRL_CMD_HALT&t;0xa9
 DECL|macro|PCTRL_LOC_RET
 mdefine_line|#define PCTRL_LOC_RET&t;0xcf
 DECL|macro|PCTRL_LOC_REN
@@ -292,6 +332,21 @@ DECL|macro|BSTEV_TBO
 mdefine_line|#define BSTEV_TBO&t;0x1f
 DECL|macro|BSTEV_RBO
 mdefine_line|#define BSTEV_RBO&t;0x2f
+multiline_comment|/* FAX State Machine */
+DECL|macro|STFAX_NULL
+mdefine_line|#define STFAX_NULL&t;0
+DECL|macro|STFAX_READY
+mdefine_line|#define STFAX_READY&t;1
+DECL|macro|STFAX_LINE
+mdefine_line|#define STFAX_LINE&t;2
+DECL|macro|STFAX_CONT
+mdefine_line|#define STFAX_CONT&t;3
+DECL|macro|STFAX_ACTIV
+mdefine_line|#define STFAX_ACTIV&t;4
+DECL|macro|STFAX_ESCAPE
+mdefine_line|#define STFAX_ESCAPE&t;5
+DECL|macro|STFAX_SILDET
+mdefine_line|#define STFAX_SILDET&t;6
 r_extern
 r_int
 id|ISARVersion

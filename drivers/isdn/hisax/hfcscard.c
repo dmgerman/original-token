@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hfcscard.c,v 1.5 1999/09/04 06:20:06 keil Exp $&n;&n; * hfcscard.c     low level stuff for hfcs based cards (Teles3c, ACER P10)&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: hfcscard.c,v $&n; * Revision 1.5  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.4  1999/08/09 18:59:59  keil&n; * Fix S0 init - Thanks to Stefan Gybas&n; *&n; * Revision 1.3  1999/07/12 21:05:12  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.2  1999/07/01 08:16:03  keil&n; * teles3c ---&gt; hfcscard&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: hfcscard.c,v 1.6 1999/12/19 13:09:42 keil Exp $&n;&n; * hfcscard.c     low level stuff for hfcs based cards (Teles3c, ACER P10)&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: hfcscard.c,v $&n; * Revision 1.6  1999/12/19 13:09:42  keil&n; * changed TASK_INTERRUPTIBLE into TASK_UNINTERRUPTIBLE for&n; * signal proof delays&n; *&n; * Revision 1.5  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.4  1999/08/09 18:59:59  keil&n; * Fix S0 init - Thanks to Stefan Gybas&n; *&n; * Revision 1.3  1999/07/12 21:05:12  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.2  1999/07/01 08:16:03  keil&n; * teles3c ---&gt; hfcscard&n; *&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -19,7 +19,7 @@ r_char
 op_star
 id|hfcs_revision
 op_assign
-l_string|&quot;$Revision: 1.5 $&quot;
+l_string|&quot;$Revision: 1.6 $&quot;
 suffix:semicolon
 r_static
 r_void
@@ -283,7 +283,7 @@ suffix:semicolon
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 id|schedule_timeout
@@ -331,7 +331,7 @@ multiline_comment|/* Reset Off */
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 id|schedule_timeout
@@ -667,7 +667,7 @@ suffix:semicolon
 id|set_current_state
 c_func
 (paren
-id|TASK_INTERRUPTIBLE
+id|TASK_UNINTERRUPTIBLE
 )paren
 suffix:semicolon
 id|schedule_timeout
