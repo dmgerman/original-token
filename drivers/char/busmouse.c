@@ -518,15 +518,10 @@ suffix:semicolon
 multiline_comment|/*&n; * writes are disallowed&n; */
 DECL|function|write_mouse
 r_static
-r_int
+id|ssize_t
 id|write_mouse
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -538,8 +533,11 @@ op_star
 id|buffer
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_return
@@ -550,15 +548,10 @@ suffix:semicolon
 multiline_comment|/*&n; * read mouse data.  Currently never blocks.&n; */
 DECL|function|read_mouse
 r_static
-r_int
+id|ssize_t
 id|read_mouse
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -569,8 +562,11 @@ op_star
 id|buffer
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_int

@@ -287,7 +287,7 @@ id|ascii
 )paren
 suffix:semicolon
 )brace
-DECL|function|dump_de
+macro_line|#if 0
 r_static
 r_void
 id|dump_de
@@ -355,6 +355,7 @@ l_string|&quot;]&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|fat_readdirx
 r_int
 id|fat_readdirx

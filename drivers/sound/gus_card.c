@@ -2,7 +2,7 @@ multiline_comment|/*&n; * sound/gus_card.c&n; *&n; * Detection routine for the G
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_GUSHW)
+macro_line|#ifdef CONFIG_GUSHW
 macro_line|#include &quot;gus_hw.h&quot;
 r_void
 id|gusintr
@@ -25,10 +25,16 @@ DECL|variable|gus_irq
 DECL|variable|gus_dma
 r_int
 id|gus_base
+op_assign
+l_int|0
 comma
 id|gus_irq
+op_assign
+l_int|0
 comma
 id|gus_dma
+op_assign
+l_int|0
 suffix:semicolon
 r_extern
 r_int
@@ -582,7 +588,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; * Some extra code for the 16 bit sampling option&n; */
-macro_line|#if defined(CONFIG_GUS16)
+macro_line|#ifdef CONFIG_GUS16
 r_int
 DECL|function|probe_gus_db16
 id|probe_gus_db16

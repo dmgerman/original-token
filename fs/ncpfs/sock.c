@@ -1,6 +1,5 @@
-multiline_comment|/*&n; *  linux/fs/ncpfs/sock.c&n; *&n; *  Copyright (C) 1992, 1993  Rick Sladkey&n; *&n; *  Modified 1995, 1996 by Volker Lendecke to be usable for ncp&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ncpfs/sock.c&n; *&n; *  Copyright (C) 1992, 1993  Rick Sladkey&n; *&n; *  Modified 1995, 1996 by Volker Lendecke to be usable for ncp&n; *  Modified 1997 Peter Waltenberg, Bill Hawes, David Woodhouse for 2.1 dcache&n; *&n; */
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -11,12 +10,12 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
+macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/ipx.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/ncp.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &lt;linux/ncp_fs_sb.h&gt;
-macro_line|#include &lt;net/sock.h&gt;
-macro_line|#include &lt;linux/poll.h&gt;
 DECL|function|_recv
 r_static
 r_int
@@ -276,8 +275,7 @@ id|socket
 op_star
 id|sock
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|fs
 suffix:semicolon
 r_int
@@ -354,6 +352,7 @@ op_assign
 op_amp
 id|inode-&gt;u.socket_i
 suffix:semicolon
+multiline_comment|/* N.B. this isn&squot;t needed ... check socket type? */
 r_if
 c_cond
 (paren
@@ -364,6 +363,7 @@ id|sock
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ncp_rpc_call: socki_lookup failed&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -508,57 +508,11 @@ op_lshift_assign
 l_int|1
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;DDPRINTK(KERN_DEBUG &quot;ncpfs: %08lX:%02X%02X%02X%02X%02X%02X:%04X&bslash;n&quot;,&n;&t;&t;&t; htonl(server-&gt;m.serv_addr.sipx_network),&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[0],&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[1],&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[2],&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[3],&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[4],&n;&t;&t;&t; server-&gt;m.serv_addr.sipx_node[5],&n;&t;&t;&t; ntohs(server-&gt;m.serv_addr.sipx_port));&n;&t;&t;*/
 id|DDPRINTK
 c_func
 (paren
-l_string|&quot;ncpfs: %08lX:%02X%02X%02X%02X%02X%02X:%04X&bslash;n&quot;
-comma
-id|htonl
-c_func
-(paren
-id|server-&gt;m.serv_addr.sipx_network
-)paren
-comma
-id|server-&gt;m.serv_addr.sipx_node
-(braket
-l_int|0
-)braket
-comma
-id|server-&gt;m.serv_addr.sipx_node
-(braket
-l_int|1
-)braket
-comma
-id|server-&gt;m.serv_addr.sipx_node
-(braket
-l_int|2
-)braket
-comma
-id|server-&gt;m.serv_addr.sipx_node
-(braket
-l_int|3
-)braket
-comma
-id|server-&gt;m.serv_addr.sipx_node
-(braket
-l_int|4
-)braket
-comma
-id|server-&gt;m.serv_addr.sipx_node
-(braket
-l_int|5
-)braket
-comma
-id|ntohs
-c_func
-(paren
-id|server-&gt;m.serv_addr.sipx_port
-)paren
-)paren
-suffix:semicolon
-id|DDPRINTK
-c_func
-(paren
+id|KERN_DEBUG
 l_string|&quot;ncpfs: req.typ: %04X, con: %d, &quot;
 l_string|&quot;seq: %d&quot;
 comma
@@ -578,6 +532,7 @@ suffix:semicolon
 id|DDPRINTK
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot; func: %d&bslash;n&quot;
 comma
 id|request.function
@@ -610,6 +565,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ncp_rpc_call: send error = %d&bslash;n&quot;
 comma
 id|result
@@ -673,6 +629,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;NCP max timeout&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -755,6 +712,7 @@ id|NCP_MOUNT_SOFT
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;NCP server not responding&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -788,6 +746,7 @@ id|major_timeout_seen
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;NCP server not responding&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -866,9 +825,10 @@ op_minus
 id|EAGAIN
 )paren
 (brace
-id|DPRINTK
+id|DDPRINTK
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;ncp_rpc_call: bad select ready&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -888,6 +848,7 @@ id|ECONNREFUSED
 id|DPRINTK
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;ncp_rpc_call: server playing coy&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -907,6 +868,7 @@ id|ERESTARTSYS
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ncp_rpc_call: recv error = %d&bslash;n&quot;
 comma
 op_minus
@@ -940,6 +902,7 @@ multiline_comment|/* Throw away the packet */
 id|DPRINTK
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;ncp_rpc_call: got positive acknowledge&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -982,6 +945,7 @@ suffix:semicolon
 id|DDPRINTK
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;ncpfs: rep.typ: %04X, con: %d, tsk: %d,&quot;
 l_string|&quot;seq: %d&bslash;n&quot;
 comma
@@ -1056,6 +1020,7 @@ id|major_timeout_seen
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;NCP server OK&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1086,6 +1051,7 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;ncp_rpc_call: reply mismatch&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1123,6 +1089,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;NCP: notice message: result=%d&bslash;n&quot;
 comma
 id|result
@@ -1145,6 +1112,7 @@ id|ncp_reply_header
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;NCP: just caught a too small read memory size..., &quot;
 l_string|&quot;email to NET channel&bslash;n&quot;
 )paren
@@ -1152,6 +1120,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;NCP: result=%d&bslash;n&quot;
 comma
 id|result
@@ -1207,6 +1176,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ncpfs: Server not locked!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1244,6 +1214,7 @@ suffix:semicolon
 id|DDPRINTK
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;do_ncp_rpc_call returned %d&bslash;n&quot;
 comma
 id|result
@@ -1269,7 +1240,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/* ncp_do_request assures that at least a complete reply header is&n; * received. It assumes that server-&gt;current_size contains the ncp&n; * request size */
+multiline_comment|/* ncp_do_request assures that at least a complete reply header is&n; * received. It assumes that server-&gt;current_size contains the ncp&n; * request size&n; */
 DECL|function|ncp_request
 r_int
 id|ncp_request
@@ -1288,29 +1259,11 @@ r_struct
 id|ncp_request_header
 op_star
 id|h
-op_assign
-(paren
-r_struct
-id|ncp_request_header
-op_star
-)paren
-(paren
-id|server-&gt;packet
-)paren
 suffix:semicolon
 r_struct
 id|ncp_reply_header
 op_star
 id|reply
-op_assign
-(paren
-r_struct
-id|ncp_reply_header
-op_star
-)paren
-(paren
-id|server-&gt;packet
-)paren
 suffix:semicolon
 r_int
 id|request_size
@@ -1325,6 +1278,17 @@ id|ncp_request_header
 suffix:semicolon
 r_int
 id|result
+suffix:semicolon
+id|h
+op_assign
+(paren
+r_struct
+id|ncp_request_header
+op_star
+)paren
+(paren
+id|server-&gt;packet
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1388,22 +1352,16 @@ l_int|0xff00
 op_rshift
 l_int|8
 suffix:semicolon
+multiline_comment|/*&n;&t; * The server shouldn&squot;t know or care what task is making a&n;&t; * request, so we always use the same task number.&n;&t; */
 id|h-&gt;task
 op_assign
-(paren
-id|current-&gt;pid
-)paren
-op_amp
-l_int|0xff
+l_int|2
 suffix:semicolon
+multiline_comment|/* (current-&gt;pid) &amp; 0xff; */
 id|h-&gt;function
 op_assign
 id|function
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|result
 op_assign
 id|ncp_do_request
@@ -1419,7 +1377,11 @@ op_star
 id|h
 )paren
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 OL
 l_int|0
 )paren
@@ -1427,15 +1389,27 @@ l_int|0
 id|DPRINTK
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;ncp_request_error: %d&bslash;n&quot;
 comma
 id|result
 )paren
 suffix:semicolon
-r_return
-id|result
+r_goto
+id|out
 suffix:semicolon
 )brace
+id|reply
+op_assign
+(paren
+r_struct
+id|ncp_reply_header
+op_star
+)paren
+(paren
+id|server-&gt;packet
+)paren
+suffix:semicolon
 id|server-&gt;completion
 op_assign
 id|reply-&gt;completion_code
@@ -1462,6 +1436,7 @@ id|result
 op_assign
 id|reply-&gt;completion_code
 suffix:semicolon
+macro_line|#ifdef NCPFS_PARANOIA
 r_if
 c_cond
 (paren
@@ -1469,16 +1444,18 @@ id|result
 op_ne
 l_int|0
 )paren
-(brace
-id|DPRINTK
+id|printk
 c_func
 (paren
-l_string|&quot;ncp_completion_code: %x&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;ncp_request: completion code=%x&bslash;n&quot;
 comma
 id|result
 )paren
 suffix:semicolon
-)brace
+macro_line|#endif
+id|out
+suffix:colon
 r_return
 id|result
 suffix:semicolon
@@ -1498,6 +1475,11 @@ r_struct
 id|ncp_request_header
 op_star
 id|h
+suffix:semicolon
+r_int
+id|result
+suffix:semicolon
+id|h
 op_assign
 (paren
 r_struct
@@ -1507,9 +1489,6 @@ op_star
 (paren
 id|server-&gt;packet
 )paren
-suffix:semicolon
-r_int
-id|result
 suffix:semicolon
 id|h-&gt;type
 op_assign
@@ -1533,20 +1512,13 @@ l_int|0xff
 suffix:semicolon
 id|h-&gt;task
 op_assign
-(paren
-id|current-&gt;pid
-)paren
-op_amp
-l_int|0xff
+l_int|2
 suffix:semicolon
+multiline_comment|/* see above */
 id|h-&gt;function
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|result
 op_assign
 id|ncp_do_request
@@ -1560,15 +1532,17 @@ op_star
 id|h
 )paren
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 OL
 l_int|0
 )paren
-(brace
-r_return
-id|result
+r_goto
+id|out
 suffix:semicolon
-)brace
 id|server-&gt;sequence
 op_assign
 l_int|0
@@ -1583,8 +1557,14 @@ op_star
 l_int|256
 )paren
 suffix:semicolon
-r_return
+id|result
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+r_return
+id|result
 suffix:semicolon
 )brace
 DECL|function|ncp_disconnect
@@ -1601,6 +1581,8 @@ id|server
 r_struct
 id|ncp_request_header
 op_star
+id|h
+suffix:semicolon
 id|h
 op_assign
 (paren
@@ -1646,12 +1628,9 @@ l_int|8
 suffix:semicolon
 id|h-&gt;task
 op_assign
-(paren
-id|current-&gt;pid
-)paren
-op_amp
-l_int|0xff
+l_int|2
 suffix:semicolon
+multiline_comment|/* see above */
 id|h-&gt;function
 op_assign
 l_int|0
@@ -1694,6 +1673,7 @@ l_int|0
 id|DPRINTK
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;ncpfs: server locked!!!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1738,6 +1718,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;ncp_unlock_server: was not locked!&bslash;n&quot;
 )paren
 suffix:semicolon

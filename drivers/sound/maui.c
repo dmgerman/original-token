@@ -6,7 +6,7 @@ mdefine_line|#define USE_SEQ_MACROS
 DECL|macro|USE_SIMPLE_MACROS
 mdefine_line|#define USE_SIMPLE_MACROS
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_MAUI)
+macro_line|#ifdef CONFIG_MAUI
 DECL|variable|maui_base
 r_static
 r_int
@@ -265,13 +265,15 @@ op_complement
 id|WK_SLEEP
 suffix:semicolon
 )brace
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|signal_pending
-c_func
 (paren
-id|current
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
 )paren
 )paren
 (brace

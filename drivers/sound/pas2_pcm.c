@@ -2,7 +2,8 @@ multiline_comment|/*&n; * pas2_pcm.c Audio routines for PAS16&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_PAS) &amp;&amp; defined(CONFIG_AUDIO)
+macro_line|#ifdef CONFIG_PAS
+macro_line|#ifdef CONFIG_AUDIO
 macro_line|#ifndef DEB
 DECL|macro|DEB
 mdefine_line|#define DEB(WHAT)
@@ -1723,5 +1724,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#endif
 macro_line|#endif
 eof

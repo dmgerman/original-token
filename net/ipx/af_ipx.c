@@ -456,8 +456,7 @@ op_star
 id|ipxrtr_lookup
 c_func
 (paren
-r_int
-r_int
+id|__u32
 )paren
 suffix:semicolon
 DECL|function|ipxitf_clear_primary_net
@@ -550,8 +549,7 @@ op_star
 id|ipxitf_find_using_net
 c_func
 (paren
-r_int
-r_int
+id|__u32
 id|net
 )paren
 (brace
@@ -562,9 +560,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|net
-op_eq
-l_int|0L
 )paren
 r_return
 id|ipx_primary_net
@@ -2079,8 +2076,7 @@ r_int
 id|ipxrtr_add_route
 c_func
 (paren
-r_int
-r_int
+id|__u32
 comma
 id|ipx_interface
 op_star
@@ -2210,24 +2206,20 @@ multiline_comment|/* See if we should update our network number */
 r_if
 c_cond
 (paren
-(paren
+op_logical_neg
 id|intrfc-&gt;if_netnum
-op_eq
-l_int|0L
-)paren
 op_logical_and
+multiline_comment|/* net number of intrfc not known yet (== 0) */
 (paren
 id|ipx-&gt;ipx_source.net
 op_eq
 id|ipx-&gt;ipx_dest.net
 )paren
 op_logical_and
-(paren
+multiline_comment|/* intra-net packet */
 id|ipx-&gt;ipx_source.net
-op_ne
-l_int|0L
 )paren
-)paren
+multiline_comment|/* source net number of packet != 0 */
 (brace
 multiline_comment|/* NB: NetWare servers lie about their hop count so we&n;&t;&t; * dropped the test based on it.  This is the best way&n;&t;&t; * to determine this is a 0 hop count packet.&n;&t;&t; */
 r_if
@@ -2268,6 +2260,11 @@ c_func
 id|KERN_WARNING
 l_string|&quot;IPX: Network number collision %lx&bslash;n        %s %s and %s %s&bslash;n&quot;
 comma
+(paren
+r_int
+r_int
+r_int
+)paren
 id|htonl
 c_func
 (paren
@@ -2330,7 +2327,7 @@ id|sk_buff
 op_star
 id|skb2
 suffix:semicolon
-r_int
+id|__u32
 op_star
 id|l
 suffix:semicolon
@@ -2357,7 +2354,7 @@ suffix:semicolon
 id|l
 op_assign
 (paren
-r_int
+id|__u32
 op_star
 )paren
 id|c
@@ -2434,7 +2431,7 @@ multiline_comment|/* That aren&squot;t in the list */
 id|l
 op_assign
 (paren
-r_int
+id|__u32
 op_star
 )paren
 id|c
@@ -2532,9 +2529,8 @@ macro_line|#endif
 r_if
 c_cond
 (paren
+op_logical_neg
 id|ipx-&gt;ipx_dest.net
-op_eq
-l_int|0L
 )paren
 id|ipx-&gt;ipx_dest.net
 op_assign
@@ -2543,9 +2539,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|ipx-&gt;ipx_source.net
-op_eq
-l_int|0L
 )paren
 id|ipx-&gt;ipx_source.net
 op_assign
@@ -2809,9 +2804,8 @@ multiline_comment|/* Must have a valid network number */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|idef-&gt;ipx_network
-op_eq
-l_int|0L
 )paren
 r_return
 op_minus
@@ -3072,11 +3066,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|idef-&gt;ipx_network
-op_ne
-l_int|0L
-)paren
 op_logical_and
 (paren
 id|ipxitf_find_using_net
@@ -3415,9 +3405,8 @@ multiline_comment|/* If the network number is known, add a route */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|intrfc-&gt;if_netnum
-op_eq
-l_int|0L
 )paren
 r_return
 l_int|0
@@ -3705,7 +3694,7 @@ id|dev
 suffix:semicolon
 id|intrfc-&gt;if_netnum
 op_assign
-l_int|0L
+l_int|0
 suffix:semicolon
 id|intrfc-&gt;if_dlink_type
 op_assign
@@ -4203,8 +4192,7 @@ op_star
 id|ipxrtr_lookup
 c_func
 (paren
-r_int
-r_int
+id|__u32
 id|net
 )paren
 (brace
@@ -4246,8 +4234,7 @@ r_int
 id|ipxrtr_add_route
 c_func
 (paren
-r_int
-r_int
+id|__u32
 id|network
 comma
 id|ipx_interface
@@ -4777,11 +4764,8 @@ multiline_comment|/* Find the appropriate interface on which to send packet */
 r_if
 c_cond
 (paren
-(paren
+op_logical_neg
 id|usipx-&gt;sipx_network
-op_eq
-l_int|0L
-)paren
 op_logical_and
 (paren
 id|ipx_primary_net
@@ -5603,6 +5587,11 @@ id|len
 comma
 l_string|&quot;%08lX   &quot;
 comma
+(paren
+r_int
+r_int
+r_int
+)paren
 id|ntohl
 c_func
 (paren
@@ -5916,6 +5905,11 @@ id|len
 comma
 l_string|&quot;%08lX:%02X%02X%02X%02X%02X%02X:%04X  &quot;
 comma
+(paren
+r_int
+r_int
+r_int
+)paren
 id|htonl
 c_func
 (paren
@@ -6020,6 +6014,11 @@ id|len
 comma
 l_string|&quot;%08lX:%02X%02X%02X%02X%02X%02X:%04X  &quot;
 comma
+(paren
+r_int
+r_int
+r_int
+)paren
 id|htonl
 c_func
 (paren
@@ -6276,6 +6275,11 @@ id|len
 comma
 l_string|&quot;%08lX   &quot;
 comma
+(paren
+r_int
+r_int
+r_int
+)paren
 id|ntohl
 c_func
 (paren
@@ -6299,6 +6303,11 @@ id|len
 comma
 l_string|&quot;%08lX     %02X%02X%02X%02X%02X%02X&bslash;n&quot;
 comma
+(paren
+r_int
+r_int
+r_int
+)paren
 id|ntohl
 c_func
 (paren
@@ -7395,7 +7404,7 @@ l_int|0
 suffix:semicolon
 id|uaddr.sipx_network
 op_assign
-l_int|0L
+l_int|0
 suffix:semicolon
 macro_line|#ifdef CONFIG_IPX_INTERN
 id|memcpy
@@ -7669,7 +7678,7 @@ r_else
 (brace
 id|sipx.sipx_network
 op_assign
-l_int|0L
+l_int|0
 suffix:semicolon
 id|memset
 c_func
@@ -7994,10 +8003,15 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s: %08X:%02X%02X%02X%02X%02X%02X:%04X&bslash;n&quot;
+l_string|&quot;%s: %08lX:%02X%02X%02X%02X%02X%02X:%04X&bslash;n&quot;
 comma
 id|str
 comma
+(paren
+r_int
+r_int
+r_int
+)paren
 id|ntohl
 c_func
 (paren

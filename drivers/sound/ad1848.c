@@ -6,7 +6,7 @@ mdefine_line|#define DEB(x)
 DECL|macro|DEB1
 mdefine_line|#define DEB1(x)
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_AD1848)
+macro_line|#ifdef CONFIG_AD1848
 macro_line|#include &quot;ad1848_mixer.h&quot;
 r_typedef
 r_struct
@@ -76,9 +76,13 @@ r_int
 id|intr_active
 suffix:semicolon
 DECL|member|chip_name
+DECL|member|name
 r_char
 op_star
 id|chip_name
+comma
+op_star
+id|name
 suffix:semicolon
 DECL|member|model
 r_int
@@ -6338,6 +6342,8 @@ l_int|0
 suffix:semicolon
 id|devc-&gt;chip_name
 op_assign
+id|devc-&gt;name
+op_assign
 l_string|&quot;AD1848&quot;
 suffix:semicolon
 id|devc-&gt;model
@@ -6358,6 +6364,26 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;     * Check that the I/O address is in use.&n;     *&n;     * The bit 0x80 of the base I/O port is known to be 0 after the&n;     * chip has performed its power on initialization. Just assume&n;     * this has happened before the OS is starting.&n;     *&n;     * If the I/O address is unused, it typically returns 0xff.&n;   */
+r_if
+c_cond
+(paren
+id|inb
+(paren
+id|devc-&gt;base
+)paren
+op_eq
+l_int|0xff
+)paren
+(brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;ad1848_detect: The base I/O address appears to be dead&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Wait for the device to stop initialization&n; */
 id|DDB
 (paren
@@ -6551,7 +6577,9 @@ id|tmp2
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* return 0; */
+r_return
+l_int|0
+suffix:semicolon
 )brace
 id|DDB
 (paren
@@ -6634,7 +6662,9 @@ id|tmp2
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* return 0; */
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n;     * The indirect register I12 has some read only bits. Lets&n;     * try to change them.&n;   */
 id|DDB
@@ -7494,15 +7524,6 @@ id|portc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|request_region
-(paren
-id|devc-&gt;base
-comma
-l_int|4
-comma
-id|devc-&gt;chip_name
-)paren
-suffix:semicolon
 id|devc-&gt;irq
 op_assign
 (paren
@@ -7548,6 +7569,17 @@ c_cond
 id|name
 op_ne
 l_int|NULL
+)paren
+id|devc-&gt;name
+op_assign
+id|name
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|name
+op_ne
+l_int|NULL
 op_logical_and
 id|name
 (braket
@@ -7575,6 +7607,15 @@ comma
 l_string|&quot;Generic audio codec (%s)&quot;
 comma
 id|devc-&gt;chip_name
+)paren
+suffix:semicolon
+id|request_region
+(paren
+id|devc-&gt;base
+comma
+l_int|4
+comma
+id|devc-&gt;name
 )paren
 suffix:semicolon
 id|conf_printf2
@@ -7785,7 +7826,7 @@ id|devc-&gt;irq
 comma
 id|adintr
 comma
-l_string|&quot;SoundPort&quot;
+id|devc-&gt;name
 comma
 l_int|NULL
 )paren
@@ -7982,7 +8023,7 @@ id|sound_alloc_dma
 (paren
 id|dma_playback
 comma
-l_string|&quot;Sound System&quot;
+id|devc-&gt;name
 )paren
 )paren
 id|printk
@@ -8006,7 +8047,7 @@ id|sound_alloc_dma
 (paren
 id|dma_capture
 comma
-l_string|&quot;Sound System (capture)&quot;
+id|devc-&gt;name
 )paren
 )paren
 id|printk
@@ -8571,7 +8612,7 @@ OG
 l_int|15
 )paren
 (brace
-multiline_comment|/* printk (&quot;ad1848.c: Bogus interrupt %d&bslash;n&quot;, irq); */
+multiline_comment|/* printk(&quot;ad1848.c: Bogus interrupt %d&bslash;n&quot;, irq); */
 r_return
 suffix:semicolon
 )brace

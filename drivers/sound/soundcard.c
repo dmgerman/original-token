@@ -93,15 +93,10 @@ mdefine_line|#define DMA_MAP_FREE&t;&t;1
 DECL|macro|DMA_MAP_BUSY
 mdefine_line|#define DMA_MAP_BUSY&t;&t;2
 r_static
-r_int
+id|ssize_t
 DECL|function|sound_read
 id|sound_read
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -112,12 +107,22 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_int
 id|dev
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 id|dev
 op_assign
@@ -136,6 +141,9 @@ op_assign
 id|file-&gt;f_flags
 suffix:semicolon
 r_return
+(paren
+id|ssize_t
+)paren
 id|sound_read_sw
 (paren
 id|dev
@@ -153,15 +161,10 @@ id|count
 suffix:semicolon
 )brace
 r_static
-r_int
+id|ssize_t
 DECL|function|sound_write
 id|sound_write
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -173,12 +176,22 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_int
 id|dev
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 id|dev
 op_assign
@@ -197,6 +210,9 @@ op_assign
 id|file-&gt;f_flags
 suffix:semicolon
 r_return
+(paren
+id|ssize_t
+)paren
 id|sound_write_sw
 (paren
 id|dev
@@ -213,10 +229,10 @@ id|count
 )paren
 suffix:semicolon
 )brace
-DECL|function|sound_lseek
 r_static
 r_int
 r_int
+DECL|function|sound_lseek
 id|sound_lseek
 (paren
 r_struct
@@ -1235,11 +1251,7 @@ id|EAGAIN
 suffix:semicolon
 id|vma-&gt;vm_dentry
 op_assign
-id|dget
-c_func
-(paren
 id|file-&gt;f_dentry
-)paren
 suffix:semicolon
 id|dmap-&gt;mapping_flags
 op_or_assign
@@ -2018,7 +2030,7 @@ op_eq
 id|DMA_MAP_UNAVAIL
 )paren
 (brace
-multiline_comment|/* printk (&quot;sound_free_dma: Bad access to DMA channel %d&bslash;n&quot;, chn); */
+multiline_comment|/* printk( &quot;sound_free_dma: Bad access to DMA channel %d&bslash;n&quot;,  chn); */
 r_return
 suffix:semicolon
 )brace
@@ -2741,7 +2753,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* printk(&quot;Start DMA%d %d, %d&bslash;n&quot;, chan, (int)(physaddr-dmap-&gt;raw_buf_phys), count); */
+multiline_comment|/* printk( &quot;Start DMA%d %d, %d&bslash;n&quot;,  chan,  (int)(physaddr-dmap-&gt;raw_buf_phys),  count); */
 r_if
 c_cond
 (paren

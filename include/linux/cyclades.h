@@ -1,4 +1,4 @@
-multiline_comment|/* $Revision: 2.0 $$Date: 1997/06/30 10:30:00 $&n; * linux/include/linux/cyclades.h&n; *&n; * This file is maintained by Marcio Saito &lt;marcio@cyclades.com&gt; and&n; * Randolph Bentson &lt;bentson@grieg.seaslug.org&gt;.&n; *&n; * This file contains the general definitions for the cyclades.c driver&n; *$Log: cyclades.h,v $&n; *Revision 2.0  1997/06/30 10:30:00  ivan&n; *added some new doorbell command constants related to IOCTLW and&n; *UART error signaling&n; *&n; *Revision 1.8  1997/06/03 15:30:00  ivan&n; *added constant ZFIRM_HLT&n; *added constant CyPCI_Ze_win ( = 2 * Cy_PCI_Zwin)&n; *&n; *Revision 1.7  1997/03/26 10:30:00  daniel&n; *new entries at the end of cyclades_port struct to reallocate&n; *variables illegally allocated within card memory.&n; *&n; *Revision 1.6  1996/09/09 18:35:30  bentson&n; *fold in changes for Cyclom-Z -- including structures for&n; *communicating with board as well modest changes to original&n; *structures to support new features.&n; *&n; *Revision 1.5  1995/11/13 21:13:31  bentson&n; *changes suggested by Michael Chastain &lt;mec@duracef.shout.net&gt;&n; *to support use of this file in non-kernel applications&n; *&n; *&n; */
+multiline_comment|/* $Revision: 2.1 $$Date: 1997/10/24 16:03:00 $&n; * linux/include/linux/cyclades.h&n; *&n; * This file is maintained by Marcio Saito &lt;marcio@cyclades.com&gt; and&n; * Randolph Bentson &lt;bentson@grieg.seaslug.org&gt;.&n; *&n; * This file contains the general definitions for the cyclades.c driver&n; *$Log: cyclades.h,v $&n; *Revision 2.1&t;1997/10/24 16:03:00  ivan&n; *added rflow (which allows enabling the CD1400 special flow control &n; *feature) and rtsdtr_inv (which allows DTR/RTS pin inversion) to &n; *cyclades_port structure;&n; *added Alpha support&n; *&n; *Revision 2.0  1997/06/30 10:30:00  ivan&n; *added some new doorbell command constants related to IOCTLW and&n; *UART error signaling&n; *&n; *Revision 1.8  1997/06/03 15:30:00  ivan&n; *added constant ZFIRM_HLT&n; *added constant CyPCI_Ze_win ( = 2 * Cy_PCI_Zwin)&n; *&n; *Revision 1.7  1997/03/26 10:30:00  daniel&n; *new entries at the end of cyclades_port struct to reallocate&n; *variables illegally allocated within card memory.&n; *&n; *Revision 1.6  1996/09/09 18:35:30  bentson&n; *fold in changes for Cyclom-Z -- including structures for&n; *communicating with board as well modest changes to original&n; *structures to support new features.&n; *&n; *Revision 1.5  1995/11/13 21:13:31  bentson&n; *changes suggested by Michael Chastain &lt;mec@duracef.shout.net&gt;&n; *to support use of this file in non-kernel applications&n; *&n; *&n; */
 macro_line|#ifndef _LINUX_CYCLADES_H
 DECL|macro|_LINUX_CYCLADES_H
 mdefine_line|#define _LINUX_CYCLADES_H
@@ -48,6 +48,16 @@ DECL|macro|CYGETDEFTIMEOUT
 mdefine_line|#define CYGETDEFTIMEOUT         0x435908
 DECL|macro|CYSETDEFTIMEOUT
 mdefine_line|#define CYSETDEFTIMEOUT         0x435909
+DECL|macro|CYSETRFLOW
+mdefine_line|#define CYSETRFLOW&t;&t;0x43590a
+DECL|macro|CYRESETRFLOW
+mdefine_line|#define CYRESETRFLOW&t;&t;0x43590b
+DECL|macro|CYSETRTSDTR_INV
+mdefine_line|#define CYSETRTSDTR_INV&t;&t;0x43590c
+DECL|macro|CYRESETRTSDTR_INV
+mdefine_line|#define CYRESETRTSDTR_INV&t;0x43590d
+DECL|macro|CYZPOLLCYCLE
+mdefine_line|#define CYZPOLLCYCLE&t;&t;0x43590e
 multiline_comment|/*************** CYCLOM-Z ADDITIONS ***************/
 DECL|macro|CZIOC
 mdefine_line|#define CZIOC           (&squot;M&squot; &lt;&lt; 8)
@@ -61,6 +71,8 @@ DECL|macro|CZ_BOOT_END
 mdefine_line|#define CZ_BOOT_END     (CZIOC|0xfd)
 DECL|macro|CZ_TEST
 mdefine_line|#define CZ_TEST         (CZIOC|0xfe)
+DECL|macro|CZ_DEF_POLL
+mdefine_line|#define CZ_DEF_POLL&t;(HZ/25)
 DECL|macro|MAX_BOARD
 mdefine_line|#define MAX_BOARD       4       /* Max number of boards */
 DECL|macro|MAX_PORT
@@ -118,6 +130,14 @@ macro_line|#ifndef DP_WINDOW_SIZE
 multiline_comment|/* #include &quot;cyclomz.h&quot; */
 multiline_comment|/****************** ****************** *******************/
 multiline_comment|/*&n; *&t;The data types defined below are used in all ZFIRM interface&n; *&t;data structures. They accomodate differences between HW&n; *&t;architectures and compilers.&n; */
+macro_line|#if defined(__alpha__)
+DECL|typedef|ucdouble
+r_typedef
+r_int
+r_int
+id|ucdouble
+suffix:semicolon
+multiline_comment|/* 64 bits, unsigned */
 DECL|typedef|uclong
 r_typedef
 r_int
@@ -125,6 +145,15 @@ r_int
 id|uclong
 suffix:semicolon
 multiline_comment|/* 32 bits, unsigned */
+macro_line|#else
+DECL|typedef|uclong
+r_typedef
+r_int
+r_int
+id|uclong
+suffix:semicolon
+multiline_comment|/* 32 bits, unsigned */
+macro_line|#endif
 DECL|typedef|ucshort
 r_typedef
 r_int
@@ -145,7 +174,7 @@ mdefine_line|#define&t;DP_WINDOW_SIZE&t;&t;(0x00080000)&t;/* window size 512 Kb 
 DECL|macro|ZE_DP_WINDOW_SIZE
 mdefine_line|#define&t;ZE_DP_WINDOW_SIZE&t;(0x00100000)&t;/* window size 1 Mb (Ze and&n;&t;&t;&t;&t;&t;&t;  8Zo V.2 */
 DECL|macro|CTRL_WINDOW_SIZE
-mdefine_line|#define&t;CTRL_WINDOW_SIZE&t;(0x00000100)&t;/* runtime regs 256 bytes */
+mdefine_line|#define&t;CTRL_WINDOW_SIZE&t;(0x00000080)&t;/* runtime regs 128 bytes */
 multiline_comment|/*&n; *&t;CUSTOM_REG - Cyclom-Z/PCI Custom Registers Set. The driver&n; *&t;normally will access only interested on the fpga_id, fpga_version,&n; *&t;start_cpu and stop_cpu.&n; */
 DECL|struct|CUSTOM_REG
 r_struct
@@ -420,6 +449,12 @@ DECL|macro|ZFIRM_ID
 mdefine_line|#define&t;ZFIRM_ID&t;0x5557465AL&t;/* ZFIRM/U signature */
 DECL|macro|ZFIRM_HLT
 mdefine_line|#define&t;ZFIRM_HLT&t;0x59505B5CL&t;/* ZFIRM needs external power supply */
+DECL|macro|ZFIRM_RST
+mdefine_line|#define&t;ZFIRM_RST&t;0x56040674L&t;/* RST signal (due to FW reset) */
+DECL|macro|ZF_TINACT_DEF
+mdefine_line|#define&t;ZF_TINACT_DEF&t;1000&t;&t;/* default inactivity timeout &n;&t;&t;&t;&t;&t;   (1000 ms) */
+DECL|macro|ZF_TINACT
+mdefine_line|#define&t;ZF_TINACT&t;ZF_TINACT_DEF
 DECL|struct|FIRM_ID
 r_struct
 id|FIRM_ID
@@ -687,14 +722,21 @@ id|uclong
 id|flow_xoff
 suffix:semicolon
 multiline_comment|/* xoff char */
-DECL|member|filler
+DECL|member|hw_overflow
 id|uclong
-id|filler
-(braket
-l_int|3
-)braket
+id|hw_overflow
 suffix:semicolon
-multiline_comment|/* filler to align structures */
+multiline_comment|/* hw overflow counter */
+DECL|member|sw_overflow
+id|uclong
+id|sw_overflow
+suffix:semicolon
+multiline_comment|/* sw overflow counter */
+DECL|member|comm_error
+id|uclong
+id|comm_error
+suffix:semicolon
+multiline_comment|/* frame/parity error counter */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;BUF_CTRL - This per channel structure contains&n; *&t;all Tx and Rx buffer control for a given channel.&n; */
@@ -808,7 +850,6 @@ suffix:semicolon
 multiline_comment|/* channel number */
 DECL|member|hcmd_param
 id|uclong
-op_star
 id|hcmd_param
 suffix:semicolon
 multiline_comment|/* pointer to parameters */
@@ -820,7 +861,6 @@ suffix:semicolon
 multiline_comment|/* channel number */
 DECL|member|fwcmd_param
 id|uclong
-op_star
 id|fwcmd_param
 suffix:semicolon
 multiline_comment|/* pointer to parameters */
@@ -865,6 +905,19 @@ suffix:semicolon
 multiline_comment|/****************** ****************** *******************/
 macro_line|#endif
 macro_line|#ifdef __KERNEL__
+multiline_comment|/***************************************&n; * Memory access functions/macros      *&n; * (required to support Alpha systems) *&n; ***************************************/
+DECL|macro|cy_writeb
+mdefine_line|#define cy_writeb(port,val)     {writeb((ucchar)(val),(ulong)(port)); mb();}
+DECL|macro|cy_writew
+mdefine_line|#define cy_writew(port,val)     {writew((ushort)(val),(ulong)(port)); mb();}
+DECL|macro|cy_writel
+mdefine_line|#define cy_writel(port,val)     {writel((uclong)(val),(ulong)(port)); mb();}
+DECL|macro|cy_readb
+mdefine_line|#define cy_readb(port)  readb(port)
+DECL|macro|cy_readw
+mdefine_line|#define cy_readw(port)  readw(port)
+DECL|macro|cy_readl
+mdefine_line|#define cy_readl(port)  readl(port)
 multiline_comment|/* Per card data structure */
 DECL|struct|cyclades_card
 r_struct
@@ -897,6 +950,11 @@ r_int
 id|bus_index
 suffix:semicolon
 multiline_comment|/* address shift - 0 for ISA, 1 for PCI */
+DECL|member|inact_ctrl
+r_int
+id|inact_ctrl
+suffix:semicolon
+multiline_comment|/* FW Inactivity control - 0 disabled, 1 enabled */
 )brace
 suffix:semicolon
 DECL|struct|cyclades_chip
@@ -985,6 +1043,14 @@ suffix:semicolon
 DECL|member|baud
 r_int
 id|baud
+suffix:semicolon
+DECL|member|rflow
+r_int
+id|rflow
+suffix:semicolon
+DECL|member|rtsdtr_inv
+r_int
+id|rtsdtr_inv
 suffix:semicolon
 DECL|member|ignore_status_mask
 r_int
@@ -1121,12 +1187,18 @@ DECL|macro|Cy_EVENT_BREAK
 mdefine_line|#define Cy_EVENT_BREAK&t;&t;3
 DECL|macro|Cy_EVENT_OPEN_WAKEUP
 mdefine_line|#define Cy_EVENT_OPEN_WAKEUP&t;4
-DECL|macro|CyMaxChipsPerCard
-mdefine_line|#define CyMaxChipsPerCard 8
+DECL|macro|CyMAX_CHIPS_PER_CARD
+mdefine_line|#define CyMAX_CHIPS_PER_CARD&t;8
+DECL|macro|CyMAX_CHAR_FIFO
+mdefine_line|#define CyMAX_CHAR_FIFO&t;&t;12
+DECL|macro|CyPORTS_PER_CHIP
+mdefine_line|#define CyPORTS_PER_CHIP&t;4
+DECL|macro|CyISA_Ywin
+mdefine_line|#define&t;CyISA_Ywin&t;0x2000
 DECL|macro|CyPCI_Ywin
 mdefine_line|#define CyPCI_Ywin &t;0x4000
 DECL|macro|CyPCI_Zctl
-mdefine_line|#define CyPCI_Zctl &t;0x100
+mdefine_line|#define CyPCI_Zctl &t;CTRL_WINDOW_SIZE
 DECL|macro|CyPCI_Zwin
 mdefine_line|#define CyPCI_Zwin &t;0x80000
 DECL|macro|CyPCI_Ze_win
@@ -1205,6 +1277,12 @@ DECL|macro|CyCLOCK_20_1MS
 mdefine_line|#define      CyCLOCK_20_1MS&t;(0x27)
 DECL|macro|CyCLOCK_25_1MS
 mdefine_line|#define      CyCLOCK_25_1MS&t;(0x31)
+DECL|macro|CyCLOCK_25_5MS
+mdefine_line|#define      CyCLOCK_25_5MS&t;(0xf4)
+DECL|macro|CyCLOCK_60_1MS
+mdefine_line|#define      CyCLOCK_60_1MS&t;(0x75)
+DECL|macro|CyCLOCK_60_2MS
+mdefine_line|#define      CyCLOCK_60_2MS&t;(0xea)
 multiline_comment|/* Virtual Registers */
 DECL|macro|CyRIVR
 mdefine_line|#define CyRIVR&t;&t;(0x43*2)
@@ -1428,9 +1506,6 @@ DECL|macro|CyTBPR
 mdefine_line|#define CyTBPR&t;&t;(0x72*2)
 DECL|macro|CyTCOR
 mdefine_line|#define CyTCOR&t;&t;(0x76*2)
-multiline_comment|/* max number of chars in the FIFO */
-DECL|macro|CyMAX_CHAR_FIFO
-mdefine_line|#define CyMAX_CHAR_FIFO&t;12
 multiline_comment|/***************************************************************************/
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_CYCLADES_H */

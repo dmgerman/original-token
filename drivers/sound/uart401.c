@@ -2,7 +2,8 @@ multiline_comment|/*&n; * sound/uart401.c&n; *&n; * MPU-401 UART driver (formerl
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_UART401
+macro_line|#ifdef CONFIG_MIDI
 DECL|struct|uart401_devc
 r_typedef
 r_struct
@@ -742,7 +743,7 @@ op_assign
 l_int|30000
 suffix:semicolon
 id|timeout
-OL
+OG
 l_int|0
 op_logical_and
 op_logical_neg
@@ -998,7 +999,7 @@ id|devc-&gt;irq
 comma
 id|uart401intr
 comma
-l_string|&quot;uart401&quot;
+l_string|&quot;MPU-401 UART&quot;
 comma
 id|devc-&gt;osp
 )paren
@@ -1035,7 +1036,7 @@ id|hw_config-&gt;io_base
 comma
 l_int|4
 comma
-l_string|&quot;SB MIDI&quot;
+l_string|&quot;MPU-401 UART&quot;
 )paren
 suffix:semicolon
 id|enter_uart_mode
@@ -1352,7 +1353,7 @@ op_assign
 l_int|30000
 suffix:semicolon
 id|timeout
-OL
+OG
 l_int|0
 op_logical_and
 op_logical_neg
@@ -1436,7 +1437,7 @@ c_cond
 id|ok
 )paren
 (brace
-id|DDB
+id|DEB
 (paren
 id|printk
 (paren
@@ -1616,11 +1617,13 @@ id|irq
 OL
 l_int|0
 )paren
+(brace
 id|irq
 op_mul_assign
 op_minus
 l_int|1
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1670,5 +1673,6 @@ id|devc-&gt;irq
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif
 eof

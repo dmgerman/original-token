@@ -1,4 +1,4 @@
-multiline_comment|/*&n;&n;   linux/drivers/char/joystick.c&n;   Copyright (C) 1992, 1993 Arthur C. Smith&n;   Joystick driver for Linux running on an IBM compatible computer.&n;&n;VERSION INFO:&n;01/08/93&t;ACS&t;0.1: Works but needs multi-joystick support&n;01/13/93&t;ACS&t;0.2: Added multi-joystick support (minor 0 and 1)&n;&t;&t;  &t;     Added delay between measuring joystick axis&n;&t;&t;   &t;     Added scaling ioctl&n;02/16/93&t;ACS&t;0.3: Modified scaling to use ints to prevent kernel&n;&t;&t;&t;     panics 8-)&n;02/28/93&t;ACS&t;0.4: Linux99.6 and fixed race condition in js_read.&n;&t;&t;&t;     After looking at a schematic of a joystick card&n;                             it became apparent that any write to the joystick&n;&t;&t;&t;     port started ALL the joystick one shots. If the&n;&t;&t;&t;     one that we are reading is short enough and the&n;&t;&t;&t;     first one to be read, the second one will return&n;&t;&t;&t;     bad data if it&squot;s one shot has not expired when&n;&t;&t;&t;     the joystick port is written for the second time.&n;&t;&t;&t;     Thus solves the mystery delay problem in 0.2!&n;05/05/93       ACS/Eyal 0.5: Upgraded the driver to the 99.9 kernel, added&n;&t;&t;&t;     joystick support to the make config options,&n;&t;&t;&t;     updated the driver to return the buttons as&n;&t;&t;&t;     positive logic, and read both axis at once&n;&t;&t;&t;     (thanks Eyal!), and added some new ioctls.&n;02/12/94   Jeff Tranter 0.6: Made necessary changes to work with 0.99pl15&n;                             kernel (and hopefully 1.0). Also did some&n;&t;&t;&t;     cleanup: indented code, fixed some typos, wrote&n;&t;&t;&t;     man page, etc...&n;05/17/95 Dan Fandrich 0.7.3: Added I/O port registration, cleaned up code&n;04/03/96    Matt Rhoten 0.8: many minor changes:&n;&t;&t;&t;     new read loop from Hal Maney &lt;maney@norden.com&gt;&n;                             cleaned up #includes to allow #include of &n;                             joystick.h with gcc -Wall and from g++&n;&t;&t;&t;     made js_init fail if it finds zero joysticks&n;&t;&t;&t;     general source/comment cleanup&n;&t;&t;&t;     use of MOD_(INC|DEC)_USE_COUNT&n;&t;&t;&t;     changes from Bernd Schmidt &lt;crux@Pool.Informatik.RWTH-Aachen.DE&gt;&n;&t;&t;&t;     to compile correctly under 1.3 in kernel or as module&n;06/30/97       Alan Cox 0.9: Ported to 2.1.x&n;&t;&t;&t;     Reformatted to resemble Linux coding standard&n;&t;&t;&t;     Removed semaphore bug (we can dump the lot I think)&n;&t;&t;&t;     Fixed xntp timer adjust during joystick timer0 bug&n;&t;&t;&t;     Changed variable names to lower case. Kept binary&n;&t;&t;&t;     &t;compatibility.&n;&t;&t;&t;     Better ioctl names. Kept binary compatibility.&n;&t;&t;&t;     Removed &squot;save_busy&squot;. Just set busy to 1.&n;*/
+multiline_comment|/*&n;&n;   linux/drivers/char/joystick.c&n;   Copyright (C) 1992, 1993 Arthur C. Smith&n;   Joystick driver for Linux running on an IBM compatible computer.&n;&n;VERSION INFO:&n;01/08/93&t;ACS&t;0.1: Works but needs multi-joystick support&n;01/13/93&t;ACS&t;0.2: Added multi-joystick support (minor 0 and 1)&n;&t;&t;  &t;     Added delay between measuring joystick axis&n;&t;&t;   &t;     Added scaling ioctl&n;02/16/93&t;ACS&t;0.3: Modified scaling to use ints to prevent kernel&n;&t;&t;&t;     panics 8-)&n;02/28/93&t;ACS&t;0.4: Linux99.6 and fixed race condition in js_read.&n;&t;&t;&t;     After looking at a schematic of a joystick card&n;                             it became apparent that any write to the joystick&n;&t;&t;&t;     port started ALL the joystick one shots. If the&n;&t;&t;&t;     one that we are reading is short enough and the&n;&t;&t;&t;     first one to be read, the second one will return&n;&t;&t;&t;     bad data if it&squot;s one shot has not expired when&n;&t;&t;&t;     the joystick port is written for the second time.&n;&t;&t;&t;     Thus solves the mystery delay problem in 0.2!&n;05/05/93       ACS/Eyal 0.5: Upgraded the driver to the 99.9 kernel, added&n;&t;&t;&t;     joystick support to the make config options,&n;&t;&t;&t;     updated the driver to return the buttons as&n;&t;&t;&t;     positive logic, and read both axis at once&n;&t;&t;&t;     (thanks Eyal!), and added some new ioctls.&n;02/12/94   Jeff Tranter 0.6: Made necessary changes to work with 0.99pl15&n;                             kernel (and hopefully 1.0). Also did some&n;&t;&t;&t;     cleanup: indented code, fixed some typos, wrote&n;&t;&t;&t;     man page, etc...&n;05/17/95 Dan Fandrich 0.7.3: Added I/O port registration, cleaned up code&n;04/03/96    Matt Rhoten 0.8: many minor changes:&n;&t;&t;&t;     new read loop from Hal Maney &lt;maney@norden.com&gt;&n;                             cleaned up #includes to allow #include of &n;                             joystick.h with gcc -Wall and from g++&n;&t;&t;&t;     made js_init fail if it finds zero joysticks&n;&t;&t;&t;     general source/comment cleanup&n;&t;&t;&t;     use of MOD_(INC|DEC)_USE_COUNT&n;&t;&t;&t;     changes from Bernd Schmidt &lt;crux@Pool.Informatik.RWTH-Aachen.DE&gt;&n;&t;&t;&t;     to compile correctly under 1.3 in kernel or as module&n;06/30/97       Alan Cox 0.9: Ported to 2.1.x&n;&t;&t;&t;     Reformatted to resemble Linux coding standard&n;&t;&t;&t;     Removed semaphore bug (we can dump the lot I think)&n;&t;&t;&t;     Fixed xntp timer adjust during joystick timer0 bug&n;&t;&t;&t;     Changed variable names to lower case. Kept binary&n;&t;&t;&t;     &t;compatibility.&n;&t;&t;&t;     Better ioctl names. Kept binary compatibility.&n;&t;&t;&t;     Removed &squot;save_busy&squot;. Just set busy to 1.&n;11/03/97  Brian Gerst 0.9.1: Fixed bug which caused driver to always time out &n;                             but never report a timeout (broken while loop).&n;                             Fixed js_read for new VFS code.&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/joystick.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -846,14 +846,9 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;js_read() reads the buttons x, and y axis from both joysticks if a&n; *&t;given interval has expired since the last read or is equal to&n; *&t;-1l. The buttons are in port 0x201 in the high nibble. The axis are&n; *&t;read by writing to 0x201 and then measuring the time it takes the&n; *&t;one shots to clear.&n; */
 DECL|function|js_read
 r_static
-r_int
+id|ssize_t
 id|js_read
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -864,8 +859,11 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_int
@@ -889,11 +887,16 @@ suffix:semicolon
 r_int
 r_int
 id|minor
-comma
-id|minor2
 suffix:semicolon
 r_int
 id|buttons
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond
@@ -930,12 +933,6 @@ dot
 id|js_expiretime
 )paren
 (brace
-id|minor2
-op_assign
-id|minor
-op_lshift
-l_int|1
-suffix:semicolon
 id|j
 op_assign
 id|js_data
@@ -1071,13 +1068,8 @@ id|get_timer0
 )paren
 suffix:semicolon
 multiline_comment|/*wait for an axis&squot; bit to clear or timeout*/
-r_while
-c_loop
-(paren
-id|j
-op_decrement
-op_logical_and
-(paren
+r_do
+(brace
 id|chk
 op_assign
 (paren
@@ -1090,9 +1082,7 @@ id|js_exist
 )paren
 op_or
 id|jsmask
-)paren
-)paren
-(brace
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1186,6 +1176,17 @@ id|JS_Y_1
 suffix:semicolon
 )brace
 )brace
+r_while
+c_loop
+(paren
+op_decrement
+id|j
+op_logical_and
+id|jsmask
+op_ne
+id|js_exist
+)paren
+suffix:semicolon
 id|sti
 c_func
 (paren

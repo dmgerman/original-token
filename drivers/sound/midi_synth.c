@@ -6,7 +6,7 @@ mdefine_line|#define USE_SEQ_MACROS
 DECL|macro|USE_SIMPLE_MACROS
 mdefine_line|#define USE_SIMPLE_MACROS
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_MIDI
 DECL|macro|_MIDI_SYNTH_C_
 mdefine_line|#define _MIDI_SYNTH_C_
 DECL|variable|sysex_sleeper
@@ -332,7 +332,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/* printk (&quot;MPU: Unknown midi channel message %02x&bslash;n&quot;, msg[0]); */
+multiline_comment|/* printk( &quot;MPU: Unknown midi channel message %02x&bslash;n&quot;,  msg[0]); */
 suffix:semicolon
 )brace
 )brace
@@ -2045,10 +2045,11 @@ OL
 id|left
 op_logical_and
 op_logical_neg
-id|signal_pending
-c_func
 (paren
-id|current
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
 )paren
 suffix:semicolon
 id|i
@@ -2166,10 +2167,11 @@ l_int|0xff
 )paren
 op_logical_and
 op_logical_neg
-id|signal_pending
-c_func
 (paren
-id|current
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
 )paren
 )paren
 (brace

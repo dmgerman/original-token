@@ -1,12 +1,12 @@
-multiline_comment|/*&n; *  ioctl.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  ioctl.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *  Modified 1997 Peter Waltenberg, Bill Hawes, David Woodhouse for 2.1 dcache&n; *&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ncp.h&gt;
+macro_line|#include &lt;linux/ncp_fs.h&gt;
 DECL|function|ncp_ioctl
 r_int
 id|ncp_ioctl
@@ -31,17 +31,6 @@ r_int
 id|arg
 )paren
 (brace
-r_int
-id|result
-suffix:semicolon
-r_struct
-id|ncp_ioctl_request
-id|request
-suffix:semicolon
-r_struct
-id|ncp_fs_info
-id|info
-suffix:semicolon
 r_struct
 id|ncp_server
 op_star
@@ -52,6 +41,17 @@ c_func
 (paren
 id|inode
 )paren
+suffix:semicolon
+r_int
+id|result
+suffix:semicolon
+r_struct
+id|ncp_ioctl_request
+id|request
+suffix:semicolon
+r_struct
+id|ncp_fs_info
+id|info
 suffix:semicolon
 r_switch
 c_cond
@@ -230,6 +230,7 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;ncp_ioctl: copy %d bytes&bslash;n&quot;
 comma
 id|server-&gt;reply_size
@@ -382,6 +383,7 @@ id|NCP_GET_FS_INFO_VERSION
 id|DPRINTK
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;info.version invalid: %d&bslash;n&quot;
 comma
 id|info.version
@@ -407,7 +409,7 @@ id|server-&gt;buffer_size
 suffix:semicolon
 id|info.volume_number
 op_assign
-id|NCP_ISTRUCT
+id|NCP_FINFO
 c_func
 (paren
 id|inode
@@ -417,7 +419,7 @@ id|volNumber
 suffix:semicolon
 id|info.directory_id
 op_assign
-id|NCP_ISTRUCT
+id|NCP_FINFO
 c_func
 (paren
 id|inode

@@ -1228,6 +1228,29 @@ id|size
 suffix:semicolon
 )brace
 macro_line|#endif
+id|sz
+op_add_assign
+id|sprintf
+(paren
+id|page
+op_plus
+id|sz
+comma
+l_string|&quot; %dk chunks&quot;
+comma
+l_int|1
+op_lshift
+id|FACTOR_SHIFT
+c_func
+(paren
+id|FACTOR
+c_func
+(paren
+id|mddev
+)paren
+)paren
+)paren
+suffix:semicolon
 r_return
 id|sz
 suffix:semicolon
@@ -1243,6 +1266,12 @@ l_string|&quot;raid0&quot;
 comma
 id|raid0_map
 comma
+l_int|NULL
+comma
+multiline_comment|/* no special make_request */
+l_int|NULL
+comma
+multiline_comment|/* no special end_request */
 id|raid0_run
 comma
 id|raid0_stop
@@ -1253,6 +1282,18 @@ l_int|NULL
 comma
 multiline_comment|/* no ioctls */
 l_int|0
+comma
+l_int|NULL
+comma
+multiline_comment|/* no error_handler */
+l_int|NULL
+comma
+multiline_comment|/* hot_add_disk */
+l_int|NULL
+comma
+multiline_comment|/* hot_remove_disk */
+l_int|NULL
+multiline_comment|/* mark_spare */
 )brace
 suffix:semicolon
 macro_line|#ifndef MODULE

@@ -12,6 +12,10 @@ macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;&t;/* for fs functions */
 DECL|macro|NFS_MAX_AGE
 mdefine_line|#define NFS_MAX_AGE 10*HZ&t;/* max age for dentry validation */
+macro_line|#ifndef shrink_dcache_parent
+DECL|macro|shrink_dcache_parent
+mdefine_line|#define shrink_dcache_parent(dentry) shrink_dcache_sb((dentry)-&gt;d_sb)
+macro_line|#endif
 multiline_comment|/* needed by smbfs as well ... move to dcache? */
 r_extern
 r_void
@@ -20,16 +24,6 @@ c_func
 (paren
 r_struct
 id|dentry
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|nfs_invalidate_dircache_sb
-c_func
-(paren
-r_struct
-id|super_block
 op_star
 )paren
 suffix:semicolon
@@ -2674,13 +2668,12 @@ l_int|1
 )paren
 (brace
 multiline_comment|/* Attempt to shrink child dentries ... */
-id|shrink_dcache_sb
+id|shrink_dcache_parent
 c_func
 (paren
-id|dentry-&gt;d_sb
+id|dentry
 )paren
 suffix:semicolon
-multiline_comment|/* Arghhh */
 r_if
 c_cond
 (paren
@@ -3345,6 +3338,48 @@ comma
 id|dentry-&gt;d_name.name
 )paren
 suffix:semicolon
+macro_line|#ifdef NFS_PARANOIA
+r_if
+c_cond
+(paren
+id|dentry-&gt;d_count
+OG
+l_int|1
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_safe_remove: %s/%s busy after delete?? d_count=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|dentry-&gt;d_count
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode
+op_logical_and
+id|inode-&gt;i_count
+OG
+l_int|1
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_safe_remove: %s/%s inode busy?? i_count=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|inode-&gt;i_count
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4065,13 +4100,12 @@ id|old_dentry-&gt;d_count
 OG
 l_int|1
 )paren
-id|shrink_dcache_sb
+id|shrink_dcache_parent
 c_func
 (paren
-id|old_dentry-&gt;d_sb
+id|old_dentry
 )paren
 suffix:semicolon
-multiline_comment|/* Arghhh */
 multiline_comment|/*&n;&t; * Now check the use counts ... we can&squot;t safely do the&n;&t; * rename unless we can drop the dentries first.&n;&t; */
 r_if
 c_cond

@@ -82,6 +82,9 @@ id|bh
 )paren
 suffix:semicolon
 )brace
+DECL|function|unlock_buffer
+r_extern
+r_inline
 r_void
 id|unlock_buffer
 c_func
@@ -89,8 +92,26 @@ c_func
 r_struct
 id|buffer_head
 op_star
+id|bh
+)paren
+(brace
+id|clear_bit
+c_func
+(paren
+id|BH_Lock
+comma
+op_amp
+id|bh-&gt;b_state
 )paren
 suffix:semicolon
+id|wake_up
+c_func
+(paren
+op_amp
+id|bh-&gt;b_wait
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * super-block locking. Again, interrupts may only unlock&n; * a super-block (although even this isn&squot;t done right now.&n; * nfs may need it).&n; */
 r_extern
 r_void

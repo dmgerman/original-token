@@ -3,7 +3,8 @@ multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * 
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;gus_hw.h&quot;
-macro_line|#if defined(CONFIG_GUSHW) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_GUSHW
+macro_line|#ifdef CONFIG_MIDI
 DECL|variable|midi_busy
 DECL|variable|input_opened
 r_static
@@ -849,5 +850,6 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif
 eof

@@ -1,7 +1,7 @@
 multiline_comment|/*&n; * sound/pas2_card.c&n; *&n; * Detection routine for the Pro Audio Spectrum cards.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_PAS)
+macro_line|#ifdef CONFIG_PAS
 DECL|variable|dma_bits
 r_static
 r_int
@@ -140,6 +140,8 @@ multiline_comment|/*&n; * The Address Translation code is used to convert I/O re
 DECL|variable|translate_code
 r_int
 id|translate_code
+op_assign
+l_int|0
 suffix:semicolon
 DECL|variable|pas_intr_mask
 r_static
@@ -165,6 +167,8 @@ suffix:semicolon
 DECL|variable|pas_model
 r_char
 id|pas_model
+op_assign
+l_int|0
 suffix:semicolon
 DECL|variable|pas_model_names
 r_static

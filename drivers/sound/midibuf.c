@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|MIDIBUF_C
 mdefine_line|#define MIDIBUF_C
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_MIDI
 multiline_comment|/*&n; * Don&squot;t make MAX_QUEUE_SIZE larger than 4000&n; */
 DECL|macro|MAX_QUEUE_SIZE
 mdefine_line|#define MAX_QUEUE_SIZE&t;4000
@@ -209,10 +209,11 @@ r_while
 c_loop
 (paren
 op_logical_neg
-id|signal_pending
-c_func
 (paren
-id|current
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
 )paren
 op_logical_and
 id|midi_devs
@@ -1059,10 +1060,11 @@ r_while
 c_loop
 (paren
 op_logical_neg
-id|signal_pending
-c_func
 (paren
-id|current
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
 )paren
 op_logical_and
 id|DATA_AVAIL
@@ -1420,13 +1422,15 @@ op_complement
 id|WK_SLEEP
 suffix:semicolon
 )brace
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|signal_pending
-c_func
 (paren
-id|current
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
 )paren
 )paren
 (brace
@@ -1697,10 +1701,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|signal_pending
-c_func
 (paren
-id|current
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
 )paren
 )paren
 id|c

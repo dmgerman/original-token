@@ -1,6 +1,3 @@
-macro_line|#ifdef __alpha__
-macro_line|#else
-macro_line|#endif
 DECL|macro|ALLOW_SELECT
 mdefine_line|#define ALLOW_SELECT
 DECL|macro|NO_INLINE_ASM
@@ -10,15 +7,12 @@ mdefine_line|#define SHORT_BANNERS
 DECL|macro|MANUAL_PNP
 mdefine_line|#define MANUAL_PNP
 DECL|macro|DO_TIMINGS
-macro_line|#undef DO_TIMINGS
+macro_line|#undef  DO_TIMINGS
 macro_line|#ifdef MODULE
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#ifdef MODVERSIONS
-macro_line|#include &lt;linux/modversions.h&gt;
-macro_line|#endif
 macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt; 131328
 DECL|macro|LINUX21X
@@ -44,7 +38,6 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
-macro_line|#else
 macro_line|#endif
 macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;linux/soundcard.h&gt;

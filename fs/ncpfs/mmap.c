@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  mmap.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  mmap.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *  Modified 1997 Peter Waltenberg, Bill Hawes, David Woodhouse for 2.1 dcache&n; *&n; */
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -60,11 +60,18 @@ id|no_share
 )paren
 (brace
 r_struct
+id|dentry
+op_star
+id|dentry
+op_assign
+id|area-&gt;vm_dentry
+suffix:semicolon
+r_struct
 id|inode
 op_star
 id|inode
 op_assign
-id|area-&gt;vm_dentry-&gt;d_inode
+id|dentry-&gt;d_inode
 suffix:semicolon
 r_int
 r_int
@@ -84,8 +91,7 @@ suffix:semicolon
 r_int
 id|pos
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|fs
 suffix:semicolon
 id|page
@@ -422,6 +428,7 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;ncp_mmap: called&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -488,12 +495,6 @@ id|inode
 id|inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
-suffix:semicolon
-id|mark_inode_dirty
-c_func
-(paren
-id|inode
-)paren
 suffix:semicolon
 )brace
 id|vma-&gt;vm_dentry

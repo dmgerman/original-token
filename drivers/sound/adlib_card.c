@@ -2,7 +2,7 @@ multiline_comment|/*&n; * sound/adlib_card.c&n; *&n; * Detection routine for the
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_YM3812)
+macro_line|#ifdef CONFIG_YM3812
 r_void
 DECL|function|attach_adlib_card
 id|attach_adlib_card

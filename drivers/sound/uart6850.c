@@ -3,7 +3,8 @@ multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * 
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Mon Nov 22 22:38:35 MET 1993 marco@driq.home.usn.nl:&n; *      added 6850 support, used with COVOX SoundMaster II and custom cards.&n; */
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_UART6850) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_UART6850
+macro_line|#ifdef CONFIG_MIDI
 DECL|variable|uart6850_base
 r_static
 r_int
@@ -907,5 +908,6 @@ id|hw_config-&gt;irq
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif
 eof

@@ -2,7 +2,8 @@ multiline_comment|/*&n; * sound/pss.c&n; *&n; * The low level driver for the Per
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_PSS) &amp;&amp; defined(CONFIG_AUDIO)
+macro_line|#ifdef CONFIG_PSS
+macro_line|#ifdef CONFIG_AUDIO
 multiline_comment|/*&n; * PSS registers.&n; */
 DECL|macro|REG
 mdefine_line|#define REG(x)&t;(devc-&gt;base+x)
@@ -299,7 +300,7 @@ op_ne
 l_char|&squot;E&squot;
 )paren
 (brace
-multiline_comment|/* printk (&quot;No PSS signature detected at 0x%x (0x%x)&bslash;n&quot;, devc-&gt;base, id); */
+multiline_comment|/* printk( &quot;No PSS signature detected at 0x%x (0x%x)&bslash;n&quot;,  devc-&gt;base,  id); */
 r_return
 l_int|0
 suffix:semicolon
@@ -1192,7 +1193,7 @@ id|PSS_DATA
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* printk(&quot;&lt;PSS: microcode version %d.%d loaded&gt;&quot;, val/16, val % 16); */
+multiline_comment|/* printk( &quot;&lt;PSS: microcode version %d.%d loaded&gt;&quot;,  val/16,  val % 16); */
 )brace
 r_return
 l_int|1
@@ -1896,7 +1897,7 @@ r_int
 id|local
 )paren
 (brace
-multiline_comment|/* printk(&quot;PSS coproc ioctl %x %x %d&bslash;n&quot;, cmd, arg, local); */
+multiline_comment|/* printk( &quot;PSS coproc ioctl %x %x %d&bslash;n&quot;,  cmd,  arg,  local); */
 r_switch
 c_cond
 (paren
@@ -3408,5 +3409,6 @@ id|hw_config
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif
 eof

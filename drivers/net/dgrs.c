@@ -180,7 +180,7 @@ l_int|0xff
 )brace
 suffix:semicolon
 DECL|variable|dgrs_ipxnet
-r_int
+id|__u32
 id|dgrs_ipxnet
 op_assign
 op_minus
@@ -4826,7 +4826,7 @@ l_int|1
 suffix:semicolon
 DECL|variable|ipxnet
 r_static
-r_int
+id|__u32
 id|ipxnet
 op_assign
 op_minus

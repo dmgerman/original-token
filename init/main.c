@@ -581,6 +581,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|gdth_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|aic7xxx_setup
 c_func
 (paren
@@ -2043,6 +2057,14 @@ macro_line|#ifdef CONFIG_SCSI_AHA1542
 l_string|&quot;aha1542=&quot;
 comma
 id|aha1542_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_GDTH
+(brace
+l_string|&quot;gdth=&quot;
+comma
+id|gdth_setup
 )brace
 comma
 macro_line|#endif

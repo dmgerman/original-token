@@ -96,7 +96,7 @@ suffix:semicolon
 DECL|macro|MBUF_MAX
 mdefine_line|#define MBUF_MAX&t;10
 DECL|macro|BUFTEST
-mdefine_line|#define BUFTEST(dc) if (dc-&gt;m_ptr &gt;= MBUF_MAX || dc-&gt;m_ptr &lt; 0) &bslash;&n;&t;{printk(&quot;MPU: Invalid buffer pointer %d/%d, s=%d&bslash;n&quot;, dc-&gt;m_ptr, dc-&gt;m_left, dc-&gt;m_state);dc-&gt;m_ptr--;}
+mdefine_line|#define BUFTEST(dc) if (dc-&gt;m_ptr &gt;= MBUF_MAX || dc-&gt;m_ptr &lt; 0) &bslash;&n;&t;{printk( &quot;MPU: Invalid buffer pointer %d/%d, s=%d&bslash;n&quot;,  dc-&gt;m_ptr,  dc-&gt;m_left,  dc-&gt;m_state);dc-&gt;m_ptr--;}
 DECL|member|m_busy
 r_int
 id|m_busy
@@ -645,7 +645,7 @@ op_le
 l_int|0xef
 )paren
 (brace
-multiline_comment|/* printk(&quot;mpu time: %d &quot;, midic); */
+multiline_comment|/* printk( &quot;mpu time: %d &quot;,  midic); */
 id|devc-&gt;m_state
 op_assign
 id|ST_TIMED
@@ -695,7 +695,7 @@ l_int|8
 )paren
 multiline_comment|/* Data byte */
 (brace
-multiline_comment|/* printk(&quot;midi msg (running status) &quot;); */
+multiline_comment|/* printk( &quot;midi msg (running status) &quot;); */
 id|msg
 op_assign
 (paren
@@ -792,19 +792,19 @@ id|midic
 r_case
 l_int|0xf8
 suffix:colon
-multiline_comment|/* printk(&quot;NOP &quot;); */
+multiline_comment|/* printk( &quot;NOP &quot;); */
 r_break
 suffix:semicolon
 r_case
 l_int|0xf9
 suffix:colon
-multiline_comment|/* printk(&quot;meas end &quot;); */
+multiline_comment|/* printk( &quot;meas end &quot;); */
 r_break
 suffix:semicolon
 r_case
 l_int|0xfc
 suffix:colon
-multiline_comment|/* printk(&quot;data end &quot;); */
+multiline_comment|/* printk( &quot;data end &quot;); */
 r_break
 suffix:semicolon
 r_default
@@ -824,7 +824,7 @@ id|devc-&gt;last_status
 op_assign
 id|midic
 suffix:semicolon
-multiline_comment|/* printk (&quot;midi msg &quot;); */
+multiline_comment|/* printk( &quot;midi msg &quot;); */
 id|msg
 op_sub_assign
 l_int|8
@@ -934,7 +934,7 @@ suffix:semicolon
 r_case
 l_int|0xf6
 suffix:colon
-multiline_comment|/* printk(&quot;tune_request&bslash;n&quot;); */
+multiline_comment|/* printk( &quot;tune_request&bslash;n&quot;); */
 id|devc-&gt;m_state
 op_assign
 id|ST_INIT
@@ -1026,7 +1026,7 @@ suffix:semicolon
 r_case
 l_int|0xff
 suffix:colon
-multiline_comment|/* printk(&quot;midi hard reset&quot;); */
+multiline_comment|/* printk( &quot;midi hard reset&quot;); */
 id|devc-&gt;m_state
 op_assign
 id|ST_INIT
@@ -2135,7 +2135,7 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*       printk (&quot;MPU: No ACK to command (0x%x)&bslash;n&quot;, (int) cmd-&gt;cmd); */
+multiline_comment|/*       printk( &quot;MPU: No ACK to command (0x%x)&bslash;n&quot;,  (int) cmd-&gt;cmd); */
 r_return
 op_minus
 id|EIO
@@ -2306,7 +2306,7 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* printk (&quot;MPU: No response(%d) to command (0x%x)&bslash;n&quot;, i, (int) cmd-&gt;cmd);  */
+multiline_comment|/* printk( &quot;MPU: No response(%d) to command (0x%x)&bslash;n&quot;,  i,  (int) cmd-&gt;cmd);  */
 r_return
 op_minus
 id|EIO

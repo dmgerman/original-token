@@ -390,6 +390,20 @@ r_int
 id|recording
 )paren
 suffix:semicolon
+r_int
+id|dma_ioctl
+(paren
+r_int
+id|dev
+comma
+r_int
+r_int
+id|cmd
+comma
+id|caddr_t
+id|arg
+)paren
+suffix:semicolon
 multiline_comment|/*&n; *&t;System calls for the /dev/sequencer&n; */
 r_int
 id|sequencer_read
@@ -688,7 +702,7 @@ r_void
 suffix:semicolon
 multiline_comment|/*&n; *&n; *&t;Misc calls from various sources&n; */
 multiline_comment|/*&t;From soundcard.c&t;*/
-macro_line|#ifndef __bsdi__
+macro_line|#if !defined(__bsdi__) &amp;&amp; !defined(__NjetBSD__)
 r_void
 id|tenmicrosec
 c_func

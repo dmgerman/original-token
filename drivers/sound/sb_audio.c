@@ -2,7 +2,7 @@ multiline_comment|/*&n; * sound/sb_audio.c&n; *&n; * Audio routines for Sound Bl
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_SBDSP)
+macro_line|#ifdef CONFIG_SBDSP
 macro_line|#include &quot;sb_mixer.h&quot;
 macro_line|#include &quot;sb.h&quot;
 r_static
@@ -64,9 +64,18 @@ id|OPEN_READ
 (brace
 id|printk
 (paren
-l_string|&quot;SB: Recording is not possible with this device&bslash;n&quot;
+l_string|&quot;Notice: Recording is not possible with /dev/dsp%d&bslash;n&quot;
+comma
+id|dev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mode
+op_eq
+id|OPEN_READ
+)paren
 r_return
 op_minus
 id|EPERM
@@ -121,6 +130,11 @@ l_string|&quot;Sound Blaster 16 bit&quot;
 )paren
 )paren
 (brace
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
@@ -2148,7 +2162,24 @@ c_cond
 id|devc-&gt;model
 op_eq
 id|MDL_SBPRO
+op_logical_and
+id|devc-&gt;channels
+op_eq
+l_int|2
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|devc-&gt;speed
+OG
+l_int|22050
+)paren
+id|printk
+(paren
+l_string|&quot;OSS: Application error. Wrong ioctl call order.&bslash;n&quot;
+)paren
+suffix:semicolon
 id|sbpro_audio_set_speed
 (paren
 id|dev
@@ -2156,6 +2187,7 @@ comma
 id|devc-&gt;speed
 )paren
 suffix:semicolon
+)brace
 )brace
 r_return
 id|devc-&gt;channels

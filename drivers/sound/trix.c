@@ -3,7 +3,7 @@ multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * 
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sb.h&quot;
-macro_line|#if defined(CONFIG_TRIX)
+macro_line|#ifdef CONFIG_TRIX
 macro_line|#ifdef INCLUDE_TRIX_BOOT
 macro_line|#include &quot;trix_boot.h&quot;
 macro_line|#else
@@ -627,7 +627,7 @@ l_int|0x80
 (brace
 id|printk
 (paren
-l_string|&quot;AudioTrix: Can&squot;t use DMA0 with a 8 bit card&bslash;n&quot;
+l_string|&quot;AudioTrix: Can&squot;t use DMA0 with a 8 bit card slot&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -657,7 +657,7 @@ l_int|0x80
 (brace
 id|printk
 (paren
-l_string|&quot;AudioTrix: Can&squot;t use IRQ%d with a 8 bit card&bslash;n&quot;
+l_string|&quot;AudioTrix: Can&squot;t use IRQ%d with a 8 bit card slot&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
 )paren

@@ -44,35 +44,39 @@ mdefine_line|#define OPT_CS4232&t;13
 DECL|macro|OPT_MAUI
 mdefine_line|#define OPT_MAUI&t;14
 DECL|macro|OPT_SPNP
-mdefine_line|#define OPT_SPNP&t;&t;15
+mdefine_line|#define OPT_SPNP&t;15
+DECL|macro|OPT_OPL3SA1
+mdefine_line|#define OPT_OPL3SA1&t;16
+DECL|macro|OPT_SOFTOSS
+mdefine_line|#define OPT_SOFTOSS&t;17
 DECL|macro|OPT_HIGHLEVEL
-mdefine_line|#define OPT_HIGHLEVEL   16&t;/* This must be same than the next one */
+mdefine_line|#define OPT_HIGHLEVEL   18&t;/* This must be same than the next one */
 DECL|macro|OPT_UNUSED1
-mdefine_line|#define OPT_UNUSED1&t;16
+mdefine_line|#define OPT_UNUSED1&t;18
 DECL|macro|OPT_UNUSED2
-mdefine_line|#define OPT_UNUSED2&t;17
+mdefine_line|#define OPT_UNUSED2&t;19
 DECL|macro|OPT_AEDSP16
-mdefine_line|#define OPT_AEDSP16     18
+mdefine_line|#define OPT_AEDSP16     20
 DECL|macro|OPT_UNUSED3
-mdefine_line|#define OPT_UNUSED3&t;19
+mdefine_line|#define OPT_UNUSED3&t;21
 DECL|macro|OPT_UNUSED4
-mdefine_line|#define OPT_UNUSED4&t;20
+mdefine_line|#define OPT_UNUSED4&t;22
 DECL|macro|OPT_UNUSED5
-mdefine_line|#define OPT_UNUSED5&t;21
+mdefine_line|#define OPT_UNUSED5&t;23
 DECL|macro|OPT_YM3812_AUTO
-mdefine_line|#define OPT_YM3812_AUTO&t;22
+mdefine_line|#define OPT_YM3812_AUTO&t;24
 DECL|macro|OPT_YM3812
-mdefine_line|#define OPT_YM3812&t;23
+mdefine_line|#define OPT_YM3812&t;25
 DECL|macro|OPT_LAST
-mdefine_line|#define OPT_LAST&t;23&t;/* Last defined OPT number */
+mdefine_line|#define OPT_LAST&t;25&t;/* Last defined OPT number */
 DECL|macro|DUMMY_OPTS
 mdefine_line|#define DUMMY_OPTS (B(OPT_YM3812_AUTO))
 DECL|macro|ANY_DEVS
-mdefine_line|#define ANY_DEVS (B(OPT_SB)|B(OPT_PAS)|B(OPT_GUS)| &bslash;&n;&t;&t;  B(OPT_MPU401)|B(OPT_PSS)|B(OPT_GUS16)|B(OPT_GUSMAX)| &bslash;&n;&t;&t;  B(OPT_MSS)|B(OPT_SSCAPE)|B(OPT_UART6850)|B(OPT_TRIX)| &bslash;&n;&t;&t;  B(OPT_MAD16)|B(OPT_CS4232)|B(OPT_MAUI)|B(OPT_ADLIB)| &bslash;&n;&t;&t;  B(OPT_SPNP))
+mdefine_line|#define ANY_DEVS (B(OPT_SB)|B(OPT_PAS)|B(OPT_GUS)| &bslash;&n;&t;&t;  B(OPT_MPU401)|B(OPT_PSS)|B(OPT_GUS16)|B(OPT_GUSMAX)| &bslash;&n;&t;&t;  B(OPT_MSS)|B(OPT_SSCAPE)|B(OPT_UART6850)|B(OPT_TRIX)| &bslash;&n;&t;&t;  B(OPT_MAD16)|B(OPT_CS4232)|B(OPT_MAUI)|B(OPT_ADLIB)| &bslash;&n;&t;&t;  B(OPT_SPNP)|B(OPT_OPL3SA1)|B(OPT_SOFTOSS))
 DECL|macro|MPU_DEVS
 mdefine_line|#define MPU_DEVS (B(OPT_PSS)|&bslash;&n;&t;&t;  B(OPT_CS4232)|B(OPT_SPNP)|B(OPT_MAUI)|B(OPT_SSCAPE))
 DECL|macro|UART401_DEVS
-mdefine_line|#define UART401_DEVS (SBDSP_DEVS|B(OPT_TRIX)|B(OPT_MAD16)|B(OPT_SPNP))
+mdefine_line|#define UART401_DEVS (SBDSP_DEVS|B(OPT_TRIX)|B(OPT_MAD16)|B(OPT_SPNP)|&bslash;&n;&t;&t;  B(OPT_OPL3SA1))
 DECL|macro|NON_AUDIO_CARDS
 mdefine_line|#define NON_AUDIO_CARDS (B(OPT_ADLIB)|B(OPT_MPU401)|B(OPT_UART6850)|B(OPT_MAUI))
 DECL|macro|AUDIO_CARDS
@@ -80,7 +84,7 @@ mdefine_line|#define AUDIO_CARDS (ANY_DEVS &amp; ~NON_AUDIO_CARDS)
 DECL|macro|MIDI_CARDS
 mdefine_line|#define MIDI_CARDS (ANY_DEVS &amp; ~(B(OPT_ADLIB)|B(OPT_MSS)))
 DECL|macro|AD1848_DEVS
-mdefine_line|#define AD1848_DEVS (B(OPT_GUS16)|B(OPT_MSS)|B(OPT_PSS)|B(OPT_GUSMAX)|&bslash;&n;&t;&t;     B(OPT_SSCAPE)|B(OPT_TRIX)|B(OPT_MAD16)|B(OPT_CS4232)|&bslash;&n;&t;&t;     B(OPT_SPNP))
+mdefine_line|#define AD1848_DEVS (B(OPT_GUS16)|B(OPT_MSS)|B(OPT_PSS)|B(OPT_GUSMAX)|&bslash;&n;&t;&t;     B(OPT_SSCAPE)|B(OPT_TRIX)|B(OPT_MAD16)|B(OPT_CS4232)|&bslash;&n;&t;&t;     B(OPT_SPNP)|B(OPT_OPL3SA1))
 DECL|macro|SBDSP_DEVS
 mdefine_line|#define SBDSP_DEVS (B(OPT_SB)|B(OPT_SPNP)|B(OPT_MAD16)|B(OPT_TRIX))
 DECL|macro|SEQUENCER_DEVS
@@ -373,6 +377,34 @@ l_int|0
 )brace
 comma
 (brace
+l_int|0
+comma
+l_int|0
+comma
+l_string|&quot;OPL3SA1&quot;
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_string|&quot;SOFTOSS&quot;
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+(brace
 id|B
 (paren
 id|OPT_SB
@@ -589,13 +621,17 @@ l_string|&quot;Ensoniq SoundScape support&quot;
 comma
 l_string|&quot;MediaTrix AudioTrix Pro support&quot;
 comma
-l_string|&quot;Support for MAD16 and/or Mozart based cards&quot;
+l_string|&quot;Support for OPTi MAD16 and/or Mozart based cards&quot;
 comma
 l_string|&quot;Support for Crystal CS4232 based (PnP) cards&quot;
 comma
 l_string|&quot;Support for Turtle Beach Wave Front (Maui, Tropez) synthesizers&quot;
 comma
 l_string|&quot;Support for PnP sound cards (_EXPERIMENTAL_)&quot;
+comma
+l_string|&quot;Yamaha OPL3-SA1 audio controller&quot;
+comma
+l_string|&quot;SoftOSS software wave table engine&quot;
 comma
 l_string|&quot;*** Unused option 1 ***&quot;
 comma
@@ -687,6 +723,10 @@ comma
 l_string|&quot;Use this option to enable experimental support for cards that&bslash;n&quot;
 l_string|&quot;use the Plug and Play protocol.&bslash;n&quot;
 comma
+l_string|&quot;Use this option with Yamaha OPL3-SA1 (YMF701) chip.&bslash;n&quot;
+comma
+l_string|&quot;SoftOSS is a virtual wave table engine by 4Front Technologies. It can&bslash;n&quot;
+l_string|&quot;be used together with any 16 bit stereo soundcard.&bslash;n&quot;
 l_string|&quot;Enable this option if your card is a Sound Blaster Pro or&bslash;n&quot;
 l_string|&quot;Sound Blaster 16. It also works with many Sound Blaster Pro clones.&bslash;n&quot;
 comma
@@ -3769,7 +3809,7 @@ id|B
 id|OPT_TRIX
 )paren
 comma
-l_string|&quot;ERROR! You have to use old sound configuration method with AudioTrix.&quot;
+l_string|&quot;ERROR! You have to use old sound configuration method with OPL3-SA1.&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -3781,7 +3821,7 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_BASE&quot;
 comma
-l_string|&quot;AudioTrix audio I/O base&quot;
+l_string|&quot;OPL3-SA1 audio I/O base&quot;
 comma
 id|FMT_HEX
 comma
@@ -3799,7 +3839,7 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_IRQ&quot;
 comma
-l_string|&quot;AudioTrix audio IRQ&quot;
+l_string|&quot;OPL3-SA1 audio IRQ&quot;
 comma
 id|FMT_INT
 comma
@@ -3817,7 +3857,7 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_DMA&quot;
 comma
-l_string|&quot;AudioTrix audio DMA&quot;
+l_string|&quot;OPL3-SA1 audio DMA&quot;
 comma
 id|FMT_INT
 comma
@@ -3835,7 +3875,7 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_DMA2&quot;
 comma
-l_string|&quot;AudioTrix second (duplex) DMA&quot;
+l_string|&quot;OPL3-SA1 second (duplex) DMA&quot;
 comma
 id|FMT_INT
 comma
@@ -3853,7 +3893,7 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_MPU_BASE&quot;
 comma
-l_string|&quot;AudioTrix MIDI I/O base&quot;
+l_string|&quot;OPL3-SA1 MIDI I/O base&quot;
 comma
 id|FMT_HEX
 comma
@@ -3871,7 +3911,7 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_MPU_IRQ&quot;
 comma
-l_string|&quot;AudioTrix MIDI IRQ&quot;
+l_string|&quot;OPL3-SA1 MIDI IRQ&quot;
 comma
 id|FMT_INT
 comma
@@ -3889,7 +3929,7 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_SB_BASE&quot;
 comma
-l_string|&quot;AudioTrix SB I/O base&quot;
+l_string|&quot;OPL3-SA1 SB I/O base&quot;
 comma
 id|FMT_HEX
 comma
@@ -3907,7 +3947,7 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_SB_IRQ&quot;
 comma
-l_string|&quot;AudioTrix SB IRQ&quot;
+l_string|&quot;OPL3-SA1 SB IRQ&quot;
 comma
 id|FMT_INT
 comma
@@ -3925,13 +3965,121 @@ id|OPT_TRIX
 comma
 l_string|&quot;TRIX_SB_DMA&quot;
 comma
-l_string|&quot;AudioTrix SB DMA&quot;
+l_string|&quot;OPL3-SA1 SB DMA&quot;
 comma
 id|FMT_INT
 comma
 l_int|1
 comma
 l_string|&quot;1 or 3&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_OPL3SA1
+)paren
+comma
+l_string|&quot;OPL3SA1_BASE&quot;
+comma
+l_string|&quot;OPL3-SA1 audio I/O base&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x530
+comma
+l_string|&quot;530, 604, E80 or F40&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_OPL3SA1
+)paren
+comma
+l_string|&quot;OPL3SA1_IRQ&quot;
+comma
+l_string|&quot;OPL3-SA1 audio IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|11
+comma
+l_string|&quot;7, 9, 10 or 11&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_OPL3SA1
+)paren
+comma
+l_string|&quot;OPL3SA1_DMA&quot;
+comma
+l_string|&quot;OPL3-SA1 audio DMA&quot;
+comma
+id|FMT_INT
+comma
+l_int|0
+comma
+l_string|&quot;0, 1 or 3&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_OPL3SA1
+)paren
+comma
+l_string|&quot;OPL3SA1_DMA2&quot;
+comma
+l_string|&quot;OPL3-SA1 second (duplex) DMA&quot;
+comma
+id|FMT_INT
+comma
+l_int|3
+comma
+l_string|&quot;0, 1 or 3&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_OPL3SA1
+)paren
+comma
+l_string|&quot;OPL3SA1_MPU_BASE&quot;
+comma
+l_string|&quot;OPL3-SA1 MIDI I/O base&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x330
+comma
+l_string|&quot;330, 370, 3B0 or 3F0&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_OPL3SA1
+)paren
+comma
+l_string|&quot;OPL3SA1_MPU_IRQ&quot;
+comma
+l_string|&quot;OPL3-SA1 MIDI IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|9
+comma
+l_string|&quot;3, 4, 5, 7 or 9&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -4148,6 +4296,42 @@ comma
 l_int|9
 comma
 l_string|&quot;5, 7, 9 or 10&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_SOFTOSS
+)paren
+comma
+l_string|&quot;SOFTOSS_RATE&quot;
+comma
+l_string|&quot;Sampling rate for SoftOSS&quot;
+comma
+id|FMT_INT
+comma
+l_int|22050
+comma
+l_string|&quot;8000 to 48000&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_SOFTOSS
+)paren
+comma
+l_string|&quot;SOFTOSS_VOICES&quot;
+comma
+l_string|&quot;Max # of concurrent voices for SoftOSS&quot;
+comma
+id|FMT_INT
+comma
+l_int|32
+comma
+l_string|&quot;4 to 32&quot;
 )paren
 suffix:semicolon
 )brace

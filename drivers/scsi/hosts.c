@@ -135,6 +135,18 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_MAC53C94
 macro_line|#include &quot;mac53c94.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_GDTH
+macro_line|#include &quot;gdth.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_PCI2000
+macro_line|#include &quot;pci2000.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_PCI2220I
+macro_line|#include &quot;pci2220i.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_PSI240I
+macro_line|#include &quot;psi240i.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG
 macro_line|#include &quot;scsi_debug.h&quot;
 macro_line|#endif
@@ -185,6 +197,18 @@ macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_ADVANSYS
 id|ADVANSYS
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_PCI2000
+id|PCI2000
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_PCI2220I
+id|PCI2220I
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_PSI240I
+id|PSI240I
 comma
 macro_line|#endif
 multiline_comment|/* BusLogic must come before aha1542.c */
@@ -298,6 +322,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_SUNESP
 id|SCSI_SPARC_ESP
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_GDTH
+id|GDTH
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_QLOGICPTI

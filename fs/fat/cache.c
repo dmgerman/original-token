@@ -1244,7 +1244,9 @@ id|d_clu
 id|printk
 c_func
 (paren
-l_string|&quot;FAT cache corruption&quot;
+l_string|&quot;FAT cache corruption inode=%ld&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
 )paren
 suffix:semicolon
 id|fat_cache_inval_inode

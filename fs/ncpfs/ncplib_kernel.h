@@ -1,11 +1,8 @@
-multiline_comment|/*&n; *  ncplib_kernel.h&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *  Modified for big endian by J.F. Chadima and David S. Miller&n; *&n; */
+multiline_comment|/*&n; *  ncplib_kernel.h&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *  Modified for big endian by J.F. Chadima and David S. Miller&n; *  Modified 1997 Peter Waltenberg, Bill Hawes, David Woodhouse for 2.1 dcache&n; *&n; */
 macro_line|#ifndef _NCPLIB_H
 DECL|macro|_NCPLIB_H
 mdefine_line|#define _NCPLIB_H
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/ncp.h&gt;
-macro_line|#include &lt;linux/ncp_fs.h&gt;
-macro_line|#include &lt;linux/ncp_fs_sb.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -16,6 +13,8 @@ macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#include &lt;asm/string.h&gt;
 macro_line|#include &lt;linux/ncp.h&gt;
+macro_line|#include &lt;linux/ncp_fs.h&gt;
+macro_line|#include &lt;linux/ncp_fs_sb.h&gt;
 r_int
 id|ncp_negotiate_buffersize
 c_func
@@ -23,14 +22,11 @@ c_func
 r_struct
 id|ncp_server
 op_star
-id|server
 comma
 r_int
-id|size
 comma
 r_int
 op_star
-id|target
 )paren
 suffix:semicolon
 r_int
@@ -40,15 +36,12 @@ c_func
 r_struct
 id|ncp_server
 op_star
-id|server
 comma
 r_int
-id|n
 comma
 r_struct
 id|ncp_volume_info
 op_star
-id|target
 )paren
 suffix:semicolon
 r_int
@@ -58,12 +51,10 @@ c_func
 r_struct
 id|ncp_server
 op_star
-id|server
 comma
 r_const
 r_char
 op_star
-id|file_id
 )paren
 suffix:semicolon
 r_int
@@ -73,26 +64,20 @@ c_func
 r_struct
 id|ncp_server
 op_star
-id|server
 comma
 r_const
 r_char
 op_star
-id|file_id
 comma
 id|__u32
-id|offset
 comma
 id|__u16
-id|to_read
 comma
 r_char
 op_star
-id|target
 comma
 r_int
 op_star
-id|bytes_read
 )paren
 suffix:semicolon
 r_int
@@ -102,27 +87,21 @@ c_func
 r_struct
 id|ncp_server
 op_star
-id|server
 comma
 r_const
 r_char
 op_star
-id|file_id
 comma
 id|__u32
-id|offset
 comma
 id|__u16
-id|to_write
 comma
 r_const
 r_char
 op_star
-id|source
 comma
 r_int
 op_star
-id|bytes_written
 )paren
 suffix:semicolon
 r_int
@@ -134,17 +113,13 @@ id|ncp_server
 op_star
 id|server
 comma
-id|__u8
-id|vol_num
-comma
-id|__u32
-id|dir_base
+r_struct
+id|inode
+op_star
 comma
 r_char
 op_star
-id|path
 comma
-multiline_comment|/* At most 1 component */
 r_struct
 id|nw_info_struct
 op_star
@@ -158,16 +133,13 @@ c_func
 r_struct
 id|ncp_server
 op_star
-id|server
 comma
 r_char
 op_star
-id|volname
 comma
 r_struct
 id|nw_info_struct
 op_star
-id|target
 )paren
 suffix:semicolon
 r_int
@@ -177,15 +149,12 @@ c_func
 r_struct
 id|ncp_server
 op_star
-id|server
 comma
 r_struct
-id|nw_info_struct
+id|inode
 op_star
-id|file
 comma
 id|__u32
-id|info_mask
 comma
 r_struct
 id|nw_modify_dos_info
@@ -200,16 +169,13 @@ c_func
 r_struct
 id|ncp_server
 op_star
-id|server
 comma
 r_struct
-id|nw_info_struct
+id|inode
 op_star
-id|dir
 comma
 r_char
 op_star
-id|name
 )paren
 suffix:semicolon
 r_int
@@ -219,30 +185,23 @@ c_func
 r_struct
 id|ncp_server
 op_star
-id|server
 comma
 r_struct
-id|nw_info_struct
+id|inode
 op_star
-id|dir
 comma
 r_char
 op_star
-id|name
 comma
 r_int
-id|open_create_mode
 comma
 id|__u32
-id|create_attributes
 comma
 r_int
-id|desired_acc_rights
 comma
 r_struct
 id|nw_file_info
 op_star
-id|target
 )paren
 suffix:semicolon
 r_int
@@ -252,12 +211,10 @@ c_func
 r_struct
 id|ncp_server
 op_star
-id|server
 comma
 r_struct
-id|nw_info_struct
+id|inode
 op_star
-id|dir
 comma
 r_struct
 id|nw_search_sequence
@@ -295,22 +252,18 @@ op_star
 id|server
 comma
 r_struct
-id|nw_info_struct
+id|inode
 op_star
-id|old_dir
 comma
 r_char
 op_star
-id|old_name
 comma
 r_struct
-id|nw_info_struct
+id|inode
 op_star
-id|new_dir
 comma
 r_char
 op_star
-id|new_name
 )paren
 suffix:semicolon
 macro_line|#endif /* _NCPLIB_H */

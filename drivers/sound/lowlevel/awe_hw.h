@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/awe_hw.h&n; *&n; * Access routines and definitions for the low level driver for the &n; * AWE32/Sound Blaster 32 wave table synth.&n; *   version 0.3.1; Jan. 21, 1997&n; *&n; * Copyright (C) 1996,1997 Takashi Iwai&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/*&n; * sound/awe_hw.h&n; *&n; * Access routines and definitions for the low level driver for the &n; * AWE32/Sound Blaster 32 wave table synth.&n; *   version 0.4.2; Sep. 1, 1997&n; *&n; * Copyright (C) 1996,1997 Takashi Iwai&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#ifndef AWE_HW_H_DEF
 DECL|macro|AWE_HW_H_DEF
 mdefine_line|#define AWE_HW_H_DEF
@@ -108,11 +108,15 @@ DECL|macro|AWE_NORMAL_VOICES
 mdefine_line|#define AWE_NORMAL_VOICES&t;30&t;/*30&amp;31 are reserved for DRAM refresh*/
 DECL|macro|AWE_MAX_CHANNELS
 mdefine_line|#define AWE_MAX_CHANNELS&t;32&t;/* max midi channels (must &gt;= voices) */
+DECL|macro|AWE_MAX_LAYERS
+mdefine_line|#define AWE_MAX_LAYERS&t;AWE_MAX_VOICES&t;/* maximum number of multiple layers */
 DECL|macro|AWE_DRAM_OFFSET
 mdefine_line|#define AWE_DRAM_OFFSET&t;&t;0x200000
 DECL|macro|AWE_MAX_DRAM_SIZE
 mdefine_line|#define AWE_MAX_DRAM_SIZE&t;(28 * 1024)&t;/* 28 MB is max onboard memory */
 DECL|macro|AWE_DEFAULT_ATTENUATION
 mdefine_line|#define AWE_DEFAULT_ATTENUATION&t;32&t;/* 12dB below */
+DECL|macro|AWE_DEFAULT_MOD_SENSE
+mdefine_line|#define AWE_DEFAULT_MOD_SENSE&t;18
 macro_line|#endif
 eof

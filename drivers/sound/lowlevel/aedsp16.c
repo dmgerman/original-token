@@ -22,7 +22,7 @@ DECL|macro|AEDSP16_INFO
 macro_line|#undef&t;AEDSP16_INFO  1&t;&t;/* Define this to enable info code      */
 macro_line|#if defined(AEDSP16_DEBUG)
 DECL|macro|DBG
-macro_line|# define DBG(x) printk x
+macro_line|# define DBG(x)  printk x
 macro_line|# if defined(AEDSP16_DEBUG_MORE)
 DECL|macro|DBG1
 macro_line|#  define DBG1(x) printk x

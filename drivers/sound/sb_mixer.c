@@ -2,7 +2,7 @@ multiline_comment|/*&n; * sound/sb_mixer.c&n; *&n; * The low level mixer driver 
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_SBDSP)
+macro_line|#ifdef CONFIG_SBDSP
 DECL|macro|__SB_MIXER_C__
 mdefine_line|#define __SB_MIXER_C__
 macro_line|#include &quot;sb.h&quot;
@@ -76,55 +76,7 @@ op_star
 id|devc
 )paren
 (brace
-multiline_comment|/*&n;   * Detect the mixer by changing parameters of two volume channels. If the&n;   * values read back match with the values written, the mixer is there (is&n;   * it?)&n;   */
-id|sb_setmixer
-(paren
-id|devc
-comma
-id|FM_VOL
-comma
-l_int|0xff
-)paren
-suffix:semicolon
-id|sb_setmixer
-(paren
-id|devc
-comma
-id|VOC_VOL
-comma
-l_int|0x33
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sb_getmixer
-(paren
-id|devc
-comma
-id|FM_VOL
-)paren
-op_ne
-l_int|0xff
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sb_getmixer
-(paren
-id|devc
-comma
-id|VOC_VOL
-)paren
-op_ne
-l_int|0x33
-)paren
-r_return
-l_int|0
-suffix:semicolon
+multiline_comment|/* Just trust the mixer is there */
 r_return
 l_int|1
 suffix:semicolon
@@ -1794,6 +1746,9 @@ id|devc-&gt;model
 (brace
 r_case
 id|MDL_SBPRO
+suffix:colon
+r_case
+id|MDL_AZTECH
 suffix:colon
 r_case
 id|MDL_JAZZ

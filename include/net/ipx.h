@@ -10,21 +10,18 @@ r_typedef
 r_struct
 (brace
 DECL|member|net
-r_int
-r_int
+id|__u32
 id|net
 suffix:semicolon
 DECL|member|node
-r_int
-r_char
+id|__u8
 id|node
 (braket
 id|IPX_NODE_LEN
 )braket
 suffix:semicolon
 DECL|member|sock
-r_int
-r_int
+id|__u16
 id|sock
 suffix:semicolon
 DECL|typedef|ipx_address
@@ -40,8 +37,7 @@ r_struct
 id|ipxhdr
 (brace
 DECL|member|ipx_checksum
-r_int
-r_int
+id|__u16
 id|ipx_checksum
 id|__attribute__
 (paren
@@ -53,8 +49,7 @@ suffix:semicolon
 DECL|macro|IPX_NO_CHECKSUM
 mdefine_line|#define IPX_NO_CHECKSUM&t;0xFFFF
 DECL|member|ipx_pktsize
-r_int
-r_int
+id|__u16
 id|ipx_pktsize
 id|__attribute__
 (paren
@@ -64,13 +59,11 @@ id|packed
 )paren
 suffix:semicolon
 DECL|member|ipx_tctrl
-r_int
-r_char
+id|__u8
 id|ipx_tctrl
 suffix:semicolon
 DECL|member|ipx_type
-r_int
-r_char
+id|__u8
 id|ipx_type
 suffix:semicolon
 DECL|macro|IPX_TYPE_UNKNOWN
@@ -147,8 +140,7 @@ id|ipx_interface
 (brace
 multiline_comment|/* IPX address */
 DECL|member|if_netnum
-r_int
-r_int
+id|__u32
 id|if_netnum
 suffix:semicolon
 DECL|member|if_node
@@ -220,8 +212,7 @@ r_struct
 id|ipx_route
 (brace
 DECL|member|ir_net
-r_int
-r_int
+id|__u32
 id|ir_net
 suffix:semicolon
 DECL|member|ir_intrfc

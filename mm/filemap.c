@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -1391,6 +1392,56 @@ mdefine_line|#define MAX_READAHEAD PageAlignSize(4096*18)
 DECL|macro|MIN_READAHEAD
 mdefine_line|#define MIN_READAHEAD PageAlignSize(4096*3)
 macro_line|#endif
+DECL|function|get_max_readahead
+r_static
+r_inline
+r_int
+id|get_max_readahead
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|inode-&gt;i_dev
+op_logical_or
+op_logical_neg
+id|max_readahead
+(braket
+id|MAJOR
+c_func
+(paren
+id|inode-&gt;i_dev
+)paren
+)braket
+)paren
+r_return
+id|MAX_READAHEAD
+suffix:semicolon
+r_return
+id|max_readahead
+(braket
+id|MAJOR
+c_func
+(paren
+id|inode-&gt;i_dev
+)paren
+)braket
+(braket
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_dev
+)paren
+)braket
+suffix:semicolon
+)brace
 DECL|function|generic_file_readahead
 r_static
 r_inline
@@ -1435,6 +1486,15 @@ suffix:semicolon
 r_int
 r_int
 id|raend
+suffix:semicolon
+r_int
+id|max_readahead
+op_assign
+id|get_max_readahead
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 id|raend
 op_assign
@@ -1659,11 +1719,11 @@ c_cond
 (paren
 id|filp-&gt;f_ramax
 OG
-id|MAX_READAHEAD
+id|max_readahead
 )paren
 id|filp-&gt;f_ramax
 op_assign
-id|MAX_READAHEAD
+id|max_readahead
 suffix:semicolon
 macro_line|#ifdef PROFILE_READAHEAD
 id|profile_readahead
@@ -1728,6 +1788,15 @@ id|page_cache
 suffix:semicolon
 r_int
 id|reada_ok
+suffix:semicolon
+r_int
+id|max_readahead
+op_assign
+id|get_max_readahead
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1891,11 +1960,11 @@ c_cond
 (paren
 id|filp-&gt;f_ramax
 OG
-id|MAX_READAHEAD
+id|max_readahead
 )paren
 id|filp-&gt;f_ramax
 op_assign
-id|MAX_READAHEAD
+id|max_readahead
 suffix:semicolon
 )brace
 r_for

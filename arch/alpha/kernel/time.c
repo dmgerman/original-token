@@ -36,12 +36,6 @@ suffix:semicolon
 multiline_comment|/*&n; * Shift amount by which scaled_ticks_per_cycle is scaled.  Shifting&n; * by 48 gives us 16 bits for HZ while keeping the accuracy good even&n; * for large CPU clock rates.&n; */
 DECL|macro|FIX_SHIFT
 mdefine_line|#define FIX_SHIFT&t;48
-DECL|variable|round_ticks
-r_static
-r_int
-r_int
-id|round_ticks
-suffix:semicolon
 multiline_comment|/* lump static variables together for more efficient access: */
 r_static
 r_struct
@@ -140,20 +134,43 @@ id|state.last_time
 op_assign
 id|now
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|hwrpb-&gt;cycle_freq
+)paren
+(brace
 id|nticks
 op_assign
-(paren
 (paren
 id|delta
 op_star
 id|state.scaled_ticks_per_cycle
-op_plus
-id|round_ticks
 )paren
 op_rshift
+(paren
 id|FIX_SHIFT
+op_minus
+l_int|1
 )paren
 suffix:semicolon
+id|nticks
+op_assign
+(paren
+id|nticks
+op_plus
+l_int|1
+)paren
+op_rshift
+l_int|1
+suffix:semicolon
+)brace
+r_else
+id|nticks
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* No way to estimate lost ticks if we don&squot;t know&n;&t;&t;&t;&t;&t;  the cycle frequency. */
 r_for
 c_loop
 (paren
@@ -396,6 +413,9 @@ suffix:semicolon
 multiline_comment|/* The Linux interpretation of the CMOS clock register contents:&n;&t; * When the Update-In-Progress (UIP) flag goes from 1 to 0, the&n;&t; * RTC registers show the second which has precisely just started.&n;&t; * Let&squot;s hope other operating systems interpret the RTC the same way.&n;&t; */
 multiline_comment|/* read RTC exactly on falling edge of update flag */
 multiline_comment|/* Wait for rise.... (may take up to 1 second) */
+r_do
+(brace
+)brace
 r_while
 c_loop
 (paren
@@ -413,14 +433,18 @@ id|RTC_UIP
 (brace
 suffix:semicolon
 )brace
-multiline_comment|/* Wait for fall.... */
+multiline_comment|/* Jay Estabook &lt;jestabro@amt.tay1.dec.com&gt;:&n; * Wait for the Update Done Interrupt bit (0x10) in reg C (12) to be set,&n; * which (hopefully) indicates that the update is really done.&n; */
+r_do
+(brace
+)brace
 r_while
 c_loop
 (paren
+op_logical_neg
 id|CMOS_READ
 c_func
 (paren
-id|RTC_FREQ_SELECT
+id|RTC_REG_C
 )paren
 op_amp
 id|RTC_UIP
@@ -428,12 +452,6 @@ id|RTC_UIP
 (brace
 suffix:semicolon
 )brace
-id|__delay
-c_func
-(paren
-l_int|1000000
-)paren
-suffix:semicolon
 id|sec
 op_assign
 id|CMOS_READ
@@ -612,6 +630,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|hwrpb-&gt;cycle_freq
+)paren
+(brace
 id|state.scaled_ticks_per_cycle
 op_assign
 (paren
@@ -626,20 +650,7 @@ id|FIX_SHIFT
 op_div
 id|hwrpb-&gt;cycle_freq
 suffix:semicolon
-id|round_ticks
-op_assign
-(paren
-r_int
-r_int
-)paren
-l_int|1
-op_lshift
-(paren
-id|FIX_SHIFT
-op_minus
-l_int|1
-)paren
-suffix:semicolon
+)brace
 id|state.last_rtc_update
 op_assign
 l_int|0

@@ -67,6 +67,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* set if Pentium(TM) with FP bug */
+DECL|variable|pentium_f00f_bug
+r_int
+id|pentium_f00f_bug
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* set if Pentium(TM) with F00F bug */
 DECL|variable|have_cpuid
 r_int
 id|have_cpuid
@@ -1595,6 +1602,7 @@ comma
 l_string|&quot;fdiv_bug&bslash;t: %s&bslash;n&quot;
 l_string|&quot;hlt_bug&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;sep_bug&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;pentium_f00f_bug&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;fpu&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;fpu_exception&bslash;t: %s&bslash;n&quot;
 l_string|&quot;cpuid&bslash;t&bslash;t: %s&bslash;n&quot;
@@ -1624,6 +1632,13 @@ suffix:colon
 l_string|&quot;yes&quot;
 comma
 id|sep_bug
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+id|pentium_f00f_bug
 ques
 c_cond
 l_string|&quot;yes&quot;

@@ -234,6 +234,18 @@ id|list_head
 id|d_lru
 suffix:semicolon
 multiline_comment|/* d_count = 0 LRU list */
+DECL|member|d_child
+r_struct
+id|list_head
+id|d_child
+suffix:semicolon
+multiline_comment|/* child of parent list */
+DECL|member|d_subdirs
+r_struct
+id|list_head
+id|d_subdirs
+suffix:semicolon
+multiline_comment|/* our children */
 DECL|member|d_name
 r_struct
 id|qstr
@@ -258,6 +270,12 @@ op_star
 id|d_sb
 suffix:semicolon
 multiline_comment|/* The root of the dentry tree */
+DECL|member|d_reftime
+r_int
+r_int
+id|d_reftime
+suffix:semicolon
+multiline_comment|/* last time referenced */
 )brace
 suffix:semicolon
 DECL|struct|dentry_operations
@@ -421,6 +439,16 @@ c_func
 (paren
 r_struct
 id|super_block
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|shrink_dcache_parent
+c_func
+(paren
+r_struct
+id|dentry
 op_star
 )paren
 suffix:semicolon

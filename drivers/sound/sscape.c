@@ -2,7 +2,7 @@ multiline_comment|/*&n; * sound/sscape.c&n; *&n; * Low level driver for Ensoniq 
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_SSCAPEHW)
+macro_line|#ifdef CONFIG_SSCAPEHW
 macro_line|#include &quot;coproc.h&quot;
 multiline_comment|/*&n; *    I/O ports&n; */
 DECL|macro|MIDI_DATA
@@ -628,53 +628,6 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|host_command1
-id|host_command1
-(paren
-r_struct
-id|sscape_info
-op_star
-id|devc
-comma
-r_int
-id|cmd
-)paren
-(brace
-r_int
-r_char
-id|buf
-(braket
-l_int|10
-)braket
-suffix:semicolon
-id|buf
-(braket
-l_int|0
-)braket
-op_assign
-(paren
-r_int
-r_char
-)paren
-(paren
-id|cmd
-op_amp
-l_int|0xff
-)paren
-suffix:semicolon
-r_return
-id|host_write
-(paren
-id|devc
-comma
-id|buf
-comma
-l_int|1
-)paren
-suffix:semicolon
-)brace
-r_static
-r_int
 DECL|function|host_command2
 id|host_command2
 (paren
@@ -865,7 +818,7 @@ op_ne
 id|CMD_ACK
 )paren
 (brace
-multiline_comment|/* printk (&quot;SNDSCAPE: Setting MT32 mode failed&bslash;n&quot;); */
+multiline_comment|/* printk( &quot;SNDSCAPE: Setting MT32 mode failed&bslash;n&quot;); */
 )brace
 id|host_close
 (paren
@@ -917,7 +870,7 @@ op_ne
 id|CMD_ACK
 )paren
 (brace
-multiline_comment|/* printk (&quot;SNDSCAPE: Setting control (%d) failed&bslash;n&quot;, ctrl); */
+multiline_comment|/* printk( &quot;SNDSCAPE: Setting control (%d) failed&bslash;n&quot;,  ctrl); */
 )brace
 id|host_close
 (paren

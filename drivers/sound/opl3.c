@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Major improvements to the FM handling 30AUG92 by Rob Hooft,&n; */
 multiline_comment|/*&n; * hooft@chem.ruu.nl&n; */
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_YM3812)
+macro_line|#ifdef CONFIG_YM3812
 macro_line|#include &quot;opl3.h&quot;
 DECL|macro|MAX_VOICE
 mdefine_line|#define MAX_VOICE&t;18
@@ -434,6 +434,11 @@ r_struct
 id|sbi_instrument
 id|ins
 suffix:semicolon
+id|printk
+(paren
+l_string|&quot;Warning: Obsolete ioctl(SNDCTL_FM_LOAD_INSTR) used. Fix the program.&bslash;n&quot;
+)paren
+suffix:semicolon
 id|memcpy
 (paren
 (paren
@@ -461,12 +466,6 @@ r_sizeof
 (paren
 id|ins
 )paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Warning: Obsolete ioctl(SNDCTL_FM_LOAD_INSTR) used. Fix the program.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if

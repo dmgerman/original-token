@@ -25,6 +25,7 @@ macro_line|#endif
 macro_line|#include &lt;linux/lockd/bind.h&gt;
 macro_line|#include &lt;linux/lockd/xdr.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/nls.h&gt;
 r_extern
 r_void
 id|device_setup

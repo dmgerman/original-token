@@ -240,6 +240,8 @@ DECL|macro|WK_SLEEP
 mdefine_line|#define WK_SLEEP&t;0x08
 DECL|macro|WK_SELECT
 mdefine_line|#define WK_SELECT&t;0x10
+DECL|macro|WK_ABORT
+mdefine_line|#define WK_ABORT&t;0x20
 DECL|macro|OPEN_READ
 mdefine_line|#define OPEN_READ&t;PCM_ENABLE_INPUT
 DECL|macro|OPEN_WRITE

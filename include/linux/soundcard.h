@@ -4,7 +4,7 @@ mdefine_line|#define SOUNDCARD_H
 multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1997&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
 multiline_comment|/*&n; * OSS interface version. With versions earlier than 3.6 this value is&n; * an integer with value less than 361. In versions 3.6 and later&n; * it&squot;s a six digit hexadecimal value. For example value&n; * of 0x030600 represents OSS version 3.6.0.&n; * Use ioctl(fd, OSS_GETVERSION, &amp;int) to get the version number of&n; * the currently active driver.&n; */
 DECL|macro|SOUND_VERSION
-mdefine_line|#define SOUND_VERSION&t;0x030800
+mdefine_line|#define SOUND_VERSION&t;0x030802
 DECL|macro|OPEN_SOUND_SYSTEM
 mdefine_line|#define OPEN_SOUND_SYSTEM
 multiline_comment|/* In Linux we need to be prepared for cross compiling */
@@ -145,7 +145,7 @@ mdefine_line|#define SNDCTL_SEQ_GETINCOUNT&t;&t;_SIOR (&squot;Q&squot;, 5, int)
 DECL|macro|SNDCTL_SEQ_PERCMODE
 mdefine_line|#define SNDCTL_SEQ_PERCMODE&t;&t;_SIOW (&squot;Q&squot;, 6, int)
 DECL|macro|SNDCTL_FM_LOAD_INSTR
-mdefine_line|#define SNDCTL_FM_LOAD_INSTR&t;&t;_SIOW (&squot;Q&squot;, 7, struct sbi_instrument)&t;/* Obsolete. Don&squot;t use. */
+mdefine_line|#define SNDCTL_FM_LOAD_INSTR&t;&t;_SIOW (&squot;Q&squot;, 7, struct sbi_instrument)&t;/* Obsolete. Don&squot;t use!!!!!! */
 DECL|macro|SNDCTL_SEQ_TESTMIDI
 mdefine_line|#define SNDCTL_SEQ_TESTMIDI&t;&t;_SIOW (&squot;Q&squot;, 8, int)
 DECL|macro|SNDCTL_SEQ_RESETSAMPLES
@@ -1215,7 +1215,7 @@ mdefine_line|#define SNDCTL_COPR_RCVMSG&t;      _SIOR (&squot;C&squot;,  9, copr
 multiline_comment|/*********************************************&n; * IOCTL commands for /dev/mixer&n; */
 multiline_comment|/* &n; * Mixer devices&n; *&n; * There can be up to 20 different analog mixer channels. The&n; * SOUND_MIXER_NRDEVICES gives the currently supported maximum. &n; * The SOUND_MIXER_READ_DEVMASK returns a bitmask which tells&n; * the devices supported by the particular mixer.&n; */
 DECL|macro|SOUND_MIXER_NRDEVICES
-mdefine_line|#define SOUND_MIXER_NRDEVICES&t;17
+mdefine_line|#define SOUND_MIXER_NRDEVICES&t;25
 DECL|macro|SOUND_MIXER_VOLUME
 mdefine_line|#define SOUND_MIXER_VOLUME&t;0
 DECL|macro|SOUND_MIXER_BASS
@@ -1251,6 +1251,22 @@ DECL|macro|SOUND_MIXER_LINE2
 mdefine_line|#define SOUND_MIXER_LINE2&t;15&t;/* Input source 2  (aux2) */
 DECL|macro|SOUND_MIXER_LINE3
 mdefine_line|#define SOUND_MIXER_LINE3&t;16&t;/* Input source 3  (line) */
+DECL|macro|SOUND_MIXER_DIGITAL1
+mdefine_line|#define SOUND_MIXER_DIGITAL1&t;17&t;/* Digital (input) 1 */
+DECL|macro|SOUND_MIXER_DIGITAL2
+mdefine_line|#define SOUND_MIXER_DIGITAL2&t;18&t;/* Digital (input) 2 */
+DECL|macro|SOUND_MIXER_DIGITAL3
+mdefine_line|#define SOUND_MIXER_DIGITAL3&t;19&t;/* Digital (input) 3 */
+DECL|macro|SOUND_MIXER_PHONEIN
+mdefine_line|#define SOUND_MIXER_PHONEIN&t;20&t;/* Phone input */
+DECL|macro|SOUND_MIXER_PHONEOUT
+mdefine_line|#define SOUND_MIXER_PHONEOUT&t;21&t;/* Phone output */
+DECL|macro|SOUND_MIXER_VIDEO
+mdefine_line|#define SOUND_MIXER_VIDEO&t;22&t;/* Video/TV (audio) in */
+DECL|macro|SOUND_MIXER_RADIO
+mdefine_line|#define SOUND_MIXER_RADIO&t;23&t;/* Radio in */
+DECL|macro|SOUND_MIXER_MONITOR
+mdefine_line|#define SOUND_MIXER_MONITOR&t;24&t;/* Monitor (usually mic) volume */
 multiline_comment|/* Some on/off settings (SOUND_SPECIAL_MIN - SOUND_SPECIAL_MAX) */
 multiline_comment|/* Not counted to SOUND_MIXER_NRDEVICES, but use the same number space */
 DECL|macro|SOUND_ONOFF_MIN
@@ -1268,9 +1284,9 @@ mdefine_line|#define SOUND_MIXER_MUTE&t;SOUND_MIXER_NONE
 DECL|macro|SOUND_MIXER_LOUD
 mdefine_line|#define SOUND_MIXER_LOUD&t;SOUND_MIXER_NONE
 DECL|macro|SOUND_DEVICE_LABELS
-mdefine_line|#define SOUND_DEVICE_LABELS&t;{&quot;Vol  &quot;, &quot;Bass &quot;, &quot;Trebl&quot;, &quot;Synth&quot;, &quot;Pcm  &quot;, &quot;Spkr &quot;, &quot;Line &quot;, &bslash;&n;&t;&t;&t;&t; &quot;Mic  &quot;, &quot;CD   &quot;, &quot;Mix  &quot;, &quot;Pcm2 &quot;, &quot;Rec  &quot;, &quot;IGain&quot;, &quot;OGain&quot;, &bslash;&n;&t;&t;&t;&t; &quot;Line1&quot;, &quot;Line2&quot;, &quot;Line3&quot;}
+mdefine_line|#define SOUND_DEVICE_LABELS&t;{&quot;Vol  &quot;, &quot;Bass &quot;, &quot;Trebl&quot;, &quot;Synth&quot;, &quot;Pcm  &quot;, &quot;Spkr &quot;, &quot;Line &quot;, &bslash;&n;&t;&t;&t;&t; &quot;Mic  &quot;, &quot;CD   &quot;, &quot;Mix  &quot;, &quot;Pcm2 &quot;, &quot;Rec  &quot;, &quot;IGain&quot;, &quot;OGain&quot;, &bslash;&n;&t;&t;&t;&t; &quot;Line1&quot;, &quot;Line2&quot;, &quot;Line3&quot;, &quot;Digital1&quot;, &quot;Digital2&quot;, &quot;Digital3&quot;, &bslash;&n;&t;&t;&t;&t; &quot;PhoneIn&quot;, &quot;PhoneOut&quot;, &quot;Video&quot;, &quot;Radio&quot;, &quot;Monitor&quot;}
 DECL|macro|SOUND_DEVICE_NAMES
-mdefine_line|#define SOUND_DEVICE_NAMES&t;{&quot;vol&quot;, &quot;bass&quot;, &quot;treble&quot;, &quot;synth&quot;, &quot;pcm&quot;, &quot;speaker&quot;, &quot;line&quot;, &bslash;&n;&t;&t;&t;&t; &quot;mic&quot;, &quot;cd&quot;, &quot;mix&quot;, &quot;pcm2&quot;, &quot;rec&quot;, &quot;igain&quot;, &quot;ogain&quot;, &bslash;&n;&t;&t;&t;&t; &quot;line1&quot;, &quot;line2&quot;, &quot;line3&quot;}
+mdefine_line|#define SOUND_DEVICE_NAMES&t;{&quot;vol&quot;, &quot;bass&quot;, &quot;treble&quot;, &quot;synth&quot;, &quot;pcm&quot;, &quot;speaker&quot;, &quot;line&quot;, &bslash;&n;&t;&t;&t;&t; &quot;mic&quot;, &quot;cd&quot;, &quot;mix&quot;, &quot;pcm2&quot;, &quot;rec&quot;, &quot;igain&quot;, &quot;ogain&quot;, &bslash;&n;&t;&t;&t;&t; &quot;line1&quot;, &quot;line2&quot;, &quot;line3&quot;, &quot;dig1&quot;, &quot;dig2&quot;, &quot;dig3&quot;, &bslash;&n;&t;&t;&t;&t; &quot;phin&quot;, &quot;phout&quot;, &quot;video&quot;, &quot;radio&quot;, &quot;monitor&quot;}
 multiline_comment|/*&t;Device bitmask identifiers&t;*/
 DECL|macro|SOUND_MIXER_RECSRC
 mdefine_line|#define SOUND_MIXER_RECSRC&t;0xff&t;/* Arg contains a bit for each recording source */
@@ -1319,6 +1335,22 @@ DECL|macro|SOUND_MASK_LINE2
 mdefine_line|#define SOUND_MASK_LINE2&t;(1 &lt;&lt; SOUND_MIXER_LINE2)
 DECL|macro|SOUND_MASK_LINE3
 mdefine_line|#define SOUND_MASK_LINE3&t;(1 &lt;&lt; SOUND_MIXER_LINE3)
+DECL|macro|SOUND_MASK_DIGITAL1
+mdefine_line|#define SOUND_MASK_DIGITAL1&t;(1 &lt;&lt; SOUND_MIXER_DIGITAL1)
+DECL|macro|SOUND_MASK_DIGITAL2
+mdefine_line|#define SOUND_MASK_DIGITAL2&t;(1 &lt;&lt; SOUND_MIXER_DIGITAL2)
+DECL|macro|SOUND_MASK_DIGITAL3
+mdefine_line|#define SOUND_MASK_DIGITAL3&t;(1 &lt;&lt; SOUND_MIXER_DIGITAL3)
+DECL|macro|SOUND_MASK_PHONEIN
+mdefine_line|#define SOUND_MASK_PHONEIN&t;(1 &lt;&lt; SOUND_MIXER_PHONEIN)
+DECL|macro|SOUND_MASK_PHONEOUT
+mdefine_line|#define SOUND_MASK_PHONEOUT&t;(1 &lt;&lt; SOUND_MIXER_PHONEOUT)
+DECL|macro|SOUND_MASK_RADIO
+mdefine_line|#define SOUND_MASK_RADIO&t;(1 &lt;&lt; SOUND_MIXER_RADIO)
+DECL|macro|SOUND_MASK_VIDEO
+mdefine_line|#define SOUND_MASK_VIDEO&t;(1 &lt;&lt; SOUND_MIXER_VIDEO)
+DECL|macro|SOUND_MASK_MONITOR
+mdefine_line|#define SOUND_MASK_MONITOR&t;(1 &lt;&lt; SOUND_MIXER_MONITOR)
 multiline_comment|/* Obsolete macros */
 DECL|macro|SOUND_MASK_MUTE
 mdefine_line|#define SOUND_MASK_MUTE&t;&t;(1 &lt;&lt; SOUND_MIXER_MUTE)

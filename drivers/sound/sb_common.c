@@ -2,7 +2,7 @@ multiline_comment|/*&n; * sound/sb_common.c&n; *&n; * Common routines for Sound 
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_SBDSP)
+macro_line|#ifdef CONFIG_SBDSP
 macro_line|#ifndef CONFIG_AUDIO
 macro_line|#error You will need to configure the sound driver with CONFIG_AUDIO option.
 macro_line|#endif
@@ -543,7 +543,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/* printk (&quot;Sound Blaster: Unexpected interrupt&bslash;n&quot;); */
+multiline_comment|/* printk( &quot;Sound Blaster: Unexpected interrupt&bslash;n&quot;); */
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Acknowledge interrupts &n; */
@@ -592,7 +592,7 @@ id|devc
 r_int
 id|loopc
 suffix:semicolon
-id|DDB
+id|DEB
 (paren
 id|printk
 (paren
@@ -720,7 +720,7 @@ l_int|0xc6
 )paren
 suffix:semicolon
 multiline_comment|/* Enable extended mode */
-id|DDB
+id|DEB
 (paren
 id|printk
 (paren
@@ -1525,6 +1525,190 @@ l_int|1
 suffix:semicolon
 )brace
 r_static
+r_void
+DECL|function|relocate_ess1688
+id|relocate_ess1688
+(paren
+id|sb_devc
+op_star
+id|devc
+)paren
+(brace
+r_int
+r_char
+id|bits
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|devc-&gt;base
+)paren
+(brace
+r_case
+l_int|0x220
+suffix:colon
+id|bits
+op_assign
+l_int|0x04
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x230
+suffix:colon
+id|bits
+op_assign
+l_int|0x05
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x240
+suffix:colon
+id|bits
+op_assign
+l_int|0x06
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x250
+suffix:colon
+id|bits
+op_assign
+l_int|0x07
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+r_return
+suffix:semicolon
+multiline_comment|/* Wrong port */
+)brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;Doing ESS1688 address selection&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * ES1688 supports two alternative ways for software address config.&n; * First try the so called Read-Sequence-Key method.&n; */
+multiline_comment|/* Reset the sequence logic */
+id|inb
+(paren
+l_int|0x229
+)paren
+suffix:semicolon
+id|inb
+(paren
+l_int|0x229
+)paren
+suffix:semicolon
+id|inb
+(paren
+l_int|0x229
+)paren
+suffix:semicolon
+multiline_comment|/* Perform the read sequence */
+id|inb
+(paren
+l_int|0x22b
+)paren
+suffix:semicolon
+id|inb
+(paren
+l_int|0x229
+)paren
+suffix:semicolon
+id|inb
+(paren
+l_int|0x22b
+)paren
+suffix:semicolon
+id|inb
+(paren
+l_int|0x229
+)paren
+suffix:semicolon
+id|inb
+(paren
+l_int|0x229
+)paren
+suffix:semicolon
+id|inb
+(paren
+l_int|0x22b
+)paren
+suffix:semicolon
+id|inb
+(paren
+l_int|0x229
+)paren
+suffix:semicolon
+multiline_comment|/* Select the base address by reading from it. Then probe using the port. */
+id|inb
+(paren
+id|devc-&gt;base
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sb_dsp_reset
+(paren
+id|devc
+)paren
+)paren
+multiline_comment|/* Bingo */
+r_return
+suffix:semicolon
+macro_line|#if 0&t;&t;&t;&t;/* This causes system lockups (Nokia 386/25 at least) */
+multiline_comment|/*&n; * The last resort is the system control register method.&n; */
+id|outb
+(paren
+(paren
+l_int|0x00
+)paren
+comma
+l_int|0xfb
+)paren
+suffix:semicolon
+multiline_comment|/* 0xFB is the unlock register */
+id|outb
+(paren
+(paren
+l_int|0x00
+)paren
+comma
+l_int|0xe0
+)paren
+suffix:semicolon
+multiline_comment|/* Select index 0 */
+id|outb
+(paren
+(paren
+id|bits
+)paren
+comma
+l_int|0xe1
+)paren
+suffix:semicolon
+multiline_comment|/* Write the config bits */
+id|outb
+(paren
+(paren
+l_int|0x00
+)paren
+comma
+l_int|0xf9
+)paren
+suffix:semicolon
+multiline_comment|/* 0xFB is the lock register */
+macro_line|#endif
+)brace
+r_static
 r_int
 DECL|function|ess_init
 id|ess_init
@@ -2183,6 +2367,28 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|devc-&gt;major
+op_eq
+l_int|0
+op_logical_and
+(paren
+id|devc-&gt;type
+op_eq
+id|MDL_ESS
+op_logical_or
+id|devc-&gt;type
+op_eq
+l_int|0
+)paren
+)paren
+id|relocate_ess1688
+(paren
+id|devc
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|sb_dsp_reset
 (paren
@@ -2405,9 +2611,6 @@ id|hw_config
 id|sb_devc
 op_star
 id|devc
-suffix:semicolon
-r_int
-id|n
 suffix:semicolon
 r_char
 id|name
@@ -2665,7 +2868,7 @@ l_string|&quot;This is a genuine SB Pro&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#if defined(__SMP__) || defined(__FreeBSD__)
 multiline_comment|/* Skip IRQ detection if SMP (doesn&squot;t work) */
 id|devc-&gt;irq_ok
 op_assign
@@ -2690,6 +2893,9 @@ l_int|1
 suffix:semicolon
 r_else
 (brace
+r_int
+id|n
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3018,21 +3224,26 @@ id|devc-&gt;minor
 op_ne
 l_int|1
 )paren
-multiline_comment|/* &quot;True&quot; SB Pro should have v3.1. */
+multiline_comment|/* &quot;True&quot; SB Pro should have v3.1 (rare ones may have 3.2). */
 (brace
 id|printk
 (paren
-l_string|&quot;This soundcard doesn&squot;t seem to be fully Sound Blaster Pro compatible.&bslash;n&quot;
+l_string|&quot;This soundcard may not be fully Sound Blaster Pro compatible.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;Almost certainly there is another way to configure OSS so that&bslash;n&quot;
+l_string|&quot;In many cases there is another way to configure OSS so that&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 (paren
 l_string|&quot;it works properly with OSS (for example in 16 bit mode).&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;Please ignore this message if you _really_ have a SB Pro.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -4620,6 +4831,7 @@ op_assign
 op_minus
 id|devc-&gt;irq
 suffix:semicolon
+macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_UART401)
 r_if
 c_cond
 (paren
@@ -4635,6 +4847,7 @@ comma
 id|hw_config
 )paren
 suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 r_case

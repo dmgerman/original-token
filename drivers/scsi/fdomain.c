@@ -761,6 +761,21 @@ comma
 l_int|1
 )brace
 comma
+(brace
+l_string|&quot;IBM F1 P264/32&quot;
+comma
+l_int|5
+comma
+l_int|14
+comma
+l_int|3
+comma
+op_minus
+l_int|1
+comma
+l_int|1
+)brace
+comma
 multiline_comment|/* This next signature may not be a 3.5 bios */
 (brace
 l_string|&quot;Future Domain Corp. V2.0108/18/93&quot;

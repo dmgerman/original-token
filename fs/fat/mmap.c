@@ -12,11 +12,7 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(2,1,0)
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#else
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Fill in the supplied page for mmap&n; */
 DECL|function|fat_file_mmap_nopage

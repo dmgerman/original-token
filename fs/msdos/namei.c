@@ -11,6 +11,9 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;../fat/msbuffer.h&quot;
+DECL|macro|MSDOS_PARANOIA
+mdefine_line|#define MSDOS_PARANOIA 1&t;
+multiline_comment|/* #define MSDOS_DEBUG 1 */
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(x)
 multiline_comment|/* MS-DOS &quot;device special files&quot; */
@@ -1370,6 +1373,7 @@ op_logical_neg
 id|dir
 )paren
 (brace
+multiline_comment|/* N.B. This test is bogus -- should never happen */
 id|d_add
 c_func
 (paren
@@ -1544,6 +1548,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+multiline_comment|/* N.B. Do we really want a negative? */
 r_return
 l_int|0
 suffix:semicolon
@@ -1608,18 +1613,11 @@ comma
 l_string|&quot;msdos_lookup: Can&squot;t happen&quot;
 )paren
 suffix:semicolon
-id|d_add
-c_func
-(paren
-id|dentry
-comma
-l_int|NULL
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ENOENT
 suffix:semicolon
+multiline_comment|/* N.B. Maybe ENOMEM is better? */
 )brace
 )brace
 id|PRINTK
@@ -2249,6 +2247,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|res
+)paren
 id|d_instantiate
 c_func
 (paren
@@ -2358,13 +2362,6 @@ op_star
 id|dir
 )paren
 (brace
-r_struct
-id|super_block
-op_star
-id|sb
-op_assign
-id|dir-&gt;i_sb
-suffix:semicolon
 id|loff_t
 id|pos
 suffix:semicolon
@@ -2378,16 +2375,10 @@ id|msdos_dir_entry
 op_star
 id|de
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dir-&gt;i_count
-OG
-l_int|1
-)paren
-r_return
-op_minus
-id|EBUSY
+r_int
+id|result
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2431,6 +2422,7 @@ OG
 op_minus
 l_int|1
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2462,18 +2454,14 @@ id|MSDOS_NAME
 )paren
 )paren
 (brace
-id|fat_brelse
-c_func
-(paren
-id|sb
-comma
-id|bh
-)paren
-suffix:semicolon
-r_return
+id|result
+op_assign
 op_minus
 id|ENOTEMPTY
 suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -2483,14 +2471,14 @@ id|bh
 id|fat_brelse
 c_func
 (paren
-id|sb
+id|dir-&gt;i_sb
 comma
 id|bh
 )paren
 suffix:semicolon
 )brace
 r_return
-l_int|0
+id|result
 suffix:semicolon
 )brace
 multiline_comment|/***** Remove a directory */
@@ -2510,6 +2498,13 @@ op_star
 id|dentry
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
 r_struct
 id|super_block
 op_star
@@ -2532,28 +2527,10 @@ id|msdos_dir_entry
 op_star
 id|de
 suffix:semicolon
-r_struct
-id|inode
-op_star
-id|inode
-suffix:semicolon
 id|bh
 op_assign
 l_int|NULL
 suffix:semicolon
-id|inode
-op_assign
-l_int|NULL
-suffix:semicolon
-id|res
-op_assign
-op_minus
-id|EPERM
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|res
 op_assign
 id|msdos_find
@@ -2574,16 +2551,16 @@ comma
 op_amp
 id|ino
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|res
 OL
 l_int|0
 )paren
 r_goto
 id|rmdir_done
-suffix:semicolon
-id|inode
-op_assign
-id|dentry-&gt;d_inode
 suffix:semicolon
 id|res
 op_assign
@@ -2603,11 +2580,6 @@ id|inode-&gt;i_mode
 r_goto
 id|rmdir_done
 suffix:semicolon
-id|res
-op_assign
-op_minus
-id|EBUSY
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2619,8 +2591,18 @@ id|dir
 op_eq
 id|inode
 )paren
-r_goto
-id|rmdir_done
+id|printk
+c_func
+(paren
+l_string|&quot;msdos_rmdir: impossible condition&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Prune any child dentries, then verify that&n;&t; * the directory is empty and not in use.&n;&t; */
+id|shrink_dcache_parent
+c_func
+(paren
+id|dentry
+)paren
 suffix:semicolon
 id|res
 op_assign
@@ -2638,6 +2620,37 @@ id|res
 r_goto
 id|rmdir_done
 suffix:semicolon
+id|res
+op_assign
+op_minus
+id|EBUSY
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dentry-&gt;d_count
+OG
+l_int|1
+)paren
+(brace
+macro_line|#ifdef MSDOS_DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;rename_diff_dir: %s/%s busy, d_count=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|dentry-&gt;d_count
+)paren
+suffix:semicolon
+macro_line|#endif
+r_goto
+id|rmdir_done
+suffix:semicolon
+)brace
 id|inode-&gt;i_nlink
 op_assign
 l_int|0
@@ -2665,6 +2678,13 @@ c_func
 id|dir
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Do the d_delete before any blocking operations.&n;&t; * We must make a negative dentry, as the FAT code&n;&t; * apparently relies on the inode being iput().&n;&t; */
+id|d_delete
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
 id|de-&gt;name
 (braket
 l_int|0
@@ -2680,12 +2700,6 @@ comma
 id|bh
 comma
 l_int|1
-)paren
-suffix:semicolon
-id|d_delete
-c_func
-(paren
-id|dentry
 )paren
 suffix:semicolon
 id|res
@@ -2859,6 +2873,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* N.B. does this need to be released on the other path? */
 id|fat_brelse
 c_func
 (paren
@@ -2872,10 +2887,6 @@ op_minus
 id|EEXIST
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-(paren
 id|res
 op_assign
 id|msdos_create_entry
@@ -2892,20 +2903,17 @@ comma
 op_amp
 id|inode
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|res
 OL
 l_int|0
 )paren
-(brace
-id|fat_unlock_creation
-c_func
-(paren
-)paren
+r_goto
+id|out_unlock
 suffix:semicolon
-r_return
-id|res
-suffix:semicolon
-)brace
 id|dir-&gt;i_nlink
 op_increment
 suffix:semicolon
@@ -3151,6 +3159,8 @@ comma
 l_string|&quot;rmdir in mkdir failed&quot;
 )paren
 suffix:semicolon
+id|out_unlock
+suffix:colon
 id|fat_unlock_creation
 c_func
 (paren
@@ -3189,6 +3199,13 @@ id|sb
 op_assign
 id|dir-&gt;i_sb
 suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
 r_int
 id|res
 comma
@@ -3204,16 +3221,7 @@ id|msdos_dir_entry
 op_star
 id|de
 suffix:semicolon
-r_struct
-id|inode
-op_star
-id|inode
-suffix:semicolon
 id|bh
-op_assign
-l_int|NULL
-suffix:semicolon
-id|inode
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -3248,9 +3256,10 @@ l_int|0
 r_goto
 id|unlink_done
 suffix:semicolon
-id|inode
+id|res
 op_assign
-id|dentry-&gt;d_inode
+op_minus
+id|EPERM
 suffix:semicolon
 r_if
 c_cond
@@ -3264,16 +3273,9 @@ id|inode-&gt;i_mode
 op_logical_and
 id|nospc
 )paren
-(brace
-id|res
-op_assign
-op_minus
-id|EPERM
-suffix:semicolon
 r_goto
 id|unlink_done
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3283,16 +3285,9 @@ c_func
 id|inode
 )paren
 )paren
-(brace
-id|res
-op_assign
-op_minus
-id|EPERM
-suffix:semicolon
 r_goto
 id|unlink_done
 suffix:semicolon
-)brace
 id|inode-&gt;i_nlink
 op_assign
 l_int|0
@@ -3351,6 +3346,10 @@ id|dentry
 )paren
 suffix:semicolon
 multiline_comment|/* This also frees the inode */
+id|res
+op_assign
+l_int|0
+suffix:semicolon
 id|unlink_done
 suffix:colon
 id|fat_brelse
@@ -4307,7 +4306,7 @@ l_int|0
 op_assign
 id|DELETED_FLAG
 suffix:semicolon
-multiline_comment|/*  Don&squot;t mark free_bh as dirty. Both states are supposed to be equivalent. */
+multiline_comment|/*&n;&t;&t; * Don&squot;t mark free_bh as dirty. Both states &n;&t;&t; * are supposed to be equivalent.&n;&t;&t; */
 id|fat_brelse
 c_func
 (paren
@@ -4362,6 +4361,71 @@ c_func
 id|free_inode
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Check whether there&squot;s already a linked inode ...&n;&t; */
+r_if
+c_cond
+(paren
+id|MSDOS_I
+c_func
+(paren
+id|old_inode
+)paren
+op_member_access_from_pointer
+id|i_linked
+)paren
+(brace
+r_struct
+id|inode
+op_star
+id|linked
+op_assign
+id|MSDOS_I
+c_func
+(paren
+id|old_inode
+)paren
+op_member_access_from_pointer
+id|i_linked
+suffix:semicolon
+macro_line|#ifdef MSDOS_PARANOIA
+id|printk
+c_func
+(paren
+l_string|&quot;rename_diff_dir: inode %ld already has link %ld, freeing it&bslash;n&quot;
+comma
+id|old_inode-&gt;i_ino
+comma
+id|linked-&gt;i_ino
+)paren
+suffix:semicolon
+macro_line|#endif
+id|MSDOS_I
+c_func
+(paren
+id|old_inode
+)paren
+op_member_access_from_pointer
+id|i_linked
+op_assign
+l_int|NULL
+suffix:semicolon
+id|MSDOS_I
+c_func
+(paren
+id|linked
+)paren
+op_member_access_from_pointer
+id|i_oldlink
+op_assign
+l_int|NULL
+suffix:semicolon
+id|iput
+c_func
+(paren
+id|linked
+)paren
+suffix:semicolon
+)brace
 id|MSDOS_I
 c_func
 (paren
@@ -4392,6 +4456,18 @@ id|i_oldlink
 op_assign
 id|old_inode
 suffix:semicolon
+macro_line|#ifdef MSDOS_DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;rename_diff_dir: inode %ld added as link of %ld&bslash;n&quot;
+comma
+id|free_inode-&gt;i_ino
+comma
+id|old_inode-&gt;i_ino
+)paren
+suffix:semicolon
+macro_line|#endif
 id|fat_cache_inval_inode
 c_func
 (paren
@@ -4437,6 +4513,71 @@ c_cond
 id|exists
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; * Check whether there&squot;s already a depend inode ...&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|MSDOS_I
+c_func
+(paren
+id|new_inode
+)paren
+op_member_access_from_pointer
+id|i_depend
+)paren
+(brace
+r_struct
+id|inode
+op_star
+id|depend
+op_assign
+id|MSDOS_I
+c_func
+(paren
+id|new_inode
+)paren
+op_member_access_from_pointer
+id|i_depend
+suffix:semicolon
+macro_line|#ifdef MSDOS_PARANOIA
+id|printk
+c_func
+(paren
+l_string|&quot;rename_diff_dir: inode %ld already has depend %ld, freeing it&bslash;n&quot;
+comma
+id|new_inode-&gt;i_ino
+comma
+id|depend-&gt;i_ino
+)paren
+suffix:semicolon
+macro_line|#endif
+id|MSDOS_I
+c_func
+(paren
+id|new_inode
+)paren
+op_member_access_from_pointer
+id|i_depend
+op_assign
+l_int|NULL
+suffix:semicolon
+id|MSDOS_I
+c_func
+(paren
+id|depend
+)paren
+op_member_access_from_pointer
+id|i_old
+op_assign
+l_int|NULL
+suffix:semicolon
+id|iput
+c_func
+(paren
+id|depend
+)paren
+suffix:semicolon
+)brace
 id|MSDOS_I
 c_func
 (paren
@@ -4461,6 +4602,18 @@ multiline_comment|/* Two references now exist to free_inode so increase count */
 id|free_inode-&gt;i_count
 op_increment
 suffix:semicolon
+macro_line|#ifdef MSDOS_DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;rename_diff_dir: inode %ld added as depend of %ld&bslash;n&quot;
+comma
+id|free_inode-&gt;i_ino
+comma
+id|new_inode-&gt;i_ino
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* free_inode is put after putting new_inode and old_inode */
 id|fat_brelse
 c_func

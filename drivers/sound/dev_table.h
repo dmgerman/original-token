@@ -3,12 +3,130 @@ multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * 
 macro_line|#ifndef _DEV_TABLE_H_
 DECL|macro|_DEV_TABLE_H_
 mdefine_line|#define _DEV_TABLE_H_
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Sound card numbers 27 to 999. (1 to 26 are defined in soundcard.h)&n; * Numbers 1000 to N are reserved for driver&squot;s internal use.&n; */
 DECL|macro|SNDCARD_DESKPROXL
 mdefine_line|#define SNDCARD_DESKPROXL&t;&t;27&t;/* Compaq Deskpro XL */
 DECL|macro|SNDCARD_SBPNP
 mdefine_line|#define SNDCARD_SBPNP&t;&t;&t;29
+DECL|macro|SNDCARD_OPL3SA1
+mdefine_line|#define SNDCARD_OPL3SA1&t;&t;&t;38
+DECL|macro|SNDCARD_OPL3SA1_SB
+mdefine_line|#define SNDCARD_OPL3SA1_SB&t;&t;39
+DECL|macro|SNDCARD_OPL3SA1_MPU
+mdefine_line|#define SNDCARD_OPL3SA1_MPU&t;&t;40
+DECL|macro|SNDCARD_SOFTOSS
+mdefine_line|#define SNDCARD_SOFTOSS&t;&t;&t;36
+r_void
+id|attach_opl3sa_wss
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+suffix:semicolon
+r_int
+id|probe_opl3sa_wss
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+suffix:semicolon
+r_void
+id|attach_opl3sa_sb
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+suffix:semicolon
+r_int
+id|probe_opl3sa_sb
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+suffix:semicolon
+r_void
+id|attach_opl3sa_mpu
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+suffix:semicolon
+r_int
+id|probe_opl3sa_mpu
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+suffix:semicolon
+r_void
+id|unload_opl3sa_wss
+c_func
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_info
+)paren
+suffix:semicolon
+r_void
+id|unload_opl3sa_sb
+c_func
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_info
+)paren
+suffix:semicolon
+r_void
+id|unload_opl3sa_mpu
+c_func
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_info
+)paren
+suffix:semicolon
+r_void
+id|attach_softsyn_card
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+suffix:semicolon
+r_int
+id|probe_softsyn
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+suffix:semicolon
+r_void
+id|unload_softsyn
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+suffix:semicolon
 multiline_comment|/*&n; *&t;NOTE! &t;NOTE!&t;NOTE!&t;NOTE!&n; *&n; *&t;If you modify this file, please check the dev_table.c also.&n; *&n; *&t;NOTE! &t;NOTE!&t;NOTE!&t;NOTE!&n; */
 r_extern
 r_int
@@ -269,6 +387,25 @@ r_int
 id|applic_profile
 suffix:semicolon
 multiline_comment|/* Application profile (APF_*) */
+multiline_comment|/* Interrupt callback stuff */
+DECL|member|audio_callback
+r_void
+(paren
+op_star
+id|audio_callback
+)paren
+(paren
+r_int
+id|dev
+comma
+r_int
+id|parm
+)paren
+suffix:semicolon
+DECL|member|callback_parm
+r_int
+id|callback_parm
+suffix:semicolon
 DECL|member|buf_flags
 r_int
 id|buf_flags
@@ -2106,6 +2243,41 @@ id|unload_ss_ms_sound
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_OPL3SA1
+(brace
+l_string|&quot;OPL3SA&quot;
+comma
+l_int|0
+comma
+id|SNDCARD_OPL3SA1
+comma
+l_string|&quot;Yamaha OPL3-SA&quot;
+comma
+id|attach_opl3sa_wss
+comma
+id|probe_opl3sa_wss
+comma
+id|unload_opl3sa_wss
+)brace
+comma
+multiline_comment|/*&t;{&quot;OPL3SASB&quot;, 0, SNDCARD_OPL3SA1_SB, &quot;OPL3-SA (SB mode)&quot;,&t;attach_opl3sa_sb, probe_opl3sa_sb, unload_opl3sa_sb}, */
+(brace
+l_string|&quot;OPL3SAMPU&quot;
+comma
+l_int|0
+comma
+id|SNDCARD_OPL3SA1_MPU
+comma
+l_string|&quot;OPL3-SA MIDI&quot;
+comma
+id|attach_opl3sa_mpu
+comma
+id|probe_opl3sa_mpu
+comma
+id|unload_opl3sa_mpu
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_TRIX
 (brace
 l_string|&quot;TRXPRO&quot;
@@ -2153,6 +2325,24 @@ comma
 id|probe_trix_mpu
 comma
 id|unload_trix_mpu
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SOFTOSS
+(brace
+l_string|&quot;SOFTSYN&quot;
+comma
+l_int|0
+comma
+id|SNDCARD_SOFTOSS
+comma
+l_string|&quot;SoftOSS Virtual Wave Table&quot;
+comma
+id|attach_softsyn_card
+comma
+id|probe_softsyn
+comma
+id|unload_softsyn
 )brace
 comma
 macro_line|#endif
@@ -2315,6 +2505,63 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#&t;endif
+macro_line|#endif
+macro_line|#ifdef CONFIG_OPL3SA1
+(brace
+id|SNDCARD_OPL3SA1
+comma
+(brace
+id|OPL3SA1_BASE
+comma
+id|OPL3SA1_IRQ
+comma
+id|OPL3SA1_DMA
+comma
+id|OPL3SA1_DMA2
+)brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
+macro_line|#&t;ifdef OPL3SA1_MPU_BASE
+(brace
+id|SNDCARD_OPL3SA1_MPU
+comma
+(brace
+id|OPL3SA1_MPU_BASE
+comma
+id|OPL3SA1_MPU_IRQ
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+)brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
+macro_line|#&t;endif
+macro_line|#endif
+macro_line|#ifdef CONFIG_SOFTOSS
+(brace
+id|SNDCARD_SOFTOSS
+comma
+(brace
+l_int|0
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SSCAPE
 (brace

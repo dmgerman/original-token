@@ -6,7 +6,7 @@ mdefine_line|#define GUSPNP_AUTODETECT
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &lt;linux/ultrasound.h&gt;
 macro_line|#include &quot;gus_hw.h&quot;
-macro_line|#if defined(CONFIG_GUSHW)
+macro_line|#ifdef CONFIG_GUSHW
 DECL|macro|GUS_BANK_SIZE
 mdefine_line|#define GUS_BANK_SIZE (((iw_mode) ? 256*1024*1024 : 256*1024))
 DECL|macro|MAX_SAMPLE
@@ -185,13 +185,6 @@ DECL|variable|gus_mem_size
 r_static
 r_int
 id|gus_mem_size
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|gus_rom_size
-r_static
-r_int
-id|gus_rom_size
 op_assign
 l_int|0
 suffix:semicolon
@@ -3131,6 +3124,11 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -3165,6 +3163,11 @@ suffix:semicolon
 id|gus_voice_init
 (paren
 id|voice
+)paren
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -7719,7 +7722,7 @@ OL
 l_int|0
 )paren
 (brace
-multiline_comment|/* printk (&quot;GUS: Loading samples without DMA&bslash;n&quot;); */
+multiline_comment|/* printk( &quot;GUS: Loading samples without DMA&bslash;n&quot;); */
 id|gus_no_dma
 op_assign
 l_int|1
@@ -10065,7 +10068,9 @@ id|OPEN_READ
 (brace
 id|printk
 (paren
-l_string|&quot;Sound: This audio device doesn&squot;t have recording capability&bslash;n&quot;
+l_string|&quot;GUS: Audio device #%d is playback only.&bslash;n&quot;
+comma
+id|dev
 )paren
 suffix:semicolon
 r_return
@@ -14515,6 +14520,11 @@ r_default
 suffix:colon
 suffix:semicolon
 )brace
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 r_void
 DECL|function|gus_voice_irq

@@ -32,7 +32,6 @@ DECL|macro|AM_WRITE
 mdefine_line|#define&t;&t;AM_WRITE&t;OPEN_WRITE
 DECL|macro|AM_READ
 mdefine_line|#define &t;AM_READ&t;&t;OPEN_READ
-r_static
 r_int
 id|dma_ioctl
 (paren
@@ -173,7 +172,7 @@ id|dev
 )braket
 suffix:semicolon
 r_return
-id|audio_format
+id|local_format
 (braket
 id|dev
 )braket
@@ -994,6 +993,7 @@ op_member_access_from_pointer
 id|dmap_out-&gt;buffsize
 )paren
 )paren
+(brace
 id|printk
 (paren
 l_string|&quot;audio: Buffer error 3 (%lx,%d), (%lx, %d)&bslash;n&quot;
@@ -1026,6 +1026,11 @@ op_member_access_from_pointer
 id|dmap_out-&gt;buffsize
 )paren
 suffix:semicolon
+r_return
+op_minus
+id|EDOM
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1038,11 +1043,32 @@ id|dev
 op_member_access_from_pointer
 id|dmap_out-&gt;raw_buf
 )paren
+(brace
 id|printk
 (paren
-l_string|&quot;audio: Buffer error 13&bslash;n&quot;
+l_string|&quot;audio: Buffer error 13 (%lx&lt;%lx)&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|dma_buf
+comma
+(paren
+r_int
+)paren
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|dmap_out-&gt;raw_buf
 )paren
 suffix:semicolon
+r_return
+op_minus
+id|EDOM
+suffix:semicolon
+)brace
 id|copy_from_user
 (paren
 id|dma_buf
@@ -1423,7 +1449,7 @@ id|arg
 r_int
 id|val
 suffix:semicolon
-multiline_comment|/* printk(&quot;audio_ioctl(%x, %x)&bslash;n&quot;, (int)cmd, (int)arg); */
+multiline_comment|/* printk( &quot;audio_ioctl(%x, %x)&bslash;n&quot;,  (int)cmd,  (int)arg); */
 id|dev
 op_assign
 id|dev
@@ -2436,14 +2462,6 @@ id|sz
 comma
 id|bsz
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dmap-&gt;needs_reorg
-)paren
-r_return
-suffix:semicolon
 id|sr
 op_assign
 id|dsp_dev-&gt;d-&gt;set_speed
@@ -2470,10 +2488,6 @@ id|dev
 comma
 l_int|0
 )paren
-suffix:semicolon
-id|dmap-&gt;needs_reorg
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2549,6 +2563,18 @@ multiline_comment|/* #bits -&gt; #bytes */
 id|dmap-&gt;data_rate
 op_assign
 id|sz
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dmap-&gt;needs_reorg
+)paren
+r_return
+suffix:semicolon
+id|dmap-&gt;needs_reorg
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -3282,7 +3308,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_static
 r_int
 DECL|function|dma_ioctl
 id|dma_ioctl
@@ -3689,6 +3714,21 @@ id|dmap-&gt;counts
 id|dmap-&gt;qhead
 )braket
 suffix:semicolon
+r_else
+(brace
+id|info-&gt;fragments
+op_assign
+id|info-&gt;bytes
+op_div
+id|dmap-&gt;fragment_size
+suffix:semicolon
+id|info-&gt;bytes
+op_sub_assign
+id|dmap-&gt;user_counter
+op_mod
+id|dmap-&gt;fragment_size
+suffix:semicolon
+)brace
 )brace
 r_return
 l_int|0

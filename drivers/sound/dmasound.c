@@ -5315,7 +5315,7 @@ suffix:semicolon
 DECL|macro|sq_block_address
 mdefine_line|#define sq_block_address(i)&t;(sq.buffers[i])
 DECL|macro|SIGNAL_RECEIVED
-mdefine_line|#define SIGNAL_RECEIVED&t;(signal_pending(current))
+mdefine_line|#define SIGNAL_RECEIVED&t;(current-&gt;signal &amp; ~current-&gt;blocked)
 DECL|macro|NON_BLOCKING
 mdefine_line|#define NON_BLOCKING(open_mode)&t;(open_mode &amp; O_NONBLOCK)
 DECL|macro|ONE_SECOND
@@ -5492,14 +5492,14 @@ id|sound_fsync
 c_func
 (paren
 r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
 id|file
 op_star
 id|filp
-comma
-r_struct
-id|dentry
-op_star
-id|dentry
 )paren
 suffix:semicolon
 r_static
@@ -5524,6 +5524,11 @@ r_int
 id|sound_lseek
 c_func
 (paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
 r_struct
 id|file
 op_star
@@ -16334,14 +16339,14 @@ id|sound_fsync
 c_func
 (paren
 r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
 id|file
 op_star
 id|filp
-comma
-r_struct
-id|dentry
-op_star
-id|dentry
 )paren
 (brace
 r_int
@@ -16350,7 +16355,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|dentry-&gt;d_inode-&gt;i_rdev
+id|inode-&gt;i_rdev
 )paren
 op_amp
 l_int|0x0f
@@ -16500,6 +16505,11 @@ r_int
 id|sound_lseek
 c_func
 (paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
 r_struct
 id|file
 op_star
@@ -16801,9 +16811,9 @@ r_return
 id|sound_fsync
 c_func
 (paren
-id|file
+id|inode
 comma
-id|file-&gt;f_dentry
+id|file
 )paren
 suffix:semicolon
 multiline_comment|/* ++TeSche: before changing any of these it&squot;s probably wise to&n;&t;&t; * wait until sound playing has settled down&n;&t;&t; */
@@ -16813,9 +16823,9 @@ suffix:colon
 id|sound_fsync
 c_func
 (paren
-id|file
+id|inode
 comma
-id|file-&gt;f_dentry
+id|file
 )paren
 suffix:semicolon
 id|IOCTL_IN
@@ -16845,9 +16855,9 @@ suffix:colon
 id|sound_fsync
 c_func
 (paren
-id|file
+id|inode
 comma
-id|file-&gt;f_dentry
+id|file
 )paren
 suffix:semicolon
 id|IOCTL_IN
@@ -16877,9 +16887,9 @@ suffix:colon
 id|sound_fsync
 c_func
 (paren
-id|file
+id|inode
 comma
-id|file-&gt;f_dentry
+id|file
 )paren
 suffix:semicolon
 id|IOCTL_IN
@@ -16913,9 +16923,9 @@ suffix:colon
 id|sound_fsync
 c_func
 (paren
-id|file
+id|inode
 comma
-id|file-&gt;f_dentry
+id|file
 )paren
 suffix:semicolon
 id|IOCTL_IN

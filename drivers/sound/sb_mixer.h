@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * sound/sb_mixer.h&n; * &n; * Definitions for the SB Pro and SB16 mixers&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 multiline_comment|/*&n; * Modified:&n; *&t;Hunyue Yau&t;Jan 6 1994&n; *&t;Added defines for the Sound Galaxy NX Pro mixer.&n; * &n; */
+macro_line|#ifdef CONFIG_SBDSP
 DECL|macro|SBPRO_RECORDING_DEVICES
 mdefine_line|#define SBPRO_RECORDING_DEVICES&t;(SOUND_MASK_LINE | SOUND_MASK_MIC | SOUND_MASK_CD)
 multiline_comment|/* Same as SB Pro, unless I find otherwise */
@@ -1436,5 +1437,6 @@ DECL|macro|SRC__CD
 mdefine_line|#define SRC__CD          3&t;/* Select CD recording source */
 DECL|macro|SRC__LINE
 mdefine_line|#define SRC__LINE        7&t;/* Use Line-in for recording source */
+macro_line|#endif
 macro_line|#endif
 eof
