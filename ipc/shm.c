@@ -6888,6 +6888,12 @@ id|swap_entry
 )paren
 suffix:semicolon
 multiline_comment|/* add the locked page to the swap cache before allowing&n;&t;   the swapin path to run lookup_swap_cache(). This avoids&n;&t;   reading a not yet uptodate block from disk.&n;&t;   NOTE: we just accounted the swap space reference for this&n;&t;   swap cache page at __get_swap_page() time. */
+id|lock_page
+c_func
+(paren
+id|page_map
+)paren
+suffix:semicolon
 id|add_to_swap_cache
 c_func
 (paren

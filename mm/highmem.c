@@ -9,6 +9,7 @@ r_int
 r_int
 id|highmem_mapnr
 suffix:semicolon
+multiline_comment|/*&n; * Take one locked page, return another low-memory locked page.&n; */
 DECL|function|prepare_highmem_swapout
 r_struct
 id|page
@@ -22,6 +23,11 @@ op_star
 id|page
 )paren
 (brace
+r_struct
+id|page
+op_star
+id|new_page
+suffix:semicolon
 r_int
 r_int
 id|regular_page
@@ -43,6 +49,13 @@ id|page
 )paren
 r_return
 id|page
+suffix:semicolon
+multiline_comment|/*&n;&t; * Here we break the page lock, and we split the&n;&t; * dirty page into two. We can unlock the old page,&n;&t; * and we&squot;ll now have two of them. Too bad, it would&n;&t; * have been nice to continue to potentially share&n;&t; * across a fork().&n;&t; */
+id|UnlockPage
+c_func
+(paren
+id|page
+)paren
 suffix:semicolon
 id|regular_page
 op_assign
@@ -98,7 +111,8 @@ c_func
 id|page
 )paren
 suffix:semicolon
-r_return
+id|new_page
+op_assign
 id|mem_map
 op_plus
 id|MAP_NR
@@ -106,6 +120,15 @@ c_func
 (paren
 id|regular_page
 )paren
+suffix:semicolon
+id|LockPage
+c_func
+(paren
+id|new_page
+)paren
+suffix:semicolon
+r_return
+id|new_page
 suffix:semicolon
 )brace
 DECL|function|replace_with_highmem

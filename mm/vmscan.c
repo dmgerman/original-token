@@ -150,11 +150,10 @@ r_goto
 id|out_failed
 suffix:semicolon
 )brace
-macro_line|#error Do not let this one slip through..
 r_if
 c_cond
 (paren
-id|PageLocked
+id|TryLockPage
 c_func
 (paren
 id|page
@@ -198,6 +197,12 @@ id|entry
 suffix:semicolon
 id|drop_pte
 suffix:colon
+id|UnlockPage
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|vma-&gt;vm_mm-&gt;rss
 op_decrement
 suffix:semicolon
@@ -261,7 +266,7 @@ id|__GFP_IO
 )paren
 )paren
 r_goto
-id|out_failed
+id|out_unlock
 suffix:semicolon
 multiline_comment|/*&n;&t; * Ok, it&squot;s really dirty. That means that&n;&t; * we should either create a new swap cache&n;&t; * entry for it, or we should write it back&n;&t; * to its own backing store.&n;&t; *&n;&t; * Note that in neither case do we actually&n;&t; * know that we make a page available, but&n;&t; * as we potentially sleep we can no longer&n;&t; * continue scanning, so we migth as well&n;&t; * assume we free&squot;d something.&n;&t; *&n;&t; * NOTE NOTE NOTE! This should just set a&n;&t; * dirty bit in &squot;page&squot;, and just drop the&n;&t; * pte. All the hard work would be done by&n;&t; * shrink_mmap().&n;&t; *&n;&t; * That would get rid of a lot of problems.&n;&t; */
 id|flush_cache_page
@@ -338,6 +343,12 @@ comma
 id|file
 )paren
 suffix:semicolon
+id|UnlockPage
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -383,7 +394,7 @@ op_logical_neg
 id|entry.val
 )paren
 r_goto
-id|out_failed
+id|out_unlock
 suffix:semicolon
 multiline_comment|/* No swap space left */
 r_if
@@ -410,7 +421,7 @@ id|entry
 )paren
 suffix:semicolon
 multiline_comment|/* One for the process, one for the swap cache */
-multiline_comment|/* This will also lock the page */
+multiline_comment|/* Add it to the swap cache */
 id|add_to_swap_cache
 c_func
 (paren
@@ -481,6 +492,17 @@ id|entry
 suffix:semicolon
 id|out_failed
 suffix:colon
+r_return
+l_int|0
+suffix:semicolon
+id|out_unlock
+suffix:colon
+id|UnlockPage
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1792,18 +1814,6 @@ id|pgdat-&gt;node_zones
 op_plus
 id|i
 suffix:semicolon
-r_do
-(brace
-r_if
-c_cond
-(paren
-id|tsk-&gt;need_resched
-)paren
-id|schedule
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1818,6 +1828,18 @@ id|zone-&gt;zone_wake_kswapd
 )paren
 )paren
 r_continue
+suffix:semicolon
+r_do
+(brace
+r_if
+c_cond
+(paren
+id|tsk-&gt;need_resched
+)paren
+id|schedule
+c_func
+(paren
+)paren
 suffix:semicolon
 id|do_try_to_free_pages
 c_func

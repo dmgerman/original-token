@@ -2494,11 +2494,6 @@ id|irq
 suffix:semicolon
 )brace
 )brace
-id|pirq_table
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* Avoid automatic IRQ assignment */
 )brace
 macro_line|#endif
 multiline_comment|/*&n;&t;&t; * Still no IRQ? Try to lookup one...&n;&t;&t; */

@@ -34,7 +34,7 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* It seems that people are forgetting to&n; * initialize their spinlocks properly, tsk tsk.&n; * Remember to turn this off in 2.4. -ben&n; */
 DECL|macro|SPINLOCK_DEBUG
-mdefine_line|#define SPINLOCK_DEBUG&t;1
+mdefine_line|#define SPINLOCK_DEBUG&t;0
 multiline_comment|/*&n; * Your basic SMP spinlocks, allowing only a single CPU anywhere&n; */
 r_typedef
 r_struct

@@ -1551,6 +1551,12 @@ id|code
 )paren
 suffix:semicolon
 macro_line|#endif
+id|task_lock
+c_func
+(paren
+id|tsk
+)paren
+suffix:semicolon
 id|sem_exit
 c_func
 (paren
@@ -1575,12 +1581,6 @@ id|tsk
 )paren
 suffix:semicolon
 id|__exit_sighand
-c_func
-(paren
-id|tsk
-)paren
-suffix:semicolon
-id|task_lock
 c_func
 (paren
 id|tsk
