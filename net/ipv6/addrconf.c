@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 Address [auto]configuration&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: addrconf.c,v 1.16 1997/04/12 04:32:44 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 Address [auto]configuration&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: addrconf.c,v 1.18 1997/04/16 05:58:03 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;Changes:&n; *&n; *&t;Janos Farkas&t;&t;&t;:&t;delete timer on ifdown&n; *&t;&lt;chexum@bankinf.banki.hu&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -67,6 +67,10 @@ id|atomic_t
 id|addr_list_lock
 op_assign
 id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 r_void
 id|addrconf_verify

@@ -1,9 +1,9 @@
 multiline_comment|/*&n; *  linux/arch/m68k/boot/amiga/linuxboot.h -- Generic routine to boot Linux/m68k&n; *&t;&t;&t;&t;&t;      on Amiga, used by both Amiboot and&n; *&t;&t;&t;&t;&t;      Amiga-Lilo.&n; *&n; *&t;Created 1996 by Geert Uytterhoeven&n; *&n; *&n; *  This file is based on the original bootstrap code (bootstrap.c):&n; *&n; *&t;Copyright (C) 1993, 1994 Hamish Macdonald&n; *&t;&t;&t;&t; Greg Harp&n; *&n; *&t;&t;    with work by Michael Rausch&n; *&t;&t;&t;&t; Geert Uytterhoeven&n; *&t;&t;&t;&t; Frank Neumann&n; *&t;&t;&t;&t; Andreas Schwab&n; *&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; */
 macro_line|#include &lt;asm/setup.h&gt;
-macro_line|#include &lt;asm/zorro.h&gt;
+macro_line|#include &lt;linux/zorro.h&gt;
 multiline_comment|/*&n;     *  Amiboot Version&n;     */
 DECL|macro|AMIBOOT_VERSION
-mdefine_line|#define AMIBOOT_VERSION&t;&t;&quot;5.1&quot;
+mdefine_line|#define AMIBOOT_VERSION&t;&t;&quot;5.4&quot;
 multiline_comment|/*&n;     *  Amiga Bootinfo Definitions&n;     *&n;     *  All limits herein are `soft&squot; limits, i.e. they don&squot;t put constraints&n;     *  on the actual parameters in the kernel.&n;     */
 DECL|struct|amiga_bootinfo
 r_struct
@@ -13,7 +13,7 @@ DECL|member|machtype
 id|u_long
 id|machtype
 suffix:semicolon
-multiline_comment|/* machine type */
+multiline_comment|/* machine type = MACH_AMIGA */
 DECL|member|cputype
 id|u_long
 id|cputype
@@ -113,6 +113,12 @@ DECL|struct|linuxboot_args
 r_struct
 id|linuxboot_args
 (brace
+DECL|member|bi
+r_struct
+id|amiga_bootinfo
+id|bi
+suffix:semicolon
+multiline_comment|/* Initial values override detected values */
 DECL|member|kernelname
 r_const
 r_char
@@ -124,12 +130,6 @@ r_const
 r_char
 op_star
 id|ramdiskname
-suffix:semicolon
-DECL|member|commandline
-r_const
-r_char
-op_star
-id|commandline
 suffix:semicolon
 DECL|member|debugflag
 r_int
@@ -276,19 +276,6 @@ id|sleep
 (paren
 id|u_long
 id|micros
-)paren
-suffix:semicolon
-DECL|member|modify_bootinfo
-r_int
-(paren
-op_star
-id|modify_bootinfo
-)paren
-(paren
-r_struct
-id|amiga_bootinfo
-op_star
-id|bi
 )paren
 suffix:semicolon
 )brace

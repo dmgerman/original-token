@@ -4674,7 +4674,18 @@ id|pb-&gt;next
 (brace
 r_int
 id|modes
+op_assign
+id|pb-&gt;modes
 suffix:semicolon
+multiline_comment|/* We only understand PC-style ports */
+r_if
+c_cond
+(paren
+id|modes
+op_amp
+id|PARPORT_MODE_SPP
+)paren
+(brace
 multiline_comment|/* transfer global values here */
 r_if
 c_cond
@@ -4741,7 +4752,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* Claim the bus so it remembers what we do to the control&n;&t;&t; * registers. [ CTR and ECP ]&n;&t;&t; */
+multiline_comment|/* Claim the bus so it remembers what we do to the&n;&t;&t;&t; * control registers. [ CTR and ECP ]&n;&t;&t;&t; */
 id|ppa_pb_claim
 c_func
 (paren
@@ -4755,15 +4766,6 @@ id|i
 comma
 l_int|0x0c
 )paren
-suffix:semicolon
-id|modes
-op_assign
-id|ppa_hosts
-(braket
-id|i
-)braket
-dot
-id|dev-&gt;port-&gt;modes
 suffix:semicolon
 id|ppa_hosts
 (braket
@@ -4987,6 +4989,7 @@ suffix:semicolon
 id|nhosts
 op_increment
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond

@@ -42,6 +42,10 @@ id|atomic_t
 id|nr_async_pages
 op_assign
 id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * Constants for the page aging mechanism: the maximum age (actually,&n; * the maximum &quot;youthfulness&quot;); the quanta by which pages rejuvenate&n; * and age; and the initial age for new pages. &n; */
 DECL|variable|swap_control

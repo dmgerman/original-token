@@ -13,6 +13,7 @@ macro_line|#include &lt;asm/amihdreg.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#endif /* CONFIG_AMIGA */
 macro_line|#ifdef CONFIG_ATARI
+macro_line|#include &lt;linux/interrupt.h&gt;&t;/* intr_count */
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atarihdreg.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;

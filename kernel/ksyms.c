@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/sys.h&gt;
@@ -391,6 +392,34 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|update_vm_cache
+)paren
+suffix:semicolon
+DECL|variable|kmem_cache_create
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kmem_cache_create
+)paren
+suffix:semicolon
+DECL|variable|kmem_cache_destroy
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kmem_cache_destroy
+)paren
+suffix:semicolon
+DECL|variable|kmem_cache_alloc
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kmem_cache_alloc
+)paren
+suffix:semicolon
+DECL|variable|kmem_cache_free
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kmem_cache_free
 )paren
 suffix:semicolon
 multiline_comment|/* filesystem internal functions */
@@ -1154,6 +1183,14 @@ id|timer_table
 )paren
 suffix:semicolon
 macro_line|#ifdef __SMP__
+multiline_comment|/* Various random spinlocks we want to export */
+DECL|variable|tqueue_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tqueue_lock
+)paren
+suffix:semicolon
 DECL|variable|waitqueue_lock
 id|EXPORT_SYMBOL
 c_func

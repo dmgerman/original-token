@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
+macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
@@ -57,6 +58,11 @@ r_goto
 id|out
 suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */
+id|current-&gt;priority
+op_assign
+op_minus
+l_int|100
+suffix:semicolon
 id|current-&gt;counter
 op_assign
 op_minus
@@ -88,12 +94,14 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-DECL|function|hard_reset_now
+DECL|function|machine_restart
 r_void
-id|hard_reset_now
+id|machine_restart
 c_func
 (paren
-r_void
+r_char
+op_star
+id|__unused
 )paren
 (brace
 r_if
@@ -106,6 +114,32 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
+DECL|function|machine_halt
+r_void
+id|machine_halt
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+DECL|function|machine_power_off
+r_void
+id|machine_power_off
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#if defined(CONFIG_APM) &amp;&amp; defined(CONFIG_APM_POWER_OFF)
+id|apm_set_power_state
+c_func
+(paren
+id|APM_STATE_OFF
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|show_regs
 r_void
@@ -598,6 +632,11 @@ r_int
 id|dump_fpu
 (paren
 r_struct
+id|pt_regs
+op_star
+id|regs
+comma
+r_struct
 id|user_m68kfp_struct
 op_star
 id|fpu
@@ -803,28 +842,20 @@ id|dump-&gt;u_ar0
 op_assign
 (paren
 r_struct
-id|pt_regs
+id|user_regs_struct
 op_star
 )paren
 (paren
 (paren
-(paren
 r_int
 )paren
-(paren
 op_amp
 id|dump-&gt;regs
-)paren
-)paren
 op_minus
-(paren
 (paren
 r_int
 )paren
-(paren
 id|dump
-)paren
-)paren
 )paren
 suffix:semicolon
 id|sw
@@ -931,6 +962,8 @@ id|dump-&gt;u_fpvalid
 op_assign
 id|dump_fpu
 (paren
+id|regs
+comma
 op_amp
 id|dump-&gt;m68kfp
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IP/TCP/UDP checksumming routines&n; *&n; * Authors:&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Tom May, &lt;ftom@netcom.com&gt;&n; *&t;&t;Andreas Schwab, &lt;schwab@issan.informatik.uni-dortmund.de&gt;&n; *&t;&t;Lots of code moved from tcp.c and ip.c; see those files&n; *&t;&t;for more names.&n; *&n; * 03/02/96&t;Jes Sorensen, Andreas Schwab, Roman Hodek:&n; *&t;&t;Fixed some nasty bugs, causing some horrible crashes.&n; *&t;&t;A: At some points, the sum (%0) was used as&n; *&t;&t;length-counter instead of the length counter&n; *&t;&t;(%1). Thanks to Roman Hodek for pointing this out.&n; *&t;&t;B: GCC seems to mess up if one uses too many&n; *&t;&t;data-registers to hold input values and one tries to&n; *&t;&t;specify d0 and d1 as scratch registers. Letting gcc choose these&n; *      registers itself solves the problem.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IP/TCP/UDP checksumming routines&n; *&n; * Authors:&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Tom May, &lt;ftom@netcom.com&gt;&n; *&t;&t;Andreas Schwab, &lt;schwab@issan.informatik.uni-dortmund.de&gt;&n; *&t;&t;Lots of code moved from tcp.c and ip.c; see those files&n; *&t;&t;for more names.&n; *&n; * 03/02/96&t;Jes Sorensen, Andreas Schwab, Roman Hodek:&n; *&t;&t;Fixed some nasty bugs, causing some horrible crashes.&n; *&t;&t;A: At some points, the sum (%0) was used as&n; *&t;&t;length-counter instead of the length counter&n; *&t;&t;(%1). Thanks to Roman Hodek for pointing this out.&n; *&t;&t;B: GCC seems to mess up if one uses too many&n; *&t;&t;data-registers to hold input values and one tries to&n; *&t;&t;specify d0 and d1 as scratch registers. Letting gcc&n; *&t;&t;choose these registers itself solves the problem.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;net/checksum.h&gt;
 multiline_comment|/*&n; * computes a partial checksum, e.g. for TCP/UDP fragments&n; */
 r_int
@@ -168,11 +168,11 @@ r_return
 id|sum
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * copy from user space while checksumming, otherwise like csum_partial&n; */
+multiline_comment|/*&n; * copy from user space while checksumming, with exception handling.&n; */
 r_int
 r_int
-DECL|function|csum_partial_copy_fromuser
-id|csum_partial_copy_fromuser
+DECL|function|csum_partial_copy_from_user
+id|csum_partial_copy_from_user
 c_func
 (paren
 r_const
@@ -189,8 +189,13 @@ id|len
 comma
 r_int
 id|sum
+comma
+r_int
+op_star
+id|csum_err
 )paren
 (brace
+multiline_comment|/*&n;&t; * GCC doesn&squot;t like more than 10 operands for the asm&n;&t; * statements so we have to use tmp2 for the error&n;&t; * code.&n;&t; */
 r_int
 r_int
 id|tmp1
@@ -314,22 +319,32 @@ l_string|&quot;6:&bslash;t&quot;
 l_string|&quot;addl %5,%0&bslash;n&bslash;t&quot;
 multiline_comment|/* now add rest long to sum */
 l_string|&quot;clrl %5&bslash;n&bslash;t&quot;
-l_string|&quot;addxl %5,%0&bslash;n&quot;
+l_string|&quot;addxl %5,%0&bslash;n&bslash;t&quot;
 multiline_comment|/* add X bit */
-l_string|&quot;7:&bslash;n&quot;
+l_string|&quot;7:&bslash;t&quot;
+l_string|&quot;clrl %5&bslash;n&quot;
+multiline_comment|/* no error - clear return value */
+l_string|&quot;8:&bslash;n&quot;
+l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;.even&bslash;n&quot;
+l_string|&quot;9:&bslash;t&quot;
+l_string|&quot;moveq #-14,%5&bslash;n&bslash;t&quot;
+multiline_comment|/* -EFAULT, out of inputs to asm ;( */
+l_string|&quot;jra 8b&bslash;n&quot;
+l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
-l_string|&quot;.long 10b,7b&bslash;n&quot;
-l_string|&quot;.long 11b,7b&bslash;n&quot;
-l_string|&quot;.long 12b,7b&bslash;n&quot;
-l_string|&quot;.long 13b,7b&bslash;n&quot;
-l_string|&quot;.long 14b,7b&bslash;n&quot;
-l_string|&quot;.long 15b,7b&bslash;n&quot;
-l_string|&quot;.long 16b,7b&bslash;n&quot;
-l_string|&quot;.long 17b,7b&bslash;n&quot;
-l_string|&quot;.long 18b,7b&bslash;n&quot;
-l_string|&quot;.long 19b,7b&bslash;n&quot;
-l_string|&quot;.long 20b,7b&bslash;n&quot;
-l_string|&quot;.long 21b,7b&bslash;n&quot;
+l_string|&quot;.long 10b,9b&bslash;n&quot;
+l_string|&quot;.long 11b,9b&bslash;n&quot;
+l_string|&quot;.long 12b,9b&bslash;n&quot;
+l_string|&quot;.long 13b,9b&bslash;n&quot;
+l_string|&quot;.long 14b,9b&bslash;n&quot;
+l_string|&quot;.long 15b,9b&bslash;n&quot;
+l_string|&quot;.long 16b,9b&bslash;n&quot;
+l_string|&quot;.long 17b,9b&bslash;n&quot;
+l_string|&quot;.long 18b,9b&bslash;n&quot;
+l_string|&quot;.long 19b,9b&bslash;n&quot;
+l_string|&quot;.long 20b,9b&bslash;n&quot;
+l_string|&quot;.long 21b,9b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=d&quot;
@@ -357,7 +372,7 @@ l_string|&quot;=&amp;d&quot;
 id|tmp1
 )paren
 comma
-l_string|&quot;=&amp;d&quot;
+l_string|&quot;=d&quot;
 (paren
 id|tmp2
 )paren
@@ -383,8 +398,56 @@ id|dst
 )paren
 )paren
 suffix:semicolon
+op_star
+id|csum_err
+op_assign
+id|tmp2
+suffix:semicolon
 r_return
 id|sum
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * This one will go away soon.&n; */
+r_int
+r_int
+DECL|function|csum_partial_copy_fromuser
+id|csum_partial_copy_fromuser
+c_func
+(paren
+r_const
+r_char
+op_star
+id|src
+comma
+r_char
+op_star
+id|dst
+comma
+r_int
+id|len
+comma
+r_int
+id|sum
+)paren
+(brace
+r_int
+id|dummy
+suffix:semicolon
+r_return
+id|csum_partial_copy_from_user
+c_func
+(paren
+id|src
+comma
+id|dst
+comma
+id|len
+comma
+id|sum
+comma
+op_amp
+id|dummy
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * copy from kernel space while checksumming, otherwise like csum_partial&n; */

@@ -953,9 +953,14 @@ id|DIRCACHE
 comma
 l_string|&quot;NFS: found dircache entry %d&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
+(paren
 id|cache
 op_minus
 id|dircache
+)paren
 )paren
 suffix:semicolon
 id|cache-&gt;locked
@@ -1011,9 +1016,14 @@ id|DIRCACHE
 comma
 l_string|&quot;NFS: using free dircache entry %d&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
+(paren
 id|free
 op_minus
 id|dircache
+)paren
 )paren
 suffix:semicolon
 id|cache-&gt;cookie
@@ -1282,6 +1292,9 @@ l_string|&quot;NFS: invalidate dircache for %x/%ld&bslash;n&quot;
 comma
 id|dev
 comma
+(paren
+r_int
+)paren
 id|ino
 )paren
 suffix:semicolon
@@ -1928,6 +1941,9 @@ l_string|&quot;NFS: lookup_cache_remove(%x/%ld)&bslash;n&quot;
 comma
 id|dev
 comma
+(paren
+r_int
+)paren
 id|fileid
 )paren
 suffix:semicolon

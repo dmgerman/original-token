@@ -137,8 +137,7 @@ DECL|macro|COMPAT_AMIGA_BOOTI_VERSION
 mdefine_line|#define COMPAT_AMIGA_BOOTI_VERSION    MK_BI_VERSION( 1, 0 )
 DECL|macro|COMPAT_ATARI_BOOTI_VERSION
 mdefine_line|#define COMPAT_ATARI_BOOTI_VERSION    MK_BI_VERSION( 1, 0 )
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;asm/zorro.h&gt;
+macro_line|#include &lt;linux/zorro.h&gt;
 DECL|macro|COMPAT_NUM_AUTO
 mdefine_line|#define COMPAT_NUM_AUTO    16
 DECL|struct|compat_bi_Amiga

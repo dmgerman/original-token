@@ -3854,6 +3854,10 @@ comma
 id|skb
 )paren
 suffix:semicolon
+id|skb-&gt;h.raw
+op_assign
+id|skb-&gt;data
+suffix:semicolon
 id|memcpy_fromiovec
 c_func
 (paren

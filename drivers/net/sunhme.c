@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -9166,6 +9167,7 @@ suffix:semicolon
 )brace
 DECL|function|happy_meal_ether_init
 r_static
+r_inline
 r_int
 id|happy_meal_ether_init
 c_func
@@ -9860,7 +9862,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|happy_meal_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|happy_meal_probe
 c_func
@@ -9869,6 +9874,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_struct

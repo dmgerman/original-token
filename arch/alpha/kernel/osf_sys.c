@@ -691,7 +691,7 @@ suffix:semicolon
 r_int
 id|prio
 suffix:semicolon
-multiline_comment|/*&n;&t; * We don&squot;t need to aquire the kernel lock here, because&n;&t; * all of these operations are local. sys_getpriority&n;&t; * will get the lock as required..&n;&t; */
+multiline_comment|/*&n;&t; * We don&squot;t need to acquire the kernel lock here, because&n;&t; * all of these operations are local. sys_getpriority&n;&t; * will get the lock as required..&n;&t; */
 id|prio
 op_assign
 id|sys_getpriority
@@ -741,7 +741,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * No need to aquire the kernel lock, we&squot;re local..&n; */
+multiline_comment|/*&n; * No need to acquire the kernel lock, we&squot;re local..&n; */
 DECL|function|sys_getxuid
 id|asmlinkage
 r_int
@@ -879,7 +879,7 @@ id|tsk
 op_assign
 id|current
 suffix:semicolon
-multiline_comment|/* &n;&t; * This isn&squot;t strictly &quot;local&quot; any more and we should actually&n;&t; * aquire the kernel lock. The &quot;p_opptr&quot; pointer might change&n;&t; * if the parent goes away (or due to ptrace). But any race&n;&t; * isn&squot;t actually going to matter, as if the parent happens&n;&t; * to change we can happily return either of the pids.&n;&t; */
+multiline_comment|/* &n;&t; * This isn&squot;t strictly &quot;local&quot; any more and we should actually&n;&t; * acquire the kernel lock. The &quot;p_opptr&quot; pointer might change&n;&t; * if the parent goes away (or due to ptrace). But any race&n;&t; * isn&squot;t actually going to matter, as if the parent happens&n;&t; * to change we can happily return either of the pids.&n;&t; */
 (paren
 op_amp
 id|regs

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.c,v 1.11 1997/04/14 05:38:59 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.c,v 1.12 1997/04/16 05:56:20 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1759,6 +1759,12 @@ suffix:semicolon
 DECL|variable|__sparc64_bh_counter
 id|atomic_t
 id|__sparc64_bh_counter
+op_assign
+id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 macro_line|#ifdef __SMP__
 macro_line|#error SMP not supported on sparc64 just yet

@@ -18,6 +18,7 @@ macro_line|#include &lt;asm/timer.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -562,7 +563,7 @@ multiline_comment|/*13*/
 id|SUN4M_INT_AUDIO
 comma
 multiline_comment|/*14*/
-l_int|0x00000000
+id|SUN4M_INT_E14
 comma
 multiline_comment|/*15*/
 l_int|0x00000000
@@ -745,7 +746,8 @@ r_void
 id|sun4m_clear_profile_irq
 c_func
 (paren
-r_void
+r_int
+id|cpu
 )paren
 (brace
 r_volatile
@@ -757,7 +759,7 @@ id|clear
 op_assign
 id|sun4m_timers-&gt;cpu_timers
 (braket
-l_int|0
+id|cpu
 )braket
 dot
 id|l14_timer_limit
@@ -770,13 +772,16 @@ id|sun4m_load_profile_irq
 c_func
 (paren
 r_int
+id|cpu
+comma
+r_int
 r_int
 id|limit
 )paren
 (brace
 id|sun4m_timers-&gt;cpu_timers
 (braket
-l_int|0
+id|cpu
 )braket
 dot
 id|l14_timer_limit
@@ -784,65 +789,6 @@ op_assign
 id|limit
 suffix:semicolon
 )brace
-macro_line|#if HANDLE_LVL14_IRQ
-DECL|function|sun4m_lvl14_handler
-r_static
-r_void
-id|sun4m_lvl14_handler
-c_func
-(paren
-r_int
-id|irq
-comma
-r_void
-op_star
-id|dev_id
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-r_volatile
-r_int
-r_int
-id|clear
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;CPU[%d]: TOOK A LEVEL14!&bslash;n&quot;
-comma
-id|smp_processor_id
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* we do nothing with this at present&n;&t; * this is purely to prevent OBP getting its mucky paws&n;&t; * in linux.&n;&t; */
-id|clear
-op_assign
-id|sun4m_timers-&gt;cpu_timers
-(braket
-l_int|0
-)braket
-dot
-id|l14_timer_limit
-suffix:semicolon
-multiline_comment|/* clear interrupt */
-multiline_comment|/* reload with value, this allows on the fly retuning of the level14&n;&t; * timer&n;&t; */
-id|sun4m_timers-&gt;cpu_timers
-(braket
-l_int|0
-)braket
-dot
-id|l14_timer_limit
-op_assign
-id|lvl14_resolution
-suffix:semicolon
-)brace
-macro_line|#endif /* HANDLE_LVL14_IRQ */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1235,37 +1181,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Can&squot;t cope with multiple CPUS yet so no level14 tick events */
-macro_line|#if HANDLE_LVL14_IRQ
-r_if
-c_cond
-(paren
-id|linux_num_cpus
-OG
-l_int|1
-)paren
-id|claim_ticker14
-c_func
-(paren
-l_int|NULL
-comma
-id|PROFILE_IRQ
-comma
-l_int|0
-)paren
-suffix:semicolon
-r_else
-id|claim_ticker14
-c_func
-(paren
-id|sun4m_lvl14_handler
-comma
-id|PROFILE_IRQ
-comma
-id|lvl14_resolution
-)paren
-suffix:semicolon
-macro_line|#endif /* HANDLE_LVL14_IRQ */
 r_if
 c_cond
 (paren
@@ -1316,6 +1231,85 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|lvl14_save
+(braket
+l_int|4
+)braket
+suffix:semicolon
+r_struct
+id|tt_entry
+op_star
+id|trap_table
+op_assign
+op_amp
+id|sparc_ttable
+(braket
+id|SP_TRAP_IRQ1
+op_plus
+(paren
+l_int|14
+op_minus
+l_int|1
+)paren
+)braket
+suffix:semicolon
+multiline_comment|/* For SMP we use the level 14 ticker, however the bootup code&n;&t;&t; * has copied the firmwares level 14 vector into boot cpu&squot;s&n;&t;&t; * trap table, we must fix this now or we get squashed.&n;&t;&t; */
+id|__save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|trap_table-&gt;inst_one
+op_assign
+id|lvl14_save
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|trap_table-&gt;inst_two
+op_assign
+id|lvl14_save
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|trap_table-&gt;inst_three
+op_assign
+id|lvl14_save
+(braket
+l_int|2
+)braket
+suffix:semicolon
+id|trap_table-&gt;inst_four
+op_assign
+id|lvl14_save
+(braket
+l_int|3
+)braket
+suffix:semicolon
+id|local_flush_cache_all
+c_func
+(paren
+)paren
+suffix:semicolon
+id|__restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 DECL|function|__initfunc
 id|__initfunc
@@ -1664,15 +1658,6 @@ l_int|1
 )paren
 (brace
 multiline_comment|/* system wide interrupts go to cpu 0, this should always&n;&t;&t; * be safe because it is guaranteed to be fitted or OBP doesn&squot;t&n;&t;&t; * come up&n;&t;&t; *&n;&t;&t; * Not sure, but writing here on SLAVIO systems may puke&n;&t;&t; * so I don&squot;t do it unless there is more than 1 cpu.&n;&t;&t; */
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;Warning:&quot;
-l_string|&quot;sun4m multiple CPU interrupt code requires work&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|irq_rcvreg
 op_assign
 (paren

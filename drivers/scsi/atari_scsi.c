@@ -409,41 +409,86 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 DECL|variable|setup_can_queue
+r_static
 r_int
 id|setup_can_queue
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|setup_can_queue
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|variable|setup_cmd_per_lun
+r_static
 r_int
 id|setup_cmd_per_lun
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|setup_cmd_per_lun
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|variable|setup_sg_tablesize
+r_static
 r_int
 id|setup_sg_tablesize
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|setup_sg_tablesize
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 macro_line|#ifdef SUPPORT_TAGS
 DECL|variable|setup_use_tagged_queuing
+r_static
 r_int
 id|setup_use_tagged_queuing
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|setup_use_tagged_queuing
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 macro_line|#endif
 DECL|variable|setup_hostid
+r_static
 r_int
 id|setup_hostid
 op_assign
 op_minus
 l_int|1
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|setup_hostid
+comma
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
 macro_line|#if defined(REAL_DMA)
 DECL|function|scsi_dma_is_ignored_buserr
@@ -1773,6 +1818,7 @@ op_assign
 id|DEFAULT_USE_TAGGED_QUEUING
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef REAL_DMA
 multiline_comment|/* If running on a Falcon and if there&squot;s TT-Ram (i.e., more than one&n;&t; * memory block, since there&squot;s always ST-Ram in a Falcon), then allocate a&n;&t; * STRAM_BUFFER_SIZE byte dribble buffer for transfers from/to alternative&n;&t; * Ram.&n;&t; */
 r_if
 c_cond
@@ -1822,6 +1868,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 id|instance
 op_assign
 id|scsi_register
@@ -1839,17 +1886,10 @@ id|atari_scsi_host
 op_assign
 id|instance
 suffix:semicolon
+multiline_comment|/* Set irq to 0, to avoid that the mid-level code disables our interrupt&n;        * during queue_command calls. This is completely unnecessary, and even&n;        * worse causes bad problems on the Falcon, where the int is shared with&n;        * IDE and floppy! */
 id|instance-&gt;irq
 op_assign
-id|IS_A_TT
-c_func
-(paren
-)paren
-ques
-c_cond
-id|IRQ_TT_MFP_SCSI
-suffix:colon
-id|IRQ_MFP_FSCSI
+l_int|0
 suffix:semicolon
 id|atari_scsi_reset_boot
 c_func
@@ -1902,10 +1942,13 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif /* REAL_DMA */
+macro_line|#ifdef REAL_DMA
 r_if
 c_cond
 (paren
 id|is_medusa
+op_logical_or
+id|is_hades
 )paren
 (brace
 multiline_comment|/* While the read overruns (described by Drew Eckhardt in&n;&t;&t;&t; * NCR5380.c) never happened on TTs, they do in fact on the Medusa&n;&t;&t;&t; * (This was the cause why SCSI didn&squot;t work right for so long&n;&t;&t;&t; * there.) Since handling the overruns slows down a bit, I turned&n;&t;&t;&t; * the #ifdef&squot;s into a runtime condition.&n;&t;&t;&t; *&n;&t;&t;&t; * In principle it should be sufficient to do max. 1 byte with&n;&t;&t;&t; * PIO, but there is another problem on the Medusa with the DMA&n;&t;&t;&t; * rest data register. So &squot;atari_read_overruns&squot; is currently set&n;&t;&t;&t; * to 4 to avoid having transfers that aren&squot;t a multiple of 4. If&n;&t;&t;&t; * the rest data bug is fixed, this can be lowered to 1.&n;&t;&t;&t; */
@@ -1914,6 +1957,7 @@ op_assign
 l_int|4
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 r_else
 (brace

@@ -1,20 +1,17 @@
 macro_line|#ifndef __SPARC64_IPC_H__
 DECL|macro|__SPARC64_IPC_H__
 mdefine_line|#define __SPARC64_IPC_H__
-multiline_comment|/* &n; * These are used to wrap system calls on the sparc.&n; *&n; * See arch/sparc64/kernel/sys_sparc.c for ugly details..&n; */
-multiline_comment|/* XXX 32-bit binary compatability... */
+multiline_comment|/* &n; * These are used to wrap system calls on the sparc.&n; *&n; * See arch/sparc64/kernel/sys_sparc32.c for ugly details..&n; */
 DECL|struct|ipc_kludge
 r_struct
 id|ipc_kludge
 (brace
 DECL|member|msgp
-r_struct
-id|msgbuf
-op_star
+id|u32
 id|msgp
 suffix:semicolon
 DECL|member|msgtyp
-r_int
+id|s32
 id|msgtyp
 suffix:semicolon
 )brace
@@ -41,7 +38,8 @@ DECL|macro|SHMGET
 mdefine_line|#define SHMGET&t;&t;23
 DECL|macro|SHMCTL
 mdefine_line|#define SHMCTL&t;&t;24
+multiline_comment|/* We don&squot;t need to maintain backward compatibility on 64bit, we&squot;ve started fresh */
 DECL|macro|IPCCALL
-mdefine_line|#define IPCCALL(version,op)&t;((version)&lt;&lt;16 | (op))
+mdefine_line|#define IPCCALL(version,op)&t;(op)
 macro_line|#endif
 eof

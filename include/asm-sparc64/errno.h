@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: errno.h,v 1.1 1996/11/20 15:27:39 davem Exp $ */
+multiline_comment|/* $Id: errno.h,v 1.2 1997/04/15 12:46:11 jj Exp $ */
 macro_line|#ifndef _SPARC64_ERRNO_H
 DECL|macro|_SPARC64_ERRNO_H
 mdefine_line|#define _SPARC64_ERRNO_H
@@ -252,5 +252,9 @@ DECL|macro|ELIBMAX
 mdefine_line|#define&t;ELIBMAX&t;&t;123&t;/* Atmpt to link in too many shared libs */
 DECL|macro|ELIBSCN
 mdefine_line|#define&t;ELIBSCN&t;&t;124&t;/* .lib section in a.out corrupted */
+DECL|macro|ENOMEDIUM
+mdefine_line|#define ENOMEDIUM       125     /* No medium found */
+DECL|macro|EMEDIUMTYPE
+mdefine_line|#define EMEDIUMTYPE     126     /* Wrong medium type */
 macro_line|#endif /* !(_SPARC64_ERRNO_H) */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.22 1997/04/12 04:28:48 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.23 1997/04/16 10:27:18 jj Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
@@ -65,6 +65,19 @@ r_int
 id|tlb_context_cache
 op_assign
 id|CTX_FIRST_VERSION
+suffix:semicolon
+multiline_comment|/* References to section boundaries */
+r_extern
+r_char
+id|__init_begin
+comma
+id|__init_end
+comma
+id|etext
+comma
+id|__p1275_loc
+comma
+id|__bss_start
 suffix:semicolon
 multiline_comment|/*&n; * BAD_PAGE is the page that is used for page faults when linux&n; * is out-of-memory. Older versions of linux just did a&n; * do_exit(), but using this instead means there is less risk&n; * for a process dying in kernel mode, possibly leaving an inode&n; * unused etc..&n; *&n; * BAD_PAGETABLE is the accompanying page-table: it is initialized&n; * to point to BAD_PAGE entries.&n; *&n; * ZERO_PAGE is a special page that is used for zero-initialized&n; * data and COW.&n; */
 DECL|function|__bad_pmd
@@ -1277,6 +1290,7 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* XXX */
 r_return
 l_string|&quot;MMU Type: Spitfire&bslash;n&bslash;tFIXME: Write this&bslash;n&quot;
 suffix:semicolon
@@ -2149,68 +2163,6 @@ id|__DIRTY_BITS
 )paren
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|prom_printf
-c_func
-(paren
-l_string|&quot;IOMAP: vaddr[%016lx]paddr[%016lx]ptep[%016lx]pte[%016lx])&bslash;n&quot;
-comma
-id|virt_addr
-comma
-id|physaddr
-comma
-(paren
-r_int
-r_int
-)paren
-id|ptep
-comma
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-)paren
-suffix:semicolon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;IOMAP: pgd[%016lx,%016lx]&bslash;n&quot;
-comma
-(paren
-r_int
-r_int
-)paren
-id|pgdp
-comma
-id|pgd_val
-c_func
-(paren
-op_star
-id|pgdp
-)paren
-)paren
-suffix:semicolon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;IOMAP: pmd[%016lx,%016lx]&bslash;n&quot;
-comma
-(paren
-r_int
-r_int
-)paren
-id|pmdp
-comma
-id|pmd_val
-c_func
-(paren
-op_star
-id|pmdp
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|set_pte
 c_func
 (paren
@@ -2280,6 +2232,7 @@ id|ptep
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef DEBUG_MMU
 DECL|function|sparc_ultra_dump_itlb
 r_void
 id|sparc_ultra_dump_itlb
@@ -2426,6 +2379,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 multiline_comment|/* paging_init() sets up the page tables */
 r_extern
 r_int
@@ -2459,11 +2413,6 @@ id|end_mem
 )paren
 )paren
 (brace
-r_extern
-r_int
-r_int
-id|__p1275_loc
-suffix:semicolon
 r_extern
 r_int
 r_int
@@ -3212,6 +3161,16 @@ op_assign
 l_int|0
 suffix:semicolon
 r_int
+id|initpages
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|prompages
+op_assign
+l_int|0
+suffix:semicolon
+r_int
 r_int
 id|tmp2
 comma
@@ -3220,10 +3179,6 @@ suffix:semicolon
 r_int
 r_int
 id|data_end
-suffix:semicolon
-r_extern
-r_char
-id|etext
 suffix:semicolon
 id|end_mem
 op_and_assign
@@ -3408,6 +3363,64 @@ c_cond
 (paren
 (paren
 id|addr
+op_ge
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|__init_begin
+op_logical_and
+id|addr
+OL
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|__init_end
+)paren
+)paren
+(brace
+id|initpages
+op_increment
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|addr
+op_ge
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|__p1275_loc
+op_logical_and
+id|addr
+OL
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|__bss_start
+)paren
+)paren
+(brace
+id|prompages
+op_increment
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|addr
 OL
 id|data_end
 )paren
@@ -3481,7 +3494,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Memory: %luk available (%dk kernel code, %dk data) [%016lx,%016lx]&bslash;n&quot;
+l_string|&quot;Memory: %luk available (%dk kernel code, %dk data, %dk init, %dk prom) [%016lx,%016lx]&bslash;n&quot;
 comma
 id|tmp2
 op_rshift
@@ -3496,6 +3509,22 @@ l_int|10
 )paren
 comma
 id|datapages
+op_lshift
+(paren
+id|PAGE_SHIFT
+op_minus
+l_int|10
+)paren
+comma
+id|initpages
+op_lshift
+(paren
+id|PAGE_SHIFT
+op_minus
+l_int|10
+)paren
+comma
+id|prompages
 op_lshift
 (paren
 id|PAGE_SHIFT
@@ -3543,19 +3572,6 @@ id|min_free_pages
 op_plus
 id|min_free_pages
 suffix:semicolon
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;Done in mem_init() halting&bslash;n&quot;
-)paren
-suffix:semicolon
-id|prom_cmdline
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|free_initmem
 r_void
@@ -3564,12 +3580,6 @@ id|free_initmem
 r_void
 )paren
 (brace
-r_extern
-r_char
-id|__init_begin
-comma
-id|__init_end
-suffix:semicolon
 r_int
 r_int
 id|addr

@@ -1330,13 +1330,11 @@ op_star
 id|fnw
 suffix:semicolon
 r_int
+id|i
+comma
 id|j
 comma
 id|k
-comma
-id|i
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* we mostly copy too much here (512bytes), but who cares ;) */
 r_if
@@ -1383,6 +1381,10 @@ id|MAX_NR_FUNC
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+id|i
+op_assign
+id|tmp.kb_func
 suffix:semicolon
 r_switch
 c_cond

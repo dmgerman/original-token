@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fb.h,v 1.24 1997/03/24 17:44:15 jj Exp $&n; * fb.h: contains the definitions of the structures that various sun&n; *       frame buffer can use to do console driver stuff.&n; *&n; * (C) 1996 Dave Redman     (djhr@tadpole.co.uk)&n; * (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * (C) 1996 David Miller    (davem@rutgers.edu)&n; * (C) 1996 Peter Zaitcev   (zaitcev@lab.ipmce.su)&n; * (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fb.h,v 1.26 1997/04/17 02:29:33 miguel Exp $&n; * fb.h: contains the definitions of the structures that various sun&n; *       frame buffer can use to do console driver stuff.&n; *&n; * (C) 1996 Dave Redman     (djhr@tadpole.co.uk)&n; * (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * (C) 1996 David Miller    (davem@rutgers.edu)&n; * (C) 1996 Peter Zaitcev   (zaitcev@lab.ipmce.su)&n; * (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC_FB_H_
 DECL|macro|__SPARC_FB_H_
 mdefine_line|#define __SPARC_FB_H_
@@ -1003,8 +1003,7 @@ op_star
 comma
 r_int
 comma
-r_int
-r_int
+id|u32
 comma
 r_int
 comma
@@ -1022,8 +1021,7 @@ op_star
 comma
 r_int
 comma
-r_int
-r_int
+id|u32
 comma
 r_int
 )paren
@@ -1039,8 +1037,7 @@ r_int
 comma
 r_int
 comma
-r_int
-r_int
+id|u32
 comma
 r_int
 )paren
@@ -1054,8 +1051,7 @@ op_star
 comma
 r_int
 comma
-r_int
-r_int
+id|u32
 comma
 r_int
 comma
@@ -1073,8 +1069,7 @@ op_star
 comma
 r_int
 comma
-r_int
-r_int
+id|u32
 comma
 r_int
 )paren
@@ -1090,12 +1085,52 @@ r_int
 comma
 r_int
 comma
-r_int
-r_int
+id|u32
 comma
 r_struct
 id|linux_sbus_device
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|creator_setup
+(paren
+id|fbinfo_t
+op_star
+comma
+r_int
+comma
+r_int
+comma
+r_int
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|io_remap_page_range
+c_func
+(paren
+r_int
+r_int
+id|from
+comma
+r_int
+r_int
+id|offset
+comma
+r_int
+r_int
+id|size
+comma
+id|pgprot_t
+id|prot
+comma
+r_int
+id|space
 )paren
 suffix:semicolon
 macro_line|#endif __SPARC_FB_H_

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgsix.c,v 1.26 1997/04/10 03:02:40 davem Exp $&n; * cgsix.c: cgsix frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: cgsix.c,v 1.27 1997/04/14 17:04:55 jj Exp $&n; * cgsix.c: cgsix frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -1773,8 +1773,7 @@ comma
 r_int
 id|slot
 comma
-r_int
-r_int
+id|u32
 id|cg6
 comma
 r_int
@@ -1801,9 +1800,6 @@ l_string|&quot;cgsix%d at 0x%8.8x &quot;
 comma
 id|slot
 comma
-(paren
-id|uint
-)paren
 id|cg6
 )paren
 suffix:semicolon
@@ -1875,14 +1871,9 @@ id|cg6info-&gt;bt
 op_assign
 id|sparc_alloc_io
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|cg6
 op_plus
 id|CG6_BROOKTREE_OFFSET
-)paren
 comma
 l_int|0
 comma
@@ -1903,14 +1894,9 @@ id|cg6info-&gt;fhc
 op_assign
 id|sparc_alloc_io
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|cg6
 op_plus
 id|CG6_FHC_OFFSET
-)paren
 comma
 l_int|0
 comma
@@ -1930,14 +1916,9 @@ id|cg6info-&gt;thc
 op_assign
 id|sparc_alloc_io
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|cg6
 op_plus
 id|CG6_THC_OFFSET
-)paren
 comma
 l_int|0
 comma
@@ -1958,14 +1939,9 @@ id|cg6info-&gt;tec
 op_assign
 id|sparc_alloc_io
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|cg6
 op_plus
 id|CG6_TEC_OFFSET
-)paren
 comma
 l_int|0
 comma
@@ -1986,14 +1962,9 @@ id|cg6info-&gt;dhc
 op_assign
 id|sparc_alloc_io
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|cg6
 op_plus
 id|CG6_DHC_OFFSET
-)paren
 comma
 l_int|0
 comma
@@ -2010,14 +1981,9 @@ id|cg6info-&gt;fbc
 op_assign
 id|sparc_alloc_io
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|cg6
 op_plus
 id|CG6_FBC_OFFSET
-)paren
 comma
 l_int|0
 comma
@@ -2034,14 +2000,9 @@ id|cg6info-&gt;rom
 op_assign
 id|sparc_alloc_io
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|cg6
 op_plus
 id|CG6_ROM_OFFSET
-)paren
 comma
 l_int|0
 comma
@@ -2069,14 +2030,9 @@ r_int
 )paren
 id|sparc_alloc_io
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|cg6
 op_plus
 id|CG6_RAM_OFFSET
-)paren
 comma
 l_int|0
 comma

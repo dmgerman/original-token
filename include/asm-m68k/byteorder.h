@@ -10,7 +10,6 @@ DECL|macro|__BIG_ENDIAN_BITFIELD
 mdefine_line|#define __BIG_ENDIAN_BITFIELD
 macro_line|#endif
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 multiline_comment|/*&n; * In-kernel byte order macros to handle stuff like&n; * byte-order-dependent filesystems etc.&n; */
 DECL|macro|le16_to_cpu

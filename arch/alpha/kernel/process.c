@@ -27,7 +27,7 @@ macro_line|#include &lt;asm/reg.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-multiline_comment|/*&n; * No need to aquire the kernel lock, we&squot;re entirely local..&n; */
+multiline_comment|/*&n; * No need to acquire the kernel lock, we&squot;re entirely local..&n; */
 DECL|function|sys_sethae
 id|asmlinkage
 r_int

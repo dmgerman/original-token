@@ -9,14 +9,7 @@ id|version
 op_assign
 l_string|&quot;bionet.c:v1.0 06-feb-96 (c) Hartmut Laue.&bslash;n&quot;
 suffix:semicolon
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2064,21 +2057,6 @@ id|lp-&gt;stats
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/version.h&gt;
-multiline_comment|/* We should include the kernel identification string in the module.&n; */
-DECL|variable|kernel_version
-r_static
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-DECL|macro|NEXT_DEV
-macro_line|#undef&t;NEXT_DEV
-DECL|macro|NEXT_DEV
-mdefine_line|#define NEXT_DEV&t;(&amp;bio_dev)
 DECL|variable|bio_name
 r_static
 r_char
@@ -2117,7 +2095,7 @@ l_int|0
 comma
 l_int|0
 comma
-id|NEXT_DEV
+l_int|NULL
 comma
 id|bionet_probe
 comma

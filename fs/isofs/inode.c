@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * We have no support for &quot;multi volume&quot; CDs, but more and more disks carry&n; * wrong information within the volume descriptors.&n; */
@@ -3734,12 +3735,16 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|init_iso9660_fs
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|init_iso9660_fs
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

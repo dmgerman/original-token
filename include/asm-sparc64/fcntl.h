@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fcntl.h,v 1.2 1997/04/04 00:50:15 davem Exp $ */
+multiline_comment|/* $Id: fcntl.h,v 1.3 1997/04/14 17:05:20 jj Exp $ */
 macro_line|#ifndef _SPARC64_FCNTL_H
 DECL|macro|_SPARC64_FCNTL_H
 mdefine_line|#define _SPARC64_FCNTL_H
@@ -73,7 +73,6 @@ DECL|macro|LOCK_NB
 mdefine_line|#define LOCK_NB&t;&t;4&t;/* or&squot;d with one of the above to prevent&n;&t;&t;&t;&t;   blocking */
 DECL|macro|LOCK_UN
 mdefine_line|#define LOCK_UN&t;&t;8&t;/* remove lock */
-multiline_comment|/* XXX 32-bit binary compatability item... -DaveM */
 DECL|struct|flock
 r_struct
 id|flock
@@ -104,5 +103,37 @@ id|__unused
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
+DECL|struct|flock32
+r_struct
+id|flock32
+(brace
+DECL|member|l_type
+r_int
+id|l_type
+suffix:semicolon
+DECL|member|l_whence
+r_int
+id|l_whence
+suffix:semicolon
+DECL|member|l_start
+id|__kernel_off_t32
+id|l_start
+suffix:semicolon
+DECL|member|l_len
+id|__kernel_off_t32
+id|l_len
+suffix:semicolon
+DECL|member|l_pid
+id|__kernel_pid_t32
+id|l_pid
+suffix:semicolon
+DECL|member|__unused
+r_int
+id|__unused
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* !(_SPARC64_FCNTL_H) */
 eof

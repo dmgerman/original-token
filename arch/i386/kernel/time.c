@@ -16,6 +16,8 @@ macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*&n; * for x86_do_profile()&n; */
+macro_line|#include &quot;irq.h&quot;
 r_extern
 r_int
 id|setup_x86_irq
@@ -923,76 +925,6 @@ id|last_rtc_update
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * Move this to a header file - right now it shows&n; * up both here and in smp.c&n; */
-DECL|function|x86_do_profile
-r_static
-r_inline
-r_void
-id|x86_do_profile
-(paren
-r_int
-r_int
-id|eip
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|prof_buffer
-op_logical_and
-id|current-&gt;pid
-)paren
-(brace
-r_extern
-r_int
-id|_stext
-suffix:semicolon
-id|eip
-op_sub_assign
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|_stext
-suffix:semicolon
-id|eip
-op_rshift_assign
-id|prof_shift
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|eip
-OL
-id|prof_len
-)paren
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|prof_buffer
-(braket
-id|eip
-)braket
-)paren
-suffix:semicolon
-r_else
-multiline_comment|/*&n;&t;&t; * Dont ignore out-of-bounds EIP values silently,&n;&t;&t; * put them into the last histogram slot, so if&n;&t;&t; * present, they will show up as a sharp peak.&n;&t;&t; */
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|prof_buffer
-(braket
-id|prof_len
-op_minus
-l_int|1
-)braket
-)paren
-suffix:semicolon
-)brace
-)brace
 multiline_comment|/*&n; * timer_interrupt() needs to keep up the real-time clock,&n; * as well as call the &quot;do_timer()&quot; routine every clocktick&n; */
 DECL|function|timer_interrupt
 r_static

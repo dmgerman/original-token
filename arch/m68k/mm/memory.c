@@ -183,7 +183,7 @@ op_logical_neg
 (paren
 id|dp-&gt;page
 op_assign
-id|__get_free_page
+id|get_free_page
 (paren
 id|GFP_KERNEL
 )paren
@@ -199,6 +199,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|flush_tlb_kernel_page
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|dp-&gt;page
+)paren
+suffix:semicolon
 id|nocache_page
 (paren
 id|dp-&gt;page
@@ -779,7 +789,7 @@ op_assign
 id|pmd_tablepage
 op_star
 )paren
-id|__get_free_page
+id|get_free_page
 c_func
 (paren
 id|GFP_KERNEL
@@ -797,6 +807,16 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+id|flush_tlb_kernel_page
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|page
+)paren
+suffix:semicolon
 id|nocache_page
 c_func
 (paren
@@ -1303,7 +1323,9 @@ suffix:semicolon
 id|asm
 r_volatile
 (paren
-l_string|&quot;pmove %/tt0,%0@&quot;
+l_string|&quot;.chip 68030&bslash;n&bslash;t&quot;
+l_string|&quot;pmove %/tt0,%0@&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
@@ -1330,7 +1352,9 @@ suffix:semicolon
 id|asm
 r_volatile
 (paren
-l_string|&quot;pmove %/tt1,%0@&quot;
+l_string|&quot;.chip 68030&bslash;n&bslash;t&quot;
+l_string|&quot;pmove %/tt1,%0@&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
@@ -1356,22 +1380,22 @@ id|vaddr
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|CPU_IS_040_OR_060
+)paren
 (brace
-r_register
 r_int
 r_int
 id|ttreg
-id|__asm__
-c_func
-(paren
-l_string|&quot;d0&quot;
-)paren
 suffix:semicolon
 id|asm
 r_volatile
 (paren
-l_string|&quot;.long 0x4e7a0006&quot;
-multiline_comment|/* movec %dtt0,%d0 */
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;movec %%dtt0,%0&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 l_string|&quot;=d&quot;
 (paren
@@ -1396,8 +1420,9 @@ suffix:semicolon
 id|asm
 r_volatile
 (paren
-l_string|&quot;.long 0x4e7a0007&quot;
-multiline_comment|/* movec %dtt1,%d0 */
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;movec %%dtt1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 l_string|&quot;=d&quot;
 (paren

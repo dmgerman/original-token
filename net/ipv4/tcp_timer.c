@@ -57,6 +57,10 @@ op_assign
 (brace
 (brace
 id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 comma
 id|TCP_SYNACK_PERIOD
 comma
@@ -68,6 +72,10 @@ comma
 multiline_comment|/* SYNACK&t;*/
 (brace
 id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 comma
 id|TCP_KEEPALIVE_PERIOD
 comma

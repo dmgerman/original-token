@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.h,v 1.15 1997/04/14 05:39:28 davem Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.16 1997/04/15 09:03:40 davem Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_IRQ_H
 DECL|macro|_SPARC_IRQ_H
 mdefine_line|#define _SPARC_IRQ_H
@@ -68,7 +68,7 @@ op_star
 id|clear_profile_irq
 )paren
 (paren
-r_void
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -78,6 +78,9 @@ op_star
 id|load_profile_irq
 )paren
 (paren
+r_int
+id|cpu
+comma
 r_int
 r_int
 id|timeout

@@ -6,15 +6,15 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 multiline_comment|/*&n;** Atari Interrupt sources.&n;**&n;*/
 DECL|macro|STMFP_SOURCE_BASE
-mdefine_line|#define STMFP_SOURCE_BASE   8
+mdefine_line|#define STMFP_SOURCE_BASE  8
 DECL|macro|TTMFP_SOURCE_BASE
-mdefine_line|#define TTMFP_SOURCE_BASE   24
+mdefine_line|#define TTMFP_SOURCE_BASE  24
 DECL|macro|SCC_SOURCE_BASE
-mdefine_line|#define SCC_SOURCE_BASE&t;    40
+mdefine_line|#define SCC_SOURCE_BASE    40
 DECL|macro|VME_SOURCE_BASE
-mdefine_line|#define VME_SOURCE_BASE&t;&t;56
+mdefine_line|#define VME_SOURCE_BASE    56
 DECL|macro|VME_MAX_SOURCES
-mdefine_line|#define VME_MAX_SOURCES&t;&t;16
+mdefine_line|#define VME_MAX_SOURCES    16
 DECL|macro|NUM_ATARI_SOURCES
 mdefine_line|#define NUM_ATARI_SOURCES   (VME_SOURCE_BASE+VME_MAX_SOURCES-STMFP_SOURCE_BASE)
 multiline_comment|/* convert vector number to int source number */
@@ -31,39 +31,39 @@ mdefine_line|#define IRQ_TYPE_FAST     1
 DECL|macro|IRQ_TYPE_PRIO
 mdefine_line|#define IRQ_TYPE_PRIO     2
 DECL|macro|IRQ_SPURIOUS
-mdefine_line|#define&t;IRQ_SPURIOUS      (IRQ_MACHSPEC | 0)
+mdefine_line|#define&t;IRQ_SPURIOUS      (0)
 multiline_comment|/* auto-vector interrupts */
 DECL|macro|IRQ_AUTO_1
-mdefine_line|#define IRQ_AUTO_1        (IRQ_MACHSPEC | 1)
+mdefine_line|#define IRQ_AUTO_1        (1)
 DECL|macro|IRQ_AUTO_2
-mdefine_line|#define IRQ_AUTO_2        (IRQ_MACHSPEC | 2)
+mdefine_line|#define IRQ_AUTO_2        (2)
 DECL|macro|IRQ_AUTO_3
-mdefine_line|#define IRQ_AUTO_3        (IRQ_MACHSPEC | 3)
+mdefine_line|#define IRQ_AUTO_3        (3)
 DECL|macro|IRQ_AUTO_4
-mdefine_line|#define IRQ_AUTO_4        (IRQ_MACHSPEC | 4)
+mdefine_line|#define IRQ_AUTO_4        (4)
 DECL|macro|IRQ_AUTO_5
-mdefine_line|#define IRQ_AUTO_5        (IRQ_MACHSPEC | 5)
+mdefine_line|#define IRQ_AUTO_5        (5)
 DECL|macro|IRQ_AUTO_6
-mdefine_line|#define IRQ_AUTO_6        (IRQ_MACHSPEC | 6)
+mdefine_line|#define IRQ_AUTO_6        (6)
 DECL|macro|IRQ_AUTO_7
-mdefine_line|#define IRQ_AUTO_7        (IRQ_MACHSPEC | 7)
+mdefine_line|#define IRQ_AUTO_7        (7)
 multiline_comment|/* ST-MFP interrupts */
 DECL|macro|IRQ_MFP_BUSY
-mdefine_line|#define IRQ_MFP_BUSY      (IRQ_MACHSPEC | 8)
+mdefine_line|#define IRQ_MFP_BUSY      (8)
 DECL|macro|IRQ_MFP_DCD
-mdefine_line|#define IRQ_MFP_DCD       (IRQ_MACHSPEC | 9)
+mdefine_line|#define IRQ_MFP_DCD       (9)
 DECL|macro|IRQ_MFP_CTS
-mdefine_line|#define IRQ_MFP_CTS  &t;  (IRQ_MACHSPEC | 10)
+mdefine_line|#define IRQ_MFP_CTS  &t;  (10)
 DECL|macro|IRQ_MFP_GPU
-mdefine_line|#define IRQ_MFP_GPU &t;  (IRQ_MACHSPEC | 11)
+mdefine_line|#define IRQ_MFP_GPU &t;  (11)
 DECL|macro|IRQ_MFP_TIMD
-mdefine_line|#define IRQ_MFP_TIMD      (IRQ_MACHSPEC | 12)
+mdefine_line|#define IRQ_MFP_TIMD      (12)
 DECL|macro|IRQ_MFP_TIMC
-mdefine_line|#define IRQ_MFP_TIMC&t;  (IRQ_MACHSPEC | 13)
+mdefine_line|#define IRQ_MFP_TIMC&t;  (13)
 DECL|macro|IRQ_MFP_ACIA
-mdefine_line|#define IRQ_MFP_ACIA&t;  (IRQ_MACHSPEC | 14)
+mdefine_line|#define IRQ_MFP_ACIA&t;  (14)
 DECL|macro|IRQ_MFP_FDC
-mdefine_line|#define IRQ_MFP_FDC       (IRQ_MACHSPEC | 15)
+mdefine_line|#define IRQ_MFP_FDC       (15)
 DECL|macro|IRQ_MFP_ACSI
 mdefine_line|#define IRQ_MFP_ACSI      IRQ_MFP_FDC
 DECL|macro|IRQ_MFP_FSCSI
@@ -71,71 +71,71 @@ mdefine_line|#define IRQ_MFP_FSCSI     IRQ_MFP_FDC
 DECL|macro|IRQ_MFP_IDE
 mdefine_line|#define IRQ_MFP_IDE       IRQ_MFP_FDC
 DECL|macro|IRQ_MFP_TIMB
-mdefine_line|#define IRQ_MFP_TIMB      (IRQ_MACHSPEC | 16)
+mdefine_line|#define IRQ_MFP_TIMB      (16)
 DECL|macro|IRQ_MFP_SERERR
-mdefine_line|#define IRQ_MFP_SERERR    (IRQ_MACHSPEC | 17)
+mdefine_line|#define IRQ_MFP_SERERR    (17)
 DECL|macro|IRQ_MFP_SEREMPT
-mdefine_line|#define IRQ_MFP_SEREMPT   (IRQ_MACHSPEC | 18)
+mdefine_line|#define IRQ_MFP_SEREMPT   (18)
 DECL|macro|IRQ_MFP_RECERR
-mdefine_line|#define IRQ_MFP_RECERR    (IRQ_MACHSPEC | 19)
+mdefine_line|#define IRQ_MFP_RECERR    (19)
 DECL|macro|IRQ_MFP_RECFULL
-mdefine_line|#define IRQ_MFP_RECFULL   (IRQ_MACHSPEC | 20)
+mdefine_line|#define IRQ_MFP_RECFULL   (20)
 DECL|macro|IRQ_MFP_TIMA
-mdefine_line|#define IRQ_MFP_TIMA      (IRQ_MACHSPEC | 21)
+mdefine_line|#define IRQ_MFP_TIMA      (21)
 DECL|macro|IRQ_MFP_RI
-mdefine_line|#define IRQ_MFP_RI        (IRQ_MACHSPEC | 22)
+mdefine_line|#define IRQ_MFP_RI        (22)
 DECL|macro|IRQ_MFP_MMD
-mdefine_line|#define IRQ_MFP_MMD       (IRQ_MACHSPEC | 23)
+mdefine_line|#define IRQ_MFP_MMD       (23)
 multiline_comment|/* TT-MFP interrupts */
 DECL|macro|IRQ_TT_MFP_IO0
-mdefine_line|#define IRQ_TT_MFP_IO0       (IRQ_MACHSPEC | 24)
+mdefine_line|#define IRQ_TT_MFP_IO0       (24)
 DECL|macro|IRQ_TT_MFP_IO1
-mdefine_line|#define IRQ_TT_MFP_IO1       (IRQ_MACHSPEC | 25)
+mdefine_line|#define IRQ_TT_MFP_IO1       (25)
 DECL|macro|IRQ_TT_MFP_SCC
-mdefine_line|#define IRQ_TT_MFP_SCC&t;     (IRQ_MACHSPEC | 26)
+mdefine_line|#define IRQ_TT_MFP_SCC&t;     (26)
 DECL|macro|IRQ_TT_MFP_RI
-mdefine_line|#define IRQ_TT_MFP_RI &t;     (IRQ_MACHSPEC | 27)
+mdefine_line|#define IRQ_TT_MFP_RI &t;     (27)
 DECL|macro|IRQ_TT_MFP_TIMD
-mdefine_line|#define IRQ_TT_MFP_TIMD      (IRQ_MACHSPEC | 28)
+mdefine_line|#define IRQ_TT_MFP_TIMD      (28)
 DECL|macro|IRQ_TT_MFP_TIMC
-mdefine_line|#define IRQ_TT_MFP_TIMC&t;     (IRQ_MACHSPEC | 29)
+mdefine_line|#define IRQ_TT_MFP_TIMC&t;     (29)
 DECL|macro|IRQ_TT_MFP_DRVRDY
-mdefine_line|#define IRQ_TT_MFP_DRVRDY    (IRQ_MACHSPEC | 30)
+mdefine_line|#define IRQ_TT_MFP_DRVRDY    (30)
 DECL|macro|IRQ_TT_MFP_SCSIDMA
-mdefine_line|#define IRQ_TT_MFP_SCSIDMA   (IRQ_MACHSPEC | 31)
+mdefine_line|#define IRQ_TT_MFP_SCSIDMA   (31)
 DECL|macro|IRQ_TT_MFP_TIMB
-mdefine_line|#define IRQ_TT_MFP_TIMB      (IRQ_MACHSPEC | 32)
+mdefine_line|#define IRQ_TT_MFP_TIMB      (32)
 DECL|macro|IRQ_TT_MFP_SERERR
-mdefine_line|#define IRQ_TT_MFP_SERERR    (IRQ_MACHSPEC | 33)
+mdefine_line|#define IRQ_TT_MFP_SERERR    (33)
 DECL|macro|IRQ_TT_MFP_SEREMPT
-mdefine_line|#define IRQ_TT_MFP_SEREMPT   (IRQ_MACHSPEC | 34)
+mdefine_line|#define IRQ_TT_MFP_SEREMPT   (34)
 DECL|macro|IRQ_TT_MFP_RECERR
-mdefine_line|#define IRQ_TT_MFP_RECERR    (IRQ_MACHSPEC | 35)
+mdefine_line|#define IRQ_TT_MFP_RECERR    (35)
 DECL|macro|IRQ_TT_MFP_RECFULL
-mdefine_line|#define IRQ_TT_MFP_RECFULL   (IRQ_MACHSPEC | 36)
+mdefine_line|#define IRQ_TT_MFP_RECFULL   (36)
 DECL|macro|IRQ_TT_MFP_TIMA
-mdefine_line|#define IRQ_TT_MFP_TIMA      (IRQ_MACHSPEC | 37)
+mdefine_line|#define IRQ_TT_MFP_TIMA      (37)
 DECL|macro|IRQ_TT_MFP_RTC
-mdefine_line|#define IRQ_TT_MFP_RTC       (IRQ_MACHSPEC | 38)
+mdefine_line|#define IRQ_TT_MFP_RTC       (38)
 DECL|macro|IRQ_TT_MFP_SCSI
-mdefine_line|#define IRQ_TT_MFP_SCSI      (IRQ_MACHSPEC | 39)
+mdefine_line|#define IRQ_TT_MFP_SCSI      (39)
 multiline_comment|/* SCC interrupts */
 DECL|macro|IRQ_SCCB_TX
-mdefine_line|#define IRQ_SCCB_TX&t;     (IRQ_MACHSPEC | 40)
+mdefine_line|#define IRQ_SCCB_TX&t;     (40)
 DECL|macro|IRQ_SCCB_STAT
-mdefine_line|#define IRQ_SCCB_STAT&t;     (IRQ_MACHSPEC | 42)
+mdefine_line|#define IRQ_SCCB_STAT&t;     (42)
 DECL|macro|IRQ_SCCB_RX
-mdefine_line|#define IRQ_SCCB_RX&t;     (IRQ_MACHSPEC | 44)
+mdefine_line|#define IRQ_SCCB_RX&t;     (44)
 DECL|macro|IRQ_SCCB_SPCOND
-mdefine_line|#define IRQ_SCCB_SPCOND&t;     (IRQ_MACHSPEC | 46)
+mdefine_line|#define IRQ_SCCB_SPCOND&t;     (46)
 DECL|macro|IRQ_SCCA_TX
-mdefine_line|#define IRQ_SCCA_TX&t;     (IRQ_MACHSPEC | 48)
+mdefine_line|#define IRQ_SCCA_TX&t;     (48)
 DECL|macro|IRQ_SCCA_STAT
-mdefine_line|#define IRQ_SCCA_STAT&t;     (IRQ_MACHSPEC | 50)
+mdefine_line|#define IRQ_SCCA_STAT&t;     (50)
 DECL|macro|IRQ_SCCA_RX
-mdefine_line|#define IRQ_SCCA_RX&t;     (IRQ_MACHSPEC | 52)
+mdefine_line|#define IRQ_SCCA_RX&t;     (52)
 DECL|macro|IRQ_SCCA_SPCOND
-mdefine_line|#define IRQ_SCCA_SPCOND&t;     (IRQ_MACHSPEC | 54)
+mdefine_line|#define IRQ_SCCA_SPCOND&t;     (54)
 DECL|macro|INT_CLK
 mdefine_line|#define INT_CLK   24576&t;    /* CLK while int_clk =2.456MHz and divide = 100 */
 DECL|macro|INT_TICKS
@@ -452,11 +452,6 @@ r_int
 id|irq
 )paren
 (brace
-id|irq
-op_and_assign
-op_complement
-id|IRQ_MACHSPEC
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -490,11 +485,6 @@ r_int
 id|irq
 )paren
 (brace
-id|irq
-op_and_assign
-op_complement
-id|IRQ_MACHSPEC
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -529,11 +519,6 @@ r_int
 id|irq
 )paren
 (brace
-id|irq
-op_and_assign
-op_complement
-id|IRQ_MACHSPEC
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -567,11 +552,6 @@ r_int
 id|irq
 )paren
 (brace
-id|irq
-op_and_assign
-op_complement
-id|IRQ_MACHSPEC
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -613,11 +593,6 @@ r_int
 id|irq
 )paren
 (brace
-id|irq
-op_and_assign
-op_complement
-id|IRQ_MACHSPEC
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -651,11 +626,6 @@ r_int
 id|irq
 )paren
 (brace
-id|irq
-op_and_assign
-op_complement
-id|IRQ_MACHSPEC
-suffix:semicolon
 r_if
 c_cond
 (paren

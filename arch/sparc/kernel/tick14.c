@@ -214,6 +214,14 @@ r_int
 id|timeout
 )paren
 (brace
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* first we copy the obp handler instructions&n;&t; */
 id|disable_irq
 c_func
@@ -312,6 +320,8 @@ suffix:semicolon
 id|load_profile_irq
 c_func
 (paren
+id|cpu
+comma
 id|timeout
 )paren
 suffix:semicolon

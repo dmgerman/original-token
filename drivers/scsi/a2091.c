@@ -8,7 +8,7 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
-macro_line|#include &lt;asm/zorro.h&gt;
+macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
@@ -929,9 +929,6 @@ suffix:semicolon
 id|instance-&gt;irq
 op_assign
 id|IRQ_AMIGA_PORTS
-op_amp
-op_complement
-id|IRQ_MACHSPEC
 suffix:semicolon
 id|instance-&gt;unique_id
 op_assign

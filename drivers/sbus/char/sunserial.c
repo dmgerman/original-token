@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunserial.c,v 1.37 1997/04/12 23:33:14 ecd Exp $&n; * serial.c: Serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;.&n; */
+multiline_comment|/* $Id: sunserial.c,v 1.38 1997/04/14 17:05:00 jj Exp $&n; * serial.c: Serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -7921,7 +7921,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.37 $&quot;
+l_string|&quot;$Revision: 1.38 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -8670,6 +8670,10 @@ r_return
 r_struct
 id|sun_zslayout
 op_star
+)paren
+(paren
+r_int
+r_int
 )paren
 id|vaddr
 (braket

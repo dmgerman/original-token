@@ -1,6 +1,7 @@
 macro_line|#ifndef _ASM_M68k_SIGCONTEXT_H
 DECL|macro|_ASM_M68k_SIGCONTEXT_H
 mdefine_line|#define _ASM_M68k_SIGCONTEXT_H
+macro_line|#include&lt;asm/fpu.h&gt;
 DECL|struct|sigcontext
 r_struct
 id|sigcontext
@@ -76,7 +77,7 @@ r_int
 r_char
 id|sc_fpstate
 (braket
-l_int|216
+id|FPSTATESIZE
 )braket
 suffix:semicolon
 )brace

@@ -22,6 +22,10 @@ id|atomic_t
 id|dst_total
 op_assign
 id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 DECL|variable|dst_gc_timer_expires
 r_static

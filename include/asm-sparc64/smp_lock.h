@@ -12,8 +12,8 @@ DECL|macro|unlock_kernel
 mdefine_line|#define unlock_kernel()&t;&t;&t;&t;do { } while(0)
 DECL|macro|release_kernel_lock
 mdefine_line|#define release_kernel_lock(task, cpu, depth)&t;((depth) = 1)
-DECL|macro|reaquire_kernel_lock
-mdefine_line|#define reaquire_kernel_lock(task, cpu, depth)&t;do { } while(0)
+DECL|macro|reacquire_kernel_lock
+mdefine_line|#define reacquire_kernel_lock(task, cpu, depth)&t;do { } while(0)
 macro_line|#else
 macro_line|#error SMP on sparc64 not supported yet
 macro_line|#endif /* (__SMP__) */

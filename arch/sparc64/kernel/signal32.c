@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: signal32.c,v 1.5 1997/04/07 18:57:09 jj Exp $&n; *  arch/sparc64/kernel/signal32.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: signal32.c,v 1.6 1997/04/16 10:27:17 jj Exp $&n; *  arch/sparc64/kernel/signal32.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -23,7 +23,7 @@ DECL|macro|synchronize_user_stack
 mdefine_line|#define synchronize_user_stack() do { } while (0)
 id|asmlinkage
 r_int
-id|sys_waitpid
+id|sys_wait4
 c_func
 (paren
 id|pid_t
@@ -36,6 +36,11 @@ id|stat_addr
 comma
 r_int
 id|options
+comma
+r_int
+r_int
+op_star
+id|ru
 )paren
 suffix:semicolon
 id|asmlinkage
@@ -137,7 +142,6 @@ mdefine_line|#define NF_ALIGNEDSZ  (((sizeof(struct new_signal_frame32) + 7) &am
 multiline_comment|/*&n; * atomically swap in the new signal mask, and wait for a signal.&n; * This is really tricky on the Sparc, watch out...&n; */
 DECL|function|_sigpause32_common
 id|asmlinkage
-r_inline
 r_void
 id|_sigpause32_common
 c_func
@@ -156,6 +160,13 @@ r_int
 r_int
 id|mask
 suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
 id|mask
 op_assign
 id|current-&gt;blocked
@@ -165,6 +176,13 @@ op_assign
 id|set
 op_amp
 id|_BLOCKABLE
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
 suffix:semicolon
 id|regs-&gt;tpc
 op_assign
@@ -237,20 +255,12 @@ op_star
 id|regs
 )paren
 (brace
-id|lock_kernel
-(paren
-)paren
-suffix:semicolon
 id|_sigpause32_common
 c_func
 (paren
 id|set
 comma
 id|regs
-)paren
-suffix:semicolon
-id|unlock_kernel
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -266,10 +276,6 @@ op_star
 id|regs
 )paren
 (brace
-id|lock_kernel
-(paren
-)paren
-suffix:semicolon
 id|_sigpause32_common
 c_func
 (paren
@@ -279,10 +285,6 @@ id|UREG_I0
 )braket
 comma
 id|regs
-)paren
-suffix:semicolon
-id|unlock_kernel
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -446,10 +448,8 @@ id|sf
 )paren
 )paren
 (brace
-id|do_exit
-(paren
-id|SIGSEGV
-)paren
+r_goto
+id|segv
 suffix:semicolon
 )brace
 r_if
@@ -466,10 +466,8 @@ op_amp
 l_int|3
 )paren
 (brace
-id|do_exit
-(paren
-id|SIGSEGV
-)paren
+r_goto
+id|segv
 suffix:semicolon
 )brace
 id|get_user
@@ -502,10 +500,8 @@ op_amp
 l_int|3
 )paren
 (brace
-id|do_exit
-(paren
-id|SIGSEGV
-)paren
+r_goto
+id|segv
 suffix:semicolon
 )brace
 id|regs-&gt;tpc
@@ -631,9 +627,19 @@ id|mask
 op_amp
 id|_BLOCKABLE
 suffix:semicolon
-id|unlock_kernel
+r_return
+suffix:semicolon
+id|segv
+suffix:colon
+id|lock_kernel
 c_func
 (paren
+)paren
+suffix:semicolon
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
 )paren
 suffix:semicolon
 )brace
@@ -661,9 +667,9 @@ id|npc
 comma
 id|psr
 suffix:semicolon
-id|lock_kernel
-(paren
-)paren
+r_int
+r_int
+id|mask
 suffix:semicolon
 id|synchronize_user_stack
 c_func
@@ -725,26 +731,8 @@ l_int|3
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s [%d]: do_sigreturn, scptr is invalid at &quot;
-l_string|&quot;pc&lt;%016lx&gt; scptr&lt;%p&gt;&bslash;n&quot;
-comma
-id|current-&gt;comm
-comma
-id|current-&gt;pid
-comma
-id|regs-&gt;tpc
-comma
-id|scptr
-)paren
-suffix:semicolon
-id|do_exit
-c_func
-(paren
-id|SIGSEGV
-)paren
+r_goto
+id|segv
 suffix:semicolon
 )brace
 id|__get_user
@@ -777,26 +765,27 @@ op_amp
 l_int|3
 )paren
 (brace
-id|do_exit
-c_func
-(paren
-id|SIGSEGV
-)paren
+r_goto
+id|segv
 suffix:semicolon
 )brace
 multiline_comment|/* Nice try. */
 id|__get_user
 c_func
 (paren
-id|current-&gt;blocked
+id|mask
 comma
 op_amp
 id|scptr-&gt;sigc_mask
 )paren
 suffix:semicolon
 id|current-&gt;blocked
-op_and_assign
+op_assign
+(paren
+id|mask
+op_amp
 id|_BLOCKABLE
+)paren
 suffix:semicolon
 id|__get_user
 c_func
@@ -880,8 +869,17 @@ c_func
 id|psr
 )paren
 suffix:semicolon
-id|unlock_kernel
+r_return
+suffix:semicolon
+id|segv
+suffix:colon
+id|lock_kernel
 (paren
+)paren
+suffix:semicolon
+id|do_exit
+(paren
+id|SIGSEGV
 )paren
 suffix:semicolon
 )brace
@@ -935,7 +933,6 @@ l_int|0
 suffix:semicolon
 )brace
 r_static
-r_inline
 r_void
 DECL|function|setup_frame32
 id|setup_frame32
@@ -1072,13 +1069,15 @@ id|signr
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Don&squot;t change signal code and address, so that&n;&t;&t; * post mortem debuggers can have a look.&n;&t;&t; */
+id|lock_kernel
+(paren
+)paren
+suffix:semicolon
 id|do_exit
 c_func
 (paren
 id|SIGILL
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 id|sc
@@ -1643,13 +1642,15 @@ id|sigframe_size
 )paren
 )paren
 (brace
+id|lock_kernel
+(paren
+)paren
+suffix:semicolon
 id|do_exit
 c_func
 (paren
 id|SIGILL
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 r_if
@@ -1670,12 +1671,14 @@ comma
 id|current-&gt;pid
 )paren
 suffix:semicolon
+id|lock_kernel
+(paren
+)paren
+suffix:semicolon
 id|do_exit
 (paren
 id|SIGILL
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 multiline_comment|/* 2. Save the current process state */
@@ -2105,13 +2108,15 @@ l_string|&quot;Invalid stack frame&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+id|lock_kernel
+(paren
+)paren
+suffix:semicolon
 id|do_exit
 c_func
 (paren
 id|SIGILL
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Start with a clean frame pointer and fill it */
@@ -3643,10 +3648,11 @@ id|SIGCHLD
 r_continue
 suffix:semicolon
 )brace
+multiline_comment|/* sys_wait4() grabs the master kernel lock, so&n;                         * we need not do so, that sucker should be&n;                         * threaded and would not be that difficult to&n;                         * do anyways.&n;                         */
 r_while
 c_loop
 (paren
-id|sys_waitpid
+id|sys_wait4
 c_func
 (paren
 op_minus
@@ -3655,6 +3661,8 @@ comma
 l_int|NULL
 comma
 id|WNOHANG
+comma
+l_int|NULL
 )paren
 OG
 l_int|0

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -4942,12 +4943,16 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|init_minix_fs
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|init_minix_fs
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

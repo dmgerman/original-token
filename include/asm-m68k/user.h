@@ -2,7 +2,6 @@ macro_line|#ifndef _M68K_USER_H
 DECL|macro|_M68K_USER_H
 mdefine_line|#define _M68K_USER_H
 macro_line|#include &lt;asm/page.h&gt;
-macro_line|#include &lt;linux/ptrace.h&gt;
 multiline_comment|/* Core file format: The core file is written in such a way that gdb&n;   can understand it and provide useful information to the user (under&n;   linux we use the &squot;trad-core&squot; bfd).  There are quite a number of&n;   obstacles to being able to view the contents of the floating point&n;   registers, and until these are solved you will not be able to view the&n;   contents of them.  Actually, you can read in the core file and look at&n;   the contents of the user struct to find out what the floating point&n;   registers contain.&n;   The actual file contents are as follows:&n;   UPAGE: 1 page consisting of a user struct that tells gdb what is present&n;   in the file.  Directly after this is a copy of the task_struct, which&n;   is currently not used by gdb, but it may come in useful at some point.&n;   All of the registers are stored as part of the upage.  The upage should&n;   always be only one page.&n;   DATA: The data area is stored.  We use current-&gt;end_text to&n;   current-&gt;brk to pick up all of the user variables, plus any memory&n;   that may have been malloced.  No attempt is made to determine if a page&n;   is demand-zero or if a page is totally unused, we just cover the entire&n;   range.  All of the addresses are rounded in such a way that an integral&n;   number of pages is written.&n;   STACK: We need the stack information in order to get a meaningful&n;   backtrace.  We need to write the data from (esp) to&n;   current-&gt;start_stack, so we round each of these off in order to be able&n;   to write an integer number of pages.&n;   The minimum core file size is 3 pages, or 12288 bytes.&n;*/
 DECL|struct|user_m68kfp_struct
 r_struct
@@ -185,7 +184,7 @@ suffix:semicolon
 multiline_comment|/* No longer used */
 DECL|member|u_ar0
 r_struct
-id|pt_regs
+id|user_regs_struct
 op_star
 id|u_ar0
 suffix:semicolon

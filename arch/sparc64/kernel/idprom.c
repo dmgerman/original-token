@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: idprom.c,v 1.1 1996/12/28 18:39:38 davem Exp $&n; * idprom.c: Routines to load the idprom into kernel addresses and&n; *           interpret the data contained within.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: idprom.c,v 1.2 1997/04/17 02:28:10 miguel Exp $&n; * idprom.c: Routines to load the idprom into kernel addresses and&n; *           interpret the data contained within.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -121,12 +121,7 @@ l_int|0x01
 id|prom_printf
 c_func
 (paren
-l_string|&quot;IDPROM: Unknown format type!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|prom_halt
-c_func
-(paren
+l_string|&quot;IDPROM: Warning, unknown format type!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -145,7 +140,7 @@ id|idprom
 id|prom_printf
 c_func
 (paren
-l_string|&quot;IDPROM: Checksum failure (nvram=%x, calc=%x)!&bslash;n&quot;
+l_string|&quot;IDPROM: Warning, checksum failure (nvram=%x, calc=%x)!&bslash;n&quot;
 comma
 id|idprom-&gt;id_cksum
 comma
@@ -154,11 +149,6 @@ c_func
 (paren
 id|idprom
 )paren
-)paren
-suffix:semicolon
-id|prom_halt
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace

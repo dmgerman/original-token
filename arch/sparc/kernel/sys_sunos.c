@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sunos.c,v 1.77 1997/02/15 01:17:04 davem Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; */
+multiline_comment|/* $Id: sys_sunos.c,v 1.78 1997/04/16 05:56:12 davem Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -5472,17 +5472,6 @@ r_void
 op_star
 )paren
 suffix:semicolon
-r_int
-id|err
-op_assign
-op_minus
-id|EINVAL
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|current-&gt;personality
 op_or_assign
 id|PER_BSD
@@ -5491,11 +5480,15 @@ r_if
 c_cond
 (paren
 id|signum
+template_param
 l_int|32
 )paren
-r_goto
-id|out
+(brace
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
+)brace
 id|p
 op_assign
 id|signum
@@ -5510,11 +5503,6 @@ c_cond
 id|action
 )paren
 (brace
-id|err
-op_assign
-op_minus
-id|EFAULT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5530,15 +5518,11 @@ id|sigaction_size
 )paren
 )paren
 (brace
-r_goto
-id|out
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 )brace
-id|err
-op_assign
-op_minus
-id|EINVAL
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5550,8 +5534,9 @@ id|signum
 op_eq
 id|SIGSTOP
 )paren
-r_goto
-id|out
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 id|memset
 c_func
@@ -5568,11 +5553,6 @@ id|sigaction
 )paren
 )paren
 suffix:semicolon
-id|err
-op_assign
-op_minus
-id|EFAULT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5588,8 +5568,9 @@ id|sigaction_size
 )paren
 )paren
 (brace
-r_goto
-id|out
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 )brace
 r_if
@@ -5604,8 +5585,9 @@ op_ne
 id|SIG_IGN
 )paren
 (brace
-id|err
-op_assign
+r_if
+c_cond
+(paren
 id|verify_area
 c_func
 (paren
@@ -5615,15 +5597,13 @@ id|new_sa.sa_handler
 comma
 l_int|1
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
 )paren
-r_goto
-id|out
+(brace
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
+)brace
 )brace
 id|new_sa.sa_flags
 op_xor_assign
@@ -5636,11 +5616,7 @@ c_cond
 id|oldaction
 )paren
 (brace
-id|err
-op_assign
-op_minus
-id|EFAULT
-suffix:semicolon
+multiline_comment|/* In the clone() case we could copy half consistant&n;&t;&t; * state to the user, however this could sleep and&n;&t;&t; * deadlock us if we held the signal lock on SMP.  So for&n;&t;&t; * now I take the easy way out and do no locking.&n;&t;&t; * But then again we don&squot;t support SunOS lwp&squot;s anyways ;-)&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5654,8 +5630,9 @@ comma
 id|sigaction_size
 )paren
 )paren
-r_goto
-id|out
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_if
 c_cond
@@ -5681,6 +5658,13 @@ c_cond
 id|action
 )paren
 (brace
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sig-&gt;siglock
+)paren
+suffix:semicolon
 op_star
 id|p
 op_assign
@@ -5692,20 +5676,16 @@ c_func
 id|signum
 )paren
 suffix:semicolon
-)brace
-id|err
-op_assign
-l_int|0
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|current-&gt;sig-&gt;siglock
 )paren
 suffix:semicolon
+)brace
 r_return
-id|err
+l_int|0
 suffix:semicolon
 )brace
 r_extern

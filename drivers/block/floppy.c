@@ -7133,11 +7133,26 @@ id|handler
 r_if
 c_cond
 (paren
-id|in_interrupt
+id|softirq_trylock
 c_func
 (paren
 )paren
 )paren
+(brace
+multiline_comment|/* got the lock, call the handler immediately */
+id|handler
+c_func
+(paren
+)paren
+suffix:semicolon
+id|softirq_endlock
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_else
+multiline_comment|/* we interrupted a bottom half. Defer handler */
 id|schedule_bh
 c_func
 (paren
@@ -7150,12 +7165,6 @@ r_void
 op_star
 )paren
 id|handler
-)paren
-suffix:semicolon
-r_else
-id|handler
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace

@@ -28,6 +28,7 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;net/br.h&gt;
 macro_line|#include &lt;linux/net_alias.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_KERNELD
 macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
@@ -78,6 +79,10 @@ id|atomic_t
 id|dev_lockct
 op_assign
 id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Our notifier list&n; */
 DECL|variable|netdev_chain
@@ -4527,12 +4532,16 @@ id|dev_get_wireless_info
 suffix:semicolon
 macro_line|#endif&t;/* CONFIG_PROC_FS */
 macro_line|#endif&t;/* CONFIG_NET_RADIO */
-DECL|function|net_dev_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|net_dev_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct

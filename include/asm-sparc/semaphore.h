@@ -25,9 +25,9 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|MUTEX
-mdefine_line|#define MUTEX ((struct semaphore) { { (1 &lt;&lt; 8) }, { 0 }, NULL })
+mdefine_line|#define MUTEX ((struct semaphore) { ATOMIC_INIT(1), ATOMIC_INIT(0), NULL })
 DECL|macro|MUTEX_LOCKED
-mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { { 0 }, { 0 }, NULL })
+mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { ATOMIC_INIT(0), ATOMIC_INIT(0), NULL })
 r_extern
 r_void
 id|__down
@@ -63,6 +63,9 @@ id|sem
 suffix:semicolon
 DECL|macro|sema_init
 mdefine_line|#define sema_init(sem, val)&t;atomic_set(&amp;((sem)-&gt;count), val)
+DECL|macro|wake_one_more
+mdefine_line|#define wake_one_more(sem)&t;atomic_inc(&amp;sem-&gt;waking);
+multiline_comment|/* XXX Put this in raw assembler for SMP case so that the atomic_t&n; * XXX spinlock can allow this to be done without grabbing the IRQ&n; * XXX global lock.&n; */
 DECL|function|waking_non_zero
 r_static
 r_inline

@@ -30,7 +30,7 @@ id|atomic_t
 suffix:semicolon
 macro_line|#endif
 DECL|macro|ATOMIC_INIT
-mdefine_line|#define ATOMIC_INIT&t;{ 0 }
+mdefine_line|#define ATOMIC_INIT(i)&t;{ (i &lt;&lt; 8) }
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;

@@ -36,6 +36,10 @@ id|atomic_t
 id|ip_frag_mem
 op_assign
 id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 multiline_comment|/* Memory used for fragments */
 r_char

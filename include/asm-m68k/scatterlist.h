@@ -22,16 +22,9 @@ r_int
 r_int
 id|length
 suffix:semicolon
-macro_line|#ifdef __sparc__
-DECL|member|dvma_address
-r_char
-op_star
-id|dvma_address
-suffix:semicolon
-multiline_comment|/* A place to hang host-specific addresses at. */
-macro_line|#endif
 )brace
 suffix:semicolon
+multiline_comment|/* This is bogus and should go away. */
 DECL|macro|ISA_DMA_THRESHOLD
 mdefine_line|#define ISA_DMA_THRESHOLD (0x00ffffff)
 macro_line|#endif /* !(_M68K_SCATTERLIST_H) */

@@ -8,7 +8,7 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
-macro_line|#include &lt;asm/zorro.h&gt;
+macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
@@ -960,6 +960,8 @@ id|epc
 suffix:semicolon
 r_int
 id|key
+op_assign
+l_int|0
 suffix:semicolon
 r_struct
 id|ConfigDev
@@ -1006,7 +1008,7 @@ id|PROD_GVPIISCSI
 comma
 l_int|0
 comma
-l_int|0
+id|key
 )paren
 )paren
 )paren
@@ -1022,6 +1024,16 @@ suffix:semicolon
 id|address
 op_assign
 id|cd-&gt;cd_BoardAddr
+suffix:semicolon
+multiline_comment|/*&n;&t; * Rumors state that some GVP ram boards use the same product&n;&t; * code as the SCSI controllers. Therefore if the board-size&n;&t; * is not 64KB we asume it is a ram board and bail out.&n;&t; */
+r_if
+c_cond
+(paren
+id|cd-&gt;cd_BoardSize
+op_ne
+l_int|0x10000
+)paren
+r_continue
 suffix:semicolon
 multiline_comment|/* check extended product code */
 id|epc
@@ -1128,9 +1140,6 @@ suffix:semicolon
 id|instance-&gt;irq
 op_assign
 id|IRQ_AMIGA_PORTS
-op_amp
-op_complement
-id|IRQ_MACHSPEC
 suffix:semicolon
 id|instance-&gt;unique_id
 op_assign

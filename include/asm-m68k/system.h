@@ -95,24 +95,30 @@ DECL|macro|__xg
 mdefine_line|#define __xg(x) ((volatile struct __xchg_dummy *)(x))
 macro_line|#if defined(CONFIG_ATARI) &amp;&amp; !defined(CONFIG_AMIGA) &amp;&amp; !defined(CONFIG_MAC)
 multiline_comment|/* block out HSYNC on the atari */
-DECL|macro|sti
-mdefine_line|#define sti() __asm__ __volatile__ (&quot;andiw #0xfbff,%/sr&quot;: : : &quot;memory&quot;)
+DECL|macro|__sti
+mdefine_line|#define __sti() __asm__ __volatile__ (&quot;andiw #0xfbff,%/sr&quot;: : : &quot;memory&quot;)
 macro_line|#else /* portable version */
-DECL|macro|sti
-mdefine_line|#define sti() __asm__ __volatile__ (&quot;andiw #0xf8ff,%/sr&quot;: : : &quot;memory&quot;)
+DECL|macro|__sti
+mdefine_line|#define __sti() __asm__ __volatile__ (&quot;andiw #0xf8ff,%/sr&quot;: : : &quot;memory&quot;)
 macro_line|#endif /* machine compilation types */ 
-DECL|macro|cli
-mdefine_line|#define cli() __asm__ __volatile__ (&quot;oriw  #0x0700,%/sr&quot;: : : &quot;memory&quot;)
+DECL|macro|__cli
+mdefine_line|#define __cli() __asm__ __volatile__ (&quot;oriw  #0x0700,%/sr&quot;: : : &quot;memory&quot;)
 DECL|macro|nop
 mdefine_line|#define nop() __asm__ __volatile__ (&quot;nop&quot;::)
 DECL|macro|mb
 mdefine_line|#define mb()  __asm__ __volatile__ (&quot;&quot;   : : :&quot;memory&quot;)
+DECL|macro|__save_flags
+mdefine_line|#define __save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;movew %/sr,%0&quot;:&quot;=d&quot; (x) : /* no input */ :&quot;memory&quot;)
+DECL|macro|__restore_flags
+mdefine_line|#define __restore_flags(x) &bslash;&n;__asm__ __volatile__(&quot;movew %0,%/sr&quot;: /* no outputs */ :&quot;d&quot; (x) : &quot;memory&quot;)
+DECL|macro|cli
+mdefine_line|#define cli() __cli()
+DECL|macro|sti
+mdefine_line|#define sti() __sti()
 DECL|macro|save_flags
-mdefine_line|#define save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;movew %/sr,%0&quot;:&quot;=d&quot; (x) : /* no input */ :&quot;memory&quot;)
+mdefine_line|#define save_flags(x) __save_flags(x)
 DECL|macro|restore_flags
-mdefine_line|#define restore_flags(x) &bslash;&n;__asm__ __volatile__(&quot;movew %0,%/sr&quot;: /* no outputs */ :&quot;d&quot; (x) : &quot;memory&quot;)
-DECL|macro|iret
-mdefine_line|#define iret() __asm__ __volatile__ (&quot;rte&quot;: : :&quot;memory&quot;, &quot;sp&quot;, &quot;cc&quot;)
+mdefine_line|#define restore_flags(x) __restore_flags(x)
 macro_line|#ifndef CONFIG_RMW_INSNS
 DECL|function|__xchg
 r_static

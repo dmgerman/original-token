@@ -977,6 +977,9 @@ c_func
 (paren
 l_string|&quot;RPC:      readres OK status %lx&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|ntohl
 c_func
 (paren
@@ -1941,6 +1944,7 @@ op_star
 id|string
 )paren
 (brace
+multiline_comment|/* This may actually happen because an nfs_entry&n;&t;&t;&t; * will take up more space than the XDR data. On&n;&t;&t;&t; * 32bit machines that&squot;s due to 8byte alignment,&n;&t;&t;&t; * on 64bit machines that&squot;s because the char * takes&n;&t;&t;&t; * up 2 longs.&n;&t;&t;&t; *&n;&t;&t;&t; * THIS IS BAD!&n;&t;&t;&t; */
 id|printk
 c_func
 (paren
@@ -1948,21 +1952,6 @@ id|KERN_NOTICE
 l_string|&quot;NFS: should not happen in %s!&bslash;n&quot;
 comma
 id|__FUNCTION__
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_NOTICE
-l_string|&quot;NFS: len = %d, entry+1=%p, string=%p&bslash;n&quot;
-comma
-id|len
-comma
-id|entry
-op_plus
-l_int|1
-comma
-id|string
 )paren
 suffix:semicolon
 r_break
@@ -2132,6 +2121,9 @@ c_func
 (paren
 l_string|&quot;RPC:      attrstat status %lx&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|ntohl
 c_func
 (paren
@@ -2219,6 +2211,9 @@ c_func
 (paren
 l_string|&quot;RPC:      diropres status %lx&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|ntohl
 c_func
 (paren

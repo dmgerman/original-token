@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/zorro.h&gt;
+macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &quot;s3blit.h&quot;
@@ -897,6 +897,20 @@ c_func
 (paren
 r_int
 id|blank
+)paren
+suffix:semicolon
+r_static
+r_int
+id|Cyberfb_setcmap
+c_func
+(paren
+r_struct
+id|fb_cmap
+op_star
+id|cmap
+comma
+r_int
+id|con
 )paren
 suffix:semicolon
 multiline_comment|/*&n;    *    Accelerated Functions used by the low level console driver&n;    */
@@ -5852,6 +5866,11 @@ op_assign
 op_amp
 id|Cyberfb_blank
 suffix:semicolon
+id|fb_info.setcmap
+op_assign
+op_amp
+id|Cyberfb_setcmap
+suffix:semicolon
 id|do_fb_set_var
 c_func
 (paren
@@ -6001,6 +6020,34 @@ id|blank
 c_func
 (paren
 id|blank
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;    *    Set the colormap&n;    */
+DECL|function|Cyberfb_setcmap
+r_static
+r_int
+id|Cyberfb_setcmap
+c_func
+(paren
+r_struct
+id|fb_cmap
+op_star
+id|cmap
+comma
+r_int
+id|con
+)paren
+(brace
+r_return
+id|Cyber_fb_set_cmap
+c_func
+(paren
+id|cmap
+comma
+l_int|1
+comma
+id|con
 )paren
 suffix:semicolon
 )brace

@@ -261,6 +261,8 @@ DECL|macro|B460800
 mdefine_line|#define  B460800 0010004
 DECL|macro|CIBAUD
 mdefine_line|#define CIBAUD&t;  002003600000&t;/* input baud rate (not used) */
+DECL|macro|CMSPAR
+mdefine_line|#define CMSPAR&t;  010000000000&t;&t;/* mark or space (stick) parity */
 DECL|macro|CRTSCTS
 mdefine_line|#define CRTSCTS&t;  020000000000&t;&t;/* flow control */
 multiline_comment|/* c_lflag bits */

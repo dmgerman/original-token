@@ -390,6 +390,26 @@ c_func
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+id|flush_page_to_ram
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|ptablep
+)paren
+suffix:semicolon
+id|flush_tlb_kernel_page
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|ptablep
+)paren
+suffix:semicolon
 id|nocache_page
 (paren
 (paren
@@ -1007,12 +1027,6 @@ id|mem_avail
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* pointer to page table for kernel stacks */
-r_extern
-r_int
-r_int
-id|availmem
-suffix:semicolon
 macro_line|#ifdef DEBUG
 (brace
 r_extern
@@ -1119,7 +1133,7 @@ dot
 id|size
 comma
 op_amp
-id|availmem
+id|start_mem
 )paren
 suffix:semicolon
 )brace
@@ -1138,13 +1152,6 @@ op_rshift
 l_int|10
 )paren
 suffix:semicolon
-macro_line|#endif
-multiline_comment|/*&n;&t; * virtual address after end of kernel&n;&t; * &quot;availmem&quot; is setup by the code in head.S.&n;&t; */
-id|start_mem
-op_assign
-id|availmem
-suffix:semicolon
-macro_line|#ifdef DEBUG
 id|printk
 (paren
 l_string|&quot;start_mem is %#lx&bslash;nvirtual_end is %#lx&bslash;n&quot;
@@ -1348,11 +1355,15 @@ l_string|&quot;before free_area_init&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 r_return
+id|PAGE_ALIGN
+c_func
+(paren
 id|free_area_init
 (paren
 id|start_mem
 comma
 id|end_mem
+)paren
 )paren
 suffix:semicolon
 )brace

@@ -1,24 +1,6 @@
 macro_line|#ifndef _M68K_IRQ_H_
 DECL|macro|_M68K_IRQ_H_
 mdefine_line|#define _M68K_IRQ_H_
-r_extern
-r_void
-id|disable_irq
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|enable_irq
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * # of m68k interrupts&n; */
 DECL|macro|SYS_IRQS
@@ -49,11 +31,75 @@ mdefine_line|#define IRQ7&t;&t;(7)&t;/* level 7 interrupt (non-maskable) */
 multiline_comment|/*&n; * &quot;Generic&quot; interrupt sources&n; */
 DECL|macro|IRQ_SCHED_TIMER
 mdefine_line|#define IRQ_SCHED_TIMER&t;(8)    /* interrupt source for scheduling timer */
-multiline_comment|/*&n; * Machine specific interrupt sources.&n; *&n; * Adding an interrupt service routine for a source with this bit&n; * set indicates a special machine specific interrupt source.&n; * The machine specific files define these sources.&n; */
-DECL|macro|IRQ_MACHSPEC
-mdefine_line|#define IRQ_MACHSPEC&t;(0x10000000L)
-DECL|macro|IRQ_IDX
-mdefine_line|#define IRQ_IDX(irq)&t;((irq) &amp; ~IRQ_MACHSPEC)
+multiline_comment|/*&n; * Machine specific interrupt sources.&n; *&n; * Adding an interrupt service routine for a source with this bit&n; * set indicates a special machine specific interrupt source.&n; * The machine specific files define these sources.&n; *&n; * The IRQ_MACHSPEC bit is now gone - the only thing it did was to&n; * introduce unnecessary overhead.&n; *&n; * All interrupt handling is actually machine specific so it is better&n; * to use function pointers, as used by the Sparc port, and select the&n; * interrupt handling functions when initializing the kernel. This way&n; * we save some unnecessary overhead at run-time. &n; *                                                      01/11/97 - Jes&n; */
+r_extern
+r_void
+(paren
+op_star
+id|enable_irq
+)paren
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|disable_irq
+)paren
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sys_request_irq
+c_func
+(paren
+r_int
+r_int
+comma
+r_void
+(paren
+op_star
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+comma
+r_int
+r_int
+comma
+r_const
+r_char
+op_star
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sys_free_irq
+c_func
+(paren
+r_int
+r_int
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * various flags for request_irq()&n; */
 DECL|macro|IRQ_FLG_LOCK
 mdefine_line|#define IRQ_FLG_LOCK&t;(0x0001)&t;/* handler is not replaceable&t;*/

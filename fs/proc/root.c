@@ -1428,8 +1428,6 @@ id|inode
 suffix:semicolon
 id|len
 op_assign
-l_int|1
-op_plus
 id|sprintf
 c_func
 (paren

@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;esp.h&quot;
@@ -2437,7 +2438,10 @@ id|eregs-&gt;esp_intrpt
 suffix:semicolon
 )brace
 multiline_comment|/* Detecting ESP chips on the machine.  This is the simple and easy&n; * version.&n; */
-DECL|function|esp_detect
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|esp_detect
 c_func
@@ -2445,6 +2449,7 @@ c_func
 id|Scsi_Host_Template
 op_star
 id|tpnt
+)paren
 )paren
 (brace
 r_struct

@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -235,7 +236,7 @@ DECL|macro|START_DATA
 macro_line|#       define START_DATA(u)&t;(u.start_data)
 macro_line|#elif defined(__sparc__)
 macro_line|#       define START_DATA(u)    (u.u_tsize)
-macro_line|#elif defined(__i386__)
+macro_line|#elif defined(__i386__) || defined(__mc68000__)
 macro_line|#       define START_DATA(u)&t;(u.u_tsize &lt;&lt; PAGE_SHIFT)
 macro_line|#endif
 macro_line|#ifdef __sparc__
@@ -2769,12 +2770,16 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-DECL|function|init_aout_binfmt
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|init_aout_binfmt
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

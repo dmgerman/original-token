@@ -26,9 +26,9 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|MUTEX
-mdefine_line|#define MUTEX ((struct semaphore) { { 1 }, 0, NULL })
+mdefine_line|#define MUTEX ((struct semaphore) { ATOMIC_INIT(1), 0, NULL })
 DECL|macro|MUTEX_LOCKED
-mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { { 0 }, 0, NULL })
+mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { ATOMIC_INIT(0), 0, NULL })
 id|asmlinkage
 r_void
 id|__down_failed

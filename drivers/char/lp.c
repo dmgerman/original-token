@@ -3695,6 +3695,15 @@ c_loop
 id|pb
 )paren
 (brace
+multiline_comment|/* We only understand PC-style ports. */
+r_if
+c_cond
+(paren
+id|pb-&gt;modes
+op_amp
+id|PARPORT_MODE_SPP
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -3820,6 +3829,7 @@ id|LP_NO
 )paren
 r_break
 suffix:semicolon
+)brace
 id|pb
 op_assign
 id|pb-&gt;next

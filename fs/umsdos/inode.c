@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/umsdos/inode.c&n; *&n; *&t;Written 1993 by Jacques Gelinas&n; *&t;Inspired from linux/fs/msdos/... by Werner Almesberger&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1575,12 +1576,16 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|init_umsdos_fs
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|init_umsdos_fs
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

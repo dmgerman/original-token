@@ -15,7 +15,7 @@ mdefine_line|#define NLM_HOST_NRHASH&t;&t;32
 DECL|macro|NLM_ADDRHASH
 mdefine_line|#define NLM_ADDRHASH(addr)&t;(ntohl(addr) &amp; (NLM_HOST_NRHASH-1))
 DECL|macro|NLM_PTRHASH
-mdefine_line|#define NLM_PTRHASH(ptr)&t;((((u32) ptr) / 32) &amp; (NLM_HOST_NRHASH-1))
+mdefine_line|#define NLM_PTRHASH(ptr)&t;((((u32)(unsigned long) ptr) / 32) &amp; (NLM_HOST_NRHASH-1))
 DECL|macro|NLM_HOST_REBIND
 mdefine_line|#define NLM_HOST_REBIND&t;&t;(60 * HZ)
 DECL|macro|NLM_HOST_EXPIRE
@@ -237,8 +237,12 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: nlm_lookup_host(%08lx, p=%d, v=%d)&bslash;n&quot;
+l_string|&quot;lockd: nlm_lookup_host(%08x, p=%d, v=%d)&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
+(paren
 id|sin
 ques
 c_cond
@@ -249,6 +253,7 @@ id|sin-&gt;sin_addr.s_addr
 )paren
 suffix:colon
 l_int|0
+)paren
 comma
 id|proto
 comma
@@ -653,8 +658,11 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: nlm_bind_host(%08lx)&bslash;n&quot;
+l_string|&quot;lockd: nlm_bind_host(%08x)&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|ntohl
 c_func
 (paren

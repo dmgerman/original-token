@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: parport_init.c,v 1.1.2.4 1997/04/01 18:19:10 phil Exp $&n; * Parallel-port initialisation code.&n; * &n; * Authors: David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Tim Waugh &lt;tmw20@cam.ac.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
+multiline_comment|/* $Id: parport_init.c,v 1.3.2.4 1997/04/16 21:20:44 phil Exp $&n; * Parallel-port initialisation code.&n; * &n; * Authors: David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Tim Waugh &lt;tmw20@cam.ac.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
@@ -34,8 +34,7 @@ id|PARPORT_MAX
 )braket
 op_assign
 (brace
-op_minus
-l_int|1
+id|PARPORT_IRQ_NONE
 comma
 )brace
 suffix:semicolon
@@ -48,8 +47,7 @@ id|PARPORT_MAX
 )braket
 op_assign
 (brace
-op_minus
-l_int|1
+id|PARPORT_DMA_NONE
 comma
 )brace
 suffix:semicolon
@@ -244,6 +242,10 @@ id|dma
 comma
 r_int
 id|size
+comma
+r_int
+op_star
+id|resid
 )paren
 (brace
 r_int
@@ -317,6 +319,11 @@ op_ne
 id|size
 )paren
 (brace
+op_star
+id|resid
+op_assign
+id|n
+suffix:semicolon
 id|retv
 op_assign
 id|i
@@ -338,7 +345,8 @@ multiline_comment|/* Multiple DMA&squot;s */
 id|printk
 c_func
 (paren
-l_string|&quot;Multiple DMA detected.&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;parport: multiple DMA detected.  Huh?&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -423,7 +431,7 @@ r_return
 id|dma
 suffix:semicolon
 )brace
-multiline_comment|/* Only called if port support ECP mode.&n; *&n; * The only restriction on DMA channels is that it has to be&n; * between 0 to 7 (inclusive). Used only in an ECP mode, DMAs are&n; * considered a shared resource and hence they should be registered&n; * when needed and then immediately unregistered.&n; *&n; * DMA autoprobes for ECP mode are known not to work for some&n; * main board BIOS configs. I had to remove everything from the&n; * port, set the mode to SPP, reboot to DOS, set the mode to ECP,&n; * and reboot again, then I got IRQ probes and DMA probes to work.&n; * [Is the BIOS doing a device detection?]&n; *&n; * A value of -1 is allowed indicating no DMA support.&n; *&n; * if( 0 &lt; DMA &lt; 4 )&n; *    1Byte DMA transfer&n; * else // 4 &lt; DMA &lt; 8&n; *    2Byte DMA transfer&n; *&n; */
+multiline_comment|/* Only called if port supports ECP mode.&n; *&n; * The only restriction on DMA channels is that it has to be&n; * between 0 to 7 (inclusive). Used only in an ECP mode, DMAs are&n; * considered a shared resource and hence they should be registered&n; * when needed and then immediately unregistered.&n; *&n; * DMA autoprobes for ECP mode are known not to work for some&n; * main board BIOS configs. I had to remove everything from the&n; * port, set the mode to SPP, reboot to DOS, set the mode to ECP,&n; * and reboot again, then I got IRQ probes and DMA probes to work.&n; * [Is the BIOS doing a device detection?]&n; *&n; * A value of -1 is allowed indicating no DMA support.&n; *&n; * if( 0 &lt; DMA &lt; 4 )&n; *    1Byte DMA transfer&n; * else // 4 &lt; DMA &lt; 8&n; *    2Byte DMA transfer&n; *&n; */
 DECL|function|parport_dma_probe
 r_static
 r_int
@@ -466,34 +474,33 @@ op_ne
 op_minus
 l_int|1
 )paren
-(brace
 r_return
 id|retv
-suffix:semicolon
-)brace
-id|buff
-op_assign
-id|kmalloc
-c_func
-(paren
-l_int|16
-comma
-id|GFP_KERNEL
-op_or
-id|GFP_DMA
-)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
+(paren
 id|buff
+op_assign
+id|kmalloc
+c_func
+(paren
+l_int|2048
+comma
+id|GFP_KERNEL
+op_or
+id|GFP_DMA
+)paren
+)paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;parport: memory squezze&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;parport: memory squeeze&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -547,7 +554,7 @@ c_func
 (paren
 id|buff
 comma
-l_int|8
+l_int|1000
 )paren
 suffix:semicolon
 id|w_ecr
@@ -568,7 +575,7 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|30
+l_int|500
 )paren
 suffix:semicolon
 multiline_comment|/* Give some for DMA tranfer */
@@ -579,9 +586,19 @@ c_func
 (paren
 id|dma
 comma
-l_int|8
+l_int|1000
+comma
+op_amp
+id|pb-&gt;speed
 )paren
 suffix:semicolon
+id|pb-&gt;speed
+op_assign
+id|pb-&gt;speed
+op_star
+l_int|2000
+suffix:semicolon
+multiline_comment|/* 500uSec * 2000 = 1sec */
 multiline_comment|/*&n;&t; * National Semiconductors only supports DMA tranfers&n;&t; * in ECP MODE&n;&t; */
 r_if
 c_cond
@@ -616,7 +633,7 @@ c_func
 (paren
 id|buff
 comma
-l_int|8
+l_int|1000
 )paren
 suffix:semicolon
 id|w_ecr
@@ -637,7 +654,7 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|30
+l_int|500
 )paren
 suffix:semicolon
 multiline_comment|/* Give some for DMA tranfer */
@@ -648,9 +665,19 @@ c_func
 (paren
 id|dma
 comma
-l_int|8
+l_int|1000
+comma
+op_amp
+id|pb-&gt;speed
 )paren
 suffix:semicolon
+id|pb-&gt;speed
+op_assign
+id|pb-&gt;speed
+op_star
+l_int|2000
+suffix:semicolon
+multiline_comment|/* 500uSec * 2000 = 1sec */
 )brace
 id|kfree
 c_func
@@ -709,12 +736,10 @@ op_amp
 l_int|0x01
 )paren
 )paren
-(brace
 r_return
 l_int|1
 suffix:semicolon
-)brace
-multiline_comment|/* To clear timeout some chip requiere double read */
+multiline_comment|/* To clear timeout some chips require double read */
 id|r_str
 c_func
 (paren
@@ -768,7 +793,7 @@ l_int|0x01
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Checks for por existence, all ports support SPP MODE&n; */
+multiline_comment|/*&n; * Checks for port existence, all ports support SPP MODE&n; */
 DECL|function|parport_SPP_supported
 r_static
 r_int
@@ -781,11 +806,6 @@ op_star
 id|pb
 )paren
 (brace
-r_int
-id|r
-comma
-id|rr
-suffix:semicolon
 multiline_comment|/* Do a simple read-write test to make sure the port exists. */
 id|w_dtr
 c_func
@@ -795,13 +815,19 @@ comma
 l_int|0xaa
 )paren
 suffix:semicolon
-id|r
-op_assign
+r_if
+c_cond
+(paren
 id|r_dtr
 c_func
 (paren
 id|pb
 )paren
+op_ne
+l_int|0xaa
+)paren
+r_return
+l_int|0
 suffix:semicolon
 id|w_dtr
 c_func
@@ -811,30 +837,20 @@ comma
 l_int|0x55
 )paren
 suffix:semicolon
-id|rr
-op_assign
+r_if
+c_cond
+(paren
 id|r_dtr
 c_func
 (paren
 id|pb
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|r
-op_ne
-l_int|0xaa
-op_logical_or
-id|rr
 op_ne
 l_int|0x55
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_return
 id|PARPORT_MODE_SPP
 suffix:semicolon
@@ -855,18 +871,6 @@ id|pb
 r_int
 id|r
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pb-&gt;base
-op_eq
-l_int|0x3BC
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|r
 op_assign
 id|r_ctr
@@ -933,11 +937,9 @@ op_amp
 l_int|0x03
 )paren
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 multiline_comment|/* Sure that no ECR register exists */
 )brace
 r_if
@@ -955,11 +957,9 @@ l_int|0x03
 op_ne
 l_int|0x01
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 id|w_ecr
 c_func
 (paren
@@ -979,11 +979,9 @@ id|pb
 op_ne
 l_int|0x35
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 id|w_ecr
 c_func
 (paren
@@ -1019,6 +1017,7 @@ id|pb
 r_int
 id|i
 suffix:semicolon
+multiline_comment|/* If there is no ECR, we have no hope of supporting ECP. */
 r_if
 c_cond
 (paren
@@ -1029,12 +1028,10 @@ op_amp
 id|PARPORT_MODE_ECR
 )paren
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Usign LGS chipset it uses ECR register, but&n;&t; * it doesn&squot;t support ECP or FIFO MODE&n;&t; */
+multiline_comment|/*&n;&t; * Using LGS chipset it uses ECR register, but&n;&t; * it doesn&squot;t support ECP or FIFO MODE&n;&t; */
 id|w_ecr
 c_func
 (paren
@@ -1068,7 +1065,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|w_fifo
 c_func
 (paren
@@ -1077,7 +1073,6 @@ comma
 l_int|0xaa
 )paren
 suffix:semicolon
-)brace
 id|w_ecr
 c_func
 (paren
@@ -1090,14 +1085,12 @@ r_if
 c_cond
 (paren
 id|i
-op_ge
+op_eq
 l_int|1024
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_return
 id|PARPORT_MODE_ECP
 suffix:semicolon
@@ -1115,18 +1108,6 @@ op_star
 id|pb
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|pb-&gt;base
-op_eq
-l_int|0x3BC
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* If EPP timeout bit clear then EPP available */
 r_if
 c_cond
@@ -1138,11 +1119,9 @@ c_func
 id|pb
 )paren
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 multiline_comment|/* No way to clear timeout */
 id|w_ctr
 c_func
@@ -1242,11 +1221,9 @@ op_amp
 id|PARPORT_MODE_ECR
 )paren
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 multiline_comment|/* Search for SMC style EPP+ECP mode */
 id|w_ecr
 c_func
@@ -1277,16 +1254,14 @@ c_cond
 (paren
 id|mode
 )paren
-(brace
 r_return
 id|PARPORT_MODE_ECPEPP
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Detect LP_PS2 support&n; * Bit 5 (0x20) sets the PS/2 data direction, setting this high&n; * allows us to read data from the data lines, old style SPP ports&n; * will return 0xff.  This may not be reliable if there is a&n; * peripheral attached to the port. &n; */
+multiline_comment|/* Detect PS/2 support.&n; *&n; * Bit 5 (0x20) sets the PS/2 data direction; setting this high&n; * allows us to read data from the data lines.  In theory we would get back&n; * 0xff but any peripheral attached to the port may drag some or all of the&n; * lines down to zero.  So if we get back anything that isn&squot;t the contents&n; * of the data register we deem PS/2 support to be present. &n; *&n; * Some SPP ports have &quot;half PS/2&quot; ability - you can&squot;t turn off the line&n; * drivers, but an external peripheral with sufficiently beefy drivers of&n; * its own can overpower them and assert its own levels onto the bus, from&n; * where they can then be read back as normal.  Ports with this property&n; * and the right type of device attached are likely to fail the SPP test,&n; * (as they will appear to have stuck bits) and so the fact that they might&n; * be misdetected here is rather academic. &n; */
 DECL|function|parport_PS2_supported
 r_static
 r_int
@@ -1300,9 +1275,9 @@ id|pb
 )paren
 (brace
 r_int
-id|r
-comma
-id|rr
+id|ok
+op_assign
+l_int|0
 suffix:semicolon
 id|epp_clear_timeout
 c_func
@@ -1320,23 +1295,7 @@ op_or
 l_int|0x20
 )paren
 suffix:semicolon
-multiline_comment|/* Tri-state the buffer */
-id|w_dtr
-c_func
-(paren
-id|pb
-comma
-l_int|0xAA
-)paren
-suffix:semicolon
-id|r
-op_assign
-id|r_dtr
-c_func
-(paren
-id|pb
-)paren
-suffix:semicolon
+multiline_comment|/* try to tri-state the buffer */
 id|w_dtr
 c_func
 (paren
@@ -1345,13 +1304,41 @@ comma
 l_int|0x55
 )paren
 suffix:semicolon
-id|rr
-op_assign
+r_if
+c_cond
+(paren
 id|r_dtr
 c_func
 (paren
 id|pb
 )paren
+op_ne
+l_int|0x55
+)paren
+id|ok
+op_increment
+suffix:semicolon
+id|w_dtr
+c_func
+(paren
+id|pb
+comma
+l_int|0xaa
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|r_dtr
+c_func
+(paren
+id|pb
+)paren
+op_ne
+l_int|0xaa
+)paren
+id|ok
+op_increment
 suffix:semicolon
 id|w_ctr
 c_func
@@ -1361,22 +1348,13 @@ comma
 id|pb-&gt;ctr
 )paren
 suffix:semicolon
-multiline_comment|/* Reset CTR register */
-r_if
+multiline_comment|/* cancel input mode */
+r_return
+id|ok
+ques
 c_cond
-(paren
-id|r
-op_ne
-l_int|0xAA
-op_logical_or
-id|rr
-op_ne
-l_int|0x55
-)paren
-r_return
 id|PARPORT_MODE_PS2
-suffix:semicolon
-r_return
+suffix:colon
 l_int|0
 suffix:semicolon
 )brace
@@ -1405,11 +1383,9 @@ op_amp
 id|PARPORT_MODE_ECR
 )paren
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 id|w_ecr
 c_func
 (paren
@@ -1446,8 +1422,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************&n; *  IRQ detection section:&n; */
-multiline_comment|/*&n; * This code is for detecting ECP interrupts (due to problems with the&n; * monolithic interrupt probing routines).&n; *&n; * In short this is a voting system where the interrupt with the most&n; * &quot;votes&quot; is the elected interrupt (it SHOULD work...)&n; */
+multiline_comment|/******************************************************&n; *  IRQ detection section:&n; *&n; * This code is for detecting ECP interrupts (due to problems with the&n; * monolithic interrupt probing routines).&n; *&n; * In short this is a voting system where the interrupt with the most&n; * &quot;votes&quot; is the elected interrupt (it SHOULD work...)&n; *&n; * This is horribly x86-specific at the moment.  I&squot;m not convinced it&n; * belongs at all.&n; */
 DECL|variable|intr_vote
 r_static
 r_int
@@ -1565,15 +1540,9 @@ id|tmp
 )paren
 (brace
 r_int
-id|max_vote
-op_assign
-l_int|0
-suffix:semicolon
-r_int
 id|irq
 op_assign
-op_minus
-l_int|1
+id|PARPORT_IRQ_NONE
 suffix:semicolon
 r_int
 id|i
@@ -1612,25 +1581,18 @@ id|intr_vote
 (braket
 id|i
 )braket
-OG
-id|max_vote
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|max_vote
+id|irq
+op_ne
+id|PARPORT_IRQ_NONE
 )paren
+multiline_comment|/* More than one interrupt */
 r_return
-op_minus
-l_int|1
-suffix:semicolon
-id|max_vote
-op_assign
-id|intr_vote
-(braket
-id|i
-)braket
+id|PARPORT_IRQ_NONE
 suffix:semicolon
 id|irq
 op_assign
@@ -1847,19 +1809,6 @@ c_func
 id|irqs
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pb-&gt;irq
-op_eq
-l_int|0
-)paren
-id|pb-&gt;irq
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-multiline_comment|/* No interrupt detected */
 id|w_ecr
 c_func
 (paren
@@ -1872,7 +1821,7 @@ r_return
 id|pb-&gt;irq
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * It&squot;s called only if supports EPP on National Semiconductors&n; * This doesn&squot;t work in SMC, LGS, and Winbond &n; */
+multiline_comment|/*&n; * This detection seems that only works in National Semiconductors&n; * This doesn&squot;t work in SMC, LGS, and Winbond &n; */
 DECL|function|irq_probe_EPP
 r_static
 r_int
@@ -1995,19 +1944,6 @@ c_func
 id|irqs
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pb-&gt;irq
-op_eq
-l_int|0
-)paren
-id|pb-&gt;irq
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-multiline_comment|/* No interrupt detected */
 id|w_ctr
 c_func
 (paren
@@ -2178,8 +2114,7 @@ l_int|0
 )paren
 id|pb-&gt;irq
 op_assign
-op_minus
-l_int|1
+id|PARPORT_IRQ_NONE
 suffix:semicolon
 multiline_comment|/* No interrupt detected */
 id|w_ctr
@@ -2194,7 +2129,7 @@ r_return
 id|pb-&gt;irq
 suffix:semicolon
 )brace
-multiline_comment|/* We will attempt to share interrupt requests since other devices&n; * such as sound cards and network cards seem to like using the&n; * printer IRQs.&n; *&n; * When LP_ECP is available we can autoprobe for IRQs.&n; * NOTE: If we can autoprobe it, we can register the IRQ.&n; */
+multiline_comment|/* We will attempt to share interrupt requests since other devices&n; * such as sound cards and network cards seem to like using the&n; * printer IRQs.&n; *&n; * When ECP is available we can autoprobe for IRQs.&n; * NOTE: If we can autoprobe it, we can register the IRQ.&n; */
 DECL|function|parport_irq_probe
 r_static
 r_int
@@ -2214,7 +2149,6 @@ id|pb-&gt;modes
 op_amp
 id|PARPORT_MODE_ECR
 )paren
-(brace
 id|pb-&gt;irq
 op_assign
 id|programmable_irq_support
@@ -2223,7 +2157,6 @@ c_func
 id|pb
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2231,7 +2164,6 @@ id|pb-&gt;modes
 op_amp
 id|PARPORT_MODE_ECP
 )paren
-(brace
 id|pb-&gt;irq
 op_assign
 id|irq_probe_ECP
@@ -2240,14 +2172,12 @@ c_func
 id|pb
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 id|pb-&gt;irq
 op_eq
-op_minus
-l_int|1
+id|PARPORT_IRQ_NONE
 op_logical_and
 (paren
 id|pb-&gt;modes
@@ -2292,8 +2222,7 @@ c_cond
 (paren
 id|pb-&gt;irq
 op_eq
-op_minus
-l_int|1
+id|PARPORT_IRQ_NONE
 op_logical_and
 (paren
 id|pb-&gt;modes
@@ -2301,7 +2230,6 @@ op_amp
 id|PARPORT_MODE_EPP
 )paren
 )paren
-(brace
 id|pb-&gt;irq
 op_assign
 id|irq_probe_EPP
@@ -2310,7 +2238,6 @@ c_func
 id|pb
 )paren
 suffix:semicolon
-)brace
 id|epp_clear_timeout
 c_func
 (paren
@@ -2322,10 +2249,8 @@ c_cond
 (paren
 id|pb-&gt;irq
 op_eq
-op_minus
-l_int|1
+id|PARPORT_IRQ_NONE
 )paren
-(brace
 id|pb-&gt;irq
 op_assign
 id|irq_probe_SPP
@@ -2334,7 +2259,6 @@ c_func
 id|pb
 )paren
 suffix:semicolon
-)brace
 r_return
 id|pb-&gt;irq
 suffix:semicolon
@@ -2376,6 +2300,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;parport: Invalid DMA[%d] at base 0x%lx&bslash;n&quot;
 comma
 id|dma
@@ -2399,6 +2324,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;parport: Invalid IRQ[%d] at base 0x%lx&bslash;n&quot;
 comma
 id|irq
@@ -2486,6 +2412,7 @@ id|pb-&gt;name
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;parport: memory squeeze&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2549,6 +2476,22 @@ suffix:semicolon
 multiline_comment|/* All ports support SPP mode. */
 id|pb-&gt;modes
 op_or_assign
+id|parport_PS2_supported
+c_func
+(paren
+id|pb
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pb-&gt;base
+op_ne
+l_int|0x3bc
+)paren
+(brace
+id|pb-&gt;modes
+op_or_assign
 id|parport_ECR_present
 c_func
 (paren
@@ -2558,14 +2501,6 @@ suffix:semicolon
 id|pb-&gt;modes
 op_or_assign
 id|parport_ECP_supported
-c_func
-(paren
-id|pb
-)paren
-suffix:semicolon
-id|pb-&gt;modes
-op_or_assign
-id|parport_PS2_supported
 c_func
 (paren
 id|pb
@@ -2595,6 +2530,7 @@ c_func
 id|pb
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Now register regions */
 r_if
 c_cond
@@ -2703,8 +2639,7 @@ c_cond
 (paren
 id|pb-&gt;dma
 op_eq
-op_minus
-l_int|1
+id|PARPORT_DMA_NONE
 )paren
 id|pb-&gt;dma
 op_assign
@@ -2725,8 +2660,7 @@ l_int|2
 )paren
 id|pb-&gt;dma
 op_assign
-op_minus
-l_int|1
+id|PARPORT_DMA_NONE
 suffix:semicolon
 )brace
 multiline_comment|/* IRQ check */
@@ -2735,8 +2669,7 @@ c_cond
 (paren
 id|pb-&gt;irq
 op_eq
-op_minus
-l_int|1
+id|PARPORT_IRQ_NONE
 )paren
 id|pb-&gt;irq
 op_assign
@@ -2757,8 +2690,7 @@ l_int|2
 )paren
 id|pb-&gt;irq
 op_assign
-op_minus
-l_int|1
+id|PARPORT_IRQ_NONE
 suffix:semicolon
 r_return
 l_int|1
@@ -2810,8 +2742,7 @@ id|io
 l_int|0
 )braket
 op_assign
-op_minus
-l_int|2
+id|PARPORT_DISABLE
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -3030,7 +2961,7 @@ c_func
 id|KERN_INFO
 l_string|&quot;Parallel port sharing: %s&bslash;n&quot;
 comma
-l_string|&quot;$Revision: 1.1.2.4 $&quot;
+l_string|&quot;$Revision: 1.3.2.4 $&quot;
 )paren
 suffix:semicolon
 r_if
@@ -3041,19 +2972,19 @@ id|io
 l_int|0
 )braket
 op_eq
-op_minus
-l_int|2
+id|PARPORT_DISABLE
 )paren
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/* Register /proc/parport */
+macro_line|#ifdef CONFIG_PROC_FS
 id|parport_proc_register
 c_func
 (paren
 l_int|NULL
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Run probes to ensure parport does exist */
 DECL|macro|PORT
 mdefine_line|#define PORT(a,b,c) &bslash;&n;&t;&t;if ((pb = parport_register_port((a), (b), (c))))  &bslash;&n;&t;&t;        parport_destroy(pb); 
@@ -3119,11 +3050,9 @@ c_func
 (paren
 l_int|0x378
 comma
-op_minus
-l_int|1
+id|PARPORT_IRQ_NONE
 comma
-op_minus
-l_int|1
+id|PARPORT_DMA_NONE
 )paren
 suffix:semicolon
 id|PORT
@@ -3131,11 +3060,9 @@ c_func
 (paren
 l_int|0x278
 comma
-op_minus
-l_int|1
+id|PARPORT_IRQ_NONE
 comma
-op_minus
-l_int|1
+id|PARPORT_DMA_NONE
 )paren
 suffix:semicolon
 id|PORT
@@ -3143,17 +3070,15 @@ c_func
 (paren
 l_int|0x3bc
 comma
-op_minus
-l_int|1
+id|PARPORT_IRQ_NONE
 comma
-op_minus
-l_int|1
+id|PARPORT_DMA_NONE
 )paren
 suffix:semicolon
 DECL|macro|PORT
 macro_line|#undef PORT
 )brace
-macro_line|#ifdef CONFIG_PNP_PARPORT_AUTOPROBE
+macro_line|#if defined(CONFIG_PNP_PARPORT_AUTOPROBE) || defined(CONFIG_PROC_FS)
 r_for
 c_loop
 (paren
@@ -3170,12 +3095,24 @@ id|pb
 op_assign
 id|pb-&gt;next
 )paren
+(brace
+macro_line|#ifdef CONFIG_PNP_PARPORT_AUTOPROBE
 id|parport_probe_one
 c_func
 (paren
 id|pb
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_PROC_FS
+id|parport_proc_register
+c_func
+(paren
+id|pb
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 macro_line|#endif
 r_return
 l_int|0
@@ -3244,10 +3181,9 @@ id|port
 )paren
 suffix:semicolon
 )brace
-id|parport_proc_unregister
+id|parport_proc_cleanup
 c_func
 (paren
-l_int|NULL
 )paren
 suffix:semicolon
 )brace

@@ -276,10 +276,6 @@ l_int|0
 dot
 id|phys_addr
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|sbus_devaddr
 c_func
 (paren
@@ -323,10 +319,6 @@ id|grrr
 dot
 id|phys_addr
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|sbus_devaddr
 c_func
 (paren

@@ -4174,10 +4174,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|do_linuxrc
 r_static
 r_int
 id|do_linuxrc
@@ -4186,7 +4183,6 @@ c_func
 r_void
 op_star
 id|shell
-)paren
 )paren
 (brace
 r_static

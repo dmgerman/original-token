@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_KERNELD
 macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
@@ -1870,12 +1871,16 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|init_ncp_fs
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|init_ncp_fs
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

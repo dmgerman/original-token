@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -3981,6 +3982,7 @@ suffix:semicolon
 multiline_comment|/* Four QE&squot;s per QEC card. */
 DECL|function|qec_ether_init
 r_static
+r_inline
 r_int
 id|qec_ether_init
 c_func
@@ -5659,7 +5661,10 @@ r_return
 id|res
 suffix:semicolon
 )brace
-DECL|function|qec_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|qec_probe
 c_func
@@ -5668,6 +5673,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_struct

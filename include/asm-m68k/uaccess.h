@@ -1505,6 +1505,10 @@ DECL|macro|copy_from_user
 mdefine_line|#define copy_from_user(to, from, n)&t;&t;&bslash;&n;(__builtin_constant_p(n) ?&t;&t;&t;&bslash;&n; __constant_copy_from_user(to, from, n) :&t;&bslash;&n; __generic_copy_from_user(to, from, n))
 DECL|macro|copy_to_user
 mdefine_line|#define copy_to_user(to, from, n)&t;&t;&bslash;&n;(__builtin_constant_p(n) ?&t;&t;&t;&bslash;&n; __constant_copy_to_user(to, from, n) :&t;&t;&bslash;&n; __generic_copy_to_user(to, from, n))
+DECL|macro|__copy_from_user
+mdefine_line|#define __copy_from_user(to, from, n) copy_from_user(to, from, n)
+DECL|macro|__copy_to_user
+mdefine_line|#define __copy_to_user(to, from, n) copy_to_user(to, from, n)
 multiline_comment|/*&n; * Copy a null terminated string from userspace.&n; */
 r_static
 r_inline

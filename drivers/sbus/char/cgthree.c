@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgthree.c,v 1.16 1997/04/10 03:02:41 davem Exp $&n; * cgtree.c: cg3 frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Support for cgRDI added, Nov/96, jj.&n; */
+multiline_comment|/* $Id: cgthree.c,v 1.18 1997/04/16 17:51:09 jj Exp $&n; * cgtree.c: cg3 frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Support for cgRDI added, Nov/96, jj.&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -352,7 +352,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;base
 )paren
@@ -735,8 +736,7 @@ comma
 r_int
 id|slot
 comma
-r_int
-r_int
+id|u32
 id|cg3
 comma
 r_int
@@ -874,9 +874,6 @@ l_string|&quot;cgRDI%d at 0x%8.8x&bslash;n&quot;
 comma
 id|slot
 comma
-(paren
-id|uint
-)paren
 id|cg3
 )paren
 suffix:semicolon
@@ -893,9 +890,6 @@ l_string|&quot;cgthree%d at 0x%8.8x&bslash;n&quot;
 comma
 id|slot
 comma
-(paren
-id|uint
-)paren
 id|cg3
 )paren
 suffix:semicolon
@@ -943,14 +937,9 @@ id|cg3info-&gt;regs
 op_assign
 id|sparc_alloc_io
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|cg3
 op_plus
 id|CG3_REGS
-)paren
 comma
 l_int|0
 comma
@@ -1161,18 +1150,14 @@ id|fb-&gt;base
 id|fb-&gt;base
 op_assign
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|sparc_alloc_io
-(paren
-(paren
-id|u32
-)paren
 (paren
 id|cg3
 op_plus
 id|CG3_RAM
-)paren
 comma
 l_int|0
 comma

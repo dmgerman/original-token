@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
@@ -14,6 +15,10 @@ c_func
 r_int
 id|cmd
 )paren
+suffix:semicolon
+r_extern
+r_int
+id|atari_SCC_reset_done
 suffix:semicolon
 DECL|variable|atari_mch_cookie
 id|EXPORT_SYMBOL
@@ -34,6 +39,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|is_medusa
+)paren
+suffix:semicolon
+DECL|variable|is_hades
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|is_hades
 )paren
 suffix:semicolon
 DECL|variable|atari_register_vme_int
@@ -99,11 +111,11 @@ c_func
 id|atari_MIDI_interrupt_hook
 )paren
 suffix:semicolon
-DECL|variable|atari_mch_cookie
+DECL|variable|atari_SCC_reset_done
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|atari_mch_cookie
+id|atari_SCC_reset_done
 )paren
 suffix:semicolon
 DECL|variable|ikbd_write

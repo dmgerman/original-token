@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -61,12 +62,16 @@ op_star
 )paren
 l_int|NULL
 suffix:semicolon
-DECL|function|binfmt_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|binfmt_setup
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_BINFMT_ELF
@@ -2043,7 +2048,12 @@ l_int|1
 )paren
 op_logical_or
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|current-&gt;sig-&gt;count
+)paren
 OG
 l_int|1
 )paren

@@ -121,6 +121,10 @@ id|atomic_t
 id|rt_cache_size
 op_assign
 id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 DECL|variable|rt_hash_table
 r_static

@@ -3,20 +3,18 @@ macro_line|#ifndef __ASM_M68K_PROCESSOR_H
 DECL|macro|__ASM_M68K_PROCESSOR_H
 mdefine_line|#define __ASM_M68K_PROCESSOR_H
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/fpu.h&gt;
 multiline_comment|/*&n; * User space process size: 3.75GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0xF0000000UL)
 multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
 DECL|macro|TASK_UNMAPPED_BASE
-mdefine_line|#define TASK_UNMAPPED_BASE&t;(TASK_SIZE / 3)
+mdefine_line|#define TASK_UNMAPPED_BASE&t;0xC0000000UL
 multiline_comment|/*&n; * Bus types&n; */
 DECL|macro|EISA_bus
 mdefine_line|#define EISA_bus 0
 DECL|macro|MCA_bus
 mdefine_line|#define MCA_bus 0
-multiline_comment|/* MAX floating point unit state size (FSAVE/FRESTORE) */
-DECL|macro|FPSTATESIZE
-mdefine_line|#define FPSTATESIZE   (216/sizeof(unsigned char))
 multiline_comment|/* &n; * if you change this structure, you must change the code and offsets&n; * in m68k/machasm.S&n; */
 DECL|struct|thread_struct
 r_struct

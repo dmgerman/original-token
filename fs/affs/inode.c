@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/amigaffs.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern
@@ -5261,12 +5262,16 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|init_affs_fs
 id|init_affs_fs
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.27 1997/04/14 05:38:31 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This file handles the Sparc specific time handling details.&n; */
+multiline_comment|/* $Id: time.c,v 1.28 1997/04/15 09:01:10 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This file handles the Sparc specific time handling details.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -154,21 +154,6 @@ op_minus
 l_int|600
 suffix:semicolon
 multiline_comment|/* do it again in 60 s */
-macro_line|#ifdef __SMP__
-multiline_comment|/* I really think it should not be done this way... -DaveM */
-id|smp_message_pass
-c_func
-(paren
-id|MSG_ALL_BUT_SELF
-comma
-id|MSG_RESCHEDULE
-comma
-l_int|0L
-comma
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */
 DECL|function|mktime

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: tcx.c,v 1.11 1997/04/10 03:02:43 davem Exp $&n; * tcx.c: SUNW,tcx 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: tcx.c,v 1.12 1997/04/14 17:04:51 jj Exp $&n; * tcx.c: SUNW,tcx 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -434,7 +434,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;base
 )paren
@@ -453,7 +454,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.tcx.tec
 )paren
@@ -472,7 +474,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.tcx.bt
 )paren
@@ -491,7 +494,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.tcx.thc
 )paren
@@ -519,7 +523,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.tcx.tcx_cplane
 )paren
@@ -1114,8 +1119,7 @@ comma
 r_int
 id|node
 comma
-r_int
-r_int
+id|u32
 id|tcx
 comma
 r_struct
@@ -1139,9 +1143,6 @@ l_string|&quot;tcx%d at 0x%8.8x &quot;
 comma
 id|slot
 comma
-(paren
-id|uint
-)paren
 id|tcx
 )paren
 suffix:semicolon

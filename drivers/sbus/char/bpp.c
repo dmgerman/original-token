@@ -15,6 +15,7 @@ macro_line|# include &lt;asm/system.h&gt;
 macro_line|# include &lt;asm/segment.h&gt;
 macro_line|#endif
 macro_line|#if defined(__sparc__)
+macro_line|# include &lt;linux/init.h&gt;
 macro_line|# include &lt;linux/delay.h&gt;         /* udelay() */
 macro_line|# include &lt;asm/oplib.h&gt;           /* OpenProm Library */
 macro_line|# include &lt;asm/sbus.h&gt;            /* struct linux_sbus *SBus_chain */

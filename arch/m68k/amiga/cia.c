@@ -70,15 +70,11 @@ l_int|0
 comma
 id|IF_PORTS
 comma
-id|IRQ2
+id|IRQ_AMIGA_AUTO_2
 comma
 id|IRQ_AMIGA_CIAA
 comma
-id|IRQ_IDX
-c_func
-(paren
 id|IRQ_AMIGA_PORTS
-)paren
 comma
 l_string|&quot;CIAA handler&quot;
 comma
@@ -102,15 +98,11 @@ l_int|0
 comma
 id|IF_EXTER
 comma
-id|IRQ6
+id|IRQ_AMIGA_AUTO_6
 comma
 id|IRQ_AMIGA_CIAB
 comma
-id|IRQ_IDX
-c_func
-(paren
 id|IRQ_AMIGA_EXTER
-)paren
 comma
 l_string|&quot;CIAB handler&quot;
 comma
@@ -391,17 +383,13 @@ id|IRQ_FLG_LOCK
 id|printk
 c_func
 (paren
-l_string|&quot;%s: IRQ %ld from %s is not replaceable&bslash;n&quot;
+l_string|&quot;%s: IRQ %i from %s is not replaceable&bslash;n&quot;
 comma
 id|__FUNCTION__
 comma
-id|IRQ_IDX
-c_func
-(paren
 id|base-&gt;cia_irq
 op_plus
 id|irq
-)paren
 comma
 id|base-&gt;irq_list
 (braket
@@ -419,27 +407,26 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
 id|flags
 op_amp
 id|IRQ_FLG_REPLACE
+)paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;%s: %s can&squot;t replace IRQ %ld from %s&bslash;n&quot;
+l_string|&quot;%s: %s can&squot;t replace IRQ %i from %s&bslash;n&quot;
 comma
 id|__FUNCTION__
 comma
 id|devname
 comma
-id|IRQ_IDX
-c_func
-(paren
 id|base-&gt;cia_irq
 op_plus
 id|irq
-)paren
 comma
 id|base-&gt;irq_list
 (braket
@@ -554,17 +541,13 @@ id|dev_id
 id|printk
 c_func
 (paren
-l_string|&quot;%s: removing probably wrong IRQ %ld from %s&bslash;n&quot;
+l_string|&quot;%s: removing probably wrong IRQ %i from %s&bslash;n&quot;
 comma
 id|__FUNCTION__
 comma
-id|IRQ_IDX
-c_func
-(paren
 id|base-&gt;cia_irq
 op_plus
 id|irq
-)paren
 comma
 id|base-&gt;irq_list
 (braket
@@ -651,11 +634,7 @@ id|irq
 op_assign
 id|SYS_IRQS
 op_plus
-id|IRQ_IDX
-c_func
-(paren
 id|mach_irq
-)paren
 suffix:semicolon
 id|ints
 op_assign
@@ -858,11 +837,7 @@ l_int|0
 suffix:semicolon
 id|j
 op_assign
-id|IRQ_IDX
-c_func
-(paren
 id|base-&gt;cia_irq
-)paren
 suffix:semicolon
 r_for
 c_loop

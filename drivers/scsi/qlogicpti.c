@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
@@ -1897,7 +1898,10 @@ suffix:semicolon
 )brace
 DECL|macro|PTI_RESET_LIMIT
 mdefine_line|#define PTI_RESET_LIMIT 400
-DECL|function|qlogicpti_load_firmware
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|qlogicpti_load_firmware
@@ -1907,6 +1911,7 @@ r_struct
 id|qlogicpti
 op_star
 id|qpti
+)paren
 )paren
 (brace
 r_struct
@@ -3017,7 +3022,10 @@ id|regs
 )paren
 suffix:semicolon
 multiline_comment|/* Detect all PTI Qlogic ISP&squot;s in the machine. */
-DECL|function|qlogicpti_detect
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|qlogicpti_detect
 c_func
@@ -3025,6 +3033,7 @@ c_func
 id|Scsi_Host_Template
 op_star
 id|tpnt
+)paren
 )paren
 (brace
 r_struct

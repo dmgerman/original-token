@@ -130,14 +130,6 @@ id|sysctl_arp_dead_res_time
 op_assign
 id|ARP_DEAD_RES_TIME
 suffix:semicolon
-multiline_comment|/* This should be completely nuked... -DaveM */
-macro_line|#if RT_CACHE_DEBUG &gt;= 1
-DECL|macro|ASSERT_BH
-mdefine_line|#define ASSERT_BH() if (!in_interrupt()) printk(KERN_CRIT __FUNCTION__ &quot; called from SPL=0&bslash;n&quot;);
-macro_line|#else
-DECL|macro|ASSERT_BH
-mdefine_line|#define ASSERT_BH()
-macro_line|#endif
 r_static
 r_void
 id|arp_neigh_destroy
@@ -171,6 +163,10 @@ id|atomic_t
 id|arp_size
 op_assign
 id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 DECL|variable|arp_unres_size
 r_static
@@ -178,6 +174,10 @@ id|atomic_t
 id|arp_unres_size
 op_assign
 id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_ARPD
 DECL|variable|arpd_not_running
@@ -412,11 +412,6 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-id|ASSERT_BH
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Release the list of `skb&squot; pointers. */
 r_while
 c_loop
@@ -441,8 +436,6 @@ id|skb
 comma
 id|FREE_WRITE
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 DECL|function|arp_free
@@ -470,11 +463,6 @@ op_star
 id|entryp
 op_assign
 id|entry-&gt;u.next
-suffix:semicolon
-id|ASSERT_BH
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -570,11 +558,6 @@ id|hh
 comma
 op_star
 id|next
-suffix:semicolon
-id|ASSERT_BH
-c_func
-(paren
-)paren
 suffix:semicolon
 id|del_timer
 c_func
@@ -2401,11 +2384,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-suffix:semicolon
-id|ASSERT_BH
-c_func
-(paren
-)paren
 suffix:semicolon
 r_while
 c_loop

@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 multiline_comment|/*&n; * Support for umsdos fs&n; *&n; * These symbols are _always_ exported, in case someone&n; * wants to install the umsdos module later.&n; */
 DECL|variable|msdos_create
 id|EXPORT_SYMBOL
@@ -90,12 +91,16 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|init_msdos_fs
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|init_msdos_fs
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

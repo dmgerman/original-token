@@ -519,10 +519,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * close access to the mouse&n; */
-DECL|function|close_mouse
+DECL|function|release_mouse
 r_static
 r_int
-id|close_mouse
+id|release_mouse
 c_func
 (paren
 r_struct
@@ -553,6 +553,7 @@ op_decrement
 id|mouse.active
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|free_irq
 c_func
@@ -1005,7 +1006,7 @@ comma
 multiline_comment|/* mouse_mmap */
 id|open_mouse
 comma
-id|close_mouse
+id|release_mouse
 comma
 l_int|NULL
 comma

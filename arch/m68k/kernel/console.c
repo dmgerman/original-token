@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/char/console.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; *&n; *     &squot;void do_keyboard_interrupt(void)&squot;&n; *&n; *     &squot;int vc_allocate(unsigned int console)&squot;&n; *     &squot;int vc_cons_allocated(unsigned int console)&squot;&n; *     &squot;int vc_resize(unsigned long lines, unsigned long cols)&squot;&n; *     &squot;int vc_resize_con(unsigned long lines, unsigned long cols,&n; *&t;&t;&t;  unsigned int currcons)&squot;&n; *     &squot;void vc_disallocate(unsigned int currcons)&squot;&n; *&n; *     &squot;unsigned long con_init(unsigned long)&squot;&n; *     &squot;int con_open(struct tty_struct *tty, struct file * filp)&squot;&n; *     &squot;void con_write(struct tty_struct * tty)&squot;&n; *     &squot;void console_print(const char * b)&squot;&n; *     &squot;void update_screen(int new_console)&squot;&n; *&n; *     &squot;void do_blank_screen(int)&squot;&n; *     &squot;void do_unblank_screen(void)&squot;&n; *     &squot;void poke_blanked_console(void)&squot;&n; *&n; *     &squot;unsigned short *screen_pos(int currcons, int w_offset, int viewed)&squot;&n; *     &squot;void complement_pos(int currcons, int offset)&squot;&n; *     &squot;void invert_screen(int currcons, int offset, int count, int shift)&squot;&n; *&n; *     &squot;void scrollback(int lines)&squot;&n; *     &squot;void scrollfront(int lines)&squot;&n; *&n; *     &squot;int con_get_font(char *)&squot; &n; *     &squot;int con_set_font(char *)&squot;&n; * &n; *     &squot;void mouse_report(struct tty_struct * tty, int butt, int mrx, int mry)&squot;&n; *     &squot;int mouse_reporting(void)&squot;&n; *&n; *     &squot;unsigned long get_video_num_lines(unsigned int console)&squot;&n; *     &squot;unsigned long get_video_num_columns(unsigned int console)&squot;&n; *     &squot;unsigned long get_video_size_row(unsigned int console)&squot;&n; *&n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; *&n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; *&n; * Copy and paste function by Andrew Haylett,&n; *   some enhancements by Alessandro Rubini.&n; *&n; * User definable mapping table and font loading by Eugene G. Crosser,&n; * &lt;crosser@pccross.msk.su&gt;&n; *&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; *&n; * Rudimentary ISO 10646/Unicode/UTF-8 character set support by&n; * Markus Kuhn, &lt;mskuhn@immd4.informatik.uni-erlangen.de&gt;.&n; *&n; * Dynamic allocation of consoles, aeb@cwi.nl, May 1994&n; * Resizing of consoles, aeb, 940926&n; *&n; * Code for xterm like mouse click reporting by Peter Orbaek 20-Jul-94&n; * &lt;poe@daimi.aau.dk&gt;&n; *&n; * 680x0 LINUX support by Arno Griffioen (arno@usn.nl)&n; *&n; * 9-Apr-94:  Arno Griffioen: fixed scrolling and delete-char bug.&n; *            Scrolling code moved to amicon.c&n; *&n; * 18-Apr-94: David Carter [carter@cs.bris.ac.uk]. 680x0 LINUX modified &n; *            Integrated support for new low level driver `amicon_ocs.c&squot;&n; *&n; */
+multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; *&n; *     &squot;void do_keyboard_interrupt(void)&squot;&n; *&n; *     &squot;int vc_allocate(unsigned int console)&squot;&n; *     &squot;int vc_cons_allocated(unsigned int console)&squot;&n; *     &squot;int vc_resize(unsigned long lines, unsigned long cols)&squot;&n; *     &squot;int vc_resize_con(unsigned long lines, unsigned long cols,&n; *&t;&t;&t;  unsigned int currcons)&squot;&n; *     &squot;void vc_disallocate(unsigned int currcons)&squot;&n; *&n; *     &squot;unsigned long con_init(unsigned long)&squot;&n; *     &squot;int con_open(struct tty_struct *tty, struct file * filp)&squot;&n; *     &squot;void con_write(struct tty_struct * tty)&squot;&n; *     &squot;void vt_console_print(const char * b)&squot;&n; *     &squot;void update_screen(int new_console)&squot;&n; *&n; *     &squot;void do_blank_screen(int)&squot;&n; *     &squot;void do_unblank_screen(void)&squot;&n; *     &squot;void poke_blanked_console(void)&squot;&n; *&n; *     &squot;unsigned short *screen_pos(int currcons, int w_offset, int viewed)&squot;&n; *     &squot;void complement_pos(int currcons, int offset)&squot;&n; *     &squot;void invert_screen(int currcons, int offset, int count, int shift)&squot;&n; *&n; *     &squot;void scrollback(int lines)&squot;&n; *     &squot;void scrollfront(int lines)&squot;&n; *&n; *     &squot;int con_get_font(char *)&squot; &n; *     &squot;int con_set_font(char *)&squot;&n; * &n; *     &squot;void mouse_report(struct tty_struct * tty, int butt, int mrx, int mry)&squot;&n; *     &squot;int mouse_reporting(void)&squot;&n; *&n; *     &squot;unsigned long get_video_num_lines(unsigned int console)&squot;&n; *     &squot;unsigned long get_video_num_columns(unsigned int console)&squot;&n; *     &squot;unsigned long get_video_size_row(unsigned int console)&squot;&n; *&n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; *&n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; *&n; * Copy and paste function by Andrew Haylett,&n; *   some enhancements by Alessandro Rubini.&n; *&n; * User definable mapping table and font loading by Eugene G. Crosser,&n; * &lt;crosser@pccross.msk.su&gt;&n; *&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; *&n; * Rudimentary ISO 10646/Unicode/UTF-8 character set support by&n; * Markus Kuhn, &lt;mskuhn@immd4.informatik.uni-erlangen.de&gt;.&n; *&n; * Dynamic allocation of consoles, aeb@cwi.nl, May 1994&n; * Resizing of consoles, aeb, 940926&n; *&n; * Code for xterm like mouse click reporting by Peter Orbaek 20-Jul-94&n; * &lt;poe@daimi.aau.dk&gt;&n; *&n; * 680x0 LINUX support by Arno Griffioen (arno@usn.nl)&n; *&n; * 9-Apr-94:  Arno Griffioen: fixed scrolling and delete-char bug.&n; *            Scrolling code moved to amicon.c&n; *&n; * 18-Apr-94: David Carter [carter@cs.bris.ac.uk]. 680x0 LINUX modified &n; *            Integrated support for new low level driver `amicon_ocs.c&squot;&n; *&n; */
 DECL|macro|BLANK
 mdefine_line|#define BLANK 0x0020
 DECL|macro|CAN_LOAD_EGA_FONTS
@@ -15,11 +15,13 @@ mdefine_line|#define DEFAULT_BELL_PITCH&t;750
 DECL|macro|DEFAULT_BELL_DURATION
 mdefine_line|#define DEFAULT_BELL_DURATION&t;(HZ/8)
 multiline_comment|/*&n; *  NOTE!!! We sometimes disable and enable interrupts for a short while&n; * (to put a word in video IO), but this will work even for keyboard&n; * interrupts. We know interrupts aren&squot;t enabled when getting a keyboard&n; * interrupt, as we use trap-gates. Hopefully all is well.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/tty_flip.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -37,6 +39,7 @@ macro_line|#include &quot;../../../drivers/char/kbd_kern.h&quot;
 macro_line|#include &quot;../../../drivers/char/vt_kern.h&quot;
 macro_line|#include &quot;../../../drivers/char/consolemap.h&quot;
 macro_line|#include &quot;../../../drivers/char/selection.h&quot;
+macro_line|#include &quot;../../../drivers/char/console_struct.h&quot;
 macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b)&t;((a) &lt; (b) ? (a) : (b))
@@ -143,6 +146,20 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_static
+r_int
+id|con_open
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+comma
+r_struct
+id|file
+op_star
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|change_console
@@ -192,21 +209,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
+r_static
 r_void
-id|register_console
+id|set_vesa_blanking
 c_func
 (paren
-r_void
-(paren
-op_star
-id|proc
-)paren
-(paren
-r_const
-r_char
-op_star
-)paren
+r_int
+r_int
+id|arg
 )paren
 suffix:semicolon
 r_extern
@@ -313,6 +323,14 @@ id|vc_scrbuf
 id|MAX_NR_CONSOLES
 )braket
 suffix:semicolon
+DECL|variable|vc_cons
+r_struct
+id|vc
+id|vc_cons
+(braket
+id|MAX_NR_CONSOLES
+)braket
+suffix:semicolon
 multiline_comment|/* used by kbd_bh - set by keyboard_interrupt */
 DECL|variable|do_poke_blanked_console
 r_int
@@ -377,25 +395,6 @@ r_int
 id|kmsg_redirect
 op_assign
 l_int|0
-suffix:semicolon
-DECL|struct|vc
-r_static
-r_struct
-id|vc
-(brace
-DECL|member|d
-r_struct
-id|vc_data
-op_star
-id|d
-suffix:semicolon
-multiline_comment|/* might add  scrmem, vt_struct, kbd  at some time,&n;&t;   to have everything in one place - the disadvantage&n;&t;   would be that vc_cons etc can no longer be static */
-DECL|variable|vc_cons
-)brace
-id|vc_cons
-(braket
-id|MAX_NR_CONSOLES
-)braket
 suffix:semicolon
 DECL|variable|conswitchp
 r_struct
@@ -538,8 +537,6 @@ mdefine_line|#define&t;vtmode&t;&t;(vt_cons[currcons]-&gt;vt_mode)
 mdefine_line|#define&t;vtpid&t;&t;(vt_cons[currcons]-&gt;vt_pid)
 mdefine_line|#define&t;vtnewvt&t;&t;(vt_cons[currcons]-&gt;vt_newvt)
 macro_line|#endif
-DECL|macro|structsize
-mdefine_line|#define structsize&t;(sizeof(struct vc_data) + sizeof(struct vt_struct))
 DECL|function|vc_cons_allocated
 r_int
 id|vc_cons_allocated
@@ -3956,7 +3953,7 @@ id|tty
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* invoked via ioctl(TIOCLINUX) */
+multiline_comment|/* invoked via ioctl(TIOCLINUX) and through set_selection */
 DECL|function|mouse_reporting
 r_int
 id|mouse_reporting
@@ -7222,7 +7219,7 @@ suffix:semicolon
 )brace
 macro_line|#if 1 /* XXX */
 multiline_comment|/* DPC: 1994-04-12&n;                         *   Speed up overstrike mode, using new putcs.&n;                         *&n;                         * P.S. I hate 8 spaces per tab! Use Emacs!&n;&t;&t;&t; */
-multiline_comment|/* Only use this for the foreground console,&n;                           where we really draw the chars */
+multiline_comment|/* Only use this for the foreground console,&n;&t;&t;&t;   where we really draw the chars */
 r_if
 c_cond
 (paren
@@ -7312,7 +7309,14 @@ comma
 id|x
 )paren
 suffix:semicolon
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
 id|pos
+)paren
 op_decrement
 suffix:semicolon
 id|need_wrap
@@ -7322,7 +7326,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* TAB TAB TAB - Arghh!!!! */
 r_while
 c_loop
 (paren
@@ -9719,15 +9722,20 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* DPC: New version of console_print using putcs */
-DECL|function|console_print
+macro_line|#ifdef CONFIG_VT_CONSOLE
+DECL|function|vt_console_print
 r_void
-id|console_print
+id|vt_console_print
 c_func
 (paren
 r_const
 r_char
 op_star
 id|b
+comma
+r_int
+r_int
+id|count
 )paren
 (brace
 r_int
@@ -9747,7 +9755,7 @@ op_assign
 id|b
 suffix:semicolon
 id|ushort
-id|count
+id|cnt
 op_assign
 l_int|0
 suffix:semicolon
@@ -9811,7 +9819,7 @@ multiline_comment|/* impossible */
 id|printk
 c_func
 (paren
-l_string|&quot;console_print: tty %d not allocated ??&bslash;n&quot;
+l_string|&quot;vt_console_print: tty %d not allocated ??&bslash;n&quot;
 comma
 id|currcons
 op_plus
@@ -9836,7 +9844,12 @@ multiline_comment|/* Contrived structure to try to emulate original need_wrap be
 r_while
 c_loop
 (paren
-(paren
+id|count
+op_decrement
+OG
+l_int|0
+)paren
+(brace
 id|c
 op_assign
 op_star
@@ -9844,11 +9857,7 @@ op_star
 id|b
 op_increment
 )paren
-)paren
-op_ne
-l_int|0
-)paren
-(brace
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9871,7 +9880,7 @@ r_if
 c_cond
 (paren
 (paren
-id|count
+id|cnt
 op_assign
 id|b
 op_minus
@@ -9897,7 +9906,7 @@ id|d
 comma
 id|start
 comma
-id|count
+id|cnt
 comma
 id|y
 comma
@@ -9906,7 +9915,7 @@ id|x
 suffix:semicolon
 id|x
 op_add_assign
-id|count
+id|cnt
 suffix:semicolon
 r_if
 c_cond
@@ -10035,13 +10044,11 @@ r_if
 c_cond
 (paren
 (paren
-id|count
+id|cnt
 op_assign
 id|b
 op_minus
 id|start
-op_minus
-l_int|1
 )paren
 OG
 l_int|0
@@ -10061,7 +10068,7 @@ id|d
 comma
 id|start
 comma
-id|count
+id|cnt
 comma
 id|y
 comma
@@ -10070,7 +10077,7 @@ id|x
 suffix:semicolon
 id|x
 op_add_assign
-id|count
+id|cnt
 suffix:semicolon
 r_if
 c_cond
@@ -10105,6 +10112,51 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|vt_console_device
+r_static
+r_int
+id|vt_console_device
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|MKDEV
+c_func
+(paren
+id|TTY_MAJOR
+comma
+id|fg_console
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+)brace
+r_extern
+r_void
+id|keyboard_wait_for_keypress
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|variable|vt_console_driver
+r_struct
+id|console
+id|vt_console_driver
+op_assign
+(brace
+id|vt_console_print
+comma
+id|do_unblank_screen
+comma
+id|keyboard_wait_for_keypress
+comma
+id|vt_console_device
+)brace
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * con_throttle and con_unthrottle are only used for&n; * paste_selection(), which has to stuff in a large number of&n; * characters...&n; */
 DECL|function|con_throttle
 r_static
@@ -10315,6 +10367,7 @@ r_int
 id|kmem_start
 )paren
 (brace
+r_const
 r_char
 op_star
 id|display_desc
@@ -10685,6 +10738,7 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* If &quot;serdebug&quot; cmd line option was present, don&squot;t register for printk */
+macro_line|#ifdef CONFIG_VT_CONSOLE
 r_if
 c_cond
 (paren
@@ -10694,7 +10748,8 @@ id|serial_debug
 id|register_console
 c_func
 (paren
-id|console_print
+op_amp
+id|vt_console_driver
 )paren
 suffix:semicolon
 id|printk
@@ -10731,6 +10786,7 @@ comma
 id|MAX_NR_CONSOLES
 )paren
 suffix:semicolon
+macro_line|#endif
 id|init_bh
 c_func
 (paren
@@ -11444,6 +11500,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Allocate the console screen memory.&n; */
 DECL|function|con_open
+r_static
 r_int
 id|con_open
 c_func
@@ -11922,10 +11979,12 @@ id|EINVAL
 suffix:semicolon
 )brace
 DECL|function|set_vesa_blanking
+r_static
 r_void
 id|set_vesa_blanking
 c_func
 (paren
+r_int
 r_int
 id|arg
 )paren

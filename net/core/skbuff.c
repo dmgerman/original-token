@@ -27,6 +27,10 @@ id|atomic_t
 id|net_skbcount
 op_assign
 id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 DECL|variable|net_allocs
 r_static
@@ -34,6 +38,10 @@ id|atomic_t
 id|net_allocs
 op_assign
 id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 DECL|variable|net_fails
 r_static
@@ -41,6 +49,10 @@ id|atomic_t
 id|net_fails
 op_assign
 id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 r_extern
 id|atomic_t

@@ -823,7 +823,7 @@ r_int
 id|cong_count
 suffix:semicolon
 DECL|member|packets_out
-id|atomic_t
+r_int
 id|packets_out
 suffix:semicolon
 DECL|member|shutdown

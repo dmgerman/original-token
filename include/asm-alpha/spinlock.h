@@ -11,8 +11,7 @@ id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
 mdefine_line|#define SPIN_LOCK_UNLOCKED { }
-DECL|macro|spin_lock_init
-mdefine_line|#define spin_lock_init(lock)&t;&t;&t;do { } while(0)
+multiline_comment|/*&n; * Basic spinlocks - one can enter at a time&n; */
 DECL|macro|spin_lock
 mdefine_line|#define spin_lock(lock)&t;&t;&t;&t;do { } while(0)
 DECL|macro|spin_trylock
@@ -27,6 +26,31 @@ DECL|macro|spin_lock_irqsave
 mdefine_line|#define spin_lock_irqsave(lock, flags)&t;&t;swpipl(flags,7)
 DECL|macro|spin_unlock_irqrestore
 mdefine_line|#define spin_unlock_irqrestore(lock, flags)&t;setipl(flags)
+multiline_comment|/*&n; * Read-write locks: we can have multiple readers, but&n; * only one writer&n; */
+DECL|macro|read_lock
+mdefine_line|#define read_lock(lock)&t;&t;&t;&t;do { } while(0)
+DECL|macro|read_unlock
+mdefine_line|#define read_unlock(lock)&t;&t;&t;do { } while(0)
+DECL|macro|read_lock_irq
+mdefine_line|#define read_lock_irq(lock)&t;&t;&t;setipl(7)
+DECL|macro|read_unlock_irq
+mdefine_line|#define read_unlock_irq(lock)&t;&t;&t;setipl(0)
+DECL|macro|read_lock_irqsave
+mdefine_line|#define read_lock_irqsave(lock, flags)&t;&t;swpipl(flags,7)
+DECL|macro|read_unlock_irqrestore
+mdefine_line|#define read_unlock_irqrestore(lock, flags)&t;setipl(flags)
+DECL|macro|write_lock
+mdefine_line|#define write_lock(lock)&t;&t;&t;&t;do { } while(0)
+DECL|macro|write_unlock
+mdefine_line|#define write_unlock(lock)&t;&t;&t;do { } while(0)
+DECL|macro|write_lock_irq
+mdefine_line|#define write_lock_irq(lock)&t;&t;&t;setipl(7)
+DECL|macro|write_unlock_irq
+mdefine_line|#define write_unlock_irq(lock)&t;&t;&t;setipl(0)
+DECL|macro|write_lock_irqsave
+mdefine_line|#define write_lock_irqsave(lock, flags)&t;&t;swpipl(flags,7)
+DECL|macro|write_unlock_irqrestore
+mdefine_line|#define write_unlock_irqrestore(lock, flags)&t;setipl(flags)
 macro_line|#else
 multiline_comment|/* Simple spin lock operations.  There are two variants, one clears IRQ&squot;s&n; * on the local processor, one does not.&n; *&n; * We make no fairness assumptions. They have a cost.&n; */
 r_typedef
@@ -49,6 +73,8 @@ id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
 mdefine_line|#define SPIN_LOCK_UNLOCKED { 0, 0 }
+DECL|macro|spin_lock_init
+mdefine_line|#define spin_lock_init(lock)&t;do { (lock)-&gt;lock = 0; (lock)-&gt;previous = 0; } while(0)
 DECL|member|a
 DECL|typedef|__dummy_lock_t
 r_typedef

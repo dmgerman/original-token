@@ -1,8 +1,7 @@
 macro_line|#ifndef _SPARC_INIT_H
 DECL|macro|_SPARC_INIT_H
 mdefine_line|#define _SPARC_INIT_H
-macro_line|#ifndef __init
-macro_line|#if (defined (__svr4__) || defined (__ELF__)) &amp;&amp; !defined (MODULE)
+macro_line|#if (defined (__svr4__) || defined (__ELF__))
 DECL|macro|__init
 mdefine_line|#define __init __attribute__ ((__section__ (&quot;.text.init&quot;)))
 DECL|macro|__initdata
@@ -30,7 +29,6 @@ DECL|macro|__FINIT
 mdefine_line|#define __FINIT
 DECL|macro|__INITDATA
 mdefine_line|#define __INITDATA
-macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 eof

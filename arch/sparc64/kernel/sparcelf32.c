@@ -24,6 +24,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -573,6 +574,9 @@ c_func
 (paren
 id|__u32
 )paren
+(paren
+r_int
+)paren
 id|envp
 )paren
 comma
@@ -586,6 +590,9 @@ c_func
 (paren
 (paren
 id|__u32
+)paren
+(paren
+r_int
 )paren
 id|argv
 )paren
@@ -630,6 +637,9 @@ c_func
 (paren
 (paren
 id|__u32
+)paren
+(paren
+r_int
 )paren
 id|p
 )paren
@@ -680,6 +690,9 @@ c_func
 (paren
 (paren
 id|__u32
+)paren
+(paren
+r_int
 )paren
 id|p
 )paren
@@ -4888,7 +4901,7 @@ id|pt_regs
 id|printk
 c_func
 (paren
-l_string|&quot;sizeof(elf_gregset_t) (%d) != sizeof(struct pt_regs) (%d)&bslash;n&quot;
+l_string|&quot;sizeof(elf_gregset_t) (%ld) != sizeof(struct pt_regs) (%ld)&bslash;n&quot;
 comma
 r_sizeof
 (paren
@@ -5629,12 +5642,16 @@ id|has_dumped
 suffix:semicolon
 )brace
 macro_line|#endif&t;&t;/* USE_ELF_CORE_DUMP */
-DECL|function|init_elf32_binfmt
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|init_elf32_binfmt
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

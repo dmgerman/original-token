@@ -19,7 +19,7 @@ mdefine_line|#define ATOMIC_INIT&t;{ 0 }
 DECL|macro|atomic_read
 mdefine_line|#define atomic_read(v)&t;&t;((v)-&gt;counter)
 DECL|macro|atomic_set
-mdefine_line|#define atomic_set(v)&t;&t;(((v)-&gt;counter) = i)
+mdefine_line|#define atomic_set(v, i)&t;(((v)-&gt;counter) = i)
 DECL|function|atomic_add
 r_static
 id|__inline__
@@ -97,6 +97,7 @@ r_void
 id|atomic_inc
 c_func
 (paren
+r_volatile
 id|atomic_t
 op_star
 id|v
@@ -124,6 +125,7 @@ r_void
 id|atomic_dec
 c_func
 (paren
+r_volatile
 id|atomic_t
 op_star
 id|v
@@ -151,6 +153,7 @@ r_int
 id|atomic_dec_and_test
 c_func
 (paren
+r_volatile
 id|atomic_t
 op_star
 id|v
@@ -183,5 +186,9 @@ op_ne
 l_int|0
 suffix:semicolon
 )brace
+DECL|macro|atomic_clear_mask
+mdefine_line|#define atomic_clear_mask(mask, v) &bslash;&n;&t;__asm__ __volatile__(&quot;andl %1,%0&quot; : : &quot;m&quot; (*v), &quot;id&quot; (~(mask)))
+DECL|macro|atomic_set_mask
+mdefine_line|#define atomic_set_mask(mask, v) &bslash;&n;&t;__asm__ __volatile__(&quot;orl %1,%0&quot; : : &quot;m&quot; (*v), &quot;id&quot; (mask));
 macro_line|#endif /* __ARCH_M68K_ATOMIC __ */
 eof

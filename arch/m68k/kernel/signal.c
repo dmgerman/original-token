@@ -975,6 +975,9 @@ op_assign
 id|frame
 suffix:semicolon
 multiline_comment|/* return address points to code on stack */
+r_if
+c_cond
+(paren
 id|put_user
 c_func
 (paren
@@ -989,7 +992,15 @@ l_int|4
 comma
 id|tframe
 )paren
+)paren
+(brace
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
+)paren
 suffix:semicolon
+)brace
 id|tframe
 op_increment
 suffix:semicolon
@@ -1000,7 +1011,7 @@ id|current-&gt;exec_domain
 op_logical_and
 id|current-&gt;exec_domain-&gt;signal_invmap
 )paren
-id|put_user
+id|__put_user
 c_func
 (paren
 id|current-&gt;exec_domain-&gt;signal_invmap
@@ -1012,7 +1023,7 @@ id|tframe
 )paren
 suffix:semicolon
 r_else
-id|put_user
+id|__put_user
 c_func
 (paren
 id|signr
@@ -1023,7 +1034,7 @@ suffix:semicolon
 id|tframe
 op_increment
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;vector
@@ -1035,7 +1046,7 @@ id|tframe
 op_increment
 suffix:semicolon
 multiline_comment|/* &quot;scp&quot; parameter.  points to sigcontext */
-id|put_user
+id|__put_user
 c_func
 (paren
 (paren
@@ -1054,7 +1065,7 @@ id|tframe
 op_increment
 suffix:semicolon
 multiline_comment|/* set up the return code... */
-id|put_user
+id|__put_user
 c_func
 (paren
 l_int|0xdefc0014
@@ -1066,7 +1077,7 @@ id|tframe
 op_increment
 suffix:semicolon
 multiline_comment|/* addaw #20,sp */
-id|put_user
+id|__put_user
 c_func
 (paren
 l_int|0x70774e40

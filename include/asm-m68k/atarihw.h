@@ -224,6 +224,13 @@ id|VME
 )paren
 suffix:semicolon
 multiline_comment|/* VME Bus */
+id|ATARIHW_DECLARE
+c_func
+(paren
+id|DSP56K
+)paren
+suffix:semicolon
+multiline_comment|/* DSP56k processor in Falcon */
 )brace
 suffix:semicolon
 r_extern
@@ -264,6 +271,10 @@ suffix:semicolon
 r_extern
 r_int
 id|is_medusa
+suffix:semicolon
+r_extern
+r_int
+id|is_hades
 suffix:semicolon
 multiline_comment|/* Do cache push/invalidate for DMA read/write. This function obeys the&n; * snooping on some machines (Medusa) and processors: The Medusa itself can&n; * snoop, but only the &squot;040 can source data from its cache to DMA writes i.e.,&n; * reads from memory). Both &squot;040 and &squot;060 invalidate cache entries on snooped&n; * DMA reads (i.e., writes to memory).&n; */
 macro_line|#include &lt;linux/mm.h&gt;
@@ -959,10 +970,10 @@ DECL|member|input_source
 id|u_char
 id|input_source
 suffix:semicolon
-DECL|macro|CODEC_SOURCE_MATRIX
-mdefine_line|#define CODEC_SOURCE_MATRIX     1
 DECL|macro|CODEC_SOURCE_ADC
-mdefine_line|#define CODEC_SOURCE_ADC        2
+mdefine_line|#define CODEC_SOURCE_ADC        1
+DECL|macro|CODEC_SOURCE_MATRIX
+mdefine_line|#define CODEC_SOURCE_MATRIX     2
 DECL|member|adc_source
 id|u_char
 id|adc_source
@@ -1806,28 +1817,46 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|tt_dmasnd
 macro_line|# define tt_dmasnd ((*(volatile struct TT_DMASND *)TT_DMASND_BAS))
+DECL|macro|DMASND_MFP_INT_REPLAY
+mdefine_line|#define DMASND_MFP_INT_REPLAY     0x01
+DECL|macro|DMASND_MFP_INT_RECORD
+mdefine_line|#define DMASND_MFP_INT_RECORD     0x02
+DECL|macro|DMASND_TIMERA_INT_REPLAY
+mdefine_line|#define DMASND_TIMERA_INT_REPLAY  0x04
+DECL|macro|DMASND_TIMERA_INT_RECORD
+mdefine_line|#define DMASND_TIMERA_INT_RECORD  0x08
 DECL|macro|DMASND_CTRL_OFF
-mdefine_line|#define&t;DMASND_CTRL_OFF&t;&t;0x00
+mdefine_line|#define&t;DMASND_CTRL_OFF&t;&t;  0x00
 DECL|macro|DMASND_CTRL_ON
-mdefine_line|#define&t;DMASND_CTRL_ON&t;&t;0x01
+mdefine_line|#define&t;DMASND_CTRL_ON&t;&t;  0x01
 DECL|macro|DMASND_CTRL_REPEAT
-mdefine_line|#define&t;DMASND_CTRL_REPEAT&t;0x02
+mdefine_line|#define&t;DMASND_CTRL_REPEAT&t;  0x02
+DECL|macro|DMASND_CTRL_RECORD_ON
+mdefine_line|#define DMASND_CTRL_RECORD_ON     0x10
+DECL|macro|DMASND_CTRL_RECORD_OFF
+mdefine_line|#define DMASND_CTRL_RECORD_OFF    0x00
+DECL|macro|DMASND_CTRL_RECORD_REPEAT
+mdefine_line|#define DMASND_CTRL_RECORD_REPEAT 0x20
+DECL|macro|DMASND_CTRL_SELECT_REPLAY
+mdefine_line|#define DMASND_CTRL_SELECT_REPLAY 0x00
+DECL|macro|DMASND_CTRL_SELECT_RECORD
+mdefine_line|#define DMASND_CTRL_SELECT_RECORD 0x80
 DECL|macro|DMASND_MODE_MONO
-mdefine_line|#define&t;DMASND_MODE_MONO&t;0x80
+mdefine_line|#define&t;DMASND_MODE_MONO&t;  0x80
 DECL|macro|DMASND_MODE_STEREO
-mdefine_line|#define&t;DMASND_MODE_STEREO&t;0x00
+mdefine_line|#define&t;DMASND_MODE_STEREO&t;  0x00
 DECL|macro|DMASND_MODE_8BIT
-mdefine_line|#define DMASND_MODE_8BIT&t;0x00
+mdefine_line|#define DMASND_MODE_8BIT&t;  0x00
 DECL|macro|DMASND_MODE_16BIT
-mdefine_line|#define DMASND_MODE_16BIT&t;0x40&t;/* Falcon only */
+mdefine_line|#define DMASND_MODE_16BIT&t;  0x40&t;/* Falcon only */
 DECL|macro|DMASND_MODE_6KHZ
-mdefine_line|#define&t;DMASND_MODE_6KHZ&t;0x00&t;/* Falcon: mute */
+mdefine_line|#define&t;DMASND_MODE_6KHZ&t;  0x00&t;/* Falcon: mute */
 DECL|macro|DMASND_MODE_12KHZ
-mdefine_line|#define&t;DMASND_MODE_12KHZ&t;0x01
+mdefine_line|#define&t;DMASND_MODE_12KHZ&t;  0x01
 DECL|macro|DMASND_MODE_25KHZ
-mdefine_line|#define&t;DMASND_MODE_25KHZ&t;0x02
+mdefine_line|#define&t;DMASND_MODE_25KHZ&t;  0x02
 DECL|macro|DMASND_MODE_50KHZ
-mdefine_line|#define&t;DMASND_MODE_50KHZ&t;0x03
+mdefine_line|#define&t;DMASND_MODE_50KHZ&t;  0x03
 DECL|macro|DMASNDSetBase
 mdefine_line|#define DMASNDSetBase(bufstart)&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;tt_dmasnd.bas_hi  = (unsigned char)(((bufstart) &amp; 0xff0000) &gt;&gt; 16); &bslash;&n;&t;tt_dmasnd.bas_mid = (unsigned char)(((bufstart) &amp; 0x00ff00) &gt;&gt; 8); &bslash;&n;&t;tt_dmasnd.bas_low = (unsigned char) ((bufstart) &amp; 0x0000ff); &bslash;&n;    } while( 0 )
 DECL|macro|DMASNDGetAdr

@@ -3,73 +3,94 @@ macro_line|#ifndef _ASMm68k_AMIGAINTS_H_
 DECL|macro|_ASMm68k_AMIGAINTS_H_
 mdefine_line|#define _ASMm68k_AMIGAINTS_H_
 multiline_comment|/*&n;** Amiga Interrupt sources.&n;**&n;*/
-DECL|macro|AMI_IRQS
-mdefine_line|#define AMI_IRQS            (24)
+DECL|macro|AUTO_IRQS
+mdefine_line|#define AUTO_IRQS           (8)
 DECL|macro|AMI_STD_IRQS
 mdefine_line|#define AMI_STD_IRQS        (14)
 DECL|macro|CIA_IRQS
 mdefine_line|#define CIA_IRQS            (5)
+DECL|macro|AMI_IRQS
+mdefine_line|#define AMI_IRQS            (32) /* AUTO_IRQS+AMI_STD_IRQS+2*CIA_IRQS */
 multiline_comment|/* vertical blanking interrupt */
 DECL|macro|IRQ_AMIGA_VERTB
-mdefine_line|#define IRQ_AMIGA_VERTB     (IRQ_MACHSPEC | 0)
+mdefine_line|#define IRQ_AMIGA_VERTB     0
 multiline_comment|/* copper interrupt */
 DECL|macro|IRQ_AMIGA_COPPER
-mdefine_line|#define IRQ_AMIGA_COPPER    (IRQ_MACHSPEC | 1)
+mdefine_line|#define IRQ_AMIGA_COPPER    1
 multiline_comment|/* Audio interrupts */
 DECL|macro|IRQ_AMIGA_AUD0
-mdefine_line|#define IRQ_AMIGA_AUD0&t;    (IRQ_MACHSPEC | 2)
+mdefine_line|#define IRQ_AMIGA_AUD0&t;    2
 DECL|macro|IRQ_AMIGA_AUD1
-mdefine_line|#define IRQ_AMIGA_AUD1&t;    (IRQ_MACHSPEC | 3)
+mdefine_line|#define IRQ_AMIGA_AUD1&t;    3
 DECL|macro|IRQ_AMIGA_AUD2
-mdefine_line|#define IRQ_AMIGA_AUD2&t;    (IRQ_MACHSPEC | 4)
+mdefine_line|#define IRQ_AMIGA_AUD2&t;    4
 DECL|macro|IRQ_AMIGA_AUD3
-mdefine_line|#define IRQ_AMIGA_AUD3&t;    (IRQ_MACHSPEC | 5)
+mdefine_line|#define IRQ_AMIGA_AUD3&t;    5
 multiline_comment|/* Blitter done interrupt */
 DECL|macro|IRQ_AMIGA_BLIT
-mdefine_line|#define IRQ_AMIGA_BLIT&t;    (IRQ_MACHSPEC | 6)
+mdefine_line|#define IRQ_AMIGA_BLIT&t;    6
 multiline_comment|/* floppy disk interrupts */
 DECL|macro|IRQ_AMIGA_DSKSYN
-mdefine_line|#define IRQ_AMIGA_DSKSYN    (IRQ_MACHSPEC | 7)
+mdefine_line|#define IRQ_AMIGA_DSKSYN    7
 DECL|macro|IRQ_AMIGA_DSKBLK
-mdefine_line|#define IRQ_AMIGA_DSKBLK    (IRQ_MACHSPEC | 8)
+mdefine_line|#define IRQ_AMIGA_DSKBLK    8
 multiline_comment|/* builtin serial port interrupts */
 DECL|macro|IRQ_AMIGA_RBF
-mdefine_line|#define IRQ_AMIGA_RBF&t;    (IRQ_MACHSPEC | 9)
+mdefine_line|#define IRQ_AMIGA_RBF&t;    9
 DECL|macro|IRQ_AMIGA_TBE
-mdefine_line|#define IRQ_AMIGA_TBE&t;    (IRQ_MACHSPEC | 10)
+mdefine_line|#define IRQ_AMIGA_TBE&t;    10
 multiline_comment|/* software interrupts */
 DECL|macro|IRQ_AMIGA_SOFT
-mdefine_line|#define IRQ_AMIGA_SOFT      (IRQ_MACHSPEC | 11)
+mdefine_line|#define IRQ_AMIGA_SOFT      11
 multiline_comment|/* interrupts from external hardware */
 DECL|macro|IRQ_AMIGA_PORTS
-mdefine_line|#define IRQ_AMIGA_PORTS&t;    (IRQ_MACHSPEC | 12)
+mdefine_line|#define IRQ_AMIGA_PORTS&t;    12
 DECL|macro|IRQ_AMIGA_EXTER
-mdefine_line|#define IRQ_AMIGA_EXTER&t;    (IRQ_MACHSPEC | 13)
+mdefine_line|#define IRQ_AMIGA_EXTER&t;    13
 multiline_comment|/* CIA interrupt sources */
 DECL|macro|IRQ_AMIGA_CIAA
-mdefine_line|#define IRQ_AMIGA_CIAA      (IRQ_MACHSPEC | 14)
+mdefine_line|#define IRQ_AMIGA_CIAA      14
 DECL|macro|IRQ_AMIGA_CIAA_TA
-mdefine_line|#define IRQ_AMIGA_CIAA_TA   (IRQ_MACHSPEC | 14)
+mdefine_line|#define IRQ_AMIGA_CIAA_TA   14
 DECL|macro|IRQ_AMIGA_CIAA_TB
-mdefine_line|#define IRQ_AMIGA_CIAA_TB   (IRQ_MACHSPEC | 15)
+mdefine_line|#define IRQ_AMIGA_CIAA_TB   15
 DECL|macro|IRQ_AMIGA_CIAA_ALRM
-mdefine_line|#define IRQ_AMIGA_CIAA_ALRM (IRQ_MACHSPEC | 16)
+mdefine_line|#define IRQ_AMIGA_CIAA_ALRM 16
 DECL|macro|IRQ_AMIGA_CIAA_SP
-mdefine_line|#define IRQ_AMIGA_CIAA_SP   (IRQ_MACHSPEC | 17)
+mdefine_line|#define IRQ_AMIGA_CIAA_SP   17
 DECL|macro|IRQ_AMIGA_CIAA_FLG
-mdefine_line|#define IRQ_AMIGA_CIAA_FLG  (IRQ_MACHSPEC | 18)
+mdefine_line|#define IRQ_AMIGA_CIAA_FLG  18
 DECL|macro|IRQ_AMIGA_CIAB
-mdefine_line|#define IRQ_AMIGA_CIAB      (IRQ_MACHSPEC | 19)
+mdefine_line|#define IRQ_AMIGA_CIAB      19
 DECL|macro|IRQ_AMIGA_CIAB_TA
-mdefine_line|#define IRQ_AMIGA_CIAB_TA   (IRQ_MACHSPEC | 19)
+mdefine_line|#define IRQ_AMIGA_CIAB_TA   19
 DECL|macro|IRQ_AMIGA_CIAB_TB
-mdefine_line|#define IRQ_AMIGA_CIAB_TB   (IRQ_MACHSPEC | 20)
+mdefine_line|#define IRQ_AMIGA_CIAB_TB   20
 DECL|macro|IRQ_AMIGA_CIAB_ALRM
-mdefine_line|#define IRQ_AMIGA_CIAB_ALRM (IRQ_MACHSPEC | 21)
+mdefine_line|#define IRQ_AMIGA_CIAB_ALRM 21
 DECL|macro|IRQ_AMIGA_CIAB_SP
-mdefine_line|#define IRQ_AMIGA_CIAB_SP   (IRQ_MACHSPEC | 22)
+mdefine_line|#define IRQ_AMIGA_CIAB_SP   22
 DECL|macro|IRQ_AMIGA_CIAB_FLG
-mdefine_line|#define IRQ_AMIGA_CIAB_FLG  (IRQ_MACHSPEC | 23)
+mdefine_line|#define IRQ_AMIGA_CIAB_FLG  23
+multiline_comment|/* auto-vector interrupts */
+DECL|macro|IRQ_AMIGA_AUTO
+mdefine_line|#define IRQ_AMIGA_AUTO      24
+DECL|macro|IRQ_AMIGA_AUTO_0
+mdefine_line|#define IRQ_AMIGA_AUTO_0    24 /* This is just a dummy */
+DECL|macro|IRQ_AMIGA_AUTO_1
+mdefine_line|#define IRQ_AMIGA_AUTO_1    25
+DECL|macro|IRQ_AMIGA_AUTO_2
+mdefine_line|#define IRQ_AMIGA_AUTO_2    26
+DECL|macro|IRQ_AMIGA_AUTO_3
+mdefine_line|#define IRQ_AMIGA_AUTO_3    27
+DECL|macro|IRQ_AMIGA_AUTO_4
+mdefine_line|#define IRQ_AMIGA_AUTO_4    28
+DECL|macro|IRQ_AMIGA_AUTO_5
+mdefine_line|#define IRQ_AMIGA_AUTO_5    29
+DECL|macro|IRQ_AMIGA_AUTO_6
+mdefine_line|#define IRQ_AMIGA_AUTO_6    30
+DECL|macro|IRQ_AMIGA_AUTO_7
+mdefine_line|#define IRQ_AMIGA_AUTO_7    31
 DECL|macro|IRQ_FLOPPY
 mdefine_line|#define IRQ_FLOPPY&t;    IRQ_AMIGA_DSKBLK
 multiline_comment|/* INTREQR masks */

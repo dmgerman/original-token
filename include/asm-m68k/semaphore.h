@@ -2,18 +2,20 @@ macro_line|#ifndef _M68K_SEMAPHORE_H
 DECL|macro|_M68K_SEMAPHORE_H
 mdefine_line|#define _M68K_SEMAPHORE_H
 macro_line|#include &lt;linux/linkage.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
 multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; *&n; * m68k version by Andreas Schwab&n; */
 DECL|struct|semaphore
 r_struct
 id|semaphore
 (brace
 DECL|member|count
-r_int
+id|atomic_t
 id|count
 suffix:semicolon
-DECL|member|waiting
-r_int
-id|waiting
+DECL|member|waking
+id|atomic_t
+id|waking
 suffix:semicolon
 DECL|member|wait
 r_struct
@@ -24,9 +26,9 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|MUTEX
-mdefine_line|#define MUTEX ((struct semaphore) { 1, 0, NULL })
+mdefine_line|#define MUTEX ((struct semaphore) { { 1 }, { 0 }, NULL })
 DECL|macro|MUTEX_LOCKED
-mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { 0, 0, NULL })
+mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { { 0 }, { 0 }, NULL })
 id|asmlinkage
 r_void
 id|__down_failed
@@ -34,6 +36,15 @@ c_func
 (paren
 r_void
 multiline_comment|/* special register calling convention */
+)paren
+suffix:semicolon
+id|asmlinkage
+r_int
+id|__down_failed_interruptible
+c_func
+(paren
+r_void
+multiline_comment|/* params in registers */
 )paren
 suffix:semicolon
 id|asmlinkage
@@ -68,7 +79,28 @@ id|sem
 )paren
 suffix:semicolon
 DECL|macro|sema_init
-mdefine_line|#define sema_init(sem, val)&t;((sem)-&gt;count = val)
+mdefine_line|#define sema_init(sem, val)&t;atomic_set(&amp;((sem)-&gt;count), val)
+DECL|function|wake_one_more
+r_static
+r_inline
+r_void
+id|wake_one_more
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|sem-&gt;waking
+)paren
+suffix:semicolon
+)brace
 DECL|function|waking_non_zero
 r_static
 r_inline
@@ -169,7 +201,7 @@ c_func
 (paren
 l_string|&quot;| atomic down operation&bslash;n&bslash;t&quot;
 l_string|&quot;lea %%pc@(1f),%%a0&bslash;n&bslash;t&quot;
-l_string|&quot;subql #1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;subql #1,%0@&bslash;n&bslash;t&quot;
 l_string|&quot;jmi &quot;
 id|SYMBOL_NAME_STR
 c_func
@@ -181,11 +213,6 @@ l_string|&quot;1:&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
-l_string|&quot;m&quot;
-(paren
-id|sem-&gt;count
-)paren
-comma
 l_string|&quot;a&quot;
 (paren
 id|sem1
@@ -195,6 +222,78 @@ l_string|&quot;%a0&quot;
 comma
 l_string|&quot;memory&quot;
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * This version waits in interruptible state so that the waiting&n; * process can be killed.  The down_failed_interruptible routine&n; * returns negative for signalled and zero for semaphore acquired.&n; */
+DECL|function|down_interruptible
+r_extern
+r_inline
+r_int
+id|down_interruptible
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+r_register
+r_int
+id|ret
+id|__asm__
+(paren
+l_string|&quot;%d0&quot;
+)paren
+suffix:semicolon
+r_register
+r_struct
+id|semaphore
+op_star
+id|sem1
+id|__asm__
+(paren
+l_string|&quot;%a1&quot;
+)paren
+op_assign
+id|sem
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;| atomic interruptible down operation&bslash;n&bslash;t&quot;
+l_string|&quot;lea %%pc@(1f),%%a0&bslash;n&bslash;t&quot;
+l_string|&quot;subql #1,%1@&bslash;n&bslash;t&quot;
+l_string|&quot;jmi &quot;
+id|SYMBOL_NAME_STR
+c_func
+(paren
+id|__down_failed_interruptible
+)paren
+l_string|&quot;&bslash;n&bslash;t&quot;
+l_string|&quot;clrl %0&bslash;n&quot;
+l_string|&quot;1:&quot;
+suffix:colon
+l_string|&quot;=d&quot;
+(paren
+id|ret
+)paren
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+id|sem1
+)paren
+suffix:colon
+l_string|&quot;%d0&quot;
+comma
+l_string|&quot;%a0&quot;
+comma
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Note! This is subtle. We jump to wake people up only if&n; * the semaphore was negative (== somebody was waiting on it).&n; * The default case (no contention) will result in NO&n; * jumps for both down() and up().&n; */

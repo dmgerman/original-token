@@ -6,12 +6,13 @@ id|risc_code_addr01
 op_assign
 l_int|0x1000
 suffix:semicolon
-DECL|variable|risc_code01
+DECL|variable|__initdata
 r_int
 r_int
 id|risc_code01
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x0078

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *    wd33c93.c - Linux-68k device driver for the Commodore&n; *                Amiga A2091/590 SCSI controller card&n; *&n; * Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; *    john@geolog.com&n; *    jshiffle@netcom.com&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; *&n; * Drew Eckhardt&squot;s excellent &squot;Generic NCR5380&squot; sources from Linux-PC&n; * provided much of the inspiration and some of the code for this&n; * driver. Everything I know about Amiga DMA was gleaned from careful&n; * reading of Hamish Mcdonald&squot;s original wd33c93 driver; in fact, I&n; * borrowed shamelessly from all over that source. Thanks Hamish!&n; *&n; * _This_ driver is (I feel) an improvement over the old one in&n; * several respects:&n; *&n; *    -  Target Disconnection/Reconnection  is now supported. Any&n; *          system with more than one device active on the SCSI bus&n; *          will benefit from this. The driver defaults to what I&squot;m&n; *          &squot;adaptive disconnect&squot; - meaning that each command is&n; *          evaluated individually as to whether or not it should&n; *          be run with the option to disconnect/reselect (if the&n; *          device chooses), or as a &quot;SCSI-bus-hog&quot;.&n; *&n; *    -  Synchronous data transfers are now supported. Because of&n; *          a few devices that choke after telling the driver that&n; *          they can do sync transfers, we don&squot;t automatically use&n; *          this faster protocol - it can be enabled via the command-&n; *          line on a device-by-device basis.&n; *&n; *    -  Runtime operating parameters can now be specified through&n; *       the &squot;amiboot&squot; or the &squot;insmod&squot; command line. For amiboot do:&n; *          &quot;amiboot [usual stuff] wd33c93=blah,blah,blah&quot;&n; *       The defaults should be good for most people. See the comment&n; *       for &squot;setup_strings&squot; below for more details.&n; *&n; *    -  The old driver relied exclusively on what the Western Digital&n; *          docs call &quot;Combination Level 2 Commands&quot;, which are a great&n; *          idea in that the CPU is relieved of a lot of interrupt&n; *          overhead. However, by accepting a certain (user-settable)&n; *          amount of additional interrupts, this driver achieves&n; *          better control over the SCSI bus, and data transfers are&n; *          almost as fast while being much easier to define, track,&n; *          and debug.&n; *&n; *&n; * TODO:&n; *       more speed. linked commands.&n; *&n; *&n; * People with bug reports, wish-lists, complaints, comments,&n; * or improvements are asked to pah-leeez email me (John Shifflett)&n; * at john@geolog.com or jshiffle@netcom.com! I&squot;m anxious to get&n; * this thing into as good a shape as possible, and I&squot;m positive&n; * there are lots of lurking bugs and &quot;Stupid Places&quot;.&n; *&n; */
+multiline_comment|/*&n; *    wd33c93.c - Linux-68k device driver for the Commodore&n; *                Amiga A2091/590 SCSI controller card&n; *&n; * Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; *    john@geolog.com&n; *    jshiffle@netcom.com&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; *&n; * Drew Eckhardt&squot;s excellent &squot;Generic NCR5380&squot; sources from Linux-PC&n; * provided much of the inspiration and some of the code for this&n; * driver. Everything I know about Amiga DMA was gleaned from careful&n; * reading of Hamish Mcdonald&squot;s original wd33c93 driver; in fact, I&n; * borrowed shamelessly from all over that source. Thanks Hamish!&n; *&n; * _This_ driver is (I feel) an improvement over the old one in&n; * several respects:&n; *&n; *    -  Target Disconnection/Reconnection  is now supported. Any&n; *          system with more than one device active on the SCSI bus&n; *          will benefit from this. The driver defaults to what I&n; *          call &squot;adaptive disconnect&squot; - meaning that each command&n; *          is evaluated individually as to whether or not it should&n; *          be run with the option to disconnect/reselect (if the&n; *          device chooses), or as a &quot;SCSI-bus-hog&quot;.&n; *&n; *    -  Synchronous data transfers are now supported. Because of&n; *          a few devices that choke after telling the driver that&n; *          they can do sync transfers, we don&squot;t automatically use&n; *          this faster protocol - it can be enabled via the command-&n; *          line on a device-by-device basis.&n; *&n; *    -  Runtime operating parameters can now be specified through&n; *       the &squot;amiboot&squot; or the &squot;insmod&squot; command line. For amiboot do:&n; *          &quot;amiboot [usual stuff] wd33c93=blah,blah,blah&quot;&n; *       The defaults should be good for most people. See the comment&n; *       for &squot;setup_strings&squot; below for more details.&n; *&n; *    -  The old driver relied exclusively on what the Western Digital&n; *          docs call &quot;Combination Level 2 Commands&quot;, which are a great&n; *          idea in that the CPU is relieved of a lot of interrupt&n; *          overhead. However, by accepting a certain (user-settable)&n; *          amount of additional interrupts, this driver achieves&n; *          better control over the SCSI bus, and data transfers are&n; *          almost as fast while being much easier to define, track,&n; *          and debug.&n; *&n; *&n; * TODO:&n; *       more speed. linked commands.&n; *&n; *&n; * People with bug reports, wish-lists, complaints, comments,&n; * or improvements are asked to pah-leeez email me (John Shifflett)&n; * at john@geolog.com or jshiffle@netcom.com! I&squot;m anxious to get&n; * this thing into as good a shape as possible, and I&squot;m positive&n; * there are lots of lurking bugs and &quot;Stupid Places&quot;.&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -13,31 +13,13 @@ macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#endif
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
-DECL|macro|PROC_INTERFACE
-mdefine_line|#define PROC_INTERFACE     /* add code for /proc/scsi/wd33c93/xxx interface */
-macro_line|#ifdef  PROC_INTERFACE
-DECL|macro|PROC_STATISTICS
-mdefine_line|#define PROC_STATISTICS    /* add code for keeping various real time stats */
-macro_line|#endif
-DECL|macro|SYNC_DEBUG
-mdefine_line|#define SYNC_DEBUG         /* extra info on sync negotiation printed */
-DECL|macro|DEBUGGING_ON
-macro_line|#undef DEBUGGING_ON        /* enable command-line debugging bitmask */
-DECL|macro|DEBUG_DEFAULTS
-mdefine_line|#define DEBUG_DEFAULTS 0   /* default debugging bitmask */
 DECL|macro|WD33C93_VERSION
-mdefine_line|#define WD33C93_VERSION    &quot;1.23&quot;
+mdefine_line|#define WD33C93_VERSION    &quot;1.24&quot;
 DECL|macro|WD33C93_DATE
-mdefine_line|#define WD33C93_DATE       &quot;04/Nov/1996&quot;
-macro_line|#ifdef DEBUGGING_ON
-DECL|macro|DB
-mdefine_line|#define DB(f,a) if (hostdata-&gt;args &amp; (f)) a;
-macro_line|#else
-DECL|macro|DB
-mdefine_line|#define DB(f,a)
-macro_line|#endif
+mdefine_line|#define WD33C93_DATE       &quot;29/Jan/1997&quot;
+multiline_comment|/*&n; * Note - the following defines have been moved to &squot;wd33c93.h&squot;:&n; *&n; *    PROC_INTERFACE&n; *    PROC_STATISTICS&n; *    SYNC_DEBUG&n; *    DEBUGGING_ON&n; *    DEBUG_DEFAULTS&n; *&n; */
 macro_line|#include &quot;wd33c93.h&quot;
-multiline_comment|/*&n; * setup_strings is an array of strings that define some of the operating&n; * parameters and settings for this driver. It is used unless an amiboot&n; * or insmod command line has been specified, in which case those settings&n; * are combined with the ones here. The driver recognizes the following&n; * keywords (lower case required) and arguments:&n; *&n; * -  nosync:bitmask -bitmask is a byte where the 1st 7 bits correspond with&n; *                    the 7 possible SCSI devices. Set a bit to prevent sync&n; *                    negotiation on that device. To maintain backwards&n; *                    compatibility, a command-line such as &quot;wd33c93=255&quot; will&n; *                    be automatically translated to &quot;wd33c93=nosync:0xff&quot;.&n; * -  nodma:x        -x = 1 to disable DMA, x = 0 to enable it. Argument is&n; *                    optional - if not present, same as &quot;nodma:1&quot;.&n; * -  period:ns      -ns is the minimum # of nanoseconds in a SCSI data transfer&n; *                    period. Default is 500; acceptable values are 250 - 1000.&n; * -  disconnect:x   -x = 0 to never allow disconnects, 2 to always allow them.&n; *                    x = 1 does &squot;adaptive&squot; disconnects, which is the default&n; *                    and generally the best choice.&n; * -  debug:x        -If &squot;DEBUGGING_ON&squot; is defined, x is a bit mask that causes&n; *                    various types of debug output to printed - see the DB_xxx&n; *                    defines in wd33c93.h&n; * -  clock:x        -x = clock input in MHz for WD33c93 chip. Normal values&n; *                    would be from 8 through 20. Default is 8.&n; * -  next           -No argument. Used to separate blocks of keywords when&n; *                    there&squot;s more than one host adapter in the system.&n; *&n; * Syntax Notes:&n; * -  Numeric arguments can be decimal or the &squot;0x&squot; form of hex notation. There&n; *    _must_ be a colon between a keyword and its numeric argument, with no&n; *    spaces.&n; * -  Keywords are separated by commas, no spaces, in the standard kernel&n; *    command-line manner, except in the case of &squot;setup_strings[]&squot; (see&n; *    below), which is simply a C array of pointers to char. Each element&n; *    in the array is a string comprising one keyword &amp; argument.&n; * -  A keyword in the &squot;nth&squot; comma-separated command-line member will overwrite&n; *    the &squot;nth&squot; element of setup_strings[]. A blank command-line member (in&n; *    other words, a comma with no preceding keyword) will _not_ overwrite&n; *    the corresponding setup_strings[] element.&n; * -  If a keyword is used more than once, the first one applies to the first&n; *    SCSI host found, the second to the second card, etc, unless the &squot;next&squot;&n; *    keyword is used to change the order.&n; *&n; * Some amiboot examples (for insmod, use &squot;setup_strings&squot; instead of &squot;wd33c93&squot;):&n; * -  wd33c93=nosync:255&n; * -  wd33c93=nodma&n; * -  wd33c93=nodma:1&n; * -  wd33c93=disconnect:2,nosync:0x08,period:250&n; * -  wd33c93=debug:0x1c&n; */
+multiline_comment|/*&n; * setup_strings is an array of strings that define some of the operating&n; * parameters and settings for this driver. It is used unless an amiboot&n; * or insmod command line has been specified, in which case those settings&n; * are combined with the ones here. The driver recognizes the following&n; * keywords (lower case required) and arguments:&n; *&n; * -  nosync:bitmask -bitmask is a byte where the 1st 7 bits correspond with&n; *                    the 7 possible SCSI devices. Set a bit to negotiate for&n; *                    asynchronous transfers on that device. To maintain&n; *                    backwards compatibility, a command-line such as&n; *                    &quot;wd33c93=255&quot; will be automatically translated to&n; *                    &quot;wd33c93=nosync:0xff&quot;.&n; * -  nodma:x        -x = 1 to disable DMA, x = 0 to enable it. Argument is&n; *                    optional - if not present, same as &quot;nodma:1&quot;.&n; * -  period:ns      -ns is the minimum # of nanoseconds in a SCSI data transfer&n; *                    period. Default is 500; acceptable values are 250 - 1000.&n; * -  disconnect:x   -x = 0 to never allow disconnects, 2 to always allow them.&n; *                    x = 1 does &squot;adaptive&squot; disconnects, which is the default&n; *                    and generally the best choice.&n; * -  debug:x        -If &squot;DEBUGGING_ON&squot; is defined, x is a bit mask that causes&n; *                    various types of debug output to printed - see the DB_xxx&n; *                    defines in wd33c93.h&n; * -  clock:x        -x = clock input in MHz for WD33c93 chip. Normal values&n; *                    would be from 8 through 20. Default is 8.&n; * -  next           -No argument. Used to separate blocks of keywords when&n; *                    there&squot;s more than one host adapter in the system.&n; *&n; * Syntax Notes:&n; * -  Numeric arguments can be decimal or the &squot;0x&squot; form of hex notation. There&n; *    _must_ be a colon between a keyword and its numeric argument, with no&n; *    spaces.&n; * -  Keywords are separated by commas, no spaces, in the standard kernel&n; *    command-line manner, except in the case of &squot;setup_strings[]&squot; (see&n; *    below), which is simply a C array of pointers to char. Each element&n; *    in the array is a string comprising one keyword &amp; argument.&n; * -  A keyword in the &squot;nth&squot; comma-separated command-line member will overwrite&n; *    the &squot;nth&squot; element of setup_strings[]. A blank command-line member (in&n; *    other words, a comma with no preceding keyword) will _not_ overwrite&n; *    the corresponding setup_strings[] element.&n; * -  If a keyword is used more than once, the first one applies to the first&n; *    SCSI host found, the second to the second card, etc, unless the &squot;next&squot;&n; *    keyword is used to change the order.&n; *&n; * Some amiboot examples (for insmod, use &squot;setup_strings&squot; instead of &squot;wd33c93&squot;):&n; * -  wd33c93=nosync:255&n; * -  wd33c93=nodma&n; * -  wd33c93=nodma:1&n; * -  wd33c93=disconnect:2,nosync:0x08,period:250&n; * -  wd33c93=debug:0x1c&n; */
 DECL|variable|setup_strings
 r_static
 r_char
@@ -73,6 +55,7 @@ l_string|&quot;&quot;
 )brace
 suffix:semicolon
 DECL|function|read_wd33c93
+r_static
 r_inline
 id|uchar
 id|read_wd33c93
@@ -97,6 +80,7 @@ suffix:semicolon
 DECL|macro|READ_AUX_STAT
 mdefine_line|#define READ_AUX_STAT() (regp-&gt;SASR)
 DECL|function|write_wd33c93
+r_static
 r_inline
 r_void
 id|write_wd33c93
@@ -123,6 +107,7 @@ id|value
 suffix:semicolon
 )brace
 DECL|function|write_wd33c93_cmd
+r_static
 r_inline
 r_void
 id|write_wd33c93_cmd
@@ -146,6 +131,7 @@ id|cmd
 suffix:semicolon
 )brace
 DECL|function|read_1_byte
+r_static
 r_inline
 id|uchar
 id|read_1_byte
@@ -231,6 +217,7 @@ id|x
 suffix:semicolon
 )brace
 DECL|function|write_wd33c93_count
+r_static
 r_void
 id|write_wd33c93_count
 c_func
@@ -266,6 +253,7 @@ id|value
 suffix:semicolon
 )brace
 DECL|function|read_wd33c93_count
+r_static
 r_int
 r_int
 id|read_wd33c93_count
@@ -490,6 +478,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|function|round_period
+r_static
 r_int
 id|round_period
 c_func
@@ -560,6 +549,7 @@ l_int|7
 suffix:semicolon
 )brace
 DECL|function|calc_sync_xfer
+r_static
 id|uchar
 id|calc_sync_xfer
 c_func
@@ -611,6 +601,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
+r_static
 r_void
 id|wd33c93_execute
 c_func
@@ -649,11 +640,9 @@ id|Scsi_Cmnd
 op_star
 id|tmp
 suffix:semicolon
-id|disable_irq
-c_func
-(paren
-id|cmd-&gt;host-&gt;irq
-)paren
+r_int
+r_int
+id|flags
 suffix:semicolon
 id|hostdata
 op_assign
@@ -761,6 +750,17 @@ op_assign
 id|GOOD
 suffix:semicolon
 multiline_comment|/*&n;    * Add the cmd to the end of &squot;input_Q&squot;. Note that REQUEST SENSE&n;    * commands are added to the head of the queue so that the desired&n;    * sense data is not lost before REQUEST_SENSE executes.&n;    */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -846,18 +846,19 @@ comma
 id|cmd-&gt;pid
 )paren
 )paren
-id|enable_irq
+id|restore_flags
 c_func
 (paren
-id|cmd-&gt;host-&gt;irq
+id|flags
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This routine attempts to start a scsi command. If the host_card is&n; * already connected, we give up immediately. Otherwise, look through&n; * the input_Q, using the first command we find that&squot;s intended&n; * for a currently non-busy target/lun.&n; */
+multiline_comment|/*&n; * This routine attempts to start a scsi command. If the host_card is&n; * already connected, we give up immediately. Otherwise, look through&n; * the input_Q, using the first command we find that&squot;s intended&n; * for a currently non-busy target/lun.&n; *&n; * wd33c93_execute() is always called with interrupts disabled or from&n; * the wd33c93_intr itself, which means that a wd33c93 interrupt&n; * cannot occur while we are in here.&n; */
 DECL|function|wd33c93_execute
+r_static
 r_void
 id|wd33c93_execute
 (paren
@@ -885,12 +886,6 @@ id|prev
 suffix:semicolon
 r_int
 id|i
-suffix:semicolon
-id|disable_irq
-c_func
-(paren
-id|instance-&gt;irq
-)paren
 suffix:semicolon
 id|hostdata
 op_assign
@@ -935,12 +930,6 @@ c_func
 l_string|&quot;)EX-0 &quot;
 )paren
 )paren
-id|enable_irq
-c_func
-(paren
-id|instance-&gt;irq
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1014,12 +1003,6 @@ c_func
 l_string|&quot;)EX-1 &quot;
 )paren
 )paren
-id|enable_irq
-c_func
-(paren
-id|instance-&gt;irq
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1305,7 +1288,7 @@ id|hostdata-&gt;selecting
 op_assign
 id|cmd
 suffix:semicolon
-multiline_comment|/* Every target has its own synchronous transfer setting, kept in the&n; * sync_xfer array, and a corresponding status byte in sync_stat[].&n; * Each target&squot;s sync_stat[] entry is initialized to SX_UNSET, and its&n; * sync_xfer[] entry is initialized to the default/safe value. SS_UNSET&n; * means that the parameters are undetermined as yet, and that we&n; * need to send an SDTR message to this device after selection is&n; * complete. We set SS_FIRST to tell the interrupt routine to do so,&n; * unless we&squot;ve been asked not to try synchronous transfers on this&n; * target (and _all_ luns within it): In this case we set SS_SET to&n; * make the defaults final.&n; */
+multiline_comment|/* Every target has its own synchronous transfer setting, kept in the&n; * sync_xfer array, and a corresponding status byte in sync_stat[].&n; * Each target&squot;s sync_stat[] entry is initialized to SX_UNSET, and its&n; * sync_xfer[] entry is initialized to the default/safe value. SS_UNSET&n; * means that the parameters are undetermined as yet, and that we&n; * need to send an SDTR message to this device after selection is&n; * complete: We set SS_FIRST to tell the interrupt routine to do so.&n; * If we&squot;ve been asked not to try synchronous transfers on this&n; * target (and _all_ luns within it), we&squot;ll still send the SDTR message&n; * later, but at that time we&squot;ll negotiate for async by specifying a&n; * sync fifo depth of 0.&n; */
 r_if
 c_cond
 (paren
@@ -1316,26 +1299,6 @@ id|cmd-&gt;target
 op_eq
 id|SS_UNSET
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|hostdata-&gt;no_sync
-op_amp
-(paren
-l_int|1
-op_lshift
-id|cmd-&gt;target
-)paren
-)paren
-id|hostdata-&gt;sync_stat
-(braket
-id|cmd-&gt;target
-)braket
-op_assign
-id|SS_SET
-suffix:semicolon
-r_else
 id|hostdata-&gt;sync_stat
 (braket
 id|cmd-&gt;target
@@ -1343,7 +1306,6 @@ id|cmd-&gt;target
 op_assign
 id|SS_FIRST
 suffix:semicolon
-)brace
 id|hostdata-&gt;state
 op_assign
 id|S_SELECTING
@@ -1546,14 +1508,9 @@ comma
 id|cmd-&gt;pid
 )paren
 )paren
-id|enable_irq
-c_func
-(paren
-id|instance-&gt;irq
-)paren
-suffix:semicolon
 )brace
 DECL|function|transfer_pio
+r_static
 r_void
 id|transfer_pio
 c_func
@@ -1726,6 +1683,7 @@ suffix:semicolon
 multiline_comment|/* Note: we are returning with the interrupt UN-cleared.&n;   * Since (presumably) an entire I/O operation has&n;   * completed, the bus phase is probably different, and&n;   * the interrupt routine will discover this when it&n;   * responds to the uncleared int.&n;   */
 )brace
 DECL|function|transfer_bytes
+r_static
 r_void
 id|transfer_bytes
 c_func
@@ -1998,6 +1956,8 @@ suffix:semicolon
 r_int
 r_int
 id|length
+comma
+id|flags
 suffix:semicolon
 id|hostdata
 op_assign
@@ -2036,6 +1996,12 @@ id|ASR_BSY
 )paren
 )paren
 r_return
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 macro_line|#ifdef PROC_STATISTICS
 id|hostdata-&gt;int_cnt
@@ -2184,12 +2150,6 @@ c_func
 l_string|&quot;TIMEOUT&quot;
 )paren
 )paren
-id|disable_irq
-c_func
-(paren
-id|instance-&gt;irq
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2247,13 +2207,14 @@ c_func
 id|cmd
 )paren
 suffix:semicolon
-multiline_comment|/* We are not connected to a target - check to see if there&n; * are commands waiting to be executed.&n; */
-id|enable_irq
+multiline_comment|/* From esp.c:&n;&t;  * There is a window of time within the scsi_done() path&n;&t;  * of execution where interrupts are turned back on full&n;&t;  * blast and left that way.  During that time we could&n;&t;  * reconnect to a disconnected command, then we&squot;d bomb&n;&t;  * out below.  We could also end up executing two commands&n;&t;  * at _once_.  ...just so you know why the restore_flags()&n;&t;  * is here...&n;&t;  */
+id|restore_flags
 c_func
 (paren
-id|instance-&gt;irq
+id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* We are not connected to a target - check to see if there&n; * are commands waiting to be executed.&n; */
 id|wd33c93_execute
 c_func
 (paren
@@ -2266,12 +2227,6 @@ multiline_comment|/* Note: this interrupt should not occur in a LEVEL2 command *
 r_case
 id|CSR_SELECT
 suffix:colon
-id|disable_irq
-c_func
-(paren
-id|instance-&gt;irq
-)paren
-suffix:semicolon
 id|DB
 c_func
 (paren
@@ -2349,7 +2304,7 @@ id|cmd-&gt;target
 op_assign
 id|SS_WAITING
 suffix:semicolon
-multiline_comment|/* tack on a 2nd message to ask about synchronous transfers */
+multiline_comment|/* Tack on a 2nd message to ask about synchronous transfers. If we&squot;ve&n; * been asked to do only asynchronous transfers on this device, we&n; * request a fifo depth of 0, which is equivalent to async - should&n; * solve the problems some people have had with GVP&squot;s Guru ROM.&n; */
 id|hostdata-&gt;outgoing_msg
 (braket
 l_int|1
@@ -2371,6 +2326,37 @@ l_int|3
 op_assign
 id|EXTENDED_SDTR
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|hostdata-&gt;no_sync
+op_amp
+(paren
+l_int|1
+op_lshift
+id|cmd-&gt;target
+)paren
+)paren
+(brace
+id|hostdata-&gt;outgoing_msg
+(braket
+l_int|4
+)braket
+op_assign
+id|hostdata-&gt;default_sx_per
+op_div
+l_int|4
+suffix:semicolon
+id|hostdata-&gt;outgoing_msg
+(braket
+l_int|5
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
 id|hostdata-&gt;outgoing_msg
 (braket
 l_int|4
@@ -2387,6 +2373,7 @@ l_int|5
 op_assign
 id|OPTIMUM_SX_OFF
 suffix:semicolon
+)brace
 id|hostdata-&gt;outgoing_len
 op_assign
 l_int|6
@@ -2687,12 +2674,6 @@ c_func
 l_string|&quot;MSG_IN=&quot;
 )paren
 )paren
-id|disable_irq
-c_func
-(paren
-id|instance-&gt;irq
-)paren
-suffix:semicolon
 id|msg
 op_assign
 id|read_1_byte
@@ -3341,18 +3322,18 @@ op_assign
 id|S_CONNECTED
 suffix:semicolon
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 multiline_comment|/* Note: this interrupt will occur only after a LEVEL2 command */
 r_case
 id|CSR_SEL_XFER_DONE
 suffix:colon
-id|disable_irq
-c_func
-(paren
-id|instance-&gt;irq
-)paren
-suffix:semicolon
 multiline_comment|/* Make sure that reselection is enabled at this point - it may&n; * have been turned off for the command that just completed.&n; */
 id|write_wd33c93
 c_func
@@ -3481,10 +3462,10 @@ id|cmd
 )paren
 suffix:semicolon
 multiline_comment|/* We are no longer  connected to a target - check to see if&n; * there are commands waiting to be executed.&n; */
-id|enable_irq
+id|restore_flags
 c_func
 (paren
-id|instance-&gt;irq
+id|flags
 )paren
 suffix:semicolon
 id|wd33c93_execute
@@ -3643,12 +3624,6 @@ r_case
 id|CSR_UNEXP_DISC
 suffix:colon
 multiline_comment|/* I think I&squot;ve seen this after a request-sense that was in response&n; * to an error condition, but not sure. We certainly need to do&n; * something when we get this interrupt - the question is &squot;what?&squot;.&n; * Let&squot;s think positively, and assume some command has finished&n; * in a legal manner (like a command that provokes a request-sense),&n; * so we treat it as a normal command-complete-disconnect.&n; */
-id|disable_irq
-c_func
-(paren
-id|instance-&gt;irq
-)paren
-suffix:semicolon
 multiline_comment|/* Make sure that reselection is enabled at this point - it may&n; * have been turned off for the command that just completed.&n; */
 id|write_wd33c93
 c_func
@@ -3765,10 +3740,11 @@ id|cmd
 )paren
 suffix:semicolon
 multiline_comment|/* We are no longer connected to a target - check to see if&n; * there are commands waiting to be executed.&n; */
-id|enable_irq
+multiline_comment|/* look above for comments on scsi_done() */
+id|restore_flags
 c_func
 (paren
-id|instance-&gt;irq
+id|flags
 )paren
 suffix:semicolon
 id|wd33c93_execute
@@ -3782,12 +3758,6 @@ suffix:semicolon
 r_case
 id|CSR_DISC
 suffix:colon
-id|disable_irq
-c_func
-(paren
-id|instance-&gt;irq
-)paren
-suffix:semicolon
 multiline_comment|/* Make sure that reselection is enabled at this point - it may&n; * have been turned off for the command that just completed.&n; */
 id|write_wd33c93
 c_func
@@ -3910,6 +3880,12 @@ c_func
 id|cmd
 )paren
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -3962,12 +3938,6 @@ id|S_UNCONNECTED
 suffix:semicolon
 )brace
 multiline_comment|/* We are no longer connected to a target - check to see if&n; * there are commands waiting to be executed.&n; */
-id|enable_irq
-c_func
-(paren
-id|instance-&gt;irq
-)paren
-suffix:semicolon
 id|wd33c93_execute
 c_func
 (paren
@@ -3990,12 +3960,6 @@ c_func
 l_string|&quot;RESEL&quot;
 )paren
 )paren
-id|disable_irq
-c_func
-(paren
-id|instance-&gt;irq
-)paren
-suffix:semicolon
 multiline_comment|/* First we have to make sure this reselection didn&squot;t */
 multiline_comment|/* happen during Arbitration/Selection of some other device. */
 multiline_comment|/* If yes, put losing command back on top of input_Q. */
@@ -4362,12 +4326,6 @@ id|phs
 )paren
 suffix:semicolon
 )brace
-id|enable_irq
-c_func
-(paren
-id|instance-&gt;irq
-)paren
-suffix:semicolon
 id|DB
 c_func
 (paren
@@ -4381,6 +4339,7 @@ l_string|&quot;} &quot;
 )paren
 )brace
 DECL|function|reset_wd33c93
+r_static
 r_void
 id|reset_wd33c93
 c_func
@@ -5543,6 +5502,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* check_setup_strings() returns index if key found, 0 if not&n; */
 DECL|function|check_setup_strings
+r_static
 r_int
 id|check_setup_strings
 c_func
@@ -6272,7 +6232,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;wd33c93-%d: chip=%s/%d no_sync=0x%x no_dma=%d&bslash;n&quot;
+l_string|&quot;wd33c93-%d: chip=%s/%d no_sync=0x%x no_dma=%d&quot;
 comma
 id|instance-&gt;host_no
 comma
@@ -6316,7 +6276,7 @@ macro_line|#ifdef DEBUGGING_ON
 id|printk
 c_func
 (paren
-l_string|&quot;           debug_flags=0x%02x setup_strings=&quot;
+l_string|&quot; debug_flags=0x%02x&bslash;n&quot;
 comma
 id|hostdata-&gt;args
 )paren
@@ -6325,10 +6285,16 @@ macro_line|#else
 id|printk
 c_func
 (paren
-l_string|&quot;           debugging=OFF setup_strings=&quot;
+l_string|&quot; debugging=OFF&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+id|printk
+c_func
+(paren
+l_string|&quot;           setup_strings=&quot;
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren

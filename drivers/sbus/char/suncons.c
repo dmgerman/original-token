@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: suncons.c,v 1.58 1997/04/04 00:50:04 davem Exp $&n; *&n; * suncons.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Peter Zaitcev (zaitcev@lab.ipmce.su)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; *&n; * Added font loading Nov/21, Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Added render_screen and faster scrolling Nov/27, miguel&n; * Added console palette code for cg6 Dec/13/95, miguel&n; * Added generic frame buffer support Dec/14/95, miguel&n; * Added cgsix and bwtwo drivers Jan/96, miguel&n; * Added 4m, and cg3 driver Feb/96, miguel&n; * Fixed the cursor on color displays Feb/96, miguel.&n; * Cleaned up the detection code, generic 8bit depth display &n; *   code, Mar/96 miguel&n; * Hacked support for cg14 video cards -- Apr/96, miguel.&n; * Color support for cg14 video cards -- May/96, miguel.&n; * Code split, Dave Redman, May/96&n; * Be more VT change friendly, May/96, miguel.&n; * Support for hw cursor and graphics acceleration, Jun/96, jj.&n; * Added TurboGX+ detection (cgthree+), Aug/96, Iain Lea (iain@sbs.de)&n; * Added TCX support (8/24bit), Aug/96, jj.&n; * Support for multiple framebuffers, Sep/96, jj.&n; * Fix bwtwo inversion and handle inverse monochrome cells in&n; *   sun_blitc, Nov/96, ecd.&n; * Fix sun_blitc and screen size on displays other than 1152x900, &n; *   128x54 chars, Nov/96, jj.&n; * Fix cursor spots left on some non-accelerated fbs, changed&n; *   software cursor to be like the hw one, Nov/96, jj.&n; * &n; * Much of this driver is derived from the DEC TGA driver by&n; * Jay Estabrook who has done a nice job with the console&n; * driver abstraction btw.&n; *&n; * We try to make everything a power of two if possible to&n; * speed up the bit blit.  Doing multiplies, divides, and&n; * remainder routines end up calling software library routines&n; * since not all Sparcs have the hardware to do it.&n; *&n; * TODO:&n; * do not blank the screen when frame buffer is mapped.&n; *&n; */
+multiline_comment|/* $Id: suncons.c,v 1.61 1997/04/17 02:29:36 miguel Exp $&n; *&n; * suncons.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Peter Zaitcev (zaitcev@lab.ipmce.su)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; *&n; * Added font loading Nov/21, Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Added render_screen and faster scrolling Nov/27, miguel&n; * Added console palette code for cg6 Dec/13/95, miguel&n; * Added generic frame buffer support Dec/14/95, miguel&n; * Added cgsix and bwtwo drivers Jan/96, miguel&n; * Added 4m, and cg3 driver Feb/96, miguel&n; * Fixed the cursor on color displays Feb/96, miguel.&n; * Cleaned up the detection code, generic 8bit depth display &n; *   code, Mar/96 miguel&n; * Hacked support for cg14 video cards -- Apr/96, miguel.&n; * Color support for cg14 video cards -- May/96, miguel.&n; * Code split, Dave Redman, May/96&n; * Be more VT change friendly, May/96, miguel.&n; * Support for hw cursor and graphics acceleration, Jun/96, jj.&n; * Added TurboGX+ detection (cgthree+), Aug/96, Iain Lea (iain@sbs.de)&n; * Added TCX support (8/24bit), Aug/96, jj.&n; * Support for multiple framebuffers, Sep/96, jj.&n; * Fix bwtwo inversion and handle inverse monochrome cells in&n; *   sun_blitc, Nov/96, ecd.&n; * Fix sun_blitc and screen size on displays other than 1152x900, &n; *   128x54 chars, Nov/96, jj.&n; * Fix cursor spots left on some non-accelerated fbs, changed&n; *   software cursor to be like the hw one, Nov/96, jj.&n; * &n; * Much of this driver is derived from the DEC TGA driver by&n; * Jay Estabrook who has done a nice job with the console&n; * driver abstraction btw.&n; *&n; * We try to make everything a power of two if possible to&n; * speed up the bit blit.  Doing multiplies, divides, and&n; * remainder routines end up calling software library routines&n; * since not all Sparcs have the hardware to do it.&n; *&n; * TODO:&n; * do not blank the screen when frame buffer is mapped.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -34,7 +34,7 @@ macro_line|#include &quot;fb.h&quot;
 DECL|macro|cmapsz
 mdefine_line|#define cmapsz 8192
 macro_line|#include &quot;suncons_font.h&quot;
-macro_line|#include &quot;linux_logo.h&quot;
+macro_line|#include &lt;asm/linux_logo.h&gt;
 DECL|variable|fbinfo
 id|fbinfo_t
 op_star
@@ -1733,19 +1733,10 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#ifdef __sparc_v9__
 id|p
 op_assign
-l_string|&quot;Linux/UltraSPARC version &quot;
-id|UTS_RELEASE
+id|linux_logo_banner
 suffix:semicolon
-macro_line|#else
-id|p
-op_assign
-l_string|&quot;Linux/SPARC version &quot;
-id|UTS_RELEASE
-suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -3717,58 +3708,13 @@ r_int
 id|addr
 )paren
 (brace
-r_switch
-c_cond
-(paren
-id|sparc_cpu_model
-)paren
-(brace
-r_case
-id|sun4c
-suffix:colon
 r_return
-id|sun4c_get_pte
+id|__get_phys
+c_func
 (paren
 id|addr
 )paren
-op_lshift
-id|PAGE_SHIFT
 suffix:semicolon
-r_case
-id|sun4m
-suffix:colon
-r_return
-(paren
-(paren
-id|srmmu_get_pte
-(paren
-id|addr
-)paren
-op_amp
-l_int|0xffffff00
-)paren
-op_lshift
-l_int|4
-)paren
-suffix:semicolon
-r_case
-id|sun4u
-suffix:colon
-multiline_comment|/* FIXME: */
-r_return
-l_int|0
-suffix:semicolon
-r_default
-suffix:colon
-id|panic
-(paren
-l_string|&quot;get_phys called for unsupported cpu model&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 )brace
 r_int
 DECL|function|get_iospace
@@ -3779,52 +3725,13 @@ r_int
 id|addr
 )paren
 (brace
-r_switch
-c_cond
-(paren
-id|sparc_cpu_model
-)paren
-(brace
-r_case
-id|sun4c
-suffix:colon
 r_return
-op_minus
-l_int|1
-suffix:semicolon
-multiline_comment|/* Don&squot;t check iospace on sun4c */
-r_case
-id|sun4m
-suffix:colon
-r_return
-(paren
-id|srmmu_get_pte
+id|__get_iospace
+c_func
 (paren
 id|addr
 )paren
-op_rshift
-l_int|28
-)paren
 suffix:semicolon
-r_case
-id|sun4u
-suffix:colon
-multiline_comment|/* FIXME: */
-r_return
-l_int|0
-suffix:semicolon
-r_default
-suffix:colon
-id|panic
-(paren
-l_string|&quot;get_iospace called for unsupported cpu model&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
 )brace
 DECL|function|__initfunc
 id|__initfunc
@@ -3886,6 +3793,8 @@ comma
 l_string|&quot;cgfourteen&quot;
 comma
 l_string|&quot;SUNW,leo&quot;
+comma
+l_string|&quot;SUNW,ffb&quot;
 comma
 l_int|0
 )brace
@@ -4152,6 +4061,53 @@ id|prom_searchsiblings
 id|n
 comma
 l_string|&quot;cgfourteen&quot;
+)paren
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_return
+id|n
+suffix:semicolon
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_int
+id|creator_present
+(paren
+r_void
+)paren
+)paren
+(brace
+r_int
+id|root
+comma
+id|n
+suffix:semicolon
+id|root
+op_assign
+id|prom_getchild
+(paren
+id|prom_root_node
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|n
+op_assign
+id|prom_searchsiblings
+(paren
+id|root
+comma
+l_string|&quot;SUNW,ffb&quot;
 )paren
 )paren
 op_eq
@@ -4799,6 +4755,30 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef SUN_FB_CREATOR
+r_case
+id|FBTYPE_CREATOR
+suffix:colon
+id|creator_setup
+(paren
+op_amp
+id|fbinfo
+(braket
+id|n
+)braket
+comma
+id|n
+comma
+id|con_node
+comma
+id|base
+comma
+id|io
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 id|fbinfo
@@ -4816,10 +4796,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|n
 )paren
-(brace
+r_return
+suffix:semicolon
+multiline_comment|/* Code below here is just executed for the first frame buffer */
 id|con_type
 op_assign
 id|type
@@ -5117,7 +5098,7 @@ id|prom_halt
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* P3: I fear this strips 15inch 1024/768 PC-like&n;&t;&t; * monitors out. */
+multiline_comment|/* P3: I fear this strips 15inch 1024/768 PC-like&n;&t; * monitors out. */
 r_if
 c_cond
 (paren
@@ -5151,7 +5132,6 @@ id|prom_halt
 (paren
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 DECL|function|__initfunc
@@ -5198,6 +5178,10 @@ op_star
 id|sbus
 suffix:semicolon
 r_int
+id|creator
+op_assign
+l_int|0
+comma
 id|cg14
 op_assign
 l_int|0
@@ -5210,6 +5194,10 @@ l_int|40
 suffix:semicolon
 r_int
 id|type
+comma
+id|card_found
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 r_int
@@ -5722,10 +5710,20 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|sbdprom
 )paren
-multiline_comment|/* I&squot;m just wondering if this if shouldn&squot;t be deleted.&n;&t;&t;&t;&t; Is /obio/cgfourteen present only if /sbus/cgfourteen&n;&t;&t;&t;&t; is not? If so, then the test here should be deleted.&n;&t;&t;&t;&t; Otherwise, this comment should be deleted. */
+id|card_found
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|card_found
+)paren
+id|card_found
+op_assign
 id|cg14
 op_assign
 id|cg14_present
@@ -5736,10 +5734,28 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|sbdprom
-op_logical_and
+id|card_found
+)paren
+(brace
+id|prom_printf
+(paren
+l_string|&quot;Searching for a creator&bslash;n&quot;
+)paren
+suffix:semicolon
+id|card_found
+op_assign
+id|creator
+op_assign
+id|creator_present
+(paren
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 op_logical_neg
-id|cg14
+id|card_found
 )paren
 (brace
 id|prom_printf
@@ -6167,6 +6183,38 @@ id|prom_root_node
 )paren
 comma
 l_string|&quot;obio&quot;
+)paren
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|creator
+)paren
+(brace
+id|sparc_framebuffer_setup
+(paren
+op_logical_neg
+id|sbdprom
+comma
+id|creator
+comma
+id|FBTYPE_CREATOR
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|prom_console_node
+op_eq
+id|creator
+comma
+id|prom_getchild
+(paren
+id|prom_root_node
 )paren
 )paren
 suffix:semicolon

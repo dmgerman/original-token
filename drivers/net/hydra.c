@@ -27,7 +27,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
-macro_line|#include &lt;asm/zorro.h&gt;
+macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#include &quot;hydra.h&quot;
 DECL|macro|HYDRA_DEBUG
 mdefine_line|#define HYDRA_DEBUG
@@ -606,11 +606,13 @@ op_assign
 op_amp
 id|hydra_get_stats
 suffix:semicolon
+macro_line|#ifdef HAVE_MULTICAST
 id|dev-&gt;set_multicast_list
 op_assign
 op_amp
-id|hydra_set_multicast_list
+id|set_multicast_list
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; &t;&t; *&t;Cannot yet do multicast&n;&t; &t;&t; */
 id|dev-&gt;flags
 op_and_assign
@@ -2611,6 +2613,7 @@ op_amp
 id|priv-&gt;stats
 suffix:semicolon
 )brace
+macro_line|#ifdef HAVE_MULTICAST
 DECL|function|set_multicast_list
 r_static
 r_void
@@ -2653,6 +2656,7 @@ multiline_comment|/* (personally i don&squot;t care about multicasts at all :) *
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#ifdef MODULE
 DECL|variable|devicename
 r_static

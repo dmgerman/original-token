@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;../fat/msbuffer.h&quot;
 macro_line|#include &quot;../fat/tables.h&quot;
@@ -9506,12 +9507,16 @@ c_func
 id|vfat_lookup
 )paren
 suffix:semicolon
-DECL|function|init_vfat_fs
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|init_vfat_fs
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

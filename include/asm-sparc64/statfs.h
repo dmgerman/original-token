@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: statfs.h,v 1.1 1996/12/26 14:22:40 davem Exp $ */
+multiline_comment|/* $Id: statfs.h,v 1.2 1997/04/14 17:05:22 jj Exp $ */
 macro_line|#ifndef _SPARC64_STATFS_H
 DECL|macro|_SPARC64_STATFS_H
 mdefine_line|#define _SPARC64_STATFS_H
@@ -10,7 +10,6 @@ id|__kernel_fsid_t
 id|fsid_t
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* XXX Fix this for full backwards 32-bit compat. */
 DECL|struct|statfs32
 r_struct
 id|statfs32
@@ -44,7 +43,7 @@ r_int
 id|f_ffree
 suffix:semicolon
 DECL|member|f_fsid
-id|__kernel_fsid_t
+id|__kernel_fsid_t32
 id|f_fsid
 suffix:semicolon
 DECL|member|f_namelen

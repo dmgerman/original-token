@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.54 1997/04/14 05:38:25 davem Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.55 1997/04/17 03:28:56 davem Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 DECL|macro|PROMLIB_INTERNAL
 mdefine_line|#define PROMLIB_INTERNAL
 macro_line|#include &lt;linux/config.h&gt;
@@ -297,6 +297,27 @@ id|EXPORT_SYMBOL_PRIVATE
 c_func
 (paren
 id|_spinlock_waitfor
+)paren
+suffix:semicolon
+DECL|variable|_rw_read_enter
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_rw_read_enter
+)paren
+suffix:semicolon
+DECL|variable|_rw_read_exit
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_rw_read_exit
+)paren
+suffix:semicolon
+DECL|variable|_rw_write_enter
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_rw_write_enter
 )paren
 suffix:semicolon
 DECL|variable|__sparc_bh_counter

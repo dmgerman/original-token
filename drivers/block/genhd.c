@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Many architectures don&squot;t like unaligned accesses, which is&n; * frequently the case with the nr_sects and start_sect partition&n; * table entries.&n; */
 macro_line|#include &lt;asm/unaligned.h&gt;
@@ -3308,6 +3309,7 @@ suffix:semicolon
 )brace
 DECL|function|setup_dev
 r_static
+r_inline
 r_void
 id|setup_dev
 c_func
@@ -3472,12 +3474,16 @@ id|dev-&gt;sizes
 suffix:semicolon
 )brace
 )brace
-DECL|function|device_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|device_setup
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_extern

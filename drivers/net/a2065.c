@@ -15,7 +15,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
-macro_line|#include &lt;asm/zorro.h&gt;
+macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -1085,7 +1085,7 @@ op_amp
 id|LE_R1_ERR
 )paren
 (brace
-multiline_comment|/* Count only the end frame as a tx error, not the beginning */
+multiline_comment|/* Count only the end frame as a rx error,&n;&t;&t;&t; * not the beginning&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1141,7 +1141,13 @@ r_else
 (brace
 id|len
 op_assign
+(paren
 id|rd-&gt;mblength
+op_amp
+l_int|0xfff
+)paren
+op_minus
+l_int|4
 suffix:semicolon
 id|skb
 op_assign
@@ -2236,6 +2242,47 @@ r_return
 id|status
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|skb
+op_eq
+l_int|NULL
+)paren
+(brace
+id|dev_tint
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;skb is NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|skb-&gt;len
+op_le
+l_int|0
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;skb len is %d&bslash;n&quot;
+comma
+id|skb-&gt;len
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* Block a timer-based transmit from overlapping. */
 macro_line|#ifdef OLD_METHOD
 id|dev-&gt;tbusy
@@ -2806,28 +2853,14 @@ id|ll
 op_assign
 id|lp-&gt;ll
 suffix:semicolon
-r_char
-id|shown
-suffix:semicolon
-id|shown
-op_assign
-l_int|0
-suffix:semicolon
 r_while
 c_loop
 (paren
 id|dev-&gt;tbusy
 )paren
-r_if
-c_cond
+id|schedule
+c_func
 (paren
-op_logical_neg
-id|shown
-op_increment
-)paren
-id|printk
-(paren
-l_string|&quot;Waiting for tbusy to go down&bslash;n&quot;
 )paren
 suffix:semicolon
 id|set_bit
@@ -2842,10 +2875,6 @@ op_amp
 id|dev-&gt;tbusy
 )paren
 suffix:semicolon
-id|shown
-op_assign
-l_int|0
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -2853,15 +2882,9 @@ id|lp-&gt;tx_old
 op_ne
 id|lp-&gt;tx_new
 )paren
-r_if
-c_cond
+id|schedule
+c_func
 (paren
-op_logical_neg
-id|shown
-)paren
-id|printk
-(paren
-l_string|&quot;Waiting for buffer to empty&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ll-&gt;rap

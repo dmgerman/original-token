@@ -10,7 +10,7 @@ macro_line|#endif
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
-macro_line|#include &lt;asm/zorro.h&gt;
+macro_line|#include &lt;linux/zorro.h&gt;
 DECL|macro|TRUE
 mdefine_line|#define TRUE                  (1)
 DECL|macro|FALSE

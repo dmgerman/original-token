@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.30 1997/04/13 10:31:44 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.31 1997/04/16 09:18:50 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;This code is dedicated to John Dyson.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2372,12 +2372,8 @@ comma
 id|buff
 )paren
 suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|sk-&gt;packets_out
-)paren
+op_increment
 suffix:semicolon
 id|buff-&gt;when
 op_assign
@@ -3336,7 +3332,7 @@ r_sizeof
 r_struct
 id|iphdr
 )paren
-op_plus
+op_minus
 r_sizeof
 (paren
 r_struct
@@ -4255,14 +4251,9 @@ id|newsk-&gt;urg_data
 op_assign
 l_int|0
 suffix:semicolon
-id|atomic_set
-c_func
-(paren
-op_amp
 id|newsk-&gt;packets_out
-comma
+op_assign
 l_int|0
-)paren
 suffix:semicolon
 id|atomic_set
 c_func

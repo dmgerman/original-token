@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/sysv_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|function|sysv_put_inode
 r_void
@@ -5556,12 +5557,16 @@ l_int|NULL
 )brace
 )brace
 suffix:semicolon
-DECL|function|init_sysv_fs
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|init_sysv_fs
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

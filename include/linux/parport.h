@@ -1,12 +1,20 @@
-multiline_comment|/* $Id: parport.h,v 1.1.2.5 1997/03/29 21:08:31 phil Exp $ */
+multiline_comment|/* $Id: parport.h,v 1.2.6.3 1997/04/16 21:21:03 phil Exp $ */
 macro_line|#ifndef _PARPORT_H_
 DECL|macro|_PARPORT_H_
 mdefine_line|#define _PARPORT_H_
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 multiline_comment|/* Maximum of 8 ports per machine */
 DECL|macro|PARPORT_MAX
 mdefine_line|#define PARPORT_MAX  8 
+multiline_comment|/* Magic numbers */
+DECL|macro|PARPORT_IRQ_NONE
+mdefine_line|#define PARPORT_IRQ_NONE  -1
+DECL|macro|PARPORT_DMA_NONE
+mdefine_line|#define PARPORT_DMA_NONE  -1
+DECL|macro|PARPORT_DISABLE
+mdefine_line|#define PARPORT_DISABLE   -2
 multiline_comment|/* Type classes for Plug-and-Play probe */
 r_typedef
 r_enum
@@ -197,6 +205,48 @@ id|prev
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|parport_dir
+r_struct
+id|parport_dir
+(brace
+DECL|member|entry
+r_struct
+id|proc_dir_entry
+op_star
+id|entry
+suffix:semicolon
+multiline_comment|/* Directory /proc/parport/X     */
+DECL|member|irq
+r_struct
+id|proc_dir_entry
+op_star
+id|irq
+suffix:semicolon
+multiline_comment|/* IRQ entry /proc/parport/X/irq */
+DECL|member|devices
+r_struct
+id|proc_dir_entry
+op_star
+id|devices
+suffix:semicolon
+multiline_comment|/* /proc/parport/X/devices       */
+DECL|member|hardware
+r_struct
+id|proc_dir_entry
+op_star
+id|hardware
+suffix:semicolon
+multiline_comment|/* /proc/parport/X/hardware      */
+DECL|member|name
+r_char
+id|name
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* /proc/parport/&quot;XXXX&quot; */
+)brace
+suffix:semicolon
 multiline_comment|/* A parallel port */
 DECL|struct|parport
 r_struct
@@ -275,17 +325,21 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-DECL|member|proc_dir
+DECL|member|pdir
 r_struct
-id|proc_dir_entry
-op_star
-id|proc_dir
+id|parport_dir
+id|pdir
 suffix:semicolon
 DECL|member|probe_info
 r_struct
 id|parport_device_info
 id|probe_info
 suffix:semicolon
+DECL|member|speed
+r_int
+id|speed
+suffix:semicolon
+multiline_comment|/* Max Write in Bytes/s */
 )brace
 suffix:semicolon
 multiline_comment|/* parport_register_port registers a new parallel port at the given address (if&n; * one does not already exist) and returns a pointer to it.  This entails&n; * claiming the I/O region, IRQ and DMA.&n; * NULL is returned if initialisation fails. &n; */
@@ -450,6 +504,22 @@ suffix:semicolon
 multiline_comment|/* Prototypes from parport_procfs */
 r_extern
 r_int
+id|parport_proc_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|parport_proc_cleanup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|parport_proc_register
 c_func
 (paren
@@ -460,7 +530,7 @@ id|pp
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|parport_proc_unregister
 c_func
 (paren

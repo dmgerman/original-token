@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: stat.h,v 1.1 1996/12/26 14:22:31 davem Exp $ */
+multiline_comment|/* $Id: stat.h,v 1.2 1997/04/16 14:52:34 jj Exp $ */
 macro_line|#ifndef _SPARC64_STAT_H
 DECL|macro|_SPARC64_STAT_H
 mdefine_line|#define _SPARC64_STAT_H
@@ -64,21 +64,20 @@ id|st_ctime
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* XXX Fix this for full backwards 32-bit compat. */
 DECL|struct|stat32
 r_struct
 id|stat32
 (brace
 DECL|member|st_dev
-id|dev_t
+id|__kernel_dev_t32
 id|st_dev
 suffix:semicolon
 DECL|member|st_ino
-id|ino_t
+id|__kernel_ino_t32
 id|st_ino
 suffix:semicolon
 DECL|member|st_mode
-id|mode_t
+id|__kernel_mode_t32
 id|st_mode
 suffix:semicolon
 DECL|member|st_nlink
@@ -86,23 +85,23 @@ r_int
 id|st_nlink
 suffix:semicolon
 DECL|member|st_uid
-id|uid_t
+id|__kernel_uid_t32
 id|st_uid
 suffix:semicolon
 DECL|member|st_gid
-id|gid_t
+id|__kernel_gid_t32
 id|st_gid
 suffix:semicolon
 DECL|member|st_rdev
-id|dev_t
+id|__kernel_dev_t32
 id|st_rdev
 suffix:semicolon
 DECL|member|st_size
-id|off_t
+id|__kernel_off_t32
 id|st_size
 suffix:semicolon
 DECL|member|st_atime
-id|time_t
+id|__kernel_time_t32
 id|st_atime
 suffix:semicolon
 DECL|member|__unused1
@@ -111,7 +110,7 @@ r_int
 id|__unused1
 suffix:semicolon
 DECL|member|st_mtime
-id|time_t
+id|__kernel_time_t32
 id|st_mtime
 suffix:semicolon
 DECL|member|__unused2
@@ -120,7 +119,7 @@ r_int
 id|__unused2
 suffix:semicolon
 DECL|member|st_ctime
-id|time_t
+id|__kernel_time_t32
 id|st_ctime
 suffix:semicolon
 DECL|member|__unused3
@@ -129,11 +128,11 @@ r_int
 id|__unused3
 suffix:semicolon
 DECL|member|st_blksize
-id|off_t
+id|__kernel_off_t32
 id|st_blksize
 suffix:semicolon
 DECL|member|st_blocks
-id|off_t
+id|__kernel_off_t32
 id|st_blocks
 suffix:semicolon
 DECL|member|__unused4

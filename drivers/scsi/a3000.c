@@ -758,9 +758,6 @@ suffix:semicolon
 id|a3000_host-&gt;irq
 op_assign
 id|IRQ_AMIGA_PORTS
-op_amp
-op_complement
-id|IRQ_MACHSPEC
 suffix:semicolon
 id|DMA
 c_func

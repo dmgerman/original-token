@@ -52,6 +52,9 @@ DECL|macro|FBTYPE_TCXCOLOR
 mdefine_line|#define FBTYPE_TCXCOLOR&t;&t;21&t;/* SUNW,tcx card */
 DECL|macro|FBTYPE_LASTPLUSONE
 mdefine_line|#define FBTYPE_LASTPLUSONE      21&t;/* This is not last + 1 in fact... */
+multiline_comment|/* Does not seem to be listed in the Sun file either */
+DECL|macro|FBTYPE_CREATOR
+mdefine_line|#define FBTYPE_CREATOR          22
 multiline_comment|/* fbio ioctls */
 multiline_comment|/* Returned by FBIOGTYPE */
 DECL|struct|fbtype

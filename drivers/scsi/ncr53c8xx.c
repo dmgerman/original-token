@@ -1,5 +1,5 @@
 multiline_comment|/******************************************************************************&n;**  Device driver for the PCI-SCSI NCR538XX controller family.&n;**&n;**  Copyright (C) 1994  Wolfgang Stanglmeier&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;**&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;**&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**  This driver has been ported to Linux from the FreeBSD NCR53C8XX driver&n;**  and is currently maintained by&n;**&n;**          Gerard Roudier              &lt;groudier@club-internet.fr&gt;&n;**&n;**  Being given that this driver originates from the FreeBSD version, and&n;**  in order to keep synergy on both, any suggested enhancements and corrections&n;**  received on Linux are automatically a potential candidate for the FreeBSD &n;**  version.&n;**&n;**  The original driver has been written for 386bsd and FreeBSD by&n;**          Wolfgang Stanglmeier        &lt;wolf@cologne.de&gt;&n;**          Stefan Esser                &lt;se@mi.Uni-Koeln.de&gt;&n;**&n;**  And has been ported to NetBSD by&n;**          Charles M. Hannum           &lt;mycroft@gnu.ai.mit.edu&gt;&n;**&n;*******************************************************************************&n;*/
-multiline_comment|/*&n;**&t;6 April 1997, version 1.18d&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(NCR BIOS in flash-bios required) &n;**&t;&t;53C815&t;&t;(~53C810 with on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide, NCR BIOS in flash bios required)&n;**&t;&t;53C825&t;&t;(Wide, ~53C820 with on board rom BIOS)&n;**&t;&t;53C860&t;&t;(Narrow fast 20, BIOS required)&n;**&t;&t;53C875&t;&t;(Wide fast 40 with on board rom BIOS)&n;**&t;&t;53C895&t;&t;(Ultra2 80 MB/s with on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X and above only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
+multiline_comment|/*&n;**&t;16 April 1997, version 1.18e&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(NCR BIOS in flash-bios required) &n;**&t;&t;53C815&t;&t;(~53C810 with on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide, NCR BIOS in flash bios required)&n;**&t;&t;53C825&t;&t;(Wide, ~53C820 with on board rom BIOS)&n;**&t;&t;53C860&t;&t;(Narrow fast 20, BIOS required)&n;**&t;&t;53C875&t;&t;(Wide fast 40 with on board rom BIOS)&n;**&t;&t;53C895&t;&t;(Ultra2 80 MB/s with on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X and above only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
 DECL|macro|SCSI_NCR_DEBUG
 mdefine_line|#define SCSI_NCR_DEBUG
 DECL|macro|SCSI_NCR_DEBUG_FLAGS
@@ -11094,6 +11094,9 @@ id|ncr_reset_bus
 id|Scsi_Cmnd
 op_star
 id|cmd
+comma
+r_int
+id|sync_reset
 )paren
 (brace
 r_struct
@@ -11249,19 +11252,21 @@ comma
 id|HS_RESET
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * If the involved command was not in a driver queue, and is &n; * not in the waiting list, complete it with DID_RESET status,&n; * in order to keep it alive.&n; */
+multiline_comment|/*&n; * If the involved command was not in a driver queue, and the &n; * scsi driver told us reset is synchronous, and the command is not &n; * currently in the waiting list, complete it with DID_RESET status,&n; * in order to keep it alive.&n; */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|found
 op_logical_and
-id|cmd
+id|sync_reset
 op_logical_and
 op_logical_neg
-id|remove_from_waiting_list
+id|retrieve_from_waiting_list
 c_func
 (paren
+l_int|0
+comma
 id|np
 comma
 id|cmd
@@ -17657,49 +17662,11 @@ id|SCR_WAIT_DISC
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;**      Unexpected data cycle while waiting for disconnect.&n;&t;&t;*/
-r_if
-c_cond
-(paren
-id|INB
+multiline_comment|/*&n;&t;&t;**      Unexpected data cycle while waiting for disconnect.&n;&t;&t;**&t;LDSC and CON bits may help in order to understand &n;&t;&t;**&t;what really happened. Print some info message and let &n;&t;&t;**&t;the reset function reset the BUS and the NCR.&n;&t;&t;*/
+id|printf
 c_func
 (paren
-id|nc_sstat2
-)paren
-op_amp
-id|LDSC
-)paren
-(brace
-multiline_comment|/*&n;&t;&t;&t;**&t;It&squot;s an early reconnect.&n;&t;&t;&t;**&t;Let&squot;s continue ...&n;&t;&t;&t;*/
-id|OUTONB
-(paren
-id|nc_dcntl
-comma
-(paren
-id|STD
-op_or
-id|NOCOM
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;**&t;info message&n;&t;&t;&t;*/
-id|printf
-(paren
-l_string|&quot;%s: INFO: LDSC while IID.&bslash;n&quot;
-comma
-id|ncr_name
-(paren
-id|np
-)paren
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;%s: target %d doesn&squot;t release the bus.&bslash;n&quot;
+l_string|&quot;%s:%d: data cycle while waiting for disconnect, LDSC=%d CON=%d&bslash;n&quot;
 comma
 id|ncr_name
 (paren
@@ -17709,16 +17676,44 @@ comma
 (paren
 r_int
 )paren
+(paren
 id|INB
+c_func
 (paren
 id|nc_ctest0
 )paren
 op_amp
 l_int|0x0f
 )paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;**&t;return without restarting the NCR.&n;&t;&t;**&t;timeout will do the real work.&n;&t;&t;*/
-r_return
+comma
+(paren
+l_int|0
+op_ne
+(paren
+id|INB
+c_func
+(paren
+id|nc_sstat2
+)paren
+op_amp
+id|LDSC
+)paren
+)paren
+comma
+(paren
+l_int|0
+op_ne
+(paren
+id|INB
+c_func
+(paren
+id|nc_scntl1
+)paren
+op_amp
+id|ISCON
+)paren
+)paren
+)paren
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -20921,7 +20916,7 @@ id|NOCOM
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*==========================================================&n;**&n;**&n;**&t;Aquire a control block&n;**&n;**&n;**==========================================================&n;*/
+multiline_comment|/*==========================================================&n;**&n;**&n;**&t;Acquire a control block&n;**&n;**&n;**==========================================================&n;*/
 DECL|function|ncr_get_ccb
 r_static
 id|ccb_p
@@ -25761,7 +25756,7 @@ id|np
 suffix:semicolon
 )brace
 multiline_comment|/*&n;**   Linux entry point of reset() function&n;*/
-macro_line|#if&t;LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,98)
+macro_line|#if defined SCSI_RESET_SYNCHRONOUS &amp;&amp; defined SCSI_RESET_ASYNCHRONOUS
 DECL|function|ncr53c8xx_reset
 r_int
 id|ncr53c8xx_reset
@@ -25775,7 +25770,107 @@ r_int
 r_int
 id|reset_flags
 )paren
+(brace
+r_int
+id|sts
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;ncr53c8xx_reset: pid=%lu reset_flags=%x serial_number=%ld serial_number_at_timeout=%ld&bslash;n&quot;
+comma
+id|cmd-&gt;pid
+comma
+id|reset_flags
+comma
+id|cmd-&gt;serial_number
+comma
+id|cmd-&gt;serial_number_at_timeout
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * We have to just ignore reset requests in some situations.&n;&t; */
+macro_line|#if defined SCSI_RESET_NOT_RUNNING
+r_if
+c_cond
+(paren
+id|cmd-&gt;serial_number
+op_ne
+id|cmd-&gt;serial_number_at_timeout
+)paren
+(brace
+id|sts
+op_assign
+id|SCSI_RESET_NOT_RUNNING
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/*&n;&t; * If the mid-level driver told us reset is synchronous, it seems &n;&t; * that we must call the done() callback for the involved command, &n;&t; * even if this command was not queued to the low-level driver, &n;&t; * before returning SCSI_RESET_SUCCESS.&n;&t; */
+id|sts
+op_assign
+id|ncr_reset_bus
+c_func
+(paren
+id|cmd
+comma
+(paren
+id|reset_flags
+op_amp
+(paren
+id|SCSI_RESET_SYNCHRONOUS
+op_or
+id|SCSI_RESET_ASYNCHRONOUS
+)paren
+)paren
+op_eq
+id|SCSI_RESET_SYNCHRONOUS
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Since we always reset the controller, when we return success, &n;&t; * we add this information to the return code.&n;&t; */
+macro_line|#if defined SCSI_RESET_HOST_RESET
+r_if
+c_cond
+(paren
+id|sts
+op_eq
+id|SCSI_RESET_SUCCESS
+)paren
+id|sts
+op_or_assign
+id|SCSI_RESET_HOST_RESET
+suffix:semicolon
+macro_line|#endif
+id|out
+suffix:colon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|sts
+suffix:semicolon
+)brace
 macro_line|#else
+DECL|function|ncr53c8xx_reset
 r_int
 id|ncr53c8xx_reset
 c_func
@@ -25784,7 +25879,6 @@ id|Scsi_Cmnd
 op_star
 id|cmd
 )paren
-macro_line|#endif
 (brace
 id|printk
 c_func
@@ -25799,10 +25893,92 @@ id|ncr_reset_bus
 c_func
 (paren
 id|cmd
+comma
+l_int|1
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n;**   Linux entry point of abort() function&n;*/
+macro_line|#if defined SCSI_RESET_SYNCHRONOUS &amp;&amp; defined SCSI_RESET_ASYNCHRONOUS
+DECL|function|ncr53c8xx_abort
+r_int
+id|ncr53c8xx_abort
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|cmd
+)paren
+(brace
+r_int
+id|sts
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;ncr53c8xx_abort: pid=%lu serial_number=%ld serial_number_at_timeout=%ld&bslash;n&quot;
+comma
+id|cmd-&gt;pid
+comma
+id|cmd-&gt;serial_number
+comma
+id|cmd-&gt;serial_number_at_timeout
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * We have to just ignore abort requests in some situations.&n;&t; */
+r_if
+c_cond
+(paren
+id|cmd-&gt;serial_number
+op_ne
+id|cmd-&gt;serial_number_at_timeout
+)paren
+(brace
+id|sts
+op_assign
+id|SCSI_ABORT_NOT_RUNNING
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
+id|sts
+op_assign
+id|ncr_abort_command
+c_func
+(paren
+id|cmd
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|sts
+suffix:semicolon
+)brace
+macro_line|#else
 DECL|function|ncr53c8xx_abort
 r_int
 id|ncr53c8xx_abort
@@ -25829,6 +26005,7 @@ id|cmd
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#ifdef MODULE
 DECL|function|ncr53c8xx_release
 r_int

@@ -334,7 +334,8 @@ r_void
 id|sun4c_clear_profile_irq
 c_func
 (paren
-r_void
+r_int
+id|cpu
 )paren
 (brace
 multiline_comment|/* Errm.. not sure how to do this.. */
@@ -345,6 +346,9 @@ r_void
 id|sun4c_load_profile_irq
 c_func
 (paren
+r_int
+id|cpu
+comma
 r_int
 r_int
 id|limit

@@ -247,10 +247,6 @@ OG
 id|SK_WMEM_MAX
 op_star
 l_int|2
-op_logical_or
-id|val
-OL
-l_int|2048
 )paren
 (brace
 r_return
@@ -274,7 +270,13 @@ suffix:semicolon
 )brace
 id|sk-&gt;sndbuf
 op_assign
+id|max
+c_func
+(paren
 id|val
+comma
+l_int|2048
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Wake up sending tasks if we&n;&t;&t;&t; *&t;upped the value.&n;&t;&t;&t; */
 id|sk
@@ -298,10 +300,6 @@ OG
 id|SK_RMEM_MAX
 op_star
 l_int|2
-op_logical_or
-id|val
-OL
-l_int|256
 )paren
 (brace
 r_return
@@ -325,7 +323,13 @@ suffix:semicolon
 )brace
 id|sk-&gt;rcvbuf
 op_assign
+id|max
+c_func
+(paren
 id|val
+comma
+l_int|256
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon

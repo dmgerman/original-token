@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.3 1997/03/18 17:59:10 jj Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.4 1997/04/14 17:04:43 jj Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 DECL|macro|PROMLIB_INTERNAL
 mdefine_line|#define PROMLIB_INTERNAL
 macro_line|#include &lt;linux/config.h&gt;
@@ -753,11 +753,18 @@ id|__csum_partial_copy_sparc_generic
 )paren
 suffix:semicolon
 multiline_comment|/* Moving data to/from userspace. */
-DECL|variable|__copy_user
+DECL|variable|__copy_to_user
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|__copy_user
+id|__copy_to_user
+)paren
+suffix:semicolon
+DECL|variable|__copy_from_user
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__copy_from_user
 )paren
 suffix:semicolon
 DECL|variable|__strncpy_from_user

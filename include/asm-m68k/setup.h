@@ -29,8 +29,8 @@ macro_line|#elif defined(CONFIG_ATARI) || defined(CONFIG_MAC)
 DECL|macro|MACH_IS_AMIGA
 macro_line|#  define MACH_IS_AMIGA (m68k_machtype == MACH_AMIGA)
 macro_line|#else
-DECL|macro|CONFIG_AMIGA_ONLY
-macro_line|#  define CONFIG_AMIGA_ONLY
+DECL|macro|MACH_AMIGA_ONLY
+macro_line|#  define MACH_AMIGA_ONLY
 DECL|macro|MACH_IS_AMIGA
 macro_line|#  define MACH_IS_AMIGA (1)
 DECL|macro|MACH_TYPE
@@ -43,8 +43,8 @@ macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC)
 DECL|macro|MACH_IS_ATARI
 macro_line|#  define MACH_IS_ATARI (m68k_machtype == MACH_ATARI)
 macro_line|#else
-DECL|macro|CONFIG_ATARI_ONLY
-macro_line|#  define CONFIG_ATARI_ONLY
+DECL|macro|MACH_ATARI_ONLY
+macro_line|#  define MACH_ATARI_ONLY
 DECL|macro|MACH_IS_ATARI
 macro_line|#  define MACH_IS_ATARI (1)
 DECL|macro|MACH_TYPE
@@ -153,8 +153,8 @@ macro_line|#elif defined(CONFIG_M68030) || defined(CONFIG_M68040) || defined(CON
 DECL|macro|CPU_IS_020
 macro_line|#  define CPU_IS_020 (m68k_cputype &amp; CPU_68020)
 macro_line|#else
-DECL|macro|CONFIG_M68020_ONLY
-macro_line|#  define CONFIG_M68020_ONLY
+DECL|macro|CPU_M68020_ONLY
+macro_line|#  define CPU_M68020_ONLY
 DECL|macro|CPU_IS_020
 macro_line|#  define CPU_IS_020 (1)
 macro_line|#endif
@@ -165,8 +165,8 @@ macro_line|#elif defined(CONFIG_M68020) || defined(CONFIG_M68040) || defined(CON
 DECL|macro|CPU_IS_030
 macro_line|#  define CPU_IS_030 (m68k_cputype &amp; CPU_68030)
 macro_line|#else
-DECL|macro|CONFIG_M68030_ONLY
-macro_line|#  define CONFIG_M68030_ONLY
+DECL|macro|CPU_M68030_ONLY
+macro_line|#  define CPU_M68030_ONLY
 DECL|macro|CPU_IS_030
 macro_line|#  define CPU_IS_030 (1)
 macro_line|#endif
@@ -177,8 +177,8 @@ macro_line|#elif defined(CONFIG_M68020) || defined(CONFIG_M68030) || defined(CON
 DECL|macro|CPU_IS_040
 macro_line|#  define CPU_IS_040 (m68k_cputype &amp; CPU_68040)
 macro_line|#else
-DECL|macro|CONFIG_M68040_ONLY
-macro_line|#  define CONFIG_M68040_ONLY
+DECL|macro|CPU_M68040_ONLY
+macro_line|#  define CPU_M68040_ONLY
 DECL|macro|CPU_IS_040
 macro_line|#  define CPU_IS_040 (1)
 macro_line|#endif
@@ -189,8 +189,8 @@ macro_line|#elif defined(CONFIG_M68020) || defined(CONFIG_M68030) || defined(CON
 DECL|macro|CPU_IS_060
 macro_line|#  define CPU_IS_060 (m68k_cputype &amp; CPU_68060)
 macro_line|#else
-DECL|macro|CONFIG_M68060_ONLY
-macro_line|#  define CONFIG_M68060_ONLY
+DECL|macro|CPU_M68060_ONLY
+macro_line|#  define CPU_M68060_ONLY
 DECL|macro|CPU_IS_060
 macro_line|#  define CPU_IS_060 (1)
 macro_line|#endif
@@ -198,14 +198,14 @@ macro_line|#if !defined(CONFIG_M68020) &amp;&amp; !defined(CONFIG_M68030)
 DECL|macro|CPU_IS_020_OR_030
 macro_line|#  define CPU_IS_020_OR_030 (0)
 macro_line|#else
-DECL|macro|CONFIG_M68020_OR_M68030
-macro_line|#  define CONFIG_M68020_OR_M68030
+DECL|macro|CPU_M68020_OR_M68030
+macro_line|#  define CPU_M68020_OR_M68030
 macro_line|#  if defined(CONFIG_M68040) || defined(CONFIG_M68060)
 DECL|macro|CPU_IS_020_OR_030
 macro_line|#    define CPU_IS_020_OR_030 (!m68k_is040or060)
 macro_line|#  else
-DECL|macro|CONFIG_M68020_OR_M68030_ONLY
-macro_line|#    define CONFIG_M68020_OR_M68030_ONLY
+DECL|macro|CPU_M68020_OR_M68030_ONLY
+macro_line|#    define CPU_M68020_OR_M68030_ONLY
 DECL|macro|CPU_IS_020_OR_030
 macro_line|#    define CPU_IS_020_OR_030 (1)
 macro_line|#  endif
@@ -214,14 +214,14 @@ macro_line|#if !defined(CONFIG_M68040) &amp;&amp; !defined(CONFIG_M68060)
 DECL|macro|CPU_IS_040_OR_060
 macro_line|#  define CPU_IS_040_OR_060 (0)
 macro_line|#else
-DECL|macro|CONFIG_M68040_OR_M68060
-macro_line|#  define CONFIG_M68040_OR_M68060
+DECL|macro|CPU_M68040_OR_M68060
+macro_line|#  define CPU_M68040_OR_M68060
 macro_line|#  if defined(CONFIG_M68020) || defined(CONFIG_M68030)
 DECL|macro|CPU_IS_040_OR_060
 macro_line|#    define CPU_IS_040_OR_060 (m68k_is040or060)
 macro_line|#  else
-DECL|macro|CONFIG_M68040_OR_M68060_ONLY
-macro_line|#    define CONFIG_M68040_OR_M68060_ONLY
+DECL|macro|CPU_M68040_OR_M68060_ONLY
+macro_line|#    define CPU_M68040_OR_M68060_ONLY
 DECL|macro|CPU_IS_040_OR_060
 macro_line|#    define CPU_IS_040_OR_060 (1)
 macro_line|#  endif

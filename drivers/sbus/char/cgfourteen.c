@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgfourteen.c,v 1.18 1997/03/24 17:44:27 jj Exp $&n; * cgfourteen.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * TODO:&n; *&n; * Add the ioctls for CLUT manipulation.&n; * Map only the amount requested, not a constant amount.&n; * XBGR mapping.&n; * Add the interrupt handler.&n;*/
+multiline_comment|/* $Id: cgfourteen.c,v 1.19 1997/04/14 17:04:57 jj Exp $&n; * cgfourteen.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * TODO:&n; *&n; * Add the ioctls for CLUT manipulation.&n; * Map only the amount requested, not a constant amount.&n; * XBGR mapping.&n; * Add the interrupt handler.&n;*/
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -650,7 +650,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.cg14.regs
 )paren
@@ -671,7 +672,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;base
 )paren
@@ -692,7 +694,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;base
 )paren
@@ -715,7 +718,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;base
 )paren
@@ -750,7 +754,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;base
 )paren
@@ -773,7 +778,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;base
 )paren
@@ -796,7 +802,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;base
 )paren
@@ -819,7 +826,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;base
 )paren
@@ -842,7 +850,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;base
 )paren
@@ -863,7 +872,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.cg14.cursor_regs
 )paren
@@ -887,7 +897,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.cg14.regs
 )paren
@@ -906,7 +917,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.cg14.regs
 op_plus
@@ -927,7 +939,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.cg14.regs
 op_plus
@@ -948,7 +961,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.cg14.regs
 op_plus
@@ -1822,8 +1836,7 @@ comma
 r_int
 id|con_node
 comma
-r_int
-r_int
+id|u32
 id|cg14
 comma
 r_int
@@ -1842,7 +1855,8 @@ id|bases
 l_int|2
 )braket
 suffix:semicolon
-id|uint
+r_int
+r_int
 id|cg14regs
 op_assign
 l_int|0
@@ -2056,9 +2070,6 @@ l_string|&quot;cgfourteen%d at 0x%8.8x with %d megs of RAM rev=%d, impl=%d&bslas
 comma
 id|slot
 comma
-(paren
-id|uint
-)paren
 id|cg14
 comma
 id|cg14info-&gt;ramsize

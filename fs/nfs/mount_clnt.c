@@ -101,8 +101,11 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;NFS:      nfs_mount(%08lx:%s)&bslash;n&quot;
+l_string|&quot;NFS:      nfs_mount(%08x:%s)&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|ntohl
 c_func
 (paren

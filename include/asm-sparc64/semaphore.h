@@ -2,7 +2,9 @@ macro_line|#ifndef _SPARC64_SEMAPHORE_H
 DECL|macro|_SPARC64_SEMAPHORE_H
 mdefine_line|#define _SPARC64_SEMAPHORE_H
 multiline_comment|/* These are actually reasonable on the V9. */
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 DECL|struct|semaphore
 r_struct
 id|semaphore
@@ -24,9 +26,9 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|MUTEX
-mdefine_line|#define MUTEX ((struct semaphore) { { 1 }, { 0 }, NULL })
+mdefine_line|#define MUTEX ((struct semaphore) { ATOMIC_INIT(1), ATOMIC_INIT(0), NULL })
 DECL|macro|MUTEX_LOCKED
-mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { { 0 }, { 0 }, NULL })
+mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { ATOMIC_INIT(0), ATOMIC_INIT(0), NULL })
 r_extern
 r_void
 id|__down
@@ -62,6 +64,76 @@ id|sem
 suffix:semicolon
 DECL|macro|sema_init
 mdefine_line|#define sema_init(sem, val)&t;atomic_set(&amp;((sem)-&gt;count), val)
+DECL|macro|wake_one_more
+mdefine_line|#define wake_one_more(sem)      atomic_inc(&amp;sem-&gt;waking);
+DECL|function|waking_non_zero
+r_extern
+id|__inline__
+r_int
+id|waking_non_zero
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|sem-&gt;waking
+)paren
+OG
+l_int|0
+)paren
+(brace
+id|atomic_dec
+c_func
+(paren
+op_amp
+id|sem-&gt;waking
+)paren
+suffix:semicolon
+id|ret
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
 DECL|function|down
 r_extern
 id|__inline__
@@ -168,5 +240,6 @@ id|sem
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* !(_SPARC64_SEMAPHORE_H) */
 eof

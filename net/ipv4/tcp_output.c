@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.34 1997/04/12 04:32:33 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.35 1997/04/16 09:18:53 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&t;Pedro Roque&t;:&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;:&t;Fragmentation on mtu decrease&n; *&t;&t;&t;&t;:&t;Segment collapse on retransmit&n; *&t;&t;&t;&t;:&t;AF independence&n; *&n; *&t;&t;Linus Torvalds&t;:&t;send_delayed_ack&n; *&t;&t;David S. Miller&t;:&t;Charge memory using the right skb&n; *&t;&t;&t;&t;&t;during syn/ack processing.&n; *&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 multiline_comment|/*&n; *&t;Get rid of any delayed acks, we sent one already..&n; */
@@ -138,12 +138,7 @@ op_rshift
 l_int|1
 )paren
 op_logical_and
-id|atomic_read
-c_func
-(paren
-op_amp
 id|sk-&gt;packets_out
-)paren
 )paren
 (brace
 id|nagle_check
@@ -155,12 +150,7 @@ r_return
 (paren
 id|nagle_check
 op_logical_and
-id|atomic_read
-c_func
-(paren
-op_amp
 id|sk-&gt;packets_out
-)paren
 OL
 id|tp-&gt;snd_cwnd
 op_logical_and
@@ -443,12 +433,8 @@ id|tp-&gt;snd_nxt
 op_assign
 id|skb-&gt;end_seq
 suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|sk-&gt;packets_out
-)paren
+op_increment
 suffix:semicolon
 id|skb-&gt;when
 op_assign
@@ -508,12 +494,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|atomic_read
-c_func
-(paren
-op_amp
 id|sk-&gt;packets_out
-)paren
 op_eq
 l_int|0
 op_logical_and
@@ -1021,12 +1002,8 @@ id|tp-&gt;send_head
 op_assign
 id|skb
 suffix:semicolon
-id|atomic_dec
-c_func
-(paren
-op_amp
 id|sk-&gt;packets_out
-)paren
+op_decrement
 suffix:semicolon
 r_return
 op_minus
@@ -1294,12 +1271,8 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|sk-&gt;packets_out
-)paren
+op_increment
 suffix:semicolon
 id|skb_set_owner_w
 c_func
@@ -1744,12 +1717,8 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
-id|atomic_dec
-c_func
-(paren
-op_amp
 id|sk-&gt;packets_out
-)paren
+op_decrement
 suffix:semicolon
 multiline_comment|/* &n;&t; *&t;Header checksum will be set by the retransmit procedure&n;&t; *&t;after calling rebuild header&n;&t; */
 id|th1-&gt;check
@@ -1932,12 +1901,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|sk-&gt;packets_out
-)paren
+op_increment
 suffix:semicolon
 )brace
 r_if
@@ -2452,12 +2417,8 @@ id|sk_buff
 op_star
 id|skb1
 suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|sk-&gt;packets_out
-)paren
+op_increment
 suffix:semicolon
 id|tp-&gt;snd_nxt
 op_assign
@@ -2842,12 +2803,8 @@ comma
 id|sk
 )paren
 suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|sk-&gt;packets_out
-)paren
+op_increment
 suffix:semicolon
 id|skb-&gt;when
 op_assign
@@ -3405,12 +3362,8 @@ comma
 id|sk
 )paren
 suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|sk-&gt;packets_out
-)paren
+op_increment
 suffix:semicolon
 id|clear_delayed_acks
 c_func

@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * linux/atari/atakeyb.c&n; *&n; * Atari Keyboard driver for 680x0 Linux&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/*&n; * Atari support by Robert de Vries&n; * enhanced by Bjoern Brauel and Roman Hodek&n; */
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/keyboard.h&gt;
@@ -69,6 +70,47 @@ id|atari_mouse_interrupt_hook
 r_char
 op_star
 )paren
+suffix:semicolon
+multiline_comment|/* variables for IKBD self test: */
+multiline_comment|/* state: 0: off; &gt;0: in progress; &gt;1: 0xf1 received */
+DECL|variable|ikbd_self_test
+r_static
+r_volatile
+r_int
+id|ikbd_self_test
+suffix:semicolon
+multiline_comment|/* timestamp when last received a char */
+DECL|variable|self_test_last_rcv
+r_static
+r_volatile
+r_int
+r_int
+id|self_test_last_rcv
+suffix:semicolon
+multiline_comment|/* bitmap of keys reported as broken */
+DECL|variable|broken_keys
+r_static
+r_int
+r_int
+id|broken_keys
+(braket
+l_int|128
+op_div
+(paren
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+op_star
+l_int|8
+)paren
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 DECL|macro|BREAK_MASK
 mdefine_line|#define BREAK_MASK&t;(0x80)
@@ -2470,6 +2512,7 @@ multiline_comment|/* ...happens often if interrupts were disabled for too long *
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Keyboard overrun&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2489,6 +2532,16 @@ id|rep_scancode
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ikbd_self_test
+)paren
+multiline_comment|/* During self test, don&squot;t do resyncing, just process the code */
+r_goto
+id|interpret_scancode
+suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -2640,6 +2693,27 @@ id|scancode
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+l_int|0xF1
+suffix:colon
+multiline_comment|/* during self-test, note that 0xf1 received */
+r_if
+c_cond
+(paren
+id|ikbd_self_test
+)paren
+(brace
+op_increment
+id|ikbd_self_test
+suffix:semicolon
+id|self_test_last_rcv
+op_assign
+id|jiffies
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* FALL THROUGH */
 r_default
 suffix:colon
 id|break_flag
@@ -2652,6 +2726,131 @@ id|scancode
 op_and_assign
 op_complement
 id|BREAK_MASK
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ikbd_self_test
+)paren
+(brace
+multiline_comment|/* Scancodes sent during the self-test stand for broken&n;&t;&t;     * keys (keys being down). The code *should* be a break&n;&t;&t;     * code, but nevertheless some AT keyboard interfaces send&n;&t;&t;     * make codes instead. Therefore, simply ignore&n;&t;&t;     * break_flag...&n;&t;&t;     * */
+r_int
+id|keyval
+op_assign
+id|ataplain_map
+(braket
+id|scancode
+)braket
+comma
+id|keytyp
+suffix:semicolon
+id|set_bit
+c_func
+(paren
+id|scancode
+comma
+id|broken_keys
+)paren
+suffix:semicolon
+id|self_test_last_rcv
+op_assign
+id|jiffies
+suffix:semicolon
+id|keyval
+op_assign
+id|ataplain_map
+(braket
+id|scancode
+)braket
+suffix:semicolon
+id|keytyp
+op_assign
+id|KTYP
+c_func
+(paren
+id|keyval
+)paren
+op_minus
+l_int|0xf0
+suffix:semicolon
+id|keyval
+op_assign
+id|KVAL
+c_func
+(paren
+id|keyval
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;Key with scancode %d &quot;
+comma
+id|scancode
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|keytyp
+op_eq
+id|KT_LATIN
+op_logical_or
+id|keytyp
+op_eq
+id|KT_LETTER
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|keyval
+OL
+l_char|&squot; &squot;
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;(&squot;^%c&squot;) &quot;
+comma
+id|keyval
+op_plus
+l_char|&squot;@&squot;
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;(&squot;%c&squot;) &quot;
+comma
+id|keyval
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;is broken -- will be ignored.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|test_bit
+c_func
+(paren
+id|scancode
+comma
+id|broken_keys
+)paren
+)paren
+r_break
 suffix:semicolon
 r_if
 c_cond
@@ -4254,10 +4453,56 @@ c_func
 id|IRQ_MFP_ACIA
 )paren
 suffix:semicolon
+id|ikbd_self_test
+op_assign
+l_int|1
+suffix:semicolon
 id|ikbd_reset
 c_func
 (paren
 )paren
+suffix:semicolon
+multiline_comment|/* wait for a period of inactivity (here: 0.25s), then assume the IKBD&squot;s&n;     * self-test is finished */
+id|self_test_last_rcv
+op_assign
+id|jiffies
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|jiffies
+OL
+id|self_test_last_rcv
+op_plus
+id|HZ
+op_div
+l_int|4
+)paren
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* if not incremented: no 0xf1 received */
+r_if
+c_cond
+(paren
+id|ikbd_self_test
+op_eq
+l_int|1
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;WARNING: keyboard self test failed!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ikbd_self_test
+op_assign
+l_int|0
 suffix:semicolon
 id|ikbd_mouse_disable
 c_func

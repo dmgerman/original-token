@@ -11,11 +11,15 @@ macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
+macro_line|#include &lt;asm/fpu.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
+macro_line|#ifdef CONFIG_KGDB
+macro_line|#include &lt;asm/kgdb.h&gt;
+macro_line|#endif
 multiline_comment|/* assembler routines */
 id|asmlinkage
 r_void
@@ -729,13 +733,9 @@ id|console_loglevel
 op_assign
 l_int|15
 suffix:semicolon
-id|mach_debug_init
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|variable|vec_names
+r_static
 r_char
 op_star
 id|vec_names
@@ -855,10 +855,11 @@ l_string|&quot;FPCP SNAN&quot;
 comma
 l_string|&quot;FPCP UNSUPPORTED OPERATION&quot;
 comma
-l_string|&quot;MMU CONFIGUATION ERROR&quot;
+l_string|&quot;MMU CONFIGURATION ERROR&quot;
 )brace
 suffix:semicolon
 DECL|variable|space_names
+r_static
 r_char
 op_star
 id|space_names
@@ -883,7 +884,6 @@ comma
 l_string|&quot;CPU&quot;
 )brace
 suffix:semicolon
-r_extern
 r_void
 id|die_if_kernel
 c_func
@@ -954,7 +954,7 @@ c_func
 (paren
 l_string|&quot;fslw=%#lx, fa=%#lx&bslash;n&quot;
 comma
-id|ssw
+id|fslw
 comma
 id|fp-&gt;un.fmt4.effaddr
 )paren
@@ -985,11 +985,20 @@ multiline_comment|/* return if there&squot;s no other error */
 r_if
 c_cond
 (paren
+(paren
 op_logical_neg
 (paren
 id|fslw
 op_amp
 id|MMU060_ERR_BITS
+)paren
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|fslw
+op_amp
+id|MMU060_SEE
 )paren
 )paren
 r_return
@@ -1083,7 +1092,39 @@ id|errorcode
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|fslw
+op_amp
+(paren
+id|MMU060_SEE
+)paren
+)paren
 (brace
+multiline_comment|/* Software Emulation Error. Probably an instruction&n;&t;&t; * using an unsupported addressing mode&n;&t;&t; */
+id|send_sig
+(paren
+id|SIGSEGV
+comma
+id|current
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;pc=%#lx, fa=%#lx&bslash;n&quot;
+comma
+id|fp-&gt;ptregs.pc
+comma
+id|fp-&gt;un.fmt4.effaddr
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1594,7 +1635,7 @@ id|fp
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_M68040 */
-macro_line|#if defined(CONFIG_M68020_OR_M68030)
+macro_line|#if defined(CPU_M68020_OR_M68030)
 DECL|function|bus_error030
 r_static
 r_inline
@@ -2835,7 +2876,7 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_M68020_OR_M68030 */
+macro_line|#endif /* CPU_M68020_OR_M68030 */
 DECL|function|buserr_c
 id|asmlinkage
 r_void
@@ -2908,7 +2949,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined (CONFIG_M68020_OR_M68030)
+macro_line|#if defined (CPU_M68020_OR_M68030)
 r_case
 l_int|0xa
 suffix:colon
@@ -2975,6 +3016,16 @@ op_star
 id|fp
 )paren
 (brace
+macro_line|#ifdef CONFIG_KGDB
+multiline_comment|/* This will never return to here, if kgdb has been initialized. And if&n;&t; * it returns from there, then to where the error happened... */
+id|enter_kgdb
+c_func
+(paren
+op_amp
+id|fp-&gt;ptregs
+)paren
+suffix:semicolon
+macro_line|#else
 r_int
 r_int
 op_star
@@ -3506,6 +3557,7 @@ id|printk
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|bad_super_trap
 r_void
@@ -3517,6 +3569,16 @@ op_star
 id|fp
 )paren
 (brace
+macro_line|#ifdef CONFIG_KGDB
+multiline_comment|/* Save the register dump if we&squot;ll enter kgdb anyways */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|kgdb_initialized
+)paren
+(brace
+macro_line|#endif
 id|console_verbose
 c_func
 (paren
@@ -3689,6 +3751,9 @@ comma
 id|current-&gt;pid
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_KGDB
+)brace
+macro_line|#endif
 id|die_if_kernel
 c_func
 (paren
@@ -3918,7 +3983,7 @@ r_int
 r_char
 id|fstate
 (braket
-l_int|216
+id|FPSTATESIZE
 )braket
 suffix:semicolon
 id|__asm__
@@ -4075,6 +4140,16 @@ id|PS_S
 )paren
 r_return
 suffix:semicolon
+macro_line|#ifdef CONFIG_KGDB
+multiline_comment|/* Save the register dump if we&squot;ll enter kgdb anyways */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|kgdb_initialized
+)paren
+(brace
+macro_line|#endif
 id|console_verbose
 c_func
 (paren
@@ -4093,7 +4168,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PC: %08lx&bslash;nSR: %04x  SP: %p&bslash;n&quot;
+l_string|&quot;PC: [&lt;%08lx&gt;]&bslash;nSR: %04x  SP: %p&bslash;n&quot;
 comma
 id|fp-&gt;pc
 comma
@@ -4161,6 +4236,9 @@ comma
 id|current-&gt;kernel_stack_page
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_KGDB
+)brace
+macro_line|#endif
 id|dump_stack
 c_func
 (paren
@@ -4172,6 +4250,23 @@ op_star
 id|fp
 )paren
 suffix:semicolon
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * This function is called if an error occur while accessing&n; * user-space from the fpsp040 code.&n; */
+DECL|function|fpsp040_die
+id|asmlinkage
+r_void
+id|fpsp040_die
+c_func
+(paren
+r_void
+)paren
+(brace
 id|do_exit
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: leo.c,v 1.14 1997/04/10 17:06:09 jj Exp $&n; * leo.c: SUNW,leo 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Michal Rehacek (Michal.Rehacek@st.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: leo.c,v 1.15 1997/04/14 17:04:54 jj Exp $&n; * leo.c: SUNW,leo 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Michal Rehacek (Michal.Rehacek@st.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -514,7 +514,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;base
 )paren
@@ -533,7 +534,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.leo.lc_ss0_usr
 )paren
@@ -552,7 +554,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.leo.ld_ss0
 )paren
@@ -571,7 +574,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.leo.cursor
 )paren
@@ -605,7 +609,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.leo.lc_ss1_usr
 )paren
@@ -624,7 +629,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.leo.ld_ss1
 )paren
@@ -658,7 +664,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.leo.lx_krn
 )paren
@@ -677,7 +684,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.leo.lc_ss0_krn
 )paren
@@ -696,7 +704,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.leo.lc_ss1_krn
 )paren
@@ -715,7 +724,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.leo.ld_gbl
 )paren
@@ -2971,8 +2981,7 @@ comma
 r_int
 id|slot
 comma
-r_int
-r_int
+id|u32
 id|leo
 comma
 r_int
@@ -3002,9 +3011,6 @@ l_string|&quot;leo%d at 0x%8.8x &quot;
 comma
 id|slot
 comma
-(paren
-id|uint
-)paren
 id|leo
 )paren
 suffix:semicolon
@@ -3115,14 +3121,9 @@ op_assign
 id|sparc_alloc_io
 c_func
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|leo
 op_plus
 id|LEO_OFF_LC_SS0_KRN
-)paren
 comma
 l_int|0
 comma
@@ -3140,14 +3141,9 @@ op_assign
 id|sparc_alloc_io
 c_func
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|leo
 op_plus
 id|LEO_OFF_LC_SS0_USR
-)paren
 comma
 l_int|0
 comma
@@ -3165,14 +3161,9 @@ op_assign
 id|sparc_alloc_io
 c_func
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|leo
 op_plus
 id|LEO_OFF_LC_SS1_KRN
-)paren
 comma
 l_int|0
 comma
@@ -3190,14 +3181,9 @@ op_assign
 id|sparc_alloc_io
 c_func
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|leo
 op_plus
 id|LEO_OFF_LC_SS1_USR
-)paren
 comma
 l_int|0
 comma
@@ -3215,14 +3201,9 @@ op_assign
 id|sparc_alloc_io
 c_func
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|leo
 op_plus
 id|LEO_OFF_LD_SS0
-)paren
 comma
 l_int|0
 comma
@@ -3240,14 +3221,9 @@ op_assign
 id|sparc_alloc_io
 c_func
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|leo
 op_plus
 id|LEO_OFF_LD_SS1
-)paren
 comma
 l_int|0
 comma
@@ -3265,14 +3241,9 @@ op_assign
 id|sparc_alloc_io
 c_func
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|leo
 op_plus
 id|LEO_OFF_LD_GBL
-)paren
 comma
 l_int|0
 comma
@@ -3290,14 +3261,9 @@ op_assign
 id|sparc_alloc_io
 c_func
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|leo
 op_plus
 id|LEO_OFF_LX_KRN
-)paren
 comma
 l_int|0
 comma
@@ -3315,14 +3281,9 @@ op_assign
 id|sparc_alloc_io
 c_func
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|leo
 op_plus
 id|LEO_OFF_LX_CURSOR
-)paren
 comma
 l_int|0
 comma
@@ -3347,14 +3308,9 @@ r_int
 id|sparc_alloc_io
 c_func
 (paren
-(paren
-id|u32
-)paren
-(paren
 id|leo
 op_plus
 id|LEO_OFF_SS0
-)paren
 comma
 l_int|0
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&t;FIB front-end.&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: route.c,v 1.10 1997/04/12 04:32:57 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&t;FIB front-end.&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: route.c,v 1.11 1997/04/16 05:58:05 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -102,8 +102,16 @@ op_assign
 l_int|NULL
 comma
 id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 comma
 id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 comma
 l_int|NULL
 comma
@@ -300,6 +308,10 @@ id|atomic_t
 id|rt6_tbl_lock
 op_assign
 id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 DECL|variable|rt6_bh_mask
 r_static

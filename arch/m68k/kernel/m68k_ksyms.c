@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -10,6 +11,8 @@ macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
+macro_line|#include &lt;asm/checksum.h&gt;
+macro_line|#include &lt;asm/hardirq.h&gt;
 id|asmlinkage
 r_int
 r_int
@@ -128,20 +131,6 @@ c_func
 id|m68k_debug_device
 )paren
 suffix:semicolon
-DECL|variable|request_irq
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|request_irq
-)paren
-suffix:semicolon
-DECL|variable|free_irq
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|free_irq
-)paren
-suffix:semicolon
 DECL|variable|dump_fpu
 id|EXPORT_SYMBOL
 c_func
@@ -175,6 +164,21 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|strstr
+)paren
+suffix:semicolon
+DECL|variable|local_irq_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|local_irq_count
+)paren
+suffix:semicolon
+multiline_comment|/* Networking helper routines. */
+DECL|variable|csum_partial_copy
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|csum_partial_copy
 )paren
 suffix:semicolon
 multiline_comment|/* The following are special because they&squot;re not called&n;   explicitly (the C compiler generates them).  Fortunately,&n;   their interface isn&squot;t gonna change any time soon now, so&n;   it&squot;s OK to leave it out of version control.  */

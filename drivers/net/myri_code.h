@@ -9,7 +9,7 @@ op_assign
 l_int|0x0000
 suffix:semicolon
 multiline_comment|/* half-word offset */
-DECL|variable|lanai4_code
+DECL|variable|__initdata
 r_static
 r_int
 r_char
@@ -17,6 +17,7 @@ id|lanai4_code
 (braket
 l_int|76256
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0xF2
@@ -152543,7 +152544,7 @@ op_assign
 l_int|0x94F0
 suffix:semicolon
 multiline_comment|/* half-word offset */
-DECL|variable|lanai4_data
+DECL|variable|__initdata
 r_static
 r_int
 r_char
@@ -152551,6 +152552,7 @@ id|lanai4_data
 (braket
 l_int|20472
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x00

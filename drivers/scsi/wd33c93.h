@@ -1,7 +1,26 @@
-multiline_comment|/*&n; *    wd33c93.h -  Linux device driver definitions for the&n; *                 Commodore Amiga A2091/590 SCSI controller card&n; *&n; *    IMPORTANT: This file is for version 1.23 - 04/Nov/1996&n; *&n; * Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; *    john@geolog.com&n; *    jshiffle@netcom.com&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; */
+multiline_comment|/*&n; *    wd33c93.h -  Linux device driver definitions for the&n; *                 Commodore Amiga A2091/590 SCSI controller card&n; *&n; *    IMPORTANT: This file is for version 1.24 - 29/Jan/1997&n; *&n; * Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; *    john@geolog.com&n; *    jshiffle@netcom.com&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; */
 macro_line|#ifndef WD33C93_H
 DECL|macro|WD33C93_H
 mdefine_line|#define WD33C93_H
+DECL|macro|PROC_INTERFACE
+mdefine_line|#define PROC_INTERFACE     /* add code for /proc/scsi/wd33c93/xxx interface */
+macro_line|#ifdef  PROC_INTERFACE
+DECL|macro|PROC_STATISTICS
+mdefine_line|#define PROC_STATISTICS    /* add code for keeping various real time stats */
+macro_line|#endif
+DECL|macro|SYNC_DEBUG
+mdefine_line|#define SYNC_DEBUG         /* extra info on sync negotiation printed */
+DECL|macro|DEBUGGING_ON
+mdefine_line|#define DEBUGGING_ON       /* enable command-line debugging bitmask */
+DECL|macro|DEBUG_DEFAULTS
+mdefine_line|#define DEBUG_DEFAULTS 0   /* default debugging bitmask */
+macro_line|#ifdef DEBUGGING_ON
+DECL|macro|DB
+mdefine_line|#define DB(f,a) if (hostdata-&gt;args &amp; (f)) a;
+macro_line|#else
+DECL|macro|DB
+mdefine_line|#define DB(f,a)
+macro_line|#endif
 DECL|macro|uchar
 mdefine_line|#define uchar unsigned char
 multiline_comment|/* wd register names */
@@ -511,11 +530,13 @@ id|uchar
 id|no_dma
 suffix:semicolon
 multiline_comment|/* set this flag to disable DMA */
+macro_line|#ifdef PROC_INTERFACE
 DECL|member|proc
 id|uchar
 id|proc
 suffix:semicolon
 multiline_comment|/* bitmask: what&squot;s in proc output */
+macro_line|#ifdef PROC_STATISTICS
 DECL|member|cmd_cnt
 r_int
 r_int
@@ -561,6 +582,8 @@ l_int|8
 )braket
 suffix:semicolon
 multiline_comment|/* # of disconnects done per target*/
+macro_line|#endif
+macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/* defines for hostdata-&gt;chip */

@@ -3008,10 +3008,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Walking the process table needs locks */
-id|lock_kernel
+id|read_lock
 c_func
 (paren
+op_amp
+id|tasklist_lock
 )paren
 suffix:semicolon
 id|for_each_task
@@ -3044,9 +3045,11 @@ id|ESRCH
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
+id|read_unlock
 c_func
 (paren
+op_amp
+id|tasklist_lock
 )paren
 suffix:semicolon
 )brace
@@ -3074,9 +3077,11 @@ op_assign
 op_minus
 id|EPERM
 suffix:semicolon
-id|lock_kernel
+id|read_lock
 c_func
 (paren
+op_amp
+id|tasklist_lock
 )paren
 suffix:semicolon
 id|for_each_task
@@ -3120,9 +3125,11 @@ id|current-&gt;pgrp
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
+id|read_unlock
 c_func
 (paren
+op_amp
+id|tasklist_lock
 )paren
 suffix:semicolon
 r_return

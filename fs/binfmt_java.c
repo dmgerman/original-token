@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|_PATH_JAVA
 mdefine_line|#define _PATH_JAVA&t;&quot;/usr/bin/java&quot;
 DECL|macro|_PATH_APPLET
@@ -634,12 +635,16 @@ l_int|NULL
 macro_line|#endif
 )brace
 suffix:semicolon
-DECL|function|init_java_binfmt
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|init_java_binfmt
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|register_binfmt

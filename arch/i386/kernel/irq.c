@@ -297,6 +297,9 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This builds up the IRQ handler stubs using some ugly macros in irq.h&n; *&n; * These macros create the low-level assembly IRQ routines that do all&n; * the operations that are needed to keep the AT interrupt-controller&n; * happy. They are also written to be fast - and to disable interrupts&n; * as little as humanly possible.&n; *&n; * NOTE! These macros expand to three different handlers for each line: one&n; * complete handler that does all the fancy stuff (including signal handling),&n; * and one fast handler that is meant for simple IRQ&squot;s that want to be&n; * atomic. The specific handler is chosen depending on the SA_INTERRUPT&n; * flag when installing a handler. Finally, one &quot;bad interrupt&quot; handler, that&n; * is used when no handler is present.&n; *&n; * The timer interrupt is handled specially to insure that the jiffies&n; * variable is updated at all times.  Specifically, the timer interrupt is&n; * just like the complete handlers except that it is invoked with interrupts&n; * disabled and should never re-enable them.  If other interrupts were&n; * allowed to be processed while the timer interrupt is active, then the&n; * other interrupts would have to avoid using the jiffies variable for delay&n; * and interval timing operations to avoid hanging the system.&n; */
+macro_line|#if NR_IRQS != 16
+macro_line|#error make irq stub building NR_IRQS dependent and remove me.
+macro_line|#endif
 id|BUILD_TIMER_IRQ
 c_func
 (paren
@@ -789,7 +792,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|16
+id|NR_IRQS
 suffix:semicolon
 id|i
 op_increment
@@ -3224,7 +3227,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|16
+id|NR_IRQS
 suffix:semicolon
 id|i
 op_increment
@@ -3242,9 +3245,9 @@ id|i
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * This bit is a hack because we don&squot;t send timer messages to all&n;&t; * processors yet. It has to be here .. it doesn&squot;t work if you put&n;&t; * it down the bottom - assembler explodes 8)&n;&t; */
 macro_line|#ifdef __SMP__&t;
 multiline_comment|/*&n;&t; * NOTE! The local APIC isn&squot;t very good at handling&n;&t; * multiple interrupts at the same interrupt level.&n;&t; * As the interrupt level is determined by taking the&n;&t; * vector number and shifting that right by 4, we&n;&t; * want to spread these out a bit so that they don&squot;t&n;&t; * all fall in the same interrupt level&n;&t; */
+multiline_comment|/*&n;&t; * The reschedule interrupt slowly changes it&squot;s functionality,&n;&t; * while so far it was a kind of broadcasted timer interrupt,&n;&t; * in the future it should become a CPU-to-CPU rescheduling IPI,&n;&t; * driven by schedule() ?&n;&t; *&n;&t; * [ It has to be here .. it doesn&squot;t work if you put&n;&t; *   it down the bottom - assembler explodes 8) ]&n;&t; */
 multiline_comment|/* IRQ &squot;16&squot; (trap 0x30) - IPI for rescheduling */
 id|set_intr_gate
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: parport_share.c,v 1.1.2.4 1997/04/01 18:19:11 phil Exp $&n; * Parallel-port resource manager code.&n; * &n; * Authors: David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Tim Waugh &lt;tmw20@cam.ac.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
+multiline_comment|/* $Id: parport_share.c,v 1.3.2.5 1997/04/16 21:20:44 phil Exp $&n; * Parallel-port resource manager code.&n; * &n; * Authors: David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Tim Waugh &lt;tmw20@cam.ac.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -9,6 +9,8 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+DECL|macro|PARPORT_PARANOID
+macro_line|#undef PARPORT_PARANOID
 macro_line|#include &quot;parport_ll_io.h&quot;
 DECL|variable|portlist
 DECL|variable|portlist_tail
@@ -72,7 +74,6 @@ id|portlist
 suffix:semicolon
 )brace
 DECL|function|parport_null_intr_func
-r_static
 r_void
 id|parport_null_intr_func
 c_func
@@ -368,8 +369,7 @@ r_new
 dot
 id|irq
 op_ne
-op_minus
-l_int|1
+id|PARPORT_IRQ_NONE
 )paren
 (brace
 r_if
@@ -937,8 +937,7 @@ c_cond
 (paren
 id|port-&gt;irq
 op_ne
-op_minus
-l_int|1
+id|PARPORT_IRQ_NONE
 )paren
 (brace
 r_if
@@ -1318,6 +1317,13 @@ c_func
 id|dev-&gt;port
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;port-&gt;modes
+op_amp
+id|PARPORT_MODE_SPP
+)paren
 id|dev-&gt;port-&gt;cad-&gt;ctr
 op_assign
 id|dev-&gt;port-&gt;ctr
@@ -1432,6 +1438,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|dev-&gt;port-&gt;modes
+op_amp
+id|PARPORT_MODE_SPP
+)paren
+r_if
+c_cond
+(paren
 id|dev-&gt;ctr
 op_ne
 id|dev-&gt;port-&gt;ctr
@@ -1509,6 +1522,13 @@ c_func
 id|dev-&gt;port
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;port-&gt;modes
+op_amp
+id|PARPORT_MODE_SPP
+)paren
 id|dev-&gt;ctr
 op_assign
 id|dev-&gt;port-&gt;ctr
@@ -1686,9 +1706,11 @@ op_member_access_from_pointer
 r_private
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
+macro_line|#ifdef PARPORT_PARANOID
+r_else
+(brace
+multiline_comment|/* can&squot;t happen */
 id|printk
 c_func
 (paren
@@ -1701,8 +1723,10 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
-multiline_comment|/* The following read funktions are an implementation of a status readback&n; * and device id request confirming to IEEE1284-1994.&n; */
+)brace
+multiline_comment|/* The following read funktions are an implementation of a status readback&n; * and device id request confirming to IEEE1284-1994.&n; *&n; * These probably ought to go in some seperate file, so people like the SPARC&n; * don&squot;t have to pull them in.&n; */
 multiline_comment|/* Wait for Status line(s) to change in 35 ms - see IEEE1284-1994 page 24 to&n; * 25 for this. After this time we can create a timeout because the&n; * peripheral doesn&squot;t conform to IEEE1284. We want to save CPU time: we are&n; * waiting a maximum time of 500 us busy (this is for speed). If there is&n; * not the right answer in this time, we call schedule and other processes&n; * are able &quot;to eat&quot; the time up to 30ms.  So the maximum load avarage can&squot;t&n; * get above 5% for a read even if the peripheral is really slow. (but your&n; * read gets very slow then - only about 10 characters per second. This&n; * should be tuneable). Thanks to Andreas who pointed me to this and ordered&n; * the documentation.&n; */
 DECL|function|parport_wait_peripheral
 r_int

@@ -520,6 +520,7 @@ op_decrement
 id|initrd_users
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -1263,7 +1264,11 @@ c_cond
 (paren
 id|ext2sb-&gt;s_magic
 op_eq
+id|cpu_to_le16
+c_func
+(paren
 id|EXT2_SUPER_MAGIC
+)paren
 )paren
 (brace
 id|printk
@@ -1277,7 +1282,11 @@ id|start_block
 suffix:semicolon
 id|nblocks
 op_assign
+id|le32_to_cpu
+c_func
+(paren
 id|ext2sb-&gt;s_blocks_count
+)paren
 suffix:semicolon
 r_goto
 id|done

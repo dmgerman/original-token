@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|error_buf
 r_static
 r_char
@@ -3621,12 +3622,16 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|init_ext2_fs
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|init_ext2_fs
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

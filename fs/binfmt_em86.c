@@ -366,7 +366,7 @@ macro_line|#else
 l_int|NULL
 comma
 op_amp
-id|mod_use_count_
+id|__this_module
 comma
 id|load_em86
 comma
@@ -376,12 +376,16 @@ l_int|NULL
 macro_line|#endif
 )brace
 suffix:semicolon
-DECL|function|init_em86_binfmt
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|init_em86_binfmt
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

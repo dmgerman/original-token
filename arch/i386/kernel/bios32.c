@@ -3090,7 +3090,7 @@ l_int|0x00
 op_logical_and
 id|inb
 (paren
-l_int|0xCFC
+l_int|0xCFB
 )paren
 op_eq
 l_int|0x00

@@ -1658,13 +1658,6 @@ id|task_struct
 op_star
 id|child
 suffix:semicolon
-r_struct
-id|user
-op_star
-id|dummy
-op_assign
-l_int|NULL
-suffix:semicolon
 r_int
 id|ret
 suffix:semicolon

@@ -283,6 +283,10 @@ id|atomic_t
 id|fib_users
 op_assign
 id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 DECL|function|fib_lock
 r_static

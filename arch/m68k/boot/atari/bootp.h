@@ -126,7 +126,7 @@ id|kname
 )paren
 suffix:semicolon
 r_int
-id|kread
+id|ll_read
 c_func
 (paren
 r_int
@@ -141,7 +141,7 @@ id|cnt
 )paren
 suffix:semicolon
 r_int
-id|klseek
+id|ll_lseek
 c_func
 (paren
 r_int
@@ -155,7 +155,7 @@ id|whence
 )paren
 suffix:semicolon
 r_int
-id|kclose
+id|ll_close
 c_func
 (paren
 r_int

@@ -327,8 +327,11 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: request from %08lx&bslash;n&quot;
+l_string|&quot;lockd: request from %08x&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|ntohl
 c_func
 (paren

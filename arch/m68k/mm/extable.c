@@ -196,7 +196,7 @@ c_func
 (paren
 id|mp-&gt;ex_table_start
 comma
-id|mp-&gt;ex_table_stop
+id|mp-&gt;ex_table_end
 op_minus
 l_int|1
 comma

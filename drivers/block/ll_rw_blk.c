@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
@@ -2757,12 +2758,16 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|function|blk_dev_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|blk_dev_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct

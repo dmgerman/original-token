@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: atomic.h,v 1.13 1997/04/14 06:56:57 davem Exp $&n; * atomic.h: Thankfully the V9 is at least reasonable for this&n; *           stuff.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: atomic.h,v 1.14 1997/04/16 05:57:06 davem Exp $&n; * atomic.h: Thankfully the V9 is at least reasonable for this&n; *           stuff.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ARCH_SPARC64_ATOMIC__
 DECL|macro|__ARCH_SPARC64_ATOMIC__
 mdefine_line|#define __ARCH_SPARC64_ATOMIC__
@@ -17,7 +17,7 @@ suffix:semicolon
 id|atomic_t
 suffix:semicolon
 DECL|macro|ATOMIC_INIT
-mdefine_line|#define ATOMIC_INIT&t;{ 0 }
+mdefine_line|#define ATOMIC_INIT(i)&t;{ (i) }
 DECL|macro|atomic_read
 mdefine_line|#define atomic_read(v)&t;&t;((v)-&gt;counter)
 DECL|macro|atomic_set

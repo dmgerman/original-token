@@ -15,7 +15,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
-macro_line|#include &lt;asm/zorro.h&gt;
+macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;ariadne.h&quot;
@@ -1612,7 +1612,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: %d packets missed&bslash;n&quot;
+l_string|&quot;%s: %lu packets missed&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

@@ -18,6 +18,9 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
+macro_line|#ifdef CONFIG_KGDB
+macro_line|#include &lt;asm/kgdb.h&gt;
+macro_line|#endif
 DECL|variable|atari_mch_cookie
 id|u_long
 id|atari_mch_cookie
@@ -26,6 +29,12 @@ DECL|variable|atari_hw_present
 r_struct
 id|atari_hw_present
 id|atari_hw_present
+suffix:semicolon
+r_extern
+r_char
+id|m68k_debug_device
+(braket
+)braket
 suffix:semicolon
 r_static
 r_void
@@ -121,7 +130,7 @@ id|dev_id
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|atari_free_irq
 (paren
 r_int
@@ -314,13 +323,6 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
-r_static
-r_void
-id|atari_waitbut
-(paren
-r_void
-)paren
-suffix:semicolon
 r_extern
 r_struct
 id|consw
@@ -340,6 +342,7 @@ suffix:semicolon
 r_static
 r_void
 id|atari_debug_init
+c_func
 (paren
 r_void
 )paren
@@ -356,13 +359,18 @@ r_int
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|atari_syms_export
-c_func
-(paren
-r_void
-)paren
+DECL|variable|atari_console_driver
+r_static
+r_struct
+id|console
+id|atari_console_driver
+suffix:semicolon
+multiline_comment|/* Can be set somewhere, if a SCC master reset has already be done and should&n; * not be repeated; used by kgdb */
+DECL|variable|atari_SCC_reset_done
+r_int
+id|atari_SCC_reset_done
+op_assign
+l_int|0
 suffix:semicolon
 r_extern
 r_void
@@ -853,6 +861,11 @@ id|atari_hw_present
 )paren
 )paren
 suffix:semicolon
+id|atari_debug_init
+c_func
+(paren
+)paren
+suffix:semicolon
 id|mach_sched_init
 op_assign
 id|atari_sched_init
@@ -881,11 +894,11 @@ id|mach_free_irq
 op_assign
 id|atari_free_irq
 suffix:semicolon
-id|mach_enable_irq
+id|enable_irq
 op_assign
 id|atari_enable_irq
 suffix:semicolon
-id|mach_disable_irq
+id|disable_irq
 op_assign
 id|atari_disable_irq
 suffix:semicolon
@@ -904,10 +917,6 @@ suffix:semicolon
 id|mach_gettimeoffset
 op_assign
 id|atari_gettimeoffset
-suffix:semicolon
-id|mach_mksound
-op_assign
-id|atari_mksound
 suffix:semicolon
 id|mach_reset
 op_assign
@@ -928,10 +937,6 @@ op_assign
 op_amp
 id|fb_con
 suffix:semicolon
-id|waitbut
-op_assign
-id|atari_waitbut
-suffix:semicolon
 id|mach_fb_init
 op_assign
 id|atari_fb_init
@@ -940,17 +945,9 @@ id|mach_max_dma_address
 op_assign
 l_int|0xffffff
 suffix:semicolon
-id|mach_debug_init
-op_assign
-id|atari_debug_init
-suffix:semicolon
 id|mach_video_setup
 op_assign
 id|atari_video_setup
-suffix:semicolon
-id|mach_syms_export
-op_assign
-id|atari_syms_export
 suffix:semicolon
 id|kd_mksound
 op_assign
@@ -967,6 +964,8 @@ r_if
 c_cond
 (paren
 id|is_medusa
+op_logical_or
+id|is_hades
 )paren
 (brace
 multiline_comment|/* There&squot;s no Atari video hardware on the Medusa, but all the&n;         * addresses below generate a DTACK so no bus error occurs! */
@@ -1169,6 +1168,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|is_hades
+op_logical_and
 id|hwreg_present
 c_func
 (paren
@@ -1313,6 +1315,9 @@ c_cond
 op_logical_neg
 id|is_medusa
 op_logical_and
+op_logical_neg
+id|is_hades
+op_logical_and
 id|hwreg_present
 c_func
 (paren
@@ -1337,16 +1342,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|is_hades
+op_logical_and
 id|hwreg_present
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
-(paren
-l_int|0xffff8940
-)paren
+op_amp
+id|codec.unused5
 )paren
 )paren
 (brace
@@ -1360,6 +1363,30 @@ id|printk
 c_func
 (paren
 l_string|&quot;CODEC &quot;
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|hwreg_present
+c_func
+(paren
+op_amp
+id|dsp56k_host_interface.icr
+)paren
+)paren
+(brace
+id|ATARIHW_SET
+c_func
+(paren
+id|DSP56K
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;DSP56K &quot;
 )paren
 suffix:semicolon
 )brace
@@ -1405,6 +1432,9 @@ l_int|0
 macro_line|#else
 op_logical_neg
 id|is_medusa
+op_logical_and
+op_logical_neg
+id|is_hades
 macro_line|#endif
 )paren
 (brace
@@ -1472,6 +1502,26 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|is_hades
+)paren
+(brace
+id|ATARIHW_SET
+c_func
+(paren
+id|VME
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;VME &quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
 id|hwreg_present
 c_func
 (paren
@@ -1532,6 +1582,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|is_hades
+op_logical_and
 id|hwreg_present
 c_func
 (paren
@@ -1589,6 +1642,9 @@ c_cond
 (paren
 op_logical_neg
 id|is_medusa
+op_logical_and
+op_logical_neg
+id|is_hades
 op_logical_and
 id|hwreg_present
 c_func
@@ -1682,6 +1738,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|is_hades
+op_logical_and
 id|hwreg_present
 c_func
 (paren
@@ -1721,6 +1780,9 @@ c_cond
 op_logical_neg
 id|is_medusa
 op_logical_and
+op_logical_neg
+id|is_hades
+op_logical_and
 id|hwreg_present
 c_func
 (paren
@@ -1754,6 +1816,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|is_hades
+op_logical_and
 op_logical_neg
 id|ATARIHW_PRESENT
 c_func
@@ -1790,11 +1855,11 @@ multiline_comment|/* Now it seems to be safe to turn of the tt0 transparent&n;  
 id|__asm__
 r_volatile
 (paren
-l_string|&quot;moveq #0,%/d0;&quot;
-l_string|&quot;.long 0x4e7b0004;&quot;
-multiline_comment|/* movec d0,itt0 */
-l_string|&quot;.long 0x4e7b0006;&quot;
-multiline_comment|/* movec d0,dtt0 */
+l_string|&quot;moveq #0,%/d0&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;movec %%d0,%%itt0&bslash;n&bslash;t&quot;
+l_string|&quot;movec %%d0,%%dtt0&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
@@ -1827,7 +1892,9 @@ multiline_comment|/* Translate 0xfexxxxxx, enable, cache&n;                     
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;pmove&t;%0@,%/tt1&quot;
+l_string|&quot;.chip 68030&bslash;n&bslash;t&quot;
+l_string|&quot;pmove&t;%0@,%/tt1&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
@@ -1844,10 +1911,10 @@ id|__asm__
 id|__volatile__
 (paren
 l_string|&quot;movel %0,%/d0&bslash;n&bslash;t&quot;
-l_string|&quot;.long 0x4e7b0005&bslash;n&bslash;t&quot;
-multiline_comment|/* movec d0,itt1 */
-l_string|&quot;.long 0x4e7b0007&quot;
-multiline_comment|/* movec d0,dtt1 */
+l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;movec %%d0,%%itt1&bslash;n&bslash;t&quot;
+l_string|&quot;movec %%d0,%%dtt1&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;g&quot;
@@ -2631,7 +2698,11 @@ multiline_comment|/* Fetch tos version at Physical 2 */
 multiline_comment|/* We my not be able to access this address if the kernel is&n;       loaded to st ram, since the first page is unmapped.  On the&n;       Medusa this is always the case and there is nothing we can do&n;       about this, so we just assume the smaller offset.  For the TT&n;       we use the fact that in head.S we have set up a mapping&n;       0xFFxxxxxx -&gt; 0x00xxxxxx, so that the first 16MB is accessible&n;       in the last 16MB of the address space. */
 id|tos_version
 op_assign
+(paren
 id|is_medusa
+op_logical_or
+id|is_hades
+)paren
 ques
 c_cond
 l_int|0xfff
@@ -3060,7 +3131,11 @@ suffix:semicolon
 multiline_comment|/* Tos version at Physical 2.  See above for explanation why we&n;       cannot use PTOV(2).  */
 id|tos_version
 op_assign
+(paren
 id|is_medusa
+op_logical_or
+id|is_hades
+)paren
 ques
 c_cond
 l_int|0xfff
@@ -3908,16 +3983,6 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-DECL|function|atari_waitbut
-r_static
-r_void
-id|atari_waitbut
-(paren
-r_void
-)paren
-(brace
-multiline_comment|/* sorry, no-op */
-)brace
 DECL|function|ata_mfp_out
 r_static
 r_inline
@@ -3948,25 +4013,26 @@ op_assign
 id|c
 suffix:semicolon
 )brace
-DECL|function|ata_mfp_print
+DECL|function|atari_mfp_console_write
+r_static
 r_void
-id|ata_mfp_print
+id|atari_mfp_console_write
 (paren
 r_const
 r_char
 op_star
 id|str
+comma
+r_int
+r_int
+id|count
 )paren
 (brace
-r_for
+r_while
 c_loop
 (paren
-suffix:semicolon
-op_star
-id|str
-suffix:semicolon
-op_increment
-id|str
+id|count
+op_decrement
 )paren
 (brace
 r_if
@@ -3988,6 +4054,7 @@ c_func
 (paren
 op_star
 id|str
+op_increment
 )paren
 suffix:semicolon
 )brace
@@ -4032,25 +4099,26 @@ op_assign
 id|c
 suffix:semicolon
 )brace
-DECL|function|ata_scc_print
+DECL|function|atari_scc_console_write
+r_static
 r_void
-id|ata_scc_print
+id|atari_scc_console_write
 (paren
 r_const
 r_char
 op_star
 id|str
+comma
+r_int
+r_int
+id|count
 )paren
 (brace
-r_for
+r_while
 c_loop
 (paren
-suffix:semicolon
-op_star
-id|str
-suffix:semicolon
-op_increment
-id|str
+id|count
+op_decrement
 )paren
 (brace
 r_if
@@ -4072,6 +4140,7 @@ c_func
 (paren
 op_star
 id|str
+op_increment
 )paren
 suffix:semicolon
 )brace
@@ -4177,14 +4246,19 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|ata_par_print
+DECL|function|atari_par_console_write
+r_static
 r_void
-id|ata_par_print
+id|atari_par_console_write
 (paren
 r_const
 r_char
 op_star
 id|str
+comma
+r_int
+r_int
+id|count
 )paren
 (brace
 r_static
@@ -4201,15 +4275,11 @@ id|printer_present
 )paren
 r_return
 suffix:semicolon
-r_for
+r_while
 c_loop
 (paren
-suffix:semicolon
-op_star
-id|str
-suffix:semicolon
-op_increment
-id|str
+id|count
+op_decrement
 )paren
 (brace
 r_if
@@ -4247,6 +4317,7 @@ c_func
 (paren
 op_star
 id|str
+op_increment
 )paren
 )paren
 (brace
@@ -4268,24 +4339,17 @@ c_func
 r_void
 )paren
 (brace
-r_extern
-r_void
+macro_line|#ifdef CONFIG_KGDB
+multiline_comment|/* if the m68k_debug_device is used by the GDB stub, do nothing here */
+r_if
+c_cond
 (paren
-op_star
-id|debug_print_proc
+id|kgdb_initialized
 )paren
-(paren
-r_const
-r_char
-op_star
-)paren
+r_return
+l_int|NULL
 suffix:semicolon
-r_extern
-r_char
-id|m68k_debug_device
-(braket
-)braket
-suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4367,9 +4431,9 @@ op_or_assign
 l_int|0x01
 suffix:semicolon
 multiline_comment|/* enable TX */
-id|debug_print_proc
+id|atari_console_driver.write
 op_assign
-id|ata_mfp_print
+id|atari_mfp_console_write
 suffix:semicolon
 )brace
 r_else
@@ -4507,9 +4571,9 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|debug_print_proc
+id|atari_console_driver.write
 op_assign
-id|ata_scc_print
+id|atari_scc_console_write
 suffix:semicolon
 )brace
 r_else
@@ -4566,98 +4630,23 @@ op_or
 l_int|0x20
 suffix:semicolon
 multiline_comment|/* strobe H */
-id|debug_print_proc
+id|atari_console_driver.write
 op_assign
-id|ata_par_print
+id|atari_par_console_write
 suffix:semicolon
 )brace
-r_else
-id|debug_print_proc
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-DECL|function|ata_serial_print
-r_void
-id|ata_serial_print
-(paren
-r_const
-r_char
-op_star
-id|str
-)paren
-(brace
-r_int
-id|c
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|c
-op_assign
-op_star
-id|str
-op_increment
-comma
-id|c
-op_ne
-l_int|0
-)paren
-(brace
 r_if
 c_cond
 (paren
-id|c
-op_eq
-l_char|&squot;&bslash;n&squot;
+id|atari_console_driver.write
 )paren
-(brace
-r_while
-c_loop
+id|register_console
+c_func
 (paren
-op_logical_neg
-(paren
-id|mfp.trn_stat
 op_amp
-(paren
-l_int|1
-op_lshift
-l_int|7
-)paren
-)paren
-)paren
-id|barrier
-(paren
+id|atari_console_driver
 )paren
 suffix:semicolon
-id|mfp.usart_dta
-op_assign
-l_char|&squot;&bslash;r&squot;
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-op_logical_neg
-(paren
-id|mfp.trn_stat
-op_amp
-(paren
-l_int|1
-op_lshift
-l_int|7
-)paren
-)paren
-)paren
-id|barrier
-(paren
-)paren
-suffix:semicolon
-id|mfp.usart_dta
-op_assign
-id|c
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/* ++roman:&n; *&n; * This function does a reset on machines that lack the ability to&n; * assert the processor&squot;s _RESET signal somehow via hardware. It is&n; * based on the fact that you can find the initial SP and PC values&n; * after a reset at physical addresses 0 and 4. This works pretty well&n; * for Atari machines, since the lowest 8 bytes of physical memory are&n; * really ROM (mapped by hardware). For other 680x0 machines: don&squot;t&n; * know if it works...&n; *&n; * To get the values at addresses 0 and 4, the MMU better is turned&n; * off first. After that, we have to jump into physical address space&n; * (the PC before the pmove statement points to the virtual address of&n; * the code). Getting that physical address is not hard, but the code&n; * becomes a bit complex since I&squot;ve tried to ensure that the jump&n; * statement after the pmove is in the cache already (otherwise the&n; * processor can&squot;t fetch it!). For that, the code first jumps to the&n; * jump statement with the (virtual) address of the pmove section in&n; * an address register . The jump statement is surely in the cache&n; * now. After that, that physical address of the reset code is loaded&n; * into the same address register, pmove is done and the same jump&n; * statements goes to the reset code. Since there are not many&n; * statements between the two jumps, I hope it stays in the cache.&n; *&n; * The C code makes heavy use of the GCC features that you can get the&n; * address of a C label. No hope to compile this with another compiler&n; * than GCC!&n; */
 multiline_comment|/* ++andreas: no need for complicated code, just depend on prefetch */
@@ -4680,6 +4669,12 @@ suffix:semicolon
 multiline_comment|/* On the Medusa, phys. 0x4 may contain garbage because it&squot;s no&n;       ROM.  See above for explanation why we cannot use PTOV(4). */
 id|reset_addr
 op_assign
+id|is_hades
+ques
+c_cond
+l_int|0x7fe00030
+suffix:colon
+(paren
 id|is_medusa
 ques
 c_cond
@@ -4692,6 +4687,7 @@ r_int
 op_star
 )paren
 l_int|0xff000004
+)paren
 suffix:semicolon
 id|acia.key_ctrl
 op_assign
@@ -4924,6 +4920,20 @@ id|strcat
 id|model
 comma
 l_string|&quot;Medusa&quot;
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|is_hades
+)paren
+id|strcat
+c_func
+(paren
+id|model
+comma
+l_string|&quot;Hades&quot;
 )paren
 suffix:semicolon
 r_else
@@ -5270,6 +5280,14 @@ c_func
 id|VME
 comma
 l_string|&quot;VME Bus&quot;
+)paren
+suffix:semicolon
+id|ATARIHW_ANNOUNCE
+c_func
+(paren
+id|DSP56K
+comma
+l_string|&quot;DSP56001 processor&quot;
 )paren
 suffix:semicolon
 r_return

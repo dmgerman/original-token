@@ -12,8 +12,8 @@ multiline_comment|/**************************** CONSTANTS **********************
 multiline_comment|/* --------------------------- VERSION --------------------------- */
 multiline_comment|/*&n; * This constant is used to know the availability of the wireless&n; * extensions and to know which version of wireless extensions it is&n; * (there is some stuff that will be added in the future...)&n; * I just plan to increment with each new version.&n; */
 DECL|macro|WIRELESS_EXT
-mdefine_line|#define WIRELESS_EXT&t;4
-multiline_comment|/*&n; * Changes :&n; *&n; * V2 to V3&n; * --------&n; *&t;Alan Cox start some imcompatibles changes. I&squot;ve integrated a bit more.&n; *&t;- Encryption renamed to Encode to avoid US regulation problems&n; *&t;- Frequency changed from float to struct to avoid problems on old 386&n; *&n; * V3 to V4&n; * --------&n; *&t;- Add sensitivity&n; */
+mdefine_line|#define WIRELESS_EXT&t;5
+multiline_comment|/*&n; * Changes :&n; *&n; * V2 to V3&n; * --------&n; *&t;Alan Cox start some incompatibles changes. I&squot;ve integrated a bit more.&n; *&t;- Encryption renamed to Encode to avoid US regulation problems&n; *&t;- Frequency changed from float to struct to avoid problems on old 386&n; *&n; * V3 to V4&n; * --------&n; *&t;- Add sensitivity&n; *&n; * V4 to V5&n; * --------&n; *&t;- Missing encoding definitions in range&n; *&t;- Access points stuff&n; */
 multiline_comment|/* -------------------------- IOCTL LIST -------------------------- */
 multiline_comment|/* Basic operations */
 DECL|macro|SIOCSIWNAME
@@ -50,12 +50,19 @@ DECL|macro|SIOCSIWSPY
 mdefine_line|#define SIOCSIWSPY&t;0x8B10&t;&t;/* set spy addresses */
 DECL|macro|SIOCGIWSPY
 mdefine_line|#define SIOCGIWSPY&t;0x8B11&t;&t;/* get spy info (quality of link) */
+multiline_comment|/* Access Point manipulation */
+DECL|macro|SIOCSIWAP
+mdefine_line|#define SIOCSIWAP&t;0x8B14&t;&t;/* set access point hardware addresses */
+DECL|macro|SIOCGIWAP
+mdefine_line|#define SIOCGIWAP&t;0x8B15&t;&t;/* get access point hardware addresses */
+DECL|macro|SIOCGIWAPLIST
+mdefine_line|#define SIOCGIWAPLIST&t;0x8B17&t;&t;/* get list of access point in range */
 multiline_comment|/* ------------------------- IOCTL STUFF ------------------------- */
 multiline_comment|/* The first and the last (range) */
 DECL|macro|SIOCIWFIRST
 mdefine_line|#define SIOCIWFIRST&t;0x8B00
 DECL|macro|SIOCIWLAST
-mdefine_line|#define SIOCIWLAST&t;0x8B13
+mdefine_line|#define SIOCIWLAST&t;0x8B17
 multiline_comment|/* Even : get (world access), odd : set (root access) */
 DECL|macro|IW_IS_SET
 mdefine_line|#define IW_IS_SET(cmd)&t;(!((cmd) &amp; 0x1))
@@ -156,6 +163,23 @@ suffix:semicolon
 multiline_comment|/* Others cases */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; *&t;Encoding information (setting and so on)&n; *&t;Encoding might be hardware encryption, scrambing or others&n; */
+DECL|struct|iw_encoding
+r_struct
+id|iw_encoding
+(brace
+DECL|member|method
+id|__u8
+id|method
+suffix:semicolon
+multiline_comment|/* Algorithm number / key used */
+DECL|member|code
+id|__u64
+id|code
+suffix:semicolon
+multiline_comment|/* Data/key used for algorithm */
+)brace
+suffix:semicolon
 multiline_comment|/* ------------------------ WIRELESS STATS ------------------------ */
 multiline_comment|/*&n; * Wireless statistics (used for /proc/net/wireless)&n; */
 DECL|struct|iw_statistics
@@ -237,28 +261,23 @@ id|iw_freq
 id|freq
 suffix:semicolon
 multiline_comment|/* frequency or channel :&n;&t;&t;&t;&t;&t; * 0-1000 = channel&n;&t;&t;&t;&t;&t; * &gt; 1000 = frequency in Hz */
-r_struct
-multiline_comment|/* Encoding stuff */
-(brace
-DECL|member|method
-id|__u8
-id|method
-suffix:semicolon
-multiline_comment|/* Algorithm number / off */
-DECL|member|code
-id|__u64
-id|code
-suffix:semicolon
-multiline_comment|/* Data used for algorithm */
 DECL|member|encoding
-)brace
+r_struct
+id|iw_encoding
 id|encoding
 suffix:semicolon
+multiline_comment|/* Encoding stuff */
 DECL|member|sensitivity
 id|__u32
 id|sensitivity
 suffix:semicolon
 multiline_comment|/* signal level threshold */
+DECL|member|ap_addr
+r_struct
+id|sockaddr
+id|ap_addr
+suffix:semicolon
+multiline_comment|/* Access point address */
 r_struct
 multiline_comment|/* For all data bigger than 16 octets */
 (brace
@@ -332,7 +351,6 @@ id|IW_MAX_FREQUENCIES
 suffix:semicolon
 multiline_comment|/* list */
 multiline_comment|/* Note : this frequency list doesn&squot;t need to fit channel numbers */
-multiline_comment|/* Encoder stuff */
 multiline_comment|/* signal level threshold range */
 DECL|member|sensitivity
 id|__u32
@@ -345,6 +363,13 @@ id|iw_quality
 id|max_qual
 suffix:semicolon
 multiline_comment|/* Quality of the link */
+multiline_comment|/* Encoder stuff */
+DECL|member|max_encoding
+r_struct
+id|iw_encoding
+id|max_encoding
+suffix:semicolon
+multiline_comment|/* Encoding max range */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Private ioctl interface information&n; */

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/romfs_fs.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|function|min
 r_static
@@ -2803,12 +2804,16 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|init_romfs_fs
 id|init_romfs_fs
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

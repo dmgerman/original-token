@@ -2,6 +2,7 @@ multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol sui
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|NEXT_DEV
 mdefine_line|#define&t;NEXT_DEV&t;NULL
 multiline_comment|/* A unified ethernet device probe.  This is the easiest way to have every&n;   ethernet adaptor have the name &quot;eth[0123...]&quot;.&n;   */
@@ -518,7 +519,10 @@ id|device
 op_star
 )paren
 suffix:semicolon
-DECL|function|ethif_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|ethif_probe
@@ -528,6 +532,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 id|u_long

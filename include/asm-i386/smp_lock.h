@@ -10,16 +10,16 @@ DECL|macro|unlock_kernel
 mdefine_line|#define unlock_kernel()&t;&t;&t;&t;do { } while(0)
 DECL|macro|release_kernel_lock
 mdefine_line|#define release_kernel_lock(task, cpu, depth)&t;((depth) = 1)
-DECL|macro|reaquire_kernel_lock
-mdefine_line|#define reaquire_kernel_lock(task, cpu, depth)&t;do { } while(0)
+DECL|macro|reacquire_kernel_lock
+mdefine_line|#define reacquire_kernel_lock(task, cpu, depth)&t;do { } while(0)
 macro_line|#else
 macro_line|#include &lt;asm/hardirq.h&gt;
 multiline_comment|/* Release global kernel lock and global interrupt lock */
 DECL|macro|release_kernel_lock
 mdefine_line|#define release_kernel_lock(task, cpu, depth) &bslash;&n;do { &bslash;&n;&t;if ((depth = (task)-&gt;lock_depth) != 0) { &bslash;&n;&t;&t;__cli(); &bslash;&n;&t;&t;(task)-&gt;lock_depth = 0; &bslash;&n;&t;&t;active_kernel_processor = NO_PROC_ID; &bslash;&n;&t;&t;clear_bit(0,&amp;kernel_flag); &bslash;&n;&t;} &bslash;&n;&t;release_irqlock(cpu); &bslash;&n;&t;__sti(); &bslash;&n;} while (0)
-multiline_comment|/* Re-aquire the kernel lock */
-DECL|macro|reaquire_kernel_lock
-mdefine_line|#define reaquire_kernel_lock(task, cpu, depth) &bslash;&n;do { if (depth) __asm__ __volatile__( &bslash;&n;&t;&quot;cli&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl $0f,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp __lock_kernel&bslash;n&quot; &bslash;&n;&t;&quot;0:&bslash;t&quot; &bslash;&n;&t;&quot;movl %2,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sti&quot; &bslash;&n;&t;: &quot;=m&quot; (task-&gt;lock_depth) &bslash;&n;&t;: &quot;d&quot; (cpu), &quot;c&quot; (depth) &bslash;&n;&t;: &quot;ax&quot;); &bslash;&n;} while (0)
+multiline_comment|/* Re-acquire the kernel lock */
+DECL|macro|reacquire_kernel_lock
+mdefine_line|#define reacquire_kernel_lock(task, cpu, depth) &bslash;&n;do { if (depth) __asm__ __volatile__( &bslash;&n;&t;&quot;cli&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl $0f,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp __lock_kernel&bslash;n&quot; &bslash;&n;&t;&quot;0:&bslash;t&quot; &bslash;&n;&t;&quot;movl %2,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sti&quot; &bslash;&n;&t;: &quot;=m&quot; (task-&gt;lock_depth) &bslash;&n;&t;: &quot;d&quot; (cpu), &quot;c&quot; (depth) &bslash;&n;&t;: &quot;ax&quot;); &bslash;&n;} while (0)
 multiline_comment|/* Locking the kernel */
 DECL|function|lock_kernel
 r_extern

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/mca.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -128,6 +129,13 @@ c_func
 id|__up_wakeup
 )paren
 suffix:semicolon
+DECL|variable|__intel_bh_counter
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__intel_bh_counter
+)paren
+suffix:semicolon
 multiline_comment|/* Networking helper routines. */
 DECL|variable|csum_partial_copy
 id|EXPORT_SYMBOL
@@ -178,6 +186,42 @@ id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|__lock_kernel
+)paren
+suffix:semicolon
+multiline_comment|/* Global SMP irq stuff */
+DECL|variable|global_irq_holder
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|global_irq_holder
+)paren
+suffix:semicolon
+DECL|variable|__global_cli
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__global_cli
+)paren
+suffix:semicolon
+DECL|variable|__global_sti
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__global_sti
+)paren
+suffix:semicolon
+DECL|variable|__global_save_flags
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__global_save_flags
+)paren
+suffix:semicolon
+DECL|variable|__global_restore_flags
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__global_restore_flags
 )paren
 suffix:semicolon
 macro_line|#endif
