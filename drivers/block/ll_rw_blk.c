@@ -4794,6 +4794,13 @@ c_func
 id|blk_queue_pluggable
 )paren
 suffix:semicolon
+DECL|variable|blk_queue_make_request
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|blk_queue_make_request
+)paren
+suffix:semicolon
 DECL|variable|generic_make_request
 id|EXPORT_SYMBOL
 c_func

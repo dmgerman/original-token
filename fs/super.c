@@ -2636,6 +2636,15 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|sema_init
+c_func
+(paren
+op_amp
+id|s-&gt;s_nfsd_free_path_sem
+comma
+l_int|1
+)paren
+suffix:semicolon
 multiline_comment|/* N.B. Should lock superblock now ... */
 r_if
 c_cond
@@ -4989,6 +4998,15 @@ c_func
 (paren
 op_amp
 id|sb-&gt;s_vfs_rename_sem
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|sema_init
+c_func
+(paren
+op_amp
+id|s-&gt;s_nfsd_free_path_sem
 comma
 l_int|1
 )paren

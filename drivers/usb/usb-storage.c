@@ -15,7 +15,8 @@ macro_line|#include &quot;../scsi/scsi.h&quot;
 macro_line|#include &quot;../scsi/hosts.h&quot;
 macro_line|#include &quot;../scsi/sd.h&quot;
 macro_line|#include &quot;usb.h&quot;
-macro_line|#include &quot;usb_storage.h&quot;
+macro_line|#include &quot;usb-storage.h&quot;
+macro_line|#include &quot;usb-storage-debug.h&quot;
 multiline_comment|/*&n; * This is the size of the structure Scsi_Host_Template.  We create&n; * an instance of this structure in this file and this is a check&n; * to see if this structure may have changed within the SCSI module.&n; * This is by no means foolproof, but it does help us some.&n; */
 DECL|macro|SCSI_HOST_TEMPLATE_SIZE
 mdefine_line|#define SCSI_HOST_TEMPLATE_SIZE&t;&t;&t;(104)
@@ -3513,6 +3514,8 @@ id|srb-&gt;host_scribble
 suffix:semicolon
 r_int
 id|result
+op_assign
+l_int|0
 suffix:semicolon
 id|__u8
 id|status

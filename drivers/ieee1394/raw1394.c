@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * IEEE 1394 for Linux&n; *&n; * Raw interface to the bus&n; *&n; * Copyright (C) 1999 Andreas E. Bombe&n; */
+multiline_comment|/*&n; * IEEE 1394 for Linux&n; *&n; * Raw interface to the bus&n; *&n; * Copyright (C) 1999, 2000 Andreas E. Bombe&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -43,6 +43,24 @@ id|hl_handle
 op_assign
 l_int|NULL
 suffix:semicolon
+DECL|variable|iso_buffer_size
+r_static
+id|atomic_t
+id|iso_buffer_size
+suffix:semicolon
+DECL|variable|iso_buffer_max
+r_static
+r_const
+r_int
+id|iso_buffer_max
+op_assign
+l_int|4
+op_star
+l_int|1024
+op_star
+l_int|1024
+suffix:semicolon
+multiline_comment|/* 4 MB */
 r_static
 r_void
 id|queue_complete_cb
@@ -187,6 +205,24 @@ id|req-&gt;ibs-&gt;refcount
 )paren
 )paren
 (brace
+id|atomic_sub
+c_func
+(paren
+(paren
+id|req-&gt;data
+(braket
+l_int|0
+)braket
+op_rshift
+l_int|16
+)paren
+op_plus
+l_int|4
+comma
+op_amp
+id|iso_buffer_size
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -879,6 +915,26 @@ c_func
 id|reqs
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|iso_buffer_size
+)paren
+op_plus
+id|length
+)paren
+OG
+id|iso_buffer_max
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
 id|spin_lock_irqsave
 c_func
 (paren
@@ -982,6 +1038,15 @@ op_logical_neg
 id|ibs
 )paren
 r_break
+suffix:semicolon
+id|atomic_add
+c_func
+(paren
+id|length
+comma
+op_amp
+id|iso_buffer_size
+)paren
 suffix:semicolon
 id|atomic_set
 c_func

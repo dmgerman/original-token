@@ -1883,7 +1883,7 @@ op_ne
 l_int|0x067b
 op_logical_or
 id|usbdev-&gt;descriptor.idProduct
-op_ne
+OG
 l_int|0x1
 )paren
 r_return

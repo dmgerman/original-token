@@ -2,6 +2,8 @@ macro_line|#ifndef _OHCI1394_H
 DECL|macro|_OHCI1394_H
 mdefine_line|#define _OHCI1394_H
 macro_line|#include &quot;ieee1394_types.h&quot;
+DECL|macro|OHCI1394_DEBUG
+mdefine_line|#define OHCI1394_DEBUG 1
 DECL|macro|OHCI1394_DRIVER_NAME
 mdefine_line|#define OHCI1394_DRIVER_NAME      &quot;ohci1394&quot;
 macro_line|#ifndef PCI_DEVICE_ID_TI_OHCI1394
@@ -16,30 +18,44 @@ macro_line|#ifndef PCI_DEVICE_ID_VIA_OHCI1394
 DECL|macro|PCI_DEVICE_ID_VIA_OHCI1394
 mdefine_line|#define PCI_DEVICE_ID_VIA_OHCI1394 0x3044
 macro_line|#endif
+macro_line|#ifndef PCI_VENDOR_ID_SONY
+DECL|macro|PCI_VENDOR_ID_SONY
+mdefine_line|#define PCI_VENDOR_ID_SONY 0x104d
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_SONY_CXD3222
+DECL|macro|PCI_DEVICE_ID_SONY_CXD3222
+mdefine_line|#define PCI_DEVICE_ID_SONY_CXD3222 0x8039
+macro_line|#endif
 DECL|macro|MAX_OHCI1394_CARDS
 mdefine_line|#define MAX_OHCI1394_CARDS        4
 DECL|macro|OHCI1394_MAX_AT_REQ_RETRIES
-mdefine_line|#define OHCI1394_MAX_AT_REQ_RETRIES       1
+mdefine_line|#define OHCI1394_MAX_AT_REQ_RETRIES       0x2
 DECL|macro|OHCI1394_MAX_AT_RESP_RETRIES
-mdefine_line|#define OHCI1394_MAX_AT_RESP_RETRIES      1
+mdefine_line|#define OHCI1394_MAX_AT_RESP_RETRIES      0x2
 DECL|macro|OHCI1394_MAX_PHYS_RESP_RETRIES
-mdefine_line|#define OHCI1394_MAX_PHYS_RESP_RETRIES    4
+mdefine_line|#define OHCI1394_MAX_PHYS_RESP_RETRIES    0x8
+DECL|macro|AR_REQ_NUM_DESC
+mdefine_line|#define AR_REQ_NUM_DESC                   4 /* number of AR req descriptors */
+DECL|macro|AR_REQ_BUF_SIZE
+mdefine_line|#define AR_REQ_BUF_SIZE                4096 /* size of AR req buffers */
+DECL|macro|AR_REQ_SPLIT_BUF_SIZE
+mdefine_line|#define AR_REQ_SPLIT_BUF_SIZE          4096 /* split packet buffer */
 DECL|macro|AR_RESP_NUM_DESC
 mdefine_line|#define AR_RESP_NUM_DESC                  4 /* number of AR resp descriptors */
 DECL|macro|AR_RESP_BUF_SIZE
 mdefine_line|#define AR_RESP_BUF_SIZE               4096 /* size of AR resp buffers */
-DECL|macro|AR_RESP_SPLIT_PACKET_BUF_SIZE
-mdefine_line|#define AR_RESP_SPLIT_PACKET_BUF_SIZE   256 /* split packet buffer */
-DECL|macro|AR_RESP_TOTAL_BUF_SIZE
-mdefine_line|#define AR_RESP_TOTAL_BUF_SIZE         (AR_RESP_BUF_SIZE * AR_RESP_NUM_DESC)
-DECL|macro|AT_REQ_PRG_SIZE
-mdefine_line|#define AT_REQ_PRG_SIZE                256
-DECL|macro|IR_RECV_BUF_SIZE
-mdefine_line|#define IR_RECV_BUF_SIZE          4096 /* 4096 bytes/buffer */
-DECL|macro|IR_SPLIT_PACKET_BUF_SIZE
-mdefine_line|#define IR_SPLIT_PACKET_BUF_SIZE  8192 /* size of buffer for split packets */
+DECL|macro|AR_RESP_SPLIT_BUF_SIZE
+mdefine_line|#define AR_RESP_SPLIT_BUF_SIZE         4096 /* split packet buffer */
 DECL|macro|IR_NUM_DESC
-mdefine_line|#define IR_NUM_DESC               16   /* number of ISO recv descriptors */
+mdefine_line|#define IR_NUM_DESC                      16 /* number of IR descriptors */
+DECL|macro|IR_BUF_SIZE
+mdefine_line|#define IR_BUF_SIZE                    6480 /* 6480 bytes/buffer */
+DECL|macro|IR_SPLIT_BUF_SIZE
+mdefine_line|#define IR_SPLIT_BUF_SIZE              8192 /* split packet buffer */
+DECL|macro|AT_REQ_NUM_DESC
+mdefine_line|#define AT_REQ_NUM_DESC                  32 /* number of AT req descriptors */
+DECL|macro|AT_RESP_NUM_DESC
+mdefine_line|#define AT_RESP_NUM_DESC                 32 /* number of AT resp descriptors */
 DECL|struct|dma_cmd
 r_struct
 id|dma_cmd
@@ -59,6 +75,188 @@ suffix:semicolon
 DECL|member|status
 id|u32
 id|status
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|at_dma_prg
+r_struct
+id|at_dma_prg
+(brace
+DECL|member|begin
+r_struct
+id|dma_cmd
+id|begin
+suffix:semicolon
+DECL|member|data
+id|quadlet_t
+id|data
+(braket
+l_int|4
+)braket
+suffix:semicolon
+DECL|member|end
+r_struct
+id|dma_cmd
+id|end
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* DMA receive context */
+DECL|struct|dma_rcv_ctx
+r_struct
+id|dma_rcv_ctx
+(brace
+DECL|member|ohci
+r_void
+op_star
+id|ohci
+suffix:semicolon
+DECL|member|ctx
+r_int
+id|ctx
+suffix:semicolon
+DECL|member|num_desc
+r_int
+r_int
+id|num_desc
+suffix:semicolon
+DECL|member|buf_size
+r_int
+r_int
+id|buf_size
+suffix:semicolon
+DECL|member|split_buf_size
+r_int
+r_int
+id|split_buf_size
+suffix:semicolon
+DECL|member|prg
+r_struct
+id|dma_cmd
+op_star
+op_star
+id|prg
+suffix:semicolon
+DECL|member|buf
+id|quadlet_t
+op_star
+op_star
+id|buf
+suffix:semicolon
+DECL|member|buf_ind
+r_int
+r_int
+id|buf_ind
+suffix:semicolon
+DECL|member|buf_offset
+r_int
+r_int
+id|buf_offset
+suffix:semicolon
+DECL|member|spb
+id|quadlet_t
+op_star
+id|spb
+suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+DECL|member|task
+r_struct
+id|tq_struct
+id|task
+suffix:semicolon
+DECL|member|ctrlClear
+r_int
+id|ctrlClear
+suffix:semicolon
+DECL|member|ctrlSet
+r_int
+id|ctrlSet
+suffix:semicolon
+DECL|member|cmdPtr
+r_int
+id|cmdPtr
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* DMA transmit context */
+DECL|struct|dma_trm_ctx
+r_struct
+id|dma_trm_ctx
+(brace
+DECL|member|ohci
+r_void
+op_star
+id|ohci
+suffix:semicolon
+DECL|member|ctx
+r_int
+id|ctx
+suffix:semicolon
+DECL|member|num_desc
+r_int
+r_int
+id|num_desc
+suffix:semicolon
+DECL|member|prg
+r_struct
+id|at_dma_prg
+op_star
+id|prg
+suffix:semicolon
+DECL|member|prg_ind
+r_int
+r_int
+id|prg_ind
+suffix:semicolon
+DECL|member|sent_ind
+r_int
+r_int
+id|sent_ind
+suffix:semicolon
+DECL|member|free_prgs
+r_int
+id|free_prgs
+suffix:semicolon
+DECL|member|branchAddrPtr
+id|quadlet_t
+op_star
+id|branchAddrPtr
+suffix:semicolon
+DECL|member|first
+r_struct
+id|hpsb_packet
+op_star
+id|first
+suffix:semicolon
+DECL|member|last
+r_struct
+id|hpsb_packet
+op_star
+id|last
+suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+DECL|member|task
+r_struct
+id|tq_struct
+id|task
+suffix:semicolon
+DECL|member|ctrlClear
+r_int
+id|ctrlClear
+suffix:semicolon
+DECL|member|ctrlSet
+r_int
+id|ctrlSet
+suffix:semicolon
+DECL|member|cmdPtr
+r_int
+id|cmdPtr
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -99,129 +297,46 @@ op_star
 id|csr_config_rom
 suffix:semicolon
 multiline_comment|/* buffer for csr config rom */
-multiline_comment|/* asynchronous receive */
-DECL|member|AR_resp_prg
+multiline_comment|/* async receive */
+DECL|member|ar_resp_context
 r_struct
-id|dma_cmd
+id|dma_rcv_ctx
 op_star
-op_star
-id|AR_resp_prg
+id|ar_resp_context
 suffix:semicolon
-DECL|member|AR_resp_buf
-id|quadlet_t
-op_star
-op_star
-id|AR_resp_buf
-suffix:semicolon
-DECL|member|AR_resp_buf_bh_ind
-r_int
-r_int
-id|AR_resp_buf_bh_ind
-suffix:semicolon
-DECL|member|AR_resp_buf_bh_offset
-r_int
-r_int
-id|AR_resp_buf_bh_offset
-suffix:semicolon
-DECL|member|AR_resp_buf_th_ind
-r_int
-r_int
-id|AR_resp_buf_th_ind
-suffix:semicolon
-DECL|member|AR_resp_buf_th_offset
-r_int
-r_int
-id|AR_resp_buf_th_offset
-suffix:semicolon
-DECL|member|AR_resp_bytes_left
-r_int
-id|AR_resp_bytes_left
-suffix:semicolon
-DECL|member|AR_resp_spb
-id|quadlet_t
-op_star
-id|AR_resp_spb
-suffix:semicolon
-DECL|member|AR_resp_lock
-id|spinlock_t
-id|AR_resp_lock
-suffix:semicolon
-multiline_comment|/* async receive task */
-DECL|member|AR_resp_pdl_task
+DECL|member|ar_req_context
 r_struct
-id|tq_struct
-id|AR_resp_pdl_task
+id|dma_rcv_ctx
+op_star
+id|ar_req_context
 suffix:semicolon
-multiline_comment|/* asynchronous transmit */
-DECL|member|AT_req_prg
+multiline_comment|/* async transmit */
+DECL|member|at_resp_context
 r_struct
-id|dma_cmd
+id|dma_trm_ctx
 op_star
-id|AT_req_prg
+id|at_resp_context
 suffix:semicolon
-multiline_comment|/* isochronous receive */
-DECL|member|IR_recv_prg
+DECL|member|at_req_context
 r_struct
-id|dma_cmd
+id|dma_trm_ctx
 op_star
+id|at_req_context
+suffix:semicolon
+multiline_comment|/* iso receive */
+DECL|member|ir_context
+r_struct
+id|dma_rcv_ctx
 op_star
-id|IR_recv_prg
-suffix:semicolon
-DECL|member|IR_recv_buf
-id|quadlet_t
-op_star
-op_star
-id|IR_recv_buf
-suffix:semicolon
-DECL|member|IR_buf_used
-r_int
-r_int
-id|IR_buf_used
-suffix:semicolon
-DECL|member|IR_buf_last_ind
-r_int
-r_int
-id|IR_buf_last_ind
-suffix:semicolon
-DECL|member|IR_buf_next_ind
-r_int
-r_int
-id|IR_buf_next_ind
-suffix:semicolon
-DECL|member|IR_recv_lock
-id|spinlock_t
-id|IR_recv_lock
-suffix:semicolon
-multiline_comment|/* iso recv split packet handling */
-DECL|member|IR_spb
-id|quadlet_t
-op_star
-id|IR_spb
-suffix:semicolon
-DECL|member|IR_sp_bytes_left
-r_int
-r_int
-id|IR_sp_bytes_left
-suffix:semicolon
-DECL|member|IR_spb_bytes_used
-r_int
-r_int
-id|IR_spb_bytes_used
-suffix:semicolon
-multiline_comment|/* iso receive channel usage */
-DECL|member|IR_channel_lock
-id|spinlock_t
-id|IR_channel_lock
+id|ir_context
 suffix:semicolon
 DECL|member|IR_channel_usage
 id|u64
 id|IR_channel_usage
 suffix:semicolon
-multiline_comment|/* iso receive task */
-DECL|member|IR_pdl_task
-r_struct
-id|tq_struct
-id|IR_pdl_task
+DECL|member|IR_channel_lock
+id|spinlock_t
+id|IR_channel_lock
 suffix:semicolon
 multiline_comment|/* IEEE-1394 part follows */
 DECL|member|host
@@ -241,31 +356,9 @@ DECL|member|phy_reg_lock
 id|spinlock_t
 id|phy_reg_lock
 suffix:semicolon
-DECL|member|async_queue
-r_struct
-id|hpsb_packet
-op_star
-id|async_queue
-suffix:semicolon
-DECL|member|async_queue_lock
-id|spinlock_t
-id|async_queue_lock
-suffix:semicolon
-DECL|member|AR_resp_active
-r_int
-id|AR_resp_active
-suffix:semicolon
 DECL|member|NumBusResets
 r_int
 id|NumBusResets
-suffix:semicolon
-DECL|member|TxRdy
-r_int
-id|TxRdy
-suffix:semicolon
-DECL|member|NumInterrupts
-r_int
-id|NumInterrupts
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -343,15 +436,15 @@ multiline_comment|/* info/CRC length, CRC */
 l_int|0x31333934
 comma
 multiline_comment|/* 1394 magic number */
-l_int|0xf064a000
+l_int|0xf07da002
 comma
-multiline_comment|/* misc. settings - FIXME */
-l_int|0x08002856
+multiline_comment|/* cyc_clk_acc = 125us, max_rec = 1024 */
+l_int|0x00000000
 comma
-multiline_comment|/* vendor ID, chip ID high */
-l_int|0x0000083E
+multiline_comment|/* vendor ID, chip ID high (written from card info) */
+l_int|0x00000000
 comma
-multiline_comment|/* chip ID low */
+multiline_comment|/* chip ID low (written from card info) */
 multiline_comment|/* root directory - FIXME */
 l_int|0x00090000
 comma

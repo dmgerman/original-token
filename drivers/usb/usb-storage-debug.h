@@ -1,20 +1,5 @@
-multiline_comment|/* Driver for USB mass storage (scsi-like) devices&n; * &n; * (C) Michael Gee (michael@linuxspecific.com) 1999&n; *&n; */
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/signal.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/miscdevice.h&gt;
-macro_line|#include &lt;linux/random.h&gt;
-macro_line|#include &lt;linux/poll.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#include &quot;../scsi/scsi.h&quot;
-macro_line|#include &quot;../scsi/hosts.h&quot;
-macro_line|#include &quot;../scsi/sd.h&quot;
-macro_line|#include &quot;usb.h&quot;
-macro_line|#include &quot;usb_storage.h&quot;
+macro_line|#ifdef CONFIG_USB_STORAGE_DEBUG
+multiline_comment|/* Debug output for Driver for USB mass storage (scsi-like) devices&n; * &n; * (C) Michael Gee (michael@linuxspecific.com) 1999&n; *&n; */
 DECL|function|us_show_command
 r_void
 id|us_show_command
@@ -692,4 +677,5 @@ l_int|9
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 eof

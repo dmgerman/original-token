@@ -52,30 +52,6 @@ id|hlt_counter
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|disable_hlt
-r_void
-id|disable_hlt
-c_func
-(paren
-r_void
-)paren
-(brace
-id|hlt_counter
-op_increment
-suffix:semicolon
-)brace
-DECL|function|enable_hlt
-r_void
-id|enable_hlt
-c_func
-(paren
-r_void
-)paren
-(brace
-id|hlt_counter
-op_decrement
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Powermanagement idle function, if any..&n; */
 DECL|variable|pm_idle
 r_void
@@ -102,6 +78,30 @@ r_void
 op_assign
 l_int|NULL
 suffix:semicolon
+DECL|function|disable_hlt
+r_void
+id|disable_hlt
+c_func
+(paren
+r_void
+)paren
+(brace
+id|hlt_counter
+op_increment
+suffix:semicolon
+)brace
+DECL|function|enable_hlt
+r_void
+id|enable_hlt
+c_func
+(paren
+r_void
+)paren
+(brace
+id|hlt_counter
+op_decrement
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * We use this if we don&squot;t have any better&n; * idle routine..&n; */
 DECL|function|default_idle
 r_static
@@ -801,7 +801,7 @@ op_star
 id|__unused
 )paren
 (brace
-macro_line|#if __SMP__
+macro_line|#if CONFIG_SMP
 multiline_comment|/*&n;&t; * Stop all CPUs and turn off local APICs and the IO-APIC, so&n;&t; * other OSs see a clean IRQ state.&n;&t; */
 id|smp_send_stop
 c_func

@@ -267,7 +267,7 @@ id|init_waitqueue_head
 c_func
 (paren
 op_amp
-id|lock-&gt;fl.fl_wait
+id|call-&gt;a_args.lock.fl.fl_wait
 )paren
 suffix:semicolon
 multiline_comment|/* set default data area */

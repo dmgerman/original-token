@@ -960,6 +960,11 @@ op_minus
 l_int|1
 )paren
 (brace
+r_int
+id|modtoyes
+op_assign
+l_int|0
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -975,6 +980,13 @@ l_string|&quot; }&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
+suffix:semicolon
+r_case
+id|token_dep_mbool
+suffix:colon
+id|modtoyes
+op_assign
+l_int|1
 suffix:semicolon
 r_case
 id|token_dep_bool
@@ -1051,7 +1063,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;]];set %s [sync_bool $%s $tmpvar_dep];&quot;
+l_string|&quot;]];set %s [sync_bool $%s $tmpvar_dep %d];&quot;
 comma
 id|vartable
 (braket
@@ -1066,18 +1078,31 @@ id|cfg-&gt;nameindex
 )braket
 dot
 id|name
+comma
+id|modtoyes
 )paren
 suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;if {$tmpvar_dep != 1} then {&quot;
+l_string|&quot;if {$tmpvar_dep != 1&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|modtoyes
+)paren
+id|printf
+c_func
+(paren
+l_string|&quot; &amp;&amp; $tmpvar_dep != 2&quot;
 )paren
 suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;configure_entry .menu%d.config.f.x%d disabled {y};&quot;
+l_string|&quot;} then {configure_entry .menu%d.config.f.x%d disabled {y};&quot;
 comma
 id|menu_num
 comma
@@ -1579,6 +1604,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_int
+id|modtoyes
+op_assign
+l_int|0
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1594,6 +1624,13 @@ l_string|&quot; }&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
+suffix:semicolon
+r_case
+id|token_dep_mbool
+suffix:colon
+id|modtoyes
+op_assign
+l_int|1
 suffix:semicolon
 r_case
 id|token_dep_bool
@@ -1670,7 +1707,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;]];set %s [sync_bool $%s $tmpvar_dep];&quot;
+l_string|&quot;]];set %s [sync_bool $%s $tmpvar_dep %d];&quot;
 comma
 id|vartable
 (braket
@@ -1685,6 +1722,8 @@ id|cfg-&gt;nameindex
 )braket
 dot
 id|name
+comma
+id|modtoyes
 )paren
 suffix:semicolon
 r_case
@@ -2236,6 +2275,11 @@ id|dependency
 op_star
 id|tmp
 suffix:semicolon
+r_int
+id|depmod
+op_assign
+l_int|2
+suffix:semicolon
 multiline_comment|/*&n;     * Generate global declaration for this symbol.&n;     */
 r_if
 c_cond
@@ -2721,7 +2765,7 @@ suffix:colon
 id|printf
 c_func
 (paren
-l_string|&quot;write_tristate $cfg $autocfg %s $%s [list $notmod]&quot;
+l_string|&quot;write_tristate $cfg $autocfg %s $%s [list $notmod] 2&quot;
 comma
 id|vartable
 (braket
@@ -2792,7 +2836,7 @@ id|cfg1-&gt;next
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;n&bslash;tif { $tmpvar_%d == &bslash;&quot;%s&bslash;&quot; } then { write_tristate $cfg $autocfg %s 1 [list $notmod] } else { write_tristate $cfg $autocfg %s 0 [list $notmod] }&quot;
+l_string|&quot;&bslash;n&bslash;tif { $tmpvar_%d == &bslash;&quot;%s&bslash;&quot; } then { write_tristate $cfg $autocfg %s 1 [list $notmod] 2 } else { write_tristate $cfg $autocfg %s 0 [list $notmod] 2 }&quot;
 comma
 op_minus
 (paren
@@ -2904,7 +2948,7 @@ l_int|NULL
 id|printf
 c_func
 (paren
-l_string|&quot;write_tristate $cfg $autocfg %s $%s [list $notmod]&bslash;n&quot;
+l_string|&quot;write_tristate $cfg $autocfg %s $%s [list $notmod] 2&bslash;n&quot;
 comma
 id|vartable
 (braket
@@ -2927,7 +2971,7 @@ r_else
 id|printf
 c_func
 (paren
-l_string|&quot;write_tristate $cfg $autocfg %s $%s [list $notmod] }&bslash;n&quot;
+l_string|&quot;write_tristate $cfg $autocfg %s $%s [list $notmod] 2 }&bslash;n&quot;
 comma
 id|vartable
 (braket
@@ -2941,6 +2985,13 @@ id|cfg-&gt;value
 suffix:semicolon
 )brace
 r_break
+suffix:semicolon
+r_case
+id|token_dep_mbool
+suffix:colon
+id|depmod
+op_assign
+l_int|1
 suffix:semicolon
 r_case
 id|token_dep_bool
@@ -2992,7 +3043,9 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;]&quot;
+l_string|&quot;] %d&quot;
+comma
+id|depmod
 )paren
 suffix:semicolon
 r_if
@@ -3593,6 +3646,9 @@ id|token_dep_bool
 suffix:colon
 r_case
 id|token_dep_tristate
+suffix:colon
+r_case
+id|token_dep_mbool
 suffix:colon
 r_case
 id|token_int
@@ -4562,6 +4618,9 @@ r_case
 id|token_dep_tristate
 suffix:colon
 r_case
+id|token_dep_mbool
+suffix:colon
+r_case
 id|token_hex
 suffix:colon
 r_case
@@ -4986,6 +5045,9 @@ suffix:semicolon
 r_case
 id|token_dep_bool
 suffix:colon
+r_case
+id|token_dep_mbool
+suffix:colon
 id|cfg-&gt;menu_line
 op_assign
 id|menu_line
@@ -5287,6 +5349,9 @@ id|token_dep_bool
 suffix:colon
 r_case
 id|token_dep_tristate
+suffix:colon
+r_case
+id|token_dep_mbool
 suffix:colon
 r_case
 id|token_tristate
@@ -5627,6 +5692,9 @@ id|token_dep_bool
 suffix:colon
 r_case
 id|token_dep_tristate
+suffix:colon
+r_case
+id|token_dep_mbool
 suffix:colon
 r_case
 id|token_hex

@@ -28,13 +28,6 @@ c_func
 id|hpsb_get_host
 )paren
 suffix:semicolon
-DECL|variable|hpsb_get_host_list
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|hpsb_get_host_list
-)paren
-suffix:semicolon
 DECL|variable|hpsb_inc_host_usage
 id|EXPORT_SYMBOL
 c_func
@@ -245,5 +238,4 @@ c_func
 id|highlevel_lock64
 )paren
 suffix:semicolon
-multiline_comment|/*&n;EXPORT_SYMBOL(hpsb_dispatch_event);&n;EXPORT_SYMBOL(hpsb_reg_event_handler);&n;*/
 eof

@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/pm.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -19,6 +20,7 @@ macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/mmx.h&gt;
+macro_line|#include &lt;asm/desc.h&gt;
 r_extern
 r_void
 id|dump_thread
@@ -86,6 +88,15 @@ id|drive_info
 )paren
 suffix:semicolon
 macro_line|#endif
+r_extern
+r_int
+r_int
+id|get_cmos_time
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* platform dependent support */
 DECL|variable|boot_cpu_data
 id|EXPORT_SYMBOL
@@ -197,6 +208,27 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|pm_power_off
+)paren
+suffix:semicolon
+DECL|variable|get_cmos_time
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_cmos_time
+)paren
+suffix:semicolon
+DECL|variable|apm_bios_info
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|apm_bios_info
+)paren
+suffix:semicolon
+DECL|variable|gdt
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|gdt
 )paren
 suffix:semicolon
 DECL|variable|__down_failed

@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/sysrq.h&gt;
 macro_line|#include &lt;linux/kbd_kern.h&gt;
 macro_line|#include &lt;linux/quotaops.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 r_extern
 r_void
@@ -52,6 +53,13 @@ r_void
 )paren
 op_assign
 l_int|NULL
+suffix:semicolon
+DECL|variable|sysrq_power_off
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sysrq_power_off
+)paren
 suffix:semicolon
 multiline_comment|/* Send a signal to all user processes */
 DECL|function|send_sig_all

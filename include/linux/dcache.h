@@ -403,6 +403,8 @@ DECL|macro|DCACHE_AUTOFS_PENDING
 mdefine_line|#define DCACHE_AUTOFS_PENDING 0x0001    /* autofs: &quot;under construction&quot; */
 DECL|macro|DCACHE_NFSFS_RENAMED
 mdefine_line|#define DCACHE_NFSFS_RENAMED  0x0002    /* this dentry has been &quot;silly&n;&t;&t;&t;&t;&t; * renamed&quot; and has to be&n;&t;&t;&t;&t;&t; * deleted on the last dput()&n;&t;&t;&t;&t;&t; */
+DECL|macro|DCACHE_NFSD_DISCONNECTED
+mdefine_line|#define&t;DCACHE_NFSD_DISCONNECTED 0x0004&t;/* This dentry is not currently connected to the&n;&t;&t;&t;&t;&t; * dcache tree. Its parent will either be itself,&n;&t;&t;&t;&t;&t; * or will have this flag as well.&n;&t;&t;&t;&t;&t; * If this dentry points to a directory, then&n;&t;&t;&t;&t;&t; * s_nfsd_free_path semaphore will be down&n;&t;&t;&t;&t;&t; */
 multiline_comment|/*&n; * d_drop() unhashes the entry from the parent&n; * dentry hashes, so that it won&squot;t be found through&n; * a VFS lookup any more. Note that this is different&n; * from deleting the dentry - d_delete will try to&n; * mark the dentry negative if possible, giving a&n; * successful _negative_ lookup, while d_drop will&n; * just make the cache lookup fail.&n; *&n; * d_drop() is used mainly for stuff that wants&n; * to invalidate a dentry for some reason (NFS&n; * timeouts or autofs deletes).&n; */
 DECL|function|d_drop
 r_static

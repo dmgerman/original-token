@@ -3206,6 +3206,13 @@ id|nlm_procedures
 comma
 )brace
 suffix:semicolon
+macro_line|#ifdef &t;CONFIG_LOCKD_V4
+r_extern
+r_struct
+id|rpc_version
+id|nlm_version4
+suffix:semicolon
+macro_line|#endif
 DECL|variable|nlm_versions
 r_static
 r_struct
@@ -3226,6 +3233,11 @@ comma
 op_amp
 id|nlm_version3
 comma
+macro_line|#ifdef &t;CONFIG_LOCKD_V4
+op_amp
+id|nlm_version4
+comma
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|variable|nlm_stats

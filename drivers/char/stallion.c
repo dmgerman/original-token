@@ -2982,6 +2982,13 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/*****************************************************************************/
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 macro_line|#ifdef MODULE
 multiline_comment|/*&n; *&t;Loadable module initialization stuff.&n; */
 DECL|function|init_module
@@ -3030,13 +3037,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
-DECL|variable|devfs_handle
-r_static
-id|devfs_handle_t
-id|devfs_handle
-op_assign
-l_int|NULL
-suffix:semicolon
 DECL|function|cleanup_module
 r_void
 id|cleanup_module

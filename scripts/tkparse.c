@@ -1521,6 +1521,14 @@ suffix:semicolon
 id|match_token
 c_func
 (paren
+id|token_dep_mbool
+comma
+l_string|&quot;dep_mbool&quot;
+)paren
+suffix:semicolon
+id|match_token
+c_func
+(paren
 id|token_dep_tristate
 comma
 l_string|&quot;dep_tristate&quot;
@@ -2304,6 +2312,9 @@ r_case
 id|token_dep_bool
 suffix:colon
 r_case
+id|token_dep_mbool
+suffix:colon
+r_case
 id|token_dep_tristate
 suffix:colon
 id|pnt
@@ -2594,7 +2605,7 @@ r_else
 id|syntax_error
 c_func
 (paren
-l_string|&quot;can&squot;t handle dep_bool/dep_tristate condition&quot;
+l_string|&quot;can&squot;t handle dep_bool/dep_mbool/dep_tristate condition&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2800,16 +2811,14 @@ c_cond
 (paren
 id|token
 op_eq
-id|token_dep_tristate
+id|token_dep_bool
 )paren
 id|sprintf
 c_func
 (paren
 id|fake_if
 comma
-l_string|&quot;[ &bslash;&quot;$%s&bslash;&quot; = &bslash;&quot;y&bslash;&quot; -o &bslash;&quot;$%s&bslash;&quot; = &bslash;&quot;m&bslash;&quot; -o &bslash;&quot;$%s&bslash;&quot; = &bslash;&quot;&bslash;&quot; ]; then&quot;
-comma
-id|dep-&gt;name
+l_string|&quot;[ &bslash;&quot;$%s&bslash;&quot; = &bslash;&quot;y&bslash;&quot; -o &bslash;&quot;$%s&bslash;&quot; = &bslash;&quot;&bslash;&quot; ]; then&quot;
 comma
 id|dep-&gt;name
 comma
@@ -2822,7 +2831,9 @@ c_func
 (paren
 id|fake_if
 comma
-l_string|&quot;[ &bslash;&quot;$%s&bslash;&quot; = &bslash;&quot;y&bslash;&quot; -o &bslash;&quot;$%s&bslash;&quot; = &bslash;&quot;&bslash;&quot; ]; then&quot;
+l_string|&quot;[ &bslash;&quot;$%s&bslash;&quot; = &bslash;&quot;y&bslash;&quot; -o &bslash;&quot;$%s&bslash;&quot; = &bslash;&quot;m&bslash;&quot; -o &bslash;&quot;$%s&bslash;&quot; = &bslash;&quot;&bslash;&quot; ]; then&quot;
+comma
+id|dep-&gt;name
 comma
 id|dep-&gt;name
 comma

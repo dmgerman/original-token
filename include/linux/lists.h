@@ -24,8 +24,8 @@ DECL|macro|QUEUE_FIRST
 mdefine_line|#define QUEUE_FIRST(head, listnam) (head)-&gt;DLIST_NEXT(listnam)
 DECL|macro|QUEUE_LAST
 mdefine_line|#define QUEUE_LAST(head, listnam) (head)-&gt;DLIST_PREV(listnam)
-DECL|macro|QUEUE_EMPTY
-mdefine_line|#define QUEUE_EMPTY(head, listnam) &bslash;&n;&t;((QUEUE_FIRST(head, listnam) == QUEUE_LAST(head, listnam)) &amp;&amp; &bslash;&n;&t; ((u_long)QUEUE_FIRST(head, listnam) == (u_long)head)) 
+DECL|macro|QUEUE_IS_EMPTY
+mdefine_line|#define QUEUE_IS_EMPTY(head, listnam) &bslash;&n;&t;((QUEUE_FIRST(head, listnam) == QUEUE_LAST(head, listnam)) &amp;&amp; &bslash;&n;&t; ((u_long)QUEUE_FIRST(head, listnam) == (u_long)head)) 
 DECL|macro|QUEUE_ENTER
 mdefine_line|#define QUEUE_ENTER(head, new, listnam, ptype) do {&t;&t;&bslash;&n;&t;(new)-&gt;listnam.dl_prev = (ptype)(head);&t;&t;&t;&bslash;&n;&t;(new)-&gt;listnam.dl_next = (head)-&gt;listnam.dl_next;&t;&bslash;&n;&t;(head)-&gt;listnam.dl_next-&gt;listnam.dl_prev = (new);&t;&bslash;&n;&t;(head)-&gt;listnam.dl_next = (new);&t;&t;&t;&bslash;&n;&t;} while (0)
 DECL|macro|QUEUE_REMOVE

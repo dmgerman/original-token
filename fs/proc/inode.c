@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/limits.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern
@@ -66,6 +67,12 @@ c_cond
 id|de
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME: count should be atomic_t */
 r_if
 c_cond
 (paren
@@ -114,6 +121,11 @@ id|de
 suffix:semicolon
 )brace
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 )brace
 DECL|function|proc_put_inode
@@ -160,6 +172,10 @@ op_star
 id|de
 op_assign
 id|inode-&gt;u.generic_ip
+suffix:semicolon
+id|inode-&gt;i_state
+op_assign
+id|I_CLEAR
 suffix:semicolon
 r_if
 c_cond

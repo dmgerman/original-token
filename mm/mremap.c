@@ -1306,7 +1306,7 @@ op_assign
 id|get_unmapped_area
 c_func
 (paren
-id|addr
+l_int|0
 comma
 id|new_len
 )paren

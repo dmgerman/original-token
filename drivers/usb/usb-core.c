@@ -62,20 +62,6 @@ r_void
 )paren
 suffix:semicolon
 r_int
-id|usb_dc2xx_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-id|usb_scanner_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
 id|usb_stor_init
 c_func
 (paren
@@ -191,13 +177,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#ifndef CONFIG_USB_MODULE
-macro_line|#ifdef CONFIG_USB_SCANNER
-id|usb_scanner_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_USB_AUDIO
 id|usb_audio_init
 c_func
@@ -221,13 +200,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_USB_OV511
 id|usb_ov511_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_DC2XX
-id|usb_dc2xx_init
 c_func
 (paren
 )paren

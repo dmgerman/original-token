@@ -14223,6 +14223,13 @@ c_func
 id|fg_console
 )paren
 suffix:semicolon
+DECL|variable|console_blank_hook
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|console_blank_hook
+)paren
+suffix:semicolon
 macro_line|#ifndef VT_SINGLE_DRIVER
 DECL|variable|take_over_console
 id|EXPORT_SYMBOL

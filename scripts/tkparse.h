@@ -37,6 +37,9 @@ comma
 DECL|enumerator|token_dep_bool
 id|token_dep_bool
 comma
+DECL|enumerator|token_dep_mbool
+id|token_dep_mbool
+comma
 DECL|enumerator|token_dep_tristate
 id|token_dep_tristate
 comma
@@ -156,7 +159,7 @@ suffix:semicolon
 multiline_comment|/* op_variable */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Dependency list for dep_bool, dep_tristate&n; */
+multiline_comment|/*&n; * Dependency list for dep_bool, dep_mbool, dep_tristate&n; */
 DECL|struct|dependency
 r_struct
 id|dependency

@@ -847,8 +847,20 @@ id|buffer
 (braket
 l_int|13
 )braket
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 )brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 macro_line|#include &lt;linux/stddef.h&gt;
 DECL|macro|pcloffs
@@ -1054,6 +1066,22 @@ id|pcl_t
 id|pclid
 )paren
 (brace
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,13)
+r_return
+id|lynx-&gt;dev-&gt;base_address
+(braket
+l_int|1
+)braket
+op_plus
+id|pclid
+op_star
+r_sizeof
+(paren
+r_struct
+id|ti_pcl
+)paren
+suffix:semicolon
+macro_line|#else
 r_return
 id|lynx-&gt;dev-&gt;resource
 (braket
@@ -1070,6 +1098,7 @@ r_struct
 id|ti_pcl
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#else /* CONFIG_IEEE1394_PCILYNX_LOCALRAM */
 DECL|function|put_pcl

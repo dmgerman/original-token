@@ -1922,6 +1922,13 @@ c_func
 id|kstat
 )paren
 suffix:semicolon
+DECL|variable|nr_running
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|nr_running
+)paren
+suffix:semicolon
 multiline_comment|/* misc */
 DECL|variable|panic
 id|EXPORT_SYMBOL
@@ -2365,6 +2372,13 @@ c_func
 id|strnicmp
 )paren
 suffix:semicolon
+DECL|variable|strspn
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|strspn
+)paren
+suffix:semicolon
 multiline_comment|/* software interrupts */
 DECL|variable|tasklet_hi_vec
 id|EXPORT_SYMBOL
@@ -2399,6 +2413,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|remove_bh
+)paren
+suffix:semicolon
+DECL|variable|tasklet_init
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tasklet_init
+)paren
+suffix:semicolon
+DECL|variable|tasklet_kill
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tasklet_kill
 )paren
 suffix:semicolon
 multiline_comment|/* init task, for moving kthread roots - ought to export a function ?? */

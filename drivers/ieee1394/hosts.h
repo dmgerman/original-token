@@ -58,11 +58,12 @@ r_int
 id|reset_retries
 suffix:semicolon
 DECL|member|topology_map
-DECL|member|speed_map
 id|quadlet_t
 op_star
 id|topology_map
-comma
+suffix:semicolon
+DECL|member|speed_map
+id|u8
 op_star
 id|speed_map
 suffix:semicolon
@@ -404,22 +405,6 @@ id|tmpl
 comma
 r_int
 id|hostdata_size
-)paren
-suffix:semicolon
-multiline_comment|/*&n; * Write pointers to all available hpsb_hosts into list.&n; * Return number of host adapters (i.e. elements in list).&n; *&n; * DEPRECATED - register with highlevel instead.&n; */
-r_int
-id|hpsb_get_host_list
-c_func
-(paren
-r_struct
-id|hpsb_host
-op_star
-id|list
-(braket
-)braket
-comma
-r_int
-id|max_list_size
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Increase / decrease host usage counter.  Increase function will return true&n; * only if successful (host still existed).  Decrease function expects host to&n; * exist.&n; */

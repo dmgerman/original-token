@@ -777,6 +777,13 @@ id|timeout
 op_assign
 id|init_timeout
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|init_timeout
+OL
+id|max_timeout
+)paren
 id|init_timeout
 op_lshift_assign
 l_int|1

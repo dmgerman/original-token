@@ -1214,31 +1214,6 @@ c_func
 l_string|&quot;Evaluating net profiler cost ...&quot;
 )paren
 suffix:semicolon
-macro_line|#if CPU == 586 || CPU == 686
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|boot_cpu_data.x86_capability
-op_amp
-id|X86_FEATURE_TSC
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;Sorry, your CPU does not support TSC. Net profiler disabled.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#endif
 macro_line|#ifdef __alpha__
 id|alpha_tick
 c_func

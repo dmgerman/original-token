@@ -13735,6 +13735,31 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pci_dma_supported
+c_func
+(paren
+id|pcidev
+comma
+l_int|0x00ffffff
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;sonicvibes: architecture does not support 24bit PCI busmaster DMA&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/* try to allocate a DDMA resource if not already available */
 r_if
 c_cond
@@ -15075,7 +15100,6 @@ suffix:semicolon
 )brace
 DECL|variable|__devinitdata
 r_static
-r_const
 r_struct
 id|pci_device_id
 id|id_table

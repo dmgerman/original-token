@@ -967,7 +967,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|QUEUE_EMPTY
+id|QUEUE_IS_EMPTY
 c_func
 (paren
 op_amp
@@ -1060,7 +1060,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|QUEUE_EMPTY
+id|QUEUE_IS_EMPTY
 c_func
 (paren
 op_amp
@@ -1743,7 +1743,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|QUEUE_EMPTY
+id|QUEUE_IS_EMPTY
 c_func
 (paren
 op_amp
@@ -1947,7 +1947,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|QUEUE_EMPTY
+id|QUEUE_IS_EMPTY
 c_func
 (paren
 op_amp
@@ -1975,7 +1975,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|QUEUE_EMPTY
+id|QUEUE_IS_EMPTY
 c_func
 (paren
 op_amp

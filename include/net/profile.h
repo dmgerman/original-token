@@ -7,6 +7,9 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#ifdef CONFIG_X86_TSC
+macro_line|#include &lt;asm/msr.h&gt;
+macro_line|#endif
 DECL|struct|net_profile_slot
 r_struct
 id|net_profile_slot
@@ -78,7 +81,7 @@ op_star
 id|leaved
 )paren
 suffix:semicolon
-macro_line|#if CPU == 586 || CPU == 686
+macro_line|#ifdef CONFIG_X86_TSC
 DECL|function|net_profile_stamp
 r_extern
 id|__inline__
@@ -92,20 +95,12 @@ op_star
 id|pstamp
 )paren
 (brace
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;.byte 0x0f,0x31&quot;
-suffix:colon
-l_string|&quot;=a&quot;
+id|rdtsc
+c_func
 (paren
 id|pstamp-&gt;tv_usec
-)paren
 comma
-l_string|&quot;=d&quot;
-(paren
 id|pstamp-&gt;tv_sec
-)paren
 )paren
 suffix:semicolon
 )brace

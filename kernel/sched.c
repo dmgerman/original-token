@@ -244,6 +244,9 @@ c_cond
 id|p-&gt;mm
 op_eq
 id|this_mm
+op_logical_or
+op_logical_neg
+id|p-&gt;mm
 )paren
 id|weight
 op_add_assign
@@ -340,7 +343,7 @@ id|p
 comma
 id|cpu
 comma
-id|prev-&gt;mm
+id|prev-&gt;active_mm
 )paren
 op_minus
 id|goodness
@@ -350,7 +353,7 @@ id|prev
 comma
 id|cpu
 comma
-id|prev-&gt;mm
+id|prev-&gt;active_mm
 )paren
 suffix:semicolon
 )brace

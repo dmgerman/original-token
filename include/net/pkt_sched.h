@@ -9,8 +9,12 @@ DECL|macro|PSCHED_CPU
 mdefine_line|#define PSCHED_CPU &t;&t;3
 DECL|macro|PSCHED_CLOCK_SOURCE
 mdefine_line|#define PSCHED_CLOCK_SOURCE&t;PSCHED_JIFFIES
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/pkt_sched.h&gt;
 macro_line|#include &lt;net/pkt_cls.h&gt;
+macro_line|#ifdef CONFIG_X86_TSC
+macro_line|#include &lt;asm/msr.h&gt;
+macro_line|#endif
 r_struct
 id|rtattr
 suffix:semicolon
@@ -865,9 +869,9 @@ DECL|macro|PSCHED_EXPORTLIST_2
 mdefine_line|#define PSCHED_EXPORTLIST_2 EXPORT_SYMBOL(psched_clock_per_hz); &bslash;&n;                            EXPORT_SYMBOL(psched_clock_scale);
 DECL|macro|PSCHED_US2JIFFIE
 mdefine_line|#define PSCHED_US2JIFFIE(delay) (((delay)+psched_clock_per_hz-1)/psched_clock_per_hz)
-macro_line|#if CPU == 586 || CPU == 686
+macro_line|#ifdef CONFIG_X86_TSC
 DECL|macro|PSCHED_GET_TIME
-mdefine_line|#define PSCHED_GET_TIME(stamp) &bslash;&n;({ u64 __cur; &bslash;&n;   __asm__ __volatile__ (&quot;.byte 0x0f,0x31&quot; :&quot;=A&quot; (__cur)); &bslash;&n;   (stamp) = __cur&gt;&gt;psched_clock_scale; &bslash;&n;})
+mdefine_line|#define PSCHED_GET_TIME(stamp) &bslash;&n;({ u64 __cur; &bslash;&n;   rdtscll(__cur); &bslash;&n;   (stamp) = __cur&gt;&gt;psched_clock_scale; &bslash;&n;})
 DECL|macro|PSCHED_EXPORTLIST_1
 mdefine_line|#define PSCHED_EXPORTLIST_1
 macro_line|#elif defined (__alpha__)

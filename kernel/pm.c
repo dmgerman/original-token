@@ -659,4 +659,11 @@ c_func
 id|pm_find
 )paren
 suffix:semicolon
+DECL|variable|pm_active
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pm_active
+)paren
+suffix:semicolon
 eof

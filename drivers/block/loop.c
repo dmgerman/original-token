@@ -1624,7 +1624,7 @@ op_amp
 id|current_request-&gt;queue
 comma
 op_amp
-id|current_request-&gt;q-&gt;queue_head
+id|q-&gt;queue_head
 )paren
 suffix:semicolon
 id|end_request
@@ -1654,7 +1654,7 @@ op_amp
 id|current_request-&gt;queue
 comma
 op_amp
-id|current_request-&gt;q-&gt;queue_head
+id|q-&gt;queue_head
 )paren
 suffix:semicolon
 id|end_request

@@ -5083,22 +5083,6 @@ r_int
 r_int
 id|stop
 suffix:semicolon
-macro_line|#if CPU == 586 || CPU == 686
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|boot_cpu_data.x86_capability
-op_amp
-id|X86_FEATURE_TSC
-)paren
-)paren
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef PSCHED_WATCHER
 id|psched_tick
 c_func

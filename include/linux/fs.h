@@ -1069,6 +1069,8 @@ DECL|macro|I_LOCK
 mdefine_line|#define I_LOCK&t;&t;2
 DECL|macro|I_FREEING
 mdefine_line|#define I_FREEING&t;4
+DECL|macro|I_CLEAR
+mdefine_line|#define I_CLEAR&t;&t;8
 r_extern
 r_void
 id|__mark_inode_dirty
@@ -1779,6 +1781,12 @@ id|semaphore
 id|s_vfs_rename_sem
 suffix:semicolon
 multiline_comment|/* Kludge */
+multiline_comment|/* The next field is used by knfsd when converting a (inode number based)&n;&t; * file handle into a dentry. As it builds a path in the dcache tree from&n;&t; * the bottom up, there may for a time be a subpath of dentrys which is not&n;&t; * connected to the main tree.  This semaphore ensure that there is only ever&n;&t; * one such free path per filesystem.  Note that unconnected files (or other&n;&t; * non-directories) are allowed, but not unconnected diretories.&n;&t; */
+DECL|member|s_nfsd_free_path_sem
+r_struct
+id|semaphore
+id|s_nfsd_free_path_sem
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * VFS helper functions..&n; */
@@ -2467,6 +2475,7 @@ op_star
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * NOTE: write_inode, delete_inode, clear_inode, put_inode can be called&n; * without the big kernel lock held in all filesystems.&n; */
 DECL|struct|super_operations
 r_struct
 id|super_operations

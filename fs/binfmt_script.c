@@ -234,6 +234,7 @@ id|cp
 op_increment
 )paren
 multiline_comment|/* nothing */
+suffix:semicolon
 r_while
 c_loop
 (paren

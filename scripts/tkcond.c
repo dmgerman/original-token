@@ -100,6 +100,10 @@ id|token_dep_bool
 op_logical_or
 id|cfg-&gt;token
 op_eq
+id|token_dep_mbool
+op_logical_or
+id|cfg-&gt;token
+op_eq
 id|token_dep_tristate
 op_logical_or
 id|cfg-&gt;token
@@ -2141,6 +2145,9 @@ r_break
 suffix:semicolon
 r_case
 id|token_dep_bool
+suffix:colon
+r_case
+id|token_dep_mbool
 suffix:colon
 r_case
 id|token_dep_tristate

@@ -2972,7 +2972,12 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Socket is locked, keep trying until memory is available. */
-r_do
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
 (brace
 id|skb
 op_assign
@@ -2990,15 +2995,23 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
-)brace
-r_while
-c_loop
+r_if
+c_cond
 (paren
 id|skb
-op_eq
-l_int|NULL
+)paren
+r_break
+suffix:semicolon
+id|current-&gt;policy
+op_or_assign
+id|SCHED_YIELD
+suffix:semicolon
+id|schedule
+c_func
+(paren
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Reserve space for headers and prepare control bits. */
 id|skb_reserve
 c_func

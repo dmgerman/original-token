@@ -87,14 +87,14 @@ macro_line|#else
 DECL|macro|CB_OPT
 mdefine_line|#define CB_OPT &quot;&quot;
 macro_line|#endif
-macro_line|#if defined(CONFIG_APM) || defined(CONFIG_ACPI)
+macro_line|#if defined(CONFIG_APM) || defined(CONFIG_APM_MODULE) || defined(CONFIG_ACPI)
 DECL|macro|APM_OPT
 mdefine_line|#define APM_OPT &quot; [apm]&quot;
 macro_line|#else
 DECL|macro|APM_OPT
 mdefine_line|#define APM_OPT &quot;&quot;
 macro_line|#endif
-macro_line|#if !defined(CONFIG_CARDBUS) &amp;&amp; !defined(CONFIG_PCI) &amp;&amp; &bslash;&n;    !defined(CONFIG_APM) &amp;&amp; !defined(CONFIG_ACPI)
+macro_line|#if !defined(CONFIG_CARDBUS) &amp;&amp; !defined(CONFIG_PCI) &amp;&amp; &bslash;&n;    !defined(CONFIG_APM) &amp;&amp; !defined(CONFIG_APM_MODULE) &amp;&amp; &bslash;&n;    !defined(CONFIG_ACPI)
 DECL|macro|OPTIONS
 mdefine_line|#define OPTIONS &quot; none&quot;
 macro_line|#else
@@ -249,7 +249,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* ns */
 multiline_comment|/* Optional features */
-macro_line|#if defined(CONFIG_APM) || defined(CONFIG_ACPI)
+macro_line|#if defined(CONFIG_APM) || defined(CONFIG_APM_MODULE) || defined(CONFIG_ACPI)
 DECL|variable|do_apm
 r_static
 r_int

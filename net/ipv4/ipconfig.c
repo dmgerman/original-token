@@ -3450,6 +3450,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; *&t;IP Autoconfig dispatcher.&n; */
 DECL|function|ip_auto_config
+r_static
 r_int
 id|__init
 id|ip_auto_config
@@ -3649,6 +3650,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|ip_auto_config
+id|module_init
+c_func
+(paren
+id|ip_auto_config
+)paren
+suffix:semicolon
 multiline_comment|/*&n; *  Decode any IP configuration options in the &quot;ip=&quot; or &quot;nfsaddrs=&quot; kernel&n; *  command line parameter. It consists of option fields separated by colons in&n; *  the following order:&n; *&n; *  &lt;client-ip&gt;:&lt;server-ip&gt;:&lt;gw-ip&gt;:&lt;netmask&gt;:&lt;host name&gt;:&lt;device&gt;:&lt;bootp|rarp&gt;&n; *&n; *  Any of the fields can be empty which means to use a default value:&n; *&t;&lt;client-ip&gt;&t;- address given by BOOTP or RARP&n; *&t;&lt;server-ip&gt;&t;- address of host returning BOOTP or RARP packet&n; *&t;&lt;gw-ip&gt;&t;&t;- none, or the address returned by BOOTP&n; *&t;&lt;netmask&gt;&t;- automatically determined from &lt;client-ip&gt;, or the&n; *&t;&t;&t;  one returned by BOOTP&n; *&t;&lt;host name&gt;&t;- &lt;client-ip&gt; in ASCII notation, or the name returned&n; *&t;&t;&t;  by BOOTP&n; *&t;&lt;device&gt;&t;- use all available devices&n; *&t;&lt;bootp|rarp|both|off&gt; - use both protocols to determine my own address&n; */
 DECL|function|ic_proto_name
 r_static

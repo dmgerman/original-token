@@ -1,7 +1,7 @@
 macro_line|#ifndef _LINUX_APM_H
 DECL|macro|_LINUX_APM_H
 mdefine_line|#define _LINUX_APM_H
-multiline_comment|/*&n; * Include file for the interface to an APM BIOS&n; * Copyright 1994-1999 Stephen Rothwell (sfr@linuxcare.com)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; */
+multiline_comment|/*&n; * Include file for the interface to an APM BIOS&n; * Copyright 1994-2000 Stephen Rothwell (sfr@linuxcare.com)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; */
 DECL|typedef|apm_event_t
 r_typedef
 r_int
@@ -147,64 +147,6 @@ DECL|macro|APM_FUNC_TIMER_ENABLE
 mdefine_line|#define&t;APM_FUNC_TIMER_ENABLE&t;1
 DECL|macro|APM_FUNC_TIMER_GET
 mdefine_line|#define&t;APM_FUNC_TIMER_GET&t;2
-multiline_comment|/*&n; * Maximum number of events stored&n; */
-DECL|macro|APM_MAX_EVENTS
-mdefine_line|#define APM_MAX_EVENTS&t;&t;20
-multiline_comment|/*&n; * The per-file APM data&n; */
-DECL|struct|apm_bios_struct
-r_struct
-id|apm_bios_struct
-(brace
-DECL|member|magic
-r_int
-id|magic
-suffix:semicolon
-DECL|member|next
-r_struct
-id|apm_bios_struct
-op_star
-id|next
-suffix:semicolon
-DECL|member|suser
-r_int
-id|suser
-suffix:semicolon
-DECL|member|suspends_pending
-r_int
-id|suspends_pending
-suffix:semicolon
-DECL|member|standbys_pending
-r_int
-id|standbys_pending
-suffix:semicolon
-DECL|member|suspends_read
-r_int
-id|suspends_read
-suffix:semicolon
-DECL|member|standbys_read
-r_int
-id|standbys_read
-suffix:semicolon
-DECL|member|event_head
-r_int
-id|event_head
-suffix:semicolon
-DECL|member|event_tail
-r_int
-id|event_tail
-suffix:semicolon
-DECL|member|events
-id|apm_event_t
-id|events
-(braket
-id|APM_MAX_EVENTS
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * The magic number in apm_bios_struct&n; */
-DECL|macro|APM_BIOS_MAGIC
-mdefine_line|#define APM_BIOS_MAGIC&t;&t;0x4101
 multiline_comment|/*&n; * in init/main.c&n; */
 r_extern
 r_struct

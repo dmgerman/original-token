@@ -191,7 +191,7 @@ id|entry
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#if defined(CONFIG_ACPI) || defined(CONFIG_APM)
+macro_line|#if defined(CONFIG_ACPI) || defined(CONFIG_APM) || defined(CONFIG_APM_MODULE)
 r_extern
 r_int
 id|pm_active
@@ -293,8 +293,7 @@ id|dev
 )paren
 (brace
 )brace
-macro_line|#else 
-singleline_comment|// CONFIG_ACPI || CONFIG_APM
+macro_line|#else /* CONFIG_ACPI || CONFIG_APM || CONFIG_APM_MODULE */
 DECL|macro|PM_IS_ACTIVE
 mdefine_line|#define PM_IS_ACTIVE() 0
 DECL|function|pm_register
@@ -416,8 +415,7 @@ id|dev
 )paren
 (brace
 )brace
-macro_line|#endif 
-singleline_comment|// CONFIG_ACPI || CONFIG_APM
+macro_line|#endif /* CONFIG_ACPI || CONFIG_APM || CONFIG_APM_MODULE */
 r_extern
 r_void
 (paren
@@ -438,7 +436,6 @@ id|pm_power_off
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif 
-singleline_comment|// __KERNEL__
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_PM_H */
 eof

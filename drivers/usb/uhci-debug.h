@@ -1086,6 +1086,8 @@ r_int
 id|i
 comma
 id|isqh
+op_assign
+l_int|0
 suffix:semicolon
 r_struct
 id|uhci_qh
