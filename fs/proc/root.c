@@ -203,6 +203,16 @@ comma
 l_string|&quot;version&quot;
 )brace
 comma
+macro_line|#ifdef CONFIG_PCI
+(brace
+id|PROC_PCI
+comma
+l_int|3
+comma
+l_string|&quot;pci&quot;
+)brace
+comma
+macro_line|#endif
 (brace
 id|PROC_CPUINFO
 comma
@@ -310,6 +320,7 @@ comma
 l_string|&quot;ioports&quot;
 )brace
 comma
+macro_line|#ifdef CONFIG_PROFILE
 (brace
 id|PROC_PROFILE
 comma
@@ -318,6 +329,7 @@ comma
 l_string|&quot;profile&quot;
 )brace
 comma
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|macro|NR_ROOT_DIRENTRY

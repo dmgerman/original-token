@@ -1028,7 +1028,7 @@ id|add_timer
 c_func
 (paren
 op_amp
-id|sk-&gt;timer
+id|sk-&gt;retransmit_timer
 )paren
 suffix:semicolon
 id|sti
@@ -16083,6 +16083,10 @@ comma
 )brace
 comma
 l_string|&quot;TCP&quot;
+comma
+l_int|0
+comma
+l_int|0
 )brace
 suffix:semicolon
 eof

@@ -152,6 +152,13 @@ id|sock
 op_star
 id|next
 suffix:semicolon
+DECL|member|prev
+r_struct
+id|sock
+op_star
+id|prev
+suffix:semicolon
+multiline_comment|/* Doubdly linked chain.. */
 DECL|member|pair
 r_struct
 id|sock
@@ -1239,6 +1246,13 @@ id|name
 (braket
 l_int|80
 )braket
+suffix:semicolon
+DECL|member|inuse
+DECL|member|highestinuse
+r_int
+id|inuse
+comma
+id|highestinuse
 suffix:semicolon
 )brace
 suffix:semicolon

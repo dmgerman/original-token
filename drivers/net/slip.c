@@ -2,11 +2,6 @@ multiline_comment|/*&n; * slip.c&t;This module implements the SLIP protocol for 
 DECL|macro|SL_CHECK_TRANSMIT
 mdefine_line|#define SL_CHECK_TRANSMIT
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef SL_COMPRESSED
-multiline_comment|/* I think following lines must be in the &lt;linux/config.h&gt;&n; *         14 Oct 1994 Dmitry Gorodchanin&n; */
-DECL|macro|CONFIG_SLIP_COMPRESSED
-mdefine_line|#define CONFIG_SLIP_COMPRESSED
-macro_line|#endif
 multiline_comment|/* Undef this, if you don&squot;t need 6bit encapsulation code in the driver */
 DECL|macro|CONFIG_SLIP_MODE_SLIP6
 mdefine_line|#define CONFIG_SLIP_MODE_SLIP6

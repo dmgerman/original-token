@@ -222,6 +222,8 @@ id|dev
 op_assign
 id|sb-&gt;s_dev
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -238,6 +240,8 @@ suffix:semicolon
 id|sb-&gt;s_dev
 op_assign
 l_int|0
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -299,6 +303,8 @@ id|sb-&gt;s_dev
 op_assign
 l_int|0
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -323,6 +329,8 @@ suffix:semicolon
 id|sb-&gt;s_dev
 op_assign
 l_int|0
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -518,12 +526,12 @@ c_func
 l_string|&quot;nfs_read_super: get root inode failed&bslash;n&quot;
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 id|sb
 suffix:semicolon
@@ -1095,9 +1103,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 id|register_filesystem
 c_func
 (paren
@@ -1117,24 +1122,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;NFS cannot be removed, currently in use&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|unregister_filesystem
 c_func
 (paren

@@ -5,7 +5,7 @@ mdefine_line|#define _LINUX_NET_H
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 DECL|macro|NSOCKETS
-mdefine_line|#define NSOCKETS&t;128&t;&t;/* should be dynamic, later...&t;*/
+mdefine_line|#define NSOCKETS&t;2000&t;&t;/* Dynamic, this is MAX LIMIT&t;*/
 DECL|macro|NPROTO
 mdefine_line|#define NPROTO&t;&t;16&t;&t;/* should be enough for now..&t;*/
 DECL|macro|SYS_SOCKET
@@ -145,6 +145,20 @@ op_star
 id|fasync_list
 suffix:semicolon
 multiline_comment|/* Asynchronous wake up list&t;*/
+DECL|member|nextsock
+r_struct
+id|socket
+op_star
+id|nextsock
+suffix:semicolon
+multiline_comment|/* next on the allocated socks&t;*/
+DECL|member|prevsock
+r_struct
+id|socket
+op_star
+id|prevsock
+suffix:semicolon
+multiline_comment|/* precious on the allocated socks */
 )brace
 suffix:semicolon
 DECL|macro|SOCK_INODE

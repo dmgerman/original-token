@@ -6,8 +6,6 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 DECL|macro|IOTABLE_SIZE
 mdefine_line|#define IOTABLE_SIZE 32
-DECL|macro|STR
-mdefine_line|#define STR(x) #x
 DECL|struct|resource_entry_t
 r_typedef
 r_struct
@@ -986,7 +984,7 @@ r_return
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * This is for compatibilty with older drivers.&n; * It can be removed when all driver call the new function.&n; */
+multiline_comment|/*&n; * This is for compatibility with older drivers.&n; * It can be removed when all driver call the new function.&n; */
 DECL|function|snarf_region
 r_void
 id|snarf_region

@@ -10,6 +10,7 @@ mdefine_line|#define USER_CS     0x1
 DECL|macro|USER_DS
 mdefine_line|#define USER_DS     0x1
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;asm/vac-ops.h&gt;
 DECL|function|get_user_byte
 r_static
 r_inline

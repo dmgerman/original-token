@@ -21707,7 +21707,7 @@ op_assign
 l_int|0x10
 suffix:semicolon
 multiline_comment|/* 2:0x00, 8:0x10, 16:0x20, 32:0x30 */
-multiline_comment|/* What is n_ports? Number of adresses or base address offset? */
+multiline_comment|/* What is n_ports? Number of addresses or base address offset? */
 r_int
 id|irq_number
 op_assign

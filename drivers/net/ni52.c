@@ -128,7 +128,7 @@ macro_line|#ifndef HAVE_PORTRESERVE
 DECL|macro|check_region
 mdefine_line|#define check_region(ioaddr, size) &t;&t;0
 DECL|macro|request_region
-mdefine_line|#define&t;request_region(ioaddr, size,name);&t;&t;do ; while (0)
+mdefine_line|#define&t;request_region(ioaddr, size,name)&t;do ; while (0)
 macro_line|#endif
 DECL|macro|NI52_TOTAL_SIZE
 mdefine_line|#define NI52_TOTAL_SIZE 16

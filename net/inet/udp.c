@@ -1944,10 +1944,37 @@ id|daddr
 )paren
 )paren
 (brace
+multiline_comment|/* &lt;mea@utu.fi&gt; wants to know, who sent it, to&n;&t;&t;   go and stomp on the garbage sender... */
 id|printk
 c_func
 (paren
-l_string|&quot;UDP: bad checksum.&bslash;n&quot;
+l_string|&quot;UDP: bad checksum. From %08lX:%d to %08lX:%d ulen %d&bslash;n&quot;
+comma
+id|ntohl
+c_func
+(paren
+id|saddr
+)paren
+comma
+id|ntohs
+c_func
+(paren
+id|uh-&gt;source
+)paren
+comma
+id|ntohl
+c_func
+(paren
+id|daddr
+)paren
+comma
+id|ntohs
+c_func
+(paren
+id|uh-&gt;dest
+)paren
+comma
+id|ulen
 )paren
 suffix:semicolon
 id|udp_statistics.UdpInErrors
@@ -2399,6 +2426,10 @@ comma
 )brace
 comma
 l_string|&quot;UDP&quot;
+comma
+l_int|0
+comma
+l_int|0
 )brace
 suffix:semicolon
 eof

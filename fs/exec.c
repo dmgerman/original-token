@@ -2383,7 +2383,6 @@ id|bprm-&gt;e_gid
 op_ne
 id|current-&gt;egid
 op_logical_or
-op_logical_neg
 id|permission
 c_func
 (paren
@@ -2830,7 +2829,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
+id|retval
+op_assign
 id|permission
 c_func
 (paren
@@ -2838,7 +2839,15 @@ id|bprm.inode
 comma
 id|MAY_EXEC
 )paren
-op_logical_or
+)paren
+op_ne
+l_int|0
+)paren
+r_goto
+id|exec_error2
+suffix:semicolon
+r_if
+c_cond
 (paren
 op_logical_neg
 (paren
@@ -2850,7 +2859,6 @@ op_logical_and
 id|fsuser
 c_func
 (paren
-)paren
 )paren
 )paren
 (brace

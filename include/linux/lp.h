@@ -32,23 +32,25 @@ DECL|macro|LP_INIT_TIME
 mdefine_line|#define LP_INIT_TIME 2
 multiline_comment|/* IOCTL numbers */
 DECL|macro|LPCHAR
-mdefine_line|#define LPCHAR   0x0001  /* corresponds to LP_INIT_CHAR */
+mdefine_line|#define LPCHAR   0x0601  /* corresponds to LP_INIT_CHAR */
 DECL|macro|LPTIME
-mdefine_line|#define LPTIME   0x0002  /* corresponds to LP_INIT_TIME */
+mdefine_line|#define LPTIME   0x0602  /* corresponds to LP_INIT_TIME */
 DECL|macro|LPABORT
-mdefine_line|#define LPABORT  0x0004  /* call with TRUE arg to abort on error,&n;&t;&t;&t;    FALSE to retry.  Default is retry.  */
+mdefine_line|#define LPABORT  0x0604  /* call with TRUE arg to abort on error,&n;&t;&t;&t;    FALSE to retry.  Default is retry.  */
 DECL|macro|LPSETIRQ
-mdefine_line|#define LPSETIRQ 0x0005  /* call with new IRQ number,&n;&t;&t;&t;    or 0 for polling (no IRQ) */
+mdefine_line|#define LPSETIRQ 0x0605  /* call with new IRQ number,&n;&t;&t;&t;    or 0 for polling (no IRQ) */
 DECL|macro|LPGETIRQ
-mdefine_line|#define LPGETIRQ 0x0006  /* get the current IRQ number */
+mdefine_line|#define LPGETIRQ 0x0606  /* get the current IRQ number */
 DECL|macro|LPWAIT
-mdefine_line|#define LPWAIT   0x0008  /* corresponds to LP_INIT_WAIT */
+mdefine_line|#define LPWAIT   0x0608  /* corresponds to LP_INIT_WAIT */
 DECL|macro|LPCAREFUL
-mdefine_line|#define LPCAREFUL   0x0009  /* call with TRUE arg to require out-of-paper, off-&n;&t;&t;&t;    line, and error indicators good on all writes,&n;&t;&t;&t;    FALSE to ignore them.  Default is ignore. */
+mdefine_line|#define LPCAREFUL   0x0609  /* call with TRUE arg to require out-of-paper, off-&n;&t;&t;&t;    line, and error indicators good on all writes,&n;&t;&t;&t;    FALSE to ignore them.  Default is ignore. */
 DECL|macro|LPABORTOPEN
-mdefine_line|#define LPABORTOPEN 0x000a  /* call with TRUE arg to abort open() on error,&n;&t;&t;&t;    FALSE to ignore error.  Default is ignore.  */
+mdefine_line|#define LPABORTOPEN 0x060a  /* call with TRUE arg to abort open() on error,&n;&t;&t;&t;    FALSE to ignore error.  Default is ignore.  */
 DECL|macro|LPGETSTATUS
-mdefine_line|#define LPGETSTATUS 0x000b  /* return LP_S(minor) */
+mdefine_line|#define LPGETSTATUS 0x060b  /* return LP_S(minor) */
+DECL|macro|LPRESET
+mdefine_line|#define LPRESET     0x060c  /* reset printer */
 multiline_comment|/* timeout for printk&squot;ing a timeout, in jiffies (100ths of a second).&n;   This is also used for re-checking error conditions if LP_ABORT is&n;   not set.  This is the default behavior. */
 DECL|macro|LP_TIMEOUT_INTERRUPT
 mdefine_line|#define LP_TIMEOUT_INTERRUPT&t;(60 * HZ)

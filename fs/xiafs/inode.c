@@ -2891,21 +2891,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;XIA-FS cannot be removed, currently in use&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|unregister_filesystem
 c_func
 (paren

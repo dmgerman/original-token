@@ -101,8 +101,13 @@ r_int
 r_int
 )paren
 suffix:semicolon
+macro_line|#ifdef __i386__
 DECL|macro|fake_keyboard_interrupt
-mdefine_line|#define fake_keyboard_interrupt() &bslash;&n;__asm__ __volatile__(&quot;int $0x21&quot;)
+mdefine_line|#define fake_keyboard_interrupt() __asm__ __volatile__(&quot;int $0x21&quot;)
+macro_line|#else
+DECL|macro|fake_keyboard_interrupt
+mdefine_line|#define fake_keyboard_interrupt() do ; while (0)
+macro_line|#endif
 DECL|variable|kbd_read_mask
 r_int
 r_char
@@ -2381,6 +2386,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef __i386__
 r_if
 c_cond
 (paren
@@ -2482,6 +2488,7 @@ op_amp
 id|pt_regs-&gt;gs
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|hold
 r_static
@@ -4903,12 +4910,14 @@ l_int|0x64
 suffix:semicolon
 multiline_comment|/* pulse reset low */
 )brace
+macro_line|#ifdef __i386__
 id|__asm__
 c_func
 (paren
 l_string|&quot;&bslash;tlidt _no_idt&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 DECL|function|kbd_init

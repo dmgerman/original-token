@@ -89,6 +89,23 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|afinet_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_INET
 r_extern
 r_int
@@ -714,6 +731,14 @@ comma
 macro_line|#endif /* CONFIG_NETROM */
 macro_line|#endif /* CONFIG_AX25 */
 (brace
+id|PROC_NET_SOCKSTAT
+comma
+l_int|8
+comma
+l_string|&quot;sockstat&quot;
+)brace
+comma
+(brace
 l_int|0
 comma
 l_int|0
@@ -1141,6 +1166,26 @@ suffix:colon
 id|length
 op_assign
 id|unix_get_info
+c_func
+(paren
+id|page
+comma
+op_amp
+id|start
+comma
+id|file-&gt;f_pos
+comma
+id|thistime
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|PROC_NET_SOCKSTAT
+suffix:colon
+id|length
+op_assign
+id|afinet_get_info
 c_func
 (paren
 id|page

@@ -489,6 +489,8 @@ c_func
 l_string|&quot;bad i-node size&quot;
 )paren
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|lock_super
 c_func
 (paren
@@ -537,6 +539,8 @@ c_func
 (paren
 l_string|&quot;MINIX-fs: unable to read superblock&bslash;n&quot;
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -669,6 +673,8 @@ l_string|&quot;VFS: Can&squot;t find a minix filesystem on dev 0x%04x.&bslash;n&
 comma
 id|dev
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -888,6 +894,8 @@ c_func
 l_string|&quot;MINIX-fs: bad superblock or unable to read bitmaps&bslash;n&quot;
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -967,6 +975,8 @@ c_func
 l_string|&quot;MINIX-fs: get root inode failed&bslash;n&quot;
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -1029,8 +1039,6 @@ id|printk
 l_string|&quot;MINIX-fs: mounting file system with errors, &quot;
 l_string|&quot;running fsck is recommended.&bslash;n&quot;
 )paren
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 id|s
@@ -2778,19 +2786,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;ne: device busy, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
 id|unregister_filesystem
 c_func
 (paren
@@ -2798,7 +2793,6 @@ op_amp
 id|minix_fs_type
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif
 eof

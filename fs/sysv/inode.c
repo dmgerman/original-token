@@ -5605,21 +5605,6 @@ r_void
 r_int
 id|i
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;SysV FS cannot be removed, currently in use&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_for
 c_loop
 (paren

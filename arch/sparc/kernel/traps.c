@@ -1,5 +1,7 @@
 multiline_comment|/*&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/*&n; * I hate traps on the sparc, grrr...&n; */
+macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
+macro_line|#include &lt;linux/kernel.h&gt;
 DECL|function|do_hw_interrupt
 r_void
 id|do_hw_interrupt

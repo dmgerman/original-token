@@ -382,7 +382,8 @@ id|inode
 )paren
 )paren
 r_return
-l_int|0
+op_minus
+id|EACCES
 suffix:semicolon
 multiline_comment|/* Nobody gets write access to an immutable file */
 r_else
@@ -432,10 +433,11 @@ c_func
 )paren
 )paren
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 r_return
-l_int|0
+op_minus
+id|EACCES
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * get_write_access() gets write permission for a file.&n; * put_write_access() releases this write permission.&n; * This is used for regular files.&n; * We cannot support write (and maybe mmap read-write shared) accesses and&n; * MAP_DENYWRITE mmappings simultaneously.&n; */
@@ -735,8 +737,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|perm
+op_ne
+l_int|0
 )paren
 (brace
 id|iput
@@ -746,8 +749,7 @@ id|dir
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EACCES
+id|perm
 suffix:semicolon
 )brace
 r_if
@@ -1542,7 +1544,9 @@ multiline_comment|/* thanks to Paul Pluzhnikov for noticing this was missing.. *
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
+id|error
+op_assign
 id|permission
 c_func
 (paren
@@ -1555,6 +1559,9 @@ id|flag
 )paren
 )paren
 )paren
+op_ne
+l_int|0
+)paren
 (brace
 id|iput
 c_func
@@ -1563,8 +1570,7 @@ id|dir
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EACCES
+id|error
 suffix:semicolon
 )brace
 op_star
@@ -1642,7 +1648,9 @@ r_else
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
+id|error
+op_assign
 id|permission
 c_func
 (paren
@@ -1653,11 +1661,11 @@ op_or
 id|MAY_EXEC
 )paren
 )paren
-id|error
-op_assign
-op_minus
-id|EACCES
+op_ne
+l_int|0
+)paren
 suffix:semicolon
+multiline_comment|/* error is already set! */
 r_else
 r_if
 c_cond
@@ -1824,7 +1832,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
+id|error
+op_assign
 id|permission
 c_func
 (paren
@@ -1837,6 +1847,9 @@ id|flag
 )paren
 )paren
 )paren
+op_ne
+l_int|0
+)paren
 (brace
 id|iput
 c_func
@@ -1845,8 +1858,7 @@ id|inode
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EACCES
+id|error
 suffix:semicolon
 )brace
 r_if
@@ -2181,7 +2193,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
+id|error
+op_assign
 id|permission
 c_func
 (paren
@@ -2192,6 +2206,9 @@ op_or
 id|MAY_EXEC
 )paren
 )paren
+op_ne
+l_int|0
+)paren
 (brace
 id|iput
 c_func
@@ -2200,8 +2217,7 @@ id|dir
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EACCES
+id|error
 suffix:semicolon
 )brace
 r_if
@@ -2501,7 +2517,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
+id|error
+op_assign
 id|permission
 c_func
 (paren
@@ -2512,6 +2530,9 @@ op_or
 id|MAY_EXEC
 )paren
 )paren
+op_ne
+l_int|0
+)paren
 (brace
 id|iput
 c_func
@@ -2520,8 +2541,7 @@ id|dir
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EACCES
+id|error
 suffix:semicolon
 )brace
 r_if
@@ -2750,7 +2770,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
+id|error
+op_assign
 id|permission
 c_func
 (paren
@@ -2761,6 +2783,9 @@ op_or
 id|MAY_EXEC
 )paren
 )paren
+op_ne
+l_int|0
+)paren
 (brace
 id|iput
 c_func
@@ -2769,8 +2794,7 @@ id|dir
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EACCES
+id|error
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * A subdirectory cannot be removed from an append-only directory&n;&t; */
@@ -2982,7 +3006,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
+id|error
+op_assign
 id|permission
 c_func
 (paren
@@ -2993,6 +3019,9 @@ op_or
 id|MAY_EXEC
 )paren
 )paren
+op_ne
+l_int|0
+)paren
 (brace
 id|iput
 c_func
@@ -3001,8 +3030,7 @@ id|dir
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EACCES
+id|error
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * A file cannot be removed from an append-only directory&n;&t; */
@@ -3219,7 +3247,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
+id|error
+op_assign
 id|permission
 c_func
 (paren
@@ -3230,6 +3260,9 @@ op_or
 id|MAY_EXEC
 )paren
 )paren
+op_ne
+l_int|0
+)paren
 (brace
 id|iput
 c_func
@@ -3238,8 +3271,7 @@ id|dir
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EACCES
+id|error
 suffix:semicolon
 )brace
 r_if
@@ -3543,7 +3575,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
+id|error
+op_assign
 id|permission
 c_func
 (paren
@@ -3553,6 +3587,9 @@ id|MAY_WRITE
 op_or
 id|MAY_EXEC
 )paren
+)paren
+op_ne
+l_int|0
 )paren
 (brace
 id|iput
@@ -3568,8 +3605,7 @@ id|oldinode
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EACCES
+id|error
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * A link to an append-only or immutable file cannot be created&n;&t; */
@@ -3841,7 +3877,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
+id|error
+op_assign
 id|permission
 c_func
 (paren
@@ -3852,6 +3890,9 @@ op_or
 id|MAY_EXEC
 )paren
 )paren
+op_ne
+l_int|0
+)paren
 (brace
 id|iput
 c_func
@@ -3860,8 +3901,7 @@ id|old_dir
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EACCES
+id|error
 suffix:semicolon
 )brace
 r_if
@@ -3948,7 +3988,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
+id|error
+op_assign
 id|permission
 c_func
 (paren
@@ -3958,6 +4000,9 @@ id|MAY_WRITE
 op_or
 id|MAY_EXEC
 )paren
+)paren
+op_ne
+l_int|0
 )paren
 (brace
 id|iput
@@ -3973,8 +4018,7 @@ id|new_dir
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EACCES
+id|error
 suffix:semicolon
 )brace
 r_if

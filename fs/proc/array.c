@@ -3043,6 +3043,15 @@ r_char
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|get_pci_list
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
 DECL|function|get_root_array
 r_static
 r_int
@@ -3093,6 +3102,18 @@ c_func
 id|page
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
+r_case
+id|PROC_PCI
+suffix:colon
+r_return
+id|get_pci_list
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+macro_line|#endif
 r_case
 id|PROC_CPUINFO
 suffix:colon

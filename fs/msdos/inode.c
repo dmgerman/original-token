@@ -14,6 +14,11 @@ macro_line|#include &quot;msbuffer.h&quot;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
 macro_line|#endif
 macro_line|#include &lt;asm/segment.h&gt;
 r_extern
@@ -216,10 +221,8 @@ c_func
 id|sb
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -1008,6 +1011,8 @@ id|blksize
 op_assign
 l_int|512
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1114,6 +1119,8 @@ id|sb-&gt;s_dev
 op_assign
 l_int|0
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -1191,6 +1198,8 @@ c_func
 (paren
 l_string|&quot;MSDOS bread failed&bslash;n&quot;
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -1755,6 +1764,8 @@ id|sb-&gt;s_dev
 op_assign
 l_int|0
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -1898,14 +1909,12 @@ c_func
 l_string|&quot;get root inode failed&bslash;n&quot;
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 r_return
 id|sb
 suffix:semicolon
@@ -3278,19 +3287,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;msdos: device busy, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
 id|unregister_filesystem
 c_func
 (paren
@@ -3298,7 +3294,6 @@ op_amp
 id|msdos_fs_type
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif
 eof

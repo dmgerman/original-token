@@ -30,6 +30,9 @@ comma
 DECL|enumerator|PROC_CPUINFO
 id|PROC_CPUINFO
 comma
+DECL|enumerator|PROC_PCI
+id|PROC_PCI
+comma
 DECL|enumerator|PROC_SELF
 id|PROC_SELF
 comma
@@ -206,6 +209,9 @@ id|PROC_NET_NR
 comma
 macro_line|#endif
 macro_line|#endif
+DECL|enumerator|PROC_NET_SOCKSTAT
+id|PROC_NET_SOCKSTAT
+comma
 DECL|enumerator|PROC_NET_LAST
 id|PROC_NET_LAST
 )brace

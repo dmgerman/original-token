@@ -105,7 +105,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * The constant and non-constant versions here are the same.&n; * Maybe I&squot;ll come up with an alpha-optimized routine for the&n; * non-constant ones (the constant ones don&squot;t need it: gcc&n; * will optimze it to the correct constant)&n; */
+multiline_comment|/*&n; * The constant and non-constant versions here are the same.&n; * Maybe I&squot;ll come up with an alpha-optimized routine for the&n; * non-constant ones (the constant ones don&squot;t need it: gcc&n; * will optimize it to the correct constant)&n; */
 r_extern
 id|__inline__
 r_int

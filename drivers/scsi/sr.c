@@ -1178,7 +1178,7 @@ id|SCpnt
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Here I tried to implement better support for PhotoCD&squot;s.&n; * &n; * Much of this has do be done with vendor-specific SCSI-commands.&n; * So I have to complete it step by step. Useful information is welcome.&n; *&n; * Actually works:&n; *   - NEC:     Detection and support of multisession CD&squot;s. Special handling&n; *              for XA-disks is not necessary.&n; *     &n; *   - TOSHIBA: setting density is done here now, mounting PhotoCD&squot;s should&n; *              work now without running the program &quot;set_density&quot;&n; *              People reported, that it is nessesary to eject and reinsert&n; *              the CD after the set-density call to get this working for&n; *              old drives.&n; *              And some very new drives don&squot;t need this call any more...&n; *              Multisession CD&squot;s are supported too.&n; *&n; * Dec 1994: completely rewritten, uses kernel_scsi_ioctl() now&n; *&n; *   kraxel@cs.tu-berlin.de (Gerd Knorr)&n; */
+multiline_comment|/*&n; * Here I tried to implement better support for PhotoCD&squot;s.&n; * &n; * Much of this has do be done with vendor-specific SCSI-commands.&n; * So I have to complete it step by step. Useful information is welcome.&n; *&n; * Actually works:&n; *   - NEC:     Detection and support of multisession CD&squot;s. Special handling&n; *              for XA-disks is not necessary.&n; *     &n; *   - TOSHIBA: setting density is done here now, mounting PhotoCD&squot;s should&n; *              work now without running the program &quot;set_density&quot;&n; *              People reported that it is necessary to eject and reinsert&n; *              the CD after the set-density call to get this working for&n; *              old drives.&n; *              And some very new drives don&squot;t need this call any more...&n; *              Multisession CD&squot;s are supported too.&n; *&n; * Dec 1994: completely rewritten, uses kernel_scsi_ioctl() now&n; *&n; *   kraxel@cs.tu-berlin.de (Gerd Knorr)&n; */
 DECL|function|sr_photocd
 r_static
 r_void
@@ -1221,7 +1221,7 @@ c_func
 )paren
 )paren
 (brace
-multiline_comment|/* I&squot;m not the superuser, so SCSI_IOCTL_SEND_COMMAND is&squot;nt allowed for me.&n;     * That&squot;s why mpcd_sector will be initialized with zero, becauce I&squot;m not&n;     * able to get the right value. Nessesary only if access_count is 1, else&n;     * no disk change happend since the last call of this function and we can&n;     * keep the old value.&n;     */
+multiline_comment|/* I&squot;m not the superuser, so SCSI_IOCTL_SEND_COMMAND isn&squot;t allowed for me.&n;     * That&squot;s why mpcd_sector will be initialized with zero, because I&squot;m not&n;     * able to get the right value. Necessary only if access_count is 1, else&n;     * no disk change happened since the last call of this function and we can&n;     * keep the old value.&n;     */
 r_if
 c_cond
 (paren
@@ -1375,7 +1375,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;sr_photocd: ioctl error: %i&bslash;n&quot;
+l_string|&quot;sr_photocd: ioctl error (NEC): 0x%x&bslash;n&quot;
 comma
 id|rc
 )paren
@@ -1649,7 +1649,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;sr_photocd: ioctl error: %i&bslash;n&quot;
+l_string|&quot;sr_photocd: ioctl error (TOSHIBA #1): 0x%x&bslash;n&quot;
 comma
 id|rc
 )paren
@@ -1710,6 +1710,27 @@ l_int|1
 op_assign
 l_int|3
 suffix:semicolon
+id|rc
+op_assign
+id|kernel_scsi_ioctl
+c_func
+(paren
+id|scsi_CDs
+(braket
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+)braket
+dot
+id|device
+comma
+id|SCSI_IOCTL_SEND_COMMAND
+comma
+id|buf
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1721,7 +1742,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;sr_photocd: ioctl error: %i&bslash;n&quot;
+l_string|&quot;sr_photocd: ioctl error (TOSHIBA #2): 0x%x&bslash;n&quot;
 comma
 id|rc
 )paren
@@ -2537,7 +2558,7 @@ l_int|0xe0
 suffix:semicolon
 multiline_comment|/*&n;           Now do the grungy work of figuring out which sectors we need, and&n;&t;   where in memory we are going to put them.&n;&n;&t;   The variables we need are:&n;&n;&t;   this_count= number of 512 byte sectors being read &n;&t;   block     = starting cdrom sector to read.&n;&t;   realcount = # of cdrom sectors to read&n;&n;&t;   The major difference between a scsi disk and a scsi cdrom&n;is that we will always use scatter-gather if we can, because we can&n;work around the fact that the buffer cache has a block size of 1024,&n;and we have 2048 byte sectors.  This code should work for buffers that&n;are any multiple of 512 bytes long.  */
 macro_line|#if 1
-multiline_comment|/* Here we redirect the volume descriptor block of the CD-ROM.&n;&t; * Nessesary for multisession CD&squot;s, until the isofs-rotines&n;&t; * handle this via the CDROMMULTISESSION_SYS call&n;&t; */
+multiline_comment|/* Here we redirect the volume descriptor block of the CD-ROM.&n;&t; * Necessary for multisession CD&squot;s, until the isofs-routines&n;&t; * handle this via the CDROMMULTISESSION_SYS call&n;&t; */
 r_if
 c_cond
 (paren

@@ -21,7 +21,7 @@ macro_line|#ifndef HAVE_PORTRESERVE
 DECL|macro|check_region
 mdefine_line|#define check_region(ioaddr, size)              0
 DECL|macro|request_region
-mdefine_line|#define request_region(ioaddr, size,name);             do ; while (0)
+mdefine_line|#define request_region(ioaddr, size,name)       do ; while (0)
 macro_line|#endif
 macro_line|#ifndef NET_DEBUG
 DECL|macro|NET_DEBUG

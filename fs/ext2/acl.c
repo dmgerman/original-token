@@ -42,7 +42,8 @@ id|inode
 )paren
 )paren
 r_return
-l_int|0
+op_minus
+id|EACCES
 suffix:semicolon
 multiline_comment|/*&n;&t; * Special case, access is always granted for root&n;&t; */
 r_if
@@ -54,7 +55,7 @@ c_func
 )paren
 )paren
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * If no ACL, checks using the file mode&n;&t; */
 r_else
@@ -98,11 +99,12 @@ id|mask
 )paren
 )paren
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 r_else
 r_return
-l_int|0
+op_minus
+id|EACCES
 suffix:semicolon
 )brace
 eof

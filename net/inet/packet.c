@@ -937,6 +937,10 @@ comma
 )brace
 comma
 l_string|&quot;PACKET&quot;
+comma
+l_int|0
+comma
+l_int|0
 )brace
 suffix:semicolon
 eof

@@ -269,7 +269,7 @@ r_int
 op_star
 id|s_sb_state
 suffix:semicolon
-multiline_comment|/* pointer to s_sbd-&gt;s_state */
+multiline_comment|/* pointer to s_sbd-&gt;s_state, only FSTYPE_SYSV */
 multiline_comment|/* We keep those superblock entities that don&squot;t change here;&n;&t;   this saves us an indirection and perhaps a conversion. */
 DECL|member|s_firstinodezone
 r_int

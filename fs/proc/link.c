@@ -399,6 +399,8 @@ id|new_inode
 suffix:semicolon
 r_int
 id|i
+comma
+id|error
 suffix:semicolon
 op_star
 id|res_inode
@@ -429,7 +431,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
+id|error
+op_assign
 id|permission
 c_func
 (paren
@@ -437,6 +441,9 @@ id|inode
 comma
 id|MAY_EXEC
 )paren
+)paren
+op_ne
+l_int|0
 )paren
 (brace
 id|iput
@@ -446,8 +453,7 @@ id|inode
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EACCES
+id|error
 suffix:semicolon
 )brace
 id|ino

@@ -83,6 +83,11 @@ mdefine_line|#define LP_NO 3
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
 macro_line|#endif
 multiline_comment|/* Test if printer is ready (and optionally has no error conditions) */
 DECL|macro|LP_READY
@@ -91,6 +96,21 @@ DECL|macro|LP_CAREFUL_READY
 mdefine_line|#define LP_CAREFUL_READY(minor, status) &bslash;&n;  ((LP_F(minor) &amp; LP_CAREFUL) ? _LP_CAREFUL_READY(status) : 1)
 DECL|macro|_LP_CAREFUL_READY
 mdefine_line|#define _LP_CAREFUL_READY(status) &bslash;&n;   (status &amp; (LP_PBUSY|LP_POUTPA|LP_PSELECD|LP_PERRORP)) == &bslash;&n;      (LP_PBUSY|LP_PSELECD|LP_PERRORP) 
+multiline_comment|/* Allow old versions of tunelp to continue to work */
+DECL|macro|OLD_LPCHAR
+mdefine_line|#define OLD_LPCHAR   0x0001
+DECL|macro|OLD_LPTIME
+mdefine_line|#define OLD_LPTIME   0x0002
+DECL|macro|OLD_LPABORT
+mdefine_line|#define OLD_LPABORT  0x0004
+DECL|macro|OLD_LPSETIRQ
+mdefine_line|#define OLD_LPSETIRQ 0x0005
+DECL|macro|OLD_LPGETIRQ
+mdefine_line|#define OLD_LPGETIRQ 0x0006
+DECL|macro|OLD_LPWAIT
+mdefine_line|#define OLD_LPWAIT   0x0008
+DECL|macro|OLD_IOCTL_MAX
+mdefine_line|#define OLD_IOCTL_MAX 8
 multiline_comment|/* &n; * All my debugging code assumes that you debug with only one printer at&n; * a time. RWWH&n; */
 DECL|macro|LP_DEBUG
 macro_line|#undef LP_DEBUG
@@ -1650,6 +1670,8 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 multiline_comment|/* If ABORTOPEN is set and the printer is offline or out of paper,&n;&t;   we may still want to open it to perform ioctl()s.  Therefore we&n;&t;   have commandeered O_NONBLOCK, even though it is being used in&n;&t;   a non-standard manner.  This is strictly a Linux hack, and&n;&t;   should most likely only ever be used by the tunelp application. */
 r_if
 c_cond
@@ -1698,6 +1720,8 @@ comma
 id|minor
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|ENOSPC
@@ -1724,6 +1748,8 @@ comma
 id|minor
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -1749,6 +1775,8 @@ l_string|&quot;lp%d printer error&bslash;n&quot;
 comma
 id|minor
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -1800,10 +1828,14 @@ id|minor
 dot
 id|lp_buffer
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 id|ret
 op_assign
 id|request_irq
@@ -1858,6 +1890,8 @@ comma
 id|ret
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -1871,10 +1905,6 @@ id|minor
 op_or_assign
 id|LP_BUSY
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-macro_line|#endif&t;
 r_return
 l_int|0
 suffix:semicolon
@@ -1962,10 +1992,8 @@ op_and_assign
 op_complement
 id|LP_BUSY
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif&t;&t;
 )brace
 DECL|function|lp_ioctl
 r_static
@@ -2051,12 +2079,33 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|cmd
+op_le
+id|OLD_IOCTL_MAX
+)paren
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;lp%d: warning: obsolete ioctl %#x (perhaps you need a new tunelp)&bslash;n&quot;
+comma
+id|minor
+comma
+id|cmd
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
 id|cmd
 )paren
 (brace
+r_case
+id|OLD_LPTIME
+suffix:colon
 r_case
 id|LPTIME
 suffix:colon
@@ -2071,6 +2120,9 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|OLD_LPCHAR
+suffix:colon
+r_case
 id|LPCHAR
 suffix:colon
 id|LP_CHAR
@@ -2083,6 +2135,9 @@ id|arg
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|OLD_LPABORT
+suffix:colon
 r_case
 id|LPABORT
 suffix:colon
@@ -2168,6 +2223,9 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|OLD_LPWAIT
+suffix:colon
+r_case
 id|LPWAIT
 suffix:colon
 id|LP_WAIT
@@ -2180,6 +2238,9 @@ id|arg
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|OLD_LPSETIRQ
+suffix:colon
 r_case
 id|LPSETIRQ
 suffix:colon
@@ -2381,7 +2442,7 @@ r_break
 suffix:semicolon
 )brace
 r_case
-id|LPGETIRQ
+id|OLD_LPGETIRQ
 suffix:colon
 id|retval
 op_assign
@@ -2394,9 +2455,93 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|LPGETIRQ
+suffix:colon
+id|retval
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+r_return
+id|retval
+suffix:semicolon
+id|memcpy_tofs
+c_func
+(paren
+(paren
+r_int
+op_star
+)paren
+id|arg
+comma
+op_amp
+id|LP_IRQ
+c_func
+(paren
+id|minor
+)paren
+comma
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|LPGETSTATUS
 suffix:colon
 id|retval
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+r_return
+id|retval
+suffix:semicolon
+r_else
+(brace
+r_int
+id|status
 op_assign
 id|LP_S
 c_func
@@ -2404,7 +2549,36 @@ c_func
 id|minor
 )paren
 suffix:semicolon
-multiline_comment|/* in range 0..255 */
+id|memcpy_tofs
+c_func
+(paren
+(paren
+r_int
+op_star
+)paren
+id|arg
+comma
+op_amp
+id|status
+comma
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_case
+id|LPRESET
+suffix:colon
+id|lp_reset
+c_func
+(paren
+id|minor
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_default

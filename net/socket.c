@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET&t;&t;An implementation of the SOCKET network access protocol.&n; *&n; * Version:&t;@(#)socket.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Anonymous&t;:&t;NOTSOCK/BADF cleanup. Error fix in&n; *&t;&t;&t;&t;&t;shutdown()&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixes&n; *&t;&t;Alan Cox&t;: &t;Removed DDI&n; *&t;&t;Jonathan Kamens&t;:&t;SOCK_DGRAM reconnect bug&n; *&t;&t;Alan Cox&t;:&t;Moved a load of checks to the very&n; *&t;&t;&t;&t;&t;top level.&n; *&t;&t;Alan Cox&t;:&t;Move address structures to/from user&n; *&t;&t;&t;&t;&t;mode above the protocol layers.&n; *&t;&t;Rob Janssen&t;:&t;Allow 0 length sends.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support (cribbed from the&n; *&t;&t;&t;&t;&t;tty drivers).&n; *&t;&t;Niibe Yutaka&t;:&t;Asynchronous I/O for writes (4.4BSD style)&n; *&t;&t;Jeff Uphoff&t;:&t;Made max number of sockets command-line configurable.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;This module is effectively the top level interface to the BSD socket&n; *&t;paradigm. Because it is very simple it works well for Unix domain sockets,&n; *&t;but requires a whole layer of substructure for the other protocols.&n; *&n; *&t;In addition it lacks an effective kernel -&gt; kernel interface to go with&n; *&t;the user one.&n; */
+multiline_comment|/*&n; * NET&t;&t;An implementation of the SOCKET network access protocol.&n; *&n; * Version:&t;@(#)socket.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Anonymous&t;:&t;NOTSOCK/BADF cleanup. Error fix in&n; *&t;&t;&t;&t;&t;shutdown()&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixes&n; *&t;&t;Alan Cox&t;: &t;Removed DDI&n; *&t;&t;Jonathan Kamens&t;:&t;SOCK_DGRAM reconnect bug&n; *&t;&t;Alan Cox&t;:&t;Moved a load of checks to the very&n; *&t;&t;&t;&t;&t;top level.&n; *&t;&t;Alan Cox&t;:&t;Move address structures to/from user&n; *&t;&t;&t;&t;&t;mode above the protocol layers.&n; *&t;&t;Rob Janssen&t;:&t;Allow 0 length sends.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support (cribbed from the&n; *&t;&t;&t;&t;&t;tty drivers).&n; *&t;&t;Niibe Yutaka&t;:&t;Asynchronous I/O for writes (4.4BSD style)&n; *&t;&t;Jeff Uphoff&t;:&t;Made max number of sockets command-line&n; *&t;&t;&t;&t;&t;configurable.&n; *&t;&t;Matti Aarnio&t;:&t;Made the number of sockets dynamic,&n; *&t;&t;&t;&t;&t;to be allocated when needed, and mr.&n; *&t;&t;&t;&t;&t;Uphoff&squot;s max is used as max to be&n; *&t;&t;&t;&t;&t;allowed to allocate.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;This module is effectively the top level interface to the BSD socket&n; *&t;paradigm. Because it is very simple it works well for Unix domain sockets,&n; *&t;but requires a whole layer of substructure for the other protocols.&n; *&n; *&t;In addition it lacks an effective kernel -&gt; kernel interface to go with&n; *&t;the user one.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -221,16 +221,27 @@ multiline_comment|/* no fsync */
 id|sock_fasync
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;The list of sockets -- allocated in sock_init().&n; */
-DECL|variable|sockets
+multiline_comment|/*&n; *&t;The lists of sockets&n; */
+DECL|variable|freesockets
 r_static
 r_struct
 id|socket
 op_star
-id|sockets
+id|freesockets
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* List of free sockets,&n;&t;&t;&t;&t;&t;&t;   pick the first */
+DECL|variable|usedsockets
+r_static
+r_struct
+id|socket
+op_star
+id|usedsockets
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Doubly-linked list of the&n;&t;&t;&t;&t;&t;&t;   active sockets */
 multiline_comment|/*&n; *&t;Used to wait for a socket.&n; */
 DECL|variable|socket_wait_free
 r_static
@@ -253,15 +264,36 @@ id|NPROTO
 )braket
 suffix:semicolon
 multiline_comment|/*      &n; *&t;Maximum number of sockets -- override-able on command-line.&n; */
+DECL|variable|maxnsockets
+r_static
+r_int
+id|maxnsockets
+op_assign
+id|NSOCKETS
+suffix:semicolon
+multiline_comment|/*&n; *&t;Number of sockets allocated&n; */
 DECL|variable|nsockets
 r_static
 r_int
 id|nsockets
 op_assign
-id|NSOCKETS
+l_int|0
 suffix:semicolon
-DECL|macro|last_socket
-mdefine_line|#define last_socket&t;(sockets + nsockets - 1)
+multiline_comment|/*&n; *&t;Statistics counters of the free/used lists&n; */
+DECL|variable|sockets_in_use
+r_static
+r_int
+id|sockets_in_use
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|sockets_in_free
+r_static
+r_int
+id|sockets_in_free
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*      &n; *&t;Overrides default max number of sockets if supplied on command-line.&n; */
 DECL|function|sock_setup
 r_void
@@ -277,7 +309,7 @@ op_star
 id|ints
 )paren
 (brace
-id|nsockets
+id|maxnsockets
 op_assign
 id|ints
 (braket
@@ -716,14 +748,15 @@ c_loop
 (paren
 id|sock
 op_assign
-id|sockets
+id|usedsockets
 suffix:semicolon
 id|sock
-op_le
-id|last_socket
+op_ne
+l_int|NULL
 suffix:semicolon
-op_increment
 id|sock
+op_assign
+id|sock-&gt;nextsock
 )paren
 r_if
 c_cond
@@ -840,49 +873,178 @@ id|socket
 op_star
 id|sock
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 r_while
 c_loop
 (paren
 l_int|1
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|freesockets
+op_eq
+l_int|NULL
+)paren
+(brace
+multiline_comment|/* Lets see if we can allocate some more */
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Alloc them from same memory page, if possible.&n;&t;&t;&t;   Nothing SHOULD prevent us from allocing one at&n;&t;&t;&t;   the time.. */
 r_for
 c_loop
 (paren
-id|sock
+id|i
 op_assign
-id|sockets
+l_int|0
 suffix:semicolon
-id|sock
-op_le
-id|last_socket
+id|i
+OL
+l_int|16
+op_logical_and
+id|nsockets
+OL
+id|maxnsockets
 suffix:semicolon
 op_increment
-id|sock
+id|i
 )paren
 (brace
+id|sock
+op_assign
+(paren
+r_struct
+id|socket
+op_star
+)paren
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|socket
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|sock-&gt;state
+id|sock
 op_eq
-id|SS_FREE
+l_int|NULL
 )paren
-(brace
-multiline_comment|/*&n;&t;&t;&t; *&t;Got one..&n;&t;&t;&t; */
+r_break
+suffix:semicolon
+multiline_comment|/* Ah well.. */
 id|sock-&gt;state
 op_assign
-id|SS_UNCONNECTED
+id|SS_FREE
+suffix:semicolon
+id|sock-&gt;nextsock
+op_assign
+id|freesockets
+suffix:semicolon
+id|sock-&gt;prevsock
+op_assign
+l_int|NULL
+suffix:semicolon
+id|freesockets
+op_assign
+id|sock
+suffix:semicolon
+op_increment
+id|sockets_in_free
+suffix:semicolon
+op_increment
+id|nsockets
+suffix:semicolon
+)brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;sock_alloc: Alloced some more, now %d sockets&bslash;n&quot;
+comma
+id|nsockets
+)paren
+suffix:semicolon
+)brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|sock
+op_assign
+id|freesockets
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sock
+op_ne
+l_int|NULL
+)paren
+multiline_comment|/* Freelist, we pick&n;&t;&t;&t;&t;     the first -- or only */
+(brace
+multiline_comment|/*&n;&t;&t; * Move it to the `usedsockets&squot; linked-list&n;&t;&t; * at its FRONT (thus  -&gt;prevsock = NULL)&n;&t;&t; */
+id|freesockets
+op_assign
+id|sock-&gt;nextsock
+suffix:semicolon
+id|sock-&gt;nextsock
+op_assign
+id|usedsockets
+suffix:semicolon
+id|sock-&gt;prevsock
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Is there something in there already ? */
+r_if
+c_cond
+(paren
+id|usedsockets
+op_ne
+l_int|NULL
+)paren
+multiline_comment|/* Yes, attach the `previous&squot; pointer */
+id|usedsockets-&gt;prevsock
+op_assign
+id|sock
+suffix:semicolon
+id|usedsockets
+op_assign
+id|sock
+suffix:semicolon
+op_decrement
+id|sockets_in_free
+suffix:semicolon
+op_increment
+id|sockets_in_use
 suffix:semicolon
 id|sti
 c_func
 (paren
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Got one..&n;&t;&t; */
+id|sock-&gt;state
+op_assign
+id|SS_UNCONNECTED
 suffix:semicolon
 id|sock-&gt;flags
 op_assign
@@ -908,7 +1070,7 @@ id|sock-&gt;fasync_list
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * This really shouldn&squot;t be necessary, but everything&n;&t;&t;&t; * else depends on inodes, so we grab it.&n;&t;&t;&t; * Sleeps are also done on the i_wait member of this&n;&t;&t;&t; * inode.  The close system call will iput this inode&n;&t;&t;&t; * for us.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * This really shouldn&squot;t be necessary, but everything&n;&t;&t; * else depends on inodes, so we grab it.&n;&t;&t; * Sleeps are also done on the i_wait member of this&n;&t;&t; * inode.  The close system call will iput this inode&n;&t;&t; * for us.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -931,6 +1093,67 @@ id|printk
 c_func
 (paren
 l_string|&quot;NET: sock_alloc: no more inodes&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * Roll-back the linkage&n;&t;&t;&t; */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Not the last ? */
+r_if
+c_cond
+(paren
+id|sock-&gt;nextsock
+op_ne
+l_int|NULL
+)paren
+id|sock-&gt;nextsock-&gt;prevsock
+op_assign
+id|sock-&gt;prevsock
+suffix:semicolon
+multiline_comment|/* Not the first ? */
+r_if
+c_cond
+(paren
+id|sock-&gt;prevsock
+op_ne
+l_int|NULL
+)paren
+id|sock-&gt;prevsock-&gt;nextsock
+op_assign
+id|sock-&gt;nextsock
+suffix:semicolon
+r_else
+multiline_comment|/* It is the first, update the head-handle */
+id|usedsockets
+op_assign
+id|sock-&gt;nextsock
+suffix:semicolon
+multiline_comment|/* Link it back to the free-list */
+id|sock-&gt;nextsock
+op_assign
+id|freesockets
+suffix:semicolon
+id|sock-&gt;prevsock
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Not used, but .. */
+id|freesockets
+op_assign
+id|sock
+suffix:semicolon
+op_increment
+id|sockets_in_free
+suffix:semicolon
+op_decrement
+id|sockets_in_use
+suffix:semicolon
+id|sti
+c_func
+(paren
 )paren
 suffix:semicolon
 id|sock-&gt;state
@@ -959,7 +1182,7 @@ id|sock
 op_member_access_from_pointer
 id|i_uid
 op_assign
-id|current-&gt;uid
+id|current-&gt;euid
 suffix:semicolon
 id|SOCK_INODE
 c_func
@@ -969,7 +1192,7 @@ id|sock
 op_member_access_from_pointer
 id|i_gid
 op_assign
-id|current-&gt;gid
+id|current-&gt;egid
 suffix:semicolon
 id|SOCK_INODE
 c_func
@@ -996,12 +1219,12 @@ r_return
 id|sock
 suffix:semicolon
 )brace
-)brace
 id|sti
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * The rest of these are in fact vestigal from the previous&n;&t;&t; * version, which didn&squot;t have growing list of sockets.&n;&t;&t; * These may become necessary if there are 2000 (or whatever&n;&t;&t; * the hard limit is set to) sockets already in system,&n;&t;&t; * but then the system itself is quite catatonic.. IMO [mea]&n;&t;&t; */
 multiline_comment|/*&n;&t;&t; *&t;If its a &squot;now or never request&squot; then return.&n;&t;&t; */
 r_if
 c_cond
@@ -1097,6 +1320,10 @@ comma
 op_star
 id|nextsock
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1186,11 +1413,80 @@ c_func
 id|sock
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Remove this `sock&squot; from the doubly-linked chain.&n;&t; */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|sock-&gt;state
 op_assign
 id|SS_FREE
 suffix:semicolon
 multiline_comment|/* this really releases us */
+multiline_comment|/* Not the last ? */
+r_if
+c_cond
+(paren
+id|sock-&gt;nextsock
+op_ne
+l_int|NULL
+)paren
+id|sock-&gt;nextsock-&gt;prevsock
+op_assign
+id|sock-&gt;prevsock
+suffix:semicolon
+multiline_comment|/* Not the first ? */
+r_if
+c_cond
+(paren
+id|sock-&gt;prevsock
+op_ne
+l_int|NULL
+)paren
+id|sock-&gt;prevsock-&gt;nextsock
+op_assign
+id|sock-&gt;nextsock
+suffix:semicolon
+r_else
+multiline_comment|/* It is the first, update the head-handle */
+id|usedsockets
+op_assign
+id|sock-&gt;nextsock
+suffix:semicolon
+multiline_comment|/* Link it back to the free-list */
+id|sock-&gt;nextsock
+op_assign
+id|freesockets
+suffix:semicolon
+id|sock-&gt;prevsock
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Not really used, but.. */
+id|freesockets
+op_assign
+id|sock
+suffix:semicolon
+op_decrement
+id|sockets_in_use
+suffix:semicolon
+multiline_comment|/* Bookkeeping.. */
+op_increment
+id|sockets_in_free
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;This will wake anyone waiting for a free socket.&n;&t; */
 id|wake_up_interruptible
 c_func
@@ -2460,13 +2756,14 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;sock_socket: no more sockets&bslash;n&quot;
+l_string|&quot;NET: sock_socket: no more sockets&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 op_minus
-id|EAGAIN
+id|ENOSR
 suffix:semicolon
+multiline_comment|/* Was: EAGAIN, but we are out of&n;&t;&t;&t;&t;   system resources! */
 )brace
 id|sock-&gt;type
 op_assign
@@ -3177,8 +3474,9 @@ l_string|&quot;NET: sock_accept: no more sockets&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-id|EAGAIN
+id|ENOSR
 suffix:semicolon
+multiline_comment|/* Was: EGAIN, but we are out of system&n;&t;&t;&t;&t;   resources! */
 )brace
 id|newsock-&gt;type
 op_assign
@@ -6187,11 +6485,6 @@ c_func
 r_void
 )paren
 (brace
-r_struct
-id|socket
-op_star
-id|sock
-suffix:semicolon
 r_int
 id|i
 suffix:semicolon
@@ -6200,55 +6493,6 @@ c_func
 (paren
 l_string|&quot;Swansea University Computer Society NET3.019&bslash;n&quot;
 )paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;The list of sockets.&n;&t; */
-id|sockets
-op_assign
-(paren
-r_struct
-id|socket
-op_star
-)paren
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-r_struct
-id|socket
-)paren
-op_star
-id|nsockets
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Allocated %d sockets.&bslash;n&quot;
-comma
-id|nsockets
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Release all sockets. &n;&t; */
-r_for
-c_loop
-(paren
-id|sock
-op_assign
-id|sockets
-suffix:semicolon
-id|sock
-op_le
-id|last_socket
-suffix:semicolon
-op_increment
-id|sock
-)paren
-id|sock-&gt;state
-op_assign
-id|SS_FREE
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Initialize all address (protocol) families. &n;&t; */
 r_for
@@ -6296,5 +6540,88 @@ op_assign
 id|net_bh
 suffix:semicolon
 macro_line|#endif  
+)brace
+DECL|function|socket_get_info
+r_int
+id|socket_get_info
+c_func
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+)paren
+(brace
+r_int
+id|len
+op_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;sockets: used %d free %d alloced %d highlimit %d&bslash;n&quot;
+comma
+id|sockets_in_use
+comma
+id|sockets_in_free
+comma
+id|nsockets
+comma
+id|maxnsockets
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|offset
+op_ge
+id|len
+)paren
+(brace
+op_star
+id|start
+op_assign
+id|buffer
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+op_star
+id|start
+op_assign
+id|buffer
+op_plus
+id|offset
+suffix:semicolon
+id|len
+op_sub_assign
+id|offset
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|length
+)paren
+id|len
+op_assign
+id|length
+suffix:semicolon
+r_return
+id|len
+suffix:semicolon
 )brace
 eof

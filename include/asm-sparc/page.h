@@ -12,7 +12,7 @@ mdefine_line|#define PAGE_SHIFT   12             /* This is the virtual page... 
 DECL|macro|PGDIR_SHIFT
 mdefine_line|#define PGDIR_SHIFT  18             /* This is the virtual segment */
 DECL|macro|PAGE_SIZE
-mdefine_line|#define PAGE_SIZE    (1UL &lt;&lt; PAGE_SHIFT)
+mdefine_line|#define PAGE_SIZE    4096
 DECL|macro|PGDIR_SIZE
 mdefine_line|#define PGDIR_SIZE   (1UL &lt;&lt; PGDIR_SHIFT)
 macro_line|#ifdef __KERNEL__
@@ -67,6 +67,7 @@ mdefine_line|#define PTE_RESV  0x00f80000   /* reserved bits */
 DECL|macro|PTE_PHYPG
 mdefine_line|#define PTE_PHYPG 0x0007ffff   /* phys pg number, sun4c only uses 16bits */
 multiline_comment|/* termed a &squot;page table&squot; in the linux kernel, a segmap entry is obtained&n; * with the following macro&n; */
+macro_line|#ifndef __ASSEMBLY__ /* for head.S */
 DECL|function|get_segmap
 r_extern
 id|__inline__
@@ -287,6 +288,7 @@ r_return
 id|ctx
 suffix:semicolon
 )brace
+macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _SPARC_PAGE_H */
 eof

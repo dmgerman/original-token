@@ -1024,6 +1024,10 @@ comma
 )brace
 comma
 l_string|&quot;RAW&quot;
+comma
+l_int|0
+comma
+l_int|0
 )brace
 suffix:semicolon
 eof

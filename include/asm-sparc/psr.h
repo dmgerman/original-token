@@ -2,6 +2,8 @@ multiline_comment|/* psr.h: This file holds the macros for masking off various p
 macro_line|#ifndef __LINUX_SPARC_PSR_H
 DECL|macro|__LINUX_SPARC_PSR_H
 mdefine_line|#define __LINUX_SPARC_PSR_H
+DECL|macro|__LINUX_SPARC_V8
+mdefine_line|#define __LINUX_SPARC_V8  /* duh */
 macro_line|#ifdef __LINUX_SPARC_V8
 multiline_comment|/* The Sparc PSR fields are laid out as the following:&n;&n;    ------------------------------------------------------------------------&n;    | impl  | vers  | icc   | resv  | EC | EF | PIL  | S | PS | ET |  CWP  |&n;bits| 31-28 | 27-24 | 23-20 | 19-14 | 13 | 12 | 11-8 | 7 | 6  | 5  |  4-0  |&n;    ------------------------------------------------------------------------&n;&n;   The PSR can only be directly be written/read by the privileged instructions&n;   &squot;rd&squot; and &squot;wr&squot;. Certain fields are changed as a side effect due to the &squot;Ticc&squot;,&n;   &squot;save&squot;, &squot;restore&squot;, and &squot;rett&squot; instructions. Also the integer condition codes&n;   &squot;icc&squot; are modified by various arithmetic instructions.&n;&n;   For example:  wr  %o2, or&squot;d_bit_pattern, %psr&n;                 rd  %psr, %o3&n;&n;*/
 DECL|macro|PSR_CWP

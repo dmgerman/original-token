@@ -561,9 +561,9 @@ id|nb
 )paren
 suffix:semicolon
 )brace
-DECL|function|unregister_netdevice_notifer
+DECL|function|unregister_netdevice_notifier
 r_int
-id|unregister_netdevice_notifer
+id|unregister_netdevice_notifier
 c_func
 (paren
 r_struct
@@ -1517,8 +1517,6 @@ r_struct
 id|packet_type
 op_star
 id|pt_prev
-op_assign
-l_int|NULL
 suffix:semicolon
 r_int
 r_int
@@ -1607,6 +1605,10 @@ id|skb-&gt;dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;We got a packet ID.  Now loop over the &quot;known protocols&quot;&n;&t;&t; *&t;table (which is actually a linked list, but this will&n;&t;&t; *&t;change soon if I get my way- FvK), and forward the packet&n;&t;&t; *&t;to anyone who wants it.&n;&t;&t; *&n;&t;&t; *&t;[FvK didn&squot;t get his way but he is right this ought to be&n;&t;&t; *&t;hashed so we typically get a single hit. The speed cost&n;&t;&t; *&t;here is minimal but no doubt adds up at the 4,000+ pkts/second&n;&t;&t; *&t;rate we can hit flat out]&n;&t;&t; */
+id|pt_prev
+op_assign
+l_int|NULL
+suffix:semicolon
 r_for
 c_loop
 (paren

@@ -70,7 +70,7 @@ macro_line|#ifndef HAVE_PORTRESERVE
 DECL|macro|check_region
 mdefine_line|#define check_region(ioaddr, size)&t;&t;0
 DECL|macro|request_region
-mdefine_line|#define request_region(ioaddr, size,name);&t;&t;do ; while (0)
+mdefine_line|#define request_region(ioaddr, size,name)&t;do ; while (0)
 macro_line|#endif
 multiline_comment|/* use 0 for production, 1 for verification, &gt;2 for debug */
 macro_line|#ifndef NET_DEBUG

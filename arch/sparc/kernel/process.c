@@ -38,9 +38,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -114,10 +111,6 @@ id|regs-&gt;fp
 op_assign
 id|fp
 suffix:semicolon
-id|regs-&gt;psr
-op_assign
-id|psr
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Free current thread data structures etc..&n; */
 DECL|function|exit_thread
@@ -189,7 +182,7 @@ id|PAGE_SIZE
 op_minus
 l_int|1
 suffix:semicolon
-id|p-&gt;tss.sp
+id|p-&gt;tss.usp
 op_assign
 (paren
 r_int
@@ -202,10 +195,6 @@ id|childregs
 op_assign
 op_star
 id|regs
-suffix:semicolon
-id|p-&gt;tss.back_link
-op_assign
-l_int|0
 suffix:semicolon
 id|p-&gt;tss.psr
 op_assign
@@ -268,7 +257,7 @@ r_char
 op_star
 op_star
 )paren
-id|regs.reg_window
+id|regs.u_regs
 (braket
 l_int|0
 )braket
@@ -278,7 +267,7 @@ r_char
 op_star
 op_star
 )paren
-id|regs.reg_window
+id|regs.u_regs
 (braket
 l_int|1
 )braket

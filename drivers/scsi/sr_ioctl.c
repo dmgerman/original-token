@@ -2507,11 +2507,6 @@ r_case
 id|CDROMMULTISESSION_SYS
 suffix:colon
 multiline_comment|/* tell start-of-last-session to kernel */
-(brace
-r_int
-op_star
-id|p_lba
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2527,16 +2522,15 @@ op_minus
 id|EACCES
 suffix:semicolon
 )brace
-id|p_lba
-op_assign
+op_star
 (paren
+(paren
+r_int
 r_int
 op_star
 )paren
 id|arg
-suffix:semicolon
-op_star
-id|p_lba
+)paren
 op_assign
 id|scsi_CDs
 (braket
@@ -2550,7 +2544,6 @@ r_return
 l_int|0
 )paren
 suffix:semicolon
-)brace
 r_case
 id|BLKRASET
 suffix:colon

@@ -6,12 +6,16 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/umsdos_fs.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
 macro_line|#endif
 DECL|variable|pseudo_root
 r_struct
@@ -96,10 +100,8 @@ c_func
 id|sb
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|UMSDOS_statfs
 r_void
@@ -1167,6 +1169,10 @@ r_struct
 id|super_block
 op_star
 id|sb
+suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+id|sb
 op_assign
 id|msdos_read_super
 c_func
@@ -1424,10 +1430,11 @@ id|pseudo
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-id|MOD_INC_USE_COUNT
+)brace
+r_else
+(brace
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 )brace
 r_return
 id|sb
@@ -1485,19 +1492,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;Umsdos: file system in use, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
 id|unregister_filesystem
 c_func
 (paren
@@ -1505,7 +1499,6 @@ op_amp
 id|umsdos_fs_type
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif
 eof

@@ -13516,12 +13516,16 @@ op_amp
 l_int|2
 )paren
 op_logical_or
+(paren
 id|permission
 c_func
 (paren
 id|inode
 comma
 l_int|2
+)paren
+op_eq
+l_int|0
 )paren
 )paren
 id|filp-&gt;f_mode

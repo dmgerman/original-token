@@ -403,7 +403,7 @@ DECL|member|s_state
 r_int
 id|s_state
 suffix:semicolon
-multiline_comment|/* file system state */
+multiline_comment|/* file system state: 0x7c269d38-s_time means clean */
 DECL|member|s_magic
 r_int
 id|s_magic
@@ -562,7 +562,7 @@ DECL|member|s_state
 r_int
 id|s_state
 suffix:semicolon
-multiline_comment|/* file system state */
+multiline_comment|/* file system state: 0xcb096f43 means clean */
 DECL|member|s_magic
 r_int
 id|s_magic

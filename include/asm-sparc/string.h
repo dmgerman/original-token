@@ -523,7 +523,7 @@ r_char
 op_star
 id|src
 comma
-r_char
+r_int
 id|c
 )paren
 (brace
@@ -934,7 +934,7 @@ r_void
 op_star
 id|src
 comma
-r_char
+r_int
 id|c
 comma
 r_int

@@ -1,5 +1,10 @@
 multiline_comment|/*  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; *&n; */
 multiline_comment|/*&n; * IRQ&squot;s are in fact implemented a bit like signal handlers for the kernel.&n; * The same sigaction struct is used, and with similar semantics (ie there&n; * is a SA_INTERRUPT flag etc). Naturally it&squot;s not a 1:1 relation, but there&n; * are similarities.&n; *&n; * sa_handler(int irq_NR) is the default function called (0 if no).&n; * sa_mask is horribly ugly (I won&squot;t even mention it)&n; * sa_flags contains various info: SA_INTERRUPT etc&n; * sa_restorer is the unused&n; */
+macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;linux/linkage.h&gt;
+macro_line|#include &lt;linux/kernel_stat.h&gt;
+macro_line|#include &lt;linux/signal.h&gt;
 DECL|function|disable_irq
 r_void
 id|disable_irq
@@ -195,8 +200,12 @@ c_func
 (paren
 id|irq
 comma
-op_amp
-id|sa
+(paren
+r_struct
+id|sigaction
+op_star
+)paren
+l_int|0
 )paren
 suffix:semicolon
 )brace

@@ -364,6 +364,7 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
+macro_line|#ifdef __i386__
 r_if
 c_cond
 (paren
@@ -379,6 +380,7 @@ id|vma-&gt;vm_page_prot
 op_or_assign
 id|PAGE_PCD
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
