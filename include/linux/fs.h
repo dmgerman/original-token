@@ -3518,6 +3518,16 @@ id|size
 )paren
 suffix:semicolon
 r_extern
+r_int
+r_int
+id|get_hardblocksize
+c_func
+(paren
+id|kdev_t
+id|dev
+)paren
+suffix:semicolon
+r_extern
 r_struct
 id|buffer_head
 op_star

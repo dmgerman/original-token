@@ -1084,11 +1084,16 @@ op_star
 id|blksize
 op_ne
 l_int|1024
+op_logical_and
+op_star
+id|blksize
+op_ne
+l_int|2048
 )paren
 (brace
 id|printk
 (paren
-l_string|&quot;MSDOS FS: Invalid blocksize (512 or 1024)&bslash;n&quot;
+l_string|&quot;MSDOS FS: Invalid blocksize (512, 1024 or 2048)&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1269,6 +1274,10 @@ op_logical_and
 id|blksize
 op_ne
 l_int|1024
+op_logical_and
+id|blksize
+op_ne
+l_int|2048
 )paren
 )paren
 (brace
@@ -1293,6 +1302,30 @@ c_func
 id|sb
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|blksize
+OG
+l_int|1024
+)paren
+(brace
+multiline_comment|/* Force the superblock to a larger size here. */
+id|sb-&gt;s_blocksize
+op_assign
+id|blksize
+suffix:semicolon
+id|set_blocksize
+c_func
+(paren
+id|sb-&gt;s_dev
+comma
+id|blksize
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 multiline_comment|/* The first read is always 1024 bytes */
 id|sb-&gt;s_blocksize
 op_assign
@@ -1306,6 +1339,7 @@ comma
 l_int|1024
 )paren
 suffix:semicolon
+)brace
 id|bh
 op_assign
 id|fat_bread
@@ -1763,7 +1797,16 @@ ques
 c_cond
 l_int|9
 suffix:colon
+(paren
+id|blksize
+op_eq
+l_int|1024
+ques
+c_cond
 l_int|10
+suffix:colon
+l_int|11
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2929,6 +2972,10 @@ op_assign
 id|sb-&gt;s_blocksize
 op_eq
 l_int|1024
+op_logical_or
+id|sb-&gt;s_blocksize
+op_eq
+l_int|2048
 )paren
 ques
 c_cond

@@ -101,6 +101,7 @@ l_int|1
 comma
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 DECL|variable|ipv4_def_router_config
 r_struct
 id|ipv4_config
@@ -677,4 +678,5 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
+macro_line|#endif /* CONFIG_SYSCTL */
 eof

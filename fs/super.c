@@ -1466,6 +1466,7 @@ id|nfss-&gt;wsize
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -1520,6 +1521,7 @@ id|nfss-&gt;retrans
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren

@@ -1,6 +1,7 @@
 multiline_comment|/* -*- linux-c -*- --------------------------------------------------------- *&n; *&n; * linux/fs/autofs/waitq.c&n; *&n; *  Copyright 1997 Transmeta Corporation -- All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
-macro_line|#include &lt;linux/modversions.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/signal.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/auto_fs.h&gt;
 multiline_comment|/* We make this a static variable rather than a part of the superblock; it&n;   is better if we don&squot;t reassign numbers easily even across filesystems */
 DECL|variable|autofs_next_wait_queue
@@ -113,6 +114,10 @@ r_int
 r_int
 id|fs
 suffix:semicolon
+r_int
+r_int
+id|old_signal
+suffix:semicolon
 r_const
 r_char
 op_star
@@ -142,6 +147,10 @@ c_func
 (paren
 id|KERNEL_DS
 )paren
+suffix:semicolon
+id|old_signal
+op_assign
+id|current-&gt;signal
 suffix:semicolon
 r_while
 c_loop
@@ -176,6 +185,45 @@ suffix:semicolon
 id|bytes
 op_sub_assign
 id|written
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|written
+op_eq
+op_minus
+id|EPIPE
+op_logical_and
+op_logical_neg
+(paren
+id|old_signal
+op_amp
+(paren
+l_int|1
+op_lshift
+(paren
+id|SIGPIPE
+op_minus
+l_int|1
+)paren
+)paren
+)paren
+)paren
+(brace
+multiline_comment|/* Keep the currently executing process from receiving a&n;&t;&t;   SIGPIPE unless it was already supposed to get one */
+id|current-&gt;signal
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+(paren
+id|SIGPIPE
+op_minus
+l_int|1
+)paren
+)paren
 suffix:semicolon
 )brace
 id|set_fs

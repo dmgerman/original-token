@@ -14,6 +14,8 @@ macro_line|#ifndef FALSE
 DECL|macro|FALSE
 macro_line|# define FALSE 0
 macro_line|#endif
+DECL|macro|MAX_SCSI_DEVICE_CODE
+mdefine_line|#define MAX_SCSI_DEVICE_CODE 10
 r_extern
 r_void
 id|scsi_make_blocked_list

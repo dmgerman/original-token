@@ -1917,7 +1917,8 @@ c_cond
 id|register_netdev
 c_func
 (paren
-id|dev
+op_amp
+id|dev_shape
 )paren
 op_ne
 l_int|0

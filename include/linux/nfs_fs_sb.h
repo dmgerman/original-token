@@ -1,73 +1,59 @@
 macro_line|#ifndef _NFS_FS_SB
 DECL|macro|_NFS_FS_SB
 mdefine_line|#define _NFS_FS_SB
-macro_line|#include &lt;linux/rpcsock.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
+macro_line|#include &lt;linux/in.h&gt;
+multiline_comment|/*&n; * NFS client parameters&n; * Part of this is duplicated in rpc_clnt and is therefore obsolete.&n; */
 DECL|struct|nfs_server
 r_struct
 id|nfs_server
 (brace
-DECL|member|file
+DECL|member|client
 r_struct
-id|file
+id|rpc_clnt
 op_star
-id|file
+id|client
 suffix:semicolon
-DECL|member|rsock
-r_struct
-id|rpc_sock
-op_star
-id|rsock
-suffix:semicolon
-DECL|member|toaddr
-r_struct
-id|sockaddr
-id|toaddr
-suffix:semicolon
-multiline_comment|/* Added for change to NFS code to use sendto()  1995-06-02  JSP */
-DECL|member|lock
-r_int
-id|lock
-suffix:semicolon
-DECL|member|wait
-r_struct
-id|wait_queue
-op_star
-id|wait
-suffix:semicolon
+multiline_comment|/* RPC client handle */
 DECL|member|flags
 r_int
 id|flags
 suffix:semicolon
+multiline_comment|/* various flags */
 DECL|member|rsize
 r_int
 id|rsize
 suffix:semicolon
+multiline_comment|/* read size */
 DECL|member|wsize
 r_int
 id|wsize
 suffix:semicolon
-DECL|member|timeo
+multiline_comment|/* write size */
+DECL|member|bsize
 r_int
-id|timeo
-suffix:semicolon
-DECL|member|retrans
 r_int
-id|retrans
+id|bsize
 suffix:semicolon
+multiline_comment|/* server block size */
 DECL|member|acregmin
+r_int
 r_int
 id|acregmin
 suffix:semicolon
+multiline_comment|/* attr cache timeouts */
 DECL|member|acregmax
+r_int
 r_int
 id|acregmax
 suffix:semicolon
 DECL|member|acdirmin
 r_int
+r_int
 id|acdirmin
 suffix:semicolon
 DECL|member|acdirmax
+r_int
 r_int
 id|acdirmax
 suffix:semicolon
@@ -78,6 +64,7 @@ id|hostname
 l_int|256
 )braket
 suffix:semicolon
+multiline_comment|/* remote hostname */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * nfs super-block data in memory&n; */

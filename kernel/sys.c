@@ -3309,7 +3309,8 @@ id|groups
 op_eq
 id|grp
 )paren
-r_break
+r_goto
+id|out
 suffix:semicolon
 id|groups
 op_increment
@@ -3329,6 +3330,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|out
+suffix:colon
 r_return
 l_int|1
 suffix:semicolon
@@ -4521,7 +4524,6 @@ r_int
 id|mask
 )paren
 (brace
-multiline_comment|/* The xchg() isn&squot;t SMP-safe on x86 right now.. */
 id|mask
 op_assign
 id|xchg

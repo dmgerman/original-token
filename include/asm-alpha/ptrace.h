@@ -106,6 +106,22 @@ r_int
 r_int
 id|hae
 suffix:semicolon
+multiline_comment|/* JRP - These are the values provided to a0-a2 by PALcode */
+DECL|member|trap_a0
+r_int
+r_int
+id|trap_a0
+suffix:semicolon
+DECL|member|trap_a1
+r_int
+r_int
+id|trap_a1
+suffix:semicolon
+DECL|member|trap_a2
+r_int
+r_int
+id|trap_a2
+suffix:semicolon
 multiline_comment|/* These are saved by PAL-code: */
 DECL|member|ps
 r_int

@@ -5,9 +5,7 @@ macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Many architectures don&squot;t like unaligned accesses, which is&n; * frequently the case with the nr_sects and start_sect partition&n; * table entries.&n; */
 macro_line|#include &lt;asm/unaligned.h&gt;
@@ -308,6 +306,117 @@ id|LINUX_EXTENDED_PARTITION
 )paren
 suffix:semicolon
 )brace
+DECL|function|get_ptable_blocksize
+r_static
+r_int
+r_int
+id|get_ptable_blocksize
+c_func
+(paren
+id|kdev_t
+id|dev
+)paren
+(brace
+r_int
+id|ret
+op_assign
+l_int|1024
+suffix:semicolon
+multiline_comment|/*&n;   * See whether the low-level driver has given us a minumum blocksize.&n;   * If so, check to see whether it is larger than the default of 1024.&n;   */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|blksize_size
+(braket
+id|MAJOR
+c_func
+(paren
+id|dev
+)paren
+)braket
+)paren
+(brace
+r_return
+id|ret
+suffix:semicolon
+)brace
+multiline_comment|/*&n;   * Check for certain special power of two sizes that we allow.&n;   * With anything larger than 1024, we must force the blocksize up to&n;   * the natural blocksize for the device so that we don&squot;t have to try&n;   * and read partial sectors.  Anything smaller should be just fine.&n;   */
+r_switch
+c_cond
+(paren
+id|blksize_size
+(braket
+id|MAJOR
+c_func
+(paren
+id|dev
+)paren
+)braket
+(braket
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
+)braket
+)paren
+(brace
+r_case
+l_int|2048
+suffix:colon
+id|ret
+op_assign
+l_int|2048
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|4096
+suffix:colon
+id|ret
+op_assign
+l_int|4096
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|8192
+suffix:colon
+id|ret
+op_assign
+l_int|8192
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|1024
+suffix:colon
+r_case
+l_int|512
+suffix:colon
+r_case
+l_int|256
+suffix:colon
+r_case
+l_int|0
+suffix:colon
+multiline_comment|/*&n;       * These are all OK.&n;       */
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|panic
+c_func
+(paren
+l_string|&quot;Strange blocksize for partition table&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_return
+id|ret
+suffix:semicolon
+)brace
 macro_line|#ifdef CONFIG_MSDOS_PARTITION
 multiline_comment|/*&n; * Create devices for each logical partition in an extended partition.&n; * The logical partitions form a linked list, with each entry being&n; * a partition table with two entries.  The first entry&n; * is the real data partition (with a start relative to the partition&n; * table start).  The second is a pointer to the next logical partition&n; * (with a start relative to the entire extended partition).&n; * We do not create a Linux partition for the partition tables, but&n; * only for the actual data partitions.&n; */
 DECL|macro|MSDOS_LABEL_MAGIC
@@ -424,7 +533,11 @@ id|dev
 comma
 l_int|0
 comma
-l_int|1024
+id|get_ptable_blocksize
+c_func
+(paren
+id|dev
+)paren
 )paren
 )paren
 )paren
@@ -774,7 +887,11 @@ id|dev
 comma
 l_int|0
 comma
-l_int|1024
+id|get_ptable_blocksize
+c_func
+(paren
+id|dev
+)paren
 )paren
 )paren
 )paren
@@ -964,7 +1081,11 @@ id|dev
 comma
 l_int|0
 comma
-l_int|1024
+id|get_ptable_blocksize
+c_func
+(paren
+id|dev
+)paren
 )paren
 )paren
 )paren
@@ -1850,7 +1971,11 @@ id|dev
 comma
 l_int|0
 comma
-l_int|1024
+id|get_ptable_blocksize
+c_func
+(paren
+id|dev
+)paren
 )paren
 )paren
 )paren
@@ -2170,7 +2295,11 @@ id|dev
 comma
 l_int|0
 comma
-l_int|1024
+id|get_ptable_blocksize
+c_func
+(paren
+id|dev
+)paren
 )paren
 )paren
 )paren

@@ -7,11 +7,6 @@ macro_line|#ifndef VERBOSE_IDE_CD_ERRORS
 DECL|macro|VERBOSE_IDE_CD_ERRORS
 mdefine_line|#define VERBOSE_IDE_CD_ERRORS 0
 macro_line|#endif
-multiline_comment|/* Turn this on to have the driver print out the meanings of the&n;   ATAPI error codes.  This will use up additional kernel-space&n;   memory, though. */
-macro_line|#ifndef VERBOSE_IDE_CD_ERRORS
-DECL|macro|VERBOSE_IDE_CD_ERRORS
-mdefine_line|#define VERBOSE_IDE_CD_ERRORS 0
-macro_line|#endif
 multiline_comment|/* Turning this on will remove code to work around various nonstandard&n;   ATAPI implementations.  If you know your drive follows the standard,&n;   this will give you a slightly smaller kernel. */
 macro_line|#ifndef STANDARD_ATAPI
 DECL|macro|STANDARD_ATAPI

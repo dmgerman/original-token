@@ -690,7 +690,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
+macro_line|#if defined(MODULE) &amp;&amp; defined(CONFIG_SYSCTL)
 multiline_comment|/*&n; *&t;sysctl registration functions defined in sysctl_net_ipv6.c&n; */
 r_extern
 r_void
@@ -732,7 +732,7 @@ op_amp
 id|ipv6_packet_type
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
+macro_line|#if defined(MODULE) &amp;&amp; defined(CONFIG_SYSCTL)
 id|ipv6_sysctl_register
 c_func
 (paren
@@ -775,11 +775,13 @@ op_amp
 id|ipv6_packet_type
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 id|ipv6_sysctl_unregister
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ip6_route_cleanup
 c_func
 (paren

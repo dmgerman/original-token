@@ -595,6 +595,18 @@ id|truncate
 )paren
 r_break
 suffix:semicolon
+multiline_comment|/*&n;&t; * If the flags are 2 or 4, this indicates &squot;.&squot; or &squot;..&squot;.&n;&t; * We don&squot;t want to do anything with this, because it&n;&t; * screws up the code that calls us.  We don&squot;t really&n;&t; * care anyways, since we can just use the non-RR&n;&t; * name.&n;&t; */
+r_if
+c_cond
+(paren
+id|rr-&gt;u.NM.flags
+op_amp
+l_int|6
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

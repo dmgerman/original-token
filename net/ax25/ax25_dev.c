@@ -180,11 +180,13 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_SYSCTL
 id|ax25_unregister_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|memset
 c_func
 (paren
@@ -340,11 +342,13 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 id|ax25_register_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|ax25_dev_device_down
 r_void
@@ -385,11 +389,13 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 id|ax25_unregister_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|save_flags
 c_func
 (paren
@@ -469,11 +475,13 @@ id|ax25_dev
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 id|ax25_register_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -518,11 +526,13 @@ id|ax25_dev
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 id|ax25_register_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -537,11 +547,13 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 id|ax25_register_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|ax25_fwd_ioctl
 r_int

@@ -176,6 +176,7 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|__xg
 mdefine_line|#define __xg(x) ((struct __xchg_dummy *)(x))
+multiline_comment|/*&n; * Note: no &quot;lock&quot; prefix even on SMP: xchg always implies lock anyway&n; */
 DECL|function|__xchg
 r_static
 r_inline

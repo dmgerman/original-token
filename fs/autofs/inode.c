@@ -1,5 +1,4 @@
 multiline_comment|/* -*- linux-c -*- --------------------------------------------------------- *&n; *&n; * linux/fs/autofs/inode.c&n; *&n; *  Copyright 1997 Transmeta Corporation -- All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
-macro_line|#include &lt;linux/modversions.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
@@ -734,6 +733,8 @@ id|s-&gt;s_dev
 op_assign
 l_int|0
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -1067,12 +1068,7 @@ id|AUTOFS_SUPER_MAGIC
 suffix:semicolon
 id|tmp.f_bsize
 op_assign
-id|PAGE_SIZE
-op_div
-r_sizeof
-(paren
-r_int
-)paren
+l_int|1024
 suffix:semicolon
 id|tmp.f_blocks
 op_assign

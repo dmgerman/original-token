@@ -1215,8 +1215,8 @@ id|sec
 suffix:semicolon
 multiline_comment|/* finally seconds */
 )brace
+multiline_comment|/* not static: needed by APM */
 DECL|function|get_cmos_time
-r_static
 r_int
 r_int
 id|get_cmos_time

@@ -5893,11 +5893,13 @@ id|i
 )braket
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 id|rose_register_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
 c_func
@@ -6028,11 +6030,13 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 id|rose_unregister_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|unregister_netdevice_notifier
 c_func
 (paren

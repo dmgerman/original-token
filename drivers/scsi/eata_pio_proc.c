@@ -1,37 +1,3 @@
-DECL|macro|MAX_SCSI_DEVICE_CODE
-mdefine_line|#define MAX_SCSI_DEVICE_CODE 10
-DECL|variable|pio_scsi_dev_types
-r_const
-r_char
-op_star
-r_const
-id|pio_scsi_dev_types
-(braket
-id|MAX_SCSI_DEVICE_CODE
-)braket
-op_assign
-(brace
-l_string|&quot;Direct-Access    &quot;
-comma
-l_string|&quot;Sequential-Access&quot;
-comma
-l_string|&quot;Printer          &quot;
-comma
-l_string|&quot;Processor        &quot;
-comma
-l_string|&quot;WORM             &quot;
-comma
-l_string|&quot;CD-ROM           &quot;
-comma
-l_string|&quot;Scanner          &quot;
-comma
-l_string|&quot;Optical Device   &quot;
-comma
-l_string|&quot;Medium Changer   &quot;
-comma
-l_string|&quot;Communications   &quot;
-)brace
-suffix:semicolon
 multiline_comment|/*&n; * eata_set_info&n; * buffer : pointer to the data that has been written to the hostfile&n; * length : number of bytes written to the hostfile&n; * HBA_ptr: pointer to the Scsi_Host struct&n; */
 DECL|function|eata_pio_set_info
 r_int

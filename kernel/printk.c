@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/kernel/printk.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; * Modified to make sys_syslog() more flexible: added commands to&n; * return the last 4k of kernel messages, regardless of whether&n; * they&squot;ve been read or not.  Added option to suppress kernel printk&squot;s&n; * to the console.  Added hook for sending the console messages&n; * elsewhere, in preparation for a serial line console (someday).&n; * Ted Ts&squot;o, 2/11/93.&n; */
+multiline_comment|/*&n; *  linux/kernel/printk.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; * Modified to make sys_syslog() more flexible: added commands to&n; * return the last 4k of kernel messages, regardless of whether&n; * they&squot;ve been read or not.  Added option to suppress kernel printk&squot;s&n; * to the console.  Added hook for sending the console messages&n; * elsewhere, in preparation for a serial line console (someday).&n; * Ted Ts&squot;o, 2/11/93.&n; * Modified for sysctl support, 1/8/97, Chris Horn.&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -44,9 +44,28 @@ id|log_wait
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* Keep together for sysctl support */
 DECL|variable|console_loglevel
 r_int
 id|console_loglevel
+op_assign
+id|DEFAULT_CONSOLE_LOGLEVEL
+suffix:semicolon
+DECL|variable|default_message_loglevel
+r_int
+id|default_message_loglevel
+op_assign
+id|DEFAULT_MESSAGE_LOGLEVEL
+suffix:semicolon
+DECL|variable|minimum_console_loglevel
+r_int
+id|minimum_console_loglevel
+op_assign
+id|MINIMUM_CONSOLE_LOGLEVEL
+suffix:semicolon
+DECL|variable|default_console_loglevel
+r_int
+id|default_console_loglevel
 op_assign
 id|DEFAULT_CONSOLE_LOGLEVEL
 suffix:semicolon
@@ -516,7 +535,7 @@ suffix:colon
 multiline_comment|/* Disable logging to console */
 id|console_loglevel
 op_assign
-id|MINIMUM_CONSOLE_LOGLEVEL
+id|minimum_console_loglevel
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -526,7 +545,7 @@ suffix:colon
 multiline_comment|/* Enable logging to console */
 id|console_loglevel
 op_assign
-id|DEFAULT_CONSOLE_LOGLEVEL
+id|default_console_loglevel
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -553,11 +572,11 @@ c_cond
 (paren
 id|len
 OL
-id|MINIMUM_CONSOLE_LOGLEVEL
+id|minimum_console_loglevel
 )paren
 id|len
 op_assign
-id|MINIMUM_CONSOLE_LOGLEVEL
+id|minimum_console_loglevel
 suffix:semicolon
 id|console_loglevel
 op_assign
@@ -751,7 +770,7 @@ id|p
 l_int|1
 )braket
 op_assign
-id|DEFAULT_MESSAGE_LOGLEVEL
+id|default_message_loglevel
 op_plus
 l_char|&squot;0&squot;
 suffix:semicolon

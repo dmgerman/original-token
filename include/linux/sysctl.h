@@ -54,109 +54,211 @@ macro_line|#ifdef __KERNEL__
 DECL|macro|CTL_ANY
 mdefine_line|#define CTL_ANY&t;&t;-1&t;/* Matches any name */
 DECL|macro|CTL_NONE
-mdefine_line|#define CTL_NONE&t;&t;0
+mdefine_line|#define CTL_NONE&t;0
 macro_line|#endif
-DECL|macro|CTL_KERN
-mdefine_line|#define CTL_KERN&t;1&t;/* General kernel info and control */
-DECL|macro|CTL_VM
-mdefine_line|#define CTL_VM&t;&t;2&t;/* VM management */
-DECL|macro|CTL_NET
-mdefine_line|#define CTL_NET&t;&t;3&t;/* Networking */
-DECL|macro|CTL_PROC
-mdefine_line|#define CTL_PROC&t;4&t;/* Process info */
-DECL|macro|CTL_FS
-mdefine_line|#define CTL_FS&t;&t;5&t;/* Filesystems */
-DECL|macro|CTL_DEBUG
-mdefine_line|#define CTL_DEBUG&t;6&t;/* Debugging */
-DECL|macro|CTL_DEV
-mdefine_line|#define CTL_DEV&t;&t;7&t;/* Devices */
-DECL|macro|CTL_MAXID
-mdefine_line|#define CTL_MAXID&t;8
+r_enum
+(brace
+DECL|enumerator|CTL_KERN
+id|CTL_KERN
+op_assign
+l_int|1
+comma
+multiline_comment|/* General kernel info and control */
+DECL|enumerator|CTL_VM
+id|CTL_VM
+comma
+multiline_comment|/* VM management */
+DECL|enumerator|CTL_NET
+id|CTL_NET
+comma
+multiline_comment|/* Networking */
+DECL|enumerator|CTL_PROC
+id|CTL_PROC
+comma
+multiline_comment|/* Process info */
+DECL|enumerator|CTL_FS
+id|CTL_FS
+comma
+multiline_comment|/* Filesystems */
+DECL|enumerator|CTL_DEBUG
+id|CTL_DEBUG
+comma
+multiline_comment|/* Debugging */
+DECL|enumerator|CTL_DEV
+id|CTL_DEV
+comma
+multiline_comment|/* Devices */
+)brace
+suffix:semicolon
 multiline_comment|/* CTL_KERN names: */
-DECL|macro|KERN_OSTYPE
-mdefine_line|#define KERN_OSTYPE&t;1&t;/* string: system version */
-DECL|macro|KERN_OSRELEASE
-mdefine_line|#define KERN_OSRELEASE&t;2&t;/* string: system release */
-DECL|macro|KERN_OSREV
-mdefine_line|#define KERN_OSREV&t;3&t;/* int: system revision */
-DECL|macro|KERN_VERSION
-mdefine_line|#define KERN_VERSION&t;4&t;/* string: compile time info */
-DECL|macro|KERN_SECUREMASK
-mdefine_line|#define KERN_SECUREMASK 5&t;/* struct: maximum rights mask */
-DECL|macro|KERN_PROF
-mdefine_line|#define KERN_PROF &t;6&t;/* table: profiling information */
-DECL|macro|KERN_NODENAME
-mdefine_line|#define KERN_NODENAME   7
-DECL|macro|KERN_DOMAINNAME
-mdefine_line|#define KERN_DOMAINNAME 8
-DECL|macro|KERN_NRINODE
-mdefine_line|#define KERN_NRINODE&t;9
-DECL|macro|KERN_MAXINODE
-mdefine_line|#define KERN_MAXINODE&t;10
-DECL|macro|KERN_NRFILE
-mdefine_line|#define KERN_NRFILE&t;11
-DECL|macro|KERN_MAXFILE
-mdefine_line|#define KERN_MAXFILE&t;12
-DECL|macro|KERN_MAXID
-mdefine_line|#define KERN_MAXID&t;13
-DECL|macro|KERN_SECURELVL
-mdefine_line|#define KERN_SECURELVL&t;14&t;/* int: system security level */
-DECL|macro|KERN_PANIC
-mdefine_line|#define KERN_PANIC&t;15&t;/* int: panic timeout */
-DECL|macro|KERN_REALROOTDEV
-mdefine_line|#define KERN_REALROOTDEV 16&t;/* real root device to mount after initrd */
-DECL|macro|KERN_NFSRNAME
-mdefine_line|#define KERN_NFSRNAME&t;17&t;/* NFS root name */
-DECL|macro|KERN_NFSRADDRS
-mdefine_line|#define KERN_NFSRADDRS&t;18&t;/* NFS root addresses */
-DECL|macro|KERN_JAVA_INTERPRETER
-mdefine_line|#define KERN_JAVA_INTERPRETER 19 /* path to Java(tm) interpreter */
-DECL|macro|KERN_JAVA_APPLETVIEWER
-mdefine_line|#define KERN_JAVA_APPLETVIEWER 20 /* path to Java(tm) appletviewer */
-DECL|macro|KERN_SPARC_REBOOT
-mdefine_line|#define KERN_SPARC_REBOOT 21 /* reboot command on Sparc */
+r_enum
+(brace
+DECL|enumerator|KERN_OSTYPE
+id|KERN_OSTYPE
+op_assign
+l_int|1
+comma
+multiline_comment|/* string: system version */
+DECL|enumerator|KERN_OSRELEASE
+id|KERN_OSRELEASE
+comma
+multiline_comment|/* string: system release */
+DECL|enumerator|KERN_OSREV
+id|KERN_OSREV
+comma
+multiline_comment|/* int: system revision */
+DECL|enumerator|KERN_VERSION
+id|KERN_VERSION
+comma
+multiline_comment|/* string: compile time info */
+DECL|enumerator|KERN_SECUREMASK
+id|KERN_SECUREMASK
+comma
+multiline_comment|/* struct: maximum rights mask */
+DECL|enumerator|KERN_PROF
+id|KERN_PROF
+comma
+multiline_comment|/* table: profiling information */
+DECL|enumerator|KERN_NODENAME
+id|KERN_NODENAME
+comma
+DECL|enumerator|KERN_DOMAINNAME
+id|KERN_DOMAINNAME
+comma
+DECL|enumerator|KERN_NRINODE
+id|KERN_NRINODE
+comma
+DECL|enumerator|KERN_MAXINODE
+id|KERN_MAXINODE
+comma
+DECL|enumerator|KERN_NRFILE
+id|KERN_NRFILE
+comma
+DECL|enumerator|KERN_MAXFILE
+id|KERN_MAXFILE
+comma
+DECL|enumerator|KERN_SECURELVL
+id|KERN_SECURELVL
+comma
+multiline_comment|/* int: system security level */
+DECL|enumerator|KERN_PANIC
+id|KERN_PANIC
+comma
+multiline_comment|/* int: panic timeout */
+DECL|enumerator|KERN_REALROOTDEV
+id|KERN_REALROOTDEV
+comma
+multiline_comment|/* real root device to mount after initrd */
+DECL|enumerator|KERN_NFSRNAME
+id|KERN_NFSRNAME
+comma
+multiline_comment|/* NFS root name */
+DECL|enumerator|KERN_NFSRADDRS
+id|KERN_NFSRADDRS
+comma
+multiline_comment|/* NFS root addresses */
+DECL|enumerator|KERN_JAVA_INTERPRETER
+id|KERN_JAVA_INTERPRETER
+comma
+multiline_comment|/* path to Java(tm) interpreter */
+DECL|enumerator|KERN_JAVA_APPLETVIEWER
+id|KERN_JAVA_APPLETVIEWER
+comma
+multiline_comment|/* path to Java(tm) appletviewer */
+DECL|enumerator|KERN_SPARC_REBOOT
+id|KERN_SPARC_REBOOT
+comma
+multiline_comment|/* reboot command on Sparc */
+DECL|enumerator|KERN_CTLALTDEL
+id|KERN_CTLALTDEL
+comma
+multiline_comment|/* int: allow ctl-alt-del to reboot */
+DECL|enumerator|KERN_PRINTK
+id|KERN_PRINTK
+comma
+multiline_comment|/* sturct: control printk logging parameters */
+)brace
+suffix:semicolon
 multiline_comment|/* CTL_VM names: */
-DECL|macro|VM_SWAPCTL
-mdefine_line|#define VM_SWAPCTL&t;1&t;/* struct: Set vm swapping control */
-DECL|macro|VM_KSWAPD
-mdefine_line|#define VM_KSWAPD&t;2&t;/* struct: control background pageout */
-DECL|macro|VM_FREEPG
-mdefine_line|#define VM_FREEPG&t;3&t;/* struct: Set free page thresholds */
-DECL|macro|VM_BDFLUSH
-mdefine_line|#define VM_BDFLUSH&t;4&t;/* struct: Control buffer cache flushing */
-DECL|macro|VM_MAXID
-mdefine_line|#define VM_MAXID&t;5
-DECL|macro|VM_OVERCOMMIT_MEMORY
-mdefine_line|#define VM_OVERCOMMIT_MEMORY 7&t;/* Turn off the virtual memory safety limit */
+r_enum
+(brace
+DECL|enumerator|VM_SWAPCTL
+id|VM_SWAPCTL
+op_assign
+l_int|1
+comma
+multiline_comment|/* struct: Set vm swapping control */
+DECL|enumerator|VM_KSWAPD
+id|VM_KSWAPD
+comma
+multiline_comment|/* struct: control background pageout */
+DECL|enumerator|VM_SWAPOUT
+id|VM_SWAPOUT
+comma
+multiline_comment|/* int: Background pageout interval */
+DECL|enumerator|VM_FREEPG
+id|VM_FREEPG
+comma
+multiline_comment|/* struct: Set free page thresholds */
+DECL|enumerator|VM_BDFLUSH
+id|VM_BDFLUSH
+comma
+multiline_comment|/* struct: Control buffer cache flushing */
+DECL|enumerator|VM_OVERCOMMIT_MEMORY
+id|VM_OVERCOMMIT_MEMORY
+comma
+multiline_comment|/* Turn off the virtual memory safety limit */
+)brace
+suffix:semicolon
 multiline_comment|/* CTL_NET names: */
-DECL|macro|NET_CORE
-mdefine_line|#define NET_CORE        1
-DECL|macro|NET_ETHER
-mdefine_line|#define NET_ETHER       2
-DECL|macro|NET_802
-mdefine_line|#define NET_802         3
-DECL|macro|NET_UNIX
-mdefine_line|#define NET_UNIX        4
-DECL|macro|NET_IPV4
-mdefine_line|#define NET_IPV4        5
-DECL|macro|NET_IPX
-mdefine_line|#define NET_IPX         6
-DECL|macro|NET_ATALK
-mdefine_line|#define NET_ATALK       7
-DECL|macro|NET_NETROM
-mdefine_line|#define NET_NETROM      8
-DECL|macro|NET_AX25
-mdefine_line|#define NET_AX25        9
-DECL|macro|NET_BRIDGE
-mdefine_line|#define NET_BRIDGE&t;10
-DECL|macro|NET_IPV6
-mdefine_line|#define NET_IPV6&t;11
-DECL|macro|NET_ROSE
-mdefine_line|#define NET_ROSE&t;12
-DECL|macro|NET_X25
-mdefine_line|#define NET_X25&t;&t;13
-DECL|macro|NET_TR
-mdefine_line|#define NET_TR&t;&t;14
+r_enum
+(brace
+DECL|enumerator|NET_CORE
+id|NET_CORE
+op_assign
+l_int|1
+comma
+DECL|enumerator|NET_ETHER
+id|NET_ETHER
+comma
+DECL|enumerator|NET_802
+id|NET_802
+comma
+DECL|enumerator|NET_UNIX
+id|NET_UNIX
+comma
+DECL|enumerator|NET_IPV4
+id|NET_IPV4
+comma
+DECL|enumerator|NET_IPX
+id|NET_IPX
+comma
+DECL|enumerator|NET_ATALK
+id|NET_ATALK
+comma
+DECL|enumerator|NET_NETROM
+id|NET_NETROM
+comma
+DECL|enumerator|NET_AX25
+id|NET_AX25
+comma
+DECL|enumerator|NET_BRIDGE
+id|NET_BRIDGE
+comma
+DECL|enumerator|NET_IPV6
+id|NET_IPV6
+comma
+DECL|enumerator|NET_ROSE
+id|NET_ROSE
+comma
+DECL|enumerator|NET_X25
+id|NET_X25
+comma
+DECL|enumerator|NET_TR
+id|NET_TR
+comma
+)brace
+suffix:semicolon
 multiline_comment|/* /proc/sys/net/core */
 multiline_comment|/* /proc/sys/net/ethernet */
 multiline_comment|/* /proc/sys/net/802 */
@@ -447,7 +549,7 @@ op_star
 suffix:semicolon
 r_extern
 r_void
-id|init_sysctl
+id|sysctl_init
 c_func
 (paren
 r_void

@@ -894,6 +894,11 @@ suffix:semicolon
 r_int
 id|bl
 suffix:semicolon
+macro_line|#ifdef CONFIG_SCSI_G_NCR5380_PORT
+r_int
+id|i
+suffix:semicolon
+macro_line|#endif 
 id|NCR5380_local_declare
 c_func
 (paren
@@ -1996,39 +2001,6 @@ op_minus
 id|start
 suffix:semicolon
 )brace
-r_const
-r_char
-op_star
-r_const
-id|private_scsi_device_types
-(braket
-)braket
-op_assign
-(brace
-l_string|&quot;Direct-Access    &quot;
-comma
-l_string|&quot;Sequential-Access&quot;
-comma
-l_string|&quot;Printer          &quot;
-comma
-l_string|&quot;Processor        &quot;
-comma
-l_string|&quot;WORM             &quot;
-comma
-l_string|&quot;CD-ROM           &quot;
-comma
-l_string|&quot;Scanner          &quot;
-comma
-l_string|&quot;Optical Device   &quot;
-comma
-l_string|&quot;Medium Changer   &quot;
-comma
-l_string|&quot;Communications   &quot;
-)brace
-suffix:semicolon
-DECL|macro|MAX_SCSI_DEVICE_CODE
-mdefine_line|#define MAX_SCSI_DEVICE_CODE sizeof(private_scsi_device_types)/sizeof(char*)
-DECL|function|generic_NCR5380_proc_info
 r_int
 id|generic_NCR5380_proc_info
 c_func
@@ -2089,6 +2061,16 @@ r_struct
 id|NCR5380_hostdata
 op_star
 id|hostdata
+suffix:semicolon
+r_extern
+r_const
+r_char
+op_star
+r_const
+id|scsi_device_types
+(braket
+id|MAX_SCSI_DEVICE_CODE
+)braket
 suffix:semicolon
 id|cli
 c_func
@@ -2380,7 +2362,7 @@ id|MAX_SCSI_DEVICE_CODE
 )paren
 ques
 c_cond
-id|private_scsi_device_types
+id|scsi_device_types
 (braket
 (paren
 r_int
@@ -2829,7 +2811,6 @@ DECL|macro|ANDP
 macro_line|#undef ANDP
 macro_line|#ifdef MODULE
 multiline_comment|/* Eventually this will go into an include file, but this will be later */
-DECL|variable|driver_template
 id|Scsi_Host_Template
 id|driver_template
 op_assign

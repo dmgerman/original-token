@@ -276,11 +276,6 @@ r_void
 )paren
 (brace
 macro_line|#ifdef __SMP__
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|atomic_inc
 c_func
 (paren
@@ -288,7 +283,7 @@ op_amp
 id|intr_count
 )paren
 suffix:semicolon
-id|sti
+id|synchronize_irq
 c_func
 (paren
 )paren

@@ -5625,11 +5625,13 @@ id|i
 )braket
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 id|nr_register_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
 c_func
@@ -5730,11 +5732,13 @@ op_amp
 id|nr_dev_notifier
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 id|nr_unregister_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|sock_unregister
 c_func
 (paren

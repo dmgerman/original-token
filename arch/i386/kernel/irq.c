@@ -36,6 +36,14 @@ id|cache_A1
 op_assign
 l_int|0xff
 suffix:semicolon
+DECL|variable|local_irq_count
+r_int
+r_int
+id|local_irq_count
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
 macro_line|#ifdef __SMP_PROF__
 DECL|variable|int_count
 r_static
@@ -1496,14 +1504,6 @@ r_volatile
 r_int
 id|global_irq_count
 suffix:semicolon
-DECL|variable|local_irq_count
-r_int
-r_int
-id|local_irq_count
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
 DECL|macro|irq_active
 mdefine_line|#define irq_active(cpu) &bslash;&n;&t;(global_irq_count != local_irq_count[cpu])
 multiline_comment|/*&n; * &quot;global_cli()&quot; is a special case, in that it can hold the&n; * interrupts disabled for a longish time, and also because&n; * we may be doing TLB invalidates when holding the global&n; * IRQ lock for historical reasons. Thus we may need to check&n; * SMP invalidate events specially by hand here (but not in&n; * any normal spinlocks)&n; */
@@ -1556,11 +1556,11 @@ suffix:semicolon
 DECL|macro|INIT_STUCK
 macro_line|#undef INIT_STUCK
 DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK 10000000
+mdefine_line|#define INIT_STUCK 100000000
 DECL|macro|STUCK
 macro_line|#undef STUCK
 DECL|macro|STUCK
-mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;wait_on_irq stuck at %08lx, waiting for %08lx (local=%d, global=%d)&bslash;n&quot;, where, previous_irqholder, local_count, global_irq_count); stuck = INIT_STUCK;}
+mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;wait_on_irq CPU#%d stuck at %08lx, waiting for %08lx (local=%d, global=%d)&bslash;n&quot;, cpu, where, previous_irqholder, local_count, global_irq_count); stuck = INIT_STUCK; }
 DECL|function|wait_on_irq
 r_static
 r_inline
@@ -1665,6 +1665,53 @@ id|local_count
 comma
 op_amp
 id|global_irq_count
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n; * This is called when we want to synchronize with&n; * interrupts. We may for example tell a device to&n; * stop sending interrupts: but to make sure there&n; * are no interrupts that are executing on another&n; * CPU we need to call this function.&n; *&n; * On UP this is a no-op.&n; */
+DECL|function|synchronize_irq
+r_void
+id|synchronize_irq
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+r_int
+id|local_count
+op_assign
+id|local_irq_count
+(braket
+id|cpu
+)braket
+suffix:semicolon
+multiline_comment|/* Do we need to wait? */
+r_if
+c_cond
+(paren
+id|local_count
+op_ne
+id|global_irq_count
+)paren
+(brace
+multiline_comment|/* The stupid way to do this */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -1808,7 +1855,7 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;movl 12(%%esp),%0&quot;
+l_string|&quot;movl 16(%%esp),%0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren

@@ -70,6 +70,7 @@ comma
 multiline_comment|/* rt gc period&t;&t;*/
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 DECL|function|ipv6_sysctl_forwarding
 r_int
 id|ipv6_sysctl_forwarding
@@ -590,4 +591,5 @@ id|ipv6_sysctl_header
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* MODULE */
+macro_line|#endif /* CONFIG_SYSCTL */
 eof

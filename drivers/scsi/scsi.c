@@ -232,8 +232,6 @@ l_int|NULL
 suffix:semicolon
 DECL|macro|SCSI_BLOCK
 mdefine_line|#define SCSI_BLOCK(HOST) ((HOST-&gt;block &amp;&amp; host_active &amp;&amp; HOST != host_active) &bslash;&n;&t;&t;&t;  || (HOST-&gt;can_queue &amp;&amp; HOST-&gt;host_busy &gt;= HOST-&gt;can_queue))
-DECL|macro|MAX_SCSI_DEVICE_CODE
-mdefine_line|#define MAX_SCSI_DEVICE_CODE 10
 DECL|variable|scsi_device_types
 r_const
 r_char

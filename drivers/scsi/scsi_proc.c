@@ -931,40 +931,6 @@ r_return
 id|cmdIndex
 suffix:semicolon
 )brace
-DECL|macro|MAX_SCSI_DEVICE_CODE
-mdefine_line|#define MAX_SCSI_DEVICE_CODE 10
-DECL|variable|scsi_dev_types
-r_const
-r_char
-op_star
-r_const
-id|scsi_dev_types
-(braket
-id|MAX_SCSI_DEVICE_CODE
-)braket
-op_assign
-(brace
-l_string|&quot;Direct-Access    &quot;
-comma
-l_string|&quot;Sequential-Access&quot;
-comma
-l_string|&quot;Printer          &quot;
-comma
-l_string|&quot;Processor        &quot;
-comma
-l_string|&quot;WORM             &quot;
-comma
-l_string|&quot;CD-ROM           &quot;
-comma
-l_string|&quot;Scanner          &quot;
-comma
-l_string|&quot;Optical Device   &quot;
-comma
-l_string|&quot;Medium Changer   &quot;
-comma
-l_string|&quot;Communications   &quot;
-)brace
-suffix:semicolon
 DECL|function|proc_print_scsidevice
 r_void
 id|proc_print_scsidevice
@@ -993,6 +959,16 @@ id|y
 op_assign
 op_star
 id|size
+suffix:semicolon
+r_extern
+r_const
+r_char
+op_star
+r_const
+id|scsi_device_types
+(braket
+id|MAX_SCSI_DEVICE_CODE
+)braket
 suffix:semicolon
 id|y
 op_assign
@@ -1254,7 +1230,7 @@ OL
 id|MAX_SCSI_DEVICE_CODE
 ques
 c_cond
-id|scsi_dev_types
+id|scsi_device_types
 (braket
 (paren
 r_int

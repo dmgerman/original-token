@@ -520,6 +520,13 @@ c_func
 id|inode_change_ok
 )paren
 suffix:semicolon
+DECL|variable|get_hardblocksize
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_hardblocksize
+)paren
+suffix:semicolon
 DECL|variable|set_blocksize
 id|EXPORT_SYMBOL
 c_func

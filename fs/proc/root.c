@@ -361,6 +361,7 @@ l_int|NULL
 )brace
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SYSCTL
 DECL|variable|proc_sys_root
 r_struct
 id|proc_dir_entry
@@ -407,6 +408,7 @@ l_int|NULL
 multiline_comment|/* parent, subdir */
 )brace
 suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_SUN_OPENPROMFS) || defined(CONFIG_SUN_OPENPROMFS_MODULE)
 DECL|variable|proc_openprom_defreaddir_ptr
 r_static
@@ -2455,6 +2457,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 id|proc_register
 c_func
 (paren
@@ -2465,6 +2468,7 @@ op_amp
 id|proc_sys_root
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_MCA
 id|proc_register
 c_func

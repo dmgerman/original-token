@@ -1,5 +1,4 @@
 multiline_comment|/* -*- linux-c -*- --------------------------------------------------------- *&n; *&n; * linux/fs/autofs/dir.c&n; *&n; *  Copyright 1997 Transmeta Corporation -- All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
-macro_line|#include &lt;linux/modversions.h&gt;
 macro_line|#include &lt;linux/auto_fs.h&gt;
 DECL|function|autofs_dir_readdir
 r_static

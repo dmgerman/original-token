@@ -20,6 +20,8 @@ DECL|macro|hardirq_enter
 mdefine_line|#define hardirq_enter(cpu)&t;(local_irq_count[cpu]++)
 DECL|macro|hardirq_exit
 mdefine_line|#define hardirq_exit(cpu)&t;(local_irq_count[cpu]--)
+DECL|macro|synchronize_irq
+mdefine_line|#define synchronize_irq()&t;do { } while (0)
 macro_line|#else
 r_extern
 r_int
@@ -232,6 +234,14 @@ c_func
 )paren
 suffix:semicolon
 )brace
+r_extern
+r_void
+id|synchronize_irq
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif /* __SMP__ */
 macro_line|#endif /* __ASM_HARDIRQ_H */
 eof

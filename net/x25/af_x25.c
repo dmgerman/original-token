@@ -5422,11 +5422,13 @@ id|KERN_INFO
 l_string|&quot;X.25 for Linux. Version 0.1 for Linux 2.1.15&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 id|x25_register_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
 c_func
@@ -5558,11 +5560,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 id|x25_unregister_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|unregister_netdevice_notifier
 c_func
 (paren

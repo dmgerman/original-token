@@ -4037,11 +4037,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SYSCTL
 id|sysctl_init
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* &n;&t; *&t;We count on the initial thread going ok &n;&t; *&t;Like idlers init is an unlocked kernel thread, which will&n;&t; *&t;make syscalls (and thus be locked).&n;&t; */
 id|kernel_thread
 c_func

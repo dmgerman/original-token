@@ -3735,7 +3735,7 @@ l_int|3
 id|printk
 c_func
 (paren
-l_string|&quot;%s: sent %ld byte packet of type %x&bslash;n&quot;
+l_string|&quot;%s: sent %d byte packet of type %x&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

@@ -7185,11 +7185,13 @@ op_amp
 id|ax25_dev_notifier
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 id|ax25_register_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
 c_func
@@ -7289,11 +7291,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 id|ax25_unregister_sysctl
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|unregister_netdevice_notifier
 c_func
 (paren

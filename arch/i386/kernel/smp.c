@@ -4110,7 +4110,7 @@ op_ne
 id|active_kernel_processor
 )paren
 (brace
-id|panic
+id|printk
 c_func
 (paren
 l_string|&quot;CPU #%d:Attempted flush tlb IPI when not AKP(=%d)&bslash;n&quot;
@@ -4122,6 +4122,15 @@ c_func
 comma
 id|active_kernel_processor
 )paren
+suffix:semicolon
+op_star
+(paren
+r_char
+op_star
+)paren
+l_int|0
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&t;printk(&quot;SMI-&quot;);*/

@@ -474,15 +474,6 @@ id|scm_detach_fds
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SMB_FS_MODULE
-DECL|variable|scm_detach_fds
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|scm_detach_fds
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_INET
 multiline_comment|/* Internet layer registration */
 DECL|variable|inet_add_protocol
@@ -1122,13 +1113,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|init_trdev
-)paren
-suffix:semicolon
-DECL|variable|csum_partial_copy
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|csum_partial_copy
 )paren
 suffix:semicolon
 macro_line|#endif

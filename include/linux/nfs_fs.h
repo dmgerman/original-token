@@ -1,43 +1,69 @@
+multiline_comment|/*&n; *  linux/include/linux/nfs_fs.h&n; *&n; *  Copyright (C) 1992  Rick Sladkey&n; *&n; *  OS-specific nfs filesystem definitions and declarations&n; */
 macro_line|#ifndef _LINUX_NFS_FS_H
 DECL|macro|_LINUX_NFS_FS_H
 mdefine_line|#define _LINUX_NFS_FS_H
-multiline_comment|/*&n; *  linux/include/linux/nfs_fs.h&n; *&n; *  Copyright (C) 1992  Rick Sladkey&n; *&n; *  OS-specific nfs filesystem definitions and declarations&n; */
+macro_line|#include &lt;linux/signal.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/sunrpc/debug.h&gt;
 macro_line|#include &lt;linux/nfs_mount.h&gt;
-multiline_comment|/*&n; * The readdir cache size controls how many directory entries are cached.&n; * Its size is limited by the number of nfs_entry structures that can fit&n; * in one page, currently, the limit is 256 when using 4KB pages.&n; */
-DECL|macro|NFS_READDIR_CACHE_SIZE
-mdefine_line|#define NFS_READDIR_CACHE_SIZE&t;&t;64
+multiline_comment|/*&n; * Enable debugging support for nfs client.&n; * Requires RPC_DEBUG.&n; */
+macro_line|#ifdef RPC_DEBUG
+DECL|macro|NFS_DEBUG
+macro_line|# define NFS_DEBUG
+macro_line|#endif
+multiline_comment|/*&n; * NFS_MAX_DIRCACHE controls the number of simultaneously cached&n; * directory chunks. Each chunk holds the list of nfs_entry&squot;s returned&n; * in a single readdir call in a memory region of size PAGE_SIZE.&n; *&n; * Note that at most server-&gt;rsize bytes of the cache memory are used.&n; */
+DECL|macro|NFS_MAX_DIRCACHE
+mdefine_line|#define NFS_MAX_DIRCACHE&t;&t;16
 DECL|macro|NFS_MAX_FILE_IO_BUFFER_SIZE
 mdefine_line|#define NFS_MAX_FILE_IO_BUFFER_SIZE&t;16384
 DECL|macro|NFS_DEF_FILE_IO_BUFFER_SIZE
-mdefine_line|#define NFS_DEF_FILE_IO_BUFFER_SIZE&t;1024
+mdefine_line|#define NFS_DEF_FILE_IO_BUFFER_SIZE&t;4096
 multiline_comment|/*&n; * The upper limit on timeouts for the exponential backoff algorithm.&n; */
 DECL|macro|NFS_MAX_RPC_TIMEOUT
 mdefine_line|#define NFS_MAX_RPC_TIMEOUT&t;&t;(6*HZ)
 multiline_comment|/*&n; * Size of the lookup cache in units of number of entries cached.&n; * It is better not to make this too large although the optimum&n; * depends on a usage and environment.&n; */
 DECL|macro|NFS_LOOKUP_CACHE_SIZE
 mdefine_line|#define NFS_LOOKUP_CACHE_SIZE&t;&t;64
+multiline_comment|/*&n; * superblock magic number for NFS&n; */
 DECL|macro|NFS_SUPER_MAGIC
 mdefine_line|#define NFS_SUPER_MAGIC&t;&t;&t;0x6969
 DECL|macro|NFS_SERVER
 mdefine_line|#define NFS_SERVER(inode)&t;&t;(&amp;(inode)-&gt;i_sb-&gt;u.nfs_sb.s_server)
+DECL|macro|NFS_CLIENT
+mdefine_line|#define NFS_CLIENT(inode)&t;&t;(NFS_SERVER(inode)-&gt;client)
+DECL|macro|NFS_ADDR
+mdefine_line|#define NFS_ADDR(inode)&t;&t;&t;(RPC_PEERADDR(NFS_CLIENT(inode)))
+DECL|macro|NFS_CONGESTED
+mdefine_line|#define NFS_CONGESTED(inode)&t;&t;(RPC_CONGESTED(NFS_CLIENT(inode)))
 DECL|macro|NFS_FH
 mdefine_line|#define NFS_FH(inode)&t;&t;&t;(&amp;(inode)-&gt;u.nfs_i.fhandle)
-DECL|macro|NFS_RENAMED_DIR
-mdefine_line|#define NFS_RENAMED_DIR(inode)&t;&t;((inode)-&gt;u.nfs_i.silly_rename_dir)
 DECL|macro|NFS_READTIME
 mdefine_line|#define NFS_READTIME(inode)&t;&t;((inode)-&gt;u.nfs_i.read_cache_jiffies)
 DECL|macro|NFS_OLDMTIME
 mdefine_line|#define NFS_OLDMTIME(inode)&t;&t;((inode)-&gt;u.nfs_i.read_cache_mtime)
+DECL|macro|NFS_CACHEINV
+mdefine_line|#define NFS_CACHEINV(inode) &bslash;&n;do { &bslash;&n;&t;NFS_READTIME(inode) = jiffies - 1000000; &bslash;&n;&t;NFS_OLDMTIME(inode) = 0; &bslash;&n;} while (0)
 DECL|macro|NFS_ATTRTIMEO
 mdefine_line|#define NFS_ATTRTIMEO(inode)&t;&t;((inode)-&gt;u.nfs_i.attrtimeo)
 DECL|macro|NFS_MINATTRTIMEO
-mdefine_line|#define NFS_MINATTRTIMEO(inode)&t;&t;(S_ISREG((inode)-&gt;i_mode)?&t;&bslash;&n;&t;&t;&t;&t;&t;&t;NFS_SERVER(inode)-&gt;acregmin : &bslash;&n;&t;&t;&t;&t;&t;&t;NFS_SERVER(inode)-&gt;acdirmin)
-DECL|macro|NFS_CACHEINV
-mdefine_line|#define NFS_CACHEINV(inode) &bslash;&n;do { &bslash;&n;&t;NFS_READTIME(inode) = jiffies - 1000000; &bslash;&n;&t;NFS_OLDMTIME(inode) = 0; &bslash;&n;} while (0)
+mdefine_line|#define NFS_MINATTRTIMEO(inode) &bslash;&n;&t;(S_ISDIR(inode-&gt;i_mode)? NFS_SERVER(inode)-&gt;acdirmin &bslash;&n;&t;&t;&t;       : NFS_SERVER(inode)-&gt;acregmin)
+DECL|macro|NFS_MAXATTRTIMEO
+mdefine_line|#define NFS_MAXATTRTIMEO(inode) &bslash;&n;&t;(S_ISDIR(inode-&gt;i_mode)? NFS_SERVER(inode)-&gt;acdirmax &bslash;&n;&t;&t;&t;       : NFS_SERVER(inode)-&gt;acregmax)
+DECL|macro|NFS_FLAGS
+mdefine_line|#define NFS_FLAGS(inode)&t;&t;((inode)-&gt;u.nfs_i.flags)
+DECL|macro|NFS_REVALIDATING
+mdefine_line|#define NFS_REVALIDATING(inode)&t;&t;(NFS_FLAGS(inode) &amp; NFS_INO_REVALIDATE)
+DECL|macro|NFS_RENAMED_DIR
+mdefine_line|#define NFS_RENAMED_DIR(inode)&t;&t;((inode)-&gt;u.nfs_i.silly_inode)
+DECL|macro|NFS_WRITEBACK
+mdefine_line|#define NFS_WRITEBACK(inode)&t;&t;((inode)-&gt;u.nfs_i.writeback)
+multiline_comment|/*&n; * These are the default flags for swap requests&n; */
+DECL|macro|NFS_RPC_SWAPFLAGS
+mdefine_line|#define NFS_RPC_SWAPFLAGS&t;&t;(RPC_TASK_SWAPPER|RPC_TASK_ROOTCREDS)
 macro_line|#ifdef __KERNEL__
-multiline_comment|/* linux/fs/nfs/proc.c */
+multiline_comment|/*&n; * linux/fs/nfs/proc.c&n; */
 r_extern
 r_int
 id|nfs_proc_getattr
@@ -131,7 +157,7 @@ id|nfs_fh
 op_star
 id|fhandle
 comma
-r_int
+r_void
 op_star
 op_star
 id|p0
@@ -167,14 +193,19 @@ op_star
 id|fhandle
 comma
 r_int
+id|swap
+comma
+r_int
+r_int
 id|offset
 comma
 r_int
+r_int
 id|count
 comma
-r_char
+r_void
 op_star
-id|data
+id|buffer
 comma
 r_struct
 id|nfs_fattr
@@ -188,20 +219,30 @@ id|nfs_proc_write
 c_func
 (paren
 r_struct
-id|inode
+id|nfs_server
 op_star
-id|inode
+id|server
 comma
+r_struct
+id|nfs_fh
+op_star
+id|fhandle
+comma
+r_int
+id|swap
+comma
+r_int
 r_int
 id|offset
 comma
 r_int
+r_int
 id|count
 comma
 r_const
-r_char
+r_void
 op_star
-id|data
+id|buffer
 comma
 r_struct
 id|nfs_fattr
@@ -295,9 +336,6 @@ r_const
 r_char
 op_star
 id|new_name
-comma
-r_int
-id|must_be_dir
 )paren
 suffix:semicolon
 r_extern
@@ -429,11 +467,12 @@ id|nfs_fh
 op_star
 id|fhandle
 comma
-r_int
+id|u32
 id|cookie
 comma
 r_int
-id|count
+r_int
+id|size
 comma
 r_struct
 id|nfs_entry
@@ -462,136 +501,7 @@ op_star
 id|res
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|nfs_proc_read_request
-c_func
-(paren
-r_struct
-id|rpc_ioreq
-op_star
-comma
-r_struct
-id|nfs_server
-op_star
-comma
-r_struct
-id|nfs_fh
-op_star
-comma
-r_int
-r_int
-id|offset
-comma
-r_int
-r_int
-id|count
-comma
-id|__u32
-op_star
-id|buf
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|nfs_proc_read_reply
-c_func
-(paren
-r_struct
-id|rpc_ioreq
-op_star
-comma
-r_struct
-id|nfs_fattr
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-op_star
-id|rpc_header
-c_func
-(paren
-r_int
-op_star
-id|p
-comma
-r_int
-id|procedure
-comma
-r_int
-id|program
-comma
-r_int
-id|version
-comma
-r_int
-id|uid
-comma
-r_int
-id|gid
-comma
-r_int
-id|ngroup
-comma
-id|gid_t
-op_star
-id|groups
-)paren
-suffix:semicolon
-r_extern
-r_int
-op_star
-id|rpc_verify
-c_func
-(paren
-r_int
-op_star
-id|p
-)paren
-suffix:semicolon
-multiline_comment|/* linux/fs/nfs/sock.c */
-r_extern
-r_int
-id|nfs_rpc_call
-c_func
-(paren
-r_struct
-id|nfs_server
-op_star
-id|server
-comma
-r_int
-op_star
-id|start
-comma
-r_int
-op_star
-id|end
-comma
-r_int
-id|size
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|nfs_rpc_doio
-c_func
-(paren
-r_struct
-id|nfs_server
-op_star
-id|server
-comma
-r_struct
-id|rpc_ioreq
-op_star
-comma
-r_int
-id|async
-)paren
-suffix:semicolon
-multiline_comment|/* linux/fs/nfs/inode.c */
+multiline_comment|/*&n; * linux/fs/nfs/inode.c&n; */
 r_extern
 r_struct
 id|super_block
@@ -658,13 +568,37 @@ op_star
 id|fattr
 )paren
 suffix:semicolon
-multiline_comment|/* linux/fs/nfs/file.c */
+r_extern
+r_int
+id|nfs_revalidate
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|_nfs_revalidate_inode
+c_func
+(paren
+r_struct
+id|nfs_server
+op_star
+comma
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * linux/fs/nfs/file.c&n; */
 r_extern
 r_struct
 id|inode_operations
 id|nfs_file_inode_operations
 suffix:semicolon
-multiline_comment|/* linux/fs/nfs/dir.c */
+multiline_comment|/*&n; * linux/fs/nfs/dir.c&n; */
 r_extern
 r_struct
 id|inode_operations
@@ -682,19 +616,29 @@ op_star
 suffix:semicolon
 r_extern
 r_void
-id|nfs_kfree_cache
+id|nfs_free_dircache
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/* linux/fs/nfs/symlink.c */
+r_extern
+r_void
+id|nfs_invalidate_dircache
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * linux/fs/nfs/symlink.c&n; */
 r_extern
 r_struct
 id|inode_operations
 id|nfs_symlink_inode_operations
 suffix:semicolon
-multiline_comment|/* linux/fs/nfs/mmap.c */
+multiline_comment|/*&n; * linux/fs/nfs/mmap.c&n; */
 r_extern
 r_int
 id|nfs_mmap
@@ -716,7 +660,120 @@ op_star
 id|vma
 )paren
 suffix:semicolon
-multiline_comment|/* linux/fs/nfs/bio.c */
+multiline_comment|/*&n; * linux/fs/nfs/locks.c&n; */
+r_extern
+r_int
+id|nfs_lock
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+id|cmd
+comma
+r_struct
+id|file_lock
+op_star
+id|fl
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * linux/fs/nfs/write.c&n; */
+r_extern
+r_int
+id|nfs_writepage
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|page
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|nfs_check_error
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|nfs_flush_dirty_pages
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+id|off_t
+comma
+id|off_t
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|nfs_truncate_dirty_pages
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|nfs_invalidate_pages
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|nfs_updatepage
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|page
+op_star
+comma
+r_const
+r_char
+op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * linux/fs/nfs/read.c&n; */
 r_extern
 r_int
 id|nfs_readpage
@@ -731,6 +788,106 @@ id|page
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|nfs_readpage_sync
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|page
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * inline functions&n; */
+r_static
+r_inline
+r_int
+DECL|function|nfs_revalidate_inode
+id|nfs_revalidate_inode
+c_func
+(paren
+r_struct
+id|nfs_server
+op_star
+id|server
+comma
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|jiffies
+op_minus
+id|NFS_READTIME
+c_func
+(paren
+id|inode
+)paren
+OL
+id|NFS_ATTRTIMEO
+c_func
+(paren
+id|inode
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_return
+id|_nfs_revalidate_inode
+c_func
+(paren
+id|server
+comma
+id|inode
+)paren
+suffix:semicolon
+)brace
+r_extern
+r_struct
+id|nfs_wreq
+op_star
+id|nfs_failed_requests
+suffix:semicolon
+r_static
+r_inline
+r_int
+DECL|function|nfs_write_error
+id|nfs_write_error
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|nfs_failed_requests
+op_eq
+l_int|NULL
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_return
+id|nfs_check_error
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* NFS root */
 DECL|macro|NFS_ROOT
 mdefine_line|#define NFS_ROOT&t;&t;&quot;/tftpboot/%s&quot;
@@ -776,5 +933,33 @@ id|nfs_root_addrs
 )braket
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
+multiline_comment|/*&n; * NFS debug flags&n; */
+DECL|macro|NFSDBG_VFS
+mdefine_line|#define NFSDBG_VFS&t;&t;0x0001
+DECL|macro|NFSDBG_DIRCACHE
+mdefine_line|#define NFSDBG_DIRCACHE&t;&t;0x0002
+DECL|macro|NFSDBG_LOOKUPCACHE
+mdefine_line|#define NFSDBG_LOOKUPCACHE&t;0x0004
+DECL|macro|NFSDBG_PAGECACHE
+mdefine_line|#define NFSDBG_PAGECACHE&t;0x0008
+DECL|macro|NFSDBG_PROC
+mdefine_line|#define NFSDBG_PROC&t;&t;0x0010
+DECL|macro|NFSDBG_XDR
+mdefine_line|#define NFSDBG_XDR&t;&t;0x0020
+DECL|macro|NFSDBG_FILE
+mdefine_line|#define NFSDBG_FILE&t;&t;0x0040
+DECL|macro|NFSDBG_ALL
+mdefine_line|#define NFSDBG_ALL&t;&t;0xFFFF
+macro_line|#ifdef __KERNEL__
+DECL|macro|ifdebug
+macro_line|# undef ifdebug
+macro_line|# ifdef NFS_DEBUG
+DECL|macro|ifdebug
+macro_line|#  define ifdebug(fac)&t;&t;if (nfs_debug &amp; NFSDBG_##fac)
+macro_line|# else
+DECL|macro|ifdebug
+macro_line|#  define ifdebug(fac)&t;&t;if (0)
+macro_line|# endif
+macro_line|#endif /* __KERNEL */
 macro_line|#endif
 eof
