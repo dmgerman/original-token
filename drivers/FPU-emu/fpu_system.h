@@ -26,6 +26,8 @@ DECL|macro|FPU_EIP
 mdefine_line|#define FPU_EIP&t;&t;&t;(FPU_info-&gt;___eip)
 DECL|macro|FPU_ORIG_EIP
 mdefine_line|#define FPU_ORIG_EIP&t;&t;(FPU_info-&gt;___orig_eip)
+DECL|macro|LDT_BASE_ADDR
+mdefine_line|#define LDT_BASE_ADDR(s)&t;((current-&gt;ldt[(s) &gt;&gt; 3].b &amp; 0xff000000)     &bslash;&n;&t;&t;&t;&t; | ((current-&gt;ldt[(s) &gt;&gt; 3].b &amp; 0xff) &lt;&lt; 16) &bslash;&n;&t;&t;&t;&t; | (current-&gt;ldt[(s) &gt;&gt; 3].a &gt;&gt; 16))
 DECL|macro|FPU_lookahead
 mdefine_line|#define FPU_lookahead           (I387.soft.lookahead)
 DECL|macro|FPU_entry_eip

@@ -42,7 +42,7 @@ id|bh_base
 l_int|32
 )braket
 suffix:semicolon
-multiline_comment|/* Who gets which entry in bh_base.  Things which will occur most often&n;   should come first. */
+multiline_comment|/* Who gets which entry in bh_base.  Things which will occur most often&n;   should come first - in which case NET should be up the top with SERIAL/TQUEUE! */
 r_enum
 (brace
 DECL|enumerator|TIMER_BH
@@ -53,14 +53,14 @@ comma
 DECL|enumerator|CONSOLE_BH
 id|CONSOLE_BH
 comma
+DECL|enumerator|TQUEUE_BH
+id|TQUEUE_BH
+comma
 DECL|enumerator|SERIAL_BH
 id|SERIAL_BH
 comma
-DECL|enumerator|TTY_BH
-id|TTY_BH
-comma
-DECL|enumerator|INET_BH
-id|INET_BH
+DECL|enumerator|NET_BH
+id|NET_BH
 comma
 DECL|enumerator|KEYBOARD_BH
 id|KEYBOARD_BH

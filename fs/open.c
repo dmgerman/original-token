@@ -2430,11 +2430,6 @@ c_func
 r_void
 )paren
 (brace
-r_struct
-id|tty_struct
-op_star
-id|tty
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2448,33 +2443,16 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
-multiline_comment|/* See if there is a controlling tty. */
+multiline_comment|/* If there is a controlling tty, hang it up */
 r_if
 c_cond
 (paren
 id|current-&gt;tty
-OL
-l_int|0
 )paren
-r_return
-l_int|0
-suffix:semicolon
-id|tty
-op_assign
-id|TTY_TABLE
-c_func
-(paren
-id|MINOR
-c_func
-(paren
-id|current-&gt;tty
-)paren
-)paren
-suffix:semicolon
 id|tty_vhangup
 c_func
 (paren
-id|tty
+id|current-&gt;tty
 )paren
 suffix:semicolon
 r_return

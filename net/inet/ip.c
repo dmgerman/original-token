@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) module.&n; *&n; * Version:&t;@(#)ip.c&t;1.0.16b&t;9/1/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Commented a couple of minor bits of surplus code&n; *&t;&t;Alan Cox&t;:&t;Undefining IP_FORWARD doesn&squot;t include the code&n; *&t;&t;&t;&t;&t;(just stops a compiler warning).&n; *&t;&t;Alan Cox&t;:&t;Frames with &gt;=MAX_ROUTE record routes, strict routes or loose routes&n; *&t;&t;&t;&t;&t;are junked rather than corrupting things.&n; *&t;&t;Alan Cox&t;:&t;Frames to bad broadcast subnets are dumped&n; *&t;&t;&t;&t;&t;We used to process them non broadcast and&n; *&t;&t;&t;&t;&t;boy could that cause havoc.&n; *&t;&t;Alan Cox&t;:&t;ip_forward sets the free flag on the &n; *&t;&t;&t;&t;&t;new frame it queues. Still crap because&n; *&t;&t;&t;&t;&t;it copies the frame but at least it &n; *&t;&t;&t;&t;&t;doesn&squot;t eat memory too.&n; *&t;&t;Alan Cox&t;:&t;Generic queue code and memory fixes.&n; *&t;&t;Fred Van Kempen :&t;IP fragment support (borrowed from NET2E)&n; *&t;&t;Gerhard Koerting:&t;Forward fragmented frames correctly.&n; *&t;&t;Gerhard Koerting: &t;Fixes to my fix of the above 8-).&n; *&t;&t;Gerhard Koerting:&t;IP interface addressing fix.&n; *&t;&t;Linus Torvalds&t;:&t;More robustness checks&n; *&t;&t;Alan Cox&t;:&t;Even more checks: Still not as robust as it ought to be&n; *&t;&t;Alan Cox&t;:&t;Save IP header pointer for later&n; *&t;&t;Alan Cox&t;:&t;ip option setting&n; *&t;&t;Alan Cox&t;:&t;Use ip_tos/ip_ttl settings&n; *&t;&t;Alan Cox&t;:&t;Fragmentation bogosity removed&n; *&t;&t;&t;&t;&t;(Thanks to Mark.Bush@prg.ox.ac.uk)&n; *&t;&t;Dmitry Gorodchanin :&t;Send of a raw packet crash fix.&n; *&t;&t;Alan Cox&t;:&t;Silly ip bug when an overlength&n; *&t;&t;&t;&t;&t;fragment turns up. Now frees the&n; *&t;&t;&t;&t;&t;queue.&n; *&t;&t;Linus Torvalds/ :&t;Memory leakage on fragmentation&t;&n; *&t;&t;Alan Cox&t;:&t;handling.&n; *&t;&t;Gerhard Koerting:&t;Forwarding uses IP priority hints&n; *&t;&t;Teemu Rantanen&t;:&t;Fragment problems.&n; *&t;&t;Alan Cox&t;:&t;General cleanup, comments and reformat&n; *&t;&t;Alan Cox&t;:&t;SNMP statistics&n; *&t;&t;Alan Cox&t;:&t;BSD address rule semantics. Also see&n; *&t;&t;&t;&t;&t;UDP as there is a nasty checksum issue&n; *&t;&t;&t;&t;&t;if you do things the wrong way.&n; *&n; * To Fix:&n; *&t;&t;IP option processing is mostly not needed. ip_forward needs to know about routing rules&n; *&t;&t;and time stamp but that&squot;s about all.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) module.&n; *&n; * Version:&t;@(#)ip.c&t;1.0.16b&t;9/1/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Commented a couple of minor bits of surplus code&n; *&t;&t;Alan Cox&t;:&t;Undefining IP_FORWARD doesn&squot;t include the code&n; *&t;&t;&t;&t;&t;(just stops a compiler warning).&n; *&t;&t;Alan Cox&t;:&t;Frames with &gt;=MAX_ROUTE record routes, strict routes or loose routes&n; *&t;&t;&t;&t;&t;are junked rather than corrupting things.&n; *&t;&t;Alan Cox&t;:&t;Frames to bad broadcast subnets are dumped&n; *&t;&t;&t;&t;&t;We used to process them non broadcast and&n; *&t;&t;&t;&t;&t;boy could that cause havoc.&n; *&t;&t;Alan Cox&t;:&t;ip_forward sets the free flag on the &n; *&t;&t;&t;&t;&t;new frame it queues. Still crap because&n; *&t;&t;&t;&t;&t;it copies the frame but at least it &n; *&t;&t;&t;&t;&t;doesn&squot;t eat memory too.&n; *&t;&t;Alan Cox&t;:&t;Generic queue code and memory fixes.&n; *&t;&t;Fred Van Kempen :&t;IP fragment support (borrowed from NET2E)&n; *&t;&t;Gerhard Koerting:&t;Forward fragmented frames correctly.&n; *&t;&t;Gerhard Koerting: &t;Fixes to my fix of the above 8-).&n; *&t;&t;Gerhard Koerting:&t;IP interface addressing fix.&n; *&t;&t;Linus Torvalds&t;:&t;More robustness checks&n; *&t;&t;Alan Cox&t;:&t;Even more checks: Still not as robust as it ought to be&n; *&t;&t;Alan Cox&t;:&t;Save IP header pointer for later&n; *&t;&t;Alan Cox&t;:&t;ip option setting&n; *&t;&t;Alan Cox&t;:&t;Use ip_tos/ip_ttl settings&n; *&t;&t;Alan Cox&t;:&t;Fragmentation bogosity removed&n; *&t;&t;&t;&t;&t;(Thanks to Mark.Bush@prg.ox.ac.uk)&n; *&t;&t;Dmitry Gorodchanin :&t;Send of a raw packet crash fix.&n; *&t;&t;Alan Cox&t;:&t;Silly ip bug when an overlength&n; *&t;&t;&t;&t;&t;fragment turns up. Now frees the&n; *&t;&t;&t;&t;&t;queue.&n; *&t;&t;Linus Torvalds/ :&t;Memory leakage on fragmentation&t;&n; *&t;&t;Alan Cox&t;:&t;handling.&n; *&t;&t;Gerhard Koerting:&t;Forwarding uses IP priority hints&n; *&t;&t;Teemu Rantanen&t;:&t;Fragment problems.&n; *&t;&t;Alan Cox&t;:&t;General cleanup, comments and reformat&n; *&t;&t;Alan Cox&t;:&t;SNMP statistics&n; *&t;&t;Alan Cox&t;:&t;BSD address rule semantics. Also see&n; *&t;&t;&t;&t;&t;UDP as there is a nasty checksum issue&n; *&t;&t;&t;&t;&t;if you do things the wrong way.&n; *&t;&t;Alan Cox&t;:&t;Always defrag, moved IP_FORWARD to the config.in file&n; *&n; * To Fix:&n; *&t;&t;IP option processing is mostly not needed. ip_forward needs to know about routing rules&n; *&t;&t;and time stamp but that&squot;s about all. Use the route mtu field here too&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -21,8 +21,6 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;arp.h&quot;
 macro_line|#include &quot;icmp.h&quot;
-DECL|macro|CONFIG_IP_FORWARD
-mdefine_line|#define CONFIG_IP_FORWARD
 DECL|macro|CONFIG_IP_DEFRAG
 mdefine_line|#define CONFIG_IP_DEFRAG
 r_extern
@@ -51,279 +49,6 @@ op_assign
 initialization_block
 suffix:semicolon
 multiline_comment|/* Forwarding=Yes, Default TTL=64 */
-multiline_comment|/* &n; *&t;Print an IP packet for debugging purposes.&n; *&n; *&t;This function is exported for the IP&n; *&t;upper layers to use also.&n; */
-DECL|function|ip_print
-r_void
-id|ip_print
-c_func
-(paren
-r_const
-r_struct
-id|iphdr
-op_star
-id|ip
-)paren
-(brace
-r_int
-r_char
-id|buff
-(braket
-l_int|32
-)braket
-suffix:semicolon
-r_int
-r_char
-op_star
-id|ptr
-suffix:semicolon
-r_int
-id|addr
-suffix:semicolon
-r_int
-id|len
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-multiline_comment|/* Are we debugging IP frames */
-r_if
-c_cond
-(paren
-id|inet_debug
-op_ne
-id|DBG_IP
-)paren
-r_return
-suffix:semicolon
-multiline_comment|/* Dump the IP header. */
-id|printk
-c_func
-(paren
-l_string|&quot;IP: ihl=%d, version=%d, tos=%d, tot_len=%d&bslash;n&quot;
-comma
-id|ip-&gt;ihl
-comma
-id|ip-&gt;version
-comma
-id|ip-&gt;tos
-comma
-id|ntohs
-c_func
-(paren
-id|ip-&gt;tot_len
-)paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;    id=%X, ttl=%d, prot=%d, check=%X&bslash;n&quot;
-comma
-id|ip-&gt;id
-comma
-id|ip-&gt;ttl
-comma
-id|ip-&gt;protocol
-comma
-id|ip-&gt;check
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;    frag_off=%d&bslash;n&quot;
-comma
-id|ip-&gt;frag_off
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;    soucre=%s &quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|ip-&gt;saddr
-)paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;dest=%s&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|ip-&gt;daddr
-)paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;    ----&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Dump the data. */
-id|ptr
-op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|ip
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-id|addr
-op_assign
-l_int|0
-suffix:semicolon
-id|len
-op_assign
-id|ntohs
-c_func
-(paren
-id|ip-&gt;tot_len
-)paren
-op_minus
-(paren
-l_int|4
-op_star
-id|ip-&gt;ihl
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|len
-OG
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;    %04X: &quot;
-comma
-id|addr
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|16
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|len
-OG
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%02X &quot;
-comma
-(paren
-op_star
-id|ptr
-op_amp
-l_int|0xFF
-)paren
-)paren
-suffix:semicolon
-id|buff
-(braket
-id|i
-)braket
-op_assign
-op_star
-id|ptr
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|buff
-(braket
-id|i
-)braket
-template_param
-l_int|126
-)paren
-id|buff
-(braket
-id|i
-)braket
-op_assign
-l_char|&squot;.&squot;
-suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;   &quot;
-)paren
-suffix:semicolon
-id|buff
-(braket
-id|i
-)braket
-op_assign
-l_char|&squot; &squot;
-suffix:semicolon
-)brace
-id|addr
-op_increment
-suffix:semicolon
-id|len
-op_decrement
-suffix:semicolon
-)brace
-suffix:semicolon
-id|buff
-(braket
-id|i
-)braket
-op_assign
-l_char|&squot;&bslash;0&squot;
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;  &bslash;&quot;%s&bslash;&quot;&bslash;n&quot;
-comma
-id|buff
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;    ----&bslash;n&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; *&t;Handle the issuing of an ioctl() request &n; *&t;for the ip device. This is scheduled to&n; *&t;disappear&n; */
 DECL|function|ip_ioctl
 r_int
@@ -349,22 +74,6 @@ c_cond
 id|cmd
 )paren
 (brace
-r_case
-id|DDIOCSDBG
-suffix:colon
-r_return
-id|dbg_ioctl
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-id|DBG_IP
-)paren
-suffix:semicolon
 r_default
 suffix:colon
 r_return
@@ -409,35 +118,6 @@ op_star
 id|opt
 )paren
 (brace
-)brace
-r_static
-r_void
-DECL|function|print_ipprot
-id|print_ipprot
-c_func
-(paren
-r_struct
-id|inet_protocol
-op_star
-id|ipprot
-)paren
-(brace
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;handler = %X, protocol = %d, copy=%d &bslash;n&quot;
-comma
-id|ipprot-&gt;handler
-comma
-id|ipprot-&gt;protocol
-comma
-id|ipprot-&gt;copy
-)paren
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* This routine will check to see if we have lost a gateway. */
 r_void
@@ -694,32 +374,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;ip_build_header (skb=%X, saddr=%X, daddr=%X, *dev=%X,&bslash;n&quot;
-l_string|&quot;                 type=%d, opt=%X, len = %d)&bslash;n&quot;
-comma
-id|skb
-comma
-id|saddr
-comma
-id|daddr
-comma
-op_star
-id|dev
-comma
-id|type
-comma
-id|opt
-comma
-id|len
-)paren
-)paren
-suffix:semicolon
 id|buff
 op_assign
 id|skb-&gt;data
@@ -811,22 +465,6 @@ multiline_comment|/*rt-&gt;rt_dev-&gt;pa_addr;*/
 id|raddr
 op_assign
 id|rt-&gt;rt_gateway
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;ip_build_header: saddr set to %s&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|saddr
-)paren
-)paren
-)paren
 suffix:semicolon
 id|opt
 op_assign
@@ -2650,18 +2288,6 @@ op_star
 )paren
 id|arg
 suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;IP: queue_expire: fragment queue 0x%X timed out!&bslash;n&quot;
-comma
-id|qp
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;   &t; *&t;Send an ICMP &quot;Fragment Reassembly Timeout&quot; message. &n;   &t; */
 id|ip_statistics.IpReasmTimeout
 op_increment
@@ -3731,18 +3357,6 @@ op_add_assign
 id|i
 suffix:semicolon
 multiline_comment|/* ptr into fragment data */
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;IP: defrag: fixed low overlap %d bytes&bslash;n&quot;
-comma
-id|i
-)paren
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n;    &t; * Look for overlap with succeeding segments.&n;    &t; * If we can merge fragments, do it.&n;      &t; */
 r_for
@@ -3802,20 +3416,6 @@ op_le
 l_int|0
 )paren
 (brace
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;IP: defrag: removing frag 0x%X (len %d)&bslash;n&quot;
-comma
-id|next
-comma
-id|next-&gt;len
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3864,18 +3464,6 @@ id|ipfrag
 )paren
 suffix:semicolon
 )brace
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;IP: defrag: fixed high overlap %d bytes&bslash;n&quot;
-comma
-id|i
-)paren
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* &n;   &t; *&t;Insert this fragment in the chain of fragments. &n;   &t; */
 id|tfp
@@ -4109,54 +3697,6 @@ id|hlen
 )paren
 suffix:semicolon
 multiline_comment|/* Where to start from */
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;IP: Fragmentation Desired&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;    DEV=%s, MTU=%d, LEN=%d SRC=%s&quot;
-comma
-id|dev-&gt;name
-comma
-id|dev-&gt;mtu
-comma
-id|left
-comma
-id|in_ntoa
-c_func
-(paren
-id|iph-&gt;saddr
-)paren
-)paren
-)paren
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot; DST=%s&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|iph-&gt;daddr
-)paren
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;   &t; *&t;Check for any &quot;DF&quot; flag. [DF means do not fragment]&n;   &t; */
 r_if
 c_cond
@@ -4170,54 +3710,6 @@ op_amp
 id|IP_DF
 )paren
 (brace
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;IP: Fragmentation Desired, but DF set !&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;    DEV=%s, MTU=%d, LEN=%d SRC=%s&quot;
-comma
-id|dev-&gt;name
-comma
-id|dev-&gt;mtu
-comma
-id|left
-comma
-id|in_ntoa
-c_func
-(paren
-id|iph-&gt;saddr
-)paren
-)paren
-)paren
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot; DST=%s&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|iph-&gt;daddr
-)paren
-)paren
-)paren
-suffix:semicolon
 id|ip_statistics.IpFragFails
 op_increment
 suffix:semicolon
@@ -4335,22 +3827,6 @@ op_mul_assign
 l_int|8
 suffix:semicolon
 )brace
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;IP: frag: creating fragment of %d bytes (%d total)&bslash;n&quot;
-comma
-id|len
-comma
-id|len
-op_plus
-id|hlen
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n; &t;&t; *&t;Allocate buffer. &n; &t;&t; */
 r_if
 c_cond
@@ -4408,6 +3884,11 @@ op_star
 )paren
 id|skb2-&gt;data
 suffix:semicolon
+id|skb2-&gt;raddr
+op_assign
+id|skb-&gt;raddr
+suffix:semicolon
+multiline_comment|/* For rebuild_header */
 multiline_comment|/*&n;&t;&t; *&t;Charge the memory for the fragment to any owner&n;&t;&t; *&t;it might posess&n;&t;&t; */
 r_if
 c_cond
@@ -4583,7 +4064,7 @@ r_int
 id|raddr
 suffix:semicolon
 multiline_comment|/* Router IP address */
-multiline_comment|/*&n;&t; * Only forward packets that were fired at us when we are in promiscuous&n;&t; * mode. In standard mode we rely on the driver to filter for us.&n;&t; */
+multiline_comment|/*&n;&t; * Only forward packets that were fired at us when we are in promiscuous&n;&t; * mode. In standard mode we rely on the driver to filter for us.&n;&t; *&n;&t; * This is a mess. When the drivers class packets on the upcall this&n;&t; * will tidy up!&n;&t; */
 r_if
 c_cond
 (paren
@@ -4598,15 +4079,7 @@ c_cond
 id|memcmp
 c_func
 (paren
-(paren
-r_char
-op_star
-)paren
-op_amp
-id|skb
-(braket
-l_int|1
-)braket
+id|skb-&gt;data
 comma
 id|dev-&gt;dev_addr
 comma
@@ -4617,6 +4090,23 @@ id|dev-&gt;addr_len
 r_return
 suffix:semicolon
 )brace
+)brace
+r_if
+c_cond
+(paren
+id|memcmp
+c_func
+(paren
+id|skb-&gt;data
+comma
+id|dev-&gt;broadcast
+comma
+id|dev-&gt;addr_len
+)paren
+)paren
+(brace
+r_return
+suffix:semicolon
 )brace
 multiline_comment|/*&n;  &t; *&t;According to the RFC, we must first decrease the TTL field. If&n;  &t; *&t;that reaches zero, we must reply an ICMP control message telling&n; &t; *&t;that the packet&squot;s lifetime expired.&n; &t; *&n; &t; *&t;Exception:&n; &t; *&t;We may not generate an ICMP for an ICMP. icmp_send does the&n; &t; *&t;enforcement of this so we can forget it here. It is however&n; &t; *&t;sometimes VERY important.&n; &t; */
 id|iph
@@ -4634,48 +4124,6 @@ op_le
 l_int|0
 )paren
 (brace
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;&bslash;nIP: *** datagram expired: TTL=0 (ignored) ***&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;    SRC = %s   &quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|iph-&gt;saddr
-)paren
-)paren
-)paren
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;    DST = %s (ignored)&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|iph-&gt;daddr
-)paren
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* Tell the sender its packet died... */
 id|icmp_send
 c_func
@@ -4720,16 +4168,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;&bslash;nIP: *** routing (phase I) failed ***&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Tell the sender its packet cannot be delivered. Again&n;&t;&t; *&t;ICMP is screened later.&n;&t;&t; */
 id|icmp_send
 c_func
@@ -4780,16 +4218,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;&bslash;nIP: *** routing (phase II) failed ***&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* &n;&t;&t;&t; *&t;Tell the sender its packet cannot be delivered... &n;&t;&t;&t; */
 id|icmp_send
 c_func
@@ -4839,42 +4267,6 @@ id|dev2
 r_return
 suffix:semicolon
 multiline_comment|/*&n;&t; * We now allocate a new buffer, and copy the datagram into it.&n;&t; * If the indicated interface is up and running, kick it.&n;&t; */
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;&bslash;nIP: *** fwd %s -&gt; &quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|iph-&gt;saddr
-)paren
-)paren
-)paren
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;%s (via %s), LEN=%d&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|raddr
-)paren
-comma
-id|dev2-&gt;name
-comma
-id|skb-&gt;len
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5121,16 +4513,6 @@ suffix:semicolon
 id|ip_statistics.IpInReceives
 op_increment
 suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;&lt;&lt;&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Tag the ip header of this packet so we can find it&n;&t; */
 id|skb-&gt;ip_hdr
 op_assign
@@ -5175,48 +4557,6 @@ l_int|0
 id|ip_statistics.IpInHdrErrors
 op_increment
 suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;&bslash;nIP: *** datagram error ***&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;    SRC = %s   &quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|iph-&gt;saddr
-)paren
-)paren
-)paren
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;    DST = %s (ignored)&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|iph-&gt;daddr
-)paren
-)paren
-)paren
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -5248,13 +4588,6 @@ l_int|5
 )paren
 (brace
 multiline_comment|/* Fast path for the typical optionless IP packet. */
-id|ip_print
-c_func
-(paren
-id|iph
-)paren
-suffix:semicolon
-multiline_comment|/* Bogus, only for debugging. */
 id|memset
 c_func
 (paren
@@ -5356,7 +4689,7 @@ macro_line|#else
 id|printk
 c_func
 (paren
-l_string|&quot;Machine %x tried to use us as a forwarder to %x but we have forwarding disabled!&bslash;n&quot;
+l_string|&quot;Machine %lx tried to use us as a forwarder to %lx but we have forwarding disabled!&bslash;n&quot;
 comma
 id|iph-&gt;saddr
 comma
@@ -5387,7 +4720,6 @@ c_cond
 id|is_frag
 )paren
 (brace
-macro_line|#ifdef CONFIG_IP_DEFRAG
 multiline_comment|/* Defragment. Obtain the complete packet if there is one */
 id|skb
 op_assign
@@ -5417,61 +4749,6 @@ id|iph
 op_assign
 id|skb-&gt;h.iph
 suffix:semicolon
-macro_line|#else
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;nIP: *** datagram fragmentation not yet implemented ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;    SRC = %s   &quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|iph-&gt;saddr
-)paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;    DST = %s (ignored)&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|iph-&gt;daddr
-)paren
-)paren
-suffix:semicolon
-id|icmp_send
-c_func
-(paren
-id|skb
-comma
-id|ICMP_DEST_UNREACH
-comma
-id|ICMP_PROT_UNREACH
-comma
-id|dev
-)paren
-suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_WRITE
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n;&t; *&t;Point into the IP datagram, just past the header. &n;&t; */
 id|skb-&gt;ip_hdr
@@ -5537,24 +4814,6 @@ op_ne
 id|iph-&gt;protocol
 )paren
 r_continue
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;Using protocol = %X:&bslash;n&quot;
-comma
-id|ipprot
-)paren
-)paren
-suffix:semicolon
-id|print_ipprot
-c_func
-(paren
-id|ipprot
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;* &t;See if we need to make a copy of it.  This will&n;&t;* &t;only be set if more than one protocol wants it. &n;&t;* &t;and then not for the last one.&n;&t;*&n;&t;* &t;This is an artifact of poor upper protocol design. &n;&t;*&t;Because the upper protocols damage the actual packet&n;&t;*&t;we must do copying. In actual fact it&squot;s even worse&n;&t;*&t;than this as TCP may hold on to the buffer.&n;&t;*/
 r_if
@@ -5858,16 +5117,6 @@ id|skb-&gt;when
 op_assign
 id|jiffies
 suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_IP
-comma
-l_string|&quot;&gt;&gt;&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Find the IP header and set the length. This is bad&n;&t; *&t;but once we get the skb data handling code in the&n;&t; *&t;hardware will push its header sensibly and we will&n;&t; *&t;set skb-&gt;ip_hdr to avoid this mess and the fixed&n;&t; *&t;header length problem&n;&t; */
 id|ptr
 op_assign
@@ -5946,12 +5195,6 @@ id|iph
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Print the frame when debugging&n;&t; */
-id|ip_print
-c_func
-(paren
-id|iph
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;More debugging. You cannot queue a packet already on a list&n;&t; *&t;Spot this and moan loudly.&n;&t; */
 r_if
 c_cond

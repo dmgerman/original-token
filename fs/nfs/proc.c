@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/nfs/proc.c&n; *&n; *  Copyright (C) 1992, 1993, 1994  Rick Sladkey&n; *&n; *  OS-independent nfs remote procedure call functions&n; */
+multiline_comment|/*&n; *  linux/fs/nfs/proc.c&n; *&n; *  Copyright (C) 1992, 1993, 1994  Rick Sladkey&n; *&n; *  OS-independent nfs remote procedure call functions&n; *&n; *  Tuned by Alan Cox &lt;A.Cox@swansea.ac.uk&gt; for &gt;3K buffers&n; *  so at last we can have decent(ish) throughput off a &n; *  Sun server.&n; *&n; *  FixMe: We ought to define a sensible small max size for&n; *  things like getattr that are tiny packets and use the&n; *  old get_free_page stuff with it.&n; *&n; *  Feel free to fix it and mail me the diffs if it worries you.&n; */
 multiline_comment|/*&n; * Defining NFS_PROC_DEBUG causes a lookup of a file named&n; * &quot;xyzzy&quot; to toggle debugging.  Just cd to an NFS-mounted&n; * filesystem and type &squot;ls xyzzy&squot; to turn on debugging.&n; */
 macro_line|#if 0
 mdefine_line|#define NFS_PROC_DEBUG
@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -64,6 +65,8 @@ id|stat
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Our memory allocation and release functions.&n; */
+DECL|macro|NFS_SLACK_SPACE
+mdefine_line|#define NFS_SLACK_SPACE&t;&t;1024&t;/* Total overkill */ 
 DECL|function|nfs_rpc_alloc
 r_static
 r_inline
@@ -72,17 +75,25 @@ op_star
 id|nfs_rpc_alloc
 c_func
 (paren
-r_void
+r_int
+id|size
 )paren
 (brace
+id|size
+op_add_assign
+id|NFS_SLACK_SPACE
+suffix:semicolon
+multiline_comment|/* Allow for the NFS crap as well as buffer */
 r_return
 (paren
 r_int
 op_star
 )paren
-id|__get_free_page
+id|kmalloc
 c_func
 (paren
+id|size
+comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
@@ -99,11 +110,12 @@ op_star
 id|p
 )paren
 (brace
-id|free_page
+id|kfree
 c_func
 (paren
 (paren
-r_int
+r_void
+op_star
 )paren
 id|p
 )paren
@@ -1038,6 +1050,7 @@ op_assign
 id|nfs_rpc_alloc
 c_func
 (paren
+id|server-&gt;rsize
 )paren
 )paren
 )paren
@@ -1259,6 +1272,7 @@ op_assign
 id|nfs_rpc_alloc
 c_func
 (paren
+id|server-&gt;wsize
 )paren
 )paren
 )paren
@@ -1517,6 +1531,7 @@ op_assign
 id|nfs_rpc_alloc
 c_func
 (paren
+id|server-&gt;rsize
 )paren
 )paren
 )paren
@@ -1752,6 +1767,7 @@ op_assign
 id|nfs_rpc_alloc
 c_func
 (paren
+id|server-&gt;rsize
 )paren
 )paren
 )paren
@@ -2011,6 +2027,7 @@ op_assign
 id|nfs_rpc_alloc
 c_func
 (paren
+id|server-&gt;rsize
 )paren
 )paren
 )paren
@@ -2317,6 +2334,7 @@ op_assign
 id|nfs_rpc_alloc
 c_func
 (paren
+id|server-&gt;wsize
 )paren
 )paren
 )paren
@@ -2594,6 +2612,7 @@ op_assign
 id|nfs_rpc_alloc
 c_func
 (paren
+id|server-&gt;wsize
 )paren
 )paren
 )paren
@@ -2842,6 +2861,7 @@ op_assign
 id|nfs_rpc_alloc
 c_func
 (paren
+id|server-&gt;wsize
 )paren
 )paren
 )paren
@@ -3072,6 +3092,7 @@ op_assign
 id|nfs_rpc_alloc
 c_func
 (paren
+id|server-&gt;wsize
 )paren
 )paren
 )paren
@@ -3315,6 +3336,7 @@ op_assign
 id|nfs_rpc_alloc
 c_func
 (paren
+id|server-&gt;wsize
 )paren
 )paren
 )paren
@@ -3555,6 +3577,7 @@ op_assign
 id|nfs_rpc_alloc
 c_func
 (paren
+id|server-&gt;wsize
 )paren
 )paren
 )paren
@@ -3808,6 +3831,7 @@ op_assign
 id|nfs_rpc_alloc
 c_func
 (paren
+id|server-&gt;wsize
 )paren
 )paren
 )paren
@@ -4056,6 +4080,7 @@ op_assign
 id|nfs_rpc_alloc
 c_func
 (paren
+id|server-&gt;wsize
 )paren
 )paren
 )paren
@@ -4298,6 +4323,7 @@ op_assign
 id|nfs_rpc_alloc
 c_func
 (paren
+id|server-&gt;rsize
 )paren
 )paren
 )paren
@@ -4646,6 +4672,7 @@ op_assign
 id|nfs_rpc_alloc
 c_func
 (paren
+id|server-&gt;rsize
 )paren
 )paren
 )paren

@@ -140,7 +140,7 @@ suffix:semicolon
 DECL|typedef|overrides
 id|overrides
 suffix:semicolon
-multiline_comment|/* This structure is 32 bits: */
+multiline_comment|/* This structure is 48 bits: */
 DECL|member|override
 r_typedef
 r_struct
@@ -148,11 +148,17 @@ r_struct
 id|overrides
 id|override
 suffix:semicolon
+DECL|member|mode16
 DECL|member|vm86
+DECL|member|p286
 DECL|typedef|fpu_addr_modes
 r_int
 r_char
+id|mode16
+comma
 id|vm86
+comma
+id|p286
 suffix:semicolon
 )brace
 id|fpu_addr_modes

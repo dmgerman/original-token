@@ -1,10 +1,9 @@
-multiline_comment|/*&n; * UNIX&t;&t;An implementation of the AF_UNIX network domain for the&n; *&t;&t;LINUX operating system.  UNIX is implemented using the&n; *&t;&t;BSD Socket interface as the means of communication with&n; *&t;&t;the user level.&n; *&n; *&t;&t;The functions in this file provide an interface between&n; *&t;&t;the PROC file system and the &quot;unix&quot; family of networking&n; *&t;&t;protocols. It is mainly used for debugging and statistics.&n; *&n; * Version:&t;@(#)proc.c&t;1.0.4&t;05/23/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Gerald J. Heim, &lt;heim@peanuts.informatik.uni-tuebingen.de&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-kalrsruhe.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Dmitry Gorodchanin&t;:&t;/proc locking fix&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * UNIX&t;&t;An implementation of the AF_UNIX network domain for the&n; *&t;&t;LINUX operating system.  UNIX is implemented using the&n; *&t;&t;BSD Socket interface as the means of communication with&n; *&t;&t;the user level.&n; *&n; *&t;&t;The functions in this file provide an interface between&n; *&t;&t;the PROC file system and the &quot;unix&quot; family of networking&n; *&t;&t;protocols. It is mainly used for debugging and statistics.&n; *&n; * Version:&t;@(#)proc.c&t;1.0.4&t;05/23/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Gerald J. Heim, &lt;heim@peanuts.informatik.uni-tuebingen.de&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-kalrsruhe.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Dmitry Gorodchanin&t;:&t;/proc locking fix&n; *&t;&t;Mathijs Maassen&t;&t;:&t;unbound /proc fix.&n; *&t;&t;Alan Cox&t;&t;:&t;Fix sock=NULL race&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
-macro_line|#include &lt;linux/ddi.h&gt;
 macro_line|#include &lt;linux/un.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &quot;unix.h&quot;
@@ -48,6 +47,19 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|socket_state
+id|s_state
+suffix:semicolon
+r_int
+id|s_type
+suffix:semicolon
+r_int
+id|s_flags
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -73,6 +85,17 @@ id|i
 op_increment
 )paren
 (brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -84,8 +107,51 @@ dot
 id|refcnt
 OG
 l_int|0
+op_logical_and
+id|unix_datas
+(braket
+id|i
+)braket
+dot
+id|socket
+op_ne
+l_int|NULL
 )paren
 (brace
+multiline_comment|/* sprintf is slow... lock only for the variable reads */
+id|s_type
+op_assign
+id|unix_datas
+(braket
+id|i
+)braket
+dot
+id|socket-&gt;type
+suffix:semicolon
+id|s_flags
+op_assign
+id|unix_datas
+(braket
+id|i
+)braket
+dot
+id|socket-&gt;flags
+suffix:semicolon
+id|s_state
+op_assign
+id|unix_datas
+(braket
+id|i
+)braket
+dot
+id|socket-&gt;state
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -113,26 +179,11 @@ id|i
 dot
 id|protocol
 comma
-id|unix_datas
-(braket
-id|i
-)braket
-dot
-id|socket-&gt;flags
+id|s_flags
 comma
-id|unix_datas
-(braket
-id|i
-)braket
-dot
-id|socket-&gt;type
+id|s_type
 comma
-id|unix_datas
-(braket
-id|i
-)braket
-dot
-id|socket-&gt;state
+id|s_state
 )paren
 suffix:semicolon
 multiline_comment|/* If socket is bound to a filename, we&squot;ll print it. */
@@ -180,14 +231,6 @@ op_increment
 op_assign
 l_char|&squot;&bslash;n&squot;
 suffix:semicolon
-id|buffer
-(braket
-id|len
-op_increment
-)braket
-op_assign
-l_char|&squot;&bslash;0&squot;
-suffix:semicolon
 )brace
 id|pos
 op_assign
@@ -226,6 +269,13 @@ r_break
 suffix:semicolon
 )brace
 )brace
+r_else
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 op_star
 id|start

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;RAW - implementation of IP &quot;raw&quot; sockets.&n; *&n; * Version:&t;@(#)raw.c&t;1.0.4&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixed up&n; *&t;&t;Alan Cox&t;:&t;ICMP error handling&n; *&t;&t;Alan Cox&t;:&t;EMSGSIZE if you send too big a packet&n; *&t;&t;Alan Cox&t;: &t;Now uses generic datagrams and shared skbuff&n; *&t;&t;&t;&t;&t;library. No more peek crashes, no more backlogs&n; *&t;&t;Alan Cox&t;:&t;Checks sk-&gt;broadcast.&n; *&t;&t;Alan Cox&t;:&t;Uses skb_free_datagram/skb_copy_datagram&n; *&t;&t;Alan Cox&t;:&t;Raw passes ip options too&n; *&t;&t;Alan Cox&t;:&t;Setsocketopt added&n; *&t;&t;Alan Cox&t;:&t;Fixed error return for broadcasts&n; *&t;&t;Alan Cox&t;:&t;Removed wake_up calls&n; *&t;&t;Alan Cox&t;:&t;Use ttl/tos&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;RAW - implementation of IP &quot;raw&quot; sockets.&n; *&n; * Version:&t;@(#)raw.c&t;1.0.4&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixed up&n; *&t;&t;Alan Cox&t;:&t;ICMP error handling&n; *&t;&t;Alan Cox&t;:&t;EMSGSIZE if you send too big a packet&n; *&t;&t;Alan Cox&t;: &t;Now uses generic datagrams and shared skbuff&n; *&t;&t;&t;&t;&t;library. No more peek crashes, no more backlogs&n; *&t;&t;Alan Cox&t;:&t;Checks sk-&gt;broadcast.&n; *&t;&t;Alan Cox&t;:&t;Uses skb_free_datagram/skb_copy_datagram&n; *&t;&t;Alan Cox&t;:&t;Raw passes ip options too&n; *&t;&t;Alan Cox&t;:&t;Setsocketopt added&n; *&t;&t;Alan Cox&t;:&t;Fixed error return for broadcasts&n; *&t;&t;Alan Cox&t;:&t;Removed wake_up calls&n; *&t;&t;Alan Cox&t;:&t;Use ttl/tos&n; *&t;&t;Alan Cox&t;:&t;Cleaned up old debugging&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -14,9 +14,6 @@ macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
-macro_line|#if 0
-macro_line|#include &quot;tcp.h&quot;
-macro_line|#endif
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;icmp.h&quot;
@@ -82,26 +79,6 @@ r_struct
 id|sock
 op_star
 id|sk
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_RAW
-comma
-l_string|&quot;raw_err(err=%d, hdr=%X, daddr=%X, saddr=%X, protocl=%X)&bslash;n&quot;
-comma
-id|err
-comma
-id|header
-comma
-id|daddr
-comma
-id|saddr
-comma
-id|protocol
-)paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -229,33 +206,6 @@ r_struct
 id|sock
 op_star
 id|sk
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_RAW
-comma
-l_string|&quot;raw_rcv(skb=%X, dev=%X, opt=%X, daddr=%X,&bslash;n&quot;
-l_string|&quot;         len=%d, saddr=%X, redo=%d, protocol=%X)&bslash;n&quot;
-comma
-id|skb
-comma
-id|dev
-comma
-id|opt
-comma
-id|daddr
-comma
-id|len
-comma
-id|saddr
-comma
-id|redo
-comma
-id|protocol
-)paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -476,31 +426,6 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_RAW
-comma
-l_string|&quot;raw_sendto(sk=%X, from=%X, len=%d, noblock=%d, flags=%X,&bslash;n&quot;
-l_string|&quot;            usin=%X, addr_len = %d)&bslash;n&quot;
-comma
-id|sk
-comma
-id|from
-comma
-id|len
-comma
-id|noblock
-comma
-id|flags
-comma
-id|usin
-comma
-id|addr_len
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Check the flags. Only MSG_DONTROUTE is permitted.&n;&t; */
 r_if
 c_cond
@@ -513,39 +438,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|len
-OL
-l_int|0
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-id|err
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|from
-comma
-id|len
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-)paren
-(brace
-r_return
-id|err
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;Get and verify the address. &n;&t; */
 r_if
 c_cond
@@ -761,16 +653,6 @@ l_int|NULL
 r_int
 id|tmp
 suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_RAW
-comma
-l_string|&quot;raw_sendto: write buffer full?&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -893,16 +775,6 @@ OL
 l_int|0
 )paren
 (brace
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_RAW
-comma
-l_string|&quot;raw_sendto: error building ip header.&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -1073,30 +945,6 @@ id|sk-&gt;state
 op_assign
 id|TCP_CLOSE
 suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_RAW
-comma
-l_string|&quot;raw_close: deleting protocol %d&bslash;n&quot;
-comma
-(paren
-(paren
-r_struct
-id|inet_protocol
-op_star
-)paren
-id|sk-&gt;pair
-)paren
-op_member_access_from_pointer
-id|protocol
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|inet_del_protocol
 c_func
 (paren
@@ -1106,18 +954,6 @@ id|inet_protocol
 op_star
 )paren
 id|sk-&gt;pair
-)paren
-OL
-l_int|0
-)paren
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_RAW
-comma
-l_string|&quot;raw_close: del_protocol failed.&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|kfree_s
@@ -1239,18 +1075,6 @@ op_star
 )paren
 id|p
 suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_RAW
-comma
-l_string|&quot;raw init added protocol %d&bslash;n&quot;
-comma
-id|sk-&gt;protocol
-)paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1302,31 +1126,6 @@ id|skb
 suffix:semicolon
 r_int
 id|err
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_RAW
-comma
-l_string|&quot;raw_recvfrom (sk=%X, to=%X, len=%d, noblock=%d, flags=%X,&bslash;n&quot;
-l_string|&quot;              sin=%X, addr_len=%X)&bslash;n&quot;
-comma
-id|sk
-comma
-id|to
-comma
-id|len
-comma
-id|noblock
-comma
-id|flags
-comma
-id|sin
-comma
-id|addr_len
-)paren
-)paren
 suffix:semicolon
 r_if
 c_cond

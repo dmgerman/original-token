@@ -3,9 +3,15 @@ DECL|macro|_LINUX_TTY_H
 mdefine_line|#define _LINUX_TTY_H
 multiline_comment|/*&n; * &squot;tty.h&squot; defines some structures used by tty_io.c and some defines.&n; */
 macro_line|#include &lt;linux/termios.h&gt;
+macro_line|#include &lt;linux/tqueue.h&gt;
+macro_line|#include &lt;linux/tty_driver.h&gt;
+macro_line|#include &lt;linux/tty_ldisc.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+multiline_comment|/*&n; * Note: don&squot;t mess with NR_PTYS until you understand the tty minor &n; * number allocation game...&n; */
 DECL|macro|NR_CONSOLES
 mdefine_line|#define NR_CONSOLES&t;8
+DECL|macro|NR_PTYS
+mdefine_line|#define NR_PTYS&t;&t;64
 DECL|macro|NR_LDISCS
 mdefine_line|#define NR_LDISCS&t;16
 multiline_comment|/*&n; * These are set up by the setup-routine at boot-time:&n; */
@@ -102,211 +108,69 @@ mdefine_line|#define VIDEO_TYPE_EGAC&t;&t;0x21&t;/* EGA/VGA in Color Mode&t;*/
 multiline_comment|/*&n; * This character is the same as _POSIX_VDISABLE: it cannot be used as&n; * a c_cc[] character, but indicates that a particular special character&n; * isn&squot;t in use (eg VINTR ahs no character etc)&n; */
 DECL|macro|__DISABLED_CHAR
 mdefine_line|#define __DISABLED_CHAR &squot;&bslash;0&squot;
-multiline_comment|/*&n; * See comment for the tty_struct structure before changing&n; * TTY_BUF_SIZE.  Actually, there should be different sized tty_queue&n; * structures for different purposes.  1024 bytes for the transmit&n; * queue is way overkill.  TYT, 9/14/92&n; */
-DECL|macro|TTY_BUF_SIZE
-mdefine_line|#define TTY_BUF_SIZE 1024&t;/* Must be a power of 2 */
-DECL|struct|tty_queue
+multiline_comment|/*&n; * This is the flip buffer used for the tty driver.  The buffer is&n; * located in the tty structure, and is used as a high speed interface&n; * between the tty driver and the tty line discpline.&n; */
+DECL|macro|TTY_FLIPBUF_SIZE
+mdefine_line|#define TTY_FLIPBUF_SIZE 512
+DECL|struct|tty_flip_buffer
 r_struct
-id|tty_queue
+id|tty_flip_buffer
 (brace
-DECL|member|head
-r_int
-r_int
-id|head
-suffix:semicolon
-DECL|member|tail
-r_int
-r_int
-id|tail
-suffix:semicolon
-DECL|member|proc_list
+DECL|member|tqueue
 r_struct
-id|wait_queue
-op_star
-id|proc_list
+id|tq_struct
+id|tqueue
 suffix:semicolon
-DECL|member|buf
+DECL|member|char_buf
 r_int
 r_char
-id|buf
-(braket
-id|TTY_BUF_SIZE
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|serial_struct
-r_struct
-id|serial_struct
-(brace
-DECL|member|type
-r_int
-id|type
-suffix:semicolon
-DECL|member|line
-r_int
-id|line
-suffix:semicolon
-DECL|member|port
-r_int
-id|port
-suffix:semicolon
-DECL|member|irq
-r_int
-id|irq
-suffix:semicolon
-DECL|member|flags
-r_int
-id|flags
-suffix:semicolon
-DECL|member|xmit_fifo_size
-r_int
-id|xmit_fifo_size
-suffix:semicolon
-DECL|member|custom_divisor
-r_int
-id|custom_divisor
-suffix:semicolon
-DECL|member|baud_base
-r_int
-id|baud_base
-suffix:semicolon
-DECL|member|close_delay
-r_int
-r_int
-id|close_delay
-suffix:semicolon
-DECL|member|reserved_char
-r_char
-id|reserved_char
+id|char_buf
 (braket
 l_int|2
+op_star
+id|TTY_FLIPBUF_SIZE
 )braket
 suffix:semicolon
-DECL|member|hub6
-r_int
-id|hub6
-suffix:semicolon
-DECL|member|reserved
-r_int
-id|reserved
+DECL|member|flag_buf
+r_char
+id|flag_buf
 (braket
-l_int|5
+l_int|2
+op_star
+id|TTY_FLIPBUF_SIZE
 )braket
+suffix:semicolon
+DECL|member|char_buf_ptr
+r_char
+op_star
+id|char_buf_ptr
+suffix:semicolon
+DECL|member|flag_buf_ptr
+r_int
+r_char
+op_star
+id|flag_buf_ptr
+suffix:semicolon
+DECL|member|count
+r_int
+id|count
+suffix:semicolon
+DECL|member|buf_num
+r_int
+id|buf_num
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * These are the supported serial types.&n; */
-DECL|macro|PORT_UNKNOWN
-mdefine_line|#define PORT_UNKNOWN&t;0
-DECL|macro|PORT_8250
-mdefine_line|#define PORT_8250&t;1
-DECL|macro|PORT_16450
-mdefine_line|#define PORT_16450&t;2
-DECL|macro|PORT_16550
-mdefine_line|#define PORT_16550&t;3
-DECL|macro|PORT_16550A
-mdefine_line|#define PORT_16550A&t;4
-DECL|macro|PORT_MAX
-mdefine_line|#define PORT_MAX&t;4
-multiline_comment|/*&n; * Definitions for async_struct (and serial_struct) flags field&n; */
-DECL|macro|ASYNC_HUP_NOTIFY
-mdefine_line|#define ASYNC_HUP_NOTIFY 0x0001 /* Notify getty on hangups and closes &n;&t;&t;&t;&t;   on the callout port */
-DECL|macro|ASYNC_FOURPORT
-mdefine_line|#define ASYNC_FOURPORT  0x0002&t;/* Set OU1, OUT2 per AST Fourport settings */
-DECL|macro|ASYNC_SAK
-mdefine_line|#define ASYNC_SAK&t;0x0004&t;/* Secure Attention Key (Orange book) */
-DECL|macro|ASYNC_SPLIT_TERMIOS
-mdefine_line|#define ASYNC_SPLIT_TERMIOS 0x0008 /* Separate termios for dialin/callout */
-DECL|macro|ASYNC_SPD_MASK
-mdefine_line|#define ASYNC_SPD_MASK&t;0x0030
-DECL|macro|ASYNC_SPD_HI
-mdefine_line|#define ASYNC_SPD_HI&t;0x0010&t;/* Use 56000 instead of 38400 bps */
-DECL|macro|ASYNC_SPD_VHI
-mdefine_line|#define ASYNC_SPD_VHI&t;0x0020  /* Use 115200 instead of 38400 bps */
-DECL|macro|ASYNC_SPD_CUST
-mdefine_line|#define ASYNC_SPD_CUST&t;0x0030  /* Use user-specified divisor */
-DECL|macro|ASYNC_SKIP_TEST
-mdefine_line|#define ASYNC_SKIP_TEST&t;0x0040 /* Skip UART test during autoconfiguration */
-DECL|macro|ASYNC_AUTO_IRQ
-mdefine_line|#define ASYNC_AUTO_IRQ  0x0080 /* Do automatic IRQ during autoconfiguration */
-DECL|macro|ASYNC_SESSION_LOCKOUT
-mdefine_line|#define ASYNC_SESSION_LOCKOUT 0x0100 /* Lock out cua opens based on session */
-DECL|macro|ASYNC_PGRP_LOCKOUT
-mdefine_line|#define ASYNC_PGRP_LOCKOUT    0x0200 /* Lock out cua opens based on pgrp */
-DECL|macro|ASYNC_CALLOUT_NOHUP
-mdefine_line|#define ASYNC_CALLOUT_NOHUP   0x0400 /* Don&squot;t do hangups for cua device */
-DECL|macro|ASYNC_FLAGS
-mdefine_line|#define ASYNC_FLAGS&t;0x0FFF&t;/* Possible legal async flags */
-DECL|macro|ASYNC_USR_MASK
-mdefine_line|#define ASYNC_USR_MASK 0x0430&t;/* Legal flags that non-privileged&n;&t;&t;&t;&t; * users can set or reset */
-multiline_comment|/* Internal flags used only by kernel/chr_drv/serial.c */
-DECL|macro|ASYNC_INITIALIZED
-mdefine_line|#define ASYNC_INITIALIZED&t;0x80000000 /* Serial port was initialized */
-DECL|macro|ASYNC_CALLOUT_ACTIVE
-mdefine_line|#define ASYNC_CALLOUT_ACTIVE&t;0x40000000 /* Call out device is active */
-DECL|macro|ASYNC_NORMAL_ACTIVE
-mdefine_line|#define ASYNC_NORMAL_ACTIVE&t;0x20000000 /* Normal device is active */
-DECL|macro|ASYNC_BOOT_AUTOCONF
-mdefine_line|#define ASYNC_BOOT_AUTOCONF&t;0x10000000 /* Autoconfigure port on bootup */
-DECL|macro|ASYNC_CLOSING
-mdefine_line|#define ASYNC_CLOSING&t;&t;0x08000000 /* Serial port is closing */
-DECL|macro|IS_A_CONSOLE
-mdefine_line|#define IS_A_CONSOLE(min)&t;(((min) &amp; 0xC0) == 0x00)
-DECL|macro|IS_A_SERIAL
-mdefine_line|#define IS_A_SERIAL(min)&t;(((min) &amp; 0xC0) == 0x40)
-DECL|macro|IS_A_PTY
-mdefine_line|#define IS_A_PTY(min)&t;&t;((min) &amp; 0x80)
-DECL|macro|IS_A_PTY_MASTER
-mdefine_line|#define IS_A_PTY_MASTER(min)&t;(((min) &amp; 0xC0) == 0x80)
-DECL|macro|IS_A_PTY_SLAVE
-mdefine_line|#define IS_A_PTY_SLAVE(min)&t;(((min) &amp; 0xC0) == 0xC0)
-DECL|macro|PTY_OTHER
-mdefine_line|#define PTY_OTHER(min)&t;&t;((min) ^ 0x40)
-DECL|macro|SL_TO_DEV
-mdefine_line|#define SL_TO_DEV(line)&t;&t;((line) | 0x40)
-DECL|macro|DEV_TO_SL
-mdefine_line|#define DEV_TO_SL(min)&t;&t;((min) &amp; 0x3F)
-DECL|macro|INC
-mdefine_line|#define INC(a) ((a) = ((a)+1) &amp; (TTY_BUF_SIZE-1))
-DECL|macro|DEC
-mdefine_line|#define DEC(a) ((a) = ((a)-1) &amp; (TTY_BUF_SIZE-1))
-DECL|macro|EMPTY
-mdefine_line|#define EMPTY(a) ((a)-&gt;head == (a)-&gt;tail)
-DECL|macro|LEFT
-mdefine_line|#define LEFT(a) (((a)-&gt;tail-(a)-&gt;head-1)&amp;(TTY_BUF_SIZE-1))
-DECL|macro|LAST
-mdefine_line|#define LAST(a) ((a)-&gt;buf[(TTY_BUF_SIZE-1)&amp;((a)-&gt;head-1)])
-DECL|macro|FULL
-mdefine_line|#define FULL(a) (!LEFT(a))
-DECL|macro|CHARS
-mdefine_line|#define CHARS(a) (((a)-&gt;head-(a)-&gt;tail)&amp;(TTY_BUF_SIZE-1))
-r_extern
-r_void
-id|put_tty_queue
-c_func
-(paren
-r_int
-r_char
-id|c
-comma
-r_struct
-id|tty_queue
-op_star
-id|queue
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|get_tty_queue
-c_func
-(paren
-r_struct
-id|tty_queue
-op_star
-id|queue
-)paren
-suffix:semicolon
+multiline_comment|/*&n; * When a break, frame error, or parity error happens, these codes are&n; * stuffed into the flags buffer.&n; */
+DECL|macro|TTY_NORMAL
+mdefine_line|#define TTY_NORMAL&t;0
+DECL|macro|TTY_BREAK
+mdefine_line|#define TTY_BREAK&t;1
+DECL|macro|TTY_FRAME
+mdefine_line|#define TTY_FRAME&t;2
+DECL|macro|TTY_PARITY
+mdefine_line|#define TTY_PARITY&t;3
+DECL|macro|TTY_OVERRUN
+mdefine_line|#define TTY_OVERRUN&t;4
 DECL|macro|INTR_CHAR
 mdefine_line|#define INTR_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VINTR])
 DECL|macro|QUIT_CHAR
@@ -460,11 +324,29 @@ DECL|struct|tty_struct
 r_struct
 id|tty_struct
 (brace
+DECL|member|magic
+r_int
+id|magic
+suffix:semicolon
+DECL|member|driver
+r_struct
+id|tty_driver
+id|driver
+suffix:semicolon
+DECL|member|ldisc
+r_struct
+id|tty_ldisc
+id|ldisc
+suffix:semicolon
 DECL|member|termios
+DECL|member|termios_locked
 r_struct
 id|termios
 op_star
 id|termios
+comma
+op_star
+id|termios_locked
 suffix:semicolon
 DECL|member|pgrp
 r_int
@@ -474,10 +356,26 @@ DECL|member|session
 r_int
 id|session
 suffix:semicolon
+DECL|member|device
+id|dev_t
+id|device
+suffix:semicolon
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+DECL|member|count
+r_int
+id|count
+suffix:semicolon
+DECL|member|winsize
+r_struct
+id|winsize
+id|winsize
+suffix:semicolon
 DECL|member|stopped
 DECL|member|hw_stopped
 DECL|member|packet
-DECL|member|lnext
 r_int
 r_char
 id|stopped
@@ -491,203 +389,11 @@ comma
 id|packet
 suffix:colon
 l_int|1
-comma
-id|lnext
-suffix:colon
-l_int|1
-suffix:semicolon
-DECL|member|char_error
-r_int
-r_char
-id|char_error
-suffix:colon
-l_int|3
-suffix:semicolon
-DECL|member|erasing
-r_int
-r_char
-id|erasing
-suffix:colon
-l_int|1
 suffix:semicolon
 DECL|member|ctrl_status
 r_int
 r_char
 id|ctrl_status
-suffix:semicolon
-DECL|member|line
-r_int
-id|line
-suffix:semicolon
-DECL|member|disc
-r_int
-id|disc
-suffix:semicolon
-DECL|member|flags
-r_int
-id|flags
-suffix:semicolon
-DECL|member|count
-r_int
-id|count
-suffix:semicolon
-DECL|member|column
-r_int
-r_int
-id|column
-suffix:semicolon
-DECL|member|winsize
-r_struct
-id|winsize
-id|winsize
-suffix:semicolon
-DECL|member|open
-r_int
-(paren
-op_star
-id|open
-)paren
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_struct
-id|file
-op_star
-id|filp
-)paren
-suffix:semicolon
-DECL|member|close
-r_void
-(paren
-op_star
-id|close
-)paren
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_struct
-id|file
-op_star
-id|filp
-)paren
-suffix:semicolon
-DECL|member|write
-r_void
-(paren
-op_star
-id|write
-)paren
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-)paren
-suffix:semicolon
-DECL|member|ioctl
-r_int
-(paren
-op_star
-id|ioctl
-)paren
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_int
-r_int
-id|cmd
-comma
-r_int
-r_int
-id|arg
-)paren
-suffix:semicolon
-DECL|member|throttle
-r_void
-(paren
-op_star
-id|throttle
-)paren
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_int
-id|status
-)paren
-suffix:semicolon
-DECL|member|set_termios
-r_void
-(paren
-op_star
-id|set_termios
-)paren
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_struct
-id|termios
-op_star
-id|old
-)paren
-suffix:semicolon
-DECL|member|stop
-r_void
-(paren
-op_star
-id|stop
-)paren
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-)paren
-suffix:semicolon
-DECL|member|start
-r_void
-(paren
-op_star
-id|start
-)paren
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-)paren
-suffix:semicolon
-DECL|member|hangup
-r_void
-(paren
-op_star
-id|hangup
-)paren
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-)paren
 suffix:semicolon
 DECL|member|link
 r_struct
@@ -695,47 +401,122 @@ id|tty_struct
 op_star
 id|link
 suffix:semicolon
-DECL|member|write_data_ptr
+DECL|member|fasync
+r_struct
+id|fasync_struct
+op_star
+id|fasync
+suffix:semicolon
+DECL|member|flip
+r_struct
+id|tty_flip_buffer
+id|flip
+suffix:semicolon
+DECL|member|max_flip_cnt
+r_int
+id|max_flip_cnt
+suffix:semicolon
+DECL|member|write_wait
+r_struct
+id|wait_queue
+op_star
+id|write_wait
+suffix:semicolon
+DECL|member|read_wait
+r_struct
+id|wait_queue
+op_star
+id|read_wait
+suffix:semicolon
+DECL|member|disc_data
+r_void
+op_star
+id|disc_data
+suffix:semicolon
+DECL|member|driver_data
+r_void
+op_star
+id|driver_data
+suffix:semicolon
+DECL|macro|N_TTY_BUF_SIZE
+mdefine_line|#define N_TTY_BUF_SIZE 4096
+multiline_comment|/*&n;&t; * The following is data for the N_TTY line discpline.  For&n;&t; * historical reasons, this is included in the tty structure.&n;&t; */
+DECL|member|column
+r_int
+r_int
+id|column
+suffix:semicolon
+DECL|member|lnext
+DECL|member|erasing
+DECL|member|raw
+DECL|member|real_raw
+DECL|member|icanon
 r_int
 r_char
-op_star
-id|write_data_ptr
+id|lnext
+suffix:colon
+l_int|1
+comma
+id|erasing
+suffix:colon
+l_int|1
+comma
+id|raw
+suffix:colon
+l_int|1
+comma
+id|real_raw
+suffix:colon
+l_int|1
+comma
+id|icanon
+suffix:colon
+l_int|1
 suffix:semicolon
-DECL|member|write_data_cnt
+DECL|member|minimum_to_wake
 r_int
-id|write_data_cnt
-suffix:semicolon
-DECL|member|write_data_callback
-r_void
-(paren
-op_star
-id|write_data_callback
-)paren
-(paren
-r_void
-op_star
-id|data
-)paren
-suffix:semicolon
-DECL|member|write_data_arg
-r_void
-op_star
-id|write_data_arg
-suffix:semicolon
-DECL|member|readq_flags
 r_int
-id|readq_flags
+id|minimum_to_wake
+suffix:semicolon
+DECL|member|overrun_time
+r_int
+id|overrun_time
+suffix:semicolon
+DECL|member|num_overrun
+r_int
+id|num_overrun
+suffix:semicolon
+DECL|member|process_char_map
+r_int
+id|process_char_map
 (braket
-id|TTY_BUF_SIZE
+l_int|256
 op_div
 l_int|32
 )braket
 suffix:semicolon
-DECL|member|secondary_flags
+DECL|member|read_buf
+r_char
+op_star
+id|read_buf
+suffix:semicolon
+DECL|member|read_head
 r_int
-id|secondary_flags
+id|read_head
+suffix:semicolon
+DECL|member|read_tail
+r_int
+id|read_tail
+suffix:semicolon
+DECL|member|read_cnt
+r_int
+id|read_cnt
+suffix:semicolon
+DECL|member|read_flags
+r_int
+id|read_flags
 (braket
-id|TTY_BUF_SIZE
+id|N_TTY_BUF_SIZE
 op_div
 l_int|32
 )braket
@@ -754,235 +535,26 @@ r_int
 r_int
 id|canon_column
 suffix:semicolon
-DECL|member|read_q
-r_struct
-id|tty_queue
-id|read_q
-suffix:semicolon
-DECL|member|write_q
-r_struct
-id|tty_queue
-id|write_q
-suffix:semicolon
-DECL|member|secondary
-r_struct
-id|tty_queue
-id|secondary
-suffix:semicolon
-DECL|member|disc_data
-r_void
-op_star
-id|disc_data
-suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|tty_ldisc
-r_struct
-id|tty_ldisc
-(brace
-DECL|member|flags
-r_int
-id|flags
-suffix:semicolon
-multiline_comment|/*&n;&t; * The following routines are called from above.&n;&t; */
-DECL|member|open
-r_int
-(paren
-op_star
-id|open
-)paren
-(paren
-r_struct
-id|tty_struct
-op_star
-)paren
-suffix:semicolon
-DECL|member|close
-r_void
-(paren
-op_star
-id|close
-)paren
-(paren
-r_struct
-id|tty_struct
-op_star
-)paren
-suffix:semicolon
-DECL|member|read
-r_int
-(paren
-op_star
-id|read
-)paren
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_int
-r_char
-op_star
-id|buf
-comma
-r_int
-r_int
-id|nr
-)paren
-suffix:semicolon
-DECL|member|write
-r_int
-(paren
-op_star
-id|write
-)paren
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_int
-r_char
-op_star
-id|buf
-comma
-r_int
-r_int
-id|nr
-)paren
-suffix:semicolon
-DECL|member|ioctl
-r_int
-(paren
-op_star
-id|ioctl
-)paren
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_int
-r_int
-id|cmd
-comma
-r_int
-r_int
-id|arg
-)paren
-suffix:semicolon
-DECL|member|select
-r_int
-(paren
-op_star
-id|select
-)paren
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_int
-id|sel_type
-comma
-r_struct
-id|select_table_struct
-op_star
-id|wait
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * The following routines are called from below.&n;&t; */
-DECL|member|handler
-r_void
-(paren
-op_star
-id|handler
-)paren
-(paren
-r_struct
-id|tty_struct
-op_star
-)paren
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|macro|LDISC_FLAG_DEFINED
-mdefine_line|#define LDISC_FLAG_DEFINED&t;0x00000001
-multiline_comment|/*&n; * These are the different types of thottle status which can be sent&n; * to the low-level tty driver.  The tty_io.c layer is responsible for&n; * notifying the low-level tty driver of the following conditions:&n; * secondary queue full, secondary queue available, and read queue&n; * available.  The low-level driver must send the read queue full&n; * command to itself, if it is interested in that condition.&n; *&n; * Note that the low-level tty driver may elect to ignore one or both&n; * of these conditions; normally, however, it will use ^S/^Q or some&n; * sort of hardware flow control to regulate the input to try to avoid&n; * overflow.  While the low-level driver is responsible for all&n; * receiving flow control, note that the ^S/^Q handling (but not&n; * hardware flow control) is handled by the upper layer, in&n; * copy_to_cooked.  &n; */
-DECL|macro|TTY_THROTTLE_SQ_FULL
-mdefine_line|#define TTY_THROTTLE_SQ_FULL&t;1
-DECL|macro|TTY_THROTTLE_SQ_AVAIL
-mdefine_line|#define TTY_THROTTLE_SQ_AVAIL&t;2
-DECL|macro|TTY_THROTTLE_RQ_FULL
-mdefine_line|#define TTY_THROTTLE_RQ_FULL&t;3
-DECL|macro|TTY_THROTTLE_RQ_AVAIL
-mdefine_line|#define TTY_THROTTLE_RQ_AVAIL&t;4
-multiline_comment|/*&n; * This defines the low- and high-watermarks for the various conditions.&n; * Again, the low-level driver is free to ignore any of these, and has&n; * to implement RQ_THREHOLD_LW for itself if it wants it.&n; */
-DECL|macro|SQ_THRESHOLD_LW
-mdefine_line|#define SQ_THRESHOLD_LW&t;16
-DECL|macro|SQ_THRESHOLD_HW
-mdefine_line|#define SQ_THRESHOLD_HW 768
-DECL|macro|RQ_THRESHOLD_LW
-mdefine_line|#define RQ_THRESHOLD_LW 16
-DECL|macro|RQ_THRESHOLD_HW
-mdefine_line|#define RQ_THRESHOLD_HW 768
+multiline_comment|/* tty magic number */
+DECL|macro|TTY_MAGIC
+mdefine_line|#define TTY_MAGIC&t;&t;0x5401
 multiline_comment|/*&n; * These bits are used in the flags field of the tty structure.&n; * &n; * So that interrupts won&squot;t be able to mess up the queues,&n; * copy_to_cooked must be atomic with repect to itself, as must&n; * tty-&gt;write.  Thus, you must use the inline functions set_bit() and&n; * clear_bit() to make things atomic.&n; */
-DECL|macro|TTY_WRITE_BUSY
-mdefine_line|#define TTY_WRITE_BUSY 0
-DECL|macro|TTY_READ_BUSY
-mdefine_line|#define TTY_READ_BUSY 1
-DECL|macro|TTY_SQ_THROTTLED
-mdefine_line|#define TTY_SQ_THROTTLED 2
-DECL|macro|TTY_RQ_THROTTLED
-mdefine_line|#define TTY_RQ_THROTTLED 3
+DECL|macro|TTY_THROTTLED
+mdefine_line|#define TTY_THROTTLED 0
 DECL|macro|TTY_IO_ERROR
-mdefine_line|#define TTY_IO_ERROR 4
+mdefine_line|#define TTY_IO_ERROR 1
 DECL|macro|TTY_SLAVE_CLOSED
-mdefine_line|#define TTY_SLAVE_CLOSED 5
+mdefine_line|#define TTY_SLAVE_CLOSED 2
 DECL|macro|TTY_EXCLUSIVE
-mdefine_line|#define TTY_EXCLUSIVE 6
-multiline_comment|/*&n; * When a break, frame error, or parity error happens, these codes are&n; * stuffed into the read queue, and the relevant bit in readq_flag bit&n; * array is set.&n; */
-DECL|macro|TTY_BREAK
-mdefine_line|#define TTY_BREAK&t;1
-DECL|macro|TTY_FRAME
-mdefine_line|#define TTY_FRAME&t;2
-DECL|macro|TTY_PARITY
-mdefine_line|#define TTY_PARITY&t;3
-DECL|macro|TTY_OVERRUN
-mdefine_line|#define TTY_OVERRUN&t;4
+mdefine_line|#define TTY_EXCLUSIVE 3
+DECL|macro|TTY_DEBUG
+mdefine_line|#define TTY_DEBUG 4
+DECL|macro|TTY_DO_WRITE_WAKEUP
+mdefine_line|#define TTY_DO_WRITE_WAKEUP 5
 DECL|macro|TTY_WRITE_FLUSH
 mdefine_line|#define TTY_WRITE_FLUSH(tty) tty_write_flush((tty))
-DECL|macro|TTY_READ_FLUSH
-mdefine_line|#define TTY_READ_FLUSH(tty) tty_read_flush((tty))
 r_extern
 r_void
 id|tty_write_flush
@@ -994,47 +566,9 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|tty_read_flush
-c_func
-(paren
-r_struct
-id|tty_struct
-op_star
-)paren
-suffix:semicolon
-multiline_comment|/* Number of chars that must be available in a write queue before&n;   the queue is awakened. */
-DECL|macro|WAKEUP_CHARS
-mdefine_line|#define WAKEUP_CHARS (3*TTY_BUF_SIZE/4)
-r_extern
-r_struct
-id|tty_struct
-op_star
-id|tty_table
-(braket
-)braket
-suffix:semicolon
-r_extern
 r_struct
 id|termios
-op_star
-id|tty_termios
-(braket
-)braket
-suffix:semicolon
-r_extern
-r_struct
-id|termios
-op_star
-id|termios_locked
-(braket
-)braket
-suffix:semicolon
-r_extern
-r_int
-id|tty_check_write
-(braket
-)braket
+id|tty_std_termios
 suffix:semicolon
 r_extern
 r_struct
@@ -1069,10 +603,6 @@ id|wait_queue
 op_star
 id|keypress_wait
 suffix:semicolon
-DECL|macro|TTY_TABLE_IDX
-mdefine_line|#define TTY_TABLE_IDX(nr)&t;((nr) ? (nr) : (fg_console+1))
-DECL|macro|TTY_TABLE
-mdefine_line|#define TTY_TABLE(nr) &t;&t;(tty_table[TTY_TABLE_IDX(nr)])
 multiline_comment|/*&t;intr=^C&t;&t;quit=^|&t;&t;erase=del&t;kill=^U&n;&t;eof=^D&t;&t;vtime=&bslash;0&t;vmin=&bslash;1&t;&t;sxtc=&bslash;0&n;&t;start=^Q&t;stop=^S&t;&t;susp=^Z&t;&t;eol=&bslash;0&n;&t;reprint=^R&t;discard=^U&t;werase=^W&t;lnext=^V&n;&t;eol2=&bslash;0&n;*/
 DECL|macro|INIT_C_CC
 mdefine_line|#define INIT_C_CC &quot;&bslash;003&bslash;034&bslash;177&bslash;025&bslash;004&bslash;0&bslash;1&bslash;0&bslash;021&bslash;023&bslash;032&bslash;0&bslash;022&bslash;017&bslash;027&bslash;026&bslash;0&quot;
@@ -1102,6 +632,14 @@ r_int
 suffix:semicolon
 r_extern
 r_int
+id|pty_init
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|tty_init
 c_func
 (paren
@@ -1109,19 +647,44 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|flush_input
+r_int
+id|tty_paranoia_check
 c_func
 (paren
 r_struct
 id|tty_struct
 op_star
 id|tty
+comma
+id|dev_t
+id|device
+comma
+r_const
+r_char
+op_star
+id|routine
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|flush_output
+r_char
+op_star
+id|_tty_name
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_char
+op_star
+id|buf
+)paren
+suffix:semicolon
+r_extern
+r_char
+op_star
+id|tty_name
 c_func
 (paren
 r_struct
@@ -1146,16 +709,13 @@ id|timeout
 suffix:semicolon
 r_extern
 r_int
-id|check_change
+id|tty_check_change
 c_func
 (paren
 r_struct
 id|tty_struct
 op_star
 id|tty
-comma
-r_int
-id|channel
 )paren
 suffix:semicolon
 r_extern
@@ -1196,6 +756,17 @@ id|new_ldisc
 suffix:semicolon
 r_extern
 r_int
+id|tty_register_driver
+c_func
+(paren
+r_struct
+id|tty_driver
+op_star
+id|driver
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|tty_read_raw_data
 c_func
 (paren
@@ -1211,59 +782,6 @@ id|bufp
 comma
 r_int
 id|buflen
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|tty_write_data
-c_func
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_char
-op_star
-id|bufp
-comma
-r_int
-id|buflen
-comma
-r_void
-(paren
-op_star
-id|callback
-)paren
-(paren
-r_void
-op_star
-id|data
-)paren
-comma
-r_void
-op_star
-id|callarg
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|tty_ioctl
-c_func
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_struct
-id|file
-op_star
-comma
-r_int
-r_int
-comma
-r_int
-r_int
 )paren
 suffix:semicolon
 r_extern
@@ -1362,27 +880,35 @@ r_int
 id|priv
 )paren
 suffix:semicolon
-multiline_comment|/* tty write functions */
+multiline_comment|/* n_tty.c */
 r_extern
-r_void
-id|rs_write
-c_func
-(paren
 r_struct
-id|tty_struct
-op_star
-id|tty
-)paren
+id|tty_ldisc
+id|tty_ldisc_N_TTY
 suffix:semicolon
+multiline_comment|/* tty_ioctl.c */
 r_extern
-r_void
-id|con_write
+r_int
+id|n_tty_ioctl
 c_func
 (paren
 r_struct
 id|tty_struct
 op_star
 id|tty
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
 )paren
 suffix:semicolon
 multiline_comment|/* serial.c */

@@ -1136,7 +1136,7 @@ suffix:semicolon
 id|mark_bh
 c_func
 (paren
-id|INET_BH
+id|NET_BH
 )paren
 suffix:semicolon
 multiline_comment|/* Inform upper layers. */
@@ -1383,7 +1383,7 @@ op_decrement
 id|boguscount
 )paren
 suffix:semicolon
-multiline_comment|/* If any worth-while packets have been received, dev_rint()&n;&t;   has done a mark_bh(INET_BH) for us and will work on them&n;&t;   when we get to the bottom-half routine. */
+multiline_comment|/* If any worth-while packets have been received, dev_rint()&n;&t;   has done a mark_bh(NET_BH) for us and will work on them&n;&t;   when we get to the bottom-half routine. */
 r_return
 suffix:semicolon
 )brace

@@ -229,6 +229,17 @@ id|sig
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t; * Forget it if the process is already zombie&squot;d.&n;&t; */
+r_if
+c_cond
+(paren
+id|p-&gt;state
+op_eq
+id|TASK_ZOMBIE
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren

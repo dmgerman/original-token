@@ -70,6 +70,10 @@ DECL|macro|SIOCSIFENCAP
 mdefine_line|#define SIOCSIFENCAP&t;0x8926&t;&t;
 DECL|macro|SIOCGIFHWADDR
 mdefine_line|#define SIOCGIFHWADDR&t;0x8927&t;&t;/* Get hardware address&t;&t;*/
+DECL|macro|SIOCGIFSLAVE
+mdefine_line|#define SIOCGIFSLAVE&t;0x8929&t;&t;/* Driver slaving support&t;*/
+DECL|macro|SIOCSIFSLAVE
+mdefine_line|#define SIOCSIFSLAVE&t;0x8930
 multiline_comment|/* Routing table calls (oldrtent - don&squot;t use) */
 DECL|macro|SIOCADDRTOLD
 mdefine_line|#define SIOCADDRTOLD&t;0x8940&t;&t;/* add routing table entry&t;*/
@@ -89,6 +93,11 @@ DECL|macro|SIOCGRARP
 mdefine_line|#define SIOCGRARP&t;0x8961&t;&t;/* get RARP table entry&t;&t;*/
 DECL|macro|SIOCSRARP
 mdefine_line|#define SIOCSRARP&t;0x8962&t;&t;/* set RARP table entry&t;&t;*/
+multiline_comment|/* Driver configuration calls */
+DECL|macro|SIOCGIFMAP
+mdefine_line|#define SIOCGIFMAP&t;0x8970&t;&t;/* Get device parameters&t;*/
+DECL|macro|SIOCSIFMAP
+mdefine_line|#define SIOCSIFMAP&t;0x8971&t;&t;/* Set device parameters&t;*/
 multiline_comment|/* Device private ioctl calls */
 multiline_comment|/*&n; *&t;These 16 ioctls are available to devices via the do_ioctl() device&n; *&t;vector. Each device should include this file and redefine these names&n; *&t;as their own. Because these are device dependant it is a good idea&n; *&t;_NOT_ to issue them to random objects and hope.&n; */
 DECL|macro|SIOCDEVPRIVATE

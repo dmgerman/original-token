@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;@(#)route.c&t;1.0.14&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Linus Torvalds, &lt;Linus.Torvalds@helsinki.fi&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&t;&t;Rui Oliveira&t;:&t;ICMP routing table updates&n; *&t;&t;(rco@di.uminho.pt)&t;Routing table insertion and update&n; *&t;&t;Linus Torvalds&t;:&t;Rewrote bits to be sensible&n; *&t;&t;Alan Cox&t;:&t;Added BSD route gw semantics&n; *&t;&t;Alan Cox&t;:&t;Super /proc &gt;4K &n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;@(#)route.c&t;1.0.14&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Linus Torvalds, &lt;Linus.Torvalds@helsinki.fi&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&t;&t;Rui Oliveira&t;:&t;ICMP routing table updates&n; *&t;&t;(rco@di.uminho.pt)&t;Routing table insertion and update&n; *&t;&t;Linus Torvalds&t;:&t;Rewrote bits to be sensible&n; *&t;&t;Alan Cox&t;:&t;Added BSD route gw semantics&n; *&t;&t;Alan Cox&t;:&t;Super /proc &gt;4K &n; *&t;&t;Alan Cox&t;:&t;MTU in route table&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -38,96 +38,6 @@ id|rt_loopback
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n; *&t;Dump the contents of a routing table entry. &n; */
-DECL|function|rt_print
-r_static
-r_void
-id|rt_print
-c_func
-(paren
-r_struct
-id|rtable
-op_star
-id|rt
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|rt
-op_eq
-l_int|NULL
-op_logical_or
-id|inet_debug
-op_ne
-id|DBG_RT
-)paren
-r_return
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;RT: %06lx NXT=%06lx FLAGS=0x%02x&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|rt
-comma
-(paren
-r_int
-)paren
-id|rt-&gt;rt_next
-comma
-id|rt-&gt;rt_flags
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;    TARGET=%s &quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|rt-&gt;rt_dst
-)paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;GW=%s &quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|rt-&gt;rt_gateway
-)paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;    DEV=%s USE=%ld REF=%d&bslash;n&quot;
-comma
-(paren
-id|rt-&gt;rt_dev
-op_eq
-l_int|NULL
-)paren
-ques
-c_cond
-l_string|&quot;NONE&quot;
-suffix:colon
-id|rt-&gt;rt_dev-&gt;name
-comma
-id|rt-&gt;rt_use
-comma
-id|rt-&gt;rt_refcnt
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; *&t;Remove a routing table entry.&n; */
 DECL|function|rt_del
 r_static
@@ -152,22 +62,6 @@ suffix:semicolon
 r_int
 r_int
 id|flags
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_RT
-comma
-l_string|&quot;RT: flushing for dst %s&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|dst
-)paren
-)paren
-)paren
 suffix:semicolon
 id|rp
 op_assign
@@ -278,23 +172,6 @@ suffix:semicolon
 r_int
 r_int
 id|flags
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_RT
-comma
-l_string|&quot;RT: flushing for dev 0x%08lx (%s)&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|dev
-comma
-id|dev-&gt;name
-)paren
-)paren
 suffix:semicolon
 id|rp
 op_assign
@@ -592,6 +469,10 @@ r_struct
 id|device
 op_star
 id|dev
+comma
+r_int
+r_int
+id|mtu
 )paren
 (brace
 r_struct
@@ -761,16 +642,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_RT
-comma
-l_string|&quot;RT: no memory for new route!&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -814,12 +685,20 @@ id|rt-&gt;rt_mtu
 op_assign
 id|dev-&gt;mtu
 suffix:semicolon
-id|rt_print
-c_func
+multiline_comment|/* Are the MSS/Window valid ? */
+r_if
+c_cond
 (paren
-id|rt
+id|rt-&gt;rt_flags
+op_amp
+id|RTF_MTU
 )paren
+(brace
+id|rt-&gt;rt_mtu
+op_assign
+id|mtu
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;What we have to do is loop though this until we have&n;&t; *&t;found the first address which has a higher generality than&n;&t; *&t;the one in rt.  Then we can put rt in right before it.&n;&t; *&t;The interrupts must be off for this process.&n;&t; */
 id|save_flags
 c_func
@@ -1356,6 +1235,8 @@ comma
 id|gw
 comma
 id|dev
+comma
+id|r-&gt;rt_mtu
 )paren
 suffix:semicolon
 r_return
@@ -1452,7 +1333,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;Iface&bslash;tDestination&bslash;tGateway &bslash;tFlags&bslash;tRefCnt&bslash;tUse&bslash;tMetric&bslash;tMask&bslash;n&quot;
+l_string|&quot;Iface&bslash;tDestination&bslash;tGateway &bslash;tFlags&bslash;tRefCnt&bslash;tUse&bslash;tMetric&bslash;tMask&bslash;tMTU&bslash;n&quot;
 )paren
 suffix:semicolon
 id|pos
@@ -1485,7 +1366,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%s&bslash;t%08lX&bslash;t%08lX&bslash;t%02X&bslash;t%d&bslash;t%lu&bslash;t%d&bslash;t%08lX&bslash;n&quot;
+l_string|&quot;%s&bslash;t%08lX&bslash;t%08lX&bslash;t%02X&bslash;t%d&bslash;t%lu&bslash;t%d&bslash;t%08lX&bslash;t%d&bslash;n&quot;
 comma
 id|r-&gt;rt_dev-&gt;name
 comma
@@ -1502,6 +1383,11 @@ comma
 id|r-&gt;rt_metric
 comma
 id|r-&gt;rt_mask
+comma
+(paren
+r_int
+)paren
+id|r-&gt;rt_mtu
 )paren
 suffix:semicolon
 id|len
@@ -1997,19 +1883,6 @@ c_cond
 id|cmd
 )paren
 (brace
-r_case
-id|DDIOCSDBG
-suffix:colon
-multiline_comment|/* Control debugging */
-r_return
-id|dbg_ioctl
-c_func
-(paren
-id|arg
-comma
-id|DBG_RT
-)paren
-suffix:semicolon
 r_case
 id|SIOCADDRTOLD
 suffix:colon

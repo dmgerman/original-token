@@ -827,7 +827,7 @@ l_int|0
 suffix:semicolon
 id|mark_bh
 (paren
-id|INET_BH
+id|NET_BH
 )paren
 suffix:semicolon
 r_return

@@ -386,19 +386,9 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_PKT
-comma
-l_string|&quot;packet_sendto: write buffer full?&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_return
 op_minus
-id|ENOMEM
+id|ENOBUFS
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Fill it in &n;&t; */

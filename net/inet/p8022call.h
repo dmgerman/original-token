@@ -1,0 +1,12 @@
+multiline_comment|/* Seperate to keep compilation of Space.c simpler */
+r_extern
+r_void
+id|p8022_proto_init
+c_func
+(paren
+r_struct
+id|net_proto
+op_star
+)paren
+suffix:semicolon
+eof

@@ -221,6 +221,13 @@ r_int
 id|users
 suffix:semicolon
 multiline_comment|/* User count - see datagram.c (and soon seqpacket.c/stream.c) */
+macro_line|#ifdef CONFIG_SLAVE_BALANCING
+DECL|member|in_dev_queue
+r_int
+r_int
+id|in_dev_queue
+suffix:semicolon
+macro_line|#endif  
 DECL|member|padding
 r_int
 r_int

@@ -2058,7 +2058,7 @@ suffix:semicolon
 id|mark_bh
 c_func
 (paren
-id|INET_BH
+id|NET_BH
 )paren
 suffix:semicolon
 multiline_comment|/* Inform upper layers. */
@@ -2456,7 +2456,7 @@ l_int|0
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* If any worth-while packets have been received, dev_rint()&n;&t;   has done a mark_bh(INET_BH) for us and will work on them&n;&t;   when we get to the bottom-half routine. */
+multiline_comment|/* If any worth-while packets have been received, dev_rint()&n;&t;   has done a mark_bh(NET_BH) for us and will work on them&n;&t;   when we get to the bottom-half routine. */
 (brace
 r_int
 id|i

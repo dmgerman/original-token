@@ -21,11 +21,15 @@ DECL|macro|IFF_RUNNING
 mdefine_line|#define&t;IFF_RUNNING&t;0x40&t;&t;/* resources allocated&t;&t;*/
 DECL|macro|IFF_NOARP
 mdefine_line|#define&t;IFF_NOARP&t;0x80&t;&t;/* no ARP protocol&t;&t;*/
-multiline_comment|/* These are not yet used: */
 DECL|macro|IFF_PROMISC
 mdefine_line|#define&t;IFF_PROMISC&t;0x100&t;&t;/* recve all packets&t;&t;*/
+multiline_comment|/* These are not yet used: */
 DECL|macro|IFF_ALLMULTI
 mdefine_line|#define&t;IFF_ALLMULTI&t;0x200&t;&t;/* recve all multicast packets&t;*/
+DECL|macro|IFF_MASTER
+mdefine_line|#define IFF_MASTER&t;0x400&t;&t;/* master of a load balancer &t;*/
+DECL|macro|IFF_SLAVE
+mdefine_line|#define IFF_SLAVE&t;0x800&t;&t;/* slave of a load balancer&t;*/
 multiline_comment|/*&n; * The ifaddr structure contains information about one address&n; * of an interface.  They are maintained by the different address&n; * families, are allocated and attached when an address is set,&n; * and are linked together so all addresses for an interface can&n; * be located.&n; */
 DECL|struct|ifaddr
 r_struct
@@ -73,6 +77,44 @@ DECL|macro|ifa_broadaddr
 mdefine_line|#define&t;ifa_broadaddr&t;ifa_ifu.ifu_broadaddr&t;/* broadcast address&t;*/
 DECL|macro|ifa_dstaddr
 mdefine_line|#define&t;ifa_dstaddr&t;ifa_ifu.ifu_dstaddr&t;/* other end of link&t;*/
+multiline_comment|/*&n; *&t;Device mapping structure. I&squot;d just gone off and designed a &n; *&t;beautiful scheme using only loadable modules with arguments&n; *&t;for driver options and along come the PCMICA people 8)&n; *&n; *&t;Ah well. The get() side of this is good for WDSETUP, and it&squot;ll&n; *&t;be handy for debugging things. The set side is fine for now and&n; *&t;being very small might be worth keeping for clean configuration.&n; */
+DECL|struct|ifmap
+r_struct
+id|ifmap
+(brace
+DECL|member|mem_start
+r_int
+r_int
+id|mem_start
+suffix:semicolon
+DECL|member|mem_end
+r_int
+r_int
+id|mem_end
+suffix:semicolon
+DECL|member|base_addr
+r_int
+r_int
+id|base_addr
+suffix:semicolon
+DECL|member|irq
+r_int
+r_char
+id|irq
+suffix:semicolon
+DECL|member|dma
+r_int
+r_char
+id|dma
+suffix:semicolon
+DECL|member|port
+r_int
+r_char
+id|port
+suffix:semicolon
+multiline_comment|/* 3 bytes spare */
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * Interface request structure used for socket&n; * ioctl&squot;s.  All interface ioctl&squot;s must have parameter&n; * definitions which begin with ifr_name.  The&n; * remainder may be interface specific.&n; */
 DECL|struct|ifreq
 r_struct
@@ -143,6 +185,19 @@ DECL|member|ifru_mtu
 r_int
 id|ifru_mtu
 suffix:semicolon
+DECL|member|ifru_map
+r_struct
+id|ifmap
+id|ifru_map
+suffix:semicolon
+DECL|member|ifru_slave
+r_char
+id|ifru_slave
+(braket
+id|IFNAMSIZ
+)braket
+suffix:semicolon
+multiline_comment|/* Just fits the size */
 DECL|member|ifru_data
 id|caddr_t
 id|ifru_data
@@ -173,6 +228,10 @@ DECL|macro|ifr_metric
 mdefine_line|#define&t;ifr_metric&t;ifr_ifru.ifru_metric&t;/* metric&t;&t;*/
 DECL|macro|ifr_mtu
 mdefine_line|#define&t;ifr_mtu&t;&t;ifr_ifru.ifru_mtu&t;/* mtu&t;&t;&t;*/
+DECL|macro|ifr_map
+mdefine_line|#define ifr_map&t;&t;ifr_ifru.ifru_map&t;/* device map&t;&t;*/
+DECL|macro|ifr_slave
+mdefine_line|#define ifr_slave&t;ifr_ifru.ifru_slave&t;/* slave device&t;&t;*/
 DECL|macro|ifr_data
 mdefine_line|#define&t;ifr_data&t;ifr_ifru.ifru_data&t;/* for use by interface&t;*/
 multiline_comment|/*&n; * Structure used in SIOCGIFCONF request.&n; * Used to retrieve interface configuration&n; * for machine (useful for programs which&n; * must know all networks accessible).&n; */

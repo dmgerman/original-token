@@ -20,6 +20,10 @@ DECL|struct|slip
 r_struct
 id|slip
 (brace
+DECL|member|magic
+r_int
+id|magic
+suffix:semicolon
 multiline_comment|/* Bitmapped flag fields. */
 DECL|member|inuse
 r_char
@@ -110,6 +114,20 @@ r_int
 id|rcount
 suffix:semicolon
 multiline_comment|/* SLIP receive counter&t;&t;*/
+DECL|member|xhead
+r_int
+r_char
+op_star
+id|xhead
+suffix:semicolon
+multiline_comment|/* XMIT buffer pointer (head)&t;*/
+DECL|member|xtail
+r_int
+r_char
+op_star
+id|xtail
+suffix:semicolon
+multiline_comment|/* XMIT buffer pointer (tail)&t;*/
 multiline_comment|/* SLIP interface statistics. */
 DECL|member|rpacket
 r_int
@@ -160,6 +178,8 @@ DECL|macro|SLF_COMP
 mdefine_line|#define SLF_COMP&t;16
 DECL|macro|SLF_EXPN
 mdefine_line|#define SLF_EXPN&t;32
+DECL|macro|SLF_XMIT_BUSY
+mdefine_line|#define SLF_XMIT_BUSY&t;64
 DECL|member|mode
 r_int
 r_char
@@ -188,6 +208,8 @@ suffix:semicolon
 multiline_comment|/* 6 bit slip controls &t;&t;*/
 )brace
 suffix:semicolon
+DECL|macro|SLIP_MAGIC
+mdefine_line|#define SLIP_MAGIC 0x5302
 r_extern
 r_int
 id|slip_init
@@ -249,14 +271,7 @@ id|sl
 comma
 r_int
 r_char
-op_star
 id|s
-comma
-r_int
-id|count
-comma
-r_int
-id|error
 )paren
 suffix:semicolon
 r_extern
@@ -271,14 +286,7 @@ id|sl
 comma
 r_int
 r_char
-op_star
 id|s
-comma
-r_int
-id|count
-comma
-r_int
-id|error
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* _LINUX_SLIP.H */

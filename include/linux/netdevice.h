@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the Interfaces handler.&n; *&n; * Version:&t;@(#)dev.h&t;1.0.10&t;08/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Donald J. Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;A.Cox@swansea.ac.uk&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;&t;Moved to /usr/include/linux for NET3&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the Interfaces handler.&n; *&n; * Version:&t;@(#)dev.h&t;1.0.10&t;08/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Donald J. Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;A.Cox@swansea.ac.uk&gt;&n; *&t;&t;Bjorn Ekwall. &lt;bj0rn@blox.se&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;&t;Moved to /usr/include/linux for NET3&n; */
 macro_line|#ifndef _LINUX_NETDEVICE_H
 DECL|macro|_LINUX_NETDEVICE_H
 mdefine_line|#define _LINUX_NETDEVICE_H
@@ -31,7 +31,7 @@ r_char
 op_star
 id|name
 suffix:semicolon
-multiline_comment|/* I/O specific fields.  */
+multiline_comment|/* I/O specific fields - FIXME: Merge these and struct ifmap into one */
 DECL|member|rmem_end
 r_int
 r_int
@@ -243,6 +243,20 @@ r_int
 id|pa_alen
 suffix:semicolon
 multiline_comment|/* protocol address length&t;*/
+multiline_comment|/* For load balancing driver pair support */
+DECL|member|pkt_queue
+r_int
+r_int
+id|pkt_queue
+suffix:semicolon
+multiline_comment|/* Packets queued */
+DECL|member|slave
+r_struct
+id|device
+op_star
+id|slave
+suffix:semicolon
+multiline_comment|/* Slave device */
 multiline_comment|/* Pointer to the interface buffers. */
 DECL|member|buffs
 r_struct
@@ -439,6 +453,26 @@ r_struct
 id|ifreq
 op_star
 id|ifr
+)paren
+suffix:semicolon
+DECL|macro|HAVE_SET_CONFIG
+mdefine_line|#define HAVE_SET_CONFIG
+DECL|member|set_config
+r_int
+(paren
+op_star
+id|set_config
+)paren
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|ifmap
+op_star
+id|map
 )paren
 suffix:semicolon
 )brace
@@ -691,7 +725,7 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|in_inet_bh
+id|in_net_bh
 c_func
 (paren
 r_void
@@ -699,7 +733,7 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|inet_bh
+id|net_bh
 c_func
 (paren
 r_void
@@ -764,6 +798,29 @@ multiline_comment|/* This function lives elsewhere (drivers/net/net_init.c but i
 r_extern
 r_void
 id|ether_setup
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Support for loadable net-drivers */
+r_extern
+r_int
+id|register_netdev
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|unregister_netdev
 c_func
 (paren
 r_struct

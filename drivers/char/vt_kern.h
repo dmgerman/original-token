@@ -8,6 +8,11 @@ r_extern
 r_struct
 id|vt_struct
 (brace
+DECL|member|vc_num
+r_int
+id|vc_num
+suffix:semicolon
+multiline_comment|/* The console number */
 DECL|member|vc_mode
 r_int
 r_char
@@ -41,6 +46,12 @@ suffix:semicolon
 DECL|member|vt_newvt
 r_int
 id|vt_newvt
+suffix:semicolon
+DECL|member|paste_wait
+r_struct
+id|wait_queue
+op_star
+id|paste_wait
 suffix:semicolon
 )brace
 id|vt_cons

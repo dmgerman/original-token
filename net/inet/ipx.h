@@ -1,8 +1,9 @@
 multiline_comment|/*&n; *&t;The following information is in its entirety obtained from:&n; *&n; *&t;Novell &squot;IPX Router Specification&squot; Version 1.10 &n; *&t;&t;Part No. 107-000029-001&n; *&n; *&t;Which is available from ftp.novell.com&n; */
-macro_line|#ifndef _IPX_H
-DECL|macro|_IPX_H
-mdefine_line|#define _IPX_H
-macro_line|#include &lt;linux/ddi.h&gt;
+macro_line|#ifndef _NET_INET_IPX_H_
+DECL|macro|_NET_INET_IPX_H_
+mdefine_line|#define _NET_INET_IPX_H_
+macro_line|#include &lt;linux/ipx.h&gt;
+macro_line|#include &quot;datalink.h&quot;
 r_typedef
 r_struct
 (brace
@@ -121,21 +122,42 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+DECL|macro|IPX_RT_ROUTED
+mdefine_line|#define IPX_RT_ROUTED&t;1&t;&t;/* This isn&squot;t a direct route. Send via this if to node router_node */
+DECL|macro|IPX_RT_BLUEBOOK
+mdefine_line|#define IPX_RT_BLUEBOOK&t;2&t;&t;
+DECL|macro|IPX_RT_8022
+mdefine_line|#define IPX_RT_8022&t;4&t;&t;
+DECL|macro|IPX_RT_SNAP
+mdefine_line|#define IPX_RT_SNAP&t;8&t;&t;
+DECL|member|dlink_type
+r_int
+r_int
+id|dlink_type
+suffix:semicolon
 DECL|member|dev
 r_struct
 id|device
 op_star
 id|dev
 suffix:semicolon
-DECL|macro|IPX_RT_ROUTED
-mdefine_line|#define IPX_RT_ROUTED&t;1&t;&t;/* This isn&squot;t a direct route. Send via this if to node router_node */
-DECL|macro|IPX_RT_BLUEBOOK
-mdefine_line|#define IPX_RT_BLUEBOOK&t;2&t;&t;/* Use DIX 8137 frames not IEE802.3 */
+DECL|member|datalink
+r_struct
+id|datalink_proto
+op_star
+id|datalink
+suffix:semicolon
 DECL|member|next
 r_struct
 id|ipx_route
 op_star
 id|next
+suffix:semicolon
+DECL|member|nextlocal
+r_struct
+id|ipx_route
+op_star
+id|nextlocal
 suffix:semicolon
 DECL|typedef|ipx_route
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Ethernet-type device handling.&n; *&n; * Version:&t;@(#)eth.c&t;1.0.7&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Florian  La Roche, &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; * &n; * Fixes:&n; *&t;&t;Mr Linux&t;: Arp problems&n; *&t;&t;Alan Cox&t;: Generic queue tidyup (very tiny here)&n; *&t;&t;Alan Cox&t;: eth_header ntohs should be htons&n; *&t;&t;Alan Cox&t;: eth_rebuild_header missing an htons and&n; *&t;&t;&t;&t;  minor other things.&n; *&t;&t;Tegge&t;&t;: Arp bug fixes. &n; *&t;&t;Florian&t;&t;: Removed many unnecessary functions, code cleanup&n; *&t;&t;&t;&t;  and changes for new arp and skbuff.&n; *&t;&t;Alan Cox&t;: Redid header building to reflect new format.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Ethernet-type device handling.&n; *&n; * Version:&t;@(#)eth.c&t;1.0.7&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Florian  La Roche, &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; * &n; * Fixes:&n; *&t;&t;Mr Linux&t;: Arp problems&n; *&t;&t;Alan Cox&t;: Generic queue tidyup (very tiny here)&n; *&t;&t;Alan Cox&t;: eth_header ntohs should be htons&n; *&t;&t;Alan Cox&t;: eth_rebuild_header missing an htons and&n; *&t;&t;&t;&t;  minor other things.&n; *&t;&t;Tegge&t;&t;: Arp bug fixes. &n; *&t;&t;Florian&t;&t;: Removed many unnecessary functions, code cleanup&n; *&t;&t;&t;&t;  and changes for new arp and skbuff.&n; *&t;&t;Alan Cox&t;: Redid header building to reflect new format.&n; *&t;&t;Alan Cox&t;: ARP only when compiled with CONFIG_INET&n; *&t;&t;Greg Page&t;: 802.2 and SNAP stuff&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -372,6 +372,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Try and get ARP to resolve the header.&n;&t; */
+macro_line|#ifdef CONFIG_INET&t; 
 r_return
 id|arp_find
 c_func
@@ -392,6 +393,11 @@ l_int|1
 suffix:colon
 l_int|0
 suffix:semicolon
+macro_line|#else
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif&t;
 )brace
 multiline_comment|/*&n; *&t;Determine the packet&squot;s protocol ID. The rule here is that we &n; *&t;assume 802.3 if the type field is short enough to be a length.&n; *&t;This is normal practice and works for any &squot;now in use&squot; protocol.&n; */
 DECL|function|eth_type_trans
@@ -423,6 +429,10 @@ op_star
 )paren
 id|skb-&gt;data
 suffix:semicolon
+r_char
+op_star
+id|rawp
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -431,8 +441,37 @@ c_func
 (paren
 id|eth-&gt;h_proto
 )paren
-OL
+op_ge
 l_int|1536
+)paren
+r_return
+id|eth-&gt;h_proto
+suffix:semicolon
+id|rawp
+op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
+(paren
+id|eth
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|rawp
+op_eq
+l_int|0xFFFF
 )paren
 r_return
 id|htons
@@ -441,8 +480,32 @@ c_func
 id|ETH_P_802_3
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|rawp
+op_eq
+l_int|0xAAAA
+)paren
 r_return
-id|eth-&gt;h_proto
+id|htons
+c_func
+(paren
+id|ETH_P_SNAP
+)paren
+suffix:semicolon
+r_return
+id|htons
+c_func
+(paren
+id|ETH_P_802_2
+)paren
 suffix:semicolon
 )brace
 eof

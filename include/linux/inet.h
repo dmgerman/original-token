@@ -2,61 +2,22 @@ multiline_comment|/*&n; *&t;&t;Swansea University Computer Society NET3&n; *&n; 
 macro_line|#ifndef _LINUX_INET_H
 DECL|macro|_LINUX_INET_H
 mdefine_line|#define _LINUX_INET_H
-macro_line|#include &lt;linux/ddi.h&gt;
-DECL|macro|INET_DEBUG
-macro_line|#undef&t;INET_DEBUG
-macro_line|#ifdef&t;INET_DEBUG
-DECL|macro|DPRINTF
-macro_line|#  define&t;DPRINTF(x)&t;dprintf x 
-macro_line|#else
-DECL|macro|DPRINTF
-macro_line|#   define&t;DPRINTF(x)&t;do ; while (0)
+macro_line|#ifdef __i386__
+DECL|macro|NET16
+mdefine_line|#define NET16(x)&t;((((x) &gt;&gt; 8) &amp; 0x00FF) | (((x) &lt;&lt; 8) &amp; 0xFF00))
 macro_line|#endif
-multiline_comment|/* Debug levels. One per module. */
-DECL|macro|DBG_OFF
-mdefine_line|#define DBG_OFF&t;&t;0&t;&t;&t;/* no debugging&t;&t;*/
-DECL|macro|DBG_INET
-mdefine_line|#define DBG_INET&t;1&t;&t;&t;/* sock.c&t;&t;*/
-DECL|macro|DBG_RT
-mdefine_line|#define DBG_RT&t;&t;2&t;&t;&t;/* route.c&t;&t;*/
-DECL|macro|DBG_DEV
-mdefine_line|#define DBG_DEV&t;&t;3&t;&t;&t;/* dev.c&t;&t;*/
-DECL|macro|DBG_ETH
-mdefine_line|#define DBG_ETH&t;&t;4&t;&t;&t;/* eth.c&t;&t;*/
-DECL|macro|DBG_PROTO
-mdefine_line|#define DBG_PROTO&t;5&t;&t;&t;/* protocol.c&t;&t;*/
-DECL|macro|DBG_TMR
-mdefine_line|#define DBG_TMR&t;&t;6&t;&t;&t;/* timer.c&t;&t;*/
-DECL|macro|DBG_PKT
-mdefine_line|#define DBG_PKT&t;&t;7&t;&t;&t;/* packet.c&t;&t;*/
-DECL|macro|DBG_RAW
-mdefine_line|#define DBG_RAW&t;&t;8&t;&t;&t;/* raw.c&t;&t;*/
-DECL|macro|DBG_LOOPB
-mdefine_line|#define DBG_LOOPB&t;10&t;&t;&t;/* loopback.c&t;&t;*/
-DECL|macro|DBG_SLIP
-mdefine_line|#define DBG_SLIP&t;11&t;&t;&t;/* slip.c&t;&t;*/
-DECL|macro|DBG_ARP
-mdefine_line|#define DBG_ARP&t;&t;20&t;&t;&t;/* arp.c&t;&t;*/
-DECL|macro|DBG_IP
-mdefine_line|#define DBG_IP&t;&t;21&t;&t;&t;/* ip.c&t;&t;&t;*/
-DECL|macro|DBG_ICMP
-mdefine_line|#define DBG_ICMP&t;22&t;&t;&t;/* icmp.c&t;&t;*/
-DECL|macro|DBG_TCP
-mdefine_line|#define DBG_TCP&t;&t;23&t;&t;&t;/* tcp.c&t;&t;*/
-DECL|macro|DBG_UDP
-mdefine_line|#define DBG_UDP&t;&t;24&t;&t;&t;/* udp.c&t;&t;*/
+macro_line|#ifdef __mc680x0__
+DECL|macro|NET16
+mdefine_line|#define NET16(x)&t;(x)
+macro_line|#endif
 macro_line|#ifdef __KERNEL__
-r_extern
-r_int
-id|inet_debug
-suffix:semicolon
 r_extern
 r_void
 id|inet_proto_init
 c_func
 (paren
 r_struct
-id|ddi_proto
+id|net_proto
 op_star
 id|pro
 )paren
@@ -81,36 +42,6 @@ c_func
 r_char
 op_star
 id|str
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|dprintf
-c_func
-(paren
-r_int
-id|level
-comma
-r_char
-op_star
-id|fmt
-comma
-dot
-dot
-dot
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|dbg_ioctl
-c_func
-(paren
-r_void
-op_star
-id|arg
-comma
-r_int
-id|level
 )paren
 suffix:semicolon
 macro_line|#endif

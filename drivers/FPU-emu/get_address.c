@@ -147,6 +147,73 @@ id|___vm86_ds
 suffix:semicolon
 DECL|macro|VM86_REG_
 mdefine_line|#define VM86_REG_(x) (*(unsigned short *) &bslash;&n;&t;&t;      (reg_offset_vm86[((unsigned)x)]+(char *) FPU_info))
+DECL|variable|reg_offset_p286
+r_static
+r_int
+id|reg_offset_p286
+(braket
+)braket
+op_assign
+(brace
+m_offsetof
+(paren
+r_struct
+id|info
+comma
+id|___cs
+)paren
+comma
+m_offsetof
+(paren
+r_struct
+id|info
+comma
+id|___ds
+)paren
+comma
+m_offsetof
+(paren
+r_struct
+id|info
+comma
+id|___es
+)paren
+comma
+m_offsetof
+(paren
+r_struct
+id|info
+comma
+id|___fs
+)paren
+comma
+m_offsetof
+(paren
+r_struct
+id|info
+comma
+id|___gs
+)paren
+comma
+m_offsetof
+(paren
+r_struct
+id|info
+comma
+id|___ss
+)paren
+comma
+m_offsetof
+(paren
+r_struct
+id|info
+comma
+id|___ds
+)paren
+)brace
+suffix:semicolon
+DECL|macro|P286_REG_
+mdefine_line|#define P286_REG_(x) (*(unsigned short *) &bslash;&n;&t;&t;      (reg_offset_p286[((unsigned)x)]+(char *) FPU_info))
 multiline_comment|/* Decode the SIB byte. This function assumes mod != 0 */
 DECL|function|sib
 r_static
@@ -398,20 +465,23 @@ op_star
 id|offset
 suffix:semicolon
 )brace
-DECL|function|vm86_segment
+DECL|function|mode16_segment
 r_static
 r_int
 r_int
-id|vm86_segment
+id|mode16_segment
 c_func
 (paren
-r_int
-r_char
-id|segment
+id|fpu_addr_modes
+id|addr_modes
 )paren
 (brace
+r_int
 id|segment
-op_decrement
+op_assign
+id|addr_modes.override.segment
+op_minus
+l_int|1
 suffix:semicolon
 macro_line|#ifdef PARANOID
 r_if
@@ -440,6 +510,11 @@ id|SIGSEGV
 suffix:semicolon
 )brace
 macro_line|#endif PARANOID
+r_if
+c_cond
+(paren
+id|addr_modes.vm86
+)paren
 r_return
 (paren
 r_int
@@ -452,6 +527,30 @@ id|segment
 )paren
 op_lshift
 l_int|4
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|addr_modes.p286
+)paren
+r_return
+(paren
+r_int
+r_int
+)paren
+id|LDT_BASE_ADDR
+c_func
+(paren
+id|P286_REG_
+c_func
+(paren
+id|segment
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;       MOD R/M byte:  MOD == 3 has a special use for the FPU&n;                      SIB byte used iff R/M = 100b&n;&n;       7   6   5   4   3   2   1   0&n;       .....   .........   .........&n;        MOD    OPCODE(2)     R/M&n;&n;&n;       SIB byte&n;&n;       7   6   5   4   3   2   1   0&n;       .....   .........   .........&n;        SS      INDEX        BASE&n;&n;*/
@@ -494,7 +593,7 @@ op_assign
 id|FPU_DS
 suffix:semicolon
 macro_line|#endif PECULIAR_486
-multiline_comment|/* Memory accessed via the cs selector is write protected&n;     in 32 bit protected mode. */
+multiline_comment|/* Memory accessed via the cs selector is write protected&n;     in protected mode. */
 DECL|macro|FPU_WRITE_BIT
 mdefine_line|#define FPU_WRITE_BIT 0x10
 r_if
@@ -743,15 +842,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|addr_modes.vm86
+id|addr_modes.mode16
 )paren
 (brace
 id|offset
 op_add_assign
-id|vm86_segment
+id|mode16_segment
 c_func
 (paren
-id|addr_modes.override.segment
+id|addr_modes
 )paren
 suffix:semicolon
 )brace
@@ -802,7 +901,7 @@ op_assign
 id|FPU_DS
 suffix:semicolon
 macro_line|#endif PECULIAR_486
-multiline_comment|/* Memory accessed via the cs selector is write protected&n;     in 32 bit protected mode. */
+multiline_comment|/* Memory accessed via the cs selector is write protected&n;     in protected mode. */
 DECL|macro|FPU_WRITE_BIT
 mdefine_line|#define FPU_WRITE_BIT 0x10
 r_if
@@ -1130,15 +1229,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|addr_modes.vm86
+id|addr_modes.mode16
 )paren
 (brace
 id|offset
 op_add_assign
-id|vm86_segment
+id|mode16_segment
 c_func
 (paren
-id|addr_modes.override.segment
+id|addr_modes
 )paren
 suffix:semicolon
 )brace

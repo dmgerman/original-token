@@ -68,7 +68,7 @@ id|socket_state
 suffix:semicolon
 DECL|macro|SO_ACCEPTCON
 mdefine_line|#define SO_ACCEPTCON&t;(1&lt;&lt;16)&t;&t;/* performed a listen&t;&t;*/
-multiline_comment|/*&n; * Internel representation of a socket. not all the fields are used by&n; * all configurations:&n; *&n; *&t;&t;server&t;&t;&t;client&n; * conn&t;&t;client connected to&t;server connected to&n; * iconn&t;list of clients&t;&t;-unused-&n; *&t;&t; awaiting connections&n; * wait&t;&t;sleep for clients,&t;sleep for connection,&n; *&t;&t;sleep for i/o&t;&t;sleep for i/o&n; */
+multiline_comment|/*&n; * Internal representation of a socket. not all the fields are used by&n; * all configurations:&n; *&n; *&t;&t;server&t;&t;&t;client&n; * conn&t;&t;client connected to&t;server connected to&n; * iconn&t;list of clients&t;&t;-unused-&n; *&t;&t; awaiting connections&n; * wait&t;&t;sleep for clients,&t;sleep for connection,&n; *&t;&t;sleep for i/o&t;&t;sleep for i/o&n; */
 DECL|struct|socket
 r_struct
 id|socket
@@ -618,6 +618,31 @@ r_int
 id|arg
 )paren
 suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|net_proto
+r_struct
+id|net_proto
+(brace
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+multiline_comment|/* Protocol name */
+DECL|member|init_func
+r_void
+(paren
+op_star
+id|init_func
+)paren
+(paren
+r_struct
+id|net_proto
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Bootstrap */
 )brace
 suffix:semicolon
 r_extern

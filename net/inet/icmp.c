@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Internet Control Message Protocol (ICMP)&n; *&n; * Version:&t;@(#)icmp.c&t;1.0.11&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Generic queue usage.&n; *&t;&t;Gerhard Koerting:&t;ICMP addressing corrected&n; *&t;&t;Alan Cox&t;:&t;Use tos/ttl settings&n; *&t;&t;Alan Cox&t;:&t;Protocol violations&n; *&t;&t;Alan Cox&t;:&t;SNMP Statistics&t;&t;&n; *&t;&t;Alan Cox&t;:&t;Routing errors&n; *&n; * &n; *&t;FIXME:&n; *&t;&t;When 1.0.6 is out merge in the NET channel diffs for TIMESTAMP&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Internet Control Message Protocol (ICMP)&n; *&n; * Version:&t;@(#)icmp.c&t;1.0.11&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Generic queue usage.&n; *&t;&t;Gerhard Koerting:&t;ICMP addressing corrected&n; *&t;&t;Alan Cox&t;:&t;Use tos/ttl settings&n; *&t;&t;Alan Cox&t;:&t;Protocol violations&n; *&t;&t;Alan Cox&t;:&t;SNMP Statistics&t;&t;&n; *&t;&t;Alan Cox&t;:&t;Routing errors&n; *&t;&t;Alan Cox&t;:&t;Changes for newer routing code&n; *&t;&t;Alan Cox&t;:&t;Removed old debugging junk&n; *&n; * &n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -132,53 +132,6 @@ l_int|0
 multiline_comment|/*&t;ICMP_HOST_UNR_TOS&t;*/
 )brace
 suffix:semicolon
-multiline_comment|/* &n; *&t;Display the contents of an ICMP header. &n; */
-DECL|function|print_icmp
-r_static
-r_void
-id|print_icmp
-c_func
-(paren
-r_struct
-id|icmphdr
-op_star
-id|icmph
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|inet_debug
-op_ne
-id|DBG_ICMP
-)paren
-r_return
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;ICMP: type = %d, code = %d, checksum = %X&bslash;n&quot;
-comma
-id|icmph-&gt;type
-comma
-id|icmph-&gt;code
-comma
-id|icmph-&gt;checksum
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;      gateway = %s&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|icmph-&gt;un.gateway
-)paren
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; *&t;Send an ICMP message in response to a situation&n; *&n; *&t;Fixme: Fragment handling is wrong really.&n; */
 DECL|function|icmp_send
 r_void
@@ -231,24 +184,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Make this =dev to force replies on the same interface */
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_ICMP
-comma
-l_string|&quot;icmp_send(skb_in = %X, type = %d, code = %d, dev=%X)&bslash;n&quot;
-comma
-id|skb_in
-comma
-id|type
-comma
-id|code
-comma
-id|dev
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Find the original IP header.&n;&t; */
 id|iph
 op_assign
@@ -600,22 +535,6 @@ op_plus
 l_int|8
 )paren
 suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_ICMP
-comma
-l_string|&quot;&gt;&gt;&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-id|print_icmp
-c_func
-(paren
-id|icmph
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Send it and free it once sent.&n;&t; */
 id|ip_queue_xmit
 c_func
@@ -699,43 +618,11 @@ l_int|7
 r_case
 id|ICMP_NET_UNREACH
 suffix:colon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_ICMP
-comma
-l_string|&quot;ICMP: %s: network unreachable.&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|iph-&gt;daddr
-)paren
-)paren
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 id|ICMP_HOST_UNREACH
 suffix:colon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_ICMP
-comma
-l_string|&quot;ICMP: %s: host unreachable.&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|iph-&gt;daddr
-)paren
-)paren
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -764,26 +651,6 @@ suffix:semicolon
 r_case
 id|ICMP_PORT_UNREACH
 suffix:colon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_ICMP
-comma
-l_string|&quot;ICMP: %s:%d: port unreachable.&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|iph-&gt;daddr
-)paren
-comma
-op_minus
-l_int|1
-multiline_comment|/* FIXME: ntohs(iph-&gt;port) */
-)paren
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -822,28 +689,6 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_ICMP
-comma
-l_string|&quot;ICMP: Unreachable: CODE=%d from %s&bslash;n&quot;
-comma
-(paren
-id|icmph-&gt;code
-op_amp
-l_int|7
-)paren
-comma
-id|in_ntoa
-c_func
-(paren
-id|iph-&gt;daddr
-)paren
-)paren
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -1034,6 +879,8 @@ comma
 id|icmph-&gt;un.gateway
 comma
 id|dev
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_break
@@ -1100,6 +947,8 @@ comma
 id|icmph-&gt;un.gateway
 comma
 id|dev
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_break
@@ -1120,22 +969,6 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_ICMP
-comma
-l_string|&quot;ICMP: Unreach: CODE=%d&bslash;n&quot;
-comma
-(paren
-id|icmph-&gt;code
-op_amp
-l_int|7
-)paren
-)paren
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -2149,22 +1982,6 @@ op_eq
 id|IS_BROADCAST
 )paren
 (brace
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_ICMP
-comma
-l_string|&quot;ICMP: Discarded broadcast from %s&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|saddr
-)paren
-)paren
-)paren
-suffix:semicolon
 id|icmp_statistics.IcmpInErrors
 op_increment
 suffix:semicolon
@@ -2240,12 +2057,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|print_icmp
-c_func
-(paren
-id|icmph
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Parse the ICMP message &n;&t; */
 r_switch
 c_cond
@@ -2506,24 +2317,6 @@ suffix:colon
 id|icmp_statistics.IcmpInErrors
 op_increment
 suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_ICMP
-comma
-l_string|&quot;ICMP: Unsupported ICMP from %s, type = 0x%X&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|saddr
-)paren
-comma
-id|icmph-&gt;type
-)paren
-)paren
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -2575,22 +2368,6 @@ c_cond
 id|cmd
 )paren
 (brace
-r_case
-id|DDIOCSDBG
-suffix:colon
-r_return
-id|dbg_ioctl
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-id|DBG_ICMP
-)paren
-suffix:semicolon
 r_default
 suffix:colon
 r_return

@@ -1783,8 +1783,7 @@ id|current-&gt;pid
 suffix:semicolon
 id|current-&gt;tty
 op_assign
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 r_return
 id|current-&gt;pgrp

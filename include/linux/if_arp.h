@@ -30,8 +30,8 @@ DECL|macro|ARPHRD_SLIP6
 mdefine_line|#define ARPHRD_SLIP6&t;258
 DECL|macro|ARPHRD_CSLIP6
 mdefine_line|#define ARPHRD_CSLIP6&t;259
-DECL|macro|ARPHRD_KISS
-mdefine_line|#define ARPHRD_KISS&t;260
+DECL|macro|ARPHRD_RSRVD
+mdefine_line|#define ARPHRD_RSRVD&t;260&t;&t;/* Notional KISS type &t;&t;*/
 DECL|macro|ARPHRD_ADAPT
 mdefine_line|#define ARPHRD_ADAPT&t;264
 multiline_comment|/* ARP protocol opcodes. */

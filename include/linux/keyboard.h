@@ -183,6 +183,8 @@ DECL|macro|K_CAPSON
 mdefine_line|#define K_CAPSON&t;K(KT_SPEC,13)
 DECL|macro|K_COMPOSE
 mdefine_line|#define K_COMPOSE       K(KT_SPEC,14)
+DECL|macro|K_SAK
+mdefine_line|#define K_SAK&t;&t;K(KT_SPEC,15)
 DECL|macro|K_P0
 mdefine_line|#define K_P0&t;&t;K(KT_PAD,0)
 DECL|macro|K_P1

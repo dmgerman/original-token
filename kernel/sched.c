@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/segment.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -45,6 +46,13 @@ op_div
 id|HZ
 suffix:semicolon
 multiline_comment|/* microsecs */
+DECL|variable|tq_timer
+id|DECLARE_TASK_QUEUE
+c_func
+(paren
+id|tq_timer
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * phase-lock loop variables&n; */
 DECL|variable|time_status
 r_int
@@ -2333,6 +2341,24 @@ c_func
 suffix:semicolon
 )brace
 )brace
+DECL|function|tqueue_bh
+r_void
+id|tqueue_bh
+c_func
+(paren
+r_void
+op_star
+id|unused
+)paren
+(brace
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_timer
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * The int argument is really a (struct pt_regs *), in case the&n; * interrupt wants to know from where it was called. The timer&n; * irq uses this to decide if it should update the user or system&n; * times.&n; */
 DECL|function|do_timer
 r_static
@@ -2815,6 +2841,20 @@ id|TIMER_BH
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|tq_timer
+op_ne
+op_amp
+id|tq_last
+)paren
+id|mark_bh
+c_func
+(paren
+id|TQUEUE_BH
+)paren
+suffix:semicolon
 id|sti
 c_func
 (paren
@@ -3335,6 +3375,15 @@ dot
 id|routine
 op_assign
 id|timer_bh
+suffix:semicolon
+id|bh_base
+(braket
+id|TQUEUE_BH
+)braket
+dot
+id|routine
+op_assign
+id|tqueue_bh
 suffix:semicolon
 r_if
 c_cond

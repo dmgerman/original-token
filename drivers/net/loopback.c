@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Pseudo-driver for the loopback interface.&n; *&n; * Version:&t;@(#)loopback.c&t;1.0.4b&t;08/16/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Pseudo-driver for the loopback interface.&n; *&n; * Version:&t;@(#)loopback.c&t;1.0.4b&t;08/16/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&n; *&t;&t;Alan Cox&t;:&t;Fixed oddments for NET3.014&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -48,20 +48,6 @@ id|dev-&gt;priv
 suffix:semicolon
 r_int
 id|done
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_LOOPB
-comma
-l_string|&quot;loopback_xmit(dev=%X, skb=%X)&bslash;n&quot;
-comma
-id|dev
-comma
-id|skb
-)paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -219,6 +205,26 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 )brace
+DECL|function|loopback_open
+r_static
+r_int
+id|loopback_open
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+id|dev-&gt;flags
+op_or_assign
+id|IFF_LOOPBACK
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* Initialize the rest of the LOOPBACK device. */
 r_int
 DECL|function|loopback_init
@@ -279,6 +285,10 @@ id|dev-&gt;rebuild_header
 op_assign
 id|eth_rebuild_header
 suffix:semicolon
+id|dev-&gt;open
+op_assign
+id|loopback_open
+suffix:semicolon
 macro_line|#else
 id|dev-&gt;hard_header_length
 op_assign
@@ -315,6 +325,7 @@ id|dev-&gt;family
 op_assign
 id|AF_INET
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET    
 id|dev-&gt;pa_addr
 op_assign
 id|in_aton
@@ -347,6 +358,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
+macro_line|#endif  
 id|dev-&gt;priv
 op_assign
 id|kmalloc

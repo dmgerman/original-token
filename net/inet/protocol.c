@@ -157,18 +157,6 @@ id|inet_protocol
 op_star
 id|p
 suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_PROTO
-comma
-l_string|&quot;get_protocol (%d)&bslash;n &quot;
-comma
-id|prot
-)paren
-)paren
-suffix:semicolon
 id|hash
 op_assign
 id|prot
@@ -198,18 +186,6 @@ op_assign
 id|p-&gt;next
 )paren
 (brace
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_PROTO
-comma
-l_string|&quot;trying protocol %d&bslash;n&quot;
-comma
-id|p-&gt;protocol
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

@@ -1450,13 +1450,31 @@ op_logical_neg
 id|skb-&gt;sk-&gt;dead
 )paren
 (brace
-id|wake_up_interruptible
+id|skb-&gt;sk
+op_member_access_from_pointer
+id|write_space
 c_func
 (paren
-id|skb-&gt;sk-&gt;sleep
+id|skb-&gt;sk
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_SLAVE_BALANCING&t;&t;&t;&t;
+r_if
+c_cond
+(paren
+id|skb-&gt;in_dev_queue
+op_logical_and
+id|skb-&gt;dev
+op_ne
+l_int|NULL
+)paren
+(brace
+id|skb-&gt;dev-&gt;pkt_queue
+op_decrement
+suffix:semicolon
+)brace
+macro_line|#endif
 id|kfree_skbmem
 c_func
 (paren
@@ -1468,6 +1486,23 @@ suffix:semicolon
 )brace
 )brace
 r_else
+(brace
+macro_line|#ifdef CONFIG_SLAVE_BALANCING&t;&t;&t;&t;
+r_if
+c_cond
+(paren
+id|skb-&gt;in_dev_queue
+op_logical_and
+id|skb-&gt;dev
+op_ne
+l_int|NULL
+)paren
+(brace
+id|skb-&gt;dev-&gt;pkt_queue
+op_decrement
+suffix:semicolon
+)brace
+macro_line|#endif
 id|kfree_skbmem
 c_func
 (paren
@@ -1476,6 +1511,7 @@ comma
 id|skb-&gt;mem_len
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; *&t;Allocate a new skbuff. We do this ourselves so we can fill in a few &squot;private&squot;&n; *&t;fields and also do memory statistics to find all the [BEEP] leaks.&n; */
 DECL|function|alloc_skb
@@ -1603,6 +1639,12 @@ id|skb-&gt;mem_addr
 op_assign
 id|skb
 suffix:semicolon
+macro_line|#ifdef CONFIG_SLAVE_BALANCING &t;
+id|skb-&gt;in_dev_queue
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif &t;
 id|skb-&gt;fraglist
 op_assign
 l_int|NULL
@@ -1661,7 +1703,7 @@ r_int
 id|size
 )paren
 (brace
-macro_line|#if CONFIG_SKB_CHECK
+macro_line|#ifdef CONFIG_SLAVE_BALANCING
 r_struct
 id|sk_buff
 op_star
@@ -1669,6 +1711,52 @@ id|x
 op_assign
 id|mem
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|x-&gt;in_dev_queue
+op_logical_and
+id|x-&gt;dev
+op_ne
+l_int|NULL
+)paren
+(brace
+id|x-&gt;dev-&gt;pkt_queue
+op_decrement
+suffix:semicolon
+)brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif&t;
+macro_line|#if CONFIG_SKB_CHECK
+macro_line|#ifndef CONFIG_SLAVE_BALANCING
+r_struct
+id|sk_buff
+op_star
+id|x
+op_assign
+id|mem
+suffix:semicolon
+macro_line|#endif&t;
 id|IS_SKB
 c_func
 (paren

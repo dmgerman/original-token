@@ -25,8 +25,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &quot;slhc.h&quot;
-DECL|macro|DPRINT
-mdefine_line|#define DPRINT(x)
 DECL|variable|last_retran
 r_int
 id|last_retran
@@ -796,24 +794,6 @@ l_int|32
 )paren
 )paren
 (brace
-id|DPRINT
-c_func
-(paren
-(paren
-l_string|&quot;comp: noncomp 1 %d %d %d&bslash;n&quot;
-comma
-id|ip-&gt;protocol
-comma
-id|ntohs
-c_func
-(paren
-id|ip-&gt;frag_off
-)paren
-comma
-id|ip-&gt;frag_off
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* Send as regular IP */
 r_if
 c_cond
@@ -884,26 +864,6 @@ id|th-&gt;ack
 )paren
 )paren
 (brace
-id|DPRINT
-c_func
-(paren
-(paren
-l_string|&quot;comp: noncomp 2 %x %x %d %d %d %d&bslash;n&quot;
-comma
-id|ip
-comma
-id|th
-comma
-id|th-&gt;syn
-comma
-id|th-&gt;fin
-comma
-id|th-&gt;rst
-comma
-id|th-&gt;ack
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* TCP connection stuff; send as regular IP */
 id|comp-&gt;sls_o_tcp
 op_increment
@@ -974,14 +934,6 @@ suffix:semicolon
 id|comp-&gt;xmit_oldest
 op_assign
 id|lcs-&gt;cs_this
-suffix:semicolon
-id|DPRINT
-c_func
-(paren
-(paren
-l_string|&quot;comp: not found&bslash;n&quot;
-)paren
-)paren
 suffix:semicolon
 r_goto
 id|uncompressed
@@ -1130,14 +1082,6 @@ l_int|0
 )paren
 )paren
 (brace
-id|DPRINT
-c_func
-(paren
-(paren
-l_string|&quot;comp: incompat&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_goto
 id|uncompressed
 suffix:semicolon
@@ -1182,14 +1126,6 @@ id|oth-&gt;urg_ptr
 )paren
 (brace
 multiline_comment|/* argh! URG not set but urp changed -- a sensible&n;&t;&t; * implementation should never do this but RFC793&n;&t;&t; * doesn&squot;t prohibit the change so we have to deal&n;&t;&t; * with it. */
-id|DPRINT
-c_func
-(paren
-(paren
-l_string|&quot;comp: urg incompat&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_goto
 id|uncompressed
 suffix:semicolon
@@ -1358,14 +1294,6 @@ id|hlen
 r_break
 suffix:semicolon
 )brace
-id|DPRINT
-c_func
-(paren
-(paren
-l_string|&quot;comp: retrans&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_goto
 id|uncompressed
 suffix:semicolon
@@ -1378,14 +1306,6 @@ r_case
 id|SPECIAL_D
 suffix:colon
 multiline_comment|/* actual changes match one of our special case encodings --&n;&t;&t; * send packet uncompressed.&n;&t;&t; */
-id|DPRINT
-c_func
-(paren
-(paren
-l_string|&quot;comp: special&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_goto
 id|uncompressed
 suffix:semicolon
@@ -1613,24 +1533,6 @@ id|deltaA
 suffix:semicolon
 multiline_comment|/* Write TCP checksum */
 multiline_comment|/* deltaS is now the size of the change section of the compressed header */
-id|DPRINT
-c_func
-(paren
-(paren
-l_string|&quot;comp: %x %x %x %d %d&bslash;n&quot;
-comma
-id|icp
-comma
-id|cp
-comma
-id|new_seq
-comma
-id|hlen
-comma
-id|deltaS
-)paren
-)paren
-suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -1871,14 +1773,6 @@ l_int|3
 id|comp-&gt;sls_i_error
 op_increment
 suffix:semicolon
-id|DPRINT
-c_func
-(paren
-(paren
-l_string|&quot;uncomp: runt&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1941,14 +1835,6 @@ id|SLF_TOSS
 id|comp-&gt;sls_i_tossed
 op_increment
 suffix:semicolon
-id|DPRINT
-c_func
-(paren
-(paren
-l_string|&quot;uncomp: toss&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1991,14 +1877,6 @@ l_int|1
 )paren
 (brace
 multiline_comment|/* Read the TCP checksum */
-id|DPRINT
-c_func
-(paren
-(paren
-l_string|&quot;uncomp: bad tcp chk&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_goto
 id|bad
 suffix:semicolon
@@ -2153,14 +2031,6 @@ op_minus
 l_int|1
 )paren
 (brace
-id|DPRINT
-c_func
-(paren
-(paren
-l_string|&quot;uncomp: bad U&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_goto
 id|bad
 suffix:semicolon
@@ -2205,14 +2075,6 @@ op_minus
 l_int|1
 )paren
 (brace
-id|DPRINT
-c_func
-(paren
-(paren
-l_string|&quot;uncomp: bad W&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_goto
 id|bad
 suffix:semicolon
@@ -2258,14 +2120,6 @@ op_minus
 l_int|1
 )paren
 (brace
-id|DPRINT
-c_func
-(paren
-(paren
-l_string|&quot;uncomp: bad A&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_goto
 id|bad
 suffix:semicolon
@@ -2311,14 +2165,6 @@ op_minus
 l_int|1
 )paren
 (brace
-id|DPRINT
-c_func
-(paren
-(paren
-l_string|&quot;uncomp: bad S&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_goto
 id|bad
 suffix:semicolon
@@ -2367,14 +2213,6 @@ op_minus
 l_int|1
 )paren
 (brace
-id|DPRINT
-c_func
-(paren
-(paren
-l_string|&quot;uncomp: bad I&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_goto
 id|bad
 suffix:semicolon
@@ -2441,24 +2279,6 @@ suffix:semicolon
 id|ip-&gt;check
 op_assign
 l_int|0
-suffix:semicolon
-id|DPRINT
-c_func
-(paren
-(paren
-l_string|&quot;uncomp: %d %d %d %d&bslash;n&quot;
-comma
-id|cp
-op_minus
-id|icp
-comma
-id|hdrlen
-comma
-id|isize
-comma
-id|len
-)paren
-)paren
 suffix:semicolon
 id|memmove
 c_func
@@ -2606,23 +2426,6 @@ op_star
 l_int|4
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|inet_debug
-op_eq
-id|DBG_SLIP
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;runcomp: change %x len %d&bslash;n&quot;
-comma
-id|changes
-comma
-id|len
-)paren
-suffix:semicolon
 r_return
 id|len
 suffix:semicolon

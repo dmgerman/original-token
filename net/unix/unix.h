@@ -96,7 +96,7 @@ id|unix_proto_init
 c_func
 (paren
 r_struct
-id|ddi_proto
+id|net_proto
 op_star
 id|pro
 )paren

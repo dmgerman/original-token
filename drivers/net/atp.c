@@ -2377,7 +2377,7 @@ suffix:semicolon
 id|mark_bh
 c_func
 (paren
-id|INET_BH
+id|NET_BH
 )paren
 suffix:semicolon
 multiline_comment|/* Inform upper layers. */

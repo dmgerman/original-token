@@ -961,6 +961,7 @@ multiline_comment|/* up to 14 characters, the rest are zeroes */
 suffix:semicolon
 DECL|macro|SYSV_DIRSIZE
 mdefine_line|#define SYSV_DIRSIZE&t;sizeof(struct sysv_dir_entry)&t;/* size of every directory entry */
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* Operations */
 multiline_comment|/* ========== */
 multiline_comment|/* identify the FS in memory */
@@ -1683,5 +1684,6 @@ r_struct
 id|inode_operations
 id|sysv_symlink_inode_operations
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

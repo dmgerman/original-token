@@ -26,6 +26,8 @@ DECL|macro|O_NDELAY
 mdefine_line|#define O_NDELAY&t;O_NONBLOCK
 DECL|macro|O_SYNC
 mdefine_line|#define O_SYNC&t;&t;010000
+DECL|macro|FASYNC
+mdefine_line|#define FASYNC&t;&t;020000&t;/* fcntl, for BSD compatibility */
 DECL|macro|F_DUPFD
 mdefine_line|#define F_DUPFD&t;&t;0&t;/* dup */
 DECL|macro|F_GETFD

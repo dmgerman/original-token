@@ -136,38 +136,6 @@ id|mask
 op_assign
 l_int|0xFFFFFFFF
 suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_DEV
-comma
-l_string|&quot;ip_addr_match(%s, &quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|me
-)paren
-)paren
-)paren
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_DEV
-comma
-l_string|&quot;%s)&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|him
-)paren
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Simple case&n;&t; */
 r_if
 c_cond
@@ -484,7 +452,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* no match at all */
 )brace
-multiline_comment|/*&n; *&t;Retrieve our own address.&n; *&n; *&t;Because the loopback address (127.0.0.1) is already recognized&n; *&t;automatically, we can use the loopback interface&squot;s address as&n; *&t;our &quot;primary&quot; interface.  This is the addressed used by IP et&n; *&t;al when it doesn&squot;t know which address to use (i.e. it does not&n; *&t;yet know from or to which interface to go...).&n; */
+multiline_comment|/*&n; *&t;Retrieve our own address.&n; *&n; *&t;Because the loopback address (127.0.0.1) is already recognized&n; *&t;automatically, we can use the loopback interface&squot;s address as&n; *&t;our &quot;primary&quot; interface.  This is the address used by IP et&n; *&t;al when it doesn&squot;t know which address to use (i.e. it does not&n; *&t;yet know from or to which interface to go...).&n; */
 DECL|function|ip_my_addr
 r_int
 r_int

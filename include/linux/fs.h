@@ -86,6 +86,8 @@ DECL|macro|MINOR
 mdefine_line|#define MINOR(a) (int)((unsigned short)(a) &amp; 0xFF)
 DECL|macro|MKDEV
 mdefine_line|#define MKDEV(a,b) ((int)((((a) &amp; 0xff) &lt;&lt; 8) | ((b) &amp; 0xff)))
+DECL|macro|NODEV
+mdefine_line|#define NODEV MKDEV(0,0)
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
@@ -554,11 +556,6 @@ DECL|member|f_mode
 id|mode_t
 id|f_mode
 suffix:semicolon
-DECL|member|f_rdev
-id|dev_t
-id|f_rdev
-suffix:semicolon
-multiline_comment|/* needed for /dev/tty */
 DECL|member|f_pos
 id|off_t
 id|f_pos
@@ -587,6 +584,11 @@ comma
 op_star
 id|f_prev
 suffix:semicolon
+DECL|member|f_owner
+r_int
+id|f_owner
+suffix:semicolon
+multiline_comment|/* pid or -pgrp where SIGIO should be sent */
 DECL|member|f_inode
 r_struct
 id|inode
@@ -599,6 +601,12 @@ id|file_operations
 op_star
 id|f_op
 suffix:semicolon
+DECL|member|private_data
+r_void
+op_star
+id|private_data
+suffix:semicolon
+multiline_comment|/* needed for tty driver, and maybe others */
 )brace
 suffix:semicolon
 DECL|struct|file_lock
@@ -649,6 +657,31 @@ id|fl_end
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|fasync_struct
+r_struct
+id|fasync_struct
+(brace
+DECL|member|magic
+r_int
+id|magic
+suffix:semicolon
+DECL|member|fa_next
+r_struct
+id|fasync_struct
+op_star
+id|fa_next
+suffix:semicolon
+multiline_comment|/* singly linked list */
+DECL|member|fa_file
+r_struct
+id|file
+op_star
+id|fa_file
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|FASYNC_MAGIC
+mdefine_line|#define FASYNC_MAGIC 0x4601
 macro_line|#include &lt;linux/minix_fs_sb.h&gt;
 macro_line|#include &lt;linux/ext_fs_sb.h&gt;
 macro_line|#include &lt;linux/ext2_fs_sb.h&gt;
@@ -991,6 +1024,24 @@ comma
 r_struct
 id|file
 op_star
+)paren
+suffix:semicolon
+DECL|member|fasync
+r_int
+(paren
+op_star
+id|fasync
+)paren
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
+comma
+r_int
 )paren
 suffix:semicolon
 )brace
@@ -1487,6 +1538,20 @@ r_int
 )paren
 suffix:semicolon
 multiline_comment|/* yes, it&squot;s really unsigned */
+r_extern
+r_void
+id|kill_fasync
+c_func
+(paren
+r_struct
+id|fasync_struct
+op_star
+id|fa
+comma
+r_int
+id|sig
+)paren
+suffix:semicolon
 r_extern
 r_int
 id|getname

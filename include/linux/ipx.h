@@ -1,3 +1,6 @@
+macro_line|#ifndef _IPX_H_
+DECL|macro|_IPX_H_
+mdefine_line|#define _IPX_H_
 DECL|struct|sockaddr_ipx
 r_struct
 id|sockaddr_ipx
@@ -22,6 +25,11 @@ suffix:semicolon
 DECL|member|sipx_port
 r_int
 id|sipx_port
+suffix:semicolon
+DECL|member|sipx_type
+r_int
+r_char
+id|sipx_type
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -62,6 +70,10 @@ r_int
 r_int
 id|ipx_flags
 suffix:semicolon
+DECL|macro|IPX_RT_SNAP
+mdefine_line|#define IPX_RT_SNAP&t;&t;8
+DECL|macro|IPX_RT_8022
+mdefine_line|#define IPX_RT_8022&t;&t;4
 DECL|macro|IPX_RT_BLUEBOOK
 mdefine_line|#define IPX_RT_BLUEBOOK&t;&t;2
 DECL|macro|IPX_RT_ROUTED
@@ -70,4 +82,5 @@ mdefine_line|#define IPX_RT_ROUTED&t;&t;1
 suffix:semicolon
 DECL|macro|IPX_MTU
 mdefine_line|#define IPX_MTU&t;&t;576
+macro_line|#endif
 eof
