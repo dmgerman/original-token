@@ -12817,6 +12817,21 @@ id|btv-&gt;last_field
 op_assign
 l_int|0
 suffix:semicolon
+id|btv-&gt;video_dev.minor
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|btv-&gt;vbi_dev.minor
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|btv-&gt;radio_dev.minor
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 multiline_comment|/* i2c */
 id|memcpy
 c_func

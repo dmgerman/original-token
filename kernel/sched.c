@@ -1,21 +1,16 @@
 multiline_comment|/*&n; *  linux/kernel/sched.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1996-04-21&t;Modified by Ulrich Windl to make NTP work&n; *  1996-12-23  Modified by Dave Grothe to fix bugs in semaphores and&n; *              make semaphores SMP safe&n; *  1997-01-28  Modified by Finn Arne Gangstad to make timers scale better.&n; */
 multiline_comment|/*&n; * &squot;sched.c&squot; is the main kernel file. It contains scheduling primitives&n; * (sleep_on, wakeup, schedule etc) as well as a number of simple system&n; * call functions (type getpid()), which just extract a field from&n; * current-task&n; */
-macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/fdreg.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/tqueue.h&gt;
-macro_line|#include &lt;linux/resource.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 multiline_comment|/*&n; * kernel variables&n; */
 DECL|variable|securebits

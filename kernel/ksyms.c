@@ -1,29 +1,21 @@
 multiline_comment|/*&n; * Herein lies all the functions/variables that are &quot;exported&quot; for linkage&n; * with dynamically loaded kernel modules.&n; *&t;&t;&t;Jon.&n; *&n; * - Stacked module support and unified symbol table added (June 1994)&n; * - External symbol table support added (December 1994)&n; * - Versions on symbols added (December 1994)&n; *   by Bjorn Ekwall &lt;bj0rn@blox.se&gt;&n; */
-macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/sys.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/termios.h&gt;
-macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
-macro_line|#include &lt;linux/mount.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
@@ -39,7 +31,6 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
-macro_line|#include &lt;asm/irq.h&gt;
 r_extern
 r_char
 op_star

@@ -2389,7 +2389,9 @@ r_int
 id|data
 )paren
 op_ge
-l_int|0xbffffffd
+id|TASK_SIZE
+op_minus
+l_int|3
 )paren
 (brace
 r_return

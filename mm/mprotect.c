@@ -1,17 +1,9 @@
 multiline_comment|/*&n; *&t;linux/mm/mprotect.c&n; *&n; *  (C) Copyright 1994 Linus Torvalds&n; */
-macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|function|change_pte_range
 r_static

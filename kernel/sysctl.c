@@ -1,18 +1,13 @@
 multiline_comment|/*&n; * sysctl.c: General linux system control interface&n; *&n; * Begun 24 March 1995, Stephen Tweedie&n; * Added /proc support, Dec 1995&n; * Added bdflush entry and intvec min/max checking, 2/23/96, Tom Dyas.&n; * Added hooks for /proc/sys/net (minor, minor patch), 96/4/1, Mike Shaver.&n; * Added kernel/java-{interpreter,appletviewer}, 96/5/10, Mike Shaver.&n; * Dynamic registration fixes, Stephen Tweedie.&n; * Added kswapd-interval, ctrl-alt-del, printk stuff, 1/8/97, Chris Horn.&n; * Made sysctl support optional via CONFIG_SYSCTL, 1/10/97, Chris Horn.&n; */
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_ROOT_NFS
 macro_line|#include &lt;linux/nfs_fs.h&gt;

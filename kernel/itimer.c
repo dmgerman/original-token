@@ -1,8 +1,5 @@
 multiline_comment|/*&n; * linux/kernel/itimer.c&n; *&n; * Copyright (C) 1992 Darren Senn&n; */
 multiline_comment|/* These are all the functions necessary to implement itimers */
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;

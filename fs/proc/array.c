@@ -2604,7 +2604,7 @@ DECL|macro|KSTK_ESP
 macro_line|# define KSTK_ESP(tsk)&t;(((unsigned long *)(4096+(unsigned long)(tsk)))[1020])
 macro_line|#elif defined(__mc68000__)
 DECL|macro|KSTK_EIP
-mdefine_line|#define&t;KSTK_EIP(tsk)&t;&bslash;&n;    ({&t;&t;&t;&bslash;&n;&t;unsigned long eip = 0;&t; &bslash;&n; &t;if ((tsk)-&gt;tss.esp0 &gt; PAGE_SIZE &amp;&amp; &bslash;&n;&t;    MAP_NR((tsk)-&gt;tss.esp0) &lt; max_mapnr) &bslash;&n;&t;      eip = ((struct pt_regs *) (tsk)-&gt;tss.esp0)-&gt;pc;&t; &bslash;&n;        eip; })
+mdefine_line|#define&t;KSTK_EIP(tsk)&t;&bslash;&n;    ({&t;&t;&t;&bslash;&n;&t;unsigned long eip = 0;&t; &bslash;&n; &t;if ((tsk)-&gt;tss.esp0 &gt; PAGE_SIZE &amp;&amp; &bslash;&n;&t;    MAP_NR((tsk)-&gt;tss.esp0) &lt; max_mapnr) &bslash;&n;&t;      eip = ((struct pt_regs *) (tsk)-&gt;tss.esp0)-&gt;pc;&t; &bslash;&n;&t;eip; })
 DECL|macro|KSTK_ESP
 mdefine_line|#define&t;KSTK_ESP(tsk)&t;((tsk) == current ? rdusp() : (tsk)-&gt;tss.usp)
 macro_line|#elif defined(__powerpc__)
@@ -2884,6 +2884,9 @@ op_star
 id|buffer
 )paren
 (brace
+r_int
+id|g
+suffix:semicolon
 id|buffer
 op_add_assign
 id|sprintf
@@ -2896,6 +2899,7 @@ l_string|&quot;Pid:&bslash;t%d&bslash;n&quot;
 l_string|&quot;PPid:&bslash;t%d&bslash;n&quot;
 l_string|&quot;Uid:&bslash;t%d&bslash;t%d&bslash;t%d&bslash;t%d&bslash;n&quot;
 l_string|&quot;Gid:&bslash;t%d&bslash;t%d&bslash;t%d&bslash;t%d&bslash;n&quot;
+l_string|&quot;Groups:&bslash;t&quot;
 comma
 id|get_task_state
 c_func
@@ -2922,6 +2926,45 @@ comma
 id|p-&gt;sgid
 comma
 id|p-&gt;fsgid
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|g
+op_assign
+l_int|0
+suffix:semicolon
+id|g
+OL
+id|p-&gt;ngroups
+suffix:semicolon
+id|g
+op_increment
+)paren
+id|buffer
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;%d &quot;
+comma
+id|p-&gt;groups
+(braket
+id|g
+)braket
+)paren
+suffix:semicolon
+id|buffer
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

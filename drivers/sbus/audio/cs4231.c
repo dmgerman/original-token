@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * drivers/sbus/audio/cs4231.c&n; *&n; * Copyright 1996, 1997, 1998 Derrick J Brashear (shadow@andrew.cmu.edu)&n; *&n; * Based on the AMD7930 driver:&n; * Copyright 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; *&n; * This is the lowlevel driver for the CS4231 audio chip found on some&n; * sun4m and sun4u machines.&n; * &n; * This was culled from the Crystal docs on the 4231a, and the addendum they&n; * faxed me on the 4231.&n; * The APC DMA controller support unfortunately is not documented. Thanks, Sun&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -159,6 +159,22 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|rtc_DP8570A_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|rtc_MK48T08_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|dsp56k_init
 c_func
 (paren
@@ -861,6 +877,20 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_H8
 id|h8_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_MVME16x
+id|rtc_MK48T08_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_BVME6000
+id|rtc_DP8570A_init
 c_func
 (paren
 )paren

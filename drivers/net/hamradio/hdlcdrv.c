@@ -3,6 +3,7 @@ multiline_comment|/*&n; *&t;hdlcdrv.c  -- HDLC packet radio network driver.&n; *
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/in.h&gt;

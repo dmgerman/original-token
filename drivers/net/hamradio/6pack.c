@@ -2811,6 +2811,9 @@ r_void
 )paren
 macro_line|#else&t;/* !MODULE */
 id|__initfunc
+c_func
+(paren
+r_int
 id|sixpack_init_ctrl_dev
 c_func
 (paren
@@ -2818,6 +2821,7 @@ r_struct
 id|device
 op_star
 id|dummy
+)paren
 )paren
 macro_line|#endif&t;/* !MODULE */
 (brace

@@ -70,6 +70,9 @@ id|loop_buf
 comma
 r_int
 id|size
+comma
+r_int
+id|real_block
 )paren
 suffix:semicolon
 DECL|member|lo_name
@@ -163,6 +166,9 @@ id|loop_buf
 comma
 r_int
 id|size
+comma
+r_int
+id|real_block
 )paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
@@ -309,6 +315,9 @@ id|loop_buf
 comma
 r_int
 id|size
+comma
+r_int
+id|real_block
 )paren
 suffix:semicolon
 DECL|member|init

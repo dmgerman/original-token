@@ -1,14 +1,7 @@
 multiline_comment|/*&n; * linux/ipc/shm.c&n; * Copyright (C) 1992, 1993 Krishna Balasubramanian&n; *         Many improvements/fixes by Bruno Haible.&n; * Replaced `struct shm_desc&squot; by `struct vm_area_struct&squot;, July 1994.&n; * Fixed the shm swap deallocation (shm_unuse()), August 1998 Andrea Arcangeli.&n; */
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/slab.h&gt;
-macro_line|#include &lt;linux/ipc.h&gt;
-macro_line|#include &lt;linux/shm.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;

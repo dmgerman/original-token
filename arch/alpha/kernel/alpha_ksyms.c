@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -19,6 +20,7 @@ macro_line|#include &lt;asm/softirq.h&gt;
 macro_line|#include &lt;asm/fpu.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;asm/unistd.h&gt;

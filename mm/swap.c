@@ -1,21 +1,13 @@
 multiline_comment|/*&n; *  linux/mm/swap.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; */
 multiline_comment|/*&n; * This file contains the default values for the opereation of the&n; * Linux VM subsystem. Fine-tuning documentation can be found in&n; * linux/Documentation/sysctl/vm.txt.&n; * Started 18.12.91&n; * Swap aging added 23.2.95, Stephen Tweedie.&n; * Buffermem limits added 12.3.98, Rik van Riel.&n; */
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
 macro_line|#include &lt;asm/uaccess.h&gt; /* for copy_to/from_user */
-macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; * We identify three levels of free memory.  We never let free mem&n; * fall below the freepages.min except for atomic allocations.  We&n; * start background swapping if we fall below freepages.high free&n; * pages, and we begin intensive swapping below freepages.low.&n; *&n; * These values are there to keep GCC from complaining. Actual&n; * initialization is done in mm/page_alloc.c or arch/sparc(64)/mm/init.c.&n; */
 DECL|variable|freepages

@@ -3,22 +3,12 @@ multiline_comment|/*&n; * demand-loading started 01.12.91 - seems it is high on 
 multiline_comment|/*&n; * Ok, demand-loading was easy, shared pages a little bit tricker. Shared&n; * pages started 02.12.91, seems to work. - Linus.&n; *&n; * Tested sharing by executing about 30 /bin/sh: under the old kernel it&n; * would have taken more than the 6M I have free, but it worked well as&n; * far as I could see.&n; *&n; * Also corrected some &quot;invalidate()&quot;s - I wasn&squot;t doing enough of them.&n; */
 multiline_comment|/*&n; * Real VM (paging to/from disk) started 18.12.91. Much more work and&n; * thought has to go into this. Oh, well..&n; * 19.12.91  -  works, somewhat. Sometimes I get faults, don&squot;t know why.&n; *&t;&t;Found it. Everything seems to work now.&n; * 20.12.91  -  Ok, making the swap-device changeable like the root.&n; */
 multiline_comment|/*&n; * 05.04.94  -  Multi-page memory management added for v1.1.&n; * &t;&t;Idea by Alex Bligh (alex@cconcepts.co.uk)&n; */
-macro_line|#include &lt;linux/signal.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/ptrace.h&gt;
-macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/string.h&gt;
 DECL|variable|max_mapnr
 r_int
 r_int

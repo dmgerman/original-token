@@ -4957,7 +4957,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_UNIX98_PTYS
 r_if
 c_cond
 (paren
@@ -4966,6 +4965,7 @@ op_eq
 id|PTMX_DEV
 )paren
 (brace
+macro_line|#ifdef CONFIG_UNIX98_PTYS
 multiline_comment|/* find a free pty. */
 r_int
 id|major
@@ -5098,8 +5098,13 @@ suffix:semicolon
 r_goto
 id|init_dev_done
 suffix:semicolon
+macro_line|#else   /* CONFIG_UNIX_98_PTYS */
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+macro_line|#endif  /* CONFIG_UNIX_98_PTYS */
 )brace
-macro_line|#endif
 id|retval
 op_assign
 id|init_dev

@@ -1,8 +1,5 @@
 multiline_comment|/*&n; * linux/kernel/capability.c&n; *&n; * Copyright (C) 1997  Andrew Main &lt;zefram@fysh.org&gt;&n; * Integrated into 2.1.97+,  Andrew G. Morgan &lt;morgan@transmeta.com&gt;&n; */
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/* Note: never hold tasklist_lock while spinning for this one */
 DECL|variable|task_capability_lock

@@ -1,17 +1,10 @@
 multiline_comment|/*&n; *  linux/mm/swap_state.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *  Swap reorganised 29.12.95, Stephen Tweedie&n; *&n; *  Rewritten to use page cache, (C) 1998 Stephen Tweedie&n; */
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
-macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/* &n; * Keep a reserved false inode which we will use to mark pages in the&n; * page cache are acting as swap cache instead of file cache. &n; *&n; * We only need a unique pointer to satisfy the page cache, but we&squot;ll&n; * reserve an entire zeroed inode structure for the purpose just to&n; * ensure that any mistaken dereferences of this structure cause a&n; * kernel oops.&n; */
 DECL|variable|swapper_inode

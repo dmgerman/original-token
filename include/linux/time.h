@@ -23,7 +23,9 @@ multiline_comment|/* nanoseconds */
 )brace
 suffix:semicolon
 macro_line|#endif /* _STRUCT_TIMESPEC */
-multiline_comment|/*&n; * change timeval to jiffies, trying to avoid the&n; * most obvious overflows..&n; */
+multiline_comment|/*&n; * Change timeval to jiffies, trying to avoid the&n; * most obvious overflows..&n; *&n; * And some not so obvious.&n; *&n; * Note that we don&squot;t want to return MAX_LONG, because&n; * for various timeout reasons we often end up having&n; * to wait &quot;jiffies+1&quot; in order to guarantee that we wait&n; * at _least_ &quot;jiffies&quot; - so &quot;jiffies+1&quot; had better still&n; * be positive.&n; */
+DECL|macro|MAX_JIFFY_OFFSET
+mdefine_line|#define MAX_JIFFY_OFFSET ((~0UL &gt;&gt; 1)-1)
 r_static
 id|__inline__
 r_int
@@ -53,26 +55,15 @@ r_if
 c_cond
 (paren
 id|sec
-OG
+op_ge
 (paren
-(paren
-r_int
-)paren
-(paren
-op_complement
-l_int|0UL
-op_rshift
-l_int|1
-)paren
+id|MAX_JIFFY_OFFSET
 op_div
 id|HZ
 )paren
 )paren
 r_return
-op_complement
-l_int|0UL
-op_rshift
-l_int|1
+id|MAX_JIFFY_OFFSET
 suffix:semicolon
 id|nsec
 op_add_assign

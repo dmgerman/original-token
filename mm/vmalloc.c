@@ -2,7 +2,6 @@ multiline_comment|/*&n; *  linux/mm/vmalloc.c&n; *&n; *  Copyright (C) 1993  Lin
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 DECL|variable|vmlist
 r_static
 r_struct

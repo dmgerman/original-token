@@ -1,21 +1,13 @@
 multiline_comment|/*&n; *&t;linux/mm/mmap.c&n; *&n; * Written by obz.&n; */
-macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/* description of effects of mapping type and prot in current implementation.&n; * this is due to the limited x86 page protection hardware.  The expected&n; * behavior is in parens:&n; *&n; * map_type&t;prot&n; *&t;&t;PROT_NONE&t;PROT_READ&t;PROT_WRITE&t;PROT_EXEC&n; * MAP_SHARED&t;r: (no) no&t;r: (yes) yes&t;r: (no) yes&t;r: (no) yes&n; *&t;&t;w: (no) no&t;w: (no) no&t;w: (yes) yes&t;w: (no) no&n; *&t;&t;x: (no) no&t;x: (no) yes&t;x: (no) yes&t;x: (yes) yes&n; *&t;&t;&n; * MAP_PRIVATE&t;r: (no) no&t;r: (yes) yes&t;r: (no) yes&t;r: (no) yes&n; *&t;&t;w: (no) no&t;w: (no) no&t;w: (copy) copy&t;w: (no) no&n; *&t;&t;x: (no) no&t;x: (no) yes&t;x: (no) yes&t;x: (yes) yes&n; *&n; */
 DECL|variable|protection_map
@@ -554,10 +546,6 @@ op_star
 id|vma
 suffix:semicolon
 r_int
-id|correct_wcount
-op_assign
-l_int|0
-comma
 id|error
 suffix:semicolon
 r_if
@@ -1054,16 +1042,17 @@ id|PAGE_SHIFT
 r_goto
 id|free_vma
 suffix:semicolon
-id|error
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|file
 )paren
 (brace
+r_int
+id|correct_wcount
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1079,14 +1068,17 @@ id|file-&gt;f_dentry-&gt;d_inode-&gt;i_writecount
 OG
 l_int|0
 )paren
+(brace
 id|error
 op_assign
 op_minus
 id|ETXTBSY
 suffix:semicolon
-r_else
-(brace
-multiline_comment|/* f_op-&gt;mmap might possibly sleep&n;&t;&t;&t;&t; * (generic_file_mmap doesn&squot;t, but other code&n;&t;&t;&t;&t; * might). In any case, this takes care of any&n;&t;&t;&t;&t; * race that this might cause.&n;&t;&t;&t;&t; */
+r_goto
+id|free_vma
+suffix:semicolon
+)brace
+multiline_comment|/* f_op-&gt;mmap might possibly sleep&n;&t;&t;&t; * (generic_file_mmap doesn&squot;t, but other code&n;&t;&t;&t; * might). In any case, this takes care of any&n;&t;&t;&t; * race that this might cause.&n;&t;&t;&t; */
 id|file-&gt;f_dentry-&gt;d_inode-&gt;i_writecount
 op_decrement
 suffix:semicolon
@@ -1095,13 +1087,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|error
-)paren
 id|error
 op_assign
 id|file-&gt;f_op
@@ -1114,7 +1099,6 @@ comma
 id|vma
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* Fix up the count if necessary, then check for an error */
 r_if
 c_cond
@@ -1130,8 +1114,9 @@ c_cond
 id|error
 )paren
 r_goto
-id|free_vma
+id|unmap_and_free_vma
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * merge_segments may merge our vma, so we can&squot;t refer to it&n;&t; * after the call.  Save the values we need now ...&n;&t; */
 id|flags
 op_assign
@@ -1193,6 +1178,41 @@ suffix:semicolon
 )brace
 r_return
 id|addr
+suffix:semicolon
+id|unmap_and_free_vma
+suffix:colon
+multiline_comment|/* Undo any partial mapping done by a device driver. */
+id|flush_cache_range
+c_func
+(paren
+id|mm
+comma
+id|vma-&gt;vm_start
+comma
+id|vma-&gt;vm_end
+)paren
+suffix:semicolon
+id|zap_page_range
+c_func
+(paren
+id|mm
+comma
+id|vma-&gt;vm_start
+comma
+id|vma-&gt;vm_end
+op_minus
+id|vma-&gt;vm_start
+)paren
+suffix:semicolon
+id|flush_tlb_range
+c_func
+(paren
+id|mm
+comma
+id|vma-&gt;vm_start
+comma
+id|vma-&gt;vm_end
+)paren
 suffix:semicolon
 id|free_vma
 suffix:colon
@@ -1496,6 +1516,10 @@ suffix:semicolon
 id|mpnt-&gt;vm_file
 op_assign
 id|area-&gt;vm_file
+suffix:semicolon
+id|mpnt-&gt;vm_pte
+op_assign
+id|area-&gt;vm_pte
 suffix:semicolon
 r_if
 c_cond

@@ -1,19 +1,11 @@
 multiline_comment|/*&n; *  linux/mm/page_io.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  Swap reorganised 29.12.95, &n; *  Asynchronous swapping added 30.12.95. Stephen Tweedie&n; *  Removed race in async swapping. 14.4.1996. Bruno Haible&n; *  Add swap of shared pages through the page cache. 20.2.1998. Stephen Tweedie&n; */
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
 macro_line|#include &lt;asm/uaccess.h&gt; /* for copy_to/from_user */
-macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|variable|lock_queue
 r_static

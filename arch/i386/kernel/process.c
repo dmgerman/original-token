@@ -43,7 +43,6 @@ id|semaphore_wake_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#ifdef __SMP__
 id|asmlinkage
 r_void
 id|ret_from_fork
@@ -54,24 +53,9 @@ r_void
 id|__asm__
 c_func
 (paren
-l_string|&quot;ret_from_smpfork&quot;
+l_string|&quot;ret_from_fork&quot;
 )paren
 suffix:semicolon
-macro_line|#else
-id|asmlinkage
-r_void
-id|ret_from_fork
-c_func
-(paren
-r_void
-)paren
-id|__asm__
-c_func
-(paren
-l_string|&quot;ret_from_sys_call&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_APM
 r_extern
 r_int
@@ -1517,6 +1501,93 @@ id|ldt
 )paren
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/*&n; * Create a kernel thread&n; */
+DECL|function|kernel_thread
+id|pid_t
+id|kernel_thread
+c_func
+(paren
+r_int
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_void
+op_star
+)paren
+comma
+r_void
+op_star
+id|arg
+comma
+r_int
+r_int
+id|flags
+)paren
+(brace
+r_int
+id|retval
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;movl %%esp,%%esi&bslash;n&bslash;t&quot;
+l_string|&quot;int $0x80&bslash;n&bslash;t&quot;
+multiline_comment|/* Linux/i386 system call */
+l_string|&quot;cmpl %%esp,%%esi&bslash;n&bslash;t&quot;
+multiline_comment|/* child or parent? */
+l_string|&quot;je 1f&bslash;n&bslash;t&quot;
+multiline_comment|/* parent - jump */
+l_string|&quot;pushl %3&bslash;n&bslash;t&quot;
+multiline_comment|/* push argument */
+l_string|&quot;call *%4&bslash;n&bslash;t&quot;
+multiline_comment|/* call fn */
+l_string|&quot;movl %2,%0&bslash;n&bslash;t&quot;
+multiline_comment|/* exit */
+l_string|&quot;int $0x80&bslash;n&quot;
+l_string|&quot;1:&bslash;t&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|retval
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|__NR_clone
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|__NR_exit
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|arg
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|fn
+)paren
+comma
+l_string|&quot;b&quot;
+(paren
+id|flags
+op_or
+id|CLONE_VM
+)paren
+suffix:colon
+l_string|&quot;si&quot;
+)paren
+suffix:semicolon
+r_return
+id|retval
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Free current thread data structures etc..&n; */
 DECL|function|exit_thread

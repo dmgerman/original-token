@@ -2390,9 +2390,9 @@ OG
 l_int|8
 op_logical_and
 id|jiffies
-OG
+op_minus
 id|dev-&gt;last_rx
-op_plus
+OG
 l_int|100
 )paren
 (brace

@@ -1,12 +1,8 @@
 multiline_comment|/*&n; *  linux/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1997-11-02  Modified for POSIX.1b signals by Richard Henderson&n; */
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/wait.h&gt;
-macro_line|#include &lt;linux/unistd.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/unistd.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * SLAB caches for signal bits.&n; */

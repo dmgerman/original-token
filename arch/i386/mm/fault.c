@@ -407,7 +407,7 @@ op_amp
 l_int|4
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * accessing the stack below %esp is always a bug.&n;&t;&t; * The &quot;+ 32&quot; is there due to some instructions (like&n;&t;&t; * pusha) doing pre-decrement on the stack and that&n;&t;&t; * doesn&squot;t show up until later..&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * accessing the stack below %esp is always a bug.&n;&t;&t; * The &quot;+ 32&quot; is there due to some instructions (like&n;&t;&t; * pusha) doing post-decrement on the stack and that&n;&t;&t; * doesn&squot;t show up until later..&n;&t;&t; */
 r_if
 c_cond
 (paren

@@ -1,24 +1,15 @@
 multiline_comment|/*&n; *&t;linux/mm/filemap.c&n; *&n; * Copyright (C) 1994, 1995  Linus Torvalds&n; */
 multiline_comment|/*&n; * This file handles the generic file mmap semantics used by&n; * most &quot;normal&quot; filesystems (but you don&squot;t /have/ to use this:&n; * the NFS filesystem used to do this differently, for example)&n; */
-macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/shm.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/mman.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/shm.h&gt;
+macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * Shared mappings implemented 30.11.1994. It&squot;s not fully working yet,&n; * though.&n; *&n; * Shared mappings now work. 15.8.1995  Bruno.&n; */
@@ -525,27 +516,6 @@ c_cond
 id|page-&gt;inode
 )paren
 (brace
-multiline_comment|/* Throw swap-cache pages away more aggressively */
-r_if
-c_cond
-(paren
-id|PageSwapCache
-c_func
-(paren
-id|page
-)paren
-)paren
-(brace
-id|delete_from_swap_cache
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -570,6 +540,26 @@ c_func
 )paren
 r_break
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|PageSwapCache
+c_func
+(paren
+id|page
+)paren
+)paren
+(brace
+id|delete_from_swap_cache
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|remove_inode_page
 c_func
 (paren

@@ -2524,6 +2524,8 @@ op_add_assign
 id|sprintf
 c_func
 (paren
+id|cp
+comma
 l_string|&quot;%s:,&quot;
 comma
 (paren
@@ -2560,6 +2562,8 @@ op_add_assign
 id|sprintf
 c_func
 (paren
+id|cp
+comma
 l_string|&quot;&gt;%s,&quot;
 comma
 (paren
@@ -2596,6 +2600,8 @@ op_add_assign
 id|sprintf
 c_func
 (paren
+id|cp
+comma
 l_string|&quot;&lt;%s,&quot;
 comma
 (paren

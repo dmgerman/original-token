@@ -1860,78 +1860,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-multiline_comment|/*&n; * Called to free the inode from the dentry. We must flush&n; * any pending writes for this dentry before freeing the inode.&n; */
-DECL|function|nfs_dentry_iput
-r_static
-r_void
-id|nfs_dentry_iput
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-id|dentry
-comma
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-id|dfprintk
-c_func
-(paren
-id|VFS
-comma
-l_string|&quot;NFS: dentry_iput(%s/%s, cnt=%d, ino=%ld)&bslash;n&quot;
-comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
-comma
-id|dentry-&gt;d_count
-comma
-id|inode-&gt;i_ino
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|NFS_WRITEBACK
-c_func
-(paren
-id|inode
-)paren
-)paren
-(brace
-macro_line|#ifdef NFS_PARANOIA
-id|printk
-c_func
-(paren
-l_string|&quot;nfs_dentry_iput: pending writes for %s/%s, i_count=%d&bslash;n&quot;
-comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
-comma
-id|inode-&gt;i_count
-)paren
-suffix:semicolon
-macro_line|#endif
-id|nfs_wbinval
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-)brace
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Called when the dentry is being freed to release private memory.&n; */
 DECL|function|nfs_dentry_release
 r_static
@@ -1978,8 +1906,8 @@ multiline_comment|/* d_delete(struct dentry *) */
 id|nfs_dentry_release
 comma
 multiline_comment|/* d_release(struct dentry *) */
-id|nfs_dentry_iput
-multiline_comment|/* d_iput(struct dentry *, struct inode *) */
+l_int|NULL
+multiline_comment|/* d_iput */
 )brace
 suffix:semicolon
 macro_line|#ifdef NFS_PARANOIA
@@ -3674,56 +3602,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|inode
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|NFS_WRITEBACK
-c_func
-(paren
-id|inode
-)paren
-)paren
-(brace
-id|nfs_wbinval
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|NFS_WRITEBACK
-c_func
-(paren
-id|inode
-)paren
-)paren
-(brace
-macro_line|#ifdef NFS_PARANOIA
-id|printk
-c_func
-(paren
-l_string|&quot;nfs_safe_remove: %s/%s writes pending, d_count=%d&bslash;n&quot;
-comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
-comma
-id|dentry-&gt;d_count
-)paren
-suffix:semicolon
-macro_line|#endif
-r_goto
-id|out
-suffix:semicolon
-)brace
-)brace
-)brace
-r_else
 (brace
 macro_line|#ifdef NFS_PARANOIA
 id|printk
@@ -4546,75 +4427,7 @@ id|old_dir
 r_goto
 id|do_rename
 suffix:semicolon
-multiline_comment|/*&n;&t; * Cross-directory move ... check whether it&squot;s a file.&n;&t; */
-r_if
-c_cond
-(paren
-id|S_ISREG
-c_func
-(paren
-id|old_inode-&gt;i_mode
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|NFS_WRITEBACK
-c_func
-(paren
-id|old_inode
-)paren
-)paren
-(brace
-macro_line|#ifdef NFS_PARANOIA
-id|printk
-c_func
-(paren
-l_string|&quot;nfs_rename: %s/%s has pending writes&bslash;n&quot;
-comma
-id|old_dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|old_dentry-&gt;d_name.name
-)paren
-suffix:semicolon
-macro_line|#endif
-id|nfs_wbinval
-c_func
-(paren
-id|old_inode
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|NFS_WRITEBACK
-c_func
-(paren
-id|old_inode
-)paren
-)paren
-(brace
-macro_line|#ifdef NFS_PARANOIA
-id|printk
-c_func
-(paren
-l_string|&quot;nfs_rename: %s/%s has pending writes after flush&bslash;n&quot;
-comma
-id|old_dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|old_dentry-&gt;d_name.name
-)paren
-suffix:semicolon
-macro_line|#endif
-r_goto
-id|out
-suffix:semicolon
-)brace
-)brace
-)brace
-multiline_comment|/*&n;&t; * Moving a directory ... prune child dentries if needed.&n;&t; */
-r_else
+multiline_comment|/*&n;&t; * Cross-directory move ...&n;&t; *&n;&t; * ... prune child dentries and writebacks if needed.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4622,12 +4435,20 @@ id|old_dentry-&gt;d_count
 OG
 l_int|1
 )paren
+(brace
+id|nfs_wb_all
+c_func
+(paren
+id|old_inode
+)paren
+suffix:semicolon
 id|shrink_dcache_parent
 c_func
 (paren
 id|old_dentry
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * Now check the use counts ... we can&squot;t safely do the&n;&t; * rename unless we can drop the dentries first.&n;&t; */
 r_if
 c_cond

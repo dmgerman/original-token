@@ -128,18 +128,8 @@ multiline_comment|/* Operational parameters that usually are not changed. */
 multiline_comment|/* Time in jiffies before concluding the transmitter is hung. */
 DECL|macro|TX_TIMEOUT
 mdefine_line|#define TX_TIMEOUT  (4*HZ)
-macro_line|#ifdef MODULE
-macro_line|#ifdef MODVERSIONS
-macro_line|#include &lt;linux/modversions.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

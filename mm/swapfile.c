@@ -1,22 +1,13 @@
 multiline_comment|/*&n; *  linux/mm/swapfile.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *  Swap reorganised 29.12.95, Stephen Tweedie&n; */
-macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
-macro_line|#include &lt;linux/smp_lock.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/kernel_stat.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/swap.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/kernel_stat.h&gt;
+macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt; /* for blk_size */
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
-macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|variable|nr_swapfiles
 r_int

@@ -2079,7 +2079,7 @@ id|null_fops
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifndef CONFIG_PPC
+macro_line|#if !defined(CONFIG_PPC) &amp;&amp; !defined(__mc68000__)
 r_case
 l_int|4
 suffix:colon
@@ -2268,6 +2268,13 @@ c_func
 suffix:semicolon
 macro_line|#ifdef CONFIG_PRINTER
 id|lp_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_M68K_PRINTER
+id|lp_m68k_init
 c_func
 (paren
 )paren

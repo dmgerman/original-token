@@ -1107,6 +1107,10 @@ comma
 r_char
 op_star
 id|_new_name
+comma
+r_int
+op_star
+id|done_flag
 )paren
 (brace
 r_int
@@ -1199,6 +1203,81 @@ comma
 id|_new_name
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|res
+)paren
+(brace
+id|ncp_invalid_dir_cache
+c_func
+(paren
+id|old_dir
+)paren
+suffix:semicolon
+id|ncp_invalid_dir_cache
+c_func
+(paren
+id|new_dir
+)paren
+suffix:semicolon
+id|d_move
+c_func
+(paren
+id|old_dentry
+comma
+id|new_dentry
+)paren
+suffix:semicolon
+op_star
+id|done_flag
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|old_dentry-&gt;d_inode
+)paren
+(brace
+id|DPRINTK
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;ncpfs: no inode -- file remains rw&bslash;n&quot;
+)paren
+suffix:semicolon
+r_goto
+id|leave_me
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|res2
+op_assign
+id|ncp_lookup_validate
+c_func
+(paren
+id|old_dentry
+)paren
+)paren
+)paren
+(brace
+id|DPRINTK
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;ncpfs: ncp_lookup_validate returned %d&bslash;n&quot;
+comma
+id|res2
+)paren
+suffix:semicolon
+)brace
+)brace
 id|memset
 c_func
 (paren
@@ -1238,9 +1317,17 @@ id|ia.ia_valid
 op_assign
 id|ATTR_MODE
 suffix:semicolon
-multiline_comment|/* FIXME: uses only inode info, no dentry info... so it is safe to call */
-multiline_comment|/* it now with old dentry. If we use name (in future), we have to move */
-multiline_comment|/* it after dentry_move in caller */
+id|DPRINTK
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;calling ncp_notify_change() with %s/%s&bslash;n&quot;
+comma
+id|old_dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|old_dentry-&gt;d_name.name
+)paren
+suffix:semicolon
 id|res2
 op_assign
 id|ncp_notify_change
@@ -1267,9 +1354,7 @@ comma
 id|res2
 )paren
 suffix:semicolon
-r_goto
-id|leave_me
-suffix:semicolon
+multiline_comment|/* goto leave_me; */
 )brace
 id|leave_me
 suffix:colon
@@ -4605,6 +4690,10 @@ id|new_dentry-&gt;d_name.len
 suffix:semicolon
 r_int
 id|error
+comma
+id|done_flag
+op_assign
+l_int|0
 suffix:semicolon
 r_char
 id|_old_name
@@ -4840,6 +4929,9 @@ comma
 id|new_dentry
 comma
 id|_new_name
+comma
+op_amp
+id|done_flag
 )paren
 suffix:semicolon
 )brace
@@ -4852,6 +4944,16 @@ op_eq
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|done_flag
+op_eq
+l_int|0
+)paren
+multiline_comment|/* if 1, the following already happened */
+(brace
+multiline_comment|/* in ncp_force_rename() */
 id|DPRINTK
 c_func
 (paren
@@ -4883,6 +4985,7 @@ comma
 id|new_dentry
 )paren
 suffix:semicolon
+)brace
 )brace
 r_else
 (brace

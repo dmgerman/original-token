@@ -6564,7 +6564,7 @@ id|baycom_ports
 id|i
 )braket
 dot
-id|irq
+id|iobase
 op_assign
 id|ints
 (braket

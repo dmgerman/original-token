@@ -283,7 +283,7 @@ id|dev
 )paren
 suffix:semicolon
 r_int
-id|lp_init
+id|lp_m68k_init
 c_func
 (paren
 r_void

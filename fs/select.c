@@ -716,6 +716,8 @@ id|retval
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * We can actually return ERESTARTSYS instead of EINTR, but I&squot;d&n; * like to be certain this leads to no problems. So I return&n; * EINTR just for safety.&n; *&n; * Update: ERESTARTSYS breaks at least the xview clock binary, so&n; * I&squot;m trying ERESTARTNOHAND which restart only when you want to.&n; */
+DECL|macro|MAX_SELECT_SECONDS
+mdefine_line|#define MAX_SELECT_SECONDS &bslash;&n;&t;((unsigned long) (MAX_SCHEDULE_TIMEOUT / HZ)-1)
 id|asmlinkage
 r_int
 DECL|function|sys_select
@@ -818,6 +820,18 @@ id|tvp-&gt;tv_usec
 r_goto
 id|out_nofds
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_int
+)paren
+id|sec
+OL
+id|MAX_SELECT_SECONDS
+)paren
+(brace
 id|timeout
 op_assign
 id|ROUND_UP
@@ -840,6 +854,7 @@ r_int
 )paren
 id|HZ
 suffix:semicolon
+)brace
 )brace
 id|ret
 op_assign

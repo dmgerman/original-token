@@ -5446,7 +5446,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Linux port (c) 1998 Building Number Three Ltd &amp; Jan &squot;Yenya&squot; Kasprzak.&bslash;n&quot;
+l_string|&quot;Linux port (c) 1998 Building Number Three Ltd &amp; Jan &bslash;&quot;Yenya&bslash;&quot; Kasprzak.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sppp_packet_type.type

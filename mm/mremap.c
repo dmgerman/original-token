@@ -1,18 +1,10 @@
 multiline_comment|/*&n; *&t;linux/mm/remap.c&n; *&n; *&t;(C) Copyright 1996 Linus Torvalds&n; */
-macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 r_extern
 r_int
@@ -658,10 +650,6 @@ op_minus
 id|vma-&gt;vm_start
 )paren
 suffix:semicolon
-id|new_vma-&gt;vm_file
-op_assign
-id|vma-&gt;vm_file
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -717,6 +705,29 @@ id|new_len
 op_rshift
 id|PAGE_SHIFT
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|new_vma-&gt;vm_flags
+op_amp
+id|VM_LOCKED
+)paren
+(brace
+id|current-&gt;mm-&gt;locked_vm
+op_add_assign
+id|new_len
+op_rshift
+id|PAGE_SHIFT
+suffix:semicolon
+id|make_pages_present
+c_func
+(paren
+id|new_vma-&gt;vm_start
+comma
+id|new_vma-&gt;vm_end
+)paren
+suffix:semicolon
+)brace
 r_return
 id|new_addr
 suffix:semicolon
@@ -1072,10 +1083,24 @@ id|vma-&gt;vm_flags
 op_amp
 id|VM_LOCKED
 )paren
+(brace
 id|current-&gt;mm-&gt;locked_vm
 op_add_assign
 id|pages
 suffix:semicolon
+id|make_pages_present
+c_func
+(paren
+id|addr
+op_plus
+id|old_len
+comma
+id|addr
+op_plus
+id|new_len
+)paren
+suffix:semicolon
+)brace
 id|ret
 op_assign
 id|addr
