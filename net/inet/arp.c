@@ -2132,42 +2132,6 @@ r_int
 r_int
 id|hash
 suffix:semicolon
-multiline_comment|/* SHOULD BE FIXED NOW */
-r_if
-c_cond
-(paren
-id|paddr
-op_eq
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;ADDRESS BOTCH 0&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;skb(saddr=%lx, daddr=%lx, raddr=%lx)&bslash;n&quot;
-comma
-id|skb-&gt;saddr
-comma
-id|skb-&gt;daddr
-comma
-id|skb-&gt;raddr
-)paren
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/* ------------- */
 r_switch
 c_cond
 (paren

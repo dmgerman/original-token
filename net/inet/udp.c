@@ -153,6 +153,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;Various people wanted BSD UDP semantics. Well they&squot;ve come &n;&t; *&t;back out because they slow down response to stuff like dead&n;&t; *&t;or unreachable name servers and they screw term users something&n;&t; *&t;chronic. Oh and it violates RFC1122. So basically fix your &n;&t; *&t;client code people.&n;&t; */
+macro_line|#ifdef CONFIG_I_AM_A_BROKEN_BSD_WEENIE
 multiline_comment|/*&n;&t; *&t;It&squot;s only fatal if we have connected to them. I&squot;m not happy&n;&t; *&t;with this code. Some BSD comparisons need doing.&n;&t; */
 r_if
 c_cond
@@ -182,8 +184,6 @@ l_int|0xff
 dot
 id|errno
 suffix:semicolon
-multiline_comment|/*&t;&t;sk-&gt;err=ECONNREFUSED;*/
-)brace
 id|sk
 op_member_access_from_pointer
 id|error_report
@@ -192,6 +192,42 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+)brace
+macro_line|#else
+r_if
+c_cond
+(paren
+id|icmp_err_convert
+(braket
+id|err
+op_amp
+l_int|0xff
+)braket
+dot
+id|fatal
+)paren
+(brace
+id|sk-&gt;err
+op_assign
+id|icmp_err_convert
+(braket
+id|err
+op_amp
+l_int|0xff
+)braket
+dot
+id|errno
+suffix:semicolon
+id|sk
+op_member_access_from_pointer
+id|error_report
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 DECL|function|udp_check
 r_static

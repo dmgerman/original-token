@@ -451,11 +451,19 @@ c_cond
 (paren
 id|saddr
 op_eq
-l_int|0x0100007FL
+id|htonl
+c_func
+(paren
+l_int|0x7F000001L
+)paren
 op_logical_and
 id|daddr
 op_ne
-l_int|0x0100007FL
+id|htonl
+c_func
+(paren
+l_int|0x7F000001L
+)paren
 )paren
 id|saddr
 op_assign
@@ -2246,7 +2254,6 @@ id|ipq
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*   &t;printk(&quot;ip_free:done&bslash;n&quot;);*/
 id|sti
 c_func
 (paren
@@ -3619,6 +3626,10 @@ suffix:semicolon
 r_int
 id|offset
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/* &n;   &t; *&t;Point into the IP datagram header. &n;   &t; */
 id|raw
 op_assign
@@ -3854,12 +3865,26 @@ suffix:semicolon
 multiline_comment|/*&n; &t;&t; *&t;Set up data on packet&n; &t;&t; */
 id|skb2-&gt;arp
 op_assign
-l_int|0
+id|skb-&gt;arp
 suffix:semicolon
-multiline_comment|/*skb-&gt;arp;*/
+r_if
+c_cond
+(paren
+id|skb-&gt;free
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;IP fragmenter: BUG free!=1 in fragmenter&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|skb2-&gt;free
 op_assign
-id|skb-&gt;free
+l_int|1
 suffix:semicolon
 id|skb2-&gt;len
 op_assign
@@ -3875,21 +3900,44 @@ op_star
 )paren
 id|skb2-&gt;data
 suffix:semicolon
-id|skb2-&gt;raddr
-op_assign
-id|skb-&gt;raddr
-suffix:semicolon
-multiline_comment|/* For rebuild_header */
 multiline_comment|/*&n;&t;&t; *&t;Charge the memory for the fragment to any owner&n;&t;&t; *&t;it might posess&n;&t;&t; */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|sk
 )paren
+(brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|sk-&gt;wmem_alloc
 op_add_assign
 id|skb2-&gt;mem_len
 suffix:semicolon
+id|skb2-&gt;sk
+op_assign
+id|sk
+suffix:semicolon
+)brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|skb2-&gt;raddr
+op_assign
+id|skb-&gt;raddr
+suffix:semicolon
+multiline_comment|/* For rebuild_header - must be here */
 multiline_comment|/* &n; &t;&t; *&t;Copy the packet header into the new buffer. &n; &t;&t; */
 id|memcpy
 c_func
@@ -3990,7 +4038,7 @@ id|dev
 comma
 id|skb2
 comma
-l_int|1
+l_int|2
 )paren
 suffix:semicolon
 )brace
@@ -3999,7 +4047,7 @@ op_increment
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_IP_FORWARD
-multiline_comment|/* &n; *&t;Forward an IP datagram to its next destination. &n; */
+multiline_comment|/* &t;&n; *&t;Forward an IP datagram to its next destination. &n; */
 DECL|function|ip_forward
 r_static
 r_void
@@ -5001,7 +5049,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Queues a packet to be sent, and starts the transmitter&n; * if necessary.  if free = 1 then we free the block after&n; * transmit, otherwise we don&squot;t.&n; * This routine also needs to put in the total length,&n; * and compute the checksum&n; */
+multiline_comment|/*&n; * Queues a packet to be sent, and starts the transmitter&n; * if necessary.  if free = 1 then we free the block after&n; * transmit, otherwise we don&squot;t. If free==2 we not only&n; * free the block but also dont assign a new ip seq number.&n; * This routine also needs to put in the total length,&n; * and compute the checksum&n; */
 DECL|function|ip_queue_xmit
 r_void
 id|ip_queue_xmit
@@ -5073,10 +5121,6 @@ id|skb
 )paren
 suffix:semicolon
 multiline_comment|/*&n;  &t; *&t;Do some book-keeping in the packet for later&n;  &t; */
-id|skb-&gt;free
-op_assign
-id|free
-suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -5117,6 +5161,15 @@ op_minus
 id|dev-&gt;hard_header_len
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;No reassigning numbers to fragments...&n;&t; */
+r_if
+c_cond
+(paren
+id|free
+op_ne
+l_int|2
+)paren
+(brace
 id|iph-&gt;id
 op_assign
 id|htons
@@ -5125,6 +5178,16 @@ c_func
 id|ip_id_count
 op_increment
 )paren
+suffix:semicolon
+)brace
+r_else
+id|free
+op_assign
+l_int|1
+suffix:semicolon
+id|skb-&gt;free
+op_assign
+id|free
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Do we need to fragment. Again this is inefficient. &n;&t; *&t;We need to somehow lock the original buffer and use&n;&t; *&t;bits of it.&n;&t; */
 r_if
