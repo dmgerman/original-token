@@ -1,7 +1,6 @@
 multiline_comment|/*&n;   * Copyright 1996 The Australian National University.&n;   * Copyright 1996 Fujitsu Laboratories Limited&n;   * &n;   * This software may be distributed under the terms of the Gnu&n;   * Public License version 2 or later&n;  */
 multiline_comment|/* &n; * ddv.c - Single AP1000 block driver.&n; *&n; * This block driver performs io operations to the ddv option&n; * board. (Hopefully:)&n; *&n; */
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;

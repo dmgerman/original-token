@@ -14,6 +14,8 @@ DECL|macro|RTCF_DIRECTDST
 mdefine_line|#define RTCF_DIRECTDST&t;0x00020000
 DECL|macro|RTCF_REDIRECTED
 mdefine_line|#define RTCF_REDIRECTED&t;0x00040000
+DECL|macro|RTCF_TPROXY
+mdefine_line|#define RTCF_TPROXY&t;0x00080000
 DECL|macro|RTCF_FAST
 mdefine_line|#define RTCF_FAST&t;0x00200000
 DECL|macro|RTCF_MASQ

@@ -3604,7 +3604,7 @@ c_cond
 (paren
 id|timer_table
 (braket
-id|SCSI_TIMER
+id|GDTH_TIMER
 )braket
 dot
 id|expires
@@ -3614,7 +3614,7 @@ l_int|0
 (brace
 id|timer_table
 (braket
-id|SCSI_TIMER
+id|GDTH_TIMER
 )braket
 dot
 id|expires
@@ -3627,7 +3627,7 @@ id|timer_active
 op_or_assign
 l_int|1
 op_lshift
-id|SCSI_TIMER
+id|GDTH_TIMER
 suffix:semicolon
 )brace
 r_else
@@ -3641,14 +3641,14 @@ id|timeout
 OL
 id|timer_table
 (braket
-id|SCSI_TIMER
+id|GDTH_TIMER
 )braket
 dot
 id|expires
 )paren
 id|timer_table
 (braket
-id|SCSI_TIMER
+id|GDTH_TIMER
 )braket
 dot
 id|expires

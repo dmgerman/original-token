@@ -8,6 +8,12 @@ r_int
 r_int
 id|apm_event_t
 suffix:semicolon
+DECL|typedef|apm_eventinfo_t
+r_typedef
+r_int
+r_int
+id|apm_eventinfo_t
+suffix:semicolon
 macro_line|#ifdef __KERNEL__
 DECL|macro|APM_40
 mdefine_line|#define APM_40&t;&t;0x40
@@ -55,6 +61,11 @@ DECL|member|cseg_len
 r_int
 r_int
 id|cseg_len
+suffix:semicolon
+DECL|member|cseg_16_len
+r_int
+r_int
+id|cseg_16_len
 suffix:semicolon
 DECL|member|dseg_len
 r_int
@@ -238,6 +249,8 @@ DECL|macro|APM_USER_SUSPEND
 mdefine_line|#define APM_USER_SUSPEND&t;0x000a
 DECL|macro|APM_STANDBY_RESUME
 mdefine_line|#define APM_STANDBY_RESUME&t;0x000b
+DECL|macro|APM_CAPABILITY_CHANGE
+mdefine_line|#define APM_CAPABILITY_CHANGE   0x000c
 multiline_comment|/*&n; * Error codes&n; */
 DECL|macro|APM_SUCCESS
 mdefine_line|#define APM_SUCCESS&t;&t;0x00
@@ -261,6 +274,10 @@ DECL|macro|APM_BAD_PARAM
 mdefine_line|#define APM_BAD_PARAM&t;&t;0x0a
 DECL|macro|APM_NOT_ENGAGED
 mdefine_line|#define APM_NOT_ENGAGED&t;&t;0x0b
+DECL|macro|APM_BAD_FUNCTION
+mdefine_line|#define APM_BAD_FUNCTION        0x0c
+DECL|macro|APM_RESUME_DISABLED
+mdefine_line|#define APM_RESUME_DISABLED&t;0x0d
 DECL|macro|APM_BAD_STATE
 mdefine_line|#define APM_BAD_STATE&t;&t;0x60
 DECL|macro|APM_NO_EVENTS

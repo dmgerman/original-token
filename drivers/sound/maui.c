@@ -100,29 +100,9 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-DECL|variable|maui_sleeper
-r_static
-r_struct
-id|wait_queue
-op_star
-id|maui_sleeper
-op_assign
-l_int|NULL
-suffix:semicolon
-DECL|variable|maui_sleep_flag
-r_static
-r_volatile
-r_struct
-id|snd_wait
-id|maui_sleep_flag
-op_assign
-(brace
-l_int|0
-)brace
-suffix:semicolon
+DECL|function|maui_wait
 r_static
 r_int
-DECL|function|maui_wait
 id|maui_wait
 c_func
 (paren
@@ -133,7 +113,7 @@ id|mask
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n; * Perform a short initial wait without sleeping&n; */
+multiline_comment|/*&n;&t; * Perform a short initial wait without sleeping&n;&t; */
 r_for
 c_loop
 (paren
@@ -166,7 +146,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Wait up to 15 seconds with sleeping&n; */
+multiline_comment|/*&n;&t; * Wait up to 15 seconds with sleeping&n;&t; */
 r_for
 c_loop
 (paren
@@ -193,85 +173,29 @@ id|HOST_STAT_PORT
 op_amp
 id|mask
 )paren
-(brace
 r_return
 l_int|1
 suffix:semicolon
-)brace
-(brace
-r_int
-r_int
-id|tlimit
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|HZ
-op_div
-l_int|10
-)paren
 id|current-&gt;timeout
-op_assign
-id|tlimit
 op_assign
 id|jiffies
 op_plus
-(paren
 id|HZ
 op_div
 l_int|10
-)paren
 suffix:semicolon
-r_else
-id|tlimit
+id|current-&gt;state
 op_assign
-(paren
-r_int
-r_int
-)paren
-op_minus
-l_int|1
+id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|maui_sleep_flag.opts
-op_assign
-id|WK_SLEEP
-suffix:semicolon
-id|interruptible_sleep_on
+id|schedule
 c_func
 (paren
-op_amp
-id|maui_sleeper
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|maui_sleep_flag.opts
-op_amp
-id|WK_WAKEUP
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|jiffies
-op_ge
-id|tlimit
-)paren
-id|maui_sleep_flag.opts
-op_or_assign
-id|WK_TIMEOUT
-suffix:semicolon
-)brace
-id|maui_sleep_flag.opts
-op_and_assign
-op_complement
-id|WK_SLEEP
-suffix:semicolon
-)brace
+id|current-&gt;timeout
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -282,19 +206,17 @@ c_func
 id|current
 )paren
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|maui_read
 r_static
 r_int
-DECL|function|maui_read
 id|maui_read
 c_func
 (paren
@@ -322,9 +244,9 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|maui_write
 r_static
 r_int
-DECL|function|maui_write
 id|maui_write
 c_func
 (paren
@@ -360,6 +282,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Maui: Write timeout&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -367,9 +290,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|mauiintr
 r_static
 r_void
-DECL|function|mauiintr
 id|mauiintr
 c_func
 (paren
@@ -391,9 +314,9 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|download_code
 r_static
 r_int
-DECL|function|download_code
 id|download_code
 c_func
 (paren
@@ -424,6 +347,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Code download (%d bytes): &quot;
 comma
 id|maui_osLen
@@ -454,6 +378,7 @@ id|i
 op_ne
 l_char|&squot;&bslash;r&squot;
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -611,6 +536,7 @@ suffix:semicolon
 id|n
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -631,6 +557,7 @@ id|HOST_DATA_PORT
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -677,7 +604,14 @@ id|done
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nDownload complete&bslash;n&quot;
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Download complete&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -687,21 +621,29 @@ suffix:semicolon
 )brace
 )brace
 )brace
+)brace
 id|failure
 suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nDownload failed!!!&bslash;n&quot;
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Download failed!!!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|maui_init
 r_static
 r_int
-DECL|function|maui_init
 id|maui_init
 c_func
 (paren
@@ -709,9 +651,11 @@ r_int
 id|irq
 )paren
 (brace
+macro_line|#ifdef __SMP__
 r_int
 id|i
 suffix:semicolon
+macro_line|#endif&t;
 r_int
 r_char
 id|bits
@@ -763,6 +707,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Maui: Invalid IRQ %d&bslash;n&quot;
 comma
 id|irq
@@ -840,6 +785,7 @@ id|HOST_CTRL_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* Cause interrupt */
+macro_line|#ifndef __SMP__
 r_for
 c_loop
 (paren
@@ -867,6 +813,7 @@ id|irq_ok
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#endif
 id|outb
 c_func
 (paren
@@ -881,6 +828,7 @@ multiline_comment|/* Leave reset */
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Turtle Beach Maui initialization&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -956,6 +904,7 @@ l_int|0x80
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Maui didn&squot;t acknowledge set HW mode command&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -963,6 +912,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Maui initialized OK&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -970,9 +920,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|maui_short_wait
 r_static
 r_int
-DECL|function|maui_short_wait
 id|maui_short_wait
 c_func
 (paren
@@ -1019,9 +969,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|maui_load_patch
 r_static
 r_int
-DECL|function|maui_load_patch
 id|maui_load_patch
 c_func
 (paren
@@ -1115,6 +1065,7 @@ id|MAUI_PATCH
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Maui: Unknown patch format&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1127,12 +1078,7 @@ OL
 id|hdr_size
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Maui error: Patch header too short&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;  printk(&quot;Maui error: Patch header too short&bslash;n&quot;);*/
 r_return
 op_minus
 id|EINVAL
@@ -1143,6 +1089,9 @@ op_sub_assign
 id|hdr_size
 suffix:semicolon
 multiline_comment|/*&n;&t; * Copy the header from user space but ignore the first bytes which have&n;&t; * been transferred already.&n;&t; */
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -1171,7 +1120,13 @@ id|hdr_size
 op_minus
 id|offs
 )paren
+)paren
+(brace
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1183,6 +1138,7 @@ id|header.len
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Maui warning: Host command record too short (%d&lt;%d)&bslash;n&quot;
 comma
 id|count
@@ -1225,6 +1181,9 @@ r_int
 r_char
 id|data
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|get_user
 c_func
 (paren
@@ -1254,7 +1213,13 @@ id|i
 )braket
 )paren
 )paren
+)paren
+(brace
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1330,8 +1295,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|probe_maui
+r_int
 id|probe_maui
 c_func
 (paren
@@ -1393,11 +1358,7 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-id|maui_sleep_flag.opts
-op_assign
-id|WK_NONE
-suffix:semicolon
-multiline_comment|/*&n; * Initialize the processor if necessary&n; */
+multiline_comment|/*&n;&t; * Initialize the processor if necessary&n;&t; */
 r_if
 c_cond
 (paren
@@ -1488,6 +1449,7 @@ multiline_comment|/* Report hardware version */
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;No WaveFront firmware detected (card uninitialized?)&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1532,6 +1494,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;No WaveFront firmware detected (card uninitialized?)&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1575,6 +1538,7 @@ id|trace_init
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;WaveFront hardware version %d.%d&bslash;n&quot;
 comma
 id|tmp1
@@ -1634,6 +1598,7 @@ id|trace_init
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;WaveFront firmware version %d.%d&bslash;n&quot;
 comma
 id|tmp1
@@ -1696,6 +1661,7 @@ id|trace_init
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Available DRAM %dk&bslash;n&quot;
 comma
 id|tmp1
@@ -1757,8 +1723,8 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-r_void
 DECL|function|attach_maui
+r_void
 id|attach_maui
 c_func
 (paren
@@ -1819,7 +1785,7 @@ id|hw_config-&gt;slots
 l_int|1
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;   * Intercept patch loading calls so that they can be handled&n;&t;&t;   * by the Maui driver.&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * Intercept patch loading calls so that they can be handled&n;&t;&t; * by the Maui driver.&n;&t;&t; */
 id|synth
 op_assign
 id|midi_devs
@@ -1861,8 +1827,8 @@ l_string|&quot;Maui: Can&squot;t install patch loader&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-r_void
 DECL|function|unload_maui
+r_void
 id|unload_maui
 c_func
 (paren
@@ -1946,9 +1912,9 @@ r_struct
 id|address_info
 id|cfg
 suffix:semicolon
-multiline_comment|/*&n; *    Install a CS4232 based card. Need to have ad1848 and mpu401&n; *      loaded ready.&n; */
-r_int
+multiline_comment|/*&n; *&t;Install a CS4232 based card. Need to have ad1848 and mpu401&n; *&t;loaded ready.&n; */
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
@@ -1958,6 +1924,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Turtle beach Maui and Tropez driver, Copyright (C) by Hannu Savolainen 1993-1996&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1978,6 +1945,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;maui: irq and io must be set.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2052,8 +2020,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren

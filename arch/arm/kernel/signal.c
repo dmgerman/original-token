@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/arch/arm/kernel/signal.c&n; *&n; *  Copyright (C) 1995, 1996 Russell King&n; */
+macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_CPU_ARM6 and CONFIG_CPU_SA110 */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;

@@ -12,6 +12,10 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+DECL|macro|ATOMIC_ON
+mdefine_line|#define ATOMIC_ON()&t;do { } while (0)
+DECL|macro|ATOMIC_OFF
+mdefine_line|#define ATOMIC_OFF()&t;do { } while (0)
 multiline_comment|/*&n; * The request-struct contains all necessary data&n; * to load a nr of sectors into memory&n; */
 DECL|variable|all_requests
 r_static
@@ -31,9 +35,9 @@ id|tq_disk
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Protect the request list against multiple users..&n; */
-DECL|variable|current_lock
+DECL|variable|io_request_lock
 id|spinlock_t
-id|current_lock
+id|io_request_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
@@ -1345,6 +1349,10 @@ id|max_req
 comma
 id|max_sectors
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|count
 op_assign
 id|bh-&gt;b_size
@@ -1591,7 +1599,17 @@ c_func
 id|bh-&gt;b_rdev
 )paren
 suffix:semicolon
-id|cli
+multiline_comment|/*&n;&t; * Now we acquire the request spinlock, we have to be mega careful&n;&t; * not to schedule or do something nonatomic&n;&t; */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|ATOMIC_ON
 c_func
 (paren
 )paren
@@ -1636,6 +1654,7 @@ op_plus
 id|major
 )paren
 suffix:semicolon
+multiline_comment|/* is atomic */
 )brace
 r_else
 r_switch
@@ -1812,9 +1831,18 @@ c_func
 id|bh
 )paren
 suffix:semicolon
-id|sti
+id|ATOMIC_OFF
 c_func
 (paren
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -1844,9 +1872,18 @@ comma
 id|bh-&gt;b_rdev
 )paren
 suffix:semicolon
-id|sti
+id|ATOMIC_OFF
 c_func
 (paren
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* if no request available: if rw_ahead, forget it; otherwise try again blocking.. */
@@ -2794,7 +2831,20 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|cli
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|ATOMIC_ON
 c_func
 (paren
 )paren
@@ -2812,9 +2862,18 @@ comma
 id|rdev
 )paren
 suffix:semicolon
-id|sti
+id|ATOMIC_OFF
 c_func
 (paren
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if

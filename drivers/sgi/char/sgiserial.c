@@ -1,4 +1,5 @@
 multiline_comment|/* sgiserial.c: Serial port driver for SGI machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_REMOTE_DEBUG */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -889,6 +889,59 @@ r_int
 id|parent_dev
 suffix:semicolon
 multiline_comment|/* 0 -&gt; no parent, 1 to n -&gt; parent=parent_dev+1 */
+multiline_comment|/* fields formerly in dmabuf.c */
+DECL|member|in_sleeper
+r_struct
+id|wait_queue
+op_star
+id|in_sleeper
+suffix:semicolon
+DECL|member|out_sleeper
+r_struct
+id|wait_queue
+op_star
+id|out_sleeper
+suffix:semicolon
+multiline_comment|/* fields formerly in audio.c */
+DECL|member|audio_mode
+r_int
+id|audio_mode
+suffix:semicolon
+multiline_comment|/* why dont we use file-&gt;f_flags &amp; O_NONBLOCK for the following? - ts */
+DECL|member|dev_nblock
+r_int
+id|dev_nblock
+suffix:semicolon
+multiline_comment|/* 1 if in nonblocking mode */
+DECL|macro|AM_NONE
+mdefine_line|#define&t;&t;AM_NONE&t;&t;0
+DECL|macro|AM_WRITE
+mdefine_line|#define&t;&t;AM_WRITE&t;OPEN_WRITE
+DECL|macro|AM_READ
+mdefine_line|#define &t;AM_READ&t;&t;OPEN_READ
+DECL|member|local_format
+r_int
+id|local_format
+suffix:semicolon
+DECL|member|audio_format
+r_int
+id|audio_format
+suffix:semicolon
+DECL|member|local_conversion
+r_int
+id|local_conversion
+suffix:semicolon
+DECL|macro|CNV_MU_LAW
+mdefine_line|#define CNV_MU_LAW&t;0x00000001
+multiline_comment|/* large structures at the end to keep offsets small */
+DECL|member|dmaps
+r_struct
+id|dma_buffparms
+id|dmaps
+(braket
+l_int|2
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
 r_int
@@ -1915,7 +1968,7 @@ id|unload_gus_db16
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_GUSHW
+macro_line|#ifdef CONFIG_GUS
 (brace
 l_string|&quot;GUS&quot;
 comma
@@ -2213,7 +2266,7 @@ id|unload_sbmpu
 comma
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifdef CONFIG_SSCAPEHW
+macro_line|#ifdef CONFIG_SSCAPE
 (brace
 l_string|&quot;SSCAPE&quot;
 comma
@@ -3285,36 +3338,6 @@ op_star
 id|ints
 )paren
 suffix:semicolon
-r_int
-id|sound_alloc_dmap
-(paren
-r_int
-id|dev
-comma
-r_struct
-id|dma_buffparms
-op_star
-id|dmap
-comma
-r_int
-id|chan
-)paren
-suffix:semicolon
-r_void
-id|sound_free_dmap
-(paren
-r_int
-id|dev
-comma
-r_struct
-id|dma_buffparms
-op_star
-id|dmap
-comma
-r_int
-id|chn
-)paren
-suffix:semicolon
 r_extern
 r_int
 id|sound_map_buffer
@@ -3379,35 +3402,6 @@ comma
 r_char
 op_star
 id|name
-)paren
-suffix:semicolon
-r_int
-id|sound_start_dma
-c_func
-(paren
-r_int
-id|dev
-comma
-r_struct
-id|dma_buffparms
-op_star
-id|dmap
-comma
-r_int
-id|chan
-comma
-r_int
-r_int
-id|physaddr
-comma
-r_int
-id|count
-comma
-r_int
-id|dma_mode
-comma
-r_int
-id|autoinit
 )paren
 suffix:semicolon
 r_void

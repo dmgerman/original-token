@@ -4487,6 +4487,15 @@ macro_line|#endif
 )brace
 r_break
 suffix:semicolon
+r_case
+id|NETDEV_CHANGEMTU
+suffix:colon
+r_case
+id|NETDEV_CHANGE
+suffix:colon
+multiline_comment|/* BUGGG... Should scan FIB to change pmtu on routes. --ANK */
+r_break
+suffix:semicolon
 )brace
 suffix:semicolon
 r_return

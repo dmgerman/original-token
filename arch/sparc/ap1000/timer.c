@@ -1,5 +1,6 @@
 multiline_comment|/*&n;   * Copyright 1996 The Australian National University.&n;   * Copyright 1996 Fujitsu Laboratories Limited&n;   * &n;   * This software may be distributed under the terms of the Gnu&n;   * Public License version 2 or later&n;  */
 multiline_comment|/* routines to control the AP1000 timer chip */
+macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_PROFILE */
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;

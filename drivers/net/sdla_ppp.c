@@ -2,6 +2,7 @@ multiline_comment|/*************************************************************
 macro_line|#if&t;!defined(__KERNEL__) || !defined(MODULE)
 macro_line|#error&t;This code MUST be compiled as a kernel module!
 macro_line|#endif
+macro_line|#include &lt;linux/config.h&gt;&t;/* CONFIG_SANGOMA_MANAGER */
 macro_line|#include &lt;linux/kernel.h&gt;&t;/* printk(), and other useful stuff */
 macro_line|#include &lt;linux/stddef.h&gt;&t;/* offsetof(), etc. */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* return codes */

@@ -3317,7 +3317,7 @@ op_assign
 id|rt6_device_match
 c_func
 (paren
-id|rt
+id|fn-&gt;leaf
 comma
 id|dev
 comma
@@ -7065,7 +7065,7 @@ c_func
 (paren
 id|size
 comma
-id|GFP_KERNEL
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if

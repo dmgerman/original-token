@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_NET_PROFILE */
 macro_line|#ifndef _NET_PROFILE_H_
 DECL|macro|_NET_PROFILE_H_
 mdefine_line|#define _NET_PROFILE_H_ 1

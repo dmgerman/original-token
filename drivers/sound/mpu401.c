@@ -2811,7 +2811,9 @@ l_int|0
 r_return
 id|ret
 suffix:semicolon
-r_return
+r_if
+c_cond
+(paren
 id|__copy_to_user
 c_func
 (paren
@@ -2825,6 +2827,13 @@ r_sizeof
 id|rec
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 r_default
 suffix:colon

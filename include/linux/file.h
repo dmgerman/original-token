@@ -134,6 +134,12 @@ op_logical_neg
 id|count
 )paren
 (brace
+id|locks_remove_flock
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|__fput

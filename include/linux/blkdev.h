@@ -118,6 +118,7 @@ id|request_fn_proc
 op_star
 id|request_fn
 suffix:semicolon
+multiline_comment|/*&n;&t; * queue_proc has to be atomic&n;&t; */
 DECL|member|queue
 id|queue_proc
 op_star

@@ -5,6 +5,7 @@ mdefine_line|#define _PPA_H
 DECL|macro|PPA_VERSION
 mdefine_line|#define   PPA_VERSION   &quot;1.39a&quot;
 multiline_comment|/* Use the following to enable certain chipset support&n; * Default is PEDANTIC = 3&n; */
+macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_SCSI_PPA_HAVE_PEDANTIC */
 macro_line|#ifndef CONFIG_SCSI_PPA_HAVE_PEDANTIC
 DECL|macro|CONFIG_SCSI_PPA_HAVE_PEDANTIC
 mdefine_line|#define CONFIG_SCSI_PPA_HAVE_PEDANTIC&t;3

@@ -45,17 +45,6 @@ DECL|macro|FALSE
 mdefine_line|#define FALSE&t;0
 DECL|macro|TRUE
 mdefine_line|#define TRUE&t;1
-DECL|struct|snd_wait
-r_struct
-id|snd_wait
-(brace
-DECL|member|opts
-r_volatile
-r_int
-id|opts
-suffix:semicolon
-)brace
-suffix:semicolon
 r_extern
 r_int
 id|sound_alloc_dma

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;SNAP data link layer. Derived from 802.2&n; *&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;, from the 802.2 layer by Greg Page.&n; *&t;&t;Merged in additions from Greg Page&squot;s psnap.c.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;$Id: route.c,v 1.36 1997/12/17 20:14:18 kuznet Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Linus Torvalds, &lt;Linus.Torvalds@helsinki.fi&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&t;&t;Rui Oliveira&t;:&t;ICMP routing table updates&n; *&t;&t;(rco@di.uminho.pt)&t;Routing table insertion and update&n; *&t;&t;Linus Torvalds&t;:&t;Rewrote bits to be sensible&n; *&t;&t;Alan Cox&t;:&t;Added BSD route gw semantics&n; *&t;&t;Alan Cox&t;:&t;Super /proc &gt;4K &n; *&t;&t;Alan Cox&t;:&t;MTU in route table&n; *&t;&t;Alan Cox&t;: &t;MSS actually. Also added the window&n; *&t;&t;&t;&t;&t;clamper.&n; *&t;&t;Sam Lantinga&t;:&t;Fixed route matching in rt_del()&n; *&t;&t;Alan Cox&t;:&t;Routing cache support.&n; *&t;&t;Alan Cox&t;:&t;Removed compatibility cruft.&n; *&t;&t;Alan Cox&t;:&t;RTF_REJECT support.&n; *&t;&t;Alan Cox&t;:&t;TCP irtt support.&n; *&t;&t;Jonathan Naylor&t;:&t;Added Metric support.&n; *&t;Miquel van Smoorenburg&t;:&t;BSD API fixes.&n; *&t;Miquel van Smoorenburg&t;:&t;Metrics.&n; *&t;&t;Alan Cox&t;:&t;Use __u32 properly&n; *&t;&t;Alan Cox&t;:&t;Aligned routing errors more closely with BSD&n; *&t;&t;&t;&t;&t;our system is still very different.&n; *&t;&t;Alan Cox&t;:&t;Faster /proc handling&n; *&t;Alexey Kuznetsov&t;:&t;Massive rework to support tree based routing,&n; *&t;&t;&t;&t;&t;routing caches and better behaviour.&n; *&t;&t;&n; *&t;&t;Olaf Erb&t;:&t;irtt wasn&squot;t being copied right.&n; *&t;&t;Bjorn Ekwall&t;:&t;Kerneld route support.&n; *&t;&t;Alan Cox&t;:&t;Multicast fixed (I hope)&n; * &t;&t;Pavel Krauz&t;:&t;Limited broadcast fixed&n; *&t;Alexey Kuznetsov&t;:&t;End of old history. Splitted to fib.c and&n; *&t;&t;&t;&t;&t;route.c and rewritten from scratch.&n; *&t;&t;Andi Kleen&t;:&t;Load-limit warning messages.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;$Id: route.c,v 1.36 1997/12/17 20:14:18 kuznet Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Linus Torvalds, &lt;Linus.Torvalds@helsinki.fi&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&t;&t;Rui Oliveira&t;:&t;ICMP routing table updates&n; *&t;&t;(rco@di.uminho.pt)&t;Routing table insertion and update&n; *&t;&t;Linus Torvalds&t;:&t;Rewrote bits to be sensible&n; *&t;&t;Alan Cox&t;:&t;Added BSD route gw semantics&n; *&t;&t;Alan Cox&t;:&t;Super /proc &gt;4K &n; *&t;&t;Alan Cox&t;:&t;MTU in route table&n; *&t;&t;Alan Cox&t;: &t;MSS actually. Also added the window&n; *&t;&t;&t;&t;&t;clamper.&n; *&t;&t;Sam Lantinga&t;:&t;Fixed route matching in rt_del()&n; *&t;&t;Alan Cox&t;:&t;Routing cache support.&n; *&t;&t;Alan Cox&t;:&t;Removed compatibility cruft.&n; *&t;&t;Alan Cox&t;:&t;RTF_REJECT support.&n; *&t;&t;Alan Cox&t;:&t;TCP irtt support.&n; *&t;&t;Jonathan Naylor&t;:&t;Added Metric support.&n; *&t;Miquel van Smoorenburg&t;:&t;BSD API fixes.&n; *&t;Miquel van Smoorenburg&t;:&t;Metrics.&n; *&t;&t;Alan Cox&t;:&t;Use __u32 properly&n; *&t;&t;Alan Cox&t;:&t;Aligned routing errors more closely with BSD&n; *&t;&t;&t;&t;&t;our system is still very different.&n; *&t;&t;Alan Cox&t;:&t;Faster /proc handling&n; *&t;Alexey Kuznetsov&t;:&t;Massive rework to support tree based routing,&n; *&t;&t;&t;&t;&t;routing caches and better behaviour.&n; *&t;&t;&n; *&t;&t;Olaf Erb&t;:&t;irtt wasn&squot;t being copied right.&n; *&t;&t;Bjorn Ekwall&t;:&t;Kerneld route support.&n; *&t;&t;Alan Cox&t;:&t;Multicast fixed (I hope)&n; * &t;&t;Pavel Krauz&t;:&t;Limited broadcast fixed&n; *&t;Alexey Kuznetsov&t;:&t;End of old history. Splitted to fib.c and&n; *&t;&t;&t;&t;&t;route.c and rewritten from scratch.&n; *&t;&t;Andi Kleen&t;:&t;Load-limit warning messages.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -359,7 +359,7 @@ id|buffer
 comma
 l_string|&quot;%-127s&bslash;n&quot;
 comma
-l_string|&quot;Iface&bslash;tDestination&bslash;tGateway &bslash;tFlags&bslash;t&bslash;tRefCnt&bslash;tUse&bslash;tMetric&bslash;tSource&bslash;t&bslash;tMTU&bslash;tWindow&bslash;tIRTT&bslash;tTOS&bslash;tHHRef&bslash;tHHUptod&bslash;tSpecDst&bslash;tHash&quot;
+l_string|&quot;Iface&bslash;tDestination&bslash;tGateway &bslash;tFlags&bslash;t&bslash;tRefCnt&bslash;tUse&bslash;tMetric&bslash;tSource&bslash;t&bslash;tMTU&bslash;tWindow&bslash;tIRTT&bslash;tTOS&bslash;tHHRef&bslash;tHHUptod&bslash;tSpecDst&quot;
 )paren
 suffix:semicolon
 id|len
@@ -429,7 +429,7 @@ c_func
 (paren
 id|temp
 comma
-l_string|&quot;%s&bslash;t%08lX&bslash;t%08lX&bslash;t%8X&bslash;t%d&bslash;t%u&bslash;t%d&bslash;t%08lX&bslash;t%d&bslash;t%u&bslash;t%u&bslash;t%02X&bslash;t%d&bslash;t%1d&bslash;t%08X&bslash;t%02X&quot;
+l_string|&quot;%s&bslash;t%08lX&bslash;t%08lX&bslash;t%8X&bslash;t%d&bslash;t%u&bslash;t%d&bslash;t%08lX&bslash;t%d&bslash;t%u&bslash;t%u&bslash;t%02X&bslash;t%d&bslash;t%1d&bslash;t%08X&quot;
 comma
 id|r-&gt;u.dst.dev
 ques
@@ -513,8 +513,6 @@ suffix:colon
 l_int|0
 comma
 id|r-&gt;rt_spec_dst
-comma
-id|i
 )paren
 suffix:semicolon
 id|sprintf
@@ -894,44 +892,28 @@ id|nr
 op_assign
 l_int|0
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 (paren
 id|rth
 op_assign
-id|rt_hash_table
-(braket
-id|i
-)braket
-)paren
-)paren
-(brace
-id|sti
+id|xchg
 c_func
 (paren
-)paren
-suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
+op_amp
 id|rt_hash_table
 (braket
 id|i
 )braket
-op_assign
+comma
 l_int|NULL
-suffix:semicolon
-id|sti
-c_func
-(paren
 )paren
+)paren
+op_eq
+l_int|NULL
+)paren
+r_continue
 suffix:semicolon
 r_for
 c_loop
@@ -4637,7 +4619,7 @@ comma
 id|u32
 id|saddr
 comma
-id|u8
+id|u32
 id|tos
 comma
 r_int
@@ -4672,11 +4654,22 @@ suffix:semicolon
 r_int
 id|hash
 suffix:semicolon
+macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
+id|u32
+id|nochecksrc
+op_assign
+(paren
+id|tos
+op_amp
+id|RTO_TPROXY
+)paren
+suffix:semicolon
+macro_line|#endif
 id|tos
 op_and_assign
 id|IPTOS_TOS_MASK
 op_or
-l_int|1
+id|RTO_ONLINK
 suffix:semicolon
 id|key.dst
 op_assign
@@ -4705,7 +4698,7 @@ op_assign
 (paren
 id|tos
 op_amp
-l_int|1
+id|RTO_ONLINK
 )paren
 ques
 c_cond
@@ -4757,6 +4750,33 @@ c_func
 id|saddr
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
+multiline_comment|/* If address is not local, test for transparent proxy flag;&n;&t;&t;   if address is local --- clear the flag.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|dev_out
+op_eq
+l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|nochecksrc
+op_eq
+l_int|0
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+id|flags
+op_or_assign
+id|RTCF_TPROXY
+suffix:semicolon
+)brace
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -4768,6 +4788,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* I removed check for oif == dev_out-&gt;oif here.&n;&t;&t;   It was wrong by three reasons:&n;&t;&t;   1. ip_dev_find(saddr) can return wrong iface, if saddr is&n;&t;&t;      assigned to multiple interfaces.&n;&t;&t;   2. Moreover, we are allowed to send packets with saddr&n;&t;&t;      of another iface. --ANK&n;&t;&t; */
 r_if
 c_cond
@@ -4776,6 +4797,10 @@ id|oif
 op_eq
 l_int|0
 op_logical_and
+macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
+id|dev_out
+op_logical_and
+macro_line|#endif
 (paren
 id|MULTICAST
 c_func
@@ -5594,7 +5619,7 @@ comma
 id|u32
 id|saddr
 comma
-id|u8
+id|u32
 id|tos
 comma
 r_int
@@ -5668,9 +5693,41 @@ id|rth-&gt;key.oif
 op_eq
 id|oif
 op_logical_and
+macro_line|#ifndef CONFIG_IP_TRANSPARENT_PROXY
 id|rth-&gt;key.tos
 op_eq
 id|tos
+macro_line|#else
+op_logical_neg
+(paren
+(paren
+id|rth-&gt;key.tos
+op_xor
+id|tos
+)paren
+op_amp
+(paren
+id|IPTOS_TOS_MASK
+op_or
+id|RTO_ONLINK
+)paren
+)paren
+op_logical_and
+(paren
+(paren
+id|tos
+op_amp
+id|RTO_TPROXY
+)paren
+op_logical_or
+op_logical_neg
+(paren
+id|rth-&gt;rt_flags
+op_amp
+id|RTCF_TPROXY
+)paren
+)paren
+macro_line|#endif
 )paren
 (brace
 id|rth-&gt;u.dst.lastuse

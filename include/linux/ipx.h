@@ -205,5 +205,28 @@ DECL|macro|SIOCAIPXPRISLT
 mdefine_line|#define SIOCAIPXPRISLT&t;&t;(SIOCPROTOPRIVATE+1)
 DECL|macro|SIOCIPXCFGDATA
 mdefine_line|#define SIOCIPXCFGDATA&t;&t;(SIOCPROTOPRIVATE+2)
-macro_line|#endif
+macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/skbuff.h&gt;
+r_extern
+r_int
+id|ipxrtr_route_skb
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ipx_if_offset
+c_func
+(paren
+r_int
+r_int
+id|ipx_net_number
+)paren
+suffix:semicolon
+macro_line|#endif /* def __KERNEL__ */
+macro_line|#endif /* def _IPX_H_ */
 eof

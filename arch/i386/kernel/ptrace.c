@@ -1,6 +1,7 @@
 multiline_comment|/* ptrace.c */
 multiline_comment|/* By Ross Biro 1/23/92 */
 multiline_comment|/* edited by Linus Torvalds */
+macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_MATH_EMULATION */
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

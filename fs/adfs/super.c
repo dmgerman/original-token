@@ -1721,11 +1721,9 @@ r_void
 )paren
 (brace
 r_return
-(paren
 id|init_adfs_fs
 c_func
 (paren
-)paren
 )paren
 suffix:semicolon
 )brace

@@ -4,7 +4,6 @@ DECL|macro|DEBUG_UFS_SUPER
 macro_line|#undef DEBUG_UFS_SUPER
 multiline_comment|/*#define DEBUG_UFS_SUPER 1*/
 multiline_comment|/* Uncomment the line above when hacking ufs superblock code */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;

@@ -36,11 +36,11 @@ op_star
 id|inode
 )paren
 (brace
-id|Printk
+id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
-l_string|&quot;put inode %x (%d) owner %x pos %d dir %x&bslash;n&quot;
+l_string|&quot;put inode %p (%lu) owner %lu pos %lu dir %lu&bslash;n&quot;
 comma
 id|inode
 comma
@@ -105,7 +105,8 @@ id|sb
 id|Printk
 (paren
 (paren
-l_string|&quot;UMSDOS_put_super: /mn/ entering&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;UMSDOS_put_super: entering&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -138,9 +139,10 @@ multiline_comment|/* Will hold inode of the file, if successful */
 r_int
 id|ret
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;umsdos_real_lookup /mn/: looking for %s /&quot;
 comma
 id|dentry-&gt;d_name.name
@@ -160,7 +162,7 @@ comma
 id|dentry
 )paren
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
 l_string|&quot;/ returned %d&bslash;n&quot;
@@ -213,6 +215,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;umsdos_setup_dir_inode: umsdos_emd_dir_lookup for inode=%p returned %p&bslash;n&quot;
 comma
 id|inode
@@ -232,6 +235,7 @@ l_int|NULL
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;umsdos_setup_dir_inode /mn/: Setting up dir_inode_ops --&gt; eg. NOT using EMD.&bslash;n&quot;
 )paren
 )paren
@@ -247,6 +251,7 @@ r_else
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;umsdos_setup_dir_inode /mn/: Setting up rdir_inode_ops --&gt; eg. using EMD.&bslash;n&quot;
 )paren
 )paren
@@ -293,6 +298,7 @@ multiline_comment|/* FIXME, I don&squot;t have a clue on this one */
 id|Printk
 (paren
 (paren
+id|KERN_WARNING
 l_string|&quot;umsdos_set_dirinfo: /mn/ FIXME: no clue&bslash;n&quot;
 )paren
 )paren
@@ -382,6 +388,16 @@ id|f_pos
 )paren
 (brace
 multiline_comment|/*&n;    This function is called very early to setup the inode, somewhat&n;    too early (called by UMSDOS_read_inode). At this point, we can&squot;t&n;    do to much, such as lookup up EMD files and so on. This causes&n;    confusion in the kernel. This is why some initialisation&n;    will be done when dir != NULL only.&n;    &n;    UMSDOS do run piggy back on top of msdos fs. It looks like something&n;    is missing in the VFS to accommodate stacked fs. Still unclear what&n;    (quite honestly).&n;    &n;    Well, maybe one! A new entry &quot;may_unmount&quot; which would allow&n;    the stacked fs to allocate some inode permanently and release&n;    them at the end. Doing that now introduce a problem. unmount&n;    always fail because some inodes are in use.&n;  */
+id|Printk
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot;Entering umsdos_patch_inode for inode=%lu&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -418,6 +434,7 @@ l_int|NULL
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;umsdos_patch_inode /mn/: seting i_op = umsdos_file_inode_operations&bslash;n&quot;
 )paren
 )paren
@@ -433,6 +450,7 @@ r_else
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;umsdos_patch_inode /mn/: seting i_op = umsdos_file_inode_operations_no_bmap&bslash;n&quot;
 )paren
 )paren
@@ -485,6 +503,7 @@ id|inode-&gt;i_mode
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;umsdos_patch_inode /mn/: seting i_op = umsdos_symlink_inode_operations&bslash;n&quot;
 )paren
 )paren
@@ -509,6 +528,7 @@ id|inode-&gt;i_mode
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;umsdos_patch_inode /mn/: seting i_op = chrdev_inode_operations&bslash;n&quot;
 )paren
 )paren
@@ -533,6 +553,7 @@ id|inode-&gt;i_mode
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;umsdos_patch_inode /mn/: seting i_op = blkdev_inode_operations&bslash;n&quot;
 )paren
 )paren
@@ -557,6 +578,7 @@ id|inode-&gt;i_mode
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;umsdos_patch_inode /mn/: uhm, init_fifo&bslash;n&quot;
 )paren
 )paren
@@ -578,10 +600,11 @@ l_int|NULL
 (brace
 multiline_comment|/* #Specification: inode / umsdos info&n;&t; The first time an inode is seen (inode-&gt;i_count == 1),&n;&t; the inode number of the EMD file which control this inode&n;&t; is tagged to this inode. It allows operation such&n;&t; as notify_change to be handled.&n;      */
 multiline_comment|/*&n;&t;This is done last because it also control the&n;&t;status of umsdos_isinit()&n;      */
-id|Printk
+id|PRINTK
 (paren
 (paren
-l_string|&quot;umsdos_patch_inode /mn/: here we go: calling umsdos_set_dirinfo (%p,%p,%d)&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;umsdos_patch_inode /mn/: here we go: calling umsdos_set_dirinfo (%p,%p,%lu)&bslash;n&quot;
 comma
 id|inode
 comma
@@ -621,6 +644,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
+id|KERN_WARNING
 l_string|&quot;umsdos_patch_inode: /mn/ Warning: untested emd_owner thingy...&bslash;n&quot;
 )paren
 )paren
@@ -770,10 +794,11 @@ op_star
 id|inode
 )paren
 (brace
-id|Printk
+id|PRINTK
 (paren
 (paren
-l_string|&quot;UMSDOS_read_inode %x ino = %d &quot;
+id|KERN_DEBUG
+l_string|&quot;UMSDOS_read_inode %p ino = %lu &quot;
 comma
 id|inode
 comma
@@ -790,7 +815,7 @@ suffix:semicolon
 id|PRINTK
 (paren
 (paren
-l_string|&quot;ino after msdos_read_inode= %d&bslash;n&quot;
+l_string|&quot;ino after msdos_read_inode= %lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -823,7 +848,7 @@ id|inode-&gt;u.umsdos_i.u.dir_info.p
 )paren
 )paren
 (brace
-id|Printk
+id|PRINTK
 (paren
 (paren
 l_string|&quot;read inode %d %d %p&bslash;n&quot;
@@ -935,6 +960,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
+id|KERN_ERR
 l_string|&quot;UMSDOS_notify_change: /mn/ completly untested&bslash;n&quot;
 )paren
 )paren
@@ -1072,7 +1098,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;pos = %d &quot;
+l_string|&quot;pos = %Lu &quot;
 comma
 id|filp.f_pos
 )paren
@@ -1214,7 +1240,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;notify pos %d ret %d nlink %d &quot;
+l_string|&quot;notify pos %lu ret %d nlink %d &quot;
 comma
 id|inode-&gt;u.umsdos_i.pos
 comma
@@ -1333,15 +1359,17 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;UMSDOS /mn/: starting UMSDOS_read_super&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;UMSDOS /mn/: sb = %p&bslash;n&quot;
 comma
 id|sb
@@ -1360,9 +1388,10 @@ comma
 id|silent
 )paren
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;UMSDOS /mn/: res = %p&bslash;n&quot;
 comma
 id|res
@@ -1372,7 +1401,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;UMSDOS dentry-WIP-Beta 0.82 (compatibility level %d.%d, fast msdos)&bslash;n&quot;
+l_string|&quot;UMSDOS dentry-WIP-Beta 0.82-1 (compatibility level %d.%d, fast msdos)&bslash;n&quot;
 comma
 id|UMSDOS_VERSION
 comma
@@ -1412,6 +1441,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;umsdos /mn/: here goes the iget ROOT_INO&bslash;n&quot;
 )paren
 )paren
@@ -1429,6 +1459,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;umsdos_read_super %p&bslash;n&quot;
 comma
 id|pseudo
@@ -1496,6 +1527,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;Mounting root&bslash;n&quot;
 )paren
 )paren
@@ -1533,6 +1565,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;/%s is there&bslash;n&quot;
 comma
 id|UMSDOS_PSDROOT_NAME
@@ -1574,6 +1607,7 @@ id|etc-&gt;d_inode-&gt;i_mode
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;/%s/etc is there&bslash;n&quot;
 comma
 id|UMSDOS_PSDROOT_NAME
@@ -1680,6 +1714,7 @@ id|sbin-&gt;d_inode-&gt;i_mode
 id|Printk
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;/%s/sbin is there&bslash;n&quot;
 comma
 id|UMSDOS_PSDROOT_NAME
@@ -1728,6 +1763,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
+id|KERN_INFO
 l_string|&quot;Activating pseudo root /%s&bslash;n&quot;
 comma
 id|UMSDOS_PSDROOT_NAME
@@ -1751,6 +1787,7 @@ multiline_comment|/* FIXME &n;&t;&n;&t;iput (sbin);&n;&t;iput (etc);&n;&t;*/
 id|Printk
 (paren
 (paren
+id|KERN_WARNING
 l_string|&quot;umsdos_read_super /mn/: Pseudo should be iput-ed here...&bslash;n&quot;
 )paren
 )paren
@@ -1763,9 +1800,10 @@ suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
 macro_line|#endif /* disabled */
-id|Printk
+id|PRINTK
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;umsdos_read_super /mn/: returning %p&bslash;n&quot;
 comma
 id|res

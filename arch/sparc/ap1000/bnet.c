@@ -1,6 +1,5 @@
 multiline_comment|/*&n;   * Copyright 1996 The Australian National University.&n;   * Copyright 1996 Fujitsu Laboratories Limited&n;   * &n;   * This software may be distributed under the terms of the Gnu&n;   * Public License version 2 or later&n;  */
 multiline_comment|/* routines to control the AP1000 bif interface. This is the interface&n;   used to talk to the front end processor */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/ap1000/apservice.h&gt;
 macro_line|#include &lt;asm/ap1000/apreg.h&gt;

@@ -2003,7 +2003,7 @@ id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|current_lock
+id|io_request_lock
 comma
 id|flags
 )paren
@@ -2024,7 +2024,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|current_lock
+id|io_request_lock
 comma
 id|flags
 )paren
@@ -2058,7 +2058,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|current_lock
+id|io_request_lock
 comma
 id|flags
 )paren
@@ -2086,11 +2086,13 @@ c_func
 )paren
 )paren
 (brace
-id|spin_unlock
+id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|current_lock
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|scsi_ioctl
@@ -2157,7 +2159,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|current_lock
+id|io_request_lock
 comma
 id|flags
 )paren
@@ -2187,7 +2189,7 @@ id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|current_lock
+id|io_request_lock
 comma
 id|flags
 )paren
@@ -2270,7 +2272,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|current_lock
+id|io_request_lock
 comma
 id|flags
 )paren

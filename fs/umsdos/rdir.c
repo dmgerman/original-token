@@ -79,7 +79,7 @@ op_star
 )paren
 id|buf
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
@@ -93,7 +93,7 @@ c_cond
 id|d-&gt;real_root
 )paren
 (brace
-id|Printk
+id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
@@ -171,13 +171,15 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Any DOS directory */
-id|Printk
+id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
-l_string|&quot;rdir_filldir /mn/: calling d-&gt;filldir (%p) for %12s (%d)&bslash;n&quot;
+l_string|&quot;rdir_filldir /mn/: calling d-&gt;filldir (%p) for %.*s (%lu)&bslash;n&quot;
 comma
 id|d-&gt;filldir
+comma
+id|name_len
 comma
 id|name
 comma
@@ -234,7 +236,7 @@ id|dir
 op_assign
 id|filp-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
@@ -278,7 +280,7 @@ comma
 id|UMSDOS_ROOT_INO
 )paren
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
@@ -391,6 +393,7 @@ multiline_comment|/*    *result = pseudo_root;*/
 id|Printk
 (paren
 (paren
+id|KERN_WARNING
 l_string|&quot;umsdos_rlookup_x: we are at pseudo-root thingy?&bslash;n&quot;
 )paren
 )paren
@@ -419,11 +422,14 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
+macro_line|#if 0
 id|Printk
 (paren
 (paren
 id|KERN_DEBUG
-l_string|&quot;umsdos_rlookup_x: umsdos_real_lookup for %s in %d returned %d&bslash;n&quot;
+l_string|&quot;umsdos_rlookup_x: umsdos_real_lookup for %.*s in %lu returned %d&bslash;n&quot;
+comma
+id|len
 comma
 id|name
 comma
@@ -454,7 +460,7 @@ id|Printk
 (paren
 (paren
 id|KERN_DEBUG
-l_string|&quot;i_ino=%d&bslash;n&quot;
+l_string|&quot;i_ino=%lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -472,6 +478,7 @@ l_string|&quot;NONE!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -501,6 +508,7 @@ multiline_comment|/* #Specification: pseudo root / DOS/linux&n;&t; Even in the r
 id|Printk
 (paren
 (paren
+id|KERN_WARNING
 l_string|&quot;umsdos_rlookup_x: do the pseudo-thingy...&bslash;n&quot;
 )paren
 )paren
@@ -532,7 +540,8 @@ multiline_comment|/* depending if this is a MsDOS directory or an UMSDOS directo
 id|Printk
 (paren
 (paren
-l_string|&quot;umsdos_rlookup_x: setting up setup_dir_inode %d...&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;umsdos_rlookup_x: setting up setup_dir_inode %lu...&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -551,7 +560,7 @@ id|iput
 id|dir
 )paren
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
@@ -581,13 +590,18 @@ op_star
 id|dentry
 )paren
 (brace
-id|Printk
+id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
-l_string|&quot;UMSDOS_rlookup /mn/: executing umsdos_rlookup_x for ino=%d in %20s&bslash;n&quot;
+l_string|&quot;UMSDOS_rlookup /mn/: executing umsdos_rlookup_x for ino=%lu in %.*s&bslash;n&quot;
 comma
 id|dir-&gt;i_ino
+comma
+(paren
+r_int
+)paren
+id|dentry-&gt;d_name.len
 comma
 id|dentry-&gt;d_name.name
 )paren

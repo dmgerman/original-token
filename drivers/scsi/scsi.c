@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;constants.h&quot;
@@ -139,6 +140,21 @@ op_star
 id|scsi_bh_queue_head
 op_assign
 l_int|NULL
+suffix:semicolon
+DECL|variable|scsi_bh_queue_tail
+r_static
+id|Scsi_Cmnd
+op_star
+id|scsi_bh_queue_tail
+op_assign
+l_int|NULL
+suffix:semicolon
+DECL|variable|scsi_bh_queue_spin
+r_static
+id|spinlock_t
+id|scsi_bh_queue_spin
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 DECL|variable|dma_malloc_freelist
 r_static
@@ -5703,10 +5719,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|Scsi_Cmnd
-op_star
-id|SCswap
-suffix:semicolon
 multiline_comment|/*&n;   * We don&squot;t have to worry about this one timing out any more.&n;   */
 id|scsi_delete_timer
 c_func
@@ -5752,74 +5764,52 @@ id|SCpnt-&gt;bh_next
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * Next, put this command in the BH queue.  All processing of the command&n;   * past this point will take place with interrupts turned on.&n;   * We start by atomicly swapping the pointer into the queue head slot.&n;   * If it was NULL before, then everything is fine, and we are done&n;   * (this is the normal case).  If it was not NULL, then we block interrupts,&n;   * and link them together.&n;   */
-id|SCswap
-op_assign
-(paren
-id|Scsi_Cmnd
-op_star
-)paren
-id|xchg
+multiline_comment|/*&n;   * Next, put this command in the BH queue.  All processing of the command&n;   * past this point will take place with interrupts turned on.&n;   * We start by atomicly swapping the pointer into the queue head slot.&n;   * If it was NULL before, then everything is fine, and we are done&n;   * (this is the normal case).  If it was not NULL, then we block interrupts,&n;   * and link them together.&n;   * We need a spinlock here, or compare and exchange if we can reorder incoming&n;   * Scsi_Cmnds, as it happens pretty often scsi_done is called multiple times&n;   * before bh is serviced. -jj&n;   */
+id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|scsi_bh_queue_head
+id|scsi_bh_queue_spin
 comma
-id|SCpnt
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|SCswap
-op_ne
-l_int|NULL
-)paren
-(brace
-multiline_comment|/*&n;       * If we assume that the interrupt handler doesn&squot;t dawdle, then it is safe to&n;       * say that we should come in here extremely rarely.  Under very heavy load,&n;       * the requests might not be removed from the list fast enough so that we&n;       * *do* end up stacking them, and that would be bad.&n;       */
-id|save_flags
-c_func
-(paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;       * See if the pointer is NULL - it might have been serviced already&n;       */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|scsi_bh_queue_head
-op_eq
-l_int|NULL
 )paren
 (brace
 id|scsi_bh_queue_head
 op_assign
-id|SCswap
+id|SCpnt
+suffix:semicolon
+id|scsi_bh_queue_tail
+op_assign
+id|SCpnt
 suffix:semicolon
 )brace
 r_else
 (brace
-id|SCswap-&gt;bh_next
+id|scsi_bh_queue_tail-&gt;bh_next
 op_assign
-id|scsi_bh_queue_head
+id|SCpnt
 suffix:semicolon
-id|scsi_bh_queue_head
+id|scsi_bh_queue_tail
 op_assign
-id|SCswap
+id|SCpnt
 suffix:semicolon
 )brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|scsi_bh_queue_spin
+comma
 id|flags
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/*&n;   * Mark the bottom half handler to be run.&n;   */
 id|mark_bh
 c_func
@@ -5848,6 +5838,10 @@ suffix:semicolon
 r_static
 id|atomic_t
 id|recursion_depth
+suffix:semicolon
+r_int
+r_int
+id|flags
 suffix:semicolon
 r_while
 c_loop
@@ -5906,16 +5900,31 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;       * This is an atomic operation - swap the pointer with a NULL pointer&n;       * We will process everything we find in the list here.&n;       */
-id|SCpnt
-op_assign
-id|xchg
+multiline_comment|/*&n;       * We need to hold the spinlock, so that nobody is tampering with the queue. -jj&n;       * We will process everything we find in the list here.&n;       */
+id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|scsi_bh_queue_head
+id|scsi_bh_queue_spin
 comma
+id|flags
+)paren
+suffix:semicolon
+id|SCpnt
+op_assign
+id|scsi_bh_queue_head
+suffix:semicolon
+id|scsi_bh_queue_head
+op_assign
 l_int|NULL
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|scsi_bh_queue_spin
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if

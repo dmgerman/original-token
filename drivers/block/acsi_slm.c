@@ -19,6 +19,7 @@ macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#include &lt;asm/atari_acsi.h&gt;
 macro_line|#include &lt;asm/atari_stdma.h&gt;
+macro_line|#include &lt;asm/atari_stram.h&gt;
 macro_line|#include &lt;asm/atari_SLM.h&gt;
 DECL|macro|DEBUG
 macro_line|#undef&t;DEBUG
@@ -542,15 +543,10 @@ id|device
 )paren
 suffix:semicolon
 r_static
-r_int
+id|ssize_t
 id|slm_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|node
-comma
 r_struct
 id|file
 op_star
@@ -561,8 +557,11 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 suffix:semicolon
 r_static
@@ -622,15 +621,10 @@ r_void
 )paren
 suffix:semicolon
 r_static
-r_int
+id|ssize_t
 id|slm_write
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|node
-comma
 r_struct
 id|file
 op_star
@@ -642,8 +636,11 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 suffix:semicolon
 r_static
@@ -1390,15 +1387,10 @@ suffix:semicolon
 )brace
 DECL|function|slm_read
 r_static
-r_int
+id|ssize_t
 id|slm_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|node
-comma
 r_struct
 id|file
 op_star
@@ -1409,10 +1401,20 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|node
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
 r_int
 r_int
 id|page
@@ -2444,15 +2446,10 @@ suffix:semicolon
 )brace
 DECL|function|slm_write
 r_static
-r_int
+id|ssize_t
 id|slm_write
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|node
-comma
 r_struct
 id|file
 op_star
@@ -2464,10 +2461,20 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|node
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
 r_int
 id|device
 op_assign
@@ -4134,14 +4141,14 @@ op_logical_neg
 (paren
 id|SLMBuffer
 op_assign
-id|kmalloc
+id|atari_stram_alloc
 c_func
 (paren
 id|SLM_BUFFER_SIZE
 comma
-id|GFP_KERNEL
-op_or
-id|GFP_DMA
+l_int|NULL
+comma
+l_string|&quot;SLM&quot;
 )paren
 )paren
 )paren
@@ -4259,6 +4266,12 @@ c_func
 (paren
 id|KERN_ERR
 l_string|&quot;acsi_slm: cleanup_module failed&bslash;n&quot;
+)paren
+suffix:semicolon
+id|atari_stram_free
+c_func
+(paren
+id|SLMBuffer
 )paren
 suffix:semicolon
 )brace

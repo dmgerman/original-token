@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * linux/drivers/char/selection.c&n; *&n; * This module exports the functions:&n; *&n; *     &squot;int set_selection(const unsigned long arg)&squot;&n; *     &squot;void clear_selection(void)&squot;&n; *     &squot;int paste_selection(struct tty_struct *tty)&squot;&n; *     &squot;int sel_loadlut(const unsigned long arg)&squot;&n; *&n; * Now that /dev/vcs exists, most of this can disappear again.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

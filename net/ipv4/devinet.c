@@ -1698,6 +1698,10 @@ suffix:semicolon
 r_case
 id|SIOCSIFFLAGS
 suffix:colon
+r_case
+id|SIOCSIFPFLAGS
+suffix:colon
+multiline_comment|/* Set per device sysctl controls */
 r_if
 c_cond
 (paren
@@ -1738,10 +1742,6 @@ r_case
 id|SIOCSIFNETMASK
 suffix:colon
 multiline_comment|/* Set the netmask for the interface */
-r_case
-id|SIOCSIFPFLAGS
-suffix:colon
-multiline_comment|/* Set per device sysctl controls */
 r_if
 c_cond
 (paren

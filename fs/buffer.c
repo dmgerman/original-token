@@ -90,14 +90,15 @@ DECL|macro|NR_RESERVED
 mdefine_line|#define NR_RESERVED (2*MAX_BUF_PER_PAGE)
 DECL|macro|MAX_UNUSED_BUFFERS
 mdefine_line|#define MAX_UNUSED_BUFFERS NR_RESERVED+20 /* don&squot;t ever have more than this &n;&t;&t;&t;&t;&t;     number of unused buffer heads */
-DECL|macro|HASH_PAGES
-mdefine_line|#define HASH_PAGES         4  /* number of pages to use for the hash table */
+multiline_comment|/*&n; * How large a hash table do we need?&n; */
 DECL|macro|HASH_PAGES_ORDER
-mdefine_line|#define HASH_PAGES_ORDER   2
+mdefine_line|#define HASH_PAGES_ORDER&t;4
+DECL|macro|HASH_PAGES
+mdefine_line|#define HASH_PAGES&t;&t;(1UL &lt;&lt; HASH_PAGES_ORDER)
 DECL|macro|NR_HASH
-mdefine_line|#define NR_HASH (HASH_PAGES*PAGE_SIZE/sizeof(struct buffer_head *))
+mdefine_line|#define NR_HASH&t;&t;&t;(HASH_PAGES*PAGE_SIZE/sizeof(struct buffer_head *))
 DECL|macro|HASH_MASK
-mdefine_line|#define HASH_MASK (NR_HASH-1)
+mdefine_line|#define HASH_MASK&t;&t;(NR_HASH-1)
 r_static
 r_int
 id|grow_buffers

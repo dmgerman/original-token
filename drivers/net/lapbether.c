@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;&quot;LAPB via ethernet&quot; driver release 001&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;This is a &quot;pseudo&quot; network driver to allow LAPB over Ethernet.&n; *&n; *&t;This driver can use any ethernet destination address, and can be &n; *&t;limited to accept frames from one dedicated ethernet card only.&n; *&n; *&t;History&n; *&t;LAPBETH 001&t;Jonathan Naylor&t;&t;Cloned from bpqether.c&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;

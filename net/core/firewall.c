@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;Generic loadable firewalls. At the moment only IP will actually&n; *&t;use these, but people can add the others as they are needed.&n; *&n; *&t;Authors:&t;Dave Bonn (for IP)&n; *&t;much hacked by:&t;Alan Cox&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;

@@ -650,6 +650,13 @@ DECL|member|af
 )brace
 id|af
 suffix:semicolon
+macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
+DECL|member|lcl_port
+id|__u16
+id|lcl_port
+suffix:semicolon
+multiline_comment|/* LVE */
+macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/* SLAB cache for open requests. */

@@ -570,7 +570,11 @@ id|__attribute__
 (paren
 id|aligned
 (paren
-l_int|4
+r_sizeof
+(paren
+r_int
+r_int
+)paren
 )paren
 )paren
 )paren

@@ -5,7 +5,6 @@ DECL|macro|CODA_PSDEV_MAJOR
 mdefine_line|#define CODA_PSDEV_MAJOR 67
 DECL|macro|MAX_CODADEVS
 mdefine_line|#define MAX_CODADEVS  5&t;   /* how many do we allow */
-macro_line|#include &lt;linux/config.h&gt;
 r_extern
 r_struct
 id|vcomm

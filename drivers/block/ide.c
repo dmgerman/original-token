@@ -111,13 +111,13 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -154,7 +154,7 @@ l_int|0x40
 op_lshift
 l_int|8
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -644,13 +644,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -671,7 +671,7 @@ comma
 id|wcount
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -799,13 +799,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -826,7 +826,7 @@ comma
 id|wcount
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -1808,13 +1808,13 @@ c_func
 id|drive
 )paren
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -1876,7 +1876,7 @@ op_div
 l_int|20
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 (paren
 id|flags
 )paren
@@ -1966,7 +1966,7 @@ l_int|20
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* OK_TO_RESET_CONTROLLER */
-id|restore_flags
+id|__restore_flags
 (paren
 id|flags
 )paren
@@ -2087,13 +2087,13 @@ id|IDE_NSECTOR_REG
 suffix:semicolon
 )brace
 )brace
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -2142,7 +2142,7 @@ c_func
 id|rq-&gt;sem
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -2176,16 +2176,12 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
-id|save_flags
+id|__save_flags
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|ide_sti
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* ide_sti(); HACK */
 id|printk
 c_func
 (paren
@@ -2631,7 +2627,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
+id|__restore_flags
 (paren
 id|flags
 )paren
@@ -3150,11 +3146,7 @@ id|retries
 op_assign
 l_int|10
 suffix:semicolon
-id|ide_sti
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* ide_sti(); HACK */
 r_if
 c_cond
 (paren
@@ -3431,17 +3423,13 @@ op_amp
 id|BUSY_STAT
 )paren
 (brace
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|ide_sti
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* ide_sti(); HACK */
 id|timeout
 op_add_assign
 id|jiffies
@@ -3477,7 +3465,7 @@ id|timeout
 )paren
 )paren
 (brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -3498,7 +3486,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -3750,11 +3738,7 @@ id|minor
 op_rshift
 id|PARTN_BITS
 suffix:semicolon
-id|ide_sti
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* ide_sti(); HACK */
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -4535,7 +4519,7 @@ op_star
 id|hwgroup
 )paren
 (brace
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -4641,7 +4625,7 @@ comma
 id|drive
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -4824,7 +4808,7 @@ id|do_ide0_request
 (paren
 r_void
 )paren
-multiline_comment|/* invoked with cli() */
+multiline_comment|/* invoked with __cli() */
 (brace
 id|do_hwgroup_request
 (paren
@@ -4844,7 +4828,7 @@ id|do_ide1_request
 (paren
 r_void
 )paren
-multiline_comment|/* invoked with cli() */
+multiline_comment|/* invoked with __cli() */
 (brace
 id|do_hwgroup_request
 (paren
@@ -4865,7 +4849,7 @@ id|do_ide2_request
 (paren
 r_void
 )paren
-multiline_comment|/* invoked with cli() */
+multiline_comment|/* invoked with __cli() */
 (brace
 id|do_hwgroup_request
 (paren
@@ -4886,7 +4870,7 @@ id|do_ide3_request
 (paren
 r_void
 )paren
-multiline_comment|/* invoked with cli() */
+multiline_comment|/* invoked with __cli() */
 (brace
 id|do_hwgroup_request
 (paren
@@ -4933,13 +4917,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -5006,7 +4990,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -5048,14 +5032,14 @@ id|do_hwgroup_request
 id|hwgroup
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * There&squot;s nothing really useful we can do with an unexpected interrupt,&n; * other than reading the status register (to clear it), and logging it.&n; * There should be no way that an irq can happen before we&squot;re ready for it,&n; * so we needn&squot;t worry much about losing an &quot;important&quot; interrupt here.&n; *&n; * On laptops (and &quot;green&quot; PCs), an unexpected interrupt occurs whenever the&n; * drive enters &quot;idle&quot;, &quot;standby&quot;, or &quot;sleep&quot; mode, so if the status looks&n; * &quot;good&quot;, we just ignore the interrupt completely.&n; *&n; * This routine assumes cli() is in effect when called.&n; *&n; * If an unexpected interrupt happens on irq15 while we are handling irq14&n; * and if the two interfaces are &quot;serialized&quot; (CMD640), then it looks like&n; * we could screw up by interfering with a new request being set up for irq15.&n; *&n; * In reality, this is a non-issue.  The new command is not sent unless the&n; * drive is ready to accept one, in which case we know the drive is not&n; * trying to interrupt us.  And ide_set_handler() is always invoked before&n; * completing the issuance of any new drive command, so we will not be&n; * accidently invoked as a result of any valid command completion interrupt.&n; *&n; */
+multiline_comment|/*&n; * There&squot;s nothing really useful we can do with an unexpected interrupt,&n; * other than reading the status register (to clear it), and logging it.&n; * There should be no way that an irq can happen before we&squot;re ready for it,&n; * so we needn&squot;t worry much about losing an &quot;important&quot; interrupt here.&n; *&n; * On laptops (and &quot;green&quot; PCs), an unexpected interrupt occurs whenever the&n; * drive enters &quot;idle&quot;, &quot;standby&quot;, or &quot;sleep&quot; mode, so if the status looks&n; * &quot;good&quot;, we just ignore the interrupt completely.&n; *&n; * This routine assumes __cli() is in effect when called.&n; *&n; * If an unexpected interrupt happens on irq15 while we are handling irq14&n; * and if the two interfaces are &quot;serialized&quot; (CMD640), then it looks like&n; * we could screw up by interfering with a new request being set up for irq15.&n; *&n; * In reality, this is a non-issue.  The new command is not sent unless the&n; * drive is ready to accept one, in which case we know the drive is not&n; * trying to interrupt us.  And ide_set_handler() is always invoked before&n; * completing the issuance of any new drive command, so we will not be&n; * accidently invoked as a result of any valid command completion interrupt.&n; *&n; */
 DECL|function|unexpected_intr
 r_static
 r_void
@@ -5185,7 +5169,7 @@ id|hwgroup-&gt;hwif
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * entry point for all interrupts, caller does cli() for us&n; */
+multiline_comment|/*&n; * entry point for all interrupts, caller does __cli() for us&n; */
 DECL|function|ide_intr
 r_void
 id|ide_intr
@@ -5203,6 +5187,10 @@ op_star
 id|regs
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|ide_hwgroup_t
 op_star
 id|hwgroup
@@ -5358,28 +5346,23 @@ id|hwgroup-&gt;timer
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|drive-&gt;unmask
-)paren
-id|ide_sti
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* if (drive-&gt;unmask)&n;&t;&t;&t;ide_sti(); HACK */
 id|handler
 c_func
 (paren
 id|drive
 )paren
 suffix:semicolon
-id|cli
+multiline_comment|/* this is necessary, as next rq may be different irq */
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* this is necessary, as next rq may be different irq */
 r_if
 c_cond
 (paren
@@ -5411,6 +5394,15 @@ id|hwgroup
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -5423,7 +5415,7 @@ id|hwgroup
 )paren
 suffix:semicolon
 )brace
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -5715,13 +5707,13 @@ op_assign
 op_amp
 id|sem
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -5811,7 +5803,7 @@ c_func
 id|hwgroup
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -5836,7 +5828,7 @@ id|sem
 )paren
 suffix:semicolon
 multiline_comment|/* wait for it to be serviced */
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -5911,13 +5903,13 @@ id|drive-&gt;select.b.unit
 op_lshift
 id|PARTN_BITS
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -5934,7 +5926,7 @@ l_int|1
 )paren
 )paren
 (brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -5952,7 +5944,7 @@ l_int|1
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -6772,13 +6764,13 @@ id|MAX_HWIFS
 )paren
 r_return
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -7228,7 +7220,7 @@ suffix:semicolon
 multiline_comment|/* restore hwif data to pristine status */
 m_abort
 suffix:colon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -8104,13 +8096,13 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -8225,7 +8217,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -12563,13 +12555,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -12593,7 +12585,7 @@ op_logical_or
 id|drive-&gt;usage
 )paren
 (brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -12613,7 +12605,7 @@ c_func
 id|drive
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -12713,13 +12705,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -12744,7 +12736,7 @@ op_member_access_from_pointer
 id|busy
 )paren
 (brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -12786,7 +12778,7 @@ id|drive-&gt;driver
 op_assign
 l_int|NULL
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags

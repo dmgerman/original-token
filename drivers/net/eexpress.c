@@ -7399,6 +7399,12 @@ op_ne
 l_int|NULL
 )paren
 (brace
+id|unregister_netdev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -7415,12 +7421,6 @@ c_func
 id|dev-&gt;base_addr
 comma
 id|EEXP_IO_EXTENT
-)paren
-suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-id|dev
 )paren
 suffix:semicolon
 )brace

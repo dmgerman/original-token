@@ -8939,6 +8939,13 @@ c_func
 r_void
 )paren
 (brace
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|thisEthwrk
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8959,13 +8966,6 @@ suffix:semicolon
 id|thisEthwrk.irq
 op_assign
 l_int|0
-suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-op_amp
-id|thisEthwrk
-)paren
 suffix:semicolon
 id|release_region
 c_func

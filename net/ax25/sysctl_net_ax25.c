@@ -2,7 +2,6 @@ multiline_comment|/* -*- linux-c -*-&n; * sysctl_net_ax25.c: sysctl interface to
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/ax25.h&gt;
 DECL|variable|min_ipdefmode
 DECL|variable|max_ipdefmode

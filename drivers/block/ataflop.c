@@ -24,6 +24,7 @@ macro_line|#include &lt;asm/atafdreg.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#include &lt;asm/atari_stdma.h&gt;
+macro_line|#include &lt;asm/atari_stram.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR FLOPPY_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
@@ -875,8 +876,6 @@ op_star
 l_int|512
 )brace
 suffix:semicolon
-DECL|macro|MAX_SECTORS
-mdefine_line|#define&t;MAX_SECTORS&t;(MaxSectors[DriveType])
 DECL|macro|BUFFER_SIZE
 mdefine_line|#define&t;BUFFER_SIZE&t;(BufferSize[DriveType])
 DECL|variable|DMABuffer
@@ -1300,6 +1299,15 @@ id|status
 suffix:semicolon
 r_static
 r_void
+id|fd_rwsec_done1
+c_func
+(paren
+r_int
+id|status
+)paren
+suffix:semicolon
+r_static
+r_void
 id|fd_writetrack
 c_func
 (paren
@@ -1655,6 +1663,10 @@ suffix:colon
 id|DSKDRV1
 )paren
 suffix:semicolon
+id|atari_dont_touch_floppy_select
+op_assign
+l_int|1
+suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -1726,6 +1738,10 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* protect against various other ints mucking around with the PSG */
+id|atari_dont_touch_floppy_select
+op_assign
+l_int|0
+suffix:semicolon
 id|sound_ym.rd_data_reg_sel
 op_assign
 l_int|14
@@ -1733,11 +1749,21 @@ suffix:semicolon
 multiline_comment|/* Select PSG Port A */
 id|sound_ym.wd_data
 op_assign
+(paren
 id|sound_ym.rd_data_reg_sel
 op_or
+(paren
+id|MACH_IS_FALCON
+ques
+c_cond
+l_int|3
+suffix:colon
 l_int|7
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/* no drives selected */
+multiline_comment|/* On Falcon, the drive B select line is used on the printer port, so&n;&t; * leave it alone... */
 id|SelectedDrive
 op_assign
 op_minus
@@ -3665,6 +3691,12 @@ id|read_track
 )paren
 (brace
 multiline_comment|/* If reading a whole track, wait about one disk rotation and&n;&t;&t; * then check if all sectors are read. The FDC will even&n;&t;&t; * search for the first non-existent sector and need 1 sec to&n;&t;&t; * recognise that it isn&squot;t present :-(&n;&t;&t; */
+id|del_timer
+(paren
+op_amp
+id|readtrack_timer
+)paren
+suffix:semicolon
 id|readtrack_timer.expires
 op_assign
 id|jiffies
@@ -3683,16 +3715,16 @@ id|HZ
 )paren
 suffix:semicolon
 multiline_comment|/* 1 rot. + 5 rot.s if motor was off  */
+id|MultReadInProgress
+op_assign
+l_int|1
+suffix:semicolon
 id|add_timer
 c_func
 (paren
 op_amp
 id|readtrack_timer
 )paren
-suffix:semicolon
-id|MultReadInProgress
-op_assign
-l_int|1
 suffix:semicolon
 )brace
 id|START_TIMEOUT
@@ -3858,6 +3890,10 @@ c_func
 l_int|NULL
 )paren
 suffix:semicolon
+id|MultReadInProgress
+op_assign
+l_int|0
+suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -3887,7 +3923,7 @@ l_int|25
 )paren
 suffix:semicolon
 multiline_comment|/* No error until now -- the FDC would have interrupted&n;&t;&t; * otherwise!&n;&t;&t; */
-id|fd_rwsec_done
+id|fd_rwsec_done1
 c_func
 (paren
 l_int|0
@@ -3940,10 +3976,6 @@ r_int
 id|status
 )paren
 (brace
-r_int
-r_int
-id|track
-suffix:semicolon
 id|DPRINT
 c_func
 (paren
@@ -3952,17 +3984,19 @@ l_string|&quot;fd_rwsec_done()&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|STOP_TIMEOUT
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|read_track
 )paren
 (brace
+id|del_timer
+c_func
+(paren
+op_amp
+id|readtrack_timer
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3975,14 +4009,33 @@ id|MultReadInProgress
 op_assign
 l_int|0
 suffix:semicolon
-id|del_timer
+)brace
+id|fd_rwsec_done1
 c_func
 (paren
-op_amp
-id|readtrack_timer
+id|status
 )paren
 suffix:semicolon
 )brace
+DECL|function|fd_rwsec_done1
+r_static
+r_void
+id|fd_rwsec_done1
+c_func
+(paren
+r_int
+id|status
+)paren
+(brace
+r_int
+r_int
+id|track
+suffix:semicolon
+id|STOP_TIMEOUT
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Correct the track if stretch != 0 */
 r_if
 c_cond
@@ -4421,7 +4474,10 @@ c_func
 (paren
 id|PhysTrackBuffer
 comma
-id|MAX_SECTORS
+id|MaxSectors
+(braket
+id|DriveType
+)braket
 op_star
 l_int|512
 comma
@@ -7069,7 +7125,7 @@ c_func
 id|FDCSPEED
 )paren
 op_logical_or
-id|is_medusa
+id|MACH_IS_MEDUSA
 )paren
 id|UD.steprate
 op_assign
@@ -7119,8 +7175,15 @@ r_if
 c_cond
 (paren
 id|drive
-OG
+op_ge
+(paren
+id|MACH_IS_FALCON
+ques
+c_cond
 l_int|1
+suffix:colon
+l_int|2
+)paren
 )paren
 r_return
 l_int|0
@@ -7892,6 +7955,27 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|MACH_IS_ATARI
+)paren
+multiline_comment|/* Amiga, Mac, ... don&squot;t have Atari-compatible floppy :-) */
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|MACH_IS_HADES
+)paren
+multiline_comment|/* Hades doesn&squot;t have Atari-compatible floppy */
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|register_blkdev
 c_func
 (paren
@@ -7929,7 +8013,7 @@ multiline_comment|/* not set by user -&gt; use default: for now, we turn&n;&t;&t
 id|UseTrackbuffer
 op_assign
 op_logical_neg
-id|is_medusa
+id|MACH_IS_MEDUSA
 suffix:semicolon
 multiline_comment|/* initialize variables */
 id|SelectedDrive
@@ -7963,16 +8047,16 @@ id|FLOPPY_TIMER
 suffix:semicolon
 id|DMABuffer
 op_assign
-id|kmalloc
+id|atari_stram_alloc
 c_func
 (paren
 id|BUFFER_SIZE
 op_plus
 l_int|512
 comma
-id|GFP_KERNEL
-op_or
-id|GFP_DMA
+l_int|NULL
+comma
+l_string|&quot;ataflop&quot;
 )paren
 suffix:semicolon
 r_if
@@ -8207,6 +8291,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+(paren
+r_void
+)paren
+id|do_floppy
+suffix:semicolon
+multiline_comment|/* avoid warning about unused variable */
 r_return
 l_int|0
 suffix:semicolon
@@ -8464,7 +8554,8 @@ id|fn
 op_assign
 l_int|0
 suffix:semicolon
-id|kfree
+id|atari_stram_free
+c_func
 (paren
 id|DMABuffer
 )paren

@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: mach64.c,v 1.11 1997/10/17 04:13:35 davem Exp $&n; * mach64.c: Ultra/PCI Mach64 console driver.&n; *&n; * Just about all of this is from the PPC/mac driver, see that for&n; * author info.  I&squot;m only responsible for grafting it into working&n; * on PCI Ultra&squot;s.  The two drivers should be merged.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_CHIP_ID */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;

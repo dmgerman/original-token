@@ -8,7 +8,6 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|MAJOR_NR
@@ -1894,15 +1893,13 @@ op_eq
 l_int|1
 )paren
 (brace
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -1917,9 +1914,12 @@ op_eq
 id|RQ_INACTIVE
 )paren
 (brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -1949,6 +1949,15 @@ c_cond
 id|SDev-&gt;host-&gt;in_recovery
 )paren
 (brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1972,6 +1981,15 @@ c_func
 )paren
 )paren
 (brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|scsi_ioctl
 c_func
 (paren
@@ -1982,13 +2000,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-)brace
-id|SDev-&gt;was_reset
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* we do lazy blocksize switching (when reading XA sectors,&n;&t; * see CDROMREADMODE2 ioctl) */
+multiline_comment|/* scsi_ioctl may allow CURRENT to change, so start over. *&n;&t;&t;SDev-&gt;was_reset = 0;&n;&t;&t;continue;&n; &t;    }&n; &t;    SDev-&gt;was_reset = 0;&n;&t;}&n;&n;&t;/* we do lazy blocksize switching (when reading XA sectors,&n;&t; * see CDROMREADMODE2 ioctl) */
 r_if
 c_cond
 (paren
@@ -2072,9 +2084,12 @@ id|SCpnt
 op_assign
 l_int|NULL
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -2099,15 +2114,13 @@ id|req1
 op_assign
 l_int|NULL
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|req
@@ -2157,7 +2170,6 @@ op_assign
 id|req-&gt;next
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2185,15 +2197,16 @@ op_assign
 id|req-&gt;next
 suffix:semicolon
 )brace
-suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2218,10 +2231,8 @@ id|SCpnt
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 multiline_comment|/* While */
 )brace
-DECL|function|requeue_sr_request
 r_void
 id|requeue_sr_request
 (paren

@@ -10,7 +10,6 @@ macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;sys/sysmacros.h&gt;
 macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &lt;fcntl.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/boot.h&gt;
 DECL|typedef|byte
 r_typedef

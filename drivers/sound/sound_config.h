@@ -1,5 +1,6 @@
 multiline_comment|/* sound_config.h&n; *&n; * A driver for Soundcards, misc configuration parameters.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &quot;local.h.master&quot;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;os.h&quot;
@@ -74,10 +75,6 @@ DECL|macro|SND_DEV_PSS
 mdefine_line|#define SND_DEV_PSS&t;SND_DEV_SNDPROC
 DECL|macro|DSP_DEFAULT_SPEED
 mdefine_line|#define DSP_DEFAULT_SPEED&t;8000
-DECL|macro|ON
-mdefine_line|#define ON&t;&t;1
-DECL|macro|OFF
-mdefine_line|#define OFF&t;&t;0
 DECL|macro|MAX_AUDIO_DEV
 mdefine_line|#define MAX_AUDIO_DEV&t;5
 DECL|macro|MAX_MIXER_DEV
@@ -88,26 +85,6 @@ DECL|macro|MAX_MIDI_DEV
 mdefine_line|#define MAX_MIDI_DEV&t;6
 DECL|macro|MAX_TIMER_DEV
 mdefine_line|#define MAX_TIMER_DEV&t;4
-DECL|struct|fileinfo
-r_struct
-id|fileinfo
-(brace
-DECL|member|mode
-r_int
-id|mode
-suffix:semicolon
-multiline_comment|/* Open mode */
-DECL|member|flags
-r_int
-id|flags
-suffix:semicolon
-DECL|member|dummy
-r_int
-id|dummy
-suffix:semicolon
-multiline_comment|/* Reference to file-flags. OS-dependent. */
-)brace
-suffix:semicolon
 DECL|struct|address_info
 r_struct
 id|address_info
@@ -263,6 +240,67 @@ DECL|macro|OPEN_WRITE
 mdefine_line|#define OPEN_WRITE&t;PCM_ENABLE_OUTPUT
 DECL|macro|OPEN_READWRITE
 mdefine_line|#define OPEN_READWRITE&t;(OPEN_READ|OPEN_WRITE)
+macro_line|#if OPEN_READ == FMODE_READ &amp;&amp; OPEN_WRITE == FMODE_WRITE
+DECL|function|translate_mode
+r_extern
+id|__inline__
+r_int
+id|translate_mode
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+)paren
+(brace
+r_return
+id|file-&gt;f_mode
+suffix:semicolon
+)brace
+macro_line|#else
+DECL|function|translate_mode
+r_extern
+id|__inline__
+r_int
+id|translate_mode
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+)paren
+(brace
+r_return
+(paren
+(paren
+id|file-&gt;f_mode
+op_amp
+id|FMODE_READ
+)paren
+ques
+c_cond
+id|OPEN_READ
+suffix:colon
+l_int|0
+)paren
+op_or
+(paren
+(paren
+id|file-&gt;f_mode
+op_amp
+id|FMODE_WRITE
+)paren
+ques
+c_cond
+id|OPEN_WRITE
+suffix:colon
+l_int|0
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#include &quot;sound_calls.h&quot;
 macro_line|#include &quot;dev_table.h&quot;
 macro_line|#ifndef DEB

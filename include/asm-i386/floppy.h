@@ -101,7 +101,7 @@ suffix:semicolon
 DECL|macro|TRACE_FLPY_INT
 macro_line|#undef TRACE_FLPY_INT
 DECL|macro|NO_FLOPPY_ASSEMBLER
-macro_line|#undef NO_FLOPPY_ASSEMBLER
+mdefine_line|#define NO_FLOPPY_ASSEMBLER
 macro_line|#ifdef TRACE_FLPY_INT
 r_static
 r_int
@@ -418,6 +418,15 @@ op_plus
 l_int|5
 )paren
 suffix:semicolon
+)brace
+id|virtual_dma_count
+op_assign
+id|lcount
+suffix:semicolon
+id|virtual_dma_addr
+op_assign
+id|lptr
+suffix:semicolon
 id|st
 op_assign
 id|inb
@@ -427,15 +436,6 @@ id|virtual_dma_port
 op_plus
 l_int|4
 )paren
-suffix:semicolon
-)brace
-id|virtual_dma_count
-op_assign
-id|lcount
-suffix:semicolon
-id|virtual_dma_addr
-op_assign
-id|lptr
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -852,7 +852,7 @@ suffix:semicolon
 r_else
 id|use_virtual_dma
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 r_else

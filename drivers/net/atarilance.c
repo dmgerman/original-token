@@ -3118,6 +3118,10 @@ suffix:semicolon
 id|lp-&gt;cur_tx
 op_increment
 suffix:semicolon
+id|lp-&gt;stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -4224,6 +4228,10 @@ id|skb
 suffix:semicolon
 id|lp-&gt;stats.rx_packets
 op_increment
+suffix:semicolon
+id|lp-&gt;stats.rx_bytes
+op_add_assign
+id|skb-&gt;len
 suffix:semicolon
 )brace
 )brace

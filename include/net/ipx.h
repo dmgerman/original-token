@@ -3,7 +3,6 @@ macro_line|#ifndef _NET_INET_IPX_H_
 DECL|macro|_NET_INET_IPX_H_
 mdefine_line|#define _NET_INET_IPX_H_
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/datalink.h&gt;
 macro_line|#include &lt;linux/ipx.h&gt;
 r_typedef
@@ -101,38 +100,6 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#include &lt;net/ipxcall.h&gt;
-r_extern
-r_int
-id|ipx_rcv
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
-id|packet_type
-op_star
-id|pt
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|ipxrtr_device_down
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
 DECL|struct|ipx_interface
 r_typedef
 r_struct
@@ -247,5 +214,5 @@ DECL|macro|IPX_MIN_EPHEMERAL_SOCKET
 mdefine_line|#define IPX_MIN_EPHEMERAL_SOCKET&t;0x4000
 DECL|macro|IPX_MAX_EPHEMERAL_SOCKET
 mdefine_line|#define IPX_MAX_EPHEMERAL_SOCKET&t;0x7fff
-macro_line|#endif
+macro_line|#endif /* def _NET_INET_IPX_H_ */
 eof

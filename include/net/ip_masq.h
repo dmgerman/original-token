@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * &t;IP masquerading functionality definitions&n; */
+macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_IP_MASQ_NDEBUG */
 macro_line|#ifndef _IP_MASQ_H
 DECL|macro|_IP_MASQ_H
 mdefine_line|#define _IP_MASQ_H

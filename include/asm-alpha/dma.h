@@ -955,5 +955,17 @@ id|dmanr
 )paren
 suffix:semicolon
 multiline_comment|/* release it again */
+DECL|macro|KERNEL_HAVE_CHECK_DMA
+mdefine_line|#define KERNEL_HAVE_CHECK_DMA
+r_extern
+r_int
+id|check_dma
+c_func
+(paren
+r_int
+r_int
+id|dmanr
+)paren
+suffix:semicolon
 macro_line|#endif /* _ASM_DMA_H */
 eof

@@ -2,6 +2,7 @@ macro_line|#ifndef _M68K_IO_H
 DECL|macro|_M68K_IO_H
 mdefine_line|#define _M68K_IO_H
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt; /* CONFIG_ATARI, CONFIG_HADES */
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#ifdef CONFIG_ATARI
 macro_line|#include &lt;asm/atarihw.h&gt;

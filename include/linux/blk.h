@@ -8,7 +8,7 @@ macro_line|#include &lt;asm/spinlock.h&gt;
 multiline_comment|/*&n; * Spinlock for protecting the request queue which&n; * is mucked around with in interrupts on potentially&n; * multiple CPU&squot;s..&n; */
 r_extern
 id|spinlock_t
-id|current_lock
+id|io_request_lock
 suffix:semicolon
 multiline_comment|/*&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; */
 DECL|macro|NR_REQUEST
@@ -743,6 +743,7 @@ macro_line|#endif /* !defined(IDE_DRIVER) */
 multiline_comment|/* end_request() - SCSI devices have their own version */
 multiline_comment|/*               - IDE drivers have their own copy too */
 macro_line|#if ! SCSI_BLK_MAJOR(MAJOR_NR)
+multiline_comment|/*&n; * The [*_]end_request() handler has to be called with the request queue&n; * spinlock aquired. All functions called within end_request() _must be_&n; * atomic.&n; */
 macro_line|#if defined(IDE_DRIVER) &amp;&amp; !defined(_IDE_C) /* shared copy for IDE modules */
 r_void
 id|ide_end_request

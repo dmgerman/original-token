@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  $Id: joystick.c,v 1.2 1997/10/31 19:11:48 mj Exp $&n; *&n; *  Copyright (C) 1997 Vojtech Pavlik&n; */
 multiline_comment|/*&n; *  This is joystick driver for Linux. It supports up to two analog joysticks&n; *  on a PC compatible machine. See Documentation/joystick.txt for changelog&n; *  and credits.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;

@@ -5875,6 +5875,13 @@ c_func
 id|dev_ni65.dma
 )paren
 suffix:semicolon
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_ni65
+)paren
+suffix:semicolon
 id|release_region
 c_func
 (paren
@@ -5897,13 +5904,6 @@ suffix:semicolon
 id|dev_ni65.priv
 op_assign
 l_int|NULL
-suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-op_amp
-id|dev_ni65
-)paren
 suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */

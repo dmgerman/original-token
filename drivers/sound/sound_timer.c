@@ -871,9 +871,6 @@ suffix:semicolon
 r_case
 id|SNDCTL_TMR_METRONOME
 suffix:colon
-multiline_comment|/* NOP */
-r_break
-suffix:semicolon
 r_default
 suffix:colon
 r_return

@@ -3202,7 +3202,6 @@ l_string|&quot;Not responding.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-)brace
 id|SMP_PRINTK
 c_func
 (paren
@@ -3211,6 +3210,29 @@ l_string|&quot;CPU has booted.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|__cpu_logical_map
+(braket
+id|cpucount
+)braket
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|cpu_number_map
+(braket
+id|i
+)braket
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|cpucount
+op_decrement
+suffix:semicolon
+)brace
 id|swapper_pg_dir
 (braket
 l_int|0
@@ -3635,7 +3657,26 @@ id|i
 op_eq
 op_minus
 l_int|1
+op_logical_and
+(paren
+id|cpu_present_map
+op_amp
+(paren
+l_int|1
+op_lshift
+id|i
 )paren
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;CPU #%d not responding. Removing from cpu_present_map.&bslash;n&quot;
+comma
+id|i
+)paren
+suffix:semicolon
 id|cpu_present_map
 op_and_assign
 op_complement
@@ -3645,6 +3686,7 @@ op_lshift
 id|i
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n;&t; *&t;Cleanup possible dangling ends...&n;&t; */
 multiline_comment|/*&n;&t; *&t;Install writable page 0 entry.&n;&t; */

@@ -7,6 +7,7 @@ mdefine_line|#define CHECK_CHARACTERS&t;1
 DECL|macro|PPP_COMPRESS
 mdefine_line|#define PPP_COMPRESS&t;&t;1
 multiline_comment|/* $Id: ppp.c,v 1.14 1997/11/27 06:04:45 paulus Exp $ */
+macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_KERNELD */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

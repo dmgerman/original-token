@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;&t;IP_MASQ_QUAKE quake masquerading module&n; *&n; *&n; * Version:&t;@(#)ip_masq_quake.c 0.02   22/02/97&n; *&n; * Author:&t;Harald Hoyer mailto:HarryH@Royal.Net&n; *&t;&t;&n; *&n; * Fixes: &n; *      Harald Hoyer            :       Unofficial Quake Specs found at &n; *                                 http://www.gamers.org/dEngine/quake/spec/ &n; *      Harald Hoyer            :       Check for QUAKE-STRING&n; *&t;Juan Jose Ciarlante&t;:  litl bits for 2.1&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *  &n; *  &n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

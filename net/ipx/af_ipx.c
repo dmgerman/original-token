@@ -444,8 +444,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 )brace
 multiline_comment|/* The following code is used to support IPX Interfaces (IPXITF).  An&n; * IPX interface is defined by a physical device and a frame type.&n; */
 r_static
@@ -2073,16 +2071,6 @@ id|ipx_device_name
 c_func
 (paren
 id|ipx_interface
-op_star
-)paren
-suffix:semicolon
-r_static
-r_int
-id|ipxrtr_route_skb
-c_func
-(paren
-r_struct
-id|sk_buff
 op_star
 )paren
 suffix:semicolon
@@ -5067,7 +5055,6 @@ id|ipx-&gt;ipx_dest.node
 suffix:semicolon
 )brace
 DECL|function|ipxrtr_route_skb
-r_static
 r_int
 id|ipxrtr_route_skb
 c_func
@@ -6692,6 +6679,20 @@ id|ipx_dgram_ops
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|SOCK_STREAM
+suffix:colon
+multiline_comment|/* Allow higher levels to piggyback */
+r_case
+id|SOCK_SEQPACKET
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;IPX: _create-ing non_DGRAM socket&bslash;n&quot;
+)paren
+suffix:semicolon
 r_default
 suffix:colon
 id|sk_free
@@ -6798,6 +6799,17 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sock-&gt;type
+op_eq
+id|SOCK_DGRAM
+)paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -7119,10 +7131,14 @@ id|sk
 comma
 l_string|&quot;IPX: bind failed because port %X in use.&bslash;n&quot;
 comma
+id|ntohs
+c_func
+(paren
 (paren
 r_int
 )paren
 id|addr-&gt;sipx_port
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -7165,10 +7181,14 @@ id|sk
 comma
 l_string|&quot;IPX: bind failed because port %X in use.&bslash;n&quot;
 comma
+id|ntohs
+c_func
+(paren
 (paren
 r_int
 )paren
 id|addr-&gt;sipx_port
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -7200,10 +7220,14 @@ id|sk
 comma
 l_string|&quot;IPX: bind failed because port %X in use.&bslash;n&quot;
 comma
+id|ntohs
+c_func
+(paren
 (paren
 r_int
 )paren
 id|addr-&gt;sipx_port
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -7229,7 +7253,13 @@ c_func
 (paren
 id|sk
 comma
-l_string|&quot;IPX: socket is bound.&bslash;n&quot;
+l_string|&quot;IPX: bound socket 0x%04X.&bslash;n&quot;
+comma
+id|ntohs
+c_func
+(paren
+id|addr-&gt;sipx_port
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -7414,6 +7444,14 @@ id|sk-&gt;protinfo.af_ipx.type
 op_assign
 id|addr-&gt;sipx_type
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sock-&gt;type
+op_eq
+id|SOCK_DGRAM
+)paren
+(brace
 id|sock-&gt;state
 op_assign
 id|SS_CONNECTED
@@ -7422,6 +7460,7 @@ id|sk-&gt;state
 op_assign
 id|TCP_ESTABLISHED
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -9560,6 +9599,58 @@ l_string|&quot;IPX Portions Copyright (c) 1995 Caldera, Inc.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Higher layers need this info to prep tx pkts */
+DECL|function|ipx_if_offset
+r_int
+id|ipx_if_offset
+c_func
+(paren
+r_int
+r_int
+id|ipx_net_number
+)paren
+(brace
+id|ipx_route
+op_star
+id|rt
+op_assign
+l_int|NULL
+suffix:semicolon
+id|rt
+op_assign
+id|ipxrtr_lookup
+c_func
+(paren
+id|ipx_net_number
+)paren
+suffix:semicolon
+r_return
+(paren
+id|rt
+ques
+c_cond
+id|rt-&gt;ir_intrfc-&gt;if_ipx_offset
+suffix:colon
+op_minus
+id|ENETUNREACH
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Export symbols for higher layers */
+DECL|variable|ipxrtr_route_skb
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ipxrtr_route_skb
+)paren
+suffix:semicolon
+DECL|variable|ipx_if_offset
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ipx_if_offset
+)paren
+suffix:semicolon
 macro_line|#ifdef MODULE
 multiline_comment|/* Note on MOD_{INC,DEC}_USE_COUNT:&n; *&n; * Use counts are incremented/decremented when&n; * sockets are created/deleted.&n; *&n; * Routes are always associated with an interface, and&n; * allocs/frees will remain properly accounted for by&n; * their associated interfaces.&n; *&n; * Ergo, before the ipx module can be removed, all IPX&n; * sockets be closed from user space.&n; */
 DECL|function|__initfunc
@@ -9707,8 +9798,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module

@@ -22,74 +22,6 @@ op_star
 id|pseudo_root
 suffix:semicolon
 multiline_comment|/* P.T.Waltenberg&n;   I&squot;ve retained this to facilitate the lookup of some of the hard-wired files/directories UMSDOS&n;   uses. It&squot;s easier to do once than hack all the other instances. Probably safer as well&n;*/
-DECL|function|compat_UMSDOS_lookup
-r_int
-id|compat_UMSDOS_lookup
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|dir
-comma
-r_const
-r_char
-op_star
-id|name
-comma
-r_int
-id|len
-comma
-r_struct
-id|inode
-op_star
-op_star
-id|inode
-)paren
-(brace
-r_int
-id|rv
-suffix:semicolon
-r_struct
-id|dentry
-op_star
-id|dentry
-suffix:semicolon
-id|dentry
-op_assign
-id|creat_dentry
-(paren
-id|name
-comma
-id|len
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-id|rv
-op_assign
-id|UMSDOS_lookup
-c_func
-(paren
-id|dir
-comma
-id|dentry
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|inode
-)paren
-op_star
-id|inode
-op_assign
-id|dentry-&gt;d_inode
-suffix:semicolon
-r_return
-id|rv
-suffix:semicolon
-)brace
 DECL|function|compat_umsdos_real_lookup
 r_int
 id|compat_umsdos_real_lookup
@@ -338,42 +270,20 @@ op_eq
 l_int|0
 )paren
 (brace
-macro_line|#if 0
-r_char
-id|zname
-(braket
-l_int|100
-)braket
-suffix:semicolon
-id|memcpy
-(paren
-id|zname
-comma
-id|dentry-&gt;d_name
-comma
-id|dentry-&gt;d_len
-)paren
-suffix:semicolon
-id|zname
-(braket
-id|name_len
-)braket
-op_assign
-l_char|&squot;&bslash;0&squot;
-suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
-l_string|&quot;dir_once :%s: offset %Ld&bslash;n&quot;
+l_string|&quot;dir_once :%.*s: offset %Ld&bslash;n&quot;
 comma
-id|zname
+id|dentry-&gt;d_len
+comma
+id|dentry-&gt;d_name
 comma
 id|offset
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|ret
 op_assign
 id|d-&gt;filldir
@@ -651,7 +561,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;umsdos_readdir_x: emd_dir-&gt;i_ino=%d&bslash;n&quot;
+l_string|&quot;umsdos_readdir_x: emd_dir-&gt;i_ino=%ld&bslash;n&quot;
 comma
 id|emd_dir-&gt;i_ino
 )paren
@@ -673,7 +583,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;f_pos %lu i_size %ld&bslash;n&quot;
+l_string|&quot;f_pos %Ld i_size %ld&bslash;n&quot;
 comma
 id|filp-&gt;f_pos
 comma
@@ -1085,7 +995,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;UMSDOS_readdir: calling _x (%p,%p,%p,%d,%p,%d,%d)&bslash;n&quot;
+l_string|&quot;UMSDOS_readdir: calling _x (%p,%p,%p,%d,%p,%d,%p)&bslash;n&quot;
 comma
 id|dir
 comma
@@ -2067,7 +1977,9 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;ptbpath :%s: &quot;
+l_string|&quot;ptbpath :%.*s: &quot;
+comma
+id|entry.name_len
 comma
 id|ptbpath
 )paren
@@ -2168,7 +2080,9 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;ptbpath :%s: &quot;
+l_string|&quot;ptbpath :%.*s: &quot;
+comma
+id|entry.name_len
 comma
 id|ptbpath
 )paren
@@ -2263,7 +2177,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n;  Check if a file exist in the current directory.&n;  Return 0 if ok, negative error code if not (ex: -ENOENT).&n;*/
 DECL|function|umsdos_lookup_x
-r_static
 r_int
 id|umsdos_lookup_x
 (paren
@@ -2552,7 +2465,9 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;lookup %s pos %lu ret %d len %d &quot;
+l_string|&quot;lookup %.*s pos %lu ret %d len %d &quot;
+comma
+id|info.fake.len
 comma
 id|info.fake.fname
 comma
@@ -2595,7 +2510,10 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;umsdos_lookup_x: compat_umsdos_real_lookup for %25s returned %d with inode=%p&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;umsdos_lookup_x: compat_umsdos_real_lookup for %.*s returned %d with inode=%p&bslash;n&quot;
+comma
+id|info.fake.len
 comma
 id|info.fake.fname
 comma
@@ -2616,7 +2534,9 @@ l_int|NULL
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;UMSDOS: Erase entry %s, out of sync with MsDOS&bslash;n&quot;
+l_string|&quot;UMSDOS: Erase entry %.*s, out of sync with MsDOS&bslash;n&quot;
+comma
+id|info.fake.len
 comma
 id|info.fake.fname
 )paren
@@ -2642,7 +2562,7 @@ id|Printk
 (paren
 (paren
 id|KERN_DEBUG
-l_string|&quot;umsdos_lookup_x /mn/ debug: ino=%d&bslash;n&quot;
+l_string|&quot;umsdos_lookup_x /mn/ debug: ino=%li&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -2693,8 +2613,8 @@ id|UMSDOS_HLINK
 id|Printk
 (paren
 (paren
-id|KERN_ERR
-l_string|&quot;umsdos_lookup_x: warning: untested /mn/ HLINK&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;umsdos_lookup_x: here goes HLINK&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -2791,7 +2711,11 @@ op_star
 id|dentry
 )paren
 (brace
-r_return
+r_int
+id|ret
+suffix:semicolon
+id|ret
+op_assign
 id|umsdos_lookup_x
 c_func
 (paren
@@ -2801,6 +2725,41 @@ id|dentry
 comma
 l_int|0
 )paren
+suffix:semicolon
+macro_line|#if 1
+r_if
+c_cond
+(paren
+id|ret
+op_eq
+op_minus
+id|ENOENT
+)paren
+(brace
+id|Printk
+(paren
+(paren
+id|KERN_INFO
+l_string|&quot;UMSDOS_lookup: converting -ENOENT to negative dentry !&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|d_add
+(paren
+id|dentry
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+multiline_comment|/* create negative dentry if not found */
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n;  Locate the inode pointed by a (pseudo) hard link&n;  Return 0 if ok, a negative error code if not.&n;*/
@@ -3096,7 +3055,12 @@ multiline_comment|/* This is a DOS directory */
 id|Printk
 (paren
 (paren
-l_string|&quot;hlink2inode /mn/: doing umsdos_rlookup_x on %20s&bslash;n&quot;
+l_string|&quot;hlink2inode /mn/: doing umsdos_rlookup_x on %.*s&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|dentry_dst-&gt;d_name.len
 comma
 id|dentry_dst-&gt;d_name.name
 )paren
@@ -3120,7 +3084,12 @@ r_else
 id|Printk
 (paren
 (paren
-l_string|&quot;hlink2inode /mn/: doing umsdos_lookup_x on %20s&bslash;n&quot;
+l_string|&quot;hlink2inode /mn/: doing umsdos_lookup_x on %.*s&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|dentry_dst-&gt;d_name.len
 comma
 id|dentry_dst-&gt;d_name.name
 )paren
@@ -3148,6 +3117,12 @@ id|ret
 )paren
 )paren
 suffix:semicolon
+op_star
+id|result
+op_assign
+id|dentry_dst-&gt;d_inode
+suffix:semicolon
+multiline_comment|/* /mn/ ok ? */
 id|Printk
 (paren
 (paren
@@ -3174,7 +3149,8 @@ l_char|&squot;&bslash;0&squot;
 (brace
 id|dir
 op_assign
-id|dentry_dst-&gt;d_inode
+op_star
+id|result
 suffix:semicolon
 )brace
 r_else

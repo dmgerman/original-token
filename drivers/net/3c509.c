@@ -9,7 +9,7 @@ op_assign
 l_string|&quot;3c509.c:1.07 6/15/95 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_MCA */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -22,7 +22,6 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_MCA */
 macro_line|#include &lt;linux/delay.h&gt;&t;/* for udelay() */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -4323,6 +4322,12 @@ op_ne
 l_int|NULL
 )paren
 (brace
+id|unregister_netdev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|kfree_s
 c_func
 (paren
@@ -4353,12 +4358,6 @@ c_func
 id|dev-&gt;base_addr
 comma
 id|EL3_IO_EXTENT
-)paren
-suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-id|dev
 )paren
 suffix:semicolon
 )brace

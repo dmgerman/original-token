@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;NET3:&t;Support for 802.2 demultiplexing off ethernet (Token ring&n; *&t;&t;is kept seperate see p8022tr.c)&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;&t;Demultiplex 802.2 encoded protocols. We match the entry by the&n; *&t;&t;SSAP/DSAP pair and then deliver to the registered datalink that&n; *&t;&t;matches. The control byte is ignored and handling of such items&n; *&t;&t;is up to the routine passed the frame.&n; *&n; *&t;&t;Unlike the 802.3 datalink we have a list of 802.2 entries as there&n; *&t;&t;are multiple protocols to demux. The list is currently short (3 or&n; *&t;&t;4 entries at most). The current demux assumes this.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;

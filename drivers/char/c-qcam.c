@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *&t;Video4Linux: Colour QuickCam driver&n; *&n; *&t;Philip Blundell &lt;philb@gnu.org&gt;, December 30 1997&n; *&n; *&t;Largely untested (seems to work at 24bpp with a bidirectional port,&n; *&t;though). &n; */
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;

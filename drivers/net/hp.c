@@ -2311,6 +2311,12 @@ id|dev-&gt;base_addr
 op_minus
 id|NIC_OFFSET
 suffix:semicolon
+id|unregister_netdev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -2335,12 +2341,6 @@ c_func
 id|ioaddr
 comma
 id|HP_IO_EXTENT
-)paren
-suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-id|dev
 )paren
 suffix:semicolon
 )brace

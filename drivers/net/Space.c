@@ -1080,6 +1080,22 @@ c_func
 id|dev
 )paren
 macro_line|#endif&t;
+macro_line|#ifdef CONFIG_ARCH_ACORN
+op_logical_and
+id|acorn_ethif_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARM_AM79C961A
+op_logical_and
+id|am79c961_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
 op_logical_and
 l_int|1
 )paren

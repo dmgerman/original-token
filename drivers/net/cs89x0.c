@@ -16,7 +16,6 @@ mdefine_line|#define NET_DEBUG 2
 macro_line|#endif
 multiline_comment|/* ======================= end of configuration ======================= */
 multiline_comment|/* Always include &squot;config.h&squot; first in case the user wants to turn on&n;   or override something. */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -5160,6 +5159,13 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/* Free up the private structure, or leak memory :-)  */
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_cs89x0
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -5178,13 +5184,6 @@ c_func
 id|dev_cs89x0.base_addr
 comma
 id|NETCARD_IO_EXTENT
-)paren
-suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-op_amp
-id|dev_cs89x0
 )paren
 suffix:semicolon
 )brace

@@ -3085,6 +3085,12 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/* NB: el2_close() handles free_irq */
+id|unregister_netdev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -3101,12 +3107,6 @@ c_func
 id|dev-&gt;base_addr
 comma
 id|EL2_IO_EXTENT
-)paren
-suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-id|dev
 )paren
 suffix:semicolon
 )brace

@@ -26,6 +26,8 @@ DECL|macro|COMTROL_TIMER
 mdefine_line|#define COMTROL_TIMER&t;10&t;/* Comtrol serial */
 DECL|macro|DIGI_TIMER
 mdefine_line|#define DIGI_TIMER&t;11&t;/* Digi serial */
+DECL|macro|GDTH_TIMER
+mdefine_line|#define GDTH_TIMER&t;12&t;/* Ugh - gdth scsi driver */
 DECL|macro|COPRO_TIMER
 mdefine_line|#define COPRO_TIMER&t;31&t;/* 387 timeout for buggy hardware (boot only) */
 DECL|struct|timer_struct

@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
-macro_line|#if defined(CONFIG_GUSHW) || defined(MODULE)
+macro_line|#if defined(CONFIG_GUS) || defined(MODULE)
 macro_line|#include &quot;gus_hw.h&quot;
 r_void
 id|gusintr
@@ -667,7 +667,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_GUSHW) || defined(MODULE)
+macro_line|#if defined(CONFIG_GUS) || defined(MODULE)
 id|gus_pcm_volume
 op_assign
 l_int|100

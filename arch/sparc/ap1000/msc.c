@@ -1,6 +1,5 @@
 multiline_comment|/*&n;   * Copyright 1996 The Australian National University.&n;   * Copyright 1996 Fujitsu Laboratories Limited&n;   * &n;   * This software may be distributed under the terms of the Gnu&n;   * Public License version 2 or later&n;  */
 multiline_comment|/*&n; * Routines to control the AP1000+ Message Controller (MSC+)&n; * and Memory Controller (MC+).&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|_APLIB_
 mdefine_line|#define _APLIB_
 macro_line|#include &lt;asm/ap1000/apreg.h&gt;

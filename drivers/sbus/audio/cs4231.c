@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * drivers/sbus/audio/cs4231.c&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; * Copyright (C) 1996 Derrick J Brashear (shadow@andrew.cmu.edu)&n; *&n; * This is the lowlevel driver for the CS4231 audio chip found on some&n; * sun4m machines.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -19,7 +19,7 @@ r_struct
 id|file_operations
 id|umsdos_symlink_operations
 suffix:semicolon
-multiline_comment|/*&n;&t;Read the data associate with the symlink.&n;&t;Return length read in buffer or  a negative error code.&n;&t;FIXME, this is messed up.&n;&t;&n;&t;/mn/ WIP fixing...&n;*/
+multiline_comment|/*&n;&t;Read the data associate with the symlink.&n;&t;Return length read in buffer or  a negative error code.&n;&t;&n;*/
 DECL|function|umsdos_readlink_x
 r_static
 r_int
@@ -40,8 +40,6 @@ id|bufsiz
 (brace
 r_int
 id|ret
-op_assign
-id|dentry-&gt;d_inode-&gt;i_size
 suffix:semicolon
 id|loff_t
 id|loffs
@@ -51,6 +49,10 @@ suffix:semicolon
 r_struct
 id|file
 id|filp
+suffix:semicolon
+id|ret
+op_assign
+id|dentry-&gt;d_inode-&gt;i_size
 suffix:semicolon
 id|memset
 (paren
@@ -98,11 +100,11 @@ id|ret
 op_assign
 id|bufsiz
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
-id|KERN_WARNING
-l_string|&quot;umsdos_readlink_x /mn/: Checkin: filp=%p, buffer=%p, size=%ld, offs=%d&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;umsdos_readlink_x /mn/: Checkin: filp=%p, buffer=%p, size=%d, offs=%Lu&bslash;n&quot;
 comma
 op_amp
 id|filp
@@ -115,21 +117,21 @@ id|loffs
 )paren
 )paren
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
-id|KERN_WARNING
+id|KERN_DEBUG
 l_string|&quot;  f_op=%p&bslash;n&quot;
 comma
 id|filp.f_op
 )paren
 )paren
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
-id|KERN_WARNING
-l_string|&quot;  inode=%d, i_size=%d&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;  inode=%lu, i_size=%lu&bslash;n&quot;
 comma
 id|filp.f_dentry-&gt;d_inode-&gt;i_ino
 comma
@@ -137,30 +139,35 @@ id|filp.f_dentry-&gt;d_inode-&gt;i_size
 )paren
 )paren
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
-id|KERN_WARNING
-l_string|&quot;  f_pos=%ld&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;  f_pos=%Lu&bslash;n&quot;
 comma
 id|filp.f_pos
 )paren
 )paren
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
-id|KERN_WARNING
-l_string|&quot;  name=%12s&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;  name=%.*s&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|filp.f_dentry-&gt;d_name.len
 comma
 id|filp.f_dentry-&gt;d_name.name
 )paren
 )paren
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
-id|KERN_WARNING
+id|KERN_DEBUG
 l_string|&quot;  i_binary(sb)=%d&bslash;n&quot;
 comma
 id|MSDOS_I
@@ -173,10 +180,10 @@ id|i_binary
 )paren
 )paren
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
-id|KERN_WARNING
+id|KERN_DEBUG
 l_string|&quot;  f_count=%d, f_flags=%d&bslash;n&quot;
 comma
 id|filp.f_count
@@ -185,30 +192,30 @@ id|filp.f_flags
 )paren
 )paren
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
-id|KERN_WARNING
+id|KERN_DEBUG
 l_string|&quot;  f_owner=%d&bslash;n&quot;
 comma
-id|filp.f_owner
+id|filp.f_owner.uid
 )paren
 )paren
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
-id|KERN_WARNING
+id|KERN_DEBUG
 l_string|&quot;  f_version=%ld&bslash;n&quot;
 comma
 id|filp.f_version
 )paren
 )paren
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
-id|KERN_WARNING
+id|KERN_DEBUG
 l_string|&quot;  f_reada=%ld, f_ramax=%ld, f_raend=%ld, f_ralen=%ld, f_rawin=%ld&bslash;n&quot;
 comma
 id|filp.f_reada
@@ -223,11 +230,11 @@ id|filp.f_rawin
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME */
-id|Printk
+id|PRINTK
 (paren
 (paren
-l_string|&quot;umsdos_readlink_x: FIXME /mn/: running fat_file_read (%p, %p, %d, %ld)&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;umsdos_readlink_x: FIXME /mn/: running fat_file_read (%p, %p, %d, %Lu)&bslash;n&quot;
 comma
 op_amp
 id|filp
@@ -268,7 +275,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-macro_line|#if 0
+macro_line|#if 0&t;/* DEBUG */
 (brace
 r_struct
 id|umsdos_dirent
@@ -277,7 +284,7 @@ id|mydirent
 op_assign
 id|buffer
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
@@ -287,7 +294,7 @@ id|mydirent-&gt;uid
 )paren
 )paren
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
@@ -297,11 +304,11 @@ id|mydirent-&gt;gid
 )paren
 )paren
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
-l_string|&quot;  (DDD) name=&gt;%20s&lt;&bslash;n&quot;
+l_string|&quot;  (DDD) name=&gt;%.20s&lt;&bslash;n&quot;
 comma
 id|mydirent-&gt;name
 )paren
@@ -309,10 +316,11 @@ id|mydirent-&gt;name
 suffix:semicolon
 )brace
 macro_line|#endif  
-id|Printk
+id|PRINTK
 (paren
 (paren
-l_string|&quot;umsdos_readlink_x: FIXME /mn/: fat_file_read returned offs=%ld ret=%d&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;umsdos_readlink_x: FIXME /mn/: fat_file_read returned offs=%Lu ret=%d&bslash;n&quot;
 comma
 id|loffs
 comma
@@ -346,10 +354,16 @@ id|buflen
 r_int
 id|ret
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
-l_string|&quot;UMSDOS_readlink: calling umsdos_readlink_x for %20s&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;UMSDOS_readlink: calling umsdos_readlink_x for %.*s&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|dentry-&gt;d_name.len
 comma
 id|dentry-&gt;d_name.name
 )paren
@@ -366,9 +380,10 @@ comma
 id|buflen
 )paren
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;readlink %d bufsiz %d&bslash;n&quot;
 comma
 id|ret
@@ -381,6 +396,7 @@ multiline_comment|/* dput(dentry); / * FIXME /mn/ */
 id|Printk
 (paren
 (paren
+id|KERN_WARNING
 l_string|&quot;UMSDOS_readlink /mn/: FIXME! skipped dput(dentry). returning %d&bslash;n&quot;
 comma
 id|ret
@@ -391,6 +407,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+multiline_comment|/* this one mostly stolen from romfs :) */
 DECL|function|UMSDOS_followlink
 r_static
 r_struct
@@ -410,21 +427,23 @@ op_star
 id|base
 )paren
 (brace
-r_int
-id|ret
-suffix:semicolon
-r_char
-id|symname
-(braket
-l_int|256
-)braket
-suffix:semicolon
 r_struct
 id|inode
 op_star
 id|inode
 op_assign
 id|dentry-&gt;d_inode
+suffix:semicolon
+r_char
+op_star
+id|symname
+op_assign
+l_int|NULL
+suffix:semicolon
+r_int
+id|len
+comma
+id|cnt
 suffix:semicolon
 id|mm_segment_t
 id|old_fs
@@ -437,31 +456,105 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-id|KERN_ERR
-l_string|&quot;UMSDOS_followlink /mn/: (%s/%s)&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;UMSDOS_followlink /mn/: (%.*s/%.*s)&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|dentry-&gt;d_parent-&gt;d_name.len
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+(paren
+r_int
+)paren
+id|dentry-&gt;d_name.len
 comma
 id|dentry-&gt;d_name.name
 )paren
 )paren
 suffix:semicolon
+id|len
+op_assign
+id|inode-&gt;i_size
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|symname
+op_assign
+id|kmalloc
+c_func
+(paren
+id|len
+op_plus
+l_int|1
+comma
+id|GFP_KERNEL
+)paren
+)paren
+)paren
+(brace
+id|dentry
+op_assign
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|EAGAIN
+)paren
+suffix:semicolon
+multiline_comment|/* correct? */
+r_goto
+id|outnobuf
+suffix:semicolon
+)brace
 id|set_fs
 (paren
 id|KERNEL_DS
 )paren
 suffix:semicolon
-multiline_comment|/* we read into kernel space */
-id|ret
+multiline_comment|/* we read into kernel space this time */
+id|PRINTK
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot;UMSDOS_followlink /mn/: Here goes umsdos_readlink_x %p, %p, %d&bslash;n&quot;
+comma
+id|dentry
+comma
+id|symname
+comma
+id|len
+)paren
+)paren
+suffix:semicolon
+id|cnt
 op_assign
 id|umsdos_readlink_x
 (paren
 id|dentry
 comma
-op_amp
 id|symname
 comma
-l_int|256
+id|len
+)paren
+suffix:semicolon
+id|PRINTK
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot;UMSDOS_followlink /mn/: back from umsdos_readlink_x %p, %p, %d!&bslash;n&quot;
+comma
+id|dentry
+comma
+id|symname
+comma
+id|len
+)paren
 )paren
 suffix:semicolon
 id|set_fs
@@ -469,20 +562,92 @@ id|set_fs
 id|old_fs
 )paren
 suffix:semicolon
-id|base
+id|Printk
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot;UMSDOS_followlink /mn/: link name is %.*s with len %d&bslash;n&quot;
+comma
+id|cnt
+comma
+id|symname
+comma
+id|cnt
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+op_ne
+id|cnt
+)paren
+(brace
+id|dentry
 op_assign
-id|creat_dentry
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|EIO
+)paren
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
+r_else
+id|symname
+(braket
+id|len
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|dentry
+op_assign
+id|lookup_dentry
+c_func
 (paren
 id|symname
 comma
-id|ret
+id|base
 comma
-l_int|NULL
+l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/*&t;UMSDOS_lookup (dentry-&gt;d_parent-&gt;d_inode, base);*/
-r_return
+id|kfree
+c_func
+(paren
+id|symname
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+l_int|0
+)paren
+(brace
+id|out
+suffix:colon
+id|kfree
+c_func
+(paren
+id|symname
+)paren
+suffix:semicolon
+id|outnobuf
+suffix:colon
+id|dput
+c_func
+(paren
 id|base
+)paren
+suffix:semicolon
+)brace
+r_return
+id|dentry
 suffix:semicolon
 )brace
 DECL|variable|umsdos_symlink_operations
@@ -562,8 +727,7 @@ multiline_comment|/* rename */
 id|UMSDOS_readlink
 comma
 multiline_comment|/* readlink */
-l_int|NULL
-multiline_comment|/*UMSDOS_followlink*/
+id|UMSDOS_followlink
 comma
 multiline_comment|/* followlink */
 multiline_comment|/* /mn/ is this REALLY needed ? I recall seeing it working w/o it... */

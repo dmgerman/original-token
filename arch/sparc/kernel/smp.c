@@ -1,4 +1,5 @@
 multiline_comment|/* smp.c: Sparc SMP support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_PROFILE */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -65,7 +65,6 @@ id|max_interrupt_work
 op_assign
 l_int|200
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#ifdef MODVERSIONS
 macro_line|#include &lt;linux/modversions.h&gt;

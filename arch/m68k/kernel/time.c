@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/arch/m68k/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the m68k-specific time handling details.&n; * Most of the stuff is located in the machine specific files.&n; */
+macro_line|#include &lt;linux/config.h&gt; /* CONFIG_HEARTBEAT */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

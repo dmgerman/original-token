@@ -7,7 +7,7 @@ mdefine_line|#define GUSPNP_AUTODETECT
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &lt;linux/ultrasound.h&gt;
 macro_line|#include &quot;gus_hw.h&quot;
-macro_line|#if defined(CONFIG_GUSHW) || defined(MODULE)
+macro_line|#if defined(CONFIG_GUS) || defined(MODULE)
 DECL|macro|GUS_BANK_SIZE
 mdefine_line|#define GUS_BANK_SIZE (((iw_mode) ? 256*1024*1024 : 256*1024))
 DECL|macro|MAX_SAMPLE
@@ -366,17 +366,6 @@ op_star
 id|dram_sleeper
 op_assign
 l_int|NULL
-suffix:semicolon
-DECL|variable|dram_sleep_flag
-r_static
-r_volatile
-r_struct
-id|snd_wait
-id|dram_sleep_flag
-op_assign
-(brace
-l_int|0
-)brace
 suffix:semicolon
 multiline_comment|/*&n; * Variables and buffers for PCM output&n; */
 DECL|macro|MAX_PCM_BUFFERS
@@ -5368,7 +5357,9 @@ id|gus_info.nr_voices
 op_assign
 id|nr_voices
 suffix:semicolon
-r_return
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -5382,6 +5373,13 @@ r_sizeof
 id|gus_info
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 r_case
 id|SNDCTL_SEQ_RESETSAMPLES
@@ -8106,9 +8104,12 @@ id|gus_no_dma
 op_assign
 l_int|0
 suffix:semicolon
-id|dram_sleep_flag.opts
-op_assign
-id|WK_NONE
+id|init_waitqueue
+c_func
+(paren
+op_amp
+id|dram_sleeper
+)paren
 suffix:semicolon
 id|gus_busy
 op_assign
@@ -8825,10 +8826,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-r_int
-r_int
-id|tlimit
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9120,15 +9117,9 @@ id|GUS_DEV_WAVE
 suffix:semicolon
 id|current-&gt;timeout
 op_assign
-id|tlimit
-op_assign
 id|jiffies
 op_plus
 id|HZ
-suffix:semicolon
-id|dram_sleep_flag.opts
-op_assign
-id|WK_SLEEP
 suffix:semicolon
 id|interruptible_sleep_on
 c_func
@@ -9141,45 +9132,17 @@ r_if
 c_cond
 (paren
 op_logical_neg
-(paren
-id|dram_sleep_flag.opts
-op_amp
-id|WK_WAKEUP
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|jiffies
-op_ge
-id|tlimit
-)paren
-id|dram_sleep_flag.opts
-op_or_assign
-id|WK_TIMEOUT
-suffix:semicolon
-)brace
-id|dram_sleep_flag.opts
-op_and_assign
-op_complement
-id|WK_SLEEP
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|dram_sleep_flag.opts
-op_amp
-id|WK_TIMEOUT
-)paren
+id|current-&gt;timeout
 )paren
 id|printk
 c_func
 (paren
-id|KERN_WARNING
 l_string|&quot;GUS: DMA Transfer timed out&bslash;n&quot;
 )paren
+suffix:semicolon
+id|current-&gt;timeout
+op_assign
+l_int|0
 suffix:semicolon
 id|restore_flags
 c_func
@@ -15406,20 +15369,6 @@ id|active_device
 r_case
 id|GUS_DEV_WAVE
 suffix:colon
-r_if
-c_cond
-(paren
-(paren
-id|dram_sleep_flag.opts
-op_amp
-id|WK_SLEEP
-)paren
-)paren
-(brace
-id|dram_sleep_flag.opts
-op_assign
-id|WK_WAKEUP
-suffix:semicolon
 id|wake_up
 c_func
 (paren
@@ -15427,7 +15376,6 @@ op_amp
 id|dram_sleeper
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_case

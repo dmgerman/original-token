@@ -2539,7 +2539,11 @@ id|neigh-&gt;primary_key
 suffix:semicolon
 id|addr_type
 op_assign
-id|neigh-&gt;type
+id|ipv6_addr_type
+c_func
+(paren
+id|addr6
+)paren
 suffix:semicolon
 r_if
 c_cond

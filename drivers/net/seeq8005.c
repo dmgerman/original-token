@@ -814,14 +814,11 @@ id|SEEQ_CFG2
 )paren
 suffix:semicolon
 multiline_comment|/* reset the card */
-id|SLOW_DOWN_IO
-suffix:semicolon
-multiline_comment|/* have to wait 4us after a reset - should be fixed */
-id|SLOW_DOWN_IO
-suffix:semicolon
-id|SLOW_DOWN_IO
-suffix:semicolon
-id|SLOW_DOWN_IO
+id|udelay
+c_func
+(paren
+l_int|5
+)paren
 suffix:semicolon
 id|outw
 c_func
@@ -2772,14 +2769,11 @@ id|SEEQ_CFG2
 )paren
 suffix:semicolon
 multiline_comment|/* reset device */
-id|SLOW_DOWN_IO
-suffix:semicolon
-multiline_comment|/* have to wait 4us after a reset - should be fixed */
-id|SLOW_DOWN_IO
-suffix:semicolon
-id|SLOW_DOWN_IO
-suffix:semicolon
-id|SLOW_DOWN_IO
+id|udelay
+c_func
+(paren
+l_int|5
+)paren
 suffix:semicolon
 id|outw
 c_func
@@ -2837,7 +2831,11 @@ comma
 id|SEEQ_BUFFER
 )paren
 suffix:semicolon
-id|SLOW_DOWN_IO
+id|udelay
+c_func
+(paren
+l_int|2
+)paren
 suffix:semicolon
 )brace
 id|outw

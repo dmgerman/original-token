@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;$Id: proc.c,v 1.1 1997/12/22 17:22:31 mj Exp $&n; *&n; *&t;Procfs interface for the PCI bus.&n; *&n; *&t;Copyright (c) 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;

@@ -2,7 +2,6 @@ multiline_comment|/*&n; * linux/fs/fat/fatfs_syms.c&n; *&n; * Exported kernel sy
 DECL|macro|ASC_LINUX_VERSION
 mdefine_line|#define ASC_LINUX_VERSION(V, P, S)&t;(((V) * 65536) + ((P) * 256) + (S))
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;

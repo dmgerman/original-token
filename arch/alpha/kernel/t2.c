@@ -1,6 +1,5 @@
 multiline_comment|/*&n; * Code common to all T2 chips.&n; *&n; * Written by Jay A Estabrook (jestabro@amt.tay1.dec.com).&n; * December 1996.&n; *&n; * based on CIA code by David A Rusling (david.rusling@reo.mts.dec.com)&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;

@@ -16,7 +16,6 @@ DECL|macro|DEBUG_UPPER
 mdefine_line|#define DEBUG_UPPER 2
 DECL|macro|DEBUG_LOWER
 mdefine_line|#define DEBUG_LOWER 4
-macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_MAX_16M */
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;

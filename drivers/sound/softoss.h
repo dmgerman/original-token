@@ -295,7 +295,7 @@ id|max_playahead
 suffix:semicolon
 DECL|member|finfo
 r_struct
-id|fileinfo
+id|file
 id|finfo
 suffix:semicolon
 DECL|member|fragsize

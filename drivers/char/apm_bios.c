@@ -44,7 +44,7 @@ multiline_comment|/*&n; * The apm_bios device is one of the misc char devices.&n
 DECL|macro|APM_MINOR_DEV
 mdefine_line|#define&t;APM_MINOR_DEV&t;134
 multiline_comment|/* Configurable options:&n; *&n; * CONFIG_APM_IGNORE_USER_SUSPEND: define to ignore USER SUSPEND requests.&n; * This is necessary on the NEC Versa M series, which generates these when&n; * resuming from SYSTEM SUSPEND.  However, enabling this on other laptops&n; * will cause the laptop to generate a CRITICAL SUSPEND when an appropriate&n; * USER SUSPEND is ignored -- this may prevent the APM driver from updating&n; * the system time on a RESUME.&n; *&n; * CONFIG_APM_DO_ENABLE: enable APM features at boot time.  From page 36 of&n; * the specification: &quot;When disabled, the APM BIOS does not automatically&n; * power manage devices, enter the Standby State, enter the Suspend State,&n; * or take power saving steps in response to CPU Idle calls.&quot;  This driver&n; * will make CPU Idle calls when Linux is idle (unless this feature is&n; * turned off -- see below).  This should always save battery power, but&n; * more complicated APM features will be dependent on your BIOS&n; * implementation.  You may need to turn this option off if your computer&n; * hangs at boot time when using APM support, or if it beeps continuously&n; * instead of suspending.  Turn this off if you have a NEC UltraLite Versa&n; * 33/C or a Toshiba T400CDT.  This is off by default since most machines&n; * do fine without this feature.&n; *&n; * CONFIG_APM_CPU_IDLE: enable calls to APM CPU Idle/CPU Busy inside the&n; * idle loop.  On some machines, this can activate improved power savings,&n; * such as a slowed CPU clock rate, when the machine is idle.  These idle&n; * call is made after the idle loop has run for some length of time (e.g.,&n; * 333 mS).  On some machines, this will cause a hang at boot time or&n; * whenever the CPU becomes idle.&n; *&n; * CONFIG_APM_DISPLAY_BLANK: enable console blanking using the APM.  Some&n; * laptops can use this to turn of the LCD backlight when the VC screen&n; * blanker blanks the screen.  Note that this is only used by the VC screen&n; * blanker, and probably won&squot;t turn off the backlight when using X11.  Some&n; * problems have been reported when using this option with gpm (if you&squot;d&n; * like to debug this, please do so).&n; *&n; * If you are debugging the APM support for your laptop, note that code for&n; * all of these options is contained in this file, so you can #define or&n; * #undef these on the next line to avoid recompiling the whole kernel.&n; *&n; */
-multiline_comment|/* KNOWN PROBLEM MACHINES:&n; *&n; * U: TI 4000M TravelMate: BIOS is *NOT* APM compliant&n; *                         [Confirmed by TI representative]&n; * U: ACER 486DX4/75: uses dseg 0040, in violation of APM specification&n; *                    [Confirmed by BIOS disassembly]&n; * P: Toshiba 1950S: battery life information only gets updated after resume&n; *&n; * Legend: U = unusable with APM patches&n; *         P = partially usable with APM patches&n; */
+multiline_comment|/* KNOWN PROBLEM MACHINES:&n; *&n; * U: TI 4000M TravelMate: BIOS is *NOT* APM compliant&n; *                         [Confirmed by TI representative]&n; * U: ACER 486DX4/75: uses dseg 0040, in violation of APM specification&n; *                    [Confirmed by BIOS disassembly]&n; * P: Toshiba 1950S: battery life information only gets updated after resume&n; * P: Midwest Micro Soundbook Elite DX2/66 monochrome: screen blanking&n; * &t;broken in BIOS [Reported by Garst R. Reese &lt;reese@isn.net&gt;]&n; *&n; * Legend: U = unusable with APM patches&n; *         P = partially usable with APM patches&n; */
 multiline_comment|/*&n; * Define to have debug messages.&n; */
 DECL|macro|APM_DEBUG
 macro_line|#undef APM_DEBUG
@@ -104,8 +104,10 @@ mdefine_line|#define APM_ENABLE_POWER_MANAGEMENT(device, error) &bslash;&n;&t;AP
 macro_line|#endif
 DECL|macro|APM_GET_POWER_STATUS
 mdefine_line|#define APM_GET_POWER_STATUS(bx, cx, dx, error) &bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error), &quot;=b&quot; (bx), &quot;=c&quot; (cx), &quot;=d&quot; (dx) &bslash;&n;&t;: &quot;a&quot; (0x530a), &quot;b&quot; (1) &bslash;&n;&t;APM_BIOS_CALL_END
+DECL|macro|APM_GET_BATTERY_STATUS
+mdefine_line|#define APM_GET_BATTERY_STATUS(which, bx, cx, dx, si, error) &bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error), &quot;=b&quot; (bx), &quot;=c&quot; (cx), &quot;=d&quot; (dx), &quot;=S&quot; (si) &bslash;&n;&t;: &quot;a&quot; (0x530a), &quot;b&quot; (0x8000 | (which)) &bslash;&n;&t;APM_BIOS_CALL_END
 DECL|macro|APM_GET_EVENT
-mdefine_line|#define APM_GET_EVENT(event, error)&t;&bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error), &quot;=b&quot; (event) &bslash;&n;&t;: &quot;a&quot; (0x530b) &bslash;&n;&t;APM_BIOS_CALL_END
+mdefine_line|#define APM_GET_EVENT(event, info, error)&t;&bslash;&n;&t;APM_BIOS_CALL(al) &bslash;&n;&t;: &quot;=a&quot; (error), &quot;=b&quot; (event), &quot;=c&quot; (info) &bslash;&n;&t;: &quot;a&quot; (0x530b) &bslash;&n;&t;APM_BIOS_CALL_END
 DECL|macro|APM_DRIVER_VERSION
 mdefine_line|#define APM_DRIVER_VERSION(ver, ax, error) &bslash;&n;&t;APM_BIOS_CALL(bl) &bslash;&n;&t;: &quot;=a&quot; (ax), &quot;=b&quot; (error) &bslash;&n;&t;: &quot;a&quot; (0x530e), &quot;b&quot; (0), &quot;c&quot; (ver) &bslash;&n;&t;APM_BIOS_CALL_END
 DECL|macro|APM_ENGAGE_POWER_MANAGEMENT
@@ -405,6 +407,8 @@ comma
 l_string|&quot;user suspend&quot;
 comma
 l_string|&quot;system standby resume&quot;
+comma
+l_string|&quot;capabilities change&quot;
 )brace
 suffix:semicolon
 DECL|macro|NR_APM_EVENT_NAME
@@ -578,6 +582,18 @@ l_string|&quot;Interface not engaged&quot;
 )brace
 comma
 (brace
+id|APM_BAD_FUNCTION
+comma
+l_string|&quot;Function not supported&quot;
+)brace
+comma
+(brace
+id|APM_RESUME_DISABLED
+comma
+l_string|&quot;Resume timer disabled&quot;
+)brace
+comma
+(brace
 id|APM_BAD_STATE
 comma
 l_string|&quot;Unable to enter requested state&quot;
@@ -647,6 +663,10 @@ c_func
 id|apm_event_t
 op_star
 id|event
+comma
+id|apm_eventinfo_t
+op_star
+id|info
 )paren
 (brace
 id|u_short
@@ -657,6 +677,9 @@ c_func
 (paren
 op_star
 id|event
+comma
+op_star
+id|info
 comma
 id|error
 )paren
@@ -675,6 +698,20 @@ op_rshift
 l_int|8
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|apm_bios_info.version
+OL
+l_int|0x0102
+)paren
+op_star
+id|info
+op_assign
+op_complement
+l_int|0
+suffix:semicolon
+multiline_comment|/* indicate info not valid */
 r_return
 id|APM_SUCCESS
 suffix:semicolon
@@ -843,6 +880,107 @@ id|bat
 comma
 op_star
 id|life
+comma
+id|error
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+op_amp
+l_int|0xff
+)paren
+r_return
+(paren
+id|error
+op_rshift
+l_int|8
+)paren
+suffix:semicolon
+r_return
+id|APM_SUCCESS
+suffix:semicolon
+)brace
+DECL|function|apm_get_battery_status
+r_static
+r_int
+id|apm_get_battery_status
+c_func
+(paren
+id|u_short
+id|which
+comma
+id|u_short
+op_star
+id|bat
+comma
+id|u_short
+op_star
+id|life
+comma
+id|u_short
+op_star
+id|nbat
+)paren
+(brace
+id|u_short
+id|status
+comma
+id|error
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|apm_bios_info.version
+OL
+l_int|0x0102
+)paren
+(brace
+multiline_comment|/* pretend we only have one battery. */
+r_if
+c_cond
+(paren
+id|which
+op_ne
+l_int|1
+)paren
+r_return
+id|APM_BAD_DEVICE
+suffix:semicolon
+op_star
+id|nbat
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+id|apm_get_power_status
+c_func
+(paren
+op_amp
+id|status
+comma
+id|bat
+comma
+id|life
+)paren
+suffix:semicolon
+)brace
+id|APM_GET_BATTERY_STATUS
+c_func
+(paren
+id|which
+comma
+id|status
+comma
+op_star
+id|bat
+comma
+op_star
+id|life
+comma
+op_star
+id|nbat
 comma
 id|error
 )paren
@@ -1609,12 +1747,16 @@ suffix:semicolon
 id|apm_event_t
 id|event
 suffix:semicolon
+id|apm_eventinfo_t
+id|info
+suffix:semicolon
 r_static
 r_int
 id|notified
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* we don&squot;t use the eventinfo */
 id|error
 op_assign
 id|apm_get_event
@@ -1622,6 +1764,9 @@ c_func
 (paren
 op_amp
 id|event
+comma
+op_amp
+id|info
 )paren
 suffix:semicolon
 r_if
@@ -1908,6 +2053,9 @@ id|APM_LOW_BATTERY
 suffix:colon
 r_case
 id|APM_POWER_STATUS_CHANGE
+suffix:colon
+r_case
+id|APM_CAPABILITY_CHANGE
 suffix:colon
 id|send_event
 c_func
@@ -3447,6 +3595,19 @@ id|apm_bios_info.version
 op_assign
 l_int|0x100
 suffix:semicolon
+multiline_comment|/* BIOS &lt; 1.2 doesn&squot;t set cseg_16_len */
+r_if
+c_cond
+(paren
+id|apm_bios_info.version
+OL
+l_int|0x102
+)paren
+id|apm_bios_info.cseg_16_len
+op_assign
+l_int|0xFFFF
+suffix:semicolon
+multiline_comment|/* 64k */
 id|printk
 c_func
 (paren
@@ -3472,9 +3633,11 @@ l_int|0x100
 id|printk
 c_func
 (paren
-l_string|&quot; cseg len %x, dseg len %x&quot;
+l_string|&quot; cseg len %x, cseg16 len %x, dseg len %x&quot;
 comma
 id|apm_bios_info.cseg_len
+comma
+id|apm_bios_info.cseg_16_len
 comma
 id|apm_bios_info.dseg_len
 )paren
@@ -3734,9 +3897,7 @@ op_rshift
 l_int|3
 )braket
 comma
-l_int|64
-op_star
-l_int|1024
+id|apm_bios_info.cseg_16_len
 )paren
 suffix:semicolon
 id|set_limit
@@ -3753,9 +3914,10 @@ id|apm_bios_info.dseg_len
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* The APM 1.2 docs state that the apm_driver_version&n;&t;&t; * call can fail if we try to connect as 1.2 to a 1.1 bios.&n;&t;&t; */
 id|apm_bios_info.version
 op_assign
-l_int|0x0101
+l_int|0x0102
 suffix:semicolon
 id|error
 op_assign
@@ -3773,6 +3935,30 @@ id|error
 op_ne
 l_int|0
 )paren
+(brace
+multiline_comment|/* Fall back to an APM 1.1 connection. */
+id|apm_bios_info.version
+op_assign
+l_int|0x0101
+suffix:semicolon
+id|error
+op_assign
+id|apm_driver_version
+c_func
+(paren
+op_amp
+id|apm_bios_info.version
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|error
+op_ne
+l_int|0
+)paren
+multiline_comment|/* Fall back to an APM 1.0 connection. */
 id|apm_bios_info.version
 op_assign
 l_int|0x100
@@ -3802,10 +3988,6 @@ id|apm_bios_info.version
 op_amp
 l_int|0xff
 )paren
-suffix:semicolon
-id|apm_bios_info.version
-op_assign
-l_int|0x0101
 suffix:semicolon
 )brace
 )brace

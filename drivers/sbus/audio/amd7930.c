@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * drivers/sbus/audio/amd7930.c&n; *&n; * Copyright (C) 1996,1997 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This is the lowlevel driver for the AMD7930 audio chip found on all&n; * sun4c machines and some sun4m machines.&n; *&n; * The amd7930 is actually an ISDN chip which has a very simple&n; * integrated audio encoder/decoder. When Sun decided on what chip to&n; * use for audio, they had the brilliant idea of using the amd7930 and&n; * only connecting the audio encoder/decoder pins.&n; *&n; * Thanks to the AMD engineer who was able to get us the AMD79C30&n; * databook which has all the programming information and gain tables.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

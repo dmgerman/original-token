@@ -32,6 +32,10 @@ multiline_comment|/*&n; * Prevents LRU trashing, entries considered equivalent,&
 DECL|macro|RT_CACHE_BUBBLE_THRESHOLD
 mdefine_line|#define RT_CACHE_BUBBLE_THRESHOLD&t;(5*HZ)
 macro_line|#include &lt;linux/route.h&gt;
+DECL|macro|RTO_ONLINK
+mdefine_line|#define RTO_ONLINK&t;0x01
+DECL|macro|RTO_TPROXY
+mdefine_line|#define RTO_TPROXY&t;0x80000000
 DECL|struct|rt_key
 r_struct
 id|rt_key
@@ -220,7 +224,7 @@ comma
 id|u32
 id|src
 comma
-id|u8
+id|u32
 id|tos
 comma
 r_int

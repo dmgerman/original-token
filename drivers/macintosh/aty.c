@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * aty.c: Console support for ATI/mach64 display adaptor cards.&n; *&n; * Copyright (C) 1997 Michael AK Tesch&n; *  written with much help from Jon Howell&n; *  changes to support the vt chip set by harry ac eaton&n; *  gt chipset support, scrollback console by anthony tong &lt;atong@uiuc.edu&gt;&n; * &n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_CHIP_ID and CONFIG_STAT0 */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;

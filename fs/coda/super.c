@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * Super block/filesystem wide operations&n; *&n; * Copryright (C) 1996 Peter J. Braam &lt;braam@maths.ox.ac.uk&gt; and &n; * Michael Callahan &lt;callahan@maths.ox.ac.uk&gt; &n; * &n; * Rewritten for Linux 2.1.?? Peter Braam &lt;braam@cs.cmu.edu&gt;&n; * Copyright (C) Carnegie Mellon University&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

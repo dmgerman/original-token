@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * Definitions for talking to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * Copyright (C) 1996 Paul Mackerras.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 DECL|typedef|phandle
 r_typedef
 r_void

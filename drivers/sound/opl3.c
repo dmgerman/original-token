@@ -3,6 +3,7 @@ multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * 
 multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 multiline_comment|/*&n; * Major improvements to the FM handling 30AUG92 by Rob Hooft,&n; */
 multiline_comment|/*&n; * hooft@chem.ruu.nl&n; */
 macro_line|#include &quot;sound_config.h&quot;
@@ -522,7 +523,9 @@ l_int|6
 suffix:colon
 id|devc-&gt;nr_voice
 suffix:semicolon
-r_return
+r_if
+c_cond
+(paren
 id|__copy_to_user
 c_func
 (paren
@@ -536,6 +539,13 @@ r_sizeof
 id|devc-&gt;fm_info
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 r_case
 id|SNDCTL_SYNTH_MEMAVL
@@ -874,10 +884,10 @@ l_int|8
 )paren
 suffix:semicolon
 multiline_comment|/* Select OPL4 ID register */
-id|tenmicrosec
+id|udelay
 c_func
 (paren
-id|devc-&gt;osp
+l_int|10
 )paren
 suffix:semicolon
 id|tmp
@@ -891,10 +901,10 @@ l_int|7
 )paren
 suffix:semicolon
 multiline_comment|/* Read it */
-id|tenmicrosec
+id|udelay
 c_func
 (paren
-id|devc-&gt;osp
+l_int|10
 )paren
 suffix:semicolon
 r_if
@@ -923,10 +933,10 @@ l_int|8
 )paren
 suffix:semicolon
 multiline_comment|/* Select OPL4 FM mixer control */
-id|tenmicrosec
+id|udelay
 c_func
 (paren
-id|devc-&gt;osp
+l_int|10
 )paren
 suffix:semicolon
 id|outb
@@ -942,10 +952,10 @@ l_int|7
 )paren
 suffix:semicolon
 multiline_comment|/* Write value */
-id|tenmicrosec
+id|udelay
 c_func
 (paren
-id|devc-&gt;osp
+l_int|10
 )paren
 suffix:semicolon
 )brace
@@ -3364,10 +3374,10 @@ id|devc-&gt;model
 op_ne
 l_int|2
 )paren
-id|tenmicrosec
+id|udelay
 c_func
 (paren
-id|devc-&gt;osp
+l_int|10
 )paren
 suffix:semicolon
 r_else
@@ -3418,26 +3428,12 @@ id|devc-&gt;model
 op_ne
 l_int|2
 )paren
-(brace
-id|tenmicrosec
+id|udelay
 c_func
 (paren
-id|devc-&gt;osp
+l_int|30
 )paren
 suffix:semicolon
-id|tenmicrosec
-c_func
-(paren
-id|devc-&gt;osp
-)paren
-suffix:semicolon
-id|tenmicrosec
-c_func
-(paren
-id|devc-&gt;osp
-)paren
-suffix:semicolon
-)brace
 r_else
 r_for
 c_loop

@@ -10,17 +10,17 @@ macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/busmouse.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/amigamouse.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
-DECL|macro|MSE_INT_ON
-mdefine_line|#define MSE_INT_ON()&t;mouseint_allowed = 1
-DECL|macro|MSE_INT_OFF
-mdefine_line|#define MSE_INT_OFF()&t;mouseint_allowed = 0
+DECL|macro|AMI_MSE_INT_ON
+mdefine_line|#define AMI_MSE_INT_ON()&t;mouseint_allowed = 1
+DECL|macro|AMI_MSE_INT_OFF
+mdefine_line|#define AMI_MSE_INT_OFF()&t;mouseint_allowed = 0
 DECL|variable|mouse
 r_static
 r_struct
@@ -91,7 +91,7 @@ id|mouseint_allowed
 r_return
 suffix:semicolon
 )brace
-id|MSE_INT_OFF
+id|AMI_MSE_INT_OFF
 c_func
 (paren
 )paren
@@ -461,7 +461,7 @@ id|SIGIO
 )paren
 suffix:semicolon
 )brace
-id|MSE_INT_ON
+id|AMI_MSE_INT_ON
 c_func
 (paren
 )paren
@@ -555,7 +555,7 @@ comma
 id|mouse_interrupt
 )paren
 suffix:semicolon
-id|MSE_INT_OFF
+id|AMI_MSE_INT_OFF
 c_func
 (paren
 )paren
@@ -660,7 +660,7 @@ l_int|1
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-id|MSE_INT_ON
+id|AMI_MSE_INT_ON
 c_func
 (paren
 )paren
@@ -672,15 +672,10 @@ suffix:semicolon
 multiline_comment|/*&n; * writes are disallowed&n; */
 DECL|function|write_mouse
 r_static
-r_int
+id|ssize_t
 id|write_mouse
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -692,8 +687,11 @@ op_star
 id|buffer
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_return
@@ -704,15 +702,10 @@ suffix:semicolon
 multiline_comment|/*&n; * read mouse data.  Currently never blocks.&n; */
 DECL|function|read_mouse
 r_static
-r_int
+id|ssize_t
 id|read_mouse
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -723,13 +716,13 @@ op_star
 id|buffer
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
-r_int
-id|r
-suffix:semicolon
 r_int
 id|dx
 suffix:semicolon
@@ -754,26 +747,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|r
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|buffer
-comma
-id|count
-)paren
-)paren
-)paren
-r_return
-id|r
-suffix:semicolon
-r_if
-c_cond
-(paren
 op_logical_neg
 id|mouse.ready
 )paren
@@ -782,7 +755,7 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 multiline_comment|/*&n;&t; * Obtain the current mouse parameters and limit as appropriate for&n;&t; * the return data format.  Interrupts are only disabled while &n;&t; * obtaining the parameters, NOT during the puts_user() calls,&n;&t; * so paging in put_user() does not effect mouse tracking.&n;&t; */
-id|MSE_INT_OFF
+id|AMI_MSE_INT_OFF
 c_func
 (paren
 )paren
@@ -861,11 +834,15 @@ id|mouse.ready
 op_assign
 l_int|0
 suffix:semicolon
-id|MSE_INT_ON
+id|AMI_MSE_INT_ON
 c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
 id|put_user
 c_func
 (paren
@@ -874,8 +851,10 @@ op_or
 l_int|0x80
 comma
 id|buffer
+op_increment
 )paren
-suffix:semicolon
+)paren
+op_logical_or
 id|put_user
 c_func
 (paren
@@ -885,10 +864,9 @@ r_char
 id|dx
 comma
 id|buffer
-op_plus
-l_int|1
+op_increment
 )paren
-suffix:semicolon
+op_logical_or
 id|put_user
 c_func
 (paren
@@ -898,36 +876,39 @@ r_char
 id|dy
 comma
 id|buffer
-op_plus
-l_int|2
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|r
-op_assign
-l_int|3
-suffix:semicolon
-id|r
-OL
-id|count
-suffix:semicolon
-id|r
 op_increment
 )paren
-id|put_user
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|count
+OG
+l_int|3
+)paren
+r_if
+c_cond
+(paren
+id|clear_user
 c_func
 (paren
-l_int|0x00
-comma
 id|buffer
-op_plus
-id|r
+comma
+id|count
+op_minus
+l_int|3
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_return
-id|r
+id|count
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * poll for mouse input&n; */
@@ -1055,7 +1036,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* reset counters */
-id|MSE_INT_OFF
+id|AMI_MSE_INT_OFF
 c_func
 (paren
 )paren

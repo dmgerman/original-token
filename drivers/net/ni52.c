@@ -6028,6 +6028,13 @@ comma
 id|NI52_TOTAL_SIZE
 )paren
 suffix:semicolon
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_ni52
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -6037,13 +6044,6 @@ suffix:semicolon
 id|dev_ni52.priv
 op_assign
 l_int|NULL
-suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-op_amp
-id|dev_ni52
-)paren
 suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */

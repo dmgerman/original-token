@@ -669,9 +669,11 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;Creation OK: [%d] %s %d pos %d&bslash;n&quot;
+l_string|&quot;Creation OK: [%lu] %.*s %d pos %ld&bslash;n&quot;
 comma
 id|dir-&gt;i_ino
+comma
+id|info.fake.len
 comma
 id|info.fake.fname
 comma
@@ -697,9 +699,11 @@ id|EEXIST
 id|printk
 (paren
 l_string|&quot;UMSDOS: out of sync, Creation error [%ld], &quot;
-l_string|&quot;deleting %s %d %d pos %ld&bslash;n&quot;
+l_string|&quot;deleting %.*s %d %d pos %ld&bslash;n&quot;
 comma
 id|dir-&gt;i_ino
+comma
+id|info.fake.len
 comma
 id|info.fake.fname
 comma
@@ -726,7 +730,9 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;umsdos_create %s ret = %d pos %d&bslash;n&quot;
+l_string|&quot;umsdos_create %.*s ret = %d pos %ld&bslash;n&quot;
+comma
+id|info.fake.len
 comma
 id|info.fake.fname
 comma
@@ -1243,7 +1249,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;  This UMSDOS_lookup does not look very useful.&n;&t;&t;  It makes sure that the inode of the file will&n;&t;&t;  be correctly setup (umsdos_patch_inode()) in&n;&t;&t;  case it is already in use.&n;&t;&t;  &n;&t;&t;  Not very efficient ...&n;&t;&t;*/
+multiline_comment|/*&n;&t;&t;  This umsdos_lookup_x does not look very useful.&n;&t;&t;  It makes sure that the inode of the file will&n;&t;&t;  be correctly setup (umsdos_patch_inode()) in&n;&t;&t;  case it is already in use.&n;&t;&t;  &n;&t;&t;  Not very efficient ...&n;&t;&t;*/
 r_struct
 id|inode
 op_star
@@ -1255,6 +1261,7 @@ suffix:semicolon
 id|PRINTK
 (paren
 (paren
+id|KERN_DEBUG
 l_string|&quot;rename lookup len %d %d -- &quot;
 comma
 id|new_len
@@ -1265,11 +1272,13 @@ id|new_info.entry.flags
 suffix:semicolon
 id|ret
 op_assign
-id|UMSDOS_lookup
+id|umsdos_lookup_x
 (paren
 id|new_dir
 comma
 id|new_dentry
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|inode
@@ -1291,7 +1300,9 @@ l_int|0
 (brace
 id|printk
 (paren
-l_string|&quot;UMSDOS: partial rename for file %s&bslash;n&quot;
+l_string|&quot;UMSDOS: partial rename for file %.*s&bslash;n&quot;
+comma
+id|new_info.entry.name_len
 comma
 id|new_info.entry.name
 )paren
@@ -1489,7 +1500,7 @@ id|ret
 op_assign
 id|umsdos_file_write_kmem
 (paren
-id|dentry-&gt;d_inode-&gt;i_ino
+id|dentry-&gt;d_inode
 comma
 op_amp
 id|filp
@@ -1501,7 +1512,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME /mn/: dentry-&gt;d_inode-&gt;i_ino is totaly wrong, just put in to compile the beast... */
+multiline_comment|/* FIXME /mn/: dentry-&gt;d_inode-&gt;i_ino is totaly wrong, just put in to compile the beast...&n; PTW dentry-&gt;d_inode is &quot;less incorrect&quot; &t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 multiline_comment|/* dput(dentry); ?? where did this come from FIXME */
 r_if
 c_cond
@@ -1712,7 +1723,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;umsdos_link dir_owner = %d -&gt; %p [%d] &quot;
+l_string|&quot;umsdos_link dir_owner = %lu -&gt; %p [%d] &quot;
 comma
 id|oldinode-&gt;u.umsdos_i.i_dir_owner
 comma
@@ -1765,7 +1776,9 @@ l_int|0
 id|Printk
 (paren
 (paren
-l_string|&quot;umsdos_link :%s: ino %d flags %d &quot;
+l_string|&quot;umsdos_link :%.*s: ino %lu flags %d &quot;
+comma
+id|entry.name_len
 comma
 id|entry.name
 comma
@@ -2590,11 +2603,13 @@ op_increment
 suffix:semicolon
 id|ret
 op_assign
-id|UMSDOS_lookup
+id|umsdos_lookup_x
 (paren
 id|dir
 comma
 id|dentry
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|sdir
@@ -2668,7 +2683,7 @@ id|creat_dentry
 (paren
 id|UMSDOS_EMD_FILE
 comma
-id|UMSDOS_EMD_FILE
+id|UMSDOS_EMD_NAMELEN
 comma
 l_int|NULL
 )paren
@@ -2981,7 +2996,9 @@ l_int|0
 id|Printk
 (paren
 (paren
-l_string|&quot;UMSDOS_unlink %s &quot;
+l_string|&quot;UMSDOS_unlink %.*s &quot;
+comma
+id|info.fake.len
 comma
 id|info.fake.fname
 )paren
@@ -3032,11 +3049,13 @@ op_increment
 suffix:semicolon
 id|ret
 op_assign
-id|UMSDOS_lookup
+id|umsdos_lookup_x
 (paren
 id|dir
 comma
 id|dentry
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|inode
@@ -3183,7 +3202,9 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;Avant msdos_unlink %s &quot;
+l_string|&quot;Avant msdos_unlink %.*s &quot;
+comma
+id|info.fake.len
 comma
 id|info.fake.fname
 )paren
@@ -3215,7 +3236,9 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;msdos_unlink %s %o ret %d &quot;
+l_string|&quot;msdos_unlink %.*s %o ret %d &quot;
+comma
+id|info.fake.len
 comma
 id|info.fake.fname
 comma

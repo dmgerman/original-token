@@ -1,7 +1,4 @@
 multiline_comment|/*&n; *  support.c&n; *  Specific support functions&n; *&n; *  Copyright (C) 1997 Martin von L&#xfffd;wis&n; *  Copyright (C) 1997 R&#xfffd;gis Duchesne&n; *&n; */
-macro_line|#ifdef NTFS_IN_LINUX_KERNEL
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#endif
 macro_line|#include &quot;types.h&quot;
 macro_line|#include &quot;struct.h&quot;
 macro_line|#include &quot;support.h&quot;
