@@ -32,7 +32,7 @@ macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 multiline_comment|/*&n; *&t;Implement IP packet firewall&n; */
-macro_line|#ifdef CONFIG_IP_FIREWALL_DEBUG 
+macro_line|#ifdef DEBUG_IP_FIREWALL 
 DECL|macro|dprintf1
 mdefine_line|#define dprintf1(a)&t;&t;printk(a)
 DECL|macro|dprintf2
@@ -53,7 +53,7 @@ mdefine_line|#define dprintf4(a1,a2,a3,a4)
 macro_line|#endif
 DECL|macro|print_ip
 mdefine_line|#define print_ip(a)&t; printk(&quot;%ld.%ld.%ld.%ld&quot;,(ntohl(a)&gt;&gt;24)&amp;0xFF,&bslash;&n;&t;&t;&t;&t;&t;      (ntohl(a)&gt;&gt;16)&amp;0xFF,&bslash;&n;&t;&t;&t;&t;&t;      (ntohl(a)&gt;&gt;8)&amp;0xFF,&bslash;&n;&t;&t;&t;&t;&t;      (ntohl(a))&amp;0xFF);
-macro_line|#ifdef CONFIG_IP_FIREWALL_DEBUG
+macro_line|#ifdef DEBUG_IP_FIREWALL
 DECL|macro|dprint_ip
 mdefine_line|#define dprint_ip(a)&t;print_ip(a)
 macro_line|#else
@@ -588,6 +588,9 @@ c_cond
 (paren
 op_logical_neg
 id|tcp-&gt;ack
+op_logical_and
+op_logical_neg
+id|tcp-&gt;rst
 )paren
 (brace
 multiline_comment|/* We do NOT have ACK, value TRUE */
@@ -709,7 +712,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_IP_FIREWALL_DEBUG
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|dprint_ip
 c_func
 (paren
@@ -1886,7 +1889,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -2065,7 +2068,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -2271,7 +2274,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -2551,7 +2554,7 @@ id|ip_fw
 )paren
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -2584,7 +2587,7 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -2607,7 +2610,7 @@ op_amp
 id|IP_FW_F_REDIR
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -2629,7 +2632,7 @@ op_amp
 id|IP_FW_F_MASQ
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -2656,7 +2659,7 @@ OL
 l_int|2
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -2684,7 +2687,7 @@ OL
 l_int|2
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -2719,7 +2722,7 @@ id|IP_FW_MAX_PORTS
 )paren
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -2887,7 +2890,7 @@ suffix:semicolon
 r_default
 suffix:colon
 multiline_comment|/*&n; &t;&t;&t;&t; *&t;Should be panic but... (Why ??? - AC)&n;&t;&t;&t;&t; */
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -2902,7 +2905,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -3066,7 +3069,7 @@ id|ip_fwpkt
 )paren
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -3117,7 +3120,7 @@ id|ipfwp-&gt;fwp_vianame
 )paren
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -3140,7 +3143,7 @@ op_ne
 id|ipfwp-&gt;fwp_via.s_addr
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -3172,7 +3175,7 @@ r_int
 )paren
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -3283,7 +3286,7 @@ id|ip_fw_masq
 )paren
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -3469,7 +3472,7 @@ suffix:semicolon
 r_default
 suffix:colon
 multiline_comment|/*&n;&t; &t;&t; *&t;Should be panic but... (Why are BSD people panic obsessed ??)&n;&t;&t;&t; */
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren
@@ -3484,7 +3487,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+macro_line|#ifdef DEBUG_IP_FIREWALL
 id|printk
 c_func
 (paren

@@ -368,6 +368,11 @@ DECL|member|open_status
 id|open_state
 id|open_status
 suffix:semicolon
+DECL|member|readlog_pending
+r_int
+r_char
+id|readlog_pending
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* token ring adapter commands */

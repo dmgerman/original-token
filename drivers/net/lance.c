@@ -1,5 +1,5 @@
 multiline_comment|/* lance.c: An AMD LANCE ethernet driver for linux. */
-multiline_comment|/*&n;&t;Written 1993,1994,1995 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the Allied Telesis AT1500 and HP J2405A, and should work&n;&t;with most other LANCE-based bus-master (NE2100 clone) ethercards.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&n;&t;Fixing alignment problem with 1.3.* kernel and some minor changes&n;&t;by Andrey V. Savochkin, 1996.&n;&n;&t;Problems or questions may be send to Donald Becker (see above) or to&n;&t;Andrey Savochkin -- saw@shade.msu.ru or&n;&t;&t;Laboratory of Computation Methods, &n;&t;&t;Department of Mathematics and Mechanics,&n;&t;&t;Moscow State University,&n;&t;&t;Leninskye Gory, Moscow 119899&n;&n;&t;But I should to inform you that I&squot;m not an expert in the LANCE card&n;&t;and it may occurs that you will receive no answer on your mail&n;&t;to Donald Becker. I didn&squot;t receive any answer on all my letters&n;&t;to him. Who knows why... But may be you are more lucky?  ;-)&n;                                                          SAW&n;*/
+multiline_comment|/*&n;&t;Written 1993,1994,1995 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the Allied Telesis AT1500 and HP J2405A, and should work&n;&t;with most other LANCE-based bus-master (NE2100 clone) ethercards.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&n;&t;Fixing alignment problem with 1.3.* kernel and some minor changes&n;&t;by Andrey V. Savochkin, 1996.&n;&n;&t;Problems or questions may be send to Donald Becker (see above) or to&n;&t;Andrey Savochkin -- saw@shade.msu.ru or&n;&t;&t;Laboratory of Computation Methods, &n;&t;&t;Department of Mathematics and Mechanics,&n;&t;&t;Moscow State University,&n;&t;&t;Leninskye Gory, Moscow 119899&n;&n;&t;But I should to inform you that I&squot;m not an expert in the LANCE card&n;&t;and it may occurs that you will receive no answer on your mail&n;&t;to Donald Becker. I didn&squot;t receive any answer on all my letters&n;&t;to him. Who knows why... But may be you are more lucky?  ;-)&n;                                                          SAW&n;    Fixed 7990 autoIRQ failure and reversed unneeded alignment. 8/20/96 djb&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;lance.c:v1.08.02 Mar 17 1996 tsbogend@bigbug.franken.de&bslash;n&quot;
+l_string|&quot;lance.c:v1.09 Aug 20 1996 dplatt@3do.com, becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -641,6 +641,13 @@ c_func
 r_int
 id|pci_index
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|lance_debug
+OG
+l_int|1
+)paren
 id|printk
 c_func
 (paren
@@ -1403,7 +1410,13 @@ r_struct
 id|lance_private
 op_star
 )paren
-id|LANCE_KMALLOC
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|kmalloc
 c_func
 (paren
 r_sizeof
@@ -1411,6 +1424,19 @@ r_sizeof
 op_star
 id|lp
 )paren
+op_plus
+l_int|7
+comma
+id|GFP_DMA
+op_or
+id|GFP_KERNEL
+)paren
+op_plus
+l_int|7
+)paren
+op_amp
+op_complement
+l_int|7
 )paren
 suffix:semicolon
 r_if
@@ -1454,24 +1480,23 @@ id|lp-&gt;name
 op_assign
 id|chipname
 suffix:semicolon
-multiline_comment|/* I&squot;m not sure that buffs also must be aligned but it&squot;s safer to do it -- SAW */
 id|lp-&gt;rx_buffs
 op_assign
 (paren
 r_int
 r_int
 )paren
-id|LANCE_KMALLOC
+id|kmalloc
 c_func
 (paren
 id|PKT_BUF_SZ
 op_star
 id|RX_RING_SIZE
+comma
+id|GFP_DMA
+op_or
+id|GFP_KERNEL
 )paren
-suffix:semicolon
-id|lp-&gt;tx_bounce_buffs
-op_assign
-l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -1480,13 +1505,22 @@ id|lance_need_isa_bounce_buffers
 )paren
 id|lp-&gt;tx_bounce_buffs
 op_assign
-id|LANCE_KMALLOC
+id|kmalloc
 c_func
 (paren
 id|PKT_BUF_SZ
 op_star
 id|TX_RING_SIZE
+comma
+id|GFP_DMA
+op_or
+id|GFP_KERNEL
 )paren
+suffix:semicolon
+r_else
+id|lp-&gt;tx_bounce_buffs
+op_assign
+l_int|NULL
 suffix:semicolon
 id|lp-&gt;chip_version
 op_assign
@@ -1990,7 +2024,15 @@ id|dev-&gt;irq
 )paren
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+id|lance_version
+op_ne
+l_int|0
+)paren
 (brace
+multiline_comment|/* 7990 boards need DMA detection first. */
 multiline_comment|/* To auto-IRQ we enable the initialization-done and DMA error&n;&t;&t;   interrupts. For ISA boards we get a DMA error, but VLB and PCI&n;&t;&t;   boards will work. */
 id|autoirq_setup
 c_func
@@ -2014,7 +2056,7 @@ op_assign
 id|autoirq_report
 c_func
 (paren
-l_int|1
+l_int|2
 )paren
 suffix:semicolon
 r_if
@@ -2317,6 +2359,70 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+)brace
+r_if
+c_cond
+(paren
+id|lance_version
+op_eq
+l_int|0
+op_logical_and
+id|dev-&gt;irq
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* We may auto-IRQ now that we have a DMA channel. */
+multiline_comment|/* Trigger an initialization just for the interrupt. */
+id|autoirq_setup
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0x0041
+comma
+id|ioaddr
+op_plus
+id|LANCE_DATA
+)paren
+suffix:semicolon
+id|dev-&gt;irq
+op_assign
+id|autoirq_report
+c_func
+(paren
+l_int|4
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;irq
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;  Failed to detect the 7990 IRQ line.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;  Auto-IRQ detected IRQ%d.&bslash;n&quot;
+comma
+id|dev-&gt;irq
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond

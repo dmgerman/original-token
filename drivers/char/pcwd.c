@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * PC Watchdog Driver&n; * by Ken Hollis (khollis@bitgate.com)&n; *&n; * Permission granted from Simon Machell (73244.1270@compuserve.com)&n; * Written for the Linux Kernel, and GPLed by Ken Hollis&n; *&n; * 960107&t;Added request_region routines, modulized the whole thing.&n; * 960108&t;Fixed end-of-file pointer (Thanks to Dan Hollis), added&n; *&t;&t;WD_TIMEOUT define.&n; * 960216&t;Added eof marker on the file, and changed verbose messages.&n; * 960716&t;Made functional and cosmetic changes to the source for&n; *&t;&t;inclusion in Linux 2.0.x kernels, thanks to Alan Cox.&n; * 960717&t;Removed read/seek routines, replaced with ioctl.  Also, added&n; *&t;&t;check_region command due to Alan&squot;s suggestion.&n; */
+multiline_comment|/*&n; * PC Watchdog Driver&n; * by Ken Hollis (khollis@bitgate.com)&n; *&n; * Permission granted from Simon Machell (73244.1270@compuserve.com)&n; * Written for the Linux Kernel, and GPLed by Ken Hollis&n; *&n; * 960107&t;Added request_region routines, modulized the whole thing.&n; * 960108&t;Fixed end-of-file pointer (Thanks to Dan Hollis), added&n; *&t;&t;WD_TIMEOUT define.&n; * 960216&t;Added eof marker on the file, and changed verbose messages.&n; * 960716&t;Made functional and cosmetic changes to the source for&n; *&t;&t;inclusion in Linux 2.0.x kernels, thanks to Alan Cox.&n; * 960717&t;Removed read/seek routines, replaced with ioctl.  Also, added&n; *&t;&t;check_region command due to Alan&squot;s suggestion.&n; * 960821&t;Made changes to compile in newer 2.0.x kernels.  Added&n; *&t;&t;&quot;cold reboot sense&quot; entry.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -17,7 +17,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/pcwd.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|WD_VER
-mdefine_line|#define WD_VER                  &quot;0.41 (07/17/96)&quot;
+mdefine_line|#define WD_VER                  &quot;0.50 (08/21/96)&quot;
 DECL|macro|WD_MINOR
 mdefine_line|#define&t;WD_MINOR&t;&t;130&t;/* Minor device number */
 DECL|macro|WD_TIMEOUT
@@ -367,7 +367,34 @@ id|WD_T110
 id|printk
 c_func
 (paren
-l_string|&quot;pcwd: CPU overheat sense&bslash;n&quot;
+l_string|&quot;pcwd: CPU overheat sense.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+op_logical_neg
+(paren
+id|card_status
+op_amp
+id|WD_WDRST
+)paren
+)paren
+op_logical_and
+(paren
+op_logical_neg
+(paren
+id|card_status
+op_amp
+id|WD_T110
+)paren
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;pcwd: Cold boot sense.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -469,9 +496,9 @@ id|pcwd_ioctl
 c_func
 (paren
 r_struct
-id|tty_struct
+id|inode
 op_star
-id|tty
+id|inode
 comma
 r_struct
 id|file
@@ -676,6 +703,7 @@ id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 DECL|variable|pcwd_fops
+r_static
 r_struct
 id|file_operations
 id|pcwd_fops
@@ -706,9 +734,7 @@ id|pcwd_open
 comma
 multiline_comment|/* Open */
 id|pcwd_close
-comma
 multiline_comment|/* Close */
-l_int|NULL
 )brace
 suffix:semicolon
 DECL|variable|pcwd_miscdev
@@ -822,7 +848,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;pcwd: No card detected.&bslash;n&quot;
+l_string|&quot;pcwd: No card detected, or wrong port assigned.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -834,7 +860,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;pcwd: Port available at 0x370.&bslash;n&quot;
+l_string|&quot;pcwd: Watchdog Rev.A detected at port 0x370&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -842,7 +868,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;pcwd: Port available at 0x270.&bslash;n&quot;
+l_string|&quot;pcwd: Watchdog Rev.A detected at port 0x270&bslash;n&quot;
 )paren
 suffix:semicolon
 id|pcwd_showprevstate
@@ -865,7 +891,7 @@ id|current_ctlport
 comma
 id|WD_PORT_EXTENT
 comma
-l_string|&quot;PCWD (Berkshire)&quot;
+l_string|&quot;PCWD Rev.A (Berkshire)&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef&t;DEBUG
@@ -921,4 +947,5 @@ suffix:semicolon
 macro_line|#endif
 )brace
 macro_line|#endif
+multiline_comment|/*&n;** TODO:&n;**&n;**&t;Both Revisions:&n;**&t;o) Support for revision B of the Watchdog Card&n;**&t;o) Implement the rest of the IOCTLs as discussed with Alan Cox&n;**&t;o) Implement only card heartbeat reset via IOCTL, not via write&n;**&t;o) Faster card detection routines&n;**&t;o) /proc device creation&n;**&n;**&t;Revision B functions:&n;**&t;o) /dev/temp device creation for temperature device (possibly use&n;**&t;   the one from the WDT drivers?)&n;**&t;o) Direct Motorola controller chip access via read/write routines&n;**&t;o) Autoprobe IO Ports for autodetection (possibly by chip detect?)&n;*/
 eof

@@ -102,6 +102,14 @@ r_void
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|pcwatchdog_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|rtc_init
 c_func
@@ -751,6 +759,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif&t;
+macro_line|#ifdef CONFIG_PCWATCHDOG
+id|pcwatchdog_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_APM
 id|apm_bios_init
 c_func

@@ -66,6 +66,12 @@ r_int
 id|sys_offset
 suffix:semicolon
 multiline_comment|/* system-specific offset */
+DECL|member|code
+r_int
+r_int
+id|code
+suffix:semicolon
+multiline_comment|/* machine check code */
 )brace
 suffix:semicolon
 r_extern

@@ -34,6 +34,15 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_PCWATCHDOG
+r_void
+id|pcwatchdog_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|read_ram
 r_static
 r_int
@@ -1533,7 +1542,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined (CONFIG_BUSMOUSE) || defined(CONFIG_UMISC) || &bslash;&n;    defined (CONFIG_PSMOUSE) || defined (CONFIG_MS_BUSMOUSE) || &bslash;&n;    defined (CONFIG_ATIXL_BUSMOUSE) || defined(CONFIG_SOFT_WATCHDOG) || &bslash;&n;    defined (CONFIG_APM) || defined (CONFIG_RTC) || defined (CONFIG_SUN_MOUSE)
+macro_line|#if defined (CONFIG_BUSMOUSE) || defined(CONFIG_UMISC) || &bslash;&n;    defined (CONFIG_PSMOUSE) || defined (CONFIG_MS_BUSMOUSE) || &bslash;&n;    defined (CONFIG_ATIXL_BUSMOUSE) || defined(CONFIG_SOFT_WATCHDOG) || &bslash;&n;    defined (CONFIG_PCWATCHDOG) || &bslash;&n;    defined (CONFIG_APM) || defined (CONFIG_RTC) || defined (CONFIG_SUN_MOUSE)
 id|misc_init
 c_func
 (paren
@@ -1549,13 +1558,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if CONFIG_QIC02_TAPE
 id|qic02_tape_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_PCWATCHDOG
-id|pcwatchdog_init
 c_func
 (paren
 )paren

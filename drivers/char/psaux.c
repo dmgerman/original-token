@@ -1,9 +1,10 @@
-multiline_comment|/*&n; * linux/drivers/char/psaux.c&n; *&n; * Driver for PS/2 type mouse by Johan Myreen.&n; *&n; * Supports pointing devices attached to a PS/2 type&n; * Keyboard and Auxiliary Device Controller.&n; *&n; * Corrections in device setup for some laptop mice &amp; trackballs.&n; * 02Feb93  (troyer@saifr00.cfsat.Honeywell.COM,mch@wimsey.bc.ca)&n; *&n; * Changed to prevent keyboard lockups on AST Power Exec.&n; * 28Jul93  Brad Bosch - brad@lachman.com&n; *&n; * Modified by Johan Myreen (jem@pandora.pp.fi) 04Aug93&n; *   to include support for QuickPort mouse.&n; *&n; * Changed references to &quot;QuickPort&quot; with &quot;82C710&quot; since &quot;QuickPort&quot;&n; * is not what this driver is all about -- QuickPort is just a&n; * connector type, and this driver is for the mouse port on the Chips&n; * &amp; Technologies 82C710 interface chip. 15Nov93 jem@pandora.pp.fi&n; *&n; * Added support for SIGIO. 28Jul95 jem@pandora.pp.fi&n; *&n; * Rearranged SIGIO support to use code from tty_io.  9Sept95 ctm@ardi.com&n; *&n; * Modularised 8-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; */
+multiline_comment|/*&n; * linux/drivers/char/psaux.c&n; *&n; * Driver for PS/2 type mouse by Johan Myreen.&n; *&n; * Supports pointing devices attached to a PS/2 type&n; * Keyboard and Auxiliary Device Controller.&n; *&n; * Corrections in device setup for some laptop mice &amp; trackballs.&n; * 02Feb93  (troyer@saifr00.cfsat.Honeywell.COM,mch@wimsey.bc.ca)&n; *&n; * Changed to prevent keyboard lockups on AST Power Exec.&n; * 28Jul93  Brad Bosch - brad@lachman.com&n; *&n; * Modified by Johan Myreen (jem@pandora.pp.fi) 04Aug93&n; *   to include support for QuickPort mouse.&n; *&n; * Changed references to &quot;QuickPort&quot; with &quot;82C710&quot; since &quot;QuickPort&quot;&n; * is not what this driver is all about -- QuickPort is just a&n; * connector type, and this driver is for the mouse port on the Chips&n; * &amp; Technologies 82C710 interface chip. 15Nov93 jem@pandora.pp.fi&n; *&n; * Added support for SIGIO. 28Jul95 jem@pandora.pp.fi&n; *&n; * Rearranged SIGIO support to use code from tty_io.  9Sept95 ctm@ardi.com&n; *&n; * Modularised 8-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; *&n; * Fixed keyboard lockups at open time&n; * 3-Jul-96, 22-Aug-96 Roman Hodek &lt;Roman.Hodek@informatik.uni-erlangen.de&gt;&n; */
 multiline_comment|/* Uncomment the following line if your mouse needs initialization. */
 multiline_comment|/* #define INITIALIZE_DEVICE */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -743,6 +744,13 @@ id|aux_count
 )paren
 r_return
 suffix:semicolon
+multiline_comment|/* disable kbd bh to avoid mixing of cmd bytes */
+id|disable_bh
+c_func
+(paren
+id|KEYBOARD_BH
+)paren
+suffix:semicolon
 id|aux_write_cmd
 c_func
 (paren
@@ -767,6 +775,13 @@ multiline_comment|/* Disable Aux device */
 id|poll_aux_status
 c_func
 (paren
+)paren
+suffix:semicolon
+multiline_comment|/* reenable kbd bh */
+id|enable_bh
+c_func
+(paren
+id|KEYBOARD_BH
 )paren
 suffix:semicolon
 id|free_irq
@@ -1027,6 +1042,13 @@ suffix:semicolon
 )brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
+multiline_comment|/* disable kbd bh to avoid mixing of cmd bytes */
+id|disable_bh
+c_func
+(paren
+id|KEYBOARD_BH
+)paren
+suffix:semicolon
 id|poll_aux_status
 c_func
 (paren
@@ -1058,6 +1080,13 @@ multiline_comment|/* enable controller ints */
 id|poll_aux_status
 c_func
 (paren
+)paren
+suffix:semicolon
+multiline_comment|/* reenable kbd bh */
+id|enable_bh
+c_func
+(paren
+id|KEYBOARD_BH
 )paren
 suffix:semicolon
 id|aux_ready
@@ -1287,16 +1316,31 @@ id|count
 )paren
 (brace
 r_int
-id|i
+id|retval
 op_assign
-id|count
+l_int|0
 suffix:semicolon
-r_while
-c_loop
+r_if
+c_cond
 (paren
-id|i
-op_decrement
+id|count
+OG
+l_int|0
 )paren
+(brace
+r_int
+id|written
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* disable kbd bh to avoid mixing of cmd bytes */
+id|disable_bh
+c_func
+(paren
+id|KEYBOARD_BH
+)paren
+suffix:semicolon
+r_do
 (brace
 r_if
 c_cond
@@ -1307,9 +1351,7 @@ c_func
 (paren
 )paren
 )paren
-r_return
-op_minus
-id|EIO
+r_break
 suffix:semicolon
 id|outb_p
 c_func
@@ -1328,9 +1370,7 @@ c_func
 (paren
 )paren
 )paren
-r_return
-op_minus
-id|EIO
+r_break
 suffix:semicolon
 id|outb_p
 c_func
@@ -1345,13 +1385,47 @@ comma
 id|AUX_OUTPUT_PORT
 )paren
 suffix:semicolon
+id|written
+op_increment
+suffix:semicolon
 )brace
+r_while
+c_loop
+(paren
+op_decrement
+id|count
+)paren
+suffix:semicolon
+multiline_comment|/* reenable kbd bh */
+id|enable_bh
+c_func
+(paren
+id|KEYBOARD_BH
+)paren
+suffix:semicolon
+id|retval
+op_assign
+op_minus
+id|EIO
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|written
+)paren
+(brace
+id|retval
+op_assign
+id|written
+suffix:semicolon
 id|inode-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+)brace
+)brace
 r_return
-id|count
+id|retval
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_82C710_MOUSE
