@@ -3904,6 +3904,11 @@ r_return
 suffix:semicolon
 )brace
 singleline_comment|//&t;memset(bh, 0, sizeof(*bh));
+id|bh-&gt;b_blocknr
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 id|init_waitqueue_head
 c_func
 (paren
@@ -4668,11 +4673,9 @@ c_func
 id|tmp
 )paren
 )paren
-(brace
 r_goto
 id|still_busy
 suffix:semicolon
-)brace
 id|tmp
 op_assign
 id|tmp-&gt;b_this_page
@@ -5188,6 +5191,10 @@ r_do
 id|bh-&gt;b_dev
 op_assign
 id|inode-&gt;i_dev
+suffix:semicolon
+id|bh-&gt;b_blocknr
+op_assign
+l_int|0
 suffix:semicolon
 id|tail
 op_assign
