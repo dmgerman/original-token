@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Writen by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
+multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Written by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
 multiline_comment|/*        &n; *        CAPI encoder/decoder for&n; *        Portugal Telecom CAPI 2.0&n; *&n; *        Not compatible with the AVM Gmbh. CAPI 2.0&n; */
 multiline_comment|/*&n; *        Documentation:&n; *        - &quot;Common ISDN API - Perfil Portugu&#xfffd;s - Vers&#xfffd;o 2.1&quot;,&n; *           Telecom Portugal, Fev 1992.&n; *        - &quot;Common ISDN API - Especifica&#xfffd;&#xfffd;o de protocolos para &n; *           acesso aos canais B&quot;, Inesc, Jan 1994.&n; */
 multiline_comment|/*&n; *        TODO: better decoding of Information Elements&n; *              for debug purposes mainly&n; *              encode our number in CallerPN and ConnectedPN&n; */
@@ -99,7 +99,7 @@ l_int|2
 op_assign
 id|AppInfoMask
 suffix:semicolon
-multiline_comment|/* Bearer Capbility - Mandatory*/
+multiline_comment|/* Bearer Capability - Mandatory*/
 op_star
 (paren
 id|skb_put
@@ -145,7 +145,7 @@ op_assign
 l_int|0x90
 suffix:semicolon
 multiline_comment|/* BC0.Octect4 -                     */
-multiline_comment|/* Bearer Capbility - Optional*/
+multiline_comment|/* Bearer Capability - Optional*/
 op_star
 (paren
 id|skb_put
@@ -1702,7 +1702,7 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Calling Party Number */
-multiline_comment|/* An &quot;aditional service&quot; as far as Portugal Telecom is concerned */
+multiline_comment|/* An &quot;additional service&quot; as far as Portugal Telecom is concerned */
 id|len
 op_assign
 id|skb-&gt;data
@@ -2097,7 +2097,7 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* FIX ME */
-multiline_comment|/* This is actualy a firmware bug */
+multiline_comment|/* This is actually a firmware bug */
 r_if
 c_cond
 (paren

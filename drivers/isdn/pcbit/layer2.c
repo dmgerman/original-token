@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Writen by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
+multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Written by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
 multiline_comment|/*        &n; *        PCBIT-D low-layer interface&n; */
 multiline_comment|/*&n; *        Based on documentation provided by Inesc:&n; *        - &quot;Interface com bus do PC para o PCBIT e PCBIT-D&quot;, Inesc, Jan 93&n; */
 multiline_comment|/*&n; *        TODO: better handling of errors&n; *              re-write/remove debug printks&n; */
@@ -915,7 +915,7 @@ op_add_assign
 id|cp_len
 suffix:semicolon
 )brace
-multiline_comment|/* bookeeping */
+multiline_comment|/* bookkeeping */
 id|dev-&gt;free
 op_sub_assign
 id|flen
@@ -1518,7 +1518,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* miminum frame read */
+multiline_comment|/* minimum frame read */
 id|frame-&gt;skb
 op_assign
 id|dev_alloc_skb
@@ -1551,7 +1551,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;pcbit_receive: out of memmory&bslash;n&quot;
+l_string|&quot;pcbit_receive: out of memory&bslash;n&quot;
 )paren
 suffix:semicolon
 id|kfree
@@ -1563,7 +1563,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* 16 byte aligment for IP */
+multiline_comment|/* 16 byte alignment for IP */
 r_if
 c_cond
 (paren
@@ -1614,7 +1614,7 @@ l_string|&quot;Type 1 frame and no frame queued&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#if 1
-multiline_comment|/* usualy after an error: toss frame */
+multiline_comment|/* usually after an error: toss frame */
 id|dev-&gt;readptr
 op_add_assign
 id|tt
@@ -1773,7 +1773,7 @@ id|flags
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *  The board sends 0 sized frames&n; *  They are TDATA_CONFs that get messed up somehow&n; *  gotta send a fake acknowledment to the upper layer somehow&n; */
+multiline_comment|/*&n; *  The board sends 0 sized frames&n; *  They are TDATA_CONFs that get messed up somehow&n; *  gotta send a fake acknowledgment to the upper layer somehow&n; */
 DECL|function|pcbit_fake_conf
 r_static
 id|__inline__

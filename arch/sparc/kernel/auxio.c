@@ -155,7 +155,7 @@ l_int|0
 dot
 id|reg_size
 comma
-l_string|&quot;auxilliaryIO&quot;
+l_string|&quot;auxiliaryIO&quot;
 comma
 id|auxregs
 (braket

@@ -2,7 +2,7 @@ multiline_comment|/* $Id: memory.c,v 1.6 1996/04/08 09:02:27 davem Exp $&n; * me
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
-multiline_comment|/* This routine, for consistancy, returns the ram parameters in the&n; * V0 prom memory descriptor format.  I choose this format becuase I&n; * think it was the easiest to work with.  I feel the religious&n; * arguments now... ;)  Also, I return the linked lists sorted to&n; * prevent paging_init() upset stomache as I have not yet written&n; * the pepto-bismal kernel module yet.&n; */
+multiline_comment|/* This routine, for consistency, returns the ram parameters in the&n; * V0 prom memory descriptor format.  I choose this format because I&n; * think it was the easiest to work with.  I feel the religious&n; * arguments now... ;)  Also, I return the linked lists sorted to&n; * prevent paging_init() upset stomach as I have not yet written&n; * the pepto-bismol kernel module yet.&n; */
 DECL|variable|prom_reg_memlist
 r_struct
 id|linux_prom_registers

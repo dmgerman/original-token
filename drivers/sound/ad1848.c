@@ -1615,7 +1615,7 @@ op_assign
 id|left
 op_or
 (paren
-id|left
+id|right
 op_lshift
 l_int|8
 )paren

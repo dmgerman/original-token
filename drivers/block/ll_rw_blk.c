@@ -111,7 +111,6 @@ comma
 suffix:semicolon
 multiline_comment|/*&n; * remove the plug and let it rip..&n; */
 DECL|function|unplug_device
-r_static
 r_void
 id|unplug_device
 c_func
@@ -148,6 +147,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;current_request
+op_eq
+op_amp
+id|dev-&gt;plug
+)paren
+(brace
 id|dev-&gt;current_request
 op_assign
 id|dev-&gt;plug.next
@@ -156,12 +164,18 @@ id|dev-&gt;plug.next
 op_assign
 l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;current_request
+)paren
 (paren
 id|dev-&gt;request_fn
 )paren
 (paren
 )paren
 suffix:semicolon
+)brace
 id|restore_flags
 c_func
 (paren

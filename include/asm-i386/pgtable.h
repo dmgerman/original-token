@@ -19,7 +19,7 @@ DECL|macro|flush_page_to_ram
 mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
 multiline_comment|/*&n; * TLB flushing:&n; *&n; *  - flush_tlb() flushes the current mm struct TLBs&n; *  - flush_tlb_all() flushes all processes TLBs&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB&squot;s&n; *  - flush_tlb_page(vma, vmaddr) flushes one page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; *&n; * ..but the i386 has somewhat limited tlb flushing capabilities,&n; * and page-granular flushes are available only on i486 and up.&n; */
 DECL|macro|__flush_tlb
-mdefine_line|#define __flush_tlb() &bslash;&n;__asm__ __volatile__(&quot;movl %%cr3,%%eax&bslash;n&bslash;tmovl %%eax,%%cr3&quot;: : :&quot;ax&quot;)
+mdefine_line|#define __flush_tlb() &bslash;&n;do { unsigned long tmpreg; __asm__ __volatile__(&quot;movl %%cr3,%0&bslash;n&bslash;tmovl %0,%%cr3&quot;:&quot;=r&quot; (tmpreg) : :&quot;memory&quot;); } while (0)
 macro_line|#ifdef CONFIG_M386
 DECL|macro|__flush_tlb_one
 mdefine_line|#define __flush_tlb_one(addr) flush_tlb()
@@ -501,7 +501,7 @@ DECL|macro|PAGE_PTR
 mdefine_line|#define PAGE_PTR(address) &bslash;&n;((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
 multiline_comment|/* to set the page-dir */
 DECL|macro|SET_PAGE_DIR
-mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) &bslash;&n;do { &bslash;&n;&t;(tsk)-&gt;tss.cr3 = (unsigned long) (pgdir); &bslash;&n;&t;if ((tsk) == current) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;movl %0,%%cr3&quot;: :&quot;a&quot; (pgdir)); &bslash;&n;} while (0)
+mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) &bslash;&n;do { &bslash;&n;&t;(tsk)-&gt;tss.cr3 = (unsigned long) (pgdir); &bslash;&n;&t;if ((tsk) == current) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;movl %0,%%cr3&quot;: :&quot;r&quot; (pgdir)); &bslash;&n;} while (0)
 DECL|function|pte_none
 r_extern
 r_inline

@@ -664,6 +664,8 @@ l_int|4
 comma
 l_string|&quot;misc&quot;
 comma
+id|S_IFREG
+op_or
 id|S_IRUGO
 comma
 l_int|1

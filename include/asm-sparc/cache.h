@@ -3,7 +3,7 @@ macro_line|#ifndef _SPARC_CACHE_H
 DECL|macro|_SPARC_CACHE_H
 mdefine_line|#define _SPARC_CACHE_H
 macro_line|#include &lt;asm/asi.h&gt;
-multiline_comment|/* Direct access to the instruction cache is provided through and&n; * alternate address space.  The IDC bit must be off in the ICCR on&n; * HyperSparcs for these accesses to work.  The code below does not do&n; * any checking, the caller must do so.  These routines are for&n; * diagnostics only, but coule end up being useful.  Use with care.&n; * Also, you are asking for trouble if you execute these in one of the&n; * three instructions following a %asr/%psr access or modification.&n; */
+multiline_comment|/* Direct access to the instruction cache is provided through and&n; * alternate address space.  The IDC bit must be off in the ICCR on&n; * HyperSparcs for these accesses to work.  The code below does not do&n; * any checking, the caller must do so.  These routines are for&n; * diagnostics only, but could end up being useful.  Use with care.&n; * Also, you are asking for trouble if you execute these in one of the&n; * three instructions following a %asr/%psr access or modification.&n; */
 multiline_comment|/* First, cache-tag access. */
 DECL|function|get_icache_tag
 r_extern

@@ -101,7 +101,7 @@ r_return
 id|memory_start
 suffix:semicolon
 )brace
-multiline_comment|/* Typing sync at the prom promptcalls the function pointed to by&n; * romvec-&gt;pv_synchook which I set to the following function.&n; * This should sync all filesystems and return, for now it just&n; * prints out pretty messages and returns.&n; */
+multiline_comment|/* Typing sync at the prom prompt calls the function pointed to by&n; * romvec-&gt;pv_synchook which I set to the following function.&n; * This should sync all filesystems and return, for now it just&n; * prints out pretty messages and returns.&n; */
 r_extern
 r_int
 r_int

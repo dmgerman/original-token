@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pconf.h,v 1.2 1995/11/25 02:32:20 davem Exp $&n; * pconf.h: pathconf() and fpathconf() defines for SunOS&n; *          system call compatability.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pconf.h,v 1.2 1995/11/25 02:32:20 davem Exp $&n; * pconf.h: pathconf() and fpathconf() defines for SunOS&n; *          system call compatibility.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PCONF_H
 DECL|macro|_SPARC_PCONF_H
 mdefine_line|#define _SPARC_PCONF_H
@@ -9,7 +9,7 @@ mdefine_line|#define _PCONF_LINK       1 /* Max number of links to an object    
 DECL|macro|_PCONF_CANON
 mdefine_line|#define _PCONF_CANON      2 /* TTY input buffer line size              */
 DECL|macro|_PCONF_INPUT
-mdefine_line|#define _PCONF_INPUT      3 /* Biggest packet a tty can inbibe at once */
+mdefine_line|#define _PCONF_INPUT      3 /* Biggest packet a tty can imbibe at once */
 DECL|macro|_PCONF_NAME
 mdefine_line|#define _PCONF_NAME       4 /* Filename length max                     */
 DECL|macro|_PCONF_PATH

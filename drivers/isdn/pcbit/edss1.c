@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Writen by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
+multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Written by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
 multiline_comment|/*        &n; *        DSS.1 Finite State Machine&n; *        base: ITU-T Rec Q.931&n; */
 multiline_comment|/*&n; *        TODO: complete the FSM&n; *              move state/event descriptions to a user space logger&n; */
 DECL|macro|__NO_VERSION__
@@ -198,13 +198,13 @@ comma
 (brace
 id|EV_NET_CALL_PROC
 comma
-l_string|&quot;NET-&gt;TE: call proceding&quot;
+l_string|&quot;NET-&gt;TE: call proceeding&quot;
 )brace
 comma
 (brace
 id|EV_NET_SETUP_ACK
 comma
-l_string|&quot;NET-&gt;TE: setup acknowlegde (more info needed)&quot;
+l_string|&quot;NET-&gt;TE: setup acknowledge (more info needed)&quot;
 )brace
 comma
 (brace
@@ -216,7 +216,7 @@ comma
 (brace
 id|EV_NET_CONN_ACK
 comma
-l_string|&quot;NET-&gt;TE: connect aknowlegde&quot;
+l_string|&quot;NET-&gt;TE: connect acknowledge&quot;
 )brace
 comma
 (brace
@@ -436,7 +436,7 @@ comma
 id|cb_disc_2
 )brace
 comma
-multiline_comment|/* Incomming */
+multiline_comment|/* Incoming */
 (brace
 id|ST_NULL
 comma
@@ -723,7 +723,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;pcbit: timer for unkown device&bslash;n&quot;
+l_string|&quot;pcbit: timer for unknown device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

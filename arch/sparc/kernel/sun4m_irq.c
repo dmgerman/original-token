@@ -1,4 +1,4 @@
-multiline_comment|/*  sun4m_irq.c&n; *  arch/sparc/kernel/sun4m_irq.c:&n; *&n; *  djhr: Hacked out of irq.c into a CPU dependant version.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@ipmce.su)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; */
+multiline_comment|/*  sun4m_irq.c&n; *  arch/sparc/kernel/sun4m_irq.c:&n; *&n; *  djhr: Hacked out of irq.c into a CPU dependent version.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@ipmce.su)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
@@ -1497,7 +1497,7 @@ OG
 l_int|1
 )paren
 (brace
-multiline_comment|/* system wide interrupts go to cpu 0, this should always&n;&t;&t; * be safe because it is guarenteed to be fitted or OBP doesn&squot;t&n;&t;&t; * come up&n;&t;&t; *&n;&t;&t; * Not sure, but writing here on SLAVIO systems may puke&n;&t;&t; * so I don&squot;t do it unless there is more than 1 cpu.&n;&t;&t; */
+multiline_comment|/* system wide interrupts go to cpu 0, this should always&n;&t;&t; * be safe because it is guaranteed to be fitted or OBP doesn&squot;t&n;&t;&t; * come up&n;&t;&t; *&n;&t;&t; * Not sure, but writing here on SLAVIO systems may puke&n;&t;&t; * so I don&squot;t do it unless there is more than 1 cpu.&n;&t;&t; */
 macro_line|#if 0
 id|printk
 c_func

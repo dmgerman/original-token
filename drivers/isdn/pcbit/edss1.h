@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Writen by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
+multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Written by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
 multiline_comment|/*        &n; *        DSS.1 module definitions&n; */
 macro_line|#ifndef EDSS1_H
 DECL|macro|EDSS1_H
@@ -11,7 +11,7 @@ mdefine_line|#define ST_CALL_INIT 1    /* Call initiated */
 DECL|macro|ST_OVER_SEND
 mdefine_line|#define ST_OVER_SEND 2    /* Overlap sending - Requests More Info 4 call */
 DECL|macro|ST_CALL_PROC
-mdefine_line|#define ST_CALL_PROC 3    /* Call Procceding */
+mdefine_line|#define ST_CALL_PROC 3    /* Call Proceeding */
 DECL|macro|ST_CALL_DELV
 mdefine_line|#define ST_CALL_DELV 4
 DECL|macro|ST_CALL_PRES
@@ -19,7 +19,7 @@ mdefine_line|#define ST_CALL_PRES 6    /* Call Present - Received CONN.IND */
 DECL|macro|ST_CALL_RECV
 mdefine_line|#define ST_CALL_RECV 7    /* Alerting sent */
 DECL|macro|ST_CONN_REQ
-mdefine_line|#define ST_CONN_REQ  8    /* Answered - wainting 4 CONN.CONF */
+mdefine_line|#define ST_CONN_REQ  8    /* Answered - waiting 4 CONN.CONF */
 DECL|macro|ST_INCM_PROC
 mdefine_line|#define ST_INCM_PROC 9
 DECL|macro|ST_ACTIVE

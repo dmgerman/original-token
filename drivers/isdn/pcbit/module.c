@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Writen by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
+multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Written by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
 multiline_comment|/*        &n; *        PCBIT-D module support&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

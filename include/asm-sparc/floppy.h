@@ -200,7 +200,7 @@ DECL|macro|N_FDC
 mdefine_line|#define N_FDC    1
 DECL|macro|N_DRIVE
 mdefine_line|#define N_DRIVE  8
-multiline_comment|/* No 64k boundry crossing problems on the Sparc. */
+multiline_comment|/* No 64k boundary crossing problems on the Sparc. */
 DECL|macro|CROSS_64KB
 mdefine_line|#define CROSS_64KB(a,s) (0)
 multiline_comment|/* Routines unique to each controller type on a Sun. */

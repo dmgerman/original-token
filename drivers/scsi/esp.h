@@ -627,7 +627,7 @@ mdefine_line|#define ESP_STAT_SPAM         0x40             /* Real bad error */
 multiline_comment|/* This indicates the &squot;interrupt pending&squot; condition on esp236, it is a reserved&n; * bit on other revs of the ESP.&n; */
 DECL|macro|ESP_STAT_INTR
 mdefine_line|#define ESP_STAT_INTR         0x80             /* Interrupt */
-multiline_comment|/* The status register can be masked with ESP_STAT_PMASK and compared&n; * with the following values to determine the current phase the ESP&n; * (at least thinks it) is in.  For our pusposes we also add our own&n; * software &squot;done&squot; bit for our phase management engine.&n; */
+multiline_comment|/* The status register can be masked with ESP_STAT_PMASK and compared&n; * with the following values to determine the current phase the ESP&n; * (at least thinks it) is in.  For our purposes we also add our own&n; * software &squot;done&squot; bit for our phase management engine.&n; */
 DECL|macro|ESP_DOP
 mdefine_line|#define ESP_DOP   (0)                                       /* Data Out  */
 DECL|macro|ESP_DIP

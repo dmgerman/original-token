@@ -2028,6 +2028,12 @@ c_func
 id|inode
 )paren
 suffix:semicolon
+id|iput
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2114,6 +2120,12 @@ OL
 l_int|2
 )paren
 (brace
+id|iput
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 id|iput
 c_func
 (paren

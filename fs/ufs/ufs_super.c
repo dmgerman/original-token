@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 r_struct
 id|super_block
 op_star

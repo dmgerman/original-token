@@ -3,6 +3,11 @@ DECL|macro|__ALPHA_IO_H
 mdefine_line|#define __ALPHA_IO_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+multiline_comment|/* We don&squot;t use IO slowdowns on the alpha, but.. */
+DECL|macro|__SLOW_DOWN_IO
+mdefine_line|#define __SLOW_DOWN_IO&t;do { } while (0)
+DECL|macro|SLOW_DOWN_IO
+mdefine_line|#define SLOW_DOWN_IO&t;do { } while (0)
 multiline_comment|/*&n; * The hae (hardware address extension) register is used to&n; * access high IO addresses. To avoid doing an external cycle&n; * every time we need to set the hae, we have a hae cache in&n; * memory. The kernel entry code makes sure that the hae is&n; * preserved across interrupts, so it is safe to set the hae&n; * once and then depend on it staying the same in kernel code.&n; */
 DECL|struct|hae
 r_extern
@@ -343,22 +348,6 @@ macro_line|#endif
 macro_line|#ifndef outw_p
 DECL|macro|outw_p
 macro_line|# define outw_p&t;&t;outw
-macro_line|#endif
-macro_line|#ifndef outl_p
-DECL|macro|outl_p
-macro_line|# define outl_p&t;&t;outl
-macro_line|#endif
-macro_line|#ifndef inw_p
-DECL|macro|inw_p
-macro_line|# define inw_p&t;&t;inw
-macro_line|#endif
-macro_line|#ifndef outw_p
-DECL|macro|outw_p
-macro_line|# define outw_p&t;&t;outw
-macro_line|#endif
-macro_line|#ifndef inl_p
-DECL|macro|inl_p
-macro_line|# define inl_p&t;&t;inl
 macro_line|#endif
 macro_line|#ifndef outl_p
 DECL|macro|outl_p

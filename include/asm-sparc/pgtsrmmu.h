@@ -432,7 +432,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/* This is guarenteed on all SRMMU&squot;s. */
+multiline_comment|/* This is guaranteed on all SRMMU&squot;s. */
 DECL|function|srmmu_flush_whole_tlb
 r_extern
 r_inline

@@ -4213,7 +4213,7 @@ op_amp
 (paren
 l_int|1
 op_lshift
-id|TTY_SLAVE_CLOSED
+id|TTY_OTHER_CLOSED
 )paren
 )paren
 (brace
@@ -5036,7 +5036,7 @@ op_amp
 (paren
 l_int|1
 op_lshift
-id|TTY_SLAVE_CLOSED
+id|TTY_OTHER_CLOSED
 )paren
 )paren
 r_return

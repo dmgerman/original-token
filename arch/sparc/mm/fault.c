@@ -258,7 +258,7 @@ id|num_bytes
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Now mask all bank sizes on a page boundry, it is all we can&n;&t; * use anyways.&n;&t; */
+multiline_comment|/* Now mask all bank sizes on a page boundary, it is all we can&n;&t; * use anyways.&n;&t; */
 r_for
 c_loop
 (paren

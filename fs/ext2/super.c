@@ -3127,12 +3127,9 @@ r_int
 id|tmp
 suffix:semicolon
 multiline_comment|/*&n;&t; * Allow the &quot;check&quot; option to be passed as a remount option.&n;&t; */
-id|set_opt
-(paren
 id|new_mount_opt
-comma
-id|CHECK_NORMAL
-)paren
+op_assign
+id|EXT2_MOUNT_CHECK_NORMAL
 suffix:semicolon
 r_if
 c_cond

@@ -1,4 +1,4 @@
-multiline_comment|/* sunmouse.c: Sun mouse driver for the Sparc&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Parts based on the psaux.c driver written by:&n; * Johan Myreen.&n; *&n; * Dec/19/95 Added SunOS mouse ioctls - miguel.&n; * Jan/5/96  Added VUID support, sigio supprot - miguel.&n; * Mar/5/96  Added proper mouse stream support - miguel.&n; */
+multiline_comment|/* sunmouse.c: Sun mouse driver for the Sparc&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Parts based on the psaux.c driver written by:&n; * Johan Myreen.&n; *&n; * Dec/19/95 Added SunOS mouse ioctls - miguel.&n; * Jan/5/96  Added VUID support, sigio support - miguel.&n; * Mar/5/96  Added proper mouse stream support - miguel.&n; */
 multiline_comment|/* The mouse is run off of one of the Zilog serial ports.  On&n; * that port is the mouse and the keyboard, each gets a zs channel.&n; * The mouse itself is mouse-systems in nature.  So the protocol is:&n; *&n; * Byte 1) Button state which is bit-encoded as&n; *            0x4 == left-button down, else up&n; *            0x2 == middle-button down, else up&n; *            0x1 == right-button down, else up&n; *&n; * Byte 2) Delta-x&n; * Byte 3) Delta-y&n; * Byte 4) Delta-x again&n; * Byte 5) Delta-y again&n; *&n; * One day this driver will have to support more than one mouse in the system.&n; *&n; * This driver has two modes of operation: the default VUID_NATIVE is&n; * set when the device is opened and allows the application to see the&n; * mouse character stream as we get it from the serial (for gpm for&n; * example).  The second method, VUID_FIRM_EVENT will provide cooked&n; * events in Firm_event records.&n; * */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -550,7 +550,7 @@ id|sunmouse.byte
 op_assign
 l_int|69
 suffix:semicolon
-multiline_comment|/* Some rediculious value */
+multiline_comment|/* Some ridiculous value */
 r_break
 suffix:semicolon
 r_case

@@ -13,7 +13,7 @@ mdefine_line|#define SRMMU_L1_KBASE_OFFSET ((KERNBASE&gt;&gt;24)&lt;&lt;2)  /* U
 DECL|macro|INTS_ENAB
 mdefine_line|#define INTS_ENAB        0x01           /* entry.S uses this. */
 DECL|macro|NCPUS
-mdefine_line|#define NCPUS            4              /* Architectual limit of sun4m. */
+mdefine_line|#define NCPUS            4              /* Architectural limit of sun4m. */
 DECL|macro|SUN4_PROM_VECTOR
 mdefine_line|#define SUN4_PROM_VECTOR 0xFFE81000     /* To safely die on a SUN4 */
 DECL|macro|SUN4_PRINTF
@@ -60,7 +60,7 @@ mdefine_line|#define SETCC_TRAP &bslash;&n;        b setcc_trap_handler; mov %ps
 multiline_comment|/* This is for hard interrupts from level 1-14, 15 is non-maskable (nmi) and&n; * gets handled with another macro.&n; */
 DECL|macro|TRAP_ENTRY_INTERRUPT
 mdefine_line|#define TRAP_ENTRY_INTERRUPT(int_level) &bslash;&n;        mov int_level, %l7; rd %psr, %l0; b real_irq_entry; rd %wim, %l3;
-multiline_comment|/* NMI&squot;s (Non Maskable Interrupts) are special, you can&squot;t keep them&n; * from coming in, and basically if you get one, the shows over. ;(&n; * On the sun4c they are usually asyncronous memory errors, on the&n; * the sun4m they could be either due to mem errors or a software&n; * initiated interrupt from the prom/kern on an SMP box saying &quot;I&n; * command you to do CPU tricks, read your mailbox for more info.&quot;&n; */
+multiline_comment|/* NMI&squot;s (Non Maskable Interrupts) are special, you can&squot;t keep them&n; * from coming in, and basically if you get one, the shows over. ;(&n; * On the sun4c they are usually asynchronous memory errors, on the&n; * the sun4m they could be either due to mem errors or a software&n; * initiated interrupt from the prom/kern on an SMP box saying &quot;I&n; * command you to do CPU tricks, read your mailbox for more info.&quot;&n; */
 DECL|macro|NMI_TRAP
 mdefine_line|#define NMI_TRAP &bslash;&n;        rd %wim, %l3; b linux_trap_nmi_sun4c; mov %psr, %l0; nop;
 multiline_comment|/* Window overflows/underflows are special and we need to try and be as&n; * efficient as possible here....&n; */

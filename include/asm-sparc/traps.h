@@ -146,7 +146,7 @@ mdefine_line|#define SP_TRAP_TFLT    0x1          /* Text fault */
 DECL|macro|SP_TRAP_II
 mdefine_line|#define SP_TRAP_II      0x2          /* Illegal Instruction */
 DECL|macro|SP_TRAP_PI
-mdefine_line|#define SP_TRAP_PI      0x3          /* Priviledged Instruction */
+mdefine_line|#define SP_TRAP_PI      0x3          /* Privileged Instruction */
 DECL|macro|SP_TRAP_FPD
 mdefine_line|#define SP_TRAP_FPD     0x4          /* Floating Point Disabled */
 DECL|macro|SP_TRAP_WOVF

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#ifdef DES_AVAILABLE
 macro_line|#include &quot;des.h&quot;
 macro_line|#endif

@@ -708,7 +708,7 @@ DECL|macro|MSG_CAPTURE
 mdefine_line|#define MSG_CAPTURE            0x0004       /* Park a processor. */
 DECL|macro|MSG_CROSS_CALL
 mdefine_line|#define MSG_CROSS_CALL         0x0005       /* run func on cpus */
-multiline_comment|/* Imperical PROM processor mailbox constants.  If the per-cpu mailbox&n; * contains something other than one of these then the ipi is from&n; * Linux&squot;s active_kernel_processor.  This facility exists so that&n; * the boot monitor can capture all the other cpus when one catches&n; * a watchdog reset or the user enters the monitor using L1-A keys.&n; */
+multiline_comment|/* Empirical PROM processor mailbox constants.  If the per-cpu mailbox&n; * contains something other than one of these then the ipi is from&n; * Linux&squot;s active_kernel_processor.  This facility exists so that&n; * the boot monitor can capture all the other cpus when one catches&n; * a watchdog reset or the user enters the monitor using L1-A keys.&n; */
 DECL|macro|MBOX_STOPCPU
 mdefine_line|#define MBOX_STOPCPU          0xFB
 DECL|macro|MBOX_IDLECPU

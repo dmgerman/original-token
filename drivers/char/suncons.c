@@ -1,5 +1,5 @@
-multiline_comment|/* suncons.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Peter Zaitcev (zaitcev@lab.ipmce.su)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Added font loading Nov/21, Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Added render_screen and faster scrolling Nov/27, miguel&n; * Added console palette code for cg6 Dec/13/95, miguel&n; * Added generic frame buffer support Dec/14/95, miguel&n; * Added cgsix and bwtwo drivers Jan/96, miguel&n; * Added 4m, and cg3 driver Feb/96, miguel&n; * Fixed the cursor on color displays Feb/96, miguel.&n; *&n; * Cleaned up the detection code, generic 8bit depth display &n; * code, Mar/96 miguel&n; * &n; * This file contains the frame buffer device drivers.&n; * Each driver is kept together in case we would like to&n; * split this file.&n; *&n; * Much of this driver is derived from the DEC TGA driver by&n; * Jay Estabrook who has done a nice job with the console&n; * driver abstraction btw.&n; *&n; * We try to make everything a power of two if possible to&n; * speed up the bit blit.  Doing multiplies, divides, and&n; * remainer routines end up calling software library routines&n; * since not all Sparcs have the hardware to do it.&n; *&n; * TODO:&n; * do not use minor to index into instances of the frame buffer,&n; * since the numbers assigned to us are not consecutive.&n; *&n; * do not blank the screen when frame buffer is mapped.&n; *&n; * Change the detection loop to use more than one video card.&n; */
-multiline_comment|/* Define thie one if you are debugging something in X, it will not disable the console output */
+multiline_comment|/* suncons.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Peter Zaitcev (zaitcev@lab.ipmce.su)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Added font loading Nov/21, Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Added render_screen and faster scrolling Nov/27, miguel&n; * Added console palette code for cg6 Dec/13/95, miguel&n; * Added generic frame buffer support Dec/14/95, miguel&n; * Added cgsix and bwtwo drivers Jan/96, miguel&n; * Added 4m, and cg3 driver Feb/96, miguel&n; * Fixed the cursor on color displays Feb/96, miguel.&n; *&n; * Cleaned up the detection code, generic 8bit depth display &n; * code, Mar/96 miguel&n; * &n; * This file contains the frame buffer device drivers.&n; * Each driver is kept together in case we would like to&n; * split this file.&n; *&n; * Much of this driver is derived from the DEC TGA driver by&n; * Jay Estabrook who has done a nice job with the console&n; * driver abstraction btw.&n; *&n; * We try to make everything a power of two if possible to&n; * speed up the bit blit.  Doing multiplies, divides, and&n; * remainder routines end up calling software library routines&n; * since not all Sparcs have the hardware to do it.&n; *&n; * TODO:&n; * do not use minor to index into instances of the frame buffer,&n; * since the numbers assigned to us are not consecutive.&n; *&n; * do not blank the screen when frame buffer is mapped.&n; *&n; * Change the detection loop to use more than one video card.&n; */
+multiline_comment|/* Define this one if you are debugging something in X, it will not disable the console output */
 multiline_comment|/* #define DEBUGGING_X */
 multiline_comment|/* See also: sparc/keyboard.c: CODING_NEW_DRIVER */
 DECL|macro|GRAPHDEV_MAJOR
@@ -78,7 +78,7 @@ r_extern
 r_int
 id|serial_console
 suffix:semicolon
-multiline_comment|/* Based upon what the PROM tells us, we can figure out where&n; * the console is currently located.  The situation can be either&n; * of the following two scenerios:&n; *&n; * 1) Console i/o is done over the serial line, ttya or ttyb&n; * 2) Console output on frame buffer (video card) and input&n; *    coming from the keyboard/mouse which each use a zilog8530&n; *    serial channel a piece.&n; */
+multiline_comment|/* Based upon what the PROM tells us, we can figure out where&n; * the console is currently located.  The situation can be either&n; * of the following two scenarios:&n; *&n; * 1) Console i/o is done over the serial line, ttya or ttyb&n; * 2) Console output on frame buffer (video card) and input&n; *    coming from the keyboard/mouse which each use a zilog8530&n; *    serial channel a piece.&n; */
 multiline_comment|/* The following variables describe a Sparc console. */
 multiline_comment|/* From the PROM */
 DECL|variable|con_name
@@ -151,7 +151,7 @@ r_int
 id|bytes_per_row
 suffix:semicolon
 multiline_comment|/* bytes used by one screen line (of 16 scan lines)  */
-multiline_comment|/* Functions used by the SPARC dependant console code&n; * to perform the restore_palette function.&n; */
+multiline_comment|/* Functions used by the SPARC dependent console code&n; * to perform the restore_palette function.&n; */
 DECL|variable|restore_palette
 r_static
 r_void
@@ -176,13 +176,13 @@ mdefine_line|#define SCREEN_WIDTH     1152     /* Screen width in pixels  */
 DECL|macro|SCREEN_HEIGHT
 mdefine_line|#define SCREEN_HEIGHT    900      /* Screen height in pixels */
 DECL|macro|CHARS_PER_LINE
-mdefine_line|#define CHARS_PER_LINE   144      /* Make this imperical for speed */
+mdefine_line|#define CHARS_PER_LINE   144      /* Make this empirical for speed */
 DECL|macro|NICE_Y_MARGIN
 mdefine_line|#define NICE_Y_MARGIN    18       /* We skip 18 y-pixels at top/bottom */
 DECL|macro|NICE_X_MARGIN
 mdefine_line|#define NICE_X_MARGIN    8        /* We skip 64 x-pixels at left/right */
 DECL|macro|FBUF_TOP_SKIP
-mdefine_line|#define FBUF_TOP_SKIP    2592     /* Imperical, (CHARS_PER_LINE * NICE_Y_MARGIN) */
+mdefine_line|#define FBUF_TOP_SKIP    2592     /* Empirical, (CHARS_PER_LINE * NICE_Y_MARGIN) */
 DECL|macro|CHAR_HEIGHT
 mdefine_line|#define CHAR_HEIGHT      16
 DECL|macro|ONE_ROW
@@ -415,7 +415,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* The idea is the following:&n; * we only use the colors in the range 0..15, and we only&n; * setup the palette on that range, so we better keep the&n; * pixel inverion using those colors, that&squot;s why we have&n; * those constants below.&n; */
+multiline_comment|/* The idea is the following:&n; * we only use the colors in the range 0..15, and we only&n; * setup the palette on that range, so we better keep the&n; * pixel inversion using those colors, that&squot;s why we have&n; * those constants below.&n; */
 r_inline
 r_static
 r_void
@@ -4860,7 +4860,7 @@ id|i
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/* The cg3 is pressumed to emulate a cg4, I guess older programs will want that */
+multiline_comment|/* The cg3 is presumed to emulate a cg4, I guess older programs will want that */
 multiline_comment|/* addresses above 0x4000000 are for cg3, below that it&squot;s cg4 emulation          */
 r_static
 r_int
@@ -6812,7 +6812,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* success */
 )brace
-multiline_comment|/* video init code, called from withing the SBUS bus scanner at&n; * boot time.&n; */
+multiline_comment|/* video init code, called from within the SBUS bus scanner at&n; * boot time.&n; */
 r_void
 DECL|function|sun_console_init
 id|sun_console_init

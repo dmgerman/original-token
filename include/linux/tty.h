@@ -593,8 +593,8 @@ DECL|macro|TTY_THROTTLED
 mdefine_line|#define TTY_THROTTLED 0
 DECL|macro|TTY_IO_ERROR
 mdefine_line|#define TTY_IO_ERROR 1
-DECL|macro|TTY_SLAVE_CLOSED
-mdefine_line|#define TTY_SLAVE_CLOSED 2
+DECL|macro|TTY_OTHER_CLOSED
+mdefine_line|#define TTY_OTHER_CLOSED 2
 DECL|macro|TTY_EXCLUSIVE
 mdefine_line|#define TTY_EXCLUSIVE 3
 DECL|macro|TTY_DEBUG

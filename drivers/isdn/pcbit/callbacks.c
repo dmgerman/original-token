@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Writen by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
+multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Written by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
 multiline_comment|/*        &n; *        callbacks for the FSM&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -304,7 +304,7 @@ id|len
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Disconnect received (actualy RELEASE COMPLETE) &n; * This means we where not hable to establish connection with remote&n; * Inform the big boss above&n; */
+multiline_comment|/*&n; * Disconnect received (actually RELEASE COMPLETE) &n; * This means we were not able to establish connection with remote&n; * Inform the big boss above&n; */
 DECL|function|cb_out_3
 r_void
 id|cb_out_3
@@ -351,7 +351,7 @@ id|ictl
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Incomming call received&n; * inform user&n; */
+multiline_comment|/*&n; * Incoming call received&n; * inform user&n; */
 DECL|function|cb_in_1
 r_void
 id|cb_in_1
@@ -514,7 +514,7 @@ id|len
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * user has replyed&n; * open the channel&n; * send CONNECT message CONNECT_ACTIVE_REQ in CAPI&n; */
+multiline_comment|/*&n; * user has replied&n; * open the channel&n; * send CONNECT message CONNECT_ACTIVE_REQ in CAPI&n; */
 DECL|function|cb_in_2
 r_void
 id|cb_in_2
@@ -812,7 +812,7 @@ id|ictl
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  User HANGUP on active/call proceding state&n; *  send disc.req&n; */
+multiline_comment|/*&n; *  User HANGUP on active/call proceeding state&n; *  send disc.req&n; */
 DECL|function|cb_disc_2
 r_void
 id|cb_disc_2
@@ -1057,7 +1057,7 @@ id|len
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  Inform User that the B-channel is availiable&n; */
+multiline_comment|/*&n; *  Inform User that the B-channel is available&n; */
 DECL|function|cb_open
 r_void
 id|cb_open

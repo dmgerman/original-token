@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/system.h&gt;     /* For NCPUS */
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS    15
-multiline_comment|/* Dave Redman (djhr@tadpole.co.uk)&n; * changed these to function pointers.. it saves cycles and will allow&n; * the irq dependancies to be split into different files at a later date&n; * sun4c_irq.c, sun4m_irq.c etc so we could reduce the kernel size.&n; */
+multiline_comment|/* Dave Redman (djhr@tadpole.co.uk)&n; * changed these to function pointers.. it saves cycles and will allow&n; * the irq dependencies to be split into different files at a later date&n; * sun4c_irq.c, sun4m_irq.c etc so we could reduce the kernel size.&n; */
 r_extern
 r_void
 (paren

@@ -13,7 +13,7 @@ mdefine_line|#define SUN4C_SYNC_PARITY    0x0008  /* bad ram chips caused a pari
 DECL|macro|SUN4C_SYNC_SBUS
 mdefine_line|#define SUN4C_SYNC_SBUS      0x0010  /* the SBUS had some problems... */
 DECL|macro|SUN4C_SYNC_NOMEM
-mdefine_line|#define SUN4C_SYNC_NOMEM     0x0020  /* translation to non-existant ram */
+mdefine_line|#define SUN4C_SYNC_NOMEM     0x0020  /* translation to non-existent ram */
 DECL|macro|SUN4C_SYNC_PROT
 mdefine_line|#define SUN4C_SYNC_PROT      0x0040  /* access violated pte protections */
 DECL|macro|SUN4C_SYNC_NPRESENT

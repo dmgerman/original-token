@@ -2842,7 +2842,7 @@ l_int|4
 op_or
 id|SRMMU_ET_PTE
 suffix:semicolon
-multiline_comment|/* I need to test whether this is consistant over all&n;&t; * sun4m&squot;s.  The bus_type represents the upper 4 bits of&n;&t; * 36-bit physical address on the I/O space lines...&n;&t; */
+multiline_comment|/* I need to test whether this is consistent over all&n;&t; * sun4m&squot;s.  The bus_type represents the upper 4 bits of&n;&t; * 36-bit physical address on the I/O space lines...&n;&t; */
 id|tmp
 op_or_assign
 (paren
@@ -3291,7 +3291,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* TLB flushes seem to upset the tsunami sometimes, I can&squot;t figure out&n; * what the hell is going on.  All I see is a tlb flush (page or whole,&n; * there is no consistant pattern) and then total local variable corruption&n; * in the procedure who called us after return.  Usually triggerable&n; * by &quot;cool&quot; programs like crashme and bonnie.  I played around a bit&n; * and adding a bunch of forced nops seems to make the problems all&n; * go away. (missed instruction fetches possibly? ugh...)&n; */
+multiline_comment|/* TLB flushes seem to upset the tsunami sometimes, I can&squot;t figure out&n; * what the hell is going on.  All I see is a tlb flush (page or whole,&n; * there is no consistent pattern) and then total local variable corruption&n; * in the procedure who called us after return.  Usually triggerable&n; * by &quot;cool&quot; programs like crashme and bonnie.  I played around a bit&n; * and adding a bunch of forced nops seems to make the problems all&n; * go away. (missed instruction fetches possibly? ugh...)&n; */
 DECL|macro|TSUNAMI_SUCKS
 mdefine_line|#define TSUNAMI_SUCKS do { nop(); nop(); nop(); nop(); nop(); &bslash;&n;&t;                   nop(); nop(); nop(); nop(); nop(); } while(0)
 DECL|function|tsunami_flush_tlb_all
@@ -8009,7 +8009,7 @@ id|SRMMU_PTE_PMASK
 op_lshift
 l_int|4
 suffix:semicolon
-multiline_comment|/* Never a cross bank boundry, thank you. */
+multiline_comment|/* Never a cross bank boundary, thank you. */
 r_if
 c_cond
 (paren
@@ -10042,7 +10042,7 @@ id|SWIFT_DE
 )paren
 suffix:semicolon
 multiline_comment|/* I &amp; D caches on */
-multiline_comment|/* The Swift branch folding logic is completely broken.  At&n;&t; * trap time, if things are just right, if can mistakedly&n;&t; * think that a trap is coming from kernel mode when in fact&n;&t; * it is coming from user mode (it mis-executes the branch in&n;&t; * the trap code).  So you see things like crashme completely&n;&t; * hosing your machine which is completely unacceptable.  Turn&n;&t; * this shit off... nice job Fujitsu.&n;&t; */
+multiline_comment|/* The Swift branch folding logic is completely broken.  At&n;&t; * trap time, if things are just right, if can mistakenly&n;&t; * think that a trap is coming from kernel mode when in fact&n;&t; * it is coming from user mode (it mis-executes the branch in&n;&t; * the trap code).  So you see things like crashme completely&n;&t; * hosing your machine which is completely unacceptable.  Turn&n;&t; * this shit off... nice job Fujitsu.&n;&t; */
 id|mreg
 op_and_assign
 op_complement

@@ -24,7 +24,7 @@ id|PAGE_SIZE
 suffix:semicolon
 multiline_comment|/* Possibly older binaries want 8192 on sun4&squot;s? */
 )brace
-multiline_comment|/*&n; * sys_pipe() is the normal C calling standard for creating&n; * a pipe. It&squot;s not the way unix tranditionally does this, though.&n; */
+multiline_comment|/*&n; * sys_pipe() is the normal C calling standard for creating&n; * a pipe. It&squot;s not the way unix traditionally does this, though.&n; */
 DECL|function|sparc_pipe
 id|asmlinkage
 r_int

@@ -602,7 +602,7 @@ op_amp
 id|SA_STATIC_ALLOC
 )paren
 (brace
-multiline_comment|/* This interrupt is marked as specially allocted&n;&t;     * so it is a bad idea to free it.&n;&t;     */
+multiline_comment|/* This interrupt is marked as specially allocated&n;&t;     * so it is a bad idea to free it.&n;&t;     */
 id|printk
 c_func
 (paren

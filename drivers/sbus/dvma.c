@@ -257,7 +257,7 @@ id|dma-&gt;running
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* No tranfers going on as of yet */
+multiline_comment|/* No transfers going on as of yet */
 id|dma-&gt;allocated
 op_assign
 l_int|0

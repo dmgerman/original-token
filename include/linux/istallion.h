@@ -268,6 +268,10 @@ DECL|member|bitsize
 r_int
 id|bitsize
 suffix:semicolon
+DECL|member|enabval
+r_int
+id|enabval
+suffix:semicolon
 DECL|member|panels
 r_int
 id|panels

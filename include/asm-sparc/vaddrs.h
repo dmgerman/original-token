@@ -17,7 +17,7 @@ DECL|macro|DVMA_LEN
 mdefine_line|#define  DVMA_LEN       0x00040000  /* Size of the DVMA address space */
 DECL|macro|DVMA_END
 mdefine_line|#define  DVMA_END       0xfff40000
-multiline_comment|/* IOMMU Mapping area, must be on a 16MB boundry!  Note this&n; * doesn&squot;t count the DVMA areas, the prom lives between the&n; * iommu mapping area (for scsi transfer buffers) and the&n; * dvma upper range (for lance packet ring buffers).&n; */
+multiline_comment|/* IOMMU Mapping area, must be on a 16MB boundary!  Note this&n; * doesn&squot;t count the DVMA areas, the prom lives between the&n; * iommu mapping area (for scsi transfer buffers) and the&n; * dvma upper range (for lance packet ring buffers).&n; */
 DECL|macro|IOMMU_VADDR
 mdefine_line|#define  IOMMU_VADDR    0xff000000
 DECL|macro|IOMMU_LEN

@@ -512,7 +512,7 @@ c_func
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* Initialize the protection map with non-constant values&n;&t; * MMU dependant values.&n;&t; */
+multiline_comment|/* Initialize the protection map with non-constant values&n;&t; * MMU dependent values.&n;&t; */
 id|protection_map
 (braket
 l_int|0

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Writen by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
+multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Written by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
 multiline_comment|/*        &n; *        PCBIT-D interface with isdn4linux&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -943,7 +943,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;ISDN_CMD_ACCEPTB - not realy needed&bslash;n&quot;
+l_string|&quot;ISDN_CMD_ACCEPTB - not really needed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1295,7 +1295,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;pcbit: %d packets allready in queue - write fails&bslash;n&quot;
+l_string|&quot;pcbit: %d packets already in queue - write fails&bslash;n&quot;
 comma
 id|chan-&gt;queued
 )paren
@@ -2930,7 +2930,7 @@ id|stat_st
 op_plus
 id|stat_end
 suffix:semicolon
-multiline_comment|/* FIXME: should we sleep and wait for more cockies ? */
+multiline_comment|/* FIXME: should we sleep and wait for more cookies ? */
 r_if
 c_cond
 (paren
@@ -3946,7 +3946,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;error: unkown ioctl&bslash;n&quot;
+l_string|&quot;error: unknown ioctl&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break

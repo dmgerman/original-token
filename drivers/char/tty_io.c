@@ -3136,7 +3136,7 @@ suffix:colon
 id|retval
 op_assign
 op_minus
-id|EAGAIN
+id|EIO
 suffix:semicolon
 r_if
 c_cond

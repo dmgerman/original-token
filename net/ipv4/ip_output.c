@@ -1986,6 +1986,13 @@ id|daddr
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now compute the buffer space we require&n;&t; */
 multiline_comment|/*&n;&t; *&t;Try the simple case first. This leaves broadcast, multicast, fragmented frames, and by&n;&t; *&t;choice RAW frames within 20 bytes of maximum size(rare) to the long path&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sk-&gt;ip_hdrincl
+)paren
+(brace
 id|length
 op_add_assign
 r_sizeof
@@ -1997,15 +2004,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|sk-&gt;ip_hdrincl
-op_logical_and
 id|opt
 )paren
+(brace
 id|length
 op_add_assign
 id|opt-&gt;optlen
 suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren
@@ -2385,8 +2392,6 @@ comma
 l_int|0
 comma
 id|length
-op_minus
-l_int|20
 )paren
 suffix:semicolon
 id|dev_unlock_list

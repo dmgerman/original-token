@@ -206,7 +206,7 @@ id|foo
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Binary compatability is good American knowhow fuckin&squot; up. */
+multiline_comment|/* Binary compatibility is good American knowhow fuckin&squot; up. */
 r_if
 c_cond
 (paren

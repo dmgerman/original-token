@@ -11303,7 +11303,7 @@ id|CYCLADES_MAJOR
 suffix:semicolon
 id|cy_serial_driver.minor_start
 op_assign
-l_int|32
+l_int|0
 suffix:semicolon
 id|cy_serial_driver.num
 op_assign

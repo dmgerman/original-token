@@ -174,7 +174,7 @@ mdefine_line|#define SIG_UNBLOCK        0x02&t;/* for unblocking signals */
 DECL|macro|SIG_SETMASK
 mdefine_line|#define SIG_SETMASK        0x04&t;/* for setting the signal mask */
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * These values of sa_flags are used only by the kernel as part of the&n; * irq handling routines.&n; *&n; * SA_INTERRUPT is also used by the irq handling routines.&n; *&n; * DJHR&n; * SA_STATIC_ALLOC is used for the SPARC system to indicate that this&n; * interupt handler&squot;s irq structure should be statically allocated&n; * by the request_irq routine.&n; * The alternative is that arch/sparc/kernel/irq.c has carnal knowledge&n; * of interrupt usage and that sucks. Also without a flag like this&n; * it may be possible for the free_irq routine to attempt to free&n; * statically allocated data.. which is NOT GOOD.&n; *&n; */
+multiline_comment|/*&n; * These values of sa_flags are used only by the kernel as part of the&n; * irq handling routines.&n; *&n; * SA_INTERRUPT is also used by the irq handling routines.&n; *&n; * DJHR&n; * SA_STATIC_ALLOC is used for the SPARC system to indicate that this&n; * interrupt handler&squot;s irq structure should be statically allocated&n; * by the request_irq routine.&n; * The alternative is that arch/sparc/kernel/irq.c has carnal knowledge&n; * of interrupt usage and that sucks. Also without a flag like this&n; * it may be possible for the free_irq routine to attempt to free&n; * statically allocated data.. which is NOT GOOD.&n; *&n; */
 DECL|macro|SA_PROBE
 mdefine_line|#define SA_PROBE SA_ONESHOT
 DECL|macro|SA_SAMPLE_RANDOM

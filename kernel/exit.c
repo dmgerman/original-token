@@ -2095,6 +2095,15 @@ op_assign
 id|current-&gt;mm
 suffix:semicolon
 multiline_comment|/* Set us up to use the kernel mm state */
+r_if
+c_cond
+(paren
+id|mm
+op_ne
+op_amp
+id|init_mm
+)paren
+(brace
 id|flush_cache_mm
 c_func
 (paren
@@ -2106,9 +2115,6 @@ c_func
 (paren
 id|mm
 )paren
-suffix:semicolon
-id|init_mm.count
-op_increment
 suffix:semicolon
 id|current-&gt;mm
 op_assign
@@ -2154,6 +2160,7 @@ c_func
 id|mm
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/* &n; * Send signals to all our closest relatives so that they know&n; * to properly mourn us..&n; */

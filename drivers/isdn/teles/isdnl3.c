@@ -1372,7 +1372,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;non-dgital call: %s -&gt; %s&bslash;n&quot;
+l_string|&quot;non-digital call: %s -&gt; %s&bslash;n&quot;
 comma
 id|st-&gt;pa-&gt;calling
 comma

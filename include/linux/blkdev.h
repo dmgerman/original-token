@@ -168,6 +168,16 @@ r_int
 id|drive
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|unplug_device
+c_func
+(paren
+r_void
+op_star
+id|data
+)paren
+suffix:semicolon
 multiline_comment|/* md needs this function to remap requests */
 r_extern
 r_int
