@@ -142,8 +142,19 @@ r_struct
 id|pt_regs
 op_star
 id|regs
+comma
+r_struct
+id|file
+op_star
+id|file
 )paren
 suffix:semicolon
+DECL|member|min_coredump
+r_int
+r_int
+id|min_coredump
+suffix:semicolon
+multiline_comment|/* minimal dump size */
 )brace
 suffix:semicolon
 r_extern
@@ -371,6 +382,20 @@ r_struct
 id|linux_binprm
 op_star
 id|binprm
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|do_coredump
+c_func
+(paren
+r_int
+id|signr
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
 macro_line|#if 0

@@ -31,6 +31,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/ldt.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/desc.h&gt;
+macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#ifdef CONFIG_MATH_EMULATION
 macro_line|#include &lt;asm/math_emu.h&gt;
 macro_line|#endif
@@ -929,12 +930,13 @@ op_or
 id|_PAGE_PRESENT
 suffix:semicolon
 multiline_comment|/*&n;&t; * Use `swapper_pg_dir&squot; as our page directory.  We bother with&n;&t; * `SET_PAGE_DIR&squot; because although might be rebooting, but if we change&n;&t; * the way we set root page dir in the future, then we wont break a&n;&t; * seldom used feature ;)&n;&t; */
-id|SET_PAGE_DIR
+id|current-&gt;mm-&gt;pgd
+op_assign
+id|swapper_pg_dir
+suffix:semicolon
+id|activate_context
 c_func
 (paren
-id|current
-comma
-id|swapper_pg_dir
 )paren
 suffix:semicolon
 multiline_comment|/* Write 0x1234 to absolute memory location 0x472.  The BIOS reads&n;&t;   this on booting to tell it to &quot;Bypass memory test (also warm&n;&t;   boot)&quot;.  This seems like a fairly standard thing that gets set by&n;&t;   REBOOT.COM programs, and the previous reset routine did this&n;&t;   too. */

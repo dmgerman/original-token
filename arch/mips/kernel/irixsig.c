@@ -1396,21 +1396,10 @@ suffix:colon
 r_case
 id|SIGSEGV
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;binfmt
-op_logical_and
-id|current-&gt;binfmt-&gt;core_dump
-op_logical_and
-id|current-&gt;binfmt
-op_member_access_from_pointer
-id|core_dump
+id|do_coredump
 c_func
 (paren
 id|signr
@@ -1421,11 +1410,6 @@ id|regs
 id|exit_code
 op_or_assign
 l_int|0x80
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 multiline_comment|/* FALLTHRU */
 r_default

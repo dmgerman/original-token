@@ -5180,13 +5180,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|current-&gt;binfmt
-op_logical_and
-id|current-&gt;binfmt-&gt;core_dump
-op_logical_and
-id|current-&gt;binfmt
-op_member_access_from_pointer
-id|core_dump
+id|do_coredump
 c_func
 (paren
 id|signr

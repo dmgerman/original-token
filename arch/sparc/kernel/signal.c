@@ -6021,26 +6021,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|current-&gt;binfmt
-op_logical_and
-id|current-&gt;binfmt-&gt;core_dump
-)paren
-(brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|current-&gt;binfmt
-op_logical_and
-id|current-&gt;binfmt-&gt;core_dump
-op_logical_and
-id|current-&gt;binfmt
-op_member_access_from_pointer
-id|core_dump
+id|do_coredump
 c_func
 (paren
 id|signr
@@ -6048,18 +6029,10 @@ comma
 id|regs
 )paren
 )paren
-(brace
 id|exit_code
 op_or_assign
 l_int|0x80
 suffix:semicolon
-)brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 macro_line|#ifdef DEBUG_SIGNALS
 multiline_comment|/* Very useful to debug dynamic linker problems */
 id|printk

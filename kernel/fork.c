@@ -1175,12 +1175,6 @@ id|mm
 )paren
 )paren
 suffix:semicolon
-id|init_new_context
-c_func
-(paren
-id|mm
-)paren
-suffix:semicolon
 id|atomic_set
 c_func
 (paren
@@ -1520,12 +1514,12 @@ id|tsk-&gt;active_mm
 op_assign
 id|mm
 suffix:semicolon
-id|SET_PAGE_DIR
+id|init_new_context
 c_func
 (paren
 id|tsk
 comma
-id|mm-&gt;pgd
+id|mm
 )paren
 suffix:semicolon
 r_return

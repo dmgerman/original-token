@@ -55,7 +55,7 @@ c_cond
 (paren
 id|mm
 op_eq
-id|current-&gt;mm
+id|current-&gt;active_mm
 )paren
 id|__flush_tlb
 c_func
@@ -85,7 +85,7 @@ c_cond
 (paren
 id|vma-&gt;vm_mm
 op_eq
-id|current-&gt;mm
+id|current-&gt;active_mm
 )paren
 id|__flush_tlb_one
 c_func
@@ -120,7 +120,7 @@ c_cond
 (paren
 id|mm
 op_eq
-id|current-&gt;mm
+id|current-&gt;active_mm
 )paren
 id|__flush_tlb
 c_func
@@ -544,9 +544,6 @@ mdefine_line|#define SIZEOF_PTR_LOG2&t;&t;&t;2
 multiline_comment|/* to find an entry in a page-table */
 DECL|macro|PAGE_PTR
 mdefine_line|#define PAGE_PTR(address) &bslash;&n;((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
-multiline_comment|/* to set the page-dir */
-DECL|macro|SET_PAGE_DIR
-mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) &bslash;&n;do { &bslash;&n;&t;unsigned long __pgdir = __pa(pgdir); &bslash;&n;&t;(tsk)-&gt;thread.cr3 = __pgdir; &bslash;&n;&t;if ((tsk) == current) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;movl %0,%%cr3&quot;: :&quot;r&quot; (__pgdir)); &bslash;&n;} while (0)
 DECL|macro|pte_none
 mdefine_line|#define pte_none(x)&t;(!pte_val(x))
 DECL|macro|pte_present
