@@ -13,7 +13,9 @@ mdefine_line|#define E820_RAM&t;1
 DECL|macro|E820_RESERVED
 mdefine_line|#define E820_RESERVED&t;2
 DECL|macro|E820_ACPI
-mdefine_line|#define E820_ACPI&t;3
+mdefine_line|#define E820_ACPI&t;3 /* usable as RAM once ACPI tables have been read */
+DECL|macro|E820_NVS
+mdefine_line|#define E820_NVS&t;4
 DECL|macro|HIGH_MEMORY
 mdefine_line|#define HIGH_MEMORY&t;(1024*1024)
 macro_line|#ifndef __ASSEMBLY__

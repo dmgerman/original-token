@@ -434,7 +434,7 @@ id|current_base
 dot
 id|noauto
 op_logical_and
-id|check_signature
+id|isa_check_signature
 c_func
 (paren
 id|bases

@@ -1420,11 +1420,6 @@ r_int
 r_char
 id|s_lock
 suffix:semicolon
-DECL|member|s_rd_only
-r_int
-r_char
-id|s_rd_only
-suffix:semicolon
 DECL|member|s_dirt
 r_int
 r_char
@@ -1457,11 +1452,6 @@ DECL|member|s_magic
 r_int
 r_int
 id|s_magic
-suffix:semicolon
-DECL|member|s_time
-r_int
-r_int
-id|s_time
 suffix:semicolon
 DECL|member|s_root
 r_struct

@@ -886,6 +886,14 @@ id|eisa_probes
 id|__initdata
 op_assign
 (brace
+macro_line|#ifdef CONFIG_DE4X5             /* DEC DE425, DE434, DE435 adapters */
+(brace
+id|de4x5_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_TLAN
 (brace
 id|tlan_probe

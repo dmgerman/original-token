@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: teles0.c,v 2.9 1999/07/12 21:05:31 keil Exp $&n;&n; * teles0.c     low level stuff for Teles Memory IO isdn cards&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; * $Log: teles0.c,v $&n; * Revision 2.9  1999/07/12 21:05:31  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.8  1998/04/15 16:44:28  keil&n; * new init code&n; *&n; * Revision 2.7  1998/03/07 22:57:08  tsbogend&n; * made HiSax working on Linux/Alpha&n; *&n; * Revision 2.6  1998/02/03 23:27:47  keil&n; * IRQ 9&n; *&n; * Revision 2.5  1998/02/02 13:29:47  keil&n; * fast io&n; *&n; * Revision 2.4  1997/11/08 21:35:54  keil&n; * new l1 init&n; *&n; * Revision 2.3  1997/11/06 17:09:31  keil&n; * New 2.1 init code&n; *&n; * Revision 2.2  1997/10/29 18:55:57  keil&n; * changes for 2.1.60 (irq2dev_map)&n; *&n; * Revision 2.1  1997/07/27 21:47:10  keil&n; * new interface structures&n; *&n; * Revision 2.0  1997/06/26 11:02:43  keil&n; * New Layer and card interface&n; *&n; * Revision 1.8  1997/04/13 19:54:04  keil&n; * Change in IRQ check delay for SMP&n; *&n; * Revision 1.7  1997/04/06 22:54:04  keil&n; * Using SKB&squot;s&n; *&n; * removed old log info /KKe&n; *&n; */
+multiline_comment|/* $Id: teles0.c,v 2.10 1999/11/14 23:37:03 keil Exp $&n;&n; * teles0.c     low level stuff for Teles Memory IO isdn cards&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; * $Log: teles0.c,v $&n; * Revision 2.10  1999/11/14 23:37:03  keil&n; * new ISA memory mapped IO&n; *&n; * Revision 2.9  1999/07/12 21:05:31  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.8  1998/04/15 16:44:28  keil&n; * new init code&n; *&n; * Revision 2.7  1998/03/07 22:57:08  tsbogend&n; * made HiSax working on Linux/Alpha&n; *&n; * Revision 2.6  1998/02/03 23:27:47  keil&n; * IRQ 9&n; *&n; * Revision 2.5  1998/02/02 13:29:47  keil&n; * fast io&n; *&n; * Revision 2.4  1997/11/08 21:35:54  keil&n; * new l1 init&n; *&n; * Revision 2.3  1997/11/06 17:09:31  keil&n; * New 2.1 init code&n; *&n; * Revision 2.2  1997/10/29 18:55:57  keil&n; * changes for 2.1.60 (irq2dev_map)&n; *&n; * Revision 2.1  1997/07/27 21:47:10  keil&n; * new interface structures&n; *&n; * Revision 2.0  1997/06/26 11:02:43  keil&n; * New Layer and card interface&n; *&n; * Revision 1.8  1997/04/13 19:54:04  keil&n; * Change in IRQ check delay for SMP&n; *&n; * Revision 1.7  1997/04/06 22:54:04  keil&n; * Using SKB&squot;s&n; *&n; * removed old log info /KKe&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -19,8 +19,10 @@ r_char
 op_star
 id|teles0_revision
 op_assign
-l_string|&quot;$Revision: 2.9 $&quot;
+l_string|&quot;$Revision: 2.10 $&quot;
 suffix:semicolon
+DECL|macro|TELES_IOMEM_SIZE
+mdefine_line|#define TELES_IOMEM_SIZE&t;0x400
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
 DECL|macro|bytein
@@ -251,14 +253,9 @@ op_assign
 id|u_char
 op_star
 )paren
-(paren
-(paren
-r_int
-)paren
 id|adr
 op_plus
 l_int|0x100
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -318,14 +315,9 @@ op_assign
 id|u_char
 op_star
 )paren
-(paren
-(paren
-r_int
-)paren
 id|adr
 op_plus
 l_int|0x100
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -396,9 +388,6 @@ id|u_char
 op_star
 )paren
 (paren
-(paren
-r_int
-)paren
 id|adr
 op_plus
 (paren
@@ -472,9 +461,6 @@ id|u_char
 op_star
 )paren
 (paren
-(paren
-r_int
-)paren
 id|adr
 op_plus
 (paren
@@ -992,6 +978,25 @@ comma
 l_int|8
 )paren
 suffix:semicolon
+id|iounmap
+c_func
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|cs-&gt;hw.teles0.membase
+)paren
+suffix:semicolon
+id|release_mem_region
+c_func
+(paren
+id|cs-&gt;hw.teles0.phymem
+comma
+id|TELES_IOMEM_SIZE
+)paren
+suffix:semicolon
 )brace
 r_static
 r_int
@@ -1119,7 +1124,7 @@ id|cfval
 op_or_assign
 (paren
 (paren
-id|cs-&gt;hw.teles0.membase
+id|cs-&gt;hw.teles0.phymem
 op_rshift
 l_int|9
 )paren
@@ -1431,13 +1436,6 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-id|cs-&gt;hw.teles0.membase
-op_assign
-id|card-&gt;para
-(braket
-l_int|1
-)braket
-suffix:semicolon
 id|cs-&gt;irq
 op_assign
 id|card-&gt;para
@@ -1457,9 +1455,7 @@ c_cond
 id|check_region
 c_func
 (paren
-(paren
 id|cs-&gt;hw.teles0.cfg_reg
-)paren
 comma
 l_int|8
 )paren
@@ -1660,11 +1656,94 @@ op_amp
 id|cs-&gt;HW_Flags
 )paren
 suffix:semicolon
+id|cs-&gt;hw.teles0.phymem
+op_assign
+id|card-&gt;para
+(braket
+l_int|1
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_mem_region
+c_func
+(paren
+id|cs-&gt;hw.teles0.phymem
+comma
+id|TELES_IOMEM_SIZE
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;HiSax: %s memory region %lx-%lx already in use&bslash;n&quot;
+comma
+id|CardType
+(braket
+id|card-&gt;typ
+)braket
+comma
+id|cs-&gt;hw.teles0.phymem
+comma
+id|cs-&gt;hw.teles0.phymem
+op_plus
+id|TELES_IOMEM_SIZE
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cs-&gt;hw.teles0.cfg_reg
+)paren
+id|release_region
+c_func
+(paren
+id|cs-&gt;hw.teles0.cfg_reg
+comma
+l_int|8
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|request_mem_region
+c_func
+(paren
+id|cs-&gt;hw.teles0.phymem
+comma
+id|TELES_IOMEM_SIZE
+comma
+l_string|&quot;teles iomem&quot;
+)paren
+suffix:semicolon
+)brace
+id|cs-&gt;hw.teles0.membase
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|ioremap
+c_func
+(paren
+id|cs-&gt;hw.teles0.phymem
+comma
+id|TELES_IOMEM_SIZE
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;HiSax: %s config irq:%d mem:0x%X cfg:0x%X&bslash;n&quot;
+l_string|&quot;HiSax: %s config irq:%d mem:0x%lX cfg:0x%X&bslash;n&quot;
 comma
 id|CardType
 (braket

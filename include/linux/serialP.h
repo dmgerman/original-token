@@ -3,10 +3,52 @@ macro_line|#ifndef _LINUX_SERIALP_H
 DECL|macro|_LINUX_SERIALP_H
 mdefine_line|#define _LINUX_SERIALP_H
 multiline_comment|/*&n; * This is our internal structure for each serial port&squot;s state.&n; * &n; * Many fields are paralleled by the structure used by the serial_struct&n; * structure.&n; *&n; * For definitions of the flags field, see tty.h&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
+multiline_comment|/*&n; * Counters of the input lines (CTS, DSR, RI, CD) interrupts&n; */
+DECL|struct|async_icount
+r_struct
+id|async_icount
+(brace
+DECL|member|cts
+DECL|member|dsr
+DECL|member|rng
+DECL|member|dcd
+DECL|member|tx
+DECL|member|rx
+id|__u32
+id|cts
+comma
+id|dsr
+comma
+id|rng
+comma
+id|dcd
+comma
+id|tx
+comma
+id|rx
+suffix:semicolon
+DECL|member|frame
+DECL|member|parity
+DECL|member|overrun
+DECL|member|brk
+id|__u32
+id|frame
+comma
+id|parity
+comma
+id|overrun
+comma
+id|brk
+suffix:semicolon
+DECL|member|buf_overrun
+id|__u32
+id|buf_overrun
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|serial_state
 r_struct
 id|serial_state
@@ -94,6 +136,10 @@ DECL|member|callout_termios
 r_struct
 id|termios
 id|callout_termios
+suffix:semicolon
+DECL|member|io_type
+r_int
+id|io_type
 suffix:semicolon
 DECL|member|info
 r_struct
@@ -250,6 +296,10 @@ DECL|member|iomem_reg_shift
 id|u16
 id|iomem_reg_shift
 suffix:semicolon
+DECL|member|io_type
+r_int
+id|io_type
+suffix:semicolon
 DECL|member|tqueue
 r_struct
 id|tq_struct
@@ -309,6 +359,9 @@ DECL|macro|SERIAL_MAGIC
 mdefine_line|#define SERIAL_MAGIC 0x5301
 DECL|macro|SSTATE_MAGIC
 mdefine_line|#define SSTATE_MAGIC 0x5302
+multiline_comment|/*&n; * The size of the serial xmit buffer is 1 page, or 4096 bytes&n; */
+DECL|macro|SERIAL_XMIT_SIZE
+mdefine_line|#define SERIAL_XMIT_SIZE 4096
 multiline_comment|/*&n; * Events are used to schedule things to happen at timer-interrupt&n; * time, instead of at rs interrupt time.&n; */
 DECL|macro|RS_EVENT_WRITE_WAKEUP
 mdefine_line|#define RS_EVENT_WRITE_WAKEUP&t;0
@@ -379,7 +432,6 @@ macro_line|#else
 DECL|macro|ALPHA_KLUDGE_MCR
 mdefine_line|#define ALPHA_KLUDGE_MCR 0
 macro_line|#endif
-macro_line|#ifdef CONFIG_PCI
 multiline_comment|/*&n; * Structures and definitions for PCI support&n; */
 r_struct
 id|pci_dev
@@ -429,7 +481,7 @@ r_int
 id|reg_shift
 suffix:semicolon
 DECL|member|init_fn
-r_void
+r_int
 (paren
 op_star
 id|init_fn
@@ -448,6 +500,10 @@ comma
 r_int
 id|enable
 )paren
+suffix:semicolon
+DECL|member|first_uart_offset
+r_int
+id|first_uart_offset
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -472,7 +528,6 @@ suffix:semicolon
 macro_line|#ifndef PCI_ANY_ID
 DECL|macro|PCI_ANY_ID
 mdefine_line|#define PCI_ANY_ID (~0)
-macro_line|#endif
 macro_line|#endif
 DECL|macro|SPCI_FL_BASE_MASK
 mdefine_line|#define SPCI_FL_BASE_MASK&t;0x0007

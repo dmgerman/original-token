@@ -2256,6 +2256,7 @@ id|E820_RAM
 multiline_comment|/* not usable memory */
 r_continue
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;!!!FIXME!!! Some BIOSen report areas as RAM that&n;&t;&t; *&t;are not. Notably the 640-&gt;1Mb area. We need a sanity&n;&t;&t; *&t;check here.&n;&t;&t; */
 id|addr
 op_assign
 (paren

@@ -253,6 +253,13 @@ c_func
 id|free_pages
 )paren
 suffix:semicolon
+DECL|variable|alloc_pages
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|alloc_pages
+)paren
+suffix:semicolon
 DECL|variable|__free_page
 id|EXPORT_SYMBOL
 c_func

@@ -1731,6 +1731,8 @@ id|get_vm_area
 c_func
 (paren
 id|size
+comma
+id|VM_IOREMAP
 )paren
 suffix:semicolon
 r_if

@@ -1,5 +1,5 @@
-multiline_comment|/* $Id: sedlbauer.c,v 1.17 1999/09/04 06:20:06 keil Exp $&n;&n; * sedlbauer.c  low level stuff for Sedlbauer cards&n; *              includes support for the Sedlbauer speed star (speed star II),&n; *              support for the Sedlbauer speed fax+,&n; *              support for the Sedlbauer ISDN-Controller PC/104 and&n; *              support for the Sedlbauer speed pci&n; *              derived from the original file asuscom.c from Karsten Keil&n; *&n; * Copyright (C) 1997,1998 Marcus Niemann (for the modifications to&n; *                                         the original file asuscom.c)&n; *&n; * Author     Marcus Niemann (niemann@www-bib.fh-bielefeld.de)&n; *&n; * Thanks to  Karsten Keil&n; *            Sedlbauer AG for informations&n; *            Edgar Toernig&n; *&n; * $Log: sedlbauer.c,v $&n; * Revision 1.17  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.16  1999/08/29 18:23:01  niemann&n; * Fixed typo in errormsg&n; *&n; * Revision 1.15  1999/08/25 17:00:00  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 1.14  1999/08/11 20:59:22  keil&n; * new PCI codefix&n; * fix IRQ problem while unload&n; *&n; * Revision 1.13  1999/08/10 16:02:08  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.12  1999/08/05 20:43:22  keil&n; * ISAR analog modem support&n; *&n; * Revision 1.11  1999/07/12 21:05:27  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.10  1999/07/01 08:12:09  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.9  1998/11/15 23:55:20  keil&n; * changes from 2.0&n; *&n; * Revision 1.8  1998/08/13 23:34:51  keil&n; * starting speedfax+ (ISAR) support&n; *&n; * Revision 1.7  1998/04/15 16:44:33  keil&n; * new init code&n; *&n; * Revision 1.6  1998/02/09 18:46:06  keil&n; * Support for Sedlbauer PCMCIA (Marcus Niemann)&n; *&n; * Revision 1.5  1998/02/02 13:29:45  keil&n; * fast io&n; *&n; * Revision 1.4  1997/11/08 21:35:52  keil&n; * new l1 init&n; *&n; * Revision 1.3  1997/11/06 17:09:28  keil&n; * New 2.1 init code&n; *&n; * Revision 1.2  1997/10/29 18:55:52  keil&n; * changes for 2.1.60 (irq2dev_map)&n; *&n; * Revision 1.1  1997/09/11 17:32:04  keil&n; * new&n; *&n; *&n; */
-multiline_comment|/* Supported cards:&n; * Card:&t;Chip:&t;&t;Configuration:&t;Comment:&n; * ---------------------------------------------------------------------&n; * Speed Card&t;ISAC_HSCX&t;DIP-SWITCH&n; * Speed Win&t;ISAC_HSCX&t;ISAPNP&n; * Speed Fax+&t;ISAC_ISAR&t;ISAPNP&t;&t;#HDLC works#&n; * Speed Star&t;ISAC_HSCX&t;CARDMGR&n; * Speed Win2&t;IPAC&t;&t;ISAPNP&n; * ISDN PC/104&t;IPAC&t;&t;DIP-SWITCH&n; * Speed Star2&t;IPAC&t;&t;CARDMGR&n; * Speed PCI&t;IPAC&t;&t;PNP&t;&t;&n; *&n; * Important:&n; * For the sedlbauer speed fax+ to work properly you have to download &n; * the firmware onto the card.&n; * For example: hisaxctrl &lt;DriverID&gt; 9 ISAR.BIN&n;*/
+multiline_comment|/* $Id: sedlbauer.c,v 1.18 1999/11/13 21:25:03 keil Exp $&n;&n; * sedlbauer.c  low level stuff for Sedlbauer cards&n; *              includes support for the Sedlbauer speed star (speed star II),&n; *              support for the Sedlbauer speed fax+,&n; *              support for the Sedlbauer ISDN-Controller PC/104 and&n; *              support for the Sedlbauer speed pci&n; *              derived from the original file asuscom.c from Karsten Keil&n; *&n; * Copyright (C) 1997,1998 Marcus Niemann (for the modifications to&n; *                                         the original file asuscom.c)&n; *&n; * Author     Marcus Niemann (niemann@www-bib.fh-bielefeld.de)&n; *&n; * Thanks to  Karsten Keil&n; *            Sedlbauer AG for informations&n; *            Edgar Toernig&n; *&n; * $Log: sedlbauer.c,v $&n; * Revision 1.18  1999/11/13 21:25:03  keil&n; * Support for Speedfax+ PCI&n; *&n; * Revision 1.17  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.16  1999/08/29 18:23:01  niemann&n; * Fixed typo in errormsg&n; *&n; * Revision 1.15  1999/08/25 17:00:00  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 1.14  1999/08/11 20:59:22  keil&n; * new PCI codefix&n; * fix IRQ problem while unload&n; *&n; * Revision 1.13  1999/08/10 16:02:08  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.12  1999/08/05 20:43:22  keil&n; * ISAR analog modem support&n; *&n; * Revision 1.11  1999/07/12 21:05:27  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.10  1999/07/01 08:12:09  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.9  1998/11/15 23:55:20  keil&n; * changes from 2.0&n; *&n; * Revision 1.8  1998/08/13 23:34:51  keil&n; * starting speedfax+ (ISAR) support&n; *&n; * Revision 1.7  1998/04/15 16:44:33  keil&n; * new init code&n; *&n; * Revision 1.6  1998/02/09 18:46:06  keil&n; * Support for Sedlbauer PCMCIA (Marcus Niemann)&n; *&n; * Revision 1.5  1998/02/02 13:29:45  keil&n; * fast io&n; *&n; * Revision 1.4  1997/11/08 21:35:52  keil&n; * new l1 init&n; *&n; * Revision 1.3  1997/11/06 17:09:28  keil&n; * New 2.1 init code&n; *&n; * Revision 1.2  1997/10/29 18:55:52  keil&n; * changes for 2.1.60 (irq2dev_map)&n; *&n; * Revision 1.1  1997/09/11 17:32:04  keil&n; * new&n; *&n; *&n; */
+multiline_comment|/* Supported cards:&n; * Card:&t;Chip:&t;&t;Configuration:&t;Comment:&n; * ---------------------------------------------------------------------&n; * Speed Card&t;ISAC_HSCX&t;DIP-SWITCH&n; * Speed Win&t;ISAC_HSCX&t;ISAPNP&n; * Speed Fax+&t;ISAC_ISAR&t;ISAPNP&t;&t;Full analog support&n; * Speed Star&t;ISAC_HSCX&t;CARDMGR&n; * Speed Win2&t;IPAC&t;&t;ISAPNP&n; * ISDN PC/104&t;IPAC&t;&t;DIP-SWITCH&n; * Speed Star2&t;IPAC&t;&t;CARDMGR&n; * Speed PCI&t;IPAC&t;&t;PCI PNP&t;&t;&n; * Speed Fax+ &t;ISAC_ISAR&t;PCI PNP&t;&t;Full analog support&n; *&n; * Important:&n; * For the sedlbauer speed fax+ to work properly you have to download &n; * the firmware onto the card.&n; * For example: hisaxctrl &lt;DriverID&gt; 9 ISAR.BIN&n;*/
 DECL|macro|SEDLBAUER_PCI
 mdefine_line|#define SEDLBAUER_PCI 1
 DECL|macro|__NO_VERSION__
@@ -26,7 +26,7 @@ r_char
 op_star
 id|Sedlbauer_revision
 op_assign
-l_string|&quot;$Revision: 1.17 $&quot;
+l_string|&quot;$Revision: 1.18 $&quot;
 suffix:semicolon
 DECL|variable|Sedlbauer_Types
 r_const
@@ -50,13 +50,19 @@ comma
 l_string|&quot;speed star II&quot;
 comma
 l_string|&quot;speed pci&quot;
+comma
+l_string|&quot;speed fax+ pci&quot;
 )brace
 suffix:semicolon
 macro_line|#ifdef SEDLBAUER_PCI
 DECL|macro|PCI_VENDOR_SEDLBAUER
 mdefine_line|#define PCI_VENDOR_SEDLBAUER&t;0xe159
 DECL|macro|PCI_SPEEDPCI_ID
-mdefine_line|#define PCI_SPEEDPCI_ID&t;0x02
+mdefine_line|#define PCI_SPEEDPCI_ID&t;&t;0x02
+DECL|macro|PCI_SUBVENDOR_SEDLBAUER
+mdefine_line|#define PCI_SUBVENDOR_SEDLBAUER&t;0x51
+DECL|macro|PCI_SUB_ID_SPEEDFAXP
+mdefine_line|#define PCI_SUB_ID_SPEEDFAXP&t;0x01
 macro_line|#endif
 DECL|macro|SEDL_SPEED_CARD_WIN
 mdefine_line|#define SEDL_SPEED_CARD_WIN&t;1
@@ -70,6 +76,8 @@ DECL|macro|SEDL_SPEED_STAR2
 mdefine_line|#define SEDL_SPEED_STAR2 &t;5
 DECL|macro|SEDL_SPEED_PCI
 mdefine_line|#define SEDL_SPEED_PCI   &t;6
+DECL|macro|SEDL_SPEEDFAX_PCI
+mdefine_line|#define SEDL_SPEEDFAX_PCI&t;7
 DECL|macro|SEDL_CHIP_TEST
 mdefine_line|#define SEDL_CHIP_TEST&t;&t;0
 DECL|macro|SEDL_CHIP_ISAC_HSCX
@@ -117,15 +125,29 @@ mdefine_line|#define SEDL_ISAR_ISA_ISAR_RESET_ON&t;10
 DECL|macro|SEDL_ISAR_ISA_ISAR_RESET_OFF
 mdefine_line|#define SEDL_ISAR_ISA_ISAR_RESET_OFF&t;12
 DECL|macro|SEDL_IPAC_ANY_ADR
-mdefine_line|#define SEDL_IPAC_ANY_ADR &t;0
+mdefine_line|#define SEDL_IPAC_ANY_ADR&t;&t;0
 DECL|macro|SEDL_IPAC_ANY_IPAC
-mdefine_line|#define SEDL_IPAC_ANY_IPAC&t;2
+mdefine_line|#define SEDL_IPAC_ANY_IPAC&t;&t;2
 DECL|macro|SEDL_IPAC_PCI_BASE
-mdefine_line|#define SEDL_IPAC_PCI_BASE&t;0
+mdefine_line|#define SEDL_IPAC_PCI_BASE&t;&t;0
 DECL|macro|SEDL_IPAC_PCI_ADR
-mdefine_line|#define SEDL_IPAC_PCI_ADR&t;0xc0
+mdefine_line|#define SEDL_IPAC_PCI_ADR&t;&t;0xc0
 DECL|macro|SEDL_IPAC_PCI_IPAC
-mdefine_line|#define SEDL_IPAC_PCI_IPAC&t;0xc8
+mdefine_line|#define SEDL_IPAC_PCI_IPAC&t;&t;0xc8
+DECL|macro|SEDL_ISAR_PCI_ADR
+mdefine_line|#define SEDL_ISAR_PCI_ADR&t;&t;0xc8
+DECL|macro|SEDL_ISAR_PCI_ISAC
+mdefine_line|#define SEDL_ISAR_PCI_ISAC&t;&t;0xd0
+DECL|macro|SEDL_ISAR_PCI_ISAR
+mdefine_line|#define SEDL_ISAR_PCI_ISAR&t;&t;0xe0
+DECL|macro|SEDL_ISAR_PCI_ISAR_RESET_ON
+mdefine_line|#define SEDL_ISAR_PCI_ISAR_RESET_ON&t;0x01
+DECL|macro|SEDL_ISAR_PCI_ISAR_RESET_OFF
+mdefine_line|#define SEDL_ISAR_PCI_ISAR_RESET_OFF&t;0x18
+DECL|macro|SEDL_ISAR_PCI_LED1
+mdefine_line|#define SEDL_ISAR_PCI_LED1&t;&t;0x08
+DECL|macro|SEDL_ISAR_PCI_LED2
+mdefine_line|#define SEDL_ISAR_PCI_LED2&t;&t;0x10
 DECL|macro|SEDL_RESET
 mdefine_line|#define SEDL_RESET      0x3&t;/* same as DOS driver */
 r_static
@@ -1890,6 +1912,93 @@ id|flags
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+(paren
+id|cs-&gt;hw.sedl.chip
+op_eq
+id|SEDL_CHIP_ISAC_ISAR
+)paren
+op_logical_and
+(paren
+id|cs-&gt;hw.sedl.bus
+op_eq
+id|SEDL_BUS_PCI
+)paren
+)paren
+(brace
+id|byteout
+c_func
+(paren
+id|cs-&gt;hw.sedl.cfg_reg
+op_plus
+l_int|3
+comma
+id|cs-&gt;hw.sedl.reset_on
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|schedule_timeout
+c_func
+(paren
+(paren
+l_int|20
+op_star
+id|HZ
+)paren
+op_div
+l_int|1000
+)paren
+suffix:semicolon
+id|byteout
+c_func
+(paren
+id|cs-&gt;hw.sedl.cfg_reg
+op_plus
+l_int|3
+comma
+id|cs-&gt;hw.sedl.reset_off
+)paren
+suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|schedule_timeout
+c_func
+(paren
+(paren
+l_int|20
+op_star
+id|HZ
+)paren
+op_div
+l_int|1000
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+r_else
 (brace
 id|byteout
 c_func
@@ -2165,6 +2274,92 @@ suffix:colon
 r_return
 l_int|0
 suffix:semicolon
+r_case
+id|MDL_INFO_CONN
+suffix:colon
+r_if
+c_cond
+(paren
+id|cs-&gt;subtyp
+op_ne
+id|SEDL_SPEEDFAX_PCI
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+r_int
+)paren
+id|arg
+)paren
+id|cs-&gt;hw.sedl.reset_off
+op_and_assign
+op_complement
+id|SEDL_ISAR_PCI_LED2
+suffix:semicolon
+r_else
+id|cs-&gt;hw.sedl.reset_off
+op_and_assign
+op_complement
+id|SEDL_ISAR_PCI_LED1
+suffix:semicolon
+id|byteout
+c_func
+(paren
+id|cs-&gt;hw.sedl.cfg_reg
+op_plus
+l_int|3
+comma
+id|cs-&gt;hw.sedl.reset_off
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MDL_INFO_REL
+suffix:colon
+r_if
+c_cond
+(paren
+id|cs-&gt;subtyp
+op_ne
+id|SEDL_SPEEDFAX_PCI
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+r_int
+)paren
+id|arg
+)paren
+id|cs-&gt;hw.sedl.reset_off
+op_or_assign
+id|SEDL_ISAR_PCI_LED2
+suffix:semicolon
+r_else
+id|cs-&gt;hw.sedl.reset_off
+op_or_assign
+id|SEDL_ISAR_PCI_LED1
+suffix:semicolon
+id|byteout
+c_func
+(paren
+id|cs-&gt;hw.sedl.cfg_reg
+op_plus
+l_int|3
+comma
+id|cs-&gt;hw.sedl.reset_off
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 r_return
 l_int|0
@@ -2216,6 +2411,14 @@ id|tmp
 (braket
 l_int|64
 )braket
+suffix:semicolon
+id|u16
+id|sub_vendor_id
+comma
+id|sub_id
+suffix:semicolon
+r_int
+id|flags
 suffix:semicolon
 id|strcpy
 c_func
@@ -2449,6 +2652,87 @@ id|cs-&gt;hw.sedl.bus
 op_assign
 id|SEDL_BUS_PCI
 suffix:semicolon
+id|pci_read_config_word
+c_func
+(paren
+id|dev_sedl
+comma
+id|PCI_SUBSYSTEM_VENDOR_ID
+comma
+op_amp
+id|sub_vendor_id
+)paren
+suffix:semicolon
+id|pci_read_config_word
+c_func
+(paren
+id|dev_sedl
+comma
+id|PCI_SUBSYSTEM_ID
+comma
+op_amp
+id|sub_id
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Sedlbauer: PCI subvendor:%x subid %x&bslash;n&quot;
+comma
+id|sub_vendor_id
+comma
+id|sub_id
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Sedlbauer: PCI base adr %#x&bslash;n&quot;
+comma
+id|cs-&gt;hw.sedl.cfg_reg
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|sub_vendor_id
+op_eq
+id|PCI_SUBVENDOR_SEDLBAUER
+)paren
+op_logical_and
+(paren
+id|sub_id
+op_eq
+id|PCI_SUB_ID_SPEEDFAXP
+)paren
+)paren
+(brace
+id|cs-&gt;hw.sedl.chip
+op_assign
+id|SEDL_CHIP_ISAC_ISAR
+suffix:semicolon
+id|cs-&gt;subtyp
+op_assign
+id|SEDL_SPEEDFAX_PCI
+suffix:semicolon
+id|cs-&gt;hw.sedl.reset_on
+op_assign
+id|cs-&gt;hw.sedl.cfg_reg
+op_plus
+id|SEDL_ISAR_PCI_ISAR_RESET_ON
+suffix:semicolon
+id|cs-&gt;hw.sedl.reset_off
+op_assign
+id|cs-&gt;hw.sedl.cfg_reg
+op_plus
+id|SEDL_ISAR_PCI_ISAR_RESET_OFF
+suffix:semicolon
+)brace
+r_else
+(brace
 id|cs-&gt;hw.sedl.chip
 op_assign
 id|SEDL_CHIP_IPAC
@@ -2457,6 +2741,7 @@ id|cs-&gt;subtyp
 op_assign
 id|SEDL_SPEED_PCI
 suffix:semicolon
+)brace
 id|bytecnt
 op_assign
 l_int|256
@@ -2495,6 +2780,59 @@ op_plus
 l_int|5
 comma
 l_int|0x02
+)paren
+suffix:semicolon
+id|byteout
+c_func
+(paren
+id|cs-&gt;hw.sedl.cfg_reg
+op_plus
+l_int|3
+comma
+id|cs-&gt;hw.sedl.reset_on
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|schedule_timeout
+c_func
+(paren
+(paren
+l_int|10
+op_star
+id|HZ
+)paren
+op_div
+l_int|1000
+)paren
+suffix:semicolon
+id|byteout
+c_func
+(paren
+id|cs-&gt;hw.sedl.cfg_reg
+op_plus
+l_int|3
+comma
+id|cs-&gt;hw.sedl.reset_off
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 macro_line|#else
@@ -2841,6 +3179,35 @@ op_eq
 id|SEDL_CHIP_ISAC_ISAR
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|cs-&gt;hw.sedl.bus
+op_eq
+id|SEDL_BUS_PCI
+)paren
+(brace
+id|cs-&gt;hw.sedl.adr
+op_assign
+id|cs-&gt;hw.sedl.cfg_reg
+op_plus
+id|SEDL_ISAR_PCI_ADR
+suffix:semicolon
+id|cs-&gt;hw.sedl.isac
+op_assign
+id|cs-&gt;hw.sedl.cfg_reg
+op_plus
+id|SEDL_ISAR_PCI_ISAC
+suffix:semicolon
+id|cs-&gt;hw.sedl.hscx
+op_assign
+id|cs-&gt;hw.sedl.cfg_reg
+op_plus
+id|SEDL_ISAR_PCI_ISAR
+suffix:semicolon
+)brace
+r_else
+(brace
 id|cs-&gt;hw.sedl.adr
 op_assign
 id|cs-&gt;hw.sedl.cfg_reg
@@ -2871,6 +3238,7 @@ id|cs-&gt;hw.sedl.cfg_reg
 op_plus
 id|SEDL_ISAR_ISA_ISAR_RESET_OFF
 suffix:semicolon
+)brace
 id|cs-&gt;bcs
 (braket
 l_int|0

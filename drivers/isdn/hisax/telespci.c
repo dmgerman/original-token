@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: telespci.c,v 2.9 1999/08/11 21:01:34 keil Exp $&n;&n; * telespci.c     low level stuff for Teles PCI isdn cards&n; *&n; * Author       Ton van Rosmalen &n; *              Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; *&n; * $Log: telespci.c,v $&n; * Revision 2.9  1999/08/11 21:01:34  keil&n; * new PCI codefix&n; *&n; * Revision 2.8  1999/08/10 16:02:10  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 2.7  1999/07/12 21:05:34  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.6  1999/07/01 08:12:15  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.5  1998/11/15 23:55:28  keil&n; * changes from 2.0&n; *&n; * Revision 2.4  1998/10/05 09:38:08  keil&n; * Fix register addressing&n; *&n; * Revision 2.3  1998/05/25 12:58:26  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.1  1998/04/15 16:38:23  keil&n; * Add S0Box and Teles PCI support&n; *&n; *&n; */
+multiline_comment|/* $Id: telespci.c,v 2.10 1999/11/15 14:20:05 keil Exp $&n;&n; * telespci.c     low level stuff for Teles PCI isdn cards&n; *&n; * Author       Ton van Rosmalen &n; *              Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; *&n; * $Log: telespci.c,v $&n; * Revision 2.10  1999/11/15 14:20:05  keil&n; * 64Bit compatibility&n; *&n; * Revision 2.9  1999/08/11 21:01:34  keil&n; * new PCI codefix&n; *&n; * Revision 2.8  1999/08/10 16:02:10  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 2.7  1999/07/12 21:05:34  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.6  1999/07/01 08:12:15  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.5  1998/11/15 23:55:28  keil&n; * changes from 2.0&n; *&n; * Revision 2.4  1998/10/05 09:38:08  keil&n; * Fix register addressing&n; *&n; * Revision 2.3  1998/05/25 12:58:26  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.1  1998/04/15 16:38:23  keil&n; * Add S0Box and Teles PCI support&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -21,7 +21,7 @@ r_char
 op_star
 id|telespci_revision
 op_assign
-l_string|&quot;$Revision: 2.9 $&quot;
+l_string|&quot;$Revision: 2.10 $&quot;
 suffix:semicolon
 DECL|macro|ZORAN_PO_RQ_PEN
 mdefine_line|#define ZORAN_PO_RQ_PEN&t;0x02000000
@@ -1271,7 +1271,7 @@ suffix:semicolon
 id|cs-&gt;hw.teles0.membase
 op_assign
 (paren
-id|u_int
+id|u_long
 )paren
 id|ioremap
 c_func
@@ -1403,7 +1403,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;HiSax: %s config irq:%d mem:%x&bslash;n&quot;
+l_string|&quot;HiSax: %s config irq:%d mem:%lx&bslash;n&quot;
 comma
 id|CardType
 (braket

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/fs/inode.c&n; *&n; * (C) 1997 Linus Torvalds&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

@@ -97,6 +97,8 @@ mdefine_line|#define ARPHRD_FCPL&t;786&t;&t;/* Fibrechannel public loop&t;*/
 DECL|macro|ARPHRD_FCFABRIC
 mdefine_line|#define ARPHRD_FCFABRIC&t;787&t;&t;/* Fibrechannel fabric&t;&t;*/
 multiline_comment|/* 787-&gt;799 reserved for fibrechannel media types */
+DECL|macro|ARPHRD_IEEE802_TR
+mdefine_line|#define ARPHRD_IEEE802_TR 800&t;&t;/* Magic type ident for TR&t;*/
 multiline_comment|/* ARP protocol opcodes. */
 DECL|macro|ARPOP_REQUEST
 mdefine_line|#define&t;ARPOP_REQUEST&t;1&t;&t;/* ARP request&t;&t;&t;*/

@@ -2812,7 +2812,7 @@ op_increment
 )paren
 id|ok
 op_assign
-id|check_signature
+id|isa_check_signature
 c_func
 (paren
 id|addresses

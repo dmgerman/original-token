@@ -2766,7 +2766,7 @@ id|p-&gt;p_pptr
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/* He&squot;s dead, Jim. You take his wallet, I&squot;ll take tricoder... */
+multiline_comment|/* He&squot;s dead, Jim. You take his wallet, I&squot;ll take the tricorder... */
 id|up
 c_func
 (paren

@@ -21,7 +21,15 @@ mdefine_line|#define TUNER_TEMIC_PAL_I   7
 DECL|macro|TUNER_TEMIC_4036FY5_NTSC
 mdefine_line|#define TUNER_TEMIC_4036FY5_NTSC&t;8
 DECL|macro|TUNER_ALPS_TSBH1_NTSC
-mdefine_line|#define TUNER_ALPS_TSBH1_NTSC 9
+mdefine_line|#define TUNER_ALPS_TSBH1_NTSC &t;9
+DECL|macro|TUNER_ALPS_TSBE1_PAL
+mdefine_line|#define TUNER_ALPS_TSBE1_PAL &t;10
+DECL|macro|TUNER_ALPS_TSBB5_PAL_I
+mdefine_line|#define TUNER_ALPS_TSBB5_PAL_I &t;11
+DECL|macro|TUNER_ALPS_TSBE5_PAL
+mdefine_line|#define TUNER_ALPS_TSBE5_PAL &t;12
+DECL|macro|TUNER_ALPS_TSBC5_PAL
+mdefine_line|#define TUNER_ALPS_TSBC5_PAL &t;13
 DECL|macro|NOTUNER
 mdefine_line|#define NOTUNER 0
 DECL|macro|PAL
@@ -40,6 +48,8 @@ DECL|macro|TEMIC
 mdefine_line|#define TEMIC   2
 DECL|macro|Sony
 mdefine_line|#define Sony    3
+DECL|macro|Alps
+mdefine_line|#define Alps    4
 DECL|macro|TUNER_SET_TYPE
 mdefine_line|#define TUNER_SET_TYPE               _IOW(&squot;t&squot;,1,int)    /* set tuner type */
 DECL|macro|TUNER_SET_TVFREQ

@@ -180,10 +180,6 @@ op_plus
 l_int|8
 )paren
 suffix:semicolon
-id|drive-&gt;present
-op_assign
-l_int|1
-suffix:semicolon
 )brace
 id|BIOS
 op_add_assign

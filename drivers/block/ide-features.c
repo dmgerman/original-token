@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * linux/drivers/block/ide-features.c&n; *&n; *  Copyright (C) 1999  Linus Torvalds &amp; authors (see below)&n; *  &n; *  Andre Hedrick &lt;andre@suse.com&gt;&n; *&n; *  Extracts if ide.c to address the evolving transfer rate code for&n; *  the SETFEATURES_XFER callouts.  Below are original authors of some or&n; *  various parts of any given function below.&n; *&n; *  Mark Lord     &lt;mlord@pobox.com&gt;&n; *  Gadi Oxman    &lt;gadio@netvision.net.il&gt;&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

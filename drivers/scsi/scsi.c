@@ -746,6 +746,17 @@ id|BLIST_NOLUN
 comma
 multiline_comment|/* causes failed REQUEST SENSE on lun 1&n;&t;&t;&t;&t;&t;&t;&t;&t; * for seagate controller, which causes&n;&t;&t;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
 (brace
+l_string|&quot;TEAC&quot;
+comma
+l_string|&quot;MT-2ST/45S2-27&quot;
+comma
+l_string|&quot;RV M&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+multiline_comment|/* Responds to all lun */
+(brace
 l_string|&quot;TEXEL&quot;
 comma
 l_string|&quot;CD-ROM&quot;
@@ -847,6 +858,17 @@ multiline_comment|/* scanjet iicx */
 (brace
 l_string|&quot;YAMAHA&quot;
 comma
+l_string|&quot;CDR100&quot;
+comma
+l_string|&quot;1.00&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+multiline_comment|/* Locks up if polled for lun != 0 */
+(brace
+l_string|&quot;YAMAHA&quot;
+comma
 l_string|&quot;CDR102&quot;
 comma
 l_string|&quot;1.00&quot;
@@ -854,7 +876,7 @@ comma
 id|BLIST_NOLUN
 )brace
 comma
-multiline_comment|/* extra reset */
+multiline_comment|/* Locks up if polled for lun != 0  &n;&t;&t;&t;&t;&t;&t;&t;&t; * extra reset */
 (brace
 l_string|&quot;RELISYS&quot;
 comma
@@ -1067,28 +1089,6 @@ op_or
 id|BLIST_SINGLELUN
 )brace
 comma
-(brace
-l_string|&quot;YAMAHA&quot;
-comma
-l_string|&quot;CDR100&quot;
-comma
-l_string|&quot;1.00&quot;
-comma
-id|BLIST_NOLUN
-)brace
-comma
-multiline_comment|/* Locks up if polled for lun != 0 */
-(brace
-l_string|&quot;YAMAHA&quot;
-comma
-l_string|&quot;CDR102&quot;
-comma
-l_string|&quot;1.00&quot;
-comma
-id|BLIST_NOLUN
-)brace
-comma
-multiline_comment|/* Locks up if polled for lun != 0 */
 (brace
 l_string|&quot;iomega&quot;
 comma
@@ -4622,6 +4622,28 @@ op_ne
 id|RQ_INACTIVE
 )paren
 (brace
+id|DECLARE_WAITQUEUE
+c_func
+(paren
+id|wait
+comma
+id|current
+)paren
+suffix:semicolon
+id|add_wait_queue
+c_func
+(paren
+op_amp
+id|device-&gt;device_wait
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_UNINTERRUPTIBLE
+suffix:semicolon
 id|spin_unlock
 c_func
 (paren
@@ -4629,12 +4651,23 @@ op_amp
 id|io_request_lock
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME!!!! */
-id|sleep_on
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_RUNNING
+suffix:semicolon
+id|remove_wait_queue
 c_func
 (paren
 op_amp
 id|device-&gt;device_wait
+comma
+op_amp
+id|wait
 )paren
 suffix:semicolon
 id|spin_lock_irq
@@ -4644,7 +4677,6 @@ op_amp
 id|io_request_lock
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME!!!! */
 )brace
 r_else
 (brace
@@ -10955,6 +10987,13 @@ id|Scsi_Host_Template
 op_star
 id|SHTp
 suffix:semicolon
+r_char
+id|name
+(braket
+l_int|10
+)braket
+suffix:semicolon
+multiline_comment|/* host_no&gt;=10^9? I don&squot;t think so. */
 multiline_comment|/*&n;&t; * First verify that this host adapter is completely free with no pending&n;&t; * commands &n;&t; */
 r_for
 c_loop
@@ -11478,10 +11517,20 @@ op_assign
 id|next_scsi_host
 suffix:semicolon
 multiline_comment|/* Remove the /proc/scsi directory entry */
+id|sprintf
+c_func
+(paren
+id|name
+comma
+l_string|&quot;%d&quot;
+comma
+id|shpnt-&gt;host_no
+)paren
+suffix:semicolon
 id|remove_proc_entry
 c_func
 (paren
-id|shpnt-&gt;proc_name
+id|name
 comma
 id|tpnt-&gt;proc_dir
 )paren

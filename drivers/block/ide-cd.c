@@ -3781,18 +3781,6 @@ r_if
 c_cond
 (paren
 id|thislen
-OL
-l_int|0
-)paren
-id|thislen
-op_assign
-op_minus
-id|thislen
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|thislen
 OG
 id|len
 )paren
@@ -3813,32 +3801,6 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* Check that we want to write. */
-r_if
-c_cond
-(paren
-id|pc-&gt;buflen
-OG
-l_int|0
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;%s: cdrom_pc_intr: Drive wants &quot;
-l_string|&quot;to transfer data the wrong way!&bslash;n&quot;
-comma
-id|drive-&gt;name
-)paren
-suffix:semicolon
-id|pc-&gt;stat
-op_assign
-l_int|1
-suffix:semicolon
-id|thislen
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* Transfer the data. */
 id|atapi_output_bytes
 (paren
@@ -3908,32 +3870,6 @@ op_eq
 l_int|2
 )paren
 (brace
-multiline_comment|/* Check that we want to read. */
-r_if
-c_cond
-(paren
-id|pc-&gt;buflen
-OL
-l_int|0
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;%s: cdrom_pc_intr: Drive wants to &quot;
-l_string|&quot;transfer data the wrong way!&bslash;n&quot;
-comma
-id|drive-&gt;name
-)paren
-suffix:semicolon
-id|pc-&gt;stat
-op_assign
-l_int|1
-suffix:semicolon
-id|thislen
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* Transfer the data. */
 id|atapi_input_bytes
 (paren

@@ -40,12 +40,6 @@ id|sk
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/proc_fs.h&gt;
-r_extern
-r_struct
-id|proc_dir_entry
-id|atm_proc_root
-suffix:semicolon
-multiline_comment|/* @@@ move elsewhere */
 r_int
 id|atm_proc_dev_register
 c_func

@@ -416,9 +416,19 @@ id|explength
 op_ne
 id|actlength
 op_logical_and
+(paren
+(paren
 id|tmp-&gt;pipetype
 op_eq
 id|PIPE_BULK
+)paren
+op_logical_or
+(paren
+id|tmp-&gt;pipetype
+op_eq
+id|PIPE_CONTROL
+)paren
+)paren
 )paren
 (brace
 multiline_comment|/* If the packet is short, none of the */

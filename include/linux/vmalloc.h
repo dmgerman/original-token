@@ -4,6 +4,11 @@ mdefine_line|#define __LINUX_VMALLOC_H
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+multiline_comment|/* bits in vm_struct-&gt;flags */
+DECL|macro|VM_IOREMAP
+mdefine_line|#define VM_IOREMAP&t;0x00000001&t;/* ioremap() and friends */
+DECL|macro|VM_ALLOC
+mdefine_line|#define VM_ALLOC&t;0x00000002&t;/* vmalloc() */
 DECL|struct|vm_struct
 r_struct
 id|vm_struct
@@ -40,6 +45,10 @@ c_func
 r_int
 r_int
 id|size
+comma
+r_int
+r_int
+id|flags
 )paren
 suffix:semicolon
 r_void

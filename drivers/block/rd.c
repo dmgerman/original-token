@@ -971,6 +971,66 @@ id|block_fsync
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
+macro_line|#ifdef MODULE
+DECL|macro|rd_init
+mdefine_line|#define rd_init init_module
+multiline_comment|/* Before freeing the module, invalidate all of the protected buffers! */
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NUM_RAMDISKS
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|invalidate_buffers
+c_func
+(paren
+id|MKDEV
+c_func
+(paren
+id|MAJOR_NR
+comma
+id|i
+)paren
+)paren
+suffix:semicolon
+id|unregister_blkdev
+c_func
+(paren
+id|MAJOR_NR
+comma
+l_string|&quot;ramdisk&quot;
+)paren
+suffix:semicolon
+id|blk_dev
+(braket
+id|MAJOR_NR
+)braket
+dot
+id|request_fn
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif  /* MODULE */
 multiline_comment|/* This is the registration and initialization section of the RAM disk driver */
 DECL|function|rd_init
 r_int
@@ -1146,7 +1206,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* loadable module support */
-macro_line|#ifdef MODULE
 id|MODULE_PARM
 (paren
 id|rd_size
@@ -1177,96 +1236,6 @@ comma
 l_string|&quot;Blocksize of each RAM disk in bytes.&quot;
 )paren
 suffix:semicolon
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-id|error
-op_assign
-id|rd_init
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|error
-)paren
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;RAMDISK: Loaded as module.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|error
-suffix:semicolon
-)brace
-multiline_comment|/* Before freeing the module, invalidate all of the protected buffers! */
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|NUM_RAMDISKS
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|invalidate_buffers
-c_func
-(paren
-id|MKDEV
-c_func
-(paren
-id|MAJOR_NR
-comma
-id|i
-)paren
-)paren
-suffix:semicolon
-id|unregister_blkdev
-c_func
-(paren
-id|MAJOR_NR
-comma
-l_string|&quot;ramdisk&quot;
-)paren
-suffix:semicolon
-id|blk_dev
-(braket
-id|MAJOR_NR
-)braket
-dot
-id|request_fn
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif  /* MODULE */
 multiline_comment|/* End of non-loading portions of the RAM disk driver */
 macro_line|#ifdef RD_LOADER 
 multiline_comment|/*&n; * This routine tries to find a RAM disk image to load, and returns the&n; * number of blocks to read for a non-compressed image, 0 if the image&n; * is a compressed image, and -1 if an image with the right magic&n; * numbers could not be found.&n; *&n; * We currently check for the following magic numbers:&n; * &t;minix&n; * &t;ext2&n; *&t;romfs&n; * &t;gzip&n; */

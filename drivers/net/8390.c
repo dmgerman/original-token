@@ -3924,11 +3924,17 @@ id|e8390_base
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-macro_line|#if defined(CONFIG_MAC) || defined(CONFIG_AMIGA_PCMCIA) || &bslash;&n;    defined(CONFIG_ARIADNE2) || defined(CONFIG_ARIADNE2_MODULE)
 r_struct
 id|ei_device
 op_star
 id|ei_local
+id|__attribute
+c_func
+(paren
+(paren
+id|unused
+)paren
+)paren
 op_assign
 (paren
 r_struct
@@ -3937,7 +3943,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-macro_line|#endif
 id|outb_p
 c_func
 (paren

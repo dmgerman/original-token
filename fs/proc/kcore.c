@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;fs/proc/kcore.c kernel ELF/AOUT core dumper&n; *&n; *&t;Modelled on fs/exec.c:aout_core_dump()&n; *&t;Jeremy Fitzhardinge &lt;jeremy@sw.oz.au&gt;&n; *&t;Implemented by David Howells &lt;David.Howells@nexor.co.uk&gt;&n; *&t;Modified and incorporated into 2.3.x by Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;Support to dump vmalloc&squot;d data structures (ELF only), Tigran Aivazian &lt;tigran@sco.com&gt;&n; */
+multiline_comment|/*&n; *&t;fs/proc/kcore.c kernel ELF/AOUT core dumper&n; *&n; *&t;Modelled on fs/exec.c:aout_core_dump()&n; *&t;Jeremy Fitzhardinge &lt;jeremy@sw.oz.au&gt;&n; *&t;ELF version written by David Howells &lt;David.Howells@nexor.co.uk&gt;&n; *&t;Modified and incorporated into 2.3.x by Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;Support to dump vmalloc&squot;d areas (ELF only), Tigran Aivazian &lt;tigran@sco.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -272,6 +272,9 @@ id|dump
 op_plus
 id|p
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -285,6 +288,10 @@ id|pnt
 comma
 id|count1
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|buf
 op_add_assign
@@ -336,6 +343,9 @@ id|count1
 op_assign
 id|count
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|clear_user
 c_func
 (paren
@@ -343,6 +353,10 @@ id|buf
 comma
 id|count1
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|buf
 op_add_assign
@@ -369,6 +383,9 @@ OG
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -388,6 +405,10 @@ id|PAGE_SIZE
 comma
 id|count
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|read
 op_add_assign
@@ -510,6 +531,16 @@ op_assign
 id|m-&gt;next
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|m-&gt;flags
+op_amp
+id|VM_IOREMAP
+)paren
+multiline_comment|/* don&squot;t dump ioremap&squot;d stuff! (TA) */
+r_continue
+suffix:semicolon
 r_try
 op_assign
 (paren
@@ -1082,7 +1113,7 @@ id|phdr-&gt;p_align
 op_assign
 id|PAGE_SIZE
 suffix:semicolon
-multiline_comment|/* setup ELF PT_LOAD program headers, one for every kvma range */
+multiline_comment|/* setup ELF PT_LOAD program header for every vmalloc&squot;d area */
 r_for
 c_loop
 (paren
@@ -1097,6 +1128,16 @@ op_assign
 id|m-&gt;next
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|m-&gt;flags
+op_amp
+id|VM_IOREMAP
+)paren
+multiline_comment|/* don&squot;t dump ioremap&squot;d stuff! (TA) */
+r_continue
+suffix:semicolon
 id|phdr
 op_assign
 (paren
@@ -1476,36 +1517,11 @@ id|size
 comma
 id|tsz
 suffix:semicolon
-r_char
-op_star
-id|elf_buffer
-suffix:semicolon
 r_int
 id|elf_buflen
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|num_vma
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|buffer
-comma
-id|buflen
-)paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 multiline_comment|/* XXX we need to somehow lock vmlist between here&n;&t; * and after elf_kcore_store_hdr() returns.&n;&t; * For now assume that num_vma does not change (TA)&n;&t; */
 id|proc_root_kcore.size
@@ -1565,6 +1581,10 @@ OL
 id|elf_buflen
 )paren
 (brace
+r_char
+op_star
+id|elf_buf
+suffix:semicolon
 id|tsz
 op_assign
 id|elf_buflen
@@ -1583,21 +1603,21 @@ id|tsz
 op_assign
 id|buflen
 suffix:semicolon
-id|elf_buffer
+id|elf_buf
 op_assign
 id|kmalloc
 c_func
 (paren
 id|elf_buflen
 comma
-id|GFP_KERNEL
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|elf_buffer
+id|elf_buf
 )paren
 r_return
 op_minus
@@ -1606,7 +1626,7 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|elf_buffer
+id|elf_buf
 comma
 l_int|0
 comma
@@ -1616,30 +1636,45 @@ suffix:semicolon
 id|elf_kcore_store_hdr
 c_func
 (paren
-id|elf_buffer
+id|elf_buf
 comma
 id|num_vma
 comma
 id|elf_buflen
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
 id|buffer
 comma
-id|elf_buffer
+id|elf_buf
 op_plus
 op_star
 id|fpos
 comma
 id|tsz
 )paren
-suffix:semicolon
+)paren
+(brace
 id|kfree
 c_func
 (paren
-id|elf_buffer
+id|elf_buf
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
+id|kfree
+c_func
+(paren
+id|elf_buf
 )paren
 suffix:semicolon
 id|buflen
@@ -1706,6 +1741,9 @@ op_assign
 id|buflen
 suffix:semicolon
 multiline_comment|/* write zeros to buffer */
+r_if
+c_cond
+(paren
 id|clear_user
 c_func
 (paren
@@ -1713,6 +1751,10 @@ id|buffer
 comma
 id|tsz
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|buflen
 op_sub_assign
@@ -1745,6 +1787,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* fill the remainder of the buffer from kernel VM space */
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -1761,6 +1806,10 @@ id|elf_buflen
 comma
 id|buflen
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|acc
 op_add_assign

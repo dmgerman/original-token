@@ -776,7 +776,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|check_signature
+id|isa_check_signature
 c_func
 (paren
 id|xd_bases

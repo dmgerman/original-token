@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: t1pci.c,v 1.2 1999/11/05 16:38:02 calle Exp $&n; * &n; * Module for AVM T1 PCI-card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: t1pci.c,v $&n; * Revision 1.2  1999/11/05 16:38:02  calle&n; * Cleanups before kernel 2.4:&n; * - Changed all messages to use card-&gt;name or driver-&gt;name instead of&n; *   constant string.&n; * - Moved some data from struct avmcard into new struct avmctrl_info.&n; *   Changed all lowlevel capi driver to match the new structur.&n; *&n; * Revision 1.1  1999/10/26 15:31:42  calle&n; * Added driver for T1-PCI card.&n; *&n; *&n; */
+multiline_comment|/*&n; * $Id: t1pci.c,v 1.3 1999/11/13 21:27:16 keil Exp $&n; * &n; * Module for AVM T1 PCI-card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: t1pci.c,v $&n; * Revision 1.3  1999/11/13 21:27:16  keil&n; * remove KERNELVERSION&n; *&n; * Revision 1.2  1999/11/05 16:38:02  calle&n; * Cleanups before kernel 2.4:&n; * - Changed all messages to use card-&gt;name or driver-&gt;name instead of&n; *   constant string.&n; * - Moved some data from struct avmcard into new struct avmctrl_info.&n; *   Changed all lowlevel capi driver to match the new structur.&n; *&n; * Revision 1.1  1999/10/26 15:31:42  calle&n; * Added driver for T1-PCI card.&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -10,7 +10,6 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/capi.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;compat.h&quot;
 macro_line|#include &quot;capicmd.h&quot;
 macro_line|#include &quot;capiutil.h&quot;
 macro_line|#include &quot;capilli.h&quot;
@@ -21,7 +20,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.2 $&quot;
+l_string|&quot;$Revision: 1.3 $&quot;
 suffix:semicolon
 DECL|macro|CONFIG_T1PCI_DEBUG
 macro_line|#undef CONFIG_T1PCI_DEBUG

@@ -99,6 +99,8 @@ mdefine_line|#define SIGPOLL&t;&t;SIGIO
 multiline_comment|/*&n;#define SIGLOST&t;&t;29&n;*/
 DECL|macro|SIGPWR
 mdefine_line|#define SIGPWR&t;&t;30
+DECL|macro|SIGSYS
+mdefine_line|#define SIGSYS&t;&t;31
 DECL|macro|SIGUNUSED
 mdefine_line|#define&t;SIGUNUSED&t;31
 multiline_comment|/* These should not be considered constants from userland.  */

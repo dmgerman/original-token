@@ -2671,10 +2671,6 @@ op_assign
 id|dev
 suffix:semicolon
 multiline_comment|/* N.B. why do this again?? */
-id|s-&gt;s_rd_only
-op_assign
-l_int|0
-suffix:semicolon
 id|s-&gt;s_type
 op_assign
 id|type

@@ -6,12 +6,6 @@ r_typedef
 id|kdev_t
 id|KernelDevice_T
 suffix:semicolon
-DECL|typedef|PROC_DirectoryEntry_T
-r_typedef
-r_struct
-id|proc_dir_entry
-id|PROC_DirectoryEntry_T
-suffix:semicolon
 DECL|typedef|ProcessorFlags_T
 r_typedef
 r_int

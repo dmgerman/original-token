@@ -1591,17 +1591,6 @@ id|dev
 suffix:semicolon
 r_extern
 r_void
-id|tr_freedev
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|fc_freedev
 c_func
 (paren

@@ -106,6 +106,11 @@ op_star
 id|sh_mem
 suffix:semicolon
 multiline_comment|/* RDP address&t;*/
+DECL|member|ph_mem
+r_int
+r_int
+id|ph_mem
+suffix:semicolon
 DECL|member|irq
 r_int
 r_int

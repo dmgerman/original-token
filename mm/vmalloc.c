@@ -817,6 +817,10 @@ c_func
 r_int
 r_int
 id|size
+comma
+r_int
+r_int
+id|flags
 )paren
 (brace
 r_int
@@ -934,6 +938,10 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
+id|area-&gt;flags
+op_assign
+id|flags
+suffix:semicolon
 id|area-&gt;addr
 op_assign
 (paren
@@ -1141,6 +1149,8 @@ id|get_vm_area
 c_func
 (paren
 id|size
+comma
+id|VM_ALLOC
 )paren
 suffix:semicolon
 r_if

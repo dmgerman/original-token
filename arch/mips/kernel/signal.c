@@ -2558,6 +2558,15 @@ suffix:colon
 r_case
 id|SIGBUS
 suffix:colon
+r_case
+id|SIGSYS
+suffix:colon
+r_case
+id|SIGXCPU
+suffix:colon
+r_case
+id|SIGXFSZ
+suffix:colon
 r_if
 c_cond
 (paren

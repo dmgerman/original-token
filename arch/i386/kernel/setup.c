@@ -1463,6 +1463,17 @@ l_string|&quot;(ACPI data)&bslash;n&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|E820_NVS
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;(ACPI NVS)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|printk

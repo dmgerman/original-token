@@ -826,7 +826,7 @@ id|j
 r_if
 c_cond
 (paren
-id|check_signature
+id|isa_check_signature
 (paren
 id|seagate_bases
 (braket

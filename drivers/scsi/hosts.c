@@ -865,17 +865,6 @@ multiline_comment|/* never reuse host_no (DB) */
 id|next_scsi_host
 op_increment
 suffix:semicolon
-multiline_comment|/* FIXME: what with overflows? Old code suffered from the same, BTW */
-id|sprintf
-c_func
-(paren
-id|retval-&gt;proc_name
-comma
-l_string|&quot;%d&quot;
-comma
-id|retval-&gt;host_no
-)paren
-suffix:semicolon
 id|retval-&gt;host_queue
 op_assign
 l_int|NULL

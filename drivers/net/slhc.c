@@ -2938,7 +2938,7 @@ suffix:semicolon
 )brace
 macro_line|#else /* MODULE */
 DECL|function|slhc_install
-r_void
+r_int
 id|__init
 id|slhc_install
 c_func
@@ -2946,6 +2946,9 @@ c_func
 r_void
 )paren
 (brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 macro_line|#else /* CONFIG_INET */

@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/inetdevice.h&gt;
 macro_line|#include &lt;linux/fddidevice.h&gt;
 macro_line|#include &lt;linux/trdevice.h&gt;
+macro_line|#include &lt;linux/fcdevice.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;net/neighbour.h&gt;
 macro_line|#include &lt;net/snmp.h&gt;
@@ -2019,11 +2020,27 @@ c_func
 id|init_trdev
 )paren
 suffix:semicolon
-DECL|variable|tr_freedev
+macro_line|#endif
+macro_line|#ifdef CONFIG_NET_FC
+DECL|variable|register_fcdev
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|tr_freedev
+id|register_fcdev
+)paren
+suffix:semicolon
+DECL|variable|unregister_fcdev
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unregister_fcdev
+)paren
+suffix:semicolon
+DECL|variable|init_fcdev
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|init_fcdev
 )paren
 suffix:semicolon
 macro_line|#endif

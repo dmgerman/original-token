@@ -6590,10 +6590,6 @@ op_assign
 op_amp
 id|udf_sb_ops
 suffix:semicolon
-id|sb-&gt;s_time
-op_assign
-l_int|0
-suffix:semicolon
 id|sb-&gt;dq_op
 op_assign
 l_int|NULL

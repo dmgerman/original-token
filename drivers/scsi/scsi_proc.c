@@ -421,6 +421,13 @@ id|Scsi_Host
 op_star
 id|hpnt
 suffix:semicolon
+r_char
+id|name
+(braket
+l_int|10
+)braket
+suffix:semicolon
+multiline_comment|/* see scsi_unregister_host() */
 id|tpnt-&gt;proc_dir
 op_assign
 id|create_proc_entry
@@ -460,12 +467,22 @@ id|proc_dir_entry
 op_star
 id|p
 suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|name
+comma
+l_string|&quot;%d&quot;
+comma
+id|hpnt-&gt;host_no
+)paren
+suffix:semicolon
 id|p
 op_assign
 id|create_proc_read_entry
 c_func
 (paren
-id|hpnt-&gt;proc_name
+id|name
 comma
 id|S_IFREG
 op_or

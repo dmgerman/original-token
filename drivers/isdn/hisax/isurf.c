@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isurf.c,v 1.6 1999/09/04 06:20:06 keil Exp $&n;&n; * isurf.c  low level stuff for Siemens I-Surf/I-Talk cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * $Log: isurf.c,v $&n; * Revision 1.6  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.5  1999/08/25 17:00:02  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 1.4  1999/08/22 20:27:09  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.3  1999/07/12 21:05:18  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.2  1999/07/01 08:07:56  keil&n; * Initial version&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: isurf.c,v 1.7 1999/11/14 23:37:03 keil Exp $&n;&n; * isurf.c  low level stuff for Siemens I-Surf/I-Talk cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * $Log: isurf.c,v $&n; * Revision 1.7  1999/11/14 23:37:03  keil&n; * new ISA memory mapped IO&n; *&n; * Revision 1.6  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.5  1999/08/25 17:00:02  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 1.4  1999/08/22 20:27:09  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.3  1999/07/12 21:05:18  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.2  1999/07/01 08:07:56  keil&n; * Initial version&n; *&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -20,7 +20,7 @@ r_char
 op_star
 id|ISurf_revision
 op_assign
-l_string|&quot;$Revision: 1.6 $&quot;
+l_string|&quot;$Revision: 1.7 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -40,6 +40,8 @@ DECL|macro|ISURF_ISAR_OFFSET
 mdefine_line|#define ISURF_ISAR_OFFSET&t;0
 DECL|macro|ISURF_ISAC_OFFSET
 mdefine_line|#define ISURF_ISAC_OFFSET&t;0x100
+DECL|macro|ISURF_IOMEM_SIZE
+mdefine_line|#define ISURF_IOMEM_SIZE&t;0x400
 multiline_comment|/* Interface functions */
 r_static
 id|u_char
@@ -547,6 +549,25 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|iounmap
+c_func
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|cs-&gt;hw.isurf.isar
+)paren
+suffix:semicolon
+id|release_mem_region
+c_func
+(paren
+id|cs-&gt;hw.isurf.phymem
+comma
+id|ISURF_IOMEM_SIZE
+)paren
+suffix:semicolon
 )brace
 r_static
 r_void
@@ -964,23 +985,12 @@ id|card-&gt;para
 l_int|1
 )braket
 suffix:semicolon
-id|cs-&gt;hw.isurf.isar
+id|cs-&gt;hw.isurf.phymem
 op_assign
 id|card-&gt;para
 (braket
 l_int|2
 )braket
-op_plus
-id|ISURF_ISAR_OFFSET
-suffix:semicolon
-id|cs-&gt;hw.isurf.isac
-op_assign
-id|card-&gt;para
-(braket
-l_int|2
-)braket
-op_plus
-id|ISURF_ISAC_OFFSET
 suffix:semicolon
 id|cs-&gt;irq
 op_assign
@@ -1055,15 +1065,92 @@ l_string|&quot;isurf isdn&quot;
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|check_mem_region
+c_func
+(paren
+id|cs-&gt;hw.isurf.phymem
+comma
+id|ISURF_IOMEM_SIZE
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;HiSax: %s memory region %lx-%lx already in use&bslash;n&quot;
+comma
+id|CardType
+(braket
+id|card-&gt;typ
+)braket
+comma
+id|cs-&gt;hw.isurf.phymem
+comma
+id|cs-&gt;hw.isurf.phymem
+op_plus
+id|ISURF_IOMEM_SIZE
+)paren
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|cs-&gt;hw.isurf.reset
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|request_mem_region
+c_func
+(paren
+id|cs-&gt;hw.isurf.phymem
+comma
+id|ISURF_IOMEM_SIZE
+comma
+l_string|&quot;isurf iomem&quot;
+)paren
+suffix:semicolon
+)brace
+id|cs-&gt;hw.isurf.isar
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|ioremap
+c_func
+(paren
+id|cs-&gt;hw.isurf.phymem
+comma
+id|ISURF_IOMEM_SIZE
+)paren
+suffix:semicolon
+id|cs-&gt;hw.isurf.isac
+op_assign
+id|cs-&gt;hw.isurf.isar
+op_plus
+id|ISURF_ISAC_OFFSET
+suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;ISurf: defined at 0x%x 0x%x IRQ %d&bslash;n&quot;
+l_string|&quot;ISurf: defined at 0x%x 0x%lx IRQ %d&bslash;n&quot;
 comma
 id|cs-&gt;hw.isurf.reset
 comma
-id|cs-&gt;hw.isurf.isar
+id|cs-&gt;hw.isurf.phymem
 comma
 id|cs-&gt;irq
 )paren

@@ -30,6 +30,7 @@ suffix:semicolon
 r_extern
 r_struct
 id|proc_dir_entry
+op_star
 id|atm_proc_root
 suffix:semicolon
 multiline_comment|/* from proc.c. */
@@ -109,26 +110,6 @@ multiline_comment|/* read */
 id|proc_mpc_write
 comma
 multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* no fsync */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *   Define allowed INODE OPERATIONS&n; */
@@ -142,100 +123,6 @@ op_assign
 op_amp
 id|mpc_file_operations
 comma
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* bmap */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-multiline_comment|/* permission */
-)brace
-suffix:semicolon
-multiline_comment|/*&n; *  Our statistics file&n; */
-DECL|variable|mpc_stats
-r_static
-r_struct
-id|proc_dir_entry
-id|mpc_stats
-op_assign
-(brace
-l_int|0
-comma
-multiline_comment|/* low_ino           */
-r_sizeof
-(paren
-id|STAT_FILE_NAME
-)paren
-op_minus
-l_int|1
-comma
-multiline_comment|/* name length       */
-id|STAT_FILE_NAME
-comma
-multiline_comment|/* name              */
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-multiline_comment|/* mode              */
-l_int|1
-comma
-multiline_comment|/* 1=file            */
-l_int|0
-comma
-multiline_comment|/* UID               */
-l_int|0
-comma
-multiline_comment|/* GID               */
-l_int|0
-comma
-multiline_comment|/* size              */
-op_amp
-id|mpc_inode_operations
-comma
-multiline_comment|/* inode operations  */
-l_int|NULL
-multiline_comment|/* get_info func-ptr */
 )brace
 suffix:semicolon
 DECL|function|print_header
@@ -2025,29 +1912,28 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|retval
+r_struct
+id|proc_dir_entry
+op_star
+id|p
+suffix:semicolon
+id|p
 op_assign
+id|create_proc_entry
+c_func
+(paren
+id|STAT_FILE_NAME
+comma
 l_int|0
+comma
+id|atm_proc_root
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|retval
-op_assign
-id|proc_register
-c_func
-(paren
-op_amp
-id|atm_proc_root
-comma
-op_amp
-id|mpc_stats
-)paren
-)paren
-op_ne
-l_int|0
+op_logical_neg
+id|p
 )paren
 (brace
 id|printk
@@ -2060,9 +1946,15 @@ id|STAT_FILE_NAME
 )paren
 suffix:semicolon
 r_return
-id|retval
+op_minus
+id|ENOMEM
 suffix:semicolon
 )brace
+id|p-&gt;ops
+op_assign
+op_amp
+id|mpc_inode_operations
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2076,13 +1968,12 @@ c_func
 r_void
 )paren
 (brace
-id|proc_unregister
+id|remove_proc_entry
 c_func
 (paren
-op_amp
-id|atm_proc_root
+id|STAT_FILE_NAME
 comma
-id|mpc_stats.low_ino
+id|atm_proc_root
 )paren
 suffix:semicolon
 )brace
