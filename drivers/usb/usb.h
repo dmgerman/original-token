@@ -145,7 +145,6 @@ mdefine_line|#define USB_REQ_SET_PROTOCOL&t;&t;0x0B
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
 DECL|macro|USB_MAJOR
 mdefine_line|#define USB_MAJOR 180
 multiline_comment|/* for 2.2-kernels */

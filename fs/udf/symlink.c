@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * symlink.c&n; *&n; * PURPOSE&n; *&t;Symlink handling routines for the OSTA-UDF(tm) filesystem.&n; *&n; * CONTACTS&n; *&t;E-mail regarding any portion of the Linux UDF file system should be&n; *&t;directed to the development team mailing list (run by majordomo):&n; *&t;&t;linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *&t;This file is distributed under the terms of the GNU General Public&n; *&t;License (GPL). Copies of the GPL can be obtained from:&n; *&t;&t;ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *&t;Each contributing author retains all rights to their own work.&n; *&n; *  (C) 1998-1999 Ben Fennema&n; *  (C) 1999 Stelias Computing Inc &n; *&n; * HISTORY&n; *&n; *  04/16/99 blf  Created.&n; *&n; */
+multiline_comment|/*&n; * symlink.c&n; *&n; * PURPOSE&n; *&t;Symlink handling routines for the OSTA-UDF(tm) filesystem.&n; *&n; * CONTACTS&n; *&t;E-mail regarding any portion of the Linux UDF file system should be&n; *&t;directed to the development team mailing list (run by majordomo):&n; *&t;&t;linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *&t;This file is distributed under the terms of the GNU General Public&n; *&t;License (GPL). Copies of the GPL can be obtained from:&n; *&t;&t;ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *&t;Each contributing author retains all rights to their own work.&n; *&n; *  (C) 1998-2000 Ben Fennema&n; *  (C) 1999 Stelias Computing Inc &n; *&n; * HISTORY&n; *&n; *  04/16/99 blf  Created.&n; *&n; */
 macro_line|#include &quot;udfdecl.h&quot;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -35,10 +35,6 @@ id|pc
 suffix:semicolon
 r_int
 id|elen
-op_assign
-l_int|0
-comma
-id|len
 op_assign
 l_int|0
 suffix:semicolon
@@ -145,8 +141,6 @@ id|memcpy
 c_func
 (paren
 id|p
-op_plus
-id|len
 comma
 id|pc-&gt;componentIdent
 comma
@@ -184,7 +178,6 @@ id|to
 op_plus
 l_int|1
 )paren
-(brace
 id|p
 (braket
 op_minus
@@ -193,7 +186,14 @@ l_int|1
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
-)brace
+r_else
+id|p
+(braket
+l_int|0
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
 )brace
 DECL|function|udf_symlink_filler
 r_static
@@ -232,6 +232,9 @@ id|symlink
 suffix:semicolon
 r_int
 id|err
+op_assign
+op_minus
+id|EIO
 suffix:semicolon
 r_char
 op_star
@@ -246,11 +249,6 @@ c_func
 (paren
 id|page
 )paren
-suffix:semicolon
-id|err
-op_assign
-op_minus
-id|EIO
 suffix:semicolon
 r_if
 c_cond
@@ -388,8 +386,7 @@ id|page
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EIO
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * symlinks can&squot;t do much...&n; */
@@ -399,18 +396,59 @@ id|inode_operations
 id|udf_symlink_inode_operations
 op_assign
 (brace
-id|readlink
-suffix:colon
+l_int|NULL
+comma
+multiline_comment|/* no file-operations */
+l_int|NULL
+comma
+multiline_comment|/* create */
+l_int|NULL
+comma
+multiline_comment|/* lookup */
+l_int|NULL
+comma
+multiline_comment|/* link */
+l_int|NULL
+comma
+multiline_comment|/* unlink */
+l_int|NULL
+comma
+multiline_comment|/* symlink */
+l_int|NULL
+comma
+multiline_comment|/* mkdir */
+l_int|NULL
+comma
+multiline_comment|/* rmdir */
+l_int|NULL
+comma
+multiline_comment|/* mknod */
+l_int|NULL
+comma
+multiline_comment|/* rename */
 id|page_readlink
 comma
-id|follow_link
-suffix:colon
+multiline_comment|/* readlink */
 id|page_follow_link
 comma
-id|readpage
-suffix:colon
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* get_block */
 id|udf_symlink_filler
 comma
+multiline_comment|/* readpage */
+l_int|NULL
+comma
+multiline_comment|/* writepage */
+l_int|NULL
+comma
+multiline_comment|/* truncate */
+l_int|NULL
+comma
+multiline_comment|/* permission */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 eof

@@ -4963,6 +4963,14 @@ op_lshift
 id|order
 )paren
 suffix:semicolon
+multiline_comment|/* Make sure DMA address 0 is never returned just to allow catching&n;&t;   of buggy drivers.  */
+id|p-&gt;iommu.lowest_free
+(braket
+l_int|0
+)braket
+op_assign
+l_int|1
+suffix:semicolon
 macro_line|#ifndef NEW_PCI_DMA_MAP
 id|iopte
 op_assign

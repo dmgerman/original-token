@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for USB SCSI - include file&n; *&n; * (c) 1999 Michael Gee (michael@linuxspecific.com)&n; * (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; */
+multiline_comment|/* Driver for USB mass storage - include file&n; *&n; * (c) 1999 Michael Gee (michael@linuxspecific.com)&n; * (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|USB_STORAGE
 mdefine_line|#define USB_STORAGE &quot;usb-storage: &quot;
@@ -6,7 +6,7 @@ r_extern
 r_int
 id|usb_stor_debug
 suffix:semicolon
-macro_line|#ifdef CONFIG_USB_SCSI_DEBUG
+macro_line|#ifdef CONFIG_USB_STORAGE_DEBUG
 r_void
 id|us_show_command
 c_func

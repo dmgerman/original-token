@@ -2,7 +2,7 @@ macro_line|#ifndef __UDF_DECL_H
 DECL|macro|__UDF_DECL_H
 mdefine_line|#define __UDF_DECL_H
 DECL|macro|UDF_VERSION_NOTICE
-mdefine_line|#define UDF_VERSION_NOTICE &quot;v0.8.9.4&quot;
+mdefine_line|#define UDF_VERSION_NOTICE &quot;v0.9.0&quot;
 macro_line|#include &lt;linux/udf_167.h&gt;
 macro_line|#include &lt;linux/udf_udf.h&gt;
 macro_line|#include &quot;udfend.h&quot;
@@ -31,6 +31,10 @@ DECL|macro|CURRENT_UTIME
 mdefine_line|#define CURRENT_UTIME&t;(xtime.tv_usec)
 DECL|macro|udf_file_entry_alloc_offset
 mdefine_line|#define udf_file_entry_alloc_offset(inode)&bslash;&n;&t;((UDF_I_EXTENDED_FE(inode) ?&bslash;&n;&t;&t;sizeof(struct ExtendedFileEntry) :&bslash;&n;&t;&t;sizeof(struct FileEntry)) + UDF_I_LENEATTR(inode))
+DECL|macro|udf_ext0_offset
+mdefine_line|#define udf_ext0_offset(inode)&bslash;&n;&t;(UDF_I_ALLOCTYPE(inode) == ICB_FLAG_AD_IN_ICB ?&bslash;&n;&t;&t;udf_file_entry_alloc_offset(inode) : 0)
+DECL|macro|udf_get_lb_pblock
+mdefine_line|#define udf_get_lb_pblock(sb,loc,offset) udf_get_pblock((sb), (loc).logicalBlockNum, (loc).partitionReferenceNum, (offset))
 macro_line|#else
 macro_line|#include &lt;sys/types.h&gt;
 macro_line|#endif /* __KERNEL__ */
@@ -468,10 +472,25 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|udf_expand_file_adinicb
+c_func
+(paren
+r_struct
+id|file
+op_star
+comma
+r_int
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_struct
 id|buffer_head
 op_star
-id|udf_expand_adinicb
+id|udf_expand_dir_adinicb
 c_func
 (paren
 r_struct
@@ -480,8 +499,6 @@ op_star
 comma
 r_int
 op_star
-comma
-r_int
 comma
 r_int
 op_star
@@ -522,6 +539,32 @@ id|buffer_head
 op_star
 comma
 r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|udf_readpage_adinicb
+(paren
+r_struct
+id|dentry
+op_star
+comma
+r_struct
+id|page
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|udf_writepage_adinicb
+(paren
+r_struct
+id|dentry
+op_star
+comma
+r_struct
+id|page
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -995,16 +1038,66 @@ id|Uint32
 suffix:semicolon
 r_extern
 id|Uint32
-id|udf_get_lb_pblock
+id|udf_get_pblock_virt15
 c_func
 (paren
 r_struct
 id|super_block
 op_star
 comma
-id|lb_addr
+id|Uint32
+comma
+id|Uint16
 comma
 id|Uint32
+)paren
+suffix:semicolon
+r_extern
+id|Uint32
+id|udf_get_pblock_virt20
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+comma
+id|Uint32
+comma
+id|Uint16
+comma
+id|Uint32
+)paren
+suffix:semicolon
+r_extern
+id|Uint32
+id|udf_get_pblock_spar15
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+comma
+id|Uint32
+comma
+id|Uint16
+comma
+id|Uint32
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|udf_fill_spartable
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+comma
+r_struct
+id|udf_sparing_data
+op_star
+comma
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* unicode.c */
@@ -1051,6 +1144,16 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* truncate.c */
+r_extern
+r_void
+id|udf_trunc
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|udf_truncate
@@ -1127,6 +1230,20 @@ suffix:semicolon
 r_extern
 r_int
 id|udf_sync_file
+c_func
+(paren
+r_struct
+id|file
+op_star
+comma
+r_struct
+id|dentry
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|udf_sync_file_adinicb
 c_func
 (paren
 r_struct
@@ -1400,22 +1517,6 @@ id|Uint16
 )paren
 suffix:semicolon
 multiline_comment|/* misc.c */
-r_extern
-id|uid_t
-id|udf_convert_uid
-c_func
-(paren
-r_int
-)paren
-suffix:semicolon
-r_extern
-id|gid_t
-id|udf_convert_gid
-c_func
-(paren
-r_int
-)paren
-suffix:semicolon
 r_extern
 id|Uint32
 id|udf64_low32

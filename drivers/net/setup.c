@@ -380,6 +380,30 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|abyss_probe
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|madgemc_probe
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|tms_pci_probe
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* Pad device name to IFNAMSIZ=16. F.e. __PAD6 is tring of 9 zeros. */
 DECL|macro|__PAD6
 mdefine_line|#define __PAD6 &quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
@@ -748,6 +772,31 @@ l_int|0
 )brace
 comma
 macro_line|#endif&t;/* CONFIG_YAM */
+multiline_comment|/*&n; *&t;Token Ring Drivers&n; */
+macro_line|#ifdef CONFIG_ABYSS
+(brace
+id|abyss_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_MADGEMC
+(brace
+id|madgemc_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_TMSPCI
+(brace
+id|tms_pci_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
 (brace
 l_int|NULL
 comma

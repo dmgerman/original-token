@@ -122,6 +122,13 @@ c_func
 id|pci_unregister_driver
 )paren
 suffix:semicolon
+DECL|variable|pci_match_device
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_match_device
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_HOTPLUG
 DECL|variable|pci_setup_device
 id|EXPORT_SYMBOL

@@ -17,7 +17,7 @@ mdefine_line|#define UDF_SB_FREE(X)&bslash;&n;{&bslash;&n;&t;if (UDF_SB(X))&bsla
 DECL|macro|UDF_SB
 mdefine_line|#define UDF_SB(X)&t;(&amp;((X)-&gt;u.udf_sb))
 DECL|macro|UDF_SB_ALLOC_PARTMAPS
-mdefine_line|#define UDF_SB_ALLOC_PARTMAPS(X,Y)&bslash;&n;{&bslash;&n;&t;UDF_SB_NUMPARTS(X) = Y;&bslash;&n;&t;UDF_SB_PARTMAPS(X) = kmalloc(sizeof(struct udf_part_map) * Y, GFP_KERNEL);&bslash;&n;}
+mdefine_line|#define UDF_SB_ALLOC_PARTMAPS(X,Y)&bslash;&n;{&bslash;&n;&t;UDF_SB_NUMPARTS(X) = Y;&bslash;&n;&t;UDF_SB_PARTMAPS(X) = kmalloc(sizeof(struct udf_part_map) * Y, GFP_KERNEL);&bslash;&n;&t;memset(UDF_SB_PARTMAPS(X), 0x00, sizeof(struct udf_part_map) * Y);&bslash;&n;}
 DECL|macro|IS_STRICT
 mdefine_line|#define IS_STRICT(X)&t;&t;&t;( UDF_SB(X)-&gt;s_flags &amp; UDF_FLAG_STRICT )
 DECL|macro|IS_UNDELETE
@@ -50,12 +50,8 @@ DECL|macro|UDF_SB_VOLIDENT
 mdefine_line|#define UDF_SB_VOLIDENT(X)&t;&t;( UDF_SB(X)-&gt;s_volident )
 DECL|macro|UDF_SB_PARTMAPS
 mdefine_line|#define UDF_SB_PARTMAPS(X)&t;&t;( UDF_SB(X)-&gt;s_partmaps )
-DECL|macro|UDF_SB_LOCATION
-mdefine_line|#define UDF_SB_LOCATION(X)&t;&t;( UDF_SB(X)-&gt;s_location )
 DECL|macro|UDF_SB_SERIALNUM
 mdefine_line|#define UDF_SB_SERIALNUM(X)&t;&t;( UDF_SB(X)-&gt;s_serialnum )
-DECL|macro|UDF_SB_CHARSET
-mdefine_line|#define UDF_SB_CHARSET(X)&t;&t;( UDF_SB(X)-&gt;s_nls_iocharset )
 DECL|macro|UDF_SB_VAT
 mdefine_line|#define UDF_SB_VAT(X)&t;&t;&t;( UDF_SB(X)-&gt;s_vat )
 DECL|macro|UDF_SB_BLOCK_BITMAP_NUMBER
@@ -78,5 +74,7 @@ DECL|macro|UDF_SB_TYPESPAR
 mdefine_line|#define UDF_SB_TYPESPAR(X,Y)&t;( UDF_SB_PARTMAPS(X)[Y].s_type_specific.s_sparing )
 DECL|macro|UDF_SB_TYPEVIRT
 mdefine_line|#define UDF_SB_TYPEVIRT(X,Y)&t;( UDF_SB_PARTMAPS(X)[Y].s_type_specific.s_virtual )
+DECL|macro|UDF_SB_PARTFUNC
+mdefine_line|#define UDF_SB_PARTFUNC(X,Y)&t;( UDF_SB_PARTMAPS(X)[Y].s_partition_func )
 macro_line|#endif /* __LINUX_UDF_SB_H */
 eof

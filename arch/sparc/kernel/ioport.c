@@ -1191,10 +1191,10 @@ l_string|&quot;sbus_set_sbus64: unsupported&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Allocate a chunk of memory suitable for DMA.&n; * Typically devices use them for control blocks.&n; * CPU may access them without any explicit flushing.&n; *&n; * XXX Some clever people know that sdev is not used and supply NULL. Watch.&n; */
-DECL|function|sbus_alloc_consistant
+DECL|function|sbus_alloc_consistent
 r_void
 op_star
-id|sbus_alloc_consistant
+id|sbus_alloc_consistent
 c_func
 (paren
 r_struct
@@ -1319,7 +1319,7 @@ multiline_comment|/*&n;&t;&t; * printk here may be flooding... Consider removal 
 id|printk
 c_func
 (paren
-l_string|&quot;sbus_alloc_consistant: no %ld pages&bslash;n&quot;
+l_string|&quot;sbus_alloc_consistent: no %ld pages&bslash;n&quot;
 comma
 id|len_total
 op_rshift
@@ -1363,7 +1363,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;sbus_alloc_consistant: no core&bslash;n&quot;
+l_string|&quot;sbus_alloc_consistent: no core&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1418,7 +1418,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;sbus_alloc_consistant: cannot occupy 0x%lx&quot;
+l_string|&quot;sbus_alloc_consistent: cannot occupy 0x%lx&quot;
 comma
 id|len_total
 )paren
@@ -1474,9 +1474,9 @@ op_star
 id|res-&gt;start
 suffix:semicolon
 )brace
-DECL|function|sbus_free_consistant
+DECL|function|sbus_free_consistent
 r_void
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 r_struct
@@ -1533,7 +1533,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;sbus_free_consistant: cannot free %p&bslash;n&quot;
+l_string|&quot;sbus_free_consistent: cannot free %p&bslash;n&quot;
 comma
 id|p
 )paren
@@ -1564,7 +1564,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;sbus_free_consistant: unaligned va %p&bslash;n&quot;
+l_string|&quot;sbus_free_consistent: unaligned va %p&bslash;n&quot;
 comma
 id|p
 )paren
@@ -1601,7 +1601,7 @@ id|n
 id|printk
 c_func
 (paren
-l_string|&quot;sbus_free_consistant: region 0x%lx asked 0x%lx&bslash;n&quot;
+l_string|&quot;sbus_free_consistent: region 0x%lx asked 0x%lx&bslash;n&quot;
 comma
 (paren
 r_int
@@ -1723,7 +1723,7 @@ r_int
 id|len
 )paren
 (brace
-macro_line|#if 0 /* This is the version that abuses consistant space */
+macro_line|#if 0 /* This is the version that abuses consistent space */
 r_int
 r_int
 id|len_total
@@ -1955,7 +1955,7 @@ r_int
 id|n
 )paren
 (brace
-macro_line|#if 0 /* This is the version that abuses consistant space */
+macro_line|#if 0 /* This is the version that abuses consistent space */
 r_struct
 id|resource
 op_star

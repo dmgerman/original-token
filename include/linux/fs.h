@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/dcache.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/cache.h&gt;
+macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 r_struct
@@ -73,10 +74,6 @@ DECL|macro|SPECIAL
 mdefine_line|#define SPECIAL 4&t;/* For non-blockdevice requests in request queue */
 DECL|macro|WRITERAW
 mdefine_line|#define WRITERAW 5&t;/* raw write - don&squot;t play with buffer lists */
-macro_line|#ifndef NULL
-DECL|macro|NULL
-mdefine_line|#define NULL ((void *) 0)
-macro_line|#endif
 DECL|macro|NIL_FILP
 mdefine_line|#define NIL_FILP&t;((struct file *)0)
 DECL|macro|SEL_IN

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/zorro.h -- Amiga AutoConfig (Zorro) Bus Definitions&n; *&n; *  Copyright (C) 1995-1998 Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; */
+multiline_comment|/*&n; *  linux/zorro.h -- Amiga AutoConfig (Zorro) Bus Definitions&n; *&n; *  Copyright (C) 1995-2000 Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; */
 macro_line|#ifndef _LINUX_ZORRO_H
 DECL|macro|_LINUX_ZORRO_H
 mdefine_line|#define _LINUX_ZORRO_H
@@ -17,6 +17,8 @@ r_typedef
 id|__u32
 id|zorro_id
 suffix:semicolon
+DECL|macro|ZORRO_WILDCARD
+mdefine_line|#define ZORRO_WILDCARD&t;&t;(0xffffffff)&t;/* not official */
 DECL|macro|ZORRO_MANUF_PACIFIC_PERIPHERALS
 mdefine_line|#define ZORRO_MANUF_PACIFIC_PERIPHERALS&t;&t;&t;&t;0x00D3
 DECL|macro|ZORRO_PROD_PACIFIC_PERIPHERALS_SE_2000_A500
@@ -1268,6 +1270,35 @@ macro_line|#ifndef __ASSEMBLY__
 DECL|macro|ZORRO_NUM_AUTO
 mdefine_line|#define ZORRO_NUM_AUTO&t;&t;16
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/ioport.h&gt;
+r_struct
+id|zorro_dev
+(brace
+r_struct
+id|ExpansionRom
+id|rom
+suffix:semicolon
+id|zorro_id
+id|id
+suffix:semicolon
+id|u16
+id|slotaddr
+suffix:semicolon
+id|u16
+id|slotsize
+suffix:semicolon
+r_char
+id|name
+(braket
+l_int|48
+)braket
+suffix:semicolon
+r_struct
+id|resource
+id|resource
+suffix:semicolon
+)brace
+suffix:semicolon
 r_extern
 r_int
 r_int
@@ -1276,7 +1307,7 @@ suffix:semicolon
 multiline_comment|/* # of autoconfig devices found */
 r_extern
 r_struct
-id|ConfigDev
+id|zorro_dev
 id|zorro_autocon
 (braket
 id|ZORRO_NUM_AUTO
@@ -1300,64 +1331,27 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
-r_int
-id|zorro_find
+r_struct
+id|zorro_dev
+op_star
+id|zorro_find_device
 c_func
 (paren
 id|zorro_id
 id|id
 comma
-r_int
-r_int
-id|part
-comma
-r_int
-r_int
-id|index
-)paren
-suffix:semicolon
-r_extern
-r_const
 r_struct
-id|ConfigDev
+id|zorro_dev
 op_star
-id|zorro_get_board
-c_func
-(paren
-r_int
-r_int
-id|key
+id|from
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|zorro_config_board
-c_func
-(paren
-r_int
-r_int
-id|key
-comma
-r_int
-r_int
-id|part
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|zorro_unconfig_board
-c_func
-(paren
-r_int
-r_int
-id|key
-comma
-r_int
-r_int
-id|part
-)paren
-suffix:semicolon
+DECL|macro|zorro_request_device
+mdefine_line|#define zorro_request_device(z, name) &bslash;&n;    request_mem_region((z)-&gt;resource.start, &bslash;&n;&t;&t;       (z)-&gt;resource.end-(z)-&gt;resource.start+1, (name))
+DECL|macro|zorro_check_device
+mdefine_line|#define zorro_check_device(z) &bslash;&n;    check_mem_region((z)-&gt;resource.start, &bslash;&n;&t;&t;     (z)-&gt;resource.end-(z)-&gt;resource.start+1)
+DECL|macro|zorro_release_device
+mdefine_line|#define zorro_release_device(z) &bslash;&n;    release_mem_region((z)-&gt;resource.start, &bslash;&n;&t;&t;       (z)-&gt;resource.end-(z)-&gt;resource.start+1)
 multiline_comment|/*&n;     *  Bitmask indicating portions of available Zorro II RAM that are unused&n;     *  by the system. Every bit represents a 64K chunk, for a maximum of 8MB&n;     *  (128 chunks, physical 0x00200000-0x009fffff).&n;     *&n;     *  If you want to use (= allocate) portions of this RAM, you should clear&n;     *  the corresponding bits.&n;     */
 r_extern
 id|__u32

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/acpi.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -401,6 +402,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|strnlen_user
+)paren
+suffix:semicolon
+DECL|variable|pci_alloc_consistent
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_alloc_consistent
+)paren
+suffix:semicolon
+DECL|variable|pci_free_consistent
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_free_consistent
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_X86_USE_3DNOW

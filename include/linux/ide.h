@@ -1015,13 +1015,30 @@ op_star
 id|dmaproc
 suffix:semicolon
 multiline_comment|/* dma read/write/abort routine */
-DECL|member|dmatable
+DECL|member|dmatable_cpu
 r_int
 r_int
 op_star
-id|dmatable
+id|dmatable_cpu
 suffix:semicolon
-multiline_comment|/* dma physical region descriptor table */
+multiline_comment|/* dma physical region descriptor table (cpu view) */
+DECL|member|dmatable_dma
+id|u32
+id|dmatable_dma
+suffix:semicolon
+multiline_comment|/* dma physical region descriptor table (dma view) */
+DECL|member|sg_table
+r_struct
+id|scatterlist
+op_star
+id|sg_table
+suffix:semicolon
+multiline_comment|/* Scatter-gather list used to build the above */
+DECL|member|sg_nents
+r_int
+id|sg_nents
+suffix:semicolon
+multiline_comment|/* Current number of entries in it */
 DECL|member|mate
 r_struct
 id|hwif_s
@@ -2692,6 +2709,14 @@ id|drive
 comma
 id|ide_dma_action_t
 id|func
+)paren
+suffix:semicolon
+r_void
+id|ide_destroy_dmatable
+(paren
+id|ide_drive_t
+op_star
+id|drive
 )paren
 suffix:semicolon
 id|ide_startstop_t

@@ -906,6 +906,12 @@ id|EAGAIN
 )paren
 r_return
 id|p
+ques
+c_cond
+id|p
+suffix:colon
+op_minus
+id|EAGAIN
 suffix:semicolon
 multiline_comment|/* No more space. Return # of accepted bytes */
 r_return
@@ -1340,6 +1346,18 @@ multiline_comment|/*&n;&t;&t;&t; *&t;Nonblocking mode handling. Return current #
 r_if
 c_cond
 (paren
+id|p
+OG
+l_int|0
+)paren
+multiline_comment|/* Avoid throwing away data */
+r_return
+id|p
+suffix:semicolon
+multiline_comment|/* Return it instead */
+r_if
+c_cond
+(paren
 (paren
 id|file-&gt;f_flags
 op_amp
@@ -1352,20 +1370,9 @@ op_minus
 id|EAGAIN
 )paren
 r_return
-id|p
+op_minus
+id|EAGAIN
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|p
-OG
-l_int|0
-)paren
-multiline_comment|/* Avoid throwing away data */
-r_return
-id|p
-suffix:semicolon
-multiline_comment|/* Return it instead */
 r_return
 id|buf_no
 suffix:semicolon

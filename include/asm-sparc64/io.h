@@ -13,7 +13,7 @@ mdefine_line|#define __SLOW_DOWN_IO&t;do { } while (0)
 DECL|macro|SLOW_DOWN_IO
 mdefine_line|#define SLOW_DOWN_IO&t;do { } while (0)
 DECL|macro|NEW_PCI_DMA_MAP
-macro_line|#undef NEW_PCI_DMA_MAP
+mdefine_line|#define NEW_PCI_DMA_MAP
 macro_line|#ifndef NEW_PCI_DMA_MAP
 DECL|macro|PCI_DVMA_HASHSZ
 mdefine_line|#define PCI_DVMA_HASHSZ&t;256

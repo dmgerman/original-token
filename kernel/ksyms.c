@@ -820,13 +820,6 @@ c_func
 id|___wait_on_page
 )paren
 suffix:semicolon
-DECL|variable|add_blkdev_randomness
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|add_blkdev_randomness
-)paren
-suffix:semicolon
 DECL|variable|block_read_full_page
 id|EXPORT_SYMBOL
 c_func
@@ -1369,13 +1362,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|max_sectors
-)paren
-suffix:semicolon
-DECL|variable|max_segments
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|max_segments
 )paren
 suffix:semicolon
 DECL|variable|max_readahead
@@ -2282,6 +2268,22 @@ c_func
 id|brw_page
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_UID16
+DECL|variable|overflowuid
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|overflowuid
+)paren
+suffix:semicolon
+DECL|variable|overflowgid
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|overflowgid
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|fs_overflowuid
 id|EXPORT_SYMBOL
 c_func
@@ -2297,13 +2299,6 @@ id|fs_overflowgid
 )paren
 suffix:semicolon
 multiline_comment|/* all busmice */
-DECL|variable|add_mouse_randomness
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|add_mouse_randomness
-)paren
-suffix:semicolon
 DECL|variable|fasync_helper
 id|EXPORT_SYMBOL
 c_func

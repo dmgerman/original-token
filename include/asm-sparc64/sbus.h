@@ -278,11 +278,11 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* These yield IOMMU mappings in consistant mode. */
+multiline_comment|/* These yield IOMMU mappings in consistent mode. */
 r_extern
 r_void
 op_star
-id|sbus_alloc_consistant
+id|sbus_alloc_consistent
 c_func
 (paren
 r_struct
@@ -291,14 +291,14 @@ op_star
 comma
 r_int
 comma
-id|u32
+id|dma_addr_t
 op_star
 id|dma_addrp
 )paren
 suffix:semicolon
 r_extern
 r_void
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 r_struct
@@ -310,12 +310,12 @@ comma
 r_void
 op_star
 comma
-id|u32
+id|dma_addr_t
 )paren
 suffix:semicolon
 multiline_comment|/* All the rest use streaming mode mappings. */
 r_extern
-id|u32
+id|dma_addr_t
 id|sbus_map_single
 c_func
 (paren
@@ -338,7 +338,7 @@ r_struct
 id|sbus_dev
 op_star
 comma
-id|u32
+id|dma_addr_t
 comma
 r_int
 )paren
@@ -385,7 +385,7 @@ r_struct
 id|sbus_dev
 op_star
 comma
-id|u32
+id|dma_addr_t
 comma
 r_int
 )paren

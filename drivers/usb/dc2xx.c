@@ -253,7 +253,6 @@ op_increment
 )paren
 (brace
 r_int
-r_int
 id|count
 suffix:semicolon
 r_int
@@ -530,7 +529,6 @@ id|thistime
 r_int
 id|result
 suffix:semicolon
-r_int
 r_int
 id|count
 suffix:semicolon

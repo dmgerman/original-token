@@ -20,7 +20,7 @@ macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 r_static
 r_int
 id|load_aout32_binary
@@ -57,6 +57,11 @@ r_struct
 id|pt_regs
 op_star
 id|regs
+comma
+r_struct
+id|file
+op_star
+id|file
 )paren
 suffix:semicolon
 r_extern
@@ -82,7 +87,7 @@ op_assign
 (brace
 l_int|NULL
 comma
-l_int|NULL
+id|THIS_MODULE
 comma
 id|load_aout32_binary
 comma
@@ -858,12 +863,6 @@ id|error
 suffix:semicolon
 r_int
 r_int
-id|p
-op_assign
-id|bprm-&gt;p
-suffix:semicolon
-r_int
-r_int
 id|fd_offset
 suffix:semicolon
 r_int
@@ -1235,6 +1234,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_static
+r_int
+r_int
+id|error_time
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1257,7 +1261,18 @@ id|ex
 op_ne
 id|NMAGIC
 )paren
+op_logical_and
+(paren
+id|jiffies
+op_minus
+id|error_time
 )paren
+OG
+l_int|5
+op_star
+id|HZ
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -1265,6 +1280,11 @@ id|KERN_NOTICE
 l_string|&quot;executable not page aligned&bslash;n&quot;
 )paren
 suffix:semicolon
+id|error_time
+op_assign
+id|jiffies
+suffix:semicolon
+)brace
 id|fd
 op_assign
 id|open_dentry
@@ -1306,7 +1326,7 @@ id|file-&gt;f_op-&gt;mmap
 id|fput
 c_func
 (paren
-id|fd
+id|file
 )paren
 suffix:semicolon
 id|sys_close
@@ -2165,6 +2185,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|init_aout32_binfmt
+r_static
 r_int
 id|__init
 id|init_aout32_binfmt
@@ -2182,4 +2203,38 @@ id|aout32_format
 )paren
 suffix:semicolon
 )brace
+DECL|function|exit_aout32_binfmt
+r_static
+r_void
+id|__exit
+id|exit_aout32_binfmt
+c_func
+(paren
+r_void
+)paren
+(brace
+id|unregister_binfmt
+c_func
+(paren
+op_amp
+id|aout32_format
+)paren
+suffix:semicolon
+)brace
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
+DECL|variable|init_aout32_binfmt
+id|module_init
+c_func
+(paren
+id|init_aout32_binfmt
+)paren
+suffix:semicolon
+DECL|variable|exit_aout32_binfmt
+id|module_exit
+c_func
+(paren
+id|exit_aout32_binfmt
+)paren
+suffix:semicolon
 eof

@@ -541,7 +541,7 @@ mdefine_line|#define MODULEPROCSTRING &quot;Driver loaded as a module&quot;
 macro_line|#else
 mdefine_line|#define MODULEPROCSTRING &quot;Driver compiled into kernel&quot;
 macro_line|#endif
-id|down
+id|down_read
 c_func
 (paren
 op_amp
@@ -577,7 +577,7 @@ comma
 id|SELECTED_SOUND_OPTIONS
 )paren
 suffix:semicolon
-id|up
+id|up_read
 c_func
 (paren
 op_amp

@@ -5935,7 +5935,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 id|lp-&gt;sdev
@@ -6306,7 +6306,7 @@ r_struct
 id|lance_init_block
 op_star
 )paren
-id|sbus_alloc_consistant
+id|sbus_alloc_consistent
 c_func
 (paren
 id|sdev
@@ -6337,7 +6337,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: Cannot allocate consistant DMA memory.&bslash;n&quot;
+l_string|&quot;%s: Cannot allocate consistent DMA memory.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren

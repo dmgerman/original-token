@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for USB scsi like devices&n; * &n; * (C) Michael Gee (michael@linuxspecific.com) 1999&n; *&n; */
+multiline_comment|/* Driver for USB mass storage (scsi-like) devices&n; * &n; * (C) Michael Gee (michael@linuxspecific.com) 1999&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -14,7 +14,7 @@ macro_line|#include &quot;../scsi/scsi.h&quot;
 macro_line|#include &quot;../scsi/hosts.h&quot;
 macro_line|#include &quot;../scsi/sd.h&quot;
 macro_line|#include &quot;usb.h&quot;
-macro_line|#include &quot;usb_scsi.h&quot;
+macro_line|#include &quot;usb_storage.h&quot;
 DECL|function|us_show_command
 r_void
 id|us_show_command

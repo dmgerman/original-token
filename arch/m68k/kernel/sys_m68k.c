@@ -392,8 +392,6 @@ op_assign
 id|do_mmap2
 c_func
 (paren
-id|file
-comma
 id|a.addr
 comma
 id|a.len
@@ -401,6 +399,8 @@ comma
 id|a.prot
 comma
 id|a.flags
+comma
+id|a.fd
 comma
 id|a.offset
 op_rshift
@@ -413,38 +413,31 @@ r_return
 id|error
 suffix:semicolon
 )brace
-DECL|struct|mmap_arg_struct64
+macro_line|#if 0
 r_struct
 id|mmap_arg_struct64
 (brace
-DECL|member|addr
 id|__u32
 id|addr
 suffix:semicolon
-DECL|member|len
 id|__u32
 id|len
 suffix:semicolon
-DECL|member|prot
 id|__u32
 id|prot
 suffix:semicolon
-DECL|member|flags
 id|__u32
 id|flags
 suffix:semicolon
-DECL|member|offset
 id|__u64
 id|offset
 suffix:semicolon
 multiline_comment|/* 64 bits */
-DECL|member|fd
 id|__u32
 id|fd
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|function|sys_mmap64
 id|asmlinkage
 r_int
 id|sys_mmap64
@@ -636,6 +629,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
+macro_line|#endif
 r_extern
 id|asmlinkage
 r_int

@@ -272,7 +272,6 @@ op_star
 id|productInfo
 )paren
 suffix:semicolon
-macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 DECL|macro|cpuid
 mdefine_line|#define cpuid smp_processor_id()

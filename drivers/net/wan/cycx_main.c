@@ -693,11 +693,6 @@ l_int|0
 suffix:semicolon
 id|wandev-&gt;maddr
 op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
 id|card-&gt;hw.dpmbase
 suffix:semicolon
 id|wandev-&gt;msize

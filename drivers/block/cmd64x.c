@@ -1129,6 +1129,13 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* clear the INTR &amp; ERROR bits */
+id|ide_destroy_dmatable
+c_func
+(paren
+id|drive
+)paren
+suffix:semicolon
+multiline_comment|/* and free any DMA resources */
 r_return
 (paren
 id|dma_stat

@@ -4089,7 +4089,7 @@ DECL|macro|QSIZE
 mdefine_line|#define QSIZE(entries)&t;(((entries) + 1) * QUEUE_ENTRY_LEN)
 id|qpti-&gt;res_cpu
 op_assign
-id|sbus_alloc_consistant
+id|sbus_alloc_consistent
 c_func
 (paren
 id|sdev
@@ -4129,7 +4129,7 @@ suffix:semicolon
 )brace
 id|qpti-&gt;req_cpu
 op_assign
-id|sbus_alloc_consistant
+id|sbus_alloc_consistent
 c_func
 (paren
 id|sdev
@@ -4156,7 +4156,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 id|sdev
@@ -4647,7 +4647,7 @@ id|fail_unmap_queues
 suffix:colon
 DECL|macro|QSIZE
 mdefine_line|#define QSIZE(entries)&t;(((entries) + 1) * QUEUE_ENTRY_LEN)
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 id|qpti-&gt;sdev
@@ -4663,7 +4663,7 @@ comma
 id|qpti-&gt;res_dvma
 )paren
 suffix:semicolon
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 id|qpti-&gt;sdev
@@ -4814,7 +4814,7 @@ id|qpti
 suffix:semicolon
 DECL|macro|QSIZE
 mdefine_line|#define QSIZE(entries)&t;(((entries) + 1) * QUEUE_ENTRY_LEN)
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 id|qpti-&gt;sdev
@@ -4830,7 +4830,7 @@ comma
 id|qpti-&gt;res_dvma
 )paren
 suffix:semicolon
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 id|qpti-&gt;sdev
@@ -5288,7 +5288,11 @@ id|i
 dot
 id|d_base
 op_assign
-id|sg-&gt;dvma_address
+id|sg_dma_address
+c_func
+(paren
+id|sg
+)paren
 suffix:semicolon
 id|ds
 (braket
@@ -5297,7 +5301,11 @@ id|i
 dot
 id|d_count
 op_assign
-id|sg-&gt;dvma_length
+id|sg_dma_len
+c_func
+(paren
+id|sg
+)paren
 suffix:semicolon
 )brace
 id|sg_count
@@ -5416,7 +5424,11 @@ id|i
 dot
 id|d_base
 op_assign
-id|sg-&gt;dvma_address
+id|sg_dma_address
+c_func
+(paren
+id|sg
+)paren
 suffix:semicolon
 id|ds
 (braket
@@ -5425,7 +5437,11 @@ id|i
 dot
 id|d_count
 op_assign
-id|sg-&gt;dvma_length
+id|sg_dma_len
+c_func
+(paren
+id|sg
+)paren
 suffix:semicolon
 )brace
 id|sg_count

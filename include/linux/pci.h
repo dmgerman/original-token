@@ -536,6 +536,11 @@ op_star
 id|driver_data
 suffix:semicolon
 multiline_comment|/* data private to the driver */
+DECL|member|dma_mask
+id|dma_addr_t
+id|dma_mask
+suffix:semicolon
+multiline_comment|/* Mask of the bits of bus address this&n;&t;&t;&t;&t;&t;   device implements.  Normally this is&n;&t;&t;&t;&t;&t;   0xffffffff.  You only need to change&n;&t;&t;&t;&t;&t;   this if your device has broken DMA&n;&t;&t;&t;&t;&t;   or supports 64-bit transfers.  */
 multiline_comment|/* device is compatible with these IDs */
 DECL|member|vendor_compatible
 r_int

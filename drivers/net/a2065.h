@@ -209,38 +209,10 @@ mdefine_line|#define LE_T3_RTY &t;0x0400&t;&t;/* Retry Error */
 DECL|macro|LE_T3_TDR
 mdefine_line|#define LE_T3_TDR&t;0x03ff&t;&t;/* Time Domain Reflectometry */
 multiline_comment|/*&n; *&t;&t;A2065 Expansion Board Structure&n; */
-DECL|struct|A2065Board
-r_struct
-id|A2065Board
-(brace
-DECL|member|Pad1
-id|u_char
-id|Pad1
-(braket
-l_int|0x4000
-)braket
-suffix:semicolon
-DECL|member|Lance
-r_volatile
-r_struct
-id|lance_regs
-id|Lance
-suffix:semicolon
-DECL|member|Pad2
-id|u_char
-id|Pad2
-(braket
-l_int|0x3ffc
-)braket
-suffix:semicolon
-DECL|member|RAM
-r_volatile
-id|u_char
-id|RAM
-(braket
-l_int|0x8000
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
+DECL|macro|A2065_LANCE
+mdefine_line|#define A2065_LANCE&t;&t;0x4000
+DECL|macro|A2065_RAM
+mdefine_line|#define A2065_RAM&t;&t;0x8000
+DECL|macro|A2065_RAM_SIZE
+mdefine_line|#define A2065_RAM_SIZE&t;&t;0x8000
 eof

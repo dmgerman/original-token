@@ -5,6 +5,7 @@ multiline_comment|/*&n; * Macros used for converting between virtual and physica
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 macro_line|#ifdef CONFIG_AMIGA
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#endif
@@ -119,7 +120,7 @@ c_func
 r_volatile
 r_void
 op_star
-id|address
+id|vaddr
 )paren
 (brace
 r_int
@@ -130,7 +131,9 @@ op_assign
 r_int
 r_int
 )paren
-id|address
+id|vaddr
+op_minus
+id|PAGE_OFFSET
 suffix:semicolon
 r_if
 c_cond
@@ -145,21 +148,24 @@ dot
 id|size
 )paren
 r_return
+id|voff
+op_plus
 id|m68k_memory
 (braket
 l_int|0
 )braket
 dot
 id|addr
-op_plus
-id|voff
 suffix:semicolon
-r_else
 r_return
 id|mm_vtop_fallback
 c_func
 (paren
-id|voff
+(paren
+r_int
+r_int
+)paren
+id|vaddr
 )paren
 suffix:semicolon
 )brace
@@ -178,8 +184,10 @@ id|paddr
 (brace
 r_int
 r_int
-id|base
+id|poff
 op_assign
+id|paddr
+op_minus
 id|m68k_memory
 (braket
 l_int|0
@@ -190,18 +198,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|paddr
-op_ge
-id|base
-)paren
-op_logical_and
-(paren
-id|paddr
+id|poff
 OL
-(paren
-id|base
-op_plus
 id|m68k_memory
 (braket
 l_int|0
@@ -209,17 +207,15 @@ l_int|0
 dot
 id|size
 )paren
-)paren
-)paren
 r_return
 (paren
 r_void
 op_star
 )paren
 (paren
-id|paddr
-op_minus
-id|base
+id|poff
+op_plus
+id|PAGE_OFFSET
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_AMIGA

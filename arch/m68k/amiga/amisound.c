@@ -115,6 +115,8 @@ r_sizeof
 (paren
 id|sine_data
 )paren
+comma
+l_string|&quot;Beep&quot;
 )paren
 suffix:semicolon
 r_if

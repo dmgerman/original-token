@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * drivers/sbus/char/jsflash.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&t;(drivers/char/mem.c)&n; *  Copyright (C) 1997  Eddie C. Dost&t;&t;(drivers/sbus/char/flash.c)&n; *  Copyright (C) 1999  Pete Zaitcev&n; *&n; * This driver is used to program OS into a Flash SIMM on&n; * Krups and Espresso platforms.&n; *&n; * It is anticipated that programming an OS Flash will be a routine&n; * procedure. In the same time it is exeedingly dangerous because&n; * a user can program its OBP flash with OS image and effectively&n; * kill the machine.&n; *&n; * This driver uses an interface different from Eddie&squot;s flash.c&n; * as a silly safeguard.&n; *&n; * XXX The flash.c manipulates page caching characteristics in a certain&n; * dubious way; also it assumes that remap_page_range() can remap&n; * PCI bus locations, which may be false. ioremap() must be used&n; * instead. We should discuss this.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -452,6 +453,7 @@ op_ne
 l_int|0
 )paren
 (brace
+macro_line|#if 0 /* __bzero XXX */
 r_int
 id|x
 op_assign
@@ -490,6 +492,12 @@ id|togo
 op_sub_assign
 id|x
 suffix:semicolon
+macro_line|#else
+multiline_comment|/*&n;&t;&t; * Implementation of clear_user() calls __bzero&n;&t;&t; * without regard to modversions,&n;&t;&t; * so we cannot build a module.&n;&t;&t; */
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif
 )brace
 r_while
 c_loop

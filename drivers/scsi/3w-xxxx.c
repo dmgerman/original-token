@@ -1,22 +1,5 @@
-multiline_comment|/* &n;   3w-xxxx.c -- 3ware Storage Controller device driver for Linux.&n;&n;   Written By: Adam Radford &lt;linux@3ware.com&gt;&n;   Copyright (C) 1999-2000 3ware Inc.&n;&n;   Kernel compatablity By: &t;Andre Hedrick &lt;andre@suse.com&gt;&n;   Non-Copyright (C) 2000&t;Andre Hedrick &lt;andre@suse.com&gt;&n;&n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; version 2 of the License.&n;&n;   This program is distributed in the hope that it will be useful,           &n;   but WITHOUT ANY WARRANTY; without even the implied warranty of            &n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             &n;   GNU General Public License for more details.                              &n;&n;   NO WARRANTY                                                               &n;   THE PROGRAM IS PROVIDED ON AN &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR        &n;   CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED INCLUDING, WITHOUT      &n;   LIMITATION, ANY WARRANTIES OR CONDITIONS OF TITLE, NON-INFRINGEMENT,      &n;   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. Each Recipient is    &n;   solely responsible for determining the appropriateness of using and       &n;   distributing the Program and assumes all risks associated with its        &n;   exercise of rights under this Agreement, including but not limited to     &n;   the risks and costs of program errors, damage to or loss of data,         &n;   programs or equipment, and unavailability or interruption of operations.  &n;&n;   DISCLAIMER OF LIABILITY                                                   &n;   NEITHER RECIPIENT NOR ANY CONTRIBUTORS SHALL HAVE ANY LIABILITY FOR ANY   &n;   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL        &n;   DAMAGES (INCLUDING WITHOUT LIMITATION LOST PROFITS), HOWEVER CAUSED AND   &n;   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR     &n;   TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE    &n;   USE OR DISTRIBUTION OF THE PROGRAM OR THE EXERCISE OF ANY RIGHTS GRANTED  &n;   HEREUNDER, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES             &n;&n;   You should have received a copy of the GNU General Public License         &n;   along with this program; if not, write to the Free Software               &n;   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA &n;&n;   Bugs/Comments/Suggestions should be mailed to:                            &n;   linux@3ware.com&n;&n;   For more information, goto:&n;   http://www.3ware.com&n;*/
-multiline_comment|/* Convert Linux Version, Patch-level, Sub-level to LINUX_VERSION_CODE. */
-DECL|macro|TW_LINUX_VERSION
-mdefine_line|#define TW_LINUX_VERSION(V, P, S)&t;(((V) * 65536) + ((P) * 256) + (S))
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifndef LINUX_VERSION_CODE
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif /* LINUX_VERSION_CODE */
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/modversions.h&gt;
+multiline_comment|/* &n;   3w-xxxx.c -- 3ware Storage Controller device driver for Linux.&n;&n;   Written By: Adam Radford &lt;linux@3ware.com&gt;&n;   Copyright (C) 1999-2000 3ware Inc.&n;&n;   Kernel compatablity By: &t;Andre Hedrick &lt;andre@suse.com&gt;&n;   Non-Copyright (C) 2000&t;Andre Hedrick &lt;andre@suse.com&gt;&n;   &n;   Further tiny build fixes and trivial hoovering    Alan Cox&n;&n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; version 2 of the License.&n;&n;   This program is distributed in the hope that it will be useful,           &n;   but WITHOUT ANY WARRANTY; without even the implied warranty of            &n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             &n;   GNU General Public License for more details.                              &n;&n;   NO WARRANTY                                                               &n;   THE PROGRAM IS PROVIDED ON AN &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR        &n;   CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED INCLUDING, WITHOUT      &n;   LIMITATION, ANY WARRANTIES OR CONDITIONS OF TITLE, NON-INFRINGEMENT,      &n;   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. Each Recipient is    &n;   solely responsible for determining the appropriateness of using and       &n;   distributing the Program and assumes all risks associated with its        &n;   exercise of rights under this Agreement, including but not limited to     &n;   the risks and costs of program errors, damage to or loss of data,         &n;   programs or equipment, and unavailability or interruption of operations.  &n;&n;   DISCLAIMER OF LIABILITY                                                   &n;   NEITHER RECIPIENT NOR ANY CONTRIBUTORS SHALL HAVE ANY LIABILITY FOR ANY   &n;   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL        &n;   DAMAGES (INCLUDING WITHOUT LIMITATION LOST PROFITS), HOWEVER CAUSED AND   &n;   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR     &n;   TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE    &n;   USE OR DISTRIBUTION OF THE PROGRAM OR THE EXERCISE OF ANY RIGHTS GRANTED  &n;   HEREUNDER, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES             &n;&n;   You should have received a copy of the GNU General Public License         &n;   along with this program; if not, write to the Free Software               &n;   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA &n;&n;   Bugs/Comments/Suggestions should be mailed to:                            &n;   linux@3ware.com&n;&n;   For more information, goto:&n;   http://www.3ware.com&n;*/
 macro_line|#include &lt;linux/module.h&gt;
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 id|MODULE_AUTHOR
 (paren
 l_string|&quot;3ware Inc.&quot;
@@ -27,7 +10,6 @@ id|MODULE_DESCRIPTION
 l_string|&quot;3ware Storage Controller Linux Driver&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
@@ -39,27 +21,16 @@ macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/errno.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#if LINUX_VERSION_CODE &lt; TW_LINUX_VERSION(2,3,0)
-macro_line|#include &lt;asm/spinlock.h&gt;
-macro_line|#endif
 DECL|macro|__3W_C
 mdefine_line|#define __3W_C&t;&t;&t;/* let 3w-xxxx.h know it is use */
-macro_line|#ifdef MODULE
-macro_line|#include &quot;/usr/src/linux/drivers/scsi/sd.h&quot;
-macro_line|#include &quot;/usr/src/linux/drivers/scsi/scsi.h&quot;
-macro_line|#include &quot;/usr/src/linux/drivers/scsi/hosts.h&quot;
-macro_line|#else
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
-macro_line|#endif
 macro_line|#include &quot;3w-xxxx.h&quot;
 r_static
 r_int
@@ -114,35 +85,6 @@ op_star
 id|regs
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; TW_LINUX_VERSION(2,3,8)
-multiline_comment|/* We will eventually need to be added to proc_fs.h */
-DECL|variable|tw_scsi_proc_entry
-r_struct
-id|proc_dir_entry
-id|tw_scsi_proc_entry
-op_assign
-(brace
-macro_line|#if !defined(PROC_SCSI_3W_XXXX)
-id|PROC_SCSI_IDESCSI
-comma
-macro_line|#else
-id|PROC_SCSI_3W_XXXX
-comma
-macro_line|#endif
-l_int|7
-comma
-l_string|&quot;3w-xxxx&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Globals */
 DECL|variable|tw_driver_version
 r_char
@@ -2307,7 +2249,6 @@ id|TW_Device_Extension
 op_star
 id|tw_dev2
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
 r_struct
 id|pci_dev
 op_star
@@ -2315,15 +2256,6 @@ id|tw_pci_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#else
-r_struct
-id|pci_dev
-op_star
-id|tw_pci_dev
-op_assign
-id|pci_devices
-suffix:semicolon
-macro_line|#endif
 id|u32
 id|status_reg_value
 suffix:semicolon
@@ -2442,7 +2374,6 @@ r_continue
 suffix:semicolon
 )brace
 multiline_comment|/* Calculate the cards register addresses */
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
 id|tw_dev-&gt;registers.base_addr
 op_assign
 id|tw_pci_dev-&gt;resource
@@ -2520,75 +2451,6 @@ op_plus
 l_int|0xC
 )paren
 suffix:semicolon
-macro_line|#else
-id|tw_dev-&gt;registers.base_addr
-op_assign
-id|tw_pci_dev-&gt;base_address
-(braket
-l_int|0
-)braket
-suffix:semicolon
-id|tw_dev-&gt;registers.control_reg_addr
-op_assign
-(paren
-id|tw_pci_dev-&gt;base_address
-(braket
-l_int|0
-)braket
-op_amp
-op_complement
-l_int|15
-)paren
-suffix:semicolon
-id|tw_dev-&gt;registers.status_reg_addr
-op_assign
-(paren
-(paren
-id|tw_pci_dev-&gt;base_address
-(braket
-l_int|0
-)braket
-op_amp
-op_complement
-l_int|15
-)paren
-op_plus
-l_int|0x4
-)paren
-suffix:semicolon
-id|tw_dev-&gt;registers.command_que_addr
-op_assign
-(paren
-(paren
-id|tw_pci_dev-&gt;base_address
-(braket
-l_int|0
-)braket
-op_amp
-op_complement
-l_int|15
-)paren
-op_plus
-l_int|0x8
-)paren
-suffix:semicolon
-id|tw_dev-&gt;registers.response_que_addr
-op_assign
-(paren
-(paren
-id|tw_pci_dev-&gt;base_address
-(braket
-l_int|0
-)braket
-op_amp
-op_complement
-l_int|15
-)paren
-op_plus
-l_int|0xC
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Save pci_dev struct to device extension */
 id|tw_dev-&gt;tw_pci_dev
 op_assign
@@ -2777,7 +2639,6 @@ r_continue
 suffix:semicolon
 )brace
 multiline_comment|/* Make sure that io region isn&squot;t already taken */
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
 r_if
 c_cond
 (paren
@@ -2791,44 +2652,18 @@ l_int|0
 )braket
 dot
 id|start
-op_amp
-op_complement
-l_int|15
 )paren
 comma
 id|TW_IO_ADDRESS_RANGE
 )paren
 )paren
 (brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|check_region
-c_func
-(paren
-(paren
-id|tw_dev-&gt;tw_pci_dev-&gt;base_address
-(braket
-l_int|0
-)braket
-op_amp
-op_complement
-l_int|15
-)paren
-comma
-id|TW_IO_ADDRESS_RANGE
-)paren
-)paren
-(brace
-macro_line|#endif
 id|printk
 c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;3w-xxxx: tw_findcards(): Couldn&squot;t get io range 0x%lx-0x%lx for card %d.&bslash;n&quot;
 comma
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
 (paren
 id|tw_dev-&gt;tw_pci_dev-&gt;resource
 (braket
@@ -2836,9 +2671,6 @@ l_int|0
 )braket
 dot
 id|start
-op_amp
-op_complement
-l_int|15
 )paren
 comma
 (paren
@@ -2848,33 +2680,8 @@ l_int|0
 )braket
 dot
 id|start
-op_amp
-op_complement
-l_int|15
 )paren
 op_plus
-macro_line|#else
-(paren
-id|tw_dev-&gt;tw_pci_dev-&gt;base_address
-(braket
-l_int|0
-)braket
-op_amp
-op_complement
-l_int|15
-)paren
-comma
-(paren
-id|tw_dev-&gt;tw_pci_dev-&gt;base_address
-(braket
-l_int|0
-)braket
-op_amp
-op_complement
-l_int|15
-)paren
-op_plus
-macro_line|#endif
 id|TW_IO_ADDRESS_RANGE
 comma
 id|numcards
@@ -2896,7 +2703,6 @@ r_continue
 suffix:semicolon
 )brace
 multiline_comment|/* Reserve the io address space */
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
 id|request_region
 c_func
 (paren
@@ -2907,9 +2713,6 @@ l_int|0
 )braket
 dot
 id|start
-op_amp
-op_complement
-l_int|15
 )paren
 comma
 id|TW_IO_ADDRESS_RANGE
@@ -2917,26 +2720,6 @@ comma
 id|TW_DEVICE_NAME
 )paren
 suffix:semicolon
-macro_line|#else
-id|request_region
-c_func
-(paren
-(paren
-id|tw_dev-&gt;tw_pci_dev-&gt;base_address
-(braket
-l_int|0
-)braket
-op_amp
-op_complement
-l_int|15
-)paren
-comma
-id|TW_IO_ADDRESS_RANGE
-comma
-id|TW_DEVICE_NAME
-)paren
-suffix:semicolon
-macro_line|#endif
 id|error
 op_assign
 id|tw_initialize_units
@@ -2960,7 +2743,6 @@ comma
 id|numcards
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
 id|release_region
 c_func
 (paren
@@ -2971,32 +2753,11 @@ l_int|0
 )braket
 dot
 id|start
-op_amp
-op_complement
-l_int|15
 )paren
 comma
 id|TW_IO_ADDRESS_RANGE
 )paren
 suffix:semicolon
-macro_line|#else
-id|release_region
-c_func
-(paren
-(paren
-id|tw_dev-&gt;tw_pci_dev-&gt;base_address
-(braket
-l_int|0
-)braket
-op_amp
-op_complement
-l_int|15
-)paren
-comma
-id|TW_IO_ADDRESS_RANGE
-)paren
-suffix:semicolon
-macro_line|#endif
 id|tw_free_device_extension
 c_func
 (paren
@@ -3035,7 +2796,6 @@ comma
 id|numcards
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
 id|release_region
 c_func
 (paren
@@ -3046,32 +2806,11 @@ l_int|0
 )braket
 dot
 id|start
-op_amp
-op_complement
-l_int|15
 )paren
 comma
 id|TW_IO_ADDRESS_RANGE
 )paren
 suffix:semicolon
-macro_line|#else
-id|release_region
-c_func
-(paren
-(paren
-id|tw_dev-&gt;tw_pci_dev-&gt;base_address
-(braket
-l_int|0
-)braket
-op_amp
-op_complement
-l_int|15
-)paren
-comma
-id|TW_IO_ADDRESS_RANGE
-)paren
-suffix:semicolon
-macro_line|#endif
 id|tw_free_device_extension
 c_func
 (paren
@@ -3119,6 +2858,7 @@ id|TW_Device_Extension
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME - check for NULL */
 id|status_reg_value
 op_assign
 id|inl
@@ -3135,7 +2875,6 @@ l_string|&quot;scsi%d : Found a 3ware Storage Controller at 0x%x, IRQ: %d P-chip
 comma
 id|host-&gt;host_no
 comma
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
 (paren
 id|u32
 )paren
@@ -3146,30 +2885,10 @@ l_int|0
 )braket
 dot
 id|start
-op_amp
-op_complement
-l_int|15
 )paren
 comma
 id|tw_pci_dev-&gt;irq
 comma
-macro_line|#else
-(paren
-id|u32
-)paren
-(paren
-id|tw_pci_dev-&gt;base_address
-(braket
-l_int|0
-)braket
-op_amp
-op_complement
-l_int|15
-)paren
-comma
-id|tw_pci_dev-&gt;irq
-comma
-macro_line|#endif
 (paren
 id|status_reg_value
 op_amp
@@ -3252,7 +2971,6 @@ c_func
 id|host
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
 id|release_region
 c_func
 (paren
@@ -3263,32 +2981,11 @@ l_int|0
 )braket
 dot
 id|start
-op_amp
-op_complement
-l_int|15
 )paren
 comma
 id|TW_IO_ADDRESS_RANGE
 )paren
 suffix:semicolon
-macro_line|#else
-id|release_region
-c_func
-(paren
-(paren
-id|tw_dev-&gt;tw_pci_dev-&gt;base_address
-(braket
-l_int|0
-)braket
-op_amp
-op_complement
-l_int|15
-)paren
-comma
-id|TW_IO_ADDRESS_RANGE
-)paren
-suffix:semicolon
-macro_line|#endif
 id|tw_free_device_extension
 c_func
 (paren
@@ -3343,7 +3040,6 @@ c_func
 id|host
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
 id|release_region
 c_func
 (paren
@@ -3354,32 +3050,11 @@ l_int|0
 )braket
 dot
 id|start
-op_amp
-op_complement
-l_int|15
 )paren
 comma
 id|TW_IO_ADDRESS_RANGE
 )paren
 suffix:semicolon
-macro_line|#else
-id|release_region
-c_func
-(paren
-(paren
-id|tw_dev-&gt;tw_pci_dev-&gt;base_address
-(braket
-l_int|0
-)braket
-op_amp
-op_complement
-l_int|15
-)paren
-comma
-id|TW_IO_ADDRESS_RANGE
-)paren
-suffix:semicolon
-macro_line|#endif
 id|tw_free_device_extension
 c_func
 (paren
@@ -4105,12 +3780,10 @@ op_amp
 id|tw_dev-&gt;tw_lock
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
 id|tw_dev-&gt;flags
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -4773,7 +4446,6 @@ id|TW_Command
 op_star
 id|command_packet
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
 r_if
 c_cond
 (paren
@@ -4788,7 +4460,6 @@ id|tw_dev-&gt;flags
 )paren
 r_return
 suffix:semicolon
-macro_line|#endif
 id|spin_lock_irqsave
 c_func
 (paren
@@ -5556,7 +5227,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
 id|clear_bit
 c_func
 (paren
@@ -5566,7 +5236,6 @@ op_amp
 id|tw_dev-&gt;flags
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* End tw_interrupt() */
 multiline_comment|/* This function handles ioctls from userspace to the driver */
@@ -8818,7 +8487,6 @@ l_string|&quot;3w-xxxx: tw_scsi_release()&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Free up the IO region */
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
 id|release_region
 c_func
 (paren
@@ -8829,32 +8497,11 @@ l_int|0
 )braket
 dot
 id|start
-op_amp
-op_complement
-l_int|15
 )paren
 comma
 id|TW_IO_ADDRESS_RANGE
 )paren
 suffix:semicolon
-macro_line|#else
-id|release_region
-c_func
-(paren
-(paren
-id|tw_dev-&gt;tw_pci_dev-&gt;base_address
-(braket
-l_int|0
-)braket
-op_amp
-op_complement
-l_int|15
-)paren
-comma
-id|TW_IO_ADDRESS_RANGE
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Free up the IRQ */
 id|free_irq
 c_func
@@ -11005,6 +10652,6 @@ id|driver_template
 op_assign
 id|TWXXXX
 suffix:semicolon
-macro_line|#include &quot;/usr/src/linux/drivers/scsi/scsi_module.c&quot;
+macro_line|#include &quot;scsi_module.c&quot;
 macro_line|#endif
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Permedia2 framebuffer driver definitions.&n; * Copyright (c) 1998-1999 Ilario Nardinocchi (nardinoc@CS.UniBO.IT)&n; * --------------------------------------------------------------------------&n; * $Id: pm2fb.h,v 1.21 1999/01/28 13:18:07 illo Exp $&n; * --------------------------------------------------------------------------&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * Permedia2 framebuffer driver definitions.&n; * Copyright (c) 1998-1999 Ilario Nardinocchi (nardinoc@CS.UniBO.IT)&n; * --------------------------------------------------------------------------&n; * $Id: pm2fb.h,v 1.21 1999/01/28 13:18:07 illo Exp $&n; * --------------------------------------------------------------------------&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 macro_line|#ifndef PM2FB_H
 DECL|macro|PM2FB_H
 mdefine_line|#define PM2FB_H

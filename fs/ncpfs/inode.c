@@ -2926,7 +2926,7 @@ c_func
 (paren
 id|inode
 comma
-id|O_RDWR
+id|O_WRONLY
 )paren
 )paren
 OL

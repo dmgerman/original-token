@@ -2232,10 +2232,49 @@ id|b-&gt;op
 op_assign
 id|BOOTP_REQUEST
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;type
+OL
+l_int|256
+)paren
+multiline_comment|/* check for false types */
 id|b-&gt;htype
 op_assign
 id|dev-&gt;type
 suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|dev-&gt;type
+op_eq
+id|ARPHRD_IEEE802_TR
+)paren
+multiline_comment|/* fix for token ring */
+id|b-&gt;htype
+op_assign
+id|ARPHRD_IEEE802
+suffix:semicolon
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Unknown ARP type 0x%04x for device %s&bslash;n&quot;
+comma
+id|dev-&gt;type
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|b-&gt;htype
+op_assign
+id|dev-&gt;type
+suffix:semicolon
+multiline_comment|/* can cause undefined behavior */
+)brace
 id|b-&gt;hlen
 op_assign
 id|dev-&gt;addr_len

@@ -1658,21 +1658,26 @@ r_return
 id|res
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Return the size of a string (including the ending 0)&n; *&n; * Return 0 for error&n; */
-DECL|function|strlen_user
+multiline_comment|/*&n; * Return the size of a string (including the ending 0)&n; *&n; * Return 0 on exception, a value greater than N if too long&n; */
+DECL|function|strnlen_user
 r_static
 r_inline
 r_int
-id|strlen_user
+id|strnlen_user
 c_func
 (paren
 r_const
 r_char
 op_star
 id|src
+comma
+r_int
+id|n
 )paren
 (brace
 r_int
+id|res
+suffix:semicolon
 id|res
 op_assign
 op_minus
@@ -1684,20 +1689,29 @@ suffix:semicolon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;1: movesb (%1)+,%%d0&bslash;n&quot;
-l_string|&quot;12:tstb %%d0&bslash;n&quot;
+l_string|&quot;1:&bslash;n&quot;
+l_string|&quot;   tstl %2&bslash;n&quot;
+l_string|&quot;   jeq 3f&bslash;n&quot;
+l_string|&quot;2: movesb (%1)+,%%d0&bslash;n&quot;
+l_string|&quot;22:&bslash;n&quot;
+l_string|&quot;   subql #1,%2&bslash;n&quot;
+l_string|&quot;   tstb %%d0&bslash;n&quot;
 l_string|&quot;   jne 1b&bslash;n&quot;
+l_string|&quot;   jra 4f&bslash;n&quot;
+l_string|&quot;3:&bslash;n&quot;
+l_string|&quot;   addql #1,%0&bslash;n&quot;
+l_string|&quot;4:&bslash;n&quot;
 l_string|&quot;   addl %1,%0&bslash;n&quot;
-l_string|&quot;2:&bslash;n&quot;
+l_string|&quot;5:&bslash;n&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
-l_string|&quot;3: moveq %2,%0&bslash;n&quot;
-l_string|&quot;   jra 2b&bslash;n&quot;
+l_string|&quot;6: moveq %3,%0&bslash;n&quot;
+l_string|&quot;   jra 5b&bslash;n&quot;
 l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .align 4&bslash;n&quot;
-l_string|&quot;   .long 1b,3b&bslash;n&quot;
-l_string|&quot;   .long 12b,3b&bslash;n&quot;
+l_string|&quot;   .long 2b,6b&bslash;n&quot;
+l_string|&quot;   .long 22b,6b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=d&quot;
@@ -1708,6 +1722,11 @@ comma
 l_string|&quot;=a&quot;
 (paren
 id|src
+)paren
+comma
+l_string|&quot;=d&quot;
+(paren
+id|n
 )paren
 suffix:colon
 l_string|&quot;i&quot;
@@ -1724,6 +1743,11 @@ l_string|&quot;1&quot;
 (paren
 id|src
 )paren
+comma
+l_string|&quot;2&quot;
+(paren
+id|n
+)paren
 suffix:colon
 l_string|&quot;d0&quot;
 )paren
@@ -1732,6 +1756,8 @@ r_return
 id|res
 suffix:semicolon
 )brace
+DECL|macro|strlen_user
+mdefine_line|#define strlen_user(str) strnlen_user(str, 32767)
 multiline_comment|/*&n; * Zero Userspace&n; */
 r_static
 r_inline

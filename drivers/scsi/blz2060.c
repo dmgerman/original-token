@@ -1,6 +1,7 @@
 multiline_comment|/* blz2060.c: Driver for Blizzard 2060 SCSI Controller.&n; *&n; * Copyright (C) 1996 Jesper Skov (jskov@cygnus.co.uk)&n; *&n; * This driver is based on the CyberStorm driver, hence the occasional&n; * reference to CyberStorm.&n; */
 multiline_comment|/* TODO:&n; *&n; * 1) Figure out how to make a cleaner merge with the sparc driver with regard&n; *    to the caches and the Sparc MMU mapping.&n; * 2) Make as few routines required outside the generic driver. A lot of the&n; *    routines in this file used to be inline!&n; */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -9,6 +10,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;NCR53C9x.h&quot;
@@ -205,15 +207,12 @@ id|NCR_ESP
 op_star
 id|esp
 suffix:semicolon
-r_const
 r_struct
-id|ConfigDev
+id|zorro_dev
 op_star
-id|esp_dev
-suffix:semicolon
-r_int
-r_int
-id|key
+id|z
+op_assign
+l_int|NULL
 suffix:semicolon
 r_int
 r_int
@@ -223,26 +222,50 @@ r_if
 c_cond
 (paren
 (paren
-id|key
+id|z
 op_assign
-id|zorro_find
+id|zorro_find_device
 c_func
 (paren
 id|ZORRO_PROD_PHASE5_BLIZZARD_2060
 comma
-l_int|0
-comma
-l_int|0
+id|z
 )paren
 )paren
 )paren
 (brace
-id|esp_dev
+r_int
+r_int
+id|board
 op_assign
-id|zorro_get_board
+id|z-&gt;resource.start
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|request_mem_region
 c_func
 (paren
-id|key
+id|board
+op_plus
+id|BLZ2060_ESP_ADDR
+comma
+r_sizeof
+(paren
+r_struct
+id|ESP_regs
+)paren
+comma
+l_string|&quot;NCR53C9x&quot;
+)paren
+)paren
+(brace
+id|strcpy
+c_func
+(paren
+id|z-&gt;name
+comma
+l_string|&quot;Blizzard 2060 Accelerator&quot;
 )paren
 suffix:semicolon
 id|esp
@@ -256,7 +279,9 @@ comma
 r_void
 op_star
 )paren
-id|esp_dev
+id|board
+op_plus
+id|BLZ2060_ESP_ADDR
 )paren
 suffix:semicolon
 multiline_comment|/* Do command transfer with programmed I/O */
@@ -369,7 +394,7 @@ r_int
 id|ZTWO_VADDR
 c_func
 (paren
-id|esp_dev-&gt;cd_BoardAddr
+id|board
 )paren
 suffix:semicolon
 id|esp-&gt;dregs
@@ -421,10 +446,6 @@ id|esp-&gt;irq
 op_assign
 id|IRQ_AMIGA_PORTS
 suffix:semicolon
-id|esp-&gt;slot
-op_assign
-id|key
-suffix:semicolon
 id|request_irq
 c_func
 (paren
@@ -455,14 +476,6 @@ c_func
 id|esp
 )paren
 suffix:semicolon
-id|zorro_config_board
-c_func
-(paren
-id|key
-comma
-l_int|0
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -480,6 +493,7 @@ suffix:semicolon
 r_return
 id|esps_in_use
 suffix:semicolon
+)brace
 )brace
 r_return
 l_int|0
@@ -967,10 +981,12 @@ id|instance
 macro_line|#ifdef MODULE
 r_int
 r_int
-id|key
-suffix:semicolon
-id|key
+id|address
 op_assign
+(paren
+r_int
+r_int
+)paren
 (paren
 (paren
 r_struct
@@ -980,7 +996,7 @@ op_star
 id|instance-&gt;hostdata
 )paren
 op_member_access_from_pointer
-id|slot
+id|edev
 suffix:semicolon
 id|esp_deallocate
 c_func
@@ -998,12 +1014,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|zorro_unconfig_board
+id|release_mem_region
 c_func
 (paren
-id|key
+id|address
 comma
-l_int|0
+r_sizeof
+(paren
+r_struct
+id|ESP_regs
+)paren
 )paren
 suffix:semicolon
 id|free_irq

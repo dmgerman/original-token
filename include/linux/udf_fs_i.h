@@ -37,25 +37,10 @@ r_int
 id|i_uctime
 suffix:semicolon
 multiline_comment|/* Physical address of inode */
-DECL|member|i_ext0Location
-id|lb_addr
-id|i_ext0Location
-suffix:semicolon
-multiline_comment|/* partition relative */
 DECL|member|i_location
 id|lb_addr
 id|i_location
 suffix:semicolon
-DECL|member|i_ext0Length
-id|__u32
-id|i_ext0Length
-suffix:semicolon
-multiline_comment|/* in blocks */
-DECL|member|i_ext0Offset
-id|__u32
-id|i_ext0Offset
-suffix:semicolon
-multiline_comment|/* for short directories */
 DECL|member|i_unique
 id|__u64
 id|i_unique

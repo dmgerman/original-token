@@ -340,5 +340,8 @@ macro_line|#else
 DECL|macro|isa_dma_bridge_buggy
 mdefine_line|#define isa_dma_bridge_buggy &t;(0)
 macro_line|#endif
+multiline_comment|/* We support dynamic DMA remapping and adjacent SG entries&n; * which have addresses modulo DMA_CHUNK_SIZE will be merged&n; * by dma_prepare_sg().&n; */
+DECL|macro|DMA_CHUNK_SIZE
+mdefine_line|#define DMA_CHUNK_SIZE 8192
 macro_line|#endif /* !(_ASM_SPARC64_DMA_H) */
 eof

@@ -1956,6 +1956,10 @@ id|dev
 r_return
 l_int|NULL
 suffix:semicolon
+id|dev-&gt;dma_mask
+op_assign
+l_int|0x00ffffff
+suffix:semicolon
 id|dev-&gt;devfn
 op_assign
 id|number

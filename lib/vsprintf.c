@@ -788,6 +788,7 @@ id|qualifier
 suffix:semicolon
 multiline_comment|/* &squot;h&squot;, &squot;l&squot;, or &squot;L&squot; for integer fields */
 multiline_comment|/* &squot;z&squot; support added 23/7/1999 S.H.    */
+multiline_comment|/* &squot;z&squot; changed to &squot;Z&squot; --davidm 1/25/99 */
 r_for
 c_loop
 (paren
@@ -1059,7 +1060,7 @@ op_logical_or
 op_star
 id|fmt
 op_eq
-l_char|&squot;z&squot;
+l_char|&squot;Z&squot;
 )paren
 (brace
 id|qualifier
@@ -1336,7 +1337,7 @@ c_cond
 (paren
 id|qualifier
 op_eq
-l_char|&squot;z&squot;
+l_char|&squot;Z&squot;
 )paren
 (brace
 r_int
@@ -1529,7 +1530,7 @@ c_cond
 (paren
 id|qualifier
 op_eq
-l_char|&squot;z&squot;
+l_char|&squot;Z&squot;
 )paren
 (brace
 id|num

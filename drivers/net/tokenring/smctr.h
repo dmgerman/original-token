@@ -2078,6 +2078,14 @@ DECL|member|join_state
 id|__u8
 id|join_state
 suffix:semicolon
+DECL|member|slot_num
+id|__u8
+id|slot_num
+suffix:semicolon
+DECL|member|pos_id
+id|__u16
+id|pos_id
+suffix:semicolon
 DECL|member|ptr_una
 id|__u32
 op_star
@@ -2911,16 +2919,12 @@ mdefine_line|#define NIC_EPIC100_CHIP        0x0014   /* EPIC/100 10/100 Mbps Et
 DECL|macro|NIC_C94_CHIP
 mdefine_line|#define NIC_C94_CHIP            0x0015  /* 91C94 PC Card with multi func */
 multiline_comment|/*&n; * Definitions for the field:&n; * adapter_type The adapter_type field describes the adapter/bus&n; *              configuration.&n; */
-DECL|macro|BUS_UNK_TYPE
-mdefine_line|#define BUS_UNK_TYPE            0x0000  /*  */
 DECL|macro|BUS_ISA16_TYPE
 mdefine_line|#define BUS_ISA16_TYPE          0x0001  /* 16 bit adap in 16 bit (E)ISA slot  */
 DECL|macro|BUS_ISA8_TYPE
 mdefine_line|#define BUS_ISA8_TYPE           0x0002  /* 8/16b adap in 8 bit XT/(E)ISA slot */
 DECL|macro|BUS_MCA_TYPE
-mdefine_line|#define BUS_MCA_TYPE            0x0003  /* Micro Channel adapter              */#define BUS_EISA32M_TYPE        0x0004  /* EISA 32 bit bus master adapter     */#define BUS_EISA32S_TYPE        0x0005  /* EISA 32 bit bus slave adapter      */#define BUS_PCMCIA_TYPE         0x0006  /* PCMCIA adapter */
-DECL|macro|BUS_PCI_TYPE
-mdefine_line|#define BUS_PCI_TYPE            0x0007  /* PCI bus */
+mdefine_line|#define BUS_MCA_TYPE            0x0003  /* Micro Channel adapter              */
 multiline_comment|/*&n; * Receive Mask definitions&n; */
 DECL|macro|ACCEPT_MULTICAST
 mdefine_line|#define ACCEPT_MULTICAST                0x0001

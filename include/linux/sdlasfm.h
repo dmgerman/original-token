@@ -1,4 +1,4 @@
-multiline_comment|/*****************************************************************************&n;* sdlasfm.h&t;WANPIPE(tm) Multiprotocol WAN Link Driver.&n;*&t;&t;Definitions for the SDLA Firmware Module (SFM).&n;*&n;* Author:&t;Gene Kozin&t;&lt;74604.152@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1996 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Dec 11, 1996&t;Gene Kozin&t;Cosmetic changes&n;* Apr 16, 1996&t;Gene Kozin&t;Changed adapter &amp; firmware IDs. Version 2&n;* Dec 15, 1995&t;Gene Kozin&t;Structures chaned&n;* Nov 09, 1995&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* sdlasfm.h&t;WANPIPE(tm) Multiprotocol WAN Link Driver.&n;*&t;&t;Definitions for the SDLA Firmware Module (SFM).&n;*&n;* Author: &t;Gideon Hack &t;&n;*&n;* Copyright:&t;(c) 1995-1999 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Jun 02, 1999  Gideon Hack&t;Added support for the S514 adapter.&n;* Dec 11, 1996&t;Gene Kozin&t;Cosmetic changes&n;* Apr 16, 1996&t;Gene Kozin&t;Changed adapter &amp; firmware IDs. Version 2&n;* Dec 15, 1995&t;Gene Kozin&t;Structures chaned&n;* Nov 09, 1995&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
 macro_line|#ifndef&t;_SDLASFM_H
 DECL|macro|_SDLASFM_H
 mdefine_line|#define&t;_SDLASFM_H
@@ -27,7 +27,14 @@ DECL|macro|SDLA_S507
 mdefine_line|#define SDLA_S507&t;5070
 DECL|macro|SDLA_S509
 mdefine_line|#define SDLA_S509&t;5090
-multiline_comment|/* Firmware identification numbers:&n; *    0  ..  999&t;Test &amp; Diagnostics&n; *  1000 .. 1999&t;Streaming HDLC&n; *  2000 .. 2999&t;Bisync&n; *  3000 .. 3999&t;SDLC&n; *  4000 .. 4999&t;HDLC&n; *  5000 .. 5999&t;X.25&n; *  6000 .. 6999&t;Frame Relay&n; *  7000 .. 7999&t;PPP&n; */
+DECL|macro|SDLA_S514
+mdefine_line|#define SDLA_S514&t;5140
+multiline_comment|/* S514 PCI adapter CPU numbers */
+DECL|macro|S514_CPU_A
+mdefine_line|#define S514_CPU_A&t;&squot;A&squot;
+DECL|macro|S514_CPU_B
+mdefine_line|#define S514_CPU_B&t;&squot;B&squot;
+multiline_comment|/* Firmware identification numbers:&n; *    0  ..  999&t;Test &amp; Diagnostics&n; *  1000 .. 1999&t;Streaming HDLC&n; *  2000 .. 2999&t;Bisync&n; *  3000 .. 3999&t;SDLC&n; *  4000 .. 4999&t;HDLC&n; *  5000 .. 5999&t;X.25&n; *  6000 .. 6999&t;Frame Relay&n; *  7000 .. 7999&t;PPP&n; *  8000 .. 8999        Cisco HDLC&n; */
 DECL|macro|SFID_CALIB502
 mdefine_line|#define&t;SFID_CALIB502&t; 200
 DECL|macro|SFID_STRM502
@@ -40,6 +47,8 @@ DECL|macro|SFID_SDLC502
 mdefine_line|#define&t;SFID_SDLC502&t;3200
 DECL|macro|SFID_HDLC502
 mdefine_line|#define&t;SFID_HDLC502&t;4200
+DECL|macro|SFID_HDLC508
+mdefine_line|#define&t;SFID_HDLC508&t;4800
 DECL|macro|SFID_X25_502
 mdefine_line|#define&t;SFID_X25_502&t;5200
 DECL|macro|SFID_X25_508
@@ -52,6 +61,12 @@ DECL|macro|SFID_PPP502
 mdefine_line|#define&t;SFID_PPP502&t;7200
 DECL|macro|SFID_PPP508
 mdefine_line|#define&t;SFID_PPP508&t;7800
+DECL|macro|SFID_PPP514
+mdefine_line|#define SFID_PPP514&t;7140
+DECL|macro|SFID_CHDLC508
+mdefine_line|#define&t;SFID_CHDLC508&t;8800
+DECL|macro|SFID_CHDLC514
+mdefine_line|#define SFID_CHDLC514&t;8140
 multiline_comment|/****** Data Types **********************************************************/
 DECL|struct|sfm_info
 r_typedef

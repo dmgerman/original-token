@@ -2390,7 +2390,7 @@ id|name
 r_int
 id|ret
 suffix:semicolon
-id|down
+id|down_read
 c_func
 (paren
 op_amp
@@ -2536,7 +2536,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|up
+id|up_read
 c_func
 (paren
 op_amp

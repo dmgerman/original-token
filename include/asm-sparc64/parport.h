@@ -654,6 +654,8 @@ l_int|0
 )braket
 comma
 id|count
+comma
+id|ebus-&gt;self
 )paren
 )paren
 id|count

@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
@@ -312,6 +313,33 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
+DECL|function|bvme6000_parse_bootinfo
+r_int
+id|bvme6000_parse_bootinfo
+c_func
+(paren
+r_const
+r_struct
+id|bi_record
+op_star
+id|bi
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|bi-&gt;tag
+op_eq
+id|BI_VME_TYPE
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_else
+r_return
+l_int|1
+suffix:semicolon
+)brace
 DECL|function|bvme6000_kbdrate
 r_int
 id|bvme6000_kbdrate
@@ -447,6 +475,31 @@ id|PitRegsPtr
 )paren
 id|BVME_PIT_BASE
 suffix:semicolon
+multiline_comment|/* Board type is only set by newer versions of vmelilo/tftplilo */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|vme_brdtype
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|m68k_cputype
+op_eq
+id|CPU_68060
+)paren
+id|vme_brdtype
+op_assign
+id|VME_TYPE_BVME6000
+suffix:semicolon
+r_else
+id|vme_brdtype
+op_assign
+id|VME_TYPE_BVME4000
+suffix:semicolon
+)brace
 macro_line|#if 0
 multiline_comment|/* Call bvme6000_set_vectors() so ABORT will work, along with BVMBug&n;     * debugger.  Note trap_init() will splat the abort vector, but&n;     * bvme6000_init_IRQ() will put it back again.  Hopefully. */
 id|bvme6000_set_vectors

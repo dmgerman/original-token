@@ -2,12 +2,7 @@ multiline_comment|/* &n;   3w-xxxx.h -- 3ware Storage Controller device driver f
 macro_line|#ifndef _3W_XXXX_H
 DECL|macro|_3W_XXXX_H
 mdefine_line|#define _3W_XXXX_H
-multiline_comment|/* Convert Linux Version, Patch-level, Sub-level to LINUX_VERSION_CODE. */
-DECL|macro|TW_LINUX_VERSION
-mdefine_line|#define TW_LINUX_VERSION(V, P, S)&t;(((V) * 65536) + ((P) * 256) + (S))
-macro_line|#ifndef LINUX_VERSION_CODE
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif /* LINUX_VERSION_CODE */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
 multiline_comment|/* Control register bit definitions */
@@ -153,14 +148,8 @@ DECL|macro|TW_IOCTL
 mdefine_line|#define TW_IOCTL                              0x80
 DECL|macro|TW_MAX_AEN_TRIES
 mdefine_line|#define TW_MAX_AEN_TRIES                      100
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
 DECL|macro|TW_IN_INTR
 mdefine_line|#define TW_IN_INTR                            1
-macro_line|#endif #endif /* version &gt; v2.3.39 */
-macro_line|#ifndef MAJOR_NR 
-DECL|macro|MAJOR_NR
-mdefine_line|#define MAJOR_NR&t;&t;&t;      8 /* SCSI */
-macro_line|#endif
 multiline_comment|/* Macros */
 DECL|macro|TW_STATUS_ERRORS
 mdefine_line|#define TW_STATUS_ERRORS(x) &bslash;&n;&t;(((x &amp; TW_STATUS_PCI_ABORT) || &bslash;&n;&t;(x &amp; TW_STATUS_PCI_PARITY_ERROR) || &bslash;&n;&t;(x &amp; TW_STATUS_QUEUE_ERROR) || &bslash;&n;&t;(x &amp; TW_STATUS_MICROCONTROLLER_ERROR)) &amp;&amp; &bslash;&n;&t;(x &amp; TW_STATUS_MICROCONTROLLER_READY))
@@ -171,13 +160,6 @@ macro_line|#else
 DECL|macro|dprintk
 mdefine_line|#define dprintk(msg...) do { } while(0);
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; TW_LINUX_VERSION(2,3,28)
-r_extern
-r_struct
-id|proc_dir_entry
-id|tw_scsi_proc_entry
-suffix:semicolon
-macro_line|#endif /* version &lt; v2.3.28 */
 multiline_comment|/* Scatter Gather List Entry */
 DECL|struct|TAG_TW_SG_Entry
 r_typedef
@@ -772,12 +754,10 @@ r_int
 r_char
 id|aen_tail
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
 DECL|member|flags
 id|u32
 id|flags
 suffix:semicolon
-macro_line|#endif
 DECL|typedef|TW_Device_Extension
 )brace
 id|TW_Device_Extension
@@ -1242,15 +1222,10 @@ op_star
 id|tw_dev
 )paren
 suffix:semicolon
-macro_line|#ifdef HOSTS_C
-macro_line|#if LINUX_VERSION_CODE &gt; TW_LINUX_VERSION(2,3,39)
+macro_line|#if defined(HOSTS_C) || defined(MODULE)
 multiline_comment|/* Scsi_Host_Template Initializer */
 DECL|macro|TWXXXX
 mdefine_line|#define TWXXXX {&t;&t;&t;&t;&t;&bslash;&n;&t;next : NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;module : NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;proc_name : &quot;3w-xxxx&quot;,&t;&t;&t;&t;&bslash;&n;&t;proc_info : tw_scsi_proc_info,&t;&t;&t;&bslash;&n;&t;name : &quot;3ware Storage Controller&quot;,&t;&t;&bslash;&n;&t;detect : tw_scsi_detect,&t;&t;&t;&bslash;&n;&t;release : tw_scsi_release,&t;&t;&t;&bslash;&n;&t;info : NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;ioctl : NULL,                  &t;&t;&t;&bslash;&n;&t;command : NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;queuecommand : tw_scsi_queue,&t;&t;&t;&bslash;&n;&t;eh_strategy_handler : NULL,&t;&t;&t;&bslash;&n;&t;eh_abort_handler : tw_scsi_eh_abort,&t;&t;&bslash;&n;&t;eh_device_reset_handler : NULL,&t;&t;&t;&bslash;&n;&t;eh_bus_reset_handler : NULL,&t;&t;&t;&bslash;&n;&t;eh_host_reset_handler : tw_scsi_eh_reset,&t;&bslash;&n;&t;abort : NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;reset : NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;slave_attach : NULL,&t;&t;&t;&t;&bslash;&n;&t;bios_param : tw_scsi_biosparam,&t;&t;&t;&bslash;&n;&t;can_queue : TW_Q_LENGTH,&t;&t;&t;&bslash;&n;&t;this_id: -1,&t;&t;&t;&t;&t;&bslash;&n;&t;sg_tablesize : TW_MAX_SGL_LENGTH,&t;&t;&bslash;&n;&t;cmd_per_lun: TW_MAX_CMDS_PER_LUN,&t;&t;&bslash;&n;&t;present : 0,&t;&t;&t;&t;&t;&bslash;&n;&t;unchecked_isa_dma : 0,&t;&t;&t;&t;&bslash;&n;&t;use_clustering : ENABLE_CLUSTERING,&t;&t;&bslash;&n; &t;use_new_eh_code : 1,&t;&t;&t;&t;&bslash;&n;&t;emulated : 1&t;&t;&t;&t;&t;&bslash;&n;}
-macro_line|#else /* version &lt; v2.2.?? */
-DECL|macro|TWXXXX
-mdefine_line|#define TWXXXX {&t;&t;&t;&t;&t;&bslash;&n;&t;next : NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;module : NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;proc_dir : &amp;tw_scsi_proc_entry,&t;&t;&t;&bslash;&n;&t;proc_info : tw_scsi_proc_info,&t;&t;&t;&bslash;&n;&t;name : &quot;3ware Storage Controller&quot;,&t;&t;&bslash;&n;&t;detect : tw_scsi_detect,&t;&t;&t;&bslash;&n;&t;release : tw_scsi_release,&t;&t;&t;&bslash;&n;&t;info : NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;ioctl : NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;command : NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;queuecommand : tw_scsi_queue,&t;&t;&t;&bslash;&n;&t;eh_strategy_handler : NULL,&t;&t;&t;&bslash;&n;&t;eh_abort_handler : tw_scsi_eh_abort,&t;&t;&bslash;&n;&t;eh_device_reset_handler : NULL,&t;&t;&t;&bslash;&n;&t;abort : NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;reset : NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;slave_attach : NULL,&t;&t;&t;&t;&bslash;&n;&t;bios_param : tw_scsi_biosparam,&t;&t;&t;&bslash;&n;&t;can_queue : TW_Q_LENGTH,&t;&t;&t;&bslash;&n;&t;this_id: -1,&t;&t;&t;&t;&t;&bslash;&n;&t;sg_tablesize : TW_MAX_SGL_LENGTH,&t;&t;&bslash;&n;&t;cmd_per_lun: TW_MAX_CMDS_PER_LUN,&t;&t;&bslash;&n;&t;present : 0,&t;&t;&t;&t;&t;&bslash;&n;&t;unchecked_isa_dma : 0,&t;&t;&t;&t;&bslash;&n;&t;use_clustering : ENABLE_CLUSTERING,&t;&t;&bslash;&n;&t;use_new_eh_code : 1&t;&t;&t;&t;&bslash;&n;}
-macro_line|#endif /* version &lt; v2.2.?? */
 macro_line|#endif /* HOSTS_C */
 macro_line|#endif /* _3W_XXXX_H */
 eof

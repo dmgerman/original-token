@@ -231,7 +231,6 @@ DECL|macro|USBDEVFS_RELEASEINTERFACE
 mdefine_line|#define USBDEVFS_RELEASEINTERFACE  _IOR(&squot;U&squot;, 16, unsigned int)
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 multiline_comment|/*&n; * inode number macros&n; */

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
@@ -931,6 +932,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|ioport_resource.end
+op_assign
+l_int|0xFFFFFFFF
+suffix:semicolon
+multiline_comment|/* Change size of I/O space from 64KB&n;                                           to 4GB. */
 id|mach_sched_init
 op_assign
 id|atari_sched_init
@@ -2090,33 +2096,6 @@ l_string|&quot;g&quot;
 l_int|0xfe00a040
 )paren
 multiline_comment|/* Translate 0xfexxxxxx, enable,&n;                                         * supervisor only, non-cacheable/&n;                                         * serialized, writable */
-suffix:colon
-l_string|&quot;d0&quot;
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n;     * On the Hades map the PCI memory, I/O and configuration areas&n;     * (0x80000000 - 0xbfffffff).&n;     *&n;     * Settings: supervisor only, non-cacheable, serialized, read and write.&n;     */
-r_if
-c_cond
-(paren
-id|MACH_IS_HADES
-)paren
-(brace
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;movel %0,%/d0&bslash;n&bslash;t&quot;
-l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
-l_string|&quot;movec %%d0,%%itt0&bslash;n&bslash;t&quot;
-l_string|&quot;movec %%d0,%%dtt0&bslash;n&bslash;t&quot;
-l_string|&quot;.chip 68k&bslash;n&bslash;t&quot;
-suffix:colon
-multiline_comment|/* no outputs */
-suffix:colon
-l_string|&quot;g&quot;
-(paren
-l_int|0x803fa040
-)paren
 suffix:colon
 l_string|&quot;d0&quot;
 )paren

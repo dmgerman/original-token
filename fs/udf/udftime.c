@@ -1061,15 +1061,6 @@ op_assign
 (paren
 op_minus
 id|sys_tz.tz_minuteswest
-op_plus
-(paren
-id|sys_tz.tz_dsttime
-ques
-c_cond
-l_int|60
-suffix:colon
-l_int|0
-)paren
 )paren
 suffix:semicolon
 r_if

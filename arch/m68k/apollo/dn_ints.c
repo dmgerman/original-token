@@ -57,6 +57,16 @@ comma
 l_int|0x82
 )brace
 suffix:semicolon
+r_extern
+r_void
+id|dn_serial_print
+(paren
+r_const
+r_char
+op_star
+id|str
+)paren
+suffix:semicolon
 DECL|function|dn_process_int
 r_void
 id|dn_process_int
@@ -71,22 +81,6 @@ op_star
 id|fp
 )paren
 (brace
-macro_line|#if 0
-r_int
-r_char
-id|x
-suffix:semicolon
-macro_line|#endif 
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;Aha DN interrupt ! : %d&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -130,18 +124,12 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;spurious irq %d occurred&bslash;n&quot;
+l_string|&quot;spurious irq %d occured&bslash;n&quot;
 comma
 id|irq
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0  
-id|printk
-c_func
-(paren
-l_string|&quot;*(0x10803) %02x&bslash;n&quot;
-comma
 op_star
 (paren
 r_volatile
@@ -150,39 +138,7 @@ r_char
 op_star
 )paren
 (paren
-id|IO_BASE
-op_plus
-l_int|0x10803
-)paren
-)paren
-suffix:semicolon
-id|x
-op_assign
-op_star
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-(paren
-id|IO_BASE
-op_plus
-l_int|0x10805
-)paren
-suffix:semicolon
-macro_line|#endif
-op_star
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-(paren
-id|IO_BASE
-op_plus
-l_int|0x11000
+id|pica
 )paren
 op_assign
 l_int|0x20
@@ -195,9 +151,7 @@ r_char
 op_star
 )paren
 (paren
-id|IO_BASE
-op_plus
-l_int|0x11100
+id|picb
 )paren
 op_assign
 l_int|0x20
@@ -213,12 +167,6 @@ r_void
 (brace
 r_int
 id|i
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Init IRQ&bslash;n&quot;
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -312,12 +260,6 @@ op_star
 id|dev_id
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;dn request IRQ&bslash;n&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -409,9 +351,7 @@ r_char
 op_star
 )paren
 (paren
-id|IO_BASE
-op_plus
-id|PICA
+id|pica
 op_plus
 l_int|1
 )paren
@@ -433,9 +373,7 @@ r_char
 op_star
 )paren
 (paren
-id|IO_BASE
-op_plus
-id|PICB
+id|picb
 op_plus
 l_int|1
 )paren
@@ -485,12 +423,6 @@ op_star
 id|dev_id
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;dn free irq&bslash;n&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -532,9 +464,7 @@ r_char
 op_star
 )paren
 (paren
-id|IO_BASE
-op_plus
-id|PICA
+id|pica
 op_plus
 l_int|1
 )paren
@@ -555,9 +485,7 @@ r_char
 op_star
 )paren
 (paren
-id|IO_BASE
-op_plus
-id|PICB
+id|picb
 op_plus
 l_int|1
 )paren

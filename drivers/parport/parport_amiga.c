@@ -1,4 +1,4 @@
-multiline_comment|/* Low-level parallel port routines for the Amiga buildin port&n; *&n; * Author: Joerg Dorchain &lt;dorchain@wirbel.com&gt;&n; *&n; * This is a complete rewrite of the code, but based heaviy upon the old&n; * lp_intern. code.&n; *&n; * The built-in Amiga parallel port provides one port at a fixed address&n; * with 8 bisdirecttional data lines (D0 - D7) and 3 bidirectional status&n; * lines (BUSY, POUT, SEL), 1 output control line /STROBE (raised automatically in&n; * hardware when the data register is accessed), and 1 input control line&n; * /ACK, able to cause an interrupt, but both not directly settable by&n; * software.&n; */
+multiline_comment|/* Low-level parallel port routines for the Amiga buildin port&n; *&n; * Author: Joerg Dorchain &lt;joerg@dorchain.net&gt;&n; *&n; * This is a complete rewrite of the code, but based heaviy upon the old&n; * lp_intern. code.&n; *&n; * The built-in Amiga parallel port provides one port at a fixed address&n; * with 8 bisdirecttional data lines (D0 - D7) and 3 bidirectional status&n; * lines (BUSY, POUT, SEL), 1 output control line /STROBE (raised automatically in&n; * hardware when the data register is accessed), and 1 input control line&n; * /ACK, able to cause an interrupt, but both not directly settable by&n; * software.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
@@ -12,8 +12,23 @@ macro_line|#ifdef DEBUG
 DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK printk
 macro_line|#else
-DECL|macro|DPRINTK
-mdefine_line|#define DPRINTK(format, args...)
+DECL|function|DPRINTK
+r_static
+r_inline
+r_void
+id|DPRINTK
+c_func
+(paren
+r_void
+op_star
+id|nothing
+comma
+dot
+dot
+dot
+)paren
+(brace
+)brace
 macro_line|#endif
 DECL|variable|this_port
 r_static
@@ -270,7 +285,7 @@ r_return
 id|old
 suffix:semicolon
 )brace
-DECL|function|status_pc_to_amiga
+macro_line|#if 0 /* currently unused */
 r_static
 r_int
 r_char
@@ -349,6 +364,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|status_amiga_to_pc
 r_static
 r_int
@@ -488,6 +504,92 @@ id|regs
 )paren
 suffix:semicolon
 )brace
+DECL|function|amiga_enable_irq
+r_static
+r_void
+id|amiga_enable_irq
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|p
+)paren
+(brace
+id|enable_irq
+c_func
+(paren
+id|IRQ_AMIGA_CIAA_FLG
+)paren
+suffix:semicolon
+)brace
+DECL|function|amiga_disable_irq
+r_static
+r_void
+id|amiga_disable_irq
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|p
+)paren
+(brace
+id|disable_irq
+c_func
+(paren
+id|IRQ_AMIGA_CIAA_FLG
+)paren
+suffix:semicolon
+)brace
+DECL|function|amiga_data_forward
+r_static
+r_void
+id|amiga_data_forward
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|p
+)paren
+(brace
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;forward&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ciaa.ddrb
+op_assign
+l_int|0xff
+suffix:semicolon
+multiline_comment|/* all pins output */
+)brace
+DECL|function|amiga_data_reverse
+r_static
+r_void
+id|amiga_data_reverse
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|p
+)paren
+(brace
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;reverse&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ciaa.ddrb
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* all pins input */
+)brace
 DECL|function|amiga_init_state
 r_static
 r_void
@@ -606,44 +708,6 @@ op_or
 id|s-&gt;u.amiga.statusdir
 suffix:semicolon
 )brace
-DECL|function|amiga_enable_irq
-r_static
-r_void
-id|amiga_enable_irq
-c_func
-(paren
-r_struct
-id|parport
-op_star
-id|p
-)paren
-(brace
-id|enable_irq
-c_func
-(paren
-id|IRQ_AMIGA_CIAA_FLG
-)paren
-suffix:semicolon
-)brace
-DECL|function|amiga_disable_irq
-r_static
-r_void
-id|amiga_disable_irq
-c_func
-(paren
-r_struct
-id|parport
-op_star
-id|p
-)paren
-(brace
-id|disable_irq
-c_func
-(paren
-id|IRQ_AMIGA_CIAA_FLG
-)paren
-suffix:semicolon
-)brace
 DECL|function|amiga_inc_use_count
 r_static
 r_void
@@ -691,12 +755,10 @@ id|amiga_enable_irq
 comma
 id|amiga_disable_irq
 comma
-l_int|NULL
+id|amiga_data_forward
 comma
-multiline_comment|/* data_forward */
-l_int|NULL
+id|amiga_data_reverse
 comma
-multiline_comment|/* data_reverse */
 id|amiga_init_state
 comma
 id|amiga_save_state
@@ -707,36 +769,26 @@ id|amiga_inc_use_count
 comma
 id|amiga_dec_use_count
 comma
-l_int|NULL
+id|parport_ieee1284_epp_write_data
 comma
-multiline_comment|/* epp_write_data */
-l_int|NULL
+id|parport_ieee1284_epp_read_data
 comma
-multiline_comment|/* epp_read_data */
-l_int|NULL
+id|parport_ieee1284_epp_write_addr
 comma
-multiline_comment|/* epp_write_addr */
-l_int|NULL
+id|parport_ieee1284_epp_read_addr
 comma
-multiline_comment|/* epp_read_addr */
-l_int|NULL
+id|parport_ieee1284_ecp_write_data
 comma
-multiline_comment|/* ecp_write_data */
-l_int|NULL
+id|parport_ieee1284_ecp_read_data
 comma
-multiline_comment|/* ecp_read_data */
-l_int|NULL
+id|parport_ieee1284_ecp_write_addr
 comma
-multiline_comment|/* ecp_write_addr */
-l_int|NULL
+id|parport_ieee1284_write_compat
 comma
-multiline_comment|/* compat_write_data */
-l_int|NULL
+id|parport_ieee1284_read_nibble
 comma
-multiline_comment|/* nibble_read_data */
-l_int|NULL
+id|parport_ieee1284_read_byte
 comma
-multiline_comment|/* byte_read_data */
 )brace
 suffix:semicolon
 multiline_comment|/* ----------- Initialisation code --------------------------------- */
@@ -869,7 +921,7 @@ macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Joerg Dorchain&quot;
+l_string|&quot;Joerg Dorchain &lt;joerg@dorchain.net&gt;&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION

@@ -419,6 +419,8 @@ id|amiga_chip_alloc
 c_func
 (paren
 id|Z2RAM_CHUNKSIZE
+comma
+l_string|&quot;z2ram&quot;
 )paren
 suffix:semicolon
 r_if

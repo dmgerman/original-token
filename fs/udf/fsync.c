@@ -1,6 +1,7 @@
-multiline_comment|/*&n; * fsync.c&n; *&n; * PURPOSE&n; *  Fsync handling routines for the OSTA-UDF(tm) filesystem.&n; *&n; * CONTACTS&n; *  E-mail regarding any portion of the Linux UDF file system should be&n; *  directed to the development team mailing list (run by majordomo):&n; *      linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *  This file is distributed under the terms of the GNU General Public&n; *  License (GPL). Copies of the GPL can be obtained from:&n; *      ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *  Each contributing author retains all rights to their own work.&n; *&n; *  (C) 1999 Ben Fennema&n; *  (C) 1999 Stelias Computing Inc&n; *&n; * HISTORY&n; *&n; *  05/22/99 blf  Created.&n; *&n; */
+multiline_comment|/*&n; * fsync.c&n; *&n; * PURPOSE&n; *  Fsync handling routines for the OSTA-UDF(tm) filesystem.&n; *&n; * CONTACTS&n; *  E-mail regarding any portion of the Linux UDF file system should be&n; *  directed to the development team mailing list (run by majordomo):&n; *      linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *  This file is distributed under the terms of the GNU General Public&n; *  License (GPL). Copies of the GPL can be obtained from:&n; *      ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *  Each contributing author retains all rights to their own work.&n; *&n; *  (C) 1999-2000 Ben Fennema&n; *  (C) 1999-2000 Stelias Computing Inc&n; *&n; * HISTORY&n; *&n; *  05/22/99 blf  Created.&n; */
 macro_line|#include &quot;udfdecl.h&quot;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/udf_fs.h&gt;
 macro_line|#include &quot;udf_i.h&quot;
 DECL|function|sync_extent_block
@@ -73,6 +74,24 @@ id|bh
 )paren
 )paren
 (brace
+multiline_comment|/* There can be a parallell read(2) that started read-I/O&n;&t;&t;   on the buffer so we can&squot;t assume that there&squot;s been&n;&t;&t;   an I/O error without first waiting I/O completation. */
+id|wait_on_buffer
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|buffer_uptodate
+c_func
+(paren
+id|bh
+)paren
+)paren
+(brace
 id|brelse
 (paren
 id|bh
@@ -82,6 +101,7 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -103,6 +123,18 @@ id|bh
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|wait
+)paren
+multiline_comment|/* when we return from fsync all the blocks&n;&t;&t;&t;   must be _just_ stored on disk */
+id|wait_on_buffer
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
 id|brelse
 (paren
 id|bh
@@ -360,7 +392,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|S_ISLNK
 c_func
 (paren
@@ -371,15 +402,6 @@ op_logical_neg
 (paren
 id|inode-&gt;i_blocks
 )paren
-)paren
-op_logical_or
-id|UDF_I_ALLOCTYPE
-c_func
-(paren
-id|inode
-)paren
-op_eq
-id|ICB_FLAG_AD_IN_ICB
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * Don&squot;t sync fast links! or ICB_FLAG_AD_IN_ICB&n;&t;&t; */
@@ -436,6 +458,36 @@ id|inode
 suffix:semicolon
 r_return
 id|err
+ques
+c_cond
+op_minus
+id|EIO
+suffix:colon
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|udf_sync_file_adinicb
+r_int
+id|udf_sync_file_adinicb
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+comma
+r_struct
+id|dentry
+op_star
+id|dentry
+)paren
+(brace
+r_return
+id|udf_sync_inode
+c_func
+(paren
+id|dentry-&gt;d_inode
+)paren
 ques
 c_cond
 op_minus

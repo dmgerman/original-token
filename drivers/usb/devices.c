@@ -1137,7 +1137,6 @@ r_char
 op_star
 id|end
 comma
-r_const
 r_struct
 id|usb_device
 op_star
@@ -1445,7 +1444,6 @@ r_char
 op_star
 id|end
 comma
-r_const
 r_struct
 id|usb_device
 op_star

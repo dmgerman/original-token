@@ -1397,14 +1397,6 @@ op_star
 id|zone
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|gfp_mask
-op_amp
-id|__GFP_IO
-)paren
-(brace
 r_int
 id|count
 op_assign
@@ -1427,14 +1419,13 @@ c_func
 id|count
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: kmem_cache_shrink here should tell us&n;&t;&t;   the number of pages freed, and it should&n;&t;&t;   work in a __GFP_DMA/__GFP_HIGHMEM behaviour&n;&t;&t;   to free only the interesting pages in&n;&t;&t;   function of the needs of the current allocation. */
+multiline_comment|/* FIXME: kmem_cache_shrink here should tell us&n;&t;   the number of pages freed, and it should&n;&t;   work in a __GFP_DMA/__GFP_HIGHMEM behaviour&n;&t;   to free only the interesting pages in&n;&t;   function of the needs of the current allocation. */
 id|kmem_cache_shrink
 c_func
 (paren
 id|inode_cachep
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon

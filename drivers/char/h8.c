@@ -8,7 +8,6 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -16,6 +15,8 @@ macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/lists.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;asm/unistd.h&gt;
@@ -1108,149 +1109,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|h8_cleanup
+r_static
 r_void
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;H8 module at %X(Interrupt %d)&bslash;n&quot;
-comma
-id|h8_base
-comma
-id|h8_irq
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|h8_irq
-comma
-id|h8_intr
-comma
-id|SA_INTERRUPT
-comma
-l_string|&quot;h8&quot;
-comma
-l_int|NULL
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;H8: error: IRQ %d is not free.&bslash;n&quot;
-comma
-id|h8_irq
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
-id|misc_register
-c_func
-(paren
-op_amp
-id|h8_device
-)paren
-suffix:semicolon
-id|request_region
-c_func
-(paren
-id|h8_base
-comma
-l_int|8
-comma
-l_string|&quot;h8&quot;
-)paren
-suffix:semicolon
-id|create_proc_info_entry
-c_func
-(paren
-l_string|&quot;driver/h8&quot;
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-id|h8_get_info
-)paren
-suffix:semicolon
-id|QUEUE_INIT
-c_func
-(paren
-op_amp
-id|h8_actq
-comma
-id|link
-comma
-id|h8_cmd_q_t
-op_star
-)paren
-suffix:semicolon
-id|QUEUE_INIT
-c_func
-(paren
-op_amp
-id|h8_cmdq
-comma
-id|link
-comma
-id|h8_cmd_q_t
-op_star
-)paren
-suffix:semicolon
-id|QUEUE_INIT
-c_func
-(paren
-op_amp
-id|h8_freeq
-comma
-id|link
-comma
-id|h8_cmd_q_t
-op_star
-)paren
-suffix:semicolon
-id|h8_alloc_queues
-c_func
-(paren
-)paren
-suffix:semicolon
-id|h8_hw_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|kernel_thread
-c_func
-(paren
-id|h8_monitor_thread
-comma
-l_int|NULL
-comma
-l_int|0
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
+id|__exit
+id|h8_cleanup
 (paren
 r_void
 )paren
@@ -1287,9 +1150,10 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-macro_line|#else /* MODULE */
 DECL|function|h8_init
+r_static
 r_int
+id|__init
 id|h8_init
 c_func
 (paren
@@ -1317,6 +1181,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;H8: error: IRQ %d is not free&bslash;n&quot;
 comma
 id|h8_irq
@@ -1330,6 +1195,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;H8 at 0x%x IRQ %d&bslash;n&quot;
 comma
 id|h8_base
@@ -1426,9 +1292,24 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+DECL|variable|h8_init
+id|module_init
+c_func
+(paren
+id|h8_init
+)paren
+suffix:semicolon
+DECL|variable|h8_cleanup
+id|module_exit
+c_func
+(paren
+id|h8_cleanup
+)paren
+suffix:semicolon
 DECL|function|h8_hw_init
+r_static
 r_void
+id|__init
 id|h8_hw_init
 c_func
 (paren

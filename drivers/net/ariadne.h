@@ -789,59 +789,16 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n;     *&t;Ariadne Expansion Board Structure&n;     */
-DECL|struct|AriadneBoard
-r_struct
-id|AriadneBoard
-(brace
-DECL|member|Pad1
-id|u_char
-id|Pad1
-(braket
-l_int|0x360
-)braket
-suffix:semicolon
-DECL|member|Lance
-r_struct
-id|Am79C960
-id|Lance
-suffix:semicolon
-DECL|member|Pad2
-id|u_char
-id|Pad2
-(braket
-l_int|0xc88
-)braket
-suffix:semicolon
-DECL|member|PiT
-r_struct
-id|MC68230
-id|PiT
-suffix:semicolon
-DECL|member|Pad3
-id|u_char
-id|Pad3
-(braket
-l_int|0x2fc0
-)braket
-suffix:semicolon
-DECL|member|BootPROM
-r_volatile
-id|u_short
-id|BootPROM
-(braket
-l_int|0x2000
-)braket
-suffix:semicolon
-multiline_comment|/* I guess it&squot;s here :-) */
-DECL|member|RAM
-r_volatile
-id|u_short
-id|RAM
-(braket
-l_int|0x4000
-)braket
-suffix:semicolon
-multiline_comment|/* Always access WORDs!! */
-)brace
-suffix:semicolon
+DECL|macro|ARIADNE_LANCE
+mdefine_line|#define ARIADNE_LANCE&t;&t;0x360
+DECL|macro|ARIADNE_PIT
+mdefine_line|#define ARIADNE_PIT&t;&t;0x1000
+DECL|macro|ARIADNE_BOOTPROM
+mdefine_line|#define ARIADNE_BOOTPROM&t;0x4000&t;/* I guess it&squot;s here :-) */
+DECL|macro|ARIADNE_BOOTPROM_SIZE
+mdefine_line|#define ARIADNE_BOOTPROM_SIZE&t;0x4000
+DECL|macro|ARIADNE_RAM
+mdefine_line|#define ARIADNE_RAM&t;&t;0x8000&t;/* Always access WORDs!! */
+DECL|macro|ARIADNE_RAM_SIZE
+mdefine_line|#define ARIADNE_RAM_SIZE&t;0x8000
 eof

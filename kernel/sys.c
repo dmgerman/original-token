@@ -3086,9 +3086,8 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This should really be a blocking read-write lock&n; * rather than a semaphore. Anybody want to implement&n; * one?&n; */
 DECL|variable|uts_sem
-id|DECLARE_MUTEX
+id|DECLARE_RWSEM
 c_func
 (paren
 id|uts_sem
@@ -3111,7 +3110,7 @@ id|errno
 op_assign
 l_int|0
 suffix:semicolon
-id|down
+id|down_read
 c_func
 (paren
 op_amp
@@ -3139,7 +3138,7 @@ op_assign
 op_minus
 id|EFAULT
 suffix:semicolon
-id|up
+id|up_read
 c_func
 (paren
 op_amp
@@ -3192,7 +3191,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|down
+id|down_write
 c_func
 (paren
 op_amp
@@ -3231,7 +3230,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|up
+id|up_write
 c_func
 (paren
 op_amp
@@ -3272,7 +3271,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|down
+id|down_read
 c_func
 (paren
 op_amp
@@ -3322,7 +3321,7 @@ op_assign
 op_minus
 id|EFAULT
 suffix:semicolon
-id|up
+id|up_read
 c_func
 (paren
 op_amp
@@ -3376,7 +3375,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|down
+id|down_write
 c_func
 (paren
 op_amp
@@ -3415,7 +3414,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|up
+id|up_write
 c_func
 (paren
 op_amp

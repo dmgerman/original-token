@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * namei.c&n; *&n; * PURPOSE&n; *      Inode name handling routines for the OSTA-UDF(tm) filesystem.&n; *&n; * CONTACTS&n; *      E-mail regarding any portion of the Linux UDF file system should be&n; *      directed to the development team mailing list (run by majordomo):&n; *              linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *      This file is distributed under the terms of the GNU General Public&n; *      License (GPL). Copies of the GPL can be obtained from:&n; *              ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *      Each contributing author retains all rights to their own work.&n; *&n; *  (C) 1998-1999 Ben Fennema&n; *  (C) 1999 Stelias Computing Inc&n; *&n; * HISTORY&n; *&n; * 12/12/98 blf  Created. Split out the lookup code from dir.c&n; * 04/19/99 blf  link, mknod, symlink support&n; *&n; */
+multiline_comment|/*&n; * namei.c&n; *&n; * PURPOSE&n; *      Inode name handling routines for the OSTA-UDF(tm) filesystem.&n; *&n; * CONTACTS&n; *      E-mail regarding any portion of the Linux UDF file system should be&n; *      directed to the development team mailing list (run by majordomo):&n; *              linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *      This file is distributed under the terms of the GNU General Public&n; *      License (GPL). Copies of the GPL can be obtained from:&n; *              ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *      Each contributing author retains all rights to their own work.&n; *&n; *  (C) 1998-2000 Ben Fennema&n; *  (C) 1999-2000 Stelias Computing Inc&n; *&n; * HISTORY&n; *&n; *  12/12/98 blf  Created. Split out the lookup code from dir.c&n; *  04/19/99 blf  link, mknod, symlink support&n; */
 macro_line|#include &quot;udfdecl.h&quot;
 macro_line|#if defined(__linux__) &amp;&amp; defined(__KERNEL__)
 macro_line|#include &lt;linux/version.h&gt;
@@ -778,7 +778,7 @@ id|loff_t
 id|size
 op_assign
 (paren
-id|UDF_I_EXT0OFFS
+id|udf_ext0_offset
 c_func
 (paren
 id|dir
@@ -820,7 +820,7 @@ suffix:semicolon
 id|f_pos
 op_assign
 (paren
-id|UDF_I_EXT0OFFS
+id|udf_ext0_offset
 c_func
 (paren
 id|dir
@@ -1355,6 +1355,21 @@ r_struct
 id|udf_fileident_bh
 id|fibh
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dentry-&gt;d_name.len
+OG
+id|UDF_NAME_LEN
+)paren
+r_return
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|ENAMETOOLONG
+)paren
+suffix:semicolon
 macro_line|#ifdef UDF_RECOVERY
 multiline_comment|/* temporary shorthand for specifying files by inode number */
 r_if
@@ -1577,7 +1592,7 @@ id|loff_t
 id|size
 op_assign
 (paren
-id|UDF_I_EXT0OFFS
+id|udf_ext0_offset
 c_func
 (paren
 id|dir
@@ -1740,7 +1755,7 @@ suffix:semicolon
 id|f_pos
 op_assign
 (paren
-id|UDF_I_EXT0OFFS
+id|udf_ext0_offset
 c_func
 (paren
 id|dir
@@ -2312,7 +2327,7 @@ l_int|NULL
 suffix:semicolon
 id|fibh-&gt;soffset
 op_sub_assign
-id|UDF_I_EXT0OFFS
+id|udf_ext0_offset
 c_func
 (paren
 id|dir
@@ -2320,7 +2335,7 @@ id|dir
 suffix:semicolon
 id|fibh-&gt;eoffset
 op_sub_assign
-id|UDF_I_EXT0OFFS
+id|udf_ext0_offset
 c_func
 (paren
 id|dir
@@ -2329,7 +2344,7 @@ suffix:semicolon
 id|f_pos
 op_sub_assign
 (paren
-id|UDF_I_EXT0OFFS
+id|udf_ext0_offset
 c_func
 (paren
 id|dir
@@ -2366,15 +2381,13 @@ id|fibh-&gt;sbh
 op_assign
 id|fibh-&gt;ebh
 op_assign
-id|udf_expand_adinicb
+id|udf_expand_dir_adinicb
 c_func
 (paren
 id|dir
 comma
 op_amp
 id|block
-comma
-l_int|1
 comma
 id|err
 )paren
@@ -3260,7 +3273,7 @@ suffix:semicolon
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|udf_file_inode_operations
+id|udf_file_inode_operations_adinicb
 suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
@@ -3514,6 +3527,16 @@ id|inode-&gt;i_uid
 op_assign
 id|current-&gt;fsuid
 suffix:semicolon
+id|init_special_inode
+c_func
+(paren
+id|inode
+comma
+id|mode
+comma
+id|rdev
+)paren
+suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
 id|mode
@@ -3661,16 +3684,6 @@ op_increment
 id|event
 suffix:semicolon
 )brace
-id|init_special_inode
-c_func
-(paren
-id|inode
-comma
-id|mode
-comma
-id|rdev
-)paren
-suffix:semicolon
 id|mark_inode_dirty
 c_func
 (paren
@@ -3831,38 +3844,6 @@ op_amp
 op_complement
 l_int|3
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|UDF_I_ALLOCTYPE
-c_func
-(paren
-id|inode
-)paren
-op_eq
-id|ICB_FLAG_AD_IN_ICB
-)paren
-(brace
-id|UDF_I_EXT0LEN
-c_func
-(paren
-id|inode
-)paren
-op_assign
-id|inode-&gt;i_size
-suffix:semicolon
-id|UDF_I_EXT0LOC
-c_func
-(paren
-id|inode
-)paren
-op_assign
-id|UDF_I_LOCATION
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 id|UDF_I_LENALLOC
 c_func
 (paren
@@ -3893,34 +3874,6 @@ comma
 id|inode-&gt;i_sb-&gt;s_blocksize
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
-id|fibh.sbh
-op_assign
-id|udf_bread
-(paren
-id|inode
-comma
-l_int|0
-comma
-l_int|1
-comma
-op_amp
-id|err
-)paren
-suffix:semicolon
-id|loc
-op_assign
-id|UDF_I_EXT0LOC
-c_func
-(paren
-id|inode
-)paren
-dot
-id|logicalBlockNum
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4357,7 +4310,7 @@ id|loff_t
 id|size
 op_assign
 (paren
-id|UDF_I_EXT0OFFS
+id|udf_ext0_offset
 c_func
 (paren
 id|dir
@@ -4393,7 +4346,7 @@ suffix:semicolon
 id|f_pos
 op_assign
 (paren
-id|UDF_I_EXT0OFFS
+id|udf_ext0_offset
 c_func
 (paren
 id|dir
@@ -6325,7 +6278,7 @@ id|old_inode-&gt;i_mode
 id|Uint32
 id|offset
 op_assign
-id|UDF_I_EXT0OFFS
+id|udf_ext0_offset
 c_func
 (paren
 id|old_inode
@@ -6499,6 +6452,25 @@ id|new_dir-&gt;i_version
 op_assign
 op_increment
 id|event
+suffix:semicolon
+multiline_comment|/*&n;&t; * Like most other Unix systems, set the ctime for inodes on a&n;&t; * rename.&n;&t; */
+id|old_inode-&gt;i_ctime
+op_assign
+id|CURRENT_TIME
+suffix:semicolon
+id|UDF_I_UCTIME
+c_func
+(paren
+id|old_inode
+)paren
+op_assign
+id|CURRENT_UTIME
+suffix:semicolon
+id|mark_inode_dirty
+c_func
+(paren
+id|old_inode
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * ok, that&squot;s it&n;&t; */
 id|ncfi.fileVersionNum

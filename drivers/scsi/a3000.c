@@ -733,11 +733,6 @@ id|WD33C93_hostdata
 suffix:semicolon
 id|a3000_host-&gt;base
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|ZTWO_VADDR
 c_func
 (paren

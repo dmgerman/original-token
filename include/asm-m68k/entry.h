@@ -9,9 +9,6 @@ macro_line|#include &lt;asm/kgdb.h&gt;
 macro_line|#endif
 multiline_comment|/*&n; * Stack layout in &squot;ret_from_exception&squot;:&n; *&n; *&t;This allows access to the syscall arguments in registers d1-d5&n; *&n; *&t; 0(sp) - d1&n; *&t; 4(sp) - d2&n; *&t; 8(sp) - d3&n; *&t; C(sp) - d4&n; *&t;10(sp) - d5&n; *&t;14(sp) - a0&n; *&t;18(sp) - a1&n; *&t;1C(sp) - a2&n; *&t;20(sp) - d0&n; *&t;24(sp) - orig_d0&n; *&t;28(sp) - stack adjustment&n; *&t;2C(sp) - sr&n; *&t;2E(sp) - pc&n; *&t;32(sp) - format &amp; vector&n; */
 multiline_comment|/*&n; * 97/05/14 Andreas: Register %a2 is now set to the current task throughout&n; *&t;&t;     the whole kernel.&n; */
-macro_line|#ifdef __ASSEMBLY__
-DECL|macro|curptr
-mdefine_line|#define curptr a2
 multiline_comment|/* the following macro is used when enabling interrupts */
 macro_line|#if defined(MACH_ATARI_ONLY) &amp;&amp; !defined(CONFIG_HADES)
 multiline_comment|/* block out HSYNC on the atari */
@@ -26,6 +23,9 @@ mdefine_line|#define ALLOWINT 0xf8ff
 DECL|macro|MAX_NOINT_IPL
 mdefine_line|#define&t;MAX_NOINT_IPL&t;0
 macro_line|#endif /* machine compilation types */ 
+macro_line|#ifdef __ASSEMBLY__
+DECL|macro|curptr
+mdefine_line|#define curptr a2
 id|LFLUSH_I_AND_D
 op_assign
 l_int|0x00000808
@@ -445,7 +445,7 @@ mdefine_line|#define SAVE_ALL_INT&t;&t;&t;&t;&bslash;&n;&t;&quot;clrl&t;%%sp@-;&
 macro_line|#else
 mdefine_line|#define SAVE_ALL_INT&t;&t;&t;&t;&bslash;&n;&t;&quot;clrl&t;%%sp@-&bslash;n&bslash;t&quot; /* stk_adj */&t;&bslash;&n;&t;&quot;pea&t;-1:w&bslash;n&bslash;t&quot;   /* orig d0 = -1 */&t;&bslash;&n;&t;&quot;movel&t;%%d0,%%sp@-&bslash;n&bslash;t&quot; /* d0 */&t;&bslash;&n;&t;&quot;moveml&t;%%d1-%%d5/%%a0-%%a2,%%sp@-&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&quot;moveml&t;%%d6-%%d7,kgdb_registers+&quot;STR(GDBOFFA_D6)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;moveml&t;%%a3-%%a6,kgdb_registers+&quot;STR(GDBOFFA_A3)
 macro_line|#endif
-mdefine_line|#define GET_CURRENT(tmp) &bslash;&n;&t;&quot;movel&t;%%sp,&quot;#tmp&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;andw&t;#-KTHREAD_SIZE,&quot;#tmp&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movel&t;&quot;#tmp&quot;,%%a2&quot;
+mdefine_line|#define GET_CURRENT(tmp) &bslash;&n;&t;&quot;movel&t;%%sp,&quot;#tmp&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;andw&t;#-&quot;STR(KTHREAD_SIZE)&quot;,&quot;#tmp&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movel&t;&quot;#tmp&quot;,%%a2&quot;
 macro_line|#endif
 macro_line|#endif /* __M68K_ENTRY_H */
 eof

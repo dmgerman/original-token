@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/video/fbgen.c -- Generic routines for frame buffer devices&n; *&n; *  Created 3 Jan 1998 by Geert Uytterhoeven&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * linux/drivers/video/fbgen.c -- Generic routines for frame buffer devices&n; *&n; *  Created 3 Jan 1998 by Geert Uytterhoeven&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  scsi_merge.c Copyright (C) 1999 Eric Youngdale&n; *&n; *  SCSI queueing library.&n; *      Initial versions: Eric Youngdale (eric@andante.org).&n; *                        Based upon conversations with large numbers&n; *                        of people at Linux Expo.&n; */
+multiline_comment|/*&n; *  scsi_merge.c Copyright (C) 1999 Eric Youngdale&n; *&n; *  SCSI queueing library.&n; *      Initial versions: Eric Youngdale (eric@andante.org).&n; *                        Based upon conversations with large numbers&n; *                        of people at Linux Expo.&n; *&t;Support for dynamic DMA mapping: Jakub Jelinek (jakub@redhat.com).&n; */
 multiline_comment|/*&n; * This file contains queue management functions that are used by SCSI.&n; * Typically this is used for several purposes.   First, we need to ensure&n; * that commands do not grow so large that they cannot be handled all at&n; * once by a host adapter.   The various flavors of merge functions included&n; * here serve this purpose.&n; *&n; * Note that it would be quite trivial to allow the low-level driver the&n; * flexibility to define it&squot;s own queue handling functions.  For the time&n; * being, the hooks are not present.   Right now we are just using the&n; * data in the host template as an indicator of how we should be handling&n; * queues, and we select routines that are optimized for that purpose.&n; *&n; * Some hosts do not impose any restrictions on the size of a request.&n; * In such cases none of the merge functions in this file are called,&n; * and we allow ll_rw_blk to merge requests in the default manner.&n; * This isn&squot;t guaranteed to be optimal, but it should be pretty darned&n; * good.   If someone comes up with ideas of better ways of managing queues&n; * to improve on the default behavior, then certainly fit it into this&n; * scheme in whatever manner makes the most sense.   Please note that&n; * since each device has it&squot;s own queue, we have considerable flexibility&n; * in queue management.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;constants.h&quot;
@@ -591,6 +592,8 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
+DECL|macro|MERGEABLE_BUFFERS
+mdefine_line|#define MERGEABLE_BUFFERS(X,Y) &bslash;&n;(((((long)(X)-&gt;b_data+(X)-&gt;b_size)|((long)(Y)-&gt;b_data)) &amp; &bslash;&n;  (DMA_CHUNK_SIZE - 1)) == 0)
 multiline_comment|/*&n; * Function:    __scsi_merge_fn()&n; *&n; * Purpose:     Prototype for queue merge function.&n; *&n; * Arguments:   q       - Queue for which we are merging request.&n; *              req     - request into which we wish to merge.&n; *              bh      - Block which we may wish to merge into request&n; *              use_clustering - 1 if this host wishes to use clustering&n; *              dma_host - 1 if this host has ISA DMA issues (bus doesn&squot;t&n; *                      expose all of the address lines, so that DMA cannot&n; *                      be done from an arbitrary address).&n; *&n; * Returns:     1 if it is OK to merge the block into the request.  0&n; *              if it is not OK.&n; *&n; * Lock status: io_request_lock is assumed to be held here.&n; *&n; * Notes:       Some drivers have limited scatter-gather table sizes, and&n; *              thus they cannot queue an infinitely large command.  This&n; *              function is called from ll_rw_blk before it attempts to merge&n; *              a new block into a request to make sure that the request will&n; *              not become too large.&n; *&n; *              This function is not designed to be directly called.  Instead&n; *              it should be referenced from other functions where the&n; *              use_clustering and dma_host parameters should be integer&n; *              constants.  The compiler should thus be able to properly&n; *              optimize the code, eliminating stuff that is irrelevant.&n; *              It is more maintainable to do this way with a single function&n; *              than to have 4 separate functions all doing roughly the&n; *              same thing.&n; */
 DECL|function|__scsi_merge_fn
 id|__inline
@@ -698,7 +701,7 @@ id|ISA_DMA_THRESHOLD
 )paren
 (brace
 r_goto
-id|new_segment
+id|new_end_segment
 suffix:semicolon
 )brace
 r_if
@@ -760,7 +763,7 @@ id|PAGE_SIZE
 )paren
 (brace
 r_goto
-id|new_segment
+id|new_end_segment
 suffix:semicolon
 )brace
 )brace
@@ -771,21 +774,47 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+id|new_end_segment
+suffix:colon
+macro_line|#ifdef DMA_CHUNK_SIZE
+r_if
+c_cond
+(paren
+id|MERGEABLE_BUFFERS
+c_func
+(paren
+id|req-&gt;bhtail
+comma
+id|bh
+)paren
+)paren
+r_goto
+id|new_mergeable
+suffix:semicolon
+macro_line|#endif
 r_goto
 id|new_segment
 suffix:semicolon
 )brace
 r_else
+(brace
 r_if
 c_cond
 (paren
 id|req-&gt;sector
 op_minus
 id|count
-op_eq
+op_ne
 id|sector
 )paren
 (brace
+multiline_comment|/* Attempt to merge sector that doesn&squot;t belong */
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -810,7 +839,7 @@ id|ISA_DMA_THRESHOLD
 )paren
 (brace
 r_goto
-id|new_segment
+id|new_start_segment
 suffix:semicolon
 )brace
 r_if
@@ -870,7 +899,7 @@ id|req-&gt;nr_segments
 )paren
 (brace
 r_goto
-id|new_segment
+id|new_start_segment
 suffix:semicolon
 )brace
 )brace
@@ -881,19 +910,85 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+id|new_start_segment
+suffix:colon
+macro_line|#ifdef DMA_CHUNK_SIZE
+r_if
+c_cond
+(paren
+id|MERGEABLE_BUFFERS
+c_func
+(paren
+id|bh
+comma
+id|req-&gt;bh
+)paren
+)paren
+r_goto
+id|new_mergeable
+suffix:semicolon
+macro_line|#endif
 r_goto
 id|new_segment
 suffix:semicolon
 )brace
-r_else
-(brace
-id|panic
-c_func
+macro_line|#ifdef DMA_CHUNK_SIZE
+id|new_mergeable
+suffix:colon
+multiline_comment|/*&n;&t; * pci_map_sg will be able to merge these two&n;&t; * into a single hardware sg entry, check if&n;&t; * we&squot;ll have enough memory for the sg list.&n;&t; * scsi.c allocates for this purpose&n;&t; * min(64,sg_tablesize) entries.&n;&t; */
+r_if
+c_cond
 (paren
-l_string|&quot;Attempt to merge sector that doesn&squot;t belong&quot;
+id|req-&gt;nr_segments
+op_ge
+l_int|64
+op_logical_and
+id|req-&gt;nr_segments
+op_ge
+id|SHpnt-&gt;sg_tablesize
 )paren
+r_return
+l_int|0
 suffix:semicolon
-)brace
+id|req-&gt;nr_segments
+op_increment
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+id|new_segment
+suffix:colon
+multiline_comment|/*&n;&t; * pci_map_sg won&squot;t be able to map these two&n;&t; * into a single hardware sg entry, so we have to&n;&t; * check if things fit into sg_tablesize.&n;&t; */
+r_if
+c_cond
+(paren
+id|req-&gt;nr_hw_segments
+op_ge
+id|SHpnt-&gt;sg_tablesize
+op_logical_or
+(paren
+id|req-&gt;nr_segments
+op_ge
+l_int|64
+op_logical_and
+id|req-&gt;nr_segments
+op_ge
+id|SHpnt-&gt;sg_tablesize
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|req-&gt;nr_hw_segments
+op_increment
+suffix:semicolon
+id|req-&gt;nr_segments
+op_increment
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+macro_line|#else
 id|new_segment
 suffix:colon
 r_if
@@ -918,10 +1013,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Function:    scsi_merge_fn_()&n; *&n; * Purpose:     queue merge function.&n; *&n; * Arguments:   q       - Queue for which we are merging request.&n; *              req     - request into which we wish to merge.&n; *              bh      - Block which we may wish to merge into request&n; *&n; * Returns:     1 if it is OK to merge the block into the request.  0&n; *              if it is not OK.&n; *&n; * Lock status: io_request_lock is assumed to be held here.&n; *&n; * Notes:       Optimized for different cases depending upon whether&n; *              ISA DMA is in use and whether clustering should be used.&n; */
 DECL|macro|MERGEFCT
 mdefine_line|#define MERGEFCT(_FUNCTION, _CLUSTER, _DMA)&t;&t;&bslash;&n;static int _FUNCTION(request_queue_t * q,&t;&t;&bslash;&n;&t;       struct request * req,&t;&t;&t;&bslash;&n;&t;       struct buffer_head * bh)&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    int ret;&t;&t;&t;&t;&t;&t;&bslash;&n;    SANITY_CHECK(req, _CLUSTER, _DMA);&t;&t;&t;&bslash;&n;    ret =  __scsi_merge_fn(q, req, bh, _CLUSTER, _DMA); &bslash;&n;    return ret;&t;&t;&t;&t;&t;&t;&bslash;&n;}
+multiline_comment|/* Version with use_clustering 0 and dma_host 1 is not necessary,&n; * since the only use of dma_host above is protected by use_clustering.&n; */
 id|MERGEFCT
 c_func
 (paren
@@ -930,15 +1027,6 @@ comma
 l_int|0
 comma
 l_int|0
-)paren
-id|MERGEFCT
-c_func
-(paren
-id|scsi_merge_fn_d
-comma
-l_int|0
-comma
-l_int|1
 )paren
 id|MERGEFCT
 c_func
@@ -1008,6 +1096,49 @@ id|SHpnt
 op_assign
 id|SDpnt-&gt;host
 suffix:semicolon
+macro_line|#ifdef DMA_CHUNK_SIZE
+multiline_comment|/* If it would not fit into prepared memory space for sg chain,&n;&t; * then don&squot;t allow the merge.&n;&t; */
+r_if
+c_cond
+(paren
+id|req-&gt;nr_segments
+op_plus
+id|next-&gt;nr_segments
+op_minus
+l_int|1
+OG
+l_int|64
+op_logical_and
+id|req-&gt;nr_segments
+op_plus
+id|next-&gt;nr_segments
+op_minus
+l_int|1
+OG
+id|SHpnt-&gt;sg_tablesize
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|req-&gt;nr_hw_segments
+op_plus
+id|next-&gt;nr_hw_segments
+op_minus
+l_int|1
+OG
+id|SHpnt-&gt;sg_tablesize
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#else
 multiline_comment|/*&n;&t; * If the two requests together are too large (even assuming that we&n;&t; * can merge the boundary requests into one segment, then don&squot;t&n;&t; * allow the merge.&n;&t; */
 r_if
 c_cond
@@ -1025,6 +1156,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n;&t; * The main question is whether the two segments at the boundaries&n;&t; * would be considered one or two.&n;&t; */
 r_if
 c_cond
@@ -1154,6 +1286,14 @@ id|next-&gt;nr_segments
 op_minus
 l_int|1
 suffix:semicolon
+macro_line|#ifdef DMA_CHUNK_SIZE
+id|req-&gt;nr_hw_segments
+op_add_assign
+id|next-&gt;nr_hw_segments
+op_minus
+l_int|1
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon
@@ -1161,6 +1301,76 @@ suffix:semicolon
 )brace
 id|dont_combine
 suffix:colon
+macro_line|#ifdef DMA_CHUNK_SIZE
+r_if
+c_cond
+(paren
+id|req-&gt;nr_segments
+op_plus
+id|next-&gt;nr_segments
+OG
+l_int|64
+op_logical_and
+id|req-&gt;nr_segments
+op_plus
+id|next-&gt;nr_segments
+OG
+id|SHpnt-&gt;sg_tablesize
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* If dynamic DMA mapping can merge last segment in req with&n;&t; * first segment in next, then the check for hw segments was&n;&t; * done above already, so we can always merge.&n;&t; */
+r_if
+c_cond
+(paren
+id|MERGEABLE_BUFFERS
+(paren
+id|req-&gt;bhtail
+comma
+id|next-&gt;bh
+)paren
+)paren
+(brace
+id|req-&gt;nr_hw_segments
+op_add_assign
+id|next-&gt;nr_hw_segments
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|req-&gt;nr_hw_segments
+op_plus
+id|next-&gt;nr_hw_segments
+OG
+id|SHpnt-&gt;sg_tablesize
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+id|req-&gt;nr_hw_segments
+op_add_assign
+id|next-&gt;nr_hw_segments
+suffix:semicolon
+)brace
+id|req-&gt;nr_segments
+op_add_assign
+id|next-&gt;nr_segments
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+macro_line|#else
 multiline_comment|/*&n;&t; * We know that the two requests at the boundary should not be combined.&n;&t; * Make sure we can fix something that is the sum of the two.&n;&t; * A slightly stricter test than we had above.&n;&t; */
 r_if
 c_cond
@@ -1187,10 +1397,12 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Function:    scsi_merge_requests_fn_()&n; *&n; * Purpose:     queue merge function.&n; *&n; * Arguments:   q       - Queue for which we are merging request.&n; *              req     - request into which we wish to merge.&n; *              bh      - Block which we may wish to merge into request&n; *&n; * Returns:     1 if it is OK to merge the block into the request.  0&n; *              if it is not OK.&n; *&n; * Lock status: io_request_lock is assumed to be held here.&n; *&n; * Notes:       Optimized for different cases depending upon whether&n; *              ISA DMA is in use and whether clustering should be used.&n; */
 DECL|macro|MERGEREQFCT
 mdefine_line|#define MERGEREQFCT(_FUNCTION, _CLUSTER, _DMA)&t;&t;&bslash;&n;static int _FUNCTION(request_queue_t * q,&t;&t;&bslash;&n;&t;&t;     struct request * req,&t;&t;&bslash;&n;&t;&t;     struct request * next)&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    int ret;&t;&t;&t;&t;&t;&t;&bslash;&n;    SANITY_CHECK(req, _CLUSTER, _DMA);&t;&t;&t;&bslash;&n;    ret =  __scsi_merge_requests_fn(q, req, next, _CLUSTER, _DMA); &bslash;&n;    return ret;&t;&t;&t;&t;&t;&t;&bslash;&n;}
+multiline_comment|/* Version with use_clustering 0 and dma_host 1 is not necessary,&n; * since the only use of dma_host above is protected by use_clustering.&n; */
 id|MERGEREQFCT
 c_func
 (paren
@@ -1199,15 +1411,6 @@ comma
 l_int|0
 comma
 l_int|0
-)paren
-id|MERGEREQFCT
-c_func
-(paren
-id|scsi_merge_requests_fn_d
-comma
-l_int|0
-comma
-l_int|1
 )paren
 id|MERGEREQFCT
 c_func
@@ -1458,7 +1661,13 @@ id|sgpnt
 comma
 l_int|0
 comma
-id|SCpnt-&gt;sglist_len
+id|SCpnt-&gt;use_sg
+op_star
+r_sizeof
+(paren
+r_struct
+id|scatterlist
+)paren
 )paren
 suffix:semicolon
 id|SCpnt-&gt;request_buffer
@@ -2261,6 +2470,7 @@ op_amp
 id|SDpnt-&gt;request_queue
 suffix:semicolon
 multiline_comment|/*&n;&t; * If the host has already selected a merge manager, then don&squot;t&n;&t; * pick a new one.&n;&t; */
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -2268,10 +2478,9 @@ id|q-&gt;merge_fn
 op_ne
 l_int|NULL
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
+macro_line|#endif
 multiline_comment|/*&n;&t; * If this host has an unlimited tablesize, then don&squot;t bother with a&n;&t; * merge manager.  The whole point of the operation is to make sure&n;&t; * that requests don&squot;t grow too large, and this host isn&squot;t picky.&n;&t; *&n;&t; * Note that ll_rw_blk.c is effectively maintaining a segment&n;&t; * count which is only valid if clustering is used, and it obviously&n;&t; * doesn&squot;t handle the DMA case.   In the end, it&n;&t; * is simply easier to do it ourselves with our own functions&n;&t; * rather than rely upon the default behavior of ll_rw_blk.&n;&t; */
 r_if
 c_cond
@@ -2323,11 +2532,11 @@ l_int|0
 (brace
 id|q-&gt;merge_fn
 op_assign
-id|scsi_merge_fn_d
+id|scsi_merge_fn_
 suffix:semicolon
 id|q-&gt;merge_requests_fn
 op_assign
-id|scsi_merge_requests_fn_d
+id|scsi_merge_requests_fn_
 suffix:semicolon
 id|SDpnt-&gt;scsi_init_io_fn
 op_assign

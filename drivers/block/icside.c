@@ -667,7 +667,7 @@ c_func
 id|drive
 )paren
 op_member_access_from_pointer
-id|dmatable
+id|dmatable_cpu
 suffix:semicolon
 r_do
 (brace
@@ -1305,7 +1305,7 @@ comma
 id|dmasg_t
 op_star
 )paren
-id|hwif-&gt;dmatable
+id|hwif-&gt;dmatable_cpu
 comma
 id|count
 )paren
@@ -1558,7 +1558,7 @@ l_string|&quot; -- ERROR, unable to allocate DMA table&bslash;n&quot;
 suffix:semicolon
 r_else
 (brace
-id|hwif-&gt;dmatable
+id|hwif-&gt;dmatable_cpu
 op_assign
 (paren
 r_void
@@ -1589,7 +1589,7 @@ l_string|&quot;&quot;
 suffix:semicolon
 )brace
 r_return
-id|hwif-&gt;dmatable
+id|hwif-&gt;dmatable_cpu
 op_ne
 l_int|NULL
 suffix:semicolon

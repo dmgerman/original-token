@@ -1214,7 +1214,7 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
-id|down
+id|down_read
 c_func
 (paren
 op_amp
@@ -1237,7 +1237,7 @@ id|name
 )paren
 )paren
 suffix:semicolon
-id|up
+id|up_read
 c_func
 (paren
 op_amp
@@ -1328,7 +1328,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|down
+id|down_read
 c_func
 (paren
 op_amp
@@ -1465,7 +1465,7 @@ op_plus
 id|__OLD_UTS_LEN
 )paren
 suffix:semicolon
-id|up
+id|up_read
 c_func
 (paren
 op_amp

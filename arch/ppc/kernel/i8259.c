@@ -22,6 +22,10 @@ DECL|macro|cached_A1
 mdefine_line|#define cached_A1 (cached_8259[0])
 DECL|macro|cached_21
 mdefine_line|#define cached_21 (cached_8259[1])
+DECL|variable|i8259_pic_irq_offset
+r_int
+id|i8259_pic_irq_offset
+suffix:semicolon
 DECL|function|i8259_irq
 r_int
 id|i8259_irq
@@ -142,11 +146,11 @@ c_cond
 (paren
 id|irq_nr
 op_ge
-id|i8259_pic.irq_offset
+id|i8259_pic_irq_offset
 )paren
 id|irq_nr
 op_sub_assign
-id|i8259_pic.irq_offset
+id|i8259_pic_irq_offset
 suffix:semicolon
 r_if
 c_cond
@@ -277,11 +281,11 @@ c_cond
 (paren
 id|irq_nr
 op_ge
-id|i8259_pic.irq_offset
+id|i8259_pic_irq_offset
 )paren
 id|irq_nr
 op_sub_assign
-id|i8259_pic.irq_offset
+id|i8259_pic_irq_offset
 suffix:semicolon
 r_if
 c_cond
@@ -330,11 +334,11 @@ c_cond
 (paren
 id|irq_nr
 op_ge
-id|i8259_pic.irq_offset
+id|i8259_pic_irq_offset
 )paren
 id|irq_nr
 op_sub_assign
-id|i8259_pic.irq_offset
+id|i8259_pic_irq_offset
 suffix:semicolon
 r_if
 c_cond
@@ -534,7 +538,7 @@ suffix:semicolon
 id|request_irq
 c_func
 (paren
-id|i8259_pic.irq_offset
+id|i8259_pic_irq_offset
 op_plus
 l_int|2
 comma
@@ -550,7 +554,7 @@ suffix:semicolon
 id|enable_irq
 c_func
 (paren
-id|i8259_pic.irq_offset
+id|i8259_pic_irq_offset
 op_plus
 l_int|2
 )paren

@@ -3125,9 +3125,13 @@ op_logical_or
 id|tp-&gt;srtt
 OG
 (paren
+(paren
 id|HZ
 op_div
 l_int|50
+)paren
+op_lshift
+l_int|3
 )paren
 op_logical_or
 id|tp-&gt;mss_cache

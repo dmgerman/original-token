@@ -2120,7 +2120,6 @@ macro_line|#ifdef CONFIG_FB_CLGEN
 r_if
 c_cond
 (paren
-(paren
 op_logical_neg
 id|strncmp
 c_func
@@ -2132,7 +2131,6 @@ comma
 l_int|10
 )paren
 op_logical_or
-(paren
 op_logical_neg
 id|strncmp
 c_func

@@ -181,6 +181,8 @@ DECL|macro|MVME_SCC_A_ADDR
 mdefine_line|#define MVME_SCC_A_ADDR&t;0xfff45005
 DECL|macro|MVME_SCC_B_ADDR
 mdefine_line|#define MVME_SCC_B_ADDR&t;0xfff45001
+DECL|macro|MVME_SCC_PCLK
+mdefine_line|#define MVME_SCC_PCLK&t;10000000
 DECL|macro|MVME162_IRQ_TYPE_PRIO
 mdefine_line|#define MVME162_IRQ_TYPE_PRIO&t;0
 DECL|macro|MVME167_IRQ_PRN

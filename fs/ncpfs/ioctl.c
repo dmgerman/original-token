@@ -1492,6 +1492,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+multiline_comment|/* locking needs both read and write access */
 r_if
 c_cond
 (paren

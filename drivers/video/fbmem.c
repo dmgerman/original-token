@@ -2327,6 +2327,9 @@ id|fix.smem_start
 suffix:semicolon
 id|len
 op_assign
+id|PAGE_ALIGN
+c_func
+(paren
 (paren
 id|start
 op_amp
@@ -2335,19 +2338,8 @@ id|PAGE_MASK
 )paren
 op_plus
 id|fix.smem_len
-suffix:semicolon
-id|len
-op_assign
-(paren
-id|len
-op_plus
-op_complement
-id|PAGE_MASK
 )paren
-op_amp
-id|PAGE_MASK
 suffix:semicolon
-multiline_comment|/* someone&squot;s on crack. */
 r_if
 c_cond
 (paren
@@ -2393,6 +2385,9 @@ id|fix.mmio_start
 suffix:semicolon
 id|len
 op_assign
+id|PAGE_ALIGN
+c_func
+(paren
 (paren
 id|start
 op_amp
@@ -2401,17 +2396,7 @@ id|PAGE_MASK
 )paren
 op_plus
 id|fix.mmio_len
-suffix:semicolon
-id|len
-op_assign
-(paren
-id|len
-op_plus
-op_complement
-id|PAGE_MASK
 )paren
-op_amp
-id|PAGE_MASK
 suffix:semicolon
 )brace
 id|start

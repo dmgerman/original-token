@@ -1481,6 +1481,13 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|down_read
+c_func
+(paren
+op_amp
+id|uts_sem
+)paren
+suffix:semicolon
 id|set_utsfield
 c_func
 (paren
@@ -1504,6 +1511,13 @@ comma
 l_int|1
 comma
 l_int|1
+)paren
+suffix:semicolon
+id|up_read
+c_func
+(paren
+op_amp
+id|uts_sem
 )paren
 suffix:semicolon
 id|set_utsfield
@@ -1622,7 +1636,7 @@ id|buf
 )paren
 (brace
 multiline_comment|/* Why should we not lie a bit? */
-id|down
+id|down_read
 c_func
 (paren
 op_amp
@@ -1757,7 +1771,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|up
+id|up_read
 c_func
 (paren
 op_amp
@@ -1848,6 +1862,13 @@ id|buffer
 op_plus
 l_int|256
 suffix:semicolon
+id|down_read
+c_func
+(paren
+op_amp
+id|uts_sem
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1878,6 +1899,13 @@ op_assign
 op_star
 id|p
 op_increment
+)paren
+suffix:semicolon
+id|up_read
+c_func
+(paren
+op_amp
+id|uts_sem
 )paren
 suffix:semicolon
 op_star

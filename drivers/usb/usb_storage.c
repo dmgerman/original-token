@@ -15,7 +15,7 @@ macro_line|#include &quot;../scsi/scsi.h&quot;
 macro_line|#include &quot;../scsi/hosts.h&quot;
 macro_line|#include &quot;../scsi/sd.h&quot;
 macro_line|#include &quot;usb.h&quot;
-macro_line|#include &quot;usb_scsi.h&quot;
+macro_line|#include &quot;usb_storage.h&quot;
 multiline_comment|/* direction table -- this indicates the direction of the data&n; * transfer for each command code -- a 1 indicates input&n; */
 DECL|variable|us_direction
 r_int
@@ -3798,6 +3798,15 @@ id|USB_STOR_TRANSPORT_ERROR
 suffix:semicolon
 )brace
 )brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;pop_CB_status, reached end of function&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|USB_STOR_TRANSPORT_ERROR
+suffix:semicolon
 )brace
 DECL|function|Bulk_reset
 r_static

@@ -2225,7 +2225,7 @@ comma
 id|pte_mkdirty
 c_func
 (paren
-id|mk_pte
+id|__mk_pte
 c_func
 (paren
 id|page

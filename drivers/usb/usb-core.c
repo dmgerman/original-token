@@ -282,7 +282,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_USB_SCSI
+macro_line|#ifdef CONFIG_USB_STORAGE
 id|usb_stor_init
 c_func
 (paren

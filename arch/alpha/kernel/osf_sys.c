@@ -2090,7 +2090,7 @@ id|name
 r_int
 id|error
 suffix:semicolon
-id|down
+id|down_read
 c_func
 (paren
 op_amp
@@ -2198,7 +2198,7 @@ l_int|0
 suffix:semicolon
 id|out
 suffix:colon
-id|up
+id|up_read
 c_func
 (paren
 op_amp
@@ -2398,11 +2398,6 @@ id|i
 comma
 id|error
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|error
 op_assign
 id|verify_area
@@ -2438,7 +2433,7 @@ id|len
 op_assign
 l_int|32
 suffix:semicolon
-id|down
+id|down_read
 c_func
 (paren
 op_amp
@@ -2486,7 +2481,7 @@ l_char|&squot;&bslash;0&squot;
 r_break
 suffix:semicolon
 )brace
-id|up
+id|up_read
 c_func
 (paren
 op_amp
@@ -2495,11 +2490,6 @@ id|uts_sem
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -3348,11 +3338,6 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|offset
 op_assign
 id|command
@@ -3389,7 +3374,7 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-id|down
+id|down_read
 c_func
 (paren
 op_amp
@@ -3447,7 +3432,7 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
-id|up
+id|up_read
 c_func
 (paren
 op_amp
@@ -3456,11 +3441,6 @@ id|uts_sem
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|err
 suffix:semicolon

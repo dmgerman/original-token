@@ -1,7 +1,12 @@
-multiline_comment|/*****************************************************************************&n;* sdladrv.h&t;SDLA Support Module.  Kernel API Definitions.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1996 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Dec 11, 1996&t;Gene Kozin&t;Complete overhaul.&n;* Oct 17, 1996&t;Gene Kozin&t;Minor bug fixes.&n;* Jun 12, 1996&t;Gene Kozin &t;Added support for S503 card.&n;* Dec 06, 1995&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* sdladrv.h&t;SDLA Support Module.  Kernel API Definitions.&n;*&n;* Author: &t;Gideon Hack&t;&n;*&n;* Copyright:&t;(c) 1995-1999 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Jun 02, 1999 &t;Gideon Hack&t;Added support for the S514 PCI adapter.&n;* Dec 11, 1996&t;Gene Kozin&t;Complete overhaul.&n;* Oct 17, 1996&t;Gene Kozin&t;Minor bug fixes.&n;* Jun 12, 1996&t;Gene Kozin &t;Added support for S503 card.&n;* Dec 06, 1995&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
 macro_line|#ifndef&t;_SDLADRV_H
 DECL|macro|_SDLADRV_H
 mdefine_line|#define&t;_SDLADRV_H
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
+DECL|macro|LINUX_2_1
+mdefine_line|#define LINUX_2_1
+macro_line|#endif
 DECL|macro|SDLA_MAXIORANGE
 mdefine_line|#define&t;SDLA_MAXIORANGE&t;4&t;/* maximum I/O port range */
 DECL|macro|SDLA_WINDOWSIZE
@@ -33,6 +38,42 @@ r_int
 id|irq
 suffix:semicolon
 multiline_comment|/* interrupt request level */
+DECL|member|S514_cpu_no
+r_char
+id|S514_cpu_no
+(braket
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* PCI CPU Number */
+DECL|member|S514_slot_no
+r_int
+r_char
+id|S514_slot_no
+suffix:semicolon
+multiline_comment|/* PCI Slot Number */
+macro_line|#ifdef LINUX_2_1
+DECL|member|pci_dev
+r_struct
+id|pci_dev
+op_star
+id|pci_dev
+suffix:semicolon
+multiline_comment|/* PCI device */
+macro_line|#else
+DECL|member|pci_bus
+r_int
+r_char
+id|pci_bus
+suffix:semicolon
+multiline_comment|/* PCI bus number */
+DECL|member|pci_dev_func
+r_int
+r_char
+id|pci_dev_func
+suffix:semicolon
+multiline_comment|/* PCI device/function number */
+macro_line|#endif
 DECL|member|dpmbase
 r_void
 op_star
@@ -137,6 +178,31 @@ id|sdla_intack
 id|sdlahw_t
 op_star
 id|hw
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|S514_intack
+(paren
+id|sdlahw_t
+op_star
+id|hw
+comma
+id|u32
+id|int_status
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|read_S514_int_stat
+(paren
+id|sdlahw_t
+op_star
+id|hw
+comma
+id|u32
+op_star
+id|int_status
 )paren
 suffix:semicolon
 r_extern

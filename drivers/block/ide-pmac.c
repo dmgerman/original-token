@@ -979,7 +979,7 @@ l_int|0x200
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Allocate space for the DBDMA commands.&n;&t; * The +2 is +1 for the stop command and +1 to allow for&n;&t; * aligning the start address to a multiple of 16 bytes.&n;&t; */
-id|hwif-&gt;dmatable
+id|hwif-&gt;dmatable_cpu
 op_assign
 (paren
 r_int
@@ -1007,7 +1007,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|hwif-&gt;dmatable
+id|hwif-&gt;dmatable_cpu
 op_eq
 l_int|0
 )paren
@@ -1126,7 +1126,7 @@ op_star
 id|DBDMA_ALIGN
 c_func
 (paren
-id|hwif-&gt;dmatable
+id|hwif-&gt;dmatable_cpu
 )paren
 suffix:semicolon
 id|out_le32

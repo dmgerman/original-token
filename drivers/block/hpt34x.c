@@ -1526,11 +1526,7 @@ multiline_comment|/* try PIO instead of DMA */
 id|outl
 c_func
 (paren
-id|virt_to_bus
-c_func
-(paren
-id|hwif-&gt;dmatable
-)paren
+id|hwif-&gt;dmatable_dma
 comma
 id|dma_base
 op_plus
@@ -1666,6 +1662,13 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* clear the INTR &amp; ERROR bits */
+id|ide_destroy_dmatable
+c_func
+(paren
+id|drive
+)paren
+suffix:semicolon
+multiline_comment|/* purge DMA mappings */
 r_return
 (paren
 id|dma_stat

@@ -609,7 +609,7 @@ comma
 id|dbri-&gt;regs_size
 )paren
 suffix:semicolon
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 id|dbri-&gt;sdev
@@ -9420,7 +9420,7 @@ id|dbri
 suffix:semicolon
 id|dbri-&gt;dma
 op_assign
-id|sbus_alloc_consistant
+id|sbus_alloc_consistent
 c_func
 (paren
 id|sdev
@@ -9525,7 +9525,7 @@ id|KERN_ERR
 l_string|&quot;DBRI: could not allocate registers&bslash;n&quot;
 )paren
 suffix:semicolon
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 id|sdev
@@ -9617,7 +9617,7 @@ comma
 id|dbri-&gt;regs_size
 )paren
 suffix:semicolon
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 id|sdev

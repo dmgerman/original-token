@@ -294,11 +294,11 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* These yield IOMMU mappings in consistant mode. */
+multiline_comment|/* These yield IOMMU mappings in consistent mode. */
 r_extern
 r_void
 op_star
-id|sbus_alloc_consistant
+id|sbus_alloc_consistent
 c_func
 (paren
 r_struct
@@ -314,7 +314,7 @@ id|dma_addrp
 suffix:semicolon
 r_extern
 r_void
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 r_struct

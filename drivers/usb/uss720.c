@@ -749,7 +749,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Access functions.&n; */
-DECL|function|uss720_irq
+macro_line|#if 0
 r_static
 r_int
 id|uss720_irq
@@ -846,6 +846,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|parport_uss720_write_data
 r_static
 r_void
@@ -1760,7 +1761,6 @@ op_assign
 id|priv-&gt;usbdev
 suffix:semicolon
 r_int
-r_int
 id|rlen
 suffix:semicolon
 r_int
@@ -1829,7 +1829,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;uss720: sendbulk ep 1 buf %p len %u rlen %lu&bslash;n&quot;
+l_string|&quot;uss720: sendbulk ep 1 buf %p len %u rlen %u&bslash;n&quot;
 comma
 id|buf
 comma
@@ -2148,7 +2148,6 @@ op_assign
 id|priv-&gt;usbdev
 suffix:semicolon
 r_int
-r_int
 id|rlen
 suffix:semicolon
 r_int
@@ -2217,7 +2216,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;uss720: sendbulk ep 1 buf %p len %u rlen %lu&bslash;n&quot;
+l_string|&quot;uss720: sendbulk ep 1 buf %p len %u rlen %u&bslash;n&quot;
 comma
 id|buffer
 comma
@@ -2274,7 +2273,6 @@ id|usbdev
 op_assign
 id|priv-&gt;usbdev
 suffix:semicolon
-r_int
 r_int
 id|rlen
 suffix:semicolon
@@ -2340,7 +2338,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;uss720: recvbulk ep 2 buf %p len %u rlen %lu&bslash;n&quot;
+l_string|&quot;uss720: recvbulk ep 2 buf %p len %u rlen %u&bslash;n&quot;
 comma
 id|buffer
 comma
@@ -2495,7 +2493,6 @@ op_assign
 id|priv-&gt;usbdev
 suffix:semicolon
 r_int
-r_int
 id|rlen
 suffix:semicolon
 r_int
@@ -2564,7 +2561,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;uss720: sendbulk ep 1 buf %p len %u rlen %lu&bslash;n&quot;
+l_string|&quot;uss720: sendbulk ep 1 buf %p len %u rlen %u&bslash;n&quot;
 comma
 id|buffer
 comma
@@ -3062,6 +3059,7 @@ suffix:semicolon
 r_return
 id|pp
 suffix:semicolon
+macro_line|#if 0
 id|probe_abort_port
 suffix:colon
 id|parport_unregister_port
@@ -3070,6 +3068,7 @@ c_func
 id|pp
 )paren
 suffix:semicolon
+macro_line|#endif
 id|probe_abort
 suffix:colon
 id|kfree

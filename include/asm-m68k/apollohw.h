@@ -2,6 +2,23 @@ multiline_comment|/* apollohw.h : some structures to access apollo HW */
 macro_line|#ifndef _ASMm68k_APOLLOHW_H_
 DECL|macro|_ASMm68k_APOLLOHW_H_
 mdefine_line|#define _ASMm68k_APOLLOHW_H_
+multiline_comment|/*&n;   apollo models &n;*/
+r_extern
+id|u_long
+id|apollo_model
+suffix:semicolon
+DECL|macro|APOLLO_UNKNOWN
+mdefine_line|#define APOLLO_UNKNOWN (0)
+DECL|macro|APOLLO_DN3000
+mdefine_line|#define APOLLO_DN3000 (1)
+DECL|macro|APOLLO_DN3010
+mdefine_line|#define APOLLO_DN3010 (2)
+DECL|macro|APOLLO_DN3500
+mdefine_line|#define APOLLO_DN3500 (3)
+DECL|macro|APOLLO_DN4000
+mdefine_line|#define APOLLO_DN4000 (4)
+DECL|macro|APOLLO_DN4500
+mdefine_line|#define APOLLO_DN4500 (5)
 multiline_comment|/* &n;   see scn2681 data sheet for more info. &n;   member names are read_write.&n;*/
 DECL|macro|DECLARE_2681_FIELD
 mdefine_line|#define DECLARE_2681_FIELD(x) unsigned char x; unsigned char dummy##x
@@ -251,22 +268,78 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|IO_BASE
 mdefine_line|#define IO_BASE 0x80000000
-DECL|macro|SIO01_PHYSADDR
-mdefine_line|#define SIO01_PHYSADDR 0x10400
-DECL|macro|SIO23_PHYSADDR
-mdefine_line|#define SIO23_PHYSADDR 0x10500
-DECL|macro|RTC_PHYSADDR
-mdefine_line|#define RTC_PHYSADDR 0x10900
-DECL|macro|PICA
-mdefine_line|#define PICA 0x11000
-DECL|macro|PICB
-mdefine_line|#define PICB 0x11100
+r_extern
+id|u_long
+id|sio01_physaddr
+suffix:semicolon
+r_extern
+id|u_long
+id|sio23_physaddr
+suffix:semicolon
+r_extern
+id|u_long
+id|rtc_physaddr
+suffix:semicolon
+r_extern
+id|u_long
+id|pica_physaddr
+suffix:semicolon
+r_extern
+id|u_long
+id|picb_physaddr
+suffix:semicolon
+r_extern
+id|u_long
+id|cpuctrl_physaddr
+suffix:semicolon
+r_extern
+id|u_long
+id|timer_physaddr
+suffix:semicolon
+DECL|macro|SAU7_SIO01_PHYSADDR
+mdefine_line|#define SAU7_SIO01_PHYSADDR 0x10400
+DECL|macro|SAU7_SIO23_PHYSADDR
+mdefine_line|#define SAU7_SIO23_PHYSADDR 0x10500
+DECL|macro|SAU7_RTC_PHYSADDR
+mdefine_line|#define SAU7_RTC_PHYSADDR 0x10900
+DECL|macro|SAU7_PICA
+mdefine_line|#define SAU7_PICA 0x11000
+DECL|macro|SAU7_PICB
+mdefine_line|#define SAU7_PICB 0x11100
+DECL|macro|SAU7_CPUCTRL
+mdefine_line|#define SAU7_CPUCTRL 0x10100
+DECL|macro|SAU7_TIMER
+mdefine_line|#define SAU7_TIMER 0x010800
+DECL|macro|SAU8_SIO01_PHYSADDR
+mdefine_line|#define SAU8_SIO01_PHYSADDR 0x8400
+DECL|macro|SAU8_RTC_PHYSADDR
+mdefine_line|#define SAU8_RTC_PHYSADDR 0x8900
+DECL|macro|SAU8_PICA
+mdefine_line|#define SAU8_PICA 0x9400
+DECL|macro|SAU8_PICB
+mdefine_line|#define SAU8_PICB 0x9500
+DECL|macro|SAU8_CPUCTRL
+mdefine_line|#define SAU8_CPUCTRL 0x8100
+DECL|macro|SAU8_TIMER
+mdefine_line|#define SAU8_TIMER 0x8800
 DECL|macro|sio01
-mdefine_line|#define sio01 ((*(volatile struct SCN2681 *)(IO_BASE + SIO01_PHYSADDR)))
+mdefine_line|#define sio01 ((*(volatile struct SCN2681 *)(IO_BASE + sio01_physaddr)))
 DECL|macro|sio23
-mdefine_line|#define sio23 ((*(volatile struct SCN2681 *)(IO_BASE + SIO01_PHYSADDR)))
+mdefine_line|#define sio23 ((*(volatile struct SCN2681 *)(IO_BASE + sio23_physaddr)))
 DECL|macro|rtc
-mdefine_line|#define rtc (((volatile struct mc146818 *)(IO_BASE + RTC_PHYSADDR)))
+mdefine_line|#define rtc (((volatile struct mc146818 *)(IO_BASE + rtc_physaddr)))
+DECL|macro|cpuctrl
+mdefine_line|#define cpuctrl (*(volatile unsigned int *)(IO_BASE + cpuctrl_physaddr))
+DECL|macro|pica
+mdefine_line|#define pica (IO_BASE + pica_physaddr)
+DECL|macro|picb
+mdefine_line|#define picb (IO_BASE + picb_physaddr)
+DECL|macro|timer
+mdefine_line|#define timer (IO_BASE + timer_physaddr)&t;
+DECL|macro|addr_xlat_map
+mdefine_line|#define addr_xlat_map ((unsigned short *)(IO_BASE + 0x17000))
+DECL|macro|isaIO2mem
+mdefine_line|#define isaIO2mem(x) (((((x) &amp; 0x3f8)  &lt;&lt; 7) | (((x) &amp; 0xfc00) &gt;&gt; 6) | ((x) &amp; 0x7)) + 0x40000 + IO_BASE)
 DECL|macro|inb
 mdefine_line|#define inb(addr) (*((volatile unsigned char *)(addr)))
 DECL|macro|outb

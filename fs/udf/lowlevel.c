@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * lowlevel.c&n; *&n; * PURPOSE&n; *  Low Level Device Routines for the UDF filesystem&n; *&n; * CONTACTS&n; *&t;E-mail regarding any portion of the Linux UDF file system should be&n; *&t;directed to the development team mailing list (run by majordomo):&n; *&t;&t;linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *&t;This file is distributed under the terms of the GNU General Public&n; *&t;License (GPL). Copies of the GPL can be obtained from:&n; *&t;&t;ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *&t;Each contributing author retains all rights to their own work.&n; *&n; *  (C) 1999 Ben Fennema&n; *&n; * HISTORY&n; *&n; *  03/26/99 blf  Created.&n; */
+multiline_comment|/*&n; * lowlevel.c&n; *&n; * PURPOSE&n; *  Low Level Device Routines for the UDF filesystem&n; *&n; * CONTACTS&n; *&t;E-mail regarding any portion of the Linux UDF file system should be&n; *&t;directed to the development team mailing list (run by majordomo):&n; *&t;&t;linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *&t;This file is distributed under the terms of the GNU General Public&n; *&t;License (GPL). Copies of the GPL can be obtained from:&n; *&t;&t;ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *&t;Each contributing author retains all rights to their own work.&n; *&n; *  (C) 1999-2000 Ben Fennema&n; *&n; * HISTORY&n; *&n; *  03/26/99 blf  Created.&n; */
 macro_line|#include &quot;udfdecl.h&quot;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
@@ -281,8 +281,8 @@ id|lblock
 op_ne
 l_int|0x7FFFFFFF
 )paren
-(brace
 multiline_comment|/* Hard Disk */
+(brace
 r_if
 c_cond
 (paren
@@ -304,8 +304,8 @@ id|div
 suffix:semicolon
 )brace
 r_else
-(brace
 multiline_comment|/* CDROM */
+(brace
 id|ret
 op_assign
 id|ioctl_by_bdev
@@ -337,6 +337,7 @@ id|lblock
 op_minus
 l_int|1
 suffix:semicolon
+r_else
 r_return
 l_int|0
 suffix:semicolon

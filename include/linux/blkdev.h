@@ -54,6 +54,11 @@ r_int
 r_int
 id|nr_segments
 suffix:semicolon
+DECL|member|nr_hw_segments
+r_int
+r_int
+id|nr_hw_segments
+suffix:semicolon
 DECL|member|current_nr_sectors
 r_int
 r_int

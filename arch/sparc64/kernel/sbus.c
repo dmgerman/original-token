@@ -853,12 +853,12 @@ op_assign
 id|ent
 suffix:semicolon
 )brace
-multiline_comment|/* We allocate consistant mappings from the end of cluster zero. */
-DECL|function|alloc_consistant_cluster
+multiline_comment|/* We allocate consistent mappings from the end of cluster zero. */
+DECL|function|alloc_consistent_cluster
 r_static
 id|iopte_t
 op_star
-id|alloc_consistant_cluster
+id|alloc_consistent_cluster
 c_func
 (paren
 r_struct
@@ -959,10 +959,10 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-DECL|function|free_consistant_cluster
+DECL|function|free_consistent_cluster
 r_static
 r_void
-id|free_consistant_cluster
+id|free_consistent_cluster
 c_func
 (paren
 r_struct
@@ -1011,10 +1011,10 @@ l_int|0UL
 )paren
 suffix:semicolon
 )brace
-DECL|function|sbus_alloc_consistant
+DECL|function|sbus_alloc_consistent
 r_void
 op_star
-id|sbus_alloc_consistant
+id|sbus_alloc_consistent
 c_func
 (paren
 r_struct
@@ -1025,7 +1025,7 @@ comma
 r_int
 id|size
 comma
-id|u32
+id|dma_addr_t
 op_star
 id|dvma_addr
 )paren
@@ -1170,7 +1170,7 @@ id|flags
 suffix:semicolon
 id|iopte
 op_assign
-id|alloc_consistant_cluster
+id|alloc_consistent_cluster
 c_func
 (paren
 id|iommu
@@ -1301,9 +1301,9 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-DECL|function|sbus_free_consistant
+DECL|function|sbus_free_consistent
 r_void
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 r_struct
@@ -1318,7 +1318,7 @@ r_void
 op_star
 id|cpu
 comma
-id|u32
+id|dma_addr_t
 id|dvma
 )paren
 (brace
@@ -1371,7 +1371,7 @@ op_amp
 id|iommu-&gt;lock
 )paren
 suffix:semicolon
-id|free_consistant_cluster
+id|free_consistent_cluster
 c_func
 (paren
 id|iommu
@@ -1438,7 +1438,7 @@ id|order
 suffix:semicolon
 )brace
 DECL|function|sbus_map_single
-id|u32
+id|dma_addr_t
 id|sbus_map_single
 c_func
 (paren
@@ -1653,7 +1653,7 @@ id|sbus_dev
 op_star
 id|sdev
 comma
-id|u32
+id|dma_addr_t
 id|dma_addr
 comma
 r_int
@@ -1752,7 +1752,7 @@ op_star
 id|sg
 comma
 r_int
-id|nents
+id|nused
 )paren
 (brace
 r_struct
@@ -1762,7 +1762,23 @@ id|dma_sg
 op_assign
 id|sg
 suffix:semicolon
-r_do
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|nused
+suffix:semicolon
+id|i
+op_increment
+)paren
 (brace
 r_int
 r_int
@@ -2092,14 +2108,6 @@ id|dma_sg
 op_increment
 suffix:semicolon
 )brace
-r_while
-c_loop
-(paren
-id|dma_sg-&gt;dvma_length
-op_ne
-l_int|0
-)paren
-suffix:semicolon
 )brace
 DECL|function|sbus_map_sg
 r_int
@@ -2146,7 +2154,7 @@ op_star
 id|sgtmp
 suffix:semicolon
 r_int
-id|unused
+id|used
 suffix:semicolon
 multiline_comment|/* Fast path single entry scatterlists. */
 r_if
@@ -2225,14 +2233,14 @@ id|sgtmp
 op_assign
 id|sg
 suffix:semicolon
-id|unused
+id|used
 op_assign
 id|nents
 suffix:semicolon
 r_while
 c_loop
 (paren
-id|unused
+id|used
 op_logical_and
 id|sgtmp-&gt;dvma_length
 )paren
@@ -2244,10 +2252,16 @@ suffix:semicolon
 id|sgtmp
 op_increment
 suffix:semicolon
-id|unused
+id|used
 op_decrement
 suffix:semicolon
 )brace
+id|used
+op_assign
+id|nents
+op_minus
+id|used
+suffix:semicolon
 id|fill_sg
 c_func
 (paren
@@ -2255,7 +2269,7 @@ id|iopte
 comma
 id|sg
 comma
-id|nents
+id|used
 )paren
 suffix:semicolon
 macro_line|#ifdef VERIFY_SG
@@ -2292,9 +2306,7 @@ id|flags
 )paren
 suffix:semicolon
 r_return
-id|nents
-op_minus
-id|unused
+id|used
 suffix:semicolon
 )brace
 DECL|function|sbus_unmap_sg
@@ -2478,7 +2490,7 @@ id|sbus_dev
 op_star
 id|sdev
 comma
-id|u32
+id|dma_addr_t
 id|base
 comma
 r_int
@@ -4863,6 +4875,14 @@ op_star
 id|iommu
 )paren
 )paren
+suffix:semicolon
+multiline_comment|/* Make sure DMA address 0 is never returned just to allow catching&n;&t;   of buggy drivers.  */
+id|iommu-&gt;lowest_free
+(braket
+l_int|0
+)braket
+op_assign
+l_int|1
 suffix:semicolon
 multiline_comment|/* Setup spinlock. */
 id|spin_lock_init

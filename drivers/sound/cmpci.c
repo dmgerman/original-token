@@ -13053,7 +13053,7 @@ suffix:semicolon
 macro_line|#else
 r_static
 r_int
-id|read_out
+id|rear_out
 op_assign
 l_int|0
 suffix:semicolon
@@ -13419,6 +13419,13 @@ suffix:semicolon
 id|s-&gt;iomidi
 op_assign
 l_int|0x330
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|s-&gt;lock
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -103,7 +103,7 @@ op_assign
 op_amp
 id|udf_dir_operations
 comma
-macro_line|#ifdef CONFIG_UDF_RW
+macro_line|#if CONFIG_UDF_RW == 1
 id|udf_create
 comma
 multiline_comment|/* create */
@@ -115,7 +115,7 @@ macro_line|#endif
 id|udf_lookup
 comma
 multiline_comment|/* lookup */
-macro_line|#ifdef CONFIG_UDF_RW
+macro_line|#if CONFIG_UDF_RW == 1
 id|udf_link
 comma
 multiline_comment|/* link */
@@ -262,8 +262,6 @@ id|filp-&gt;f_pos
 comma
 id|dir-&gt;i_ino
 )paren
-OL
-l_int|0
 )paren
 r_return
 l_int|0
@@ -365,7 +363,7 @@ id|loff_t
 id|size
 op_assign
 (paren
-id|UDF_I_EXT0OFFS
+id|udf_ext0_offset
 c_func
 (paren
 id|dir
@@ -415,7 +413,7 @@ l_int|0
 id|nf_pos
 op_assign
 (paren
-id|UDF_I_EXT0OFFS
+id|udf_ext0_offset
 c_func
 (paren
 id|dir
@@ -863,8 +861,6 @@ id|filp-&gt;f_pos
 comma
 id|filp-&gt;f_dentry-&gt;d_parent-&gt;d_inode-&gt;i_ino
 )paren
-OL
-l_int|0
 )paren
 (brace
 r_if
@@ -933,8 +929,6 @@ id|filp-&gt;f_pos
 comma
 id|iblock
 )paren
-OL
-l_int|0
 )paren
 (brace
 r_if

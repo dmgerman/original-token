@@ -2,7 +2,6 @@ multiline_comment|/*&n; * ricoh.h 1.9 1999/10/25 20:03:34&n; *&n; * The contents
 macro_line|#ifndef _LINUX_RICOH_H
 DECL|macro|_LINUX_RICOH_H
 mdefine_line|#define _LINUX_RICOH_H
-macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|RF5C_MODE_CTL
 mdefine_line|#define RF5C_MODE_CTL&t;&t;0x1f&t;/* Mode control */
 DECL|macro|RF5C_PWR_CTL

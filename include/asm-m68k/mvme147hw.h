@@ -259,11 +259,13 @@ DECL|macro|M147_SCC_A_ADDR
 mdefine_line|#define M147_SCC_A_ADDR&t;&t;0xfffe3002
 DECL|macro|M147_SCC_B_ADDR
 mdefine_line|#define M147_SCC_B_ADDR&t;&t;0xfffe3000
+DECL|macro|M147_SCC_PCLK
+mdefine_line|#define M147_SCC_PCLK&t;&t;5000000
 DECL|macro|MVME147_IRQ_SCSI_PORT
 mdefine_line|#define MVME147_IRQ_SCSI_PORT&t;0x45
 DECL|macro|MVME147_IRQ_SCSI_DMA
 mdefine_line|#define MVME147_IRQ_SCSI_DMA&t;0x46
-multiline_comment|/* SCC interrupts, for MVME162 */
+multiline_comment|/* SCC interrupts, for MVME147 */
 DECL|macro|MVME147_IRQ_TYPE_PRIO
 mdefine_line|#define MVME147_IRQ_TYPE_PRIO&t;0
 DECL|macro|MVME147_IRQ_SCC_BASE

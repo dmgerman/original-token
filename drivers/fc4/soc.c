@@ -3725,7 +3725,7 @@ id|soc_req
 suffix:semicolon
 id|s-&gt;req_cpu
 op_assign
-id|sbus_alloc_consistant
+id|sbus_alloc_consistent
 c_func
 (paren
 id|sdev
@@ -4400,7 +4400,7 @@ id|reg_size
 )paren
 suffix:semicolon
 )brace
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 id|sdev

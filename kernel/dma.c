@@ -11,6 +11,8 @@ id|dma_spin_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
+multiline_comment|/*&n; *&t;If our port doesn&squot;t define this it has no PC like DMA&n; */
+macro_line|#ifdef MAX_DMA_CHANNELS
 multiline_comment|/* Channel n is busy iff dma_chan_busy[n].lock != 0.&n; * DMA0 used to be reserved for DRAM refresh, but apparently not any more...&n; * DMA4 is reserved for cascading.&n; */
 DECL|struct|dma_chan
 r_struct
@@ -284,4 +286,63 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* free_dma */
+macro_line|#else
+DECL|function|request_dma
+r_int
+id|request_dma
+c_func
+(paren
+r_int
+r_int
+id|dmanr
+comma
+r_const
+r_char
+op_star
+id|device_id
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+DECL|function|free_dma
+r_int
+id|free_dma
+c_func
+(paren
+r_int
+r_int
+id|dmanr
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+DECL|function|get_dma_list
+r_int
+id|get_dma_list
+c_func
+(paren
+r_char
+op_star
+id|buf
+)paren
+(brace
+id|strcpy
+c_func
+(paren
+id|buf
+comma
+l_string|&quot;No DMA&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|7
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

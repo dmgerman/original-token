@@ -8,16 +8,18 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#ifdef CONFIG_ATARI
 macro_line|#include &lt;asm/atari_stram.h&gt;
 macro_line|#endif
@@ -41,10 +43,7 @@ id|__init
 id|kernel_page_table
 c_func
 (paren
-r_int
-r_int
-op_star
-id|memavailp
+r_void
 )paren
 (brace
 id|pte_t
@@ -57,25 +56,19 @@ op_assign
 id|pte_t
 op_star
 )paren
-op_star
-id|memavailp
-suffix:semicolon
-op_star
-id|memavailp
-op_add_assign
+id|alloc_bootmem_low_pages
+c_func
+(paren
 id|PAGE_SIZE
+)paren
 suffix:semicolon
 id|clear_page
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|ptablep
 )paren
 suffix:semicolon
-id|flush_page_to_ram
+id|__flush_page_to_ram
 c_func
 (paren
 (paren
@@ -133,10 +126,7 @@ id|__init
 id|kernel_ptr_table
 c_func
 (paren
-r_int
-r_int
-op_star
-id|memavailp
+r_void
 )paren
 (brace
 r_if
@@ -196,7 +186,7 @@ r_continue
 suffix:semicolon
 id|pmd
 op_assign
-id|pgd_page
+id|__pgd_page
 c_func
 (paren
 id|kernel_pg_dir
@@ -263,25 +253,19 @@ op_assign
 id|pmd_t
 op_star
 )paren
-op_star
-id|memavailp
-suffix:semicolon
-op_star
-id|memavailp
-op_add_assign
+id|alloc_bootmem_low_pages
+c_func
+(paren
 id|PAGE_SIZE
+)paren
 suffix:semicolon
 id|clear_page
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|last_pgtable
 )paren
 suffix:semicolon
-id|flush_page_to_ram
+id|__flush_page_to_ram
 c_func
 (paren
 (paren
@@ -334,11 +318,6 @@ id|addr
 comma
 r_int
 id|size
-comma
-r_int
-r_int
-op_star
-id|memavailp
 )paren
 (brace
 DECL|macro|PTRTREESIZE
@@ -510,7 +489,6 @@ op_assign
 id|kernel_ptr_table
 c_func
 (paren
-id|memavailp
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG
@@ -596,7 +574,6 @@ op_assign
 id|kernel_ptr_table
 c_func
 (paren
-id|memavailp
 )paren
 suffix:semicolon
 id|pte_dir
@@ -700,7 +677,6 @@ op_assign
 id|kernel_page_table
 c_func
 (paren
-id|memavailp
 )paren
 suffix:semicolon
 id|pmd_set
@@ -788,19 +764,6 @@ suffix:semicolon
 r_extern
 r_int
 r_int
-id|free_area_init
-c_func
-(paren
-r_int
-r_int
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
 id|empty_bad_page_table
 suffix:semicolon
 r_extern
@@ -810,19 +773,12 @@ id|empty_bad_page
 suffix:semicolon
 multiline_comment|/*&n; * paging_init() continues the virtual memory environment setup which&n; * was begun by the code in arch/head.S.&n; */
 DECL|function|paging_init
-r_int
-r_int
+r_void
 id|__init
 id|paging_init
 c_func
 (paren
-r_int
-r_int
-id|start_mem
-comma
-r_int
-r_int
-id|end_mem
+r_void
 )paren
 (brace
 r_int
@@ -833,6 +789,18 @@ r_int
 id|mem_avail
 op_assign
 l_int|0
+suffix:semicolon
+r_int
+r_int
+id|zones_size
+(braket
+l_int|3
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 macro_line|#ifdef DEBUG
 (brace
@@ -1012,9 +980,6 @@ id|chunk
 )braket
 dot
 id|size
-comma
-op_amp
-id|start_mem
 )paren
 suffix:semicolon
 )brace
@@ -1046,27 +1011,39 @@ macro_line|#endif
 multiline_comment|/*&n;&t; * initialize the bad page table and bad page to point&n;&t; * to a couple of allocated pages&n;&t; */
 id|empty_bad_page_table
 op_assign
-id|start_mem
-suffix:semicolon
-id|start_mem
-op_add_assign
+(paren
+r_int
+r_int
+)paren
+id|alloc_bootmem_pages
+c_func
+(paren
 id|PAGE_SIZE
+)paren
 suffix:semicolon
 id|empty_bad_page
 op_assign
-id|start_mem
-suffix:semicolon
-id|start_mem
-op_add_assign
+(paren
+r_int
+r_int
+)paren
+id|alloc_bootmem_pages
+c_func
+(paren
 id|PAGE_SIZE
+)paren
 suffix:semicolon
 id|empty_zero_page
 op_assign
-id|start_mem
-suffix:semicolon
-id|start_mem
-op_add_assign
+(paren
+r_int
+r_int
+)paren
+id|alloc_bootmem_pages
+c_func
+(paren
 id|PAGE_SIZE
+)paren
 suffix:semicolon
 id|memset
 c_func
@@ -1095,17 +1072,73 @@ l_string|&quot;before free_area_init&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-r_return
-id|PAGE_ALIGN
-c_func
+id|zones_size
+(braket
+l_int|0
+)braket
+op_assign
 (paren
+id|mach_max_dma_address
+OL
+(paren
+r_int
+r_int
+)paren
+id|high_memory
+ques
+c_cond
+id|mach_max_dma_address
+suffix:colon
+(paren
+r_int
+r_int
+)paren
+id|high_memory
+)paren
+suffix:semicolon
+id|zones_size
+(braket
+l_int|1
+)braket
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|high_memory
+op_minus
+id|zones_size
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|zones_size
+(braket
+l_int|0
+)braket
+op_assign
+(paren
+id|zones_size
+(braket
+l_int|0
+)braket
+op_minus
+id|PAGE_OFFSET
+)paren
+op_rshift
+id|PAGE_SHIFT
+suffix:semicolon
+id|zones_size
+(braket
+l_int|1
+)braket
+op_rshift_assign
+id|PAGE_SHIFT
+suffix:semicolon
 id|free_area_init
 c_func
 (paren
-id|start_mem
-comma
-id|end_mem
-)paren
+id|zones_size
 )paren
 suffix:semicolon
 )brace

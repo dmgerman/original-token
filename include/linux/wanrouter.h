@@ -1,4 +1,9 @@
-multiline_comment|/*****************************************************************************&n;* router.h&t;Definitions for the WAN Multiprotocol Router Module.&n;*&t;&t;This module provides API and common services for WAN Link&n;*&t;&t;Drivers and is completely hardware-independent.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&t;&t;Jaspreet Singh&t;&lt;jaspreet@sangoma.com&gt;&n;* Additions:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* May 23, 1999&t;Arnaldo Melo&t;Added local_addr to wanif_conf_t&n;*&t;&t;&t;&t;WAN_DISCONNECTING state added&n;* Nov 06, 1997&t;Jaspreet Singh&t;Changed Router Driver version to 1.1 from 1.0&n;* Oct 20, 1997&t;Jaspreet Singh&t;Added &squot;cir&squot;,&squot;bc&squot;,&squot;be&squot; and &squot;mc&squot; to &squot;wanif_conf_t&squot;&n;*&t;&t;&t;&t;Added &squot;enable_IPX&squot; and &squot;network_number&squot; to &n;*&t;&t;&t;&t;&squot;wan_device_t&squot;.  Also added defines for&n;*&t;&t;&t;&t;UDP PACKET TYPE, Interrupt test, critical values&n;*&t;&t;&t;&t;for RACE conditions.&n;* Oct 05, 1997&t;Jaspreet Singh&t;Added &squot;dlci_num&squot; and &squot;dlci[100]&squot; to &n;*&t;&t;&t;&t;&squot;wan_fr_conf_t&squot; to configure a list of dlci(s)&n;*&t;&t;&t;&t;for a NODE &n;* Jul 07, 1997&t;Jaspreet Singh&t;Added &squot;ttl&squot; to &squot;wandev_conf_t&squot; &amp; &squot;wan_device_t&squot;&n;* May 29, 1997 &t;Jaspreet Singh&t;Added &squot;tx_int_enabled&squot; to &squot;wan_device_t&squot;&n;* May 21, 1997&t;Jaspreet Singh&t;Added &squot;udp_port&squot; to &squot;wan_device_t&squot;&n;* Apr 25, 1997  Farhan Thawar   Added &squot;udp_port&squot; to &squot;wandev_conf_t&squot;&n;* Jan 16, 1997&t;Gene Kozin&t;router_devlist made public&n;* Jan 02, 1997&t;Gene Kozin&t;Initial version (based on wanpipe.h).&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* wanrouter.h&t;Definitions for the WAN Multiprotocol Router Module.&n;*&t;&t;This module provides API and common services for WAN Link&n;*&t;&t;Drivers and is completely hardware-independent.&n;*&n;* Author: &t;Nenad Corbic &lt;ncorbic@sangoma.com&gt;&n;*&t;&t;Gideon Hack &t;&n;* Additions:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Copyright:&t;(c) 1995-1999 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Oct 04, 1999  Nenad Corbic &t;Updated for 2.1.0 release&n;* Jun 02, 1999  Gideon Hack&t;Added support for the S514 adapter.&n;* May 23, 1999&t;Arnaldo Melo&t;Added local_addr to wanif_conf_t&n;*&t;&t;&t;&t;WAN_DISCONNECTING state added&n;* Jul 20, 1998&t;David Fong&t;Added Inverse ARP options to &squot;wanif_conf_t&squot;&n;* Jun 12, 1998&t;David Fong&t;Added Cisco HDLC support.&n;* Dec 16, 1997&t;Jaspreet Singh&t;Moved &squot;enable_IPX&squot; and &squot;network_number&squot; to&n;*&t;&t;&t;&t;&squot;wanif_conf_t&squot;&n;* Dec 05, 1997&t;Jaspreet Singh&t;Added &squot;pap&squot;, &squot;chap&squot; to &squot;wanif_conf_t&squot;&n;*&t;&t;&t;&t;Added &squot;authenticator&squot; to &squot;wan_ppp_conf_t&squot;&n;* Nov 06, 1997&t;Jaspreet Singh&t;Changed Router Driver version to 1.1 from 1.0&n;* Oct 20, 1997&t;Jaspreet Singh&t;Added &squot;cir&squot;,&squot;bc&squot;,&squot;be&squot; and &squot;mc&squot; to &squot;wanif_conf_t&squot;&n;*&t;&t;&t;&t;Added &squot;enable_IPX&squot; and &squot;network_number&squot; to &n;*&t;&t;&t;&t;&squot;wan_device_t&squot;.  Also added defines for&n;*&t;&t;&t;&t;UDP PACKET TYPE, Interrupt test, critical values&n;*&t;&t;&t;&t;for RACE conditions.&n;* Oct 05, 1997&t;Jaspreet Singh&t;Added &squot;dlci_num&squot; and &squot;dlci[100]&squot; to &n;*&t;&t;&t;&t;&squot;wan_fr_conf_t&squot; to configure a list of dlci(s)&n;*&t;&t;&t;&t;for a NODE &n;* Jul 07, 1997&t;Jaspreet Singh&t;Added &squot;ttl&squot; to &squot;wandev_conf_t&squot; &amp; &squot;wan_device_t&squot;&n;* May 29, 1997 &t;Jaspreet Singh&t;Added &squot;tx_int_enabled&squot; to &squot;wan_device_t&squot;&n;* May 21, 1997&t;Jaspreet Singh&t;Added &squot;udp_port&squot; to &squot;wan_device_t&squot;&n;* Apr 25, 1997  Farhan Thawar   Added &squot;udp_port&squot; to &squot;wandev_conf_t&squot;&n;* Jan 16, 1997&t;Gene Kozin&t;router_devlist made public&n;* Jan 02, 1997&t;Gene Kozin&t;Initial version (based on wanpipe.h).&n;*****************************************************************************/
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
+DECL|macro|LINUX_2_1
+mdefine_line|#define LINUX_2_1
+macro_line|#endif
 macro_line|#ifndef&t;_ROUTER_H
 DECL|macro|_ROUTER_H
 mdefine_line|#define&t;_ROUTER_H
@@ -69,6 +74,11 @@ op_plus
 l_int|31
 )brace
 suffix:semicolon
+multiline_comment|/* identifiers for displaying proc file data for dual port adapters */
+DECL|macro|PROC_DATA_PORT_0
+mdefine_line|#define PROC_DATA_PORT_0 0x8000&t;/* the data is for port 0 */
+DECL|macro|PROC_DATA_PORT_1
+mdefine_line|#define PROC_DATA_PORT_1 0x8001&t;/* the data is for port 1 */
 multiline_comment|/* NLPID for packet encapsulation (ISO/IEC TR 9577) */
 DECL|macro|NLPID_IP
 mdefine_line|#define&t;NLPID_IP&t;0xCC&t;/* Internet Protocol Datagram */
@@ -89,15 +99,19 @@ DECL|macro|WAN_DRVNAME_SZ
 mdefine_line|#define&t;WAN_DRVNAME_SZ&t;15&t;/* max length of the link driver name */
 DECL|macro|WAN_ADDRESS_SZ
 mdefine_line|#define&t;WAN_ADDRESS_SZ&t;31&t;/* max length of the WAN media address */
+DECL|macro|USED_BY_FIELD
+mdefine_line|#define USED_BY_FIELD&t;8&t;/* max length of the used by field */
 multiline_comment|/* Defines for UDP PACKET TYPE */
 DECL|macro|UDP_PTPIPE_TYPE
 mdefine_line|#define UDP_PTPIPE_TYPE &t;0x01
 DECL|macro|UDP_FPIPE_TYPE
 mdefine_line|#define UDP_FPIPE_TYPE&t;&t;0x02
+DECL|macro|UDP_CPIPE_TYPE
+mdefine_line|#define UDP_CPIPE_TYPE&t;&t;0x03
 DECL|macro|UDP_DRVSTATS_TYPE
-mdefine_line|#define UDP_DRVSTATS_TYPE &t;0x03
+mdefine_line|#define UDP_DRVSTATS_TYPE &t;0x04
 DECL|macro|UDP_INVALID_TYPE
-mdefine_line|#define UDP_INVALID_TYPE  &t;0x04
+mdefine_line|#define UDP_INVALID_TYPE  &t;0x05
 multiline_comment|/* Command return code */
 DECL|macro|CMD_OK
 mdefine_line|#define CMD_OK&t;&t;0&t;&t;/* normal firmware return code */
@@ -346,9 +360,73 @@ r_int
 id|ip_options
 suffix:semicolon
 multiline_comment|/* IP options */
+DECL|member|authenticator
+r_char
+id|authenticator
+suffix:semicolon
+multiline_comment|/* AUTHENTICATOR or not */
+DECL|member|ip_mode
+r_char
+id|ip_mode
+suffix:semicolon
+multiline_comment|/* Static/Host/Peer */
 DECL|typedef|wan_ppp_conf_t
 )brace
 id|wan_ppp_conf_t
+suffix:semicolon
+multiline_comment|/*----------------------------------------------------------------------------&n; * CHDLC-specific link-level configuration.&n; */
+DECL|struct|wan_chdlc_conf
+r_typedef
+r_struct
+id|wan_chdlc_conf
+(brace
+DECL|member|ignore_dcd
+r_int
+r_char
+id|ignore_dcd
+suffix:semicolon
+multiline_comment|/* Protocol options:&t;&t;*/
+DECL|member|ignore_cts
+r_int
+r_char
+id|ignore_cts
+suffix:semicolon
+multiline_comment|/*  Ignore these to determine&t;*/
+DECL|member|ignore_keepalive
+r_int
+r_char
+id|ignore_keepalive
+suffix:semicolon
+multiline_comment|/*  link status (Yes or No)&t;*/
+DECL|member|hdlc_streaming
+r_int
+r_char
+id|hdlc_streaming
+suffix:semicolon
+multiline_comment|/*  hdlc_streaming mode (Y/N) */
+DECL|member|keepalive_tx_tmr
+r_int
+id|keepalive_tx_tmr
+suffix:semicolon
+multiline_comment|/* transmit keepalive timer */
+DECL|member|keepalive_rx_tmr
+r_int
+id|keepalive_rx_tmr
+suffix:semicolon
+multiline_comment|/* receive  keepalive timer */
+DECL|member|keepalive_err_margin
+r_int
+id|keepalive_err_margin
+suffix:semicolon
+multiline_comment|/* keepalive_error_tolerance */
+DECL|member|slarp_timer
+r_int
+id|slarp_timer
+suffix:semicolon
+multiline_comment|/* SLARP request timer */
+DECL|typedef|wan_chdlc_conf_t
+)brace
+id|wan_chdlc_conf_t
 suffix:semicolon
 multiline_comment|/*----------------------------------------------------------------------------&n; * WAN device configuration. Passed to ROUTER_SETUP IOCTL.&n; */
 DECL|struct|wandev_conf
@@ -393,6 +471,24 @@ r_int
 id|dma
 suffix:semicolon
 multiline_comment|/* DMA request level */
+DECL|member|S514_CPU_no
+r_char
+id|S514_CPU_no
+(braket
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* S514 PCI adapter CPU number (&squot;A&squot; or &squot;B&squot;) */
+DECL|member|PCI_slot_no
+r_int
+id|PCI_slot_no
+suffix:semicolon
+multiline_comment|/* S514 PCI adapter slot number */
+DECL|member|comm_port
+r_char
+id|comm_port
+suffix:semicolon
+multiline_comment|/* Communication Port (PRI=0, SEC=1) */
 DECL|member|bps
 r_int
 id|bps
@@ -414,6 +510,12 @@ r_char
 id|ttl
 suffix:semicolon
 multiline_comment|/* Time To Live for UDP security */
+DECL|member|ft1
+r_int
+r_char
+id|ft1
+suffix:semicolon
+multiline_comment|/* FT1 Configurator Option */
 DECL|member|interface
 r_char
 id|interface
@@ -439,6 +541,11 @@ r_char
 id|connection
 suffix:semicolon
 multiline_comment|/* permanent/switched/on-demand */
+DECL|member|read_mode
+r_char
+id|read_mode
+suffix:semicolon
+multiline_comment|/* read mode: Polling or interrupt */
 DECL|member|hw_opt
 r_int
 id|hw_opt
@@ -447,18 +554,6 @@ l_int|4
 )braket
 suffix:semicolon
 multiline_comment|/* other hardware options */
-DECL|member|enable_IPX
-r_int
-r_char
-id|enable_IPX
-suffix:semicolon
-multiline_comment|/* Enable or Disable IPX */
-DECL|member|network_number
-r_int
-r_int
-id|network_number
-suffix:semicolon
-multiline_comment|/* Network Number for IPX */
 DECL|member|reserved
 r_int
 id|reserved
@@ -496,6 +591,11 @@ id|wan_fr_conf_t
 id|fr
 suffix:semicolon
 multiline_comment|/* frame relay configuration */
+DECL|member|chdlc
+id|wan_chdlc_conf_t
+id|chdlc
+suffix:semicolon
+multiline_comment|/* Cisco HDLC configuration */
 DECL|member|u
 )brace
 id|u
@@ -511,6 +611,12 @@ DECL|macro|WANCONFIG_FR
 mdefine_line|#define&t;WANCONFIG_FR&t;102&t;/* frame relay link */
 DECL|macro|WANCONFIG_PPP
 mdefine_line|#define&t;WANCONFIG_PPP&t;103&t;/* synchronous PPP link */
+DECL|macro|WANCONFIG_CHDLC
+mdefine_line|#define WANCONFIG_CHDLC&t;104&t;/* Cisco HDLC Link */
+DECL|macro|WANCONFIG_BSC
+mdefine_line|#define WANCONFIG_BSC&t;105&t;/* BiSync Streaming */
+DECL|macro|WANCONFIG_HDLC
+mdefine_line|#define WANCONFIG_HDLC&t;106&t;/* HDLC Support */
 multiline_comment|/*&n; * Configuration options defines.&n; */
 multiline_comment|/* general options */
 DECL|macro|WANOPT_OFF
@@ -567,11 +673,30 @@ DECL|macro|WANOPT_ONDEMAND
 mdefine_line|#define&t;WANOPT_ONDEMAND&t;&t;2&t;/* activate DTR only before sending */
 multiline_comment|/* frame relay in-channel signalling */
 DECL|macro|WANOPT_FR_ANSI
-mdefine_line|#define&t;WANOPT_FR_ANSI&t;&t;0&t;/* ANSI T1.617 Annex D */
+mdefine_line|#define&t;WANOPT_FR_ANSI&t;&t;1&t;/* ANSI T1.617 Annex D */
 DECL|macro|WANOPT_FR_Q933
-mdefine_line|#define&t;WANOPT_FR_Q933&t;&t;1&t;/* ITU Q.933A */
+mdefine_line|#define&t;WANOPT_FR_Q933&t;&t;2&t;/* ITU Q.933A */
 DECL|macro|WANOPT_FR_LMI
-mdefine_line|#define&t;WANOPT_FR_LMI&t;&t;2&t;/* LMI */
+mdefine_line|#define&t;WANOPT_FR_LMI&t;&t;3&t;/* LMI */
+multiline_comment|/* PPP IP Mode Options */
+DECL|macro|WANOPT_PPP_STATIC
+mdefine_line|#define&t;WANOPT_PPP_STATIC&t;0
+DECL|macro|WANOPT_PPP_HOST
+mdefine_line|#define&t;WANOPT_PPP_HOST&t;&t;1
+DECL|macro|WANOPT_PPP_PEER
+mdefine_line|#define&t;WANOPT_PPP_PEER&t;&t;2
+multiline_comment|/* CHDLC Protocol Options */
+multiline_comment|/* DF Commmented out for now.&n;&n;#define WANOPT_CHDLC_NO_DCD&t;&t;IGNORE_DCD_FOR_LINK_STAT&n;#define WANOPT_CHDLC_NO_CTS&t;&t;IGNORE_CTS_FOR_LINK_STAT&n;#define WANOPT_CHDLC_NO_KEEPALIVE&t;IGNORE_KPALV_FOR_LINK_STAT&n;*/
+multiline_comment|/* Port options */
+DECL|macro|WANOPT_PRI
+mdefine_line|#define WANOPT_PRI 0
+DECL|macro|WANOPT_SEC
+mdefine_line|#define WANOPT_SEC 1
+multiline_comment|/* read mode */
+DECL|macro|WANOPT_INTR
+mdefine_line|#define&t;WANOPT_INTR&t;0
+DECL|macro|WANOPT_POLL
+mdefine_line|#define WANOPT_POLL&t;1
 multiline_comment|/*----------------------------------------------------------------------------&n; * WAN Link Status Info (for ROUTER_STAT IOCTL).&n; */
 DECL|struct|wandev_stat
 r_typedef
@@ -709,13 +834,17 @@ DECL|enumerator|WAN_CONNECTED
 id|WAN_CONNECTED
 comma
 multiline_comment|/* link/channel is operational */
-DECL|enumerator|WAN_DISCONNECTING
-id|WAN_DISCONNECTING
-comma
-multiline_comment|/* disconnection is in progress */
 DECL|enumerator|WAN_LIMIT
 id|WAN_LIMIT
+comma
 multiline_comment|/* for verification only */
+DECL|enumerator|WAN_DUALPORT
+id|WAN_DUALPORT
+comma
+multiline_comment|/* for Dual Port cards */
+DECL|enumerator|WAN_DISCONNECTING
+id|WAN_DISCONNECTING
+multiline_comment|/* link/channel is disconnecting */
 )brace
 suffix:semicolon
 multiline_comment|/* &squot;modem_status&squot; masks */
@@ -763,6 +892,14 @@ l_int|1
 )braket
 suffix:semicolon
 multiline_comment|/* media address, ASCIIZ */
+DECL|member|usedby
+r_char
+id|usedby
+(braket
+id|USED_BY_FIELD
+)braket
+suffix:semicolon
+multiline_comment|/* used by API or WANPIPE */
 DECL|member|idle_timeout
 r_int
 id|idle_timeout
@@ -788,6 +925,29 @@ r_int
 id|be
 suffix:semicolon
 multiline_comment|/* Excess Burst Size fwd, bwd */
+DECL|member|enable_IPX
+r_int
+r_char
+id|enable_IPX
+suffix:semicolon
+multiline_comment|/* Enable or Disable IPX */
+DECL|member|inarp
+r_int
+r_char
+id|inarp
+suffix:semicolon
+multiline_comment|/* Send Inverse ARP requests Y/N */
+DECL|member|inarp_interval
+r_int
+id|inarp_interval
+suffix:semicolon
+multiline_comment|/* sec, between InARP requests */
+DECL|member|network_number
+r_int
+r_int
+id|network_number
+suffix:semicolon
+multiline_comment|/* Network Number for IPX */
 DECL|member|mc
 r_char
 id|mc
@@ -815,14 +975,113 @@ r_char
 id|protocol
 suffix:semicolon
 multiline_comment|/* prococol used in this channel (TCPOX25 or X25) */
-DECL|member|reserved
+DECL|member|pap
+r_char
+id|pap
+suffix:semicolon
+multiline_comment|/* PAP enabled or disabled */
+DECL|member|chap
+r_char
+id|chap
+suffix:semicolon
+multiline_comment|/* CHAP enabled or disabled */
+DECL|member|userid
 r_int
-id|reserved
+r_char
+id|userid
 (braket
-l_int|8
+l_int|511
 )braket
 suffix:semicolon
-multiline_comment|/* reserved for future extensions */
+multiline_comment|/* List of User Id */
+DECL|member|passwd
+r_int
+r_char
+id|passwd
+(braket
+l_int|511
+)braket
+suffix:semicolon
+multiline_comment|/* List of passwords */
+DECL|member|sysname
+r_int
+r_char
+id|sysname
+(braket
+l_int|31
+)braket
+suffix:semicolon
+multiline_comment|/* Name of the system */
+DECL|member|ignore_dcd
+r_int
+r_char
+id|ignore_dcd
+suffix:semicolon
+multiline_comment|/* Protocol options: */
+DECL|member|ignore_cts
+r_int
+r_char
+id|ignore_cts
+suffix:semicolon
+multiline_comment|/*  Ignore these to determine */
+DECL|member|ignore_keepalive
+r_int
+r_char
+id|ignore_keepalive
+suffix:semicolon
+multiline_comment|/*  link status (Yes or No) */
+DECL|member|hdlc_streaming
+r_int
+r_char
+id|hdlc_streaming
+suffix:semicolon
+multiline_comment|/*  Hdlc streaming mode (Y/N) */
+DECL|member|keepalive_tx_tmr
+r_int
+id|keepalive_tx_tmr
+suffix:semicolon
+multiline_comment|/* transmit keepalive timer */
+DECL|member|keepalive_rx_tmr
+r_int
+id|keepalive_rx_tmr
+suffix:semicolon
+multiline_comment|/* receive  keepalive timer */
+DECL|member|keepalive_err_margin
+r_int
+id|keepalive_err_margin
+suffix:semicolon
+multiline_comment|/* keepalive_error_tolerance */
+DECL|member|slarp_timer
+r_int
+id|slarp_timer
+suffix:semicolon
+multiline_comment|/* SLARP request timer */
+DECL|member|ttl
+r_int
+r_char
+id|ttl
+suffix:semicolon
+multiline_comment|/* Time To Live for UDP security */
+DECL|member|interface
+r_char
+id|interface
+suffix:semicolon
+multiline_comment|/* RS-232/V.35, etc. */
+DECL|member|clocking
+r_char
+id|clocking
+suffix:semicolon
+multiline_comment|/* external/internal */
+DECL|member|bps
+r_int
+id|bps
+suffix:semicolon
+multiline_comment|/* data transfer rate */
+DECL|member|mtu
+r_int
+id|mtu
+suffix:semicolon
+multiline_comment|/* maximum transmit unit size */
 DECL|typedef|wanif_conf_t
 )brace
 id|wanif_conf_t
@@ -856,15 +1115,34 @@ op_star
 r_private
 suffix:semicolon
 multiline_comment|/* -&gt; driver private data */
+DECL|member|config_id
+r_int
+id|config_id
+suffix:semicolon
+multiline_comment|/* Configuration ID */
 multiline_comment|/****** hardware configuration ******/
 DECL|member|ioport
 r_int
 id|ioport
 suffix:semicolon
 multiline_comment|/* adapter I/O port base #1 */
+DECL|member|S514_cpu_no
+r_char
+id|S514_cpu_no
+(braket
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* PCI CPU Number */
+DECL|member|S514_slot_no
+r_int
+r_char
+id|S514_slot_no
+suffix:semicolon
+multiline_comment|/* PCI Slot Number */
 DECL|member|maddr
-r_void
-op_star
+r_int
+r_int
 id|maddr
 suffix:semicolon
 multiline_comment|/* dual-port memory address */
@@ -934,6 +1212,32 @@ r_char
 id|connection
 suffix:semicolon
 multiline_comment|/* permanent/switched/on-demand */
+DECL|member|signalling
+r_char
+id|signalling
+suffix:semicolon
+multiline_comment|/* Signalling RS232 or V35 */
+DECL|member|read_mode
+r_char
+id|read_mode
+suffix:semicolon
+multiline_comment|/* read mode: Polling or interrupt */
+DECL|member|new_if_cnt
+r_char
+id|new_if_cnt
+suffix:semicolon
+multiline_comment|/* Number of interfaces per wanpipe */
+DECL|member|del_if_cnt
+r_char
+id|del_if_cnt
+suffix:semicolon
+multiline_comment|/* Number of times del_if() gets called */
+DECL|member|piggyback
+r_int
+r_char
+id|piggyback
+suffix:semicolon
+multiline_comment|/* Piggibacking a port */
 DECL|member|hw_opt
 r_int
 id|hw_opt
@@ -942,35 +1246,32 @@ l_int|4
 )braket
 suffix:semicolon
 multiline_comment|/* other hardware options */
-DECL|member|enable_IPX
-r_int
-r_char
-id|enable_IPX
-suffix:semicolon
-multiline_comment|/* Enable or Disable IPX */
-DECL|member|network_number
-r_int
-r_int
-id|network_number
-suffix:semicolon
-multiline_comment|/* Network Number for IPX */
 multiline_comment|/****** status and statistics *******/
 DECL|member|state
 r_char
 id|state
 suffix:semicolon
 multiline_comment|/* device state */
-DECL|member|modem_status
-r_int
-id|modem_status
+DECL|member|api_status
+r_char
+id|api_status
 suffix:semicolon
-multiline_comment|/* modem status */
+multiline_comment|/* device api status */
+macro_line|#ifdef LINUX_2_1
+DECL|member|stats
+r_struct
+id|net_device_stats
+id|stats
+suffix:semicolon
+multiline_comment|/* interface statistics */
+macro_line|#else
 DECL|member|stats
 r_struct
 id|enet_statistics
 id|stats
 suffix:semicolon
 multiline_comment|/* interface statistics */
+macro_line|#endif
 DECL|member|reserved
 r_int
 id|reserved
@@ -1175,6 +1476,7 @@ multiline_comment|/* Proc interface functions. These must not be called by the d
 r_extern
 r_int
 id|wanrouter_proc_init
+c_func
 (paren
 r_void
 )paren
@@ -1182,6 +1484,7 @@ suffix:semicolon
 r_extern
 r_void
 id|wanrouter_proc_cleanup
+c_func
 (paren
 r_void
 )paren
@@ -1189,6 +1492,7 @@ suffix:semicolon
 r_extern
 r_int
 id|wanrouter_proc_add
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -1198,6 +1502,7 @@ suffix:semicolon
 r_extern
 r_int
 id|wanrouter_proc_delete
+c_func
 (paren
 id|wan_device_t
 op_star

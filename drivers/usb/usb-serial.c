@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;(C) Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * This driver was originally based on the ACM driver by Armin Fuerst (which was &n; * based on a driver by Brad Keryan)&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (01/23/2000) gkh&n; *&t;Fixed problem of crash when trying to open a port that didn&squot;t have a&n; *&t;device assigned to it. Made the minor node finding a little smarter,&n; *&t;now it looks to find a continous space for the new device.&n; *&n; * (01/21/2000) gkh&n; *&t;Fixed bug in visor_startup with patch from Miles Lott (milos@insync.net)&n; *&t;Fixed get_serial_by_minor which was all messed up for multi port &n; *&t;devices. Fixed multi port problem for generic devices. Now the number&n; *&t;of ports is determined by the number of bulk out endpoints for the&n; *&t;generic device.&n; *&n; * (01/19/2000) gkh&n; *&t;Removed lots of cruft that was around from the old (pre urb) driver &n; *&t;interface.&n; *&t;Made the serial_table dynamic. This should save lots of memory when&n; *&t;the number of minor nodes goes up to 256.&n; *&t;Added initial support for devices that have more than one port. &n; *&t;Added more debugging comments for the Visor, and added a needed &n; *&t;set_configuration call.&n; *&n; * (01/17/2000) gkh&n; *&t;Fixed the WhiteHEAT firmware (my processing tool had a bug)&n; *&t;and added new debug loader firmware for it.&n; *&t;Removed the put_char function as it isn&squot;t really needed.&n; *&t;Added visor startup commands as found by the Win98 dump.&n; * &n; * (01/13/2000) gkh&n; *&t;Fixed the vendor id for the generic driver to the one I meant it to be.&n; *&n; * (01/12/2000) gkh&n; *&t;Forget the version numbering...that&squot;s pretty useless...&n; *&t;Made the driver able to be compiled so that the user can select which&n; *&t;converter they want to use. This allows people who only want the Visor&n; *&t;support to not pay the memory size price of the WhiteHEAT.&n; *&t;Fixed bug where the generic driver (idVendor=0000 and idProduct=0000)&n; *&t;grabbed the root hub. Not good.&n; * &n; * version 0.4.0 (01/10/2000) gkh&n; *&t;Added whiteheat.h containing the firmware for the ConnectTech WhiteHEAT&n; *&t;device. Added startup function to allow firmware to be downloaded to&n; *&t;a device if it needs to be.&n; *&t;Added firmware download logic to the WhiteHEAT device.&n; *&t;Started to add #defines to split up the different drivers for potential&n; *&t;configuration option.&n; *&t;&n; * version 0.3.1 (12/30/99) gkh&n; *      Fixed problems with urb for bulk out.&n; *      Added initial support for multiple sets of endpoints. This enables&n; *      the Handspring Visor to be attached successfully. Only the first&n; *      bulk in / bulk out endpoint pair is being used right now.&n; *&n; * version 0.3.0 (12/27/99) gkh&n; *&t;Added initial support for the Handspring Visor based on a patch from&n; *&t;Miles Lott (milos@sneety.insync.net)&n; *&t;Cleaned up the code a bunch and converted over to using urbs only.&n; *&n; * version 0.2.3 (12/21/99) gkh&n; *&t;Added initial support for the Connect Tech WhiteHEAT converter.&n; *&t;Incremented the number of ports in expectation of getting the&n; *&t;WhiteHEAT to work properly (4 ports per connection).&n; *&t;Added notification on insertion and removal of what port the&n; *&t;device is/was connected to (and what kind of device it was).&n; *&n; * version 0.2.2 (12/16/99) gkh&n; *&t;Changed major number to the new allocated number. We&squot;re legal now!&n; *&n; * version 0.2.1 (12/14/99) gkh&n; *&t;Fixed bug that happens when device node is opened when there isn&squot;t a&n; *&t;device attached to it. Thanks to marek@webdesign.no for noticing this.&n; *&n; * version 0.2.0 (11/10/99) gkh&n; *&t;Split up internals to make it easier to add different types of serial &n; *&t;converters to the code.&n; *&t;Added a &quot;generic&quot; driver that gets it&squot;s vendor and product id&n; *&t;from when the module is loaded. Thanks to David E. Nelson (dnelson@jump.net)&n; *&t;for the idea and sample code (from the usb scanner driver.)&n; *&t;Cleared up any licensing questions by releasing it under the GNU GPL.&n; *&n; * version 0.1.2 (10/25/99) gkh&n; * &t;Fixed bug in detecting device.&n; *&n; * version 0.1.1 (10/05/99) gkh&n; * &t;Changed the major number to not conflict with anything else.&n; *&n; * version 0.1 (09/28/99) gkh&n; * &t;Can recognize the two different devices and start up a read from&n; *&t;device when asked to. Writes also work. No control signals yet, this&n; *&t;all is vendor specific data (i.e. no spec), also no control for&n; *&t;different baud rates or other bit settings.&n; *&t;Currently we are using the same devid as the acm driver. This needs&n; *&t;to change.&n; * &n; */
+multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;(C) Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * This driver was originally based on the ACM driver by Armin Fuerst (which was &n; * based on a driver by Brad Keryan)&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (01/25/2000) gkh&n; *&t;Added initial framework for FTDI serial converter so that Bill Ryder&n; *&t;has a place to put his code.&n; *&t;Added the vendor specific info from Handspring. Now we can print out&n; *&t;informational debug messages as well as understand what is happening.&n; *&n; * (01/23/2000) gkh&n; *&t;Fixed problem of crash when trying to open a port that didn&squot;t have a&n; *&t;device assigned to it. Made the minor node finding a little smarter,&n; *&t;now it looks to find a continous space for the new device.&n; *&n; * (01/21/2000) gkh&n; *&t;Fixed bug in visor_startup with patch from Miles Lott (milos@insync.net)&n; *&t;Fixed get_serial_by_minor which was all messed up for multi port &n; *&t;devices. Fixed multi port problem for generic devices. Now the number&n; *&t;of ports is determined by the number of bulk out endpoints for the&n; *&t;generic device.&n; *&n; * (01/19/2000) gkh&n; *&t;Removed lots of cruft that was around from the old (pre urb) driver &n; *&t;interface.&n; *&t;Made the serial_table dynamic. This should save lots of memory when&n; *&t;the number of minor nodes goes up to 256.&n; *&t;Added initial support for devices that have more than one port. &n; *&t;Added more debugging comments for the Visor, and added a needed &n; *&t;set_configuration call.&n; *&n; * (01/17/2000) gkh&n; *&t;Fixed the WhiteHEAT firmware (my processing tool had a bug)&n; *&t;and added new debug loader firmware for it.&n; *&t;Removed the put_char function as it isn&squot;t really needed.&n; *&t;Added visor startup commands as found by the Win98 dump.&n; * &n; * (01/13/2000) gkh&n; *&t;Fixed the vendor id for the generic driver to the one I meant it to be.&n; *&n; * (01/12/2000) gkh&n; *&t;Forget the version numbering...that&squot;s pretty useless...&n; *&t;Made the driver able to be compiled so that the user can select which&n; *&t;converter they want to use. This allows people who only want the Visor&n; *&t;support to not pay the memory size price of the WhiteHEAT.&n; *&t;Fixed bug where the generic driver (idVendor=0000 and idProduct=0000)&n; *&t;grabbed the root hub. Not good.&n; * &n; * version 0.4.0 (01/10/2000) gkh&n; *&t;Added whiteheat.h containing the firmware for the ConnectTech WhiteHEAT&n; *&t;device. Added startup function to allow firmware to be downloaded to&n; *&t;a device if it needs to be.&n; *&t;Added firmware download logic to the WhiteHEAT device.&n; *&t;Started to add #defines to split up the different drivers for potential&n; *&t;configuration option.&n; *&t;&n; * version 0.3.1 (12/30/99) gkh&n; *      Fixed problems with urb for bulk out.&n; *      Added initial support for multiple sets of endpoints. This enables&n; *      the Handspring Visor to be attached successfully. Only the first&n; *      bulk in / bulk out endpoint pair is being used right now.&n; *&n; * version 0.3.0 (12/27/99) gkh&n; *&t;Added initial support for the Handspring Visor based on a patch from&n; *&t;Miles Lott (milos@sneety.insync.net)&n; *&t;Cleaned up the code a bunch and converted over to using urbs only.&n; *&n; * version 0.2.3 (12/21/99) gkh&n; *&t;Added initial support for the Connect Tech WhiteHEAT converter.&n; *&t;Incremented the number of ports in expectation of getting the&n; *&t;WhiteHEAT to work properly (4 ports per connection).&n; *&t;Added notification on insertion and removal of what port the&n; *&t;device is/was connected to (and what kind of device it was).&n; *&n; * version 0.2.2 (12/16/99) gkh&n; *&t;Changed major number to the new allocated number. We&squot;re legal now!&n; *&n; * version 0.2.1 (12/14/99) gkh&n; *&t;Fixed bug that happens when device node is opened when there isn&squot;t a&n; *&t;device attached to it. Thanks to marek@webdesign.no for noticing this.&n; *&n; * version 0.2.0 (11/10/99) gkh&n; *&t;Split up internals to make it easier to add different types of serial &n; *&t;converters to the code.&n; *&t;Added a &quot;generic&quot; driver that gets it&squot;s vendor and product id&n; *&t;from when the module is loaded. Thanks to David E. Nelson (dnelson@jump.net)&n; *&t;for the idea and sample code (from the usb scanner driver.)&n; *&t;Cleared up any licensing questions by releasing it under the GNU GPL.&n; *&n; * version 0.1.2 (10/25/99) gkh&n; * &t;Fixed bug in detecting device.&n; *&n; * version 0.1.1 (10/05/99) gkh&n; * &t;Changed the major number to not conflict with anything else.&n; *&n; * version 0.1 (09/28/99) gkh&n; * &t;Can recognize the two different devices and start up a read from&n; *&t;device when asked to. Writes also work. No control signals yet, this&n; *&t;all is vendor specific data (i.e. no spec), also no control for&n; *&t;different baud rates or other bit settings.&n; *&t;Currently we are using the same devid as the acm driver. This needs&n; *&t;to change.&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -114,12 +114,12 @@ suffix:semicolon
 multiline_comment|/* USB Serial devices vendor ids and device ids that this driver supports */
 DECL|macro|BELKIN_VENDOR_ID
 mdefine_line|#define BELKIN_VENDOR_ID&t;&t;0x056c
-DECL|macro|BELKIN_SERIAL_CONVERTER
-mdefine_line|#define BELKIN_SERIAL_CONVERTER&t;&t;0x8007
+DECL|macro|BELKIN_SERIAL_CONVERTER_ID
+mdefine_line|#define BELKIN_SERIAL_CONVERTER_ID&t;0x8007
 DECL|macro|PERACOM_VENDOR_ID
 mdefine_line|#define PERACOM_VENDOR_ID&t;&t;0x0565
-DECL|macro|PERACOM_SERIAL_CONVERTER
-mdefine_line|#define PERACOM_SERIAL_CONVERTER&t;0x0001
+DECL|macro|PERACOM_SERIAL_CONVERTER_ID
+mdefine_line|#define PERACOM_SERIAL_CONVERTER_ID&t;0x0001
 DECL|macro|CONNECT_TECH_VENDOR_ID
 mdefine_line|#define CONNECT_TECH_VENDOR_ID&t;&t;0x0710
 DECL|macro|CONNECT_TECH_FAKE_WHITE_HEAT_ID
@@ -130,6 +130,10 @@ DECL|macro|HANDSPRING_VENDOR_ID
 mdefine_line|#define HANDSPRING_VENDOR_ID&t;&t;0x082d
 DECL|macro|HANDSPRING_VISOR_ID
 mdefine_line|#define HANDSPRING_VISOR_ID&t;&t;0x0100
+DECL|macro|FTDI_VENDOR_ID
+mdefine_line|#define FTDI_VENDOR_ID&t;&t;&t;0x0403
+DECL|macro|FTDI_SERIAL_CONVERTER_ID
+mdefine_line|#define FTDI_SERIAL_CONVERTER_ID&t;0x8372
 DECL|macro|SERIAL_TTY_MAJOR
 mdefine_line|#define SERIAL_TTY_MAJOR&t;188&t;/* Nice legal number now */
 DECL|macro|SERIAL_TTY_MINORS
@@ -755,7 +759,7 @@ r_static
 id|__u16
 id|belkin_product_id
 op_assign
-id|BELKIN_SERIAL_CONVERTER
+id|BELKIN_SERIAL_CONVERTER_ID
 suffix:semicolon
 DECL|variable|belkin_device
 r_static
@@ -848,7 +852,7 @@ r_static
 id|__u16
 id|peracom_product_id
 op_assign
-id|PERACOM_SERIAL_CONVERTER
+id|PERACOM_SERIAL_CONVERTER_ID
 suffix:semicolon
 DECL|variable|peracom_device
 r_static
@@ -1151,6 +1155,60 @@ id|whiteheat_unthrottle
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_USB_SERIAL_VISOR
+multiline_comment|/****************************************************************************&n; * Handspring Visor Vendor specific request codes (bRequest values)&n; * A big thank you to Handspring for providing the following information.&n; * If anyone wants the original file where these values and structures came&n; * from, send email to &lt;greg@kroah.com&gt;.&n; ****************************************************************************/
+multiline_comment|/****************************************************************************&n; * VISOR_REQUEST_BYTES_AVAILABLE asks the visor for the number of bytes that&n; * are available to be transfered to the host for the specified endpoint.&n; * Currently this is not used, and always returns 0x0001&n; ****************************************************************************/
+DECL|macro|VISOR_REQUEST_BYTES_AVAILABLE
+mdefine_line|#define VISOR_REQUEST_BYTES_AVAILABLE&t;&t;0x01
+multiline_comment|/****************************************************************************&n; * VISOR_CLOSE_NOTIFICATION is set to the device to notify it that the host&n; * is now closing the pipe. An empty packet is sent in response.&n; ****************************************************************************/
+DECL|macro|VISOR_CLOSE_NOTIFICATION
+mdefine_line|#define VISOR_CLOSE_NOTIFICATION&t;&t;0x02
+multiline_comment|/****************************************************************************&n; * VISOR_GET_CONNECTION_INFORMATION is sent by the host during enumeration to&n; * get the endpoints used by the connection.&n; ****************************************************************************/
+DECL|macro|VISOR_GET_CONNECTION_INFORMATION
+mdefine_line|#define VISOR_GET_CONNECTION_INFORMATION&t;0x03
+multiline_comment|/****************************************************************************&n; * VISOR_GET_CONNECTION_INFORMATION returns data in the following format&n; ****************************************************************************/
+DECL|struct|visor_connection_info
+r_struct
+id|visor_connection_info
+(brace
+DECL|member|num_ports
+id|__u16
+id|num_ports
+suffix:semicolon
+r_struct
+(brace
+DECL|member|port_function_id
+id|__u8
+id|port_function_id
+suffix:semicolon
+DECL|member|port
+id|__u8
+id|port
+suffix:semicolon
+DECL|member|connections
+)brace
+id|connections
+(braket
+l_int|2
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* struct visor_connection_info.connection[x].port defines: */
+DECL|macro|VISOR_ENDPOINT_1
+mdefine_line|#define VISOR_ENDPOINT_1&t;&t;0x01
+DECL|macro|VISOR_ENDPOINT_2
+mdefine_line|#define VISOR_ENDPOINT_2&t;&t;0x02
+multiline_comment|/* struct visor_connection_info.connection[x].port_function_id defines: */
+DECL|macro|VISOR_FUNCTION_GENERIC
+mdefine_line|#define VISOR_FUNCTION_GENERIC&t;&t;0x00
+DECL|macro|VISOR_FUNCTION_DEBUGGER
+mdefine_line|#define VISOR_FUNCTION_DEBUGGER&t;&t;0x01
+DECL|macro|VISOR_FUNCTION_HOTSYNC
+mdefine_line|#define VISOR_FUNCTION_HOTSYNC&t;&t;0x02
+DECL|macro|VISOR_FUNCTION_CONSOLE
+mdefine_line|#define VISOR_FUNCTION_CONSOLE&t;&t;0x03
+DECL|macro|VISOR_FUNCTION_REMOTE_FILE_SYS
+mdefine_line|#define VISOR_FUNCTION_REMOTE_FILE_SYS&t;0x04
 multiline_comment|/* function prototypes for a handspring visor */
 r_static
 r_int
@@ -1315,6 +1373,129 @@ id|visor_startup
 )brace
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_USB_SERIAL_FTDI
+multiline_comment|/* function prototypes for a FTDI serial converter */
+r_static
+r_int
+id|ftdi_serial_open
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+suffix:semicolon
+r_static
+r_void
+id|ftdi_serial_close
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+suffix:semicolon
+multiline_comment|/* All of the device info needed for the Handspring Visor */
+DECL|variable|ftdi_vendor_id
+r_static
+id|__u16
+id|ftdi_vendor_id
+op_assign
+id|FTDI_VENDOR_ID
+suffix:semicolon
+DECL|variable|ftdi_product_id
+r_static
+id|__u16
+id|ftdi_product_id
+op_assign
+id|FTDI_SERIAL_CONVERTER_ID
+suffix:semicolon
+DECL|variable|ftdi_device
+r_static
+r_struct
+id|usb_serial_device_type
+id|ftdi_device
+op_assign
+(brace
+id|name
+suffix:colon
+l_string|&quot;FTDI&quot;
+comma
+id|idVendor
+suffix:colon
+op_amp
+id|ftdi_vendor_id
+comma
+multiline_comment|/* the FTDI vendor ID */
+id|idProduct
+suffix:colon
+op_amp
+id|ftdi_product_id
+comma
+multiline_comment|/* the FTDI product id */
+id|needs_interrupt_in
+suffix:colon
+id|MUST_HAVE_NOT
+comma
+multiline_comment|/* this device must not have an interrupt in endpoint */
+id|needs_bulk_in
+suffix:colon
+id|MUST_HAVE
+comma
+multiline_comment|/* this device must have a bulk in endpoint */
+id|needs_bulk_out
+suffix:colon
+id|MUST_HAVE
+comma
+multiline_comment|/* this device must have a bulk out endpoint */
+id|num_interrupt_in
+suffix:colon
+l_int|0
+comma
+id|num_bulk_in
+suffix:colon
+l_int|1
+comma
+id|num_bulk_out
+suffix:colon
+l_int|1
+comma
+id|num_ports
+suffix:colon
+l_int|1
+comma
+id|open
+suffix:colon
+id|ftdi_serial_open
+comma
+id|close
+suffix:colon
+id|ftdi_serial_close
+comma
+id|write
+suffix:colon
+id|generic_serial_write
+comma
+id|write_room
+suffix:colon
+id|generic_write_room
+comma
+id|chars_in_buffer
+suffix:colon
+id|generic_chars_in_buffer
+)brace
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* To add support for another serial converter, create a usb_serial_device_type&n;   structure for that device, and add it to this list, making sure that the last&n;   entry is NULL. */
 DECL|variable|usb_serial_devices
 r_static
@@ -1352,6 +1533,11 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_USB_SERIAL_VISOR
 op_amp
 id|handspring_device
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_SERIAL_FTDI
+op_amp
+id|ftdi_device
 comma
 macro_line|#endif
 l_int|NULL
@@ -3907,6 +4093,18 @@ id|tty-&gt;device
 op_minus
 id|serial-&gt;minor
 suffix:semicolon
+r_int
+r_char
+op_star
+id|transfer_buffer
+op_assign
+id|kmalloc
+(paren
+l_int|0x12
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
 id|dbg
 c_func
 (paren
@@ -3915,6 +4113,53 @@ comma
 id|port
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|transfer_buffer
+)paren
+(brace
+id|err
+c_func
+(paren
+l_string|&quot;visor_serial_close: kmalloc(%d) failed.&bslash;n&quot;
+comma
+l_int|0x12
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* send a shutdown message to the device */
+id|usb_control_msg
+(paren
+id|serial-&gt;dev
+comma
+id|usb_rcvctrlpipe
+c_func
+(paren
+id|serial-&gt;dev
+comma
+l_int|0
+)paren
+comma
+id|VISOR_CLOSE_NOTIFICATION
+comma
+l_int|0xc2
+comma
+l_int|0x0000
+comma
+l_int|0x0000
+comma
+id|transfer_buffer
+comma
+l_int|0x12
+comma
+l_int|300
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* shutdown our bulk reads and writes */
 id|usb_unlink_urb
 (paren
@@ -4059,7 +4304,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; Here&squot;s the raw dump of the vendor specific command data that the Visor sends on Win98&n;______________________________________________________________________&n;SETUP(0xB4) ADDR(0x02) ENDP(0x0) CRC5(0x15)&n;______________________________________________________________________&n;DATA0(0xC3) DATA(C2 03 00 00 00 00 12 00 ) CRC16(0xB0BB)&n;______________________________________________________________________&n;ACK(0x4B)&n;______________________________________________________________________&n;IN(0x96) ADDR(0x02) ENDP(0x0) CRC5(0x15)&n;______________________________________________________________________&n;DATA1(0xD2) DATA(02 00 00 01 02 02 ) CRC16(0xF4E6)&n;______________________________________________________________________&n;ACK(0x4B)&n;______________________________________________________________________&n;OUT(0x87) ADDR(0x02) ENDP(0x0) CRC5(0x15)&n;______________________________________________________________________&n;DATA1(0xD2) DATA() CRC16(0x0000)&n;______________________________________________________________________&n;ACK(0x4B)&n;______________________________________________________________________&n;SETUP(0xB4) ADDR(0x02) ENDP(0x0) CRC5(0x15)&n;______________________________________________________________________&n;DATA0(0xC3) DATA(C2 01 00 00 05 00 02 00 ) CRC16(0xC488)&n;______________________________________________________________________&n;ACK(0x4B)&n;______________________________________________________________________&n;IN(0x96) ADDR(0x02) ENDP(0x0) CRC5(0x15)&n;______________________________________________________________________&n;DATA1(0xD2) DATA(01 00 ) CRC16(0xFFFB)&n;______________________________________________________________________&n;ACK(0x4B)&n;______________________________________________________________________&n;OUT(0x87) ADDR(0x02) ENDP(0x0) CRC5(0x15)&n;______________________________________________________________________&n;DATA1(0xD2) DATA() CRC16(0x0000)&n;______________________________________________________________________&n;ACK(0x4B)&n;______________________________________________________________________&n;*/
 DECL|function|visor_startup
 r_static
 r_int
@@ -4071,7 +4315,6 @@ op_star
 id|serial
 )paren
 (brace
-multiline_comment|/* send out two unknown commands that I found by looking at a Win98 trace */
 r_int
 id|response
 suffix:semicolon
@@ -4129,6 +4372,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* send a get connection info request */
 id|response
 op_assign
 id|usb_control_msg
@@ -4143,7 +4387,7 @@ comma
 l_int|0
 )paren
 comma
-l_int|0x03
+id|VISOR_GET_CONNECTION_INFORMATION
 comma
 l_int|0xc2
 comma
@@ -4169,16 +4413,37 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;visor_startup: error getting first vendor specific message&quot;
+l_string|&quot;visor_startup: error getting connection information&quot;
 )paren
 suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#ifdef DEBUG
+r_struct
+id|visor_connection_info
+op_star
+id|connection_info
+op_assign
+(paren
+r_struct
+id|visor_connection_info
+op_star
+)paren
+id|transfer_buffer
+suffix:semicolon
+r_char
+op_star
+id|string
+suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;visor_startup: First vendor specific message successful, data received:&quot;
+l_string|&quot;%s: Number of ports: %d&quot;
+comma
+id|serial-&gt;type-&gt;name
+comma
+id|connection_info-&gt;num_ports
 )paren
 suffix:semicolon
 r_for
@@ -4190,23 +4455,89 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|response
+id|connection_info-&gt;num_ports
 suffix:semicolon
 op_increment
 id|i
 )paren
-id|dbg
-c_func
+(brace
+r_switch
+c_cond
 (paren
-l_string|&quot;    0x%.2x&quot;
-comma
-id|transfer_buffer
+id|connection_info-&gt;connections
 (braket
 id|i
 )braket
+dot
+id|port_function_id
+)paren
+(brace
+r_case
+id|VISOR_FUNCTION_GENERIC
+suffix:colon
+id|string
+op_assign
+l_string|&quot;Generic&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|VISOR_FUNCTION_DEBUGGER
+suffix:colon
+id|string
+op_assign
+l_string|&quot;Debugger&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|VISOR_FUNCTION_HOTSYNC
+suffix:colon
+id|string
+op_assign
+l_string|&quot;HotSync&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|VISOR_FUNCTION_REMOTE_FILE_SYS
+suffix:colon
+id|string
+op_assign
+l_string|&quot;Remote File System&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|string
+op_assign
+l_string|&quot;unknown&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|dbg
+c_func
+(paren
+l_string|&quot;%s: port %d, is for %s&quot;
+comma
+id|serial-&gt;type-&gt;name
+comma
+id|connection_info-&gt;connections
+(braket
+id|i
+)braket
+dot
+id|port
+comma
+id|string
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
+)brace
+multiline_comment|/* ask for the number of bytes available, but ignore the response as it is broken */
 id|response
 op_assign
 id|usb_control_msg
@@ -4221,7 +4552,7 @@ comma
 l_int|0
 )paren
 comma
-l_int|0x01
+id|VISOR_REQUEST_BYTES_AVAILABLE
 comma
 l_int|0xc2
 comma
@@ -4247,41 +4578,7 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;visor_startup: error getting second vendor specific message&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|dbg
-c_func
-(paren
-l_string|&quot;visor_startup: Second vendor specific message successful, data received:&quot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|response
-suffix:semicolon
-op_increment
-id|i
-)paren
-id|dbg
-c_func
-(paren
-l_string|&quot;    0x%.2x&quot;
-comma
-id|transfer_buffer
-(braket
-id|i
-)braket
+l_string|&quot;visor_startup: error getting bytes available request&quot;
 )paren
 suffix:semicolon
 )brace
@@ -4298,6 +4595,186 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* CONFIG_USB_SERIAL_VISOR*/
+macro_line|#ifdef CONFIG_USB_SERIAL_FTDI
+multiline_comment|/******************************************************************************&n; * FTDI Serial Converter specific driver functions&n; ******************************************************************************/
+DECL|function|ftdi_serial_open
+r_static
+r_int
+id|ftdi_serial_open
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+(brace
+r_struct
+id|usb_serial
+op_star
+id|serial
+op_assign
+(paren
+r_struct
+id|usb_serial
+op_star
+)paren
+id|tty-&gt;driver_data
+suffix:semicolon
+r_int
+id|port
+op_assign
+id|MINOR
+c_func
+(paren
+id|tty-&gt;device
+)paren
+op_minus
+id|serial-&gt;minor
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;ftdi_serial_open port %d&quot;
+comma
+id|port
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|serial-&gt;active
+(braket
+id|port
+)braket
+)paren
+(brace
+id|dbg
+(paren
+l_string|&quot;device already open&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+id|serial-&gt;active
+(braket
+id|port
+)braket
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/*Start reading from the device*/
+r_if
+c_cond
+(paren
+id|usb_submit_urb
+c_func
+(paren
+op_amp
+id|serial-&gt;read_urb
+(braket
+id|port
+)braket
+)paren
+)paren
+id|dbg
+c_func
+(paren
+l_string|&quot;usb_submit_urb(read bulk) failed&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Need to do device specific setup here (control lines, baud rate, etc.) */
+multiline_comment|/* FIXME!!! */
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+DECL|function|ftdi_serial_close
+r_static
+r_void
+id|ftdi_serial_close
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+(brace
+r_struct
+id|usb_serial
+op_star
+id|serial
+op_assign
+(paren
+r_struct
+id|usb_serial
+op_star
+)paren
+id|tty-&gt;driver_data
+suffix:semicolon
+r_int
+id|port
+op_assign
+id|MINOR
+c_func
+(paren
+id|tty-&gt;device
+)paren
+op_minus
+id|serial-&gt;minor
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;ftdi_serial_close port %d&quot;
+comma
+id|port
+)paren
+suffix:semicolon
+multiline_comment|/* Need to change the control lines here */
+multiline_comment|/* FIXME */
+multiline_comment|/* shutdown our bulk reads and writes */
+id|usb_unlink_urb
+(paren
+op_amp
+id|serial-&gt;write_urb
+(braket
+id|port
+)braket
+)paren
+suffix:semicolon
+id|usb_unlink_urb
+(paren
+op_amp
+id|serial-&gt;read_urb
+(braket
+id|port
+)braket
+)paren
+suffix:semicolon
+id|serial-&gt;active
+(braket
+id|port
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*****************************************************************************&n; * generic devices specific driver functions&n; *****************************************************************************/
 DECL|function|generic_serial_open
 r_static
@@ -5468,6 +5945,8 @@ id|i
 )braket
 op_member_access_from_pointer
 id|wMaxPacketSize
+op_star
+l_int|2
 suffix:semicolon
 id|serial-&gt;bulk_out_buffer
 (braket

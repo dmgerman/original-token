@@ -10,7 +10,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
@@ -22,6 +22,17 @@ id|asmlinkage
 r_int
 r_int
 id|__ashrdi3
+(paren
+r_int
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+id|asmlinkage
+r_int
+r_int
+id|__lshrdi3
 (paren
 r_int
 r_int
@@ -238,6 +249,15 @@ c_func
 id|kernel_thread
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_VME
+DECL|variable|vme_brdtype
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|vme_brdtype
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Networking helper routines. */
 DECL|variable|csum_partial_copy
 id|EXPORT_SYMBOL
@@ -252,6 +272,13 @@ id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|__ashrdi3
+)paren
+suffix:semicolon
+DECL|variable|__lshrdi3
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__lshrdi3
 )paren
 suffix:semicolon
 DECL|variable|memcpy

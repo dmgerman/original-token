@@ -32,6 +32,10 @@ DECL|macro|O_DIRECTORY
 mdefine_line|#define O_DIRECTORY&t;040000&t;/* must be a directory */
 DECL|macro|O_NOFOLLOW
 mdefine_line|#define O_NOFOLLOW&t;0100000&t;/* don&squot;t follow links */
+DECL|macro|O_DIRECT
+mdefine_line|#define O_DIRECT&t;0200000&t;/* direct disk access hint - currently ignored */
+DECL|macro|O_LARGEFILE
+mdefine_line|#define O_LARGEFILE&t;0400000
 DECL|macro|F_DUPFD
 mdefine_line|#define F_DUPFD&t;&t;0&t;/* dup */
 DECL|macro|F_GETFD

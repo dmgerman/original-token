@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.143 1999/12/16 16:15:14 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.144 2000/01/23 07:16:11 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -57,14 +57,6 @@ DECL|variable|phys_base
 r_int
 r_int
 id|phys_base
-suffix:semicolon
-DECL|variable|totalram_pages
-r_static
-r_int
-r_int
-id|totalram_pages
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* get_new_mmu_context() uses &quot;cache + 1&quot;.  */
 DECL|variable|ctx_alloc_lock
@@ -448,7 +440,7 @@ c_func
 (paren
 l_string|&quot;%ld pages of RAM&bslash;n&quot;
 comma
-id|totalram_pages
+id|num_physpages
 )paren
 suffix:semicolon
 id|printk
@@ -5443,9 +5435,6 @@ r_int
 id|first
 )paren
 suffix:semicolon
-id|totalram_pages
-op_increment
-suffix:semicolon
 id|num_physpages
 op_increment
 suffix:semicolon
@@ -5913,8 +5902,6 @@ suffix:semicolon
 macro_line|#endif
 id|num_physpages
 op_assign
-id|totalram_pages
-op_assign
 id|free_all_bootmem
 c_func
 (paren
@@ -6085,9 +6072,6 @@ op_star
 )paren
 id|addr
 )paren
-suffix:semicolon
-id|totalram_pages
-op_increment
 suffix:semicolon
 id|num_physpages
 op_increment
@@ -6300,9 +6284,6 @@ c_func
 id|p
 )paren
 suffix:semicolon
-id|totalram_pages
-op_increment
-suffix:semicolon
 id|num_physpages
 op_increment
 suffix:semicolon
@@ -6321,7 +6302,7 @@ id|val
 (brace
 id|val-&gt;totalram
 op_assign
-id|totalram_pages
+id|num_physpages
 suffix:semicolon
 id|val-&gt;sharedram
 op_assign

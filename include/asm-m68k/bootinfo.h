@@ -94,6 +94,31 @@ DECL|macro|ATARI_MACH_HADES
 mdefine_line|#define ATARI_MACH_HADES&t;2&t;/* Hades 040 or 060 */
 DECL|macro|ATARI_MACH_AB40
 mdefine_line|#define ATARI_MACH_AB40&t;&t;3&t;/* Afterburner040 on Falcon */
+multiline_comment|/*&n;     *  VME-specific tags&n;     */
+DECL|macro|BI_VME_TYPE
+mdefine_line|#define BI_VME_TYPE&t;&t;0x8000&t;/* VME sub-architecture (u_long) */
+DECL|macro|BI_VME_BRDINFO
+mdefine_line|#define BI_VME_BRDINFO&t;&t;0x8001&t;/* VME board information (struct) */
+multiline_comment|/* BI_VME_TYPE codes */
+DECL|macro|VME_TYPE_TP34V
+mdefine_line|#define&t;VME_TYPE_TP34V&t;&t;0x0034&t;/* Tadpole TP34V */
+DECL|macro|VME_TYPE_MVME147
+mdefine_line|#define VME_TYPE_MVME147&t;0x0147&t;/* Motorola MVME147 */
+DECL|macro|VME_TYPE_MVME162
+mdefine_line|#define VME_TYPE_MVME162&t;0x0162&t;/* Motorola MVME162 */
+DECL|macro|VME_TYPE_MVME166
+mdefine_line|#define VME_TYPE_MVME166&t;0x0166&t;/* Motorola MVME166 */
+DECL|macro|VME_TYPE_MVME167
+mdefine_line|#define VME_TYPE_MVME167&t;0x0167&t;/* Motorola MVME167 */
+DECL|macro|VME_TYPE_MVME172
+mdefine_line|#define VME_TYPE_MVME172&t;0x0172&t;/* Motorola MVME172 */
+DECL|macro|VME_TYPE_MVME177
+mdefine_line|#define VME_TYPE_MVME177&t;0x0177&t;/* Motorola MVME177 */
+DECL|macro|VME_TYPE_BVME4000
+mdefine_line|#define VME_TYPE_BVME4000&t;0x4000&t;/* BVM Ltd. BVME4000 */
+DECL|macro|VME_TYPE_BVME6000
+mdefine_line|#define VME_TYPE_BVME6000&t;0x6000&t;/* BVM Ltd. BVME6000 */
+multiline_comment|/* BI_VME_BRDINFO is a 32 byte struct as returned by the Bug code on&n; * Motorola VME boards.  Contains board number, Bug version, board&n; * configuration options, etc.  See include/asm/mvme16xhw.h for details.&n; */
 multiline_comment|/*&n;     *  Macintosh-specific tags (all u_long)&n;     */
 DECL|macro|BI_MAC_MODEL
 mdefine_line|#define BI_MAC_MODEL&t;&t;0x8000&t;/* Mac Gestalt ID (model type) */
@@ -280,6 +305,9 @@ id|mac_booter_data
 id|mac_bi_data
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n;     *  Apollo-specific tags&n;     */
+DECL|macro|BI_APOLLO_MODEL
+mdefine_line|#define BI_APOLLO_MODEL         0x8000  /* model (u_long) */
 multiline_comment|/*&n;     * Stuff for bootinfo interface versioning&n;     *&n;     * At the start of kernel code, a &squot;struct bootversion&squot; is located.&n;     * bootstrap checks for a matching version of the interface before booting&n;     * a kernel, to avoid user confusion if kernel and bootstrap don&squot;t work&n;     * together :-)&n;     *&n;     * If incompatible changes are made to the bootinfo interface, the major&n;     * number below should be stepped (and the minor reset to 0) for the&n;     * appropriate machine. If a change is backward-compatible, the minor&n;     * should be stepped. &quot;Backwards-compatible&quot; means that booting will work,&n;     * but certain features may not.&n;     */
 DECL|macro|BOOTINFOV_MAGIC
 mdefine_line|#define BOOTINFOV_MAGIC&t;&t;&t;0x4249561A&t;/* &squot;BIV^Z&squot; */

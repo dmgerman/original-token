@@ -8,15 +8,9 @@ macro_line|#include &quot;../scsi/scsi.h&quot;
 macro_line|#include &quot;fc.h&quot;
 macro_line|#include &quot;fcp.h&quot;
 macro_line|#include &quot;fc-al.h&quot;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifdef __sparc__
 macro_line|#include &lt;asm/sbus.h&gt;
-DECL|typedef|dma_handle
-r_typedef
-id|u32
-id|dma_handle
-suffix:semicolon
-macro_line|#else
-macro_line|#error Need to port FC layer to your architecture
 macro_line|#endif
 multiline_comment|/* 0 or 1 */
 DECL|macro|FCP_SCSI_USE_NEW_EH_CODE
@@ -89,7 +83,7 @@ id|did
 suffix:semicolon
 multiline_comment|/* FCP SCSI stuff */
 DECL|member|data
-id|dma_handle
+id|dma_addr_t
 id|data
 suffix:semicolon
 multiline_comment|/* From now on this cannot be touched for proto == TYPE_SCSI_FCP */
@@ -98,11 +92,11 @@ id|fc_hdr
 id|fch
 suffix:semicolon
 DECL|member|cmd
-id|dma_handle
+id|dma_addr_t
 id|cmd
 suffix:semicolon
 DECL|member|rsp
-id|dma_handle
+id|dma_addr_t
 id|rsp
 suffix:semicolon
 DECL|member|cmdlen
@@ -263,6 +257,13 @@ id|sbus_dev
 op_star
 id|dev
 suffix:semicolon
+macro_line|#else
+DECL|member|dev
+r_struct
+id|pci_dev
+op_star
+id|dev
+suffix:semicolon
 macro_line|#endif
 DECL|member|module
 r_struct
@@ -295,7 +296,7 @@ id|scsi_rsp_pool
 suffix:semicolon
 DECL|member|dma_scsi_cmd
 DECL|member|dma_scsi_rsp
-id|dma_handle
+id|dma_addr_t
 id|dma_scsi_cmd
 comma
 id|dma_scsi_rsp

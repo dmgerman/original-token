@@ -1,20 +1,12 @@
-multiline_comment|/*****************************************************************************&n;* sdla_fr.h&t;Sangoma frame relay firmware API definitions.&n;*&n;* Author:&t;Jaspreet Singh  &lt;jaspreet@sangoma.com&gt;&n;*&t;&t;Gene Kozin&t;&lt;74604.152@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1996 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Oct 12, 1997&t;Jaspreet Singh&t;Added FR_READ_DLCI_IB_MAPPING&n;* Jul 21, 1997 &t;Jaspreet Singh&t;Changed FRRES_TOO_LONG and FRRES_TOO_MANY to &n;*&t;&t;&t;&t;0x05 and 0x06 respectively.&n;* Dec 23, 1996&t;Gene Kozin&t;v2.0&n;* Apr 29, 1996&t;Gene Kozin&t;v1.0 (merged version S502 &amp; S508 definitions).&n;* Sep 26, 1995&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* sdla_fr.h&t;Sangoma frame relay firmware API definitions.&n;*&n;* Author:       Gideon Hack  &t;&n;*&t;&t;Nenad Corbic &lt;ncorbic@sangoma.com&gt; &t;&n;*&n;* Copyright:&t;(c) 1995-1999 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Oct 04, 1999  Gideon Hack     Updated API structures&n;* Jun 02, 1999  Gideon Hack &t;Modifications for S514 support&n;* Oct 12, 1997&t;Jaspreet Singh&t;Added FR_READ_DLCI_IB_MAPPING&n;* Jul 21, 1997 &t;Jaspreet Singh&t;Changed FRRES_TOO_LONG and FRRES_TOO_MANY to &n;*&t;&t;&t;&t;0x05 and 0x06 respectively.&n;* Dec 23, 1996&t;Gene Kozin&t;v2.0&n;* Apr 29, 1996&t;Gene Kozin&t;v1.0 (merged version S502 &amp; S508 definitions).&n;* Sep 26, 1995&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
 macro_line|#ifndef&t;_SDLA_FR_H
 DECL|macro|_SDLA_FR_H
 mdefine_line|#define&t;_SDLA_FR_H
-multiline_comment|/*----------------------------------------------------------------------------&n; * Notes:&n; * ------&n; * 1. All structures defined in this file are byte-alined.  To ensure&n; *    portability of this code between different platforms and compilers, one&n; *    of the following defines must be defined before including this file:&n; *&n; *&t;Compiler&t;Platform&t;Define&t;&t;Use option&n; *&t;--------&t;--------&t;------&t;&t;----------&n; *&t;GNU C&t;&t;Linux&t;&t;_GNUC_&t;&t;-&n; *&t;Microsoft C&t;DOS/Windows&t;_MSC_&t;&t;-&n; */
-macro_line|#ifdef&t;&t;_GNUC_
-macro_line|#  ifndef&t;PACKED
+multiline_comment|/*----------------------------------------------------------------------------&n; * Notes:&n; * ------&n; * 1. All structures defined in this file are byte-alined.  &n; *&n; *&t;Compiler&t;Platform&n; *&t;--------&t;--------&n; *&t;GNU C&t;&t;Linux&n; */
+macro_line|#ifndef&t;PACKED
 DECL|macro|PACKED
 macro_line|#    define&t;PACKED&t;__attribute__((packed))
-macro_line|#  endif&t;/* PACKED */
-macro_line|#else
-DECL|macro|PACKED
-macro_line|#  define&t;PACKED
-macro_line|#endif
-macro_line|#ifdef&t;&t;_MSC_
-macro_line|#  pragma&t;pack(1)
-macro_line|#endif
+macro_line|#endif&t;/* PACKED */
 multiline_comment|/* Adapter memory layout */
 DECL|macro|FR_MB_VECTOR
 mdefine_line|#define&t;FR_MB_VECTOR&t;0xE000&t;/* mailbox window vector */
@@ -39,6 +31,12 @@ DECL|macro|FR502_MAX_DATA
 mdefine_line|#define FR502_MAX_DATA&t;4096&t;/* maximum data buffer length */
 DECL|macro|FR508_MAX_DATA
 mdefine_line|#define FR508_MAX_DATA&t;4080&t;/* maximum data buffer length */
+DECL|macro|MIN_LGTH_FR_DATA_CFG
+mdefine_line|#define MIN_LGTH_FR_DATA_CFG         300     /* min Information frame length&n;(for configuration purposes) */
+DECL|macro|FR_MAX_NO_DATA_BYTES_IN_FRAME
+mdefine_line|#define FR_MAX_NO_DATA_BYTES_IN_FRAME  15354 &t;/* max Information frame length */
+DECL|macro|HIGHEST_VALID_DLCI
+mdefine_line|#define HIGHEST_VALID_DLCI&t;991
 multiline_comment|/****** Data Structures *****************************************************/
 multiline_comment|/*----------------------------------------------------------------------------&n; * Frame relay command block.&n; */
 DECL|struct|fr_cmd
@@ -134,6 +132,8 @@ DECL|macro|FR_LIST_ACTIVE_DLCI
 mdefine_line|#define&t;FR_LIST_ACTIVE_DLCI&t;0x17
 DECL|macro|FR_FLUSH_DATA_BUFFERS
 mdefine_line|#define FR_FLUSH_DATA_BUFFERS&t;0x18
+DECL|macro|FR_READ_ADD_DLC_STATS
+mdefine_line|#define FR_READ_ADD_DLC_STATS&t;0x19
 DECL|macro|FR_ADD_DLCI
 mdefine_line|#define&t;FR_ADD_DLCI&t;&t;0x20
 DECL|macro|FR_DELETE_DLCI
@@ -158,6 +158,31 @@ DECL|macro|FR_SET_INTR_MODE
 mdefine_line|#define&t;FR_SET_INTR_MODE&t;0x50
 DECL|macro|FR_READ_INTR_MODE
 mdefine_line|#define&t;FR_READ_INTR_MODE&t;0x51
+DECL|macro|FR_SET_TRACE_CONFIG
+mdefine_line|#define FR_SET_TRACE_CONFIG&t;0x60
+DECL|macro|FR_FT1_STATUS_CTRL
+mdefine_line|#define FR_FT1_STATUS_CTRL &t;0x80
+DECL|macro|FR_SET_FT1_MODE
+mdefine_line|#define FR_SET_FT1_MODE&t;&t;0x81
+multiline_comment|/* Special UDP drivers management commands */
+DECL|macro|FPIPE_ENABLE_TRACING
+mdefine_line|#define FPIPE_ENABLE_TRACING          &t;0x41
+DECL|macro|FPIPE_DISABLE_TRACING
+mdefine_line|#define FPIPE_DISABLE_TRACING&t;&t;0x42
+DECL|macro|FPIPE_GET_TRACE_INFO
+mdefine_line|#define FPIPE_GET_TRACE_INFO            0x43
+DECL|macro|FPIPE_FT1_READ_STATUS
+mdefine_line|#define FPIPE_FT1_READ_STATUS           0x44
+DECL|macro|FPIPE_DRIVER_STAT_IFSEND
+mdefine_line|#define FPIPE_DRIVER_STAT_IFSEND        0x45
+DECL|macro|FPIPE_DRIVER_STAT_INTR
+mdefine_line|#define FPIPE_DRIVER_STAT_INTR          0x46
+DECL|macro|FPIPE_DRIVER_STAT_GEN
+mdefine_line|#define FPIPE_DRIVER_STAT_GEN           0x47
+DECL|macro|FPIPE_FLUSH_DRIVER_STATS
+mdefine_line|#define FPIPE_FLUSH_DRIVER_STATS        0x48
+DECL|macro|FPIPE_ROUTER_UP_TIME
+mdefine_line|#define FPIPE_ROUTER_UP_TIME            0x49
 multiline_comment|/* &squot;result&squot; field defines */
 DECL|macro|FRRES_OK
 mdefine_line|#define FRRES_OK&t;&t;0x00&t;/* command executed successfully */
@@ -371,7 +396,7 @@ id|fr508_flags_t
 suffix:semicolon
 multiline_comment|/* &squot;event&squot; field defines */
 DECL|macro|FR_EVENT_STATUS
-mdefine_line|#define&t;FR_EVENT_STATUS&t;&t;0x01&t;/* channel status change ??? */
+mdefine_line|#define&t;FR_EVENT_STATUS&t;&t;0x01&t;/* channel status change */
 DECL|macro|FR_EVENT_DLC_STATUS
 mdefine_line|#define&t;FR_EVENT_DLC_STATUS&t;0x02&t;/* DLC status change */
 DECL|macro|FR_EVENT_BAD_DLCI
@@ -396,6 +421,8 @@ DECL|macro|FR_INTR_DLC
 mdefine_line|#define&t;FR_INTR_DLC&t;&t;0x10&t;/* DLC status change */
 DECL|macro|FR_INTR_TIMER
 mdefine_line|#define&t;FR_INTR_TIMER&t;&t;0x20&t;/* millisecond timer */
+DECL|macro|FR_INTR_TX_MULT_DLCIs
+mdefine_line|#define FR_INTR_TX_MULT_DLCIs&t;0x80&t;/* Tx interrupt on multiple DLCIs */
 multiline_comment|/*----------------------------------------------------------------------------&n; * Receive Buffer Configuration Info. S508 only!&n; *&t;This structure is located at offset FR508_RXBC_OFFS into FR_MB_VECTOR.&n; */
 DECL|struct|fr_buf_info
 r_typedef
@@ -449,10 +476,10 @@ DECL|typedef|fr_buf_info_t
 id|fr_buf_info_t
 suffix:semicolon
 multiline_comment|/*----------------------------------------------------------------------------&n; * Buffer Status Element. S508 only!&n; *&t;Array of structures of this type is located at offset defined by the&n; *&t;&squot;rse_base&squot; field of the frBufInfo_t structure into absolute adapter&n; *&t;memory address space.&n; */
-DECL|struct|fr_buf_ctl
+DECL|struct|fr_rx_buf_ctl
 r_typedef
 r_struct
-id|fr_buf_ctl
+id|fr_rx_buf_ctl
 (brace
 DECL|member|PACKED
 r_int
@@ -506,9 +533,70 @@ id|offset
 id|PACKED
 suffix:semicolon
 multiline_comment|/* 0Ch: buffer absolute address */
-DECL|typedef|fr_buf_ctl_t
+DECL|typedef|fr_rx_buf_ctl_t
 )brace
-id|fr_buf_ctl_t
+id|fr_rx_buf_ctl_t
+suffix:semicolon
+DECL|struct|fr_tx_buf_ctl
+r_typedef
+r_struct
+id|fr_tx_buf_ctl
+(brace
+DECL|member|PACKED
+r_int
+r_char
+id|flag
+id|PACKED
+suffix:semicolon
+multiline_comment|/* 00h: ready flag */
+DECL|member|PACKED
+r_int
+r_int
+id|rsrv0
+(braket
+l_int|2
+)braket
+id|PACKED
+suffix:semicolon
+multiline_comment|/* 01h: */
+DECL|member|PACKED
+r_int
+r_int
+id|length
+id|PACKED
+suffix:semicolon
+multiline_comment|/* 05h: frame length */
+DECL|member|PACKED
+r_int
+r_int
+id|dlci
+id|PACKED
+suffix:semicolon
+multiline_comment|/* 07h: DLCI */
+DECL|member|PACKED
+r_int
+r_char
+id|attr
+id|PACKED
+suffix:semicolon
+multiline_comment|/* 09h: FECN/BECN/DE/CR */
+DECL|member|PACKED
+r_int
+r_int
+id|rsrv1
+id|PACKED
+suffix:semicolon
+multiline_comment|/* 0Ah:  */
+DECL|member|PACKED
+r_int
+r_int
+id|offset
+id|PACKED
+suffix:semicolon
+multiline_comment|/* 0Ch: buffer absolute address */
+DECL|typedef|fr_tx_buf_ctl_t
+)brace
+id|fr_tx_buf_ctl_t
 suffix:semicolon
 multiline_comment|/*----------------------------------------------------------------------------&n; * Global Configuration Block. Passed to FR_SET_CONFIG command when dlci == 0.&n; */
 DECL|struct|fr_conf
@@ -690,6 +778,159 @@ DECL|macro|FRCFG_MODE_V35
 mdefine_line|#define&t;FRCFG_MODE_V35&t;&t;0x0000&t;/* S508 only */
 DECL|macro|FRCFG_MODE_RS232
 mdefine_line|#define&t;FRCFG_MODE_RS232&t;0x0002&t;/* S508 only */
+multiline_comment|/* defines for line tracing */
+multiline_comment|/* the line trace status element presented by the frame relay code */
+r_typedef
+r_struct
+(brace
+DECL|member|PACKED
+r_int
+r_char
+id|flag
+id|PACKED
+suffix:semicolon
+multiline_comment|/* ready flag */
+DECL|member|PACKED
+r_int
+r_int
+id|length
+id|PACKED
+suffix:semicolon
+multiline_comment|/* trace length */
+DECL|member|PACKED
+r_int
+r_char
+id|rsrv0
+(braket
+l_int|2
+)braket
+id|PACKED
+suffix:semicolon
+multiline_comment|/* reserved */
+DECL|member|PACKED
+r_int
+r_char
+id|attr
+id|PACKED
+suffix:semicolon
+multiline_comment|/* trace attributes */
+DECL|member|PACKED
+r_int
+r_int
+id|tmstamp
+id|PACKED
+suffix:semicolon
+multiline_comment|/* time stamp */
+DECL|member|PACKED
+r_int
+r_char
+id|rsrv1
+(braket
+l_int|4
+)braket
+id|PACKED
+suffix:semicolon
+multiline_comment|/* reserved */
+DECL|member|PACKED
+r_int
+r_int
+id|offset
+id|PACKED
+suffix:semicolon
+multiline_comment|/* buffer absolute address */
+DECL|typedef|fr_trc_el_t
+)brace
+id|fr_trc_el_t
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|PACKED
+r_int
+r_char
+id|status
+id|PACKED
+suffix:semicolon
+multiline_comment|/* status flag */
+DECL|member|PACKED
+r_int
+r_char
+id|data_passed
+id|PACKED
+suffix:semicolon
+multiline_comment|/* 0 if no data passed, 1 if */
+multiline_comment|/* data passed */
+DECL|member|PACKED
+r_int
+r_int
+id|length
+id|PACKED
+suffix:semicolon
+multiline_comment|/* frame length */
+DECL|member|PACKED
+r_int
+r_int
+id|tmstamp
+id|PACKED
+suffix:semicolon
+multiline_comment|/* time stamp */
+DECL|typedef|fpipemon_trc_hdr_t
+)brace
+id|fpipemon_trc_hdr_t
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|PACKED
+id|fpipemon_trc_hdr_t
+id|fpipemon_trc_hdr
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_char
+id|data
+(braket
+id|FR_MAX_NO_DATA_BYTES_IN_FRAME
+)braket
+id|PACKED
+suffix:semicolon
+DECL|typedef|fpipemon_trc_t
+)brace
+id|fpipemon_trc_t
+suffix:semicolon
+multiline_comment|/* bit settings for the &squot;status&squot; byte  - note that bits 1, 2 and 3 are used */
+multiline_comment|/* for returning the number of frames being passed to fpipemon */
+DECL|macro|TRC_OUTGOING_FRM
+mdefine_line|#define TRC_OUTGOING_FRM&t;0x01
+DECL|macro|TRC_ABORT_ERROR
+mdefine_line|#define TRC_ABORT_ERROR         0x10
+DECL|macro|TRC_CRC_ERROR
+mdefine_line|#define TRC_CRC_ERROR           0x20
+DECL|macro|TRC_OVERRUN_ERROR
+mdefine_line|#define TRC_OVERRUN_ERROR       0x40
+DECL|macro|MORE_TRC_DATA
+mdefine_line|#define MORE_TRC_DATA&t;&t;0x80
+DECL|macro|MAX_FRMS_TRACED
+mdefine_line|#define MAX_FRMS_TRACED&t;&t;0x07
+DECL|macro|NO_TRC_ELEMENTS_OFF
+mdefine_line|#define NO_TRC_ELEMENTS_OFF&t;&t;0x9000
+DECL|macro|BASE_TRC_ELEMENTS_OFF
+mdefine_line|#define BASE_TRC_ELEMENTS_OFF&t;&t;0x9002
+DECL|macro|TRC_ACTIVE
+mdefine_line|#define TRC_ACTIVE&t;&t;&t;0x01
+DECL|macro|FLUSH_TRC_BUFFERS
+mdefine_line|#define FLUSH_TRC_BUFFERS &t;&t;0x02
+DECL|macro|FLUSH_TRC_STATISTICS
+mdefine_line|#define FLUSH_TRC_STATISTICS&t;&t;0x04
+DECL|macro|TRC_SIGNALLING_FRMS
+mdefine_line|#define TRC_SIGNALLING_FRMS&t;&t;0x10
+DECL|macro|TRC_INFO_FRMS
+mdefine_line|#define TRC_INFO_FRMS&t;&t;&t;0x20
+DECL|macro|ACTIVATE_TRC
+mdefine_line|#define ACTIVATE_TRC&t;(TRC_ACTIVE | TRC_SIGNALLING_FRMS | TRC_INFO_FRMS)
+DECL|macro|RESET_TRC
+mdefine_line|#define RESET_TRC&t;(FLUSH_TRC_BUFFERS | FLUSH_TRC_STATISTICS)
 multiline_comment|/*----------------------------------------------------------------------------&n; * Channel configuration.&n; *&t;This structure is passed to the FR_SET_CONFIG command when dlci != 0.&n; */
 DECL|struct|fr_dlc_conf
 r_typedef
@@ -1252,6 +1493,584 @@ DECL|macro|FR_ISF_LVE
 mdefine_line|#define&t;FR_ISF_LVE&t;2&t;&t;/* issue Link Verification Enquiry */
 DECL|macro|FR_ISF_FSE
 mdefine_line|#define&t;FR_ISF_FSE&t;3&t;&t;/* issue Full Status Enquiry */
+multiline_comment|/*----------------------------------------------------------------------------&n; * Frame Relay ARP Header -- Used for Dynamic route creation with InvARP &n; */
+DECL|struct|arphdr_fr
+r_typedef
+r_struct
+id|arphdr_fr
+(brace
+DECL|member|PACKED
+r_int
+r_int
+id|ar_hrd
+id|PACKED
+suffix:semicolon
+multiline_comment|/* format of hardware addr */
+DECL|member|PACKED
+r_int
+r_int
+id|ar_pro
+id|PACKED
+suffix:semicolon
+multiline_comment|/* format of protocol addr */
+DECL|member|PACKED
+r_int
+r_char
+id|ar_hln
+id|PACKED
+suffix:semicolon
+multiline_comment|/* length of hardware addr */
+DECL|member|PACKED
+r_int
+r_char
+id|ar_pln
+id|PACKED
+suffix:semicolon
+multiline_comment|/* length of protocol addr */
+DECL|member|PACKED
+r_int
+r_int
+id|ar_op
+id|PACKED
+suffix:semicolon
+multiline_comment|/* ARP opcode&t;&t;   */
+DECL|member|PACKED
+r_int
+r_int
+id|ar_sha
+id|PACKED
+suffix:semicolon
+multiline_comment|/* Sender DLCI addr 2 bytes */
+DECL|member|PACKED
+r_int
+r_int
+id|ar_sip
+id|PACKED
+suffix:semicolon
+multiline_comment|/* Sender IP   addr 4 bytes */
+DECL|member|PACKED
+r_int
+r_int
+id|ar_tha
+id|PACKED
+suffix:semicolon
+multiline_comment|/* Target DLCI addr 2 bytes */
+DECL|member|PACKED
+r_int
+r_int
+id|ar_tip
+id|PACKED
+suffix:semicolon
+multiline_comment|/* Target IP   addr 4 bytes */
+DECL|typedef|arphdr_fr_t
+)brace
+id|arphdr_fr_t
+suffix:semicolon
+multiline_comment|/*----------------------------------------------------------------------------&n; * Frame Relay RFC 1490 SNAP Header -- Used to check for ARP packets&n; */
+DECL|struct|arphdr_1490
+r_typedef
+r_struct
+id|arphdr_1490
+(brace
+DECL|member|PACKED
+r_int
+r_char
+id|control
+id|PACKED
+suffix:semicolon
+multiline_comment|/* UI, etc...  */
+DECL|member|PACKED
+r_int
+r_char
+id|pad
+id|PACKED
+suffix:semicolon
+multiline_comment|/* Pad */
+DECL|member|PACKED
+r_int
+r_char
+id|NLPID
+id|PACKED
+suffix:semicolon
+multiline_comment|/* SNAP */
+DECL|member|PACKED
+r_int
+r_char
+id|OUI
+(braket
+l_int|3
+)braket
+id|PACKED
+suffix:semicolon
+multiline_comment|/* Ethertype, etc... */
+DECL|member|PACKED
+r_int
+r_int
+id|PID
+id|PACKED
+suffix:semicolon
+multiline_comment|/* ARP, IP, etc... */
+DECL|typedef|arphdr_1490_t
+)brace
+id|arphdr_1490_t
+suffix:semicolon
+multiline_comment|/* UDP/IP packet (for UDP management) layout */
+multiline_comment|/* The embedded control block for UDP mgmt&n;   This is essentially a mailbox structure, without the large data field */
+r_typedef
+r_struct
+(brace
+DECL|member|PACKED
+r_int
+r_char
+id|opp_flag
+id|PACKED
+suffix:semicolon
+multiline_comment|/* the opp flag */
+DECL|member|PACKED
+r_int
+r_char
+id|command
+id|PACKED
+suffix:semicolon
+multiline_comment|/* command code */
+DECL|member|PACKED
+r_int
+r_int
+id|length
+id|PACKED
+suffix:semicolon
+multiline_comment|/* length of data buffer */
+DECL|member|PACKED
+r_int
+r_char
+id|result
+id|PACKED
+suffix:semicolon
+multiline_comment|/* return code */
+DECL|member|PACKED
+r_int
+r_int
+id|dlci
+id|PACKED
+suffix:semicolon
+multiline_comment|/* DLCI number */
+DECL|member|PACKED
+r_int
+r_char
+id|attr
+id|PACKED
+suffix:semicolon
+multiline_comment|/* FECN, BECN, DE and C/R bits */
+DECL|member|PACKED
+r_int
+r_int
+id|rxlost1
+id|PACKED
+suffix:semicolon
+multiline_comment|/* frames discarded at int. level */
+DECL|member|PACKED
+r_int
+r_int
+id|rxlost2
+id|PACKED
+suffix:semicolon
+multiline_comment|/* frames discarded at app. level */
+DECL|member|PACKED
+r_int
+r_char
+id|rsrv
+(braket
+l_int|2
+)braket
+id|PACKED
+suffix:semicolon
+multiline_comment|/* reserved for future use */
+DECL|typedef|cblock_t
+)brace
+id|cblock_t
+suffix:semicolon
+multiline_comment|/* UDP management packet layout (data area of ip packet) */
+r_typedef
+r_struct
+(brace
+DECL|member|PACKED
+r_int
+r_char
+id|control
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_char
+id|NLPID
+id|PACKED
+suffix:semicolon
+DECL|typedef|fr_encap_hdr_t
+)brace
+id|fr_encap_hdr_t
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|PACKED
+id|fr_encap_hdr_t
+id|fr_encap_hdr
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+id|ip_pkt_t
+id|ip_pkt
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+id|udp_pkt_t
+id|udp_pkt
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+id|wp_mgmt_t
+id|wp_mgmt
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+id|cblock_t
+id|cblock
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_char
+id|data
+(braket
+l_int|4080
+)braket
+id|PACKED
+suffix:semicolon
+DECL|typedef|fr_udp_pkt_t
+)brace
+id|fr_udp_pkt_t
+suffix:semicolon
+multiline_comment|/* valid ip_protocol for UDP management */
+DECL|macro|UDPMGMT_UDP_PROTOCOL
+mdefine_line|#define UDPMGMT_UDP_PROTOCOL 0x11
+DECL|macro|UDPMGMT_FPIPE_SIGNATURE
+mdefine_line|#define UDPMGMT_FPIPE_SIGNATURE         &quot;FPIPE8ND&quot;
+DECL|macro|UDPMGMT_DRVRSTATS_SIGNATURE
+mdefine_line|#define UDPMGMT_DRVRSTATS_SIGNATURE     &quot;DRVSTATS&quot;
+multiline_comment|/* values for request/reply byte */
+DECL|macro|UDPMGMT_REQUEST
+mdefine_line|#define UDPMGMT_REQUEST&t;0x01
+DECL|macro|UDPMGMT_REPLY
+mdefine_line|#define UDPMGMT_REPLY&t;0x02
+DECL|macro|UDP_OFFSET
+mdefine_line|#define UDP_OFFSET&t;12
+r_typedef
+r_struct
+(brace
+DECL|member|if_send_entry
+r_int
+r_int
+id|if_send_entry
+suffix:semicolon
+DECL|member|if_send_skb_null
+r_int
+r_int
+id|if_send_skb_null
+suffix:semicolon
+DECL|member|if_send_broadcast
+r_int
+r_int
+id|if_send_broadcast
+suffix:semicolon
+DECL|member|if_send_multicast
+r_int
+r_int
+id|if_send_multicast
+suffix:semicolon
+DECL|member|if_send_critical_ISR
+r_int
+r_int
+id|if_send_critical_ISR
+suffix:semicolon
+DECL|member|if_send_critical_non_ISR
+r_int
+r_int
+id|if_send_critical_non_ISR
+suffix:semicolon
+DECL|member|if_send_busy
+r_int
+r_int
+id|if_send_busy
+suffix:semicolon
+DECL|member|if_send_busy_timeout
+r_int
+r_int
+id|if_send_busy_timeout
+suffix:semicolon
+DECL|member|if_send_DRVSTATS_request
+r_int
+r_int
+id|if_send_DRVSTATS_request
+suffix:semicolon
+DECL|member|if_send_FPIPE_request
+r_int
+r_int
+id|if_send_FPIPE_request
+suffix:semicolon
+DECL|member|if_send_wan_disconnected
+r_int
+r_int
+id|if_send_wan_disconnected
+suffix:semicolon
+DECL|member|if_send_dlci_disconnected
+r_int
+r_int
+id|if_send_dlci_disconnected
+suffix:semicolon
+DECL|member|if_send_no_bfrs
+r_int
+r_int
+id|if_send_no_bfrs
+suffix:semicolon
+DECL|member|if_send_adptr_bfrs_full
+r_int
+r_int
+id|if_send_adptr_bfrs_full
+suffix:semicolon
+DECL|member|if_send_bfrs_passed_to_adptr
+r_int
+r_int
+id|if_send_bfrs_passed_to_adptr
+suffix:semicolon
+DECL|member|if_send_consec_send_fail
+r_int
+r_int
+id|if_send_consec_send_fail
+suffix:semicolon
+DECL|typedef|drvstats_if_send_t
+)brace
+id|drvstats_if_send_t
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|rx_intr_no_socket
+r_int
+r_int
+id|rx_intr_no_socket
+suffix:semicolon
+DECL|member|rx_intr_dev_not_started
+r_int
+r_int
+id|rx_intr_dev_not_started
+suffix:semicolon
+DECL|member|rx_intr_DRVSTATS_request
+r_int
+r_int
+id|rx_intr_DRVSTATS_request
+suffix:semicolon
+DECL|member|rx_intr_FPIPE_request
+r_int
+r_int
+id|rx_intr_FPIPE_request
+suffix:semicolon
+DECL|member|rx_intr_bfr_not_passed_to_stack
+r_int
+r_int
+id|rx_intr_bfr_not_passed_to_stack
+suffix:semicolon
+DECL|member|rx_intr_bfr_passed_to_stack
+r_int
+r_int
+id|rx_intr_bfr_passed_to_stack
+suffix:semicolon
+DECL|typedef|drvstats_rx_intr_t
+)brace
+id|drvstats_rx_intr_t
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|UDP_FPIPE_mgmt_kmalloc_err
+r_int
+r_int
+id|UDP_FPIPE_mgmt_kmalloc_err
+suffix:semicolon
+DECL|member|UDP_FPIPE_mgmt_direction_err
+r_int
+r_int
+id|UDP_FPIPE_mgmt_direction_err
+suffix:semicolon
+DECL|member|UDP_FPIPE_mgmt_adptr_type_err
+r_int
+r_int
+id|UDP_FPIPE_mgmt_adptr_type_err
+suffix:semicolon
+DECL|member|UDP_FPIPE_mgmt_adptr_cmnd_OK
+r_int
+r_int
+id|UDP_FPIPE_mgmt_adptr_cmnd_OK
+suffix:semicolon
+DECL|member|UDP_FPIPE_mgmt_adptr_cmnd_timeout
+r_int
+r_int
+id|UDP_FPIPE_mgmt_adptr_cmnd_timeout
+suffix:semicolon
+DECL|member|UDP_FPIPE_mgmt_adptr_send_passed
+r_int
+r_int
+id|UDP_FPIPE_mgmt_adptr_send_passed
+suffix:semicolon
+DECL|member|UDP_FPIPE_mgmt_adptr_send_failed
+r_int
+r_int
+id|UDP_FPIPE_mgmt_adptr_send_failed
+suffix:semicolon
+DECL|member|UDP_FPIPE_mgmt_not_passed_to_stack
+r_int
+r_int
+id|UDP_FPIPE_mgmt_not_passed_to_stack
+suffix:semicolon
+DECL|member|UDP_FPIPE_mgmt_passed_to_stack
+r_int
+r_int
+id|UDP_FPIPE_mgmt_passed_to_stack
+suffix:semicolon
+DECL|member|UDP_FPIPE_mgmt_no_socket
+r_int
+r_int
+id|UDP_FPIPE_mgmt_no_socket
+suffix:semicolon
+DECL|member|UDP_DRVSTATS_mgmt_kmalloc_err
+r_int
+r_int
+id|UDP_DRVSTATS_mgmt_kmalloc_err
+suffix:semicolon
+DECL|member|UDP_DRVSTATS_mgmt_adptr_cmnd_OK
+r_int
+r_int
+id|UDP_DRVSTATS_mgmt_adptr_cmnd_OK
+suffix:semicolon
+DECL|member|UDP_DRVSTATS_mgmt_adptr_cmnd_timeout
+r_int
+r_int
+id|UDP_DRVSTATS_mgmt_adptr_cmnd_timeout
+suffix:semicolon
+DECL|member|UDP_DRVSTATS_mgmt_adptr_send_passed
+r_int
+r_int
+id|UDP_DRVSTATS_mgmt_adptr_send_passed
+suffix:semicolon
+DECL|member|UDP_DRVSTATS_mgmt_adptr_send_failed
+r_int
+r_int
+id|UDP_DRVSTATS_mgmt_adptr_send_failed
+suffix:semicolon
+DECL|member|UDP_DRVSTATS_mgmt_not_passed_to_stack
+r_int
+r_int
+id|UDP_DRVSTATS_mgmt_not_passed_to_stack
+suffix:semicolon
+DECL|member|UDP_DRVSTATS_mgmt_passed_to_stack
+r_int
+r_int
+id|UDP_DRVSTATS_mgmt_passed_to_stack
+suffix:semicolon
+DECL|member|UDP_DRVSTATS_mgmt_no_socket
+r_int
+r_int
+id|UDP_DRVSTATS_mgmt_no_socket
+suffix:semicolon
+DECL|typedef|drvstats_gen_t
+)brace
+id|drvstats_gen_t
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|PACKED
+r_int
+r_char
+id|attr
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_int
+id|time_stamp
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_char
+id|reserved
+(braket
+l_int|13
+)braket
+id|PACKED
+suffix:semicolon
+DECL|typedef|api_rx_hdr_t
+)brace
+id|api_rx_hdr_t
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|PACKED
+id|api_rx_hdr_t
+id|api_rx_hdr
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_void
+op_star
+id|data
+id|PACKED
+suffix:semicolon
+DECL|typedef|api_rx_element_t
+)brace
+id|api_rx_element_t
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|PACKED
+r_int
+r_char
+id|attr
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_char
+id|reserved
+(braket
+l_int|15
+)braket
+id|PACKED
+suffix:semicolon
+DECL|typedef|api_tx_hdr_t
+)brace
+id|api_tx_hdr_t
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|PACKED
+id|api_tx_hdr_t
+id|api_tx_hdr
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_void
+op_star
+id|data
+id|PACKED
+suffix:semicolon
+DECL|typedef|api_tx_element_t
+)brace
+id|api_tx_element_t
+suffix:semicolon
 macro_line|#ifdef&t;&t;_MSC_
 macro_line|#  pragma&t;pack()
 macro_line|#endif

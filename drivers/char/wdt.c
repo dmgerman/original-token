@@ -42,9 +42,11 @@ l_int|11
 suffix:semicolon
 DECL|macro|WD_TIMO
 mdefine_line|#define WD_TIMO (100*60)&t;&t;/* 1 minute */
+macro_line|#ifndef MODULE
 multiline_comment|/*&n; *&t;Setup options&n; */
 DECL|function|wdt_setup
-r_void
+r_static
+r_int
 id|__init
 id|wdt_setup
 c_func
@@ -52,12 +54,29 @@ c_func
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
+r_int
+id|ints
+(braket
+l_int|4
+)braket
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -96,7 +115,19 @@ l_int|2
 suffix:semicolon
 )brace
 )brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;wdt=&quot;
+comma
+id|wdt_setup
+)paren
+suffix:semicolon
+macro_line|#endif /* !MODULE */
 multiline_comment|/*&n; *&t;Programming support&n; */
 DECL|function|wdt_ctr_mode
 r_static
@@ -1239,6 +1270,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;WDT500/501-P driver 0.07 at %X (Interrupt %d)&bslash;n&quot;
 comma
 id|io
@@ -1267,6 +1299,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;IRQ %d is not free.&bslash;n&quot;
 comma
 id|irq

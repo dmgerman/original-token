@@ -1171,7 +1171,15 @@ DECL|macro|__RWSEM_DEBUG_INIT
 mdefine_line|#define __RWSEM_DEBUG_INIT&t;/* */
 macro_line|#endif
 DECL|macro|__RWSEM_INITIALIZER
-mdefine_line|#define __RWSEM_INITIALIZER(name) &bslash;&n;{ RW_LOCK_BIAS, 0, __WAIT_QUEUE_HEAD_INITIALIZER((name).wait), &bslash;&n;  __WAIT_QUEUE_HEAD_INITIALIZER((name).write_bias_wait) &bslash;&n;  __SEM_DEBUG_INIT(name) __RWSEM_DEBUG_INIT }
+mdefine_line|#define __RWSEM_INITIALIZER(name,count) &bslash;&n;{ (count), 0, __WAIT_QUEUE_HEAD_INITIALIZER((name).wait), &bslash;&n;  __WAIT_QUEUE_HEAD_INITIALIZER((name).write_bias_wait) &bslash;&n;  __SEM_DEBUG_INIT(name) __RWSEM_DEBUG_INIT }
+DECL|macro|__DECLARE_RWSEM_GENERIC
+mdefine_line|#define __DECLARE_RWSEM_GENERIC(name,count) &bslash;&n;&t;struct rw_semaphore name = __RWSEM_INITIALIZER(name,count)
+DECL|macro|DECLARE_RWSEM
+mdefine_line|#define DECLARE_RWSEM(name) __DECLARE_RWSEM_GENERIC(name,RW_LOCK_BIAS)
+DECL|macro|DECLARE_RWSEM_READ_LOCKED
+mdefine_line|#define DECLARE_RWSEM_READ_LOCKED(name) __DECLARE_RWSEM_GENERIC(name,RW_LOCK_BIAS-1)
+DECL|macro|DECLARE_RWSEM_WRITE_LOCKED
+mdefine_line|#define DECLARE_RWSEM_WRITE_LOCKED(name) __DECLARE_RWSEM_GENERIC(name,0)
 DECL|function|init_rwsem
 r_extern
 r_inline

@@ -272,7 +272,8 @@ id|pg_table
 id|pte_t
 id|pte
 op_assign
-id|mk_pte
+id|__mk_pte
+c_func
 (paren
 id|address
 comma

@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/arch/m68k/kernel/setup.c&n; *&n; *  Copyright (
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of system setup&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -11,6 +12,7 @@ macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
@@ -25,7 +27,10 @@ macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#endif
+macro_line|#ifndef CONFIG_AMIGA
+DECL|macro|dbprintf
+mdefine_line|#define dbprintf&t;printk
 macro_line|#endif
 DECL|variable|m68k_machtype
 r_int
@@ -47,6 +52,13 @@ r_int
 r_int
 id|m68k_mmutype
 suffix:semicolon
+macro_line|#ifdef CONFIG_VME
+DECL|variable|vme_brdtype
+r_int
+r_int
+id|vme_brdtype
+suffix:semicolon
+macro_line|#endif
 DECL|variable|m68k_is040or060
 r_int
 id|m68k_is040or060
@@ -73,6 +85,11 @@ r_int
 id|m68k_realnum_memory
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|m68k_memoffset
+r_int
+r_int
+id|m68k_memoffset
 suffix:semicolon
 DECL|variable|m68k_memory
 r_struct
@@ -447,7 +464,7 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_USERIAL)||defined(CONFIG_BVME6000_SCC)||defined(CONFIG_MVME162_SCC)||defined(CONFIG_HPDCA)||defined(CONFIG_WHIPPET_SERIAL)||defined(CONFIG_MULTIFACE_III_TTY)||defined(CONFIG_GVPIOEXT)||defined(CONFIG_AMIGA_BUILTIN_SERIAL)||defined(CONFIG_MAC_SCC)||defined(CONFIG_ATARI_MIDI)||defined(CONFIG_ATARI_SCC)||defined(CONFIG_ATARI_MFPSER)
+macro_line|#if defined(CONFIG_USERIAL)||defined(CONFIG_HPDCA)||defined(CONFIG_WHIPPET_SERIAL)||defined(CONFIG_MULTIFACE_III_TTY)||defined(CONFIG_GVPIOEXT)||defined(CONFIG_AMIGA_BUILTIN_SERIAL)||defined(CONFIG_MAC_SCC)||defined(CONFIG_ATARI_MIDI)||defined(CONFIG_ATARI_SCC)||defined(CONFIG_ATARI_MFPSER)
 DECL|macro|M68K_SERIAL
 mdefine_line|#define M68K_SERIAL
 macro_line|#endif
@@ -479,9 +496,7 @@ r_int
 id|m68k_serial_console_init
 c_func
 (paren
-r_int
-comma
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -513,14 +528,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
-r_extern
-r_void
-id|base_trap_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_MAGIC_SYSRQ
 DECL|variable|mach_sysrq_key
 r_int
@@ -585,6 +592,39 @@ suffix:semicolon
 r_extern
 r_int
 id|q40_parse_bootinfo
+c_func
+(paren
+r_const
+r_struct
+id|bi_record
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|bvme6000_parse_bootinfo
+c_func
+(paren
+r_const
+r_struct
+id|bi_record
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|mvme16x_parse_bootinfo
+c_func
+(paren
+r_const
+r_struct
+id|bi_record
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|mvme147_parse_bootinfo
 c_func
 (paren
 r_const
@@ -918,6 +958,48 @@ id|record
 )paren
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+id|MACH_IS_BVME6000
+)paren
+id|unknown
+op_assign
+id|bvme6000_parse_bootinfo
+c_func
+(paren
+id|record
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|MACH_IS_MVME16x
+)paren
+id|unknown
+op_assign
+id|mvme16x_parse_bootinfo
+c_func
+(paren
+id|record
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|MACH_IS_MVME147
+)paren
+id|unknown
+op_assign
+id|mvme147_parse_bootinfo
+c_func
+(paren
+id|record
+)paren
+suffix:semicolon
+r_else
 id|unknown
 op_assign
 l_int|1
@@ -983,6 +1065,17 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+id|m68k_memoffset
+op_assign
+id|m68k_memory
+(braket
+l_int|0
+)braket
+dot
+id|addr
+op_minus
+id|PAGE_OFFSET
+suffix:semicolon
 macro_line|#endif
 )brace
 DECL|function|setup_arch
@@ -995,16 +1088,6 @@ r_char
 op_star
 op_star
 id|cmdline_p
-comma
-r_int
-r_int
-op_star
-id|memory_start_p
-comma
-r_int
-r_int
-op_star
-id|memory_end_p
 )paren
 (brace
 r_extern
@@ -1014,6 +1097,12 @@ comma
 id|_edata
 comma
 id|_end
+suffix:semicolon
+r_int
+r_int
+id|endmem
+comma
+id|startmem
 suffix:semicolon
 r_int
 id|i
@@ -1058,13 +1147,6 @@ id|m68k_is040or060
 op_assign
 l_int|6
 suffix:semicolon
-macro_line|#ifndef CONFIG_SUN3
-id|base_trap_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* FIXME: m68k_fputype is passed in by Penguin booter, which can&n;&t; * be confused by software FPU emulation. BEWARE.&n;&t; * We should really do our own FPU check at startup.&n;&t; * [what do we do with buggy 68LC040s? if we have problems&n;&t; *  with them, we should add a test to check_bugs() below] */
 macro_line|#ifndef CONFIG_M68KFPU_EMU_ONLY
 multiline_comment|/* clear the fpu if we have one */
@@ -1554,15 +1636,29 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#ifndef CONFIG_SUN3
-op_star
-id|memory_start_p
+id|startmem
 op_assign
-id|availmem
-suffix:semicolon
-op_star
-id|memory_end_p
-op_assign
+id|m68k_memory
+(braket
 l_int|0
+)braket
+dot
+id|addr
+suffix:semicolon
+id|endmem
+op_assign
+id|startmem
+op_plus
+id|m68k_memory
+(braket
+l_int|0
+)braket
+dot
+id|size
+suffix:semicolon
+id|high_memory
+op_assign
+id|PAGE_OFFSET
 suffix:semicolon
 r_for
 c_loop
@@ -1578,8 +1674,73 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-op_star
-id|memory_end_p
+(brace
+id|m68k_memory
+(braket
+id|i
+)braket
+dot
+id|size
+op_and_assign
+id|MASK_256K
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|m68k_memory
+(braket
+id|i
+)braket
+dot
+id|addr
+OL
+id|startmem
+)paren
+id|startmem
+op_assign
+id|m68k_memory
+(braket
+id|i
+)braket
+dot
+id|addr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|m68k_memory
+(braket
+id|i
+)braket
+dot
+id|addr
+op_plus
+id|m68k_memory
+(braket
+id|i
+)braket
+dot
+id|size
+OG
+id|endmem
+)paren
+id|endmem
+op_assign
+id|m68k_memory
+(braket
+id|i
+)braket
+dot
+id|addr
+op_plus
+id|m68k_memory
+(braket
+id|i
+)braket
+dot
+id|size
+suffix:semicolon
+id|high_memory
 op_add_assign
 id|m68k_memory
 (braket
@@ -1587,8 +1748,79 @@ id|i
 )braket
 dot
 id|size
-op_amp
-id|MASK_256K
+suffix:semicolon
+)brace
+id|availmem
+op_add_assign
+id|init_bootmem_node
+c_func
+(paren
+l_int|0
+comma
+id|availmem
+op_rshift
+id|PAGE_SHIFT
+comma
+id|startmem
+op_rshift
+id|PAGE_SHIFT
+comma
+id|endmem
+op_rshift
+id|PAGE_SHIFT
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|m68k_num_memory
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|free_bootmem
+c_func
+(paren
+id|m68k_memory
+(braket
+l_int|0
+)braket
+dot
+id|addr
+comma
+id|m68k_memory
+(braket
+l_int|0
+)braket
+dot
+id|size
+)paren
+suffix:semicolon
+id|reserve_bootmem
+c_func
+(paren
+id|m68k_memory
+(braket
+l_int|0
+)braket
+dot
+id|addr
+comma
+id|availmem
+op_minus
+id|m68k_memory
+(braket
+l_int|0
+)braket
+dot
+id|addr
+)paren
 suffix:semicolon
 macro_line|#endif
 )brace
@@ -2146,46 +2378,34 @@ id|unregister_serial
 suffix:semicolon
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 DECL|function|serial_console_init
-r_int
+r_void
 id|serial_console_init
 c_func
 (paren
-r_int
-id|kmem_start
-comma
-r_int
-id|kmem_end
+r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_SERIAL
+macro_line|#ifdef CONFIG_Q40_SERIAL
 r_if
 c_cond
 (paren
 id|MACH_IS_Q40
 )paren
-r_return
+(brace
 id|ser_console_init
 c_func
 (paren
-id|kmem_start
-comma
-id|kmem_end
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 macro_line|#endif
 macro_line|#if defined(M68K_SERIAL) &amp;&amp; defined(CONFIG_SERIAL_CONSOLE)
-r_return
 id|m68k_serial_console_init
 c_func
 (paren
-id|kmem_start
-comma
-id|kmem_end
 )paren
-suffix:semicolon
-macro_line|#else
-r_return
-id|kmem_start
 suffix:semicolon
 macro_line|#endif
 )brace

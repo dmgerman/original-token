@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/aha1542.c&n; *&n; *  Copyright (C) 1992  Tommy Thorn&n; *  Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  Modified by Eric Youngdale&n; *        Use request_irq and request_dma to help prevent unexpected conflicts&n; *        Set up on-board DMA controller, such that we do not have to&n; *        have the bios enabled to use the aha1542.&n; *  Modified by David Gentzel&n; *        Don&squot;t call request_dma if dma mask is 0 (for BusLogic BT-445S VL-Bus&n; *        controller).&n; *  Modified by Matti Aarnio&n; *        Accept parameters from LILO cmd-line. -- 1-Oct-94&n; *  Modified by Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *        Recognise extended mode on AHA1542CP, different bit than 1542CF&n; *        1-Jan-97&n; *  Modified by Bjorn L. Thordarson and Einar Thor Einarsson&n; *        Recognize that DMA0 is valid DMA channel -- 13-Jul-98&n; *  Modified by Chris Faulhaber &lt;jedgar@fxp.org&gt;&n; *        Added module command-line options&n; *        19-Jul-99&n; */
+multiline_comment|/* $Id: aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/aha1542.c&n; *&n; *  Copyright (C) 1992  Tommy Thorn&n; *  Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  Modified by Eric Youngdale&n; *        Use request_irq and request_dma to help prevent unexpected conflicts&n; *        Set up on-board DMA controller, such that we do not have to&n; *        have the bios enabled to use the aha1542.&n; *  Modified by David Gentzel&n; *        Don&squot;t call request_dma if dma mask is 0 (for BusLogic BT-445S VL-Bus&n; *        controller).&n; *  Modified by Matti Aarnio&n; *        Accept parameters from LILO cmd-line. -- 1-Oct-94&n; *  Modified by Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *        Recognise extended mode on AHA1542CP, different bit than 1542CF&n; *        1-Jan-97&n; *  Modified by Bjorn L. Thordarson and Einar Thor Einarsson&n; *        Recognize that DMA0 is valid DMA channel -- 13-Jul-98&n; *  Modified by Chris Faulhaber &lt;jedgar@fxp.org&gt;&n; *        Added module command-line options&n; *        19-Jul-99&n; *  Modified by Adam Fritzler &lt;mid@auk.cx&gt;&n; *        Added proper detection of the AHA-1640 (MCA version of AHA-1540)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -15,6 +15,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/mca.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;aha1542.h&quot;
@@ -165,7 +166,7 @@ multiline_comment|/*&n;   static const char RCSid[] = &quot;$Header: /usr/src/li
 multiline_comment|/* The adaptec can be configured for quite a number of addresses, but&n;   I generally do not want the card poking around at random.  We allow&n;   two addresses - this allows people to use the Adaptec with a Midi&n;   card, which also used 0x330 -- can be overridden with LILO! */
 DECL|macro|MAXBOARDS
 mdefine_line|#define MAXBOARDS 4&t;&t;/* Increase this and the sizes of the&n;&t;&t;&t;&t;   arrays below, if you need more.. */
-multiline_comment|/* Boards 3,4 slots are reserved for ISAPnP scans */
+multiline_comment|/* Boards 3,4 slots are reserved for ISAPnP/MCA scans */
 DECL|variable|bases
 r_static
 r_int
@@ -4949,6 +4950,254 @@ l_int|0
 op_assign
 id|atbt
 suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/*&n;&t; *&t;Find MicroChannel cards (AHA1640)&n;&t; */
+macro_line|#ifdef CONFIG_MCA
+r_if
+c_cond
+(paren
+id|MCA_bus
+)paren
+(brace
+r_int
+id|slot
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|pos
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|indx
+op_assign
+l_int|0
+suffix:semicolon
+(paren
+id|slot
+op_ne
+id|MCA_NOTFOUND
+)paren
+op_logical_and
+(paren
+id|indx
+OL
+r_sizeof
+(paren
+id|bases
+)paren
+op_div
+r_sizeof
+(paren
+id|bases
+(braket
+l_int|0
+)braket
+)paren
+)paren
+suffix:semicolon
+id|indx
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|bases
+(braket
+id|indx
+)braket
+)paren
+r_continue
+suffix:semicolon
+multiline_comment|/* Detect only AHA-1640 cards -- MCA ID 0F1F */
+id|slot
+op_assign
+id|mca_find_unused_adapter
+c_func
+(paren
+l_int|0x0f1f
+comma
+id|slot
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|slot
+op_eq
+id|MCA_NOTFOUND
+)paren
+r_break
+suffix:semicolon
+multiline_comment|/* Found one */
+id|pos
+op_assign
+id|mca_read_stored_pos
+c_func
+(paren
+id|slot
+comma
+l_int|3
+)paren
+suffix:semicolon
+multiline_comment|/* Decode address */
+r_if
+c_cond
+(paren
+id|pos
+op_amp
+l_int|0x80
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|pos
+op_amp
+l_int|0x02
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|pos
+op_amp
+l_int|0x01
+)paren
+id|bases
+(braket
+id|indx
+)braket
+op_assign
+l_int|0x334
+suffix:semicolon
+r_else
+id|bases
+(braket
+id|indx
+)braket
+op_assign
+l_int|0x234
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|pos
+op_amp
+l_int|0x01
+)paren
+id|bases
+(braket
+id|indx
+)braket
+op_assign
+l_int|0x134
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|pos
+op_amp
+l_int|0x02
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|pos
+op_amp
+l_int|0x01
+)paren
+id|bases
+(braket
+id|indx
+)braket
+op_assign
+l_int|0x330
+suffix:semicolon
+r_else
+id|bases
+(braket
+id|indx
+)braket
+op_assign
+l_int|0x230
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|pos
+op_amp
+l_int|0x01
+)paren
+id|bases
+(braket
+id|indx
+)braket
+op_assign
+l_int|0x130
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* No need to decode IRQ and Arb level -- those are&n;&t;&t;&t; * read off the card later.&n;&t;&t;&t; */
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Found an AHA-1640 in MCA slot %d, I/O 0x%04x&bslash;n&quot;
+comma
+id|slot
+comma
+id|bases
+(braket
+id|indx
+)braket
+)paren
+suffix:semicolon
+id|mca_set_adapter_name
+c_func
+(paren
+id|slot
+comma
+l_string|&quot;Adapter AHA-1640&quot;
+)paren
+suffix:semicolon
+id|mca_set_adapter_procfn
+c_func
+(paren
+id|slot
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|mca_mark_as_used
+c_func
+(paren
+id|slot
+)paren
+suffix:semicolon
+multiline_comment|/* Go on */
+id|slot
+op_increment
+suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Hunt for ISA Plug&squot;n&squot;Pray Adaptecs (AHA1535)&n;&t; */

@@ -31,10 +31,6 @@ id|page_table
 comma
 r_int
 id|gfp_mask
-comma
-id|zone_t
-op_star
-id|zone
 )paren
 (brace
 id|pte_t
@@ -151,21 +147,6 @@ id|PageLocked
 c_func
 (paren
 id|page
-)paren
-op_logical_or
-(paren
-id|zone
-op_logical_and
-(paren
-op_logical_neg
-id|memclass
-c_func
-(paren
-id|page-&gt;zone
-comma
-id|zone
-)paren
-)paren
 )paren
 )paren
 r_goto
@@ -521,10 +502,6 @@ id|end
 comma
 r_int
 id|gfp_mask
-comma
-id|zone_t
-op_star
-id|zone
 )paren
 (brace
 id|pte_t
@@ -630,8 +607,6 @@ comma
 id|pte
 comma
 id|gfp_mask
-comma
-id|zone
 )paren
 suffix:semicolon
 r_if
@@ -692,10 +667,6 @@ id|end
 comma
 r_int
 id|gfp_mask
-comma
-id|zone_t
-op_star
-id|zone
 )paren
 (brace
 id|pmd_t
@@ -799,8 +770,6 @@ comma
 id|end
 comma
 id|gfp_mask
-comma
-id|zone
 )paren
 suffix:semicolon
 r_if
@@ -858,10 +827,6 @@ id|address
 comma
 r_int
 id|gfp_mask
-comma
-id|zone_t
-op_star
-id|zone
 )paren
 (brace
 id|pgd_t
@@ -926,8 +891,6 @@ comma
 id|end
 comma
 id|gfp_mask
-comma
-id|zone
 )paren
 suffix:semicolon
 r_if
@@ -981,10 +944,6 @@ id|mm
 comma
 r_int
 id|gfp_mask
-comma
-id|zone_t
-op_star
-id|zone
 )paren
 (brace
 r_int
@@ -1053,8 +1012,6 @@ comma
 id|address
 comma
 id|gfp_mask
-comma
-id|zone
 )paren
 suffix:semicolon
 r_if
@@ -1115,10 +1072,6 @@ id|priority
 comma
 r_int
 id|gfp_mask
-comma
-id|zone_t
-op_star
-id|zone
 )paren
 (brace
 r_struct
@@ -1345,8 +1298,6 @@ c_func
 id|best
 comma
 id|gfp_mask
-comma
-id|zone
 )paren
 suffix:semicolon
 id|mmdrop
@@ -1462,7 +1413,16 @@ r_goto
 id|done
 suffix:semicolon
 )brace
-multiline_comment|/* don&squot;t be too light against the d/i cache since&n;&t;&t;   shrink_mmap() almost never fail when there&squot;s&n;&t;&t;   really plenty of memory free. */
+multiline_comment|/* Try to get rid of some shared memory pages.. */
+r_if
+c_cond
+(paren
+id|gfp_mask
+op_amp
+id|__GFP_IO
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; * don&squot;t be too light against the d/i cache since&n;&t;&t;   &t; * shrink_mmap() almost never fail when there&squot;s&n;&t;&t;   &t; * really plenty of memory free. &n;&t;&t;&t; */
 id|count
 op_sub_assign
 id|shrink_dcache_memory
@@ -1497,15 +1457,6 @@ l_int|0
 r_goto
 id|done
 suffix:semicolon
-multiline_comment|/* Try to get rid of some shared memory pages.. */
-r_if
-c_cond
-(paren
-id|gfp_mask
-op_amp
-id|__GFP_IO
-)paren
-(brace
 r_while
 c_loop
 (paren
@@ -1542,8 +1493,6 @@ c_func
 id|priority
 comma
 id|gfp_mask
-comma
-id|zone
 )paren
 )paren
 (brace
@@ -1734,6 +1683,11 @@ id|gfp_mask
 op_amp
 id|__GFP_WAIT
 )paren
+(brace
+id|current-&gt;flags
+op_or_assign
+id|PF_MEMALLOC
+suffix:semicolon
 id|retval
 op_assign
 id|do_try_to_free_pages
@@ -1744,6 +1698,12 @@ comma
 id|zone
 )paren
 suffix:semicolon
+id|current-&gt;flags
+op_and_assign
+op_complement
+id|PF_MEMALLOC
+suffix:semicolon
+)brace
 r_return
 id|retval
 suffix:semicolon

@@ -1200,6 +1200,11 @@ id|amiga_chip_alloc
 (paren
 r_int
 id|size
+comma
+r_const
+r_char
+op_star
+id|name
 )paren
 suffix:semicolon
 r_void

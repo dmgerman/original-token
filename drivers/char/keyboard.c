@@ -15,7 +15,7 @@ macro_line|#include &lt;linux/kbd_diacr.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/kbd_ll.h&gt;
 macro_line|#include &lt;linux/sysrq.h&gt;
-macro_line|#include &lt;linux/acpi.h&gt;
+macro_line|#include &lt;linux/pm.h&gt;
 DECL|macro|SIZE
 mdefine_line|#define SIZE(x) (sizeof(x)/sizeof((x)[0]))
 macro_line|#ifndef KBD_DEFMODE
@@ -574,26 +574,12 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
-DECL|variable|acpi_kbd_info
+DECL|variable|pm_kbd
 r_static
 r_struct
-id|acpi_dev_info
-id|acpi_kbd_info
-op_assign
-(brace
-id|ACPI_SYS_DEV
-comma
-id|ACPI_KBC_HID
-comma
-l_int|NULL
-)brace
-suffix:semicolon
-DECL|variable|acpi_kbd
-r_static
-r_struct
-id|acpi_dev
+id|pm_dev
 op_star
-id|acpi_kbd
+id|pm_kbd
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -775,10 +761,10 @@ suffix:semicolon
 r_char
 id|raw_mode
 suffix:semicolon
-id|acpi_access
+id|pm_access
 c_func
 (paren
-id|acpi_kbd
+id|pm_kbd
 )paren
 suffix:semicolon
 id|do_poke_blanked_console
@@ -3907,15 +3893,16 @@ c_func
 id|KEYBOARD_BH
 )paren
 suffix:semicolon
-id|acpi_kbd
+id|pm_kbd
 op_assign
-id|acpi_register
+id|pm_register
 c_func
 (paren
-op_amp
-id|acpi_kbd_info
+id|PM_SYS_DEV
 comma
-l_int|0
+id|PM_SYS_KBC
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return

@@ -434,6 +434,8 @@ DECL|macro|__NR_setfsuid32
 mdefine_line|#define __NR_setfsuid32&t;&t;215
 DECL|macro|__NR_setfsgid32
 mdefine_line|#define __NR_setfsgid32&t;&t;216
+DECL|macro|__NR_pivot_root
+mdefine_line|#define __NR_pivot_root&t;&t;217
 multiline_comment|/* user-visible error numbers are in the range -1 - -124: see &lt;asm-i386/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;&t;errno = -(res); &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)

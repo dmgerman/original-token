@@ -381,6 +381,13 @@ id|hwif-&gt;dma_base
 )paren
 suffix:semicolon
 multiline_comment|/* from ERRATA: clear the INTR &amp; ERROR bits */
+id|ide_destroy_dmatable
+c_func
+(paren
+id|drive
+)paren
+suffix:semicolon
+multiline_comment|/* and free any DMA resources */
 r_return
 (paren
 id|dma_stat

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_iommu.c,v 1.7 1999/12/20 14:08:15 jj Exp $&n; * pci_iommu.c: UltraSparc PCI controller IOM/STC support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; * Copyright (C) 1999 Jakub Jelinek (jakub@redhat.com)&n; */
+multiline_comment|/* $Id: pci_iommu.c,v 1.7 1999/12/20 14:08:15 jj Exp $&n; * pci_iommu.c: UltraSparc PCI controller IOM/STC support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; * Copyright (C) 1999, 2000 Jakub Jelinek (jakub@redhat.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -180,7 +180,7 @@ id|pci_iommu
 op_star
 id|iommu
 comma
-id|u32
+id|dma_addr_t
 id|base
 comma
 r_int
@@ -256,12 +256,12 @@ op_assign
 id|ent
 suffix:semicolon
 )brace
-multiline_comment|/* We allocate consistant mappings from the end of cluster zero. */
-DECL|function|alloc_consistant_cluster
+multiline_comment|/* We allocate consistent mappings from the end of cluster zero. */
+DECL|function|alloc_consistent_cluster
 r_static
 id|iopte_t
 op_star
-id|alloc_consistant_cluster
+id|alloc_consistent_cluster
 c_func
 (paren
 r_struct
@@ -372,11 +372,11 @@ DECL|macro|IOPTE_STREAMING
 mdefine_line|#define IOPTE_STREAMING(CTX, PADDR) &bslash;&n;&t;(IOPTE_CONSISTANT(CTX, PADDR) | IOPTE_STBUF)
 DECL|macro|IOPTE_INVALID
 mdefine_line|#define IOPTE_INVALID&t;0UL
-multiline_comment|/* Allocate and map kernel buffer of size SIZE using consistant mode&n; * DMA for PCI device PDEV.  Return non-NULL cpu-side address if&n; * successful and set *DMA_ADDRP to the PCI side dma address.&n; */
-DECL|function|pci_alloc_consistant
+multiline_comment|/* Allocate and map kernel buffer of size SIZE using consistent mode&n; * DMA for PCI device PDEV.  Return non-NULL cpu-side address if&n; * successful and set *DMA_ADDRP to the PCI side dma address.&n; */
+DECL|function|pci_alloc_consistent
 r_void
 op_star
-id|pci_alloc_consistant
+id|pci_alloc_consistent
 c_func
 (paren
 r_struct
@@ -387,7 +387,7 @@ comma
 r_int
 id|size
 comma
-id|u32
+id|dma_addr_t
 op_star
 id|dma_addrp
 )paren
@@ -422,28 +422,6 @@ id|ret
 suffix:semicolon
 r_int
 id|npages
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|size
-op_le
-l_int|0
-op_logical_or
-id|pdev
-op_eq
-l_int|NULL
-op_logical_or
-id|pdev-&gt;sysdata
-op_eq
-l_int|NULL
-op_logical_or
-id|dma_addrp
-op_eq
-l_int|NULL
-)paren
-r_return
-l_int|NULL
 suffix:semicolon
 id|size
 op_assign
@@ -491,6 +469,23 @@ l_int|10
 )paren
 r_return
 l_int|NULL
+suffix:semicolon
+multiline_comment|/* We still don&squot;t support devices which don&squot;t recognize at least 30 bits&n;&t;   of bus address. Bug me to code it (is pretty easy actually). -jj */
+r_if
+c_cond
+(paren
+(paren
+id|pdev-&gt;dma_mask
+op_amp
+l_int|0x3fffffff
+)paren
+op_ne
+l_int|0x3fffffff
+)paren
+id|BUG
+c_func
+(paren
+)paren
 suffix:semicolon
 id|first_page
 op_assign
@@ -548,7 +543,7 @@ id|flags
 suffix:semicolon
 id|iopte
 op_assign
-id|alloc_consistant_cluster
+id|alloc_consistent_cluster
 c_func
 (paren
 id|iommu
@@ -744,10 +739,10 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/* Free and unmap a consistant DMA translation. */
-DECL|function|pci_free_consistant
+multiline_comment|/* Free and unmap a consistent DMA translation. */
+DECL|function|pci_free_consistent
 r_void
-id|pci_free_consistant
+id|pci_free_consistent
 c_func
 (paren
 r_struct
@@ -762,7 +757,7 @@ r_void
 op_star
 id|cpu
 comma
-id|u32
+id|dma_addr_t
 id|dvma
 )paren
 (brace
@@ -789,27 +784,6 @@ comma
 id|npages
 comma
 id|i
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|size
-op_le
-l_int|0
-op_logical_or
-id|pdev
-op_eq
-l_int|NULL
-op_logical_or
-id|pdev-&gt;sysdata
-op_eq
-l_int|NULL
-op_logical_or
-id|cpu
-op_eq
-l_int|NULL
-)paren
-r_return
 suffix:semicolon
 id|npages
 op_assign
@@ -853,7 +827,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* Data for consistant mappings cannot enter the streaming&n;&t; * buffers, so we only need to update the TSB.  Flush of the&n;&t; * IOTLB is done later when these ioptes are used for a new&n;&t; * allocation.&n;&t; */
+multiline_comment|/* Data for consistent mappings cannot enter the streaming&n;&t; * buffers, so we only need to update the TSB.  Flush of the&n;&t; * IOTLB is done later when these ioptes are used for a new&n;&t; * allocation.&n;&t; */
 r_for
 c_loop
 (paren
@@ -940,7 +914,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Map a single buffer at PTR of SZ bytes for PCI DMA&n; * in streaming mode.&n; */
 DECL|function|pci_map_single
-id|u32
+id|dma_addr_t
 id|pci_map_single
 c_func
 (paren
@@ -961,24 +935,16 @@ r_struct
 id|pcidev_cookie
 op_star
 id|pcp
-op_assign
-id|pdev-&gt;sysdata
 suffix:semicolon
 r_struct
 id|pci_iommu
 op_star
 id|iommu
-op_assign
-op_amp
-id|pcp-&gt;pbm-&gt;parent-&gt;iommu
 suffix:semicolon
 r_struct
 id|pci_strbuf
 op_star
 id|strbuf
-op_assign
-op_amp
-id|pcp-&gt;pbm-&gt;stc
 suffix:semicolon
 id|iopte_t
 op_star
@@ -1004,6 +970,37 @@ id|u32
 id|bus_addr
 comma
 id|ret
+suffix:semicolon
+id|pcp
+op_assign
+id|pdev-&gt;sysdata
+suffix:semicolon
+id|iommu
+op_assign
+op_amp
+id|pcp-&gt;pbm-&gt;parent-&gt;iommu
+suffix:semicolon
+id|strbuf
+op_assign
+op_amp
+id|pcp-&gt;pbm-&gt;stc
+suffix:semicolon
+multiline_comment|/* We still don&squot;t support devices which don&squot;t recognize at least 30 bits&n;&t;   of bus address. Bug me to code it (is pretty easy actually). -jj */
+r_if
+c_cond
+(paren
+(paren
+id|pdev-&gt;dma_mask
+op_amp
+l_int|0x3fffffff
+)paren
+op_ne
+l_int|0x3fffffff
+)paren
+id|BUG
+c_func
+(paren
+)paren
 suffix:semicolon
 id|oaddr
 op_assign
@@ -1254,7 +1251,7 @@ id|pci_dev
 op_star
 id|pdev
 comma
-id|u32
+id|dma_addr_t
 id|bus_addr
 comma
 r_int
@@ -1265,24 +1262,16 @@ r_struct
 id|pcidev_cookie
 op_star
 id|pcp
-op_assign
-id|pdev-&gt;sysdata
 suffix:semicolon
 r_struct
 id|pci_iommu
 op_star
 id|iommu
-op_assign
-op_amp
-id|pcp-&gt;pbm-&gt;parent-&gt;iommu
 suffix:semicolon
 r_struct
 id|pci_strbuf
 op_star
 id|strbuf
-op_assign
-op_amp
-id|pcp-&gt;pbm-&gt;stc
 suffix:semicolon
 id|iopte_t
 op_star
@@ -1297,6 +1286,20 @@ comma
 id|i
 comma
 id|ctx
+suffix:semicolon
+id|pcp
+op_assign
+id|pdev-&gt;sysdata
+suffix:semicolon
+id|iommu
+op_assign
+op_amp
+id|pcp-&gt;pbm-&gt;parent-&gt;iommu
+suffix:semicolon
+id|strbuf
+op_assign
+op_amp
+id|pcp-&gt;pbm-&gt;stc
 suffix:semicolon
 id|npages
 op_assign
@@ -1332,6 +1335,36 @@ op_rshift
 id|PAGE_SHIFT
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG_PCI_IOMMU
+r_if
+c_cond
+(paren
+id|iopte_val
+c_func
+(paren
+op_star
+id|base
+)paren
+op_eq
+id|IOPTE_INVALID
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;pci_unmap_single called on non-mapped region %08x,%08x from %016lx&bslash;n&quot;
+comma
+id|bus_addr
+comma
+id|sz
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|bus_addr
 op_and_assign
 id|PAGE_MASK
@@ -1555,9 +1588,7 @@ suffix:semicolon
 DECL|function|fill_sg
 r_static
 r_inline
-r_struct
-id|scatterlist
-op_star
+r_void
 id|fill_sg
 c_func
 (paren
@@ -1571,7 +1602,7 @@ op_star
 id|sg
 comma
 r_int
-id|nents
+id|nused
 comma
 r_int
 r_int
@@ -1588,7 +1619,23 @@ id|dma_sg
 op_assign
 id|sg
 suffix:semicolon
-r_do
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|nused
+suffix:semicolon
+id|i
+op_increment
+)paren
 (brace
 r_int
 r_int
@@ -1926,17 +1973,6 @@ id|dma_sg
 op_increment
 suffix:semicolon
 )brace
-r_while
-c_loop
-(paren
-id|dma_sg-&gt;dvma_length
-op_ne
-l_int|0
-)paren
-suffix:semicolon
-r_return
-id|dma_sg
-suffix:semicolon
 )brace
 multiline_comment|/* Map a set of buffers described by SGLIST with NELEMS array&n; * elements in streaming mode for PCI DMA.&n; * When making changes here, inspect the assembly output. I was having&n; * hard time to kepp this routine out of using stack slots for holding variables.&n; */
 DECL|function|pci_map_sg
@@ -1996,7 +2032,7 @@ op_star
 id|sgtmp
 suffix:semicolon
 r_int
-id|tmp
+id|used
 suffix:semicolon
 multiline_comment|/* Fast path single entry scatterlists. */
 r_if
@@ -2040,6 +2076,23 @@ id|strbuf
 op_assign
 op_amp
 id|pcp-&gt;pbm-&gt;stc
+suffix:semicolon
+multiline_comment|/* We still don&squot;t support devices which don&squot;t recognize at least 30 bits&n;&t;   of bus address. Bug me to code it (is pretty easy actually). -jj */
+r_if
+c_cond
+(paren
+(paren
+id|pdev-&gt;dma_mask
+op_amp
+l_int|0x3fffffff
+)paren
+op_ne
+l_int|0x3fffffff
+)paren
+id|BUG
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* Step 1: Prepare scatter list. */
 id|npages
@@ -2087,7 +2140,7 @@ id|PAGE_SHIFT
 )paren
 suffix:semicolon
 multiline_comment|/* Step 3: Normalize DMA addresses. */
-id|tmp
+id|used
 op_assign
 id|nelems
 suffix:semicolon
@@ -2098,8 +2151,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|tmp
-op_decrement
+id|used
 op_logical_and
 id|sgtmp-&gt;dvma_length
 )paren
@@ -2111,7 +2163,16 @@ suffix:semicolon
 id|sgtmp
 op_increment
 suffix:semicolon
+id|used
+op_decrement
+suffix:semicolon
 )brace
+id|used
+op_assign
+id|nelems
+op_minus
+id|used
+suffix:semicolon
 multiline_comment|/* Step 4: Choose a context if necessary. */
 id|ctx
 op_assign
@@ -2128,15 +2189,13 @@ id|iommu-&gt;iommu_cur_ctx
 op_increment
 suffix:semicolon
 multiline_comment|/* Step 5: Create the mappings. */
-id|sgtmp
-op_assign
 id|fill_sg
 (paren
 id|base
 comma
 id|sglist
 comma
-id|nelems
+id|used
 comma
 id|ctx
 comma
@@ -2212,9 +2271,7 @@ id|flags
 )paren
 suffix:semicolon
 r_return
-id|sgtmp
-op_minus
-id|sglist
+id|used
 suffix:semicolon
 )brace
 multiline_comment|/* Unmap a set of streaming mode DMA translations. */
@@ -2241,24 +2298,16 @@ r_struct
 id|pcidev_cookie
 op_star
 id|pcp
-op_assign
-id|pdev-&gt;sysdata
 suffix:semicolon
 r_struct
 id|pci_iommu
 op_star
 id|iommu
-op_assign
-op_amp
-id|pcp-&gt;pbm-&gt;parent-&gt;iommu
 suffix:semicolon
 r_struct
 id|pci_strbuf
 op_star
 id|strbuf
-op_assign
-op_amp
-id|pcp-&gt;pbm-&gt;stc
 suffix:semicolon
 id|iopte_t
 op_star
@@ -2277,27 +2326,32 @@ suffix:semicolon
 id|u32
 id|bus_addr
 suffix:semicolon
+id|pcp
+op_assign
+id|pdev-&gt;sysdata
+suffix:semicolon
+id|iommu
+op_assign
+op_amp
+id|pcp-&gt;pbm-&gt;parent-&gt;iommu
+suffix:semicolon
+id|strbuf
+op_assign
+op_amp
+id|pcp-&gt;pbm-&gt;stc
+suffix:semicolon
 id|bus_addr
 op_assign
 id|sglist-&gt;dvma_address
 op_amp
 id|PAGE_MASK
 suffix:semicolon
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|nelems
-OG
-l_int|1
-)paren
-(brace
 r_for
 c_loop
 (paren
+id|i
+op_assign
+l_int|1
 suffix:semicolon
 id|i
 OL
@@ -2323,7 +2377,6 @@ suffix:semicolon
 id|i
 op_decrement
 suffix:semicolon
-)brace
 id|npages
 op_assign
 (paren
@@ -2364,6 +2417,36 @@ op_rshift
 id|PAGE_SHIFT
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG_PCI_IOMMU
+r_if
+c_cond
+(paren
+id|iopte_val
+c_func
+(paren
+op_star
+id|base
+)paren
+op_eq
+id|IOPTE_INVALID
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;pci_unmap_sg called on non-mapped region %08x,%d from %016lx&bslash;n&quot;
+comma
+id|sglist-&gt;dvma_address
+comma
+id|nelems
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|spin_lock_irqsave
 c_func
 (paren
@@ -2580,7 +2663,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Make physical memory consistant for a single&n; * streaming mode DMA translation after a transfer.&n; */
+multiline_comment|/* Make physical memory consistent for a single&n; * streaming mode DMA translation after a transfer.&n; */
 DECL|function|pci_dma_sync_single
 r_void
 id|pci_dma_sync_single
@@ -2591,7 +2674,7 @@ id|pci_dev
 op_star
 id|pdev
 comma
-id|u32
+id|dma_addr_t
 id|bus_addr
 comma
 r_int
@@ -2602,24 +2685,16 @@ r_struct
 id|pcidev_cookie
 op_star
 id|pcp
-op_assign
-id|pdev-&gt;sysdata
 suffix:semicolon
 r_struct
 id|pci_iommu
 op_star
 id|iommu
-op_assign
-op_amp
-id|pcp-&gt;pbm-&gt;parent-&gt;iommu
 suffix:semicolon
 r_struct
 id|pci_strbuf
 op_star
 id|strbuf
-op_assign
-op_amp
-id|pcp-&gt;pbm-&gt;stc
 suffix:semicolon
 r_int
 r_int
@@ -2628,6 +2703,20 @@ comma
 id|ctx
 comma
 id|npages
+suffix:semicolon
+id|pcp
+op_assign
+id|pdev-&gt;sysdata
+suffix:semicolon
+id|iommu
+op_assign
+op_amp
+id|pcp-&gt;pbm-&gt;parent-&gt;iommu
+suffix:semicolon
+id|strbuf
+op_assign
+op_amp
+id|pcp-&gt;pbm-&gt;stc
 suffix:semicolon
 r_if
 c_cond
@@ -2860,7 +2949,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Make physical memory consistant for a set of streaming&n; * mode DMA translations after a transfer.&n; */
+multiline_comment|/* Make physical memory consistent for a set of streaming&n; * mode DMA translations after a transfer.&n; */
 DECL|function|pci_dma_sync_sg
 r_void
 id|pci_dma_sync_sg
@@ -2884,30 +2973,36 @@ r_struct
 id|pcidev_cookie
 op_star
 id|pcp
-op_assign
-id|pdev-&gt;sysdata
 suffix:semicolon
 r_struct
 id|pci_iommu
 op_star
 id|iommu
-op_assign
-op_amp
-id|pcp-&gt;pbm-&gt;parent-&gt;iommu
 suffix:semicolon
 r_struct
 id|pci_strbuf
 op_star
 id|strbuf
-op_assign
-op_amp
-id|pcp-&gt;pbm-&gt;stc
 suffix:semicolon
 r_int
 r_int
 id|flags
 comma
 id|ctx
+suffix:semicolon
+id|pcp
+op_assign
+id|pdev-&gt;sysdata
+suffix:semicolon
+id|iommu
+op_assign
+op_amp
+id|pcp-&gt;pbm-&gt;parent-&gt;iommu
+suffix:semicolon
+id|strbuf
+op_assign
+op_amp
+id|pcp-&gt;pbm-&gt;stc
 suffix:semicolon
 r_if
 c_cond
@@ -3053,10 +3148,6 @@ suffix:semicolon
 id|u32
 id|bus_addr
 suffix:semicolon
-id|i
-op_assign
-l_int|0
-suffix:semicolon
 id|bus_addr
 op_assign
 id|sglist
@@ -3068,17 +3159,12 @@ id|dvma_address
 op_amp
 id|PAGE_MASK
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|nelems
-OG
-l_int|1
-)paren
-(brace
 r_for
 c_loop
 (paren
+id|i
+op_assign
+l_int|1
 suffix:semicolon
 id|i
 OL
@@ -3103,7 +3189,6 @@ suffix:semicolon
 id|i
 op_decrement
 suffix:semicolon
-)brace
 id|npages
 op_assign
 (paren

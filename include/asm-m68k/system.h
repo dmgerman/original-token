@@ -4,6 +4,7 @@ mdefine_line|#define _M68K_SYSTEM_H
 macro_line|#include &lt;linux/config.h&gt; /* get configuration macros */
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/entry.h&gt;
 DECL|macro|prepare_to_switch
 mdefine_line|#define prepare_to_switch()&t;do { } while(0)
 multiline_comment|/*&n; * switch_to(n) should switch tasks to task ptr, first checking that&n; * ptr isn&squot;t the current task, in which case it does nothing.  This&n; * also clears the TS-flag if the task we switched to has used the&n; * math co-processor latest.&n; */
@@ -18,6 +19,52 @@ r_void
 suffix:semicolon
 DECL|macro|switch_to
 mdefine_line|#define switch_to(prev,next,last) { &bslash;&n;  register void *_prev __asm__ (&quot;a0&quot;) = (prev); &bslash;&n;  register void *_next __asm__ (&quot;a1&quot;) = (next); &bslash;&n;  register void *_last __asm__ (&quot;d1&quot;); &bslash;&n;  __asm__ __volatile__(&quot;jbsr &quot; SYMBOL_NAME_STR(resume) &bslash;&n;&t;&t;       : &quot;=d&quot; (_last) : &quot;a&quot; (_prev), &quot;a&quot; (_next) &bslash;&n;&t;&t;       : &quot;d0&quot;, &quot;d1&quot;, &quot;d2&quot;, &quot;d3&quot;, &quot;d4&quot;, &quot;d5&quot;, &quot;a0&quot;, &quot;a1&quot;); &bslash;&n;  (last) = _last; &bslash;&n;}
+multiline_comment|/* interrupt control.. */
+macro_line|#if 0
+mdefine_line|#define __sti() asm volatile (&quot;andiw %0,%%sr&quot;: : &quot;i&quot; (ALLOWINT) : &quot;memory&quot;)
+macro_line|#else
+macro_line|#include &lt;asm/hardirq.h&gt;
+DECL|macro|__sti
+mdefine_line|#define __sti() ({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (!local_irq_count[smp_processor_id()])&t;&t;&t;&t;&bslash;&n;&t;&t;asm volatile (&quot;andiw %0,%%sr&quot;: : &quot;i&quot; (ALLOWINT) : &quot;memory&quot;);&t;&bslash;&n;})
+macro_line|#endif
+DECL|macro|__cli
+mdefine_line|#define __cli() asm volatile (&quot;oriw  #0x0700,%%sr&quot;: : : &quot;memory&quot;)
+DECL|macro|__save_flags
+mdefine_line|#define __save_flags(x) asm volatile (&quot;movew %%sr,%0&quot;:&quot;=d&quot; (x) : : &quot;memory&quot;)
+DECL|macro|__restore_flags
+mdefine_line|#define __restore_flags(x) asm volatile (&quot;movew %0,%%sr&quot;: :&quot;d&quot; (x) : &quot;memory&quot;)
+multiline_comment|/* For spinlocks etc */
+DECL|macro|local_irq_save
+mdefine_line|#define local_irq_save(x)&t;({ __save_flags(x); __cli(); })
+DECL|macro|local_irq_restore
+mdefine_line|#define local_irq_restore(x)&t;__restore_flags(x)
+DECL|macro|local_irq_disable
+mdefine_line|#define local_irq_disable()&t;__cli()
+DECL|macro|local_irq_enable
+mdefine_line|#define local_irq_enable()&t;__sti()
+DECL|macro|cli
+mdefine_line|#define cli()&t;&t;&t;__cli()
+DECL|macro|sti
+mdefine_line|#define sti()&t;&t;&t;__sti()
+DECL|macro|save_flags
+mdefine_line|#define save_flags(x)&t;&t;__save_flags(x)
+DECL|macro|restore_flags
+mdefine_line|#define restore_flags(x)&t;__restore_flags(x)
+multiline_comment|/*&n; * Force strict CPU ordering.&n; * Not really required on m68k...&n; */
+DECL|macro|nop
+mdefine_line|#define nop()  asm volatile (&quot;nop&quot;::)
+DECL|macro|mb
+mdefine_line|#define mb()   asm volatile (&quot;&quot;   : : :&quot;memory&quot;)
+DECL|macro|rmb
+mdefine_line|#define rmb()  asm volatile (&quot;&quot;   : : :&quot;memory&quot;)
+DECL|macro|wmb
+mdefine_line|#define wmb()  asm volatile (&quot;&quot;   : : :&quot;memory&quot;)
+DECL|macro|set_rmb
+mdefine_line|#define set_rmb(var, value)    do { xchg(&amp;var, value); } while (0)
+DECL|macro|set_mb
+mdefine_line|#define set_mb(var, value)     set_rmb(var, value)
+DECL|macro|set_wmb
+mdefine_line|#define set_wmb(var, value)    do { var = value; wmb(); } while (0)
 DECL|macro|xchg
 mdefine_line|#define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
 DECL|macro|tas
@@ -38,38 +85,6 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|__xg
 mdefine_line|#define __xg(x) ((volatile struct __xchg_dummy *)(x))
-macro_line|#if defined(MACH_ATARI_ONLY) &amp;&amp; !defined(CONFIG_HADES)
-multiline_comment|/* block out HSYNC on the atari */
-DECL|macro|__sti
-mdefine_line|#define __sti() __asm__ __volatile__ (&quot;andiw #0xfbff,%/sr&quot;: : : &quot;memory&quot;)
-macro_line|#else /* portable version */
-DECL|macro|__sti
-mdefine_line|#define __sti() __asm__ __volatile__ (&quot;andiw #0xf8ff,%/sr&quot;: : : &quot;memory&quot;)
-macro_line|#endif /* machine compilation types */ 
-DECL|macro|__cli
-mdefine_line|#define __cli() __asm__ __volatile__ (&quot;oriw  #0x0700,%/sr&quot;: : : &quot;memory&quot;)
-DECL|macro|nop
-mdefine_line|#define nop() __asm__ __volatile__ (&quot;nop&quot;::)
-DECL|macro|mb
-mdefine_line|#define mb()  __asm__ __volatile__ (&quot;&quot;   : : :&quot;memory&quot;)
-DECL|macro|rmb
-mdefine_line|#define rmb()  __asm__ __volatile__ (&quot;&quot;   : : :&quot;memory&quot;)
-DECL|macro|wmb
-mdefine_line|#define wmb()  __asm__ __volatile__ (&quot;&quot;   : : :&quot;memory&quot;)
-DECL|macro|__save_flags
-mdefine_line|#define __save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;movew %/sr,%0&quot;:&quot;=d&quot; (x) : /* no input */ :&quot;memory&quot;)
-DECL|macro|__restore_flags
-mdefine_line|#define __restore_flags(x) &bslash;&n;__asm__ __volatile__(&quot;movew %0,%/sr&quot;: /* no outputs */ :&quot;d&quot; (x) : &quot;memory&quot;)
-DECL|macro|cli
-mdefine_line|#define cli() __cli()
-DECL|macro|sti
-mdefine_line|#define sti() __sti()
-DECL|macro|save_flags
-mdefine_line|#define save_flags(x) __save_flags(x)
-DECL|macro|restore_flags
-mdefine_line|#define restore_flags(x) __restore_flags(x)
-DECL|macro|save_and_cli
-mdefine_line|#define save_and_cli(flags)   do { save_flags(flags); cli(); } while(0)
 macro_line|#ifndef CONFIG_RMW_INSNS
 DECL|function|__xchg
 r_static

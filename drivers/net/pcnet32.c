@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;pcnet32.c:v1.23ac 21.9.1999 tsbogend@alpha.franken.de&bslash;n&quot;
+l_string|&quot;pcnet32.c:v1.25kf 26.9.1999 tsbogend@alpha.franken.de&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -57,6 +57,14 @@ id|pcnet32_debug
 op_assign
 l_int|1
 suffix:semicolon
+DECL|variable|tx_start
+r_static
+r_int
+id|tx_start
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Mapping -- 0:20, 1:64, 2:128, 3:~220 (depends on chip vers) */
 macro_line|#ifdef MODULE
 DECL|variable|pcnet32_dev
 r_static
@@ -74,7 +82,7 @@ r_const
 r_int
 id|max_interrupt_work
 op_assign
-l_int|20
+l_int|80
 suffix:semicolon
 DECL|variable|rx_copybreak
 r_static
@@ -198,13 +206,13 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * &t;&t;&t;&t;Theory of Operation&n; * &n; * This driver uses the same software structure as the normal lance&n; * driver. So look for a verbose description in lance.c. The differences&n; * to the normal lance driver is the use of the 32bit mode of PCnet32&n; * and PCnetPCI chips. Because these chips are 32bit chips, there is no&n; * 16MB limitation and we don&squot;t need bounce buffers.&n; */
-multiline_comment|/*&n; * History:&n; * v0.01:  Initial version&n; *         only tested on Alpha Noname Board&n; * v0.02:  changed IRQ handling for new interrupt scheme (dev_id)&n; *         tested on a ASUS SP3G&n; * v0.10:  fixed an odd problem with the 79C974 in a Compaq Deskpro XL&n; *         looks like the 974 doesn&squot;t like stopping and restarting in a&n; *         short period of time; now we do a reinit of the lance; the&n; *         bug was triggered by doing ifconfig eth0 &lt;ip&gt; broadcast &lt;addr&gt;&n; *         and hangs the machine (thanks to Klaus Liedl for debugging)&n; * v0.12:  by suggestion from Donald Becker: Renamed driver to pcnet32,&n; *         made it standalone (no need for lance.c)&n; * v0.13:  added additional PCI detecting for special PCI devices (Compaq)&n; * v0.14:  stripped down additional PCI probe (thanks to David C Niemi&n; *         and sveneric@xs4all.nl for testing this on their Compaq boxes)&n; * v0.15:  added 79C965 (VLB) probe&n; *         added interrupt sharing for PCI chips&n; * v0.16:  fixed set_multicast_list on Alpha machines&n; * v0.17:  removed hack from dev.c; now pcnet32 uses ethif_probe in Space.c&n; * v0.19:  changed setting of autoselect bit&n; * v0.20:  removed additional Compaq PCI probe; there is now a working one&n; *&t;   in arch/i386/bios32.c&n; * v0.21:  added endian conversion for ppc, from work by cort@cs.nmt.edu&n; * v0.22:  added printing of status to ring dump&n; * v0.23:  changed enet_statistics to net_devive_stats&n; * v0.90:  added multicast filter&n; *         added module support&n; *         changed irq probe to new style&n; *         added PCnetFast chip id&n; *         added fix for receive stalls with Intel saturn chipsets&n; *         added in-place rx skbs like in the tulip driver&n; *         minor cleanups&n; * v0.91:  added PCnetFast+ chip id&n; *         back port to 2.0.x&n; * v1.00:  added some stuff from Donald Becker&squot;s 2.0.34 version&n; *         added support for byte counters in net_dev_stats&n; * v1.01:  do ring dumps, only when debugging the driver&n; *         increased the transmit timeout&n; * v1.02:  fixed memory leak in pcnet32_init_ring()&n; * v1.10:  workaround for stopped transmitter&n; *         added port selection for modules&n; *         detect special T1/E1 WAN card and setup port selection&n; * v1.11:  fixed wrong checking of Tx errors&n; * v1.20:  added check of return value kmalloc (cpeterso@cs.washington.edu)&n; *         added save original kmalloc addr for freeing (mcr@solidum.com)&n; *         added support for PCnetHome chip (joe@MIT.EDU)&n; *         rewritten PCI card detection&n; *         added dwio mode to get driver working on some PPC machines&n; * v1.21:  added mii selection and mii ioctl&n; * v1.22:  changed pci scanning code to make PPC people happy&n; *         fixed switching to 32bit mode in pcnet32_open() (thanks&n; *         to Michael Richard &lt;mcr@solidum.com&gt; for noticing this one)&n; *&t;   added sub vendor/device id matching (thanks again to &n; *&t;   Michael Richard &lt;mcr@solidum.com&gt;)&n; *         added chip id for 79c973/975 (thanks to Zach Brown &lt;zab@zabbo.net&gt;)&n; * v1.23   fixed small bug, when manual selecting MII speed/duplex&n; * v1.23ac Added SMP spinlocking - Alan Cox &lt;alan@redhat.com&gt;&n; */
+multiline_comment|/*&n; * History:&n; * v0.01:  Initial version&n; *         only tested on Alpha Noname Board&n; * v0.02:  changed IRQ handling for new interrupt scheme (dev_id)&n; *         tested on a ASUS SP3G&n; * v0.10:  fixed an odd problem with the 79C974 in a Compaq Deskpro XL&n; *         looks like the 974 doesn&squot;t like stopping and restarting in a&n; *         short period of time; now we do a reinit of the lance; the&n; *         bug was triggered by doing ifconfig eth0 &lt;ip&gt; broadcast &lt;addr&gt;&n; *         and hangs the machine (thanks to Klaus Liedl for debugging)&n; * v0.12:  by suggestion from Donald Becker: Renamed driver to pcnet32,&n; *         made it standalone (no need for lance.c)&n; * v0.13:  added additional PCI detecting for special PCI devices (Compaq)&n; * v0.14:  stripped down additional PCI probe (thanks to David C Niemi&n; *         and sveneric@xs4all.nl for testing this on their Compaq boxes)&n; * v0.15:  added 79C965 (VLB) probe&n; *         added interrupt sharing for PCI chips&n; * v0.16:  fixed set_multicast_list on Alpha machines&n; * v0.17:  removed hack from dev.c; now pcnet32 uses ethif_probe in Space.c&n; * v0.19:  changed setting of autoselect bit&n; * v0.20:  removed additional Compaq PCI probe; there is now a working one&n; *&t;   in arch/i386/bios32.c&n; * v0.21:  added endian conversion for ppc, from work by cort@cs.nmt.edu&n; * v0.22:  added printing of status to ring dump&n; * v0.23:  changed enet_statistics to net_devive_stats&n; * v0.90:  added multicast filter&n; *         added module support&n; *         changed irq probe to new style&n; *         added PCnetFast chip id&n; *         added fix for receive stalls with Intel saturn chipsets&n; *         added in-place rx skbs like in the tulip driver&n; *         minor cleanups&n; * v0.91:  added PCnetFast+ chip id&n; *         back port to 2.0.x&n; * v1.00:  added some stuff from Donald Becker&squot;s 2.0.34 version&n; *         added support for byte counters in net_dev_stats&n; * v1.01:  do ring dumps, only when debugging the driver&n; *         increased the transmit timeout&n; * v1.02:  fixed memory leak in pcnet32_init_ring()&n; * v1.10:  workaround for stopped transmitter&n; *         added port selection for modules&n; *         detect special T1/E1 WAN card and setup port selection&n; * v1.11:  fixed wrong checking of Tx errors&n; * v1.20:  added check of return value kmalloc (cpeterso@cs.washington.edu)&n; *         added save original kmalloc addr for freeing (mcr@solidum.com)&n; *         added support for PCnetHome chip (joe@MIT.EDU)&n; *         rewritten PCI card detection&n; *         added dwio mode to get driver working on some PPC machines&n; * v1.21:  added mii selection and mii ioctl&n; * v1.22:  changed pci scanning code to make PPC people happy&n; *         fixed switching to 32bit mode in pcnet32_open() (thanks&n; *         to Michael Richard &lt;mcr@solidum.com&gt; for noticing this one)&n; *&t;   added sub vendor/device id matching (thanks again to &n; *&t;   Michael Richard &lt;mcr@solidum.com&gt;)&n; *         added chip id for 79c973/975 (thanks to Zach Brown &lt;zab@zabbo.net&gt;)&n; * v1.23   fixed small bug, when manual selecting MII speed/duplex&n; * v1.24   Applied Thomas&squot; patch to use TxStartPoint and thus decrease TxFIFO&n; *         underflows.  Added tx_start_pt module parameter. Increased&n; *         TX_RING_SIZE from 16 to 32.  Added #ifdef&squot;d code to use DXSUFLO&n; *         for FAST[+] chipsets. &lt;kaf@fc.hp.com&gt;&n; * v1.24ac Added SMP spinlocking - Alan Cox &lt;alan@redhat.com&gt;&n; * v1.25kf Added No Interrupt on successful Tx for some Tx&squot;s &lt;kaf@fc.hp.com&gt;&n; */
 multiline_comment|/*&n; * Set the number of Tx and Rx buffers, using Log_2(# buffers).&n; * Reasonable default values are 4 Tx buffers, and 16 Rx buffers.&n; * That translates to 2 (4 == 2^^2) and 4 (16 == 2^^4).&n; */
 macro_line|#ifndef PCNET32_LOG_TX_BUFFERS
 DECL|macro|PCNET32_LOG_TX_BUFFERS
 mdefine_line|#define PCNET32_LOG_TX_BUFFERS 4
 DECL|macro|PCNET32_LOG_RX_BUFFERS
-mdefine_line|#define PCNET32_LOG_RX_BUFFERS 4
+mdefine_line|#define PCNET32_LOG_RX_BUFFERS 5
 macro_line|#endif
 DECL|macro|TX_RING_SIZE
 mdefine_line|#define TX_RING_SIZE&t;&t;&t;(1 &lt;&lt; (PCNET32_LOG_TX_BUFFERS))
@@ -514,6 +522,7 @@ multiline_comment|/* Guard lock */
 DECL|member|cur_rx
 DECL|member|cur_tx
 r_int
+r_int
 id|cur_rx
 comma
 id|cur_tx
@@ -521,6 +530,7 @@ suffix:semicolon
 multiline_comment|/* The next free ring entry */
 DECL|member|dirty_rx
 DECL|member|dirty_tx
+r_int
 r_int
 id|dirty_rx
 comma
@@ -547,6 +557,19 @@ suffix:colon
 l_int|1
 comma
 multiline_comment|/* shared irq possible */
+DECL|member|ltint
+id|ltint
+suffix:colon
+l_int|1
+comma
+macro_line|#ifdef DO_DXSUFLO
+DECL|member|dxsuflo
+id|dxsuflo
+suffix:colon
+l_int|1
+comma
+multiline_comment|/* disable transmit stop on uflo */
+macro_line|#endif
 DECL|member|full_duplex
 id|full_duplex
 suffix:colon
@@ -819,6 +842,26 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+id|PCI_USES_IO
+op_or
+id|PCI_USES_MASTER
+comma
+id|PCNET32_TOTAL_SIZE
+comma
+id|pcnet32_probe1
+)brace
+comma
+(brace
+l_string|&quot;AMD PCnetPCI series (IBM)&quot;
+comma
+id|PCI_VENDOR_ID_AMD
+comma
+id|PCI_DEVICE_ID_AMD_LANCE
+comma
+l_int|0x1014
+comma
+l_int|0x2000
 comma
 id|PCI_USES_IO
 op_or
@@ -1505,7 +1548,7 @@ comma
 id|PCI_SUBSYSTEM_VENDOR_ID
 comma
 op_amp
-id|sdid
+id|svid
 )paren
 suffix:semicolon
 id|pci_read_config_word
@@ -1516,7 +1559,7 @@ comma
 id|PCI_SUBSYSTEM_ID
 comma
 op_amp
-id|svid
+id|sdid
 )paren
 suffix:semicolon
 r_for
@@ -1890,6 +1933,18 @@ id|fset
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef DO_DXSUFLO
+r_int
+id|dxsuflo
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+r_int
+id|ltint
+op_assign
+l_int|0
+suffix:semicolon
 r_int
 id|chip_version
 suffix:semicolon
@@ -2106,6 +2161,10 @@ id|fset
 op_assign
 l_int|1
 suffix:semicolon
+id|ltint
+op_assign
+l_int|1
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -2289,6 +2348,7 @@ id|ioaddr
 comma
 l_int|80
 comma
+(paren
 id|a
 op_member_access_from_pointer
 id|read_csr
@@ -2298,9 +2358,22 @@ id|ioaddr
 comma
 l_int|80
 )paren
+op_amp
+l_int|0x0C00
+)paren
 op_or
 l_int|0x0c00
 )paren
+suffix:semicolon
+macro_line|#ifdef DO_DXSUFLO
+id|dxsuflo
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
+id|ltint
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 id|dev
@@ -2372,6 +2445,264 @@ id|i
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|chip_version
+op_plus
+l_int|1
+)paren
+op_amp
+l_int|0xfffe
+)paren
+op_eq
+l_int|0x2624
+)paren
+(brace
+multiline_comment|/* Version 0x2623 or 0x2624 */
+id|i
+op_assign
+id|a
+op_member_access_from_pointer
+id|read_csr
+c_func
+(paren
+id|ioaddr
+comma
+l_int|80
+)paren
+op_amp
+l_int|0x0C00
+suffix:semicolon
+multiline_comment|/* Check tx_start_pt */
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n    tx_start_pt(0x%04x):&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|i
+op_rshift
+l_int|10
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;  20 bytes,&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;  64 bytes,&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot; 128 bytes,&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|3
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;~220 bytes,&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|i
+op_assign
+id|a
+op_member_access_from_pointer
+id|read_bcr
+c_func
+(paren
+id|ioaddr
+comma
+l_int|18
+)paren
+suffix:semicolon
+multiline_comment|/* Check Burst/Bus control */
+id|printk
+c_func
+(paren
+l_string|&quot; BCR18(%x):&quot;
+comma
+id|i
+op_amp
+l_int|0xffff
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_amp
+(paren
+l_int|1
+op_lshift
+l_int|5
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;BurstWrEn &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_amp
+(paren
+l_int|1
+op_lshift
+l_int|6
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;BurstRdEn &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_amp
+(paren
+l_int|1
+op_lshift
+l_int|7
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;DWordIO &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_amp
+(paren
+l_int|1
+op_lshift
+l_int|11
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;NoUFlow &quot;
+)paren
+suffix:semicolon
+id|i
+op_assign
+id|a
+op_member_access_from_pointer
+id|read_bcr
+c_func
+(paren
+id|ioaddr
+comma
+l_int|25
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n    SRAMSIZE=0x%04x,&quot;
+comma
+id|i
+op_lshift
+l_int|8
+)paren
+suffix:semicolon
+id|i
+op_assign
+id|a
+op_member_access_from_pointer
+id|read_bcr
+c_func
+(paren
+id|ioaddr
+comma
+l_int|26
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; SRAM_BND=0x%04x,&quot;
+comma
+id|i
+op_lshift
+l_int|8
+)paren
+suffix:semicolon
+id|i
+op_assign
+id|a
+op_member_access_from_pointer
+id|read_bcr
+c_func
+(paren
+id|ioaddr
+comma
+l_int|27
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_amp
+(paren
+l_int|1
+op_lshift
+l_int|14
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;LowLatRx,&quot;
+)paren
+suffix:semicolon
+)brace
 id|dev-&gt;base_addr
 op_assign
 id|ioaddr
@@ -2471,6 +2802,16 @@ suffix:semicolon
 id|lp-&gt;full_duplex
 op_assign
 id|fdx
+suffix:semicolon
+macro_line|#ifdef DO_DXSUFLO
+id|lp-&gt;dxsuflo
+op_assign
+id|dxsuflo
+suffix:semicolon
+macro_line|#endif
+id|lp-&gt;ltint
+op_assign
+id|ltint
 suffix:semicolon
 id|lp-&gt;mii
 op_assign
@@ -3167,6 +3508,72 @@ id|val
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef DO_DXSUFLO 
+r_if
+c_cond
+(paren
+id|lp-&gt;dxsuflo
+)paren
+(brace
+multiline_comment|/* Disable transmit stop on underflow */
+id|val
+op_assign
+id|lp-&gt;a.read_csr
+(paren
+id|ioaddr
+comma
+l_int|3
+)paren
+suffix:semicolon
+id|val
+op_or_assign
+l_int|0x40
+suffix:semicolon
+id|lp-&gt;a.write_csr
+(paren
+id|ioaddr
+comma
+l_int|3
+comma
+id|val
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|lp-&gt;ltint
+)paren
+(brace
+multiline_comment|/* Enable TxDone-intr inhibitor */
+id|val
+op_assign
+id|lp-&gt;a.read_csr
+(paren
+id|ioaddr
+comma
+l_int|5
+)paren
+suffix:semicolon
+id|val
+op_or_assign
+(paren
+l_int|1
+op_lshift
+l_int|14
+)paren
+suffix:semicolon
+id|lp-&gt;a.write_csr
+(paren
+id|ioaddr
+comma
+l_int|5
+comma
+id|val
+)paren
+suffix:semicolon
+)brace
 id|lp-&gt;init_block.mode
 op_assign
 id|le16_to_cpu
@@ -3817,6 +4224,9 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+id|u16
+id|status
+suffix:semicolon
 r_int
 id|entry
 suffix:semicolon
@@ -4127,6 +4537,47 @@ comma
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* Default status -- will not enable Successful-TxDone&n;     * interrupt when that option is available to us.&n;     */
+id|status
+op_assign
+l_int|0x8300
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|lp-&gt;ltint
+)paren
+op_logical_and
+(paren
+(paren
+id|lp-&gt;cur_tx
+op_minus
+id|lp-&gt;dirty_tx
+op_eq
+id|TX_RING_SIZE
+op_div
+l_int|2
+)paren
+op_logical_or
+(paren
+id|lp-&gt;cur_tx
+op_minus
+id|lp-&gt;dirty_tx
+op_ge
+id|TX_RING_SIZE
+op_minus
+l_int|2
+)paren
+)paren
+)paren
+(brace
+multiline_comment|/* Enable Successful-TxDone interrupt if we have&n;&t; * 1/2 of, or nearly all of, our ring buffer Tx&squot;d&n;&t; * but not yet cleaned up.  Thus, most of the time,&n;&t; * we will not enable Successful-TxDone interrupts.&n;&t; */
+id|status
+op_assign
+l_int|0x9300
+suffix:semicolon
+)brace
 multiline_comment|/* Fill in a Tx ring entry */
 multiline_comment|/* Mask to ring buffer boundary. */
 id|entry
@@ -4196,7 +4647,7 @@ op_assign
 id|le16_to_cpu
 c_func
 (paren
-l_int|0x8300
+id|status
 )paren
 suffix:semicolon
 id|lp-&gt;cur_tx
@@ -4474,6 +4925,7 @@ l_int|0x0200
 (brace
 multiline_comment|/* Tx-done interrupt */
 r_int
+r_int
 id|dirty_tx
 op_assign
 id|lp-&gt;dirty_tx
@@ -4585,6 +5037,7 @@ l_int|0x10000000
 id|lp-&gt;stats.tx_window_errors
 op_increment
 suffix:semicolon
+macro_line|#ifndef DO_DXSUFLO
 r_if
 c_cond
 (paren
@@ -4593,15 +5046,15 @@ op_amp
 l_int|0x40000000
 )paren
 (brace
-multiline_comment|/* Ackk!  On FIFO errors the Tx unit is turned off! */
 id|lp-&gt;stats.tx_fifo_errors
 op_increment
 suffix:semicolon
+multiline_comment|/* Ackk!  On FIFO errors the Tx unit is turned off! */
 multiline_comment|/* Remove this verbosity later! */
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Tx FIFO error! Status %4.4x.&bslash;n&quot;
+l_string|&quot;%s: Tx FIFO error! CSR0=%4.4x&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -4613,6 +5066,45 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#else
+r_if
+c_cond
+(paren
+id|err_status
+op_amp
+l_int|0x40000000
+)paren
+(brace
+id|lp-&gt;stats.tx_fifo_errors
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lp-&gt;dxsuflo
+)paren
+(brace
+multiline_comment|/* If controller doesn&squot;t recover ... */
+multiline_comment|/* Ackk!  On FIFO errors the Tx unit is turned off! */
+multiline_comment|/* Remove this verbosity later! */
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Tx FIFO error! CSR0=%4.4x&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|csr0
+)paren
+suffix:semicolon
+id|must_restart
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 )brace
 r_else
 (brace
@@ -6306,6 +6798,14 @@ suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
+id|tx_start_pt
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
 id|options
 comma
 l_string|&quot;1-&quot;
@@ -6340,6 +6840,14 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+DECL|variable|tx_start_pt
+r_static
+r_int
+id|tx_start_pt
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 r_int
 DECL|function|init_module
 id|init_module
@@ -6358,6 +6866,25 @@ l_int|0
 id|pcnet32_debug
 op_assign
 id|debug
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|tx_start_pt
+op_ge
+l_int|0
+)paren
+op_logical_and
+(paren
+id|tx_start_pt
+op_le
+l_int|3
+)paren
+)paren
+id|tx_start
+op_assign
+id|tx_start_pt
 suffix:semicolon
 id|pcnet32_dev
 op_assign

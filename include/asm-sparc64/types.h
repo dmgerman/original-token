@@ -109,6 +109,12 @@ id|u64
 suffix:semicolon
 DECL|macro|BITS_PER_LONG
 mdefine_line|#define BITS_PER_LONG 64
+multiline_comment|/* Dma addresses are 32-bits wide for now.  */
+DECL|typedef|dma_addr_t
+r_typedef
+id|u32
+id|dma_addr_t
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* defined(_SPARC64_TYPES_H) */
 eof

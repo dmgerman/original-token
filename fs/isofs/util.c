@@ -619,15 +619,6 @@ l_int|60
 op_plus
 id|second
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sys_tz.tz_dsttime
-)paren
-id|crtime
-op_sub_assign
-l_int|3600
-suffix:semicolon
 multiline_comment|/* sign extend */
 r_if
 c_cond
@@ -645,7 +636,7 @@ op_lshift
 l_int|8
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t;&t; * The timezone offset is unreliable on some disks,&n;&t;&t; * so we make a sanity check.  In no case is it ever&n;&t;&t; * more than 13 hours from GMT, which is 52*15min.&n;&t;&t; * The time is always stored in localtime with the&n;&t;&t; * timezone offset being what get added to GMT to&n;&t;&t; * get to localtime.  Thus we need to subtract the offset&n;&t;&t; * to get to true GMT, which is what we store the time&n;&t;&t; * as internally.  On the local system, the user may set&n;&t;&t; * their timezone any way they wish, of course, so GMT&n;&t;&t; * gets converted back to localtime on the receiving&n;&t;&t; * system.&n;&t;&t; *&n;&t;&t; * NOTE: mkisofs in versions prior to mkisofs-1.10 had&n;&t;&t; * the sign wrong on the timezone offset.  This has now&n;&t;&t; * been corrected there too, but if you are getting screwy&n;&t;&t; * results this may be the explaination.  If enough people&n;&t;&t; * complain, a user configuration option could be added&n;&t;&t; * to add the timezone offset in with the wrong sign&n;&t;&t; * for &squot;compatibility&squot; with older discs, but I cannot see how&n;&t;&t; * it will matter that much.&n;&t;&t; *&n;&t;&t; * Thanks to kuhlmav@elec.canterbury.ac.nz (Volker Kuhlmann)&n;&t;&t; * for pointing out the sign error.&n;&t;&t; */
+multiline_comment|/* &n;&t;&t; * The timezone offset is unreliable on some disks,&n;&t;&t; * so we make a sanity check.  In no case is it ever&n;&t;&t; * more than 13 hours from GMT, which is 52*15min.&n;&t;&t; * The time is always stored in localtime with the&n;&t;&t; * timezone offset being what get added to GMT to&n;&t;&t; * get to localtime.  Thus we need to subtract the offset&n;&t;&t; * to get to true GMT, which is what we store the time&n;&t;&t; * as internally.  On the local system, the user may set&n;&t;&t; * their timezone any way they wish, of course, so GMT&n;&t;&t; * gets converted back to localtime on the receiving&n;&t;&t; * system.&n;&t;&t; *&n;&t;&t; * NOTE: mkisofs in versions prior to mkisofs-1.10 had&n;&t;&t; * the sign wrong on the timezone offset.  This has now&n;&t;&t; * been corrected there too, but if you are getting screwy&n;&t;&t; * results this may be the explanation.  If enough people&n;&t;&t; * complain, a user configuration option could be added&n;&t;&t; * to add the timezone offset in with the wrong sign&n;&t;&t; * for &squot;compatibility&squot; with older discs, but I cannot see how&n;&t;&t; * it will matter that much.&n;&t;&t; *&n;&t;&t; * Thanks to kuhlmav@elec.canterbury.ac.nz (Volker Kuhlmann)&n;&t;&t; * for pointing out the sign error.&n;&t;&t; */
 r_if
 c_cond
 (paren

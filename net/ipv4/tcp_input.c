@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.182 2000/01/21 23:45:59 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.183 2000/01/24 18:40:33 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; *&t;&t;Eric Schenk&t;:&t;Fix retransmitter so that it sends&n; *&t;&t;&t;&t;&t;next packet on ack of previous packet.&n; *&t;&t;Andi Kleen&t;:&t;Moved open_request checking here&n; *&t;&t;&t;&t;&t;and process RSTs for open_requests.&n; *&t;&t;Andi Kleen&t;:&t;Better prune_queue, and other fixes.&n; *&t;&t;Andrey Savochkin:&t;Fix RTT measurements in the presnce of&n; *&t;&t;&t;&t;&t;timestamps.&n; *&t;&t;Andrey Savochkin:&t;Check sequence numbers correctly when&n; *&t;&t;&t;&t;&t;removing SACKs due to in sequence incoming&n; *&t;&t;&t;&t;&t;data segments.&n; *&t;&t;Andi Kleen:&t;&t;Make sure we never ack data there is not&n; *&t;&t;&t;&t;&t;enough room for. Also make this condition&n; *&t;&t;&t;&t;&t;a fatal error if it might still happen.&n; *&t;&t;Andi Kleen:&t;&t;Add tcp_measure_rcv_mss to make &n; *&t;&t;&t;&t;&t;connections with MSS&lt;min(MTU,ann. MSS)&n; *&t;&t;&t;&t;&t;work without delayed acks. &n; *&t;&t;Andi Kleen:&t;&t;Process packets with PSH set in the&n; *&t;&t;&t;&t;&t;fast path.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -4403,10 +4403,22 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|tp.saw_tstamp
+)paren
+(brace
+id|tp.ts_recent
+op_assign
+id|tw-&gt;ts_recent
+suffix:semicolon
+id|tp.ts_recent_stamp
+op_assign
+id|tw-&gt;ts_recent_stamp
+suffix:semicolon
 id|paws_reject
 op_assign
-id|tp.saw_tstamp
-op_logical_and
 id|tcp_paws_check
 c_func
 (paren
@@ -4416,6 +4428,7 @@ comma
 id|th-&gt;rst
 )paren
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -10003,10 +10016,33 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ttp.saw_tstamp
+)paren
+(brace
+id|ttp.ts_recent
+op_assign
+id|req-&gt;ts_recent
+suffix:semicolon
+multiline_comment|/* We do not store true stamp, but it is not required,&n;&t;&t;&t; * it can be estimated (approximately)&n;&t;&t;&t; * from another data.&n;&t;&t;&t; */
+id|ttp.ts_recent_stamp
+op_assign
+id|xtime.tv_sec
+op_minus
+(paren
+(paren
+id|TCP_TIMEOUT_INIT
+op_div
+id|HZ
+)paren
+op_lshift
+id|req-&gt;retrans
+)paren
+suffix:semicolon
 id|paws_reject
 op_assign
-id|ttp.saw_tstamp
-op_logical_and
 id|tcp_paws_check
 c_func
 (paren
@@ -10016,6 +10052,7 @@ comma
 id|th-&gt;rst
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Check for pure retransmited SYN. */
 r_if
@@ -10550,7 +10587,41 @@ r_if
 c_cond
 (paren
 id|tp-&gt;saw_tstamp
-op_logical_and
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|tp-&gt;rcv_tsecr
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* Workaround for bug in linux-2.1 and early&n;&t;&t;&t;&t; * 2.2 kernels. Let&squot;s pretend that we did not&n;&t;&t;&t;&t; * see such timestamp to avoid bogus rtt value,&n;&t;&t;&t;&t; * calculated by tcp_ack().&n;&t;&t;&t;&t; */
+id|tp-&gt;saw_tstamp
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* But do not forget to store peer&squot;s timestamp! */
+r_if
+c_cond
+(paren
+id|th-&gt;syn
+)paren
+(brace
+id|tp-&gt;ts_recent
+op_assign
+id|tp-&gt;rcv_tsval
+suffix:semicolon
+id|tp-&gt;ts_recent_stamp
+op_assign
+id|xtime.tv_sec
+suffix:semicolon
+)brace
+)brace
+r_else
+r_if
+c_cond
 (paren
 (paren
 id|__s32
@@ -10573,7 +10644,6 @@ id|tp-&gt;syn_stamp
 )paren
 OL
 l_int|0
-)paren
 )paren
 (brace
 id|NETDEBUG
@@ -10603,6 +10673,7 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Now ACK is acceptable.&n;&t;&t; *&n;&t;&t; * &quot;If the RST bit is set&n;&t;&t; *    If the ACK was acceptable then signal the user &quot;error:&n;&t;&t; *    connection reset&quot;, drop the segment, enter CLOSED state,&n;&t;&t; *    delete TCB, and return.&quot;&n;&t;&t; */
 r_if
@@ -11706,6 +11777,25 @@ comma
 id|tmo
 op_minus
 id|TCP_TIMEWAIT_LEN
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|th-&gt;fin
+op_logical_or
+id|sk-&gt;lock.users
+)paren
+(brace
+multiline_comment|/* Bad case. We could lose such FIN otherwise.&n;&t;&t;&t;&t;&t;&t; * It is not a big problem, but it looks confusing&n;&t;&t;&t;&t;&t;&t; * and not so rare event. We still can lose it now,&n;&t;&t;&t;&t;&t;&t; * if it spins in bh_lock_sock(), but it is really&n;&t;&t;&t;&t;&t;&t; * marginal case.&n;&t;&t;&t;&t;&t;&t; */
+id|tcp_reset_keepalive_timer
+c_func
+(paren
+id|sk
+comma
+id|tmo
 )paren
 suffix:semicolon
 )brace

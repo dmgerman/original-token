@@ -2423,16 +2423,6 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|tms380tr_probe
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|smctr_probe
 c_func
 (paren
@@ -2468,14 +2458,6 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_IBMOL
 op_logical_and
 id|olympic_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_SKTR
-op_logical_and
-id|tms380tr_probe
 c_func
 (paren
 id|dev

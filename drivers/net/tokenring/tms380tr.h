@@ -1,8 +1,65 @@
-multiline_comment|/* tms380tr.h: TI TMS380 Token Ring driver for Linux&n; *&n; * Authors:&n; * - Christoph Goos &lt;cgoos@syskonnect.de&gt;&n; */
+multiline_comment|/* &n; * tms380tr.h: TI TMS380 Token Ring driver for Linux&n; *&n; * Authors:&n; * - Christoph Goos &lt;cgoos@syskonnect.de&gt;&n; * - Adam Fritzler &lt;mid@auk.cx&gt;&n; */
 macro_line|#ifndef __LINUX_TMS380TR_H
 DECL|macro|__LINUX_TMS380TR_H
 mdefine_line|#define __LINUX_TMS380TR_H
 macro_line|#ifdef __KERNEL__
+multiline_comment|/* module prototypes */
+r_int
+id|tms380tr_open
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_int
+id|tms380tr_close
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_void
+id|tms380tr_interrupt
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_int
+id|tmsdev_init
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_void
+id|tms380tr_wait
+c_func
+(paren
+r_int
+r_int
+id|time
+)paren
+suffix:semicolon
 DECL|macro|TMS380TR_MAX_ADAPTERS
 mdefine_line|#define TMS380TR_MAX_ADAPTERS 7
 DECL|macro|SEND_TIMEOUT
@@ -24,9 +81,6 @@ multiline_comment|/*  ----------------------------------------------------------
 multiline_comment|/*  Bit  0 | 1| 2| 3|| 4| 5| 6| 7|| 8| 9| 10| 11|| 12| 13| 14| 15|  */
 multiline_comment|/*  --------------------------------------------------------------  */
 multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/* Swap bytes of a word.                        */
-DECL|macro|SWAPB
-mdefine_line|#define SWAPB(x) (((unsigned short)((x) &lt;&lt; 8)) | ((unsigned short)((x) &gt;&gt; 8)))
 multiline_comment|/* Swap words of a long.                        */
 DECL|macro|SWAPW
 mdefine_line|#define SWAPW(x) (((x) &lt;&lt; 16) | ((x) &gt;&gt; 16))
@@ -43,30 +97,34 @@ multiline_comment|/* Get the high word of a long.                     */
 DECL|macro|HIWORD
 mdefine_line|#define HIWORD(l)       ((unsigned short)((unsigned long)(l) &gt;&gt; 16))
 multiline_comment|/* Token ring adapter I/O addresses for normal mode. */
+multiline_comment|/*&n; * The SIF registers.  Common to all adapters.&n; */
+multiline_comment|/* Basic SIF (SRSX = 0) */
 DECL|macro|SIFDAT
-mdefine_line|#define SIFDAT      &t;&t;0L&t;/* SIF/DMA data. */
+mdefine_line|#define SIFDAT      &t;&t;0x00&t;/* SIF/DMA data. */
 DECL|macro|SIFINC
-mdefine_line|#define SIFINC      &t;&t;2L  &t;/* IO Word data with auto increment. */
+mdefine_line|#define SIFINC      &t;&t;0x02  &t;/* IO Word data with auto increment. */
 DECL|macro|SIFINH
-mdefine_line|#define SIFINH      &t;&t;3L  &t;/* IO Byte data with auto increment. */
+mdefine_line|#define SIFINH      &t;&t;0x03  &t;/* IO Byte data with auto increment. */
 DECL|macro|SIFADR
-mdefine_line|#define SIFADR      &t;&t;4L  &t;/* SIF/DMA Address. */
+mdefine_line|#define SIFADR      &t;&t;0x04  &t;/* SIF/DMA Address. */
 DECL|macro|SIFCMD
-mdefine_line|#define SIFCMD      &t;&t;6L  &t;/* SIF Command. */
+mdefine_line|#define SIFCMD      &t;&t;0x06  &t;/* SIF Command. */
 DECL|macro|SIFSTS
-mdefine_line|#define SIFSTS      &t;&t;6L  &t;/* SIF Status. */
+mdefine_line|#define SIFSTS      &t;&t;0x06  &t;/* SIF Status. */
+multiline_comment|/* &quot;Extended&quot; SIF (SRSX = 1) */
 DECL|macro|SIFACL
-mdefine_line|#define SIFACL      &t;&t;8L  &t;/* SIF Adapter Control Register. */
+mdefine_line|#define SIFACL      &t;&t;0x08  &t;/* SIF Adapter Control Register. */
 DECL|macro|SIFADD
-mdefine_line|#define SIFADD      &t;&t;10L &t;/* SIF/DMA Address. */
+mdefine_line|#define SIFADD      &t;&t;0x0a &t;/* SIF/DMA Address. -- 0x0a */
 DECL|macro|SIFADX
-mdefine_line|#define SIFADX      &t;&t;12L
+mdefine_line|#define SIFADX      &t;&t;0x0c     /* 0x0c */
 DECL|macro|DMALEN
-mdefine_line|#define DMALEN      &t;&t;14L &t;/* SIF DMA length. */
+mdefine_line|#define DMALEN      &t;&t;0x0e &t;/* SIF DMA length. -- 0x0e */
+multiline_comment|/*&n; * POS Registers.  Only for ISA Adapters.&n; */
 DECL|macro|POSREG
-mdefine_line|#define POSREG      &t;&t;16L &t;/* Adapter Program Option Select (POS)&n;&t;&t;&t; &t;&t; * Register: base IO address + 16 byte.&n;&t;&t;&t; &t;&t; */
+mdefine_line|#define POSREG      &t;&t;0x10 &t;/* Adapter Program Option Select (POS)&n;&t;&t;&t; &t;&t; * Register: base IO address + 16 byte.&n;&t;&t;&t; &t;&t; */
 DECL|macro|POSREG_2
-mdefine_line|#define POSREG_2    &t;&t;24L &t;/* only for TR4/16+ adapter&n;&t;&t;&t; &t;&t; * base IO address + 24 byte.&n;&t;&t;&t; &t;&t; */
+mdefine_line|#define POSREG_2    &t;&t;24L &t;/* only for TR4/16+ adapter&n;&t;&t;&t; &t;&t; * base IO address + 24 byte. -- 0x18&n;&t;&t;&t; &t;&t; */
 multiline_comment|/* SIFCMD command codes (high-low) */
 DECL|macro|CMD_INTERRUPT_ADAPTER
 mdefine_line|#define CMD_INTERRUPT_ADAPTER   0x8000  /* Cause internal adapter interrupt */
@@ -107,10 +165,12 @@ DECL|macro|ACL_BOOT
 mdefine_line|#define ACL_BOOT&t;&t;0x0020
 DECL|macro|ACL_SINTEN
 mdefine_line|#define ACL_SINTEN&t;&t;0x0008  /* System interrupt enable/disable&n;&t;&t;&t;&t;&t; * (1/0): can be written if ACL_ARESET&n;&t;&t;&t;&t;&t; * is zero.&n;&t;&t;&t;&t;&t; */
-DECL|macro|ACL_SPEED4
-mdefine_line|#define ACL_SPEED4&t;&t;0x0003
-DECL|macro|ACL_SPEED16
-mdefine_line|#define ACL_SPEED16&t;&t;0x0001
+DECL|macro|ACL_PEN
+mdefine_line|#define ACL_PEN                 0x0004
+DECL|macro|ACL_NSELOUT0
+mdefine_line|#define ACL_NSELOUT0            0x0002 
+DECL|macro|ACL_NSELOUT1
+mdefine_line|#define ACL_NSELOUT1            0x0001&t;/* NSELOUTx have a card-specific&n;&t;&t;&t;&t;&t; * meaning for setting ring speed.&n;&t;&t;&t;&t;&t; */
 DECL|macro|PS_DMA_MASK
 mdefine_line|#define PS_DMA_MASK&t;&t;(ACL_SWHRQ | ACL_PSDMAEN)
 multiline_comment|/* SIFSTS register return codes (high-low) */
@@ -130,110 +190,116 @@ DECL|macro|ADAPTER_INT_PTRS
 mdefine_line|#define ADAPTER_INT_PTRS&t;0x0A00  /* Address offset of adapter internal&n;&t;&t;&t;&t;&t; * pointers 01:0a00 (high-low) have to&n;&t;&t;&t;&t;&t; * be read after init and before open.&n;&t;&t;&t;&t;&t; */
 multiline_comment|/* Interrupt Codes (only MAC IRQs) */
 DECL|macro|STS_IRQ_ADAPTER_CHECK
-mdefine_line|#define STS_IRQ_ADAPTER_CHECK   0x0000  /* unrecoverable hardware or&n;&t;&t;&t;&t;&t; * software error.&n;&t;&t;&t;&t;&t; */ 
+mdefine_line|#define STS_IRQ_ADAPTER_CHECK&t;0x0000&t;/* unrecoverable hardware or&n;&t;&t;&t;&t;&t; * software error.&n;&t;&t;&t;&t;&t; */ 
 DECL|macro|STS_IRQ_RING_STATUS
-mdefine_line|#define STS_IRQ_RING_STATUS     0x0004  /* SSB is updated with ring status. */
+mdefine_line|#define STS_IRQ_RING_STATUS&t;0x0004  /* SSB is updated with ring status. */
+DECL|macro|STS_IRQ_LLC_STATUS
+mdefine_line|#define STS_IRQ_LLC_STATUS&t;0x0005&t;/* Not used in MAC-only microcode */
 DECL|macro|STS_IRQ_SCB_CLEAR
-mdefine_line|#define STS_IRQ_SCB_CLEAR       0x0006  /* SCB clear, following an&n;&t;&t;&t;&t;&t; * SCB_REQUEST IRQ.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define STS_IRQ_SCB_CLEAR&t;0x0006&t;/* SCB clear, following an&n;&t;&t;&t;&t;&t; * SCB_REQUEST IRQ.&n;&t;&t;&t;&t;&t; */
+DECL|macro|STS_IRQ_TIMER
+mdefine_line|#define STS_IRQ_TIMER&t;&t;0x0007&t;/* Not normally used in MAC ucode */
 DECL|macro|STS_IRQ_COMMAND_STATUS
-mdefine_line|#define STS_IRQ_COMMAND_STATUS  0x0008  /* SSB is updated with command &n;&t;&t;&t;&t;&t; * status.&n;&t;&t;&t;&t;&t; */ 
+mdefine_line|#define STS_IRQ_COMMAND_STATUS&t;0x0008&t;/* SSB is updated with command &n;&t;&t;&t;&t;&t; * status.&n;&t;&t;&t;&t;&t; */ 
 DECL|macro|STS_IRQ_RECEIVE_STATUS
-mdefine_line|#define STS_IRQ_RECEIVE_STATUS  0x000A  /* SSB is updated with receive&n;&t;&t;&t;&t;&t; * status.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define STS_IRQ_RECEIVE_STATUS&t;0x000A&t;/* SSB is updated with receive&n;&t;&t;&t;&t;&t; * status.&n;&t;&t;&t;&t;&t; */
 DECL|macro|STS_IRQ_TRANSMIT_STATUS
-mdefine_line|#define STS_IRQ_TRANSMIT_STATUS 0x000C  /* SSB is updated with transmit&n;                                         * status&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define STS_IRQ_TRANSMIT_STATUS&t;0x000C&t;/* SSB is updated with transmit&n;                                         * status&n;&t;&t;&t;&t;&t; */
+DECL|macro|STS_IRQ_RECEIVE_PENDING
+mdefine_line|#define STS_IRQ_RECEIVE_PENDING&t;0x000E&t;/* Not used in MAC-only microcode */
 DECL|macro|STS_IRQ_MASK
-mdefine_line|#define STS_IRQ_MASK            0x000F  /* = STS_ERROR_MASK. */
+mdefine_line|#define STS_IRQ_MASK&t;&t;0x000F&t;/* = STS_ERROR_MASK. */
 multiline_comment|/* TRANSMIT_STATUS completion code: (SSB.Parm[0]) */
 DECL|macro|COMMAND_COMPLETE
-mdefine_line|#define COMMAND_COMPLETE        0x0080  /* TRANSMIT command completed&n;                                         * (avoid this!) issue another transmit&n;&t;&t;&t;&t;&t; * to send additional frames.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define COMMAND_COMPLETE&t;0x0080&t;/* TRANSMIT command completed&n;                                         * (avoid this!) issue another transmit&n;&t;&t;&t;&t;&t; * to send additional frames.&n;&t;&t;&t;&t;&t; */
 DECL|macro|FRAME_COMPLETE
-mdefine_line|#define FRAME_COMPLETE          0x0040  /* Frame has been transmitted;&n;&t;&t;&t;&t;&t; * INTERRUPT_FRAME bit was set in the&n;&t;&t;&t;&t;&t; * CSTAT request; indication of possibly&n;&t;&t;&t;&t;&t; * more than one frame transmissions!&n;&t;&t;&t;&t;&t; * SSB.Parm[0-1]: 32 bit pointer to&n;&t;&t;&t;&t;&t; * TPL of last frame.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define FRAME_COMPLETE&t;&t;0x0040&t;/* Frame has been transmitted;&n;&t;&t;&t;&t;&t; * INTERRUPT_FRAME bit was set in the&n;&t;&t;&t;&t;&t; * CSTAT request; indication of possibly&n;&t;&t;&t;&t;&t; * more than one frame transmissions!&n;&t;&t;&t;&t;&t; * SSB.Parm[0-1]: 32 bit pointer to&n;&t;&t;&t;&t;&t; * TPL of last frame.&n;&t;&t;&t;&t;&t; */
 DECL|macro|LIST_ERROR
-mdefine_line|#define LIST_ERROR              0x0020  /* Error in one of the TPLs that&n;&t;&t;&t;&t;&t; * compose the frame; TRANSMIT&n;&t;&t;&t;&t;&t; * terminated; Parm[1-2]: 32 bit pointer&n;&t;&t;&t;&t;&t; * to TPL which starts the error&n;&t;&t;&t;&t;&t; * frame; error details in bits 8-13.&n;&t;&t;&t;&t;&t; * (14?)&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define LIST_ERROR&t;&t;0x0020&t;/* Error in one of the TPLs that&n;&t;&t;&t;&t;&t; * compose the frame; TRANSMIT&n;&t;&t;&t;&t;&t; * terminated; Parm[1-2]: 32bit pointer&n;&t;&t;&t;&t;&t; * to TPL which starts the error&n;&t;&t;&t;&t;&t; * frame; error details in bits 8-13.&n;&t;&t;&t;&t;&t; * (14?)&n;&t;&t;&t;&t;&t; */
 DECL|macro|FRAME_SIZE_ERROR
-mdefine_line|#define FRAME_SIZE_ERROR        0x8000  /* FRAME_SIZE does not equal the sum of&n;&t;&t;&t;&t;&t; * the valid DATA_COUNT fields;&n;&t;&t;&t;&t;&t; * FRAME_SIZE less than header plus&n;&t;&t;&t;&t;&t; * information field. (15 bytes +&n;&t;&t;&t;&t;&t; * routing field) Or if FRAME_SIZE&n;&t;&t;&t;&t;&t; * was specified as zero in one list.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define FRAME_SIZE_ERROR&t;0x8000&t;/* FRAME_SIZE does not equal the sum of&n;&t;&t;&t;&t;&t; * the valid DATA_COUNT fields;&n;&t;&t;&t;&t;&t; * FRAME_SIZE less than header plus&n;&t;&t;&t;&t;&t; * information field. (15 bytes +&n;&t;&t;&t;&t;&t; * routing field) Or if FRAME_SIZE&n;&t;&t;&t;&t;&t; * was specified as zero in one list.&n;&t;&t;&t;&t;&t; */
 DECL|macro|TX_THRESHOLD
-mdefine_line|#define TX_THRESHOLD            0x4000  /* FRAME_SIZE greater than (BUFFER_SIZE&n;&t;&t;&t;&t;&t; * - 9) * TX_BUF_MAX.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define TX_THRESHOLD&t;&t;0x4000&t;/* FRAME_SIZE greater than (BUFFER_SIZE&n;&t;&t;&t;&t;&t; * - 9) * TX_BUF_MAX.&n;&t;&t;&t;&t;&t; */
 DECL|macro|ODD_ADDRESS
-mdefine_line|#define ODD_ADDRESS             0x2000  /* Odd forward pointer value is&n;&t;&t;&t;&t;&t; * read on a list without END_FRAME&n;&t;&t;&t;&t;&t; * indication.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define ODD_ADDRESS&t;&t;0x2000&t;/* Odd forward pointer value is&n;&t;&t;&t;&t;&t; * read on a list without END_FRAME&n;&t;&t;&t;&t;&t; * indication.&n;&t;&t;&t;&t;&t; */
 DECL|macro|FRAME_ERROR
-mdefine_line|#define FRAME_ERROR             0x1000  /* START_FRAME bit is (not) anticipated,&n;&t;&t;&t;&t;&t; * but (not) set.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define FRAME_ERROR&t;&t;0x1000&t;/* START_FRAME bit (not) anticipated,&n;&t;&t;&t;&t;&t; * but (not) set.&n;&t;&t;&t;&t;&t; */
 DECL|macro|ACCESS_PRIORITY_ERROR
-mdefine_line|#define ACCESS_PRIORITY_ERROR   0x0800  /* Access priority requested has not&n;&t;&t;&t;&t;&t; * been allowed.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define ACCESS_PRIORITY_ERROR&t;0x0800&t;/* Access priority requested has not&n;&t;&t;&t;&t;&t; * been allowed.&n;&t;&t;&t;&t;&t; */
 DECL|macro|UNENABLED_MAC_FRAME
-mdefine_line|#define UNENABLED_MAC_FRAME     0x0400  /* MAC frame has source class of zero&n;&t;&t;&t;&t;&t; * or MAC frame PCF ATTN field is&n;&t;&t;&t;&t;&t; * greater than one.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define UNENABLED_MAC_FRAME&t;0x0400&t;/* MAC frame has source class of zero&n;&t;&t;&t;&t;&t; * or MAC frame PCF ATTN field is&n;&t;&t;&t;&t;&t; * greater than one.&n;&t;&t;&t;&t;&t; */
 DECL|macro|ILLEGAL_FRAME_FORMAT
-mdefine_line|#define ILLEGAL_FRAME_FORMAT    0x0200  /* Bit 0 or FC field was set to one. */
+mdefine_line|#define ILLEGAL_FRAME_FORMAT&t;0x0200&t;/* Bit 0 or FC field was set to one. */
 multiline_comment|/*&n; * Since we need to support some functions even if the adapter is in a&n; * CLOSED state, we have a (pseudo-) command queue which holds commands&n; * that are outstandig to be executed.&n; *&n; * Each time a command completes, an interrupt occurs and the next&n; * command is executed. The command queue is actually a simple word with &n; * a bit for each outstandig command. Therefore the commands will not be&n; * executed in the order they have been queued.&n; *&n; * The following defines the command code bits and the command queue:&n; */
 DECL|macro|OC_OPEN
-mdefine_line|#define OC_OPEN                 0x0001&t;/* OPEN command */
+mdefine_line|#define OC_OPEN&t;&t;&t;0x0001&t;/* OPEN command */
 DECL|macro|OC_TRANSMIT
-mdefine_line|#define OC_TRANSMIT             0x0002  /* TRANSMIT command */
+mdefine_line|#define OC_TRANSMIT&t;&t;0x0002&t;/* TRANSMIT command */
 DECL|macro|OC_TRANSMIT_HALT
-mdefine_line|#define OC_TRANSMIT_HALT        0x0004  /* TRANSMIT_HALT command */
+mdefine_line|#define OC_TRANSMIT_HALT&t;0x0004&t;/* TRANSMIT_HALT command */
 DECL|macro|OC_RECEIVE
-mdefine_line|#define OC_RECEIVE              0x0008  /* RECEIVE command */
+mdefine_line|#define OC_RECEIVE&t;&t;0x0008&t;/* RECEIVE command */
 DECL|macro|OC_CLOSE
-mdefine_line|#define OC_CLOSE                0x0010  /* CLOSE command */
+mdefine_line|#define OC_CLOSE&t;&t;0x0010&t;/* CLOSE command */
 DECL|macro|OC_SET_GROUP_ADDR
-mdefine_line|#define OC_SET_GROUP_ADDR       0x0020  /* SET_GROUP_ADDR command */
+mdefine_line|#define OC_SET_GROUP_ADDR&t;0x0020&t;/* SET_GROUP_ADDR command */
 DECL|macro|OC_SET_FUNCT_ADDR
-mdefine_line|#define OC_SET_FUNCT_ADDR       0x0040  /* SET_FUNCT_ADDR command */
+mdefine_line|#define OC_SET_FUNCT_ADDR&t;0x0040&t;/* SET_FUNCT_ADDR command */
 DECL|macro|OC_READ_ERROR_LOG
-mdefine_line|#define OC_READ_ERROR_LOG       0x0080  /* READ_ERROR_LOG command */
+mdefine_line|#define OC_READ_ERROR_LOG&t;0x0080&t;/* READ_ERROR_LOG command */
 DECL|macro|OC_READ_ADAPTER
-mdefine_line|#define OC_READ_ADAPTER         0x0100  /* READ_ADAPTER command */
+mdefine_line|#define OC_READ_ADAPTER&t;&t;0x0100&t;/* READ_ADAPTER command */
 DECL|macro|OC_MODIFY_OPEN_PARMS
-mdefine_line|#define OC_MODIFY_OPEN_PARMS    0x0400  /* MODIFY_OPEN_PARMS command */
+mdefine_line|#define OC_MODIFY_OPEN_PARMS&t;0x0400&t;/* MODIFY_OPEN_PARMS command */
 DECL|macro|OC_RESTORE_OPEN_PARMS
-mdefine_line|#define OC_RESTORE_OPEN_PARMS   0x0800  /* RESTORE_OPEN_PARMS command */
+mdefine_line|#define OC_RESTORE_OPEN_PARMS&t;0x0800&t;/* RESTORE_OPEN_PARMS command */
 DECL|macro|OC_SET_FIRST_16_GROUP
-mdefine_line|#define OC_SET_FIRST_16_GROUP   0x1000  /* SET_FIRST_16_GROUP command */
+mdefine_line|#define OC_SET_FIRST_16_GROUP&t;0x1000&t;/* SET_FIRST_16_GROUP command */
 DECL|macro|OC_SET_BRIDGE_PARMS
-mdefine_line|#define OC_SET_BRIDGE_PARMS     0x2000  /* SET_BRIDGE_PARMS command */
+mdefine_line|#define OC_SET_BRIDGE_PARMS&t;0x2000&t;/* SET_BRIDGE_PARMS command */
 DECL|macro|OC_CONFIG_BRIDGE_PARMS
-mdefine_line|#define OC_CONFIG_BRIDGE_PARMS  0x4000  /* CONFIG_BRIDGE_PARMS command */
+mdefine_line|#define OC_CONFIG_BRIDGE_PARMS&t;0x4000&t;/* CONFIG_BRIDGE_PARMS command */
 DECL|macro|OPEN
-mdefine_line|#define OPEN&t;&t;&t;0x0300  /* C: open command. S: completion. */
+mdefine_line|#define OPEN&t;&t;&t;0x0300&t;/* C: open command. S: completion. */
 DECL|macro|TRANSMIT
-mdefine_line|#define TRANSMIT&t;&t;0x0400  /* C: transmit command. S: completion&n;&t;&t;&t;&t;&t; * status. (reject: COMMAND_REJECT if&n;&t;&t;&t;&t;&t; * adapter not opened, TRANSMIT already&n;&t;&t;&t;&t;&t; * issued or address passed in the SCB&n;&t;&t;&t;&t;&t; * not word aligned)&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define TRANSMIT&t;&t;0x0400&t;/* C: transmit command. S: completion&n;&t;&t;&t;&t;&t; * status. (reject: COMMAND_REJECT if&n;&t;&t;&t;&t;&t; * adapter not opened, TRANSMIT already&n;&t;&t;&t;&t;&t; * issued or address passed in the SCB&n;&t;&t;&t;&t;&t; * not word aligned)&n;&t;&t;&t;&t;&t; */
 DECL|macro|TRANSMIT_HALT
-mdefine_line|#define TRANSMIT_HALT&t;&t;0x0500  /* C: interrupt TX TPL chain; if no&n;&t;&t;&t;&t;&t; * TRANSMIT command issued, the command&n;&t;&t;&t;&t;&t; * is ignored. (completion with TRANSMIT&n;&t;&t;&t;&t;&t; * status (0x0400)!)&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define TRANSMIT_HALT&t;&t;0x0500&t;/* C: interrupt TX TPL chain; if no&n;&t;&t;&t;&t;&t; * TRANSMIT command issued, the command&n;&t;&t;&t;&t;&t; * is ignored (completion with TRANSMIT&n;&t;&t;&t;&t;&t; * status (0x0400)!)&n;&t;&t;&t;&t;&t; */
 DECL|macro|RECEIVE
-mdefine_line|#define RECEIVE&t;&t;&t;0x0600  /* C: receive command. S: completion&n;&t;&t;&t;&t;&t; * status. (reject: COMMAND_REJECT if&n;&t;&t;&t;&t;&t; * adapter not opened, RECEIVE already&n;&t;&t;&t;&t;&t; * issued or address passed in the SCB &n;&t;&t;&t;&t;&t; * not word aligned)&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define RECEIVE&t;&t;&t;0x0600&t;/* C: receive command. S: completion&n;&t;&t;&t;&t;&t; * status. (reject: COMMAND_REJECT if&n;&t;&t;&t;&t;&t; * adapter not opened, RECEIVE already&n;&t;&t;&t;&t;&t; * issued or address passed in the SCB &n;&t;&t;&t;&t;&t; * not word aligned)&n;&t;&t;&t;&t;&t; */
 DECL|macro|CLOSE
-mdefine_line|#define CLOSE&t;&t;&t;0x0700  /* C: close adapter. S: completion.&n;&t;&t;&t;&t;&t; * (COMMAND_REJECT if adapter not open)&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define CLOSE&t;&t;&t;0x0700&t;/* C: close adapter. S: completion.&n;&t;&t;&t;&t;&t; * (COMMAND_REJECT if adapter not open)&n;&t;&t;&t;&t;&t; */
 DECL|macro|SET_GROUP_ADDR
-mdefine_line|#define SET_GROUP_ADDR&t;&t;0x0800  /* C: alter adapter group address after&n;&t;&t;&t;&t;&t; * OPEN.  S: completion. (COMMAND_REJECT&n;&t;&t;&t;&t;&t; * if adapter not open)&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define SET_GROUP_ADDR&t;&t;0x0800&t;/* C: alter adapter group address after&n;&t;&t;&t;&t;&t; * OPEN. S: completion. (COMMAND_REJECT&n;&t;&t;&t;&t;&t; * if adapter not open)&n;&t;&t;&t;&t;&t; */
 DECL|macro|SET_FUNCT_ADDR
-mdefine_line|#define SET_FUNCT_ADDR&t;&t;0x0900  /* C: alter adapter functional address&n;&t;&t;&t;&t;&t; * after OPEN. S: completion.&n;&t;&t;&t;&t;&t; * (COMMAND_REJECT if adapter not open)&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define SET_FUNCT_ADDR&t;&t;0x0900&t;/* C: alter adapter functional address&n;&t;&t;&t;&t;&t; * after OPEN. S: completion.&n;&t;&t;&t;&t;&t; * (COMMAND_REJECT if adapter not open)&n;&t;&t;&t;&t;&t; */
 DECL|macro|READ_ERROR_LOG
-mdefine_line|#define READ_ERROR_LOG&t;&t;0x0A00  /* C: read adapter error counters.&n;&t;&t;&t;&t;&t; * S: completion. (command ignored&n;&t;&t;&t;&t;&t; * if adapter not open!)&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define READ_ERROR_LOG&t;&t;0x0A00&t;/* C: read adapter error counters.&n;&t;&t;&t;&t;&t; * S: completion. (command ignored&n;&t;&t;&t;&t;&t; * if adapter not open!)&n;&t;&t;&t;&t;&t; */
 DECL|macro|READ_ADAPTER
-mdefine_line|#define READ_ADAPTER&t;&t;0x0B00  /* C: read data from adapter memory.&n;&t;&t;&t;&t;&t; * (important: after init and before&n;&t;&t;&t;&t;&t; * open!) S: completion. (ADAPTER_CHECK&n;&t;&t;&t;&t;&t; * interrupt if undefined storage area&n;&t;&t;&t;&t;&t; * read)&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define READ_ADAPTER&t;&t;0x0B00&t;/* C: read data from adapter memory.&n;&t;&t;&t;&t;&t; * (important: after init and before&n;&t;&t;&t;&t;&t; * open!) S: completion. (ADAPTER_CHECK&n;&t;&t;&t;&t;&t; * interrupt if undefined storage area&n;&t;&t;&t;&t;&t; * read)&n;&t;&t;&t;&t;&t; */
 DECL|macro|MODIFY_OPEN_PARMS
-mdefine_line|#define MODIFY_OPEN_PARMS&t;0x0D00  /* C: modify some adapter operational&n;&t;&t;&t;&t;&t; * parameters. (bit correspondend to&n;&t;&t;&t;&t;&t; * WRAP_INTERFACE is ignored)&n;&t;&t;&t;&t;&t; * S: completion. (reject: &n;&t;&t;&t;&t;&t; * COMMAND_REJECT)&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define MODIFY_OPEN_PARMS&t;0x0D00&t;/* C: modify some adapter operational&n;&t;&t;&t;&t;&t; * parameters. (bit correspondend to&n;&t;&t;&t;&t;&t; * WRAP_INTERFACE is ignored)&n;&t;&t;&t;&t;&t; * S: completion. (reject: &n;&t;&t;&t;&t;&t; * COMMAND_REJECT)&n;&t;&t;&t;&t;&t; */
 DECL|macro|RESTORE_OPEN_PARMS
-mdefine_line|#define RESTORE_OPEN_PARMS&t;0x0E00  /* C: modify some adapter operational&n;&t;&t;&t;&t;&t; * parameters. (bit correspondend&n;&t;&t;&t;&t;&t; * to WRAP_INTERFACE is ignored)&n;&t;&t;&t;&t;&t; * S: completion. (reject:&n;&t;&t;&t;&t;&t; * COMMAND_REJECT)&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define RESTORE_OPEN_PARMS&t;0x0E00&t;/* C: modify some adapter operational&n;&t;&t;&t;&t;&t; * parameters. (bit correspondend&n;&t;&t;&t;&t;&t; * to WRAP_INTERFACE is ignored)&n;&t;&t;&t;&t;&t; * S: completion. (reject:&n;&t;&t;&t;&t;&t; * COMMAND_REJECT)&n;&t;&t;&t;&t;&t; */
 DECL|macro|SET_FIRST_16_GROUP
-mdefine_line|#define SET_FIRST_16_GROUP&t;0x0F00  /* C: alter the first two bytes in&n;&t;&t;&t;&t;&t; * adapter group address.&n;&t;&t;&t;&t;&t; * S: completion. (reject:&n;&t;&t;&t;&t;&t; * COMMAND_REJECT)&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define SET_FIRST_16_GROUP&t;0x0F00&t;/* C: alter the first two bytes in&n;&t;&t;&t;&t;&t; * adapter group address.&n;&t;&t;&t;&t;&t; * S: completion. (reject:&n;&t;&t;&t;&t;&t; * COMMAND_REJECT)&n;&t;&t;&t;&t;&t; */
 DECL|macro|SET_BRIDGE_PARMS
-mdefine_line|#define SET_BRIDGE_PARMS&t;0x1000  /* C: values and conditions for the&n;&t;&t;&t;&t;&t; * adapter hardware to use when frames&n;&t;&t;&t;&t;&t; * are copied for forwarding.&n;&t;&t;&t;&t;&t; * S: completion. (reject:&n;&t;&t;&t;&t;&t; * COMMAND_REJECT)&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define SET_BRIDGE_PARMS&t;0x1000&t;/* C: values and conditions for the&n;&t;&t;&t;&t;&t; * adapter hardware to use when frames&n;&t;&t;&t;&t;&t; * are copied for forwarding.&n;&t;&t;&t;&t;&t; * S: completion. (reject:&n;&t;&t;&t;&t;&t; * COMMAND_REJECT)&n;&t;&t;&t;&t;&t; */
 DECL|macro|CONFIG_BRIDGE_PARMS
-mdefine_line|#define CONFIG_BRIDGE_PARMS 0x1100&t;/* C: ..&n;&t;&t;&t;&t;&t; * S: completion. (reject:&n;&t;&t;&t;&t;&t; * COMMAND_REJECT)&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define CONFIG_BRIDGE_PARMS&t;0x1100&t;/* C: ..&n;&t;&t;&t;&t;&t; * S: completion. (reject:&n;&t;&t;&t;&t;&t; * COMMAND_REJECT)&n;&t;&t;&t;&t;&t; */
 DECL|macro|SPEED_4
-mdefine_line|#define SPEED_4         4
+mdefine_line|#define SPEED_4&t;&t;&t;4
 DECL|macro|SPEED_16
-mdefine_line|#define SPEED_16        16&t;/* Default transmission speed  */
+mdefine_line|#define SPEED_16&t;&t;16&t;/* Default transmission speed  */
 multiline_comment|/* Initialization Parameter Block (IPB); word alignment necessary! */
 DECL|macro|BURST_SIZE
-mdefine_line|#define BURST_SIZE      0x0018  /* Default burst size */
+mdefine_line|#define BURST_SIZE&t;0x0018&t;/* Default burst size */
 DECL|macro|BURST_MODE
-mdefine_line|#define BURST_MODE      0x9F00  /* Burst mode enable */
+mdefine_line|#define BURST_MODE&t;0x9F00&t;/* Burst mode enable */
 DECL|macro|DMA_RETRIES
-mdefine_line|#define DMA_RETRIES     0x0505  /* Magic DMA retry number... */
+mdefine_line|#define DMA_RETRIES&t;0x0505&t;/* Magic DMA retry number... */
 DECL|macro|CYCLE_TIME
-mdefine_line|#define CYCLE_TIME      3&t;/* Default AT-bus cycle time: 500 ns&n;&t;&t;&t;&t; * (later adapter version: fix  cycle time!)&n;&t;&t;&t;&t; */
+mdefine_line|#define CYCLE_TIME&t;3&t;/* Default AT-bus cycle time: 500 ns&n;&t;&t;&t;&t; * (later adapter version: fix  cycle time!)&n;&t;&t;&t;&t; */
 DECL|macro|LINE_SPEED_BIT
 mdefine_line|#define LINE_SPEED_BIT&t;0x80
 multiline_comment|/* Macro definition for the wait function. */
@@ -252,7 +318,7 @@ mdefine_line|#define FOUR_SECONDS&t;&t;(ONE_SECOND_TICKS * 4)
 DECL|macro|FIVE_SECONDS
 mdefine_line|#define FIVE_SECONDS&t;&t;(ONE_SECOND_TICKS * 5)
 DECL|macro|BUFFER_SIZE
-mdefine_line|#define BUFFER_SIZE 2048&t;/* Buffers on Adapter */
+mdefine_line|#define BUFFER_SIZE &t;&t;2048&t;/* Buffers on Adapter */
 macro_line|#pragma pack(1)
 r_typedef
 r_struct
@@ -323,13 +389,13 @@ r_int
 r_int
 id|SCB_Addr
 suffix:semicolon
-multiline_comment|/* SCB address: even, word aligned, high-low. */
+multiline_comment|/* SCB address: even, word aligned, high-low */
 DECL|member|SSB_Addr
 r_int
 r_int
 id|SSB_Addr
 suffix:semicolon
-multiline_comment|/* SSB address: even, word aligned, high-low. */
+multiline_comment|/* SSB address: even, word aligned, high-low */
 DECL|typedef|IPB
 DECL|typedef|IPB_Ptr
 )brace
@@ -347,40 +413,41 @@ mdefine_line|#define TPL_SIZE&t;8+6*TX_FRAG_NUM /* Depending on fragments per TP
 DECL|macro|RPL_SIZE
 mdefine_line|#define RPL_SIZE&t;14&t;&t;/* (with TI firmware v2.26 handling&n;&t;&t;&t;&t;&t; * up to nine fragments possible)&n;&t;&t;&t;&t;&t; */
 DECL|macro|TX_BUF_MIN
-mdefine_line|#define TX_BUF_MIN      20&t;&t;/* ??? (Stephan: calculation with */
+mdefine_line|#define TX_BUF_MIN&t;20&t;&t;/* ??? (Stephan: calculation with */
 DECL|macro|TX_BUF_MAX
-mdefine_line|#define TX_BUF_MAX      40&t;&t;/* BUFFER_SIZE and MAX_FRAME_SIZE) ??? &n;&t;&t;&t;&t;&t; */
+mdefine_line|#define TX_BUF_MAX&t;40&t;&t;/* BUFFER_SIZE and MAX_FRAME_SIZE) ??? &n;&t;&t;&t;&t;&t; */
 DECL|macro|DISABLE_EARLY_TOKEN_RELEASE
-mdefine_line|#define DISABLE_EARLY_TOKEN_RELEASE 0x1000
+mdefine_line|#define DISABLE_EARLY_TOKEN_RELEASE &t;0x1000
 multiline_comment|/* OPEN Options (high-low) */
 DECL|macro|WRAP_INTERFACE
 mdefine_line|#define WRAP_INTERFACE&t;&t;0x0080&t;/* Inserting omitted for test&n;&t;&t;&t;&t;&t; * purposes; transmit data appears&n;&t;&t;&t;&t;&t; * as receive data. (usefull for&n;&t;&t;&t;&t;&t; * testing; change: CLOSE necessary)&n;&t;&t;&t;&t;&t; */
 DECL|macro|DISABLE_HARD_ERROR
-mdefine_line|#define DISABLE_HARD_ERROR&t;0x0040  /* On HARD_ERROR &amp; TRANSMIT_BEACON&n;&t;&t;&t;&t;&t; * no RING.STATUS interrupt.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define DISABLE_HARD_ERROR&t;0x0040&t;/* On HARD_ERROR &amp; TRANSMIT_BEACON&n;&t;&t;&t;&t;&t; * no RING.STATUS interrupt.&n;&t;&t;&t;&t;&t; */
 DECL|macro|DISABLE_SOFT_ERROR
-mdefine_line|#define DISABLE_SOFT_ERROR&t;0x0020  /* On SOFT_ERROR, no RING.STATUS&n;&t;&t;&t;&t;&t; * interrupt.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define DISABLE_SOFT_ERROR&t;0x0020&t;/* On SOFT_ERROR, no RING.STATUS&n;&t;&t;&t;&t;&t; * interrupt.&n;&t;&t;&t;&t;&t; */
 DECL|macro|PASS_ADAPTER_MAC_FRAMES
-mdefine_line|#define PASS_ADAPTER_MAC_FRAMES 0x0010  /* Passing unsupported MAC frames&n;&t;&t;&t;&t;&t; * to system.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define PASS_ADAPTER_MAC_FRAMES&t;0x0010&t;/* Passing unsupported MAC frames&n;&t;&t;&t;&t;&t; * to system.&n;&t;&t;&t;&t;&t; */
 DECL|macro|PASS_ATTENTION_FRAMES
-mdefine_line|#define PASS_ATTENTION_FRAMES   0x0008  /* All changed attention MAC frames are&n;&t;&t;&t;&t;&t; * passed to the system.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define PASS_ATTENTION_FRAMES&t;0x0008&t;/* All changed attention MAC frames are&n;&t;&t;&t;&t;&t; * passed to the system.&n;&t;&t;&t;&t;&t; */
 DECL|macro|PAD_ROUTING_FIELD
-mdefine_line|#define PAD_ROUTING_FIELD&t;0x0004  /* Routing field is padded to 18&n;&t;&t;&t;&t;&t; * bytes.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define PAD_ROUTING_FIELD&t;0x0004&t;/* Routing field is padded to 18&n;&t;&t;&t;&t;&t; * bytes.&n;&t;&t;&t;&t;&t; */
 DECL|macro|FRAME_HOLD
-mdefine_line|#define FRAME_HOLD&t;&t;0x0002  /* Adapter waits for entire frame before&n;&t;&t;&t;&t;&t; * initiating DMA transfer; otherwise:&n;&t;&t;&t;&t;&t; * DMA transfer initiation if internal&n;&t;&t;&t;&t;&t; * buffer filled.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define FRAME_HOLD&t;&t;0x0002&t;/*Adapter waits for entire frame before&n;&t;&t;&t;&t;&t; * initiating DMA transfer; otherwise:&n;&t;&t;&t;&t;&t; * DMA transfer initiation if internal&n;&t;&t;&t;&t;&t; * buffer filled.&n;&t;&t;&t;&t;&t; */
 DECL|macro|CONTENDER
-mdefine_line|#define CONTENDER&t;&t;0x0001  /* Adapter participates in the monitor&n;&t;&t;&t;&t;&t; * contention process.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define CONTENDER&t;&t;0x0001&t;/* Adapter participates in the monitor&n;&t;&t;&t;&t;&t; * contention process.&n;&t;&t;&t;&t;&t; */
 DECL|macro|PASS_BEACON_MAC_FRAMES
-mdefine_line|#define PASS_BEACON_MAC_FRAMES  0x8000  /* Adapter passes beacon MAC frames&n;&t;&t;&t;&t;&t; * to the system.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define PASS_BEACON_MAC_FRAMES&t;0x8000&t;/* Adapter passes beacon MAC frames&n;&t;&t;&t;&t;&t; * to the system.&n;&t;&t;&t;&t;&t; */
 DECL|macro|EARLY_TOKEN_RELEASE
-mdefine_line|#define EARLY_TOKEN_RELEASE &t;0x1000  /* Only valid in 16 Mbps operation;&n;&t;&t;&t;&t;&t; * 0 = ETR. (no effect in 4 Mbps&n;&t;&t;&t;&t;&t; * operation)&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define EARLY_TOKEN_RELEASE &t;0x1000&t;/* Only valid in 16 Mbps operation;&n;&t;&t;&t;&t;&t; * 0 = ETR. (no effect in 4 Mbps&n;&t;&t;&t;&t;&t; * operation)&n;&t;&t;&t;&t;&t; */
 DECL|macro|COPY_ALL_MAC_FRAMES
-mdefine_line|#define COPY_ALL_MAC_FRAMES&t;0x0400  /* All MAC frames are copied to&n;&t;&t;&t;&t;&t; * the system. (after OPEN: duplicate&n;&t;&t;&t;&t;&t; * address test (DAT) MAC frame is &n;&t;&t;&t;&t;&t; * first received frame copied to the&n;&t;&t;&t;&t;&t; * system)&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define COPY_ALL_MAC_FRAMES&t;0x0400&t;/* All MAC frames are copied to&n;&t;&t;&t;&t;&t; * the system. (after OPEN: duplicate&n;&t;&t;&t;&t;&t; * address test (DAT) MAC frame is &n;&t;&t;&t;&t;&t; * first received frame copied to the&n;&t;&t;&t;&t;&t; * system)&n;&t;&t;&t;&t;&t; */
 DECL|macro|COPY_ALL_NON_MAC_FRAMES
-mdefine_line|#define COPY_ALL_NON_MAC_FRAMES&t;0x0200  /* All non MAC frames are copied to&n;&t;&t;&t;&t;&t; * the system.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define COPY_ALL_NON_MAC_FRAMES&t;0x0200&t;/* All non MAC frames are copied to&n;&t;&t;&t;&t;&t; * the system.&n;&t;&t;&t;&t;&t; */
 DECL|macro|PASS_FIRST_BUF_ONLY
-mdefine_line|#define PASS_FIRST_BUF_ONLY&t;0x0100  /* Passes only first internal buffer&n;&t;&t;&t;&t;&t; * of each received frame; FrameSize&n;&t;&t;&t;&t;&t; * of RPLs must contain internal&n;&t;&t;&t;&t;&t; * BUFFER_SIZE bits for promiscous mode.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define PASS_FIRST_BUF_ONLY&t;0x0100&t;/* Passes only first internal buffer&n;&t;&t;&t;&t;&t; * of each received frame; FrameSize&n;&t;&t;&t;&t;&t; * of RPLs must contain internal&n;&t;&t;&t;&t;&t; * BUFFER_SIZE bits for promiscous mode.&n;&t;&t;&t;&t;&t; */
 DECL|macro|ENABLE_FULL_DUPLEX_SELECTION
-mdefine_line|#define ENABLE_FULL_DUPLEX_SELECTION 0x2000 /* Enable the use of full-duplex&n;&t;&t;&t;&t;&t; * settings with bits in byte 22 in&n;&t;&t;&t;&t;&t; * ocpl. (new feature in firmware&n;&t;&t;&t;&t;&t; * version 3.09)&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define ENABLE_FULL_DUPLEX_SELECTION&t;0x2000 
+multiline_comment|/* Enable the use of full-duplex&n;&t;&t;&t;&t;&t; * settings with bits in byte 22 in&n;&t;&t;&t;&t;&t; * ocpl. (new feature in firmware&n;&t;&t;&t;&t;&t; * version 3.09)&n;&t;&t;&t;&t;&t; */
 multiline_comment|/* Full-duplex settings */
 DECL|macro|OPEN_FULL_DUPLEX_OFF
 mdefine_line|#define OPEN_FULL_DUPLEX_OFF&t;0x0000
@@ -395,7 +462,7 @@ mdefine_line|#define TX_FRAG_NUM&t;3&t; /* Number of fragments used in one TPL. 
 DECL|macro|TX_MORE_FRAGMENTS
 mdefine_line|#define TX_MORE_FRAGMENTS 0x8000 /* Bit set in DataCount to indicate more&n;&t;&t;&t;&t;  * fragments following.&n;&t;&t;&t;&t;  */
 DECL|macro|ISA_MAX_ADDRESS
-mdefine_line|#define ISA_MAX_ADDRESS 0x00ffffff
+mdefine_line|#define ISA_MAX_ADDRESS &t;0x00ffffff
 macro_line|#pragma pack(1)
 r_typedef
 r_struct
@@ -1130,34 +1197,6 @@ id|RPLIndex
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|TMS_ISA
-mdefine_line|#define TMS_ISA 1
-DECL|macro|TMS_PCI
-mdefine_line|#define TMS_PCI 2
-DECL|struct|cardinfo_table
-r_struct
-id|cardinfo_table
-(brace
-DECL|member|type
-r_int
-id|type
-suffix:semicolon
-multiline_comment|/* 1 = ISA, 2 = PCI */
-DECL|member|vendor_id
-r_int
-id|vendor_id
-suffix:semicolon
-DECL|member|device_id
-r_int
-id|device_id
-suffix:semicolon
-DECL|member|name
-r_char
-op_star
-id|name
-suffix:semicolon
-)brace
-suffix:semicolon
 multiline_comment|/* Information that need to be kept for each board. */
 DECL|struct|net_local
 r_typedef
@@ -1376,12 +1415,12 @@ id|tr_statistics
 id|MacStat
 suffix:semicolon
 multiline_comment|/* MAC statistics structure */
-DECL|member|CardType
-r_struct
-id|cardinfo_table
-op_star
-id|CardType
+DECL|member|dmalimit
+r_int
+r_int
+id|dmalimit
 suffix:semicolon
+multiline_comment|/* the max DMA address (ie, ISA) */
 DECL|member|timer
 r_struct
 id|timer_list
@@ -1396,6 +1435,92 @@ id|INTPTRS
 id|intptrs
 suffix:semicolon
 multiline_comment|/* Internal adapter pointer. Must be read&n;&t;&t;&t;&t; * before OPEN command.&n;&t;&t;&t;&t; */
+DECL|member|setnselout
+r_int
+r_int
+(paren
+op_star
+id|setnselout
+)paren
+(paren
+r_struct
+id|net_device
+op_star
+)paren
+suffix:semicolon
+DECL|member|sifreadb
+r_int
+r_int
+(paren
+op_star
+id|sifreadb
+)paren
+(paren
+r_struct
+id|net_device
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|sifwriteb
+r_void
+(paren
+op_star
+id|sifwriteb
+)paren
+(paren
+r_struct
+id|net_device
+op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|sifreadw
+r_int
+r_int
+(paren
+op_star
+id|sifreadw
+)paren
+(paren
+r_struct
+id|net_device
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|sifwritew
+r_void
+(paren
+op_star
+id|sifwritew
+)paren
+(paren
+r_struct
+id|net_device
+op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|tmspriv
+r_void
+op_star
+id|tmspriv
+suffix:semicolon
 DECL|typedef|NET_LOCAL
 )brace
 id|NET_LOCAL

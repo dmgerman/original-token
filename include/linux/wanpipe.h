@@ -1,7 +1,10 @@
-multiline_comment|/*****************************************************************************&n;* wanpipe.h&t;WANPIPE(tm) Multiprotocol WAN Link Driver.&n;*&t;&t;User-level API definitions.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&t;&t;Jaspreet Singh&t;&lt;jaspreet@sangoma.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Nov 26, 1997&t;Jaspreet Singh&t;Added &squot;load_sharing&squot; structure.  Also added &n;*&t;&t;&t;&t;&squot;devs_struct&squot;,&squot;dev_to_devtint_next&squot; to &squot;sdla_t&squot;&t;&n;* Nov 24, 1997&t;Jaspreet Singh&t;Added &squot;irq_dis_if_send_count&squot;, &n;*&t;&t;&t;&t;&squot;irq_dis_poll_count&squot; to &squot;sdla_t&squot;.&n;* Nov 06, 1997&t;Jaspreet Singh&t;Added a define called &squot;INTR_TEST_MODE&squot;&n;* Oct 20, 1997&t;Jaspreet Singh&t;Added &squot;buff_intr_mode_unbusy&squot; and &n;*&t;&t;&t;&t;&squot;dlci_intr_mode_unbusy&squot; to &squot;sdla_t&squot;&n;* Oct 18, 1997&t;Jaspreet Singh&t;Added structure to maintain global driver&n;*&t;&t;&t;&t;statistics.&n;* Jan 15, 1997&t;Gene Kozin&t;Version 3.1.0&n;*&t;&t;&t;&t; o added UDP management stuff&n;* Jan 02, 1997&t;Gene Kozin&t;Version 3.0.0&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* wanpipe.h&t;WANPIPE(tm) Multiprotocol WAN Link Driver.&n;*&t;&t;User-level API definitions.&n;*&n;* Author: &t;Nenad Corbic &lt;ncorbic@sangoma.com&gt;&n;*&t;&t;Gideon Hack  &t;&n;*&n;* Copyright:&t;(c) 1995-1999 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Oct 04, 1999  Nenad Corbic    New CHDLC and FRAME RELAY code, SMP support&n;* Jun 02, 1999  Gideon Hack&t;Added &squot;update_call_count&squot; for Cisco HDLC &n;*&t;&t;&t;&t;support&n;* Jun 26, 1998&t;David Fong&t;Added &squot;ip_mode&squot; in sdla_t.u.p for dynamic IP&n;*&t;&t;&t;&t;routing mode configuration&n;* Jun 12, 1998&t;David Fong&t;Added Cisco HDLC union member in sdla_t&n;* Dec 08, 1997&t;Jaspreet Singh  Added &squot;authenticator&squot; in union of &squot;sdla_t&squot; &n;* Nov 26, 1997&t;Jaspreet Singh&t;Added &squot;load_sharing&squot; structure.  Also added &n;*&t;&t;&t;&t;&squot;devs_struct&squot;,&squot;dev_to_devtint_next&squot; to &squot;sdla_t&squot;&t;&n;* Nov 24, 1997&t;Jaspreet Singh&t;Added &squot;irq_dis_if_send_count&squot;, &n;*&t;&t;&t;&t;&squot;irq_dis_poll_count&squot; to &squot;sdla_t&squot;.&n;* Nov 06, 1997&t;Jaspreet Singh&t;Added a define called &squot;INTR_TEST_MODE&squot;&n;* Oct 20, 1997&t;Jaspreet Singh&t;Added &squot;buff_intr_mode_unbusy&squot; and &n;*&t;&t;&t;&t;&squot;dlci_intr_mode_unbusy&squot; to &squot;sdla_t&squot;&n;* Oct 18, 1997&t;Jaspreet Singh&t;Added structure to maintain global driver&n;*&t;&t;&t;&t;statistics.&n;* Jan 15, 1997&t;Gene Kozin&t;Version 3.1.0&n;*&t;&t;&t;&t; o added UDP management stuff&n;* Jan 02, 1997&t;Gene Kozin&t;Version 3.0.0&n;*****************************************************************************/
 macro_line|#ifndef&t;_WANPIPE_H
 DECL|macro|_WANPIPE_H
 mdefine_line|#define&t;_WANPIPE_H
+macro_line|#ifdef __SMP__
+macro_line|#include &lt;asm/spinlock.h&gt;       /* Support for SMP Locking */
+macro_line|#endif
 macro_line|#include &lt;linux/wanrouter.h&gt;
 multiline_comment|/* Defines */
 macro_line|#ifndef&t;PACKED
@@ -15,6 +18,19 @@ DECL|macro|WANPIPE_DUMP
 mdefine_line|#define&t;WANPIPE_DUMP&t;(ROUTER_USER+0)&t;/* dump adapter&squot;s memory */
 DECL|macro|WANPIPE_EXEC
 mdefine_line|#define&t;WANPIPE_EXEC&t;(ROUTER_USER+1)&t;/* execute firmware command */
+DECL|macro|TRACE_ALL
+mdefine_line|#define TRACE_ALL                       0x00
+DECL|macro|TRACE_PROT
+mdefine_line|#define TRACE_PROT&t;&t;&t;0x01
+DECL|macro|TRACE_DATA
+mdefine_line|#define TRACE_DATA&t;&t;&t;0x02
+multiline_comment|/* values for request/reply byte */
+DECL|macro|UDPMGMT_REQUEST
+mdefine_line|#define UDPMGMT_REQUEST&t;0x01
+DECL|macro|UDPMGMT_REPLY
+mdefine_line|#define UDPMGMT_REPLY&t;0x02
+DECL|macro|UDP_OFFSET
+mdefine_line|#define UDP_OFFSET&t;12
 multiline_comment|/*&n; * Data structures for IOCTL calls.&n; */
 DECL|struct|sdla_dump
 r_typedef
@@ -213,28 +229,343 @@ DECL|typedef|global_stats_t
 )brace
 id|global_stats_t
 suffix:semicolon
-multiline_comment|/* This structure is used for maitaining a circular linked list of all&n; * interfaces(devices) per card. It is used in the Interrupt Service routine&n; * for a transmit interrupt where the start of the loop to dev_tint all&n; * interfaces changes.&n; */
-DECL|struct|load_sharing
+r_typedef
+(def_block
+r_struct
+(brace
+DECL|member|PACKED
+r_int
+r_int
+id|udp_src_port
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_int
+id|udp_dst_port
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_int
+id|udp_length
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_int
+id|udp_checksum
+id|PACKED
+suffix:semicolon
+DECL|typedef|udp_pkt_t
+)brace
+)def_block
+id|udp_pkt_t
+suffix:semicolon
 r_typedef
 r_struct
-id|load_sharing
 (brace
-DECL|member|dev_ptr
-r_struct
-id|net_device
-op_star
-id|dev_ptr
+DECL|member|PACKED
+r_int
+r_char
+id|ver_inet_hdr_length
+id|PACKED
 suffix:semicolon
-DECL|member|next
-r_struct
-id|load_sharing
-op_star
-id|next
+DECL|member|PACKED
+r_int
+r_char
+id|service_type
+id|PACKED
 suffix:semicolon
-DECL|typedef|load_sharing_t
+DECL|member|PACKED
+r_int
+r_int
+id|total_length
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_int
+id|identifier
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_int
+id|flags_frag_offset
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_char
+id|ttl
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_char
+id|protocol
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_int
+id|hdr_checksum
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_int
+id|ip_src_address
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_int
+id|ip_dst_address
+id|PACKED
+suffix:semicolon
+DECL|typedef|ip_pkt_t
 )brace
-id|load_sharing_t
+id|ip_pkt_t
 suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|PACKED
+r_int
+r_char
+id|signature
+(braket
+l_int|8
+)braket
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_char
+id|request_reply
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_char
+id|id
+id|PACKED
+suffix:semicolon
+DECL|member|PACKED
+r_int
+r_char
+id|reserved
+(braket
+l_int|6
+)braket
+id|PACKED
+suffix:semicolon
+DECL|typedef|wp_mgmt_t
+)brace
+id|wp_mgmt_t
+suffix:semicolon
+multiline_comment|/*************************************************************************&n; Data Structure for if_send  statistics&n;*************************************************************************/
+DECL|struct|if_send_stat
+r_typedef
+r_struct
+id|if_send_stat
+(brace
+DECL|member|if_send_entry
+r_int
+r_int
+id|if_send_entry
+suffix:semicolon
+DECL|member|if_send_skb_null
+r_int
+r_int
+id|if_send_skb_null
+suffix:semicolon
+DECL|member|if_send_broadcast
+r_int
+r_int
+id|if_send_broadcast
+suffix:semicolon
+DECL|member|if_send_multicast
+r_int
+r_int
+id|if_send_multicast
+suffix:semicolon
+DECL|member|if_send_critical_ISR
+r_int
+r_int
+id|if_send_critical_ISR
+suffix:semicolon
+DECL|member|if_send_critical_non_ISR
+r_int
+r_int
+id|if_send_critical_non_ISR
+suffix:semicolon
+DECL|member|if_send_tbusy
+r_int
+r_int
+id|if_send_tbusy
+suffix:semicolon
+DECL|member|if_send_tbusy_timeout
+r_int
+r_int
+id|if_send_tbusy_timeout
+suffix:semicolon
+DECL|member|if_send_PIPE_request
+r_int
+r_int
+id|if_send_PIPE_request
+suffix:semicolon
+DECL|member|if_send_wan_disconnected
+r_int
+r_int
+id|if_send_wan_disconnected
+suffix:semicolon
+DECL|member|if_send_dlci_disconnected
+r_int
+r_int
+id|if_send_dlci_disconnected
+suffix:semicolon
+DECL|member|if_send_no_bfrs
+r_int
+r_int
+id|if_send_no_bfrs
+suffix:semicolon
+DECL|member|if_send_adptr_bfrs_full
+r_int
+r_int
+id|if_send_adptr_bfrs_full
+suffix:semicolon
+DECL|member|if_send_bfr_passed_to_adptr
+r_int
+r_int
+id|if_send_bfr_passed_to_adptr
+suffix:semicolon
+DECL|member|if_send_protocol_error
+r_int
+r_int
+id|if_send_protocol_error
+suffix:semicolon
+DECL|member|if_send_bfr_not_passed_to_adptr
+r_int
+r_int
+id|if_send_bfr_not_passed_to_adptr
+suffix:semicolon
+DECL|member|if_send_tx_int_enabled
+r_int
+r_int
+id|if_send_tx_int_enabled
+suffix:semicolon
+DECL|member|if_send_consec_send_fail
+r_int
+r_int
+id|if_send_consec_send_fail
+suffix:semicolon
+DECL|typedef|if_send_stat_t
+)brace
+id|if_send_stat_t
+suffix:semicolon
+DECL|struct|rx_intr_stat
+r_typedef
+r_struct
+id|rx_intr_stat
+(brace
+DECL|member|rx_intr_no_socket
+r_int
+r_int
+id|rx_intr_no_socket
+suffix:semicolon
+DECL|member|rx_intr_dev_not_started
+r_int
+r_int
+id|rx_intr_dev_not_started
+suffix:semicolon
+DECL|member|rx_intr_PIPE_request
+r_int
+r_int
+id|rx_intr_PIPE_request
+suffix:semicolon
+DECL|member|rx_intr_bfr_not_passed_to_stack
+r_int
+r_int
+id|rx_intr_bfr_not_passed_to_stack
+suffix:semicolon
+DECL|member|rx_intr_bfr_passed_to_stack
+r_int
+r_int
+id|rx_intr_bfr_passed_to_stack
+suffix:semicolon
+DECL|typedef|rx_intr_stat_t
+)brace
+id|rx_intr_stat_t
+suffix:semicolon
+DECL|struct|pipe_mgmt_stat
+r_typedef
+r_struct
+id|pipe_mgmt_stat
+(brace
+DECL|member|UDP_PIPE_mgmt_kmalloc_err
+r_int
+r_int
+id|UDP_PIPE_mgmt_kmalloc_err
+suffix:semicolon
+DECL|member|UDP_PIPE_mgmt_direction_err
+r_int
+r_int
+id|UDP_PIPE_mgmt_direction_err
+suffix:semicolon
+DECL|member|UDP_PIPE_mgmt_adptr_type_err
+r_int
+r_int
+id|UDP_PIPE_mgmt_adptr_type_err
+suffix:semicolon
+DECL|member|UDP_PIPE_mgmt_adptr_cmnd_OK
+r_int
+r_int
+id|UDP_PIPE_mgmt_adptr_cmnd_OK
+suffix:semicolon
+DECL|member|UDP_PIPE_mgmt_adptr_cmnd_timeout
+r_int
+r_int
+id|UDP_PIPE_mgmt_adptr_cmnd_timeout
+suffix:semicolon
+DECL|member|UDP_PIPE_mgmt_adptr_send_passed
+r_int
+r_int
+id|UDP_PIPE_mgmt_adptr_send_passed
+suffix:semicolon
+DECL|member|UDP_PIPE_mgmt_adptr_send_failed
+r_int
+r_int
+id|UDP_PIPE_mgmt_adptr_send_failed
+suffix:semicolon
+DECL|member|UDP_PIPE_mgmt_not_passed_to_stack
+r_int
+r_int
+id|UDP_PIPE_mgmt_not_passed_to_stack
+suffix:semicolon
+DECL|member|UDP_PIPE_mgmt_passed_to_stack
+r_int
+r_int
+id|UDP_PIPE_mgmt_passed_to_stack
+suffix:semicolon
+DECL|member|UDP_PIPE_mgmt_no_socket
+r_int
+r_int
+id|UDP_PIPE_mgmt_no_socket
+suffix:semicolon
+DECL|member|UDP_PIPE_mgmt_passed_to_adptr
+r_int
+r_int
+id|UDP_PIPE_mgmt_passed_to_adptr
+suffix:semicolon
+DECL|typedef|pipe_mgmt_stat_t
+)brace
+id|pipe_mgmt_stat_t
+suffix:semicolon
+DECL|macro|MAX_LGTH_UDP_MGNT_PKT
+mdefine_line|#define MAX_LGTH_UDP_MGNT_PKT 2000
 multiline_comment|/* This is used for interrupt testing */
 DECL|macro|INTR_TEST_MODE
 mdefine_line|#define INTR_TEST_MODE&t;0x02
@@ -322,6 +653,11 @@ r_char
 id|dlci_int_mode_unbusy
 suffix:semicolon
 multiline_comment|/* flag for carrying out dev_tint */
+DECL|member|configured
+r_char
+id|configured
+suffix:semicolon
+multiline_comment|/* flag for previous configurations */
 DECL|member|irq_dis_if_send_count
 r_int
 r_int
@@ -334,22 +670,28 @@ r_int
 id|irq_dis_poll_count
 suffix:semicolon
 multiline_comment|/* Disabling irqs in poll routine*/
+DECL|member|force_enable_irq
+r_int
+r_int
+id|force_enable_irq
+suffix:semicolon
+DECL|member|TracingEnabled
+r_char
+id|TracingEnabled
+suffix:semicolon
+multiline_comment|/* flag for enabling trace */
 DECL|member|statistics
 id|global_stats_t
 id|statistics
 suffix:semicolon
 multiline_comment|/* global statistics */
-multiline_comment|/* The following is used as  a pointer to the structure in our &n;&t;   circular linked list which changes the start of the loop for &n;&t;   dev_tint of all interfaces */
-DECL|member|dev_to_devtint_next
-id|load_sharing_t
-op_star
-id|dev_to_devtint_next
+macro_line|#ifdef __SMP__
+DECL|member|lock
+id|spinlock_t
+id|lock
 suffix:semicolon
-DECL|member|devs_struct
-id|load_sharing_t
-op_star
-id|devs_struct
-suffix:semicolon
+multiline_comment|/* Support for SMP Locking */
+macro_line|#endif
 DECL|member|mbox
 r_void
 op_star
@@ -417,6 +759,13 @@ op_star
 id|u_data
 )paren
 suffix:semicolon
+DECL|member|next
+r_struct
+id|sdla
+op_star
+id|next
+suffix:semicolon
+multiline_comment|/* Secondary Port Device: Piggibacking */
 r_union
 (brace
 r_struct
@@ -480,6 +829,79 @@ r_int
 r_int
 id|dlci_num
 suffix:semicolon
+DECL|member|dlci_to_dev_map
+r_struct
+id|net_device
+op_star
+id|dlci_to_dev_map
+(braket
+l_int|991
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+DECL|member|tx_interrupts_pending
+r_int
+id|tx_interrupts_pending
+suffix:semicolon
+DECL|member|timer_int_enabled
+r_int
+r_int
+id|timer_int_enabled
+suffix:semicolon
+DECL|member|udp_pkt_lgth
+r_int
+r_int
+id|udp_pkt_lgth
+suffix:semicolon
+DECL|member|udp_type
+r_int
+id|udp_type
+suffix:semicolon
+DECL|member|udp_pkt_src
+r_char
+id|udp_pkt_src
+suffix:semicolon
+DECL|member|udp_dlci
+r_int
+id|udp_dlci
+suffix:semicolon
+DECL|member|udp_pkt_data
+r_char
+id|udp_pkt_data
+(braket
+id|MAX_LGTH_UDP_MGNT_PKT
+)braket
+suffix:semicolon
+DECL|member|trc_el_base
+r_void
+op_star
+id|trc_el_base
+suffix:semicolon
+multiline_comment|/* first trace element */
+DECL|member|trc_el_last
+r_void
+op_star
+id|trc_el_last
+suffix:semicolon
+multiline_comment|/* last trace element */
+DECL|member|curr_trc_el
+r_void
+op_star
+id|curr_trc_el
+suffix:semicolon
+multiline_comment|/* current trace element */
+DECL|member|trc_bfr_space
+r_int
+r_int
+id|trc_bfr_space
+suffix:semicolon
+multiline_comment|/* trace buffer space */
+DECL|member|update_comms_stats
+r_int
+r_char
+id|update_comms_stats
+suffix:semicolon
 DECL|member|f
 )brace
 id|f
@@ -537,9 +959,248 @@ r_int
 id|rx_top
 suffix:semicolon
 multiline_comment|/* S508 receive buffer end */
+DECL|member|ip_mode
+r_char
+id|ip_mode
+suffix:semicolon
+multiline_comment|/* STATIC/HOST/PEER IP Mode */
+DECL|member|authenticator
+r_char
+id|authenticator
+suffix:semicolon
+multiline_comment|/* Authenticator for PAP/CHAP */
 DECL|member|p
 )brace
 id|p
+suffix:semicolon
+r_struct
+multiline_comment|/* Cisco HDLC-specific data */
+(brace
+DECL|member|if_name
+r_char
+id|if_name
+(braket
+id|WAN_IFNAME_SZ
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* interface name */
+DECL|member|comm_port
+r_int
+r_char
+id|comm_port
+suffix:semicolon
+multiline_comment|/* Communication Port O or 1 */
+DECL|member|usedby
+r_int
+r_char
+id|usedby
+suffix:semicolon
+multiline_comment|/* Used by WANPIPE or API */
+DECL|member|rxmb
+r_void
+op_star
+id|rxmb
+suffix:semicolon
+multiline_comment|/* Receive mail box */
+DECL|member|flags
+r_void
+op_star
+id|flags
+suffix:semicolon
+multiline_comment|/* flags */
+DECL|member|tx_status
+r_void
+op_star
+id|tx_status
+suffix:semicolon
+multiline_comment|/* Tx status element */
+DECL|member|rx_status
+r_void
+op_star
+id|rx_status
+suffix:semicolon
+multiline_comment|/* Rx status element */
+DECL|member|txbuf
+r_void
+op_star
+id|txbuf
+suffix:semicolon
+multiline_comment|/* -&gt; current Tx buffer */
+DECL|member|txbuf_base
+r_void
+op_star
+id|txbuf_base
+suffix:semicolon
+multiline_comment|/* -&gt; first Tx buffer */
+DECL|member|txbuf_last
+r_void
+op_star
+id|txbuf_last
+suffix:semicolon
+multiline_comment|/* -&gt; last Tx buffer */
+DECL|member|rxbuf_base
+r_void
+op_star
+id|rxbuf_base
+suffix:semicolon
+multiline_comment|/* -&gt; first Rx buffer */
+DECL|member|rxbuf_last
+r_void
+op_star
+id|rxbuf_last
+suffix:semicolon
+multiline_comment|/* -&gt; last Rx buffer */
+DECL|member|rx_base
+r_int
+id|rx_base
+suffix:semicolon
+multiline_comment|/* S508 receive buffer base */
+DECL|member|rx_top
+r_int
+id|rx_top
+suffix:semicolon
+multiline_comment|/* S508 receive buffer end */
+DECL|member|protocol_options
+r_int
+r_int
+id|protocol_options
+suffix:semicolon
+DECL|member|kpalv_tx
+r_int
+r_int
+id|kpalv_tx
+suffix:semicolon
+multiline_comment|/* Tx kpalv timer */
+DECL|member|kpalv_rx
+r_int
+r_int
+id|kpalv_rx
+suffix:semicolon
+multiline_comment|/* Rx kpalv timer */
+DECL|member|kpalv_err
+r_int
+r_int
+id|kpalv_err
+suffix:semicolon
+multiline_comment|/* Error tolerance */
+DECL|member|slarp_timer
+r_int
+r_int
+id|slarp_timer
+suffix:semicolon
+multiline_comment|/* SLARP req timer */
+DECL|member|state
+r_int
+id|state
+suffix:semicolon
+multiline_comment|/* state of the link */
+DECL|member|api_status
+r_int
+r_char
+id|api_status
+suffix:semicolon
+DECL|member|update_call_count
+r_int
+r_char
+id|update_call_count
+suffix:semicolon
+DECL|member|c
+)brace
+id|c
+suffix:semicolon
+r_struct
+(brace
+DECL|member|tx_status
+r_void
+op_star
+id|tx_status
+suffix:semicolon
+multiline_comment|/* Tx status element */
+DECL|member|rx_status
+r_void
+op_star
+id|rx_status
+suffix:semicolon
+multiline_comment|/* Rx status element */
+DECL|member|trace_status
+r_void
+op_star
+id|trace_status
+suffix:semicolon
+multiline_comment|/* Trace status element */
+DECL|member|txbuf
+r_void
+op_star
+id|txbuf
+suffix:semicolon
+multiline_comment|/* -&gt; current Tx buffer */
+DECL|member|txbuf_base
+r_void
+op_star
+id|txbuf_base
+suffix:semicolon
+multiline_comment|/* -&gt; first Tx buffer */
+DECL|member|txbuf_last
+r_void
+op_star
+id|txbuf_last
+suffix:semicolon
+multiline_comment|/* -&gt; last Tx buffer */
+DECL|member|rxbuf_base
+r_void
+op_star
+id|rxbuf_base
+suffix:semicolon
+multiline_comment|/* -&gt; first Rx buffer */
+DECL|member|rxbuf_last
+r_void
+op_star
+id|rxbuf_last
+suffix:semicolon
+multiline_comment|/* -&gt; last Rx buffer */
+DECL|member|tracebuf
+r_void
+op_star
+id|tracebuf
+suffix:semicolon
+multiline_comment|/* -&gt; current Trace buffer */
+DECL|member|tracebuf_base
+r_void
+op_star
+id|tracebuf_base
+suffix:semicolon
+multiline_comment|/* -&gt; current Trace buffer */
+DECL|member|tracebuf_last
+r_void
+op_star
+id|tracebuf_last
+suffix:semicolon
+multiline_comment|/* -&gt; current Trace buffer */
+DECL|member|rx_base
+r_int
+id|rx_base
+suffix:semicolon
+multiline_comment|/* receive buffer base */
+DECL|member|rx_end
+r_int
+id|rx_end
+suffix:semicolon
+multiline_comment|/* receive buffer end */
+DECL|member|trace_base
+r_int
+id|trace_base
+suffix:semicolon
+multiline_comment|/* trace buffer base */
+DECL|member|trace_end
+r_int
+id|trace_end
+suffix:semicolon
+multiline_comment|/* trace buffer end */
+DECL|member|h
+)brace
+id|h
 suffix:semicolon
 DECL|member|u
 )brace
@@ -619,6 +1280,59 @@ id|conf
 )paren
 suffix:semicolon
 multiline_comment|/* wpp.c */
+r_int
+id|wpc_init
+(paren
+id|sdla_t
+op_star
+id|card
+comma
+id|wandev_conf_t
+op_star
+id|conf
+)paren
+suffix:semicolon
+multiline_comment|/* Cisco HDLC */
+r_int
+id|bsc_init
+(paren
+id|sdla_t
+op_star
+id|card
+comma
+id|wandev_conf_t
+op_star
+id|conf
+)paren
+suffix:semicolon
+multiline_comment|/* BSC streaming */
+r_int
+id|hdlc_init
+c_func
+(paren
+id|sdla_t
+op_star
+id|card
+comma
+id|wandev_conf_t
+op_star
+id|conf
+)paren
+suffix:semicolon
+multiline_comment|/* HDLC support */
+r_int
+id|wpft1_init
+(paren
+id|sdla_t
+op_star
+id|card
+comma
+id|wandev_conf_t
+op_star
+id|conf
+)paren
+suffix:semicolon
+multiline_comment|/* FT1 Config support */
 macro_line|#endif&t;/* __KERNEL__ */
 macro_line|#endif&t;/* _WANPIPE_H */
 eof

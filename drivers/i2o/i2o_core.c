@@ -5739,7 +5739,7 @@ l_int|0
 op_assign
 id|EIGHT_WORD_MSG_SIZE
 op_or
-id|TRL_OFFSET_6
+id|SGL_OFFSET_6
 suffix:semicolon
 id|msg
 (braket
@@ -5779,12 +5779,17 @@ op_assign
 l_int|4096
 suffix:semicolon
 multiline_comment|/* Host page frame size */
+multiline_comment|/* Frame size is in words. Pick 128, its what everyone elses uses and&n;&t;   other sizes break some adapters. */
 id|msg
 (braket
 l_int|5
 )braket
 op_assign
+(paren
 id|MSG_FRAME_SIZE
+op_rshift
+l_int|2
+)paren
 op_lshift
 l_int|16
 op_or
@@ -5804,7 +5809,7 @@ id|msg
 l_int|7
 )braket
 op_assign
-id|virt_to_phys
+id|virt_to_bus
 c_func
 (paren
 id|status
@@ -5834,8 +5839,8 @@ id|status
 (braket
 l_int|0
 )braket
-op_ne
-id|I2O_CMD_OUTBOUND_INIT_COMPLETE
+OL
+l_int|0x02
 )paren
 (brace
 r_if
@@ -5852,11 +5857,33 @@ op_star
 id|HZ
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|status
+(braket
+l_int|0
+)braket
+op_eq
+l_int|0x00
+)paren
+(brace
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: Outbound Q initialize timeout.&bslash;n&quot;
+l_string|&quot;%s: Ignored queue initialize request.&bslash;n&quot;
+comma
+id|c-&gt;name
+)paren
+suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: Outbound queue initialize timeout.&bslash;n&quot;
 comma
 id|c-&gt;name
 )paren
@@ -5881,6 +5908,42 @@ id|barrier
 c_func
 (paren
 )paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|status
+(braket
+l_int|0
+)braket
+op_ne
+id|I2O_CMD_OUTBOUND_INIT_COMPLETE
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: Outbound queue initialize rejected (%d).&bslash;n&quot;
+comma
+id|c-&gt;name
+comma
+id|status
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|status
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/* Alloc space for IOP&squot;s outbound queue message frames */

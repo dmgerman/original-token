@@ -591,6 +591,8 @@ DECL|macro|BVME_SCC_A_ADDR
 mdefine_line|#define BVME_SCC_A_ADDR&t;0xffb0000b
 DECL|macro|BVME_SCC_B_ADDR
 mdefine_line|#define BVME_SCC_B_ADDR&t;0xffb00003
+DECL|macro|BVME_SCC_RTxC
+mdefine_line|#define BVME_SCC_RTxC&t;7372800
 DECL|macro|BVME_CONFIG_REG
 mdefine_line|#define BVME_CONFIG_REG&t;0xff500003
 DECL|macro|config_reg_ptr

@@ -10,311 +10,6 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &quot;udf_i.h&quot;
 macro_line|#include &quot;udf_sb.h&quot;
-r_static
-id|loff_t
-id|udf_file_llseek
-c_func
-(paren
-r_struct
-id|file
-op_star
-comma
-id|loff_t
-comma
-r_int
-)paren
-suffix:semicolon
-r_static
-id|ssize_t
-id|udf_file_read_adinicb
-(paren
-r_struct
-id|file
-op_star
-comma
-r_char
-op_star
-comma
-r_int
-comma
-id|loff_t
-op_star
-)paren
-suffix:semicolon
-r_static
-id|ssize_t
-id|udf_file_write
-(paren
-r_struct
-id|file
-op_star
-comma
-r_const
-r_char
-op_star
-comma
-r_int
-comma
-id|loff_t
-op_star
-)paren
-suffix:semicolon
-r_static
-r_int
-id|udf_open_file
-c_func
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_struct
-id|file
-op_star
-)paren
-suffix:semicolon
-r_static
-r_int
-id|udf_release_file
-c_func
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_struct
-id|file
-op_star
-)paren
-suffix:semicolon
-DECL|variable|udf_file_operations
-r_static
-r_struct
-id|file_operations
-id|udf_file_operations
-op_assign
-(brace
-id|udf_file_llseek
-comma
-multiline_comment|/* llseek */
-id|generic_file_read
-comma
-multiline_comment|/* read */
-id|udf_file_write
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-id|udf_ioctl
-comma
-multiline_comment|/* ioctl */
-id|generic_file_mmap
-comma
-multiline_comment|/* mmap */
-id|udf_open_file
-comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-id|udf_release_file
-comma
-multiline_comment|/* release */
-id|udf_sync_file
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-multiline_comment|/* lock */
-)brace
-suffix:semicolon
-DECL|variable|udf_file_inode_operations
-r_struct
-id|inode_operations
-id|udf_file_inode_operations
-op_assign
-(brace
-op_amp
-id|udf_file_operations
-comma
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-id|udf_get_block
-comma
-multiline_comment|/* get_block */
-id|block_read_full_page
-comma
-multiline_comment|/* readpage */
-id|block_write_full_page
-comma
-multiline_comment|/* writepage */
-macro_line|#ifdef CONFIG_UDF_RW
-id|udf_truncate
-comma
-multiline_comment|/* truncate */
-macro_line|#else
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-macro_line|#endif
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
-)brace
-suffix:semicolon
-DECL|variable|udf_file_operations_adinicb
-r_static
-r_struct
-id|file_operations
-id|udf_file_operations_adinicb
-op_assign
-(brace
-id|udf_file_llseek
-comma
-multiline_comment|/* llseek */
-id|udf_file_read_adinicb
-comma
-multiline_comment|/* read */
-id|udf_file_write
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-id|udf_ioctl
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-id|udf_release_file
-comma
-multiline_comment|/* release */
-id|udf_sync_file
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-multiline_comment|/* lock */
-)brace
-suffix:semicolon
-DECL|variable|udf_file_inode_operations_adinicb
-r_struct
-id|inode_operations
-id|udf_file_inode_operations_adinicb
-op_assign
-(brace
-op_amp
-id|udf_file_operations_adinicb
-comma
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-id|udf_get_block
-comma
-multiline_comment|/* get_block */
-id|block_read_full_page
-comma
-multiline_comment|/* readpage */
-id|block_write_full_page
-comma
-multiline_comment|/* writepage */
-macro_line|#ifdef CONFIG_UDF_RW
-id|udf_truncate
-comma
-multiline_comment|/* truncate */
-macro_line|#else
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-macro_line|#endif
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
-)brace
-suffix:semicolon
 multiline_comment|/*&n; * Make sure the offset never goes beyond the 32-bit mark..&n; */
 DECL|function|udf_file_llseek
 r_static
@@ -495,77 +190,6 @@ id|inode
 op_assign
 id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
-id|remove_suid
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|UDF_I_ALLOCTYPE
-c_func
-(paren
-id|inode
-)paren
-op_eq
-id|ICB_FLAG_AD_IN_ICB
-)paren
-(brace
-r_int
-id|i
-comma
-id|err
-suffix:semicolon
-r_struct
-id|buffer_head
-op_star
-id|bh
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|bh
-op_assign
-id|udf_expand_adinicb
-c_func
-(paren
-id|inode
-comma
-op_amp
-id|i
-comma
-l_int|0
-comma
-op_amp
-id|err
-)paren
-)paren
-)paren
-id|udf_release_data
-c_func
-(paren
-id|bh
-)paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|UDF_I_ALLOCTYPE
-c_func
-(paren
-id|inode
-)paren
-op_eq
-id|ICB_FLAG_AD_IN_ICB
-)paren
-r_return
-id|err
-suffix:semicolon
-)brace
 id|retval
 op_assign
 id|generic_file_write
@@ -590,6 +214,12 @@ OG
 l_int|0
 )paren
 (brace
+id|remove_suid
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 id|inode-&gt;i_ctime
 op_assign
 id|inode-&gt;i_mtime
@@ -610,39 +240,44 @@ id|inode
 op_assign
 id|CURRENT_UTIME
 suffix:semicolon
-)brace
 id|mark_inode_dirty
 c_func
 (paren
 id|inode
 )paren
 suffix:semicolon
+)brace
 r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * udf_file_read&n; *&n; * PURPOSE&n; *&t;Read from an open file.&n; *&n; * DESCRIPTION&n; *&t;Optional - sys_read() will return -EINVAL if this routine is not&n; *&t;available.&n; *&n; *&t;Refer to sys_read() in fs/read_write.c&n; *&t;sys_read() -&gt; .&n; *&n; *&t;Note that you can use generic_file_read() instead, which requires that&n; *&t;udf_readpage() be available, but you can use generic_readpage(), which&n; *&t;requires that udf_block_map() be available. Reading will then be done by&n; *&t;memory-mapping the file a page at a time. This is not suitable for&n; *&t;devices that don&squot;t handle read-ahead [example: CD-R/RW that may have&n; *&t;blank sectors that shouldn&squot;t be read].&n; *&n; *&t;Refer to generic_file_read() in mm/filemap.c and to generic_readpage()&n; *&t;in fs/buffer.c&n; *&n; *&t;Block devices can use block_read() instead. Refer to fs/block_dev.c&n; *&n; * PRE-CONDITIONS&n; *&t;inode&t;&t;&t;Pointer to inode to read from (never NULL).&n; *&t;filp&t;&t;&t;Pointer to file to read from (never NULL).&n; *&t;buf&t;&t;&t;Point to read buffer (validated).&n; *&t;bufsize&t;&t;&t;Size of read buffer.&n; *&n; * POST-CONDITIONS&n; *&t;&lt;return&gt;&t;&t;Bytes read (&gt;=0) or an error code (&lt;0) that&n; *&t;&t;&t;&t;sys_read() will return.&n; *&n; * HISTORY&n; *&t;July 1, 1997 - Andrew E. Mileski&n; *&t;Written, tested, and released.&n; */
-DECL|function|udf_file_read_adinicb
-r_static
-id|ssize_t
-id|udf_file_read_adinicb
+DECL|function|udf_write_partial_page_adinicb
+r_int
+id|udf_write_partial_page_adinicb
 c_func
 (paren
 r_struct
 id|file
 op_star
-id|filp
+id|file
 comma
+r_struct
+id|page
+op_star
+id|page
+comma
+r_int
+r_int
+id|offset
+comma
+r_int
+r_int
+id|bytes
+comma
+r_const
 r_char
 op_star
 id|buf
-comma
-r_int
-id|bufsize
-comma
-id|loff_t
-op_star
-id|loff
 )paren
 (brace
 r_struct
@@ -650,103 +285,97 @@ id|inode
 op_star
 id|inode
 op_assign
-id|filp-&gt;f_dentry-&gt;d_inode
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
-id|loff_t
-id|size
+r_int
+id|err
+op_assign
+l_int|0
 comma
-id|left
-comma
-id|pos
-suffix:semicolon
-id|Uint32
 id|block
 suffix:semicolon
 r_struct
 id|buffer_head
 op_star
 id|bh
-op_assign
-l_int|NULL
 suffix:semicolon
-id|size
-op_assign
-id|inode-&gt;i_size
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_star
-id|loff
-OG
-id|size
-)paren
-id|left
+r_int
+r_int
+id|kaddr
 op_assign
 l_int|0
-suffix:semicolon
-r_else
-id|left
-op_assign
-id|size
-op_minus
-op_star
-id|loff
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|left
-OG
-id|bufsize
-)paren
-id|left
-op_assign
-id|bufsize
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|left
-op_le
-l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
-id|pos
-op_assign
-op_star
-id|loff
-op_plus
-id|UDF_I_EXT0OFFS
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-id|block
-op_assign
-id|udf_block_map
-c_func
-(paren
-id|inode
-comma
-l_int|0
-)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-(paren
-id|bh
-op_assign
-id|udf_tread
+id|PageLocked
 c_func
 (paren
-id|inode-&gt;i_sb
-comma
+id|page
+)paren
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|offset
+OL
+l_int|0
+op_logical_or
+id|offset
+op_ge
+(paren
+id|inode-&gt;i_sb-&gt;s_blocksize
+op_minus
+id|udf_file_entry_alloc_offset
+c_func
+(paren
+id|inode
+)paren
+)paren
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bytes
+op_plus
+id|offset
+template_param
+(paren
+id|inode-&gt;i_sb-&gt;s_blocksize
+op_minus
+id|udf_file_entry_alloc_offset
+c_func
+(paren
+id|inode
+)paren
+)paren
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+id|kaddr
+op_assign
+id|kmap
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+id|block
+op_assign
 id|udf_get_lb_pblock
 c_func
 (paren
@@ -760,51 +389,334 @@ id|inode
 comma
 l_int|0
 )paren
+suffix:semicolon
+id|bh
+op_assign
+id|getblk
+(paren
+id|inode-&gt;i_dev
+comma
+id|block
 comma
 id|inode-&gt;i_sb-&gt;s_blocksize
 )paren
-)paren
-)paren
-(brace
-r_return
-l_int|0
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 op_logical_neg
-id|copy_to_user
+id|buffer_uptodate
 c_func
 (paren
-id|buf
-comma
-id|bh-&gt;b_data
-op_plus
-id|pos
-comma
-id|left
+id|bh
 )paren
 )paren
-op_star
-id|loff
-op_add_assign
-id|left
+(brace
+id|ll_rw_block
+(paren
+id|READ
+comma
+l_int|1
+comma
+op_amp
+id|bh
+)paren
 suffix:semicolon
-r_else
-id|left
-op_assign
-op_minus
-id|EFAULT
-suffix:semicolon
-id|udf_release_data
+id|wait_on_buffer
 c_func
 (paren
 id|bh
 )paren
 suffix:semicolon
+)brace
+id|err
+op_assign
+id|copy_from_user
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|kaddr
+op_plus
+id|offset
+comma
+id|buf
+comma
+id|bytes
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|bh-&gt;b_data
+op_plus
+id|udf_file_entry_alloc_offset
+c_func
+(paren
+id|inode
+)paren
+op_plus
+id|offset
+comma
+(paren
+r_char
+op_star
+)paren
+id|kaddr
+op_plus
+id|offset
+comma
+id|bytes
+)paren
+suffix:semicolon
+id|mark_buffer_dirty
+c_func
+(paren
+id|bh
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|brelse
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
+id|kunmap
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+id|SetPageUptodate
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 r_return
-id|left
+id|bytes
+suffix:semicolon
+)brace
+DECL|function|udf_file_write_adinicb
+r_static
+id|ssize_t
+id|udf_file_write_adinicb
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+comma
+r_const
+r_char
+op_star
+id|buf
+comma
+r_int
+id|count
+comma
+id|loff_t
+op_star
+id|ppos
+)paren
+(brace
+id|ssize_t
+id|retval
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
+r_int
+id|err
+comma
+id|pos
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|file-&gt;f_flags
+op_amp
+id|O_APPEND
+)paren
+id|pos
+op_assign
+id|inode-&gt;i_size
+suffix:semicolon
+r_else
+id|pos
+op_assign
+op_star
+id|ppos
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;i_sb-&gt;s_blocksize
+OL
+(paren
+id|udf_file_entry_alloc_offset
+c_func
+(paren
+id|inode
+)paren
+op_plus
+id|pos
+op_plus
+id|count
+)paren
+)paren
+(brace
+id|udf_expand_file_adinicb
+c_func
+(paren
+id|file
+comma
+id|pos
+op_plus
+id|count
+comma
+op_amp
+id|err
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|UDF_I_ALLOCTYPE
+c_func
+(paren
+id|inode
+)paren
+op_eq
+id|ICB_FLAG_AD_IN_ICB
+)paren
+(brace
+id|udf_debug
+c_func
+(paren
+l_string|&quot;udf_expand_adinicb: err=%d&bslash;n&quot;
+comma
+id|err
+)paren
+suffix:semicolon
+r_return
+id|err
+suffix:semicolon
+)brace
+r_else
+r_return
+id|udf_file_write
+c_func
+(paren
+id|file
+comma
+id|buf
+comma
+id|count
+comma
+id|ppos
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|pos
+op_plus
+id|count
+OG
+id|inode-&gt;i_size
+)paren
+id|UDF_I_LENALLOC
+c_func
+(paren
+id|inode
+)paren
+op_assign
+id|pos
+op_plus
+id|count
+suffix:semicolon
+r_else
+id|UDF_I_LENALLOC
+c_func
+(paren
+id|inode
+)paren
+op_assign
+id|inode-&gt;i_size
+suffix:semicolon
+)brace
+id|retval
+op_assign
+id|generic_file_write
+c_func
+(paren
+id|file
+comma
+id|buf
+comma
+id|count
+comma
+id|ppos
+comma
+id|udf_write_partial_page_adinicb
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+OG
+l_int|0
+)paren
+(brace
+id|remove_suid
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+id|inode-&gt;i_ctime
+op_assign
+id|inode-&gt;i_mtime
+op_assign
+id|CURRENT_TIME
+suffix:semicolon
+id|UDF_I_UCTIME
+c_func
+(paren
+id|inode
+)paren
+op_assign
+id|UDF_I_UMTIME
+c_func
+(paren
+id|inode
+)paren
+op_assign
+id|CURRENT_UTIME
+suffix:semicolon
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+)brace
+r_return
+id|retval
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * udf_ioctl&n; *&n; * PURPOSE&n; *&t;Issue an ioctl.&n; *&n; * DESCRIPTION&n; *&t;Optional - sys_ioctl() will return -ENOTTY if this routine is not&n; *&t;available, and the ioctl cannot be handled without filesystem help.&n; *&n; *&t;sys_ioctl() handles these ioctls that apply only to regular files:&n; *&t;&t;FIBMAP [requires udf_block_map()], FIGETBSZ, FIONREAD&n; *&t;These ioctls are also handled by sys_ioctl():&n; *&t;&t;FIOCLEX, FIONCLEX, FIONBIO, FIOASYNC&n; *&t;All other ioctls are passed to the filesystem.&n; *&n; *&t;Refer to sys_ioctl() in fs/ioctl.c&n; *&t;sys_ioctl() -&gt; .&n; *&n; * PRE-CONDITIONS&n; *&t;inode&t;&t;&t;Pointer to inode that ioctl was issued on.&n; *&t;filp&t;&t;&t;Pointer to file that ioctl was issued on.&n; *&t;cmd&t;&t;&t;The ioctl command.&n; *&t;arg&t;&t;&t;The ioctl argument [can be interpreted as a&n; *&t;&t;&t;&t;user-space pointer if desired].&n; *&n; * POST-CONDITIONS&n; *&t;&lt;return&gt;&t;&t;Success (&gt;=0) or an error code (&lt;=0) that&n; *&t;&t;&t;&t;sys_ioctl() will return.&n; *&n; * HISTORY&n; *&t;July 1, 1997 - Andrew E. Mileski&n; *&t;Written, tested, and released.&n; */
@@ -1295,4 +1207,232 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|udf_file_operations
+r_static
+r_struct
+id|file_operations
+id|udf_file_operations
+op_assign
+(brace
+id|udf_file_llseek
+comma
+multiline_comment|/* llseek */
+id|generic_file_read
+comma
+multiline_comment|/* read */
+id|udf_file_write
+comma
+multiline_comment|/* write */
+l_int|NULL
+comma
+multiline_comment|/* readdir */
+l_int|NULL
+comma
+multiline_comment|/* poll */
+id|udf_ioctl
+comma
+multiline_comment|/* ioctl */
+id|generic_file_mmap
+comma
+multiline_comment|/* mmap */
+id|udf_open_file
+comma
+multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
+id|udf_release_file
+comma
+multiline_comment|/* release */
+id|udf_sync_file
+comma
+multiline_comment|/* fsync */
+l_int|NULL
+comma
+multiline_comment|/* fasync */
+l_int|NULL
+multiline_comment|/* lock */
+)brace
+suffix:semicolon
+DECL|variable|udf_file_inode_operations
+r_struct
+id|inode_operations
+id|udf_file_inode_operations
+op_assign
+(brace
+op_amp
+id|udf_file_operations
+comma
+l_int|NULL
+comma
+multiline_comment|/* create */
+l_int|NULL
+comma
+multiline_comment|/* lookup */
+l_int|NULL
+comma
+multiline_comment|/* link */
+l_int|NULL
+comma
+multiline_comment|/* unlink */
+l_int|NULL
+comma
+multiline_comment|/* symlink */
+l_int|NULL
+comma
+multiline_comment|/* mkdir */
+l_int|NULL
+comma
+multiline_comment|/* rmdir */
+l_int|NULL
+comma
+multiline_comment|/* mknod */
+l_int|NULL
+comma
+multiline_comment|/* rename */
+l_int|NULL
+comma
+multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
+id|udf_get_block
+comma
+multiline_comment|/* get_block */
+id|block_read_full_page
+comma
+multiline_comment|/* readpage */
+id|block_write_full_page
+comma
+multiline_comment|/* writepage */
+macro_line|#if CONFIG_UDF_RW == 1
+id|udf_truncate
+comma
+multiline_comment|/* truncate */
+macro_line|#else
+l_int|NULL
+comma
+multiline_comment|/* truncate */
+macro_line|#endif
+l_int|NULL
+comma
+multiline_comment|/* permission */
+l_int|NULL
+multiline_comment|/* revalidate */
+)brace
+suffix:semicolon
+DECL|variable|udf_file_operations_adinicb
+r_static
+r_struct
+id|file_operations
+id|udf_file_operations_adinicb
+op_assign
+(brace
+id|udf_file_llseek
+comma
+multiline_comment|/* llseek */
+id|generic_file_read
+comma
+multiline_comment|/* read */
+id|udf_file_write_adinicb
+comma
+multiline_comment|/* write */
+l_int|NULL
+comma
+multiline_comment|/* readdir */
+l_int|NULL
+comma
+multiline_comment|/* poll */
+id|udf_ioctl
+comma
+multiline_comment|/* ioctl */
+l_int|NULL
+comma
+multiline_comment|/* mmap */
+l_int|NULL
+comma
+multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
+id|udf_release_file
+comma
+multiline_comment|/* release */
+id|udf_sync_file_adinicb
+comma
+multiline_comment|/* fsync */
+l_int|NULL
+comma
+multiline_comment|/* fasync */
+l_int|NULL
+multiline_comment|/* lock */
+)brace
+suffix:semicolon
+DECL|variable|udf_file_inode_operations_adinicb
+r_struct
+id|inode_operations
+id|udf_file_inode_operations_adinicb
+op_assign
+(brace
+op_amp
+id|udf_file_operations_adinicb
+comma
+l_int|NULL
+comma
+multiline_comment|/* create */
+l_int|NULL
+comma
+multiline_comment|/* lookup */
+l_int|NULL
+comma
+multiline_comment|/* link */
+l_int|NULL
+comma
+multiline_comment|/* unlink */
+l_int|NULL
+comma
+multiline_comment|/* symlink */
+l_int|NULL
+comma
+multiline_comment|/* mkdir */
+l_int|NULL
+comma
+multiline_comment|/* rmdir */
+l_int|NULL
+comma
+multiline_comment|/* mknod */
+l_int|NULL
+comma
+multiline_comment|/* rename */
+l_int|NULL
+comma
+multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
+id|udf_get_block
+comma
+multiline_comment|/* get_block */
+id|udf_readpage_adinicb
+comma
+multiline_comment|/* readpage */
+id|udf_writepage_adinicb
+comma
+multiline_comment|/* writepage */
+macro_line|#if CONFIG_UDF_RW == 1
+id|udf_truncate_adinicb
+comma
+multiline_comment|/* truncate */
+macro_line|#else
+l_int|NULL
+comma
+multiline_comment|/* truncate */
+macro_line|#endif
+l_int|NULL
+comma
+multiline_comment|/* permission */
+l_int|NULL
+multiline_comment|/* revalidate */
+)brace
+suffix:semicolon
 eof

@@ -5759,7 +5759,7 @@ suffix:semicolon
 multiline_comment|/* Allocate transmit/receive descriptor DVMA block. */
 id|bp-&gt;bmac_block
 op_assign
-id|sbus_alloc_consistant
+id|sbus_alloc_consistent
 c_func
 (paren
 id|bp-&gt;bigmac_sdev
@@ -5786,7 +5786,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;BIGMAC: Cannot allocate consistant DMA.&bslash;n&quot;
+l_string|&quot;BIGMAC: Cannot allocate consistent DMA.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -5953,7 +5953,7 @@ c_cond
 (paren
 id|bp-&gt;bmac_block
 )paren
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 id|bp-&gt;bigmac_sdev
@@ -6252,7 +6252,7 @@ comma
 id|TCVR_REG_SIZE
 )paren
 suffix:semicolon
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 id|bp-&gt;bigmac_sdev

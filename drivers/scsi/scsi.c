@@ -7192,6 +7192,21 @@ id|proc_dir_entry
 op_star
 id|generic
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|scsi_init_minimal_dma_pool
+c_func
+(paren
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * This makes /proc/scsi and /proc/scsi/scsi visible.&n;&t; */
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_scsi
@@ -7270,21 +7285,6 @@ id|scsi_loadable_module_flag
 op_assign
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|scsi_init_minimal_dma_pool
-c_func
-(paren
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * This is where the processing takes place for most everything&n;&t; * when commands are completed.&n;&t; */
 id|init_bh
 c_func

@@ -481,7 +481,7 @@ mdefine_line|#define CLD_STOPPED&t;5&t;/* child has stopped */
 DECL|macro|CLD_CONTINUED
 mdefine_line|#define CLD_CONTINUED&t;6&t;/* stopped child has continued */
 DECL|macro|NSIGCHLD
-mdefine_line|#define NSIGCHLD
+mdefine_line|#define NSIGCHLD&t;6
 multiline_comment|/*&n; * SIGPOLL si_codes&n; */
 DECL|macro|POLL_IN
 mdefine_line|#define POLL_IN&t;&t;1&t;/* data input available */

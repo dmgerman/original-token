@@ -19149,13 +19149,6 @@ id|ftr
 )paren
 (brace
 r_struct
-id|usb_device
-op_star
-id|dev
-op_assign
-id|state-&gt;s-&gt;usbdev
-suffix:semicolon
-r_struct
 id|mixerchannel
 op_star
 id|ch
@@ -19166,6 +19159,14 @@ id|chftr
 comma
 id|mchftr
 suffix:semicolon
+macro_line|#if 0
+r_struct
+id|usb_device
+op_star
+id|dev
+op_assign
+id|state-&gt;s-&gt;usbdev
+suffix:semicolon
 r_int
 r_char
 id|data
@@ -19173,6 +19174,7 @@ id|data
 l_int|1
 )braket
 suffix:semicolon
+macro_line|#endif
 id|usb_audio_recurseunit
 c_func
 (paren

@@ -142,7 +142,7 @@ id|system_utsname
 suffix:semicolon
 r_extern
 r_struct
-id|semaphore
+id|rw_semaphore
 id|uts_sem
 suffix:semicolon
 macro_line|#endif

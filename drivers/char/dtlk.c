@@ -3,15 +3,8 @@ multiline_comment|/* This driver is for the DoubleTalk PC, a speech synthesizer&
 macro_line|#ifdef MODVERSIONS
 macro_line|#include &lt;linux/modversions.h&gt;
 macro_line|#endif
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 DECL|macro|KERNEL
 mdefine_line|#define KERNEL
 macro_line|#include &lt;linux/types.h&gt;
@@ -24,7 +17,7 @@ macro_line|#include &lt;asm/segment.h&gt;&t;/* for put_user_byte */
 macro_line|#include &lt;asm/io.h&gt;&t;&t;/* for inb_p, outb_p, inb, outb, etc. */
 macro_line|#include &lt;asm/uaccess.h&gt;&t;/* for get_user, etc. */
 macro_line|#include &lt;linux/wait.h&gt;&t;&t;/* for wait_queue */
-macro_line|#include &lt;linux/init.h&gt;&t;&t;/* for __init */
+macro_line|#include &lt;linux/init.h&gt;&t;&t;/* for __init, module_{init,exit} */
 macro_line|#include &lt;linux/poll.h&gt;&t;&t;/* for POLLIN, etc. */
 macro_line|#include &lt;linux/dtlk.h&gt;&t;&t;/* local header file for DoubleTalk values */
 macro_line|#ifdef TRACING
@@ -1293,6 +1286,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|dtlk_init
+r_static
 r_int
 id|__init
 id|dtlk_init
@@ -1389,26 +1383,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|dtlk_cleanup
+r_static
 r_void
-)paren
-(brace
-r_return
-id|dtlk_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
+id|__exit
+id|dtlk_cleanup
 (paren
 r_void
 )paren
@@ -1459,7 +1438,20 @@ id|DTLK_IO_EXTENT
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|dtlk_init
+id|module_init
+c_func
+(paren
+id|dtlk_init
+)paren
+suffix:semicolon
+DECL|variable|dtlk_cleanup
+id|module_exit
+c_func
+(paren
+id|dtlk_cleanup
+)paren
+suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------------------ */
 multiline_comment|/* sleep for ms milliseconds */
 DECL|function|dtlk_delay

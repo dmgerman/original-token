@@ -3937,6 +3937,11 @@ l_int|16
 op_amp
 l_int|0xffff
 suffix:semicolon
+multiline_comment|/* Assume 32-bit PCI; let 64-bit PCI cards (which are far rarer)&n;&t;   set this higher, assuming the system even supports it.  */
+id|dev-&gt;dma_mask
+op_assign
+l_int|0xffffffff
+suffix:semicolon
 r_if
 c_cond
 (paren

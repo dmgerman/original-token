@@ -8,19 +8,28 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifdef CONFIG_ATARI
 macro_line|#include &lt;asm/atari_stram.h&gt;
 macro_line|#endif
+DECL|variable|totalram_pages
+r_static
+r_int
+r_int
+id|totalram_pages
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#ifdef CONFIG_SUN3
 r_void
 id|mmu_emu_reserve_pages
@@ -187,7 +196,7 @@ r_return
 id|pte_mkdirty
 c_func
 (paren
-id|mk_pte
+id|__mk_pte
 c_func
 (paren
 id|empty_bad_page
@@ -466,13 +475,7 @@ id|__init
 id|mem_init
 c_func
 (paren
-r_int
-r_int
-id|start_mem
-comma
-r_int
-r_int
-id|end_mem
+r_void
 )paren
 (brace
 r_int
@@ -497,18 +500,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|end_mem
-op_and_assign
-id|PAGE_MASK
-suffix:semicolon
-id|high_memory
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|end_mem
-suffix:semicolon
 id|max_mapnr
 op_assign
 id|num_physpages
@@ -516,50 +507,9 @@ op_assign
 id|MAP_NR
 c_func
 (paren
-id|end_mem
+id|high_memory
 )paren
 suffix:semicolon
-id|tmp
-op_assign
-id|start_mem
-op_assign
-id|PAGE_ALIGN
-c_func
-(paren
-id|start_mem
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|tmp
-OL
-id|end_mem
-)paren
-(brace
-id|clear_bit
-c_func
-(paren
-id|PG_reserved
-comma
-op_amp
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|tmp
-)paren
-)braket
-dot
-id|flags
-)paren
-suffix:semicolon
-id|tmp
-op_add_assign
-id|PAGE_SIZE
-suffix:semicolon
-)brace
 macro_line|#ifdef CONFIG_ATARI
 r_if
 c_cond
@@ -582,6 +532,22 @@ id|max_mapnr
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* this will put all memory onto the freelists */
+id|totalram_pages
+op_assign
+id|free_all_bootmem
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;tp:%ld&bslash;n&quot;
+comma
+id|totalram_pages
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -591,13 +557,18 @@ id|PAGE_OFFSET
 suffix:semicolon
 id|tmp
 OL
-id|end_mem
+(paren
+r_int
+r_int
+)paren
+id|high_memory
 suffix:semicolon
 id|tmp
 op_add_assign
 id|PAGE_SIZE
 )paren
 (brace
+macro_line|#if 0
 macro_line|#ifndef CONFIG_SUN3
 r_if
 c_cond
@@ -631,6 +602,7 @@ dot
 id|flags
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 r_if
 c_cond
@@ -704,6 +676,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+macro_line|#if 0
 id|set_page_count
 c_func
 (paren
@@ -746,6 +719,7 @@ c_func
 id|tmp
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#ifndef CONFIG_SUN3
 multiline_comment|/* insert pointer tables allocated so far into the tablelist */
@@ -789,7 +763,7 @@ id|i
 id|init_pointer_table
 c_func
 (paren
-id|pgd_page
+id|__pgd_page
 c_func
 (paren
 id|kernel_pg_dir
@@ -827,6 +801,9 @@ r_int
 r_int
 )paren
 id|nr_free_pages
+c_func
+(paren
+)paren
 op_lshift
 (paren
 id|PAGE_SHIFT
@@ -868,6 +845,85 @@ l_int|10
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+DECL|function|free_initrd_mem
+r_void
+id|free_initrd_mem
+c_func
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+(brace
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|start
+OL
+id|end
+suffix:semicolon
+id|start
+op_add_assign
+id|PAGE_SIZE
+)paren
+(brace
+id|ClearPageReserved
+c_func
+(paren
+id|mem_map
+op_plus
+id|MAP_NR
+c_func
+(paren
+id|start
+)paren
+)paren
+suffix:semicolon
+id|set_page_count
+c_func
+(paren
+id|mem_map
+op_plus
+id|MAP_NR
+c_func
+(paren
+id|start
+)paren
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|free_page
+c_func
+(paren
+id|start
+)paren
+suffix:semicolon
+id|totalram_pages
+op_increment
+suffix:semicolon
+)brace
+id|printk
+(paren
+l_string|&quot;Freeing initrd memory: %ldk freed&bslash;n&quot;
+comma
+(paren
+id|end
+op_minus
+id|start
+)paren
+op_rshift
+l_int|10
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|si_meminfo
 r_void
 id|si_meminfo
@@ -889,7 +945,7 @@ id|max_mapnr
 suffix:semicolon
 id|val-&gt;totalram
 op_assign
-l_int|0
+id|totalram_pages
 suffix:semicolon
 id|val-&gt;sharedram
 op_assign
@@ -898,8 +954,9 @@ suffix:semicolon
 id|val-&gt;freeram
 op_assign
 id|nr_free_pages
-op_lshift
-id|PAGE_SHIFT
+c_func
+(paren
+)paren
 suffix:semicolon
 id|val-&gt;bufferram
 op_assign
@@ -907,7 +964,7 @@ id|atomic_read
 c_func
 (paren
 op_amp
-id|buffermem
+id|buffermem_pages
 )paren
 suffix:semicolon
 r_while
@@ -962,13 +1019,13 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|val-&gt;totalram
-op_lshift_assign
-id|PAGE_SHIFT
+id|val-&gt;totalhigh
+op_assign
+l_int|0
 suffix:semicolon
-id|val-&gt;sharedram
-op_lshift_assign
-id|PAGE_SHIFT
+id|val-&gt;freehigh
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 suffix:semicolon

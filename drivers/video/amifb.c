@@ -6123,6 +6123,8 @@ id|amiga_chip_alloc
 c_func
 (paren
 id|size
+comma
+l_string|&quot;amifb&quot;
 )paren
 )paren
 )paren

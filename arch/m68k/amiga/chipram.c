@@ -2,6 +2,7 @@ multiline_comment|/*&n;**  linux/amiga/chipram.c&n;**&n;**      Modified 03-May-
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 DECL|struct|chip_desc
 r_struct
@@ -50,6 +51,18 @@ r_int
 r_int
 id|chipavail
 suffix:semicolon
+DECL|variable|chipram
+r_static
+r_struct
+id|resource
+id|chipram
+op_assign
+(brace
+l_string|&quot;Chip RAM&quot;
+comma
+l_int|0
+)brace
+suffix:semicolon
 DECL|function|amiga_chip_avail
 r_int
 r_int
@@ -97,6 +110,20 @@ id|CHIP_RAM
 )paren
 )paren
 r_return
+suffix:semicolon
+id|chipram.end
+op_assign
+id|amiga_chip_size
+suffix:semicolon
+id|request_resource
+c_func
+(paren
+op_amp
+id|iomem_resource
+comma
+op_amp
+id|chipram
+)paren
 suffix:semicolon
 multiline_comment|/* initialize start boundary */
 id|dp
@@ -181,9 +208,15 @@ DECL|function|amiga_chip_alloc
 r_void
 op_star
 id|amiga_chip_alloc
+c_func
 (paren
 r_int
 id|size
+comma
+r_const
+r_char
+op_star
+id|name
 )paren
 (brace
 multiline_comment|/* last chunk */
@@ -212,7 +245,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;chip_alloc: allocate %ld bytes&bslash;n&quot;
+l_string|&quot;amiga_chip_alloc: allocate %ld bytes&bslash;n&quot;
 comma
 id|size
 )paren
@@ -359,7 +392,7 @@ suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 (paren
-l_string|&quot;chip_alloc: no split&bslash;n&quot;
+l_string|&quot;amiga_chip_alloc: no split&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -387,7 +420,7 @@ suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 (paren
-l_string|&quot;chip_alloc: splitting %d to %ld&bslash;n&quot;
+l_string|&quot;amiga_chip_alloc: splitting %d to %ld&bslash;n&quot;
 comma
 id|dp-&gt;length
 comma
@@ -486,7 +519,7 @@ suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 (paren
-l_string|&quot;chip_alloc: returning %p&bslash;n&quot;
+l_string|&quot;amiga_chip_alloc: returning %p&bslash;n&quot;
 comma
 id|ptr
 )paren
@@ -506,7 +539,7 @@ l_int|7
 id|panic
 c_func
 (paren
-l_string|&quot;chip_alloc: alignment violation&bslash;n&quot;
+l_string|&quot;amiga_chip_alloc: alignment violation&bslash;n&quot;
 )paren
 suffix:semicolon
 id|chipavail
@@ -524,6 +557,40 @@ id|dp
 )paren
 suffix:semicolon
 multiline_comment|/*MILAN*/
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_mem_region
+c_func
+(paren
+id|ZTWO_PADDR
+c_func
+(paren
+id|ptr
+)paren
+comma
+id|size
+comma
+id|name
+)paren
+)paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;amiga_chip_alloc: region of size %ld at 0x%08lx &quot;
+l_string|&quot;is busy&bslash;n&quot;
+comma
+id|size
+comma
+id|ZTWO_PADDR
+c_func
+(paren
+id|ptr
+)paren
+)paren
+suffix:semicolon
 r_return
 id|ptr
 suffix:semicolon
@@ -602,6 +669,18 @@ op_assign
 id|edp-&gt;alloced
 op_assign
 l_int|0
+suffix:semicolon
+id|release_mem_region
+c_func
+(paren
+id|ZTWO_PADDR
+c_func
+(paren
+id|ptr
+)paren
+comma
+id|sdp-&gt;length
+)paren
 suffix:semicolon
 multiline_comment|/* check if we should merge with the previous chunk */
 r_if

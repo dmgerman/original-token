@@ -276,11 +276,7 @@ multiline_comment|/* select DMA xfer */
 id|outl
 c_func
 (paren
-id|virt_to_bus
-c_func
-(paren
-id|hwif-&gt;dmatable
-)paren
+id|hwif-&gt;dmatable_dma
 op_or
 id|reading
 op_or
@@ -362,6 +358,13 @@ id|drive-&gt;waiting_for_dma
 op_assign
 l_int|0
 suffix:semicolon
+id|ide_destroy_dmatable
+c_func
+(paren
+id|drive
+)paren
+suffix:semicolon
+multiline_comment|/* purge DMA mappings */
 r_return
 (paren
 id|inw

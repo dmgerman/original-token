@@ -4109,7 +4109,7 @@ id|i
 op_member_access_from_pointer
 id|qe_block
 op_assign
-id|sbus_alloc_consistant
+id|sbus_alloc_consistent
 c_func
 (paren
 id|qesdevs
@@ -4135,7 +4135,7 @@ id|i
 op_member_access_from_pointer
 id|buffers
 op_assign
-id|sbus_alloc_consistant
+id|sbus_alloc_consistent
 c_func
 (paren
 id|qesdevs
@@ -4556,7 +4556,7 @@ id|qe-&gt;qe_block
 op_ne
 l_int|NULL
 )paren
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 id|qe-&gt;qe_sdev
@@ -4575,7 +4575,7 @@ id|qe-&gt;buffers
 op_ne
 l_int|NULL
 )paren
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 id|qe-&gt;qe_sdev
@@ -4960,7 +4960,7 @@ comma
 id|MREGS_REG_SIZE
 )paren
 suffix:semicolon
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 id|root_qec_dev-&gt;qes
@@ -4987,7 +4987,7 @@ op_member_access_from_pointer
 id|qblock_dvma
 )paren
 suffix:semicolon
-id|sbus_free_consistant
+id|sbus_free_consistent
 c_func
 (paren
 id|root_qec_dev-&gt;qes

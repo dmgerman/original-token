@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef CONFIG_SUN3
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 r_extern
 r_inline
 r_void

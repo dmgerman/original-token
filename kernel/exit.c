@@ -1511,13 +1511,6 @@ c_func
 id|tsk
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG_PROC_TREE
-id|audit_ptree
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1986,13 +1979,6 @@ c_func
 id|p
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG_PROC_TREE
-id|audit_ptree
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_goto
 id|end_wait4
 suffix:semicolon

@@ -888,11 +888,30 @@ op_eq
 id|TYPE_MOD
 )paren
 (brace
+r_int
+id|nents
+op_assign
+id|host-&gt;sg_tablesize
+suffix:semicolon
+macro_line|#ifdef DMA_CHUNK_SIZE
+multiline_comment|/* If the architecture does DMA sg merging, make sure&n;&t;&t;&t;&t;   we count with at least 64 entries even for HBAs&n;&t;&t;&t;&t;   which handle very few sg entries.  */
+r_if
+c_cond
+(paren
+id|nents
+OL
+l_int|64
+)paren
+id|nents
+op_assign
+l_int|64
+suffix:semicolon
+macro_line|#endif
 id|new_dma_sectors
 op_add_assign
 (paren
 (paren
-id|host-&gt;sg_tablesize
+id|nents
 op_star
 r_sizeof
 (paren

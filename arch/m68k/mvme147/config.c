@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
@@ -279,6 +280,37 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
+DECL|function|mvme147_parse_bootinfo
+r_int
+id|mvme147_parse_bootinfo
+c_func
+(paren
+r_const
+r_struct
+id|bi_record
+op_star
+id|bi
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|bi-&gt;tag
+op_eq
+id|BI_VME_TYPE
+op_logical_or
+id|bi-&gt;tag
+op_eq
+id|BI_VME_BRDINFO
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_else
+r_return
+l_int|1
+suffix:semicolon
+)brace
 DECL|function|mvme147_kbdrate
 r_int
 id|mvme147_kbdrate
@@ -438,6 +470,17 @@ suffix:semicolon
 id|mach_get_hardware_list
 op_assign
 id|mvme147_get_hardware_list
+suffix:semicolon
+multiline_comment|/* Board type is only set by newer versions of vmelilo/tftplilo */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|vme_brdtype
+)paren
+id|vme_brdtype
+op_assign
+id|VME_TYPE_MVME147
 suffix:semicolon
 )brace
 multiline_comment|/* Using pcc tick timer 1 */

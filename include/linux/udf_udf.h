@@ -243,14 +243,7 @@ DECL|member|locSparingTable
 id|Uint32
 id|locSparingTable
 (braket
-l_int|0
-)braket
-suffix:semicolon
-DECL|member|pad
-id|Uint8
-id|pad
-(braket
-l_int|0
+l_int|4
 )braket
 suffix:semicolon
 )brace

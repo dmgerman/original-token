@@ -9448,6 +9448,8 @@ op_star
 id|amiga_chip_alloc
 (paren
 id|RAW_BUF_SIZE
+comma
+l_string|&quot;Floppy&quot;
 )paren
 )paren
 op_eq

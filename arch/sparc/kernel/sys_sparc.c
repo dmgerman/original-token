@@ -1695,7 +1695,7 @@ op_assign
 op_minus
 id|EFAULT
 suffix:semicolon
-id|down
+id|down_read
 c_func
 (paren
 op_amp
@@ -1759,7 +1759,7 @@ l_int|0
 suffix:semicolon
 id|done
 suffix:colon
-id|up
+id|up_read
 c_func
 (paren
 op_amp

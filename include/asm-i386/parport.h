@@ -131,6 +131,8 @@ op_star
 id|dma
 op_increment
 )paren
+comma
+l_int|NULL
 )paren
 )paren
 id|count
@@ -174,6 +176,8 @@ id|dma
 (braket
 l_int|0
 )braket
+comma
+l_int|NULL
 )paren
 )paren
 id|count
@@ -198,6 +202,8 @@ id|dma
 (braket
 l_int|0
 )braket
+comma
+l_int|NULL
 )paren
 )paren
 id|count
@@ -222,6 +228,8 @@ id|dma
 (braket
 l_int|0
 )braket
+comma
+l_int|NULL
 )paren
 )paren
 id|count
