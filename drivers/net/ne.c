@@ -1,3 +1,5 @@
+DECL|macro|rw_bugfix
+mdefine_line|#define rw_bugfix
 multiline_comment|/* ne.c: A general non-shared-memory NS8390 ethernet driver for linux. */
 multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;&n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;        Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with many programmed-I/O 8390-based ethernet&n;    boards.  Currently it support the NE1000, NE2000, many clones,&n;    and some Cabletron products.&n;*/
 multiline_comment|/* Routines for the NatSemi-based designs (NE[12]000). */

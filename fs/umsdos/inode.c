@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/fs/umsdos/inode.c&n; *&n; *&t;Written 1993 by Jacques Gelinas &n; *&t;Inspired from linux/fs/msdos/... by Werner Almesberger&n; *&n; */
-macro_line|#include &lt;stdlib.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

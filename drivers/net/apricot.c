@@ -2886,7 +2886,6 @@ l_int|8
 op_plus
 id|i
 )paren
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Some other boards trip the checksum.. but then appear as ether&n;       address 0. Trap these - AC */
@@ -2907,7 +2906,7 @@ l_int|0
 )paren
 (brace
 r_return
-id|mem_addr
+id|mem_start
 suffix:semicolon
 )brace
 id|dev

@@ -1291,7 +1291,7 @@ l_int|0x80
 suffix:semicolon
 multiline_comment|/* removable */
 )brace
-id|SDpnt-&gt;manufactor
+id|SDpnt-&gt;manufacturer
 op_assign
 id|SCSI_MAN_UNKNOWN
 suffix:semicolon
@@ -1311,7 +1311,7 @@ comma
 l_int|3
 )paren
 )paren
-id|SDpnt-&gt;manufactor
+id|SDpnt-&gt;manufacturer
 op_assign
 id|SCSI_MAN_NEC
 suffix:semicolon
@@ -1331,7 +1331,7 @@ comma
 l_int|7
 )paren
 )paren
-id|SDpnt-&gt;manufactor
+id|SDpnt-&gt;manufacturer
 op_assign
 id|SCSI_MAN_TOSHIBA
 suffix:semicolon

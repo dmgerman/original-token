@@ -486,6 +486,18 @@ c_func
 id|set_device_ro
 )paren
 comma
+id|X
+c_func
+(paren
+id|bmap
+)paren
+comma
+id|X
+c_func
+(paren
+id|sync_dev
+)paren
+comma
 multiline_comment|/* Module creation of serial units */
 id|X
 c_func

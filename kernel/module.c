@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-multiline_comment|/*&n; * Heavily modified by Bjorn Ekwall &lt;bj0rn@blox.se&gt; May 1994 (C)&n; * This source is covered by the GNU GPL, the same as all kernel sources.&n; *&n; * Features:&n; *&t;- Supports stacked modules (removable only of there are no dependents).&n; *&t;- Supports table of symbols defined by the modules.&n; *&t;- Supports /proc/ksyms, showing value, name and owner of all&n; *&t;  the symbols defined by all modules (in stack order).&n; *&t;- Added module dependencies information into /proc/modules&n; *&t;- Supports redefines of all symbols, for streams-like behaviour.&n; *&t;- Compatible with older versions of insmod.&n; *&n; */
+multiline_comment|/*&n; * Originally by Anonymous (as far as I know...)&n; * Linux version by Bas Laarhoven &lt;bas@vimec.nl&gt;&n; * 0.99.14 version by Jon Tombs &lt;jon@gtex02.us.es&gt;,&n; *&n; * Heavily modified by Bjorn Ekwall &lt;bj0rn@blox.se&gt; May 1994 (C)&n; * This source is covered by the GNU GPL, the same as all kernel sources.&n; *&n; * Features:&n; *&t;- Supports stacked modules (removable only of there are no dependents).&n; *&t;- Supports table of symbols defined by the modules.&n; *&t;- Supports /proc/ksyms, showing value, name and owner of all&n; *&t;  the symbols defined by all modules (in stack order).&n; *&t;- Added module dependencies information into /proc/modules&n; *&t;- Supports redefines of all symbols, for streams-like behaviour.&n; *&t;- Compatible with older versions of insmod.&n; *&n; */
 macro_line|#ifdef DEBUG_MODULE
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(a) printk a
@@ -814,6 +814,9 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_int
+id|legal_start
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -904,9 +907,19 @@ id|size
 )paren
 )paren
 )paren
+(brace
+id|kfree_s
+c_func
+(paren
+id|newtab
+comma
+id|size
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
+)brace
 id|memcpy_fromfs
 c_func
 (paren
@@ -923,6 +936,72 @@ comma
 id|size
 )paren
 suffix:semicolon
+multiline_comment|/* sanity check */
+id|legal_start
+op_assign
+r_sizeof
+(paren
+r_struct
+id|symbol_table
+)paren
+op_plus
+id|newtab-&gt;n_symbols
+op_star
+r_sizeof
+(paren
+r_struct
+id|internal_symbol
+)paren
+op_plus
+id|newtab-&gt;n_refs
+op_star
+r_sizeof
+(paren
+r_struct
+id|module_ref
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|newtab-&gt;n_symbols
+OL
+l_int|0
+)paren
+op_logical_or
+(paren
+id|newtab-&gt;n_refs
+OL
+l_int|0
+)paren
+op_logical_or
+(paren
+id|legal_start
+OG
+id|size
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Illegal symbol table! Rejected!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|kfree_s
+c_func
+(paren
+id|newtab
+comma
+id|size
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 multiline_comment|/* relocate name pointers, index referred from start of table */
 r_for
 c_loop
@@ -952,6 +1031,44 @@ op_increment
 id|i
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+r_int
+)paren
+id|sym-&gt;name
+OL
+id|legal_start
+op_logical_or
+id|size
+op_le
+(paren
+r_int
+)paren
+id|sym-&gt;name
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Illegal symbol table! Rejected!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|kfree_s
+c_func
+(paren
+id|newtab
+comma
+id|size
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+multiline_comment|/* else */
 id|sym-&gt;name
 op_add_assign
 (paren
@@ -964,7 +1081,7 @@ id|mp-&gt;symtab
 op_assign
 id|newtab
 suffix:semicolon
-multiline_comment|/* Update module references.&n;&t;&t; * On entry, from &quot;insmod&quot;, ref-&gt;module points to&n;&t;&t; * the referenced module!&n;&t;&t; * Also, &quot;sym&quot; from above, points to the first ref entry!!!&n;&t;&t; */
+multiline_comment|/* Update module references.&n;&t;&t; * On entry, from &quot;insmod&quot;, ref-&gt;module points to&n;&t;&t; * the referenced module!&n;&t;&t; * Now it will point to the current module instead!&n;&t;&t; * The ref structure becomes the first link in the linked&n;&t;&t; * list of references to the referenced module.&n;&t;&t; * Also, &quot;sym&quot; from above, points to the first ref entry!!!&n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -992,6 +1109,53 @@ op_increment
 id|i
 )paren
 (brace
+multiline_comment|/* Check for valid reference */
+r_struct
+id|module
+op_star
+id|link
+op_assign
+id|module_list
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|link
+op_logical_and
+(paren
+id|ref-&gt;module
+op_ne
+id|link
+)paren
+)paren
+id|link
+op_assign
+id|link-&gt;next
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|link
+op_eq
+(paren
+r_struct
+id|module
+op_star
+)paren
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Non-module reference! Rejected!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 id|ref-&gt;next
 op_assign
 id|ref-&gt;module-&gt;ref

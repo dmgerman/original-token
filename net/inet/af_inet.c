@@ -4994,18 +4994,6 @@ id|score
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * strange but true: udp sockets don&squot;t care that much&n;&t;&t; * about the remote address.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|prot
-op_eq
-op_amp
-id|udp_prot
-)paren
-r_return
-id|s
-suffix:semicolon
 multiline_comment|/* remote address matches? */
 r_if
 c_cond

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR SCSI_CDROM_MAJOR
@@ -1177,7 +1178,7 @@ id|SCpnt
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Here I tried to implement better support for PhotoCD&squot;s.&n; * &n; * Much of this has do be done with vendor-specific SCSI-commands.&n; * So I have to complete it step by step. Useful information is welcome.&n; *&n; * Actually works: (should work ;-)&n; *   - NEC:     Detection and support of multisession CD&squot;s. Special handling&n; *              for XA-disks is not nessesary.&n; *     &n; *   - TOSHIBA: setting density is done here now, mounting PhotoCD&squot;s should&n; *              work now without running the program &quot;set_density&quot;&n; *              multisession-CD&squot;s are supported too.&n; *&n; *   Gerd Knorr  (mailto:kraxel@cs.tu-berlin.de,&n; *                http://www.cs.tu-berlin.de/~kraxel/)&n; */
+multiline_comment|/*&n; * Here I tried to implement better support for PhotoCD&squot;s.&n; * &n; * Much of this has do be done with vendor-specific SCSI-commands.&n; * So I have to complete it step by step. Useful information is welcome.&n; *&n; * Actually works: (should work ;-)&n; *   - NEC:     Detection and support of multisession CD&squot;s. Special handling&n; *              for XA-disks is not necessary.&n; *     &n; *   - TOSHIBA: setting density is done here now, mounting PhotoCD&squot;s should&n; *              work now without running the program &quot;set_density&quot;&n; *              multisession-CD&squot;s are supported too.&n; *&n; *   Gerd Knorr  (mailto:kraxel@cs.tu-berlin.de,&n; *                http://www.cs.tu-berlin.de/~kraxel/)&n; */
 DECL|function|sr_photocd_done
 r_static
 r_void
@@ -1247,7 +1248,7 @@ id|inode-&gt;i_rdev
 )paren
 )braket
 dot
-id|device-&gt;manufactor
+id|device-&gt;manufacturer
 )paren
 (brace
 r_case
@@ -1487,6 +1488,10 @@ op_star
 l_int|75
 op_plus
 id|frame
+suffix:semicolon
+id|sector
+op_sub_assign
+id|CD_BLOCK_OFFSET
 suffix:semicolon
 r_if
 c_cond
@@ -1939,6 +1944,10 @@ l_int|75
 op_plus
 id|frame
 suffix:semicolon
+id|sector
+op_sub_assign
+id|CD_BLOCK_OFFSET
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2125,12 +2134,14 @@ id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 0&t;/* don&squot;t use for now - it doesn&squot;t seem to work for everybody */
 id|sr_photocd
 c_func
 (paren
 id|inode
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

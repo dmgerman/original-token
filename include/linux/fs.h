@@ -22,8 +22,6 @@ DECL|macro|NR_SUPER
 mdefine_line|#define NR_SUPER 32
 DECL|macro|NR_IHASH
 mdefine_line|#define NR_IHASH 131
-DECL|macro|NR_FILE_LOCKS
-mdefine_line|#define NR_FILE_LOCKS 64
 DECL|macro|BLOCK_SIZE
 mdefine_line|#define BLOCK_SIZE 1024
 DECL|macro|BLOCK_SIZE_BITS
@@ -717,6 +715,12 @@ op_star
 id|fl_next
 suffix:semicolon
 multiline_comment|/* singly linked list */
+DECL|member|fl_nextlink
+r_struct
+id|file_lock
+op_star
+id|fl_nextlink
+suffix:semicolon
 DECL|member|fl_owner
 r_struct
 id|task_struct

@@ -10628,7 +10628,7 @@ op_plus
 id|th-&gt;syn
 suffix:semicolon
 multiline_comment|/* Right edge of _data_ part of frame */
-multiline_comment|/*&n;&t;&t; *&t;This is subtle and not nice. When we shut down we can&n;&t;&t; *&t;have data in the queue and acked_seq therefore not&n;&t;&t; *&t;pointing to the last byte that will be read. Thus&n;&t;&t; *&t;the naive implementation:&n;&t;&t; *&t;&t;after(new_seq,sk-&gt;acked_seq+1)&n;&t;&t; *&t;will cause bogus resets IFF a resend of a frame that has&n;&t;&t; *&t;been queued but not yet read after a shutdown has been done&n;&t;&t; *&t;occured.What we do now is a bit more complex but works as&n;&t;&t; *&t;follows. If the queue is empty copied_seq+1 is right (+1 for FIN)&n;&t;&t; *&t;if the queue has data the shutdown occurs at the right edge of&n;&t;&t; *&t;the last packet queued +1&n;&t;&t; *&n;&t;&t; *&t;We can&squot;t simply ack data beyond this point as it has&n;&t;&t; *&t;and will never be received by an application.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;This is subtle and not nice. When we shut down we can&n;&t;&t; *&t;have data in the queue and acked_seq therefore not&n;&t;&t; *&t;pointing to the last byte that will be read. Thus&n;&t;&t; *&t;the naive implementation:&n;&t;&t; *&t;&t;after(new_seq,sk-&gt;acked_seq+1)&n;&t;&t; *&t;will cause bogus resets IFF a resend of a frame that has&n;&t;&t; *&t;been queued but not yet read after a shutdown has been done.&n;&t;&t; *&t;What we do now is a bit more complex but works as&n;&t;&t; *&t;follows. If the queue is empty copied_seq+1 is right (+1 for FIN)&n;&t;&t; *&t;if the queue has data the shutdown occurs at the right edge of&n;&t;&t; *&t;the last packet queued +1&n;&t;&t; *&n;&t;&t; *&t;We can&squot;t simply ack data beyond this point as it has&n;&t;&t; *&t;and will never be received by an application.&n;&t;&t; */
 id|tail
 op_assign
 id|skb_peek
@@ -14297,7 +14297,7 @@ id|sk-&gt;debug
 id|printk
 c_func
 (paren
-l_string|&quot;Reset on closed socket %s.&bslash;n&quot;
+l_string|&quot;Reset on closed socket %d.&bslash;n&quot;
 comma
 id|sk-&gt;blog
 )paren
@@ -14374,6 +14374,12 @@ c_cond
 id|th-&gt;ack
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|sk-&gt;debug
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -14382,6 +14388,7 @@ comma
 id|sk-&gt;blog
 )paren
 suffix:semicolon
+)brace
 id|tcp_reset
 c_func
 (paren

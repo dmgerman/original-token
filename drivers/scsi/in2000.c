@@ -1,8 +1,9 @@
-multiline_comment|/*&n; *  This file is in2000.c, written and&n; *  Copyright (C) 1993  Brad McLean&n; *&t;Last edit 07/19/94 WDE&n; * Disclaimer:&n; * Note:  This is ugly.  I know it, I wrote it, but my whole&n; * focus was on getting the damn thing up and out quickly.&n; * Future stuff that would be nice:  Command chaining, and&n; * a local queue of commands would speed stuff up considerably.&n; * Disconnection needs some supporting code.  All of this&n; * is beyond the scope of what I wanted to address, but if you&n; * have time and patience, more power to you.&n; * Also, there are some constants scattered throughout that&n; * should have defines, and I should have built functions to&n; * address the registers on the WD chip.&n; * Oh well, I&squot;m out of time for this project.&n; * The one good thing to be said is that you can use the card.&n; */
+multiline_comment|/*&n; *  This file is in2000.c, written and&n; *  Copyright (C) 1993  Brad McLean&n; *&t;Last edit 08/25/94 WDE&n; * Disclaimer:&n; * Note:  This is ugly.  I know it, I wrote it, but my whole&n; * focus was on getting the damn thing up and out quickly.&n; * Future stuff that would be nice:  Command chaining, and&n; * a local queue of commands would speed stuff up considerably.&n; * Disconnection needs some supporting code.  All of this&n; * is beyond the scope of what I wanted to address, but if you&n; * have time and patience, more power to you.&n; * Also, there are some constants scattered throughout that&n; * should have defines, and I should have built functions to&n; * address the registers on the WD chip.&n; * Oh well, I&squot;m out of time for this project.&n; * The one good thing to be said is that you can use the card.&n; */
 multiline_comment|/*&n; * This module was updated by Shaun Savage first on 5-13-93&n; * At that time the write was fixed, irq detection, and some&n; * timing stuff.  since that time other problems were fixed.&n; * On 7-20-93 this file was updated for patch level 11&n; * There are still problems with it but it work on 95% of&n; * the machines.  There are still problems with it working with&n; * IDE drives, as swap drive and HD that support reselection.&n; * But for most people it will work.&n; */
 multiline_comment|/* More changes by Bill Earnest, wde@aluxpo.att.com&n; * through 4/07/94. Includes rewrites of FIFO routines,&n; * length-limited commands to make swap partitions work.&n; * Merged the changes released by Larry Doolittle, based on input&n; * from Jon Luckey, Roger Sunshine, John Shifflett. The FAST_FIFO&n; * doesn&squot;t work for me. Scatter-gather code from Eric. The change to&n; * an IF stmt. in the interrupt routine finally made it stable.&n; * Limiting swap request size patch to ll_rw_blk.c not needed now.&n; * Please ignore the clutter of debug stmts., pretty can come later.&n; */
 multiline_comment|/* Merged code from Matt Postiff improving the auto-sense validation&n; * for all I/O addresses. Some reports of problems still come in, but&n; * have been unable to reproduce or localize the cause. Some are from&n; * LUN &gt; 0 problems, but that is not host specific. Now 6/6/94.&n; */
 multiline_comment|/* Changes for 1.1.28 kernel made 7/19/94, code not affected. (WDE)&n; */
+multiline_comment|/* Changes for 1.1.43+ kernels made 8/25/94, code added to check for&n; * new BIOS version, derived by jshiffle@netcom.com. (WDE)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -322,6 +323,18 @@ l_int|0x04
 )paren
 op_eq
 l_int|0x41564f4e
+op_logical_or
+op_star
+(paren
+id|bios_tab
+(braket
+id|i
+)braket
+op_plus
+l_int|0xc
+)paren
+op_eq
+l_int|0x61776c41
 )paren
 (brace
 id|printk
@@ -355,7 +368,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * retreive the current transaction counter from the WD&n; */
+multiline_comment|/*&n; * retrieve the current transaction counter from the WD&n; */
 DECL|function|in2000_txcnt
 r_static
 r_int
@@ -505,7 +518,7 @@ l_int|3
 op_minus
 l_int|32
 suffix:semicolon
-multiline_comment|/* dont fill completely */
+multiline_comment|/* don&squot;t fill completely */
 r_if
 c_cond
 (paren

@@ -23,20 +23,17 @@ r_struct
 id|timestamp
 (brace
 DECL|member|len
-r_int
-r_char
+id|u8
 id|len
 suffix:semicolon
 DECL|member|ptr
-r_int
-r_char
+id|u8
 id|ptr
 suffix:semicolon
 r_union
 (brace
 macro_line|#if defined(__i386__)  
-r_int
-r_char
+id|u8
 id|flags
 suffix:colon
 l_int|4
@@ -45,25 +42,31 @@ id|overflow
 suffix:colon
 l_int|4
 suffix:semicolon
-macro_line|#else
-macro_line|#if defined(__mc680x0__)
-r_int
-r_char
+macro_line|#elif defined(__mc680x0__)
+id|u8
 id|overflow
 suffix:colon
 l_int|4
 comma
 id|flags
+suffix:colon
+l_int|4
+suffix:semicolon
+macro_line|#elif defined(__alpha__)
+id|u8
+id|flags
+suffix:colon
+l_int|4
+comma
+id|overflow
 suffix:colon
 l_int|4
 suffix:semicolon
 macro_line|#else
 macro_line|#error&t;&quot;Adjust this structure to match your CPU&quot;
-macro_line|#endif
 macro_line|#endif&t;&t;&t;&t;&t;&t;
 DECL|member|full_char
-r_int
-r_char
+id|u8
 id|full_char
 suffix:semicolon
 DECL|member|x
@@ -71,8 +74,7 @@ DECL|member|x
 id|x
 suffix:semicolon
 DECL|member|data
-r_int
-r_int
+id|u32
 id|data
 (braket
 l_int|9
@@ -160,8 +162,7 @@ id|iphdr
 (brace
 macro_line|#if defined(__i386__)
 DECL|member|ihl
-r_int
-r_char
+id|u8
 id|ihl
 suffix:colon
 l_int|4
@@ -171,10 +172,8 @@ id|version
 suffix:colon
 l_int|4
 suffix:semicolon
-macro_line|#else
-macro_line|#if defined (__mc680x0__)
-r_int
-r_char
+macro_line|#elif defined (__mc680x0__)
+id|u8
 id|version
 suffix:colon
 l_int|4
@@ -183,53 +182,53 @@ id|ihl
 suffix:colon
 l_int|4
 suffix:semicolon
+macro_line|#elif defined (__alpha__)
+id|u8
+id|ihl
+suffix:colon
+l_int|4
+comma
+id|version
+suffix:colon
+l_int|4
+suffix:semicolon
 macro_line|#else
 macro_line|#error &quot;Adjust this structure to match your CPU&quot;
-macro_line|#endif&t;&t;&t;
 macro_line|#endif
 DECL|member|tos
-r_int
-r_char
+id|u8
 id|tos
 suffix:semicolon
 DECL|member|tot_len
-r_int
-r_int
+id|u16
 id|tot_len
 suffix:semicolon
 DECL|member|id
-r_int
-r_int
+id|u16
 id|id
 suffix:semicolon
 DECL|member|frag_off
-r_int
-r_int
+id|u16
 id|frag_off
 suffix:semicolon
 DECL|member|ttl
-r_int
-r_char
+id|u8
 id|ttl
 suffix:semicolon
 DECL|member|protocol
-r_int
-r_char
+id|u8
 id|protocol
 suffix:semicolon
 DECL|member|check
-r_int
-r_int
+id|u16
 id|check
 suffix:semicolon
 DECL|member|saddr
-r_int
-r_int
+id|u32
 id|saddr
 suffix:semicolon
 DECL|member|daddr
-r_int
-r_int
+id|u32
 id|daddr
 suffix:semicolon
 multiline_comment|/*The options start here. */

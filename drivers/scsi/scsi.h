@@ -303,7 +303,7 @@ mdefine_line|#define&t;SCSI_1_CCS&t;2
 DECL|macro|SCSI_2
 mdefine_line|#define&t;SCSI_2&t;&t;3
 multiline_comment|/*&n;&t;Every SCSI command starts with a one byte OP-code.&n;&t;The next byte&squot;s high three bits are the LUN of the&n;&t;device.  Any multi-byte quantities are stored high byte&n;&t;first, and may have a 5 bit MSB in the same byte&n;&t;as the LUN.&n;*/
-multiline_comment|/*&n;        Manufactors list&n;*/
+multiline_comment|/*&n;        Manufacturers list&n;*/
 DECL|macro|SCSI_MAN_UNKNOWN
 mdefine_line|#define SCSI_MAN_UNKNOWN     0
 DECL|macro|SCSI_MAN_NEC
@@ -331,12 +331,12 @@ id|id
 comma
 id|lun
 suffix:semicolon
-DECL|member|manufactor
+DECL|member|manufacturer
 r_int
 r_int
-id|manufactor
+id|manufacturer
 suffix:semicolon
-multiline_comment|/* Manufactor of device, for using vendor-specific cmd&squot;s */
+multiline_comment|/* Manufacturer of device, for using vendor-specific cmd&squot;s */
 DECL|member|attached
 r_int
 id|attached

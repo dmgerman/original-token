@@ -1,11 +1,15 @@
-macro_line|#ifndef _LINUX_PAGE_H
-DECL|macro|_LINUX_PAGE_H
-mdefine_line|#define _LINUX_PAGE_H
+macro_line|#ifndef _ALPHA_PAGE_H
+DECL|macro|_ALPHA_PAGE_H
+mdefine_line|#define _ALPHA_PAGE_H
+DECL|macro|invalidate_all
+mdefine_line|#define invalidate_all() &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;lda $16,-2($31)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long 51&quot; &bslash;&n;&t;: : :&quot;$1&quot;, &quot;$16&quot;, &quot;$17&quot;, &quot;$22&quot;,&quot;$23&quot;,&quot;$24&quot;,&quot;$25&quot;)
+DECL|macro|invalidate
+mdefine_line|#define invalidate() &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;lda $16,-1($31)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long 51&quot; &bslash;&n;&t;: : :&quot;$1&quot;, &quot;$16&quot;, &quot;$17&quot;, &quot;$22&quot;,&quot;$23&quot;,&quot;$24&quot;,&quot;$25&quot;)
 multiline_comment|/* PAGE_SHIFT determines the page size */
 DECL|macro|PAGE_SHIFT
-mdefine_line|#define PAGE_SHIFT&t;&t;&t;12
+mdefine_line|#define PAGE_SHIFT&t;&t;&t;13
 DECL|macro|PGDIR_SHIFT
-mdefine_line|#define PGDIR_SHIFT&t;&t;&t;22
+mdefine_line|#define PGDIR_SHIFT&t;&t;&t;23
 DECL|macro|PAGE_SIZE
 mdefine_line|#define PAGE_SIZE&t;&t;&t;(1UL &lt;&lt; PAGE_SHIFT)
 DECL|macro|PGDIR_SIZE
@@ -29,7 +33,7 @@ mdefine_line|#define PTR_MASK&t;&t;&t;(~(sizeof(void*)-1))
 multiline_comment|/* sizeof(void*)==1&lt;&lt;SIZEOF_PTR_LOG2 */
 multiline_comment|/* 64-bit machines, beware!  SRB. */
 DECL|macro|SIZEOF_PTR_LOG2
-mdefine_line|#define SIZEOF_PTR_LOG2&t;&t;&t;2
+mdefine_line|#define SIZEOF_PTR_LOG2&t;&t;&t;4
 multiline_comment|/* to find an entry in a page-table-directory */
 DECL|macro|PAGE_DIR_OFFSET
 mdefine_line|#define PAGE_DIR_OFFSET(base,address)&t;((unsigned long*)((base)+&bslash;&n;  ((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)*2&amp;PTR_MASK&amp;~PAGE_MASK)))
@@ -40,5 +44,5 @@ multiline_comment|/* the no. of pointers that fit on a page */
 DECL|macro|PTRS_PER_PAGE
 mdefine_line|#define PTRS_PER_PAGE&t;&t;&t;(PAGE_SIZE/sizeof(void*))
 macro_line|#endif /* __KERNEL__ */
-macro_line|#endif /* _LINUX_PAGE_H */
+macro_line|#endif /* _ALPHA_PAGE_H */
 eof

@@ -185,9 +185,7 @@ DECL|macro|UMSDOS_INIT_EMD
 mdefine_line|#define UMSDOS_INIT_EMD&t;&t;1242&t;/* Create the EMD file if not there */
 DECL|macro|UMSDOS_DOS_SETUP
 mdefine_line|#define UMSDOS_DOS_SETUP&t;1243&t;/* Set the defaults of the MsDOS driver */
-macro_line|#ifndef _SYS_STAT_H
-macro_line|#include &lt;sys/stat.h&gt;
-macro_line|#endif
+macro_line|#include &lt;linux/stat.h&gt;
 DECL|struct|umsdos_ioctl
 r_struct
 id|umsdos_ioctl
@@ -204,7 +202,7 @@ id|umsdos_dirent
 suffix:semicolon
 DECL|member|stat
 r_struct
-id|stat
+id|new_stat
 id|stat
 suffix:semicolon
 DECL|member|version

@@ -1,7 +1,7 @@
 macro_line|#ifndef _LINUX_MM_H
 DECL|macro|_LINUX_MM_H
 mdefine_line|#define _LINUX_MM_H
-macro_line|#include &lt;linux/page.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -930,8 +930,6 @@ DECL|macro|read_swap_page
 mdefine_line|#define read_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(READ,(nr),(buf))
 DECL|macro|write_swap_page
 mdefine_line|#define write_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(WRITE,(nr),(buf))
-DECL|macro|invalidate
-mdefine_line|#define invalidate() &bslash;&n;__asm__ __volatile__(&quot;movl %%cr3,%%eax&bslash;n&bslash;tmovl %%eax,%%cr3&quot;: : :&quot;ax&quot;)
 r_extern
 r_int
 r_int

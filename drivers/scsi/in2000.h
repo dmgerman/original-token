@@ -1,5 +1,5 @@
 macro_line|#ifndef _IN2000_H
-multiline_comment|/* $Id: in2000.h,v 1.1 1994/03/14 06:27:38 root Exp root $&n; *&n; * Header file for the Always IN 2000 driver for Linux&n; *&n; */
+multiline_comment|/* $Id: in2000.h,v 1.2 1994/08/25 06:27:38 root Exp root $&n; *&n; * Header file for the Always IN 2000 driver for Linux&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 multiline_comment|/* The IN-2000 is based on a WD33C93 */
@@ -30,6 +30,8 @@ mdefine_line|#define G2CNTRL_HRDY&t;0x20&t;&t;/* Sets HOST ready */
 multiline_comment|/* WD33C93 defines */
 DECL|macro|OWNID
 mdefine_line|#define&t;OWNID&t;0
+DECL|macro|CONTROL
+macro_line|#undef&t;CONTROL
 DECL|macro|CONTROL
 mdefine_line|#define&t;CONTROL&t;1
 DECL|macro|TIMEOUT
@@ -107,27 +109,17 @@ mdefine_line|#define&t;AUX_INT&t;0x80
 multiline_comment|/* Select timeout const, 1 count = 8ms */
 DECL|macro|IN2000_TMOUT
 mdefine_line|#define IN2000_TMOUT 0x1f
-macro_line|#if 0
-multiline_comment|/* This is used with scatter-gather */
-r_struct
-id|in2000_chain
-(brace
-id|ulong
-id|dataptr
-suffix:semicolon
-multiline_comment|/* Location of data */
-id|ulong
-id|datalen
-suffix:semicolon
-multiline_comment|/* Size of this part of chain */
-)brace
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* These belong in scsi.h also */
+DECL|macro|any2scsi
+macro_line|#undef any2scsi
 DECL|macro|any2scsi
 mdefine_line|#define any2scsi(up, p)&t;&t;&t;&t;&bslash;&n;(up)[0] = (((unsigned long)(p)) &gt;&gt; 16);&t;&t;&bslash;&n;(up)[1] = (((unsigned long)(p)) &gt;&gt; 8);&t;&t;&bslash;&n;(up)[2] = ((unsigned long)(p));
 DECL|macro|scsi2int
+macro_line|#undef scsi2int
+DECL|macro|scsi2int
 mdefine_line|#define scsi2int(up) ( ((((long)*(up))&amp;0x1f) &lt;&lt; 16) + (((long)(up)[1]) &lt;&lt; 8) + ((long)(up)[2]) )
+DECL|macro|xany2scsi
+macro_line|#undef xany2scsi
 DECL|macro|xany2scsi
 mdefine_line|#define xany2scsi(up, p)&t;&bslash;&n;(up)[0] = ((long)(p)) &gt;&gt; 24;&t;&bslash;&n;(up)[1] = ((long)(p)) &gt;&gt; 16;&t;&bslash;&n;(up)[2] = ((long)(p)) &gt;&gt; 8;&t;&bslash;&n;(up)[3] = ((long)(p));
 DECL|macro|xscsi2int

@@ -316,7 +316,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;Block, offset: %x %x %x&bslash;n&quot;
+l_string|&quot;Block, offset, f_pos: %x %x %x&bslash;n&quot;
 comma
 id|block
 comma
@@ -479,7 +479,7 @@ r_if
 c_cond
 (paren
 id|offset
-op_ge
+OG
 id|bufsize
 )paren
 (brace

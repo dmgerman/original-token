@@ -1,7 +1,8 @@
-multiline_comment|/*&n; *  linux/fs/locks.c&n; *&n; *  Provide support for fcntl()&squot;s F_GETLK, F_SETLK, and F_SETLKW calls.&n; *  Doug Evans, 92Aug07, dje@sspiff.uucp.&n; *&n; *  Deadlock Detection added by Kelly Carmichael, kelly@[142.24.8.65]&n; *  September 17, 1994.&n; *&n; * FIXME: one thing isn&squot;t handled yet:&n; *&t;- mandatory locks (requires lots of changes elsewhere)&n; *&n; *  Edited by Kai Petzke, wpp@marie.physik.tu-berlin.de&n; */
+multiline_comment|/*&n; *  linux/fs/locks.c&n; *&n; *  Provide support for fcntl()&squot;s F_GETLK, F_SETLK, and F_SETLKW calls.&n; *  Doug Evans, 92Aug07, dje@sspiff.uucp.&n; *&n; *  Deadlock Detection added by Kelly Carmichael, kelly@[142.24.8.65]&n; *  September 17, 1994.&n; *&n; * FIXME: one thing isn&squot;t handled yet:&n; *&t;- mandatory locks (requires lots of changes elsewhere)&n; *&n; *  Edited by Kai Petzke, wpp@marie.physik.tu-berlin.de&n; *&n; *  Converted file_lock_table to a linked list from an array, which eliminates&n; *  the limits on how many active file locks are open - Chad Page&n; *  (pageone@netcom.com), November 27, 1994 &n; */
 DECL|macro|DEADLOCK_DETECTION
 mdefine_line|#define DEADLOCK_DETECTION
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -138,10 +139,10 @@ DECL|variable|file_lock_table
 r_static
 r_struct
 id|file_lock
+op_star
 id|file_lock_table
-(braket
-id|NR_FILE_LOCKS
-)braket
+op_assign
+l_int|NULL
 suffix:semicolon
 DECL|variable|file_lock_free_list
 r_static
@@ -149,86 +150,9 @@ r_struct
 id|file_lock
 op_star
 id|file_lock_free_list
-suffix:semicolon
-multiline_comment|/*&n; * Called at boot time to initialize the lock table ...&n; */
-DECL|function|fcntl_init_locks
-r_void
-id|fcntl_init_locks
-c_func
-(paren
-r_void
-)paren
-(brace
-r_struct
-id|file_lock
-op_star
-id|fl
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|fl
-op_assign
-op_amp
-id|file_lock_table
-(braket
-l_int|0
-)braket
-suffix:semicolon
-id|fl
-OL
-id|file_lock_table
-op_plus
-id|NR_FILE_LOCKS
-op_minus
-l_int|1
-suffix:semicolon
-id|fl
-op_increment
-)paren
-(brace
-id|fl-&gt;fl_next
-op_assign
-id|fl
-op_plus
-l_int|1
-suffix:semicolon
-id|fl-&gt;fl_owner
 op_assign
 l_int|NULL
 suffix:semicolon
-)brace
-id|file_lock_table
-(braket
-id|NR_FILE_LOCKS
-op_minus
-l_int|1
-)braket
-dot
-id|fl_next
-op_assign
-l_int|NULL
-suffix:semicolon
-id|file_lock_table
-(braket
-id|NR_FILE_LOCKS
-op_minus
-l_int|1
-)braket
-dot
-id|fl_owner
-op_assign
-l_int|NULL
-suffix:semicolon
-id|file_lock_free_list
-op_assign
-op_amp
-id|file_lock_table
-(braket
-l_int|0
-)braket
-suffix:semicolon
-)brace
 DECL|function|fcntl_getlk
 r_int
 id|fcntl_getlk
@@ -829,22 +753,15 @@ c_loop
 (paren
 id|fl
 op_assign
-op_amp
 id|file_lock_table
-(braket
-l_int|0
-)braket
 suffix:semicolon
 id|fl
-OL
-id|file_lock_table
-op_plus
-id|NR_FILE_LOCKS
-op_minus
-l_int|1
+op_ne
+l_int|NULL
 suffix:semicolon
 id|fl
-op_increment
+op_assign
+id|fl-&gt;fl_nextlink
 )paren
 (brace
 r_if
@@ -1756,7 +1673,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * File_lock() inserts a lock at the position pos of the linked list.&n; */
+multiline_comment|/*&n; * File_lock() inserts a lock at the position pos of the linked list.&n; *&n; *  Modified to create a new node if no free entries available - Chad Page&n; *&n; */
 DECL|function|alloc_lock
 r_static
 r_struct
@@ -1797,10 +1714,58 @@ id|tmp
 op_eq
 l_int|NULL
 )paren
-r_return
+(brace
+multiline_comment|/* Okay, let&squot;s make a new file_lock structure... */
+id|tmp
+op_assign
+(paren
+r_struct
+id|file_lock
+op_star
+)paren
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|file_lock
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+id|tmp
+op_member_access_from_pointer
+id|fl_owner
+op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* no available entry */
+id|tmp
+op_member_access_from_pointer
+id|fl_next
+op_assign
+id|file_lock_free_list
+suffix:semicolon
+id|tmp
+op_member_access_from_pointer
+id|fl_nextlink
+op_assign
+id|file_lock_table
+suffix:semicolon
+id|file_lock_table
+op_assign
+id|tmp
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* remove from free list */
+id|file_lock_free_list
+op_assign
+id|tmp-&gt;fl_next
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1813,11 +1778,6 @@ c_func
 (paren
 l_string|&quot;alloc_lock: broken free list&bslash;n&quot;
 )paren
-suffix:semicolon
-multiline_comment|/* remove from free list */
-id|file_lock_free_list
-op_assign
-id|tmp-&gt;fl_next
 suffix:semicolon
 op_star
 id|tmp

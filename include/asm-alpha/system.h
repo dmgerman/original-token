@@ -9,8 +9,8 @@ DECL|macro|INIT_STACK
 mdefine_line|#define INIT_STACK&t;0xfffffc0000302000
 DECL|macro|START_ADDR
 mdefine_line|#define START_ADDR&t;0xfffffc0000304000
-DECL|macro|SIZE
-mdefine_line|#define SIZE&t;&t;(32*1024)
+DECL|macro|START_SIZE
+mdefine_line|#define START_SIZE&t;(32*1024)
 multiline_comment|/*&n; * Common PAL-code&n; */
 DECL|macro|PAL_halt
 mdefine_line|#define PAL_halt&t;  0
@@ -84,10 +84,6 @@ macro_line|#ifndef mb
 DECL|macro|mb
 mdefine_line|#define mb() __asm__ __volatile__(&quot;mb&quot;: : :&quot;memory&quot;)
 macro_line|#endif
-DECL|macro|invalidate_all
-mdefine_line|#define invalidate_all() &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;lda $16,-2($31)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long 51&quot; &bslash;&n;&t;: : :&quot;$1&quot;, &quot;$16&quot;, &quot;$17&quot;, &quot;$22&quot;,&quot;$23&quot;,&quot;$24&quot;,&quot;$25&quot;)
-DECL|macro|invalidate
-mdefine_line|#define invalidate() &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;lda $16,-1($31)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long 51&quot; &bslash;&n;&t;: : :&quot;$1&quot;, &quot;$16&quot;, &quot;$17&quot;, &quot;$22&quot;,&quot;$23&quot;,&quot;$24&quot;,&quot;$25&quot;)
 DECL|macro|swpipl
 mdefine_line|#define swpipl(__new_ipl) &bslash;&n;({ unsigned long __old_ipl; &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;bis %1,%1,$16&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long 53&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bis $0,$0,%0&quot; &bslash;&n;&t;: &quot;=r&quot; (__old_ipl) &bslash;&n;&t;: &quot;r&quot; (__new_ipl) &bslash;&n;&t;: &quot;$0&quot;, &quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;); &bslash;&n;__old_ipl; })
 macro_line|#endif

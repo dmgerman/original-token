@@ -83,6 +83,9 @@ c_func
 (paren
 r_int
 id|arg
+comma
+r_int
+id|mode
 )paren
 suffix:semicolon
 DECL|variable|tty_std_termios
@@ -6230,6 +6233,8 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
+id|retval
+op_assign
 id|get_fs_byte
 c_func
 (paren
@@ -6249,6 +6254,8 @@ id|do_screendump
 c_func
 (paren
 id|arg
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_case
@@ -6316,8 +6323,7 @@ suffix:semicolon
 r_case
 l_int|6
 suffix:colon
-multiline_comment|/* Make it possible to react to Shift+Mousebutton */
-multiline_comment|/* Note that shift_state is an undocumented&n;&t;&t;&t;   kernel-internal variable; programs not closely&n;&t;&t;&t;   related to the kernel should not use this. */
+multiline_comment|/*&n;&t;&t;&t; * Make it possible to react to Shift+Mousebutton.&n;&t;&t;&t; * Note that &squot;shift_state&squot; is an undocumented&n;&t;&t;&t; * kernel-internal variable; programs not closely&n;&t;&t;&t; * related to the kernel should not use this.&n;&t;&t;&t; */
 id|put_fs_byte
 c_func
 (paren
@@ -6347,6 +6353,25 @@ r_return
 l_int|0
 suffix:semicolon
 macro_line|#endif /* CONFIG_SELECTION */
+r_case
+l_int|8
+suffix:colon
+multiline_comment|/* second arg is 1 or 2 */
+r_case
+l_int|9
+suffix:colon
+multiline_comment|/* both are explained in console.c */
+r_return
+id|do_screendump
+c_func
+(paren
+id|arg
+comma
+id|retval
+op_minus
+l_int|7
+)paren
+suffix:semicolon
 r_default
 suffix:colon
 r_return
@@ -7006,6 +7031,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_star
 id|driver-&gt;refcount
 )paren
 r_return

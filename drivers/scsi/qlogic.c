@@ -800,7 +800,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*----------------------------------------------------------------*/
-multiline_comment|/* initate scsi command - queueing handler */
+multiline_comment|/* initiate scsi command - queueing handler */
 DECL|function|ql_icmd
 r_static
 r_void
@@ -2603,7 +2603,7 @@ id|ip
 )braket
 )paren
 (brace
-multiline_comment|/* This should mimmic the DOS Qlogic driver&squot;s behavior exactly */
+multiline_comment|/* This should mimic the DOS Qlogic driver&squot;s behavior exactly */
 id|ip
 (braket
 l_int|0

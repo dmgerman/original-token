@@ -1553,7 +1553,7 @@ id|sk-&gt;prot
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Make the backlog atomic. If we don&squot;t do this there is a tiny&n;&t; *&t;window where a packet may arrive between the sk-&gt;blog being &n;&t; *&t;tested and then set with sk-&gt;inuse stil 0 causing an extra &n;&t; *&t;unwanted re-entry into release_sock().&n;&t; */
+multiline_comment|/*&n;&t; *&t;Make the backlog atomic. If we don&squot;t do this there is a tiny&n;&t; *&t;window where a packet may arrive between the sk-&gt;blog being &n;&t; *&t;tested and then set with sk-&gt;inuse still 0 causing an extra &n;&t; *&t;unwanted re-entry into release_sock().&n;&t; */
 id|save_flags
 c_func
 (paren

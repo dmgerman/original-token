@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_TYPES_H
 DECL|macro|_LINUX_TYPES_H
 mdefine_line|#define _LINUX_TYPES_H
+macro_line|#include &lt;asm/types.h&gt;
 macro_line|#ifndef _SIZE_T
 DECL|macro|_SIZE_T
 mdefine_line|#define _SIZE_T
@@ -74,21 +75,12 @@ r_int
 r_int
 id|dev_t
 suffix:semicolon
-macro_line|#ifdef OLD_LINUX
 DECL|typedef|ino_t
 r_typedef
 r_int
 r_int
 id|ino_t
 suffix:semicolon
-macro_line|#else
-DECL|typedef|ino_t
-r_typedef
-r_int
-r_int
-id|ino_t
-suffix:semicolon
-macro_line|#endif
 DECL|typedef|mode_t
 r_typedef
 r_int

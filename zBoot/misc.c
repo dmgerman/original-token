@@ -1,7 +1,7 @@
 multiline_comment|/*&n; * misc.c&n; * &n; * This is a collection of several routines from gzip-1.0.3 &n; * adapted for Linux.&n; *&n; * malloc by Hannu Savolainen 1993 and Matthias Urlichs 1994&n; * puts by Nick Holloway 1993&n; */
 macro_line|#include &quot;gzip.h&quot;
 macro_line|#include &quot;lzw.h&quot;
-macro_line|#include &lt;linux/segment.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/*&n; * These are set up by the setup-routine at boot-time:&n; */
 DECL|struct|screen_info
 r_struct

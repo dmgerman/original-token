@@ -76,7 +76,7 @@ DECL|macro|FD_SECTSIZE
 mdefine_line|#define FD_SECTSIZE(floppy) ( (floppy)-&gt;rate &amp; FD_2M ? &bslash;&n;&t;&t;&t;     512 : 128 &lt;&lt; FD_SIZECODE(floppy) )
 DECL|macro|FD_PERP
 mdefine_line|#define FD_PERP 0x40
-macro_line|#ifndef ASSEMBLER
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* the following structure is used by FDSETPRM, FDDEFPRM and FDGETPRM */
 DECL|struct|floppy_struct
 r_struct

@@ -2,7 +2,6 @@ multiline_comment|/*&n; * include/asm-mips/segment.h&n; *&n; * This file is subj
 macro_line|#ifndef _ASM_MIPS_SEGMENT_H_
 DECL|macro|_ASM_MIPS_SEGMENT_H_
 mdefine_line|#define _ASM_MIPS_SEGMENT_H_
-macro_line|#include &lt;linux/segment.h&gt;
 DECL|function|get_user_byte
 r_static
 r_inline

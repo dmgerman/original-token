@@ -2,7 +2,7 @@ multiline_comment|/*&n; * include/asm-mips/system.h&n; *&n; * This file is subje
 macro_line|#ifndef _ASM_MIPS_SYSTEM_H_
 DECL|macro|_ASM_MIPS_SYSTEM_H_
 mdefine_line|#define _ASM_MIPS_SYSTEM_H_
-macro_line|#include &lt;linux/segment.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;mips/mipsregs.h&gt;
 multiline_comment|/*&n; * move_to_user_mode() doesn&squot;t switch to user mode on the mips, since&n; * that would run us into problems: The kernel is located at virtual&n; * address 0x80000000. If we now would switch over to user mode, we&n; * we would immediately get an address error exception.&n; * Anyway - we don&squot;t have problems with a task running in kernel mode,&n; * as long it&squot;s code is foolproof.&n; */
 DECL|macro|move_to_user_mode

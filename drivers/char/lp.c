@@ -2291,6 +2291,23 @@ id|offset
 op_increment
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|LP_B
+c_func
+(paren
+id|offset
+)paren
+comma
+l_int|3
+)paren
+)paren
+r_continue
+suffix:semicolon
 multiline_comment|/* write to port &amp; read back to check */
 id|outb_p
 c_func
@@ -2359,6 +2376,18 @@ c_func
 l_string|&quot;lp_init: lp%d exists, &quot;
 comma
 id|offset
+)paren
+suffix:semicolon
+id|snarf_region
+c_func
+(paren
+id|LP_B
+c_func
+(paren
+id|offset
+)paren
+comma
+l_int|3
 )paren
 suffix:semicolon
 r_if

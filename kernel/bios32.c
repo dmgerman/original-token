@@ -1,9 +1,9 @@
 multiline_comment|/*&n; * bios32.c - BIOS32, PCI BIOS functions.&n; *&n; * Sponsored by&n; *&t;iX Multiuser Multitasking Magazine&n; *&t;Hannover, Germany&n; *&t;hm@ix.de&n; *&n; * Copyright 1993, 1994 Drew Eckhardt&n; *      Visionary Computing&n; *      (Unix and Linux consulting and custom programming)&n; *      Drew@Colorado.EDU&n; *      +1 (303) 786-7975&n; *&n; * For more information, please consult&n; *&n; * PCI BIOS Specification Revision&n; * PCI Local Bus Specification&n; * PCI System Design Guide&n; *&n; * PCI Special Interest Group&n; * M/S HF3-15A&n; * 5200 N.E. Elam Young Parkway&n; * Hillsboro, Oregon 97124-6497&n; * +1 (503) 696-2000&n; * +1 (800) 433-5177&n; *&n; * Manuals are $25 each or $50 for all three, plus $7 shipping&n; * within the United States, $35 abroad.&n; *&n; *&n; * CHANGELOG :&n; * Jun 17, 1994 : Modified to accommodate the broken pre-PCI BIOS SPECIFICATION&n; *&t;Revision 2.0 present on &lt;thys@dennis.ee.up.ac.za&gt;&squot;s ASUS mainboard.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/segment.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/*&n; * It would seem some PCI bioses are buggy, so we don&squot;t actually use these&n; * routines unless we need to..&n; */
 macro_line|#ifdef CONFIG_SCSI_NCR53C7xx
 DECL|macro|CONFIG_PCI
