@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#endif
@@ -1132,8 +1133,8 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;        total:   used:    free:   shared:  buffers:&bslash;n&quot;
-l_string|&quot;Mem:  %8lu %8lu %8lu %8lu %8lu&bslash;n&quot;
+l_string|&quot;        total:    used:    free:  shared: buffers:  cached:&bslash;n&quot;
+l_string|&quot;Mem:  %8lu %8lu %8lu %8lu %8lu %8lu&bslash;n&quot;
 l_string|&quot;Swap: %8lu %8lu %8lu&bslash;n&quot;
 comma
 id|i.totalram
@@ -1147,6 +1148,10 @@ comma
 id|i.sharedram
 comma
 id|i.bufferram
+comma
+id|page_cache_size
+op_star
+id|PAGE_SIZE
 comma
 id|i.totalswap
 comma

@@ -15,7 +15,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#include &lt;asm/ppc_machine.h&gt;
 multiline_comment|/*&n; * Trap &amp; Exception support&n; */
 r_void
 DECL|function|trap_init
@@ -217,6 +217,14 @@ comma
 id|regs-&gt;msr
 )paren
 suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
 id|_exception
 c_func
 (paren

@@ -386,12 +386,12 @@ comma
 DECL|member|age
 id|age
 suffix:colon
-l_int|6
+l_int|8
 comma
 DECL|member|unused
 id|unused
 suffix:colon
-l_int|9
+l_int|7
 comma
 DECL|member|reserved
 id|reserved
@@ -487,7 +487,7 @@ id|NR_MEM_LISTS
 suffix:semicolon
 r_extern
 r_int
-r_char
+r_int
 op_star
 id|free_area_map
 (braket

@@ -4,7 +4,7 @@ DECL|macro|_LINUX_PORTIO_H
 mdefine_line|#define _LINUX_PORTIO_H
 DECL|macro|HAVE_PORTRESERVE
 mdefine_line|#define HAVE_PORTRESERVE
-multiline_comment|/*&n; * Call check_region() before probing for your hardware.&n; * Once you have found you hardware, register it with snarf_region().&n; * If you unload the driver, use release_region to free ports.&n; */
+multiline_comment|/*&n; * Call check_region() before probing for your hardware.&n; * Once you have found you hardware, register it with request_region().&n; * If you unload the driver, use release_region to free ports.&n; */
 r_extern
 r_void
 id|reserve_setup
@@ -22,20 +22,6 @@ suffix:semicolon
 r_extern
 r_int
 id|check_region
-c_func
-(paren
-r_int
-r_int
-id|from
-comma
-r_int
-r_int
-id|extent
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|snarf_region
 c_func
 (paren
 r_int

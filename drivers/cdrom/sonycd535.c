@@ -406,7 +406,7 @@ r_void
 )paren
 (brace
 macro_line|#ifdef USE_IRQ
-multiline_comment|/* this code snarfed from cdu31a.c; it will not&n;&t; * directly work for the cdu535 as written...&n;&t; */
+multiline_comment|/*&n;&t; * This code was taken from cdu31a.c; it will not&n;&t; * directly work for the cdu535 as written...&n;&t; */
 id|curr_control_reg
 op_or_assign
 (paren
@@ -438,7 +438,7 @@ r_void
 )paren
 (brace
 macro_line|#ifdef USE_IRQ
-multiline_comment|/* this code snarfed from cdu31a.c; it will not&n;&t; * directly work for the cdu535 as written...&n;&t; */
+multiline_comment|/*&n;&t; * This code was taken from cdu31a.c; it will not&n;&t; * directly work for the cdu535 as written...&n;&t; */
 id|curr_control_reg
 op_and_assign
 op_complement

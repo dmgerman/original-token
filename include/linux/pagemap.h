@@ -30,6 +30,13 @@ suffix:semicolon
 )brace
 DECL|macro|PAGE_HASH_SIZE
 mdefine_line|#define PAGE_HASH_SIZE 257
+DECL|macro|PAGE_AGE_VALUE
+mdefine_line|#define PAGE_AGE_VALUE 16
+r_extern
+r_int
+r_int
+id|page_cache_size
+suffix:semicolon
 r_extern
 r_struct
 id|page
@@ -135,6 +142,16 @@ id|offset
 )paren
 r_continue
 suffix:semicolon
+id|page-&gt;age
+op_assign
+id|PAGE_AGE_VALUE
+op_or
+(paren
+id|page-&gt;age
+op_rshift
+l_int|1
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -169,6 +186,9 @@ id|page-&gt;inode
 comma
 id|page-&gt;offset
 )paren
+suffix:semicolon
+id|page_cache_size
+op_decrement
 suffix:semicolon
 r_if
 c_cond
@@ -240,6 +260,13 @@ id|inode
 comma
 id|page-&gt;offset
 )paren
+suffix:semicolon
+id|page_cache_size
+op_increment
+suffix:semicolon
+id|page-&gt;age
+op_assign
+id|PAGE_AGE_VALUE
 suffix:semicolon
 id|page-&gt;prev_hash
 op_assign

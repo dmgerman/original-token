@@ -405,32 +405,6 @@ r_return
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * This is for compatibility with older drivers.&n; * It can be removed when all drivers call the new function.&n; */
-DECL|function|snarf_region
-r_void
-id|snarf_region
-c_func
-(paren
-r_int
-r_int
-id|from
-comma
-r_int
-r_int
-id|num
-)paren
-(brace
-id|request_region
-c_func
-(paren
-id|from
-comma
-id|num
-comma
-l_string|&quot;No name given.&quot;
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* &n; * Call this when the device driver is unloaded&n; */
 DECL|function|release_region
 r_void

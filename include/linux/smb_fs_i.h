@@ -8,22 +8,22 @@ DECL|enum|smb_inode_state
 r_enum
 id|smb_inode_state
 (brace
-DECL|enumerator|INODE_VALID
-id|INODE_VALID
+DECL|enumerator|SMB_INODE_VALID
+id|SMB_INODE_VALID
 op_assign
 l_int|19
 comma
 multiline_comment|/* Inode currently in use */
-DECL|enumerator|INODE_LOOKED_UP
-id|INODE_LOOKED_UP
+DECL|enumerator|SMB_INODE_LOOKED_UP
+id|SMB_INODE_LOOKED_UP
 comma
 multiline_comment|/* directly before iget */
-DECL|enumerator|INODE_CACHED
-id|INODE_CACHED
+DECL|enumerator|SMB_INODE_CACHED
+id|SMB_INODE_CACHED
 comma
 multiline_comment|/* in a path to an inode which is in use */
-DECL|enumerator|INODE_INVALID
-id|INODE_INVALID
+DECL|enumerator|SMB_INODE_INVALID
+id|SMB_INODE_INVALID
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * smb fs inode data (in memory only)&n; */

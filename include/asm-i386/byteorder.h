@@ -132,7 +132,7 @@ r_int
 id|x
 )paren
 (brace
-macro_line|#if defined(CONFIG_M486) &amp;&amp; defined(__KERNEL__)
+macro_line|#if defined(__KERNEL__) &amp;&amp; !defined(CONFIG_M386)
 id|__asm__
 c_func
 (paren

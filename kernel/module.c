@@ -3117,5 +3117,20 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 )brace
+DECL|function|register_symtab
+r_int
+id|register_symtab
+c_func
+(paren
+r_struct
+id|symbol_table
+op_star
+id|intab
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#endif&t;/* CONFIG_MODULES */
 eof

@@ -2126,7 +2126,7 @@ c_func
 id|slot
 )paren
 suffix:semicolon
-multiline_comment|/* The ioports for eisa boards are generally beyond that used in the&n;&t;   check,snarf_region code, but this may change at some point, so we&n;&t;   go through the motions. */
+multiline_comment|/*&n;&t; * The ioports for eisa boards are generally beyond that used in the&n;&t; * check/allocate region code, but this may change at some point,&n;&t; * so we go through the motions.&n;&t; */
 r_if
 c_cond
 (paren

@@ -412,6 +412,10 @@ l_int|16
 op_star
 id|val
 op_assign
+(paren
+r_int
+r_int
+)paren
 l_int|0xFFFFFFFF
 suffix:semicolon
 r_return
@@ -552,6 +556,10 @@ l_int|16
 op_star
 id|val
 op_assign
+(paren
+r_int
+r_char
+)paren
 l_int|0xFFFFFFFF
 suffix:semicolon
 r_return

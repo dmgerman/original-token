@@ -365,6 +365,7 @@ id|dev-&gt;removable
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Device not ready.  Make sure there is a disc in the drive.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -393,6 +394,7 @@ multiline_comment|/* This is no longer considered an error */
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Disc change detected.&bslash;n&quot;
 )paren
 suffix:semicolon

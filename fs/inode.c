@@ -346,7 +346,7 @@ id|inode
 suffix:semicolon
 )brace
 DECL|function|grow_inodes
-r_void
+r_int
 id|grow_inodes
 c_func
 (paren
@@ -381,6 +381,8 @@ id|GFP_KERNEL
 )paren
 )paren
 r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 id|i
 op_assign
@@ -433,6 +435,9 @@ c_func
 id|inode
 op_increment
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|inode_init
@@ -1932,8 +1937,7 @@ r_int
 r_int
 id|badness
 op_assign
-op_complement
-l_int|0UL
+l_int|1000
 suffix:semicolon
 r_int
 id|i
@@ -2036,8 +2040,6 @@ r_if
 c_cond
 (paren
 id|badness
-OG
-l_int|20
 )paren
 r_if
 c_cond
@@ -2047,11 +2049,16 @@ OL
 id|NR_INODE
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|grow_inodes
 c_func
 (paren
 )paren
-suffix:semicolon
+op_eq
+l_int|0
+)paren
 r_goto
 id|repeat
 suffix:semicolon

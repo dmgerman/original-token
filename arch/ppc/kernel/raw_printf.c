@@ -12,11 +12,298 @@ r_char
 id|c
 )paren
 suffix:semicolon
+r_char
+id|cngetc
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
+id|cntstc
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|_cnpause
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|cnpause
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|video_on
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
+id|CRT_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
+id|kbd
+c_func
+(paren
+r_int
+id|noblock
+)paren
+suffix:semicolon
+r_int
+id|scankbd
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|variable|_sprintk_ptr
 r_static
 r_char
 op_star
 id|_sprintk_ptr
+suffix:semicolon
+r_void
+id|kbdreset
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
+id|CRT_test
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
+id|CRT_putc
+c_func
+(paren
+r_int
+comma
+r_int
+r_char
+)paren
+suffix:semicolon
+multiline_comment|/*int CRT_putc(int port, u_char c)*/
+r_int
+id|CRT_getc
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
+id|_vprintk
+c_func
+(paren
+r_int
+(paren
+op_star
+id|putc
+)paren
+(paren
+)paren
+comma
+r_const
+r_char
+op_star
+id|fmt0
+comma
+id|va_list
+id|ap
+)paren
+suffix:semicolon
+r_static
+id|_cvt
+c_func
+(paren
+r_int
+r_int
+id|val
+comma
+r_char
+op_star
+id|buf
+comma
+r_int
+id|radix
+comma
+r_char
+op_star
+id|digits
+)paren
+suffix:semicolon
+r_static
+r_void
+id|cursor
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_void
+id|initscreen
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * COM1 NS16550 support&n; */
+DECL|struct|NS16550
+r_struct
+id|NS16550
+(brace
+DECL|member|rbr
+r_int
+r_char
+id|rbr
+suffix:semicolon
+multiline_comment|/* 0 */
+DECL|member|ier
+r_int
+r_char
+id|ier
+suffix:semicolon
+multiline_comment|/* 1 */
+DECL|member|fcr
+r_int
+r_char
+id|fcr
+suffix:semicolon
+multiline_comment|/* 2 */
+DECL|member|lcr
+r_int
+r_char
+id|lcr
+suffix:semicolon
+multiline_comment|/* 3 */
+DECL|member|mcr
+r_int
+r_char
+id|mcr
+suffix:semicolon
+multiline_comment|/* 4 */
+DECL|member|lsr
+r_int
+r_char
+id|lsr
+suffix:semicolon
+multiline_comment|/* 5 */
+DECL|member|msr
+r_int
+r_char
+id|msr
+suffix:semicolon
+multiline_comment|/* 6 */
+DECL|member|scr
+r_int
+r_char
+id|scr
+suffix:semicolon
+multiline_comment|/* 7 */
+)brace
+suffix:semicolon
+DECL|macro|thr
+mdefine_line|#define thr rbr
+DECL|macro|iir
+mdefine_line|#define iir fcr
+DECL|macro|dll
+mdefine_line|#define dll rbr
+DECL|macro|dlm
+mdefine_line|#define dlm ier
+DECL|macro|LSR_DR
+mdefine_line|#define LSR_DR   0x01  /* Data ready */
+DECL|macro|LSR_OE
+mdefine_line|#define LSR_OE   0x02  /* Overrun */
+DECL|macro|LSR_PE
+mdefine_line|#define LSR_PE   0x04  /* Parity error */
+DECL|macro|LSR_FE
+mdefine_line|#define LSR_FE   0x08  /* Framing error */
+DECL|macro|LSR_BI
+mdefine_line|#define LSR_BI   0x10  /* Break */
+DECL|macro|LSR_THRE
+mdefine_line|#define LSR_THRE 0x20  /* Xmit holding register empty */
+DECL|macro|LSR_TEMT
+mdefine_line|#define LSR_TEMT 0x40  /* Xmitter empty */
+DECL|macro|LSR_ERR
+mdefine_line|#define LSR_ERR  0x80  /* Error */
+DECL|macro|COM1
+mdefine_line|#define COM1&t;0x800003F8
+DECL|macro|COM2
+mdefine_line|#define COM2&t;0x800002F8
+DECL|typedef|NS16550_t
+r_typedef
+r_struct
+id|NS16550
+op_star
+id|NS16550_t
+suffix:semicolon
+DECL|variable|COM_PORTS
+r_const
+id|NS16550_t
+id|COM_PORTS
+(braket
+)braket
+op_assign
+(brace
+id|COM1
+comma
+id|COM2
+)brace
+suffix:semicolon
+r_volatile
+r_struct
+id|NS16550
+op_star
+id|NS16550_init
+c_func
+(paren
+r_int
+id|chan
+)paren
+suffix:semicolon
+r_void
+id|NS16550_putc
+c_func
+(paren
+r_volatile
+r_struct
+id|NS16550
+op_star
+id|com_port
+comma
+r_int
+r_char
+id|c
+)paren
+suffix:semicolon
+r_int
+r_char
+id|NS16550_getc
+c_func
+(paren
+r_volatile
+r_struct
+id|NS16550
+op_star
+id|com_port
+)paren
 suffix:semicolon
 DECL|function|_sputc
 r_static
@@ -195,17 +482,11 @@ suffix:semicolon
 )brace
 DECL|macro|is_digit
 mdefine_line|#define is_digit(c) ((c &gt;= &squot;0&squot;) &amp;&amp; (c &lt;= &squot;9&squot;))
-r_int
 DECL|function|_vprintk
+r_int
 id|_vprintk
 c_func
 (paren
-id|putc
-comma
-id|fmt0
-comma
-id|ap
-)paren
 r_int
 (paren
 op_star
@@ -213,15 +494,15 @@ id|putc
 )paren
 (paren
 )paren
-suffix:semicolon
+comma
 r_const
 r_char
 op_star
 id|fmt0
-suffix:semicolon
+comma
 id|va_list
 id|ap
-suffix:semicolon
+)paren
 (brace
 r_char
 id|c
@@ -947,11 +1228,12 @@ l_int|0
 suffix:semicolon
 DECL|macro|MAX_LINES
 mdefine_line|#define MAX_LINES 24
-r_char
 DECL|function|cngetc
+r_char
 id|cngetc
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int
@@ -975,12 +1257,12 @@ op_eq
 id|CRT_PORT
 )paren
 (brace
+multiline_comment|/*      c = CRT_getc(port);*/
 id|c
 op_assign
 id|CRT_getc
 c_func
 (paren
-id|port
 )paren
 suffix:semicolon
 )brace
@@ -996,6 +1278,11 @@ op_assign
 id|NS16550_getc
 c_func
 (paren
+(paren
+r_struct
+id|NS16550
+op_star
+)paren
 id|port
 )paren
 suffix:semicolon
@@ -1013,9 +1300,11 @@ id|c
 suffix:semicolon
 )brace
 DECL|function|cntstc
+r_int
 id|cntstc
 c_func
 (paren
+r_void
 )paren
 (brace
 r_return
@@ -1101,6 +1390,9 @@ r_else
 (brace
 id|port
 op_assign
+(paren
+r_int
+)paren
 id|NS16550_init
 c_func
 (paren
@@ -1140,6 +1432,11 @@ id|port
 id|NS16550_putc
 c_func
 (paren
+(paren
+r_struct
+id|NS16550
+op_star
+)paren
 id|port
 comma
 id|c
@@ -1194,9 +1491,11 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|_cnpause
+r_void
 id|_cnpause
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int
@@ -1327,9 +1626,11 @@ id|s
 suffix:semicolon
 )brace
 DECL|function|cnpause
+r_void
 id|cnpause
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int
@@ -1378,114 +1679,11 @@ id|s
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * COM1 NS16550 support&n; */
-DECL|struct|NS16550
-r_struct
-id|NS16550
-(brace
-DECL|member|rbr
-r_int
-r_char
-id|rbr
-suffix:semicolon
-multiline_comment|/* 0 */
-DECL|member|ier
-r_int
-r_char
-id|ier
-suffix:semicolon
-multiline_comment|/* 1 */
-DECL|member|fcr
-r_int
-r_char
-id|fcr
-suffix:semicolon
-multiline_comment|/* 2 */
-DECL|member|lcr
-r_int
-r_char
-id|lcr
-suffix:semicolon
-multiline_comment|/* 3 */
-DECL|member|mcr
-r_int
-r_char
-id|mcr
-suffix:semicolon
-multiline_comment|/* 4 */
-DECL|member|lsr
-r_int
-r_char
-id|lsr
-suffix:semicolon
-multiline_comment|/* 5 */
-DECL|member|msr
-r_int
-r_char
-id|msr
-suffix:semicolon
-multiline_comment|/* 6 */
-DECL|member|scr
-r_int
-r_char
-id|scr
-suffix:semicolon
-multiline_comment|/* 7 */
-)brace
-suffix:semicolon
-DECL|macro|thr
-mdefine_line|#define thr rbr
-DECL|macro|iir
-mdefine_line|#define iir fcr
-DECL|macro|dll
-mdefine_line|#define dll rbr
-DECL|macro|dlm
-mdefine_line|#define dlm ier
-DECL|macro|LSR_DR
-mdefine_line|#define LSR_DR   0x01  /* Data ready */
-DECL|macro|LSR_OE
-mdefine_line|#define LSR_OE   0x02  /* Overrun */
-DECL|macro|LSR_PE
-mdefine_line|#define LSR_PE   0x04  /* Parity error */
-DECL|macro|LSR_FE
-mdefine_line|#define LSR_FE   0x08  /* Framing error */
-DECL|macro|LSR_BI
-mdefine_line|#define LSR_BI   0x10  /* Break */
-DECL|macro|LSR_THRE
-mdefine_line|#define LSR_THRE 0x20  /* Xmit holding register empty */
-DECL|macro|LSR_TEMT
-mdefine_line|#define LSR_TEMT 0x40  /* Xmitter empty */
-DECL|macro|LSR_ERR
-mdefine_line|#define LSR_ERR  0x80  /* Error */
-DECL|macro|COM1
-mdefine_line|#define COM1&t;0x800003F8
-DECL|macro|COM2
-mdefine_line|#define COM2&t;0x800002F8
-DECL|typedef|NS16550_t
-r_typedef
-r_struct
-id|NS16550
-op_star
-id|NS16550_t
-suffix:semicolon
-DECL|variable|COM_PORTS
-r_const
-id|NS16550_t
-id|COM_PORTS
-(braket
-)braket
-op_assign
-(brace
-id|COM1
-comma
-id|COM2
-)brace
-suffix:semicolon
+DECL|function|NS16550_init
 r_volatile
 r_struct
 id|NS16550
 op_star
-DECL|function|NS16550_init
 id|NS16550_init
 c_func
 (paren
@@ -1586,6 +1784,7 @@ id|com_port
 suffix:semicolon
 )brace
 DECL|function|NS16550_putc
+r_void
 id|NS16550_putc
 c_func
 (paren
@@ -1883,12 +2082,13 @@ id|pccolor_so
 suffix:semicolon
 multiline_comment|/* color/attributes, standout mode */
 multiline_comment|/*&n; * cursor() sets an offset (0-1999) into the 80x25 text area   &n; */
+DECL|function|cursor
 r_static
 r_void
-DECL|function|cursor
 id|cursor
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int
@@ -1950,12 +2150,13 @@ id|pos
 suffix:semicolon
 )brace
 )brace
+DECL|function|initscreen
 r_static
 r_void
-DECL|function|initscreen
 id|initscreen
 c_func
 (paren
+r_void
 )paren
 (brace
 r_struct
@@ -2057,15 +2258,16 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * CRT_putc (nee sput) has support for emulation of the &squot;ibmpc&squot; termcap entry.&n; * This is a bare-bones implementation of a bare-bones entry&n; * One modification: Change li#24 to li#25 to reflect 25 lines&n; * &quot;ca&quot; is the color/attributes value (left-shifted by 8)&n; * or 0 if the current regular color for that screen is to be used.&n; */
-r_void
 DECL|function|CRT_putc
+r_int
 id|CRT_putc
 c_func
 (paren
 r_int
 id|port
 comma
-id|u_char
+r_int
+r_char
 id|c
 )paren
 (brace
@@ -3100,9 +3302,11 @@ c_func
 suffix:semicolon
 )brace
 DECL|function|video_on
+r_void
 id|video_on
 c_func
 (paren
+r_void
 )paren
 (brace
 multiline_comment|/* Enable video */
@@ -3131,9 +3335,11 @@ l_int|20
 suffix:semicolon
 )brace
 DECL|function|CRT_init
+r_int
 id|CRT_init
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int
@@ -4698,16 +4904,14 @@ comma
 multiline_comment|/* 0x78-0x7F */
 )brace
 suffix:semicolon
-r_int
 DECL|function|kbd
+r_int
 id|kbd
 c_func
 (paren
-id|noblock
-)paren
 r_int
 id|noblock
-suffix:semicolon
+)paren
 (brace
 r_int
 r_char
@@ -5154,9 +5358,11 @@ id|loop
 suffix:semicolon
 )brace
 DECL|function|scankbd
+r_int
 id|scankbd
 c_func
 (paren
+r_void
 )paren
 (brace
 r_return
@@ -5173,9 +5379,11 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|kbdreset
+r_void
 id|kbdreset
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int
@@ -5264,9 +5472,11 @@ l_int|0xFA
 suffix:semicolon
 )brace
 DECL|function|CRT_getc
+r_int
 id|CRT_getc
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int
@@ -5293,9 +5503,11 @@ id|c
 suffix:semicolon
 )brace
 DECL|function|CRT_test
+r_int
 id|CRT_test
 c_func
 (paren
+r_void
 )paren
 (brace
 r_return

@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/iso_fs.h&gt;
 macro_line|#include &lt;linux/sysv_fs.h&gt;
 macro_line|#include &lt;linux/hpfs_fs.h&gt;
 macro_line|#include &lt;linux/smb_fs.h&gt;
+macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 r_extern
 r_void
@@ -266,6 +267,27 @@ id|file_system_type
 id|smb_read_super
 comma
 l_string|&quot;smbfs&quot;
+comma
+l_int|0
+comma
+l_int|NULL
+)brace
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_NCP_FS
+id|register_filesystem
+c_func
+(paren
+op_amp
+(paren
+r_struct
+id|file_system_type
+)paren
+(brace
+id|ncp_read_super
+comma
+l_string|&quot;ncpfs&quot;
 comma
 l_int|0
 comma

@@ -17,8 +17,6 @@ id|pgd_t
 id|swapper_pg_dir
 (braket
 l_int|1024
-op_star
-l_int|8
 )braket
 suffix:semicolon
 multiline_comment|/*pgd_t *swapper_pg_dir;*/
@@ -1116,6 +1114,7 @@ id|BAT
 id|BAT2
 op_assign
 (brace
+multiline_comment|/* map kernel with bats 0 = yes */
 macro_line|#if 1
 (brace
 l_int|0x00000000
@@ -1516,29 +1515,13 @@ id|SEGREG
 op_star
 id|segs
 suffix:semicolon
-id|_printk
-c_func
-(paren
-l_string|&quot;MMU init - started&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;_printk(&quot;MMU init - started&bslash;n&quot;);*/
 id|find_end_of_memory
 c_func
 (paren
 )paren
 suffix:semicolon
-id|_printk
-c_func
-(paren
-l_string|&quot;  Start at 0x%08X, End at 0x%08X, Hash at 0x%08X&bslash;n&quot;
-comma
-id|_start
-comma
-id|_end
-comma
-id|Hash
-)paren
-suffix:semicolon
+multiline_comment|/*&t;_printk(&quot;  Start at 0x%08X, End at 0x%08X, Hash at 0x%08X&bslash;n&quot;, _start, _end, Hash);*/
 id|_SDR1
 op_assign
 (paren
@@ -1790,12 +1773,7 @@ id|PAGE_KERNEL
 )paren
 suffix:semicolon
 )brace
-id|_printk
-c_func
-(paren
-l_string|&quot;MMU init - done!&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;_printk(&quot;MMU init - done!&bslash;n&quot;);*/
 )brace
 id|pte
 op_star
@@ -1842,14 +1820,7 @@ id|MMU_PAGE_SIZE
 )paren
 suffix:semicolon
 )brace
-id|_printk
-c_func
-(paren
-l_string|&quot;MMU Allocate Page at %08X&bslash;n&quot;
-comma
-id|pg
-)paren
-suffix:semicolon
+multiline_comment|/*&t;_printk(&quot;MMU Allocate Page at %08X&bslash;n&quot;, pg);*/
 r_return
 id|pg
 suffix:semicolon

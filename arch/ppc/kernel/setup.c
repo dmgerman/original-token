@@ -425,15 +425,6 @@ id|size_memory
 suffix:semicolon
 DECL|macro|DEFAULT_ROOT_DEVICE
 mdefine_line|#define DEFAULT_ROOT_DEVICE 0x0200&t;/* fd0 */
-DECL|macro|COMMAND_LINE_SIZE
-mdefine_line|#define COMMAND_LINE_SIZE 512&t;/* Should match head.S */
-DECL|variable|saved_command_line
-r_char
-id|saved_command_line
-(braket
-id|COMMAND_LINE_SIZE
-)braket
-suffix:semicolon
 DECL|function|setup_arch
 r_void
 id|setup_arch
@@ -472,14 +463,6 @@ suffix:semicolon
 id|aux_device_present
 op_assign
 l_int|0xaa
-suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|saved_command_line
-comma
-id|cmd_line
-)paren
 suffix:semicolon
 op_star
 id|cmdline_p

@@ -46,7 +46,7 @@ id|NR_MEM_LISTS
 suffix:semicolon
 DECL|variable|free_area_map
 r_int
-r_char
+r_int
 op_star
 id|free_area_map
 (braket
@@ -3307,6 +3307,9 @@ multiline_comment|/* If the current user space is mapped to kernel space (for th
 r_if
 c_cond
 (paren
+op_logical_neg
+id|size
+op_logical_or
 id|get_fs
 c_func
 (paren

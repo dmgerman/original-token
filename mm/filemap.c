@@ -16,6 +16,13 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; * Shared mappings implemented 30.11.1994. It&squot;s not fully working yet,&n; * though.&n; *&n; * Shared mappings now work. 15.8.1995  Bruno.&n; */
+DECL|variable|page_cache_size
+r_int
+r_int
+id|page_cache_size
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|page_hash_table
 r_struct
 id|page
@@ -243,7 +250,11 @@ l_int|0
 suffix:semicolon
 id|priority
 op_assign
+(paren
 id|limit
+op_lshift
+l_int|2
+)paren
 op_rshift
 id|priority
 suffix:semicolon
@@ -266,10 +277,39 @@ r_if
 c_cond
 (paren
 id|page-&gt;inode
-op_logical_and
+)paren
+(brace
+r_int
+id|age
+op_assign
+id|page-&gt;age
+suffix:semicolon
+multiline_comment|/* if the page is shared, we juvenate it slightly */
+r_if
+c_cond
+(paren
 id|page-&gt;count
-op_eq
+op_ne
 l_int|1
+)paren
+id|age
+op_or_assign
+id|PAGE_AGE_VALUE
+suffix:semicolon
+id|page-&gt;age
+op_assign
+id|age
+op_rshift
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|age
+op_le
+id|PAGE_AGE_VALUE
+op_div
+l_int|2
 )paren
 (brace
 id|remove_page_from_hash_queue
@@ -297,6 +337,7 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+)brace
 )brace
 id|page
 op_increment

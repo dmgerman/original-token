@@ -9,12 +9,12 @@ multiline_comment|/*&n; * The Linux memory management assumes a three-level page
 multiline_comment|/*&n; * TLB invalidation:&n; *&n; *  - invalidate() invalidates the current mm struct TLBs&n; *  - invalidate_all() invalidates all processes TLBs&n; *  - invalidate_mm(mm) invalidates the specified mm context TLB&squot;s&n; *  - invalidate_page(mm, vmaddr) invalidates one page&n; *  - invalidate_range(mm, start, end) invalidates a range of pages&n; *&n; * ..but the i386 has somewhat limited invalidation capabilities,&n; * and page-granular invalidates are available only on i486 and up.&n; */
 DECL|macro|__invalidate
 mdefine_line|#define __invalidate() &bslash;&n;__asm__ __volatile__(&quot;movl %%cr3,%%eax&bslash;n&bslash;tmovl %%eax,%%cr3&quot;: : :&quot;ax&quot;)
-macro_line|#ifdef CONFIG_M486
-DECL|macro|__invalidate_one
-mdefine_line|#define __invalidate_one(addr) &bslash;&n;__asm__ __volatile__(&quot;invlpg %0&quot;: :&quot;m&quot; (*(char *) addr))
-macro_line|#else
+macro_line|#ifdef CONFIG_M386
 DECL|macro|__invalidate_one
 mdefine_line|#define __invalidate_one(addr) invalidate()
+macro_line|#else
+DECL|macro|__invalidate_one
+mdefine_line|#define __invalidate_one(addr) &bslash;&n;__asm__ __volatile__(&quot;invlpg %0&quot;: :&quot;m&quot; (*(char *) addr))
 macro_line|#endif
 macro_line|#ifndef __SMP__
 DECL|macro|invalidate

@@ -1,5 +1,4 @@
-multiline_comment|/* skeleton.c: A network driver outline for linux. */
-multiline_comment|/*&n;&t;Written 1993-94 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This file is an outline for writing a network device driver for the&n;&t;the Linux operating system.&n;&n;&t;To write (or understand) a driver, have a look at the &quot;loopback.c&quot; file to&n;&t;get a feel of what is going on, and then use the code below as a skeleton&n;&t;for the new driver.&n;&n;*/
+multiline_comment|/* skeleton.c: A network driver outline for linux.&n; *&n; *&t;Written 1993-94 by Donald Becker.&n; *&n; *&t;Copyright 1993 United States Government as represented by the&n; *&t;Director, National Security Agency.&n; *&n; *&t;This software may be used and distributed according to the terms&n; *&t;of the GNU Public License, incorporated herein by reference.&n; *&n; *&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n; *&t;Center of Excellence in Space Data and Information Sciences&n; *&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n; *&n; *&t;This file is an outline for writing a network device driver for the&n; *&t;the Linux operating system.&n; *&n; *&t;To write (or understand) a driver, have a look at the &quot;loopback.c&quot; file to&n; *&t;get a feel of what is going on, and then use the code below as a skeleton&n; *&t;for the new driver.&n; *&n; */
 DECL|variable|version
 r_static
 r_const
@@ -9,7 +8,7 @@ id|version
 op_assign
 l_string|&quot;skeleton.c:v1.51 9/24/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
-multiline_comment|/*&n;  Sources:&n;&t;List your sources of programming information to document that&n;&t;the driver is your own creation, and give due credit to others&n;&t;that contributed to the work.  Remember that GNU project code&n;&t;cannot use proprietary or trade secret information.&t; Interface&n;&t;definitions are generally considered non-copyrightable to the&n;&t;extent that the same names and structures must be used to be&n;&t;compatible.&n;&n;&t;Finally, keep in mind that the Linux kernel is has an API, not&n;&t;ABI.  Proprietary object-code-only distributions are not permitted&n;&t;under the GPL.&n;*/
+multiline_comment|/*&n; *  Sources:&n; *&t;List your sources of programming information to document that&n; *&t;the driver is your own creation, and give due credit to others&n; *&t;that contributed to the work. Remember that GNU project code&n; *&t;cannot use proprietary or trade secret information. Interface&n; *&t;definitions are generally considered non-copyrightable to the&n; *&t;extent that the same names and structures must be used to be&n; *&t;compatible.&n; *&n; *&t;Finally, keep in mind that the Linux kernel is has an API, not&n; *&t;ABI. Proprietary object-code-only distributions are not permitted&n; *&t;under the GPL.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -29,7 +28,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-multiline_comment|/* The name of the card. Is used for messages and in the requests for&n; * io regions, irqs and dma channels&n; */
+multiline_comment|/*&n; * The name of the card. Is used for messages and in the requests for&n; * io regions, irqs and dma channels&n; */
 DECL|variable|cardname
 r_static
 r_const
@@ -253,10 +252,9 @@ r_int
 id|startp
 )paren
 suffix:semicolon
-"&f;"
-multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, allocate space for the device and return success&n;   (detachable devices only).&n;   */
+multiline_comment|/*&n; * Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n; * If dev-&gt;base_addr == 0, probe all likely locations.&n; * If dev-&gt;base_addr == 1, always return failure.&n; * If dev-&gt;base_addr == 2, allocate space for the device and return success&n; * (detachable devices only).&n; */
 macro_line|#ifdef HAVE_DEVLIST
-multiline_comment|/* Support for a alternate probe manager, which will eliminate the&n;   boilerplate below. */
+multiline_comment|/*&n; * Support for a alternate probe manager,&n; * which will eliminate the boilerplate below.&n; */
 DECL|variable|netcard_drv
 r_struct
 id|netdev_entry
@@ -387,7 +385,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* This is the real probe routine.  Linux has a history of friendly device&n;   probes on the ISA bus.  A good device probes avoids doing writes, and&n;   verifies that the correct device exists and functions.  */
+multiline_comment|/*&n; * This is the real probe routine. Linux has a history of friendly device&n; * probes on the ISA bus. A good device probes avoids doing writes, and&n; * verifies that the correct device exists and functions.&n; */
 DECL|function|netcard_probe1
 r_static
 r_int
@@ -412,7 +410,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* For ethernet adaptors the first three octets of the station address &n;&t;   contains the manufacturer&squot;s unique code.  That might be a good probe&n;&t;   method. Ideally you would add additional checks.  */
+multiline_comment|/*&n;&t; * For ethernet adaptors the first three octets of the station address &n;&t; * contains the manufacturer&squot;s unique code. That might be a good probe&n;&t; * method. Ideally you would add additional checks.&n;&t; */
 r_if
 c_cond
 (paren
@@ -461,7 +459,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* Don&squot;t allocate the private data here, it is done later&n;&t;&t; * This makes it easier to free the memory when this driver&n;&t;&t; * is used as a module.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Don&squot;t allocate the private data here, it is done later&n;&t;&t; * This makes it easier to free the memory when this driver&n;&t;&t; * is used as a module.&n;&t;&t; */
 id|dev
 op_assign
 id|init_etherdev
@@ -556,7 +554,7 @@ id|i
 )paren
 suffix:semicolon
 macro_line|#ifdef jumpered_interrupts
-multiline_comment|/* If this board has jumpered interrupts, snarf the interrupt vector&n;&t;   now.&t; There is no point in waiting since no other device can use&n;&t;   the interrupt, and this marks the irq as busy.&n;&t;   Jumpered interrupts are typically not reported by the boards, and&n;&t;   we must used autoIRQ to find them. */
+multiline_comment|/*&n;&t; * If this board has jumpered interrupts, allocate the interrupt&n;&t; * vector now. There is no point in waiting since no other device&n;&t; * can use the interrupt, and this marks the irq as busy. Jumpered&n;&t; * interrupts are typically not reported by the boards, and we must&n;&t; * used autoIRQ to find them.&n;&t; */
 r_if
 c_cond
 (paren
@@ -616,7 +614,7 @@ id|dev-&gt;irq
 op_eq
 l_int|2
 )paren
-multiline_comment|/* Fixup for users that don&squot;t know that IRQ 2 is really IRQ 9,&n;&t;&t; * or don&squot;t know which one to set.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Fixup for users that don&squot;t know that IRQ 2 is really&n;&t;&t; * IRQ9, or don&squot;t know which one to set.&n;&t;&t; */
 id|dev-&gt;irq
 op_assign
 l_int|9
@@ -664,7 +662,7 @@ suffix:semicolon
 )brace
 macro_line|#endif&t;/* jumpered interrupt */
 macro_line|#ifdef jumpered_dma
-multiline_comment|/* If we use a jumpered DMA channel, that should be probed for and&n;&t;   allocated here as well.  See lance.c for an example. */
+multiline_comment|/*&n;&t; * If we use a jumpered DMA channel, that should be probed for and&n;&t; * allocated here as well. See lance.c for an example.&n;&t; */
 r_if
 c_cond
 (paren
@@ -780,7 +778,7 @@ op_amp
 l_int|0xf0
 )paren
 suffix:semicolon
-multiline_comment|/* Eliminate the old and floating requests and DMA4, the cascade. */
+multiline_comment|/*&n;&t;&t; * Eliminate the old and floating requests,&n;&t;&t; * and DMA4 the cascade.&n;&t;&t; */
 id|new_dma_status
 op_xor_assign
 id|dma_status
@@ -962,8 +960,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-"&f;"
-multiline_comment|/* Open/initialize the board.  This is called (in the current kernel)&n;   sometime after booting when the &squot;ifconfig&squot; program is run.&n;&n;   This routine should set everything up anew at each open, even&n;   registers that &quot;should&quot; only need to be set once at boot, so that&n;   there is non-reboot way to recover if something goes wrong.&n;   */
+multiline_comment|/*&n; * Open/initialize the board. This is called (in the current kernel)&n; * sometime after booting when the &squot;ifconfig&squot; program is run.&n; *&n; * This routine should set everything up anew at each open, even&n; * registers that &quot;should&quot; only need to be set once at boot, so that&n; * there is non-reboot way to recover if something goes wrong.&n; */
 r_static
 r_int
 DECL|function|net_open
@@ -993,7 +990,7 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-multiline_comment|/* This is used if the interrupt line can turned off (shared).&n;&t;   See 3c503.c for an example of selecting the IRQ at config-time. */
+multiline_comment|/*&n;&t; * This is used if the interrupt line can turned off (shared).&n;&t; * See 3c503.c for an example of selecting the IRQ at config-time.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1016,7 +1013,7 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-multiline_comment|/* Always snarf the DMA channel after the IRQ, and clean up on failure. */
+multiline_comment|/*&n;&t; * Always allocate the DMA channel after the IRQ,&n;&t; * and clean up on failure.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1047,7 +1044,7 @@ id|dev-&gt;irq
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/* Reset the hardware here.  Don&squot;t forget to set the station address. */
+multiline_comment|/* Reset the hardware here. Don&squot;t forget to set the station address. */
 multiline_comment|/*chipset_init(dev, 1);*/
 id|outb
 c_func
@@ -1119,7 +1116,7 @@ c_cond
 id|dev-&gt;tbusy
 )paren
 (brace
-multiline_comment|/* If we get here, some higher level has decided we are broken.&n;&t;&t;   There should really be a &quot;kick me&quot; function call instead. */
+multiline_comment|/*&n;&t;&t; * If we get here, some higher level has decided we are broken.&n;&t;&t; * There should really be a &quot;kick me&quot; function call instead.&n;&t;&t; */
 r_int
 id|tickssofar
 op_assign
@@ -1175,7 +1172,7 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
-multiline_comment|/* If some higher layer thinks we&squot;ve missed an tx-done interrupt&n;&t;   we are passed NULL. Caution: dev_tint() handles the cli()/sti()&n;&t;   itself. */
+multiline_comment|/*&n;&t; * If some higher layer thinks we&squot;ve missed an tx-done interrupt&n;&t; * we are passed NULL. Caution: dev_tint() handles the cli()/sti()&n;&t; * itself.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1194,7 +1191,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t;   done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
+multiline_comment|/*&n;&t; * Block a timer-based transmit from overlapping. This could better be&n;&t; * done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1285,8 +1282,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-"&f;"
-multiline_comment|/* The typical workload of the driver:&n;   Handle the network interface interrupts. */
+multiline_comment|/*&n; * The typical workload of the driver:&n; *   Handle the network interface interrupts.&n; */
 r_static
 r_void
 DECL|function|net_interrupt
@@ -1668,7 +1664,7 @@ op_decrement
 id|boguscount
 )paren
 suffix:semicolon
-multiline_comment|/* If any worth-while packets have been received, dev_rint()&n;&t;   has done a mark_bh(NET_BH) for us and will work on them&n;&t;   when we get to the bottom-half routine. */
+multiline_comment|/*&n;&t; * If any worth-while packets have been received, dev_rint()&n;&t; * has done a mark_bh(NET_BH) for us and will work on them&n;&t; * when we get to the bottom-half routine.&n;&t; */
 r_return
 suffix:semicolon
 )brace
@@ -1759,7 +1755,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Get the current statistics.&t;This may be called with the card open or&n;   closed. */
+multiline_comment|/*&n; * Get the current statistics.&n; * This may be called with the card open or closed.&n; */
 r_static
 r_struct
 id|enet_statistics
@@ -1817,7 +1813,7 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -1&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;best-effort filtering.&n; */
+multiline_comment|/*&n; * Set or clear the multicast filter for this adaptor.&n; * num_addrs == -1&t;Promiscuous mode, receive all packets&n; * num_addrs == 0&t;Normal mode, clear multicast list&n; * num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets,&n; *&t;&t;&t;and do best-effort filtering.&n; */
 r_static
 r_void
 DECL|function|set_multicast_list
@@ -1843,6 +1839,7 @@ op_amp
 id|IFF_PROMISC
 )paren
 (brace
+multiline_comment|/* Enable promiscuous mode */
 id|outw
 c_func
 (paren
@@ -1853,7 +1850,6 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* Enable promiscuous mode */
 )brace
 r_else
 r_if
@@ -1870,6 +1866,7 @@ OG
 id|HW_MAX_ADDRS
 )paren
 (brace
+multiline_comment|/* Disable promiscuous mode, use normal mode. */
 id|hardware_set_filter
 c_func
 (paren
@@ -1884,7 +1881,6 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* Disable promiscuous mode, use normal mode */
 )brace
 r_else
 r_if
@@ -1893,13 +1889,13 @@ c_cond
 id|dev-&gt;mc_count
 )paren
 (brace
+multiline_comment|/* Walk the address list, and load the filter */
 id|hardware_set_filter
 c_func
 (paren
 id|dev-&gt;mc_list
 )paren
 suffix:semicolon
-multiline_comment|/* Walk the address list and load the filter */
 id|outw
 c_func
 (paren
@@ -1919,7 +1915,6 @@ id|ioaddr
 )paren
 suffix:semicolon
 )brace
-"&f;"
 macro_line|#ifdef MODULE
 DECL|variable|devicename
 r_static
@@ -1943,7 +1938,7 @@ op_assign
 (brace
 id|devicename
 comma
-multiline_comment|/* device name is inserted by linux/drivers/net/net_init.c */
+multiline_comment|/* will be inserted by linux/drivers/net/net_init.c */
 l_int|0
 comma
 l_int|0
@@ -2023,7 +2018,7 @@ comma
 id|cardname
 )paren
 suffix:semicolon
-multiline_comment|/* copy the parameters from insmod into the device structure */
+multiline_comment|/* Copy the parameters from insmod into the device structure. */
 id|this_device.base_addr
 op_assign
 id|io
@@ -2079,8 +2074,7 @@ op_amp
 id|this_device
 )paren
 suffix:semicolon
-multiline_comment|/* If we don&squot;t do this, we can&squot;t re-insmod it later. */
-multiline_comment|/* Release irq/dma here, when you have jumpered versions and snarfed&n;&t; * them in net_probe1().&n;&t; */
+multiline_comment|/*&n;&t; * If we don&squot;t do this, we can&squot;t re-insmod it later.&n;&t; * Release irq/dma here, when you have jumpered versions and&n;&t; * allocate them in net_probe1().&n;&t; */
 multiline_comment|/*&n;&t;   free_irq(this_device.irq);&n;&t;   free_dma(this_device.dma);&n;&t;*/
 id|release_region
 c_func
@@ -2109,6 +2103,5 @@ id|net_local
 suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
-"&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -Wall -Wstrict-prototypes -Wwrite-strings -Wredundant-decls -O2 -m486 -c skeleton.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; *  c-indent-level: 4&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command:&n; *&t;gcc -D__KERNEL__ -Wall -Wstrict-prototypes -Wwrite-strings&n; *&t;-Wredundant-decls -O2 -m486 -c skeleton.c&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; *  c-indent-level: 4&n; * End:&n; */
 eof

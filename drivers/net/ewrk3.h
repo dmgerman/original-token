@@ -78,59 +78,59 @@ mdefine_line|#define PAGE0_RSVD    0x240         /* RESERVED */
 DECL|macro|PAGE0_USRD
 mdefine_line|#define PAGE0_USRD    0x600         /* User Data */
 multiline_comment|/*&n;** Control and Status Register bit definitions (EWRK3_CSR)&n;*/
-DECL|macro|RA
-mdefine_line|#define RA&t;&t;0x80&t;    /* Runt Accept */
-DECL|macro|PME
-mdefine_line|#define PME&t;&t;0x40&t;    /* Promiscuous Mode Enable */
-DECL|macro|MCE
-mdefine_line|#define MCE&t;&t;0x20&t;    /* Multicast Enable */ 
-DECL|macro|TNE
-mdefine_line|#define TNE&t;&t;0x08&t;    /* TX Done Queue Not Empty */
-DECL|macro|RNE
-mdefine_line|#define RNE&t;&t;0x04&t;    /* RX Queue Not Empty */
-DECL|macro|TXD
-mdefine_line|#define TXD&t;&t;0x02&t;    /* TX Disable */
-DECL|macro|RXD
-mdefine_line|#define RXD&t;&t;0x01&t;    /* RX Disable */
+DECL|macro|CSR_RA
+mdefine_line|#define CSR_RA&t;&t;0x80&t;    /* Runt Accept */
+DECL|macro|CSR_PME
+mdefine_line|#define CSR_PME&t;&t;0x40&t;    /* Promiscuous Mode Enable */
+DECL|macro|CSR_MCE
+mdefine_line|#define CSR_MCE&t;&t;0x20&t;    /* Multicast Enable */ 
+DECL|macro|CSR_TNE
+mdefine_line|#define CSR_TNE&t;&t;0x08&t;    /* TX Done Queue Not Empty */
+DECL|macro|CSR_RNE
+mdefine_line|#define CSR_RNE&t;&t;0x04&t;    /* RX Queue Not Empty */
+DECL|macro|CSR_TXD
+mdefine_line|#define CSR_TXD&t;&t;0x02&t;    /* TX Disable */
+DECL|macro|CSR_RXD
+mdefine_line|#define CSR_RXD&t;&t;0x01&t;    /* RX Disable */
 multiline_comment|/*&n;** Control Register bit definitions (EWRK3_CR)&n;*/
-DECL|macro|APD
-mdefine_line|#define APD&t;&t;0x80&t;/* Auto Port Disable */
-DECL|macro|PSEL
-mdefine_line|#define PSEL&t;&t;0x40&t;/* Port Select (0-&gt;TP port) */
-DECL|macro|LBCK
-mdefine_line|#define LBCK&t;&t;0x20&t;/* LoopBaCK enable */
-DECL|macro|FDUP
-mdefine_line|#define FDUP&t;&t;0x10&t;/* Full DUPlex enable */
-DECL|macro|FBUS
-mdefine_line|#define FBUS&t;&t;0x08&t;/* Fast BUS enable (ISA clk &gt; 8.33MHz) */
-DECL|macro|EN_16
-mdefine_line|#define EN_16&t;&t;0x04&t;/* ENable 16 bit memory accesses */
-DECL|macro|LED
-mdefine_line|#define LED&t;&t;0x02&t;/* LED (1-&gt; turn on) */
+DECL|macro|CR_APD
+mdefine_line|#define CR_APD&t;&t;0x80&t;/* Auto Port Disable */
+DECL|macro|CR_PSEL
+mdefine_line|#define CR_PSEL&t;&t;0x40&t;/* Port Select (0-&gt;TP port) */
+DECL|macro|CR_LBCK
+mdefine_line|#define CR_LBCK&t;&t;0x20&t;/* LoopBaCK enable */
+DECL|macro|CR_FDUP
+mdefine_line|#define CR_FDUP&t;&t;0x10&t;/* Full DUPlex enable */
+DECL|macro|CR_FBUS
+mdefine_line|#define CR_FBUS&t;&t;0x08&t;/* Fast BUS enable (ISA clk &gt; 8.33MHz) */
+DECL|macro|CR_EN_16
+mdefine_line|#define CR_EN_16&t;0x04&t;/* ENable 16 bit memory accesses */
+DECL|macro|CR_LED
+mdefine_line|#define CR_LED&t;&t;0x02&t;/* LED (1-&gt; turn on) */
 multiline_comment|/*&n;** Interrupt Control Register bit definitions (EWRK3_ICR)&n;*/
-DECL|macro|IE
-mdefine_line|#define IE&t;&t;0x80&t;/* Interrupt Enable */
-DECL|macro|IS
-mdefine_line|#define IS&t;&t;0x60&t;/* Interrupt Selected */
-DECL|macro|TNEM
-mdefine_line|#define TNEM&t;&t;0x08&t;/* TNE Mask (0-&gt;mask) */
-DECL|macro|RNEM
-mdefine_line|#define RNEM&t;&t;0x04&t;/* RNE Mask (0-&gt;mask) */
-DECL|macro|TXDM
-mdefine_line|#define TXDM&t;&t;0x02&t;/* TXD Mask (0-&gt;mask) */
-DECL|macro|RXDM
-mdefine_line|#define RXDM&t;&t;0x01&t;/* RXD Mask (0-&gt;mask) */
+DECL|macro|ICR_IE
+mdefine_line|#define ICR_IE&t;&t;0x80&t;/* Interrupt Enable */
+DECL|macro|ICR_IS
+mdefine_line|#define ICR_IS&t;&t;0x60&t;/* Interrupt Selected */
+DECL|macro|ICR_TNEM
+mdefine_line|#define ICR_TNEM&t;0x08&t;/* TNE Mask (0-&gt;mask) */
+DECL|macro|ICR_RNEM
+mdefine_line|#define ICR_RNEM&t;0x04&t;/* RNE Mask (0-&gt;mask) */
+DECL|macro|ICR_TXDM
+mdefine_line|#define ICR_TXDM&t;0x02&t;/* TXD Mask (0-&gt;mask) */
+DECL|macro|ICR_RXDM
+mdefine_line|#define ICR_RXDM&t;0x01&t;/* RXD Mask (0-&gt;mask) */
 multiline_comment|/*&n;** Transmit Status Register bit definitions (EWRK3_TSR)&n;*/
-DECL|macro|NCL
-mdefine_line|#define NCL&t;&t;0x80&t;/* No Carrier Loopback */
-DECL|macro|ID
-mdefine_line|#define ID&t;&t;0x40&t;/* Initially Deferred */
-DECL|macro|LCL
-mdefine_line|#define LCL&t;&t;0x20&t;/* Late CoLlision */
-DECL|macro|ECL
-mdefine_line|#define ECL&t;&t;0x10&t;/* Excessive CoLlisions */
-DECL|macro|RCNTR
-mdefine_line|#define RCNTR&t;&t;0x0f&t;/* Retries CouNTeR */
+DECL|macro|TSR_NCL
+mdefine_line|#define TSR_NCL&t;&t;0x80&t;/* No Carrier Loopback */
+DECL|macro|TSR_ID
+mdefine_line|#define TSR_ID&t;&t;0x40&t;/* Initially Deferred */
+DECL|macro|TSR_LCL
+mdefine_line|#define TSR_LCL&t;&t;0x20&t;/* Late CoLlision */
+DECL|macro|TSR_ECL
+mdefine_line|#define TSR_ECL&t;&t;0x10&t;/* Excessive CoLlisions */
+DECL|macro|TSR_RCNTR
+mdefine_line|#define TSR_RCNTR&t;0x0f&t;/* Retries CouNTeR */
 multiline_comment|/*&n;** I/O Page Register bit definitions (EWRK3_IOPR)&n;*/
 DECL|macro|EEPROM_INIT
 mdefine_line|#define EEPROM_INIT&t;0xc0&t;/* EEPROM INIT command */
@@ -143,85 +143,87 @@ mdefine_line|#define EEPROM_WR_DIS&t;0xd8&t;/* EEPROM WRITE DISABLE command */
 DECL|macro|EEPROM_RD
 mdefine_line|#define EEPROM_RD&t;0xe0&t;/* EEPROM READ command */
 multiline_comment|/*&n;** I/O Base Register bit definitions (EWRK3_IOBR)&n;*/
-DECL|macro|EISA
-mdefine_line|#define EISA&t;&t;0x20&t;/* Enable EISA ID and Control Registers */
-DECL|macro|IOB
-mdefine_line|#define IOB&t;&t;0x1f&t;/* Compare bits for I/O Base Address */
-multiline_comment|/*&n;** I/O Configuration/Management Register bit definitions (EWRK3_CMR)&n;*/
-DECL|macro|RA
-mdefine_line|#define RA              0x80    /* Read Ahead */
-DECL|macro|WB
-mdefine_line|#define WB              0x40    /* Write Behind */
-DECL|macro|LINK
-mdefine_line|#define LINK&t;&t;0x20&t;/* 0-&gt;TP */
-DECL|macro|POLARITY
-mdefine_line|#define POLARITY&t;0x10&t;/* Informational */
-DECL|macro|NO_EEPROM
-mdefine_line|#define NO_EEPROM&t;0x0c&t;/* NO_EEPROM&lt;1:0&gt; pin status */
-DECL|macro|HS
-mdefine_line|#define HS&t;        0x08&t;/* Hard Strapped pin status (LeMAC2) */
-DECL|macro|PNP
-mdefine_line|#define PNP             0x04    /* Plug &squot;n Play */
-DECL|macro|DRAM
-mdefine_line|#define DRAM&t;&t;0x02&t;/* 0-&gt; 1DRAM, 1-&gt; 2 DRAM on board */
-DECL|macro|_0WS
-mdefine_line|#define _0WS            0x01    /* Zero Wait State */
+DECL|macro|EISA_REGS_EN
+mdefine_line|#define EISA_REGS_EN&t;0x20&t;/* Enable EISA ID and Control Registers */
+DECL|macro|EISA_IOB
+mdefine_line|#define EISA_IOB        0x1f&t;/* Compare bits for I/O Base Address */
+multiline_comment|/*&n;** I/O Congiguration/Management Register bit definitions (EWRK3_CMR)&n;*/
+DECL|macro|CMR_RA
+mdefine_line|#define CMR_RA          0x80    /* Read Ahead */
+DECL|macro|CMR_WB
+mdefine_line|#define CMR_WB          0x40    /* Write Behind */
+DECL|macro|CMR_LINK
+mdefine_line|#define CMR_LINK        0x20&t;/* 0-&gt;TP */
+DECL|macro|CMR_POLARITY
+mdefine_line|#define CMR_POLARITY    0x10&t;/* Informational */
+DECL|macro|CMR_NO_EEPROM
+mdefine_line|#define CMR_NO_EEPROM&t;0x0c&t;/* NO_EEPROM&lt;1:0&gt; pin status */
+DECL|macro|CMR_HS
+mdefine_line|#define CMR_HS          0x08&t;/* Hard Strapped pin status (LeMAC2) */
+DECL|macro|CMR_PNP
+mdefine_line|#define CMR_PNP         0x04    /* Plug &squot;n Play */
+DECL|macro|CMR_DRAM
+mdefine_line|#define CMR_DRAM        0x02&t;/* 0-&gt; 1DRAM, 1-&gt; 2 DRAM on board */
+DECL|macro|CMR_0WS
+mdefine_line|#define CMR_0WS         0x01    /* Zero Wait State */
 multiline_comment|/* &n;** MAC Receive Status Register bit definitions&n;*/
-DECL|macro|ROK
-mdefine_line|#define ROK     &t;0x80 &t;/* Receive OK summary */
-DECL|macro|IAM
-mdefine_line|#define IAM     &t;0x10 &t;/* Individual Address Match */
-DECL|macro|MCM
-mdefine_line|#define MCM     &t;0x08 &t;/* MultiCast Match */
-DECL|macro|DBE
-mdefine_line|#define DBE     &t;0x04 &t;/* Dribble Bit Error */
-DECL|macro|CRC
-mdefine_line|#define CRC     &t;0x02 &t;/* CRC error */
-DECL|macro|PLL
-mdefine_line|#define PLL     &t;0x01 &t;/* Phase Lock Lost */
+DECL|macro|R_ROK
+mdefine_line|#define R_ROK     &t;0x80 &t;/* Receive OK summary */
+DECL|macro|R_IAM
+mdefine_line|#define R_IAM     &t;0x10 &t;/* Individual Address Match */
+DECL|macro|R_MCM
+mdefine_line|#define R_MCM     &t;0x08 &t;/* MultiCast Match */
+DECL|macro|R_DBE
+mdefine_line|#define R_DBE     &t;0x04 &t;/* Dribble Bit Error */
+DECL|macro|R_CRC
+mdefine_line|#define R_CRC     &t;0x02 &t;/* CRC error */
+DECL|macro|R_PLL
+mdefine_line|#define R_PLL     &t;0x01 &t;/* Phase Lock Lost */
 multiline_comment|/* &n;** MAC Transmit Control Register bit definitions&n;*/
-DECL|macro|SQEE
-mdefine_line|#define SQEE    &t;0x40 &t;/* SQE Enable - look for heartbeat  */
-DECL|macro|SED
-mdefine_line|#define SED     &t;0x20 &t;/* Stop when Error Detected */
-DECL|macro|QMODE
-mdefine_line|#define QMODE     &t;0x10 &t;/* Q_MODE */
-DECL|macro|LAB
-mdefine_line|#define LAB             0x08 &t;/* Less Aggressive Backoff */
-DECL|macro|PAD
-mdefine_line|#define PAD     &t;0x04 &t;/* PAD Runt Packets */
-DECL|macro|IFC
-mdefine_line|#define IFC     &t;0x02 &t;/* Insert Frame Check */
-DECL|macro|ISA
-mdefine_line|#define ISA     &t;0x01 &t;/* Insert Source Address */
+DECL|macro|TCR_SQEE
+mdefine_line|#define TCR_SQEE    &t;0x40 &t;/* SQE Enable - look for heartbeat  */
+DECL|macro|TCR_SED
+mdefine_line|#define TCR_SED     &t;0x20 &t;/* Stop when Error Detected */
+DECL|macro|TCR_QMODE
+mdefine_line|#define TCR_QMODE     &t;0x10 &t;/* Q_MODE */
+DECL|macro|TCR_LAB
+mdefine_line|#define TCR_LAB         0x08 &t;/* Less Aggressive Backoff */
+DECL|macro|TCR_PAD
+mdefine_line|#define TCR_PAD     &t;0x04 &t;/* PAD Runt Packets */
+DECL|macro|TCR_IFC
+mdefine_line|#define TCR_IFC     &t;0x02 &t;/* Insert Frame Check */
+DECL|macro|TCR_ISA
+mdefine_line|#define TCR_ISA     &t;0x01 &t;/* Insert Source Address */
 multiline_comment|/* &n;** MAC Transmit Status Register bit definitions&n;*/
-DECL|macro|VSTS
-mdefine_line|#define VSTS    &t;0x80 &t;/* Valid STatuS */
-DECL|macro|MAC_CTU
-mdefine_line|#define MAC_CTU     &t;0x40 &t;/* Cut Through Used */
-DECL|macro|MAC_SQE
-mdefine_line|#define MAC_SQE     &t;0x20 &t;/* Signal Quality Error */
-DECL|macro|MAC_NCL
-mdefine_line|#define MAC_NCL     &t;0x10 &t;/* No Carrier Loopback */
-DECL|macro|MAC_LCL
-mdefine_line|#define MAC_LCL         0x08 &t;/* Late Collision */
-DECL|macro|MAC_ID
-mdefine_line|#define MAC_ID      &t;0x04 &t;/* Initially Deferred */
-DECL|macro|MAC_COLL
-mdefine_line|#define MAC_COLL     &t;0x03 &t;/* COLLision status */
-DECL|macro|MAC_XCOLL
-mdefine_line|#define MAC_XCOLL       0x03    /* Excessive Collisions */
-DECL|macro|MAC_MCOLL
-mdefine_line|#define MAC_MCOLL       0x02    /* Multiple Collisions */
-DECL|macro|MAC_OCOLL
-mdefine_line|#define MAC_OCOLL       0x01    /* One Collision */
-DECL|macro|MAC_NOCOLL
-mdefine_line|#define MAC_NOCOLL      0x00    /* No Collisions */
-DECL|macro|MAC_XUR
-mdefine_line|#define MAC_XUR         0x03    /* Excessive Underruns */
-DECL|macro|MAC_TXE
-mdefine_line|#define MAC_TXE         0x7f    /* TX Errors */
+DECL|macro|T_VSTS
+mdefine_line|#define T_VSTS    &t;0x80 &t;/* Valid STatuS */
+DECL|macro|T_CTU
+mdefine_line|#define T_CTU     &t;0x40 &t;/* Cut Through Used */
+DECL|macro|T_SQE
+mdefine_line|#define T_SQE     &t;0x20 &t;/* Signal Quality Error */
+DECL|macro|T_NCL
+mdefine_line|#define T_NCL     &t;0x10 &t;/* No Carrier Loopback */
+DECL|macro|T_LCL
+mdefine_line|#define T_LCL           0x08 &t;/* Late Collision */
+DECL|macro|T_ID
+mdefine_line|#define T_ID      &t;0x04 &t;/* Initially Deferred */
+DECL|macro|T_COLL
+mdefine_line|#define T_COLL     &t;0x03 &t;/* COLLision status */
+DECL|macro|T_XCOLL
+mdefine_line|#define T_XCOLL         0x03    /* Excessive Collisions */
+DECL|macro|T_MCOLL
+mdefine_line|#define T_MCOLL         0x02    /* Multiple Collisions */
+DECL|macro|T_OCOLL
+mdefine_line|#define T_OCOLL         0x01    /* One Collision */
+DECL|macro|T_NOCOLL
+mdefine_line|#define T_NOCOLL        0x00    /* No Collisions */
+DECL|macro|T_XUR
+mdefine_line|#define T_XUR           0x03    /* Excessive Underruns */
+DECL|macro|T_TXE
+mdefine_line|#define T_TXE           0x7f    /* TX Errors */
 multiline_comment|/* &n;** EISA Configuration Register bit definitions &n;*/
+DECL|macro|EISA_ID
+mdefine_line|#define EISA_ID       iobase + 0x0c80  /* EISA ID Registers */ 
 DECL|macro|EISA_ID0
 mdefine_line|#define EISA_ID0      iobase + 0x0c80  /* EISA ID Register 0 */ 
 DECL|macro|EISA_ID1
@@ -371,6 +373,8 @@ DECL|macro|MASK_INTERRUPTS
 mdefine_line|#define MASK_INTERRUPTS   1
 DECL|macro|UNMASK_INTERRUPTS
 mdefine_line|#define UNMASK_INTERRUPTS 0
+DECL|macro|EEPROM_OFFSET
+mdefine_line|#define EEPROM_OFFSET(a) ((u_short)((u_long)(a)))
 multiline_comment|/*&n;** Include the IOCTL stuff&n;*/
 macro_line|#include &lt;linux/sockios.h&gt;
 DECL|macro|EWRK3IOCTL

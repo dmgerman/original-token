@@ -60,6 +60,31 @@ r_int
 id|bcc
 )paren
 suffix:semicolon
+DECL|function|min
+r_static
+r_inline
+r_int
+id|min
+c_func
+(paren
+r_int
+id|a
+comma
+r_int
+id|b
+)paren
+(brace
+r_return
+id|a
+OL
+id|b
+ques
+c_cond
+id|a
+suffix:colon
+id|b
+suffix:semicolon
+)brace
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*                                                                           */
 multiline_comment|/*  Encoding/Decoding section                                                */

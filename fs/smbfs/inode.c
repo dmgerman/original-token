@@ -169,7 +169,7 @@ c_cond
 (paren
 id|check_info-&gt;state
 op_eq
-id|INODE_LOOKED_UP
+id|SMB_INODE_LOOKED_UP
 )paren
 (brace
 id|DDPRINTK
@@ -188,7 +188,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;smb_read_inode: &quot;
-l_string|&quot;state != INODE_LOOKED_UP&bslash;n&quot;
+l_string|&quot;state != SMB_INODE_LOOKED_UP&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -222,7 +222,7 @@ suffix:colon
 macro_line|#endif
 id|inode_info-&gt;state
 op_assign
-id|INODE_VALID
+id|SMB_INODE_VALID
 suffix:semicolon
 id|SMB_INOP
 c_func

@@ -4086,7 +4086,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Grab the region */
-id|snarf_region
+id|request_region
 c_func
 (paren
 id|ioaddr
@@ -4094,6 +4094,8 @@ op_amp
 l_int|0x3f0
 comma
 id|PT_TOTAL_SIZE
+comma
+l_string|&quot;pt&quot;
 )paren
 suffix:semicolon
 )brace

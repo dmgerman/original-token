@@ -1,5 +1,5 @@
-multiline_comment|/* * Last edited: Nov  8 12:32 1995 (cort) */
-multiline_comment|/*&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Adapted for PowerPC by Gary Thomas&n; */
+multiline_comment|/* * Last edited: Dec 14 17:32 1995 (cort) */
+multiline_comment|/*&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Adapted for PowerPC by Gary Thomas&n; *  Modified by Cort Dougan&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -16,7 +16,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#include &lt;asm/ppc_machine.h&gt;
 DECL|function|dump_fpu
 r_int
 id|dump_fpu
@@ -382,6 +382,10 @@ suffix:semicolon
 multiline_comment|/* Result from fork() */
 id|p-&gt;tss.ksp
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|childregs
 suffix:semicolon
 r_if
@@ -402,9 +406,14 @@ id|childregs-&gt;gpr
 l_int|1
 )braket
 op_assign
+(paren
+r_int
+)paren
+(paren
 id|childregs
 op_plus
 l_int|1
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -560,18 +569,71 @@ op_star
 id|regs
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
+r_char
+op_star
+id|a
+suffix:semicolon
+macro_line|#if 0
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+l_int|0x400
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;process.c: sys_fork() called&bslash;n&quot;
+l_string|&quot;going to do kmalloc(%d)&bslash;n&quot;
+comma
+id|i
 )paren
 suffix:semicolon
+id|a
+op_assign
+id|kmalloc
+c_func
+(paren
+id|i
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+id|a
+op_assign
+id|kmalloc
+c_func
+(paren
+id|i
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;a = %x&bslash;n&quot;
+comma
+id|a
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 id|do_fork
 c_func
 (paren
-id|CLONE_VM
-op_or
 id|SIGCHLD
 comma
 id|regs-&gt;gpr
@@ -626,7 +688,6 @@ r_char
 op_star
 id|filename
 suffix:semicolon
-multiline_comment|/*&t;printk(&quot;process.c: sys_execve(a0 = %s, a1 = %x, a2 = %x)&bslash;n&quot;,a0,a1,a2);*/
 macro_line|#if 1
 multiline_comment|/* paranoia check.  I really don&squot;t trust head.S  -- Cort */
 r_if
@@ -692,25 +753,6 @@ comma
 id|regs
 )paren
 suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|error
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;EXECVE - file = &squot;%s&squot;, error = %d&bslash;n&quot;
-comma
-id|filename
-comma
-id|error
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|putname
 c_func
 (paren
@@ -773,13 +815,13 @@ id|regs-&gt;gpr
 l_int|1
 )braket
 suffix:semicolon
-id|i
-op_assign
+multiline_comment|/* I hard coded in all the arguments to clone since clone() is inlined&n;     and has trouble with its args  with our gcc -- Cort*/
+r_return
 id|do_fork
 c_func
 (paren
-id|CLONE_VM
 multiline_comment|/*clone_flags*/
+id|CLONE_VM
 comma
 multiline_comment|/*usp*/
 id|regs-&gt;gpr
@@ -789,10 +831,6 @@ l_int|1
 comma
 id|regs
 )paren
-suffix:semicolon
-multiline_comment|/*  printk(&quot;sys_clone going to return %d&bslash;n&quot;, i);*/
-r_return
-id|i
 suffix:semicolon
 )brace
 r_void
@@ -849,6 +887,11 @@ l_int|2
 suffix:semicolon
 id|sp
 op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
 op_star
 id|sp
 suffix:semicolon

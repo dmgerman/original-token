@@ -2345,7 +2345,7 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-multiline_comment|/* We used to allocate DMA here, but that was silly.&n;&t;   DMA lines can&squot;t be shared!  We now permanently snarf them. */
+multiline_comment|/* We used to allocate DMA here, but that was silly.&n;&t;   DMA lines can&squot;t be shared!  We now permanently allocate them. */
 id|irq2dev_map
 (braket
 id|dev-&gt;irq

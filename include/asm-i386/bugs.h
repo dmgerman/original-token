@@ -417,6 +417,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifndef CONFIG_M386
 multiline_comment|/*&n;&t; * The 386 chips don&squot;t support TLB finegrained invalidation.&n;&t; * They will fault when they hit a invlpg instruction.&n;&t; */
 r_if
 c_cond
@@ -426,7 +427,6 @@ op_eq
 l_int|3
 )paren
 (brace
-macro_line|#if defined(CONFIG_M486) || defined(CONFIG_M586)
 id|printk
 c_func
 (paren
@@ -446,10 +446,8 @@ suffix:semicolon
 suffix:semicolon
 )paren
 suffix:semicolon
-macro_line|#endif
-r_return
-suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 DECL|function|check_bugs
 r_static

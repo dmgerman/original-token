@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * this indicates whether you can reboot with ctrl-alt-del: the default is yes&n; */
@@ -1606,6 +1607,14 @@ op_assign
 id|buffermem
 op_rshift
 id|PAGE_SHIFT
+suffix:semicolon
+id|freepages
+op_add_assign
+id|page_cache_size
+suffix:semicolon
+id|freepages
+op_rshift_assign
+l_int|1
 suffix:semicolon
 id|freepages
 op_add_assign

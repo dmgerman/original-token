@@ -49,7 +49,7 @@ l_int|2
 comma
 l_int|2
 comma
-l_int|0
+l_int|4
 comma
 multiline_comment|/* Buffer aging */
 l_int|32
@@ -6330,7 +6330,7 @@ id|i
 op_assign
 (paren
 r_int
-r_char
+r_int
 op_star
 )paren
 id|start_mem

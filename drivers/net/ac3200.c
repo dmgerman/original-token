@@ -637,7 +637,7 @@ l_int|3
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Assign and snarf the interrupt now. */
+multiline_comment|/* Assign and allocate the interrupt now. */
 r_if
 c_cond
 (paren

@@ -2088,7 +2088,7 @@ suffix:semicolon
 )brace
 id|new_inode_info-&gt;state
 op_assign
-id|INODE_LOOKED_UP
+id|SMB_INODE_LOOKED_UP
 suffix:semicolon
 id|new_inode_info-&gt;nused
 op_assign
@@ -2223,7 +2223,7 @@ suffix:semicolon
 )brace
 id|i-&gt;state
 op_assign
-id|INODE_CACHED
+id|SMB_INODE_CACHED
 suffix:semicolon
 r_while
 c_loop
@@ -2237,7 +2237,7 @@ op_logical_and
 (paren
 id|i-&gt;state
 op_eq
-id|INODE_CACHED
+id|SMB_INODE_CACHED
 )paren
 )paren
 (brace
@@ -2337,7 +2337,7 @@ l_int|0
 suffix:semicolon
 id|root-&gt;state
 op_assign
-id|INODE_LOOKED_UP
+id|SMB_INODE_LOOKED_UP
 suffix:semicolon
 id|root-&gt;nused
 op_assign
@@ -2810,11 +2810,11 @@ c_cond
 (paren
 id|result_info-&gt;state
 op_eq
-id|INODE_CACHED
+id|SMB_INODE_CACHED
 )paren
 id|result_info-&gt;state
 op_assign
-id|INODE_LOOKED_UP
+id|SMB_INODE_LOOKED_UP
 suffix:semicolon
 id|put_pname
 c_func
