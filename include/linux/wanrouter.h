@@ -809,6 +809,12 @@ r_char
 id|port
 suffix:semicolon
 multiline_comment|/* board port */
+DECL|member|protocol
+r_int
+r_char
+id|protocol
+suffix:semicolon
+multiline_comment|/* prococol used in this channel (TCPOX25 or X25) */
 DECL|member|reserved
 r_int
 id|reserved

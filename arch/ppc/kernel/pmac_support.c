@@ -255,7 +255,6 @@ id|nvram_naddrs
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef CONFIG_NVRAM
 DECL|function|nvram_read_byte
 r_int
 r_char
@@ -509,5 +508,4 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_NVRAM */
 eof

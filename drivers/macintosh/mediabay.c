@@ -1740,6 +1740,7 @@ id|bay-&gt;reset_timer
 op_assign
 id|MB_RESET_COUNT
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
 r_if
 c_cond
 (paren
@@ -1749,6 +1750,7 @@ id|bay-&gt;cd_timer
 op_assign
 id|MB_IDE_WAIT
 suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 )brace

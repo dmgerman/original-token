@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * Definitions for the interface between the generic PPP code&n; * and a PPP channel.&n; *&n; * A PPP channel provides a way for the generic PPP code to send&n; * and receive packets over some sort of communications medium.&n; * Packets are stored in sk_buffs and have the 2-byte PPP protocol&n; * number at the start, but not the address and control bytes.&n; *&n; * Copyright 1999 Paul Mackerras.&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; * ==FILEVERSION 990717==&n; */
-multiline_comment|/* $Id$ */
+multiline_comment|/*&n; * Definitions for the interface between the generic PPP code&n; * and a PPP channel.&n; *&n; * A PPP channel provides a way for the generic PPP code to send&n; * and receive packets over some sort of communications medium.&n; * Packets are stored in sk_buffs and have the 2-byte PPP protocol&n; * number at the start, but not the address and control bytes.&n; *&n; * Copyright 1999 Paul Mackerras.&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; * ==FILEVERSION 990909==&n; */
+multiline_comment|/* $Id: ppp_channel.h,v 1.2 1999/09/15 11:21:53 paulus Exp $ */
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 r_struct
@@ -60,6 +60,11 @@ r_int
 id|latency
 suffix:semicolon
 multiline_comment|/* overhead time in milliseconds */
+DECL|member|hdrlen
+r_int
+id|hdrlen
+suffix:semicolon
+multiline_comment|/* amount of headroom channel needs */
 DECL|member|list
 r_struct
 id|list_head

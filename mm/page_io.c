@@ -449,8 +449,6 @@ comma
 id|zones
 comma
 id|block_size
-comma
-l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Note! For consistency we do all of the logic,&n; &t; * decrementing the page count, and unlocking the page in the&n; &t; * swap lock map - in the IO completion handler.&n; &t; */

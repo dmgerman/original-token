@@ -1583,6 +1583,14 @@ DECL|variable|boot_dev
 id|kdev_t
 id|boot_dev
 suffix:semicolon
+r_extern
+r_void
+id|via_pmu_start
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_void
 id|__init
 DECL|function|pmac_init2
@@ -1592,12 +1600,21 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_ADB_PMU
+id|via_pmu_start
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_NVRAM  
 id|pmac_nvram_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PMAC_PBOOK&t;
+macro_line|#endif&t;
+macro_line|#ifdef CONFIG_PMAC_PBOOK
 id|media_bay_init
 c_func
 (paren
@@ -1751,7 +1768,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_IDE_PMAC
+macro_line|#if defined(CONFIG_BLK_DEV_IDE) &amp;&amp; defined(CONFIG_BLK_DEV_IDE_PMAC)
 r_extern
 r_int
 id|pmac_ide_count
@@ -1912,7 +1929,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_BLK_DEV_IDE_PMAC */
+macro_line|#endif /* CONFIG_BLK_DEV_IDE &amp;&amp; CONFIG_BLK_DEV_IDE_PMAC */
 DECL|function|find_boot_device
 r_void
 id|__init
@@ -1952,7 +1969,7 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_IDE_PMAC
+macro_line|#if defined(CONFIG_BLK_DEV_IDE) &amp;&amp; defined(CONFIG_BLK_DEV_IDE_PMAC)
 id|boot_dev
 op_assign
 id|find_ide_boot
@@ -2344,7 +2361,7 @@ r_int
 id|index
 )paren
 (brace
-macro_line|#if defined(CONFIG_BLK_DEV_IDE_PMAC)
+macro_line|#if defined(CONFIG_BLK_DEV_IDE) &amp;&amp; defined(CONFIG_BLK_DEV_IDE_PMAC)
 r_return
 id|pmac_ide_regbase
 (braket
@@ -2426,7 +2443,7 @@ id|id
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_BLK_DEV_IDE_PMAC)
+macro_line|#if defined(CONFIG_BLK_DEV_IDE) &amp;&amp; defined(CONFIG_BLK_DEV_IDE_PMAC)
 multiline_comment|/* This is declared in drivers/block/ide-pmac.c */
 r_void
 id|pmac_ide_init_hwif_ports
@@ -2617,7 +2634,7 @@ l_int|0x69
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-macro_line|#if defined(CONFIG_BLK_DEV_IDE_PMAC)
+macro_line|#if defined(CONFIG_BLK_DEV_IDE) &amp;&amp; defined(CONFIG_BLK_DEV_IDE_PMAC)
 id|ppc_ide_md.insw
 op_assign
 id|pmac_ide_insw

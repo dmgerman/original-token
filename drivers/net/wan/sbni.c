@@ -5785,7 +5785,7 @@ suffix:semicolon
 )brace
 id|slave
 op_assign
-id|dev_get
+id|dev_get_by_name
 c_func
 (paren
 id|tmpstr
@@ -5814,6 +5814,17 @@ c_func
 l_string|&quot;%s: Both devices should be UP to enslave!&bslash;n&quot;
 comma
 id|dev-&gt;name
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|slave
+)paren
+id|dev_put
+c_func
+(paren
+id|slave
 )paren
 suffix:semicolon
 r_return
@@ -5912,11 +5923,18 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-r_return
+id|error
+op_assign
 op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+id|dev_put
+c_func
+(paren
+id|slave
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -6110,6 +6128,11 @@ r_int
 id|initial
 )paren
 (brace
+r_int
+id|crc
+comma
+id|dummy_len
+suffix:semicolon
 id|__asm__
 (paren
 l_string|&quot;xorl %%eax,%%eax&bslash;n&bslash;t&quot;
@@ -6118,9 +6141,17 @@ l_string|&quot;lodsb&bslash;n&bslash;t&quot;
 l_string|&quot;xorb %%dl,%%al&bslash;n&bslash;t&quot;
 l_string|&quot;shrl $8,%%edx&bslash;n&bslash;t&quot;
 l_string|&quot;xorl (%%edi,%%eax,4),%%edx&bslash;n&bslash;t&quot;
-l_string|&quot;loop 1b&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%edx,%%eax&quot;
+l_string|&quot;loop 1b&quot;
 suffix:colon
+l_string|&quot;=d&quot;
+(paren
+id|crc
+)paren
+comma
+l_string|&quot;=c&quot;
+(paren
+id|dummy_len
+)paren
 suffix:colon
 l_string|&quot;S&quot;
 (paren
@@ -6136,24 +6167,22 @@ l_int|0
 )braket
 )paren
 comma
-l_string|&quot;c&quot;
+l_string|&quot;1&quot;
 (paren
 id|len
 )paren
 comma
-l_string|&quot;d&quot;
+l_string|&quot;0&quot;
 (paren
 id|initial
 )paren
 suffix:colon
 l_string|&quot;eax&quot;
-comma
-l_string|&quot;edx&quot;
-comma
-l_string|&quot;ecx&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* return crc; */
+r_return
+id|crc
+suffix:semicolon
 )brace
 macro_line|#else
 DECL|function|calc_crc

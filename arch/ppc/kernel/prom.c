@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: prom.c,v 1.77 1999/09/14 01:13:19 cort Exp $&n; *&n; * Procedures for interfacing to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * In particular, we are interested in the device tree&n; * and in using some of its services (exit, write to stdout).&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
+multiline_comment|/*&n; * $Id: prom.c,v 1.79 1999/10/08 01:56:32 paulus Exp $&n; *&n; * Procedures for interfacing to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * In particular, we are interested in the device tree&n; * and in using some of its services (exit, write to stdout).&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -599,6 +599,11 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* init it so it&squot;s in data segment not bss */
+DECL|variable|dev_tree_size
+r_int
+r_int
+id|dev_tree_size
+suffix:semicolon
 multiline_comment|/*&n; * prom_init() is called very early on, before the kernel text&n; * and data have been mapped to KERNELBASE.  At this point the code&n; * is running at whatever address it has been loaded at, so&n; * references to extern and static variables must be relocated&n; * explicitly.  The procedure reloc_offset() returns the address&n; * we&squot;re currently running at minus the address we were linked at.&n; * (Note that strings count as static variables.)&n; *&n; * Because OF may have mapped I/O devices into the area starting at&n; * KERNELBASE, particularly on CHRP machines, we can&squot;t safely call&n; * OF once the kernel has been mapped to KERNELBASE.  Therefore all&n; * OF calls should be done within prom_init(), and prom_init()&n; * and all routines called within it must be careful to relocate&n; * references as necessary.&n; *&n; * Note that the bss is cleared *after* prom_init runs, so we have&n; * to make sure that any static or extern variables it accesses&n; * are put in the data segment.&n; */
 DECL|macro|PTRRELOC
 mdefine_line|#define PTRRELOC(x)&t;((typeof(x))((unsigned long)(x) + offset))
@@ -2816,7 +2821,7 @@ l_string|&quot;...failed&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * If we have a display that we don&squot;t know how to drive,&n; * we will want to try to execute OF&squot;s open method for it&n; * later.  However, OF will probably fall over if we do that&n; * we&squot;ve taken over the MMU.&n; * So we check whether we will need to open the display,&n; * and if so, open it now.&n; */
 id|__init
@@ -4014,12 +4019,8 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;device tree used %lu bytes&bslash;n&quot;
-comma
+id|dev_tree_size
+op_assign
 id|mem
 op_minus
 (paren
@@ -4027,7 +4028,6 @@ r_int
 r_int
 )paren
 id|allnodes
-)paren
 suffix:semicolon
 id|klimit
 op_assign
@@ -8367,6 +8367,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_int
+id|cline
+op_assign
+l_int|0
+comma
+id|x
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -8451,6 +8458,10 @@ id|g_loc_Y
 )paren
 op_increment
 suffix:semicolon
+id|cline
+op_assign
+l_int|1
+suffix:semicolon
 r_break
 suffix:semicolon
 r_default
@@ -8506,7 +8517,12 @@ id|g_loc_Y
 )paren
 op_increment
 suffix:semicolon
+id|cline
+op_assign
+l_int|1
+suffix:semicolon
 )brace
+macro_line|#if 0
 r_while
 c_loop
 (paren
@@ -8536,6 +8552,71 @@ id|g_loc_Y
 op_decrement
 suffix:semicolon
 )brace
+macro_line|#else
+multiline_comment|/* wrap around from bottom to top of screen so we don&squot;t&n;&t;   waste time scrolling each line.  -- paulus. */
+r_if
+c_cond
+(paren
+id|RELOC
+c_func
+(paren
+id|g_loc_Y
+)paren
+op_ge
+id|RELOC
+c_func
+(paren
+id|g_max_loc_Y
+)paren
+)paren
+id|RELOC
+c_func
+(paren
+id|g_loc_Y
+)paren
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cline
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|x
+op_assign
+l_int|0
+suffix:semicolon
+id|x
+OL
+id|RELOC
+c_func
+(paren
+id|g_max_loc_X
+)paren
+suffix:semicolon
+op_increment
+id|x
+)paren
+id|draw_byte
+c_func
+(paren
+l_char|&squot; &squot;
+comma
+id|x
+comma
+id|RELOC
+c_func
+(paren
+id|g_loc_Y
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 id|__pmac
 r_void

@@ -4033,6 +4033,7 @@ id|system
 )paren
 (brace
 r_int
+r_int
 id|psecs
 suffix:semicolon
 id|psecs
@@ -6512,6 +6513,59 @@ c_func
 (paren
 op_amp
 id|tasklist_lock
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Put all the gunge required to become a kernel thread without&n; *&t;attached user resources in one place where it belongs.&n; */
+DECL|function|daemonize
+r_void
+id|daemonize
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|fs_struct
+op_star
+id|fs
+suffix:semicolon
+multiline_comment|/*&n;&t; * If we were started as result of loading a module, close all of the&n;&t; * user space pages.  We don&squot;t need them, and if we didn&squot;t close them&n;&t; * they would be locked into memory.&n;&t; */
+id|exit_mm
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+id|current-&gt;session
+op_assign
+l_int|1
+suffix:semicolon
+id|current-&gt;pgrp
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Become as one with the init task */
+id|exit_fs
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+multiline_comment|/* current-&gt;fs-&gt;count--; */
+id|fs
+op_assign
+id|init_task.fs
+suffix:semicolon
+id|current-&gt;fs
+op_assign
+id|fs
+suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|fs-&gt;count
 )paren
 suffix:semicolon
 )brace

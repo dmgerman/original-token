@@ -4,7 +4,6 @@ multiline_comment|/*************************************************************
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
-macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
@@ -5282,21 +5281,6 @@ l_int|NULL
 multiline_comment|/* lock */
 )brace
 suffix:semicolon
-DECL|variable|ezusb_misc
-r_static
-r_struct
-id|miscdevice
-id|ezusb_misc
-op_assign
-(brace
-l_int|192
-comma
-l_string|&quot;ezusb&quot;
-comma
-op_amp
-id|ezusb_fops
-)brace
-suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|function|ezusb_probe
 r_static
@@ -5642,6 +5626,11 @@ l_int|NULL
 comma
 l_int|NULL
 )brace
+comma
+op_amp
+id|ezusb_fops
+comma
+l_int|32
 )brace
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
@@ -5742,32 +5731,6 @@ id|lock
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* register misc device */
-r_if
-c_cond
-(paren
-id|misc_register
-c_func
-(paren
-op_amp
-id|ezusb_misc
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;ezusb: cannot register minor %d&bslash;n&quot;
-comma
-id|ezusb_misc.minor
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
 id|usb_register
 c_func
 (paren
@@ -5799,13 +5762,6 @@ c_func
 (paren
 op_amp
 id|ezusb_driver
-)paren
-suffix:semicolon
-id|misc_deregister
-c_func
-(paren
-op_amp
-id|ezusb_misc
 )paren
 suffix:semicolon
 )brace

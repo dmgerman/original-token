@@ -156,13 +156,6 @@ l_int|2
 )paren
 (brace
 r_case
-id|ORIG_EAX
-suffix:colon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-r_case
 id|FS
 suffix:colon
 r_if

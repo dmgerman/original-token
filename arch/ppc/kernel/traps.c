@@ -417,15 +417,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Caused by (from msr): &quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;regs %p &quot;
+l_string|&quot;Caused by (from SRR1=%lx): &quot;
 comma
-id|regs
+id|regs-&gt;msr
 )paren
 suffix:semicolon
 r_switch
@@ -433,31 +427,22 @@ c_cond
 (paren
 id|regs-&gt;msr
 op_amp
-l_int|0x0000F000
+l_int|0xF0000
 )paren
 (brace
 r_case
-(paren
-l_int|1
-op_lshift
-l_int|12
-)paren
+l_int|0x80000
 suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Machine check signal - probably due to mm fault&bslash;n&quot;
-l_string|&quot;with mmu off&bslash;n&quot;
+l_string|&quot;Machine check signal&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-(paren
-l_int|1
-op_lshift
-l_int|13
-)paren
+l_int|0x40000
 suffix:colon
 id|printk
 c_func
@@ -468,31 +453,23 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-(paren
-l_int|1
-op_lshift
-l_int|14
-)paren
+l_int|0x20000
 suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Data parity signal&bslash;n&quot;
+l_string|&quot;Data parity error signal&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-(paren
-l_int|1
-op_lshift
-l_int|15
-)paren
+l_int|0x10000
 suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Address parity signal&bslash;n&quot;
+l_string|&quot;Address parity error signal&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -506,12 +483,6 @@ l_string|&quot;Unknown values in msr&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|show_regs
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
 macro_line|#if defined(CONFIG_XMON) || defined(CONFIG_KGDB)
 id|debugger
 c_func
@@ -520,6 +491,12 @@ id|regs
 )paren
 suffix:semicolon
 macro_line|#endif
+id|show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
 id|print_backtrace
 c_func
 (paren

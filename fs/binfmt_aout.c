@@ -1150,6 +1150,13 @@ suffix:semicolon
 r_int
 id|retval
 suffix:semicolon
+r_static
+r_int
+r_int
+id|error_time
+op_assign
+l_int|0
+suffix:semicolon
 id|ex
 op_assign
 op_star
@@ -1261,6 +1268,18 @@ op_ne
 id|BLOCK_SIZE
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|jiffies
+op_minus
+id|error_time
+)paren
+OG
+l_int|5
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -1268,6 +1287,11 @@ id|KERN_NOTICE
 l_string|&quot;N_TXTOFF != BLOCK_SIZE. See a.out.h.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|error_time
+op_assign
+id|jiffies
+suffix:semicolon
+)brace
 r_return
 op_minus
 id|ENOEXEC
@@ -1297,6 +1321,18 @@ id|bprm-&gt;dentry-&gt;d_inode-&gt;i_sb-&gt;s_blocksize
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|jiffies
+op_minus
+id|error_time
+)paren
+OG
+l_int|5
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -1304,6 +1340,11 @@ id|KERN_NOTICE
 l_string|&quot;N_TXTOFF &lt; BLOCK_SIZE. Please convert binary.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|error_time
+op_assign
+id|jiffies
+suffix:semicolon
+)brace
 r_return
 op_minus
 id|ENOEXEC

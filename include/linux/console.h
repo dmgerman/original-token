@@ -375,6 +375,12 @@ multiline_comment|/* VGA text console */
 r_extern
 r_struct
 id|consw
+id|newport_con
+suffix:semicolon
+multiline_comment|/* SGI Newport console  */
+r_extern
+r_struct
+id|consw
 id|prom_con
 suffix:semicolon
 multiline_comment|/* SPARC PROM console */

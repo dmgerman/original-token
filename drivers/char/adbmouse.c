@@ -449,6 +449,20 @@ op_minus
 id|ENODEV
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* all buttons up */
+id|memset
+c_func
+(paren
+id|adb_mouse_buttons
+comma
+l_int|7
+comma
+r_sizeof
+(paren
+id|adb_mouse_buttons
+)paren
+)paren
+suffix:semicolon
 id|msedev
 op_assign
 id|register_busmouse

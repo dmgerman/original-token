@@ -759,6 +759,8 @@ id|sib-&gt;sibling
 r_if
 c_cond
 (paren
+id|sib-&gt;name
+op_logical_and
 id|strcmp
 c_func
 (paren

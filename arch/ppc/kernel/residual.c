@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: residual.c,v 1.16 1999/09/17 17:23:09 cort Exp $&n; *&n; * Code to deal with the PReP residual data.&n; *&n; * Written by: Cort Dougan (cort@cs.nmt.edu)&n; * Improved _greatly_ and rewritten by Gabriel Paubert (paubert@iram.es)&n; *&n; *  This file is based on the following documentation:&n; *&n; *&t;IBM Power Personal Systems Architecture&n; *&t;Residual Data&n; * &t;Document Number: PPS-AR-FW0001&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; *&n; */
+multiline_comment|/*&n; * $Id: residual.c,v 1.17 1999/09/27 18:40:23 cort Exp $&n; *&n; * Code to deal with the PReP residual data.&n; *&n; * Written by: Cort Dougan (cort@cs.nmt.edu)&n; * Improved _greatly_ and rewritten by Gabriel Paubert (paubert@iram.es)&n; *&n; *  This file is based on the following documentation:&n; *&n; *&t;IBM Power Personal Systems Architecture&n; *&t;Residual Data&n; * &t;Document Number: PPS-AR-FW0001&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; *&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
 macro_line|#include &lt;asm/pnp.h&gt;
@@ -21,11 +21,12 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
 DECL|variable|__prepdata
 r_int

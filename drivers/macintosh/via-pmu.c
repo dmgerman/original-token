@@ -493,6 +493,7 @@ suffix:semicolon
 multiline_comment|/*&n; * This table indicates for each PMU opcode:&n; * - the number of data bytes to be sent with the command, or -1&n; *   if a length byte should be sent,&n; * - the number of response bytes which the PMU will return, or&n; *   -1 if it will send a length byte.&n; */
 DECL|variable|__openfirmwaredata
 r_static
+r_const
 id|s8
 id|pmu_data_len
 (braket
@@ -2729,6 +2730,28 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * We can&squot;t wait until pmu_init gets called, that happens too late.&n; * It happens after IDE and SCSI initialization, which can take a few&n; * seconds, and by that time the PMU could have given up on us and&n; * turned us off.&n; * This is called from arch/ppc/kernel/pmac_setup.c:pmac_init2().&n; */
+DECL|function|via_pmu_start
+r_void
+id|via_pmu_start
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|vias
+op_eq
+l_int|NULL
+)paren
+r_return
+suffix:semicolon
 id|bright_req_1.complete
 op_assign
 l_int|1
@@ -2783,8 +2806,6 @@ id|line
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|ENXIO
 suffix:semicolon
 )brace
 multiline_comment|/* Enable interrupts */
@@ -2814,9 +2835,6 @@ c_func
 (paren
 l_int|1
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 r_static

@@ -2352,11 +2352,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|do_initcalls
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 id|real_root_dev
 op_assign
@@ -2384,6 +2379,11 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
+id|do_initcalls
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* .. filesystems .. */
 id|filesystem_setup
 c_func

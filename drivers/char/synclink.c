@@ -1,10 +1,14 @@
-multiline_comment|/*&n; * linux/drivers/char/synclink.c&n; *&n; * ==FILEDATE 19990610==&n; *&n; * Device driver for Microgate SyncLink ISA and PCI&n; * high speed multiprotocol serial adapters.&n; *&n; * written by Paul Fulghum for Microgate Corporation&n; * paulkf@microgate.com&n; *&n; * Microgate and SyncLink are trademarks of Microgate Corporation&n; *&n; * Derived from serial.c written by Theodore Ts&squot;o and Linus Torvalds&n; *&n; * Original release 01/11/99&n; *&n; * This code is released under the GNU General Public License (GPL)&n; *&n; * This driver is primarily intended for use in synchronous&n; * HDLC mode. Asynchronous mode is also provided.&n; *&n; * When operating in synchronous mode, each call to mgsl_write()&n; * contains exactly one complete HDLC frame. Calling mgsl_put_char&n; * will start assembling an HDLC frame that will not be sent until&n; * mgsl_flush_chars or mgsl_write is called.&n; * &n; * Synchronous receive data is reported as complete frames. To accomplish&n; * this, the TTY flip buffer is bypassed (too small to hold largest&n; * frame and may fragment frames) and the line discipline&n; * receive entry point is called directly.&n; *&n; * This driver has been tested with a slightly modified ppp.c driver&n; * for synchronous PPP.&n; *&n; * THIS SOFTWARE IS PROVIDED ``AS IS&squot;&squot; AND ANY EXPRESS OR IMPLIED&n; * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES&n; * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,&n; * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES&n; * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,&n; * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)&n; * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED&n; * OF THE POSSIBILITY OF SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * linux/drivers/char/synclink.c&n; *&n; * ==FILEDATE 19990901==&n; *&n; * Device driver for Microgate SyncLink ISA and PCI&n; * high speed multiprotocol serial adapters.&n; *&n; * written by Paul Fulghum for Microgate Corporation&n; * paulkf@microgate.com&n; *&n; * Microgate and SyncLink are trademarks of Microgate Corporation&n; *&n; * Derived from serial.c written by Theodore Ts&squot;o and Linus Torvalds&n; *&n; * Original release 01/11/99&n; *&n; * This code is released under the GNU General Public License (GPL)&n; *&n; * This driver is primarily intended for use in synchronous&n; * HDLC mode. Asynchronous mode is also provided.&n; *&n; * When operating in synchronous mode, each call to mgsl_write()&n; * contains exactly one complete HDLC frame. Calling mgsl_put_char&n; * will start assembling an HDLC frame that will not be sent until&n; * mgsl_flush_chars or mgsl_write is called.&n; * &n; * Synchronous receive data is reported as complete frames. To accomplish&n; * this, the TTY flip buffer is bypassed (too small to hold largest&n; * frame and may fragment frames) and the line discipline&n; * receive entry point is called directly.&n; *&n; * This driver has been tested with a slightly modified ppp.c driver&n; * for synchronous PPP.&n; *&n; * THIS SOFTWARE IS PROVIDED ``AS IS&squot;&squot; AND ANY EXPRESS OR IMPLIED&n; * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES&n; * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,&n; * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES&n; * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,&n; * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)&n; * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED&n; * OF THE POSSIBILITY OF SUCH DAMAGE.&n; */
 DECL|macro|VERSION
 mdefine_line|#define VERSION(ver,rel,seq) (((ver)&lt;&lt;16) | ((rel)&lt;&lt;8) | (seq))
 DECL|macro|BREAKPOINT
 mdefine_line|#define BREAKPOINT() asm(&quot;   int $3&quot;);
 DECL|macro|MAX_ISA_DEVICES
 mdefine_line|#define MAX_ISA_DEVICES 10
+DECL|macro|MAX_PCI_DEVICES
+mdefine_line|#define MAX_PCI_DEVICES 10
+DECL|macro|MAX_TOTAL_DEVICES
+mdefine_line|#define MAX_TOTAL_DEVICES 20
 macro_line|#include &lt;linux/config.h&gt;&t;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -41,6 +45,23 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
+macro_line|#if LINUX_VERSION_CODE &lt; VERSION(2,3,0) 
+DECL|typedef|wait_queue_head_t
+r_typedef
+r_struct
+id|wait_queue
+op_star
+id|wait_queue_head_t
+suffix:semicolon
+DECL|macro|DECLARE_WAITQUEUE
+mdefine_line|#define DECLARE_WAITQUEUE(name,task) struct wait_queue (name) = {(task),NULL}
+DECL|macro|init_waitqueue_head
+mdefine_line|#define init_waitqueue_head(head) *(head) = NULL
+DECL|macro|DECLARE_MUTEX
+mdefine_line|#define DECLARE_MUTEX(name) struct semaphore (name) = MUTEX
+DECL|macro|set_current_state
+mdefine_line|#define set_current_state(a) current-&gt;state = (a)
+macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt;= VERSION(2,1,4)
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|GET_USER
@@ -606,6 +627,12 @@ op_star
 id|tx_buffer_list
 suffix:semicolon
 multiline_comment|/* list of transmit buffer entries */
+DECL|member|intermediate_rxbuffer
+r_int
+r_char
+op_star
+id|intermediate_rxbuffer
+suffix:semicolon
 DECL|member|rx_enabled
 r_int
 id|rx_enabled
@@ -629,6 +656,10 @@ suffix:semicolon
 DECL|member|cmr_value
 id|u16
 id|cmr_value
+suffix:semicolon
+DECL|member|tcsr_value
+id|u16
+id|tcsr_value
 suffix:semicolon
 DECL|member|device_name
 r_char
@@ -777,14 +808,14 @@ DECL|member|flag_buf
 r_char
 id|flag_buf
 (braket
-id|HDLC_MAX_FRAME_SIZE
+id|MAX_ASYNC_BUFFER_SIZE
 )braket
 suffix:semicolon
 DECL|member|char_buf
 r_char
 id|char_buf
 (braket
-id|HDLC_MAX_FRAME_SIZE
+id|MAX_ASYNC_BUFFER_SIZE
 )braket
 suffix:semicolon
 DECL|member|drop_rts_on_tx_done
@@ -1126,9 +1157,18 @@ DECL|macro|IDLEMODE_SPACE
 mdefine_line|#define IDLEMODE_SPACE&t;&t;&t;0x0600
 DECL|macro|IDLEMODE_MARK
 mdefine_line|#define IDLEMODE_MARK&t;&t;&t;0x0700
+DECL|macro|IDLEMODE_MASK
+mdefine_line|#define IDLEMODE_MASK&t;&t;&t;0x0700
+multiline_comment|/*&n; * IUSC revision identifiers&n; */
+DECL|macro|IUSC_SL1660
+mdefine_line|#define&t;IUSC_SL1660&t;&t;&t;0x4d44
+DECL|macro|IUSC_PRE_SL1660
+mdefine_line|#define IUSC_PRE_SL1660&t;&t;&t;0x4553
 multiline_comment|/*&n; * Transmit status Bits in Transmit Command/status Register (TCSR)&n; */
 DECL|macro|TCSR_PRESERVE
-mdefine_line|#define TCSR_PRESERVE&t;&t;&t;0x0700
+mdefine_line|#define TCSR_PRESERVE&t;&t;&t;0x0F00
+DECL|macro|TCSR_UNDERWAIT
+mdefine_line|#define TCSR_UNDERWAIT&t;&t;&t;BIT11
 DECL|macro|TXSTATUS_PREAMBLE_SENT
 mdefine_line|#define TXSTATUS_PREAMBLE_SENT&t;&t;BIT7
 DECL|macro|TXSTATUS_IDLE_SENT
@@ -1150,7 +1190,7 @@ mdefine_line|#define TXSTATUS_FIFO_EMPTY&t;&t;BIT0
 DECL|macro|TXSTATUS_ALL
 mdefine_line|#define TXSTATUS_ALL&t;&t;&t;0x00fa
 DECL|macro|usc_UnlatchTxstatusBits
-mdefine_line|#define usc_UnlatchTxstatusBits(a,b) usc_OutReg( (a), TCSR, (u16)((a)-&gt;usc_idle_mode + ((b) &amp; 0x00FF)) )
+mdefine_line|#define usc_UnlatchTxstatusBits(a,b) usc_OutReg( (a), TCSR, (u16)((a)-&gt;tcsr_value + ((b) &amp; 0x00FF)) )
 DECL|macro|MISCSTATUS_RXC_LATCHED
 mdefine_line|#define MISCSTATUS_RXC_LATCHED&t;&t;BIT15
 DECL|macro|MISCSTATUS_RXC
@@ -1458,9 +1498,19 @@ id|Cmd
 )paren
 suffix:semicolon
 DECL|macro|usc_TCmd
-mdefine_line|#define usc_TCmd(a,b) usc_OutReg((a), TCSR, (u16)((a)-&gt;usc_idle_mode + (b)))
+mdefine_line|#define usc_TCmd(a,b) usc_OutReg((a), TCSR, (u16)((a)-&gt;tcsr_value + (b)))
 DECL|macro|usc_RCmd
 mdefine_line|#define usc_RCmd(a,b) usc_OutReg((a), RCSR, (b))
+r_void
+id|usc_process_rxoverrun_sync
+c_func
+(paren
+r_struct
+id|mgsl_struct
+op_star
+id|info
+)paren
+suffix:semicolon
 r_void
 id|usc_start_receiver
 c_func
@@ -1962,6 +2012,26 @@ op_star
 id|info
 )paren
 suffix:semicolon
+r_int
+id|mgsl_alloc_intermediate_rxbuffer_memory
+c_func
+(paren
+r_struct
+id|mgsl_struct
+op_star
+id|info
+)paren
+suffix:semicolon
+r_void
+id|mgsl_free_intermediate_rxbuffer_memory
+c_func
+(paren
+r_struct
+id|mgsl_struct
+op_star
+id|info
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Bottom half interrupt handlers&n; */
 r_void
 id|mgsl_bh_handler
@@ -2430,6 +2500,19 @@ id|debug_level
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|maxframe
+r_static
+r_int
+id|maxframe
+(braket
+id|MAX_TOTAL_DEVICES
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &gt;= VERSION(2,1,0)
 id|MODULE_PARM
 c_func
@@ -2505,6 +2588,20 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|maxframe
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_TOTAL_DEVICES
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 macro_line|#endif
 DECL|variable|driver_name
 r_static
@@ -2520,7 +2617,7 @@ r_char
 op_star
 id|driver_version
 op_assign
-l_string|&quot;1.7&quot;
+l_string|&quot;1.14&quot;
 suffix:semicolon
 DECL|variable|serial_driver
 DECL|variable|callout_driver
@@ -3852,21 +3949,18 @@ op_amp
 id|RXSTATUS_OVERRUN
 )paren
 (brace
-multiline_comment|/* Purge receive FIFO to allow DMA buffer completion&n;&t;&t; * with overrun status stored in the receive status block.&n;&t;&t; */
-id|usc_RCmd
-c_func
-(paren
-id|info
-comma
-id|RCmd_EnterHuntmode
-)paren
+singleline_comment|//&t;&t;/* Purge receive FIFO to allow DMA buffer completion
+singleline_comment|//&t;&t; * with overrun status stored in the receive status block.
+singleline_comment|//&t;&t; */
+singleline_comment|//&t;&t;usc_RCmd( info, RCmd_EnterHuntmode );
+singleline_comment|//&t;&t;usc_RTCmd( info, RTCmd_PurgeRxFifo );
+id|info-&gt;icount.rxover
+op_increment
 suffix:semicolon
-id|usc_RTCmd
+id|usc_process_rxoverrun_sync
 c_func
 (paren
 id|info
-comma
-id|RTCmd_PurgeRxFifo
 )paren
 suffix:semicolon
 )brace
@@ -3946,6 +4040,40 @@ comma
 id|status
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
+(paren
+id|TXSTATUS_UNDERRUN
+op_or
+id|TXSTATUS_ABORT_SENT
+)paren
+)paren
+(brace
+multiline_comment|/* finished sending HDLC abort. This may leave&t;*/
+multiline_comment|/* the TxFifo with data from the aborted frame&t;*/
+multiline_comment|/* so purge the TxFifo. Also shutdown the DMA&t;*/
+multiline_comment|/* channel in case there is data remaining in &t;*/
+multiline_comment|/* the DMA buffer&t;&t;&t;&t;*/
+id|usc_DmaCmd
+c_func
+(paren
+id|info
+comma
+id|DmaCmd_ResetTxChannel
+)paren
+suffix:semicolon
+id|usc_RTCmd
+c_func
+(paren
+id|info
+comma
+id|RTCmd_PurgeTxFifo
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -11586,9 +11714,11 @@ c_cond
 id|info-&gt;close_delay
 )paren
 (brace
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -11811,9 +11941,11 @@ c_loop
 id|info-&gt;tx_active
 )paren
 (brace
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -11872,9 +12004,11 @@ op_logical_and
 id|info-&gt;tx_enabled
 )paren
 (brace
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -11912,9 +12046,11 @@ r_break
 suffix:semicolon
 )brace
 )brace
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_RUNNING
+)paren
 suffix:semicolon
 m_exit
 suffix:colon
@@ -12522,9 +12658,11 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_RUNNING
+)paren
 suffix:semicolon
 id|remove_wait_queue
 c_func
@@ -13538,7 +13676,7 @@ id|flags
 suffix:semicolon
 (brace
 id|u16
-id|Tscr
+id|Tcsr
 op_assign
 id|usc_InReg
 c_func
@@ -13670,7 +13808,7 @@ comma
 l_string|&quot;tcsr=%04X tdmr=%04X ticr=%04X rcsr=%04X rdmr=%04X&bslash;n&quot;
 l_string|&quot;ricr=%04X icr =%04X dccr=%04X tmr=%04X tccr=%04X ccar=%04X&bslash;n&quot;
 comma
-id|Tscr
+id|Tcsr
 comma
 id|Tdmr
 comma
@@ -13905,28 +14043,6 @@ id|info-&gt;last_mem_alloc
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|info-&gt;bus_type
-op_eq
-id|MGSL_BUS_TYPE_PCI
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * The PCI adapter has 256KBytes of shared memory to use.&n;&t;&t; * This is 64 PAGE_SIZE buffers. 1 is used for the buffer&n;&t;&t; * list. 2 are used for the transmit and one is left as&n;&t;&t; * a spare. The 4K buffer list can hold 128 DMA_BUFFER&n;&t;&t; * structures at 32bytes each.&n;&t;&t; */
-id|info-&gt;rx_buffer_count
-op_assign
-l_int|60
-suffix:semicolon
-id|info-&gt;tx_buffer_count
-op_assign
-l_int|2
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* Calculate the number of PAGE_SIZE buffers needed for */
-multiline_comment|/* receive and transmit DMA buffers. */
 multiline_comment|/* Calculate the number of DMA buffers necessary to hold the */
 multiline_comment|/* largest allowable frame size. Note: If the max frame size is */
 multiline_comment|/* not an even multiple of the DMA buffer size then we need to */
@@ -13953,11 +14069,39 @@ id|DMABUFFERSIZE
 id|BuffersPerFrame
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;bus_type
+op_eq
+id|MGSL_BUS_TYPE_PCI
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * The PCI adapter has 256KBytes of shared memory to use.&n;&t;&t; * This is 64 PAGE_SIZE buffers.&n;&t;&t; *&n;&t;&t; * The first page is used for padding at this time so the&n;&t;&t; * buffer list does not begin at offset 0 of the PCI&n;&t;&t; * adapter&squot;s shared memory.&n;&t;&t; *&n;&t;&t; * The 2nd page is used for the buffer list. A 4K buffer&n;&t;&t; * list can hold 128 DMA_BUFFER structures at 32 bytes&n;&t;&t; * each.&n;&t;&t; *&n;&t;&t; * This leaves 62 4K pages.&n;&t;&t; *&n;&t;&t; * The next N pages are used for a transmit frame. We&n;&t;&t; * reserve enough 4K page blocks to hold the configured&n;&t;&t; * MaxFrameSize&n;&t;&t; *&n;&t;&t; * Of the remaining pages (62-N), determine how many can&n;&t;&t; * be used to receive full MaxFrameSize inbound frames&n;&t;&t; */
+id|info-&gt;tx_buffer_count
+op_assign
+id|BuffersPerFrame
+suffix:semicolon
+id|info-&gt;rx_buffer_count
+op_assign
+l_int|62
+op_minus
+id|info-&gt;tx_buffer_count
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Calculate the number of PAGE_SIZE buffers needed for */
+multiline_comment|/* receive and transmit DMA buffers. */
 multiline_comment|/* Calculate the number of DMA buffers necessary to */
 multiline_comment|/* hold 7 max size receive frames and one max size transmit frame. */
 multiline_comment|/* The receive buffer count is bumped by one so we avoid an */
 multiline_comment|/* End of List condition if all receive buffers are used when */
 multiline_comment|/* using linked list DMA buffers. */
+id|info-&gt;tx_buffer_count
+op_assign
+id|BuffersPerFrame
+suffix:semicolon
 id|info-&gt;rx_buffer_count
 op_assign
 (paren
@@ -13968,9 +14112,23 @@ id|MAXRXFRAMES
 op_plus
 l_int|6
 suffix:semicolon
+multiline_comment|/* &n;&t;&t; * limit total TxBuffers &amp; RxBuffers to 62 4K total &n;&t;&t; * (ala PCI Allocation) &n;&t;&t; */
+r_if
+c_cond
+(paren
+(paren
 id|info-&gt;tx_buffer_count
+op_plus
+id|info-&gt;rx_buffer_count
+)paren
+OG
+l_int|62
+)paren
+id|info-&gt;rx_buffer_count
 op_assign
-id|BuffersPerFrame
+l_int|62
+op_minus
+id|info-&gt;tx_buffer_count
 suffix:semicolon
 )brace
 r_if
@@ -14025,6 +14183,14 @@ comma
 id|info-&gt;tx_buffer_list
 comma
 id|info-&gt;tx_buffer_count
+)paren
+OL
+l_int|0
+op_logical_or
+id|mgsl_alloc_intermediate_rxbuffer_memory
+c_func
+(paren
+id|info
 )paren
 OL
 l_int|0
@@ -14640,6 +14806,77 @@ id|info
 suffix:semicolon
 )brace
 multiline_comment|/* end of mgsl_free_dma_buffers() */
+multiline_comment|/*&n; * mgsl_alloc_intermediate_rxbuffer_memory()&n; * &n; * &t;Allocate a buffer large enough to hold max_frame_size. This buffer&n; *&t;is used to pass an assembled frame to the line discipline.&n; * &n; * Arguments:&n; * &n; *&t;info&t;&t;pointer to device instance data&n; * &n; * Return Value:&t;0 if success, otherwise -ENOMEM&n; */
+DECL|function|mgsl_alloc_intermediate_rxbuffer_memory
+r_int
+id|mgsl_alloc_intermediate_rxbuffer_memory
+c_func
+(paren
+r_struct
+id|mgsl_struct
+op_star
+id|info
+)paren
+(brace
+id|info-&gt;intermediate_rxbuffer
+op_assign
+id|kmalloc
+c_func
+(paren
+id|info-&gt;max_frame_size
+comma
+id|GFP_KERNEL
+op_or
+id|GFP_DMA
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;intermediate_rxbuffer
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* end of mgsl_alloc_intermediate_rxbuffer_memory() */
+multiline_comment|/*&n; * mgsl_free_intermediate_rxbuffer_memory()&n; * &n; * &n; * Arguments:&n; * &n; *&t;info&t;&t;pointer to device instance data&n; * &n; * Return Value:&t;None&n; */
+DECL|function|mgsl_free_intermediate_rxbuffer_memory
+r_void
+id|mgsl_free_intermediate_rxbuffer_memory
+c_func
+(paren
+r_struct
+id|mgsl_struct
+op_star
+id|info
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|info-&gt;intermediate_rxbuffer
+)paren
+id|kfree_s
+c_func
+(paren
+id|info-&gt;intermediate_rxbuffer
+comma
+id|info-&gt;max_frame_size
+)paren
+suffix:semicolon
+id|info-&gt;intermediate_rxbuffer
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+multiline_comment|/* end of mgsl_free_intermediate_rxbuffer_memory() */
 multiline_comment|/* mgsl_claim_resources()&n; * &n; * &t;Claim all resources used by a device&n; * &t;&n; * Arguments:&t;&t;info&t;pointer to device instance data&n; * Return Value:&t;0 if success, otherwise -ENODEV&n; */
 DECL|function|mgsl_claim_resources
 r_int
@@ -15067,6 +15304,12 @@ c_func
 id|info
 )paren
 suffix:semicolon
+id|mgsl_free_intermediate_rxbuffer_memory
+c_func
+(paren
+id|info
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -15214,6 +15457,29 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|info-&gt;max_frame_size
+OL
+l_int|4096
+)paren
+id|info-&gt;max_frame_size
+op_assign
+l_int|4096
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|info-&gt;max_frame_size
+OG
+l_int|65535
+)paren
+id|info-&gt;max_frame_size
+op_assign
+l_int|65535
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|info-&gt;bus_type
 op_eq
 id|MGSL_BUS_TYPE_PCI
@@ -15222,7 +15488,7 @@ id|MGSL_BUS_TYPE_PCI
 id|printk
 c_func
 (paren
-l_string|&quot;SyncLink device %s added:PCI bus IO=%04X IRQ=%d Mem=%08X LCR=%08X&bslash;n&quot;
+l_string|&quot;SyncLink device %s added:PCI bus IO=%04X IRQ=%d Mem=%08X LCR=%08X MaxFrameSize=%u&bslash;n&quot;
 comma
 id|info-&gt;device_name
 comma
@@ -15233,6 +15499,8 @@ comma
 id|info-&gt;phys_memory_base
 comma
 id|info-&gt;phys_lcr_base
+comma
+id|info-&gt;max_frame_size
 )paren
 suffix:semicolon
 )brace
@@ -15241,7 +15509,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;SyncLink device %s added:ISA bus IO=%04X IRQ=%d DMA=%d&bslash;n&quot;
+l_string|&quot;SyncLink device %s added:ISA bus IO=%04X IRQ=%d DMA=%d MaxFrameSize=%u&bslash;n&quot;
 comma
 id|info-&gt;device_name
 comma
@@ -15250,12 +15518,14 @@ comma
 id|info-&gt;irq_level
 comma
 id|info-&gt;dma_level
+comma
+id|info-&gt;max_frame_size
 )paren
 suffix:semicolon
 )brace
 )brace
 multiline_comment|/* end of mgsl_add_device() */
-multiline_comment|/* mgsl_allocate_device()&n; * &n; * &t;Allocate and initialize a device instance structure&n; * &t;&n; * Arguments:&t;&t;None&n; * Return Value:&t;pointer to mgsl_struct if success, otherwise NULL&n; */
+multiline_comment|/* mgsl_allocate_device()&n; * &n; * &t;Allocate and initialize a device instance structure&n; * &t;&n; * Arguments:&t;&t;none&n; * Return Value:&t;pointer to mgsl_struct if success, otherwise NULL&n; */
 DECL|function|mgsl_allocate_device
 r_struct
 id|mgsl_struct
@@ -15422,6 +15692,11 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_int
+id|num_devices
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Check for user specified ISA devices */
 r_for
 c_loop
@@ -15577,12 +15852,35 @@ id|info-&gt;irq_flags
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* override default max frame size if arg available */
+r_if
+c_cond
+(paren
+id|num_devices
+OL
+id|MAX_TOTAL_DEVICES
+op_logical_and
+id|maxframe
+(braket
+id|num_devices
+)braket
+)paren
+id|info-&gt;max_frame_size
+op_assign
+id|maxframe
+(braket
+id|num_devices
+)braket
+suffix:semicolon
 multiline_comment|/* add new device to device list */
 id|mgsl_add_device
 c_func
 (paren
 id|info
 )paren
+suffix:semicolon
+op_increment
+id|num_devices
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PCI
@@ -15913,6 +16211,26 @@ suffix:semicolon
 id|info-&gt;function
 op_assign
 id|func
+suffix:semicolon
+multiline_comment|/* override default max frame size if arg available */
+r_if
+c_cond
+(paren
+id|num_devices
+OL
+id|MAX_TOTAL_DEVICES
+op_logical_and
+id|maxframe
+(braket
+id|num_devices
+)braket
+)paren
+id|info-&gt;max_frame_size
+op_assign
+id|maxframe
+(braket
+id|num_devices
+)braket
 suffix:semicolon
 multiline_comment|/* Store the PCI9050 misc control register value because a flaw&n;&t;&t; * in the PCI9050 prevents LCR registers from being read if &n;&t;&t; * BIOS assigns an LCR base address with bit 7 set.&n;&t;&t; *  &n;&t;&t; * Only the misc control register is accessed for which only &n;&t;&t; * write access is needed, so set an initial value and change &n;&t;&t; * bits to the device instance data as we write the value&n;&t;&t; * to the actual misc control register.&n;&t;&t; */
 id|info-&gt;misc_ctrl_value
@@ -16960,6 +17278,46 @@ id|info
 id|u16
 id|RegValue
 suffix:semicolon
+r_int
+id|PreSL1660
+suffix:semicolon
+multiline_comment|/*&n;&t; * determine if the IUSC on the adapter is pre-SL1660. If&n;&t; * not, take advantage of the UnderWait feature of more&n;&t; * modern chips. If an underrun occurs and this bit is set,&n;&t; * the transmitter will idle the programmed idle pattern&n;&t; * until the driver has time to service the underrun. Otherwise,&n;&t; * the dma controller may get the cycles previously requested&n;&t; * and begin transmitting queued tx data.&n;&t; */
+id|usc_OutReg
+c_func
+(paren
+id|info
+comma
+id|TMCR
+comma
+l_int|0x1f
+)paren
+suffix:semicolon
+id|RegValue
+op_assign
+id|usc_InReg
+c_func
+(paren
+id|info
+comma
+id|TMDR
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|RegValue
+op_eq
+id|IUSC_PRE_SL1660
+)paren
+id|PreSL1660
+op_assign
+l_int|1
+suffix:semicolon
+r_else
+id|PreSL1660
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -17176,6 +17534,24 @@ id|RegValue
 op_or_assign
 id|BIT9
 suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|info-&gt;params.crc_type
+op_eq
+id|HDLC_CRC_32_CCITT
+)paren
+id|RegValue
+op_or_assign
+(paren
+id|BIT12
+op_or
+id|BIT10
+op_or
+id|BIT9
+)paren
+suffix:semicolon
 id|usc_OutReg
 c_func
 (paren
@@ -17382,6 +17758,26 @@ id|BIT9
 op_plus
 id|BIT8
 suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|info-&gt;params.crc_type
+op_eq
+id|HDLC_CRC_32_CCITT
+)paren
+id|RegValue
+op_or_assign
+(paren
+id|BIT12
+op_or
+id|BIT10
+op_or
+id|BIT9
+op_or
+id|BIT8
+)paren
+suffix:semicolon
 id|usc_OutReg
 c_func
 (paren
@@ -17449,6 +17845,31 @@ c_func
 id|info
 comma
 id|TRANSMIT_STATUS
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;** Transmit Command/Status Register (TCSR)&n;&t;**&n;&t;** &lt;15..12&gt;&t;0000&t;TCmd&n;&t;** &lt;11&gt; &t;0/1&t;UnderWait&n;&t;** &lt;10..08&gt;&t;000&t;TxIdle&n;&t;** &lt;7&gt;&t;&t;x&t;PreSent&n;&t;** &lt;6&gt;         &t;x&t;IdleSent&n;&t;** &lt;5&gt;         &t;x&t;AbortSent&n;&t;** &lt;4&gt;         &t;x&t;EOF/EOM Sent&n;&t;** &lt;3&gt;         &t;x&t;CRC Sent&n;&t;** &lt;2&gt;         &t;x&t;All Sent&n;&t;** &lt;1&gt;         &t;x&t;TxUnder&n;&t;** &lt;0&gt;         &t;x&t;TxEmpty&n;&t;** &n;&t;** 0000 0000 0000 0000 = 0x0000&n;&t;*/
+id|info-&gt;tcsr_value
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|PreSL1660
+)paren
+id|info-&gt;tcsr_value
+op_or_assign
+id|TCSR_UNDERWAIT
+suffix:semicolon
+id|usc_OutReg
+c_func
+(paren
+id|info
+comma
+id|TCSR
+comma
+id|info-&gt;tcsr_value
 )paren
 suffix:semicolon
 multiline_comment|/* Clock mode Control Register (CMCR)&n;&t; *&n;&t; * &lt;15..14&gt;&t;00&t;counter 1 Source = Disabled&n;&t; * &lt;13..12&gt; &t;00&t;counter 0 Source = Disabled&n;&t; * &lt;11..10&gt; &t;11&t;BRG1 Input is TxC Pin&n;&t; * &lt;9..8&gt;&t;11&t;BRG0 Input is TxC Pin&n;&t; * &lt;7..6&gt;&t;01&t;DPLL Input is BRG1 Output&n;&t; * &lt;5..3&gt;&t;XXX&t;TxCLK comes from Port 0&n;&t; * &lt;2..0&gt;   &t;XXX&t;RxCLK comes from Port 1&n;&t; *&n;&t; *&t;0000 1111 0111 0111 = 0x0f77&n;&t; */
@@ -18567,6 +18988,503 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* end of usc_enable_aux_clock() */
+multiline_comment|/*&n; *&n; * usc_process_rxoverrun_sync()&n; *&n; *&t;&t;This function processes a receive overrun by resetting the&n; *&t;&t;receive DMA buffers and issuing a Purge Rx FIFO command&n; *&t;&t;to allow the receiver to continue receiving.&n; *&n; * Arguments:&n; *&n; *&t;info&t;&t;pointer to device extension&n; *&n; * Return Value: None&n; */
+DECL|function|usc_process_rxoverrun_sync
+r_void
+id|usc_process_rxoverrun_sync
+c_func
+(paren
+r_struct
+id|mgsl_struct
+op_star
+id|info
+)paren
+(brace
+r_int
+id|start_index
+suffix:semicolon
+r_int
+id|end_index
+suffix:semicolon
+r_int
+id|frame_start_index
+suffix:semicolon
+r_int
+id|start_of_frame_found
+op_assign
+id|FALSE
+suffix:semicolon
+r_int
+id|end_of_frame_found
+op_assign
+id|FALSE
+suffix:semicolon
+r_int
+id|reprogram_dma
+op_assign
+id|FALSE
+suffix:semicolon
+id|DMABUFFERENTRY
+op_star
+id|buffer_list
+op_assign
+id|info-&gt;rx_buffer_list
+suffix:semicolon
+id|u32
+id|phys_addr
+suffix:semicolon
+id|usc_DmaCmd
+c_func
+(paren
+id|info
+comma
+id|DmaCmd_PauseRxChannel
+)paren
+suffix:semicolon
+id|usc_RCmd
+c_func
+(paren
+id|info
+comma
+id|RCmd_EnterHuntmode
+)paren
+suffix:semicolon
+id|usc_RTCmd
+c_func
+(paren
+id|info
+comma
+id|RTCmd_PurgeRxFifo
+)paren
+suffix:semicolon
+multiline_comment|/* CurrentRxBuffer points to the 1st buffer of the next */
+multiline_comment|/* possibly available receive frame. */
+id|frame_start_index
+op_assign
+id|start_index
+op_assign
+id|end_index
+op_assign
+id|info-&gt;current_rx_buffer
+suffix:semicolon
+multiline_comment|/* Search for an unfinished string of buffers. This means */
+multiline_comment|/* that a receive frame started (at least one buffer with */
+multiline_comment|/* count set to zero) but there is no terminiting buffer */
+multiline_comment|/* (status set to non-zero). */
+r_while
+c_loop
+(paren
+op_logical_neg
+id|buffer_list
+(braket
+id|end_index
+)braket
+dot
+id|count
+)paren
+(brace
+multiline_comment|/* Count field has been reset to zero by 16C32. */
+multiline_comment|/* This buffer is currently in use. */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|start_of_frame_found
+)paren
+(brace
+id|start_of_frame_found
+op_assign
+id|TRUE
+suffix:semicolon
+id|frame_start_index
+op_assign
+id|end_index
+suffix:semicolon
+id|end_of_frame_found
+op_assign
+id|FALSE
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|buffer_list
+(braket
+id|end_index
+)braket
+dot
+id|status
+)paren
+(brace
+multiline_comment|/* Status field has been set by 16C32. */
+multiline_comment|/* This is the last buffer of a received frame. */
+multiline_comment|/* We want to leave the buffers for this frame intact. */
+multiline_comment|/* Move on to next possible frame. */
+id|start_of_frame_found
+op_assign
+id|FALSE
+suffix:semicolon
+id|end_of_frame_found
+op_assign
+id|TRUE
+suffix:semicolon
+)brace
+multiline_comment|/* advance to next buffer entry in linked list */
+id|end_index
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|end_index
+op_eq
+id|info-&gt;rx_buffer_count
+)paren
+id|end_index
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|start_index
+op_eq
+id|end_index
+)paren
+(brace
+multiline_comment|/* The entire list has been searched with all Counts == 0 and */
+multiline_comment|/* all Status == 0. The receive buffers are */
+multiline_comment|/* completely screwed, reset all receive buffers! */
+id|mgsl_reset_rx_dma_buffers
+c_func
+(paren
+id|info
+)paren
+suffix:semicolon
+id|frame_start_index
+op_assign
+l_int|0
+suffix:semicolon
+id|start_of_frame_found
+op_assign
+id|FALSE
+suffix:semicolon
+id|reprogram_dma
+op_assign
+id|TRUE
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|start_of_frame_found
+op_logical_and
+op_logical_neg
+id|end_of_frame_found
+)paren
+(brace
+multiline_comment|/* There is an unfinished string of receive DMA buffers */
+multiline_comment|/* as a result of the receiver overrun. */
+multiline_comment|/* Reset the buffers for the unfinished frame */
+multiline_comment|/* and reprogram the receive DMA controller to start */
+multiline_comment|/* at the 1st buffer of unfinished frame. */
+id|start_index
+op_assign
+id|frame_start_index
+suffix:semicolon
+r_do
+(brace
+op_star
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+(paren
+id|info-&gt;rx_buffer_list
+(braket
+id|start_index
+op_increment
+)braket
+dot
+id|count
+)paren
+)paren
+op_assign
+id|DMABUFFERSIZE
+suffix:semicolon
+multiline_comment|/* Adjust index for wrap around. */
+r_if
+c_cond
+(paren
+id|start_index
+op_eq
+id|info-&gt;rx_buffer_count
+)paren
+id|start_index
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|start_index
+op_ne
+id|end_index
+)paren
+(brace
+suffix:semicolon
+)brace
+id|reprogram_dma
+op_assign
+id|TRUE
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|reprogram_dma
+)paren
+(brace
+id|usc_UnlatchRxstatusBits
+c_func
+(paren
+id|info
+comma
+id|RXSTATUS_ALL
+)paren
+suffix:semicolon
+id|usc_ClearIrqPendingBits
+c_func
+(paren
+id|info
+comma
+id|RECEIVE_DATA
+op_or
+id|RECEIVE_STATUS
+)paren
+suffix:semicolon
+id|usc_UnlatchRxstatusBits
+c_func
+(paren
+id|info
+comma
+id|RECEIVE_DATA
+op_or
+id|RECEIVE_STATUS
+)paren
+suffix:semicolon
+id|usc_EnableReceiver
+c_func
+(paren
+id|info
+comma
+id|DISABLE_UNCONDITIONAL
+)paren
+suffix:semicolon
+multiline_comment|/* This empties the receive FIFO and loads the RCC with RCLR */
+id|usc_OutReg
+c_func
+(paren
+id|info
+comma
+id|CCSR
+comma
+(paren
+id|u16
+)paren
+(paren
+id|usc_InReg
+c_func
+(paren
+id|info
+comma
+id|CCSR
+)paren
+op_or
+id|BIT13
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* program 16C32 with physical address of 1st DMA buffer entry */
+id|phys_addr
+op_assign
+id|info-&gt;rx_buffer_list
+(braket
+id|frame_start_index
+)braket
+dot
+id|phys_entry
+suffix:semicolon
+id|usc_OutDmaReg
+c_func
+(paren
+id|info
+comma
+id|NRARL
+comma
+(paren
+id|u16
+)paren
+id|phys_addr
+)paren
+suffix:semicolon
+id|usc_OutDmaReg
+c_func
+(paren
+id|info
+comma
+id|NRARU
+comma
+(paren
+id|u16
+)paren
+(paren
+id|phys_addr
+op_rshift
+l_int|16
+)paren
+)paren
+suffix:semicolon
+id|usc_UnlatchRxstatusBits
+c_func
+(paren
+id|info
+comma
+id|RXSTATUS_ALL
+)paren
+suffix:semicolon
+id|usc_ClearIrqPendingBits
+c_func
+(paren
+id|info
+comma
+id|RECEIVE_DATA
+op_plus
+id|RECEIVE_STATUS
+)paren
+suffix:semicolon
+id|usc_EnableInterrupts
+c_func
+(paren
+id|info
+comma
+id|RECEIVE_STATUS
+)paren
+suffix:semicolon
+multiline_comment|/* 1. Arm End of Buffer (EOB) Receive DMA Interrupt (BIT2 of RDIAR) */
+multiline_comment|/* 2. Enable Receive DMA Interrupts (BIT1 of DICR) */
+id|usc_OutDmaReg
+c_func
+(paren
+id|info
+comma
+id|RDIAR
+comma
+id|BIT3
+op_plus
+id|BIT2
+)paren
+suffix:semicolon
+id|usc_OutDmaReg
+c_func
+(paren
+id|info
+comma
+id|DICR
+comma
+(paren
+id|u16
+)paren
+(paren
+id|usc_InDmaReg
+c_func
+(paren
+id|info
+comma
+id|DICR
+)paren
+op_or
+id|BIT1
+)paren
+)paren
+suffix:semicolon
+id|usc_DmaCmd
+c_func
+(paren
+id|info
+comma
+id|DmaCmd_InitRxChannel
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;params.flags
+op_amp
+id|HDLC_FLAG_AUTO_DCD
+)paren
+id|usc_EnableReceiver
+c_func
+(paren
+id|info
+comma
+id|ENABLE_AUTO_DCD
+)paren
+suffix:semicolon
+r_else
+id|usc_EnableReceiver
+c_func
+(paren
+id|info
+comma
+id|ENABLE_UNCONDITIONAL
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* This empties the receive FIFO and loads the RCC with RCLR */
+id|usc_OutReg
+c_func
+(paren
+id|info
+comma
+id|CCSR
+comma
+(paren
+id|u16
+)paren
+(paren
+id|usc_InReg
+c_func
+(paren
+id|info
+comma
+id|CCSR
+)paren
+op_or
+id|BIT13
+)paren
+)paren
+suffix:semicolon
+id|usc_RTCmd
+c_func
+(paren
+id|info
+comma
+id|RTCmd_PurgeRxFifo
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* end of usc_process_rxoverrun_sync() */
 multiline_comment|/* usc_stop_receiver()&n; *&n; *&t;Disable USC receiver&n; *&n; * Arguments:&t;&t;info&t;pointer to device instance data&n; * Return Value:&t;None&n; */
 DECL|function|usc_stop_receiver
 r_void
@@ -20565,6 +21483,17 @@ id|info-&gt;usc_idle_mode
 op_assign
 id|usc_idle_mode
 suffix:semicolon
+singleline_comment|//usc_OutReg(info, TCSR, usc_idle_mode);
+id|info-&gt;tcsr_value
+op_and_assign
+op_complement
+id|IDLEMODE_MASK
+suffix:semicolon
+multiline_comment|/* clear idle mode bits */
+id|info-&gt;tcsr_value
+op_add_assign
+id|usc_idle_mode
+suffix:semicolon
 id|usc_OutReg
 c_func
 (paren
@@ -20572,7 +21501,7 @@ id|info
 comma
 id|TCSR
 comma
-id|usc_idle_mode
+id|info-&gt;tcsr_value
 )paren
 suffix:semicolon
 )brace
@@ -21317,6 +22246,18 @@ id|framesize
 op_sub_assign
 l_int|2
 suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|info-&gt;params.crc_type
+op_eq
+id|HDLC_CRC_32_CCITT
+)paren
+id|framesize
+op_sub_assign
+l_int|4
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -21360,7 +22301,13 @@ id|StartIndex
 dot
 id|virt_addr
 comma
+id|MIN
+c_func
+(paren
 id|framesize
+comma
+id|DMABUFFERSIZE
+)paren
 comma
 l_int|0
 )paren
@@ -21376,13 +22323,117 @@ c_cond
 (paren
 id|framesize
 OG
-id|HDLC_MAX_FRAME_SIZE
+id|info-&gt;max_frame_size
 )paren
 id|info-&gt;icount.rxlong
 op_increment
 suffix:semicolon
 r_else
 (brace
+macro_line|#if 1
+multiline_comment|/* &n;&t;&t;&t; * copy contents of dma frame buffer(s) to intermediate&n;&t;&t;         * rxbuffer for presentation to line discipline&n;&t;&t;&t; */
+r_int
+id|copy_count
+op_assign
+id|framesize
+suffix:semicolon
+r_int
+id|index
+op_assign
+id|StartIndex
+suffix:semicolon
+r_int
+r_char
+op_star
+id|ptmp
+op_assign
+id|info-&gt;intermediate_rxbuffer
+suffix:semicolon
+id|info-&gt;icount.rxok
+op_increment
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|copy_count
+)paren
+(brace
+r_int
+id|partial_count
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|copy_count
+OG
+id|DMABUFFERSIZE
+)paren
+id|partial_count
+op_assign
+id|DMABUFFERSIZE
+suffix:semicolon
+r_else
+id|partial_count
+op_assign
+id|copy_count
+suffix:semicolon
+id|pBufEntry
+op_assign
+op_amp
+(paren
+id|info-&gt;rx_buffer_list
+(braket
+id|index
+)braket
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|ptmp
+comma
+id|pBufEntry-&gt;virt_addr
+comma
+id|partial_count
+)paren
+suffix:semicolon
+id|ptmp
+op_add_assign
+id|partial_count
+suffix:semicolon
+id|copy_count
+op_sub_assign
+id|partial_count
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_increment
+id|index
+op_eq
+id|info-&gt;rx_buffer_count
+)paren
+id|index
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* Call the line discipline receive callback directly. */
+id|tty-&gt;ldisc
+dot
+id|receive_buf
+c_func
+(paren
+id|tty
+comma
+id|info-&gt;intermediate_rxbuffer
+comma
+id|info-&gt;flag_buf
+comma
+id|framesize
+)paren
+suffix:semicolon
+macro_line|#else
 id|info-&gt;icount.rxok
 op_increment
 suffix:semicolon
@@ -21411,6 +22462,7 @@ comma
 id|framesize
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 multiline_comment|/* Free the buffers used by this frame. */
@@ -21445,14 +22497,14 @@ c_cond
 op_logical_neg
 id|info-&gt;rx_buffer_list
 (braket
-id|info-&gt;current_rx_buffer
+id|EndIndex
 )braket
 dot
 id|status
 op_logical_and
 id|info-&gt;rx_buffer_list
 (braket
-id|info-&gt;current_rx_buffer
+id|EndIndex
 )braket
 dot
 id|count
@@ -21538,7 +22590,13 @@ id|info
 comma
 id|Buffer
 comma
+id|MIN
+c_func
+(paren
 id|BufferSize
+comma
+id|DMABUFFERSIZE
+)paren
 comma
 l_int|1
 )paren
@@ -22237,9 +23295,11 @@ op_logical_neg
 id|info-&gt;irq_occurred
 )paren
 (brace
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -22251,9 +23311,11 @@ l_int|10
 )paren
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_RUNNING
+)paren
 suffix:semicolon
 )brace
 id|spin_lock_irqsave
@@ -22869,7 +23931,7 @@ comma
 id|TCSR
 )paren
 op_amp
-l_int|0x0700
+l_int|0x0f00
 )paren
 op_or
 l_int|0xfa

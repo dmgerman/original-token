@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Open Host Controller Interface driver for USB.&n; *&n; * (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt;&n; * Significant code from the following individuals has also been used:&n; * (C) Copyright 1999 Roman Weissgaerber &lt;weissg@vienna.at&gt; [ohci-hcd.c]&n; * (C) Copyright 1999 Linus Torvalds [uhci.c]&n; *&n; * This is the &quot;other&quot; host controller interface for USB.  You will&n; * find this on many non-Intel based motherboards, and of course the&n; * Mac.  As Linus hacked his UHCI driver together first, I originally&n; * modeled this after his.. (it should be obvious)&n; *&n; * To get started in USB, I used the &quot;Universal Serial Bus System&n; * Architecture&quot; book by Mindshare, Inc.  It was a reasonable introduction&n; * and overview of USB and the two dominant host controller interfaces&n; * however you&squot;re better off just reading the real specs available&n; * from www.usb.org as you&squot;ll need them to get enough details to&n; * actually implement a HCD.  The book has many typos and omissions&n; * Beware, the specs are the victim of a committee.&n; *&n; * This code was written with Guinness on the brain, xsnow on the desktop&n; * and Orbital, Orb, Enya &amp; Massive Attack on the CD player.  What a life!  ;) &n; *&n; * No filesystems were harmed in the development of this code.&n; *&n; * $Id: ohci.c,v 1.77 1999/09/16 04:30:19 greg Exp $&n; */
+multiline_comment|/*&n; * Open Host Controller Interface driver for USB.&n; *&n; * (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt;&n; * Significant code from the following individuals has also been used:&n; * (C) Copyright 1999 Roman Weissgaerber &lt;weissg@vienna.at&gt; [ohci-hcd.c]&n; * (C) Copyright 1999 Linus Torvalds [uhci.c]&n; *&n; * This is the &quot;other&quot; host controller interface for USB.  You will&n; * find this on many non-Intel based motherboards, and of course the&n; * Mac.  As Linus hacked his UHCI driver together first, I originally&n; * modeled this after his.. (it should be obvious)&n; *&n; * To get started in USB, I used the &quot;Universal Serial Bus System&n; * Architecture&quot; book by Mindshare, Inc.  It was a reasonable introduction&n; * and overview of USB and the two dominant host controller interfaces&n; * however you&squot;re better off just reading the real specs available&n; * from www.usb.org as you&squot;ll need them to get enough details to&n; * actually implement a HCD.  The book has many typos and omissions&n; * Beware, the specs are the victim of a committee.&n; *&n; * This code was written with Guinness on the brain, xsnow on the desktop&n; * and Orbital, Orb, Enya &amp; Massive Attack on the CD player.  What a life!  ;) &n; *&n; * No filesystems were harmed in the development of this code.&n; *&n; * $Id: ohci.c,v 1.80 1999/09/30 06:32:17 greg Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -9201,10 +9201,6 @@ c_func
 id|ohci-&gt;bus-&gt;root_hub
 )paren
 suffix:semicolon
-id|root_hub-&gt;hcca
-op_assign
-l_int|NULL
-suffix:semicolon
 id|ohci-&gt;bus-&gt;root_hub
 op_assign
 l_int|NULL
@@ -9479,7 +9475,6 @@ op_eq
 id|SIGUSR1
 )paren
 (brace
-multiline_comment|/* TODO: have it do a full ed/td queue dump? */
 id|printk
 c_func
 (paren

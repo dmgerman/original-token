@@ -563,7 +563,7 @@ id|status
 r_return
 id|USB_ST_NOERROR
 suffix:semicolon
-multiline_comment|/* APC BackUPS Pro kludge */
+multiline_comment|/* XXX FIXME APC BackUPS Pro kludge */
 multiline_comment|/* It tries to send all of the descriptor instead of */
 multiline_comment|/*  the amount we requested */
 r_if
@@ -580,6 +580,7 @@ op_logical_and
 id|tmp-&gt;status
 op_amp
 id|TD_CTRL_NAK
+multiline_comment|/* &amp;&amp; its a control TD */
 )paren
 r_return
 id|USB_ST_NOERROR
@@ -2419,7 +2420,7 @@ id|td-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/* if period 0, insert into fast q */
+multiline_comment|/* if period 0, set _REMOVE flag */
 r_if
 c_cond
 (paren
@@ -2432,17 +2433,18 @@ id|td-&gt;flags
 op_or_assign
 id|UHCI_TD_REMOVE
 suffix:semicolon
-id|qh-&gt;skel
-op_assign
-op_amp
-id|dev-&gt;uhci-&gt;skel_int2_qh
-suffix:semicolon
 )brace
-r_else
 id|qh-&gt;skel
 op_assign
 op_amp
-id|dev-&gt;uhci-&gt;skel_int8_qh
+id|dev-&gt;uhci-&gt;skelqh
+(braket
+id|__interval_to_skel
+c_func
+(paren
+id|period
+)paren
+)braket
 suffix:semicolon
 id|uhci_add_irq_list
 c_func
@@ -3511,7 +3513,7 @@ id|td
 comma
 id|isocdesc-&gt;callback_fn
 comma
-id|isocdesc-&gt;context
+id|isocdesc
 )paren
 suffix:semicolon
 )brace
@@ -3575,7 +3577,7 @@ id|td
 comma
 id|isocdesc-&gt;callback_fn
 comma
-id|isocdesc-&gt;context
+id|isocdesc
 )paren
 suffix:semicolon
 multiline_comment|/* TBD: D.K. ??? */
@@ -5575,7 +5577,7 @@ op_logical_neg
 id|first
 )paren
 r_return
-l_int|0
+id|USB_ST_REMOVED
 suffix:semicolon
 id|uhci_remove_transfer
 c_func
@@ -5586,7 +5588,7 @@ l_int|1
 )paren
 suffix:semicolon
 r_return
-l_int|1
+id|USB_ST_NOERROR
 suffix:semicolon
 )brace
 DECL|variable|uhci_device_operations
@@ -7350,17 +7352,17 @@ c_func
 id|usb
 )paren
 suffix:semicolon
-multiline_comment|/* 8 Interrupt queues */
+multiline_comment|/*&n;&t; * 9 Interrupt queues; link int2 thru int256 to int1 first,&n;&t; * then link int1 to control and control to bulk&n;&t; */
 r_for
 c_loop
 (paren
 id|i
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 id|i
 OL
-l_int|8
+l_int|9
 suffix:semicolon
 id|i
 op_increment
@@ -7383,7 +7385,7 @@ id|virt_to_bus
 c_func
 (paren
 op_amp
-id|uhci-&gt;skel_control_qh
+id|uhci-&gt;skel_int1_qh
 )paren
 op_or
 id|UHCI_PTR_QH
@@ -7393,6 +7395,21 @@ op_assign
 id|UHCI_PTR_TERM
 suffix:semicolon
 )brace
+id|uhci-&gt;skel_int1_qh.link
+op_assign
+id|virt_to_bus
+c_func
+(paren
+op_amp
+id|uhci-&gt;skel_control_qh
+)paren
+op_or
+id|UHCI_PTR_QH
+suffix:semicolon
+id|uhci-&gt;skel_int1_qh.element
+op_assign
+id|UHCI_PTR_TERM
+suffix:semicolon
 id|uhci-&gt;skel_control_qh.link
 op_assign
 id|virt_to_bus

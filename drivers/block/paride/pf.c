@@ -2747,7 +2747,11 @@ suffix:semicolon
 id|pf_sleep
 c_func
 (paren
-l_int|2
+l_int|20
+op_star
+id|HZ
+op_div
+l_int|1000
 )paren
 suffix:semicolon
 id|k
@@ -2779,6 +2783,8 @@ id|STAT_BUSY
 id|pf_sleep
 c_func
 (paren
+id|HZ
+op_div
 l_int|10
 )paren
 suffix:semicolon

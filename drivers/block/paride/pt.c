@@ -2039,7 +2039,7 @@ c_func
 (paren
 id|unit
 comma
-l_int|100
+id|HZ
 comma
 id|tmo
 comma
@@ -2223,7 +2223,11 @@ suffix:semicolon
 id|pt_sleep
 c_func
 (paren
-l_int|2
+l_int|20
+op_star
+id|HZ
+op_div
+l_int|1000
 )paren
 suffix:semicolon
 id|k
@@ -2255,6 +2259,8 @@ id|STAT_BUSY
 id|pt_sleep
 c_func
 (paren
+id|HZ
+op_div
 l_int|10
 )paren
 suffix:semicolon
@@ -2506,7 +2512,7 @@ suffix:semicolon
 id|pt_sleep
 c_func
 (paren
-l_int|100
+id|HZ
 )paren
 suffix:semicolon
 )brace
@@ -3995,7 +4001,9 @@ c_func
 (paren
 id|unit
 comma
-l_int|1
+id|HZ
+op_div
+l_int|100
 comma
 id|PT_TMO
 comma
@@ -4520,7 +4528,9 @@ c_func
 (paren
 id|unit
 comma
-l_int|1
+id|HZ
+op_div
+l_int|100
 comma
 id|PT_TMO
 comma

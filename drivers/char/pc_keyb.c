@@ -2857,6 +2857,13 @@ id|AUX_INTS_ON
 )paren
 suffix:semicolon
 multiline_comment|/* Enable controller ints */
+id|send_data
+c_func
+(paren
+id|KBD_CMD_ENABLE
+)paren
+suffix:semicolon
+multiline_comment|/* try to workaround toshiba4030cdt problem */
 r_return
 l_int|0
 suffix:semicolon

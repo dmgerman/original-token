@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * Generic PPP layer for Linux.&n; *&n; * Copyright 1999 Paul Mackerras.&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; * The generic PPP layer handles the PPP network interfaces, the&n; * /dev/ppp device, packet and VJ compression, and multilink.&n; * It talks to PPP `channels&squot; via the interface defined in&n; * include/linux/ppp_channel.h.  Channels provide the basic means for&n; * sending and receiving PPP frames on some kind of communications&n; * channel.&n; *&n; * Part of the code in this driver was inspired by the old async-only&n; * PPP driver, written by Michael Callahan and Al Longyear, and&n; * subsequently hacked by Paul Mackerras.&n; *&n; * ==FILEVERSION 990806==&n; */
-multiline_comment|/* $Id: ppp_generic.c,v 1.3 1999/09/02 05:30:12 paulus Exp $ */
+multiline_comment|/*&n; * Generic PPP layer for Linux.&n; *&n; * Copyright 1999 Paul Mackerras.&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; * The generic PPP layer handles the PPP network interfaces, the&n; * /dev/ppp device, packet and VJ compression, and multilink.&n; * It talks to PPP `channels&squot; via the interface defined in&n; * include/linux/ppp_channel.h.  Channels provide the basic means for&n; * sending and receiving PPP frames on some kind of communications&n; * channel.&n; *&n; * Part of the code in this driver was inspired by the old async-only&n; * PPP driver, written by Michael Callahan and Al Longyear, and&n; * subsequently hacked by Paul Mackerras.&n; *&n; * ==FILEVERSION 990915==&n; */
+multiline_comment|/* $Id: ppp_generic.c,v 1.5 1999/09/15 11:21:48 paulus Exp $ */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -325,6 +325,9 @@ r_struct
 id|ppp
 op_star
 id|ppp
+comma
+r_int
+id|do_mark_bh
 )paren
 suffix:semicolon
 r_static
@@ -649,7 +652,7 @@ id|ETH_P_PPPTALK
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Routines for locking and unlocking the transmit and receive paths&n; * of each unit.&n; */
+multiline_comment|/*&n; * Routines for locking and unlocking the transmit and receive paths&n; * of each unit.&n; *&n; * On the transmit side, we have threads of control coming into the&n; * driver from (at least) three places: the core net code, write calls&n; * on /dev/ppp from pppd, and wakeup calls from channels.  There is&n; * possible concurrency even on UP systems (between mainline and&n; * BH processing).  The XMIT_BUSY bit in ppp-&gt;busy serializes the&n; * transmit-side processing for each ppp unit.&n; */
 r_static
 r_inline
 r_void
@@ -1215,6 +1218,9 @@ suffix:semicolon
 id|ssize_t
 id|ret
 suffix:semicolon
+r_int
+id|extra
+suffix:semicolon
 id|ret
 op_assign
 op_minus
@@ -1235,6 +1241,27 @@ op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
+id|extra
+op_assign
+id|PPP_HDRLEN
+op_minus
+l_int|2
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppp-&gt;dev
+op_logical_and
+id|ppp-&gt;dev-&gt;hard_header_len
+OG
+id|PPP_HDRLEN
+)paren
+id|extra
+op_assign
+id|ppp-&gt;dev-&gt;hard_header_len
+op_minus
+l_int|2
+suffix:semicolon
 id|skb
 op_assign
 id|alloc_skb
@@ -1242,7 +1269,7 @@ c_func
 (paren
 id|count
 op_plus
-l_int|2
+id|extra
 comma
 id|GFP_KERNEL
 )paren
@@ -1262,7 +1289,7 @@ c_func
 (paren
 id|skb
 comma
-l_int|2
+id|extra
 )paren
 suffix:semicolon
 id|ret
@@ -1322,6 +1349,8 @@ id|ppp_xmit_unlock
 c_func
 (paren
 id|ppp
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|ret
@@ -2053,6 +2082,8 @@ id|ppp_xmit_unlock
 c_func
 (paren
 id|ppp
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|err
@@ -2397,17 +2428,6 @@ r_char
 op_star
 id|pp
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* can skb-&gt;data ever be 0? */
 id|npi
 op_assign
 id|ethertype_to_npindex
@@ -2462,61 +2482,6 @@ r_goto
 id|outf
 suffix:semicolon
 )brace
-multiline_comment|/* The transmit side of the ppp interface is serialized by&n;&t;   the XMIT_BUSY bit in ppp-&gt;busy. */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|trylock_xmit_path
-c_func
-(paren
-id|ppp
-)paren
-)paren
-(brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|ppp-&gt;xmit_pending
-)paren
-id|ppp_push
-c_func
-(paren
-id|ppp
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ppp-&gt;xmit_pending
-)paren
-(brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|ppp_xmit_unlock
-c_func
-(paren
-id|ppp
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* Put the 2-byte PPP protocol number on the front,&n;&t;   making sure there is room for the address and control fields. */
 r_if
 c_cond
@@ -2542,7 +2507,7 @@ c_func
 (paren
 id|skb-&gt;len
 op_plus
-id|PPP_HDRLEN
+id|dev-&gt;hard_header_len
 comma
 id|GFP_ATOMIC
 )paren
@@ -2555,14 +2520,14 @@ op_eq
 l_int|0
 )paren
 r_goto
-id|outnbusy
+id|outf
 suffix:semicolon
 id|skb_reserve
 c_func
 (paren
 id|ns
 comma
-id|PPP_HDRLEN
+id|dev-&gt;hard_header_len
 )paren
 suffix:semicolon
 id|memcpy
@@ -2625,30 +2590,39 @@ l_int|1
 op_assign
 id|proto
 suffix:semicolon
-id|ppp_send_frame
+multiline_comment|/*&n;&t; * ppp-&gt;xq should only ever have more than 1 data packet on it&n;&t; * if the core net code calls us when dev-&gt;tbusy == 1.&n;&t; */
+id|dev-&gt;tbusy
+op_assign
+l_int|1
+suffix:semicolon
+id|skb_queue_tail
 c_func
 (paren
-id|ppp
+op_amp
+id|ppp-&gt;xq
 comma
 id|skb
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|trylock_xmit_path
+c_func
+(paren
+id|ppp
+)paren
+)paren
 id|ppp_xmit_unlock
 c_func
 (paren
 id|ppp
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-id|outnbusy
-suffix:colon
-id|ppp_xmit_unlock
-c_func
-(paren
-id|ppp
-)paren
 suffix:semicolon
 id|outf
 suffix:colon
@@ -2988,6 +2962,9 @@ r_struct
 id|ppp
 op_star
 id|ppp
+comma
+r_int
+id|do_mark_bh
 )paren
 (brace
 r_struct
@@ -3002,6 +2979,7 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+multiline_comment|/* Do whatever work is waiting to be done. */
 r_if
 c_cond
 (paren
@@ -3020,6 +2998,7 @@ c_func
 id|ppp
 )paren
 suffix:semicolon
+multiline_comment|/* If there&squot;s no work left to do, tell the core net&n;&t;&t;   code that we can accept some more. */
 r_while
 c_loop
 (paren
@@ -3048,12 +3027,49 @@ comma
 id|skb
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppp-&gt;xmit_pending
+op_eq
+l_int|0
+op_logical_and
+id|skb_peek
+c_func
+(paren
+op_amp
+id|ppp-&gt;xq
+)paren
+op_eq
+l_int|0
+op_logical_and
+id|ppp-&gt;dev-&gt;tbusy
+)paren
+(brace
+id|ppp-&gt;dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|do_mark_bh
+)paren
+id|mark_bh
+c_func
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Now unlock the transmit path, let others in. */
 id|unlock_xmit_path
 c_func
 (paren
 id|ppp
 )paren
 suffix:semicolon
+multiline_comment|/* Check whether any work was queued up&n;&t;&t;   between our last check and the unlock. */
 r_if
 c_cond
 (paren
@@ -3084,6 +3100,7 @@ id|ppp-&gt;xq
 )paren
 r_break
 suffix:semicolon
+multiline_comment|/* If so, lock again and do the work.  If we can&squot;t get&n;&t;&t;   the lock, someone else has it and they&squot;ll do the work. */
 r_if
 c_cond
 (paren
@@ -3181,6 +3198,8 @@ c_func
 (paren
 id|skb-&gt;len
 op_plus
+id|ppp-&gt;dev-&gt;hard_header_len
+op_minus
 l_int|2
 comma
 id|GFP_ATOMIC
@@ -3210,6 +3229,8 @@ c_func
 (paren
 id|new_skb
 comma
+id|ppp-&gt;dev-&gt;hard_header_len
+op_minus
 l_int|2
 )paren
 suffix:semicolon
@@ -3394,7 +3415,7 @@ c_func
 (paren
 id|ppp-&gt;dev-&gt;mtu
 op_plus
-id|PPP_HDRLEN
+id|ppp-&gt;dev-&gt;hard_header_len
 comma
 id|GFP_ATOMIC
 )paren
@@ -3418,6 +3439,23 @@ r_goto
 id|drop
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|ppp-&gt;dev-&gt;hard_header_len
+OG
+id|PPP_HDRLEN
+)paren
+id|skb_reserve
+c_func
+(paren
+id|new_skb
+comma
+id|ppp-&gt;dev-&gt;hard_header_len
+op_minus
+id|PPP_HDRLEN
+)paren
+suffix:semicolon
 multiline_comment|/* compressor still expects A/C bytes in hdr */
 id|len
 op_assign
@@ -4797,6 +4835,23 @@ suffix:semicolon
 op_increment
 id|ppp-&gt;n_channels
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppp-&gt;dev
+op_logical_and
+id|chan-&gt;hdrlen
+op_plus
+id|PPP_HDRLEN
+OG
+id|ppp-&gt;dev-&gt;hard_header_len
+)paren
+id|ppp-&gt;dev-&gt;hard_header_len
+op_assign
+id|chan-&gt;hdrlen
+op_plus
+id|PPP_HDRLEN
+suffix:semicolon
 id|ret
 op_assign
 l_int|0
@@ -4942,27 +4997,10 @@ id|ppp_xmit_unlock
 c_func
 (paren
 id|ppp
+comma
+l_int|1
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ppp-&gt;xmit_pending
-op_eq
-l_int|0
-)paren
-(brace
-id|ppp-&gt;dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|NET_BH
-)paren
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Compression control.&n; */
 multiline_comment|/* Process the PPPIOCSCOMPRESS ioctl. */
@@ -5201,6 +5239,8 @@ id|ppp_xmit_unlock
 c_func
 (paren
 id|ppp
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -5660,6 +5700,8 @@ id|ppp_xmit_unlock
 c_func
 (paren
 id|ppp
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|lock_recv_path

@@ -2052,6 +2052,8 @@ c_func
 id|sunname-&gt;sun_path
 comma
 l_int|2
+op_or
+id|O_NOFOLLOW
 comma
 id|S_IFSOCK
 )paren

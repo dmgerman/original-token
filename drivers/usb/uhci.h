@@ -390,29 +390,136 @@ DECL|macro|uhci_to_usb
 mdefine_line|#define uhci_to_usb(uhci)&t;((uhci)-&gt;usb)
 DECL|macro|usb_to_uhci
 mdefine_line|#define usb_to_uhci(usb)&t;((struct uhci_device *)(usb)-&gt;hcpriv)
-multiline_comment|/*&n; * There are various standard queues. We set up several different&n; * queues for each of the three basic queue types: interrupt,&n; * control, and bulk.&n; *&n; *  - There are various different interrupt latencies: ranging from&n; *    every other USB frame (2 ms apart) to every 256 USB frames (ie&n; *    256 ms apart). Make your choice according to how obnoxious you&n; *    want to be on the wire, vs how critical latency is for you.&n; *  - The control list is done every frame.&n; *  - There are 4 bulk lists, so that up to four devices can have a&n; *    bulk list of their own and when run concurrently all four lists&n; *    will be be serviced.&n; *&n; * This is a bit misleading, there are various interrupt latencies, but they&n; * vary a bit, interrupt2 isn&squot;t exactly 2ms, it can vary up to 4ms since the&n; * other queues can &quot;override&quot; it. interrupt4 can vary up to 8ms, etc. Minor&n; * problem&n; *&n; * In the case of the root hub, these QH&squot;s are just head&squot;s of qh&squot;s. Don&squot;t&n; * be scared, it kinda makes sense. Look at this wonderful picture care of&n; * Linus:&n; *&n; *  generic-iso-QH  -&gt;  dev1-iso-QH  -&gt;  generic-irq-QH  -&gt;  dev1-irq-QH  -&gt; ...&n; *       |                  |                  |                   |&n; *      End             dev1-iso-TD1          End            dev1-irq-TD1&n; *                          |&n; *                      dev1-iso-TD2&n; *                          |&n; *                        ....&n; *&n; * This may vary a bit (the UHCI docs don&squot;t explicitly say you can put iso&n; * transfers in QH&squot;s and all of their pictures don&squot;t have that either) but&n; * other than that, that is what we&squot;re doing now&n; *&n; * And now we don&squot;t put Iso transfers in QH&squot;s, so we don&squot;t waste one on it&n; *&n; * To keep with Linus&squot; nomenclature, this is called the QH skeleton. These&n; * labels (below) are only signficant to the root hub&squot;s QH&squot;s&n; */
+multiline_comment|/*&n; * There are various standard queues. We set up several different&n; * queues for each of the three basic queue types: interrupt,&n; * control, and bulk.&n; *&n; *  - There are various different interrupt latencies: ranging from&n; *    every other USB frame (2 ms apart) to every 256 USB frames (ie&n; *    256 ms apart). Make your choice according to how obnoxious you&n; *    want to be on the wire, vs how critical latency is for you.&n; *  - The control list is done every frame.&n; *  - There are 4 bulk lists, so that up to four devices can have a&n; *    bulk list of their own and when run concurrently all four lists&n; *    will be be serviced.&n; *&n; * This is a bit misleading, there are various interrupt latencies, but they&n; * vary a bit, interrupt2 isn&squot;t exactly 2ms, it can vary up to 4ms since the&n; * other queues can &quot;override&quot; it. interrupt4 can vary up to 8ms, etc. Minor&n; * problem&n; *&n; * In the case of the root hub, these QH&squot;s are just head&squot;s of qh&squot;s. Don&squot;t&n; * be scared, it kinda makes sense. Look at this wonderful picture care of&n; * Linus:&n; *&n; *  generic-  -&gt;  dev1-  -&gt;  generic-  -&gt;  dev1-  -&gt;  control-  -&gt;  bulk- -&gt; ...&n; *   iso-QH      iso-QH       irq-QH      irq-QH        QH           QH&n; *      |           |            |           |           |            |&n; *     End     dev1-iso-TD1     End     dev1-irq-TD1    ...          ... &n; *                  |&n; *             dev1-iso-TD2&n; *                  |&n; *                ....&n; *&n; * This may vary a bit (the UHCI docs don&squot;t explicitly say you can put iso&n; * transfers in QH&squot;s and all of their pictures don&squot;t have that either) but&n; * other than that, that is what we&squot;re doing now&n; *&n; * And now we don&squot;t put Iso transfers in QH&squot;s, so we don&squot;t waste one on it&n; *&n; * To keep with Linus&squot; nomenclature, this is called the QH skeleton. These&n; * labels (below) are only signficant to the root hub&squot;s QH&squot;s&n; */
 DECL|macro|UHCI_NUM_SKELQH
-mdefine_line|#define UHCI_NUM_SKELQH&t;&t;10
+mdefine_line|#define UHCI_NUM_SKELQH&t;&t;11
+DECL|macro|skel_int1_qh
+mdefine_line|#define skel_int1_qh&t;&t;skelqh[0]
 DECL|macro|skel_int2_qh
-mdefine_line|#define skel_int2_qh&t;&t;skelqh[0]
+mdefine_line|#define skel_int2_qh&t;&t;skelqh[1]
 DECL|macro|skel_int4_qh
-mdefine_line|#define skel_int4_qh&t;&t;skelqh[1]
+mdefine_line|#define skel_int4_qh&t;&t;skelqh[2]
 DECL|macro|skel_int8_qh
-mdefine_line|#define skel_int8_qh&t;&t;skelqh[2]
+mdefine_line|#define skel_int8_qh&t;&t;skelqh[3]
 DECL|macro|skel_int16_qh
-mdefine_line|#define skel_int16_qh&t;&t;skelqh[3]
+mdefine_line|#define skel_int16_qh&t;&t;skelqh[4]
 DECL|macro|skel_int32_qh
-mdefine_line|#define skel_int32_qh&t;&t;skelqh[4]
+mdefine_line|#define skel_int32_qh&t;&t;skelqh[5]
 DECL|macro|skel_int64_qh
-mdefine_line|#define skel_int64_qh&t;&t;skelqh[5]
+mdefine_line|#define skel_int64_qh&t;&t;skelqh[6]
 DECL|macro|skel_int128_qh
-mdefine_line|#define skel_int128_qh&t;&t;skelqh[6]
+mdefine_line|#define skel_int128_qh&t;&t;skelqh[7]
 DECL|macro|skel_int256_qh
-mdefine_line|#define skel_int256_qh&t;&t;skelqh[7]
+mdefine_line|#define skel_int256_qh&t;&t;skelqh[8]
 DECL|macro|skel_control_qh
-mdefine_line|#define skel_control_qh&t;&t;skelqh[8]
+mdefine_line|#define skel_control_qh&t;&t;skelqh[9]
 DECL|macro|skel_bulk_qh
-mdefine_line|#define skel_bulk_qh&t;&t;skelqh[9]
+mdefine_line|#define skel_bulk_qh&t;&t;skelqh[10]
+multiline_comment|/*&n; * Search tree for determining where &lt;interval&gt; fits in the&n; * skelqh[] skeleton.&n; *&n; * An interrupt request should be placed into the slowest skelqh[]&n; * which meets the interval/period/frequency requirement.&n; * An interrupt request is allowed to be faster than &lt;interval&gt; but not slower.&n; *&n; * For a given &lt;interval&gt;, this function returns the appropriate/matching&n; * skelqh[] index value.&n; *&n; * NOTE: For UHCI, we don&squot;t really need int256_qh since the maximum interval&n; * is 255 ms.  However, we do need an int1_qh since 1 is a valid interval&n; * and we should meet that frequency when requested to do so.&n; * This will require some change(s) to the UHCI skeleton.&n; */
+DECL|function|__interval_to_skel
+r_static
+r_inline
+r_int
+id|__interval_to_skel
+c_func
+(paren
+id|interval
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|interval
+OL
+l_int|16
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|interval
+OL
+l_int|4
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|interval
+OL
+l_int|2
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* int1 for 0-1 ms */
+)brace
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* int2 for 2-3 ms */
+)brace
+r_if
+c_cond
+(paren
+id|interval
+OL
+l_int|8
+)paren
+(brace
+r_return
+l_int|2
+suffix:semicolon
+multiline_comment|/* int4 for 4-7 ms */
+)brace
+r_return
+l_int|3
+suffix:semicolon
+multiline_comment|/* int 8 for 8-15 ms */
+)brace
+r_if
+c_cond
+(paren
+id|interval
+OL
+l_int|64
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|interval
+OL
+l_int|32
+)paren
+(brace
+r_return
+l_int|4
+suffix:semicolon
+multiline_comment|/* int16 for 16-31 ms */
+)brace
+r_return
+l_int|5
+suffix:semicolon
+multiline_comment|/* int32 for 32-63 ms */
+)brace
+r_if
+c_cond
+(paren
+id|interval
+OL
+l_int|128
+)paren
+r_return
+l_int|6
+suffix:semicolon
+multiline_comment|/* int64 for 64-127 ms */
+r_return
+l_int|7
+suffix:semicolon
+multiline_comment|/* int128 for 128-255 ms (Max.) */
+)brace
 multiline_comment|/*&n; * This describes the full uhci information.&n; *&n; * Note how the &quot;proper&quot; USB information is just&n; * a subset of what the full implementation needs.&n; */
 DECL|struct|uhci
 r_struct

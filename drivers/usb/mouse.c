@@ -3,7 +3,6 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -11,8 +10,6 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &quot;usb.h&quot;
-DECL|macro|USB_MOUSE_MINOR
-mdefine_line|#define USB_MOUSE_MINOR 32
 DECL|struct|mouse_state
 r_struct
 id|mouse_state
@@ -248,7 +245,7 @@ id|data
 l_int|0
 )braket
 op_amp
-l_int|0x07
+l_int|0x0f
 suffix:semicolon
 id|mouse-&gt;dx
 op_add_assign
@@ -1007,21 +1004,6 @@ id|fasync_mouse
 comma
 )brace
 suffix:semicolon
-DECL|variable|usb_mouse
-r_static
-r_struct
-id|miscdevice
-id|usb_mouse
-op_assign
-(brace
-id|USB_MOUSE_MINOR
-comma
-l_string|&quot;USB mouse&quot;
-comma
-op_amp
-id|usb_mouse_fops
-)brace
-suffix:semicolon
 DECL|function|mouse_probe
 r_static
 r_int
@@ -1389,6 +1371,11 @@ l_int|NULL
 comma
 l_int|NULL
 )brace
+comma
+op_amp
+id|usb_mouse_fops
+comma
+l_int|16
 )brace
 suffix:semicolon
 DECL|function|usb_mouse_init
@@ -1429,13 +1416,6 @@ suffix:semicolon
 id|mouse-&gt;fasync
 op_assign
 l_int|NULL
-suffix:semicolon
-id|misc_register
-c_func
-(paren
-op_amp
-id|usb_mouse
-)paren
 suffix:semicolon
 id|usb_register
 c_func
@@ -1506,13 +1486,6 @@ c_func
 (paren
 op_amp
 id|mouse_driver
-)paren
-suffix:semicolon
-id|misc_deregister
-c_func
-(paren
-op_amp
-id|usb_mouse
 )paren
 suffix:semicolon
 )brace

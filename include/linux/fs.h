@@ -3904,8 +3904,6 @@ r_int
 )braket
 comma
 r_int
-comma
-r_int
 )paren
 suffix:semicolon
 DECL|typedef|writepage_t

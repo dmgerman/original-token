@@ -1664,7 +1664,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_ADB_MOUSE
+macro_line|#ifdef CONFIG_ADBMOUSE
 id|adb_mouse_init
 c_func
 (paren

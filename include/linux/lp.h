@@ -1,7 +1,7 @@
 macro_line|#ifndef _LINUX_LP_H
 DECL|macro|_LINUX_LP_H
 mdefine_line|#define _LINUX_LP_H
-multiline_comment|/*&n; * usr/include/linux/lp.h c.1991-1992 James Wiegand&n; * many modifications copyright (C) 1992 Michael K. Johnson&n; * Interrupt support added 1993 Nigel Gamble&n; */
+multiline_comment|/*&n; * usr/include/linux/lp.h c.1991-1992 James Wiegand&n; * many modifications copyright (C) 1992 Michael K. Johnson&n; * Interrupt support added 1993 Nigel Gamble&n; * Removed 8255 status defines from inside __KERNEL__ Marcelo Tosatti &n; */
 multiline_comment|/*&n; * Per POSIX guidelines, this module reserves the LP and lp prefixes&n; * These are the lp_table[minor].flags flags...&n; */
 DECL|macro|LP_EXIST
 mdefine_line|#define LP_EXIST 0x0001
@@ -33,6 +33,17 @@ DECL|macro|LP_HAVE_PORT_BIT
 mdefine_line|#define LP_HAVE_PORT_BIT   12 /* (0x1000) Port is claimed. */
 DECL|macro|LP_PORT_BUSY
 mdefine_line|#define LP_PORT_BUSY   (1&lt;&lt;13) /* Reading or writing. */
+multiline_comment|/* &n; * bit defines for 8255 status port&n; * base + 1&n; * accessed with LP_S(minor), which gets the byte...&n; */
+DECL|macro|LP_PBUSY
+mdefine_line|#define LP_PBUSY&t;0x80  /* inverted input, active high */
+DECL|macro|LP_PACK
+mdefine_line|#define LP_PACK&t;&t;0x40  /* unchanged input, active low */
+DECL|macro|LP_POUTPA
+mdefine_line|#define LP_POUTPA&t;0x20  /* unchanged input, active high */
+DECL|macro|LP_PSELECD
+mdefine_line|#define LP_PSELECD&t;0x10  /* unchanged input, active high */
+DECL|macro|LP_PERRORP
+mdefine_line|#define LP_PERRORP&t;0x08  /* unchanged input, active low */
 multiline_comment|/* timeout for each character.  This is relative to bus cycles -- it&n; * is the count in a busy loop.  THIS IS THE VALUE TO CHANGE if you&n; * have extremely slow printing, or if the machine seems to slow down&n; * a lot when you print.  If you have slow printing, increase this&n; * number and recompile, and if your system gets bogged down, decrease&n; * this number.  This can be changed with the tunelp(8) command as well.&n; */
 DECL|macro|LP_INIT_CHAR
 mdefine_line|#define LP_INIT_CHAR 1000
@@ -215,17 +226,6 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * The following constants describe the various signals of the printer port&n; * hardware.  Note that the hardware inverts some signals and that some&n; * signals are active low.  An example is LP_STROBE, which must be programmed&n; * with 1 for being active and 0 for being inactive, because the strobe signal&n; * gets inverted, but it is also active low.&n; */
-multiline_comment|/* &n; * bit defines for 8255 status port&n; * base + 1&n; * accessed with LP_S(minor), which gets the byte...&n; */
-DECL|macro|LP_PBUSY
-mdefine_line|#define LP_PBUSY&t;0x80  /* inverted input, active high */
-DECL|macro|LP_PACK
-mdefine_line|#define LP_PACK&t;&t;0x40  /* unchanged input, active low */
-DECL|macro|LP_POUTPA
-mdefine_line|#define LP_POUTPA&t;0x20  /* unchanged input, active high */
-DECL|macro|LP_PSELECD
-mdefine_line|#define LP_PSELECD&t;0x10  /* unchanged input, active high */
-DECL|macro|LP_PERRORP
-mdefine_line|#define LP_PERRORP&t;0x08  /* unchanged input, active low */
 multiline_comment|/* &n; * defines for 8255 control port&n; * base + 2 &n; * accessed with LP_C(minor)&n; */
 DECL|macro|LP_PINTEN
 mdefine_line|#define LP_PINTEN&t;0x10  /* high to read data in or-ed with data out */

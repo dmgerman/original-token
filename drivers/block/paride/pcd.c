@@ -2482,7 +2482,11 @@ suffix:semicolon
 id|pcd_sleep
 c_func
 (paren
-l_int|2
+l_int|20
+op_star
+id|HZ
+op_div
+l_int|1000
 )paren
 suffix:semicolon
 multiline_comment|/* delay a bit */
@@ -2792,7 +2796,7 @@ suffix:semicolon
 id|pcd_sleep
 c_func
 (paren
-l_int|100
+id|HZ
 )paren
 suffix:semicolon
 )brace

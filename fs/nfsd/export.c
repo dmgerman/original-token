@@ -2529,7 +2529,7 @@ comma
 id|NFSEXP_CROSSMNT
 comma
 (brace
-l_string|&quot;crossmnt&quot;
+l_string|&quot;nohide&quot;
 comma
 l_string|&quot;&quot;
 )brace

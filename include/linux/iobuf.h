@@ -232,9 +232,6 @@ id|b
 comma
 r_int
 id|size
-comma
-r_int
-id|bmap
 )paren
 suffix:semicolon
 macro_line|#endif /* __LINUX_IOBUF_H */

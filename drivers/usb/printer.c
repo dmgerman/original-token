@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for USB Printers&n; * &n; * (C) Michael Gee (michael@linuxspecific.com) 1999&n; * &n; */
+multiline_comment|/* Driver for USB Printers&n; * &n; * Copyright 1999 Michael Gee (michael@linuxspecific.com)&n; * Copyright 1999 Pavel Machek (pavel@suse.cz)&n; *&n; * Distribute under GPL version 2 or later.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -16,17 +16,6 @@ DECL|macro|NAK_TIMEOUT
 mdefine_line|#define NAK_TIMEOUT (HZ)&t;&t;&t;&t;/* stall wait for printer */
 DECL|macro|MAX_RETRY_COUNT
 mdefine_line|#define MAX_RETRY_COUNT ((60*60*HZ)/NAK_TIMEOUT)&t;/* should not take 1 minute a page! */
-macro_line|#ifndef USB_PRINTER_MAJOR
-DECL|macro|USB_PRINTER_MAJOR
-mdefine_line|#define USB_PRINTER_MAJOR 63
-macro_line|#endif
-DECL|variable|mymajor
-r_static
-r_int
-id|mymajor
-op_assign
-id|USB_PRINTER_MAJOR
-suffix:semicolon
 DECL|macro|MAX_PRINTERS
 mdefine_line|#define MAX_PRINTERS&t;8
 DECL|struct|pp_usb_data
@@ -1797,26 +1786,6 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/* just in case */
 )brace
-DECL|variable|printer_driver
-r_static
-r_struct
-id|usb_driver
-id|printer_driver
-op_assign
-(brace
-l_string|&quot;printer&quot;
-comma
-id|printer_probe
-comma
-id|printer_disconnect
-comma
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-)brace
-suffix:semicolon
 DECL|variable|usb_printer_fops
 r_static
 r_struct
@@ -1855,6 +1824,31 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+DECL|variable|printer_driver
+r_static
+r_struct
+id|usb_driver
+id|printer_driver
+op_assign
+(brace
+l_string|&quot;printer&quot;
+comma
+id|printer_probe
+comma
+id|printer_disconnect
+comma
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
+comma
+op_amp
+id|usb_printer_fops
+comma
+l_int|0
+)brace
+suffix:semicolon
 DECL|function|usb_printer_init
 r_int
 id|usb_printer_init
@@ -1863,54 +1857,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|result
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|result
-op_assign
-id|register_chrdev
-c_func
-(paren
-id|USB_PRINTER_MAJOR
-comma
-l_string|&quot;usblp&quot;
-comma
-op_amp
-id|usb_printer_fops
-)paren
-)paren
-OL
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;usbprinter: Cannot register device&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|result
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|mymajor
-op_eq
-l_int|0
-)paren
-(brace
-id|mymajor
-op_assign
-id|result
-suffix:semicolon
-)brace
 id|usb_register
 c_func
 (paren
@@ -1958,14 +1904,6 @@ c_func
 (paren
 op_amp
 id|printer_driver
-)paren
-suffix:semicolon
-id|unregister_chrdev
-c_func
-(paren
-id|mymajor
-comma
-l_string|&quot;usblp&quot;
 )paren
 suffix:semicolon
 )brace

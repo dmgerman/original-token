@@ -4710,9 +4710,6 @@ id|b
 comma
 r_int
 id|size
-comma
-r_int
-id|bmap
 )paren
 (brace
 r_struct
@@ -4843,38 +4840,6 @@ id|bh-&gt;b_blocknr
 op_assign
 id|block
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * When we use bmap, we define block zero to represent&n;&t;&t; * a hole.  ll_rw_page, however, may legitimately&n;&t;&t; * access block zero, and we need to distinguish the&n;&t;&t; * two cases.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|bmap
-op_logical_and
-op_logical_neg
-id|block
-)paren
-(brace
-id|memset
-c_func
-(paren
-id|bh-&gt;b_data
-comma
-l_int|0
-comma
-id|size
-)paren
-suffix:semicolon
-id|set_bit
-c_func
-(paren
-id|BH_Uptodate
-comma
-op_amp
-id|bh-&gt;b_state
-)paren
-suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
 id|set_bit
 c_func
 (paren
@@ -5081,7 +5046,7 @@ op_ne
 id|head
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * subtle. We release buffer-heads only if this is&n;&t; * the &squot;final&squot; flushpage. We have invalidated the bmap&n;&t; * cached value unconditionally, so real IO is not&n;&t; * possible anymore.&n;&t; *&n;&t; * If the free doesn&squot;t work out, the buffers can be&n;&t; * left around - they just turn into anonymous buffers&n;&t; * instead.&n;&t; */
+multiline_comment|/*&n;&t; * subtle. We release buffer-heads only if this is&n;&t; * the &squot;final&squot; flushpage. We have invalidated the get_block&n;&t; * cached value unconditionally, so real IO is not&n;&t; * possible anymore.&n;&t; *&n;&t; * If the free doesn&squot;t work out, the buffers can be&n;&t; * left around - they just turn into anonymous buffers&n;&t; * instead.&n;&t; */
 r_if
 c_cond
 (paren
@@ -7244,9 +7209,6 @@ id|b
 comma
 r_int
 id|size
-comma
-r_int
-id|bmap
 )paren
 (brace
 r_int
@@ -7776,7 +7738,7 @@ id|err
 suffix:semicolon
 id|error
 suffix:colon
-multiline_comment|/* We got an error allocation the bh&squot;es.  Just free the current&n;           buffer_heads and exit. */
+multiline_comment|/* We got an error allocating the bh&squot;es.  Just free the current&n;           buffer_heads and exit. */
 id|spin_lock
 c_func
 (paren
@@ -7843,9 +7805,6 @@ id|b
 comma
 r_int
 id|size
-comma
-r_int
-id|bmap
 )paren
 (brace
 r_struct
@@ -7911,8 +7870,6 @@ comma
 id|b
 comma
 id|size
-comma
-id|bmap
 )paren
 suffix:semicolon
 id|fresh
@@ -8005,41 +7962,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|bmap
-op_logical_and
-op_logical_neg
-id|block
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|block
-)paren
-id|BUG
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-r_if
-c_cond
-(paren
-id|bmap
-op_logical_and
-op_logical_neg
-id|block
-)paren
-id|BUG
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
 op_logical_neg
 id|buffer_uptodate
 c_func
@@ -8063,7 +7985,6 @@ op_amp
 id|bh-&gt;b_count
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 r_else
@@ -8256,7 +8177,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Generic &quot;read page&quot; function for block devices that have the normal&n; * bmap functionality. This is most of the block device filesystems.&n; * Reads the page asynchronously --- the unlock_buffer() and&n; * mark_buffer_uptodate() functions propagate buffer state into the&n; * page struct once IO has completed.&n; */
+multiline_comment|/*&n; * Generic &quot;read page&quot; function for block devices that have the normal&n; * get_block functionality. This is most of the block device filesystems.&n; * Reads the page asynchronously --- the unlock_buffer() and&n; * mark_buffer_uptodate() functions propagate buffer state into the&n; * page struct once IO has completed.&n; */
 DECL|function|block_read_full_page
 r_int
 id|block_read_full_page

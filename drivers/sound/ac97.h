@@ -59,6 +59,28 @@ mdefine_line|#define  AC97_MODEM_RATE         0x0024
 DECL|macro|AC97_POWER_CONTROL
 mdefine_line|#define  AC97_POWER_CONTROL      0x0026
 multiline_comment|/* registers 0x0028 - 0x0058 are reserved */
+multiline_comment|/* AC&squot;97 2.0 */
+DECL|macro|AC97_EXTENDED_ID
+mdefine_line|#define AC97_EXTENDED_ID&t;0x0028&t;/* Extended Audio ID */
+DECL|macro|AC97_EXTENDED_STATUS
+mdefine_line|#define AC97_EXTENDED_STATUS&t;0x002A&t;/* Extended Audio Status */
+DECL|macro|AC97_PCM_FRONT_DAC_RATE
+mdefine_line|#define AC97_PCM_FRONT_DAC_RATE 0x002C  /* PCM Front DAC Rate */
+DECL|macro|AC97_PCM_SURR_DAC_RATE
+mdefine_line|#define AC97_PCM_SURR_DAC_RATE  0x002E  /* PCM Surround DAC Rate */
+DECL|macro|AC97_PCM_LFE_DAC_RATE
+mdefine_line|#define AC97_PCM_LFE_DAC_RATE   0x0030  /* PCM LFE DAC Rate */
+DECL|macro|AC97_PCM_LR_DAC_RATE
+mdefine_line|#define AC97_PCM_LR_DAC_RATE&t;0x0032&t;/* PCM LR DAC Rate */
+DECL|macro|AC97_PCM_MIC_ADC_RATE
+mdefine_line|#define AC97_PCM_MIC_ADC_RATE   0x0034  /* PCM MIC ADC Rate */
+DECL|macro|AC97_CENTER_LFE_MASTER
+mdefine_line|#define AC97_CENTER_LFE_MASTER  0x0036  /* Center + LFE Master Volume */
+DECL|macro|AC97_SURROUND_MASTER
+mdefine_line|#define AC97_SURROUND_MASTER    0x0038  /* Surround (Rear) Master Volume */
+DECL|macro|AC97_RESERVED_3A
+mdefine_line|#define AC97_RESERVED_3A&t;0x003A&t;/* Reserved */
+multiline_comment|/* range 0x3c-0x58 - MODEM */
 multiline_comment|/* registers 0x005a - 0x007a are vendor reserved */
 DECL|macro|AC97_VENDOR_ID1
 mdefine_line|#define  AC97_VENDOR_ID1         0x007c

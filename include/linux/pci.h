@@ -1849,6 +1849,16 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|pci_pci_problems
+suffix:semicolon
+DECL|macro|PCIPCI_FAIL
+mdefine_line|#define PCIPCI_FAIL&t;&t;1
+DECL|macro|PCIPCI_TRITON
+mdefine_line|#define PCIPCI_TRITON&t;&t;2
+DECL|macro|PCIPCI_NATOMA
+mdefine_line|#define PCIPCI_NATOMA&t;&t;4
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* LINUX_PCI_H */
 eof

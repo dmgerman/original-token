@@ -2686,6 +2686,6 @@ mdefine_line|#define PageSkip(page)&t;&t;(0)
 DECL|macro|kern_addr_valid
 mdefine_line|#define kern_addr_valid(addr)&t;(1)
 DECL|macro|io_remap_page_range
-mdefine_line|#define io_remap_page_range(start, busaddr, size, prot) &bslash;&n;&t;remap_page_range(start, virt_to_phys(ioremap(busaddr)), size, prot)
+mdefine_line|#define io_remap_page_range(start, busaddr, size, prot) &bslash;&n;&t;remap_page_range(start, virt_to_phys(__ioremap(busaddr)), size, prot)
 macro_line|#endif /* _ALPHA_PGTABLE_H */
 eof

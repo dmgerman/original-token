@@ -2003,11 +2003,13 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_NVRAM  
 id|pmac_nvram_init
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
 multiline_comment|/*&n; * IDE stuff.&n; */
@@ -2401,36 +2403,6 @@ op_assign
 id|chrp_ide_irq
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_BLK_DEV_IDE_MODULE)
-DECL|variable|chrp_ide_irq
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|chrp_ide_irq
-)paren
-suffix:semicolon
-DECL|variable|chrp_ide_ports_known
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|chrp_ide_ports_known
-)paren
-suffix:semicolon
-DECL|variable|chrp_ide_regbase
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|chrp_ide_regbase
-)paren
-suffix:semicolon
-DECL|variable|chrp_ide_probe
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|chrp_ide_probe
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 r_void
 id|__init

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB Abstract Control Model based on Brad Keryan&squot;s USB busmouse driver &n; *&n; * Armin Fuerst 5/8/1999 &lt;armin.please@put.your.email.here.!!!!&gt;&n; *&n; * version 0.8: Fixed endianity bug, some cleanups. I really hate to have&n; * half of driver in form if (...) { info(&quot;x&quot;); return y; }&n; * &t;&t;&t;&t;&t;&t;Pavel Machek &lt;pavel@suse.de&gt;&n; *&n; * version 0.7: Added usb flow control. Fixed bug in uhci.c (what idiot&n; * wrote this code? ...Oops that was me). Fixed module cleanup. Did some&n; * testing at 3Com =&gt; zmodem uload+download works, pppd had trouble but&n; * seems to work now. Changed Menuconfig texts &quot;Communications Device&n; * Class (ACM)&quot; might be a bit more intuitive. Ported to 2.3.13-1 prepatch. &n; * (2/8/99)&n; *&n; * version 0.6: Modularized driver, added disconnect code, improved&n; * assignment of device to tty minor number.&n; * (21/7/99)&n; *&n; * version 0.5: Driver now generates a tty instead of a simple character&n; * device. Moved async bulk transfer to 2.3.10 kernel version. fixed a bug&n; * in uhci_td_allocate. Commenetd out getstringtable which causes crash.&n; * (13/7/99)&n; *&n; * version 0.4: Small fixes in the FIFO, cleanup. Updated Bulk transfer in &n; * uhci.c. Should have the correct interface now. &n; * (6/6/99)&n; *&n; * version 0.3: Major changes. Changed Bulk transfer to interrupt based&n; * transfer. Using FIFO Buffers now. Consistent handling of open/close&n; * file state and detected/nondetected device. File operations behave&n; * according to this. Driver is able to send+receive now! Heureka!&n; * (27/5/99)&n; *&n; * version 0.2: Improved Bulk transfer. TX led now flashes every time data is&n; * sent. Send Encapsulated Data is not needed, nor does it do anything.&n; * Why&squot;s that ?!? Thanks to Thomas Sailer for his close look at the bulk code.&n; * He told me about some importand bugs. (5/21/99)&n; *&n; * version 0.1: Bulk transfer for uhci seems to work now, no dangling tds any&n; * more. TX led of the ISDN TA flashed the first time. Does this mean it works?&n; * The interrupt of the ctrl endpoint crashes the kernel =&gt; no read possible&n; * (5/19/99)&n; *&n; * version 0.0: Driver sets up configuration, sets up data pipes, opens misc&n; * device. No actual data transfer is done, since we don&squot;t have bulk transfer,&n; * yet. Purely skeleton for now. (5/8/99)&n; */
+multiline_comment|/*&n; * USB Abstract Control Model based on Brad Keryan&squot;s USB busmouse driver &n; *&n; * Armin Fuerst 5/8/1999 &lt;armin.please@put.your.email.here.!!!!&gt;&n; *&n; * version 0.8: Fixed endianity bug, some cleanups. I really hate to have&n; * half of driver in form if (...) { info(&quot;x&quot;); return y; }&n; * &t;&t;&t;&t;&t;&t;Pavel Machek &lt;pavel@suse.cz&gt;&n; *&n; * version 0.7: Added usb flow control. Fixed bug in uhci.c (what idiot&n; * wrote this code? ...Oops that was me). Fixed module cleanup. Did some&n; * testing at 3Com =&gt; zmodem uload+download works, pppd had trouble but&n; * seems to work now. Changed Menuconfig texts &quot;Communications Device&n; * Class (ACM)&quot; might be a bit more intuitive. Ported to 2.3.13-1 prepatch. &n; * (2/8/99)&n; *&n; * version 0.6: Modularized driver, added disconnect code, improved&n; * assignment of device to tty minor number.&n; * (21/7/99)&n; *&n; * version 0.5: Driver now generates a tty instead of a simple character&n; * device. Moved async bulk transfer to 2.3.10 kernel version. fixed a bug&n; * in uhci_td_allocate. Commenetd out getstringtable which causes crash.&n; * (13/7/99)&n; *&n; * version 0.4: Small fixes in the FIFO, cleanup. Updated Bulk transfer in &n; * uhci.c. Should have the correct interface now. &n; * (6/6/99)&n; *&n; * version 0.3: Major changes. Changed Bulk transfer to interrupt based&n; * transfer. Using FIFO Buffers now. Consistent handling of open/close&n; * file state and detected/nondetected device. File operations behave&n; * according to this. Driver is able to send+receive now! Heureka!&n; * (27/5/99)&n; *&n; * version 0.2: Improved Bulk transfer. TX led now flashes every time data is&n; * sent. Send Encapsulated Data is not needed, nor does it do anything.&n; * Why&squot;s that ?!? Thanks to Thomas Sailer for his close look at the bulk code.&n; * He told me about some importand bugs. (5/21/99)&n; *&n; * version 0.1: Bulk transfer for uhci seems to work now, no dangling tds any&n; * more. TX led of the ISDN TA flashed the first time. Does this mean it works?&n; * The interrupt of the ctrl endpoint crashes the kernel =&gt; no read possible&n; * (5/19/99)&n; *&n; * version 0.0: Driver sets up configuration, sets up data pipes, opens misc&n; * device. No actual data transfer is done, since we don&squot;t have bulk transfer,&n; * yet. Purely skeleton for now. (5/8/99)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -16,7 +16,7 @@ macro_line|#include &quot;usb.h&quot;
 DECL|macro|NR_PORTS
 mdefine_line|#define NR_PORTS 3
 DECL|macro|ACM_MAJOR
-mdefine_line|#define ACM_MAJOR 166
+mdefine_line|#define ACM_MAJOR 166&t;/* Wow, major is now officially allocated */
 singleline_comment|//#define info(message...); printk(message);
 DECL|macro|info
 mdefine_line|#define info(message...);
@@ -1677,14 +1677,7 @@ l_int|2
 )paren
 r_continue
 suffix:semicolon
-id|endpoint
-op_assign
-op_amp
-id|interface-&gt;endpoint
-(braket
-l_int|0
-)braket
-suffix:semicolon
+multiline_comment|/* if ((endpoint-&gt;bEndpointAddress &amp; 0x80) == 0x80) */
 r_if
 c_cond
 (paren

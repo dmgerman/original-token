@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: init.c,v 1.188 1999/09/18 18:40:44 dmalek Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; *  $Id: init.c,v 1.193 1999/10/11 18:50:35 geert Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -350,6 +350,7 @@ id|mem_pieces
 op_star
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_PREP) || defined(CONFIG_APUS) || defined(CONFIG_ALL_PPC)
 r_static
 r_void
 id|append_mem_piece
@@ -364,6 +365,7 @@ comma
 r_int
 )paren
 suffix:semicolon
+macro_line|#endif
 r_extern
 r_struct
 id|task_struct
@@ -656,6 +658,12 @@ r_int
 id|__map_without_bats
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/* max amount of RAM to use */
+DECL|variable|__max_memory
+r_int
+r_int
+id|__max_memory
 suffix:semicolon
 DECL|function|__bad_pte
 r_void
@@ -2867,6 +2875,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#if defined(CONFIG_PREP) || defined(CONFIG_APUS) || defined(CONFIG_PPC_ALL)
 multiline_comment|/*&n; * Add some memory to an array of pieces&n; */
 r_static
 r_void
@@ -2919,6 +2928,7 @@ op_assign
 id|size
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#ifndef CONFIG_8xx
 r_static
 r_void
@@ -3237,6 +3247,7 @@ op_assign
 id|d
 suffix:semicolon
 )brace
+macro_line|#if defined(CONFIG_PMAC) || defined(CONFIG_CHRP) || defined(CONFIG_ALL_PPC)
 multiline_comment|/*&n; * Read in a property describing some pieces of memory.&n; */
 DECL|function|get_mem_prop
 r_static
@@ -3339,6 +3350,7 @@ id|mp
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_PMAC || CONFIG_CHRP || CONFIG_ALL_PPC */
 multiline_comment|/*&n; * Set up one of the I/D BAT (block address translation) register pairs.&n; * The parameters are not checked; in particular size must be a power&n; * of 2 between 128k and 256M.&n; */
 DECL|function|setbat
 r_void
@@ -4233,7 +4245,7 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|macro|FREESEC
-mdefine_line|#define FREESEC(START,END,CNT) do { &bslash;&n;&t;a = (unsigned long)(&amp;START); &bslash;&n;&t;for (; a &lt; (unsigned long)(&amp;END); a += PAGE_SIZE) { &bslash;&n;&t;  &t;clear_bit(PG_reserved, &amp;mem_map[MAP_NR(a)].flags); &bslash;&n;&t;&t;atomic_set(&amp;mem_map[MAP_NR(a)].count, 1); &bslash;&n;&t;&t;free_page(a); &bslash;&n;&t;&t;CNT++; &bslash;&n;&t;} &bslash;&n;} while (0)
+mdefine_line|#define FREESEC(START,END,CNT) do { &bslash;&n;&t;a = (unsigned long)(&amp;START); &bslash;&n;&t;for (; a &lt; (unsigned long)(&amp;END); a += PAGE_SIZE) { &bslash;&n;&t;  &t;clear_bit(PG_reserved, &amp;mem_map[MAP_NR(a)].flags); &bslash;&n;&t;&t;set_page_count(mem_map+MAP_NR(a), 1); &bslash;&n;&t;&t;free_page(a); &bslash;&n;&t;&t;CNT++; &bslash;&n;&t;} &bslash;&n;} while (0)
 id|FREESEC
 c_func
 (paren
@@ -4598,6 +4610,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_GEMINI&t;
 r_else
 r_if
 c_cond
@@ -4613,6 +4626,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_GEMINI&t;*/
 r_else
 multiline_comment|/* prep */
 id|end_of_DRAM
@@ -4790,6 +4804,7 @@ suffix:semicolon
 r_case
 id|_MACH_Pmac
 suffix:colon
+macro_line|#if 0
 (brace
 r_int
 r_int
@@ -4838,11 +4853,12 @@ comma
 id|IO_PAGE
 )paren
 suffix:semicolon
+)brace
+macro_line|#endif
 id|ioremap_base
 op_assign
 l_int|0xf0000000
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_case
@@ -5416,39 +5432,6 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|addr
-op_assign
-id|PAGE_OFFSET
-suffix:semicolon
-id|addr
-OL
-id|end_mem
-suffix:semicolon
-id|addr
-op_add_assign
-id|PAGE_SIZE
-)paren
-id|set_bit
-c_func
-(paren
-id|PG_reserved
-comma
-op_amp
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|addr
-)paren
-)braket
-dot
-id|flags
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
 id|i
 op_assign
 l_int|0
@@ -5480,6 +5463,7 @@ id|address
 suffix:semicolon
 id|lim
 op_assign
+(paren
 id|a
 op_plus
 id|phys_avail.regions
@@ -5488,6 +5472,9 @@ id|i
 )braket
 dot
 id|size
+)paren
+op_amp
+id|PAGE_MASK
 suffix:semicolon
 id|a
 op_assign
@@ -5528,10 +5515,6 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-id|phys_avail.n_regions
-op_assign
-l_int|0
-suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 multiline_comment|/* if we are booted from BootX with an initial ramdisk,&n;&t;   make sure the ramdisk pages aren&squot;t reserved. */
 r_if
@@ -5610,6 +5593,7 @@ id|address
 suffix:semicolon
 id|lim
 op_assign
+(paren
 id|a
 op_plus
 id|prom_mem.regions
@@ -5618,6 +5602,9 @@ id|i
 )braket
 dot
 id|size
+)paren
+op_amp
+id|PAGE_MASK
 suffix:semicolon
 id|a
 op_assign
@@ -5749,20 +5736,16 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|atomic_set
+id|set_page_count
 c_func
 (paren
-op_amp
 id|mem_map
-(braket
+op_plus
 id|MAP_NR
 c_func
 (paren
 id|addr
 )paren
-)braket
-dot
-id|count
 comma
 l_int|1
 )paren
@@ -5787,7 +5770,7 @@ op_ge
 id|initrd_end
 )paren
 macro_line|#endif /* CONFIG_BLK_DEV_INITRD */
-macro_line|#ifndef CONFIG_8xx&t;&t;  
+macro_line|#ifndef CONFIG_8xx
 r_if
 c_cond
 (paren
@@ -5870,7 +5853,7 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#ifndef CONFIG_8xx
-macro_line|#if defined(CONFIG_PMAC) || defined(CONFIG_PPC_ALL)
+macro_line|#if defined(CONFIG_PMAC) || defined(CONFIG_CHRP) || defined(CONFIG_ALL_PPC)
 multiline_comment|/*&n; * On systems with Open Firmware, collect information about&n; * physical RAM and which pieces are already in use.&n; * At this point, we have (at least) the first 8MB mapped with a BAT.&n; * Our text, data, bss use something over 1MB, starting at 0.&n; * Open Firmware may be using 1MB at the 4MB point.&n; */
 DECL|function|pmac_find_end_of_memory
 r_int
@@ -5978,6 +5961,21 @@ multiline_comment|/*&n;&t; * XXX:&n;&t; * Make sure ram mappings don&squot;t sto
 r_if
 c_cond
 (paren
+id|__max_memory
+op_eq
+l_int|0
+op_logical_or
+id|__max_memory
+OG
+id|RAM_LIMIT
+)paren
+id|__max_memory
+op_assign
+id|RAM_LIMIT
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|phys_mem.regions
 (braket
 l_int|0
@@ -5985,8 +5983,9 @@ l_int|0
 dot
 id|size
 op_ge
-id|RAM_LIMIT
+id|__max_memory
 )paren
+(brace
 id|phys_mem.regions
 (braket
 l_int|0
@@ -5994,8 +5993,13 @@ l_int|0
 dot
 id|size
 op_assign
-id|RAM_LIMIT
+id|__max_memory
 suffix:semicolon
+id|phys_mem.n_regions
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 id|total
 op_assign
 id|phys_mem.regions
@@ -6059,15 +6063,6 @@ op_amp
 id|phys_avail
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* booted from BootX - it&squot;s all available (after klimit) */
-id|phys_avail
-op_assign
-id|phys_mem
-suffix:semicolon
-)brace
 id|prom_mem
 op_assign
 id|phys_mem
@@ -6086,58 +6081,6 @@ suffix:semicolon
 op_increment
 id|i
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|phys_avail.regions
-(braket
-id|i
-)braket
-dot
-id|address
-op_ge
-id|RAM_LIMIT
-)paren
-r_continue
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|phys_avail.regions
-(braket
-id|i
-)braket
-dot
-id|address
-op_plus
-id|phys_avail.regions
-(braket
-id|i
-)braket
-dot
-id|size
-)paren
-op_ge
-id|RAM_LIMIT
-)paren
-id|phys_avail.regions
-(braket
-id|i
-)braket
-dot
-id|size
-op_assign
-id|RAM_LIMIT
-op_minus
-id|phys_avail.regions
-(braket
-id|i
-)braket
-dot
-id|address
-suffix:semicolon
 id|remove_mem_piece
 c_func
 (paren
@@ -6158,8 +6101,20 @@ id|i
 dot
 id|size
 comma
-l_int|1
+l_int|0
 )paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* booted from BootX - it&squot;s all available (after klimit) */
+id|phys_avail
+op_assign
+id|phys_mem
+suffix:semicolon
+id|prom_mem.n_regions
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * phys_avail records memory we can use now.&n;&t; * prom_mem records memory allocated by the prom that we&n;&t; * don&squot;t want to use now, but we&squot;ll reclaim later.&n;&t; * Make sure the kernel text/data/bss is in neither.&n;&t; */
@@ -6244,8 +6199,8 @@ id|total
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* defined(CONFIG_PMAC) || defined(CONFIG_PPC_ALL) */
-macro_line|#if defined(CONFIG_PREP) || defined(CONFIG_PPC_ALL)
+macro_line|#endif /* CONFIG_PMAC || CONFIG_CHRP || CONFIG_ALL_PPC */
+macro_line|#if defined(CONFIG_PREP) || defined(CONFIG_ALL_PPC)
 multiline_comment|/*&n; * This finds the amount of physical ram and does necessary&n; * setup for prep.  This is pretty architecture specific so&n; * this will likely stay separate from the pmac.&n; * -- Cort&n; */
 DECL|function|prep_find_end_of_memory
 r_int
@@ -6372,8 +6327,8 @@ id|total
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* defined(CONFIG_PREP) || defined(CONFIG_PPC_ALL) */
-macro_line|#if defined(CONFIG_GEMINI) || defined(CONFIG_PPC_ALL)
+macro_line|#endif /* defined(CONFIG_PREP) || defined(CONFIG_ALL_PPC) */
+macro_line|#if defined(CONFIG_GEMINI)
 DECL|function|gemini_find_end_of_memory
 r_int
 r_int
@@ -6522,7 +6477,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-macro_line|#endif /* defined(CONFIG_GEMINI) || defined(CONFIG_PPC_ALL) */
+macro_line|#endif /* defined(CONFIG_GEMINI) || defined(CONFIG_ALL_PPC) */
 macro_line|#ifdef CONFIG_APUS
 DECL|macro|HARDWARE_MAPPED_SIZE
 mdefine_line|#define HARDWARE_MAPPED_SIZE (512*1024)

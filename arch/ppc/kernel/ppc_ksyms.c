@@ -33,6 +33,7 @@ macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#ifdef __SMP__
 macro_line|#include &lt;asm/smplock.h&gt;
 macro_line|#endif /* __SMP__ */
+macro_line|#include &quot;time.h&quot;
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -628,11 +629,11 @@ c_func
 id|__strncpy_from_user
 )paren
 suffix:semicolon
-DECL|variable|strlen_user
+DECL|variable|__strnlen_user
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|strlen_user
+id|__strnlen_user
 )paren
 suffix:semicolon
 multiline_comment|/*&n;EXPORT_SYMBOL(inb);&n;EXPORT_SYMBOL(inw);&n;EXPORT_SYMBOL(inl);&n;EXPORT_SYMBOL(outb);&n;EXPORT_SYMBOL(outw);&n;EXPORT_SYMBOL(outl);&n;EXPORT_SYMBOL(outsl);*/
@@ -748,6 +749,36 @@ c_func
 id|ppc_ide_md
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDE_MODULE
+DECL|variable|chrp_ide_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|chrp_ide_irq
+)paren
+suffix:semicolon
+DECL|variable|chrp_ide_ports_known
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|chrp_ide_ports_known
+)paren
+suffix:semicolon
+DECL|variable|chrp_ide_regbase
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|chrp_ide_regbase
+)paren
+suffix:semicolon
+DECL|variable|chrp_ide_probe
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|chrp_ide_probe
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|start_thread
 id|EXPORT_SYMBOL
 c_func
@@ -1199,6 +1230,31 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|irq_desc
+)paren
+suffix:semicolon
+r_void
+id|ppc_irq_dispatch_handler
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|variable|ppc_irq_dispatch_handler
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ppc_irq_dispatch_handler
+)paren
+suffix:semicolon
+DECL|variable|decrementer_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|decrementer_count
 )paren
 suffix:semicolon
 eof

@@ -1445,8 +1445,6 @@ comma
 id|b
 comma
 id|sector_size
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if

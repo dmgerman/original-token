@@ -348,6 +348,7 @@ id|host-&gt;unique_id
 op_assign
 id|nfscs
 suffix:semicolon
+macro_line|#ifndef MODULE
 id|note_scsi_host
 c_func
 (paren
@@ -356,6 +357,7 @@ comma
 id|host
 )paren
 suffix:semicolon
+macro_line|#endif
 id|state
 op_assign
 (paren

@@ -233,6 +233,9 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_struct
+id|task_struct
+suffix:semicolon
 multiline_comment|/* Free all resources held by a thread. */
 r_extern
 r_void

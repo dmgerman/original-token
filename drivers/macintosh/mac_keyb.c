@@ -2365,7 +2365,7 @@ r_int
 id|id
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ADB_MOUSE
+macro_line|#ifdef CONFIG_ADBMOUSE
 multiline_comment|/* XXX: Hook for mouse driver */
 DECL|variable|adb_mouse_interrupt_hook
 r_void
@@ -2769,7 +2769,7 @@ op_amp
 id|repeat_timer
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ADB_MOUSE
+macro_line|#ifdef CONFIG_ADBMOUSE
 multiline_comment|/*&n;&t; * XXX: Add mouse button 2+3 fake codes here if mouse open.&n;&t; *&t;Keep track of &squot;button&squot; states here as we only send &n;&t; *&t;single up/down events!&n;&t; *&t;Really messy; might need to check if keyboard is in&n;&t; *&t;VC_RAW mode.&n;&t; *&t;Might also want to know how many buttons need to be emulated.&n;&t; *&t;-&gt; hide this as function in arch/m68k/mac ?&n;&t; */
 r_if
 c_cond
@@ -2892,7 +2892,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_ADB_MOUSE */
+macro_line|#endif /* CONFIG_ADBMOUSE */
 r_if
 c_cond
 (paren
@@ -3106,7 +3106,7 @@ id|tty
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef CONFIG_ADB_MOUSE
+macro_line|#ifdef CONFIG_ADBMOUSE
 r_static
 r_void
 DECL|function|mouse_input
@@ -3557,7 +3557,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#endif /* CONFIG_ADB_MOUSE */
+macro_line|#endif /* CONFIG_ADBMOUSE */
 multiline_comment|/* XXX Needs to get rid of this, see comments in pmu.c */
 r_extern
 r_int
@@ -4266,7 +4266,7 @@ id|plain_map
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ADB_MOUSE
+macro_line|#ifdef CONFIG_ADBMOUSE
 multiline_comment|/* initialize mouse interrupt hook */
 id|adb_mouse_interrupt_hook
 op_assign
@@ -4372,7 +4372,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-macro_line|#ifdef CONFIG_ADB_MOUSE
+macro_line|#ifdef CONFIG_ADBMOUSE
 id|adb_register
 c_func
 (paren
@@ -4386,7 +4386,7 @@ comma
 id|mouse_input
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_ADB_MOUSE */
+macro_line|#endif /* CONFIG_ADBMOUSE */
 id|adb_register
 c_func
 (paren
