@@ -3,6 +3,7 @@ macro_line|#ifndef _EATA_H
 DECL|macro|_EATA_H
 mdefine_line|#define _EATA_H
 macro_line|#include &lt;scsi/scsicam.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 r_int
 id|eata2x_detect
 c_func
@@ -58,7 +59,7 @@ r_int
 )paren
 suffix:semicolon
 DECL|macro|EATA_VERSION
-mdefine_line|#define EATA_VERSION &quot;4.02.00&quot;
+mdefine_line|#define EATA_VERSION &quot;4.04.00&quot;
 DECL|macro|LinuxVersionCode
 mdefine_line|#define LinuxVersionCode(v, p, s) (((v)&lt;&lt;16)+((p)&lt;&lt;8)+(s))
 macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,88)

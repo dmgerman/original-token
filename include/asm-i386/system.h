@@ -307,8 +307,9 @@ r_return
 id|x
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Force strict CPU ordering.&n; * And yes, this is required on UP too when we&squot;re talking&n; * to devices.&n; */
 DECL|macro|mb
-mdefine_line|#define mb()  __asm__ __volatile__ (&quot;&quot;   : : :&quot;memory&quot;)
+mdefine_line|#define mb() &t;__asm__ __volatile__ (&quot;lock; addl $0,0(%%esp)&quot;: : :&quot;memory&quot;)
 multiline_comment|/* interrupt control.. */
 DECL|macro|__sti
 mdefine_line|#define __sti() __asm__ __volatile__ (&quot;sti&quot;: : :&quot;memory&quot;)
