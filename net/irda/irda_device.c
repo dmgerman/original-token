@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.c&n; * Version:       0.3&n; * Description:   Abstract device driver layer and helper functions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Sep  2 20:22:08 1998&n; * Modified at:   Mon Jan 18 11:05:59 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.c&n; * Version:       0.4&n; * Description:   Abstract device driver layer and helper functions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Sep  2 20:22:08 1998&n; * Modified at:   Tue Feb 16 17:36:04 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -7,8 +7,12 @@ macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;net/pkt_sched.h&gt;
+macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;asm/ioctls.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#include &lt;net/irda/irda_device.h&gt;
 macro_line|#include &lt;net/irda/irlap_frame.h&gt;
 macro_line|#include &lt;net/irda/timer.h&gt;
@@ -61,25 +65,20 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|girbil_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|variable|irda_device
 id|hashbin_t
 op_star
 id|irda_device
 op_assign
 l_int|NULL
-suffix:semicolon
-r_void
-id|irda_device_start_todo_timer
-c_func
-(paren
-r_struct
-id|irda_device
-op_star
-id|self
-comma
-r_int
-id|timeout
-)paren
 suffix:semicolon
 multiline_comment|/* Netdevice functions */
 r_static
@@ -191,15 +190,6 @@ r_void
 )paren
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* Allocate master array */
 id|irda_device
 op_assign
@@ -267,6 +257,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_ACTISYS_DONGLE
 id|actisys_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_GIRBIL_DONGLE
+id|girbil_init
 c_func
 (paren
 )paren
@@ -610,7 +607,7 @@ id|self-&gt;description
 comma
 id|self-&gt;name
 comma
-l_int|4
+l_int|5
 )paren
 suffix:semicolon
 id|strcat
@@ -965,6 +962,17 @@ r_int
 id|speed
 )paren
 (brace
+id|DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;(), &lt;%ld&gt;&bslash;n&quot;
+comma
+id|jiffies
+)paren
+suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -976,27 +984,17 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|self-&gt;magic
-op_ne
-id|IRDA_DEVICE_MAGIC
-)paren
-(brace
-id|DEBUG
+id|ASSERT
 c_func
 (paren
-l_int|0
+id|self-&gt;magic
+op_eq
+id|IRDA_DEVICE_MAGIC
 comma
-id|__FUNCTION__
-l_string|&quot;(), irda device is gone! Maybe you need to update &quot;
-l_string|&quot;your irmanager and/or irattach!&quot;
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *  Is is possible to change speed yet? Wait until the last byte &n;&t; *  has been transmitted.&n;&t; */
 r_if
 c_cond
@@ -1044,7 +1042,7 @@ l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;(), Warning, wait_until_sent() &quot;
-l_string|&quot;is not implemented by the irda_device!&bslash;n&quot;
+l_string|&quot;has not implemented by the device driver!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1303,77 +1301,6 @@ id|self-&gt;new_speed
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irda_device_start_todo_timer (self, timeout)&n; *&n; *    Start todo timer. This function is used to delay execution of certain&n; *    functions. Its implemented using timers since delaying a timer or a&n; *    bottom halves function can be very difficult othervise.&n; *&n; */
-DECL|function|irda_device_start_todo_timer
-r_void
-id|irda_device_start_todo_timer
-c_func
-(paren
-r_struct
-id|irda_device
-op_star
-id|self
-comma
-r_int
-id|timeout
-)paren
-(brace
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|IRDA_DEVICE_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|del_timer
-c_func
-(paren
-op_amp
-id|self-&gt;todo_timer
-)paren
-suffix:semicolon
-id|self-&gt;todo_timer.data
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|self
-suffix:semicolon
-id|self-&gt;todo_timer.function
-op_assign
-op_amp
-id|irda_device_todo_expired
-suffix:semicolon
-id|self-&gt;todo_timer.expires
-op_assign
-id|jiffies
-op_plus
-id|timeout
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|self-&gt;todo_timer
-)paren
-suffix:semicolon
-)brace
 DECL|function|irda_device_get_stats
 r_static
 r_struct
@@ -1495,10 +1422,7 @@ id|dev-&gt;change_mtu
 op_assign
 id|irda_device_net_change_mtu
 suffix:semicolon
-id|dev-&gt;hard_header
-op_assign
-id|irda_device_net_hard_header
-suffix:semicolon
+multiline_comment|/*  &t;dev-&gt;hard_header     = irda_device_net_hard_header; */
 id|dev-&gt;hard_header_len
 op_assign
 l_int|0
@@ -1555,7 +1479,6 @@ id|dev-&gt;flags
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* IFF_NOARP | IFF_POINTOPOINT; */
 r_return
 l_int|0
 suffix:semicolon
@@ -1590,6 +1513,7 @@ DECL|function|irda_device_net_hard_header
 r_static
 r_int
 id|irda_device_net_hard_header
+c_func
 (paren
 r_struct
 id|sk_buff
@@ -1631,7 +1555,7 @@ op_assign
 id|skb-&gt;data
 suffix:semicolon
 multiline_comment|/* skb_push(skb,PPP_HARD_HDR_LEN); */
-multiline_comment|/*         return PPP_HARD_HDR_LEN; */
+multiline_comment|/* return PPP_HARD_HDR_LEN; */
 r_return
 l_int|0
 suffix:semicolon
@@ -1867,7 +1791,206 @@ id|flags
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
-multiline_comment|/*&n; * Function irlap_proc_read (buf, start, offset, len, unused)&n; *&n; *    Give some info to the /proc file system&n; *&n; */
+DECL|function|irda_device_print_flags
+r_int
+id|irda_device_print_flags
+c_func
+(paren
+r_struct
+id|irda_device
+op_star
+id|idev
+comma
+r_char
+op_star
+id|buf
+)paren
+(brace
+r_int
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;&bslash;t&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|idev-&gt;netdev.flags
+op_amp
+id|IFF_UP
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;UP &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|idev-&gt;netdev.tbusy
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;RUNNING &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|idev-&gt;flags
+op_amp
+id|IFF_SIR
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;SIR &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|idev-&gt;flags
+op_amp
+id|IFF_MIR
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;MIR &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|idev-&gt;flags
+op_amp
+id|IFF_FIR
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;FIR &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|idev-&gt;flags
+op_amp
+id|IFF_PIO
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;PIO &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|idev-&gt;flags
+op_amp
+id|IFF_DMA
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;DMA &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|idev-&gt;flags
+op_amp
+id|IFF_DONGLE
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;DONGLE &quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|len
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Function irda_device_proc_read (buf, start, offset, len, unused)&n; *&n; *    Give some info to the /proc file system&n; *&n; */
 DECL|function|irda_device_proc_read
 r_int
 id|irda_device_proc_read
@@ -1946,7 +2069,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;device name: %s&bslash;n&quot;
+l_string|&quot;%s,&quot;
 comma
 id|self-&gt;name
 )paren
@@ -1960,28 +2083,21 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;description: %s&bslash;n&quot;
+l_string|&quot;&bslash;tbinding: %s&bslash;n&quot;
 comma
 id|self-&gt;description
 )paren
 suffix:semicolon
 id|len
 op_add_assign
-id|sprintf
+id|irda_device_print_flags
 c_func
 (paren
+id|self
+comma
 id|buf
 op_plus
 id|len
-comma
-l_string|&quot;  tbusy=%s&bslash;n&quot;
-comma
-id|self-&gt;netdev.tbusy
-ques
-c_cond
-l_string|&quot;TRUE&quot;
-suffix:colon
-l_string|&quot;FALSE&quot;
 )paren
 suffix:semicolon
 id|len
@@ -1993,7 +2109,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;  bps&bslash;tmaxtt&bslash;tdsize&bslash;twinsize&bslash;taddbofs&bslash;tmintt&bslash;tldisc&bslash;n&quot;
+l_string|&quot;&bslash;tbps&bslash;tmaxtt&bslash;tdsize&bslash;twinsize&bslash;taddbofs&bslash;tmintt&bslash;tldisc&bslash;n&quot;
 )paren
 suffix:semicolon
 id|len
@@ -2005,7 +2121,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;  %d&bslash;t&quot;
+l_string|&quot;&bslash;t%d&bslash;t&quot;
 comma
 id|self-&gt;qos.baud_rate.value
 )paren

@@ -3316,7 +3316,7 @@ id|sk-&gt;protinfo.ax25
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef AX25_CONFIG_DAMA_SLAVE
+macro_line|#ifdef CONFIG_AX25_DAMA_SLAVE
 r_case
 id|AX25_PROTO_DAMA_SLAVE
 suffix:colon

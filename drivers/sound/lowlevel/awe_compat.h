@@ -27,7 +27,7 @@ macro_line|#include &quot;soundvers.h&quot;
 macro_line|#else
 macro_line|#include &quot;../soundvers.h&quot;
 macro_line|#endif
-macro_line|#if SOUND_INTERNAL_VERSION &gt;= 0x30803
+macro_line|#if defined(SOUND_INTERNAL_VERSION) &amp;&amp; SOUND_INTERNAL_VERSION &gt;= 0x30803
 multiline_comment|/* OSS/Free-3.8 */
 DECL|macro|AWE_NO_PATCHMGR
 mdefine_line|#define AWE_NO_PATCHMGR
@@ -114,49 +114,9 @@ DECL|macro|my_malloc_memptr
 mdefine_line|#define my_malloc_memptr()&t;_mem_start
 DECL|macro|my_free
 mdefine_line|#define my_free(ptr)&t;/* do nothing */
-DECL|function|my_malloc
-r_static
-r_void
-op_star
-id|my_malloc
-c_func
-(paren
-r_int
-id|size
-)paren
-(brace
-r_char
-op_star
-id|ptr
-suffix:semicolon
-id|PERMANENT_MALLOC
-c_func
-(paren
-id|ptr
-comma
-r_char
-op_star
-comma
-id|size
-comma
-id|_mem_start
-)paren
-suffix:semicolon
-r_return
-(paren
-r_void
-op_star
-)paren
-id|ptr
-suffix:semicolon
-)brace
-DECL|macro|my_kmalloc
-mdefine_line|#define my_kmalloc(size) my_malloc(size)
-DECL|macro|kfree
-mdefine_line|#define kfree(ptr)&t;/* do nothing */
 multiline_comment|/* allocate buffer only once */
 DECL|macro|INIT_TABLE
-mdefine_line|#define INIT_TABLE(buffer,index,nums,type) {&bslash;&n;buffer = my_malloc(sizeof(type) * (nums)); index = (nums);&bslash;&n;}
+mdefine_line|#define INIT_TABLE(buffer,index,nums,type) {&bslash;&n;PERMANENT_MALLOC(buffer, char*, size, _mem_start); index = (nums);&bslash;&n;}
 macro_line|#else
 DECL|macro|AWE_DYNAMIC_BUFFER
 mdefine_line|#define AWE_DYNAMIC_BUFFER
@@ -168,10 +128,6 @@ DECL|macro|my_malloc
 mdefine_line|#define my_malloc(size)&t;&t;vmalloc(size)
 DECL|macro|my_free
 mdefine_line|#define my_free(ptr)&t;&t;if (ptr) {vfree(ptr);}
-DECL|macro|my_kmalloc
-mdefine_line|#define my_kmalloc(size)&t;kmalloc(size,GFP_KERNEL)
-DECL|macro|my_kfree
-mdefine_line|#define my_kfree(ptr)&t;&t;kfree(ptr)
 multiline_comment|/* do not allocate buffer at beginning */
 DECL|macro|INIT_TABLE
 mdefine_line|#define INIT_TABLE(buffer,index,nums,type) {buffer=NULL; index=0;}
@@ -258,6 +214,39 @@ mdefine_line|#define sound_unload_mixerdev(dev)&t;/**/
 DECL|macro|sound_unload_mididev
 mdefine_line|#define sound_unload_mididev(dev)&t;/**/
 macro_line|#endif /* AWE_MODULE_SUPPORT */
+macro_line|#if LINUX_VERSION_CODE &lt; ASC_LINUX_VERSION(2,1,0)
+DECL|function|interruptible_sleep_on_timeout
+r_inline
+r_static
+r_void
+id|interruptible_sleep_on_timeout
+c_func
+(paren
+r_struct
+id|wait_queue
+op_star
+op_star
+id|q
+comma
+r_int
+r_int
+id|timeout
+)paren
+(brace
+id|current-&gt;timeout
+op_assign
+id|jiffies
+op_plus
+id|timeout
+suffix:semicolon
+id|interruptible_sleep_on
+c_func
+(paren
+id|q
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#endif /* CONFIG_AWE32_SYNTH */
 macro_line|#endif /* AWE_COMPAT_H_DEF */
 eof

@@ -325,6 +325,10 @@ id|sb_dsp_detect
 c_func
 (paren
 id|hw_config
+comma
+l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -449,6 +453,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Set pas2=1 to load this as support for pas2 */
+DECL|variable|support
+r_int
+id|support
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Set support to load this as a support module */
 DECL|variable|sm_games
 r_int
 id|sm_games
@@ -522,6 +533,14 @@ suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
+id|support
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
 id|trix
 comma
 l_string|&quot;i&quot;
@@ -585,6 +604,10 @@ op_eq
 l_int|0
 op_logical_and
 id|pas2
+op_eq
+l_int|0
+op_logical_and
+id|support
 op_eq
 l_int|0
 )paren
@@ -750,6 +773,9 @@ id|trix
 op_logical_and
 op_logical_neg
 id|pas2
+op_logical_and
+op_logical_neg
+id|support
 )paren
 id|unload_sb
 c_func

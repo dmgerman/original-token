@@ -710,6 +710,8 @@ DECL|macro|BR_DEBUG
 mdefine_line|#define BR_DEBUG&t;0x0002&t;/* debugging enabled */
 DECL|macro|BR_PROT_STATS
 mdefine_line|#define BR_PROT_STATS&t;0x0004&t;/* protocol statistics enabled */
+DECL|macro|BR_STP_DISABLED
+mdefine_line|#define BR_STP_DISABLED&t;0x0008&t;/* Spanning tree protocol disabled */
 DECL|struct|br_cf
 r_struct
 id|br_cf
@@ -762,6 +764,8 @@ DECL|macro|BRCMD_DISABLE_PROT_STATS
 mdefine_line|#define BRCMD_DISABLE_PROT_STATS 14
 DECL|macro|BRCMD_ZERO_PROT_STATS
 mdefine_line|#define BRCMD_ZERO_PROT_STATS&t;15
+DECL|macro|BRCMD_TOGGLE_STP
+mdefine_line|#define BRCMD_TOGGLE_STP&t;16
 multiline_comment|/* prototypes of exported bridging functions... */
 r_void
 id|br_init
@@ -900,6 +904,14 @@ id|length
 comma
 r_int
 id|dummy
+)paren
+suffix:semicolon
+r_void
+id|br_avl_delete_by_port
+c_func
+(paren
+r_int
+id|port
 )paren
 suffix:semicolon
 multiline_comment|/* externs */

@@ -1,12 +1,12 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      timer.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Mon Nov  2 14:31:55 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      timer.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Thu Feb  4 11:05:24 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef TIMER_H
 DECL|macro|TIMER_H
 mdefine_line|#define TIMER_H
-macro_line|#include &quot;irda.h&quot;
-macro_line|#include &quot;irmod.h&quot;
-macro_line|#include &quot;irlap.h&quot;
-macro_line|#include &quot;irlmp.h&quot;
-macro_line|#include &quot;irda_device.h&quot;
+macro_line|#include &lt;net/irda/irda.h&gt;
+macro_line|#include &lt;net/irda/irmod.h&gt;
+macro_line|#include &lt;net/irda/irlap.h&gt;
+macro_line|#include &lt;net/irda/irlmp.h&gt;
+macro_line|#include &lt;net/irda/irda_device.h&gt;
 multiline_comment|/* &n; *  Timeout definitions, some defined in IrLAP p. 92&n; */
 DECL|macro|POLL_TIMEOUT
 mdefine_line|#define POLL_TIMEOUT        45             /* Must never exceed 500 ms */
@@ -24,8 +24,6 @@ DECL|macro|QUERY_TIMEOUT
 mdefine_line|#define QUERY_TIMEOUT          100
 DECL|macro|WATCHDOG_TIMEOUT
 mdefine_line|#define WATCHDOG_TIMEOUT      2000                /* 20 sec */
-DECL|macro|RETRY_TIMEOUT
-mdefine_line|#define RETRY_TIMEOUT           51
 DECL|typedef|TIMER_CALLBACK
 r_typedef
 r_void
@@ -141,6 +139,9 @@ suffix:semicolon
 r_struct
 id|lsap_cb
 suffix:semicolon
+r_struct
+id|lap_cb
+suffix:semicolon
 r_inline
 r_void
 id|irlmp_start_watchdog_timer
@@ -161,6 +162,19 @@ c_func
 (paren
 r_struct
 id|irlmp_cb
+op_star
+comma
+r_int
+id|timeout
+)paren
+suffix:semicolon
+r_inline
+r_void
+id|irlmp_start_idle_timer
+c_func
+(paren
+r_struct
+id|lap_cb
 op_star
 comma
 r_int

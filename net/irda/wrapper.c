@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      wrapper.c&n; * Version:       &n; * Description:   IrDA Wrapper layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Sat Jan 16 22:05:45 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      wrapper.c&n; * Version:       1.0&n; * Description:   SIR wrapper layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Tue Feb 16 17:27:23 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
@@ -10,7 +10,7 @@ macro_line|#include &lt;net/irda/irlap_frame.h&gt;
 macro_line|#include &lt;net/irda/irda_device.h&gt;
 DECL|macro|MIN_LENGTH
 mdefine_line|#define MIN_LENGTH 14
-id|__inline__
+r_inline
 r_static
 r_int
 id|stuff_byte
@@ -68,15 +68,6 @@ suffix:semicolon
 )brace
 id|fcs
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|6
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -111,7 +102,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;async_xmit: Warning size=%d of sk_buff to big!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;Warning size=%d of sk_buff to big!&bslash;n&quot;
 comma
 (paren
 r_int
@@ -324,7 +316,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Function async_bump (idev)&n; *&n; *    Got a frame, make a copy of it, and pass it up the stack!&n; *&n; */
 DECL|function|async_bump
 r_static
-id|__inline__
+r_inline
 r_void
 id|async_bump
 c_func
@@ -360,20 +352,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|skb
-op_eq
-l_int|NULL
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-id|__FUNCTION__
-l_string|&quot;() memory squeeze, &quot;
-l_string|&quot;dropping frame.&bslash;n&quot;
-)paren
-suffix:semicolon
 id|idev-&gt;stats.rx_dropped
 op_increment
 suffix:semicolon
@@ -424,10 +406,6 @@ id|len
 op_minus
 l_int|2
 )paren
-suffix:semicolon
-id|idev-&gt;rx_buff.len
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &n;&t; *  Feed it to IrLAP layer &n;&t; */
 multiline_comment|/* memcpy(skb_put(skb,count), ax-&gt;rbuff, count); */
@@ -487,14 +465,15 @@ id|idev-&gt;rx_buff.state
 r_case
 id|OUTSIDE_FRAME
 suffix:colon
-r_if
+r_switch
 c_cond
 (paren
 id|byte
-op_eq
-id|BOF
 )paren
 (brace
+r_case
+id|BOF
+suffix:colon
 id|idev-&gt;rx_buff.state
 op_assign
 id|BEGIN_FRAME
@@ -503,16 +482,19 @@ id|idev-&gt;rx_buff.in_frame
 op_assign
 id|TRUE
 suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|byte
-op_eq
+r_break
+suffix:semicolon
+r_case
+id|XBOF
+suffix:colon
+id|idev-&gt;xbofs
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|EOF
-)paren
-(brace
+suffix:colon
 id|irda_device_set_media_busy
 c_func
 (paren
@@ -520,6 +502,12 @@ id|idev
 comma
 id|TRUE
 )paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+r_break
 suffix:semicolon
 )brace
 r_break
@@ -567,17 +555,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
 multiline_comment|/* Got first byte of frame */
-r_if
-c_cond
-(paren
-id|idev-&gt;rx_buff.len
-OL
-id|idev-&gt;rx_buff.truesize
-)paren
-(brace
 id|idev-&gt;rx_buff.data
 (braket
 id|idev-&gt;rx_buff.len
@@ -600,14 +578,6 @@ id|idev-&gt;rx_buff.state
 op_assign
 id|INSIDE_FRAME
 suffix:semicolon
-)brace
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;Rx buffer overflow&bslash;n&quot;
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -626,14 +596,6 @@ r_case
 id|BOF
 suffix:colon
 multiline_comment|/* New frame? */
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;New frame?&bslash;n&quot;
-)paren
-suffix:semicolon
 id|idev-&gt;rx_buff.state
 op_assign
 id|BEGIN_FRAME
@@ -669,14 +631,6 @@ r_case
 id|EOF
 suffix:colon
 multiline_comment|/* Abort frame */
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;Abort frame (2)&bslash;n&quot;
-)paren
-suffix:semicolon
 id|idev-&gt;rx_buff.state
 op_assign
 id|OUTSIDE_FRAME
@@ -726,12 +680,25 @@ id|INSIDE_FRAME
 suffix:semicolon
 )brace
 r_else
-id|printk
+(brace
+id|DEBUG
 c_func
 (paren
-l_string|&quot;Rx buffer overflow&bslash;n&quot;
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), Rx buffer overflow, aborting&bslash;n&quot;
 )paren
 suffix:semicolon
+id|idev-&gt;rx_buff.state
+op_assign
+id|OUTSIDE_FRAME
+suffix:semicolon
+id|idev-&gt;rx_buff.len
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 )brace
@@ -809,6 +776,10 @@ comma
 id|idev-&gt;rx_buff.len
 )paren
 suffix:semicolon
+id|idev-&gt;rx_buff.len
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -867,12 +838,25 @@ id|byte
 suffix:semicolon
 )brace
 r_else
-id|printk
+(brace
+id|DEBUG
 c_func
 (paren
-l_string|&quot;Rx buffer overflow&bslash;n&quot;
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), Rx buffer overflow, aborting&bslash;n&quot;
 )paren
 suffix:semicolon
+id|idev-&gt;rx_buff.state
+op_assign
+id|OUTSIDE_FRAME
+suffix:semicolon
+id|idev-&gt;rx_buff.len
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 )brace
@@ -882,7 +866,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function stuff_byte (byte, buf)&n; *&n; *    Byte stuff one single byte and put the result in buffer pointed to by&n; *    buf. The buffer must at all times be able to have two bytes inserted.&n; * &n; */
 DECL|function|stuff_byte
-id|__inline__
+r_inline
 r_static
 r_int
 id|stuff_byte
@@ -905,9 +889,11 @@ id|byte
 r_case
 id|BOF
 suffix:colon
+multiline_comment|/* FALLTHROUGH */
 r_case
 id|EOF
 suffix:colon
+multiline_comment|/* FALLTHROUGH */
 r_case
 id|CE
 suffix:colon

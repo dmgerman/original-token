@@ -3368,6 +3368,9 @@ id|devc-&gt;model
 )paren
 (brace
 r_case
+id|MDL_ESSPCI
+suffix:colon
+r_case
 id|MDL_SBPRO
 suffix:colon
 r_case

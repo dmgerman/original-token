@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/awe_wave.c&n; *&n; * The low level driver for the AWE32/SB32/AWE64 wave table synth.&n; *   version 0.4.3; Nov. 1, 1998&n; *&n; * Copyright (C) 1996-1998 Takashi Iwai&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/*&n; * sound/awe_wave.c&n; *&n; * The low level driver for the AWE32/SB32/AWE64 wave table synth.&n; *   version 0.4.3; Feb. 1, 1999&n; *&n; * Copyright (C) 1996-1999 Takashi Iwai&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 multiline_comment|/* include initial header files and compatibility macros */
 macro_line|#ifdef __FreeBSD__
 macro_line|#  include &lt;i386/isa/sound/awe_compat.h&gt;
@@ -490,37 +490,72 @@ macro_line|#if defined(AWE_MODULE_SUPPORT) &amp;&amp; defined(MODULE)
 multiline_comment|/* replace awe_port variable with exported variable */
 DECL|macro|awe_port
 mdefine_line|#define awe_port&t;io
-DECL|macro|BASEVAR_DECL
-mdefine_line|#define BASEVAR_DECL&t;/**/
-macro_line|#else
-DECL|macro|BASEVAR_DECL
-mdefine_line|#define BASEVAR_DECL&t;static
-macro_line|#endif /* module */
-multiline_comment|/* awe32 base address (overwritten at initialization) */
-DECL|variable|awe_port
-id|BASEVAR_DECL
+DECL|macro|awe_mem_size
+mdefine_line|#define awe_mem_size&t;memsize
+DECL|variable|io
 r_int
-id|awe_port
+id|io
 op_assign
 id|AWE_DEFAULT_BASE_ADDR
 suffix:semicolon
-multiline_comment|/* memory byte size */
+multiline_comment|/* Emu8000 base address */
 DECL|variable|memsize
-id|BASEVAR_DECL
 r_int
 id|memsize
 op_assign
 id|AWE_DEFAULT_MEM_SIZE
 suffix:semicolon
-multiline_comment|/* for module option */
+multiline_comment|/* memory size in Kbytes */
+macro_line|#ifdef MODULE_PARM
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|io
+comma
+l_string|&quot;base i/o port of Emu8000&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|memsize
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|memsize
+comma
+l_string|&quot;onboard DRAM size in Kbytes&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#else
+DECL|variable|awe_port
+r_static
+r_int
+id|awe_port
+op_assign
+id|AWE_DEFAULT_BASE_ADDR
+suffix:semicolon
 DECL|variable|awe_mem_size
 r_static
 r_int
 id|awe_mem_size
 op_assign
-op_minus
-l_int|1
+id|AWE_DEFAULT_MEM_SIZE
 suffix:semicolon
+macro_line|#endif /* module */
 multiline_comment|/* DRAM start offset */
 DECL|variable|awe_mem_start
 r_static
@@ -2980,7 +3015,7 @@ multiline_comment|/*------------------------------------------------------------
 macro_line|#ifdef CONFIG_PNP_DRV
 macro_line|#include &lt;linux/pnp.h&gt;
 DECL|variable|pnp
-id|BASEVAR_DECL
+r_static
 r_int
 id|pnp
 op_assign
@@ -3592,6 +3627,8 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE_PARM
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -4203,43 +4240,6 @@ id|awe_sleeper
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|function|awe_wakeup
-r_static
-r_void
-id|awe_wakeup
-c_func
-(paren
-r_int
-r_int
-id|dummy
-)paren
-(brace
-id|wake_up
-c_func
-(paren
-op_amp
-id|awe_sleeper
-)paren
-suffix:semicolon
-)brace
-DECL|variable|awe_timer
-r_static
-r_struct
-id|timer_list
-id|awe_timer
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|awe_wakeup
-)brace
-suffix:semicolon
 DECL|function|awe_wait
 r_static
 r_void
@@ -4251,14 +4251,12 @@ r_int
 id|delay
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|awe_timer.expires
-op_assign
-id|jiffies
-op_plus
+id|interruptible_sleep_on_timeout
+c_func
+(paren
+op_amp
+id|awe_sleeper
+comma
 (paren
 id|HZ
 op_star
@@ -4272,35 +4270,6 @@ l_int|44099
 )paren
 op_div
 l_int|44100
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|awe_timer
-)paren
-suffix:semicolon
-id|save_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|sleep_on
-c_func
-(paren
-op_amp
-id|awe_sleeper
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 )brace
@@ -7485,7 +7454,7 @@ l_int|0x8000
 id|awe_poke
 c_func
 (paren
-id|AWE_ENVVAL
+id|AWE_ENVVOL
 c_func
 (paren
 id|voice
@@ -17013,6 +16982,10 @@ suffix:semicolon
 id|sf_id
 OG
 l_int|0
+op_logical_and
+id|sf_id
+op_le
+id|current_sf_id
 suffix:semicolon
 id|sf_id
 op_assign
@@ -21810,6 +21783,10 @@ suffix:semicolon
 id|i
 OG
 l_int|0
+op_logical_and
+id|i
+op_le
+id|current_sf_id
 suffix:semicolon
 id|i
 op_assign
@@ -21924,6 +21901,9 @@ macro_line|#ifdef AWE_ALLOW_SAMPLE_SHARING
 r_if
 c_cond
 (paren
+(paren
+id|i
+op_assign
 id|sflists
 (braket
 id|sf
@@ -21932,6 +21912,13 @@ l_int|1
 )braket
 dot
 id|shared
+)paren
+OG
+l_int|0
+op_logical_and
+id|i
+op_le
+id|current_sf_id
 )paren
 (brace
 multiline_comment|/* search recursively */
@@ -21951,14 +21938,7 @@ r_return
 id|search_sample_index
 c_func
 (paren
-id|sflists
-(braket
-id|sf
-op_minus
-l_int|1
-)braket
-dot
-id|shared
+id|i
 comma
 id|sample
 comma
@@ -22161,19 +22141,6 @@ dot
 id|v.velhigh
 )paren
 (brace
-id|vlist
-(braket
-id|nvoices
-)braket
-op_assign
-op_amp
-id|infos
-(braket
-id|rec
-)braket
-dot
-id|v
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -22186,13 +22153,39 @@ id|type
 op_eq
 id|V_ST_MAPPED
 )paren
+(brace
 multiline_comment|/* mapper */
+id|vlist
+(braket
+l_int|0
+)braket
+op_assign
+op_amp
+id|infos
+(braket
+id|rec
+)braket
+dot
+id|v
+suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
+)brace
+id|vlist
+(braket
 id|nvoices
 op_increment
+)braket
+op_assign
+op_amp
+id|infos
+(braket
+id|rec
+)braket
+dot
+id|v
 suffix:semicolon
 r_if
 c_cond
@@ -27022,21 +27015,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|memsize
-op_ge
-l_int|0
-)paren
-multiline_comment|/* given by config file or module option */
-id|awe_mem_size
-op_assign
-id|memsize
-op_star
-l_int|1024
-suffix:semicolon
-multiline_comment|/* convert to Kbytes */
 r_return
 l_int|1
 suffix:semicolon
@@ -27061,13 +27039,28 @@ r_void
 r_if
 c_cond
 (paren
-id|awe_mem_size
-op_ge
-l_int|0
+id|awe_present
 )paren
 multiline_comment|/* already initialized */
 r_return
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|awe_mem_size
+op_ge
+l_int|0
+)paren
+(brace
+multiline_comment|/* given by config file or module option */
+id|awe_mem_size
+op_mul_assign
+l_int|1024
+suffix:semicolon
+multiline_comment|/* convert to Kbytes */
+r_return
+suffix:semicolon
+)brace
 id|awe_open_dram_for_check
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      uircc.c&n; * Version:       0.1&n; * Description:   Driver for the Sharp Universal Infrared &n; *                Communications Controller (UIRCC)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Dec 26 10:59:03 1998&n; * Modified at:   Tue Jan 19 23:54:04 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Tecra 510CDT, 500C Series, 530CDT, 520CDT,&n; *     740CDT, Portege 300CT, 660CDT, Satellite 220C Series, &n; *     Satellite Pro, 440C Series, 470CDT, 460C Series, 480C Series&n; *&n; *     Notice that FIR mode is not working yet, since I don&squot;t know &n; *     how to make the UIRCC drive the interrupt line, and not the&n; *     UART (which is used for SIR speeds). Please mail me if you know!&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      uircc.c&n; * Version:       0.1&n; * Description:   Driver for the Sharp Universal Infrared &n; *                Communications Controller (UIRCC)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Dec 26 10:59:03 1998&n; * Modified at:   Tue Feb  9 13:30:41 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Tecra 510CDT, 500C Series, 530CDT, 520CDT,&n; *     740CDT, Portege 300CT, 660CDT, Satellite 220C Series, &n; *     Satellite Pro, 440C Series, 470CDT, 460C Series, 480C Series&n; *&n; *     Notice that FIR mode is not working yet, since I don&squot;t know &n; *     how to make the UIRCC drive the interrupt line, and not the&n; *     UART (which is used for SIR speeds). Please mail me if you know!&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -787,6 +787,16 @@ op_amp
 id|idev-&gt;qos
 )paren
 suffix:semicolon
+id|idev-&gt;flags
+op_assign
+id|IFF_FIR
+op_or
+id|IFF_SIR
+op_or
+id|IFF_DMA
+op_or
+id|IFF_PIO
+suffix:semicolon
 multiline_comment|/* Specify which buffer allocation policy we need */
 id|idev-&gt;rx_buff.flags
 op_assign
@@ -1015,6 +1025,7 @@ id|dma
 r_int
 id|version
 suffix:semicolon
+macro_line|#if 0
 r_int
 id|probe_irq
 op_assign
@@ -1027,6 +1038,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+macro_line|#endif
 id|DEBUG
 c_func
 (paren
@@ -1705,29 +1717,6 @@ id|skb
 comma
 id|dev
 )paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-id|__u8
-id|sr3
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), tbusy==TRUE&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EBUSY
 suffix:semicolon
 )brace
 multiline_comment|/* Lock transmit buffer */

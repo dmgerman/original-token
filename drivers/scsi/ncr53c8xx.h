@@ -4,7 +4,7 @@ DECL|macro|NCR53C8XX_H
 mdefine_line|#define NCR53C8XX_H
 multiline_comment|/*&n;**&t;Name and revision of the driver&n;*/
 DECL|macro|SCSI_NCR_DRIVER_NAME
-mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&t;&quot;ncr53c8xx - revision 3.1f&quot;
+mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&t;&quot;ncr53c8xx - revision 3.1h&quot;
 multiline_comment|/*&n;**&t;Check supported Linux versions&n;*/
 macro_line|#if !defined(LINUX_VERSION_CODE)
 macro_line|#include &lt;linux/version.h&gt;
@@ -20,8 +20,6 @@ macro_line|#endif
 multiline_comment|/*&n;**&t;These options are not tunable from &squot;make config&squot;&n;*/
 DECL|macro|SCSI_NCR_PROC_INFO_SUPPORT
 mdefine_line|#define&t;SCSI_NCR_PROC_INFO_SUPPORT
-DECL|macro|SCSI_NCR_SHARE_IRQ
-mdefine_line|#define SCSI_NCR_SHARE_IRQ
 multiline_comment|/*&n;**&t;If you want a driver as small as possible, donnot define the &n;**&t;following options.&n;*/
 DECL|macro|SCSI_NCR_BOOT_COMMAND_LINE_SUPPORT
 mdefine_line|#define SCSI_NCR_BOOT_COMMAND_LINE_SUPPORT

@@ -849,7 +849,6 @@ macro_line|#endif
 multiline_comment|/*&n; * ---------------------------------------------------------------------- &n; * callbacks which accept incoming indication/confirm from IrTTP  (or IrLMP)&n; * ---------------------------------------------------------------------- &n; */
 DECL|function|ircomm_accept_data_indication
 r_void
-(def_block
 id|ircomm_accept_data_indication
 c_func
 (paren
@@ -931,10 +930,8 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-)def_block
 DECL|function|ircomm_accept_connect_confirm
 r_void
-(def_block
 id|ircomm_accept_connect_confirm
 c_func
 (paren
@@ -1076,10 +1073,8 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-)def_block
 DECL|function|ircomm_accept_connect_indication
 r_void
-(def_block
 id|ircomm_accept_connect_indication
 c_func
 (paren
@@ -1202,10 +1197,8 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-)def_block
 DECL|function|ircomm_accept_disconnect_indication
 r_void
-(def_block
 id|ircomm_accept_disconnect_indication
 c_func
 (paren
@@ -1290,10 +1283,8 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-)def_block
 DECL|function|ircomm_accept_flow_indication
 r_void
-(def_block
 id|ircomm_accept_flow_indication
 c_func
 (paren
@@ -1447,12 +1438,10 @@ l_string|&quot;ircomm_accept_flow_indication:unknown status!&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-)def_block
 multiline_comment|/* &n; * ----------------------------------------------------------------------&n; * Implementation of actions,descrived in section 7.4 of the reference.&n; * ----------------------------------------------------------------------&n; */
 DECL|function|issue_connect_request
 r_static
 r_void
-(def_block
 id|issue_connect_request
 c_func
 (paren
@@ -1500,6 +1489,8 @@ id|self-&gt;tsap
 comma
 id|self-&gt;dlsap
 comma
+id|self-&gt;saddr
+comma
 id|self-&gt;daddr
 comma
 l_int|NULL
@@ -1527,6 +1518,8 @@ id|self-&gt;tsap
 comma
 id|self-&gt;dlsap
 comma
+id|self-&gt;saddr
+comma
 id|self-&gt;daddr
 comma
 l_int|NULL
@@ -1552,11 +1545,9 @@ id|self-&gt;servicetype
 suffix:semicolon
 )brace
 )brace
-)def_block
 DECL|function|disconnect_indication
 r_static
 r_void
-(def_block
 id|disconnect_indication
 c_func
 (paren
@@ -1594,11 +1585,9 @@ id|skb
 suffix:semicolon
 )brace
 )brace
-)def_block
 DECL|function|connect_indication
 r_static
 r_void
-(def_block
 id|connect_indication
 c_func
 (paren
@@ -1645,12 +1634,10 @@ id|skb
 suffix:semicolon
 )brace
 )brace
-)def_block
 macro_line|#if 0
 multiline_comment|/*   it&squot;s for THREE_WIRE_RAW.*/
 r_static
 r_void
-(def_block
 id|connect_indication_three_wire_raw
 c_func
 (paren
@@ -1666,12 +1653,10 @@ l_string|&quot;ircomm:connect_indication_threewire():not implemented!&quot;
 )paren
 suffix:semicolon
 )brace
-)def_block
 macro_line|#endif 
 DECL|function|connect_confirmation
 r_static
 r_void
-(def_block
 id|connect_confirmation
 c_func
 (paren
@@ -1711,11 +1696,9 @@ id|skb
 suffix:semicolon
 )brace
 )brace
-)def_block
 DECL|function|issue_connect_response
 r_static
 r_void
-(def_block
 id|issue_connect_response
 c_func
 (paren
@@ -1771,11 +1754,9 @@ id|skb
 suffix:semicolon
 )brace
 )brace
-)def_block
 DECL|function|issue_disconnect_request
 r_static
 r_void
-(def_block
 id|issue_disconnect_request
 c_func
 (paren
@@ -1819,11 +1800,9 @@ id|P_NORMAL
 )paren
 suffix:semicolon
 )brace
-)def_block
 DECL|function|issue_data_request
 r_static
 r_void
-(def_block
 id|issue_data_request
 c_func
 (paren
@@ -1910,11 +1889,9 @@ id|userdata
 suffix:semicolon
 )brace
 )brace
-)def_block
 DECL|function|issue_control_request
 r_static
 r_void
-(def_block
 id|issue_control_request
 c_func
 (paren
@@ -1958,11 +1935,9 @@ id|userdata
 suffix:semicolon
 )brace
 )brace
-)def_block
 DECL|function|process_data
 r_static
 r_void
-(def_block
 id|process_data
 c_func
 (paren
@@ -2031,10 +2006,8 @@ id|skb
 suffix:semicolon
 )brace
 )brace
-)def_block
 DECL|function|ircomm_data_indication
 r_void
-(def_block
 id|ircomm_data_indication
 c_func
 (paren
@@ -2059,7 +2032,6 @@ l_string|&quot;ircomm_data_indication:not implemented yet!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-)def_block
 multiline_comment|/* &n; * ----------------------------------------------------------------------&n; * Implementation of state chart,&n; * descrived in section 7.1 of the specification.&n; * ----------------------------------------------------------------------&n; */
 DECL|function|ircomm_do_event
 r_static
@@ -2158,7 +2130,6 @@ multiline_comment|/* &n; * we currently need dummy (discovering) state for debug
 DECL|function|ircomm_state_discovery
 r_static
 r_void
-(def_block
 id|ircomm_state_discovery
 c_func
 (paren
@@ -2199,12 +2170,10 @@ id|skb
 suffix:semicolon
 )brace
 )brace
-)def_block
 multiline_comment|/*&n; * ircomm_state_idle&n; */
 DECL|function|ircomm_state_idle
 r_static
 r_void
-(def_block
 id|ircomm_state_idle
 c_func
 (paren
@@ -2307,12 +2276,10 @@ id|event
 suffix:semicolon
 )brace
 )brace
-)def_block
 multiline_comment|/*&n; * ircomm_state_waiti&n; */
 DECL|function|ircomm_state_waiti
 r_static
 r_void
-(def_block
 id|ircomm_state_waiti
 c_func
 (paren
@@ -2405,7 +2372,6 @@ id|event
 suffix:semicolon
 )brace
 )brace
-)def_block
 multiline_comment|/*&n; * ircomm_state_waitr&n; */
 DECL|function|ircomm_state_waitr
 r_static
@@ -2546,7 +2512,6 @@ multiline_comment|/*&n; * ircomm_state_conn&n; */
 DECL|function|ircomm_state_conn
 r_static
 r_void
-(def_block
 id|ircomm_state_conn
 c_func
 (paren
@@ -2681,11 +2646,9 @@ id|event
 suffix:semicolon
 )brace
 )brace
-)def_block
 multiline_comment|/*&n; *  ----------------------------------------------------------------------&n; *  ircomm requests&n; *&n; *  ----------------------------------------------------------------------&n; */
 DECL|function|ircomm_connect_request
 r_void
-(def_block
 id|ircomm_connect_request
 c_func
 (paren
@@ -2744,10 +2707,8 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-)def_block
 DECL|function|ircomm_connect_response
 r_void
-(def_block
 id|ircomm_connect_response
 c_func
 (paren
@@ -2883,10 +2844,8 @@ id|userdata
 )paren
 suffix:semicolon
 )brace
-)def_block
 DECL|function|ircomm_disconnect_request
 r_void
-(def_block
 id|ircomm_disconnect_request
 c_func
 (paren
@@ -2942,10 +2901,8 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-)def_block
 DECL|function|ircomm_data_request
 r_void
-(def_block
 id|ircomm_data_request
 c_func
 (paren
@@ -3044,12 +3001,10 @@ id|userdata
 )paren
 suffix:semicolon
 )brace
-)def_block
 multiline_comment|/*&n; *  ----------------------------------------------------------------------&n; *  IrCOMM_control.req and friends&n; *&n; *  ----------------------------------------------------------------------&n; */
 DECL|function|ircomm_tx_ctrlbuffer
 r_static
 r_void
-(def_block
 id|ircomm_tx_ctrlbuffer
 c_func
 (paren
@@ -3198,10 +3153,8 @@ id|skb
 suffix:semicolon
 )brace
 )brace
-)def_block
 DECL|function|ircomm_control_request
 r_void
-(def_block
 id|ircomm_control_request
 c_func
 (paren
@@ -3294,11 +3247,9 @@ id|self
 suffix:semicolon
 )brace
 )brace
-)def_block
 DECL|function|append_tuple
 r_static
 r_void
-(def_block
 id|append_tuple
 c_func
 (paren
@@ -3474,11 +3425,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* PV */
 )brace
-)def_block
 multiline_comment|/*&n; * ircomm_append_ctrl();&n; * this function is exported as a request to send some control-channel tuples&n; * to peer device&n; */
 DECL|function|ircomm_append_ctrl
 r_void
-(def_block
 id|ircomm_append_ctrl
 c_func
 (paren
@@ -4190,11 +4139,9 @@ id|instruction
 suffix:semicolon
 )brace
 )brace
-)def_block
 DECL|function|ircomm_parse_control
 r_static
 r_void
-(def_block
 id|ircomm_parse_control
 c_func
 (paren
@@ -4854,7 +4801,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-)def_block
 multiline_comment|/*&n; * ----------------------------------------------------------------------&n; * Function init_module(void) ,cleanup_module()&n; *&n; *   Initializes the ircomm control structure&n; *   These Function are called when you insmod / rmmod .&n; * ----------------------------------------------------------------------&n; */
 macro_line|#ifdef MODULE
 DECL|function|init_module
@@ -4910,7 +4856,6 @@ macro_line|#ifdef CONFIG_PROC_FS
 multiline_comment|/*&n; * Function proc_ircomm_read (buf, start, offset, len, unused)&n; *&n; * this function is called if there is a access on /proc/irda/comm .&n; *&n; */
 DECL|function|ircomm_proc_read
 r_int
-(def_block
 id|ircomm_proc_read
 c_func
 (paren
@@ -5188,6 +5133,5 @@ r_return
 id|len
 suffix:semicolon
 )brace
-)def_block
 macro_line|#endif /* CONFIG_PROC_FS */
 eof

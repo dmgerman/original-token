@@ -3,7 +3,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/dirent.h&gt;
 macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
@@ -455,7 +454,7 @@ id|inode
 comma
 id|cachep-&gt;status
 comma
-id|entry-&gt;d_name
+id|entry-&gt;name
 comma
 id|fpos
 )paren
@@ -575,7 +574,7 @@ c_func
 (paren
 l_string|&quot;smb_add_to_cache: added entry %s, len=%d, pos=%ld, entries=%d&bslash;n&quot;
 comma
-id|entry-&gt;d_name
+id|entry-&gt;name
 comma
 id|len
 comma

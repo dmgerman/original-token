@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.c&n; * Version:       0.1&n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Tue Dec 15 16:00:35 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.c&n; * Version:       0.8&n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Thu Feb 11 01:22:44 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -7,16 +7,58 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irttp.h&gt;
+macro_line|#include &lt;net/irda/irmod.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
 macro_line|#include &lt;net/irda/irias_object.h&gt;
 macro_line|#include &lt;net/irda/iriap_event.h&gt;
 macro_line|#include &lt;net/irda/iriap.h&gt;
+multiline_comment|/* FIXME: This one should go in irlmp.c */
+DECL|variable|ias_charset_types
+r_static
+r_const
+r_char
+op_star
+id|ias_charset_types
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;CS_ASCII&quot;
+comma
+l_string|&quot;CS_ISO_8859_1&quot;
+comma
+l_string|&quot;CS_ISO_8859_2&quot;
+comma
+l_string|&quot;CS_ISO_8859_3&quot;
+comma
+l_string|&quot;CS_ISO_8859_4&quot;
+comma
+l_string|&quot;CS_ISO_8859_5&quot;
+comma
+l_string|&quot;CS_ISO_8859_6&quot;
+comma
+l_string|&quot;CS_ISO_8859_7&quot;
+comma
+l_string|&quot;CS_ISO_8859_8&quot;
+comma
+l_string|&quot;CS_ISO_8859_9&quot;
+comma
+l_string|&quot;CS_UNICODE&quot;
+)brace
+suffix:semicolon
 DECL|variable|iriap
 id|hashbin_t
 op_star
 id|iriap
 op_assign
 l_int|NULL
+suffix:semicolon
+r_extern
+r_char
+op_star
+id|lmp_reasons
+(braket
+)braket
 suffix:semicolon
 r_static
 r_struct
@@ -88,7 +130,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;--&gt; iriap_init&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Allocate master array */
@@ -209,14 +252,6 @@ c_func
 id|LSAP_IAS
 comma
 id|IAS_SERVER
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;iriap_init --&gt;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -447,7 +482,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;iriap_register: source LSAP sel=%02x&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), source LSAP sel=%02x&bslash;n&quot;
 comma
 id|slsap_sel
 )paren
@@ -468,13 +504,7 @@ id|self-&gt;mode
 op_assign
 id|mode
 suffix:semicolon
-id|init_timer
-c_func
-(paren
-op_amp
-id|self-&gt;watchdog_timer
-)paren
-suffix:semicolon
+multiline_comment|/* init_timer( &amp;self-&gt;watchdog_timer); */
 id|hashbin_insert
 c_func
 (paren
@@ -540,6 +570,15 @@ op_star
 id|self
 )paren
 (brace
+id|DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -562,13 +601,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|del_timer
-c_func
-(paren
-op_amp
-id|self-&gt;watchdog_timer
-)paren
-suffix:semicolon
+multiline_comment|/* del_timer( &amp;self-&gt;watchdog_timer); */
 id|self-&gt;magic
 op_assign
 l_int|0
@@ -592,12 +625,18 @@ op_star
 id|self
 )paren
 (brace
+r_struct
+id|iriap_cb
+op_star
+id|entry
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
 l_int|4
 comma
-l_string|&quot;iriap_close()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -639,6 +678,13 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+id|entry
+op_assign
+(paren
+r_struct
+id|iriap_cb
+op_star
+)paren
 id|hashbin_remove
 c_func
 (paren
@@ -647,6 +693,17 @@ comma
 id|self-&gt;slsap_sel
 comma
 l_int|NULL
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|entry
+op_eq
+id|self
+comma
+r_return
+suffix:semicolon
 )paren
 suffix:semicolon
 id|__iriap_close
@@ -690,7 +747,12 @@ c_func
 l_int|4
 comma
 id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+l_string|&quot;(), reason=%s&bslash;n&quot;
+comma
+id|lmp_reasons
+(braket
+id|reason
+)braket
 )paren
 suffix:semicolon
 id|self
@@ -735,13 +797,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|del_timer
-c_func
-(paren
-op_amp
-id|self-&gt;watchdog_timer
-)paren
-suffix:semicolon
+multiline_comment|/* del_timer( &amp;self-&gt;watchdog_timer); */
 r_if
 c_cond
 (paren
@@ -759,7 +815,7 @@ id|__FUNCTION__
 l_string|&quot;(), disconnect as client&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Inform service user */
+multiline_comment|/* &n;&t;&t; * Inform service user that the request failed by sending &n;&t;&t; * it a NULL value.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -853,7 +909,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;iriap_disconnect_request()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -899,8 +956,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;iriap_getvaluebyclass: &quot;
-l_string|&quot;Could not allocate an sk_buff of length %d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Could not allocate an sk_buff of length %d&bslash;n&quot;
 comma
 l_int|64
 )paren
@@ -1024,9 +1081,6 @@ r_void
 id|iriap_getvaluebyclass_request
 c_func
 (paren
-id|__u32
-id|daddr
-comma
 r_char
 op_star
 id|name
@@ -1034,6 +1088,12 @@ comma
 r_char
 op_star
 id|attr
+comma
+id|__u32
+id|saddr
+comma
+id|__u32
+id|daddr
 comma
 id|CONFIRM_CALLBACK
 id|callback
@@ -1073,7 +1133,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;iriap_getvaluebyclass_request()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|self
@@ -1089,9 +1150,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|self
-op_eq
-l_int|NULL
 )paren
 r_return
 suffix:semicolon
@@ -1111,20 +1171,17 @@ id|self-&gt;daddr
 op_assign
 id|daddr
 suffix:semicolon
+id|self-&gt;saddr
+op_assign
+id|saddr
+suffix:semicolon
 multiline_comment|/* &n;&t; *  Save operation, so we know what the later indication is about&n;&t; */
 id|self-&gt;operation
 op_assign
 id|GET_VALUE_BY_CLASS
 suffix:semicolon
 multiline_comment|/* Give ourselves 7 secs to finish this operation */
-id|iriap_start_watchdog_timer
-c_func
-(paren
-id|self
-comma
-l_int|700
-)paren
-suffix:semicolon
+multiline_comment|/* iriap_start_watchdog_timer( self, 700); */
 id|skb
 op_assign
 id|dev_alloc_skb
@@ -1136,25 +1193,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|skb
-op_eq
-l_int|NULL
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;iriap_getvaluebyclass: &quot;
-l_string|&quot;Could not allocate an sk_buff of length %d&bslash;n&quot;
-comma
-l_int|64
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 id|name_len
 op_assign
 id|strlen
@@ -1306,6 +1349,9 @@ suffix:semicolon
 r_int
 id|n
 suffix:semicolon
+r_int
+id|charset
+suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -1375,7 +1421,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;iriap_getvaluebyclass_confirm: len=%d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), len=%d&bslash;n&quot;
 comma
 id|len
 )paren
@@ -1457,7 +1504,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;iriap_getvaluebyclass_confirm: lsap=%d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), lsap=%d&bslash;n&quot;
 comma
 id|value-&gt;t.integer
 )paren
@@ -1467,23 +1515,55 @@ suffix:semicolon
 r_case
 id|IAS_STRING
 suffix:colon
-multiline_comment|/* FIXME: check len of string, and if string is/should be&n;&t;&t; *  null terminated? */
-id|ASSERT
-c_func
-(paren
+id|charset
+op_assign
 id|fp
 (braket
 id|n
 op_increment
 )braket
-op_eq
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|charset
+)paren
+(brace
+r_case
+id|CS_ASCII
+suffix:colon
+r_break
+suffix:semicolon
+multiline_comment|/* &t;&t;case CS_ISO_8859_1: */
+multiline_comment|/* &t;&t;case CS_ISO_8859_2: */
+multiline_comment|/* &t;&t;case CS_ISO_8859_3: */
+multiline_comment|/* &t;&t;case CS_ISO_8859_4: */
+multiline_comment|/* &t;&t;case CS_ISO_8859_5: */
+multiline_comment|/* &t;&t;case CS_ISO_8859_6: */
+multiline_comment|/* &t;&t;case CS_ISO_8859_7: */
+multiline_comment|/* &t;&t;case CS_ISO_8859_8: */
+multiline_comment|/* &t;&t;case CS_ISO_8859_9: */
+multiline_comment|/* &t;&t;case CS_UNICODE: */
+r_default
+suffix:colon
+id|DEBUG
+c_func
+(paren
 l_int|0
 comma
-r_return
-suffix:semicolon
+id|__FUNCTION__
+l_string|&quot;(), charset %s, not supported&bslash;n&quot;
+comma
+id|ias_charset_types
+(braket
+id|charset
+)braket
 )paren
 suffix:semicolon
-multiline_comment|/* ASCII only! */
+r_return
+suffix:semicolon
+multiline_comment|/* break; */
+)brace
 id|value_len
 op_assign
 id|fp
@@ -1495,7 +1575,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(), strlen=%d&bslash;n&quot;
@@ -1514,10 +1594,20 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+multiline_comment|/* Make sure the string is null-terminated */
+id|fp
+(braket
+id|n
+op_plus
+id|value_len
+)braket
+op_assign
+l_int|0x00
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 l_string|&quot;Got string %s&bslash;n&quot;
 comma
@@ -1634,7 +1724,7 @@ id|self
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function iriap_getvaluebyclass_response ()&n; *&n; *    Send answer to getvaluebyclass_indication back to peer LM-IAS&n; * &n; */
+multiline_comment|/*&n; * Function iriap_getvaluebyclass_response ()&n; *&n; *    Send answer back to remote LM-IAS&n; * &n; */
 DECL|function|iriap_getvaluebyclass_response
 r_void
 id|iriap_getvaluebyclass_response
@@ -1674,7 +1764,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;iriap_getvaluebyclass_response()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -1699,50 +1790,63 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|value
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|value-&gt;len
+op_le
+l_int|1024
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
 multiline_comment|/* Initialize variables */
 id|n
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* &n;&t; *  FIXME: adjust the size of the response after the length of the &n;&t; *  value &n;&t; */
+multiline_comment|/* &n;&t; *  We must adjust the size of the response after the length of the &n;&t; *  value. We add 9 bytes because of the 6 bytes for the frame and&n;&t; *  max 3 bytes for the value coding.&n;&t; */
 id|skb
 op_assign
 id|dev_alloc_skb
 c_func
 (paren
-l_int|64
+id|value-&gt;len
+op_plus
+id|LMP_HEADER
+op_plus
+id|LAP_HEADER
+op_plus
+l_int|9
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|skb
-op_eq
-l_int|NULL
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(),&quot;
-l_string|&quot;Could not allocate an skb of length %d&bslash;n&quot;
-comma
-l_int|64
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/* Reserve space for MUX and LAP header */
 id|skb_reserve
 c_func
 (paren
 id|skb
 comma
-id|LMP_CONTROL_HEADER
+id|LMP_HEADER
 op_plus
 id|LAP_HEADER
 )paren
@@ -1938,18 +2042,6 @@ suffix:semicolon
 r_case
 id|IAS_OCT_SEQ
 suffix:colon
-multiline_comment|/* FIXME:&n;&t;&t; * we can send only 55 octets at this time. &n;&t;&t; * we should be able to send 1024 octets.       TH&n;&t;&t; */
-id|ASSERT
-c_func
-(paren
-id|value-&gt;len
-op_le
-l_int|55
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 id|skb_put
 c_func
 (paren
@@ -2046,8 +2138,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;iriap_getvaluebyclass_response: &quot;
-l_string|&quot;type not implemented!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), type not implemented!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -2106,12 +2198,6 @@ id|attr
 l_int|64
 )braket
 suffix:semicolon
-r_char
-id|both
-(braket
-l_int|128
-)braket
-suffix:semicolon
 r_struct
 id|ias_object
 op_star
@@ -2127,7 +2213,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;iriap_getvaluebyclass_indication()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -2243,35 +2330,13 @@ multiline_comment|/* &n;&t; *  Now, do some advanced parsing! :-) &n;&t; */
 id|DEBUG
 c_func
 (paren
-l_int|9
+l_int|4
 comma
 l_string|&quot;LM-IAS: Looking up %s: %s&bslash;n&quot;
 comma
 id|name
 comma
 id|attr
-)paren
-suffix:semicolon
-id|sprintf
-c_func
-(paren
-id|both
-comma
-l_string|&quot;%s:%s&quot;
-comma
-id|name
-comma
-id|attr
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;LM-IAS: looking for %s&bslash;n&quot;
-comma
-id|both
 )paren
 suffix:semicolon
 id|obj
@@ -2317,7 +2382,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 l_string|&quot;LM-IAS: found %s, id=%d&bslash;n&quot;
 comma
@@ -2373,7 +2438,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 l_string|&quot;LM-IAS: found %s&bslash;n&quot;
 comma
@@ -2422,7 +2487,8 @@ c_func
 (paren
 l_int|6
 comma
-l_string|&quot;iriap_send_ack()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -2458,25 +2524,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|skb
-op_eq
-l_int|NULL
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;iriap_send_ack: &quot;
-l_string|&quot;Could not allocate an sk_buff of length %d&bslash;n&quot;
-comma
-l_int|64
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/* Reserve space for MUX and LAP header */
 id|skb_reserve
 c_func
@@ -2589,16 +2641,11 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;iriap_connect_confirm()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
-id|del_timer
-c_func
-(paren
-op_amp
-id|self-&gt;watchdog_timer
-)paren
-suffix:semicolon
+multiline_comment|/* del_timer( &amp;self-&gt;watchdog_timer); */
 id|iriap_do_client_event
 c_func
 (paren
@@ -2648,7 +2695,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;iriap_connect_indication()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|self
@@ -2741,7 +2789,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;iriap_data_indication()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|self
@@ -2978,7 +3027,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;iriap_data_indication: Unknown op-code: %02x&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown op-code: %02x&bslash;n&quot;
 comma
 id|opcode
 )paren
@@ -3016,7 +3066,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;iriap_call_indication()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -3147,11 +3198,13 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
+suffix:semicolon
+r_return
 suffix:semicolon
 id|ASSERT
 c_func
@@ -3208,39 +3261,6 @@ comma
 l_string|&quot;IAS_OCT_SEQ&quot;
 comma
 l_string|&quot;IAS_STRING&quot;
-)brace
-suffix:semicolon
-multiline_comment|/* FIXME: This one should go in irlmp.c */
-DECL|variable|ias_charset_types
-r_static
-r_char
-op_star
-id|ias_charset_types
-(braket
-)braket
-op_assign
-(brace
-l_string|&quot;CS_ASCII&quot;
-comma
-l_string|&quot;CS_ISO_8859_1&quot;
-comma
-l_string|&quot;CS_ISO_8859_2&quot;
-comma
-l_string|&quot;CS_ISO_8859_3&quot;
-comma
-l_string|&quot;CS_ISO_8859_4&quot;
-comma
-l_string|&quot;CS_ISO_8859_5&quot;
-comma
-l_string|&quot;CS_ISO_8859_6&quot;
-comma
-l_string|&quot;CS_ISO_8859_7&quot;
-comma
-l_string|&quot;CS_ISO_8859_8&quot;
-comma
-l_string|&quot;CS_ISO_8859_9&quot;
-comma
-l_string|&quot;CS_UNICODE&quot;
 )brace
 suffix:semicolon
 DECL|function|irias_proc_read

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.c&n; * Version:       1.0&n; * Description:   IrDA line discipline implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:18:38 1997&n; * Modified at:   Mon Jan 18 15:32:03 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.c&n; * Version:       1.1&n; * Description:   IrDA line discipline implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:18:38 1997&n; * Modified at:   Tue Feb  9 13:08:25 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -684,6 +684,12 @@ id|self-&gt;idev.qos.min_turn_time.bits
 op_assign
 l_int|0x03
 suffix:semicolon
+id|self-&gt;idev.flags
+op_assign
+id|IFF_SIR
+op_or
+id|IFF_PIO
+suffix:semicolon
 id|irda_qos_bits_to_value
 c_func
 (paren
@@ -882,14 +888,6 @@ id|self
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;IrTTY: close() --&gt;&bslash;n&quot;
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* &n; *  Function irtty_change_speed ( self, baud)&n; *&n; *    Change the speed of the serial port. The driver layer must check that&n; *    all transmission has finished using the irtty_wait_until_sent() &n; *    function.&n; */
 DECL|function|irtty_change_speed
@@ -918,6 +916,17 @@ id|self
 suffix:semicolon
 r_int
 id|cflag
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;(), &lt;%ld&gt;&bslash;n&quot;
+comma
+id|jiffies
+)paren
 suffix:semicolon
 id|ASSERT
 c_func
@@ -1190,6 +1199,10 @@ suffix:semicolon
 r_case
 id|ACTISYS_DONGLE
 suffix:colon
+multiline_comment|/* FALLTHROUGH */
+r_case
+id|ACTISYS_PLUS_DONGLE
+suffix:colon
 id|DEBUG
 c_func
 (paren
@@ -1203,6 +1216,26 @@ id|request_module
 c_func
 (paren
 l_string|&quot;actisys&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|GIRBIL_DONGLE
+suffix:colon
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), GIrBIL dongle!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|request_module
+c_func
+(paren
+l_string|&quot;girbil&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1621,7 +1654,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; *  Unwrap and destuff one byte&n;&t;&t; */
+multiline_comment|/* Unwrap and destuff one byte */
 id|async_unwrap_char
 c_func
 (paren
@@ -1633,7 +1666,6 @@ id|cp
 op_increment
 )paren
 suffix:semicolon
-multiline_comment|/* self-&gt;rx_over_errors++; */
 )brace
 )brace
 multiline_comment|/*&n; * Function irtty_hard_xmit (skb, dev)&n; *&n; *    Transmit skb&n; *&n; */
@@ -1693,26 +1725,6 @@ l_int|0
 suffix:semicolon
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), tbusy==TRUE&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-)brace
 id|idev
 op_assign
 (paren
@@ -1798,7 +1810,8 @@ op_eq
 id|FALSE
 )paren
 r_return
-l_int|0
+op_minus
+id|EBUSY
 suffix:semicolon
 multiline_comment|/*  &n;&t; *  Transfer skb to tx_buff while wrapping, stuffing and making CRC &n;&t; */
 id|idev-&gt;tx_buff.len
@@ -1855,6 +1868,13 @@ op_assign
 id|idev-&gt;tx_buff.data
 op_plus
 id|actual
+suffix:semicolon
+id|idev-&gt;stats.tx_packets
+op_increment
+suffix:semicolon
+id|idev-&gt;stats.tx_bytes
+op_add_assign
+id|idev-&gt;tx_buff.len
 suffix:semicolon
 macro_line|#if 0
 multiline_comment|/* &n;&t; *  Did we transmit the whole frame? Commented out for now since&n;&t; *  I must check if this optimalization really works. DB.&n;&t; */
@@ -2022,13 +2042,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Unlock */
-id|idev-&gt;stats.tx_packets
-op_increment
-suffix:semicolon
-id|idev-&gt;stats.tx_bytes
-op_add_assign
-id|idev-&gt;tx_buff.len
-suffix:semicolon
 multiline_comment|/* Tell network layer that we want more frames */
 id|mark_bh
 c_func
@@ -2069,18 +2082,6 @@ suffix:semicolon
 id|idev-&gt;tx_buff.head
 op_add_assign
 id|actual
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;actual=%d, sent %d&bslash;n&quot;
-comma
-id|actual
-comma
-id|count
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irtty_is_receiving (idev)&n; *&n; *    Return TRUE is we are currently receiving a frame&n; *&n; */
@@ -2228,6 +2229,7 @@ id|dongle_q
 op_star
 )paren
 id|kmalloc
+c_func
 (paren
 r_sizeof
 (paren
@@ -2345,6 +2347,106 @@ id|node
 )paren
 suffix:semicolon
 )brace
+DECL|function|irtty_set_dtr_rts
+r_void
+id|irtty_set_dtr_rts
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_int
+id|dtr
+comma
+r_int
+id|rts
+)paren
+(brace
+id|mm_segment_t
+id|fs
+suffix:semicolon
+r_int
+id|arg
+op_assign
+id|TIOCM_OUT2
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rts
+)paren
+id|arg
+op_or_assign
+id|TIOCM_RTS
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dtr
+)paren
+id|arg
+op_or_assign
+id|TIOCM_DTR
+suffix:semicolon
+multiline_comment|/*&n;&t; *  The ioctl() function, or actually set_modem_info() in serial.c&n;&t; *  expects a pointer to the argument in user space. To hack us&n;&t; *  around this, we use the set_fs() function to fool the routines &n;&t; *  that check if they are called from user space. We also need &n;&t; *  to send a pointer to the argument so get_user() gets happy. DB.&n;&t; */
+id|fs
+op_assign
+id|get_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+id|set_fs
+c_func
+(paren
+id|get_ds
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tty-&gt;driver
+dot
+id|ioctl
+c_func
+(paren
+id|tty
+comma
+l_int|NULL
+comma
+id|TIOCMSET
+comma
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|arg
+)paren
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), error!&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|set_fs
+c_func
+(paren
+id|fs
+)paren
+suffix:semicolon
+)brace
 DECL|function|irtty_net_init
 r_static
 r_int
@@ -2454,6 +2556,18 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Dag Brattli &lt;dagb@cs.uit.no&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;IrDA TTY device driver&quot;
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Function init_module (void)&n; *&n; *    Initialize IrTTY module&n; *&n; */
 DECL|function|init_module
 r_int

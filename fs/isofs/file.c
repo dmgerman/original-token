@@ -7,7 +7,6 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/iso_fs.h&gt;
 multiline_comment|/*&n; * We have mostly NULLs here: the current defaults are OK for&n; * the isofs filesystem.&n; */
 DECL|variable|isofs_file_operations
 r_static

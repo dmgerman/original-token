@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.c&n; * Version:       0.8&n; * Description:   FIR/MIR driver for the Winbond W83977AF Super I/O chip&n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Wed Nov  4 11:46:16 1998&n; * Modified at:   Mon Dec 14 21:51:53 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Corel Computer Corp.&n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Paul VanderSpek nor Corel Computer Corp. admit liability&n; *     nor provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; *     If you find bugs in this file, its very likely that the same bug&n; *     will also be in w83977af_ir.c since the implementations is quite&n; *     similar.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb( iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb( bank, iobase+BSR);&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.c&n; * Version:       0.8&n; * Description:   FIR/MIR driver for the Winbond W83977AF Super I/O chip&n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Wed Nov  4 11:46:16 1998&n; * Modified at:   Tue Feb  9 13:30:35 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Corel Computer Corp.&n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Paul VanderSpek nor Corel Computer Corp. admit liability&n; *     nor provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; *     If you find bugs in this file, its very likely that the same bug&n; *     will also be in w83977af_ir.c since the implementations is quite&n; *     similar.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb( iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb( bank, iobase+BSR);&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -728,6 +728,18 @@ c_func
 op_amp
 id|idev-&gt;qos
 )paren
+suffix:semicolon
+id|idev-&gt;flags
+op_assign
+id|IFF_FIR
+op_or
+id|IFF_MIR
+op_or
+id|IFF_SIR
+op_or
+id|IFF_DMA
+op_or
+id|IFF_PIO
 suffix:semicolon
 multiline_comment|/* Specify which buffer allocation policy we need */
 id|idev-&gt;rx_buff.flags
@@ -1773,26 +1785,6 @@ r_int
 id|skb-&gt;len
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), tbusy==TRUE&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-)brace
 multiline_comment|/* Lock transmit buffer */
 r_if
 c_cond

@@ -1275,13 +1275,6 @@ op_add_assign
 id|map_size
 suffix:semicolon
 )brace
-id|vma-&gt;vm_file
-op_assign
-id|file
-suffix:semicolon
-id|file-&gt;f_count
-op_increment
-suffix:semicolon
 id|vma-&gt;vm_flags
 op_or_assign
 id|VM_IO

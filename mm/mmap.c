@@ -1122,6 +1122,13 @@ id|error
 r_goto
 id|unmap_and_free_vma
 suffix:semicolon
+id|vma-&gt;vm_file
+op_assign
+id|file
+suffix:semicolon
+id|file-&gt;f_count
+op_increment
+suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * merge_segments may merge our vma, so we can&squot;t refer to it&n;&t; * after the call.  Save the values we need now ...&n;&t; */
 id|flags

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.1&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Tue Jan 19 22:58:45 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.8&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Thu Feb 11 00:38:58 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -358,6 +358,7 @@ op_star
 suffix:semicolon
 DECL|variable|irlap_event
 r_static
+r_const
 r_char
 op_star
 id|irlap_event
@@ -426,6 +427,7 @@ comma
 )brace
 suffix:semicolon
 DECL|variable|irlap_state
+r_const
 r_char
 op_star
 id|irlap_state
@@ -717,7 +719,7 @@ id|irlap_poll_timer_expired
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlap_do_event (event, skb, info)&n; *&n; *    Rushes through the state machine without any delay. If state = XMIT&n; *    then send queued data frames. &n; */
+multiline_comment|/*&n; * Function irlap_do_event (event, skb, info)&n; *&n; *    Rushes through the state machine without any delay. If state == XMIT&n; *    then send queued data frames. &n; */
 DECL|function|irlap_do_event
 r_void
 id|irlap_do_event
@@ -745,11 +747,6 @@ id|info
 r_int
 id|ret
 suffix:semicolon
-r_int
-id|iter
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -760,24 +757,15 @@ id|self-&gt;magic
 op_ne
 id|LAP_MAGIC
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;irlap_do_event: bad pointer *self&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 id|DEBUG
 c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlap_do_event: event = %s, state = %s&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), event = %s, state = %s&bslash;n&quot;
 comma
 id|irlap_event
 (braket
@@ -790,7 +778,6 @@ id|self-&gt;state
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; *  Do event, this implementation does not deal with pending events. &n;&t; *  This is because I don&squot;t see the need for this. DB&n;&t; */
 id|ret
 op_assign
 (paren
@@ -810,23 +797,21 @@ comma
 id|info
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; *  Check if we have switched to XMIT state? If so, send queued data &n;&t; *  frames if any, if -1 is returned it means that we are not allowed &n;&t; *  to send any more frames.  &n;&t; */
-r_while
-c_loop
-(paren
-(paren
-id|self-&gt;state
-op_eq
-id|LAP_XMIT_P
-)paren
-op_logical_or
+multiline_comment|/* &n;&t; *  Check if there are any pending events that needs to be executed&n;&t; */
+r_switch
+c_cond
 (paren
 id|self-&gt;state
-op_eq
-id|LAP_XMIT_S
-)paren
 )paren
 (brace
+r_case
+id|LAP_XMIT_P
+suffix:colon
+multiline_comment|/* FALLTHROUGH */
+r_case
+id|LAP_XMIT_S
+suffix:colon
+multiline_comment|/* &n;&t;&t; * Check if there are any queued data frames, and do not&n;&t;&t; * try to disconnect link if we send any data frames, since&n;&t;&t; * that will change the state away form XMIT&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -836,13 +821,13 @@ c_func
 op_amp
 id|self-&gt;tx_list
 )paren
-OG
-l_int|0
 )paren
 (brace
-r_struct
-id|sk_buff
-op_star
+multiline_comment|/* Try to send away all queued data frames */
+r_while
+c_loop
+(paren
+(paren
 id|skb
 op_assign
 id|skb_dequeue
@@ -851,26 +836,11 @@ c_func
 op_amp
 id|self-&gt;tx_list
 )paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|skb
+)paren
 op_ne
 l_int|NULL
-comma
-r_return
-suffix:semicolon
 )paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;** Sending queued data frames&bslash;n&quot;
-)paren
-suffix:semicolon
+(brace
 id|ret
 op_assign
 (paren
@@ -898,21 +868,16 @@ op_eq
 op_minus
 id|EPROTO
 )paren
-r_return
+r_break
 suffix:semicolon
 multiline_comment|/* Try again later! */
 )brace
+)brace
 r_else
-r_return
-suffix:semicolon
-multiline_comment|/* Just in case :-) */
 r_if
 c_cond
 (paren
-id|iter
-op_increment
-OG
-l_int|100
+id|self-&gt;disconnect_pending
 )paren
 (brace
 id|DEBUG
@@ -921,12 +886,78 @@ c_func
 l_int|0
 comma
 id|__FUNCTION__
-l_string|&quot;(), *** breaking!! ***&bslash;n&quot;
+l_string|&quot;(), disconnecting!&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|self-&gt;disconnect_pending
+op_assign
+id|FALSE
+suffix:semicolon
+id|ret
+op_assign
+(paren
+op_star
+id|state
+(braket
+id|self-&gt;state
+)braket
+)paren
+(paren
+id|self
+comma
+id|DISCONNECT_REQUEST
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 )brace
+r_break
+suffix:semicolon
+r_case
+id|LAP_NDM
+suffix:colon
+multiline_comment|/* Check if we should try to connect */
+r_if
+c_cond
+(paren
+id|self-&gt;connect_pending
+)paren
+(brace
+id|self-&gt;connect_pending
+op_assign
+id|FALSE
+suffix:semicolon
+id|ret
+op_assign
+(paren
+op_star
+id|state
+(braket
+id|self-&gt;state
+)braket
+)paren
+(paren
+id|self
+comma
+id|CONNECT_REQUEST
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+multiline_comment|/* &t;case LAP_CONN: */
+multiline_comment|/* &t;case LAP_RESET_WAIT: */
+multiline_comment|/* &t;case LAP_RESET_CHECK: */
+r_default
+suffix:colon
+r_break
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Function irlap_next_state (self, state)&n; *&n; *    Switches state and provides debug information&n; *&n; */
@@ -954,18 +985,8 @@ id|self-&gt;magic
 op_ne
 id|LAP_MAGIC
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irlap_next_state: I have lost myself!&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 id|DEBUG
 c_func
 (paren
@@ -1228,7 +1249,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irlap_discovery_request: media busy!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), media busy!&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* irlap-&gt;log.condition = MEDIA_BUSY; */
@@ -1284,7 +1306,7 @@ c_func
 (paren
 id|self
 comma
-id|SLOT_TIMEOUT
+id|self-&gt;slot_timeout
 )paren
 suffix:semicolon
 id|irlap_next_state
@@ -1606,7 +1628,7 @@ c_func
 (paren
 id|self
 comma
-id|SLOT_TIMEOUT
+id|self-&gt;slot_timeout
 )paren
 suffix:semicolon
 multiline_comment|/* Keep state */
@@ -1784,7 +1806,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), QUERY_TIMER_EXPIRED &lt;%ld&gt;&bslash;n&quot;
@@ -1926,7 +1948,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unknown event %d, %s&bslash;n&quot;
@@ -1943,8 +1965,6 @@ r_if
 c_cond
 (paren
 id|skb
-op_ne
-l_int|NULL
 )paren
 id|dev_kfree_skb
 c_func
@@ -2200,7 +2220,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unknown event %d, %s&bslash;n&quot;
@@ -2590,14 +2610,8 @@ id|self-&gt;retry_count
 op_assign
 l_int|0
 suffix:semicolon
-id|irlap_send_rr_frame
-c_func
-(paren
-id|self
-comma
-id|CMD_FRAME
-)paren
-suffix:semicolon
+multiline_comment|/* This frame will just be sent at the old speed */
+multiline_comment|/* irlap_send_rr_frame( self, CMD_FRAME); */
 id|irlap_start_final_timer
 c_func
 (paren
@@ -2717,7 +2731,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlap_state_xmit_p (self, event, skb, info)&n; * &n; *    XMIT, Only the primary station has right to transmit, and we therefor&n; *    do not expect to receive any transmissions from other stations.  &n; *&n; */
+multiline_comment|/*&n; * Function irlap_state_xmit_p (self, event, skb, info)&n; * &n; *    XMIT, Only the primary station has right to transmit, and we&n; *    therefore do not expect to receive any transmissions from other&n; *    stations.&n; * &n; */
 DECL|function|irlap_state_xmit_p
 r_static
 r_int
@@ -2960,6 +2974,12 @@ comma
 id|LAP_NRM_P
 )paren
 suffix:semicolon
+multiline_comment|/* &n;&t;&t;&t;&t; * Make sure state machine does not try to send&n;&t;&t;&t;&t; * any more frames &n;&t;&t;&t;&t; */
+id|ret
+op_assign
+op_minus
+id|EPROTO
+suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_IRDA_FAST_RR
 multiline_comment|/* Peer may want to reply immediately */
@@ -3082,7 +3102,20 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/* DEBUG( 0, &quot;irlap_state_xmit: Unknown event&quot;); */
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %s&bslash;n&quot;
+comma
+id|irlap_event
+(braket
+id|event
+)braket
+)paren
+suffix:semicolon
 id|ret
 op_assign
 op_minus
@@ -3129,7 +3162,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -3274,7 +3307,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unknown event %d&bslash;n&quot;
@@ -3557,7 +3590,7 @@ id|NR_INVALID
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 l_string|&quot;irlap_state_nrm_p: received RR with &quot;
 l_string|&quot;invalid nr !&bslash;n&quot;
@@ -4259,17 +4292,19 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
-l_string|&quot;irlap_state_nrm_p: Not implemented!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Not implemented!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
-l_string|&quot;event=%s, ns_status=%d, nr_status=%d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), event=%s, ns_status=%d, nr_status=%d&bslash;n&quot;
 comma
 id|irlap_event
 (braket
@@ -4569,7 +4604,7 @@ multiline_comment|/* FIXME: Check how this is in the standard! */
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), RECV_DISC_FRAME()&bslash;n&quot;
@@ -4644,7 +4679,20 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/* DEBUG( 0, &quot;irlap_state_nrm_p: Unknown event&quot;); */
+id|DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %s&bslash;n&quot;
+comma
+id|irlap_event
+(braket
+id|event
+)braket
+)paren
+suffix:semicolon
 id|ret
 op_assign
 op_minus
@@ -4848,7 +4896,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unknown event %s&bslash;n&quot;
@@ -5190,7 +5238,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unknown event %s&bslash;n&quot;
@@ -5434,6 +5482,12 @@ comma
 id|LAP_NRM_S
 )paren
 suffix:semicolon
+multiline_comment|/* &n;&t;&t;&t;&t; * Make sure state machine does not try to send&n;&t;&t;&t;&t; * any more frames &n;&t;&t;&t;&t; */
+id|ret
+op_assign
+op_minus
+id|EPROTO
+suffix:semicolon
 )brace
 )brace
 r_else
@@ -5441,7 +5495,7 @@ r_else
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unable to send!&bslash;n&quot;
@@ -5469,7 +5523,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unknown event %s&bslash;n&quot;
@@ -5762,11 +5816,10 @@ r_else
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
-l_string|&quot;(), &quot;
-l_string|&quot;invalid nr not implemented!&bslash;n&quot;
+l_string|&quot;(), invalid nr not implemented!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -6429,9 +6482,10 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
-l_string|&quot;irlap_state_nrm_s: received SNRM cmd&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), received SNRM cmd&bslash;n&quot;
 )paren
 suffix:semicolon
 id|irlap_next_state
@@ -6467,9 +6521,10 @@ multiline_comment|/*&n;&t;&t; *  Wait until retry_count * n matches negotiated t
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
-l_string|&quot;retry_count = %d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), retry_count = %d&bslash;n&quot;
 comma
 id|self-&gt;retry_count
 )paren
@@ -6726,7 +6781,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unknown event %d, (%s)&bslash;n&quot;
@@ -6824,7 +6879,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), event=%s&bslash;n&quot;
@@ -6937,7 +6992,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unknown event %d, (%s)&bslash;n&quot;

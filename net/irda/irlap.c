@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.c&n; * Version:       0.8&n; * Description:   An IrDA LAP driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Sat Jan 16 22:19:27 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute iyt and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.c&n; * Version:       0.9&n; * Description:   An IrDA LAP driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Sat Feb 20 01:39:58 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute iyt and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -23,6 +23,12 @@ id|irlap
 op_assign
 l_int|NULL
 suffix:semicolon
+DECL|variable|sysctl_slot_timeout
+r_int
+id|sysctl_slot_timeout
+op_assign
+id|SLOT_TIMEOUT
+suffix:semicolon
 r_static
 r_void
 id|__irlap_close
@@ -34,6 +40,33 @@ op_star
 id|self
 )paren
 suffix:semicolon
+DECL|variable|lap_reasons
+r_static
+r_char
+op_star
+id|lap_reasons
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;ERROR, NOT USED&quot;
+comma
+l_string|&quot;LAP_DISC_INDICATION&quot;
+comma
+l_string|&quot;LAP_NO_RESPONSE&quot;
+comma
+l_string|&quot;LAP_RESET_INDICATION&quot;
+comma
+l_string|&quot;LAP_FOUND_NONE&quot;
+comma
+l_string|&quot;LAP_MEDIA_BUSY&quot;
+comma
+l_string|&quot;LAP_PRIMARY_CONFLICT&quot;
+comma
+l_string|&quot;ERROR, NOT USED&quot;
+comma
+)brace
+suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 r_int
 id|irlap_proc_read
@@ -41,21 +74,16 @@ c_func
 (paren
 r_char
 op_star
-id|buf
 comma
 r_char
 op_star
 op_star
-id|start
 comma
 id|off_t
-id|offset
 comma
 r_int
-id|len
 comma
 r_int
-id|unused
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
@@ -408,14 +436,6 @@ op_amp
 id|self-&gt;notify
 )paren
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irlap_open --&gt;&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 id|self
 suffix:semicolon
@@ -517,8 +537,7 @@ l_int|NULL
 suffix:semicolon
 id|self-&gt;magic
 op_assign
-op_complement
-id|LAP_MAGIC
+l_int|0
 suffix:semicolon
 id|kfree
 c_func
@@ -616,7 +635,7 @@ id|lap
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Didn&squot;t find myself!&bslash;n&quot;
@@ -693,6 +712,10 @@ id|irlmp_link_connect_indication
 c_func
 (paren
 id|self-&gt;notify.instance
+comma
+id|self-&gt;saddr
+comma
+id|self-&gt;daddr
 comma
 op_amp
 id|self-&gt;qos_tx
@@ -814,7 +837,6 @@ id|self-&gt;state
 op_eq
 id|LAP_NDM
 )paren
-(brace
 id|irlap_do_event
 c_func
 (paren
@@ -827,27 +849,11 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;() Wrong state!&bslash;n&quot;
-)paren
+id|self-&gt;connect_pending
+op_assign
+id|TRUE
 suffix:semicolon
-id|irlap_disconnect_indication
-c_func
-(paren
-id|self
-comma
-id|LAP_MEDIA_BUSY
-)paren
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Function irlap_connect_confirm (void)&n; *&n; *    Connection request is accepted&n; *&n; */
 DECL|function|irlap_connect_confirm
@@ -1007,7 +1013,7 @@ id|skb
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Decompress error!&bslash;n&quot;
@@ -1049,7 +1055,7 @@ id|skb
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -1126,7 +1132,7 @@ id|skb
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Decompress error!&bslash;n&quot;
@@ -1216,7 +1222,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlap_data_request: tx_list=%d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), tx_list=%d&bslash;n&quot;
 comma
 id|skb_queue_len
 c_func
@@ -1253,7 +1260,7 @@ id|skb
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Compress error!&bslash;n&quot;
@@ -1424,7 +1431,7 @@ id|self
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|3
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -1452,6 +1459,31 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|self-&gt;state
+)paren
+(brace
+r_case
+id|LAP_XMIT_P
+suffix:colon
+multiline_comment|/* FALLTROUGH */
+r_case
+id|LAP_XMIT_S
+suffix:colon
+multiline_comment|/* FALLTROUGH */
+r_case
+id|LAP_CONN
+suffix:colon
+multiline_comment|/* FALLTROUGH */
+r_case
+id|LAP_RESET_WAIT
+suffix:colon
+multiline_comment|/* FALLTROUGH */
+r_case
+id|LAP_RESET_CHECK
+suffix:colon
 id|irlap_do_event
 c_func
 (paren
@@ -1464,6 +1496,26 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), disconnect pending!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|self-&gt;disconnect_pending
+op_assign
+id|TRUE
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Function irlap_disconnect_indication (void)&n; *&n; *    Disconnect request from other device&n; *&n; */
 DECL|function|irlap_disconnect_indication
@@ -1483,10 +1535,15 @@ id|reason
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|1
 comma
 id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+l_string|&quot;(), reason=%s&bslash;n&quot;
+comma
+id|lap_reasons
+(braket
+id|reason
+)braket
 )paren
 suffix:semicolon
 id|ASSERT
@@ -1538,9 +1595,10 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
-l_string|&quot;Sending reset request!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Sending reset request!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|irlap_do_event
@@ -1560,12 +1618,15 @@ suffix:semicolon
 r_case
 id|LAP_NO_RESPONSE
 suffix:colon
+multiline_comment|/* FALLTROUGH */
 r_case
 id|LAP_DISC_INDICATION
 suffix:colon
+multiline_comment|/* FALLTROUGH */
 r_case
 id|LAP_FOUND_NONE
 suffix:colon
+multiline_comment|/* FALLTROUGH */
 r_case
 id|LAP_MEDIA_BUSY
 suffix:colon
@@ -1588,7 +1649,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Reason %d not implemented!&bslash;n&quot;
@@ -1651,6 +1712,48 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;(), nslots = %d&bslash;n&quot;
+comma
+id|discovery-&gt;nslots
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+(paren
+id|discovery-&gt;nslots
+op_eq
+l_int|1
+)paren
+op_logical_or
+(paren
+id|discovery-&gt;nslots
+op_eq
+l_int|6
+)paren
+op_logical_or
+(paren
+id|discovery-&gt;nslots
+op_eq
+l_int|8
+)paren
+op_logical_or
+(paren
+id|discovery-&gt;nslots
+op_eq
+l_int|16
+)paren
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *  Discovery is only possible in NDM mode&n;&t; */
 r_if
 c_cond
@@ -1681,7 +1784,7 @@ id|HB_LOCAL
 suffix:semicolon
 id|info.S
 op_assign
-l_int|6
+id|discovery-&gt;nslots
 suffix:semicolon
 multiline_comment|/* Number of slots */
 id|info.s
@@ -1696,6 +1799,56 @@ suffix:semicolon
 id|info.discovery
 op_assign
 id|discovery
+suffix:semicolon
+multiline_comment|/* Check if the slot timeout is within limits */
+r_if
+c_cond
+(paren
+id|sysctl_slot_timeout
+OL
+l_int|2
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), to low value for slot timeout!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|sysctl_slot_timeout
+op_assign
+l_int|2
+suffix:semicolon
+)brace
+multiline_comment|/* &n;&t;&t; * Highest value is actually 8, but we allow higher since&n;&t;&t; * some devices seems to require it.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|sysctl_slot_timeout
+OG
+l_int|16
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), to high value for slot timeout!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|sysctl_slot_timeout
+op_assign
+l_int|16
+suffix:semicolon
+)brace
+id|self-&gt;slot_timeout
+op_assign
+id|sysctl_slot_timeout
 suffix:semicolon
 id|irlap_do_event
 c_func
@@ -1779,6 +1932,28 @@ l_int|NULL
 comma
 r_return
 suffix:semicolon
+)paren
+suffix:semicolon
+multiline_comment|/* &n;&t; * Check for successful discovery, since we are then allowed to clear &n;&t; * the media busy condition (irlap p.94). This should allow us to make &n;&t; * connection attempts much easier.&n;&t; */
+r_if
+c_cond
+(paren
+id|discovery_log
+op_logical_and
+id|hashbin_get_size
+c_func
+(paren
+id|discovery_log
+)paren
+OG
+l_int|0
+)paren
+id|irda_device_set_media_busy
+c_func
+(paren
+id|self-&gt;irdev
+comma
+id|FALSE
 )paren
 suffix:semicolon
 multiline_comment|/* Inform IrLMP */
@@ -1919,7 +2094,6 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* TODO: layering violation! */
 id|irlmp_status_indication
 c_func
 (paren
@@ -1944,7 +2118,7 @@ id|self
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -2017,7 +2191,7 @@ r_void
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -2361,7 +2535,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;*** irlap_validate_ns_received: expected!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), expected!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2429,7 +2604,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;*** irlap_validate_nr_received: expected!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), expected!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2507,7 +2683,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlap_initiate_connection_state()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -2842,7 +3019,7 @@ id|self-&gt;irdev
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), driver missing!&bslash;n&quot;
@@ -3137,14 +3314,12 @@ r_if
 c_cond
 (paren
 id|qos_user
-op_ne
-l_int|NULL
 )paren
 (brace
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Found user specified QoS!&bslash;n&quot;
@@ -3275,6 +3450,10 @@ op_assign
 l_int|11
 suffix:semicolon
 multiline_comment|/* Use these until connection has been made */
+id|self-&gt;slot_timeout
+op_assign
+id|sysctl_slot_timeout
+suffix:semicolon
 id|self-&gt;final_timeout
 op_assign
 id|FINAL_TIMEOUT
@@ -3300,6 +3479,10 @@ c_func
 (paren
 id|self
 )paren
+suffix:semicolon
+id|self-&gt;disconnect_pending
+op_assign
+id|FALSE
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlap_apply_connection_parameters (qos)&n; *&n; *    Initialize IrLAP with the negotiated QoS values&n; *&n; */
@@ -3402,7 +3585,6 @@ op_assign
 l_int|0
 suffix:semicolon
 r_else
-multiline_comment|/* self-&gt;N1 = 6; */
 id|self-&gt;N1
 op_assign
 l_int|3000
@@ -3419,7 +3601,6 @@ comma
 id|self-&gt;N1
 )paren
 suffix:semicolon
-multiline_comment|/* self-&gt;N2 = qos-&gt;link_disc_time.value * 2; */
 id|self-&gt;N2
 op_assign
 id|qos-&gt;link_disc_time.value
@@ -3467,7 +3648,7 @@ id|qos-&gt;compression.value
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Initializing compression&bslash;n&quot;
@@ -3603,7 +3784,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;IrLAP[%d] &lt;-&gt; %s &quot;
+l_string|&quot;irlap%d &lt;-&gt; %s &quot;
 comma
 id|i
 op_increment

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlpt_srvr_fsm.c&n; * Version:       0.1&n; * Sources:       irlan_event.c&n; * &n; *     Copyright (c) 1997, Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     I, Thomas Davis, provide no warranty for any of this software. This &n; *     material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlpt_srvr_fsm.c&n; * Version:       0.1&n; * Sources:       irlan_event.c&n; * &n; *     Copyright (c) 1997, Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *&t;&t;All Rights Reserved.&n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;, &n; *&t;&t;All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     I, Thomas Davis, provide no warranty for any of this software. This &n; *     material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;net/irda/iriap.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
 macro_line|#include &lt;net/irda/irttp.h&gt;
@@ -65,8 +65,9 @@ DECL|variable|irlpt_server_fsm_debug
 r_int
 id|irlpt_server_fsm_debug
 op_assign
-l_int|3
+l_int|4
 suffix:semicolon
+multiline_comment|/* don&squot;t change this! */
 DECL|variable|irlpt_server_state
 r_static
 r_int
@@ -341,14 +342,22 @@ c_func
 id|irlpt_server_fsm_debug
 comma
 id|__FUNCTION__
-l_string|&quot;: LM_CONNECT, remote lsap=%d&bslash;n&quot;
+l_string|&quot;: LM_CONNECT, remote lsap: 0x%08x&bslash;n&quot;
 comma
-id|info-&gt;dlsap_sel
+id|info-&gt;lsap-&gt;dlsap_sel
 )paren
 suffix:semicolon
 id|self-&gt;dlsap_sel
 op_assign
-id|info-&gt;dlsap_sel
+id|info-&gt;lsap-&gt;dlsap_sel
+suffix:semicolon
+id|self-&gt;daddr
+op_assign
+id|info-&gt;daddr
+suffix:semicolon
+id|self-&gt;saddr
+op_assign
+id|info-&gt;saddr
 suffix:semicolon
 id|r_skb
 op_assign
@@ -378,12 +387,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|ALLOC_SKB_MAGIC
-c_func
-(paren
-id|r_skb
-)paren
-suffix:semicolon
 id|skb_reserve
 c_func
 (paren
@@ -391,10 +394,6 @@ id|r_skb
 comma
 id|LMP_MAX_HEADER
 )paren
-suffix:semicolon
-id|skb-&gt;len
-op_assign
-l_int|0
 suffix:semicolon
 id|irlmp_connect_response
 c_func

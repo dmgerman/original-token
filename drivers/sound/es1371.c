@@ -8936,13 +8936,6 @@ id|db-&gt;mapped
 op_assign
 l_int|1
 suffix:semicolon
-id|vma-&gt;vm_file
-op_assign
-id|file
-suffix:semicolon
-id|file-&gt;f_count
-op_increment
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -11894,13 +11887,6 @@ suffix:semicolon
 id|s-&gt;dma_dac1.mapped
 op_assign
 l_int|1
-suffix:semicolon
-id|vma-&gt;vm_file
-op_assign
-id|file
-suffix:semicolon
-id|file-&gt;f_count
-op_increment
 suffix:semicolon
 r_return
 l_int|0

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap_event.c&n; * Version:       0.1&n; * Description:   IAP Finite State Machine&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Wed Dec  9 02:20:02 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap_event.c&n; * Version:       0.1&n; * Description:   IAP Finite State Machine&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Tue Jan 26 12:29:36 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
 macro_line|#include &lt;net/irda/iriap.h&gt;
@@ -792,6 +792,9 @@ op_star
 id|skb
 )paren
 (brace
+r_int
+id|ret
+suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -835,12 +838,16 @@ id|self-&gt;skb
 op_assign
 id|skb
 suffix:semicolon
+id|ret
+op_assign
 id|irlmp_connect_request
 c_func
 (paren
 id|self-&gt;lsap
 comma
 id|LSAP_IAS
+comma
+id|self-&gt;saddr
 comma
 id|self-&gt;daddr
 comma
@@ -863,7 +870,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;state_s_disconnect: Unknown event %d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %d&bslash;n&quot;
 comma
 id|event
 )paren

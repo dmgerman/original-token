@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.95 1999/02/08 11:20:03 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.96 1999/03/05 13:23:13 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -5419,12 +5419,6 @@ id|users
 )paren
 r_goto
 id|ipv6_pktoptions
-suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
-)paren
 suffix:semicolon
 r_return
 l_int|0

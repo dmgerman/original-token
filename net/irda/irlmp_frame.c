@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_frame.c&n; * Version:       0.8&n; * Description:   IrLMP frame implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 02:09:59 1997&n; * Modified at:   Sat Jan 16 22:14:04 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_frame.c&n; * Version:       0.8&n; * Description:   IrLMP frame implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 02:09:59 1997&n; * Modified at:   Thu Feb 18 08:48:28 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -773,7 +773,7 @@ id|userdata
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -829,6 +829,12 @@ id|lap_cb
 op_star
 id|self
 comma
+id|__u32
+id|saddr
+comma
+id|__u32
+id|daddr
+comma
 r_struct
 id|qos_info
 op_star
@@ -853,6 +859,22 @@ multiline_comment|/* Copy QoS settings for this session */
 id|self-&gt;qos
 op_assign
 id|qos
+suffix:semicolon
+multiline_comment|/* Update destination device address */
+id|self-&gt;daddr
+op_assign
+id|daddr
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;saddr
+op_eq
+id|saddr
+comma
+r_return
+suffix:semicolon
+)paren
 suffix:semicolon
 id|irlmp_do_lap_event
 c_func

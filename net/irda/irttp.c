@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.c&n; * Version:       0.4&n; * Description:   Tiny Transport Protocol (TTP) implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Tue Jan 19 23:56:58 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.c&n; * Version:       1.0&n; * Description:   Tiny Transport Protocol (TTP) implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Sat Feb 20 01:30:39 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -200,14 +200,6 @@ r_void
 )paren
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;--&gt; irttp_init&bslash;n&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* Initialize the irttp structure. */
 r_if
 c_cond
@@ -293,6 +285,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irttp_cleanup (void)&n; *&n; *    Called by module destruction/cleanup code&n; *&n; */
+macro_line|#ifdef MODULE
 DECL|function|irttp_cleanup
 r_void
 id|irttp_cleanup
@@ -301,14 +294,6 @@ c_func
 r_void
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irttp_cleanup&bslash;n&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* Check for main structure */
 id|ASSERT
 c_func
@@ -346,8 +331,7 @@ id|__irttp_close_tsap
 suffix:semicolon
 id|irttp-&gt;magic
 op_assign
-op_complement
-id|TTP_MAGIC
+l_int|0
 suffix:semicolon
 multiline_comment|/* De-allocate main structure */
 id|kfree
@@ -361,6 +345,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * Function irttp_open_tsap (stsap, notify)&n; *&n; *    Create TSAP connection endpoint,&n; */
 DECL|function|irttp_open_tsap
 r_struct
@@ -576,6 +561,10 @@ id|self-&gt;magic
 op_assign
 id|TTP_TSAP_MAGIC
 suffix:semicolon
+id|self-&gt;connected
+op_assign
+id|FALSE
+suffix:semicolon
 id|skb_queue_head_init
 c_func
 (paren
@@ -701,25 +690,16 @@ op_assign
 op_complement
 id|TTP_TSAP_MAGIC
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Deallocate structure&n;&t; */
 id|kfree
 c_func
 (paren
 id|self
 )paren
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irttp_close_tsap() --&gt;&bslash;n&quot;
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irttp_close (self)&n; *&n; *    Remove TSAP from list of all TSAPs and then deallocate all resources&n; *    associated with this TSAP&n; *&n; */
 DECL|function|irttp_close_tsap
-r_void
+r_int
 id|irttp_close_tsap
 c_func
 (paren
@@ -734,6 +714,15 @@ id|tsap_cb
 op_star
 id|tsap
 suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -742,6 +731,8 @@ op_ne
 l_int|NULL
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -753,9 +744,63 @@ op_eq
 id|TTP_TSAP_MAGIC
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
+multiline_comment|/* Make sure tsap has been disconnected */
+r_if
+c_cond
+(paren
+id|self-&gt;connected
+)paren
+(brace
+multiline_comment|/* Check if disconnect is not pending */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|self-&gt;disconnect_pend
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), TSAP still connected!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|irttp_disconnect_request
+c_func
+(paren
+id|self
+comma
+l_int|NULL
+comma
+id|P_NORMAL
+)paren
+suffix:semicolon
+)brace
+id|self-&gt;close_pend
+op_assign
+id|TRUE
+suffix:semicolon
+id|irttp_start_todo_timer
+c_func
+(paren
+id|self
+comma
+l_int|100
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* Will be back! */
+)brace
 id|tsap
 op_assign
 id|hashbin_remove
@@ -776,6 +821,8 @@ op_eq
 id|self
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -802,6 +849,9 @@ c_func
 (paren
 id|self
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irttp_udata_request (self, skb)&n; *&n; *    Send unreliable data on this TSAP&n; *&n; */
@@ -888,7 +938,7 @@ id|self-&gt;connected
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), No data, or not connected&bslash;n&quot;
@@ -910,7 +960,7 @@ id|self-&gt;max_seg_size
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), UData is to large for IrLAP!&bslash;n&quot;
@@ -1055,7 +1105,7 @@ id|self-&gt;max_seg_size
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), SAR disabled, and data is to large for IrLAP!&bslash;n&quot;
@@ -1086,7 +1136,7 @@ id|self-&gt;tx_max_sdu_size
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), SAR enabled, &quot;
@@ -1531,46 +1581,6 @@ id|self-&gt;tx_queue_lock
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Check if there is any disconnect request pending */
-r_if
-c_cond
-(paren
-id|self-&gt;disconnect_pend
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|self-&gt;disconnect_skb
-)paren
-(brace
-id|irttp_disconnect_request
-c_func
-(paren
-id|self
-comma
-id|self-&gt;disconnect_skb
-comma
-id|P_NORMAL
-)paren
-suffix:semicolon
-id|self-&gt;disconnect_skb
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-r_else
-id|irttp_disconnect_request
-c_func
-(paren
-id|self
-comma
-l_int|NULL
-comma
-id|P_NORMAL
-)paren
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Function irttp_give_credit (self)&n; *&n; *    Send a dataless flowdata TTP-PDU and give available credit to peer&n; *    TSAP&n; */
 DECL|function|irttp_give_credit
@@ -1625,7 +1635,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irttp_give_credit() send=%d,avail=%d,remote=%d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;() send=%d,avail=%d,remote=%d&bslash;n&quot;
 comma
 id|self-&gt;send_credit
 comma
@@ -1646,25 +1657,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|tx_skb
-op_eq
-l_int|NULL
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;irttp_give_credit: &quot;
-l_string|&quot;Could not allocate an sk_buff of length %d&bslash;n&quot;
-comma
-l_int|64
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/* Reserve space for LMP, and LAP header */
 id|skb_reserve
 c_func
@@ -2089,7 +2086,7 @@ id|flow
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -2129,7 +2126,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), flow stop&bslash;n&quot;
@@ -2147,7 +2144,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), flow start&bslash;n&quot;
@@ -2170,7 +2167,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unknown flow command!&bslash;n&quot;
@@ -2191,6 +2188,9 @@ id|self
 comma
 id|__u8
 id|dtsap_sel
+comma
+id|__u32
+id|saddr
 comma
 id|__u32
 id|daddr
@@ -2274,26 +2274,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|skb
-op_eq
-l_int|NULL
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;Could not allocate an &quot;
-l_string|&quot;sk_buff of length %d&bslash;n&quot;
-comma
-l_int|64
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/* Reserve space for MUX_CONTROL and LAP header */
 id|skb_reserve
 c_func
@@ -2527,6 +2512,8 @@ id|self-&gt;lsap
 comma
 id|dtsap_sel
 comma
+id|saddr
+comma
 id|daddr
 comma
 id|qos
@@ -2624,18 +2611,6 @@ c_func
 id|skb
 op_ne
 l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-multiline_comment|/* FIXME: just remove this when we know its working */
-id|ASSERT
-c_func
-(paren
-id|max_seg_size
-op_eq
-id|qos-&gt;data_size.value
 comma
 r_return
 suffix:semicolon
@@ -2771,7 +2746,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irttp_connect_confirm() send=%d,avail=%d,remote=%d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;() send=%d,avail=%d,remote=%d&bslash;n&quot;
 comma
 id|self-&gt;send_credit
 comma
@@ -2845,6 +2821,11 @@ id|tsap_cb
 op_star
 id|self
 suffix:semicolon
+r_struct
+id|lsap_cb
+op_star
+id|lsap
+suffix:semicolon
 id|__u8
 op_star
 id|frame
@@ -2897,6 +2878,15 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+id|lsap
+op_assign
+(paren
+r_struct
+id|lsap_cb
+op_star
+)paren
+id|sap
+suffix:semicolon
 multiline_comment|/* FIXME: just remove this when we know its working */
 id|ASSERT
 c_func
@@ -2922,14 +2912,17 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irttp_connect_indication(), TSAP sel=%02x&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), TSAP sel=%02x&bslash;n&quot;
 comma
 id|self-&gt;stsap_sel
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: Need to update dtsap_sel if its equal to LSAP_ANY */
-multiline_comment|/* &t;if ( self-&gt;dtsap_sel == LSAP_ANY) */
-multiline_comment|/* &t;&t;self-&gt;dtsap_sel = lsap-&gt;dlsap_sel; */
+multiline_comment|/* Need to update dtsap_sel if its equal to LSAP_ANY */
+id|self-&gt;dtsap_sel
+op_assign
+id|lsap-&gt;dlsap_sel
+suffix:semicolon
 id|frame
 op_assign
 id|skb-&gt;data
@@ -3009,7 +3002,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irttp_connect_indication: initial send_credit=%d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), initial send_credit=%d&bslash;n&quot;
 comma
 id|n
 )paren
@@ -3131,26 +3125,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|skb
-op_eq
-l_int|NULL
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;Could not allocate an &quot;
-l_string|&quot;sk_buff of length %d&bslash;n&quot;
-comma
-l_int|64
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/* Reserve space for MUX_CONTROL and LAP header */
 id|skb_reserve
 c_func
@@ -3374,7 +3353,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irttp_disconnect_request ( self)&n; *&n; *    Close this connection please! If priority is high, the queued data &n; *    segments, if any, will be deallocated first&n; *&n; */
+multiline_comment|/*&n; * Function irttp_disconnect_request (self)&n; *&n; *    Close this connection please! If priority is high, the queued data &n; *    segments, if any, will be deallocated first&n; *&n; */
 DECL|function|irttp_disconnect_request
 r_void
 id|irttp_disconnect_request
@@ -3402,7 +3381,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -3460,7 +3439,7 @@ id|self-&gt;disconnect_pend
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), disconnect already pending&bslash;n&quot;
@@ -3514,7 +3493,7 @@ id|P_HIGH
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;High priority!!()&bslash;n&quot;
@@ -3562,7 +3541,14 @@ c_func
 id|self
 )paren
 suffix:semicolon
-multiline_comment|/*  &n;&t;&t;&t; *  irttp_xmit will call us again when the tx_queue&n;&t;&t;&t; *  is empty&n;&t;&t;&t; */
+id|irttp_start_todo_timer
+c_func
+(paren
+id|self
+comma
+l_int|100
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -3570,7 +3556,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Disconnecting ...&bslash;n&quot;
@@ -3598,26 +3584,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|skb
-op_eq
-l_int|NULL
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), Could not allocate an &quot;
-l_string|&quot;sk_buff of length %d&bslash;n&quot;
-comma
-l_int|64
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/* &n;&t;&t; *  Reserve space for MUX and LAP header &n;&t;&t; */
 id|skb_reserve
 c_func
@@ -3676,7 +3647,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irttp_disconnect_indication()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|self
@@ -3807,7 +3779,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irttp_do_events() send=%d,avail=%d,remote=%d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;() send=%d,avail=%d,remote=%d&bslash;n&quot;
 comma
 id|self-&gt;send_credit
 comma
@@ -3986,7 +3959,7 @@ r_else
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Error!&bslash;n&quot;
@@ -4063,7 +4036,7 @@ r_else
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Truncated frame&bslash;n&quot;
@@ -4159,14 +4132,12 @@ id|self-&gt;tx_queue
 op_ne
 l_int|NULL
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* Deallocate received frames */
 r_while
 c_loop
@@ -4184,14 +4155,12 @@ id|self-&gt;rx_queue
 op_ne
 l_int|NULL
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* Deallocate received fragments */
 r_while
 c_loop
@@ -4209,14 +4178,12 @@ id|self-&gt;rx_fragments
 op_ne
 l_int|NULL
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Function irttp_reasseble (self)&n; *&n; *    Makes a new (continuous) skb of all the fragments in the fragment&n; *    queue&n; *&n; */
 DECL|function|irttp_reassemble_skb
@@ -4296,20 +4263,9 @@ c_cond
 op_logical_neg
 id|skb
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), unable to allocate skb&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
-)brace
 id|skb_put
 c_func
 (paren
@@ -4554,23 +4510,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|frag
-op_eq
-l_int|NULL
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), Couldn&squot;t allocate skbuff!&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 id|skb_reserve
 c_func
 (paren
@@ -4724,7 +4668,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irttp_do_events: sending credit!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), sending credit!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|irttp_give_credit
@@ -4734,8 +4679,86 @@ id|self
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Rearm! */
-multiline_comment|/* irttp_start_todo_timer( self, 50); */
+multiline_comment|/* Check if time for disconnect */
+r_if
+c_cond
+(paren
+id|self-&gt;disconnect_pend
+)paren
+(brace
+multiline_comment|/* Check if it&squot;s possible to disconnect yet */
+r_if
+c_cond
+(paren
+id|skb_queue_empty
+c_func
+(paren
+op_amp
+id|self-&gt;tx_queue
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|self-&gt;disconnect_skb
+)paren
+(brace
+id|irttp_disconnect_request
+c_func
+(paren
+id|self
+comma
+id|self-&gt;disconnect_skb
+comma
+id|P_NORMAL
+)paren
+suffix:semicolon
+id|self-&gt;disconnect_skb
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+r_else
+id|irttp_disconnect_request
+c_func
+(paren
+id|self
+comma
+l_int|NULL
+comma
+id|P_NORMAL
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Try again later */
+id|irttp_start_todo_timer
+c_func
+(paren
+id|self
+comma
+l_int|100
+)paren
+suffix:semicolon
+multiline_comment|/* No reason to try and close now */
+r_return
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Check if it&squot;s closing time */
+r_if
+c_cond
+(paren
+id|self-&gt;close_pend
+)paren
+id|irttp_close_tsap
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irttp_start_todo_timer (self, timeout)&n; *&n; *    Start todo timer. &n; *&n; */
 DECL|function|irttp_start_todo_timer
@@ -4911,7 +4934,7 @@ id|TTP_TSAP_MAGIC
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 l_string|&quot;irttp_proc_read: bad ptr self&bslash;n&quot;
 )paren

@@ -407,13 +407,6 @@ id|inode
 )paren
 suffix:semicolon
 )brace
-id|vma-&gt;vm_file
-op_assign
-id|file
-suffix:semicolon
-id|file-&gt;f_count
-op_increment
-suffix:semicolon
 id|vma-&gt;vm_ops
 op_assign
 op_amp

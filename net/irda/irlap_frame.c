@@ -1,8 +1,7 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.c&n; * Version:       0.3&n; * Description:   Build and transmit IrLAP frames&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Tue Jan 19 22:58:13 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Resrved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.c&n; * Version:       0.8&n; * Description:   Build and transmit IrLAP frames&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Sat Feb 20 01:40:14 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Resrved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
-macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -27,7 +26,6 @@ id|hint
 suffix:semicolon
 multiline_comment|/*&n; * Function irlap_insert_mtt (self, skb)&n; *&n; *    Insert minimum turnaround time relevant information into the skb. We &n; *    need to do this since it&squot;s per packet relevant information.&n; *&n; */
 DECL|function|irlap_insert_mtt
-id|__inline__
 r_void
 id|irlap_insert_mtt
 c_func
@@ -112,6 +110,63 @@ id|cb-&gt;xbofs
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Function irlap_queue_xmit (self, skb)&n; *&n; *    A little wrapper for dev_queue_xmit, so we can insert some common&n; *    code into it.&n; */
+DECL|function|irlap_queue_xmit
+r_void
+id|irlap_queue_xmit
+c_func
+(paren
+r_struct
+id|irlap_cb
+op_star
+id|self
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+multiline_comment|/* Some init stuff */
+id|skb-&gt;dev
+op_assign
+id|self-&gt;netdev
+suffix:semicolon
+id|skb-&gt;h.raw
+op_assign
+id|skb-&gt;nh.raw
+op_assign
+id|skb-&gt;mac.raw
+op_assign
+id|skb-&gt;data
+suffix:semicolon
+id|skb-&gt;protocol
+op_assign
+id|htons
+c_func
+(paren
+id|ETH_P_IRDA
+)paren
+suffix:semicolon
+multiline_comment|/* &n;&t; * Insert MTT (min. turn time) into skb, so that the device driver &n;&t; * knows which MTT to use &n;&t; */
+id|irlap_insert_mtt
+c_func
+(paren
+id|self
+comma
+id|skb
+)paren
+suffix:semicolon
+id|dev_queue_xmit
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+id|self-&gt;stats.tx_packets
+op_increment
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Function irlap_send_snrm_cmd (void)&n; *&n; *    Transmits a connect SNRM command frame&n; */
 DECL|function|irlap_send_snrm_frame
 r_void
@@ -149,7 +204,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlap_send_snrm_cmd()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -190,25 +246,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|skb
-op_eq
-l_int|NULL
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;irlap_send_snrm_cmd: &quot;
-l_string|&quot;Could not allocate an sk_buff of length %d&bslash;n&quot;
-comma
-l_int|64
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 id|skb_put
 c_func
 (paren
@@ -271,40 +313,54 @@ l_int|9
 )paren
 suffix:semicolon
 multiline_comment|/* 21 left */
-id|memcpy
-c_func
+op_star
+(paren
+(paren
+id|__u32
+op_star
+)paren
 (paren
 id|frame
 op_plus
 id|n
-comma
-op_amp
+)paren
+)paren
+op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|self-&gt;saddr
-comma
-l_int|4
 )paren
 suffix:semicolon
 id|n
 op_add_assign
 l_int|4
 suffix:semicolon
-id|memcpy
-c_func
+op_star
+(paren
+(paren
+id|__u32
+op_star
+)paren
 (paren
 id|frame
 op_plus
 id|n
-comma
-op_amp
+)paren
+)paren
+op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|self-&gt;daddr
-comma
-l_int|4
 )paren
 suffix:semicolon
 id|n
 op_add_assign
 l_int|4
 suffix:semicolon
+multiline_comment|/* &t;&t;memcpy(frame+n, &amp;self-&gt;saddr, 4); n += 4; */
+multiline_comment|/* &t;&t;memcpy(frame+n, &amp;self-&gt;daddr, 4); n += 4; */
 id|frame
 (braket
 id|n
@@ -313,7 +369,6 @@ op_increment
 op_assign
 id|self-&gt;caddr
 suffix:semicolon
-multiline_comment|/* skb_put( skb, 21); */
 id|len
 op_assign
 id|irda_insert_qos_negotiation_params
@@ -336,30 +391,13 @@ id|len
 )paren
 suffix:semicolon
 )brace
-id|skb-&gt;dev
-op_assign
-id|self-&gt;netdev
-suffix:semicolon
-id|skb-&gt;h.raw
-op_assign
-id|skb-&gt;data
-suffix:semicolon
-id|irlap_insert_mtt
+id|irlap_queue_xmit
 c_func
 (paren
 id|self
 comma
 id|skb
 )paren
-suffix:semicolon
-id|dev_queue_xmit
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-id|self-&gt;stats.tx_packets
-op_increment
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlap_recv_snrm_cmd (skb, info)&n; *&n; *    Received SNRM (Set Normal Response Mode) command frame&n; *&n; */
@@ -433,16 +471,13 @@ op_star
 id|skb-&gt;data
 suffix:semicolon
 multiline_comment|/* Copy peer device address */
-id|memcpy
+multiline_comment|/* memcpy( &amp;info-&gt;daddr, &amp;frame-&gt;saddr, 4); */
+id|info-&gt;daddr
+op_assign
+id|le32_to_cpu
 c_func
 (paren
-op_amp
-id|info-&gt;daddr
-comma
-op_amp
 id|frame-&gt;saddr
-comma
-l_int|4
 )paren
 suffix:semicolon
 multiline_comment|/* Copy connection address */
@@ -498,7 +533,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;() &lt;%ld&gt;&bslash;n&quot;
@@ -548,25 +583,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|skb
-op_eq
-l_int|NULL
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;Could not allocate an sk_buff of length %d&bslash;n&quot;
-comma
-l_int|64
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 id|skb_put
 c_func
 (paren
@@ -598,40 +619,54 @@ id|UA_RSP
 op_or
 id|PF_BIT
 suffix:semicolon
-id|memcpy
-c_func
+op_star
+(paren
+(paren
+id|__u32
+op_star
+)paren
 (paren
 id|frame
 op_plus
 id|n
-comma
-op_amp
+)paren
+)paren
+op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|self-&gt;saddr
-comma
-l_int|4
 )paren
 suffix:semicolon
 id|n
 op_add_assign
 l_int|4
 suffix:semicolon
-id|memcpy
-c_func
+op_star
+(paren
+(paren
+id|__u32
+op_star
+)paren
 (paren
 id|frame
 op_plus
 id|n
-comma
-op_amp
+)paren
+)paren
+op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|self-&gt;daddr
-comma
-l_int|4
 )paren
 suffix:semicolon
 id|n
 op_add_assign
 l_int|4
 suffix:semicolon
+multiline_comment|/* &t;memcpy( frame+n, &amp;self-&gt;saddr, 4); n += 4; */
+multiline_comment|/* &t;memcpy( frame+n, &amp;self-&gt;daddr, 4); n += 4; */
 multiline_comment|/* Should we send QoS negotiation parameters? */
 r_if
 c_cond
@@ -660,30 +695,13 @@ id|len
 )paren
 suffix:semicolon
 )brace
-id|skb-&gt;dev
-op_assign
-id|self-&gt;netdev
-suffix:semicolon
-id|skb-&gt;h.raw
-op_assign
-id|skb-&gt;data
-suffix:semicolon
-id|irlap_insert_mtt
+id|irlap_queue_xmit
 c_func
 (paren
 id|self
 comma
 id|skb
 )paren
-suffix:semicolon
-id|dev_queue_xmit
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-id|self-&gt;stats.tx_packets
-op_increment
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlap_send_dm_frame (void)&n; *&n; *    Send disconnected mode (DM) frame&n; *&n; */
@@ -742,25 +760,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|skb
-op_eq
-l_int|NULL
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;irlap_send_disc_frame: &quot;
-l_string|&quot;Could not allocate an sk_buff of length %d&bslash;n&quot;
-comma
-l_int|64
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 id|skb_put
 c_func
 (paren
@@ -804,30 +808,13 @@ id|DM_RSP
 op_or
 id|PF_BIT
 suffix:semicolon
-id|skb-&gt;dev
-op_assign
-id|self-&gt;netdev
-suffix:semicolon
-id|skb-&gt;h.raw
-op_assign
-id|skb-&gt;data
-suffix:semicolon
-id|irlap_insert_mtt
+id|irlap_queue_xmit
 c_func
 (paren
 id|self
 comma
 id|skb
 )paren
-suffix:semicolon
-id|dev_queue_xmit
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-id|self-&gt;stats.tx_packets
-op_increment
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlap_send_disc_frame (void)&n; *&n; *    Send disconnect (DISC) frame&n; *&n; */
@@ -852,6 +839,15 @@ suffix:semicolon
 id|__u8
 op_star
 id|frame
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|3
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
 suffix:semicolon
 id|ASSERT
 c_func
@@ -886,25 +882,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|skb
-op_eq
-l_int|NULL
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;irlap_send_disc_frame: &quot;
-l_string|&quot;Could not allocate an sk_buff of length %d&bslash;n&quot;
-comma
-l_int|64
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 id|skb_put
 c_func
 (paren
@@ -935,30 +917,13 @@ id|DISC_CMD
 op_or
 id|PF_BIT
 suffix:semicolon
-id|skb-&gt;dev
-op_assign
-id|self-&gt;netdev
-suffix:semicolon
-id|skb-&gt;h.raw
-op_assign
-id|skb-&gt;data
-suffix:semicolon
-id|irlap_insert_mtt
+id|irlap_queue_xmit
 c_func
 (paren
 id|self
 comma
 id|skb
 )paren
-suffix:semicolon
-id|dev_queue_xmit
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-id|self-&gt;stats.tx_packets
-op_increment
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlap_send_discovery_xid_frame (S, s, command)&n; *&n; *    Build and transmit a XID (eXchange station IDentifier) discovery&n; *    frame. &n; */
@@ -1062,25 +1027,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|skb
-op_eq
-l_int|NULL
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;irlap_send_discovery_xid_frame: &quot;
-l_string|&quot;Could not allocate an sk_buff of length %d&bslash;n&quot;
-comma
-l_int|64
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 id|skb_put
 c_func
 (paren
@@ -1134,46 +1085,37 @@ id|frame-&gt;ident
 op_assign
 id|XID_FORMAT
 suffix:semicolon
-id|memcpy
+id|frame-&gt;saddr
+op_assign
+id|cpu_to_le32
 c_func
 (paren
-op_amp
-id|frame-&gt;saddr
-comma
-op_amp
 id|self-&gt;saddr
-comma
-l_int|4
 )paren
 suffix:semicolon
+multiline_comment|/* &t;memcpy( &amp;frame-&gt;saddr, &amp;self-&gt;saddr, 4); */
 r_if
 c_cond
 (paren
 id|command
 )paren
-id|memcpy
+multiline_comment|/* memcpy( &amp;frame-&gt;daddr, &amp;bcast, 4); */
+id|frame-&gt;daddr
+op_assign
+id|cpu_to_le32
 c_func
 (paren
-op_amp
-id|frame-&gt;daddr
-comma
-op_amp
 id|bcast
-comma
-l_int|4
 )paren
 suffix:semicolon
 r_else
-id|memcpy
+multiline_comment|/* memcpy( &amp;frame-&gt;daddr, &amp;self-&gt;daddr, 4); */
+id|frame-&gt;daddr
+op_assign
+id|cpu_to_le32
 c_func
 (paren
-op_amp
-id|frame-&gt;daddr
-comma
-op_amp
 id|self-&gt;daddr
-comma
-l_int|4
 )paren
 suffix:semicolon
 r_switch
@@ -1262,7 +1204,6 @@ l_int|0
 op_amp
 id|HINT_EXTENSION
 )paren
-(brace
 id|skb_put
 c_func
 (paren
@@ -1273,7 +1214,6 @@ op_plus
 id|discovery-&gt;info_len
 )paren
 suffix:semicolon
-)brace
 r_else
 id|skb_put
 c_func
@@ -1369,30 +1309,13 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|skb-&gt;dev
-op_assign
-id|self-&gt;netdev
-suffix:semicolon
-id|skb-&gt;h.raw
-op_assign
-id|skb-&gt;data
-suffix:semicolon
-id|irlap_insert_mtt
+id|irlap_queue_xmit
 c_func
 (paren
 id|self
 comma
 id|skb
 )paren
-suffix:semicolon
-id|dev_queue_xmit
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-id|self-&gt;stats.tx_packets
-op_increment
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlap_recv_discovery_xid_rsp (skb, info)&n; *&n; *    Received a XID discovery response&n; *&n; */
@@ -1796,16 +1719,13 @@ op_star
 id|skb-&gt;data
 suffix:semicolon
 multiline_comment|/* Copy peer device address */
-id|memcpy
+multiline_comment|/* memcpy( &amp;info-&gt;daddr, &amp;xid-&gt;saddr, 4); */
+id|info-&gt;daddr
+op_assign
+id|le32_to_cpu
 c_func
 (paren
-op_amp
-id|info-&gt;daddr
-comma
-op_amp
 id|xid-&gt;saddr
-comma
-l_int|4
 )paren
 suffix:semicolon
 r_switch
@@ -2157,24 +2077,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|skb
-op_eq
-l_int|NULL
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;irlap_send_rr_frame: &quot;
-l_string|&quot;Could not allocate an skb of length %d&bslash;n&quot;
-comma
-l_int|32
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 id|skb_put
 c_func
 (paren
@@ -2248,30 +2155,13 @@ comma
 id|jiffies
 )paren
 suffix:semicolon
-id|skb-&gt;dev
-op_assign
-id|self-&gt;netdev
-suffix:semicolon
-id|skb-&gt;h.raw
-op_assign
-id|skb-&gt;data
-suffix:semicolon
-id|irlap_insert_mtt
+id|irlap_queue_xmit
 c_func
 (paren
 id|self
 comma
 id|skb
 )paren
-suffix:semicolon
-id|dev_queue_xmit
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-id|self-&gt;stats.tx_packets
-op_increment
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlap_recv_rr_frame (skb, info)&n; *&n; *    Received RR (Receive Ready) frame from peer station&n; *&n; */
@@ -2512,24 +2402,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|skb
-op_eq
-l_int|NULL
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;irlap_send_frmr_frame: &quot;
-l_string|&quot;Could not allocate an sk_buff of length %d&bslash;n&quot;
-comma
-l_int|32
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 id|skb_put
 c_func
 (paren
@@ -2612,30 +2489,13 @@ comma
 id|jiffies
 )paren
 suffix:semicolon
-id|skb-&gt;dev
-op_assign
-id|self-&gt;netdev
-suffix:semicolon
-id|skb-&gt;h.raw
-op_assign
-id|skb-&gt;data
-suffix:semicolon
-id|irlap_insert_mtt
+id|irlap_queue_xmit
 c_func
 (paren
 id|self
 comma
 id|skb
 )paren
-suffix:semicolon
-id|dev_queue_xmit
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-id|self-&gt;stats.tx_packets
-op_increment
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlap_recv_rnr_frame (self, skb, info)&n; *&n; *    Received RNR (Receive Not Ready) frame from peer station&n; *&n; */
@@ -2755,7 +2615,9 @@ c_func
 l_int|4
 comma
 id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+l_string|&quot;(), &lt;%ld&gt;&bslash;n&quot;
+comma
+id|jiffies
 )paren
 suffix:semicolon
 id|ASSERT
@@ -2898,7 +2760,6 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
-multiline_comment|/* tx_skb = skb_copy( skb, GFP_ATOMIC);  */
 r_if
 c_cond
 (paren
@@ -3104,7 +2965,6 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
-multiline_comment|/* tx_skb = skb_copy( skb, GFP_ATOMIC);  */
 r_if
 c_cond
 (paren
@@ -3375,7 +3235,6 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
-multiline_comment|/* tx_skb = skb_copy( skb, GFP_ATOMIC); */
 r_if
 c_cond
 (paren
@@ -3620,7 +3479,6 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
-multiline_comment|/* tx_skb = skb_copy( skb, GFP_ATOMIC); */
 r_if
 c_cond
 (paren
@@ -3824,7 +3682,6 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
-multiline_comment|/* tx_skb = skb_copy( skb, GFP_ATOMIC); */
 r_if
 c_cond
 (paren
@@ -4150,30 +4007,13 @@ id|CMD_FRAME
 suffix:colon
 l_int|0
 suffix:semicolon
-id|skb-&gt;dev
-op_assign
-id|self-&gt;netdev
-suffix:semicolon
-id|skb-&gt;h.raw
-op_assign
-id|skb-&gt;data
-suffix:semicolon
-id|irlap_insert_mtt
+id|irlap_queue_xmit
 c_func
 (paren
 id|self
 comma
 id|skb
 )paren
-suffix:semicolon
-id|dev_queue_xmit
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-id|self-&gt;stats.tx_packets
-op_increment
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlap_send_i_frame (skb)&n; *&n; *    Contruct and transmit Information (I) frame&n; */
@@ -4336,30 +4176,13 @@ id|jiffies
 suffix:semicolon
 )brace
 macro_line|#endif&t;
-id|skb-&gt;dev
-op_assign
-id|self-&gt;netdev
-suffix:semicolon
-id|skb-&gt;h.raw
-op_assign
-id|skb-&gt;data
-suffix:semicolon
-id|irlap_insert_mtt
+id|irlap_queue_xmit
 c_func
 (paren
 id|self
 comma
 id|skb
 )paren
-suffix:semicolon
-id|dev_queue_xmit
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-id|self-&gt;stats.tx_packets
-op_increment
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlap_recv_i_frame (skb, frame)&n; *&n; *    Receive and parse an I (Information) frame&n; * &n; */
@@ -5350,7 +5173,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 l_string|&quot;DISC cmd frame received!&bslash;n&quot;
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_comp.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Fri Oct  9 09:18:07 1998&n; * Modified at:   Mon Dec 14 11:55:27 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       ppp.c, isdn_ppp.c&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_comp.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Fri Oct  9 09:18:07 1998&n; * Modified at:   Mon Feb  8 01:23:52 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       ppp.c, isdn_ppp.c&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irqueue.h&gt;
 macro_line|#include &lt;net/irda/irlap.h&gt;
@@ -232,7 +232,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -543,7 +543,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -759,7 +759,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;() skb-&gt;len=%d, jiffies=%ld&bslash;n&quot;
@@ -895,7 +895,7 @@ l_int|0
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unable to compress frame!&bslash;n&quot;
@@ -960,7 +960,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;() new_skb-&gt;len=%d&bslash;n, jiffies=%ld&quot;
@@ -1154,7 +1154,7 @@ l_int|0
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unable to decompress frame!&bslash;n&quot;
@@ -1181,7 +1181,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;() new_skb-&gt;len=%d&bslash;n&quot;

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_event.c&n; * Version:       0.1&n; * Description:   An IrDA LMP event driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Sat Jan 16 22:22:29 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_event.c&n; * Version:       0.8&n; * Description:   An IrDA LMP event driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Thu Feb 11 01:24:21 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/timer.h&gt;
@@ -7,6 +7,7 @@ macro_line|#include &lt;net/irda/irlmp.h&gt;
 macro_line|#include &lt;net/irda/irlmp_frame.h&gt;
 macro_line|#include &lt;net/irda/irlmp_event.h&gt;
 DECL|variable|irlmp_state
+r_const
 r_char
 op_star
 id|irlmp_state
@@ -23,6 +24,7 @@ comma
 )brace
 suffix:semicolon
 DECL|variable|irlsap_state
+r_const
 r_char
 op_star
 id|irlsap_state
@@ -46,6 +48,7 @@ comma
 suffix:semicolon
 DECL|variable|irlmp_event
 r_static
+r_const
 r_char
 op_star
 id|irlmp_event
@@ -89,6 +92,8 @@ comma
 l_string|&quot;LM_LAP_DISCOVERY_REQUEST&quot;
 comma
 l_string|&quot;LM_LAP_DISCOVERY_CONFIRM&quot;
+comma
+l_string|&quot;LM_LAP_IDLE_TIMEOUT&quot;
 comma
 )brace
 suffix:semicolon
@@ -473,7 +478,7 @@ suffix:semicolon
 id|irlmp_discovery_request
 c_func
 (paren
-l_int|8
+id|sysctl_discovery_slots
 )paren
 suffix:semicolon
 multiline_comment|/* Restart timer */
@@ -545,6 +550,70 @@ c_func
 id|self
 comma
 id|LM_WATCHDOG_TIMEOUT
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
+DECL|function|irlmp_idle_timer_expired
+r_void
+id|irlmp_idle_timer_expired
+c_func
+(paren
+r_int
+r_int
+id|data
+)paren
+(brace
+r_struct
+id|lap_cb
+op_star
+id|self
+op_assign
+(paren
+r_struct
+id|lap_cb
+op_star
+)paren
+id|data
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;magic
+op_eq
+id|LMP_LAP_MAGIC
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|irlmp_do_lap_event
+c_func
+(paren
+id|self
+comma
+id|LM_LAP_IDLE_TIMEOUT
 comma
 l_int|NULL
 )paren
@@ -658,7 +727,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_standby() LS_CONNECT_REQUEST&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;() LS_CONNECT_REQUEST&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* FIXME: need to set users requested QoS */
@@ -713,7 +783,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_standby: Unknown event&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown event&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -754,10 +825,15 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+l_string|&quot;(), event=%s&bslash;n&quot;
+comma
+id|irlmp_event
+(braket
+id|event
+)braket
 )paren
 suffix:semicolon
 r_switch
@@ -831,7 +907,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), IRLAP_DISCONNECT_INDICATION&bslash;n&quot;
@@ -1067,7 +1143,31 @@ id|__FUNCTION__
 l_string|&quot;(), LM_LAP_DISCONNECT_REQUEST&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *  Need to find out if we should close IrLAP or not&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *  Need to find out if we should close IrLAP or not. If there&n;&t;&t; *  is only one LSAP connection left on this link, that LSAP &n;&t;&t; *  must be the one that tries to close IrLAP. It will be &n;&t;&t; *  removed later and moved to the list of unconnected LSAPs&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|hashbin_get_size
+c_func
+(paren
+id|self-&gt;lsaps
+)paren
+op_eq
+l_int|1
+)paren
+id|irlmp_start_idle_timer
+c_func
+(paren
+id|self
+comma
+id|LM_IDLE_TIMEOUT
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|LM_LAP_IDLE_TIMEOUT
+suffix:colon
 r_if
 c_cond
 (paren
@@ -1086,7 +1186,7 @@ c_func
 l_int|0
 comma
 id|__FUNCTION__
-l_string|&quot;(), no more LSAPs so time to disconnect IrLAP&bslash;n&quot;
+l_string|&quot;(), no more LSAPs so time to close IrLAP&bslash;n&quot;
 )paren
 suffix:semicolon
 id|irlmp_next_lap_state
@@ -1399,7 +1499,17 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/* DEBUG( 4, &quot;irlmp_state_disconnected: Unknown event %d&bslash;n&quot;,&n;&t;&t;   event); */
+id|DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %d&bslash;n&quot;
+comma
+id|event
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -1514,7 +1624,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_connect: Unknown event&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown event&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1648,7 +1759,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_connect_pend: Unknown event %d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;Unknown event %d&bslash;n&quot;
 comma
 id|event
 )paren
@@ -1973,13 +2085,34 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|reason
-op_assign
-id|irlmp_convert_lap_reason
+id|ASSERT
 c_func
 (paren
-id|self-&gt;lap-&gt;reason
+id|skb
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
 )paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|skb-&gt;len
+OG
+l_int|3
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|reason
+op_assign
+id|skb-&gt;data
+(braket
+l_int|3
+)braket
 suffix:semicolon
 multiline_comment|/* Try to close the LAP connection */
 id|DEBUG
@@ -2081,7 +2214,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_state_setup()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 r_switch
@@ -2169,13 +2303,34 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|reason
-op_assign
-id|irlmp_convert_lap_reason
+id|ASSERT
 c_func
 (paren
-id|self-&gt;lap-&gt;reason
+id|skb
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
 )paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|skb-&gt;len
+OG
+l_int|3
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|reason
+op_assign
+id|skb-&gt;data
+(braket
+l_int|3
+)braket
 suffix:semicolon
 id|irlmp_disconnect_indication
 c_func
@@ -2185,6 +2340,59 @@ comma
 id|reason
 comma
 id|skb
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|LM_WATCHDOG_TIMEOUT
+suffix:colon
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;() WATCHDOG_TIMEOUT!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;lap
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|irlmp_do_lap_event
+c_func
+(paren
+id|self-&gt;lap
+comma
+id|LM_LAP_DISCONNECT_REQUEST
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|irlmp_next_lsap_state
+c_func
+(paren
+id|self
+comma
+id|LSAP_DISCONNECTED
+)paren
+suffix:semicolon
+id|irlmp_disconnect_indication
+c_func
+(paren
+id|self
+comma
+id|LM_CONNECT_FAILURE
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_break
@@ -2227,6 +2435,9 @@ op_star
 id|skb
 )paren
 (brace
+id|LM_REASON
+id|reason
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -2292,26 +2503,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|LM_DISCONNECT_INDICATION
-suffix:colon
-id|del_timer
-c_func
-(paren
-op_amp
-id|self-&gt;watchdog_timer
-)paren
-suffix:semicolon
-id|irlmp_next_lsap_state
-c_func
-(paren
-id|self
-comma
-id|LSAP_DISCONNECTED
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
 id|LM_WATCHDOG_TIMEOUT
 suffix:colon
 id|DEBUG
@@ -2323,7 +2514,6 @@ id|__FUNCTION__
 l_string|&quot;() WATCHDOG_TIMEOUT!&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: should we do a disconnect_indication? */
 id|ASSERT
 c_func
 (paren
@@ -2351,6 +2541,55 @@ c_func
 id|self
 comma
 id|LSAP_DISCONNECTED
+)paren
+suffix:semicolon
+id|irlmp_disconnect_indication
+c_func
+(paren
+id|self
+comma
+id|LM_CONNECT_FAILURE
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|LM_LAP_DISCONNECT_INDICATION
+suffix:colon
+multiline_comment|/* LS_Disconnect.indication */
+id|del_timer
+c_func
+(paren
+op_amp
+id|self-&gt;watchdog_timer
+)paren
+suffix:semicolon
+id|irlmp_next_lsap_state
+c_func
+(paren
+id|self
+comma
+id|LSAP_DISCONNECTED
+)paren
+suffix:semicolon
+id|reason
+op_assign
+id|irlmp_convert_lap_reason
+c_func
+(paren
+id|self-&gt;lap-&gt;reason
+)paren
+suffix:semicolon
+id|irlmp_disconnect_indication
+c_func
+(paren
+id|self
+comma
+id|reason
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_break

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.c&n; * Version:       0.8&n; * Description:   IrDA Link Management Protocol (LMP) layer                 &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Sat Jan 16 22:13:20 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.c&n; * Version:       0.8&n; * Description:   IrDA Link Management Protocol (LMP) layer                 &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Sat Feb 20 01:28:39 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -24,11 +24,18 @@ id|irlmp
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* These can be altered by the sysctl interface */
 DECL|variable|sysctl_discovery
 r_int
 id|sysctl_discovery
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|sysctl_discovery_slots
+r_int
+id|sysctl_discovery_slots
+op_assign
+l_int|6
 suffix:semicolon
 DECL|variable|sysctl_devname
 r_char
@@ -36,6 +43,30 @@ id|sysctl_devname
 (braket
 l_int|65
 )braket
+suffix:semicolon
+DECL|variable|lmp_reasons
+r_char
+op_star
+id|lmp_reasons
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;ERROR, NOT USED&quot;
+comma
+l_string|&quot;LM_USER_REQUEST&quot;
+comma
+l_string|&quot;LM_LAP_DISCONNECT&quot;
+comma
+l_string|&quot;LM_CONNECT_FAILURE&quot;
+comma
+l_string|&quot;LM_LAP_RESET&quot;
+comma
+l_string|&quot;LM_INIT_DISCONNECT&quot;
+comma
+l_string|&quot;ERROR, NOT USED&quot;
+comma
+)brace
 suffix:semicolon
 id|__u8
 op_star
@@ -85,14 +116,6 @@ r_void
 )paren
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;--&gt; irlmp_init&bslash;n&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* Initialize the irlmp structure. */
 r_if
 c_cond
@@ -357,7 +380,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_open_lsap(), slsap_sel=%02x&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), slsap_sel=%02x&bslash;n&quot;
 comma
 id|slsap_sel
 )paren
@@ -482,6 +506,10 @@ id|self-&gt;dlsap_sel
 op_assign
 id|LSAP_ANY
 suffix:semicolon
+id|self-&gt;connected
+op_assign
+id|FALSE
+suffix:semicolon
 id|init_timer
 c_func
 (paren
@@ -553,7 +581,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_close()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -609,19 +638,10 @@ op_assign
 id|FALSE
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;&t; *  Deallocate structure&n;&t; */
 id|kfree
 c_func
 (paren
 id|self
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irlmp_close() --&gt;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -743,7 +763,7 @@ l_int|NULL
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Looks like somebody has removed me already!&bslash;n&quot;
@@ -899,6 +919,10 @@ id|lap-&gt;saddr
 op_assign
 id|saddr
 suffix:semicolon
+id|lap-&gt;daddr
+op_assign
+id|DEV_ADDR_ANY
+suffix:semicolon
 id|lap-&gt;lsaps
 op_assign
 id|hashbin_new
@@ -921,6 +945,13 @@ c_func
 id|lap
 comma
 id|LAP_STANDBY
+)paren
+suffix:semicolon
+id|init_timer
+c_func
+(paren
+op_amp
+id|lap-&gt;idle_timer
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Insert into queue of unconnected LSAPs&n;&t; */
@@ -992,8 +1023,6 @@ r_if
 c_cond
 (paren
 id|self
-op_ne
-l_int|NULL
 )paren
 (brace
 id|ASSERT
@@ -1007,10 +1036,16 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+id|del_timer
+c_func
+(paren
+op_amp
+id|self-&gt;idle_timer
+)paren
+suffix:semicolon
 id|self-&gt;magic
 op_assign
-op_complement
-id|LMP_LAP_MAGIC
+l_int|0
 suffix:semicolon
 id|kfree
 c_func
@@ -1024,9 +1059,10 @@ r_else
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
-l_string|&quot;irlmp_unregister_irlap(), Didn&squot;t find LAP!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Didn&squot;t find LAP layer!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1079,7 +1115,7 @@ l_int|NULL
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 l_string|&quot;Discovery:&bslash;n&quot;
 )paren
@@ -1087,7 +1123,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 l_string|&quot;  daddr=%08x&bslash;n&quot;
 comma
@@ -1097,7 +1133,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 l_string|&quot;  name=%s&bslash;n&quot;
 comma
@@ -1118,196 +1154,35 @@ id|log
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function irlmp_connect_request (handle, dlsap, userdata)&n; *&n; *    Connect with a peer LSAP  &n; *&n; */
-DECL|function|irlmp_connect_request
-r_void
-id|irlmp_connect_request
+DECL|function|irlmp_find_link
+r_static
+r_struct
+id|lap_cb
+op_star
+id|irlmp_find_link
 c_func
 (paren
-r_struct
-id|lsap_cb
-op_star
-id|self
-comma
-id|__u8
-id|dlsap_sel
-comma
 id|__u32
 id|daddr
-comma
-r_struct
-id|qos_info
-op_star
-id|qos
-comma
-r_struct
-id|sk_buff
-op_star
-id|userdata
 )paren
 (brace
-r_struct
-id|sk_buff
-op_star
-id|skb
-op_assign
-l_int|NULL
-suffix:semicolon
 r_struct
 id|lap_cb
 op_star
 id|lap
 suffix:semicolon
-r_struct
-id|lsap_cb
-op_star
-id|lsap
-suffix:semicolon
 r_int
 r_int
 id|flags
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LMP_LSAP_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|4
-comma
-l_string|&quot;irlmp_connect_request(), &quot;
-l_string|&quot;slsap_sel=%02x, dlsap_sel=%02x, daddr=%08x&bslash;n&quot;
-comma
-id|self-&gt;slsap_sel
-comma
-id|dlsap_sel
-comma
-id|daddr
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|self-&gt;connected
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
-l_string|&quot;(), Error: already connected!!&bslash;n&quot;
+l_string|&quot;(), client didn&squot;t supply saddr, so try to look it up!&bslash;n&quot;
 )paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/* Any userdata? */
-r_if
-c_cond
-(paren
-id|userdata
-op_eq
-l_int|NULL
-)paren
-(brace
-id|skb
-op_assign
-id|dev_alloc_skb
-c_func
-(paren
-l_int|64
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), Could not allocate sk_buff of length %d&bslash;n&quot;
-comma
-l_int|64
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|skb_reserve
-c_func
-(paren
-id|skb
-comma
-id|LMP_CONTROL_HEADER
-op_plus
-id|LAP_HEADER
-)paren
-suffix:semicolon
-)brace
-r_else
-id|skb
-op_assign
-id|userdata
-suffix:semicolon
-multiline_comment|/* Make room for MUX control header ( 3 bytes) */
-id|ASSERT
-c_func
-(paren
-id|skb_headroom
-c_func
-(paren
-id|skb
-)paren
-op_ge
-id|LMP_CONTROL_HEADER
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|skb_push
-c_func
-(paren
-id|skb
-comma
-id|LMP_CONTROL_HEADER
-)paren
-suffix:semicolon
-id|self-&gt;dlsap_sel
-op_assign
-id|dlsap_sel
-suffix:semicolon
-id|self-&gt;tmp_skb
-op_assign
-id|skb
 suffix:semicolon
 multiline_comment|/* &n;&t; *  Find out which link to connect on, and make sure nothing strange&n;&t; *  happens while we traverse the list&n;&t; */
 id|save_flags
@@ -1350,6 +1225,7 @@ op_eq
 id|LMP_LAP_MAGIC
 comma
 r_return
+l_int|NULL
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1373,14 +1249,12 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_connect_request() found link to connect on!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;() found link to connect on!&bslash;n&quot;
 )paren
 suffix:semicolon
-id|self-&gt;lap
-op_assign
+r_return
 id|lap
-suffix:semicolon
-r_break
 suffix:semicolon
 )brace
 id|lap
@@ -1403,6 +1277,265 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Function irlmp_connect_request (handle, dlsap, userdata)&n; *&n; *    Connect with a peer LSAP  &n; *&n; */
+DECL|function|irlmp_connect_request
+r_int
+id|irlmp_connect_request
+c_func
+(paren
+r_struct
+id|lsap_cb
+op_star
+id|self
+comma
+id|__u8
+id|dlsap_sel
+comma
+id|__u32
+id|saddr
+comma
+id|__u32
+id|daddr
+comma
+r_struct
+id|qos_info
+op_star
+id|qos
+comma
+r_struct
+id|sk_buff
+op_star
+id|userdata
+)paren
+(brace
+r_struct
+id|sk_buff
+op_star
+id|skb
+op_assign
+l_int|NULL
+suffix:semicolon
+r_struct
+id|lap_cb
+op_star
+id|lap
+suffix:semicolon
+r_struct
+id|lsap_cb
+op_star
+id|lsap
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;magic
+op_eq
+id|LMP_LSAP_MAGIC
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;(), slsap_sel=%02x, dlsap_sel=%02x, saddr=%08x, daddr=%08x&bslash;n&quot;
+comma
+id|self-&gt;slsap_sel
+comma
+id|dlsap_sel
+comma
+id|saddr
+comma
+id|daddr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;connected
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), Error: already connected!!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EISCONN
+suffix:semicolon
+)brace
+multiline_comment|/* Any userdata? */
+r_if
+c_cond
+(paren
+id|userdata
+op_eq
+l_int|NULL
+)paren
+(brace
+id|skb
+op_assign
+id|dev_alloc_skb
+c_func
+(paren
+l_int|64
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+op_eq
+l_int|NULL
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), Could not allocate sk_buff of length %d&bslash;n&quot;
+comma
+l_int|64
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+id|LMP_CONTROL_HEADER
+op_plus
+id|LAP_HEADER
+)paren
+suffix:semicolon
+)brace
+r_else
+id|skb
+op_assign
+id|userdata
+suffix:semicolon
+multiline_comment|/* Make room for MUX control header ( 3 bytes) */
+id|ASSERT
+c_func
+(paren
+id|skb_headroom
+c_func
+(paren
+id|skb
+)paren
+op_ge
+id|LMP_CONTROL_HEADER
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+id|skb_push
+c_func
+(paren
+id|skb
+comma
+id|LMP_CONTROL_HEADER
+)paren
+suffix:semicolon
+id|self-&gt;dlsap_sel
+op_assign
+id|dlsap_sel
+suffix:semicolon
+id|self-&gt;tmp_skb
+op_assign
+id|skb
+suffix:semicolon
+multiline_comment|/*  &n;&t; * Find the link to where we should try to connect since there may&n;&t; * be more than one IrDA port on this machine. If the client has&n;&t; * passed us the saddr (and already knows which link to use), then&n;&t; * we use that to find the link, if not then we have to look in the&n;&t; * discovery log and check if any of the links has discovered a&n;&t; * device with the given daddr &n;&t; */
+r_if
+c_cond
+(paren
+id|saddr
+)paren
+id|lap
+op_assign
+id|hashbin_find
+c_func
+(paren
+id|irlmp-&gt;links
+comma
+id|saddr
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_else
+id|lap
+op_assign
+id|irlmp_find_link
+c_func
+(paren
+id|daddr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lap
+op_eq
+l_int|NULL
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), Unable to find a usable link!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EHOSTUNREACH
+suffix:semicolon
+)brace
+id|self-&gt;lap
+op_assign
+id|lap
+suffix:semicolon
 multiline_comment|/* &n;&t; *  Remove LSAP from list of unconnected LSAPs and insert it into the &n;&t; *  list of connected LSAPs for the particular link */
 id|lsap
 op_assign
@@ -1416,27 +1549,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-multiline_comment|/* Check if we found a link to connect on */
-r_if
-c_cond
-(paren
-id|self-&gt;lap
-op_eq
-l_int|NULL
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), Unable to find a usable link!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|ASSERT
 c_func
 (paren
@@ -1445,6 +1557,8 @@ op_ne
 l_int|NULL
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1456,6 +1570,8 @@ op_eq
 id|LMP_LSAP_MAGIC
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1467,6 +1583,8 @@ op_ne
 l_int|NULL
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1478,6 +1596,8 @@ op_eq
 id|LMP_LAP_MAGIC
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1534,6 +1654,9 @@ comma
 id|skb
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlmp_connect_indication (self)&n; *&n; *    Incomming connection&n; *&n; */
 DECL|function|irlmp_connect_indication
@@ -1560,7 +1683,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_connect_indication()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -1681,7 +1805,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_connect_response()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -1922,7 +2047,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_disconnect_request()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -1958,7 +2084,7 @@ id|self-&gt;connected
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), already disconnected!&bslash;n&quot;
@@ -2145,10 +2271,15 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|1
 comma
 id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+l_string|&quot;(), reason=%s&bslash;n&quot;
+comma
+id|lmp_reasons
+(braket
+id|reason
+)braket
 )paren
 suffix:semicolon
 id|ASSERT
@@ -2187,7 +2318,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|3
 comma
 id|__FUNCTION__
 l_string|&quot;(), slsap_sel=%02x, dlsap_sel=%02x&bslash;n&quot;
@@ -2205,7 +2336,7 @@ id|self-&gt;dlsap_sel
 op_assign
 id|LSAP_ANY
 suffix:semicolon
-multiline_comment|/* &n;&t; *  Remove assosiation betwen this LSAP and the kink it used &n;&t; */
+multiline_comment|/* &n;&t; *  Remove association between this LSAP and the link it used &n;&t; */
 id|ASSERT
 c_func
 (paren
@@ -2282,28 +2413,6 @@ id|self-&gt;lap
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* FIXME: the reasons should be extracted somewhere else? */
-r_if
-c_cond
-(paren
-id|userdata
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), reason=%02x&bslash;n&quot;
-comma
-id|userdata-&gt;data
-(braket
-l_int|3
-)braket
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *  Inform service user&n;&t; */
 r_if
 c_cond
@@ -2348,7 +2457,9 @@ c_func
 l_int|4
 comma
 id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+l_string|&quot;(), nslots=%d&bslash;n&quot;
+comma
+id|nslots
 )paren
 suffix:semicolon
 id|ASSERT
@@ -2370,6 +2481,50 @@ id|sysctl_discovery
 )paren
 r_return
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|nslots
+op_ne
+l_int|1
+)paren
+op_logical_and
+(paren
+id|nslots
+op_ne
+l_int|6
+)paren
+op_logical_and
+(paren
+id|nslots
+op_ne
+l_int|8
+)paren
+op_logical_and
+(paren
+id|nslots
+op_ne
+l_int|16
+)paren
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), invalid number of slots value!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|nslots
+op_assign
+id|sysctl_discovery_slots
+op_assign
+l_int|8
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *  Construct new discovery info to be used by IrLAP,&n;&t; *  TODO: no need to do this every time!&n;&t; */
 id|irlmp-&gt;discovery_cmd.hint
 (braket
@@ -2414,6 +2569,10 @@ c_func
 id|irlmp-&gt;discovery_cmd.info
 )paren
 suffix:semicolon
+id|irlmp-&gt;discovery_cmd.nslots
+op_assign
+id|nslots
+suffix:semicolon
 multiline_comment|/*&n;&t; * Try to send discovery packets on all links&n;&t; */
 id|lap
 op_assign
@@ -2452,7 +2611,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_discovery_request() sending request!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;() sending request!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|irlmp_do_lap_event
@@ -2509,19 +2669,21 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KERN_INFO
+l_int|1
+comma
 l_string|&quot;IrDA Discovered: %s&bslash;n&quot;
 comma
 id|discovery-&gt;info
 )paren
 suffix:semicolon
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KERN_INFO
+l_int|1
+comma
 l_string|&quot;    Services: &quot;
 )paren
 suffix:semicolon
@@ -2834,9 +2996,6 @@ id|self-&gt;daddr
 op_assign
 id|discovery-&gt;daddr
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Create a new discovery log if neccessary&n;&t; */
-multiline_comment|/* if ( self-&gt;cachelog == NULL) */
-multiline_comment|/* &t;&t;self-&gt;cachelog = hashbin_new( HB_LOCAL); */
 id|ASSERT
 c_func
 (paren
@@ -3081,7 +3240,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_data_indication()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ASSERT
@@ -3146,6 +3306,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlmp_udata_request (self, skb)&n; *&n; *    &n; *&n; */
 DECL|function|irlmp_udata_request
+r_inline
 r_void
 id|irlmp_udata_request
 c_func
@@ -3176,28 +3337,6 @@ c_func
 id|skb
 op_ne
 l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LMP_LSAP_MAGIC
 comma
 r_return
 suffix:semicolon
@@ -3339,7 +3478,7 @@ id|skb
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Sorry not implemented&bslash;n&quot;
@@ -3361,7 +3500,7 @@ id|skb
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -3379,7 +3518,7 @@ r_void
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 l_string|&quot;irlmp_status_request(), Not implemented&bslash;n&quot;
 )paren
@@ -3427,7 +3566,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Allocate array to store services in */
+multiline_comment|/* &n;&t; * Allocate array to store services in. 16 entries should be safe &n;&t; * since we currently only support 2 hint bytes&n;&t; */
 id|service
 op_assign
 id|kmalloc
@@ -3448,9 +3587,10 @@ id|service
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
-l_string|&quot;irlmp_hint_to_service: Unable to kmalloc!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unable to kmalloc!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3467,9 +3607,11 @@ l_int|0
 )braket
 )paren
 (brace
-id|printk
+id|DEBUG
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;&lt;None&gt;&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3487,9 +3629,11 @@ l_int|0
 op_amp
 id|HINT_PNP
 )paren
-id|printk
+id|DEBUG
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;PnP Compatible &quot;
 )paren
 suffix:semicolon
@@ -3503,9 +3647,11 @@ l_int|0
 op_amp
 id|HINT_PDA
 )paren
-id|printk
+id|DEBUG
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;PDA/Palmtop &quot;
 )paren
 suffix:semicolon
@@ -3519,9 +3665,11 @@ l_int|0
 op_amp
 id|HINT_COMPUTER
 )paren
-id|printk
+id|DEBUG
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;Computer &quot;
 )paren
 suffix:semicolon
@@ -3536,10 +3684,12 @@ op_amp
 id|HINT_PRINTER
 )paren
 (brace
-id|printk
+id|DEBUG
 c_func
 (paren
-l_string|&quot;Printer&bslash;n&quot;
+l_int|1
+comma
+l_string|&quot;Printer &quot;
 )paren
 suffix:semicolon
 id|service
@@ -3561,9 +3711,11 @@ l_int|0
 op_amp
 id|HINT_MODEM
 )paren
-id|printk
+id|DEBUG
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;Modem &quot;
 )paren
 suffix:semicolon
@@ -3577,9 +3729,11 @@ l_int|0
 op_amp
 id|HINT_FAX
 )paren
-id|printk
+id|DEBUG
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;Fax &quot;
 )paren
 suffix:semicolon
@@ -3594,10 +3748,12 @@ op_amp
 id|HINT_LAN
 )paren
 (brace
-id|printk
+id|DEBUG
 c_func
 (paren
-l_string|&quot;LAN Access&bslash;n&quot;
+l_int|1
+comma
+l_string|&quot;LAN Access &quot;
 )paren
 suffix:semicolon
 id|service
@@ -3631,12 +3787,24 @@ l_int|1
 op_amp
 id|HINT_TELEPHONY
 )paren
-id|printk
+(brace
+id|DEBUG
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;Telephony &quot;
 )paren
 suffix:semicolon
+id|service
+(braket
+id|i
+op_increment
+)braket
+op_assign
+id|S_TELEPHONY
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3647,9 +3815,11 @@ l_int|1
 op_amp
 id|HINT_FILE_SERVER
 )paren
-id|printk
+id|DEBUG
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;File Server &quot;
 )paren
 suffix:semicolon
@@ -3664,9 +3834,11 @@ op_amp
 id|HINT_COMM
 )paren
 (brace
-id|printk
+id|DEBUG
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;IrCOMM &quot;
 )paren
 suffix:semicolon
@@ -3690,9 +3862,11 @@ op_amp
 id|HINT_OBEX
 )paren
 (brace
-id|printk
+id|DEBUG
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;IrOBEX &quot;
 )paren
 suffix:semicolon
@@ -3706,9 +3880,11 @@ id|S_OBEX
 suffix:semicolon
 )brace
 )brace
-id|printk
+id|DEBUG
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3858,9 +4034,10 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
-l_string|&quot;irlmp_service_to_hint(), Unknown service!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown service!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -3976,9 +4153,10 @@ id|entry
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
-l_string|&quot;irlmp_register(), Unable to kmalloc!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unable to kmalloc!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4085,8 +4263,9 @@ id|entry
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
+id|__FUNCTION__
 l_string|&quot;Unable to find entry to unregister!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4264,7 +4443,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_slsap_inuse()&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Check if slsap is already in use. To do this we have to loop over&n;&t; *  every IrLAP connection and check every LSAP assosiated with each&n;&t; *  the connection.&n;&t; */
@@ -4440,7 +4620,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irlmp_find_free_slsap(), picked next free lsap_sel=%02x&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), next free lsap_sel=%02x&bslash;n&quot;
 comma
 id|lsap_sel
 )paren
@@ -4474,6 +4655,15 @@ r_case
 id|LAP_DISC_INDICATION
 suffix:colon
 multiline_comment|/* Received a disconnect request from peer */
+id|DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), LAP_DISC_INDICATION&bslash;n&quot;
+)paren
+suffix:semicolon
 id|reason
 op_assign
 id|LM_USER_REQUEST
@@ -4484,6 +4674,15 @@ r_case
 id|LAP_NO_RESPONSE
 suffix:colon
 multiline_comment|/* To many retransmits without response */
+id|DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), LAP_NO_RESPONSE&bslash;n&quot;
+)paren
+suffix:semicolon
 id|reason
 op_assign
 id|LM_LAP_DISCONNECT
@@ -4493,6 +4692,15 @@ suffix:semicolon
 r_case
 id|LAP_RESET_INDICATION
 suffix:colon
+id|DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), LAP_RESET_INDICATION&bslash;n&quot;
+)paren
+suffix:semicolon
 id|reason
 op_assign
 id|LM_LAP_RESET
@@ -4508,6 +4716,15 @@ suffix:colon
 r_case
 id|LAP_PRIMARY_CONFLICT
 suffix:colon
+id|DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), LAP_FOUND_NONE, LAP_MEDIA_BUSY or LAP_PRIMARY_CONFLICT&bslash;n&quot;
+)paren
+suffix:semicolon
 id|reason
 op_assign
 id|LM_CONNECT_FAILURE
@@ -4519,7 +4736,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unknow IrLAP disconnect reason %d!&bslash;n&quot;
@@ -4536,6 +4753,102 @@ suffix:semicolon
 )brace
 r_return
 id|reason
+suffix:semicolon
+)brace
+DECL|function|irlmp_get_saddr
+id|__u32
+id|irlmp_get_saddr
+c_func
+(paren
+r_struct
+id|lsap_cb
+op_star
+id|self
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+l_int|0
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;lap
+op_ne
+l_int|NULL
+comma
+r_return
+l_int|0
+suffix:semicolon
+)paren
+suffix:semicolon
+r_return
+id|self-&gt;lap-&gt;saddr
+suffix:semicolon
+)brace
+DECL|function|irlmp_get_daddr
+id|__u32
+id|irlmp_get_daddr
+c_func
+(paren
+r_struct
+id|lsap_cb
+op_star
+id|self
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+l_int|0
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;lap
+op_ne
+l_int|NULL
+comma
+r_return
+l_int|0
+suffix:semicolon
+)paren
+suffix:semicolon
+r_return
+id|self-&gt;lap-&gt;daddr
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS

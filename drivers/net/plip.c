@@ -5034,7 +5034,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|3
+id|PLIP_MAX
 op_logical_and
 id|list
 (braket
@@ -5166,7 +5166,7 @@ c_func
 (paren
 id|parport
 comma
-id|i
+id|pb-&gt;number
 )paren
 )paren
 (brace

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_eth.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Oct 15 08:37:58 1998&n; * Modified at:   Wed Dec  9 11:14:53 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_eth.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Oct 15 08:37:58 1998&n; * Modified at:   Wed Feb  3 19:58:28 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
@@ -6,191 +6,10 @@ macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irlan_common.h&gt;
 macro_line|#include &lt;net/irda/irlan_eth.h&gt;
-multiline_comment|/*&n; * Function irlan_eth_init (dev)&n; *&n; *    The network device initialization function. Called only once.&n; *&n; */
-DECL|function|irlan_eth_init
-r_int
-id|irlan_eth_init
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-r_struct
-id|irlan_cb
-op_star
-id|self
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|dev
-op_ne
-l_int|NULL
-comma
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)paren
-suffix:semicolon
-id|self
-op_assign
-(paren
-r_struct
-id|irlan_cb
-op_star
-)paren
-id|dev-&gt;priv
-suffix:semicolon
-multiline_comment|/*  &t;dev-&gt;open               = irlan_eth_open;  */
-multiline_comment|/* &t;dev-&gt;stop&t;        = irlan_eth_close; */
-id|dev-&gt;hard_start_xmit
-op_assign
-id|irlan_eth_tx
-suffix:semicolon
-id|dev-&gt;get_stats
-op_assign
-id|irlan_eth_get_stats
-suffix:semicolon
-id|dev-&gt;set_multicast_list
-op_assign
-id|irlan_eth_set_multicast_list
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|ether_setup
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-id|dev-&gt;tx_queue_len
-op_assign
-id|TTP_MAX_QUEUE
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Function irlan_eth_open (dev)&n; *&n; *    Start the IrLAN ether network device, this function will be called by&n; *    &quot;ifconfig irlan0 up&quot;.&n; *&n; */
-DECL|function|irlan_eth_open
-r_int
-id|irlan_eth_open
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-multiline_comment|/* struct irlan_cb *self = (struct irlan_cb *) dev-&gt;priv; */
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|dev
-op_ne
-l_int|NULL
-comma
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)paren
-suffix:semicolon
-multiline_comment|/* Ready to play! */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* MOD_INC_USE_COUNT; */
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Function irlan_eth_close (dev)&n; *&n; *    Stop the Client ether network device, his function will be called by&n; *    ifconfig down.&n; */
-DECL|function|irlan_eth_close
-r_int
-id|irlan_eth_close
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|dev
-op_ne
-l_int|NULL
-comma
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)paren
-suffix:semicolon
-multiline_comment|/* Stop device */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* MOD_DEC_USE_COUNT; */
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Function irlan_eth_tx (skb)&n; *&n; *    Transmits ethernet frames over IrDA link.&n; *&n; */
-DECL|function|irlan_eth_tx
+DECL|function|irlan_eth_xmit
 r_int
-id|irlan_eth_tx
+id|irlan_eth_xmit
 c_func
 (paren
 r_struct
@@ -251,10 +70,22 @@ l_int|0
 suffix:semicolon
 )paren
 suffix:semicolon
+multiline_comment|/* Lock transmit buffer */
 r_if
 c_cond
 (paren
+id|irda_lock
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+op_amp
 id|dev-&gt;tbusy
+)paren
+op_eq
+id|FALSE
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * If we get here, some higher level has decided we are broken.&n;&t;&t; * There should really be a &quot;kick me&quot; function call instead.&n;&t;&t; */
@@ -264,15 +95,6 @@ op_assign
 id|jiffies
 op_minus
 id|dev-&gt;trans_start
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), tbusy==TRUE&bslash;n&quot;
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -292,91 +114,6 @@ suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * If some higher layer thinks we&squot;ve missed an tx-done interrupt&n;&t; * we are passed NULL. Caution: dev_tint() handles the cli()/sti()&n;&t; * itself.&n;&t; */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), skb==NULL&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; *  Check that we are connected&n;         */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|self-&gt;connected
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), Not connected, dropping frame!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-op_increment
-id|self-&gt;stats.tx_dropped
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Block a timer-based transmit from overlapping. This could better be&n;&t; * done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well.&n;&t; */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 id|DEBUG
@@ -417,7 +154,7 @@ comma
 id|IRLAN_MAX_HEADER
 )paren
 suffix:semicolon
-multiline_comment|/* Skb headroom large enough to contain IR-headers? */
+multiline_comment|/* skb headroom large enough to contain IR-headers? */
 r_if
 c_cond
 (paren
@@ -543,15 +280,6 @@ l_int|1
 )paren
 (brace
 multiline_comment|/*  &n;&t;&t; *  IrTTPs tx queue is full, so we just have to drop the&n;&t;&t; *  frame! You might think that we should just return -1&n;&t;&t; *  and don&squot;t deallocate the frame, but that is dangerous&n;&t;&t; *  since it&squot;s possible that we have replaced the original&n;&t;&t; *  skb with a new one with larger headroom, and that would&n;&t;&t; *  really confuse do_dev_queue_xmit() in dev.c! I have&n;&t;&t; *  tried :-) DB&n;&t;&t; */
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), Dropping frame&bslash;n&quot;
-)paren
-suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
@@ -569,14 +297,15 @@ id|dev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Finished! */
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlan_eth_rx (handle, skb)&n; *&n; *    This function gets the data that is received on the data channel&n; *&n; */
-DECL|function|irlan_eth_rx
+multiline_comment|/*&n; * Function irlan_eth_receive (handle, skb)&n; *&n; *    This function gets the data that is received on the data channel&n; *&n; */
+DECL|function|irlan_eth_receive
 r_void
-id|irlan_eth_rx
+id|irlan_eth_receive
 c_func
 (paren
 r_void
@@ -643,15 +372,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|IS_SKB
-c_func
-(paren
-id|skb
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -661,19 +381,6 @@ l_int|1
 comma
 r_return
 suffix:semicolon
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;Got some ether data: length=%d&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|skb-&gt;len
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * Adopt this frame! Important to set all these fields since they &n;&t; * might have been previously set by the low level IrDA network&n;&t; * device driver &n;&t; */
@@ -707,6 +414,7 @@ id|self-&gt;stats.rx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
+multiline_comment|/* &t;net_bh(); */
 )brace
 multiline_comment|/*&n; * Function irlan_eth_flow (status)&n; *&n; *    Do flow control between IP/Ethernet and IrLAN/IrTTP. This is done by &n; *    controlling the dev-&gt;tbusy variable.&n; */
 DECL|function|irlan_eth_flow_indication
@@ -938,11 +646,13 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
+suffix:semicolon
+r_return
 suffix:semicolon
 id|ASSERT
 c_func

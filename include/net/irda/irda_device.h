@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Haris Zukanovic &lt;haris@stud.cs.uit.no&gt;&n; * Created at:    Tue Apr 14 12:41:42 1998&n; * Modified at:   Mon Jan 18 10:52:10 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Haris Zukanovic, &lt;haris@stud.cs.uit.no&gt;&n; *     Copyright (c) 1998 Dag Brattli, &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Haris Zukanovic nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Haris Zukanovic &lt;haris@stud.cs.uit.no&gt;&n; * Created at:    Tue Apr 14 12:41:42 1998&n; * Modified at:   Tue Feb  9 14:01:50 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Haris Zukanovic, &lt;haris@stud.cs.uit.no&gt;&n; *     Copyright (c) 1998 Dag Brattli, &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Haris Zukanovic nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRDA_DEVICE_H
 DECL|macro|IRDA_DEVICE_H
 mdefine_line|#define IRDA_DEVICE_H
@@ -7,16 +7,19 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/qos.h&gt;
 macro_line|#include &lt;net/irda/irqueue.h&gt;
-DECL|macro|SIR_MODE
-mdefine_line|#define SIR_MODE &t;0x01
-DECL|macro|MIR_MODE
-mdefine_line|#define MIR_MODE &t;0x02
-DECL|macro|FIR_MODE
-mdefine_line|#define FIR_MODE &t;0x04
-DECL|macro|IO_PIO
-mdefine_line|#define IO_PIO   &t;0x08
-DECL|macro|IO_DMA
-mdefine_line|#define IO_DMA&t;&t;0x10
+multiline_comment|/* Some non-standard interface flags (should not conflict with any in if.h */
+DECL|macro|IFF_SIR
+mdefine_line|#define IFF_SIR &t;0x01 /* Supports SIR speeds */
+DECL|macro|IFF_MIR
+mdefine_line|#define IFF_MIR &t;0x02 /* Supports MIR speeds */
+DECL|macro|IFF_FIR
+mdefine_line|#define IFF_FIR &t;0x04 /* Supports FIR speeds */
+DECL|macro|IFF_PIO
+mdefine_line|#define IFF_PIO   &t;0x08 /* Supports PIO transfer of data */
+DECL|macro|IFF_DMA
+mdefine_line|#define IFF_DMA&t;&t;0x10 /* Supports DMA transfer of data */
+DECL|macro|IFF_DONGLE
+mdefine_line|#define IFF_DONGLE      0x20 /* Interface has a dongle attached */
 DECL|macro|IO_XMIT
 mdefine_line|#define IO_XMIT 0x01
 DECL|macro|IO_RECV
@@ -193,7 +196,11 @@ r_struct
 id|enet_statistics
 id|stats
 suffix:semicolon
-multiline_comment|/* &t;int flags; */
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* Interface flags (see defs above) */
 DECL|member|priv
 r_void
 op_star
@@ -220,6 +227,10 @@ DECL|member|rx_buff
 r_struct
 id|iobuff_t
 id|rx_buff
+suffix:semicolon
+DECL|member|xbofs
+r_int
+id|xbofs
 suffix:semicolon
 DECL|member|media_busy
 r_int

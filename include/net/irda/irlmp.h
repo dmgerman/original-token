@@ -1,14 +1,14 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.h&n; * Version:       0.3&n; * Description:   IrDA Link Management Protocol (LMP) layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Mon Dec  7 21:11:32 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.h&n; * Version:       0.3&n; * Description:   IrDA Link Management Protocol (LMP) layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Thu Feb  4 11:06:24 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRLMP_H
 DECL|macro|IRLMP_H
 mdefine_line|#define IRLMP_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &quot;irmod.h&quot;
-macro_line|#include &quot;qos.h&quot;
-macro_line|#include &quot;irlap.h&quot;
-macro_line|#include &quot;irlmp_event.h&quot;
-macro_line|#include &quot;irqueue.h&quot;
+macro_line|#include &lt;net/irda/irmod.h&gt;
+macro_line|#include &lt;net/irda/qos.h&gt;
+macro_line|#include &lt;net/irda/irlap.h&gt;
+macro_line|#include &lt;net/irda/irlmp_event.h&gt;
+macro_line|#include &lt;net/irda/irqueue.h&gt;
 multiline_comment|/* LSAP-SEL&squot;s */
 DECL|macro|LSAP_MASK
 mdefine_line|#define LSAP_MASK     0x7f
@@ -16,6 +16,8 @@ DECL|macro|LSAP_IAS
 mdefine_line|#define LSAP_IAS      0x00
 DECL|macro|LSAP_ANY
 mdefine_line|#define LSAP_ANY      0xff
+DECL|macro|DEV_ADDR_ANY
+mdefine_line|#define DEV_ADDR_ANY  0xffffffff
 multiline_comment|/* Predefined LSAPs used by the various servers */
 DECL|macro|TSAP_IRLAN
 mdefine_line|#define TSAP_IRLAN    0x05
@@ -63,6 +65,8 @@ DECL|macro|HINT_HTTP
 mdefine_line|#define HINT_HTTP        0x10
 DECL|macro|HINT_OBEX
 mdefine_line|#define HINT_OBEX        0x20
+DECL|macro|LM_IDLE_TIMEOUT
+mdefine_line|#define LM_IDLE_TIMEOUT  200 /* 2 seconds for now */
 r_typedef
 r_enum
 (brace
@@ -286,6 +290,11 @@ op_star
 id|qos
 suffix:semicolon
 multiline_comment|/* LAP QoS for this session */
+DECL|member|idle_timer
+r_struct
+id|timer_list
+id|idle_timer
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *  Used for caching the last slsap-&gt;dlsap-&gt;handle mapping&n; */
@@ -327,17 +336,16 @@ DECL|member|conflict_flag
 id|__u8
 id|conflict_flag
 suffix:semicolon
-multiline_comment|/* int discovery; */
-DECL|member|discovery_rsp
-id|DISCOVERY
-id|discovery_rsp
-suffix:semicolon
-multiline_comment|/* Discovery response to use by IrLAP */
 DECL|member|discovery_cmd
 id|DISCOVERY
 id|discovery_cmd
 suffix:semicolon
 multiline_comment|/* Discovery command to use by IrLAP */
+DECL|member|discovery_rsp
+id|DISCOVERY
+id|discovery_rsp
+suffix:semicolon
+multiline_comment|/* Discovery response to use by IrLAP */
 DECL|member|free_lsap_sel
 r_int
 id|free_lsap_sel
@@ -472,7 +480,7 @@ id|__u32
 id|saddr
 )paren
 suffix:semicolon
-r_void
+r_int
 id|irlmp_connect_request
 c_func
 (paren
@@ -482,6 +490,9 @@ op_star
 comma
 id|__u8
 id|dlsap_sel
+comma
+id|__u32
+id|saddr
 comma
 id|__u32
 id|daddr
@@ -701,6 +712,37 @@ c_func
 (paren
 id|LAP_REASON
 )paren
+suffix:semicolon
+id|__u32
+id|irlmp_get_saddr
+c_func
+(paren
+r_struct
+id|lsap_cb
+op_star
+id|self
+)paren
+suffix:semicolon
+id|__u32
+id|irlmp_get_daddr
+c_func
+(paren
+r_struct
+id|lsap_cb
+op_star
+id|self
+)paren
+suffix:semicolon
+r_extern
+r_char
+op_star
+id|lmp_reasons
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_discovery_slots
 suffix:semicolon
 r_extern
 r_struct

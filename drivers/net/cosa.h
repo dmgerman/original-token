@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cosa.h,v 1.5 1998/12/24 12:40:18 kas Exp $ */
+multiline_comment|/* $Id: cosa.h,v 1.6 1999/01/06 14:02:44 kas Exp $ */
 multiline_comment|/*&n; *  Copyright (C) 1995-1997  Jan &quot;Yenya&quot; Kasprzak &lt;kas@fi.muni.cz&gt;&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#ifndef COSA_H__
 DECL|macro|COSA_H__
@@ -103,5 +103,15 @@ mdefine_line|#define COSAIONRCARDS&t;_IO(&squot;C&squot;,0xf7)
 multiline_comment|/* Get the number of channels on this card */
 DECL|macro|COSAIONRCHANS
 mdefine_line|#define COSAIONRCHANS&t;_IO(&squot;C&squot;,0xf8)
+multiline_comment|/* Set the driver for the bus-master operations */
+DECL|macro|COSAIOBMSET
+mdefine_line|#define COSAIOBMSET&t;_IOW(&squot;C&squot;, 0xf9, sizeof(unsigned short))
+DECL|macro|COSA_BM_OFF
+mdefine_line|#define COSA_BM_OFF&t;0&t;/* Bus-mastering off - use ISA DMA (default) */
+DECL|macro|COSA_BM_ON
+mdefine_line|#define COSA_BM_ON&t;1&t;/* Bus-mastering on - faster but untested */
+multiline_comment|/* Gets the busmaster status */
+DECL|macro|COSAIOBMGET
+mdefine_line|#define COSAIOBMGET&t;_IO(&squot;C&squot;, 0xfa)
 macro_line|#endif /* !COSA_H__ */
 eof

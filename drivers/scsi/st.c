@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;  Michael Leodolter, Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992 - 1998 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Thu Dec  3 20:27:46 1998 by makisara@home&n;  Some small formal changes - aeb, 950809&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;  Michael Leodolter, Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992 - 1999 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Sun Mar  7 09:03:17 1999 by makisara@home&n;  Some small formal changes - aeb, 950809&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -5415,12 +5415,23 @@ id|STp-&gt;block_size
 op_ne
 l_int|0
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;st%d: Write not multiple of tape block size.&bslash;n&quot;
+comma
+id|dev
+)paren
+suffix:semicolon
 r_return
 (paren
 op_minus
 id|EIO
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

@@ -134,9 +134,7 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
+multiline_comment|/* &t;int i; */
 id|DEBUG
 c_func
 (paren
@@ -823,9 +821,6 @@ r_struct
 id|irda_device
 op_star
 id|idev
-suffix:semicolon
-r_int
-id|xbofs
 suffix:semicolon
 r_int
 id|actual

@@ -1,4 +1,4 @@
-multiline_comment|/* radiotrack (radioreveal) driver for Linux radio support&n; * (c) 1997 M. Kirkwood&n; * Coverted to new API by Alan Cox &lt;Alan.Cox@linux.org&gt;&n; * Various bugfixes and enhancements by Russell Kroll &lt;rkroll@exploits.org&gt;&n; *&n; * TODO: Allow for more than one of these foolish entities :-)&n; *&n; * Notes on the hardware (reverse engineered from other peoples&squot;&n; * reverse engineering of AIMS&squot; code :-)&n; *&n; *  Frequency control is done digitally -- ie out(port,encodefreq(95.8));&n; *&n; *  The signal strength query is unsurprisingly inaccurate.  And it seems&n; *  to indicate that (on my card, at least) the frequency setting isn&squot;t&n; *  too great.  (I have to tune up .025MHz from what the freq should be&n; *  to get a report that the thing is tuned.)&n; *&n; *  Volume control is (ugh) analogue:&n; *   out(port, start_increasing_volume);&n; *   wait(a_wee_while);&n; *   out(port, stop_changing_the_volume);&n; *  &n; */
+multiline_comment|/* radiotrack (radioreveal) driver for Linux radio support&n; * (c) 1997 M. Kirkwood&n; * Coverted to new API by Alan Cox &lt;Alan.Cox@linux.org&gt;&n; * Various bugfixes and enhancements by Russell Kroll &lt;rkroll@exploits.org&gt;&n; *&n; * History:&n; * 1999-02-24&t;Russell Kroll &lt;rkroll@exploits.org&gt;&n; * &t;&t;Fine tuning/VIDEO_TUNER_LOW&n; *&t;&t;Frequency range expanded to start at 87 MHz&n; *&n; * TODO: Allow for more than one of these foolish entities :-)&n; *&n; * Notes on the hardware (reverse engineered from other peoples&squot;&n; * reverse engineering of AIMS&squot; code :-)&n; *&n; *  Frequency control is done digitally -- ie out(port,encodefreq(95.8));&n; *&n; *  The signal strength query is unsurprisingly inaccurate.  And it seems&n; *  to indicate that (on my card, at least) the frequency setting isn&squot;t&n; *  too great.  (I have to tune up .025MHz from what the freq should be&n; *  to get a report that the thing is tuned.)&n; *&n; *  Volume control is (ugh) analogue:&n; *   out(port, start_increasing_volume);&n; *   wait(a_wee_while);&n; *   out(port, stop_changing_the_volume);&n; *  &n; */
 macro_line|#include &lt;linux/module.h&gt;&t;/* Modules &t;&t;&t;*/
 macro_line|#include &lt;linux/init.h&gt;&t;&t;/* Initdata&t;&t;&t;*/
 macro_line|#include &lt;linux/ioport.h&gt;&t;/* check_region, request_region&t;*/
@@ -607,28 +607,17 @@ r_int
 id|i
 suffix:semicolon
 multiline_comment|/* adapted from radio-aztech.c */
-multiline_comment|/* We want to compute x * 100 / 16 without overflow &n;&t; * So we compute x*6 + (x/100)*25 to give x*6.25&n;&t; */
-id|freq
-op_assign
-id|freq
-op_star
-l_int|6
-op_plus
-id|freq
-op_div
-l_int|4
-suffix:semicolon
-multiline_comment|/* massage the data a little&t;*/
+multiline_comment|/* now uses VIDEO_TUNER_LOW for fine tuning */
 id|freq
 op_add_assign
-l_int|1070
+l_int|171200
 suffix:semicolon
-multiline_comment|/* IF = 10.7 MHz &t;&t;*/
+multiline_comment|/* Add 10.7 MHz IF &t;&t;*/
 id|freq
 op_div_assign
-l_int|5
+l_int|800
 suffix:semicolon
-multiline_comment|/* ref = 25 kHz&t;&t;&t;*/
+multiline_comment|/* Convert to 50 kHz units&t;*/
 id|send_0_byte
 (paren
 id|io
@@ -823,52 +812,6 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* signal present&t;&t;*/
 )brace
-DECL|function|rt_chkstereo
-r_int
-id|rt_chkstereo
-c_func
-(paren
-r_struct
-id|rt_device
-op_star
-id|dev
-)paren
-(brace
-id|outb
-c_func
-(paren
-l_int|0xd8
-comma
-id|io
-)paren
-suffix:semicolon
-id|sleep_delay
-c_func
-(paren
-l_int|100000
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|inb
-c_func
-(paren
-id|io
-)paren
-op_amp
-l_int|0x0fd
-)paren
-r_return
-id|VIDEO_SOUND_STEREO
-suffix:semicolon
-multiline_comment|/* stereo detected */
-r_else
-r_return
-id|VIDEO_SOUND_MONO
-suffix:semicolon
-multiline_comment|/* mono */
-)brace
 DECL|function|rt_ioctl
 r_static
 r_int
@@ -1022,9 +965,9 @@ suffix:semicolon
 id|v.rangelow
 op_assign
 (paren
-l_int|88
+l_int|87
 op_star
-l_int|16
+l_int|16000
 )paren
 suffix:semicolon
 id|v.rangehigh
@@ -1032,12 +975,12 @@ op_assign
 (paren
 l_int|108
 op_star
-l_int|16
+l_int|16000
 )paren
 suffix:semicolon
 id|v.flags
 op_assign
-l_int|0
+id|VIDEO_TUNER_LOW
 suffix:semicolon
 id|v.mode
 op_assign
@@ -1228,14 +1171,6 @@ op_assign
 id|rt-&gt;curvol
 op_star
 l_int|6554
-suffix:semicolon
-id|v.mode
-op_assign
-id|rt_chkstereo
-c_func
-(paren
-id|rt
-)paren
 suffix:semicolon
 id|v.step
 op_assign

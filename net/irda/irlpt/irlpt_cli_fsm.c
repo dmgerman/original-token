@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlpt_cli_fsm.c&n; * Version:       0.1&n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Jan 12 11:06:00 1999&n; * Modified at:   Tue Jan 12 11:14:22 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;&n; *     Copyright (c) 1998, Dag Brattli, &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     I, Thomas Davis, provide no warranty for any of this software. This &n; *     material is provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlpt_cli_fsm.c&n; * Version:       0.1&n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Jan 12 11:06:00 1999&n; * Modified at:   Tue Jan 26 12:02:31 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;&n; *     Copyright (c) 1998, Dag Brattli, &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     I, Thomas Davis, provide no warranty for any of this software. This &n; *     material is provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;net/irda/iriap.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
 macro_line|#include &lt;net/irda/irttp.h&gt;
@@ -109,29 +109,6 @@ id|info
 suffix:semicolon
 r_static
 r_int
-id|irlpt_client_state_waitr
-(paren
-r_struct
-id|irlpt_cb
-op_star
-id|self
-comma
-id|IRLPT_EVENT
-id|event
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
-id|irlpt_info
-op_star
-id|info
-)paren
-suffix:semicolon
-r_static
-r_int
 id|irlpt_client_state_conn
 (paren
 r_struct
@@ -157,7 +134,7 @@ DECL|variable|irlpt_client_fsm_debug
 r_int
 id|irlpt_client_fsm_debug
 op_assign
-l_int|3
+l_int|4
 suffix:semicolon
 DECL|variable|irlpt_client_state
 r_int
@@ -195,8 +172,6 @@ comma
 id|irlpt_client_state_ready
 comma
 id|irlpt_client_state_waiti
-comma
-id|irlpt_client_state_waitr
 comma
 id|irlpt_client_state_conn
 comma
@@ -378,7 +353,7 @@ l_string|&quot; --&gt;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function client_state_idle (event, skb, info)&n; *&n; *    IDLE, We are waiting for an indication that there is a provider&n; *    available.&n; */
+multiline_comment|/*&n; * Function irlpt_client_state_idle (self, event, skb, info)&n; *&n; *    IDLE, We are waiting for an indication that there is a provider&n; *    available.&n; */
 DECL|function|irlpt_client_state_idle
 r_static
 r_int
@@ -456,17 +431,20 @@ c_func
 id|irlpt_client_fsm_debug
 comma
 id|__FUNCTION__
-l_string|&quot;: IRLPT_DISCOVERY_INDICATION, sending getvaluebyclass command..&bslash;n&quot;
+l_string|&quot;: IRLPT_DISCOVERY_INDICATION, &quot;
+l_string|&quot;sending getvaluebyclass command..&bslash;n&quot;
 )paren
 suffix:semicolon
 id|iriap_getvaluebyclass_request
 c_func
 (paren
-id|info-&gt;daddr
-comma
 l_string|&quot;IrLPT&quot;
 comma
 l_string|&quot;IrDA:IrLMP:LsapSel&quot;
+comma
+id|info-&gt;saddr
+comma
+id|info-&gt;daddr
 comma
 id|irlpt_client_get_value_confirm
 comma
@@ -534,7 +512,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function client_state_query&n; *&n; *    QUERY, We have queryed the remote IAS and is ready to connect&n; *    to provider, just waiting for the confirm.&n; *&n; */
+multiline_comment|/*&n; * Function irlpt_client_state_query&n; *&n; *    QUERY, We have queryed the remote IAS and is ready to connect&n; *    to provider, just waiting for the confirm.&n; *&n; */
 DECL|function|irlpt_client_state_query
 r_static
 r_int
@@ -660,6 +638,63 @@ comma
 id|IRLPT_CLIENT_IDLE
 )paren
 suffix:semicolon
+id|DEBUG
+c_func
+(paren
+id|irlpt_client_fsm_debug
+comma
+id|__FUNCTION__
+l_string|&quot;: waking any sleepers..&bslash;n&quot;
+)paren
+suffix:semicolon
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|self-&gt;read_wait
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|LMP_DISCONNECT
+suffix:colon
+r_case
+id|LAP_DISCONNECT
+suffix:colon
+id|DEBUG
+c_func
+(paren
+id|irlpt_client_fsm_debug
+comma
+id|__FUNCTION__
+l_string|&quot;: LMP_DISCONNECT or LAP_DISCONNECT&bslash;n&quot;
+)paren
+suffix:semicolon
+id|irlpt_client_next_state
+c_func
+(paren
+id|self
+comma
+id|IRLPT_CLIENT_IDLE
+)paren
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+id|irlpt_client_fsm_debug
+comma
+id|__FUNCTION__
+l_string|&quot;: waking any sleepers..&bslash;n&quot;
+)paren
+suffix:semicolon
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|self-&gt;read_wait
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_default
@@ -709,7 +744,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function client_state_info &n; *&n; *    INFO, We have issued a GetInfo command and is awaiting a reply.&n; */
+multiline_comment|/*&n; * Function irlpt_client_state_info &n; *&n; *    INFO, We have issued a GetInfo command and is awaiting a reply.&n; */
 DECL|function|irlpt_client_state_ready
 r_static
 r_int
@@ -820,6 +855,22 @@ id|__FUNCTION__
 l_string|&quot;: LMP_DISCONNECT or LAP_DISCONNECT&bslash;n&quot;
 )paren
 suffix:semicolon
+id|DEBUG
+c_func
+(paren
+id|irlpt_client_fsm_debug
+comma
+id|__FUNCTION__
+l_string|&quot;: waking any sleepers..&bslash;n&quot;
+)paren
+suffix:semicolon
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|self-&gt;read_wait
+)paren
+suffix:semicolon
 id|irlpt_client_next_state
 c_func
 (paren
@@ -877,7 +928,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function client_state_waiti &n; *&n; *&n; */
+multiline_comment|/*&n; * Function irlpt_client_state_waiti &n; *&n; *&n; */
 DECL|function|irlpt_client_state_waiti
 r_static
 r_int
@@ -965,6 +1016,22 @@ comma
 id|IRLPT_CLIENT_CONN
 )paren
 suffix:semicolon
+id|DEBUG
+c_func
+(paren
+id|irlpt_client_fsm_debug
+comma
+id|__FUNCTION__
+l_string|&quot;: waking any sleepers..&bslash;n&quot;
+)paren
+suffix:semicolon
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|self-&gt;read_wait
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -980,6 +1047,22 @@ id|irlpt_client_fsm_debug
 comma
 id|__FUNCTION__
 l_string|&quot;: LMP_DISCONNECT&bslash;n&quot;
+)paren
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+id|irlpt_client_fsm_debug
+comma
+id|__FUNCTION__
+l_string|&quot;: waking any sleepers..&bslash;n&quot;
+)paren
+suffix:semicolon
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|self-&gt;read_wait
 )paren
 suffix:semicolon
 id|irlpt_client_next_state
@@ -1039,188 +1122,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function client_state_waitr &n; *&n; *&n; */
-DECL|function|irlpt_client_state_waitr
-r_static
-r_int
-id|irlpt_client_state_waitr
-c_func
-(paren
-r_struct
-id|irlpt_cb
-op_star
-id|self
-comma
-id|IRLPT_EVENT
-id|event
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
-id|irlpt_info
-op_star
-id|info
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-id|irlpt_client_fsm_debug
-comma
-l_string|&quot;--&gt; &quot;
-id|__FUNCTION__
-l_string|&quot;:&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|IRLPT_MAGIC
-comma
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)paren
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|event
-)paren
-(brace
-r_case
-id|LMP_CONNECT
-suffix:colon
-id|DEBUG
-c_func
-(paren
-id|irlpt_client_fsm_debug
-comma
-id|__FUNCTION__
-l_string|&quot;: LMP_CONNECT&bslash;n&quot;
-)paren
-suffix:semicolon
-id|irlpt_client_next_state
-c_func
-(paren
-id|self
-comma
-id|IRLPT_CLIENT_CONN
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|LMP_DISCONNECT
-suffix:colon
-id|DEBUG
-c_func
-(paren
-id|irlpt_client_fsm_debug
-comma
-id|__FUNCTION__
-l_string|&quot;: LMP_DISCONNECT&bslash;n&quot;
-)paren
-suffix:semicolon
-id|irlpt_client_next_state
-c_func
-(paren
-id|self
-comma
-id|IRLPT_CLIENT_IDLE
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|LAP_DISCONNECT
-suffix:colon
-id|DEBUG
-c_func
-(paren
-id|irlpt_client_fsm_debug
-comma
-id|__FUNCTION__
-l_string|&quot;: LAP_DISCONNECT&bslash;n&quot;
-)paren
-suffix:semicolon
-id|irlpt_client_next_state
-c_func
-(paren
-id|self
-comma
-id|IRLPT_CLIENT_IDLE
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|DEBUG
-c_func
-(paren
-id|irlpt_client_fsm_debug
-comma
-id|__FUNCTION__
-l_string|&quot;: Unknown event %d, (%s)&bslash;n&quot;
-comma
-id|event
-comma
-id|irlpt_fsm_event
-(braket
-id|event
-)braket
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|skb
-)paren
-(brace
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-)brace
-id|DEBUG
-c_func
-(paren
-id|irlpt_client_fsm_debug
-comma
-id|__FUNCTION__
-l_string|&quot; --&gt;&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Function client_state_conn (event, skb, info)&n; *&n; *    CONN, We have connected to a provider but has not issued any&n; *    commands yet.&n; *&n; */
+multiline_comment|/*&n; * Function irlpt_client_state_conn (self, event, skb, info)&n; *&n; *    CONN, We have connected to a provider but has not issued any&n; *    commands yet.&n; *&n; */
 DECL|function|irlpt_client_state_conn
 r_static
 r_int
@@ -1323,6 +1225,30 @@ id|irlpt_client_fsm_debug
 comma
 id|__FUNCTION__
 l_string|&quot;: LMP_DISCONNECT/LAP_DISCONNECT&bslash;n&quot;
+)paren
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+id|irlpt_client_fsm_debug
+comma
+id|__FUNCTION__
+l_string|&quot;: waking any sleepers..&bslash;n&quot;
+)paren
+suffix:semicolon
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|self-&gt;read_wait
+)paren
+suffix:semicolon
+id|irlpt_client_next_state
+c_func
+(paren
+id|self
+comma
+id|IRLPT_CLIENT_IDLE
 )paren
 suffix:semicolon
 id|irlpt_client_next_state

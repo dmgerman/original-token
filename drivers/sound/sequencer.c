@@ -5135,6 +5135,11 @@ id|midi_opened
 (braket
 id|i
 )braket
+op_logical_and
+id|midi_devs
+(braket
+id|i
+)braket
 )paren
 (brace
 r_if
@@ -6424,6 +6429,12 @@ op_logical_or
 id|midi_dev
 op_ge
 id|max_mididev
+op_logical_or
+op_logical_neg
+id|midi_devs
+(braket
+id|midi_dev
+)braket
 )paren
 r_return
 op_minus
@@ -7214,6 +7225,12 @@ op_logical_or
 id|dev
 op_ge
 id|max_mididev
+op_logical_or
+op_logical_neg
+id|midi_devs
+(braket
+id|dev
+)braket
 )paren
 r_return
 op_minus

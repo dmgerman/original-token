@@ -230,6 +230,10 @@ id|__u32
 id|daddr
 suffix:semicolon
 multiline_comment|/* Device address of the peer device */
+DECL|member|saddr
+id|__u32
+id|saddr
+suffix:semicolon
 DECL|member|d_handler
 r_void
 (paren

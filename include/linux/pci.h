@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: pci.h,v 1.87 1998/10/11 15:13:12 mj Exp $&n; *&n; *&t;PCI defines and function prototypes&n; *&t;Copyright 1994, Drew Eckhardt&n; *&t;Copyright 1997, 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *&t;For more information, please consult the following manuals (look at&n; *&t;http://www.pcisig.com/ for how to get them):&n; *&n; *&t;PCI BIOS Specification&n; *&t;PCI Local Bus Specification&n; *&t;PCI to PCI Bridge Specification&n; *&t;PCI System Design Guide&n; */
+multiline_comment|/*&n; *&t;$Id: pci.h,v 1.87 1998/10/11 15:13:12 mj Exp $&n; *&n; *&t;PCI defines and function prototypes&n; *&t;Copyright 1994, Drew Eckhardt&n; *&t;Copyright 1997--1999 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *&t;For more information, please consult the following manuals (look at&n; *&t;http://www.pcisig.com/ for how to get them):&n; *&n; *&t;PCI BIOS Specification&n; *&t;PCI Local Bus Specification&n; *&t;PCI to PCI Bridge Specification&n; *&t;PCI System Design Guide&n; */
 macro_line|#ifndef LINUX_PCI_H
 DECL|macro|LINUX_PCI_H
 mdefine_line|#define LINUX_PCI_H
@@ -31,6 +31,8 @@ DECL|macro|PCI_COMMAND_FAST_BACK
 mdefine_line|#define  PCI_COMMAND_FAST_BACK&t;0x200&t;/* Enable back-to-back writes */
 DECL|macro|PCI_STATUS
 mdefine_line|#define PCI_STATUS&t;&t;0x06&t;/* 16 bits */
+DECL|macro|PCI_STATUS_CAP_LIST
+mdefine_line|#define  PCI_STATUS_CAP_LIST&t;0x10&t;/* Support Capability List */
 DECL|macro|PCI_STATUS_66MHZ
 mdefine_line|#define  PCI_STATUS_66MHZ&t;0x20&t;/* Support 66 Mhz PCI 2.1 bus */
 DECL|macro|PCI_STATUS_UDF
@@ -132,7 +134,9 @@ DECL|macro|PCI_ROM_ADDRESS_ENABLE
 mdefine_line|#define  PCI_ROM_ADDRESS_ENABLE&t;0x01
 DECL|macro|PCI_ROM_ADDRESS_MASK
 mdefine_line|#define PCI_ROM_ADDRESS_MASK&t;(~0x7ffUL)
-multiline_comment|/* 0x34-0x3b are reserved */
+DECL|macro|PCI_CAPABILITY_LIST
+mdefine_line|#define PCI_CAPABILITY_LIST&t;0x34&t;/* Offset of first capability list entry */
+multiline_comment|/* 0x35-0x3b are reserved */
 DECL|macro|PCI_INTERRUPT_LINE
 mdefine_line|#define PCI_INTERRUPT_LINE&t;0x3c&t;/* 8 bits */
 DECL|macro|PCI_INTERRUPT_PIN
@@ -280,6 +284,15 @@ mdefine_line|#define PCI_CB_SUBSYSTEM_ID&t;0x42
 DECL|macro|PCI_CB_LEGACY_MODE_BASE
 mdefine_line|#define PCI_CB_LEGACY_MODE_BASE&t;0x44&t;/* 16-bit PC Card legacy mode base address (ExCa) */
 multiline_comment|/* 0x48-0x7f reserved */
+multiline_comment|/* Capability lists */
+DECL|macro|PCI_CAP_LIST_ID
+mdefine_line|#define PCI_CAP_LIST_ID&t;&t;0&t;/* Capability ID */
+DECL|macro|PCI_CAP_ID_PM
+mdefine_line|#define  PCI_CAP_ID_PM&t;&t;0x01&t;/* Power Management */
+DECL|macro|PCI_CAP_ID_AGP
+mdefine_line|#define  PCI_CAP_ID_AGP&t;&t;0x02&t;/* Accelerated Graphics Port */
+DECL|macro|PCI_CAP_LIST_NEXT
+mdefine_line|#define PCI_CAP_LIST_NEXT&t;1&t;/* Next capability in the list */
 multiline_comment|/* Device classes and subclasses */
 DECL|macro|PCI_CLASS_NOT_DEFINED
 mdefine_line|#define PCI_CLASS_NOT_DEFINED&t;&t;0x0000
@@ -572,6 +585,8 @@ DECL|macro|PCI_DEVICE_ID_DEC_21150
 mdefine_line|#define PCI_DEVICE_ID_DEC_21150&t;&t;0x0022
 DECL|macro|PCI_DEVICE_ID_DEC_21152
 mdefine_line|#define PCI_DEVICE_ID_DEC_21152&t;&t;0x0024
+DECL|macro|PCI_DEVICE_ID_DEC_21153
+mdefine_line|#define PCI_DEVICE_ID_DEC_21153&t;&t;0x0025
 DECL|macro|PCI_VENDOR_ID_CIRRUS
 mdefine_line|#define PCI_VENDOR_ID_CIRRUS&t;&t;0x1013
 DECL|macro|PCI_DEVICE_ID_CIRRUS_7548
@@ -1537,6 +1552,10 @@ DECL|macro|PCI_VENDOR_ID_CBOARDS
 mdefine_line|#define PCI_VENDOR_ID_CBOARDS&t;&t;0x1307
 DECL|macro|PCI_DEVICE_ID_CBOARDS_DAS1602_16
 mdefine_line|#define PCI_DEVICE_ID_CBOARDS_DAS1602_16 0x0001
+DECL|macro|PCI_VENDOR_ID_NETGEAR
+mdefine_line|#define PCI_VENDOR_ID_NETGEAR&t;&t;0x1385
+DECL|macro|PCI_DEVICE_ID_NETGEAR_GA620
+mdefine_line|#define PCI_DEVICE_ID_NETGEAR_GA620&t;0x620a
 DECL|macro|PCI_VENDOR_ID_SYMPHONY
 mdefine_line|#define PCI_VENDOR_ID_SYMPHONY&t;&t;0x1c1c
 DECL|macro|PCI_DEVICE_ID_SYMPHONY_101
@@ -1687,6 +1706,8 @@ DECL|macro|PCI_DEVICE_ID_INTEL_P6
 mdefine_line|#define PCI_DEVICE_ID_INTEL_P6&t;&t;0x84c4
 DECL|macro|PCI_DEVICE_ID_INTEL_82450GX
 mdefine_line|#define PCI_DEVICE_ID_INTEL_82450GX&t;0x84c5
+DECL|macro|PCI_DEVICE_ID_INTEL_82451NX
+mdefine_line|#define PCI_DEVICE_ID_INTEL_82451NX&t;0x84ca
 DECL|macro|PCI_VENDOR_ID_KTI
 mdefine_line|#define PCI_VENDOR_ID_KTI&t;&t;0x8e2e
 DECL|macro|PCI_DEVICE_ID_KTI_ET32P2
@@ -2226,6 +2247,16 @@ c_func
 r_struct
 id|pci_bus
 op_star
+id|bus
+)paren
+suffix:semicolon
+r_struct
+id|pci_bus
+op_star
+id|pci_scan_peer_bridge
+c_func
+(paren
+r_int
 id|bus
 )paren
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* aztech.c - Aztech radio card driver for Linux 2.1 by Russell Kroll&n; *&n; * Heavily modified to support the new 2.1 radio card interfaces by&n; * Russell Kroll (rkroll@exploits.org)&n; *&n; * Based on code by&n; *&n; * Quay Ly&n; * Donald Song&n; * Jason Lewis      (jlewis@twilight.vtc.vsc.edu) &n; * Scott McGrath    (smcgrath@twilight.vtc.vsc.edu)&n; * William McGrath  (wmcgrath@twilight.vtc.vsc.edu)&n; *&n; * The basis for this code may be found at http://bigbang.vtc.vsc.edu/fmradio/&n; * along with more information on the card itself.&n; *&n; * Notable changes from the original source:&n; * - includes stripped down to the essentials&n; * - for loops used as delays replaced with udelay()&n; * - #defines removed, changed to static values&n; * - tuning structure changed - no more character arrays, other changes&n;*/
+multiline_comment|/* radio-aztech.c - Aztech radio card driver for Linux 2.2 &n; *&n; * Adapted to support the Video for Linux API by &n; * Russell Kroll &lt;rkroll@exploits.org&gt;.  Based on original tuner code by:&n; *&n; * Quay Ly&n; * Donald Song&n; * Jason Lewis      (jlewis@twilight.vtc.vsc.edu) &n; * Scott McGrath    (smcgrath@twilight.vtc.vsc.edu)&n; * William McGrath  (wmcgrath@twilight.vtc.vsc.edu)&n; *&n; * The basis for this code may be found at http://bigbang.vtc.vsc.edu/fmradio/&n; * along with more information on the card itself.&n; *&n; * History:&n; * 1999-02-24&t;Russell Kroll &lt;rkroll@exploits.org&gt;&n; *&t;&t;Fine tuning/VIDEO_TUNER_LOW&n; * &t;&t;Range expanded to 87-108 MHz (from 87.9-107.8)&n; *&n; * Notable changes from the original source:&n; * - includes stripped down to the essentials&n; * - for loops used as delays replaced with udelay()&n; * - #defines removed, changed to static values&n; * - tuning structure changed - no more character arrays, other changes&n;*/
 macro_line|#include &lt;linux/module.h&gt;&t;/* Modules &t;&t;&t;*/
 macro_line|#include &lt;linux/init.h&gt;&t;&t;/* Initdata&t;&t;&t;*/
 macro_line|#include &lt;linux/ioport.h&gt;&t;/* check_region, request_region&t;*/
@@ -321,27 +321,16 @@ id|frequency
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*  6.25 *  */
-id|frequency
-op_assign
-id|frequency
-op_star
-l_int|6
-op_plus
-id|frequency
-op_div
-l_int|4
-suffix:semicolon
-multiline_comment|/* massage data a bit */
 id|frequency
 op_add_assign
-l_int|1070
+l_int|171200
 suffix:semicolon
-multiline_comment|/* tuning needs 24 data bits  */
+multiline_comment|/* Add 10.7 MHz IF&t;&t;*/
 id|frequency
 op_div_assign
-l_int|5
+l_int|800
 suffix:semicolon
+multiline_comment|/* Convert to 50 kHz units&t;*/
 id|send_0_byte
 (paren
 id|dev
@@ -635,26 +624,22 @@ suffix:semicolon
 id|v.rangelow
 op_assign
 (paren
-l_int|879
+l_int|87
 op_star
-l_int|16
+l_int|16000
 )paren
-op_div
-l_int|10
 suffix:semicolon
 id|v.rangehigh
 op_assign
 (paren
-l_int|1078
+l_int|108
 op_star
-l_int|16
+l_int|16000
 )paren
-op_div
-l_int|10
 suffix:semicolon
 id|v.flags
 op_assign
-l_int|0
+id|VIDEO_TUNER_LOW
 suffix:semicolon
 id|v.mode
 op_assign
@@ -1184,7 +1169,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Aztech radio card driver v0.40/19980422 rkroll@exploits.org&bslash;n&quot;
+l_string|&quot;Aztech radio card driver v1.00/19990224 rkroll@exploits.org&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* mute card - prevents noisy bootups */

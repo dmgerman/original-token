@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *&n; * Filename:      irlpt.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Thomas Davis, &lt;ratbert@radiks.net&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Sun Mar  8 23:44:19 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  irlan.c&n; *&n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     Copyright (c) 1998, Dag Brattli,  &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Thomas Davis, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *&n; * Filename:      irlpt_cli.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Thomas Davis, &lt;ratbert@radiks.net&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Sun Mar  8 23:44:19 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  irlan.c&n; *&n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     Copyright (c) 1998, Dag Brattli,  &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Thomas Davis, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;net/irda/irlap.h&gt;
 macro_line|#include &lt;net/irda/irttp.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
@@ -99,6 +99,16 @@ op_star
 id|userdata
 )paren
 suffix:semicolon
+r_static
+r_void
+id|irlpt_client_expired
+c_func
+(paren
+r_int
+r_int
+id|data
+)paren
+suffix:semicolon
 macro_line|#if 0
 r_static
 r_char
@@ -114,7 +124,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;IrLPT, $Revision: 1.10 $/$Date: 1998/11/10 22:50:57 $ (Thomas Davis)&quot;
+l_string|&quot;IrLPT client, v2 (Thomas Davis)&quot;
 suffix:semicolon
 DECL|variable|client_fops
 r_struct
@@ -272,6 +282,17 @@ id|len
 suffix:semicolon
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;in_use
+op_eq
+id|FALSE
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
 id|len
 op_add_assign
 id|sprintf
@@ -378,24 +399,12 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;service_type: %s&bslash;n&quot;
+l_string|&quot;service_type: %s, port type: %s&bslash;n&quot;
 comma
 id|irlpt_service_type
 (braket
 id|index
 )braket
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;port_type: %s&bslash;n&quot;
 comma
 id|irlpt_port_type
 (braket
@@ -412,7 +421,9 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;daddr: 0x%08x&bslash;n&quot;
+l_string|&quot;saddr: 0x%08x, daddr: 0x%08x&bslash;n&quot;
+comma
+id|self-&gt;saddr
 comma
 id|self-&gt;daddr
 )paren
@@ -426,26 +437,13 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;fsm_state: %s&bslash;n&quot;
-comma
-id|irlpt_client_fsm_state
-(braket
-id|self-&gt;state
-)braket
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;retries: %d&bslash;n&quot;
+l_string|&quot;retries: %d, count: %d, queued packets: %d&bslash;n&quot;
 comma
 id|self-&gt;open_retries
+comma
+id|self-&gt;count
+comma
+id|self-&gt;pkt_count
 )paren
 suffix:semicolon
 id|len
@@ -457,7 +455,9 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;dlsap: %d&bslash;n&quot;
+l_string|&quot;slsap: %d, dlsap: %d&bslash;n&quot;
+comma
+id|self-&gt;slsap_sel
 comma
 id|self-&gt;dlsap_sel
 )paren
@@ -471,28 +471,12 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;count: %d&bslash;n&quot;
+l_string|&quot;fsm state: %s&bslash;n&quot;
 comma
-id|self-&gt;count
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;rx_queue: %d&bslash;n&quot;
-comma
-id|skb_queue_len
-c_func
-(paren
-op_amp
-id|self-&gt;rx_queue
-)paren
+id|irlpt_client_fsm_state
+(braket
+id|self-&gt;state
+)braket
 )paren
 suffix:semicolon
 id|len
@@ -564,7 +548,7 @@ id|proc_dir_entry
 id|proc_irda
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
-multiline_comment|/*&n; * Function irlpt_init (dev)&n; *&n; *   Initializes the irlpt control structure&n; *&n; */
+multiline_comment|/*&n; * Function irlpt_client_init (dev)&n; *&n; *   Initializes the irlpt control structure&n; *&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -616,7 +600,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;IrLPT: Can&squot;t allocate hashbin!&bslash;n&quot;
+l_string|&quot;IrLPT client: Can&squot;t allocate hashbin!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -662,7 +646,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-multiline_comment|/*&n; * Function irlpt_cleanup (void)&n; *&n; *&n; *&n; */
+multiline_comment|/*&n; * Function irlpt_client_cleanup (void)&n; *&n; */
 DECL|function|irlpt_client_cleanup
 r_static
 r_void
@@ -690,7 +674,7 @@ comma
 id|CLIENT
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Delete hashbin and close all irlan client instances in it&n;&t; */
+multiline_comment|/*&n;&t; *  Delete hashbin and close all irlpt client instances in it&n;&t; */
 id|hashbin_delete
 c_func
 (paren
@@ -724,7 +708,7 @@ l_string|&quot; --&gt;&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
-multiline_comment|/*&n; * Function irlpt_open (void)&n; *&n; *    This is the entry-point which starts all the fun! Currently this&n; *&n; */
+multiline_comment|/*&n; * Function irlpt_client_open (void)&n; *&n; */
 DECL|function|irlpt_client_open
 r_static
 r_struct
@@ -752,6 +736,31 @@ id|__FUNCTION__
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+id|self
+op_assign
+(paren
+r_struct
+id|irlpt_cb
+op_star
+)paren
+id|hashbin_find
+c_func
+(paren
+id|irlpt_clients
+comma
+id|daddr
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self
+op_eq
+l_int|NULL
+)paren
+(brace
 id|self
 op_assign
 id|kmalloc
@@ -816,6 +825,23 @@ id|irlpt_clients
 )paren
 )paren
 suffix:semicolon
+id|hashbin_insert
+c_func
+(paren
+id|irlpt_clients
+comma
+(paren
+id|QUEUE
+op_star
+)paren
+id|self
+comma
+id|daddr
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
 id|self-&gt;ir_dev.minor
 op_assign
 id|MISC_DYNAMIC_MINOR
@@ -852,6 +878,10 @@ id|self-&gt;porttype
 op_assign
 id|IRLPT_SERIAL
 suffix:semicolon
+id|self-&gt;do_event
+op_assign
+id|irlpt_client_do_event
+suffix:semicolon
 id|skb_queue_head_init
 c_func
 (paren
@@ -867,23 +897,8 @@ comma
 id|IRLPT_CLIENT_IDLE
 )paren
 suffix:semicolon
-id|hashbin_insert
-c_func
-(paren
-id|irlpt_clients
-comma
-(paren
-id|QUEUE
-op_star
-)paren
-id|self
-comma
-id|daddr
-comma
-l_int|NULL
-)paren
+id|MOD_INC_USE_COUNT
 suffix:semicolon
-multiline_comment|/*&t;MOD_INC_USE_COUNT; */
 id|DEBUG
 c_func
 (paren
@@ -967,9 +982,10 @@ l_int|NULL
 id|DEBUG
 c_func
 (paren
-l_int|3
+id|irlpt_client_debug
 comma
-l_string|&quot;irlpt_client_close: freeing SKB&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;: freeing SKB&bslash;n&quot;
 )paren
 suffix:semicolon
 id|dev_kfree_skb
@@ -986,18 +1002,12 @@ op_amp
 id|self-&gt;ir_dev
 )paren
 suffix:semicolon
-id|self-&gt;magic
+id|self-&gt;in_use
 op_assign
-op_complement
-id|IRLPT_MAGIC
+id|FALSE
 suffix:semicolon
-id|kfree
-c_func
-(paren
-id|self
-)paren
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
-multiline_comment|/* MOD_DEC_USE_COUNT; */
 id|DEBUG
 c_func
 (paren
@@ -1032,6 +1042,11 @@ suffix:semicolon
 id|__u32
 id|daddr
 suffix:semicolon
+multiline_comment|/* address of remote printer */
+id|__u32
+id|saddr
+suffix:semicolon
+multiline_comment|/* address of local link where it was discovered */
 id|DEBUG
 c_func
 (paren
@@ -1066,7 +1081,15 @@ suffix:semicolon
 suffix:semicolon
 id|daddr
 op_assign
+id|info.daddr
+op_assign
 id|discovery-&gt;daddr
+suffix:semicolon
+id|saddr
+op_assign
+id|info.saddr
+op_assign
+id|discovery-&gt;saddr
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Check if an instance is already dealing with this device&n;&t; *  (daddr)&n;&t; */
 id|self
@@ -1090,47 +1113,26 @@ r_if
 c_cond
 (paren
 id|self
-op_ne
+op_eq
 l_int|NULL
+op_logical_or
+id|self-&gt;in_use
+op_eq
+id|FALSE
 )paren
 (brace
-id|ASSERT
+id|DEBUG
 c_func
 (paren
-id|self-&gt;magic
-op_eq
-id|IRLPT_MAGIC
+id|irlpt_client_debug
 comma
-r_return
-suffix:semicolon
+id|__FUNCTION__
+l_string|&quot;: daddr 0x%08x not found or was closed&bslash;n&quot;
+comma
+id|daddr
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|self-&gt;state
-op_eq
-id|IRLPT_CLIENT_IDLE
-)paren
-(brace
-id|irlpt_client_do_event
-c_func
-(paren
-id|self
-comma
-id|IRLPT_DISCOVERY_INDICATION
-comma
-l_int|NULL
-comma
-op_amp
-id|info
-)paren
-suffix:semicolon
-)brace
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * We have no instance for daddr, so time to start a new instance.&n;&t; * First we must find a free entry in master array&n;&t; */
+multiline_comment|/*&n;&t;&t; * We have no instance for daddr, so time to start a new &n;&t;&t; * instance. First we must find a free entry in master array&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1153,9 +1155,12 @@ c_func
 id|irlpt_client_debug
 comma
 id|__FUNCTION__
-l_string|&quot;:irlpt_client_open failed!&bslash;n&quot;
+l_string|&quot;: failed!&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 )brace
 id|ASSERT
 c_func
@@ -1181,32 +1186,43 @@ suffix:semicolon
 suffix:semicolon
 id|self-&gt;daddr
 op_assign
-id|info.daddr
-op_assign
 id|daddr
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|self-&gt;state
-op_eq
-id|IRLPT_CLIENT_IDLE
-)paren
-(brace
-id|irlpt_client_do_event
+id|self-&gt;saddr
+op_assign
+id|saddr
+suffix:semicolon
+id|self-&gt;timeout
+op_assign
+id|irlpt_client_expired
+suffix:semicolon
+id|irda_start_timer
 c_func
 (paren
+op_amp
+id|self-&gt;lpt_timer
+comma
+l_int|5000
+comma
+(paren
+r_int
+r_int
+)paren
 id|self
 comma
-id|IRLPT_DISCOVERY_INDICATION
-comma
-l_int|NULL
-comma
-op_amp
-id|info
+id|self-&gt;timeout
 )paren
 suffix:semicolon
-)brace
+macro_line|#if 0
+multiline_comment|/* changed to wake up when we get connected; that way,&n;&t;   if the connection drops, we can easily kill the link. */
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|self-&gt;write_wait
+)paren
+suffix:semicolon
+macro_line|#endif
 id|DEBUG
 c_func
 (paren
@@ -1446,6 +1462,7 @@ id|info.daddr
 op_assign
 id|self-&gt;daddr
 suffix:semicolon
+macro_line|#if 0
 multiline_comment|/*&n;&t; *  Check if we have got some QoS parameters back! This should be the&n;&t; *  negotiated QoS for the link.&n;&t; */
 r_if
 c_cond
@@ -1465,6 +1482,7 @@ id|qos-&gt;data_size.value
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 id|self-&gt;irlap_data_size
 op_assign
 (paren
@@ -1800,7 +1818,39 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/* can&squot;t stop here..  if we get a bad obj, must tell the state&n;&t;   machine that!&n;&t;ASSERT( type == IAS_INTEGER, return;);&n;&t;*/
+multiline_comment|/* Check if request succeeded */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|value
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), got NULL value!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|irlpt_client_do_event
+c_func
+(paren
+id|self
+comma
+id|IAS_PROVIDER_NOT_AVAIL
+comma
+l_int|NULL
+comma
+op_amp
+id|info
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1920,6 +1970,13 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+id|irda_notify_init
+c_func
+(paren
+op_amp
+id|lpt_notify
+)paren
+suffix:semicolon
 id|lpt_notify.connect_confirm
 op_assign
 id|irlpt_client_connect_confirm
@@ -1931,6 +1988,14 @@ suffix:semicolon
 id|lpt_notify.data_indication
 op_assign
 id|irlpt_client_data_indication
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|lpt_notify.name
+comma
+l_string|&quot;IrLPT client&quot;
+)paren
 suffix:semicolon
 id|lpt_notify.instance
 op_assign
@@ -1982,6 +2047,8 @@ id|self-&gt;lsap
 comma
 id|self-&gt;dlsap_sel
 comma
+id|self-&gt;saddr
+comma
 id|self-&gt;daddr
 comma
 l_int|NULL
@@ -1990,6 +2057,164 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
+id|DEBUG
+c_func
+(paren
+id|irlpt_client_debug
+comma
+id|__FUNCTION__
+l_string|&quot; --&gt;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|irlpt_client_expired
+r_static
+r_void
+id|irlpt_client_expired
+c_func
+(paren
+r_int
+r_int
+id|data
+)paren
+(brace
+r_struct
+id|irlpt_cb
+op_star
+id|self
+op_assign
+(paren
+r_struct
+id|irlpt_cb
+op_star
+)paren
+id|data
+suffix:semicolon
+r_struct
+id|sk_buff
+op_star
+id|skb
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+id|irlpt_client_debug
+comma
+l_string|&quot;--&gt; &quot;
+id|__FUNCTION__
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+id|irlpt_client_debug
+comma
+id|__FUNCTION__
+l_string|&quot;: removing irlpt_cb!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;magic
+op_eq
+id|IRLPT_MAGIC
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;state
+op_eq
+id|IRLPT_CLIENT_CONN
+)paren
+(brace
+id|skb
+op_assign
+id|dev_alloc_skb
+c_func
+(paren
+l_int|64
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+op_eq
+l_int|NULL
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(: Could not allocate an &quot;
+l_string|&quot;sk_buff of length %d&bslash;n&quot;
+comma
+l_int|64
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+id|LMP_CONTROL_HEADER
+op_plus
+id|LAP_HEADER
+)paren
+suffix:semicolon
+id|irlmp_disconnect_request
+c_func
+(paren
+id|self-&gt;lsap
+comma
+id|skb
+)paren
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+id|irlpt_client_debug
+comma
+id|__FUNCTION__
+l_string|&quot;: irlmp_close_slap(self-&gt;lsap)&bslash;n&quot;
+)paren
+suffix:semicolon
+id|irlmp_close_lsap
+c_func
+(paren
+id|self-&gt;lsap
+)paren
+suffix:semicolon
+)brace
+id|irlpt_client_close
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -2010,7 +2235,23 @@ suffix:semicolon
 id|MODULE_DESCRIPTION
 c_func
 (paren
-l_string|&quot;The Linux IrDA/IrLPT protocol&quot;
+l_string|&quot;The Linux IrDA/IrLPT client protocol&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irlpt_client_debug
+comma
+l_string|&quot;1i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irlpt_client_fsm_debug
+comma
+l_string|&quot;1i&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Function init_module (void)&n; *&n; *    Initialize the IrLPT client module, this function is called by the&n; *    modprobe(1) program.&n; */
@@ -2027,7 +2268,7 @@ c_func
 (paren
 id|irlpt_client_debug
 comma
-l_string|&quot;--&gt; irlpt client: init_module&bslash;n&quot;
+l_string|&quot;--&gt; IrLPT client: init_module&bslash;n&quot;
 )paren
 suffix:semicolon
 id|irlpt_client_init
@@ -2040,7 +2281,7 @@ c_func
 (paren
 id|irlpt_client_debug
 comma
-l_string|&quot;irlpt client: init_module --&gt;&bslash;n&quot;
+l_string|&quot;IrLPT client: init_module --&gt;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2061,7 +2302,7 @@ c_func
 (paren
 id|irlpt_client_debug
 comma
-l_string|&quot;--&gt; irlpt client: cleanup_module&bslash;n&quot;
+l_string|&quot;--&gt; IrLPT client: cleanup_module&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* No need to check MOD_IN_USE, as sys_delete_module() checks. */
@@ -2076,7 +2317,7 @@ c_func
 (paren
 id|irlpt_client_debug
 comma
-l_string|&quot;irlpt client: cleanup_module --&gt;&bslash;n&quot;
+l_string|&quot;IrLPT client: cleanup_module --&gt;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

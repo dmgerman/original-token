@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sound.h&gt;
 macro_line|#include &lt;linux/major.h&gt;

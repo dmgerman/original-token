@@ -1,8 +1,8 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irias_object.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Oct  1 22:49:50 1998&n; * Modified at:   Sun Oct 25 00:28:56 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irias_object.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Oct  1 22:49:50 1998&n; * Modified at:   Wed Feb  3 10:38:02 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#ifndef LM_IAS_OBJECT_H
 DECL|macro|LM_IAS_OBJECT_H
 mdefine_line|#define LM_IAS_OBJECT_H
-macro_line|#include &quot;irqueue.h&quot;
+macro_line|#include &lt;net/irda/irqueue.h&gt;
 multiline_comment|/* LM-IAS Attribute types */
 DECL|macro|IAS_MISSING
 mdefine_line|#define IAS_MISSING 0
@@ -47,11 +47,11 @@ DECL|struct|ias_value
 r_struct
 id|ias_value
 (brace
-multiline_comment|/* Value description */
 DECL|member|type
 id|__u8
 id|type
 suffix:semicolon
+multiline_comment|/* Value description */
 DECL|member|charset
 r_int
 id|charset
@@ -98,20 +98,19 @@ DECL|member|magic
 r_int
 id|magic
 suffix:semicolon
-multiline_comment|/* Attribute name */
 DECL|member|name
 r_char
 op_star
 id|name
 suffix:semicolon
-multiline_comment|/*        char *attr; What do we need this for?  */
-multiline_comment|/* Attribute value */
+multiline_comment|/* Attribute name */
 DECL|member|value
 r_struct
 id|ias_value
 op_star
 id|value
 suffix:semicolon
+multiline_comment|/* Attribute value */
 )brace
 suffix:semicolon
 r_char
@@ -221,6 +220,24 @@ id|octets
 comma
 r_int
 id|len
+)paren
+suffix:semicolon
+r_int
+id|irias_object_change_attribute
+c_func
+(paren
+r_char
+op_star
+id|obj_name
+comma
+r_char
+op_star
+id|attrib_name
+comma
+r_struct
+id|ias_value
+op_star
+id|new_value
 )paren
 suffix:semicolon
 r_struct

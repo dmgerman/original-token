@@ -1,13 +1,14 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_srv_event.c&n; * Version:       0.1&n; * Description:   IrLAN Server FSM (Finite State Machine)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Wed Dec  9 02:39:05 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_provider_event.c&n; * Version:       0.9&n; * Description:   IrLAN provider state machine)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Wed Feb  3 21:43:06 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/iriap.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
 macro_line|#include &lt;net/irda/irttp.h&gt;
-macro_line|#include &lt;net/irda/irlan_srv.h&gt;
+macro_line|#include &lt;net/irda/irlan_provider.h&gt;
 macro_line|#include &lt;net/irda/irlan_event.h&gt;
 r_static
 r_int
-id|irlan_server_state_idle
+id|irlan_provider_state_idle
+c_func
 (paren
 r_struct
 id|irlan_cb
@@ -21,16 +22,12 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_struct
-id|irlan_info
-op_star
-id|info
 )paren
 suffix:semicolon
 r_static
 r_int
-id|irlan_server_state_info
+id|irlan_provider_state_info
+c_func
 (paren
 r_struct
 id|irlan_cb
@@ -44,16 +41,12 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_struct
-id|irlan_info
-op_star
-id|info
 )paren
 suffix:semicolon
 r_static
 r_int
-id|irlan_server_state_open
+id|irlan_provider_state_open
+c_func
 (paren
 r_struct
 id|irlan_cb
@@ -67,16 +60,12 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_struct
-id|irlan_info
-op_star
-id|info
 )paren
 suffix:semicolon
 r_static
 r_int
-id|irlan_server_state_data
+id|irlan_provider_state_data
+c_func
 (paren
 r_struct
 id|irlan_cb
@@ -90,11 +79,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_struct
-id|irlan_info
-op_star
-id|info
 )paren
 suffix:semicolon
 DECL|variable|state
@@ -119,15 +103,10 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_struct
-id|irlan_info
-op_star
-id|info
 )paren
 op_assign
 (brace
-id|irlan_server_state_idle
+id|irlan_provider_state_idle
 comma
 l_int|NULL
 comma
@@ -135,12 +114,12 @@ multiline_comment|/* Query */
 l_int|NULL
 comma
 multiline_comment|/* Info */
-id|irlan_server_state_info
+id|irlan_provider_state_info
 comma
 l_int|NULL
 comma
 multiline_comment|/* Media */
-id|irlan_server_state_open
+id|irlan_provider_state_open
 comma
 l_int|NULL
 comma
@@ -148,7 +127,7 @@ multiline_comment|/* Wait */
 l_int|NULL
 comma
 multiline_comment|/* Arb */
-id|irlan_server_state_data
+id|irlan_provider_state_data
 comma
 l_int|NULL
 comma
@@ -158,9 +137,9 @@ comma
 multiline_comment|/* Sync */
 )brace
 suffix:semicolon
-DECL|function|irlan_do_server_event
+DECL|function|irlan_do_provider_event
 r_void
-id|irlan_do_server_event
+id|irlan_do_provider_event
 c_func
 (paren
 r_struct
@@ -175,18 +154,28 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_struct
-id|irlan_info
-op_star
-id|info
 )paren
 (brace
+id|ASSERT
+c_func
 (paren
 op_star
 id|state
 (braket
-id|self-&gt;state
+id|self-&gt;provider.state
+)braket
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+(paren
+op_star
+id|state
+(braket
+id|self-&gt;provider.state
 )braket
 )paren
 (paren
@@ -195,16 +184,14 @@ comma
 id|event
 comma
 id|skb
-comma
-id|info
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlan_server_state_idle (event, skb, info)&n; *&n; *    IDLE, We are waiting for an indication that there is a provider&n; *    available.&n; */
-DECL|function|irlan_server_state_idle
+multiline_comment|/*&n; * Function irlan_provider_state_idle (event, skb, info)&n; *&n; *    IDLE, We are waiting for an indication that there is a provider&n; *    available.&n; */
+DECL|function|irlan_provider_state_idle
 r_static
 r_int
-id|irlan_server_state_idle
+id|irlan_provider_state_idle
 c_func
 (paren
 r_struct
@@ -219,11 +206,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_struct
-id|irlan_info
-op_star
-id|info
 )paren
 (brace
 id|DEBUG
@@ -257,27 +239,15 @@ id|event
 r_case
 id|IRLAN_CONNECT_INDICATION
 suffix:colon
-id|ASSERT
-c_func
-(paren
-id|info
-op_ne
-l_int|NULL
-comma
-r_return
-l_int|0
-suffix:semicolon
-)paren
-suffix:semicolon
-id|irlan_server_connect_response
+id|irlan_provider_connect_response
 c_func
 (paren
 id|self
 comma
-id|info-&gt;tsap
+id|self-&gt;provider.tsap_ctrl
 )paren
 suffix:semicolon
-id|irlan_next_state
+id|irlan_next_provider_state
 c_func
 (paren
 id|self
@@ -308,23 +278,21 @@ c_cond
 (paren
 id|skb
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlan_server_state_info (self, event, skb, info)&n; *&n; *    INFO, We have issued a GetInfo command and is awaiting a reply.&n; */
-DECL|function|irlan_server_state_info
+multiline_comment|/*&n; * Function irlan_provider_state_info (self, event, skb, info)&n; *&n; *    INFO, We have issued a GetInfo command and is awaiting a reply.&n; */
+DECL|function|irlan_provider_state_info
 r_static
 r_int
-id|irlan_server_state_info
+id|irlan_provider_state_info
 c_func
 (paren
 r_struct
@@ -339,11 +307,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_struct
-id|irlan_info
-op_star
-id|info
 )paren
 (brace
 r_int
@@ -380,7 +343,19 @@ id|event
 r_case
 id|IRLAN_GET_INFO_CMD
 suffix:colon
-id|irlan_server_send_reply
+multiline_comment|/* Be sure to use 802.3 in case of peer mode */
+r_if
+c_cond
+(paren
+id|self-&gt;access_type
+op_eq
+id|ACCESS_PEER
+)paren
+id|self-&gt;media
+op_assign
+id|MEDIA_802_3
+suffix:semicolon
+id|irlan_provider_send_reply
 c_func
 (paren
 id|self
@@ -396,7 +371,7 @@ suffix:semicolon
 r_case
 id|IRLAN_GET_MEDIA_CMD
 suffix:colon
-id|irlan_server_send_reply
+id|irlan_provider_send_reply
 c_func
 (paren
 id|self
@@ -422,7 +397,25 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|irlan_server_send_reply
+r_if
+c_cond
+(paren
+id|self-&gt;access_type
+op_eq
+id|ACCESS_PEER
+)paren
+(brace
+multiline_comment|/* FIXME: make use of random functions! */
+id|self-&gt;provider.send_arb_val
+op_assign
+(paren
+id|jiffies
+op_amp
+l_int|0xffff
+)paren
+suffix:semicolon
+)brace
+id|irlan_provider_send_reply
 c_func
 (paren
 id|self
@@ -439,7 +432,8 @@ id|ret
 op_eq
 id|RSP_SUCCESS
 )paren
-id|irlan_next_state
+(brace
+id|irlan_next_provider_state
 c_func
 (paren
 id|self
@@ -447,15 +441,28 @@ comma
 id|IRLAN_OPEN
 )paren
 suffix:semicolon
+multiline_comment|/* Signal client that we are now open */
+id|irlan_do_client_event
+c_func
+(paren
+id|self
+comma
+id|IRLAN_PROVIDER_SIGNAL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
 id|IRLAN_LMP_DISCONNECT
 suffix:colon
+multiline_comment|/* FALLTHROUGH */
 r_case
 id|IRLAN_LAP_DISCONNECT
 suffix:colon
-id|irlan_next_state
+id|irlan_next_provider_state
 c_func
 (paren
 id|self
@@ -472,7 +479,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irlan_server_state_info, Unknown event %d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %d&bslash;n&quot;
 comma
 id|event
 )paren
@@ -485,23 +493,21 @@ c_cond
 (paren
 id|skb
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlan_server_state_open (self, event, skb, info)&n; *&n; *    OPEN, The client has issued a OpenData command and is awaiting a&n; *    reply&n; *&n; */
-DECL|function|irlan_server_state_open
+multiline_comment|/*&n; * Function irlan_provider_state_open (self, event, skb, info)&n; *&n; *    OPEN, The client has issued a OpenData command and is awaiting a&n; *    reply&n; *&n; */
+DECL|function|irlan_provider_state_open
 r_static
 r_int
-id|irlan_server_state_open
+id|irlan_provider_state_open
 c_func
 (paren
 r_struct
@@ -516,11 +522,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_struct
-id|irlan_info
-op_star
-id|info
 )paren
 (brace
 id|DEBUG
@@ -554,7 +555,7 @@ id|event
 r_case
 id|IRLAN_FILTER_CONFIG_CMD
 suffix:colon
-id|irlan_server_extract_params
+id|irlan_provider_extract_params
 c_func
 (paren
 id|self
@@ -564,7 +565,7 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|irlan_server_send_reply
+id|irlan_provider_send_reply
 c_func
 (paren
 id|self
@@ -580,15 +581,7 @@ suffix:semicolon
 r_case
 id|IRLAN_DATA_CONNECT_INDICATION
 suffix:colon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;DATA_CONNECT_INDICATION&bslash;n&quot;
-)paren
-suffix:semicolon
-id|irlan_next_state
+id|irlan_next_provider_state
 c_func
 (paren
 id|self
@@ -596,12 +589,12 @@ comma
 id|IRLAN_DATA
 )paren
 suffix:semicolon
-id|irlan_server_connect_response
+id|irlan_provider_connect_response
 c_func
 (paren
 id|self
 comma
-id|info-&gt;tsap
+id|self-&gt;tsap_data
 )paren
 suffix:semicolon
 r_break
@@ -609,10 +602,11 @@ suffix:semicolon
 r_case
 id|IRLAN_LMP_DISCONNECT
 suffix:colon
+multiline_comment|/* FALLTHROUGH */
 r_case
 id|IRLAN_LAP_DISCONNECT
 suffix:colon
-id|irlan_next_state
+id|irlan_next_provider_state
 c_func
 (paren
 id|self
@@ -627,7 +621,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unknown event %d&bslash;n&quot;
@@ -643,23 +637,21 @@ c_cond
 (paren
 id|skb
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlan_server_state_data (self, event, skb, info)&n; *&n; *    DATA, The data channel is connected, allowing data transfers between&n; *    the local and remote machines.&n; *&n; */
-DECL|function|irlan_server_state_data
+multiline_comment|/*&n; * Function irlan_provider_state_data (self, event, skb, info)&n; *&n; *    DATA, The data channel is connected, allowing data transfers between&n; *    the local and remote machines.&n; *&n; */
+DECL|function|irlan_provider_state_data
 r_static
 r_int
-id|irlan_server_state_data
+id|irlan_provider_state_data
 c_func
 (paren
 r_struct
@@ -674,11 +666,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_struct
-id|irlan_info
-op_star
-id|info
 )paren
 (brace
 r_struct
@@ -729,7 +716,7 @@ id|event
 r_case
 id|IRLAN_FILTER_CONFIG_CMD
 suffix:colon
-id|irlan_server_extract_params
+id|irlan_provider_extract_params
 c_func
 (paren
 id|self
@@ -739,7 +726,7 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|irlan_server_send_reply
+id|irlan_provider_send_reply
 c_func
 (paren
 id|self
@@ -749,45 +736,12 @@ comma
 id|RSP_SUCCESS
 )paren
 suffix:semicolon
-multiline_comment|/* Make sure the code below only runs once */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|self-&gt;connected
-)paren
-(brace
-id|mgr_event.event
-op_assign
-id|EVENT_IRLAN_START
-suffix:semicolon
-id|sprintf
-c_func
-(paren
-id|mgr_event.devname
-comma
-l_string|&quot;%s&quot;
-comma
-id|self-&gt;ifname
-)paren
-suffix:semicolon
-id|irmanager_notify
-c_func
-(paren
-op_amp
-id|mgr_event
-)paren
-suffix:semicolon
-id|self-&gt;connected
-op_assign
-id|TRUE
-suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_case
 id|IRLAN_LMP_DISCONNECT
 suffix:colon
+multiline_comment|/* FALLTHROUGH */
 r_case
 id|IRLAN_LAP_DISCONNECT
 suffix:colon
@@ -812,7 +766,7 @@ op_amp
 id|mgr_event
 )paren
 suffix:semicolon
-id|irlan_next_state
+id|irlan_next_provider_state
 c_func
 (paren
 id|self
@@ -829,7 +783,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irlan_server_state_data, Unknown event %d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %d&bslash;n&quot;
 comma
 id|event
 )paren
@@ -842,14 +797,12 @@ c_cond
 (paren
 id|skb
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon

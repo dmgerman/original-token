@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.h&n; * Version:       &n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Sat Dec  5 13:45:37 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.h&n; * Version:       0.5&n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Tue Jan 26 11:50:33 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRIAP_H
 DECL|macro|IRIAP_H
 mdefine_line|#define IRIAP_H
@@ -57,52 +57,6 @@ op_star
 id|priv
 )paren
 suffix:semicolon
-DECL|struct|iap_value
-r_struct
-id|iap_value
-(brace
-DECL|member|full
-r_char
-op_star
-id|full
-suffix:semicolon
-DECL|member|name
-r_char
-op_star
-id|name
-suffix:semicolon
-DECL|member|attr
-r_char
-op_star
-id|attr
-suffix:semicolon
-DECL|member|obj_id
-id|__u16
-id|obj_id
-suffix:semicolon
-DECL|member|ret_code
-id|__u8
-id|ret_code
-suffix:semicolon
-DECL|member|type
-id|__u8
-id|type
-suffix:semicolon
-DECL|member|len
-r_int
-id|len
-suffix:semicolon
-DECL|member|value_int
-r_int
-id|value_int
-suffix:semicolon
-DECL|member|value_char
-r_char
-op_star
-id|value_char
-suffix:semicolon
-)brace
-suffix:semicolon
 DECL|struct|iriap_cb
 r_struct
 id|iriap_cb
@@ -122,6 +76,10 @@ r_int
 id|mode
 suffix:semicolon
 multiline_comment|/* Client or server */
+DECL|member|saddr
+id|__u32
+id|saddr
+suffix:semicolon
 DECL|member|daddr
 id|__u32
 id|daddr
@@ -198,9 +156,6 @@ r_void
 id|iriap_getvaluebyclass_request
 c_func
 (paren
-id|__u32
-id|addr
-comma
 r_char
 op_star
 id|name
@@ -208,6 +163,12 @@ comma
 r_char
 op_star
 id|attr
+comma
+id|__u32
+id|saddr
+comma
+id|__u32
+id|daddr
 comma
 id|CONFIRM_CALLBACK
 id|callback

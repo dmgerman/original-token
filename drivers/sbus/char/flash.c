@@ -262,13 +262,6 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-id|vma-&gt;vm_file
-op_assign
-id|file
-suffix:semicolon
-id|file-&gt;f_count
-op_increment
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

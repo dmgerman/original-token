@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irproc.c&n; * Version:       &n; * Description:   Various entries in the /proc file system&n; * Status:        Experimental.&n; * Author:        Thomas Davis, &lt;ratbert@radiks.net&gt;&n; * Created at:    Sat Feb 21 21:33:24 1998&n; * Modified at:   Tue Dec 15 09:21:50 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;, &n; *     All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     I, Thomas Davis, provide no warranty for any of this software. &n; *     This material is provided &quot;AS-IS&quot; and at no charge. &n; *     &n; *     Portions lifted from the linux/fs/procfs/ files.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irproc.c&n; * Version:       &n; * Description:   Various entries in the /proc file system&n; * Status:        Experimental.&n; * Author:        Thomas Davis, &lt;ratbert@radiks.net&gt;&n; * Created at:    Sat Feb 21 21:33:24 1998&n; * Modified at:   Thu Feb 11 15:23:23 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;, &n; *     All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     I, Thomas Davis, provide no warranty for any of this software. &n; *     This material is provided &quot;AS-IS&quot; and at no charge. &n; *     &n; *     Portions lifted from the linux/fs/procfs/ files.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;net/irda/irmod.h&gt;
@@ -6,7 +6,7 @@ macro_line|#include &lt;net/irda/irlap.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
 r_static
 r_int
-id|proc_irda_21x_lookup
+id|proc_irda_lookup
 c_func
 (paren
 r_struct
@@ -182,8 +182,6 @@ r_int
 id|unused
 )paren
 suffix:semicolon
-multiline_comment|/* int proc_irda_readdir(struct inode *inode, struct file *filp, void *dirent,  */
-multiline_comment|/* &t;&t;      filldir_t filldir); */
 DECL|enum|irda_directory_inos
 r_enum
 id|irda_directory_inos
@@ -264,7 +262,7 @@ multiline_comment|/* default net directory file-ops */
 l_int|NULL
 comma
 multiline_comment|/* create */
-id|proc_irda_21x_lookup
+id|proc_irda_lookup
 comma
 l_int|NULL
 comma
@@ -635,6 +633,11 @@ op_amp
 id|proc_irda
 )paren
 suffix:semicolon
+id|proc_irda.fill_inode
+op_assign
+op_amp
+id|irda_proc_modcount
+suffix:semicolon
 id|proc_register
 c_func
 (paren
@@ -768,10 +771,10 @@ id|proc_irda.low_ino
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function proc_irda_21x_lookup (dir, dentry)&n; *&n; *    This is a copy of proc_lookup from the linux-2.1.x &n; *&n; */
-DECL|function|proc_irda_21x_lookup
+multiline_comment|/*&n; * Function proc_irda_lookup (dir, dentry)&n; *&n; *    This is a copy of proc_lookup from the linux-2.2.x kernel&n; *&n; */
+DECL|function|proc_irda_lookup
 r_int
-id|proc_irda_21x_lookup
+id|proc_irda_lookup
 c_func
 (paren
 r_struct

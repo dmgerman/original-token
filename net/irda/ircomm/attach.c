@@ -71,7 +71,6 @@ macro_line|#endif
 multiline_comment|/*&n; * handler for iriap_getvaluebyclass_request() &n; *&n; */
 DECL|function|ircomm_getvalue_confirm
 r_void
-(def_block
 id|ircomm_getvalue_confirm
 c_func
 (paren
@@ -122,6 +121,26 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+multiline_comment|/* Check if request succeeded */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|value
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), got NULL value!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|DEBUG
 c_func
 (paren
@@ -308,11 +327,9 @@ r_break
 suffix:semicolon
 )brace
 )brace
-)def_block
 DECL|function|got_lsapsel
 r_static
 r_void
-(def_block
 id|got_lsapsel
 c_func
 (paren
@@ -434,11 +451,9 @@ id|self
 suffix:semicolon
 )brace
 )brace
-)def_block
 DECL|function|query_lsapsel
 r_static
 r_void
-(def_block
 id|query_lsapsel
 c_func
 (paren
@@ -469,12 +484,15 @@ id|THREE_WIRE_RAW
 )paren
 (brace
 id|iriap_getvaluebyclass_request
+c_func
 (paren
-id|self-&gt;daddr
-comma
 l_string|&quot;IrDA:IrCOMM&quot;
 comma
 l_string|&quot;IrDA:TinyTP:LsapSel&quot;
+comma
+id|self-&gt;saddr
+comma
+id|self-&gt;daddr
 comma
 id|ircomm_getvalue_confirm
 comma
@@ -489,13 +507,12 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;ircomm:query_lsap:&quot;
+id|__FUNCTION__
 l_string|&quot;THREE_WIRE_RAW is not implemented!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
 )brace
-)def_block
 multiline_comment|/*&n; * ircomm_discovery_indication()&n; *    Remote device is discovered, try query the remote IAS to see which&n; *    device it is, and which services it has.&n; */
 DECL|function|ircomm_discovery_indication
 r_void
@@ -550,6 +567,10 @@ id|self-&gt;daddr
 op_assign
 id|discovery-&gt;daddr
 suffix:semicolon
+id|self-&gt;saddr
+op_assign
+id|discovery-&gt;saddr
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -599,7 +620,6 @@ DECL|function|ircomm_attach_cable
 r_struct
 id|ircomm_cb
 op_star
-(def_block
 id|ircomm_attach_cable
 c_func
 (paren
@@ -970,10 +990,8 @@ id|self
 )paren
 suffix:semicolon
 )brace
-)def_block
 DECL|function|ircomm_detach_cable
 r_int
-(def_block
 id|ircomm_detach_cable
 c_func
 (paren
@@ -1121,5 +1139,4 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-)def_block
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      esi.c&n; * Version:       1.1&n; * Description:   Driver for the Extended Systems JetEye PC&n; * Status:        Experimental.&n; * Author:        Thomas Davis, &lt;ratbert@radiks.net&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Mon Jan 18 11:30:32 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  esi.c&n; *&n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     Copyright (c) 1998, Dag Brattli,  &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Thomas Davis, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      esi.c&n; * Version:       1.2&n; * Description:   Driver for the Extended Systems JetEye PC dongle&n; * Status:        Experimental.&n; * Author:        Thomas Davis, &lt;ratbert@radiks.net&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Tue Feb  9 15:36:47 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  esi.c&n; *&n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     Copyright (c) 1998, Dag Brattli,  &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Thomas Davis, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -165,6 +165,10 @@ id|idev-&gt;io.dongle_id
 op_assign
 id|type
 suffix:semicolon
+id|idev-&gt;flags
+op_or_assign
+id|IFF_DONGLE
+suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 )brace
@@ -210,9 +214,9 @@ op_star
 id|tty
 suffix:semicolon
 r_int
-id|arg
-op_assign
-id|TIOCM_OUT2
+id|dtr
+comma
+id|rts
 suffix:semicolon
 r_struct
 id|termios
@@ -220,9 +224,6 @@ id|old_termios
 suffix:semicolon
 r_int
 id|cflag
-suffix:semicolon
-id|mm_segment_t
-id|fs
 suffix:semicolon
 id|ASSERT
 c_func
@@ -318,9 +319,13 @@ id|cflag
 op_or_assign
 id|B19200
 suffix:semicolon
-id|arg
-op_or_assign
-id|TIOCM_DTR
+id|dtr
+op_assign
+id|TRUE
+suffix:semicolon
+id|rts
+op_assign
+id|FALSE
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -331,11 +336,11 @@ id|cflag
 op_or_assign
 id|B115200
 suffix:semicolon
-id|arg
-op_or_assign
-id|TIOCM_RTS
-op_or
-id|TIOCM_DTR
+id|dtr
+op_assign
+id|rts
+op_assign
+id|TRUE
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -348,13 +353,18 @@ id|cflag
 op_or_assign
 id|B9600
 suffix:semicolon
-id|arg
-op_or_assign
-id|TIOCM_RTS
+id|dtr
+op_assign
+id|FALSE
+suffix:semicolon
+id|rts
+op_assign
+id|TRUE
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* Change speed of serial driver */
 id|tty-&gt;termios-&gt;c_cflag
 op_assign
 id|cflag
@@ -370,60 +380,14 @@ op_amp
 id|old_termios
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  The ioctl function, or actually set_modem_info in serial.c&n;&t; *  expects a pointer to the argument in user space. To hack us&n;&t; *  around this we use the set_fs function to fool the routines &n;&t; *  that check if they are called from user space. We also need &n;&t; *  to send a pointer to the argument so get_user() gets happy. &n;&t; *  DB.&n;&t; */
-id|fs
-op_assign
-id|get_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-id|set_fs
-c_func
-(paren
-id|get_ds
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tty-&gt;driver
-dot
-id|ioctl
+id|irtty_set_dtr_rts
 c_func
 (paren
 id|tty
 comma
-l_int|NULL
+id|dtr
 comma
-id|TIOCMSET
-comma
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|arg
-)paren
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), error setting ESI speed!&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-id|set_fs
-c_func
-(paren
-id|fs
+id|rts
 )paren
 suffix:semicolon
 )brace

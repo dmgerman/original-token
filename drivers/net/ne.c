@@ -355,6 +355,21 @@ l_int|0x5d
 comma
 multiline_comment|/* Broken ne1000 clones */
 (brace
+l_string|&quot;PCM-4823&quot;
+comma
+l_string|&quot;PCM-4823&quot;
+comma
+(brace
+l_int|0x00
+comma
+l_int|0xc0
+comma
+l_int|0x6c
+)brace
+)brace
+comma
+multiline_comment|/* Broken Advantech MoBo */
+(brace
 l_int|0
 comma
 )brace

@@ -31,8 +31,8 @@ DECL|macro|SUN_OPENPROM_MINOR
 mdefine_line|#define SUN_OPENPROM_MINOR 139
 DECL|macro|NVRAM_MINOR
 mdefine_line|#define NVRAM_MINOR 144
-DECL|macro|RADIO_MINOR
-mdefine_line|#define RADIO_MINOR 152
+DECL|macro|I2O_MINOR
+mdefine_line|#define I2O_MINOR 166
 DECL|macro|MISC_DYNAMIC_MINOR
 mdefine_line|#define MISC_DYNAMIC_MINOR 255
 r_extern

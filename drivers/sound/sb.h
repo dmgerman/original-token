@@ -75,6 +75,8 @@ DECL|macro|MDL_ES1868MIDI
 mdefine_line|#define MDL_ES1868MIDI&t;14&t;/* MIDI port of ESS1868 */
 DECL|macro|MDL_AEDSP
 mdefine_line|#define MDL_AEDSP&t;15&t;/* Audio Excel DSP 16 */
+DECL|macro|MDL_ESSPCI
+mdefine_line|#define MDL_ESSPCI&t;16&t;/* ESS PCI card */
 DECL|macro|SUBMDL_ALS007
 mdefine_line|#define SUBMDL_ALS007&t;42&t;/* ALS-007 differs from SB16 only in mixer */
 multiline_comment|/* register assignment */
@@ -92,6 +94,8 @@ DECL|macro|SB_NO_RECORDING
 mdefine_line|#define SB_NO_RECORDING&t;0x00000008 /* No audio recording */
 DECL|macro|SB_MIDI_ONLY
 mdefine_line|#define SB_MIDI_ONLY&t;(SB_NO_AUDIO|SB_NO_MIXER)
+DECL|macro|SB_PCI_IRQ
+mdefine_line|#define SB_PCI_IRQ&t;0x00000010 /* PCI shared IRQ */
 DECL|struct|mixer_def
 r_struct
 id|mixer_def
@@ -194,6 +198,11 @@ id|dma8
 comma
 id|dma16
 suffix:semicolon
+DECL|member|pcibase
+r_int
+id|pcibase
+suffix:semicolon
+multiline_comment|/* For ESS Maestro etc */
 multiline_comment|/* State variables */
 DECL|member|opened
 r_int
@@ -366,6 +375,12 @@ DECL|typedef|sb_devc
 )brace
 id|sb_devc
 suffix:semicolon
+multiline_comment|/*&n; *&t;PCI card types&n; */
+DECL|macro|SB_PCI_ESSMAESTRO
+mdefine_line|#define&t;SB_PCI_ESSMAESTRO&t;1&t;/* ESS Maestro Legacy */
+DECL|macro|SB_PCI_YAMAHA
+mdefine_line|#define&t;SB_PCI_YAMAHA&t;&t;2&t;/* Yamaha Legacy */
+multiline_comment|/* &n; *&t;Functions&n; */
 r_int
 id|sb_dsp_command
 (paren
@@ -431,6 +446,12 @@ r_struct
 id|address_info
 op_star
 id|hw_config
+comma
+r_int
+id|pci
+comma
+r_int
+id|pciio
 )paren
 suffix:semicolon
 r_int

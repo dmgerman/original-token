@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irmod.h&n; * Version:       0.3&n; * Description:   IrDA module and utilities functions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Dec 15 13:58:52 1997&n; * Modified at:   Tue Jan 12 14:56:11 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *&n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charg.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irmod.h&n; * Version:       0.3&n; * Description:   IrDA module and utilities functions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Dec 15 13:58:52 1997&n; * Modified at:   Thu Feb 11 15:14:30 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *&n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charg.&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRMOD_H
 DECL|macro|IRMOD_H
 mdefine_line|#define IRMOD_H
@@ -36,6 +36,7 @@ comma
 DECL|enumerator|EVENT_IRLPT_STOP
 id|EVENT_IRLPT_STOP
 comma
+multiline_comment|/* &t;EVENT_IROBEX_INIT, */
 DECL|enumerator|EVENT_IROBEX_START
 id|EVENT_IROBEX_START
 comma
@@ -445,11 +446,32 @@ DECL|enumerator|LM_INIT_DISCONNECT
 id|LM_INIT_DISCONNECT
 comma
 multiline_comment|/* Link Management initiated disconnect */
+DECL|enumerator|LM_LSAP_NOTCONN
+id|LM_LSAP_NOTCONN
+comma
+multiline_comment|/* Data delivered on unconnected LSAP */
+DECL|enumerator|LM_NON_RESP_CLIENT
+id|LM_NON_RESP_CLIENT
+comma
+multiline_comment|/* Non responsive LM-MUX client */
+DECL|enumerator|LM_NO_AVAIL_CLIENT
+id|LM_NO_AVAIL_CLIENT
+comma
+multiline_comment|/* No available LM-MUX client */
+DECL|enumerator|LM_CONN_HALF_OPEN
+id|LM_CONN_HALF_OPEN
+comma
+multiline_comment|/* Connection is half open */
+DECL|enumerator|LM_BAD_SOURCE_ADDR
+id|LM_BAD_SOURCE_ADDR
+comma
+multiline_comment|/* Illegal source address (i.e 0x00) */
 DECL|typedef|LM_REASON
 )brace
 id|LM_REASON
 suffix:semicolon
-multiline_comment|/* FIXME: Just for now */
+DECL|macro|LM_UNKNOWN
+mdefine_line|#define LM_UNKNOWN 0xff       /* Unspecified disconnect reason */
 multiline_comment|/*&n; *  IrLMP character code values&n; */
 DECL|macro|CS_ASCII
 mdefine_line|#define CS_ASCII       0x00
@@ -530,6 +552,11 @@ r_int
 id|gen_addr_bit
 suffix:semicolon
 multiline_comment|/* Need to generate a new device address? */
+DECL|member|nslots
+r_int
+id|nslots
+suffix:semicolon
+multiline_comment|/* Number of slots to use when discovering */
 )brace
 suffix:semicolon
 DECL|enumerator|FLOW_STOP
@@ -776,6 +803,18 @@ r_struct
 id|irmanager_event
 op_star
 id|event
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|irda_proc_modcount
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_int
 )paren
 suffix:semicolon
 macro_line|#endif

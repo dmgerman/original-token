@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: pci.c,v 1.90 1998/09/05 12:39:39 mj Exp $&n; *&n; *&t;PCI Bus Services, see include/linux/pci.h for further explanation.&n; *&n; *&t;Copyright 1993 -- 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang&n; *&n; *&t;Copyright 1997 -- 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; */
+multiline_comment|/*&n; *&t;$Id: pci.c,v 1.91 1999/01/21 13:34:01 davem Exp $&n; *&n; *&t;PCI Bus Services, see include/linux/pci.h for further explanation.&n; *&n; *&t;Copyright 1993 -- 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang&n; *&n; *&t;Copyright 1997 -- 1999 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -21,13 +21,6 @@ r_struct
 id|pci_bus
 id|pci_root
 suffix:semicolon
-macro_line|#ifdef CONFIG_VISWS
-DECL|variable|pci_other
-r_struct
-id|pci_bus
-id|pci_other
-suffix:semicolon
-macro_line|#endif
 DECL|variable|pci_devices
 r_struct
 id|pci_dev
@@ -1648,6 +1641,77 @@ r_return
 id|max
 suffix:semicolon
 )brace
+DECL|function|pci_scan_peer_bridge
+r_struct
+id|pci_bus
+op_star
+id|__init
+id|pci_scan_peer_bridge
+c_func
+(paren
+r_int
+id|bus
+)paren
+(brace
+r_struct
+id|pci_bus
+op_star
+id|b
+suffix:semicolon
+id|b
+op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+op_star
+id|b
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|b
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+op_star
+id|b
+)paren
+)paren
+suffix:semicolon
+id|b-&gt;next
+op_assign
+id|pci_root.next
+suffix:semicolon
+id|pci_root.next
+op_assign
+id|b
+suffix:semicolon
+id|b-&gt;number
+op_assign
+id|b-&gt;secondary
+op_assign
+id|bus
+suffix:semicolon
+id|b-&gt;subordinate
+op_assign
+id|pci_scan_bus
+c_func
+(paren
+id|b
+)paren
+suffix:semicolon
+r_return
+id|b
+suffix:semicolon
+)brace
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1713,27 +1777,6 @@ op_amp
 id|pci_root
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_VISWS
-id|pci_other.number
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* XXX unless bridge(s) on pci_root */
-id|pci_other.subordinate
-op_assign
-id|pci_scan_bus
-c_func
-(paren
-op_amp
-id|pci_other
-)paren
-suffix:semicolon
-id|pci_root.next
-op_assign
-op_amp
-id|pci_other
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* give BIOS a chance to apply platform specific fixes: */
 id|pcibios_fixup
 c_func

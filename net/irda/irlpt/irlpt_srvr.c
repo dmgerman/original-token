@@ -166,13 +166,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|variable|irlpt_server_wait
-r_static
-r_struct
-id|wait_queue
-op_star
-id|irlpt_server_wait
-suffix:semicolon
 DECL|variable|irlpt_server_lsap
 r_int
 id|irlpt_server_lsap
@@ -200,7 +193,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;IrLPT server, $Revision: 1.9 $/$Date: 1998/10/22 12:02:22 $ (Thomas Davis)&quot;
+l_string|&quot;IrLPT server, v2 (Thomas Davis)&quot;
 suffix:semicolon
 DECL|variable|irlpt_fops
 r_struct
@@ -255,7 +248,7 @@ multiline_comment|/* lock */
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-multiline_comment|/*&n; * Function proc_irlpt_read (buf, start, offset, len, unused)&n; *&n; *&n; *&n; */
+multiline_comment|/*&n; * Function irlpt_server_proc_read (buf, start, offset, len, unused)&n; *&n; *&n; *&n; */
 DECL|function|irlpt_server_proc_read
 r_static
 r_int
@@ -420,24 +413,12 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;servicetype: %s&bslash;n&quot;
+l_string|&quot;servicetype: %s, porttype: %s&bslash;n&quot;
 comma
 id|irlpt_service_type
 (braket
 id|index
 )braket
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;porttype: %s&bslash;n&quot;
 comma
 id|irlpt_port_type
 (braket
@@ -454,7 +435,9 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;daddr: %d&bslash;n&quot;
+l_string|&quot;saddr: 0x%08x, daddr: 0x%08x&bslash;n&quot;
+comma
+id|irlpt_server-&gt;saddr
 comma
 id|irlpt_server-&gt;daddr
 )paren
@@ -468,38 +451,9 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;state: %s&bslash;n&quot;
+l_string|&quot;slsap: 0x%08x, dlsap: 0x%08x&bslash;n&quot;
 comma
-id|irlpt_server_fsm_state
-(braket
-id|irlpt_server-&gt;state
-)braket
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;retries: %d&bslash;n&quot;
-comma
-id|irlpt_server-&gt;open_retries
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;peersap: %d&bslash;n&quot;
+id|irlpt_server-&gt;slsap_sel
 comma
 id|irlpt_server-&gt;dlsap_sel
 )paren
@@ -513,7 +467,9 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;count: %d&bslash;n&quot;
+l_string|&quot;retries: %d, count: %d&bslash;n&quot;
+comma
+id|irlpt_server-&gt;open_retries
 comma
 id|irlpt_server-&gt;count
 )paren
@@ -527,7 +483,12 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;rx_queue: %d&bslash;n&quot;
+l_string|&quot;fsm state: %s, rx queue depth: %d&bslash;n&quot;
+comma
+id|irlpt_server_fsm_state
+(braket
+id|irlpt_server-&gt;state
+)braket
 comma
 id|skb_queue_len
 c_func
@@ -917,10 +878,12 @@ op_star
 id|userdata
 )paren
 (brace
+macro_line|#if 0
 r_struct
 id|irlpt_info
 id|info
 suffix:semicolon
+macro_line|#endif
 r_struct
 id|irlpt_cb
 op_star
@@ -967,10 +930,12 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+macro_line|#if 0
 id|info.daddr
 op_assign
 id|self-&gt;daddr
 suffix:semicolon
+macro_line|#endif
 id|DEBUG
 c_func
 (paren
@@ -1001,7 +966,21 @@ id|wake_up_interruptible
 c_func
 (paren
 op_amp
-id|irlpt_server_wait
+id|self-&gt;read_wait
+)paren
+suffix:semicolon
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|self-&gt;write_wait
+)paren
+suffix:semicolon
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|self-&gt;ex_wait
 )paren
 suffix:semicolon
 id|DEBUG
@@ -1010,7 +989,7 @@ c_func
 id|irlpt_server_debug
 comma
 id|__FUNCTION__
-l_string|&quot;: skb_queue_len=%d&bslash;n&quot;
+l_string|&quot;: rx queue length: %d&bslash;n&quot;
 comma
 id|skb_queue_len
 c_func
@@ -1082,10 +1061,6 @@ id|skb
 )paren
 (brace
 r_struct
-id|irlpt_info
-id|info
-suffix:semicolon
-r_struct
 id|irlpt_cb
 op_star
 id|self
@@ -1131,40 +1106,6 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|info.daddr
-op_assign
-id|self-&gt;daddr
-suffix:semicolon
-multiline_comment|/*&n;&t; *  Check if we have got some QoS parameters back! This should be the&n;&t; *  negotiated QoS for the link.&n;&t; */
-r_if
-c_cond
-(paren
-id|qos
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-id|irlpt_server_debug
-comma
-id|__FUNCTION__
-l_string|&quot;: IrLPT Negotiated BAUD_RATE: %02x&bslash;n&quot;
-comma
-id|qos-&gt;baud_rate.bits
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-id|irlpt_server_debug
-comma
-id|__FUNCTION__
-l_string|&quot;: IrLPT Negotiated BAUD_RATE: %d bps.&bslash;n&quot;
-comma
-id|qos-&gt;baud_rate.value
-)paren
-suffix:semicolon
-)brace
 id|self-&gt;connected
 op_assign
 id|TRUE
@@ -1229,11 +1170,6 @@ r_struct
 id|irlpt_info
 id|info
 suffix:semicolon
-r_struct
-id|lsap_cb
-op_star
-id|lsap
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -1253,7 +1189,7 @@ op_star
 )paren
 id|instance
 suffix:semicolon
-id|lsap
+id|info.lsap
 op_assign
 (paren
 r_struct
@@ -1292,10 +1228,6 @@ id|self-&gt;eof
 op_assign
 id|FALSE
 suffix:semicolon
-id|info.lsap
-op_assign
-id|lsap
-suffix:semicolon
 id|irlpt_server_do_event
 c_func
 (paren
@@ -1332,7 +1264,7 @@ l_string|&quot; --&gt;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlpt_data_indication (handle, skb)&n; *&n; *    This function gets the data that is received on the data channel&n; *&n; */
+multiline_comment|/*&n; * Function irlpt_server_data_indication (handle, skb)&n; *&n; *    This function gets the data that is received on the data channel&n; *&n; */
 DECL|function|irlpt_server_data_indication
 r_static
 r_void
@@ -1445,7 +1377,7 @@ id|wake_up_interruptible
 c_func
 (paren
 op_amp
-id|irlpt_server_wait
+id|self-&gt;read_wait
 )paren
 suffix:semicolon
 id|DEBUG
@@ -1504,7 +1436,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;irlpt_register_server:, unable to obtain handle!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;: unable to obtain handle!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1542,7 +1475,7 @@ c_func
 (paren
 id|notify.name
 comma
-l_string|&quot;IrLPT&quot;
+l_string|&quot;IrLPT server&quot;
 )paren
 suffix:semicolon
 id|irlpt_server-&gt;lsap
@@ -1561,6 +1494,10 @@ op_assign
 id|IRLPT_WAITING
 suffix:semicolon
 id|irlpt_server-&gt;service_LSAP
+op_assign
+id|irlpt_server_lsap
+suffix:semicolon
+id|irlpt_server-&gt;slsap_sel
 op_assign
 id|irlpt_server_lsap
 suffix:semicolon
@@ -1622,12 +1559,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if 0
-r_struct
-id|notify_t
-id|notify
-suffix:semicolon
-macro_line|#endif
 id|DEBUG
 c_func
 (paren
@@ -1638,85 +1569,10 @@ id|__FUNCTION__
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/*&n;&t; *  First register control TSAP&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|irlpt_server
-op_logical_or
-id|irlpt_server-&gt;magic
-op_ne
-id|IRLPT_MAGIC
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;irlpt_register_server:, unable to obtain handle!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|irda_notify_init
-c_func
-(paren
-op_amp
-id|notify
-)paren
-suffix:semicolon
-id|notify.connect_confirm
-op_assign
-id|irlpt_server_connect_confirm
-suffix:semicolon
-id|notify.connect_indication
-op_assign
-id|irlpt_server_connect_indication
-suffix:semicolon
-id|notify.disconnect_indication
-op_assign
-id|irlpt_server_disconnect_indication
-suffix:semicolon
-id|notify.data_indication
-op_assign
-id|irlpt_server_data_indication
-suffix:semicolon
-id|notify.instance
-op_assign
-id|irlpt_server
-suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|notify.name
-comma
-l_string|&quot;IrLPT&quot;
-)paren
-suffix:semicolon
-id|irlpt_server-&gt;lsap
-op_assign
-id|irlmp_open_lsap
-c_func
-(paren
-id|irlpt_server_lsap
-comma
-op_amp
-id|notify
-)paren
-suffix:semicolon
 id|irlpt_server-&gt;connected
 op_assign
-id|IRLPT_WAITING
+id|IRLPT_DISCONNECTED
 suffix:semicolon
-id|irlpt_server-&gt;service_LSAP
-op_assign
-id|irlpt_server_lsap
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* &n;&t; *  de-Register with LM-IAS&n;&t; */
 id|irias_delete_object
 c_func
@@ -1755,7 +1611,23 @@ suffix:semicolon
 id|MODULE_DESCRIPTION
 c_func
 (paren
-l_string|&quot;The Linux IrDA/IrLPT protocol&quot;
+l_string|&quot;The Linux IrDA/IrLPT server protocol&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irlpt_server_debug
+comma
+l_string|&quot;1i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irlpt_server_fsm_debug
+comma
+l_string|&quot;1i&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Function init_module (void)&n; *&n; *    Initialize the IrLPT server module, this function is called by the&n; *    modprobe(1) program.&n; */
@@ -1772,7 +1644,7 @@ c_func
 (paren
 id|irlpt_server_debug
 comma
-l_string|&quot;--&gt; irlpt server: init_module&bslash;n&quot;
+l_string|&quot;--&gt; IrLPT server: init_module&bslash;n&quot;
 )paren
 suffix:semicolon
 id|irlpt_server_init
@@ -1785,7 +1657,7 @@ c_func
 (paren
 id|irlpt_server_debug
 comma
-l_string|&quot;irlpt server: init_module --&gt;&bslash;n&quot;
+l_string|&quot;IrLPT server: init_module --&gt;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1806,17 +1678,7 @@ c_func
 (paren
 id|irlpt_server_debug
 comma
-l_string|&quot;--&gt; &quot;
-id|__FUNCTION__
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|3
-comma
-l_string|&quot;--&gt; irlpt server: cleanup_module&bslash;n&quot;
+l_string|&quot;--&gt; IrLPT server: cleanup_module&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* No need to check MOD_IN_USE, as sys_delete_module() checks. */
@@ -1831,7 +1693,7 @@ c_func
 (paren
 id|irlpt_server_debug
 comma
-l_string|&quot;irlpt server: cleanup_module --&gt;&bslash;n&quot;
+l_string|&quot;IrLPT server: cleanup_module --&gt;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

@@ -858,6 +858,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_DTLK
+id|dtlk_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_APM
 id|apm_bios_init
 c_func

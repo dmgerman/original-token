@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.h&n; * Version:       0.3&n; * Description:   Tiny Transport Protocol (TTP) definitions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Sat Dec  5 13:48:12 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.h&n; * Version:       1.0&n; * Description:   Tiny Transport Protocol (TTP) definitions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Tue Feb  2 10:55:18 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRTTP_H
 DECL|macro|IRTTP_H
 mdefine_line|#define IRTTP_H
@@ -9,28 +9,28 @@ macro_line|#include &lt;net/irda/irlmp.h&gt;
 macro_line|#include &lt;net/irda/qos.h&gt;
 macro_line|#include &lt;net/irda/irqueue.h&gt;
 DECL|macro|TTP_MAX_CONNECTIONS
-mdefine_line|#define TTP_MAX_CONNECTIONS   LM_MAX_CONNECTIONS
+mdefine_line|#define TTP_MAX_CONNECTIONS    LM_MAX_CONNECTIONS
 DECL|macro|TTP_HEADER
-mdefine_line|#define TTP_HEADER            1
+mdefine_line|#define TTP_HEADER             1
 DECL|macro|TTP_HEADER_WITH_SAR
-mdefine_line|#define TTP_HEADER_WITH_SAR   6
+mdefine_line|#define TTP_HEADER_WITH_SAR    6
 DECL|macro|TTP_PARAMETERS
-mdefine_line|#define TTP_PARAMETERS        0x80
+mdefine_line|#define TTP_PARAMETERS         0x80
 DECL|macro|TTP_MORE
-mdefine_line|#define TTP_MORE              0x80
+mdefine_line|#define TTP_MORE               0x80
 DECL|macro|DEFAULT_INITIAL_CREDIT
 mdefine_line|#define DEFAULT_INITIAL_CREDIT 22
 DECL|macro|LOW_THRESHOLD
-mdefine_line|#define LOW_THRESHOLD  4
+mdefine_line|#define LOW_THRESHOLD   4
 DECL|macro|HIGH_THRESHOLD
-mdefine_line|#define HIGH_THRESHOLD 8
+mdefine_line|#define HIGH_THRESHOLD  8
 DECL|macro|TTP_MAX_QUEUE
-mdefine_line|#define TTP_MAX_QUEUE 22
+mdefine_line|#define TTP_MAX_QUEUE  22
 multiline_comment|/* Some priorities for disconnect requests */
 DECL|macro|P_NORMAL
-mdefine_line|#define P_NORMAL 0
+mdefine_line|#define P_NORMAL    0
 DECL|macro|P_HIGH
-mdefine_line|#define P_HIGH 1
+mdefine_line|#define P_HIGH      1
 DECL|macro|SAR_DISABLE
 mdefine_line|#define SAR_DISABLE 0
 multiline_comment|/*&n; *  This structure contains all data assosiated with one instance of a TTP &n; *  connection.&n; */
@@ -145,7 +145,7 @@ DECL|member|rx_sdu_size
 r_int
 id|rx_sdu_size
 suffix:semicolon
-multiline_comment|/* The current size of a partially received frame */
+multiline_comment|/* Current size of a partially received frame */
 DECL|member|rx_max_sdu_size
 r_int
 id|rx_max_sdu_size
@@ -166,6 +166,11 @@ r_int
 id|no_defrag
 suffix:semicolon
 multiline_comment|/* Don&squot;t reassemble received fragments */
+DECL|member|close_pend
+r_int
+id|close_pend
+suffix:semicolon
+multiline_comment|/* Close, but disconnect_pend */
 DECL|member|disconnect_pend
 r_int
 id|disconnect_pend
@@ -215,7 +220,7 @@ id|irttp_open_tsap
 c_func
 (paren
 id|__u8
-id|stsap
+id|stsap_sel
 comma
 r_int
 id|credit
@@ -226,7 +231,7 @@ op_star
 id|notify
 )paren
 suffix:semicolon
-r_void
+r_int
 id|irttp_close_tsap
 c_func
 (paren
@@ -277,6 +282,9 @@ id|self
 comma
 id|__u8
 id|dtsap_sel
+comma
+id|__u32
+id|saddr
 comma
 id|__u32
 id|daddr
@@ -386,6 +394,48 @@ id|self
 id|self-&gt;no_defrag
 op_assign
 id|TRUE
+suffix:semicolon
+)brace
+DECL|function|irttp_get_saddr
+r_static
+id|__inline
+id|__u32
+id|irttp_get_saddr
+c_func
+(paren
+r_struct
+id|tsap_cb
+op_star
+id|self
+)paren
+(brace
+r_return
+id|irlmp_get_saddr
+c_func
+(paren
+id|self-&gt;lsap
+)paren
+suffix:semicolon
+)brace
+DECL|function|irttp_get_daddr
+r_static
+id|__inline
+id|__u32
+id|irttp_get_daddr
+c_func
+(paren
+r_struct
+id|tsap_cb
+op_star
+id|self
+)paren
+(brace
+r_return
+id|irlmp_get_daddr
+c_func
+(paren
+id|self-&gt;lsap
+)paren
 suffix:semicolon
 )brace
 r_extern

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *&n; * Filename:      irlpt.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Thomas Davis, &lt;ratbert@radiks.net&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Sun Mar  8 23:44:19 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  irlan.c&n; *&n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *&t;&t;&t;   Dag Brattli,  &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Thomas Davis, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *&n; * Filename:      irlpt_common.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Thomas Davis, &lt;ratbert@radiks.net&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Sun Mar  8 23:44:19 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  irlan.c&n; *&n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *&t;&t;&t;   Dag Brattli,  &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Thomas Davis, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRLPT_COMMON_H
 DECL|macro|IRLPT_COMMON_H
 mdefine_line|#define IRLPT_COMMON_H
@@ -210,9 +210,6 @@ comma
 DECL|enumerator|IRLPT_CLIENT_WAITI
 id|IRLPT_CLIENT_WAITI
 comma
-DECL|enumerator|IRLPT_CLIENT_WAITR
-id|IRLPT_CLIENT_WAITR
-comma
 DECL|enumerator|IRLPT_CLIENT_CONN
 id|IRLPT_CLIENT_CONN
 comma
@@ -261,12 +258,6 @@ comma
 DECL|enumerator|LMP_DISCONNECT_INDICATION
 id|LMP_DISCONNECT_INDICATION
 comma
-macro_line|#if 0
-id|TTP_CONNECT_INDICATION
-comma
-id|TTP_DISCONNECT_INDICATION
-comma
-macro_line|#endif
 DECL|enumerator|IRLPT_DISCOVERY_INDICATION
 id|IRLPT_DISCOVERY_INDICATION
 comma
@@ -300,6 +291,10 @@ suffix:semicolon
 DECL|member|daddr
 id|__u32
 id|daddr
+suffix:semicolon
+DECL|member|saddr
+id|__u32
+id|saddr
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -374,6 +369,11 @@ multiline_comment|/* magic used to detect corruption of &n;&t;&t;&t;&t;   the st
 DECL|member|daddr
 id|__u32
 id|daddr
+suffix:semicolon
+multiline_comment|/* address of remote printer */
+DECL|member|saddr
+id|__u32
+id|saddr
 suffix:semicolon
 multiline_comment|/* my local address. */
 DECL|member|retry_timer
@@ -470,6 +470,50 @@ r_struct
 id|wait_queue
 op_star
 id|ex_wait
+suffix:semicolon
+multiline_comment|/* this is used to remove the printer when it&squot;s gone */
+DECL|member|lpt_timer
+r_struct
+id|timer_list
+id|lpt_timer
+suffix:semicolon
+DECL|member|timeout
+r_void
+(paren
+op_star
+id|timeout
+)paren
+(paren
+r_int
+r_int
+id|data
+)paren
+suffix:semicolon
+DECL|member|do_event
+r_void
+(paren
+op_star
+id|do_event
+)paren
+(paren
+r_struct
+id|irlpt_cb
+op_star
+id|self
+comma
+id|IRLPT_EVENT
+id|event
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|irlpt_info
+op_star
+id|info
+)paren
 suffix:semicolon
 multiline_comment|/* this is used by the server side of the system */
 DECL|member|connected

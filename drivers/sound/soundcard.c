@@ -82,13 +82,21 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Persistent DMA buffers */
+macro_line|#ifdef CONFIG_SOUND_DMAP
+DECL|variable|sound_dmap_flag
+r_int
+id|sound_dmap_flag
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#else
 DECL|variable|sound_dmap_flag
 r_int
 id|sound_dmap_flag
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Off by default */
+macro_line|#endif
 DECL|variable|soundcard_configured
 r_static
 r_int
@@ -3723,13 +3731,6 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-id|vma-&gt;vm_file
-op_assign
-id|file
-suffix:semicolon
-id|file-&gt;f_count
-op_increment
-suffix:semicolon
 id|dmap-&gt;mapping_flags
 op_or_assign
 id|DMA_MAP_MAPPED
@@ -3911,34 +3912,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|destroy_special_devices
-r_static
-r_void
-id|destroy_special_devices
-c_func
-(paren
-r_void
-)paren
-(brace
-id|unregister_sound_special
-c_func
-(paren
-l_int|6
-)paren
-suffix:semicolon
-id|unregister_sound_special
-c_func
-(paren
-l_int|1
-)paren
-suffix:semicolon
-id|unregister_sound_special
-c_func
-(paren
-l_int|8
-)paren
-suffix:semicolon
-)brace
 macro_line|#ifdef MODULE
 r_static
 r_void
@@ -4039,6 +4012,35 @@ l_string|&quot;sound: registering /proc/sound failed&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif&t;&t;
 )brace
+macro_line|#ifdef MODULE
+DECL|function|destroy_special_devices
+r_static
+r_void
+id|destroy_special_devices
+c_func
+(paren
+r_void
+)paren
+(brace
+id|unregister_sound_special
+c_func
+(paren
+l_int|6
+)paren
+suffix:semicolon
+id|unregister_sound_special
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+id|unregister_sound_special
+c_func
+(paren
+l_int|8
+)paren
+suffix:semicolon
+)brace
 DECL|variable|sound
 r_static
 r_int
@@ -4051,7 +4053,6 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
 DECL|variable|traceinit
 r_int
 id|traceinit

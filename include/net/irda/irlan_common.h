@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan.h&n; * Version:       0.1&n; * Description:   IrDA LAN access layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Thu Oct 29 13:23:11 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_common.h&n; * Version:       0.8&n; * Description:   IrDA LAN access layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Wed Feb 17 23:28:53 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRLAN_H
 DECL|macro|IRLAN_H
 mdefine_line|#define IRLAN_H
@@ -6,10 +6,12 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &quot;irqueue.h&quot;
-macro_line|#include &quot;irttp.h&quot;
+macro_line|#include &lt;net/irda/irqueue.h&gt;
+macro_line|#include &lt;net/irda/irttp.h&gt;
 DECL|macro|IRLAN_MTU
-mdefine_line|#define IRLAN_MTU 1518
+mdefine_line|#define IRLAN_MTU        1518
+DECL|macro|IRLAN_TIMEOUT
+mdefine_line|#define IRLAN_TIMEOUT    1000
 multiline_comment|/* Command packet types */
 DECL|macro|CMD_GET_PROVIDER_INFO
 mdefine_line|#define CMD_GET_PROVIDER_INFO   0
@@ -53,33 +55,33 @@ DECL|macro|MEDIA_802_5
 mdefine_line|#define MEDIA_802_5 2
 multiline_comment|/* Filter parameters */
 DECL|macro|DATA_CHAN
-mdefine_line|#define DATA_CHAN 1
+mdefine_line|#define DATA_CHAN   1
 DECL|macro|FILTER_TYPE
 mdefine_line|#define FILTER_TYPE 2
 DECL|macro|FILTER_MODE
 mdefine_line|#define FILTER_MODE 3
 multiline_comment|/* Filter types */
-DECL|macro|IR_DIRECTED
-mdefine_line|#define IR_DIRECTED   1
-DECL|macro|IR_FUNCTIONAL
-mdefine_line|#define IR_FUNCTIONAL 2
-DECL|macro|IR_GROUP
-mdefine_line|#define IR_GROUP      3
-DECL|macro|IR_MAC_FRAME
-mdefine_line|#define IR_MAC_FRAME  4
-DECL|macro|IR_MULTICAST
-mdefine_line|#define IR_MULTICAST  5
-DECL|macro|IR_BROADCAST
-mdefine_line|#define IR_BROADCAST  6
-DECL|macro|IR_IPX_SOCKET
-mdefine_line|#define IR_IPX_SOCKET 7
+DECL|macro|IRLAN_DIRECTED
+mdefine_line|#define IRLAN_DIRECTED   0x01
+DECL|macro|IRLAN_FUNCTIONAL
+mdefine_line|#define IRLAN_FUNCTIONAL 0x02
+DECL|macro|IRLAN_GROUP
+mdefine_line|#define IRLAN_GROUP      0x04
+DECL|macro|IRLAN_MAC_FRAME
+mdefine_line|#define IRLAN_MAC_FRAME  0x08
+DECL|macro|IRLAN_MULTICAST
+mdefine_line|#define IRLAN_MULTICAST  0x10
+DECL|macro|IRLAN_BROADCAST
+mdefine_line|#define IRLAN_BROADCAST  0x20
+DECL|macro|IRLAN_IPX_SOCKET
+mdefine_line|#define IRLAN_IPX_SOCKET 0x40
 multiline_comment|/* Filter modes */
 DECL|macro|ALL
-mdefine_line|#define ALL    1
+mdefine_line|#define ALL     1
 DECL|macro|FILTER
-mdefine_line|#define FILTER 2
+mdefine_line|#define FILTER  2
 DECL|macro|NONE
-mdefine_line|#define NONE   3
+mdefine_line|#define NONE    3
 multiline_comment|/* Filter operations */
 DECL|macro|GET
 mdefine_line|#define GET     1
@@ -92,23 +94,38 @@ mdefine_line|#define REMOVE  4
 DECL|macro|DYNAMIC
 mdefine_line|#define DYNAMIC 5
 multiline_comment|/* Access types */
-DECL|macro|DIRECT
-mdefine_line|#define DIRECT 1
-DECL|macro|PEER
-mdefine_line|#define PEER   2
-DECL|macro|HOSTED
-mdefine_line|#define HOSTED 3
+DECL|macro|ACCESS_DIRECT
+mdefine_line|#define ACCESS_DIRECT  1
+DECL|macro|ACCESS_PEER
+mdefine_line|#define ACCESS_PEER    2
+DECL|macro|ACCESS_HOSTED
+mdefine_line|#define ACCESS_HOSTED  3
+DECL|macro|IRLAN_BYTE
+mdefine_line|#define IRLAN_BYTE   0
+DECL|macro|IRLAN_SHORT
+mdefine_line|#define IRLAN_SHORT  1
+DECL|macro|IRLAN_ARRAY
+mdefine_line|#define IRLAN_ARRAY  2
 DECL|macro|IRLAN_MAX_HEADER
 mdefine_line|#define IRLAN_MAX_HEADER (TTP_HEADER+LMP_HEADER+LAP_HEADER)
-multiline_comment|/*&n; *  IrLAN client subclass&n; */
+multiline_comment|/*&n; *  IrLAN client&n; */
 DECL|struct|irlan_client_cb
 r_struct
 id|irlan_client_cb
 (brace
-multiline_comment|/*&n;&t; *  Client fields&n;&t; */
+DECL|member|state
+r_int
+id|state
+suffix:semicolon
 DECL|member|open_retries
 r_int
 id|open_retries
+suffix:semicolon
+DECL|member|tsap_ctrl
+r_struct
+id|tsap_cb
+op_star
+id|tsap_ctrl
 suffix:semicolon
 DECL|member|reconnect_key
 id|__u8
@@ -121,6 +138,18 @@ DECL|member|key_len
 id|__u8
 id|key_len
 suffix:semicolon
+DECL|member|recv_arb_val
+id|__u16
+id|recv_arb_val
+suffix:semicolon
+DECL|member|max_frame
+id|__u16
+id|max_frame
+suffix:semicolon
+DECL|member|filter_type
+r_int
+id|filter_type
+suffix:semicolon
 DECL|member|unicast_open
 r_int
 id|unicast_open
@@ -129,14 +158,33 @@ DECL|member|broadcast_open
 r_int
 id|broadcast_open
 suffix:semicolon
+DECL|member|kick_timer
+r_struct
+id|timer_list
+id|kick_timer
+suffix:semicolon
+DECL|member|start_new_provider
+r_int
+id|start_new_provider
+suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * IrLAN servers subclass&n; */
-DECL|struct|irlan_server_cb
+multiline_comment|/*&n; * IrLAN provider&n; */
+DECL|struct|irlan_provider_cb
 r_struct
-id|irlan_server_cb
+id|irlan_provider_cb
 (brace
-multiline_comment|/*&n;&t; *  Store some values here which are used by the irlan_server to parse&n;&t; *  FILTER_OPERATIONs&n;&t; */
+DECL|member|state
+r_int
+id|state
+suffix:semicolon
+DECL|member|tsap_ctrl
+r_struct
+id|tsap_cb
+op_star
+id|tsap_ctrl
+suffix:semicolon
+multiline_comment|/*&n;&t; *  Store some values here which are used by the provider to parse&n;&t; *  the filter operations&n;&t; */
 DECL|member|data_chan
 r_int
 id|data_chan
@@ -157,6 +205,10 @@ DECL|member|filter_entry
 r_int
 id|filter_entry
 suffix:semicolon
+DECL|member|send_arb_val
+id|__u16
+id|send_arb_val
+suffix:semicolon
 DECL|member|mac_address
 id|__u8
 id|mac_address
@@ -167,7 +219,7 @@ suffix:semicolon
 multiline_comment|/* Generated MAC address for peer device */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *  IrLAN super class&n; */
+multiline_comment|/*&n; *  IrLAN&n; */
 DECL|struct|irlan_cb
 r_struct
 id|irlan_cb
@@ -209,26 +261,32 @@ id|__u32
 id|daddr
 suffix:semicolon
 multiline_comment|/* Destination device address */
-DECL|member|connected
+DECL|member|netdev_registered
 r_int
-id|connected
+id|netdev_registered
 suffix:semicolon
-multiline_comment|/* TTP layer ready to exchange ether frames */
-DECL|member|state
+DECL|member|notify_irmanager
 r_int
-id|state
+id|notify_irmanager
 suffix:semicolon
-multiline_comment|/* Current state of IrLAN layer */
 DECL|member|media
 r_int
 id|media
 suffix:semicolon
-DECL|member|tsap_ctrl
-r_struct
-id|tsap_cb
-op_star
-id|tsap_ctrl
+multiline_comment|/* Media type */
+DECL|member|access_type
+r_int
+id|access_type
 suffix:semicolon
+multiline_comment|/* Currently used access type */
+DECL|member|version
+id|__u8
+id|version
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* IrLAN version */
 DECL|member|tsap_data
 r_struct
 id|tsap_cb
@@ -240,57 +298,37 @@ r_int
 id|use_udata
 suffix:semicolon
 multiline_comment|/* Use Unit Data transfers */
-DECL|member|dtsap_sel_data
-id|__u8
-id|dtsap_sel_data
-suffix:semicolon
-multiline_comment|/* Destination data TSAP selector */
 DECL|member|stsap_sel_data
 id|__u8
 id|stsap_sel_data
 suffix:semicolon
 multiline_comment|/* Source data TSAP selector */
+DECL|member|dtsap_sel_data
+id|__u8
+id|dtsap_sel_data
+suffix:semicolon
+multiline_comment|/* Destination data TSAP selector */
 DECL|member|dtsap_sel_ctrl
 id|__u8
 id|dtsap_sel_ctrl
 suffix:semicolon
 multiline_comment|/* Destination ctrl TSAP selector */
 DECL|member|client
-r_int
-id|client
-suffix:semicolon
-multiline_comment|/* Client or server */
-r_union
-(brace
-DECL|member|client
 r_struct
 id|irlan_client_cb
 id|client
 suffix:semicolon
-DECL|member|server
+multiline_comment|/* Client specific fields */
+DECL|member|provider
 r_struct
-id|irlan_server_cb
-id|server
+id|irlan_provider_cb
+id|provider
 suffix:semicolon
-DECL|member|t
-)brace
-id|t
-suffix:semicolon
-multiline_comment|/* void (*irlan_dev_init)(struct irlan_cb *); */
-multiline_comment|/* &n;         *  Used by extract_params, placed here for now to avoid placing &n;         *  them on the stack. FIXME: remove these!&n;         */
-DECL|member|name
-r_char
-id|name
-(braket
-l_int|255
-)braket
-suffix:semicolon
-DECL|member|value
-r_char
-id|value
-(braket
-l_int|1016
-)braket
+multiline_comment|/* Provider specific fields */
+DECL|member|watchdog_timer
+r_struct
+id|timer_list
+id|watchdog_timer
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -300,7 +338,70 @@ op_star
 id|irlan_open
 c_func
 (paren
+id|__u32
+id|saddr
+comma
+id|__u32
+id|daddr
+comma
+r_int
+id|netdev
+)paren
+suffix:semicolon
 r_void
+id|irlan_close
+c_func
+(paren
+r_struct
+id|irlan_cb
+op_star
+id|self
+)paren
+suffix:semicolon
+r_int
+id|irlan_register_netdev
+c_func
+(paren
+r_struct
+id|irlan_cb
+op_star
+id|self
+)paren
+suffix:semicolon
+r_void
+id|irlan_ias_register
+c_func
+(paren
+r_struct
+id|irlan_cb
+op_star
+id|self
+comma
+id|__u8
+id|tsap_sel
+)paren
+suffix:semicolon
+r_void
+id|irlan_start_watchdog_timer
+c_func
+(paren
+r_struct
+id|irlan_cb
+op_star
+id|self
+comma
+r_int
+id|timeout
+)paren
+suffix:semicolon
+r_void
+id|irlan_open_data_tsap
+c_func
+(paren
+r_struct
+id|irlan_cb
+op_star
+id|self
 )paren
 suffix:semicolon
 r_void
@@ -335,6 +436,16 @@ id|self
 suffix:semicolon
 r_void
 id|irlan_open_data_channel
+c_func
+(paren
+r_struct
+id|irlan_cb
+op_star
+id|self
+)paren
+suffix:semicolon
+r_void
+id|irlan_close_data_channel
 c_func
 (paren
 r_struct
@@ -380,7 +491,7 @@ id|self
 )paren
 suffix:semicolon
 r_int
-id|insert_byte_param
+id|irlan_insert_byte_param
 c_func
 (paren
 r_struct
@@ -397,7 +508,24 @@ id|value
 )paren
 suffix:semicolon
 r_int
-id|insert_string_param
+id|irlan_insert_short_param
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_char
+op_star
+id|param
+comma
+id|__u16
+id|value
+)paren
+suffix:semicolon
+r_int
+id|irlan_insert_string_param
 c_func
 (paren
 r_struct
@@ -415,7 +543,7 @@ id|value
 )paren
 suffix:semicolon
 r_int
-id|insert_array_param
+id|irlan_insert_array_param
 c_func
 (paren
 r_struct
@@ -436,34 +564,7 @@ id|value_len
 )paren
 suffix:semicolon
 r_int
-id|insert_param
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_char
-op_star
-id|param
-comma
-r_int
-id|type
-comma
-r_char
-op_star
-id|value_char
-comma
-id|__u8
-id|value_byte
-comma
-id|__u16
-id|value_short
-)paren
-suffix:semicolon
-r_int
-id|irlan_get_response_param
+id|irlan_get_param
 c_func
 (paren
 id|__u8
@@ -478,7 +579,7 @@ r_char
 op_star
 id|value
 comma
-r_int
+id|__u16
 op_star
 id|len
 )paren

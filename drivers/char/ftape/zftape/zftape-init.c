@@ -1031,13 +1031,6 @@ op_amp
 id|dummy
 suffix:semicolon
 macro_line|#endif
-id|vma-&gt;vm_file
-op_assign
-id|filep
-suffix:semicolon
-id|filep-&gt;f_count
-op_increment
-suffix:semicolon
 )brace
 id|current-&gt;blocked
 op_assign

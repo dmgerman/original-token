@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      actisys.c&n; * Version:       0.4&n; * Description:   Implementation for the ACTiSYS IR-220L and IR-220L+ &n; *                dongles&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Oct 21 20:02:35 1998&n; * Modified at:   Mon Jan 18 11:30:25 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      actisys.c&n; * Version:       0.5&n; * Description:   Implementation for the ACTiSYS IR-220L and IR-220L+ &n; *                dongles&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Oct 21 20:02:35 1998&n; * Modified at:   Tue Feb  9 15:38:16 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -190,7 +190,7 @@ id|type
 id|strcat
 c_func
 (paren
-id|idev-&gt;name
+id|idev-&gt;description
 comma
 l_string|&quot; &lt;-&gt; actisys&quot;
 )paren
@@ -198,6 +198,10 @@ suffix:semicolon
 id|idev-&gt;io.dongle_id
 op_assign
 id|type
+suffix:semicolon
+id|idev-&gt;flags
+op_or_assign
+id|IFF_DONGLE
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -217,7 +221,7 @@ id|dev
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function actisys_change_speed (tty, baud)&n; *&n; *    Change speed of the ACTiSYS IR-220L and IR-220L+ type IrDA dongles.  &n; *    To cycle through the available baud rates, pulse RTS low for a few ms.&n; *    To be compatible with the new IR-220L+, we have to reset the dongle &n; *    first since its not possible cycle around anymore and still be &n; *    compatible with both dongles :-(&n; */
+multiline_comment|/*&n; * Function actisys_change_speed (tty, baud)&n; *&n; *    Change speed of the ACTiSYS IR-220L and IR-220L+ type IrDA dongles.&n; *    To cycle through the available baud rates, pulse RTS low for a few&n; *    ms.  &n; */
 DECL|function|actisys_change_speed
 r_static
 r_void
@@ -243,9 +247,6 @@ id|tty_struct
 op_star
 id|tty
 suffix:semicolon
-r_int
-id|arg
-suffix:semicolon
 r_struct
 id|termios
 id|old_termios
@@ -261,13 +262,10 @@ id|index
 op_assign
 l_int|0
 suffix:semicolon
-id|mm_segment_t
-id|fs
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -347,7 +345,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(), index=%d&bslash;n&quot;
@@ -379,7 +377,7 @@ id|baudrate
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(), current baudrate = %d&bslash;n&quot;
@@ -390,75 +388,15 @@ id|index
 )braket
 )paren
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), Clearing RTS&bslash;n&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* Set DTR, clear RTS */
-id|arg
-op_assign
-id|TIOCM_DTR
-op_or
-id|TIOCM_OUT2
-suffix:semicolon
-id|fs
-op_assign
-id|get_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-id|set_fs
-c_func
-(paren
-id|get_ds
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tty-&gt;driver
-dot
-id|ioctl
+id|irtty_set_dtr_rts
 c_func
 (paren
 id|tty
 comma
-l_int|NULL
+id|TRUE
 comma
-id|TIOCMSET
-comma
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|arg
-)paren
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;Error clearing RTS!&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-id|set_fs
-c_func
-(paren
-id|fs
+id|FALSE
 )paren
 suffix:semicolon
 multiline_comment|/* Wait at a few ms */
@@ -473,67 +411,14 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* Set DTR, Set RTS */
-id|arg
-op_assign
-id|TIOCM_DTR
-op_or
-id|TIOCM_RTS
-op_or
-id|TIOCM_OUT2
-suffix:semicolon
-id|fs
-op_assign
-id|get_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-id|set_fs
-c_func
-(paren
-id|get_ds
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tty-&gt;driver
-dot
-id|ioctl
+id|irtty_set_dtr_rts
 c_func
 (paren
 id|tty
 comma
-l_int|NULL
+id|TRUE
 comma
-id|TIOCMSET
-comma
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|arg
-)paren
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;Error setting RTS!&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-id|set_fs
-c_func
-(paren
-id|fs
+id|TRUE
 )paren
 suffix:semicolon
 multiline_comment|/* Wait at a few ms again */
@@ -589,7 +474,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(), current baudrate = %d&bslash;n&quot;
@@ -671,18 +556,10 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* Change speed of serial port */
 id|tty-&gt;termios-&gt;c_cflag
 op_assign
 id|cflag
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), Setting the speed of the serial port&bslash;n&quot;
-)paren
 suffix:semicolon
 id|tty-&gt;driver
 dot
@@ -721,23 +598,6 @@ r_struct
 id|tty_struct
 op_star
 id|tty
-suffix:semicolon
-r_int
-id|arg
-op_assign
-l_int|0
-suffix:semicolon
-id|mm_segment_t
-id|fs
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
 suffix:semicolon
 id|ASSERT
 c_func
@@ -804,74 +664,15 @@ id|tty
 )paren
 r_return
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), Clearing DTR&bslash;n&quot;
-)paren
-suffix:semicolon
-id|arg
-op_assign
-id|TIOCM_RTS
-op_or
-id|TIOCM_OUT2
-suffix:semicolon
-id|fs
-op_assign
-id|get_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-id|set_fs
-c_func
-(paren
-id|get_ds
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tty-&gt;driver
-dot
-id|ioctl
+multiline_comment|/* Clear DTR */
+id|irtty_set_dtr_rts
 c_func
 (paren
 id|tty
 comma
-l_int|NULL
+id|FALSE
 comma
-id|TIOCMSET
-comma
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|arg
-)paren
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), ioctl error!&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-id|set_fs
-c_func
-(paren
-id|fs
+id|TRUE
 )paren
 suffix:semicolon
 multiline_comment|/* Sleep 10-20 ms*/
@@ -885,76 +686,15 @@ c_func
 l_int|2
 )paren
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), Setting DTR&bslash;n&quot;
-)paren
-suffix:semicolon
-id|arg
-op_assign
-id|TIOCM_RTS
-op_or
-id|TIOCM_DTR
-op_or
-id|TIOCM_OUT2
-suffix:semicolon
-id|fs
-op_assign
-id|get_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-id|set_fs
-c_func
-(paren
-id|get_ds
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tty-&gt;driver
-dot
-id|ioctl
+multiline_comment|/* Go back to normal mode */
+id|irtty_set_dtr_rts
 c_func
 (paren
 id|tty
 comma
-l_int|NULL
+id|TRUE
 comma
-id|TIOCMSET
-comma
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|arg
-)paren
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), ioctl error!&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-id|set_fs
-c_func
-(paren
-id|fs
+id|TRUE
 )paren
 suffix:semicolon
 id|idev-&gt;qos.baud_rate.value
@@ -1012,6 +752,18 @@ suffix:semicolon
 multiline_comment|/* All except 0 ms */
 )brace
 macro_line|#ifdef MODULE
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Dag Brattli &lt;dagb@cs.uit.no&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;ACTiSYS IR-220L and IR-220L+ dongle driver&quot;
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Function init_module (void)&n; *&n; *    Initialize Actisys module&n; *&n; */
 DECL|function|init_module
 r_int

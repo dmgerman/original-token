@@ -1256,7 +1256,11 @@ op_assign
 id|SK_RAM
 op_star
 )paren
+id|bus_to_virt
+c_func
+(paren
 id|rom_addr
+)paren
 suffix:semicolon
 multiline_comment|/* Read in station address */
 r_for
