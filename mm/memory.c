@@ -5,7 +5,6 @@ multiline_comment|/*&n; * Real VM (paging to/from disk) started 18.12.91. Much m
 multiline_comment|/*&n; * 05.04.94  -  Multi-page memory management added for v1.1.&n; * &t;&t;Idea by Alex Bligh (alex@cconcepts.co.uk)&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

@@ -718,6 +718,15 @@ l_int|21
 comma
 multiline_comment|/* Adaptec 152x */
 (brace
+l_string|&quot;Adaptec AHA-1520B&quot;
+comma
+l_int|0x0b
+comma
+l_int|19
+)brace
+comma
+multiline_comment|/* Adaptec 152x rev B */
+(brace
 l_string|&quot;Adaptec ASW-B626 BIOS&quot;
 comma
 l_int|0x1029

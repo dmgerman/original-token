@@ -1,7 +1,6 @@
 multiline_comment|/*&n; *  arch/mips/mm/fault.c&n; *&n; *  Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/ldt.h&gt;
+macro_line|#include &quot;desc.h&quot;
 DECL|function|read_ldt
 r_static
 r_int
@@ -44,32 +45,21 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|size
-op_assign
-id|LDT_ENTRIES
-op_star
-id|LDT_ENTRY_SIZE
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|address
 )paren
-(brace
-id|address
-op_assign
-op_amp
-id|default_ldt
+r_return
+l_int|0
 suffix:semicolon
 id|size
 op_assign
-r_sizeof
-(paren
-id|default_ldt
-)paren
+id|LDT_ENTRIES
+op_star
+id|LDT_ENTRY_SIZE
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -298,15 +288,7 @@ suffix:semicolon
 id|set_ldt_desc
 c_func
 (paren
-id|gdt
-op_plus
-(paren
 id|i
-op_lshift
-l_int|1
-)paren
-op_plus
-id|FIRST_LDT_ENTRY
 comma
 id|ldt
 comma

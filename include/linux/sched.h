@@ -74,7 +74,6 @@ r_extern
 r_int
 id|last_pid
 suffix:semicolon
-macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/time.h&gt;

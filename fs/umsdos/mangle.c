@@ -3,6 +3,11 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/umsdos_fs.h&gt;
+multiline_comment|/* (This file is used outside of the kernel) */
+macro_line|#ifndef __KERNEL__
+DECL|macro|KERN_WARNING
+mdefine_line|#define KERN_WARNING
+macro_line|#endif
 multiline_comment|/*&n; * Complete the mangling of the MSDOS fake name&n; * based on the position of the entry in the EMD file.&n; * &n; * Simply complete the job of umsdos_parse; fill the extension.&n; * &n; * Beware that info-&gt;f_pos must be set.&n; */
 DECL|function|umsdos_manglename
 r_void

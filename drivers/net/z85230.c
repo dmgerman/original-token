@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;(c) Copyright 1998 Building Number Three Ltd&n; *&n; *&t;Development of this driver was funded by Equiinet Ltd&n; *&t;&t;&t;http://www.equiinet.com&n; *&n; *&t;ChangeLog:&n; *&n; *&t;Asynchronous mode dropped for 2.2. For 2.3 we will attempt the&n; *&t;unification of all the Z85x30 asynchronous drivers for real.&n; *&n; *&t;To Do:&n; *&t;&n; *&t;Finish DMA mode support.&n; *&n; *&t;Performance&n; *&n; *&t;Z85230:&n; *&t;Non DMA you want a 486DX50 or better to do 64Kbits. 9600 baud&n; *&t;X.25 is not unrealistic on all machines. DMA mode can in theory&n; *&t;handle T1/E1 quite nicely.&n; *&n; *&t;Z85C30:&n; *&t;64K will take DMA, 9600 baud X.25 should be ok.&n; *&n; *&t;Z8530:&n; *&t;Synchronous mode without DMA is unlikely to pass about 2400 baud.&n; */
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/net.h&gt;

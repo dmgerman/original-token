@@ -1400,9 +1400,10 @@ op_star
 id|q
 suffix:semicolon
 multiline_comment|/* Only if not module */
-r_extern
 r_int
 id|initmem_freed
+op_assign
+l_int|1
 suffix:semicolon
 r_struct
 id|fbcon_font_desc

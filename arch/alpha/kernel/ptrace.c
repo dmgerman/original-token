@@ -3,7 +3,6 @@ multiline_comment|/* By Ross Biro 1/23/92 */
 multiline_comment|/* edited by Linus Torvalds */
 multiline_comment|/* mangled further by Bob Manson (manson@santafe.edu) */
 multiline_comment|/* more mutilation by David Mosberger (davidm@azstarnet.com) */
-macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

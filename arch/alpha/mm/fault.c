@@ -9,7 +9,6 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|macro|__EXTERN_INLINE
 macro_line|#undef  __EXTERN_INLINE
 macro_line|#include &lt;linux/signal.h&gt;
-macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

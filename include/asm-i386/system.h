@@ -3,21 +3,6 @@ DECL|macro|__ASM_SYSTEM_H
 mdefine_line|#define __ASM_SYSTEM_H
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-multiline_comment|/*&n; * Entry into gdt where to find first TSS. GDT layout:&n; *   0 - null&n; *   1 - not used&n; *   2 - kernel code segment&n; *   3 - kernel data segment&n; *   4 - user code segment&n; *   5 - user data segment&n; *   6 - not used&n; *   7 - not used&n; *   8 - APM BIOS support&n; *   9 - APM BIOS support&n; *  10 - APM BIOS support&n; *  11 - APM BIOS support&n; *  12 - TSS #0&n; *  13 - LDT #0&n; *  14 - TSS #1&n; *  15 - LDT #1&n; */
-DECL|macro|FIRST_TSS_ENTRY
-mdefine_line|#define FIRST_TSS_ENTRY 12
-DECL|macro|FIRST_LDT_ENTRY
-mdefine_line|#define FIRST_LDT_ENTRY (FIRST_TSS_ENTRY+1)
-DECL|macro|_TSS
-mdefine_line|#define _TSS(n) ((((unsigned long) n)&lt;&lt;4)+(FIRST_TSS_ENTRY&lt;&lt;3))
-DECL|macro|_LDT
-mdefine_line|#define _LDT(n) ((((unsigned long) n)&lt;&lt;4)+(FIRST_LDT_ENTRY&lt;&lt;3))
-DECL|macro|load_TR
-mdefine_line|#define load_TR(n) __asm__ __volatile__(&quot;ltr %%ax&quot;: /* no output */ :&quot;a&quot; (_TSS(n)))
-DECL|macro|load_ldt
-mdefine_line|#define load_ldt(n) __asm__ __volatile__(&quot;lldt %%ax&quot;: /* no output */ :&quot;a&quot; (_LDT(n)))
-DECL|macro|store_TR
-mdefine_line|#define store_TR(n) &bslash;&n;__asm__(&quot;str %%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;subl %2,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;shrl $4,%%eax&quot; &bslash;&n;&t;:&quot;=a&quot; (n) &bslash;&n;&t;:&quot;0&quot; (0),&quot;i&quot; (FIRST_TSS_ENTRY&lt;&lt;3))
 macro_line|#ifdef __KERNEL__
 r_struct
 id|task_struct
@@ -393,56 +378,6 @@ mdefine_line|#define save_flags(x) __save_flags(x)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(x) __restore_flags(x)
 macro_line|#endif
-r_extern
-r_void
-id|set_intr_gate
-c_func
-(paren
-r_int
-r_int
-id|irq
-comma
-r_void
-op_star
-id|addr
-)paren
-suffix:semicolon
-r_void
-id|set_ldt_desc
-c_func
-(paren
-r_void
-op_star
-id|n
-comma
-r_void
-op_star
-id|addr
-comma
-r_int
-r_int
-id|size
-)paren
-suffix:semicolon
-r_void
-id|set_tss_desc
-c_func
-(paren
-r_void
-op_star
-id|n
-comma
-r_void
-op_star
-id|addr
-)paren
-suffix:semicolon
-multiline_comment|/*&n; * This is the ldt that every process will get unless we need&n; * something other than this.&n; */
-r_extern
-r_struct
-id|desc_struct
-id|default_ldt
-suffix:semicolon
 multiline_comment|/*&n; * disable hlt during certain critical i/o operations&n; */
 DECL|macro|HAVE_DISABLE_HLT
 mdefine_line|#define HAVE_DISABLE_HLT

@@ -2,6 +2,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &quot;desc.h&quot;
 DECL|variable|init_mmap
 r_static
 r_struct
@@ -56,7 +57,7 @@ id|init_mm
 op_assign
 id|INIT_MM
 suffix:semicolon
-multiline_comment|/*&n; * Initial task structure.&n; *&n; * We need to make sure that this is 8192-byte aligned due to the&n; * way process stacks are handled. This is done by making sure&n; * the linker maps this in the .text segment right after head.S,&n; * and making head.S ensure the proper alignment.&n; *&n; * The things we do for performance..&n; */
+multiline_comment|/*&n; * Initial task structure.&n; *&n; * We need to make sure that this is 8192-byte aligned due to the&n; * way process stacks are handled. This is done by having a special&n; * &quot;init_task&quot; linker map entry..&n; */
 DECL|variable|init_task_union
 r_union
 id|task_union
@@ -68,7 +69,7 @@ c_func
 id|__section__
 c_func
 (paren
-l_string|&quot;.text&quot;
+l_string|&quot;.data.init_task&quot;
 )paren
 )paren
 )paren

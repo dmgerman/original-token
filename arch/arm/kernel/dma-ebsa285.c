@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * arch/arm/kernel/dma-ebsa285.c&n; *&n; * Copyright (C) 1998 Phil Blundell&n; *&n; * DMA functions specific to EBSA-285/CATS architectures&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;

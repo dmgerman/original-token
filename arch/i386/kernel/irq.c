@@ -22,6 +22,7 @@ macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &quot;irq.h&quot;
+macro_line|#include &quot;desc.h&quot;
 DECL|variable|local_bh_count
 r_int
 r_int

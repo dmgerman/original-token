@@ -1,7 +1,6 @@
 multiline_comment|/*&n; *  linux/arch/i386/traps.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; * &squot;Traps.c&squot; handles hardware traps and faults after we have saved some&n; * state in &squot;asm.s&squot;.&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -19,6 +18,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/debugreg.h&gt;
+macro_line|#include &quot;desc.h&quot;
 id|asmlinkage
 r_int
 id|system_call
@@ -44,6 +44,35 @@ op_assign
 l_int|0
 comma
 l_int|0
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * The IDT has to be page-aligned to simplify the Pentium&n; * F0 0F bug workaround.. We have a special link segment&n; * for this.&n; */
+DECL|variable|idt_table
+r_struct
+id|desc_struct
+id|idt_table
+(braket
+l_int|256
+)braket
+id|__attribute__
+c_func
+(paren
+(paren
+id|__section__
+c_func
+(paren
+l_string|&quot;.data.idt&quot;
+)paren
+)paren
+)paren
+op_assign
+(brace
+(brace
+l_int|0
+comma
+l_int|0
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|function|console_verbose
@@ -1950,22 +1979,6 @@ c_func
 id|PAGE_SIZE
 )paren
 suffix:semicolon
-id|memcpy
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|page
-comma
-id|idt_table
-comma
-l_int|256
-op_star
-l_int|8
-)paren
-suffix:semicolon
 id|pgd
 op_assign
 id|pgd_offset
@@ -1997,14 +2010,27 @@ comma
 id|page
 )paren
 suffix:semicolon
-op_star
-id|pte
-op_assign
-id|pte_wrprotect
+id|free_page
+c_func
+(paren
+id|pte_page
 c_func
 (paren
 op_star
 id|pte
+)paren
+)paren
+suffix:semicolon
+op_star
+id|pte
+op_assign
+id|mk_pte
+c_func
+(paren
+op_amp
+id|idt_table
+comma
+id|PAGE_KERNEL_RO
 )paren
 suffix:semicolon
 id|local_flush_tlb
@@ -2037,7 +2063,7 @@ suffix:semicolon
 )brace
 DECL|macro|_set_gate
 mdefine_line|#define _set_gate(gate_addr,type,dpl,addr) &bslash;&n;__asm__ __volatile__ (&quot;movw %%dx,%%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %2,%%dx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%eax,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%edx,%1&quot; &bslash;&n;&t;:&quot;=m&quot; (*((long *) (gate_addr))), &bslash;&n;&t; &quot;=m&quot; (*(1+(long *) (gate_addr))) &bslash;&n;&t;:&quot;i&quot; ((short) (0x8000+(dpl&lt;&lt;13)+(type&lt;&lt;8))), &bslash;&n;&t; &quot;d&quot; ((char *) (addr)),&quot;a&quot; (__KERNEL_CS &lt;&lt; 16) &bslash;&n;&t;:&quot;ax&quot;,&quot;dx&quot;)
-multiline_comment|/*&n; * WARNING! If we ever start to insert IDT entries&n; * into the IDT at run-time, we need to be aware of&n; * the F0 0F bug workaround that marks the IDT&n; * read-only. It should be easy enough to just follow&n; * the page tables and set the gate directly..&n; */
+multiline_comment|/*&n; * This needs to use &squot;idt_table&squot; rather than &squot;idt&squot;, and&n; * thus use the _nonmapped_ version of the IDT, as the&n; * Pentium F0 0F bugfix can have resulted in the mapped&n; * IDT being write-protected.&n; */
 DECL|function|set_intr_gate
 r_void
 id|set_intr_gate
@@ -2055,11 +2081,9 @@ id|addr
 id|_set_gate
 c_func
 (paren
-id|idt
+id|idt_table
 op_plus
-(paren
 id|n
-)paren
 comma
 l_int|14
 comma
@@ -2088,11 +2112,9 @@ id|addr
 id|_set_gate
 c_func
 (paren
-id|idt
+id|idt_table
 op_plus
-(paren
 id|n
-)paren
 comma
 l_int|15
 comma
@@ -2121,11 +2143,9 @@ id|addr
 id|_set_gate
 c_func
 (paren
-id|idt
+id|idt_table
 op_plus
-(paren
 id|n
-)paren
 comma
 l_int|15
 comma
@@ -2173,8 +2193,8 @@ r_void
 id|set_tss_desc
 c_func
 (paren
-r_void
-op_star
+r_int
+r_int
 id|n
 comma
 r_void
@@ -2185,20 +2205,20 @@ id|addr
 id|_set_tssldt_desc
 c_func
 (paren
+id|gdt_table
+op_plus
+id|FIRST_TSS_ENTRY
+op_plus
 (paren
-(paren
-r_char
-op_star
-)paren
 id|n
+op_lshift
+l_int|1
 )paren
 comma
-(paren
 (paren
 r_int
 )paren
 id|addr
-)paren
 comma
 l_int|235
 comma
@@ -2211,8 +2231,8 @@ r_void
 id|set_ldt_desc
 c_func
 (paren
-r_void
-op_star
+r_int
+r_int
 id|n
 comma
 r_void
@@ -2227,20 +2247,20 @@ id|size
 id|_set_tssldt_desc
 c_func
 (paren
+id|gdt_table
+op_plus
+id|FIRST_LDT_ENTRY
+op_plus
 (paren
-(paren
-r_char
-op_star
-)paren
 id|n
+op_lshift
+l_int|1
 )paren
 comma
-(paren
 (paren
 r_int
 )paren
 id|addr
-)paren
 comma
 (paren
 (paren
@@ -2267,11 +2287,6 @@ r_void
 (brace
 r_int
 id|i
-suffix:semicolon
-r_struct
-id|desc_struct
-op_star
-id|p
 suffix:semicolon
 r_if
 c_cond
@@ -2511,28 +2526,19 @@ id|system_call
 )paren
 suffix:semicolon
 multiline_comment|/* set up GDT task &amp; ldt entries */
-id|p
-op_assign
-id|gdt
-op_plus
-id|FIRST_TSS_ENTRY
-suffix:semicolon
 id|set_tss_desc
 c_func
 (paren
-id|p
+l_int|0
 comma
 op_amp
 id|init_task.tss
 )paren
 suffix:semicolon
-id|p
-op_increment
-suffix:semicolon
 id|set_ldt_desc
 c_func
 (paren
-id|p
+l_int|0
 comma
 op_amp
 id|default_ldt
@@ -2540,43 +2546,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|p
-op_increment
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|1
-suffix:semicolon
-id|i
-OL
-id|NR_TASKS
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|p-&gt;a
-op_assign
-id|p-&gt;b
-op_assign
-l_int|0
-suffix:semicolon
-id|p
-op_increment
-suffix:semicolon
-id|p-&gt;a
-op_assign
-id|p-&gt;b
-op_assign
-l_int|0
-suffix:semicolon
-id|p
-op_increment
-suffix:semicolon
-)brace
 multiline_comment|/* Clear NT, so that we won&squot;t have troubles with that later on */
 id|__asm__
 c_func

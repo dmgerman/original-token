@@ -36,6 +36,7 @@ macro_line|#ifdef CONFIG_MATH_EMULATION
 macro_line|#include &lt;asm/math_emu.h&gt;
 macro_line|#endif
 macro_line|#include &quot;irq.h&quot;
+macro_line|#include &quot;desc.h&quot;
 DECL|variable|semaphore_wake_lock
 id|spinlock_t
 id|semaphore_wake_lock
@@ -1686,12 +1687,7 @@ id|ldt
 op_assign
 id|old_ldt
 suffix:semicolon
-r_int
-id|ldt_size
-op_assign
-id|LDT_ENTRIES
-suffix:semicolon
-multiline_comment|/* &quot;default_ldt&quot; - use the one from init_task */
+multiline_comment|/* default LDT - use the one from init_task */
 id|p-&gt;tss.ldt
 op_assign
 id|_LDT
@@ -1767,19 +1763,11 @@ suffix:semicolon
 id|set_ldt_desc
 c_func
 (paren
-id|gdt
-op_plus
-(paren
 id|nr
-op_lshift
-l_int|1
-)paren
-op_plus
-id|FIRST_LDT_ENTRY
 comma
 id|ldt
 comma
-id|ldt_size
+id|LDT_ENTRIES
 )paren
 suffix:semicolon
 r_return
@@ -1900,15 +1888,7 @@ suffix:semicolon
 id|set_tss_desc
 c_func
 (paren
-id|gdt
-op_plus
-(paren
 id|nr
-op_lshift
-l_int|1
-)paren
-op_plus
-id|FIRST_TSS_ENTRY
 comma
 op_amp
 (paren

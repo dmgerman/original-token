@@ -7,7 +7,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
-macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -4732,15 +4731,15 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|check_bugs
+c_func
+(paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
 l_string|&quot;POSIX conformance testing by UNIFIX&bslash;n&quot;
-)paren
-suffix:semicolon
-id|check_bugs
-c_func
-(paren
 )paren
 suffix:semicolon
 id|smp_init
