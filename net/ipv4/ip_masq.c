@@ -1,4 +1,5 @@
-multiline_comment|/*&n; *&n; * &t;Masquerading functionality&n; *&n; * &t;Copyright (c) 1994 Pauline Middelink&n; *&n; *&t;See ip_fw.c for original log&n; *&n; * Fixes:&n; *&t;Juan Jose Ciarlante&t;:&t;Modularized application masquerading (see ip_masq_app.c)&n; *&t;Juan Jose Ciarlante&t;:&t;New struct ip_masq_seq that holds output/input delta seq.&n; *&t;Juan Jose Ciarlante&t;:&t;Added hashed lookup by proto,maddr,mport and proto,saddr,sport&n; *&t;Juan Jose Ciarlante&t;:&t;Fixed deadlock if free ports get exhausted&n; *&t;Juan Jose Ciarlante&t;:&t;Added NO_ADDR status flag.&n; *&t;Nigel Metheringham&t;:&t;ICMP handling.&n; *&t;&n; */
+multiline_comment|/*&n; *&n; * &t;Masquerading functionality&n; *&n; * &t;Copyright (c) 1994 Pauline Middelink&n; *&n; *&t;See ip_fw.c for original log&n; *&n; * Fixes:&n; *&t;Juan Jose Ciarlante&t;:&t;Modularized application masquerading (see ip_masq_app.c)&n; *&t;Juan Jose Ciarlante&t;:&t;New struct ip_masq_seq that holds output/input delta seq.&n; *&t;Juan Jose Ciarlante&t;:&t;Added hashed lookup by proto,maddr,mport and proto,saddr,sport&n; *&t;Juan Jose Ciarlante&t;:&t;Fixed deadlock if free ports get exhausted&n; *&t;Juan Jose Ciarlante&t;:&t;Added NO_ADDR status flag.&n; *&t;Nigel Metheringham&t;:&t;Added ICMP handling for demasquerade&n; *&t;Nigel Metheringham&t;:&t;Checksum checking of masqueraded data&n; *&n; *&t;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -9,6 +10,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
+macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
@@ -1612,7 +1614,7 @@ r_int
 r_int
 id|timeout
 suffix:semicolon
-multiline_comment|/*&n;&t; * We can only masquerade protocols with ports...&n;&t; */
+multiline_comment|/*&n;&t; * We can only masquerade protocols with ports...&n;&t; * [TODO]&n;&t; * We may need to consider masq-ing some ICMP related to masq-ed protocols&n;&t; */
 r_if
 c_cond
 (paren
@@ -2096,13 +2098,29 @@ suffix:semicolon
 multiline_comment|/* The ip header contained within the ICMP */
 id|__u16
 op_star
-id|portptr
+id|pptr
 suffix:semicolon
 multiline_comment|/* port numbers from TCP/UDP contained header */
 r_struct
 id|ip_masq
 op_star
 id|ms
+suffix:semicolon
+r_int
+r_int
+id|len
+op_assign
+id|ntohs
+c_func
+(paren
+id|iph-&gt;tot_len
+)paren
+op_minus
+(paren
+id|iph-&gt;ihl
+op_star
+l_int|4
+)paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_CONFIG_IP_MASQUERADE
 id|printk
@@ -2184,7 +2202,7 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* &n;&t; * Find the ports involved - remember this packet was &n;&t; * *outgoing* so the ports are reversed (and addresses)&n;&t; */
-id|portptr
+id|pptr
 op_assign
 (paren
 id|__u16
@@ -2212,7 +2230,7 @@ c_cond
 id|ntohs
 c_func
 (paren
-id|portptr
+id|pptr
 (braket
 l_int|0
 )braket
@@ -2223,6 +2241,43 @@ id|PORT_MASQ_END
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* Ensure the checksum is correct */
+r_if
+c_cond
+(paren
+id|ip_compute_csum
+c_func
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|icmph
+comma
+id|len
+)paren
+)paren
+(brace
+multiline_comment|/* Failed checksum! */
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;MASQ: ICMP: failed checksum from %s!&bslash;n&quot;
+comma
+id|in_ntoa
+c_func
+(paren
+id|iph-&gt;saddr
+)paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 macro_line|#ifdef DEBUG_CONFIG_IP_MASQUERADE
 id|printk
 c_func
@@ -2238,7 +2293,7 @@ comma
 id|ntohs
 c_func
 (paren
-id|portptr
+id|pptr
 (braket
 l_int|0
 )braket
@@ -2253,7 +2308,7 @@ comma
 id|ntohs
 c_func
 (paren
-id|portptr
+id|pptr
 (braket
 l_int|1
 )braket
@@ -2271,14 +2326,14 @@ id|ciph-&gt;protocol
 comma
 id|ciph-&gt;daddr
 comma
-id|portptr
+id|pptr
 (braket
 l_int|1
 )braket
 comma
 id|ciph-&gt;saddr
 comma
-id|portptr
+id|pptr
 (braket
 l_int|0
 )braket
@@ -2318,7 +2373,7 @@ id|ciph
 )paren
 suffix:semicolon
 multiline_comment|/* the TCP/UDP source port - cannot redo check */
-id|portptr
+id|pptr
 (braket
 l_int|0
 )braket
@@ -2342,13 +2397,7 @@ op_star
 )paren
 id|icmph
 comma
-id|skb-&gt;len
-op_minus
-r_sizeof
-(paren
-r_struct
-id|iphdr
-)paren
+id|len
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_CONFIG_IP_MASQUERADE
@@ -2366,7 +2415,7 @@ comma
 id|ntohs
 c_func
 (paren
-id|portptr
+id|pptr
 (braket
 l_int|0
 )braket
@@ -2381,7 +2430,7 @@ comma
 id|ntohs
 c_func
 (paren
-id|portptr
+id|pptr
 (braket
 l_int|1
 )braket
@@ -2437,66 +2486,17 @@ id|ms
 suffix:semicolon
 r_int
 r_int
-id|frag
+id|len
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|iph-&gt;protocol
-op_ne
-id|IPPROTO_UDP
-op_logical_and
-id|iph-&gt;protocol
-op_ne
-id|IPPROTO_TCP
-op_logical_and
-id|iph-&gt;protocol
-op_ne
-id|IPPROTO_ICMP
-)paren
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/*&n;   &t; * Toss fragments, since we handle them in ip_rcv()&n;&t; */
-id|frag
-op_assign
-id|ntohs
-c_func
-(paren
-id|iph-&gt;frag_off
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|frag
-op_amp
-id|IP_MF
-)paren
-op_ne
-l_int|0
-op_logical_or
-(paren
-id|frag
-op_amp
-id|IP_OFFSET
-)paren
-op_ne
-l_int|0
 )paren
 (brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|iph-&gt;protocol
-op_eq
+r_case
 id|IPPROTO_ICMP
-)paren
+suffix:colon
 r_return
 id|ip_fw_demasq_icmp
 c_func
@@ -2506,6 +2506,13 @@ comma
 id|dev
 )paren
 suffix:semicolon
+r_case
+id|IPPROTO_TCP
+suffix:colon
+r_case
+id|IPPROTO_UDP
+suffix:colon
+multiline_comment|/* Make sure packet is in the masq range */
 id|portptr
 op_assign
 (paren
@@ -2545,6 +2552,120 @@ id|PORT_MASQ_END
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* Check that the checksum is OK */
+id|len
+op_assign
+id|ntohs
+c_func
+(paren
+id|iph-&gt;tot_len
+)paren
+op_minus
+(paren
+id|iph-&gt;ihl
+op_star
+l_int|4
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|iph-&gt;protocol
+op_eq
+id|IPPROTO_UDP
+)paren
+op_logical_and
+(paren
+id|portptr
+(braket
+l_int|3
+)braket
+op_eq
+l_int|0
+)paren
+)paren
+multiline_comment|/* No UDP checksum */
+r_break
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|skb-&gt;ip_summed
+)paren
+(brace
+r_case
+id|CHECKSUM_NONE
+suffix:colon
+id|skb-&gt;csum
+op_assign
+id|csum_partial
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|portptr
+comma
+id|len
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_case
+id|CHECKSUM_HW
+suffix:colon
+r_if
+c_cond
+(paren
+id|csum_tcpudp_magic
+c_func
+(paren
+id|iph-&gt;saddr
+comma
+id|iph-&gt;daddr
+comma
+id|len
+comma
+id|iph-&gt;protocol
+comma
+id|skb-&gt;csum
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;MASQ: failed TCP/UDP checksum from %s!&bslash;n&quot;
+comma
+id|in_ntoa
+c_func
+(paren
+id|iph-&gt;saddr
+)paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_default
+suffix:colon
+(brace
+)brace
+multiline_comment|/* CHECKSUM_UNNECESSARY */
+)brace
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#ifdef DEBUG_CONFIG_IP_MASQUERADE
 id|printk
 c_func
@@ -2606,9 +2727,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-r_int
-id|size
-suffix:semicolon
 multiline_comment|/*&n;                 *&t;Set dport if not defined yet.&n;                 */
 r_if
 c_cond
@@ -2685,21 +2803,6 @@ id|ms-&gt;daddr
 suffix:semicolon
 macro_line|#endif
 )brace
-id|size
-op_assign
-id|skb-&gt;len
-op_minus
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|portptr
-op_minus
-id|skb-&gt;h.raw
-)paren
-suffix:semicolon
 id|iph-&gt;daddr
 op_assign
 id|ms-&gt;saddr
@@ -2760,19 +2863,18 @@ l_int|4
 )braket
 )paren
 suffix:semicolon
-id|size
+id|len
 op_assign
-id|skb-&gt;len
-op_minus
+id|ntohs
+c_func
 (paren
-(paren
-r_int
-r_char
-op_star
+id|iph-&gt;tot_len
 )paren
-id|portptr
 op_minus
-id|skb-&gt;h.raw
+(paren
+id|iph-&gt;ihl
+op_star
+l_int|4
 )paren
 suffix:semicolon
 )brace
@@ -2799,7 +2901,7 @@ id|iph-&gt;saddr
 comma
 id|iph-&gt;daddr
 comma
-id|size
+id|len
 )paren
 suffix:semicolon
 id|ip_masq_set_expire
@@ -2848,7 +2950,7 @@ op_plus
 l_int|1
 )paren
 comma
-id|size
+id|len
 op_minus
 r_sizeof
 (paren
@@ -2873,7 +2975,7 @@ id|iph-&gt;saddr
 comma
 id|iph-&gt;daddr
 comma
-id|size
+id|len
 comma
 id|skb
 )paren
@@ -3286,6 +3388,7 @@ op_amp
 id|ip_masq_syms
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS        
 id|proc_net_register
 c_func
 (paren
@@ -3320,6 +3423,7 @@ id|ip_msqhst_procinfo
 )brace
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 id|ip_masq_app_init
 c_func
 (paren

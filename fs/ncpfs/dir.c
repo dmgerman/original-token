@@ -3781,6 +3781,12 @@ l_char|&squot;.&squot;
 )paren
 )paren
 (brace
+id|iput
+c_func
+(paren
+id|dir
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EEXIST

@@ -7655,6 +7655,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
 c_func
 (paren
@@ -7757,6 +7758,7 @@ id|atalk_if_get_info
 )brace
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 id|printk
 c_func
 (paren
@@ -7921,6 +7923,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_unregister
 c_func
 (paren
@@ -7939,6 +7942,7 @@ c_func
 id|PROC_NET_ATIF
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 id|unregister_netdevice_notifier
 c_func
 (paren

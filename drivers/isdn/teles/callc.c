@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: callc.c,v 1.7 1996/05/17 03:40:37 fritz Exp $&n; *&n; * $Log: callc.c,v $&n; * Revision 1.7  1996/05/17 03:40:37  fritz&n; * General cleanup.&n; *&n; * Revision 1.6  1996/05/10 22:42:07  fritz&n; * Added entry for EV_RELEASE_CNF in ST_OUT (if no D-Channel avail.)&n; *&n; * Revision 1.5  1996/05/06 10:16:15  fritz&n; * Added voice stuff.&n; *&n; * Revision 1.4  1996/04/30 22:04:05  isdn4dev&n; *   improved callback  Karsten Keil&n; *&n; * Revision 1.3  1996/04/30 10:04:19  fritz&n; * Started voice support.&n; * Added printk() to debug-switcher for easier&n; * synchronization between printk()&squot;s and output&n; * of /dev/isdnctrl.&n; *&n; * Revision 1.2  1996/04/20 16:42:29  fritz&n; * Changed statemachine to allow reject of incoming calls.&n; *&n; * Revision 1.1  1996/04/13 10:20:59  fritz&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: callc.c,v 1.8 1996/05/31 01:00:38 fritz Exp $&n; *&n; * $Log: callc.c,v $&n; * Revision 1.8  1996/05/31 01:00:38  fritz&n; * Changed return code of teles_writebuf, when out of memory.&n; *&n; * Revision 1.7  1996/05/17 03:40:37  fritz&n; * General cleanup.&n; *&n; * Revision 1.6  1996/05/10 22:42:07  fritz&n; * Added entry for EV_RELEASE_CNF in ST_OUT (if no D-Channel avail.)&n; *&n; * Revision 1.5  1996/05/06 10:16:15  fritz&n; * Added voice stuff.&n; *&n; * Revision 1.4  1996/04/30 22:04:05  isdn4dev&n; *   improved callback  Karsten Keil&n; *&n; * Revision 1.3  1996/04/30 10:04:19  fritz&n; * Started voice support.&n; * Added printk() to debug-switcher for easier&n; * synchronization between printk()&squot;s and output&n; * of /dev/isdnctrl.&n; *&n; * Revision 1.2  1996/04/20 16:42:29  fritz&n; * Changed statemachine to allow reject of incoming calls.&n; *&n; * Revision 1.1  1996/04/13 10:20:59  fritz&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;teles.h&quot;
@@ -6481,9 +6481,8 @@ c_cond
 id|err
 )paren
 r_return
-(paren
-l_int|0
-)paren
+op_minus
+id|ENOMEM
 suffix:semicolon
 id|ptr
 op_assign

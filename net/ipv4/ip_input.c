@@ -1119,8 +1119,8 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#ifdef CONFIG_IP_MASQUERADE
-(brace
 multiline_comment|/*&n;&t;&t; * Do we need to de-masquerade this packet?&n;&t;&t; */
+(brace
 r_int
 id|ret
 op_assign

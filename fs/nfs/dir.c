@@ -2334,6 +2334,7 @@ c_cond
 op_logical_neg
 id|error
 )paren
+(brace
 id|nfs_lookup_cache_add
 c_func
 (paren
@@ -2348,6 +2349,18 @@ op_amp
 id|fattr
 )paren
 suffix:semicolon
+multiline_comment|/* The parent dir inode count may have changed ! */
+id|nfs_lookup_cache_remove
+c_func
+(paren
+l_int|NULL
+comma
+id|dir
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
 id|iput
 c_func
 (paren

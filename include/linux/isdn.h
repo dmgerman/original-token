@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn.h,v 1.10 1996/05/18 01:37:18 fritz Exp $&n; *&n; * Main header for the Linux ISDN subsystem (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn.h,v $&n; * Revision 1.10  1996/05/18 01:37:18  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.9  1996/05/17 03:58:20  fritz&n; * Added flags for DLE handling.&n; *&n; * Revision 1.8  1996/05/11 21:49:55  fritz&n; * Removed queue management variables.&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.7  1996/05/07 09:10:06  fritz&n; * Reorganized tty-related structs.&n; *&n; * Revision 1.6  1996/05/06 11:38:27  hipp&n; * minor change in ippp struct&n; *&n; * Revision 1.5  1996/04/30 11:03:16  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.4  1996/04/29 23:00:02  fritz&n; * Added variables for voice-support.&n; *&n; * Revision 1.3  1996/04/20 16:54:58  fritz&n; * Increased maximum number of channels.&n; * Added some flags for isdn_net to handle callback more reliable.&n; * Fixed delay-definitions to be more accurate.&n; * Misc. typos&n; *&n; * Revision 1.2  1996/02/11 02:10:02  fritz&n; * Changed IOCTL-names&n; * Added rx_netdev, st_netdev, first_skb, org_hcb, and org_hcu to&n; * Netdevice-local struct.&n; *&n; * Revision 1.1  1996/01/10 20:55:07  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn.h,v 1.11 1996/05/31 01:37:47 fritz Exp $&n; *&n; * Main header for the Linux ISDN subsystem (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn.h,v $&n; * Revision 1.11  1996/05/31 01:37:47  fritz&n; * Minor changes, due to changes in isdn_tty.c&n; *&n; * Revision 1.10  1996/05/18 01:37:18  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.9  1996/05/17 03:58:20  fritz&n; * Added flags for DLE handling.&n; *&n; * Revision 1.8  1996/05/11 21:49:55  fritz&n; * Removed queue management variables.&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.7  1996/05/07 09:10:06  fritz&n; * Reorganized tty-related structs.&n; *&n; * Revision 1.6  1996/05/06 11:38:27  hipp&n; * minor change in ippp struct&n; *&n; * Revision 1.5  1996/04/30 11:03:16  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.4  1996/04/29 23:00:02  fritz&n; * Added variables for voice-support.&n; *&n; * Revision 1.3  1996/04/20 16:54:58  fritz&n; * Increased maximum number of channels.&n; * Added some flags for isdn_net to handle callback more reliable.&n; * Fixed delay-definitions to be more accurate.&n; * Misc. typos&n; *&n; * Revision 1.2  1996/02/11 02:10:02  fritz&n; * Changed IOCTL-names&n; * Added rx_netdev, st_netdev, first_skb, org_hcb, and org_hcu to&n; * Netdevice-local struct.&n; *&n; * Revision 1.1  1996/01/10 20:55:07  fritz&n; * Initial revision&n; *&n; */
 macro_line|#ifndef isdn_h
 DECL|macro|isdn_h
 mdefine_line|#define isdn_h
@@ -1090,15 +1090,11 @@ id|timer_list
 id|nc_timer
 suffix:semicolon
 multiline_comment|/* Timer for delayed NO CARRIER   */
-DECL|macro|FUTURE
-mdefine_line|#define FUTURE 1
-macro_line|#if FUTURE
 DECL|member|send_outstanding
 r_int
 id|send_outstanding
 suffix:semicolon
 multiline_comment|/* # of outstanding send-requests */
-macro_line|#endif
 DECL|member|xmit_size
 r_int
 id|xmit_size
@@ -1109,6 +1105,19 @@ r_int
 id|xmit_count
 suffix:semicolon
 multiline_comment|/* # of chars in xmit_buf         */
+DECL|member|xmit_buf
+r_int
+r_char
+op_star
+id|xmit_buf
+suffix:semicolon
+multiline_comment|/* transmit buffer                */
+DECL|member|xmit_queue
+r_struct
+id|sk_buff_head
+id|xmit_queue
+suffix:semicolon
+multiline_comment|/* transmit queue                 */
 DECL|member|tty
 r_struct
 id|tty_struct
@@ -1156,13 +1165,6 @@ id|wait_queue
 op_star
 id|close_wait
 suffix:semicolon
-DECL|member|xmit_buf
-r_struct
-id|sk_buff_head
-op_star
-id|xmit_buf
-suffix:semicolon
-multiline_comment|/* transmit-buffer queue          */
 DECL|typedef|modem_info
 )brace
 id|modem_info
@@ -1203,6 +1205,7 @@ multiline_comment|/* ?? copied from Orig */
 DECL|member|modem_termios
 r_struct
 id|termios
+op_star
 id|modem_termios
 (braket
 id|ISDN_MAX_CHANNELS
@@ -1211,6 +1214,7 @@ suffix:semicolon
 DECL|member|modem_termios_locked
 r_struct
 id|termios
+op_star
 id|modem_termios_locked
 (braket
 id|ISDN_MAX_CHANNELS

@@ -3535,6 +3535,11 @@ id|len
 comma
 id|p
 suffix:semicolon
+r_int
+id|last_len
+op_assign
+l_int|0
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -3825,6 +3830,24 @@ r_else
 r_if
 c_cond
 (paren
+id|pos
+OG
+id|offset
+op_plus
+id|length
+)paren
+(brace
+id|len
+op_assign
+id|last_len
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
 id|reset
 )paren
 (brace
@@ -3838,19 +3861,10 @@ op_assign
 l_int|0L
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|pos
-OG
-id|offset
-op_plus
-id|length
-)paren
-(brace
-r_break
+id|last_len
+op_assign
+id|len
 suffix:semicolon
-)brace
 id|i
 op_assign
 id|i-&gt;fw_next
@@ -4454,6 +4468,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#ifdef CONFIG_IP_ACCT
 id|proc_net_register
 c_func
@@ -4492,6 +4507,7 @@ id|ip_acct_procinfo
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif
 macro_line|#ifdef CONFIG_IP_FIREWALL
 r_if
 c_cond
@@ -4515,6 +4531,7 @@ l_string|&quot;Unable to register IP firewall.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PROC_FS&t;&t;
 id|proc_net_register
 c_func
 (paren
@@ -4623,6 +4640,7 @@ id|ip_fw_fwd_procinfo
 )brace
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_IP_MASQUERADE
 multiline_comment|/*&n;         *&t;Initialize masquerading. &n;         */

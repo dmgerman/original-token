@@ -1081,6 +1081,14 @@ id|sk-&gt;send_head
 op_assign
 l_int|NULL
 suffix:semicolon
+id|sk-&gt;send_tail
+op_assign
+l_int|NULL
+suffix:semicolon
+id|sk-&gt;send_next
+op_assign
+l_int|NULL
+suffix:semicolon
 id|sti
 c_func
 (paren

@@ -1,7 +1,7 @@
 macro_line|#ifndef _ALPHA_STATFS_H
 DECL|macro|_ALPHA_STATFS_H
 mdefine_line|#define _ALPHA_STATFS_H
-macro_line|#ifndef _LINUX_TYPES_DONT_EXPORT
+macro_line|#ifndef __KERNEL_STRICT_NAMES
 macro_line|#include &lt;linux/posix_types.h&gt;
 DECL|typedef|fsid_t
 r_typedef

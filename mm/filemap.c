@@ -2645,7 +2645,7 @@ id|found_page
 suffix:semicolon
 id|page_read_error
 suffix:colon
-multiline_comment|/*&n;&t; * Umm, take care of errors if the page isn&squot;t up-to-date.&n;&t; * Try to re-read it _once_.&n;&t; */
+multiline_comment|/*&n;&t; * Umm, take care of errors if the page isn&squot;t up-to-date.&n;&t; * Try to re-read it _once_. We do this synchronously,&n;&t; * because there really aren&squot;t any performance issues here&n;&t; * and we need to check for errors.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2663,6 +2663,12 @@ l_int|0
 )paren
 r_goto
 id|failure
+suffix:semicolon
+id|wait_on_page
+c_func
+(paren
+id|page
+)paren
 suffix:semicolon
 r_if
 c_cond

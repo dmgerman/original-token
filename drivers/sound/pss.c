@@ -3019,10 +3019,10 @@ op_star
 id|hw_config
 )paren
 (brace
+macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 r_int
 id|ret
 suffix:semicolon
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 (brace
 r_int
 id|prev_devs
@@ -3063,10 +3063,14 @@ op_amp
 id|pss_coproc_operations
 suffix:semicolon
 )brace
-macro_line|#endif
 r_return
 id|ret
 suffix:semicolon
+macro_line|#else
+r_return
+id|mem_start
+suffix:semicolon
+macro_line|#endif
 )brace
 r_int
 DECL|function|probe_pss_mss
@@ -3304,11 +3308,13 @@ op_star
 id|hw_config
 )paren
 (brace
+macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 id|unload_mpu401
 (paren
 id|hw_config
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 r_void
 DECL|function|unload_pss_mss

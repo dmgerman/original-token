@@ -10077,6 +10077,7 @@ op_amp
 id|ax25_dev_notifier
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS&t;&t;&t;  
 id|proc_net_register
 c_func
 (paren
@@ -10179,11 +10180,12 @@ id|ax25_cs_get_info
 )brace
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;G4KLX/GW4PTS AX.25 for Linux. Version 0.32 BETA for Linux NET3.035 (Linux 2.0)&bslash;n&quot;
+l_string|&quot;G4KLX/GW4PTS AX.25 for Linux. Version 0.32 for Linux NET3.035 (Linux 2.0)&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BPQETHER

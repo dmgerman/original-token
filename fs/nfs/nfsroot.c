@@ -4082,7 +4082,6 @@ l_int|0
 op_eq
 l_char|&squot;&bslash;0&squot;
 op_logical_or
-op_logical_neg
 id|strncmp
 c_func
 (paren

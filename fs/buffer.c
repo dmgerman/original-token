@@ -5407,6 +5407,15 @@ op_amp
 id|page-&gt;flags
 )paren
 suffix:semicolon
+id|clear_bit
+c_func
+(paren
+id|PG_error
+comma
+op_amp
+id|page-&gt;flags
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Allocate buffer heads pointing to this page, just for I/O.&n;&t; * They do _not_ show up in the buffer hash table!&n;&t; * They are _not_ registered in page-&gt;buffers either!&n;&t; */
 id|bh
 op_assign

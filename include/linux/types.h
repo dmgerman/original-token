@@ -3,7 +3,7 @@ DECL|macro|_LINUX_TYPES_H
 mdefine_line|#define _LINUX_TYPES_H
 macro_line|#include &lt;linux/posix_types.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
-macro_line|#ifndef _LINUX_TYPES_DONT_EXPORT
+macro_line|#ifndef __KERNEL_STRICT_NAMES
 DECL|typedef|fd_set
 r_typedef
 id|__kernel_fd_set
@@ -166,7 +166,7 @@ r_int
 r_int
 id|ulong
 suffix:semicolon
-macro_line|#endif /* _LINUX_TYPES_DONT_EXPORT */
+macro_line|#endif /* __KERNEL_STRICT_NAMES */
 multiline_comment|/*&n; * Below are truly Linux-specific types that should never collide with&n; * any application/library that wants linux/types.h.&n; */
 DECL|struct|ustat
 r_struct

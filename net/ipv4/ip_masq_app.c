@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;&t;IP_MASQ_APP application masquerading module&n; *&n; *&n; * Version:&t;@(#)ip_masq_app.c  0.03      03/96&n; *&n; * Author:&t;Juan Jose Ciarlante, &lt;jjciarla@raiz.uncu.edu.ar&gt;&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;JJC&t;&t;: Implemented also input pkt hook&n; *&n; *&n; * FIXME:&n; *&t;- ip_masq_skb_replace(): use same skb if space available.&n; *&t;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1440,7 +1441,7 @@ c_cond
 (paren
 id|offset
 OL
-l_int|22
+l_int|40
 )paren
 id|len
 op_assign
@@ -1449,14 +1450,14 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;%-21s&bslash;n&quot;
+l_string|&quot;%-39s&bslash;n&quot;
 comma
-l_string|&quot;prot port    n_attach&quot;
+l_string|&quot;prot port    n_attach name&quot;
 )paren
 suffix:semicolon
 id|pos
 op_assign
-l_int|22
+l_int|40
 suffix:semicolon
 r_for
 c_loop
@@ -1489,10 +1490,10 @@ op_assign
 id|mapp-&gt;next
 )paren
 (brace
-multiline_comment|/* &n;&t;&t;&t; * If you change the length of this sprintf, then all&n;&t;&t;&t; * the length calculations need fixing too!&n;&t;&t;&t; * Line length = 22 (3 + 2 + 7 + 1 + 7 + 1 + 1)&n;&t;&t;&t; */
+multiline_comment|/* &n;&t;&t;&t; * If you change the length of this sprintf, then all&n;&t;&t;&t; * the length calculations need fixing too!&n;&t;&t;&t; * Line length = 40 (3 + 2 + 7 + 1 + 7 + 1 + 2 + 17)&n;&t;&t;&t; */
 id|pos
 op_add_assign
-l_int|22
+l_int|40
 suffix:semicolon
 r_if
 c_cond
@@ -1512,7 +1513,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%-3s  %-7u %-7d &bslash;n&quot;
+l_string|&quot;%-3s  %-7u %-7d  %-17s&bslash;n&quot;
 comma
 id|masq_proto_name
 c_func
@@ -1531,6 +1532,8 @@ id|mapp-&gt;type
 )paren
 comma
 id|mapp-&gt;n_attach
+comma
+id|mapp-&gt;name
 )paren
 suffix:semicolon
 r_if
@@ -1599,6 +1602,7 @@ op_amp
 id|ip_masq_app_syms
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS        
 id|proc_net_register
 c_func
 (paren
@@ -1633,6 +1637,7 @@ id|ip_masq_app_getinfo
 )brace
 )paren
 suffix:semicolon
+macro_line|#endif        
 r_return
 l_int|0
 suffix:semicolon

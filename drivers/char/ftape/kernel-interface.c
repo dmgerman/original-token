@@ -333,7 +333,7 @@ l_string|&quot;ftape-2.08 960314&bslash;n&quot;
 id|KERN_INFO
 l_string|&quot; (c) 1993-1995 Bas Laarhoven (bas@vimec.nl)&bslash;n&quot;
 id|KERN_INFO
-l_string|&quot; (c) 1995-1996 Kai Harrekilde-Petersen (khp@pip.dknet.dk)&bslash;n&quot;
+l_string|&quot; (c) 1995-1996 Kai Harrekilde-Petersen (khp@dolphinics.no)&bslash;n&quot;
 id|KERN_INFO
 l_string|&quot; QIC-117 driver for QIC-40/80/3010/3020 tape drives&bslash;n&quot;
 id|KERN_INFO

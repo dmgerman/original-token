@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp_input.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp_input.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&n; * Fixes:&t;Eric Schenk&t;: avoid multiple retransmissions in one&n; *&t;&t;&t;&t;: round trip timeout.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -477,7 +477,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Set for next retransmit based on expected ACK time.&n;&t;&t; *&t;FIXME: We set this every time which means our &n;&t;&t; *&t;retransmits are really about a window behind.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Set for next retransmit based on expected ACK time&n;&t;&t; *&t;of the first packet in the resend queue.&n;&t;&t; *&t;This is no longer a window behind.&n;&t;&t; */
 id|tcp_reset_xmit_timer
 c_func
 (paren
@@ -1009,7 +1009,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; *&t;Again we slide the timer wrongly&n;&t;&t;&t; */
 id|tcp_reset_xmit_timer
 c_func
 (paren
@@ -1053,11 +1052,6 @@ id|device
 op_star
 id|dev
 suffix:semicolon
-r_int
-id|ct
-op_assign
-l_int|0
-suffix:semicolon
 r_struct
 id|rtable
 op_star
@@ -1067,6 +1061,23 @@ id|prot
 op_assign
 id|sk-&gt;prot
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|all
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * If we are just retransmitting one packet reset&n;&t;&t; * to the start of the queue.&n;&t;&t; */
+id|sk-&gt;send_next
+op_assign
+id|sk-&gt;send_head
+suffix:semicolon
+id|sk-&gt;packets_out
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|skb
 op_assign
 id|sk-&gt;send_head
@@ -1481,16 +1492,13 @@ comma
 id|sk-&gt;priority
 )paren
 suffix:semicolon
+id|sk-&gt;packets_out
+op_increment
+suffix:semicolon
 )brace
 )brace
 )brace
 multiline_comment|/*&n;&t;&t; *&t;Count retransmissions&n;&t;&t; */
-id|ct
-op_increment
-suffix:semicolon
-id|sk-&gt;retransmits
-op_increment
-suffix:semicolon
 id|sk-&gt;prot-&gt;retransmits
 op_increment
 suffix:semicolon
@@ -1507,6 +1515,11 @@ id|sk-&gt;high_seq
 op_assign
 id|sk-&gt;sent_seq
 suffix:semicolon
+multiline_comment|/*&n;&t;         * Advance the send_next pointer so we don&squot;t keep&n;&t;&t; * retransmitting the same stuff every time we get an ACK.&n;&t;&t; */
+id|sk-&gt;send_next
+op_assign
+id|skb-&gt;link3
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Only one retransmit requested.&n;&t;&t; */
 r_if
 c_cond
@@ -1520,7 +1533,7 @@ multiline_comment|/*&n;&t;&t; *&t;This should cut it off before we send too many
 r_if
 c_cond
 (paren
-id|ct
+id|sk-&gt;packets_out
 op_ge
 id|sk-&gt;cong_window
 )paren
@@ -2822,7 +2835,6 @@ c_cond
 (paren
 id|sk-&gt;keepopen
 )paren
-(brace
 id|tcp_reset_xmit_timer
 c_func
 (paren
@@ -2833,12 +2845,12 @@ comma
 id|TCP_TIMEOUT_LEN
 )paren
 suffix:semicolon
-)brace
 r_else
-id|delete_timer
+id|del_timer
 c_func
 (paren
-id|sk
+op_amp
+id|sk-&gt;retransmit_timer
 )paren
 suffix:semicolon
 )brace
@@ -3039,6 +3051,7 @@ id|sk-&gt;debug
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;&bslash;rtcp_ack: seq %x ack %x&bslash;n&quot;
 comma
 id|sk-&gt;sent_seq

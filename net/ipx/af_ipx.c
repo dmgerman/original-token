@@ -2297,7 +2297,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;IPX: Network number collision %lx&bslash;n&bslash;t%s %s and %s %s&bslash;n&quot;
+l_string|&quot;IPX: Network number collision %lx&bslash;n        %s %s and %s %s&bslash;n&quot;
 comma
 id|htonl
 c_func
@@ -9879,6 +9879,7 @@ op_amp
 id|ipx_dev_notifier
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
 c_func
 (paren
@@ -9900,6 +9901,7 @@ op_amp
 id|ipx_rt_procinfo
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 id|printk
 c_func
 (paren
@@ -9955,6 +9957,7 @@ id|ifc
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_unregister
 c_func
 (paren
@@ -9973,6 +9976,7 @@ c_func
 id|PROC_NET_IPX
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 id|unregister_netdevice_notifier
 c_func
 (paren

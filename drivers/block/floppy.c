@@ -396,6 +396,10 @@ DECL|macro|STRETCH
 mdefine_line|#define STRETCH(floppy) ((floppy)-&gt;stretch &amp; FD_STRETCH)
 DECL|macro|CLEARSTRUCT
 mdefine_line|#define CLEARSTRUCT(x) memset((x), 0, sizeof(*(x)))
+DECL|macro|INT_OFF
+mdefine_line|#define INT_OFF save_flags(flags); cli()
+DECL|macro|INT_ON
+mdefine_line|#define INT_ON  restore_flags(flags)
 multiline_comment|/* read/write */
 DECL|macro|COMMAND
 mdefine_line|#define COMMAND raw_cmd-&gt;cmd[0]
@@ -1327,9 +1331,9 @@ l_string|&quot;E2880&quot;
 comma
 multiline_comment|/*  8 2.88MB 3.5&quot;   */
 (brace
-l_int|5760
+l_int|6240
 comma
-l_int|36
+l_int|39
 comma
 l_int|2
 comma
@@ -1343,12 +1347,12 @@ l_int|0x43
 comma
 l_int|0xAF
 comma
-l_int|0x54
+l_int|0x28
 comma
-l_string|&quot;CompaQ&quot;
+l_string|&quot;E3120&quot;
 )brace
 comma
-multiline_comment|/*  9 2.88MB 3.5&quot;   */
+multiline_comment|/*  9 3.12MB 3.5&quot;   */
 (brace
 l_int|2880
 comma
@@ -3376,6 +3380,10 @@ r_int
 id|interruptible
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3399,10 +3407,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
+id|INT_OFF
 suffix:semicolon
 r_while
 c_loop
@@ -3424,10 +3429,7 @@ c_cond
 id|fdc_busy
 )paren
 (brace
-id|sti
-c_func
-(paren
-)paren
+id|INT_ON
 suffix:semicolon
 r_return
 op_minus
@@ -3438,10 +3440,7 @@ id|fdc_busy
 op_assign
 l_int|1
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
+id|INT_ON
 suffix:semicolon
 id|command_status
 op_assign
@@ -4215,16 +4214,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
+id|INT_OFF
 suffix:semicolon
 r_if
 c_cond
@@ -4245,11 +4235,7 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
+id|INT_ON
 suffix:semicolon
 )brace
 DECL|function|floppy_enable_hlt
@@ -4265,16 +4251,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
+id|INT_OFF
 suffix:semicolon
 r_if
 c_cond
@@ -4294,11 +4271,7 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
+id|INT_ON
 suffix:semicolon
 )brace
 DECL|function|setup_DMA
@@ -4310,6 +4283,10 @@ c_func
 r_void
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 macro_line|#ifdef FLOPPY_SANITY_CHECK
 r_if
 c_cond
@@ -4448,10 +4425,7 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif
-id|cli
-c_func
-(paren
-)paren
+id|INT_OFF
 suffix:semicolon
 id|fd_disable_dma
 c_func
@@ -4503,10 +4477,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
+id|INT_ON
 suffix:semicolon
 id|floppy_disable_hlt
 c_func
@@ -8150,6 +8121,10 @@ id|interruptible
 r_int
 id|ret
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|floppy_tq.routine
 op_assign
 (paren
@@ -8172,10 +8147,7 @@ op_amp
 id|tq_timer
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
+id|INT_OFF
 suffix:semicolon
 r_while
 c_loop
@@ -8237,20 +8209,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
+id|INT_ON
 suffix:semicolon
 r_return
 op_minus
 id|EINTR
 suffix:semicolon
 )brace
-id|sti
-c_func
-(paren
-)paren
+id|INT_ON
 suffix:semicolon
 r_if
 c_cond
@@ -17846,11 +17812,6 @@ id|raw_cmd
 op_assign
 l_int|0
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -18310,10 +18271,11 @@ r_void
 r_int
 id|i
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|INT_OFF
 suffix:semicolon
 r_if
 c_cond
@@ -18322,19 +18284,13 @@ id|usage_count
 op_increment
 )paren
 (brace
-id|sti
-c_func
-(paren
-)paren
+id|INT_ON
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-id|sti
-c_func
-(paren
-)paren
+id|INT_ON
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -18516,10 +18472,11 @@ r_int
 r_int
 id|tmpaddr
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|INT_OFF
 suffix:semicolon
 r_if
 c_cond
@@ -18528,18 +18485,12 @@ op_decrement
 id|usage_count
 )paren
 (brace
-id|sti
-c_func
-(paren
-)paren
+id|INT_ON
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|sti
-c_func
-(paren
-)paren
+id|INT_ON
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon

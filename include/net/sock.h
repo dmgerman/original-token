@@ -406,6 +406,13 @@ op_star
 r_volatile
 id|send_head
 suffix:semicolon
+DECL|member|send_next
+r_struct
+id|sk_buff
+op_star
+r_volatile
+id|send_next
+suffix:semicolon
 DECL|member|send_tail
 r_struct
 id|sk_buff

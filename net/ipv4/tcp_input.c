@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp_input.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&n; * FIXES&n; *&t;&t;Pedro Roque&t;:&t;Double ACK bug&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp_input.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&n; * FIXES&n; *&t;&t;Pedro Roque&t;:&t;Double ACK bug&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;Eric Schenk&t;: &t;Skip fast retransmit on small windows.&n; *&t;&t;Eric schenk&t;:&t;Fixes to retransmission code to&n; *&t;&t;&t;&t;:&t;avoid extra retransmission.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 multiline_comment|/*&n; *&t;Policy code extracted so it&squot;s now separate&n; */
@@ -1259,6 +1259,10 @@ id|newsk-&gt;send_tail
 op_assign
 l_int|NULL
 suffix:semicolon
+id|newsk-&gt;send_next
+op_assign
+l_int|NULL
+suffix:semicolon
 id|skb_queue_head_init
 c_func
 (paren
@@ -1756,6 +1760,10 @@ id|sk-&gt;send_tail
 op_assign
 l_int|NULL
 suffix:semicolon
+id|sk-&gt;send_next
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;This is an artifact of a flawed concept. We want one&n;&t; *&t;queue and a smarter send routine when we send all.&n;&t; */
 id|cli
 c_func
@@ -1866,6 +1874,10 @@ op_assign
 id|skb
 suffix:semicolon
 id|sk-&gt;send_tail
+op_assign
+id|skb
+suffix:semicolon
+id|sk-&gt;send_next
 op_assign
 id|skb
 suffix:semicolon
@@ -2085,6 +2097,10 @@ id|sk-&gt;send_tail
 op_assign
 l_int|NULL
 suffix:semicolon
+id|sk-&gt;send_next
+op_assign
+l_int|NULL
+suffix:semicolon
 id|sk-&gt;packets_out
 op_assign
 l_int|0
@@ -2149,7 +2165,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; *&t;Remember the highest ack received and update the&n;&t; *&t;right hand window edge of the host.&n;&t; *&t;We do a bit of work here to track number of times we&squot;ve&n;&t; *&t;seen this ack without a change in the right edge of the&n;&t; *&t;window and no data in the packet.&n;&t; *&t;This will allow us to do fast retransmits.&n;&t; */
-multiline_comment|/* We are looking for duplicate ACKs here.&n;&t; * An ACK is a duplicate if:&n;&t; * (1) it has the same sequence number as the largest number we&squot;ve seen,&n;&t; * (2) it has the same window as the last ACK,&n;&t; * (3) we have outstanding data that has not been ACKed&n;&t; * (4) The packet was not carrying any data.&n;&t; * (5) [From Floyd&squot;s paper on fast retransmit wars]&n;&t; *     The packet acked data after high_seq;&n;&t; * I&squot;ve tried to order these in occurrence of most likely to fail&n;&t; * to least likely to fail.&n;&t; * [These are the rules BSD stacks use to determine if an ACK is a&n;&t; *  duplicate.]&n;&t; */
+multiline_comment|/* We are looking for duplicate ACKs here.&n;&t; * An ACK is a duplicate if:&n;&t; * (1) it has the same sequence number as the largest number we&squot;ve seen,&n;&t; * (2) it has the same window as the last ACK,&n;&t; * (3) we have outstanding data that has not been ACKed&n;&t; * (4) The packet was not carrying any data.&n;&t; * (5) [From Floyd&squot;s paper on fast retransmit wars]&n;&t; *     The packet acked data after high_seq;&n;&t; * I&squot;ve tried to order these in occurrence of most likely to fail&n;&t; * to least likely to fail.&n;&t; * [These are an extension of the rules BSD stacks use to&n;&t; *  determine if an ACK is a duplicate.]&n;&t; */
 r_if
 c_cond
 (paren
@@ -2185,10 +2201,24 @@ id|sk-&gt;high_seq
 )paren
 )paren
 (brace
-multiline_comment|/* See draft-stevens-tcpca-spec-01 for explanation&n;&t;&t; * of what we are doing here.&n;&t;&t; */
+multiline_comment|/* Prevent counting of duplicate ACKs if the congestion&n;&t;&t; * window is smaller than 3. Note that since we reduce&n;&t;&t; * the congestion window when we do a fast retransmit,&n;&t;&t; * we must be careful to keep counting if we were already&n;&t;&t; * counting. The idea behind this is to avoid doing&n;&t;&t; * fast retransmits if the congestion window is so small&n;&t;&t; * that we cannot get 3 ACKs due to the loss of a packet&n;&t;&t; * unless we are getting ACKs for retransmitted packets.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;cong_window
+op_ge
+l_int|3
+op_logical_or
+id|sk-&gt;rcv_ack_cnt
+OG
+id|MAX_DUP_ACKS
+op_plus
+l_int|1
+)paren
 id|sk-&gt;rcv_ack_cnt
 op_increment
 suffix:semicolon
+multiline_comment|/* See draft-stevens-tcpca-spec-01 for explanation&n;&t;&t; * of what we are doing here.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2218,10 +2248,6 @@ op_plus
 id|MAX_DUP_ACKS
 op_plus
 l_int|1
-suffix:semicolon
-multiline_comment|/* FIXME:&n;&t;&t;&t; * reduce the count. We don&squot;t want to be&n;&t;&t;&t; * seen to be in &quot;retransmit&quot; mode if we&n;&t;&t;&t; * are doing a fast retransmit.&n;&t;&t;&t; * This is also a signal to tcp_do_retransmit&n;&t;&t;&t; * not to set sk-&gt;high_seq.&n;&t;&t;&t; * This is a horrible ugly hack.&n;&t;&t;&t; */
-id|sk-&gt;retransmits
-op_decrement
 suffix:semicolon
 id|tcp_do_retransmit
 c_func
@@ -2457,6 +2483,18 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; * advance the send_next pointer if needed.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;send_next
+op_eq
+id|skb
+)paren
+id|sk-&gt;send_next
+op_assign
+id|sk-&gt;send_head
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Note that we only reset backoff and rto in the&n;&t;&t; * rtt recomputation code.  And that doesn&squot;t happen&n;&t;&t; * if there were retransmissions in effect.  So the&n;&t;&t; * first new packet after the retransmissions is&n;&t;&t; * sent with the backoff still in effect.  Not until&n;&t;&t; * we get an ack from a non-retransmitted packet do&n;&t;&t; * we reset the backoff and rto.  This allows us to deal&n;&t;&t; * with a situation where the network delay has increased&n;&t;&t; * suddenly.  I.e. Karn&squot;s algorithm. (SIGCOMM &squot;87, p5.)&n;&t;&t; */
 multiline_comment|/*&n;&t;&t; *&t;We have one less packet out there. &n;&t;&t; */
 r_if
@@ -2549,24 +2587,18 @@ id|sk
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * XXX someone ought to look at this too.. at the moment, if skb_peek()&n;&t; * returns non-NULL, we complete ignore the timer stuff in the else&n;&t; * clause.  We ought to organize the code so that else clause can&n;&t; * (should) be executed regardless, possibly moving the PROBE timer&n;&t; * reset over.  The skb_peek() thing should only move stuff to the&n;&t; * write queue, NOT also manage the timer functions.&n;&t; */
-multiline_comment|/*&n;&t; * Maybe we can take some stuff off of the write queue,&n;&t; * and put it onto the xmit queue.&n;&t; */
+multiline_comment|/*&n;&t; * Maybe we can take some stuff off of the write queue,&n;&t; * and put it onto the xmit queue.&n;&t; * FIXME: (?) There is bizzare case being tested here, to check if&n;&t; * the data at the head of the queue ends before the start of&n;&t; * the sequence we already ACKed. This does not appear to be&n;&t; * a case that can actually occur. Why are we testing it?&n;&t; */
 r_if
 c_cond
 (paren
-id|skb_peek
+op_logical_neg
+id|skb_queue_empty
 c_func
 (paren
 op_amp
 id|sk-&gt;write_queue
 )paren
-op_ne
-l_int|NULL
-)paren
-(brace
-r_if
-c_cond
-(paren
+op_logical_and
 op_logical_neg
 id|before
 c_func
@@ -2600,7 +2632,7 @@ OL
 id|sk-&gt;cong_window
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; *&t;Add more data to the send queue.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Add more data to the send queue.&n;&t;&t; */
 id|flag
 op_or_assign
 l_int|1
@@ -2612,47 +2644,7 @@ id|sk
 )paren
 suffix:semicolon
 )brace
-r_else
-r_if
-c_cond
-(paren
-id|before
-c_func
-(paren
-id|sk-&gt;window_seq
-comma
-id|sk-&gt;write_queue.next-&gt;end_seq
-)paren
-op_logical_and
-id|sk-&gt;send_head
-op_eq
-l_int|NULL
-op_logical_and
-id|sk-&gt;ack_backlog
-op_eq
-l_int|0
-op_logical_and
-id|sk-&gt;state
-op_ne
-id|TCP_TIME_WAIT
-)paren
-(brace
-multiline_comment|/*&n; &t;&t;&t; *&t;Data to queue but no room.&n; &t;&t;&t; */
-id|tcp_reset_xmit_timer
-c_func
-(paren
-id|sk
-comma
-id|TIME_PROBE0
-comma
-id|sk-&gt;rto
-)paren
-suffix:semicolon
-)brace
-)brace
-r_else
-(brace
-multiline_comment|/*&n;&t;&t; * from TIME_WAIT we stay in TIME_WAIT as long as we rx packets&n;&t;&t; * from TCP_CLOSE we don&squot;t do anything&n;&t;&t; *&n;&t;&t; * from anything else, if there is write data (or fin) pending,&n;&t;&t; * we use a TIME_WRITE timeout, else if keepalive we reset to&n;&t;&t; * a KEEPALIVE timeout, else we delete the timer.&n;&t;&t; *&n;&t;&t; * We do not set flag for nominal write data, otherwise we may&n;&t;&t; * force a state where we start to write itsy bitsy tidbits&n;&t;&t; * of data.&n;&t;&t; */
+multiline_comment|/*&n;&t; * Reset timers to reflect the new state.&n;&t; *&n;&t; * from TIME_WAIT we stay in TIME_WAIT as long as we rx packets&n;&t; * from TCP_CLOSE we don&squot;t do anything&n;&t; *&n;&t; * from anything else, if there is queued data (or fin) pending,&n;&t; * we use a TIME_WRITE timeout, if there is data to write but&n;&t; * no room in the window we use TIME_PROBE0, else if keepalive&n;&t; * we reset to a KEEPALIVE timeout, else we delete the timer.&n;&t; *&n;&t; * We do not set flag for nominal write data, otherwise we may&n;&t; * force a state where we start to write itsy bitsy tidbits&n;&t; * of data.&n;&t; */
 r_switch
 c_cond
 (paren
@@ -2662,7 +2654,7 @@ id|sk-&gt;state
 r_case
 id|TCP_TIME_WAIT
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t; * keep us in TIME_WAIT until we stop getting packets,&n;&t;&t;&t; * reset the timeout.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * keep us in TIME_WAIT until we stop getting packets,&n;&t;&t; * reset the timeout.&n;&t;&t; */
 id|tcp_reset_msl_timer
 c_func
 (paren
@@ -2678,26 +2670,18 @@ suffix:semicolon
 r_case
 id|TCP_CLOSE
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t; * don&squot;t touch the timer.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * don&squot;t touch the timer.&n;&t;&t; */
 r_break
 suffix:semicolon
 r_default
 suffix:colon
 (brace
 )brace
-multiline_comment|/*&n;&t;&t;&t; * &t;Must check send_head and write_queue&n;&t;&t;&t; * &t;to determine which timeout to use.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * &t;Must check send_head and write_queue&n;&t;&t; * &t;to determine which timeout to use.&n;&t;&t; */
 r_if
 c_cond
 (paren
 id|sk-&gt;send_head
-op_logical_or
-op_logical_neg
-id|skb_queue_empty
-c_func
-(paren
-op_amp
-id|sk-&gt;write_queue
-)paren
 )paren
 (brace
 id|tcp_reset_xmit_timer
@@ -2706,6 +2690,35 @@ c_func
 id|sk
 comma
 id|TIME_WRITE
+comma
+id|sk-&gt;rto
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|skb_queue_empty
+c_func
+(paren
+op_amp
+id|sk-&gt;write_queue
+)paren
+op_logical_and
+id|sk-&gt;ack_backlog
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* &n;&t;&t;&t; * if the write queue is not empty when we get here&n;&t;&t;&t; * then we failed to move any data to the retransmit&n;&t;&t;&t; * queue above. (If we had send_head would be non-NULL).&n;&t;&t;&t; * Furthermore, since the send_head is NULL here&n;&t;&t;&t; * we must not be in retransmit mode at this point.&n;&t;&t;&t; * This implies we have no packets in flight,&n;&t;&t;&t; * hence sk-&gt;packets_out &lt; sk-&gt;cong_window.&n;&t;&t;&t; * Examining the conditions for the test to move&n;&t;&t;&t; * data to the retransmission queue we find that&n;&t;&t;&t; * we must therefore have a zero window.&n;&t;&t;&t; * Hence, if the ack_backlog is 0 we should initiate&n;&t;&t;&t; * a zero probe.&n;&t;&t;&t; * We don&squot;t do a zero probe if we have a delayed&n;&t;&t;&t; * ACK in hand since the other side may have a&n;&t;&t;&t; * window opening, but they are waiting to hear&n;&t;&t;&t; * from us before they tell us about it.&n;&t;&t;&t; * (They are applying Nagle&squot;s rule).&n;&t;&t;&t; * So, we don&squot;t set up the zero window probe&n;&t;&t;&t; * just yet. We do have to clear the timer&n;&t;&t;&t; * though in this case...&n;&t;&t;&t; */
+id|tcp_reset_xmit_timer
+c_func
+(paren
+id|sk
+comma
+id|TIME_PROBE0
 comma
 id|sk-&gt;rto
 )paren
@@ -2745,7 +2758,6 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n;&t; *&t;We have nothing queued but space to send. Send any partial&n;&t; *&t;packets immediately (end of Nagle rule application).&n;&t; */
 r_if
@@ -2903,6 +2915,22 @@ comma
 id|TCP_FIN_WAIT2
 )paren
 suffix:semicolon
+multiline_comment|/* If the socket is dead, then there is no&n;&t;&t;&t; * user process hanging around using it.&n;&t;&t;&t; * We want to set up a FIN_WAIT2 timeout ala BSD.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;dead
+)paren
+id|tcp_reset_msl_timer
+c_func
+(paren
+id|sk
+comma
+id|TIME_CLOSE
+comma
+id|TCP_FIN_TIMEOUT
+)paren
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; *&t;Incoming ACK to a FIN we sent in the case of a simultaneous close.&n;&t; *&n;&t; *&t;Move to TIME_WAIT&n;&t; */
@@ -3022,29 +3050,14 @@ id|sk-&gt;mtu
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * I make no guarantees about the first clause in the following&n;&t; * test, i.e. &quot;(!flag) || (flag&amp;4)&quot;.  I&squot;m not entirely sure under&n;&t; * what conditions &quot;!flag&quot; would be true.  However I think the rest&n;&t; * of the conditions would prevent that from causing any&n;&t; * unnecessary retransmission. &n;&t; *   Clearly if the first packet has expired it should be &n;&t; * retransmitted.  The other alternative, &quot;flag&amp;2 &amp;&amp; retransmits&quot;, is&n;&t; * harder to explain:  You have to look carefully at how and when the&n;&t; * timer is set and with what timeout.  The most recent transmission always&n;&t; * sets the timer.  So in general if the most recent thing has timed&n;&t; * out, everything before it has as well.  So we want to go ahead and&n;&t; * retransmit some more.  If we didn&squot;t explicitly test for this&n;&t; * condition with &quot;flag&amp;2 &amp;&amp; retransmits&quot;, chances are &quot;when + rto &lt; jiffies&quot;&n;&t; * would not be true.  If you look at the pattern of timing, you can&n;&t; * show that rto is increased fast enough that the next packet would&n;&t; * almost never be retransmitted immediately.  Then you&squot;d end up&n;&t; * waiting for a timeout to send each packet on the retransmission&n;&t; * queue.  With my implementation of the Karn sampling algorithm,&n;&t; * the timeout would double each time.  The net result is that it would&n;&t; * take a hideous amount of time to recover from a single dropped packet.&n;&t; * It&squot;s possible that there should also be a test for TIME_WRITE, but&n;&t; * I think as long as &quot;send_head != NULL&quot; and &quot;retransmit&quot; is on, we&squot;ve&n;&t; * got to be in real retransmission mode.&n;&t; *   Note that tcp_do_retransmit is called with all==1.  Setting cong_window&n;&t; * back to 1 at the timeout will cause us to send 1, then 2, etc. packets.&n;&t; * As long as no further losses occur, this seems reasonable.&n;&t; */
+multiline_comment|/*&n;&t; * The following code has been greatly simplified from the&n;&t; * old hacked up stuff. The wonders of properly setting the&n;&t; * retransmission timeouts.&n;&t; *&n;&t; * If we are retransmitting, and we acked a packet on the retransmit&n;&t; * queue, and there is still something in the retransmit queue,&n;&t; * then we can output some retransmission packets.&n;&t; */
 r_if
 c_cond
 (paren
-(paren
-(paren
-op_logical_neg
-id|flag
-)paren
-op_logical_or
-(paren
-id|flag
-op_amp
-l_int|4
-)paren
-)paren
-op_logical_and
 id|sk-&gt;send_head
 op_ne
 l_int|NULL
 op_logical_and
-(paren
-(paren
 (paren
 id|flag
 op_amp
@@ -3053,37 +3066,6 @@ l_int|2
 op_logical_and
 id|sk-&gt;retransmits
 )paren
-op_logical_or
-(paren
-id|sk-&gt;send_head-&gt;when
-op_plus
-id|sk-&gt;rto
-OL
-id|jiffies
-)paren
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|sk-&gt;send_head-&gt;when
-op_plus
-id|sk-&gt;rto
-OL
-id|jiffies
-)paren
-(brace
-id|tcp_retransmit
-c_func
-(paren
-id|sk
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
-r_else
 (brace
 id|tcp_do_retransmit
 c_func
@@ -3093,17 +3075,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|tcp_reset_xmit_timer
-c_func
-(paren
-id|sk
-comma
-id|TIME_WRITE
-comma
-id|sk-&gt;rto
-)paren
-suffix:semicolon
-)brace
 )brace
 r_return
 l_int|1
@@ -3299,6 +3270,11 @@ op_ne
 id|TIME_WRITE
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|sk-&gt;send_head
+)paren
 id|tcp_reset_xmit_timer
 c_func
 (paren
@@ -3307,6 +3283,14 @@ comma
 id|TIME_WRITE
 comma
 id|sk-&gt;rto
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;send_head NULL in FIN_WAIT1&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

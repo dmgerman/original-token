@@ -680,9 +680,10 @@ id|nb
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Send (or queue for sending) a packet. &n; *&n; *&t;IMPORTANT: When this is called to resend frames. The caller MUST&n; *&t;already have locked the sk_buff. Apart from that we do the&n; *&t;rest of the magic.&n; */
-DECL|function|dev_queue_xmit
+DECL|function|do_dev_queue_xmit
+r_static
 r_void
-id|dev_queue_xmit
+id|do_dev_queue_xmit
 c_func
 (paren
 r_struct
@@ -1073,11 +1074,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|start_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1095,19 +1091,9 @@ l_int|0
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; *&t;Packet is now solely the responsibility of the driver&n;&t;&t; */
-id|end_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|end_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Transmission failed, put skb back into a list. Once on the list it&squot;s safe and&n;&t; *&t;no longer device locked (it can be freed safely from the device queue)&n;&t; */
 id|cli
 c_func
@@ -1132,6 +1118,46 @@ id|restore_flags
 c_func
 (paren
 id|flags
+)paren
+suffix:semicolon
+)brace
+DECL|function|dev_queue_xmit
+r_void
+id|dev_queue_xmit
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+id|pri
+)paren
+(brace
+id|start_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
+id|do_dev_queue_xmit
+c_func
+(paren
+id|skb
+comma
+id|dev
+comma
+id|pri
+)paren
+suffix:semicolon
+id|end_bh_atomic
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -1248,6 +1274,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;This routine causes all interfaces to try to send some data. &n; */
 DECL|function|dev_transmit
+r_static
 r_void
 id|dev_transmit
 c_func
@@ -1764,7 +1791,7 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Feed them to the output stage and if it fails&n;&t;&t;&t; *&t;indicate they re-queue at the front.&n;&t;&t;&t; */
-id|dev_queue_xmit
+id|do_dev_queue_xmit
 c_func
 (paren
 id|skb

@@ -3036,7 +3036,18 @@ id|skb-&gt;lock
 id|printk
 c_func
 (paren
-l_string|&quot;double lock on device queue!&bslash;n&quot;
+l_string|&quot;double lock on device queue, lock=%d caller=%p&bslash;n&quot;
+comma
+id|skb-&gt;lock
+comma
+(paren
+op_amp
+id|skb
+)paren
+(braket
+op_minus
+l_int|1
+)braket
 )paren
 suffix:semicolon
 )brace

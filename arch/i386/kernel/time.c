@@ -87,7 +87,7 @@ id|low_timer
 comma
 id|missing_time
 suffix:semicolon
-multiline_comment|/* Last jiffie when do_fast_gettimeoffset() was called.. */
+multiline_comment|/* Last jiffy when do_fast_gettimeoffset() was called.. */
 r_static
 r_int
 r_int
@@ -103,7 +103,7 @@ id|cached_quotient
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* The &quot;clocks per usec&quot; value is calculated once each jiffie */
+multiline_comment|/* The &quot;clocks per usec&quot; value is calculated once each jiffy */
 id|tmp
 op_assign
 id|jiffies
@@ -409,7 +409,7 @@ id|jiffies_p
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * cache volatile jiffies temporaly, we have IRQs turned off. &n;&t; */
+multiline_comment|/*&n;&t; * cache volatile jiffies temporarily; we have IRQs turned off. &n;&t; */
 r_int
 r_int
 id|jiffies_t

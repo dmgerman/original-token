@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: buffers.c,v 1.2 1996/04/29 22:48:14 fritz Exp $&n; *&n; * $Log: buffers.c,v $&n; * Revision 1.2  1996/04/29 22:48:14  fritz&n; * Removed compatibility-macros. No longer needed.&n; *&n; * Revision 1.1  1996/04/13 10:19:28  fritz&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: buffers.c,v 1.3 1996/05/31 00:56:53 fritz Exp $&n; *&n; * $Log: buffers.c,v $&n; * Revision 1.3  1996/05/31 00:56:53  fritz&n; * removed cli() from BufPoolAdd, since it is called&n; * with interrupts off anyway.&n; *&n; * Revision 1.2  1996/04/29 22:48:14  fritz&n; * Removed compatibility-macros. No longer needed.&n; *&n; * Revision 1.1  1996/04/13 10:19:28  fritz&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;teles.h&quot;
@@ -95,9 +95,6 @@ r_struct
 id|Pages
 op_star
 id|ptr
-suffix:semicolon
-r_int
-id|flags
 suffix:semicolon
 id|byte
 op_star
@@ -269,17 +266,6 @@ id|bp-&gt;bpps
 )paren
 suffix:semicolon
 )brace
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|first-&gt;next
 op_assign
 id|bp-&gt;freelist
@@ -287,12 +273,6 @@ suffix:semicolon
 id|bp-&gt;freelist
 op_assign
 id|bh
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
 suffix:semicolon
 r_return
 (paren

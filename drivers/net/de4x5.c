@@ -12120,10 +12120,16 @@ op_increment
 r_if
 c_cond
 (paren
+(paren
+r_int
+r_int
+)paren
 id|lp-&gt;rx_skb
 (braket
 id|i
 )braket
+OG
+l_int|1
 )paren
 (brace
 id|dev_kfree_skb

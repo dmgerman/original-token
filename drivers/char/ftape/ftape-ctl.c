@@ -1469,7 +1469,7 @@ c_func
 op_minus
 l_int|1
 comma
-l_string|&quot;Kai Harrekilde-Petersen &lt;khp@pip.dknet.dk&gt;&quot;
+l_string|&quot;Kai Harrekilde-Petersen &lt;khp@dolphinics.no&gt;&quot;
 )paren
 suffix:semicolon
 id|TRACE
@@ -1631,7 +1631,7 @@ c_func
 op_minus
 l_int|1
 comma
-l_string|&quot;please report this to &lt;khp@pip.dknet.dk&gt;&quot;
+l_string|&quot;please report this to &lt;khp@dolphinics.no&gt;&quot;
 )paren
 suffix:semicolon
 id|TRACE
@@ -1910,7 +1910,7 @@ c_func
 op_minus
 l_int|1
 comma
-l_string|&quot;please report this to &lt;khp@pip.dknet.dk&gt;&quot;
+l_string|&quot;please report this to &lt;khp@dolphinics.no&gt;&quot;
 )paren
 suffix:semicolon
 id|TRACE

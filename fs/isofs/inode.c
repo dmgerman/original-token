@@ -2110,6 +2110,43 @@ op_plus
 id|block
 suffix:semicolon
 )brace
+DECL|function|test_and_set_uid
+r_static
+r_void
+id|test_and_set_uid
+c_func
+(paren
+id|uid_t
+op_star
+id|p
+comma
+id|uid_t
+id|value
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|value
+)paren
+(brace
+op_star
+id|p
+op_assign
+id|value
+suffix:semicolon
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;Resetting to %d&bslash;n&quot;
+comma
+id|value
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+)brace
 DECL|function|isofs_read_inode
 r_void
 id|isofs_read_inode
@@ -2778,6 +2815,7 @@ c_cond
 op_logical_neg
 id|high_sierra
 )paren
+(brace
 id|parse_rock_ridge_inode
 c_func
 (paren
@@ -2786,6 +2824,17 @@ comma
 id|inode
 )paren
 suffix:semicolon
+multiline_comment|/* hmm..if we want uid or gid set, override the rock ridge setting */
+id|test_and_set_uid
+c_func
+(paren
+op_amp
+id|inode-&gt;i_uid
+comma
+id|inode-&gt;i_sb-&gt;u.isofs_sb.s_uid
+)paren
+suffix:semicolon
+)brace
 macro_line|#ifdef DEBUG
 id|printk
 c_func

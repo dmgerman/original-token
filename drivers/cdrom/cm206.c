@@ -1,6 +1,6 @@
 multiline_comment|/* cm206.c. A linux-driver for the cm206 cdrom player with cm260 adapter card.&n;   Copyright (c) 1995, 1996 David van Leeuwen.&n;   &n;     This program is free software; you can redistribute it and/or modify&n;     it under the terms of the GNU General Public License as published by&n;     the Free Software Foundation; either version 2 of the License, or&n;     (at your option) any later version.&n;     &n;     This program is distributed in the hope that it will be useful,&n;     but WITHOUT ANY WARRANTY; without even the implied warranty of&n;     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;     GNU General Public License for more details.&n;     &n;     You should have received a copy of the GNU General Public License&n;     along with this program; if not, write to the Free Software&n;     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;History:&n; Started 25 jan 1994. Waiting for documentation...&n; 22 feb 1995: 0.1a first reasonably safe polling driver.&n;&t;      Two major bugs, one in read_sector and one in &n;&t;      do_cm206_request, happened to cancel!&n; 25 feb 1995: 0.2a first reasonable interrupt driven version of above.&n;              uart writes are still done in polling mode. &n; 25 feb 1995: 0.21a writes also in interrupt mode, still some&n;&t;      small bugs to be found... Larger buffer. &n;  2 mrt 1995: 0.22 Bug found (cd-&gt; nowhere, interrupt was called in&n;              initialization), read_ahead of 16. Timeouts implemented.&n;&t;      unclear if they do something...&n;  7 mrt 1995: 0.23 Start of background read-ahead.&n; 18 mrt 1995: 0.24 Working background read-ahead. (still problems)&n; 26 mrt 1995: 0.25 Multi-session ioctl added (kernel v1.2).&n;              Statistics implemented, though separate stats206.h.&n;&t;      Accessible trough ioctl 0x1000 (just a number).&n;&t;      Hard to choose between v1.2 development and 1.1.75.&n;&t;      Bottom-half doesn&squot;t work with 1.2...&n;&t;      0.25a: fixed... typo. Still problems...&n;  1 apr 1995: 0.26 Module support added. Most bugs found. Use kernel 1.2.n.&n;  5 apr 1995: 0.27 Auto-probe for the adapter card base address.&n;              Auto-probe for the adaptor card irq line.&n;  7 apr 1995: 0.28 Added lilo setup support for base address and irq.&n;              Use major number 32 (not in this source), officially&n;&t;      assigned to this driver.&n;  9 apr 1995: 0.29 Added very limited audio support. Toc_header, stop, pause,&n;              resume, eject. Play_track ignores track info, because we can&squot;t &n;&t;      read a table-of-contents entry. Toc_entry is implemented&n;&t;      as a `placebo&squot; function: always returns start of disc. &n;  3 may 1995: 0.30 Audio support completed. The get_toc_entry function&n;              is implemented as a binary search. &n; 15 may 1995: 0.31 More work on audio stuff. Workman is not easy to &n;              satisfy; changed binary search into linear search.&n;&t;      Auto-probe for base address somewhat relaxed.&n;  1 jun 1995: 0.32 Removed probe_irq_on/off for module version.&n; 10 jun 1995: 0.33 Workman still behaves funny, but you should be&n;              able to eject and substitute another disc.&n;&n; An adaptation of 0.33 is included in linux-1.3.7 by Eberhard Moenkeberg&n;&n; 18 jul 1995: 0.34 Patch by Heiko Eissfeldt included, mainly considering &n;              verify_area&squot;s in the ioctls. Some bugs introduced by &n;&t;      EM considering the base port and irq fixed. &n;&n; 18 dec 1995: 0.35 Add some code for error checking... no luck...&n;&n; We jump to reach our goal: version 1.0 in the next stable linux kernel.&n;&n; 19 mar 1996: 0.95 Different implementation of CDROM_GET_UPC, on&n;&t;      request of Thomas Quinot. &n; 25 mar 1996: 0.96 Interpretation of opening with O_WRONLY or O_RDWR:&n;&t;      open only for ioctl operation, e.g., for operation of&n;&t;      tray etc.&n; 4 apr 1996:  0.97 First implementation of layer between VFS and cdrom&n;              driver, a generic interface. Much of the functionality&n;&t;      of cm206_open() and cm206_ioctl() is transferred to a&n;&t;      new file cdrom.c and its header ucdrom.h. &n;&n;&t;      Upgrade to Linux kernel 1.3.78. &n;&n; 11 apr 1996  0.98 Upgrade to Linux kernel 1.3.85&n;              Made it more uniform.&n; * &n; * Parts of the code are based upon lmscd.c written by Kai Petzke,&n; * sbpcd.c written by Eberhard Moenkeberg, and mcd.c by Martin&n; * Harriss, but any off-the-shelf dynamic programming algorithm won&squot;t&n; * be able to find them.&n; *&n; * The cm206 drive interface and the cm260 adapter card seem to be &n; * sufficiently different from their cm205/cm250 counterparts&n; * in order to write a complete new driver.&n; * &n; * I call all routines connected to the Linux kernel something&n; * with `cm206&squot; in it, as this stuff is too series-dependent. &n; * &n; * Currently, my limited knowledge is based on:&n; * - The Linux Kernel Hacker&squot;s guide, v. 0.5, by Michael K. Johnson&n; * - Linux Kernel Programmierung, by Michael Beck and others&n; * - Philips/LMS cm206 and cm226 product specification&n; * - Philips/LMS cm260 product specification&n; *&n; *                       David van Leeuwen, david@tm.tno.nl.  */
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;$Id: cm206.c,v 0.99 1996/04/14 20:26:26 david Exp $&quot;
+mdefine_line|#define VERSION &quot;$Id: cm206.c,v 0.99 1996/04/14 20:26:26 david Exp david $&quot;
 macro_line|#include &lt;linux/module.h&gt;&t;
 macro_line|#include &lt;linux/errno.h&gt;&t;/* These include what we really need */
 macro_line|#include &lt;linux/delay.h&gt;
@@ -5457,6 +5457,23 @@ macro_line|#else
 id|reset_cm260
 c_func
 (paren
+)paren
+suffix:semicolon
+multiline_comment|/* Now, the problem here is that reset_cm260 can generate an&n;     interrupt. It seems that this can cause a kernel oops some time&n;     later. So we wait a while and `service&squot; this interrupt. */
+id|udelay
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|dc_normal
+op_or
+id|READ_AHEAD
+comma
+id|r_data_control
 )paren
 suffix:semicolon
 id|printk

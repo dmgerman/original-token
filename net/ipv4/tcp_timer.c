@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&n; * Fixes:&n; *&n; *&t;&t;Eric Schenk&t;: Fix retransmission timeout counting.&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 DECL|function|tcp_delack_timer
 r_void
@@ -55,32 +55,68 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-r_int
-)paren
-id|when
-OL
-l_int|0
+id|why
+op_eq
+id|TIME_WRITE
 )paren
 (brace
-id|when
+multiline_comment|/* In this case we want to timeout on the first packet&n;&t;&t; * in the resend queue. If the resend queue is empty,&n;&t;&t; * then the packet we are sending hasn&squot;t made it there yet,&n;&t;&t; * so we timeout from the current time.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;send_head
+)paren
+(brace
+id|sk-&gt;retransmit_timer.expires
 op_assign
-l_int|3
+id|sk-&gt;send_head-&gt;when
+op_plus
+id|when
 suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* This should never happen!&n;&t;&t; &t; */
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;Error: Negative timer in xmit_timer&bslash;n&quot;
+l_string|&quot;Error: send_head NULL in xmit_timer&bslash;n&quot;
 )paren
 suffix:semicolon
+id|sk-&gt;ip_xmit_timeout
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+suffix:semicolon
 )brace
+)brace
+r_else
+(brace
 id|sk-&gt;retransmit_timer.expires
 op_assign
 id|jiffies
 op_plus
 id|when
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|sk-&gt;retransmit_timer.expires
+OL
+id|jiffies
+)paren
+(brace
+multiline_comment|/* We can get here if we reset the timer on an event&n;&t;&t; * that could not fire because the interupts where disabled.&n;&t;&t; * make sure it happens soon.&n;&t;&t; */
+id|sk-&gt;retransmit_timer.expires
+op_assign
+id|jiffies
+op_plus
+l_int|2
+suffix:semicolon
+)brace
 id|add_timer
 c_func
 (paren
@@ -105,6 +141,10 @@ r_int
 id|all
 )paren
 (brace
+multiline_comment|/*&n;&t; * record how many times we&squot;ve timed out.&n;&t; * This determines when we should quite trying.&n;&t; * This needs to be counted here, because we should not be&n;&t; * counting one per packet we send, but rather one per round&n;&t; * trip timeout.&n;&t; */
+id|sk-&gt;retransmits
+op_increment
+suffix:semicolon
 id|tcp_do_retransmit
 c_func
 (paren
@@ -131,6 +171,12 @@ op_star
 id|HZ
 )paren
 suffix:semicolon
+multiline_comment|/* be paranoid about the data structure... */
+r_if
+c_cond
+(paren
+id|sk-&gt;send_head
+)paren
 id|tcp_reset_xmit_timer
 c_func
 (paren
@@ -139,6 +185,14 @@ comma
 id|TIME_WRITE
 comma
 id|sk-&gt;rto
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;send_head NULL in tcp_retransmit_time&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

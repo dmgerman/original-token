@@ -1395,6 +1395,10 @@ id|sk-&gt;send_head
 op_assign
 id|skb
 suffix:semicolon
+id|sk-&gt;send_next
+op_assign
+id|skb
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -3757,6 +3761,7 @@ id|ip_rt_notifier
 suffix:semicolon
 multiline_comment|/*&t;ip_raw_init();&n;&t;ip_packet_init();&n;&t;ip_tcp_init();&n;&t;ip_udp_init();*/
 macro_line|#ifdef CONFIG_IP_MULTICAST
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
 c_func
 (paren
@@ -3791,6 +3796,7 @@ id|ip_mc_procinfo
 )brace
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 macro_line|#endif
 )brace
 eof

@@ -168,10 +168,10 @@ DECL|macro|fd_request_irq
 mdefine_line|#define fd_request_irq()          sun_fd_request_irq()
 DECL|macro|fd_free_irq
 mdefine_line|#define fd_free_irq()             /* nothing... */
-DECL|macro|fd_dma_mem_alloc
+macro_line|#if 0  /* P3: added by Alain, these cause a MMU corruption. 19960524 XXX */
 mdefine_line|#define fd_dma_mem_alloc(size)    ((unsigned long) vmalloc(size))
-DECL|macro|fd_dma_mem_free
 mdefine_line|#define fd_dma_mem_free(addr,size) (vfree((void *)(addr)))
+macro_line|#endif
 DECL|macro|FLOPPY_MOTOR_MASK
 mdefine_line|#define FLOPPY_MOTOR_MASK         0x10
 multiline_comment|/* It&squot;s all the same... */
@@ -264,8 +264,17 @@ r_case
 l_int|7
 suffix:colon
 multiline_comment|/* FD_DIR */
-multiline_comment|/* Always return 0, the disk never changes&n;&t;&t; * without the kernel explicitly doing so.&n;&t;&t; */
 r_return
+(paren
+op_star
+id|AUXREG
+op_amp
+id|AUXIO_FLPY_DCHG
+)paren
+ques
+c_cond
+l_int|0x80
+suffix:colon
 l_int|0
 suffix:semicolon
 )brace
@@ -463,9 +472,9 @@ r_case
 l_int|7
 suffix:colon
 multiline_comment|/* FD_DIR */
-multiline_comment|/* Always return 0, the disk never changes&n;&t;&t; * without the kernel explicitly ejecting it.&n;&t;&t; */
+multiline_comment|/* XXX: Is DCL on 0x80 in sun4m? */
 r_return
-l_int|0
+id|sun_fdc-&gt;dir_82077
 suffix:semicolon
 )brace
 suffix:semicolon

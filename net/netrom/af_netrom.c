@@ -5865,6 +5865,7 @@ id|nr_default.paclen
 op_assign
 id|NR_DEFAULT_PACLEN
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
 c_func
 (paren
@@ -5967,6 +5968,7 @@ id|nr_nodes_get_info
 )brace
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 )brace
 macro_line|#endif
 eof
