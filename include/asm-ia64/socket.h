@@ -1,7 +1,7 @@
 macro_line|#ifndef _ASM_IA64_SOCKET_H
 DECL|macro|_ASM_IA64_SOCKET_H
 mdefine_line|#define _ASM_IA64_SOCKET_H
-multiline_comment|/*&n; * Socket related defines.  This mostly mirrors the Linux/x86 version.&n; *&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * Socket related defines.  This mostly mirrors the Linux/x86 version.&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
 macro_line|#include &lt;asm/sockios.h&gt;
 multiline_comment|/* For setsockoptions(2) */
 DECL|macro|SOL_SOCKET
@@ -55,12 +55,14 @@ mdefine_line|#define SO_SECURITY_ENCRYPTION_TRANSPORT&t;23
 DECL|macro|SO_SECURITY_ENCRYPTION_NETWORK
 mdefine_line|#define SO_SECURITY_ENCRYPTION_NETWORK&t;&t;24
 DECL|macro|SO_BINDTODEVICE
-mdefine_line|#define SO_BINDTODEVICE&t;25
+mdefine_line|#define SO_BINDTODEVICE&t;&t;25
 multiline_comment|/* Socket filtering */
 DECL|macro|SO_ATTACH_FILTER
-mdefine_line|#define SO_ATTACH_FILTER        26
+mdefine_line|#define SO_ATTACH_FILTER&t;26
 DECL|macro|SO_DETACH_FILTER
-mdefine_line|#define SO_DETACH_FILTER        27
+mdefine_line|#define SO_DETACH_FILTER&t;27
+DECL|macro|SO_PEERNAME
+mdefine_line|#define SO_PEERNAME&t;&t;28
 DECL|macro|SO_PEERNAME
 mdefine_line|#define SO_PEERNAME             28
 macro_line|#endif /* _ASM_IA64_SOCKET_H */

@@ -218,8 +218,6 @@ id|msdos_put_super
 id|sb
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Complete the setup of a directory dentry based on its&n; * EMD/non-EMD status.  If it has an EMD, then plug the&n; * umsdos function table. If not, use the msdos one.&n; */
 DECL|function|umsdos_setup_dir
@@ -1131,8 +1129,6 @@ id|dentry
 op_star
 id|new_root
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
@@ -1300,12 +1296,6 @@ c_func
 id|KERN_INFO
 l_string|&quot;UMSDOS: msdos_read_super failed, mount aborted.&bslash;n&quot;
 )paren
-suffix:semicolon
-id|sb-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -1485,21 +1475,16 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-DECL|variable|umsdos_fs_type
 r_static
-r_struct
-id|file_system_type
+id|DECLARE_FSTYPE_DEV
+c_func
+(paren
 id|umsdos_fs_type
-op_assign
-(brace
+comma
 l_string|&quot;umsdos&quot;
 comma
-id|FS_REQUIRES_DEV
-comma
 id|UMSDOS_read_super
-comma
-l_int|NULL
-)brace
+)paren
 suffix:semicolon
 DECL|function|init_umsdos_fs
 r_int

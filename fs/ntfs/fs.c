@@ -3764,8 +3764,6 @@ comma
 l_string|&quot;ntfs_put_super: done&bslash;n&quot;
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 )brace
 multiline_comment|/* Called by the kernel when asking for stats */
 DECL|function|ntfs_statfs
@@ -4029,10 +4027,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* When the driver is compiled as a module, kmod must know when it&n;&t; * can safely remove it from memory. To do this, each module owns a&n;&t; * reference counter.&n;&t; */
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-multiline_comment|/* Don&squot;t put ntfs_debug() before MOD_INC_USE_COUNT, printk() can block&n;&t; * so this could lead to a race condition with kmod.&n;&t; */
 id|ntfs_debug
 c_func
 (paren
@@ -4103,21 +4097,6 @@ r_goto
 id|ntfs_read_super_vol
 suffix:semicolon
 )brace
-multiline_comment|/* Ensure that the super block won&squot;t be used until it is completed */
-id|lock_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
-id|ntfs_debug
-c_func
-(paren
-id|DEBUG_OTHER
-comma
-l_string|&quot;lock_super&bslash;n&quot;
-)paren
-suffix:semicolon
 macro_line|#if 0
 multiline_comment|/* Set to read only, user option might reset it */
 id|sb-&gt;s_flags
@@ -4509,20 +4488,6 @@ r_goto
 id|ntfs_read_super_mft
 suffix:semicolon
 )brace
-id|unlock_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
-id|ntfs_debug
-c_func
-(paren
-id|DEBUG_OTHER
-comma
-l_string|&quot;unlock_super&bslash;n&quot;
-)paren
-suffix:semicolon
 id|ntfs_debug
 c_func
 (paren
@@ -4544,24 +4509,6 @@ id|vol-&gt;mft
 suffix:semicolon
 id|ntfs_read_super_unl
 suffix:colon
-id|sb-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
-id|ntfs_debug
-c_func
-(paren
-id|DEBUG_OTHER
-comma
-l_string|&quot;unlock_super&bslash;n&quot;
-)paren
-suffix:semicolon
 id|ntfs_read_super_vol
 suffix:colon
 macro_line|#ifndef NTFS_IN_LINUX_KERNEL
@@ -4582,37 +4529,21 @@ comma
 l_string|&quot;read_super: done&bslash;n&quot;
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/* Define the filesystem&n; *&n; * Define SECOND if you cannot unload ntfs, and want to avoid rebooting&n; * for just one more test&n; */
-DECL|variable|ntfs_fs_type
+multiline_comment|/* Define the filesystem&n; */
 r_static
-r_struct
-id|file_system_type
+id|DECLARE_FSTYPE_DEV
+c_func
+(paren
 id|ntfs_fs_type
-op_assign
-(brace
-multiline_comment|/* Filesystem name, as used after mount -t */
-macro_line|#ifndef SECOND
+comma
 l_string|&quot;ntfs&quot;
 comma
-macro_line|#else
-l_string|&quot;ntfs2&quot;
-comma
-macro_line|#endif
-multiline_comment|/* This filesystem requires a device (a hard disk)&n; * May want to add FS_IBASKET when it works&n; */
-id|FS_REQUIRES_DEV
-comma
-multiline_comment|/* Entry point of the filesystem */
 id|ntfs_read_super
-comma
-multiline_comment|/* Will point to the next filesystem in the kernel table */
-l_int|NULL
-)brace
+)paren
 suffix:semicolon
 multiline_comment|/* When this code is not compiled as a module, this is the main entry point,&n; * called by do_sys_setup() in fs/filesystems.c&n; *&n; * NOTE : __init is a macro used to remove this function from memory&n; * once initialization is done&n; */
 DECL|function|init_ntfs_fs

@@ -459,6 +459,13 @@ id|swapper_pg_dir
 id|PTRS_PER_PGD
 )braket
 suffix:semicolon
+r_extern
+r_void
+id|paging_init
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * IA-64 doesn&squot;t have any external MMU info: the page tables contain&n; * all the necessary information.  However, we can use this macro&n; * to pre-install (override) a PTE that we know is needed anyhow.&n; *&n; * Asit says that on Itanium, it is generally faster to let the VHPT&n; * walker pick up a newly installed PTE (and VHPT misses should be&n; * extremely rare compared to normal misses).  Also, since&n; * pre-installing the PTE has the problem that we may evict another&n; * TLB entry needlessly because we don&squot;t know for sure whether we need&n; * to update the iTLB or dTLB, I tend to prefer this solution, too.&n; * Also, this avoids nasty issues with forward progress (what if the&n; * newly installed PTE gets replaced before we return to the previous&n; * execution context?).&n; *&n; */
 macro_line|#if 1
 DECL|macro|update_mmu_cache

@@ -590,12 +590,7 @@ id|awc_tx_timeout
 suffix:semicolon
 id|dev-&gt;watchdog_timeo
 op_assign
-id|TX_TIMEOUT
-suffix:semicolon
-id|netif_start_queue
-(paren
-id|dev
-)paren
+id|AWC_TX_TIMEOUT
 suffix:semicolon
 id|request_irq
 c_func
@@ -1389,7 +1384,7 @@ id|awc_tx_timeout
 suffix:semicolon
 id|dev-&gt;watchdog_timeo
 op_assign
-id|TX_TIMEOUT
+id|AWC_TX_TIMEOUT
 suffix:semicolon
 id|netif_start_queue
 (paren
@@ -1972,12 +1967,7 @@ l_int|0
 )braket
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;       Both irq and io params must be supplied  for ISA mode !!!&bslash;n&quot;
-)paren
-suffix:semicolon
+singleline_comment|//&t;&t;printk(&quot;       Both irq and io params must be supplied  for ISA mode !!!&bslash;n&quot;);
 r_return
 op_minus
 id|ENODEV
@@ -2153,12 +2143,7 @@ id|awc_tx_timeout
 suffix:semicolon
 id|dev-&gt;watchdog_timeo
 op_assign
-id|TX_TIMEOUT
-suffix:semicolon
-id|netif_start_queue
-(paren
-id|dev
-)paren
+id|AWC_TX_TIMEOUT
 suffix:semicolon
 id|request_irq
 c_func
@@ -3586,12 +3571,7 @@ id|awc_tx_timeout
 suffix:semicolon
 id|dev-&gt;watchdog_timeo
 op_assign
-id|TX_TIMEOUT
-suffix:semicolon
-id|netif_start_queue
-(paren
-id|dev
-)paren
+id|AWC_TX_TIMEOUT
 suffix:semicolon
 id|awc_private_init
 c_func
@@ -4062,24 +4042,14 @@ op_minus
 id|ENODEV
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;PCI 4X00 aironet cards not found&bslash;n&quot;
-)paren
-suffix:semicolon
+singleline_comment|//&t;&t;printk(&quot;PCI 4X00 aironet cards not found&bslash;n&quot;);
 )brace
 r_else
 (brace
 id|found
 op_increment
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;PCI 4X00 found some cards &bslash;n&quot;
-)paren
-suffix:semicolon
+singleline_comment|//&t;&t;printk(&quot;PCI 4X00 found some cards &bslash;n&quot;);
 )brace
 macro_line|#endif
 macro_line|#ifdef CONFIG_AIRONET4500_PNP
@@ -4096,24 +4066,14 @@ op_minus
 id|ENODEV
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;PNP 4X00 aironet cards not found&bslash;n&quot;
-)paren
-suffix:semicolon
+singleline_comment|//&t;&t;printk(&quot;PNP 4X00 aironet cards not found&bslash;n&quot;);
 )brace
 r_else
 (brace
 id|found
 op_increment
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;PNP 4X00 found some cards &bslash;n&quot;
-)paren
-suffix:semicolon
+singleline_comment|//&t;&t;printk(&quot;PNP 4X00 found some cards &bslash;n&quot;);
 )brace
 macro_line|#endif
 macro_line|#ifdef CONFIG_AIRONET4500_365
@@ -4129,24 +4089,14 @@ op_minus
 l_int|1
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;PCMCIA 4X00 aironet cards not found for i365(without card services) initialization&bslash;n&quot;
-)paren
-suffix:semicolon
+singleline_comment|//&t;&t;printk(&quot;PCMCIA 4X00 aironet cards not found for i365(without card services) initialization&bslash;n&quot;);
 )brace
 r_else
 (brace
 id|found
 op_increment
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;PCMCIA 4X00 found some cards, take care, this code is not supposed to work yet &bslash;n&quot;
-)paren
-suffix:semicolon
+singleline_comment|//&t;&t; printk(&quot;PCMCIA 4X00 found some cards, take care, this code is not supposed to work yet &bslash;n&quot;);
 )brace
 macro_line|#endif
 macro_line|#ifdef CONFIG_AIRONET4500_ISA
@@ -4163,24 +4113,14 @@ op_minus
 id|ENODEV
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;ISA 4X00 aironet ISA-bus non-PNP-mode cards not found&bslash;n&quot;
-)paren
-suffix:semicolon
+singleline_comment|//&t;&t;printk(&quot;ISA 4X00 aironet ISA-bus non-PNP-mode cards not found&bslash;n&quot;);
 )brace
 r_else
 (brace
 id|found
 op_increment
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;ISA 4X00 found some cards &bslash;n&quot;
-)paren
-suffix:semicolon
+singleline_comment|//&t;&t;printk(&quot;ISA 4X00 found some cards &bslash;n&quot;);
 )brace
 macro_line|#endif
 r_if
@@ -4189,10 +4129,19 @@ c_cond
 op_logical_neg
 id|found
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;No Aironet 4X00 cards were found. Note that for ISA &bslash;n cards you should use either automatic PNP mode or &bslash;n ISA mode with both io and irq param &bslash;n Aironet is also afraid of: being second PNP controller(by slot), having anything(brandname bios weirdnesses) in range 0x100-0x180 and maybe around  0xd0000&bslash;n If you PNP type card does not get found, try non-PNP switch before complainig. &bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon

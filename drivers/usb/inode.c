@@ -2188,8 +2188,6 @@ id|u.usbdev_i.slist
 )paren
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 )brace
 DECL|function|usbdevfs_statfs
 r_static
@@ -2880,14 +2878,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* fill superblock */
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-id|lock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
 id|s-&gt;s_blocksize
 op_assign
 l_int|1024
@@ -2987,12 +2977,6 @@ id|s-&gt;u.usbdevfs_sb.slist
 comma
 op_amp
 id|superlist
-)paren
-suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|s
 )paren
 suffix:semicolon
 r_for
@@ -3146,18 +3130,6 @@ c_func
 id|root_inode
 )paren
 suffix:semicolon
-id|s-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -3170,29 +3142,22 @@ id|KERN_WARNING
 l_string|&quot;usbdevfs: mount parameter error&bslash;n&quot;
 )paren
 suffix:semicolon
-id|s-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
 )brace
-DECL|variable|usbdevice_fs_type
 r_static
-r_struct
-id|file_system_type
+id|DECLARE_FSTYPE
+c_func
+(paren
 id|usbdevice_fs_type
-op_assign
-(brace
-l_string|&quot;usbdevfs&quot;
 comma
-l_int|0
+l_string|&quot;usbdevfs&quot;
 comma
 id|usbdevfs_read_super
 comma
-l_int|NULL
-)brace
+l_int|0
+)paren
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|function|usbdevfs_add_bus
@@ -3533,6 +3498,7 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
+macro_line|#ifdef CONFIG_PROC_FS&t;&t;
 DECL|variable|usbdir
 r_static
 r_struct
@@ -3542,6 +3508,7 @@ id|usbdir
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#endif&t;
 DECL|function|usbdevfs_init
 r_int
 id|__init
@@ -3620,6 +3587,7 @@ op_amp
 id|usbdevfs_driver
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS&t;&t;
 multiline_comment|/* create mount point for usbdevfs */
 id|usbdir
 op_assign
@@ -3631,6 +3599,7 @@ comma
 id|proc_bus
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 r_return
 id|ret
 suffix:semicolon
@@ -3658,6 +3627,7 @@ op_amp
 id|usbdevice_fs_type
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS&t;
 r_if
 c_cond
 (paren
@@ -3671,6 +3641,7 @@ comma
 id|proc_bus
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#if 0
 id|module_init

@@ -987,14 +987,20 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|efi.systab-&gt;hdr.revision
-op_ne
+op_xor
 id|EFI_SYSTEM_TABLE_REVISION
+)paren
+op_rshift
+l_int|16
+op_ne
+l_int|0
 )paren
 id|printk
 c_func
 (paren
-l_string|&quot;Warning: EFI system table version mismatch: &quot;
+l_string|&quot;Warning: EFI system table major version mismatch: &quot;
 l_string|&quot;got %d.%02d, expected %d.%02d&bslash;n&quot;
 comma
 id|efi.systab-&gt;hdr.revision

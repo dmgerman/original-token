@@ -320,6 +320,17 @@ r_char
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|try_inc_mod_count
+c_func
+(paren
+r_struct
+id|module
+op_star
+id|mod
+)paren
+suffix:semicolon
 macro_line|#if defined(MODULE) &amp;&amp; !defined(__GENKSYMS__)
 multiline_comment|/* Embedded module documentation macros.  */
 multiline_comment|/* For documentation purposes only.  */

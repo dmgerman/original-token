@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/dcache.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/cache.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 r_struct
@@ -232,14 +233,6 @@ c_func
 (paren
 r_void
 )paren
-suffix:semicolon
-DECL|typedef|buffer_block
-r_typedef
-r_char
-id|buffer_block
-(braket
-id|BLOCK_SIZE
-)braket
 suffix:semicolon
 multiline_comment|/* bh state bits */
 DECL|macro|BH_Uptodate
@@ -2883,6 +2876,12 @@ comma
 r_int
 )paren
 suffix:semicolon
+DECL|member|owner
+r_struct
+id|module
+op_star
+id|owner
+suffix:semicolon
 DECL|member|next
 r_struct
 id|file_system_type
@@ -2891,6 +2890,15 @@ id|next
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef MODULE
+DECL|macro|DECLARE_FSTYPE
+mdefine_line|#define DECLARE_FSTYPE(var,type,read,flags) &bslash;&n;struct file_system_type var = { &bslash;&n;&t;name:&t;&t;type, &bslash;&n;&t;read_super:&t;read, &bslash;&n;&t;fs_flags:&t;flags, &bslash;&n;&t;owner:&t;&t;THIS_MODULE, &bslash;&n;}
+macro_line|#else
+DECL|macro|DECLARE_FSTYPE
+mdefine_line|#define DECLARE_FSTYPE(var,type,read,flags) &bslash;&n;struct file_system_type var = { &bslash;&n;&t;name:&t;&t;type, &bslash;&n;&t;read_super:&t;read, &bslash;&n;&t;fs_flags:&t;flags, &bslash;&n;}
+macro_line|#endif
+DECL|macro|DECLARE_FSTYPE_DEV
+mdefine_line|#define DECLARE_FSTYPE_DEV(var,type,read) &bslash;&n;&t;DECLARE_FSTYPE(var,type,read,FS_REQUIRES_DEV)
 r_extern
 r_int
 id|register_filesystem
@@ -3599,18 +3607,6 @@ r_extern
 r_struct
 id|file_operations
 id|rdwr_pipe_fops
-suffix:semicolon
-r_extern
-r_struct
-id|file_system_type
-op_star
-id|get_fs_type
-c_func
-(paren
-r_const
-r_char
-op_star
-)paren
 suffix:semicolon
 r_extern
 r_int

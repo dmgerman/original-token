@@ -139,9 +139,11 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|oom
+id|force_sig
 c_func
 (paren
+id|SIGKILL
+comma
 id|tsk
 )paren
 suffix:semicolon
@@ -172,9 +174,11 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|oom
+id|force_sig
 c_func
 (paren
+id|SIGKILL
+comma
 id|tsk
 )paren
 suffix:semicolon

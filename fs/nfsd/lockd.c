@@ -19,7 +19,7 @@ op_star
 id|rqstp
 comma
 r_struct
-id|knfs_fh
+id|nfs_fh
 op_star
 id|f
 comma
@@ -36,18 +36,34 @@ r_struct
 id|svc_fh
 id|fh
 suffix:semicolon
-multiline_comment|/* must initialize before using! */
+multiline_comment|/* must initialize before using! but maxsize doesn&squot;t matter */
 id|fh_init
 c_func
 (paren
 op_amp
 id|fh
+comma
+l_int|0
 )paren
 suffix:semicolon
-id|fh.fh_handle
-op_assign
+id|memcpy
+c_func
+(paren
+(paren
+r_char
 op_star
+)paren
+op_amp
+id|fh.fh_handle.fh_base
+comma
+(paren
+r_char
+op_star
+)paren
 id|f
+comma
+id|NFS_FHSIZE
+)paren
 suffix:semicolon
 id|fh.fh_export
 op_assign

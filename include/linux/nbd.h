@@ -35,7 +35,7 @@ id|requests_out
 suffix:semicolon
 macro_line|#endif
 r_static
-r_void
+r_int
 DECL|function|nbd_end_request
 id|nbd_end_request
 c_func
@@ -50,11 +50,33 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_int
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#ifdef PARANOIA
 id|requests_out
 op_increment
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n;&t; * This is a very dirty hack that we have to do to handle&n;&t; * merged requests because end_request stuff is a bit&n;&t; * broken. The fact we have to do this only if there&n;&t; * aren&squot;t errors looks even more silly.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|req-&gt;errors
+)paren
+(brace
+id|req-&gt;sector
+op_add_assign
+id|req-&gt;current_nr_sectors
+suffix:semicolon
+id|req-&gt;nr_sectors
+op_sub_assign
+id|req-&gt;current_nr_sectors
+suffix:semicolon
+)brace
 id|spin_lock_irqsave
 c_func
 (paren
@@ -81,6 +103,10 @@ l_string|&quot;nbd&quot;
 r_goto
 id|out
 suffix:semicolon
+id|ret
+op_assign
+l_int|1
+suffix:semicolon
 id|end_that_request_last
 c_func
 (paren
@@ -99,6 +125,7 @@ id|flags
 )paren
 suffix:semicolon
 r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|macro|MAX_NBD
@@ -124,8 +151,6 @@ DECL|macro|NBD_READ_ONLY
 mdefine_line|#define NBD_READ_ONLY 0x0001
 DECL|macro|NBD_WRITE_NOCHK
 mdefine_line|#define NBD_WRITE_NOCHK 0x0002
-DECL|macro|NBD_INITIALISED
-mdefine_line|#define NBD_INITIALISED 0x0004
 DECL|member|sock
 r_struct
 id|socket

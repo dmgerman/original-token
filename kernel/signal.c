@@ -68,6 +68,18 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|signal_queue_cachep
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;signals_init(): cannot create signal_queue SLAB cache&quot;
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Flush all pending signals for a task.&n; */
 r_void

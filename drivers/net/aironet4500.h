@@ -99,9 +99,9 @@ id|socket_and_copy_register
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* timeout for transmit watchdog timer */
-DECL|macro|TX_TIMEOUT
-mdefine_line|#define TX_TIMEOUT&t;&t;&t;(HZ * 3)
+multiline_comment|/* timeout for transmit watchdog timer, AP default is 8 sec */
+DECL|macro|AWC_TX_TIMEOUT
+mdefine_line|#define AWC_TX_TIMEOUT&t;&t;&t;(HZ * 8) 
 multiline_comment|/***************************  REGISTER OFFSETS *********************/
 DECL|macro|awc_Command_register
 mdefine_line|#define awc_Command_register &t;&t;0x00
@@ -772,7 +772,6 @@ suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
-r_inline
 r_void
 DECL|function|awc_fid_queue_init
 (def_block
@@ -3546,10 +3545,13 @@ DECL|member|node
 id|dev_node_t
 id|node
 suffix:semicolon
+singleline_comment|// somewhere back in times PCMCIA needed that
 DECL|member|dummy_test
 r_int
 id|dummy_test
 suffix:semicolon
+singleline_comment|// left for cleanup
+singleline_comment|// card rid inmemory copy
 DECL|member|config
 r_struct
 id|awc_config
@@ -3642,6 +3644,7 @@ r_struct
 id|awc_modulation
 id|modulation
 suffix:semicolon
+singleline_comment|// here are just references to rids
 DECL|member|rid_dir
 r_struct
 id|awc_rid_dir
@@ -3789,6 +3792,7 @@ DECL|member|both_bap_spinlock
 id|my_spinlock_t
 id|both_bap_spinlock
 suffix:semicolon
+singleline_comment|// on SMP, card should theorethically live without that
 DECL|member|both_bap_spinlock_flags
 r_int
 r_int
@@ -3798,6 +3802,7 @@ DECL|member|bap_setup_spinlock
 id|my_spinlock_t
 id|bap_setup_spinlock
 suffix:semicolon
+singleline_comment|// on SMP, card should theoretically live without that
 DECL|member|bap_setup_spinlock_flags
 r_int
 r_int
@@ -3811,6 +3816,10 @@ DECL|member|command_issuing_spinlock_flags
 r_int
 r_int
 id|command_issuing_spinlock_flags
+suffix:semicolon
+DECL|member|interrupt_spinlock
+id|my_spinlock_t
+id|interrupt_spinlock
 suffix:semicolon
 DECL|member|unlock_command_postponed
 r_volatile
@@ -3867,6 +3876,34 @@ suffix:semicolon
 DECL|member|p802_11_send
 r_int
 id|p802_11_send
+suffix:semicolon
+DECL|member|simple_bridge
+r_int
+id|simple_bridge
+suffix:semicolon
+DECL|member|force_rts_on_shorter
+r_int
+id|force_rts_on_shorter
+suffix:semicolon
+DECL|member|force_tx_rate
+r_int
+id|force_tx_rate
+suffix:semicolon
+DECL|member|ip_tos_reliability_rts
+r_int
+id|ip_tos_reliability_rts
+suffix:semicolon
+DECL|member|ip_tos_troughput_no_retries
+r_int
+id|ip_tos_troughput_no_retries
+suffix:semicolon
+DECL|member|full_stats
+r_int
+id|full_stats
+suffix:semicolon
+DECL|member|debug
+r_int
+id|debug
 suffix:semicolon
 DECL|member|stats
 r_struct

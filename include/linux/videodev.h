@@ -940,7 +940,7 @@ mdefine_line|#define VIDIOCSPICT&t;&t;_IOW(&squot;v&squot;,7,struct video_pictur
 DECL|macro|VIDIOCCAPTURE
 mdefine_line|#define VIDIOCCAPTURE&t;&t;_IOW(&squot;v&squot;,8,int)&t;&t;&t;&t;/* Start, end capture */
 DECL|macro|VIDIOCGWIN
-mdefine_line|#define VIDIOCGWIN&t;&t;_IOR(&squot;v&squot;,9, struct video_window)&t;/* Set the video overlay window */
+mdefine_line|#define VIDIOCGWIN&t;&t;_IOR(&squot;v&squot;,9, struct video_window)&t;/* Get the video overlay window */
 DECL|macro|VIDIOCSWIN
 mdefine_line|#define VIDIOCSWIN&t;&t;_IOW(&squot;v&squot;,10, struct video_window)&t;/* Set the video overlay window - passes clip list for hardware smarts , chromakey etc */
 DECL|macro|VIDIOCGFBUF

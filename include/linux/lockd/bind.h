@@ -8,9 +8,6 @@ r_struct
 id|svc_rqst
 suffix:semicolon
 r_struct
-id|knfs_fh
-suffix:semicolon
-r_struct
 id|svc_client
 suffix:semicolon
 multiline_comment|/* opaque type */
@@ -65,7 +62,7 @@ id|svc_rqst
 op_star
 comma
 r_struct
-id|knfs_fh
+id|nfs_fh
 op_star
 comma
 r_struct

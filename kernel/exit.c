@@ -127,6 +127,22 @@ id|p-&gt;nswap
 op_plus
 id|p-&gt;cnswap
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Potentially available timeslices are retrieved&n;&t;&t; * here - this way the parent does not get penalized&n;&t;&t; * for creating too many processes.&n;&t;&t; *&n;&t;&t; * (this cannot be used to artificially &squot;generate&squot;&n;&t;&t; * timeslices, because any timeslice recovered here&n;&t;&t; * was given away by the parent in the first place.)&n;&t;&t; */
+id|current-&gt;counter
+op_add_assign
+id|p-&gt;counter
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;counter
+OG
+id|current-&gt;priority
+)paren
+id|current-&gt;counter
+op_assign
+id|current-&gt;priority
+suffix:semicolon
 id|free_task_struct
 c_func
 (paren

@@ -112,7 +112,7 @@ c_func
 (paren
 r_new
 comma
-l_int|1
+l_int|0
 )paren
 suffix:semicolon
 id|bforget

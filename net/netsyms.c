@@ -793,6 +793,7 @@ c_func
 id|br_handle_frame_hook
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET
 DECL|variable|br_ioctl_hook
 id|EXPORT_SYMBOL
 c_func
@@ -800,6 +801,7 @@ c_func
 id|br_ioctl_hook
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_INET
 multiline_comment|/* Internet layer registration */

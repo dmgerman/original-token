@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: inode.c,v 1.6 2000/02/27 08:19:47 davem Exp $&n; * openpromfs.c: /proc/openprom handling routines&n; *&n; * Copyright (C) 1996-1999 Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998      Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: inode.c,v 1.7 2000/03/10 04:45:50 davem Exp $&n; * openpromfs.c: /proc/openprom handling routines&n; *&n; * Copyright (C) 1996-1999 Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998      Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -5899,8 +5899,6 @@ op_star
 id|sb
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 )brace
 DECL|function|openprom_statfs
 r_static
@@ -5999,14 +5997,6 @@ id|inode
 op_star
 id|root_inode
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-id|lock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
 id|s-&gt;s_blocksize
 op_assign
 l_int|1024
@@ -6060,12 +6050,6 @@ id|s-&gt;s_root
 r_goto
 id|out_no_root
 suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
 r_return
 id|s
 suffix:semicolon
@@ -6083,37 +6067,22 @@ c_func
 id|root_inode
 )paren
 suffix:semicolon
-id|s-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
 )brace
-DECL|variable|openprom_fs_type
 r_static
-r_struct
-id|file_system_type
+id|DECLARE_FSTYPE
+c_func
+(paren
 id|openprom_fs_type
-op_assign
-(brace
-l_string|&quot;openpromfs&quot;
 comma
-l_int|0
+l_string|&quot;openpromfs&quot;
 comma
 id|openprom_read_super
 comma
-l_int|NULL
-)brace
+l_int|0
+)paren
 suffix:semicolon
 DECL|function|init_openprom_fs
 r_int

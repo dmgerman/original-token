@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *&t; Aironet 4500/4800 driver core&n; *&n; *&t;&t;Elmer Joandi, Januar 1999&n; *&t;&t;Copyright: &t;GPL&n; *&t;&n; *&n; *&t;Revision 0.1 ,started  30.12.1998&n; *&n; *&n; */
-multiline_comment|/* CHANGELOG:&n; &t;march 99, stable version 2.0&n; &t;august 99, stable version 2.2&n; &t;november 99, integration with 2.3&n;&t;17.12.99: finally, got SMP near-correct. &n;&t;&t;timing issues remain- on SMP box its 15% slower on tcp&t;&n; */
+multiline_comment|/* CHANGELOG:&n; &t;march 99, stable version 2.0&n; &t;august 99, stable version 2.2&n; &t;november 99, integration with 2.3&n;&t;17.12.99: finally, got SMP near-correct. &n;&t;&t;timing issues remain- on SMP box its 15% slower on tcp&t;&n;&t;10.03.00 looks like softnet take us back to normal on SMP&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &quot;aironet4500.h&quot;
+macro_line|#include &lt;linux/ip.h&gt;
 DECL|variable|bap_sleep
 r_int
 id|bap_sleep
@@ -1532,7 +1533,7 @@ suffix:semicolon
 )def_block
 suffix:semicolon
 multiline_comment|/******************************** &t;BAP&t;*************************/
-r_inline
+singleline_comment|// inline // too long for inline
 DECL|function|awc_bap_setup
 r_int
 id|awc_bap_setup
@@ -6981,6 +6982,9 @@ suffix:semicolon
 id|priv-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
+id|priv-&gt;stats.rx_bytes
+op_increment
+suffix:semicolon
 id|netif_rx
 c_func
 (paren
@@ -7169,7 +7173,11 @@ id|p2p_direct
 op_assign
 id|priv-&gt;p2p_found
 suffix:semicolon
-singleline_comment|//&t;struct iphdr * ip_hdr;
+r_struct
+id|iphdr
+op_star
+id|ip_hdr
+suffix:semicolon
 singleline_comment|//buffer = skb-&gt;data;
 id|AWC_ENTRY_EXIT_DEBUG
 c_func
@@ -7177,6 +7185,7 @@ c_func
 l_string|&quot;awc_802_11_tx_find_path_and_post&quot;
 )paren
 suffix:semicolon
+singleline_comment|// netif_stop_queue(dev);
 id|DOWN
 c_func
 (paren
@@ -7434,25 +7443,51 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tx_rate
+id|priv-&gt;force_tx_rate
 op_eq
 l_int|2
 op_logical_or
-id|tx_rate
+id|priv-&gt;force_tx_rate
 op_eq
 l_int|4
 op_logical_or
-id|tx_rate
+id|priv-&gt;force_tx_rate
 op_eq
-l_int|20
+l_int|11
 op_logical_or
-id|tx_rate
+id|priv-&gt;force_tx_rate
 op_eq
 l_int|22
 )paren
+(brace
 id|fid-&gt;u.tx.radio_tx.tx_bit_rate
 op_assign
-id|tx_rate
+id|priv-&gt;force_tx_rate
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|priv-&gt;force_tx_rate
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;wrong force_tx_rate=%d changed to default &bslash;n&quot;
+comma
+id|priv-&gt;force_tx_rate
+)paren
+suffix:semicolon
+id|priv-&gt;force_tx_rate
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 suffix:semicolon
 id|fid-&gt;u.tx.radio_tx.TX_Control
 op_assign
@@ -7462,8 +7497,80 @@ id|aironet4500_tx_control_tx_fail_event_enable
 op_or
 id|aironet4500_tx_control_no_release
 suffix:semicolon
-multiline_comment|/*&t;if (len &lt; 100){&n;&t;&t;fid-&gt;u.tx.radio_tx.TX_Control |=&n;&t;&t;&t;aironet4500_tx_control_use_rts;&n;&t;};&n;*/
-multiline_comment|/*&t;ip_hdr = skb-&gt;data + 14;&n;&t;if (ip_hdr &amp;&amp; skb-&gt;data[12] == 0x80 ){&n;&t;&t;if (ip_hdr-&gt;tos &amp; IPTOS_RELIABILITY)&n;&t;&t;&t;fid-&gt;u.tx.radio_tx.TX_Control |=&n;&t;&t;&t;    aironet4500_tx_control_use_rts;&n;&t;&t;if (ip_hdr-&gt;tos &amp; IPTOS_THROUGHPUT)&n;&t;&t;&t;fid-&gt;u.tx.radio_tx.TX_Control |=&n;&t;&t;&t;    aironet4500_tx_control_no_retries;&n;&t;};&n;*/
+r_if
+c_cond
+(paren
+id|len
+OL
+id|priv-&gt;force_rts_on_shorter
+)paren
+(brace
+id|fid-&gt;u.tx.radio_tx.TX_Control
+op_or_assign
+id|aironet4500_tx_control_use_rts
+suffix:semicolon
+)brace
+suffix:semicolon
+id|ip_hdr
+op_assign
+(paren
+r_struct
+id|iphdr
+op_star
+)paren
+(paren
+(paren
+(paren
+r_char
+op_star
+)paren
+id|skb-&gt;data
+)paren
+op_plus
+l_int|14
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ip_hdr
+op_logical_and
+id|skb-&gt;data
+(braket
+l_int|12
+)braket
+op_eq
+l_int|0x80
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ip_hdr-&gt;tos
+op_amp
+id|IPTOS_RELIABILITY
+op_logical_and
+id|priv-&gt;ip_tos_reliability_rts
+)paren
+id|fid-&gt;u.tx.radio_tx.TX_Control
+op_or_assign
+id|aironet4500_tx_control_use_rts
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ip_hdr-&gt;tos
+op_amp
+id|IPTOS_THROUGHPUT
+op_logical_and
+id|priv-&gt;ip_tos_troughput_no_retries
+)paren
+id|fid-&gt;u.tx.radio_tx.TX_Control
+op_or_assign
+id|aironet4500_tx_control_no_retries
+suffix:semicolon
+)brace
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7544,18 +7651,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|memcmp
-c_func
-(paren
-id|dev-&gt;dev_addr
-comma
-id|skb-&gt;data
-op_plus
-l_int|6
-comma
-l_int|6
-)paren
+id|priv-&gt;simple_bridge
 )paren
 (brace
 id|memcpy
@@ -7902,6 +7998,13 @@ id|dev-&gt;name
 suffix:semicolon
 )brace
 suffix:semicolon
+id|priv-&gt;stats.tx_bytes
+op_add_assign
+id|fid-&gt;u.tx.ieee_802_3.payload_length
+suffix:semicolon
+id|priv-&gt;stats.tx_packets
+op_increment
+suffix:semicolon
 id|awc_fid_queue_push_tail
 c_func
 (paren
@@ -7925,6 +8028,52 @@ comma
 id|fid
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|priv-&gt;tx_large_ready.size
+op_le
+l_int|2
+op_logical_or
+id|priv-&gt;tx_small_ready.size
+op_le
+l_int|2
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|netif_running
+c_func
+(paren
+id|dev
+)paren
+)paren
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|netif_running
+c_func
+(paren
+id|dev
+)paren
+)paren
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
 id|UP
 c_func
 (paren
@@ -7989,6 +8138,22 @@ c_func
 (paren
 op_amp
 id|priv-&gt;tx_buff_semaphore
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|netif_running
+c_func
+(paren
+id|dev
+)paren
+)paren
+id|netif_start_queue
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 id|dev_kfree_skb
@@ -8070,11 +8235,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-id|netif_wake_queue
-(paren
-id|dev
-)paren
-suffix:semicolon
 id|AWC_ENTRY_EXIT_DEBUG
 c_func
 (paren
@@ -8213,6 +8373,7 @@ suffix:semicolon
 )brace
 )def_block
 suffix:semicolon
+r_inline
 r_void
 DECL|function|awc_802_11_after_tx_complete
 (def_block
@@ -8313,11 +8474,7 @@ id|tx_buff-&gt;busy
 op_assign
 l_int|0
 suffix:semicolon
-id|netif_wake_queue
-(paren
-id|dev
-)paren
-suffix:semicolon
+singleline_comment|//&t;netif_wake_queue (dev);
 id|AWC_ENTRY_EXIT_DEBUG
 c_func
 (paren
@@ -10361,7 +10518,13 @@ singleline_comment|//&t;int interrupt_reenter = 0;
 singleline_comment|//&t;unsigned long flags;&t;
 singleline_comment|//&t;save_flags(flags);
 singleline_comment|//&t;cli();
-singleline_comment|//&t;disable_irq(dev-&gt;irq);
+singleline_comment|// here we need it, because on 2.3 SMP there are truly parallel irqs &t;
+id|disable_irq
+c_func
+(paren
+id|dev-&gt;irq
+)paren
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -11147,7 +11310,12 @@ id|priv-&gt;enabled_interrupts
 )paren
 suffix:semicolon
 singleline_comment|//end_here:
-singleline_comment|//&t;enable_irq(dev-&gt;irq);
+id|enable_irq
+c_func
+(paren
+id|dev-&gt;irq
+)paren
+suffix:semicolon
 singleline_comment|//  &t;restore_flags(flags);
 r_return
 l_int|0
@@ -11160,7 +11328,12 @@ c_func
 l_string|&quot; bad_end exit &bslash;n&quot;
 )paren
 suffix:semicolon
-singleline_comment|//&t;enable_irq(dev-&gt;irq);
+id|enable_irq
+c_func
+(paren
+id|dev-&gt;irq
+)paren
+suffix:semicolon
 singleline_comment|//&t;restore_flags(flags);
 r_return
 op_minus
@@ -11232,7 +11405,6 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|channel
-r_static
 r_int
 id|channel
 op_assign
@@ -11240,21 +11412,18 @@ l_int|5
 suffix:semicolon
 singleline_comment|//static int tx_full_rate = 0;
 DECL|variable|max_mtu
-r_static
 r_int
 id|max_mtu
 op_assign
 l_int|2312
 suffix:semicolon
 DECL|variable|adhoc
-r_static
 r_int
 id|adhoc
 op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|large_buff_mem
-r_static
 r_int
 id|large_buff_mem
 op_assign
@@ -11263,21 +11432,18 @@ op_star
 l_int|10
 suffix:semicolon
 DECL|variable|small_buff_no
-r_static
 r_int
 id|small_buff_no
 op_assign
 l_int|20
 suffix:semicolon
 DECL|variable|awc_full_stats
-r_static
 r_int
 id|awc_full_stats
 op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|SSID
-r_static
 r_char
 id|SSID
 (braket
@@ -11289,16 +11455,20 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|variable|master
-r_static
 r_int
 id|master
 op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|slave
-r_static
 r_int
 id|slave
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|awc_simple_bridge
+r_int
+id|awc_simple_bridge
 op_assign
 l_int|0
 suffix:semicolon
@@ -11364,6 +11534,14 @@ id|MODULE_PARM
 c_func
 (paren
 id|slave
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|awc_simple_bridge
 comma
 l_string|&quot;i&quot;
 )paren
@@ -11473,13 +11651,7 @@ c_func
 id|awc_start_xmit
 )paren
 suffix:semicolon
-DECL|variable|awc_rx
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|awc_rx
-)paren
-suffix:semicolon
+singleline_comment|//EXPORT_SYMBOL(awc_rx);
 DECL|variable|awc_interrupt
 id|EXPORT_SYMBOL
 c_func
@@ -11923,7 +12095,7 @@ id|i
 op_increment
 suffix:semicolon
 )brace
-singleline_comment|// following MUST be consistent with awc_rids !!!
+singleline_comment|// following MUST be consistent with awc_rids in count and ordrering !!!
 id|priv-&gt;rid_dir
 (braket
 l_int|0
@@ -12365,6 +12537,7 @@ op_assign
 id|MODE_STA_ESS
 suffix:semicolon
 singleline_comment|//        priv-&gt;config.OperatingMode = MODE_AP;
+singleline_comment|// Setting rates does not work with new hardware, use force_tx_rate via proc
 singleline_comment|//&t;priv-&gt;config.Rates[0]&t;=0x82;
 singleline_comment|//&t;priv-&gt;config.Rates[1]&t;=0x4;
 singleline_comment|//&t;priv-&gt;config.Rates[2]&t;=tx_full_rate;
@@ -12400,9 +12573,11 @@ op_logical_and
 id|slave
 )paren
 (brace
+singleline_comment|// by spec 0xffff, but, this causes immediate bad behaviour
+singleline_comment|// firmware behvaiour changed somehere around ver 2??
 id|priv-&gt;config.JoinNetTimeout
 op_assign
-l_int|0xffff
+l_int|0x7fff
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -12538,6 +12713,13 @@ r_sizeof
 (paren
 id|priv-&gt;SSIDs
 )paren
+)paren
+suffix:semicolon
+id|my_spin_lock_init
+c_func
+(paren
+op_amp
+id|priv-&gt;queues_lock
 )paren
 suffix:semicolon
 id|priv-&gt;SSIDs.ridLen
@@ -12974,6 +13156,13 @@ op_amp
 id|priv-&gt;bap_setup_spinlock
 )paren
 suffix:semicolon
+id|my_spin_lock_init
+c_func
+(paren
+op_amp
+id|priv-&gt;interrupt_spinlock
+)paren
+suffix:semicolon
 id|priv-&gt;command_semaphore_on
 op_assign
 l_int|0
@@ -13130,6 +13319,30 @@ suffix:semicolon
 id|priv-&gt;p802_11_send
 op_assign
 id|p802_11_send
+suffix:semicolon
+id|priv-&gt;full_stats
+op_assign
+id|awc_full_stats
+suffix:semicolon
+id|priv-&gt;simple_bridge
+op_assign
+id|awc_simple_bridge
+suffix:semicolon
+id|priv-&gt;force_rts_on_shorter
+op_assign
+l_int|0
+suffix:semicolon
+id|priv-&gt;force_tx_rate
+op_assign
+id|tx_rate
+suffix:semicolon
+id|priv-&gt;ip_tos_reliability_rts
+op_assign
+l_int|0
+suffix:semicolon
+id|priv-&gt;ip_tos_troughput_no_retries
+op_assign
+l_int|0
 suffix:semicolon
 id|priv-&gt;ejected
 op_assign
@@ -13387,6 +13600,10 @@ suffix:semicolon
 r_int
 id|cnt
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|DEBUG
 (paren
 l_int|2
@@ -13419,8 +13636,17 @@ suffix:semicolon
 id|priv-&gt;stats.tx_errors
 op_increment
 suffix:semicolon
-singleline_comment|// save_flags(flags);
-singleline_comment|// cli();
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|fid
 op_assign
 id|priv-&gt;tx_in_transmit.head
@@ -13435,6 +13661,7 @@ c_loop
 id|fid
 )paren
 (brace
+singleline_comment|// removing all fids older that that
 r_if
 c_cond
 (paren
@@ -13500,14 +13727,23 @@ id|printk
 l_string|&quot;bbb in awc_fid_queue&bslash;n&quot;
 )paren
 suffix:semicolon
-singleline_comment|//              restore_flags(flags);
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 suffix:semicolon
 )brace
-singleline_comment|//restore_flags(flags);
-singleline_comment|//debug =0x8;
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
@@ -13621,32 +13857,10 @@ l_int|1
 suffix:semicolon
 )brace
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|priv-&gt;tx_chain_active
-)paren
-)paren
-(brace
-id|netif_start_queue
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
+singleline_comment|//&t;if (test_and_set_bit( 0, (void *) &amp;priv-&gt;tx_chain_active) ) {
+singleline_comment|//&t;&t;netif_start_queue (dev);
+singleline_comment|//&t;&t;return 1;
+singleline_comment|//&t;}
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
@@ -13672,6 +13886,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|awc_rx
+r_inline
 r_int
 id|awc_rx
 c_func
@@ -13798,10 +14013,25 @@ op_star
 )paren
 id|dev_id
 suffix:semicolon
-singleline_comment|//&t;struct awc_private *lp;
-singleline_comment|//&t;unsigned long flags;
+r_struct
+id|awc_private
+op_star
+id|priv
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 singleline_comment|//&t;if ((dev == NULL)) return;
-singleline_comment|//&t;lp = (struct awc_private *)dev-&gt;priv;
+id|priv
+op_assign
+(paren
+r_struct
+id|awc_private
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -13812,10 +14042,28 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+id|my_spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|priv-&gt;interrupt_spinlock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|awc_interrupt_process
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|my_spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|priv-&gt;interrupt_spinlock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -13902,6 +14150,14 @@ c_cond
 id|awc_full_stats
 )paren
 (brace
+id|priv-&gt;stats.rx_bytes
+op_assign
+id|priv-&gt;statistics.HostRxBytes
+suffix:semicolon
+id|priv-&gt;stats.tx_bytes
+op_assign
+id|priv-&gt;statistics.HostTxBytes
+suffix:semicolon
 id|priv-&gt;stats.rx_fifo_errors
 op_assign
 id|priv-&gt;statistics.RxOverrunErr
@@ -13985,7 +14241,10 @@ id|new_mtu
 )paren
 (brace
 singleline_comment|//&t;struct awc_private *priv = (struct awc_private *)dev-&gt;priv;
-singleline_comment|//        unsigned long flags;
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -14041,12 +14300,33 @@ op_ne
 id|new_mtu
 )paren
 (brace
-singleline_comment|//&t;&t;save_flags(flags);
-singleline_comment|//&t;&t;cli();
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|awc_disable_MAC
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|awc_tx_dealloc
@@ -14071,7 +14351,12 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-singleline_comment|//&t;&t;restore_flags(flags);
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren

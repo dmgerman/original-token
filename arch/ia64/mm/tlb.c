@@ -216,7 +216,7 @@ id|ia64_ptce_info.stride
 l_int|1
 )braket
 suffix:semicolon
-id|save_and_cli
+id|__save_and_cli
 c_func
 (paren
 id|flags
@@ -273,7 +273,7 @@ op_add_assign
 id|stride0
 suffix:semicolon
 )brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags

@@ -7847,10 +7847,6 @@ id|fs_info
 )paren
 suffix:semicolon
 macro_line|#endif
-id|sb-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
 macro_line|#ifdef CONFIG_DEVFS_TUNNEL
 id|dput
 (paren
@@ -7867,8 +7863,6 @@ id|delete_fs
 (paren
 id|fs_info
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_put_super  */
@@ -12167,11 +12161,6 @@ op_assign
 id|TRUE
 suffix:semicolon
 )brace
-id|lock_super
-(paren
-id|sb
-)paren
-suffix:semicolon
 id|sb-&gt;u.generic_sbp
 op_assign
 id|fs_info
@@ -12279,11 +12268,6 @@ id|sb-&gt;s_root-&gt;d_covered
 )paren
 suffix:semicolon
 macro_line|#endif
-id|unlock_super
-(paren
-id|sb
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_DEVFS_DEBUG
 r_if
 c_cond
@@ -12302,8 +12286,6 @@ id|sb-&gt;u.generic_sbp
 )paren
 suffix:semicolon
 macro_line|#endif
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 id|sb
 suffix:semicolon
@@ -12329,36 +12311,23 @@ id|iput
 id|root_inode
 )paren
 suffix:semicolon
-id|sb-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
-id|unlock_super
-(paren
-id|sb
-)paren
-suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_read_super  */
-DECL|variable|devfs_fs_type
 r_static
-r_struct
-id|file_system_type
+id|DECLARE_FSTYPE
+c_func
+(paren
 id|devfs_fs_type
-op_assign
-(brace
-id|DEVFS_NAME
 comma
-l_int|0
+id|DEVFS_NAME
 comma
 id|devfs_read_super
 comma
-l_int|NULL
-comma
-)brace
+l_int|0
+)paren
 suffix:semicolon
 multiline_comment|/*  File operations for devfsd follow  */
 DECL|function|devfsd_read

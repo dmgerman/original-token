@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_psycho.c,v 1.13 2000/02/18 13:48:54 davem Exp $&n; * pci_psycho.c: PSYCHO/U2P specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
+multiline_comment|/* $Id: pci_psycho.c,v 1.14 2000/03/10 02:42:15 davem Exp $&n; * pci_psycho.c: PSYCHO/U2P specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -5243,6 +5243,22 @@ c_func
 (paren
 id|p-&gt;controller_regs
 op_plus
+id|PSYCHO_IOMMU_TAG
+op_plus
+(paren
+id|i
+op_star
+l_int|8UL
+)paren
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|psycho_write
+c_func
+(paren
+id|p-&gt;controller_regs
+op_plus
 id|PSYCHO_IOMMU_DATA
 op_plus
 (paren
@@ -5255,23 +5271,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|control
-op_and_assign
-op_complement
-(paren
-id|PSYCHO_IOMMU_CTRL_DENAB
-)paren
-suffix:semicolon
-id|psycho_write
-c_func
-(paren
-id|p-&gt;controller_regs
-op_plus
-id|PSYCHO_IOMMU_CONTROL
-comma
-id|control
-)paren
-suffix:semicolon
+multiline_comment|/* Leave diag mode enabled for full-flushing done&n;&t; * in pci_iommu.c&n;&t; */
 multiline_comment|/* Using assumed page size 8K with 128K entries we need 1MB iommu page&n;&t; * table (128K ioptes * 8 bytes per iopte).  This is&n;&t; * page order 7 on UltraSparc.&n;&t; */
 id|tsbbase
 op_assign
@@ -5338,14 +5338,51 @@ op_lshift
 l_int|7
 )paren
 suffix:semicolon
-multiline_comment|/* Make sure DMA address 0 is never returned just to allow catching&n;&t;   of buggy drivers.  */
-id|p-&gt;iommu.lowest_free
-(braket
-l_int|0
-)braket
+multiline_comment|/* We start with no consistent mappings. */
+id|p-&gt;iommu.lowest_consistent_map
 op_assign
 l_int|1
+op_lshift
+(paren
+id|p-&gt;iommu.page_table_sz_bits
+op_minus
+id|PBM_LOGCLUSTERS
+)paren
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|PBM_NCLUSTERS
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|p-&gt;iommu.alloc_info
+(braket
+id|i
+)braket
+dot
+id|flush
+op_assign
+l_int|0
+suffix:semicolon
+id|p-&gt;iommu.alloc_info
+(braket
+id|i
+)braket
+dot
+id|next
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|psycho_write
 c_func
 (paren

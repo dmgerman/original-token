@@ -41,9 +41,7 @@ r_typedef
 r_void
 id|ia64_mv_irq_init_t
 (paren
-r_struct
-id|irq_desc
-op_star
+r_void
 )paren
 suffix:semicolon
 DECL|typedef|ia64_mv_pci_fixup_t

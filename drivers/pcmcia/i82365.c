@@ -7606,7 +7606,6 @@ op_star
 id|base
 )paren
 (brace
-macro_line|#ifdef CONFIG_PROC_FS
 id|socket_info_t
 op_star
 id|s
@@ -7658,7 +7657,6 @@ id|s-&gt;proc
 op_assign
 id|base
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|pcic_proc_remove
 r_static
@@ -7708,6 +7706,9 @@ id|base
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|macro|pcic_proc_setup
+mdefine_line|#define pcic_proc_setup NULL
 macro_line|#endif /* CONFIG_PROC_FS */
 multiline_comment|/*====================================================================*/
 multiline_comment|/*&n; * The locking is rather broken. Why do we only lock for ISA, not for&n; * all other cases? If there are reasons to lock, we should lock. Not&n; * this silly conditional.&n; *&n; * Plan: make it bug-for-bug compatible with the old stuff, and clean&n; * it up when the infrastructure is done.&n; */

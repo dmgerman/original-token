@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pbm.h,v 1.20 2000/02/18 13:50:55 davem Exp $&n; * pbm.h: UltraSparc PCI controller software state.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: pbm.h,v 1.21 2000/03/10 02:42:17 davem Exp $&n; * pbm.h: UltraSparc PCI controller software state.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef __SPARC64_PBM_H
 DECL|macro|__SPARC64_PBM_H
 mdefine_line|#define __SPARC64_PBM_H
@@ -81,10 +81,25 @@ r_int
 r_int
 id|write_complete_reg
 suffix:semicolon
+multiline_comment|/* The lowest used consistent mapping entry.  Since&n;&t; * we allocate consistent maps out of cluster 0 this&n;&t; * is relative to the beginning of closter 0.&n;&t; */
+DECL|member|lowest_consistent_map
+id|u32
+id|lowest_consistent_map
+suffix:semicolon
 multiline_comment|/* If PBM_NCLUSTERS is ever decreased to 4 or lower,&n;&t; * or if largest supported page_table_sz * 8K goes above&n;&t; * 2GB, you must increase the size of the type of&n;&t; * these counters.  You have been duly warned. -DaveM&n;&t; */
-DECL|member|lowest_free
+r_struct
+(brace
+DECL|member|next
 id|u16
-id|lowest_free
+id|next
+suffix:semicolon
+DECL|member|flush
+id|u16
+id|flush
+suffix:semicolon
+DECL|member|alloc_info
+)brace
+id|alloc_info
 (braket
 id|PBM_NCLUSTERS
 )braket

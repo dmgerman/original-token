@@ -958,10 +958,10 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|oom
+id|panic
 c_func
 (paren
-id|current
+l_string|&quot;Out of memory.&quot;
 )paren
 suffix:semicolon
 r_return
@@ -991,10 +991,10 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|oom
+id|panic
 c_func
 (paren
-id|current
+l_string|&quot;Out of memory.&quot;
 )paren
 suffix:semicolon
 r_return

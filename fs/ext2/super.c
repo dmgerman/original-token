@@ -562,8 +562,6 @@ id|brelse
 id|sb-&gt;u.ext2_sb.s_sbh
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -2115,21 +2113,10 @@ id|sb-&gt;u.ext2_sb.s_mount_opt
 )paren
 )paren
 (brace
-id|sb-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-id|lock_super
-(paren
-id|sb
-)paren
-suffix:semicolon
 id|set_blocksize
 (paren
 id|dev
@@ -2185,21 +2172,10 @@ id|blocksize
 )paren
 )paren
 (brace
-id|sb-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
-id|unlock_super
-(paren
-id|sb
-)paren
-suffix:semicolon
 id|printk
 (paren
 l_string|&quot;EXT2-fs: unable to read superblock&bslash;n&quot;
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -2265,15 +2241,6 @@ id|dev
 suffix:semicolon
 id|failed_mount
 suffix:colon
-id|sb-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
-id|unlock_super
-(paren
-id|sb
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2284,8 +2251,6 @@ c_func
 (paren
 id|bh
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -3212,11 +3177,6 @@ id|sb-&gt;u.ext2_sb.s_db_per_group
 op_assign
 id|db_count
 suffix:semicolon
-id|unlock_super
-(paren
-id|sb
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * set up enough so that it can read an inode&n;&t; */
 id|sb-&gt;s_dev
 op_assign
@@ -3248,10 +3208,6 @@ op_logical_neg
 id|sb-&gt;s_root
 )paren
 (brace
-id|sb-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3305,8 +3261,6 @@ id|printk
 (paren
 l_string|&quot;EXT2-fs: get root inode failed&bslash;n&quot;
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -3840,23 +3794,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|variable|ext2_fs_type
 r_static
-r_struct
-id|file_system_type
+id|DECLARE_FSTYPE_DEV
+c_func
+(paren
 id|ext2_fs_type
-op_assign
-(brace
+comma
 l_string|&quot;ext2&quot;
 comma
-id|FS_REQUIRES_DEV
-multiline_comment|/* | FS_IBASKET */
-comma
-multiline_comment|/* ibaskets have unresolved bugs */
 id|ext2_read_super
-comma
-l_int|NULL
-)brace
+)paren
 suffix:semicolon
 DECL|function|init_ext2_fs
 r_static

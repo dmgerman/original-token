@@ -190,7 +190,7 @@ suffix:semicolon
 multiline_comment|/* linked list */
 DECL|member|f_handle
 r_struct
-id|knfs_fh
+id|nfs_fh
 id|f_handle
 suffix:semicolon
 multiline_comment|/* NFS file handle */
@@ -232,6 +232,11 @@ id|semaphore
 id|f_sema
 suffix:semicolon
 multiline_comment|/* avoid concurrent access */
+DECL|member|f_hash
+r_int
+id|f_hash
+suffix:semicolon
+multiline_comment|/* hash of f_handle */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This is a server block (i.e. a lock requested by some client which&n; * couldn&squot;t be granted because of a conflicting lock).&n; */

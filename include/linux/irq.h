@@ -1,7 +1,10 @@
 macro_line|#ifndef __irq_h
 DECL|macro|__irq_h
 mdefine_line|#define __irq_h
+macro_line|#include &lt;linux/cache.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/ptrace.h&gt;
 multiline_comment|/*&n; * IRQ line status.&n; */
 DECL|macro|IRQ_INPROGRESS
 mdefine_line|#define IRQ_INPROGRESS&t;1&t;/* IRQ handler active - do not enter! */

@@ -4563,34 +4563,21 @@ id|a
 op_assign
 id|clnt-&gt;adapter
 suffix:semicolon
-multiline_comment|/* data are set to primary head... maybe I should change it */
 r_struct
 id|matroxfb_dh_maven_info
 op_star
 id|m2info
 op_assign
 (paren
+(paren
 r_struct
-id|matroxfb_dh_maven_info
-op_star
-)paren
-(paren
-(paren
-(paren
-id|u_int8_t
+id|i2c_bit_adapter
 op_star
 )paren
 id|a
 )paren
-op_minus
-m_offsetof
-(paren
-r_struct
-id|matroxfb_dh_maven_info
-comma
-id|maven.adapter
-)paren
-)paren
+op_member_access_from_pointer
+id|minfo
 suffix:semicolon
 r_struct
 id|maven_data
@@ -4599,7 +4586,6 @@ id|md
 op_assign
 id|clnt-&gt;data
 suffix:semicolon
-multiline_comment|/* add some checks that m2info is matroxfb_dh_fb_info here... */
 r_struct
 id|matrox_fb_info
 op_star

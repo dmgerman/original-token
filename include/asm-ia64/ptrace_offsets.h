@@ -295,11 +295,11 @@ mdefine_line|#define PT_CR_IFS&t;&t;0x0840
 DECL|macro|PT_AR_UNAT
 mdefine_line|#define PT_AR_UNAT&t;&t;0x0848
 DECL|macro|PT_AR_PFS
-mdefine_line|#define PT_AR_PFS&t;&t;0x0858
+mdefine_line|#define PT_AR_PFS&t;&t;0x0850
 DECL|macro|PT_AR_RSC
 mdefine_line|#define PT_AR_RSC&t;&t;0x0858
 DECL|macro|PT_AR_RNAT
-mdefine_line|#define PT_AR_RNAT&t;&t;0x0868
+mdefine_line|#define PT_AR_RNAT&t;&t;0x0860
 DECL|macro|PT_AR_BSPSTORE
 mdefine_line|#define PT_AR_BSPSTORE&t;&t;0x0868
 DECL|macro|PT_PR

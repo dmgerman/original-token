@@ -2185,7 +2185,6 @@ l_int|0
 comma
 id|regs
 comma
-op_amp
 id|isr
 )paren
 suffix:semicolon

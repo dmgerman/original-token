@@ -3390,6 +3390,21 @@ r_void
 r_int
 id|u
 suffix:semicolon
+multiline_comment|/* register misc device */
+r_if
+c_cond
+(paren
+id|usb_register
+c_func
+(paren
+op_amp
+id|dabusb_driver
+)paren
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 multiline_comment|/* initialize struct */
 r_for
 c_loop
@@ -3472,13 +3487,6 @@ id|s-&gt;rec_buff_list
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* register misc device */
-id|usb_register
-(paren
-op_amp
-id|dabusb_driver
-)paren
-suffix:semicolon
 id|dbg
 c_func
 (paren

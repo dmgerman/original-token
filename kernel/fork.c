@@ -2877,13 +2877,29 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * &quot;share&quot; dynamic priority between parent and child, thus the&n;&t; * total amount of dynamic priorities in the system doesnt change,&n;&t; * more scheduling fairness. This is only important in the first&n;&t; * timeslice, on the long run the scheduling behaviour is unchanged.&n;&t; */
+id|p-&gt;counter
+op_assign
+(paren
+id|current-&gt;counter
+op_plus
+l_int|1
+)paren
+op_rshift
+l_int|1
+suffix:semicolon
 id|current-&gt;counter
 op_rshift_assign
 l_int|1
 suffix:semicolon
-id|p-&gt;counter
-op_assign
+r_if
+c_cond
+(paren
+op_logical_neg
 id|current-&gt;counter
+)paren
+id|current-&gt;need_resched
+op_assign
+l_int|1
 suffix:semicolon
 multiline_comment|/*&n;&t; * Ok, add it to the run-queues and make it&n;&t; * visible to the rest of the system.&n;&t; *&n;&t; * Let it rip!&n;&t; */
 id|retval

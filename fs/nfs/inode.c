@@ -507,8 +507,6 @@ c_func
 id|server-&gt;hostname
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 )brace
 r_void
 DECL|function|nfs_umount_begin
@@ -769,8 +767,6 @@ r_struct
 id|nfs_fattr
 id|fattr
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -851,12 +847,6 @@ id|INADDR_ANY
 )paren
 r_goto
 id|out_no_remote
-suffix:semicolon
-id|lock_super
-c_func
-(paren
-id|sb
-)paren
 suffix:semicolon
 id|sb-&gt;s_flags
 op_or_assign
@@ -1250,12 +1240,6 @@ op_assign
 id|root_fh
 suffix:semicolon
 multiline_comment|/* We&squot;re airborne */
-id|unlock_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
 multiline_comment|/* Check whether to start the lockd process */
 r_if
 c_cond
@@ -1376,12 +1360,6 @@ id|server-&gt;hostname
 suffix:semicolon
 id|out_unlock
 suffix:colon
-id|unlock_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
 r_goto
 id|out_fail
 suffix:semicolon
@@ -1406,12 +1384,6 @@ l_string|&quot;nfs_read_super: missing data argument&bslash;n&quot;
 suffix:semicolon
 id|out_fail
 suffix:colon
-id|sb-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -3553,22 +3525,18 @@ id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * File system information&n; */
-DECL|variable|nfs_fs_type
 r_static
-r_struct
-id|file_system_type
+id|DECLARE_FSTYPE
+c_func
+(paren
 id|nfs_fs_type
-op_assign
-(brace
-l_string|&quot;nfs&quot;
 comma
-l_int|0
-multiline_comment|/* FS_NO_DCACHE - this doesn&squot;t work right now*/
+l_string|&quot;nfs&quot;
 comma
 id|nfs_read_super
 comma
-l_int|NULL
-)brace
+l_int|0
+)paren
 suffix:semicolon
 r_extern
 r_int

@@ -510,7 +510,7 @@ suffix:semicolon
 DECL|macro|EFI_SYSTEM_TABLE_SIGNATURE
 mdefine_line|#define EFI_SYSTEM_TABLE_SIGNATURE 0x5453595320494249
 DECL|macro|EFI_SYSTEM_TABLE_REVISION
-mdefine_line|#define EFI_SYSTEM_TABLE_REVISION  ((0 &lt;&lt; 16) | (91))
+mdefine_line|#define EFI_SYSTEM_TABLE_REVISION  ((0 &lt;&lt; 16) | (92))
 r_typedef
 r_struct
 (brace

@@ -151,19 +151,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: GETATTR(3)  %x/%ld&bslash;n&quot;
+l_string|&quot;nfsd: GETATTR(3)  %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -232,19 +222,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: SETATTR(3)  %x/%ld&bslash;n&quot;
+l_string|&quot;nfsd: SETATTR(3)  %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -312,19 +292,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: LOOKUP(3)   %x/%ld %s&bslash;n&quot;
+l_string|&quot;nfsd: LOOKUP(3)   %s %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -342,6 +312,15 @@ id|resp-&gt;dirfh
 comma
 op_amp
 id|argp-&gt;fh
+)paren
+suffix:semicolon
+id|fh_init
+c_func
+(paren
+op_amp
+id|resp-&gt;fh
+comma
+id|NFS3_FHSIZE
 )paren
 suffix:semicolon
 id|nfserr
@@ -398,19 +377,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: ACCESS(3)   %x/%ld 0x%x&bslash;n&quot;
+l_string|&quot;nfsd: ACCESS(3)   %s 0x%x&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -490,19 +459,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: READLINK(3) %x/%ld&bslash;n&quot;
+l_string|&quot;nfsd: READLINK(3) %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -607,19 +566,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: READ(3) %x/%ld %lu bytes at %lu&bslash;n&quot;
+l_string|&quot;nfsd: READ(3) %s %lu bytes at %lu&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -774,19 +723,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: WRITE(3)    %x/%ld %d bytes at %ld%s&bslash;n&quot;
+l_string|&quot;nfsd: WRITE(3)    %s %d bytes at %ld%s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -897,19 +836,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: CREATE(3)   %x/%ld %s&bslash;n&quot;
+l_string|&quot;nfsd: CREATE(3)   %s %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -938,6 +867,8 @@ c_func
 (paren
 op_amp
 id|resp-&gt;fh
+comma
+id|NFS3_FHSIZE
 )paren
 suffix:semicolon
 id|attr
@@ -1070,19 +1001,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: MKDIR(3)    %x/%ld %s&bslash;n&quot;
+l_string|&quot;nfsd: MKDIR(3)    %s %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -1112,6 +1033,8 @@ c_func
 (paren
 op_amp
 id|resp-&gt;fh
+comma
+id|NFS3_FHSIZE
 )paren
 suffix:semicolon
 id|nfserr
@@ -1174,19 +1097,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: SYMLINK(3)  %x/%ld %s -&gt; %s&bslash;n&quot;
+l_string|&quot;nfsd: SYMLINK(3)  %s %s -&gt; %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;ffh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -1213,6 +1126,8 @@ c_func
 (paren
 op_amp
 id|resp-&gt;fh
+comma
+id|NFS3_FHSIZE
 )paren
 suffix:semicolon
 id|nfserr
@@ -1283,19 +1198,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: MKNOD(3)    %x/%ld %s&bslash;n&quot;
+l_string|&quot;nfsd: MKNOD(3)    %s %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -1320,6 +1225,8 @@ c_func
 (paren
 op_amp
 id|resp-&gt;fh
+comma
+id|NFS3_FHSIZE
 )paren
 suffix:semicolon
 r_if
@@ -1485,19 +1392,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: REMOVE(3)   %x/%ld %s&bslash;n&quot;
+l_string|&quot;nfsd: REMOVE(3)   %s %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -1572,19 +1469,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: RMDIR(3)    %x/%ld %s&bslash;n&quot;
+l_string|&quot;nfsd: RMDIR(3)    %s %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -1656,19 +1543,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: RENAME(3)   %x/%ld %s -&gt; %x/%ld %s&bslash;n&quot;
+l_string|&quot;nfsd: RENAME(3)   %s %s -&gt;&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;ffh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -1676,18 +1553,14 @@ id|argp-&gt;ffh
 )paren
 comma
 id|argp-&gt;fname
-comma
-id|SVCFH_DEV
+)paren
+suffix:semicolon
+id|dprintk
 c_func
 (paren
-op_amp
-id|argp-&gt;tfh
-)paren
+l_string|&quot;nfsd: -&gt; %s %s&bslash;n&quot;
 comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -1774,36 +1647,22 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: LINK(3)     %x/%ld -&gt; %x/%ld %s&bslash;n&quot;
+l_string|&quot;nfsd: LINK(3)     %s -&gt;&bslash;n&quot;
 comma
-id|SVCFH_DEV
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
 id|argp-&gt;ffh
 )paren
-comma
-(paren
-r_int
 )paren
-id|SVCFH_INO
+suffix:semicolon
+id|dprintk
 c_func
 (paren
-op_amp
-id|argp-&gt;ffh
-)paren
+l_string|&quot;nfsd:   -&gt; %s %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;tfh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -1897,19 +1756,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: READDIR(3)  %x/%ld %d bytes at %d&bslash;n&quot;
+l_string|&quot;nfsd: READDIR(3)  %s %d bytes at %d&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -2064,19 +1913,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: READDIR+(3) %x/%ld %d bytes at %d&bslash;n&quot;
+l_string|&quot;nfsd: READDIR+(3) %s %d bytes at %d&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -2219,19 +2058,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: FSSTAT(3)   %x/%ld&bslash;n&quot;
+l_string|&quot;nfsd: FSSTAT(3)   %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -2296,19 +2125,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: FSINFO(3)   %x/%ld&bslash;n&quot;
+l_string|&quot;nfsd: FSINFO(3)   %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -2446,19 +2265,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: PATHCONF(3) %x/%ld&bslash;n&quot;
+l_string|&quot;nfsd: PATHCONF(3) %s&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp
@@ -2602,19 +2411,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: COMMIT(3)   %x/%ld %d@%ld&bslash;n&quot;
+l_string|&quot;nfsd: COMMIT(3)   %s %d@%ld&bslash;n&quot;
 comma
-id|SVCFH_DEV
-c_func
-(paren
-op_amp
-id|argp-&gt;fh
-)paren
-comma
-(paren
-r_int
-)paren
-id|SVCFH_INO
+id|SVCFH_fmt
 c_func
 (paren
 op_amp

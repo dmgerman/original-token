@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * Advanced Configuration and Power Interface &n; *&n; * Based on &squot;ACPI Specification 1.0b&squot; February 2, 1999 and &n; * &squot;IA-64 Extensions to ACPI Specification&squot; Revision 0.6&n; * &n; * Copyright (C) 1999 VA Linux Systems&n; * Copyright (C) 1999,2000 Walt Drummond &lt;drummond@valinux.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
@@ -11,7 +12,6 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/efi.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/iosapic.h&gt;
-macro_line|#include &lt;asm/irq.h&gt;
 DECL|macro|ACPI_DEBUG
 macro_line|#undef ACPI_DEBUG&t;&t;/* Guess what this does? */
 macro_line|#ifdef CONFIG_SMP
@@ -211,11 +211,11 @@ suffix:semicolon
 r_int
 r_int
 id|ver
+comma
+id|v
 suffix:semicolon
 r_int
 id|l
-comma
-id|v
 comma
 id|pins
 suffix:semicolon
@@ -282,12 +282,23 @@ op_increment
 (brace
 id|v
 op_assign
-id|map_legacy_irq
-c_func
-(paren
 id|iosapic-&gt;irq_base
 op_plus
 id|l
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|v
+OL
+l_int|16
+)paren
+id|v
+op_assign
+id|isa_irq_to_vector
+c_func
+(paren
+id|v
 )paren
 suffix:semicolon
 r_if
@@ -301,7 +312,7 @@ id|IA64_MAX_VECTORED_IRQ
 id|printk
 c_func
 (paren
-l_string|&quot;    !!! IRQ %d &gt; 255&bslash;n&quot;
+l_string|&quot;    !!! bad IOSAPIC interrupt vector: %u&bslash;n&quot;
 comma
 id|v
 )paren
@@ -358,7 +369,7 @@ op_star
 id|p
 )paren
 (brace
-multiline_comment|/*&n;&t; * This is not good.  ACPI is not necessarily limited to CONFIG_IA64_SV, yet&n;&t; * ACPI does not necessarily imply IOSAPIC either.  Perhaps there should be&n;&t; * a means for platform_setup() to register ACPI handlers?&n;&t; */
+multiline_comment|/*&n;&t; * This is not good.  ACPI is not necessarily limited to CONFIG_IA64_DIG, yet&n;&t; * ACPI does not necessarily imply IOSAPIC either.  Perhaps there should be&n;&t; * a means for platform_setup() to register ACPI handlers?&n;&t; */
 macro_line|#ifdef CONFIG_IA64_IRQ_ACPI
 id|acpi_entry_int_override_t
 op_star
@@ -379,7 +390,7 @@ id|i
 suffix:semicolon
 id|vector
 op_assign
-id|map_legacy_irq
+id|isa_irq_to_vector
 c_func
 (paren
 id|legacy-&gt;isa_irq

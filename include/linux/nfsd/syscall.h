@@ -33,6 +33,8 @@ DECL|macro|NFSCTL_GETFH
 mdefine_line|#define NFSCTL_GETFH&t;&t;6&t;/* get an fh by ino (used by mountd) */
 DECL|macro|NFSCTL_GETFD
 mdefine_line|#define NFSCTL_GETFD&t;&t;7&t;/* get an fh by path (used by mountd) */
+DECL|macro|NFSCTL_GETFS
+mdefine_line|#define&t;NFSCTL_GETFS&t;&t;8&t;/* get an fh by path with max FH len */
 multiline_comment|/* SVC */
 DECL|struct|nfsctl_svc
 r_struct
@@ -225,6 +227,31 @@ id|gd_version
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* GETFS - GET Filehandle with Size */
+DECL|struct|nfsctl_fsparm
+r_struct
+id|nfsctl_fsparm
+(brace
+DECL|member|gd_addr
+r_struct
+id|sockaddr
+id|gd_addr
+suffix:semicolon
+DECL|member|gd_path
+r_char
+id|gd_path
+(braket
+id|NFS_MAXPATHLEN
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+DECL|member|gd_maxlen
+r_int
+id|gd_maxlen
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * This is the argument union.&n; */
 DECL|struct|nfsctl_arg
 r_struct
@@ -267,6 +294,13 @@ r_struct
 id|nfsctl_fdparm
 id|u_getfd
 suffix:semicolon
+macro_line|#ifdef notyet
+DECL|member|u_getfs
+r_struct
+id|nfsctl_fsparm
+id|u_getfs
+suffix:semicolon
+macro_line|#endif
 DECL|member|u_debug
 r_int
 r_int
@@ -288,6 +322,8 @@ DECL|macro|ca_getfh
 mdefine_line|#define ca_getfh&t;u.u_getfh
 DECL|macro|ca_getfd
 mdefine_line|#define ca_getfd&t;u.u_getfd
+DECL|macro|ca_getfs
+mdefine_line|#define&t;ca_getfs&t;u.u_getfs
 DECL|macro|ca_authd
 mdefine_line|#define ca_authd&t;u.u_authd
 DECL|macro|ca_debug
@@ -299,10 +335,19 @@ r_union
 id|nfsctl_res
 (brace
 DECL|member|cr_getfh
-r_struct
-id|knfs_fh
+id|__u8
 id|cr_getfh
+(braket
+id|NFS_FHSIZE
+)braket
 suffix:semicolon
+macro_line|#ifdef notyet
+DECL|member|cr_getfs
+r_struct
+id|knfsd_fh
+id|cr_getfs
+suffix:semicolon
+macro_line|#endif
 DECL|member|cr_debug
 r_int
 r_int

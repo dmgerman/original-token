@@ -1714,9 +1714,12 @@ op_star
 id|path
 comma
 r_struct
-id|knfs_fh
+id|knfsd_fh
 op_star
 id|f
+comma
+r_int
+id|maxsize
 )paren
 (brace
 r_struct
@@ -1971,8 +1974,12 @@ c_func
 (paren
 op_amp
 id|fh
+comma
+id|maxsize
 )paren
 suffix:semicolon
+id|err
+op_assign
 id|fh_compose
 c_func
 (paren
@@ -1995,7 +2002,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|knfs_fh
+id|knfsd_fh
 )paren
 )paren
 suffix:semicolon
@@ -2007,7 +2014,7 @@ id|fh
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|err
 suffix:semicolon
 id|out
 suffix:colon

@@ -2,21 +2,18 @@ multiline_comment|/* -*- linux-c -*- -------------------------------------------
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;autofs_i.h&quot;
-DECL|variable|autofs_fs_type
 r_static
-r_struct
-id|file_system_type
+id|DECLARE_FSTYPE
+c_func
+(paren
 id|autofs_fs_type
-op_assign
-(brace
-l_string|&quot;autofs&quot;
 comma
-l_int|0
+l_string|&quot;autofs&quot;
 comma
 id|autofs4_read_super
 comma
-l_int|NULL
-)brace
+l_int|0
+)paren
 suffix:semicolon
 DECL|function|init_autofs4_fs
 r_static

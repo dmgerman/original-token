@@ -2062,6 +2062,7 @@ id|sb-&gt;u.ext2_sb.s_es-&gt;s_free_inodes_count
 suffix:semicolon
 macro_line|#endif
 )brace
+multiline_comment|/* Called at mount-time, super-block is locked */
 DECL|function|ext2_check_inodes_bitmap
 r_void
 id|ext2_check_inodes_bitmap
@@ -2095,11 +2096,6 @@ id|gdp
 suffix:semicolon
 r_int
 id|i
-suffix:semicolon
-id|lock_super
-(paren
-id|sb
-)paren
 suffix:semicolon
 id|es
 op_assign
@@ -2262,11 +2258,6 @@ id|es-&gt;s_free_inodes_count
 )paren
 comma
 id|bitmap_count
-)paren
-suffix:semicolon
-id|unlock_super
-(paren
-id|sb
 )paren
 suffix:semicolon
 )brace

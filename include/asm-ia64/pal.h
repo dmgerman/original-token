@@ -1,7 +1,7 @@
 macro_line|#ifndef _ASM_IA64_PAL_H
 DECL|macro|_ASM_IA64_PAL_H
 mdefine_line|#define _ASM_IA64_PAL_H
-multiline_comment|/*&n; * Processor Abstraction Layer definitions.&n; *&n; * This is based on version 2.4 of the manual &quot;Enhanced Mode Processor&n; * Abstraction Layer&quot;.&n; *&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1999 VA Linux Systems&n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; * Copyright (C) 1999 Srinivasa Prasad Thirumalachar &lt;sprasad@sprasad.engr.sgi.com&gt;&n; *&n; * 99/10/01&t;davidm&t;Make sure we pass zero for reserved parameters.&n; */
+multiline_comment|/*&n; * Processor Abstraction Layer definitions.&n; *&n; * This is based on version 2.4 of the manual &quot;Enhanced Mode Processor&n; * Abstraction Layer&quot;.&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1999 VA Linux Systems&n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; * Copyright (C) 1999 Srinivasa Prasad Thirumalachar &lt;sprasad@sprasad.engr.sgi.com&gt;&n; *&n; * 99/10/01&t;davidm&t;Make sure we pass zero for reserved parameters.&n; * 00/03/07&t;davidm&t;Updated pal_cache_flush() to be in sync with PAL v2.6.&n; */
 multiline_comment|/*&n; * Note that some of these calls use a static-register only calling&n; * convention which has nothing to do with the regular calling&n; * convention.&n; */
 DECL|macro|PAL_CACHE_FLUSH
 mdefine_line|#define PAL_CACHE_FLUSH&t;&t;1&t;/* flush i/d cache */
@@ -134,10 +134,10 @@ DECL|macro|PAL_CACHE_TYPE_DATA
 mdefine_line|#define PAL_CACHE_TYPE_DATA&t;&t;2&t;/* Data or unified cache */
 DECL|macro|PAL_CACHE_TYPE_INSTRUCTION_DATA
 mdefine_line|#define PAL_CACHE_TYPE_INSTRUCTION_DATA&t;3&t;/* Both Data &amp; Instruction */
-DECL|macro|PAL_CACHE_FLUSH_NO_INVALIDATE
-mdefine_line|#define PAL_CACHE_FLUSH_NO_INVALIDATE&t;0&t;/* Don&squot;t invalidate clean lines */
 DECL|macro|PAL_CACHE_FLUSH_INVALIDATE
 mdefine_line|#define PAL_CACHE_FLUSH_INVALIDATE&t;1&t;/* Invalidate clean lines */
+DECL|macro|PAL_CACHE_FLUSH_CHK_INTRS
+mdefine_line|#define PAL_CACHE_FLUSH_CHK_INTRS&t;2&t;/* check for interrupts/mc while flushing */
 multiline_comment|/* Processor cache line size in bytes  */
 DECL|typedef|pal_cache_line_size_t
 r_typedef
@@ -1729,7 +1729,7 @@ r_return
 id|iprv.status
 suffix:semicolon
 )brace
-multiline_comment|/* Flush the processor instruction or data caches */
+multiline_comment|/*&n; * Flush the processor instruction or data caches.  *PROGRESS must be&n; * initialized to zero before calling this for the first time..&n; */
 r_extern
 r_inline
 id|s64
@@ -1743,7 +1743,8 @@ id|u64
 id|invalidate
 comma
 id|u64
-id|plat_ack
+op_star
+id|progress
 )paren
 (brace
 r_struct
@@ -1761,8 +1762,14 @@ id|cache_type
 comma
 id|invalidate
 comma
-id|plat_ack
+op_star
+id|progress
 )paren
+suffix:semicolon
+op_star
+id|progress
+op_assign
+id|iprv.v1
 suffix:semicolon
 r_return
 id|iprv.status

@@ -1,12 +1,14 @@
+multiline_comment|/*&n; * This file contains the code to configure and read/write the ia64 performance&n; * monitoring stuff.&n; *&n; * Originaly Written by Ganesh Venkitachalam, IBM Corp.&n; * Modifications by David Mosberger-Tang, Hewlett-Packard Co.&n; * Copyright (C) 1999 Ganesh Venkitachalam &lt;venkitac@us.ibm.com&gt;&n; * Copyright (C) 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/errno.h&gt;
-macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/hw_irq.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+multiline_comment|/* Long blurb on how this works: &n; * We set dcr.pp, psr.pp, and the appropriate pmc control values with&n; * this.  Notice that we go about modifying _each_ task&squot;s pt_regs to&n; * set cr_ipsr.pp.  This will start counting when &quot;current&quot; does an&n; * _rfi_. Also, since each task&squot;s cr_ipsr.pp, and cr_ipsr is inherited&n; * across forks, we do _not_ need additional code on context&n; * switches. On stopping of the counters we dont need to go about&n; * changing every task&squot;s cr_ipsr back to where it wuz, because we can&n; * just set pmc[0]=1. But we do it anyways becuase we will probably&n; * add thread specific accounting later.&n; *&n; * The obvious problem with this is that on SMP systems, it is a bit&n; * of work (when someone wants to do it:-)) - it would be easier if we&n; * just added code to the context-switch path, but if we wanted to support&n; * per-thread accounting, the context-switch path might be long unless &n; * we introduce a flag in the task_struct. Right now, the following code &n; * will NOT work correctly on MP (for more than one reason:-)).&n; *&n; * The short answer is that to make this work on SMP,  we would need &n; * to lock the run queue to ensure no context switches, send &n; * an IPI to each processor, and in that IPI handler, set processor regs,&n; * and just modify the psr bit of only the _current_ thread, since we have &n; * modified the psr bit correctly in the kernel stack for every process &n; * which is not running. Also, we need pmd arrays per-processor, and &n; * the READ_PMD command will need to get values off of other processors. &n; * IPIs are the answer, irrespective of what the question is. Might &n; * crash on SMP systems without the lock_kernel().&n; */
 macro_line|#ifdef CONFIG_PERFMON
 DECL|macro|MAX_PERF_COUNTER
 mdefine_line|#define MAX_PERF_COUNTER&t;4&t;/* true for Itanium, at least */
@@ -33,6 +35,7 @@ id|data
 suffix:semicolon
 DECL|member|counter_num
 r_int
+r_int
 id|counter_num
 suffix:semicolon
 )brace
@@ -50,8 +53,9 @@ r_struct
 id|task_struct
 op_star
 id|perf_owner
+op_assign
+l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n; * We set dcr.pp, psr.pp, and the appropriate pmc control values with&n; * this.  Notice that we go about modifying _each_ task&squot;s pt_regs to&n; * set cr_ipsr.pp.  This will start counting when &quot;current&quot; does an&n; * _rfi_. Also, since each task&squot;s cr_ipsr.pp, and cr_ipsr is inherited&n; * across forks, we do _not_ need additional code on context&n; * switches. On stopping of the counters we dont _need_ to go about&n; * changing every task&squot;s cr_ipsr back to where it wuz, because we can&n; * just set pmc[0]=1. But we do it anyways becuase we will probably&n; * add thread specific accounting later.&n; *&n; * The obvious problem with this is that on SMP systems, it is a bit&n; * of work (when someone wants to do it) - it would be easier if we&n; * just added code to the context-switch path.  I think we would need&n; * to lock the run queue to ensure no context switches, send an IPI to&n; * each processor, and in that IPI handler, just modify the psr bit of&n; * only the _current_ thread, since we have modified the psr bit&n; * correctly in the kernel stack for every process which is not&n; * running.  Might crash on SMP systems without the&n; * lock_kernel(). Hence the lock..&n; */
 id|asmlinkage
 r_int
 r_int
@@ -146,7 +150,7 @@ r_if
 c_cond
 (paren
 id|cmd2
-op_ge
+OG
 id|MAX_PERF_COUNTER
 )paren
 r_return
@@ -266,7 +270,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * This is a no can do.  It obviously wouldn&squot;t&n;&t;&t;&t; * work on SMP where another process may not&n;&t;&t;&t; * be blocked at all.&n;&t;&t;&t; *&n;&t;&t;&t; * Perhaps we need a global predicate in the&n;&t;&t;&t; * leave_kernel path to control if pp should&n;&t;&t;&t; * be on or off?&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * This is a no can do.  It obviously wouldn&squot;t&n;&t;&t;&t; * work on SMP where another process may not&n;&t;&t;&t; * be blocked at all. We need to put in a  perfmon &n;&t;&t;&t; * IPI to take care of MP systems. See blurb above.&n;&t;&t;&t; */
 id|lock_kernel
 c_func
 (paren
@@ -333,7 +337,7 @@ r_if
 c_cond
 (paren
 id|cmd2
-op_ge
+OG
 id|MAX_PERF_COUNTER
 )paren
 r_return
@@ -364,13 +368,13 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
+multiline_comment|/* This looks shady, but IMHO this will work fine. This is  &n;&t;&t; * the sequence that I could come up with to avoid races&n;&t;&t; * with the interrupt handler. See explanation in the &n;&t;&t; * following comment.&n;&t;&t; */
 id|local_irq_save
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* XXX this looks wrong */
 id|__asm__
 id|__volatile__
 c_func
@@ -402,7 +406,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * We cannot touch pmc[0] to stop counting here, as&n;&t;&t; * that particular instruction might cause an overflow&n;&t;&t; * and the mask in pmc[0] might get lost. I&squot;m not very&n;&t;&t; * sure of the hardware behavior here. So we stop&n;&t;&t; * counting by psr.pp = 0. And we reset dcr.pp to&n;&t;&t; * prevent an interrupt from mucking up psr.pp in the&n;&t;&t; * meanwhile. Perfmon interrupts are pended, hence the&n;&t;&t; * above code should be ok if one of the above&n;&t;&t; * instructions cause overflows. Is this ok?  When I&n;&t;&t; * muck with dcr, is the cli/sti needed??&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * We cannot write to pmc[0] to stop counting here, as&n;&t;&t; * that particular instruction might cause an overflow&n;&t;&t; * and the mask in pmc[0] might get lost. I&squot;m _not_ &n;&t;&t; * sure of the hardware behavior here. So we stop&n;&t;&t; * counting by psr.pp = 0. And we reset dcr.pp to&n;&t;&t; * prevent an interrupt from mucking up psr.pp in the&n;&t;&t; * meanwhile. Perfmon interrupts are pended, hence the&n;&t;&t; * above code should be ok if one of the above instructions &n;&t;&t; * caused overflows, i.e the interrupt should get serviced&n;&t;&t; * when we re-enabled interrupts. When I muck with dcr, &n;&t;&t; * is the irq_save/restore needed?&n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -461,7 +465,6 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* XXX this looks wrong */
 id|__asm__
 id|__volatile__
 c_func
@@ -557,7 +560,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * This is a no can do.  It obviously wouldn&squot;t&n;&t;&t; * work on SMP where another process may not&n;&t;&t; * be blocked at all.&n;&t;&t; *&n;&t;&t; * Perhaps we need a global predicate in the&n;&t;&t; * leave_kernel path to control if pp should&n;&t;&t; * be on or off?&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * This is a no can do.  It obviously wouldn&squot;t&n;&t;&t; * work on SMP where another process may not&n;&t;&t; * be blocked at all. We need to put in a  perfmon &n;&t;&t; * IPI to take care of MP systems. See blurb above.&n;&t;&t; */
 id|lock_kernel
 c_func
 (paren
@@ -608,7 +611,7 @@ c_func
 suffix:semicolon
 id|perf_owner
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -642,7 +645,7 @@ id|val
 suffix:semicolon
 id|mask
 op_assign
-id|ia64_get_pmd
+id|ia64_get_pmc
 c_func
 (paren
 l_int|0
@@ -798,6 +801,14 @@ suffix:semicolon
 id|ia64_srlz_d
 c_func
 (paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Initialized perfmon vector to %u&bslash;n&quot;
+comma
+id|PERFMON_IRQ
 )paren
 suffix:semicolon
 )brace

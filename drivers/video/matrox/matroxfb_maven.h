@@ -5,6 +5,9 @@ macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/i2c-algo-bit.h&gt;
 macro_line|#include &quot;matroxfb_base.h&quot;
+r_struct
+id|matroxfb_dh_maven_info
+suffix:semicolon
 DECL|struct|i2c_bit_adapter
 r_struct
 id|i2c_bit_adapter
@@ -22,6 +25,12 @@ DECL|member|bac
 r_struct
 id|i2c_algo_bit_data
 id|bac
+suffix:semicolon
+DECL|member|minfo
+r_struct
+id|matroxfb_dh_maven_info
+op_star
+id|minfo
 suffix:semicolon
 )brace
 suffix:semicolon

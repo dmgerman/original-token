@@ -259,8 +259,11 @@ op_star
 id|path
 comma
 r_struct
-id|knfs_fh
+id|knfsd_fh
 op_star
+comma
+r_int
+id|maxsize
 )paren
 suffix:semicolon
 r_int

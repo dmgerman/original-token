@@ -4373,11 +4373,11 @@ c_func
 id|init_mad16
 )paren
 suffix:semicolon
-DECL|variable|exit_mad16
+DECL|variable|cleanup_mad16
 id|module_exit
 c_func
 (paren
-id|exit_mad16
+id|cleanup_mad16
 )paren
 suffix:semicolon
 macro_line|#ifndef MODULE

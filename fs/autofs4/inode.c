@@ -333,10 +333,6 @@ l_string|&quot;autofs: shutting down&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|autofs4_umount_begin
 r_static
@@ -996,14 +992,6 @@ id|minproto
 comma
 id|maxproto
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-id|lock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
 multiline_comment|/* Super block already completed? */
 r_if
 c_cond
@@ -1129,13 +1117,6 @@ id|s-&gt;s_root
 op_assign
 l_int|NULL
 suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
-multiline_comment|/* shouldn&squot;t we keep it locked a while longer? */
 multiline_comment|/*&n;&t; * Get the root inode and dentry, but defer checking for errors.&n;&t; */
 id|autofs4_ihash_insert
 c_func
@@ -1341,12 +1322,6 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Success ... somebody else completed the super block for us. &n;&t; */
 id|out_unlock
 suffix:colon
-id|unlock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
 r_goto
 id|out_dec
 suffix:semicolon
@@ -1385,8 +1360,6 @@ id|root_inode
 suffix:semicolon
 id|out_dec
 suffix:colon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 id|s
 suffix:semicolon
@@ -1400,10 +1373,6 @@ l_string|&quot;autofs: pipe file descriptor does not contain proper ops&bslash;n
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * fput() can block, so we clear the super block first.&n;&t; */
-id|s-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
 id|fput
 c_func
 (paren
@@ -1414,10 +1383,6 @@ multiline_comment|/* fall through */
 id|fail_dput
 suffix:colon
 multiline_comment|/*&n;&t; * dput() can block, so we clear the super block first.&n;&t; */
-id|s-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
 id|dput
 c_func
 (paren
@@ -1436,10 +1401,6 @@ l_string|&quot;autofs: get root dentry failed&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * iput() can block, so we clear the super block first.&n;&t; */
-id|s-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
 id|iput
 c_func
 (paren
@@ -1454,25 +1415,8 @@ c_func
 id|sbi
 )paren
 suffix:semicolon
-r_goto
-id|fail_dec
-suffix:semicolon
 id|fail_unlock
 suffix:colon
-id|unlock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
-id|fail_dec
-suffix:colon
-id|s-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon

@@ -36,8 +36,24 @@ id|envp
 )paren
 suffix:semicolon
 macro_line|#else
-DECL|macro|request_module
-mdefine_line|#define request_module(x) do {} while(0)
+DECL|function|request_module
+r_static
+r_inline
+r_int
+id|request_module
+c_func
+(paren
+r_const
+r_char
+op_star
+id|name
+)paren
+(brace
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
+)brace
 DECL|function|exec_usermodehelper
 r_extern
 r_inline

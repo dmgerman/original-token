@@ -141,10 +141,6 @@ c_func
 id|sbi
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 )brace
 r_static
 r_int
@@ -173,17 +169,6 @@ op_star
 id|inode
 )paren
 suffix:semicolon
-r_static
-r_void
-id|devpts_write_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-suffix:semicolon
 DECL|variable|devpts_sops
 r_static
 r_struct
@@ -194,10 +179,6 @@ op_assign
 id|read_inode
 suffix:colon
 id|devpts_read_inode
-comma
-id|write_inode
-suffix:colon
-id|devpts_write_inode
 comma
 id|put_super
 suffix:colon
@@ -540,14 +521,6 @@ id|devpts_sb_info
 op_star
 id|sbi
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-id|lock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
 multiline_comment|/* Super block already completed? */
 r_if
 c_cond
@@ -673,13 +646,6 @@ id|s-&gt;s_root
 op_assign
 l_int|NULL
 suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
-multiline_comment|/* shouldn&squot;t we keep it locked a while longer? */
 multiline_comment|/*&n;&t; * Get the root inode and dentry, but defer checking for errors.&n;&t; */
 id|root_inode
 op_assign
@@ -751,12 +717,6 @@ r_goto
 id|out_dec
 suffix:semicolon
 multiline_comment|/*&n;&t; * Success! Install the root dentry now to indicate completion.&n;&t; */
-id|lock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
 id|s-&gt;s_root
 op_assign
 id|root
@@ -792,24 +752,12 @@ id|mounts
 op_assign
 id|s
 suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
 r_return
 id|s
 suffix:semicolon
 multiline_comment|/*&n;&t; * Success ... somebody else completed the super block for us. &n;&t; */
 id|out_unlock
 suffix:colon
-id|unlock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
 r_goto
 id|out_dec
 suffix:semicolon
@@ -835,8 +783,6 @@ id|root_inode
 suffix:semicolon
 id|out_dec
 suffix:colon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 id|s
 suffix:semicolon
@@ -844,10 +790,6 @@ multiline_comment|/*&n;&t; * Failure ... clear the s_dev slot and clean up.&n;&t
 id|fail_dput
 suffix:colon
 multiline_comment|/*&n;&t; * dput() can block, so we clear the super block first.&n;&t; */
-id|s-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
 id|dput
 c_func
 (paren
@@ -866,10 +808,6 @@ l_string|&quot;devpts: get root dentry failed&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * iput() can block, so we clear the super block first.&n;&t; */
-id|s-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
 id|iput
 c_func
 (paren
@@ -884,25 +822,8 @@ c_func
 id|sbi
 )paren
 suffix:semicolon
-r_goto
-id|fail_dec
-suffix:semicolon
 id|fail_unlock
 suffix:colon
-id|unlock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
-id|fail_dec
-suffix:colon
-id|s-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -1077,34 +998,18 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|function|devpts_write_inode
 r_static
-r_void
-id|devpts_write_inode
+id|DECLARE_FSTYPE
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-)brace
-DECL|variable|devpts_fs_type
-r_static
-r_struct
-id|file_system_type
 id|devpts_fs_type
-op_assign
-(brace
-l_string|&quot;devpts&quot;
 comma
-l_int|0
+l_string|&quot;devpts&quot;
 comma
 id|devpts_read_super
 comma
-l_int|NULL
-)brace
+l_int|0
+)paren
 suffix:semicolon
 DECL|function|devpts_pty_new
 r_void

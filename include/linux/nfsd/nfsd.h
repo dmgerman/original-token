@@ -654,18 +654,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* nfsd/nfsctl.c */
-r_void
-id|nfsd_modcount
-c_func
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * lockd binding&n; */
 r_void
 id|nfsd_lockd_init
@@ -723,6 +711,8 @@ DECL|macro|nfserr_rofs
 mdefine_line|#define&t;nfserr_rofs&t;&t;__constant_htonl(NFSERR_ROFS)
 DECL|macro|nfserr_mlink
 mdefine_line|#define&t;nfserr_mlink&t;&t;__constant_htonl(NFSERR_MLINK)
+DECL|macro|nfserr_opnotsupp
+mdefine_line|#define&t;nfserr_opnotsupp&t;__constant_htonl(NFSERR_OPNOTSUPP)
 DECL|macro|nfserr_nametoolong
 mdefine_line|#define&t;nfserr_nametoolong&t;__constant_htonl(NFSERR_NAMETOOLONG)
 DECL|macro|nfserr_notempty

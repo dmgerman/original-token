@@ -5,20 +5,15 @@ macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
-DECL|variable|vfat_fs_type
-r_struct
-id|file_system_type
+id|DECLARE_FSTYPE_DEV
+c_func
+(paren
 id|vfat_fs_type
-op_assign
-(brace
+comma
 l_string|&quot;vfat&quot;
 comma
-id|FS_REQUIRES_DEV
-comma
 id|vfat_read_super
-comma
-l_int|NULL
-)brace
+)paren
 suffix:semicolon
 DECL|variable|vfat_create
 id|EXPORT_SYMBOL

@@ -2773,6 +2773,7 @@ l_int|7
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Called at mount-time, super-block is locked */
 DECL|function|ext2_check_blocks_bitmap
 r_void
 id|ext2_check_blocks_bitmap
@@ -2817,11 +2818,6 @@ r_int
 id|i
 comma
 id|j
-suffix:semicolon
-id|lock_super
-(paren
-id|sb
-)paren
 suffix:semicolon
 id|es
 op_assign
@@ -3187,11 +3183,6 @@ id|es-&gt;s_free_blocks_count
 )paren
 comma
 id|bitmap_count
-)paren
-suffix:semicolon
-id|unlock_super
-(paren
-id|sb
 )paren
 suffix:semicolon
 )brace

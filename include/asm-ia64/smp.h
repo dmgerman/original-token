@@ -3,11 +3,11 @@ macro_line|#ifndef _ASM_IA64_SMP_H
 DECL|macro|_ASM_IA64_SMP_H
 mdefine_line|#define _ASM_IA64_SMP_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_SMP
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|IPI_DEFAULT_BASE_ADDR
 mdefine_line|#define IPI_DEFAULT_BASE_ADDR&t;0xfee00000
@@ -236,5 +236,6 @@ op_star
 id|regs
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_SMP */
 macro_line|#endif /* _ASM_IA64_SMP_H */
 eof

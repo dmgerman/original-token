@@ -947,7 +947,7 @@ c_func
 (paren
 id|bh
 comma
-l_int|1
+l_int|0
 )paren
 suffix:semicolon
 id|dir-&gt;i_ctime
@@ -1225,7 +1225,7 @@ c_func
 (paren
 id|old_bh
 comma
-l_int|1
+l_int|0
 )paren
 suffix:semicolon
 id|error
@@ -1526,7 +1526,7 @@ c_func
 (paren
 id|bh
 comma
-l_int|1
+l_int|0
 )paren
 suffix:semicolon
 id|brelse

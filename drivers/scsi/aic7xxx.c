@@ -1487,8 +1487,7 @@ id|maxscbs
 suffix:semicolon
 multiline_comment|/* max scbs including pageable scbs */
 DECL|member|hscbs_dma
-r_int
-r_int
+id|dma_addr_t
 id|hscbs_dma
 suffix:semicolon
 multiline_comment|/* DMA handle to hscbs */

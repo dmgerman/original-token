@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/datalink.h&gt;
 macro_line|#include &lt;net/psnap.h&gt;
@@ -118,8 +119,6 @@ multiline_comment|/* Next entry in chain */
 suffix:semicolon
 multiline_comment|/*&n; *&t;Hashed list of resolved, unresolved and proxy entries&n; */
 DECL|variable|resolved
-DECL|variable|unresolved
-DECL|variable|proxies
 r_static
 r_struct
 id|aarp_entry
@@ -128,13 +127,21 @@ id|resolved
 (braket
 id|AARP_HASH_SIZE
 )braket
-comma
+suffix:semicolon
+DECL|variable|unresolved
+r_static
+r_struct
+id|aarp_entry
 op_star
 id|unresolved
 (braket
 id|AARP_HASH_SIZE
 )braket
-comma
+suffix:semicolon
+DECL|variable|proxies
+r_static
+r_struct
+id|aarp_entry
 op_star
 id|proxies
 (braket
@@ -148,6 +155,14 @@ id|unresolved_count
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* One lock protects it all. */
+DECL|variable|aarp_lock
+r_static
+id|spinlock_t
+id|aarp_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/*&n; *&t;Used to walk the list and purge/kick entries.&n; */
 DECL|variable|aarp_timer
 r_static
@@ -155,11 +170,11 @@ r_struct
 id|timer_list
 id|aarp_timer
 suffix:semicolon
-multiline_comment|/*&n; *&t;Delete an aarp queue&n; */
-DECL|function|aarp_expire
+multiline_comment|/*&n; *&t;Delete an aarp queue&n; *&n; *&t;Must run under aarp_lock.&n; */
+DECL|function|__aarp_expire
 r_static
 r_void
-id|aarp_expire
+id|__aarp_expire
 c_func
 (paren
 r_struct
@@ -189,14 +204,12 @@ id|a-&gt;packet_queue
 op_ne
 l_int|NULL
 )paren
-(brace
 id|kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
 id|kfree_s
 c_func
 (paren
@@ -210,11 +223,11 @@ id|a
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Send an aarp queue entry request&n; */
-DECL|function|aarp_send_query
+multiline_comment|/*&n; *&t;Send an aarp queue entry request&n; *&n; *&t;Must run under aarp_lock.&n; */
+DECL|function|__aarp_send_query
 r_static
 r_void
-id|aarp_send_query
+id|__aarp_send_query
 c_func
 (paren
 r_struct
@@ -230,7 +243,19 @@ id|aarp_eth_multicast
 id|ETH_ALEN
 )braket
 op_assign
-initialization_block
+(brace
+l_int|0x09
+comma
+l_int|0x00
+comma
+l_int|0x07
+comma
+l_int|0xFF
+comma
+l_int|0xFF
+comma
+l_int|0xFF
+)brace
 suffix:semicolon
 r_struct
 id|net_device
@@ -287,12 +312,23 @@ c_cond
 id|skb
 op_eq
 l_int|NULL
-op_logical_or
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|sat
 op_eq
 l_int|NULL
 )paren
 (brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -450,6 +486,7 @@ id|a-&gt;xmit_count
 op_increment
 suffix:semicolon
 )brace
+multiline_comment|/* This runs under aarp_lock and in softint context, so only&n; * atomic memory allocations can be used.&n; */
 DECL|function|aarp_send_reply
 r_static
 r_void
@@ -515,10 +552,8 @@ id|skb
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;Set up the buffer.&n;&t; */
 id|skb_reserve
 c_func
@@ -633,7 +668,6 @@ id|sha
 op_eq
 l_int|NULL
 )paren
-(brace
 id|memset
 c_func
 (paren
@@ -644,7 +678,6 @@ comma
 id|ETH_ALEN
 )paren
 suffix:semicolon
-)brace
 r_else
 id|memcpy
 c_func
@@ -744,7 +777,19 @@ id|aarp_eth_multicast
 id|ETH_ALEN
 )braket
 op_assign
-initialization_block
+(brace
+l_int|0x09
+comma
+l_int|0x00
+comma
+l_int|0x07
+comma
+l_int|0xFF
+comma
+l_int|0xFF
+comma
+l_int|0xFF
+)brace
 suffix:semicolon
 r_if
 c_cond
@@ -753,10 +798,8 @@ id|skb
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;Set up the buffer.&n;&t; */
 id|skb_reserve
 c_func
@@ -907,11 +950,11 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Handle an aarp timer expire&n; */
-DECL|function|aarp_expire_timer
+multiline_comment|/*&n; *&t;Handle an aarp timer expire&n; *&n; *&t;Must run under the aarp_lock.&n; */
+DECL|function|__aarp_expire_timer
 r_static
 r_void
-id|aarp_expire_timer
+id|__aarp_expire_timer
 c_func
 (paren
 r_struct
@@ -970,7 +1013,7 @@ id|n
 op_member_access_from_pointer
 id|next
 suffix:semicolon
-id|aarp_expire
+id|__aarp_expire
 c_func
 (paren
 id|t
@@ -978,6 +1021,7 @@ id|t
 suffix:semicolon
 )brace
 r_else
+(brace
 id|n
 op_assign
 op_amp
@@ -992,11 +1036,12 @@ id|next
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Kick all pending requests 5 times a second.&n; */
-DECL|function|aarp_kick
+)brace
+multiline_comment|/*&n; *&t;Kick all pending requests 5 times a second.&n; *&n; *&t;Must run under the aarp_lock.&n; */
+DECL|function|__aarp_kick
 r_static
 r_void
-id|aarp_kick
+id|__aarp_kick
 c_func
 (paren
 r_struct
@@ -1022,7 +1067,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* Expired - if this will be the 11th transmit, we delete&n;&t;&t;   instead */
+multiline_comment|/* Expired - if this will be the 11th transmit, we delete&n;&t;&t; * instead.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1051,7 +1096,7 @@ id|n
 op_member_access_from_pointer
 id|next
 suffix:semicolon
-id|aarp_expire
+id|__aarp_expire
 c_func
 (paren
 id|t
@@ -1060,7 +1105,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|aarp_send_query
+id|__aarp_send_query
 c_func
 (paren
 op_star
@@ -1082,11 +1127,11 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; *&t;A device has gone down. Take all entries referring to the device&n; *&t;and remove them.&n; */
-DECL|function|aarp_expire_device
+multiline_comment|/*&n; *&t;A device has gone down. Take all entries referring to the device&n; *&t;and remove them.&n; *&n; *&t;Must run under the aarp_lock.&n; */
+DECL|function|__aarp_expire_device
 r_static
 r_void
-id|aarp_expire_device
+id|__aarp_expire_device
 c_func
 (paren
 r_struct
@@ -1145,7 +1190,7 @@ id|n
 op_member_access_from_pointer
 id|next
 suffix:semicolon
-id|aarp_expire
+id|__aarp_expire
 c_func
 (paren
 id|t
@@ -1153,6 +1198,7 @@ id|t
 suffix:semicolon
 )brace
 r_else
+(brace
 id|n
 op_assign
 op_amp
@@ -1165,6 +1211,7 @@ op_member_access_from_pointer
 id|next
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/*&n; *&t;Handle the timer event &n; */
@@ -1181,8 +1228,13 @@ id|unused
 (brace
 r_int
 id|ct
-op_assign
-l_int|0
+suffix:semicolon
+id|spin_lock_bh
+c_func
+(paren
+op_amp
+id|aarp_lock
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -1199,7 +1251,7 @@ id|ct
 op_increment
 )paren
 (brace
-id|aarp_expire_timer
+id|__aarp_expire_timer
 c_func
 (paren
 op_amp
@@ -1209,7 +1261,7 @@ id|ct
 )braket
 )paren
 suffix:semicolon
-id|aarp_kick
+id|__aarp_kick
 c_func
 (paren
 op_amp
@@ -1219,7 +1271,7 @@ id|ct
 )braket
 )paren
 suffix:semicolon
-id|aarp_expire_timer
+id|__aarp_expire_timer
 c_func
 (paren
 op_amp
@@ -1229,7 +1281,7 @@ id|ct
 )braket
 )paren
 suffix:semicolon
-id|aarp_expire_timer
+id|__aarp_expire_timer
 c_func
 (paren
 op_amp
@@ -1240,6 +1292,13 @@ id|ct
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock_bh
+c_func
+(paren
+op_amp
+id|aarp_lock
+)paren
+suffix:semicolon
 id|mod_timer
 c_func
 (paren
@@ -1282,8 +1341,6 @@ id|ptr
 (brace
 r_int
 id|ct
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -1293,6 +1350,13 @@ op_eq
 id|NETDEV_DOWN
 )paren
 (brace
+id|spin_lock_bh
+c_func
+(paren
+op_amp
+id|aarp_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1308,7 +1372,7 @@ id|ct
 op_increment
 )paren
 (brace
-id|aarp_expire_device
+id|__aarp_expire_device
 c_func
 (paren
 op_amp
@@ -1320,7 +1384,7 @@ comma
 id|ptr
 )paren
 suffix:semicolon
-id|aarp_expire_device
+id|__aarp_expire_device
 c_func
 (paren
 op_amp
@@ -1332,7 +1396,7 @@ comma
 id|ptr
 )paren
 suffix:semicolon
-id|aarp_expire_device
+id|__aarp_expire_device
 c_func
 (paren
 op_amp
@@ -1345,12 +1409,19 @@ id|ptr
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock_bh
+c_func
+(paren
+op_amp
+id|aarp_lock
+)paren
+suffix:semicolon
 )brace
 r_return
 id|NOTIFY_DONE
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Create a new aarp entry.&n; */
+multiline_comment|/*&n; *&t;Create a new aarp entry.  This must use GFP_ATOMIC because it&n; *&t;runs while holding spinlocks.&n; */
 DECL|function|aarp_alloc
 r_static
 r_struct
@@ -1386,11 +1457,9 @@ id|a
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 l_int|NULL
 suffix:semicolon
-)brace
 id|skb_queue_head_init
 c_func
 (paren
@@ -1402,13 +1471,13 @@ r_return
 id|a
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Find an entry. We might return an expired but not yet purged entry. We&n; * don&squot;t care as it will do no harm.&n; */
-DECL|function|aarp_find_entry
+multiline_comment|/*&n; * Find an entry. We might return an expired but not yet purged entry. We&n; * don&squot;t care as it will do no harm.&n; *&n; * This must run under the aarp_lock.&n; */
+DECL|function|__aarp_find_entry
 r_static
 r_struct
 id|aarp_entry
 op_star
-id|aarp_find_entry
+id|__aarp_find_entry
 c_func
 (paren
 r_struct
@@ -1427,21 +1496,6 @@ op_star
 id|sat
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1463,25 +1517,18 @@ id|list-&gt;dev
 op_eq
 id|dev
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 id|list
 op_assign
 id|list-&gt;next
 suffix:semicolon
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_return
 id|list
 suffix:semicolon
 )brace
+multiline_comment|/* Called from the DDP code, and thus must be exported. */
 DECL|function|aarp_proxy_remove
 r_void
 id|aarp_proxy_remove
@@ -1516,9 +1563,16 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+id|spin_lock_bh
+c_func
+(paren
+op_amp
+id|aarp_lock
+)paren
+suffix:semicolon
 id|a
 op_assign
-id|aarp_find_entry
+id|__aarp_find_entry
 c_func
 (paren
 id|proxies
@@ -1536,18 +1590,27 @@ c_cond
 (paren
 id|a
 )paren
-(brace
 id|a-&gt;expires_at
 op_assign
-l_int|0
+id|jiffies
+op_minus
+l_int|1
+suffix:semicolon
+id|spin_unlock_bh
+c_func
+(paren
+op_amp
+id|aarp_lock
+)paren
 suffix:semicolon
 )brace
-)brace
-DECL|function|aarp_proxy_find
+multiline_comment|/* This must run under aarp_lock. */
+DECL|function|__aarp_proxy_find
+r_static
 r_struct
 id|at_addr
 op_star
-id|aarp_proxy_find
+id|__aarp_proxy_find
 c_func
 (paren
 r_struct
@@ -1561,6 +1624,11 @@ op_star
 id|sa
 )paren
 (brace
+r_struct
+id|at_addr
+op_star
+id|retval
+suffix:semicolon
 r_struct
 id|aarp_entry
 op_star
@@ -1579,9 +1647,13 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+id|retval
+op_assign
+l_int|NULL
+suffix:semicolon
 id|a
 op_assign
-id|aarp_find_entry
+id|__aarp_find_entry
 c_func
 (paren
 id|proxies
@@ -1601,11 +1673,12 @@ id|a
 op_ne
 l_int|NULL
 )paren
-r_return
+id|retval
+op_assign
 id|sa
 suffix:semicolon
 r_return
-l_int|NULL
+id|retval
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Probe a Phase 1 device or a device that requires its Net:Node to&n; * be set via an ioctl.&n; */
@@ -1705,12 +1778,10 @@ op_ne
 id|sa-&gt;sat_addr.s_node
 )paren
 )paren
-(brace
 id|iface-&gt;status
 op_or_assign
 id|ATIF_PROBE_FAIL
 suffix:semicolon
-)brace
 id|iface-&gt;address.s_net
 op_assign
 id|htons
@@ -1724,8 +1795,6 @@ op_assign
 id|sa-&gt;sat_addr.s_node
 suffix:semicolon
 )brace
-r_return
-suffix:semicolon
 )brace
 DECL|function|aarp_probe_network
 r_void
@@ -1839,6 +1908,8 @@ id|count
 suffix:semicolon
 r_int
 id|hash
+comma
+id|retval
 suffix:semicolon
 multiline_comment|/*&n;&t; * we don&squot;t currently support LocalTalk or PPP for proxy AARP;&n;&t; * if someone wants to try and add it, have fun&n;&t; */
 r_if
@@ -1849,10 +1920,8 @@ op_eq
 id|ARPHRD_LOCALTLK
 )paren
 r_return
-(paren
 op_minus
 id|EPROTONOSUPPORT
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1862,10 +1931,8 @@ op_eq
 id|ARPHRD_PPP
 )paren
 r_return
-(paren
 op_minus
 id|EPROTONOSUPPORT
-)paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * create a new AARP entry with the flags set to be published -- &n;&t; * we need this one to hang around even if it&squot;s in use&n;&t; */
 id|entry
@@ -1883,10 +1950,8 @@ op_eq
 l_int|NULL
 )paren
 r_return
-(paren
 op_minus
 id|ENOMEM
-)paren
 suffix:semicolon
 id|entry-&gt;expires_at
 op_assign
@@ -1908,6 +1973,13 @@ suffix:semicolon
 id|entry-&gt;dev
 op_assign
 id|atif-&gt;dev
+suffix:semicolon
+id|spin_lock_bh
+c_func
+(paren
+op_amp
+id|aarp_lock
+)paren
 suffix:semicolon
 id|hash
 op_assign
@@ -1961,12 +2033,26 @@ id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
+id|spin_unlock_bh
+c_func
+(paren
+op_amp
+id|aarp_lock
+)paren
+suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
 id|HZ
 op_div
 l_int|10
+)paren
+suffix:semicolon
+id|spin_lock_bh
+c_func
+(paren
+op_amp
+id|aarp_lock
 )paren
 suffix:semicolon
 r_if
@@ -1979,7 +2065,10 @@ id|ATIF_PROBE_FAIL
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * FIX ME: I think we need exclusive access to the status flags,&n;&t; * &t;&t;in case some one fails the probe while we&squot;re removing&n;&t; *&t;&t;the probe flag.&n;&t; */
+id|retval
+op_assign
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1991,14 +2080,15 @@ id|ATIF_PROBE_FAIL
 multiline_comment|/* free the entry */
 id|entry-&gt;expires_at
 op_assign
-l_int|0
+id|jiffies
+op_minus
+l_int|1
 suffix:semicolon
 multiline_comment|/* return network full */
-r_return
-(paren
+id|retval
+op_assign
 op_minus
 id|EADDRINUSE
-)paren
 suffix:semicolon
 )brace
 r_else
@@ -2010,8 +2100,15 @@ op_complement
 id|ATIF_PROBE
 suffix:semicolon
 )brace
+id|spin_unlock_bh
+c_func
+(paren
+op_amp
+id|aarp_lock
+)paren
+suffix:semicolon
 r_return
-l_int|1
+id|retval
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Send a DDP frame&n; */
@@ -2047,7 +2144,19 @@ id|ddp_eth_multicast
 id|ETH_ALEN
 )braket
 op_assign
-initialization_block
+(brace
+l_int|0x09
+comma
+l_int|0x00
+comma
+l_int|0x07
+comma
+l_int|0xFF
+comma
+l_int|0xFF
+comma
+l_int|0xFF
+)brace
 suffix:semicolon
 r_int
 id|hash
@@ -2056,10 +2165,6 @@ r_struct
 id|aarp_entry
 op_star
 id|a
-suffix:semicolon
-r_int
-r_int
-id|flags
 suffix:semicolon
 id|skb-&gt;nh.raw
 op_assign
@@ -2197,12 +2302,10 @@ c_cond
 (paren
 id|skb-&gt;sk
 )paren
-(brace
 id|skb-&gt;priority
 op_assign
 id|skb-&gt;sk-&gt;priority
 suffix:semicolon
-)brace
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -2239,12 +2342,10 @@ c_cond
 (paren
 id|skb-&gt;sk
 )paren
-(brace
 id|skb-&gt;priority
 op_assign
 id|skb-&gt;sk-&gt;priority
 suffix:semicolon
-)brace
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -2267,12 +2368,10 @@ id|dev-&gt;type
 op_ne
 id|ARPHRD_ETHER
 )paren
-(brace
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -2293,17 +2392,6 @@ op_mod
 id|AARP_HASH_SIZE
 op_minus
 l_int|1
-)paren
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Do we have a resolved entry ?&n;&t; */
@@ -2332,31 +2420,30 @@ c_cond
 (paren
 id|skb-&gt;sk
 )paren
-(brace
 id|skb-&gt;priority
 op_assign
 id|skb-&gt;sk-&gt;priority
 suffix:semicolon
-)brace
 id|dev_queue_xmit
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
 )brace
+id|spin_lock_bh
+c_func
+(paren
+op_amp
+id|aarp_lock
+)paren
+suffix:semicolon
 id|a
 op_assign
-id|aarp_find_entry
+id|__aarp_find_entry
 c_func
 (paren
 id|resolved
@@ -2382,9 +2469,11 @@ id|a-&gt;expires_at
 op_assign
 id|jiffies
 op_plus
+(paren
 id|sysctl_aarp_expiry_time
 op_star
 l_int|10
+)paren
 suffix:semicolon
 id|ddp_dl
 op_member_access_from_pointer
@@ -2415,10 +2504,11 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_bh
 c_func
 (paren
-id|flags
+op_amp
+id|aarp_lock
 )paren
 suffix:semicolon
 r_return
@@ -2428,7 +2518,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Do we have an unresolved entry: This is the less common path&n;&t; */
 id|a
 op_assign
-id|aarp_find_entry
+id|__aarp_find_entry
 c_func
 (paren
 id|unresolved
@@ -2459,10 +2549,11 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_bh
 c_func
 (paren
-id|flags
+op_amp
+id|aarp_lock
 )paren
 suffix:semicolon
 r_return
@@ -2486,10 +2577,11 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; *&t;Whoops slipped... good job it&squot;s an unreliable &n;&t;&t; *&t;protocol 8)&t;&n;&t;&t; */
-id|restore_flags
+id|spin_unlock_bh
 c_func
 (paren
-id|flags
+op_amp
+id|aarp_lock
 )paren
 suffix:semicolon
 r_return
@@ -2543,14 +2635,8 @@ suffix:semicolon
 id|unresolved_count
 op_increment
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Send an initial request for the address&n;&t; */
-id|aarp_send_query
+id|__aarp_send_query
 c_func
 (paren
 id|a
@@ -2564,7 +2650,6 @@ id|unresolved_count
 op_eq
 l_int|1
 )paren
-(brace
 id|mod_timer
 c_func
 (paren
@@ -2576,17 +2661,24 @@ op_plus
 id|sysctl_aarp_tick_time
 )paren
 suffix:semicolon
-)brace
+multiline_comment|/*&n;&t; *&t;Now finally, it is safe to drop the lock.&n;&t; */
+id|spin_unlock_bh
+c_func
+(paren
+op_amp
+id|aarp_lock
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Tell the ddp layer we have taken over for this frame.&n;&t; */
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;An entry in the aarp unresolved queue has become resolved. Send&n; *&t;all the frames queued under it.&n; */
-DECL|function|aarp_resolved
+multiline_comment|/*&n; *&t;An entry in the aarp unresolved queue has become resolved. Send&n; *&t;all the frames queued under it.&n; *&n; *&t;Must run under aarp_lock.&n; */
+DECL|function|__aarp_resolved
 r_static
 r_void
-id|aarp_resolved
+id|__aarp_resolved
 c_func
 (paren
 r_struct
@@ -2672,9 +2764,11 @@ id|a-&gt;expires_at
 op_assign
 id|jiffies
 op_plus
+(paren
 id|sysctl_aarp_expiry_time
 op_star
 l_int|10
+)paren
 suffix:semicolon
 id|ddp_dl
 op_member_access_from_pointer
@@ -2693,12 +2787,10 @@ c_cond
 (paren
 id|skb-&gt;sk
 )paren
-(brace
 id|skb-&gt;priority
 op_assign
 id|skb-&gt;sk-&gt;priority
 suffix:semicolon
-)brace
 id|dev_queue_xmit
 c_func
 (paren
@@ -2708,6 +2800,7 @@ suffix:semicolon
 )brace
 )brace
 r_else
+(brace
 id|list
 op_assign
 op_amp
@@ -2720,6 +2813,7 @@ op_member_access_from_pointer
 id|next
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/*&n; *&t;This is called by the SNAP driver whenever we see an AARP SNAP&n; *&t;frame. We currently only support Ethernet.&n; */
@@ -2772,10 +2866,6 @@ comma
 id|da
 suffix:semicolon
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|hash
 suffix:semicolon
 r_struct
@@ -2783,7 +2873,7 @@ id|atalk_iface
 op_star
 id|ifa
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;We only do Ethernet SNAP AARP&n;&t; */
+multiline_comment|/*&n;&t; *&t;We only do Ethernet SNAP AARP.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2843,6 +2933,7 @@ r_if
 c_cond
 (paren
 id|ea-&gt;function
+template_param
 id|AARP_PROBE
 op_logical_or
 id|ea-&gt;hw_len
@@ -2872,7 +2963,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Looks good&n;&t; */
+multiline_comment|/*&n;&t; *&t;Looks good.&n;&t; */
 id|hash
 op_assign
 id|ea-&gt;pa_src_node
@@ -2883,7 +2974,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Build an address&n;&t; */
+multiline_comment|/*&n;&t; *&t;Build an address.&n;&t; */
 id|sa.s_node
 op_assign
 id|ea-&gt;pa_src_node
@@ -2892,14 +2983,7 @@ id|sa.s_net
 op_assign
 id|ea-&gt;pa_src_net
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Process the packet&n;&t; */
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Check for replies of me&n;&t; */
+multiline_comment|/*&n;&t; *&t;Process the packet.&n;&t; *&t;Check for replies of me.&n;&t; */
 id|ifa
 op_assign
 id|atalk_find_dev
@@ -2916,12 +3000,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -2957,12 +3035,6 @@ id|ifa-&gt;status
 op_or_assign
 id|ATIF_PROBE_FAIL
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -2975,7 +3047,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; * Check for replies of proxy AARP entries&n;&t; */
-multiline_comment|/*&n;&t; * FIX ME: do we need a cli() here? &n;&t; * aarp_find_entry does one on its own, between saving and restoring flags, so&n;&t; * I don&squot;t think it is necessary, but I could be wrong -- it&squot;s happened before&n;&t; */
 id|da.s_node
 op_assign
 id|ea-&gt;pa_dst_node
@@ -2984,9 +3055,16 @@ id|da.s_net
 op_assign
 id|ea-&gt;pa_dst_net
 suffix:semicolon
+id|spin_lock_bh
+c_func
+(paren
+op_amp
+id|aarp_lock
+)paren
+suffix:semicolon
 id|a
 op_assign
-id|aarp_find_entry
+id|__aarp_find_entry
 c_func
 (paren
 id|proxies
@@ -3007,6 +3085,7 @@ id|a
 op_ne
 l_int|NULL
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -3019,13 +3098,14 @@ id|a-&gt;status
 op_or_assign
 id|ATIF_PROBE_FAIL
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * we do not respond to probe or request packets for &n;&t;&t;&t; * this address while we are probing this address&n;&t;&t;&t; */
-id|restore_flags
+id|spin_unlock_bh
 c_func
 (paren
-id|flags
+op_amp
+id|aarp_lock
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * we do not respond to probe or request packets for&n;&t;&t;&t; * this address while we are probing this address&n;&t;&t;&t; */
 id|kfree_skb
 c_func
 (paren
@@ -3035,6 +3115,7 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+)brace
 )brace
 r_switch
 c_cond
@@ -3052,25 +3133,17 @@ id|unresolved_count
 op_eq
 l_int|0
 )paren
-(brace
 multiline_comment|/* Speed up */
 r_break
 suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;&t;&t; *&t;Find the entry&t;&n;&t;&t;&t; */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* FIX ME: is this cli() necessary? aarp_find_entry does one on its own... */
+multiline_comment|/*&n;&t;&t;&t; *&t;Find the entry.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
 (paren
 id|a
 op_assign
-id|aarp_find_entry
+id|__aarp_find_entry
 c_func
 (paren
 id|unresolved
@@ -3087,15 +3160,15 @@ id|sa
 op_eq
 l_int|NULL
 op_logical_or
+(paren
 id|dev
 op_ne
 id|a-&gt;dev
 )paren
-(brace
+)paren
 r_break
 suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;&t;&t; *&t;We can fill one in - this is good&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;We can fill one in - this is good.&n;&t;&t;&t; */
 id|memcpy
 c_func
 (paren
@@ -3106,7 +3179,7 @@ comma
 id|ETH_ALEN
 )paren
 suffix:semicolon
-id|aarp_resolved
+id|__aarp_resolved
 c_func
 (paren
 op_amp
@@ -3127,7 +3200,6 @@ id|unresolved_count
 op_eq
 l_int|0
 )paren
-(brace
 id|mod_timer
 c_func
 (paren
@@ -3139,7 +3211,6 @@ op_plus
 id|sysctl_aarp_expiry_time
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_case
@@ -3157,10 +3228,10 @@ id|sa.s_net
 op_assign
 id|ea-&gt;pa_dst_net
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * see if we have a matching proxy&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * See if we have a matching proxy.&n;&t;&t;&t; */
 id|ma
 op_assign
-id|aarp_proxy_find
+id|__aarp_proxy_find
 c_func
 (paren
 id|dev
@@ -3184,7 +3255,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * we need to make a copy of the entry&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * We need to make a copy of the entry.&n;&t;&t;&t;&t; */
 id|da.s_node
 op_assign
 id|sa.s_node
@@ -3207,13 +3278,13 @@ op_eq
 id|AARP_PROBE
 )paren
 (brace
-multiline_comment|/* A probe implies someone trying to get an&n;&t;&t;&t;&t;   address. So as a precaution flush any&n;&t;&t;&t;&t;   entries we have for this address */
+multiline_comment|/* A probe implies someone trying to get an&n;&t;&t;&t;&t; * address. So as a precaution flush any&n;&t;&t;&t;&t; * entries we have for this address.&n;&t;&t;&t;&t; */
 r_struct
 id|aarp_entry
 op_star
 id|a
 op_assign
-id|aarp_find_entry
+id|__aarp_find_entry
 c_func
 (paren
 id|resolved
@@ -3233,7 +3304,7 @@ op_amp
 id|sa
 )paren
 suffix:semicolon
-multiline_comment|/* Make it expire next tick - that avoids us&n;&t;&t;&t;&t;   getting into a probe/flush/learn/probe/flush/learn&n;&t;&t;&t;&t;   cycle during probing of a slow to respond host addr */
+multiline_comment|/* Make it expire next tick - that avoids us&n;&t;&t;&t;&t; * getting into a probe/flush/learn/probe/flush/learn&n;&t;&t;&t;&t; * cycle during probing of a slow to respond host addr.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3241,14 +3312,12 @@ id|a
 op_ne
 l_int|NULL
 )paren
-(brace
 id|a-&gt;expires_at
 op_assign
 id|jiffies
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond
@@ -3257,10 +3326,8 @@ id|sa.s_node
 op_ne
 id|ma-&gt;s_node
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3272,10 +3339,8 @@ id|sa.s_net
 op_ne
 id|ma-&gt;s_net
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 id|sa.s_node
 op_assign
 id|ea-&gt;pa_src_node
@@ -3301,10 +3366,12 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|restore_flags
+suffix:semicolon
+id|spin_unlock_bh
 c_func
 (paren
-id|flags
+op_amp
+id|aarp_lock
 )paren
 suffix:semicolon
 id|kfree_skb
@@ -3323,7 +3390,13 @@ r_struct
 id|notifier_block
 id|aarp_notifier
 op_assign
-initialization_block
+(brace
+id|aarp_device_event
+comma
+l_int|NULL
+comma
+l_int|0
+)brace
 suffix:semicolon
 DECL|variable|aarp_snap_id
 r_static
@@ -3332,7 +3405,17 @@ id|aarp_snap_id
 (braket
 )braket
 op_assign
-initialization_block
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x80
+comma
+l_int|0xF3
+)brace
 suffix:semicolon
 DECL|function|aarp_proto_init
 r_void
@@ -3360,7 +3443,6 @@ id|aarp_rcv
 op_eq
 l_int|NULL
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -3368,7 +3450,6 @@ id|KERN_CRIT
 l_string|&quot;Unable to register AARP with SNAP.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 id|init_timer
 c_func
 (paren
@@ -3419,8 +3500,13 @@ id|dev
 (brace
 r_int
 id|ct
-op_assign
-l_int|0
+suffix:semicolon
+id|spin_lock_bh
+c_func
+(paren
+op_amp
+id|aarp_lock
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -3437,7 +3523,7 @@ id|ct
 op_increment
 )paren
 (brace
-id|aarp_expire_device
+id|__aarp_expire_device
 c_func
 (paren
 op_amp
@@ -3449,7 +3535,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-id|aarp_expire_device
+id|__aarp_expire_device
 c_func
 (paren
 op_amp
@@ -3461,7 +3547,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-id|aarp_expire_device
+id|__aarp_expire_device
 c_func
 (paren
 op_amp
@@ -3474,7 +3560,12 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-r_return
+id|spin_unlock_bh
+c_func
+(paren
+op_amp
+id|aarp_lock
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Called from proc fs&n; */
@@ -3529,6 +3620,13 @@ comma
 l_string|&quot;last_sent&quot;
 comma
 l_string|&quot;expires&quot;
+)paren
+suffix:semicolon
+id|spin_lock_bh
+c_func
+(paren
+op_amp
+id|aarp_lock
 )paren
 suffix:semicolon
 r_for
@@ -4179,6 +4277,13 @@ l_string|&quot;      proxy&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
+id|spin_unlock_bh
+c_func
+(paren
+op_amp
+id|aarp_lock
+)paren
+suffix:semicolon
 r_return
 id|len
 suffix:semicolon

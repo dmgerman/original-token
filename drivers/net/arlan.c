@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  Copyright (C) 1997 Cullen Jennings&n; *  Copyright (C) 1998 Elmer.Joandi@ut.ee, +37-255-13500        &n; *  Gnu Public License applies&n; * This module provides support for the Arlan 655 card made by Aironet&n; */
+multiline_comment|/*&n; *  Copyright (C) 1997 Cullen Jennings&n; *  Copyright (C) 1998 Elmer Joandiu, elmer@ylenurme.ee&n; *  Gnu Public License applies&n; * This module provides support for the Arlan 655 card made by Aironet&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;arlan.h&quot;
 DECL|variable|arlan_version
@@ -2908,6 +2908,36 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|priv-&gt;tx_last_sent
+OG
+id|priv-&gt;tx_last_cleared
+op_logical_and
+id|jiffies
+op_minus
+id|priv-&gt;tx_last_sent
+OG
+l_int|5
+op_star
+id|HZ
+)paren
+(brace
+id|arlan_command
+c_func
+(paren
+id|dev
+comma
+id|ARLAN_COMMAND_CLEAN_AND_RESET
+)paren
+suffix:semicolon
+id|priv-&gt;tx_last_cleared
+op_assign
+id|jiffies
+suffix:semicolon
+)brace
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -2931,7 +2961,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;Retranmit from timer &bslash;n&quot;
+l_string|&quot;Retransmit from timer &bslash;n&quot;
 )paren
 suffix:semicolon
 id|priv-&gt;ReTransmitRequested
@@ -6733,15 +6763,8 @@ comma
 id|ARLAN_COMMAND_CLEAN_AND_RESET
 )paren
 suffix:semicolon
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-id|netif_start_queue
-(paren
-id|dev
-)paren
-suffix:semicolon
+singleline_comment|// dev-&gt;trans_start = jiffies;
+singleline_comment|// netif_start_queue (dev);
 )brace
 DECL|function|arlan_tx
 r_static
@@ -6788,7 +6811,6 @@ c_func
 l_string|&quot;arlan_tx&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * If some higher layer thinks we&squot;ve missed an tx-done interrupt&n;&t; * we are passed NULL. Caution: dev_tint() handles the cli()/sti()&n;&t; * itself.&n;&t; */
 id|length
 op_assign
 id|ETH_ZLEN

@@ -250,18 +250,6 @@ op_star
 id|dir_ops
 suffix:semicolon
 multiline_comment|/* Opaque; default directory operations */
-DECL|member|put_super_callback
-r_void
-(paren
-op_star
-id|put_super_callback
-)paren
-(paren
-r_struct
-id|super_block
-op_star
-)paren
-suffix:semicolon
 DECL|member|private_data
 r_void
 op_star

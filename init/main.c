@@ -2082,7 +2082,7 @@ c_func
 id|mempages
 )paren
 suffix:semicolon
-id|kiobuf_init
+id|kiobuf_setup
 c_func
 (paren
 )paren

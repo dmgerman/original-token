@@ -1,19 +1,16 @@
 multiline_comment|/*&n; * linux/arch/ia64/kernel/time.c&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; * Copyright (C) 1999-2000 David Mosberger &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1999 Don Dugger &lt;don.dugger@intel.com&gt;&n; * Copyright (C) 1999-2000 VA Linux Systems&n; * Copyright (C) 1999-2000 Walt Drummond &lt;drummond@valinux.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/efi.h&gt;
-macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/machvec.h&gt;
+macro_line|#include &lt;asm/hw_irq.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/sal.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#ifdef CONFIG_KDB
-macro_line|# include &lt;linux/kdb.h&gt;
-macro_line|#endif
 r_extern
 id|rwlock_t
 id|xtime_lock
@@ -62,8 +59,32 @@ id|ip
 )paren
 (brace
 r_extern
+r_int
+r_int
+id|prof_cpu_mask
+suffix:semicolon
+r_extern
 r_char
 id|_stext
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+(paren
+l_int|1UL
+op_lshift
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+op_amp
+id|prof_cpu_mask
+)paren
+)paren
+r_return
 suffix:semicolon
 r_if
 c_cond
@@ -120,7 +141,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Return the number of micro-seconds that elapsed since the last&n; * update to jiffy.  The xtime_lock must be at least read-locked when&n; * calling this routine.&n; */
 r_static
-multiline_comment|/*inline*/
+r_inline
 r_int
 r_int
 DECL|function|gettimeoffset
@@ -575,7 +596,11 @@ l_int|0
 comma
 l_int|0
 comma
+id|ia64_task_regs
+c_func
+(paren
 id|current
+)paren
 )paren
 suffix:semicolon
 id|local_irq_restore
@@ -973,6 +998,26 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|variable|timer_irqaction
+r_static
+r_struct
+id|irqaction
+id|timer_irqaction
+op_assign
+(brace
+id|handler
+suffix:colon
+id|timer_interrupt
+comma
+id|flags
+suffix:colon
+id|SA_INTERRUPT
+comma
+id|name
+suffix:colon
+l_string|&quot;timer&quot;
+)brace
+suffix:semicolon
 r_void
 id|__init
 DECL|function|time_init
@@ -981,28 +1026,33 @@ id|time_init
 r_void
 )paren
 (brace
-multiline_comment|/*&n;&t; * Request the IRQ _before_ doing anything to cause that&n;&t; * interrupt to be posted.&n;&t; */
-r_if
-c_cond
-(paren
-id|request_irq
+multiline_comment|/* we can&squot;t do request_irq() here because the kmalloc() would fail... */
+id|irq_desc
+(braket
+id|TIMER_IRQ
+)braket
+dot
+id|status
+op_assign
+id|IRQ_DISABLED
+suffix:semicolon
+id|irq_desc
+(braket
+id|TIMER_IRQ
+)braket
+dot
+id|handler
+op_assign
+op_amp
+id|irq_type_ia64_internal
+suffix:semicolon
+id|setup_irq
 c_func
 (paren
 id|TIMER_IRQ
 comma
-id|timer_interrupt
-comma
-l_int|0
-comma
-l_string|&quot;timer&quot;
-comma
-l_int|NULL
-)paren
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;Could not allocate timer IRQ!&quot;
+op_amp
+id|timer_irqaction
 )paren
 suffix:semicolon
 id|efi_gettimeofday

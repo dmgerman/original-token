@@ -914,7 +914,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;global_restore_flags: %08lx (%08lx)&bslash;n&quot;
+l_string|&quot;global_restore_flags: %08lx (%08lx) from %p&bslash;n&quot;
 comma
 id|flags
 comma
@@ -926,6 +926,12 @@ id|flags
 op_minus
 l_int|1
 )braket
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
 )paren
 suffix:semicolon
 )brace

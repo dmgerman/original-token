@@ -15,6 +15,7 @@ DECL|macro|KIO_STATIC_PAGES
 mdefine_line|#define KIO_STATIC_PAGES&t;(KIO_MAX_ATOMIC_IO / (PAGE_SIZE &gt;&gt; 10) + 1)
 DECL|macro|KIO_MAX_SECTORS
 mdefine_line|#define KIO_MAX_SECTORS&t;&t;(KIO_MAX_ATOMIC_IO * 2)
+multiline_comment|/* The main kiobuf struct used for all our IO! */
 DECL|struct|kiobuf
 r_struct
 id|kiobuf
@@ -56,14 +57,6 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* If set, pages has been locked */
 multiline_comment|/* Always embed enough struct pages for 64k of IO */
-DECL|member|page_array
-r_int
-r_int
-id|page_array
-(braket
-id|KIO_STATIC_PAGES
-)braket
-suffix:semicolon
 DECL|member|map_array
 r_struct
 id|page
@@ -133,13 +126,66 @@ op_star
 id|iobuf
 )paren
 suffix:semicolon
+r_int
+id|lock_kiovec
+c_func
+(paren
+r_int
+id|nr
+comma
+r_struct
+id|kiobuf
+op_star
+id|iovec
+(braket
+)braket
+comma
+r_int
+id|wait
+)paren
+suffix:semicolon
+r_int
+id|unlock_kiovec
+c_func
+(paren
+r_int
+id|nr
+comma
+r_struct
+id|kiobuf
+op_star
+id|iovec
+(braket
+)braket
+)paren
+suffix:semicolon
 multiline_comment|/* fs/iobuf.c */
 r_void
 id|__init
-id|kiobuf_init
+id|kiobuf_setup
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_void
+id|kiobuf_init
+c_func
+(paren
+r_struct
+id|kiobuf
+op_star
+)paren
+suffix:semicolon
+r_void
+id|end_kio_request
+c_func
+(paren
+r_struct
+id|kiobuf
+op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_void

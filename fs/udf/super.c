@@ -285,26 +285,16 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* UDF filesystem type */
-DECL|variable|udf_fstype
 r_static
-r_struct
-id|file_system_type
+id|DECLARE_FSTYPE_DEV
+c_func
+(paren
 id|udf_fstype
-op_assign
-(brace
-id|name
-suffix:colon
+comma
 l_string|&quot;udf&quot;
 comma
-id|fs_flags
-suffix:colon
-id|FS_REQUIRES_DEV
-comma
-id|read_super
-suffix:colon
 id|udf_read_super
-comma
-)brace
+)paren
 suffix:semicolon
 multiline_comment|/* Superblock operations */
 DECL|variable|udf_sb_ops
@@ -6559,15 +6549,6 @@ id|uopt.umask
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Lock the module in memory (if applicable) */
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-id|lock_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
 id|memset
 c_func
 (paren
@@ -7117,12 +7098,6 @@ c_func
 id|sb
 )paren
 suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
 multiline_comment|/* Assign the root inode */
 multiline_comment|/* assign inodes by physical block number */
 multiline_comment|/* perhaps it&squot;s not extensible enough, but for now ... */
@@ -7248,14 +7223,6 @@ c_func
 (paren
 id|sb
 )paren
-suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -7508,8 +7475,6 @@ c_func
 (paren
 id|sb
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * udf_stat_fs&n; *&n; * PURPOSE&n; *&t;Return info about the filesystem.&n; *&n; * DESCRIPTION&n; *&t;Called by sys_statfs()&n; *&n; * HISTORY&n; *&t;July 1, 1997 - Andrew E. Mileski&n; *&t;Written, tested, and released.&n; */

@@ -91,21 +91,21 @@ mdefine_line|#define awc_RID_gen_BasicRate_10Mbps &t;&t;&t;{&amp;aironet4500_RID
 DECL|macro|awc_RID_gen_BasicRate_11Mbps
 mdefine_line|#define awc_RID_gen_BasicRate_11Mbps &t;&t;&t;{&amp;aironet4500_RID_Select_General_Config,0x0010, 8,1,1,0,1,0xff,0x96,&quot;BasicRate 11Mbps&quot;}
 DECL|macro|awc_RID_gen_Long_retry_limit
-mdefine_line|#define awc_RID_gen_Long_retry_limit &t;&t;&t;{&amp;aironet4500_RID_Select_General_Config,0x0018,16, 1,1,0,0,0,0,&quot;Short Retry Limit&quot;}
+mdefine_line|#define awc_RID_gen_Long_retry_limit &t;&t;&t;{&amp;aironet4500_RID_Select_General_Config,0x0018,16, 1,1,0,0,0xffff,0,&quot;Short Retry Limit&quot;}
 DECL|macro|awc_RID_gen_Short_retry_limit
-mdefine_line|#define awc_RID_gen_Short_retry_limit &t;&t;&t;{&amp;aironet4500_RID_Select_General_Config,0x001A,16, 1,1,0,0,0,0,&quot;Long Retry Limit&quot;}
+mdefine_line|#define awc_RID_gen_Short_retry_limit &t;&t;&t;{&amp;aironet4500_RID_Select_General_Config,0x001A,16, 1,1,0,0,0xffff,0,&quot;Long Retry Limit&quot;}
 DECL|macro|awc_RID_gen_Tx_MSDU_lifetime
-mdefine_line|#define awc_RID_gen_Tx_MSDU_lifetime &t;&t;&t;{&amp;aironet4500_RID_Select_General_Config,0x001C,16, 1,1000,0,0,0,0,&quot;TX MSDU Lifetime&quot;}
+mdefine_line|#define awc_RID_gen_Tx_MSDU_lifetime &t;&t;&t;{&amp;aironet4500_RID_Select_General_Config,0x001C,16, 1,1000,0,0,0xffff,0,&quot;TX MSDU Lifetime&quot;}
 DECL|macro|awc_RID_gen_Rx_MSDU_lifetime
-mdefine_line|#define awc_RID_gen_Rx_MSDU_lifetime &t;&t;&t;{&amp;aironet4500_RID_Select_General_Config,0x001E,16, 1,1000,0,0,0,0,&quot;RX MSDU Lifetime&quot;}
+mdefine_line|#define awc_RID_gen_Rx_MSDU_lifetime &t;&t;&t;{&amp;aironet4500_RID_Select_General_Config,0x001E,16, 1,1000,0,0,0xffff,0,&quot;RX MSDU Lifetime&quot;}
 DECL|macro|awc_RID_gen_Stationary
-mdefine_line|#define awc_RID_gen_Stationary &t;&t;&t;&t;{&amp;aironet4500_RID_Select_General_Config,0x0020,16, 1,1,0,0,0,0,&quot;Stationary&quot;}
+mdefine_line|#define awc_RID_gen_Stationary &t;&t;&t;&t;{&amp;aironet4500_RID_Select_General_Config,0x0020,16, 1,1,0,0,0xffff,0,&quot;Stationary&quot;}
 DECL|macro|awc_RID_gen_BC_MC_Ordering
-mdefine_line|#define awc_RID_gen_BC_MC_Ordering &t;&t;&t;{&amp;aironet4500_RID_Select_General_Config,0x0022,16, 1,1,0,0,0,0,&quot;Strictly order Bcast and Mcast&quot;}
+mdefine_line|#define awc_RID_gen_BC_MC_Ordering &t;&t;&t;{&amp;aironet4500_RID_Select_General_Config,0x0022,16, 1,1,0,0,0xffff,0,&quot;Strictly order Bcast and Mcast&quot;}
 DECL|macro|awc_RID_gen_Device_type
-mdefine_line|#define awc_RID_gen_Device_type &t;&t;&t;{&amp;aironet4500_RID_Select_General_Config,0x0024,16, 1,1,1,0,0xffff,0x0065,&quot;Radio Type PC4500&quot;}
+mdefine_line|#define awc_RID_gen_Device_type &t;&t;&t;{&amp;aironet4500_RID_Select_General_Config,0x0024,16, 1,1,1,0,0xffff,0x00,&quot;Radio Type&quot;}
 DECL|macro|awc_RID_gen_Reserved_0x0026
-mdefine_line|#define awc_RID_gen_Reserved_0x0026 &t;&t;&t;{&amp;aironet4500_RID_Select_General_Config,0x0026, 8,10,1,0,0,0,0,&quot;Reserved 0x0028&quot;}
+mdefine_line|#define awc_RID_gen_Reserved_0x0026 &t;&t;&t;{&amp;aironet4500_RID_Select_General_Config,0x0026, 8,10,1,0,0,0xff,0,&quot;Reserved0x28&quot;}
 singleline_comment|//SCANNING/ASSOCIATING
 DECL|macro|awc_RID_gen_ScanMode
 mdefine_line|#define awc_RID_gen_ScanMode&t;&t;&t;&t;awc_def_gen_RID(0x0030,&quot;ScanMode&quot;,&t;&t;16,0xf,0, NULL)
@@ -198,7 +198,7 @@ DECL|macro|awc_RID_gen_FastListenDelay
 mdefine_line|#define awc_RID_gen_FastListenDelay &t;&t;awc_def_gen_RID(0x005A,&quot;FastListenDelay&quot;,&t;16,0xffff,0,&quot;msek&quot;)&t;
 singleline_comment|//      0 default    200 kus    Time interval to delay before going to fast listen
 DECL|macro|awc_RID_gen_Reserved0x005C
-mdefine_line|#define awc_RID_gen_Reserved0x005C &t;&t;&t;awc_def_gen_RID(0x005C,&quot;Reserved0x005C&quot;,&t;32,0,0,&quot;&quot;)&t;
+mdefine_line|#define awc_RID_gen_Reserved0x005C &t;&t;&t;awc_def_gen_RID(0x005C,&quot;Reserved0x005C&quot;,&t;32,0xffffffff,0,&quot;&quot;)&t;
 singleline_comment|//
 singleline_comment|//ADHOC (or AP) OPERATION
 DECL|macro|awc_RID_gen_BeaconPeriod
@@ -291,7 +291,7 @@ DECL|macro|awc_RID_gen_ARLDelay
 mdefine_line|#define awc_RID_gen_ARLDelay &t;&t;&t;awc_def_gen_RID(0x0094,&quot;ARLDelay&quot;,&t;&t;16,0xffff,0,&quot;times&quot;)&t;
 singleline_comment|//       0 default    0xFFFF    0 selects the factory defaults. (which for now is
 DECL|macro|awc_RID_gen_Unused0x0096
-mdefine_line|#define awc_RID_gen_Unused0x0096 &t;&t;&t;awc_def_gen_RID(0x0096,&quot;Unused&quot;,&t;&t;16,0,0,&quot;&quot;)&t;
+mdefine_line|#define awc_RID_gen_Unused0x0096 &t;&t;&t;awc_def_gen_RID(0x0096,&quot;Reserved0x96&quot;,&t;&t;16,0xffff,0,&quot;&quot;)&t;
 singleline_comment|//
 DECL|macro|awc_RID_gen_MagicPacketAction
 mdefine_line|#define awc_RID_gen_MagicPacketAction &t;&t;awc_def_gen_RID(0x0098,&quot;MagicPacketAction&quot;,&t;8,0xff,0,&quot; hell knows what&quot;)&t;
@@ -378,21 +378,21 @@ mdefine_line|#define awc_RID_act_BasicRate_10Mbps &t;&t;&t;{&amp;aironet4500_RID
 DECL|macro|awc_RID_act_BasicRate_11Mbps
 mdefine_line|#define awc_RID_act_BasicRate_11Mbps &t;&t;&t;{&amp;aironet4500_RID_Select_Active_Config,0x0010, 8,1,1,0,1,0xff,0x96,&quot;BasicRate 11Mbps&quot;}
 DECL|macro|awc_RID_act_Long_retry_limit
-mdefine_line|#define awc_RID_act_Long_retry_limit &t;&t;{&amp;aironet4500_RID_Select_Active_Config,0x0018,16, 1,1,0,0,0,0,&quot;Short Retry Limit&quot;}
+mdefine_line|#define awc_RID_act_Long_retry_limit &t;&t;{&amp;aironet4500_RID_Select_Active_Config,0x0018,16, 1,1,0,0,0xffff,0,&quot;Short Retry Limit&quot;}
 DECL|macro|awc_RID_act_Short_retry_limit
-mdefine_line|#define awc_RID_act_Short_retry_limit &t;&t;{&amp;aironet4500_RID_Select_Active_Config,0x001A,16, 1,1,0,0,0,0,&quot;Long Retry Limit&quot;}
+mdefine_line|#define awc_RID_act_Short_retry_limit &t;&t;{&amp;aironet4500_RID_Select_Active_Config,0x001A,16, 1,1,0,0,0xffff,0,&quot;Long Retry Limit&quot;}
 DECL|macro|awc_RID_act_Tx_MSDU_lifetime
-mdefine_line|#define awc_RID_act_Tx_MSDU_lifetime &t;&t;{&amp;aironet4500_RID_Select_Active_Config,0x001C,16, 1,1000,0,0,0,0,&quot;TX MSDU Lifetime&quot;}
+mdefine_line|#define awc_RID_act_Tx_MSDU_lifetime &t;&t;{&amp;aironet4500_RID_Select_Active_Config,0x001C,16, 1,1000,0,0,0xffff,0,&quot;TX MSDU Lifetime&quot;}
 DECL|macro|awc_RID_act_Rx_MSDU_lifetime
-mdefine_line|#define awc_RID_act_Rx_MSDU_lifetime &t;&t;{&amp;aironet4500_RID_Select_Active_Config,0x001E,16, 1,1000,0,0,0,0,&quot;RX MSDU Lifetime&quot;}
+mdefine_line|#define awc_RID_act_Rx_MSDU_lifetime &t;&t;{&amp;aironet4500_RID_Select_Active_Config,0x001E,16, 1,1000,0,0,0xffff,0,&quot;RX MSDU Lifetime&quot;}
 DECL|macro|awc_RID_act_Stationary
-mdefine_line|#define awc_RID_act_Stationary &t;&t;&t;{&amp;aironet4500_RID_Select_Active_Config,0x0020,16, 1,1,0,0,0,0,&quot;Stationary&quot;}
+mdefine_line|#define awc_RID_act_Stationary &t;&t;&t;{&amp;aironet4500_RID_Select_Active_Config,0x0020,16, 1,1,0,0,0xffff,0,&quot;Stationary&quot;}
 DECL|macro|awc_RID_act_BC_MC_Ordering
-mdefine_line|#define awc_RID_act_BC_MC_Ordering &t;&t;&t;{&amp;aironet4500_RID_Select_Active_Config,0x0022,16, 1,1,0,0,0,0,&quot;Strictly order Bcast and Mcast&quot;}
+mdefine_line|#define awc_RID_act_BC_MC_Ordering &t;&t;&t;{&amp;aironet4500_RID_Select_Active_Config,0x0022,16, 1,1,0,0,0xffff,0,&quot;Strictly order Bcast and Mcast&quot;}
 DECL|macro|awc_RID_act_Device_type
 mdefine_line|#define awc_RID_act_Device_type &t;&t;&t;{&amp;aironet4500_RID_Select_Active_Config,0x0024,16, 1,1,1,0,0xffff,0x0065,&quot;Radio Type PC4500&quot;}
 DECL|macro|awc_RID_act_Reserved_0x0026
-mdefine_line|#define awc_RID_act_Reserved_0x0026 &t;&t;&t;{&amp;aironet4500_RID_Select_Active_Config,0x0026, 8,10,1,0,0,0,0,&quot;Reserved 0x0028&quot;}
+mdefine_line|#define awc_RID_act_Reserved_0x0026 &t;&t;&t;{&amp;aironet4500_RID_Select_Active_Config,0x0026, 8,10,1,0,0,0xff,0,&quot;Reserved0x28&quot;}
 singleline_comment|//SCANNING/ASSOCIATING
 DECL|macro|awc_RID_act_ScanMode
 mdefine_line|#define awc_RID_act_ScanMode&t;&t;&t;awc_def_act_RID(0x0030,&quot;ScanMode&quot;,&t;&t;16,0xf,0, NULL)
@@ -581,7 +581,7 @@ DECL|macro|awc_RID_act_ARLDelay
 mdefine_line|#define awc_RID_act_ARLDelay &t;&t;&t;awc_def_act_RID(0x0094,&quot;ARLDelay&quot;,&t;&t;16,0xffff,0,&quot;times&quot;)&t;
 singleline_comment|//       0 default    0xFFFF    0 selects the factory defaults. (which for now is
 DECL|macro|awc_RID_act_Unused0x0096
-mdefine_line|#define awc_RID_act_Unused0x0096 &t;&t;awc_def_act_RID(0x0096,&quot;Unused&quot;,&t;&t;16,0,0,&quot;&quot;)&t;
+mdefine_line|#define awc_RID_act_Unused0x0096 &t;&t;awc_def_act_RID(0x0096,&quot;Reserved0x96&quot;,&t;&t;16,0xffff,0,&quot;&quot;)&t;
 singleline_comment|//
 DECL|macro|awc_RID_act_MagicPacketAction
 mdefine_line|#define awc_RID_act_MagicPacketAction &t;&t;awc_def_act_RID(0x0098,&quot;MagicPacketAction&quot;,&t;8,0xff,0,&quot; hell knows what&quot;)&t;
@@ -607,13 +607,19 @@ mdefine_line|#define awc_RID_SSIDlen2 &t;&t;&t;awc_def_SSID_RID(0x0024,&quot;SSI
 singleline_comment|//      0      The length of the SSID2 byte string.
 DECL|macro|awc_RID_SSID2
 mdefine_line|#define awc_RID_SSID2 &t;&t;&t;&t;awc_def_SSID_RID(0x0026,&quot;SSID2&quot;,&t;&t;255,0,0,&quot;&quot;) &t;
-singleline_comment|//   0&squot;s    The identifier uniquely identifying the wireless system.
+singleline_comment|//   
 DECL|macro|awc_RID_SSIDlen3
 mdefine_line|#define awc_RID_SSIDlen3 &t;&t;&t;awc_def_SSID_RID(0x0046,&quot;SSIDlen3&quot;,&t;&t;16,0xffff,0,&quot;&quot;)&t;
 singleline_comment|//      0      The length of the SSID3 byte string.
 DECL|macro|awc_RID_SSID3
 mdefine_line|#define awc_RID_SSID3 &t;&t;&t;&t;awc_def_SSID_RID(0x0048,&quot;SSID3&quot;,&t;&t;255,0,0,&quot;&quot;)&t;
-singleline_comment|//    0&squot;s    The identifier uniquely identifying the wireless system.
+singleline_comment|//    
+DECL|macro|awc_RID_SSID1hex
+mdefine_line|#define awc_RID_SSID1hex &t;&t;&t;&t;awc_def_SSID_RID(0x0004,&quot;SSID1hex&quot;,&t;&t;255,0xff,0,&quot;&quot;)&t;
+DECL|macro|awc_RID_SSID2hex
+mdefine_line|#define awc_RID_SSID2hex &t;&t;&t;&t;awc_def_SSID_RID(0x0026,&quot;SSID2hex&quot;,&t;&t;255,0xff,0,&quot;&quot;) &t;
+DECL|macro|awc_RID_SSID3hex
+mdefine_line|#define awc_RID_SSID3hex &t;&t;&t;&t;awc_def_SSID_RID(0x0048,&quot;SSID3hex&quot;,&t;&t;255,0xff,0,&quot;&quot;)&t;
 singleline_comment|// AP list
 DECL|macro|awc_RID_AP_List_RidLen
 mdefine_line|#define awc_RID_AP_List_RidLen &t;&t;&t;awc_def_AP_List_RID(0x0000,&quot;RidLen&quot;,&t;&t;16,0xffff,0,&quot;&quot;)&t;&t;

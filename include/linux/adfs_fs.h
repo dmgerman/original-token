@@ -212,12 +212,5 @@ l_int|511
 suffix:semicolon
 )brace
 macro_line|#endif
-r_extern
-r_int
-id|init_adfs_fs
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#endif
 eof

@@ -83,21 +83,16 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/*================ File-local variables ================*/
-DECL|variable|hfs_fs
 r_static
-r_struct
-id|file_system_type
+id|DECLARE_FSTYPE_DEV
+c_func
+(paren
 id|hfs_fs
-op_assign
-(brace
+comma
 l_string|&quot;hfs&quot;
 comma
-id|FS_REQUIRES_DEV
-comma
 id|hfs_read_super
-comma
-l_int|NULL
-)brace
+)paren
 suffix:semicolon
 multiline_comment|/*================ File-local functions ================*/
 multiline_comment|/* &n; * hfs_read_inode()&n; *&n; * this doesn&squot;t actually do much. hfs_iget actually fills in the &n; * necessary inode information.&n; */
@@ -254,8 +249,6 @@ id|sb-&gt;s_dev
 comma
 id|BLOCK_SIZE
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * hfs_statfs()&n; *&n; * This is the statfs() entry in the super_operations structure for&n; * HFS filesystems.  The purpose is to return various data about the&n; * filesystem.&n; *&n; * changed f_files/f_ffree to reflect the fs_ablock/free_ablocks.&n; */
@@ -1583,15 +1576,6 @@ r_goto
 id|bail3
 suffix:semicolon
 )brace
-multiline_comment|/* in case someone tries to unload the module while we wait on I/O */
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-id|lock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
 multiline_comment|/* set the device driver to 512-byte blocks */
 id|set_blocksize
 c_func
@@ -1876,12 +1860,6 @@ op_amp
 id|hfs_dentry_operations
 suffix:semicolon
 multiline_comment|/* everything&squot;s okay */
-id|unlock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
 r_return
 id|s
 suffix:semicolon
@@ -1921,20 +1899,8 @@ comma
 id|BLOCK_SIZE
 )paren
 suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|bail3
 suffix:colon
-id|s-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon

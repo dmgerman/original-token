@@ -30,7 +30,7 @@ op_star
 id|pbulk_transfer_t
 suffix:semicolon
 DECL|macro|DABUSB_MINOR
-mdefine_line|#define DABUSB_MINOR 64
+mdefine_line|#define DABUSB_MINOR 240&t;&t;/* some unassigned USB minor */
 DECL|macro|DABUSB_VERSION
 mdefine_line|#define DABUSB_VERSION 0x1000
 DECL|macro|IOCTL_DAB_BULK

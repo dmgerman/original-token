@@ -796,11 +796,6 @@ op_assign
 op_amp
 id|awc_pcmcia_close
 suffix:semicolon
-id|netif_start_queue
-(paren
-id|dev
-)paren
-suffix:semicolon
 id|link-&gt;priv
 op_assign
 id|dev

@@ -281,6 +281,9 @@ id|bootmap_start
 comma
 id|bootmap_size
 suffix:semicolon
+id|u64
+id|progress
+suffix:semicolon
 multiline_comment|/*&n;&t; * The secondary bootstrap loader passes us the boot&n;&t; * parameters at the beginning of the ZERO_PAGE, so let&squot;s&n;&t; * stash away those values before ZERO_PAGE gets cleared out.&n;&t; */
 id|memcpy
 c_func
@@ -545,6 +548,11 @@ id|dummy_con
 suffix:semicolon
 macro_line|# endif
 macro_line|#endif
+id|paging_init
+c_func
+(paren
+)paren
+suffix:semicolon
 id|platform_setup
 c_func
 (paren

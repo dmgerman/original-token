@@ -5,25 +5,16 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/efs_fs.h&gt;
 macro_line|#include &lt;linux/efs_vh.h&gt;
 macro_line|#include &lt;linux/efs_fs_sb.h&gt;
-DECL|variable|efs_fs_type
 r_static
-r_struct
-id|file_system_type
+id|DECLARE_FSTYPE_DEV
+c_func
+(paren
 id|efs_fs_type
-op_assign
-(brace
+comma
 l_string|&quot;efs&quot;
 comma
-multiline_comment|/* filesystem name */
-id|FS_REQUIRES_DEV
-comma
-multiline_comment|/* fs_flags */
 id|efs_read_super
-comma
-multiline_comment|/* entry function pointer */
-l_int|NULL
-multiline_comment|/* next */
-)brace
+)paren
 suffix:semicolon
 DECL|variable|efs_superblock_operations
 r_static
@@ -695,14 +686,6 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-id|lock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
 id|sb
 op_assign
 id|SUPER_INFO
@@ -921,12 +904,6 @@ id|EFS_ROOTINODE
 )paren
 )paren
 suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -973,20 +950,8 @@ id|s
 suffix:semicolon
 id|out_no_fs_ul
 suffix:colon
-id|unlock_super
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
 id|out_no_fs
 suffix:colon
-id|s-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -1002,8 +967,6 @@ op_star
 id|s
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 )brace
 DECL|function|efs_statfs
 r_int

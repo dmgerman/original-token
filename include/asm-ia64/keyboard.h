@@ -5,7 +5,7 @@ multiline_comment|/*&n; * This file contains the ia-64 architecture specific key
 macro_line|# ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|KEYBOARD_IRQ
-mdefine_line|#define KEYBOARD_IRQ&t;&t;&t;1
+mdefine_line|#define KEYBOARD_IRQ&t;&t;&t;isa_irq_to_vector(1)
 DECL|macro|DISABLE_KBD_DURING_INTERRUPTS
 mdefine_line|#define DISABLE_KBD_DURING_INTERRUPTS&t;0
 r_extern
@@ -142,7 +142,7 @@ DECL|macro|kbd_pause
 mdefine_line|#define kbd_pause() do { } while(0)
 multiline_comment|/*&n; * Machine specific bits for the PS/2 driver&n; */
 DECL|macro|AUX_IRQ
-mdefine_line|#define AUX_IRQ 12
+mdefine_line|#define AUX_IRQ&t;&t;&t;&t;isa_irq_to_vector(12)
 DECL|macro|aux_request_irq
 mdefine_line|#define aux_request_irq(hand, dev_id)&t;&t;&t;&t;&t;&bslash;&n;&t;request_irq(AUX_IRQ, hand, SA_SHIRQ, &quot;PS/2 Mouse&quot;, dev_id)
 DECL|macro|aux_free_irq
