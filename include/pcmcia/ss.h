@@ -113,6 +113,10 @@ DECL|typedef|socket_state_t
 )brace
 id|socket_state_t
 suffix:semicolon
+r_extern
+id|socket_state_t
+id|dead_socket
+suffix:semicolon
 multiline_comment|/* Socket configuration flags */
 DECL|macro|SS_PWR_AUTO
 mdefine_line|#define SS_PWR_AUTO&t;0x0010
@@ -235,6 +239,30 @@ DECL|struct|pccard_operations
 r_struct
 id|pccard_operations
 (brace
+DECL|member|init
+r_int
+(paren
+op_star
+id|init
+)paren
+(paren
+r_int
+r_int
+id|sock
+)paren
+suffix:semicolon
+DECL|member|suspend
+r_int
+(paren
+op_star
+id|suspend
+)paren
+(paren
+r_int
+r_int
+id|sock
+)paren
+suffix:semicolon
 DECL|member|register_callback
 r_int
 (paren

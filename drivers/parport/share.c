@@ -355,6 +355,22 @@ id|port
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* Ask kmod for some lowlevel drivers. */
+DECL|function|get_lowlevel_driver
+r_static
+r_void
+id|get_lowlevel_driver
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* There is no actual module called this: you should set&n;&t; * up an alias for modutils. */
+id|request_module
+(paren
+l_string|&quot;parport_lowlevel&quot;
+)paren
+suffix:semicolon
+)brace
 DECL|function|parport_register_driver
 r_int
 id|parport_register_driver
@@ -408,14 +424,13 @@ id|drv-&gt;attach
 id|port
 )paren
 suffix:semicolon
-multiline_comment|/* For compatibility with 2.2, check the (obsolete) parport_lowlevel&n;&t; * alias in case some people haven&squot;t changed to post-install rules&n;&t; * yet.  parport_enumerate (itself deprecated) will printk a&n;&t; * friendly reminder. */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|portlist
 )paren
-id|parport_enumerate
+id|get_lowlevel_driver
 (paren
 )paren
 suffix:semicolon
@@ -459,6 +474,11 @@ op_eq
 id|arg
 )paren
 (brace
+r_struct
+id|parport
+op_star
+id|port
+suffix:semicolon
 id|spin_lock
 (paren
 op_amp
@@ -485,6 +505,25 @@ op_amp
 id|driverlist_lock
 )paren
 suffix:semicolon
+multiline_comment|/* Call the driver&squot;s detach routine for each&n;&t;&t;&t; * port to clean up any resources that the&n;&t;&t;&t; * attach routine acquired. */
+r_for
+c_loop
+(paren
+id|port
+op_assign
+id|portlist
+suffix:semicolon
+id|port
+suffix:semicolon
+id|port
+op_assign
+id|port-&gt;next
+)paren
+id|drv-&gt;detach
+(paren
+id|port
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -498,7 +537,7 @@ id|drv-&gt;next
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Return a list of all the ports we know about. */
+multiline_comment|/* Return a list of all the ports we know about.  This function shouldn&squot;t&n; * really be used -- use parport_register_driver instead. */
 DECL|function|parport_enumerate
 r_struct
 id|parport
@@ -509,33 +548,16 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* Attempt to make things work on 2.2 systems. */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|portlist
 )paren
-(brace
-id|request_module
+id|get_lowlevel_driver
 (paren
-l_string|&quot;parport_lowlevel&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|portlist
-)paren
-multiline_comment|/* The user has a parport_lowlevel alias in&n;&t;&t;&t; * modules.conf. Warn them that it won&squot;t work&n;&t;&t;&t; * for long. */
-id|printk
-(paren
-id|KERN_WARNING
-l_string|&quot;parport: &squot;parport_lowlevel&squot; is deprecated; &quot;
-l_string|&quot;see parport.txt&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 r_return
 id|portlist
 suffix:semicolon

@@ -100,8 +100,8 @@ DECL|macro|__FINIT
 mdefine_line|#define __FINIT
 DECL|macro|__INITDATA
 mdefine_line|#define __INITDATA
-multiline_comment|/* Not sure what version aliases were introduced in, but certainly in 2.95.  */
-macro_line|#if __GNUC__ &gt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 95)
+multiline_comment|/* Not sure what version aliases were introduced in, but certainly in 2.91.66.  */
+macro_line|#if __GNUC__ &gt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 91)
 DECL|macro|module_init
 mdefine_line|#define module_init(x)&t;int init_module(void) __attribute__((alias(#x)));
 DECL|macro|module_exit

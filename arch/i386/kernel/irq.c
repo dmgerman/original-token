@@ -2474,6 +2474,10 @@ r_int
 r_int
 id|delay
 suffix:semicolon
+r_int
+r_int
+id|val
+suffix:semicolon
 multiline_comment|/*&n;&t; * first, enable any unassigned irqs&n;&t; */
 id|spin_lock_irq
 c_func
@@ -2586,6 +2590,10 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Now filter out any obviously spurious interrupts&n;&t; */
+id|val
+op_assign
+l_int|0
+suffix:semicolon
 id|spin_lock_irq
 c_func
 (paren
@@ -2669,6 +2677,19 @@ id|i
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|i
+OL
+l_int|32
+)paren
+id|val
+op_or_assign
+l_int|1
+op_lshift
+id|i
+suffix:semicolon
 )brace
 id|spin_unlock_irq
 c_func
@@ -2678,7 +2699,7 @@ id|irq_controller_lock
 )paren
 suffix:semicolon
 r_return
-l_int|0x12345678
+id|val
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Return a mask of triggered interrupts (this&n; * can handle only legacy ISA interrupts).&n; */
@@ -2690,7 +2711,7 @@ c_func
 (paren
 r_int
 r_int
-id|unused
+id|val
 )paren
 (brace
 r_int
@@ -2699,28 +2720,6 @@ suffix:semicolon
 r_int
 r_int
 id|mask
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|unused
-op_ne
-l_int|0x12345678
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;Bad IRQ probe from %lx&bslash;n&quot;
-comma
-(paren
-op_amp
-id|unused
-)paren
-(braket
-op_minus
-l_int|1
-)braket
-)paren
 suffix:semicolon
 id|mask
 op_assign
@@ -2822,6 +2821,8 @@ id|irq_controller_lock
 suffix:semicolon
 r_return
 id|mask
+op_amp
+id|val
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Return the one interrupt that triggered (this can&n; * handle any interrupt source)&n; */
@@ -2832,7 +2833,7 @@ c_func
 (paren
 r_int
 r_int
-id|unused
+id|val
 )paren
 (brace
 r_int
@@ -2841,28 +2842,6 @@ comma
 id|irq_found
 comma
 id|nr_irqs
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|unused
-op_ne
-l_int|0x12345678
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;Bad IRQ probe from %lx&bslash;n&quot;
-comma
-(paren
-op_amp
-id|unused
-)paren
-(braket
-op_minus
-l_int|1
-)braket
-)paren
 suffix:semicolon
 id|nr_irqs
 op_assign
