@@ -102,12 +102,18 @@ op_star
 id|rt_dev
 suffix:semicolon
 multiline_comment|/* forcing the device at add&t;*/
-DECL|member|rt_mtu
+DECL|member|rt_mss
 r_int
 r_int
-id|rt_mtu
+id|rt_mss
 suffix:semicolon
 multiline_comment|/* per route MTU/Window */
+DECL|member|rt_window
+r_int
+r_int
+id|rt_window
+suffix:semicolon
+multiline_comment|/* Window clamping */
 )brace
 suffix:semicolon
 DECL|macro|RTF_UP
@@ -122,7 +128,14 @@ DECL|macro|RTF_DYNAMIC
 mdefine_line|#define&t;RTF_DYNAMIC&t;0x0010&t;&t;/* created dyn. (by redirect)&t;  */
 DECL|macro|RTF_MODIFIED
 mdefine_line|#define&t;RTF_MODIFIED&t;0x0020&t;&t;/* modified dyn. (by redirect)&t;  */
+DECL|macro|RTF_MSS
+mdefine_line|#define RTF_MSS&t;&t;0x0040&t;&t;/* specific MSS for this route&t;  */
+DECL|macro|RTF_WINDOW
+mdefine_line|#define RTF_WINDOW&t;0x0080&t;&t;/* per route window clamping&t;  */
+multiline_comment|/*&n; *&t;REMOVE THESE BY 1.2.0 !!!!!!!!!!!!!!!!!&n; */
 DECL|macro|RTF_MTU
-mdefine_line|#define RTF_MTU&t;&t;0x0040&t;&t;/* specific MSS for this route&t;  */
+mdefine_line|#define&t;RTF_MTU&t;&t;RTF_MSS
+DECL|macro|rt_mtu
+mdefine_line|#define rt_mtu&t;&t;rt_mss&t;&t;
 macro_line|#endif&t;/* _LINUX_ROUTE_H */
 eof

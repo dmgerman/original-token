@@ -257,6 +257,10 @@ c_cond
 id|EISA_bus
 )paren
 (brace
+r_static
+r_int
+id|eisa_addr
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -273,6 +277,10 @@ op_add_assign
 l_int|0x1000
 )paren
 (brace
+id|eisa_addr
+op_assign
+id|ioaddr
+suffix:semicolon
 multiline_comment|/* Check the standard EISA ID register for an encoded &squot;3Com&squot;. */
 r_if
 c_cond

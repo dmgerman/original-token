@@ -34,6 +34,8 @@ DECL|macro|ARPHRD_RSRVD
 mdefine_line|#define ARPHRD_RSRVD&t;260&t;&t;/* Notional KISS type &t;&t;*/
 DECL|macro|ARPHRD_ADAPT
 mdefine_line|#define ARPHRD_ADAPT&t;264
+DECL|macro|ARPHRD_PPP
+mdefine_line|#define ARPHRD_PPP&t;512
 multiline_comment|/* ARP protocol opcodes. */
 DECL|macro|ARPOP_REQUEST
 mdefine_line|#define&t;ARPOP_REQUEST&t;1&t;&t;/* ARP request&t;&t;&t;*/

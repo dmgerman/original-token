@@ -3280,6 +3280,7 @@ op_plus
 id|BIOS
 )paren
 suffix:semicolon
+macro_line|#ifdef does_not_work_for_everybody_with_scsi_but_helps_ibm_vp
 r_if
 c_cond
 (paren
@@ -3297,6 +3298,7 @@ id|drive
 id|NR_HD
 op_increment
 suffix:semicolon
+macro_line|#endif
 id|BIOS
 op_add_assign
 l_int|16

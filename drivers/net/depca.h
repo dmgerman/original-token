@@ -8,8 +8,12 @@ DECL|macro|DEPCA_DATA
 mdefine_line|#define DEPCA_DATA  ioaddr+0x04   /* LANCE registers&squot; data port */
 DECL|macro|DEPCA_ADDR
 mdefine_line|#define DEPCA_ADDR  ioaddr+0x06   /* LANCE registers&squot; address port */
+DECL|macro|DEPCA_HBASE
+mdefine_line|#define DEPCA_HBASE ioaddr+0x08   /* EISA high memory base address reg. */
 DECL|macro|DEPCA_PROM
 mdefine_line|#define DEPCA_PROM  ioaddr+0x0c   /* Ethernet address ROM data port */
+DECL|macro|DEPCA_CNFG
+mdefine_line|#define DEPCA_CNFG  ioaddr+0x0c   /* EISA Configuration port */
 DECL|macro|DEPCA_RBSA
 mdefine_line|#define DEPCA_RBSA  ioaddr+0x0e   /* RAM buffer starting address (2k buff.) */
 multiline_comment|/*&n;** These are LANCE registers addressable through DEPCA_ADDR &n;*/
@@ -34,6 +38,8 @@ DECL|macro|RBE
 mdefine_line|#define RBE      &t;0x0010&t;/* Remote Boot Enable (1-&gt;net boot) */
 DECL|macro|AAC
 mdefine_line|#define AAC      &t;0x0008  /* Address ROM Address Counter (1-&gt;enable) */
+DECL|macro|_128KB
+mdefine_line|#define _128KB      &t;0x0008  /* 128kB Network RAM (1-&gt;enable) */
 DECL|macro|IM
 mdefine_line|#define IM       &t;0x0004&t;/* Interrupt Mask (1-&gt;mask) */
 DECL|macro|IEN
@@ -146,9 +152,34 @@ DECL|macro|TMD3_LCAR
 mdefine_line|#define TMD3_LCAR    0x0800&t;/* Loss of CARrier */
 DECL|macro|TMD3_RTRY
 mdefine_line|#define TMD3_RTRY    0x0400&t;/* ReTRY error */
+multiline_comment|/* &n;** EISA configuration Register (CNFG) bit definitions &n;*/
+DECL|macro|TIMEOUT
+mdefine_line|#define TIMEOUT       &t;0x0100&t;/* 0:2.5 mins, 1: 30 secs */
+DECL|macro|REMOTE
+mdefine_line|#define REMOTE      &t;0x0080  /* Remote Boot Enable -&gt; 1 */
+DECL|macro|IRQ11
+mdefine_line|#define IRQ11       &t;0x0040  /* Enable -&gt; 1 */
+DECL|macro|IRQ10
+mdefine_line|#define IRQ10    &t;0x0020&t;/* Enable -&gt; 1 */
+DECL|macro|IRQ9
+mdefine_line|#define IRQ9    &t;0x0010&t;/* Enable -&gt; 1 */
+DECL|macro|IRQ5
+mdefine_line|#define IRQ5      &t;0x0008  /* Enable -&gt; 1 */
+DECL|macro|BUFF
+mdefine_line|#define BUFF     &t;0x0004&t;/* 0: 64kB or 128kB, 1: 32kB */
+DECL|macro|PADR16
+mdefine_line|#define PADR16   &t;0x0002&t;/* RAM on 64kB boundary */
+DECL|macro|PADR17
+mdefine_line|#define PADR17    &t;0x0001&t;/* RAM on 128kB boundary */
 multiline_comment|/*&n;** Miscellaneous&n;*/
 DECL|macro|MASK_INTERRUPTS
 mdefine_line|#define MASK_INTERRUPTS   1
 DECL|macro|UNMASK_INTERRUPTS
 mdefine_line|#define UNMASK_INTERRUPTS 0
+DECL|macro|EISA_EN
+mdefine_line|#define EISA_EN         0x0001   /* Enable EISA bus buffers */
+DECL|macro|DEPCA_EISA_ID
+mdefine_line|#define DEPCA_EISA_ID   ioaddr+0x80   /* ID long word for EISA card */
+DECL|macro|DEPCA_EISA_CTRL
+mdefine_line|#define DEPCA_EISA_CTRL ioaddr+0x84   /* Control word for EISA card */
 eof

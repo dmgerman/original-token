@@ -263,6 +263,11 @@ r_int
 r_int
 id|max_window
 suffix:semicolon
+DECL|member|window_clamp
+r_int
+r_int
+id|window_clamp
+suffix:semicolon
 DECL|member|num
 r_int
 r_int

@@ -881,6 +881,8 @@ comma
 id|dev
 comma
 l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_break
@@ -947,6 +949,8 @@ comma
 id|icmph-&gt;un.gateway
 comma
 id|dev
+comma
+l_int|0
 comma
 l_int|0
 )paren

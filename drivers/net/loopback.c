@@ -316,6 +316,8 @@ multiline_comment|/* New-style flags. */
 id|dev-&gt;flags
 op_assign
 id|IFF_LOOPBACK
+op_or
+id|IFF_BROADCAST
 suffix:semicolon
 id|dev-&gt;family
 op_assign

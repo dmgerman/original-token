@@ -325,6 +325,15 @@ l_string|&quot;MAXTOR&quot;
 comma
 l_string|&quot;XT-8760S&quot;
 comma
+l_string|&quot;B6B&quot;
+)brace
+comma
+multiline_comment|/* Locks-up when LUN &gt; 0 is polled */
+(brace
+l_string|&quot;MAXTOR&quot;
+comma
+l_string|&quot;XT-8760S&quot;
+comma
 l_string|&quot;B7B&quot;
 )brace
 comma

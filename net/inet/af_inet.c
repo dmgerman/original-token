@@ -2969,9 +2969,11 @@ id|sock-&gt;state
 op_eq
 id|SS_CONNECTING
 op_logical_and
+id|tcp_connected
+c_func
+(paren
 id|sk-&gt;state
-op_eq
-id|TCP_ESTABLISHED
+)paren
 )paren
 (brace
 id|sock-&gt;state

@@ -14,6 +14,8 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
+macro_line|#include &lt;linux/segment.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/*&n; * Define this if things work differently on a i386 and a i486:&n; * it will (on a i486) warn about kernel memory accesses that are&n; * done without a &squot;verify_area(VERIFY_WRITE,..)&squot;&n; */
 DECL|macro|CONFIG_TEST_VERIFY_AREA
 macro_line|#undef CONFIG_TEST_VERIFY_AREA
@@ -3385,6 +3387,23 @@ r_struct
 id|vm_area_struct
 op_star
 id|vma
+suffix:semicolon
+multiline_comment|/* If the current user space is mapped to kernel space (for the&n;&t; * case where we use a fake user buffer with get_fs/set_fs()) we&n;&t; * don&squot;t expect to find the address in the user vm map.&n;&t; */
+r_if
+c_cond
+(paren
+id|get_fs
+c_func
+(paren
+)paren
+op_eq
+id|get_ds
+c_func
+(paren
+)paren
+)paren
+r_return
+l_int|0
 suffix:semicolon
 r_for
 c_loop

@@ -4706,16 +4706,7 @@ id|is_frag
 )paren
 suffix:semicolon
 macro_line|#else
-id|printk
-c_func
-(paren
-l_string|&quot;Machine %lx tried to use us as a forwarder to %lx but we have forwarding disabled!&bslash;n&quot;
-comma
-id|iph-&gt;saddr
-comma
-id|iph-&gt;daddr
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(&quot;Machine %lx tried to use us as a forwarder to %lx but we have forwarding disabled!&bslash;n&quot;,&n;&t;&t;&t;iph-&gt;saddr,iph-&gt;daddr);*/
 id|ip_statistics.IpInAddrErrors
 op_increment
 suffix:semicolon
