@@ -1907,6 +1907,16 @@ c_func
 (paren
 id|INTEL
 comma
+id|INTEL_82441
+comma
+l_string|&quot;82441FX Natoma&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
 id|INTEL_82439
 comma
 l_string|&quot;82439HX Triton II&quot;
@@ -1919,7 +1929,7 @@ id|INTEL
 comma
 id|INTEL_82371SB_0
 comma
-l_string|&quot;82371SB Triton II PIIX&quot;
+l_string|&quot;82371SB Natoma/Triton II PIIX&quot;
 )paren
 comma
 id|DEVICE
@@ -1929,7 +1939,7 @@ id|INTEL
 comma
 id|INTEL_82371SB_1
 comma
-l_string|&quot;82371SB Triton II PIIX&quot;
+l_string|&quot;82371SB Natoma/Triton II PIIX&quot;
 )paren
 comma
 id|DEVICE

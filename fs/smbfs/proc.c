@@ -8838,7 +8838,7 @@ r_if
 c_cond
 (paren
 id|server-&gt;protocol
-OG
+op_ge
 id|PROTOCOL_LANMAN1
 )paren
 (brace

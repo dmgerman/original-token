@@ -23721,7 +23721,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
-multiline_comment|/*&n;**&t;Copy formatted profile informations into the input buffer.&n;*/
+multiline_comment|/*&n;**&t;Copy formatted profile information into the input buffer.&n;*/
 DECL|function|ncr_host_info
 r_static
 r_int
@@ -23768,7 +23768,7 @@ c_func
 op_amp
 id|info
 comma
-l_string|&quot;General informations:&bslash;n&quot;
+l_string|&quot;General information:&bslash;n&quot;
 )paren
 suffix:semicolon
 id|copy_info
@@ -23860,7 +23860,7 @@ c_func
 op_amp
 id|info
 comma
-l_string|&quot;Profiling informations:&bslash;n&quot;
+l_string|&quot;Profiling information:&bslash;n&quot;
 )paren
 suffix:semicolon
 id|copy_info

@@ -2287,15 +2287,17 @@ id|sb_devc
 op_star
 id|devc
 suffix:semicolon
-r_int
-id|n
-suffix:semicolon
 r_char
 id|name
 (braket
 l_int|100
 )braket
 suffix:semicolon
+macro_line|#ifndef NO_SB_IRQ_TEST
+r_int
+id|n
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Check if we had detected a SB device earlier&n; */
 id|DDB
 (paren
@@ -2515,6 +2517,7 @@ l_string|&quot;This is a genuine SB Pro&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifndef NO_SB_IRQ_TEST
 r_for
 c_loop
 (paren
@@ -2560,7 +2563,7 @@ id|devc-&gt;irq_ok
 op_logical_and
 id|i
 OL
-l_int|10000000
+l_int|10000
 suffix:semicolon
 id|i
 op_increment
@@ -2602,6 +2605,7 @@ id|devc-&gt;irq
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 id|request_region
 (paren
 id|hw_config-&gt;io_base

@@ -1,5 +1,5 @@
 multiline_comment|/*----------------------------------------------------------------*/
-multiline_comment|/*&n;   Qlogic linux driver - work in progress. No Warranty express or implied.&n;   Use at your own risk.  Support Tort Reform so you won&squot;t have to read all&n;   these silly disclaimers.&n;&n;   Copyright 1994, Tom Zerucha.   &n;   zerucha@shell.portal.com&n;&n;   Additional Code, and much appreciated help by&n;   Michael A. Griffith&n;   grif@cs.ucr.edu&n;&n;   Thanks to Eric Youngdale and Dave Hinds for loadable module and PCMCIA&n;   help respectively, and for suffering through my foolishness during the&n;   debugging process.&n;&n;   Reference Qlogic FAS408 Technical Manual, 53408-510-00A, May 10, 1994&n;   (you can reference it, but it is incomplete and inaccurate in places)&n;&n;   Version 0.44 5/7/96 - kernel 1.2.0+, pcmcia 2.5.4+&n;&n;   Functions as standalone, loadable, and PCMCIA driver, the latter from&n;   Dave Hind&squot;s PCMCIA package.&n;&n;   Redistributable under terms of the GNU Public License&n;&n;*/
+multiline_comment|/*&n;   Qlogic linux driver - work in progress. No Warranty express or implied.&n;   Use at your own risk.  Support Tort Reform so you won&squot;t have to read all&n;   these silly disclaimers.&n;&n;   Copyright 1994, Tom Zerucha.   &n;   zerucha@shell.portal.com&n;&n;   Additional Code, and much appreciated help by&n;   Michael A. Griffith&n;   grif@cs.ucr.edu&n;&n;   Thanks to Eric Youngdale and Dave Hinds for loadable module and PCMCIA&n;   help respectively, and for suffering through my foolishness during the&n;   debugging process.&n;&n;   Reference Qlogic FAS408 Technical Manual, 53408-510-00A, May 10, 1994&n;   (you can reference it, but it is incomplete and inaccurate in places)&n;&n;   Version 0.45 6/9/96 - kernel 1.2.0+&n;&n;   Functions as standalone, loadable, and PCMCIA driver, the latter from&n;   Dave Hind&squot;s PCMCIA package.&n;&n;   Redistributable under terms of the GNU Public License&n;&n;*/
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* Configuration */
 multiline_comment|/* Set the following to 2 to use normal interrupt (active high/totempole-&n;   tristate), otherwise use 0 (REQUIRED FOR PCMCIA) for active low, open&n;   drain */
@@ -2848,7 +2848,7 @@ id|qbase
 comma
 l_int|0x10
 comma
-l_string|&quot;qlogic&quot;
+l_string|&quot;qlogicfas&quot;
 )paren
 suffix:semicolon
 id|hreg
@@ -2894,7 +2894,7 @@ c_func
 (paren
 id|qinfo
 comma
-l_string|&quot;Qlogicfas Driver version 0.44, chip %02X at %03X, IRQ %d, TPdma:%d&quot;
+l_string|&quot;Qlogicfas Driver version 0.45, chip %02X at %03X, IRQ %d, TPdma:%d&quot;
 comma
 id|qltyp
 comma
