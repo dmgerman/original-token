@@ -132,6 +132,8 @@ id|p
 id|count
 op_assign
 id|high_memory
+op_plus
+id|PAGE_SIZE
 op_minus
 id|p
 suffix:semicolon

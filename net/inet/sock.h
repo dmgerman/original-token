@@ -68,6 +68,16 @@ r_int
 r_int
 id|fin_seq
 suffix:semicolon
+DECL|member|urg_seq
+r_int
+r_int
+id|urg_seq
+suffix:semicolon
+DECL|member|urg_data
+r_int
+r_int
+id|urg_data
+suffix:semicolon
 multiline_comment|/*&n;   * Not all are volatile, but some are, so we&n;   * might as well say they all are.&n;   */
 DECL|member|inuse
 r_volatile
@@ -287,12 +297,6 @@ r_volatile
 r_int
 r_int
 id|packets_out
-suffix:semicolon
-DECL|member|urg
-r_volatile
-r_int
-r_int
-id|urg
 suffix:semicolon
 DECL|member|shutdown
 r_volatile

@@ -230,9 +230,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  urg = %d shutdown=%d&bslash;n&quot;
-comma
-id|sk-&gt;urg
+l_string|&quot;  shutdown=%d&bslash;n&quot;
 comma
 id|sk-&gt;shutdown
 )paren
@@ -3193,6 +3191,14 @@ id|sk-&gt;fin_seq
 op_assign
 l_int|0
 suffix:semicolon
+id|sk-&gt;urg_seq
+op_assign
+l_int|0
+suffix:semicolon
+id|sk-&gt;urg_data
+op_assign
+l_int|0
+suffix:semicolon
 id|sk-&gt;proc
 op_assign
 l_int|0
@@ -3257,10 +3263,6 @@ op_assign
 l_int|1
 suffix:semicolon
 id|sk-&gt;shutdown
-op_assign
-l_int|0
-suffix:semicolon
-id|sk-&gt;urg
 op_assign
 l_int|0
 suffix:semicolon

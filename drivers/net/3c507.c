@@ -1,12 +1,12 @@
 multiline_comment|/* 3c507.c: An EtherLink16 device driver for Linux. */
-multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorported herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;Thanks go to jennings@Montrouge.SMR.slb.com ( Patrick Jennings)&n;&t;and jrs@world.std.com (Rick Sladkey) for testing and bugfixes.&n;&n;&t;Things remaining to do:&n;&t;Verify that the tx and rx buffers don&squot;t have fencepost errors.&n;&t;Move the theory of operation and memory map documentation.&n;&t;The statistics need to be updated correctly.&n;*/
+multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorported herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;Thanks go to jennings@Montrouge.SMR.slb.com ( Patrick Jennings)&n;&t;and jrs@world.std.com (Rick Sladkey) for testing and bugfixes.&n;&t;Mark Salazar &lt;leslie@access.digex.net&gt; made the changes for cards with&n;&t;only 16K packet buffers.&n;&n;&t;Things remaining to do:&n;&t;Verify that the tx and rx buffers don&squot;t have fencepost errors.&n;&t;Move the theory of operation and memory map documentation.&n;&t;The statistics need to be updated correctly.&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c507.c:v0.03 10/27/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;3c507.c:v0.99-15f 2/17/94 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n;  Sources:&n;&t;This driver wouldn&squot;t have been written with the availability of the&n;&t;Crynwr driver source code.&t;It provided a known-working implementation&n;&t;that filled in the gaping holes of the Intel documention.  Three cheers&n;&t;for Russ Nelson.&n;&n;&t;Intel Microcommunications Databook, Vol. 1, 1990. It provides just enough&n;&t;info that the casual reader might think that it documents the i82586.&n;*/
@@ -178,6 +178,9 @@ DECL|macro|iSCB_CBL
 mdefine_line|#define iSCB_CBL&t;&t;0xC&t;/* Command BLock offset. */
 DECL|macro|iSCB_RFA
 mdefine_line|#define iSCB_RFA&t;&t;0xE&t;/* Rx Frame Area offset. */
+multiline_comment|/*  Since the 3c507 maps the shared memory window so that the last byte is&n;&t;at 82586 address FFFF, the first byte is at 82586 address 0, 16K, 32K, or&n;&t;48K cooresponding to window sizes of 64K, 48K, 32K and 16K respectively. &n;&t;We can account for this be setting the &squot;SBC Base&squot; entry in the ISCP table&n;&t;below for all the 16 bit offset addresses, and also adding the &squot;SCB Base&squot;&n;&t;value to all 24 bit physical addresses (in the SCP table and the TX and RX&n;&t;Buffer Descriptors).&n;&t;&t;&t;&t;&t;-Mark&t;&n;&t;*/
+DECL|macro|SCB_BASE
+mdefine_line|#define SCB_BASE&t;&t;((unsigned)64*1024 - (dev-&gt;mem_end - dev-&gt;mem_start))
 multiline_comment|/*&n;  What follows in &squot;init_words[]&squot; is the &quot;program&quot; that is downloaded to the&n;  82586 memory.&t; It&squot;s mostly tables and command blocks, and starts at the&n;  reset address 0xfffff6.  This is designed to be similar to the EtherExpress,&n;  thus the unusual location of the SCB at 0x0008.&n;&n;  Even with the additional &quot;don&squot;t care&quot; values, doing it this way takes less&n;  program space than initializing the individual tables, and I feel it&squot;s much&n;  cleaner.&n;&n;  The databook is particularly useless for the first two structures, I had&n;  to use the Crynwr driver as an example.&n;&n;   The memory setup is as follows:&n;   */
 DECL|macro|CONFIG_CMD
 mdefine_line|#define CONFIG_CMD&t;0x0018
@@ -211,27 +214,30 @@ DECL|macro|RX_BUF_SIZE
 mdefine_line|#define RX_BUF_SIZE &t;(1518+14+18)&t;/* packet+header+RBD */
 DECL|macro|RX_BUF_END
 mdefine_line|#define RX_BUF_END&t;&t;(dev-&gt;mem_end - dev-&gt;mem_start)
-multiline_comment|/*&n;  That&squot;s it: only 86 bytes to set up the beast, including every extra&n;  command available.  The 170 byte buffer at DUMP_DATA is shared between the&n;  Dump command (called only by the diagnostic program) and the SetMulticastList&n;  command. &n;&n;  To complete the memory setup you only have to write the station address at&n;  SA_OFFSET and create the Tx &amp; Rx buffer lists.&n;&n;  The Tx command chain and buffer list is setup as follows:&n;  A Tx command table, with the data buffer pointing to...&n;  A Tx data buffer descriptor.  The packet is in a single buffer, rather than&n;     chaining together several smaller buffers.&n;  A NoOp command, which initially points to itself,&n;  And the packet data.&n;&n;  A transmit is done by filling in the Tx command table and data buffer,&n;  re-writing the NoOp command, and finally changing the offset of the last&n;  command to point to the current Tx command.  When the Tx command is finished,&n;  it jumps to the NoOp, when it loops until the next Tx command changes the&n;  &quot;link offset&quot; in the NoOp.  This way the 82586 never has to go through the&n;  slow restart sequence.&n;&n;  The Rx buffer list is set up in the obvious ring structure.  We have enough&n;  memory (and low enough interrupt latency) that we can avoid the complicated&n;  Rx buffer linked lists by alway associating a full-size Rx data buffer with&n;  each Rx data frame.&n;&n;  I current use four transmit buffers starting at TX_BUF_START (0x0100), and&n;  use the rest of memory, from RX_BUF_START to RX_BUF_END, for Rx buffers.&n;&n;  */
+multiline_comment|/*&n;  That&squot;s it: only 86 bytes to set up the beast, including every extra&n;  command available.  The 170 byte buffer at DUMP_DATA is shared between the&n;  Dump command (called only by the diagnostic program) and the SetMulticastList&n;  command. &n;&n;  To complete the memory setup you only have to write the station address at&n;  SA_OFFSET and create the Tx &amp; Rx buffer lists.&n;&n;  The Tx command chain and buffer list is setup as follows:&n;  A Tx command table, with the data buffer pointing to...&n;  A Tx data buffer descriptor.  The packet is in a single buffer, rather than&n;&t;chaining together several smaller buffers.&n;  A NoOp command, which initially points to itself,&n;  And the packet data.&n;&n;  A transmit is done by filling in the Tx command table and data buffer,&n;  re-writing the NoOp command, and finally changing the offset of the last&n;  command to point to the current Tx command.  When the Tx command is finished,&n;  it jumps to the NoOp, when it loops until the next Tx command changes the&n;  &quot;link offset&quot; in the NoOp.  This way the 82586 never has to go through the&n;  slow restart sequence.&n;&n;  The Rx buffer list is set up in the obvious ring structure.  We have enough&n;  memory (and low enough interrupt latency) that we can avoid the complicated&n;  Rx buffer linked lists by alway associating a full-size Rx data buffer with&n;  each Rx data frame.&n;&n;  I current use four transmit buffers starting at TX_BUF_START (0x0100), and&n;  use the rest of memory, from RX_BUF_START to RX_BUF_END, for Rx buffers.&n;&n;  */
 DECL|variable|init_words
+r_int
 r_int
 id|init_words
 (braket
 )braket
 op_assign
 (brace
+multiline_comment|/*&t;System Configuration Pointer (SCP). */
 l_int|0x0000
 comma
 multiline_comment|/* Set bus size to 16 bits. */
-l_int|0x0000
-comma
-l_int|0x0000
-comma
-multiline_comment|/* Set control mailbox (SCB) addr. */
 l_int|0
 comma
 l_int|0
 comma
-multiline_comment|/* pad to 0x000000. */
+multiline_comment|/* pad words. */
+l_int|0x0000
+comma
+l_int|0x0000
+comma
+multiline_comment|/* ISCP phys addr, set in init_82586_mem(). */
+multiline_comment|/*&t;Intermediate System Configuration Pointer (ISCP). */
 l_int|0x0001
 comma
 multiline_comment|/* Status word that&squot;s cleared when init is done. */
@@ -242,6 +248,7 @@ comma
 l_int|0
 comma
 multiline_comment|/* SCB offset, (skip, skip) */
+multiline_comment|/* System Control Block (SCB). */
 l_int|0
 comma
 l_int|0xf000
@@ -472,7 +479,7 @@ id|dev
 )paren
 suffix:semicolon
 "&f;"
-multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, (detachable devices only) alloate space for the&n;   device and return success.&n;   */
+multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;&t;If dev-&gt;base_addr == 0, probe all likely locations.&n;&t;If dev-&gt;base_addr == 1, always return failure.&n;&t;If dev-&gt;base_addr == 2, (detachable devices only) alloate space for the&n;&t;device and return success.&n;&t;*/
 r_int
 DECL|function|el16_probe
 id|el16_probe
@@ -1053,22 +1060,6 @@ l_int|12
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|size
-op_ne
-l_int|0x10000
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Warning, this version probably only works with 64K of&quot;
-l_string|&quot;shared memory.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
 id|dev-&gt;mem_start
 op_assign
 id|base
@@ -2331,6 +2322,12 @@ op_star
 id|write_ptr
 suffix:semicolon
 r_int
+r_int
+id|SCB_base
+op_assign
+id|SCB_BASE
+suffix:semicolon
+r_int
 id|cur_rxbuf
 op_assign
 id|lp-&gt;rx_head
@@ -2453,6 +2450,8 @@ op_assign
 id|cur_rxbuf
 op_plus
 l_int|0x20
+op_plus
+id|SCB_base
 suffix:semicolon
 multiline_comment|/* Buffer: Address low */
 op_star
@@ -2571,25 +2570,22 @@ op_plus
 id|MISC_CTRL
 )paren
 suffix:semicolon
-multiline_comment|/* Write the words at 0xfff6 (address-aliased to 0xfffff6). */
-macro_line|#ifdef old
-id|memcpy
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|dev-&gt;mem_start
-op_plus
-l_int|0xfff6
-comma
+multiline_comment|/* Fix the ISCP address and base. */
 id|init_words
-comma
-l_int|10
-)paren
+(braket
+l_int|3
+)braket
+op_assign
+id|SCB_BASE
 suffix:semicolon
-macro_line|#else
+id|init_words
+(braket
+l_int|7
+)braket
+op_assign
+id|SCB_BASE
+suffix:semicolon
+multiline_comment|/* Write the words at 0xfff6 (address-aliased to 0xfffff6). */
 id|memcpy
 c_func
 (paren
@@ -2606,7 +2602,6 @@ comma
 l_int|10
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Write the words at 0x0000. */
 id|memcpy
 c_func
@@ -2906,6 +2901,8 @@ op_assign
 id|tx_block
 op_plus
 l_int|22
+op_plus
+id|SCB_BASE
 suffix:semicolon
 multiline_comment|/* Buffer follows the NoOp command. */
 op_star
@@ -3467,5 +3464,5 @@ id|rx_tail
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -I/usr/src/linux/drivers/net -Wall -Wstrict-prototypes -O6 -m486 -c 3c507.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -I/usr/src/linux/drivers/net -Wall -Wstrict-prototypes -O6 -m486 -c 3c507.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; *  c-indent-level: 4&n; * End:&n; */
 eof

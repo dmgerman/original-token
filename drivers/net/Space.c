@@ -459,7 +459,7 @@ macro_line|#ifndef ETH0_IRQ
 DECL|macro|ETH0_IRQ
 macro_line|# define ETH0_IRQ 0
 macro_line|#endif
-multiline_comment|/* &quot;eth0&quot; defaults to autoprobe, other use a base of &quot;-0x20&quot;, &quot;don&squot;t probe&quot;.&n;   Enable these with boot-time setup. 0.99pl13+ can optionally autoprobe. */
+multiline_comment|/* &quot;eth0&quot; defaults to autoprobe (== 0), other use a base of 0xffe0 (== -0x20),&n;   which means &quot;don&squot;t probe&quot;.  These entries exist to only to provide empty&n;   slots which may be enabled at boot-time. */
 DECL|variable|eth3_dev
 r_static
 r_struct

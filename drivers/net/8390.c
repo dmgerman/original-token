@@ -1,15 +1,15 @@
 multiline_comment|/* 8390.c: A general NS8390 ethernet driver core for linux. */
-multiline_comment|/*&n;  Written 1992,1993 by Donald Becker.&n;  &n;  Copyright 1993 United States Government as represented by the&n;  Director, National Security Agency.&t; This software may be used and&n;  distributed according to the terms of the GNU Public License,&n;  incorporated herein by reference.&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  &n;  The Author may be reached as becker@super.org or&n;  C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;  */
+multiline_comment|/*&n;  Written 1992,1993 by Donald Becker.&n;  &n;  Copyright 1993 United States Government as represented by the&n;  Director, National Security Agency.&t; This software may be used and&n;  distributed according to the terms of the GNU Public License,&n;  incorporated herein by reference.&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;  &n;  The Author may be reached as becker@super.org or&n;  C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;  */
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;8390.c:v0.99-13f 10/18/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;8390.c:v0.99-15e 2/16/94 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/*&n;  Braindamage remaining:&n;  &n;  Ethernet devices should use a chr_drv device interface, with ioctl()s to&n;  configure the card, bring the interface up or down, allow access to&n;  statistics, and maybe read() and write() access to raw packets.&n;  This won&squot;t be done until after Linux 1.00.&n;  &n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;  The NE* programming info came from the Crynwr packet driver, and figuring&n;  out that the those boards are similar to the NatSemi evaluation board&n;  described in AN-729.&t;Thanks NS, no thanks to Novell/Eagle.&n;  */
+multiline_comment|/*&n;  Braindamage remaining:&n;  Much of this code should be cleaned up post-1.00, but it has been&n;  extensively beta tested in the current form.&n;  &n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;  The NE* programming info came from the Crynwr packet driver, and figuring&n;  out that the those boards are similar to the NatSemi evaluation board&n;  described in AN-729.&t;Thanks NS, no thanks to Novell/Eagle.&n;  */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -34,12 +34,7 @@ macro_line|#include &quot;skbuff.h&quot;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;arp.h&quot;
 macro_line|#include &quot;8390.h&quot;
-macro_line|#ifndef HAVE_ALLOC_SKB
-DECL|macro|alloc_skb
-mdefine_line|#define alloc_skb(size, priority) (struct sk_buff *) kmalloc(size,priority)
-DECL|macro|kfree_skbmem
-mdefine_line|#define kfree_skbmem(addr, size) kfree_s(addr,size)
-macro_line|#endif
+multiline_comment|/* These are the operational function interfaces to board-specific&n;   routines.&n;&t;void reset_8390(struct device *dev)&n;&t;&t;Resets the board associated with DEV, including a hardware reset of&n;&t;&t;the 8390.  This is only called when there is a transmit timeout, and&n;&t;&t;it is always followed by 8390_init().&n;&t;void block_output(struct device *dev, int count, const unsigned char *buf,&n;&t;&t;&t;&t;&t;  int start_page)&n;&t;&t;Write the COUNT bytes of BUF to the packet buffer at START_PAGE.  The&n;&t;&t;&quot;page&quot; value uses the 8390&squot;s 256-byte pages.&n;&t;int block_input(struct device *dev, int count, char *buf, int ring_offset)&n;&t;&t;Read COUNT bytes from the packet buffer into BUF.  Start reading from&n;&t;&t;RING_OFFSET, the address as the 8390 sees it.  The first read will&n;&t;&t;always be the 4 byte, page aligned 8390 header.  *If* there is a&n;&t;&t;subsequent read, it will be of the rest of the packet.&n;*/
 DECL|macro|ei_reset_8390
 mdefine_line|#define ei_reset_8390 (ei_local-&gt;reset_8390)
 DECL|macro|ei_block_output
@@ -62,10 +57,15 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Max number of packets received at one Intr. */
-multiline_comment|/*static int high_water_mark = 0;*/
+multiline_comment|/* Max number of packets received at one Intr.&n;   Current this may only be examined by a kernel debugger. */
+DECL|variable|high_water_mark
+r_static
+r_int
+id|high_water_mark
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Index to functions. */
-multiline_comment|/* Put in the device structure. */
 r_int
 id|ei_open
 c_func
@@ -76,7 +76,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* Dispatch from interrupts. */
+multiline_comment|/* Put into the device structure. */
 r_void
 id|ei_interrupt
 c_func
@@ -85,6 +85,7 @@ r_int
 id|reg_ptr
 )paren
 suffix:semicolon
+multiline_comment|/* Installed as the interrupt handler. */
 r_static
 r_void
 id|ei_tx_intr
@@ -227,9 +228,8 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 r_return
-l_int|1
+id|ENXIO
 suffix:semicolon
-multiline_comment|/* ENXIO would be more accurate. */
 )brace
 id|irq2dev_map
 (braket
@@ -317,11 +317,7 @@ id|length
 comma
 id|send_length
 suffix:semicolon
-r_int
-id|tmp_tbusy
-suffix:semicolon
-multiline_comment|/* we must lock dev_tint in dev.c with dev-&gt;t_busy =1 */
-multiline_comment|/* because on a slow pc a quasi endless loop can appear */
+multiline_comment|/* We normally shouldn&squot;t be called if dev-&gt;tbusy is set, but the&n;&t;   existing code does anyway.&n;&t;   If it has been too long (&gt; 100 or 150ms.) since the last Tx we assume&n;&t;   the board has died and kick it. */
 r_if
 c_cond
 (paren
@@ -354,7 +350,7 @@ c_cond
 (paren
 id|tickssofar
 OL
-l_int|5
+l_int|10
 op_logical_or
 (paren
 id|tickssofar
@@ -396,7 +392,7 @@ comma
 id|isr
 )paren
 suffix:semicolon
-multiline_comment|/* It&squot;s possible to check for an IRQ conflict here.&n;&t;&t;   I may have to do that someday. */
+multiline_comment|/* Does the 8390 thinks it has posted an interrupt? */
 r_if
 c_cond
 (paren
@@ -405,7 +401,7 @@ id|isr
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Possible IRQ conflict on IRQ%d?&quot;
+l_string|&quot;%s: Possible IRQ conflict on IRQ%d?&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -413,6 +409,8 @@ id|dev-&gt;irq
 )paren
 suffix:semicolon
 r_else
+(brace
+multiline_comment|/* The 8390 probably hasn&squot;t gotten on the cable yet. */
 id|printk
 c_func
 (paren
@@ -421,7 +419,13 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-multiline_comment|/* It futile, but try to restart it anyway. */
+id|ei_local-&gt;interface_num
+op_xor_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Try a different xcvr.  */
+)brace
+multiline_comment|/* Try to restart the card.  Perhaps the user has fixed something. */
 id|ei_reset_8390
 c_func
 (paren
@@ -436,14 +440,12 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
 suffix:semicolon
 )brace
-multiline_comment|/* This is new: it means some higher layer thinks we&squot;ve missed an&n;       tx-done interrupt. Caution: dev_tint() handles the cli()/sti()&n;       itself. */
+multiline_comment|/* Sending a NULL skb means some higher layer thinks we&squot;ve missed an&n;       tx-done interrupt. Caution: dev_tint() handles the cli()/sti()&n;       itself. */
 r_if
 c_cond
 (paren
@@ -497,6 +499,10 @@ id|skb-&gt;arp
 op_assign
 l_int|1
 suffix:semicolon
+id|length
+op_assign
+id|skb-&gt;len
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -507,61 +513,32 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-id|length
-op_assign
-id|skb-&gt;len
-suffix:semicolon
-id|send_length
-op_assign
-id|ETH_ZLEN
-OL
-id|length
-ques
-c_cond
-id|length
-suffix:colon
-id|ETH_ZLEN
-suffix:semicolon
-multiline_comment|/* Turn off interrupts so that we can put the packet out safely. */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* Block a timer-based transmit from overlapping. */
 r_if
 c_cond
 (paren
-id|dev-&gt;interrupt
-op_logical_or
-id|ei_local-&gt;irqlock
+id|set_bit
+c_func
+(paren
+l_int|0
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|dev-&gt;tbusy
+)paren
+op_ne
+l_int|0
 )paren
 (brace
-multiline_comment|/* We should never get here during an interrupt after 0.99.4. */
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ei_debug
-OG
-l_int|2
-)paren
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Attempt to reenter critical zone%s.&bslash;n&quot;
+l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
 comma
 id|dev-&gt;name
-comma
-id|ei_local-&gt;irqlock
-ques
-c_cond
-l_string|&quot; during interrupt&quot;
-suffix:colon
-l_string|&quot;&quot;
 )paren
 suffix:semicolon
 r_return
@@ -579,30 +556,20 @@ op_plus
 id|EN0_IMR
 )paren
 suffix:semicolon
-multiline_comment|/* Atomically lock out dev.c:dev_tint(). */
-id|tmp_tbusy
-op_assign
-id|set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-suffix:semicolon
 id|ei_local-&gt;irqlock
 op_assign
 l_int|1
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
+id|send_length
+op_assign
+id|ETH_ZLEN
+OL
+id|length
+ques
+c_cond
+id|length
+suffix:colon
+id|ETH_ZLEN
 suffix:semicolon
 r_if
 c_cond
@@ -698,13 +665,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* We can get to here if we get an rx interrupt and queued&n;&t;&t;&t;   a tx packet just before masking 8390 irqs above. */
+multiline_comment|/* We should never get here. */
 r_if
 c_cond
 (paren
 id|ei_debug
-OG
-l_int|2
 )paren
 id|printk
 c_func
@@ -714,18 +679,13 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|ei_local-&gt;irqlock
 op_assign
 l_int|0
 suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
-id|tmp_tbusy
+l_int|1
 suffix:semicolon
 id|outb_p
 c_func
@@ -737,19 +697,10 @@ op_plus
 id|EN0_IMR
 )paren
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
 )brace
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
 id|ei_block_output
 c_func
 (paren
@@ -778,6 +729,10 @@ id|send_length
 comma
 id|output_page
 )paren
+suffix:semicolon
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
 suffix:semicolon
 r_if
 c_cond
@@ -816,24 +771,18 @@ r_else
 id|ei_local-&gt;txqueue
 op_increment
 suffix:semicolon
-r_if
-c_cond
+id|dev-&gt;tbusy
+op_assign
 (paren
 id|ei_local-&gt;tx1
 op_logical_and
 id|ei_local-&gt;tx2
 )paren
-id|tmp_tbusy
-op_assign
-l_int|1
 suffix:semicolon
 )brace
 r_else
 (brace
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
+multiline_comment|/* No pingpong, just a single Tx buffer. */
 id|ei_block_output
 c_func
 (paren
@@ -856,29 +805,19 @@ comma
 id|ei_local-&gt;tx_start_page
 )paren
 suffix:semicolon
-id|tmp_tbusy
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+id|dev-&gt;tbusy
 op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* PINGPONG */
-r_if
-c_cond
-(paren
-id|skb-&gt;free
-)paren
-id|kfree_skb
-(paren
-id|skb
-comma
-id|FREE_WRITE
-)paren
-suffix:semicolon
 multiline_comment|/* Turn 8390 interrupts back on. */
-id|cli
-c_func
-(paren
-)paren
+id|ei_local-&gt;irqlock
+op_assign
+l_int|0
 suffix:semicolon
 id|outb_p
 c_func
@@ -890,17 +829,16 @@ op_plus
 id|EN0_IMR
 )paren
 suffix:semicolon
-id|ei_local-&gt;irqlock
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-id|tmp_tbusy
-suffix:semicolon
-id|sti
-c_func
+r_if
+c_cond
 (paren
+id|skb-&gt;free
+)paren
+id|kfree_skb
+(paren
+id|skb
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -1113,7 +1051,7 @@ op_logical_and
 op_increment
 id|boguscount
 OL
-l_int|20
+l_int|5
 )paren
 (brace
 r_if
@@ -1597,7 +1535,17 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Do the statistics _after_ we start the next TX. */
+multiline_comment|/* Minimize Tx latency: update the statistics after we restart TXing. */
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|ENTSR_COL
+)paren
+id|ei_local-&gt;stat.collisions
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1609,17 +1557,8 @@ id|ei_local-&gt;stat.tx_packets
 op_increment
 suffix:semicolon
 r_else
+(brace
 id|ei_local-&gt;stat.tx_errors
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|status
-op_amp
-id|ENTSR_COL
-)paren
-id|ei_local-&gt;stat.collisions
 op_increment
 suffix:semicolon
 r_if
@@ -1672,6 +1611,7 @@ id|ENTSR_OWC
 id|ei_local-&gt;stat.tx_window_errors
 op_increment
 suffix:semicolon
+)brace
 id|mark_bh
 (paren
 id|INET_BH
@@ -1718,7 +1658,7 @@ comma
 id|current_offset
 suffix:semicolon
 r_int
-id|boguscount
+id|rx_pkt_count
 op_assign
 l_int|0
 suffix:semicolon
@@ -1737,7 +1677,7 @@ r_while
 c_loop
 (paren
 op_increment
-id|boguscount
+id|rx_pkt_count
 OL
 l_int|10
 )paren
@@ -1804,7 +1744,7 @@ id|this_frame
 op_assign
 id|ei_local-&gt;rx_start_page
 suffix:semicolon
-multiline_comment|/* Someday we&squot;ll omit the previous step, iff we never get this message.*/
+multiline_comment|/* Someday we&squot;ll omit the previous, iff we never get this message.&n;&t;&t;   (There is at least one clone claimed to have a problem.)  */
 r_if
 c_cond
 (paren
@@ -1919,7 +1859,6 @@ op_minus
 id|num_rx_pages
 )paren
 (brace
-macro_line|#ifndef EI_DEBUG
 id|ei_local-&gt;current_page
 op_assign
 id|rxing_page
@@ -1936,148 +1875,44 @@ op_plus
 id|EN0_BOUNDARY
 )paren
 suffix:semicolon
-r_continue
-suffix:semicolon
-macro_line|#else
-r_static
-r_int
-id|last_rx_bogosity
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s: bogus packet header, status=%#2x nxpg=%#2x sz=%#x (at %#4x)&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|rx_frame.status
-comma
-id|rx_frame.next
-comma
-id|rx_frame.count
-comma
-id|current_offset
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ei_local-&gt;stat.rx_packets
-op_ne
-id|last_rx_bogosity
-)paren
-(brace
-multiline_comment|/* Maybe we can avoid resetting the chip... empty the packet ring. */
-id|ei_local-&gt;current_page
-op_assign
-id|rxing_page
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s:&t;setting next frame to %#2x (nxt=%#2x, rx_frm.nx=%#2x rx_frm.stat=%#2x).&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|ei_local-&gt;current_page
-comma
-id|next_frame
-comma
-id|rx_frame.next
-comma
-id|rx_frame.status
-)paren
-suffix:semicolon
-id|last_rx_bogosity
-op_assign
-id|ei_local-&gt;stat.rx_packets
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|ei_local-&gt;current_page
-op_minus
-l_int|1
-comma
-id|e8390_base
-op_plus
-id|EN0_BOUNDARY
-)paren
+id|ei_local-&gt;stat.rx_errors
+op_increment
 suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-r_else
-(brace
-multiline_comment|/* Oh no Mr Bill! Last ditch error recovery. */
-id|printk
-c_func
-(paren
-l_string|&quot;%s: recovery failed, resetting at packet #%d..&quot;
-comma
-id|dev-&gt;name
-comma
-id|ei_local-&gt;stat.rx_packets
-)paren
-suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-id|ei_reset_8390
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-id|NS8390_init
-c_func
-(paren
-id|dev
-comma
-l_int|1
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;restarting.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-macro_line|#endif&t;/* EI8390_NOCHECK */
-)brace
 r_if
 c_cond
-(paren
 (paren
 id|pkt_len
 template_param
-l_int|1535
+l_int|1518
 )paren
-op_logical_and
+(brace
+r_if
+c_cond
+(paren
 id|ei_debug
 )paren
 id|printk
 c_func
 (paren
-l_string|&quot;%s: bogus packet size, status=%#2x nxpg=%#2x size=%#x&bslash;n&quot;
+l_string|&quot;%s: bogus packet size: %d, status=%#2x nxpg=%#2x.&bslash;n&quot;
 comma
 id|dev-&gt;name
+comma
+id|rx_frame.count
 comma
 id|rx_frame.status
 comma
 id|rx_frame.next
-comma
-id|rx_frame.count
 )paren
 suffix:semicolon
+id|ei_local-&gt;stat.rx_errors
+op_increment
+suffix:semicolon
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -2163,7 +1998,6 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/* &squot;skb-&gt;data&squot; points to the start of sk_buff data area. */
 id|ei_block_input
 c_func
 (paren
@@ -2185,54 +2019,12 @@ id|rx_frame
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef HAVE_NETIF_RX
 id|netif_rx
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-macro_line|#else
-id|skb-&gt;lock
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev_rint
-c_func
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|skb
-comma
-id|pkt_len
-comma
-id|IN_SKBUFF
-comma
-id|dev
-)paren
-)paren
-(brace
-id|kfree_skbmem
-c_func
-(paren
-id|skb
-comma
-id|sksize
-)paren
-suffix:semicolon
-id|lp-&gt;stats.rx_dropped
-op_increment
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-macro_line|#endif
 id|ei_local-&gt;stat.rx_packets
 op_increment
 suffix:semicolon
@@ -2253,7 +2045,7 @@ id|ei_debug
 id|printk
 c_func
 (paren
-l_string|&quot;%s: bogus packet, status=%#2x nxpg=%#2x size=%d&bslash;n&quot;
+l_string|&quot;%s: bogus packet: status=%#2x nxpg=%#2x size=%d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -2279,7 +2071,7 @@ id|next_frame
 op_assign
 id|rx_frame.next
 suffix:semicolon
-multiline_comment|/* This should never happen, it&squot;s here for debugging. */
+multiline_comment|/* This _should_ never happen: it&squot;s here for avoiding bad clones. */
 r_if
 c_cond
 (paren
@@ -2304,20 +2096,6 @@ id|ei_local-&gt;rx_start_page
 suffix:semicolon
 )brace
 id|ei_local-&gt;current_page
-op_add_assign
-l_int|1
-op_plus
-(paren
-(paren
-id|pkt_len
-op_plus
-l_int|4
-)paren
-op_rshift
-l_int|8
-)paren
-suffix:semicolon
-id|ei_local-&gt;current_page
 op_assign
 id|next_frame
 suffix:semicolon
@@ -2335,6 +2113,18 @@ id|EN0_BOUNDARY
 suffix:semicolon
 )brace
 multiline_comment|/* If any worth-while packets have been received, dev_rint()&n;       has done a mark_bh(INET_BH) for us and will work on them&n;       when we get to the bottom-half routine. */
+multiline_comment|/* Record the maximum Rx packet queue. */
+r_if
+c_cond
+(paren
+id|rx_pkt_count
+OG
+id|high_water_mark
+)paren
+id|high_water_mark
+op_assign
+id|rx_pkt_count
+suffix:semicolon
 multiline_comment|/* Bug alert!  Reset ENISR_OVER to avoid spurious overruns! */
 id|outb_p
 c_func
@@ -2419,8 +2209,8 @@ suffix:semicolon
 id|ei_local-&gt;stat.rx_over_errors
 op_increment
 suffix:semicolon
-multiline_comment|/* The we.c driver does dummy = inb_p( RBCR[01] ); at this point.&n;       It might mean something -- magic to speed up a reset?  A 8390 bug?*/
-multiline_comment|/* Wait for reset in case the NIC is doing a tx or rx.&t;This could take up to&n;       1.5msec, but we have no way of timing something in that range.  The &squot;jiffies&squot;&n;       are just a sanity check. */
+multiline_comment|/* The old Biro driver does dummy = inb_p( RBCR[01] ); at this point.&n;       It might mean something -- magic to speed up a reset?  A 8390 bug?*/
+multiline_comment|/* Wait for the reset to complete.&t;This should happen almost instantly,&n;&t;   but could take up to 1.5msec in certain rare instances.  There is no&n;&t;   easy way of timing something in that range, so we use &squot;jiffies&squot; as&n;&t;   a sanity check. */
 r_while
 c_loop
 (paren
@@ -2467,7 +2257,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-suffix:semicolon
 multiline_comment|/* Remove packets right away. */
 id|ei_receive
 c_func
@@ -3368,5 +3157,5 @@ r_return
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c 8390.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c 8390.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  c-indent-level: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

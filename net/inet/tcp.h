@@ -21,6 +21,9 @@ DECL|macro|MIN_WRITE_SPACE
 mdefine_line|#define MIN_WRITE_SPACE&t;2048
 DECL|macro|TCP_WINDOW_DIFF
 mdefine_line|#define TCP_WINDOW_DIFF&t;2048
+multiline_comment|/* marks the urg_data as read */
+DECL|macro|URG_READ
+mdefine_line|#define URG_READ&t;0xdeadbeef
 DECL|macro|TCP_RETR1
 mdefine_line|#define TCP_RETR1&t;7&t;/*&n;&t;&t;&t;&t; * This is howmany retries it does before it&n;&t;&t;&t;&t; * tries to figure out if the gateway is&n;&t;&t;&t;&t; * down.&n;&t;&t;&t;&t; */
 DECL|macro|TCP_RETR2

@@ -5,10 +5,10 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;at1700.c:v0.03 11/16/93  Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;at1700.c:v0.05 2/9/94  Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/*&n;  Sources:&n;    The Fujitsu MB86695 datasheet.&n;*/
+multiline_comment|/*&n;  Sources:&n;    The Fujitsu MB86695 datasheet.&n;&n;&t;After this driver was written, ATI provided their EEPROM configuration&n;&t;code header file.  Thanks to Gerry Sockins of ATI.&n;*/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -18,12 +18,12 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;errno.h&gt;
-macro_line|#include &lt;memory.h&gt;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;eth.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
@@ -395,7 +395,6 @@ op_assign
 op_star
 id|port
 suffix:semicolon
-macro_line|#ifdef HAVE_PORTRESERVE
 r_if
 c_cond
 (paren
@@ -406,20 +405,6 @@ id|ioaddr
 comma
 l_int|32
 )paren
-)paren
-r_continue
-suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-id|inw
-c_func
-(paren
-id|ioaddr
-)paren
-op_ne
-l_int|0x0000
 )paren
 r_continue
 suffix:semicolon
@@ -443,8 +428,8 @@ suffix:semicolon
 r_return
 id|ENODEV
 suffix:semicolon
-multiline_comment|/* ENODEV would be more accurate. */
 )brace
+multiline_comment|/* The Fujitsu datasheet suggests that the NIC be probed for by checking its&n;   &quot;signature&quot;, the default bit pattern after a reset.  This *doesn&squot;t* work --&n;   there is no way to reset the bus interface without a complete power-cycle!&n;&n;   It turns out that ATI came to the same conclusion I did: the only thing&n;   that can be done is checking a few bits and then diving right into an&n;   EEPROM read. */
 DECL|function|at1700_probe1
 r_int
 id|at1700_probe1
@@ -467,13 +452,13 @@ l_int|4
 )braket
 op_assign
 (brace
-l_int|0x0000
+l_int|0xffff
 comma
 l_int|0xffff
 comma
-l_int|0x41f6
+l_int|0x7ff7
 comma
-l_int|0xefb6
+l_int|0xff5f
 )brace
 suffix:semicolon
 r_int
@@ -484,19 +469,19 @@ l_int|4
 )braket
 op_assign
 (brace
-l_int|0x0000
+l_int|0xffff
 comma
 l_int|0xffff
 comma
-l_int|0x00f0
+l_int|0x7ff7
 comma
-l_int|0x2f00
+l_int|0xdf0f
 )brace
 suffix:semicolon
 r_char
 id|irqmap
 (braket
-l_int|4
+l_int|8
 )braket
 op_assign
 (brace
@@ -507,6 +492,14 @@ comma
 l_int|5
 comma
 l_int|9
+comma
+l_int|10
+comma
+l_int|11
+comma
+l_int|14
+comma
+l_int|15
 )brace
 suffix:semicolon
 r_int
@@ -573,7 +566,7 @@ c_cond
 (paren
 id|net_debug
 OG
-l_int|1
+l_int|2
 )paren
 id|printk
 c_func
@@ -603,7 +596,35 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#ifdef HAVE_PORTRESERVE
+r_if
+c_cond
+(paren
+id|read_eeprom
+c_func
+(paren
+id|ioaddr
+comma
+l_int|4
+)paren
+op_ne
+l_int|0x0000
+op_logical_or
+id|read_eeprom
+c_func
+(paren
+id|ioaddr
+comma
+l_int|5
+)paren
+op_amp
+l_int|0x00ff
+op_ne
+l_int|0x00F4
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
 multiline_comment|/* Grab the region so that we can find another board if the IRQ request&n;&t;   fails. */
 id|snarf_region
 c_func
@@ -613,11 +634,23 @@ comma
 l_int|32
 )paren
 suffix:semicolon
-macro_line|#endif
 id|irq
 op_assign
 id|irqmap
 (braket
+(paren
+id|read_eeprom
+c_func
+(paren
+id|ioaddr
+comma
+l_int|12
+)paren
+op_amp
+l_int|0x04
+)paren
+op_or
+(paren
 id|read_eeprom
 c_func
 (paren
@@ -627,6 +660,7 @@ l_int|0
 )paren
 op_rshift
 l_int|14
+)paren
 )braket
 suffix:semicolon
 multiline_comment|/* Snarf the interrupt vector now. */
@@ -1758,7 +1792,9 @@ op_member_access_from_pointer
 id|rebuild_header
 c_func
 (paren
-id|skb-&gt;data
+id|skb
+op_plus
+l_int|1
 comma
 id|dev
 )paren
@@ -1827,7 +1863,15 @@ r_char
 op_star
 id|buf
 op_assign
-id|skb-&gt;data
+(paren
+r_void
+op_star
+)paren
+(paren
+id|skb
+op_plus
+l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2516,7 +2560,7 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/* &squot;skb-&gt;data&squot; points to the start of sk_buff data area. */
+multiline_comment|/* &squot;skb+1&squot; points to the start of sk_buff data area. */
 id|insw
 c_func
 (paren
@@ -2524,7 +2568,15 @@ id|ioaddr
 op_plus
 id|DATAPORT
 comma
-id|skb-&gt;data
+(paren
+r_void
+op_star
+)paren
+(paren
+id|skb
+op_plus
+l_int|1
+)paren
 comma
 (paren
 id|pkt_len
@@ -2575,7 +2627,18 @@ c_func
 (paren
 l_string|&quot; %02x&quot;
 comma
-id|skb-&gt;data
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+(paren
+id|skb
+op_plus
+l_int|1
+)paren
+)paren
 (braket
 id|i
 )braket

@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;smc-ultra.c:v0.05 12/21/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;smc-ultra.c:v0.06 2/9/94 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -624,11 +624,11 @@ op_assign
 (brace
 l_int|0x0C0000
 comma
-l_int|0x0D0000
+l_int|0x0E0000
 comma
 l_int|0xFC0000
 comma
-l_int|0xFD0000
+l_int|0xFE0000
 )brace
 suffix:semicolon
 r_int

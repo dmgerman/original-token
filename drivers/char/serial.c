@@ -6716,13 +6716,15 @@ c_func
 id|tty
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * XXX There should be a timeout added to&n;&t;&t; * wait_until_sent, eventually.  TYT 1/19/94&n;&t;&t; */
 id|wait_until_sent
 c_func
 (paren
 id|tty
+comma
+l_int|6000
 )paren
 suffix:semicolon
+multiline_comment|/* 60 seconds timeout */
 )brace
 r_else
 id|flush_output

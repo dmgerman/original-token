@@ -1504,12 +1504,6 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#ifdef CONFIG_82C710_MOUSE
-id|printk
-c_func
-(paren
-l_string|&quot;Probing 82C710 mouse port device.&bslash;n&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

@@ -1139,6 +1139,9 @@ r_struct
 id|tty_struct
 op_star
 id|tty
+comma
+r_int
+id|timeout
 )paren
 suffix:semicolon
 r_extern

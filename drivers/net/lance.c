@@ -276,7 +276,6 @@ suffix:semicolon
 multiline_comment|/* Used for alignment */
 )brace
 suffix:semicolon
-r_static
 r_int
 r_int
 id|lance_probe1
@@ -503,7 +502,6 @@ id|mem_start
 suffix:semicolon
 )brace
 DECL|function|lance_probe1
-r_static
 r_int
 r_int
 id|lance_probe1
@@ -2060,7 +2058,9 @@ op_member_access_from_pointer
 id|rebuild_header
 c_func
 (paren
-id|skb-&gt;data
+id|skb
+op_plus
+l_int|1
 comma
 id|dev
 )paren
@@ -2229,7 +2229,9 @@ c_cond
 r_int
 )paren
 (paren
-id|skb-&gt;data
+id|skb
+op_plus
+l_int|1
 )paren
 op_plus
 id|skb-&gt;len
@@ -2254,7 +2256,11 @@ comma
 (paren
 r_int
 )paren
-id|skb-&gt;data
+(paren
+id|skb
+op_plus
+l_int|1
+)paren
 )paren
 suffix:semicolon
 id|memcpy
@@ -2266,7 +2272,9 @@ id|lp-&gt;tx_bounce_buffs
 id|entry
 )braket
 comma
-id|skb-&gt;data
+id|skb
+op_plus
+l_int|1
 comma
 id|skb-&gt;len
 )paren
@@ -2330,7 +2338,11 @@ op_assign
 (paren
 r_int
 )paren
-id|skb-&gt;data
+(paren
+id|skb
+op_plus
+l_int|1
+)paren
 op_or
 l_int|0x83000000
 suffix:semicolon
@@ -2703,9 +2715,10 @@ l_int|0x4000
 id|lp-&gt;stats.tx_fifo_errors
 op_increment
 suffix:semicolon
-multiline_comment|/* We should re-init() after the FIFO error. */
+multiline_comment|/* Perhaps we should re-init() after the FIFO error. */
 )brace
 r_else
+(brace
 r_if
 c_cond
 (paren
@@ -2716,10 +2729,10 @@ l_int|0x18000000
 id|lp-&gt;stats.collisions
 op_increment
 suffix:semicolon
-r_else
 id|lp-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
+)brace
 multiline_comment|/* We don&squot;t free the skb if it&squot;s a data-only copy in the bounce&n;&t;       buffer.  The address checks here are sorted -- the first test&n;&t;       should always work.  */
 r_if
 c_cond
@@ -3130,7 +3143,16 @@ suffix:semicolon
 id|memcpy
 c_func
 (paren
-id|skb-&gt;data
+(paren
+r_int
+r_char
+op_star
+)paren
+(paren
+id|skb
+op_plus
+l_int|1
+)paren
 comma
 (paren
 r_int
@@ -3636,6 +3658,43 @@ id|LANCE_DATA
 suffix:semicolon
 multiline_comment|/* Resume normal operation. */
 )brace
+macro_line|#endif
+macro_line|#ifdef HAVE_DEVLIST
+DECL|variable|lance_portlist
+r_static
+r_int
+r_int
+id|lance_portlist
+(braket
+)braket
+op_assign
+(brace
+l_int|0x300
+comma
+l_int|0x320
+comma
+l_int|0x340
+comma
+l_int|0x360
+comma
+l_int|0
+)brace
+suffix:semicolon
+DECL|variable|lance_drv
+r_struct
+id|netdev_entry
+id|lance_drv
+op_assign
+(brace
+l_string|&quot;lance&quot;
+comma
+id|lance_probe1
+comma
+id|LANCE_TOTAL_SIZE
+comma
+id|lance_portlist
+)brace
+suffix:semicolon
 macro_line|#endif
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c lance.c&quot;&n; * End:&n; */

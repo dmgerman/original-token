@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;hp.c:v0.99.14a 12/2/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;hp.c:v0.99.15c 2/11/94 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -135,7 +135,7 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* The map from IRQ number to HP_CONFIGURE register setting. */
-multiline_comment|/* My default is IRQ5&t;   0  1&t; 2&t;3  4  5&t; 6&t;7  8  9 10 11 */
+multiline_comment|/* My default is IRQ5&t;   0  1&t; 2  3  4  5  6&t;7  8  9 10 11 */
 DECL|variable|irqmap
 r_static
 r_char
@@ -322,8 +322,6 @@ id|ioaddr
 )paren
 (brace
 r_int
-id|status
-comma
 id|i
 comma
 id|board_id
@@ -342,6 +340,7 @@ op_assign
 id|dev-&gt;dev_addr
 suffix:semicolon
 multiline_comment|/* Check for the HP physical address, 08 00 09 xx xx xx. */
+multiline_comment|/* This really isn&squot;t good enough: we may pick up HP LANCE boards&n;&t;   also!  Avoid the lance 0x5757 signature. */
 r_if
 c_cond
 (paren
@@ -372,42 +371,16 @@ l_int|2
 )paren
 op_ne
 l_int|0x09
-)paren
-r_return
-id|ENODEV
-suffix:semicolon
-multiline_comment|/* This really isn&squot;t good enough, we may pick up HP LANCE boards also! */
-multiline_comment|/* Verify that there is a 8390 at the expected location. */
-id|outb
-c_func
-(paren
-id|E8390_NODMA
-op_plus
-id|E8390_STOP
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-id|SLOW_DOWN_IO
-suffix:semicolon
-id|status
-op_assign
+op_logical_or
 id|inb
 c_func
 (paren
 id|ioaddr
+op_plus
+l_int|14
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|status
-op_ne
-l_int|0x21
-op_logical_and
-id|status
-op_ne
-l_int|0x23
+op_eq
+l_int|0x57
 )paren
 r_return
 id|ENODEV
@@ -1672,5 +1645,5 @@ r_return
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *&t;compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c hp.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c hp.c&quot;&n; * version-control: t&n; * kept-new-versions: 5&n; * tab-width: 4&n; * c-indent-level: 4&n; * End:&n; */
 eof

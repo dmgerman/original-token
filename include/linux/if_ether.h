@@ -1,18 +1,18 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Global definitions for the Ethernet IEE 802.3 interface.&n; *&n; * Version:&t;@(#)if_ether.h&t;1.0.1&t;03/15/93&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Global definitions for the Ethernet IEE 802.3 interface.&n; *&n; * Version:&t;@(#)if_ether.h&t;1.0.1a&t;02/08/94&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _LINUX_IF_ETHER_H
 DECL|macro|_LINUX_IF_ETHER_H
 mdefine_line|#define _LINUX_IF_ETHER_H
-multiline_comment|/* IEEE 802.3 Ethernet magic constants. */
+multiline_comment|/* IEEE 802.3 Ethernet magic constants.  The frame sizes omit the preamble&n;   and FCS/CRC (frame check sequence). */
 DECL|macro|ETH_ALEN
-mdefine_line|#define ETH_ALEN&t;6&t;&t;/* #bytes in eth addr&t;&t;*/
+mdefine_line|#define ETH_ALEN&t;6&t;&t;/* Octets in one ethernet addr&t; */
 DECL|macro|ETH_HLEN
-mdefine_line|#define ETH_HLEN&t;14&t;&t;/* #bytes in eth header&t;&t;*/
+mdefine_line|#define ETH_HLEN&t;14&t;&t;/* Total octets in header.&t; */
 DECL|macro|ETH_ZLEN
-mdefine_line|#define ETH_ZLEN&t;60&t;&t;/* min #bytes in frame&t;&t;*/
-DECL|macro|ETH_FLEN
-mdefine_line|#define ETH_FLEN&t;1536&t;&t;/* max #bytes in frame&t;&t;*/
-DECL|macro|ETH_DLEN
-mdefine_line|#define ETH_DLEN&t;(ETH_FLEN - ETH_HLEN)&t;/* max #bytes of data&t;*/
+mdefine_line|#define ETH_ZLEN&t;60&t;&t;/* Min. octets in frame sans FCS */
+DECL|macro|ETH_DATA_LEN
+mdefine_line|#define ETH_DATA_LEN&t;1500&t;&t;/* Max. octets in payload&t; */
+DECL|macro|ETH_FRAME_LEN
+mdefine_line|#define ETH_FRAME_LEN&t;1514&t;&t;/* Max. octets in frame sans FCS */
 multiline_comment|/* These are the defined Ethernet Protocol ID&squot;s. */
 DECL|macro|ETH_P_LOOP
 mdefine_line|#define ETH_P_LOOP&t;0x0060&t;&t;/* Ethernet Loopback packet&t;*/
@@ -36,9 +36,6 @@ DECL|macro|ETH_P_AX25
 mdefine_line|#define ETH_P_AX25&t;0x0002&t;&t;/* Dummy protocol id for AX.25  */
 DECL|macro|ETH_P_ALL
 mdefine_line|#define ETH_P_ALL&t;0x0003&t;&t;/* Every packet (be careful!!!) */
-multiline_comment|/* Define the Ethernet Broadcast Address (48 bits set to &quot;1&quot;). */
-DECL|macro|ETH_A_BCAST
-mdefine_line|#define ETH_A_BCAST     &quot;&bslash;377&bslash;377&bslash;377&bslash;377&bslash;377&bslash;377&quot;
 multiline_comment|/* This is an Ethernet frame header. */
 DECL|struct|ethhdr
 r_struct
@@ -70,38 +67,6 @@ suffix:semicolon
 multiline_comment|/* packet type ID field&t;*/
 )brace
 suffix:semicolon
-multiline_comment|/* This is the complete Ethernet frame. */
-DECL|struct|ethframe
-r_struct
-id|ethframe
-(brace
-DECL|member|f_hdr
-r_struct
-id|ethhdr
-id|f_hdr
-suffix:semicolon
-multiline_comment|/* frame header&t;&t;*/
-DECL|member|f_data
-r_char
-id|f_data
-(braket
-id|ETH_DLEN
-)braket
-suffix:semicolon
-multiline_comment|/* frame data (variable)*/
-)brace
-suffix:semicolon
-multiline_comment|/* Receiver modes */
-DECL|macro|ETH_MODE_MONITOR
-mdefine_line|#define ETH_MODE_MONITOR&t;1&t;/* Monitor mode - no receive&t;*/
-DECL|macro|ETH_MODE_PHYS
-mdefine_line|#define ETH_MODE_PHYS&t;&t;2&t;/* Physical address receive only */
-DECL|macro|ETH_MODE_BCAST
-mdefine_line|#define ETH_MODE_BCAST&t;&t;3&t;/* Broadcast receive + mode 2&t;*/
-DECL|macro|ETH_MODE_MCAST
-mdefine_line|#define ETH_MODE_MCAST&t;&t;4&t;/* Multicast receive + mode 3&t;*/
-DECL|macro|ETH_MODE_PROMISC
-mdefine_line|#define ETH_MODE_PROMISC&t;5&t;/* Promiscuous mode - receive all */
 multiline_comment|/* Ethernet statistics collection data. */
 DECL|struct|enet_statistics
 r_struct

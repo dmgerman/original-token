@@ -189,9 +189,6 @@ id|free
 comma
 DECL|member|arp
 id|arp
-comma
-DECL|member|urg_used
-id|urg_used
 suffix:semicolon
 DECL|member|tries
 DECL|member|lock

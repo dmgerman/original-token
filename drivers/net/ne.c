@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;ne.c:v0.99-14a 12/3/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;ne.c:v0.99-15b 2/8/94 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -667,7 +667,7 @@ op_eq
 l_int|2
 )paren
 (brace
-multiline_comment|/* We must set the 8390 for word mode, AND RESET IT. */
+multiline_comment|/* We must set the 8390 for word mode. */
 r_int
 id|tmp
 suffix:semicolon
@@ -681,26 +681,7 @@ op_plus
 id|EN0_DCFG
 )paren
 suffix:semicolon
-id|tmp
-op_assign
-id|inb_p
-c_func
-(paren
-id|NE_BASE
-op_plus
-id|NE_RESET
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|tmp
-comma
-id|NE_BASE
-op_plus
-id|NE_RESET
-)paren
-suffix:semicolon
+multiline_comment|/* We used to reset the ethercard here, but it doesn&squot;t seem&n;&t;   to be necessary. */
 multiline_comment|/* Un-double the SA_prom values. */
 r_for
 c_loop

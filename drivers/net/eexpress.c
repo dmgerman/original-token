@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;eexpress.c:v0.06 10/27/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;eexpress.c:v0.07 1/19/94 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n;  Sources:&n;&t;This driver wouldn&squot;t have been written with the availability of the&n;&t;Crynwr driver source code.&t;It provided a known-working implementation&n;&t;that filled in the gaping holes of the Intel documention.  Three cheers&n;&t;for Russ Nelson.&n;&n;&t;Intel Microcommunications Databook, Vol. 1, 1990. It provides just enough&n;&t;info that the casual reader might think that it documents the i82586.&n;*/
@@ -175,7 +175,7 @@ DECL|macro|ASIC_RESET
 mdefine_line|#define ASIC_RESET&t;&t;0x40
 DECL|macro|_586_RESET
 mdefine_line|#define _586_RESET&t;&t;0x80
-multiline_comment|/* Offsets into the System Control Block structure. */
+multiline_comment|/* Offsets to elements of the System Control Block structure. */
 DECL|macro|SCB_STATUS
 mdefine_line|#define SCB_STATUS&t;0xc008
 DECL|macro|SCB_CMD
@@ -196,7 +196,7 @@ DECL|macro|SCB_CBL
 mdefine_line|#define SCB_CBL&t;&t;0xc00C&t;/* Command BLock offset. */
 DECL|macro|SCB_RFA
 mdefine_line|#define SCB_RFA&t;&t;0xc00E&t;/* Rx Frame Area offset. */
-multiline_comment|/*&n;  What follows in &squot;init_words[]&squot; is the &quot;program&quot; that is downloaded to the&n;  82586 memory.&t; It&squot;s mostly tables and command blocks, and starts at the&n;  reset address 0xfffff6.&n;&n;  Even with the additional &quot;don&squot;t care&quot; values, doing it this way takes less&n;  program space than initializing the individual tables, and I feel it&squot;s much&n;  cleaner.&n;&n;  The databook is particularly useless for the first two structures, I had&n;  to use the Crynwr driver as an example.&n;&n;   The memory setup is as follows:&n;   */
+multiline_comment|/*&n;  What follows in &squot;init_words[]&squot; is the &quot;program&quot; that is downloaded to the&n;  82586 memory.&t; It&squot;s mostly tables and command blocks, and starts at the&n;  reset address 0xfffff6.&n;&n;  Even with the additional &quot;don&squot;t care&quot; values, doing it this way takes less&n;  program space than initializing the individual tables, and I feel it&squot;s much&n;  cleaner.&n;&n;  The databook is particularly useless for the first two structures; they are&n;  completely undocumented.  I had to use the Crynwr driver as an example.&n;&n;   The memory setup is as follows:&n;   */
 DECL|macro|CONFIG_CMD
 mdefine_line|#define CONFIG_CMD&t;0x0018
 DECL|macro|SET_SA_CMD
@@ -222,14 +222,16 @@ mdefine_line|#define TX_BUF_START&t;0x0100
 DECL|macro|NUM_TX_BUFS
 mdefine_line|#define NUM_TX_BUFS &t;4
 DECL|macro|TX_BUF_SIZE
-mdefine_line|#define TX_BUF_SIZE &t;(1518+14+20+16) /* packet+header+TBD */
+mdefine_line|#define TX_BUF_SIZE&t;&t;0x0680&t;/* packet+header+TBD+extra (1518+14+20+16) */
+DECL|macro|TX_BUF_END
+mdefine_line|#define TX_BUF_END&t;&t;0x2000
 DECL|macro|RX_BUF_START
 mdefine_line|#define RX_BUF_START&t;0x2000
 DECL|macro|RX_BUF_SIZE
 mdefine_line|#define RX_BUF_SIZE &t;(0x640)&t;/* packet+header+RBD+extra */
 DECL|macro|RX_BUF_END
-mdefine_line|#define RX_BUF_END&t;&t;0x8000
-multiline_comment|/*&n;  That&squot;s it: only 86 bytes to set up the beast, including every extra&n;  command available.  The 170 byte buffer at DUMP_DATA is shared between the&n;  Dump command (called only by the diagnostic program) and the SetMulticastList&n;  command. &n;&n;  To complete the memory setup you only have to write the station address at&n;  SA_OFFSET and create the Tx &amp; Rx buffer lists.&n;&n;  The Tx command chain and buffer list is setup as follows:&n;  A Tx command table, with the data buffer pointing to...&n;  A Tx data buffer descriptor.  The packet is in a single buffer, rather than&n;     chaining together several smaller buffers.&n;  A NoOp command, which initially points to itself,&n;  And the packet data.&n;&n;  A transmit is done by filling in the Tx command table and data buffer,&n;  re-writing the NoOp command, and finally changing the offset of the last&n;  command to point to the current Tx command.  When the Tx command is finished,&n;  it jumps to the NoOp, when it loops until the next Tx command changes the&n;  &quot;link offset&quot; in the NoOp.  This way the 82586 never has to go through the&n;  slow restart sequence.&n;&n;  The Rx buffer list is set up in the obvious ring structure.  We have enough&n;  memory (and low enough interrupt latency) that we can avoid the complicated&n;  Rx buffer linked lists by alway associating a full-size Rx data buffer with&n;  each Rx data frame.&n;&n;  I current use four transmit buffers starting at TX_BUF_START (0x0100), and&n;  use the rest of memory, from RX_BUF_START to RX_BUF_END, for Rx buffers.&n;&n;  */
+mdefine_line|#define RX_BUF_END&t;&t;0x4000
+multiline_comment|/*&n;  That&squot;s it: only 86 bytes to set up the beast, including every extra&n;  command available.  The 170 byte buffer at DUMP_DATA is shared between the&n;  Dump command (called only by the diagnostic program) and the SetMulticastList&n;  command.&n;&n;  To complete the memory setup you only have to write the station address at&n;  SA_OFFSET and create the Tx &amp; Rx buffer lists.&n;&n;  The Tx command chain and buffer list is setup as follows:&n;  A Tx command table, with the data buffer pointing to...&n;  A Tx data buffer descriptor.  The packet is in a single buffer, rather than&n;     chaining together several smaller buffers.&n;  A NoOp command, which initially points to itself,&n;  And the packet data.&n;&n;  A transmit is done by filling in the Tx command table and data buffer,&n;  re-writing the NoOp command, and finally changing the offset of the last&n;  command to point to the current Tx command.  When the Tx command is finished,&n;  it jumps to the NoOp, when it loops until the next Tx command changes the&n;  &quot;link offset&quot; in the NoOp.  This way the 82586 never has to go through the&n;  slow restart sequence.&n;&n;  The Rx buffer list is set up in the obvious ring structure.  We have enough&n;  memory (and low enough interrupt latency) that we can avoid the complicated&n;  Rx buffer linked lists by alway associating a full-size Rx data buffer with&n;  each Rx data frame.&n;&n;  I current use four transmit buffers starting at TX_BUF_START (0x0100), and&n;  use the rest of memory, from RX_BUF_START to RX_BUF_END, for Rx buffers.&n;&n;  */
 DECL|variable|init_words
 r_static
 r_int
@@ -689,6 +691,14 @@ id|inb
 c_func
 (paren
 id|id_addr
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;EtherExpress ID checksum is %04x.&bslash;n&quot;
+comma
+id|sum
 )paren
 suffix:semicolon
 macro_line|#else
@@ -1607,7 +1617,9 @@ op_member_access_from_pointer
 id|rebuild_header
 c_func
 (paren
-id|skb-&gt;data
+id|skb
+op_plus
+l_int|1
 comma
 id|dev
 )paren
@@ -1676,7 +1688,15 @@ r_char
 op_star
 id|buf
 op_assign
-id|skb-&gt;data
+(paren
+r_void
+op_star
+)paren
+(paren
+id|skb
+op_plus
+l_int|1
+)paren
 suffix:semicolon
 multiline_comment|/* Disable the 82586&squot;s input to the interrupt line. */
 id|outb
@@ -1807,8 +1827,6 @@ l_int|0
 suffix:semicolon
 r_int
 id|ack_cmd
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2050,7 +2068,7 @@ c_cond
 (paren
 id|lp-&gt;tx_reap
 OG
-id|RX_BUF_START
+id|TX_BUF_END
 op_minus
 id|TX_BUF_SIZE
 )paren
@@ -2121,10 +2139,23 @@ op_logical_and
 id|dev-&gt;start
 )paren
 (brace
+r_int
+id|saved_write_ptr
+op_assign
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|WRITE_PTR
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|net_debug
+OG
+l_int|1
 )paren
 id|printk
 c_func
@@ -2136,10 +2167,75 @@ comma
 id|status
 )paren
 suffix:semicolon
-multiline_comment|/* If this ever occurs we should really re-write the idle loop, reset&n;&t;&t;   the Tx list, and do a complete restart of the command unit.&n;&t;&t;   For now we rely on the Tx timeout if the resume doesn&squot;t work. */
+multiline_comment|/* If this ever occurs we must re-write the idle loop, reset&n;&t;&t;   the Tx list, and do a complete restart of the command unit. */
+id|outw
+c_func
+(paren
+id|IDLELOOP
+comma
+id|ioaddr
+op_plus
+id|WRITE_PTR
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0
+comma
+id|ioaddr
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|CmdNOp
+comma
+id|ioaddr
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|IDLELOOP
+comma
+id|ioaddr
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|IDLELOOP
+comma
+id|SCB_CBL
+)paren
+suffix:semicolon
+id|lp-&gt;tx_cmd_link
+op_assign
+id|IDLELOOP
+op_plus
+l_int|4
+suffix:semicolon
+id|lp-&gt;tx_head
+op_assign
+id|lp-&gt;tx_reap
+op_assign
+id|TX_BUF_START
+suffix:semicolon
+multiline_comment|/* Restore the saved write pointer. */
+id|outw
+c_func
+(paren
+id|saved_write_ptr
+comma
+id|ioaddr
+op_plus
+id|WRITE_PTR
+)paren
+suffix:semicolon
 id|ack_cmd
 op_or_assign
-id|CUC_RESUME
+id|CUC_START
 suffix:semicolon
 )brace
 r_if
@@ -2168,21 +2264,106 @@ id|WRITE_PTR
 )paren
 suffix:semicolon
 multiline_comment|/* The Rx unit is not ready, it must be hung.  Restart the receiver by&n;&t;&t;   initializing the rx buffers, and issuing an Rx start command. */
+id|lp-&gt;stats.rx_errors
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|net_debug
+OG
+l_int|1
 )paren
+(brace
+r_int
+id|cur_rxbuf
+op_assign
+id|RX_BUF_START
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Rx unit stopped, status %04x, restarting.&bslash;n&quot;
+l_string|&quot;%s: Rx unit stopped status %04x rx head %04x tail %04x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|status
+comma
+id|lp-&gt;rx_head
+comma
+id|lp-&gt;rx_tail
 )paren
 suffix:semicolon
+r_while
+c_loop
+(paren
+id|cur_rxbuf
+op_le
+id|RX_BUF_END
+op_minus
+id|RX_BUF_SIZE
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  Rx buf at %04x:&quot;
+comma
+id|cur_rxbuf
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|cur_rxbuf
+comma
+id|ioaddr
+op_plus
+id|READ_PTR
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|0x20
+suffix:semicolon
+id|i
+op_add_assign
+l_int|2
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot; %04x&quot;
+comma
+id|inw
+c_func
+(paren
+id|ioaddr
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|cur_rxbuf
+op_add_assign
+id|RX_BUF_SIZE
+suffix:semicolon
+)brace
+)brace
 id|init_rx_bufs
 c_func
 (paren
@@ -3000,9 +3181,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the Rx-block list. */
+DECL|function|init_rx_bufs
 r_static
 r_void
-DECL|function|init_rx_bufs
 id|init_rx_bufs
 c_func
 (paren
@@ -3093,7 +3274,7 @@ multiline_comment|/* Buffer offset */
 id|outw
 c_func
 (paren
-l_int|0x0000
+l_int|0xFeed
 comma
 id|ioaddr
 )paren
@@ -3102,7 +3283,7 @@ multiline_comment|/* Pad for dest addr. */
 id|outw
 c_func
 (paren
-l_int|0x0000
+l_int|0xF00d
 comma
 id|ioaddr
 )paren
@@ -3110,7 +3291,7 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-l_int|0x0000
+l_int|0xF001
 comma
 id|ioaddr
 )paren
@@ -3118,7 +3299,7 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-l_int|0x0000
+l_int|0x0505
 comma
 id|ioaddr
 )paren
@@ -3127,7 +3308,7 @@ multiline_comment|/* Pad for source addr. */
 id|outw
 c_func
 (paren
-l_int|0x0000
+l_int|0x2424
 comma
 id|ioaddr
 )paren
@@ -3135,7 +3316,7 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-l_int|0x0000
+l_int|0x6565
 comma
 id|ioaddr
 )paren
@@ -3143,7 +3324,7 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-l_int|0x0000
+l_int|0xdeaf
 comma
 id|ioaddr
 )paren
@@ -3473,7 +3654,7 @@ c_cond
 (paren
 id|lp-&gt;tx_head
 OG
-id|RX_BUF_START
+id|TX_BUF_END
 op_minus
 id|TX_BUF_SIZE
 )paren
@@ -3864,7 +4045,15 @@ c_func
 (paren
 id|ioaddr
 comma
-id|skb-&gt;data
+(paren
+r_void
+op_star
+)paren
+(paren
+id|skb
+op_plus
+l_int|1
+)paren
 comma
 (paren
 id|pkt_len
