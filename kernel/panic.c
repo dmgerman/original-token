@@ -7,9 +7,6 @@ macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sysrq.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#ifdef __alpha__
-macro_line|#include &lt;asm/machvec.h&gt;
-macro_line|#endif
 id|asmlinkage
 r_void
 id|sys_sync
@@ -241,18 +238,6 @@ id|printk
 c_func
 (paren
 l_string|&quot;Press L1-A to return to the boot prom&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef __alpha__
-r_if
-c_cond
-(paren
-id|alpha_using_srm
-)paren
-id|halt
-c_func
-(paren
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -146,17 +146,19 @@ r_int
 id|mode
 )paren
 (brace
-id|u8
-id|tmp
-suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|mode
-op_eq
-id|LINUX_REBOOT_CMD_RESTART
 )paren
 (brace
+r_case
+id|LINUX_REBOOT_CMD_RESTART
+suffix:colon
+(brace
+id|u8
+id|t8
+suffix:semicolon
 id|pcibios_read_config_byte
 c_func
 (paren
@@ -167,7 +169,7 @@ comma
 l_int|0x43
 comma
 op_amp
-id|tmp
+id|t8
 )paren
 suffix:semicolon
 id|pcibios_write_config_byte
@@ -179,7 +181,7 @@ l_int|0x38
 comma
 l_int|0x43
 comma
-id|tmp
+id|t8
 op_or
 l_int|0x80
 )paren
@@ -199,6 +201,58 @@ l_int|0
 comma
 l_int|0x92
 )paren
+suffix:semicolon
+multiline_comment|/* NOTREACHED */
+)brace
+r_break
+suffix:semicolon
+r_case
+id|LINUX_REBOOT_CMD_POWER_OFF
+suffix:colon
+(brace
+id|u32
+id|pmuport
+suffix:semicolon
+id|pcibios_read_config_dword
+c_func
+(paren
+l_int|0
+comma
+l_int|0x88
+comma
+l_int|0x10
+comma
+op_amp
+id|pmuport
+)paren
+suffix:semicolon
+id|pmuport
+op_and_assign
+l_int|0xfffe
+suffix:semicolon
+id|outl
+c_func
+(paren
+l_int|0xffff
+comma
+id|pmuport
+)paren
+suffix:semicolon
+multiline_comment|/* clear pending events */
+id|outw
+c_func
+(paren
+l_int|0x2000
+comma
+id|pmuport
+op_plus
+l_int|4
+)paren
+suffix:semicolon
+multiline_comment|/* power off */
+multiline_comment|/* NOTREACHED */
+)brace
+r_break
 suffix:semicolon
 )brace
 )brace
@@ -1314,7 +1368,7 @@ op_logical_and
 (paren
 id|IRONGATE0-&gt;dramms
 op_amp
-l_int|0x3FF
+l_int|0x300
 )paren
 op_eq
 l_int|0x300
@@ -1324,8 +1378,6 @@ l_int|0x300
 r_int
 r_int
 id|nmi_ctl
-comma
-id|temp
 suffix:semicolon
 multiline_comment|/* Clear ALI NMI */
 id|nmi_ctl
@@ -1361,44 +1413,33 @@ comma
 l_int|0x61
 )paren
 suffix:semicolon
-id|temp
-op_assign
-id|IRONGATE0-&gt;stat_cmd
-suffix:semicolon
+multiline_comment|/* Write again clears error bits.  */
 id|IRONGATE0-&gt;stat_cmd
 op_assign
-id|temp
+id|IRONGATE0-&gt;stat_cmd
+op_amp
+op_complement
+l_int|0x100
 suffix:semicolon
-multiline_comment|/* write again clears error bits */
 id|mb
 c_func
 (paren
 )paren
 suffix:semicolon
-id|temp
-op_assign
 id|IRONGATE0-&gt;stat_cmd
 suffix:semicolon
-multiline_comment|/* re-read to force write */
-id|temp
+multiline_comment|/* Write again clears error bits.  */
+id|IRONGATE0-&gt;dramms
 op_assign
 id|IRONGATE0-&gt;dramms
 suffix:semicolon
-id|IRONGATE0-&gt;dramms
-op_assign
-id|temp
-suffix:semicolon
-multiline_comment|/* write again clears error bits */
 id|mb
 c_func
 (paren
 )paren
 suffix:semicolon
-id|temp
-op_assign
 id|IRONGATE0-&gt;dramms
 suffix:semicolon
-multiline_comment|/* re-read to force write */
 id|draina
 c_func
 (paren

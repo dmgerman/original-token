@@ -460,6 +460,15 @@ DECL|macro|__CALL_PAL_RW1
 mdefine_line|#define __CALL_PAL_RW1(NAME, RTYPE, TYPE0)&t;&t;&t;&bslash;&n;static inline RTYPE NAME(TYPE0 arg0)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register RTYPE __r0 __asm__(&quot;$0&quot;);&t;&t;&t;&bslash;&n;&t;register TYPE0 __r16 __asm__(&quot;$16&quot;) = arg0;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;call_pal %2 # &quot;#NAME&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__r16), &quot;=r&quot;(__r0)&t;&t;&t;&bslash;&n;&t;&t;: &quot;i&quot;(PAL_ ## NAME), &quot;0&quot;(__r16)&t;&t;&t;&bslash;&n;&t;&t;: &quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;);&t;&t;&bslash;&n;&t;return __r0;&t;&t;&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|__CALL_PAL_RW2
 mdefine_line|#define __CALL_PAL_RW2(NAME, RTYPE, TYPE0, TYPE1)&t;&t;&bslash;&n;static inline RTYPE NAME(TYPE0 arg0, TYPE1 arg1)&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register RTYPE __r0 __asm__(&quot;$0&quot;);&t;&t;&t;&bslash;&n;&t;register TYPE0 __r16 __asm__(&quot;$16&quot;) = arg0;&t;&t;&bslash;&n;&t;register TYPE1 __r17 __asm__(&quot;$17&quot;) = arg1;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;call_pal %3 # &quot;#NAME&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__r16), &quot;=r&quot;(__r17), &quot;=r&quot;(__r0)&t;&t;&bslash;&n;&t;&t;: &quot;i&quot;(PAL_ ## NAME), &quot;0&quot;(__r16), &quot;1&quot;(__r17)&t;&bslash;&n;&t;&t;: &quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;);&t;&t;&bslash;&n;&t;return __r0;&t;&t;&t;&t;&t;&t;&bslash;&n;}
+id|__CALL_PAL_W1
+c_func
+(paren
+id|cflush
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
 id|__CALL_PAL_R0
 c_func
 (paren

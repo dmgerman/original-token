@@ -3062,7 +3062,7 @@ op_star
 id|old_rows
 )paren
 suffix:semicolon
-id|memcpy
+id|scr_memcpyw
 c_func
 (paren
 id|q

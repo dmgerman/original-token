@@ -700,6 +700,7 @@ id|sgpnt
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/*&n;         * The io_request_lock *must* be held at this point.&n;         */
 r_if
 c_cond
@@ -716,6 +717,7 @@ l_string|&quot;Warning - io_request_lock is not held in queuecommand&bslash;n&qu
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n;&t; * If we are being notified of the mid-level reposessing a command due to timeout,&n;&t; * just return.&n;&t; */
 r_if
 c_cond

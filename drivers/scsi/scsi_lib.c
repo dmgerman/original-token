@@ -155,6 +155,8 @@ op_assign
 op_amp
 id|SCpnt-&gt;request
 suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 )brace
 )brace
@@ -936,6 +938,23 @@ id|SCpnt-&gt;bufflen
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;&t; * Zero these out.  They now point to freed memory, and it is&n;&t; * dangerous to hang onto the pointers.&n;&t; */
+id|SCpnt-&gt;buffer
+op_assign
+l_int|NULL
+suffix:semicolon
+id|SCpnt-&gt;bufflen
+op_assign
+l_int|0
+suffix:semicolon
+id|SCpnt-&gt;request_buffer
+op_assign
+l_int|NULL
+suffix:semicolon
+id|SCpnt-&gt;request_bufflen
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;&t; * Next deal with any sectors which we were able to correctly&n;&t; * handle.&n;&t; */
 r_if
 c_cond
@@ -1604,13 +1623,13 @@ id|req
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * Find the actual device driver associated with this command.&n;&t;&t; * The SPECIAL requests are things like character device or&n;&t;&t; * ioctls, which did not originate from ll_rw_blk.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Find the actual device driver associated with this command.&n;&t;&t; * The SPECIAL requests are things like character device or&n;&t;&t; * ioctls, which did not originate from ll_rw_blk.  Note that&n;&t;&t; * the special field is also used to indicate the SCpnt for&n;&t;&t; * the remainder of a partially fulfilled request that can &n;&t;&t; * come up when there is a medium error.  We have to treat&n;&t;&t; * these two cases differently.  We differentiate by looking&n;&t;&t; * at request.cmd, as this tells us the real story.&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|req-&gt;special
-op_ne
-l_int|NULL
+id|req-&gt;cmd
+op_eq
+id|SPECIAL
 )paren
 (brace
 id|STpnt
@@ -1651,6 +1670,32 @@ l_string|&quot;Unable to find device associated with request&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t;&t; * Now try and find a command block that we can use.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|req-&gt;special
+op_ne
+l_int|NULL
+)paren
+(brace
+id|SCpnt
+op_assign
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+id|req-&gt;special
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; * We need to recount the number of&n;&t;&t;&t;&t; * scatter-gather segments here - the&n;&t;&t;&t;&t; * normal case code assumes this to be&n;&t;&t;&t;&t; * correct, as it would be a performance&n;&t;&t;&t;&t; * lose to always recount.  Handling&n;&t;&t;&t;&t; * errors is always unusual, of course.&n;&t;&t;&t;&t; */
+id|recount_segments
+c_func
+(paren
+id|SCpnt
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|SCpnt
 op_assign
 id|scsi_allocate_device
@@ -1661,6 +1706,7 @@ comma
 id|FALSE
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t;&t; * If so, we are ready to do something.  Bump the count&n;&t;&t;&t; * while the queue is locked and then break out of the loop.&n;&t;&t;&t; * Otherwise loop around and try another request.&n;&t;&t;&t; */
 r_if
 c_cond
@@ -1740,12 +1786,17 @@ id|q-&gt;current_request
 op_assign
 id|req-&gt;next
 suffix:semicolon
+id|SCpnt-&gt;request.next
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|req-&gt;special
-op_eq
-l_int|NULL
+id|req
+op_ne
+op_amp
+id|SCpnt-&gt;request
 )paren
 (brace
 id|memcpy
@@ -1780,7 +1831,11 @@ id|wait_for_request
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * Now it is finally safe to release the lock.  We are not going&n;&t;&t; * to noodle the request list until this request has been queued&n;&t;&t; * and we loop back to queue another.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Now it is finally safe to release the lock.  We are&n;&t;&t; * not going to noodle the request list until this&n;&t;&t; * request has been queued and we loop back to queue&n;&t;&t; * another.  &n;&t;&t; */
+id|req
+op_assign
+l_int|NULL
+suffix:semicolon
 id|spin_unlock_irq
 c_func
 (paren
@@ -1791,9 +1846,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|req-&gt;special
-op_eq
-l_int|NULL
+id|SCpnt-&gt;request.cmd
+op_ne
+id|SPECIAL
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t; * This will do a couple of things:&n;&t;&t;&t; *  1) Fill in the actual SCSI command.&n;&t;&t;&t; *  2) Fill in any other upper-level specific fields (timeout).&n;&t;&t;&t; *&n;&t;&t;&t; * If this returns 0, it means that the request failed (reading&n;&t;&t;&t; * past end of disk, reading offline device, etc).   This won&squot;t&n;&t;&t;&t; * actually talk to the device, but some kinds of consistency&n;&t;&t;&t; * checking may cause the request to be rejected immediately.&n;&t;&t;&t; */

@@ -5213,7 +5213,7 @@ op_assign
 id|Sg_device
 op_star
 )paren
-id|scsi_init_malloc
+id|kmalloc
 c_func
 (paren
 (paren
@@ -5228,6 +5228,25 @@ id|Sg_device
 )paren
 comma
 id|GFP_ATOMIC
+)paren
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|sg_dev_arr
+comma
+l_int|0
+comma
+(paren
+id|sg_template.dev_noticed
+op_plus
+id|SG_EXTRA_DEVS
+)paren
+op_star
+r_sizeof
+(paren
+id|Sg_device
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -5693,7 +5712,7 @@ l_int|NULL
 (brace
 multiline_comment|/* Really worrying situation of writes still pending and get here */
 multiline_comment|/* Strategy: shorten timeout on release + wait on detach ... */
-id|scsi_init_free
+id|kfree
 c_func
 (paren
 (paren
@@ -5701,17 +5720,6 @@ r_char
 op_star
 )paren
 id|sg_dev_arr
-comma
-(paren
-id|sg_template.dev_noticed
-op_plus
-id|SG_EXTRA_DEVS
-)paren
-op_star
-r_sizeof
-(paren
-id|Sg_device
-)paren
 )paren
 suffix:semicolon
 id|sg_dev_arr

@@ -5062,6 +5062,14 @@ l_int|64
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef __alpha__
+multiline_comment|/* Force ALPHA to use bus I/O and not bus MEM.&n;&t;   This is to avoid having to use HAE_MEM registers,&n;&t;   which is broken on some platforms and with SMP.  */
+id|command
+op_and_assign
+op_complement
+id|PCI_COMMAND_MEMORY
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

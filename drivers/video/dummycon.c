@@ -22,8 +22,8 @@ DECL|function|dummycon_startup
 r_static
 r_const
 r_char
-id|__init
 op_star
+id|__init
 id|dummycon_startup
 c_func
 (paren

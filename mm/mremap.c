@@ -764,7 +764,7 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Expand (or shrink) an existing mapping, potentially moving it at the&n; * same time (controlled by the MREMAP_MAYMOVE flag and available VM space)&n; *&n; * MREMAP_FIXED option added 5-Dec-1999 by Benjamin LaHaise&n; * This option implies MREMAP_MAYMOVE.&n; */
+multiline_comment|/*&n; * Expand (or shrink) an existing mapping, potentially moving it at the&n; * same time (controlled by the MREMAP_MAYMOVE flag and available VM space)&n; *&n; * MREMAP_FIXED option added 5-Dec-1999 by Benjamin LaHaise&n; * This option implies MREMAP_MAYMOVE.&n; *&n; * &quot;__new_addr&quot; toying in order to not change the saved stack layout&n; * for old x86 binaries that don&squot;t want %edi to change..&n; */
 DECL|function|sys_mremap
 id|asmlinkage
 r_int
@@ -790,9 +790,15 @@ id|flags
 comma
 r_int
 r_int
-id|new_addr
+id|__new_addr
 )paren
 (brace
+r_int
+r_int
+id|new_addr
+op_assign
+id|__new_addr
+suffix:semicolon
 r_struct
 id|vm_area_struct
 op_star

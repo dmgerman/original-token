@@ -69,6 +69,7 @@ id|root
 op_ne
 l_int|NULL
 )paren
+(brace
 id|err
 op_assign
 id|request_resource
@@ -89,7 +90,27 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;PCI: Address space collision on region %d &quot;
+l_string|&quot;PCI: Address space collision on &quot;
+l_string|&quot;region %d of device %s [%lx:%lx]&bslash;n&quot;
+comma
+id|resource
+comma
+id|dev-&gt;name
+comma
+id|res-&gt;start
+comma
+id|res-&gt;end
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;PCI: No parent found for region %d &quot;
 l_string|&quot;of device %s&bslash;n&quot;
 comma
 id|resource
@@ -225,6 +246,14 @@ l_int|0
 r_continue
 suffix:semicolon
 multiline_comment|/* Determine the root we allocate from.  */
+id|res-&gt;end
+op_sub_assign
+id|res-&gt;start
+suffix:semicolon
+id|res-&gt;start
+op_assign
+l_int|0
+suffix:semicolon
 id|root
 op_assign
 id|pci_find_parent_resource
@@ -257,15 +286,9 @@ suffix:colon
 id|min_mem
 )paren
 suffix:semicolon
-id|min
-op_add_assign
-id|root-&gt;start
-suffix:semicolon
 id|size
 op_assign
 id|res-&gt;end
-op_minus
-id|res-&gt;start
 op_plus
 l_int|1
 suffix:semicolon

@@ -939,6 +939,13 @@ id|pci_controler
 op_star
 id|hose
 suffix:semicolon
+id|IRONGATE0-&gt;stat_cmd
+op_assign
+id|IRONGATE0-&gt;stat_cmd
+op_amp
+op_complement
+l_int|0x100
+suffix:semicolon
 id|irongate_pci_clr_err
 c_func
 (paren

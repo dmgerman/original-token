@@ -482,17 +482,17 @@ macro_line|#endif
 )brace
 suffix:semicolon
 DECL|macro|OUTREG32
-mdefine_line|#define OUTREG32(mmap, addr, val)   *(volatile u32 *)(mmap + (addr)) = (val)
+mdefine_line|#define OUTREG32(mmap, addr, val)   __raw_writel((val), (mmap)+(addr))
 DECL|macro|OUTREG16
-mdefine_line|#define OUTREG16(mmap, addr, val)   *(volatile u16 *)(mmap + (addr)) = (val)
+mdefine_line|#define OUTREG16(mmap, addr, val)   __raw_writew((val), (mmap)+(addr))
 DECL|macro|OUTREG8
-mdefine_line|#define OUTREG8 (mmap, addr, val)   *(volatile u8 *) (mmap + (addr)) = (val)
+mdefine_line|#define OUTREG8 (mmap, addr, val)   __raw_writeb((val), (mmap)+(addr))
 DECL|macro|INREG32
-mdefine_line|#define INREG32(mmap, addr)         *(volatile u32 *)(mmap + (addr))
+mdefine_line|#define INREG32(mmap, addr)         __raw_readl((mmap)+(addr))
 DECL|macro|INREG16
-mdefine_line|#define INREG16(mmap, addr)         *(volatile u16 *)(mmap + (addr))
+mdefine_line|#define INREG16(mmap, addr)         __raw_readw((mmap)+(addr))
 DECL|macro|INREG8
-mdefine_line|#define INREG8 (mmap, addr)         *(volatile u8 *) (mmap + (addr))
+mdefine_line|#define INREG8 (mmap, addr)         __raw_readb((mmap)+(addr))
 DECL|macro|CACHE_FLUSH
 mdefine_line|#define CACHE_FLUSH&t;agp_bridge.cache_flush
 DECL|macro|A_SIZE_8

@@ -220,10 +220,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|root
-op_eq
-op_amp
-id|ioport_resource
+id|root-&gt;end
+OL
+l_int|0x10000
 )paren
 id|fmt
 op_assign

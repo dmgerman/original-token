@@ -528,6 +528,17 @@ op_star
 id|secs
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Prototypes for functions in scsi_merge.c&n; */
+r_extern
+r_void
+id|recount_segments
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Prototypes for functions in scsi_lib.c&n; */
 r_extern
 r_void
@@ -646,16 +657,6 @@ id|timeout
 comma
 r_int
 id|retries
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|scsi_request_fn
-c_func
-(paren
-id|request_queue_t
-op_star
-id|q
 )paren
 suffix:semicolon
 r_extern
@@ -1353,6 +1354,13 @@ DECL|member|flags
 r_int
 id|flags
 suffix:semicolon
+multiline_comment|/*&n;&t; * Used to indicate that a command which has timed out also&n;&t; * completed normally.  Typically the completion function will&n;&t; * do nothing but set this flag in this instance because the&n;&t; * timeout handler is already running.&n;&t; */
+DECL|member|done_late
+r_int
+id|done_late
+suffix:colon
+l_int|1
+suffix:semicolon
 multiline_comment|/*&n;&t; * These two flags are used to track commands that are in the&n;&t; * mid-level queue.  The idea is that a command can be there for&n;&t; * one of two reasons - either the host is busy or the device is&n;&t; * busy.  Thus when a command on the host finishes, we only try&n;&t; * and requeue commands that we might expect to be queueable.&n;&t; */
 DECL|member|host_wait
 r_int
@@ -1366,12 +1374,6 @@ id|device_wait
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* These variables are for the cdrom only. Once we have variable size &n;&t; * buffers in the buffer cache, they will go away. */
-DECL|member|this_count
-r_int
-id|this_count
-suffix:semicolon
-multiline_comment|/* End of special cdrom variables */
 multiline_comment|/* Low-level done function - can be used by low-level driver to point&n;&t; *        to completion function.  Not used by mid/upper level code. */
 DECL|member|scsi_done
 r_void

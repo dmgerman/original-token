@@ -114,6 +114,37 @@ id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
+DECL|function|flush_cache
+r_static
+r_inline
+r_void
+id|flush_cache
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#if defined(__i386__)
+id|asm
+r_volatile
+(paren
+l_string|&quot;wbinvd&quot;
+op_scope_resolution
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+macro_line|#elif defined(__alpha__)
+multiline_comment|/* ??? I wonder if we&squot;ll really need to flush caches, or if the&n;&t;   core logic can manage to keep the system coherent.  The ARM&n;&t;   speaks only of using `cflush&squot; to get things in memory in&n;&t;   preparation for power failure.&n;&n;&t;   If we do need to call `cflush&squot;, we&squot;ll need a target page,&n;&t;   as we can only flush one page at a time.  */
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please define flush_cache.&quot;
+macro_line|#endif
+)brace
 macro_line|#ifdef __SMP__
 DECL|variable|cpus_waiting
 r_static
@@ -233,25 +264,6 @@ macro_line|#else&t;&t;&t;&t;/* __SMP__ */
 DECL|macro|global_cache_flush
 mdefine_line|#define global_cache_flush flush_cache
 macro_line|#endif&t;&t;&t;&t;/* __SMP__ */
-DECL|function|flush_cache
-r_static
-r_void
-id|flush_cache
-c_func
-(paren
-r_void
-)paren
-(brace
-id|asm
-r_volatile
-(paren
-l_string|&quot;wbinvd&quot;
-op_scope_resolution
-suffix:colon
-l_string|&quot;memory&quot;
-)paren
-suffix:semicolon
-)brace
 DECL|function|agp_backend_acquire
 r_int
 id|agp_backend_acquire
@@ -5773,6 +5785,10 @@ id|aper_size_info_32
 op_star
 id|current_size
 suffix:semicolon
+r_int
+r_int
+id|addr
+suffix:semicolon
 id|u32
 id|temp
 suffix:semicolon
@@ -5937,7 +5953,7 @@ op_amp
 id|temp
 )paren
 suffix:semicolon
-id|temp
+id|addr
 op_assign
 (paren
 id|temp
@@ -5945,9 +5961,26 @@ op_amp
 id|PCI_BASE_ADDRESS_MEM_MASK
 )paren
 suffix:semicolon
+macro_line|#ifdef __alpha__
+multiline_comment|/* ??? Presumably what is wanted is the bus address as seen&n;&t;   from the CPU side, since it appears that this value is&n;&t;   exported to userland via an ioctl.  The terminology below&n;&t;   is confused, mixing `physical address&squot; with `bus address&squot;,&n;&t;   as x86 folk are wont to do.  */
+id|addr
+op_assign
+id|virt_to_phys
+c_func
+(paren
+id|ioremap
+c_func
+(paren
+id|addr
+comma
+l_int|0
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|agp_bridge.gart_bus_addr
 op_assign
-id|temp
+id|addr
 suffix:semicolon
 r_return
 l_int|0
@@ -7878,14 +7911,11 @@ r_void
 (brace
 r_int
 id|memory
-suffix:semicolon
-r_float
+comma
 id|t
-suffix:semicolon
-r_int
+comma
 id|index
-suffix:semicolon
-r_int
+comma
 id|result
 suffix:semicolon
 id|memory
@@ -7895,12 +7925,12 @@ c_func
 (paren
 id|high_memory
 )paren
-op_div
-l_int|0x100000
+op_rshift
+l_int|20
 suffix:semicolon
 id|index
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 r_while
 c_loop
@@ -7998,20 +8028,20 @@ c_func
 (paren
 id|KERN_INFO
 l_string|&quot;agpgart: Maximum main memory to use &quot;
-l_string|&quot;for agp memory: %dM&bslash;n&quot;
+l_string|&quot;for agp memory: %ldM&bslash;n&quot;
 comma
 id|result
 )paren
 suffix:semicolon
 id|result
 op_assign
-(paren
 id|result
-op_star
-l_int|0x100000
+op_lshift
+(paren
+l_int|20
+op_minus
+id|PAGE_SHIFT
 )paren
-op_div
-l_int|4096
 suffix:semicolon
 r_return
 id|result

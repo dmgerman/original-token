@@ -4226,6 +4226,22 @@ op_amp
 id|SCpnt-&gt;host-&gt;host_active
 )paren
 suffix:semicolon
+id|SCpnt-&gt;buffer
+op_assign
+l_int|NULL
+suffix:semicolon
+id|SCpnt-&gt;bufflen
+op_assign
+l_int|0
+suffix:semicolon
+id|SCpnt-&gt;request_buffer
+op_assign
+l_int|NULL
+suffix:semicolon
+id|SCpnt-&gt;request_bufflen
+op_assign
+l_int|0
+suffix:semicolon
 id|SCpnt-&gt;use_sg
 op_assign
 l_int|0
@@ -4249,6 +4265,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Do not flag underflow conditions */
+id|SCpnt-&gt;resid
+op_assign
+l_int|0
+suffix:semicolon
 id|SCpnt-&gt;state
 op_assign
 id|SCSI_STATE_INITIALIZING
@@ -4907,7 +4927,7 @@ id|rtn
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * scsi_do_cmd sends all the commands out to the low-level driver.  It&n; * handles the specifics required for each low level driver - ie queued&n; * or non queued.  It also prevents conflicts when different high level&n; * drivers go for the same host at the same time.&n; */
-multiline_comment|/*&n; * Function:    scsi_do_cmd&n; *&n; * Purpose:     Queue a SCSI command&n; *&n; * Arguments:   SCpnt     - command descriptor.&n; *              cmnd      - actual SCSI command to be performed.&n; *              buffer    - data buffer.&n; *              bufflen   - size of data buffer.&n; *              done      - completion function to be run.&n; *              timeout   - how long to let it run before timeout.&n; *              retries   - number of retries we allow.&n; *&n; * Lock status: With the new queueing code, this is SMP-safe, and no locks&n; *              need be held upon entry.   The old queueing code the lock was&n; *              assumed to be held upon entry.&n; *&n; * Returns:     Pointer to command descriptor.&n; *&n; * Notes:       Prior to the new queue code, this function was not SMP-safe.&n; *              Also, this function is now only used for queueing requests&n; *              for things like ioctls and character device requests - this&n; *              is because we essentially just inject a request into the&n; *              queue for the device. Normal block device handling manipulates&n; *              the queue directly.&n; */
+multiline_comment|/*&n; * Function:    scsi_do_cmd&n; *&n; * Purpose:     Queue a SCSI command&n; *&n; * Arguments:   SCpnt     - command descriptor.&n; *              cmnd      - actual SCSI command to be performed.&n; *              buffer    - data buffer.&n; *              bufflen   - size of data buffer.&n; *              done      - completion function to be run.&n; *              timeout   - how long to let it run before timeout.&n; *              retries   - number of retries we allow.&n; *&n; * Lock status: With the new queueing code, this is SMP-safe, and no locks&n; *              need be held upon entry.   The old queueing code the lock was&n; *              assumed to be held upon entry.&n; *&n; * Returns:     Nothing.&n; *&n; * Notes:       Prior to the new queue code, this function was not SMP-safe.&n; *              Also, this function is now only used for queueing requests&n; *              for things like ioctls and character device requests - this&n; *              is because we essentially just inject a request into the&n; *              queue for the device. Normal block device handling manipulates&n; *              the queue directly.&n; */
 DECL|function|scsi_do_cmd
 r_void
 id|scsi_do_cmd
@@ -5271,6 +5291,10 @@ op_logical_neg
 id|tstatus
 )paren
 (brace
+id|SCpnt-&gt;done_late
+op_assign
+l_int|1
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace

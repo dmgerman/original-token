@@ -1068,7 +1068,7 @@ suffix:semicolon
 id|debug_info
 c_func
 (paren
-l_string|&quot;USB: serial_read_irq&bslash;n&quot;
+l_string|&quot;USB serial: serial_read_irq&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef SERIAL_DEBUG
@@ -1314,7 +1314,7 @@ suffix:semicolon
 id|debug_info
 c_func
 (paren
-l_string|&quot;USB: serial_open&bslash;n&quot;
+l_string|&quot;USB Serial: serial_open&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* assign a serial object to the tty pointer */
@@ -1332,6 +1332,48 @@ op_minus
 id|tty-&gt;driver.minor_start
 )braket
 suffix:semicolon
+multiline_comment|/* do some sanity checking that we really have a device present */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial
+)paren
+(brace
+id|debug_info
+c_func
+(paren
+l_string|&quot;USB Serial: serial == NULL!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+op_minus
+id|ENODEV
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial-&gt;type
+)paren
+(brace
+id|debug_info
+c_func
+(paren
+l_string|&quot;USB Serial: serial-&gt;type == NULL!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+op_minus
+id|ENODEV
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* make the tty driver remember our serial object, and us it */
 id|tty-&gt;driver_data
 op_assign
 id|serial
@@ -1399,9 +1441,42 @@ suffix:semicolon
 id|debug_info
 c_func
 (paren
-l_string|&quot;USB: serial_close&bslash;n&quot;
+l_string|&quot;USB Serial: serial_close&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* do some sanity checking that we really have a device present */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial
+)paren
+(brace
+id|debug_info
+c_func
+(paren
+l_string|&quot;USB Serial: serial == NULL!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial-&gt;type
+)paren
+(brace
+id|debug_info
+c_func
+(paren
+l_string|&quot;USB Serial: serial-&gt;type == NULL!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1493,6 +1568,47 @@ c_func
 l_string|&quot;USB Serial: serial_write&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* do some sanity checking that we really have a device present */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial
+)paren
+(brace
+id|debug_info
+c_func
+(paren
+l_string|&quot;USB Serial: serial == NULL!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+op_minus
+id|ENODEV
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial-&gt;type
+)paren
+(brace
+id|debug_info
+c_func
+(paren
+l_string|&quot;USB Serial: serial-&gt;type == NULL!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+op_minus
+id|ENODEV
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1597,6 +1713,39 @@ c_func
 l_string|&quot;USB Serial: serial_put_char&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* do some sanity checking that we really have a device present */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial
+)paren
+(brace
+id|debug_info
+c_func
+(paren
+l_string|&quot;USB Serial: serial == NULL!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial-&gt;type
+)paren
+(brace
+id|debug_info
+c_func
+(paren
+l_string|&quot;USB Serial: serial-&gt;type == NULL!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1678,6 +1827,47 @@ c_func
 l_string|&quot;USB Serial: serial_write_room&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* do some sanity checking that we really have a device present */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial
+)paren
+(brace
+id|debug_info
+c_func
+(paren
+l_string|&quot;USB Serial: serial == NULL!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+op_minus
+id|ENODEV
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial-&gt;type
+)paren
+(brace
+id|debug_info
+c_func
+(paren
+l_string|&quot;USB Serial: serial-&gt;type == NULL!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+op_minus
+id|ENODEV
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1771,6 +1961,47 @@ c_func
 l_string|&quot;USB Serial: serial_chars_in_buffer&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* do some sanity checking that we really have a device present */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial
+)paren
+(brace
+id|debug_info
+c_func
+(paren
+l_string|&quot;USB Serial: serial == NULL!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+op_minus
+id|ENODEV
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial-&gt;type
+)paren
+(brace
+id|debug_info
+c_func
+(paren
+l_string|&quot;USB Serial: serial-&gt;type == NULL!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+op_minus
+id|ENODEV
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1864,6 +2095,39 @@ c_func
 l_string|&quot;USB Serial: serial_throttle&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* do some sanity checking that we really have a device present */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial
+)paren
+(brace
+id|debug_info
+c_func
+(paren
+l_string|&quot;USB Serial: serial == NULL!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial-&gt;type
+)paren
+(brace
+id|debug_info
+c_func
+(paren
+l_string|&quot;USB Serial: serial-&gt;type == NULL!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1943,6 +2207,39 @@ c_func
 l_string|&quot;USB Serial: serial_unthrottle&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* do some sanity checking that we really have a device present */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial
+)paren
+(brace
+id|debug_info
+c_func
+(paren
+l_string|&quot;USB Serial: serial == NULL!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial-&gt;type
+)paren
+(brace
+id|debug_info
+c_func
+(paren
+l_string|&quot;USB Serial: serial-&gt;type == NULL!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2025,7 +2322,7 @@ suffix:semicolon
 id|debug_info
 c_func
 (paren
-l_string|&quot;USB: etek_serial_open&bslash;n&quot;
+l_string|&quot;USB Serial: etek_serial_open&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -2128,7 +2425,7 @@ suffix:semicolon
 id|debug_info
 c_func
 (paren
-l_string|&quot;USB: etek_serial_close&bslash;n&quot;
+l_string|&quot;USB Serial: etek_serial_close&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Need to change the control lines here */
@@ -2580,7 +2877,7 @@ suffix:semicolon
 id|debug_info
 c_func
 (paren
-l_string|&quot;USB: generic_serial_open&bslash;n&quot;
+l_string|&quot;USB Serial: generic_serial_open&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -2689,7 +2986,7 @@ suffix:semicolon
 id|debug_info
 c_func
 (paren
-l_string|&quot;USB: generic_serial_close&bslash;n&quot;
+l_string|&quot;USB Serial: generic_serial_close&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* shutdown any bulk reads that might be going on */
@@ -3184,7 +3481,6 @@ id|bulk_out_endpoint
 op_assign
 l_int|NULL
 suffix:semicolon
-singleline_comment|//&t;SERIAL_TYPE type;
 r_struct
 id|usb_serial_device_type
 op_star
@@ -3196,7 +3492,6 @@ suffix:semicolon
 r_int
 id|serial_num
 suffix:semicolon
-singleline_comment|//&t;int ret;
 r_int
 id|i
 suffix:semicolon
@@ -3235,7 +3530,7 @@ suffix:semicolon
 macro_line|#ifdef SERIAL_DEBUG
 id|printk
 (paren
-l_string|&quot;Looking at %s&bslash;nVendor id=%.4x&bslash;nProduct id=%.4x&quot;
+l_string|&quot;USB Serial: Looking at %s&bslash;nVendor id=%.4x&bslash;nProduct id=%.4x&bslash;n&quot;
 comma
 id|type-&gt;name
 comma
@@ -3277,7 +3572,7 @@ id|type-&gt;idProduct
 id|debug_info
 c_func
 (paren
-l_string|&quot;descriptor matches...looking at the endpoints&bslash;n&quot;
+l_string|&quot;USB Serial: descriptor matches...looking at the endpoints&bslash;n&quot;
 )paren
 multiline_comment|/* descriptor matches, let&squot;s try to find the endpoints needed */
 id|interrupt_pipe
@@ -3349,7 +3644,7 @@ multiline_comment|/* we found a bulk in endpoint */
 id|debug_info
 c_func
 (paren
-l_string|&quot;found bulk in&bslash;n&quot;
+l_string|&quot;USB Serial: found bulk in&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -3407,7 +3702,7 @@ multiline_comment|/* we found a bulk out endpoint */
 id|debug_info
 c_func
 (paren
-l_string|&quot;found bulk out&bslash;n&quot;
+l_string|&quot;USB Serial: found bulk out&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -3461,7 +3756,7 @@ multiline_comment|/* we found a interrupt in endpoint */
 id|debug_info
 c_func
 (paren
-l_string|&quot;found interrupt in&bslash;n&quot;
+l_string|&quot;USB Serial: found interrupt in&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -3809,7 +4104,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;USB Serial failed usb_request_irq (0x%x)&bslash;n&quot;
+l_string|&quot;USB Serial: failed usb_request_irq (0x%x)&bslash;n&quot;
 comma
 id|ret
 )paren
@@ -3835,7 +4130,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;USB Serial, descriptors matched, but endpoints did not&bslash;n&quot;
+l_string|&quot;USB Serial: descriptors matched, but endpoints did not&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -4020,7 +4315,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;USB Serial device disconnected.&bslash;n&quot;
+l_string|&quot;USB Serial: device disconnected.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -4304,7 +4599,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;USB Serial support registered.&bslash;n&quot;
+l_string|&quot;USB Serial: support registered.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

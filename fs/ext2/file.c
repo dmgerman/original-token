@@ -548,7 +548,7 @@ multiline_comment|/* writepage */
 id|ext2_truncate
 comma
 multiline_comment|/* truncate */
-id|ext2_permission
+l_int|NULL
 comma
 multiline_comment|/* permission */
 l_int|NULL

@@ -560,12 +560,11 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|ipc_lock
+id|spin_lock
 c_func
 (paren
-id|ids
-comma
-id|id
+op_amp
+id|ids-&gt;ary
 )paren
 suffix:semicolon
 id|ids-&gt;entries

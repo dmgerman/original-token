@@ -3,6 +3,7 @@ DECL|macro|__ALPHA_DELAY_H
 mdefine_line|#define __ALPHA_DELAY_H
 macro_line|#include &lt;asm/smp.h&gt;
 multiline_comment|/*&n; * Copyright (C) 1993 Linus Torvalds&n; *&n; * Delay routines, using a pre-computed &quot;loops_per_second&quot; value.&n; */
+multiline_comment|/* We can make the delay loop inline, but we have to be very careful wrt&n;   scheduling for ev6 machines, so that we keep a consistent number of&n;   iterations for all invocations.  */
 r_extern
 id|__inline__
 r_void
@@ -15,59 +16,26 @@ r_int
 id|loops
 )paren
 (brace
-r_register
-r_int
-r_int
-id|r0
 id|__asm__
+id|__volatile__
 c_func
 (paren
-l_string|&quot;$0&quot;
-)paren
-op_assign
+l_string|&quot;.align 4&bslash;n&quot;
+l_string|&quot;1:&t;subq %0,1,%0&bslash;n&quot;
+l_string|&quot;&t;bge %0,1b&bslash;n&quot;
+l_string|&quot;&t;nop&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
 id|loops
-suffix:semicolon
-macro_line|#ifdef MODULE
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;lda $28,___delay; jsr $28,($28),0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|r0
 )paren
 suffix:colon
-l_string|&quot;r&quot;
+l_string|&quot;0&quot;
 (paren
-id|r0
+id|loops
 )paren
-suffix:colon
-l_string|&quot;$28&quot;
 )paren
 suffix:semicolon
-macro_line|#else
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;bsr $28,___delay&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|r0
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|r0
-)paren
-suffix:colon
-l_string|&quot;$28&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * division by multiplication: you don&squot;t have to worry about&n; * loss of precision.&n; *&n; * Use only for very small delays ( &lt; 1 msec).  Should probably use a&n; * lookup table, really, as the multiplications take much too long with&n; * short delays.  This is a &quot;reasonable&quot; implementation, though (and the&n; * first constant multiplications gets optimized away if the delay is&n; * a constant).&n; *&n; * Optimize small constants further by exposing the second multiplication&n; * to the compiler.  In addition, mulq is 2 cycles faster than umulh.&n; */
 r_extern

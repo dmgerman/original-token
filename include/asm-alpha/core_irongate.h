@@ -3,13 +3,12 @@ DECL|macro|__ALPHA_IRONGATE__H__
 mdefine_line|#define __ALPHA_IRONGATE__H__
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/compiler.h&gt;
-multiline_comment|/*&n; * IRONGATE is the internal name for the AMD-751 K7 core logic chipset&n; * which provides memory controller and PCI access for NAUTILUS-based&n; * EV6 (21264) systems.&n; *&n; * This file is based on:&n; *&n; * IronGate management library, (c) 1999 Alpha Processor, Inc.&n; * Begun 19 January 1999 by Stig Telfer, Alpha Processor, Inc.&n; */
+multiline_comment|/*&n; * IRONGATE is the internal name for the AMD-751 K7 core logic chipset&n; * which provides memory controller and PCI access for NAUTILUS-based&n; * EV6 (21264) systems.&n; *&n; * This file is based on:&n; *&n; * IronGate management library, (c) 1999 Alpha Processor, Inc.&n; * Copyright (C) 1999 Alpha Processor, Inc.,&n; *&t;(David Daniel, Stig Telfer, Soohoon Lee)&n; */
 multiline_comment|/*&n; * The 21264 supports, and internally recognizes, a 44-bit physical&n; * address space that is divided equally between memory address space&n; * and I/O address space. Memory address space resides in the lower&n; * half of the physical address space (PA[43]=0) and I/O address space&n; * resides in the upper half of the physical address space (PA[43]=1).&n; *&n; */
-multiline_comment|/* Eh? Not offset from memory?  */
 DECL|macro|IRONGATE_DMA_WIN_BASE
-mdefine_line|#define IRONGATE_DMA_WIN_BASE&t;&t; (0U)
+mdefine_line|#define IRONGATE_DMA_WIN_BASE&t;&t; (0UL)
 DECL|macro|IRONGATE_DMA_WIN_SIZE
-mdefine_line|#define IRONGATE_DMA_WIN_SIZE&t;&t; (0U)
+mdefine_line|#define IRONGATE_DMA_WIN_SIZE&t;&t; (0UL)
 multiline_comment|/*&n; * Irongate CSR map.  Some of the CSRs are 8 or 16 bits, but all access&n; * through the routines given is 32-bit.&n; *&n; * The first 0x40 bytes are standard as per the PCI spec.&n; */
 DECL|typedef|igcsr32
 r_typedef
@@ -1205,9 +1204,7 @@ DECL|typedef|ig_dramms_t
 id|ig_dramms_t
 suffix:semicolon
 multiline_comment|/*&n; * Memory spaces:&n; */
-multiline_comment|/* ??? the following probably needs fixing */
 multiline_comment|/* Irongate is consistent with a subset of the Tsunami memory map */
-multiline_comment|/* XXX: Do we need to conditionalize on this?  */
 macro_line|#ifdef USE_48_BIT_KSEG
 DECL|macro|IRONGATE_BIAS
 mdefine_line|#define IRONGATE_BIAS 0x80000000000UL
