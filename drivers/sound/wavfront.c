@@ -1,4 +1,4 @@
-multiline_comment|/*  -*- linux-c -*-&n; *&n; * sound/wavfront.c&n; *&n; * A Linux driver for Turtle Beach WaveFront Series (Maui, Tropez, Tropez Plus)&n; *&n; * This driver supports the onboard wavetable synthesizer (an ICS2115),&n; * including patch, sample and program loading and unloading, conversion&n; * of GUS patches during loading, and full user-level access to all&n; * WaveFront commands. It tries to provide semi-intelligent patch and&n; * sample management as well.&n; *&n; * It also provides support for the ICS emulation of an MPU-401.  Full&n; * support for the ICS emulation&squot;s &quot;virtual MIDI mode&quot; is provided in&n; * wf_midi.c.&n; *&n; * Support is also provided for the Tropez Plus&squot; onboard FX processor,&n; * a Yamaha YSS225. Currently, code exists to configure the YSS225,&n; * and there is an interface allowing tweaking of any of its memory&n; * addresses. However, I have been unable to decipher the logical&n; * positioning of the configuration info for various effects, so for&n; * now, you just get the YSS225 in the same state as Turtle Beach&squot;s&n; * &quot;SETUPSND.EXE&quot; utility leaves it.&n; *&n; * The boards&squot; CODEC (a Crystal CS4232) is supported by cs4232.[co],&n; * This chip also controls the configuration of the card: the wavefront&n; * synth is logical unit 4.&n; *&n; **********************************************************************&n; *&n; * Copyright (C) by Paul Barton-Davis 1998&n; *&n; * Some portions of this file are taken from work that is&n; * copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * Although the relevant code here is all new, the handling of&n; * sample/alias/multi- samples is entirely based on a driver by Matt&n; * Martin and Rutger Nijlunsing which demonstrated how to get things&n; * to most aspects of this to work correctly. The GUS patch loading&n; * code has been almost unaltered by me, except to fit formatting and&n; * function names in the rest of the file. Many thanks to them.&n; *&n; * Appreciation and thanks to Hannu Savolainen for his early work on the Maui&n; * driver, and answering a few questions while this one was developed.&n; *&n; * Absolutely NO thanks to Turtle Beach/Voyetra and Yamaha for their&n; * complete lack of help in developing this driver, and in particular&n; * for their utter silence in response to questions about undocumented&n; * aspects of configuring a WaveFront soundcard, particularly the&n; * effects processor.&n; *&n; * $Id: wavfront.c,v 0.4 1998/07/22 02:12:11 pbd Exp $&n; *&n; * This program is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*  -*- linux-c -*-&n; *&n; * sound/wavfront.c&n; *&n; * A Linux driver for Turtle Beach WaveFront Series (Maui, Tropez, Tropez Plus)&n; *&n; * This driver supports the onboard wavetable synthesizer (an ICS2115),&n; * including patch, sample and program loading and unloading, conversion&n; * of GUS patches during loading, and full user-level access to all&n; * WaveFront commands. It tries to provide semi-intelligent patch and&n; * sample management as well.&n; *&n; * It also provides support for the ICS emulation of an MPU-401.  Full&n; * support for the ICS emulation&squot;s &quot;virtual MIDI mode&quot; is provided in&n; * wf_midi.c.&n; *&n; * Support is also provided for the Tropez Plus&squot; onboard FX processor,&n; * a Yamaha YSS225. Currently, code exists to configure the YSS225,&n; * and there is an interface allowing tweaking of any of its memory&n; * addresses. However, I have been unable to decipher the logical&n; * positioning of the configuration info for various effects, so for&n; * now, you just get the YSS225 in the same state as Turtle Beach&squot;s&n; * &quot;SETUPSND.EXE&quot; utility leaves it.&n; *&n; * The boards&squot; CODEC (a Crystal CS4232) is supported by cs4232.[co],&n; * This chip also controls the configuration of the card: the wavefront&n; * synth is logical unit 4.&n; *&n; **********************************************************************&n; *&n; * Copyright (C) by Paul Barton-Davis 1998&n; *&n; * Some portions of this file are taken from work that is&n; * copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * Although the relevant code here is all new, the handling of&n; * sample/alias/multi- samples is entirely based on a driver by Matt&n; * Martin and Rutger Nijlunsing which demonstrated how to get things&n; * to most aspects of this to work correctly. The GUS patch loading&n; * code has been almost unaltered by me, except to fit formatting and&n; * function names in the rest of the file. Many thanks to them.&n; *&n; * Appreciation and thanks to Hannu Savolainen for his early work on the Maui&n; * driver, and answering a few questions while this one was developed.&n; *&n; * Absolutely NO thanks to Turtle Beach/Voyetra and Yamaha for their&n; * complete lack of help in developing this driver, and in particular&n; * for their utter silence in response to questions about undocumented&n; * aspects of configuring a WaveFront soundcard, particularly the&n; * effects processor.&n; *&n; * $Id: wavfront.c,v 0.5 1998/07/22 16:16:41 pbd Exp $&n; *&n; * This program is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/init.h&gt;
@@ -2256,7 +2256,7 @@ l_int|0
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/***********************************************************************&n;WaveFront: data munging   &n;&n;Things here are weird.  All data written to the board cannot &n;have its most significant bit set.  Any data item with values &n;potentially &gt; 0x7F (127) must be split across multiple bytes.&n;&n;Sometimes, we need to munge numeric values that are represented on&n;the x86 side as 8- to 32-bit values.  Sometimes, we need to munge data&n;that is represented on the x86 side as an array of bytes.  The most&n;efficient approach to handling both cases seems to be to use 2&n;different functions for munging and 2 for de-munging.  This avoids&n;weird casting and worrying about bit-level offsets.&n;&n;**********************************************************************/
+multiline_comment|/***********************************************************************&n;WaveFront: data munging   &n;&n;Things here are wierd. All data written to the board cannot &n;have its most significant bit set. Any data item with values &n;potentially &gt; 0x7F (127) must be split across multiple bytes.&n;&n;Sometimes, we need to munge numeric values that are represented on&n;the x86 side as 8-32 bit values. Sometimes, we need to munge data&n;that is represented on the x86 side as an array of bytes. The most&n;efficient approach to handling both cases seems to be to use 2&n;different functions for munging and 2 for de-munging. This avoids&n;wierd casting and worrying about bit-level offsets.&n;&n;**********************************************************************/
 r_static
 r_int
 r_char
@@ -4162,7 +4162,7 @@ comma
 l_int|4
 )paren
 suffix:semicolon
-multiline_comment|/* This one is truly weird.  What kind of weirdo decided that in&n;&t;   a system dominated by 16- and 32-bit integers, they would use&n;&t;   just 12 bits ?&n;&t;*/
+multiline_comment|/* This one is truly wierd. What kind of wierdo decided that in&n;&t;   a system dominated by 16 and 32 bit integers, they would use&n;&t;   a just 12 bits ?&n;&t;*/
 id|shptr
 op_assign
 id|munge_int32
@@ -4174,7 +4174,7 @@ comma
 l_int|3
 )paren
 suffix:semicolon
-multiline_comment|/* Why is this nybblified, when the MSB is *always* zero? &n;&t;   Anyway, we can&squot;t take address of bitfield, so make a&n;&t;   good-faith guess at where it starts.&n;&t;*/
+multiline_comment|/* Why is this nybblified, when the MSB is *always* zero ? &n;&t;   Anyway, we can&squot;t take address of bitfield, so make a&n;&t;   good-faith guess at where it starts.&n;&t;*/
 id|shptr
 op_assign
 id|munge_int32
@@ -8326,6 +8326,26 @@ id|hwv
 l_int|2
 )braket
 suffix:semicolon
+multiline_comment|/* Check IRQ is legal */
+r_if
+c_cond
+(paren
+(paren
+id|bits
+op_assign
+id|wavefront_interrupt_bits
+(paren
+id|hw-&gt;irq
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -8371,25 +8391,6 @@ id|hw-&gt;control_port
 suffix:semicolon
 multiline_comment|/* At this point, the board is in reset, and the H/W initialization&n;&t;   register is accessed at the same address as the data port.&n;     &n;&t;   Bit 7 - Enable IRQ Driver&t;&n;&t;   0 - Tri-state the Wave-Board drivers for the PC Bus IRQs&n;&t;   1 - Enable IRQ selected by bits 5:3 to be driven onto the PC Bus.&n;     &n;&t;   Bit 6 - MIDI Interface Select&n;&n;&t;   0 - Use the MIDI Input from the 26-pin WaveBlaster&n;&t;   compatible header as the serial MIDI source&n;&t;   1 - Use the MIDI Input from the 9-pin D connector as the serial MIDI &n;&t;   source.&n;     &n;&t;   Bits 5:3 - IRQ Selection&n;&t;   0 0 0 - IRQ 2/9&n;&t;   0 0 1 - IRQ 5&n;&t;   0 1 0 - IRQ 12&n;&t;   0 1 1 - IRQ 15&n;&t;   1 0 0 - Reserved&n;&t;   1 0 1 - Reserved&n;&t;   1 1 0 - Reserved&n;&t;   1 1 1 - Reserved&n;     &n;&t;   Bits 2:1 - Reserved&n;&t;   Bit 0 - Disable Boot ROM&n;&t;   0 - memory accesses to 03FC30-03FFFFH utilize the internal Boot ROM&n;&t;   1 - memory accesses to 03FC30-03FFFFH are directed to external &n;&t;   storage.&n;     &n;&t;*/
 multiline_comment|/* configure hardware: IRQ, enable interrupts, &n;&t;   plus external 9-pin MIDI interface selected&n;&t;*/
-r_if
-c_cond
-(paren
-(paren
-id|bits
-op_assign
-id|wavefront_interrupt_bits
-(paren
-id|hw-&gt;irq
-)paren
-)paren
-OL
-l_int|0
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
 id|outb
 (paren
 l_int|0x80
@@ -8401,7 +8402,7 @@ comma
 id|hw-&gt;data_port
 )paren
 suffix:semicolon
-multiline_comment|/* CONTROL REGISTER&n;&n;&t;   0 Host Rx Interrupt Enable (1=Enabled)      0x1&n;&t;   1 Unused                                    0x2&n;&t;   2 Unused                                    0x4&n;&t;   3 Unused                                    0x8&n;&t;   4 Host Tx Interrupt Enable                 0x10&n;&t;   5 Mute (0=Mute; 1=Play)                    0x20&n;&t;   6 Master Interrupt Enable (1=Enabled)      0x40&n;&t;   7 Master Reset (0=Reset; 1=Run)            0x80&n;&n;&t;   Take us out of reset, unmute, master + TX + RX interrupts on.&n;&t;   &n;&t;   We&squot;ll get an interrupt presumably to tell us that the TX&n;&t;   register is clear. However, this doesn&squot;t mean that the&n;&t;   board is ready. We actually have to send it a command, and&n;&t;   wait till it gets back to use. After a cold boot, this can&n;&t;   take some time.&n;&t;   &n;&t;   &n;&t;   I think this is because its only after a cold boot that the&n;&t;   onboard ROM does its memory check, which can take &quot;up to 4&n;&t;   seconds&quot; according to the WaveFront SDK. So, since sleeping&n;&t;   doesn&squot;t cost us much, we&squot;ll give it *plenty* of time. It&n;&t;   turns out that with 12MB of RAM, it can take up to 16&n;&t;   seconds or so!! See the code after &quot;ABOUT INTERRUPTS&quot;&n;&t;*/
+multiline_comment|/* CONTROL REGISTER&n;&n;&t;   0 Host Rx Interrupt Enable (1=Enabled)      0x1&n;&t;   1 Unused                                    0x2&n;&t;   2 Unused                                    0x4&n;&t;   3 Unused                                    0x8&n;&t;   4 Host Tx Interrupt Enable                 0x10&n;&t;   5 Mute (0=Mute; 1=Play)                    0x20&n;&t;   6 Master Interrupt Enable (1=Enabled)      0x40&n;&t;   7 Master Reset (0=Reset; 1=Run)            0x80&n;&n;&t;   Take us out of reset, unmute, master + TX + RX interrupts on.&n;&t;   &n;&t;   We&squot;ll get an interrupt presumably to tell us that the TX&n;&t;   register is clear. However, this doesn&squot;t mean that the&n;&t;   board is ready. We actually have to send it a command, and&n;&t;   wait till it gets back to use. After a cold boot, this can&n;&t;   take some time.&n;&t;   &n;&t;   I think this is because its only after a cold boot that the&n;&t;   onboard ROM does its memory check, which can take &quot;up to 4&n;&t;   seconds&quot; according to the WaveFront SDK. So, since sleeping&n;&t;   doesn&squot;t cost us much, we&squot;ll give it *plenty* of time. It&n;&t;   turns out that with 12MB of RAM, it can take up to 16&n;&t;   seconds or so!! See the code after &quot;ABOUT INTERRUPTS&quot;&n;&t;*/
 id|wavefront_should_cause_interrupt
 c_func
 (paren
@@ -9667,37 +9668,8 @@ id|ospath
 r_goto
 id|gone_bad
 suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
 )brace
-)brace
-r_if
-c_cond
-(paren
-id|fx_raw
-)paren
-(brace
-id|wffx_init
-(paren
-id|hw
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* If we loaded the OS, we now have to wait for it to be ready&n;&t;   to roll. We can&squot;t guarantee that interrupts are enabled,&n;&t;   because we might be reloading the module without forcing a&n;&t;   reset/reload of the firmware.&n;&t;   &n;&t;   Rather than busy-wait, lets just turn interrupts on.&n;&t;*/
-id|outb
-(paren
-l_int|0x80
-op_or
-l_int|0x40
-op_or
-l_int|0x10
-op_or
-l_int|0x1
-comma
-id|hw-&gt;control_port
-)paren
-suffix:semicolon
+multiline_comment|/* Wait for the OS to get running. The protocol for&n;&t;&t;   this is non-obvious, and was determined by&n;&t;&t;   using port-IO tracing in DOSemu and some&n;&t;&t;   experimentation here.&n;&t;&t;   &n;&t;&t;   Rather than busy-wait, use interrupts creatively.&n;&t;&t;*/
 id|wavefront_should_cause_interrupt
 (paren
 id|hw
@@ -9763,7 +9735,7 @@ r_goto
 id|gone_bad
 suffix:semicolon
 )brace
-multiline_comment|/* OK, no (RX/TX) interrupts any more, but leave mute&n;&t;   on. Master interrupts get enabled when we&squot;re done here.&n;&t;*/
+multiline_comment|/* OK, no (RX/TX) interrupts any more, but leave mute&n;&t;&t;   on. Master interrupts get enabled when we&squot;re done here.&n;&t;&t;*/
 id|outb
 (paren
 l_int|0x80
@@ -9779,6 +9751,20 @@ comma
 id|hw
 )paren
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+multiline_comment|/*XXX has_fx_device() &amp;&amp; */
+id|fx_raw
+)paren
+(brace
+id|wffx_init
+(paren
+id|hw
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* SETUPSND.EXE asks for sample memory config here, but since i&n;&t;   have no idea how to interpret the result, we&squot;ll forget&n;&t;   about it.&n;&t;*/
 r_if
 c_cond
@@ -10815,7 +10801,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* YSS225 initialization.&n;&n;   This code was developed using DOSEmu.  The Turtle Beach SETUPSND&n;   utility was run with I/O tracing in DOSEmu enabled, and a reconstruction&n;   of the port I/O done, using the Yamaha faxback document as a guide&n;   to add more logic to the code.  It&squot;s really pretty weird.&n;&n;   There was an alternative approach of just dumping the whole I/O&n;   sequence as a series of port/value pairs and a simple loop&n;   that output it.  However, I hope that eventually I&squot;ll get more&n;   control over what this code does, and so I tried to stick with&n;   a somewhat &quot;algorithmic&quot; approach.&n;*/
+multiline_comment|/* YSS225 initialization.&n;&n;   This code was developed using DOSEMU. The Turtle Beach SETUPSND&n;   utility was run with I/O tracing in DOSEMU enabled, and a reconstruction&n;   of the port I/O done, using the Yamaha faxback document as a guide&n;   to add more logic to the code. Its really pretty wierd.&n;&n;   There was an alternative approach of just dumping the whole I/O&n;   sequence as a series of port/value pairs and a simple loop&n;   that output it. However, I hope that eventually I&squot;ll get more&n;   control over what this code does, and so I tried to stick with&n;   a somewhat &quot;algorithmic&quot; approach.&n;*/
 r_static
 r_int
 DECL|function|wffx_init
@@ -14209,7 +14195,7 @@ r_void
 id|printk
 (paren
 l_string|&quot;Turtle Beach WaveFront Driver&bslash;n&quot;
-l_string|&quot;Copyright (C) by Hannu Savolainen, &quot;
+l_string|&quot;Copyright (C) by Hannu Solvainen, &quot;
 l_string|&quot;Paul Barton-Davis 1993-1998.&bslash;n&quot;
 )paren
 suffix:semicolon

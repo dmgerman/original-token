@@ -106,13 +106,11 @@ op_eq
 id|sb-&gt;sv_flc_size
 )paren
 (brace
-r_int
-r_int
+id|u16
 op_star
 id|flc_count
 suffix:semicolon
-r_int
-r_int
+id|u32
 op_star
 id|flc_blocks
 suffix:semicolon
@@ -727,13 +725,11 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* the last block continues the free list */
-r_int
-r_int
+id|u16
 op_star
 id|flc_count
 suffix:semicolon
-r_int
-r_int
+id|u32
 op_star
 id|flc_blocks
 suffix:semicolon
@@ -1281,13 +1277,11 @@ c_loop
 l_int|1
 )paren
 (brace
-r_int
-r_int
+id|u16
 op_star
 id|flc_count
 suffix:semicolon
-r_int
-r_int
+id|u32
 op_star
 id|flc_blocks
 suffix:semicolon

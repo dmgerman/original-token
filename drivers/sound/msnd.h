@@ -1,9 +1,9 @@
-multiline_comment|/*********************************************************************&n; *&n; * msnd.h&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Some parts of this header file were derived from the Turtle Beach&n; * MultiSound Driver Development Kit.&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; * Copyright (C) 1993 Turtle Beach Systems, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd.h,v 1.18 1998/09/04 18:43:40 andrewtv Exp $&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *&n; * msnd.h&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Some parts of this header file were derived from the Turtle Beach&n; * MultiSound Driver Development Kit.&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; * Copyright (C) 1993 Turtle Beach Systems, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd.h,v 1.31 1998/09/10 14:02:58 andrewtv Exp $&n; *&n; ********************************************************************/
 macro_line|#ifndef __MSND_H
 DECL|macro|__MSND_H
 mdefine_line|#define __MSND_H
 DECL|macro|VERSION
-mdefine_line|#define VERSION&t;&t;&t;&quot;0.7.13&quot;
+mdefine_line|#define VERSION&t;&t;&t;&quot;0.8.2&quot;
 DECL|macro|DEFSAMPLERATE
 mdefine_line|#define DEFSAMPLERATE&t;&t;DSP_DEFAULT_SPEED
 DECL|macro|DEFSAMPLESIZE
@@ -11,7 +11,7 @@ mdefine_line|#define DEFSAMPLESIZE&t;&t;AFMT_U8
 DECL|macro|DEFCHANNELS
 mdefine_line|#define DEFCHANNELS&t;&t;1
 DECL|macro|DEFFIFOSIZE
-mdefine_line|#define DEFFIFOSIZE&t;&t;64
+mdefine_line|#define DEFFIFOSIZE&t;&t;128
 DECL|macro|SNDCARD_MSND
 mdefine_line|#define SNDCARD_MSND&t;&t;38
 DECL|macro|SRAM_BANK_SIZE
@@ -204,6 +204,8 @@ DECL|macro|PCTODSP_OFFSET
 mdefine_line|#define PCTODSP_OFFSET(w)&t;(USHORT)((w)/2)
 DECL|macro|PCTODSP_BASED
 mdefine_line|#define PCTODSP_BASED(w)&t;(USHORT)(((w)/2) + DSP_BASE_ADDR)
+DECL|macro|DSPTOPC_BASED
+mdefine_line|#define DSPTOPC_BASED(w)&t;(((w) - DSP_BASE_ADDR) * 2)
 macro_line|#ifdef SLOWIO
 DECL|macro|outb
 macro_line|#  undef outb
@@ -354,32 +356,17 @@ r_char
 id|info
 suffix:semicolon
 DECL|member|base
-r_char
+r_volatile
+id|BYTE
 op_star
 id|base
 suffix:semicolon
-macro_line|#ifndef LINUX20
-DECL|member|lock
-id|spinlock_t
-id|lock
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Motorola 56k DSP SMA */
 DECL|member|SMA
 r_volatile
 id|BYTE
 op_star
 id|SMA
-suffix:semicolon
-DECL|member|CurDAQD
-DECL|member|CurDARQD
-r_volatile
-id|BYTE
-op_star
-id|CurDAQD
-comma
-op_star
-id|CurDARQD
 suffix:semicolon
 DECL|member|DAPQ
 DECL|member|DARQ
@@ -438,28 +425,28 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-DECL|macro|F_BANKONE
-mdefine_line|#define F_BANKONE&t;&t;&t;0
-DECL|macro|F_INTERRUPT
-mdefine_line|#define F_INTERRUPT&t;&t;&t;1
-DECL|macro|F_WRITING
-mdefine_line|#define F_WRITING&t;&t;&t;2
-DECL|macro|F_WRITEBLOCK
-mdefine_line|#define F_WRITEBLOCK&t;&t;&t;3
-DECL|macro|F_READING
-mdefine_line|#define F_READING&t;&t;&t;4
-DECL|macro|F_READBLOCK
-mdefine_line|#define F_READBLOCK&t;&t;&t;5
-DECL|macro|F_AUDIO_INUSE
-mdefine_line|#define F_AUDIO_INUSE&t;&t;&t;6
-DECL|macro|F_EXT_MIDI_INUSE
-mdefine_line|#define F_EXT_MIDI_INUSE&t;&t;7
-DECL|macro|F_INT_MIDI_INUSE
-mdefine_line|#define F_INT_MIDI_INUSE&t;&t;8
-DECL|macro|F_WRITEFLUSH
-mdefine_line|#define F_WRITEFLUSH&t;&t;&t;9
+DECL|macro|F_RESETTING
+mdefine_line|#define F_RESETTING&t;&t;&t;0
 DECL|macro|F_HAVEDIGITAL
-mdefine_line|#define F_HAVEDIGITAL&t;&t;&t;10
+mdefine_line|#define F_HAVEDIGITAL&t;&t;&t;1
+DECL|macro|F_AUDIO_WRITE_INUSE
+mdefine_line|#define F_AUDIO_WRITE_INUSE&t;&t;2
+DECL|macro|F_WRITING
+mdefine_line|#define F_WRITING&t;&t;&t;3
+DECL|macro|F_WRITEBLOCK
+mdefine_line|#define F_WRITEBLOCK&t;&t;&t;4
+DECL|macro|F_WRITEFLUSH
+mdefine_line|#define F_WRITEFLUSH&t;&t;&t;5
+DECL|macro|F_AUDIO_READ_INUSE
+mdefine_line|#define F_AUDIO_READ_INUSE&t;&t;6
+DECL|macro|F_READING
+mdefine_line|#define F_READING&t;&t;&t;7
+DECL|macro|F_READBLOCK
+mdefine_line|#define F_READBLOCK&t;&t;&t;8
+DECL|macro|F_EXT_MIDI_INUSE
+mdefine_line|#define F_EXT_MIDI_INUSE&t;&t;9
+DECL|macro|F_INT_MIDI_INUSE
+mdefine_line|#define F_INT_MIDI_INUSE&t;&t;10
 DECL|member|writeblock
 DECL|member|readblock
 r_struct
@@ -475,6 +462,16 @@ r_struct
 id|wait_queue
 op_star
 id|writeflush
+suffix:semicolon
+macro_line|#ifndef LINUX20
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+macro_line|#endif
+DECL|member|nresets
+r_int
+id|nresets
 suffix:semicolon
 DECL|member|recsrc
 r_int
@@ -503,17 +500,33 @@ DECL|member|calibrate_signal
 r_int
 id|calibrate_signal
 suffix:semicolon
-DECL|member|sample_size
+DECL|member|play_sample_size
+DECL|member|play_sample_rate
+DECL|member|play_channels
 r_int
-id|sample_size
+id|play_sample_size
+comma
+id|play_sample_rate
+comma
+id|play_channels
 suffix:semicolon
-DECL|member|sample_rate
+DECL|member|play_ndelay
 r_int
-id|sample_rate
+id|play_ndelay
 suffix:semicolon
-DECL|member|channels
+DECL|member|rec_sample_size
+DECL|member|rec_sample_rate
+DECL|member|rec_channels
 r_int
-id|channels
+id|rec_sample_size
+comma
+id|rec_sample_rate
+comma
+id|rec_channels
+suffix:semicolon
+DECL|member|rec_ndelay
+r_int
+id|rec_ndelay
 suffix:semicolon
 DECL|member|bCurrentMidiPatch
 id|BYTE
@@ -551,9 +564,12 @@ DECL|member|fifosize
 r_int
 id|fifosize
 suffix:semicolon
-DECL|member|lastbank
+DECL|member|last_playbank
+DECL|member|last_recbank
 r_int
-id|lastbank
+id|last_playbank
+comma
+id|last_recbank
 suffix:semicolon
 multiline_comment|/* MIDI in callback */
 DECL|member|midi_in_interrupt

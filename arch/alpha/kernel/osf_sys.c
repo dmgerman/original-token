@@ -934,6 +934,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -957,6 +958,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

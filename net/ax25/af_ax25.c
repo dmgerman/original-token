@@ -4682,6 +4682,14 @@ id|fsa.fsa_ax25.sax25_ndigis
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;protinfo.ax25-&gt;digipeat
+op_ne
+l_int|NULL
+)paren
+(brace
 id|ndigi
 op_assign
 id|sk-&gt;protinfo.ax25-&gt;digipeat-&gt;ndigi
@@ -4714,6 +4722,7 @@ id|sk-&gt;protinfo.ax25-&gt;digipeat-&gt;calls
 id|i
 )braket
 suffix:semicolon
+)brace
 )brace
 r_else
 (brace

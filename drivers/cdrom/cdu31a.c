@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -5115,9 +5116,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
 multiline_comment|/* Make sure the timer is cancelled. */
@@ -5640,9 +5643,11 @@ suffix:semicolon
 )brace
 id|end_do_cdu31a_request
 suffix:colon
-id|cli
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
 macro_line|#if 0

@@ -521,6 +521,13 @@ c_func
 id|d_lookup
 )paren
 suffix:semicolon
+DECL|variable|d_path
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|d_path
+)paren
+suffix:semicolon
 DECL|variable|__mark_inode_dirty
 id|EXPORT_SYMBOL
 c_func

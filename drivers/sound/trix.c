@@ -56,6 +56,13 @@ id|trix_osp
 op_assign
 l_int|NULL
 suffix:semicolon
+DECL|variable|mpu
+r_static
+r_int
+id|mpu
+op_assign
+l_int|0
+suffix:semicolon
 DECL|function|trix_read
 r_static
 r_int
@@ -1770,6 +1777,8 @@ id|sb_dsp_unload
 c_func
 (paren
 id|hw_config
+comma
+id|mpu
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1927,13 +1936,6 @@ DECL|variable|mpu_config
 r_struct
 id|address_info
 id|mpu_config
-suffix:semicolon
-DECL|variable|mpu
-r_static
-r_int
-id|mpu
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|sb
 r_static

@@ -28,7 +28,7 @@ r_int
 id|count
 )paren
 (brace
-r_int
+id|ssize_t
 id|ret
 suffix:semicolon
 id|mm_segment_t
@@ -41,122 +41,6 @@ suffix:semicolon
 id|set_fs
 (paren
 id|KERNEL_DS
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;umsdos_file_read_kmem /mn/: Checkin: filp=%p, buf=%p, size=%d&bslash;n&quot;
-comma
-id|filp
-comma
-id|buf
-comma
-id|count
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  inode=%lu, i_size=%lu&bslash;n&quot;
-comma
-id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_ino
-comma
-id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_size
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  f_pos=%Lu&bslash;n&quot;
-comma
-id|filp-&gt;f_pos
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  name=%.*s&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|filp-&gt;f_dentry-&gt;d_name.len
-comma
-id|filp-&gt;f_dentry-&gt;d_name.name
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  i_binary(sb)=%d&bslash;n&quot;
-comma
-id|MSDOS_I
-(paren
-id|filp-&gt;f_dentry-&gt;d_inode
-)paren
-op_member_access_from_pointer
-id|i_binary
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  f_count=%d, f_flags=%d&bslash;n&quot;
-comma
-id|filp-&gt;f_count
-comma
-id|filp-&gt;f_flags
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  f_owner=%d&bslash;n&quot;
-comma
-id|filp-&gt;f_owner.uid
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  f_version=%ld&bslash;n&quot;
-comma
-id|filp-&gt;f_version
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  f_reada=%ld, f_ramax=%ld, f_raend=%ld, f_ralen=%ld, f_rawin=%ld&bslash;n&quot;
-comma
-id|filp-&gt;f_reada
-comma
-id|filp-&gt;f_ramax
-comma
-id|filp-&gt;f_raend
-comma
-id|filp-&gt;f_ralen
-comma
-id|filp-&gt;f_rawin
-)paren
 )paren
 suffix:semicolon
 id|MSDOS_I
@@ -182,159 +66,6 @@ op_amp
 id|filp-&gt;f_pos
 )paren
 suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;fat_file_read returned with %d!&bslash;n&quot;
-comma
-id|ret
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  (ret) inode=%lu, i_size=%lu&bslash;n&quot;
-comma
-id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_ino
-comma
-id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_size
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  (ret) f_pos=%Lu&bslash;n&quot;
-comma
-id|filp-&gt;f_pos
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  (ret) name=%.*s&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|filp-&gt;f_dentry-&gt;d_name.len
-comma
-id|filp-&gt;f_dentry-&gt;d_name.name
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  (ret) i_binary(sb)=%d&bslash;n&quot;
-comma
-id|MSDOS_I
-(paren
-id|filp-&gt;f_dentry-&gt;d_inode
-)paren
-op_member_access_from_pointer
-id|i_binary
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  (ret) f_count=%d, f_flags=%d&bslash;n&quot;
-comma
-id|filp-&gt;f_count
-comma
-id|filp-&gt;f_flags
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  (ret) f_owner=%d&bslash;n&quot;
-comma
-id|filp-&gt;f_owner.uid
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  (ret) f_version=%ld&bslash;n&quot;
-comma
-id|filp-&gt;f_version
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  (ret) f_reada=%ld, f_ramax=%ld, f_raend=%ld, f_ralen=%ld, f_rawin=%ld&bslash;n&quot;
-comma
-id|filp-&gt;f_reada
-comma
-id|filp-&gt;f_ramax
-comma
-id|filp-&gt;f_raend
-comma
-id|filp-&gt;f_ralen
-comma
-id|filp-&gt;f_rawin
-)paren
-)paren
-suffix:semicolon
-macro_line|#if 0
-(brace
-r_struct
-id|umsdos_dirent
-op_star
-id|mydirent
-op_assign
-id|buf
-suffix:semicolon
-id|Printk
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  (DDD) uid=%d&bslash;n&quot;
-comma
-id|mydirent-&gt;uid
-)paren
-)paren
-suffix:semicolon
-id|Printk
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  (DDD) gid=%d&bslash;n&quot;
-comma
-id|mydirent-&gt;gid
-)paren
-)paren
-suffix:semicolon
-id|Printk
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  (DDD) name=&gt;%.20s&lt;&bslash;n&quot;
-comma
-id|mydirent-&gt;name
-)paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|set_fs
 (paren
 id|old_fs
@@ -378,143 +109,7 @@ id|set_fs
 id|KERNEL_DS
 )paren
 suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;umsdos_file_write_kmem /mn/: Checkin: filp=%p, buf=%p, size=%d&bslash;n&quot;
-comma
-id|filp
-comma
-id|buf
-comma
-id|count
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  struct dentry=%p&bslash;n&quot;
-comma
-id|filp-&gt;f_dentry
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  struct inode=%p&bslash;n&quot;
-comma
-id|filp-&gt;f_dentry-&gt;d_inode
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  inode=%lu, i_size=%lu&bslash;n&quot;
-comma
-id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_ino
-comma
-id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_size
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  f_pos=%Lu&bslash;n&quot;
-comma
-id|filp-&gt;f_pos
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  name=%.*s&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|filp-&gt;f_dentry-&gt;d_name.len
-comma
-id|filp-&gt;f_dentry-&gt;d_name.name
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  i_binary(sb)=%d&bslash;n&quot;
-comma
-id|MSDOS_I
-(paren
-id|filp-&gt;f_dentry-&gt;d_inode
-)paren
-op_member_access_from_pointer
-id|i_binary
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  f_count=%d, f_flags=%d&bslash;n&quot;
-comma
-id|filp-&gt;f_count
-comma
-id|filp-&gt;f_flags
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  f_owner=%d&bslash;n&quot;
-comma
-id|filp-&gt;f_owner.uid
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  f_version=%ld&bslash;n&quot;
-comma
-id|filp-&gt;f_version
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  f_reada=%ld, f_ramax=%ld, f_raend=%ld, f_ralen=%ld, f_rawin=%ld&bslash;n&quot;
-comma
-id|filp-&gt;f_reada
-comma
-id|filp-&gt;f_ramax
-comma
-id|filp-&gt;f_raend
-comma
-id|filp-&gt;f_ralen
-comma
-id|filp-&gt;f_rawin
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* note: i_binary=2 is for CVF-FAT. We put it here, instead of&n;&t; * umsdos_file_write_kmem, since it is also wise not to compress symlinks&n;&t; * (in the unlikely event that they are &gt; 512 bytes and can be compressed &n;&t; * FIXME: should we set it when reading symlinks too? */
+multiline_comment|/* note: i_binary=2 is for CVF-FAT. We put it here, instead of&n;&t; * umsdos_file_write_kmem, since it is also wise not to compress&n;&t; * symlinks (in the unlikely event that they are &gt; 512 bytes and&n;&t; * can be compressed.&n;&t; * FIXME: should we set it when reading symlinks too?&n;&t; */
 id|MSDOS_I
 (paren
 id|filp-&gt;f_dentry-&gt;d_inode
@@ -538,20 +133,28 @@ op_amp
 id|filp-&gt;f_pos
 )paren
 suffix:semicolon
-id|Printk
+macro_line|#ifdef UMSDOS_PARANOIA
+r_if
+c_cond
 (paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;fat_file_write returned with %ld!&bslash;n&quot;
-comma
-(paren
-r_int
-r_int
+id|ret
+op_ne
+id|count
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;umsdos_file_write: count=%u, ret=%u&bslash;n&quot;
+comma
+id|count
+comma
 id|ret
 )paren
-)paren
 suffix:semicolon
+)brace
+macro_line|#endif
 id|set_fs
 (paren
 id|old_fs
@@ -580,16 +183,8 @@ r_int
 id|count
 )paren
 (brace
-r_int
+id|ssize_t
 id|ret
-suffix:semicolon
-id|Printk
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot; STARTED WRITE_KMEM /mn/&bslash;n&quot;
-)paren
-)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -727,13 +322,6 @@ comma
 id|count
 )paren
 suffix:semicolon
-id|Printk
-(paren
-(paren
-l_string|&quot;umsdos_emd_dir_write /mn/: write_kmem returned&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 macro_line|#ifdef __BIG_ENDIAN
 id|d-&gt;nlink
 op_assign
@@ -792,7 +380,7 @@ id|d-&gt;mode
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if UMS_DEBUG
+macro_line|#ifdef UMSDOS_PARANOIA
 r_if
 c_cond
 (paren
@@ -813,9 +401,11 @@ id|count
 suffix:semicolon
 macro_line|#endif
 r_return
+(paren
 id|written
 op_ne
 id|count
+)paren
 ques
 c_cond
 op_minus
@@ -843,14 +433,12 @@ r_int
 id|count
 )paren
 (brace
-r_int
-r_int
+id|ssize_t
+id|sizeread
+comma
 id|ret
 op_assign
 l_int|0
-suffix:semicolon
-r_int
-id|sizeread
 suffix:semicolon
 macro_line|#ifdef __BIG_ENDIAN
 r_struct
@@ -891,13 +479,14 @@ id|count
 (brace
 id|printk
 (paren
-l_string|&quot;UMSDOS:  problem with EMD file:  can&squot;t read pos = %Ld (%d != %d)&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;UMSDOS: EMD problem, pos=%Ld, count=%d, read=%d&bslash;n&quot;
 comma
 id|filp-&gt;f_pos
 comma
-id|sizeread
-comma
 id|count
+comma
+id|sizeread
 )paren
 suffix:semicolon
 id|ret
@@ -990,12 +579,15 @@ suffix:semicolon
 id|demd
 op_assign
 id|umsdos_lookup_dentry
+c_func
 (paren
 id|parent
 comma
 id|UMSDOS_EMD_FILE
 comma
 id|UMSDOS_EMD_NAMELEN
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_return
@@ -1060,7 +652,7 @@ r_return
 id|found
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Create the EMD file for a directory if it doesn&squot;t&n; * already exist. Returns 0 or and error code.&n; */
+multiline_comment|/*&n; * Create the EMD file for a directory if it doesn&squot;t&n; * already exist. Returns 0 or an error code.&n; */
 DECL|function|umsdos_make_emd
 r_int
 id|umsdos_make_emd
@@ -1110,6 +702,10 @@ r_goto
 id|out
 suffix:semicolon
 multiline_comment|/* already created? */
+id|err
+op_assign
+l_int|0
+suffix:semicolon
 id|inode
 op_assign
 id|demd-&gt;d_inode
@@ -1119,27 +715,19 @@ c_cond
 (paren
 id|inode
 )paren
-(brace
-id|parent-&gt;d_inode-&gt;u.umsdos_i.i_emd_dir
-op_assign
-id|inode-&gt;i_ino
-suffix:semicolon
-id|err
-op_assign
-l_int|0
-suffix:semicolon
 r_goto
-id|out_dput
+id|out_set
 suffix:semicolon
-)brace
-id|printk
+id|Printk
 c_func
+(paren
 (paren
 l_string|&quot;umsdos_make_emd: creating %s/%s&bslash;n&quot;
 comma
 id|parent-&gt;d_name.name
 comma
 id|demd-&gt;d_name.name
+)paren
 )paren
 suffix:semicolon
 id|err
@@ -1165,7 +753,11 @@ id|err
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;UMSDOS: Can&squot;t create EMD file&bslash;n&quot;
+l_string|&quot;UMSDOS: Can&squot;t create EMD file %s/%s&bslash;n&quot;
+comma
+id|parent-&gt;d_name.name
+comma
+id|demd-&gt;d_name.name
 )paren
 suffix:semicolon
 r_goto
@@ -1176,6 +768,8 @@ id|inode
 op_assign
 id|demd-&gt;d_inode
 suffix:semicolon
+id|out_set
+suffix:colon
 id|parent-&gt;d_inode-&gt;u.umsdos_i.i_emd_dir
 op_assign
 id|inode-&gt;i_ino
@@ -1359,7 +953,7 @@ id|out
 suffix:semicolon
 id|rv
 op_assign
-id|umsdos_real_lookup
+id|msdos_lookup
 (paren
 id|dir
 comma
@@ -1823,7 +1417,7 @@ c_cond
 id|free_entry
 )paren
 (brace
-multiline_comment|/* #Specification: EMD file / empty entries&n;&t;&t; * Unused entry in the EMD file are identified&n;&t;&t; * by the name_len field equal to 0. However to&n;&t;&t; * help future extension (or bug correction :-( ),&n;&t;&t; * empty entries are filled with 0.&n;&t;&t; */
+multiline_comment|/* #Specification: EMD file / empty entries&n;&t;&t; * Unused entries in the EMD file are identified&n;&t;&t; * by the name_len field equal to 0. However to&n;&t;&t; * help future extension (or bug correction :-( ),&n;&t;&t; * empty entries are filled with 0.&n;&t;&t; */
 id|memset
 (paren
 op_amp
@@ -2556,6 +2150,23 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|Printk
+c_func
+(paren
+(paren
+l_string|&quot;umsdos_find: ready to mangle %s, len=%d, pos=%ld&bslash;n&quot;
+comma
+id|entry-&gt;name
+comma
+id|entry-&gt;name_len
+comma
+(paren
+r_int
+)paren
+id|info-&gt;f_pos
+)paren
+)paren
+suffix:semicolon
 id|umsdos_manglename
 (paren
 id|info

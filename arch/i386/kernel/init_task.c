@@ -2,7 +2,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &quot;desc.h&quot;
+macro_line|#include &lt;asm/desc.h&gt;
 DECL|variable|init_mmap
 r_static
 r_struct

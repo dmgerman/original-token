@@ -3,14 +3,8 @@ macro_line|#ifndef _PPA_H
 DECL|macro|_PPA_H
 mdefine_line|#define _PPA_H
 DECL|macro|PPA_VERSION
-mdefine_line|#define   PPA_VERSION   &quot;1.39a&quot;
-multiline_comment|/* Use the following to enable certain chipset support&n; * Default is PEDANTIC = 3&n; */
-macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_SCSI_PPA_HAVE_PEDANTIC */
-macro_line|#ifndef CONFIG_SCSI_PPA_HAVE_PEDANTIC
-DECL|macro|CONFIG_SCSI_PPA_HAVE_PEDANTIC
-mdefine_line|#define CONFIG_SCSI_PPA_HAVE_PEDANTIC&t;3
-macro_line|#endif
-multiline_comment|/* &n; * this driver has been hacked by Matteo Frigo (athena@theory.lcs.mit.edu)&n; * to support EPP and scatter-gather.                        [0.26-athena]&n; *&n; * additional hacks by David Campbell&n; * in response to this driver &quot;mis-behaving&quot; on his machine.&n; *      Fixed EPP to handle &quot;software&quot; changing of EPP port data direction.&n; *      Chased down EPP timeouts&n; *      Made this driver &quot;kernel version friendly&quot;           [0.28-athena]&n; *&n; * [ Stuff removed ]&n; *&n; * Compiled against 2.1.53.&n; *&t;Rebuilt ppa_abort() function, should handle unplugged cable.&n; *&t;&t;&t;&t;&t;&t;&t;[1.35s]&n; *&n; * PPA now auto probes for EPP on base address which are aligned on&n; * 8 byte boundaries (0x278 &amp; 0x378) using the attached devices.&n; * This hopefully avoids the nasty problem of trying to detect EPP.&n; *&t;Tested on 2.1.53&t;&t;&t;&t;[1.36]&n; *&n; * The id_probe utility no longer performs read/write tests.&n; * Additional code included for checking the Intel ECP bug&n; * (Bit 0 of STR stuck low which fools the EPP detection routine)&n; *&t;&t;&t;&t;&t;&t;&t;[1.37]&n; *&n; * Oops! Got the bit sign mixed up for the Intel bug check.&n; * Found that an additional delay is required during SCSI resets&n; * to allow devices to settle down.&n; *&t;&t;&t;&t;&t;&t;&t;[1.38]&n; *&n; * Fixed all problems in the parport sharing scheme. Now ppa can be safe&n; * used with lp or other parport devices on the same parallel port.&n; *&t;&t;1997 by Andrea Arcangeli&n; *&t;&t;&t;&t;&t;&t;&t;[1.39]&n; *&n; * Little fix in ppa engine to ensure that ppa don&squot; t release parport&n; * or disconnect in wrong cases.&n; *&t;&t;1997 by Andrea Arcangeli&n; *&t;&t;&t;&t;&t;&t;&t;[1.39a]&n; */
+mdefine_line|#define   PPA_VERSION   &quot;2.01&quot;
+multiline_comment|/* &n; * this driver has been hacked by Matteo Frigo (athena@theory.lcs.mit.edu)&n; * to support EPP and scatter-gather.                        [0.26-athena]&n; *&n; * additional hacks by David Campbell&n; * in response to this driver &quot;mis-behaving&quot; on his machine.&n; *      Fixed EPP to handle &quot;software&quot; changing of EPP port data direction.&n; *      Chased down EPP timeouts&n; *      Made this driver &quot;kernel version friendly&quot;           [0.28-athena]&n; *&n; * [ Stuff removed ]&n; *&n; * Corrected ppa.h for 2.1.x kernels (&gt;=2.1.85)&n; * Modified &quot;Nat Semi Kludge&quot; for extended chipsets&n; *&t;&t;&t;&t;&t;&t;&t;[1.41]&n; *&n; * Fixed id_probe for EPP 1.9 chipsets (misdetected as EPP 1.7)&n; *&t;&t;&t;&t;&t;&t;&t;[1.42]&n; *&n; * Development solely for 2.1.x kernels from now on!&n; *&t;&t;&t;&t;&t;&t;&t;[2.00]&n; *&n; * Hack and slash at the init code (EPP device check routine)&n; * Added INSANE option.&n; *&t;&t;&t;&t;&t;&t;&t;[2.01]&n; *&n; * Patch applied to sync against the 2.1.x kernel code&n; * Included qboot_zip.sh&n; *&t;&t;&t;&t;&t;&t;&t;[2.02]&n; */
 multiline_comment|/* ------ END OF USER CONFIGURABLE PARAMETERS ----- */
 macro_line|#ifdef PPA_CODE
 macro_line|#include  &lt;linux/stddef.h&gt;
@@ -93,6 +87,35 @@ DECL|macro|CONNECT_EPP_MAYBE
 mdefine_line|#define CONNECT_EPP_MAYBE 1
 DECL|macro|CONNECT_NORMAL
 mdefine_line|#define CONNECT_NORMAL  0
+multiline_comment|/* INSANE code */
+DECL|macro|PPA_INSANE
+mdefine_line|#define PPA_INSANE 0
+macro_line|#if PPA_INSANE &gt; 0
+DECL|macro|r_dtr
+mdefine_line|#define r_dtr(x)        (unsigned char)inb_p((x))
+DECL|macro|r_str
+mdefine_line|#define r_str(x)        (unsigned char)inb_p((x)+1)
+DECL|macro|r_ctr
+mdefine_line|#define r_ctr(x)        (unsigned char)inb_p((x)+2)
+DECL|macro|r_epp
+mdefine_line|#define r_epp(x)        (unsigned char)inb_p((x)+4)
+DECL|macro|r_fifo
+mdefine_line|#define r_fifo(x)       (unsigned char)inb_p((x)+0x400)
+DECL|macro|r_ecr
+mdefine_line|#define r_ecr(x)        (unsigned char)inb_p((x)+0x402)
+DECL|macro|w_dtr
+mdefine_line|#define w_dtr(x,y)      outb_p(y, (x))
+DECL|macro|w_str
+mdefine_line|#define w_str(x,y)      outb_p(y, (x)+1)
+DECL|macro|w_ctr
+mdefine_line|#define w_ctr(x,y)      outb_p(y, (x)+2)
+DECL|macro|w_epp
+mdefine_line|#define w_epp(x,y)      outb_p(y, (x)+4)
+DECL|macro|w_fifo
+mdefine_line|#define w_fifo(x,y)     outb_p(y, (x)+0x400)
+DECL|macro|w_ecr
+mdefine_line|#define w_ecr(x,y)      outb_p(y, (x)+0x402)
+macro_line|#else /* PPA_INSANE */
 DECL|macro|r_dtr
 mdefine_line|#define r_dtr(x)        (unsigned char)inb((x))
 DECL|macro|r_str
@@ -117,6 +140,7 @@ DECL|macro|w_fifo
 mdefine_line|#define w_fifo(x,y)     outb(y, (x)+0x400)
 DECL|macro|w_ecr
 mdefine_line|#define w_ecr(x,y)      outb(y, (x)+0x402)
+macro_line|#endif&t;/* PPA_INSANE */
 r_static
 r_int
 id|ppa_engine
@@ -261,9 +285,6 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
-comma
-r_int
-r_int
 )paren
 suffix:semicolon
 r_int
@@ -300,6 +321,6 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|PPA
-mdefine_line|#define PPA {&t;proc_dir:&t;&t;&amp;proc_scsi_ppa,&t;&t;&t;&bslash;&n;&t;&t;proc_info:&t;&t;ppa_proc_info,&t;&t;&t;&bslash;&n;&t;&t;name:&t;&t;&t;&quot;Iomega parport ZIP drive&quot;,&t;&bslash;&n;&t;&t;detect:&t;&t;&t;ppa_detect,&t;&t;&t;&bslash;&n;&t;&t;release:&t;&t;ppa_release,&t;&t;&t;&bslash;&n;&t;&t;command:&t;&t;ppa_command,&t;&t;&t;&bslash;&n;&t;&t;queuecommand:&t;&t;ppa_queuecommand,&t;&t;&bslash;&n;&t;&t;abort:&t;&t;&t;ppa_abort,&t;&t;&t;&bslash;&n;&t;&t;reset:&t;&t;&t;ppa_reset,&t;&t;&t;&bslash;&n;&t;&t;bios_param:&t;&t;ppa_biosparam,&t;&t;&t;&bslash;&n;&t;&t;this_id:&t;&t;-1,&t;&t;&t;&t;&bslash;&n;&t;&t;sg_tablesize:&t;&t;SG_ALL,&t;&t;&t;&t;&bslash;&n;&t;&t;cmd_per_lun:&t;&t;1,&t;&t;&t;&t;&bslash;&n;&t;&t;use_clustering:&t;&t;ENABLE_CLUSTERING&t;&t;&bslash;&n;}
+mdefine_line|#define PPA {&t;proc_dir:&t;&t;&t;&amp;proc_scsi_ppa,&t;&t;&bslash;&n;&t;&t;proc_info:&t;&t;&t;ppa_proc_info,&t;&t;&bslash;&n;&t;&t;name:&t;&t;&t;&t;&quot;Iomega parport ZIP drive&quot;,&bslash;&n;&t;&t;detect:&t;&t;&t;&t;ppa_detect,&t;&t;&bslash;&n;&t;&t;release:&t;&t;&t;ppa_release,&t;&t;&bslash;&n;&t;&t;command:&t;&t;&t;ppa_command,&t;&t;&bslash;&n;&t;&t;queuecommand:&t;&t;&t;ppa_queuecommand,&t;&bslash;&n;&t;&t;eh_abort_handler:&t;&t;ppa_abort,&t;&t;&bslash;&n;&t;&t;eh_device_reset_handler:&t;NULL,&t;&t;&t;&bslash;&n;&t;&t;eh_bus_reset_handler:&t;&t;ppa_reset,&t;&t;&bslash;&n;&t;&t;eh_host_reset_handler:&t;&t;ppa_reset,&t;&t;&bslash;&n;&t;&t;bios_param:&t;&t;&t;ppa_biosparam,&t;&t;&bslash;&n;&t;&t;this_id:&t;&t;&t;-1,&t;&t;&t;&bslash;&n;&t;&t;sg_tablesize:&t;&t;&t;SG_ALL,&t;&t;&t;&bslash;&n;&t;&t;cmd_per_lun:&t;&t;&t;1,&t;&t;&t;&bslash;&n;&t;&t;use_clustering:&t;&t;&t;ENABLE_CLUSTERING&t;&bslash;&n;}
 macro_line|#endif&t;&t;&t;&t;/* _PPA_H */
 eof

@@ -5161,7 +5161,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;%s: close1 timed timed out with status %4.4x, cmd %4.4x.&bslash;n&quot;
+l_string|&quot;%s: close1 timed out with status %4.4x, cmd %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -5206,7 +5206,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;%s: close2 timed timed out with status %4.4x, cmd %4.4x.&bslash;n&quot;
+l_string|&quot;%s: close2 timed out with status %4.4x, cmd %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

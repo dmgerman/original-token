@@ -3010,7 +3010,7 @@ comma
 )brace
 suffix:semicolon
 DECL|macro|PALETTEFMT_MAX
-mdefine_line|#define PALETTEFMT_MAX 11
+mdefine_line|#define PALETTEFMT_MAX 15
 DECL|function|make_rawrisctab
 r_static
 r_int
@@ -14293,7 +14293,7 @@ id|btv-&gt;pll.pll_ifreq
 op_assign
 l_int|0
 suffix:semicolon
-id|btv-&gt;pll.pll_ifreq
+id|btv-&gt;pll.pll_ofreq
 op_assign
 l_int|0
 suffix:semicolon

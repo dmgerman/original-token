@@ -3175,6 +3175,8 @@ id|sb_dsp_unload
 c_func
 (paren
 id|hw_config
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_return

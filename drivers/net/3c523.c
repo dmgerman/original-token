@@ -1552,7 +1552,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* Now we extract configuration info from the card.&n;&t;The 3c523 provides information in two of the POS registers, but&n;&t;the second one is only needed if we want to tell the card what IRQ&n;&t;to use.  I suspect that whoever sets the thing up initially would&n;&t;prefer we don&squot;t screw with those things.&n;&n;&t;Note we we read the status info when we found the card...&n;&n;&t;See 3c523.h for more details.&n;&t;*/
+multiline_comment|/* Now we extract configuration info from the card.&n;&t;The 3c523 provides information in two of the POS registers, but&n;&t;the second one is only needed if we want to tell the card what IRQ&n;&t;to use.  I suspect that whoever sets the thing up initially would&n;&t;prefer we don&squot;t screw with those things.&n;&n;&t;Note that we read the status info when we found the card...&n;&n;&t;See 3c523.h for more details.&n;&t;*/
 multiline_comment|/* revision is stored in the first 4 bits of the revision register */
 id|revision
 op_assign

@@ -15,8 +15,7 @@ id|inode
 op_star
 id|inode
 comma
-r_int
-r_int
+id|u32
 op_star
 id|blockp
 comma
@@ -32,8 +31,7 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
-r_int
-r_int
+id|u32
 id|tmp
 comma
 id|block
@@ -204,8 +202,7 @@ id|inode
 op_star
 id|inode
 comma
-r_int
-r_int
+id|u32
 op_star
 id|iblockp
 comma
@@ -225,8 +222,7 @@ id|wait
 r_int
 id|rc
 suffix:semicolon
-r_int
-r_int
+id|u32
 id|tmp
 comma
 id|block
@@ -428,8 +424,7 @@ id|inode
 op_star
 id|inode
 comma
-r_int
-r_int
+id|u32
 op_star
 id|iblockp
 comma
@@ -514,8 +509,7 @@ id|inode
 comma
 (paren
 (paren
-r_int
-r_int
+id|u32
 op_star
 )paren
 id|ind_bh-&gt;b_data
@@ -568,8 +562,7 @@ id|inode
 op_star
 id|inode
 comma
-r_int
-r_int
+id|u32
 op_star
 id|diblockp
 comma
@@ -654,8 +647,7 @@ id|inode
 comma
 (paren
 (paren
-r_int
-r_int
+id|u32
 op_star
 )paren
 id|dind_bh-&gt;b_data
@@ -708,8 +700,7 @@ id|inode
 op_star
 id|inode
 comma
-r_int
-r_int
+id|u32
 op_star
 id|tiblockp
 comma
@@ -794,8 +785,7 @@ id|inode
 comma
 (paren
 (paren
-r_int
-r_int
+id|u32
 op_star
 )paren
 id|tind_bh-&gt;b_data

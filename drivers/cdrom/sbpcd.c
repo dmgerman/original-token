@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -5970,6 +5971,10 @@ op_amp
 id|f_putcmd
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -6022,6 +6027,12 @@ comma
 id|msgbuf
 )paren
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -6052,9 +6063,10 @@ id|i
 )braket
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -27852,11 +27864,14 @@ op_assign
 id|req-&gt;next
 suffix:semicolon
 multiline_comment|/* task can fuck it up         GTL  */
-id|sti
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME!!!! */
 id|down
 c_func
 (paren
@@ -28096,6 +28111,14 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME!!!! */
 r_goto
 id|request_loop
 suffix:semicolon
@@ -28293,6 +28316,14 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME!!!! */
 r_goto
 id|request_loop
 suffix:semicolon
@@ -28339,6 +28370,14 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* wait a bit, try again */
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME!!!! */
 r_goto
 id|request_loop
 suffix:semicolon
@@ -29479,8 +29518,6 @@ suffix:semicolon
 id|error_flag
 op_increment
 suffix:semicolon
-r_break
-suffix:semicolon
 )brace
 r_if
 c_cond
@@ -29502,8 +29539,6 @@ id|j
 suffix:semicolon
 id|error_flag
 op_increment
-suffix:semicolon
-r_break
 suffix:semicolon
 )brace
 r_if
@@ -29593,14 +29628,15 @@ suffix:semicolon
 id|error_flag
 op_increment
 suffix:semicolon
-r_break
-suffix:semicolon
 )brace
 id|SBPCD_STI
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|error_flag
-op_assign
-l_int|0
+)paren
+r_break
 suffix:semicolon
 id|msg
 c_func

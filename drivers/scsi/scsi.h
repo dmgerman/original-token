@@ -30,6 +30,13 @@ id|scsi_device_types
 id|MAX_SCSI_DEVICE_CODE
 )braket
 suffix:semicolon
+macro_line|#ifdef DEBUG
+DECL|macro|SCSI_TIMEOUT
+mdefine_line|#define SCSI_TIMEOUT (5*HZ)
+macro_line|#else
+DECL|macro|SCSI_TIMEOUT
+mdefine_line|#define SCSI_TIMEOUT (2*HZ)
+macro_line|#endif
 multiline_comment|/*&n; *  Use these to separate status msg and our bytes&n; *&n; *  These are set by:&n; *&n; *      status byte = set from target device&n; *      msg_byte    = return status from host adapter itself.&n; *      host_byte   = set by low-level driver to indicate status.&n; *      driver_byte = set by mid-level.&n; */
 DECL|macro|status_byte
 mdefine_line|#define status_byte(result) (((result) &gt;&gt; 1) &amp; 0x1f)

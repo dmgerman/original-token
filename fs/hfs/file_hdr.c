@@ -2944,6 +2944,8 @@ op_assign
 id|count
 suffix:semicolon
 )brace
+id|left
+op_sub_assign
 id|copy_from_user
 c_func
 (paren
@@ -3096,6 +3098,8 @@ op_assign
 id|count
 suffix:semicolon
 )brace
+id|left
+op_sub_assign
 id|copy_from_user
 c_func
 (paren
@@ -3679,6 +3683,8 @@ c_cond
 id|p
 )paren
 (brace
+id|left
+op_sub_assign
 id|copy_from_user
 c_func
 (paren

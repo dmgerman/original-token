@@ -33,6 +33,36 @@ macro_line|#include &lt;net/ip6_route.h&gt;
 macro_line|#include &lt;net/addrconf.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+DECL|variable|unloadable
+r_static
+r_int
+id|unloadable
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* XX: Turn to one when all is ok within the&n;&t;&t;&t;      module for allowing unload */
+macro_line|#if defined(MODULE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20115
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Cast of dozens&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;IPv6 protocol stack for Linux&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|unloadable
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_struct
 id|proto_ops
@@ -1833,6 +1863,15 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|unloadable
+)paren
+r_return
+l_int|1
+suffix:semicolon
 multiline_comment|/* We keep internally 3 raw sockets */
 r_return
 id|__this_module.usecount

@@ -2498,7 +2498,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Send out data on TCP socket.&n; * FIXME: Make the sendto call non-blocking in order not to hang&n; * a daemon on a a dead client. Requires write queue maintenance.&n; */
+multiline_comment|/*&n; * Send out data on TCP socket.&n; * FIXME: Make the sendto call non-blocking in order not to hang&n; * a daemon on a dead client. Requires write queue maintenance.&n; */
 r_static
 r_int
 DECL|function|svc_tcp_sendto

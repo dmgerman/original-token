@@ -39,6 +39,9 @@ comma
 DECL|enumerator|PROC_MCA
 id|PROC_MCA
 comma
+DECL|enumerator|PROC_NUBUS
+id|PROC_NUBUS
+comma
 DECL|enumerator|PROC_SELF
 id|PROC_SELF
 comma

@@ -240,6 +240,8 @@ DECL|macro|VID_TYPE_MONOCHROME
 mdefine_line|#define VID_TYPE_MONOCHROME&t;256&t;/* Monochrome only */
 DECL|macro|VID_TYPE_SUBCAPTURE
 mdefine_line|#define VID_TYPE_SUBCAPTURE&t;512&t;/* Can capture subareas of the image */
+DECL|macro|VID_TYPE_OUTPUT
+mdefine_line|#define VID_TYPE_OUTPUT&t;&t;1024&t;/* Can output video data */
 DECL|struct|video_capability
 r_struct
 id|video_capability

@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 multiline_comment|/* #include &lt;linux/ucdrom.h&gt; */
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|MAJOR_NR
@@ -3012,6 +3013,13 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 id|error
 op_assign
 l_int|0
@@ -3187,6 +3195,13 @@ id|e2
 suffix:semicolon
 )brace
 )brace
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 id|end_request
 c_func
 (paren

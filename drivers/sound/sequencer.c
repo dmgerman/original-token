@@ -7244,7 +7244,7 @@ op_amp
 (paren
 (paren
 r_struct
-id|synth_info
+id|midi_info
 op_star
 )paren
 id|arg
@@ -7300,7 +7300,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|synth_info
+id|midi_info
 )paren
 )paren
 ques

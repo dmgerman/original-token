@@ -892,6 +892,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 op_logical_neg
 (paren
 id|de-&gt;flags
@@ -906,6 +907,9 @@ op_logical_or
 id|dir-&gt;i_sb-&gt;u.isofs_sb.s_unhide
 op_eq
 l_char|&squot;y&squot;
+)paren
+op_logical_and
+id|dlen
 )paren
 (brace
 id|match

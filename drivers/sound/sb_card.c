@@ -6,6 +6,13 @@ macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#ifdef CONFIG_SBDSP
 macro_line|#include &quot;sb_mixer.h&quot;
 macro_line|#include &quot;sb.h&quot;
+DECL|variable|sbmpu
+r_static
+r_int
+id|sbmpu
+op_assign
+l_int|0
+suffix:semicolon
 DECL|function|attach_sb_card
 r_void
 id|attach_sb_card
@@ -111,6 +118,8 @@ id|sb_dsp_unload
 c_func
 (paren
 id|hw_config
+comma
+id|sbmpu
 )paren
 suffix:semicolon
 )brace
@@ -292,13 +301,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-DECL|variable|sbmpu
-r_static
-r_int
-id|sbmpu
-op_assign
-l_int|0
-suffix:semicolon
 DECL|variable|smw_free
 r_void
 op_star
@@ -448,8 +450,6 @@ id|sbmpu
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MIDI
 r_if
 c_cond
 (paren

@@ -46,8 +46,6 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
-multiline_comment|/* We have to set the access time because msdos don&squot;t care */
-multiline_comment|/* FIXME */
 r_int
 id|ret
 op_assign
@@ -62,6 +60,7 @@ comma
 id|ppos
 )paren
 suffix:semicolon
+multiline_comment|/* We have to set the access time because msdos don&squot;t care */
 r_if
 c_cond
 (paren
@@ -76,7 +75,12 @@ id|inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-multiline_comment|/* FIXME &n;&t;&t; * inode-&gt;i_dirt = 1;&n;&t;&t; */
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 )brace
 r_return
 id|ret
@@ -138,6 +142,16 @@ l_string|&quot;UMSDOS_truncate&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|IS_RDONLY
+(paren
+id|inode
+)paren
+)paren
+(brace
 id|fat_truncate
 (paren
 id|inode
@@ -149,7 +163,13 @@ id|inode-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-multiline_comment|/*FIXME inode-&gt;i_dirt = 1; */
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Function for normal file system (512 bytes hardware sector size) */
 DECL|variable|umsdos_file_operations

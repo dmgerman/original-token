@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: dmascc.c,v 1.2.1.4 1998/06/10 02:24:11 kudielka Exp $&n; *&n; * Driver for high-speed SCC boards (those with DMA support)&n; * Copyright (C) 1997 Klaus Kudielka&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/*&n; * $Id: dmascc.c,v 1.3 1998/09/07 04:41:56 kudielka Exp $&n; *&n; * Driver for high-speed SCC boards (those with DMA support)&n; * Copyright (C) 1997 Klaus Kudielka&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/dmascc.h&gt;
@@ -45,6 +45,18 @@ DECL|macro|register_netdevice
 mdefine_line|#define register_netdevice(x) register_netdev(x)
 DECL|macro|unregister_netdevice
 mdefine_line|#define unregister_netdevice(x) unregister_netdev(x)
+DECL|macro|dev_kfree_skb
+mdefine_line|#define dev_kfree_skb(x) dev_kfree_skb(x,FREE_WRITE)
+DECL|macro|SET_DEV_INIT
+mdefine_line|#define SET_DEV_INIT(x) (x=dmascc_dev_init)
+DECL|macro|SHDLCE
+mdefine_line|#define SHDLCE  0x01 /* WR15 */
+DECL|macro|AUTOEOM
+mdefine_line|#define AUTOEOM 0x02 /* WR7&squot; */
+DECL|macro|RXFIFOH
+mdefine_line|#define RXFIFOH 0x08
+DECL|macro|TXFIFOE
+mdefine_line|#define TXFIFOE 0x20
 DECL|function|dmascc_dev_init
 r_static
 r_int
@@ -104,8 +116,8 @@ suffix:semicolon
 macro_line|#else
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-DECL|macro|dmascc_dev_init
-mdefine_line|#define dmascc_dev_init NULL
+DECL|macro|SET_DEV_INIT
+mdefine_line|#define SET_DEV_INIT(x)
 macro_line|#endif
 multiline_comment|/* Number of buffers per channel */
 DECL|macro|NUM_TX_BUF
@@ -846,7 +858,7 @@ macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Klaus Kudielka &lt;oe1kib@oe1xtu.ampr.org&gt;&quot;
+l_string|&quot;Klaus Kudielka&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
@@ -1974,7 +1986,7 @@ op_or
 id|NV
 )paren
 suffix:semicolon
-multiline_comment|/* Determine type of chip */
+multiline_comment|/* Determine type of chip by enabling SDLC/HDLC enhancements */
 id|write_scc
 c_func
 (paren
@@ -1982,7 +1994,7 @@ id|cmd
 comma
 id|R15
 comma
-l_int|1
+id|SHDLCE
 )paren
 suffix:semicolon
 r_if
@@ -2616,9 +2628,11 @@ id|dev-&gt;set_mac_address
 op_assign
 id|scc_set_mac_address
 suffix:semicolon
+id|SET_DEV_INIT
+c_func
+(paren
 id|dev-&gt;init
-op_assign
-id|dmascc_dev_init
+)paren
 suffix:semicolon
 id|dev-&gt;type
 op_assign
@@ -3054,7 +3068,7 @@ id|cmd
 comma
 id|R15
 comma
-l_int|1
+id|SHDLCE
 )paren
 suffix:semicolon
 multiline_comment|/* Auto EOM reset */
@@ -3065,7 +3079,7 @@ id|cmd
 comma
 id|R7
 comma
-l_int|0x02
+id|AUTOEOM
 )paren
 suffix:semicolon
 id|write_scc
@@ -3091,7 +3105,7 @@ id|cmd
 comma
 id|R15
 comma
-l_int|1
+id|SHDLCE
 )paren
 suffix:semicolon
 multiline_comment|/* RX FIFO half full (interrupt only), Auto EOM reset,&n;       TX FIFO empty (DMA only) */
@@ -3102,12 +3116,16 @@ id|cmd
 comma
 id|R7
 comma
+id|AUTOEOM
+op_or
+(paren
 id|dev-&gt;dma
 ques
 c_cond
-l_int|0x22
+id|TXFIFOE
 suffix:colon
-l_int|0x0a
+id|RXFIFOH
+)paren
 )paren
 suffix:semicolon
 id|write_scc

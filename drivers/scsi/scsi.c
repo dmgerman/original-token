@@ -53,15 +53,6 @@ suffix:semicolon
 macro_line|#else
 macro_line|# error You lose.
 macro_line|#endif
-DECL|macro|MAX_SCSI_DEVICE_CODE
-mdefine_line|#define MAX_SCSI_DEVICE_CODE 10
-macro_line|#ifdef DEBUG
-DECL|macro|SCSI_TIMEOUT
-mdefine_line|#define SCSI_TIMEOUT (5*HZ)
-macro_line|#else
-DECL|macro|SCSI_TIMEOUT
-mdefine_line|#define SCSI_TIMEOUT (2*HZ)
-macro_line|#endif
 DECL|macro|MIN_RESET_DELAY
 mdefine_line|#define MIN_RESET_DELAY (2*HZ)
 multiline_comment|/* Do not call reset on error if we just did a reset within 15 sec. */

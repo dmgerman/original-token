@@ -2556,12 +2556,6 @@ id|child-&gt;exit_code
 op_assign
 id|data
 suffix:semicolon
-id|wake_up_process
-c_func
-(paren
-id|child
-)paren
-suffix:semicolon
 multiline_comment|/* make sure the single step bit is not set. */
 id|tmp
 op_assign
@@ -2584,6 +2578,12 @@ comma
 id|EFL_OFFSET
 comma
 id|tmp
+)paren
+suffix:semicolon
+id|wake_up_process
+c_func
+(paren
+id|child
 )paren
 suffix:semicolon
 id|ret
@@ -2617,12 +2617,6 @@ multiline_comment|/* already dead */
 r_goto
 id|out
 suffix:semicolon
-id|wake_up_process
-c_func
-(paren
-id|child
-)paren
-suffix:semicolon
 id|child-&gt;exit_code
 op_assign
 id|SIGKILL
@@ -2649,6 +2643,12 @@ comma
 id|EFL_OFFSET
 comma
 id|tmp
+)paren
+suffix:semicolon
+id|wake_up_process
+c_func
+(paren
+id|child
 )paren
 suffix:semicolon
 r_goto
@@ -2709,17 +2709,17 @@ comma
 id|tmp
 )paren
 suffix:semicolon
+id|child-&gt;exit_code
+op_assign
+id|data
+suffix:semicolon
+multiline_comment|/* give it a chance to run. */
 id|wake_up_process
 c_func
 (paren
 id|child
 )paren
 suffix:semicolon
-id|child-&gt;exit_code
-op_assign
-id|data
-suffix:semicolon
-multiline_comment|/* give it a chance to run. */
 id|ret
 op_assign
 l_int|0
@@ -2766,12 +2766,6 @@ op_complement
 id|PF_PTRACED
 op_or
 id|PF_TRACESYS
-)paren
-suffix:semicolon
-id|wake_up_process
-c_func
-(paren
-id|child
 )paren
 suffix:semicolon
 id|child-&gt;exit_code
@@ -2834,6 +2828,12 @@ comma
 id|EFL_OFFSET
 comma
 id|tmp
+)paren
+suffix:semicolon
+id|wake_up_process
+c_func
+(paren
+id|child
 )paren
 suffix:semicolon
 id|ret

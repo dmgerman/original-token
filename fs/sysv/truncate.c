@@ -27,13 +27,11 @@ r_int
 r_int
 id|i
 suffix:semicolon
-r_int
-r_int
+id|u32
 op_star
 id|p
 suffix:semicolon
-r_int
-r_int
+id|u32
 id|block
 suffix:semicolon
 r_struct
@@ -207,8 +205,7 @@ r_int
 r_int
 id|offset
 comma
-r_int
-r_int
+id|sysv_zone_t
 op_star
 id|p
 comma
@@ -623,8 +620,7 @@ r_int
 r_int
 id|offset
 comma
-r_int
-r_int
+id|sysv_zone_t
 op_star
 id|p
 comma
@@ -637,8 +633,7 @@ op_star
 id|dirt
 )paren
 (brace
-r_int
-r_int
+id|u32
 id|indtmp
 comma
 id|indblock
@@ -661,8 +656,7 @@ id|sysv_zone_t
 op_star
 id|ind
 suffix:semicolon
-r_int
-r_int
+id|u32
 id|tmp
 comma
 id|block
@@ -979,8 +973,7 @@ r_int
 r_int
 id|offset
 comma
-r_int
-r_int
+id|sysv_zone_t
 op_star
 id|p
 comma
@@ -993,8 +986,7 @@ op_star
 id|dirt
 )paren
 (brace
-r_int
-r_int
+id|u32
 id|indtmp
 comma
 id|indblock
@@ -1017,8 +1009,7 @@ id|sysv_zone_t
 op_star
 id|ind
 suffix:semicolon
-r_int
-r_int
+id|u32
 id|tmp
 comma
 id|block

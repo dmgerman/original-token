@@ -606,6 +606,17 @@ l_char|&squot;0&squot;
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|entry
+OG
+id|sbi-&gt;max_ptys
+)paren
+r_return
+op_minus
+id|ENOENT
+suffix:semicolon
 id|dentry-&gt;d_inode
 op_assign
 id|sbi-&gt;inodes

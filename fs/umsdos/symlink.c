@@ -34,35 +34,37 @@ id|bufsiz
 )paren
 (brace
 r_int
-id|ret
+id|size
+op_assign
+id|dentry-&gt;d_inode-&gt;i_size
 suffix:semicolon
 id|loff_t
 id|loffs
 op_assign
 l_int|0
 suffix:semicolon
+id|ssize_t
+id|ret
+suffix:semicolon
 r_struct
 id|file
 id|filp
 suffix:semicolon
-id|ret
-op_assign
-id|dentry-&gt;d_inode-&gt;i_size
-suffix:semicolon
-r_if
-c_cond
+id|Printk
+c_func
 (paren
-op_logical_neg
 (paren
-id|dentry-&gt;d_inode
+id|KERN_DEBUG
+l_string|&quot;UMSDOS_read: %s/%s, size=%u&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|size
 )paren
 )paren
-(brace
-r_return
-op_minus
-id|EBADF
 suffix:semicolon
-)brace
 id|fill_new_filp
 (paren
 op_amp
@@ -84,167 +86,19 @@ op_assign
 op_amp
 id|umsdos_symlink_operations
 suffix:semicolon
-multiline_comment|/* /mn/ - we have to fill it with dummy values so we won&squot;t segfault */
 r_if
 c_cond
 (paren
-id|ret
+id|size
 OG
 id|bufsiz
 )paren
-id|ret
+id|size
 op_assign
 id|bufsiz
 suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;umsdos_readlink_x /mn/: Checkin: filp=%p, buffer=%p, size=%d, offs=%Lu&bslash;n&quot;
-comma
-op_amp
-id|filp
-comma
-id|buffer
-comma
 id|ret
-comma
-id|loffs
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  f_op=%p&bslash;n&quot;
-comma
-id|filp.f_op
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  inode=%lu, i_size=%lu&bslash;n&quot;
-comma
-id|filp.f_dentry-&gt;d_inode-&gt;i_ino
-comma
-id|filp.f_dentry-&gt;d_inode-&gt;i_size
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  f_pos=%Lu&bslash;n&quot;
-comma
-id|filp.f_pos
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  name=%.*s&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|filp.f_dentry-&gt;d_name.len
-comma
-id|filp.f_dentry-&gt;d_name.name
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  i_binary(sb)=%d&bslash;n&quot;
-comma
-id|MSDOS_I
-(paren
-id|filp.f_dentry-&gt;d_inode
-)paren
-op_member_access_from_pointer
-id|i_binary
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  f_count=%d, f_flags=%d&bslash;n&quot;
-comma
-id|filp.f_count
-comma
-id|filp.f_flags
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  f_owner=%d&bslash;n&quot;
-comma
-id|filp.f_owner.uid
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  f_version=%ld&bslash;n&quot;
-comma
-id|filp.f_version
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  f_reada=%ld, f_ramax=%ld, f_raend=%ld, f_ralen=%ld, f_rawin=%ld&bslash;n&quot;
-comma
-id|filp.f_reada
-comma
-id|filp.f_ramax
-comma
-id|filp.f_raend
-comma
-id|filp.f_ralen
-comma
-id|filp.f_rawin
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;umsdos_readlink_x: FIXME /mn/: running fat_file_read (%p, %p, %d, %Lu)&bslash;n&quot;
-comma
-op_amp
-id|filp
-comma
-id|buffer
-comma
-id|ret
-comma
-id|loffs
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
+op_assign
 id|fat_file_read
 (paren
 op_amp
@@ -252,16 +106,18 @@ id|filp
 comma
 id|buffer
 comma
-(paren
-r_int
-)paren
-id|ret
+id|size
 comma
 op_amp
 id|loffs
 )paren
-op_ne
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|ret
+op_ne
+id|size
 )paren
 (brace
 id|ret
@@ -270,59 +126,6 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-macro_line|#if 0
-(brace
-r_struct
-id|umsdos_dirent
-op_star
-id|mydirent
-op_assign
-id|buffer
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  (DDD) uid=%d&bslash;n&quot;
-comma
-id|mydirent-&gt;uid
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  (DDD) gid=%d&bslash;n&quot;
-comma
-id|mydirent-&gt;gid
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  (DDD) name=&gt;%.20s&lt;&bslash;n&quot;
-comma
-id|mydirent-&gt;name
-)paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;umsdos_readlink_x: FIXME /mn/: fat_file_read returned offs=%Lu ret=%d&bslash;n&quot;
-comma
-id|loffs
-comma
-id|ret
-)paren
-)paren
-suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -345,26 +148,7 @@ r_int
 id|buflen
 )paren
 (brace
-r_int
-id|ret
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;UMSDOS_readlink: calling umsdos_readlink_x for %.*s&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|dentry-&gt;d_name.len
-comma
-id|dentry-&gt;d_name.name
-)paren
-)paren
-suffix:semicolon
-id|ret
-op_assign
+r_return
 id|umsdos_readlink_x
 (paren
 id|dentry
@@ -373,32 +157,6 @@ id|buffer
 comma
 id|buflen
 )paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;readlink %d bufsiz %d&bslash;n&quot;
-comma
-id|ret
-comma
-id|buflen
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* dput(dentry); / * FIXME /mn/? It seems it is unneeded. d_count is not changed by umsdos_readlink_x */
-id|Printk
-(paren
-(paren
-id|KERN_WARNING
-l_string|&quot;UMSDOS_readlink /mn/: FIXME! skipped dput(dentry). returning %d&bslash;n&quot;
-comma
-id|ret
-)paren
-)paren
-suffix:semicolon
-r_return
-id|ret
 suffix:semicolon
 )brace
 multiline_comment|/* this one mostly stolen from romfs :) */
@@ -430,8 +188,6 @@ suffix:semicolon
 r_char
 op_star
 id|symname
-op_assign
-l_int|NULL
 suffix:semicolon
 r_int
 id|len
@@ -446,22 +202,13 @@ id|get_fs
 )paren
 suffix:semicolon
 id|Printk
+c_func
 (paren
 (paren
 id|KERN_DEBUG
-l_string|&quot;UMSDOS_followlink /mn/: (%.*s/%.*s)&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|dentry-&gt;d_parent-&gt;d_name.len
+l_string|&quot;UMSDOS_followlink /mn/: (%s/%s)&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-(paren
-r_int
-)paren
-id|dentry-&gt;d_name.len
 comma
 id|dentry-&gt;d_name.name
 )paren
@@ -494,10 +241,9 @@ op_assign
 id|ERR_PTR
 (paren
 op_minus
-id|EAGAIN
+id|ENOMEM
 )paren
 suffix:semicolon
-multiline_comment|/* correct? */
 r_goto
 id|outnobuf
 suffix:semicolon
@@ -508,20 +254,6 @@ id|KERNEL_DS
 )paren
 suffix:semicolon
 multiline_comment|/* we read into kernel space this time */
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;UMSDOS_followlink /mn/: Here goes umsdos_readlink_x %p, %p, %d&bslash;n&quot;
-comma
-id|dentry
-comma
-id|symname
-comma
-id|len
-)paren
-)paren
-suffix:semicolon
 id|cnt
 op_assign
 id|umsdos_readlink_x
@@ -533,37 +265,9 @@ comma
 id|len
 )paren
 suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;UMSDOS_followlink /mn/: back from umsdos_readlink_x %p, %p, %d!&bslash;n&quot;
-comma
-id|dentry
-comma
-id|symname
-comma
-id|len
-)paren
-)paren
-suffix:semicolon
 id|set_fs
 (paren
 id|old_fs
-)paren
-suffix:semicolon
-id|Printk
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;UMSDOS_followlink /mn/: link name is %.*s with len %d&bslash;n&quot;
-comma
-id|cnt
-comma
-id|symname
-comma
-id|cnt
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -586,7 +290,6 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-r_else
 id|symname
 (braket
 id|len
@@ -635,6 +338,7 @@ r_return
 id|dentry
 suffix:semicolon
 )brace
+multiline_comment|/* needed to patch the file structure */
 DECL|variable|umsdos_symlink_operations
 r_static
 r_struct
@@ -684,7 +388,7 @@ op_assign
 (brace
 l_int|NULL
 comma
-multiline_comment|/* default file operations */
+multiline_comment|/* default file operations (none) */
 l_int|NULL
 comma
 multiline_comment|/* create */
@@ -718,18 +422,15 @@ multiline_comment|/* readlink */
 id|UMSDOS_followlink
 comma
 multiline_comment|/* followlink */
-multiline_comment|/* /mn/ is this REALLY needed ? I recall seeing it working w/o it... */
 id|generic_readpage
 comma
 multiline_comment|/* readpage */
-multiline_comment|/* in original NULL. changed to generic_readpage. FIXME? /mn/ */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
 id|fat_bmap
 comma
 multiline_comment|/* bmap */
-multiline_comment|/* in original NULL. changed to fat_bmap. FIXME? /mn/ */
 l_int|NULL
 comma
 multiline_comment|/* truncate */

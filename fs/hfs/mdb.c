@@ -1,7 +1,7 @@
 multiline_comment|/*&n; * linux/fs/hfs/mdb.c&n; *&n; * Copyright (C) 1995-1997  Paul H. Hargrove&n; * This file may be distributed under the terms of the GNU Public License.&n; *&n; * This file contains functions for reading/writing the MDB.&n; *&n; * &quot;XXX&quot; in a comment is a note to myself to consider changing something.&n; *&n; * In function preconditions the term &quot;valid&quot; applied to a pointer to&n; * a structure means that the pointer is non-NULL and the structure it&n; * points to has all fields initialized to consistent values.&n; *&n; * The code in this file initializes some structures which contain&n; * pointers by calling memset(&amp;foo, 0, sizeof(foo)).&n; * This produces the desired behavior only due to the non-ANSI&n; * assumption that the machine representation of NULL is all zeros.&n; */
 macro_line|#include &quot;hfs.h&quot;
 multiline_comment|/*================ File-local data types ================*/
-multiline_comment|/* &n; * The HFS Master Directory Block (MDB).&n; *&n; * Also known as the Volume Information Block (VIB), this structure is&n; * the HFS equivalent of a superblock.&n; *&n; * Reference: _Inside Macintosh: Files_ pages 2-59 through 2-62&n; */
+multiline_comment|/* &n; * The HFS Master Directory Block (MDB).&n; *&n; * Also known as the Volume Information Block (VIB), this structure is&n; * the HFS equivalent of a superblock.&n; *&n; * Reference: _Inside Macintosh: Files_ pages 2-59 through 2-62&n; *&n; * modified for HFS Extended&n; */
 DECL|struct|raw_mdb
 r_struct
 id|raw_mdb
@@ -127,21 +127,16 @@ l_int|32
 )braket
 suffix:semicolon
 multiline_comment|/* data used by the Finder */
-DECL|member|drVCSize
+DECL|member|drEmbedSigWord
 id|hfs_word_t
-id|drVCSize
+id|drEmbedSigWord
 suffix:semicolon
-multiline_comment|/* MacOS caching parameter */
-DECL|member|drVCBMSize
-id|hfs_word_t
-id|drVCBMSize
+multiline_comment|/* embedded volume signature */
+DECL|member|drEmbedExtent
+id|hfs_lword_t
+id|drEmbedExtent
 suffix:semicolon
-multiline_comment|/* MacOS caching parameter */
-DECL|member|drCtlCSize
-id|hfs_word_t
-id|drCtlCSize
-suffix:semicolon
-multiline_comment|/* MacOS caching parameter */
+multiline_comment|/* starting block number (xdrStABN) &n;&t;&t;&t;&t;&t;   and number of allocation blocks &n;&t;&t;&t;&t;&t;   (xdrNumABlks) occupied by embedded&n;&t;&t;&t;&t;&t;   volume */
 DECL|member|drXTFlSize
 id|hfs_lword_t
 id|drXTFlSize

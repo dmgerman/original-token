@@ -21,8 +21,8 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
+macro_line|#include &lt;asm/desc.h&gt;
 macro_line|#include &quot;irq.h&quot;
-macro_line|#include &quot;desc.h&quot;
 DECL|variable|local_bh_count
 r_int
 r_int
@@ -2607,6 +2607,18 @@ comma
 id|flags
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|irq_desc
+(braket
+id|irq
+)braket
+dot
+id|status
+op_amp
+id|IRQ_INPROGRESS
+)paren
 id|synchronize_irq
 c_func
 (paren
@@ -3366,11 +3378,7 @@ op_assign
 id|status
 op_amp
 op_complement
-(paren
 id|IRQ_INPROGRESS
-op_or
-id|IRQ_PENDING
-)paren
 suffix:semicolon
 id|irq_desc
 (braket

@@ -1400,6 +1400,13 @@ c_func
 id|tcp_tw_death_row_slot
 )paren
 suffix:semicolon
+DECL|variable|tcp_sync_mss
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcp_sync_mss
+)paren
+suffix:semicolon
 DECL|variable|net_statistics
 id|EXPORT_SYMBOL
 c_func

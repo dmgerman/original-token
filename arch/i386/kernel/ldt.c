@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/ldt.h&gt;
-macro_line|#include &quot;desc.h&quot;
+macro_line|#include &lt;asm/desc.h&gt;
 DECL|function|read_ldt
 r_static
 r_int

@@ -334,7 +334,7 @@ mdefine_line|#define&t;CLK1MIS&t;0x80&t;&t;/* One clock missing */
 multiline_comment|/* Read Register 12 (lower byte of baud rate generator constant) */
 multiline_comment|/* Read Register 13 (upper byte of baud rate generator constant) */
 multiline_comment|/* Read Register 15 (value of WR 15) */
-multiline_comment|/* 8580/85180/85280 Enhanced SCC register definitions */
+multiline_comment|/* Z85C30/Z85230 Enhanced SCC register definitions */
 multiline_comment|/* Write Register 7&squot; (SDLC/HDLC Programmable Enhancements) */
 DECL|macro|AUTOTXF
 mdefine_line|#define AUTOTXF&t;0x01&t;&t;/* Auto Tx Flag */
@@ -344,10 +344,14 @@ DECL|macro|AUTORTS
 mdefine_line|#define AUTORTS&t;0x04&t;&t;/* Auto RTS */
 DECL|macro|TXDNRZI
 mdefine_line|#define TXDNRZI 0x08&t;&t;/* TxD Pulled High in SDLC NRZI mode */
+DECL|macro|RXFIFOH
+mdefine_line|#define RXFIFOH 0x08&t;&t;/* Z85230: Int on RX FIFO half full */
 DECL|macro|FASTDTR
 mdefine_line|#define FASTDTR 0x10&t;&t;/* Fast DTR/REQ Mode */
 DECL|macro|CRCCBCR
 mdefine_line|#define CRCCBCR&t;0x20&t;&t;/* CRC Check Bytes Completely Received */
+DECL|macro|TXFIFOE
+mdefine_line|#define TXFIFOE 0x20&t;&t;/* Z85230: Int on TX FIFO completely empty */
 DECL|macro|EXTRDEN
 mdefine_line|#define EXTRDEN&t;0x40&t;&t;/* Extended Read Enabled */
 multiline_comment|/* Write Register 15 (external/status interrupt control) */
@@ -363,6 +367,6 @@ DECL|macro|BCMSB
 mdefine_line|#define BCMSB&t;0x3f&t;&t;/* MSB of 14 bits count */
 DECL|macro|FDA
 mdefine_line|#define FDA&t;0x40&t;&t;/* FIFO Data Available Status */
-DECL|macro|FOY
-mdefine_line|#define FOY&t;0x80&t;&t;/* FIFO Overflow Status */
+DECL|macro|FOS
+mdefine_line|#define FOS&t;0x80&t;&t;/* FIFO Overflow Status */
 eof

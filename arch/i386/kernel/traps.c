@@ -18,7 +18,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/debugreg.h&gt;
-macro_line|#include &quot;desc.h&quot;
+macro_line|#include &lt;asm/desc.h&gt;
 id|asmlinkage
 r_int
 id|system_call
@@ -897,6 +897,19 @@ c_cond
 id|fixup
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; * The GP fault might have been due to&n;&t;&t;&t; * bad segments, so clean up the ones&n;&t;&t;&t; * we care about here..&n;&t;&t;&t; */
+id|regs-&gt;xds
+op_assign
+id|__KERNEL_DS
+suffix:semicolon
+id|regs-&gt;xes
+op_assign
+id|__KERNEL_DS
+suffix:semicolon
+id|regs-&gt;xss
+op_assign
+id|__KERNEL_DS
+suffix:semicolon
 id|regs-&gt;eip
 op_assign
 id|fixup

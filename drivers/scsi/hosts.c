@@ -138,9 +138,6 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AM53C974
 macro_line|#include &quot;AM53C974.h&quot;
 macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI_PPA
-macro_line|#include &quot;ppa.h&quot;
-macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_SUNESP
 macro_line|#include &quot;esp.h&quot;
 macro_line|#endif
@@ -194,6 +191,13 @@ macro_line|#include &quot;../acorn/scsi/powertec.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_JAZZ_ESP
 macro_line|#include &quot;jazz_esp.h&quot;
+macro_line|#endif
+multiline_comment|/*&n; * Moved ppa driver to the end of the probe list&n; * since it is a removable host adapter.&n; * This means the parallel ZIP drive will not bump&n; * the order of the /dev/sd devices - campbell@torque.net&n; */
+macro_line|#ifdef CONFIG_SCSI_PPA
+macro_line|#include &quot;ppa.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_IMM
+macro_line|#include &quot;imm.h&quot;
 macro_line|#endif
 multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /vger/u4/cvs/linux/drivers/scsi/hosts.c,v 1.20 1996/12/12 19:18:32 davem Exp $&quot;;&n;*/
 multiline_comment|/*&n; *  The scsi host entries should be in the order you wish the&n; *  cards to be detected.  A driver may appear more than once IFF&n; *  it can deal with being detected (and therefore initialized)&n; *  with more than one simultaneous host number, can handle being&n; *  reentrant, etc.&n; *&n; *  They may appear in any order, as each SCSI host is told which host &n; *  number it is during detection.&n; */
@@ -389,10 +393,6 @@ macro_line|#ifdef CONFIG_SCSI_AM53C974
 id|AM53C974
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI_PPA
-id|PPA
-comma
-macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_SUNESP
 id|SCSI_SPARC_ESP
 comma
@@ -446,6 +446,15 @@ macro_line|#ifdef CONFIG_SCSI_POWERTECSCSI
 id|POWERTECSCSI
 comma
 macro_line|#endif
+macro_line|#endif
+multiline_comment|/* &quot;Removable host adapters&quot; below this line (Parallel Port/USB/other) */
+macro_line|#ifdef CONFIG_SCSI_PPA
+id|PPA
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_IMM
+id|IMM
+comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG
 id|SCSI_DEBUG

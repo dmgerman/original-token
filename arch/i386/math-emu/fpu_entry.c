@@ -3,6 +3,7 @@ multiline_comment|/*------------------------------------------------------------
 multiline_comment|/*---------------------------------------------------------------------------+&n; | math_emulate(), restore_i387_soft() and save_i387_soft() are the only     |&n; | entry points for wm-FPU-emu.                                              |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/desc.h&gt;
 macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
 macro_line|#include &quot;exception.h&quot;

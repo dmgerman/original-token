@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#if 0
 r_void
@@ -2782,7 +2783,7 @@ op_star
 id|sb
 )paren
 (brace
-multiline_comment|/* we can assume sysv_write_super() has already been called, and&n;&t;   and that the superblock is locked */
+multiline_comment|/* we can assume sysv_write_super() has already been called,&n;&t;   and that the superblock is locked */
 id|brelse
 c_func
 (paren
@@ -3453,12 +3454,10 @@ id|super_block
 op_star
 id|sb
 suffix:semicolon
-r_int
-r_int
+id|u32
 id|tmp
 suffix:semicolon
-r_int
-r_int
+id|u32
 op_star
 id|p
 suffix:semicolon
@@ -3635,8 +3634,7 @@ id|super_block
 op_star
 id|sb
 suffix:semicolon
-r_int
-r_int
+id|u32
 id|tmp
 comma
 id|block
@@ -4246,6 +4244,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+macro_line|#ifdef __BIG_ENDIAN
 DECL|function|read3byte
 r_static
 r_inline
@@ -4253,6 +4252,100 @@ r_int
 r_int
 id|read3byte
 (paren
+r_int
+r_char
+op_star
+id|p
+)paren
+(brace
+r_return
+(paren
+id|p
+(braket
+l_int|2
+)braket
+op_or
+(paren
+id|p
+(braket
+l_int|1
+)braket
+op_lshift
+l_int|8
+)paren
+op_or
+(paren
+id|p
+(braket
+l_int|0
+)braket
+op_lshift
+l_int|16
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|write3byte
+r_static
+r_inline
+r_void
+id|write3byte
+(paren
+r_int
+r_char
+op_star
+id|p
+comma
+r_int
+r_int
+id|val
+)paren
+(brace
+id|p
+(braket
+l_int|2
+)braket
+op_assign
+id|val
+op_amp
+l_int|0xFF
+suffix:semicolon
+id|p
+(braket
+l_int|1
+)braket
+op_assign
+(paren
+id|val
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xFF
+suffix:semicolon
+id|p
+(braket
+l_int|0
+)braket
+op_assign
+(paren
+id|val
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0xFF
+suffix:semicolon
+)brace
+macro_line|#else
+DECL|function|read3byte
+r_static
+r_inline
+r_int
+r_int
+id|read3byte
+(paren
+r_int
 r_char
 op_star
 id|p
@@ -4300,6 +4393,7 @@ r_inline
 r_void
 id|write3byte
 (paren
+r_int
 r_char
 op_star
 id|p
@@ -4340,6 +4434,7 @@ op_rshift
 l_int|16
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|coh_read3byte
 r_static
 r_inline
@@ -4347,6 +4442,7 @@ r_int
 r_int
 id|coh_read3byte
 (paren
+r_int
 r_char
 op_star
 id|p
@@ -4394,6 +4490,7 @@ r_inline
 r_void
 id|coh_write3byte
 (paren
+r_int
 r_char
 op_star
 id|p

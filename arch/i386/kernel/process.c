@@ -32,11 +32,11 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/ldt.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#include &lt;asm/desc.h&gt;
 macro_line|#ifdef CONFIG_MATH_EMULATION
 macro_line|#include &lt;asm/math_emu.h&gt;
 macro_line|#endif
 macro_line|#include &quot;irq.h&quot;
-macro_line|#include &quot;desc.h&quot;
 DECL|variable|semaphore_wake_lock
 id|spinlock_t
 id|semaphore_wake_lock

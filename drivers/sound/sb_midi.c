@@ -558,14 +558,6 @@ suffix:semicolon
 )brace
 id|std_midi_synth.midi_dev
 op_assign
-id|dev
-suffix:semicolon
-id|devc-&gt;my_mididev
-op_assign
-id|dev
-suffix:semicolon
-id|std_midi_synth.midi_dev
-op_assign
 id|devc-&gt;my_mididev
 op_assign
 id|dev

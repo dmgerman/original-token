@@ -301,9 +301,6 @@ DECL|macro|WF_MIDI_VIRTUAL_IS_EXTERNAL
 mdefine_line|#define WF_MIDI_VIRTUAL_IS_EXTERNAL 0x2
 DECL|macro|WF_MIDI_IN_TO_SYNTH_DISABLED
 mdefine_line|#define WF_MIDI_IN_TO_SYNTH_DISABLED 0x4
-multiline_comment|/* See wavefront.c for details */
-DECL|macro|WAVEFRONT_MAX_DEVICES
-mdefine_line|#define WAVEFRONT_MAX_DEVICES 1 /* How many WaveFront cards we can handle */
 multiline_comment|/* slot indexes for struct address_info: makes code a little more mnemonic */
 DECL|macro|WF_SYNTH_SLOT
 mdefine_line|#define WF_SYNTH_SLOT         0
@@ -1334,7 +1331,7 @@ DECL|typedef|wavefront_any
 )brace
 id|wavefront_any
 suffix:semicolon
-multiline_comment|/* Hannu Savolainen hoped that his &quot;patch_info&quot; struct in soundcard.h&n;   might work for other wavetable-based patch-loading situations.&n;   Alas, his fears were correct.  The WaveFront doesn&squot;t even come with&n;   just &quot;patches&quot;, but several different kinds of structures that&n;   control the process of generating sound.&n; */
+multiline_comment|/* Hannu Solvainen hoped that his &quot;patch_info&quot; struct in soundcard.h&n;   might work for other wave-table based patch loading situations.&n;   Alas, his fears were correct. The WaveFront doesn&squot;t even come with&n;   just &quot;patches&quot;, but several different kind of structures that&n;   control the sound generation process.&n; */
 DECL|struct|wf_patch_info
 r_typedef
 r_struct
@@ -1625,7 +1622,7 @@ DECL|macro|WFFX_SRSSETMODE
 mdefine_line|#define WFFX_SRSSETMODE&t;        &t;66
 DECL|macro|WFFX_SRSSETDEF
 mdefine_line|#define WFFX_SRSSETDEF&t;&t;        68
-multiline_comment|/* Allow direct user-space control over FX memory/coefficient data.&n;   In theory this could be used to download the FX microprogram,&n;   but it would be a little slower, and involve some weird code.&n; */
+multiline_comment|/* Allow direct user-space control over FX memory/coefficient data.&n;   In theory this could be used to download the FX microprogram,&n;   but it would be a little slower, and involve some wierd code.&n; */
 DECL|macro|WFFX_MEMSET
 mdefine_line|#define WFFX_MEMSET              69
 macro_line|#endif __wavefront_h__

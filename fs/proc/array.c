@@ -3639,7 +3639,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;%d (%s) %c %d %d %d %d %d %lu %lu &bslash;&n;%lu %lu %lu %lu %lu %ld %ld %ld %ld %ld %ld %lu %lu %ld %lu %lu %lu %lu %lu &bslash;&n;%lu %lu %lu %lu %lu %lu %lu %lu&bslash;n&quot;
+l_string|&quot;%d (%s) %c %d %d %d %d %d %lu %lu &bslash;&n;%lu %lu %lu %lu %lu %ld %ld %ld %ld %ld %ld %lu %lu %ld %lu %lu %lu %lu %lu &bslash;&n;%lu %lu %lu %lu %lu %lu %lu %lu %d&bslash;n&quot;
 comma
 id|pid
 comma
@@ -3781,6 +3781,8 @@ comma
 id|tsk-&gt;nswap
 comma
 id|tsk-&gt;cnswap
+comma
+id|tsk-&gt;exit_signal
 )paren
 suffix:semicolon
 )brace
@@ -5513,6 +5515,18 @@ id|page
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_NUBUS
+r_case
+id|PROC_NUBUS
+suffix:colon
+r_return
+id|get_nubus_list
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;&t;
 r_case
 id|PROC_CPUINFO
 suffix:colon

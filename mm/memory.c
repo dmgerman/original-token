@@ -2783,9 +2783,6 @@ r_int
 r_int
 id|address
 comma
-r_int
-id|write_access
-comma
 id|pte_t
 op_star
 id|page_table
@@ -4252,8 +4249,6 @@ comma
 id|vma
 comma
 id|address
-comma
-id|write_access
 comma
 id|pte
 )paren

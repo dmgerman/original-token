@@ -1595,6 +1595,24 @@ id|ret
 op_assign
 id|devc-&gt;supported_devices
 suffix:semicolon
+multiline_comment|/* The ESS seems to have stereo mic controls */
+r_if
+c_cond
+(paren
+id|devc-&gt;model
+op_eq
+id|MDL_ESS
+)paren
+id|ret
+op_and_assign
+op_complement
+(paren
+id|SOUND_MASK_SPEAKER
+op_or
+id|SOUND_MASK_IMIX
+)paren
+suffix:semicolon
+r_else
 r_if
 c_cond
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *&n; * msnd.c - Driver Base&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd.c,v 1.9 1998/09/04 18:41:27 andrewtv Exp $&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *&n; * msnd.c - Driver Base&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd.c,v 1.16 1998/09/08 04:05:56 andrewtv Exp $&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#if LINUX_VERSION_CODE &lt; 0x020101
 DECL|macro|LINUX20
@@ -22,6 +22,7 @@ macro_line|#  include &lt;asm/io.h&gt;
 macro_line|#  include &lt;asm/uaccess.h&gt;
 macro_line|#  include &lt;asm/spinlock.h&gt;
 macro_line|#endif
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;msnd.h&quot;
 DECL|macro|LOGNAME
 mdefine_line|#define LOGNAME&t;&t;&t;&quot;msnd&quot;
@@ -742,7 +743,7 @@ r_register
 r_int
 id|timeout
 op_assign
-l_int|100
+l_int|1000
 suffix:semicolon
 r_while
 c_loop
@@ -794,7 +795,7 @@ r_register
 r_int
 id|timeout
 op_assign
-l_int|100
+l_int|1000
 suffix:semicolon
 r_while
 c_loop
@@ -901,7 +902,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_WARNING
+id|KERN_DEBUG
 id|LOGNAME
 l_string|&quot;: Send DSP command timeout&bslash;n&quot;
 )paren
@@ -989,7 +990,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_WARNING
+id|KERN_DEBUG
 id|LOGNAME
 l_string|&quot;: Send host word timeout&bslash;n&quot;
 )paren
@@ -1121,23 +1122,15 @@ op_star
 id|dev
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-id|LOGNAME
-l_string|&quot;: enable_irq: count %d&bslash;n&quot;
-comma
-id|dev-&gt;irq_ref
-)paren
+r_int
+r_int
+id|flags
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|dev-&gt;irq_ref
 op_increment
-op_ne
-l_int|0
 )paren
 r_return
 l_int|0
@@ -1148,6 +1141,15 @@ c_func
 id|KERN_DEBUG
 id|LOGNAME
 l_string|&quot;: Enabling IRQ&bslash;n&quot;
+)paren
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|dev-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -1162,19 +1164,6 @@ op_eq
 l_int|0
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|dev-&gt;lock
-comma
-id|flags
-)paren
-suffix:semicolon
 id|outb
 c_func
 (paren
@@ -1247,6 +1236,12 @@ op_plus
 id|HP_ICR
 )paren
 suffix:semicolon
+id|enable_irq
+c_func
+(paren
+id|dev-&gt;irq
+)paren
+suffix:semicolon
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -1260,6 +1255,23 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|dev-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+id|LOGNAME
+l_string|&quot;: Enable IRQ failed&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -1279,16 +1291,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-id|LOGNAME
-l_string|&quot;: disable_irq: count %d&bslash;n&quot;
-comma
-id|dev-&gt;irq_ref
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1307,31 +1309,22 @@ id|dev-&gt;irq_ref
 OL
 l_int|0
 )paren
-(brace
 id|printk
 c_func
 (paren
-id|KERN_WARNING
+id|KERN_DEBUG
 id|LOGNAME
 l_string|&quot;: IRQ ref count is %d&bslash;n&quot;
 comma
 id|dev-&gt;irq_ref
 )paren
 suffix:semicolon
-multiline_comment|/*&t;&t;dev-&gt;irq_ref = 0; */
-)brace
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
 id|LOGNAME
 l_string|&quot;: Disabling IRQ&bslash;n&quot;
-)paren
-suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|50
 )paren
 suffix:semicolon
 id|spin_lock_irqsave
@@ -1343,6 +1336,18 @@ comma
 id|flags
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|msnd_wait_TXDE
+c_func
+(paren
+id|dev
+)paren
+op_eq
+l_int|0
+)paren
+(brace
 id|outb
 c_func
 (paren
@@ -1379,6 +1384,12 @@ op_plus
 id|HP_IRQM
 )paren
 suffix:semicolon
+id|disable_irq
+c_func
+(paren
+id|dev-&gt;irq
+)paren
+suffix:semicolon
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -1390,6 +1401,28 @@ id|flags
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|dev-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+id|LOGNAME
+l_string|&quot;: Disable IRQ failed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 macro_line|#ifndef LINUX20

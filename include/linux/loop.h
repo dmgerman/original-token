@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_LOOP_H
 DECL|macro|_LINUX_LOOP_H
 mdefine_line|#define _LINUX_LOOP_H
+macro_line|#include &lt;linux/kdev_t.h&gt;
 multiline_comment|/*&n; * include/linux/loop.h&n; *&n; * Written by Theodore Ts&squot;o, 3/29/93.&n; *&n; * Copyright 1993 by Theodore Ts&squot;o.  Redistribution of this file is&n; * permitted under the GNU Public License.&n; */
 DECL|macro|LO_NAME_SIZE
 mdefine_line|#define LO_NAME_SIZE&t;64
@@ -85,36 +86,56 @@ id|lo_encrypt_key
 id|LO_KEY_SIZE
 )braket
 suffix:semicolon
-macro_line|#ifdef DES_AVAILABLE
-DECL|member|lo_des_key
-id|des_key_schedule
-id|lo_des_key
-suffix:semicolon
-DECL|member|lo_des_init
-r_int
-r_int
-id|lo_des_init
+DECL|member|lo_init
+id|__u32
+id|lo_init
 (braket
 l_int|2
 )braket
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef IDEA_AVAILABLE
-DECL|member|lo_idea_en_key
-id|idea_key
-id|lo_idea_en_key
+DECL|member|lo_key_owner
+id|uid_t
+id|lo_key_owner
 suffix:semicolon
-DECL|member|lo_idea_de_key
-id|idea_key
-id|lo_idea_de_key
+multiline_comment|/* Who set the key */
+DECL|member|ioctl
+r_int
+(paren
+op_star
+id|ioctl
+)paren
+(paren
+r_struct
+id|loop_device
+op_star
+comma
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
 suffix:semicolon
-macro_line|#endif
 DECL|member|lo_backing_file
 r_struct
 id|file
 op_star
 id|lo_backing_file
 suffix:semicolon
+DECL|member|key_data
+r_void
+op_star
+id|key_data
+suffix:semicolon
+DECL|member|key_reserved
+r_char
+id|key_reserved
+(braket
+l_int|48
+)braket
+suffix:semicolon
+multiline_comment|/* for use by the filter modules */
 )brace
 suffix:semicolon
 DECL|typedef|transfer_proc_t
@@ -144,12 +165,17 @@ r_int
 id|size
 )paren
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 multiline_comment|/*&n; * Loop flags&n; */
 DECL|macro|LO_FLAGS_DO_BMAP
 mdefine_line|#define LO_FLAGS_DO_BMAP&t;0x00000001
 DECL|macro|LO_FLAGS_READ_ONLY
 mdefine_line|#define LO_FLAGS_READ_ONLY&t;0x00000002
-macro_line|#endif /* __KERNEL__ */
+multiline_comment|/* &n; * Note that this structure gets the wrong offsets when directly used&n; * from a glibc program, because glibc has a 32bit dev_t.&n; * Prevent people from shooting in their own foot.  &n; */
+macro_line|#if __GLIBC__ &gt;= 2 &amp;&amp; !defined(dev_t)
+macro_line|#error &quot;Wrong dev_t in loop.h&quot;
+macro_line|#endif 
+multiline_comment|/*&n; *&t;This uses kdev_t because glibc currently has no appropiate&n; *&t;conversion version for the loop ioctls. &n; * &t;The situation is very unpleasant&t;&n; */
 DECL|struct|loop_info
 r_struct
 id|loop_info
@@ -226,17 +252,125 @@ l_int|4
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Loop encryption types --- LO_CRYPT_IDEA isn&squot;t supported yet&n; */
+multiline_comment|/*&n; * Loop filter types&n; */
 DECL|macro|LO_CRYPT_NONE
 mdefine_line|#define LO_CRYPT_NONE&t;0
 DECL|macro|LO_CRYPT_XOR
 mdefine_line|#define LO_CRYPT_XOR&t;1
 DECL|macro|LO_CRYPT_DES
 mdefine_line|#define LO_CRYPT_DES&t;2
-DECL|macro|LO_CRYPT_IDEA
-mdefine_line|#define LO_CRYPT_IDEA&t;3
+DECL|macro|LO_CRYPT_DUMMY
+mdefine_line|#define LO_CRYPT_DUMMY     9
+DECL|macro|LO_CRYPT_SKIPJACK
+mdefine_line|#define LO_CRYPT_SKIPJACK 10
 DECL|macro|MAX_LO_CRYPT
-mdefine_line|#define MAX_LO_CRYPT&t;4
+mdefine_line|#define MAX_LO_CRYPT&t;20
+macro_line|#ifdef __KERNEL__
+multiline_comment|/* Support for loadable transfer modules */
+DECL|struct|loop_func_table
+r_struct
+id|loop_func_table
+(brace
+DECL|member|number
+r_int
+id|number
+suffix:semicolon
+multiline_comment|/* filter type */
+DECL|member|transfer
+r_int
+(paren
+op_star
+id|transfer
+)paren
+(paren
+r_struct
+id|loop_device
+op_star
+id|lo
+comma
+r_int
+id|cmd
+comma
+r_char
+op_star
+id|raw_buf
+comma
+r_char
+op_star
+id|loop_buf
+comma
+r_int
+id|size
+)paren
+suffix:semicolon
+DECL|member|init
+r_int
+(paren
+op_star
+id|init
+)paren
+(paren
+r_struct
+id|loop_device
+op_star
+comma
+r_struct
+id|loop_info
+op_star
+)paren
+suffix:semicolon
+DECL|member|release
+r_int
+(paren
+op_star
+id|release
+)paren
+(paren
+r_struct
+id|loop_device
+op_star
+)paren
+suffix:semicolon
+DECL|member|ioctl
+r_int
+(paren
+op_star
+id|ioctl
+)paren
+(paren
+r_struct
+id|loop_device
+op_star
+comma
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+r_int
+id|loop_register_transfer
+c_func
+(paren
+r_struct
+id|loop_func_table
+op_star
+id|funcs
+)paren
+suffix:semicolon
+r_int
+id|loop_unregister_transfer
+c_func
+(paren
+r_int
+id|number
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * IOCTL commands --- we will commandeer 0x4C (&squot;L&squot;)&n; */
 DECL|macro|LOOP_SET_FD
 mdefine_line|#define LOOP_SET_FD&t;0x4C00

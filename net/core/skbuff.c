@@ -521,7 +521,7 @@ id|skb-&gt;dst
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef CONFIG_IP_FIREWALL_CHAINS
+macro_line|#ifdef CONFIG_IP_FIREWALL
 id|skb-&gt;fwmark
 op_assign
 l_int|0

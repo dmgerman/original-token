@@ -1852,6 +1852,9 @@ id|type
 )paren
 (brace
 r_case
+id|ICMP_TIME_EXCEEDED
+suffix:colon
+r_case
 id|ICMP_SOURCE_QUENCH
 suffix:colon
 r_return

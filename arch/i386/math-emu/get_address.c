@@ -2,6 +2,7 @@ multiline_comment|/*------------------------------------------------------------
 multiline_comment|/*---------------------------------------------------------------------------+&n; | Note:                                                                     |&n; |    The file contains code which accesses user memory.                     |&n; |    Emulator static data may change when user memory is accessed, due to   |&n; |    other processes using the emulator while swapping is in progress.      |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/desc.h&gt;
 macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;

@@ -215,89 +215,76 @@ id|s_sbd2
 suffix:semicolon
 multiline_comment|/* entire superblock data, for part 2 */
 DECL|member|s_sb_fic_count
-r_int
-r_int
+id|u16
 op_star
 id|s_sb_fic_count
 suffix:semicolon
 multiline_comment|/* pointer to s_sbd-&gt;s_ninode */
 DECL|member|s_sb_fic_inodes
-r_int
-r_int
+id|u16
 op_star
 id|s_sb_fic_inodes
 suffix:semicolon
 multiline_comment|/* pointer to s_sbd-&gt;s_inode */
 DECL|member|s_sb_total_free_inodes
-r_int
-r_int
+id|u16
 op_star
 id|s_sb_total_free_inodes
 suffix:semicolon
 multiline_comment|/* pointer to s_sbd-&gt;s_tinode */
 DECL|member|s_sb_flc_count
-r_int
-r_int
+id|u16
 op_star
 id|s_sb_flc_count
 suffix:semicolon
 multiline_comment|/* pointer to s_sbd-&gt;s_nfree */
 DECL|member|s_sb_flc_blocks
-r_int
-r_int
+id|u32
 op_star
 id|s_sb_flc_blocks
 suffix:semicolon
 multiline_comment|/* pointer to s_sbd-&gt;s_free */
 DECL|member|s_sb_total_free_blocks
-r_int
-r_int
+id|u32
 op_star
 id|s_sb_total_free_blocks
 suffix:semicolon
 multiline_comment|/* pointer to s_sbd-&gt;s_tfree */
 DECL|member|s_sb_time
-r_int
-r_int
+id|u32
 op_star
 id|s_sb_time
 suffix:semicolon
 multiline_comment|/* pointer to s_sbd-&gt;s_time */
 DECL|member|s_sb_state
-r_int
-r_int
+id|u32
 op_star
 id|s_sb_state
 suffix:semicolon
 multiline_comment|/* pointer to s_sbd-&gt;s_state, only FSTYPE_SYSV */
 multiline_comment|/* We keep those superblock entities that don&squot;t change here;&n;&t;   this saves us an indirection and perhaps a conversion. */
 DECL|member|s_firstinodezone
-r_int
-r_int
+id|u32
 id|s_firstinodezone
 suffix:semicolon
 multiline_comment|/* index of first inode zone */
 DECL|member|s_firstdatazone
-r_int
-r_int
+id|u32
 id|s_firstdatazone
 suffix:semicolon
 multiline_comment|/* same as s_sbd-&gt;s_isize */
 DECL|member|s_ninodes
-r_int
-r_int
+id|u32
 id|s_ninodes
 suffix:semicolon
 multiline_comment|/* total number of inodes */
 DECL|member|s_ndatazones
-r_int
-r_int
+id|u32
 id|s_ndatazones
 suffix:semicolon
 multiline_comment|/* total number of data zones */
 DECL|member|s_nzones
-r_int
-r_int
+id|u32
 id|s_nzones
 suffix:semicolon
 multiline_comment|/* same as s_sbd-&gt;s_fsize */

@@ -801,6 +801,8 @@ comma
 id|entry
 )paren
 suffix:semicolon
+id|mem_count
+op_sub_assign
 id|copy_from_user
 c_func
 (paren

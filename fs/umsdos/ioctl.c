@@ -731,6 +731,8 @@ comma
 id|data.dos_dirent.d_name
 comma
 id|data.dos_dirent.d_reclen
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|ret
@@ -762,6 +764,8 @@ comma
 id|data.umsdos_dirent.name
 comma
 id|data.umsdos_dirent.name_len
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|ret
@@ -916,6 +920,8 @@ comma
 id|data.dos_dirent.d_name
 comma
 id|data.dos_dirent.d_reclen
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|ret
@@ -997,6 +1003,8 @@ comma
 id|data.dos_dirent.d_name
 comma
 id|data.dos_dirent.d_reclen
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|ret
@@ -1083,6 +1091,8 @@ comma
 id|data.dos_dirent.d_name
 comma
 id|data.dos_dirent.d_reclen
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|ret

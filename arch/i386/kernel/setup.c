@@ -2437,6 +2437,8 @@ id|cache_size
 op_assign
 l_int|0
 suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 l_int|0x41
 suffix:colon
@@ -2578,7 +2580,7 @@ l_int|0
 (brace
 id|p
 op_assign
-l_string|&quot;Celeron&quot;
+l_string|&quot;Celeron (Covington)&quot;
 suffix:semicolon
 )brace
 )brace

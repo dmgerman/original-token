@@ -3762,6 +3762,7 @@ id|io_base
 )paren
 (brace
 )brace
+multiline_comment|/* if (sbmpu) below we allow mpu401 to manage the midi devs&n;   otherwise we have to unload them. (Andrzej Krzysztofowicz) */
 DECL|function|sb_dsp_unload
 r_void
 id|sb_dsp_unload
@@ -3771,6 +3772,9 @@ r_struct
 id|address_info
 op_star
 id|hw_config
+comma
+r_int
+id|sbmpu
 )paren
 (brace
 id|sb_devc
@@ -3865,6 +3869,11 @@ comma
 id|devc
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|devc-&gt;my_mixerdev
+)paren
 id|sound_unload_mixerdev
 c_func
 (paren
@@ -3872,7 +3881,21 @@ id|devc-&gt;my_mixerdev
 )paren
 suffix:semicolon
 multiline_comment|/* We don&squot;t have to do this bit any more the UART401 is its own&n;&t;&t;&t;&t;master  -- Krzysztof Halasa */
-multiline_comment|/* sound_unload_mididev(devc-&gt;my_mididev); */
+multiline_comment|/* But we have to do it, if UART401 is not detected */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sbmpu
+op_logical_and
+id|devc-&gt;my_mididev
+)paren
+id|sound_unload_mididev
+c_func
+(paren
+id|devc-&gt;my_mididev
+)paren
+suffix:semicolon
 id|sound_unload_audiodev
 c_func
 (paren
@@ -5312,7 +5335,6 @@ op_assign
 op_minus
 id|devc-&gt;irq
 suffix:semicolon
-macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_UART401)
 r_if
 c_cond
 (paren
@@ -5329,7 +5351,6 @@ comma
 id|hw_config
 )paren
 suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 r_case

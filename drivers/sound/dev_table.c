@@ -2642,6 +2642,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_MIDI
 r_int
 id|i
 op_assign
@@ -2687,6 +2688,14 @@ suffix:semicolon
 r_return
 id|i
 suffix:semicolon
+macro_line|#else
+r_return
+(paren
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|sound_alloc_synthdev
 r_int

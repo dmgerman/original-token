@@ -3816,7 +3816,16 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|mbuf-&gt;len
+r_sizeof
+(paren
+id|mbuf-&gt;data
+)paren
+op_div
+r_sizeof
+(paren
+r_int
+r_int
+)paren
 suffix:semicolon
 id|i
 op_increment
