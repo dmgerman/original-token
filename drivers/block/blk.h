@@ -465,8 +465,6 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
-macro_line|#else
-macro_line|#error &quot;unknown blk device&quot;
 macro_line|#endif
 macro_line|#if (MAJOR_NR != SCSI_TAPE_MAJOR)
 macro_line|#ifndef CURRENT

@@ -6374,6 +6374,7 @@ r_int
 id|c
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -6399,6 +6400,8 @@ comma
 l_string|&quot;c&quot;
 (paren
 id|count
+op_div
+l_int|2
 )paren
 suffix:colon
 l_string|&quot;cx&quot;

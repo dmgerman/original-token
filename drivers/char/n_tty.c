@@ -4742,6 +4742,7 @@ suffix:semicolon
 id|nr
 op_decrement
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4755,7 +4756,6 @@ c_func
 id|tty
 )paren
 suffix:semicolon
-)brace
 )brace
 r_else
 (brace

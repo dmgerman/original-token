@@ -41,5 +41,13 @@ c_func
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|print_Scsi_Cmnd
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
 macro_line|#endif /* def _CONSTANTS_H */
 eof

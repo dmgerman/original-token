@@ -2009,6 +2009,10 @@ op_logical_and
 id|type
 op_ne
 id|SOCK_PACKET
+op_logical_and
+id|type
+op_ne
+id|SOCK_NCP
 )paren
 op_logical_or
 id|protocol

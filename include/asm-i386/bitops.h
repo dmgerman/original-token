@@ -501,5 +501,40 @@ id|res
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * ffz = Find First Zero in word. Undefined if no zero exists,&n; * so code should check against ~0UL first..&n; */
+DECL|function|ffz
+r_extern
+r_inline
+r_int
+r_int
+id|ffz
+c_func
+(paren
+r_int
+r_int
+id|word
+)paren
+(brace
+id|__asm__
+c_func
+(paren
+l_string|&quot;bsfl %1,%0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|word
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_complement
+id|word
+)paren
+)paren
+suffix:semicolon
+r_return
+id|word
+suffix:semicolon
+)brace
 macro_line|#endif /* _I386_BITOPS_H */
 eof

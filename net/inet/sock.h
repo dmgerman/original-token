@@ -12,6 +12,7 @@ macro_line|#include &quot;ax25.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_IPX
 macro_line|#include &quot;ipx.h&quot;
+macro_line|#include &quot;ncp.h&quot;
 macro_line|#endif
 DECL|macro|SOCK_ARRAY_SIZE
 mdefine_line|#define SOCK_ARRAY_SIZE&t;64
@@ -398,6 +399,11 @@ DECL|member|ipx_type
 r_int
 r_int
 id|ipx_type
+suffix:semicolon
+DECL|member|ncp
+r_struct
+id|ncp_info
+id|ncp
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_AX25

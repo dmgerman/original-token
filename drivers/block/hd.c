@@ -5031,6 +5031,9 @@ id|hd_driveid
 )paren
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 id|RO_IOCTLS
 c_func
 (paren

@@ -506,9 +506,15 @@ suffix:colon
 r_if
 c_cond
 (paren
+(paren
 id|sk-&gt;type
 op_eq
 id|SOCK_SEQPACKET
+op_logical_or
+id|sk-&gt;type
+op_eq
+id|SOCK_NCP
+)paren
 op_logical_and
 id|sk-&gt;state
 op_eq

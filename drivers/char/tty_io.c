@@ -6810,10 +6810,26 @@ r_if
 c_cond
 (paren
 id|error
+OL
+l_int|0
 )paren
 r_return
 id|error
 suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|driver-&gt;major
+op_eq
+l_int|0
+)paren
+(brace
+id|driver-&gt;major
+op_assign
+id|error
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -6841,7 +6857,7 @@ op_assign
 id|driver
 suffix:semicolon
 r_return
-l_int|0
+id|error
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initialize the console device. This is called *early*, so&n; * we can&squot;t necessarily depend on lots of kernel help here.&n; * Just do some early initializations, and do the complex setup&n; * later.&n; */
@@ -7013,7 +7029,7 @@ c_func
 (paren
 id|TTYAUX_MAJOR
 comma
-l_string|&quot;tty&quot;
+l_string|&quot;cua&quot;
 comma
 op_amp
 id|tty_fops
