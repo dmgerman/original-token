@@ -2957,15 +2957,13 @@ op_star
 id|vmp
 )paren
 (brace
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 r_int
 r_int
@@ -3258,9 +3256,12 @@ op_assign
 op_increment
 id|vcommp-&gt;vc_seq
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|req-&gt;uc_sleep
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/* Fill in the common input args. */
 (paren

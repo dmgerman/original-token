@@ -1856,6 +1856,13 @@ c_func
 id|___strtok
 )paren
 suffix:semicolon
+DECL|variable|init_special_inode
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|init_special_inode
+)paren
+suffix:semicolon
 DECL|variable|init_fifo
 id|EXPORT_SYMBOL
 c_func

@@ -248,7 +248,7 @@ multiline_comment|/* mkdir */
 id|nat_rmdir
 comma
 multiline_comment|/* rmdir */
-id|hfs_mknod
+l_int|NULL
 comma
 multiline_comment|/* mknod */
 id|hfs_rename

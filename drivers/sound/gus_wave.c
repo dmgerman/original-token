@@ -369,14 +369,12 @@ l_int|1024
 )braket
 suffix:semicolon
 multiline_comment|/* Must match value set to max_fragment */
-DECL|variable|dram_sleeper
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|dram_sleeper
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * Variables and buffers for PCM output&n; */
 DECL|macro|MAX_PCM_BUFFERS
@@ -8133,7 +8131,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|init_waitqueue
+id|init_waitqueue_head
 c_func
 (paren
 op_amp

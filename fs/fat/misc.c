@@ -208,14 +208,12 @@ suffix:semicolon
 )brace
 multiline_comment|/* File creation lock. This is system-wide to avoid deadlocks in rename. */
 multiline_comment|/* (rename might deadlock before detecting cross-FS moves.) */
-DECL|variable|creation_wait
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|creation_wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 DECL|variable|creation_lock
 r_static

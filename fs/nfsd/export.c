@@ -220,14 +220,12 @@ id|hash_count
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|hash_wait
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|hash_wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 DECL|macro|READLOCK
 mdefine_line|#define READLOCK&t;&t;0

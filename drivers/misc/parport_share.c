@@ -1061,7 +1061,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|init_waitqueue
+id|init_waitqueue_head
 c_func
 (paren
 op_amp

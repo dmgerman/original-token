@@ -430,9 +430,7 @@ id|rom_samples_rdonly
 suffix:semicolon
 multiline_comment|/* can we write on ROM samples */
 DECL|member|interrupt_sleeper
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|interrupt_sleeper
 suffix:semicolon
 DECL|variable|dev
@@ -8692,7 +8690,7 @@ l_string|&quot;no response to firmware probe, assume raw.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|init_waitqueue
+id|init_waitqueue_head
 (paren
 op_amp
 id|dev.interrupt_sleeper

@@ -14,14 +14,12 @@ id|usb_operations
 id|uhci_device_operations
 suffix:semicolon
 multiline_comment|/* Wakes up khubd */
-DECL|variable|usb_hub_wait
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|usb_hub_wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 DECL|variable|hub_event_lock
 r_static

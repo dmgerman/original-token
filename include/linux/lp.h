@@ -188,9 +188,7 @@ id|stats
 suffix:semicolon
 macro_line|#endif
 DECL|member|wait_q
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wait_q
 suffix:semicolon
 DECL|member|last_error

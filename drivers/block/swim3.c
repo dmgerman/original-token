@@ -466,9 +466,7 @@ r_int
 id|ejected
 suffix:semicolon
 DECL|member|wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wait
 suffix:semicolon
 DECL|member|wanted
@@ -5638,6 +5636,13 @@ suffix:semicolon
 id|fs-&gt;media_bay
 op_assign
 id|mediabay
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|fs-&gt;wait
+)paren
 suffix:semicolon
 id|fs-&gt;dma_cmd
 op_assign

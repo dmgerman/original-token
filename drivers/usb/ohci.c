@@ -34,14 +34,12 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-DECL|variable|ohci_configure
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|ohci_configure
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 macro_line|#ifdef OHCI_TIMER
 DECL|variable|ohci_timer
@@ -1401,12 +1399,12 @@ suffix:semicolon
 )brace
 multiline_comment|/* ohci_request_irq() */
 multiline_comment|/*&n; * Control thread operations:&n; */
-DECL|variable|control_wakeup
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|control_wakeup
+)paren
 suffix:semicolon
 multiline_comment|/*&n; *  This is the handler that gets called when a control transaction&n; *  completes.&n; *&n; *  This function is called from the interrupt handler.&n; */
 DECL|function|ohci_control_completed
@@ -1501,15 +1499,13 @@ comma
 op_star
 id|status_td
 suffix:semicolon
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 macro_line|#if 0
 id|printk

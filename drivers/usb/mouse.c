@@ -51,9 +51,7 @@ id|ready
 suffix:semicolon
 multiline_comment|/* the mouse has changed state since the last read */
 DECL|member|wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wait
 suffix:semicolon
 multiline_comment|/* for polling */
@@ -72,6 +70,29 @@ r_static
 r_struct
 id|mouse_state
 id|static_mouse_state
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|__WAIT_QUEUE_HEAD_INITIALIZER
+c_func
+(paren
+id|static_mouse_state.wait
+)paren
+comma
+)brace
 suffix:semicolon
 DECL|variable|usb_mouse_lock
 id|spinlock_t

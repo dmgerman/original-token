@@ -271,20 +271,20 @@ r_int
 id|SLMError
 suffix:semicolon
 multiline_comment|/* wait queues */
-DECL|variable|slm_wait
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|slm_wait
+)paren
 suffix:semicolon
 multiline_comment|/* waiting for buffer */
-DECL|variable|print_wait
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|print_wait
+)paren
 suffix:semicolon
 multiline_comment|/* waiting for printing finished */
 multiline_comment|/* status codes */

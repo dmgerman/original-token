@@ -465,12 +465,12 @@ l_int|0
 comma
 )brace
 suffix:semicolon
-DECL|variable|busy_wait
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|busy_wait
+)paren
 suffix:semicolon
 DECL|variable|CurrentNReq
 r_static

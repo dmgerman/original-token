@@ -37,14 +37,12 @@ suffix:semicolon
 macro_line|#endif
 DECL|macro|compile_assert
 mdefine_line|#define compile_assert(x) do { switch (0) { case 1: case !(x): } } while (0)
-DECL|variable|uhci_configure
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|uhci_configure
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * Return the result of a TD..&n; */
 DECL|function|uhci_td_result
@@ -1097,12 +1095,12 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Control thread operations: we just mark the last TD&n; * in a control thread as an interrupt TD, and wake up&n; * the front-end on completion.&n; *&n; * We need to remove the TD from the lists (both interrupt&n; * list and TD lists) by hand if something bad happens!&n; */
-DECL|variable|control_wakeup
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|control_wakeup
+)paren
 suffix:semicolon
 DECL|function|uhci_control_completed
 r_static
@@ -1157,15 +1155,13 @@ op_star
 id|last
 )paren
 (brace
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 r_struct
 id|uhci_qh
