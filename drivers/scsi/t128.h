@@ -71,7 +71,8 @@ r_int
 id|t128_detect
 c_func
 (paren
-r_int
+id|Scsi_Host_Template
+op_star
 )paren
 suffix:semicolon
 r_const
@@ -124,7 +125,7 @@ macro_line|#endif
 multiline_comment|/* &n; * I hadn&squot;t thought of this with the earlier drivers - but to prevent&n; * macro definition conflicts, we shouldn&squot;t define all of the internal&n; * macros when this is being used solely for the host stub.&n; */
 macro_line|#ifdef HOSTS_C
 DECL|macro|TRANTOR_T128
-mdefine_line|#define TRANTOR_T128 {&quot;Trantor T128/T128F/T228&quot;, t128_detect, t128_info,&bslash;&n;&t;NULL, t128_queue_command, t128_abort, t128_reset, NULL, &t;&bslash;&n;&t;t128_biosparam, &t;&t;&t;&t;&t;&t;&bslash;&n;&t;/* can queue */ CAN_QUEUE, /* id */ 7, SG_ALL,&t;&t;&t;&bslash;&n;&t;/* cmd per lun */ CMD_PER_LUN , 0, 0, DISABLE_CLUSTERING}
+mdefine_line|#define TRANTOR_T128 {NULL, &quot;Trantor T128/T128F/T228&quot;, t128_detect, NULL,  &bslash;&n;&t;t128_info,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL, t128_queue_command, t128_abort, t128_reset, NULL, &t;&bslash;&n;&t;t128_biosparam, &t;&t;&t;&t;&t;&t;&bslash;&n;&t;/* can queue */ CAN_QUEUE, /* id */ 7, SG_ALL,&t;&t;&t;&bslash;&n;&t;/* cmd per lun */ CMD_PER_LUN , 0, 0, DISABLE_CLUSTERING}
 macro_line|#else
 DECL|macro|NCR5380_implementation_fields
 mdefine_line|#define NCR5380_implementation_fields &bslash;&n;    volatile unsigned char *base

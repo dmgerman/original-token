@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/fs/isofs/inode.c&n; * &n; *  (C) 1992, 1993, 1994  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/iso_fs.h&gt;
@@ -12,42 +11,6 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#if defined(CONFIG_BLK_DEV_SR)
-r_extern
-r_int
-id|check_cdrom_media_change
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_CDU31A)
-r_extern
-r_int
-id|check_cdu31a_media_change
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_MCD)
-r_extern
-r_int
-id|check_mcd_media_change
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef LEAK_CHECK
 DECL|variable|check_malloc
 r_static

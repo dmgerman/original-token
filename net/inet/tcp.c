@@ -24,7 +24,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 DECL|macro|TCP_FASTPATH
-macro_line|#undef TCP_FASTPATH
+mdefine_line|#define TCP_FASTPATH
 DECL|macro|SEQ_TICK
 mdefine_line|#define SEQ_TICK 3
 DECL|variable|seq_offset
@@ -13209,6 +13209,12 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|release_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

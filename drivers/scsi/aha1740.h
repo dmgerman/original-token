@@ -384,7 +384,8 @@ r_int
 id|aha1740_detect
 c_func
 (paren
-r_int
+id|Scsi_Host_Template
+op_star
 )paren
 suffix:semicolon
 r_int
@@ -460,6 +461,6 @@ DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
 DECL|macro|AHA1740
-mdefine_line|#define AHA1740 {&quot;Adaptec 1740&quot;, aha1740_detect,&t;&bslash;&n;&t;&t;aha1740_info, aha1740_command,&t;&t;&bslash;&n;&t;&t;aha1740_queuecommand,&t;&t;&t;&bslash;&n;&t;&t;aha1740_abort,&t;&t;&t;&t;&bslash;&n;&t;&t;aha1740_reset,&t;&t;&t;&t;&bslash;&n;&t;        NULL,&t;&t;                        &bslash;&n;&t;&t;aha1740_biosparam,                      &bslash;&n;&t;&t;AHA1740_ECBS, 7, AHA1740_SCATTER, 1, 0, 0, ENABLE_CLUSTERING}
+mdefine_line|#define AHA1740 {NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;   &quot;Adaptec 1740&quot;, &t;&t;&t;&bslash;&n;&t;&t;   aha1740_detect,&t;&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;   aha1740_info, &t;&t;&t;&bslash;&n;&t;&t;   aha1740_command,&t;&t;&t;&bslash;&n;&t;&t;   aha1740_queuecommand,&t;&t;&bslash;&n;&t;&t;   aha1740_abort,&t;&t;&t;&bslash;&n;&t;&t;   aha1740_reset,&t;&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;                &bslash;&n;&t;&t;   aha1740_biosparam,                   &bslash;&n;&t;&t;   AHA1740_ECBS, &t;&t;&t;&bslash;&n;&t;&t;   7, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   AHA1740_SCATTER, &t;&t;&t;&bslash;&n;&t;&t;   1, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   0, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   0, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   ENABLE_CLUSTERING}
 macro_line|#endif
 eof

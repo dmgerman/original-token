@@ -3733,8 +3733,9 @@ r_int
 id|buslogic_detect
 c_func
 (paren
-r_int
-id|hostnum
+id|Scsi_Host_Template
+op_star
+id|tpnt
 )paren
 (brace
 r_int
@@ -3831,7 +3832,7 @@ op_assign
 id|scsi_register
 c_func
 (paren
-id|hostnum
+id|tpnt
 comma
 r_sizeof
 (paren
@@ -4605,12 +4606,6 @@ id|scsi_unregister
 c_func
 (paren
 id|SHpnt
-comma
-r_sizeof
-(paren
-r_struct
-id|hostdata
-)paren
 )paren
 suffix:semicolon
 )brace

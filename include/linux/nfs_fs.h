@@ -9,7 +9,7 @@ multiline_comment|/*&n; * The readdir cache size controls how many directory ent
 DECL|macro|NFS_READDIR_CACHE_SIZE
 mdefine_line|#define NFS_READDIR_CACHE_SIZE&t;&t;64
 DECL|macro|NFS_MAX_FILE_IO_BUFFER_SIZE
-mdefine_line|#define NFS_MAX_FILE_IO_BUFFER_SIZE&t;16834
+mdefine_line|#define NFS_MAX_FILE_IO_BUFFER_SIZE&t;16384
 DECL|macro|NFS_DEF_FILE_IO_BUFFER_SIZE
 mdefine_line|#define NFS_DEF_FILE_IO_BUFFER_SIZE&t;1024
 multiline_comment|/*&n; * The upper limit on timeouts for the exponential backoff algorithm&n; * in tenths of a second.&n; */

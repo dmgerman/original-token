@@ -160,13 +160,6 @@ l_int|NULL
 comma
 )brace
 suffix:semicolon
-DECL|variable|scsi_debug_host
-r_static
-r_int
-id|scsi_debug_host
-op_assign
-l_int|0
-suffix:semicolon
 r_extern
 r_void
 id|scsi_debug_interrupt
@@ -2710,14 +2703,11 @@ r_int
 id|scsi_debug_detect
 c_func
 (paren
-r_int
-id|hostnum
+id|Scsi_Host_Template
+op_star
+id|tpnt
 )paren
 (brace
-id|scsi_debug_host
-op_assign
-id|hostnum
-suffix:semicolon
 macro_line|#ifndef IMMEDIATE
 id|timer_table
 (braket
@@ -2777,7 +2767,7 @@ l_string|&quot;scsi_debug_abort&bslash;n&quot;
 suffix:semicolon
 id|SCpnt-&gt;result
 op_assign
-id|i
+id|SCpnt-&gt;abort_reason
 op_lshift
 l_int|16
 suffix:semicolon

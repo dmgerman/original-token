@@ -3529,6 +3529,16 @@ id|count
 op_increment
 suffix:semicolon
 )brace
+(paren
+op_star
+id|tty_loc
+)paren
+op_member_access_from_pointer
+id|driver
+op_assign
+op_star
+id|driver
+suffix:semicolon
 op_star
 id|ret_tty
 op_assign

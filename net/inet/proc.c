@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the various access functions for the&n; *&t;&t;PROC file system.  It is mainly used for debugging and&n; *&t;&t;statistics.&n; *&n; * Version:&t;@(#)proc.c&t;1.0.5&t;05/27/93&n; *&n; * Authors:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Gerald J. Heim, &lt;heim@peanuts.informatik.uni-tuebingen.de&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&t;&t;Erik Schoenfelder, &lt;schoenfr@ibr.cs.tu-bs.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;UDP sockets show the rxqueue/txqueue&n; *&t;&t;&t;&t;&t;using hint flag for the netinfo.&n; *&t;Pauline Middelink&t;:&t;Pidentd support&n; *&t;&t;Alan Cox&t;:&t;Make /proc safer.&n; *&t;Erik Schoenfelder&t;:&t;/proc/net/snmp&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the various access functions for the&n; *&t;&t;PROC file system.  It is mainly used for debugging and&n; *&t;&t;statistics.&n; *&n; * Version:&t;@(#)proc.c&t;1.0.5&t;05/27/93&n; *&n; * Authors:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Gerald J. Heim, &lt;heim@peanuts.informatik.uni-tuebingen.de&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&t;&t;Erik Schoenfelder, &lt;schoenfr@ibr.cs.tu-bs.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;UDP sockets show the rxqueue/txqueue&n; *&t;&t;&t;&t;&t;using hint flag for the netinfo.&n; *&t;Pauline Middelink&t;:&t;Pidentd support&n; *&t;&t;Alan Cox&t;:&t;Make /proc safer.&n; *&t;Erik Schoenfelder&t;:&t;/proc/net/snmp&n; *&t;&t;Alan Cox&t;:&t;Handle dead sockets properly.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -248,6 +248,11 @@ r_int
 )paren
 id|sp-&gt;retransmits
 comma
+id|sp-&gt;dead
+ques
+c_cond
+l_int|0
+suffix:colon
 id|SOCK_INODE
 c_func
 (paren
@@ -269,7 +274,7 @@ op_amp
 id|sp-&gt;timer
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * All sockets with (port mod SOCK_ARRAY_SIZE) = i&n;&t;&t; * are kept in sock_array[i], so we must follow the&n;&t;&t; * &squot;next&squot; link to get them all.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * All sockets with (port mod SOCK_ARRAY_SIZE) = i&n;&t;&t;&t; * are kept in sock_array[i], so we must follow the&n;&t;&t;&t; * &squot;next&squot; link to get them all.&n;&t;&t;&t; */
 id|sp
 op_assign
 id|sp-&gt;next
@@ -316,7 +321,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* We only turn interrupts back on for a moment, but because the interrupt queues anything built up&n;&t;&t;   before this will clear before we jump back and cli, so its not as bad as it looks */
+multiline_comment|/* We only turn interrupts back on for a moment, but because the interrupt queues anything built up&n;&t;&t;&t;   before this will clear before we jump back and cli, so its not as bad as it looks */
 r_if
 c_cond
 (paren
@@ -690,7 +695,7 @@ comma
 id|udp_statistics.UdpOutDatagrams
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;  len += sprintf( buffer + len,&n;&t;  &t;&quot;TCP fast path RX:  H2: %ul H1: %ul L: %ul&bslash;n&quot;,&n;&t;  &t;&t;tcp_rx_hit2,tcp_rx_hit1,tcp_rx_miss);&n;*/
+multiline_comment|/*&t;&n;&t;  len += sprintf( buffer + len,&n;&t;  &t;&quot;TCP fast path RX:  H2: %ul H1: %ul L: %ul&bslash;n&quot;,&n;&t;  &t;&t;tcp_rx_hit2,tcp_rx_hit1,tcp_rx_miss);&n;*/
 r_if
 c_cond
 (paren

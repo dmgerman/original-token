@@ -638,14 +638,15 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-multiline_comment|/* &n; * Function : int pas16_detect(int hostno)&n; *&n; * Purpose : detects and initializes PAS16 controllers&n; *&t;that were autoprobed, overriden on the LILO command line, &n; *&t;or specified at compile time.&n; *&n; * Inputs : hostno - id of this SCSI adapter.&n; * &n; * Returns : 1 if a host adapter was found, 0 if not.&n; *&n; */
+multiline_comment|/* &n; * Function : int pas16_detect(Scsi_Host_Template * tpnt)&n; *&n; * Purpose : detects and initializes PAS16 controllers&n; *&t;that were autoprobed, overriden on the LILO command line, &n; *&t;or specified at compile time.&n; *&n; * Inputs : tpnt - template for this SCSI adapter.&n; * &n; * Returns : 1 if a host adapter was found, 0 if not.&n; *&n; */
 DECL|function|pas16_detect
 r_int
 id|pas16_detect
 c_func
 (paren
-r_int
-id|hostno
+id|Scsi_Host_Template
+op_star
+id|tpnt
 )paren
 (brace
 r_static
@@ -756,9 +757,7 @@ macro_line|#if (PDEBUG &amp; PDEBUG_INIT)
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : probing io_port %04x&bslash;n&quot;
-comma
-id|hostno
+l_string|&quot;scsi-pas16 : probing io_port %04x&bslash;n&quot;
 comma
 (paren
 r_int
@@ -815,9 +814,7 @@ macro_line|#if (PDEBUG &amp; PDEBUG_INIT)
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : detected board.&bslash;n&quot;
-comma
-id|hostno
+l_string|&quot;scsi-pas16 : detected board.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -827,9 +824,7 @@ macro_line|#if defined(PDEBUG) &amp;&amp; (PDEBUG &amp; PDEBUG_INIT)
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : io_port = %04x&bslash;n&quot;
-comma
-id|hostno
+l_string|&quot;scsi-pas16 : io_port = %04x&bslash;n&quot;
 comma
 (paren
 r_int
@@ -851,7 +846,7 @@ id|instance
 op_assign
 id|scsi_register
 (paren
-id|hostno
+id|tpnt
 comma
 r_sizeof
 (paren
@@ -926,7 +921,7 @@ c_func
 (paren
 l_string|&quot;scsi%d : IRQ%d not free, interrupts disabled&bslash;n&quot;
 comma
-id|hostno
+id|instance-&gt;host_no
 comma
 id|instance-&gt;irq
 )paren
@@ -949,7 +944,7 @@ c_func
 (paren
 l_string|&quot;scsi%d : interrupts not enabled. for better interactive performance,&bslash;n&quot;
 comma
-id|hostno
+id|instance-&gt;host_no
 )paren
 suffix:semicolon
 id|printk
@@ -957,7 +952,7 @@ c_func
 (paren
 l_string|&quot;scsi%d : please jumper the board for a free IRQ.&bslash;n&quot;
 comma
-id|hostno
+id|instance-&gt;host_no
 )paren
 suffix:semicolon
 )brace
@@ -967,7 +962,7 @@ c_func
 (paren
 l_string|&quot;scsi%d : irq = %d&bslash;n&quot;
 comma
-id|hostno
+id|instance-&gt;host_no
 comma
 id|instance-&gt;irq
 )paren
@@ -1035,9 +1030,6 @@ id|current_override
 suffix:semicolon
 op_increment
 id|count
-suffix:semicolon
-op_increment
-id|hostno
 suffix:semicolon
 )brace
 r_return

@@ -6,7 +6,8 @@ r_int
 id|ultrastor_detect
 c_func
 (paren
-r_int
+id|Scsi_Host_Template
+op_star
 )paren
 suffix:semicolon
 r_const
@@ -76,7 +77,7 @@ mdefine_line|#define ULTRASTOR_MAX_CMDS 16
 DECL|macro|ULTRASTOR_24F_PORT
 mdefine_line|#define ULTRASTOR_24F_PORT 0xC80
 DECL|macro|ULTRASTOR_14F
-mdefine_line|#define ULTRASTOR_14F &bslash;&n;    { &quot;UltraStor 14F/24F/34F&quot;, ultrastor_detect, ultrastor_info, 0, &bslash;&n;      ultrastor_queuecommand, ultrastor_abort, ultrastor_reset, &bslash;&n;      0, ultrastor_biosparam, ULTRASTOR_MAX_CMDS, 0, &bslash;&n;      ULTRASTOR_14F_MAX_SG, ULTRASTOR_MAX_CMDS_PER_LUN, 0, 1, &bslash;&n;&t;ENABLE_CLUSTERING }
+mdefine_line|#define ULTRASTOR_14F { NULL, /* Ptr for modules*/&t;&bslash;&n;&t;&t;&t;  &quot;UltraStor 14F/24F/34F&quot;, &t;&bslash;&n;&t;&t;&t;  ultrastor_detect, &t;&t;&bslash;&n;&t;&t;&t;  NULL,&t;/* Release */&t;&t;&bslash;&n;&t;&t;&t;  ultrastor_info, &t;&t;&bslash;&n;&t;&t;&t;  0, &t;&t;&t;&t;&bslash;&n;&t;&t;&t;  ultrastor_queuecommand,&t;&bslash;&n;&t;&t;&t;  ultrastor_abort, &t;&t;&bslash;&n;&t;&t;&t;  ultrastor_reset,&t;&t;&bslash;&n;&t;&t;&t;  0,&t;&t;&t;&t;&bslash;&n;&t;&t;&t;  ultrastor_biosparam, &t;&t;&bslash;&n;&t;&t;&t;  ULTRASTOR_MAX_CMDS,&t;&t;&bslash;&n;&t;&t;&t;  0, &t;&t;&t;&t;&bslash;&n;&t;&t;&t;  ULTRASTOR_14F_MAX_SG, &t;&bslash;&n;&t;&t;&t;  ULTRASTOR_MAX_CMDS_PER_LUN, &t;&bslash;&n;&t;&t;&t;  0, &t;&t;&t;&t;&bslash;&n;&t;&t;&t;  1, &t;&t;&t;&t;&bslash;&n;&t;&t;&t;  ENABLE_CLUSTERING }
 macro_line|#ifdef ULTRASTOR_PRIVATE
 DECL|macro|UD_ABORT
 mdefine_line|#define UD_ABORT&t;0x0001

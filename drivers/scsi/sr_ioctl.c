@@ -136,7 +136,7 @@ id|scsi_CDs
 id|target
 )braket
 dot
-id|device-&gt;index
+id|device
 comma
 l_int|1
 )paren
@@ -341,12 +341,7 @@ id|wake_up
 c_func
 (paren
 op_amp
-id|scsi_devices
-(braket
-id|SCpnt-&gt;index
-)braket
-dot
-id|device_wait
+id|SCpnt-&gt;device-&gt;device_wait
 )paren
 suffix:semicolon
 multiline_comment|/* Wake up a process waiting for device*/

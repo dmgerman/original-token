@@ -5,7 +5,8 @@ r_int
 id|wd7000_detect
 c_func
 (paren
-r_int
+id|Scsi_Host_Template
+op_star
 )paren
 suffix:semicolon
 r_int
@@ -82,6 +83,6 @@ mdefine_line|#define WD7000_Q    16
 DECL|macro|WD7000_SG
 mdefine_line|#define WD7000_SG   16
 DECL|macro|WD7000
-mdefine_line|#define WD7000 {&bslash;&n;&t;&quot;Western Digital WD-7000&quot;,      &bslash;&n;&t;wd7000_detect,                  &bslash;&n;&t;wd7000_info,                    &bslash;&n;&t;wd7000_command,&t;                &bslash;&n;&t;wd7000_queuecommand,&t;        &bslash;&n;&t;wd7000_abort,&t;&t;&t;&bslash;&n;&t;wd7000_reset,&t;&t;&t;&bslash;&n;&t;NULL,                           &bslash;&n;&t;wd7000_biosparam,               &bslash;&n;&t;WD7000_Q, 7, WD7000_SG, 1, 0, 1, ENABLE_CLUSTERING}
+mdefine_line|#define WD7000 { NULL, &bslash;&n;&t;&quot;Western Digital WD-7000&quot;,      &bslash;&n;&t;wd7000_detect,                  &bslash;&n;&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;wd7000_info,                    &bslash;&n;&t;wd7000_command,&t;                &bslash;&n;&t;wd7000_queuecommand,&t;        &bslash;&n;&t;wd7000_abort,&t;&t;&t;&bslash;&n;&t;wd7000_reset,&t;&t;&t;&bslash;&n;&t;NULL,                           &bslash;&n;&t;wd7000_biosparam,               &bslash;&n;&t;WD7000_Q, 7, WD7000_SG, 1, 0, 1, ENABLE_CLUSTERING}
 macro_line|#endif
 eof

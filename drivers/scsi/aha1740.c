@@ -2089,8 +2089,9 @@ r_int
 id|aha1740_detect
 c_func
 (paren
-r_int
-id|hostnum
+id|Scsi_Host_Template
+op_star
+id|tpnt
 )paren
 (brace
 id|memset

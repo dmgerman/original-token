@@ -1231,7 +1231,7 @@ id|LP_PERRORP
 id|printk
 c_func
 (paren
-l_string|&quot;lp%d on fire&bslash;n&quot;
+l_string|&quot;lp%d reported invalid error status (on fire, eh?)&bslash;n&quot;
 comma
 id|minor
 )paren

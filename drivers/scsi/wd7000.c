@@ -56,11 +56,6 @@ r_typedef
 r_struct
 id|adapter
 (brace
-DECL|member|num
-r_int
-id|num
-suffix:semicolon
-multiline_comment|/* Index into Scsi_hosts array */
 DECL|member|sh
 r_struct
 id|Scsi_Host
@@ -3578,8 +3573,9 @@ r_int
 id|wd7000_detect
 c_func
 (paren
-r_int
-id|hostnum
+id|Scsi_Host_Template
+op_star
+id|tpnt
 )paren
 multiline_comment|/* &n; *  Returns the number of adapters this driver is supporting.&n; *&n; *  The source for hosts.c says to wait to call scsi_register until 100%&n; *  sure about an adapter.  We need to do it a little sooner here; we&n; *  need the storage set up by scsi_register before wd7000_init, and&n; *  changing the location of an Adapter structure is more trouble than&n; *  calling scsi_unregister.&n; *&n; */
 (brace
@@ -3719,7 +3715,7 @@ op_assign
 id|scsi_register
 c_func
 (paren
-id|hostnum
+id|tpnt
 comma
 r_sizeof
 (paren
@@ -3761,10 +3757,6 @@ id|Adapter
 )paren
 )paren
 suffix:semicolon
-id|host-&gt;num
-op_assign
-id|hostnum
-suffix:semicolon
 id|host-&gt;sh
 op_assign
 id|sh
@@ -3801,14 +3793,8 @@ id|host
 (brace
 multiline_comment|/* Initialization failed */
 id|scsi_unregister
-c_func
 (paren
 id|sh
-comma
-r_sizeof
-(paren
-id|Adapter
-)paren
 )paren
 suffix:semicolon
 r_continue

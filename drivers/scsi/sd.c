@@ -23,7 +23,7 @@ mdefine_line|#define SD_TIMEOUT 300
 DECL|macro|SD_MOD_TIMEOUT
 mdefine_line|#define SD_MOD_TIMEOUT 750
 DECL|macro|CLUSTERABLE_DEVICE
-mdefine_line|#define CLUSTERABLE_DEVICE(SC) (SC-&gt;host-&gt;hostt-&gt;use_clustering &amp;&amp; &bslash;&n;&t;&t;&t;    scsi_devices[SC-&gt;index].type != TYPE_MOD)
+mdefine_line|#define CLUSTERABLE_DEVICE(SC) (SC-&gt;host-&gt;hostt-&gt;use_clustering &amp;&amp; &bslash;&n;&t;&t;&t;    SC-&gt;device-&gt;type != TYPE_MOD)
 DECL|variable|sd
 r_struct
 id|hd_struct
@@ -1291,7 +1291,7 @@ id|CURRENT-&gt;dev
 )paren
 )braket
 dot
-id|device-&gt;index
+id|device
 comma
 l_int|0
 )paren
@@ -1362,7 +1362,7 @@ id|req-&gt;dev
 )paren
 )braket
 dot
-id|device-&gt;index
+id|device
 )paren
 suffix:semicolon
 r_if
@@ -3414,12 +3414,7 @@ comma
 id|rw_intr
 comma
 (paren
-id|scsi_devices
-(braket
-id|SCpnt-&gt;index
-)braket
-dot
-id|type
+id|SCpnt-&gt;device-&gt;type
 op_eq
 id|TYPE_DISK
 ques
@@ -3694,7 +3689,7 @@ id|rscsi_disks
 id|i
 )braket
 dot
-id|device-&gt;index
+id|device
 comma
 l_int|1
 )paren
@@ -3999,7 +3994,7 @@ id|jiffies
 OL
 id|time1
 op_plus
-l_int|100
+id|HZ
 )paren
 (brace
 suffix:semicolon
@@ -4242,12 +4237,7 @@ id|wake_up
 c_func
 (paren
 op_amp
-id|scsi_devices
-(braket
-id|SCpnt-&gt;index
-)braket
-dot
-id|device_wait
+id|SCpnt-&gt;device-&gt;device_wait
 )paren
 suffix:semicolon
 multiline_comment|/* Wake up a process waiting for device*/
@@ -4929,19 +4919,11 @@ id|memory_start
 suffix:semicolon
 )brace
 DECL|function|sd_init1
-r_int
-r_int
+r_void
 (def_block
 id|sd_init1
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
 )paren
 (brace
 id|rscsi_disks
@@ -4950,19 +4932,16 @@ op_assign
 id|Scsi_Disk
 op_star
 )paren
-id|mem_start
-suffix:semicolon
-id|mem_start
-op_add_assign
+id|scsi_init_malloc
+c_func
+(paren
 id|MAX_SD
 op_star
 r_sizeof
 (paren
 id|Scsi_Disk
 )paren
-suffix:semicolon
-r_return
-id|mem_start
+)paren
 suffix:semicolon
 )brace
 )def_block

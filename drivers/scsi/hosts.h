@@ -20,9 +20,18 @@ r_struct
 id|scsi_disk
 id|Disk
 suffix:semicolon
+DECL|struct|SHT
 r_typedef
 r_struct
+id|SHT
 (brace
+multiline_comment|/* Used with loadable modules so we can construct a linked list. */
+DECL|member|next
+r_struct
+id|SHT
+op_star
+id|next
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;The name pointer is a pointer to the name of the SCSI&n;&t;&t;device detected.&n;&t;*/
 DECL|member|name
 r_char
@@ -37,7 +46,22 @@ op_star
 id|detect
 )paren
 (paren
+r_struct
+id|SHT
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Used with loadable modules to unload the host structures */
+DECL|member|release
 r_int
+(paren
+op_star
+id|release
+)paren
+(paren
+r_struct
+id|Scsi_Host
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;The info function will return whatever useful&n;&t;&t;information the developer sees fit.              &n;&t;*/
@@ -199,6 +223,11 @@ id|Scsi_Host
 op_star
 id|next
 suffix:semicolon
+DECL|member|extra_bytes
+r_int
+r_int
+id|extra_bytes
+suffix:semicolon
 DECL|member|host_busy
 r_volatile
 r_int
@@ -270,6 +299,13 @@ id|unchecked_isa_dma
 suffix:colon
 l_int|1
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;   True if this host was loaded as a loadable module&n;&t;&t;   */
+DECL|member|loaded_as_module
+r_int
+id|loaded_as_module
+suffix:colon
+l_int|1
+suffix:semicolon
 DECL|member|hostdata
 r_int
 id|hostdata
@@ -288,23 +324,46 @@ id|scsi_hostlist
 suffix:semicolon
 r_extern
 id|Scsi_Host_Template
+op_star
 id|scsi_hosts
-(braket
-)braket
 suffix:semicolon
 multiline_comment|/*&n;&t;scsi_init initializes the scsi hosts.&n;*/
+multiline_comment|/* We use these goofy things because the MM is not set up when we init&n;   the scsi subsystem.  By using these functions we can write code that&n;   looks normal.  Also, it makes it possible to use the same code for a&n;   loadable module. */
+r_extern
+r_void
+op_star
+id|scsi_init_malloc
+c_func
+(paren
+r_int
+r_int
+id|size
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|scsi_init_free
+c_func
+(paren
+r_char
+op_star
+id|ptr
+comma
+r_int
+r_int
+id|size
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|scsi_loadable_module_flag
+suffix:semicolon
 r_int
 r_int
 id|scsi_init
 c_func
 (paren
-r_int
-r_int
-id|memory_start
-comma
-r_int
-r_int
-id|memory_end
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -314,8 +373,8 @@ op_star
 id|scsi_register
 c_func
 (paren
-r_int
-id|i
+id|Scsi_Host_Template
+op_star
 comma
 r_int
 id|j
@@ -330,9 +389,6 @@ r_struct
 id|Scsi_Host
 op_star
 id|i
-comma
-r_int
-id|j
 )paren
 suffix:semicolon
 DECL|macro|BLANK_HOST

@@ -494,73 +494,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Current value of the control register */
-macro_line|#if 1 /* This will go away as soon as the isofs code is fixed&n;         to use the fops struct. */
-multiline_comment|/*&n; * This routine returns 1 if the disk has been changed since the last&n; * check or 0 if it hasn&squot;t.  Setting flag to 0 resets the changed flag.&n; */
-r_int
-DECL|function|check_cdu31a_media_change
-id|check_cdu31a_media_change
-c_func
-(paren
-r_int
-id|full_dev
-comma
-r_int
-id|flag
-)paren
-(brace
-r_int
-id|retval
-comma
-id|target
-suffix:semicolon
-id|target
-op_assign
-id|MINOR
-c_func
-(paren
-id|full_dev
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|target
-OG
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Sony CD-ROM request error: invalid device.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-id|retval
-op_assign
-id|sony_disc_changed
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|flag
-)paren
-(brace
-id|sony_disc_changed
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_return
-id|retval
-suffix:semicolon
-)brace
-macro_line|#endif
-multiline_comment|/*&n; * This routine returns 1 if the disk has been changed since the last&n; * check or 0 if it hasn&squot;t.  Setting flag to 0 resets the changed flag.&n; */
+multiline_comment|/*&n; * This routine returns 1 if the disk has been changed since the last&n; * check or 0 if it hasn&squot;t.&n; */
 r_static
 r_int
 DECL|function|scd_disk_change

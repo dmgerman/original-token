@@ -585,10 +585,16 @@ DECL|function|seagate_st0x_detect
 r_int
 id|seagate_st0x_detect
 (paren
-r_int
-id|hostnum
+id|Scsi_Host_Template
+op_star
+id|tpnt
 )paren
 (brace
+r_struct
+id|Scsi_Host
+op_star
+id|instance
+suffix:semicolon
 macro_line|#ifndef OVERRIDE
 r_int
 id|i
@@ -796,12 +802,7 @@ suffix:semicolon
 macro_line|#endif /* OVERIDE */
 )brace
 multiline_comment|/* (! controller_type) */
-id|scsi_hosts
-(braket
-id|hostnum
-)braket
-dot
-id|this_id
+id|tpnt-&gt;this_id
 op_assign
 (paren
 id|controller_type
@@ -891,9 +892,19 @@ id|st0x_dr
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; *&t;At all times, we will use IRQ 5.  Should also check for IRQ3 if we &n; * &t;loose our first interrupt.&n; */
+id|instance
+op_assign
+id|scsi_register
+c_func
+(paren
+id|tpnt
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|hostno
 op_assign
-id|hostnum
+id|instance-&gt;host_no
 suffix:semicolon
 r_if
 c_cond
@@ -1676,12 +1687,7 @@ op_assign
 (paren
 r_int
 )paren
-id|scsi_devices
-(braket
-id|SCint-&gt;index
-)braket
-dot
-id|borken
+id|SCint-&gt;device-&gt;borken
 suffix:semicolon
 macro_line|#endif
 macro_line|#if (DEBUG &amp; PRINT_COMMAND)

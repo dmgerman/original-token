@@ -292,13 +292,6 @@ id|interrupt_level
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|this_host
-r_static
-r_int
-id|this_host
-op_assign
-l_int|0
-suffix:semicolon
 DECL|variable|in_command
 r_static
 r_volatile
@@ -1142,8 +1135,9 @@ r_int
 id|fdomain_16x0_detect
 c_func
 (paren
-r_int
-id|hostnum
+id|Scsi_Host_Template
+op_star
+id|tpnt
 )paren
 (brace
 r_int
@@ -1724,10 +1718,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|this_host
-op_assign
-id|hostnum
-suffix:semicolon
 multiline_comment|/* Log IRQ with kernel */
 r_if
 c_cond
@@ -1909,12 +1899,7 @@ id|adapter_mask
 op_assign
 l_int|0x80
 suffix:semicolon
-id|scsi_hosts
-(braket
-id|this_host
-)braket
-dot
-id|this_id
+id|tpnt-&gt;this_id
 op_assign
 l_int|7
 suffix:semicolon
@@ -1976,12 +1961,7 @@ c_cond
 (paren
 id|i
 op_eq
-id|scsi_hosts
-(braket
-id|this_host
-)braket
-dot
-id|this_id
+id|tpnt-&gt;this_id
 )paren
 multiline_comment|/* Skip host adapter */
 r_continue
