@@ -945,23 +945,6 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;         SCSI Bus Reset: %sabled&bslash;n&quot;
-comma
-id|aic7xxx_no_reset
-ques
-c_cond
-l_string|&quot;Dis&quot;
-suffix:colon
-l_string|&quot;En&quot;
-)paren
-suffix:semicolon
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|BLS
-comma
 l_string|&quot;Disconnect Enable Flags: 0x%04x&bslash;n&quot;
 comma
 id|p-&gt;discenable

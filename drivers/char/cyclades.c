@@ -1,11 +1,7 @@
 DECL|macro|BLOCKMOVE
 mdefine_line|#define BLOCKMOVE
-DECL|macro|NEW_INTR_FLOW
-mdefine_line|#define&t;NEW_INTR_FLOW
 DECL|macro|Z_WAKE
 mdefine_line|#define&t;Z_WAKE
-DECL|macro|NEW_PCI
-mdefine_line|#define&t;NEW_PCI
 DECL|variable|rcsid
 r_static
 r_char
@@ -13,9 +9,9 @@ id|rcsid
 (braket
 )braket
 op_assign
-l_string|&quot;$Revision: 2.2.1.1 $$Date: 1998/03/19 16:43:12 $&quot;
+l_string|&quot;$Revision: 2.2.1.3 $$Date: 1998/06/01 12:09:10 $&quot;
 suffix:semicolon
-multiline_comment|/*&n; *  linux/drivers/char/cyclades.c&n; *&n; * This file contains the driver for the Cyclades Cyclom-Y multiport&n; * serial boards.&n; *&n; * Maintained by Ivan Passos (ivan@cyclades.com),&n; * Marcio Saito (marcio@cyclades.com) and &n; * Randolph Bentson (bentson@grieg.seaslug.org).&n; *&n; * For Technical support and installation problems, please send e-mail&n; * to support@cyclades.com.&n; *&n; * Much of the design and some of the code came from serial.c&n; * which was copyright (C) 1991, 1992  Linus Torvalds.  It was&n; * extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92,&n; * and then fixed as suggested by Michael K. Johnson 12/12/92.&n; *&n; * This version does not support shared irq&squot;s.&n; *&n; * This module exports the following rs232 io functions:&n; *   int cy_init(void);&n; *   int cy_open(struct tty_struct *tty, struct file *filp);&n; * and the following functions for modularization.&n; *   int init_module(void);&n; *   void cleanup_module(void);&n; *&n; * $Log: cyclades.c,v $&n; * Revision 2.2.1.1  1998/03/19 16:43:12 ivan&n; * added conditional compilation for new/old PCI structure support;&n; * removed kernel series (2.0.x / 2.1.x) conditional compilation.&n; *&n; * Revision 2.1.1.3  1998/03/16 18:01:12 ivan&n; * cleaned up the data loss fix;&n; * fixed XON/XOFF handling once more (Cyclades-Z);&n; * general revision in the driver routines;&n; * introduction of a mechanism to prevent data loss with slow &n; * printers, by forcing a delay before closing the port.&n; *&n; * Revision 2.1.1.2  1998/02/17 16:50:00 ivan&n; * fixed detection/handling of new CD1400 in Ye boards;&n; * fixed XON/XOFF handling (Cyclades-Z);&n; * fixed data loss caused by a premature port close;&n; * introduction of a flag that holds the CD1400 version ID per port&n; * (used by the CYGETCD1400VER new ioctl).&n; *&n; * Revision 2.1.1.1  1997/12/03 17:31:19 ivan&n; * Code review for the module cleanup routine;&n; * fixed RTS and DTR status report for new CD1400&squot;s in get_modem_info;&n; * includes anonymous changes regarding signal_pending.&n; * &n; * Revision 2.1  1997/11/01 17:42:41 ivan&n; * Changes in the driver to support Alpha systems (except 8Zo V_1);&n; * BREAK fix for the Cyclades-Z boards;&n; * driver inactivity control by FW implemented;&n; * introduction of flag that allows driver to take advantage of &n; * a special CD1400 feature related to HW flow control;&n; * added support for the CD1400  rev. J (Cyclom-Y boards);&n; * introduction of ioctls to:&n; *  - control the rtsdtr_inv flag (Cyclom-Y);&n; *  - control the rflow flag (Cyclom-Y);&n; *  - adjust the polling interval (Cyclades-Z);&n; *&n; * Revision 1.36.4.33  1997/06/27 19:00:00  ivan&n; * Fixes related to kernel version conditional &n; * compilation.&n; *  &n; * Revision 1.36.4.32  1997/06/14 19:30:00  ivan&n; * Compatibility issues between kernels 2.0.x and &n; * 2.1.x (mainly related to clear_bit function).&n; *  &n; * Revision 1.36.4.31  1997/06/03 15:30:00  ivan&n; * Changes to define the memory window according to the &n; * board type.&n; *  &n; * Revision 1.36.4.30  1997/05/16 15:30:00  daniel&n; * Changes to suport new cycladesZ boards.&n; *&n; * Revision 1.36.4.29  1997/05/12 11:30:00  daniel&n; * Merge of Bentson&squot;s and Daniel&squot;s version 1.36.4.28.&n; * Corrects bug in cy_detect_pci: check if there are more&n; * ports than the number of static structs allocated.&n; * Warning message during initialization if this driver is&n; * used with the new generation of cycladesZ boards.  Those&n; * will be supported only in next release of the driver.&n; * Corrects bug in cy_detect_pci and cy_detect_isa that&n; * returned wrong number of VALID boards, when a cyclomY&n; * was found with no serial modules connected.&n; * Changes to use current (2.1.x) kernel subroutine names&n; * and created macros for compilation with 2.0.x kernel,&n; * instead of the other way around.&n; *&n; * Revision 1.36.4.28  1997/05/?? ??:00:00  bentson&n; * Change queue_task_irq_off to queue_task_irq.&n; * The inline function queue_task_irq_off (tqueue.h)&n; * was removed from latest releases of 2.1.x kernel.&n; * Use of macro __initfunc to mark the initialization&n; * routines, so memory can be reused.&n; * Also incorporate implementation of critical region&n; * in function cleanup_module() created by anonymous&n; * linuxer.&n; *&n; * Revision 1.36.4.28  1997/04/25 16:00:00  daniel&n; * Change to support new firmware that solves DCD problem:&n; * application could fail to receive SIGHUP signal when DCD&n; * varying too fast.&n; *&n; * Revision 1.36.4.27  1997/03/26 10:30:00  daniel&n; * Changed for suport linux versions 2.1.X.&n; * Backward compatible with linux versions 2.0.X.&n; * Corrected illegal use of filler field in&n; * CH_CTRL struct.&n; * Deleted some debug messages.&n; *&n; * Revision 1.36.4.26  1997/02/27 12:00:00  daniel&n; * Included check for NULL tty pointer in cyz_poll.&n; *&n; * Revision 1.36.4.25  1997/02/26 16:28:30  bentson&n; * Bill Foster at Blarg! Online services noticed that&n; * some of the switch elements of -Z modem control&n; * lacked a closing &quot;break;&quot;&n; *&n; * Revision 1.36.4.24  1997/02/24 11:00:00  daniel&n; * Changed low water threshold for buffer xmit_buf&n; *&n; * Revision 1.36.4.23  1996/12/02 21:50:16  bentson&n; * Marcio provided fix to modem status fetch for -Z&n; *&n; * Revision 1.36.4.22  1996/10/28 22:41:17  bentson&n; * improve mapping of -Z control page (thanks to Steve&n; * Price &lt;stevep@fa.tdktca.com&gt; for help on this)&n; *&n; * Revision 1.36.4.21  1996/09/10 17:00:10  bentson&n; * shift from cpu-bound to memcopy in cyz_polling operation&n; *&n; * Revision 1.36.4.20  1996/09/09 18:30:32  Bentson&n; * Added support to set and report higher speeds.&n; *&n; * Revision 1.36.4.19c  1996/08/09 10:00:00  Marcio Saito&n; * Some fixes in the HW flow control for the BETA release.&n; * Don&squot;t try to register the IRQ.&n; *&n; * Revision 1.36.4.19  1996/08/08 16:23:18  Bentson&n; * make sure &quot;cyc&quot; appears in all kernel messages; all soft interrupts&n; * handled by same routine; recognize out-of-band reception; comment&n; * out some diagnostic messages; leave RTS/CTS flow control to hardware;&n; * fix race condition in -Z buffer management; only -Y needs to explictly&n; * flush chars; tidy up some startup messages;&n; *&n; * Revision 1.36.4.18  1996/07/25 18:57:31  bentson&n; * shift MOD_INC_USE_COUNT location to match&n; * serial.c; purge some diagnostic messages;&n; *&n; * Revision 1.36.4.17  1996/07/25 18:01:08  bentson&n; * enable modem status messages and fetch &amp; process them; note&n; * time of last activity type for each port; set_line_char now&n; * supports more than line 0 and treats 0 baud correctly;&n; * get_modem_info senses rs_status;&n; *&n; * Revision 1.36.4.16  1996/07/20 08:43:15  bentson&n; * barely works--now&squot;s time to turn on&n; * more features &squot;til it breaks&n; *&n; * Revision 1.36.4.15  1996/07/19 22:30:06  bentson&n; * check more -Z board status; shorten boot message&n; *&n; * Revision 1.36.4.14  1996/07/19 22:20:37  bentson&n; * fix reference to ch_ctrl in startup; verify return&n; * values from cyz_issue_cmd and cyz_update_channel;&n; * more stuff to get modem control correct;&n; *&n; * Revision 1.36.4.13  1996/07/11 19:53:33  bentson&n; * more -Z stuff folded in; re-order changes to put -Z stuff&n; * after -Y stuff (to make changes clearer)&n; *&n; * Revision 1.36.4.12  1996/07/11 15:40:55  bentson&n; * Add code to poll Cyclades-Z.  Add code to get &amp; set RS-232 control.&n; * Add code to send break.  Clear firmware ID word at startup (so&n; * that other code won&squot;t talk to inactive board).&n; *&n; * Revision 1.36.4.11  1996/07/09 05:28:29  bentson&n; * add code for -Z in set_line_char&n; *&n; * Revision 1.36.4.10  1996/07/08 19:28:37  bentson&n; * fold more -Z stuff (or in some cases, error messages)&n; * into driver; add text to &quot;don&squot;t know what to do&quot; messages.&n; *&n; * Revision 1.36.4.9  1996/07/08 18:38:38  bentson&n; * moved compile-time flags near top of file; cosmetic changes&n; * to narrow text (to allow 2-up printing); changed many declarations&n; * to &quot;static&quot; to limit external symbols; shuffled code order to&n; * coalesce -Y and -Z specific code, also to put internal functions&n; * in order of tty_driver structure; added code to recognize -Z&n; * ports (and for moment, do nothing or report error); add cy_startup&n; * to parse boot command line for extra base addresses for ISA probes;&n; *&n; * Revision 1.36.4.8  1996/06/25 17:40:19  bentson&n; * reorder some code, fix types of some vars (int vs. long),&n; * add cy_setup to support user declared ISA addresses&n; *&n; * Revision 1.36.4.7  1996/06/21 23:06:18  bentson&n; * dump ioctl based firmware load (it&squot;s now a user level&n; * program); ensure uninitialzed ports cannot be used&n; *&n; * Revision 1.36.4.6  1996/06/20 23:17:19  bentson&n; * rename vars and restructure some code&n; *&n; * Revision 1.36.4.5  1996/06/14 15:09:44  bentson&n; * get right status back after boot load&n; *&n; * Revision 1.36.4.4  1996/06/13 19:51:44  bentson&n; * successfully loads firmware&n; *&n; * Revision 1.36.4.3  1996/06/13 06:08:33  bentson&n; * add more of the code for the boot/load ioctls&n; *&n; * Revision 1.36.4.2  1996/06/11 21:00:51  bentson&n; * start to add Z functionality--starting with ioctl&n; * for loading firmware&n; *&n; * Revision 1.36.4.1  1996/06/10 18:03:02  bentson&n; * added code to recognize Z/PCI card at initialization; report&n; * presence, but card is not initialized (because firmware needs&n; * to be loaded)&n; *&n; * Revision 1.36.3.8  1996/06/07 16:29:00  bentson&n; * starting minor number at zero; added missing verify_area&n; * as noted by Heiko Eissfeldt &lt;heiko@colossus.escape.de&gt;&n; *&n; * Revision 1.36.3.7  1996/04/19 21:06:18  bentson&n; * remove unneeded boot message &amp; fix CLOCAL hardware flow&n; * control (Miquel van Smoorenburg &lt;miquels@Q.cistron.nl&gt;);&n; * remove unused diagnostic statements; minor 0 is first;&n; *&n; * Revision 1.36.3.6  1996/03/13 13:21:17  marcio&n; * The kernel function vremap (available only in later 1.3.xx kernels)&n; * allows the access to memory addresses above the RAM. This revision&n; * of the driver supports PCI boards below 1Mb (device id 0x100) and&n; * above 1Mb (device id 0x101).&n; *&n; * Revision 1.36.3.5  1996/03/07 15:20:17  bentson&n; * Some global changes to interrupt handling spilled into&n; * this driver--mostly unused arguments in system function&n; * calls.  Also added change by Marcio Saito which should&n; * reduce lost interrupts at startup by fast processors.&n; *&n; * Revision 1.36.3.4  1995/11/13  20:45:10  bentson&n; * Changes by Corey Minyard &lt;minyard@wf-rch.cirr.com&gt; distributed&n; * in 1.3.41 kernel to remove a possible race condition, extend&n; * some error messages, and let the driver run as a loadable module&n; * Change by Alan Wendt &lt;alan@ez0.ezlink.com&gt; to remove a&n; * possible race condition.&n; * Change by Marcio Saito &lt;marcio@cyclades.com&gt; to fix PCI addressing.&n; *&n; * Revision 1.36.3.3  1995/11/13  19:44:48  bentson&n; * Changes by Linus Torvalds in 1.3.33 kernel distribution&n; * required due to reordering of driver initialization.&n; * Drivers are now initialized *after* memory management.&n; *&n; * Revision 1.36.3.2  1995/09/08  22:07:14  bentson&n; * remove printk from ISR; fix typo&n; *&n; * Revision 1.36.3.1  1995/09/01  12:00:42  marcio&n; * Minor fixes in the PCI board support. PCI function calls in&n; * conditional compilation (CONFIG_PCI). Thanks to Jim Duncan&n; * &lt;duncan@okay.com&gt;. &quot;bad serial count&quot; message removed.&n; *&n; * Revision 1.36.3  1995/08/22  09:19:42  marcio&n; * Cyclom-Y/PCI support added. Changes in the cy_init routine and&n; * board initialization. Changes in the boot messages. The driver&n; * supports up to 4 boards and 64 ports by default.&n; *&n; * Revision 1.36.1.4  1995/03/29  06:14:14  bentson&n; * disambiguate between Cyclom-16Y and Cyclom-32Ye;&n; *&n; * Revision 1.36.1.3  1995/03/23  22:15:35  bentson&n; * add missing break in modem control block in ioctl switch statement&n; * (discovered by Michael Edward Chastain &lt;mec@jobe.shell.portal.com&gt;);&n; *&n; * Revision 1.36.1.2  1995/03/22  19:16:22  bentson&n; * make sure CTS flow control is set as soon as possible (thanks&n; * to note from David Lambert &lt;lambert@chesapeake.rps.slb.com&gt;);&n; *&n; * Revision 1.36.1.1  1995/03/13  15:44:43  bentson&n; * initialize defaults for receive threshold and stale data timeout;&n; * cosmetic changes;&n; *&n; * Revision 1.36  1995/03/10  23:33:53  bentson&n; * added support of chips 4-7 in 32 port Cyclom-Ye;&n; * fix cy_interrupt pointer dereference problem&n; * (Joe Portman &lt;baron@aa.net&gt;);&n; * give better error response if open is attempted on non-existent port&n; * (Zachariah Vaum &lt;jchryslr@netcom.com&gt;);&n; * correct command timeout (Kenneth Lerman &lt;lerman@@seltd.newnet.com&gt;);&n; * conditional compilation for -16Y on systems with fast, noisy bus;&n; * comment out diagnostic print function;&n; * cleaned up table of base addresses;&n; * set receiver time-out period register to correct value,&n; * set receive threshold to better default values,&n; * set chip timer to more accurate 200 Hz ticking,&n; * add code to monitor and modify receive parameters&n; * (Rik Faith &lt;faith@cs.unc.edu&gt; Nick Simicich&n; * &lt;njs@scifi.emi.net&gt;);&n; *&n; * Revision 1.35  1994/12/16  13:54:18  steffen&n; * additional patch by Marcio Saito for board detection&n; * Accidently left out in 1.34&n; *&n; * Revision 1.34  1994/12/10  12:37:12  steffen&n; * This is the corrected version as suggested by Marcio Saito&n; *&n; * Revision 1.33  1994/12/01  22:41:18  bentson&n; * add hooks to support more high speeds directly; add tytso&n; * patch regarding CLOCAL wakeups&n; *&n; * Revision 1.32  1994/11/23  19:50:04  bentson&n; * allow direct kernel control of higher signalling rates;&n; * look for cards at additional locations&n; *&n; * Revision 1.31  1994/11/16  04:33:28  bentson&n; * ANOTHER fix from Corey Minyard, minyard@wf-rch.cirr.com--&n; * a problem in chars_in_buffer has been resolved by some&n; * small changes;  this should yield smoother output&n; *&n; * Revision 1.30  1994/11/16  04:28:05  bentson&n; * Fix from Corey Minyard, Internet: minyard@metronet.com,&n; * UUCP: minyard@wf-rch.cirr.com, WORK: minyardbnr.ca, to&n; * cy_hangup that appears to clear up much (all?) of the&n; * DTR glitches; also he&squot;s added/cleaned-up diagnostic messages&n; *&n; * Revision 1.29  1994/11/16  04:16:07  bentson&n; * add change proposed by Ralph Sims, ralphs@halcyon.com, to&n; * operate higher speeds in same way as other serial ports;&n; * add more serial ports (for up to two 16-port muxes).&n; *&n; * Revision 1.28  1994/11/04  00:13:16  root&n; * turn off diagnostic messages&n; *&n; * Revision 1.27  1994/11/03  23:46:37  root&n; * bunch of changes to bring driver into greater conformance&n; * with the serial.c driver (looking for missed fixes)&n; *&n; * Revision 1.26  1994/11/03  22:40:36  root&n; * automatic interrupt probing fixed.&n; *&n; * Revision 1.25  1994/11/03  20:17:02  root&n; * start to implement auto-irq&n; *&n; * Revision 1.24  1994/11/03  18:01:55  root&n; * still working on modem signals--trying not to drop DTR&n; * during the getty/login processes&n; *&n; * Revision 1.23  1994/11/03  17:51:36  root&n; * extend baud rate support; set receive threshold as function&n; * of baud rate; fix some problems with RTS/CTS;&n; *&n; * Revision 1.22  1994/11/02  18:05:35  root&n; * changed arguments to udelay to type long to get&n; * delays to be of correct duration&n; *&n; * Revision 1.21  1994/11/02  17:37:30  root&n; * employ udelay (after calibrating loops_per_second earlier&n; * in init/main.c) instead of using home-grown delay routines&n; *&n; * Revision 1.20  1994/11/02  03:11:38  root&n; * cy_chars_in_buffer forces a return value of 0 to let&n; * login work (don&squot;t know why it does); some functions&n; * that were returning EFAULT, now executes the code;&n; * more work on deciding when to disable xmit interrupts;&n; *&n; * Revision 1.19  1994/11/01  20:10:14  root&n; * define routine to start transmission interrupts (by enabling&n; * transmit interrupts); directly enable/disable modem interrupts;&n; *&n; * Revision 1.18  1994/11/01  18:40:45  bentson&n; * Don&squot;t always enable transmit interrupts in startup; interrupt on&n; * TxMpty instead of TxRdy to help characters get out before shutdown;&n; * restructure xmit interrupt to check for chars first and quit if&n; * none are ready to go; modem status (MXVRx) is upright, _not_ inverted&n; * (to my view);&n; *&n; * Revision 1.17  1994/10/30  04:39:45  bentson&n; * rename serial_driver and callout_driver to cy_serial_driver and&n; * cy_callout_driver to avoid linkage interference; initialize&n; * info-&gt;type to PORT_CIRRUS; ruggedize paranoia test; elide -&gt;port&n; * from cyclades_port structure; add paranoia check to cy_close;&n; *&n; * Revision 1.16  1994/10/30  01:14:33  bentson&n; * change major numbers; add some _early_ return statements;&n; *&n; * Revision 1.15  1994/10/29  06:43:15  bentson&n; * final tidying up for clean compile;  enable some error reporting&n; *&n; * Revision 1.14  1994/10/28  20:30:22  Bentson&n; * lots of changes to drag the driver towards the new tty_io&n; * structures and operation.  not expected to work, but may&n; * compile cleanly.&n; *&n; * Revision 1.13  1994/07/21  23:08:57  Bentson&n; * add some diagnostic cruft; support 24 lines (for testing&n; * both -8Y and -16Y cards; be more thorough in servicing all&n; * chips during interrupt; add &quot;volatile&quot; a few places to&n; * circumvent compiler optimizations; fix base &amp; offset&n; * computations in block_til_ready (was causing chip 0 to&n; * stop operation)&n; *&n; * Revision 1.12  1994/07/19  16:42:11  Bentson&n; * add some hackery for kernel version 1.1.8; expand&n; * error messages; refine timing for delay loops and&n; * declare loop params volatile&n; *&n; * Revision 1.11  1994/06/11  21:53:10  bentson&n; * get use of save_car right in transmit interrupt service&n; *&n; * Revision 1.10.1.1  1994/06/11  21:31:18  bentson&n; * add some diagnostic printing; try to fix save_car stuff&n; *&n; * Revision 1.10  1994/06/11  20:36:08  bentson&n; * clean up compiler warnings&n; *&n; * Revision 1.9  1994/06/11  19:42:46  bentson&n; * added a bunch of code to support modem signalling&n; *&n; * Revision 1.8  1994/06/11  17:57:07  bentson&n; * recognize break &amp; parity error&n; *&n; * Revision 1.7  1994/06/05  05:51:34  bentson&n; * Reorder baud table to be monotonic; add cli to CP; discard&n; * incoming characters and status if the line isn&squot;t open; start to&n; * fold code into cy_throttle; start to port get_serial_info,&n; * set_serial_info, get_modem_info, set_modem_info, and send_break&n; * from serial.c; expand cy_ioctl; relocate and expand config_setup;&n; * get flow control characters from tty struct; invalidate ports w/o&n; * hardware;&n; *&n; * Revision 1.6  1994/05/31  18:42:21  bentson&n; * add a loop-breaker in the interrupt service routine;&n; * note when port is initialized so that it can be shut&n; * down under the right conditions; receive works without&n; * any obvious errors&n; *&n; * Revision 1.5  1994/05/30  00:55:02  bentson&n; * transmit works without obvious errors&n; *&n; * Revision 1.4  1994/05/27  18:46:27  bentson&n; * incorporated more code from lib_y.c; can now print short&n; * strings under interrupt control to port zero; seems to&n; * select ports/channels/lines correctly&n; *&n; * Revision 1.3  1994/05/25  22:12:44  bentson&n; * shifting from multi-port on a card to proper multiplexor&n; * data structures;  added skeletons of most routines&n; *&n; * Revision 1.2  1994/05/19  13:21:43  bentson&n; * start to crib from other sources&n; *&n; */
+multiline_comment|/*&n; *  linux/drivers/char/cyclades.c&n; *&n; * This file contains the driver for the Cyclades Cyclom-Y multiport&n; * serial boards.&n; *&n; * Maintained by Ivan Passos (ivan@cyclades.com),&n; * Marcio Saito (marcio@cyclades.com) and &n; * Randolph Bentson (bentson@grieg.seaslug.org).&n; *&n; * For Technical support and installation problems, please send e-mail&n; * to support@cyclades.com.&n; *&n; * Much of the design and some of the code came from serial.c&n; * which was copyright (C) 1991, 1992  Linus Torvalds.  It was&n; * extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92,&n; * and then fixed as suggested by Michael K. Johnson 12/12/92.&n; *&n; * This version does not support shared irq&squot;s.&n; *&n; * This module exports the following rs232 io functions:&n; *   int cy_init(void);&n; *   int cy_open(struct tty_struct *tty, struct file *filp);&n; * and the following functions for modularization.&n; *   int init_module(void);&n; *   void cleanup_module(void);&n; *&n; * $Log: cyclades.c,v $&n; * Revision 2.2.1.3  1998/06/01 12:09:10 ivan&n; * General code review in order to comply with 2.1 kernel standards;&n; * data loss prevention for slow devices revisited (cy_wait_until_sent&n; * was created);&n; * removed conditional compilation for new/old PCI structure support &n; * (now the driver only supports the new PCI structure).&n; *&n; * Revision 2.2.1.1  1998/03/19 16:43:12 ivan&n; * added conditional compilation for new/old PCI structure support;&n; * removed kernel series (2.0.x / 2.1.x) conditional compilation.&n; *&n; * Revision 2.1.1.3  1998/03/16 18:01:12 ivan&n; * cleaned up the data loss fix;&n; * fixed XON/XOFF handling once more (Cyclades-Z);&n; * general review of the driver routines;&n; * introduction of a mechanism to prevent data loss with slow &n; * printers, by forcing a delay before closing the port.&n; *&n; * Revision 2.1.1.2  1998/02/17 16:50:00 ivan&n; * fixed detection/handling of new CD1400 in Ye boards;&n; * fixed XON/XOFF handling (Cyclades-Z);&n; * fixed data loss caused by a premature port close;&n; * introduction of a flag that holds the CD1400 version ID per port&n; * (used by the CYGETCD1400VER new ioctl).&n; *&n; * Revision 2.1.1.1  1997/12/03 17:31:19 ivan&n; * Code review for the module cleanup routine;&n; * fixed RTS and DTR status report for new CD1400&squot;s in get_modem_info;&n; * includes anonymous changes regarding signal_pending.&n; * &n; * Revision 2.1  1997/11/01 17:42:41 ivan&n; * Changes in the driver to support Alpha systems (except 8Zo V_1);&n; * BREAK fix for the Cyclades-Z boards;&n; * driver inactivity control by FW implemented;&n; * introduction of flag that allows driver to take advantage of &n; * a special CD1400 feature related to HW flow control;&n; * added support for the CD1400  rev. J (Cyclom-Y boards);&n; * introduction of ioctls to:&n; *  - control the rtsdtr_inv flag (Cyclom-Y);&n; *  - control the rflow flag (Cyclom-Y);&n; *  - adjust the polling interval (Cyclades-Z);&n; *&n; * Revision 1.36.4.33  1997/06/27 19:00:00  ivan&n; * Fixes related to kernel version conditional &n; * compilation.&n; *  &n; * Revision 1.36.4.32  1997/06/14 19:30:00  ivan&n; * Compatibility issues between kernels 2.0.x and &n; * 2.1.x (mainly related to clear_bit function).&n; *  &n; * Revision 1.36.4.31  1997/06/03 15:30:00  ivan&n; * Changes to define the memory window according to the &n; * board type.&n; *  &n; * Revision 1.36.4.30  1997/05/16 15:30:00  daniel&n; * Changes to suport new cycladesZ boards.&n; *&n; * Revision 1.36.4.29  1997/05/12 11:30:00  daniel&n; * Merge of Bentson&squot;s and Daniel&squot;s version 1.36.4.28.&n; * Corrects bug in cy_detect_pci: check if there are more&n; * ports than the number of static structs allocated.&n; * Warning message during initialization if this driver is&n; * used with the new generation of cycladesZ boards.  Those&n; * will be supported only in next release of the driver.&n; * Corrects bug in cy_detect_pci and cy_detect_isa that&n; * returned wrong number of VALID boards, when a cyclomY&n; * was found with no serial modules connected.&n; * Changes to use current (2.1.x) kernel subroutine names&n; * and created macros for compilation with 2.0.x kernel,&n; * instead of the other way around.&n; *&n; * Revision 1.36.4.28  1997/05/?? ??:00:00  bentson&n; * Change queue_task_irq_off to queue_task_irq.&n; * The inline function queue_task_irq_off (tqueue.h)&n; * was removed from latest releases of 2.1.x kernel.&n; * Use of macro __initfunc to mark the initialization&n; * routines, so memory can be reused.&n; * Also incorporate implementation of critical region&n; * in function cleanup_module() created by anonymous&n; * linuxer.&n; *&n; * Revision 1.36.4.28  1997/04/25 16:00:00  daniel&n; * Change to support new firmware that solves DCD problem:&n; * application could fail to receive SIGHUP signal when DCD&n; * varying too fast.&n; *&n; * Revision 1.36.4.27  1997/03/26 10:30:00  daniel&n; * Changed for suport linux versions 2.1.X.&n; * Backward compatible with linux versions 2.0.X.&n; * Corrected illegal use of filler field in&n; * CH_CTRL struct.&n; * Deleted some debug messages.&n; *&n; * Revision 1.36.4.26  1997/02/27 12:00:00  daniel&n; * Included check for NULL tty pointer in cyz_poll.&n; *&n; * Revision 1.36.4.25  1997/02/26 16:28:30  bentson&n; * Bill Foster at Blarg! Online services noticed that&n; * some of the switch elements of -Z modem control&n; * lacked a closing &quot;break;&quot;&n; *&n; * Revision 1.36.4.24  1997/02/24 11:00:00  daniel&n; * Changed low water threshold for buffer xmit_buf&n; *&n; * Revision 1.36.4.23  1996/12/02 21:50:16  bentson&n; * Marcio provided fix to modem status fetch for -Z&n; *&n; * Revision 1.36.4.22  1996/10/28 22:41:17  bentson&n; * improve mapping of -Z control page (thanks to Steve&n; * Price &lt;stevep@fa.tdktca.com&gt; for help on this)&n; *&n; * Revision 1.36.4.21  1996/09/10 17:00:10  bentson&n; * shift from cpu-bound to memcopy in cyz_polling operation&n; *&n; * Revision 1.36.4.20  1996/09/09 18:30:32  Bentson&n; * Added support to set and report higher speeds.&n; *&n; * Revision 1.36.4.19c  1996/08/09 10:00:00  Marcio Saito&n; * Some fixes in the HW flow control for the BETA release.&n; * Don&squot;t try to register the IRQ.&n; *&n; * Revision 1.36.4.19  1996/08/08 16:23:18  Bentson&n; * make sure &quot;cyc&quot; appears in all kernel messages; all soft interrupts&n; * handled by same routine; recognize out-of-band reception; comment&n; * out some diagnostic messages; leave RTS/CTS flow control to hardware;&n; * fix race condition in -Z buffer management; only -Y needs to explictly&n; * flush chars; tidy up some startup messages;&n; *&n; * Revision 1.36.4.18  1996/07/25 18:57:31  bentson&n; * shift MOD_INC_USE_COUNT location to match&n; * serial.c; purge some diagnostic messages;&n; *&n; * Revision 1.36.4.17  1996/07/25 18:01:08  bentson&n; * enable modem status messages and fetch &amp; process them; note&n; * time of last activity type for each port; set_line_char now&n; * supports more than line 0 and treats 0 baud correctly;&n; * get_modem_info senses rs_status;&n; *&n; * Revision 1.36.4.16  1996/07/20 08:43:15  bentson&n; * barely works--now&squot;s time to turn on&n; * more features &squot;til it breaks&n; *&n; * Revision 1.36.4.15  1996/07/19 22:30:06  bentson&n; * check more -Z board status; shorten boot message&n; *&n; * Revision 1.36.4.14  1996/07/19 22:20:37  bentson&n; * fix reference to ch_ctrl in startup; verify return&n; * values from cyz_issue_cmd and cyz_update_channel;&n; * more stuff to get modem control correct;&n; *&n; * Revision 1.36.4.13  1996/07/11 19:53:33  bentson&n; * more -Z stuff folded in; re-order changes to put -Z stuff&n; * after -Y stuff (to make changes clearer)&n; *&n; * Revision 1.36.4.12  1996/07/11 15:40:55  bentson&n; * Add code to poll Cyclades-Z.  Add code to get &amp; set RS-232 control.&n; * Add code to send break.  Clear firmware ID word at startup (so&n; * that other code won&squot;t talk to inactive board).&n; *&n; * Revision 1.36.4.11  1996/07/09 05:28:29  bentson&n; * add code for -Z in set_line_char&n; *&n; * Revision 1.36.4.10  1996/07/08 19:28:37  bentson&n; * fold more -Z stuff (or in some cases, error messages)&n; * into driver; add text to &quot;don&squot;t know what to do&quot; messages.&n; *&n; * Revision 1.36.4.9  1996/07/08 18:38:38  bentson&n; * moved compile-time flags near top of file; cosmetic changes&n; * to narrow text (to allow 2-up printing); changed many declarations&n; * to &quot;static&quot; to limit external symbols; shuffled code order to&n; * coalesce -Y and -Z specific code, also to put internal functions&n; * in order of tty_driver structure; added code to recognize -Z&n; * ports (and for moment, do nothing or report error); add cy_startup&n; * to parse boot command line for extra base addresses for ISA probes;&n; *&n; * Revision 1.36.4.8  1996/06/25 17:40:19  bentson&n; * reorder some code, fix types of some vars (int vs. long),&n; * add cy_setup to support user declared ISA addresses&n; *&n; * Revision 1.36.4.7  1996/06/21 23:06:18  bentson&n; * dump ioctl based firmware load (it&squot;s now a user level&n; * program); ensure uninitialzed ports cannot be used&n; *&n; * Revision 1.36.4.6  1996/06/20 23:17:19  bentson&n; * rename vars and restructure some code&n; *&n; * Revision 1.36.4.5  1996/06/14 15:09:44  bentson&n; * get right status back after boot load&n; *&n; * Revision 1.36.4.4  1996/06/13 19:51:44  bentson&n; * successfully loads firmware&n; *&n; * Revision 1.36.4.3  1996/06/13 06:08:33  bentson&n; * add more of the code for the boot/load ioctls&n; *&n; * Revision 1.36.4.2  1996/06/11 21:00:51  bentson&n; * start to add Z functionality--starting with ioctl&n; * for loading firmware&n; *&n; * Revision 1.36.4.1  1996/06/10 18:03:02  bentson&n; * added code to recognize Z/PCI card at initialization; report&n; * presence, but card is not initialized (because firmware needs&n; * to be loaded)&n; *&n; * Revision 1.36.3.8  1996/06/07 16:29:00  bentson&n; * starting minor number at zero; added missing verify_area&n; * as noted by Heiko Eissfeldt &lt;heiko@colossus.escape.de&gt;&n; *&n; * Revision 1.36.3.7  1996/04/19 21:06:18  bentson&n; * remove unneeded boot message &amp; fix CLOCAL hardware flow&n; * control (Miquel van Smoorenburg &lt;miquels@Q.cistron.nl&gt;);&n; * remove unused diagnostic statements; minor 0 is first;&n; *&n; * Revision 1.36.3.6  1996/03/13 13:21:17  marcio&n; * The kernel function vremap (available only in later 1.3.xx kernels)&n; * allows the access to memory addresses above the RAM. This revision&n; * of the driver supports PCI boards below 1Mb (device id 0x100) and&n; * above 1Mb (device id 0x101).&n; *&n; * Revision 1.36.3.5  1996/03/07 15:20:17  bentson&n; * Some global changes to interrupt handling spilled into&n; * this driver--mostly unused arguments in system function&n; * calls.  Also added change by Marcio Saito which should&n; * reduce lost interrupts at startup by fast processors.&n; *&n; * Revision 1.36.3.4  1995/11/13  20:45:10  bentson&n; * Changes by Corey Minyard &lt;minyard@wf-rch.cirr.com&gt; distributed&n; * in 1.3.41 kernel to remove a possible race condition, extend&n; * some error messages, and let the driver run as a loadable module&n; * Change by Alan Wendt &lt;alan@ez0.ezlink.com&gt; to remove a&n; * possible race condition.&n; * Change by Marcio Saito &lt;marcio@cyclades.com&gt; to fix PCI addressing.&n; *&n; * Revision 1.36.3.3  1995/11/13  19:44:48  bentson&n; * Changes by Linus Torvalds in 1.3.33 kernel distribution&n; * required due to reordering of driver initialization.&n; * Drivers are now initialized *after* memory management.&n; *&n; * Revision 1.36.3.2  1995/09/08  22:07:14  bentson&n; * remove printk from ISR; fix typo&n; *&n; * Revision 1.36.3.1  1995/09/01  12:00:42  marcio&n; * Minor fixes in the PCI board support. PCI function calls in&n; * conditional compilation (CONFIG_PCI). Thanks to Jim Duncan&n; * &lt;duncan@okay.com&gt;. &quot;bad serial count&quot; message removed.&n; *&n; * Revision 1.36.3  1995/08/22  09:19:42  marcio&n; * Cyclom-Y/PCI support added. Changes in the cy_init routine and&n; * board initialization. Changes in the boot messages. The driver&n; * supports up to 4 boards and 64 ports by default.&n; *&n; * Revision 1.36.1.4  1995/03/29  06:14:14  bentson&n; * disambiguate between Cyclom-16Y and Cyclom-32Ye;&n; *&n; * Revision 1.36.1.3  1995/03/23  22:15:35  bentson&n; * add missing break in modem control block in ioctl switch statement&n; * (discovered by Michael Edward Chastain &lt;mec@jobe.shell.portal.com&gt;);&n; *&n; * Revision 1.36.1.2  1995/03/22  19:16:22  bentson&n; * make sure CTS flow control is set as soon as possible (thanks&n; * to note from David Lambert &lt;lambert@chesapeake.rps.slb.com&gt;);&n; *&n; * Revision 1.36.1.1  1995/03/13  15:44:43  bentson&n; * initialize defaults for receive threshold and stale data timeout;&n; * cosmetic changes;&n; *&n; * Revision 1.36  1995/03/10  23:33:53  bentson&n; * added support of chips 4-7 in 32 port Cyclom-Ye;&n; * fix cy_interrupt pointer dereference problem&n; * (Joe Portman &lt;baron@aa.net&gt;);&n; * give better error response if open is attempted on non-existent port&n; * (Zachariah Vaum &lt;jchryslr@netcom.com&gt;);&n; * correct command timeout (Kenneth Lerman &lt;lerman@@seltd.newnet.com&gt;);&n; * conditional compilation for -16Y on systems with fast, noisy bus;&n; * comment out diagnostic print function;&n; * cleaned up table of base addresses;&n; * set receiver time-out period register to correct value,&n; * set receive threshold to better default values,&n; * set chip timer to more accurate 200 Hz ticking,&n; * add code to monitor and modify receive parameters&n; * (Rik Faith &lt;faith@cs.unc.edu&gt; Nick Simicich&n; * &lt;njs@scifi.emi.net&gt;);&n; *&n; * Revision 1.35  1994/12/16  13:54:18  steffen&n; * additional patch by Marcio Saito for board detection&n; * Accidently left out in 1.34&n; *&n; * Revision 1.34  1994/12/10  12:37:12  steffen&n; * This is the corrected version as suggested by Marcio Saito&n; *&n; * Revision 1.33  1994/12/01  22:41:18  bentson&n; * add hooks to support more high speeds directly; add tytso&n; * patch regarding CLOCAL wakeups&n; *&n; * Revision 1.32  1994/11/23  19:50:04  bentson&n; * allow direct kernel control of higher signalling rates;&n; * look for cards at additional locations&n; *&n; * Revision 1.31  1994/11/16  04:33:28  bentson&n; * ANOTHER fix from Corey Minyard, minyard@wf-rch.cirr.com--&n; * a problem in chars_in_buffer has been resolved by some&n; * small changes;  this should yield smoother output&n; *&n; * Revision 1.30  1994/11/16  04:28:05  bentson&n; * Fix from Corey Minyard, Internet: minyard@metronet.com,&n; * UUCP: minyard@wf-rch.cirr.com, WORK: minyardbnr.ca, to&n; * cy_hangup that appears to clear up much (all?) of the&n; * DTR glitches; also he&squot;s added/cleaned-up diagnostic messages&n; *&n; * Revision 1.29  1994/11/16  04:16:07  bentson&n; * add change proposed by Ralph Sims, ralphs@halcyon.com, to&n; * operate higher speeds in same way as other serial ports;&n; * add more serial ports (for up to two 16-port muxes).&n; *&n; * Revision 1.28  1994/11/04  00:13:16  root&n; * turn off diagnostic messages&n; *&n; * Revision 1.27  1994/11/03  23:46:37  root&n; * bunch of changes to bring driver into greater conformance&n; * with the serial.c driver (looking for missed fixes)&n; *&n; * Revision 1.26  1994/11/03  22:40:36  root&n; * automatic interrupt probing fixed.&n; *&n; * Revision 1.25  1994/11/03  20:17:02  root&n; * start to implement auto-irq&n; *&n; * Revision 1.24  1994/11/03  18:01:55  root&n; * still working on modem signals--trying not to drop DTR&n; * during the getty/login processes&n; *&n; * Revision 1.23  1994/11/03  17:51:36  root&n; * extend baud rate support; set receive threshold as function&n; * of baud rate; fix some problems with RTS/CTS;&n; *&n; * Revision 1.22  1994/11/02  18:05:35  root&n; * changed arguments to udelay to type long to get&n; * delays to be of correct duration&n; *&n; * Revision 1.21  1994/11/02  17:37:30  root&n; * employ udelay (after calibrating loops_per_second earlier&n; * in init/main.c) instead of using home-grown delay routines&n; *&n; * Revision 1.20  1994/11/02  03:11:38  root&n; * cy_chars_in_buffer forces a return value of 0 to let&n; * login work (don&squot;t know why it does); some functions&n; * that were returning EFAULT, now executes the code;&n; * more work on deciding when to disable xmit interrupts;&n; *&n; * Revision 1.19  1994/11/01  20:10:14  root&n; * define routine to start transmission interrupts (by enabling&n; * transmit interrupts); directly enable/disable modem interrupts;&n; *&n; * Revision 1.18  1994/11/01  18:40:45  bentson&n; * Don&squot;t always enable transmit interrupts in startup; interrupt on&n; * TxMpty instead of TxRdy to help characters get out before shutdown;&n; * restructure xmit interrupt to check for chars first and quit if&n; * none are ready to go; modem status (MXVRx) is upright, _not_ inverted&n; * (to my view);&n; *&n; * Revision 1.17  1994/10/30  04:39:45  bentson&n; * rename serial_driver and callout_driver to cy_serial_driver and&n; * cy_callout_driver to avoid linkage interference; initialize&n; * info-&gt;type to PORT_CIRRUS; ruggedize paranoia test; elide -&gt;port&n; * from cyclades_port structure; add paranoia check to cy_close;&n; *&n; * Revision 1.16  1994/10/30  01:14:33  bentson&n; * change major numbers; add some _early_ return statements;&n; *&n; * Revision 1.15  1994/10/29  06:43:15  bentson&n; * final tidying up for clean compile;  enable some error reporting&n; *&n; * Revision 1.14  1994/10/28  20:30:22  Bentson&n; * lots of changes to drag the driver towards the new tty_io&n; * structures and operation.  not expected to work, but may&n; * compile cleanly.&n; *&n; * Revision 1.13  1994/07/21  23:08:57  Bentson&n; * add some diagnostic cruft; support 24 lines (for testing&n; * both -8Y and -16Y cards; be more thorough in servicing all&n; * chips during interrupt; add &quot;volatile&quot; a few places to&n; * circumvent compiler optimizations; fix base &amp; offset&n; * computations in block_til_ready (was causing chip 0 to&n; * stop operation)&n; *&n; * Revision 1.12  1994/07/19  16:42:11  Bentson&n; * add some hackery for kernel version 1.1.8; expand&n; * error messages; refine timing for delay loops and&n; * declare loop params volatile&n; *&n; * Revision 1.11  1994/06/11  21:53:10  bentson&n; * get use of save_car right in transmit interrupt service&n; *&n; * Revision 1.10.1.1  1994/06/11  21:31:18  bentson&n; * add some diagnostic printing; try to fix save_car stuff&n; *&n; * Revision 1.10  1994/06/11  20:36:08  bentson&n; * clean up compiler warnings&n; *&n; * Revision 1.9  1994/06/11  19:42:46  bentson&n; * added a bunch of code to support modem signalling&n; *&n; * Revision 1.8  1994/06/11  17:57:07  bentson&n; * recognize break &amp; parity error&n; *&n; * Revision 1.7  1994/06/05  05:51:34  bentson&n; * Reorder baud table to be monotonic; add cli to CP; discard&n; * incoming characters and status if the line isn&squot;t open; start to&n; * fold code into cy_throttle; start to port get_serial_info,&n; * set_serial_info, get_modem_info, set_modem_info, and send_break&n; * from serial.c; expand cy_ioctl; relocate and expand config_setup;&n; * get flow control characters from tty struct; invalidate ports w/o&n; * hardware;&n; *&n; * Revision 1.6  1994/05/31  18:42:21  bentson&n; * add a loop-breaker in the interrupt service routine;&n; * note when port is initialized so that it can be shut&n; * down under the right conditions; receive works without&n; * any obvious errors&n; *&n; * Revision 1.5  1994/05/30  00:55:02  bentson&n; * transmit works without obvious errors&n; *&n; * Revision 1.4  1994/05/27  18:46:27  bentson&n; * incorporated more code from lib_y.c; can now print short&n; * strings under interrupt control to port zero; seems to&n; * select ports/channels/lines correctly&n; *&n; * Revision 1.3  1994/05/25  22:12:44  bentson&n; * shifting from multi-port on a card to proper multiplexor&n; * data structures;  added skeletons of most routines&n; *&n; * Revision 1.2  1994/05/19  13:21:43  bentson&n; * start to crib from other sources&n; *&n; */
 multiline_comment|/* If you need to install more boards than NR_CARDS, change the constant&n;   in the definition below. No other change is necessary to support up to&n;   eight boards. Beyond that you&squot;ll have to extend cy_isa_addresses. */
 DECL|macro|NR_CARDS
 mdefine_line|#define NR_CARDS        4
@@ -32,22 +28,24 @@ DECL|macro|ZE_V1
 mdefine_line|#define ZE_V1&t;2
 DECL|macro|SERIAL_PARANOIA_CHECK
 mdefine_line|#define&t;SERIAL_PARANOIA_CHECK
-DECL|macro|SERIAL_DEBUG_OPEN
-macro_line|#undef&t;SERIAL_DEBUG_OPEN
-DECL|macro|SERIAL_DEBUG_THROTTLE
-macro_line|#undef&t;SERIAL_DEBUG_THROTTLE
-DECL|macro|SERIAL_DEBUG_OTHER
-macro_line|#undef&t;SERIAL_DEBUG_OTHER
-DECL|macro|SERIAL_DEBUG_IO
-macro_line|#undef&t;SERIAL_DEBUG_IO
-DECL|macro|SERIAL_DEBUG_COUNT
-macro_line|#undef&t;SERIAL_DEBUG_COUNT
-DECL|macro|SERIAL_DEBUG_DTR
-macro_line|#undef&t;SERIAL_DEBUG_DTR
-DECL|macro|CYCLOM_16Y_HACK
-macro_line|#undef&t;CYCLOM_16Y_HACK
-DECL|macro|CYCLOM_ENABLE_MONITORING
-macro_line|#undef&t;CYCLOM_ENABLE_MONITORING
+DECL|macro|CY_DEBUG_OPEN
+macro_line|#undef&t;CY_DEBUG_OPEN
+DECL|macro|CY_DEBUG_THROTTLE
+macro_line|#undef&t;CY_DEBUG_THROTTLE
+DECL|macro|CY_DEBUG_OTHER
+macro_line|#undef&t;CY_DEBUG_OTHER
+DECL|macro|CY_DEBUG_IO
+macro_line|#undef&t;CY_DEBUG_IO
+DECL|macro|CY_DEBUG_COUNT
+macro_line|#undef&t;CY_DEBUG_COUNT
+DECL|macro|CY_DEBUG_DTR
+macro_line|#undef&t;CY_DEBUG_DTR
+DECL|macro|CY_DEBUG_WAIT_UNTIL_SENT
+macro_line|#undef&t;CY_DEBUG_WAIT_UNTIL_SENT
+DECL|macro|CY_16Y_HACK
+macro_line|#undef&t;CY_16Y_HACK
+DECL|macro|CY_ENABLE_MONITORING
+macro_line|#undef&t;CY_ENABLE_MONITORING
 DECL|macro|CY_PCI_DEBUG
 macro_line|#undef&t;CY_PCI_DEBUG
 macro_line|#if 0
@@ -63,35 +61,33 @@ multiline_comment|/******** &n; * For the next two macros, it is assumed that th
 mdefine_line|#define CHARS_IN_BUF(buf_ctrl) &bslash;&n;    ((cy_readl(&amp;buf_ctrl-&gt;rx_put) - &bslash;&n;      cy_readl(&amp;buf_ctrl-&gt;rx_get) + &bslash;&n;      cy_readl(&amp;buf_ctrl-&gt;rx_bufsize)) &amp; &bslash;&n;&t;&t;  (cy_readl(&amp;buf_ctrl-&gt;rx_bufsize) - 1))
 mdefine_line|#define SPACE_IN_BUF(buf_ctrl) &bslash;&n;    ((cy_readl(&amp;buf_ctrl-&gt;tx_get) - &bslash;&n;      cy_readl(&amp;buf_ctrl-&gt;tx_put) + &bslash;&n;      cy_readl(&amp;buf_ctrl-&gt;tx_bufsize) - 1) &amp; &bslash;&n;&t;&t;  (cy_readl(&amp;buf_ctrl-&gt;tx_bufsize) - 1))
 macro_line|#endif
+multiline_comment|/*&n; * Include section &n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/cyclades.h&gt;
-macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#ifndef NEW_PCI
-macro_line|#include &lt;linux/bios32.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|cy_put_user
 mdefine_line|#define cy_put_user&t;put_user
 DECL|function|cy_get_user
@@ -153,10 +149,6 @@ DECL|macro|WAKEUP_CHARS
 mdefine_line|#define WAKEUP_CHARS (SERIAL_XMIT_SIZE-256)
 DECL|macro|STD_COM_FLAGS
 mdefine_line|#define STD_COM_FLAGS (0)
-DECL|macro|SERIAL_TYPE_NORMAL
-mdefine_line|#define SERIAL_TYPE_NORMAL  1
-DECL|macro|SERIAL_TYPE_CALLOUT
-mdefine_line|#define SERIAL_TYPE_CALLOUT 2
 r_static
 id|DECLARE_TASK_QUEUE
 c_func
@@ -172,6 +164,11 @@ id|tty_driver
 id|cy_serial_driver
 comma
 id|cy_callout_driver
+suffix:semicolon
+DECL|variable|serial_refcount
+r_static
+r_int
+id|serial_refcount
 suffix:semicolon
 DECL|variable|cy_irq_triggered
 r_static
@@ -311,11 +308,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* next minor available */
-DECL|variable|serial_refcount
-r_static
-r_int
-id|serial_refcount
-suffix:semicolon
 DECL|variable|serial_table
 r_static
 r_struct
@@ -354,7 +346,7 @@ id|cyclades_card
 op_star
 id|IRQ_cards
 (braket
-l_int|16
+id|NR_IRQS
 )braket
 suffix:semicolon
 multiline_comment|/*&n; * tmp_buf is used as a temporary buffer by serial_write.  We need to&n; * lock it in case the copy_from_user blocks while swapping in a page,&n; * and some other program tries to do a serial write at the same time.&n; * Since the lock will only come under contention when the system is&n; * swapping and available memory is low, it makes sense to share one&n; * buffer across all the serial ports, since it significantly saves&n; * memory if large numbers of serial ports are open.  This buffer is&n; * allocated when the first cy_open occurs.&n; */
@@ -364,8 +356,6 @@ r_int
 r_char
 op_star
 id|tmp_buf
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|tmp_buf_sem
 r_static
@@ -1063,243 +1053,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* serial_paranoia_check */
-multiline_comment|/* The following diagnostic routines allow the driver to spew&n;   information on the screen, even (especially!) during interrupts.&n; */
-r_static
-r_void
-DECL|function|SP
-(def_block
-id|SP
-c_func
-(paren
-r_char
-op_star
-id|data
-)paren
-(brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|console_print
-c_func
-(paren
-id|data
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-)brace
-)def_block
-multiline_comment|/* SP */
-r_static
-r_void
-DECL|function|CP
-(def_block
-id|CP
-c_func
-(paren
-r_char
-id|data
-)paren
-(brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-r_char
-id|scrn
-(braket
-l_int|2
-)braket
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|scrn
-(braket
-l_int|0
-)braket
-op_assign
-id|data
-suffix:semicolon
-id|scrn
-(braket
-l_int|1
-)braket
-op_assign
-l_char|&squot;&bslash;0&squot;
-suffix:semicolon
-id|console_print
-c_func
-(paren
-id|scrn
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-)brace
-)def_block
-multiline_comment|/* CP */
-DECL|function|CP4
-r_static
-r_void
-id|CP4
-c_func
-(paren
-r_int
-id|data
-)paren
-(brace
-(paren
-id|data
-OL
-l_int|10
-)paren
-ques
-c_cond
-id|CP
-c_func
-(paren
-id|data
-op_plus
-l_char|&squot;0&squot;
-)paren
-suffix:colon
-id|CP
-c_func
-(paren
-id|data
-op_plus
-l_char|&squot;A&squot;
-op_minus
-l_int|10
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* CP4 */
-DECL|function|CP8
-r_static
-r_void
-id|CP8
-c_func
-(paren
-r_int
-id|data
-)paren
-(brace
-id|CP4
-c_func
-(paren
-(paren
-id|data
-op_rshift
-l_int|4
-)paren
-op_amp
-l_int|0x0f
-)paren
-suffix:semicolon
-id|CP4
-c_func
-(paren
-id|data
-op_amp
-l_int|0x0f
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* CP8 */
-macro_line|#if 0
-r_static
-r_void
-id|CP16
-c_func
-(paren
-r_int
-id|data
-)paren
-(brace
-id|CP8
-c_func
-(paren
-(paren
-id|data
-op_rshift
-l_int|8
-)paren
-op_amp
-l_int|0xff
-)paren
-suffix:semicolon
-id|CP8
-c_func
-(paren
-id|data
-op_amp
-l_int|0xff
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* CP16 */
-r_static
-r_void
-id|CP32
-c_func
-(paren
-r_int
-id|data
-)paren
-(brace
-id|CP16
-c_func
-(paren
-(paren
-id|data
-op_rshift
-l_int|16
-)paren
-op_amp
-l_int|0xffff
-)paren
-suffix:semicolon
-id|CP16
-c_func
-(paren
-id|data
-op_amp
-l_int|0xffff
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* CP32 */
-macro_line|#endif
 multiline_comment|/*&n; * This routine is used by the interrupt handler to schedule&n; * processing in the software interrupt portion of the driver&n; * (also known as the &quot;bottom half&quot;).  This can be called any&n; * number of times for any channel without harm.&n; */
 r_static
 r_inline
@@ -2404,37 +2157,6 @@ id|index
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|save_xir
-op_amp
-l_int|0x3
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|SP
-c_func
-(paren
-l_string|&quot;channel &quot;
-)paren
-suffix:semicolon
-id|CP8
-c_func
-(paren
-id|save_xir
-)paren
-suffix:semicolon
-id|SP
-c_func
-(paren
-l_string|&quot; requesting unexpected interrupt&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 id|cy_writeb
 c_func
 (paren
@@ -3258,7 +2980,7 @@ id|index
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CYCLOM_ENABLE_MONITORING
+macro_line|#ifdef CY_ENABLE_MONITORING
 op_increment
 id|info-&gt;mon.int_count
 suffix:semicolon
@@ -3329,7 +3051,7 @@ op_increment
 op_assign
 id|data
 suffix:semicolon
-macro_line|#ifdef CYCLOM_16Y_HACK
+macro_line|#ifdef CY_16Y_HACK
 id|udelay
 c_func
 (paren
@@ -3804,7 +3526,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef NEW_INTR_FLOW
 r_if
 c_cond
 (paren
@@ -3840,14 +3561,6 @@ id|index
 op_amp
 op_complement
 id|CyTxMpty
-)paren
-suffix:semicolon
-id|cy_sched_event
-c_func
-(paren
-id|info
-comma
-id|Cy_EVENT_SHUTDOWN_WAKEUP
 )paren
 suffix:semicolon
 r_goto
@@ -3938,7 +3651,6 @@ r_goto
 id|txdone
 suffix:semicolon
 )brace
-macro_line|#endif
 r_while
 c_loop
 (paren
@@ -3948,7 +3660,6 @@ OG
 l_int|0
 )paren
 (brace
-macro_line|#ifdef NEW_INTR_FLOW
 r_if
 c_cond
 (paren
@@ -3960,130 +3671,6 @@ r_goto
 id|txdone
 suffix:semicolon
 )brace
-macro_line|#else
-r_if
-c_cond
-(paren
-op_logical_neg
-id|info-&gt;xmit_cnt
-)paren
-(brace
-id|cy_writeb
-c_func
-(paren
-(paren
-id|u_long
-)paren
-id|base_addr
-op_plus
-(paren
-id|CySRER
-op_lshift
-id|index
-)paren
-comma
-id|cy_readb
-c_func
-(paren
-id|base_addr
-op_plus
-(paren
-id|CySRER
-op_lshift
-id|index
-)paren
-)paren
-op_amp
-op_complement
-id|CyTxMpty
-)paren
-suffix:semicolon
-r_goto
-id|txdone
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|info-&gt;xmit_buf
-op_eq
-l_int|0
-)paren
-(brace
-id|cy_writeb
-c_func
-(paren
-(paren
-id|u_long
-)paren
-id|base_addr
-op_plus
-(paren
-id|CySRER
-op_lshift
-id|index
-)paren
-comma
-id|cy_readb
-c_func
-(paren
-id|base_addr
-op_plus
-(paren
-id|CySRER
-op_lshift
-id|index
-)paren
-)paren
-op_amp
-op_complement
-id|CyTxMpty
-)paren
-suffix:semicolon
-r_goto
-id|txdone
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|info-&gt;tty-&gt;stopped
-op_logical_or
-id|info-&gt;tty-&gt;hw_stopped
-)paren
-(brace
-id|cy_writeb
-c_func
-(paren
-(paren
-id|u_long
-)paren
-id|base_addr
-op_plus
-(paren
-id|CySRER
-op_lshift
-id|index
-)paren
-comma
-id|cy_readb
-c_func
-(paren
-id|base_addr
-op_plus
-(paren
-id|CySRER
-op_lshift
-id|index
-)paren
-)paren
-op_amp
-op_complement
-id|CyTxMpty
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* Because the Embedded Transmit Commands have&n;                           been enabled, we must check to see if the&n;&t;&t;&t;   escape character, NULL, is being sent.  If it&n;&t;&t;&t;   is, we must ensure that there is room for it&n;&t;&t;&t;   to be doubled in the output stream.  Therefore&n;&t;&t;&t;   we no longer advance the pointer when the&n;&t;&t;&t;   character is fetched, but rather wait until&n;&t;&t;&t;   after the check for a NULL output character.&n;&t;&t;&t;   This is necessary because there may not be&n;&t;&t;&t;   room for the two chars needed to send a NULL.)&n;                         */
 id|outch
 op_assign
@@ -5685,7 +5272,6 @@ op_amp
 id|C_RS_DCD
 )paren
 (brace
-multiline_comment|/* SP(&quot;Open Wakeup&bslash;n&quot;); */
 id|cy_sched_event
 c_func
 (paren
@@ -5715,7 +5301,6 @@ id|ASYNC_CALLOUT_NOHUP
 )paren
 )paren
 (brace
-multiline_comment|/* SP(&quot;Hangup&bslash;n&quot;); */
 id|cy_sched_event
 c_func
 (paren
@@ -5764,7 +5349,6 @@ id|C_RS_DCD
 )paren
 (brace
 multiline_comment|/* cy_start isn&squot;t used because... &n;&t;&t;&t;       HW flow is handled by the board */
-multiline_comment|/* SP(&quot;Write Wakeup&bslash;n&quot;); */
 id|cy_sched_event
 c_func
 (paren
@@ -5799,7 +5383,6 @@ id|C_RS_CTS
 )paren
 (brace
 multiline_comment|/* cy_stop isn&squot;t used because &n;&t;&t;&t;       HW flow is handled by the board */
-multiline_comment|/* SP(&quot;Write stop&bslash;n&quot;); */
 )brace
 )brace
 )brace
@@ -5977,7 +5560,7 @@ l_int|1
 op_assign
 id|jiffies
 suffix:semicolon
-macro_line|#ifdef CYCLOM_ENABLE_MONITORING
+macro_line|#ifdef CY_ENABLE_MONITORING
 id|info-&gt;mon.int_count
 op_increment
 suffix:semicolon
@@ -6024,7 +5607,6 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* SP(&quot;-&quot;); */
 id|info-&gt;rflush_count
 op_increment
 suffix:semicolon
@@ -6836,7 +6418,7 @@ id|index
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OPEN
+macro_line|#ifdef CY_DEBUG_OPEN
 id|printk
 c_func
 (paren
@@ -6980,7 +6562,7 @@ comma
 id|CyDTR
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -7187,7 +6769,7 @@ id|ch_ctrl
 op_assign
 id|zfw_ctrl-&gt;ch_ctrl
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OPEN
+macro_line|#ifdef CY_DEBUG_OPEN
 id|printk
 c_func
 (paren
@@ -7357,7 +6939,7 @@ id|retval
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -7395,7 +6977,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_OPEN
+macro_line|#ifdef CY_DEBUG_OPEN
 id|printk
 c_func
 (paren
@@ -7703,7 +7285,7 @@ id|index
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OPEN
+macro_line|#ifdef CY_DEBUG_OPEN
 id|printk
 c_func
 (paren
@@ -7832,7 +7414,7 @@ op_complement
 id|CyDTR
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -7953,7 +7535,7 @@ dot
 id|base_addr
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OPEN
+macro_line|#ifdef CY_DEBUG_OPEN
 id|printk
 c_func
 (paren
@@ -8162,7 +7744,7 @@ id|retval
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -8199,7 +7781,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_OPEN
+macro_line|#ifdef CY_DEBUG_OPEN
 id|printk
 c_func
 (paren
@@ -8300,26 +7882,22 @@ id|info-&gt;close_wait
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
+r_return
+(paren
 (paren
 id|info-&gt;flags
 op_amp
 id|ASYNC_HUP_NOTIFY
 )paren
-(brace
-r_return
+ques
+c_cond
 op_minus
 id|EAGAIN
-suffix:semicolon
-)brace
-r_else
-(brace
-r_return
+suffix:colon
 op_minus
 id|ERESTARTSYS
+)paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n;     * If this is a callout device, then just make sure the normal&n;     * device isn&squot;t being used.&n;     */
 r_if
@@ -8462,7 +8040,7 @@ op_amp
 id|wait
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OPEN
+macro_line|#ifdef CY_DEBUG_OPEN
 id|printk
 c_func
 (paren
@@ -8505,7 +8083,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_COUNT
+macro_line|#ifdef CY_DEBUG_COUNT
 id|printk
 c_func
 (paren
@@ -8605,6 +8183,12 @@ id|info-&gt;flags
 op_amp
 id|ASYNC_CALLOUT_ACTIVE
 )paren
+op_logical_and
+(paren
+id|tty-&gt;termios-&gt;c_cflag
+op_amp
+id|CBAUD
+)paren
 )paren
 (brace
 id|cy_writeb
@@ -8661,7 +8245,7 @@ comma
 id|CyDTR
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -8727,28 +8311,22 @@ id|ASYNC_INITIALIZED
 )paren
 )paren
 (brace
-r_if
-c_cond
+r_return
+(paren
 (paren
 id|info-&gt;flags
 op_amp
 id|ASYNC_HUP_NOTIFY
 )paren
-(brace
-id|retval
-op_assign
+ques
+c_cond
 op_minus
 id|EAGAIN
-suffix:semicolon
-)brace
-r_else
-(brace
-id|retval
-op_assign
+suffix:colon
 op_minus
 id|ERESTARTSYS
+)paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 )brace
@@ -8858,7 +8436,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_OPEN
+macro_line|#ifdef CY_DEBUG_OPEN
 id|printk
 c_func
 (paren
@@ -9039,7 +8617,7 @@ id|retval
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -9068,28 +8646,22 @@ id|ASYNC_INITIALIZED
 )paren
 )paren
 (brace
-r_if
-c_cond
+r_return
+(paren
 (paren
 id|info-&gt;flags
 op_amp
 id|ASYNC_HUP_NOTIFY
 )paren
-(brace
-id|retval
-op_assign
+ques
+c_cond
 op_minus
 id|EAGAIN
-suffix:semicolon
-)brace
-r_else
-(brace
-id|retval
-op_assign
+suffix:colon
 op_minus
 id|ERESTARTSYS
+)paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 )brace
@@ -9156,7 +8728,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_OPEN
+macro_line|#ifdef CY_DEBUG_OPEN
 id|printk
 c_func
 (paren
@@ -9204,7 +8776,7 @@ id|filp
 id|info-&gt;count
 op_increment
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_COUNT
+macro_line|#ifdef CY_DEBUG_COUNT
 id|printk
 c_func
 (paren
@@ -9220,7 +8792,7 @@ macro_line|#endif
 id|info-&gt;blocked_open
 op_decrement
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OPEN
+macro_line|#ifdef CY_DEBUG_OPEN
 id|printk
 c_func
 (paren
@@ -9251,6 +8823,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* block_til_ready */
 multiline_comment|/*&n; * This routine is called whenever a serial port is opened.  It&n; * performs the serial-specific initialization for the tty structure.&n; */
+r_static
 r_int
 DECL|function|cy_open
 id|cy_open
@@ -9276,6 +8849,10 @@ r_int
 id|retval
 comma
 id|line
+suffix:semicolon
+r_int
+r_int
+id|page
 suffix:semicolon
 id|line
 op_assign
@@ -9434,7 +9011,7 @@ id|signature
 (brace
 id|printk
 (paren
-l_string|&quot;Cyclades-Z Error: you need an external power supply for this number of ports.&bslash;n&bslash;rFirmware halted.&bslash;r&bslash;n&quot;
+l_string|&quot;cyc:Cyclades-Z Error: you need an external power supply for this number of ports.&bslash;n&bslash;rFirmware halted.&bslash;r&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -9443,7 +9020,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;Cyclades-Z firmware not yet loaded&bslash;n&quot;
+l_string|&quot;cyc:Cyclades-Z firmware not yet loaded&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -9453,7 +9030,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef SERIAL_DEBUG_OTHER
+macro_line|#ifdef CY_DEBUG_OTHER
 id|printk
 c_func
 (paren
@@ -9483,7 +9060,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_OPEN
+macro_line|#ifdef CY_DEBUG_OPEN
 id|printk
 c_func
 (paren
@@ -9499,7 +9076,7 @@ macro_line|#endif
 id|info-&gt;count
 op_increment
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_COUNT
+macro_line|#ifdef CY_DEBUG_COUNT
 id|printk
 c_func
 (paren
@@ -9519,7 +9096,6 @@ id|info-&gt;tty
 op_assign
 id|tty
 suffix:semicolon
-multiline_comment|/* Some drivers have (incorrect/incomplete) code to test&n;       against a race condition.  Should add good code here!!! */
 r_if
 c_cond
 (paren
@@ -9527,13 +9103,8 @@ op_logical_neg
 id|tmp_buf
 )paren
 (brace
-id|tmp_buf
+id|page
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|get_free_page
 c_func
 (paren
@@ -9544,48 +9115,80 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|tmp_buf
+id|page
 )paren
-(brace
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-)brace
-)brace
 r_if
 c_cond
 (paren
-(paren
-id|info-&gt;count
-op_eq
-l_int|1
+id|tmp_buf
 )paren
-op_logical_and
+id|free_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_else
+id|tmp_buf
+op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
+id|page
+suffix:semicolon
+)brace
+multiline_comment|/*&n;     * If the port is the middle of closing, bail out now&n;     */
+r_if
+c_cond
+(paren
+id|tty_hung_up_p
+c_func
+(paren
+id|filp
+)paren
+op_logical_or
 (paren
 id|info-&gt;flags
 op_amp
-id|ASYNC_SPLIT_TERMIOS
+id|ASYNC_CLOSING
 )paren
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|tty-&gt;driver.subtype
-op_eq
-id|SERIAL_TYPE_NORMAL
+id|info-&gt;flags
+op_amp
+id|ASYNC_CLOSING
 )paren
-op_star
-id|tty-&gt;termios
-op_assign
-id|info-&gt;normal_termios
+id|interruptible_sleep_on
+c_func
+(paren
+op_amp
+id|info-&gt;close_wait
+)paren
 suffix:semicolon
-r_else
-op_star
-id|tty-&gt;termios
-op_assign
-id|info-&gt;callout_termios
+r_return
+(paren
+(paren
+id|info-&gt;flags
+op_amp
+id|ASYNC_HUP_NOTIFY
+)paren
+ques
+c_cond
+op_minus
+id|EAGAIN
+suffix:colon
+op_minus
+id|ERESTARTSYS
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     * Start up serial port&n;     */
@@ -9627,7 +9230,7 @@ c_cond
 id|retval
 )paren
 (brace
-macro_line|#ifdef SERIAL_DEBUG_OPEN
+macro_line|#ifdef CY_DEBUG_OPEN
 id|printk
 c_func
 (paren
@@ -9641,6 +9244,41 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+(paren
+id|info-&gt;count
+op_eq
+l_int|1
+)paren
+op_logical_and
+(paren
+id|info-&gt;flags
+op_amp
+id|ASYNC_SPLIT_TERMIOS
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|tty-&gt;driver.subtype
+op_eq
+id|SERIAL_TYPE_NORMAL
+)paren
+op_star
+id|tty-&gt;termios
+op_assign
+id|info-&gt;normal_termios
+suffix:semicolon
+r_else
+op_star
+id|tty-&gt;termios
+op_assign
+id|info-&gt;callout_termios
+suffix:semicolon
+)brace
 id|info-&gt;session
 op_assign
 id|current-&gt;session
@@ -9649,7 +9287,7 @@ id|info-&gt;pgrp
 op_assign
 id|current-&gt;pgrp
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OPEN
+macro_line|#ifdef CY_DEBUG_OPEN
 id|printk
 c_func
 (paren
@@ -9663,6 +9301,352 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* cy_open */
+multiline_comment|/*&n; * cy_wait_until_sent() --- wait until the transmitter is empty&n; */
+DECL|function|cy_wait_until_sent
+r_static
+r_void
+id|cy_wait_until_sent
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_int
+id|timeout
+)paren
+(brace
+r_struct
+id|cyclades_port
+op_star
+id|info
+op_assign
+(paren
+r_struct
+id|cyclades_port
+op_star
+)paren
+id|tty-&gt;driver_data
+suffix:semicolon
+r_int
+r_char
+op_star
+id|base_addr
+suffix:semicolon
+r_int
+id|card
+comma
+id|chip
+comma
+id|channel
+comma
+id|index
+suffix:semicolon
+r_int
+r_int
+id|orig_jiffies
+comma
+id|char_time
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|serial_paranoia_check
+c_func
+(paren
+id|info
+comma
+id|tty-&gt;device
+comma
+l_string|&quot;cy_wait_until_sent&quot;
+)paren
+)paren
+r_return
+suffix:semicolon
+id|orig_jiffies
+op_assign
+id|jiffies
+suffix:semicolon
+multiline_comment|/*&n;     * Set the check interval to be 1/5 of the estimated time to&n;     * send a single character, and make it at least 1.  The check&n;     * interval should also be less than the timeout.&n;     * &n;     * Note: we have to use pretty tight timings here to satisfy&n;     * the NIST-PCTS.&n;     */
+id|char_time
+op_assign
+(paren
+id|info-&gt;timeout
+op_minus
+id|HZ
+op_div
+l_int|50
+)paren
+op_div
+id|info-&gt;xmit_fifo_size
+suffix:semicolon
+id|char_time
+op_assign
+id|char_time
+op_div
+l_int|5
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|char_time
+op_eq
+l_int|0
+)paren
+id|char_time
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|timeout
+OL
+l_int|0
+)paren
+id|timeout
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|timeout
+)paren
+id|char_time
+op_assign
+id|MIN
+c_func
+(paren
+id|char_time
+comma
+id|timeout
+)paren
+suffix:semicolon
+macro_line|#ifdef CY_DEBUG_WAIT_UNTIL_SENT
+id|printk
+c_func
+(paren
+l_string|&quot;In cy_wait_until_sent(%d) check=%lu...&quot;
+comma
+id|timeout
+comma
+id|char_time
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;jiff=%lu...&quot;
+comma
+id|jiffies
+)paren
+suffix:semicolon
+macro_line|#endif
+id|card
+op_assign
+id|info-&gt;card
+suffix:semicolon
+id|channel
+op_assign
+(paren
+id|info-&gt;line
+)paren
+op_minus
+(paren
+id|cy_card
+(braket
+id|card
+)braket
+dot
+id|first_line
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|IS_CYC_Z
+c_func
+(paren
+id|cy_card
+(braket
+id|card
+)braket
+)paren
+)paren
+(brace
+id|chip
+op_assign
+id|channel
+op_rshift
+l_int|2
+suffix:semicolon
+id|channel
+op_and_assign
+l_int|0x03
+suffix:semicolon
+id|index
+op_assign
+id|cy_card
+(braket
+id|card
+)braket
+dot
+id|bus_index
+suffix:semicolon
+id|base_addr
+op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
+(paren
+id|cy_card
+(braket
+id|card
+)braket
+dot
+id|base_addr
+op_plus
+(paren
+id|cy_chip_offset
+(braket
+id|chip
+)braket
+op_lshift
+id|index
+)paren
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|cy_readb
+c_func
+(paren
+id|base_addr
+op_plus
+(paren
+id|CySRER
+op_lshift
+id|index
+)paren
+)paren
+op_amp
+id|CyTxMpty
+)paren
+(brace
+macro_line|#ifdef CY_DEBUG_WAIT_UNTIL_SENT
+id|printk
+c_func
+(paren
+l_string|&quot;Not clean (jiff=%lu)...&quot;
+comma
+id|jiffies
+)paren
+suffix:semicolon
+macro_line|#endif
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|current-&gt;counter
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* make us low-priority */
+id|current-&gt;timeout
+op_assign
+id|jiffies
+op_plus
+id|char_time
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|signal_pending
+c_func
+(paren
+id|current
+)paren
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|timeout
+op_logical_and
+(paren
+(paren
+id|orig_jiffies
+op_plus
+id|timeout
+)paren
+OL
+id|jiffies
+)paren
+)paren
+r_break
+suffix:semicolon
+)brace
+id|current-&gt;state
+op_assign
+id|TASK_RUNNING
+suffix:semicolon
+)brace
+r_else
+(brace
+singleline_comment|// Nothing to do!
+)brace
+multiline_comment|/* Run one more char cycle */
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|current-&gt;counter
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* make us low-priority */
+id|current-&gt;timeout
+op_assign
+id|jiffies
+op_plus
+(paren
+id|char_time
+op_star
+l_int|5
+)paren
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_RUNNING
+suffix:semicolon
+macro_line|#ifdef CY_DEBUG_WAIT_UNTIL_SENT
+id|printk
+c_func
+(paren
+l_string|&quot;Clean (jiff=%lu)...done&bslash;n&quot;
+comma
+id|jiffies
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 multiline_comment|/*&n; * This routine is called when a particular tty device is closed.&n; */
 r_static
 r_void
@@ -9697,7 +9681,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OTHER
+macro_line|#ifdef CY_DEBUG_OTHER
 id|printk
 c_func
 (paren
@@ -9727,7 +9711,7 @@ l_string|&quot;cy_close&quot;
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_OPEN
+macro_line|#ifdef CY_DEBUG_OPEN
 id|printk
 c_func
 (paren
@@ -9761,6 +9745,8 @@ id|filp
 )paren
 )paren
 (brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -9801,7 +9787,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_COUNT
+macro_line|#ifdef CY_DEBUG_COUNT
 id|printk
 c_func
 (paren
@@ -9824,7 +9810,7 @@ OL
 l_int|0
 )paren
 (brace
-macro_line|#ifdef SERIAL_DEBUG_COUNT
+macro_line|#ifdef CY_DEBUG_COUNT
 id|printk
 c_func
 (paren
@@ -9891,44 +9877,20 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|info-&gt;closing_wait2
-op_ne
-l_int|0
-)paren
-(brace
-multiline_comment|/* The port&squot;s being forced to wait, &n;&t;&t;&t;&t;       independent on the port settings */
-id|tty_wait_until_sent
-c_func
-(paren
-id|tty
-comma
-id|info-&gt;closing_wait2
-op_star
-id|HZ
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-r_if
-c_cond
-(paren
 id|info-&gt;closing_wait
 op_ne
-id|ASYNC_CLOSING_WAIT_NONE
+id|CY_CLOSING_WAIT_NONE
 )paren
+(brace
 id|tty_wait_until_sent
 c_func
 (paren
 id|tty
 comma
 id|info-&gt;closing_wait
-op_star
-id|HZ
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Waiting for on-board buffers to be empty before closing the port */
 r_if
 c_cond
 (paren
@@ -9943,7 +9905,6 @@ id|info-&gt;card
 )paren
 )paren
 (brace
-macro_line|#ifdef NEW_INTR_FLOW
 r_int
 r_char
 op_star
@@ -9971,9 +9932,21 @@ id|info-&gt;card
 dot
 id|bus_index
 suffix:semicolon
-r_if
-c_cond
+multiline_comment|/* Stop accepting input */
+id|cy_writeb
+c_func
 (paren
+(paren
+id|u_long
+)paren
+id|base_addr
+op_plus
+(paren
+id|CySRER
+op_lshift
+id|index
+)paren
+comma
 id|cy_readb
 c_func
 (paren
@@ -9986,23 +9959,33 @@ id|index
 )paren
 )paren
 op_amp
-id|CyTxMpty
+op_complement
+id|CyRxData
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;flags
+op_amp
+id|ASYNC_INITIALIZED
 )paren
 (brace
-multiline_comment|/* Interrupts are enabled, so go to sleep */
-id|interruptible_sleep_on
+multiline_comment|/* Waiting for on-board buffers to be empty before closing &n;&t;       the port */
+id|cy_wait_until_sent
 c_func
 (paren
-op_amp
-id|info-&gt;shutdown_wait
+id|tty
+comma
+id|info-&gt;timeout
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 )brace
 r_else
 (brace
 macro_line|#ifdef Z_WAKE
+multiline_comment|/* Waiting for on-board buffers to be empty before closing the port */
 r_int
 r_char
 op_star
@@ -10236,7 +10219,7 @@ op_amp
 id|info-&gt;close_wait
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OTHER
+macro_line|#ifdef CY_DEBUG_OTHER
 id|printk
 c_func
 (paren
@@ -10300,11 +10283,11 @@ suffix:semicolon
 r_int
 id|c
 comma
-id|total
+id|ret
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_IO
+macro_line|#ifdef CY_DEBUG_IO
 id|printk
 c_func
 (paren
@@ -10350,11 +10333,18 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|from_user
 )paren
+(brace
 id|down
 c_func
 (paren
@@ -10362,12 +10352,166 @@ op_amp
 id|tmp_buf_sem
 )paren
 suffix:semicolon
-id|save_flags
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+id|c
+op_assign
+id|MIN
+c_func
+(paren
+id|count
+comma
+id|MIN
+c_func
+(paren
+id|SERIAL_XMIT_SIZE
+op_minus
+id|info-&gt;xmit_cnt
+op_minus
+l_int|1
+comma
+id|SERIAL_XMIT_SIZE
+op_minus
+id|info-&gt;xmit_head
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|c
+op_le
+l_int|0
+)paren
+r_break
+suffix:semicolon
+id|c
+op_sub_assign
+id|copy_from_user
+c_func
+(paren
+id|tmp_buf
+comma
+id|buf
+comma
+id|c
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|c
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ret
+)paren
+(brace
+id|ret
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+)brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|c
+op_assign
+id|MIN
+c_func
+(paren
+id|c
+comma
+id|MIN
+c_func
+(paren
+id|SERIAL_XMIT_SIZE
+op_minus
+id|info-&gt;xmit_cnt
+op_minus
+l_int|1
+comma
+id|SERIAL_XMIT_SIZE
+op_minus
+id|info-&gt;xmit_head
+)paren
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|info-&gt;xmit_buf
+op_plus
+id|info-&gt;xmit_head
+comma
+id|tmp_buf
+comma
+id|c
+)paren
+suffix:semicolon
+id|info-&gt;xmit_head
+op_assign
+(paren
+(paren
+id|info-&gt;xmit_head
+op_plus
+id|c
+)paren
+op_amp
+(paren
+id|SERIAL_XMIT_SIZE
+op_minus
+l_int|1
+)paren
+)paren
+suffix:semicolon
+id|info-&gt;xmit_cnt
+op_add_assign
+id|c
+suffix:semicolon
+id|restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
+id|buf
+op_add_assign
+id|c
+suffix:semicolon
+id|count
+op_sub_assign
+id|c
+suffix:semicolon
+id|ret
+op_add_assign
+id|c
+suffix:semicolon
+)brace
+id|up
+c_func
+(paren
+op_amp
+id|tmp_buf_sem
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 r_while
 c_loop
 (paren
@@ -10408,60 +10552,16 @@ id|c
 op_le
 l_int|0
 )paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|from_user
-)paren
-(brace
-id|copy_from_user
-c_func
-(paren
-id|tmp_buf
-comma
-id|buf
-comma
-id|c
-)paren
-suffix:semicolon
-id|c
-op_assign
-id|MIN
-c_func
-(paren
-id|c
-comma
-id|MIN
-c_func
-(paren
-id|SERIAL_XMIT_SIZE
-op_minus
-id|info-&gt;xmit_cnt
-op_minus
-l_int|1
-comma
-id|SERIAL_XMIT_SIZE
-op_minus
-id|info-&gt;xmit_head
-)paren
-)paren
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|info-&gt;xmit_buf
-op_plus
-id|info-&gt;xmit_head
-comma
-id|tmp_buf
-comma
-id|c
-)paren
-suffix:semicolon
 )brace
-r_else
 id|memcpy
 c_func
 (paren
@@ -10506,43 +10606,12 @@ id|count
 op_sub_assign
 id|c
 suffix:semicolon
-id|total
+id|ret
 op_add_assign
 id|c
 suffix:semicolon
-macro_line|#if 0
-id|SP
-c_func
-(paren
-l_string|&quot;CW&quot;
-)paren
-suffix:semicolon
-id|CP16
-c_func
-(paren
-id|c
-)paren
-suffix:semicolon
-id|SP
-c_func
-(paren
-l_string|&quot; &quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
-r_if
-c_cond
-(paren
-id|from_user
-)paren
-id|up
-c_func
-(paren
-op_amp
-id|tmp_buf_sem
-)paren
-suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -10562,14 +10631,8 @@ id|info
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_return
-id|total
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/* cy_write */
@@ -10606,7 +10669,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_IO
+macro_line|#ifdef CY_DEBUG_IO
 id|printk
 c_func
 (paren
@@ -10695,14 +10758,6 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|SP
-c_func
-(paren
-l_string|&quot;+&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* cy_put_char */
 multiline_comment|/*&n; * This routine is called by the kernel after it has written a&n; * series of characters to the tty device using put_char().  &n; */
@@ -10748,7 +10803,7 @@ id|channel
 comma
 id|index
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_IO
+macro_line|#ifdef CY_DEBUG_IO
 id|printk
 c_func
 (paren
@@ -10961,7 +11016,7 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_IO
+macro_line|#ifdef CY_DEBUG_IO
 id|printk
 c_func
 (paren
@@ -11090,7 +11145,7 @@ id|card
 )paren
 )paren
 (brace
-macro_line|#ifdef SERIAL_DEBUG_IO
+macro_line|#ifdef CY_DEBUG_IO
 id|printk
 c_func
 (paren
@@ -11258,7 +11313,7 @@ id|tx_get
 op_plus
 id|tx_bufsize
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_IO
+macro_line|#ifdef CY_DEBUG_IO
 id|printk
 c_func
 (paren
@@ -11323,6 +11378,9 @@ suffix:semicolon
 r_int
 r_int
 id|chip_number
+suffix:semicolon
+r_int
+id|baud
 suffix:semicolon
 r_int
 id|i
@@ -11409,189 +11467,71 @@ dot
 id|bus_index
 suffix:semicolon
 multiline_comment|/* baud rate */
-id|i
+id|baud
 op_assign
-id|cflag
-op_amp
-id|CBAUD
+id|tty_get_baud_rate
+c_func
+(paren
+id|info-&gt;tty
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|i
-op_amp
-id|CBAUDEX
+id|baud
+OG
+id|CD1400_MAX_SPEED
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|i
-op_eq
-id|B57600
-)paren
-id|i
+id|baud
 op_assign
-l_int|16
-suffix:semicolon
-macro_line|#ifdef B76800
-r_else
-r_if
-c_cond
-(paren
-id|i
-op_eq
-id|B76800
-)paren
-(brace
-id|i
-op_assign
-l_int|17
+id|CD1400_MAX_SPEED
 suffix:semicolon
 )brace
-macro_line|#endif
-r_else
-r_if
-c_cond
+multiline_comment|/* find the baud index */
+r_for
+c_loop
 (paren
 id|i
-op_eq
-id|B115200
-)paren
-(brace
-id|i
 op_assign
-l_int|18
+l_int|0
 suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
 id|i
-op_eq
-id|B230400
-op_logical_and
-(paren
-id|info-&gt;chip_rev
-op_ge
-id|CD1400_REV_J
-)paren
-)paren
-(brace
-multiline_comment|/* It is a CD1400 rev. J or later */
-id|i
-op_assign
+OL
 l_int|20
 suffix:semicolon
-)brace
-r_else
-id|info-&gt;tty-&gt;termios-&gt;c_cflag
-op_and_assign
-op_complement
-id|CBAUDEX
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 id|i
-op_eq
-l_int|15
+op_increment
 )paren
 (brace
 r_if
 c_cond
 (paren
-(paren
-id|info-&gt;flags
-op_amp
-id|ASYNC_SPD_MASK
-)paren
+id|baud
 op_eq
-id|ASYNC_SPD_HI
-)paren
+id|baud_table
+(braket
 id|i
-op_add_assign
-l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|info-&gt;flags
-op_amp
-id|ASYNC_SPD_MASK
-)paren
-op_eq
-id|ASYNC_SPD_VHI
-)paren
-id|i
-op_add_assign
-l_int|3
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|info-&gt;flags
-op_amp
-id|ASYNC_SPD_MASK
-)paren
-op_eq
-id|ASYNC_SPD_CUST
+)braket
 )paren
 (brace
-r_switch
-c_cond
-(paren
-id|info-&gt;baud
-)paren
-(brace
-r_case
-l_int|57600
-suffix:colon
-id|i
-op_add_assign
-l_int|1
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#ifdef B76800
-r_case
-l_int|76800
-suffix:colon
-id|i
-op_add_assign
-l_int|2
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
-r_case
-l_int|115200
-suffix:colon
-id|i
-op_add_assign
-l_int|3
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|230400
-suffix:colon
-id|i
-op_add_assign
-l_int|5
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
 r_break
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|20
+)paren
+(brace
+id|i
+op_assign
+l_int|19
+suffix:semicolon
+multiline_comment|/* CD1400_MAX_SPEED */
 )brace
 r_if
 c_cond
@@ -11688,7 +11628,7 @@ id|info-&gt;xmit_fifo_size
 op_star
 id|HZ
 op_star
-l_int|30
+l_int|15
 op_div
 l_int|269
 )paren
@@ -12529,7 +12469,7 @@ id|CyDTR
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -12628,7 +12568,7 @@ id|CyDTR
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -12802,384 +12742,40 @@ id|channel
 )braket
 suffix:semicolon
 multiline_comment|/* baud rate */
-r_switch
-c_cond
-(paren
-id|i
+id|baud
 op_assign
-id|cflag
-op_amp
-id|CBAUD
-)paren
-(brace
-multiline_comment|/*&n;        case B0: cy_writel(&amp;ch_ctrl-&gt;comm_baud , 0); break;&n;&t;*/
-r_case
-id|B50
-suffix:colon
-id|cy_writel
+id|tty_get_baud_rate
 c_func
 (paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|50
+id|info-&gt;tty
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B75
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|75
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B110
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|110
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B134
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|134
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B150
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|150
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B200
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|200
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B300
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|300
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B600
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|600
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B1200
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|1200
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B1800
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|1800
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B2400
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|2400
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B4800
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|4800
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B9600
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|9600
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B19200
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|19200
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B38400
-suffix:colon
 r_if
 c_cond
 (paren
-(paren
-id|info-&gt;flags
-op_amp
-id|ASYNC_SPD_MASK
-)paren
-op_eq
-id|ASYNC_SPD_HI
+id|baud
+OG
+id|CD1400_MAX_SPEED
 )paren
 (brace
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|57600
-)paren
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-(paren
-id|info-&gt;flags
-op_amp
-id|ASYNC_SPD_MASK
-)paren
-op_eq
-id|ASYNC_SPD_VHI
-)paren
-(brace
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|115200
-)paren
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-(paren
-id|info-&gt;flags
-op_amp
-id|ASYNC_SPD_MASK
-)paren
-op_eq
-id|ASYNC_SPD_CUST
-)paren
-(brace
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-id|info-&gt;baud
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|38400
-)paren
-suffix:semicolon
-)brace
-r_break
-suffix:semicolon
-r_case
-id|B57600
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|57600
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#ifdef B76800
-r_case
-id|B76800
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|76800
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
-r_case
-id|B115200
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|115200
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B230400
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|230400
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B460800
-suffix:colon
-id|cy_writel
-c_func
-(paren
-op_amp
-id|ch_ctrl-&gt;comm_baud
-comma
-l_int|460800
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|i
+id|baud
 op_assign
-id|cy_readl
+id|CD1400_MAX_SPEED
+suffix:semicolon
+)brace
+id|cy_writel
 c_func
 (paren
 op_amp
 id|ch_ctrl-&gt;comm_baud
+comma
+id|baud
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|baud
 op_eq
 l_int|134
 )paren
@@ -13204,7 +12800,7 @@ r_else
 r_if
 c_cond
 (paren
-id|i
+id|baud
 )paren
 (brace
 id|info-&gt;timeout
@@ -13216,7 +12812,7 @@ id|HZ
 op_star
 l_int|15
 op_div
-id|i
+id|baud
 )paren
 op_plus
 l_int|2
@@ -13559,7 +13155,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|i
+id|baud
 op_eq
 l_int|0
 )paren
@@ -13582,7 +13178,7 @@ op_complement
 id|C_RS_DTR
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -13609,7 +13205,7 @@ op_or
 id|C_RS_DTR
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -13671,6 +13267,74 @@ id|info-&gt;tty-&gt;flags
 )paren
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/*&n;     * Set up the tty-&gt;alt_speed kludge&n;     */
+r_if
+c_cond
+(paren
+id|info-&gt;tty
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|info-&gt;flags
+op_amp
+id|ASYNC_SPD_MASK
+)paren
+op_eq
+id|ASYNC_SPD_HI
+)paren
+id|info-&gt;tty-&gt;alt_speed
+op_assign
+l_int|57600
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|info-&gt;flags
+op_amp
+id|ASYNC_SPD_MASK
+)paren
+op_eq
+id|ASYNC_SPD_VHI
+)paren
+id|info-&gt;tty-&gt;alt_speed
+op_assign
+l_int|115200
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|info-&gt;flags
+op_amp
+id|ASYNC_SPD_MASK
+)paren
+op_eq
+id|ASYNC_SPD_SHI
+)paren
+id|info-&gt;tty-&gt;alt_speed
+op_assign
+l_int|230400
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|info-&gt;flags
+op_amp
+id|ASYNC_SPD_MASK
+)paren
+op_eq
+id|ASYNC_SPD_WARP
+)paren
+id|info-&gt;tty-&gt;alt_speed
+op_assign
+l_int|460800
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/* set_line_char */
@@ -13822,13 +13486,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|new_info
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
 id|copy_from_user
 c_func
 (paren
@@ -13842,6 +13499,10 @@ r_sizeof
 id|new_serial
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|old_info
 op_assign
@@ -14529,6 +14190,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 )brace
+r_return
 id|cy_put_user
 c_func
 (paren
@@ -14541,9 +14203,6 @@ op_star
 )paren
 id|value
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* get_modem_info */
@@ -14883,7 +14542,7 @@ id|CyDTR
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -15110,7 +14769,7 @@ id|CyDTR
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -15419,7 +15078,7 @@ id|CyDTR
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -15543,7 +15202,7 @@ id|CyDTR
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -15757,7 +15416,7 @@ op_or
 id|C_RS_DTR
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -15842,7 +15501,7 @@ op_complement
 id|C_RS_DTR
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -15955,7 +15614,7 @@ op_or
 id|C_RS_DTR
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -15993,7 +15652,7 @@ op_complement
 id|C_RS_DTR
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_DTR
+macro_line|#ifdef CY_DEBUG_DTR
 id|printk
 c_func
 (paren
@@ -16501,6 +16160,7 @@ id|index
 op_amp
 id|CyREC_FIFO
 suffix:semicolon
+r_return
 id|cy_put_user
 c_func
 (paren
@@ -16513,10 +16173,10 @@ suffix:semicolon
 r_else
 (brace
 singleline_comment|// Nothing to do!
-)brace
 r_return
 l_int|0
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* get_threshold */
 r_static
@@ -16563,6 +16223,7 @@ op_star
 id|value
 )paren
 (brace
+r_return
 id|cy_put_user
 c_func
 (paren
@@ -16570,9 +16231,6 @@ id|info-&gt;default_threshold
 comma
 id|value
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* get_default_threshold */
@@ -16830,6 +16488,7 @@ id|index
 )paren
 )paren
 suffix:semicolon
+r_return
 id|cy_put_user
 c_func
 (paren
@@ -16842,10 +16501,10 @@ suffix:semicolon
 r_else
 (brace
 singleline_comment|// Nothing to do!
-)brace
 r_return
 l_int|0
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* get_timeout */
 r_static
@@ -16892,6 +16551,7 @@ op_star
 id|value
 )paren
 (brace
+r_return
 id|cy_put_user
 c_func
 (paren
@@ -16899,9 +16559,6 @@ id|info-&gt;default_timeout
 comma
 id|value
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* get_default_timeout */
@@ -16931,9 +16588,6 @@ r_int
 id|arg
 )paren
 (brace
-r_int
-id|error
-suffix:semicolon
 r_struct
 id|cyclades_port
 op_star
@@ -16951,7 +16605,24 @@ id|ret_val
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OTHER
+r_if
+c_cond
+(paren
+id|serial_paranoia_check
+c_func
+(paren
+id|info
+comma
+id|tty-&gt;device
+comma
+l_string|&quot;cy_ioctl&quot;
+)paren
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+macro_line|#ifdef CY_DEBUG_OTHER
 id|printk
 c_func
 (paren
@@ -16975,39 +16646,6 @@ id|cmd
 r_case
 id|CYGETMON
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_struct
-id|cyclades_monitor
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-(brace
-id|ret_val
-op_assign
-id|error
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 id|ret_val
 op_assign
 id|get_mon_info
@@ -17028,39 +16666,6 @@ suffix:semicolon
 r_case
 id|CYGETTHRESH
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-(brace
-id|ret_val
-op_assign
-id|error
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 id|ret_val
 op_assign
 id|get_threshold
@@ -17100,39 +16705,6 @@ suffix:semicolon
 r_case
 id|CYGETDEFTHRESH
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-(brace
-id|ret_val
-op_assign
-id|error
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 id|ret_val
 op_assign
 id|get_default_threshold
@@ -17172,39 +16744,6 @@ suffix:semicolon
 r_case
 id|CYGETTIMEOUT
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-(brace
-id|ret_val
-op_assign
-id|error
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 id|ret_val
 op_assign
 id|get_timeout
@@ -17244,39 +16783,6 @@ suffix:semicolon
 r_case
 id|CYGETDEFTIMEOUT
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-(brace
-id|ret_val
-op_assign
-id|error
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 id|ret_val
 op_assign
 id|get_default_timeout
@@ -17366,39 +16872,9 @@ suffix:semicolon
 r_case
 id|CYGETCARDINFO
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_struct
-id|cyclades_card
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|error
-)paren
-(brace
-id|ret_val
-op_assign
-id|error
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 id|copy_to_user
 c_func
 (paren
@@ -17424,7 +16900,14 @@ r_struct
 id|cyclades_card
 )paren
 )paren
+)paren
+(brace
+id|ret_val
+op_assign
+op_minus
+id|EFAULT
 suffix:semicolon
+)brace
 id|ret_val
 op_assign
 l_int|0
@@ -17462,13 +16945,17 @@ suffix:semicolon
 r_case
 id|CYSETWAIT
 suffix:colon
-id|info-&gt;closing_wait2
+id|info-&gt;closing_wait
 op_assign
 (paren
 r_int
 r_int
 )paren
 id|arg
+op_star
+id|HZ
+op_div
+l_int|100
 suffix:semicolon
 id|ret_val
 op_assign
@@ -17481,7 +16968,13 @@ id|CYGETWAIT
 suffix:colon
 id|ret_val
 op_assign
-id|info-&gt;closing_wait2
+id|info-&gt;closing_wait
+op_div
+(paren
+id|HZ
+op_div
+l_int|100
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -17584,6 +17077,26 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|TIOCMGET
+suffix:colon
+id|ret_val
+op_assign
+id|get_modem_info
+c_func
+(paren
+id|info
+comma
+(paren
+r_int
+r_int
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|TIOCMBIS
 suffix:colon
 r_case
@@ -17611,230 +17124,9 @@ id|arg
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/* The following commands are incompletely implemented!!! */
-r_case
-id|TIOCGSOFTCAR
-suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-r_int
-op_star
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-(brace
-id|ret_val
-op_assign
-id|error
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|cy_put_user
-c_func
-(paren
-id|C_CLOCAL
-c_func
-(paren
-id|tty
-)paren
-ques
-c_cond
-l_int|1
-suffix:colon
-l_int|0
-comma
-(paren
-r_int
-r_int
-op_star
-)paren
-id|arg
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|TIOCSSOFTCAR
-suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-r_int
-op_star
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-(brace
-id|ret_val
-op_assign
-id|error
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|arg
-op_assign
-id|cy_get_user
-c_func
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|arg
-)paren
-suffix:semicolon
-id|tty-&gt;termios-&gt;c_cflag
-op_assign
-(paren
-(paren
-id|tty-&gt;termios-&gt;c_cflag
-op_amp
-op_complement
-id|CLOCAL
-)paren
-op_or
-(paren
-id|arg
-ques
-c_cond
-id|CLOCAL
-suffix:colon
-l_int|0
-)paren
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|TIOCMGET
-suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-r_int
-op_star
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-(brace
-id|ret_val
-op_assign
-id|error
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|ret_val
-op_assign
-id|get_modem_info
-c_func
-(paren
-id|info
-comma
-(paren
-r_int
-r_int
-op_star
-)paren
-id|arg
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|TIOCGSERIAL
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_struct
-id|serial_struct
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-(brace
-id|ret_val
-op_assign
-id|error
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 id|ret_val
 op_assign
 id|get_serial_info
@@ -17855,39 +17147,6 @@ suffix:semicolon
 r_case
 id|TIOCSSERIAL
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_struct
-id|serial_struct
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-(brace
-id|ret_val
-op_assign
-id|error
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 id|ret_val
 op_assign
 id|set_serial_info
@@ -17913,7 +17172,7 @@ op_minus
 id|ENOIOCTLCMD
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_OTHER
+macro_line|#ifdef CY_DEBUG_OTHER
 id|printk
 c_func
 (paren
@@ -17956,7 +17215,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OTHER
+macro_line|#ifdef CY_DEBUG_OTHER
 id|printk
 c_func
 (paren
@@ -18082,7 +17341,7 @@ id|channel
 comma
 id|index
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_THROTTLE
+macro_line|#ifdef CY_DEBUG_THROTTLE
 r_char
 id|buf
 (braket
@@ -18359,7 +17618,7 @@ id|channel
 comma
 id|index
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_THROTTLE
+macro_line|#ifdef CY_DEBUG_THROTTLE
 r_char
 id|buf
 (braket
@@ -18647,7 +17906,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OTHER
+macro_line|#ifdef CY_DEBUG_OTHER
 id|printk
 c_func
 (paren
@@ -18864,7 +18123,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OTHER
+macro_line|#ifdef CY_DEBUG_OTHER
 id|printk
 c_func
 (paren
@@ -19068,7 +18327,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_IO
+macro_line|#ifdef CY_DEBUG_IO
 id|printk
 c_func
 (paren
@@ -19329,7 +18588,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OTHER
+macro_line|#ifdef CY_DEBUG_OTHER
 id|printk
 c_func
 (paren
@@ -19375,7 +18634,7 @@ id|info-&gt;count
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_COUNT
+macro_line|#ifdef CY_DEBUG_COUNT
 id|printk
 c_func
 (paren
@@ -20200,7 +19459,6 @@ r_void
 )paren
 (brace
 macro_line|#ifdef CONFIG_PCI
-macro_line|#ifdef NEW_PCI
 r_struct
 id|pci_dev
 op_star
@@ -20212,16 +19470,6 @@ r_int
 r_char
 id|cyy_rev_id
 suffix:semicolon
-macro_line|#else
-r_int
-r_char
-id|cyy_bus
-comma
-id|cyy_dev_fn
-comma
-id|cyy_rev_id
-suffix:semicolon
-macro_line|#endif
 r_int
 r_int
 id|pci_intr_ctrl
@@ -20229,6 +19477,8 @@ suffix:semicolon
 r_int
 r_char
 id|cy_pci_irq
+op_assign
+l_int|0
 suffix:semicolon
 id|uclong
 id|cy_pci_addr0
@@ -20253,14 +19503,6 @@ id|dev_index
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifndef NEW_PCI
-r_int
-r_int
-id|board_index
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 id|uclong
 id|mailbox
 suffix:semicolon
@@ -20279,7 +19521,6 @@ id|ZeIndex
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef NEW_PCI
 r_if
 c_cond
 (paren
@@ -20292,20 +19533,6 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* PCI bus not present */
-macro_line|#else
-r_if
-c_cond
-(paren
-id|pcibios_present
-c_func
-(paren
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-multiline_comment|/* PCI bus not present */
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -20341,7 +19568,6 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#ifdef NEW_PCI
 r_if
 c_cond
 (paren
@@ -20373,48 +19599,6 @@ r_break
 suffix:semicolon
 multiline_comment|/* found a board */
 )brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|pcibios_find_device
-c_func
-(paren
-id|PCI_VENDOR_ID_CYCLADES
-comma
-id|device_id
-comma
-id|board_index
-comma
-op_amp
-id|cyy_bus
-comma
-op_amp
-id|cyy_dev_fn
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|dev_index
-op_increment
-suffix:semicolon
-multiline_comment|/* try next device id */
-id|board_index
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_else
-(brace
-id|board_index
-op_increment
-suffix:semicolon
-r_break
-suffix:semicolon
-multiline_comment|/* found a board */
-)brace
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -20426,7 +19610,6 @@ l_int|0
 r_break
 suffix:semicolon
 multiline_comment|/* read PCI configuration area */
-macro_line|#ifdef NEW_PCI
 id|cy_pci_irq
 op_assign
 id|pdev-&gt;irq
@@ -20463,88 +19646,6 @@ op_amp
 id|cyy_rev_id
 )paren
 suffix:semicolon
-macro_line|#else
-id|pcibios_read_config_byte
-c_func
-(paren
-id|cyy_bus
-comma
-id|cyy_dev_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|cy_pci_irq
-)paren
-suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|cyy_bus
-comma
-id|cyy_dev_fn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-(paren
-r_int
-r_int
-op_star
-)paren
-op_amp
-id|cy_pci_addr0
-)paren
-suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|cyy_bus
-comma
-id|cyy_dev_fn
-comma
-id|PCI_BASE_ADDRESS_1
-comma
-(paren
-r_int
-r_int
-op_star
-)paren
-op_amp
-id|cy_pci_addr1
-)paren
-suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|cyy_bus
-comma
-id|cyy_dev_fn
-comma
-id|PCI_BASE_ADDRESS_2
-comma
-(paren
-r_int
-r_int
-op_star
-)paren
-op_amp
-id|cy_pci_addr2
-)paren
-suffix:semicolon
-id|pcibios_read_config_byte
-c_func
-(paren
-id|cyy_bus
-comma
-id|cyy_dev_fn
-comma
-id|PCI_REVISION_ID
-comma
-op_amp
-id|cyy_rev_id
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -20567,19 +19668,11 @@ c_func
 (paren
 l_string|&quot;Cyclom-Y/PCI (bus=0x0%x, pci_id=0x%x, &quot;
 comma
-macro_line|#ifdef NEW_PCI
 id|pdev-&gt;bus-&gt;number
 comma
 id|pdev-&gt;devfn
 )paren
 suffix:semicolon
-macro_line|#else
-id|cyy_bus
-comma
-id|cyy_dev_fn
-)paren
-suffix:semicolon
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -20633,19 +19726,11 @@ c_func
 (paren
 l_string|&quot;Cyclom-Y/PCI (bus=0x0%x, pci_id=0x%x, &quot;
 comma
-macro_line|#ifdef NEW_PCI
 id|pdev-&gt;bus-&gt;number
 comma
 id|pdev-&gt;devfn
 )paren
 suffix:semicolon
-macro_line|#else
-id|cyy_bus
-comma
-id|cyy_dev_fn
-)paren
-suffix:semicolon
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -21104,19 +20189,11 @@ c_func
 (paren
 l_string|&quot;Cyclades-Z/PCI (bus=0x0%x, pci_id=0x%x, &quot;
 comma
-macro_line|#ifdef NEW_PCI
 id|pdev-&gt;bus-&gt;number
 comma
 id|pdev-&gt;devfn
 )paren
 suffix:semicolon
-macro_line|#else
-id|cyy_bus
-comma
-id|cyy_dev_fn
-)paren
-suffix:semicolon
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -21170,19 +20247,11 @@ c_func
 (paren
 l_string|&quot;Cyclades-Z/PCI (bus=0x0%x, pci_id=0x%x, &quot;
 comma
-macro_line|#ifdef NEW_PCI
 id|pdev-&gt;bus-&gt;number
 comma
 id|pdev-&gt;devfn
 )paren
 suffix:semicolon
-macro_line|#else
-id|cyy_bus
-comma
-id|cyy_dev_fn
-)paren
-suffix:semicolon
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -22582,6 +21651,10 @@ id|TTY_DRIVER_MAGIC
 suffix:semicolon
 id|cy_serial_driver.name
 op_assign
+l_string|&quot;cyclades&quot;
+suffix:semicolon
+id|cy_serial_driver.name
+op_assign
 l_string|&quot;ttyC&quot;
 suffix:semicolon
 id|cy_serial_driver.major
@@ -22701,6 +21774,10 @@ id|cy_serial_driver.hangup
 op_assign
 id|cy_hangup
 suffix:semicolon
+id|cy_serial_driver.wait_until_sent
+op_assign
+id|cy_wait_until_sent
+suffix:semicolon
 multiline_comment|/*&n;     * The callout device is just like normal device except for&n;     * major number and the subtype code.&n;     */
 id|cy_callout_driver
 op_assign
@@ -22717,6 +21794,14 @@ suffix:semicolon
 id|cy_callout_driver.subtype
 op_assign
 id|SERIAL_TYPE_CALLOUT
+suffix:semicolon
+id|cy_callout_driver.read_proc
+op_assign
+l_int|0
+suffix:semicolon
+id|cy_callout_driver.proc_entry
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -22767,7 +21852,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|16
+id|NR_IRQS
 suffix:semicolon
 id|i
 op_increment
@@ -23144,10 +22229,6 @@ id|info-&gt;closing_wait
 op_assign
 id|CLOSING_WAIT_DELAY
 suffix:semicolon
-id|info-&gt;closing_wait2
-op_assign
-l_int|0
-suffix:semicolon
 id|info-&gt;x_char
 op_assign
 l_int|0
@@ -23160,7 +22241,7 @@ id|info-&gt;count
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_COUNT
+macro_line|#ifdef CY_DEBUG_COUNT
 singleline_comment|//        printk(&quot;cyc:cy_init(1) setting Z count to 0&bslash;n&quot;);
 macro_line|#endif
 id|info-&gt;blocked_open
@@ -23339,10 +22420,6 @@ id|info-&gt;closing_wait
 op_assign
 id|CLOSING_WAIT_DELAY
 suffix:semicolon
-id|info-&gt;closing_wait2
-op_assign
-l_int|0
-suffix:semicolon
 id|chip_number
 op_assign
 (paren
@@ -23481,7 +22558,7 @@ id|info-&gt;count
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_COUNT
+macro_line|#ifdef CY_DEBUG_COUNT
 singleline_comment|//        printk(&quot;cyc:cy_init(2) setting Y count to 0&bslash;n&quot;);
 macro_line|#endif
 id|info-&gt;blocked_open

@@ -1588,23 +1588,19 @@ multiline_comment|/* lock */
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-r_extern
+DECL|variable|proc_sys_root
 r_struct
 id|proc_dir_entry
 id|proc_sys_root
-suffix:semicolon
-DECL|variable|proc_fs_coda
-r_struct
-id|proc_dir_entry
-id|proc_fs_coda
 op_assign
 (brace
-id|PROC_FS_CODA
+id|PROC_SYS
 comma
-l_int|4
+l_int|3
 comma
-l_string|&quot;coda&quot;
+l_string|&quot;sys&quot;
 comma
+multiline_comment|/* inode, name */
 id|S_IFDIR
 op_or
 id|S_IRUGO
@@ -1617,20 +1613,25 @@ l_int|0
 comma
 l_int|0
 comma
+multiline_comment|/* mode, nlink, uid, gid */
 l_int|0
 comma
 op_amp
 id|proc_dir_inode_operations
 comma
+multiline_comment|/* size, ops */
 l_int|NULL
 comma
 l_int|NULL
 comma
+multiline_comment|/* get_info, fill_inode */
+l_int|NULL
+comma
+multiline_comment|/* next */
 l_int|NULL
 comma
 l_int|NULL
-comma
-l_int|NULL
+multiline_comment|/* parent, subdir */
 )brace
 suffix:semicolon
 DECL|variable|proc_sys_coda
@@ -1713,23 +1714,26 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-macro_line|#if 0
+multiline_comment|/*&n; * target directory structure:&n;   /proc/fs/&n;   /proc/fs/coda&n;   /proc/fs/coda/{vfs_stats,&n;&n;*/
+DECL|variable|proc_fs_coda
 r_struct
 id|proc_dir_entry
-id|proc_coda_ncstats
+id|proc_fs_coda
 op_assign
 (brace
-l_int|0
+id|PROC_FS_CODA
 comma
-l_int|12
+l_int|4
 comma
-l_string|&quot;coda-ncstats&quot;
+l_string|&quot;coda&quot;
 comma
-id|S_IFREG
+id|S_IFDIR
 op_or
 id|S_IRUGO
+op_or
+id|S_IXUGO
 comma
-l_int|1
+l_int|2
 comma
 l_int|0
 comma
@@ -1738,12 +1742,19 @@ comma
 l_int|0
 comma
 op_amp
-id|proc_net_inode_operations
+id|proc_dir_inode_operations
 comma
-id|cfsnc_nc_info
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
 )brace
 suffix:semicolon
-macro_line|#endif
 DECL|variable|proc_coda_vfs
 r_struct
 id|proc_dir_entry
@@ -2143,18 +2154,6 @@ op_amp
 id|proc_coda_cache_inv
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|proc_register
-c_func
-(paren
-op_amp
-id|proc_fs_coda
-comma
-op_amp
-id|proc_coda_ncstats
-)paren
-suffix:semicolon
-macro_line|#endif
 id|proc_register
 c_func
 (paren
@@ -2387,17 +2386,6 @@ comma
 id|proc_sys_coda.low_ino
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|proc_unregister
-c_func
-(paren
-op_amp
-id|proc_fs_coda
-comma
-id|proc_coda_ncstats.low_ino
-)paren
-suffix:semicolon
-macro_line|#endif
 id|proc_unregister
 c_func
 (paren

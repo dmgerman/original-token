@@ -25,12 +25,6 @@ DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &quot;irq.h&quot;
-DECL|variable|semaphore_wake_lock
-id|spinlock_t
-id|semaphore_wake_lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
-suffix:semicolon
 r_extern
 r_int
 r_int

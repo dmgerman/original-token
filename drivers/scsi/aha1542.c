@@ -931,18 +931,10 @@ id|bse
 )paren
 )paren
 suffix:semicolon
-id|i
-op_assign
-id|jiffies
-op_plus
-l_int|2
-suffix:semicolon
-r_while
-c_loop
+id|mdelay
+c_func
 (paren
-id|i
-OG
-id|jiffies
+l_int|20
 )paren
 suffix:semicolon
 multiline_comment|/* Wait a little bit for things to settle down. */

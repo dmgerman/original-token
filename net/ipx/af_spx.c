@@ -2826,7 +2826,7 @@ id|pdata-&gt;state
 op_assign
 id|SPX_CONNECTED
 suffix:semicolon
-id|pdatat-&gt;dest_connid
+id|pdata-&gt;dest_connid
 op_assign
 id|ipxh-&gt;spx.sconn
 suffix:semicolon

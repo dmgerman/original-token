@@ -1886,7 +1886,7 @@ r_int
 id|cap
 )paren
 (brace
-macro_line|#if 0 /* not yet */
+macro_line|#if 1 /* ok now */
 r_if
 c_cond
 (paren

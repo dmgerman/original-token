@@ -1,4 +1,4 @@
-multiline_comment|/* $Revision: 2.3 $$Date: 1998/03/16 18:01:12 $&n; * linux/include/linux/cyclades.h&n; *&n; * This file is maintained by Ivan Passos &lt;ivan@cyclades.com&gt;, &n; * Marcio Saito &lt;marcio@cyclades.com&gt; and&n; * Randolph Bentson &lt;bentson@grieg.seaslug.org&gt;.&n; *&n; * This file contains the general definitions for the cyclades.c driver&n; *$Log: cyclades.h,v $&n; *Revision 2.3  1998/03/16 18:01:12  ivan&n; *changes in the cyclades_port structure to get it closer to the &n; *standard serial port structure;&n; *added constants for new ioctls;&n; *Revision 2.2  1998/02/17 16:50:00  ivan&n; *changes in the cyclades_port structure (addition of shutdown_wait and &n; *chip_rev variables);&n; *added constants for new ioctls and for CD1400 rev. numbers.&n; *&n; *Revision 2.1&t;1997/10/24 16:03:00  ivan&n; *added rflow (which allows enabling the CD1400 special flow control &n; *feature) and rtsdtr_inv (which allows DTR/RTS pin inversion) to &n; *cyclades_port structure;&n; *added Alpha support&n; *&n; *Revision 2.0  1997/06/30 10:30:00  ivan&n; *added some new doorbell command constants related to IOCTLW and&n; *UART error signaling&n; *&n; *Revision 1.8  1997/06/03 15:30:00  ivan&n; *added constant ZFIRM_HLT&n; *added constant CyPCI_Ze_win ( = 2 * Cy_PCI_Zwin)&n; *&n; *Revision 1.7  1997/03/26 10:30:00  daniel&n; *new entries at the end of cyclades_port struct to reallocate&n; *variables illegally allocated within card memory.&n; *&n; *Revision 1.6  1996/09/09 18:35:30  bentson&n; *fold in changes for Cyclom-Z -- including structures for&n; *communicating with board as well modest changes to original&n; *structures to support new features.&n; *&n; *Revision 1.5  1995/11/13 21:13:31  bentson&n; *changes suggested by Michael Chastain &lt;mec@duracef.shout.net&gt;&n; *to support use of this file in non-kernel applications&n; *&n; *&n; */
+multiline_comment|/* $Revision: 2.4 $$Date: 1998/06/01 12:09:53 $&n; * linux/include/linux/cyclades.h&n; *&n; * This file is maintained by Ivan Passos &lt;ivan@cyclades.com&gt;, &n; * Marcio Saito &lt;marcio@cyclades.com&gt; and&n; * Randolph Bentson &lt;bentson@grieg.seaslug.org&gt;.&n; *&n; * This file contains the general definitions for the cyclades.c driver&n; *$Log: cyclades.h,v $&n; *Revision 2.4  1998/06/01 12:09:53  ivan&n; *removed closing_wait2 from cyclades_port structure;&n; *&n; *Revision 2.3  1998/03/16 18:01:12  ivan&n; *changes in the cyclades_port structure to get it closer to the &n; *standard serial port structure;&n; *added constants for new ioctls;&n; *&n; *Revision 2.2  1998/02/17 16:50:00  ivan&n; *changes in the cyclades_port structure (addition of shutdown_wait and &n; *chip_rev variables);&n; *added constants for new ioctls and for CD1400 rev. numbers.&n; *&n; *Revision 2.1&t;1997/10/24 16:03:00  ivan&n; *added rflow (which allows enabling the CD1400 special flow control &n; *feature) and rtsdtr_inv (which allows DTR/RTS pin inversion) to &n; *cyclades_port structure;&n; *added Alpha support&n; *&n; *Revision 2.0  1997/06/30 10:30:00  ivan&n; *added some new doorbell command constants related to IOCTLW and&n; *UART error signaling&n; *&n; *Revision 1.8  1997/06/03 15:30:00  ivan&n; *added constant ZFIRM_HLT&n; *added constant CyPCI_Ze_win ( = 2 * Cy_PCI_Zwin)&n; *&n; *Revision 1.7  1997/03/26 10:30:00  daniel&n; *new entries at the end of cyclades_port struct to reallocate&n; *variables illegally allocated within card memory.&n; *&n; *Revision 1.6  1996/09/09 18:35:30  bentson&n; *fold in changes for Cyclom-Z -- including structures for&n; *communicating with board as well modest changes to original&n; *structures to support new features.&n; *&n; *Revision 1.5  1995/11/13 21:13:31  bentson&n; *changes suggested by Michael Chastain &lt;mec@duracef.shout.net&gt;&n; *to support use of this file in non-kernel applications&n; *&n; *&n; */
 macro_line|#ifndef _LINUX_CYCLADES_H
 DECL|macro|_LINUX_CYCLADES_H
 mdefine_line|#define _LINUX_CYCLADES_H
@@ -83,10 +83,10 @@ DECL|macro|CZ_DEF_POLL
 mdefine_line|#define CZ_DEF_POLL&t;(HZ/25)
 DECL|macro|MAX_BOARD
 mdefine_line|#define MAX_BOARD       4       /* Max number of boards */
-DECL|macro|MAX_PORT
-mdefine_line|#define MAX_PORT        128     /* Max number of ports per board */
 DECL|macro|MAX_DEV
 mdefine_line|#define MAX_DEV         256     /* Max number of ports total */
+DECL|macro|CYZ_MAX_SPEED
+mdefine_line|#define&t;CYZ_MAX_SPEED&t;921600
 DECL|macro|CYZ_FIFO_SIZE
 mdefine_line|#define&t;CYZ_FIFO_SIZE&t;16
 DECL|macro|CYZ_BOOT_NWORDS
@@ -1089,11 +1089,6 @@ r_int
 r_int
 id|closing_wait
 suffix:semicolon
-DECL|member|closing_wait2
-r_int
-r_int
-id|closing_wait2
-suffix:semicolon
 DECL|member|event
 r_int
 r_int
@@ -1221,13 +1216,19 @@ mdefine_line|#define Cy_EVENT_OPEN_WAKEUP&t;&t;4
 DECL|macro|Cy_EVENT_SHUTDOWN_WAKEUP
 mdefine_line|#define Cy_EVENT_SHUTDOWN_WAKEUP&t;5
 DECL|macro|CLOSING_WAIT_DELAY
-mdefine_line|#define&t;CLOSING_WAIT_DELAY&t;30
+mdefine_line|#define&t;CLOSING_WAIT_DELAY&t;30*HZ
+DECL|macro|CY_CLOSING_WAIT_NONE
+mdefine_line|#define CY_CLOSING_WAIT_NONE&t;65535
+DECL|macro|CY_CLOSING_WAIT_INF
+mdefine_line|#define CY_CLOSING_WAIT_INF&t;0
 DECL|macro|CyMAX_CHIPS_PER_CARD
 mdefine_line|#define CyMAX_CHIPS_PER_CARD&t;8
 DECL|macro|CyMAX_CHAR_FIFO
 mdefine_line|#define CyMAX_CHAR_FIFO&t;&t;12
 DECL|macro|CyPORTS_PER_CHIP
 mdefine_line|#define CyPORTS_PER_CHIP&t;4
+DECL|macro|CD1400_MAX_SPEED
+mdefine_line|#define&t;CD1400_MAX_SPEED&t;115200
 DECL|macro|CyISA_Ywin
 mdefine_line|#define&t;CyISA_Ywin&t;0x2000
 DECL|macro|CyPCI_Ywin

@@ -5,6 +5,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -273,6 +274,15 @@ id|Scsi_Device
 op_star
 id|SDpnt
 suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|SCSI_LOG_IOCTL
 c_func
 (paren
@@ -314,15 +324,6 @@ op_assign
 op_amp
 id|sem
 suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 id|scsi_do_cmd
 c_func
 (paren
@@ -355,6 +356,15 @@ c_func
 (paren
 op_amp
 id|sem
+)paren
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|SCpnt-&gt;request.sem
@@ -576,6 +586,15 @@ c_func
 (paren
 op_amp
 id|SDpnt-&gt;device_wait
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -988,6 +1007,15 @@ r_break
 suffix:semicolon
 )brace
 macro_line|#ifndef DEBUG_NO_CMD
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|SCpnt
 op_assign
 id|scsi_allocate_device
@@ -1011,15 +1039,6 @@ id|SCpnt-&gt;request.sem
 op_assign
 op_amp
 id|sem
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
 suffix:semicolon
 id|scsi_do_cmd
 c_func
@@ -1148,6 +1167,15 @@ id|result
 op_assign
 id|SCpnt-&gt;result
 suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|wake_up
 c_func
 (paren
@@ -1196,6 +1224,15 @@ id|SDpnt-&gt;scsi_request_fn
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_return
 id|result
 suffix:semicolon

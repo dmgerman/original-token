@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_SOCKET_H
 DECL|macro|_LINUX_SOCKET_H
 mdefine_line|#define _LINUX_SOCKET_H
+macro_line|#if defined(__KERNEL__) || !defined(__GLIBC__) || (__GLIBC__ &lt; 2)
 macro_line|#include &lt;asm/socket.h&gt;&t;&t;&t;/* arch-dependent defines&t;*/
 macro_line|#include &lt;linux/sockios.h&gt;&t;&t;/* the SIOCxxx I/O controls&t;*/
 macro_line|#include &lt;linux/uio.h&gt;&t;&t;&t;/* iovec support&t;&t;*/
@@ -656,5 +657,6 @@ id|data
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif /* not kernel and not glibc */
 macro_line|#endif /* _LINUX_SOCKET_H */
 eof

@@ -1216,11 +1216,9 @@ id|alias_de
 id|printk
 c_func
 (paren
-l_string|&quot;Corrupt alias list for %*s&bslash;n&quot;
+l_string|&quot;Null alias list for inode %ld&bslash;n&quot;
 comma
-id|alias_de-&gt;d_name.len
-comma
-id|alias_de-&gt;d_name.name
+id|inode-&gt;i_ino
 )paren
 suffix:semicolon
 r_return

@@ -313,12 +313,14 @@ DECL|macro|_VUID_T_
 mdefine_line|#define _VUID_T_
 DECL|typedef|vuid_t
 r_typedef
-id|u_long
+r_int
+r_int
 id|vuid_t
 suffix:semicolon
 DECL|typedef|vgid_t
 r_typedef
-id|u_long
+r_int
+r_int
 id|vgid_t
 suffix:semicolon
 macro_line|#endif /*_VUID_T_ */
@@ -559,8 +561,7 @@ DECL|macro|CFS_ZAPFILE
 mdefine_line|#define CFS_ZAPFILE     ((u_long) 27)
 DECL|macro|CFS_ZAPDIR
 mdefine_line|#define CFS_ZAPDIR      ((u_long) 28)
-DECL|macro|CFS_ZAPVNODE
-mdefine_line|#define CFS_ZAPVNODE    ((u_long) 29)
+multiline_comment|/* #define CFS_ZAPVNODE    ((u_long) 29)   obsolete */
 DECL|macro|CFS_PURGEFID
 mdefine_line|#define CFS_PURGEFID    ((u_long) 30)
 DECL|macro|CFS_OPEN_BY_PATH

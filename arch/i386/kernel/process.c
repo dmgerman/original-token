@@ -36,6 +36,12 @@ macro_line|#ifdef CONFIG_MATH_EMULATION
 macro_line|#include &lt;asm/math_emu.h&gt;
 macro_line|#endif
 macro_line|#include &quot;irq.h&quot;
+DECL|variable|semaphore_wake_lock
+id|spinlock_t
+id|semaphore_wake_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 DECL|variable|last_task_used_math
 r_struct
 id|task_struct

@@ -157,6 +157,16 @@ op_star
 )paren
 suffix:semicolon
 r_int
+id|coda_fid_is_weird
+c_func
+(paren
+r_struct
+id|ViceFid
+op_star
+id|fid
+)paren
+suffix:semicolon
+r_int
 id|coda_iscontrol
 c_func
 (paren

@@ -590,6 +590,10 @@ id|sb_info
 suffix:semicolon
 id|ENTRY
 suffix:semicolon
+id|sb-&gt;s_dev
+op_assign
+l_int|0
+suffix:semicolon
 id|coda_cache_clear_all
 c_func
 (paren

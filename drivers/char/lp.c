@@ -249,6 +249,15 @@ c_func
 id|minor
 )paren
 suffix:semicolon
+id|lp_table
+(braket
+id|minor
+)braket
+dot
+id|irq_missed
+op_assign
+l_int|1
+suffix:semicolon
 id|schedule
 (paren
 )paren

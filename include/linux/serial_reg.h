@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/linux/serial.h&n; *&n; * Copyright (C) 1992, 1994 by Theodore Ts&squot;o.&n; * &n; * Redistribution of this file is permitted under the terms of the GNU &n; * Public License (GPL)&n; * &n; * These are the UART port assignments, expressed as offsets from the base&n; * register.  These assignments should hold for any serial port based on&n; * a 8250, 16450, or 16550(A).&n; */
+multiline_comment|/*&n; * include/linux/serial_reg.h&n; *&n; * Copyright (C) 1992, 1994 by Theodore Ts&squot;o.&n; * &n; * Redistribution of this file is permitted under the terms of the GNU &n; * Public License (GPL)&n; * &n; * These are the UART port assignments, expressed as offsets from the base&n; * register.  These assignments should hold for any serial port based on&n; * a 8250, 16450, or 16550(A).&n; */
 macro_line|#ifndef _LINUX_SERIAL_REG_H
 DECL|macro|_LINUX_SERIAL_REG_H
 mdefine_line|#define _LINUX_SERIAL_REG_H

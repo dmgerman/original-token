@@ -757,12 +757,24 @@ c_cond
 (paren
 id|dropme
 )paren
+(brace
 id|d_drop
 c_func
 (paren
 id|entry
 )paren
 suffix:semicolon
+id|ITOC
+c_func
+(paren
+id|res_inode
+)paren
+op_member_access_from_pointer
+id|c_flags
+op_or_assign
+id|C_VATTR
+suffix:semicolon
+)brace
 id|EXIT
 suffix:semicolon
 r_return
@@ -1183,8 +1195,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* invalidate the directory cnode&squot;s attributes */
 id|dircnp-&gt;c_flags
-op_and_assign
-op_complement
+op_or_assign
 id|C_VATTR
 suffix:semicolon
 id|d_instantiate
@@ -1456,8 +1467,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* invalidate the directory cnode&squot;s attributes */
 id|dircnp-&gt;c_flags
-op_and_assign
-op_complement
+op_or_assign
 id|C_VATTR
 suffix:semicolon
 id|dir-&gt;i_nlink
@@ -1670,8 +1680,7 @@ id|error
 )paren
 (brace
 id|dir_cnp-&gt;c_flags
-op_and_assign
-op_complement
+op_or_assign
 id|C_VATTR
 suffix:semicolon
 id|inode-&gt;i_nlink
@@ -2005,8 +2014,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* cache management */
 id|dircnp-&gt;c_flags
-op_and_assign
-op_complement
+op_or_assign
 id|C_VATTR
 suffix:semicolon
 id|de-&gt;d_inode-&gt;i_nlink
@@ -3629,7 +3637,11 @@ c_cond
 (paren
 id|cii-&gt;c_flags
 op_amp
+(paren
 id|C_PURGE
+op_or
+id|C_VATTR
+)paren
 )paren
 id|valid
 op_assign
@@ -3724,7 +3736,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-multiline_comment|/* this baby may be lost if:&n;&t;   - it&squot;s type changed&n;            - it&squot;s ino changed &n;&t;*/
+multiline_comment|/* this baby may be lost if:&n;            - it&squot;s type changed&n;            - it&squot;s ino changed &n;&t;*/
 id|old_mode
 op_assign
 id|inode-&gt;i_mode
@@ -3784,7 +3796,11 @@ suffix:semicolon
 id|cii-&gt;c_flags
 op_and_assign
 op_complement
+(paren
 id|C_VATTR
+op_or
+id|C_PURGE
+)paren
 suffix:semicolon
 r_return
 l_int|0

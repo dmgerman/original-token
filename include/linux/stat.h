@@ -4,6 +4,7 @@ mdefine_line|#define _LINUX_STAT_H
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/stat.h&gt;
 macro_line|#endif
+macro_line|#if defined(__KERNEL__) || !defined(__GLIBC__) || (__GLIBC__ &lt; 2)
 DECL|macro|S_IFMT
 mdefine_line|#define S_IFMT  00170000
 DECL|macro|S_IFSOCK
@@ -64,6 +65,7 @@ DECL|macro|S_IWOTH
 mdefine_line|#define S_IWOTH 00002
 DECL|macro|S_IXOTH
 mdefine_line|#define S_IXOTH 00001
+macro_line|#endif
 macro_line|#ifdef __KERNEL__
 DECL|macro|S_IRWXUGO
 mdefine_line|#define S_IRWXUGO&t;(S_IRWXU|S_IRWXG|S_IRWXO)

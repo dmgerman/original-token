@@ -4150,6 +4150,21 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|tty-&gt;driver.close
+)paren
+id|tty-&gt;driver
+dot
+id|close
+c_func
+(paren
+id|tty
+comma
+id|filp
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Sanity check: if tty-&gt;count is going to zero, there shouldn&squot;t be&n;&t; * any waiters on tty-&gt;read_wait or tty-&gt;write_wait.  We test the&n;&t; * wait queues and kick everyone out _before_ actually starting to&n;&t; * close.  This ensures that we won&squot;t block while releasing the tty&n;&t; * structure.&n;&t; *&n;&t; * The test for the o_tty closing is necessary, since the master and&n;&t; * slave sides may close in any order.  If the slave side closes out&n;&t; * first, its count will be one, since the master side holds an open.&n;&t; * Thus this test wouldn&squot;t be triggered at the time the slave closes,&n;&t; * so we do it now.&n;&t; *&n;&t; * Note that it&squot;s possible for the tty to be opened again while we&squot;re&n;&t; * flushing out waiters.  By recalculating the closing flags before&n;&t; * each iteration we avoid any problems.&n;&t; */
 r_while
 c_loop
@@ -4315,21 +4330,6 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * The closing flags are now consistent with the open counts on &n;&t; * both sides, and we&squot;ve completed the last operation that could &n;&t; * block, so it&squot;s safe to proceed with closing.&n;&t; */
-r_if
-c_cond
-(paren
-id|tty-&gt;driver.close
-)paren
-id|tty-&gt;driver
-dot
-id|close
-c_func
-(paren
-id|tty
-comma
-id|filp
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

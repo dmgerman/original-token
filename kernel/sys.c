@@ -1649,17 +1649,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;uid
-op_ne
-l_int|0
-op_logical_and
-id|current-&gt;euid
-op_ne
-l_int|0
-op_logical_and
-id|current-&gt;suid
-op_ne
-l_int|0
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_SETUID
+)paren
 )paren
 (brace
 r_if
@@ -1968,17 +1963,12 @@ id|sgid
 r_if
 c_cond
 (paren
-id|current-&gt;uid
-op_ne
-l_int|0
-op_logical_and
-id|current-&gt;euid
-op_ne
-l_int|0
-op_logical_and
-id|current-&gt;suid
-op_ne
-l_int|0
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_SETGID
+)paren
 )paren
 (brace
 r_if
@@ -2276,7 +2266,7 @@ id|current-&gt;dumpable
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* We emulate fsuid by essentially doing a scaled-down version&n;         * of what we did in setresuid and friends. However, we only&n;         * operate on the fs-specific bits of the process&squot; effective&n;         * capabilities &n;         *&n;         * FIXME - is fsuser used for all CAP_FS_MASK capabilities?&n;         *          if not, we might be a bit too harsh here.&n;         */
+multiline_comment|/* We emulate fsuid by essentially doing a scaled-down version&n;&t; * of what we did in setresuid and friends. However, we only&n;&t; * operate on the fs-specific bits of the process&squot; effective&n;&t; * capabilities &n;&t; *&n;&t; * FIXME - is fsuser used for all CAP_FS_MASK capabilities?&n;&t; *          if not, we might be a bit too harsh here.&n;&t; */
 r_if
 c_cond
 (paren

@@ -205,7 +205,7 @@ suffix:semicolon
 multiline_comment|/* No longer used */
 DECL|member|u_ar0
 r_struct
-id|pt_regs
+id|user_pt_regs
 op_star
 id|u_ar0
 suffix:semicolon

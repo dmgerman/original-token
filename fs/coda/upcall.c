@@ -3736,7 +3736,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * There are 7 cases where cache invalidations occur.  The semantics&n; *  of each is listed here:&n; *&n; * CFS_FLUSH     -- flush all entries from the name cache and the cnode cache.&n; * CFS_PURGEUSER -- flush all entries from the name cache for a specific user&n; *                  This call is a result of token expiration.&n; *&n; * The next arise as the result of callbacks on a file or directory.&n; * CFS_ZAPFILE   -- flush the cached attributes for a file.&n;&n; * CFS_ZAPDIR    -- flush the attributes for the dir and&n; *                  force a new lookup for all the children&n;                    of this dir.&n;&n; * CFS_ZAPVNODE  -- intended to be a zapfile for just one cred. &n;                    Not used?&n; *&n; * The next is a result of Venus detecting an inconsistent file.&n; * CFS_PURGEFID  -- flush the attribute for the file&n; *                  purge it and its children from the dcache&n; *&n; * The last  allows Venus to replace local fids with global ones&n; * during reintegration.&n; *&n; * CFS_REPLACE -- replace one ViceFid with another throughout the name cache */
+multiline_comment|/* &n; * There are 7 cases where cache invalidations occur.  The semantics&n; *  of each is listed here:&n; *&n; * CFS_FLUSH     -- flush all entries from the name cache and the cnode cache.&n; * CFS_PURGEUSER -- flush all entries from the name cache for a specific user&n; *                  This call is a result of token expiration.&n; *&n; * The next arise as the result of callbacks on a file or directory.&n; * CFS_ZAPFILE   -- flush the cached attributes for a file.&n;&n; * CFS_ZAPDIR    -- flush the attributes for the dir and&n; *                  force a new lookup for all the children&n;                    of this dir.&n;&n; *&n; * The next is a result of Venus detecting an inconsistent file.&n; * CFS_PURGEFID  -- flush the attribute for the file&n; *                  purge it and its children from the dcache&n; *&n; * The last  allows Venus to replace local fids with global ones&n; * during reintegration.&n; *&n; * CFS_REPLACE -- replace one ViceFid with another throughout the name cache */
 DECL|function|coda_downcall
 r_int
 id|coda_downcall
@@ -3756,7 +3756,26 @@ op_star
 id|sb
 )paren
 (brace
-multiline_comment|/* Handle invalidate requests. */
+multiline_comment|/* Handle invalidation requests. */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sb
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;coda_downcall: opcode %d, no sb!&bslash;n&quot;
+comma
+id|opcode
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_switch
 c_cond
 (paren
@@ -3868,23 +3887,6 @@ op_assign
 op_amp
 id|out-&gt;cfs_zapdir.CodaFid
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|fid
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;ZAPDIR: Null fid&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|CDEBUG
 c_func
 (paren
@@ -3915,6 +3917,12 @@ comma
 id|sb
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode
+)paren
+(brace
 id|coda_flag_inode
 c_func
 (paren
@@ -3937,13 +3945,11 @@ comma
 id|C_PURGE
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-r_case
-id|CFS_ZAPVNODE
-suffix:colon
 r_case
 id|CFS_ZAPFILE
 suffix:colon
@@ -3967,23 +3973,6 @@ c_func
 id|CFS_ZAPFILE
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|fid
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;ZAPFILE: Null fid&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|CDEBUG
 c_func
 (paren
@@ -4008,6 +3997,12 @@ comma
 id|sb
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode
+)paren
+(brace
 id|coda_flag_inode
 c_func
 (paren
@@ -4022,6 +4017,7 @@ c_func
 id|inode
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -4042,23 +4038,6 @@ op_assign
 op_amp
 id|out-&gt;cfs_purgefid.CodaFid
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|fid
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;PURGEFID: Null fid&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|CDEBUG
 c_func
 (paren
@@ -4089,6 +4068,12 @@ comma
 id|sb
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode
+)paren
+(brace
 id|coda_flag_inode
 c_func
 (paren
@@ -4103,6 +4088,7 @@ c_func
 id|inode
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon

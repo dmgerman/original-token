@@ -18,6 +18,7 @@ DECL|function|coda_fill_inode
 r_static
 r_void
 id|coda_fill_inode
+c_func
 (paren
 r_struct
 id|inode
@@ -170,7 +171,7 @@ id|ino
 suffix:semicolon
 id|ENTRY
 suffix:semicolon
-multiline_comment|/* &n;        * We get inode numbers from Venus -- see venus source&n;&t;*/
+multiline_comment|/* &n;&t; * We get inode numbers from Venus -- see venus source&n;&t; */
 id|error
 op_assign
 id|venus_getattr
@@ -320,10 +321,17 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|printk
+id|cnp-&gt;c_flags
+op_assign
+l_int|0
+suffix:semicolon
+id|CDEBUG
 c_func
 (paren
-l_string|&quot;coda_cnode make on initialized inode %ld, %s!&bslash;n&quot;
+id|D_CNODE
+comma
+l_string|&quot;coda_cnode make on initialized&quot;
+l_string|&quot;inode %ld, %s!&bslash;n&quot;
 comma
 (paren
 op_star
@@ -345,12 +353,41 @@ multiline_comment|/* fill in the inode attributes */
 r_if
 c_cond
 (paren
-id|coda_fid_is_volroot
+id|coda_f2i
+c_func
+(paren
+id|fid
+)paren
+op_ne
+id|ino
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|coda_fid_is_weird
 c_func
 (paren
 id|fid
 )paren
 )paren
+id|printk
+c_func
+(paren
+l_string|&quot;Coda: unknown weird fid: ino %ld, fid %s.&quot;
+l_string|&quot;Tell Peter.&quot;
+comma
+id|ino
+comma
+id|coda_f2s
+c_func
+(paren
+op_amp
+id|cnp-&gt;c_fid
+)paren
+)paren
+suffix:semicolon
 id|list_add
 c_func
 (paren
@@ -361,6 +398,24 @@ op_amp
 id|sbi-&gt;sbi_volroothead
 )paren
 suffix:semicolon
+id|CDEBUG
+c_func
+(paren
+id|D_CNODE
+comma
+l_string|&quot;Added %ld ,%s to volroothead&bslash;n&quot;
+comma
+id|ino
+comma
+id|coda_f2s
+c_func
+(paren
+op_amp
+id|cnp-&gt;c_fid
+)paren
+)paren
+suffix:semicolon
+)brace
 id|coda_fill_inode
 c_func
 (paren
@@ -376,7 +431,8 @@ c_func
 (paren
 id|D_CNODE
 comma
-l_string|&quot;Done linking: ino %ld,  at 0x%x with cnp 0x%x, cnp-&gt;c_vnode 0x%x&bslash;n&quot;
+l_string|&quot;Done linking: ino %ld,  at 0x%x with cnp 0x%x,&quot;
+l_string|&quot;cnp-&gt;c_vnode 0x%x&bslash;n&quot;
 comma
 (paren
 op_star
@@ -538,7 +594,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|coda_fid_is_volroot
+id|coda_fid_is_weird
 c_func
 (paren
 id|fid
@@ -604,9 +660,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|cii-&gt;c_fid.Volume
-op_eq
-id|fid-&gt;Volume
+id|coda_fideq
+c_func
+(paren
+op_amp
+id|cii-&gt;c_fid
+comma
+id|fid
+)paren
 )paren
 (brace
 id|inode
@@ -632,7 +693,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/* fid is not volume root, hence ino is computable */
+multiline_comment|/* fid is not weird: ino should be computable */
 id|nr
 op_assign
 id|coda_f2i
@@ -722,22 +783,21 @@ op_amp
 id|cnp-&gt;c_fid
 )paren
 )paren
-op_logical_and
-op_logical_neg
-id|coda_fid_is_volroot
-c_func
-(paren
-op_amp
-(paren
-id|cnp-&gt;c_fid
-)paren
-)paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;coda_fid2inode: bad cnode! Tell Peter.&bslash;n&quot;
+l_string|&quot;coda_fid2inode: bad cnode (ino %ld, fid %s)&quot;
+l_string|&quot;Tell Peter.&bslash;n&quot;
+comma
+id|nr
+comma
+id|coda_f2s
+c_func
+(paren
+id|fid
+)paren
 )paren
 suffix:semicolon
 id|iput

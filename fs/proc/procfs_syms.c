@@ -107,6 +107,13 @@ c_func
 id|proc_net
 )paren
 suffix:semicolon
+DECL|variable|proc_bus
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|proc_bus
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * This is required so that if we load scsi later, that the&n; * scsi code can attach to /proc/scsi in the correct manner.&n; */
 DECL|variable|proc_scsi
 id|EXPORT_SYMBOL

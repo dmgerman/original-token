@@ -735,11 +735,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|cnp-&gt;c_flags
-op_and_assign
-op_complement
-id|C_VATTR
-suffix:semicolon
 id|down
 c_func
 (paren
@@ -786,6 +781,15 @@ comma
 op_amp
 id|cont_file
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+)paren
+id|cnp-&gt;c_flags
+op_or_assign
+id|C_VATTR
 suffix:semicolon
 r_return
 id|result
