@@ -10,8 +10,8 @@ macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;ibmcam.h&quot;
 multiline_comment|/*&n; * IBMCAM_LOCKS_DRIVER_WHILE_DEVICE_IS_PLUGGED: This symbol controls&n; * the locking of the driver. If non-zero, the driver counts the&n; * probe() call as usage and increments module usage counter; this&n; * effectively prevents removal of the module (with rmmod) until the&n; * device is unplugged (then disconnect() callback reduces the module&n; * usage counter back, and module can be removed).&n; *&n; * This behavior may be useful if you prefer to lock the driver in&n; * memory until device is unplugged. However you can&squot;t reload the&n; * driver if you want to alter some parameters - you&squot;d need to unplug&n; * the camera first. Therefore, I recommend setting 0.&n; */
 DECL|macro|IBMCAM_LOCKS_DRIVER_WHILE_DEVICE_IS_PLUGGED

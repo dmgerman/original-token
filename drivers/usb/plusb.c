@@ -15,7 +15,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 singleline_comment|//#define DEBUG
-macro_line|#include &quot;usb.h&quot;
+macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &quot;plusb.h&quot;
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|NRPLUSB

@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;  /* for in_interrupt() */
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG
-macro_line|#include &quot;usb.h&quot;
+macro_line|#include &lt;linux/usb.h&gt;
 multiline_comment|/*&n; * Prototypes for the device driver probing/loading functions&n; */
 r_static
 r_void

@@ -10,7 +10,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/lp.h&gt;
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG
-macro_line|#include &quot;usb.h&quot;
+macro_line|#include &lt;linux/usb.h&gt;
 DECL|macro|USBLP_BUF_SIZE
 mdefine_line|#define USBLP_BUF_SIZE&t;&t;8192
 multiline_comment|/*&n; * USB Printer Requests&n; */

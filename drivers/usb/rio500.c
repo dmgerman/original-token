@@ -11,7 +11,7 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#include &quot;usb.h&quot;
+macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &quot;rio500_usb.h&quot;
 DECL|macro|RIO_MINOR
 mdefine_line|#define RIO_MINOR   64

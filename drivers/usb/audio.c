@@ -19,7 +19,7 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;usb.h&quot;
+macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &quot;audio.h&quot;
 DECL|macro|AUDIO_DEBUG
 mdefine_line|#define AUDIO_DEBUG 1

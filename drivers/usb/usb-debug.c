@@ -5,7 +5,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG
-macro_line|#include &quot;usb.h&quot;
+macro_line|#include &lt;linux/usb.h&gt;
 DECL|function|usb_show_endpoint
 r_static
 r_void

@@ -5,7 +5,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &quot;usb.h&quot;
+macro_line|#include &lt;linux/usb.h&gt;
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|struct|parport_uss720_private
 r_struct

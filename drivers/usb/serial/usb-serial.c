@@ -15,7 +15,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG
-macro_line|#include &quot;../usb.h&quot;
+macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#ifdef CONFIG_USB_SERIAL_WHITEHEAT
 macro_line|#include &quot;whiteheat.h&quot;&t;&t;/* firmware for the ConnectTech WhiteHEAT device */
 macro_line|#endif

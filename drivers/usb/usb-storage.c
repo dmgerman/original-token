@@ -10,11 +10,11 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;../scsi/scsi.h&quot;
 macro_line|#include &quot;../scsi/hosts.h&quot;
 macro_line|#include &quot;../scsi/sd.h&quot;
-macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;usb-storage.h&quot;
 macro_line|#include &quot;usb-storage-debug.h&quot;
 multiline_comment|/*&n; * This is the size of the structure Scsi_Host_Template.  We create&n; * an instance of this structure in this file and this is a check&n; * to see if this structure may have changed within the SCSI module.&n; * This is by no means foolproof, but it does help us some.&n; */

@@ -4,9 +4,9 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
-macro_line|#include &quot;usb.h&quot;
 macro_line|#if LINUX_VERSION_CODE&lt;0x2032d || !defined(__KERNEL__) || !defined(__OPTIMIZE__)
 macro_line|#error You can not compile this driver on this kernel with this C options!
 macro_line|#endif

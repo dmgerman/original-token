@@ -12,15 +12,15 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;  /* for in_interrupt() */
+DECL|macro|DEBUG
+macro_line|#undef DEBUG
+macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
-DECL|macro|DEBUG
-macro_line|#undef DEBUG
 DECL|macro|OHCI_USE_NPS
 mdefine_line|#define OHCI_USE_NPS
-macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;usb-ohci.h&quot;
 macro_line|#include &lt;linux/pm.h&gt;
 r_static

@@ -13,7 +13,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
-macro_line|#include &quot;usb.h&quot;
+macro_line|#include &lt;linux/usb.h&gt;
 multiline_comment|/* current USB framework handles max of 16 USB devices per driver */
 DECL|macro|MAX_CAMERAS
 mdefine_line|#define&t;MAX_CAMERAS&t;&t;8

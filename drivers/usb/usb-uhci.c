@@ -12,21 +12,21 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;&t;/* for in_interrupt() */
 macro_line|#include &lt;linux/init.h&gt;
+multiline_comment|/* This enables debug printks */
+DECL|macro|DEBUG
+mdefine_line|#define DEBUG
+macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/* This enables more detailed sanity checks in submit_iso */
 singleline_comment|//#define ISO_SANITY_CHECK
-multiline_comment|/* This enables debug printks */
-DECL|macro|DEBUG
-mdefine_line|#define DEBUG
 multiline_comment|/* This enables all symbols to be exported, to ease debugging oopses */
 singleline_comment|//#define DEBUG_SYMBOLS
 multiline_comment|/* This enables an extra UHCI slab for memory debugging */
 DECL|macro|DEBUG_SLAB
 mdefine_line|#define DEBUG_SLAB
-macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;usb-uhci.h&quot;
 macro_line|#include &quot;usb-uhci-debug.h&quot;
 DECL|macro|DEBUG

@@ -10,8 +10,8 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;usbdevice_fs.h&quot;
 multiline_comment|/* --------------------------------------------------------------------- */
 r_static

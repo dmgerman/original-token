@@ -2,7 +2,7 @@ macro_line|#ifndef __LINUX_UHCI_H
 DECL|macro|__LINUX_UHCI_H
 mdefine_line|#define __LINUX_UHCI_H
 macro_line|#include &lt;linux/list.h&gt;
-macro_line|#include &quot;usb.h&quot;
+macro_line|#include &lt;linux/usb.h&gt;
 multiline_comment|/*&n; * This nested spinlock code is courtesy of Davide Libenzi &lt;dlibenzi@maticad.it&gt;&n; */
 DECL|struct|s_nested_lock
 r_struct

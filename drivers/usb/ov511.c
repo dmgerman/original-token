@@ -23,8 +23,8 @@ macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
+macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;ov511.h&quot;
 DECL|macro|OV511_I2C_RETRIES
 mdefine_line|#define OV511_I2C_RETRIES 3

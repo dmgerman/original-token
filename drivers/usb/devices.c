@@ -3,8 +3,8 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;usbdevice_fs.h&quot;
 DECL|macro|MAX_TOPO_LEVEL
 mdefine_line|#define MAX_TOPO_LEVEL&t;&t;6

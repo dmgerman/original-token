@@ -11,13 +11,13 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+DECL|macro|DEBUG
+mdefine_line|#define DEBUG
+macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-DECL|macro|DEBUG
-mdefine_line|#define DEBUG
-macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;uhci.h&quot;
 macro_line|#include &quot;uhci-debug.h&quot;
 macro_line|#include &lt;linux/pm.h&gt;

@@ -2,7 +2,7 @@ multiline_comment|/*&n; * driver/usb/usb-core.c&n; *&n; * (C) Copyright David Wa
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &quot;usb.h&quot;
+macro_line|#include &lt;linux/usb.h&gt;
 multiline_comment|/*&n; * USB core&n; */
 r_int
 id|usb_hub_init

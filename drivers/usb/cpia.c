@@ -10,8 +10,8 @@ macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;cpia.h&quot;
 DECL|variable|debug
 r_static

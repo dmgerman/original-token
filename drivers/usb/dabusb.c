@@ -11,7 +11,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &quot;usb.h&quot;
+macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &quot;dabusb.h&quot;
 macro_line|#include &quot;dabfirmware.h&quot;
 multiline_comment|/* --------------------------------------------------------------------- */

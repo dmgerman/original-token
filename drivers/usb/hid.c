@@ -10,12 +10,12 @@ macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#include &lt;asm/unaligned.h&gt;
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
 DECL|macro|DEBUG_DATA
 macro_line|#undef DEBUG_DATA
-macro_line|#include &quot;usb.h&quot;
+macro_line|#include &lt;linux/usb.h&gt;
+macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#include &quot;hid.h&quot;
 macro_line|#ifdef DEBUG
 macro_line|#include &quot;hid-debug.h&quot;
