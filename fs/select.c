@@ -581,6 +581,9 @@ id|timeout
 id|poll_table
 op_star
 id|wait
+comma
+op_star
+id|orig_wait
 suffix:semicolon
 r_int
 id|retval
@@ -595,6 +598,8 @@ op_assign
 op_star
 id|timeout
 suffix:semicolon
+id|orig_wait
+op_assign
 id|wait
 op_assign
 l_int|NULL
@@ -643,6 +648,8 @@ c_cond
 id|__timeout
 )paren
 (brace
+id|orig_wait
+op_assign
 id|wait
 op_assign
 id|alloc_wait
@@ -970,7 +977,7 @@ suffix:semicolon
 id|free_wait
 c_func
 (paren
-id|wait
+id|orig_wait
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Up-to-date the caller timeout.&n;&t; */
