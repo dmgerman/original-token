@@ -683,10 +683,10 @@ id|ss2
 comma
 id|__ss2h
 suffix:semicolon
-DECL|member|cr3
+DECL|member|__cr3
 r_int
 r_int
-id|cr3
+id|__cr3
 suffix:semicolon
 DECL|member|eip
 r_int
@@ -826,11 +826,6 @@ r_int
 r_int
 id|esp0
 suffix:semicolon
-DECL|member|cr3
-r_int
-r_int
-id|cr3
-suffix:semicolon
 DECL|member|eip
 r_int
 r_int
@@ -923,11 +918,11 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_THREAD
-mdefine_line|#define INIT_THREAD  {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,(long) &amp;swapper_pg_dir - PAGE_OFFSET,&t;&t;&t;&bslash;&n;&t;0, 0, 0, 0, &t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ [0 ... 7] = 0 },&t;/* debugging registers */&t;&bslash;&n;&t;0, 0, 0,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ { 0, }, },&t;&t;/* 387 state */&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,{~0,}&t;&t;&t;/* io permissions */&t;&t;&bslash;&n;}
+mdefine_line|#define INIT_THREAD  {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0, 0, 0, 0, &t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ [0 ... 7] = 0 },&t;/* debugging registers */&t;&bslash;&n;&t;0, 0, 0,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ { 0, }, },&t;&t;/* 387 state */&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,{~0,}&t;&t;&t;/* io permissions */&t;&t;&bslash;&n;}
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP &bslash;&n;{ &amp;init_mm, 0, 0, NULL, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,0, /* back_link, __blh */&t;&t;&t;&t;&bslash;&n;&t;sizeof(init_stack) + (long) &amp;init_stack, /* esp0 */&t;&bslash;&n;&t;__KERNEL_DS, 0, /* ss0 */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* stack1, stack2 */&t;&t;&t;&bslash;&n;&t;(long) &amp;swapper_pg_dir - PAGE_OFFSET, /* cr3 */&t;&t;&bslash;&n;&t;0,0, /* eip,eflags */&t;&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0, /* eax,ecx,edx,ebx */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0, /* esp,ebp,esi,edi */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* es,cs,ss */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* ds,fs,gs */&t;&t;&t;&t;&bslash;&n;&t;__LDT(0),0, /* ldt */&t;&t;&t;&t;&t;&bslash;&n;&t;0, INVALID_IO_BITMAP_OFFSET, /* tace, bitmap */&t;&t;&bslash;&n;&t;{~0, } /* ioperm */&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,0, /* back_link, __blh */&t;&t;&t;&t;&bslash;&n;&t;sizeof(init_stack) + (long) &amp;init_stack, /* esp0 */&t;&bslash;&n;&t;__KERNEL_DS, 0, /* ss0 */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* stack1, stack2 */&t;&t;&t;&bslash;&n;&t;0, /* cr3 */&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,0, /* eip,eflags */&t;&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0, /* eax,ecx,edx,ebx */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0, /* esp,ebp,esi,edi */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* es,cs,ss */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* ds,fs,gs */&t;&t;&t;&t;&bslash;&n;&t;__LDT(0),0, /* ldt */&t;&t;&t;&t;&t;&bslash;&n;&t;0, INVALID_IO_BITMAP_OFFSET, /* tace, bitmap */&t;&t;&bslash;&n;&t;{~0, } /* ioperm */&t;&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|start_thread
 mdefine_line|#define start_thread(regs, new_eip, new_esp) do {&t;&t;&bslash;&n;&t;__asm__(&quot;movl %w0,%%fs ; movl %w0,%%gs&quot;: :&quot;r&quot; (0));&t;&bslash;&n;&t;set_fs(USER_DS);&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;xds = __USER_DS;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;xes = __USER_DS;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;xss = __USER_DS;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;xcs = __USER_CS;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;eip = new_eip;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;esp = new_esp;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/* Forward declaration, a strange C thing */

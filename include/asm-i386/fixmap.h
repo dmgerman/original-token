@@ -4,6 +4,7 @@ DECL|macro|_ASM_FIXMAP_H
 mdefine_line|#define _ASM_FIXMAP_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;asm/apic.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/*&n; * Here we define all the compile-time &squot;special&squot; virtual&n; * addresses. The point is to have a constant address at&n; * compile time, but to set the physical address only&n; * in the boot process. We allocate these special  addresses&n; * from the end of virtual memory (0xfffff000) backwards.&n; * Also this lets us do fail-safe vmalloc(), we&n; * can guarantee that these special addresses and&n; * vmalloc()-ed addresses never overlap.&n; *&n; * these &squot;compile-time allocated&squot; memory buffers are&n; * fixed-size 4k pages. (or larger if used with an increment&n; * bigger than 1) use fixmap_set(idx,phys) to associate&n; * physical memory with fixmap indices.&n; *&n; * TLB entries of such buffers will not be flushed across&n; * task switches.&n; */
 multiline_comment|/*&n; * on UP currently we will have no trace of the fixmap mechanizm,&n; * no page table allocations, etc. This might change in the&n; * future, say framebuffers for the console driver(s) could be&n; * fix-mapped?&n; */
@@ -18,8 +19,17 @@ comma
 multiline_comment|/* local (CPU) APIC) -- required for SMP or not */
 macro_line|#endif
 macro_line|#ifdef CONFIG_X86_IO_APIC
-DECL|enumerator|FIX_IO_APIC_BASE
-id|FIX_IO_APIC_BASE
+DECL|enumerator|FIX_IO_APIC_BASE_0
+id|FIX_IO_APIC_BASE_0
+comma
+DECL|enumerator|FIX_IO_APIC_BASE_END
+id|FIX_IO_APIC_BASE_END
+op_assign
+id|FIX_IO_APIC_BASE_0
+op_plus
+id|MAX_IO_APICS
+op_minus
+l_int|1
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_X86_VISWS_APIC

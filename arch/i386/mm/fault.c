@@ -834,9 +834,9 @@ id|printk
 c_func
 (paren
 id|KERN_ALERT
-l_string|&quot;current-&gt;thread.cr3 = %08lx, %%cr3 = %08lx&bslash;n&quot;
+l_string|&quot;current-&gt;active_mm.pgd = %p, %%cr3 = %08lx&bslash;n&quot;
 comma
-id|tsk-&gt;thread.cr3
+id|tsk-&gt;active_mm-&gt;pgd
 comma
 id|page
 )paren

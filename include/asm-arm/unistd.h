@@ -384,6 +384,22 @@ multiline_comment|/* 188 reserved */
 multiline_comment|/* 189 reserved */
 DECL|macro|__NR_vfork
 mdefine_line|#define __NR_vfork&t;&t;&t;(__NR_SYSCALL_BASE+190)
+DECL|macro|__NR_timer_create
+mdefine_line|#define __NR_timer_create&t;&t;(__NR_SYSCALL_BASE+191)
+DECL|macro|__NR_timer_settime
+mdefine_line|#define __NR_timer_settime&t;&t;(__NR_SYSCALL_BASE+192)
+DECL|macro|__NR_timer_gettime
+mdefine_line|#define __NR_timer_gettime&t;&t;(__NR_SYSCALL_BASE+193)
+DECL|macro|__NR_timer_getoverrun
+mdefine_line|#define __NR_timer_getoverrun&t;&t;(__NR_SYSCALL_BASE+194)
+DECL|macro|__NR_timer_delete
+mdefine_line|#define __NR_timer_delete&t;&t;(__NR_SYSCALL_BASE+195)
+DECL|macro|__NR_clock_gettime
+mdefine_line|#define __NR_clock_gettime&t;&t;(__NR_SYSCALL_BASE+196)
+DECL|macro|__NR_clock_settime
+mdefine_line|#define __NR_clock_settime&t;&t;(__NR_SYSCALL_BASE+197)
+DECL|macro|__NR_clock_getres
+mdefine_line|#define __NR_clock_getres&t;&t;(__NR_SYSCALL_BASE+198)
 DECL|macro|__sys2
 mdefine_line|#define __sys2(x) #x
 DECL|macro|__sys1

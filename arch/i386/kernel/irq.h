@@ -138,7 +138,7 @@ mdefine_line|#define FIRST_EXTERNAL_VECTOR&t;0x20
 DECL|macro|SYSCALL_VECTOR
 mdefine_line|#define SYSCALL_VECTOR&t;&t;0x80
 multiline_comment|/*&n; * Vectors 0x20-0x2f are used for ISA interrupts.&n; */
-multiline_comment|/*&n; * Special IRQ vectors used by the SMP architecture:&n; *&n; * (some of the following vectors are &squot;rare&squot;, they might be merged&n; *  into a single vector to save vector space. TLB, reschedule and&n; *  local APIC vectors are performance-critical.)&n; */
+multiline_comment|/*&n; * Special IRQ vectors used by the SMP architecture:&n; *&n; * (some of the following vectors are &squot;rare&squot;, they are merged&n; *  into a single vector (FUNCTION_VECTOR) to save vector space.&n; *  TLB, reschedule and local APIC vectors are performance-critical.)&n; */
 DECL|macro|RESCHEDULE_VECTOR
 mdefine_line|#define RESCHEDULE_VECTOR&t;0x30
 DECL|macro|INVALIDATE_TLB_VECTOR
@@ -399,20 +399,6 @@ r_int
 id|mp_bus_id_to_pci_bus
 (braket
 id|MAX_MP_BUSSES
-)braket
-suffix:semicolon
-r_extern
-r_char
-id|ioapic_OEM_ID
-(braket
-l_int|16
-)braket
-suffix:semicolon
-r_extern
-r_char
-id|ioapic_Product_ID
-(braket
-l_int|16
 )braket
 suffix:semicolon
 r_extern

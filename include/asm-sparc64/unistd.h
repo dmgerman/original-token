@@ -446,6 +446,22 @@ DECL|macro|__NR_nfsservctl
 mdefine_line|#define __NR_nfsservctl         254
 DECL|macro|__NR_aplib
 mdefine_line|#define __NR_aplib              255
+DECL|macro|__NR_timer_create
+mdefine_line|#define __NR_timer_create&t;256
+DECL|macro|__NR_timer_settime
+mdefine_line|#define __NR_timer_settime&t;257
+DECL|macro|__NR_timer_gettime
+mdefine_line|#define __NR_timer_gettime&t;258
+DECL|macro|__NR_timer_getoverrun
+mdefine_line|#define __NR_timer_getoverrun&t;259
+DECL|macro|__NR_timer_delete
+mdefine_line|#define __NR_timer_delete&t;260
+DECL|macro|__NR_clock_gettime
+mdefine_line|#define __NR_clock_gettime&t;261
+DECL|macro|__NR_clock_settime
+mdefine_line|#define __NR_clock_settime&t;262
+DECL|macro|__NR_clock_getres
+mdefine_line|#define __NR_clock_getres&t;263
 DECL|macro|_syscall0
 mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ __volatile__ (&quot;mov %0, %%g1&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;      &quot;t 0x6d&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;      &quot;sub %%g0, %%o0, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;      &quot;movcc %%xcc, %%o0, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;      : &quot;=r&quot; (__res)&bslash;&n;&t;&t;      : &quot;0&quot; (__NR_##name) &bslash;&n;&t;&t;      : &quot;g1&quot;, &quot;o0&quot;, &quot;cc&quot;); &bslash;&n;if (__res &gt;= 0) &bslash;&n;    return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}
 DECL|macro|_syscall1

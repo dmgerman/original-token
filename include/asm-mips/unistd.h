@@ -2322,6 +2322,22 @@ DECL|macro|__NR_getpmsg
 mdefine_line|#define __NR_getpmsg&t;&t;&t;(__NR_Linux + 208)
 DECL|macro|__NR_putpmsg
 mdefine_line|#define __NR_putpmsg&t;&t;&t;(__NR_Linux + 209)
+DECL|macro|__NR_timer_create
+mdefine_line|#define __NR_timer_create&t;&t;(__NR_Linux + 210)
+DECL|macro|__NR_timer_settime
+mdefine_line|#define __NR_timer_settime&t;&t;(__NR_Linux + 211)
+DECL|macro|__NR_timer_gettime
+mdefine_line|#define __NR_timer_gettime&t;&t;(__NR_Linux + 212)
+DECL|macro|__NR_timer_getoverrun
+mdefine_line|#define __NR_timer_getoverrun&t;&t;(__NR_Linux + 213)
+DECL|macro|__NR_timer_delete
+mdefine_line|#define __NR_timer_delete&t;&t;(__NR_Linux + 214)
+DECL|macro|__NR_clock_gettime
+mdefine_line|#define __NR_clock_gettime&t;&t;(__NR_Linux + 215)
+DECL|macro|__NR_clock_settime
+mdefine_line|#define __NR_clock_settime&t;&t;(__NR_Linux + 216)
+DECL|macro|__NR_clock_getres
+mdefine_line|#define __NR_clock_getres&t;&t;(__NR_Linux + 217)
 multiline_comment|/*&n; * Offset of the last Linux flavoured syscall&n; */
 DECL|macro|__NR_Linux_syscalls
 mdefine_line|#define __NR_Linux_syscalls&t;&t;209

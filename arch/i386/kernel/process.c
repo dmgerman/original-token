@@ -934,6 +934,10 @@ id|current-&gt;mm-&gt;pgd
 op_assign
 id|swapper_pg_dir
 suffix:semicolon
+id|current-&gt;active_mm-&gt;pgd
+op_assign
+id|swapper_pg_dir
+suffix:semicolon
 id|activate_context
 c_func
 (paren
@@ -2293,52 +2297,6 @@ id|prev-&gt;gs
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Re-load LDT if necessary&n;&t; */
-r_if
-c_cond
-(paren
-id|prev_p-&gt;active_mm-&gt;segments
-op_ne
-id|next_p-&gt;active_mm-&gt;segments
-)paren
-id|load_LDT
-c_func
-(paren
-id|next_p-&gt;mm
-)paren
-suffix:semicolon
-multiline_comment|/* Re-load page tables */
-(brace
-r_int
-r_int
-id|new_cr3
-op_assign
-id|next-&gt;cr3
-suffix:semicolon
-id|tss-&gt;cr3
-op_assign
-id|new_cr3
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|new_cr3
-op_ne
-id|prev-&gt;cr3
-)paren
-id|asm
-r_volatile
-(paren
-l_string|&quot;movl %0,%%cr3&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|new_cr3
-)paren
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * Restore %fs and %gs.&n;&t; */
 id|loadsegment
 c_func

@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_X86_LOCAL_APIC
 macro_line|#ifndef ASSEMBLY
 macro_line|#include &lt;asm/fixmap.h&gt;
-macro_line|#include &lt;asm/i82489.h&gt;
+macro_line|#include &lt;asm/apic.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#endif
 macro_line|#endif
@@ -566,6 +566,70 @@ id|__cpu_logical_map
 (braket
 id|cpu
 )braket
+suffix:semicolon
+)brace
+DECL|function|apic_write
+r_extern
+id|__inline
+r_void
+id|apic_write
+c_func
+(paren
+r_int
+r_int
+id|reg
+comma
+r_int
+r_int
+id|v
+)paren
+(brace
+op_star
+(paren
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+(paren
+id|APIC_BASE
+op_plus
+id|reg
+)paren
+)paren
+op_assign
+id|v
+suffix:semicolon
+)brace
+DECL|function|apic_read
+r_extern
+id|__inline
+r_int
+r_int
+id|apic_read
+c_func
+(paren
+r_int
+r_int
+id|reg
+)paren
+(brace
+r_return
+op_star
+(paren
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+(paren
+id|APIC_BASE
+op_plus
+id|reg
+)paren
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;General functions that each host system must provide.&n; */

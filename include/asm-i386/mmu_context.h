@@ -2,16 +2,11 @@ macro_line|#ifndef __I386_MMU_CONTEXT_H
 DECL|macro|__I386_MMU_CONTEXT_H
 mdefine_line|#define __I386_MMU_CONTEXT_H
 macro_line|#include &lt;asm/desc.h&gt;
-multiline_comment|/*&n; * get a new mmu context.. x86&squot;s don&squot;t know much about contexts,&n; * but we have to reload the new LDT in exec().&n; *&n; * We implement lazy MMU context-switching on x86 to optimize context&n; * switches done to/from kernel threads. Kernel threads &squot;inherit&squot; the&n; * previous MM, so Linux doesnt have to flush the TLB. In most cases&n; * we switch back to the same process so we preserve the TLB cache.&n; * This all means that kernel threads have about as much overhead as&n; * a function call ...&n; */
-DECL|macro|get_mmu_context
-mdefine_line|#define get_mmu_context(next) do { } while (0)
-DECL|macro|set_mmu_context
-mdefine_line|#define set_mmu_context(prev,next) do { next-&gt;thread.cr3 = prev-&gt;thread.cr3; } while(0)
 multiline_comment|/*&n; * possibly do the LDT unload here?&n; */
 DECL|macro|destroy_context
 mdefine_line|#define destroy_context(mm)&t;&t;do { } while(0)
 DECL|macro|init_new_context
-mdefine_line|#define init_new_context(tsk,mm)&t;do { (tsk)-&gt;thread.cr3 = __pa((mm)-&gt;pgd); } while (0)
+mdefine_line|#define init_new_context(tsk,mm)&t;do { } while (0)
 DECL|function|activate_context
 r_static
 r_inline
@@ -36,27 +31,11 @@ id|mm
 op_assign
 id|tsk-&gt;mm
 suffix:semicolon
-r_int
-r_int
-id|cr3
-suffix:semicolon
 id|load_LDT
 c_func
 (paren
 id|mm
 )paren
-suffix:semicolon
-id|cr3
-op_assign
-id|__pa
-c_func
-(paren
-id|mm-&gt;pgd
-)paren
-suffix:semicolon
-id|tsk-&gt;thread.cr3
-op_assign
-id|cr3
 suffix:semicolon
 id|__asm__
 id|__volatile__
@@ -67,7 +46,61 @@ suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
 (paren
-id|cr3
+id|__pa
+c_func
+(paren
+id|mm-&gt;pgd
+)paren
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|switch_mm
+r_static
+r_inline
+r_void
+id|switch_mm
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|prev
+comma
+r_struct
+id|mm_struct
+op_star
+id|next
+)paren
+(brace
+multiline_comment|/*&n;&t; * Re-load LDT if necessary&n;&t; */
+r_if
+c_cond
+(paren
+id|prev-&gt;segments
+op_ne
+id|next-&gt;segments
+)paren
+id|load_LDT
+c_func
+(paren
+id|next
+)paren
+suffix:semicolon
+multiline_comment|/* Re-load page tables */
+id|asm
+r_volatile
+(paren
+l_string|&quot;movl %0,%%cr3&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|__pa
+c_func
+(paren
+id|next-&gt;pgd
+)paren
 )paren
 )paren
 suffix:semicolon
