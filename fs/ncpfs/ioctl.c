@@ -1150,14 +1150,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|server-&gt;sign_active
+id|arg
 )paren
 (brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1220,6 +1215,14 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* ignore when signatures not wanted */
+)brace
+r_else
+(brace
+id|server-&gt;sign_active
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon

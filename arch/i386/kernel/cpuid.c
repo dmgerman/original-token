@@ -194,7 +194,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-macro_line|#else /* ! __SMP__ */
+macro_line|#else /* ! CONFIG_SMP */
 DECL|function|do_cpuid
 r_extern
 r_inline
@@ -244,7 +244,7 @@ l_int|3
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* ! __SMP__ */
+macro_line|#endif /* ! CONFIG_SMP */
 DECL|function|cpuid_seek
 r_static
 id|loff_t

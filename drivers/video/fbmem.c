@@ -1011,6 +1011,16 @@ id|resolver_video_setup
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_FB_SIS
+(brace
+l_string|&quot;sisfb&quot;
+comma
+id|sisfb_init
+comma
+id|sisfb_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_FB_VIRTUAL
 multiline_comment|/* Must be last to avoid that vfb becomes your primary display */
 (brace
@@ -1019,16 +1029,6 @@ comma
 id|vfb_init
 comma
 id|vfb_setup
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_FB_SIS
-(brace
-l_string|&quot;sisfb&quot;
-comma
-id|sisfb_init
-comma
-id|sisfb_setup
 )brace
 comma
 macro_line|#endif

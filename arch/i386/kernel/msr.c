@@ -474,7 +474,7 @@ id|cmd.err
 suffix:semicolon
 )brace
 )brace
-macro_line|#else /* ! __SMP__ */
+macro_line|#else /* ! CONFIG_SMP */
 DECL|function|do_wrmsr
 r_extern
 r_inline
@@ -541,7 +541,7 @@ id|edx
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* ! __SMP__ */
+macro_line|#endif /* ! CONFIG_SMP */
 DECL|function|msr_seek
 r_static
 id|loff_t

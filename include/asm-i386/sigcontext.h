@@ -1,6 +1,7 @@
 macro_line|#ifndef _ASMi386_SIGCONTEXT_H
 DECL|macro|_ASMi386_SIGCONTEXT_H
 mdefine_line|#define _ASMi386_SIGCONTEXT_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * As documented in the iBCS2 standard..&n; *&n; * The first part of &quot;struct _fpstate&quot; is just the&n; * normal i387 hardware setup, the extra &quot;status&quot;&n; * word is used to save the coprocessor status word&n; * before entering the handler.&n; */
 DECL|struct|_fpreg
 r_struct
