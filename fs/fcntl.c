@@ -551,11 +551,35 @@ suffix:semicolon
 r_case
 id|F_SETOWN
 suffix:colon
+multiline_comment|/*&n;&t;&t;&t; *&t;Add the security checks - AC. Without this there is a massive&n;&t;&t;&t; *&t;Linux security hole here - consider what happens if you do &n;&t;&t;&t; *&t;something like &n;&t;&t;&t; *&t;&t;fcntl(0,F_SETOWN,some_root_process);&n;&t;&t;&t; *&t;&t;getchar();&n;&t;&t;&t; *&t;and input a line!&n;&t;&t;&t; *&n;&t;&t;&t; *&t;BTW: Don&squot;t try this for fun. Several Unix systems I tried this on&n;&t;&t;&t; *&t;fall for the trick!&n;&t;&t;&t; *&n;&t;&t;&t; *&t;I had to fix this botch job as Linux kill_fasync asserts&n;&t;&t;&t; *&t;priv making it a free all user process killer!&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+op_logical_and
+id|current-&gt;pgrp
+op_ne
+op_minus
+id|arg
+op_logical_and
+id|current-&gt;pid
+op_ne
+id|arg
+)paren
+(brace
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
 id|filp-&gt;f_owner
 op_assign
 id|arg
 suffix:semicolon
-multiline_comment|/* XXX security implications? */
 r_if
 c_cond
 (paren

@@ -598,7 +598,15 @@ suffix:semicolon
 )brace
 id|revalidate
 suffix:colon
-multiline_comment|/* If the dir block has changed since the last call to&n;&t;&t;   readdir(2), then we might be pointing to an invalid dirent&n;&t;&t;   right now.  Scan from the start of the block to make&n;&t;&t;   sure. */
+multiline_comment|/* If the dir block has changed since the last call to&n;&t;&t; * readdir(2), then we might be pointing to an invalid&n;&t;&t; * dirent right now.  Scan from the start of the block&n;&t;&t; * to make sure. */
+r_if
+c_cond
+(paren
+id|filp-&gt;f_version
+op_ne
+id|inode-&gt;i_version
+)paren
+(brace
 r_for
 c_loop
 (paren
@@ -629,7 +637,7 @@ op_plus
 id|i
 )paren
 suffix:semicolon
-multiline_comment|/* It&squot;s too expensive to do a full dirent test&n;&t;&t;&t; * each time round this loop, but we do have&n;&t;&t;&t; * to test at least that it is non-zero.  A&n;&t;&t;&t; * failure will be detected in the dirent test&n;&t;&t;&t; * below. */
+multiline_comment|/* It&squot;s too expensive to do a full&n;&t;&t;&t;&t; * dirent test each time round this&n;&t;&t;&t;&t; * loop, but we do have to test at&n;&t;&t;&t;&t; * least that it is non-zero.  A&n;&t;&t;&t;&t; * failure will be detected in the&n;&t;&t;&t;&t; * dirent test below. */
 r_if
 c_cond
 (paren
@@ -667,6 +675,11 @@ l_int|1
 op_or
 id|offset
 suffix:semicolon
+id|filp-&gt;f_version
+op_assign
+id|inode-&gt;i_version
+suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -714,7 +727,7 @@ id|offset
 )paren
 )paren
 (brace
-multiline_comment|/* On error, skip the f_pos to the next block. */
+multiline_comment|/* On error, skip the f_pos to the&n;                                   next block. */
 id|filp-&gt;f_pos
 op_assign
 (paren
@@ -760,7 +773,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* Old libc libraries always use a count of 1. */
+multiline_comment|/* Old libc libraries always use a&n;                                   count of 1. */
 r_if
 c_cond
 (paren
@@ -790,7 +803,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* We might block in the next section&n;                               * if the data destination is&n;                               * currently swapped out.  So, use a&n;                               * version stamp to detect whether or&n;                               * not the directory has been modified&n;                               * during the copy operation. */
+multiline_comment|/* We might block in the next section&n;&t;&t;&t;&t; * if the data destination is&n;&t;&t;&t;&t; * currently swapped out.  So, use a&n;&t;&t;&t;&t; * version stamp to detect whether or&n;&t;&t;&t;&t; * not the directory has been modified&n;&t;&t;&t;&t; * during the copy operation. */
 id|version
 op_assign
 id|inode-&gt;i_version

@@ -1438,7 +1438,6 @@ c_cond
 (paren
 id|info-&gt;xmit_cnt
 op_logical_and
-op_logical_neg
 id|info-&gt;xmit_buf
 op_logical_and
 op_logical_neg

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Routines having to do with the &squot;struct sk_buff&squot; memory handlers.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Routines having to do with the &squot;struct sk_buff&squot; memory handlers.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&n; *&t;Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Fixed the worst of the load balancer bugs.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;Note: There are a load of cli()/sti() pairs protecting the net_memory type&n; *&t;variables. Without them for some reason the ++/-- operators do not come out&n; *&t;atomic. Also with gcc 2.4.5 these counts can come out wrong anyway - use 2.5.8!!&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1278,50 +1278,9 @@ id|skb-&gt;sk
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_SLAVE_BALANCING
-r_if
-c_cond
-(paren
-id|skb-&gt;in_dev_queue
-op_logical_and
-id|skb-&gt;dev
-op_ne
-l_int|NULL
-)paren
-(brace
-id|skb-&gt;dev-&gt;pkt_queue
-op_decrement
-suffix:semicolon
-)brace
-macro_line|#endif
-id|kfree_skbmem
-c_func
-(paren
-id|skb
-comma
-id|skb-&gt;mem_len
-)paren
-suffix:semicolon
 )brace
 )brace
 r_else
-(brace
-macro_line|#ifdef CONFIG_SLAVE_BALANCING
-r_if
-c_cond
-(paren
-id|skb-&gt;in_dev_queue
-op_logical_and
-id|skb-&gt;dev
-op_ne
-l_int|NULL
-)paren
-(brace
-id|skb-&gt;dev-&gt;pkt_queue
-op_decrement
-suffix:semicolon
-)brace
-macro_line|#endif
 id|kfree_skbmem
 c_func
 (paren
@@ -1330,7 +1289,6 @@ comma
 id|skb-&gt;mem_len
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; *&t;Allocate a new skbuff. We do this ourselves so we can fill in a few &squot;private&squot;&n; *&t;fields and also do memory statistics to find all the [BEEP] leaks.&n; */
 DECL|function|alloc_skb

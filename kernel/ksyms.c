@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#ifdef CONFIG_INET
+macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/irq.h&gt;
@@ -631,6 +632,19 @@ c_func
 id|si_meminfo
 )paren
 comma
+multiline_comment|/* socket layer registration */
+id|X
+c_func
+(paren
+id|sock_register
+)paren
+comma
+id|X
+c_func
+(paren
+id|sock_unregister
+)paren
+comma
 macro_line|#ifdef CONFIG_FTAPE
 multiline_comment|/* The next labels are needed for ftape driver.  */
 id|X
@@ -712,6 +726,42 @@ id|X
 c_func
 (paren
 id|irq2dev_map
+)paren
+comma
+id|X
+c_func
+(paren
+id|dev_add_pack
+)paren
+comma
+id|X
+c_func
+(paren
+id|dev_remove_pack
+)paren
+comma
+id|X
+c_func
+(paren
+id|dev_get
+)paren
+comma
+id|X
+c_func
+(paren
+id|dev_ioctl
+)paren
+comma
+id|X
+c_func
+(paren
+id|dev_queue_xmit
+)paren
+comma
+id|X
+c_func
+(paren
+id|dev_base
 )paren
 comma
 macro_line|#endif

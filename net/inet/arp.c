@@ -1,4 +1,4 @@
-multiline_comment|/* linux/net/inet/arp.c&n; *&n; * Copyright (C) 1994 by Florian  La Roche&n; *&n; * This module implements the Address Resolution Protocol ARP (RFC 826),&n; * which is used to convert IP addresses (or in the future maybe other&n; * high-level addresses into a low-level hardware address (like an Ethernet&n; * address).&n; *&n; * FIXME:&n; *&t;Experiment with better retransmit timers&n; *&t;Clean up the timer deletions&n; *&t;If you create a proxy entry set your interface address to the address&n; *&t;and then delete it, proxies may get out of sync with reality - check this&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Removed the ethernet assumptions in Florian&squot;s code&n; *&t;&t;Alan Cox&t;:&t;Fixed some small errors in the ARP logic&n; *&t;&t;Alan Cox&t;:&t;Allow &gt;4K in /proc&n; *&t;&t;Alan Cox&t;:&t;Make ARP add its own protocol entry&n; *&n; *              Ross Martin     :       Rewrote arp_rcv() and arp_get_info()&n; *&t;&t;Stephen Henson&t;:&t;Add AX25 support to arp_get_info()&n; *&t;&t;Alan Cox&t;:&t;Drop data when a device is downed.&n; *&t;&t;Alan Cox&t;:&t;Use init_timer().&n; *&t;&t;Alan Cox&t;:&t;Double lock fixes.&n; *&t;&t;Martin Seine&t;:&t;Move the arphdr structure&n; *&t;&t;&t;&t;&t;to if_arp.h for compatibility&n; *&t;&t;&t;&t;&t;with BSD based programs.&n; */
+multiline_comment|/* linux/net/inet/arp.c&n; *&n; * Copyright (C) 1994 by Florian  La Roche&n; *&n; * This module implements the Address Resolution Protocol ARP (RFC 826),&n; * which is used to convert IP addresses (or in the future maybe other&n; * high-level addresses into a low-level hardware address (like an Ethernet&n; * address).&n; *&n; * FIXME:&n; *&t;Experiment with better retransmit timers&n; *&t;Clean up the timer deletions&n; *&t;If you create a proxy entry set your interface address to the address&n; *&t;and then delete it, proxies may get out of sync with reality - check this&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Removed the ethernet assumptions in Florian&squot;s code&n; *&t;&t;Alan Cox&t;:&t;Fixed some small errors in the ARP logic&n; *&t;&t;Alan Cox&t;:&t;Allow &gt;4K in /proc&n; *&t;&t;Alan Cox&t;:&t;Make ARP add its own protocol entry&n; *&n; *              Ross Martin     :       Rewrote arp_rcv() and arp_get_info()&n; *&t;&t;Stephen Henson&t;:&t;Add AX25 support to arp_get_info()&n; *&t;&t;Alan Cox&t;:&t;Drop data when a device is downed.&n; *&t;&t;Alan Cox&t;:&t;Use init_timer().&n; *&t;&t;Alan Cox&t;:&t;Double lock fixes.&n; *&t;&t;Martin Seine&t;:&t;Move the arphdr structure&n; *&t;&t;&t;&t;&t;to if_arp.h for compatibility&n; *&t;&t;&t;&t;&t;with BSD based programs.&n; *              Andrew Tridgell :       Added ARP netmask code and&n; *                                      re-arranged proxy handling&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -55,6 +55,12 @@ r_int
 id|ip
 suffix:semicolon
 multiline_comment|/* ip address of entry &t;&t;*/
+DECL|member|mask
+r_int
+r_int
+id|mask
+suffix:semicolon
+multiline_comment|/* netmask - used for generalised proxy arps (tridge) &t;&t;*/
 DECL|member|ha
 r_int
 r_char
@@ -116,6 +122,7 @@ mdefine_line|#define ARP_TIMEOUT&t;&t;(600*HZ)
 multiline_comment|/*&n; *&t;How often is the function &squot;arp_check_retries&squot; called.&n; *&t;An entry is invalidated in the time between ARP_TIMEOUT and&n; *&t;(ARP_TIMEOUT+ARP_CHECK_INTERVAL).&n; */
 DECL|macro|ARP_CHECK_INTERVAL
 mdefine_line|#define ARP_CHECK_INTERVAL&t;(60 * HZ)
+multiline_comment|/* Forward declarations. */
 r_static
 r_void
 id|arp_check_expire
@@ -124,7 +131,21 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* Forward declaration. */
+r_static
+r_struct
+id|arp_table
+op_star
+id|arp_lookup
+c_func
+(paren
+r_int
+r_int
+id|paddr
+comma
+r_int
+id|exact
+)paren
+suffix:semicolon
 DECL|variable|arp_timer
 r_static
 r_struct
@@ -144,16 +165,22 @@ op_amp
 id|arp_check_expire
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * The default arp netmask is just 255.255.255.255 which means it&squot;s&n; * a single machine entry. Only proxy entries can have other netmasks&n; *&n;*/
+DECL|macro|DEF_ARP_NETMASK
+mdefine_line|#define DEF_ARP_NETMASK (~0)
 multiline_comment|/*&n; * &t;The size of the hash table. Must be a power of two.&n; * &t;Maybe we should remove hashing in the future for arp and concentrate&n; * &t;on Patrick Schaaf&squot;s Host-Cache-Lookup...&n; */
 DECL|macro|ARP_TABLE_SIZE
 mdefine_line|#define ARP_TABLE_SIZE  16
+multiline_comment|/* The ugly +1 here is to cater for proxy entries. They are put in their &n;   own list for efficiency of lookup. If you don&squot;t want to find a proxy&n;   entry then don&squot;t look in the last entry, otherwise do &n;*/
+DECL|macro|FULL_ARP_TABLE_SIZE
+mdefine_line|#define FULL_ARP_TABLE_SIZE (ARP_TABLE_SIZE+1)
 DECL|variable|arp_tables
 r_struct
 id|arp_table
 op_star
 id|arp_tables
 (braket
-id|ARP_TABLE_SIZE
+id|FULL_ARP_TABLE_SIZE
 )braket
 op_assign
 (brace
@@ -161,17 +188,11 @@ l_int|NULL
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;The last bits in the IP address are used for the cache lookup.&n; */
+multiline_comment|/*&n; *&t;The last bits in the IP address are used for the cache lookup.&n; *      A special entry is used for proxy arp entries&n; */
 DECL|macro|HASH
 mdefine_line|#define HASH(paddr) &t;&t;(htonl(paddr) &amp; (ARP_TABLE_SIZE - 1))
-multiline_comment|/*&n; *&t;Number of proxy arp entries. This is normally zero and we use it to do&n; *&t;some optimizing for normal uses.&n; */
-DECL|variable|proxies
-r_static
-r_int
-id|proxies
-op_assign
-l_int|0
-suffix:semicolon
+DECL|macro|PROXY_HASH
+mdefine_line|#define PROXY_HASH ARP_TABLE_SIZE
 multiline_comment|/*&n; *&t;Check if there are too old entries and remove them. If the ATF_PERM&n; *&t;flag is set, they are always left in the arp cache (permanent entry).&n; *&t;Note: Only fully resolved entries, which don&squot;t have any packets in&n; *&t;the queue, can be deleted, since ARP_TIMEOUT is much greater than&n; *&t;ARP_MAX_TRIES*ARP_RES_TIME.&n; */
 DECL|function|arp_check_expire
 r_static
@@ -217,7 +238,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|ARP_TABLE_SIZE
+id|FULL_ARP_TABLE_SIZE
 suffix:semicolon
 id|i
 op_increment
@@ -278,16 +299,6 @@ op_assign
 id|entry-&gt;next
 suffix:semicolon
 multiline_comment|/* remove from list */
-r_if
-c_cond
-(paren
-id|entry-&gt;flags
-op_amp
-id|ATF_PUBL
-)paren
-id|proxies
-op_decrement
-suffix:semicolon
 id|del_timer
 c_func
 (paren
@@ -365,16 +376,6 @@ suffix:semicolon
 r_int
 r_int
 id|flags
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|entry-&gt;flags
-op_amp
-id|ATF_PUBL
-)paren
-id|proxies
-op_decrement
 suffix:semicolon
 id|save_flags
 c_func
@@ -494,7 +495,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|ARP_TABLE_SIZE
+id|FULL_ARP_TABLE_SIZE
 suffix:semicolon
 id|i
 op_increment
@@ -544,16 +545,6 @@ op_assign
 id|entry-&gt;next
 suffix:semicolon
 multiline_comment|/* remove from list */
-r_if
-c_cond
-(paren
-id|entry-&gt;flags
-op_amp
-id|ATF_PUBL
-)paren
-id|proxies
-op_decrement
-suffix:semicolon
 id|del_timer
 c_func
 (paren
@@ -1066,6 +1057,23 @@ c_func
 id|entry-&gt;ip
 )paren
 suffix:semicolon
+multiline_comment|/* proxy entries shouldn&squot;t really time out so this is really&n;&t;   only here for completeness&n;&t;*/
+r_if
+c_cond
+(paren
+id|entry-&gt;flags
+op_amp
+id|ATF_PUBL
+)paren
+id|pentry
+op_assign
+op_amp
+id|arp_tables
+(braket
+id|PROXY_HASH
+)braket
+suffix:semicolon
+r_else
 id|pentry
 op_assign
 op_amp
@@ -1355,6 +1363,11 @@ r_int
 id|force
 )paren
 (brace
+r_int
+id|checked_proxies
+op_assign
+l_int|0
+suffix:semicolon
 r_struct
 id|arp_table
 op_star
@@ -1387,6 +1400,22 @@ op_amp
 id|arp_tables
 (braket
 id|hash
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+op_star
+id|pentry
+)paren
+multiline_comment|/* also check proxy entries */
+id|pentry
+op_assign
+op_amp
+id|arp_tables
+(braket
+id|PROXY_HASH
 )braket
 suffix:semicolon
 r_while
@@ -1455,6 +1484,31 @@ op_assign
 op_amp
 id|entry-&gt;next
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|checked_proxies
+op_logical_and
+op_logical_neg
+op_star
+id|pentry
+)paren
+(brace
+multiline_comment|/* ugly. we have to make sure we check proxy&n;&t;&t;       entries as well */
+id|checked_proxies
+op_assign
+l_int|1
+suffix:semicolon
+id|pentry
+op_assign
+op_amp
+id|arp_tables
+(braket
+id|PROXY_HASH
+)braket
+suffix:semicolon
+)brace
 )brace
 id|sti
 c_func
@@ -1533,8 +1587,6 @@ suffix:semicolon
 r_int
 r_int
 id|hash
-comma
-id|dest_hash
 suffix:semicolon
 r_int
 r_char
@@ -1634,6 +1686,9 @@ suffix:semicolon
 macro_line|#endif
 r_case
 id|ARPHRD_ETHER
+suffix:colon
+r_case
+id|ARPHRD_ARCNET
 suffix:colon
 r_if
 c_cond
@@ -1809,34 +1864,6 @@ id|IS_MYADDR
 )paren
 (brace
 multiline_comment|/*&n; * &t;To get in here, it is a request for someone else.  We need to&n; * &t;check if that someone else is one of our proxies.  If it isn&squot;t,&n; * &t;we can toss it.&n; */
-r_if
-c_cond
-(paren
-id|proxies
-op_eq
-l_int|0
-)paren
-(brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-id|dest_hash
-op_assign
-id|HASH
-c_func
-(paren
-id|tip
-)paren
-suffix:semicolon
 id|cli
 c_func
 (paren
@@ -1849,7 +1876,7 @@ id|proxy_entry
 op_assign
 id|arp_tables
 (braket
-id|dest_hash
+id|PROXY_HASH
 )braket
 suffix:semicolon
 id|proxy_entry
@@ -1859,32 +1886,32 @@ op_assign
 id|proxy_entry-&gt;next
 )paren
 (brace
+multiline_comment|/* we will respond to a proxy arp request&n;&t;&t;&t;     if the masked arp table ip matches the masked&n;&t;&t;&t;     tip. This allows a single proxy arp table&n;&t;&t;&t;     entry to be used on a gateway machine to handle&n;&t;&t;&t;     all requests for a whole network, rather than&n;&t;&t;&t;     having to use a huge number of proxy arp entries&n;&t;&t;&t;     and having to keep them uptodate.&n;&t;&t;&t;     */
 r_if
 c_cond
 (paren
-id|proxy_entry-&gt;ip
-op_eq
-id|tip
-op_logical_and
 id|proxy_entry-&gt;htype
 op_eq
 id|htype
+op_logical_and
+op_logical_neg
+(paren
+(paren
+id|proxy_entry-&gt;ip
+op_xor
+id|tip
 )paren
-(brace
+op_amp
+id|proxy_entry-&gt;mask
+)paren
+)paren
 r_break
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond
 (paren
 id|proxy_entry
-op_logical_and
-(paren
-id|proxy_entry-&gt;flags
-op_amp
-id|ATF_PUBL
-)paren
 )paren
 (brace
 id|memcpy
@@ -2145,6 +2172,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|entry-&gt;mask
+op_assign
+id|DEF_ARP_NETMASK
+suffix:semicolon
 id|entry-&gt;ip
 op_assign
 id|sip
@@ -2336,32 +2367,15 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Find an entry&n;&t; */
-r_for
-c_loop
-(paren
 id|entry
 op_assign
-id|arp_tables
-(braket
-id|hash
-)braket
-suffix:semicolon
-id|entry
-op_ne
-l_int|NULL
-suffix:semicolon
-id|entry
-op_assign
-id|entry-&gt;next
-)paren
-r_if
-c_cond
+id|arp_lookup
+c_func
 (paren
-id|entry-&gt;ip
-op_eq
 id|paddr
+comma
+l_int|0
 )paren
-r_break
 suffix:semicolon
 r_if
 c_cond
@@ -2478,6 +2492,10 @@ op_ne
 l_int|NULL
 )paren
 (brace
+id|entry-&gt;mask
+op_assign
+id|DEF_ARP_NETMASK
+suffix:semicolon
 id|entry-&gt;ip
 op_assign
 id|paddr
@@ -2715,7 +2733,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;IP address       HW type     Flags       HW address&bslash;n&quot;
+l_string|&quot;IP address       HW type     Flags       HW address            Mask&bslash;n&quot;
 )paren
 suffix:semicolon
 id|pos
@@ -2740,7 +2758,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|ARP_TABLE_SIZE
+id|FULL_ARP_TABLE_SIZE
 suffix:semicolon
 id|i
 op_increment
@@ -2885,7 +2903,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%-17s0x%-10x0x%-10x%s&bslash;n&quot;
+l_string|&quot;%-17s0x%-10x0x%-10x%s&quot;
 comma
 id|in_ntoa
 c_func
@@ -2902,6 +2920,33 @@ comma
 id|entry-&gt;flags
 comma
 id|hbuffer
+)paren
+suffix:semicolon
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+op_plus
+id|size
+comma
+l_string|&quot;     %-17s&bslash;n&quot;
+comma
+id|entry-&gt;mask
+op_eq
+id|DEF_ARP_NETMASK
+ques
+c_cond
+l_string|&quot;*&quot;
+suffix:colon
+id|in_ntoa
+c_func
+(paren
+id|entry-&gt;mask
+)paren
 )paren
 suffix:semicolon
 id|len
@@ -2990,7 +3035,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This will find an entry in the ARP table by looking at the IP address.&n; *&t;Be careful, interrupts are turned off on exit!!!&n; */
+multiline_comment|/*&n; *&t;This will find an entry in the ARP table by looking at the IP address.&n; *      If exact is true then only exact IP matches will be allowed&n; *      for proxy entries, otherwise the netmask will be used&n; */
 DECL|function|arp_lookup
 r_static
 r_struct
@@ -3002,6 +3047,9 @@ c_func
 r_int
 r_int
 id|paddr
+comma
+r_int
+id|exact
 )paren
 (brace
 r_struct
@@ -3017,11 +3065,6 @@ id|HASH
 c_func
 (paren
 id|paddr
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_for
@@ -3048,6 +3091,56 @@ c_cond
 id|entry-&gt;ip
 op_eq
 id|paddr
+)paren
+r_break
+suffix:semicolon
+multiline_comment|/* it&squot;s possibly a proxy entry (with a netmask) */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|entry
+)paren
+r_for
+c_loop
+(paren
+id|entry
+op_assign
+id|arp_tables
+(braket
+id|PROXY_HASH
+)braket
+suffix:semicolon
+id|entry
+op_ne
+l_int|NULL
+suffix:semicolon
+id|entry
+op_assign
+id|entry-&gt;next
+)paren
+r_if
+c_cond
+(paren
+id|exact
+ques
+c_cond
+(paren
+id|entry-&gt;ip
+op_eq
+id|paddr
+)paren
+suffix:colon
+op_logical_neg
+(paren
+(paren
+id|entry-&gt;ip
+op_xor
+id|paddr
+)paren
+op_amp
+id|entry-&gt;mask
+)paren
 )paren
 r_break
 suffix:semicolon
@@ -3090,8 +3183,6 @@ suffix:semicolon
 r_int
 r_int
 id|ip
-comma
-id|hash
 suffix:semicolon
 r_struct
 id|rtable
@@ -3142,6 +3233,20 @@ id|hlen
 op_assign
 id|ETH_ALEN
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ARPHRD_ARCNET
+suffix:colon
+id|htype
+op_assign
+id|ARPHRD_ARCNET
+suffix:semicolon
+id|hlen
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* length of arcnet addresses */
 r_break
 suffix:semicolon
 macro_line|#ifdef CONFIG_AX25
@@ -3224,46 +3329,21 @@ op_minus
 id|ENETUNREACH
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Is there an existing entry for this address?&n;&t; */
-id|hash
-op_assign
-id|HASH
-c_func
-(paren
-id|ip
-)paren
-suffix:semicolon
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Find the entry&n;&t; */
-r_for
-c_loop
-(paren
 id|entry
 op_assign
-id|arp_tables
-(braket
-id|hash
-)braket
-suffix:semicolon
-id|entry
-op_ne
-l_int|NULL
-suffix:semicolon
-id|entry
-op_assign
-id|entry-&gt;next
-)paren
-r_if
-c_cond
+id|arp_lookup
+c_func
 (paren
-id|entry-&gt;ip
-op_eq
 id|ip
+comma
+l_int|1
 )paren
-r_break
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Do we need to create a new entry&n;&t; */
 r_if
@@ -3274,6 +3354,27 @@ op_eq
 l_int|NULL
 )paren
 (brace
+r_int
+r_int
+id|hash
+op_assign
+id|HASH
+c_func
+(paren
+id|ip
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|r.arp_flags
+op_amp
+id|ATF_PUBL
+)paren
+id|hash
+op_assign
+id|PROXY_HASH
+suffix:semicolon
 id|entry
 op_assign
 (paren
@@ -3352,17 +3453,6 @@ id|entry-&gt;skb
 )paren
 suffix:semicolon
 )brace
-r_else
-r_if
-c_cond
-(paren
-id|entry-&gt;flags
-op_amp
-id|ATF_PUBL
-)paren
-id|proxies
-op_decrement
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;We now have a pointer to an ARP entry.  Update it!&n;&t; */
 id|memcpy
 c_func
@@ -3389,12 +3479,38 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|entry-&gt;flags
 op_amp
 id|ATF_PUBL
 )paren
-id|proxies
-op_increment
+op_logical_and
+(paren
+id|entry-&gt;flags
+op_amp
+id|ATF_NETMASK
+)paren
+)paren
+(brace
+id|si
+op_assign
+(paren
+r_struct
+id|sockaddr_in
+op_star
+)paren
+op_amp
+id|r.arp_netmask
+suffix:semicolon
+id|entry-&gt;mask
+op_assign
+id|si-&gt;sin_addr.s_addr
+suffix:semicolon
+)brace
+r_else
+id|entry-&gt;mask
+op_assign
+id|DEF_ARP_NETMASK
 suffix:semicolon
 id|entry-&gt;dev
 op_assign
@@ -3473,12 +3589,19 @@ op_star
 op_amp
 id|r.arp_pa
 suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|entry
 op_assign
 id|arp_lookup
 c_func
 (paren
 id|si-&gt;sin_addr.s_addr
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if

@@ -465,10 +465,13 @@ r_char
 id|ax25_n2
 suffix:semicolon
 DECL|member|ax25_t1
+DECL|member|ax25_t2
 DECL|member|ax25_t3
 r_int
 r_int
 id|ax25_t1
+comma
+id|ax25_t2
 comma
 id|ax25_t3
 suffix:semicolon

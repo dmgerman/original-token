@@ -1163,7 +1163,7 @@ id|current-&gt;euid
 suffix:semicolon
 id|current-&gt;fsuid
 op_assign
-id|euid
+id|current-&gt;euid
 suffix:semicolon
 r_return
 l_int|0

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&n; *&t;Cleaned up and recommented by Alan Cox 2nd April 1994. I hope to have&n; *&t;the rest as well commented in the end.&n; */
+multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&n; *&t;Cleaned up and recommented by Alan Cox 2nd April 1994. I hope to have&n; *&t;the rest as well commented in the end.&n; */
 multiline_comment|/*&n; *&t;A lot of these includes will be going walkies very soon &n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -1035,11 +1035,6 @@ l_int|0
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; *&t;Packet is now solely the responsibility of the driver&n;&t;&t; */
-macro_line|#ifdef CONFIG_SLAVE_BALANCING&t;
-id|dev-&gt;pkt_queue
-op_decrement
-suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -2822,7 +2817,15 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#endif&t;&t;&t;&t;
-multiline_comment|/*&n;&t;&t;&t;&t; *&t;Has promiscuous mode been turned off&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|dev-&gt;set_multicast_list
+op_ne
+l_int|NULL
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;Has promiscuous mode been turned off&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2854,7 +2857,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; &t; *&t;Has it been turned on&n;&t;&t;&t; &t; */
+multiline_comment|/*&n;&t;&t;&t; &t;&t; *&t;Has it been turned on&n;&t;&t;&t; &t;&t; */
 r_if
 c_cond
 (paren
@@ -2887,6 +2890,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t;&t;  &t; *&t;Have we downed the interface&n;&t;&t;&t;  &t; */
 r_if
 c_cond
@@ -3946,7 +3950,6 @@ c_cond
 id|cmd
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;The old old setup ioctl. Even its name and this entry will soon be&n;&t;&t; *&t;just so much ionization on a backup tape.&n;&t;&t; */
 r_case
 id|SIOCGIFCONF
 suffix:colon

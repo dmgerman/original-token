@@ -638,6 +638,11 @@ id|file_operations
 op_star
 id|f_op
 suffix:semicolon
+DECL|member|f_version
+r_int
+r_int
+id|f_version
+suffix:semicolon
 DECL|member|private_data
 r_void
 op_star

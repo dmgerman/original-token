@@ -134,6 +134,13 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
+DECL|member|fasync_list
+r_struct
+id|fasync_struct
+op_star
+id|fasync_list
+suffix:semicolon
+multiline_comment|/* Asynchronous wake up list&t;*/
 )brace
 suffix:semicolon
 DECL|macro|SOCK_INODE
@@ -664,6 +671,17 @@ id|servsock
 suffix:semicolon
 r_extern
 r_int
+id|sock_wake_async
+c_func
+(paren
+r_struct
+id|socket
+op_star
+id|sock
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|sock_register
 c_func
 (paren
@@ -674,6 +692,15 @@ r_struct
 id|proto_ops
 op_star
 id|ops
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sock_unregister
+c_func
+(paren
+r_int
+id|family
 )paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */

@@ -142,9 +142,6 @@ mdefine_line|#define IP_TTL&t;&t;2
 multiline_comment|/* IPX options */
 DECL|macro|IPX_TYPE
 mdefine_line|#define IPX_TYPE&t;1
-multiline_comment|/* AX.25 options */
-DECL|macro|AX25_WINDOW
-mdefine_line|#define AX25_WINDOW&t;1
 multiline_comment|/* TCP options - this way around because someone left a set in the c library includes */
 DECL|macro|TCP_NODELAY
 mdefine_line|#define TCP_NODELAY&t;1

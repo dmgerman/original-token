@@ -67,6 +67,12 @@ r_int
 id|arp_flags
 suffix:semicolon
 multiline_comment|/* flags&t;&t;&t;*/
+DECL|member|arp_netmask
+r_struct
+id|sockaddr
+id|arp_netmask
+suffix:semicolon
+multiline_comment|/* netmask (only for proxy arps) */
 )brace
 suffix:semicolon
 multiline_comment|/* ARP Flag values. */
@@ -78,6 +84,8 @@ DECL|macro|ATF_PUBL
 mdefine_line|#define&t;ATF_PUBL&t;0x08&t;&t;/* publish entry&t;&t;*/
 DECL|macro|ATF_USETRAILERS
 mdefine_line|#define&t;ATF_USETRAILERS&t;0x10&t;&t;/* has requested trailers&t;*/
+DECL|macro|ATF_NETMASK
+mdefine_line|#define ATF_NETMASK     0x20            /* want to use a netmask (only&n;&t;&t;&t;&t;&t;   for proxy entries) */
 multiline_comment|/*&n; *&t;This structure defines an ethernet arp header.&n; */
 DECL|struct|arphdr
 r_struct

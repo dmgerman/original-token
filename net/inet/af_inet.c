@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;AF_INET protocol family socket handler.&n; *&n; * Version:&t;@(#)af_inet.c&t;(from sock.c) 1.0.17&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Alan Cox, &lt;A.Cox@swansea.ac.uk&gt;&n; *&n; * Changes (see also sock.c)&n; *&n; *&t;&t;A.N.Kuznetsov&t;:&t;Socket death error in accept().&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;AF_INET protocol family socket handler.&n; *&n; * Version:&t;@(#)af_inet.c&t;(from sock.c) 1.0.17&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Alan Cox, &lt;A.Cox@swansea.ac.uk&gt;&n; *&n; * Changes (see also sock.c)&n; *&n; *&t;&t;A.N.Kuznetsov&t;:&t;Socket death error in accept().&n; *&t;&t;John Richardson :&t;Fix non blocking error in connect()&n; *&t;&t;&t;&t;&t;so sockets that fail to connect&n; *&t;&t;&t;&t;&t;don&squot;t return -EINPROGRESS.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support&n; *&t;&t;Alan Cox&t;:&t;Keep correct socket pointer on sock structures&n; *&t;&t;&t;&t;&t;when accept() ed&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1515,6 +1515,12 @@ id|wake_up_interruptible
 c_func
 (paren
 id|sk-&gt;sleep
+)paren
+suffix:semicolon
+id|sock_wake_async
+c_func
+(paren
+id|sk-&gt;socket
 )paren
 suffix:semicolon
 )brace
@@ -3098,6 +3104,27 @@ r_if
 c_cond
 (paren
 id|sk-&gt;state
+OG
+id|TCP_FIN_WAIT2
+op_logical_and
+id|sock-&gt;state
+op_eq
+id|SS_CONNECTING
+)paren
+(brace
+id|sock-&gt;state
+op_assign
+id|SS_UNCONNECTED
+suffix:semicolon
+r_return
+op_minus
+id|ETIMEDOUT
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|sk-&gt;state
 op_ne
 id|TCP_ESTABLISHED
 op_logical_and
@@ -3416,6 +3443,10 @@ id|sk2-&gt;sleep
 op_assign
 id|newsock-&gt;wait
 suffix:semicolon
+id|sk2-&gt;socket
+op_assign
+id|newsock
+suffix:semicolon
 id|newsock-&gt;conn
 op_assign
 l_int|NULL
@@ -3469,6 +3500,10 @@ op_assign
 id|sk2
 suffix:semicolon
 id|sk2-&gt;sleep
+op_assign
+l_int|NULL
+suffix:semicolon
+id|sk2-&gt;socket
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -5021,7 +5056,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;NET3 TCP/IP protocols stack v016&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society TCP/IP for NET3.017&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Tell SOCKET that we are alive... &n;&t; */

@@ -327,6 +327,11 @@ id|f-&gt;f_count
 op_assign
 l_int|1
 suffix:semicolon
+id|f-&gt;f_version
+op_assign
+op_increment
+id|event
+suffix:semicolon
 r_return
 id|f
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;TIMER - implementation of software timers for IP.&n; *&n; * Version:&t;@(#)timer.c&t;1.0.7&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;To avoid destroying a wait queue as we use it&n; *&t;&t;&t;&t;&t;we defer destruction until the destroy timer goes&n; *&t;&t;&t;&t;&t;off.&n; *&t;&t;Alan Cox&t;:&t;Destroy socket doesn&squot;t write a status value to the&n; *&t;&t;&t;&t;&t;socket buffer _AFTER_ freeing it! Also sock ensures&n; *&t;&t;&t;&t;&t;the socket will get removed BEFORE this is called&n; *&t;&t;&t;&t;&t;otherwise if the timer TIME_DESTROY occurs inside&n; *&t;&t;&t;&t;&t;of inet_bh() with this socket being handled it goes&n; *&t;&t;&t;&t;&t;BOOM! Have to stop timer going off if net_bh is&n; *&t;&t;&t;&t;&t;active or the destroy causes crashes.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;TIMER - implementation of software timers for IP.&n; *&n; * Version:&t;@(#)timer.c&t;1.0.7&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;To avoid destroying a wait queue as we use it&n; *&t;&t;&t;&t;&t;we defer destruction until the destroy timer goes&n; *&t;&t;&t;&t;&t;off.&n; *&t;&t;Alan Cox&t;:&t;Destroy socket doesn&squot;t write a status value to the&n; *&t;&t;&t;&t;&t;socket buffer _AFTER_ freeing it! Also sock ensures&n; *&t;&t;&t;&t;&t;the socket will get removed BEFORE this is called&n; *&t;&t;&t;&t;&t;otherwise if the timer TIME_DESTROY occurs inside&n; *&t;&t;&t;&t;&t;of inet_bh() with this socket being handled it goes&n; *&t;&t;&t;&t;&t;BOOM! Have to stop timer going off if net_bh is&n; *&t;&t;&t;&t;&t;active or the destroy causes crashes.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up unused code.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -181,69 +181,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef NOTDEF
-multiline_comment|/* &n;&t; * what the hell is this doing here?  this belongs in tcp.c.&n;&t; * I believe that this code is the cause of a lot of timer&n;&t; * screwups, especially during close (like FIN_WAIT1 states&n;&t; * with a KEEPOPEN timeout rather then a WRITE timeout).&n;&t; */
-r_if
-c_cond
-(paren
-id|skb_peek
-c_func
-(paren
-op_amp
-id|sk-&gt;write_queue
-)paren
-op_logical_and
-id|before
-c_func
-(paren
-id|sk-&gt;window_seq
-comma
-id|sk-&gt;write_queue.next-&gt;h.seq
-)paren
-op_logical_and
-id|sk-&gt;send_head
-op_eq
-l_int|NULL
-op_logical_and
-id|sk-&gt;ack_backlog
-op_eq
-l_int|0
-op_logical_and
-id|sk-&gt;state
-op_ne
-id|TCP_TIME_WAIT
-)paren
-id|reset_timer
-c_func
-(paren
-id|sk
-comma
-id|TIME_PROBE0
-comma
-id|sk-&gt;rto
-)paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|sk-&gt;keepopen
-)paren
-id|reset_timer
-(paren
-id|sk
-comma
-id|TIME_KEEPOPEN
-comma
-id|TCP_TIMEOUT_LEN
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Always see if we need to send an ack. */
 r_if
 c_cond
 (paren
 id|sk-&gt;ack_backlog
+op_logical_and
+op_logical_neg
+id|sk-&gt;zapped
 )paren
 (brace
 id|sk-&gt;prot-&gt;read_wakeup

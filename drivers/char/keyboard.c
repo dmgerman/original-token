@@ -1357,7 +1357,7 @@ id|reply_expected
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef KBD_REPORT_ERR
+macro_line|#if 0
 id|printk
 c_func
 (paren
