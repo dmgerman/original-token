@@ -118,6 +118,8 @@ DECL|macro|AF_AAL5
 mdefine_line|#define AF_AAL5&t;&t;8&t;/* Reserved for Werner&squot;s ATM &t;*/
 DECL|macro|AF_X25
 mdefine_line|#define AF_X25&t;&t;9&t;/* Reserved for X.25 project &t;*/
+DECL|macro|AF_INET6
+mdefine_line|#define AF_INET6&t;10&t;/* IP version 6&t;&t;&t;*/
 DECL|macro|AF_MAX
 mdefine_line|#define AF_MAX&t;&t;12&t;/* For now.. */
 multiline_comment|/* Protocol families, same as address families. */
@@ -141,6 +143,8 @@ DECL|macro|PF_AAL5
 mdefine_line|#define PF_AAL5&t;&t;AF_AAL5
 DECL|macro|PF_X25
 mdefine_line|#define PF_X25&t;&t;AF_X25
+DECL|macro|PF_INET6
+mdefine_line|#define PF_INET6&t;AF_INET6
 DECL|macro|PF_MAX
 mdefine_line|#define PF_MAX&t;&t;AF_MAX
 multiline_comment|/* Maximum queue length specificable by listen.  */

@@ -1699,6 +1699,64 @@ id|s
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Added by Gertjan van Wingerde to make minix and sysv module work */
+DECL|macro|__HAVE_ARCH_STRNLEN
+mdefine_line|#define __HAVE_ARCH_STRNLEN
+DECL|function|strnlen
+r_extern
+r_inline
+r_int
+id|strnlen
+c_func
+(paren
+r_const
+r_char
+op_star
+id|s
+comma
+r_int
+id|count
+)paren
+(brace
+r_register
+r_int
+id|__res
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;movl %1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;jmp 2f&bslash;n&quot;
+l_string|&quot;1:&bslash;tcmpb $0,(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;je 3f&bslash;n&bslash;t&quot;
+l_string|&quot;incl %0&bslash;n&quot;
+l_string|&quot;2:&bslash;tdecl %2&bslash;n&bslash;t&quot;
+l_string|&quot;cmpl $-1,%2&bslash;n&bslash;t&quot;
+l_string|&quot;jne 1b&bslash;n&quot;
+l_string|&quot;3:&bslash;tsubl %1,%0&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|__res
+)paren
+suffix:colon
+l_string|&quot;c&quot;
+(paren
+id|s
+)paren
+comma
+l_string|&quot;d&quot;
+(paren
+id|count
+)paren
+)paren
+suffix:semicolon
+r_return
+id|__res
+suffix:semicolon
+)brace
+multiline_comment|/* end of additional stuff */
 multiline_comment|/*&n; * This looks horribly ugly, but the compiler can optimize it totally,&n; * as we by now know that both pattern and count is constant..&n; */
 DECL|function|__constant_c_and_count_memset
 r_extern

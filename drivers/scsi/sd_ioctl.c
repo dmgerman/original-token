@@ -87,7 +87,7 @@ id|cmd
 )paren
 (brace
 r_case
-id|HDIO_REQ
+id|HDIO_GETGEO
 suffix:colon
 multiline_comment|/* Return BIOS disk parameters */
 r_if

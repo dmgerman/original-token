@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET3:&t;Implementation of BSD Unix domain sockets.&n; *&n; * Authors:&t;Alan Cox, &lt;alan@cymru.net&gt;&n; *&n; *&t;&t;Currently this contains all but the file descriptor passing code.&n; *&t;&t;Before that goes in the odd bugs in the iovec handlers need &n; *&t;&t;fixing, and this bit testing. BSD fd passing is a trivial part&n; *&t;&t;of the exercise.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Linus Torvalds&t;:&t;Assorted bug cures.&n; *&t;&t;Niibe Yutaka&t;:&t;async I/O support&n; *&t;&t;Carsten Paeth&t;:&t;PF_UNIX check, address fixes.&n; */
+multiline_comment|/*&n; * NET3:&t;Implementation of BSD Unix domain sockets.&n; *&n; * Authors:&t;Alan Cox, &lt;alan@cymru.net&gt;&n; *&n; *&t;&t;Currently this contains all but the file descriptor passing code.&n; *&t;&t;Before that goes in the odd bugs in the iovec handlers need &n; *&t;&t;fixing, and this bit testing. BSD fd passing is not a trivial part&n; *&t;&t;of the exercise it turns out. Anyone like writing garbage collectors.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Linus Torvalds&t;:&t;Assorted bug cures.&n; *&t;&t;Niibe Yutaka&t;:&t;async I/O support.&n; *&t;&t;Carsten Paeth&t;:&t;PF_UNIX check, address fixes.&n; *&t;&t;Alan Cox&t;:&t;Limit size of allocated blocks.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -2746,7 +2746,7 @@ l_int|NULL
 (brace
 r_return
 op_minus
-id|EINVAL
+id|ENOTCONN
 suffix:semicolon
 )brace
 )brace
@@ -2797,6 +2797,24 @@ id|sk_buff
 op_div
 l_int|2
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Keep to page sized kmalloc()&squot;s as various people&n;&t;&t; *&t;have suggested. Big mallocs stress the vm too&n;&t;&t; *&t;much.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|len
+OG
+l_int|4000
+op_logical_and
+id|sock-&gt;type
+op_ne
+id|SOCK_DGRAM
+)paren
+(brace
+id|len
+op_assign
+l_int|4000
+suffix:semicolon
+)brace
 )brace
 id|size
 op_assign
@@ -4452,7 +4470,7 @@ id|pro
 id|printk
 c_func
 (paren
-l_string|&quot;NET3: Unix domain sockets 0.07 BETA for Linux NET3.030.&bslash;n&quot;
+l_string|&quot;NET3: Unix domain sockets 0.09 BETA for Linux NET3.030.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sock_register

@@ -960,9 +960,11 @@ multiline_comment|/* Clear the MCE bit */
 r_if
 c_cond
 (paren
+(paren
 id|prev
 op_amp
 l_int|0x40
+)paren
 op_eq
 l_int|0
 )paren

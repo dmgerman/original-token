@@ -1936,13 +1936,13 @@ multiline_comment|/* &n; *&t;Check for bad requests for 127.x.x.x and requests f
 r_if
 c_cond
 (paren
-id|IN_LOOPBACK
+id|LOOPBACK
 c_func
 (paren
 id|tip
 )paren
 op_logical_or
-id|IN_MULTICAST
+id|MULTICAST
 c_func
 (paren
 id|tip

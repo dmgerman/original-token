@@ -277,6 +277,10 @@ multiline_comment|/* After the comment above, that should be no surprise. */
 r_if
 c_cond
 (paren
+id|err
+OL
+l_int|13
+op_logical_and
 id|icmp_err_convert
 (braket
 id|err

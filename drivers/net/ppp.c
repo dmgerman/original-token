@@ -7806,9 +7806,11 @@ id|SC_IP_DOWN
 r_if
 c_cond
 (paren
+(paren
 id|ppp-&gt;flags
 op_amp
 id|SC_IP_FLUSH
+)paren
 op_eq
 l_int|0
 )paren

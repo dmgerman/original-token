@@ -16,7 +16,7 @@ mdefine_line|#define&t;ARPHRD_PRONET&t;4&t;&t;/* PROnet token ring&t;&t;*/
 DECL|macro|ARPHRD_CHAOS
 mdefine_line|#define&t;ARPHRD_CHAOS&t;5&t;&t;/* Chaosnet&t;&t;&t;*/
 DECL|macro|ARPHRD_IEEE802
-mdefine_line|#define&t;ARPHRD_IEEE802&t;6&t;&t;/* IEEE 802.2 Ethernet- huh?&t;*/
+mdefine_line|#define&t;ARPHRD_IEEE802&t;6&t;&t;/* IEEE 802.2 Ethernet/TR/TB&t;*/
 DECL|macro|ARPHRD_ARCNET
 mdefine_line|#define&t;ARPHRD_ARCNET&t;7&t;&t;/* ARCnet&t;&t;&t;*/
 DECL|macro|ARPHRD_APPLETLK
@@ -38,6 +38,8 @@ DECL|macro|ARPHRD_PPP
 mdefine_line|#define ARPHRD_PPP&t;512
 DECL|macro|ARPHRD_TUNNEL
 mdefine_line|#define ARPHRD_TUNNEL&t;768&t;&t;/* IPIP tunnel&t;&t;&t;*/
+DECL|macro|ARPHRD_TUNNEL6
+mdefine_line|#define ARPHRD_TUNNEL6&t;769&t;&t;/* IPIP6 tunnel&t;&t;&t;*/
 multiline_comment|/* ARP protocol opcodes. */
 DECL|macro|ARPOP_REQUEST
 mdefine_line|#define&t;ARPOP_REQUEST&t;1&t;&t;/* ARP request&t;&t;&t;*/

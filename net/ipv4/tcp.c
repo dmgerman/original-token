@@ -1834,6 +1834,11 @@ multiline_comment|/*&n;&t; * If we&squot;ve already connected we will keep tryin
 r_if
 c_cond
 (paren
+id|err
+OL
+l_int|13
+op_logical_and
+(paren
 id|icmp_err_convert
 (braket
 id|err
@@ -1846,6 +1851,7 @@ op_logical_or
 id|sk-&gt;state
 op_eq
 id|TCP_SYN_SENT
+)paren
 )paren
 (brace
 r_if

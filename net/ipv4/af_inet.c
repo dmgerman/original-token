@@ -142,6 +142,7 @@ id|rarp_ioctl_hook
 )paren
 (paren
 r_int
+r_int
 comma
 r_void
 op_star

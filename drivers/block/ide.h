@@ -5,7 +5,7 @@ DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|REALLY_FAST_IO
-mdefine_line|#define&t;REALLY_FAST_IO&t;&t;&t;/* define if ide ports are perfect */
+macro_line|#undef &t;REALLY_FAST_IO&t;&t;&t;/* define if ide ports are perfect */
 DECL|macro|INITIAL_MULT_COUNT
 mdefine_line|#define INITIAL_MULT_COUNT&t;0&t;/* off=0; on=2,4,8,16,32, etc.. */
 macro_line|#ifndef DISK_RECOVERY_TIME&t;&t;/* off=0; on=access_delay_time */
@@ -130,33 +130,6 @@ mdefine_line|#define WAIT_WORSTCASE&t;(30*HZ)&t;/* 30sec  - worst case when spin
 DECL|macro|WAIT_CMD
 mdefine_line|#define WAIT_CMD&t;(10*HZ)&t;/* 10sec  - maximum wait for an IRQ to happen */
 macro_line|#ifdef CONFIG_BLK_DEV_IDECD
-DECL|struct|packet_command
-r_struct
-id|packet_command
-(brace
-DECL|member|buffer
-r_char
-op_star
-id|buffer
-suffix:semicolon
-DECL|member|buflen
-r_int
-id|buflen
-suffix:semicolon
-DECL|member|stat
-r_int
-id|stat
-suffix:semicolon
-DECL|member|c
-r_int
-r_char
-id|c
-(braket
-l_int|12
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
 DECL|struct|atapi_request_sense
 r_struct
 id|atapi_request_sense
@@ -246,6 +219,39 @@ l_int|3
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|packet_command
+r_struct
+id|packet_command
+(brace
+DECL|member|buffer
+r_char
+op_star
+id|buffer
+suffix:semicolon
+DECL|member|buflen
+r_int
+id|buflen
+suffix:semicolon
+DECL|member|stat
+r_int
+id|stat
+suffix:semicolon
+DECL|member|sense_data
+r_struct
+id|atapi_request_sense
+op_star
+id|sense_data
+suffix:semicolon
+DECL|member|c
+r_int
+r_char
+id|c
+(braket
+l_int|12
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* Space to hold the disk TOC. */
 DECL|macro|MAX_TRACKS
 mdefine_line|#define MAX_TRACKS 99
@@ -306,6 +312,18 @@ DECL|struct|atapi_toc
 r_struct
 id|atapi_toc
 (brace
+DECL|member|last_session_lba
+r_int
+id|last_session_lba
+suffix:semicolon
+DECL|member|xa_flag
+r_int
+id|xa_flag
+suffix:semicolon
+DECL|member|capacity
+r_int
+id|capacity
+suffix:semicolon
 DECL|member|hdr
 r_struct
 id|atapi_toc_header
@@ -534,23 +552,30 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* 1 if need to do check_media_change */
-DECL|member|dma_capable
+DECL|member|using_dma
 r_int
-id|dma_capable
+id|using_dma
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* for Intel Triton chipset, others.. */
+multiline_comment|/* disk is using dma for read/write */
+DECL|member|unmask
+r_int
+id|unmask
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* flag: okay to unmask other irqs */
+DECL|member|media
+id|media_t
+id|media
+suffix:semicolon
+multiline_comment|/* disk, cdrom, tape */
 DECL|member|select
 id|select_t
 id|select
 suffix:semicolon
 multiline_comment|/* basic drive/head select reg value */
-DECL|member|unmask
-id|byte
-id|unmask
-suffix:semicolon
-multiline_comment|/* flag: okay to unmask other irqs */
 DECL|member|hwif
 r_void
 op_star
@@ -567,16 +592,6 @@ id|byte
 id|ready_stat
 suffix:semicolon
 multiline_comment|/* min status value for drive ready */
-DECL|member|wpcom
-id|byte
-id|wpcom
-suffix:semicolon
-multiline_comment|/* ignored by all IDE drives */
-DECL|member|media
-id|media_t
-id|media
-suffix:semicolon
-multiline_comment|/* disk, cdrom, tape */
 DECL|member|mult_count
 id|byte
 id|mult_count
@@ -680,6 +695,46 @@ DECL|typedef|ide_drive_t
 )brace
 id|ide_drive_t
 suffix:semicolon
+multiline_comment|/*&n; * An ide_dmaproc_t() initiates/aborts DMA read/write operations on a drive.&n; *&n; * The caller is assumed to have selected the drive and programmed the drive&squot;s&n; * sector address using CHS or LBA.  All that remains is to prepare for DMA&n; * and then issue the actual read/write DMA/PIO command to the drive.&n; *&n; * Returns 0 if all went well.&n; * Returns 1 if DMA read/write could not be started, in which case the caller&n; * should either try again later, or revert to PIO for the current request.&n; */
+DECL|enumerator|ide_dma_read
+DECL|enumerator|ide_dma_write
+DECL|enumerator|ide_dma_abort
+DECL|enumerator|ide_dma_check
+DECL|typedef|ide_dma_action_t
+r_typedef
+r_enum
+(brace
+id|ide_dma_read
+op_assign
+l_int|0
+comma
+id|ide_dma_write
+op_assign
+l_int|1
+comma
+id|ide_dma_abort
+op_assign
+l_int|2
+comma
+id|ide_dma_check
+op_assign
+l_int|3
+)brace
+id|ide_dma_action_t
+suffix:semicolon
+DECL|typedef|ide_dmaproc_t
+r_typedef
+r_int
+(paren
+id|ide_dmaproc_t
+)paren
+(paren
+id|ide_dma_action_t
+comma
+id|ide_drive_t
+op_star
+)paren
+suffix:semicolon
 DECL|struct|hwif_s
 r_typedef
 r_struct
@@ -725,6 +780,25 @@ op_star
 id|gd
 suffix:semicolon
 multiline_comment|/* gendisk structure */
+DECL|member|dmaproc
+id|ide_dmaproc_t
+op_star
+id|dmaproc
+suffix:semicolon
+multiline_comment|/* dma read/write/abort routine */
+DECL|member|dmatable
+r_int
+r_int
+op_star
+id|dmatable
+suffix:semicolon
+multiline_comment|/* dma physical region descriptor table */
+DECL|member|dma_base
+r_int
+r_int
+id|dma_base
+suffix:semicolon
+multiline_comment|/* base addr for dma ports (triton) */
 DECL|member|irq
 id|byte
 id|irq
@@ -762,17 +836,11 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* this interface exists */
-DECL|member|reset_timeout
-r_int
-r_int
-id|reset_timeout
-suffix:semicolon
-multiline_comment|/* timeout value during ide resets */
 macro_line|#if (DISK_RECOVERY_TIME &gt; 0)
-DECL|member|last_timer
+DECL|member|last_time
 r_int
 r_int
-id|last_timer
+id|last_time
 suffix:semicolon
 multiline_comment|/* time when previous rq was done */
 macro_line|#endif
@@ -794,7 +862,7 @@ DECL|typedef|ide_hwif_t
 )brace
 id|ide_hwif_t
 suffix:semicolon
-multiline_comment|/*&n; *  our internal interrupt handler type&n; */
+multiline_comment|/*&n; *  internal ide interrupt handler type&n; */
 DECL|typedef|ide_handler_t
 r_typedef
 r_void
@@ -848,6 +916,18 @@ id|request
 id|wrq
 suffix:semicolon
 multiline_comment|/* local copy of current write rq */
+DECL|member|reset_timeout
+r_int
+r_int
+id|reset_timeout
+suffix:semicolon
+multiline_comment|/* timeout value during ide resets */
+macro_line|#ifdef CONFIG_BLK_DEV_IDECD
+DECL|member|doing_atapi_reset
+r_int
+id|doing_atapi_reset
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
 DECL|typedef|ide_hwgroup_t
 )brace
 id|ide_hwgroup_t
@@ -994,6 +1074,28 @@ r_char
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Start a reset operation for an IDE interface.&n; * Returns 0 if the reset operation is still in progress,&n; *  in which case the drive MUST return, to await completion.&n; * Returns 1 if the reset is complete (success or failure).&n; */
+r_int
+id|ide_do_reset
+(paren
+id|ide_drive_t
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * ide_alloc(): memory allocation for use *only* during driver initialization.&n; * If &quot;within_area&quot; is non-zero, the memory will be allocated such that&n; * it lies entirely within a &quot;within_area&quot; sized area (eg. 4096).  This is&n; * needed for DMA stuff.  &quot;within_area&quot; must be a power of two (not validated).&n; * All allocations are longword aligned.&n; */
+r_void
+op_star
+id|ide_alloc
+(paren
+r_int
+r_int
+id|bytecount
+comma
+r_int
+r_int
+id|within_area
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDECD
 multiline_comment|/*&n; * These are routines in ide-cd.c invoked from ide.c&n; */
 r_void
@@ -1072,4 +1174,13 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
+macro_line|#ifdef CONFIG_BLK_DEV_TRITON
+r_void
+id|ide_init_triton
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_TRITON */
 eof

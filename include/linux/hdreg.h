@@ -78,18 +78,27 @@ DECL|macro|WIN_DOORLOCK
 mdefine_line|#define WIN_DOORLOCK&t;&t;0xde&t;/* lock door on removeable drives */
 DECL|macro|WIN_DOORUNLOCK
 mdefine_line|#define WIN_DOORUNLOCK&t;&t;0xdf&t;/* unlock door on removeable drives */
-DECL|macro|WIN_PIDENTIFY
-mdefine_line|#define WIN_PIDENTIFY&t;&t;0xA1&t;/* identify ATA-PI device&t;*/
 DECL|macro|WIN_MULTREAD
-mdefine_line|#define WIN_MULTREAD&t;&t;0xC4&t;/* read multiple sectors&t;*/
+mdefine_line|#define WIN_MULTREAD&t;&t;0xC4&t;/* read sectors using multiple mode */
 DECL|macro|WIN_MULTWRITE
-mdefine_line|#define WIN_MULTWRITE&t;&t;0xC5&t;/* write multiple sectors&t;*/
+mdefine_line|#define WIN_MULTWRITE&t;&t;0xC5&t;/* write sectors using multiple mode */
 DECL|macro|WIN_SETMULT
-mdefine_line|#define WIN_SETMULT&t;&t;0xC6&t;/* enable read multiple&t;&t;*/
+mdefine_line|#define WIN_SETMULT&t;&t;0xC6&t;/* enable/disable multiple mode */
 DECL|macro|WIN_IDENTIFY
 mdefine_line|#define WIN_IDENTIFY&t;&t;0xEC&t;/* ask drive to identify itself&t;*/
 DECL|macro|WIN_SETFEATURES
-mdefine_line|#define WIN_SETFEATURES&t;&t;0xEF&t;/* set special drive features   */
+mdefine_line|#define WIN_SETFEATURES&t;&t;0xEF&t;/* set special drive features */
+DECL|macro|WIN_READDMA
+mdefine_line|#define WIN_READDMA&t;&t;0xc8&t;/* read sectors using DMA transfers */
+DECL|macro|WIN_WRITEDMA
+mdefine_line|#define WIN_WRITEDMA&t;&t;0xca&t;/* write sectors using DMA transfers */
+multiline_comment|/* Additional drive command codes used by ATAPI devices. */
+DECL|macro|WIN_PIDENTIFY
+mdefine_line|#define WIN_PIDENTIFY&t;&t;0xA1&t;/* identify ATAPI device&t;*/
+DECL|macro|WIN_SRST
+mdefine_line|#define WIN_SRST&t;&t;0x08&t;/* ATAPI soft reset command */
+DECL|macro|WIN_PACKETCMD
+mdefine_line|#define WIN_PACKETCMD&t;&t;0xa0&t;/* Send a packet command. */
 multiline_comment|/* Bits for HD_ERROR */
 DECL|macro|MARK_ERR
 mdefine_line|#define MARK_ERR&t;0x01&t;/* Bad address mark */
@@ -132,8 +141,6 @@ suffix:semicolon
 multiline_comment|/* hd/ide ctl&squot;s that pass (arg) ptrs to user space are numbered 0x30n/0x31n */
 DECL|macro|HDIO_GETGEO
 mdefine_line|#define HDIO_GETGEO&t;&t;0x301&t;/* get device geometry */
-DECL|macro|HDIO_REQ
-mdefine_line|#define HDIO_REQ&t;&t;HDIO_GETGEO&t;/* obsolete, use HDIO_GETGEO */
 DECL|macro|HDIO_GET_UNMASKINTR
 mdefine_line|#define HDIO_GET_UNMASKINTR&t;0x302&t;/* get current unmask setting */
 DECL|macro|HDIO_GET_MULTCOUNT
@@ -145,7 +152,9 @@ mdefine_line|#define HDIO_GET_KEEPSETTINGS &t;0x308&t;/* get keep-settings-on-re
 DECL|macro|HDIO_GET_CHIPSET
 mdefine_line|#define HDIO_GET_CHIPSET&t;0x309&t;/* get current interface type setting */
 DECL|macro|HDIO_GET_NOWERR
-mdefine_line|#define HDIO_GET_NOWERR&t;0x30a&t;/* get ignore-write-error flag */
+mdefine_line|#define HDIO_GET_NOWERR&t;&t;0x30a&t;/* get ignore-write-error flag */
+DECL|macro|HDIO_GET_DMA
+mdefine_line|#define HDIO_GET_DMA&t;&t;0x30b&t;/* get use-dma flag */
 DECL|macro|HDIO_DRIVE_CMD
 mdefine_line|#define HDIO_DRIVE_CMD&t;&t;0x31f&t;/* execute a special drive command */
 multiline_comment|/* hd/ide ctl&squot;s that pass (arg) non-ptr values are numbered 0x32n/0x33n */
@@ -158,7 +167,9 @@ mdefine_line|#define HDIO_SET_KEEPSETTINGS&t;0x323&t;/* keep ioctl settings on r
 DECL|macro|HDIO_SET_CHIPSET
 mdefine_line|#define HDIO_SET_CHIPSET&t;0x324&t;/* optimise driver for interface type */
 DECL|macro|HDIO_SET_NOWERR
-mdefine_line|#define HDIO_SET_NOWERR&t;0x325&t;/* set ignore-write-error flag */
+mdefine_line|#define HDIO_SET_NOWERR&t;&t;0x325&t;/* set ignore-write-error flag */
+DECL|macro|HDIO_SET_DMA
+mdefine_line|#define HDIO_SET_DMA&t;&t;0x326&t;/* set use-dma flag */
 multiline_comment|/* structure returned by HDIO_GET_IDENTITY, as per ANSI ATA2 rev.2f spec */
 DECL|struct|hd_driveid
 r_struct

@@ -230,5 +230,46 @@ mdefine_line|#define LOOPBACK(x)&t;(((x) &amp; htonl(0xff000000)) == htonl(0x7f0
 DECL|macro|MULTICAST
 mdefine_line|#define MULTICAST(x)&t;(((x) &amp; htonl(0xf0000000)) == htonl(0xe0000000))
 macro_line|#endif
+multiline_comment|/*&n; *&t;IPv6 definitions as we start to include them. This is just&n; *&t;a beginning dont get excited 8)&n; */
+DECL|struct|in_addr6
+r_struct
+id|in_addr6
+(brace
+DECL|member|s6_addr
+r_int
+r_char
+id|s6_addr
+(braket
+l_int|16
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|sockaddr_in6
+r_struct
+id|sockaddr_in6
+(brace
+DECL|member|sin6_family
+r_int
+r_int
+id|sin6_family
+suffix:semicolon
+DECL|member|sin6_port
+r_int
+r_int
+id|sin6_port
+suffix:semicolon
+DECL|member|sin6_flowinfo
+r_int
+r_int
+id|sin6_flowinfo
+suffix:semicolon
+DECL|member|sin6_addr
+r_struct
+id|in_addr6
+id|sin6_addr
+suffix:semicolon
+)brace
+suffix:semicolon
 macro_line|#endif&t;/* _LINUX_IN_H */
 eof

@@ -514,7 +514,7 @@ comma
 id|BLIST_NOLUN
 )brace
 comma
-multiline_comment|/* causes failed REQUEST SENSE on lun 1 &n;                                                 * for aha152x controller, which causes &n;                                                 * SCSI code to reset bus.*/
+multiline_comment|/* causes failed REQUEST SENSE on lun 1 &n;&t;&t;&t;&t;&t;&t; * for aha152x controller, which causes &n;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
 (brace
 l_string|&quot;SEAGATE&quot;
 comma
@@ -577,7 +577,7 @@ comma
 id|BLIST_NOLUN
 )brace
 comma
-multiline_comment|/* causes failed REQUEST SENSE on lun 1 &n;                                                 * for seagate controller, which causes &n;                                                 * SCSI code to reset bus.*/
+multiline_comment|/* causes failed REQUEST SENSE on lun 1 &n;&t;&t;&t;&t;&t;&t; * for seagate controller, which causes &n;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
 (brace
 l_string|&quot;TEXEL&quot;
 comma
@@ -588,7 +588,7 @@ comma
 id|BLIST_NOLUN
 )brace
 comma
-multiline_comment|/* causes failed REQUEST SENSE on lun 1 &n;                                                 * for seagate controller, which causes &n;                                                 * SCSI code to reset bus.*/
+multiline_comment|/* causes failed REQUEST SENSE on lun 1 &n;&t;&t;&t;&t;&t;&t; * for seagate controller, which causes &n;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
 (brace
 l_string|&quot;QUANTUM&quot;
 comma
@@ -1473,7 +1473,7 @@ op_ne
 id|dev
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * We need the for so our continue, etc. work fine.&n;                 * We put this in a variable so that we can override&n;                 * it during the scan if we detect a device *KNOWN*&n;                 * to have multiple logical units.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * We need the for so our continue, etc. work fine.&n;&t;&t; * We put this in a variable so that we can override&n;&t;&t; * it during the scan if we detect a device *KNOWN*&n;&t;&t; * to have multiple logical units.&n;&t;&t; */
 id|max_dev_lun
 op_assign
 (paren
@@ -2497,7 +2497,7 @@ id|SDpnt-&gt;disconnect
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;                             * Get any flags for this device.&n;                             */
+multiline_comment|/*&n;&t;&t;&t;     * Get any flags for this device.&n;&t;&t;&t;     */
 id|bflags
 op_assign
 id|get_device_flags
@@ -2736,7 +2736,7 @@ id|BLIST_NOLUN
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;                             * If we want to only allow I/O to one of the luns&n;                             * attached to this device at a time, then we set this&n;                             * flag.&n;                             */
+multiline_comment|/*&n;&t;&t;&t;     * If we want to only allow I/O to one of the luns&n;&t;&t;&t;     * attached to this device at a time, then we set this&n;&t;&t;&t;     * flag.&n;&t;&t;&t;     */
 r_if
 c_cond
 (paren
@@ -2750,7 +2750,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;                             * If this device is known to support multiple units, override&n;                             * the other settings, and scan all of them.&n;                             */
+multiline_comment|/*&n;&t;&t;&t;     * If this device is known to support multiple units, override&n;&t;&t;&t;     * the other settings, and scan all of them.&n;&t;&t;&t;     */
 r_if
 c_cond
 (paren
@@ -2759,7 +2759,7 @@ op_amp
 id|BLIST_FORCELUN
 )paren
 (brace
-multiline_comment|/*&n;                                 * We probably want to make this a variable, but this&n;                                 * will do for now.&n;                                 */
+multiline_comment|/*&n;&t;&t;&t;&t; * We probably want to make this a variable, but this&n;&t;&t;&t;&t; * will do for now.&n;&t;&t;&t;&t; */
 id|max_dev_lun
 op_assign
 l_int|8
@@ -2815,7 +2815,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* if result == DID_OK ends */
-multiline_comment|/*&n;                     * This might screw us up with multi-lun devices, but the user can&n;                     * scan for them too.&n;                     */
+multiline_comment|/*&n;&t;&t;     * This might screw us up with multi-lun devices, but the user can&n;&t;&t;     * scan for them too.&n;&t;&t;     */
 r_if
 c_cond
 (paren
@@ -3210,7 +3210,7 @@ op_ge
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;                     * I think that we should really limit things to one&n;                     * outstanding command per device - this is what tends to trip&n;                     * up buggy firmware.&n;                     */
+multiline_comment|/*&n;&t;&t;     * I think that we should really limit things to one&n;&t;&t;     * outstanding command per device - this is what tends to trip&n;&t;&t;     * up buggy firmware.&n;&t;&t;     */
 r_return
 l_int|NULL
 suffix:semicolon
@@ -3706,7 +3706,7 @@ op_ge
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;                         * I think that we should really limit things to one&n;                         * outstanding command per device - this is what tends to trip&n;                         * up buggy firmware.&n;                         */
+multiline_comment|/*&n;&t;&t;&t; * I think that we should really limit things to one&n;&t;&t;&t; * outstanding command per device - this is what tends to trip&n;&t;&t;&t; * up buggy firmware.&n;&t;&t;&t; */
 id|found
 op_assign
 l_int|NULL
@@ -8034,6 +8034,11 @@ id|size
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|retval
+)paren
 id|memset
 c_func
 (paren
@@ -8699,6 +8704,12 @@ op_assign
 id|dma_sectors
 suffix:semicolon
 multiline_comment|/* This must be a multiple of 16 */
+r_if
+c_cond
+(paren
+id|dma_sectors
+)paren
+(brace
 id|dma_malloc_freelist
 op_assign
 (paren
@@ -8795,6 +8806,7 @@ op_or
 id|GFP_DMA
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* OK, now we finish the initialization by doing spin-up, read&n;     * capacity, etc, etc &n;     */
 r_for
@@ -10158,6 +10170,12 @@ op_assign
 id|dma_sectors
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|new_dma_sectors
+)paren
+(brace
 id|new_dma_malloc_freelist
 op_assign
 (paren
@@ -10217,6 +10235,7 @@ op_rshift
 l_int|1
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * If we need more buffers, expand the list.&n;&t; */
 r_if
 c_cond
@@ -10279,6 +10298,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dma_malloc_freelist
+)paren
+(brace
 id|memcpy
 c_func
 (paren
@@ -10301,10 +10326,17 @@ op_rshift
 l_int|3
 )paren
 suffix:semicolon
+)brace
 id|dma_malloc_freelist
 op_assign
 id|new_dma_malloc_freelist
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dma_malloc_pages
+)paren
+(brace
 id|memcpy
 c_func
 (paren
@@ -10331,6 +10363,7 @@ op_rshift
 l_int|1
 )paren
 suffix:semicolon
+)brace
 id|dma_free_sectors
 op_add_assign
 id|new_dma_sectors

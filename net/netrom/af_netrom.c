@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;net/ax25.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -28,6 +29,7 @@ macro_line|#include &lt;net/netrom.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
+macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 multiline_comment|/************************************************************************&bslash;&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n;*&t;&t;&t;Handlers for the socket list&t;&t;&t;*&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n;&bslash;************************************************************************/
 DECL|variable|nr_default
@@ -6142,6 +6144,11 @@ l_int|0
 comma
 l_int|0
 comma
+l_int|0
+comma
+op_amp
+id|proc_net_inode_operations
+comma
 id|nr_get_info
 )brace
 )paren
@@ -6171,6 +6178,11 @@ l_int|0
 comma
 l_int|0
 comma
+l_int|0
+comma
+op_amp
+id|proc_net_inode_operations
+comma
 id|nr_neigh_get_info
 )brace
 )paren
@@ -6199,6 +6211,11 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_net_inode_operations
 comma
 id|nr_nodes_get_info
 )brace

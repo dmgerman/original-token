@@ -321,25 +321,7 @@ id|sock
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|nr_get_info
-c_func
-(paren
-r_char
-op_star
-comma
-r_char
-op_star
-op_star
-comma
-id|off_t
-comma
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
+multiline_comment|/*extern int  nr_get_info(char *, char **, off_t, int, int);*/
 multiline_comment|/* nr_dev.c */
 r_extern
 r_int

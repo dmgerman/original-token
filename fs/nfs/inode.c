@@ -519,6 +519,8 @@ c_func
 l_string|&quot;NFS: Error passed unconnected socket and no address&bslash;n&quot;
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon

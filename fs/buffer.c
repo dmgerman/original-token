@@ -5728,8 +5728,8 @@ r_return
 id|address
 suffix:semicolon
 )brace
+macro_line|#if 0
 multiline_comment|/*&n; * bwrite_page writes a page out to the buffer cache and/or the physical device.&n; * It&squot;s used for mmap writes (the same way bread_page() is used for mmap reads).&n; */
-DECL|function|bwrite_page
 r_void
 id|bwrite_page
 c_func
@@ -5920,8 +5920,10 @@ comma
 id|size
 )paren
 suffix:semicolon
+multiline_comment|/* ???!?!! */
 )brace
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * Try to increase the number of buffers available: the size argument&n; * is used to determine what kind of buffers we want.&n; */
 DECL|function|grow_buffers
 r_static

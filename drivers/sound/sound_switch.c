@@ -1800,12 +1800,14 @@ r_if
 c_cond
 (paren
 (paren
+(paren
 id|cmd
 op_rshift
 l_int|8
 )paren
 op_amp
 l_int|0xff
+)paren
 op_eq
 l_char|&squot;M&squot;
 op_logical_and

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;SUCS NET3:&n; *&n; *&t;Generic datagram handling routines. These are generic for all protocols. Possibly a generic IP version on top&n; *&t;of these would make sense. Not tonight however 8-).&n; *&t;This is used because UDP, RAW, PACKET and the to be released IPX layer all have identical select code and mostly&n; *&t;identical recvfrom() code. So we share it here. The select was shared before but buried in udp.c so I moved it.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;. (datagram_select() from old udp.c code)&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;NULL return from skb_peek_copy() understood&n; *&t;&t;Alan Cox&t;:&t;Rewrote skb_read_datagram to avoid the skb_peek_copy stuff.&n; *&t;&t;Alan Cox&t;:&t;Added support for SOCK_SEQPACKET. IPX can no longer use the SO_TYPE hack but&n; *&t;&t;&t;&t;&t;AX.25 now works right, and SPX is feasible.&n; *&t;&t;Alan Cox&t;:&t;Fixed write select of non IP protocol crash.&n; *&t;&t;Florian  La Roche:&t;Changed for my new skbuff handling.&n; *&t;&t;Darryl Miles&t;:&t;Fixed non-blocking SOCK_SEQPACKET.&n; *&t;&t;Linus Torvalds&t;:&t;BSD semantic fixes.&n; *&n; *&t;Note:&n; *&t;&t;A lot of this will change when the protocol/socket separation&n; *&t;occurs. Using this will make things reasonably clean.&n; */
+multiline_comment|/*&n; *&t;SUCS NET3:&n; *&n; *&t;Generic datagram handling routines. These are generic for all protocols. Possibly a generic IP version on top&n; *&t;of these would make sense. Not tonight however 8-).&n; *&t;This is used because UDP, RAW, PACKET and the to be released IPX layer all have identical select code and mostly&n; *&t;identical recvfrom() code. So we share it here. The select was shared before but buried in udp.c so I moved it.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;. (datagram_select() from old udp.c code)&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;NULL return from skb_peek_copy() understood&n; *&t;&t;Alan Cox&t;:&t;Rewrote skb_read_datagram to avoid the skb_peek_copy stuff.&n; *&t;&t;Alan Cox&t;:&t;Added support for SOCK_SEQPACKET. IPX can no longer use the SO_TYPE hack but&n; *&t;&t;&t;&t;&t;AX.25 now works right, and SPX is feasible.&n; *&t;&t;Alan Cox&t;:&t;Fixed write select of non IP protocol crash.&n; *&t;&t;Florian  La Roche:&t;Changed for my new skbuff handling.&n; *&t;&t;Darryl Miles&t;:&t;Fixed non-blocking SOCK_SEQPACKET.&n; *&t;&t;Linus Torvalds&t;:&t;BSD semantic fixes.&n; *&t;&t;Alan Cox&t;:&t;Datagram iovec handling&n; *&n; *&t;Note:&n; *&t;&t;A lot of this will change when the protocol/socket separation&n; *&t;occurs. Using this will make things reasonably clean.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -457,6 +457,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Copy a datagram to a linear buffer.&n; */
 DECL|function|skb_copy_datagram
 r_void
 id|skb_copy_datagram
@@ -479,6 +480,42 @@ id|size
 )paren
 (brace
 id|memcpy_tofs
+c_func
+(paren
+id|to
+comma
+id|skb-&gt;h.raw
+op_plus
+id|offset
+comma
+id|size
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Copy a datagram to an iovec.&n; */
+DECL|function|skb_copy_datagram_iovec
+r_void
+id|skb_copy_datagram_iovec
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_int
+id|offset
+comma
+r_struct
+id|iovec
+op_star
+id|to
+comma
+r_int
+id|size
+)paren
+(brace
+id|memcpy_toiovec
 c_func
 (paren
 id|to

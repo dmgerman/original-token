@@ -3082,6 +3082,11 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* SVR4/i386 ABI (pages 3-31, 3-32) says that when the program&n;&t;   starts %edx contains a pointer to a function which might be&n;&t;   registered using `atexit&squot;.  This provides a mean for the&n;&t;   dynamic linker to call DT_FINI functions for shared libraries&n;&t;   that have been loaded before the code runs.&n;&n;&t;   A value of 0 tells we have no such handler.  */
+id|regs-&gt;edx
+op_assign
+l_int|0
+suffix:semicolon
 id|start_thread
 c_func
 (paren

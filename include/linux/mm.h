@@ -237,7 +237,7 @@ id|newprot
 )paren
 suffix:semicolon
 DECL|member|sync
-r_void
+r_int
 (paren
 op_star
 id|sync
@@ -328,7 +328,7 @@ id|page
 )paren
 suffix:semicolon
 DECL|member|swapout
-r_void
+r_int
 (paren
 op_star
 id|swapout

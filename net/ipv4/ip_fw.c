@@ -5668,6 +5668,9 @@ id|offset
 comma
 r_int
 id|length
+comma
+r_int
+id|unused
 )paren
 (brace
 id|off_t

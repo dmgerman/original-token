@@ -1,4 +1,4 @@
-multiline_comment|/*&t;$Id: optcd.c,v 1.7 1995/06/28 20:20:13 root Exp $&n;&t;linux/drivers/block/optcd.c - Optics Storage 8000 AT CDROM driver&n;&n;&t;Copyright (C) 1995 Leo Spiekman (spiekman@dutette.et.tudelft.nl)&n;&n;&t;Based on Aztech CD268 CDROM driver by Werner Zimmermann and preworks&n;&t;by Eberhard Moenkeberg.&n;&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;&t;History&n;&t;14-5-95&t;&t;v0.0&t;Plays sound tracks. No reading of data CDs yet.&n;&t;&t;&t;&t;Detection of disk change doesn&squot;t work.&n;&t;21-5-95&t;&t;v0.1&t;First ALPHA version. CD can be mounted. The&n;&t;&t;&t;&t;device major nr is borrowed from the Aztech&n;&t;&t;&t;&t;driver. Speed is around 240 kb/s, as measured&n;&t;&t;&t;&t;with &quot;time dd if=/dev/cdrom of=/dev/null &bslash;&n;&t;&t;&t;&t;bs=2048 count=4096&quot;.&n;&t;24-6-95&t;&t;v0.2&t;Reworked the #defines for the command codes&n;&t;&t;&t;&t;and the like, as well as the structure of&n;&t;&t;&t;&t;the hardware communication protocol, to&n;&t;&t;&t;&t;reflect the &quot;official&quot; documentation, kindly&n;&t;&t;&t;&t;supplied by C.K. Tan, Optics Storage Pte. Ltd.&n;&t;&t;&t;&t;Also tidied up the state machine somewhat.&n;&t;28-6-95&t;&t;v0.3&t;Removed the ISP-16 interface code, as this&n;&t;&t;&t;&t;should go into its own driver. The driver now&n;&t;&t;&t;&t;has its own major nr.&n;&t;&t;&t;&t;Disk change detection now seems to work, too.&n;*/
+multiline_comment|/*&t;$Id: optcd.c,v 1.3 1995/08/24 19:54:27 root Exp root $&n;&t;linux/drivers/block/optcd.c - Optics Storage 8000 AT CDROM driver&n;&n;&t;Copyright (C) 1995 Leo Spiekman (spiekman@dutette.et.tudelft.nl)&n;&n;&t;Based on Aztech CD268 CDROM driver by Werner Zimmermann and preworks&n;&t;by Eberhard Moenkeberg (emoenke@gwdg.de). ISP16 detection and&n;&t;configuration by Eric van der Maarel (maarel@marin.nl), with some data&n;&t;communicated by Vadim V. Model (vadim@rbrf.msk.su).&n;&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;&t;History&n;&t;14-5-95&t;&t;v0.0&t;Plays sound tracks. No reading of data CDs yet.&n;&t;&t;&t;&t;Detection of disk change doesn&squot;t work.&n;&t;21-5-95&t;&t;v0.1&t;First ALPHA version. CD can be mounted. The&n;&t;&t;&t;&t;device major nr is borrowed from the Aztech&n;&t;&t;&t;&t;driver. Speed is around 240 kb/s, as measured&n;&t;&t;&t;&t;with &quot;time dd if=/dev/cdrom of=/dev/null &bslash;&n;&t;&t;&t;&t;bs=2048 count=4096&quot;.&n;&t;24-6-95&t;&t;v0.2&t;Reworked the #defines for the command codes&n;&t;&t;&t;&t;and the like, as well as the structure of&n;&t;&t;&t;&t;the hardware communication protocol, to&n;&t;&t;&t;&t;reflect the &quot;official&quot; documentation, kindly&n;&t;&t;&t;&t;supplied by C.K. Tan, Optics Storage Pte. Ltd.&n;&t;&t;&t;&t;Also tidied up the state machine somewhat.&n;&t;28-6-95&t;&t;v0.3&t;Removed the ISP-16 interface code, as this&n;&t;&t;&t;&t;should go into its own driver. The driver now&n;&t;&t;&t;&t;has its own major nr.&n;&t;&t;&t;&t;Disk change detection now seems to work, too.&n;&t;&t;&t;&t;This version became part of the standard&n;&t;&t;&t;&t;kernel as of version 1.3.7&n;&t;24-9-95&t;&t;v0.4&t;Re-inserted ISP-16 interface code which I&n;&t;&t;&t;&t;copied from sjcd.c, with a few changes.&n;&t;&t;&t;&t;Updated README.optcd. Submitted for&n;&t;&t;&t;&t;inclusion in 1.3.21&n;*/
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
@@ -34,6 +34,139 @@ macro_line|# include &quot;blk.h&quot;
 DECL|macro|optcd_port
 mdefine_line|#define optcd_port optcd&t;/* Needed for the modutils. */
 macro_line|# include &lt;linux/optcd.h&gt;
+multiline_comment|/* Some (Media)Magic */
+multiline_comment|/* define types of drive the interface on an ISP16 card may be looking at */
+DECL|macro|ISP16_DRIVE_X
+mdefine_line|#define ISP16_DRIVE_X 0x00
+DECL|macro|ISP16_SONY
+mdefine_line|#define ISP16_SONY  0x02
+DECL|macro|ISP16_PANASONIC0
+mdefine_line|#define ISP16_PANASONIC0 0x02
+DECL|macro|ISP16_SANYO0
+mdefine_line|#define ISP16_SANYO0 0x02
+DECL|macro|ISP16_MITSUMI
+mdefine_line|#define ISP16_MITSUMI  0x04
+DECL|macro|ISP16_PANASONIC1
+mdefine_line|#define ISP16_PANASONIC1 0x06
+DECL|macro|ISP16_SANYO1
+mdefine_line|#define ISP16_SANYO1 0x06
+DECL|macro|ISP16_DRIVE_NOT_USED
+mdefine_line|#define ISP16_DRIVE_NOT_USED 0x08  /* not used */
+DECL|macro|ISP16_DRIVE_SET_MASK
+mdefine_line|#define ISP16_DRIVE_SET_MASK 0xF1  /* don&squot;t change 0-bit or 4-7-bits*/
+multiline_comment|/* ...for port */
+DECL|macro|ISP16_DRIVE_SET_PORT
+mdefine_line|#define ISP16_DRIVE_SET_PORT 0xF8D
+multiline_comment|/* set io parameters */
+DECL|macro|ISP16_BASE_340
+mdefine_line|#define ISP16_BASE_340  0x00
+DECL|macro|ISP16_BASE_330
+mdefine_line|#define ISP16_BASE_330  0x40
+DECL|macro|ISP16_BASE_360
+mdefine_line|#define ISP16_BASE_360  0x80
+DECL|macro|ISP16_BASE_320
+mdefine_line|#define ISP16_BASE_320  0xC0
+DECL|macro|ISP16_IRQ_X
+mdefine_line|#define ISP16_IRQ_X  0x00
+DECL|macro|ISP16_IRQ_5
+mdefine_line|#define ISP16_IRQ_5  0x04  /* shouldn&squot;t be used due to soundcard conflicts */
+DECL|macro|ISP16_IRQ_7
+mdefine_line|#define ISP16_IRQ_7  0x08  /* shouldn&squot;t be used due to soundcard conflicts */
+DECL|macro|ISP16_IRQ_3
+mdefine_line|#define ISP16_IRQ_3  0x0C
+DECL|macro|ISP16_IRQ_9
+mdefine_line|#define ISP16_IRQ_9  0x10
+DECL|macro|ISP16_IRQ_10
+mdefine_line|#define ISP16_IRQ_10  0x14
+DECL|macro|ISP16_IRQ_11
+mdefine_line|#define ISP16_IRQ_11  0x18
+DECL|macro|ISP16_DMA_X
+mdefine_line|#define ISP16_DMA_X  0x03
+DECL|macro|ISP16_DMA_3
+mdefine_line|#define ISP16_DMA_3  0x00
+DECL|macro|ISP16_DMA_5
+mdefine_line|#define ISP16_DMA_5  0x00
+DECL|macro|ISP16_DMA_6
+mdefine_line|#define ISP16_DMA_6  0x01
+DECL|macro|ISP16_DMA_7
+mdefine_line|#define ISP16_DMA_7  0x02
+DECL|macro|ISP16_IO_SET_MASK
+mdefine_line|#define ISP16_IO_SET_MASK  0x20  /* don&squot;t change 5-bit */
+multiline_comment|/* ...for port */
+DECL|macro|ISP16_IO_SET_PORT
+mdefine_line|#define ISP16_IO_SET_PORT  0xF8E
+multiline_comment|/* enable the drive */
+DECL|macro|ISP16_NO_IDE__ENABLE_CDROM_PORT
+mdefine_line|#define ISP16_NO_IDE__ENABLE_CDROM_PORT  0xF90  /* ISP16 without IDE interface */
+DECL|macro|ISP16_IDE__ENABLE_CDROM_PORT
+mdefine_line|#define ISP16_IDE__ENABLE_CDROM_PORT  0xF91  /* ISP16 with IDE interface */
+DECL|macro|ISP16_ENABLE_CDROM
+mdefine_line|#define ISP16_ENABLE_CDROM  0x80  /* seven bit */
+multiline_comment|/* the magic stuff */
+DECL|macro|ISP16_CTRL_PORT
+mdefine_line|#define ISP16_CTRL_PORT  0xF8F
+DECL|macro|ISP16_NO_IDE__CTRL
+mdefine_line|#define ISP16_NO_IDE__CTRL  0xE2  /* ISP16 without IDE interface */
+DECL|macro|ISP16_IDE__CTRL
+mdefine_line|#define ISP16_IDE__CTRL  0xE3  /* ISP16 with IDE interface */
+r_static
+r_int
+id|isp16_detect
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_int
+id|isp16_no_ide__detect
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_int
+id|isp16_with_ide__detect
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_int
+id|isp16_config
+c_func
+(paren
+r_int
+id|base
+comma
+id|u_char
+id|drive_type
+comma
+r_int
+id|irq
+comma
+r_int
+id|dma
+)paren
+suffix:semicolon
+DECL|variable|isp16_type
+r_static
+r_int
+id|isp16_type
+suffix:semicolon
+multiline_comment|/* dependent on type of interface card */
+DECL|variable|isp16_ctrl
+r_static
+id|u_char
+id|isp16_ctrl
+suffix:semicolon
+DECL|variable|isp16_enable_cdrom_port
+r_static
+id|u_short
+id|isp16_enable_cdrom_port
+suffix:semicolon
 DECL|variable|optcd_port
 r_static
 r_int
@@ -6377,6 +6510,103 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|check_region
+c_func
+(paren
+id|ISP16_DRIVE_SET_PORT
+comma
+l_int|5
+)paren
+)paren
+(brace
+multiline_comment|/* If someone else has&squot;nt already reserved these ports,&n;&t;   probe for an ISP16 interface card, and enable SONY mode&n;&t;   with no interrupts and no DMA. (As far as I know, all optics&n;&t;   drives come with a SONY interface.) */
+r_if
+c_cond
+(paren
+(paren
+id|isp16_type
+op_assign
+id|isp16_detect
+c_func
+(paren
+)paren
+)paren
+OL
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;No ISP16 cdrom interface found.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|u_char
+id|expected_drive
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;ISP16 cdrom interface (%s optional IDE) detected.&bslash;n&quot;
+comma
+(paren
+id|isp16_type
+op_eq
+l_int|2
+)paren
+ques
+c_cond
+l_string|&quot;with&quot;
+suffix:colon
+l_string|&quot;without&quot;
+)paren
+suffix:semicolon
+id|expected_drive
+op_assign
+(paren
+id|isp16_type
+ques
+c_cond
+id|ISP16_SANYO1
+suffix:colon
+id|ISP16_SANYO0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|isp16_config
+c_func
+(paren
+id|optcd_port
+comma
+id|ISP16_SONY
+comma
+l_int|0
+comma
+l_int|0
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ISP16 cdrom interface has not been properly configured.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|mem_start
+suffix:semicolon
+)brace
+)brace
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
 id|optResetDrive
 c_func
 (paren
@@ -6576,4 +6806,723 @@ l_string|&quot;optcd: module released.&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif MODULE
+multiline_comment|/*&n; * -- ISP16 detection and configuration&n; *&n; *    Copyright (c) 1995, Eric van der Maarel &lt;maarel@marin.nl&gt;&n; *&n; *    Version 0.5&n; *&n; *    Detect cdrom interface on ISP16 soundcard.&n; *    Configure cdrom interface.&n; *&n; *    Algorithm for the card with no IDE support option taken&n; *    from the CDSETUP.SYS driver for MSDOS,&n; *    by OPTi Computers, version 2.03.&n; *    Algorithm for the IDE supporting ISP16 as communicated&n; *    to me by Vadim Model and Leo Spiekman.&n; *&n; *    Use, modifification or redistribution of this software is&n; *    allowed under the terms of the GPL.&n; *&n; */
+DECL|macro|ISP16_IN
+mdefine_line|#define ISP16_IN(p) (outb(isp16_ctrl,ISP16_CTRL_PORT), inb(p))
+DECL|macro|ISP16_OUT
+mdefine_line|#define ISP16_OUT(p,b) (outb(isp16_ctrl,ISP16_CTRL_PORT), outb(b,p))
+r_static
+r_int
+DECL|function|isp16_detect
+id|isp16_detect
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|isp16_with_ide__detect
+c_func
+(paren
+)paren
+OL
+l_int|0
+)paren
+)paren
+r_return
+l_int|2
+suffix:semicolon
+r_else
+r_return
+id|isp16_no_ide__detect
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_static
+r_int
+DECL|function|isp16_no_ide__detect
+id|isp16_no_ide__detect
+c_func
+(paren
+r_void
+)paren
+(brace
+id|u_char
+id|ctrl
+suffix:semicolon
+id|u_char
+id|enable_cdrom
+suffix:semicolon
+id|u_char
+id|io
+suffix:semicolon
+r_int
+id|i
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|isp16_ctrl
+op_assign
+id|ISP16_NO_IDE__CTRL
+suffix:semicolon
+id|isp16_enable_cdrom_port
+op_assign
+id|ISP16_NO_IDE__ENABLE_CDROM_PORT
+suffix:semicolon
+multiline_comment|/* read&squot; and write&squot; are a special read and write, respectively */
+multiline_comment|/* read&squot; ISP16_CTRL_PORT, clear last two bits and write&squot; back the result */
+id|ctrl
+op_assign
+id|ISP16_IN
+c_func
+(paren
+id|ISP16_CTRL_PORT
+)paren
+op_amp
+l_int|0xFC
+suffix:semicolon
+id|ISP16_OUT
+c_func
+(paren
+id|ISP16_CTRL_PORT
+comma
+id|ctrl
+)paren
+suffix:semicolon
+multiline_comment|/* read&squot; 3,4 and 5-bit from the cdrom enable port */
+id|enable_cdrom
+op_assign
+id|ISP16_IN
+c_func
+(paren
+id|ISP16_NO_IDE__ENABLE_CDROM_PORT
+)paren
+op_amp
+l_int|0x38
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|enable_cdrom
+op_amp
+l_int|0x20
+)paren
+)paren
+(brace
+multiline_comment|/* 5-bit not set */
+multiline_comment|/* read&squot; last 2 bits of ISP16_IO_SET_PORT */
+id|io
+op_assign
+id|ISP16_IN
+c_func
+(paren
+id|ISP16_IO_SET_PORT
+)paren
+op_amp
+l_int|0x03
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|io
+op_amp
+l_int|0x01
+)paren
+op_lshift
+l_int|1
+)paren
+op_eq
+(paren
+id|io
+op_amp
+l_int|0x02
+)paren
+)paren
+(brace
+multiline_comment|/* bits are the same */
+r_if
+c_cond
+(paren
+id|io
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* ...the same and 0 */
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|enable_cdrom
+op_or_assign
+l_int|0x20
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* ...the same and 1 */
+multiline_comment|/* my card, first time &squot;round */
+id|i
+op_assign
+l_int|1
+suffix:semicolon
+id|enable_cdrom
+op_or_assign
+l_int|0x28
+suffix:semicolon
+)brace
+id|ISP16_OUT
+c_func
+(paren
+id|ISP16_NO_IDE__ENABLE_CDROM_PORT
+comma
+id|enable_cdrom
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* bits are not the same */
+id|ISP16_OUT
+c_func
+(paren
+id|ISP16_CTRL_PORT
+comma
+id|ctrl
+)paren
+suffix:semicolon
+r_return
+id|i
+suffix:semicolon
+multiline_comment|/* -&gt; not detected: possibly incorrect conclusion */
+)brace
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|enable_cdrom
+op_eq
+l_int|0x20
+)paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|enable_cdrom
+op_eq
+l_int|0x28
+)paren
+multiline_comment|/* my card, already initialised */
+id|i
+op_assign
+l_int|1
+suffix:semicolon
+id|ISP16_OUT
+c_func
+(paren
+id|ISP16_CTRL_PORT
+comma
+id|ctrl
+)paren
+suffix:semicolon
+r_return
+id|i
+suffix:semicolon
+)brace
+r_static
+r_int
+DECL|function|isp16_with_ide__detect
+id|isp16_with_ide__detect
+c_func
+(paren
+r_void
+)paren
+(brace
+id|u_char
+id|ctrl
+suffix:semicolon
+id|u_char
+id|tmp
+suffix:semicolon
+id|isp16_ctrl
+op_assign
+id|ISP16_IDE__CTRL
+suffix:semicolon
+id|isp16_enable_cdrom_port
+op_assign
+id|ISP16_IDE__ENABLE_CDROM_PORT
+suffix:semicolon
+multiline_comment|/* read&squot; and write&squot; are a special read and write, respectively */
+multiline_comment|/* read&squot; ISP16_CTRL_PORT and save */
+id|ctrl
+op_assign
+id|ISP16_IN
+c_func
+(paren
+id|ISP16_CTRL_PORT
+)paren
+suffix:semicolon
+multiline_comment|/* write&squot; zero to the ctrl port and get response */
+id|ISP16_OUT
+c_func
+(paren
+id|ISP16_CTRL_PORT
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|tmp
+op_assign
+id|ISP16_IN
+c_func
+(paren
+id|ISP16_CTRL_PORT
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp
+op_ne
+l_int|2
+)paren
+multiline_comment|/* isp16 with ide option not detected */
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* restore ctrl port value */
+id|ISP16_OUT
+c_func
+(paren
+id|ISP16_CTRL_PORT
+comma
+id|ctrl
+)paren
+suffix:semicolon
+r_return
+l_int|2
+suffix:semicolon
+)brace
+r_static
+r_int
+DECL|function|isp16_config
+id|isp16_config
+c_func
+(paren
+r_int
+id|base
+comma
+id|u_char
+id|drive_type
+comma
+r_int
+id|irq
+comma
+r_int
+id|dma
+)paren
+(brace
+id|u_char
+id|base_code
+suffix:semicolon
+id|u_char
+id|irq_code
+suffix:semicolon
+id|u_char
+id|dma_code
+suffix:semicolon
+id|u_char
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|drive_type
+op_eq
+id|ISP16_MITSUMI
+)paren
+op_logical_and
+(paren
+id|dma
+op_ne
+l_int|0
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Mitsumi cdrom drive has no dma support.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|base
+)paren
+(brace
+r_case
+l_int|0x340
+suffix:colon
+id|base_code
+op_assign
+id|ISP16_BASE_340
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x330
+suffix:colon
+id|base_code
+op_assign
+id|ISP16_BASE_330
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x360
+suffix:colon
+id|base_code
+op_assign
+id|ISP16_BASE_360
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x320
+suffix:colon
+id|base_code
+op_assign
+id|ISP16_BASE_320
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Base address 0x%03X not supported by cdrom interface on ISP16.&bslash;n&quot;
+comma
+id|base
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_switch
+c_cond
+(paren
+id|irq
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
+id|irq_code
+op_assign
+id|ISP16_IRQ_X
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/* disable irq */
+r_case
+l_int|5
+suffix:colon
+id|irq_code
+op_assign
+id|ISP16_IRQ_5
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Irq 5 shouldn&squot;t be used by cdrom interface on ISP16,&quot;
+l_string|&quot; due to possible conflicts with the soundcard.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|7
+suffix:colon
+id|irq_code
+op_assign
+id|ISP16_IRQ_7
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Irq 7 shouldn&squot;t be used by cdrom interface on ISP16,&quot;
+l_string|&quot; due to possible conflicts with the soundcard.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|3
+suffix:colon
+id|irq_code
+op_assign
+id|ISP16_IRQ_3
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|9
+suffix:colon
+id|irq_code
+op_assign
+id|ISP16_IRQ_9
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|10
+suffix:colon
+id|irq_code
+op_assign
+id|ISP16_IRQ_10
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|11
+suffix:colon
+id|irq_code
+op_assign
+id|ISP16_IRQ_11
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Irq %d not supported by cdrom interface on ISP16.&bslash;n&quot;
+comma
+id|irq
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_switch
+c_cond
+(paren
+id|dma
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
+id|dma_code
+op_assign
+id|ISP16_DMA_X
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/* disable dma */
+r_case
+l_int|1
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Dma 1 cannot be used by cdrom interface on ISP16,&quot;
+l_string|&quot; due to conflict with the soundcard.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|3
+suffix:colon
+id|dma_code
+op_assign
+id|ISP16_DMA_3
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|5
+suffix:colon
+id|dma_code
+op_assign
+id|ISP16_DMA_5
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|6
+suffix:colon
+id|dma_code
+op_assign
+id|ISP16_DMA_6
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|7
+suffix:colon
+id|dma_code
+op_assign
+id|ISP16_DMA_7
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Dma %d not supported by cdrom interface on ISP16.&bslash;n&quot;
+comma
+id|dma
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|drive_type
+op_ne
+id|ISP16_SONY
+op_logical_and
+id|drive_type
+op_ne
+id|ISP16_PANASONIC0
+op_logical_and
+id|drive_type
+op_ne
+id|ISP16_PANASONIC1
+op_logical_and
+id|drive_type
+op_ne
+id|ISP16_SANYO0
+op_logical_and
+id|drive_type
+op_ne
+id|ISP16_SANYO1
+op_logical_and
+id|drive_type
+op_ne
+id|ISP16_MITSUMI
+op_logical_and
+id|drive_type
+op_ne
+id|ISP16_DRIVE_X
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Drive type (code 0x%02X) not supported by cdrom&quot;
+l_string|&quot; interface on ISP16.&bslash;n&quot;
+comma
+id|drive_type
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* set type of interface */
+id|i
+op_assign
+id|ISP16_IN
+c_func
+(paren
+id|ISP16_DRIVE_SET_PORT
+)paren
+op_amp
+id|ISP16_DRIVE_SET_MASK
+suffix:semicolon
+multiline_comment|/* clear some bits */
+id|ISP16_OUT
+c_func
+(paren
+id|ISP16_DRIVE_SET_PORT
+comma
+id|i
+op_or
+id|drive_type
+)paren
+suffix:semicolon
+multiline_comment|/* enable cdrom on interface with ide support */
+r_if
+c_cond
+(paren
+id|isp16_type
+OG
+l_int|1
+)paren
+id|ISP16_OUT
+c_func
+(paren
+id|isp16_enable_cdrom_port
+comma
+id|ISP16_ENABLE_CDROM
+)paren
+suffix:semicolon
+multiline_comment|/* set base address, irq and dma */
+id|i
+op_assign
+id|ISP16_IN
+c_func
+(paren
+id|ISP16_IO_SET_PORT
+)paren
+op_amp
+id|ISP16_IO_SET_MASK
+suffix:semicolon
+multiline_comment|/* keep some bits */
+id|ISP16_OUT
+c_func
+(paren
+id|ISP16_IO_SET_PORT
+comma
+id|i
+op_or
+id|base_code
+op_or
+id|irq_code
+op_or
+id|dma_code
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 eof

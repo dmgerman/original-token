@@ -427,7 +427,7 @@ id|INTEL
 comma
 id|INTEL_82371
 comma
-l_string|&quot;82471 Triton&quot;
+l_string|&quot;82371 Triton&quot;
 )paren
 comma
 id|DEVICE
@@ -1532,7 +1532,7 @@ r_case
 id|PCI_CLASS_STORAGE_IDE
 suffix:colon
 r_return
-l_string|&quot;IDE controller&quot;
+l_string|&quot;IDE interface&quot;
 suffix:semicolon
 r_case
 id|PCI_CLASS_STORAGE_FLOPPY

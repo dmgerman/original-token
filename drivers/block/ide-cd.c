@@ -45,8 +45,6 @@ DECL|macro|PACKET_COMMAND
 mdefine_line|#define PACKET_COMMAND 4315
 DECL|macro|REQUEST_SENSE_COMMAND
 mdefine_line|#define REQUEST_SENSE_COMMAND 4316
-DECL|macro|WIN_PACKETCMD
-mdefine_line|#define WIN_PACKETCMD 0xa0  /* Send a packet command. */
 multiline_comment|/* Some ATAPI command opcodes (just like SCSI).&n;   (Some other cdrom-specific codes are in cdrom.h.) */
 DECL|macro|TEST_UNIT_READY
 mdefine_line|#define TEST_UNIT_READY         0x00

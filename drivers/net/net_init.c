@@ -1410,6 +1410,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+)brace
 r_for
 c_loop
 (paren
@@ -1445,7 +1446,6 @@ l_int|NULL
 suffix:semicolon
 r_break
 suffix:semicolon
-)brace
 )brace
 )brace
 id|restore_flags

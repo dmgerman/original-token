@@ -581,7 +581,7 @@ macro_line|#endif /* (MAJOR_NR != SCSI_TAPE_MAJOR) &amp;&amp; !defined(IDE_DRIVE
 multiline_comment|/* end_request() - SCSI devices have their own version */
 multiline_comment|/*               - IDE drivers have their own copy too */
 macro_line|#if ! SCSI_MAJOR(MAJOR_NR)
-macro_line|#ifdef _IDE_CD_C&t;/* ide-cd.c uses copy from ide.c */
+macro_line|#if defined(_IDE_CD_C) || defined(_TRITON_C) /* shares copy with ide.c */
 r_void
 id|ide_end_request
 c_func

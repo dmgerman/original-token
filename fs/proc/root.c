@@ -48,6 +48,101 @@ op_star
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * These are the generic /proc directory operations. They&n; * use the in-memory &quot;struct proc_dir_entry&quot; tree to parse&n; * the /proc directory.&n; *&n; * NOTE! The /proc/scsi directory currently does not correctly&n; * build up the proc_dir_entry tree, and will show up empty.&n; */
+DECL|variable|proc_dir_operations
+r_static
+r_struct
+id|file_operations
+id|proc_dir_operations
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* lseek - default */
+l_int|NULL
+comma
+multiline_comment|/* read - bad */
+l_int|NULL
+comma
+multiline_comment|/* write - bad */
+id|proc_readdir
+comma
+multiline_comment|/* readdir */
+l_int|NULL
+comma
+multiline_comment|/* select - default */
+l_int|NULL
+comma
+multiline_comment|/* ioctl - default */
+l_int|NULL
+comma
+multiline_comment|/* mmap */
+l_int|NULL
+comma
+multiline_comment|/* no special open code */
+l_int|NULL
+comma
+multiline_comment|/* no special release code */
+l_int|NULL
+multiline_comment|/* can&squot;t fsync */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * proc directories can do almost nothing..&n; */
+DECL|variable|proc_dir_inode_operations
+r_static
+r_struct
+id|inode_operations
+id|proc_dir_inode_operations
+op_assign
+(brace
+op_amp
+id|proc_dir_operations
+comma
+multiline_comment|/* default net directory file-ops */
+l_int|NULL
+comma
+multiline_comment|/* create */
+id|proc_lookup
+comma
+multiline_comment|/* lookup */
+l_int|NULL
+comma
+multiline_comment|/* link */
+l_int|NULL
+comma
+multiline_comment|/* unlink */
+l_int|NULL
+comma
+multiline_comment|/* symlink */
+l_int|NULL
+comma
+multiline_comment|/* mkdir */
+l_int|NULL
+comma
+multiline_comment|/* rmdir */
+l_int|NULL
+comma
+multiline_comment|/* mknod */
+l_int|NULL
+comma
+multiline_comment|/* rename */
+l_int|NULL
+comma
+multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
+multiline_comment|/* truncate */
+l_int|NULL
+multiline_comment|/* permission */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * The root /proc directory is special, as it has the&n; * &lt;pid&gt; directories. Thus we don&squot;t use the generic&n; * directory handling functions for that..&n; */
 DECL|variable|proc_root_operations
 r_static
 r_struct
@@ -86,7 +181,7 @@ l_int|NULL
 multiline_comment|/* no fsync */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * proc directories can do almost nothing..&n; */
+multiline_comment|/*&n; * proc root can do almost nothing..&n; */
 DECL|variable|proc_root_inode_operations
 r_static
 r_struct
@@ -160,7 +255,7 @@ id|S_IRUGO
 op_or
 id|S_IXUGO
 comma
-l_int|3
+l_int|2
 comma
 l_int|0
 comma
@@ -170,6 +265,87 @@ l_int|0
 comma
 op_amp
 id|proc_root_inode_operations
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_root
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|variable|proc_net
+r_struct
+id|proc_dir_entry
+id|proc_net
+op_assign
+(brace
+id|PROC_NET
+comma
+l_int|3
+comma
+l_string|&quot;net&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_dir_inode_operations
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|variable|proc_scsi
+r_struct
+id|proc_dir_entry
+id|proc_scsi
+op_assign
+(brace
+id|PROC_SCSI
+comma
+l_int|4
+comma
+l_string|&quot;scsi&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_dir_inode_operations
 comma
 l_int|NULL
 comma

@@ -20,7 +20,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-multiline_comment|/* the BIOS manuals say there can be up to 4 lpt devices&n; * but I have not seen a board where the 4th address is listed&n; * if you have different hardware change the table below &n; * please let me know if you have different equipment&n; * if you have more than 3 printers, remember to increase LP_NO&n; */
+multiline_comment|/* the BIOS manuals say there can be up to 4 lpt devices&n; * but I have not seen a board where the 4th address is listed&n; * if you have different hardware change the table below&n; * please let me know if you have different equipment&n; * if you have more than 3 printers, remember to increase LP_NO&n; */
 DECL|variable|lp_table
 r_struct
 id|lp_struct
@@ -123,8 +123,8 @@ mdefine_line|#define LP_READY(minor, status) &bslash;&n;  ((LP_F(minor) &amp; LP
 DECL|macro|LP_CAREFUL_READY
 mdefine_line|#define LP_CAREFUL_READY(minor, status) &bslash;&n;  ((LP_F(minor) &amp; LP_CAREFUL) ? _LP_CAREFUL_READY(status) : 1)
 DECL|macro|_LP_CAREFUL_READY
-mdefine_line|#define _LP_CAREFUL_READY(status) &bslash;&n;   (status &amp; (LP_PBUSY|LP_POUTPA|LP_PSELECD|LP_PERRORP)) == &bslash;&n;      (LP_PBUSY|LP_PSELECD|LP_PERRORP) 
-multiline_comment|/* &n; * All my debugging code assumes that you debug with only one printer at&n; * a time. RWWH&n; * Debug info moved into stats area, so this is no longer true (Rob Janssen)&n; */
+mdefine_line|#define _LP_CAREFUL_READY(status) &bslash;&n;   (status &amp; (LP_PBUSY|LP_POUTPA|LP_PSELECD|LP_PERRORP)) == &bslash;&n;      (LP_PBUSY|LP_PSELECD|LP_PERRORP)
+multiline_comment|/*&n; * All my debugging code assumes that you debug with only one printer at&n; * a time. RWWH&n; * Debug info moved into stats area, so this is no longer true (Rob Janssen)&n; */
 DECL|macro|LP_DEBUG
 macro_line|#undef LP_DEBUG
 DECL|function|lp_reset
@@ -2929,7 +2929,7 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#else&t;&t;
+macro_line|#else
 r_return
 id|kmem_start
 suffix:semicolon
@@ -3100,7 +3100,7 @@ macro_line|#ifdef MODULE
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#else&t;
+macro_line|#else
 r_return
 id|kmem_start
 suffix:semicolon
@@ -3137,9 +3137,9 @@ c_func
 l_string|&quot;lp: busy - remove delayed&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
 )brace
-r_else
-(brace
 id|unregister_chrdev
 c_func
 (paren
@@ -3162,6 +3162,33 @@ suffix:semicolon
 id|offset
 op_increment
 )paren
+(brace
+r_int
+id|base
+comma
+id|size
+suffix:semicolon
+id|base
+op_assign
+id|LP_B
+c_func
+(paren
+id|offset
+)paren
+suffix:semicolon
+id|size
+op_assign
+(paren
+id|base
+op_eq
+l_int|0x3bc
+)paren
+ques
+c_cond
+l_int|3
+suffix:colon
+l_int|8
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3182,7 +3209,7 @@ c_func
 id|offset
 )paren
 comma
-l_int|3
+id|size
 )paren
 suffix:semicolon
 )brace
