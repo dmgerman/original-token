@@ -69,7 +69,7 @@ id|max_inodes
 op_assign
 id|NR_INODE
 suffix:semicolon
-multiline_comment|/*&n; * Put the inode on the super block&squot;s dirty list&n; */
+multiline_comment|/*&n; * Put the inode on the super block&squot;s dirty list.&n; *&n; * CAREFUL! We mark it dirty unconditionally, but&n; * move it onto the dirty list only if it is hashed.&n; * If it was not hashed, it will never be added to&n; * the dirty list even if it is later hashed, as it&n; * will have been marked dirty already.&n; *&n; * In short, make sure you hash any inodes _before_&n; * you start marking them dirty..&n; */
 DECL|function|__mark_inode_dirty
 r_void
 id|__mark_inode_dirty

@@ -4757,12 +4757,6 @@ id|inode-&gt;i_gid
 op_assign
 id|current-&gt;fsgid
 suffix:semicolon
-id|mark_inode_dirty
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 id|inode-&gt;i_ino
 op_assign
 id|block
@@ -4833,6 +4827,12 @@ op_minus
 l_int|1
 suffix:semicolon
 id|insert_inode_hash
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+id|mark_inode_dirty
 c_func
 (paren
 id|inode
