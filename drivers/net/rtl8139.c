@@ -5993,7 +5993,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Free the original skb. */
-id|dev_free_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|tp-&gt;tx_info

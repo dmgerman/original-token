@@ -3694,7 +3694,7 @@ id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-id|netif_start_queue
+id|netif_wake_queue
 (paren
 id|dev
 )paren
@@ -3756,6 +3756,11 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+id|netif_stop_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren
@@ -3804,11 +3809,9 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
-id|compat_dev_kfree_skb
+id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 multiline_comment|/* You might need to clean up and record Tx statistics here. */
@@ -5793,7 +5796,7 @@ op_amp
 id|dev-&gt;flags
 )paren
 )paren
-id|netif_start_queue
+id|netif_wake_queue
 c_func
 (paren
 id|dev

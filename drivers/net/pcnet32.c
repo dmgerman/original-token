@@ -5086,7 +5086,7 @@ id|entry
 )braket
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|lp-&gt;tx_skbuff

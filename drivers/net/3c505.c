@@ -2494,7 +2494,7 @@ c_cond
 id|adapter-&gt;current_dma.direction
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|adapter-&gt;current_dma.skb

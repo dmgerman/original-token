@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Intel IO-APIC support for multi-Pentium hosts.&n; *&n; *&t;Copyright (C) 1997, 1998, 1999, 2000 Ingo Molnar, Hajnalka Szabo&n; *&n; *&t;Many thanks to Stig Venaas for trying out countless experimental&n; *&t;patches and reporting/debugging problems patiently!&n; *&n; *&t;(c) 1999, Multiple IO-APIC support, developed by&n; *&t;Ken-ichi Yaku &lt;yaku@css1.kbnes.nec.co.jp&gt; and&n; *      Hidemi Kishimoto &lt;kisimoto@css1.kbnes.nec.co.jp&gt;,&n; *&t;further tested and cleaned up by Zach Brown &lt;zab@redhat.com&gt;&n; *&t;and Ingo Molnar &lt;mingo@redhat.com&gt;&n; */
+multiline_comment|/*&n; *&t;Intel IO-APIC support for multi-Pentium hosts.&n; *&n; *&t;Copyright (C) 1997, 1998, 1999, 2000 Ingo Molnar, Hajnalka Szabo&n; *&n; *&t;Many thanks to Stig Venaas for trying out countless experimental&n; *&t;patches and reporting/debugging problems patiently!&n; *&n; *&t;(c) 1999, Multiple IO-APIC support, developed by&n; *&t;Ken-ichi Yaku &lt;yaku@css1.kbnes.nec.co.jp&gt; and&n; *      Hidemi Kishimoto &lt;kisimoto@css1.kbnes.nec.co.jp&gt;,&n; *&t;further tested and cleaned up by Zach Brown &lt;zab@redhat.com&gt;&n; *&t;and Ingo Molnar &lt;mingo@redhat.com&gt;&n; *&n; *&t;Fixes&n; *&t;Maciej W. Rozycki&t;:&t;Bits for genuine 82489DX APICs&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -3877,113 +3877,6 @@ l_int|0x23
 suffix:semicolon
 )brace
 )brace
-DECL|function|setup_ioapic_default_id
-r_static
-r_void
-id|__init
-id|setup_ioapic_default_id
-c_func
-(paren
-r_void
-)paren
-(brace
-r_struct
-id|IO_APIC_reg_00
-id|reg_00
-suffix:semicolon
-multiline_comment|/*&n;&t; * &squot;default&squot; mptable configurations mean a hardwired setup,&n;&t; * 2 CPUs, 16 APIC registers. IO-APIC ID is usually set to 0,&n;&t; * setting it to ID 2 should be fine.&n;&t; */
-multiline_comment|/*&n;&t; * Sanity check, is ID 2 really free? Every APIC in the&n;&t; * system must have a unique ID or we get lots of nice&n;&t; * &squot;stuck on smp_invalidate_needed IPI wait&squot; messages.&n;&t; */
-r_if
-c_cond
-(paren
-id|phys_cpu_present_map
-op_amp
-(paren
-l_int|1
-op_lshift
-l_int|0x2
-)paren
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;APIC ID 2 already used&quot;
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Set the ID&n;&t; */
-op_star
-(paren
-r_int
-op_star
-)paren
-op_amp
-id|reg_00
-op_assign
-id|io_apic_read
-c_func
-(paren
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;...changing IO-APIC physical APIC ID to 2...&bslash;n&quot;
-)paren
-suffix:semicolon
-id|reg_00.ID
-op_assign
-l_int|0x2
-suffix:semicolon
-id|io_apic_write
-c_func
-(paren
-l_int|0
-comma
-l_int|0
-comma
-op_star
-(paren
-r_int
-op_star
-)paren
-op_amp
-id|reg_00
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Sanity check&n;&t; */
-op_star
-(paren
-r_int
-op_star
-)paren
-op_amp
-id|reg_00
-op_assign
-id|io_apic_read
-c_func
-(paren
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|reg_00.ID
-op_ne
-l_int|0x2
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;could not set ID&quot;
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * function to set the IO-APIC physical IDs based on the&n; * values stored in the MPC table.&n; *&n; * by Matt Domsch &lt;Matt_Domsch@dell.com&gt;  Tue Dec 21 12:25:05 CST 1999&n; */
 DECL|function|setup_ioapic_ids_from_mpc
 r_static
@@ -4039,6 +3932,36 @@ id|printk
 c_func
 (paren
 l_string|&quot;...changing IO-APIC physical APIC ID to %d ...&quot;
+comma
+id|mp_ioapics
+(braket
+id|apic
+)braket
+dot
+id|mpc_apicid
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Sanity check, is the ID really free? Every APIC in the&n;&t;&t; * system must have a unique ID or we get lots of nice&n;&t;&t; * &squot;stuck on smp_invalidate_needed IPI wait&squot; messages.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|phys_cpu_present_map
+op_amp
+(paren
+l_int|1
+op_lshift
+id|mp_ioapics
+(braket
+id|apic
+)braket
+dot
+id|mpc_apicid
+)paren
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;APIC ID %d already used&quot;
 comma
 id|mp_ioapics
 (braket
@@ -4289,11 +4212,6 @@ op_assign
 l_int|2
 suffix:semicolon
 )brace
-id|setup_ioapic_default_id
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * There is a nasty bug in some older SMP boards, their mptable lies&n; * about the timer IRQ. We do the following to work around the situation:&n; *&n; *&t;- timer IRQ defaults to IO-APIC IRQ&n; *&t;- if this function detects that timer IRQs are defunct, then we fall&n; *&t;  back to ISA timer IRQs&n; */
 DECL|function|timer_irq_works
@@ -4909,6 +4827,12 @@ r_int
 id|vector
 suffix:semicolon
 multiline_comment|/*&n;&t; * get/set the timer IRQ vector:&n;&t; */
+id|disable_8259A_irq
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
 id|vector
 op_assign
 id|assign_irq_vector

@@ -67,12 +67,6 @@ id|pages_low
 comma
 id|pages_high
 suffix:semicolon
-DECL|member|zone_pgdat
-r_struct
-id|pglist_data
-op_star
-id|zone_pgdat
-suffix:semicolon
 multiline_comment|/*&n;&t; * free areas of different sizes&n;&t; */
 DECL|member|free_area
 id|free_area_t
@@ -91,6 +85,29 @@ DECL|member|size
 r_int
 r_int
 id|size
+suffix:semicolon
+multiline_comment|/*&n;&t; * Discontig memory support fields.&n;&t; */
+DECL|member|zone_pgdat
+r_struct
+id|pglist_data
+op_star
+id|zone_pgdat
+suffix:semicolon
+DECL|member|zone_start_paddr
+r_int
+r_int
+id|zone_start_paddr
+suffix:semicolon
+DECL|member|zone_start_mapnr
+r_int
+r_int
+id|zone_start_mapnr
+suffix:semicolon
+DECL|member|zone_mem_map
+r_struct
+id|page
+op_star
+id|zone_mem_map
 suffix:semicolon
 DECL|typedef|zone_t
 )brace
@@ -171,6 +188,25 @@ id|bootmem_data
 op_star
 id|bdata
 suffix:semicolon
+DECL|member|node_start_paddr
+r_int
+r_int
+id|node_start_paddr
+suffix:semicolon
+DECL|member|node_start_mapnr
+r_int
+r_int
+id|node_start_mapnr
+suffix:semicolon
+DECL|member|node_size
+r_int
+r_int
+id|node_size
+suffix:semicolon
+DECL|member|node_id
+r_int
+id|node_id
+suffix:semicolon
 DECL|typedef|pg_data_t
 )brace
 id|pg_data_t
@@ -181,6 +217,43 @@ id|numnodes
 suffix:semicolon
 DECL|macro|memclass
 mdefine_line|#define memclass(pgzone, tzone)&t;(((pgzone)-&gt;zone_pgdat == (tzone)-&gt;zone_pgdat) &bslash;&n;&t;&t;&t;&amp;&amp; (((pgzone) - (pgzone)-&gt;zone_pgdat-&gt;node_zones) &lt;= &bslash;&n;&t;&t;&t;((tzone) - (pgzone)-&gt;zone_pgdat-&gt;node_zones)))
+multiline_comment|/*&n; * The following two are not meant for general usage. They are here as&n; * prototypes for the discontig memory code.&n; */
+r_extern
+r_void
+id|show_free_areas_core
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|free_area_init_core
+c_func
+(paren
+r_int
+id|nid
+comma
+id|pg_data_t
+op_star
+id|pgdat
+comma
+r_struct
+id|page
+op_star
+op_star
+id|gmap
+comma
+r_int
+r_int
+op_star
+id|zones_size
+comma
+r_int
+r_int
+id|paddr
+)paren
+suffix:semicolon
 macro_line|#ifndef CONFIG_DISCONTIGMEM
 r_extern
 id|pg_data_t
@@ -195,14 +268,6 @@ macro_line|#include &lt;asm/mmzone.h&gt;
 macro_line|#endif /* !CONFIG_DISCONTIGMEM */
 DECL|macro|MAP_ALIGN
 mdefine_line|#define MAP_ALIGN(x)&t;((((x) % sizeof(mem_map_t)) == 0) ? (x) : ((x) + &bslash;&n;&t;&t;sizeof(mem_map_t) - ((x) % sizeof(mem_map_t))))
-macro_line|#ifdef CONFIG_DISCONTIGMEM
-DECL|macro|LOCAL_MAP_NR
-mdefine_line|#define LOCAL_MAP_NR(kvaddr) &bslash;&n;&t;(((unsigned long)(kvaddr)-LOCAL_BASE_ADDR((kvaddr))) &gt;&gt; PAGE_SHIFT)
-DECL|macro|MAP_NR
-mdefine_line|#define MAP_NR(kaddr)&t;(LOCAL_MAP_NR((kaddr)) + &bslash;&n;&t;&t;(((unsigned long)ADDR_TO_MAPBASE((kaddr)) - PAGE_OFFSET) / &bslash;&n;&t;&t;sizeof(mem_map_t)))
-DECL|macro|kern_addr_valid
-mdefine_line|#define kern_addr_valid(addr)&t;((KVADDR_TO_NID((unsigned long)addr) &gt;= &bslash;&n;&t;numnodes) ? 0 : (test_bit(LOCAL_MAP_NR((addr)), &bslash;&n;&t;NODE_DATA(KVADDR_TO_NID((unsigned long)addr))-&gt;valid_addr_bitmap)))
-macro_line|#endif /* CONFIG_DISCONTIGMEM */
 macro_line|#endif /* !__ASSEMBLY__ */
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_MMZONE_H */

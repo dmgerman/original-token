@@ -1244,31 +1244,6 @@ r_return
 id|retv
 suffix:semicolon
 )brace
-DECL|function|lp_lseek
-r_static
-r_int
-r_int
-id|lp_lseek
-c_func
-(paren
-r_struct
-id|file
-op_star
-id|file
-comma
-r_int
-r_int
-id|offset
-comma
-r_int
-id|origin
-)paren
-(brace
-r_return
-op_minus
-id|ESPIPE
-suffix:semicolon
-)brace
 macro_line|#ifdef CONFIG_PARPORT_1284
 multiline_comment|/* Status readback conforming to ieee1284 */
 DECL|function|lp_read

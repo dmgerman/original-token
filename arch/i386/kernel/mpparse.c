@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Intel Multiprocessor Specificiation 1.1 and 1.4&n; *&t;compliant MP-table parsing routines.&n; *&n; *&t;(c) 1995 Alan Cox, Building #3 &lt;alan@redhat.com&gt;&n; *&t;(c) 1998, 1999, 2000 Ingo Molnar &lt;mingo@redhat.com&gt;&n; *&n; *&t;Fixes&n; *&t;&t;Erich Boleyn&t;:&t;MP v1.4 and additional changes.&n; *&t;&t;Alan Cox&t;:&t;Added EBDA scanning&n; *&t;&t;Ingo Molnar&t;:&t;various cleanups and rewrites&n; *&t;Maciej W. Rozycki&t;:&t;Bits for genuine 82489DX timers&n; */
+multiline_comment|/*&n; *&t;Intel Multiprocessor Specificiation 1.1 and 1.4&n; *&t;compliant MP-table parsing routines.&n; *&n; *&t;(c) 1995 Alan Cox, Building #3 &lt;alan@redhat.com&gt;&n; *&t;(c) 1998, 1999, 2000 Ingo Molnar &lt;mingo@redhat.com&gt;&n; *&n; *&t;Fixes&n; *&t;&t;Erich Boleyn&t;:&t;MP v1.4 and additional changes.&n; *&t;&t;Alan Cox&t;:&t;Added EBDA scanning&n; *&t;&t;Ingo Molnar&t;:&t;various cleanups and rewrites&n; *&t;Maciej W. Rozycki&t;:&t;Bits for genuine 82489DX APICs&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -1289,6 +1289,14 @@ op_ne
 l_int|0
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;Default MP configuration #%d&bslash;n&quot;
+comma
+id|mpf-&gt;mpf_feature1
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * local APIC has default address&n;&t;&t; */
 id|mp_lapic_addr
 op_assign
@@ -1315,6 +1323,15 @@ dot
 id|mpc_apicaddr
 op_assign
 l_int|0xFEC00000
+suffix:semicolon
+id|mp_ioapics
+(braket
+l_int|0
+)braket
+dot
+id|mpc_apicid
+op_assign
+l_int|2
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Save the default type number, we&n;&t;&t; * need it later to set the IO-APIC&n;&t;&t; * up properly:&n;&t;&t; */
 id|mpc_default_type

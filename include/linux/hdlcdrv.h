@@ -745,12 +745,13 @@ DECL|member|ptt_keyed
 r_int
 id|ptt_keyed
 suffix:semicolon
-DECL|member|send_queue
+multiline_comment|/* queued skb for transmission */
+DECL|member|skb
 r_struct
-id|sk_buff_head
-id|send_queue
+id|sk_buff
+op_star
+id|skb
 suffix:semicolon
-multiline_comment|/* Packets awaiting transmission */
 )brace
 suffix:semicolon
 multiline_comment|/* -------------------------------------------------------------------- */

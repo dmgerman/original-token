@@ -2893,8 +2893,6 @@ id|printk
 c_func
 (paren
 l_string|&quot;igafb_init: no memory start&bslash;n&quot;
-comma
-id|addr
 )paren
 suffix:semicolon
 id|kfree
@@ -3010,6 +3008,10 @@ suffix:semicolon
 id|iounmap
 c_func
 (paren
+(paren
+r_void
+op_star
+)paren
 id|info-&gt;frame_buffer
 )paren
 suffix:semicolon
@@ -3063,6 +3065,10 @@ suffix:semicolon
 id|iounmap
 c_func
 (paren
+(paren
+r_void
+op_star
+)paren
 id|info-&gt;frame_buffer
 )paren
 suffix:semicolon
@@ -3274,6 +3280,10 @@ suffix:semicolon
 id|iounmap
 c_func
 (paren
+(paren
+r_void
+op_star
+)paren
 id|info-&gt;frame_buffer
 )paren
 suffix:semicolon

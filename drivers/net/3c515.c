@@ -5711,7 +5711,7 @@ id|entry
 )braket
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|lp-&gt;tx_skbuff
@@ -5804,7 +5804,7 @@ id|dev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 (paren
 id|lp-&gt;tx_skb
 )paren

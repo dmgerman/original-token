@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcikbd.c,v 1.43 2000/02/09 22:33:25 davem Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
+multiline_comment|/* $Id: pcikbd.c,v 1.44 2000/02/11 04:49:13 davem Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -4311,18 +4311,6 @@ id|found
 suffix:semicolon
 )brace
 macro_line|#endif
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pci_present
-c_func
-(paren
-)paren
-)paren
-r_goto
-id|do_enodev
-suffix:semicolon
 multiline_comment|/*&n;&t; * Get the nodes for keyboard and mouse from aliases on normal systems.&n;&t; */
 id|node
 op_assign

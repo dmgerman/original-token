@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Local APIC handling, local APIC timers&n; *&n; *&t;(c) 1999, 2000 Ingo Molnar &lt;mingo@redhat.com&gt;&n; *&n; */
+multiline_comment|/*&n; *&t;Local APIC handling, local APIC timers&n; *&n; *&t;(c) 1999, 2000 Ingo Molnar &lt;mingo@redhat.com&gt;&n; *&n; *&t;Fixes&n; *&t;Maciej W. Rozycki&t;:&t;Bits for genuine 82489DX timers&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
