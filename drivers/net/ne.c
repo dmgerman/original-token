@@ -783,12 +783,10 @@ r_if
 c_cond
 (paren
 id|pci_irq_line
-op_eq
-l_int|0
 )paren
-r_continue
+r_break
 suffix:semicolon
-multiline_comment|/* Try next PCI ID */
+multiline_comment|/* Found it */
 )brace
 r_if
 c_cond

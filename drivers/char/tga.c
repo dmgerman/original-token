@@ -1478,9 +1478,6 @@ id|pci_dev
 op_star
 id|dev
 suffix:semicolon
-r_int
-id|status
-suffix:semicolon
 multiline_comment|/*&n;&t; * first, find the TGA among the PCI devices...&n;&t; */
 r_if
 c_cond
@@ -1500,6 +1497,7 @@ l_int|NULL
 )paren
 )paren
 )paren
+(brace
 multiline_comment|/* PANIC!!! */
 id|printk
 c_func
@@ -1583,7 +1581,6 @@ c_func
 suffix:semicolon
 multiline_comment|/*&n;&t; * FINALLY, we can register TGA as console (whew!)&n;&t; */
 macro_line|#ifdef CONFIG_VT_CONSOLE
-DECL|variable|vt_console_driver
 id|register_console
 c_func
 (paren
@@ -1593,6 +1590,7 @@ id|vt_console_driver
 suffix:semicolon
 macro_line|#endif
 )brace
+DECL|variable|__initdata
 r_int
 r_char
 id|PLLbits
@@ -1617,6 +1615,7 @@ comma
 l_int|0xb8
 )brace
 suffix:semicolon
+DECL|variable|__initdata
 r_const
 r_int
 r_int
@@ -1756,6 +1755,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+DECL|variable|__initdata
 r_const
 r_int
 r_int
@@ -2279,6 +2279,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
@@ -3641,6 +3642,7 @@ r_int
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
@@ -3751,6 +3753,7 @@ multiline_comment|/*&n; * tga_blitc&n; *&n; * Displays an ASCII character at a s
 r_static
 r_int
 r_int
+DECL|variable|fontmask_bits
 id|fontmask_bits
 (braket
 l_int|16
@@ -3791,6 +3794,7 @@ l_int|0xffffffff
 )brace
 suffix:semicolon
 r_int
+DECL|function|tga_blitc
 id|tga_blitc
 c_func
 (paren
@@ -4336,6 +4340,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * font table of displayable characters.&n; */
+DECL|variable|tga_builtin_font
 r_char
 id|tga_builtin_font
 (braket

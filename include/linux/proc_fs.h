@@ -943,14 +943,6 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|proc_bus_pci_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|proc_register
 c_func

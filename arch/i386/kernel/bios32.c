@@ -3515,6 +3515,16 @@ r_int
 id|i
 comma
 id|has_io
+comma
+id|has_mem
+suffix:semicolon
+r_int
+r_int
+id|cmd
+suffix:semicolon
+r_int
+r_char
+id|pin
 suffix:semicolon
 r_for
 c_loop
@@ -3530,8 +3540,10 @@ op_assign
 id|dev-&gt;next
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * There are probably some buggy BIOSes that forget to assign I/O port&n;&t;&t; * addresses to several devices. We probably should assign new addresses&n;&t;&t; * to such devices, but we need to gather some information first. [mj]&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * There are buggy BIOSes that forget to enable I/O and memory&n;&t;&t; * access to PCI devices. We try to fix this, but we need to&n;&t;&t; * be sure that the BIOS didn&squot;t forget to assign an address&n;&t;&t; * to the device. [mj]&n;&t;&t; */
 id|has_io
+op_assign
+id|has_mem
 op_assign
 l_int|0
 suffix:semicolon
@@ -3568,7 +3580,7 @@ id|PCI_BASE_ADDRESS_SPACE_IO
 )paren
 (brace
 id|has_io
-op_assign
+op_or_assign
 l_int|1
 suffix:semicolon
 id|a
@@ -3585,6 +3597,7 @@ id|a
 op_eq
 id|PCI_BASE_ADDRESS_IO_MASK
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -3599,19 +3612,25 @@ comma
 id|dev-&gt;devfn
 )paren
 suffix:semicolon
+id|has_io
+op_or_assign
+l_int|2
+suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t;&t; * Check if the I/O space access is allowed. If not, moan loudly. [mj]&n;&t;&t; */
+r_else
 r_if
 c_cond
 (paren
-id|has_io
+id|a
+op_amp
+id|PCI_BASE_ADDRESS_MEM_MASK
 )paren
-(brace
-r_int
-r_int
-id|cmd
+id|has_mem
+op_assign
+l_int|1
 suffix:semicolon
+)brace
 id|pci_read_config_word
 c_func
 (paren
@@ -3626,6 +3645,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|has_io
+op_eq
+l_int|1
+op_logical_and
 op_logical_neg
 (paren
 id|cmd
@@ -3633,29 +3656,70 @@ op_amp
 id|PCI_COMMAND_IO
 )paren
 )paren
+(brace
 id|printk
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;PCI: BIOS forgot to enable I/O for device %02x:%02x,&quot;
-l_string|&quot; please report to &lt;mj@ucw.cz&gt;&bslash;n&quot;
+l_string|&quot;PCI: Enabling I/O for device %02x:%02x&bslash;n&quot;
 comma
 id|dev-&gt;bus-&gt;number
 comma
 id|dev-&gt;devfn
 )paren
 suffix:semicolon
+id|cmd
+op_or_assign
+id|PCI_COMMAND_IO
+suffix:semicolon
+id|pci_write_config_word
+c_func
+(paren
+id|dev
+comma
+id|PCI_COMMAND
+comma
+id|cmd
+)paren
+suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
-multiline_comment|/*&n;&t;&t; * Recalculate IRQ numbers if we use the I/O APIC&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|has_mem
+op_logical_and
+op_logical_neg
+(paren
+id|cmd
+op_amp
+id|PCI_COMMAND_MEMORY
+)paren
+)paren
 (brace
-r_int
-r_char
-id|pin
+id|printk
+c_func
+(paren
+l_string|&quot;PCI: Enabling memory for device %02x:%02x&bslash;n&quot;
+comma
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+)paren
 suffix:semicolon
-r_int
-id|irq
+id|cmd
+op_or_assign
+id|PCI_COMMAND_MEMORY
 suffix:semicolon
+id|pci_write_config_word
+c_func
+(paren
+id|dev
+comma
+id|PCI_COMMAND
+comma
+id|cmd
+)paren
+suffix:semicolon
+)brace
 id|pci_read_config_byte
 c_func
 (paren
@@ -3666,6 +3730,12 @@ comma
 op_amp
 id|pin
 )paren
+suffix:semicolon
+macro_line|#ifdef __SMP__
+multiline_comment|/*&n;&t;&t; * Recalculate IRQ numbers if we use the I/O APIC&n;&t;&t; */
+(brace
+r_int
+id|irq
 suffix:semicolon
 r_if
 c_cond
@@ -3726,7 +3796,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-multiline_comment|/*&n;&t;&t; * Fix out-of-range IRQ numbers.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Fix out-of-range IRQ numbers and report bogus IRQ.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3737,6 +3807,27 @@ id|NR_IRQS
 id|dev-&gt;irq
 op_assign
 l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pin
+op_logical_and
+op_logical_neg
+id|dev-&gt;irq
+)paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;PCI: Bogus IRQ for device %02x:%02x [pin=%x], please report to &lt;mj@ucw.cz&gt;&bslash;n&quot;
+comma
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+id|pin
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -3849,9 +3940,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_return
-id|str
-op_plus
-l_int|3
+l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PCI_BIOS
@@ -3876,9 +3965,7 @@ op_assign
 id|PCI_PROBE_BIOS
 suffix:semicolon
 r_return
-id|str
-op_plus
-l_int|4
+l_int|NULL
 suffix:semicolon
 )brace
 r_else
@@ -3903,9 +3990,7 @@ op_complement
 id|PCI_PROBE_BIOS
 suffix:semicolon
 r_return
-id|str
-op_plus
-l_int|6
+l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -3931,9 +4016,7 @@ op_assign
 id|PCI_PROBE_CONF1
 suffix:semicolon
 r_return
-id|str
-op_plus
-l_int|5
+l_int|NULL
 suffix:semicolon
 )brace
 r_else
@@ -3957,9 +4040,7 @@ op_assign
 id|PCI_PROBE_CONF2
 suffix:semicolon
 r_return
-id|str
-op_plus
-l_int|5
+l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#endif

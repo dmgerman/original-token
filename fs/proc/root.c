@@ -2016,37 +2016,6 @@ op_amp
 id|proc_array_inode_operations
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI_OLD_PROC
-DECL|variable|proc_root_pci
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_root_pci
-op_assign
-(brace
-id|PROC_PCI
-comma
-l_int|3
-comma
-l_string|&quot;pci&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_array_inode_operations
-)brace
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_ZORRO
 DECL|variable|proc_root_zorro
 r_static
@@ -2786,18 +2755,6 @@ op_amp
 id|proc_root_version
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI_OLD_PROC
-id|proc_register
-c_func
-(paren
-op_amp
-id|proc_root
-comma
-op_amp
-id|proc_root_pci
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_ZORRO
 id|proc_register
 c_func
@@ -3155,13 +3112,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI
-id|proc_bus_pci_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * As some entries in /proc are volatile, we want to &n; * get rid of unused dentries.  This could be made &n; * smarter: we could keep a &quot;volatile&quot; flag in the &n; * inode to indicate which ones to keep.&n; */
 r_static

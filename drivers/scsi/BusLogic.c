@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -10965,10 +10966,10 @@ l_bool|false
 suffix:semicolon
 )brace
 multiline_comment|/*&n;  BusLogic_InterruptHandler handles hardware interrupts from BusLogic Host&n;  Adapters.&n;*/
-DECL|function|BusLogic_InterruptHandler
+DECL|function|do_BusLogic_InterruptHandler
 r_static
 r_void
-id|BusLogic_InterruptHandler
+id|do_BusLogic_InterruptHandler
 c_func
 (paren
 r_int
@@ -11249,6 +11250,58 @@ id|HostAdapter-&gt;SCSI_Host
 )paren
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/*&n; * This is the low-level interrupt handler:&n; * we get the io request lock here to guarantee&n; * that all of this is atomic wrt the setup&n; * functions.&n; */
+DECL|function|BusLogic_InterruptHandler
+r_static
+r_void
+id|BusLogic_InterruptHandler
+c_func
+(paren
+r_int
+id|IRQ_Channel
+comma
+r_void
+op_star
+id|DeviceIdentifier
+comma
+id|Registers_T
+op_star
+id|InterruptRegisters
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|do_BusLogic_InterruptHandler
+c_func
+(paren
+id|IRQ_Channel
+comma
+id|DeviceIdentifier
+comma
+id|InterruptRegisters
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n;  BusLogic_WriteOutgoingMailbox places CCB and Action Code into an Outgoing&n;  Mailbox for execution by Host Adapter.  The Host Adapter&squot;s Lock should&n;  already have been acquired by the caller.&n;*/
 DECL|function|BusLogic_WriteOutgoingMailbox

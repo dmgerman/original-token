@@ -381,6 +381,8 @@ comma
 id|size
 comma
 id|off
+comma
+id|idx
 suffix:semicolon
 r_int
 r_int
@@ -458,19 +460,26 @@ suffix:semicolon
 r_for
 c_loop
 (paren
+id|idx
+op_assign
+l_int|0
+suffix:semicolon
+id|idx
+op_le
+l_int|5
+suffix:semicolon
+id|idx
+op_increment
+)paren
+(brace
 id|off
 op_assign
 id|PCI_BASE_ADDRESS_0
-suffix:semicolon
-id|off
-op_le
-id|PCI_BASE_ADDRESS_5
-suffix:semicolon
-id|off
-op_add_assign
+op_plus
 l_int|4
-)paren
-(brace
+op_star
+id|idx
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Figure out how much space and of what type this&n;&t;&t; * device wants.&n;&t;&t; */
 id|pcibios_write_config_dword
 c_func
@@ -507,11 +516,7 @@ id|base
 multiline_comment|/* this base-address register is unused */
 id|dev-&gt;base_address
 (braket
-id|PCI_BASE_INDEX
-c_func
-(paren
-id|off
-)paren
+id|idx
 )braket
 op_assign
 l_int|0
@@ -637,11 +642,7 @@ l_int|1
 suffix:semicolon
 id|dev-&gt;base_address
 (braket
-id|PCI_BASE_INDEX
-c_func
-(paren
-id|off
-)paren
+id|idx
 )braket
 op_assign
 id|handle
@@ -737,9 +738,8 @@ id|dev-&gt;devfn
 )paren
 )paren
 suffix:semicolon
-id|off
-op_add_assign
-l_int|4
+id|idx
+op_increment
 suffix:semicolon
 multiline_comment|/* skip extra 4 bytes */
 r_continue

@@ -29760,6 +29760,10 @@ op_star
 id|regs
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 macro_line|#ifdef DEBUG_NCR53C8XX
 id|printk
 c_func
@@ -29780,6 +29784,15 @@ id|printf
 l_string|&quot;[&quot;
 )paren
 suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|ncr_exception
 c_func
 (paren
@@ -29787,6 +29800,15 @@ c_func
 id|ncb_p
 )paren
 id|dev_id
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if

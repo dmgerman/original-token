@@ -5,6 +5,8 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#ifdef CONFIG_PROC_FS
 DECL|struct|pci_dev_info
@@ -6826,6 +6828,58 @@ suffix:semicolon
 )brace
 r_return
 id|len
+suffix:semicolon
+)brace
+DECL|variable|proc_old_pci
+r_static
+r_struct
+id|proc_dir_entry
+id|proc_old_pci
+op_assign
+(brace
+id|PROC_PCI
+comma
+l_int|3
+comma
+l_string|&quot;pci&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_array_inode_operations
+)brace
+suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
+id|proc_old_pci_init
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+id|proc_register
+c_func
+(paren
+op_amp
+id|proc_root
+comma
+op_amp
+id|proc_old_pci
+)paren
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_PROC_FS */

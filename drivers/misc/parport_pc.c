@@ -2585,6 +2585,10 @@ id|PARPORT_IRQ_NONE
 suffix:semicolon
 r_int
 id|i
+comma
+id|valid
+op_assign
+l_int|1
 suffix:semicolon
 multiline_comment|/* We ignore the timer - irq 0 */
 r_for
@@ -2630,8 +2634,9 @@ op_ne
 id|PARPORT_IRQ_NONE
 )paren
 multiline_comment|/* More than one interrupt */
-r_return
-id|PARPORT_IRQ_NONE
+id|valid
+op_assign
+l_int|0
 suffix:semicolon
 id|irq
 op_assign
@@ -2647,8 +2652,19 @@ id|intr_vote
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|valid
+)paren
+(brace
 r_return
 id|irq
+suffix:semicolon
+)brace
+r_else
+r_return
+id|PARPORT_IRQ_NONE
 suffix:semicolon
 )brace
 multiline_comment|/* Only if supports ECP mode */

@@ -2633,9 +2633,10 @@ r_if
 c_cond
 (paren
 id|pwd-&gt;d_parent
-op_ne
+op_eq
 id|pwd
-op_logical_and
+op_logical_or
+op_logical_neg
 id|list_empty
 c_func
 (paren
