@@ -1,7 +1,5 @@
 multiline_comment|/* $Id: parport_probe.c,v 1.3 1997/10/19 18:18:46 phil Exp $ &n; * Parallel port device probing code&n; * &n; * Authors:    Carsten Gross, carsten@sol.wohnheim.uni-ulm.de&n; *             Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
 macro_line|#include &lt;linux/tasks.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -12,6 +10,8 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/lp.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|DEBUG_PROBE
 macro_line|#undef DEBUG_PROBE

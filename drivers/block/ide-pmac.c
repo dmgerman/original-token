@@ -69,11 +69,9 @@ id|wr
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA_PMAC */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+multiline_comment|/*&n; * N.B. this can&squot;t be an initfunc, because the media-bay task can&n; * call ide_[un]register at any time.&n; */
 r_void
+DECL|function|pmac_ide_init_hwif_ports
 id|pmac_ide_init_hwif_ports
 c_func
 (paren
@@ -87,7 +85,6 @@ comma
 r_int
 op_star
 id|irq
-)paren
 )paren
 (brace
 r_int

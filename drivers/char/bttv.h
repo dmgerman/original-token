@@ -93,6 +93,30 @@ id|depth
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|bttv_pll_info
+r_struct
+id|bttv_pll_info
+(brace
+DECL|member|pll_ifreq
+r_int
+r_int
+id|pll_ifreq
+suffix:semicolon
+multiline_comment|/* PLL input frequency &t;  */
+DECL|member|pll_ofreq
+r_int
+r_int
+id|pll_ofreq
+suffix:semicolon
+multiline_comment|/* PLL output frequency   */
+DECL|member|pll_crystal
+r_int
+r_int
+id|pll_crystal
+suffix:semicolon
+multiline_comment|/* Crystal used for input */
+)brace
+suffix:semicolon
 DECL|struct|bttv
 r_struct
 id|bttv
@@ -404,7 +428,8 @@ r_int
 id|grabcount
 suffix:semicolon
 DECL|member|pll
-r_int
+r_struct
+id|bttv_pll_info
 id|pll
 suffix:semicolon
 DECL|member|Fsc
@@ -461,6 +486,8 @@ DECL|macro|BTTV_GRAB
 mdefine_line|#define BTTV_GRAB&t;&t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+2, struct gbuf)
 DECL|macro|BTTV_FIELDNR
 mdefine_line|#define BTTV_FIELDNR&t;&t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+2, unsigned int)
+DECL|macro|BTTV_PLLSET
+mdefine_line|#define BTTV_PLLSET&t;&t;_IOW(&squot;v&squot; , BASE_VIDIOCPRIVATE+3, struct bttv_pll_info)
 DECL|macro|BTTV_UNKNOWN
 mdefine_line|#define BTTV_UNKNOWN       0x00
 DECL|macro|BTTV_MIRO

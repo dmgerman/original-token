@@ -179,6 +179,9 @@ comma
 multiline_comment|/* no special open is needed */
 l_int|NULL
 comma
+multiline_comment|/* flush */
+l_int|NULL
+comma
 multiline_comment|/* release */
 id|file_fsync
 comma
@@ -352,6 +355,9 @@ multiline_comment|/* mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open code */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 l_int|NULL
 comma
 multiline_comment|/* no special release code */

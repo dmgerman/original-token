@@ -9,7 +9,7 @@ mdefine_line|#define KBD_REPORT_TIMEOUTS&t;&t;/* Report keyboard timeouts */
 DECL|macro|KBD_IS_FOCUS_9000
 macro_line|#undef KBD_IS_FOCUS_9000&t;&t;/* We have the brain-damaged FOCUS-9000 keyboard */
 DECL|macro|KBD_INIT_TIMEOUT
-mdefine_line|#define KBD_INIT_TIMEOUT HZ&t;&t;/* Timeout in jiffies for initializing the keyboard */
+mdefine_line|#define KBD_INIT_TIMEOUT 1000&t;&t;/* Timeout in ms for initializing the keyboard */
 DECL|macro|KBC_TIMEOUT
 mdefine_line|#define KBC_TIMEOUT 250&t;&t;&t;/* Timeout in ms for sending to keyboard controller */
 DECL|macro|KBD_TIMEOUT

@@ -5065,7 +5065,10 @@ comma
 multiline_comment|/* flush */
 id|floppy_release
 comma
-multiline_comment|/* release *&n;&t;block_fsync,&t;&t;/* fsync */
+multiline_comment|/* release */
+id|block_fsync
+comma
+multiline_comment|/* fsync */
 l_int|NULL
 comma
 multiline_comment|/* fasync */

@@ -17,6 +17,7 @@ DECL|macro|NBD_PRINT_DEBUG
 mdefine_line|#define NBD_PRINT_DEBUG&t;_IO( 0xab, 6 )
 macro_line|#ifdef MAJOR_NR
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;asm/semaphore.h&gt;
 DECL|macro|LOCAL_END_REQUEST
 mdefine_line|#define LOCAL_END_REQUEST
 macro_line|#include &lt;linux/blk.h&gt;
@@ -94,6 +95,8 @@ DECL|macro|NBD_READ_ONLY
 mdefine_line|#define NBD_READ_ONLY 0x0001
 DECL|macro|NBD_WRITE_NOCHK
 mdefine_line|#define NBD_WRITE_NOCHK 0x0002
+DECL|macro|NBD_INITIALISED
+mdefine_line|#define NBD_INITIALISED 0x0004
 DECL|member|sock
 r_struct
 id|socket
@@ -124,6 +127,11 @@ r_struct
 id|request
 op_star
 id|tail
+suffix:semicolon
+DECL|member|queue_lock
+r_struct
+id|semaphore
+id|queue_lock
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -1261,8 +1261,9 @@ multiline_comment|/*&n;&t;&t;&t;&t;&t; * we use the first one only currently&n;&
 r_if
 c_cond
 (paren
-op_logical_neg
 id|ioapics
+op_eq
+l_int|1
 )paren
 id|mp_ioapic_addr
 op_assign

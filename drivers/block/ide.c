@@ -7259,6 +7259,8 @@ op_assign
 l_int|0
 comma
 id|unit
+comma
+id|i
 suffix:semicolon
 r_int
 r_int
@@ -7451,16 +7453,16 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|index
+id|i
 op_assign
 l_int|0
 suffix:semicolon
-id|index
+id|i
 OL
 id|MAX_DRIVES
 suffix:semicolon
 op_increment
-id|index
+id|i
 )paren
 (brace
 id|drive
@@ -7468,7 +7470,7 @@ op_assign
 op_amp
 id|hwif-&gt;drives
 (braket
-id|index
+id|i
 )braket
 suffix:semicolon
 r_if

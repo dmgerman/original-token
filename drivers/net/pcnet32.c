@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;pcnet32.c:v1.00 30.5.98 tsbogend@alpha.franken.de&bslash;n&quot;
+l_string|&quot;pcnet32.c:v1.01 29.8.98 tsbogend@alpha.franken.de&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -87,7 +87,7 @@ op_assign
 l_int|200
 suffix:semicolon
 multiline_comment|/*&n; * &t;&t;&t;&t;Theory of Operation&n; * &n; * This driver uses the same software structure as the normal lance&n; * driver. So look for a verbose description in lance.c. The differences&n; * to the normal lance driver is the use of the 32bit mode of PCnet32&n; * and PCnetPCI chips. Because these chips are 32bit chips, there is no&n; * 16MB limitation and we don&squot;t need bounce buffers.&n; */
-multiline_comment|/*&n; * History:&n; * v0.01:  Initial version&n; *         only tested on Alpha Noname Board&n; * v0.02:  changed IRQ handling for new interrupt scheme (dev_id)&n; *         tested on a ASUS SP3G&n; * v0.10:  fixed an odd problem with the 79C974 in a Compaq Deskpro XL&n; *         looks like the 974 doesn&squot;t like stopping and restarting in a&n; *         short period of time; now we do a reinit of the lance; the&n; *         bug was triggered by doing ifconfig eth0 &lt;ip&gt; broadcast &lt;addr&gt;&n; *         and hangs the machine (thanks to Klaus Liedl for debugging)&n; * v0.12:  by suggestion from Donald Becker: Renamed driver to pcnet32,&n; *         made it standalone (no need for lance.c)&n; * v0.13:  added additional PCI detecting for special PCI devices (Compaq)&n; * v0.14:  stripped down additional PCI probe (thanks to David C Niemi&n; *         and sveneric@xs4all.nl for testing this on their Compaq boxes)&n; * v0.15:  added 79C965 (VLB) probe&n; *         added interrupt sharing for PCI chips&n; * v0.16:  fixed set_multicast_list on Alpha machines&n; * v0.17:  removed hack from dev.c; now pcnet32 uses ethif_probe in Space.c&n; * v0.19:  changed setting of autoselect bit&n; * v0.20:  removed additional Compaq PCI probe; there is now a working one&n; *&t;   in arch/i386/bios32.c&n; * v0.21:  added endian conversion for ppc, from work by cort@cs.nmt.edu&n; * v0.22:  added printing of status to ring dump&n; * v0.23:  changed enet_statistics to net_devive_stats&n; * v0.90:  added multicast filter&n; *         added module support&n; *         changed irq probe to new style&n; *         added PCnetFast chip id&n; *         added fix for receive stalls with Intel saturn chipsets&n; *         added in-place rx skbs like in the tulip driver&n; *         minor cleanups&n; * v0.91:  added PCnetFast+ chip id&n; *         back port to 2.0.x&n; * v1.00:  added some stuff from Donald Becker&squot;s 2.0.34 version&n; *         added support for byte counters in net_dev_stats&n; */
+multiline_comment|/*&n; * History:&n; * v0.01:  Initial version&n; *         only tested on Alpha Noname Board&n; * v0.02:  changed IRQ handling for new interrupt scheme (dev_id)&n; *         tested on a ASUS SP3G&n; * v0.10:  fixed an odd problem with the 79C974 in a Compaq Deskpro XL&n; *         looks like the 974 doesn&squot;t like stopping and restarting in a&n; *         short period of time; now we do a reinit of the lance; the&n; *         bug was triggered by doing ifconfig eth0 &lt;ip&gt; broadcast &lt;addr&gt;&n; *         and hangs the machine (thanks to Klaus Liedl for debugging)&n; * v0.12:  by suggestion from Donald Becker: Renamed driver to pcnet32,&n; *         made it standalone (no need for lance.c)&n; * v0.13:  added additional PCI detecting for special PCI devices (Compaq)&n; * v0.14:  stripped down additional PCI probe (thanks to David C Niemi&n; *         and sveneric@xs4all.nl for testing this on their Compaq boxes)&n; * v0.15:  added 79C965 (VLB) probe&n; *         added interrupt sharing for PCI chips&n; * v0.16:  fixed set_multicast_list on Alpha machines&n; * v0.17:  removed hack from dev.c; now pcnet32 uses ethif_probe in Space.c&n; * v0.19:  changed setting of autoselect bit&n; * v0.20:  removed additional Compaq PCI probe; there is now a working one&n; *&t;   in arch/i386/bios32.c&n; * v0.21:  added endian conversion for ppc, from work by cort@cs.nmt.edu&n; * v0.22:  added printing of status to ring dump&n; * v0.23:  changed enet_statistics to net_devive_stats&n; * v0.90:  added multicast filter&n; *         added module support&n; *         changed irq probe to new style&n; *         added PCnetFast chip id&n; *         added fix for receive stalls with Intel saturn chipsets&n; *         added in-place rx skbs like in the tulip driver&n; *         minor cleanups&n; * v0.91:  added PCnetFast+ chip id&n; *         back port to 2.0.x&n; * v1.00:  added some stuff from Donald Becker&squot;s 2.0.34 version&n; *         added support for byte counters in net_dev_stats&n; * v1.01:  do ring dumps, only when debugging the driver&n; *         increased the transmit timeout&n; *         &n; */
 multiline_comment|/*&n; * Set the number of Tx and Rx buffers, using Log_2(# buffers).&n; * Reasonable default values are 4 Tx buffers, and 16 Rx buffers.&n; * That translates to 2 (4 == 2^^2) and 4 (16 == 2^^4).&n; */
 macro_line|#ifndef PCNET32_LOG_TX_BUFFERS
 DECL|macro|PCNET32_LOG_TX_BUFFERS
@@ -2397,7 +2397,9 @@ c_cond
 (paren
 id|tickssofar
 OL
-l_int|20
+id|HZ
+op_div
+l_int|2
 )paren
 r_return
 l_int|1
@@ -2441,7 +2443,13 @@ suffix:semicolon
 id|lp-&gt;stats.tx_errors
 op_increment
 suffix:semicolon
-macro_line|#ifndef final_version
+r_if
+c_cond
+(paren
+id|pcnet32_debug
+OG
+l_int|2
+)paren
 (brace
 r_int
 id|i
@@ -2594,7 +2602,6 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 id|pcnet32_restart
 c_func
 (paren

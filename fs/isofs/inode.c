@@ -1217,7 +1217,7 @@ id|value
 suffix:semicolon
 id|popt-&gt;map
 op_assign
-l_char|&squot;a&squot;
+l_char|&squot;n&squot;
 suffix:semicolon
 id|popt-&gt;rock
 op_assign

@@ -644,6 +644,10 @@ c_cond
 id|dir-&gt;i_sb-&gt;u.isofs_sb.s_rock
 op_logical_or
 id|dir-&gt;i_sb-&gt;u.isofs_sb.s_joliet_level
+op_logical_or
+id|dir-&gt;i_sb-&gt;u.isofs_sb.s_mapping
+op_eq
+l_char|&squot;a&squot;
 )paren
 (brace
 r_if

@@ -393,6 +393,20 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
+id|memset
+c_func
+(paren
+id|t
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+op_star
+id|t
+)paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3685,6 +3699,9 @@ id|saa5249_read
 comma
 id|saa5249_write
 comma
+l_int|NULL
+comma
+multiline_comment|/* poll */
 id|saa5249_ioctl
 comma
 l_int|NULL

@@ -183,7 +183,7 @@ DECL|macro|GET_BYTE_FROM_USER
 mdefine_line|#define GET_BYTE_FROM_USER(target,addr,offs) &bslash;&n;&t;get_user(target, (unsigned char*)&amp;((addr)[offs]))
 DECL|macro|GET_SHORT_FROM_USER
 mdefine_line|#define GET_SHORT_FROM_USER(target,addr,offs) &bslash;&n;&t;get_user(target, (unsigned short*)&amp;((addr)[offs]))
-macro_line|#ifdef AWE_OSS38
+macro_line|#ifdef AWE_OSS38_AND_IM_A_BANANA
 DECL|macro|IOCTL_TO_USER
 mdefine_line|#define IOCTL_TO_USER(target,offs,source,count) &bslash;&n;&t;memcpy(target, (source)+(offs), count)
 DECL|macro|IO_WRITE_CHECK

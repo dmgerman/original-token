@@ -59,11 +59,15 @@ id|irq
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Status: reason for being disabled: somebody has&n; * done a &quot;disable_irq()&quot; or we must not re-enter the&n; * already executing irq..&n; */
+multiline_comment|/*&n; * IRQ line status.&n; */
 DECL|macro|IRQ_INPROGRESS
-mdefine_line|#define IRQ_INPROGRESS&t;1
+mdefine_line|#define IRQ_INPROGRESS&t;1&t;/* IRQ handler active - do not enter! */
 DECL|macro|IRQ_DISABLED
-mdefine_line|#define IRQ_DISABLED&t;2
+mdefine_line|#define IRQ_DISABLED&t;2&t;/* IRQ disabled - do not enter! */
+DECL|macro|IRQ_PENDING
+mdefine_line|#define IRQ_PENDING&t;4&t;/* IRQ pending - replay on enable */
+DECL|macro|IRQ_REPLAY
+mdefine_line|#define IRQ_REPLAY&t;8&t;/* IRQ has been replayed but not acked yet */
 multiline_comment|/*&n; * This is the &quot;IRQ descriptor&quot;, which contains various information&n; * about the irq, including what kind of hardware handling it has,&n; * whether it is disabled etc etc.&n; *&n; * Pad this out to 32 bytes for cache and indexing reasons.&n; */
 r_typedef
 r_struct
@@ -74,18 +78,6 @@ r_int
 id|status
 suffix:semicolon
 multiline_comment|/* IRQ status - IRQ_INPROGRESS, IRQ_DISABLED */
-DECL|member|events
-r_int
-r_int
-id|events
-suffix:semicolon
-multiline_comment|/* Do we have any pending events? */
-DECL|member|ipi
-r_int
-r_int
-id|ipi
-suffix:semicolon
-multiline_comment|/* Have we sent off the pending IPI? */
 DECL|member|handler
 r_struct
 id|hw_interrupt_type
