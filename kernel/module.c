@@ -2918,9 +2918,13 @@ id|link-&gt;next
 r_if
 c_cond
 (paren
+id|link-&gt;ref
+op_logical_and
+(paren
 id|link-&gt;ref-&gt;module
 op_eq
 id|mp
+)paren
 )paren
 id|link-&gt;ref
 op_assign

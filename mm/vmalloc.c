@@ -1,5 +1,3 @@
-DECL|macro|THREE_LEVEL
-mdefine_line|#define THREE_LEVEL
 multiline_comment|/*&n; *  linux/mm/vmalloc.c&n; *&n; *  Copyright (C) 1993  Linus Torvalds&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;

@@ -6200,7 +6200,7 @@ l_string|&quot;invalid base 0x%X specified.&bslash;n&quot;
 comma
 id|ints
 (braket
-id|i
+l_int|1
 )braket
 )paren
 suffix:semicolon

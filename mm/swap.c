@@ -1,5 +1,3 @@
-DECL|macro|THREE_LEVEL
-mdefine_line|#define THREE_LEVEL
 multiline_comment|/*&n; *  linux/mm/swap.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; */
 multiline_comment|/*&n; * This file should contain most things doing the swapping from/to disk.&n; * Started 18.12.91&n; */
 macro_line|#include &lt;linux/mm.h&gt;

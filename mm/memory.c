@@ -1,5 +1,3 @@
-DECL|macro|THREE_LEVEL
-mdefine_line|#define THREE_LEVEL
 multiline_comment|/*&n; *  linux/mm/memory.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; */
 multiline_comment|/*&n; * demand-loading started 01.12.91 - seems it is high on the list of&n; * things wanted, and it should be easy to implement. - Linus&n; */
 multiline_comment|/*&n; * Ok, demand-loading was easy, shared pages a little bit tricker. Shared&n; * pages started 02.12.91, seems to work. - Linus.&n; *&n; * Tested sharing by executing about 30 /bin/sh: under the old kernel it&n; * would have taken more than the 6M I have free, but it worked well as&n; * far as I could see.&n; *&n; * Also corrected some &quot;invalidate()&quot;s - I wasn&squot;t doing enough of them.&n; */

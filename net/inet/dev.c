@@ -733,6 +733,11 @@ c_func
 l_string|&quot;dev_queue_xmit: worked around a missed interrupt&bslash;n&quot;
 )paren
 suffix:semicolon
+id|start_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dev
 op_member_access_from_pointer
 id|hard_start_xmit
@@ -741,6 +746,11 @@ c_func
 l_int|NULL
 comma
 id|dev
+)paren
+suffix:semicolon
+id|end_bh_atomic
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -994,6 +1004,11 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|start_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1010,10 +1025,20 @@ op_eq
 l_int|0
 )paren
 (brace
+id|end_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Packet is now solely the responsibility of the driver&n;&t;&t; */
 r_return
 suffix:semicolon
 )brace
+id|end_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Transmission failed, put skb back into a list. Once on the list it&squot;s safe and&n;&t; *&t;no longer device locked (it can be freed safely from the device queue)&n;&t; */
 id|cli
 c_func

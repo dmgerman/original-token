@@ -135,6 +135,8 @@ DECL|macro|HDIO_GET_IDENTITY
 mdefine_line|#define HDIO_GET_IDENTITY &t;0x307&t;/* get IDE identification info */
 DECL|macro|HDIO_GET_KEEPSETTINGS
 mdefine_line|#define HDIO_GET_KEEPSETTINGS &t;0x308&t;/* get keep-settings-on-reset flag */
+DECL|macro|HDIO_GET_CHIPSET
+mdefine_line|#define HDIO_GET_CHIPSET&t;0x309&t;/* get current interface type setting */
 DECL|macro|HDIO_DRIVE_CMD
 mdefine_line|#define HDIO_DRIVE_CMD&t;&t;0x31f&t;/* execute a special drive command */
 multiline_comment|/* hd/ide ctl&squot;s that pass (arg) non-ptr values are numbered 0x32n/0x33n */
@@ -144,6 +146,8 @@ DECL|macro|HDIO_SET_UNMASKINTR
 mdefine_line|#define HDIO_SET_UNMASKINTR&t;0x322&t;/* permit other irqs during I/O */
 DECL|macro|HDIO_SET_KEEPSETTINGS
 mdefine_line|#define HDIO_SET_KEEPSETTINGS&t;0x323&t;/* keep ioctl settings on reset */
+DECL|macro|HDIO_SET_CHIPSET
+mdefine_line|#define HDIO_SET_CHIPSET&t;0x324&t;/* optimise driver for interface type */
 multiline_comment|/* structure returned by HDIO_GET_IDENTITY, as per ANSI ATA2 rev.2f spec */
 DECL|struct|hd_driveid
 r_struct

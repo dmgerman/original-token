@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-cd.c&n; *&n; * 1.00  Oct 31, 1994 -- Initial version.&n; * 1.01  Nov  2, 1994 -- Fixed problem with starting request in&n; *                       cdrom_check_status.&n; * 1.03  Nov 25, 1994 -- leaving unmask_intr[] as a user-setting (as for disks)&n; * (from mlord)       -- minor changes to cdrom_setup()&n; *                    -- renamed ide_dev_s to ide_dev_t, enable irq on command&n; * 2.00  Nov 27, 1994 -- Generalize packet command interface;&n; *                       add audio ioctls.&n; * 2.01  Dec  3, 1994 -- Rework packet command interface to handle devices&n; *                       which send an interrupt when ready for a command.&n; * 2.02  Dec 11, 1994 -- Cache the TOC in the driver.&n; *                       Don&squot;t use SCMD_PLAYAUDIO_TI; it&squot;s not included&n; *                       in the current version of ATAPI.&n; *                       Try to use LBA instead of track or MSF addressing&n; *                       when possible.&n; *                       Don&squot;t wait for READY_STAT.&n; * 2.03  Jan 10, 1995 -- Rewrite block read routines to handle block sizes&n; *                       other than 2k and to move multiple sectors in a&n; *                       single transaction.&n; * 2.04  Apr 21, 1995 -- Add work-around for Creative Labs CD220E drives.&n; *                       Thanks to Nick Saw &lt;cwsaw@pts7.pts.mot.com&gt; for&n; *                       help in figuring this out.  Ditto for Acer and&n; *                       Aztech drives, which seem to have the same problem.&n; *                       &n; *&n; * ATAPI cd-rom driver.  To be used with ide.c.&n; *&n; * Copyright (C) 1994, 1995  scott snyder  &lt;snyder@fnald0.fnal.gov&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; * (../../COPYING).&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-cd.c&n; *&n; * 1.00  Oct 31, 1994 -- Initial version.&n; * 1.01  Nov  2, 1994 -- Fixed problem with starting request in&n; *                       cdrom_check_status.&n; * 1.03  Nov 25, 1994 -- leaving unmask_intr[] as a user-setting (as for disks)&n; * (from mlord)       -- minor changes to cdrom_setup()&n; *                    -- renamed ide_dev_s to ide_dev_t, enable irq on command&n; * 2.00  Nov 27, 1994 -- Generalize packet command interface;&n; *                       add audio ioctls.&n; * 2.01  Dec  3, 1994 -- Rework packet command interface to handle devices&n; *                       which send an interrupt when ready for a command.&n; * 2.02  Dec 11, 1994 -- Cache the TOC in the driver.&n; *                       Don&squot;t use SCMD_PLAYAUDIO_TI; it&squot;s not included&n; *                       in the current version of ATAPI.&n; *                       Try to use LBA instead of track or MSF addressing&n; *                       when possible.&n; *                       Don&squot;t wait for READY_STAT.&n; * 2.03  Jan 10, 1995 -- Rewrite block read routines to handle block sizes&n; *                       other than 2k and to move multiple sectors in a&n; *                       single transaction.&n; * 2.04  Apr 21, 1995 -- Add work-around for Creative Labs CD220E drives.&n; *                       Thanks to Nick Saw &lt;cwsaw@pts7.pts.mot.com&gt; for&n; *                       help in figuring this out.  Ditto for Acer and&n; *                       Aztech drives, which seem to have the same problem.&n; * 2.04b May 30, 1995 -- Fix to match changes in ide.c version 3.16 -ml&n; *&n; * ATAPI cd-rom driver.  To be used with ide.c.&n; *&n; * Copyright (C) 1994, 1995  scott snyder  &lt;snyder@fnald0.fnal.gov&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; * (../../COPYING).&n; */
 macro_line|#include &lt;linux/cdrom.h&gt;
 DECL|macro|SECTOR_SIZE
 mdefine_line|#define SECTOR_SIZE 512
@@ -8,10 +8,17 @@ DECL|macro|SECTORS_PER_FRAME
 mdefine_line|#define SECTORS_PER_FRAME (CD_FRAMESIZE / SECTOR_SIZE)
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b) ((a) &lt; (b) ? (a) : (b))
+macro_line|#if 1&t;/* &quot;old&quot; method */
 DECL|macro|OUT_WORDS
 mdefine_line|#define OUT_WORDS(b,n)  outsw (IDE_PORT (HD_DATA, dev-&gt;hwif), (b), (n))
 DECL|macro|IN_WORDS
 mdefine_line|#define IN_WORDS(b,n)   insw  (IDE_PORT (HD_DATA, dev-&gt;hwif), (b), (n))
+macro_line|#else&t;/* &quot;new&quot; method -- should really fix each instance instead of this */
+DECL|macro|OUT_WORDS
+mdefine_line|#define OUT_WORDS(b,n)&t;output_ide_data(dev,b,(n)/2)
+DECL|macro|IN_WORDS
+mdefine_line|#define IN_WORDS(b,n)&t;input_ide_data(dev,b,(n)/2)
+macro_line|#endif
 multiline_comment|/* special command codes for strategy routine. */
 DECL|macro|PACKET_COMMAND
 mdefine_line|#define PACKET_COMMAND 4315
@@ -478,7 +485,7 @@ id|stat
 comma
 id|good_stat
 comma
-id|BAD_RW_STAT
+id|BAD_R_STAT
 )paren
 )paren
 r_return

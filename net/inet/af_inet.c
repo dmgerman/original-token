@@ -2730,15 +2730,15 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* This will destroy it. */
+id|sock-&gt;data
+op_assign
+l_int|NULL
+suffix:semicolon
 id|release_sock
 c_func
 (paren
 id|sk
 )paren
-suffix:semicolon
-id|sock-&gt;data
-op_assign
-l_int|NULL
 suffix:semicolon
 id|sk-&gt;socket
 op_assign
@@ -3223,11 +3223,26 @@ op_amp
 id|O_NONBLOCK
 )paren
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|sk-&gt;err
+op_ne
+l_int|0
+)paren
+r_return
+op_minus
+id|sk-&gt;err
+suffix:semicolon
+multiline_comment|/* Connection must have failed */
+r_else
 r_return
 op_minus
 id|EALREADY
 suffix:semicolon
 multiline_comment|/* Connecting is currently in progress */
+)brace
 r_if
 c_cond
 (paren

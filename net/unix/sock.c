@@ -1762,7 +1762,7 @@ c_func
 (paren
 id|fname
 comma
-l_int|0
+l_int|2
 comma
 id|S_IFSOCK
 comma

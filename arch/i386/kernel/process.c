@@ -72,6 +72,10 @@ r_void
 r_int
 id|i
 suffix:semicolon
+id|pmd_t
+op_star
+id|pmd
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -84,6 +88,16 @@ op_minus
 id|EPERM
 suffix:semicolon
 multiline_comment|/* Map out the low memory: it&squot;s no longer needed */
+id|pmd
+op_assign
+id|pmd_offset
+c_func
+(paren
+id|swapper_pg_dir
+comma
+l_int|0
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -98,12 +112,11 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|pgd_clear
+id|pmd_clear
 c_func
 (paren
-id|swapper_pg_dir
-op_plus
-id|i
+id|pmd
+op_increment
 )paren
 suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */

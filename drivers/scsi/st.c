@@ -317,7 +317,6 @@ id|SCpnt
 )paren
 suffix:semicolon
 )brace
-r_else
 macro_line|#endif
 id|scode
 op_assign

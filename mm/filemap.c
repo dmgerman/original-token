@@ -1,5 +1,3 @@
-DECL|macro|THREE_LEVEL
-mdefine_line|#define THREE_LEVEL
 multiline_comment|/*&n; *&t;linux/mm/filemmap.c&n; *&n; * Copyright (C) 1994 Linus Torvalds&n; */
 multiline_comment|/*&n; * This file handles the generic file mmap semantics used by&n; * most &quot;normal&quot; filesystems (but you don&squot;t /have/ to use this:&n; * the NFS filesystem does this differently, for example)&n; */
 macro_line|#include &lt;linux/stat.h&gt;

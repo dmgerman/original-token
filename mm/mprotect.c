@@ -1,5 +1,3 @@
-DECL|macro|THREE_LEVEL
-mdefine_line|#define THREE_LEVEL
 multiline_comment|/*&n; *&t;linux/mm/mprotect.c&n; *&n; *  (C) Copyright 1994 Linus Torvalds&n; */
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

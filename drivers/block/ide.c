@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide.c&t;Version 3.14  March 7, 1995&n; *&n; *  Copyright (C) 1994, 1995  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; * This is the dual IDE interface driver, as evolved from hd.c.  &n; * It supports up to two IDE interfaces, on one or two IRQs (usually 14 &amp; 15).&n; * There can be up to two drives per interface, as per the ATA-2 spec.&n; *&n; * Primary   i/f: ide0: major=3;  (hda)         minor=0, (hdb)         minor=64&n; * Secondary i/f: ide1: major=22; (hdc or hd1a) minor=0, (hdd or hd1b) minor=64&n; *&n; *  From hd.c:&n; *  |&n; *  | It traverses the request-list, using interrupts to jump between functions.&n; *  | As nearly all functions can be called within interrupts, we may not sleep.&n; *  | Special care is recommended.  Have Fun!&n; *  |&n; *  | modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *  |&n; *  | Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  | in the early extended-partition checks and added DM partitions.&n; *  |&n; *  | Early work on error handling by Mika Liljeberg (liljeber@cs.Helsinki.FI).&n; *  |&n; *  | IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  | and general streamlining by Mark Lord (mlord@bnr.ca).&n; *&n; *  October, 1994 -- Complete line-by-line overhaul for linux 1.1.x, by:&n; *&n; *&t;Mark Lord&t;(mlord@bnr.ca)&t;&t;&t;(IDE Perf.Pkg)&n; *&t;Delman Lee&t;(delman@mipg.upenn.edu)&t;&t;(&quot;Mr. atdisk2&quot;)&n; *&t;Petri Mattila&t;(ptjmatti@kruuna.helsinki.fi)&t;(EIDE stuff)&n; *&t;Scott Snyder&t;(snyder@fnald0.fnal.gov)&t;(ATAPI IDE cd-rom)&n; *&n; *  This was a rewrite of just about everything from hd.c, though some original&n; *  code is still sprinkled about.  Think of it as a major evolution, with &n; *  inspiration from lots of linux users, esp.  hamish@zot.apana.org.au&n; *&n; *  Version 1.0 ALPHA&t;initial code, primary i/f working okay&n; *  Version 1.1 ALPHA&t;fixes for dual i/f&n; *  Version 1.2 ALPHA&t;first serious attempt at sharing irqs&n; *  Version 1.3 BETA&t;dual i/f on shared irq tested &amp; working!&n; *  Version 1.4 BETA&t;added auto probing for irq(s)&n; *  Version 1.5 BETA&t;added ALPHA (untested) support for IDE cd-roms,&n; *&t;&t;&t;fixed hd.c coexistence bug, other minor stuff&n; *  Version 1.6 BETA&t;fix link error when cd-rom not configured&n; *  Version 2.0 BETA&t;lots of minor fixes; remove annoying messages; ...&n; *  Version 2.2 BETA&t;fixed reset_drives; major overhaul of autoprobing&n; *  Version 2.3 BETA&t;set DEFAULT_UNMASK_INTR to 0 again; cosmetic changes&n; *  Version 2.4 BETA&t;added debounce on reading of drive status reg,&n; *&t;&t;&t;added config flags to remove unwanted features&n; *  Version 2.5 BETA&t;fixed problem with leftover phantom IRQ after probe,&n; *&t;&t;&t;allow &quot;set_geometry&quot; even when in LBA (as per spec(?)),&n; *&t;&t;&t;assorted miscellaneous tweaks.&n; *  Version 2.6 BETA&t;more config flag stuff, another probing tweak,&n; *  (not released)&t;multmode now defaults to status quo from boot time,&n; *&t;&t;&t;moved &gt;16heads check to init time, rearranged reset code&n; *&t;&t;&t;added HDIO_DRIVE_CMD, removed standby/xfermode stuff&n; *&t;&t;&t;hopefully fixed ATAPI probing code, added hdx=cdrom&n; *  Version 2.7 BETA&t;fixed invocation of cdrom_setup()&n; *  Version 2.8 BETA&t;fixed compile error for DISK_RECOVERY_TIME&gt;0&n; *&t;&t;&t;fixed incorrect drive selection in DO_DRIVE_CMD (Bug!)&n; *  Version 2.9 BETA&t;more work on ATAPI CDROM recognition&n; *  (not released)&t;changed init order so partition checks go in sequence&n; *  Version 3.0 BETA&t;included ide-cd.c update from Steve with Mitsumi fixes&n; *&t;&t;&t;attempt to fix byte-swap problem with Mitsumi id_info&n; *&t;&t;&t;ensure drives on second i/f get initialized on boot&n; *&t;&t;&t;preliminary compile-time support for 32bit IDE i/f chips&n; *&t;&t;&t;added check_region() and snarf_region() to probes&n; *  Version 3.1 BETA&t;ensure drives on *both* i/f get initialized on boot&n; *&t;&t;&t;fix byte-swap problem with Mitsumi id_info&n; *&t;&t;&t;changed ide_timermask into ide_timerbit&n; *&t;&t;&t;get rid of unexpected interrupts after probing&n; *&t;&t;&t;don&squot;t wait for READY_STAT on cdrom drives&n; *  Version 3.2 BETA&t;Ooops.. mistakenly left VLB_32BIT_IDE on by default&n; *&t;&t;&t;new ide-cd.c from Scott&n; *  Version 3.3 BETA&t;fix compiling with PROBE_FOR_IRQS==0&n; *  (sent to Linus)&t;tweak in do_probe() to fix Delman&squot;s DRDY problem&n; *  Version 3.4 BETA&t;removed &quot;444&quot; debug message&n; *  (sent to Linus)&n; *  Version 3.5&t;&t;correct the bios_cyl field if it&squot;s too small&n; *  (linux 1.1.76)&t; (to help fdisk with brain-dead BIOSs)&n; *  Version 3.6&t;&t;cosmetic corrections to comments and stuff&n; *  (linux 1.1.77)&t;reorganise probing code to make it understandable&n; *&t;&t;&t;added halfway retry to probing for drive identification&n; *&t;&t;&t;added &quot;hdx=noprobe&quot; command line option&n; *&t;&t;&t;allow setting multmode even when identification fails&n; *  Version 3.7&t;&t;move set_geometry=1 from do_identify() to ide_init()&n; *&t;&t;&t;increase DRQ_WAIT to eliminate nuisance messages&n; *&t;&t;&t;wait for DRQ_STAT instead of DATA_READY during probing&n; *&t;&t;&t;  (courtesy of Gary Thomas gary@efland.UU.NET)&n; *  Version 3.8&t;&t;fixed byte-swapping for confused Mitsumi cdrom drives&n; *&t;&t;&t;update of ide-cd.c from Scott, allows blocksize=1024&n; *&t;&t;&t;cdrom probe fixes, inspired by jprang@uni-duisburg.de&n; *  Version 3.9&t;&t;don&squot;t use LBA if lba_capacity looks funny&n; *&t;&t;&t;correct the drive capacity calculations&n; *&t;&t;&t;fix probing for old Seagates without HD_ALTSTATUS&n; *&t;&t;&t;fix byte-ordering for some NEC cdrom drives&n; *  Version 3.10&t;disable multiple mode by default; was causing trouble&n; *  Version 3.11&t;fix mis-identification of old WD disks as cdroms&n; *  Version 3,12&t;simplify logic for selecting initial mult_count&n; *&t;&t;&t;  (fixes problems with buggy WD drives)&n; *  Version 3.13&t;remove excess &quot;multiple mode disabled&quot; messages&n; *  Version 3.14&t;fix ide_error() handling of BUSY_STAT&n; *&t;&t;&t;fix byte-swapped cdrom strings (again.. arghh!)&n; *&t;&t;&t;ignore INDEX bit when checking the ALTSTATUS reg&n; *&n; *  To do:&n; *&t;- special 32-bit controller-type detection &amp; support&n; *&t;- figure out how to support oddball &quot;intelligent&quot; caching cards&n; *&t;- reverse-engineer 3/4 drive support on fancy &quot;Promise&quot; cards&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ide.c&t;Version 3.16  May 30, 1995&n; *&n; *  Copyright (C) 1994, 1995  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; * This is the dual IDE interface driver, as evolved from hd.c.  &n; * It supports up to two IDE interfaces, on one or two IRQs (usually 14 &amp; 15).&n; * There can be up to two drives per interface, as per the ATA-2 spec.&n; *&n; * Primary   i/f: ide0: major=3;  (hda)         minor=0, (hdb)         minor=64&n; * Secondary i/f: ide1: major=22; (hdc or hd1a) minor=0, (hdd or hd1b) minor=64&n; *&n; *  From hd.c:&n; *  |&n; *  | It traverses the request-list, using interrupts to jump between functions.&n; *  | As nearly all functions can be called within interrupts, we may not sleep.&n; *  | Special care is recommended.  Have Fun!&n; *  |&n; *  | modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *  |&n; *  | Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  | in the early extended-partition checks and added DM partitions.&n; *  |&n; *  | Early work on error handling by Mika Liljeberg (liljeber@cs.Helsinki.FI).&n; *  |&n; *  | IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  | and general streamlining by Mark Lord (mlord@bnr.ca).&n; *&n; *  October, 1994 -- Complete line-by-line overhaul for linux 1.1.x, by:&n; *&n; *&t;Mark Lord&t;(mlord@bnr.ca)&t;&t;&t;(IDE Perf.Pkg)&n; *&t;Delman Lee&t;(delman@mipg.upenn.edu)&t;&t;(&quot;Mr. atdisk2&quot;)&n; *&t;Petri Mattila&t;(ptjmatti@kruuna.helsinki.fi)&t;(EIDE stuff)&n; *&t;Scott Snyder&t;(snyder@fnald0.fnal.gov)&t;(ATAPI IDE cd-rom)&n; *&n; *  This was a rewrite of just about everything from hd.c, though some original&n; *  code is still sprinkled about.  Think of it as a major evolution, with &n; *  inspiration from lots of linux users, esp.  hamish@zot.apana.org.au&n; *&n; *  Version 1.0 ALPHA&t;initial code, primary i/f working okay&n; *  Version 1.1 ALPHA&t;fixes for dual i/f&n; *  Version 1.2 ALPHA&t;first serious attempt at sharing irqs&n; *  Version 1.3 BETA&t;dual i/f on shared irq tested &amp; working!&n; *  Version 1.4 BETA&t;added auto probing for irq(s)&n; *  Version 1.5 BETA&t;added ALPHA (untested) support for IDE cd-roms,&n; *&t;&t;&t;fixed hd.c coexistence bug, other minor stuff&n; *  Version 1.6 BETA&t;fix link error when cd-rom not configured&n; *  Version 2.0 BETA&t;lots of minor fixes; remove annoying messages; ...&n; *  Version 2.2 BETA&t;fixed reset_drives; major overhaul of autoprobing&n; *  Version 2.3 BETA&t;set DEFAULT_UNMASK_INTR to 0 again; cosmetic changes&n; *  Version 2.4 BETA&t;added debounce on reading of drive status reg,&n; *&t;&t;&t;added config flags to remove unwanted features&n; *  Version 2.5 BETA&t;fixed problem with leftover phantom IRQ after probe,&n; *&t;&t;&t;allow &quot;set_geometry&quot; even when in LBA (as per spec(?)),&n; *&t;&t;&t;assorted miscellaneous tweaks.&n; *  Version 2.6 BETA&t;more config flag stuff, another probing tweak,&n; *  (not released)&t;multmode now defaults to status quo from boot time,&n; *&t;&t;&t;moved &gt;16heads check to init time, rearranged reset code&n; *&t;&t;&t;added HDIO_DRIVE_CMD, removed standby/xfermode stuff&n; *&t;&t;&t;hopefully fixed ATAPI probing code, added hdx=cdrom&n; *  Version 2.7 BETA&t;fixed invocation of cdrom_setup()&n; *  Version 2.8 BETA&t;fixed compile error for DISK_RECOVERY_TIME&gt;0&n; *&t;&t;&t;fixed incorrect drive selection in DO_DRIVE_CMD (Bug!)&n; *  Version 2.9 BETA&t;more work on ATAPI CDROM recognition&n; *  (not released)&t;changed init order so partition checks go in sequence&n; *  Version 3.0 BETA&t;included ide-cd.c update from Steve with Mitsumi fixes&n; *&t;&t;&t;attempt to fix byte-swap problem with Mitsumi id_info&n; *&t;&t;&t;ensure drives on second i/f get initialized on boot&n; *&t;&t;&t;preliminary compile-time support for 32bit IDE i/f chips&n; *&t;&t;&t;added check_region() and snarf_region() to probes&n; *  Version 3.1 BETA&t;ensure drives on *both* i/f get initialized on boot&n; *&t;&t;&t;fix byte-swap problem with Mitsumi id_info&n; *&t;&t;&t;changed ide_timermask into ide_timerbit&n; *&t;&t;&t;get rid of unexpected interrupts after probing&n; *&t;&t;&t;don&squot;t wait for READY_STAT on cdrom drives&n; *  Version 3.2 BETA&t;Ooops.. mistakenly left VLB_32BIT_IDE on by default&n; *&t;&t;&t;new ide-cd.c from Scott&n; *  Version 3.3 BETA&t;fix compiling with PROBE_FOR_IRQS==0&n; *  (sent to Linus)&t;tweak in do_probe() to fix Delman&squot;s DRDY problem&n; *  Version 3.4 BETA&t;removed &quot;444&quot; debug message&n; *  (sent to Linus)&n; *  Version 3.5&t;&t;correct the bios_cyl field if it&squot;s too small&n; *  (linux 1.1.76)&t; (to help fdisk with brain-dead BIOSs)&n; *  Version 3.6&t;&t;cosmetic corrections to comments and stuff&n; *  (linux 1.1.77)&t;reorganise probing code to make it understandable&n; *&t;&t;&t;added halfway retry to probing for drive identification&n; *&t;&t;&t;added &quot;hdx=noprobe&quot; command line option&n; *&t;&t;&t;allow setting multmode even when identification fails&n; *  Version 3.7&t;&t;move set_geometry=1 from do_identify() to ide_init()&n; *&t;&t;&t;increase DRQ_WAIT to eliminate nuisance messages&n; *&t;&t;&t;wait for DRQ_STAT instead of DATA_READY during probing&n; *&t;&t;&t;  (courtesy of Gary Thomas gary@efland.UU.NET)&n; *  Version 3.8&t;&t;fixed byte-swapping for confused Mitsumi cdrom drives&n; *&t;&t;&t;update of ide-cd.c from Scott, allows blocksize=1024&n; *&t;&t;&t;cdrom probe fixes, inspired by jprang@uni-duisburg.de&n; *  Version 3.9&t;&t;don&squot;t use LBA if lba_capacity looks funny&n; *&t;&t;&t;correct the drive capacity calculations&n; *&t;&t;&t;fix probing for old Seagates without HD_ALTSTATUS&n; *&t;&t;&t;fix byte-ordering for some NEC cdrom drives&n; *  Version 3.10&t;disable multiple mode by default; was causing trouble&n; *  Version 3.11&t;fix mis-identification of old WD disks as cdroms&n; *  Version 3,12&t;simplify logic for selecting initial mult_count&n; *&t;&t;&t;  (fixes problems with buggy WD drives)&n; *  Version 3.13&t;remove excess &quot;multiple mode disabled&quot; messages&n; *  Version 3.14&t;fix ide_error() handling of BUSY_STAT&n; *&t;&t;&t;fix byte-swapped cdrom strings (again.. arghh!)&n; *&t;&t;&t;ignore INDEX bit when checking the ALTSTATUS reg&n; *  Version 3.15&t;add SINGLE_THREADED flag for use with dual-CMD i/f&n; *&t;&t;&t;ignore WRERR_STAT for non-write operations&n; *&t;&t;&t;added VLB_SYNC support for DC-2000A &amp; others,&n; *&t;&t;&t; (incl. some Promise chips), courtesy of Frank Gockel&n; *  Version 3.16&t;convert VLB_32BIT and VLB_SYNC into runtime flags&n; *&t;&t;&t;add ioctls to get/set VLB flags (HDIO_[SG]ET_CHIPSET)&n; *&t;&t;&t;rename SINGLE_THREADED to SUPPORT_SERIALIZE,&n; *&t;&t;&t;add boot flag to &quot;serialize&quot; operation for CMD i/f&n; *&t;&t;&t;add optional support for DTC2278 interfaces,&n; *&t;&t;&t; courtesy of andy@cercle.cts.com (Dyan Wile).&n; *&t;&t;&t;add boot flag to enable &quot;dtc2278&quot; probe&n; *&t;&t;&t;add probe to avoid EATA (SCSI) interfaces,&n; *&t;&t;&t; courtesy of neuffer@goofy.zdv.uni-mainz.de.&n; *&n; *  To do:&n; *&t;- improved CMD support:  tech info is supposedly &quot;in the mail&quot;&n; *&t;- special 32-bit controller-type detection &amp; support&n; *&t;- figure out how to support oddball &quot;intelligent&quot; caching cards&n; *&t;- reverse-engineer 3/4 drive support on fancy &quot;Promise&quot; cards&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -27,14 +27,18 @@ macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|REALLY_FAST_IO
 macro_line|#undef&t;REALLY_FAST_IO&t;&t;&t;/* define if ide ports are perfect */
 DECL|macro|INITIAL_MULT_COUNT
-mdefine_line|#define INITIAL_MULT_COUNT&t;0&t;/* use zero to disable block mode */
-macro_line|#ifndef VLB_32BIT_IDE&t;&t;&t;/* 0 for safety, 1 for 32-bit chipset:*/
-DECL|macro|VLB_32BIT_IDE
-mdefine_line|#define VLB_32BIT_IDE&t;&t;0&t;/*   Winbond 83759F or OPTi 82C621 */
+mdefine_line|#define INITIAL_MULT_COUNT&t;0&t;/* off=0; on=2,4,8,16,32, etc.. */
+macro_line|#ifndef SUPPORT_VLB_32BIT&t;&t;/* 1 to support 32bit I/O on VLB */
+DECL|macro|SUPPORT_VLB_32BIT
+mdefine_line|#define SUPPORT_VLB_32BIT&t;1&t;/* 0 to reduce kernel size */
 macro_line|#endif
-macro_line|#ifndef DISK_RECOVERY_TIME&t;&t;/* min. delay between IO for hardware */
+macro_line|#ifndef SUPPORT_VLB_SYNC&t;&t;/* 1 to support weird 32-bit chips */
+DECL|macro|SUPPORT_VLB_SYNC
+mdefine_line|#define SUPPORT_VLB_SYNC&t;1&t;/* 0 to reduce kernel size */
+macro_line|#endif
+macro_line|#ifndef DISK_RECOVERY_TIME&t;&t;/* off=0; on=access_delay_time */
 DECL|macro|DISK_RECOVERY_TIME
-mdefine_line|#define DISK_RECOVERY_TIME&t;0&t;/*  that needs it. */
+mdefine_line|#define DISK_RECOVERY_TIME&t;0&t;/*  for hardware that needs it */
 macro_line|#endif
 macro_line|#ifndef OK_TO_RESET_CONTROLLER&t;&t;/* 1 needed for good error recovery */
 DECL|macro|OK_TO_RESET_CONTROLLER
@@ -48,9 +52,17 @@ macro_line|#ifndef OPTIMIZE_IRQS&t;&t;&t;/* 1 for slightly faster code */
 DECL|macro|OPTIMIZE_IRQS
 mdefine_line|#define OPTIMIZE_IRQS&t;&t;1&t;/* 0 to reduce kernel size */
 macro_line|#endif
+macro_line|#ifndef SUPPORT_SERIALIZE&t;&t;/* 1 to support CMD dual interfaces */
+DECL|macro|SUPPORT_SERIALIZE
+mdefine_line|#define SUPPORT_SERIALIZE&t;1&t;/* 0 to reduce kernel size */
+macro_line|#endif
 macro_line|#ifndef SUPPORT_SHARING_IRQ&t;&t;/* 1 to allow two IDE i/f on one IRQ */
 DECL|macro|SUPPORT_SHARING_IRQ
 mdefine_line|#define SUPPORT_SHARING_IRQ&t;1&t;/* 0 to reduce kernel size */
+macro_line|#endif
+macro_line|#ifndef SUPPORT_DTC2278&t;&t;&t;/* 1 to support DTC2278 chipset */
+DECL|macro|SUPPORT_DTC2278
+mdefine_line|#define SUPPORT_DTC2278&t;&t;1&t;/* 0 to reduce kernel size */
 macro_line|#endif
 macro_line|#ifndef FANCY_STATUS_DUMPS&t;&t;/* 1 for human-readable drive errors */
 DECL|macro|FANCY_STATUS_DUMPS
@@ -89,7 +101,17 @@ DECL|macro|HWIF
 mdefine_line|#define HWIF&t;&t;&t;hwif
 DECL|macro|DEV_HWIF
 mdefine_line|#define DEV_HWIF&t;&t;(dev-&gt;hwif)
+macro_line|#if SUPPORT_SERIALIZE
+DECL|macro|SUPPORT_SHARING_IRQ
+macro_line|#undef&t;SUPPORT_SHARING_IRQ
+DECL|macro|SUPPORT_SHARING_IRQ
+mdefine_line|#define&t;SUPPORT_SHARING_IRQ&t;1
+macro_line|#endif
 macro_line|#else
+DECL|macro|SUPPORT_SERIALIZE
+macro_line|#undef&t;SUPPORT_SERIALIZE
+DECL|macro|SUPPORT_SERIALIZE
+mdefine_line|#define SUPPORT_SERIALIZE&t;&t;0
 DECL|macro|OPTIMIZE_IRQS
 macro_line|#undef&t;OPTIMIZE_IRQS
 DECL|macro|OPTIMIZE_IRQS
@@ -129,27 +151,33 @@ mdefine_line|#define OUT_BYTE(b,p)&t;&t;outb_p((b),IDE_PORT(p,DEV_HWIF))
 DECL|macro|IN_BYTE
 mdefine_line|#define IN_BYTE(p,hwif)&t;&t;(byte)inb_p(IDE_PORT(p,hwif))
 macro_line|#endif /* REALLY_FAST_IO */
-macro_line|#if VLB_32BIT_IDE
-DECL|macro|OUT_SECTORS
-mdefine_line|#define OUT_SECTORS(b,n)&t;outsl(IDE_PORT(HD_DATA,DEV_HWIF),(b),(n)&lt;&lt;7)
-DECL|macro|IN_SECTORS
-mdefine_line|#define IN_SECTORS(b,n)&t;&t;insl(IDE_PORT(HD_DATA,DEV_HWIF),(b),(n)&lt;&lt;7)
-macro_line|#else
-DECL|macro|OUT_SECTORS
-mdefine_line|#define OUT_SECTORS(b,n)&t;outsw(IDE_PORT(HD_DATA,DEV_HWIF),(b),(n)&lt;&lt;8)
-DECL|macro|IN_SECTORS
-mdefine_line|#define IN_SECTORS(b,n)&t;&t;insw(IDE_PORT(HD_DATA,DEV_HWIF),(b),(n)&lt;&lt;8)
-macro_line|#endif&t;/* VLB_32BIT_IDE */
+macro_line|#if SUPPORT_VLB_32BIT
+macro_line|#if SUPPORT_VLB_SYNC
+DECL|macro|VLB_SYNC
+mdefine_line|#define VLB_SYNC __asm__ __volatile__ (&quot;pusha&bslash;n movl $0x01f2,%edx&bslash;n inb (%dx),%al&bslash;n inb (%dx),%al&bslash;n inb (%dx),%al&bslash;n popa&bslash;n&quot;)
+macro_line|#endif&t;/* SUPPORT_VLB_SYNC */
+macro_line|#endif&t;/* SUPPORT_VLB_32BIT */
+macro_line|#if SUPPORT_DTC2278
+DECL|variable|probe_dtc2278
+r_static
+id|uint
+id|probe_dtc2278
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 DECL|macro|GET_ERR
 mdefine_line|#define GET_ERR(hwif)&t;&t;IN_BYTE(HD_ERROR,hwif)
 DECL|macro|GET_STAT
 mdefine_line|#define GET_STAT(hwif)&t;&t;IN_BYTE(HD_STATUS,hwif)
 DECL|macro|OK_STAT
 mdefine_line|#define OK_STAT(stat,good,bad)&t;(((stat)&amp;((good)|(bad)))==(good))
-DECL|macro|BAD_RW_STAT
-mdefine_line|#define BAD_RW_STAT&t;&t;(BUSY_STAT   | ERR_STAT  | WRERR_STAT)
+DECL|macro|BAD_R_STAT
+mdefine_line|#define BAD_R_STAT&t;&t;(BUSY_STAT   | ERR_STAT)
+DECL|macro|BAD_W_STAT
+mdefine_line|#define BAD_W_STAT&t;&t;(BUSY_STAT   | ERR_STAT | WRERR_STAT)
 DECL|macro|BAD_STAT
-mdefine_line|#define BAD_STAT&t;&t;(BAD_RW_STAT | DRQ_STAT)
+mdefine_line|#define BAD_STAT&t;&t;(BAD_R_STAT  | DRQ_STAT)
 DECL|macro|DRIVE_READY
 mdefine_line|#define DRIVE_READY&t;&t;(READY_STAT  | SEEK_STAT)
 DECL|macro|DATA_READY
@@ -165,6 +193,8 @@ DECL|macro|PARTN_MASK
 mdefine_line|#define PARTN_MASK&t;((1&lt;&lt;PARTN_BITS)-1)&t;/* a useful bit mask */
 DECL|macro|MAX_DRIVES
 mdefine_line|#define MAX_DRIVES&t;2&t;/* per interface; 2 assumed by lots of code */
+DECL|macro|SECTOR_WORDS
+mdefine_line|#define SECTOR_WORDS&t;(512 / 4)&t;/* number of 32bit words per sector */
 multiline_comment|/*&n; * Timeouts for various operations:&n; */
 DECL|macro|WAIT_DRQ
 mdefine_line|#define WAIT_DRQ&t;5&t;/* 50msec - spec allows up to 20ms */
@@ -338,11 +368,25 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* mutex for ide_open, revalidate_.. */
+DECL|member|vlb_32bit
+r_int
+id|vlb_32bit
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* use 32bit in/out for data */
+DECL|member|vlb_sync
+r_int
+id|vlb_sync
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* needed for some 32bit chip sets */
 DECL|member|reserved0
 r_int
 id|reserved0
 suffix:colon
-l_int|3
+l_int|1
 suffix:semicolon
 multiline_comment|/* unused */
 DECL|member|special
@@ -356,12 +400,12 @@ id|select
 suffix:semicolon
 multiline_comment|/* basic drive/head select reg value */
 DECL|member|mult_count
-DECL|member|reserved1
+DECL|member|chipset
 DECL|member|reserved2
 id|byte
 id|mult_count
 comma
-id|reserved1
+id|chipset
 comma
 id|reserved2
 suffix:semicolon
@@ -719,6 +763,13 @@ id|unsupported
 op_assign
 l_string|&quot; not supported by this kernel&bslash;n&quot;
 suffix:semicolon
+DECL|variable|single_threaded
+r_static
+id|byte
+id|single_threaded
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#if SUPPORT_SHARING_IRQ
 DECL|variable|sharing_single_irq
 r_static
@@ -736,7 +787,7 @@ id|current_hwif
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* for two i/f on one IRQ */
+multiline_comment|/* for single_threaded==1 */
 macro_line|#endif /* SUPPORT_SHARING_IRQ */
 multiline_comment|/*&n; * This structure is used to register our block device(s) with the kernel:&n; */
 r_static
@@ -973,6 +1024,216 @@ mdefine_line|#define DO_REQUEST {SET_DISK_RECOVERY_TIMER do_request(DEV_HWIF);}
 multiline_comment|/*&n; * This is a macro rather than an inline to permit better gcc code.&n; * Caller MUST do sti() before invoking WAIT_STAT() (for jiffies to work).&n; *&n; * This routine should get fixed to not hog the cpu during extra long waits..&n; * That could be done by busy-waiting for the first jiffy or two, and then&n; * setting a timer to wake up at half second intervals thereafter,&n; * until WAIT_WORSTCASE is achieved, before timing out.&n; */
 DECL|macro|WAIT_STAT
 mdefine_line|#define WAIT_STAT(dev,good,bad,timeout,msg,label)&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;byte stat;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;udelay(1);&t;/* spec allows drive 400ns to assert &quot;BUSY&quot; */&t;&bslash;&n;&t;if (GET_STAT(DEV_HWIF) &amp; BUSY_STAT) {&t;&t;&t;&t;&bslash;&n;&t;&t;unsigned long timer = jiffies + timeout;&t;&t;&bslash;&n;&t;&t;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;if ((GET_STAT(DEV_HWIF) &amp; BUSY_STAT) == 0)&t;&bslash;&n;&t;&t;&t;&t;break;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;} while (timer &gt; jiffies);&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;udelay(1);&t;/* spec allows 400ns for status to stabilize */&t;&bslash;&n;&t;if (!OK_STAT(stat=GET_STAT(DEV_HWIF), good, bad)) {&t;&t;&bslash;&n;&t;&t;ide_error(dev, msg &quot; error&quot;, stat);&t;&t;&t;&bslash;&n;&t;&t;goto label;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
+multiline_comment|/*&n; * This is used for all data transfers *from* the IDE interface&n; */
+DECL|function|input_ide_data
+r_void
+id|input_ide_data
+(paren
+id|ide_dev_t
+op_star
+id|dev
+comma
+r_void
+op_star
+id|buffer
+comma
+id|uint
+id|wcount
+)paren
+(brace
+macro_line|#if SUPPORT_VLB_32BIT
+r_if
+c_cond
+(paren
+id|dev-&gt;vlb_32bit
+)paren
+(brace
+macro_line|#if SUPPORT_VLB_SYNC
+r_if
+c_cond
+(paren
+id|dev-&gt;vlb_sync
+)paren
+(brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|VLB_SYNC
+suffix:semicolon
+id|insl
+c_func
+(paren
+id|IDE_PORT
+c_func
+(paren
+id|HD_DATA
+comma
+id|DEV_HWIF
+)paren
+comma
+id|buffer
+comma
+id|wcount
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;unmask
+)paren
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif /* SUPPORT_VLB_SYNC */
+id|insl
+c_func
+(paren
+id|IDE_PORT
+c_func
+(paren
+id|HD_DATA
+comma
+id|DEV_HWIF
+)paren
+comma
+id|buffer
+comma
+id|wcount
+)paren
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif /* SUPPORT_VLB_32BIT */
+id|insw
+c_func
+(paren
+id|IDE_PORT
+c_func
+(paren
+id|HD_DATA
+comma
+id|DEV_HWIF
+)paren
+comma
+id|buffer
+comma
+id|wcount
+op_lshift
+l_int|1
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * This is used for all data transfers *to* the IDE interface&n; */
+DECL|function|output_ide_data
+r_void
+id|output_ide_data
+(paren
+id|ide_dev_t
+op_star
+id|dev
+comma
+r_void
+op_star
+id|buffer
+comma
+id|uint
+id|wcount
+)paren
+(brace
+macro_line|#if SUPPORT_VLB_32BIT
+r_if
+c_cond
+(paren
+id|dev-&gt;vlb_32bit
+)paren
+(brace
+macro_line|#if SUPPORT_VLB_SYNC
+r_if
+c_cond
+(paren
+id|dev-&gt;vlb_sync
+)paren
+(brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|VLB_SYNC
+suffix:semicolon
+id|outsl
+c_func
+(paren
+id|IDE_PORT
+c_func
+(paren
+id|HD_DATA
+comma
+id|DEV_HWIF
+)paren
+comma
+id|buffer
+comma
+id|wcount
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;unmask
+)paren
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_else
+id|outsl
+c_func
+(paren
+id|IDE_PORT
+c_func
+(paren
+id|HD_DATA
+comma
+id|DEV_HWIF
+)paren
+comma
+id|buffer
+comma
+id|wcount
+)paren
+suffix:semicolon
+macro_line|#endif /* SUPPORT_VLB_SYNC */
+)brace
+r_else
+macro_line|#endif /* SUPPORT_VLB_32BIT */
+id|outsw
+c_func
+(paren
+id|IDE_PORT
+c_func
+(paren
+id|HD_DATA
+comma
+id|DEV_HWIF
+)paren
+comma
+id|buffer
+comma
+id|wcount
+op_lshift
+l_int|1
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * This should get invoked on every exit path from the driver.&n; */
 DECL|function|start_ide_timer
 r_static
@@ -2351,7 +2612,7 @@ id|DEV_HWIF
 comma
 id|DATA_READY
 comma
-id|BAD_RW_STAT
+id|BAD_R_STAT
 )paren
 )paren
 (brace
@@ -2419,12 +2680,16 @@ id|nsect
 op_assign
 l_int|1
 suffix:semicolon
-id|IN_SECTORS
+id|input_ide_data
 c_func
 (paren
+id|dev
+comma
 id|rq-&gt;buffer
 comma
 id|nsect
+op_star
+id|SECTOR_WORDS
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG
@@ -2576,7 +2841,7 @@ id|DEV_HWIF
 comma
 id|DRIVE_READY
 comma
-id|BAD_RW_STAT
+id|BAD_W_STAT
 )paren
 )paren
 (brace
@@ -2672,12 +2937,14 @@ op_assign
 op_amp
 id|write_intr
 suffix:semicolon
-id|OUT_SECTORS
+id|output_ide_data
 c_func
 (paren
+id|dev
+comma
 id|rq-&gt;buffer
 comma
-l_int|1
+id|SECTOR_WORDS
 )paren
 suffix:semicolon
 r_return
@@ -2757,12 +3024,16 @@ id|mcount
 op_sub_assign
 id|nsect
 suffix:semicolon
-id|OUT_SECTORS
+id|output_ide_data
 c_func
 (paren
+id|dev
+comma
 id|rq-&gt;buffer
 comma
 id|nsect
+op_lshift
+l_int|7
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG
@@ -2911,7 +3182,7 @@ id|DEV_HWIF
 comma
 id|DRIVE_READY
 comma
-id|BAD_RW_STAT
+id|BAD_W_STAT
 )paren
 )paren
 (brace
@@ -3168,7 +3439,7 @@ suffix:semicolon
 r_else
 id|printk
 (paren
-l_string|&quot;  %s: disabled multiple mode&bslash;n&quot;
+l_string|&quot;  %s: multiple mode turned off&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -3425,6 +3696,36 @@ id|HWIF
 )braket
 )paren
 suffix:semicolon
+macro_line|#if SUPPORT_SERIALIZE
+r_if
+c_cond
+(paren
+id|single_threaded
+op_logical_and
+id|ide_irq
+(braket
+id|HWIF
+)braket
+op_ne
+id|ide_irq
+(braket
+id|HWIF
+op_xor
+l_int|1
+)braket
+)paren
+id|disable_irq
+c_func
+(paren
+id|ide_irq
+(braket
+id|HWIF
+op_xor
+l_int|1
+)braket
+)paren
+suffix:semicolon
+macro_line|#endif /* SUPPORT_SERIALIZE */
 id|sti
 c_func
 (paren
@@ -3457,7 +3758,7 @@ macro_line|#if SUPPORT_SHARING_IRQ
 r_if
 c_cond
 (paren
-id|sharing_single_irq
+id|single_threaded
 )paren
 multiline_comment|/* this line is indeed necessary */
 id|hwif
@@ -3485,6 +3786,36 @@ id|HWIF
 )braket
 )paren
 suffix:semicolon
+macro_line|#if SUPPORT_SERIALIZE
+r_if
+c_cond
+(paren
+id|single_threaded
+op_logical_and
+id|ide_irq
+(braket
+id|HWIF
+)braket
+op_ne
+id|ide_irq
+(braket
+id|HWIF
+op_xor
+l_int|1
+)braket
+)paren
+id|enable_irq
+c_func
+(paren
+id|ide_irq
+(braket
+id|HWIF
+op_xor
+l_int|1
+)braket
+)paren
+suffix:semicolon
+macro_line|#endif /* SUPPORT_SERIALIZE */
 )brace
 id|restore_flags
 c_func
@@ -4138,7 +4469,7 @@ id|dev
 comma
 id|DATA_READY
 comma
-id|BAD_RW_STAT
+id|BAD_W_STAT
 comma
 id|WAIT_DRQ
 comma
@@ -4190,12 +4521,14 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|OUT_SECTORS
+id|output_ide_data
 c_func
 (paren
+id|dev
+comma
 id|rq-&gt;buffer
 comma
-l_int|1
+id|SECTOR_WORDS
 )paren
 suffix:semicolon
 id|ide_handler
@@ -4392,7 +4725,7 @@ id|current_hwif
 op_assign
 id|hwif
 suffix:semicolon
-multiline_comment|/* used *only* when sharing_single_irq==1 */
+multiline_comment|/* used *only* when single_threaded==1 */
 macro_line|#endif /* SUPPORT_SHARING_IRQ */
 r_if
 c_cond
@@ -4441,12 +4774,14 @@ macro_line|#if SUPPORT_SHARING_IRQ
 r_if
 c_cond
 (paren
-id|sharing_single_irq
+id|single_threaded
 )paren
 (brace
 r_if
 c_cond
 (paren
+id|sharing_single_irq
+op_logical_and
 (paren
 id|dev
 op_assign
@@ -4871,7 +5206,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is a macro rather than an inline function to&n; * prevent gcc from over-optimizing accesses to current_hwif,&n; * which may have a different value on exit from do_request().&n; */
 DECL|macro|DO_IDE_REQUEST
-mdefine_line|#define DO_IDE_REQUEST(hwif)&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (ide_handler[hwif] == NULL) {&t;&bslash;&n;&t;&t;disable_irq(ide_irq[hwif]);&t;&bslash;&n;&t;&t;do_request(hwif);&t;&t;&bslash;&n;&t;&t;cli();&t;&t;&t;&t;&bslash;&n;&t;&t;start_ide_timer(hwif);&t;&t;&bslash;&n;&t;&t;enable_irq(ide_irq[hwif]);&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define DO_IDE_REQUEST(hwif)&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (ide_handler[hwif] == NULL) {&t;&bslash;&n;&t;&t;disable_irq(ide_irq[hwif]);&t;&bslash;&n;&t;&t;if (single_threaded &amp;&amp; ide_irq[hwif] != ide_irq[hwif^1]) &bslash;&n;&t;&t;&t;disable_irq(ide_irq[hwif^1]); &bslash;&n;&t;&t;do_request(hwif);&t;&t;&bslash;&n;&t;&t;cli();&t;&t;&t;&t;&bslash;&n;&t;&t;start_ide_timer(hwif);&t;&t;&bslash;&n;&t;&t;enable_irq(ide_irq[hwif]);&t;&bslash;&n;&t;&t;if (single_threaded &amp;&amp; ide_irq[hwif] != ide_irq[hwif^1]) &bslash;&n;&t;&t;&t;enable_irq(ide_irq[hwif^1]); &bslash;&n;&t;}&t;&t;&t;&t;&t;&bslash;&n;}
 macro_line|#if SUPPORT_TWO_INTERFACES
 DECL|function|do_ide0_request
 r_static
@@ -4989,11 +5324,38 @@ comma
 id|stat
 )paren
 suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|2
+comma
+id|IDE_PORT
+c_func
+(paren
+id|HD_CMD
+comma
+id|hwif
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* disable device irq */
 macro_line|#if SUPPORT_SHARING_IRQ
 r_if
 c_cond
 (paren
-id|sharing_single_irq
+id|single_threaded
+op_logical_and
+id|ide_irq
+(braket
+id|hwif
+)braket
+op_eq
+id|ide_irq
+(braket
+id|hwif
+op_xor
+l_int|1
+)braket
 )paren
 (brace
 r_if
@@ -5033,14 +5395,73 @@ comma
 id|stat
 )paren
 suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|2
+comma
+id|IDE_PORT
+c_func
+(paren
+id|HD_CMD
+comma
+id|hwif
+op_xor
+l_int|1
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* disable device irq */
 )brace
 macro_line|#endif /* SUPPORT_SHARING_IRQ */
 )brace
 multiline_comment|/*&n; * This is a macro rather than an inline function to&n; * prevent gcc from over-optimizing accesses to current_hwif,&n; * which may have a different value on exit from handler().&n; */
 DECL|macro|IDE_INTR
-mdefine_line|#define IDE_INTR(hwif)&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ide_dev_t *dev;&t;&t;&t;&t;&t;&bslash;&n;&t;void (*handler)(ide_dev_t *);&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;timer_active &amp;= ~ide_timerbit[hwif];&t;&t;&bslash;&n;&t;if ((handler = ide_handler[hwif]) != NULL) {&t;&bslash;&n;&t;&t;ide_handler[hwif] = NULL;&t;&t;&bslash;&n;&t;&t;dev = ide_cur_dev[hwif];&t;&t;&bslash;&n;&t;&t;if (dev-&gt;unmask)&t;&t;&t;&bslash;&n;&t;&t;&t;sti();&t;&t;&t;&t;&bslash;&n;&t;&t;handler(dev);&t;&t;&t;&t;&bslash;&n;&t;} else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;unexpected_intr(hwif);&t;&t;&t;&bslash;&n;&t;cli();&t;&t;&t;&t;&t;&t;&bslash;&n;&t;start_ide_timer(hwif);&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define IDE_INTR(hwif)&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ide_dev_t *dev;&t;&t;&t;&t;&t;&bslash;&n;&t;void (*handler)(ide_dev_t *);&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;timer_active &amp;= ~ide_timerbit[hwif];&t;&t;&bslash;&n;&t;if ((handler = ide_handler[hwif]) != NULL) {&t;&bslash;&n;&t;&t;ide_handler[hwif] = NULL;&t;&t;&bslash;&n;&t;&t;dev = ide_cur_dev[hwif];&t;&t;&bslash;&n;&t;&t;if (dev-&gt;unmask)&t;&t;&t;&bslash;&n;&t;&t;&t;sti();&t;&t;&t;&t;&bslash;&n;&t;&t;handler(dev);&t;&t;&t;&t;&bslash;&n;&t;} else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;unexpected_intr(hwif);&t;&t;&t;&bslash;&n;&t;cli();&t;&t;&t;&t;&t;&t;&bslash;&n;}
+macro_line|#if SUPPORT_SERIALIZE
+multiline_comment|/* entry point for all interrupts when single_threaded==1 */
+DECL|function|ide_seq_intr
+r_static
+r_void
+id|ide_seq_intr
+(paren
+r_int
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+id|byte
+id|hwif
+op_assign
+(paren
+id|irq
+op_ne
+id|ide_irq
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+id|IDE_INTR
+c_func
+(paren
+id|HWIF
+)paren
+suffix:semicolon
+id|start_ide_timer
+c_func
+(paren
+id|current_hwif
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* SUPPORT_SERIALIZE */
 macro_line|#if OPTIMIZE_IRQS
-multiline_comment|/* entry point for all interrupts on ide0 when sharing_single_irq==0 */
+multiline_comment|/* entry point for all interrupts on ide0 when single_threaded==0 */
 DECL|function|ide0_intr
 r_static
 r_void
@@ -5061,8 +5482,14 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
+id|start_ide_timer
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
 )brace
-multiline_comment|/* entry point for all interrupts on ide1 when sharing_single_irq==0 */
+multiline_comment|/* entry point for all interrupts on ide1 when single_threaded==0 */
 DECL|function|ide1_intr
 r_static
 r_void
@@ -5083,13 +5510,19 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
+id|start_ide_timer
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 )brace
 macro_line|#else&t;/* OPTIMIZE_IRQS */
 DECL|macro|ide0_intr
 mdefine_line|#define ide0_intr&t;ide_intr
 DECL|macro|ide1_intr
 mdefine_line|#define ide1_intr&t;ide_intr
-multiline_comment|/* entry point for all interrupts when sharing_single_irq==0 */
+multiline_comment|/* entry point for all interrupts when single_threaded==0 */
 DECL|function|ide_intr
 r_static
 r_void
@@ -5124,6 +5557,12 @@ c_func
 id|HWIF
 )paren
 suffix:semicolon
+id|start_ide_timer
+c_func
+(paren
+id|HWIF
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif&t;/* OPTIMIZE_IRQS */
 macro_line|#if SUPPORT_SHARING_IRQ
@@ -5143,6 +5582,12 @@ id|regs
 )paren
 (brace
 id|IDE_INTR
+c_func
+(paren
+id|current_hwif
+)paren
+suffix:semicolon
+id|start_ide_timer
 c_func
 (paren
 id|current_hwif
@@ -6262,6 +6707,18 @@ id|dev-&gt;unmask
 )paren
 suffix:semicolon
 r_case
+id|HDIO_GET_CHIPSET
+suffix:colon
+r_return
+id|write_fs_long
+c_func
+(paren
+id|arg
+comma
+id|dev-&gt;chipset
+)paren
+suffix:semicolon
+r_case
 id|HDIO_GET_MULTCOUNT
 suffix:colon
 r_return
@@ -6363,66 +6820,6 @@ suffix:semicolon
 r_case
 id|HDIO_SET_KEEPSETTINGS
 suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|suser
-c_func
-(paren
-)paren
-)paren
-r_return
-op_minus
-id|EACCES
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|arg
-OG
-l_int|1
-)paren
-op_logical_or
-(paren
-id|MINOR
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-op_amp
-id|PARTN_MASK
-)paren
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|dev-&gt;keep_settings
-op_assign
-id|arg
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 r_case
 id|HDIO_SET_UNMASKINTR
 suffix:colon
@@ -6473,9 +6870,102 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|cmd
+op_eq
+id|HDIO_SET_KEEPSETTINGS
+)paren
+id|dev-&gt;keep_settings
+op_assign
+id|arg
+suffix:semicolon
+r_else
 id|dev-&gt;unmask
 op_assign
 id|arg
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+r_case
+id|HDIO_SET_CHIPSET
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|EACCES
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|arg
+OG
+l_int|3
+)paren
+op_logical_or
+(paren
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+op_amp
+id|PARTN_MASK
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|dev-&gt;chipset
+op_assign
+id|arg
+suffix:semicolon
+id|dev-&gt;vlb_sync
+op_assign
+(paren
+id|arg
+op_amp
+l_int|2
+)paren
+op_rshift
+l_int|1
+suffix:semicolon
+id|dev-&gt;vlb_32bit
+op_assign
+(paren
+id|arg
+op_amp
+l_int|1
+)paren
 suffix:semicolon
 id|restore_flags
 c_func
@@ -7115,12 +7605,14 @@ id|probe_mem_start
 op_add_assign
 l_int|512
 suffix:semicolon
-id|IN_SECTORS
+id|input_ide_data
 c_func
 (paren
+id|dev
+comma
 id|id
 comma
-l_int|1
+id|SECTOR_WORDS
 )paren
 suffix:semicolon
 multiline_comment|/* read 512 bytes of id info */
@@ -7129,6 +7621,60 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * EATA SCSI controllers do a hardware ATA emulation:  ignore them&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|id-&gt;model
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;P&squot;
+op_logical_and
+id|id-&gt;model
+(braket
+l_int|1
+)braket
+op_eq
+l_char|&squot;M&squot;
+)paren
+op_logical_or
+(paren
+id|id-&gt;model
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;S&squot;
+op_logical_and
+id|id-&gt;model
+(braket
+l_int|1
+)braket
+op_eq
+l_char|&squot;K&squot;
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: EATA SCSI HBA %.10s&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|id-&gt;model
+)paren
+suffix:semicolon
+id|dev-&gt;present
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *  WIN_IDENTIFY returns little-endian info,&n;&t; *  WIN_PIDENTIFY *usually* returns little-endian info.&n;&t; */
 id|bswap
 op_assign
@@ -7871,7 +8417,7 @@ id|DEV_HWIF
 comma
 id|DRQ_STAT
 comma
-id|BAD_RW_STAT
+id|BAD_R_STAT
 )paren
 )paren
 (brace
@@ -8863,6 +9409,77 @@ op_eq
 l_int|0
 )paren
 (brace
+macro_line|#if SUPPORT_DTC2278
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|str
+comma
+l_string|&quot;dtc2278&quot;
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s&bslash;n&quot;
+comma
+id|str
+)paren
+suffix:semicolon
+id|probe_dtc2278
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* try to init DTC-2278 at boot */
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif /* SUPPORT_DTC2278 */
+macro_line|#if SUPPORT_SERIALIZE
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|str
+comma
+l_string|&quot;serialize&quot;
+)paren
+op_logical_or
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|str
+comma
+l_string|&quot;cmd&quot;
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s&bslash;n&quot;
+comma
+id|str
+)paren
+suffix:semicolon
+id|single_threaded
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* serialize all drive access */
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif /* SUPPORT_SERIALIZE */
 r_if
 c_cond
 (paren
@@ -8879,7 +9496,9 @@ l_string|&quot;noprobe&quot;
 id|printk
 c_func
 (paren
-l_string|&quot;noprobe&bslash;n&quot;
+l_string|&quot;%s&bslash;n&quot;
+comma
+id|str
 )paren
 suffix:semicolon
 id|dev-&gt;dont_probe
@@ -9511,6 +10130,14 @@ id|dev-&gt;usage
 op_assign
 l_int|0
 suffix:semicolon
+id|dev-&gt;vlb_32bit
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;vlb_sync
+op_assign
+l_int|0
+suffix:semicolon
 id|dev-&gt;id
 op_assign
 l_int|NULL
@@ -9658,6 +10285,32 @@ op_amp
 id|ide_shared_intr
 suffix:semicolon
 )brace
+macro_line|#if SUPPORT_SERIALIZE
+r_else
+r_if
+c_cond
+(paren
+id|single_threaded
+)paren
+(brace
+id|handler
+op_assign
+op_amp
+id|ide_seq_intr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|HWIF
+op_ne
+l_int|0
+)paren
+id|msg
+op_assign
+l_string|&quot; (single-threaded with ide0)&quot;
+suffix:semicolon
+)brace
+macro_line|#endif /* SUPPORT_SERIALIZE */
 macro_line|#endif /* SUPPORT_SHARING_IRQ */
 id|save_flags
 c_func
@@ -9911,6 +10564,170 @@ multiline_comment|/* revalidate */
 macro_line|#endif CONFIG_BLK_DEV_IDECD
 )brace
 suffix:semicolon
+macro_line|#if SUPPORT_DTC2278
+multiline_comment|/*&n; * From: andy@cercle.cts.com (Dyan Wile)&n; *&n; * Below is a patch for DTC-2278 - alike software-programmable controllers&n; * The code enables the secondary IDE controller and the PIO4 (3?) timings on&n; * the primary (EIDE). You may probably have to enable the 32-bit support to&n; * get the full speed. You better get the disk interrupts disabled ( hdparm -u0 &n; * /dev/hd.. ) for the drives connected to the EIDE interface. (I get my &n; * filesystem  corrupted with -u 1, but under heavy disk load only :-)  &n; */
+DECL|function|sub22
+r_static
+r_void
+id|sub22
+(paren
+r_char
+id|b
+comma
+r_char
+id|c
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|3
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|__inb
+c_func
+(paren
+l_int|0x3f6
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|b
+comma
+l_int|0xb0
+)paren
+suffix:semicolon
+id|__inb
+c_func
+(paren
+l_int|0x3f6
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|c
+comma
+l_int|0xb4
+)paren
+suffix:semicolon
+id|__inb
+c_func
+(paren
+l_int|0x3f6
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|__inb
+c_func
+(paren
+l_int|0xb4
+)paren
+op_eq
+id|c
+)paren
+(brace
+id|outb_p
+c_func
+(paren
+l_int|7
+comma
+l_int|0xb0
+)paren
+suffix:semicolon
+id|__inb
+c_func
+(paren
+l_int|0x3f6
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+multiline_comment|/* success */
+)brace
+)brace
+)brace
+DECL|function|try_to_init_dtc2278
+r_static
+r_void
+id|try_to_init_dtc2278
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* This (presumably) enables PIO mode4 (3?) on the first interface */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|sub22
+c_func
+(paren
+l_int|1
+comma
+l_int|0xc3
+)paren
+suffix:semicolon
+id|sub22
+c_func
+(paren
+l_int|0
+comma
+l_int|0xa0
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* This enables the second interface */
+id|outb_p
+c_func
+(paren
+l_int|4
+comma
+l_int|0xb0
+)paren
+suffix:semicolon
+id|__inb
+c_func
+(paren
+l_int|0x3f6
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x20
+comma
+l_int|0xb4
+)paren
+suffix:semicolon
+id|__inb
+c_func
+(paren
+l_int|0x3f6
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* SUPPORT_DTC2278 */
 multiline_comment|/*&n; * This is gets invoked once during initialization, to set *everything* up&n; */
 DECL|function|ide_init
 r_int
@@ -9929,6 +10746,20 @@ id|mem_end
 id|byte
 id|hwif
 suffix:semicolon
+macro_line|#if SUPPORT_DTC2278
+r_if
+c_cond
+(paren
+id|probe_dtc2278
+)paren
+id|try_to_init_dtc2278
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* SUPPORT_DTC2278 */
+multiline_comment|/* single_threaded = 0; */
+multiline_comment|/* zero by default, override at boot */
 r_for
 c_loop
 (paren
@@ -10103,6 +10934,10 @@ id|sharing_single_irq
 op_assign
 l_int|1
 suffix:semicolon
+id|single_threaded
+op_assign
+l_int|1
+suffix:semicolon
 macro_line|#else /* SUPPORT_SHARING_IRQ */
 id|printk
 c_func
@@ -10269,7 +11104,7 @@ macro_line|#if SUPPORT_SHARING_IRQ
 r_if
 c_cond
 (paren
-id|sharing_single_irq
+id|single_threaded
 )paren
 id|blk_dev
 (braket

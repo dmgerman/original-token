@@ -1,5 +1,3 @@
-DECL|macro|THREE_LEVEL
-mdefine_line|#define THREE_LEVEL
 multiline_comment|/* ptrace.c */
 multiline_comment|/* By Ross Biro 1/23/92 */
 multiline_comment|/* edited by Linus Torvalds */

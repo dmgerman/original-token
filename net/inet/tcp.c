@@ -2034,6 +2034,14 @@ suffix:colon
 r_if
 c_cond
 (paren
+id|sk-&gt;err
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|sk-&gt;shutdown
 op_amp
 id|SEND_SHUTDOWN
@@ -2083,8 +2091,6 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|sk-&gt;err
-op_logical_or
 id|sk-&gt;urg_data
 )paren
 r_return
