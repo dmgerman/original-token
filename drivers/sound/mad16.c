@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/*&n; * sound/mad16.c&n; *&n; * Initialization code for OPTi MAD16 compatible audio chips. Including&n; *&n; *      OPTi 82C928     MAD16           (replaced by C929)&n; *      OAK OTI-601D    Mozart&n; *      OPTi 82C929     MAD16 Pro&n; *&n; * These audio interface chips don&squot;t prduce sound themselves. They just&n; * connect some other components (OPL-[234] and a WSS compatible codec)&n; * to the PC bus and perform I/O, DMA and IRQ address decoding. There is&n; * also a UART for the MPU-401 mode (not 82C928/Mozart).&n; * The Mozart chip appears to be compatible with the 82C928 (can anybody&n; * confirm this?).&n; *&n; * NOTE! If you want to set CD-ROM address and/or joystick enable, define&n; *       MAD16_CONF in local.h as combination of the following bits:&n; *&n; *      0x01    - joystick disabled&n; *&n; *      CD-ROM type selection (select just one):&n; *      0x00    - none&n; *      0x02    - Sony 31A&n; *      0x04    - Mitsumi&n; *      0x06    - Panasonic (type &quot;LaserMate&quot;, not &quot;SoundBlaster&quot;)&n; *      0x08    - Secondary IDE (address 0x170)&n; *      0x0a    - Primary IDE (address 0x1F0)&n; *      &n; *      For example Mitsumi with joystick disabled = 0x04|0x01 = 0x05&n; *      For example LaserMate (for use with sbpcd) plus joystick = 0x06&n; *      &n; *    MAD16_CDSEL:&n; *      This defaults to CD I/O 0x340, no IRQ and DMA3 &n; *      (DMA5 with Mitsumi or IDE). If you like to change these, define&n; *      MAD16_CDSEL with the following bits:&n; *&n; *      CD-ROM port: 0x00=340, 0x40=330, 0x80=360 or 0xc0=320&n; *      OPL4 select: 0x20=OPL4, 0x00=OPL3&n; *      CD-ROM irq: 0x00=disabled, 0x04=IRQ5, 0x08=IRQ7, 0x0a=IRQ3, 0x10=IRQ9,&n; *                  0x14=IRQ10 and 0x18=IRQ11.&n; *&n; *      CD-ROM DMA (Sony or Panasonic): 0x00=DMA3, 0x01=DMA2, 0x02=DMA1 or 0x03=disabled&n; *   or&n; *      CD-ROM DMA (Mitsumi or IDE):    0x00=DMA5, 0x01=DMA6, 0x02=DMA7 or 0x03=disabled&n; *&n; *      For use with sbpcd, address 0x340, set MAD16_CDSEL to 0x03 or 0x23.&n; */
+multiline_comment|/*&n; * sound/mad16.c&n; *&n; * Initialization code for OPTi MAD16 compatible audio chips. Including&n; *&n; *      OPTi 82C928     MAD16           (replaced by C929)&n; *      OAK OTI-601D    Mozart&n; *      OPTi 82C929     MAD16 Pro&n; *      OPTi 82C930     (Not supported yet)&n; *&n; * These audio interface chips don&squot;t prduce sound themselves. They just&n; * connect some other components (OPL-[234] and a WSS compatible codec)&n; * to the PC bus and perform I/O, DMA and IRQ address decoding. There is&n; * also a UART for the MPU-401 mode (not 82C928/Mozart).&n; * The Mozart chip appears to be compatible with the 82C928 (can anybody&n; * confirm this?).&n; *&n; * NOTE! If you want to set CD-ROM address and/or joystick enable, define&n; *       MAD16_CONF in local.h as combination of the following bits:&n; *&n; *      0x01    - joystick disabled&n; *&n; *      CD-ROM type selection (select just one):&n; *      0x00    - none&n; *      0x02    - Sony 31A&n; *      0x04    - Mitsumi&n; *      0x06    - Panasonic (type &quot;LaserMate&quot;, not &quot;SoundBlaster&quot;)&n; *      0x08    - Secondary IDE (address 0x170)&n; *      0x0a    - Primary IDE (address 0x1F0)&n; *      &n; *      For example Mitsumi with joystick disabled = 0x04|0x01 = 0x05&n; *      For example LaserMate (for use with sbpcd) plus joystick = 0x06&n; *      &n; *    MAD16_CDSEL:&n; *      This defaults to CD I/O 0x340, no IRQ and DMA3 &n; *      (DMA5 with Mitsumi or IDE). If you like to change these, define&n; *      MAD16_CDSEL with the following bits:&n; *&n; *      CD-ROM port: 0x00=340, 0x40=330, 0x80=360 or 0xc0=320&n; *      OPL4 select: 0x20=OPL4, 0x00=OPL3&n; *      CD-ROM irq: 0x00=disabled, 0x04=IRQ5, 0x08=IRQ7, 0x0a=IRQ3, 0x10=IRQ9,&n; *                  0x14=IRQ10 and 0x18=IRQ11.&n; *&n; *      CD-ROM DMA (Sony or Panasonic): 0x00=DMA3, 0x01=DMA2, 0x02=DMA1 or 0x03=disabled&n; *   or&n; *      CD-ROM DMA (Mitsumi or IDE):    0x00=DMA5, 0x01=DMA6, 0x02=DMA7 or 0x03=disabled&n; *&n; *      For use with sbpcd, address 0x340, set MAD16_CDSEL to 0x03 or 0x23.&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_MAD16)
 DECL|variable|already_initialized
@@ -16,7 +16,11 @@ DECL|macro|MOZART
 mdefine_line|#define MOZART&t;2
 DECL|macro|C929
 mdefine_line|#define C929&t;3
+DECL|macro|C930
+mdefine_line|#define C930&t;4
 multiline_comment|/*&n; *    Registers&n; *&n; *      The MAD16 occupies I/O ports 0xf8d to 0xf93 (fixed locations).&n; *      All ports are inactive by default. They can be activated by&n; *      writing 0xE2 or 0xE3 to the password register. The password is valid&n; *      only until the next I/O read or write.&n; */
+DECL|macro|MC0_PORT
+mdefine_line|#define MC0_PORT&t;0xf8c&t;/* Dummy port */
 DECL|macro|MC1_PORT
 mdefine_line|#define MC1_PORT&t;0xf8d&t;/* SB address, CDROM interface type, joystick */
 DECL|macro|MC2_PORT
@@ -33,6 +37,16 @@ DECL|macro|MC6_PORT
 mdefine_line|#define MC6_PORT&t;0xf92
 DECL|macro|MC7_PORT
 mdefine_line|#define MC7_PORT&t;0xf93
+DECL|macro|MC8_PORT
+mdefine_line|#define MC8_PORT&t;0xf94
+DECL|macro|MC9_PORT
+mdefine_line|#define MC9_PORT&t;0xf95
+DECL|macro|MC10_PORT
+mdefine_line|#define MC10_PORT&t;0xf96
+DECL|macro|MC11_PORT
+mdefine_line|#define MC11_PORT&t;0xf97
+DECL|macro|MC12_PORT
+mdefine_line|#define MC12_PORT&t;0xf98
 DECL|variable|board_type
 r_static
 r_int
@@ -223,6 +237,9 @@ id|tmp
 comma
 id|tmp2
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 multiline_comment|/*&n; * Check that reading a register doesn&squot;t return bus float (0xff)&n; * when the card is accessed using password. This may fail in case&n; * the card is in low power mode. Normally at least the power saving mode&n; * bit should be 0.&n; */
 r_if
 c_cond
@@ -251,6 +268,35 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0xf8d
+suffix:semicolon
+id|i
+op_le
+l_int|0xf98
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;Port %0x (init value) = %0x&bslash;n&quot;
+comma
+id|i
+comma
+id|mad_read
+(paren
+id|i
+)paren
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Now check that the gate is closed on first I/O after writing&n; * the password. (This is how a MAD16 compatible card works).&n; */
 r_if
 c_cond
@@ -348,6 +394,220 @@ r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* Bingo */
+)brace
+r_static
+r_int
+DECL|function|wss_init
+id|wss_init
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+(brace
+r_int
+id|ad_flags
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n; *    Verify the WSS parameters&n; */
+r_if
+c_cond
+(paren
+id|check_region
+(paren
+id|hw_config-&gt;io_base
+comma
+l_int|8
+)paren
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;MSS: I/O port conflict&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ad1848_detect
+(paren
+id|hw_config-&gt;io_base
+op_plus
+l_int|4
+comma
+op_amp
+id|ad_flags
+comma
+id|mad16_osp
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;     * Check if the IO port returns valid signature. The original MS Sound&n;     * system returns 0x04 while some cards (AudioTriX Pro for example)&n;     * return 0x00.&n;   */
+r_if
+c_cond
+(paren
+(paren
+id|inb
+(paren
+id|hw_config-&gt;io_base
+op_plus
+l_int|3
+)paren
+op_amp
+l_int|0x3f
+)paren
+op_ne
+l_int|0x04
+op_logical_and
+(paren
+id|inb
+(paren
+id|hw_config-&gt;io_base
+op_plus
+l_int|3
+)paren
+op_amp
+l_int|0x3f
+)paren
+op_ne
+l_int|0x00
+)paren
+(brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;No MSS signature detected on port 0x%x (0x%x)&bslash;n&quot;
+comma
+id|hw_config-&gt;io_base
+comma
+id|inb
+(paren
+id|hw_config-&gt;io_base
+op_plus
+l_int|3
+)paren
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|hw_config-&gt;irq
+OG
+l_int|11
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;MSS: Bad IRQ %d&bslash;n&quot;
+comma
+id|hw_config-&gt;irq
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|hw_config-&gt;dma
+op_ne
+l_int|0
+op_logical_and
+id|hw_config-&gt;dma
+op_ne
+l_int|1
+op_logical_and
+id|hw_config-&gt;dma
+op_ne
+l_int|3
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;MSS: Bad DMA %d&bslash;n&quot;
+comma
+id|hw_config-&gt;dma
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n;     * Check that DMA0 is not in use with a 8 bit board.&n;   */
+r_if
+c_cond
+(paren
+id|hw_config-&gt;dma
+op_eq
+l_int|0
+op_logical_and
+id|inb
+(paren
+id|hw_config-&gt;io_base
+op_plus
+l_int|3
+)paren
+op_amp
+l_int|0x80
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;MSS: Can&squot;t use DMA0 with a 8 bit card/slot&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|hw_config-&gt;irq
+OG
+l_int|7
+op_logical_and
+id|hw_config-&gt;irq
+op_ne
+l_int|9
+op_logical_and
+id|inb
+(paren
+id|hw_config-&gt;io_base
+op_plus
+l_int|3
+)paren
+op_amp
+l_int|0x80
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;MSS: Can&squot;t use IRQ%d with a 8 bit card/slot&bslash;n&quot;
+comma
+id|hw_config-&gt;irq
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
 r_int
 DECL|function|probe_mad16
@@ -457,9 +717,13 @@ id|detect_mad16
 (paren
 )paren
 )paren
+(brace
 r_return
 l_int|0
 suffix:semicolon
+)brace
+r_else
+(brace
 id|DDB
 (paren
 id|printk
@@ -468,6 +732,7 @@ l_string|&quot;mad16.c: 82C929 detected&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -541,7 +806,7 @@ id|DDB
 (paren
 id|printk
 (paren
-l_string|&quot;port %03x = %03x&bslash;n&quot;
+l_string|&quot;port %03x = %02x&bslash;n&quot;
 comma
 id|i
 comma
@@ -774,7 +1039,7 @@ id|DDB
 (paren
 id|printk
 (paren
-l_string|&quot;port %03x after init = %03x&bslash;n&quot;
+l_string|&quot;port %03x after init = %02x&bslash;n&quot;
 comma
 id|i
 comma
@@ -785,184 +1050,11 @@ id|i
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *    Verify the WSS parameters&n; */
-r_if
-c_cond
+id|wss_init
 (paren
-id|check_region
-(paren
-id|hw_config-&gt;io_base
-comma
-l_int|8
-)paren
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;MSS: I/O port conflict&bslash;n&quot;
+id|hw_config
 )paren
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n;     * Check if the IO port returns valid signature. The original MS Sound&n;     * system returns 0x04 while some cards (AudioTriX Pro for example)&n;     * return 0x00.&n;   */
-r_if
-c_cond
-(paren
-(paren
-id|inb
-(paren
-id|hw_config-&gt;io_base
-op_plus
-l_int|3
-)paren
-op_amp
-l_int|0x3f
-)paren
-op_ne
-l_int|0x04
-op_logical_and
-(paren
-id|inb
-(paren
-id|hw_config-&gt;io_base
-op_plus
-l_int|3
-)paren
-op_amp
-l_int|0x3f
-)paren
-op_ne
-l_int|0x00
-)paren
-(brace
-id|DDB
-(paren
-id|printk
-(paren
-l_string|&quot;No MSS signature detected on port 0x%x (0x%x)&bslash;n&quot;
-comma
-id|hw_config-&gt;io_base
-comma
-id|inb
-(paren
-id|hw_config-&gt;io_base
-op_plus
-l_int|3
-)paren
-)paren
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|hw_config-&gt;irq
-OG
-l_int|11
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;MSS: Bad IRQ %d&bslash;n&quot;
-comma
-id|hw_config-&gt;irq
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|hw_config-&gt;dma
-op_ne
-l_int|0
-op_logical_and
-id|hw_config-&gt;dma
-op_ne
-l_int|1
-op_logical_and
-id|hw_config-&gt;dma
-op_ne
-l_int|3
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;MSS: Bad DMA %d&bslash;n&quot;
-comma
-id|hw_config-&gt;dma
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n;     * Check that DMA0 is not in use with a 8 bit board.&n;   */
-r_if
-c_cond
-(paren
-id|hw_config-&gt;dma
-op_eq
-l_int|0
-op_logical_and
-id|inb
-(paren
-id|hw_config-&gt;io_base
-op_plus
-l_int|3
-)paren
-op_amp
-l_int|0x80
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;MSS: Can&squot;t use DMA0 with a 8 bit card/slot&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|hw_config-&gt;irq
-OG
-l_int|7
-op_logical_and
-id|hw_config-&gt;irq
-op_ne
-l_int|9
-op_logical_and
-id|inb
-(paren
-id|hw_config-&gt;io_base
-op_plus
-l_int|3
-)paren
-op_amp
-l_int|0x80
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;MSS: Can&squot;t use IRQ%d with a 8 bit card/slot&bslash;n&quot;
-comma
-id|hw_config-&gt;irq
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_return
 l_int|1
 suffix:semicolon

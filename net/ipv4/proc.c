@@ -112,7 +112,8 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;sl  local_address rem_address   st tx_queue rx_queue tr tm-&gt;when uid&bslash;n&quot;
+l_string|&quot;sl  local_address rem_address   st tx_queue &quot;
+l_string|&quot;rx_queue tr tm-&gt;when uid inode&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;This was very pretty but didn&squot;t work when a socket is destroyed&n; *&t;at the wrong moment (eg a syn recv socket getting a reset), or&n; *&t;a memory timer destroy. Instead of playing with timers we just&n; *&t;concede defeat and cli().&n; */
@@ -281,7 +282,8 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%2d: %08lX:%04X %08lX:%04X %02X %08X:%08X %02X:%08lX %08X %d %d&bslash;n&quot;
+l_string|&quot;%2d: %08lX:%04X %08lX:%04X&quot;
+l_string|&quot; %02X %08X:%08X %02X:%08lX %08X %d %d %ld&bslash;n&quot;
 comma
 id|i
 comma
@@ -353,6 +355,25 @@ id|timer_active
 ques
 c_cond
 id|sp-&gt;timeout
+suffix:colon
+l_int|0
+comma
+id|sp-&gt;socket
+op_logical_and
+id|SOCK_INODE
+c_func
+(paren
+id|sp-&gt;socket
+)paren
+ques
+c_cond
+id|SOCK_INODE
+c_func
+(paren
+id|sp-&gt;socket
+)paren
+op_member_access_from_pointer
+id|i_ino
 suffix:colon
 l_int|0
 )paren

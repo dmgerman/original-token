@@ -1995,6 +1995,7 @@ op_ne
 id|SND_DEV_CTL
 )paren
 (brace
+macro_line|#ifdef CONFIG_AUDIO
 r_int
 id|dtype
 op_assign
@@ -2011,7 +2012,6 @@ c_cond
 id|dtype
 )paren
 (brace
-macro_line|#ifdef CONFIG_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -2062,11 +2062,8 @@ comma
 id|arg
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
+)brace
 macro_line|#endif
-r_default
-suffix:colon
 r_return
 id|mixer_devs
 (braket
@@ -2082,7 +2079,6 @@ comma
 id|arg
 )paren
 suffix:semicolon
-)brace
 )brace
 r_switch
 c_cond

@@ -991,11 +991,6 @@ id|debug
 op_assign
 l_int|0
 suffix:semicolon
-id|printk
-(paren
-l_string|&quot;sscapeintr(0x%02x)&bslash;n&quot;
-comma
-(paren
 id|bits
 op_assign
 id|sscape_read
@@ -1003,8 +998,6 @@ id|sscape_read
 id|devc
 comma
 id|GA_INTSTAT_REG
-)paren
-)paren
 )paren
 suffix:semicolon
 r_if

@@ -792,6 +792,14 @@ id|skb-&gt;ip_hdr
 op_assign
 id|skb-&gt;h.iph
 suffix:semicolon
+id|skb-&gt;protocol
+op_assign
+id|htons
+c_func
+(paren
+id|ETH_P_IP
+)paren
+suffix:semicolon
 macro_line|#ifdef TUNNEL_DEBUG
 id|printk
 c_func
@@ -860,11 +868,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|tunnel_get_stats
 r_static
 r_struct
 id|enet_statistics
 op_star
-DECL|function|tunnel_get_stats
 id|tunnel_get_stats
 c_func
 (paren
@@ -915,7 +923,7 @@ id|tun_msg
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;tunnel: version v0.2b&bslash;n&quot;
+l_string|&quot;tunnel: version v0.2b2&bslash;n&quot;
 )paren
 suffix:semicolon
 id|tun_msg

@@ -2,6 +2,7 @@ multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol sui
 macro_line|#ifndef _LINUX_SOCKIOS_H
 DECL|macro|_LINUX_SOCKIOS_H
 mdefine_line|#define _LINUX_SOCKIOS_H
+macro_line|#include &lt;asm/sockios.h&gt;
 multiline_comment|/* Routing table calls. */
 DECL|macro|SIOCADDRT
 mdefine_line|#define SIOCADDRT&t;0x890B&t;&t;/* add routing table entry&t;*/

@@ -6454,15 +6454,13 @@ suffix:semicolon
 op_star
 id|phase
 op_assign
-(paren
 id|NCR5380_read
 c_func
 (paren
 id|STATUS_REG
+)paren
 op_amp
 id|PHASE_MASK
-)paren
-)paren
 suffix:semicolon
 macro_line|#if 0
 id|NCR5380_print_phase

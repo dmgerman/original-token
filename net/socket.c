@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET&t;&t;An implementation of the SOCKET network access protocol.&n; *&n; * Version:&t;@(#)socket.c&t;1.1.93&t;18/02/95&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Anonymous&t;:&t;NOTSOCK/BADF cleanup. Error fix in&n; *&t;&t;&t;&t;&t;shutdown()&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixes&n; *&t;&t;Alan Cox&t;: &t;Removed DDI&n; *&t;&t;Jonathan Kamens&t;:&t;SOCK_DGRAM reconnect bug&n; *&t;&t;Alan Cox&t;:&t;Moved a load of checks to the very&n; *&t;&t;&t;&t;&t;top level.&n; *&t;&t;Alan Cox&t;:&t;Move address structures to/from user&n; *&t;&t;&t;&t;&t;mode above the protocol layers.&n; *&t;&t;Rob Janssen&t;:&t;Allow 0 length sends.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support (cribbed from the&n; *&t;&t;&t;&t;&t;tty drivers).&n; *&t;&t;Niibe Yutaka&t;:&t;Asynchronous I/O for writes (4.4BSD style)&n; *&t;&t;Jeff Uphoff&t;:&t;Made max number of sockets command-line&n; *&t;&t;&t;&t;&t;configurable.&n; *&t;&t;Matti Aarnio&t;:&t;Made the number of sockets dynamic,&n; *&t;&t;&t;&t;&t;to be allocated when needed, and mr.&n; *&t;&t;&t;&t;&t;Uphoff&squot;s max is used as max to be&n; *&t;&t;&t;&t;&t;allowed to allocate.&n; *&t;&t;Linus&t;&t;:&t;Argh. removed all the socket allocation&n; *&t;&t;&t;&t;&t;altogether: it&squot;s in the inode now.&n; *&t;&t;Alan Cox&t;:&t;Made sock_alloc()/sock_release() public&n; *&t;&t;&t;&t;&t;for NetROM and future kernel nfsd type&n; *&t;&t;&t;&t;&t;stuff.&n; *&t;&t;Alan Cox&t;:&t;sendmsg/recvmsg basics.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;This module is effectively the top level interface to the BSD socket&n; *&t;paradigm. Because it is very simple it works well for Unix domain sockets,&n; *&t;but requires a whole layer of substructure for the other protocols.&n; *&n; *&t;In addition it lacks an effective kernel -&gt; kernel interface to go with&n; *&t;the user one.&n; */
+multiline_comment|/*&n; * NET&t;&t;An implementation of the SOCKET network access protocol.&n; *&n; * Version:&t;@(#)socket.c&t;1.1.93&t;18/02/95&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Anonymous&t;:&t;NOTSOCK/BADF cleanup. Error fix in&n; *&t;&t;&t;&t;&t;shutdown()&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixes&n; *&t;&t;Alan Cox&t;: &t;Removed DDI&n; *&t;&t;Jonathan Kamens&t;:&t;SOCK_DGRAM reconnect bug&n; *&t;&t;Alan Cox&t;:&t;Moved a load of checks to the very&n; *&t;&t;&t;&t;&t;top level.&n; *&t;&t;Alan Cox&t;:&t;Move address structures to/from user&n; *&t;&t;&t;&t;&t;mode above the protocol layers.&n; *&t;&t;Rob Janssen&t;:&t;Allow 0 length sends.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support (cribbed from the&n; *&t;&t;&t;&t;&t;tty drivers).&n; *&t;&t;Niibe Yutaka&t;:&t;Asynchronous I/O for writes (4.4BSD style)&n; *&t;&t;Jeff Uphoff&t;:&t;Made max number of sockets command-line&n; *&t;&t;&t;&t;&t;configurable.&n; *&t;&t;Matti Aarnio&t;:&t;Made the number of sockets dynamic,&n; *&t;&t;&t;&t;&t;to be allocated when needed, and mr.&n; *&t;&t;&t;&t;&t;Uphoff&squot;s max is used as max to be&n; *&t;&t;&t;&t;&t;allowed to allocate.&n; *&t;&t;Linus&t;&t;:&t;Argh. removed all the socket allocation&n; *&t;&t;&t;&t;&t;altogether: it&squot;s in the inode now.&n; *&t;&t;Alan Cox&t;:&t;Made sock_alloc()/sock_release() public&n; *&t;&t;&t;&t;&t;for NetROM and future kernel nfsd type&n; *&t;&t;&t;&t;&t;stuff.&n; *&t;&t;Alan Cox&t;:&t;sendmsg/recvmsg basics.&n; *&t;&t;Tom Dyas&t;:&t;Export net symbols.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;This module is effectively the top level interface to the BSD socket&n; *&t;paradigm. Because it is very simple it works well for Unix domain sockets,&n; *&t;but requires a whole layer of substructure for the other protocols.&n; *&n; *&t;In addition it lacks an effective kernel -&gt; kernel interface to go with&n; *&t;the user one.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -14,9 +14,20 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
+macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#include &lt;net/netlink.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#ifdef CONFIG_MODULES
+r_extern
+r_void
+id|export_net_symbols
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 r_static
 r_int
 id|sock_lseek
@@ -776,6 +787,10 @@ id|sock-&gt;next
 op_assign
 l_int|NULL
 suffix:semicolon
+id|sock-&gt;file
+op_assign
+l_int|NULL
+suffix:semicolon
 id|sock-&gt;wait
 op_assign
 op_amp
@@ -937,6 +952,10 @@ op_decrement
 id|sockets_in_use
 suffix:semicolon
 multiline_comment|/* Bookkeeping.. */
+id|sock-&gt;file
+op_assign
+l_int|NULL
+suffix:semicolon
 id|iput
 c_func
 (paren
@@ -1791,6 +1810,68 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Perform the socket system call. we locate the appropriate&n; *&t;family, then create a fresh socket.&n; */
+DECL|function|find_protocol_family
+r_static
+r_int
+id|find_protocol_family
+c_func
+(paren
+r_int
+id|family
+)paren
+(brace
+r_register
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NPROTO
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|pops
+(braket
+id|i
+)braket
+op_eq
+l_int|NULL
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pops
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|family
+op_eq
+id|family
+)paren
+r_return
+id|i
+suffix:semicolon
+)brace
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 DECL|function|sys_socket
 id|asmlinkage
 r_int
@@ -1823,54 +1904,62 @@ op_star
 id|ops
 suffix:semicolon
 multiline_comment|/* Locate the correct protocol family. */
-r_for
-c_loop
-(paren
 id|i
 op_assign
-l_int|0
+id|find_protocol_family
+c_func
+(paren
+id|family
+)paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_KERNELD
+multiline_comment|/* Attempt to load a protocol module if the find failed. */
+r_if
+c_cond
+(paren
 id|i
 OL
-id|NPROTO
-suffix:semicolon
-op_increment
-id|i
+l_int|0
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|pops
+r_char
+id|module_name
 (braket
-id|i
+l_int|30
 )braket
-op_eq
-l_int|NULL
-)paren
-r_continue
 suffix:semicolon
-r_if
-c_cond
+id|sprintf
+c_func
 (paren
-id|pops
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|family
-op_eq
+id|module_name
+comma
+l_string|&quot;net-pf-%d&quot;
+comma
 id|family
 )paren
-r_break
+suffix:semicolon
+id|request_module
+c_func
+(paren
+id|module_name
+)paren
+suffix:semicolon
+id|i
+op_assign
+id|find_protocol_family
+c_func
+(paren
+id|family
+)paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
 id|i
-op_eq
-id|NPROTO
+OL
+l_int|0
 )paren
 (brace
 r_return
@@ -2015,6 +2104,13 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+id|sock-&gt;file
+op_assign
+id|current-&gt;files-&gt;fd
+(braket
+id|fd
+)braket
+suffix:semicolon
 r_return
 id|fd
 suffix:semicolon
@@ -2772,6 +2868,13 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+id|sock-&gt;file
+op_assign
+id|current-&gt;files-&gt;fd
+(braket
+id|fd
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5846,7 +5949,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Swansea University Computer Society NET3.033 for Linux 1.3.50&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society NET3.034 for Linux 1.3.77&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Initialize all address (protocol) families. &n;&t; */
@@ -5904,6 +6007,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Export networking symbols to the world.&n;&t; */
+macro_line|#ifdef CONFIG_MODULES
+id|export_net_symbols
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|socket_get_info
 r_int

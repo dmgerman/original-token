@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Global definitions for the ARP (RFC 826) protocol.&n; *&n; * Version:&t;@(#)if_arp.h&t;1.0.1&t;04/16/93&n; *&n; * Authors:&t;Original taken from Berkeley UNIX 4.3, (c) UCB 1986-1988&n; *&t;&t;Portions taken from the KA9Q/NOS (v2.00m PA0GRI) source.&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Global definitions for the ARP (RFC 826) protocol.&n; *&n; * Version:&t;@(#)if_arp.h&t;1.0.1&t;04/16/93&n; *&n; * Authors:&t;Original taken from Berkeley UNIX 4.3, (c) UCB 1986-1988&n; *&t;&t;Portions taken from the KA9Q/NOS (v2.00m PA0GRI) source.&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche,&n; *&t;&t;Jonathan Layes &lt;layes@loran.com&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _LINUX_IF_ARP_H
 DECL|macro|_LINUX_IF_ARP_H
 mdefine_line|#define _LINUX_IF_ARP_H
@@ -21,6 +21,8 @@ DECL|macro|ARPHRD_ARCNET
 mdefine_line|#define&t;ARPHRD_ARCNET&t;7&t;&t;/* ARCnet&t;&t;&t;*/
 DECL|macro|ARPHRD_APPLETLK
 mdefine_line|#define&t;ARPHRD_APPLETLK&t;8&t;&t;/* APPLEtalk&t;&t;&t;*/
+DECL|macro|ARPHRD_DLCI
+mdefine_line|#define ARPHRD_DLCI&t;15&t;&t;/* Frame Relay DLCI&t;&t;*/
 multiline_comment|/* Dummy types for non ARP hardware */
 DECL|macro|ARPHRD_SLIP
 mdefine_line|#define ARPHRD_SLIP&t;256
@@ -41,7 +43,7 @@ mdefine_line|#define ARPHRD_TUNNEL&t;768&t;&t;/* IPIP tunnel&t;&t;&t;*/
 DECL|macro|ARPHRD_TUNNEL6
 mdefine_line|#define ARPHRD_TUNNEL6&t;769&t;&t;/* IPIP6 tunnel&t;&t;&t;*/
 DECL|macro|ARPHRD_FRAD
-mdefine_line|#define ARPHRD_FRAD&t;770&t;&t;/* Frame Relay&t;&t;&t;*/
+mdefine_line|#define ARPHRD_FRAD&t;770&t;&t;/* Frame Relay Access Device&t;*/
 DECL|macro|ARPHRD_SKIP
 mdefine_line|#define ARPHRD_SKIP&t;771&t;&t;/* SKIP vif&t;&t;&t;*/
 DECL|macro|ARPHRD_LOOPBACK
@@ -204,6 +206,72 @@ l_int|4
 suffix:semicolon
 multiline_comment|/* target IP address&t;&t;*/
 macro_line|#endif
+)brace
+suffix:semicolon
+multiline_comment|/* Support for the user space arp daemon, arpd */
+DECL|macro|ARPD_UPDATE
+mdefine_line|#define ARPD_UPDATE&t;0x01
+DECL|macro|ARPD_LOOKUP
+mdefine_line|#define ARPD_LOOKUP&t;0x02
+DECL|struct|arpd_request
+r_struct
+id|arpd_request
+(brace
+DECL|member|req
+r_int
+r_int
+id|req
+suffix:semicolon
+multiline_comment|/* request type */
+DECL|member|ip
+id|__u32
+id|ip
+suffix:semicolon
+multiline_comment|/* ip address of entry */
+DECL|member|mask
+id|__u32
+id|mask
+suffix:semicolon
+multiline_comment|/* netmask - used for proxy */
+DECL|member|ha
+r_int
+r_char
+id|ha
+(braket
+id|MAX_ADDR_LEN
+)braket
+suffix:semicolon
+multiline_comment|/* Hardware address */
+DECL|member|last_used
+r_int
+r_int
+id|last_used
+suffix:semicolon
+multiline_comment|/* For expiry */
+DECL|member|last_updated
+r_int
+r_int
+id|last_updated
+suffix:semicolon
+multiline_comment|/* For expiry */
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* Control status */
+DECL|member|dev
+r_struct
+id|device
+op_star
+id|dev
+suffix:semicolon
+multiline_comment|/* Device entry is tied to */
+DECL|member|loc
+r_int
+id|loc
+suffix:semicolon
+multiline_comment|/* Debugging call location */
 )brace
 suffix:semicolon
 macro_line|#endif&t;/* _LINUX_IF_ARP_H */

@@ -238,6 +238,8 @@ DECL|macro|WK_SIGNAL
 mdefine_line|#define WK_SIGNAL&t;0x04
 DECL|macro|WK_SLEEP
 mdefine_line|#define WK_SLEEP&t;0x08
+DECL|macro|WK_SELECT
+mdefine_line|#define WK_SELECT&t;0x10
 DECL|macro|OPEN_READ
 mdefine_line|#define OPEN_READ&t;PCM_ENABLE_INPUT
 DECL|macro|OPEN_WRITE

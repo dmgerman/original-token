@@ -3,19 +3,7 @@ DECL|macro|_ASM_SOCKET_H
 mdefine_line|#define _ASM_SOCKET_H
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/ioctl.h&gt;
-multiline_comment|/* Socket-level I/O control calls. */
-DECL|macro|FIOGETOWN
-mdefine_line|#define FIOGETOWN&t;_IOR(&squot;f&squot;, 123, int)
-DECL|macro|FIOSETOWN
-mdefine_line|#define FIOSETOWN &t;_IOW(&squot;f&squot;, 124, int)
-DECL|macro|SIOCATMARK
-mdefine_line|#define SIOCATMARK&t;_IOR(&squot;s&squot;, 7, int)
-DECL|macro|SIOCSPGRP
-mdefine_line|#define SIOCSPGRP&t;_IOW(&squot;s&squot;, 8, pid_t)
-DECL|macro|SIOCGPGRP
-mdefine_line|#define SIOCGPGRP&t;_IOR(&squot;s&squot;, 9, pid_t)
-DECL|macro|SIOCGSTAMP
-mdefine_line|#define SIOCGSTAMP&t;0x8906&t;&t;&t;/* Get stamp - linux-specific */
+macro_line|#include &lt;asm/sockios.h&gt;
 multiline_comment|/* For setsockoptions(2) */
 multiline_comment|/*&n; * Note: we only bother about making the SOL_SOCKET options&n; * same as OSF/1, as that&squot;s all that &quot;normal&quot; programs are&n; * likely to set.  We don&squot;t necessarily want to be binary&n; * compatible with _everything_. &n; */
 DECL|macro|SOL_SOCKET

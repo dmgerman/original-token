@@ -7847,8 +7847,6 @@ suffix:semicolon
 id|SCset-&gt;timeout
 op_assign
 id|timeout
-op_plus
-id|used
 suffix:semicolon
 )brace
 id|least
@@ -7889,6 +7887,13 @@ OG
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|SCpnt
+op_ne
+id|SCset
+)paren
 id|SCpnt-&gt;timeout
 op_sub_assign
 id|used

@@ -465,7 +465,7 @@ r_int
 id|smp_found_config
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|smp_scan_config
 c_func
 (paren
@@ -516,6 +516,14 @@ r_extern
 r_volatile
 r_int
 id|cpu_number_map
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
+r_extern
+r_volatile
+r_int
+id|cpu_logical_map
 (braket
 id|NR_CPUS
 )braket

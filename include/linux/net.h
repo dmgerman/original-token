@@ -151,6 +151,13 @@ op_star
 id|fasync_list
 suffix:semicolon
 multiline_comment|/* Asynchronous wake up list&t;*/
+DECL|member|file
+r_struct
+id|file
+op_star
+id|file
+suffix:semicolon
+multiline_comment|/* File back pointer for gc&t;*/
 )brace
 suffix:semicolon
 DECL|macro|SOCK_INODE

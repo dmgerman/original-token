@@ -738,8 +738,8 @@ DECL|macro|PF_TRACESYS
 mdefine_line|#define PF_TRACESYS&t;0x00000020&t;/* tracing system calls */
 DECL|macro|PF_FORKNOEXEC
 mdefine_line|#define PF_FORKNOEXEC&t;0x00000040&t;/* forked but didn&squot;t exec */
-DECL|macro|PF_SUPERPREV
-mdefine_line|#define PF_SUPERPREV&t;0x00000100&t;/* used super-user privileges */
+DECL|macro|PF_SUPERPRIV
+mdefine_line|#define PF_SUPERPRIV&t;0x00000100&t;/* used super-user privileges */
 DECL|macro|PF_DUMPCORE
 mdefine_line|#define PF_DUMPCORE&t;0x00000200&t;/* dumped core */
 DECL|macro|PF_SIGNALED
@@ -1023,7 +1023,7 @@ l_int|0
 )paren
 id|current-&gt;flags
 op_or_assign
-id|PF_SUPERPREV
+id|PF_SUPERPRIV
 suffix:semicolon
 r_return
 (paren

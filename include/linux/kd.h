@@ -16,12 +16,14 @@ r_struct
 id|consolefontdesc
 (brace
 DECL|member|charcount
-id|u_short
+r_int
+r_int
 id|charcount
 suffix:semicolon
 multiline_comment|/* characters in font (256 or 512) */
 DECL|member|charheight
-id|u_short
+r_int
+r_int
 id|charheight
 suffix:semicolon
 multiline_comment|/* scan lines per character (1-32) */
@@ -107,11 +109,13 @@ r_struct
 id|unipair
 (brace
 DECL|member|unicode
-id|u_short
+r_int
+r_int
 id|unicode
 suffix:semicolon
 DECL|member|fontpos
-id|u_short
+r_int
+r_int
 id|fontpos
 suffix:semicolon
 )brace
@@ -121,7 +125,8 @@ r_struct
 id|unimapdesc
 (brace
 DECL|member|entry_ct
-id|u_short
+r_int
+r_int
 id|entry_ct
 suffix:semicolon
 DECL|member|entries
@@ -141,17 +146,20 @@ r_struct
 id|unimapinit
 (brace
 DECL|member|advised_hashsize
-id|u_short
+r_int
+r_int
 id|advised_hashsize
 suffix:semicolon
 multiline_comment|/* 0 if no opinion */
 DECL|member|advised_hashstep
-id|u_short
+r_int
+r_int
 id|advised_hashstep
 suffix:semicolon
 multiline_comment|/* 0 if no opinion */
 DECL|member|advised_hashlevel
-id|u_short
+r_int
+r_int
 id|advised_hashlevel
 suffix:semicolon
 multiline_comment|/* 0 if no opinion */
@@ -196,15 +204,18 @@ r_struct
 id|kbentry
 (brace
 DECL|member|kb_table
-id|u_char
+r_int
+r_char
 id|kb_table
 suffix:semicolon
 DECL|member|kb_index
-id|u_char
+r_int
+r_char
 id|kb_index
 suffix:semicolon
 DECL|member|kb_value
-id|u_short
+r_int
+r_int
 id|kb_value
 suffix:semicolon
 )brace
@@ -226,11 +237,13 @@ r_struct
 id|kbsentry
 (brace
 DECL|member|kb_func
-id|u_char
+r_int
+r_char
 id|kb_func
 suffix:semicolon
 DECL|member|kb_string
-id|u_char
+r_int
+r_char
 id|kb_string
 (braket
 l_int|512
@@ -249,7 +262,8 @@ id|kbdiacr
 DECL|member|diacr
 DECL|member|base
 DECL|member|result
-id|u_char
+r_int
+r_char
 id|diacr
 comma
 id|base

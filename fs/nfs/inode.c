@@ -207,7 +207,7 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The way this works is that the mount process passes a structure&n; * in the data argument which contains an open socket to the NFS&n; * server and the root file handle obtained from the server&squot;s mount&n; * daemon.  We stash theses away in the private superblock fields.&n; * Later we can add other mount parameters like caching values.&n; */
+multiline_comment|/*&n; * The way this works is that the mount process passes a structure&n; * in the data argument which contains an open socket to the NFS&n; * server and the root file handle obtained from the server&squot;s mount&n; * daemon.  We stash these away in the private superblock fields.&n; * Later we can add other mount parameters like caching values.&n; */
 DECL|function|nfs_read_super
 r_struct
 id|super_block
@@ -612,7 +612,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*  printk(&quot;NFS: coppying passed addr to server-&gt;toaddr&bslash;n&quot;) ;*/
+multiline_comment|/*  printk(&quot;NFS: copying passed addr to server-&gt;toaddr&bslash;n&quot;) ;*/
 id|memcpy
 c_func
 (paren

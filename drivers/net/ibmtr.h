@@ -1,7 +1,12 @@
 multiline_comment|/* Definitions for an IBM Token Ring card. */
 multiline_comment|/* This file is distributed under the GNU GPL   */
+multiline_comment|/* ported to the Alpha architecture 02/20/96 (just used the HZ macro) */
 DECL|macro|TR_RETRY_INTERVAL
-mdefine_line|#define TR_RETRY_INTERVAL 500
+mdefine_line|#define TR_RETRY_INTERVAL (5*HZ) /* 500 on PC = 5 s */
+DECL|macro|TR_RESET_INTERVAL
+mdefine_line|#define TR_RESET_INTERVAL (HZ/20) /* 5 on PC = 50 ms */
+DECL|macro|TR_BUSY_INTERVAL
+mdefine_line|#define TR_BUSY_INTERVAL (HZ/5) /* 5 on PC = 200 ms */
 DECL|macro|TR_ISA
 mdefine_line|#define TR_ISA 1
 DECL|macro|TR_MCA
@@ -12,14 +17,6 @@ DECL|macro|NOTOK
 mdefine_line|#define NOTOK 0
 DECL|macro|TOKDEBUG
 mdefine_line|#define TOKDEBUG 1
-multiline_comment|/* Mike Eckhoff -- 96/02/08 */
-multiline_comment|/* This defines the minimum timeout. If a transmission takes */
-multiline_comment|/* longer then TX_TIMEOUT to send, we will wait and retry. */
-multiline_comment|/* On large networks, this value may need to be increased. */
-multiline_comment|/* We will start at .2s because that is what most drivers seem to be doing */
-multiline_comment|/* now and the original value of .05s was not nearly enough for large nets. */
-DECL|macro|TX_TIMEOUT
-mdefine_line|#define TX_TIMEOUT (HZ/5)
 macro_line|#ifndef IBMTR_SHARED_RAM_BASE
 DECL|macro|IBMTR_SHARED_RAM_BASE
 mdefine_line|#define IBMTR_SHARED_RAM_BASE 0xD0
@@ -191,7 +188,7 @@ DECL|macro|ACA_RW
 mdefine_line|#define ACA_RW 0x00
 macro_line|#ifdef ENABLE_PAGING
 DECL|macro|SET_PAGE
-mdefine_line|#define SET_PAGE(x) (*(unsigned char *) &bslash;&n;                         (ti-&gt;mmio + ACA_OFFSET + ACA_RW + SRPR_EVEN)&bslash;&n;                                                = (x&gt;&gt;8)&amp;ti.page_mask)
+mdefine_line|#define SET_PAGE(x) (writeb(((x&gt;&gt;8)&amp;ti.page_mask), &bslash;&n;  ti-&gt;mmio + ACA_OFFSET + ACA_RW + SRPR_EVEN))
 macro_line|#else
 DECL|macro|SET_PAGE
 mdefine_line|#define SET_PAGE(x)
@@ -214,6 +211,11 @@ id|CLOSED
 )brace
 id|open_state
 suffix:semicolon
+multiline_comment|/* do_tok_int possible values */
+DECL|macro|FIRST_INT
+mdefine_line|#define FIRST_INT 1
+DECL|macro|NOT_FIRST
+mdefine_line|#define NOT_FIRST 2
 DECL|struct|tok_info
 r_struct
 id|tok_info
@@ -224,9 +226,7 @@ r_char
 id|irq
 suffix:semicolon
 DECL|member|mmio
-r_int
-r_char
-op_star
+id|__u32
 id|mmio
 suffix:semicolon
 DECL|member|hw_address
@@ -278,10 +278,6 @@ r_int
 r_char
 id|do_tok_int
 suffix:semicolon
-DECL|macro|FIRST_INT
-mdefine_line|#define FIRST_INT 1
-DECL|macro|NOT_FIRST
-mdefine_line|#define NOT_FIRST 2
 DECL|member|wait_for_tok_int
 r_struct
 id|wait_queue
@@ -313,44 +309,32 @@ id|mapped_ram_size
 suffix:semicolon
 multiline_comment|/* size of RAM page */
 DECL|member|sram
-r_int
-r_char
-op_star
+id|__u32
 id|sram
 suffix:semicolon
 multiline_comment|/* Shared memory base address */
 DECL|member|init_srb
-r_int
-r_char
-op_star
+id|__u32
 id|init_srb
 suffix:semicolon
 multiline_comment|/* Initial System Request Block address */
 DECL|member|srb
-r_int
-r_char
-op_star
+id|__u32
 id|srb
 suffix:semicolon
 multiline_comment|/* System Request Block address */
 DECL|member|ssb
-r_int
-r_char
-op_star
+id|__u32
 id|ssb
 suffix:semicolon
 multiline_comment|/* System Status Block address */
 DECL|member|arb
-r_int
-r_char
-op_star
+id|__u32
 id|arb
 suffix:semicolon
 multiline_comment|/* Adapter Request Block address */
 DECL|member|asb
-r_int
-r_char
-op_star
+id|__u32
 id|asb
 suffix:semicolon
 multiline_comment|/* Adapter Status Block address */
@@ -386,6 +370,84 @@ id|open_status
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* token ring adapter commands */
+DECL|macro|DIR_INTERRUPT
+mdefine_line|#define DIR_INTERRUPT &t;&t;0x00 /* struct srb_interrupt */
+DECL|macro|DIR_MOD_OPEN_PARAMS
+mdefine_line|#define DIR_MOD_OPEN_PARAMS &t;0x01
+DECL|macro|DIR_OPEN_ADAPTER
+mdefine_line|#define DIR_OPEN_ADAPTER &t;0x03 /* struct dir_open_adapter */
+DECL|macro|DIR_CLOSE_ADAPTER
+mdefine_line|#define DIR_CLOSE_ADAPTER   &t;0x04
+DECL|macro|DIR_SET_GRP_ADDR
+mdefine_line|#define DIR_SET_GRP_ADDR    &t;0x06
+DECL|macro|DIR_SET_FUNC_ADDR
+mdefine_line|#define DIR_SET_FUNC_ADDR   &t;0x07
+DECL|macro|DIR_READ_LOG
+mdefine_line|#define DIR_READ_LOG &t;&t;0x08 /* struct srb_read_log */
+DECL|macro|DLC_OPEN_SAP
+mdefine_line|#define DLC_OPEN_SAP &t;&t;0x15 /* struct dlc_open_sap */
+DECL|macro|DLC_CLOSE_SAP
+mdefine_line|#define DLC_CLOSE_SAP       &t;0x16
+DECL|macro|DATA_LOST
+mdefine_line|#define DATA_LOST &t;&t;0x20 /* struct asb_rec */
+DECL|macro|REC_DATA
+mdefine_line|#define REC_DATA &t;&t;0x81 /* struct arb_rec_req */
+DECL|macro|XMIT_DATA_REQ
+mdefine_line|#define XMIT_DATA_REQ &t;&t;0x82 /* struct arb_xmit_req */
+DECL|macro|DLC_STATUS
+mdefine_line|#define DLC_STATUS &t;&t;0x83 /* struct arb_dlc_status */
+DECL|macro|RING_STAT_CHANGE
+mdefine_line|#define RING_STAT_CHANGE    &t;0x84 /* struct dlc_open_sap ??? */
+multiline_comment|/* DIR_OPEN_ADAPTER options */
+DECL|macro|OPEN_PASS_BCON_MAC
+mdefine_line|#define OPEN_PASS_BCON_MAC 0x0100
+DECL|macro|NUM_RCV_BUF
+mdefine_line|#define NUM_RCV_BUF 16
+DECL|macro|RCV_BUF_LEN
+mdefine_line|#define RCV_BUF_LEN 136
+DECL|macro|DHB_LENGTH
+mdefine_line|#define DHB_LENGTH 2048
+DECL|macro|NUM_DHB
+mdefine_line|#define NUM_DHB 2
+DECL|macro|DLC_MAX_SAP
+mdefine_line|#define DLC_MAX_SAP 2
+DECL|macro|DLC_MAX_STA
+mdefine_line|#define DLC_MAX_STA 1
+multiline_comment|/* DLC_OPEN_SAP options */
+DECL|macro|MAX_I_FIELD
+mdefine_line|#define MAX_I_FIELD 0x0088
+DECL|macro|SAP_OPEN_IND_SAP
+mdefine_line|#define SAP_OPEN_IND_SAP 0x04
+DECL|macro|SAP_OPEN_PRIORITY
+mdefine_line|#define SAP_OPEN_PRIORITY 0x20
+DECL|macro|SAP_OPEN_STATION_CNT
+mdefine_line|#define SAP_OPEN_STATION_CNT 0x1
+DECL|macro|XMIT_DIR_FRAME
+mdefine_line|#define XMIT_DIR_FRAME 0x0A
+DECL|macro|XMIT_UI_FRAME
+mdefine_line|#define XMIT_UI_FRAME  0x0d
+DECL|macro|XMIT_XID_CMD
+mdefine_line|#define XMIT_XID_CMD   0x0e
+DECL|macro|XMIT_TEST_CMD
+mdefine_line|#define XMIT_TEST_CMD  0x11
+multiline_comment|/* srb close return code */
+DECL|macro|SIGNAL_LOSS
+mdefine_line|#define SIGNAL_LOSS  0x8000
+DECL|macro|HARD_ERROR
+mdefine_line|#define HARD_ERROR   0x4000
+DECL|macro|XMIT_BEACON
+mdefine_line|#define XMIT_BEACON  0x1000
+DECL|macro|LOBE_FAULT
+mdefine_line|#define LOBE_FAULT   0x0800
+DECL|macro|AUTO_REMOVAL
+mdefine_line|#define AUTO_REMOVAL 0x0400
+DECL|macro|REMOVE_RECV
+mdefine_line|#define REMOVE_RECV  0x0100
+DECL|macro|LOG_OVERFLOW
+mdefine_line|#define LOG_OVERFLOW 0x0080
+DECL|macro|RING_RECOVER
+mdefine_line|#define RING_RECOVER 0x0020
 DECL|struct|srb_init_response
 r_struct
 id|srb_init_response
@@ -414,39 +476,31 @@ l_int|3
 )braket
 suffix:semicolon
 DECL|member|bring_up_code
-r_int
-r_int
+id|__u16
 id|bring_up_code
 suffix:semicolon
 DECL|member|encoded_address
-r_int
-r_int
+id|__u16
 id|encoded_address
 suffix:semicolon
 DECL|member|level_address
-r_int
-r_int
+id|__u16
 id|level_address
 suffix:semicolon
 DECL|member|adapter_address
-r_int
-r_int
+id|__u16
 id|adapter_address
 suffix:semicolon
 DECL|member|parms_address
-r_int
-r_int
+id|__u16
 id|parms_address
 suffix:semicolon
 DECL|member|mac_address
-r_int
-r_int
+id|__u16
 id|mac_address
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|DIR_OPEN_ADAPTER
-mdefine_line|#define DIR_OPEN_ADAPTER 0x03
 DECL|struct|dir_open_adapter
 r_struct
 id|dir_open_adapter
@@ -464,8 +518,7 @@ l_int|7
 )braket
 suffix:semicolon
 DECL|member|open_options
-r_int
-r_int
+id|__u16
 id|open_options
 suffix:semicolon
 DECL|member|node_address
@@ -493,18 +546,15 @@ l_int|4
 )braket
 suffix:semicolon
 DECL|member|num_rcv_buf
-r_int
-r_int
+id|__u16
 id|num_rcv_buf
 suffix:semicolon
 DECL|member|rcv_buf_len
-r_int
-r_int
+id|__u16
 id|rcv_buf_len
 suffix:semicolon
 DECL|member|dhb_length
-r_int
-r_int
+id|__u16
 id|dhb_length
 suffix:semicolon
 DECL|member|num_dhb
@@ -604,49 +654,27 @@ l_int|3
 )braket
 suffix:semicolon
 DECL|member|error_code
-r_int
-r_int
+id|__u16
 id|error_code
 suffix:semicolon
 DECL|member|asb_addr
-r_int
-r_int
+id|__u16
 id|asb_addr
 suffix:semicolon
 DECL|member|srb_addr
-r_int
-r_int
+id|__u16
 id|srb_addr
 suffix:semicolon
 DECL|member|arb_addr
-r_int
-r_int
+id|__u16
 id|arb_addr
 suffix:semicolon
 DECL|member|ssb_addr
-r_int
-r_int
+id|__u16
 id|ssb_addr
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* DIR_OPEN_ADAPTER options */
-DECL|macro|OPEN_PASS_BCON_MAC
-mdefine_line|#define OPEN_PASS_BCON_MAC 0x0100
-DECL|macro|NUM_RCV_BUF
-mdefine_line|#define NUM_RCV_BUF 16
-DECL|macro|RCV_BUF_LEN
-mdefine_line|#define RCV_BUF_LEN 136
-DECL|macro|DHB_LENGTH
-mdefine_line|#define DHB_LENGTH 2048
-DECL|macro|NUM_DHB
-mdefine_line|#define NUM_DHB 2
-DECL|macro|DLC_MAX_SAP
-mdefine_line|#define DLC_MAX_SAP 2
-DECL|macro|DLC_MAX_STA
-mdefine_line|#define DLC_MAX_STA 1
-DECL|macro|DLC_OPEN_SAP
-mdefine_line|#define DLC_OPEN_SAP 0x15
 DECL|struct|dlc_open_sap
 r_struct
 id|dlc_open_sap
@@ -672,8 +700,7 @@ r_char
 id|reserved2
 suffix:semicolon
 DECL|member|station_id
-r_int
-r_int
+id|__u16
 id|station_id
 suffix:semicolon
 DECL|member|timer_t1
@@ -717,8 +744,7 @@ r_char
 id|gsap_max_mem
 suffix:semicolon
 DECL|member|max_i_field
-r_int
-r_int
+id|__u16
 id|max_i_field
 suffix:semicolon
 DECL|member|sap_value
@@ -751,23 +777,6 @@ l_int|0
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* DLC_OPEN_SAP options */
-DECL|macro|MAX_I_FIELD
-mdefine_line|#define MAX_I_FIELD 0x0088
-DECL|macro|SAP_OPEN_IND_SAP
-mdefine_line|#define SAP_OPEN_IND_SAP 0x04
-DECL|macro|SAP_OPEN_PRIORITY
-mdefine_line|#define SAP_OPEN_PRIORITY 0x20
-DECL|macro|SAP_OPEN_STATION_CNT
-mdefine_line|#define SAP_OPEN_STATION_CNT 0x1
-DECL|macro|XMIT_DIR_FRAME
-mdefine_line|#define XMIT_DIR_FRAME 0x0a
-DECL|macro|XMIT_UI_FRAME
-mdefine_line|#define XMIT_UI_FRAME  0x0d
-DECL|macro|XMIT_XID_CMD
-mdefine_line|#define XMIT_XID_CMD   0x0e
-DECL|macro|XMIT_TEST_CMD
-mdefine_line|#define XMIT_TEST_CMD  0x11
 DECL|struct|srb_xmit
 r_struct
 id|srb_xmit
@@ -793,14 +802,11 @@ r_char
 id|reserved1
 suffix:semicolon
 DECL|member|station_id
-r_int
-r_int
+id|__u16
 id|station_id
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|DIR_INTERRUPT
-mdefine_line|#define DIR_INTERRUPT 0x00
 DECL|struct|srb_interrupt
 r_struct
 id|srb_interrupt
@@ -822,8 +828,6 @@ id|ret_code
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|DIR_READ_LOG
-mdefine_line|#define DIR_READ_LOG 0x08
 DECL|struct|srb_read_log
 r_struct
 id|srb_read_log
@@ -930,13 +934,11 @@ r_char
 id|reserved
 suffix:semicolon
 DECL|member|station_id
-r_int
-r_int
+id|__u16
 id|station_id
 suffix:semicolon
 DECL|member|frame_length
-r_int
-r_int
+id|__u16
 id|frame_length
 suffix:semicolon
 DECL|member|hdr_length
@@ -951,8 +953,6 @@ id|rsap_value
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|XMIT_DATA_REQ
-mdefine_line|#define XMIT_DATA_REQ 0x82
 DECL|struct|arb_xmit_req
 r_struct
 id|arb_xmit_req
@@ -976,19 +976,15 @@ l_int|2
 )braket
 suffix:semicolon
 DECL|member|station_id
-r_int
-r_int
+id|__u16
 id|station_id
 suffix:semicolon
 DECL|member|dhb_address
-r_int
-r_int
+id|__u16
 id|dhb_address
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|REC_DATA
-mdefine_line|#define REC_DATA 0x81
 DECL|struct|arb_rec_req
 r_struct
 id|arb_rec_req
@@ -1007,13 +1003,11 @@ l_int|3
 )braket
 suffix:semicolon
 DECL|member|station_id
-r_int
-r_int
+id|__u16
 id|station_id
 suffix:semicolon
 DECL|member|rec_buf_addr
-r_int
-r_int
+id|__u16
 id|rec_buf_addr
 suffix:semicolon
 DECL|member|lan_hdr_len
@@ -1027,8 +1021,7 @@ r_char
 id|dlc_hdr_len
 suffix:semicolon
 DECL|member|frame_len
-r_int
-r_int
+id|__u16
 id|frame_len
 suffix:semicolon
 DECL|member|msg_type
@@ -1038,8 +1031,6 @@ id|msg_type
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|DATA_LOST
-mdefine_line|#define DATA_LOST 0x20
 DECL|struct|asb_rec
 r_struct
 id|asb_rec
@@ -1065,13 +1056,11 @@ r_char
 id|reserved2
 suffix:semicolon
 DECL|member|station_id
-r_int
-r_int
+id|__u16
 id|station_id
 suffix:semicolon
 DECL|member|rec_buf_addr
-r_int
-r_int
+id|__u16
 id|rec_buf_addr
 suffix:semicolon
 )brace
@@ -1089,8 +1078,7 @@ l_int|2
 )braket
 suffix:semicolon
 DECL|member|buf_ptr
-r_int
-r_int
+id|__u16
 id|buf_ptr
 suffix:semicolon
 DECL|member|reserved2
@@ -1099,8 +1087,7 @@ r_char
 id|reserved2
 suffix:semicolon
 DECL|member|buf_len
-r_int
-r_int
+id|__u16
 id|buf_len
 suffix:semicolon
 DECL|member|data
@@ -1113,8 +1100,6 @@ l_int|0
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|DLC_STATUS
-mdefine_line|#define DLC_STATUS          0x83
 DECL|struct|arb_dlc_status
 r_struct
 id|arb_dlc_status
@@ -1133,13 +1118,11 @@ l_int|3
 )braket
 suffix:semicolon
 DECL|member|station_id
-r_int
-r_int
+id|__u16
 id|station_id
 suffix:semicolon
 DECL|member|status
-r_int
-r_int
+id|__u16
 id|status
 suffix:semicolon
 DECL|member|frmr_data
@@ -1170,8 +1153,6 @@ id|rsap_value
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|RING_STAT_CHANGE
-mdefine_line|#define RING_STAT_CHANGE    0x84
 DECL|struct|arb_ring_stat_change
 r_struct
 id|arb_ring_stat_change
@@ -1190,14 +1171,11 @@ l_int|5
 )braket
 suffix:semicolon
 DECL|member|ring_status
-r_int
-r_int
+id|__u16
 id|ring_status
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|DIR_CLOSE_ADAPTER
-mdefine_line|#define DIR_CLOSE_ADAPTER   0x04
 DECL|struct|srb_close_adapter
 r_struct
 id|srb_close_adapter
@@ -1219,28 +1197,4 @@ id|ret_code
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|DIR_MOD_OPEN_PARAMS
-mdefine_line|#define DIR_MOD_OPEN_PARAMS 0x01
-DECL|macro|DIR_SET_GRP_ADDR
-mdefine_line|#define DIR_SET_GRP_ADDR    0x06
-DECL|macro|DIR_SET_FUNC_ADDR
-mdefine_line|#define DIR_SET_FUNC_ADDR   0x07
-DECL|macro|DLC_CLOSE_SAP
-mdefine_line|#define DLC_CLOSE_SAP       0x16
-DECL|macro|SIGNAL_LOSS
-mdefine_line|#define SIGNAL_LOSS  0x8000
-DECL|macro|HARD_ERROR
-mdefine_line|#define HARD_ERROR   0x4000
-DECL|macro|XMIT_BEACON
-mdefine_line|#define XMIT_BEACON  0x1000
-DECL|macro|LOBE_FAULT
-mdefine_line|#define LOBE_FAULT   0x0800
-DECL|macro|AUTO_REMOVAL
-mdefine_line|#define AUTO_REMOVAL 0x0400
-DECL|macro|REMOVE_RECV
-mdefine_line|#define REMOVE_RECV  0x0100
-DECL|macro|LOG_OVERFLOW
-mdefine_line|#define LOG_OVERFLOW 0x0080
-DECL|macro|RING_RECOVER
-mdefine_line|#define RING_RECOVER 0x0020
 eof

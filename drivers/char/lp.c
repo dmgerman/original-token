@@ -3333,11 +3333,13 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef MODULE
 r_int
 id|failed
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

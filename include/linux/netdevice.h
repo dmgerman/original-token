@@ -635,6 +635,24 @@ op_star
 id|haddr
 )paren
 suffix:semicolon
+DECL|macro|HAVE_CHANGE_MTU
+mdefine_line|#define HAVE_CHANGE_MTU
+DECL|member|change_mtu
+r_int
+(paren
+op_star
+id|change_mtu
+)paren
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+id|new_mtu
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|packet_type

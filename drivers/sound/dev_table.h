@@ -137,9 +137,9 @@ mdefine_line|#define MAX_SUB_BUFFERS&t;&t;(32*MAX_REALTIME_FACTOR)
 DECL|macro|DMODE_NONE
 mdefine_line|#define DMODE_NONE&t;&t;0
 DECL|macro|DMODE_OUTPUT
-mdefine_line|#define DMODE_OUTPUT&t;&t;1
+mdefine_line|#define DMODE_OUTPUT&t;&t;PCM_ENABLE_OUTPUT
 DECL|macro|DMODE_INPUT
-mdefine_line|#define DMODE_INPUT&t;&t;2
+mdefine_line|#define DMODE_INPUT&t;&t;PCM_ENABLE_INPUT
 DECL|struct|dma_buffparms
 r_struct
 id|dma_buffparms
@@ -182,6 +182,10 @@ DECL|macro|DMA_EMPTY
 mdefine_line|#define DMA_EMPTY&t;0x00000010&t;
 DECL|macro|DMA_ALLOC_DONE
 mdefine_line|#define DMA_ALLOC_DONE&t;0x00000020
+DECL|macro|DMA_SYNCING
+mdefine_line|#define DMA_SYNCING&t;0x00000040
+DECL|macro|DMA_CLEAN
+mdefine_line|#define DMA_CLEAN&t;0x00000080
 DECL|member|open_mode
 r_int
 id|open_mode

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET3:&t;Implementation of BSD Unix domain sockets.&n; *&n; * Authors:&t;Alan Cox, &lt;alan@cymru.net&gt;&n; *&n; *&t;&t;Currently this contains all but the file descriptor passing code.&n; *&t;&t;Before that goes in the odd bugs in the iovec handlers need &n; *&t;&t;fixing, and this bit testing. BSD fd passing is not a trivial part&n; *&t;&t;of the exercise it turns out. Anyone like writing garbage collectors.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Linus Torvalds&t;:&t;Assorted bug cures.&n; *&t;&t;Niibe Yutaka&t;:&t;async I/O support.&n; *&t;&t;Carsten Paeth&t;:&t;PF_UNIX check, address fixes.&n; *&t;&t;Alan Cox&t;:&t;Limit size of allocated blocks.&n; *&t;&t;Alan Cox&t;:&t;Fixed the stupid socketpair bug.&n; *&t;&t;Alan Cox&t;:&t;BSD compatibility fine tuning.&n; *&t;&t;Alan Cox&t;:&t;Fixed a bug in connect when interrupted.&n; *&t;&t;Alan Cox&t;:&t;Sorted out a proper draft version of&n; *&t;&t;&t;&t;&t;file descriptor passing hacked up from&n; *&t;&t;&t;&t;&t;Mike Shaver&squot;s work.&n; *&t;&t;Marty Leisner&t;:&t;Fixes to fd passing&n; *&t;&t;Nick Nevin&t;:&t;recvmsg bugfix.&n; *&n; * Known differences from reference BSD that was tested:&n; *&n; *&t;[TO FIX]&n; *&t;ECONNREFUSED is not returned from one end of a connected() socket to the&n; *&t;&t;other the moment one end closes.&n; *&t;fstat() doesn&squot;t return st_dev=NODEV, and give the blksize as high water mark&n; *&t;&t;and a fake inode identifier (nor the BSD first socket fstat twice bug).&n; *&t;[NOT TO FIX]&n; *&t;accept() returns a path name even if the connecting socket has closed&n; *&t;&t;in the meantime (BSD loses the path and gives up).&n; *&t;accept() returns 0 length path for an unbound connector. BSD returns 16&n; *&t;&t;and a null first byte in the path (but not for gethost/peername - BSD bug ??)&n; *&t;socketpair(...SOCK_RAW..) doesnt panic the kernel.&n; *&t;BSD af_unix apprently has connect forgetting to block properly.&n; */
+multiline_comment|/*&n; * NET3:&t;Implementation of BSD Unix domain sockets.&n; *&n; * Authors:&t;Alan Cox, &lt;alan@cymru.net&gt;&n; *&n; *&t;&t;Currently this contains all but the file descriptor passing code.&n; *&t;&t;Before that goes in the odd bugs in the iovec handlers need &n; *&t;&t;fixing, and this bit testing. BSD fd passing is not a trivial part&n; *&t;&t;of the exercise it turns out. Anyone like writing garbage collectors.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Linus Torvalds&t;:&t;Assorted bug cures.&n; *&t;&t;Niibe Yutaka&t;:&t;async I/O support.&n; *&t;&t;Carsten Paeth&t;:&t;PF_UNIX check, address fixes.&n; *&t;&t;Alan Cox&t;:&t;Limit size of allocated blocks.&n; *&t;&t;Alan Cox&t;:&t;Fixed the stupid socketpair bug.&n; *&t;&t;Alan Cox&t;:&t;BSD compatibility fine tuning.&n; *&t;&t;Alan Cox&t;:&t;Fixed a bug in connect when interrupted.&n; *&t;&t;Alan Cox&t;:&t;Sorted out a proper draft version of&n; *&t;&t;&t;&t;&t;file descriptor passing hacked up from&n; *&t;&t;&t;&t;&t;Mike Shaver&squot;s work.&n; *&t;&t;Marty Leisner&t;:&t;Fixes to fd passing&n; *&t;&t;Nick Nevin&t;:&t;recvmsg bugfix.&n; *&t;&t;Alan Cox&t;:&t;Started proper garbage collector&n; *&n; * Known differences from reference BSD that was tested:&n; *&n; *&t;[TO FIX]&n; *&t;ECONNREFUSED is not returned from one end of a connected() socket to the&n; *&t;&t;other the moment one end closes.&n; *&t;fstat() doesn&squot;t return st_dev=NODEV, and give the blksize as high water mark&n; *&t;&t;and a fake inode identifier (nor the BSD first socket fstat twice bug).&n; *&t;[NOT TO FIX]&n; *&t;accept() returns a path name even if the connecting socket has closed&n; *&t;&t;in the meantime (BSD loses the path and gives up).&n; *&t;accept() returns 0 length path for an unbound connector. BSD returns 16&n; *&t;&t;and a null first byte in the path (but not for gethost/peername - BSD bug ??)&n; *&t;socketpair(...SOCK_RAW..) doesnt panic the kernel.&n; *&t;BSD af_unix apprently has connect forgetting to block properly.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -25,7 +25,6 @@ macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/af_unix.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 DECL|variable|unix_socket_list
-r_static
 id|unix_socket
 op_star
 id|unix_socket_list
@@ -2854,20 +2853,6 @@ id|EBADF
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; *&t;Make sure the garbage collector can cope.&n;&t; */
-r_if
-c_cond
-(paren
-id|unix_gc_free
-OL
-id|num
-)paren
-(brace
-r_return
-op_minus
-id|ENOBUFS
-suffix:semicolon
-)brace
 multiline_comment|/* add another reference to these files */
 r_for
 c_loop
@@ -2905,11 +2890,9 @@ op_member_access_from_pointer
 id|f_count
 op_increment
 suffix:semicolon
-id|unix_gc_add
+id|unix_inflight
 c_func
 (paren
-id|sk
-comma
 id|fp
 (braket
 id|i
@@ -2970,7 +2953,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
-id|unix_gc_remove
+id|unix_notinflight
 c_func
 (paren
 id|fp
@@ -3300,7 +3283,7 @@ op_amp
 id|current-&gt;files-&gt;close_on_exec
 )paren
 suffix:semicolon
-id|unix_gc_remove
+id|unix_notinflight
 c_func
 (paren
 id|fp
@@ -3332,7 +3315,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
-id|unix_gc_remove
+id|unix_notinflight
 c_func
 (paren
 id|fp
@@ -5100,7 +5083,8 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;Num       RefCount Protocol Flags    Type St Path&bslash;n&quot;
+l_string|&quot;Num       RefCount Protocol Flags    Type St &quot;
+l_string|&quot;Inode Path&bslash;n&quot;
 )paren
 suffix:semicolon
 r_while
@@ -5120,7 +5104,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%p: %08X %08X %08lX %04X %02X&quot;
+l_string|&quot;%p: %08X %08X %08lX %04X %02X %5ld&quot;
 comma
 id|s
 comma
@@ -5133,6 +5117,13 @@ comma
 id|s-&gt;socket-&gt;type
 comma
 id|s-&gt;socket-&gt;state
+comma
+id|s-&gt;socket-&gt;inode
+ques
+c_cond
+id|s-&gt;socket-&gt;inode-&gt;i_ino
+suffix:colon
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -5246,7 +5237,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 DECL|variable|unix_proto_ops
-r_static
 r_struct
 id|proto_ops
 id|unix_proto_ops

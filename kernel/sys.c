@@ -17,7 +17,6 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/acct.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
-macro_line|#include &lt;sys/sysmacros.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * this indicates whether you can reboot with ctrl-alt-del: the default is yes&n; */
@@ -1053,7 +1052,8 @@ c_cond
 op_minus
 l_int|1
 suffix:colon
-id|makedev
+id|MKDEV
+c_func
 (paren
 l_int|4
 comma
@@ -1080,7 +1080,7 @@ c_cond
 (paren
 id|current-&gt;flags
 op_amp
-id|PF_SUPERPREV
+id|PF_SUPERPRIV
 )paren
 id|ac.ac_flag
 op_or_assign

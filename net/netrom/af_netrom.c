@@ -5350,7 +5350,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%-9s %-3s  %02X/%02X %02X/%02X %2d %2d %2d %2d %3d/%03d %2d/%02d %2d/%02d %3d %3d %5ld %5ld&bslash;n&quot;
+l_string|&quot;%-9s %-3s  %02X/%02X %02X/%02X %2d %2d %2d %2d %3d/%03d %2d/%02d %2d/%02d %3d %3d %5d %5d&bslash;n&quot;
 comma
 id|ax2asc
 c_func
@@ -5568,7 +5568,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;G4KLX NET/ROM for Linux. Version 0.4 ALPHA for AX25.030 Linux 1.3.45&bslash;n&quot;
+l_string|&quot;G4KLX NET/ROM for Linux. Version 0.4 ALPHA for AX25.032 Linux 1.3.77&bslash;n&quot;
 )paren
 suffix:semicolon
 id|nr_default.quality

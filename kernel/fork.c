@@ -1016,7 +1016,7 @@ id|PF_PTRACED
 op_or
 id|PF_TRACESYS
 op_or
-id|PF_SUPERPREV
+id|PF_SUPERPRIV
 )paren
 suffix:semicolon
 id|p-&gt;flags

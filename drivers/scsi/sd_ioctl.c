@@ -12,6 +12,7 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;scsi_ioctl.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
+macro_line|#include &lt;linux/scsicam.h&gt;     /* must follow &quot;hosts.h&quot; */
 DECL|function|sd_ioctl
 r_int
 id|sd_ioctl

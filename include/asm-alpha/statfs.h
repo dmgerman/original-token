@@ -1,20 +1,14 @@
 macro_line|#ifndef _ALPHA_STATFS_H
 DECL|macro|_ALPHA_STATFS_H
 mdefine_line|#define _ALPHA_STATFS_H
-r_typedef
-r_struct
-(brace
-DECL|member|val
-r_int
-id|val
-(braket
-l_int|2
-)braket
-suffix:semicolon
+macro_line|#ifndef _LINUX_TYPES_DONT_EXPORT
+macro_line|#include &lt;linux/posix_types.h&gt;
 DECL|typedef|fsid_t
-)brace
+r_typedef
+id|__fsid_t
 id|fsid_t
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * The OSF/1 statfs structure is much larger, but this should&n; * match the beginning, at least.&n; */
 DECL|struct|statfs
 r_struct
@@ -57,7 +51,7 @@ r_int
 id|f_ffree
 suffix:semicolon
 DECL|member|f_fsid
-id|fsid_t
+id|__fsid_t
 id|f_fsid
 suffix:semicolon
 multiline_comment|/* linux-specific entries start here.. */

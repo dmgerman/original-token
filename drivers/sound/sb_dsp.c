@@ -2880,7 +2880,7 @@ id|UART_MIDI
 (brace
 id|printk
 (paren
-l_string|&quot;SB: Audio device or MIDI already in use&bslash;n&quot;
+l_string|&quot;SB: Audio device or MIDI already in use.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * PCI defines and function prototypes&n; * Copyright 1994, Drew Eckhardt&n; *&n; * For more information, please consult &n; * &n; * PCI BIOS Specification Revision&n; * PCI Local Bus Specification&n; * PCI System Design Guide&n; *&n; * PCI Special Interest Group&n; * M/S HF3-15A&n; * 5200 N.E. Elam Young Parkway&n; * Hillsboro, Oregon 97124-6497&n; * +1 (503) 696-2000 &n; * +1 (800) 433-5177&n; * &n; * Manuals are $25 each or $50 for all three, plus $7 shipping &n; * within the United States, $35 abroad.&n; */
-multiline_comment|/*&t;PROCEDURE TO REPORT NEW PCI DEVICES&n; * We are trying to collect informations on new PCI devices, using&n; * the standart PCI identification procedure. If some warning is&n; * displayed at boot time, please report &n; *&t;- /proc/pci&n; *&t;- your exact hardware description. Try to find out&n; *&t;  which device is unknown. It may be you mainboard chipset.&n; *&t;  PCI-CPU bridge or PCI-ISA bridge.&n; *&t;- If you can&squot;t find the actual information in your hardware&n; *&t;  booklet, try to read the references of the chip on the board.&n; *&t;- Send all that, with the word PCIPROBE in the subject,&n; *&t;  to frederic@cao-vlsi.ibp.fr, and I&squot;ll add your device to &n; *&t;  the list as soon as possible&n; *&t;&t;fred.&n; */
+multiline_comment|/*&t;PROCEDURE TO REPORT NEW PCI DEVICES&n; * We are trying to collect informations on new PCI devices, using&n; * the standart PCI identification procedure. If some warning is&n; * displayed at boot time, please report &n; *&t;- /proc/pci&n; *&t;- your exact hardware description. Try to find out&n; *&t;  which device is unknown. It may be you mainboard chipset.&n; *&t;  PCI-CPU bridge or PCI-ISA bridge.&n; *&t;- If you can&squot;t find the actual information in your hardware&n; *&t;  booklet, try to read the references of the chip on the board.&n; *&t;- Send all that to linux-pcisupport@cao-vlsi.ibp.fr,&n; *&t;  and I&squot;ll add your device to the list as soon as possible&n; *&n; * BEFORE you send a mail, please check the latest linux releases&n; * to be sure it has not been recently added.&n; *&n; *        Thanks&n; *&t;&t;Frederic Potter.&n; */
 macro_line|#ifndef PCI_H
 DECL|macro|PCI_H
 mdefine_line|#define PCI_H
@@ -356,8 +356,6 @@ DECL|macro|PCI_DEVICE_ID_CIRRUS_5434_8
 mdefine_line|#define PCI_DEVICE_ID_CIRRUS_5434_8&t;0x00a8
 DECL|macro|PCI_DEVICE_ID_CIRRUS_5436
 mdefine_line|#define PCI_DEVICE_ID_CIRRUS_5436&t;0x00ac
-DECL|macro|PCI_DEVICE_ID_CIRRUS_6205
-mdefine_line|#define PCI_DEVICE_ID_CIRRUS_6205&t;0x0205
 DECL|macro|PCI_DEVICE_ID_CIRRUS_6729
 mdefine_line|#define PCI_DEVICE_ID_CIRRUS_6729&t;0x1100
 DECL|macro|PCI_DEVICE_ID_CIRRUS_7542
@@ -406,6 +404,8 @@ DECL|macro|PCI_DEVICE_ID_CT_65548
 mdefine_line|#define PCI_DEVICE_ID_CT_65548&t;&t;0x00dc
 DECL|macro|PCI_VENDOR_ID_MIRO
 mdefine_line|#define PCI_VENDOR_ID_MIRO&t;&t;0x1031
+DECL|macro|PCI_DEVICE_ID_MIRO_36050
+mdefine_line|#define PCI_DEVICE_ID_MIRO_36050&t;0x5601
 DECL|macro|PCI_VENDOR_ID_FD
 mdefine_line|#define PCI_VENDOR_ID_FD&t;&t;0x1036
 DECL|macro|PCI_DEVICE_ID_FD_36C70
@@ -416,6 +416,8 @@ DECL|macro|PCI_DEVICE_ID_SI_6201
 mdefine_line|#define PCI_DEVICE_ID_SI_6201&t;&t;0x0001
 DECL|macro|PCI_DEVICE_ID_SI_6202
 mdefine_line|#define PCI_DEVICE_ID_SI_6202&t;&t;0x0002
+DECL|macro|PCI_DEVICE_ID_SI_6205
+mdefine_line|#define PCI_DEVICE_ID_SI_6205&t;&t;0x0205
 DECL|macro|PCI_DEVICE_ID_SI_503
 mdefine_line|#define PCI_DEVICE_ID_SI_503&t;&t;0x0008
 DECL|macro|PCI_DEVICE_ID_SI_501
@@ -622,8 +624,34 @@ DECL|macro|PCI_DEVICE_ID_VIA_82C416
 mdefine_line|#define PCI_DEVICE_ID_VIA_82C416&t;0x1571
 DECL|macro|PCI_VENDOR_ID_VORTEX
 mdefine_line|#define PCI_VENDOR_ID_VORTEX&t;&t;0x1119
-DECL|macro|PCI_DEVICE_ID_VORTEX_GDT
-mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT&t;0x0001
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT60x0
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT60x0&t;0x0000
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6000B
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6000B&t;0x0001
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x10
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x10&t;0x0002
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x20
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x20&t;0x0003
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6530
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6530&t;0x0004
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6550
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6550&t;0x0005
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x17
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x17&t;0x0006
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x27
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x27&t;0x0007
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6537
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6537&t;0x0008
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6557
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6557&t;0x0009
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x15
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x15&t;0x000a
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x25
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x25&t;0x000b
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6535
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6535&t;0x000c
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6555
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6555&t;0x000d
 DECL|macro|PCI_VENDOR_ID_EF
 mdefine_line|#define PCI_VENDOR_ID_EF&t;&t;0x111a
 DECL|macro|PCI_DEVICE_ID_EF_ATM_FPGA
@@ -634,6 +662,8 @@ DECL|macro|PCI_VENDOR_ID_FORE
 mdefine_line|#define PCI_VENDOR_ID_FORE&t;&t;0x1127
 DECL|macro|PCI_DEVICE_ID_FORE_PCA200PC
 mdefine_line|#define PCI_DEVICE_ID_FORE_PCA200PC&t;0x0210
+DECL|macro|PCI_DEVICE_ID_FORE_PCA200E
+mdefine_line|#define PCI_DEVICE_ID_FORE_PCA200E&t;0x0300
 DECL|macro|PCI_VENDOR_ID_IMAGINGTECH
 mdefine_line|#define PCI_VENDOR_ID_IMAGINGTECH&t;0x112f
 DECL|macro|PCI_DEVICE_ID_IMAGINGTECH_ICPCI

@@ -361,16 +361,6 @@ c_func
 (paren
 id|CIRRUS
 comma
-id|CIRRUS_6205
-comma
-l_string|&quot;GD 6205&quot;
-)paren
-comma
-id|DEVICE
-c_func
-(paren
-id|CIRRUS
-comma
 id|CIRRUS_6729
 comma
 l_string|&quot;CL 6729&quot;
@@ -529,6 +519,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|MIRO
+comma
+id|MIRO_36050
+comma
+l_string|&quot;ZR36050&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|FD
 comma
 id|FD_36C70
@@ -554,6 +554,16 @@ comma
 id|SI_6202
 comma
 l_string|&quot;6202&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|SI
+comma
+id|SI_6205
+comma
+l_string|&quot;6205&quot;
 )paren
 comma
 id|DEVICE
@@ -1273,9 +1283,139 @@ c_func
 (paren
 id|VORTEX
 comma
-id|VORTEX_GDT
+id|VORTEX_GDT60x0
+comma
+l_string|&quot;GDT 60x0&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6000B
 comma
 l_string|&quot;GDT 6000b&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x10
+comma
+l_string|&quot;GDT 6110/6510&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x20
+comma
+l_string|&quot;GDT 6120/6520&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6530
+comma
+l_string|&quot;GDT 6530&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6550
+comma
+l_string|&quot;GDT 6550&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x17
+comma
+l_string|&quot;GDT 6117/6517&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x27
+comma
+l_string|&quot;GDT 6127/6527&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6537
+comma
+l_string|&quot;GDT 6537&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6557
+comma
+l_string|&quot;GDT 6557&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x15
+comma
+l_string|&quot;GDT 6115/6515&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x25
+comma
+l_string|&quot;GDT 6125/6525&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6535
+comma
+l_string|&quot;GDT 6535&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6555
+comma
+l_string|&quot;GDT 6555&quot;
 )paren
 comma
 id|DEVICE
@@ -1316,6 +1456,16 @@ comma
 id|FORE_PCA200PC
 comma
 l_string|&quot;PCA-200PC&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|FORE
+comma
+id|FORE_PCA200E
+comma
+l_string|&quot;PCA-200E&quot;
 )paren
 comma
 id|DEVICE

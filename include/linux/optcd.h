@@ -41,7 +41,7 @@ DECL|macro|STOP_TIMEOUT
 mdefine_line|#define STOP_TIMEOUT&t;&t;1000&t;&t;/* for poll wait */
 DECL|macro|RESET_WAIT
 mdefine_line|#define RESET_WAIT&t;&t;1000&t;&t;/* busy wait at drive reset */
-multiline_comment|/* # of buffer for block size conversion. 6 is optimal for my setup (P75),&n;   giving 280 kb/s, with 0.4% CPU usage. Experiment to find your optimal&n;   setting */
+multiline_comment|/* # of buffers for block size conversion. 6 is optimal for my setup (P75),&n;   giving 280 kb/s, with 0.4% CPU usage. Experiment to find your optimal&n;   setting */
 DECL|macro|N_BUFS
 mdefine_line|#define N_BUFS&t;&t;6
 macro_line|#endif _LINUX_OPTCD_H

@@ -292,6 +292,38 @@ id|iph-&gt;tot_len
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Try to select closest &lt;src,dst&gt; alias device, if any.&n;&t; *&t;net_alias_dev_rcv_sel32 returns main device if it &n;&t; *&t;fails to found other.&n;&t; */
+macro_line|#ifdef CONFIG_NET_ALIAS
+r_if
+c_cond
+(paren
+id|iph-&gt;daddr
+op_ne
+id|skb-&gt;dev-&gt;pa_addr
+op_logical_and
+id|net_alias_has
+c_func
+(paren
+id|skb-&gt;dev
+)paren
+)paren
+id|skb-&gt;dev
+op_assign
+id|dev
+op_assign
+id|net_alias_dev_rcv_sel32
+c_func
+(paren
+id|skb-&gt;dev
+comma
+id|AF_INET
+comma
+id|iph-&gt;saddr
+comma
+id|iph-&gt;daddr
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -349,38 +381,6 @@ suffix:semicolon
 )brace
 macro_line|#endif&t;&t;&t;&t;&t;
 )brace
-multiline_comment|/*&n;&t; *&t;Try to select closest &lt;src,dst&gt; alias device, if any.&n;&t; *&t;net_alias_dev_rcv_sel32 returns main device if it &n;&t; *&t;fails to found other.&n;&t; */
-macro_line|#ifdef CONFIG_NET_ALIAS
-r_if
-c_cond
-(paren
-id|iph-&gt;daddr
-op_ne
-id|skb-&gt;dev-&gt;pa_addr
-op_logical_and
-id|net_alias_has
-c_func
-(paren
-id|skb-&gt;dev
-)paren
-)paren
-id|skb-&gt;dev
-op_assign
-id|dev
-op_assign
-id|net_alias_dev_rcv_sel32
-c_func
-(paren
-id|skb-&gt;dev
-comma
-id|AF_INET
-comma
-id|iph-&gt;saddr
-comma
-id|iph-&gt;daddr
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Account for the packet (even if the packet is&n;&t; *&t;not accepted by the firewall!).&n;&t; */
 macro_line|#ifdef CONFIG_IP_ACCT
 id|ip_fw_chk

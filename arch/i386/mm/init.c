@@ -393,6 +393,10 @@ id|PAGE_SIZE
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef __SMP__
+r_if
+c_cond
+(paren
+op_logical_neg
 id|smp_scan_config
 c_func
 (paren
@@ -400,9 +404,14 @@ l_int|0x0
 comma
 l_int|0x400
 )paren
-suffix:semicolon
+)paren
 multiline_comment|/* Scan the bottom 1K for a signature */
-multiline_comment|/*&n;&t; *&t;FIXME: Linux assumes you have 640K of base ram.. this continues&n;&t; *&t;the error...&n;&t; */
+(brace
+multiline_comment|/*&n;&t;&t; *&t;FIXME: Linux assumes you have 640K of base ram.. this continues&n;&t;&t; *&t;the error...&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
 id|smp_scan_config
 c_func
 (paren
@@ -412,7 +421,7 @@ l_int|0x400
 comma
 l_int|0x400
 )paren
-suffix:semicolon
+)paren
 multiline_comment|/* Scan the top 1K of base RAM */
 id|smp_scan_config
 c_func
@@ -423,6 +432,7 @@ l_int|0x10000
 )paren
 suffix:semicolon
 multiline_comment|/* Scan the 64K of bios */
+)brace
 multiline_comment|/*&n;&t; *&t;If it is an SMP machine we should know now, unless the configuration&n;&t; *&t;is in an EISA/MCA bus machine with an extended bios data area. I don&squot;t&n;&t; *&t;have such a machine so someone else can fill in the check of the EBDA&n;&t; *&t;here.&n;&t; */
 multiline_comment|/*&t;smp_alloc_memory(8192); */
 macro_line|#endif

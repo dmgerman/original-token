@@ -1367,14 +1367,6 @@ op_assign
 id|UTS_RELEASE
 suffix:semicolon
 macro_line|#endif
-DECL|variable|debugmem
-r_static
-r_int
-id|debugmem
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* switched off by default */
 DECL|variable|sound
 r_static
 r_int
@@ -1538,6 +1530,15 @@ r_void
 r_int
 id|i
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2086,6 +2087,14 @@ macro_line|#ifdef KMALLOC_DMA_BROKEN
 id|fatal_error__This_version_is_not_compatible_with_this_kernel
 suffix:semicolon
 macro_line|#endif
+DECL|variable|debugmem
+r_static
+r_int
+id|debugmem
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* switched off by default */
 DECL|variable|dma_buffsize
 r_static
 r_int
@@ -2307,7 +2316,7 @@ id|GFP_ATOMIC
 comma
 id|sz
 comma
-l_int|1
+id|MAX_DMA_ADDRESS
 )paren
 )paren
 op_eq
@@ -2654,6 +2663,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+macro_line|#endif
 r_void
 DECL|function|conf_printf
 id|conf_printf
@@ -2853,5 +2863,4 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

@@ -15,6 +15,8 @@ DECL|macro|KERNELD_REQUEST_ROUTE
 mdefine_line|#define KERNELD_REQUEST_ROUTE 6 /* from net/ipv4/route.c */
 DECL|macro|KERNELD_BLANKER
 mdefine_line|#define KERNELD_BLANKER 7 /* from drivers/char/console.c */
+DECL|macro|KERNELD_ARP
+mdefine_line|#define KERNELD_ARP 256 /* from net/ipv4/arp.c */
 DECL|macro|IPC_KERNELD
 mdefine_line|#define IPC_KERNELD 00040000   /* use the kerneld message channel */
 DECL|macro|KERNELD_MAXCMD

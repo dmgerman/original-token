@@ -2769,43 +2769,38 @@ r_void
 (brace
 r_int
 id|i
-op_assign
-l_int|0
+comma
+id|j
 suffix:semicolon
 id|smp_boot_cpus
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Create the slave init tasks as sharing pid 0.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Create the slave init tasks as sharing pid 0.&n;&t; *&n;&t; *&t;This should only happen if we have virtual CPU numbers&n;&t; *&t;higher than 0.&n;&t; */
 r_for
 c_loop
 (paren
 id|i
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 id|i
 OL
-id|NR_CPUS
+id|smp_num_cpus
 suffix:semicolon
 id|i
 op_increment
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;This should only do anything if the mapping&n;&t;&t; *&t;corresponds to a live CPU which is not the boot CPU.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|cpu_number_map
+id|j
+op_assign
+id|cpu_logical_map
 (braket
 id|i
 )braket
-OG
-l_int|0
-)paren
-(brace
-multiline_comment|/*&n;&t;&t;&t; *&t;We use kernel_thread for the idlers which are&n;&t;&t;&t; *&t;unlocked tasks running in kernel space.&n;&t;&t;&t; */
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;We use kernel_thread for the idlers which are&n;&t;&t; *&t;unlocked tasks running in kernel space.&n;&t;&t; */
 id|kernel_thread
 c_func
 (paren
@@ -2816,30 +2811,26 @@ comma
 id|CLONE_PID
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; *&t;Don&squot;t assume linear processor numbering&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Don&squot;t assume linear processor numbering&n;&t;&t; */
 id|current_set
 (braket
-id|i
+id|j
 )braket
 op_assign
 id|task
 (braket
-id|cpu_number_map
-(braket
 id|i
-)braket
 )braket
 suffix:semicolon
 id|current_set
 (braket
-id|i
+id|j
 )braket
 op_member_access_from_pointer
 id|processor
 op_assign
-id|i
+id|j
 suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/*&n; *&t;The autoprobe routines assume CPU#0 on the i386&n; *&t;so we don&squot;t actually set the game in motion until&n; *&t;they are finished.&n; */

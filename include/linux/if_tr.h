@@ -35,20 +35,17 @@ r_struct
 id|trh_hdr
 (brace
 DECL|member|ac
-r_int
-r_char
+id|__u8
 id|ac
 suffix:semicolon
 multiline_comment|/* access control field */
 DECL|member|fc
-r_int
-r_char
+id|__u8
 id|fc
 suffix:semicolon
 multiline_comment|/* frame control field */
 DECL|member|daddr
-r_int
-r_char
+id|__u8
 id|daddr
 (braket
 id|TR_ALEN
@@ -56,8 +53,7 @@ id|TR_ALEN
 suffix:semicolon
 multiline_comment|/* destination address */
 DECL|member|saddr
-r_int
-r_char
+id|__u8
 id|saddr
 (braket
 id|TR_ALEN
@@ -65,14 +61,12 @@ id|TR_ALEN
 suffix:semicolon
 multiline_comment|/* source address */
 DECL|member|rcf
-r_int
-r_int
+id|__u16
 id|rcf
 suffix:semicolon
 multiline_comment|/* route control field */
 DECL|member|rseg
-r_int
-r_int
+id|__u16
 id|rseg
 (braket
 l_int|8
@@ -87,26 +81,22 @@ r_struct
 id|trllc
 (brace
 DECL|member|dsap
-r_int
-r_char
+id|__u8
 id|dsap
 suffix:semicolon
 multiline_comment|/* destination SAP */
 DECL|member|ssap
-r_int
-r_char
+id|__u8
 id|ssap
 suffix:semicolon
 multiline_comment|/* source SAP */
 DECL|member|llc
-r_int
-r_char
+id|__u8
 id|llc
 suffix:semicolon
 multiline_comment|/* LLC control field */
 DECL|member|protid
-r_int
-r_char
+id|__u8
 id|protid
 (braket
 l_int|3
@@ -114,8 +104,7 @@ l_int|3
 suffix:semicolon
 multiline_comment|/* protocol id */
 DECL|member|ethertype
-r_int
-r_int
+id|__u16
 id|ethertype
 suffix:semicolon
 multiline_comment|/* ether type field */
@@ -165,7 +154,7 @@ DECL|member|transmit_collision
 r_int
 id|transmit_collision
 suffix:semicolon
-multiline_comment|/* detailed Token-Ring errors. See IBM Token-Ring Network Architecture&n;      for more info */
+multiline_comment|/* detailed Token-Ring errors. See IBM Token-Ring Network&n;&t;   Architecture for more info */
 DECL|member|line_errors
 r_int
 id|line_errors

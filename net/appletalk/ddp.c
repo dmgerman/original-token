@@ -1,8 +1,9 @@
-multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from &n; *&t;&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&t;&t;Christer Weinigel&t;: &t;Routing and /proc fixes.&n; *&t;&t;Bradford Johnson&t;:&t;Locatalk.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; */
+multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from &n; *&t;&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&t;&t;Christer Weinigel&t;: &t;Routing and /proc fixes.&n; *&t;&t;Bradford Johnson&t;:&t;Locatalk.&n; *&t;&t;Tom Dyas&t;&t;:&t;Module support.&n; *&t;&t;Alan Cox&t;&t;:&t;Hooks for PPP (based on the&n; *&t;&t;&t;&t;&t;&t;localtalk hook).&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; */
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -14,12 +15,12 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
-macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/route.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;&t;/* For TIOCOUTQ/INQ */
 macro_line|#include &lt;net/datalink.h&gt;
@@ -30,7 +31,6 @@ macro_line|#include &lt;linux/atalk.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
-macro_line|#ifdef CONFIG_ATALK
 DECL|macro|APPLETALK_DEBUG
 macro_line|#undef APPLETALK_DEBUG
 macro_line|#ifdef APPLETALK_DEBUG
@@ -471,6 +471,8 @@ id|sk
 )paren
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -644,7 +646,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%08lX:%08lX &quot;
+l_string|&quot;%08X:%08X &quot;
 comma
 id|s-&gt;wmem_alloc
 comma
@@ -1021,9 +1023,15 @@ multiline_comment|/*&n; *&t;THIS IS A HACK: Farallon cards want to do their own 
 r_if
 c_cond
 (paren
+(paren
 id|atif-&gt;dev-&gt;type
 op_eq
 id|ARPHRD_LOCALTLK
+op_logical_or
+id|atif-&gt;dev-&gt;type
+op_eq
+id|ARPHRD_PPP
+)paren
 op_logical_and
 id|atif-&gt;dev-&gt;do_ioctl
 )paren
@@ -2596,6 +2604,10 @@ op_logical_and
 id|dev-&gt;type
 op_ne
 id|ARPHRD_LOCALTLK
+op_logical_and
+id|dev-&gt;type
+op_ne
+id|ARPHRD_PPP
 )paren
 (brace
 r_return
@@ -4198,6 +4210,8 @@ op_minus
 id|ESOCKTNOSUPPORT
 suffix:semicolon
 )brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|sk-&gt;dead
 op_assign
 l_int|0
@@ -5244,7 +5258,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Receive a packet (in skb) from device dev. This has come from the SNAP decoder, and on entry&n; *&t;skb-&gt;h.raw is the DDP header, skb-&gt;len is the DDP length. The physical headers have been &n; *&t;extracted.&n; */
+multiline_comment|/*&n; *&t;Receive a packet (in skb) from device dev. This has come from the SNAP decoder, and on entry&n; *&t;skb-&gt;h.raw is the DDP header, skb-&gt;len is the DDP length. The physical headers have been &n; *&t;extracted. PPP should probably pass frames marked as for this layer&n; *&t;[ie ARPHRD_ETHERTALK]&n; */
 DECL|function|atalk_rcv
 r_static
 r_int
@@ -7612,6 +7626,32 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+DECL|variable|ppptalk_packet_type
+r_struct
+id|packet_type
+id|ppptalk_packet_type
+op_assign
+(brace
+l_int|0
+comma
+l_int|NULL
+comma
+id|atalk_rcv
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|variable|ddp_snap_id
+r_static
+r_char
+id|ddp_snap_id
+(braket
+)braket
+op_assign
+initialization_block
+suffix:semicolon
 multiline_comment|/* Called by proto.c on kernel start up */
 DECL|function|atalk_proto_init
 r_void
@@ -7624,14 +7664,6 @@ op_star
 id|pro
 )paren
 (brace
-r_static
-r_char
-id|ddp_snap_id
-(braket
-)braket
-op_assign
-initialization_block
-suffix:semicolon
 (paren
 r_void
 )paren
@@ -7680,6 +7712,21 @@ c_func
 (paren
 op_amp
 id|ltalk_packet_type
+)paren
+suffix:semicolon
+id|ppptalk_packet_type.type
+op_assign
+id|htons
+c_func
+(paren
+id|ETH_P_PPPTALK
+)paren
+suffix:semicolon
+id|dev_add_pack
+c_func
+(paren
+op_amp
+id|ppptalk_packet_type
 )paren
 suffix:semicolon
 id|register_netdevice_notifier
@@ -7799,9 +7846,233 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Appletalk 0.16 for Linux NET3.033&bslash;n&quot;
+l_string|&quot;Appletalk 0.17 for Linux NET3.034&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|atalk_proto_init
+c_func
+(paren
+l_int|NULL
+)paren
+suffix:semicolon
+id|register_symtab
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;FIX THIS: If there are any routes/devices configured&n; *&t;for appletalk we must not be unloaded.&n; */
+multiline_comment|/* Remove all route entries. Interrupts must be off. */
+DECL|function|free_route_list
+r_extern
+r_inline
+r_void
+id|free_route_list
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|atalk_route
+op_star
+id|list
+op_assign
+id|atalk_router_list
+comma
+op_star
+id|tmp
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|list
+op_ne
+l_int|NULL
+)paren
+(brace
+id|tmp
+op_assign
+id|list-&gt;next
+suffix:semicolon
+id|kfree_s
+c_func
+(paren
+id|list
+comma
+r_sizeof
+(paren
+r_struct
+id|atalk_route
+)paren
+)paren
+suffix:semicolon
+id|list
+op_assign
+id|tmp
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Remove all interface entries. Interrupts must be off. */
+DECL|function|free_interface_list
+r_extern
+r_inline
+r_void
+id|free_interface_list
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|atalk_iface
+op_star
+id|list
+op_assign
+id|atalk_iface_list
+comma
+op_star
+id|tmp
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|list
+op_ne
+l_int|NULL
+)paren
+(brace
+id|tmp
+op_assign
+id|list-&gt;next
+suffix:semicolon
+id|kfree_s
+c_func
+(paren
+id|list
+comma
+r_sizeof
+(paren
+r_struct
+id|atalk_iface
+)paren
+)paren
+suffix:semicolon
+id|list
+op_assign
+id|tmp
+suffix:semicolon
+)brace
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|aarp_cleanup_module
+c_func
+(paren
+)paren
+suffix:semicolon
+id|proc_net_unregister
+c_func
+(paren
+id|PROC_NET_ATALK
+)paren
+suffix:semicolon
+id|proc_net_unregister
+c_func
+(paren
+id|PROC_NET_AT_ROUTE
+)paren
+suffix:semicolon
+id|proc_net_unregister
+c_func
+(paren
+id|PROC_NET_ATIF
+)paren
+suffix:semicolon
+id|unregister_netdevice_notifier
+c_func
+(paren
+op_amp
+id|ddp_notifier
+)paren
+suffix:semicolon
+id|dev_remove_pack
+c_func
+(paren
+op_amp
+id|ltalk_packet_type
+)paren
+suffix:semicolon
+id|dev_remove_pack
+c_func
+(paren
+op_amp
+id|ppptalk_packet_type
+)paren
+suffix:semicolon
+id|unregister_snap_client
+c_func
+(paren
+id|ddp_snap_id
+)paren
+suffix:semicolon
+id|sock_unregister
+c_func
+(paren
+id|atalk_proto_ops.family
+)paren
+suffix:semicolon
+id|free_route_list
+c_func
+(paren
+)paren
+suffix:semicolon
+id|free_interface_list
+c_func
+(paren
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif  /* MODULE */
 eof

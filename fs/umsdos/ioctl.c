@@ -168,7 +168,7 @@ r_int
 id|err
 suffix:semicolon
 multiline_comment|/* #Specification: ioctl / acces&n;&t;&t;Only root (effective id) is allowed to do IOCTL on directory&n;&t;&t;in UMSDOS. EPERM is returned for other user.&n;&t;*/
-multiline_comment|/*&n;&t;&t;Well, not all case require write access, but it simplify the code&n;&t;&t;and let&squot;s face it, there is only one client (umssync) for all this&n;&t;*/
+multiline_comment|/*&n;&t;&t;Well, not all cases require write access, but it simplifies&n;&t;&t;the code, and let&squot;s face it, there is only one client (umssync)&n;&t;&t;for all this.&n;&t;*/
 r_if
 c_cond
 (paren

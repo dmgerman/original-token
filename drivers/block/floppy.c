@@ -11467,6 +11467,8 @@ c_cond
 (paren
 op_logical_neg
 id|CURRENT
+op_logical_or
+id|CURRENT_PLUGGED
 )paren
 (brace
 id|CLEAR_INTR

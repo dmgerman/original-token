@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/sched.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; * &squot;sched.c&squot; is the main kernel file. It contains scheduling primitives&n; * (sleep_on, wakeup, schedule etc) as well as a number of simple system&n; * call functions (type getpid(), which just extracts a field from&n; * current-task&n; */
+multiline_comment|/*&n; * &squot;sched.c&squot; is the main kernel file. It contains scheduling primitives&n; * (sleep_on, wakeup, schedule etc) as well as a number of simple system&n; * call functions (type getpid()), which just extract a field from&n; * current-task&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -535,8 +535,8 @@ op_assign
 l_int|0
 suffix:semicolon
 id|i
-op_le
-id|smp_top_cpu
+OL
+id|smp_num_cpus
 suffix:semicolon
 id|i
 op_increment
@@ -545,24 +545,14 @@ op_increment
 r_if
 c_cond
 (paren
-id|cpu_number_map
-(braket
-id|i
-)braket
-op_eq
-op_minus
-l_int|1
-)paren
-r_continue
-suffix:semicolon
-r_if
-c_cond
-(paren
 l_int|0
 op_eq
 id|current_set
 (braket
+id|cpu_logical_map
+(braket
 id|i
+)braket
 )braket
 op_member_access_from_pointer
 id|pid
@@ -571,7 +561,10 @@ id|pid
 id|smp_message_pass
 c_func
 (paren
+id|cpu_logical_map
+(braket
 id|i
+)braket
 comma
 id|MSG_RESCHEDULE
 comma
@@ -3510,7 +3503,7 @@ macro_line|#else
 r_int
 id|cpu
 comma
-id|i
+id|j
 suffix:semicolon
 id|cpu
 op_assign
@@ -3522,38 +3515,31 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|i
+id|j
 op_assign
 l_int|0
 suffix:semicolon
-id|i
-op_le
-id|smp_top_cpu
+id|j
+OL
+id|smp_num_cpus
 suffix:semicolon
-id|i
+id|j
 op_increment
 )paren
 (brace
+r_int
+id|i
+op_assign
+id|cpu_logical_map
+(braket
+id|j
+)braket
+suffix:semicolon
 r_struct
 id|task_struct
 op_star
 id|p
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|cpu_number_map
-(braket
-id|i
-)braket
-op_eq
-op_minus
-l_int|1
-)paren
-(brace
-r_continue
-suffix:semicolon
-)brace
 macro_line|#ifdef __SMP_PROF__
 r_if
 c_cond

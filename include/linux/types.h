@@ -1,77 +1,135 @@
 macro_line|#ifndef _LINUX_TYPES_H
 DECL|macro|_LINUX_TYPES_H
 mdefine_line|#define _LINUX_TYPES_H
-multiline_comment|/*&n; * This allows for 256 file descriptors: if NR_OPEN is ever grown beyond that&n; * you&squot;ll have to change this too. But 256 fd&squot;s seem to be enough even for such&n; * &quot;real&quot; unices like SunOS, so hopefully this is one limit that doesn&squot;t have&n; * to be changed.&n; *&n; * Note that POSIX wants the FD_CLEAR(fd,fdsetp) defines to be in &lt;sys/time.h&gt;&n; * (and thus &lt;linux/time.h&gt;) - but this is a more logical place for them. Solved&n; * by having dummy defines in &lt;sys/time.h&gt;.&n; */
-multiline_comment|/*&n; * Those macros may have been defined in &lt;gnu/types.h&gt;. But we always&n; * use the ones here. &n; */
-DECL|macro|__NFDBITS
-macro_line|#undef __NFDBITS
-DECL|macro|__NFDBITS
-mdefine_line|#define __NFDBITS&t;(8 * sizeof(unsigned int))
-DECL|macro|__FD_SETSIZE
-macro_line|#undef __FD_SETSIZE
-DECL|macro|__FD_SETSIZE
-mdefine_line|#define __FD_SETSIZE&t;256
-DECL|macro|__FDSET_INTS
-macro_line|#undef __FDSET_INTS
-DECL|macro|__FDSET_INTS
-mdefine_line|#define __FDSET_INTS&t;(__FD_SETSIZE/__NFDBITS)
-DECL|struct|fd_set
-r_typedef
-r_struct
-id|fd_set
-(brace
-DECL|member|fds_bits
-r_int
-r_int
-id|fds_bits
-(braket
-id|__FDSET_INTS
-)braket
-suffix:semicolon
-DECL|typedef|fd_set
-)brace
-id|fd_set
-suffix:semicolon
+macro_line|#include &lt;linux/posix_types.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
-macro_line|#ifndef NULL
-DECL|macro|NULL
-mdefine_line|#define NULL ((void *) 0)
-macro_line|#endif
-macro_line|#if defined(__GNUC__) &amp;&amp; !defined(__STRICT_ANSI__)
-DECL|macro|_LOFF_T
-mdefine_line|#define _LOFF_T
-DECL|typedef|loff_t
+macro_line|#ifndef _LINUX_TYPES_DONT_EXPORT
+DECL|typedef|fd_set
 r_typedef
-r_int
-r_int
-id|loff_t
+id|__fd_set
+id|fd_set
 suffix:semicolon
-macro_line|#endif
+DECL|typedef|dev_t
+r_typedef
+id|__dev_t
+id|dev_t
+suffix:semicolon
+DECL|typedef|ino_t
+r_typedef
+id|__ino_t
+id|ino_t
+suffix:semicolon
+DECL|typedef|mode_t
+r_typedef
+id|__mode_t
+id|mode_t
+suffix:semicolon
+DECL|typedef|nlink_t
+r_typedef
+id|__nlink_t
+id|nlink_t
+suffix:semicolon
+DECL|typedef|off_t
+r_typedef
+id|__off_t
+id|off_t
+suffix:semicolon
+DECL|typedef|pid_t
+r_typedef
+id|__pid_t
+id|pid_t
+suffix:semicolon
+DECL|typedef|uid_t
+r_typedef
+id|__uid_t
+id|uid_t
+suffix:semicolon
+DECL|typedef|gid_t
+r_typedef
+id|__gid_t
+id|gid_t
+suffix:semicolon
+DECL|typedef|daddr_t
+r_typedef
+id|__daddr_t
+id|daddr_t
+suffix:semicolon
 multiline_comment|/* bsd */
 DECL|typedef|u_char
 r_typedef
-r_int
-r_char
+id|__u_char
 id|u_char
 suffix:semicolon
 DECL|typedef|u_short
 r_typedef
-r_int
-r_int
+id|__u_short
 id|u_short
 suffix:semicolon
 DECL|typedef|u_int
 r_typedef
-r_int
-r_int
+id|__u_int
 id|u_int
 suffix:semicolon
 DECL|typedef|u_long
 r_typedef
-r_int
-r_int
+id|__u_long
 id|u_long
 suffix:semicolon
+multiline_comment|/*&n; * The following typedefs are also protected by individual ifdefs for&n; * historical reasons:&n; */
+macro_line|#ifndef _SIZE_T
+DECL|macro|_SIZE_T
+mdefine_line|#define _SIZE_T
+DECL|typedef|size_t
+r_typedef
+id|__size_t
+r_int
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef _SSIZE_T
+DECL|macro|_SSIZE_T
+mdefine_line|#define _SSIZE_T
+DECL|typedef|ssize_t
+r_typedef
+id|__ssize_t
+id|ssize_t
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef _PTRDIFF_T
+DECL|macro|_PTRDIFF_T
+mdefine_line|#define _PTRDIFF_T
+DECL|typedef|ptrdiff_t
+r_typedef
+id|__ptrdiff_t
+r_int
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef _TIME_T
+DECL|macro|_TIME_T
+mdefine_line|#define _TIME_T
+DECL|typedef|time_t
+r_typedef
+id|__time_t
+id|time_t
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef _CLOCK_T
+DECL|macro|_CLOCK_T
+mdefine_line|#define _CLOCK_T
+DECL|typedef|clock_t
+r_typedef
+id|__clock_t
+id|clock_t
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef _CADDR_T
+DECL|macro|_CADDR_T
+mdefine_line|#define _CADDR_T
+DECL|typedef|caddr_t
+r_typedef
+id|__caddr_t
+id|caddr_t
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* sysv */
 DECL|typedef|unchar
 r_typedef
@@ -97,40 +155,35 @@ r_int
 r_int
 id|ulong
 suffix:semicolon
-DECL|typedef|caddr_t
-r_typedef
-r_char
-op_star
-id|caddr_t
-suffix:semicolon
-DECL|typedef|cc_t
-r_typedef
-r_int
-r_char
-id|cc_t
-suffix:semicolon
-DECL|typedef|speed_t
+macro_line|#endif /* _LINUX_TYPES_DONT_EXPORT */
+multiline_comment|/*&n; * Below are truly Linux-specific types that should never collide with&n; * any application/library that wants linux/types.h.&n; */
+macro_line|#if defined(__GNUC__) &amp;&amp; !defined(__STRICT_ANSI__)
+DECL|typedef|__loff_t
 r_typedef
 r_int
 r_int
-id|speed_t
+id|__loff_t
 suffix:semicolon
-DECL|typedef|tcflag_t
+macro_line|#ifndef _LINUX_TYPES_DONT_EXPORT
+DECL|macro|_LOFF_T
+mdefine_line|#define _LOFF_T
+DECL|typedef|loff_t
 r_typedef
-r_int
-r_int
-id|tcflag_t
+id|__loff_t
+id|loff_t
 suffix:semicolon
+macro_line|#endif
+macro_line|#endif
 DECL|struct|ustat
 r_struct
 id|ustat
 (brace
 DECL|member|f_tfree
-id|daddr_t
+id|__daddr_t
 id|f_tfree
 suffix:semicolon
 DECL|member|f_tinode
-id|ino_t
+id|__ino_t
 id|f_tinode
 suffix:semicolon
 DECL|member|f_fname
@@ -149,5 +202,5 @@ l_int|6
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* _LINUX_TYPES_H */
 eof

@@ -11,53 +11,6 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-multiline_comment|/*&n; * Map memory not associated with any file into a process&n; * address space.  Adjacent memory is merged.&n; */
-DECL|function|anon_map
-r_static
-r_inline
-r_int
-id|anon_map
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_struct
-id|vm_area_struct
-op_star
-id|vma
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|zeromap_page_range
-c_func
-(paren
-id|vma-&gt;vm_start
-comma
-id|vma-&gt;vm_end
-op_minus
-id|vma-&gt;vm_start
-comma
-id|vma-&gt;vm_page_prot
-)paren
-)paren
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * description of effects of mapping type and prot in current implementation.&n; * this is due to the limited x86 page protection hardware.  The expected&n; * behavior is in parens:&n; *&n; * map_type&t;prot&n; *&t;&t;PROT_NONE&t;PROT_READ&t;PROT_WRITE&t;PROT_EXEC&n; * MAP_SHARED&t;r: (no) no&t;r: (yes) yes&t;r: (no) yes&t;r: (no) yes&n; *&t;&t;w: (no) no&t;w: (no) no&t;w: (yes) yes&t;w: (no) no&n; *&t;&t;x: (no) no&t;x: (no) yes&t;x: (no) yes&t;x: (yes) yes&n; *&t;&t;&n; * MAP_PRIVATE&t;r: (no) no&t;r: (yes) yes&t;r: (no) yes&t;r: (no) yes&n; *&t;&t;w: (no) no&t;w: (no) no&t;w: (copy) copy&t;w: (no) no&n; *&t;&t;x: (no) no&t;x: (no) yes&t;x: (no) yes&t;x: (yes) yes&n; *&n; */
 DECL|variable|protection_map
 id|pgprot_t
@@ -132,9 +85,6 @@ r_int
 id|off
 )paren
 (brace
-r_int
-id|error
-suffix:semicolon
 r_struct
 id|vm_area_struct
 op_star
@@ -591,6 +541,8 @@ c_cond
 (paren
 id|file
 )paren
+(brace
+r_int
 id|error
 op_assign
 id|file-&gt;f_op
@@ -601,19 +553,6 @@ c_func
 id|file-&gt;f_inode
 comma
 id|file
-comma
-id|vma
-)paren
-suffix:semicolon
-r_else
-id|error
-op_assign
-id|anon_map
-c_func
-(paren
-l_int|NULL
-comma
-l_int|NULL
 comma
 id|vma
 )paren
@@ -633,6 +572,7 @@ suffix:semicolon
 r_return
 id|error
 suffix:semicolon
+)brace
 )brace
 id|flags
 op_assign

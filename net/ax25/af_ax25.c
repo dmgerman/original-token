@@ -9944,7 +9944,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot; %5ld %5ld&bslash;n&quot;
+l_string|&quot; %5d %5d&bslash;n&quot;
 comma
 id|ax25-&gt;sk-&gt;wmem_alloc
 comma
@@ -10306,7 +10306,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;G4KLX/GW4PTS AX.25 for Linux. Version 0.31 BETA for Linux NET3.032 (Linux 1.3.53)&bslash;n&quot;
+l_string|&quot;G4KLX/GW4PTS AX.25 for Linux. Version 0.32 BETA for Linux NET3.034 (Linux 1.3.77)&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BPQETHER
@@ -10959,7 +10959,7 @@ c_func
 (paren
 id|skb
 comma
-id|FREE_READ
+id|FREE_WRITE
 )paren
 suffix:semicolon
 r_if

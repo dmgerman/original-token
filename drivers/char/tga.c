@@ -928,10 +928,6 @@ comma
 id|video_screen_size
 )paren
 suffix:semicolon
-id|__scrollback_mode
-op_assign
-l_int|0
-suffix:semicolon
 id|origin
 op_assign
 id|video_mem_start

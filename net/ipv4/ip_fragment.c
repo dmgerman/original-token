@@ -1978,10 +1978,14 @@ id|IP_DF
 id|ip_statistics.IpFragFails
 op_increment
 suffix:semicolon
+id|NETDEBUG
+c_func
+(paren
 id|printk
 c_func
 (paren
 l_string|&quot;ip_queue_xmit: frag needed&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return

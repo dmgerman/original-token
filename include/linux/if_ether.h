@@ -2,7 +2,7 @@ multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol sui
 macro_line|#ifndef _LINUX_IF_ETHER_H
 DECL|macro|_LINUX_IF_ETHER_H
 mdefine_line|#define _LINUX_IF_ETHER_H
-multiline_comment|/* IEEE 802.3 Ethernet magic constants.  The frame sizes omit the preamble&n;   and FCS/CRC (frame check sequence). */
+multiline_comment|/*&n; *&t;IEEE 802.3 Ethernet magic constants.  The frame sizes omit the preamble&n; *&t;and FCS/CRC (frame check sequence). &n; */
 DECL|macro|ETH_ALEN
 mdefine_line|#define ETH_ALEN&t;6&t;&t;/* Octets in one ethernet addr&t; */
 DECL|macro|ETH_HLEN
@@ -13,7 +13,7 @@ DECL|macro|ETH_DATA_LEN
 mdefine_line|#define ETH_DATA_LEN&t;1500&t;&t;/* Max. octets in payload&t; */
 DECL|macro|ETH_FRAME_LEN
 mdefine_line|#define ETH_FRAME_LEN&t;1514&t;&t;/* Max. octets in frame sans FCS */
-multiline_comment|/* These are the defined Ethernet Protocol ID&squot;s. */
+multiline_comment|/*&n; *&t;These are the defined Ethernet Protocol ID&squot;s.&n; */
 DECL|macro|ETH_P_LOOP
 mdefine_line|#define ETH_P_LOOP&t;0x0060&t;&t;/* Ethernet Loopback packet&t;*/
 DECL|macro|ETH_P_ECHO
@@ -73,7 +73,9 @@ DECL|macro|ETH_P_PPP_MP
 mdefine_line|#define ETH_P_PPP_MP    0x0008          /* Dummy type for PPP MP frames */
 DECL|macro|ETH_P_LOCALTALK
 mdefine_line|#define ETH_P_LOCALTALK 0x0009&t;&t;/* Localtalk pseudeo type &t;*/
-multiline_comment|/* This is an Ethernet frame header. */
+DECL|macro|ETH_P_PPPTALK
+mdefine_line|#define ETH_P_PPPTALK&t;0x0010&t;&t;/* Dummy type for Atalk over PPP*/
+multiline_comment|/*&n; *&t;This is an Ethernet frame header.&n; */
 DECL|struct|ethhdr
 r_struct
 id|ethhdr
@@ -104,7 +106,7 @@ suffix:semicolon
 multiline_comment|/* packet type ID field&t;*/
 )brace
 suffix:semicolon
-multiline_comment|/* Ethernet statistics collection data. */
+multiline_comment|/*&n; *&t;Ethernet statistics collection data. &n; */
 DECL|struct|enet_statistics
 r_struct
 id|enet_statistics

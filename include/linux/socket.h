@@ -181,6 +181,7 @@ DECL|macro|SOL_TCP
 mdefine_line|#define SOL_TCP&t;&t;6
 DECL|macro|SOL_UDP
 mdefine_line|#define SOL_UDP&t;&t;17
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* IP options */
 DECL|macro|IP_TOS
 mdefine_line|#define IP_TOS&t;&t;1
@@ -206,6 +207,7 @@ DECL|macro|IP_ADD_MEMBERSHIP
 mdefine_line|#define IP_ADD_MEMBERSHIP&t;&t;35
 DECL|macro|IP_DROP_MEMBERSHIP
 mdefine_line|#define IP_DROP_MEMBERSHIP&t;&t;36
+macro_line|#endif /* __KERNEL__ */
 multiline_comment|/* These need to appear somewhere around here */
 DECL|macro|IP_DEFAULT_MULTICAST_TTL
 mdefine_line|#define IP_DEFAULT_MULTICAST_TTL        1

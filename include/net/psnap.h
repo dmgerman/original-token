@@ -1,3 +1,7 @@
+macro_line|#ifndef _NET_PSNAP_H
+DECL|macro|_NET_PSNAP_H
+mdefine_line|#define _NET_PSNAP_H
+r_extern
 r_struct
 id|datalink_proto
 op_star
@@ -29,4 +33,16 @@ op_star
 )paren
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|unregister_snap_client
+c_func
+(paren
+r_int
+r_char
+op_star
+id|desc
+)paren
+suffix:semicolon
+macro_line|#endif
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;   md.c : Multiple Devices driver for Linux&n;          Copyright (C) 1994-96 Marc ZYNGIER&n;&t;  &lt;zyngier@ufr-info-p7.ibp.fr&gt; or&n;&t;  &lt;maz@gloups.fdn.fr&gt;&n;&n;   A lot of inspiration came from hd.c ...&n;&n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; either version 2, or (at your option)&n;   any later version.&n;   &n;   You should have received a copy of the GNU General Public License&n;   (for example /usr/src/linux/COPYING); if not, write to the Free&n;   Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  &n;*/
+multiline_comment|/*&n;   md.c : Multiple Devices driver for Linux&n;          Copyright (C) 1994-96 Marc ZYNGIER&n;&t;  &lt;zyngier@ufr-info-p7.ibp.fr&gt; or&n;&t;  &lt;maz@gloups.fdn.fr&gt;&n;&n;   A lot of inspiration came from hd.c ...&n;&n;   kerneld support by Boris Tobotras &lt;boris@xtalk.msk.su&gt;&n;&n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; either version 2, or (at your option)&n;   any later version.&n;   &n;   You should have received a copy of the GNU General Public License&n;   (for example /usr/src/linux/COPYING); if not, write to the Free&n;   Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  &n;*/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -11,6 +11,9 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
+macro_line|#ifdef CONFIG_KERNELD
+macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#endif
 macro_line|#include &lt;errno.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR MD_MAJOR
@@ -194,7 +197,7 @@ r_static
 r_char
 id|name
 (braket
-l_int|10
+l_int|40
 )braket
 suffix:semicolon
 multiline_comment|/* This should be long&n;&t;&t;&t;&t;   enough for a device name ! */
@@ -217,18 +220,26 @@ id|hd
 (brace
 id|printk
 (paren
-l_string|&quot;No gendisk entry for dev %04x&bslash;n&quot;
+l_string|&quot;No gendisk entry for dev %s&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 )paren
 suffix:semicolon
 id|sprintf
 (paren
 id|name
 comma
-l_string|&quot;dev %04x&quot;
+l_string|&quot;dev %s&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -838,17 +849,57 @@ id|PERSONALITY_SHIFT
 )paren
 op_ge
 id|MAX_PERSONALITY
-op_logical_or
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|pers
 (braket
 id|index
 )braket
 )paren
+(brace
+macro_line|#ifdef CONFIG_KERNELD
+r_char
+id|module_name
+(braket
+l_int|80
+)braket
+suffix:semicolon
+id|sprintf
+(paren
+id|module_name
+comma
+l_string|&quot;md-personality-%d&quot;
+comma
+id|index
+)paren
+suffix:semicolon
+id|request_module
+(paren
+id|module_name
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pers
+(braket
+id|index
+)braket
+)paren
+macro_line|#endif
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 id|md_dev
 (braket
 id|minor
@@ -1942,9 +1993,13 @@ id|MAX_REAL
 id|printk
 c_func
 (paren
-l_string|&quot;md: bad device number: 0x%04x&bslash;n&quot;
+l_string|&quot;md: bad device: %s&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|req-&gt;rq_dev
+)paren
 )paren
 suffix:semicolon
 id|end_request
@@ -2060,10 +2115,23 @@ id|request
 op_star
 id|req
 suffix:semicolon
+r_int
+id|flags
+suffix:semicolon
 id|down
 (paren
 op_amp
 id|request_lock
+)paren
+suffix:semicolon
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 r_for
@@ -2093,11 +2161,6 @@ dot
 id|bh
 )paren
 r_continue
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
 suffix:semicolon
 id|found
 op_assign
@@ -2219,10 +2282,6 @@ id|found
 r_if
 c_cond
 (paren
-id|req-&gt;rq_status
-op_ne
-id|RQ_INACTIVE
-op_logical_and
 id|req-&gt;rq_status
 op_ne
 id|RQ_ACTIVE
@@ -2356,7 +2415,12 @@ id|i
 dot
 id|nr_sectors
 suffix:semicolon
-id|bh-&gt;b_reqnext
+id|pending
+(braket
+id|i
+)braket
+dot
+id|bhtail-&gt;b_reqnext
 op_assign
 id|req-&gt;bh
 suffix:semicolon
@@ -2407,6 +2471,10 @@ id|up
 (paren
 op_amp
 id|request_lock
+)paren
+suffix:semicolon
+id|sti
+(paren
 )paren
 suffix:semicolon
 id|req
@@ -2501,11 +2569,20 @@ op_amp
 id|request_lock
 )paren
 suffix:semicolon
+id|cli
+(paren
+)paren
+suffix:semicolon
 )brace
 id|up
 (paren
 op_amp
 id|request_lock
+)paren
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
 )paren
 suffix:semicolon
 r_for
@@ -2546,10 +2623,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-id|sti
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|variable|md_symbol_table
 r_static

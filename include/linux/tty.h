@@ -2,6 +2,14 @@ macro_line|#ifndef _LINUX_TTY_H
 DECL|macro|_LINUX_TTY_H
 mdefine_line|#define _LINUX_TTY_H
 multiline_comment|/*&n; * &squot;tty.h&squot; defines some structures used by tty_io.c and some defines.&n; */
+multiline_comment|/*&n; * These constants are also useful for user-level apps (e.g., VC&n; * resizing).&n; */
+DECL|macro|MIN_NR_CONSOLES
+mdefine_line|#define MIN_NR_CONSOLES&t;1&t;/* must be at least 1 */
+DECL|macro|MAX_NR_CONSOLES
+mdefine_line|#define MAX_NR_CONSOLES&t;63&t;/* serial lines start at 64 */
+DECL|macro|MAX_NR_USER_CONSOLES
+mdefine_line|#define MAX_NR_USER_CONSOLES 63&t;/* must be root to allocate above this */
+multiline_comment|/* Note: the ioctl VT_GETSTATE does not work for&n;&t;&t;   consoles 16 and higher (since it returns a short) */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
@@ -10,13 +18,6 @@ macro_line|#include &lt;linux/tty_driver.h&gt;
 macro_line|#include &lt;linux/tty_ldisc.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Note: don&squot;t mess with NR_PTYS until you understand the tty minor &n; * number allocation game...&n; * (Note: the *_driver.minor_start values 1, 64, 128, 192 are&n; * hardcoded at present.)&n; */
-DECL|macro|MIN_NR_CONSOLES
-mdefine_line|#define MIN_NR_CONSOLES&t;1&t;/* must be at least 1 */
-DECL|macro|MAX_NR_CONSOLES
-mdefine_line|#define MAX_NR_CONSOLES&t;63&t;/* serial lines start at 64 */
-DECL|macro|MAX_NR_USER_CONSOLES
-mdefine_line|#define MAX_NR_USER_CONSOLES 63&t;/* must be root to allocate above this */
-multiline_comment|/* Note: the ioctl VT_GETSTATE does not work for&n;&t;&t;   consoles 16 and higher (since it returns a short) */
 DECL|macro|NR_PTYS
 mdefine_line|#define NR_PTYS&t;&t;256
 DECL|macro|NR_LDISCS

@@ -4,6 +4,7 @@ mdefine_line|#define _LINUX_BLKDEV_H
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
+macro_line|#include &lt;linux/tqueue.h&gt;
 multiline_comment|/*&n; * Ok, this is an expanded form so that we can use the same&n; * request for paging requests when that is implemented. In&n; * paging, &squot;bh&squot; is NULL, and the semaphore is used to wait&n; * for read/write completion.&n; */
 DECL|struct|request
 r_struct
@@ -104,8 +105,15 @@ id|request
 op_star
 id|current_request
 suffix:semicolon
+DECL|member|plug_tq
+r_struct
+id|tq_struct
+id|plug_tq
+suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|IS_PLUGGED
+mdefine_line|#define IS_PLUGGED(dev) ((dev)-&gt;plug_tq.sync)
 DECL|struct|sec_size
 r_struct
 id|sec_size

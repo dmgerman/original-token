@@ -12,7 +12,7 @@ macro_line|#endif
 macro_line|#ifdef&t;CONFIG_INET
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#endif
-macro_line|#ifdef CONFIG_IPX
+macro_line|#if defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE)
 macro_line|#include &lt;net/ipxcall.h&gt;
 macro_line|#include &lt;net/p8022call.h&gt;
 macro_line|#endif
@@ -22,8 +22,8 @@ macro_line|#ifdef CONFIG_NETROM
 macro_line|#include &lt;net/nrcall.h&gt;
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifdef CONFIG_ATALK
-macro_line|#ifndef CONFIG_IPX
+macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE)
+macro_line|#if ! ( defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE) )
 macro_line|#include &lt;net/p8022call.h&gt;
 macro_line|#endif
 macro_line|#include &lt;net/atalkcall.h&gt;
@@ -61,7 +61,7 @@ id|unix_proto_init
 comma
 multiline_comment|/* Unix domain socket family &t;*/
 macro_line|#endif
-macro_line|#if defined(CONFIG_IPX)||defined(CONFIG_ATALK)  
+macro_line|#if defined(CONFIG_IPX)   || defined(CONFIG_IPX_MODULE) || &bslash;&n;    defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE)
 (brace
 l_string|&quot;802.2&quot;
 comma

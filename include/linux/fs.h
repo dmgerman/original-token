@@ -2195,6 +2195,16 @@ id|filp
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|blkdev_release
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+suffix:semicolon
+r_extern
 r_struct
 id|file_operations
 id|def_blk_fops

@@ -9827,7 +9827,9 @@ c_func
 (paren
 id|tty
 comma
-l_int|3000
+l_int|30
+op_star
+id|HZ
 )paren
 suffix:semicolon
 multiline_comment|/* 30 seconds timeout */

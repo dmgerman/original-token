@@ -56,11 +56,6 @@ id|smp_num_cpus
 suffix:semicolon
 r_extern
 r_int
-id|smp_top_cpu
-suffix:semicolon
-multiline_comment|/* Top CPU number  */
-r_extern
-r_int
 id|smp_threads_ready
 suffix:semicolon
 multiline_comment|/* True once the per process idle is forked */
@@ -161,8 +156,6 @@ DECL|macro|smp_num_cpus
 mdefine_line|#define smp_num_cpus&t;&t;&t;1
 DECL|macro|smp_processor_id
 mdefine_line|#define smp_processor_id()&t;&t;0
-DECL|macro|smp_top_cpu
-mdefine_line|#define smp_top_cpu&t;&t;&t;0
 DECL|macro|smp_message_pass
 mdefine_line|#define smp_message_pass(t,m,d,w)&t;
 DECL|macro|smp_threads_ready

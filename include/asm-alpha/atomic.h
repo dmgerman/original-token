@@ -1,7 +1,7 @@
-macro_line|#ifndef __ARCH_I386_ATOMIC__
-DECL|macro|__ARCH_I386_ATOMIC__
-mdefine_line|#define __ARCH_I386_ATOMIC__
-multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc..&n; */
+macro_line|#ifndef __ARCH_ALPHA_ATOMIC__
+DECL|macro|__ARCH_ALPHA_ATOMIC__
+mdefine_line|#define __ARCH_ALPHA_ATOMIC__
+multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc...&n; *&n; * But use these as seldom as possible since they are much more slower&n; * than regular operations.&n; */
 multiline_comment|/*&n; * Make sure gcc doesn&squot;t try to be clever and move things around&n; * on us. We need to use _exactly_ the address the user gave us,&n; * not some alias that contains the same information.&n; */
 DECL|macro|__atomic_fool_gcc
 mdefine_line|#define __atomic_fool_gcc(x) (*(struct { int a[100]; } *)x)

@@ -4440,6 +4440,8 @@ op_logical_neg
 id|CURRENT
 )paren
 op_logical_or
+id|CURRENT_PLUGGED
+op_logical_or
 id|CURRENT-&gt;rq_status
 op_eq
 id|RQ_INACTIVE

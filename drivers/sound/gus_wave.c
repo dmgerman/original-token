@@ -3314,6 +3314,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|gus_pnp_flag
+op_logical_and
+op_logical_neg
 id|tmp
 )paren
 id|printk
@@ -6964,6 +6967,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|gus_pnp_flag
+op_logical_or
 id|gus_no_dma
 )paren
 (brace

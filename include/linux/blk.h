@@ -545,6 +545,8 @@ macro_line|#ifndef CURRENT
 DECL|macro|CURRENT
 mdefine_line|#define CURRENT (blk_dev[MAJOR_NR].current_request)
 macro_line|#endif
+DECL|macro|CURRENT_PLUGGED
+mdefine_line|#define CURRENT_PLUGGED IS_PLUGGED(blk_dev+MAJOR_NR)
 DECL|macro|CURRENT_DEV
 mdefine_line|#define CURRENT_DEV DEVICE_NR(CURRENT-&gt;rq_dev)
 macro_line|#ifdef DEVICE_INTR
@@ -591,7 +593,7 @@ DECL|macro|CLEAR_INTR
 mdefine_line|#define CLEAR_INTR
 macro_line|#endif
 DECL|macro|INIT_REQUEST
-mdefine_line|#define INIT_REQUEST &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;CLEAR_INTR; &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;rq_dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!buffer_locked(CURRENT-&gt;bh)) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
+mdefine_line|#define INIT_REQUEST &bslash;&n;&t;if (!CURRENT || CURRENT_PLUGGED) {&bslash;&n;&t;&t;CLEAR_INTR; &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;rq_dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!buffer_locked(CURRENT-&gt;bh)) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
 macro_line|#endif /* (MAJOR_NR != SCSI_TAPE_MAJOR) &amp;&amp; !defined(IDE_DRIVER) */
 multiline_comment|/* end_request() - SCSI devices have their own version */
 multiline_comment|/*               - IDE drivers have their own copy too */

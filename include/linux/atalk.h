@@ -493,6 +493,16 @@ op_star
 id|addr
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+r_extern
+r_void
+id|aarp_cleanup_module
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 eof

@@ -1,9 +1,8 @@
-multiline_comment|/*&n; *&t; PnP soundcard support is not included in this version.&n; *&n; *&t; AEDSP16 will not work without significant changes.&n; */
+multiline_comment|/*&n; *     PnP soundcard support is not included in this version.&n; *&n; *       AEDSP16 will not work without significant changes.&n; */
 DECL|macro|DISABLED_OPTIONS
 mdefine_line|#define DISABLED_OPTIONS &t;(B(OPT_SPNP)|B(OPT_AEDSP16)|B(OPT_UNUSED1)|B(OPT_UNUSED2))
 multiline_comment|/*&n; * sound/configure.c  - Configuration program for the Linux Sound Driver&n; */
-DECL|macro|COPYING2
-mdefine_line|#define COPYING2
+multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
@@ -69,7 +68,7 @@ mdefine_line|#define OPT_LAST&t;23&t;/* Last defined OPT number */
 DECL|macro|DUMMY_OPTS
 mdefine_line|#define DUMMY_OPTS (B(OPT_MIDI_AUTO)|B(OPT_YM3812_AUTO))
 DECL|macro|ANY_DEVS
-mdefine_line|#define ANY_DEVS (B(OPT_AUDIO)|B(OPT_MIDI)|B(OPT_GUS)| &bslash;&n;&t;&t;  B(OPT_MPU401)|B(OPT_PSS)|B(OPT_GUS16)|B(OPT_GUSMAX)| &bslash;&n;&t;&t;  B(OPT_MSS)|B(OPT_SSCAPE)|B(OPT_UART6850)|B(OPT_TRIX)| &bslash;&n;&t;&t;  B(OPT_MAD16)|B(OPT_CS4232)|B(OPT_MAUI))
+mdefine_line|#define ANY_DEVS (B(OPT_AUDIO)|B(OPT_MIDI)|B(OPT_GUS)| &bslash;&n;&t;&t;  B(OPT_MPU401)|B(OPT_PSS)|B(OPT_GUS16)|B(OPT_GUSMAX)| &bslash;&n;&t;&t;  B(OPT_MSS)|B(OPT_SSCAPE)|B(OPT_UART6850)|B(OPT_TRIX)| &bslash;&n;&t;&t;  B(OPT_MAD16)|B(OPT_CS4232)|B(OPT_MAUI)|B(OPT_ADLIB))
 DECL|macro|AUDIO_CARDS
 mdefine_line|#define AUDIO_CARDS (B (OPT_PSS) | B (OPT_SB) | B (OPT_PAS) | B (OPT_GUS) | &bslash;&n;&t;&t;B (OPT_MSS) | B (OPT_GUS16) | B (OPT_GUSMAX) | B (OPT_TRIX) | &bslash;&n;&t;&t;B (OPT_SSCAPE)| B(OPT_MAD16) | B(OPT_CS4232))
 DECL|macro|MIDI_CARDS
@@ -824,42 +823,6 @@ r_int
 id|nr
 )paren
 (brace
-macro_line|#if 0
-r_switch
-c_cond
-(paren
-id|nr
-)paren
-(brace
-r_case
-id|OPT_LAST_MUTUAL
-op_plus
-l_int|1
-suffix:colon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nThe following cards should work with any other cards.&bslash;n&quot;
-l_string|&quot;CAUTION! Don&squot;t enable MPU-401 if you don&squot;t have it.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|OPT_HIGHLEVEL
-suffix:colon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nSelect one or more of the following options&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -958,7 +921,6 @@ suffix:semicolon
 id|response
 suffix:colon
 id|fprintf
-c_func
 (paren
 id|stderr
 comma
@@ -971,7 +933,6 @@ c_cond
 id|def_answ
 )paren
 id|fprintf
-c_func
 (paren
 id|stderr
 comma
@@ -980,7 +941,6 @@ l_string|&quot; [Y/n/?] &quot;
 suffix:semicolon
 r_else
 id|fprintf
-c_func
 (paren
 id|stderr
 comma
@@ -1057,7 +1017,6 @@ l_char|&squot;?&squot;
 (brace
 multiline_comment|/* display help message */
 id|fprintf
-c_func
 (paren
 id|stderr
 comma
@@ -1065,7 +1024,6 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|fprintf
-c_func
 (paren
 id|stderr
 comma
@@ -1073,7 +1031,6 @@ id|help
 )paren
 suffix:semicolon
 id|fprintf
-c_func
 (paren
 id|stderr
 comma
@@ -1425,7 +1382,6 @@ r_if
 c_cond
 (paren
 id|strcmp
-c_func
 (paren
 id|choices
 comma
@@ -2114,7 +2070,6 @@ l_int|0
 multiline_comment|/* Rename it (hack) */
 (brace
 id|printf
-c_func
 (paren
 l_string|&quot;#define SB_DMA2 %s&bslash;n&quot;
 comma
@@ -2143,7 +2098,6 @@ l_int|0
 multiline_comment|/* Rename it (hack) */
 (brace
 id|printf
-c_func
 (paren
 l_string|&quot;#define SB_DMA2 %s&bslash;n&quot;
 comma
@@ -2637,12 +2591,10 @@ comma
 l_string|&quot;Old configuration copied.&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef linux
 id|build_defines
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|old_config_used
 op_assign
 l_int|1
@@ -2651,7 +2603,6 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifdef linux
 r_void
 DECL|function|build_defines
 id|build_defines
@@ -2744,23 +2695,6 @@ dot
 id|macro
 )paren
 suffix:semicolon
-macro_line|#if 0
-r_else
-id|fprintf
-(paren
-id|optf
-comma
-l_string|&quot;CONFIG_%s=n&bslash;n&quot;
-comma
-id|hw_table
-(braket
-id|i
-)braket
-dot
-id|macro
-)paren
-suffix:semicolon
-macro_line|#endif
 id|fprintf
 (paren
 id|optf
@@ -2811,23 +2745,6 @@ dot
 id|name
 )paren
 suffix:semicolon
-macro_line|#if 0
-r_else
-id|fprintf
-(paren
-id|optf
-comma
-l_string|&quot;CONFIG_%s=n&bslash;n&quot;
-comma
-id|extra_options
-(braket
-id|i
-)braket
-dot
-id|name
-)paren
-suffix:semicolon
-macro_line|#endif
 id|i
 op_increment
 suffix:semicolon
@@ -2845,7 +2762,6 @@ id|optf
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_void
 DECL|function|ask_parameters
 id|ask_parameters
@@ -2853,7 +2769,6 @@ id|ask_parameters
 r_void
 )paren
 (brace
-macro_line|#ifdef linux
 r_int
 id|num
 suffix:semicolon
@@ -4014,7 +3929,6 @@ comma
 l_string|&quot;5, 7, 9 or 10&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|ask_int_choice
 (paren
 id|B
@@ -4121,13 +4035,11 @@ id|ask_parameters
 (paren
 )paren
 suffix:semicolon
-macro_line|#if 1
 id|printf
 (paren
 l_string|&quot;#&bslash;n$MAKE -C drivers/sound kernelconfig || exit 1&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_void
 DECL|function|dump_fixed_local
@@ -4617,7 +4529,6 @@ l_int|255
 )braket
 suffix:semicolon
 id|sprintf
-c_func
 (paren
 id|str
 comma
@@ -5606,7 +5517,6 @@ l_int|255
 )braket
 suffix:semicolon
 id|sprintf
-c_func
 (paren
 id|str
 comma

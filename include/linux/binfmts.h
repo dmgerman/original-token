@@ -232,6 +232,16 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|remove_arg_zero
+c_func
+(paren
+r_struct
+id|linux_binprm
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|search_binary_handler
 c_func

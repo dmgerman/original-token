@@ -57,7 +57,6 @@ r_int
 id|buffer_size
 suffix:semicolon
 multiline_comment|/* The negotiated buffer size, to be&n;&t;&t;&t;&t;   used for read/write requests! */
-multiline_comment|/* Not used yet, but here some day the namespace numbers will be&n;&t;   stored. */
 DECL|member|volume_number
 r_int
 id|volume_number
@@ -69,15 +68,15 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|NCP_IOC_NCPREQUEST
-mdefine_line|#define&t;NCP_IOC_NCPREQUEST&t;&t;_IOR(&squot;n&squot;, 1, unsigned char *)
+mdefine_line|#define&t;NCP_IOC_NCPREQUEST&t;&t;_IOR(&squot;n&squot;, 1, struct ncp_ioctl_request)
 DECL|macro|NCP_IOC_GETMOUNTUID
-mdefine_line|#define&t;NCP_IOC_GETMOUNTUID&t;&t;_IOR(&squot;u&squot;, 1, uid_t)
+mdefine_line|#define&t;NCP_IOC_GETMOUNTUID&t;&t;_IOW(&squot;n&squot;, 2, uid_t)
 DECL|macro|NCP_IOC_CONN_LOGGED_IN
-mdefine_line|#define NCP_IOC_CONN_LOGGED_IN          _IO(&squot;l&squot;, 1)
+mdefine_line|#define NCP_IOC_CONN_LOGGED_IN          _IO(&squot;n&squot;, 3)
 DECL|macro|NCP_GET_FS_INFO_VERSION
 mdefine_line|#define NCP_GET_FS_INFO_VERSION (1)
 DECL|macro|NCP_IOC_GET_FS_INFO
-mdefine_line|#define NCP_IOC_GET_FS_INFO             _IOWR(&squot;i&squot;, 1, unsigned char *)
+mdefine_line|#define NCP_IOC_GET_FS_INFO             _IOWR(&squot;n&squot;, 4, struct ncp_fs_info)
 multiline_comment|/*&n; * The packet size to allocate. One page should be enough.&n; */
 DECL|macro|NCP_PACKET_SIZE
 mdefine_line|#define NCP_PACKET_SIZE 4070

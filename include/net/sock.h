@@ -16,10 +16,10 @@ macro_line|#ifdef CONFIG_NETROM
 macro_line|#include &lt;net/netrom.h&gt;
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifdef CONFIG_IPX
+macro_line|#if defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE)
 macro_line|#include &lt;net/ipx.h&gt;
 macro_line|#endif
-macro_line|#ifdef CONFIG_ATALK
+macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE)
 macro_line|#include &lt;linux/atalk.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/igmp.h&gt;
@@ -62,6 +62,16 @@ id|sock
 op_star
 id|other
 suffix:semicolon
+DECL|member|marksweep
+r_int
+id|marksweep
+suffix:semicolon
+DECL|macro|MARKED
+mdefine_line|#define MARKED&t;&t;&t;1
+DECL|member|inflight
+r_int
+id|inflight
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;IP packet socket options&n; */
@@ -102,7 +112,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Once the IPX ncpd patches are in these are going into protinfo&n; */
-macro_line|#ifdef CONFIG_IPX 
+macro_line|#if defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE)
 DECL|struct|ipx_opt
 r_struct
 id|ipx_opt
@@ -661,20 +671,20 @@ r_struct
 id|unix_opt
 id|af_unix
 suffix:semicolon
-macro_line|#ifdef CONFIG_ATALK
+macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE)
 DECL|member|af_at
 r_struct
 id|atalk_sock
 id|af_at
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_IPX
+macro_line|#if defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE)
 DECL|member|af_ipx
 r_struct
 id|ipx_opt
 id|af_ipx
 suffix:semicolon
-macro_line|#endif&t;&t;
+macro_line|#endif
 macro_line|#ifdef CONFIG_INET
 DECL|member|af_packet
 r_struct

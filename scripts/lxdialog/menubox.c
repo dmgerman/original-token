@@ -1325,7 +1325,7 @@ c_cond
 (paren
 id|choice
 OL
-l_int|6
+l_int|2
 op_logical_and
 id|scroll
 )paren
@@ -1462,7 +1462,9 @@ c_cond
 (paren
 id|choice
 OG
-l_int|4
+id|max_choice
+op_minus
+l_int|3
 )paren
 op_logical_and
 (paren

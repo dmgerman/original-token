@@ -3051,6 +3051,25 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|dev-&gt;change_mtu
+)paren
+id|ret
+op_assign
+(paren
+op_star
+id|dev-&gt;change_mtu
+)paren
+(paren
+id|dev
+comma
+id|ifr.ifr_mtu
+)paren
+suffix:semicolon
+r_else
+(brace
 id|dev-&gt;mtu
 op_assign
 id|ifr.ifr_mtu
@@ -3059,6 +3078,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -3621,6 +3641,22 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|sdla_setup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|dlci_setup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|net_dev_init
 r_int
 id|net_dev_init
@@ -3682,6 +3718,20 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif&t;
+macro_line|#if defined(CONFIG_DLCI)
+id|dlci_setup
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_SDLA)
+id|sdla_setup
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;SLHC if present needs attaching so other people see it&n;&t; *&t;even if not opened.&n;&t; */
 macro_line|#if (defined(CONFIG_SLIP_COMPRESSED) || defined(CONFIG_PPP)) &amp;&amp; defined(CONFIG_SLHC_BUILTIN)
 id|slhc_install

@@ -6,6 +6,7 @@ DECL|macro|LO_NAME_SIZE
 mdefine_line|#define LO_NAME_SIZE&t;64
 DECL|macro|LO_KEY_SIZE
 mdefine_line|#define LO_KEY_SIZE&t;32
+macro_line|#ifdef __KERNEL__
 DECL|struct|loop_device
 r_struct
 id|loop_device
@@ -130,6 +131,9 @@ suffix:semicolon
 multiline_comment|/*&n; * Loop flags&n; */
 DECL|macro|LO_FLAGS_DO_BMAP
 mdefine_line|#define LO_FLAGS_DO_BMAP&t;0x00000001
+DECL|macro|LO_FLAGS_READ_ONLY
+mdefine_line|#define LO_FLAGS_READ_ONLY&t;0x00000002
+macro_line|#endif /* __KERNEL__ */
 DECL|struct|loop_info
 r_struct
 id|loop_info

@@ -2,6 +2,7 @@ multiline_comment|/*&n; *&t;The following information is in its entirety obtaine
 macro_line|#ifndef _NET_INET_IPX_H_
 DECL|macro|_NET_INET_IPX_H_
 mdefine_line|#define _NET_INET_IPX_H_
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/datalink.h&gt;
 macro_line|#include &lt;linux/ipx.h&gt;

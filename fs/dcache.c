@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/dcache.c&n; *&n; *  (C) Copyright 1994 Linus Torvalds&n; */
 multiline_comment|/*&n; * The directory cache is a &quot;two-level&quot; cache, each level doing LRU on&n; * its entries.  Adding new entries puts them at the end of the LRU&n; * queue on the first-level cache, while the second-level cache is&n; * fed by any cache hits.&n; *&n; * The idea is that new additions (from readdir(), for example) will not&n; * flush the cache of entries that have really been used.&n; *&n; * There is a global hash-table over both caches that hashes the entries&n; * based on the directory inode number and device as well as on a&n; * string-hash computed over the name. &n; */
-macro_line|#include &lt;stddef.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 multiline_comment|/*&n; * Don&squot;t bother caching long names.. They just take up space in the cache, and&n; * for a name cache you just want to cache the &quot;normal&quot; names anyway which tend&n; * to be short.&n; */
@@ -86,8 +85,12 @@ id|prev_lru
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|dcache_offset
+mdefine_line|#define dcache_offset(x) ((unsigned long)&amp;((struct dir_cache_entry*)0)-&gt;x)
+DECL|macro|dcache_datalen
+mdefine_line|#define dcache_datalen (dcache_offset(lru_head) - dcache_offset(dc_dev))
 DECL|macro|COPYDATA
-mdefine_line|#define COPYDATA(de, newde) &bslash;&n;memcpy((void *) &amp;newde-&gt;dc_dev, (void *) &amp;de-&gt;dc_dev, &bslash;&n;sizeof(kdev_t) + 3*sizeof(unsigned long) + 1 + DCACHE_NAME_LEN)
+mdefine_line|#define COPYDATA(de, newde) &bslash;&n;memcpy((void *) &amp;newde-&gt;dc_dev, (void *) &amp;de-&gt;dc_dev, dcache_datalen)
 DECL|variable|level1_cache
 r_static
 r_struct
@@ -123,7 +126,7 @@ id|level2_head
 suffix:semicolon
 multiline_comment|/*&n; * The hash-queues are also doubly-linked circular lists, but the head is&n; * itself on the doubly-linked list, not just a pointer to the first entry.&n; */
 DECL|macro|DCACHE_HASH_QUEUES
-mdefine_line|#define DCACHE_HASH_QUEUES 19
+mdefine_line|#define DCACHE_HASH_QUEUES 32
 DECL|macro|hash_fn
 mdefine_line|#define hash_fn(dev,dir,namehash) ((HASHDEV(dev) ^ (dir) ^ (namehash)) % DCACHE_HASH_QUEUES)
 DECL|variable|hash_table
@@ -148,13 +151,27 @@ op_star
 id|de
 )paren
 (brace
-id|de-&gt;next_lru-&gt;prev_lru
+r_struct
+id|dir_cache_entry
+op_star
+id|next
+op_assign
+id|de-&gt;next_lru
+suffix:semicolon
+r_struct
+id|dir_cache_entry
+op_star
+id|prev
 op_assign
 id|de-&gt;prev_lru
 suffix:semicolon
-id|de-&gt;prev_lru-&gt;next_lru
+id|next-&gt;prev_lru
 op_assign
-id|de-&gt;next_lru
+id|prev
+suffix:semicolon
+id|prev-&gt;next_lru
+op_assign
+id|next
 suffix:semicolon
 )brace
 DECL|function|add_lru
@@ -175,15 +192,22 @@ op_star
 id|head
 )paren
 (brace
+r_struct
+id|dir_cache_entry
+op_star
+id|prev
+op_assign
+id|head-&gt;prev_lru
+suffix:semicolon
 id|de-&gt;next_lru
 op_assign
 id|head
 suffix:semicolon
 id|de-&gt;prev_lru
 op_assign
-id|head-&gt;prev_lru
+id|prev
 suffix:semicolon
-id|de-&gt;prev_lru-&gt;next_lru
+id|prev-&gt;next_lru
 op_assign
 id|de
 suffix:semicolon
@@ -257,8 +281,8 @@ id|len
 (brace
 r_return
 id|len
-op_star
-op_star
+op_plus
+(paren
 (paren
 r_const
 r_int
@@ -266,6 +290,25 @@ r_char
 op_star
 )paren
 id|name
+)paren
+(braket
+l_int|0
+)braket
+op_plus
+(paren
+(paren
+r_const
+r_int
+r_char
+op_star
+)paren
+id|name
+)paren
+(braket
+id|len
+op_minus
+l_int|1
+)braket
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Hash queue manipulation. Look out for the casts..&n; */
@@ -282,19 +325,33 @@ op_star
 id|de
 )paren
 (brace
+r_struct
+id|dir_cache_entry
+op_star
+id|next
+op_assign
+id|de-&gt;h.next
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|de-&gt;h.next
+id|next
 )paren
 (brace
-id|de-&gt;h.next-&gt;h.prev
+r_struct
+id|dir_cache_entry
+op_star
+id|prev
 op_assign
 id|de-&gt;h.prev
 suffix:semicolon
-id|de-&gt;h.prev-&gt;h.next
+id|next-&gt;h.prev
 op_assign
-id|de-&gt;h.next
+id|prev
+suffix:semicolon
+id|prev-&gt;h.next
+op_assign
+id|next
 suffix:semicolon
 id|de-&gt;h.next
 op_assign
@@ -320,9 +377,16 @@ op_star
 id|hash
 )paren
 (brace
-id|de-&gt;h.next
+r_struct
+id|dir_cache_entry
+op_star
+id|next
 op_assign
 id|hash-&gt;next
+suffix:semicolon
+id|de-&gt;h.next
+op_assign
+id|next
 suffix:semicolon
 id|de-&gt;h.prev
 op_assign
@@ -333,7 +397,7 @@ op_star
 )paren
 id|hash
 suffix:semicolon
-id|hash-&gt;next-&gt;h.prev
+id|next-&gt;h.prev
 op_assign
 id|de
 suffix:semicolon

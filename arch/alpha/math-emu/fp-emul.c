@@ -1111,7 +1111,7 @@ op_rshift
 l_int|5
 )paren
 op_amp
-l_int|0x3ff
+l_int|0x7ff
 suffix:semicolon
 id|fb
 op_assign

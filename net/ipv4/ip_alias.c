@@ -16,10 +16,10 @@ macro_line|#include &quot;user_stubs.h&quot;
 macro_line|#endif
 macro_line|#include &lt;linux/net_alias.h&gt;
 macro_line|#include &lt;net/ip_alias.h&gt;
-multiline_comment|/*&n; * AF_INET alias init&n; */
+multiline_comment|/*&n; *&t;AF_INET alias init&n; */
+DECL|function|ip_alias_init_1
 r_static
 r_int
-DECL|function|ip_alias_init_1
 id|ip_alias_init_1
 c_func
 (paren
@@ -55,10 +55,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * AF_INET alias done&n; */
+multiline_comment|/*&n; *&t;AF_INET alias done&n; */
+DECL|function|ip_alias_done_1
 r_static
 r_int
-DECL|function|ip_alias_done_1
 id|ip_alias_done_1
 c_func
 (paren
@@ -89,9 +89,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * print alias address info&n; */
-r_int
+multiline_comment|/*&n; *&t;Print alias address info&n; */
 DECL|function|ip_alias_print_1
+r_int
 id|ip_alias_print_1
 c_func
 (paren
@@ -172,10 +172,10 @@ l_int|255
 )paren
 suffix:semicolon
 )brace
+DECL|function|ip_alias_dev_select
 r_struct
 id|device
 op_star
-DECL|function|ip_alias_dev_select
 id|ip_alias_dev_select
 c_func
 (paren
@@ -203,7 +203,14 @@ id|rtable
 op_star
 id|rt
 suffix:semicolon
-multiline_comment|/*&n;   * defensive...&n;   */
+r_struct
+id|device
+op_star
+id|dev
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Defensive...&t;&n;&t; */
 r_if
 c_cond
 (paren
@@ -214,7 +221,7 @@ l_int|NULL
 r_return
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * get u32 address. &n;   */
+multiline_comment|/*&n;&t; *&t;Get u32 address. &n;&t; */
 id|addr
 op_assign
 (paren
@@ -241,7 +248,7 @@ l_int|0
 r_return
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * find &squot;closest&squot; device to address given. any other suggestions? ...&n;   * net_alias module will check if returned device is main_dev&squot;s alias&n;   */
+multiline_comment|/*&n;&t; *&t;Find &squot;closest&squot; device to address given. any other suggestions? ...&n;&t; *&t;net_alias module will check if returned device is main_dev&squot;s alias&n;&t; */
 id|rt
 op_assign
 id|ip_rt_route
@@ -252,15 +259,25 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_return
+r_if
+c_cond
 (paren
 id|rt
 )paren
-ques
-c_cond
+(brace
+id|dev
+op_assign
 id|rt-&gt;rt_dev
-suffix:colon
-l_int|NULL
+suffix:semicolon
+id|ip_rt_put
+c_func
+(paren
+id|rt
+)paren
+suffix:semicolon
+)brace
+r_return
+id|dev
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * net_alias AF_INET type defn.&n; */

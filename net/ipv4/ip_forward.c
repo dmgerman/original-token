@@ -532,7 +532,7 @@ op_logical_neg
 (paren
 id|iph-&gt;saddr
 op_xor
-id|iph-&gt;daddr
+id|dev-&gt;pa_addr
 )paren
 op_amp
 id|dev-&gt;pa_mask

@@ -50,17 +50,20 @@ r_struct
 id|vt_stat
 (brace
 DECL|member|v_active
-id|ushort
+r_int
+r_int
 id|v_active
 suffix:semicolon
 multiline_comment|/* active vt */
 DECL|member|v_signal
-id|ushort
+r_int
+r_int
 id|v_signal
 suffix:semicolon
 multiline_comment|/* signal to send */
 DECL|member|v_state
-id|ushort
+r_int
+r_int
 id|v_state
 suffix:semicolon
 multiline_comment|/* vt bitmask */
@@ -83,17 +86,20 @@ r_struct
 id|vt_sizes
 (brace
 DECL|member|v_rows
-id|ushort
+r_int
+r_int
 id|v_rows
 suffix:semicolon
 multiline_comment|/* number of rows */
 DECL|member|v_cols
-id|ushort
+r_int
+r_int
 id|v_cols
 suffix:semicolon
 multiline_comment|/* number of columns */
 DECL|member|v_scrollsize
-id|ushort
+r_int
+r_int
 id|v_scrollsize
 suffix:semicolon
 multiline_comment|/* number of lines of scrollback */
@@ -106,32 +112,38 @@ r_struct
 id|vt_consize
 (brace
 DECL|member|v_rows
-id|ushort
+r_int
+r_int
 id|v_rows
 suffix:semicolon
 multiline_comment|/* number of rows */
 DECL|member|v_cols
-id|ushort
+r_int
+r_int
 id|v_cols
 suffix:semicolon
 multiline_comment|/* number of columns */
 DECL|member|v_vlin
-id|ushort
+r_int
+r_int
 id|v_vlin
 suffix:semicolon
 multiline_comment|/* number of pixel rows on screen */
 DECL|member|v_clin
-id|ushort
+r_int
+r_int
 id|v_clin
 suffix:semicolon
 multiline_comment|/* number of pixel rows per character */
 DECL|member|v_vcol
-id|ushort
+r_int
+r_int
 id|v_vcol
 suffix:semicolon
 multiline_comment|/* number of pixel columns on screen */
 DECL|member|v_ccol
-id|ushort
+r_int
+r_int
 id|v_ccol
 suffix:semicolon
 multiline_comment|/* number of pixel columns per character */

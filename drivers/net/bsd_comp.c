@@ -22,7 +22,7 @@ macro_line|#include &lt;linux/signal.h&gt;&t;/* used in new tty drivers */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;net/if.h&gt;
+macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -32,9 +32,9 @@ macro_line|#include &lt;linux/ppp_defs.h&gt;
 macro_line|#ifdef NEW_SKBUFF
 macro_line|#include &lt;linux/netprotocol.h&gt;
 macro_line|#endif
-macro_line|#include &lt;netinet/ip.h&gt;
-macro_line|#include &lt;netinet/tcp.h&gt;
-macro_line|#include &lt;net/if_arp.h&gt;
+macro_line|#include &lt;linux/ip.h&gt;
+macro_line|#include &lt;linux/tcp.h&gt;
+macro_line|#include &lt;linux/if_arp.h&gt;
 DECL|macro|PACKETPTR
 macro_line|#undef   PACKETPTR
 DECL|macro|PACKETPTR

@@ -7859,11 +7859,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|midi_sleep_flag.mode
-op_and_assign
-op_complement
-id|WK_SLEEP
-suffix:semicolon
 id|restore_flags
 (paren
 id|flags
@@ -7919,11 +7914,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|seq_sleep_flag.mode
-op_and_assign
-op_complement
-id|WK_SLEEP
-suffix:semicolon
 id|restore_flags
 (paren
 id|flags

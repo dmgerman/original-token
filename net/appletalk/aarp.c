@@ -2,7 +2,6 @@ multiline_comment|/*&n; *&t;AARP:&t;&t;An implementation of the Appletalk aarp p
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -14,17 +13,16 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
-macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/datalink.h&gt;
 macro_line|#include &lt;net/psnap.h&gt;
 macro_line|#include &lt;linux/atalk.h&gt;
-macro_line|#ifdef CONFIG_ATALK
 multiline_comment|/*&n; *&t;Lists of aarp entries&n; */
 DECL|struct|aarp_entry
 r_struct
@@ -2598,14 +2596,7 @@ id|aarp_notifier
 op_assign
 initialization_block
 suffix:semicolon
-DECL|function|aarp_proto_init
-r_void
-id|aarp_proto_init
-c_func
-(paren
-r_void
-)paren
-(brace
+DECL|variable|aarp_snap_id
 r_static
 r_char
 id|aarp_snap_id
@@ -2614,6 +2605,14 @@ id|aarp_snap_id
 op_assign
 initialization_block
 suffix:semicolon
+DECL|function|aarp_proto_init
+r_void
+id|aarp_proto_init
+c_func
+(paren
+r_void
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -2675,5 +2674,136 @@ id|aarp_notifier
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#ifdef MODULE
+multiline_comment|/* Free all the entries in an aarp list. Caller should turn off interrupts. */
+DECL|function|free_entry_list
+r_static
+r_void
+id|free_entry_list
+c_func
+(paren
+r_struct
+id|aarp_entry
+op_star
+id|list
+)paren
+(brace
+r_struct
+id|aarp_entry
+op_star
+id|tmp
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|list
+op_ne
+l_int|NULL
+)paren
+(brace
+id|tmp
+op_assign
+id|list-&gt;next
+suffix:semicolon
+id|aarp_expire
+c_func
+(paren
+id|list
+)paren
+suffix:semicolon
+id|list
+op_assign
+id|tmp
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* General module cleanup. Called from cleanup_module() in ddp.c. */
+DECL|function|aarp_cleanup_module
+r_void
+id|aarp_cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|del_timer
+c_func
+(paren
+op_amp
+id|aarp_timer
+)paren
+suffix:semicolon
+id|unregister_netdevice_notifier
+c_func
+(paren
+op_amp
+id|aarp_notifier
+)paren
+suffix:semicolon
+id|unregister_snap_client
+c_func
+(paren
+id|aarp_snap_id
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|AARP_HASH_SIZE
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|free_entry_list
+c_func
+(paren
+id|resolved
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+id|free_entry_list
+c_func
+(paren
+id|unresolved
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif  /* MODULE */
 eof

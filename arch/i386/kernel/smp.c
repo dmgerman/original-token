@@ -62,6 +62,8 @@ multiline_comment|/* Bitmask of existing CPU&squot;s &t;&t;&t;&t;*/
 DECL|variable|smp_num_cpus
 r_int
 id|smp_num_cpus
+op_assign
+l_int|1
 suffix:semicolon
 multiline_comment|/* Total count of live CPU&squot;s &t;&t;&t;&t;*/
 DECL|variable|smp_threads_ready
@@ -80,6 +82,15 @@ id|NR_CPUS
 )braket
 suffix:semicolon
 multiline_comment|/* which CPU maps to which logical number&t;&t;*/
+DECL|variable|cpu_logical_map
+r_volatile
+r_int
+id|cpu_logical_map
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
+multiline_comment|/* which logical number maps to which CPU&t;&t;*/
 DECL|variable|cpu_callin_map
 r_volatile
 r_int
@@ -120,13 +131,6 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Internal processor count&t;&t;&t;&t;*/
-DECL|variable|smp_top_cpu
-r_int
-id|smp_top_cpu
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Highest used APIC id &t;&t;&t;&t;*/
 DECL|variable|io_apic_addr
 r_static
 r_int
@@ -956,13 +960,6 @@ id|boot_cpu_id
 op_assign
 id|m-&gt;mpc_apicid
 suffix:semicolon
-id|nlong
-op_assign
-id|boot_cpu_id
-op_lshift
-l_int|24
-suffix:semicolon
-multiline_comment|/* Dummy &squot;self&squot; for bootup */
 )brace
 r_else
 multiline_comment|/* Boot CPU already counted */
@@ -1246,7 +1243,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Scan the memory blocks for an SMP configuration block.&n; */
 DECL|function|smp_scan_config
-r_void
+r_int
 id|smp_scan_config
 c_func
 (paren
@@ -1412,6 +1409,72 @@ op_ne
 l_int|0
 )paren
 (brace
+r_int
+r_int
+id|cfg
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;We need to know what the local&n;&t;&t;&t;&t;&t; *&t;APIC id of the boot CPU is!&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n; *&n; *&t;HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK&n; *&n; *&t;It&squot;s not just a crazy hack...  ;-)&n; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;Standard page mapping&n;&t;&t;&t;&t;&t; *&t;functions don&squot;t work yet.&n;&t;&t;&t;&t;&t; *&t;We know that page 0 is not&n;&t;&t;&t;&t;&t; *&t;used.  Steal it for now!&n;&t;&t;&t;&t;&t; */
+id|cfg
+op_assign
+id|pg0
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|pg0
+(braket
+l_int|0
+)braket
+op_assign
+(paren
+id|apic_addr
+op_or
+l_int|7
+)paren
+suffix:semicolon
+id|local_invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
+id|boot_cpu_id
+op_assign
+id|GET_APIC_ID
+c_func
+(paren
+op_star
+(paren
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+id|APIC_ID
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;Give it back&n;&t;&t;&t;&t;&t; */
+id|pg0
+(braket
+l_int|0
+)braket
+op_assign
+id|cfg
+suffix:semicolon
+id|local_invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&n; *&t;END OF HACK   END OF HACK   END OF HACK   END OF HACK   END OF HACK&n; *&n; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;2 CPUs, numbered 0 &amp; 1.&n;&t;&t;&t;&t;&t; */
+id|cpu_present_map
+op_assign
+l_int|3
+suffix:semicolon
 id|num_processors
 op_assign
 l_int|2
@@ -1504,6 +1567,7 @@ id|mpf-&gt;mpf_feature1
 )paren
 suffix:semicolon
 r_return
+l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -1520,8 +1584,23 @@ c_func
 l_string|&quot;Bus #1 is PCI&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;Set local APIC version to&n;&t;&t;&t;&t;&t; *&t;the integrated form.&n;&t;&t;&t;&t;&t; *&t;It&squot;s initialized to zero&n;&t;&t;&t;&t;&t; *&t;otherwise, representing&n;&t;&t;&t;&t;&t; *&t;a discrete 82489DX.&n;&t;&t;&t;&t;&t; */
+id|apic_version
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0x10
+suffix:semicolon
+id|apic_version
+(braket
+l_int|1
+)braket
+op_assign
+l_int|0x10
+suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t;&t; *&t;Read the physical hardware table.&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Read the physical hardware table.&n;&t;&t;&t;&t; *&t;Anything here will override the&n;&t;&t;&t;&t; *&t;defaults.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1539,55 +1618,7 @@ id|mpf-&gt;mpf_physptr
 )paren
 suffix:semicolon
 )brace
-r_else
-(brace
-r_int
-r_int
-id|cfg
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;If no table present, determine&n;&t;&t;&t;&t;&t; *&t;what the CPU mapping is.&n;&t;&t;&t;&t;&t; */
-multiline_comment|/*&n; *&n; *&t;HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK&n; *&n; */
-multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;Standard page mapping&n;&t;&t;&t;&t;&t; *&t;functions don&squot;t work yet.&n;&t;&t;&t;&t;&t; *&t;We know that page 0 is not&n;&t;&t;&t;&t;&t; *&t;used.  Steal it for now!&n;&t;&t;&t;&t;&t; */
-id|cfg
-op_assign
-id|pg0
-(braket
-l_int|0
-)braket
-suffix:semicolon
-id|pg0
-(braket
-l_int|0
-)braket
-op_assign
-(paren
-id|apic_addr
-op_or
-l_int|7
-)paren
-suffix:semicolon
-id|local_invalidate
-c_func
-(paren
-)paren
-suffix:semicolon
-id|boot_cpu_id
-op_assign
-id|GET_APIC_ID
-c_func
-(paren
-op_star
-(paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
-)paren
-id|APIC_ID
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Now that the boot CPU id is known,&n;&t;&t;&t;&t; *&t;set some other information about it.&n;&t;&t;&t;&t; */
 id|nlong
 op_assign
 id|boot_cpu_id
@@ -1595,42 +1626,13 @@ op_lshift
 l_int|24
 suffix:semicolon
 multiline_comment|/* Dummy &squot;self&squot; for bootup */
-multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;Give it back&n;&t;&t;&t;&t;&t; */
-id|pg0
+id|cpu_logical_map
 (braket
 l_int|0
 )braket
 op_assign
-id|cfg
-suffix:semicolon
-id|local_invalidate
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n; *&n; *&t;END OF HACK   END OF HACK   END OF HACK   END OF HACK   END OF HACK&n; *&n; */
-multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;If boot CPU != 0, other CPU&n;&t;&t;&t;&t;&t; *&t;is 0, else other CPU is 1.&n;&t;&t;&t;&t;&t; */
-r_if
-c_cond
-(paren
 id|boot_cpu_id
-)paren
-id|cpu_present_map
-op_assign
-l_int|1
-op_or
-(paren
-l_int|1
-op_lshift
-id|boot_cpu_id
-)paren
 suffix:semicolon
-r_else
-id|cpu_present_map
-op_assign
-l_int|3
-suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -1639,8 +1641,9 @@ comma
 id|num_processors
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; *&t;Only use the first one found.&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Only use the first configuration found.&n;&t;&t;&t;&t; */
 r_return
+l_int|1
 suffix:semicolon
 )brace
 )brace
@@ -1653,6 +1656,9 @@ op_sub_assign
 l_int|16
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Trampoline 80x86 program as an array.&n; */
 DECL|variable|trampoline_data
@@ -2058,8 +2064,6 @@ r_void
 (brace
 r_int
 id|i
-comma
-id|j
 suffix:semicolon
 r_int
 id|cpucount
@@ -2336,20 +2340,8 @@ id|i
 op_eq
 id|boot_cpu_id
 )paren
-(brace
-id|smp_top_cpu
-op_assign
-id|max
-c_func
-(paren
-id|smp_top_cpu
-comma
-id|i
-)paren
-suffix:semicolon
 r_continue
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2372,6 +2364,8 @@ r_int
 id|timeout
 comma
 id|num_starts
+comma
+id|j
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;We need a kernel stack for each processor.&n;&t;&t;&t; */
 id|stack
@@ -2506,6 +2500,17 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Be paranoid about clearing APIC errors.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|apic_version
+(braket
+id|i
+)braket
+op_amp
+l_int|0xF0
+)paren
+(brace
 id|apic_write
 c_func
 (paren
@@ -2526,6 +2531,7 @@ op_amp
 l_int|0xEF
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t;&t; *&t;Status is now clean&n;&t;&t;&t; */
 id|send_status
 op_assign
@@ -2707,7 +2713,7 @@ c_loop
 (paren
 id|j
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 op_logical_neg
 (paren
@@ -2718,7 +2724,7 @@ id|accept_status
 op_logical_and
 (paren
 id|j
-OL
+op_le
 id|num_starts
 )paren
 suffix:semicolon
@@ -2977,15 +2983,12 @@ id|i
 op_assign
 id|cpucount
 suffix:semicolon
-id|smp_top_cpu
+id|cpu_logical_map
+(braket
+id|cpucount
+)braket
 op_assign
-id|max
-c_func
-(paren
-id|smp_top_cpu
-comma
 id|i
-)paren
 suffix:semicolon
 )brace
 r_else
@@ -3326,7 +3329,7 @@ r_return
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; *&t;Sanity check we don&squot;t re-enter this across CPU&squot;s. Only the kernel&n;&t; *&t;lock holder may send messages. For a STOP_CPU we are bringing the&n;&t; *&t;entire box to the fastest halt we can.. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Sanity check we don&squot;t re-enter this across CPU&squot;s. Only the kernel&n;&t; *&t;lock holder may send messages. For a STOP_CPU we are bringing the&n;&t; *&t;entire box to the fastest halt we can.. A reschedule carries&n;&t; *&t;no data and can occur during an invalidate.. guess what panic&n;&t; *&t;I got to notice this bug...&n;&t; */
 r_if
 c_cond
 (paren
@@ -3337,6 +3340,10 @@ op_logical_and
 id|msg
 op_ne
 id|MSG_STOP_CPU
+op_logical_and
+id|msg
+op_ne
+id|MSG_RESCHEDULE
 )paren
 (brace
 id|panic

@@ -328,6 +328,8 @@ DECL|macro|__NR_sched_rr_get_interval
 mdefine_line|#define __NR_sched_rr_get_interval&t;161
 DECL|macro|__NR_nanosleep
 mdefine_line|#define __NR_nanosleep&t;&t;162
+DECL|macro|__NR_mremap
+mdefine_line|#define __NR_mremap&t;&t;163
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0
 mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name)); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}

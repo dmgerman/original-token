@@ -10,8 +10,6 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &lt;linux/if_ether.h&gt;&t;/* For the statistics structure. */
-macro_line|#include &lt;linux/if_arp.h&gt;&t;/* For ARPHRD_ETHER */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -20,6 +18,8 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
+macro_line|#include &lt;linux/if_ether.h&gt;&t;/* For the statistics structure. */
+macro_line|#include &lt;linux/if_arp.h&gt;&t;/* For ARPHRD_ETHER */
 DECL|macro|LOOPBACK_MTU
 mdefine_line|#define LOOPBACK_MTU (PAGE_SIZE*7/8)
 multiline_comment|/*&n; * The higher levels take care of making this non-reentrant (it&squot;s&n; * called with bh&squot;s disabled).&n; */
@@ -115,7 +115,7 @@ c_func
 (paren
 id|skb2
 comma
-id|FREE_READ
+id|FREE_WRITE
 )paren
 suffix:semicolon
 id|unlock
@@ -131,9 +131,14 @@ id|skb-&gt;sk
 )paren
 (brace
 multiline_comment|/*&n;&t;  &t; *&t;Packet sent but looped back around. Cease to charge&n;&t;  &t; *&t;the socket for the frame.&n;&t;  &t; */
-id|skb-&gt;sk-&gt;wmem_alloc
-op_sub_assign
+id|atomic_sub
+c_func
+(paren
 id|skb-&gt;truesize
+comma
+op_amp
+id|skb-&gt;sk-&gt;wmem_alloc
+)paren
 suffix:semicolon
 id|skb-&gt;sk
 op_member_access_from_pointer
