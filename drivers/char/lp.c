@@ -3061,6 +3061,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;lp%d at 0x%04x, &quot;
 comma
 id|offset

@@ -5772,6 +5772,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;SJCD: Sanyo CDR-H94A cdrom driver version %d.%d.&bslash;n&quot;
 comma
 id|SJCD_VERSION_MAJOR
@@ -5869,6 +5870,7 @@ multiline_comment|/*&n;   * Check for card. Since we are booting now, we can&squ
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;SJCD: Resetting: &quot;
 )paren
 suffix:semicolon
@@ -5979,6 +5981,7 @@ multiline_comment|/*&n;   * Get and print out cdrom version.&n;   */
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;SJCD: Getting version: &quot;
 )paren
 suffix:semicolon
@@ -6142,6 +6145,7 @@ id|sjcd_status_valid
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;SJCD: Getting status: &quot;
 )paren
 suffix:semicolon
@@ -6252,6 +6256,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;SJCD: Status: port=0x%x.&bslash;n&quot;
 comma
 id|sjcd_base
@@ -6353,6 +6358,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;SJCD: module: removed.&bslash;n&quot;
 )paren
 suffix:semicolon

@@ -1241,7 +1241,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ip_masq_free_ports
+op_star
+id|free_ports_p
 op_eq
 l_int|0
 )paren

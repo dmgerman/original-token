@@ -5665,6 +5665,7 @@ macro_line|#if DEBUG &gt; 0
 id|printk
 c_func
 (paren
+id|KERN_INFO
 id|CDU535_MESSAGE_NAME
 l_string|&quot;: probing base address %03X&bslash;n&quot;
 comma
@@ -6017,6 +6018,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 id|CDU535_MESSAGE_NAME
 l_string|&quot; I/F CDROM : %8.8s %16.16s %4.4s&quot;
 comma
@@ -6539,6 +6541,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_INFO
 id|CDU535_HANDLE
 l_string|&quot; module released&bslash;n&quot;
 )paren

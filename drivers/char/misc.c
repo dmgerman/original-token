@@ -1,9 +1,9 @@
-multiline_comment|/*&n; * linux/drivers/char/misc.c&n; *&n; * Generic misc open routine by Johan Myreen&n; *&n; * Based on code from Linus&n; *&n; * Teemu Rantanen&squot;s Microsoft Busmouse support and Derrick Cole&squot;s&n; *   changes incorporated into 0.97pl4&n; *   by Peter Cervasio (pete%q106fm.uucp@wupost.wustl.edu) (08SEP92)&n; *   See busmouse.c for particulars.&n; *&n; * Made things a lot mode modular - easy to compile in just one or two&n; * of the misc drivers, as they are now completely independent. Linus.&n; *&n; * Support for loadable modules. 8-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; *&n; * Fixed a failing symbol register to free the device registration&n; *&t;&t;Alan Cox &lt;alan@lxorguk.ukuu.org.uk&gt; 21-Jan-96&n; *&n; * Dynamic minors and /proc/mice by Alessandro Rubini. 26-Mar-96&n; *&n; * Renamed to misc and miscdevice to be more accurate. Alan Cox 26-May-96&n; */
+multiline_comment|/*&n; * linux/drivers/char/misc.c&n; *&n; * Generic misc open routine by Johan Myreen&n; *&n; * Based on code from Linus&n; *&n; * Teemu Rantanen&squot;s Microsoft Busmouse support and Derrick Cole&squot;s&n; *   changes incorporated into 0.97pl4&n; *   by Peter Cervasio (pete%q106fm.uucp@wupost.wustl.edu) (08SEP92)&n; *   See busmouse.c for particulars.&n; *&n; * Made things a lot mode modular - easy to compile in just one or two&n; * of the misc drivers, as they are now completely independent. Linus.&n; *&n; * Support for loadable modules. 8-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; *&n; * Fixed a failing symbol register to free the device registration&n; *&t;&t;Alan Cox &lt;alan@lxorguk.ukuu.org.uk&gt; 21-Jan-96&n; *&n; * Dynamic minors and /proc/mice by Alessandro Rubini. 26-Mar-96&n; *&n; * Renamed to misc and miscdevice to be more accurate. Alan Cox 26-Mar-96&n; *&n; * Handling of mouse minor numbers for kerneld:&n; *  Idea by Jacques Gelinas &lt;jack@solucorp.qc.ca&gt;,&n; *  adapted by Bjorn Ekwall &lt;bj0rn@blox.se&gt;&n; *  corrected by Alan Cox &lt;alan@lxorguk.ukuu.org.uk&gt;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -11,6 +11,9 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/tty.h&gt; /* needed by selection.h */
 macro_line|#include &quot;selection.h&quot; /* export its symbols */
+macro_line|#ifdef CONFIG_KERNELD
+macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * Head entry for the doubly linked miscdevice list&n; */
 DECL|variable|misc_list
 r_static
@@ -204,43 +207,104 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+(paren
 id|c
 op_ne
 op_amp
 id|misc_list
 )paren
-(brace
-r_if
-c_cond
+op_logical_and
 (paren
 id|c-&gt;minor
-op_eq
+op_ne
 id|minor
 )paren
-(brace
-id|file-&gt;f_op
-op_assign
-id|c-&gt;fops
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
+)paren
 id|c
 op_assign
 id|c-&gt;next
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
-id|file-&gt;f_op
+id|c
 op_eq
-l_int|NULL
+op_amp
+id|misc_list
 )paren
+(brace
+macro_line|#ifdef CONFIG_KERNELD
+r_char
+id|modname
+(braket
+l_int|20
+)braket
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|modname
+comma
+l_string|&quot;char-major-%d-%d&quot;
+comma
+id|MISC_MAJOR
+comma
+id|minor
+)paren
+suffix:semicolon
+id|request_module
+c_func
+(paren
+id|modname
+)paren
+suffix:semicolon
+id|c
+op_assign
+id|misc_list.next
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|c
+op_ne
+op_amp
+id|misc_list
+)paren
+op_logical_and
+(paren
+id|c-&gt;minor
+op_ne
+id|minor
+)paren
+)paren
+id|c
+op_assign
+id|c-&gt;next
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|c
+op_eq
+op_amp
+id|misc_list
+)paren
+macro_line|#endif
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|file-&gt;f_op
+op_assign
+id|c-&gt;fops
+)paren
+)paren
 r_return
 id|file-&gt;f_op
 op_member_access_from_pointer
@@ -251,6 +315,11 @@ id|inode
 comma
 id|file
 )paren
+suffix:semicolon
+r_else
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 DECL|variable|misc_fops
@@ -509,7 +578,7 @@ r_void
 id|unregister_chrdev
 c_func
 (paren
-id|MOUSE_MAJOR
+id|MISC_MAJOR
 comma
 l_string|&quot;misc&quot;
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sysctl.c: General linux system control interface&n; *&n; * Begun 24 March 1995, Stephen Tweedie&n; * Added /proc support, Dec 1995&n; * Added bdflush entry and intvec min/max checking, 2/23/96, Tom Dyas.&n; */
+multiline_comment|/*&n; * sysctl.c: General linux system control interface&n; *&n; * Begun 24 March 1995, Stephen Tweedie&n; * Added /proc support, Dec 1995&n; * Added bdflush entry and intvec min/max checking, 2/23/96, Tom Dyas.&n; * Added hooks for /proc/sys/net (minor, minor patch), 96/4/1, Mike Shaver.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -84,6 +84,12 @@ DECL|variable|vm_table
 r_static
 id|ctl_table
 id|vm_table
+(braket
+)braket
+suffix:semicolon
+r_extern
+id|ctl_table
+id|net_table
 (braket
 )braket
 suffix:semicolon
@@ -351,6 +357,20 @@ comma
 l_int|0555
 comma
 id|vm_table
+)brace
+comma
+(brace
+id|CTL_NET
+comma
+l_string|&quot;net&quot;
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|0555
+comma
+id|net_table
 )brace
 comma
 (brace

@@ -965,16 +965,9 @@ c_cond
 (paren
 id|intr_count
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Aiee: scheduling in interrupt&bslash;n&quot;
-)paren
+r_goto
+id|scheduling_in_interrupt
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1334,6 +1327,16 @@ id|timer
 )paren
 suffix:semicolon
 )brace
+r_return
+suffix:semicolon
+id|scheduling_in_interrupt
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Aiee: scheduling in interrupt&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 macro_line|#ifndef __alpha__
 multiline_comment|/*&n; * For backwards compatibility?  This can be done in libc so Alpha&n; * and all newer ports shouldn&squot;t need it.&n; */
@@ -3917,9 +3920,6 @@ r_if
 c_cond
 (paren
 id|tq_timer
-op_ne
-op_amp
-id|tq_last
 )paren
 id|mark_bh
 c_func

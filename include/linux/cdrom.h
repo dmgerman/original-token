@@ -271,6 +271,20 @@ id|cdsc_reladdr
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|cdrom_mcn
+r_struct
+id|cdrom_mcn
+(brace
+DECL|member|medium_catalog_number
+id|u_char
+id|medium_catalog_number
+(braket
+l_int|14
+)braket
+suffix:semicolon
+multiline_comment|/* 13 ASCII digits, null-terminated */
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * audio states (from SCSI-2, but seen with other drives, too)&n; */
 DECL|macro|CDROM_AUDIO_INVALID
 mdefine_line|#define&t;CDROM_AUDIO_INVALID&t;0x00&t;/* audio status not supported */

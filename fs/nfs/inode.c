@@ -2,14 +2,20 @@ multiline_comment|/*&n; *  linux/fs/nfs/inode.c&n; *&n; *  Copyright (C) 1992  R
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
+macro_line|#include &lt;linux/nfsiod.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+multiline_comment|/* This is for kernel_thread */
+DECL|macro|__KERNEL_SYSCALLS__
+mdefine_line|#define __KERNEL_SYSCALLS__
+macro_line|#include &lt;linux/unistd.h&gt;
 r_extern
 r_int
 id|close_fp
@@ -1241,6 +1247,62 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * Start up an nfsiod process. This is an awful hack, because when running&n; * as a module, we will keep insmod&squot;s memory. Besides, the current-&gt;comm&n; * hack won&squot;t work in this case&n; * The best would be to have a syscall for nfs client control that (among&n; * other things) forks biod&squot;s.&n; * Alternatively, we might want to have the idle task spawn biod&squot;s on demand.&n; */
+DECL|function|run_nfsiod
+r_static
+r_int
+id|run_nfsiod
+c_func
+(paren
+r_void
+op_star
+id|dummy
+)paren
+(brace
+r_int
+id|ret
+suffix:semicolon
+macro_line|#ifdef __SMP__
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|syscall_count
+op_increment
+suffix:semicolon
+macro_line|#endif
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+id|current-&gt;session
+op_assign
+l_int|1
+suffix:semicolon
+id|current-&gt;pgrp
+op_assign
+l_int|1
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|current-&gt;comm
+comma
+l_string|&quot;nfsiod&quot;
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|nfsiod
+c_func
+(paren
+)paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
 DECL|function|init_nfs_fs
 r_int
 id|init_nfs_fs
@@ -1249,6 +1311,47 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* Fork four biod&squot;s */
+id|kernel_thread
+c_func
+(paren
+id|run_nfsiod
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|kernel_thread
+c_func
+(paren
+id|run_nfsiod
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|kernel_thread
+c_func
+(paren
+id|run_nfsiod
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|kernel_thread
+c_func
+(paren
+id|run_nfsiod
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
 r_return
 id|register_filesystem
 c_func

@@ -1257,12 +1257,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*TCP_CONNECT_TIME&lt;&lt;3*/
-id|newsk-&gt;ato
-op_assign
-id|HZ
-op_div
-l_int|3
-suffix:semicolon
 id|newsk-&gt;rto
 op_assign
 id|TCP_TIMEOUT_INIT

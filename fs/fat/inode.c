@@ -3261,6 +3261,17 @@ c_cond
 id|error
 )paren
 r_return
+id|MSDOS_SB
+c_func
+(paren
+id|inode-&gt;i_sb
+)paren
+op_member_access_from_pointer
+id|options.quiet
+ques
+c_cond
+l_int|0
+suffix:colon
 id|error
 suffix:semicolon
 r_if

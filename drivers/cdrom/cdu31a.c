@@ -10668,6 +10668,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Sony I/F CDROM : %8.8s %16.16s %8.8s&bslash;n&quot;
 comma
 id|drive_config.vendor_id
@@ -10680,6 +10681,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;  Capabilities: %s&quot;
 comma
 id|load_mech
@@ -10954,6 +10956,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;cdu31a module released.&bslash;n&quot;
 )paren
 suffix:semicolon

@@ -4296,6 +4296,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;mcd=0x%x,%d: &quot;
 comma
 id|mcd_port
@@ -6577,6 +6578,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;mcd module released.&bslash;n&quot;
 )paren
 suffix:semicolon

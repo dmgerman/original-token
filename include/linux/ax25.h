@@ -171,6 +171,8 @@ DECL|macro|AX25_IDLE
 mdefine_line|#define AX25_IDLE&t;9
 DECL|macro|AX25_PACLEN
 mdefine_line|#define AX25_PACLEN&t;10
+DECL|macro|AX25_IPMAXQUEUE
+mdefine_line|#define AX25_IPMAXQUEUE 11
 DECL|macro|AX25_KILL
 mdefine_line|#define AX25_KILL&t;99
 DECL|macro|SIOCAX25GETUID
@@ -243,6 +245,8 @@ DECL|macro|AX25_VALUES_IDLE
 mdefine_line|#define AX25_VALUES_IDLE&t;13&t;/* mode vc idle timer */
 DECL|macro|AX25_VALUES_PACLEN
 mdefine_line|#define AX25_VALUES_PACLEN&t;14&t;/* AX.25 MTU */
+DECL|macro|AX25_VALUES_IPMAXQUEUE
+mdefine_line|#define AX25_VALUES_IPMAXQUEUE  15&t;/* Maximum number of buffers enqueued */
 DECL|macro|AX25_MAX_VALUES
 mdefine_line|#define&t;AX25_MAX_VALUES&t;&t;20
 DECL|struct|ax25_parms_struct

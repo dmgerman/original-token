@@ -133,12 +133,20 @@ id|file
 op_star
 )paren
 suffix:semicolon
-r_static
 r_void
 id|get_sectorsize
 c_func
 (paren
 r_int
+)paren
+suffix:semicolon
+r_void
+id|sr_photocd
+c_func
+(paren
+r_struct
+id|inode
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -1269,10 +1277,9 @@ id|SCpnt
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Here I tried to implement better support for PhotoCD&squot;s.&n; * &n; * Much of this has do be done with vendor-specific SCSI-commands.&n; * So I have to complete it step by step. Useful information is welcome.&n; *&n; * Actually works:&n; *   - NEC:     Detection and support of multisession CD&squot;s. Special handling&n; *              for XA-disks is not necessary.&n; *     &n; *   - TOSHIBA: setting density is done here now, mounting PhotoCD&squot;s should&n; *              work now without running the program &quot;set_density&quot;&n; *              Multisession CD&squot;s are supported too.&n; *&n; *   kraxel@cs.tu-berlin.de (Gerd Knorr)&n; */
-multiline_comment|/*&n; * 19950704 operator@melchior.cuivre.fdn.fr (Thomas Quinot)&n; *&n; *   - SONY:&t;Same as Nec.&n; *&n; *   - PIONEER: works with SONY code&n; */
+multiline_comment|/*&n; * Here I tried to implement support for multisession-CD&squot;s&n; * &n; * Much of this has do be done with vendor-specific SCSI-commands, becauce&n; * multisession is newer than the SCSI-II standard.&n; * So I have to complete it step by step. Useful information is welcome.&n; *&n; * Actually works:&n; *   - NEC:     Detection and support of multisession CD&squot;s. Special handling&n; *              for XA-disks is not necessary.&n; *     &n; *   - TOSHIBA: setting density is done here now, mounting PhotoCD&squot;s should&n; *              work now without running the program &quot;set_density&quot;&n; *              Multisession CD&squot;s are supported too.&n; *&n; *   Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt; &n; */
+multiline_comment|/*&n; * 19950704 operator@melchior.cuivre.fdn.fr (Thomas Quinot)&n; *&n; *   - SONY:&t;Same as Nec.&n; *&n; *   - PIONEER: works with SONY code (may be others too ?)&n; */
 DECL|function|sr_photocd
-r_static
 r_void
 id|sr_photocd
 c_func
@@ -1347,7 +1354,8 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;sr_photocd: CDROM and/or the driver does not support multisession CD&squot;s&quot;
+id|KERN_DEBUG
+l_string|&quot;sr_photocd: CDROM and/or driver do not support multisession CD&squot;s&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1364,7 +1372,7 @@ c_func
 )paren
 )paren
 (brace
-multiline_comment|/* I&squot;m not the superuser, so SCSI_IOCTL_SEND_COMMAND isn&squot;t allowed for me.&n;&t; * That&squot;s why mpcd_sector will be initialized with zero, because I&squot;m not&n;&t; * able to get the right value. Necessary only if access_count is 1, else&n;&t; * no disk change happened since the last call of this function and we can&n;&t; * keep the old value.&n;&t; */
+multiline_comment|/* I&squot;m not the superuser, so SCSI_IOCTL_SEND_COMMAND isn&squot;t allowed&n;         * for me. That&squot;s why mpcd_sector will be initialized with zero,&n;         * because I&squot;m not able to get the right value. Necessary only if&n;         * access_count is 1, else no disk change happened since the last&n;         * call of this function and we can keep the old value.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1457,6 +1465,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;sr_photocd: use NEC code&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1549,9 +1558,18 @@ op_ne
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|rc
+op_ne
+l_int|0x28000002
+)paren
+multiline_comment|/* drop &quot;not ready&quot; */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;sr_photocd: ioctl error (NEC): 0x%x&bslash;n&quot;
 comma
 id|rc
@@ -1581,6 +1599,7 @@ l_int|0xb0
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;sr_photocd: (NEC) Hmm, seems the CDROM doesn&squot;t support multisession CD&squot;s&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1704,6 +1723,7 @@ id|sector
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;sr_photocd: multisession CD detected. start: %lu&bslash;n&quot;
 comma
 id|sector
@@ -1720,6 +1740,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;sr_photocd: use TOSHIBA code&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1813,10 +1834,11 @@ op_eq
 l_int|0x28000002
 )paren
 (brace
-multiline_comment|/* Got a &quot;not ready&quot; - error. No chance to find out if this is&n;&t;&t; * because there is no CD in the drive or because the drive&n;&t;&t; * don&squot;t knows multisession CD&squot;s. So I need to do an extra check... */
+multiline_comment|/* Got a &quot;not ready&quot; - error. No chance to find out if this is&n;&t;&t; * because there is no CD in the drive or because the drive&n;&t;&t; * don&squot;t knows multisession CD&squot;s. So I need to do an extra&n;                 * check... */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|kernel_scsi_ioctl
 c_func
 (paren
@@ -1840,15 +1862,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;sr_photocd: drive not ready&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
+id|KERN_INFO
 l_string|&quot;sr_photocd: (TOSHIBA) Hmm, seems the CDROM doesn&squot;t support multisession CD&squot;s&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1862,6 +1876,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;sr_photocd: ioctl error (TOSHIBA #1): 0x%x&bslash;n&quot;
 comma
 id|rc
@@ -1988,6 +2003,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;sr_photocd: multisession CD detected: start: %lu&bslash;n&quot;
 comma
 id|sector
@@ -2085,6 +2101,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;sr_photocd: ioctl error (TOSHIBA #2): 0x%x&bslash;n&quot;
 comma
 id|rc
@@ -2097,6 +2114,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;sr_photocd: get_density: 0x%x&bslash;n&quot;
 comma
 id|rec
@@ -2138,6 +2156,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;sr_photocd: doing set_density&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2212,7 +2231,7 @@ id|cmd
 l_int|6
 )braket
 suffix:semicolon
-multiline_comment|/* this is a 6-Byte command          */
+multiline_comment|/* this is a 6-Byte command    */
 id|send
 (braket
 l_int|3
@@ -2220,7 +2239,7 @@ l_int|3
 op_assign
 l_int|0x08
 suffix:semicolon
-multiline_comment|/* the data for the command          */
+multiline_comment|/* the data for the command    */
 id|send
 (braket
 l_int|4
@@ -2235,7 +2254,7 @@ l_int|0x81
 suffix:colon
 l_int|0
 suffix:semicolon
-multiline_comment|/* density 0x81 for XA-CD&squot;s, 0 else  */
+multiline_comment|/* density 0x81 for XA, 0 else */
 id|send
 (braket
 l_int|10
@@ -2275,13 +2294,14 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;sr_photocd: ioctl error (TOSHIBA #3): 0x%x&bslash;n&quot;
 comma
 id|rc
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* The set_density command may have changed the sector size or capacity. */
+multiline_comment|/* The set_density command may have changed the&n;             * sector size or capacity. */
 id|scsi_CDs
 (braket
 id|MINOR
@@ -2309,6 +2329,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;sr_photocd: use SONY/PIONEER code&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2402,9 +2423,18 @@ op_ne
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|rc
+op_ne
+l_int|0x28000002
+)paren
+multiline_comment|/* drop &quot;not ready&quot; */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;sr_photocd: ioctl error (SONY): 0x%x&bslash;n&quot;
 comma
 id|rc
@@ -2436,6 +2466,7 @@ l_int|0x0a
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;sr_photocd: (SONY) Hmm, seems the CDROM doesn&squot;t support multisession CD&squot;s&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2494,6 +2525,7 @@ id|sector
 )paren
 id|printk
 (paren
+id|KERN_DEBUG
 l_string|&quot;sr_photocd: multisession CD detected. start: %lu&bslash;n&quot;
 comma
 id|sector
@@ -4883,7 +4915,6 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|get_sectorsize
-r_static
 r_void
 (def_block
 id|get_sectorsize

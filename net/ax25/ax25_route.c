@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 031&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Other kernels modules in this kit are generally BSD derived. See the copyright headers.&n; *&n; *&n; *&t;History&n; *&t;AX.25 020&t;Jonathan(G4KLX)&t;First go.&n; *&t;AX.25 022&t;Jonathan(G4KLX)&t;Added the actual meat to this - we now have a nice mheard list.&n; *&t;AX.25 025&t;Alan(GW4PTS)&t;First cut at autobinding by route scan.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;Extracted AX25 control block from the&n; *&t;&t;&t;&t;&t;sock structure. Device removal now&n; *&t;&t;&t;&t;&t;removes the heard structure.&n; *&t;AX.25 029&t;Steven(GW7RRM)&t;Added /proc information for uid/callsign mapping.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Handling of IP mode in the routing list and /proc entry.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added digi-peaters to routing table, and&n; *&t;&t;&t;&t;&t;ioctls to manipulate them. Added port&n; *&t;&t;&t;&t;&t;configuration.&n; *&t;AX.25 031&t;Jonathan(G4KLX)&t;Added concept of default route.&n; *&t;&t;&t;Joerg(DL1BKE)&t;ax25_rt_build_path() find digipeater list and device by &n; *&t;&t;&t;&t;&t;destination call. Needed for IP routing via digipeater&n; *&t;&t;&t;Jonathan(G4KLX)&t;Added routing for IP datagram packets.&n; *&t;&t;&t;Joerg(DL1BKE)&t;changed routing for IP datagram and VC to use a default&n; *&t;&t;&t;&t;&t;route if available. Does not overwrite default routes&n; *&t;&t;&t;&t;&t;on route-table overflow anymore.&n; *&t;&t;&t;Joerg(DL1BKE)&t;fixed AX.25 routing of IP datagram and VC, new ioctl()&n; *&t;&t;&t;&t;&t;&quot;SIOCAX25OPTRT&quot; to set IP mode and a &squot;permanent&squot; flag&n; *&t;&t;&t;&t;&t;on routes.&n; */
+multiline_comment|/*&n; *&t;AX.25 release 031&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Other kernels modules in this kit are generally BSD derived. See the copyright headers.&n; *&n; *&n; *&t;History&n; *&t;AX.25 020&t;Jonathan(G4KLX)&t;First go.&n; *&t;AX.25 022&t;Jonathan(G4KLX)&t;Added the actual meat to this - we now have a nice mheard list.&n; *&t;AX.25 025&t;Alan(GW4PTS)&t;First cut at autobinding by route scan.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;Extracted AX25 control block from the&n; *&t;&t;&t;&t;&t;sock structure. Device removal now&n; *&t;&t;&t;&t;&t;removes the heard structure.&n; *&t;AX.25 029&t;Steven(GW7RRM)&t;Added /proc information for uid/callsign mapping.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Handling of IP mode in the routing list and /proc entry.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added digi-peaters to routing table, and&n; *&t;&t;&t;&t;&t;ioctls to manipulate them. Added port&n; *&t;&t;&t;&t;&t;configuration.&n; *&t;AX.25 031&t;Jonathan(G4KLX)&t;Added concept of default route.&n; *&t;&t;&t;Joerg(DL1BKE)&t;ax25_rt_build_path() find digipeater list and device by &n; *&t;&t;&t;&t;&t;destination call. Needed for IP routing via digipeater&n; *&t;&t;&t;Jonathan(G4KLX)&t;Added routing for IP datagram packets.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Changed routing for IP datagram and VC to use a default&n; *&t;&t;&t;&t;&t;route if available. Does not overwrite default routes&n; *&t;&t;&t;&t;&t;on route-table overflow anymore.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Fixed AX.25 routing of IP datagram and VC, new ioctl()&n; *&t;&t;&t;&t;&t;&quot;SIOCAX25OPTRT&quot; to set IP mode and a &squot;permanent&squot; flag&n; *&t;&t;&t;&t;&t;on routes.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &lt;linux/errno.h&gt;
@@ -2626,6 +2626,15 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* skip KISS command */
 id|ax25_rt
 op_assign
 id|ax25_find_route
@@ -2682,7 +2691,7 @@ id|len
 id|printk
 c_func
 (paren
-l_string|&quot;ax25_dg_build_path: not enough headroom for in skb&bslash;n&quot;
+l_string|&quot;ax25_dg_build_path: not enough headroom for digis in skb&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2695,8 +2704,6 @@ op_amp
 id|dest
 comma
 id|skb-&gt;data
-op_plus
-l_int|1
 comma
 id|AX25_ADDR_LEN
 )paren
@@ -2709,7 +2716,7 @@ id|src
 comma
 id|skb-&gt;data
 op_plus
-l_int|8
+l_int|7
 comma
 id|AX25_ADDR_LEN
 )paren
@@ -2724,13 +2731,6 @@ comma
 id|len
 )paren
 suffix:semicolon
-op_star
-id|bp
-op_increment
-op_assign
-l_int|0x00
-suffix:semicolon
-multiline_comment|/* KISS Data */
 id|build_ax25_addr
 c_func
 (paren
@@ -3149,6 +3149,13 @@ id|AX25_VALUES_PACLEN
 )braket
 op_assign
 id|AX25_DEF_PACLEN
+suffix:semicolon
+id|ax25_dev-&gt;values
+(braket
+id|AX25_VALUES_IPMAXQUEUE
+)braket
+op_assign
+id|AX25_DEF_IPMAXQUEUE
 suffix:semicolon
 id|save_flags
 c_func
@@ -3670,7 +3677,7 @@ id|ax25_parms.values
 id|AX25_VALUES_PACLEN
 )braket
 OL
-l_int|16
+l_int|22
 )paren
 r_return
 op_minus
@@ -3694,6 +3701,20 @@ id|AX25_DIGI_XBAND
 )paren
 op_ne
 l_int|0
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ax25_parms.values
+(braket
+id|AX25_VALUES_IPMAXQUEUE
+)braket
+OL
+l_int|1
 )paren
 r_return
 op_minus

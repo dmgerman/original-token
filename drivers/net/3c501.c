@@ -1601,6 +1601,14 @@ l_int|0
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t; *&t;FIXME: is there a logic to whether to keep on trying or&n;&t;&t;&t; *&t;reset immediately ?&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|el_debug
+OG
+l_int|1
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -1630,6 +1638,7 @@ id|EL1_RXPTR
 )paren
 )paren
 suffix:semicolon
+)brace
 id|dev-&gt;tbusy
 op_assign
 l_int|0

@@ -869,6 +869,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Microsoft BusMouse detected and installed.&bslash;n&quot;
 )paren
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/nfs/nfsroot.c -- version 2.3&n; *&n; *  Copyright (C) 1995, 1996  Gero Kuhlmann &lt;gero@gkminix.han.de&gt;&n; *&n; *  For parts of this file:&n; *  Copyright (C) 1996  Martin Mares &lt;mj@k332.feld.cvut.cz&gt;&n; *&n; *  Allow an NFS filesystem to be mounted as root. The way this works is:&n; *     (1) Determine the local IP address via RARP or BOOTP or from the&n; *         kernel command line.&n; *     (2) Handle RPC negotiation with the system which replied to RARP or&n; *         was reported as a boot server by BOOTP or manually.&n; *     (3) The actual mounting is done later, when init() is running.&n; *&n; *&n; *&t;Changes:&n; *&n; *&t;Alan Cox&t;:&t;Removed get_address name clash with FPU.&n; *&t;Alan Cox&t;:&t;Reformatted a bit.&n; *&t;Gero Kuhlmann&t;:&t;Code cleanup&n; *&t;Michael Rausch  :&t;Fixed recognition of an incoming RARP answer.&n; *&t;Martin Mares&t;: (2.0)&t;Auto-configuration via BOOTP supported.&n; *&t;Martin Mares&t;:&t;Manual selection of interface &amp; BOOTP/RARP.&n; *&t;Martin Mares&t;:&t;Using network routes instead of host routes,&n; *&t;&t;&t;&t;allowing the default configuration to be used&n; *&t;&t;&t;&t;for normal operation of the host.&n; *&t;Martin Mares&t;:&t;Randomized timer with exponential backoff&n; *&t;&t;&t;&t;installed to minimize network congestion.&n; *&t;Martin Mares&t;:&t;Code cleanup.&n; *&t;Martin Mares&t;: (2.1)&t;BOOTP and RARP made configuration options.&n; *&t;Martin Mares&t;:&t;Server hostname generation fixed.&n; *&t;Gerd Knorr&t;:&t;Fixed wired inode handling&n; *&t;Martin Mares&t;: (2.2)&t;&quot;0.0.0.0&quot; addresses from command line ignored.&n; *&t;Martin Mares&t;:&t;RARP replies not tested for server address.&n; *&t;Gero Kuhlmann&t;: (2.3) Some bug fixes and code cleanup again (please&n; *&t;&t;&t;&t;send me your new patches _before_ bothering&n; *&t;&t;&t;&t;Linus so that I don&squot; always have to cleanup&n; *&t;&t;&t;&t;_afterwards_ - thanks)&n; *&t;Gero Kuhlmann&t;:&t;Last changes of Martin Mares undone.&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/nfs/nfsroot.c -- version 2.3&n; *&n; *  Copyright (C) 1995, 1996  Gero Kuhlmann &lt;gero@gkminix.han.de&gt;&n; *&n; *  For parts of this file:&n; *  Copyright (C) 1996  Martin Mares &lt;mj@k332.feld.cvut.cz&gt;&n; *&n; *  Allow an NFS filesystem to be mounted as root. The way this works is:&n; *     (1) Determine the local IP address via RARP or BOOTP or from the&n; *         kernel command line.&n; *     (2) Handle RPC negotiation with the system which replied to RARP or&n; *         was reported as a boot server by BOOTP or manually.&n; *     (3) The actual mounting is done later, when init() is running.&n; *&n; *&n; *&t;Changes:&n; *&n; *&t;Alan Cox&t;:&t;Removed get_address name clash with FPU.&n; *&t;Alan Cox&t;:&t;Reformatted a bit.&n; *&t;Gero Kuhlmann&t;:&t;Code cleanup&n; *&t;Michael Rausch  :&t;Fixed recognition of an incoming RARP answer.&n; *&t;Martin Mares&t;: (2.0)&t;Auto-configuration via BOOTP supported.&n; *&t;Martin Mares&t;:&t;Manual selection of interface &amp; BOOTP/RARP.&n; *&t;Martin Mares&t;:&t;Using network routes instead of host routes,&n; *&t;&t;&t;&t;allowing the default configuration to be used&n; *&t;&t;&t;&t;for normal operation of the host.&n; *&t;Martin Mares&t;:&t;Randomized timer with exponential backoff&n; *&t;&t;&t;&t;installed to minimize network congestion.&n; *&t;Martin Mares&t;:&t;Code cleanup.&n; *&t;Martin Mares&t;: (2.1)&t;BOOTP and RARP made configuration options.&n; *&t;Martin Mares&t;:&t;Server hostname generation fixed.&n; *&t;Gerd Knorr&t;:&t;Fixed wired inode handling&n; *&t;Martin Mares&t;: (2.2)&t;&quot;0.0.0.0&quot; addresses from command line ignored.&n; *&t;Martin Mares&t;:&t;RARP replies not tested for server address.&n; *&t;Gero Kuhlmann&t;: (2.3) Some bug fixes and code cleanup again (please&n; *&t;&t;&t;&t;send me your new patches _before_ bothering&n; *&t;&t;&t;&t;Linus so that I don&squot; always have to cleanup&n; *&t;&t;&t;&t;_afterwards_ - thanks)&n; *&t;Gero Kuhlmann&t;:&t;Last changes of Martin Mares undone.&n; *&t;Gero Kuhlmann&t;: &t;RARP replies are tested for specified server&n; *&t;&t;&t;&t;again. However, it&squot;s now possible to have&n; *&t;&t;&t;&t;different RARP and NFS servers.&n; *&t;Gero Kuhlmann&t;:&t;&quot;0.0.0.0&quot; addresses from command line are&n; *&t;&t;&t;&t;now mapped to INADDR_NONE.&n; *&n; */
 multiline_comment|/* Define this to allow debugging output */
 DECL|macro|NFSROOT_DEBUG
 macro_line|#undef NFSROOT_DEBUG
@@ -160,6 +160,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Number of devices allowing RARP */
+DECL|variable|rarp_serv
+r_static
+r_struct
+id|sockaddr_in
+id|rarp_serv
+suffix:semicolon
+multiline_comment|/* IP address of RARP server */
 macro_line|#if defined(CONFIG_RNFS_BOOTP) || defined(CONFIG_RNFS_RARP)
 DECL|macro|CONFIG_RNFS_DYNAMIC
 mdefine_line|#define CONFIG_RNFS_DYNAMIC&t;&t;/* Enable dynamic IP config */
@@ -922,11 +929,11 @@ op_logical_and
 op_logical_neg
 id|bootp_flag
 op_logical_and
-id|server.sin_addr.s_addr
+id|rarp_serv.sin_addr.s_addr
 op_ne
 id|INADDR_NONE
 op_logical_and
-id|server.sin_addr.s_addr
+id|rarp_serv.sin_addr.s_addr
 op_ne
 id|sip
 )paren
@@ -4520,6 +4527,8 @@ id|myaddr.sin_family
 op_assign
 id|server.sin_family
 op_assign
+id|rarp_serv.sin_family
+op_assign
 id|gateway.sin_family
 op_assign
 id|netmask.sin_family
@@ -4529,6 +4538,8 @@ suffix:semicolon
 id|myaddr.sin_addr.s_addr
 op_assign
 id|server.sin_addr.s_addr
+op_assign
+id|rarp_serv.sin_addr.s_addr
 op_assign
 id|gateway.sin_addr.s_addr
 op_assign
@@ -4691,6 +4702,10 @@ id|num
 r_case
 l_int|0
 suffix:colon
+r_if
+c_cond
+(paren
+(paren
 id|myaddr.sin_addr.s_addr
 op_assign
 id|in_aton
@@ -4698,12 +4713,23 @@ c_func
 (paren
 id|ip
 )paren
+)paren
+op_eq
+id|INADDR_ANY
+)paren
+id|myaddr.sin_addr.s_addr
+op_assign
+id|INADDR_NONE
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 l_int|1
 suffix:colon
+r_if
+c_cond
+(paren
+(paren
 id|server.sin_addr.s_addr
 op_assign
 id|in_aton
@@ -4711,12 +4737,23 @@ c_func
 (paren
 id|ip
 )paren
+)paren
+op_eq
+id|INADDR_ANY
+)paren
+id|server.sin_addr.s_addr
+op_assign
+id|INADDR_NONE
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 l_int|2
 suffix:colon
+r_if
+c_cond
+(paren
+(paren
 id|gateway.sin_addr.s_addr
 op_assign
 id|in_aton
@@ -4724,12 +4761,23 @@ c_func
 (paren
 id|ip
 )paren
+)paren
+op_eq
+id|INADDR_ANY
+)paren
+id|gateway.sin_addr.s_addr
+op_assign
+id|INADDR_NONE
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 l_int|3
 suffix:colon
+r_if
+c_cond
+(paren
+(paren
 id|netmask.sin_addr.s_addr
 op_assign
 id|in_aton
@@ -4737,6 +4785,13 @@ c_func
 (paren
 id|ip
 )paren
+)paren
+op_eq
+id|INADDR_ANY
+)paren
+id|netmask.sin_addr.s_addr
+op_assign
+id|INADDR_NONE
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -4896,6 +4951,10 @@ id|num
 op_increment
 suffix:semicolon
 )brace
+id|rarp_serv
+op_assign
+id|server
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Set the interface address and configure a route to the server.&n; */
 DECL|function|root_nfs_setup

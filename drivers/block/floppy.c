@@ -11447,10 +11447,11 @@ op_eq
 id|RQ_INACTIVE
 )paren
 (brace
-id|DPRINT
+id|CLEAR_INTR
+suffix:semicolon
+id|unlock_fdc
 c_func
 (paren
-l_string|&quot;current not active!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -15093,6 +15094,7 @@ id|first
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Floppy drive(s): &quot;
 )paren
 suffix:semicolon
@@ -16503,6 +16505,7 @@ l_int|0x80
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;FDC %d is a 8272A&bslash;n&quot;
 comma
 id|fdc
@@ -16570,6 +16573,7 @@ l_int|0x80
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;FDC %d is a 82072&bslash;n&quot;
 comma
 id|fdc
@@ -16648,6 +16652,7 @@ l_int|0x80
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;FDC %d is a pre-1991 82077&bslash;n&quot;
 comma
 id|fdc
@@ -16740,6 +16745,7 @@ l_int|0x80
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;FDC %d is a post-1991 82077&bslash;n&quot;
 comma
 id|fdc
@@ -16816,6 +16822,7 @@ l_int|0x40
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;FDC %d is a 3Volt 82078SL.&bslash;n&quot;
 comma
 id|fdc
@@ -16829,6 +16836,7 @@ multiline_comment|/* Either a 82078-1 or a 82078SL running at 5Volt */
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;FDC %d is a 82078-1.&bslash;n&quot;
 comma
 id|fdc
@@ -16843,6 +16851,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;FDC %d is a 44pin 82078&bslash;n&quot;
 comma
 id|fdc
@@ -16857,6 +16866,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;FDC %d is a S82078B&bslash;n&quot;
 comma
 id|fdc
@@ -16871,6 +16881,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;FDC %d is a National Semiconductor PC87306&bslash;n&quot;
 comma
 id|fdc
@@ -16884,6 +16895,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;FDC %d init: 82077 variant with PARTID=%d.&bslash;n&quot;
 comma
 id|fdc
@@ -18679,6 +18691,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;inserting floppy driver for %s&bslash;n&quot;
 comma
 id|kernel_version

@@ -2967,6 +2967,7 @@ r_else
 (brace
 id|printk
 (paren
+id|KERN_INFO
 l_string|&quot;Happy GoldStar !&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3018,6 +3019,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;GoldStar-module released.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3054,6 +3056,7 @@ id|result
 suffix:semicolon
 id|printk
 (paren
+id|KERN_INFO
 l_string|&quot;GSCD: version %s&bslash;n&quot;
 comma
 id|GSCD_VERSION
@@ -3061,6 +3064,7 @@ id|GSCD_VERSION
 suffix:semicolon
 id|printk
 (paren
+id|KERN_INFO
 l_string|&quot;GSCD: Trying to detect a Goldstar R420 CD-ROM drive at 0x%X.&bslash;n&quot;
 comma
 id|gscd_port
@@ -3204,6 +3208,7 @@ id|i
 suffix:semicolon
 id|printk
 (paren
+id|KERN_INFO
 l_string|&quot;GSCD: Reset unit %d ... &quot;
 comma
 id|i
@@ -3288,6 +3293,7 @@ l_string|&quot;gscd&quot;
 suffix:semicolon
 id|printk
 (paren
+id|KERN_INFO
 l_string|&quot;GSCD: GoldStar CD-ROM Drive found.&bslash;n&quot;
 )paren
 suffix:semicolon

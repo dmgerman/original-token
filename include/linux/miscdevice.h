@@ -53,7 +53,7 @@ suffix:semicolon
 suffix:semicolon
 r_extern
 r_int
-id|mouse_register
+id|misc_register
 c_func
 (paren
 r_struct
@@ -64,7 +64,7 @@ id|misc
 suffix:semicolon
 r_extern
 r_int
-id|mouse_deregister
+id|misc_deregister
 c_func
 (paren
 r_struct

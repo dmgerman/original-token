@@ -715,7 +715,7 @@ DECL|macro|NEXT_DEV
 macro_line|#   define NEXT_DEV&t;(&amp;sdla0_dev)
 macro_line|#endif
 multiline_comment|/* This must be AFTER the various FRADs so it initializes FIRST! */
-macro_line|#ifdef CONFIG_FRAD
+macro_line|#ifdef CONFIG_DLCI
 r_extern
 r_int
 id|dlci_init
@@ -1321,6 +1321,55 @@ macro_line|#undef NEXT_DEV
 DECL|macro|NEXT_DEV
 mdefine_line|#define NEXT_DEV (&amp;slip_bootstrap)
 macro_line|#endif&t;/* SLIP */
+macro_line|#if defined(CONFIG_STRIP)
+r_extern
+r_int
+id|strip_init_ctrl_dev
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+DECL|variable|strip_bootstrap
+r_static
+r_struct
+id|device
+id|strip_bootstrap
+op_assign
+(brace
+l_string|&quot;strip_proto&quot;
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NEXT_DEV
+comma
+id|strip_init_ctrl_dev
+comma
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#undef NEXT_DEV
+DECL|macro|NEXT_DEV
+mdefine_line|#define NEXT_DEV (&amp;strip_bootstrap)
+macro_line|#endif   /* STRIP */
 macro_line|#if defined(CONFIG_PPP)
 r_extern
 r_int

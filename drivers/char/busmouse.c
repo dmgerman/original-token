@@ -1001,6 +1001,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Logitech bus mouse detected, using IRQ %d.&bslash;n&quot;
 comma
 id|mouse_irq

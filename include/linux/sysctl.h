@@ -121,6 +121,33 @@ mdefine_line|#define VM_BDFLUSH&t;4&t;/* struct: Control buffer cache flushing *
 DECL|macro|VM_MAXID
 mdefine_line|#define VM_MAXID&t;5
 multiline_comment|/* CTL_NET names: */
+multiline_comment|/* /proc/sys/net/core */
+DECL|macro|NET_CORE
+mdefine_line|#define NET_CORE&t;&t;0x01000000
+multiline_comment|/* /proc/sys/net/ethernet */
+DECL|macro|NET_ETHER
+mdefine_line|#define NET_ETHER&t;&t;0x02000000
+multiline_comment|/* /proc/sys/net/802 */
+DECL|macro|NET_802
+mdefine_line|#define NET_802         &t;0x03000000
+multiline_comment|/* /proc/sys/net/unix */
+DECL|macro|NET_UNIX
+mdefine_line|#define NET_UNIX&t;&t;0x04000000
+multiline_comment|/* /proc/sys/net/ipv4 */
+DECL|macro|NET_IPV4
+mdefine_line|#define NET_IPV4&t;&t;0x05000000
+multiline_comment|/* /proc/sys/net/ipx */
+DECL|macro|NET_IPX
+mdefine_line|#define NET_IPX&t;&t;&t;0x06000000
+multiline_comment|/* /proc/sys/net/appletalk */
+DECL|macro|NET_ATALK
+mdefine_line|#define NET_ATALK&t;&t;0x07000000
+multiline_comment|/* /proc/sys/net/netrom */
+DECL|macro|NET_NETROM
+mdefine_line|#define NET_NETROM&t;&t;0x08000000
+multiline_comment|/* /proc/sys/net/ax25 */
+DECL|macro|NET_AX25
+mdefine_line|#define NET_AX25&t;&t;0x09000000
 multiline_comment|/* CTL_PROC names: */
 multiline_comment|/* CTL_FS names: */
 multiline_comment|/* CTL_DEBUG names: */

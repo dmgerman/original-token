@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;lance.c:v1.08.01 Mar 6 1996 saw@shade.msu.ru&bslash;n&quot;
+l_string|&quot;lance.c:v1.08.02 Mar 17 1996 tsbogend@bigbug.franken.de&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -90,6 +90,7 @@ multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibili
 multiline_comment|/* Memory accessed from LANCE card must be aligned on 8-byte boundaries.&n;   But we can&squot;t believe that kmalloc()&squot;ed memory satisfyes it. -- SAW */
 DECL|macro|LANCE_KMALLOC
 mdefine_line|#define LANCE_KMALLOC(x) &bslash;&n;&t;((void *) (((unsigned long)kmalloc((x)+7, GFP_DMA | GFP_KERNEL)+7) &amp; ~7))
+multiline_comment|/*&n; * Changes:&n; *&t;Thomas Bogendoerfer (tsbogend@bigbug.franken.de):&n; *&t;- added support for Linux/Alpha, but removed most of it, because&n; *        it worked only for the PCI chip. &n; *      - added hook for the 32bit lance driver&n; */
 multiline_comment|/* Set the number of Tx and Rx buffers, using Log_2(# buffers).&n;   Reasonable default values are 16 Tx buffers, and 16 Rx buffers.&n;   That translates to 4 and 4 (16 == 2^^4). */
 macro_line|#ifndef LANCE_LOG_TX_BUFFERS
 DECL|macro|LANCE_LOG_TX_BUFFERS
@@ -128,16 +129,16 @@ r_struct
 id|lance_rx_head
 (brace
 DECL|member|base
-r_int
+id|s32
 id|base
 suffix:semicolon
 DECL|member|buf_length
-r_int
+id|s16
 id|buf_length
 suffix:semicolon
 multiline_comment|/* This length is 2s complement (negative)! */
 DECL|member|msg_length
-r_int
+id|s16
 id|msg_length
 suffix:semicolon
 multiline_comment|/* This length is &quot;normal&quot;. */
@@ -148,16 +149,16 @@ r_struct
 id|lance_tx_head
 (brace
 DECL|member|base
-r_int
+id|s32
 id|base
 suffix:semicolon
 DECL|member|length
-r_int
+id|s16
 id|length
 suffix:semicolon
 multiline_comment|/* Length is 2s complement (negative)! */
 DECL|member|misc
-r_int
+id|s16
 id|misc
 suffix:semicolon
 )brace
@@ -168,14 +169,12 @@ r_struct
 id|lance_init_block
 (brace
 DECL|member|mode
-r_int
-r_int
+id|u16
 id|mode
 suffix:semicolon
 multiline_comment|/* Pre-set mode (reg. 15) */
 DECL|member|phys_addr
-r_int
-r_char
+id|u8
 id|phys_addr
 (braket
 l_int|6
@@ -183,7 +182,7 @@ l_int|6
 suffix:semicolon
 multiline_comment|/* Physical ethernet address */
 DECL|member|filter
-r_int
+id|u32
 id|filter
 (braket
 l_int|2
@@ -192,12 +191,12 @@ suffix:semicolon
 multiline_comment|/* Multicast filter (unused). */
 multiline_comment|/* Receive and transmit ring base, along with extra bits. */
 DECL|member|rx_ring
-r_int
+id|u32
 id|rx_ring
 suffix:semicolon
 multiline_comment|/* Tx and Rx ring base pointers */
 DECL|member|tx_ring
-r_int
+id|u32
 id|tx_ring
 suffix:semicolon
 )brace
@@ -297,7 +296,8 @@ r_char
 id|tx_full
 suffix:semicolon
 DECL|member|lock
-r_char
+r_int
+r_int
 id|lock
 suffix:semicolon
 )brace
@@ -580,10 +580,12 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifndef __alpha__    
 r_int
 op_star
 id|port
 suffix:semicolon
+macro_line|#endif    
 r_if
 c_cond
 (paren
@@ -772,6 +774,8 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif  /* defined(CONFIG_PCI) */
+multiline_comment|/* On the Alpha don&squot;t look for PCnet chips on the ISA bus */
+macro_line|#ifndef __alpha__
 r_for
 c_loop
 (paren
@@ -861,6 +865,7 @@ id|ioaddr
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -921,6 +926,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Already printed version info. */
+macro_line|#ifndef __alpha__
 multiline_comment|/* First we look for special cases.&n;&t;   Check for HP&squot;s on-board ethernet by looking for &squot;HP&squot; in the BIOS.&n;&t;   There are two HP versions, check the BIOS for the configuration port.&n;&t;   This method provided by L. Julliard, Laurent_Julliard@grenoble.hp.com.&n;&t;   */
 r_if
 c_cond
@@ -1044,6 +1050,7 @@ op_eq
 l_int|0x09
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Reset the LANCE.&t; */
 id|reset_val
 op_assign
@@ -1321,6 +1328,51 @@ dot
 id|name
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_LANCE32
+multiline_comment|/* look if it&squot;s a PCI or VLB chip */
+r_if
+c_cond
+(paren
+id|lance_version
+op_eq
+id|PCNET_PCI
+op_logical_or
+id|lance_version
+op_eq
+id|PCNET_VLB
+)paren
+(brace
+r_extern
+r_void
+id|lance32_probe1
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_const
+r_char
+op_star
+id|chipname
+comma
+r_int
+id|pci_irq_line
+)paren
+suffix:semicolon
+id|lance32_probe1
+(paren
+id|dev
+comma
+id|chipname
+comma
+id|pci_irq_line
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif    
 multiline_comment|/* Make certain the data structures used by the LANCE are aligned and DMAble. */
 id|lp
 op_assign
@@ -1464,18 +1516,34 @@ suffix:semicolon
 id|lp-&gt;init_block.rx_ring
 op_assign
 (paren
-r_int
+(paren
+id|u32
 )paren
+id|virt_to_bus
+c_func
+(paren
 id|lp-&gt;rx_ring
+)paren
+op_amp
+l_int|0xffffff
+)paren
 op_or
 id|RX_RING_LEN_BITS
 suffix:semicolon
 id|lp-&gt;init_block.tx_ring
 op_assign
 (paren
-r_int
+(paren
+id|u32
 )paren
+id|virt_to_bus
+c_func
+(paren
 id|lp-&gt;tx_ring
+)paren
+op_amp
+l_int|0xffffff
+)paren
 op_or
 id|TX_RING_LEN_BITS
 suffix:semicolon
@@ -1504,10 +1572,14 @@ c_func
 r_int
 )paren
 (paren
-r_int
+id|u32
 )paren
+id|virt_to_bus
+c_func
+(paren
 op_amp
 id|lp-&gt;init_block
+)paren
 comma
 id|ioaddr
 op_plus
@@ -1537,10 +1609,14 @@ c_func
 (paren
 (paren
 (paren
-r_int
+id|u32
 )paren
+id|virt_to_bus
+c_func
+(paren
 op_amp
 id|lp-&gt;init_block
+)paren
 )paren
 op_rshift
 l_int|16
@@ -2481,20 +2557,32 @@ comma
 id|dev-&gt;dma
 comma
 (paren
-r_int
+id|u32
 )paren
+id|virt_to_bus
+c_func
+(paren
 id|lp-&gt;tx_ring
+)paren
 comma
 (paren
-r_int
+id|u32
 )paren
+id|virt_to_bus
+c_func
+(paren
 id|lp-&gt;rx_ring
+)paren
 comma
 (paren
-r_int
+id|u32
 )paren
+id|virt_to_bus
+c_func
+(paren
 op_amp
 id|lp-&gt;init_block
+)paren
 )paren
 suffix:semicolon
 id|lance_init_ring
@@ -2521,10 +2609,14 @@ c_func
 r_int
 )paren
 (paren
-r_int
+id|u32
 )paren
+id|virt_to_bus
+c_func
+(paren
 op_amp
 id|lp-&gt;init_block
+)paren
 comma
 id|ioaddr
 op_plus
@@ -2546,10 +2638,14 @@ c_func
 (paren
 (paren
 (paren
-r_int
+id|u32
 )paren
+id|virt_to_bus
+c_func
+(paren
 op_amp
 id|lp-&gt;init_block
+)paren
 )paren
 op_rshift
 l_int|16
@@ -2666,10 +2762,14 @@ comma
 id|i
 comma
 (paren
-r_int
+id|u32
 )paren
+id|virt_to_bus
+c_func
+(paren
 op_amp
 id|lp-&gt;init_block
+)paren
 comma
 id|inw
 c_func
@@ -2829,6 +2929,15 @@ dot
 id|base
 op_assign
 (paren
+id|u32
+)paren
+id|virt_to_bus
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
 id|lp-&gt;rx_buffs
 op_plus
 id|i
@@ -2920,18 +3029,34 @@ suffix:semicolon
 id|lp-&gt;init_block.rx_ring
 op_assign
 (paren
-r_int
+(paren
+id|u32
 )paren
+id|virt_to_bus
+c_func
+(paren
 id|lp-&gt;rx_ring
+)paren
+op_amp
+l_int|0xffffff
+)paren
 op_or
 id|RX_RING_LEN_BITS
 suffix:semicolon
 id|lp-&gt;init_block.tx_ring
 op_assign
 (paren
-r_int
+(paren
+id|u32
 )paren
+id|virt_to_bus
+c_func
+(paren
 id|lp-&gt;tx_ring
+)paren
+op_amp
+l_int|0xffffff
+)paren
 op_or
 id|TX_RING_LEN_BITS
 suffix:semicolon
@@ -3490,8 +3615,10 @@ r_if
 c_cond
 (paren
 (paren
-r_int
+id|u32
 )paren
+id|virt_to_bus
+c_func
 (paren
 id|skb-&gt;data
 )paren
@@ -3516,8 +3643,10 @@ comma
 id|dev-&gt;name
 comma
 (paren
-r_int
+id|u32
 )paren
+id|virt_to_bus
+c_func
 (paren
 id|skb-&gt;data
 )paren
@@ -3545,12 +3674,20 @@ dot
 id|base
 op_assign
 (paren
-r_int
+(paren
+id|u32
 )paren
+id|virt_to_bus
+c_func
+(paren
 (paren
 id|lp-&gt;tx_bounce_buffs
 op_plus
 id|entry
+)paren
+)paren
+op_amp
+l_int|0xffffff
 )paren
 op_or
 l_int|0x83000000
@@ -3580,10 +3717,16 @@ dot
 id|base
 op_assign
 (paren
-r_int
+(paren
+id|u32
 )paren
+id|virt_to_bus
+c_func
 (paren
 id|skb-&gt;data
+)paren
+op_amp
+l_int|0xffffff
 )paren
 op_or
 l_int|0x83000000
@@ -4560,6 +4703,9 @@ r_int
 r_char
 op_star
 )paren
+id|bus_to_virt
+c_func
+(paren
 (paren
 id|lp-&gt;rx_ring
 (braket
@@ -4569,6 +4715,7 @@ dot
 id|base
 op_amp
 l_int|0x00ffffff
+)paren
 )paren
 comma
 id|pkt_len

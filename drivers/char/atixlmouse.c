@@ -842,6 +842,7 @@ id|c
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;&bslash;nATI Inport &quot;
 )paren
 suffix:semicolon

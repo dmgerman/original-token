@@ -1756,6 +1756,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|seagate_st0x_command
 r_int
 id|seagate_st0x_command
 (paren
@@ -4627,6 +4628,7 @@ id|st0x_aborted
 )paren
 suffix:semicolon
 )brace
+DECL|function|seagate_st0x_abort
 r_int
 id|seagate_st0x_abort
 (paren
@@ -4644,6 +4646,7 @@ id|SCSI_ABORT_PENDING
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;the seagate_st0x_reset function resets the SCSI bus&n;*/
+DECL|function|seagate_st0x_reset
 r_int
 id|seagate_st0x_reset
 (paren
@@ -4709,6 +4712,7 @@ suffix:semicolon
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;scsi_ioctl.h&quot;
+DECL|function|seagate_st0x_biosparam
 r_int
 id|seagate_st0x_biosparam
 c_func
@@ -5122,6 +5126,7 @@ OG
 l_int|64
 )paren
 )paren
+(brace
 multiline_comment|/* The Seagate&squot;s seem to have some mapping&n;&t; * Multiple heads * sectors * cyl to get capacity&n;&t; * Then start rounding down. */
 id|capacity
 op_assign
@@ -5166,7 +5171,6 @@ op_div
 id|heads
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
 id|ip
 (braket
@@ -5198,6 +5202,7 @@ suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 multiline_comment|/* Eventually this will go into an include file, but this will be later */
+DECL|variable|driver_template
 id|Scsi_Host_Template
 id|driver_template
 op_assign

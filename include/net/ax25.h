@@ -149,6 +149,8 @@ DECL|macro|AX25_DEF_IDLE
 mdefine_line|#define AX25_DEF_IDLE&t;&t;20
 DECL|macro|AX25_DEF_PACLEN
 mdefine_line|#define AX25_DEF_PACLEN&t;&t;256
+DECL|macro|AX25_DEF_IPMAXQUEUE
+mdefine_line|#define AX25_DEF_IPMAXQUEUE&t;1&t;&t;/* 1 * ax25-&gt;window */
 DECL|macro|AX25_DEF_DIGI
 mdefine_line|#define&t;AX25_DEF_DIGI&t;&t;(AX25_DIGI_INBAND|AX25_DIGI_XBAND)
 DECL|struct|ax25_uid_assoc
@@ -308,6 +310,11 @@ DECL|member|paclen
 r_int
 r_int
 id|paclen
+suffix:semicolon
+DECL|member|maxqueue
+r_int
+r_int
+id|maxqueue
 suffix:semicolon
 DECL|member|fragno
 DECL|member|fraglen
@@ -1110,6 +1117,20 @@ id|ax25_digi
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|ax25_queue_length
+c_func
+(paren
+id|ax25_cb
+op_star
+comma
+r_struct
+id|sk_buff
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* dl1bke 960327 */
 r_extern
 r_void
 id|ax25_dama_on

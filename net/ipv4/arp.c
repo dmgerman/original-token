@@ -3117,6 +3117,9 @@ suffix:colon
 r_case
 id|ARPHRD_ARCNET
 suffix:colon
+r_case
+id|ARPHRD_METRICOM
+suffix:colon
 r_if
 c_cond
 (paren

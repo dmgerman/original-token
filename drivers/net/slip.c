@@ -4556,6 +4556,7 @@ multiline_comment|/* Sanity */
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;SLIP: version %s (dynamic channels, max=%d)&quot;
 macro_line|#ifdef CONFIG_SLIP_MODE_SLIP6
 l_string|&quot; (6 bit encapsulation enabled)&quot;
@@ -4579,6 +4580,7 @@ macro_line|#ifdef CONFIG_AX25
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;AX25: KISS encapsulation enabled.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4587,6 +4589,7 @@ macro_line|#ifdef CONFIG_SLIP_SMART
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;SLIP linefill/keepalive option.&bslash;n&quot;
 )paren
 suffix:semicolon

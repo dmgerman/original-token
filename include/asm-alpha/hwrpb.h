@@ -51,6 +51,7 @@ DECL|macro|ST_DEC_EB66P
 mdefine_line|#define ST_DEC_EB66P&t;&t;-19&t;/* EB66 systype&t;&t;*/
 DECL|macro|ST_DEC_EBPC64
 mdefine_line|#define ST_DEC_EBPC64&t;&t;-20&t;/* Cabriolet (AlphaPC64) systype */
+macro_line|#defien ST_DEC_EB164&t;&t; 26&t;/* EB164 systype&t;*/
 DECL|struct|pcb_struct
 r_struct
 id|pcb_struct

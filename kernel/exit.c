@@ -51,7 +51,8 @@ op_star
 suffix:semicolon
 DECL|function|generate
 r_static
-r_int
+r_inline
+r_void
 id|generate
 c_func
 (paren
@@ -88,10 +89,17 @@ id|p-&gt;sig-&gt;action
 op_minus
 l_int|1
 suffix:semicolon
-multiline_comment|/* always generate signals for traced processes ??? */
+multiline_comment|/*&n;&t; * Optimize away the signal, if it&squot;s a signal that can&n;&t; * be handled immediately (ie non-blocked and untraced)&n;&t; * and that is ignored (either explicitly or by default)&n;&t; */
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
+id|mask
+op_amp
+id|p-&gt;blocked
+)paren
+op_logical_and
 op_logical_neg
 (paren
 id|p-&gt;flags
@@ -113,7 +121,6 @@ op_ne
 id|SIGCHLD
 )paren
 r_return
-l_int|0
 suffix:semicolon
 multiline_comment|/* some signals are ignored by default.. (but SIGCONT already did its deed) */
 r_if
@@ -144,7 +151,6 @@ id|SIGURG
 )paren
 )paren
 r_return
-l_int|0
 suffix:semicolon
 )brace
 id|p-&gt;signal
@@ -170,9 +176,6 @@ c_func
 (paren
 id|p
 )paren
-suffix:semicolon
-r_return
-l_int|1
 suffix:semicolon
 )brace
 DECL|function|send_sig

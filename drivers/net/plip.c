@@ -835,8 +835,7 @@ suffix:semicolon
 multiline_comment|/* Initialize task queue structures */
 id|nl-&gt;immediate.next
 op_assign
-op_amp
-id|tq_last
+l_int|NULL
 suffix:semicolon
 id|nl-&gt;immediate.sync
 op_assign
@@ -860,8 +859,7 @@ id|dev
 suffix:semicolon
 id|nl-&gt;deferred.next
 op_assign
-op_amp
-id|tq_last
+l_int|NULL
 suffix:semicolon
 id|nl-&gt;deferred.sync
 op_assign

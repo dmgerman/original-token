@@ -1,7 +1,8 @@
-multiline_comment|/*&n; *  scsi.c Copyright (C) 1992 Drew Eckhardt&n; *         Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  generic mid-level SCSI driver&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *  Bug correction thanks go to :&n; *      Rik Faith &lt;faith@cs.unc.edu&gt;&n; *      Tommy Thorn &lt;tthorn&gt;&n; *      Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; *&n; *  Modified by Eric Youngdale eric@aib.com to&n; *  add scatter-gather, multiple outstanding request, and other&n; *  enhancements.&n; *&n; *  Native multichannel and wide scsi support added &n; *  by Michael Neuffer neuffer@goofy.zdv.uni-mainz.de&n; */
+multiline_comment|/*&n; *  scsi.c Copyright (C) 1992 Drew Eckhardt&n; *         Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  generic mid-level SCSI driver&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *  Bug correction thanks go to :&n; *      Rik Faith &lt;faith@cs.unc.edu&gt;&n; *      Tommy Thorn &lt;tthorn&gt;&n; *      Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; *&n; *  Modified by Eric Youngdale eric@aib.com to&n; *  add scatter-gather, multiple outstanding request, and other&n; *  enhancements.&n; *&n; *  Native multichannel and wide scsi support added &n; *  by Michael Neuffer neuffer@goofy.zdv.uni-mainz.de&n; *&n; *  Added request_module(&quot;scsi_hostadapter&quot;) for kerneld:&n; *  (Put an &quot;alias scsi_hostadapter your_hostadapter&quot; in /etc/conf.modules)&n; *  Bjorn Ekwall  &lt;bj0rn@blox.se&gt;&n; */
 multiline_comment|/*&n; * Don&squot;t import our own symbols, as this would severely mess up our&n; * symbol tables.&n; */
 DECL|macro|_SCSI_SYMS_VER_
 mdefine_line|#define _SCSI_SYMS_VER_
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -17,7 +18,9 @@ macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;constants.h&quot;
-macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_KERNELD
+macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#endif
 DECL|macro|USE_STATIC_SCSI_MEMORY
 macro_line|#undef USE_STATIC_SCSI_MEMORY
 multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/scsi.c,v 1.5 1993/09/24 12:45:18 drew Exp drew $&quot;;&n;*/
@@ -2539,6 +2542,27 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* assume no peripheral if any sort of error */
+multiline_comment|/*&n;   * Check the peripheral qualifier field - this tells us whether LUNS&n;   * are supported here or not.&n;   */
+r_if
+c_cond
+(paren
+(paren
+id|scsi_result
+(braket
+l_int|0
+)braket
+op_rshift
+l_int|5
+)paren
+op_eq
+l_int|3
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* assume no peripheral if any sort of error */
+)brace
 multiline_comment|/*&n;   * It would seem some TOSHIBA CDROM gets things wrong&n;   */
 r_if
 c_cond
@@ -11947,6 +11971,21 @@ multiline_comment|/* Load upper level device handler of some kind */
 r_case
 id|MODULE_SCSI_DEV
 suffix:colon
+macro_line|#ifdef CONFIG_KERNELD
+r_if
+c_cond
+(paren
+id|scsi_hosts
+op_eq
+l_int|NULL
+)paren
+id|request_module
+c_func
+(paren
+l_string|&quot;scsi_hostadapter&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|scsi_register_device_module
 c_func

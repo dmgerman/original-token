@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 031&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;Extracted AX25 control block from the&n; *&t;&t;&t;&t;&t;sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; */
+multiline_comment|/*&n; *&t;AX.25 release 031&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;Extracted AX25 control block from the&n; *&t;&t;&t;&t;&t;sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;AX.25 032&t;Joerg(DL1BKE)&t;Fixed DAMA timeout bug&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &lt;linux/errno.h&gt;
@@ -549,6 +549,11 @@ c_cond
 op_logical_neg
 id|ax25-&gt;dama_slave
 )paren
+(brace
+id|ax25-&gt;t3timer
+op_assign
+l_int|0
+suffix:semicolon
 id|ax25_send_control
 c_func
 (paren
@@ -561,6 +566,14 @@ comma
 id|C_COMMAND
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|ax25-&gt;t3timer
+op_assign
+id|ax25-&gt;t3
+suffix:semicolon
+)brace
 multiline_comment|/* state 1 or 2 should not happen, but... */
 r_if
 c_cond
@@ -581,10 +594,6 @@ r_else
 id|ax25-&gt;state
 op_assign
 id|AX25_STATE_2
-suffix:semicolon
-id|ax25-&gt;t3timer
-op_assign
-l_int|0
 suffix:semicolon
 id|ax25-&gt;t1timer
 op_assign

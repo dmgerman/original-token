@@ -8443,6 +8443,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;optcd: DOLPHIN 8000 AT CDROM at 0x%x&bslash;n&quot;
 comma
 id|optcd_port
@@ -8511,6 +8512,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;optcd: module released.&bslash;n&quot;
 )paren
 suffix:semicolon

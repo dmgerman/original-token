@@ -561,9 +561,9 @@ c_func
 (paren
 id|SI
 comma
-id|SI_6205
+id|SI_503
 comma
-l_string|&quot;6205&quot;
+l_string|&quot;85C503&quot;
 )paren
 comma
 id|DEVICE
@@ -571,9 +571,9 @@ c_func
 (paren
 id|SI
 comma
-id|SI_503
+id|SI_6205
 comma
-l_string|&quot;85C503&quot;
+l_string|&quot;6205&quot;
 )paren
 comma
 id|DEVICE

@@ -175,7 +175,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|__xg
-mdefine_line|#define __xg(x) ((volatile struct __xchg_dummy *)(x))
+mdefine_line|#define __xg(x) ((struct __xchg_dummy *)(x))
 DECL|function|__xchg
 r_static
 r_inline
@@ -188,7 +188,6 @@ r_int
 r_int
 id|x
 comma
-r_volatile
 r_void
 op_star
 id|ptr

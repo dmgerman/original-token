@@ -3103,7 +3103,7 @@ id|mbo
 dot
 id|rsalen
 op_assign
-l_int|12
+l_int|16
 suffix:semicolon
 id|ccb
 (braket

@@ -5516,6 +5516,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;cm206: v&quot;
 id|VERSION
 )paren
@@ -5698,6 +5699,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Firmware revision %d&quot;
 comma
 id|e
@@ -5896,6 +5898,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%d kB adapter memory available, &quot;
 l_string|&quot; %ld bytes kernel memory used.&bslash;n&quot;
 comma
@@ -6064,6 +6067,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;cm206 removed&bslash;n&quot;
 )paren
 suffix:semicolon

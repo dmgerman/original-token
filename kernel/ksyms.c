@@ -930,12 +930,6 @@ comma
 id|X
 c_func
 (paren
-id|tq_last
-)paren
-comma
-id|X
-c_func
-(paren
 id|timer_active
 )paren
 comma

@@ -2415,7 +2415,8 @@ multiline_comment|/* reserve space for vj header expansion */
 id|dev-&gt;mem_start
 op_assign
 (paren
-id|__u32
+r_int
+r_int
 )paren
 id|buf_base
 (paren
@@ -2425,7 +2426,8 @@ suffix:semicolon
 id|dev-&gt;mem_end
 op_assign
 (paren
-id|__u32
+r_int
+r_int
 )paren
 (paren
 id|dev-&gt;mem_start
@@ -2436,7 +2438,8 @@ suffix:semicolon
 id|dev-&gt;rmem_start
 op_assign
 (paren
-id|__u32
+r_int
+r_int
 )paren
 id|buf_base
 (paren
@@ -2446,7 +2449,8 @@ suffix:semicolon
 id|dev-&gt;rmem_end
 op_assign
 (paren
-id|__u32
+r_int
+r_int
 )paren
 (paren
 id|dev-&gt;rmem_start

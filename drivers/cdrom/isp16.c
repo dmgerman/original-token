@@ -209,6 +209,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;ISP16: configuration cdrom interface, version %d.%d.&bslash;n&quot;
 comma
 id|ISP16_VERSION_MAJOR
@@ -291,6 +292,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;ISP16: cdrom interface (with OPTi 82C92%d chip) detected.&bslash;n&quot;
 comma
 (paren
@@ -433,6 +435,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;ISP16: cdrom interface set up with io base 0x%03X, irq %d, dma %d,&quot;
 l_string|&quot; type %s.&bslash;n&quot;
 comma
@@ -1195,6 +1198,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;ISP16: module released.&bslash;n&quot;
 )paren
 suffix:semicolon

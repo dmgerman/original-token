@@ -2472,6 +2472,7 @@ macro_line|#endif
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Unloading %s: version %s&bslash;n&quot;
 comma
 id|stli_drvname
@@ -19946,6 +19947,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: version %s&bslash;n&quot;
 comma
 id|stli_drvname

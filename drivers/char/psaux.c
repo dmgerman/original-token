@@ -1761,6 +1761,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;82C710 type pointing device detected -- driver installed.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1795,6 +1796,7 @@ l_int|0xaa
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;PS/2 auxiliary pointing device detected -- driver installed.&bslash;n&quot;
 )paren
 suffix:semicolon

@@ -2964,6 +2964,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;CSLIP: code copyright 1989 Regents of the University of California&bslash;n&quot;
 )paren
 suffix:semicolon
