@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.1 1997/03/11 17:37:04 jj Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.5 1997/04/04 00:49:52 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -264,6 +264,8 @@ DECL|variable|boot_flags
 r_int
 r_int
 id|boot_flags
+op_assign
+l_int|0
 suffix:semicolon
 DECL|macro|BOOTME_DEBUG
 mdefine_line|#define BOOTME_DEBUG  0x1
@@ -301,6 +303,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -321,6 +324,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 DECL|function|obp_system_intr
 r_int
@@ -724,7 +728,7 @@ l_int|4
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * &quot;mem=XXX[kKmM] overrides the PROM-reported&n;&t;&t;&t;&t; * memory size.&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * &quot;mem=XXX[kKmM]&quot; overrides the PROM-reported&n;&t;&t;&t;&t; * memory size.&n;&t;&t;&t;&t; */
 id|memory_size
 op_assign
 id|simple_strtoul
@@ -904,6 +908,32 @@ id|reboot_command
 l_int|256
 )braket
 suffix:semicolon
+DECL|variable|phys_base
+r_int
+r_int
+id|phys_base
+suffix:semicolon
+DECL|variable|fake_swapper_regs
+r_static
+r_struct
+id|pt_regs
+id|fake_swapper_regs
+op_assign
+(brace
+(brace
+l_int|0
+comma
+)brace
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)brace
+suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -929,6 +959,10 @@ id|memory_end_p
 )paren
 )paren
 (brace
+r_int
+r_int
+id|lowest_paddr
+suffix:semicolon
 r_int
 id|total
 comma
@@ -1044,11 +1078,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|load_mmu
-c_func
-(paren
-)paren
-suffix:semicolon
 id|total
 op_assign
 id|prom_probe_memory
@@ -1056,19 +1085,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-op_star
-id|memory_start_p
+id|lowest_paddr
 op_assign
-(paren
-(paren
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|end
-)paren
-)paren
+l_int|0xffffffffffffffffUL
 suffix:semicolon
 r_for
 c_loop
@@ -1090,6 +1109,29 @@ id|i
 op_increment
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|sp_banks
+(braket
+id|i
+)braket
+dot
+id|base_addr
+OL
+id|lowest_paddr
+)paren
+(brace
+id|lowest_paddr
+op_assign
+id|sp_banks
+(braket
+id|i
+)braket
+dot
+id|base_addr
+suffix:semicolon
+)brace
 id|end_of_phys_memory
 op_assign
 id|sp_banks
@@ -1165,15 +1207,52 @@ c_func
 id|prom_sync_me
 )paren
 suffix:semicolon
+multiline_comment|/* In paging_init() we tip off this value to see if we need&n;&t; * to change init_mm.pgd to point to the real alias mapping.&n;&t; */
+id|phys_base
+op_assign
+id|lowest_paddr
+suffix:semicolon
+op_star
+id|memory_start_p
+op_assign
+id|PAGE_ALIGN
+c_func
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|end
+)paren
+)paren
+suffix:semicolon
 op_star
 id|memory_end_p
 op_assign
 (paren
 id|end_of_phys_memory
 op_plus
-id|KERNBASE
+id|PAGE_OFFSET
 )paren
 suffix:semicolon
+macro_line|#ifndef NO_DAVEM_DEBUGGING
+id|prom_printf
+c_func
+(paren
+l_string|&quot;phys_base[%016lx] memory_start[%016lx] memory_end[%016lx]&bslash;n&quot;
+comma
+id|phys_base
+comma
+op_star
+id|memory_start_p
+comma
+op_star
+id|memory_end_p
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1241,11 +1320,11 @@ c_cond
 (paren
 id|initrd_start
 OL
-id|KERNBASE
+id|PAGE_OFFSET
 )paren
 id|initrd_start
 op_add_assign
-id|KERNBASE
+id|PAGE_OFFSET
 suffix:semicolon
 id|initrd_end
 op_assign
@@ -1314,14 +1393,13 @@ suffix:semicolon
 )brace
 macro_line|#endif&t;
 multiline_comment|/* Due to stack alignment restrictions and assumptions... */
-macro_line|#if 0&t;
 id|init_task.mm-&gt;mmap-&gt;vm_page_prot
 op_assign
 id|PAGE_SHARED
 suffix:semicolon
 id|init_task.mm-&gt;mmap-&gt;vm_start
 op_assign
-id|KERNBASE
+id|PAGE_OFFSET
 suffix:semicolon
 id|init_task.mm-&gt;mmap-&gt;vm_end
 op_assign
@@ -1336,7 +1414,11 @@ r_int
 )paren
 id|NO_CONTEXT
 suffix:semicolon
-macro_line|#endif&t;
+id|init_task.tss.kregs
+op_assign
+op_amp
+id|fake_swapper_regs
+suffix:semicolon
 macro_line|#ifdef CONFIG_SUN_SERIAL
 op_star
 id|memory_start_p
@@ -1371,7 +1453,7 @@ id|console_fb
 r_case
 l_int|0
 suffix:colon
-multiline_comment|/* Let get our io devices from prom */
+multiline_comment|/* Let&squot;s get our io devices from prom */
 (brace
 r_int
 id|idev

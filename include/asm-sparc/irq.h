@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.h,v 1.14 1996/08/29 09:48:18 davem Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.15 1997/04/14 05:39:28 davem Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_IRQ_H
 DECL|macro|_SPARC_IRQ_H
 mdefine_line|#define _SPARC_IRQ_H
@@ -23,6 +23,28 @@ r_void
 (paren
 op_star
 id|enable_irq
+)paren
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|disable_pil_irq
+)paren
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|enable_pil_irq
 )paren
 (paren
 r_int
@@ -332,5 +354,7 @@ DECL|macro|SUN4M_INT_SBUSBITS
 mdefine_line|#define&t;SUN4M_INT_SBUSBITS&t;0x00003F80&t;  /* sbus int bits */
 DECL|macro|SUN4M_INT_SBUS
 mdefine_line|#define SUN4M_INT_SBUS(x)&t;(1 &lt;&lt; (x+7))
+DECL|macro|SUN4M_INT_VME
+mdefine_line|#define SUN4M_INT_VME(x)&t;(1 &lt;&lt; (x))
 macro_line|#endif
 eof

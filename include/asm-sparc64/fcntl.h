@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fcntl.h,v 1.1 1996/11/20 15:28:41 davem Exp $ */
+multiline_comment|/* $Id: fcntl.h,v 1.2 1997/04/04 00:50:15 davem Exp $ */
 macro_line|#ifndef _SPARC64_FCNTL_H
 DECL|macro|_SPARC64_FCNTL_H
 mdefine_line|#define _SPARC64_FCNTL_H
@@ -73,6 +73,7 @@ DECL|macro|LOCK_NB
 mdefine_line|#define LOCK_NB&t;&t;4&t;/* or&squot;d with one of the above to prevent&n;&t;&t;&t;&t;   blocking */
 DECL|macro|LOCK_UN
 mdefine_line|#define LOCK_UN&t;&t;8&t;/* remove lock */
+multiline_comment|/* XXX 32-bit binary compatability item... -DaveM */
 DECL|struct|flock
 r_struct
 id|flock

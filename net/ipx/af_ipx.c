@@ -6255,9 +6255,19 @@ id|len
 comma
 l_string|&quot;%08X  %08X  &quot;
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|s-&gt;wmem_alloc
+)paren
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|s-&gt;rmem_alloc
+)paren
 )paren
 suffix:semicolon
 id|len
@@ -9114,7 +9124,12 @@ id|amount
 op_assign
 id|sk-&gt;sndbuf
 op_minus
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;wmem_alloc
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -45,6 +45,16 @@ r_int
 id|udelay_val
 suffix:semicolon
 multiline_comment|/* that&squot;s it */
+DECL|member|next
+r_int
+r_int
+id|next
+suffix:semicolon
+DECL|member|mid
+r_int
+r_int
+id|mid
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
@@ -68,11 +78,6 @@ DECL|member|akp
 r_int
 r_char
 id|akp
-suffix:semicolon
-DECL|member|irq_udt
-r_int
-r_char
-id|irq_udt
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -99,36 +104,6 @@ r_extern
 r_int
 r_int
 id|cpu_present_map
-suffix:semicolon
-r_extern
-id|__volatile__
-r_int
-r_int
-id|smp_invalidate_needed
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-r_extern
-r_void
-id|smp_message_irq
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|ipi_count
-suffix:semicolon
-r_extern
-r_void
-id|print_lock_state
-c_func
-(paren
-r_void
-)paren
 suffix:semicolon
 DECL|typedef|smpfunc_t
 r_typedef
@@ -207,22 +182,6 @@ comma
 r_int
 r_int
 id|arg5
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|smp_capture
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|smp_release
-c_func
-(paren
-r_void
 )paren
 suffix:semicolon
 DECL|function|xc0
@@ -469,6 +428,14 @@ id|cpu_logical_map
 id|NR_CPUS
 )braket
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|smp_proc_in_lock
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
 DECL|function|smp_processor_id
 r_extern
 id|__inline__
@@ -500,16 +467,6 @@ r_return
 id|cpuid
 suffix:semicolon
 )brace
-r_extern
-id|__volatile__
-r_int
-r_int
-id|smp_proc_in_lock
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-multiline_comment|/* for computing process time */
 r_extern
 id|__volatile__
 r_int
@@ -712,8 +669,6 @@ suffix:semicolon
 )brace
 macro_line|#endif /* !(__ASSEMBLY__) */
 multiline_comment|/* Sparc specific messages. */
-DECL|macro|MSG_CAPTURE
-mdefine_line|#define MSG_CAPTURE            0x0004       /* Park a processor. */
 DECL|macro|MSG_CROSS_CALL
 mdefine_line|#define MSG_CROSS_CALL         0x0005       /* run func on cpus */
 multiline_comment|/* Empirical PROM processor mailbox constants.  If the per-cpu mailbox&n; * contains something other than one of these then the ipi is from&n; * Linux&squot;s active_kernel_processor.  This facility exists so that&n; * the boot monitor can capture all the other cpus when one catches&n; * a watchdog reset or the user enters the monitor using L1-A keys.&n; */
@@ -733,11 +688,6 @@ DECL|macro|SMP_FROM_INT
 mdefine_line|#define SMP_FROM_INT&t;&t;1
 DECL|macro|SMP_FROM_SYSCALL
 mdefine_line|#define SMP_FROM_SYSCALL&t;2
-macro_line|#else /* !(__SMP__) */
-DECL|macro|smp_capture
-mdefine_line|#define smp_capture()&t;&t;do { } while(0)
-DECL|macro|smp_release
-mdefine_line|#define smp_release()&t;&t;do { } while(0)
 macro_line|#endif /* !(__SMP__) */
 macro_line|#endif /* !(_SPARC_SMP_H) */
 eof

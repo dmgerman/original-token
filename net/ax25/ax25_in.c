@@ -1273,7 +1273,12 @@ l_int|NULL
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;rmem_alloc
+)paren
 op_ge
 id|sk-&gt;rcvbuf
 )paren

@@ -2,6 +2,7 @@ macro_line|#ifndef __SPARC64_IPC_H__
 DECL|macro|__SPARC64_IPC_H__
 mdefine_line|#define __SPARC64_IPC_H__
 multiline_comment|/* &n; * These are used to wrap system calls on the sparc.&n; *&n; * See arch/sparc64/kernel/sys_sparc.c for ugly details..&n; */
+multiline_comment|/* XXX 32-bit binary compatability... */
 DECL|struct|ipc_kludge
 r_struct
 id|ipc_kludge

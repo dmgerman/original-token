@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mostek.h,v 1.1 1996/12/26 13:25:22 davem Exp $&n; * mostek.h:  Describes the various Mostek time of day clock registers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
+multiline_comment|/* $Id: mostek.h,v 1.2 1997/03/25 03:58:30 davem Exp $&n; * mostek.h:  Describes the various Mostek time of day clock registers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_MOSTEK_H
 DECL|macro|_SPARC64_MOSTEK_H
 mdefine_line|#define _SPARC64_MOSTEK_H
@@ -191,24 +191,32 @@ id|mostek48t08
 op_star
 id|mstk48t08_regs
 suffix:semicolon
-DECL|enum|sparc_clock_type
-DECL|enumerator|MSTK48T02
-DECL|enumerator|MSTK48T08
-DECL|enumerator|MSTK_INVALID
-r_enum
-id|sparc_clock_type
+multiline_comment|/* SUN5 systems usually have 48t59 model clock chipsets.  But we keep the older&n; * clock chip definitions around just in case.&n; */
+DECL|struct|mostek48t59
+r_struct
+id|mostek48t59
 (brace
-id|MSTK48T02
-comma
-id|MSTK48T08
-comma
-id|MSTK_INVALID
+DECL|member|offset
+r_char
+id|offset
+(braket
+l_int|6
+op_star
+l_int|1024
+)braket
+suffix:semicolon
+DECL|member|regs
+r_struct
+id|mostek48t02
+id|regs
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
-r_enum
-id|sparc_clock_type
-id|sp_clock_typ
+r_struct
+id|mostek48t59
+op_star
+id|mstk48t59_regs
 suffix:semicolon
 macro_line|#endif /* !(_SPARC64_MOSTEK_H) */
 eof

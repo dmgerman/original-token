@@ -1579,20 +1579,30 @@ id|u_int
 id|res_out_ptr
 suffix:semicolon
 multiline_comment|/* index of next result slot  */
-DECL|member|res
+DECL|member|res_cpu
 r_struct
 id|pti_queue_entry
 op_star
-id|res
+id|res_cpu
 suffix:semicolon
-multiline_comment|/* Pointer to RESPONSE dvma   */
-DECL|member|req
+multiline_comment|/* Ptr to RESPONSE bufs (CPU) */
+DECL|member|res_dvma
+id|__u32
+id|res_dvma
+suffix:semicolon
+multiline_comment|/* Ptr to RESPONSE bufs (DVMA)*/
+DECL|member|req_cpu
 r_struct
 id|pti_queue_entry
 op_star
-id|req
+id|req_cpu
 suffix:semicolon
-multiline_comment|/* Pointer to REQUEST dvma    */
+multiline_comment|/* Ptr to REQUEST bufs (CPU)  */
+DECL|member|req_dvma
+id|__u32
+id|req_dvma
+suffix:semicolon
+multiline_comment|/* Ptr to REQUEST bufs (DVMA) */
 DECL|member|cmd_count
 r_int
 id|cmd_count

@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * sysctl_net_ipv4.c: sysctl interface to net IPV4 subsystem.&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/ipv4 directory entry (empty =) ). [MS]&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/snmp.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/route.h&gt;

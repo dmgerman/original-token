@@ -159,6 +159,10 @@ DECL|macro|__put_user_8
 mdefine_line|#define __put_user_8(x,addr)&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;long __pu_tmp1, __pu_tmp2;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;1:&t;ldq_u %1,0(%4)&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;insbl %3,%4,%2&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;mskbl %1,%4,%1&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;or %1,%2,%1&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;2:&t;stq_u %1,0(%4)&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;3:&bslash;n&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;.gprel32 1b&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;lda $31, 3b-1b(%0)&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;.gprel32 2b&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;lda $31, 3b-2b(%0)&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;.previous&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__pu_err),&t;&t;&t;&t;&bslash;&n;&t;  &t;  &quot;=&amp;r&quot;(__pu_tmp1), &quot;=&amp;r&quot;(__pu_tmp2)&t;&t;&bslash;&n;&t;&t;: &quot;r&quot;((unsigned long)(x)), &quot;r&quot;(addr), &quot;0&quot;(__pu_err)); &bslash;&n;}
 macro_line|#endif
 multiline_comment|/*&n; * Complex access routines&n; */
+DECL|macro|__copy_to_user
+mdefine_line|#define __copy_to_user(to,from,n)   __copy_tofrom_user_nocheck((to),(from),(n))
+DECL|macro|__copy_from_user
+mdefine_line|#define __copy_from_user(to,from,n) __copy_tofrom_user_nocheck((to),(from),(n))
 DECL|macro|copy_to_user
 mdefine_line|#define copy_to_user(to,from,n)   __copy_tofrom_user((to),(from),(n),__cu_to)
 DECL|macro|copy_from_user
@@ -171,6 +175,8 @@ c_func
 r_void
 )paren
 suffix:semicolon
+DECL|macro|__copy_tofrom_user_nocheck
+mdefine_line|#define __copy_tofrom_user_nocheck(to,from,n)&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register void * __cu_to __asm__(&quot;$6&quot;) = (to);&t;&t;&t;&bslash;&n;&t;register const void * __cu_from __asm__(&quot;$7&quot;) = (from);&t;&t;&bslash;&n;&t;register long __cu_len __asm__(&quot;$0&quot;) = (n);&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;jsr $28,(%3),__copy_user&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot; (__cu_len), &quot;=r&quot; (__cu_from), &quot;=r&quot; (__cu_to)&t;&bslash;&n;&t;&t;: &quot;r&quot; (__copy_user), &quot;0&quot; (__cu_len),&t;&t;&t;&bslash;&n;&t;&t;  &quot;1&quot; (__cu_from), &quot;2&quot; (__cu_to)&t;&t;&t;&bslash;&n;&t;&t;: &quot;$1&quot;,&quot;$2&quot;,&quot;$3&quot;,&quot;$4&quot;,&quot;$5&quot;,&quot;$28&quot;,&quot;memory&quot;);&t;&t;&bslash;&n;&t;__cu_len;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__copy_tofrom_user
 mdefine_line|#define __copy_tofrom_user(to,from,n,v)&t;&t;&t;&t;&t;    &bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;    &bslash;&n;&t;register void * __cu_to __asm__(&quot;$6&quot;) = (to);&t;&t;&t;    &bslash;&n;&t;register const void * __cu_from __asm__(&quot;$7&quot;) = (from);&t;&t;    &bslash;&n;&t;register long __cu_len __asm__(&quot;$0&quot;) = (n);&t;&t;&t;    &bslash;&n;&t;if (__access_ok(((long)(v)),__cu_len,__access_mask)) {&t;&t;    &bslash;&n;&t;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;    &bslash;&n;&t;&t;&t;&quot;jsr $28,(%3),__copy_user&quot;&t;&t;&t;    &bslash;&n;&t;&t;&t;: &quot;=r&quot; (__cu_len), &quot;=r&quot; (__cu_from), &quot;=r&quot; (__cu_to) &bslash;&n;&t;&t;&t;: &quot;r&quot; (__copy_user), &quot;0&quot; (__cu_len),&t;&t;    &bslash;&n;&t;&t;&t;  &quot;1&quot; (__cu_from), &quot;2&quot; (__cu_to)   &t;&t;    &bslash;&n;&t;&t;&t;: &quot;$1&quot;,&quot;$2&quot;,&quot;$3&quot;,&quot;$4&quot;,&quot;$5&quot;,&quot;$28&quot;,&quot;memory&quot;);&t;    &bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;    &bslash;&n;&t;__cu_len;&t;&t;&t;&t;&t;&t;&t;    &bslash;&n;})
 DECL|macro|copy_to_user_ret

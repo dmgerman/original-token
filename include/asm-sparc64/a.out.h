@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: a.out.h,v 1.2 1996/12/28 18:39:49 davem Exp $ */
+multiline_comment|/* $Id: a.out.h,v 1.3 1997/04/07 18:57:14 jj Exp $ */
 macro_line|#ifndef __SPARC64_A_OUT_H__
 DECL|macro|__SPARC64_A_OUT_H__
 mdefine_line|#define __SPARC64_A_OUT_H__
@@ -87,10 +87,10 @@ DECL|macro|N_SYMOFF
 mdefine_line|#define N_SYMOFF(x)     (N_TXTOFF(x) + (x).a_text +   &bslash;&n;                         (x).a_data + (x).a_trsize +  &bslash;&n;                         (x).a_drsize)
 multiline_comment|/* Where does text segment go in memory after being loaded? */
 DECL|macro|N_TXTADDR
-mdefine_line|#define N_TXTADDR(x)    (((N_MAGIC(x) == ZMAGIC) &amp;&amp;        &bslash;&n;&t;                 ((x).a_entry &lt; SPARC_PGSIZE)) ?   &bslash;&n;                          0 : SPARC_PGSIZE)
+mdefine_line|#define N_TXTADDR(x)    (unsigned long)(((N_MAGIC(x) == ZMAGIC) &amp;&amp;      &bslash;&n;&t;                 ((x).a_entry &lt; SPARC_PGSIZE)) ?   &t;&t;&bslash;&n;                          0 : SPARC_PGSIZE)
 multiline_comment|/* And same for the data segment.. */
 DECL|macro|N_DATADDR
-mdefine_line|#define N_DATADDR(x) (N_MAGIC(x)==OMAGIC ?         &bslash;&n;                      (N_TXTADDR(x) + (x).a_text)  &bslash;&n;                       : (_N_SEGMENT_ROUND (_N_TXTENDADDR(x))))
+mdefine_line|#define N_DATADDR(x) (N_MAGIC(x)==OMAGIC ?         &bslash;&n;                      (N_TXTADDR(x) + (x).a_text)  &bslash;&n;                       : (unsigned long)(_N_SEGMENT_ROUND (_N_TXTENDADDR(x))))
 DECL|macro|N_TRSIZE
 mdefine_line|#define N_TRSIZE(a)&t;((a).a_trsize)
 DECL|macro|N_DRSIZE

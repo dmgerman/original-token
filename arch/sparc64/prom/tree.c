@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: tree.c,v 1.4 1997/03/04 16:27:14 jj Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: tree.c,v 1.5 1997/03/24 17:44:01 jj Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -6,6 +6,33 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 multiline_comment|/* Return the child of node &squot;node&squot; or zero if no this node has no&n; * direct descendent.&n; */
+id|__inline__
+r_int
+DECL|function|__prom_getchild
+id|__prom_getchild
+c_func
+(paren
+r_int
+id|node
+)paren
+(brace
+r_return
+id|p1275_cmd
+(paren
+l_string|&quot;child&quot;
+comma
+id|P1275_INOUT
+c_func
+(paren
+l_int|1
+comma
+l_int|1
+)paren
+comma
+id|node
+)paren
+suffix:semicolon
+)brace
 id|__inline__
 r_int
 DECL|function|prom_getchild
@@ -34,18 +61,9 @@ suffix:semicolon
 )brace
 id|cnode
 op_assign
-id|p1275_cmd
-(paren
-l_string|&quot;child&quot;
-comma
-id|P1275_INOUT
+id|__prom_getchild
 c_func
 (paren
-l_int|1
-comma
-l_int|1
-)paren
-comma
 id|node
 )paren
 suffix:semicolon
@@ -135,6 +153,33 @@ suffix:semicolon
 multiline_comment|/* Return the next sibling of node &squot;node&squot; or zero if no more siblings&n; * at this level of depth in the tree.&n; */
 id|__inline__
 r_int
+DECL|function|__prom_getsibling
+id|__prom_getsibling
+c_func
+(paren
+r_int
+id|node
+)paren
+(brace
+r_return
+id|p1275_cmd
+(paren
+l_string|&quot;peer&quot;
+comma
+id|P1275_INOUT
+c_func
+(paren
+l_int|1
+comma
+l_int|1
+)paren
+comma
+id|node
+)paren
+suffix:semicolon
+)brace
+id|__inline__
+r_int
 DECL|function|prom_getsibling
 id|prom_getsibling
 c_func
@@ -161,18 +206,9 @@ suffix:semicolon
 )brace
 id|sibnode
 op_assign
-id|p1275_cmd
-(paren
-l_string|&quot;peer&quot;
-comma
-id|P1275_INOUT
+id|__prom_getsibling
 c_func
 (paren
-l_int|1
-comma
-l_int|1
-)paren
-comma
 id|node
 )paren
 suffix:semicolon

@@ -780,8 +780,12 @@ l_int|0
 id|inode-&gt;i_count
 op_increment
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|page-&gt;count
-op_increment
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -860,8 +864,12 @@ c_func
 id|page
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|page-&gt;count
-op_increment
+)paren
 suffix:semicolon
 r_if
 c_cond

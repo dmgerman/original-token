@@ -3590,6 +3590,10 @@ multiline_comment|/* pte_val(pte) == shp-&gt;shm_pages[idx] */
 id|current-&gt;min_flt
 op_increment
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|mem_map
 (braket
 id|MAP_NR
@@ -3604,7 +3608,7 @@ id|pte
 )braket
 dot
 id|count
-op_increment
+)paren
 suffix:semicolon
 r_return
 id|pte_modify
@@ -4169,6 +4173,10 @@ id|SHM_IDX_SHIFT
 )paren
 )paren
 suffix:semicolon
+id|atomic_dec
+c_func
+(paren
+op_amp
 id|mem_map
 (braket
 id|MAP_NR
@@ -4183,7 +4191,7 @@ id|pte
 )braket
 dot
 id|count
-op_decrement
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4228,6 +4236,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|mem_map
 (braket
 id|MAP_NR
@@ -4242,6 +4254,7 @@ id|page
 )braket
 dot
 id|count
+)paren
 op_ne
 l_int|1
 )paren

@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: sigcontext.h,v 1.3 1997/03/03 16:51:55 jj Exp $ */
+multiline_comment|/* $Id: sigcontext.h,v 1.4 1997/04/04 00:50:28 davem Exp $ */
 macro_line|#ifndef __SPARC64_SIGCONTEXT_H
 DECL|macro|__SPARC64_SIGCONTEXT_H
 mdefine_line|#define __SPARC64_SIGCONTEXT_H
 macro_line|#include &lt;asm/ptrace.h&gt;
+multiline_comment|/* XXX This gets exported to userland as well as kernel, it is probably&n; * XXX riddled with many hard to find 32-bit binary compatability issues.&n; * XXX Signals and this file need to be investigated heavily. -DaveM&n; */
 DECL|macro|SUNOS_MAXWIN
 mdefine_line|#define SUNOS_MAXWIN   31
 macro_line|#ifndef __ASSEMBLY__

@@ -1,4 +1,4 @@
-multiline_comment|/* cdrom.c. Common ioctl and open routines for various Linux cdrom drivers. -*- linux-c -*-&n;   Copyright (c) 1996 David van Leeuwen. &n;&n;   The routines in the file should provide an interface between&n;   software accessing cdroms and the various drivers that implement&n;   specific hardware devices. &n;&n; */
+multiline_comment|/* cdrom.c. Common ioctl and open routines for various Linux cdrom drivers. -*- linux-c -*-&n;   Copyright (c) 1996, 1997 David A. van Leeuwen.&n;&n;   The routines in the file should provide an interface between&n;   software accessing cdroms and the various drivers that implement&n;   specific hardware devices.&n;&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -11,10 +11,15 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/ucdrom.h&gt;
+multiline_comment|/* define CHECKTYPE if you want to check for audio/data cdrom. You&n;   must use cd player programs that respect the O_NONBLOCK option for&n;   opening the cdrom-device for ioctl-commanding only. (See&n;   Documentation/cdrom/cdrom-standard.tex). Patches for a number of cd&n;   players (CDplayer-2.0, cd-console-1.1, workbone-2.3, cdtool-1.0,&n;   cdp-0.33, cdplayer-0.4, cdthing-1.4, lyn0.8a, playcd-1.0) can be&n;   found in directory&n;&n;&t;ftp://ftp.gwdg.de/pub/linux/cdrom/drivers/cm206/&n;&n;   A runtime configuration program &quot;checktype.c&quot; to allow for cdrom&n;   medium type checking can be found at the same location.&n;&n;   In order to be able to get neat system errors like &quot;No medium&n;   found&quot; or &quot;Wrong medium type&quot; upon attempting to mount/play an&n;   empty slot, mount an audio disc or play a data disc, you need to&n;   have a new libc.5.so.  */
+DECL|macro|CHECKTYPE
+macro_line|#undef CHECKTYPE
 DECL|macro|FM_WRITE
 mdefine_line|#define FM_WRITE&t;0x2                 /* file mode write bit */
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;Generic CD-ROM driver, v 1.21 1996/11/08 03:24:49&quot;
+mdefine_line|#define VERSION &quot;$Id: cdrom.c,v 1.7 1997/02/27 22:14:26 david Exp $&quot;
+DECL|macro|REVISION
+mdefine_line|#define REVISION &quot;$Revision: 1.7 $&quot;
 multiline_comment|/* Not-exported routines. */
 r_static
 r_int
@@ -145,7 +150,7 @@ suffix:semicolon
 multiline_comment|/* This macro makes sure we don&squot;t have to check on cdrom_device_ops&n; * existence in the run-time routines below. Change_capability is a&n; * hack to have the capability flags defined const, while we can still&n; * change it here without gcc complaining at every line.&n; */
 DECL|macro|ENSURE
 mdefine_line|#define ENSURE(call, bits) if (cdo-&gt;call == NULL) *change_capability &amp;= ~(bits)
-multiline_comment|/* We don&squot;t use $name$ yet, but it could be used for the /proc&n; * filesystem in the future, or for other purposes.  &n; */
+multiline_comment|/* We don&squot;t use $name$ yet, but it could be used for the /proc&n; * filesystem in the future, or for other purposes.&n; */
 DECL|function|register_cdrom
 r_int
 id|register_cdrom
@@ -316,6 +321,12 @@ id|CDO_USE_FFLAGS
 op_or
 id|CDO_LOCK
 suffix:semicolon
+macro_line|#ifdef CHECKTYPE
+id|cdi-&gt;options
+op_or_assign
+id|CDO_CHECK_TYPE
+suffix:semicolon
+macro_line|#endif
 id|cdi-&gt;mc_flags
 op_assign
 l_int|0
@@ -701,7 +712,7 @@ suffix:semicolon
 r_else
 r_return
 op_minus
-id|ENXIO
+id|ENOMEDIUM
 suffix:semicolon
 multiline_comment|/* can&squot;t close: too bad */
 id|ds
@@ -725,7 +736,7 @@ id|CDS_NO_DISC
 )paren
 r_return
 op_minus
-id|ENXIO
+id|ENOMEDIUM
 suffix:semicolon
 )brace
 )brace
@@ -757,7 +768,7 @@ id|CDS_NO_DISC
 )paren
 r_return
 op_minus
-id|ENXIO
+id|ENOMEDIUM
 suffix:semicolon
 r_if
 c_cond
@@ -772,7 +783,7 @@ id|CDS_DATA_1
 )paren
 r_return
 op_minus
-id|ENODATA
+id|EMEDIUMTYPE
 suffix:semicolon
 )brace
 multiline_comment|/* all is well, we can open the device */
@@ -855,6 +866,9 @@ id|cdrom_device_ops
 op_star
 id|cdo
 suffix:semicolon
+r_int
+id|opened_for_data
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -864,6 +878,24 @@ l_int|NULL
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|opened_for_data
+op_assign
+op_logical_neg
+(paren
+id|cdi-&gt;options
+op_amp
+id|CDO_USE_FFLAGS
+)paren
+op_logical_or
+op_logical_neg
+(paren
+id|fp
+op_logical_and
+id|fp-&gt;f_flags
+op_amp
+id|O_NONBLOCK
+)paren
 suffix:semicolon
 id|cdo
 op_assign
@@ -877,6 +909,8 @@ op_eq
 l_int|1
 op_logical_and
 multiline_comment|/* last process that closes dev*/
+id|opened_for_data
+op_logical_and
 id|cdi-&gt;options
 op_amp
 id|CDO_LOCK
@@ -940,6 +974,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|opened_for_data
+op_logical_and
 id|cdi-&gt;options
 op_amp
 id|CDO_AUTO_EJECT
@@ -1094,7 +1130,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Requests to the low-level drivers will /always/ be done in the&n;   following format convention: &n;&n;   CDROM_LBA: all data-related requests.&n;   CDROM_MSF: all audio-related requests. &n;&n;   However, a low-level implementation is allowed to refuse this&n;   request, and return information in its own favorite format.  &n;&n;   It doesn&squot;t make sense /at all/ to ask for a play_audio in LBA&n;   format, or ask for multi-session info in MSF format. However, for&n;   backward compatibility these format requests will be satisfied, but&n;   the requests to the low-level drivers will be sanitized in the more&n;   meaningful format indicated above.&n; */
+multiline_comment|/* Requests to the low-level drivers will /always/ be done in the&n;   following format convention:&n;&n;   CDROM_LBA: all data-related requests.&n;   CDROM_MSF: all audio-related requests.&n;&n;   However, a low-level implementation is allowed to refuse this&n;   request, and return information in its own favorite format.&n;&n;   It doesn&squot;t make sense /at all/ to ask for a play_audio in LBA&n;   format, or ask for multi-session info in MSF format. However, for&n;   backward compatibility these format requests will be satisfied, but&n;   the requests to the low-level drivers will be sanitized in the more&n;   meaningful format indicated above.&n; */
 r_static
 DECL|function|sanitize_format
 r_void
@@ -1196,10 +1232,26 @@ suffix:semicolon
 )brace
 multiline_comment|/* All checking and format change makes this code really hard to read!&n; * So let&squot;s make some check and memory move macros.  These macros are&n; * a little inefficient when both used in the same piece of code, as&n; * verify_area is used twice, but who cares, as ioctl() calls&n; * shouldn&squot;t be in inner loops.&n; */
 DECL|macro|GETARG
-mdefine_line|#define GETARG(type, x) { &bslash;&n;        int ret=verify_area(VERIFY_READ, (void *) arg, sizeof x); &bslash;&n;&t;    if (ret) return ret; &bslash;&n;&t;    copy_from_user(&amp;x, (type *) arg, sizeof x); }
+mdefine_line|#define GETARG(type, x) { &bslash;&n;&t;int ret=verify_area(VERIFY_READ, (void *) arg, sizeof x); &bslash;&n;&t;    if (ret) return ret; &bslash;&n;&t;    copy_from_user(&amp;x, (type *) arg, sizeof x); }
 DECL|macro|PUTARG
 mdefine_line|#define PUTARG(type, x) { &bslash;&n;&t;    int ret=verify_area(VERIFY_WRITE, (void *) arg, sizeof x); &bslash;&n;&t;    if (ret) return ret; &bslash;&n;&t;    copy_to_user((type *) arg, &amp;x, sizeof x); }
 multiline_comment|/* Some of the cdrom ioctls are not implemented here, because these&n; * appear to be either too device-specific, or it is not clear to me&n; * what use they are. These are (number of drivers that support them&n; * in parenthesis): CDROMREADMODE1 (2+ide), CDROMREADMODE2 (2+ide),&n; * CDROMREADAUDIO (2+ide), CDROMREADRAW (2), CDROMREADCOOKED (2),&n; * CDROMSEEK (2), CDROMPLAYBLK (scsi), CDROMREADALL (1). Read-audio,&n; * OK (although i guess the record companies aren&squot;t too happy with&n; * this, most drives therefore refuse to transport audio data).  But&n; * why are there 5 different READs defined? For now, these functions&n; * are left over to the device-specific ioctl routine,&n; * cdo-&gt;dev_ioctl. Note that as a result of this, no&n; * memory-verification is performed for these ioctls.&n; */
+r_static
+r_int
+id|check_for_audio_disc
+c_func
+(paren
+r_struct
+id|cdrom_device_info
+op_star
+id|cdi
+comma
+r_struct
+id|cdrom_device_ops
+op_star
+id|cdo
+)paren
+suffix:semicolon
 r_static
 DECL|function|cdrom_ioctl
 r_int
@@ -1260,7 +1312,7 @@ id|cdo
 op_assign
 id|cdi-&gt;ops
 suffix:semicolon
-multiline_comment|/* the first few commands do not deal with audio capabilities, but&n;           only with routines in cdrom device operations. */
+multiline_comment|/* the first few commands do not deal with audio capabilities, but&n;&t;   only with routines in cdrom device operations. */
 r_switch
 c_cond
 (paren
@@ -1483,10 +1535,21 @@ id|CDC_MEDIA_CHANGED
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
+id|cdo-&gt;capability
+op_amp
+op_complement
+id|cdi-&gt;mask
+op_amp
+id|CDC_SELECT_DISC
+)paren
+op_logical_or
 id|arg
 op_eq
 id|CDSL_CURRENT
 )paren
+multiline_comment|/* cannot select disc or select current disc */
 r_return
 id|media_changed
 c_func
@@ -1496,23 +1559,16 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_else
 r_if
 c_cond
 (paren
 (paren
 r_int
+r_int
 )paren
 id|arg
 OL
 id|cdi-&gt;capacity
-op_logical_and
-id|cdo-&gt;capability
-op_amp
-op_complement
-id|cdi-&gt;mask
-op_amp
-id|CDC_SELECT_DISC
 )paren
 r_return
 id|cdo-&gt;media_changed
@@ -1522,7 +1578,6 @@ comma
 id|arg
 )paren
 suffix:semicolon
-r_else
 r_return
 op_minus
 id|EINVAL
@@ -1751,7 +1806,7 @@ id|cdo-&gt;drive_status
 op_eq
 l_int|NULL
 op_logical_or
-op_logical_neg
+(paren
 (paren
 id|cdo-&gt;capability
 op_amp
@@ -1759,12 +1814,13 @@ op_complement
 id|cdi-&gt;mask
 op_amp
 id|CDC_SELECT_DISC
+)paren
 op_logical_and
 (paren
 r_int
 )paren
 id|arg
-OL
+op_ge
 id|cdi-&gt;capacity
 )paren
 )paren
@@ -1884,6 +1940,8 @@ macro_line|#endif
 )brace
 multiline_comment|/* switch */
 multiline_comment|/* Now all the audio-ioctls follow, they are all routed through the&n;   same call audio_ioctl(). */
+DECL|macro|CHECKAUDIO
+mdefine_line|#define CHECKAUDIO if ((ret=check_for_audio_disc(cdi, cdo))) return ret
 r_if
 c_cond
 (paren
@@ -1891,6 +1949,10 @@ id|cdo-&gt;capability
 op_amp
 id|CDC_PLAY_AUDIO
 )paren
+(brace
+r_int
+id|ret
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -2009,6 +2071,8 @@ id|cdrom_tochdr
 comma
 id|header
 )paren
+suffix:semicolon
+id|CHECKAUDIO
 suffix:semicolon
 r_if
 c_cond
@@ -2144,6 +2208,8 @@ comma
 id|msf
 )paren
 suffix:semicolon
+id|CHECKAUDIO
+suffix:semicolon
 r_return
 id|cdo
 op_member_access_from_pointer
@@ -2175,6 +2241,8 @@ id|cdrom_ti
 comma
 id|track_index
 )paren
+suffix:semicolon
+id|CHECKAUDIO
 suffix:semicolon
 r_return
 id|cdo
@@ -2270,6 +2338,8 @@ suffix:semicolon
 r_case
 id|CDROMSTART
 suffix:colon
+id|CHECKAUDIO
+suffix:semicolon
 r_case
 id|CDROMSTOP
 suffix:colon
@@ -2294,6 +2364,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* switch */
+)brace
 r_if
 c_cond
 (paren
@@ -2320,6 +2391,196 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+multiline_comment|/* This code is similar to that in open_for_data. The routine is called&n;   in case a audio play operation is requested. It doesn&squot;t make much sense&n;   do do this on a data disc.&n; */
+DECL|function|check_for_audio_disc
+r_int
+id|check_for_audio_disc
+c_func
+(paren
+r_struct
+id|cdrom_device_info
+op_star
+id|cdi
+comma
+r_struct
+id|cdrom_device_ops
+op_star
+id|cdo
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|cdi-&gt;options
+op_amp
+id|CDO_CHECK_TYPE
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cdo-&gt;drive_status
+op_ne
+l_int|NULL
+)paren
+(brace
+r_int
+id|ds
+op_assign
+id|cdo
+op_member_access_from_pointer
+id|drive_status
+c_func
+(paren
+id|cdi
+comma
+id|CDSL_CURRENT
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ds
+op_eq
+id|CDS_TRAY_OPEN
+)paren
+(brace
+multiline_comment|/* can/may i close it? */
+r_if
+c_cond
+(paren
+id|cdo-&gt;capability
+op_amp
+op_complement
+id|cdi-&gt;mask
+op_amp
+id|CDC_CLOSE_TRAY
+op_logical_and
+id|cdi-&gt;options
+op_amp
+id|CDO_AUTO_CLOSE
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|cdo
+op_member_access_from_pointer
+id|tray_move
+c_func
+(paren
+id|cdi
+comma
+l_int|0
+)paren
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+r_else
+r_return
+op_minus
+id|ENOMEDIUM
+suffix:semicolon
+multiline_comment|/* can&squot;t close: too bad */
+id|ds
+op_assign
+id|cdo
+op_member_access_from_pointer
+id|drive_status
+c_func
+(paren
+id|cdi
+comma
+id|CDSL_CURRENT
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ds
+op_eq
+id|CDS_NO_DISC
+)paren
+r_return
+op_minus
+id|ENOMEDIUM
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|cdo-&gt;disc_status
+op_ne
+l_int|NULL
+)paren
+(brace
+id|ds
+op_assign
+id|cdo
+op_member_access_from_pointer
+id|disc_status
+c_func
+(paren
+id|cdi
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ds
+op_eq
+id|CDS_NO_DISC
+)paren
+r_return
+op_minus
+id|ENOMEDIUM
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ds
+op_ne
+id|CDS_AUDIO
+)paren
+r_return
+op_minus
+id|EMEDIUMTYPE
+suffix:semicolon
+)brace
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|variable|register_cdrom
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|register_cdrom
+)paren
+suffix:semicolon
+DECL|variable|unregister_cdrom
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unregister_cdrom
+)paren
+suffix:semicolon
+DECL|variable|cdrom_fops
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|cdrom_fops
+)paren
+suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
@@ -2333,8 +2594,8 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Module inserted: &quot;
-id|VERSION
+l_string|&quot;Module cdrom: Generic CDROM driver &quot;
+id|REVISION
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2353,5 +2614,5 @@ r_void
 multiline_comment|/*&n;&t;printk(KERN_INFO &quot;Module cdrom removed&bslash;n&quot;);&n;&t;*/
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * Local variables:&n; * comment-column: 40&n; * compile-command: &quot;gcc -DMODULE -D__KERNEL__ -I. -I/usr/src/linux-obj/include -Wall -Wstrict-prototypes -O2 -m486 -c cdrom.c -o cdrom.o&quot;&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; * comment-column: 40&n; * compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -pipe -fno-strength-reduce -m486 -DCPU=486 -DMODULE -DMODVERSIONS -include /usr/src/linux/include/linux/modversions.h  -c -o cdrom.o cdrom.c&quot;&n; * End:&n; */
 eof

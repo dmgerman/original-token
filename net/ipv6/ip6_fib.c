@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation &n; *&t;Forwarding Information Database&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_fib.c,v 1.6 1997/03/18 18:24:33 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation &n; *&t;Forwarding Information Database&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_fib.c,v 1.7 1997/04/12 04:32:46 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2507,7 +2507,12 @@ op_amp
 id|RTF_CACHE
 )paren
 op_logical_and
+id|atomic_read
+c_func
+(paren
+op_amp
 id|rt-&gt;rt6i_use
+)paren
 op_eq
 l_int|0
 )paren

@@ -2944,9 +2944,10 @@ multiline_comment|/* If queue_command() is called from an interrupt (real one or
 r_if
 c_cond
 (paren
-id|intr_count
-OG
-l_int|0
+id|in_interrupt
+c_func
+(paren
+)paren
 op_logical_or
 (paren
 (paren

@@ -1,8 +1,7 @@
-multiline_comment|/* $Id: vaddrs.h,v 1.1 1997/03/18 18:03:43 jj Exp $ */
+multiline_comment|/* $Id: vaddrs.h,v 1.6 1997/04/04 00:50:31 davem Exp $ */
 macro_line|#ifndef _SPARC64_VADDRS_H
 DECL|macro|_SPARC64_VADDRS_H
 mdefine_line|#define _SPARC64_VADDRS_H
-macro_line|#include &lt;asm/head.h&gt;
 multiline_comment|/* asm-sparc64/vaddrs.h:  Here will be define the virtual addresses at&n; *                      which important I/O addresses will be mapped.&n; *                      For instance the timer register virtual address&n; *                      is defined here.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/* I can see only one reason why we should have statically defined&n; * mappings for devices and is the speedup improvements of not loading&n; * a pointer and then the value in the assembly code&n; */
 DECL|macro|IOBASE_VADDR

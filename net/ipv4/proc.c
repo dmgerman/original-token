@@ -187,6 +187,7 @@ id|srcp
 op_assign
 id|sp-&gt;dummy_th.source
 suffix:semicolon
+multiline_comment|/* FIXME: The fact that retransmit_timer occurs as a field&n;&t;&t; * in two different parts of the socket structure is,&n;&t; &t; * to say the least, confusing. This code now uses the&n;&t;&t; * right retransmit_timer variable, but I&squot;m not sure&n;&t;&t; * the rest of the timer stuff is still correct.&n;&t;&t; * In particular I&squot;m not sure what the timeout value&n;&t;&t; * is suppose to reflect (as opposed to tm-&gt;when). -- erics&n;&t;&t; */
 multiline_comment|/* Since we are Little Endian we need to swap the bytes :-( */
 id|destp
 op_assign
@@ -210,7 +211,7 @@ id|del_timer
 c_func
 (paren
 op_amp
-id|sp-&gt;retransmit_timer
+id|tp-&gt;retransmit_timer
 )paren
 suffix:semicolon
 id|timer_active2
@@ -228,7 +229,7 @@ c_cond
 op_logical_neg
 id|timer_active1
 )paren
-id|sp-&gt;retransmit_timer.expires
+id|tp-&gt;retransmit_timer.expires
 op_assign
 l_int|0
 suffix:semicolon
@@ -259,7 +260,7 @@ c_cond
 (paren
 id|timer_active1
 op_logical_and
-id|sp-&gt;retransmit_timer.expires
+id|tp-&gt;retransmit_timer.expires
 OL
 id|timer_expires
 )paren
@@ -270,7 +271,7 @@ id|timer_active1
 suffix:semicolon
 id|timer_expires
 op_assign
-id|sp-&gt;retransmit_timer.expires
+id|tp-&gt;retransmit_timer.expires
 suffix:semicolon
 )brace
 r_if
@@ -321,7 +322,12 @@ id|sp-&gt;write_seq
 op_minus
 id|tp-&gt;snd_una
 suffix:colon
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sp-&gt;wmem_alloc
+)paren
 comma
 id|format
 op_eq
@@ -332,7 +338,12 @@ id|tp-&gt;rcv_nxt
 op_minus
 id|sp-&gt;copied_seq
 suffix:colon
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sp-&gt;rmem_alloc
+)paren
 comma
 id|timer_active
 comma
@@ -343,7 +354,12 @@ comma
 (paren
 r_int
 )paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sp-&gt;retransmits
+)paren
 comma
 id|sp-&gt;socket
 ques
@@ -376,7 +392,7 @@ id|add_timer
 c_func
 (paren
 op_amp
-id|sp-&gt;retransmit_timer
+id|tp-&gt;retransmit_timer
 )paren
 suffix:semicolon
 r_if

@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: parport_probe.c,v 1.1.2.9 1997/03/29 21:08:16 phil Exp $ &n; * Parallel port device probing code&n; * &n; * Authors:    Carsten Gross, carsten@sol.wohnheim.uni-ulm.de&n; *             Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
+macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;

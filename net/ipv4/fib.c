@@ -278,8 +278,11 @@ op_star
 id|fib_wait
 suffix:semicolon
 DECL|variable|fib_users
+r_static
 id|atomic_t
 id|fib_users
+op_assign
+id|ATOMIC_INIT
 suffix:semicolon
 DECL|function|fib_lock
 r_static
@@ -293,7 +296,12 @@ r_void
 r_while
 c_loop
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|fib_users
+)paren
 )paren
 id|sleep_on
 c_func

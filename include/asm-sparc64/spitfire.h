@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: spitfire.h,v 1.2 1996/12/28 18:39:55 davem Exp $&n; * spitfire.h: SpitFire/BlackBird/Cheetah inline MMU operations.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: spitfire.h,v 1.7 1997/04/04 00:50:29 davem Exp $&n; * spitfire.h: SpitFire/BlackBird/Cheetah inline MMU operations.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_SPITFIRE_H
 DECL|macro|_SPARC64_SPITFIRE_H
 mdefine_line|#define _SPARC64_SPITFIRE_H
@@ -24,6 +24,201 @@ mdefine_line|#define VIRT_WATCHPOINT&t;&t;0x0000000000000038
 DECL|macro|PHYS_WATCHPOINT
 mdefine_line|#define PHYS_WATCHPOINT&t;&t;0x0000000000000040
 macro_line|#ifndef __ASSEMBLY__
+DECL|function|spitfire_get_isfsr
+r_extern
+id|__inline__
+r_int
+r_int
+id|spitfire_get_isfsr
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|ret
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ldxa&t;[%1] %2, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|ret
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|TLB_SFSR
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_IMMU
+)paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+DECL|function|spitfire_get_dsfsr
+r_extern
+id|__inline__
+r_int
+r_int
+id|spitfire_get_dsfsr
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|ret
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ldxa&t;[%1] %2, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|ret
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|TLB_SFSR
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+DECL|function|spitfire_get_sfar
+r_extern
+id|__inline__
+r_int
+r_int
+id|spitfire_get_sfar
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|ret
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ldxa&t;[%1] %2, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|ret
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|DMMU_SFAR
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+DECL|function|spitfire_put_isfsr
+r_extern
+id|__inline__
+r_void
+id|spitfire_put_isfsr
+c_func
+(paren
+r_int
+r_int
+id|sfsr
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stxa&t;%0, [%1] %2&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|sfsr
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|TLB_SFSR
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_IMMU
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|spitfire_put_dsfsr
+r_extern
+id|__inline__
+r_void
+id|spitfire_put_dsfsr
+c_func
+(paren
+r_int
+r_int
+id|sfsr
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stxa&t;%0, [%1] %2&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|sfsr
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|TLB_SFSR
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|spitfire_get_primary_context
 r_extern
 id|__inline__
@@ -61,12 +256,14 @@ id|ASI_DMMU
 )paren
 )paren
 suffix:semicolon
+r_return
+id|ctx
+suffix:semicolon
 )brace
 DECL|function|spitfire_set_primary_context
 r_extern
 id|__inline__
-r_int
-r_int
+r_void
 id|spitfire_set_primary_context
 c_func
 (paren
@@ -81,10 +278,13 @@ c_func
 (paren
 l_string|&quot;stxa&t;%0, [%1] %2&quot;
 suffix:colon
+multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
 id|ctx
+op_amp
+l_int|0x1fff
 )paren
 comma
 l_string|&quot;r&quot;
@@ -96,6 +296,12 @@ l_string|&quot;i&quot;
 (paren
 id|ASI_DMMU
 )paren
+)paren
+suffix:semicolon
+id|membar
+c_func
+(paren
+l_string|&quot;#Sync&quot;
 )paren
 suffix:semicolon
 )brace
@@ -136,12 +342,14 @@ id|ASI_DMMU
 )paren
 )paren
 suffix:semicolon
+r_return
+id|ctx
+suffix:semicolon
 )brace
 DECL|function|spitfire_set_secondary_context
 r_extern
 id|__inline__
-r_int
-r_int
+r_void
 id|spitfire_set_secondary_context
 c_func
 (paren
@@ -156,10 +364,13 @@ c_func
 (paren
 l_string|&quot;stxa&t;%0, [%1] %2&quot;
 suffix:colon
+multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
 id|ctx
+op_amp
+l_int|0x1fff
 )paren
 comma
 l_string|&quot;r&quot;
@@ -171,6 +382,12 @@ l_string|&quot;i&quot;
 (paren
 id|ASI_DMMU
 )paren
+)paren
+suffix:semicolon
+id|membar
+c_func
+(paren
+l_string|&quot;#Sync&quot;
 )paren
 suffix:semicolon
 )brace
@@ -302,11 +519,54 @@ r_return
 id|data
 suffix:semicolon
 )brace
-DECL|function|spitfire_put_dtlb_data
+DECL|function|spitfire_get_dtlb_tag
 r_extern
 id|__inline__
 r_int
 r_int
+id|spitfire_get_dtlb_tag
+c_func
+(paren
+r_int
+id|entry
+)paren
+(brace
+r_int
+r_int
+id|tag
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ldxa&t;[%1] %2, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|tag
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|entry
+op_lshift
+l_int|3
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DTLB_TAG_READ
+)paren
+)paren
+suffix:semicolon
+r_return
+id|tag
+suffix:semicolon
+)brace
+DECL|function|spitfire_put_dtlb_data
+r_extern
+id|__inline__
+r_void
 id|spitfire_put_dtlb_data
 c_func
 (paren
@@ -324,6 +584,7 @@ c_func
 (paren
 l_string|&quot;stxa&t;%0, [%1] %2&quot;
 suffix:colon
+multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -388,11 +649,54 @@ r_return
 id|data
 suffix:semicolon
 )brace
-DECL|function|spitfire_put_itlb_data
+DECL|function|spitfire_get_itlb_tag
 r_extern
 id|__inline__
 r_int
 r_int
+id|spitfire_get_itlb_tag
+c_func
+(paren
+r_int
+id|entry
+)paren
+(brace
+r_int
+r_int
+id|tag
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ldxa&t;[%1] %2, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|tag
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|entry
+op_lshift
+l_int|3
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_ITLB_TAG_READ
+)paren
+)paren
+suffix:semicolon
+r_return
+id|tag
+suffix:semicolon
+)brace
+DECL|function|spitfire_put_itlb_data
+r_extern
+id|__inline__
+r_void
 id|spitfire_put_itlb_data
 c_func
 (paren
@@ -410,6 +714,7 @@ c_func
 (paren
 l_string|&quot;stxa&t;%0, [%1] %2&quot;
 suffix:colon
+multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -448,6 +753,7 @@ c_func
 (paren
 l_string|&quot;stxa&t;%%g0, [%0] %1&quot;
 suffix:colon
+multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -477,6 +783,7 @@ c_func
 (paren
 l_string|&quot;stxa&t;%%g0, [%0] %1&quot;
 suffix:colon
+multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -506,6 +813,7 @@ c_func
 (paren
 l_string|&quot;stxa&t;%%g0, [%0] %1&quot;
 suffix:colon
+multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -535,6 +843,7 @@ c_func
 (paren
 l_string|&quot;stxa&t;%%g0, [%0] %1&quot;
 suffix:colon
+multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -564,6 +873,7 @@ c_func
 (paren
 l_string|&quot;stxa&t;%%g0, [%0] %1&quot;
 suffix:colon
+multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -593,6 +903,7 @@ c_func
 (paren
 l_string|&quot;stxa&t;%%g0, [%0] %1&quot;
 suffix:colon
+multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -625,6 +936,7 @@ c_func
 (paren
 l_string|&quot;stxa&t;%%g0, [%0] %1&quot;
 suffix:colon
+multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -656,6 +968,7 @@ c_func
 (paren
 l_string|&quot;stxa&t;%%g0, [%0] %1&quot;
 suffix:colon
+multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -687,6 +1000,7 @@ c_func
 (paren
 l_string|&quot;stxa&t;%%g0, [%0] %1&quot;
 suffix:colon
+multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -720,6 +1034,7 @@ c_func
 (paren
 l_string|&quot;stxa&t;%%g0, [%0] %1&quot;
 suffix:colon
+multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -753,6 +1068,7 @@ c_func
 (paren
 l_string|&quot;stxa&t;%%g0, [%0] %1&quot;
 suffix:colon
+multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -786,6 +1102,7 @@ c_func
 (paren
 l_string|&quot;stxa&t;%%g0, [%0] %1&quot;
 suffix:colon
+multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren

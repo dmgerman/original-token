@@ -1,6 +1,7 @@
 macro_line|#ifndef __ASM_HARDIRQ_H
 DECL|macro|__ASM_HARDIRQ_H
 mdefine_line|#define __ASM_HARDIRQ_H
+macro_line|#include &lt;linux/tasks.h&gt;
 r_extern
 r_int
 r_int
@@ -13,7 +14,7 @@ DECL|macro|in_interrupt
 mdefine_line|#define in_interrupt()&t;(local_irq_count[smp_processor_id()] != 0)
 macro_line|#ifndef __SMP__
 DECL|macro|hardirq_trylock
-mdefine_line|#define hardirq_trylock(cpu)&t;((cpu)==0)&t;/* always true */
+mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count[cpu] == 0)
 DECL|macro|hardirq_endlock
 mdefine_line|#define hardirq_endlock(cpu)&t;do { } while (0)
 DECL|macro|hardirq_enter
@@ -23,6 +24,7 @@ mdefine_line|#define hardirq_exit(cpu)&t;(local_irq_count[cpu]--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;do { } while (0)
 macro_line|#else
+macro_line|#include &lt;asm/atomic.h&gt;
 r_extern
 r_int
 r_char
@@ -35,9 +37,7 @@ r_int
 id|global_irq_lock
 suffix:semicolon
 r_extern
-r_int
-r_volatile
-r_int
+id|atomic_t
 id|global_irq_count
 suffix:semicolon
 DECL|function|release_irqlock
@@ -160,7 +160,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|global_irq_count
+)paren
 op_ne
 l_int|1
 op_logical_or

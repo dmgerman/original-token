@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: oplib.h,v 1.6 1997/03/18 18:01:30 jj Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.7 1997/04/03 09:29:25 davem Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC64_OPLIB_H
 DECL|macro|__SPARC64_OPLIB_H
 mdefine_line|#define __SPARC64_OPLIB_H
@@ -754,6 +754,17 @@ id|prom_inst2pkg
 c_func
 (paren
 r_int
+)paren
+suffix:semicolon
+multiline_comment|/* Client interface level routines. */
+r_extern
+r_void
+id|prom_set_trap_table
+c_func
+(paren
+r_int
+r_int
+id|tba
 )paren
 suffix:semicolon
 multiline_comment|/* Dorking with Bus ranges... */

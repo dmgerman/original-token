@@ -483,7 +483,7 @@ mdefine_line|#define ADDRESS(x) (PAGE_OFFSET + ((x) &lt;&lt; PAGE_SHIFT))
 DECL|macro|RMQUEUE
 mdefine_line|#define RMQUEUE(order, dma) &bslash;&n;do { struct free_area_struct * area = free_area+order; &bslash;&n;     unsigned long new_order = order; &bslash;&n;&t;do { struct page *prev = memory_head(area), *ret; &bslash;&n;&t;&t;while (memory_head(area) != (ret = prev-&gt;next)) { &bslash;&n;&t;&t;&t;if (!dma || CAN_DMA(ret)) { &bslash;&n;&t;&t;&t;&t;unsigned long map_nr = ret-&gt;map_nr; &bslash;&n;&t;&t;&t;&t;(prev-&gt;next = ret-&gt;next)-&gt;prev = prev; &bslash;&n;&t;&t;&t;&t;MARK_USED(map_nr, new_order, area); &bslash;&n;&t;&t;&t;&t;nr_free_pages -= 1 &lt;&lt; order; &bslash;&n;&t;&t;&t;&t;EXPAND(ret, map_nr, order, new_order, area); &bslash;&n;&t;&t;&t;&t;restore_flags(flags); &bslash;&n;&t;&t;&t;&t;return ADDRESS(map_nr); &bslash;&n;&t;&t;&t;} &bslash;&n;&t;&t;&t;prev = ret; &bslash;&n;&t;&t;} &bslash;&n;&t;&t;new_order++; area++; &bslash;&n;&t;} while (new_order &lt; NR_MEM_LISTS); &bslash;&n;} while (0)
 DECL|macro|EXPAND
-mdefine_line|#define EXPAND(map,index,low,high,area) &bslash;&n;do { unsigned long size = 1 &lt;&lt; high; &bslash;&n;&t;while (high &gt; low) { &bslash;&n;&t;&t;area--; high--; size &gt;&gt;= 1; &bslash;&n;&t;&t;add_mem_queue(area, map); &bslash;&n;&t;&t;MARK_USED(index, high, area); &bslash;&n;&t;&t;index += size; &bslash;&n;&t;&t;map += size; &bslash;&n;&t;} &bslash;&n;&t;map-&gt;count = 1; &bslash;&n;&t;map-&gt;age = PAGE_INITIAL_AGE; &bslash;&n;} while (0)
+mdefine_line|#define EXPAND(map,index,low,high,area) &bslash;&n;do { unsigned long size = 1 &lt;&lt; high; &bslash;&n;&t;while (high &gt; low) { &bslash;&n;&t;&t;area--; high--; size &gt;&gt;= 1; &bslash;&n;&t;&t;add_mem_queue(area, map); &bslash;&n;&t;&t;MARK_USED(index, high, area); &bslash;&n;&t;&t;index += size; &bslash;&n;&t;&t;map += size; &bslash;&n;&t;} &bslash;&n;&t;atomic_set(&amp;map-&gt;count, 1); &bslash;&n;&t;map-&gt;age = PAGE_INITIAL_AGE; &bslash;&n;} while (0)
 DECL|function|__get_free_pages
 r_int
 r_int
@@ -518,11 +518,13 @@ id|NR_MEM_LISTS
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#if 0
 r_if
 c_cond
 (paren
-id|intr_count
+id|in_interrupt
+c_func
+(paren
+)paren
 op_logical_and
 id|priority
 op_ne
@@ -562,7 +564,6 @@ id|GFP_ATOMIC
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 id|reserved_pages
 op_assign
 l_int|5
@@ -952,6 +953,15 @@ r_do
 (brace
 op_decrement
 id|p
+suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
+id|p-&gt;count
+comma
+l_int|0
+)paren
 suffix:semicolon
 id|p-&gt;flags
 op_assign

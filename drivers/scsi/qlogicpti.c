@@ -1509,12 +1509,7 @@ op_assign
 id|u_short
 )paren
 (paren
-(paren
-(paren
-id|u_int
-)paren
-id|qpti-&gt;res
-)paren
+id|qpti-&gt;res_dvma
 op_rshift
 l_int|16
 )paren
@@ -1528,12 +1523,7 @@ op_assign
 id|u_short
 )paren
 (paren
-(paren
-(paren
-id|u_int
-)paren
-id|qpti-&gt;res
-)paren
+id|qpti-&gt;res_dvma
 op_amp
 l_int|0xffff
 )paren
@@ -1608,12 +1598,7 @@ op_assign
 id|u_short
 )paren
 (paren
-(paren
-(paren
-id|u_int
-)paren
-id|qpti-&gt;req
-)paren
+id|qpti-&gt;req_dvma
 op_rshift
 l_int|16
 )paren
@@ -1627,12 +1612,7 @@ op_assign
 id|u_short
 )paren
 (paren
-(paren
-(paren
-id|u_int
-)paren
-id|qpti-&gt;req
-)paren
+id|qpti-&gt;req_dvma
 op_amp
 l_int|0xffff
 )paren
@@ -2249,6 +2229,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Load the firmware. */
 macro_line|#ifndef MODULE
+multiline_comment|/* XXX THIS SHIT DOES NOT WORK ON ULTRA... FIXME -DaveM */
 id|dvma_addr
 op_assign
 (paren
@@ -2370,6 +2351,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* XXX THIS SHIT DOES NOT WORK ON ULTRA... FIXME -DaveM */
 id|mmu_unlockarea
 c_func
 (paren
@@ -3696,7 +3678,7 @@ suffix:semicolon
 multiline_comment|/* The request and response queues must each be aligned&n;&t;&t;&t; * on a page boundry.&n;&t;&t;&t; */
 DECL|macro|QSIZE
 mdefine_line|#define QSIZE(entries)&t;(((entries) + 1) * QUEUE_ENTRY_LEN)
-id|qpti-&gt;res
+id|qpti-&gt;res_cpu
 op_assign
 id|sparc_dvma_malloc
 c_func
@@ -3708,9 +3690,12 @@ id|RES_QUEUE_LEN
 )paren
 comma
 l_string|&quot;PTISP Response Queue&quot;
+comma
+op_amp
+id|qpti-&gt;res_dvma
 )paren
 suffix:semicolon
-id|qpti-&gt;req
+id|qpti-&gt;req_cpu
 op_assign
 id|sparc_dvma_malloc
 c_func
@@ -3722,6 +3707,9 @@ id|QLOGICISP_REQ_QUEUE_LEN
 )paren
 comma
 l_string|&quot;PTISP Request Queue&quot;
+comma
+op_amp
+id|qpti-&gt;req_dvma
 )paren
 suffix:semicolon
 DECL|macro|QSIZE
@@ -4386,7 +4374,7 @@ id|Continuation_Entry
 op_star
 )paren
 op_amp
-id|qpti-&gt;req
+id|qpti-&gt;req_cpu
 (braket
 id|in_ptr
 )braket
@@ -4511,8 +4499,18 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* XXX Casts are extremely gross, but with 64-bit cpu addresses&n;&t;&t; * XXX and 32-bit SBUS DVMA addresses what am I to do? -DaveM&n;&t;&t; */
 id|Cmnd-&gt;SCp.ptr
 op_assign
+(paren
+r_char
+op_star
+)paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|mmu_get_scsi_one
 c_func
 (paren
@@ -4525,6 +4523,7 @@ comma
 id|Cmnd-&gt;request_bufflen
 comma
 id|qpti-&gt;qdev-&gt;my_bus
+)paren
 )paren
 suffix:semicolon
 id|cmd-&gt;dataseg
@@ -4686,7 +4685,7 @@ id|Command_Entry
 op_star
 )paren
 op_amp
-id|qpti-&gt;req
+id|qpti-&gt;req_cpu
 (braket
 id|in_ptr
 )braket
@@ -4781,7 +4780,7 @@ id|Command_Entry
 op_star
 )paren
 op_amp
-id|qpti-&gt;req
+id|qpti-&gt;req_cpu
 (braket
 id|in_ptr
 )braket
@@ -5276,7 +5275,7 @@ id|Status_Entry
 op_star
 )paren
 op_amp
-id|qpti-&gt;res
+id|qpti-&gt;res_cpu
 (braket
 id|out_ptr
 )braket
@@ -5396,8 +5395,7 @@ id|mmu_release_scsi_one
 c_func
 (paren
 (paren
-r_char
-op_star
+id|__u32
 )paren
 id|Cmnd-&gt;SCp.ptr
 comma

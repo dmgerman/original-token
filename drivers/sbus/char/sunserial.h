@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunserial.h,v 1.5 1996/10/16 13:13:41 zaitcev Exp $&n; * serial.h: Definitions for the Sparc Zilog serial driver.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sunserial.h,v 1.9 1997/04/12 23:33:12 ecd Exp $&n; * serial.h: Definitions for the Sparc Zilog serial driver.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_SERIAL_H
 DECL|macro|_SPARC_SERIAL_H
 mdefine_line|#define _SPARC_SERIAL_H
@@ -159,9 +159,7 @@ mdefine_line|#define ZILOG_SPLIT_TERMIOS 0x0008 /* Separate termios for dialin/c
 DECL|macro|ZILOG_SPD_MASK
 mdefine_line|#define ZILOG_SPD_MASK&t;0x0030
 DECL|macro|ZILOG_SPD_HI
-mdefine_line|#define ZILOG_SPD_HI&t;0x0010&t;/* Use 56000 instead of 38400 bps */
-DECL|macro|ZILOG_SPD_VHI
-mdefine_line|#define ZILOG_SPD_VHI&t;0x0020  /* Use 115200 instead of 38400 bps */
+mdefine_line|#define ZILOG_SPD_HI&t;0x0010&t;/* Use 76800 instead of 38400 bps */
 DECL|macro|ZILOG_SPD_CUST
 mdefine_line|#define ZILOG_SPD_CUST&t;0x0030  /* Use user-specified divisor */
 DECL|macro|ZILOG_SKIP_TEST
@@ -732,8 +730,8 @@ DECL|macro|Tx_BUF_EMP
 mdefine_line|#define&t;Tx_BUF_EMP&t;0x4&t;/* Tx Buffer empty */
 DECL|macro|DCD
 mdefine_line|#define&t;DCD&t;&t;0x8&t;/* DCD */
-DECL|macro|SYNC_HUNT
-mdefine_line|#define&t;SYNC_HUNT&t;0x10&t;/* Sync/hunt */
+DECL|macro|SYNC
+mdefine_line|#define&t;SYNC&t;&t;0x10&t;/* Sync/hunt */
 DECL|macro|CTS
 mdefine_line|#define&t;CTS&t;&t;0x20&t;/* CTS */
 DECL|macro|TxEOM
@@ -770,6 +768,24 @@ mdefine_line|#define&t;CRC_ERR&t;&t;0x40&t;/* CRC/Framing Error */
 DECL|macro|END_FR
 mdefine_line|#define&t;END_FR&t;&t;0x80&t;/* End of Frame (SDLC) */
 multiline_comment|/* Read Register 2 (channel b only) - Interrupt vector */
+DECL|macro|CHB_Tx_EMPTY
+mdefine_line|#define CHB_Tx_EMPTY&t;0x00
+DECL|macro|CHB_EXT_STAT
+mdefine_line|#define CHB_EXT_STAT&t;0x02
+DECL|macro|CHB_Rx_AVAIL
+mdefine_line|#define CHB_Rx_AVAIL&t;0x04
+DECL|macro|CHB_SPECIAL
+mdefine_line|#define CHB_SPECIAL&t;0x06
+DECL|macro|CHA_Tx_EMPTY
+mdefine_line|#define CHA_Tx_EMPTY&t;0x08
+DECL|macro|CHA_EXT_STAT
+mdefine_line|#define CHA_EXT_STAT&t;0x0a
+DECL|macro|CHA_Rx_AVAIL
+mdefine_line|#define CHA_Rx_AVAIL&t;0x0c
+DECL|macro|CHA_SPECIAL
+mdefine_line|#define CHA_SPECIAL&t;0x0e
+DECL|macro|STATUS_MASK
+mdefine_line|#define STATUS_MASK&t;0x0e
 multiline_comment|/* Read Register 3 (interrupt pending register) ch a only */
 DECL|macro|CHBEXT
 mdefine_line|#define&t;CHBEXT&t;0x1&t;&t;/* Channel B Ext/Stat IP */
@@ -799,6 +815,8 @@ multiline_comment|/* Read Register 15 (value of WR 15) */
 multiline_comment|/* Misc macros */
 DECL|macro|ZS_CLEARERR
 mdefine_line|#define ZS_CLEARERR(channel)    do { channel-&gt;control = ERR_RES; &bslash;&n;&t;&t;&t;&t;     udelay(5); } while(0)
+DECL|macro|ZS_CLEARSTAT
+mdefine_line|#define ZS_CLEARSTAT(channel)   do { channel-&gt;control = RES_EXT_INT; &bslash;&n;&t;&t;&t;&t;     udelay(5); } while(0)
 DECL|macro|ZS_CLEARFIFO
 mdefine_line|#define ZS_CLEARFIFO(channel)   do { volatile unsigned char garbage; &bslash;&n;&t;&t;&t;&t;     garbage = channel-&gt;data; &bslash;&n;&t;&t;&t;&t;     udelay(2); &bslash;&n;&t;&t;&t;&t;     garbage = channel-&gt;data; &bslash;&n;&t;&t;&t;&t;     udelay(2); &bslash;&n;&t;&t;&t;&t;     garbage = channel-&gt;data; &bslash;&n;&t;&t;&t;&t;     udelay(2); } while(0)
 macro_line|#endif /* !(_SPARC_SERIAL_H) */

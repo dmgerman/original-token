@@ -1,12 +1,18 @@
-multiline_comment|/* $Id: page.h,v 1.5 1997/02/25 20:00:36 jj Exp $ */
+multiline_comment|/* $Id: page.h,v 1.8 1997/03/26 12:24:21 davem Exp $ */
 macro_line|#ifndef _SPARC64_PAGE_H
 DECL|macro|_SPARC64_PAGE_H
 mdefine_line|#define _SPARC64_PAGE_H
 DECL|macro|PAGE_SHIFT
 mdefine_line|#define PAGE_SHIFT   13
 macro_line|#ifdef __KERNEL__
+macro_line|#ifndef __ASSEMBLY__
+multiline_comment|/* I have my suspicions... -DaveM */
+DECL|macro|PAGE_SIZE
+mdefine_line|#define PAGE_SIZE    (1UL &lt;&lt; PAGE_SHIFT)
+macro_line|#else
 DECL|macro|PAGE_SIZE
 mdefine_line|#define PAGE_SIZE    (1 &lt;&lt; PAGE_SHIFT)
+macro_line|#endif
 DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK    (~(PAGE_SIZE-1))
 macro_line|#ifndef __ASSEMBLY__
@@ -204,13 +210,23 @@ DECL|macro|__iopgprot
 mdefine_line|#define __iopgprot(x)&t;(x)
 macro_line|#endif /* (STRICT_MM_TYPECHECKS) */
 macro_line|#endif /* !(__ASSEMBLY__) */
+macro_line|#ifndef __ASSEMBLY__
+DECL|macro|TASK_UNMAPPED_BASE
+mdefine_line|#define TASK_UNMAPPED_BASE&t;0x0000000070000000UL
+macro_line|#else
 DECL|macro|TASK_UNMAPPED_BASE
 mdefine_line|#define TASK_UNMAPPED_BASE&t;0x0000000070000000
+macro_line|#endif
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
+macro_line|#ifndef __ASSEMBLY__
+DECL|macro|PAGE_OFFSET
+mdefine_line|#define PAGE_OFFSET&t;&t;0xFFFFF80000000000UL
+macro_line|#else
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;&t;0xFFFFF80000000000
+macro_line|#endif
 DECL|macro|__pa
 mdefine_line|#define __pa(x)&t;&t;&t;((unsigned long)(x) - PAGE_OFFSET)
 DECL|macro|__va

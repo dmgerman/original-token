@@ -726,13 +726,17 @@ comma
 id|pte
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|mem_map
 (braket
 id|page_nr
 )braket
 dot
 id|count
-op_increment
+)paren
 suffix:semicolon
 )brace
 DECL|function|copy_pte_range
@@ -2658,6 +2662,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|mem_map
 (braket
 id|MAP_NR
@@ -2668,6 +2676,7 @@ id|page
 )braket
 dot
 id|count
+)paren
 op_ne
 l_int|1
 )paren
@@ -3011,6 +3020,10 @@ multiline_comment|/*&n;&t; * Do we need to copy?&n;&t; */
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|mem_map
 (braket
 id|MAP_NR
@@ -3021,6 +3034,7 @@ id|old_page
 )braket
 dot
 id|count
+)paren
 op_ne
 l_int|1
 )paren
@@ -3888,6 +3902,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|mem_map
 (braket
 id|MAP_NR
@@ -3902,6 +3920,7 @@ id|page
 )braket
 dot
 id|count
+)paren
 OG
 l_int|1
 op_logical_and
@@ -4163,6 +4182,10 @@ r_else
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|mem_map
 (braket
 id|MAP_NR
@@ -4173,6 +4196,7 @@ id|page
 )braket
 dot
 id|count
+)paren
 OG
 l_int|1
 op_logical_and

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.7 1997/03/14 21:05:38 jj Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.11 1997/04/10 23:32:42 davem Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_BITOPS_H
 DECL|macro|_SPARC64_BITOPS_H
 mdefine_line|#define _SPARC64_BITOPS_H
@@ -60,7 +60,7 @@ c_func
 id|lduw
 (braket
 op_mod
-l_int|2
+l_int|4
 )braket
 comma
 op_mod
@@ -72,10 +72,10 @@ op_mod
 l_int|0
 comma
 op_mod
-l_int|4
+l_int|3
 comma
 op_mod
-l_int|3
+l_int|2
 id|bne
 comma
 id|pn
@@ -89,14 +89,14 @@ op_mod
 l_int|0
 comma
 op_mod
-l_int|4
+l_int|3
 comma
 op_mod
 l_int|1
 id|cas
 (braket
 op_mod
-l_int|2
+l_int|4
 )braket
 comma
 op_mod
@@ -124,7 +124,7 @@ id|b
 id|lduw
 (braket
 op_mod
-l_int|2
+l_int|4
 )braket
 comma
 op_mod
@@ -141,9 +141,6 @@ op_amp
 id|r
 l_string|&quot; (temp1), &quot;
 op_assign
-id|r
-l_string|&quot; (m), &quot;
-op_assign
 op_amp
 id|r
 "&quot;"
@@ -151,7 +148,7 @@ id|r
 id|oldbit
 )paren
 suffix:colon
-l_string|&quot;ir&quot;
+l_string|&quot;HIr&quot;
 (paren
 l_int|1UL
 op_lshift
@@ -166,6 +163,8 @@ l_string|&quot;r&quot;
 (paren
 id|m
 )paren
+suffix:colon
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return
@@ -229,7 +228,7 @@ c_func
 id|lduw
 (braket
 op_mod
-l_int|2
+l_int|4
 )braket
 comma
 op_mod
@@ -241,10 +240,10 @@ op_mod
 l_int|0
 comma
 op_mod
-l_int|4
+l_int|3
 comma
 op_mod
-l_int|3
+l_int|2
 id|be
 comma
 id|pn
@@ -258,14 +257,14 @@ op_mod
 l_int|0
 comma
 op_mod
-l_int|4
+l_int|3
 comma
 op_mod
 l_int|1
 id|cas
 (braket
 op_mod
-l_int|2
+l_int|4
 )braket
 comma
 op_mod
@@ -293,7 +292,7 @@ id|b
 id|lduw
 (braket
 op_mod
-l_int|2
+l_int|4
 )braket
 comma
 op_mod
@@ -310,9 +309,6 @@ op_amp
 id|r
 l_string|&quot; (temp1), &quot;
 op_assign
-id|r
-l_string|&quot; (m), &quot;
-op_assign
 op_amp
 id|r
 "&quot;"
@@ -320,7 +316,7 @@ id|r
 id|oldbit
 )paren
 suffix:colon
-l_string|&quot;ir&quot;
+l_string|&quot;HIr&quot;
 (paren
 l_int|1UL
 op_lshift
@@ -335,6 +331,8 @@ l_string|&quot;r&quot;
 (paren
 id|m
 )paren
+suffix:colon
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return
@@ -398,35 +396,35 @@ c_func
 id|lduw
 (braket
 op_mod
-l_int|2
+l_int|4
 )braket
 comma
 op_mod
 l_int|0
 l_int|1
 suffix:colon
-id|andcc
+op_logical_and
 op_mod
 l_int|0
 comma
 op_mod
-l_int|4
+l_int|3
 comma
 op_mod
-l_int|3
+l_int|2
 op_xor
 op_mod
 l_int|0
 comma
 op_mod
-l_int|4
+l_int|3
 comma
 op_mod
 l_int|1
 id|cas
 (braket
 op_mod
-l_int|2
+l_int|4
 )braket
 comma
 op_mod
@@ -454,7 +452,7 @@ id|b
 id|lduw
 (braket
 op_mod
-l_int|2
+l_int|4
 )braket
 comma
 op_mod
@@ -469,9 +467,6 @@ op_amp
 id|r
 l_string|&quot; (temp1), &quot;
 op_assign
-id|r
-l_string|&quot; (m), &quot;
-op_assign
 op_amp
 id|r
 "&quot;"
@@ -479,7 +474,7 @@ id|r
 id|oldbit
 )paren
 suffix:colon
-l_string|&quot;ir&quot;
+l_string|&quot;HIr&quot;
 (paren
 l_int|1UL
 op_lshift
@@ -494,6 +489,8 @@ l_string|&quot;r&quot;
 (paren
 id|m
 )paren
+suffix:colon
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return
@@ -837,10 +834,10 @@ c_func
 id|lduwa
 (braket
 op_mod
-l_int|2
+l_int|4
 )braket
 op_mod
-l_int|6
+l_int|5
 comma
 op_mod
 l_int|0
@@ -851,10 +848,10 @@ op_mod
 l_int|0
 comma
 op_mod
-l_int|4
+l_int|3
 comma
 op_mod
-l_int|3
+l_int|2
 id|bne
 comma
 id|pn
@@ -868,17 +865,17 @@ op_mod
 l_int|0
 comma
 op_mod
-l_int|4
+l_int|3
 comma
 op_mod
 l_int|1
 id|casa
 (braket
 op_mod
-l_int|2
+l_int|4
 )braket
 op_mod
-l_int|6
+l_int|5
 comma
 op_mod
 l_int|0
@@ -905,10 +902,10 @@ id|b
 id|lduwa
 (braket
 op_mod
-l_int|2
+l_int|4
 )braket
 op_mod
-l_int|6
+l_int|5
 comma
 op_mod
 l_int|0
@@ -924,9 +921,6 @@ op_amp
 id|r
 l_string|&quot; (temp1), &quot;
 op_assign
-id|r
-l_string|&quot; (m), &quot;
-op_assign
 op_amp
 id|r
 "&quot;"
@@ -934,7 +928,7 @@ id|r
 id|oldbit
 )paren
 suffix:colon
-l_string|&quot;ir&quot;
+l_string|&quot;HIr&quot;
 (paren
 l_int|1UL
 op_lshift
@@ -945,7 +939,7 @@ l_int|31
 )paren
 )paren
 comma
-l_string|&quot;2&quot;
+l_string|&quot;r&quot;
 (paren
 id|m
 )paren
@@ -954,6 +948,8 @@ l_string|&quot;i&quot;
 (paren
 id|ASI_PL
 )paren
+suffix:colon
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1015,10 +1011,10 @@ c_func
 id|lduwa
 (braket
 op_mod
-l_int|2
+l_int|4
 )braket
 op_mod
-l_int|6
+l_int|5
 comma
 op_mod
 l_int|0
@@ -1029,10 +1025,10 @@ op_mod
 l_int|0
 comma
 op_mod
-l_int|4
+l_int|3
 comma
 op_mod
-l_int|3
+l_int|2
 id|be
 comma
 id|pn
@@ -1046,17 +1042,17 @@ op_mod
 l_int|0
 comma
 op_mod
-l_int|4
+l_int|3
 comma
 op_mod
 l_int|1
 id|casa
 (braket
 op_mod
-l_int|2
+l_int|4
 )braket
 op_mod
-l_int|6
+l_int|5
 comma
 op_mod
 l_int|0
@@ -1083,10 +1079,10 @@ id|b
 id|lduwa
 (braket
 op_mod
-l_int|2
+l_int|4
 )braket
 op_mod
-l_int|6
+l_int|5
 comma
 op_mod
 l_int|0
@@ -1102,9 +1098,6 @@ op_amp
 id|r
 l_string|&quot; (temp1), &quot;
 op_assign
-id|r
-l_string|&quot; (m), &quot;
-op_assign
 op_amp
 id|r
 "&quot;"
@@ -1112,7 +1105,7 @@ id|r
 id|oldbit
 )paren
 suffix:colon
-l_string|&quot;ir&quot;
+l_string|&quot;HIr&quot;
 (paren
 l_int|1UL
 op_lshift
@@ -1123,7 +1116,7 @@ l_int|31
 )paren
 )paren
 comma
-l_string|&quot;2&quot;
+l_string|&quot;r&quot;
 (paren
 id|m
 )paren
@@ -1132,6 +1125,8 @@ l_string|&quot;i&quot;
 (paren
 id|ASI_PL
 )paren
+suffix:colon
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1538,6 +1533,15 @@ DECL|macro|ext2_find_first_zero_bit
 mdefine_line|#define ext2_find_first_zero_bit&t;find_first_zero_le_bit
 DECL|macro|ext2_find_next_zero_bit
 mdefine_line|#define ext2_find_next_zero_bit&t;&t;find_next_zero_le_bit
+multiline_comment|/* Bitmap functions for the minix filesystem.  */
+DECL|macro|minix_set_bit
+mdefine_line|#define minix_set_bit(nr,addr) set_bit(nr,addr)
+DECL|macro|minix_clear_bit
+mdefine_line|#define minix_clear_bit(nr,addr) clear_bit(nr,addr)
+DECL|macro|minix_test_bit
+mdefine_line|#define minix_test_bit(nr,addr) test_bit(nr,addr)
+DECL|macro|minix_find_first_zero_bit
+mdefine_line|#define minix_find_first_zero_bit(addr,size) find_first_zero_bit(addr,size)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* defined(_SPARC64_BITOPS_H) */
 eof

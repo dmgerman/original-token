@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: io.h,v 1.5 1997/03/18 18:04:00 jj Exp $ */
+multiline_comment|/* $Id: io.h,v 1.10 1997/04/10 05:13:29 davem Exp $ */
 macro_line|#ifndef __SPARC64_IO_H
 DECL|macro|__SPARC64_IO_H
 mdefine_line|#define __SPARC64_IO_H
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/page.h&gt;      /* IO address mapping routines need this */
 macro_line|#include &lt;asm/system.h&gt;
 DECL|function|inb_local
@@ -275,6 +276,9 @@ r_int
 id|virt_addr
 comma
 r_int
+id|bus
+comma
+r_int
 id|rdonly
 )paren
 suffix:semicolon
@@ -302,6 +306,9 @@ r_int
 id|virt_addr
 comma
 r_int
+id|bus
+comma
+r_int
 id|rdonly
 )paren
 (brace
@@ -311,10 +318,10 @@ id|physaddr
 comma
 id|virt_addr
 comma
+id|bus
+comma
 id|rdonly
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 DECL|function|unmapioaddr
@@ -334,28 +341,31 @@ id|sparc_ultra_unmapioaddr
 id|virt_addr
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
 r_extern
 r_void
 op_star
 id|sparc_alloc_io
 (paren
-r_void
-op_star
+id|u32
+id|pa
 comma
 r_void
 op_star
+id|va
 comma
 r_int
+id|sz
 comma
 r_char
 op_star
+id|name
+comma
+id|u32
+id|io
 comma
 r_int
-comma
-r_int
+id|rdonly
 )paren
 suffix:semicolon
 r_extern
@@ -364,8 +374,10 @@ id|sparc_free_io
 (paren
 r_void
 op_star
+id|va
 comma
 r_int
+id|sz
 )paren
 suffix:semicolon
 r_extern
@@ -374,9 +386,15 @@ op_star
 id|sparc_dvma_malloc
 (paren
 r_int
+id|sz
 comma
 r_char
 op_star
+id|name
+comma
+id|__u32
+op_star
+id|dvma_addr
 )paren
 suffix:semicolon
 DECL|macro|virt_to_phys

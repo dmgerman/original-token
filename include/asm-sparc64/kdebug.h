@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: kdebug.h,v 1.1 1997/03/14 21:05:34 jj Exp $&n; * kdebug.h:  Defines and definitions for debugging the Linux kernel&n; *            under various kernel debuggers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: kdebug.h,v 1.2 1997/04/04 00:50:21 davem Exp $&n; * kdebug.h:  Defines and definitions for debugging the Linux kernel&n; *            under various kernel debuggers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_KDEBUG_H
 DECL|macro|_SPARC64_KDEBUG_H
 mdefine_line|#define _SPARC64_KDEBUG_H
 macro_line|#include &lt;asm/openprom.h&gt;
+multiline_comment|/* XXX This needs to all be fixed for Ultra/V9 -DaveM */
 multiline_comment|/* The debugger lives in 1MB of virtual address space right underneath&n; * the boot prom.&n; */
 DECL|macro|DEBUG_FIRSTVADDR
 mdefine_line|#define DEBUG_FIRSTVADDR       0xffc00000

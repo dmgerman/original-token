@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: machines.h,v 1.1 1997/03/14 21:05:37 jj Exp $&n; * machines.h:  Defines for taking apart the machine type value in the&n; *              idprom and determining the kind of machine we are on.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: machines.h,v 1.2 1997/04/04 00:50:23 davem Exp $&n; * machines.h:  Defines for taking apart the machine type value in the&n; *              idprom and determining the kind of machine we are on.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_MACHINES_H
 DECL|macro|_SPARC64_MACHINES_H
 mdefine_line|#define _SPARC64_MACHINES_H
+multiline_comment|/* XXX This should disappear. -DaveM */
 DECL|struct|Sun_Machine_Models
 r_struct
 id|Sun_Machine_Models

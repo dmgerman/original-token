@@ -245,6 +245,10 @@ DECL|macro|EREMOTEIO
 mdefine_line|#define&t;EREMOTEIO&t;121&t;/* Remote I/O error */
 DECL|macro|EDQUOT
 mdefine_line|#define&t;EDQUOT&t;&t;122&t;/* Quota exceeded */
+DECL|macro|ENOMEDIUM
+mdefine_line|#define&t;ENOMEDIUM&t;123&t;/* No medium found */
+DECL|macro|EMEDIUMTYPE
+mdefine_line|#define&t;EMEDIUMTYPE&t;124&t;/* Wrong medium type */
 multiline_comment|/* Should never be seen by user programs */
 DECL|macro|ERESTARTSYS
 mdefine_line|#define ERESTARTSYS&t;512

@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: io.h,v 1.11 1996/11/19 11:26:14 davem Exp $ */
+multiline_comment|/* $Id: io.h,v 1.14 1997/04/10 05:13:22 davem Exp $ */
 macro_line|#ifndef __SPARC_IO_H
 DECL|macro|__SPARC_IO_H
 mdefine_line|#define __SPARC_IO_H
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/page.h&gt;      /* IO address mapping routines need this */
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Defines for io operations on the Sparc. Whether a memory access is going&n; * to i/o sparc is encoded in the pte. The type bits determine whether this&n; * is i/o sparc, on board memory, or VME space for VME cards. I think VME&n; * space only works on sun4&squot;s&n; */
@@ -490,20 +491,25 @@ r_void
 op_star
 id|sparc_alloc_io
 (paren
-r_void
-op_star
+id|u32
+id|pa
 comma
 r_void
 op_star
+id|va
 comma
 r_int
+id|sz
 comma
 r_char
 op_star
+id|name
+comma
+id|u32
+id|io
 comma
 r_int
-comma
-r_int
+id|rdonly
 )paren
 suffix:semicolon
 r_extern
@@ -512,21 +518,70 @@ id|sparc_free_io
 (paren
 r_void
 op_star
+id|vaddr
 comma
 r_int
+id|sz
 )paren
 suffix:semicolon
 r_extern
 r_void
 op_star
-id|sparc_dvma_malloc
+id|_sparc_dvma_malloc
 (paren
 r_int
+id|sz
 comma
 r_char
 op_star
+id|name
 )paren
 suffix:semicolon
+multiline_comment|/* Returns CPU visible address, dvmaaddr_p is a pointer to where&n; * the DVMA visible (ie. SBUS/PSYCO+PCI) address should be stored.&n; */
+DECL|function|sparc_dvma_malloc
+r_static
+id|__inline__
+r_void
+op_star
+id|sparc_dvma_malloc
+c_func
+(paren
+r_int
+id|size
+comma
+r_char
+op_star
+id|name
+comma
+id|__u32
+op_star
+id|dvmaaddr_p
+)paren
+(brace
+r_void
+op_star
+id|cpuaddr
+op_assign
+id|_sparc_dvma_malloc
+c_func
+(paren
+id|size
+comma
+id|name
+)paren
+suffix:semicolon
+op_star
+id|dvmaaddr_p
+op_assign
+(paren
+id|__u32
+)paren
+id|cpuaddr
+suffix:semicolon
+r_return
+id|cpuaddr
+suffix:semicolon
+)brace
 DECL|macro|virt_to_phys
 mdefine_line|#define virt_to_phys(x) __pa((unsigned long)(x))
 DECL|macro|phys_to_virt

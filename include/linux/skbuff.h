@@ -845,7 +845,12 @@ id|skb
 (brace
 r_return
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|skb-&gt;data_skb-&gt;count
+)paren
 op_ne
 l_int|1
 )paren
@@ -866,7 +871,12 @@ id|skb
 (brace
 r_return
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|skb-&gt;users
+)paren
 op_ne
 l_int|1
 )paren

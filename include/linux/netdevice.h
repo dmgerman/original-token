@@ -5,6 +5,7 @@ mdefine_line|#define _LINUX_NETDEVICE_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
 multiline_comment|/*&n; *&t;For future expansion when we will have different priorities. &n; */
 DECL|macro|DEV_NUMBUFFS
 mdefine_line|#define DEV_NUMBUFFS&t;3&t;&t;/* Number of queues per device&t;   */
@@ -92,7 +93,7 @@ id|hh_next
 suffix:semicolon
 multiline_comment|/* Next entry&t;&t;&t;     */
 DECL|member|hh_refcnt
-r_int
+id|atomic_t
 id|hh_refcnt
 suffix:semicolon
 multiline_comment|/* number of users                   */
@@ -1215,7 +1216,12 @@ r_void
 r_while
 c_loop
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|dev_lockct
+)paren
 )paren
 (brace
 id|schedule

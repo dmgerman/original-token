@@ -3646,7 +3646,10 @@ op_star
 id|get_free_page
 c_func
 (paren
-id|intr_count
+id|in_interrupt
+c_func
+(paren
+)paren
 ques
 c_cond
 id|GFP_ATOMIC

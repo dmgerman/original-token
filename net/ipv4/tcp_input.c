@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.39 1997/03/17 04:49:35 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
-multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.42 1997/04/12 04:32:24 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; *&t;&t;Eric Schenk&t;:&t;Fix retransmitter so that it sends&n; *&t;&t;&t;&t;&t;next packet on ack of previous packet.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
@@ -323,6 +323,24 @@ l_int|3
 op_plus
 id|tp-&gt;mdev
 suffix:semicolon
+id|tp-&gt;rto
+op_add_assign
+(paren
+id|tp-&gt;rto
+op_rshift
+l_int|2
+)paren
+op_plus
+(paren
+id|tp-&gt;rto
+op_rshift
+(paren
+id|tp-&gt;snd_cwnd
+op_minus
+l_int|1
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -338,7 +356,7 @@ l_int|120
 op_star
 id|HZ
 suffix:semicolon
-multiline_comment|/* Was 1*HZ - keep .2 as minimum cos of the BSD delayed acks */
+multiline_comment|/* Was 1*HZ - keep .2 as minimum cos of the BSD delayed acks &n;&t; * FIXME: It&squot;s not entirely clear this lower bound is the best&n;&t; * way to avoid the problem. Is it possible to drop the lower&n;&t; * bound and still avoid trouble with BSD stacks? Perhaps&n;&t; * some modification to the RTO calculation that takes delayed&n;&t; * ack bais into account? This needs serious thought. -- erics&n;&t; */
 r_if
 c_cond
 (paren
@@ -812,6 +830,7 @@ op_amp
 id|sk-&gt;tp_pinfo.af_tcp
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME: if we are already retransmitting should this code&n;&t; * be skipped? [Floyd high_seq check sort of does this]&n;&t; * The case I&squot;m worried about is falling into a fast&n;&t; * retransmit on a link with a congestion window of 1 or 2.&n;&t; * There was some evidence in 2.0.x that this was problem&n;&t; * on really slow links (1200 or 2400 baud). I need to&n;&t; * try this situation again and see what happens.&n;&t; */
 multiline_comment|/*&n;&t; * An ACK is a duplicate if:&n;&t; * (1) it has the same sequence number as the largest number we&squot;ve &n;&t; *     seen,&n;&t; * (2) it has the same window as the last ACK,&n;&t; * (3) we have outstanding data that has not been ACKed&n;&t; * (4) The packet was not carrying any data.&n;&t; * (5) [From Floyds paper on fast retransmit wars]&n;&t; *     The packet acked data after high_seq;&n;&t; */
 r_if
 c_cond
@@ -820,7 +839,12 @@ id|ack
 op_eq
 id|tp-&gt;snd_una
 op_logical_and
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;packets_out
+)paren
 op_logical_and
 (paren
 id|not_dup
@@ -862,14 +886,14 @@ op_assign
 id|max
 c_func
 (paren
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 op_rshift
 l_int|1
 comma
 l_int|2
 )paren
 suffix:semicolon
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 op_assign
 id|sk-&gt;ssthresh
 op_plus
@@ -881,6 +905,17 @@ c_func
 id|sk
 comma
 l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* careful not to timeout just after fast&n;&t;&t;&t;&t; * retransmit!&n;&t;&t;&t;&t; */
+id|tcp_reset_xmit_timer
+c_func
+(paren
+id|sk
+comma
+id|TIME_RETRANS
+comma
+id|tp-&gt;rto
 )paren
 suffix:semicolon
 )brace
@@ -897,7 +932,7 @@ l_int|3
 id|sk-&gt;dup_acks
 op_increment
 suffix:semicolon
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 op_increment
 suffix:semicolon
 )brace
@@ -917,7 +952,7 @@ id|tp-&gt;retrans_head
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 op_assign
 id|max
 c_func
@@ -927,9 +962,14 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|sk-&gt;retransmits
-op_assign
+comma
 l_int|0
+)paren
 suffix:semicolon
 )brace
 id|sk-&gt;dup_acks
@@ -1079,7 +1119,7 @@ multiline_comment|/*&n;&t; *      Slow Start&n;&t; */
 r_if
 c_cond
 (paren
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 OL
 id|sk-&gt;ssthresh
 op_logical_and
@@ -1108,7 +1148,7 @@ id|sk-&gt;cong_count
 op_increment
 )paren
 (brace
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 op_increment
 suffix:semicolon
 id|sk-&gt;cong_count
@@ -1139,10 +1179,10 @@ c_cond
 id|sk-&gt;cong_count
 op_increment
 op_ge
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 )paren
 (brace
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 op_increment
 suffix:semicolon
 id|sk-&gt;cong_count
@@ -1170,10 +1210,10 @@ c_cond
 id|sk-&gt;cong_count
 op_increment
 op_ge
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 )paren
 (brace
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 op_decrement
 suffix:semicolon
 id|sk-&gt;cong_count
@@ -1185,11 +1225,11 @@ multiline_comment|/* Never less than 2 segments */
 r_if
 c_cond
 (paren
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 OL
 l_int|2
 )paren
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 op_assign
 l_int|2
 suffix:semicolon
@@ -1217,32 +1257,42 @@ id|u32
 id|seq_rtt
 )paren
 (brace
-multiline_comment|/* &n;         * This is Jacobson&squot;s slow start and congestion avoidance. &n;         * SIGCOMM &squot;88, p. 328.  Because we keep cong_window in &n;         * integral mss&squot;s, we can&squot;t do cwnd += 1 / cwnd.  &n;         * Instead, maintain a counter and increment it once every &n;         * cwnd times.  &n;         */
+r_struct
+id|tcp_opt
+op_star
+id|tp
+op_assign
+op_amp
+(paren
+id|sk-&gt;tp_pinfo.af_tcp
+)paren
+suffix:semicolon
+multiline_comment|/* &n;         * This is Jacobson&squot;s slow start and congestion avoidance. &n;         * SIGCOMM &squot;88, p. 328.  Because we keep cong_window in &n;         * integral mss&squot;s, we can&squot;t do cwnd += 1 / cwnd.  &n;         * Instead, maintain a counter and increment it once every &n;         * cwnd times.  &n;&t; * FIXME: Check to be sure the mathematics works out right&n;&t; * on this trick when we have to reduce the congestion window.&n;&t; * The cong_count has to be reset properly when reduction events&n;&t; * happen.&n;&t; * FIXME: What happens when the congestion window gets larger&n;&t; * than the maximum receiver window by some large factor&n;&t; * Suppose the pipeline never looses packets for a long&n;&t; * period of time, then traffic increases causing packet loss.&n;&t; * The congestion window should be reduced, but what it should&n;&t; * be reduced to is not clear, since 1/2 the old window may&n;&t; * still be larger than the maximum sending rate we ever achieved.&n;         */
 r_if
 c_cond
 (paren
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 op_le
 id|sk-&gt;ssthresh
 )paren
 (brace
 multiline_comment|/* &n;                 *&t;In &quot;safe&quot; area, increase&n;                 */
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 op_increment
 suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;                 *&t;In dangerous area, increase slowly.  &n;                 *      In theory this is&n;                 *  &t;sk-&gt;cong_window += 1 / sk-&gt;cong_window&n;                 */
+multiline_comment|/*&n;                 *&t;In dangerous area, increase slowly.  &n;                 *      In theory this is&n;                 *  &t;tp-&gt;snd_cwnd += 1 / tp-&gt;snd_cwnd&n;                 */
 r_if
 c_cond
 (paren
 id|sk-&gt;cong_count
 op_ge
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 )paren
 (brace
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 op_increment
 suffix:semicolon
 id|sk-&gt;cong_count
@@ -1396,6 +1446,7 @@ id|acked
 op_assign
 id|FLAG_DATA_ACKED
 suffix:semicolon
+multiline_comment|/* FIXME: packet counting may break if we have to&n;&t;&t; * do packet &quot;repackaging&quot; for stacks that don&squot;t&n;&t;&t; * like overlapping packets.&n;&t;&t; */
 id|atomic_dec
 c_func
 (paren
@@ -1815,19 +1866,34 @@ multiline_comment|/*&n;&t; *&t;if we where retransmiting don&squot;t count rtt e
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;retransmits
+)paren
 )paren
 (brace
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;packets_out
+)paren
 op_eq
 l_int|0
 )paren
+id|atomic_set
+c_func
+(paren
+op_amp
 id|sk-&gt;retransmits
-op_assign
+comma
 l_int|0
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -1868,7 +1934,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;packets_out
+)paren
 )paren
 (brace
 r_if
@@ -1901,12 +1972,16 @@ op_minus
 id|skb-&gt;when
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * FIXME: This assumes that when we are retransmitting&n;&t;&t;&t; * we should only ever respond with one packet.&n;&t;&t;&t; * This means congestion windows should not grow&n;&t;&t;&t; * during recovery. In 2.0.X we allow the congestion&n;&t;&t;&t; * window to grow. It is not clear to me which&n;&t;&t;&t; * decision is correct. The RFCs should be double&n;&t;&t;&t; * checked as should the behavior of other stacks.&n;&t;&t;&t; * Also note that if we do want to allow the&n;&t;&t;&t; * congestion window to grow during retransmits&n;&t;&t;&t; * we have to fix the call to congestion window&n;&t;&t;&t; * updates so that it works during retransmission.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
-id|when
-op_le
-l_int|0
+id|atomic_read
+c_func
+(paren
+op_amp
+id|sk-&gt;retransmits
+)paren
 )paren
 (brace
 id|tp-&gt;retrans_head
@@ -1955,6 +2030,7 @@ comma
 id|TIME_RETRANS
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME: danger, if we just did a timeout and got the third&n;&t; * ack on this packet, then this is going to send it again!&n;&t; * [No. Floyd retransmit war check keeps this from happening. -- erics]&n;&t; */
 id|tcp_fast_retrans
 c_func
 (paren
@@ -2883,12 +2959,18 @@ op_plus
 id|tp-&gt;snd_wnd
 )paren
 op_logical_and
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;packets_out
+)paren
 OL
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t; *&t;Add more data to the send queue.&n;&t;&t;&t; */
+multiline_comment|/* FIXME: the congestion window is checked&n;&t;&t;&t; * again in tcp_write_xmit anyway?!&n;&t;&t;&t; */
 id|tcp_write_xmit
 c_func
 (paren
@@ -2916,7 +2998,12 @@ r_else
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;packets_out
+)paren
 op_eq
 l_int|0
 op_logical_and
@@ -2925,6 +3012,7 @@ id|tp-&gt;pending
 )paren
 (brace
 multiline_comment|/*&n; &t;&t;&t; *&t;Data to queue but no room.&n; &t;&t;&t; */
+multiline_comment|/* FIXME: Is it right to do a zero window probe into&n;&t;&t;&t; * a congestion window limited window???&n;&t;&t;&t; */
 id|tcp_reset_xmit_timer
 c_func
 (paren
@@ -3739,7 +3827,12 @@ multiline_comment|/*&n;&t; *&t;If our receive queue has grown past its limits,&n
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;rmem_alloc
+)paren
 OG
 id|sk-&gt;rcvbuf
 )paren

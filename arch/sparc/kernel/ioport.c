@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioport.c,v 1.22 1996/10/11 00:59:46 davem Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * The routines in this file should be changed for a memory allocator&n; * that would be setup just like NetBSD does : you create regions that&n; * are administered by a general purpose allocator, and then you call&n; * that allocator with your handle and the block size instead of this&n; * weak stuff.&n; */
+multiline_comment|/* $Id: ioport.c,v 1.24 1997/04/10 03:02:32 davem Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * The routines in this file should be changed for a memory allocator&n; * that would be setup just like NetBSD does : you create regions that&n; * are administered by a general purpose allocator, and then you call&n; * that allocator with your handle and the block size instead of this&n; * weak stuff.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -32,8 +32,7 @@ r_void
 op_star
 id|sparc_alloc_io
 (paren
-r_void
-op_star
+id|u32
 id|address
 comma
 r_void
@@ -47,7 +46,7 @@ r_char
 op_star
 id|name
 comma
-r_int
+id|u32
 id|bus_type
 comma
 r_int
@@ -362,10 +361,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Does DVMA allocations with PAGE_SIZE granularity.  How this basically&n; * works is that the ESP chip can do DVMA transfers at ANY address with&n; * certain size and boundary restrictions.  But other devices that are&n; * attached to it and would like to do DVMA have to set things up in&n; * a special way, if the DVMA sees a device attached to it transfer data&n; * at addresses above DVMA_VADDR it will grab them, this way it does not&n; * now have to know the peculiarities of where to read the Lance data&n; * from. (for example)&n; */
-DECL|function|sparc_dvma_malloc
+DECL|function|_sparc_dvma_malloc
 r_void
 op_star
-id|sparc_dvma_malloc
+id|_sparc_dvma_malloc
 (paren
 r_int
 id|len

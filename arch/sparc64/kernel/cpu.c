@@ -61,7 +61,27 @@ l_int|0x10
 comma
 l_int|0
 comma
-l_string|&quot;FIXME: UltraSparc I FPU&quot;
+l_string|&quot;UltraSparc I integrated FPU&quot;
+)brace
+comma
+(brace
+l_int|0x17
+comma
+l_int|0x11
+comma
+l_int|0
+comma
+l_string|&quot;UltraSparc II integrated FPU&quot;
+)brace
+comma
+(brace
+l_int|0x17
+comma
+l_int|0x12
+comma
+l_int|0
+comma
+l_string|&quot;UltraSparc III integrated FPU&quot;
 )brace
 comma
 )brace
@@ -81,9 +101,26 @@ l_int|0x17
 comma
 l_int|0x10
 comma
-l_string|&quot;FIXME: UltraSparc I&quot;
+l_string|&quot;TI UltraSparc I   (SpitFire)&quot;
 )brace
 comma
+(brace
+l_int|0x17
+comma
+l_int|0x11
+comma
+l_string|&quot;TI UltraSparc II  (BlackBird)&quot;
+)brace
+comma
+(brace
+l_int|0x17
+comma
+l_int|0x12
+comma
+l_string|&quot;TI UltraSparc III (Cheetah)&quot;
+)brace
+comma
+multiline_comment|/* A guess... */
 )brace
 suffix:semicolon
 DECL|macro|NSPARCCHIPS

@@ -2,15 +2,77 @@ multiline_comment|/* atomic.h: These still suck, but the I-cache hit rate is hig
 macro_line|#ifndef __ARCH_SPARC_ATOMIC__
 DECL|macro|__ARCH_SPARC_ATOMIC__
 mdefine_line|#define __ARCH_SPARC_ATOMIC__
+macro_line|#ifdef __SMP__
+multiline_comment|/* This is a temporary measure. -DaveM */
+DECL|member|counter
 DECL|typedef|atomic_t
 r_typedef
+r_struct
+(brace
+r_volatile
 r_int
+id|counter
+suffix:semicolon
+)brace
 id|atomic_t
 suffix:semicolon
+macro_line|#else
+DECL|member|counter
+DECL|typedef|atomic_t
+r_typedef
+r_struct
+(brace
+r_int
+id|counter
+suffix:semicolon
+)brace
+id|atomic_t
+suffix:semicolon
+macro_line|#endif
+DECL|macro|ATOMIC_INIT
+mdefine_line|#define ATOMIC_INIT&t;{ 0 }
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;
-multiline_comment|/* We do the bulk of the actual work out of line in two common&n; * routines in assembler, see arch/sparc/lib/atomic.S for the&n; * &quot;fun&quot; details.&n; */
+multiline_comment|/* We do the bulk of the actual work out of line in two common&n; * routines in assembler, see arch/sparc/lib/atomic.S for the&n; * &quot;fun&quot; details.&n; *&n; * For SMP the trick is you embed the spin lock byte within&n; * the word, use the low byte so signedness is easily retained&n; * via a quick arithmetic shift.  It looks like this:&n; *&n; *&t;----------------------------------------&n; *&t;| signed 24-bit counter value |  lock  |  atomic_t&n; *&t;----------------------------------------&n; *&t; 31                          8 7      0&n; */
+DECL|function|atomic_read
+r_static
+id|__inline__
+r_int
+id|atomic_read
+c_func
+(paren
+id|atomic_t
+op_star
+id|v
+)paren
+(brace
+r_int
+id|val
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;sra&t;%1, 0x8, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|v-&gt;counter
+)paren
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
+DECL|macro|atomic_set
+mdefine_line|#define atomic_set(v, i)&t;(((v)-&gt;counter) = ((i) &lt;&lt; 8))
 multiline_comment|/* Make sure gcc doesn&squot;t try to be clever and move things around&n; * on us. We need to use _exactly_ the address the user gave us,&n; * not some alias that contains the same information.&n; */
 DECL|macro|__atomic_fool_gcc
 mdefine_line|#define __atomic_fool_gcc(x) ((struct { int a[100]; } *)x)
@@ -21,7 +83,7 @@ r_void
 id|atomic_add
 c_func
 (paren
-id|atomic_t
+r_int
 id|i
 comma
 id|atomic_t
@@ -40,7 +102,7 @@ l_string|&quot;g1&quot;
 )paren
 suffix:semicolon
 r_register
-id|atomic_t
+r_int
 id|increment
 id|asm
 c_func
@@ -115,6 +177,8 @@ comma
 l_string|&quot;g7&quot;
 comma
 l_string|&quot;memory&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace
@@ -125,7 +189,7 @@ r_void
 id|atomic_sub
 c_func
 (paren
-id|atomic_t
+r_int
 id|i
 comma
 id|atomic_t
@@ -144,7 +208,7 @@ l_string|&quot;g1&quot;
 )paren
 suffix:semicolon
 r_register
-id|atomic_t
+r_int
 id|increment
 id|asm
 c_func
@@ -219,6 +283,8 @@ comma
 l_string|&quot;g7&quot;
 comma
 l_string|&quot;memory&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace
@@ -229,7 +295,7 @@ r_int
 id|atomic_add_return
 c_func
 (paren
-id|atomic_t
+r_int
 id|i
 comma
 id|atomic_t
@@ -248,7 +314,7 @@ l_string|&quot;g1&quot;
 )paren
 suffix:semicolon
 r_register
-id|atomic_t
+r_int
 id|increment
 id|asm
 c_func
@@ -323,6 +389,8 @@ comma
 l_string|&quot;g7&quot;
 comma
 l_string|&quot;memory&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return
@@ -336,7 +404,7 @@ r_int
 id|atomic_sub_return
 c_func
 (paren
-id|atomic_t
+r_int
 id|i
 comma
 id|atomic_t
@@ -355,7 +423,7 @@ l_string|&quot;g1&quot;
 )paren
 suffix:semicolon
 r_register
-id|atomic_t
+r_int
 id|increment
 id|asm
 c_func
@@ -430,6 +498,8 @@ comma
 l_string|&quot;g7&quot;
 comma
 l_string|&quot;memory&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return

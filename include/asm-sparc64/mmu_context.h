@@ -1,26 +1,183 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.4 1996/12/28 18:39:51 davem Exp $ */
+multiline_comment|/* $Id: mmu_context.h,v 1.7 1997/04/04 00:50:23 davem Exp $ */
 macro_line|#ifndef __SPARC64_MMU_CONTEXT_H
 DECL|macro|__SPARC64_MMU_CONTEXT_H
 mdefine_line|#define __SPARC64_MMU_CONTEXT_H
+multiline_comment|/* Derived heavily from Linus&squot;s Alpha/AXP ASN code... */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/spitfire.h&gt;
 DECL|macro|NO_CONTEXT
-mdefine_line|#define NO_CONTEXT     -1
+mdefine_line|#define NO_CONTEXT     0
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* Initialize the context related info for a new mm_struct&n; * instance.&n; */
 DECL|macro|init_new_context
-mdefine_line|#define init_new_context(mm) ((mm)-&gt;context = NO_CONTEXT)
+mdefine_line|#define init_new_context(mm)&t;((mm)-&gt;context = NO_CONTEXT)
+DECL|macro|destroy_context
+mdefine_line|#define destroy_context(mm)&t;do { } while(0)
 r_extern
+r_int
+r_int
+id|tlb_context_cache
+suffix:semicolon
+DECL|macro|MAX_CTX
+mdefine_line|#define MAX_CTX&t;&t;&t;PAGE_SIZE
+DECL|macro|CTX_VERSION_SHIFT
+mdefine_line|#define CTX_VERSION_SHIFT&t;PAGE_SHIFT
+DECL|macro|CTX_VERSION_MASK
+mdefine_line|#define CTX_VERSION_MASK&t;((~0UL) &lt;&lt; CTX_VERSION_SHIFT)
+DECL|macro|CTX_FIRST_VERSION
+mdefine_line|#define CTX_FIRST_VERSION&t;((1UL &lt;&lt; CTX_VERSION_SHIFT) + 1UL)
+DECL|function|get_new_mmu_context
+r_extern
+id|__inline__
 r_void
-id|spitfire_get_new_context
+id|get_new_mmu_context
 c_func
 (paren
 r_struct
 id|mm_struct
 op_star
 id|mm
+comma
+r_int
+r_int
+id|ctx
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|ctx
+op_amp
+op_complement
+id|CTX_VERSION_MASK
+)paren
+OG
+id|MAX_CTX
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|entry
+suffix:semicolon
+id|save_and_cli
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stxa&t;%%g0, [%0] %1&bslash;n&bslash;t&quot;
+l_string|&quot;stxa&t;%%g0, [%0] %2&quot;
+suffix:colon
+multiline_comment|/* No outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|TLB_TAG_ACCESS
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_IMMU
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|entry
+op_assign
+l_int|0
+suffix:semicolon
+id|entry
+OL
+l_int|62
+suffix:semicolon
+id|entry
+op_increment
+)paren
+(brace
+id|spitfire_put_dtlb_data
+c_func
+(paren
+id|entry
+comma
+l_int|0x0UL
+)paren
+suffix:semicolon
+id|spitfire_put_itlb_data
+c_func
+(paren
+id|entry
+comma
+l_int|0x0UL
+)paren
+suffix:semicolon
+)brace
+id|membar
+c_func
+(paren
+l_string|&quot;#Sync&quot;
+)paren
+suffix:semicolon
+id|flushi
+c_func
+(paren
+id|PAGE_OFFSET
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|ctx
+op_assign
+(paren
+id|ctx
+op_amp
+id|CTX_VERSION_MASK
+)paren
+op_plus
+id|CTX_FIRST_VERSION
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ctx
+)paren
+(brace
+id|ctx
+op_assign
+id|CTX_FIRST_VERSION
+suffix:semicolon
+)brace
+)brace
+id|tlb_context_cache
+op_assign
+id|ctx
+op_plus
+l_int|1
+suffix:semicolon
+id|mm-&gt;context
+op_assign
+id|ctx
+suffix:semicolon
+)brace
 DECL|function|get_mmu_context
 r_extern
 id|__inline__
@@ -44,37 +201,62 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tsk-&gt;mm-&gt;context
-op_eq
-id|NO_CONTEXT
+id|mm
+op_logical_and
+op_logical_neg
+(paren
+id|tsk-&gt;tss.flags
+op_amp
+id|SPARC_FLAG_KTHREAD
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|tsk-&gt;flags
+op_amp
+id|PF_EXITING
+)paren
 )paren
 (brace
-id|spitfire_get_new_context
-c_func
-(paren
-id|mm
-)paren
+r_int
+r_int
+id|ctx
+op_assign
+id|tlb_context_cache
 suffix:semicolon
-)brace
-multiline_comment|/* Get current set of user windows out of the cpu. */
 id|flushw_user
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Jump into new ASN. */
-id|spitfire_set_primary_context
-c_func
+r_if
+c_cond
+(paren
 (paren
 id|mm-&gt;context
+op_xor
+id|ctx
+)paren
+op_amp
+id|CTX_VERSION_MASK
+)paren
+(brace
+id|get_new_mmu_context
+c_func
+(paren
+id|mm
+comma
+id|ctx
 )paren
 suffix:semicolon
+)brace
 id|spitfire_set_secondary_context
 c_func
 (paren
 id|mm-&gt;context
 )paren
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(__SPARC64_MMU_CONTEXT_H) */

@@ -802,6 +802,24 @@ id|page
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * linux/fs/mount_clnt.c&n; * (Used only by nfsroot module)&n; */
+r_extern
+r_int
+id|nfs_mount
+c_func
+(paren
+r_struct
+id|sockaddr_in
+op_star
+comma
+r_char
+op_star
+comma
+r_struct
+id|nfs_fh
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * inline functions&n; */
 r_static
 r_inline
@@ -948,6 +966,8 @@ DECL|macro|NFSDBG_XDR
 mdefine_line|#define NFSDBG_XDR&t;&t;0x0020
 DECL|macro|NFSDBG_FILE
 mdefine_line|#define NFSDBG_FILE&t;&t;0x0040
+DECL|macro|NFSDBG_ROOT
+mdefine_line|#define NFSDBG_ROOT&t;&t;0x0080
 DECL|macro|NFSDBG_ALL
 mdefine_line|#define NFSDBG_ALL&t;&t;0xFFFF
 macro_line|#ifdef __KERNEL__

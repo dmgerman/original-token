@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/drivers/char/tga.c&n; *&n; *  Copyright (C) 1995  Jay Estabrook&n; */
 multiline_comment|/*&n; *&t;tga.c&n; *&n; * This module exports the console io support for DEC&squot;s TGA&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;

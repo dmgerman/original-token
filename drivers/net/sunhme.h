@@ -1211,6 +1211,8 @@ id|TX_RING_MAXSIZE
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|hblock_offset
+mdefine_line|#define hblock_offset(mem, elem) &bslash;&n;((__u32)((unsigned long)(&amp;(((struct hmeal_init_block *)0)-&gt;mem[elem]))))
 DECL|macro|SUN4C_PKT_BUF_SZ
 mdefine_line|#define SUN4C_PKT_BUF_SZ&t;1546
 DECL|macro|SUN4C_RX_BUFF_SIZE
@@ -1243,6 +1245,8 @@ id|SUN4C_RX_BUFF_SIZE
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|hbuf_offset
+mdefine_line|#define hbuf_offset(mem, elem) &bslash;&n;((__u32)((unsigned long)(&amp;(((struct hmeal_buffers *)0)-&gt;mem[elem][0]))))
 multiline_comment|/* Now software state stuff. */
 DECL|enum|happy_transceiver
 r_enum
@@ -1342,7 +1346,12 @@ id|hmeal_init_block
 op_star
 id|happy_block
 suffix:semicolon
-multiline_comment|/* RX and TX descriptors             */
+multiline_comment|/* RX and TX descriptors (CPU addr)  */
+DECL|member|hblock_dvma
+id|__u32
+id|hblock_dvma
+suffix:semicolon
+multiline_comment|/* DVMA visible address happy block  */
 DECL|member|rx_skbs
 r_struct
 id|sk_buff
@@ -1374,12 +1383,19 @@ id|rx_old
 comma
 id|tx_old
 suffix:semicolon
+multiline_comment|/* We may use this for Ultra as well, will have to see, maybe not. */
 DECL|member|sun4c_buffers
 r_struct
 id|hmeal_buffers
 op_star
 id|sun4c_buffers
 suffix:semicolon
+multiline_comment|/* CPU visible address.              */
+DECL|member|s4c_buf_dvma
+id|__u32
+id|s4c_buf_dvma
+suffix:semicolon
+multiline_comment|/* DVMA visible address.             */
 DECL|member|happy_flags
 r_int
 r_int

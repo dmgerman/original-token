@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: dma.h,v 1.23 1997/03/14 21:05:20 jj Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.24 1997/04/10 05:13:21 davem Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC_DMA_H
 DECL|macro|_ASM_SPARC_DMA_H
 mdefine_line|#define _ASM_SPARC_DMA_H
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/vac-ops.h&gt;  /* for invalidate&squot;s, etc. */
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
@@ -28,29 +29,25 @@ id|sparc_dma_registers
 (brace
 DECL|member|cond_reg
 id|__volatile__
-r_int
-r_int
+id|__u32
 id|cond_reg
 suffix:semicolon
 multiline_comment|/* DMA condition register */
 DECL|member|st_addr
 id|__volatile__
-r_char
-op_star
+id|__u32
 id|st_addr
 suffix:semicolon
 multiline_comment|/* Start address of this transfer */
 DECL|member|cnt
 id|__volatile__
-r_int
-r_int
+id|__u32
 id|cnt
 suffix:semicolon
 multiline_comment|/* How many bytes to transfer */
 DECL|member|dma_test
 id|__volatile__
-r_int
-r_int
+id|__u32
 id|dma_test
 suffix:semicolon
 multiline_comment|/* DMA test register */

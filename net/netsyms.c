@@ -1026,6 +1026,13 @@ c_func
 id|tcp_prot
 )paren
 suffix:semicolon
+DECL|variable|tcp_openreq_cachep
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcp_openreq_cachep
+)paren
+suffix:semicolon
 DECL|variable|ipv4_specific
 id|EXPORT_SYMBOL
 c_func
@@ -1113,6 +1120,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|init_trdev
+)paren
+suffix:semicolon
+DECL|variable|tr_freedev
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tr_freedev
 )paren
 suffix:semicolon
 macro_line|#endif

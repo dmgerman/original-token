@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: parport_share.c,v 1.1.2.4 1997/04/01 18:19:11 phil Exp $&n; * Parallel-port resource manager code.&n; * &n; * Authors: David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Tim Waugh &lt;tmw20@cam.ac.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
+macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
@@ -218,7 +219,6 @@ dot
 id|name
 comma
 r_new
-dot
 dot
 id|dma
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: checksum.h,v 1.26 1997/03/14 07:54:47 davem Exp $ */
+multiline_comment|/* $Id: checksum.h,v 1.27 1997/04/11 00:42:18 davem Exp $ */
 macro_line|#ifndef __SPARC_CHECKSUM_H
 DECL|macro|__SPARC_CHECKSUM_H
 mdefine_line|#define __SPARC_CHECKSUM_H
@@ -627,6 +627,8 @@ comma
 l_string|&quot;g3&quot;
 comma
 l_string|&quot;g4&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return
@@ -712,6 +714,8 @@ l_string|&quot;1&quot;
 (paren
 id|saddr
 )paren
+suffix:colon
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return
@@ -766,6 +770,8 @@ id|sum
 op_lshift
 l_int|16
 )paren
+suffix:colon
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1071,6 +1077,8 @@ comma
 l_string|&quot;g3&quot;
 comma
 l_string|&quot;g4&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return

@@ -17,6 +17,14 @@ macro_line|#endif
 multiline_comment|/* Don&squot;t take this from &lt;ctype.h&gt;: 011-015 on the screen aren&squot;t spaces */
 DECL|macro|isspace
 mdefine_line|#define isspace(c)&t;((c) == &squot; &squot;)
+r_extern
+r_void
+id|poke_blanked_console
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* Variables for selection control. */
 multiline_comment|/* Use a dynamic buffer, instead of static (Dec 1994) */
 DECL|variable|sel_cons

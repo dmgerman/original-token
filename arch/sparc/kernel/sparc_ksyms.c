@@ -1,10 +1,11 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.49 1997/03/15 07:47:45 davem Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.54 1997/04/14 05:38:25 davem Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 DECL|macro|PROMLIB_INTERNAL
 mdefine_line|#define PROMLIB_INTERNAL
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
@@ -19,6 +20,9 @@ macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/mostek.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;asm/softirq.h&gt;
+macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/user.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
@@ -288,6 +292,20 @@ c_func
 id|_unlock_kernel
 )paren
 suffix:semicolon
+DECL|variable|_spinlock_waitfor
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|_spinlock_waitfor
+)paren
+suffix:semicolon
+DECL|variable|__sparc_bh_counter
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__sparc_bh_counter
+)paren
+suffix:semicolon
 DECL|variable|page_offset
 id|EXPORT_SYMBOL
 c_func
@@ -360,6 +378,79 @@ c_func
 id|_clear_le_bit
 )paren
 suffix:semicolon
+multiline_comment|/* IRQ implementation. */
+DECL|variable|local_irq_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|local_irq_count
+)paren
+suffix:semicolon
+macro_line|#ifdef __SMP__
+DECL|variable|global_irq_holder
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|global_irq_holder
+)paren
+suffix:semicolon
+DECL|variable|global_irq_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|global_irq_lock
+)paren
+suffix:semicolon
+DECL|variable|global_bh_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|global_bh_lock
+)paren
+suffix:semicolon
+DECL|variable|global_irq_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|global_irq_count
+)paren
+suffix:semicolon
+DECL|variable|__global_cli
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__global_cli
+)paren
+suffix:semicolon
+DECL|variable|__global_sti
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__global_sti
+)paren
+suffix:semicolon
+DECL|variable|__global_save_flags
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__global_save_flags
+)paren
+suffix:semicolon
+DECL|variable|__global_restore_flags
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__global_restore_flags
+)paren
+suffix:semicolon
+DECL|variable|synchronize_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|synchronize_irq
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|udelay
 id|EXPORT_SYMBOL
 c_func
@@ -460,11 +551,11 @@ c_func
 id|mmu_release_scsi_one
 )paren
 suffix:semicolon
-DECL|variable|sparc_dvma_malloc
+DECL|variable|_sparc_dvma_malloc
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|sparc_dvma_malloc
+id|_sparc_dvma_malloc
 )paren
 suffix:semicolon
 DECL|variable|sun4c_unmapioaddr

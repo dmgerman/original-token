@@ -1085,8 +1085,12 @@ suffix:semicolon
 id|inode-&gt;i_count
 op_increment
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|page-&gt;count
-op_increment
+)paren
 suffix:semicolon
 id|append_write_request
 c_func
@@ -1278,8 +1282,12 @@ op_amp
 id|wait
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|page-&gt;count
-op_increment
+)paren
 suffix:semicolon
 id|repeat
 suffix:colon

@@ -2237,9 +2237,14 @@ op_assign
 op_increment
 id|event
 suffix:semicolon
-id|best-&gt;i_sem.count
-op_assign
+id|sema_init
+c_func
+(paren
+op_amp
+id|best-&gt;i_sem
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|best-&gt;i_ino
 op_assign

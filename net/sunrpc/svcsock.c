@@ -3703,10 +3703,7 @@ id|KERN_NOTICE
 l_string|&quot;svc: server socket destroy delayed&bslash;n&quot;
 )paren
 suffix:semicolon
-id|svsk-&gt;sk_server
-op_assign
-l_int|NULL
-suffix:semicolon
+multiline_comment|/* svsk-&gt;sk_server = NULL; */
 )brace
 )brace
 eof

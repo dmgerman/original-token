@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtsun4c.h,v 1.33 1996/12/20 07:55:04 davem Exp $&n; * pgtsun4c.h:  Sun4c specific pgtable.h defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtsun4c.h,v 1.34 1997/03/23 03:47:08 davem Exp $&n; * pgtsun4c.h:  Sun4c specific pgtable.h defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PGTSUN4C_H
 DECL|macro|_SPARC_PGTSUN4C_H
 mdefine_line|#define _SPARC_PGTSUN4C_H
@@ -248,8 +248,6 @@ id|ASI_SEGMAP
 )paren
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
 DECL|function|sun4c_get_pte
 r_extern
@@ -340,8 +338,6 @@ l_string|&quot;i&quot;
 id|ASI_PTE
 )paren
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 DECL|function|sun4c_get_context

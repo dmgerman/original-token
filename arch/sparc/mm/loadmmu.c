@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: loadmmu.c,v 1.45 1996/12/30 06:16:28 davem Exp $&n; * loadmmu.c:  This code loads up all the mm function pointers once the&n; *             machine type has been determined.  It also sets the static&n; *             mmu values such as PAGE_NONE, etc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: loadmmu.c,v 1.46 1997/04/10 05:12:51 davem Exp $&n; * loadmmu.c:  This code loads up all the mm function pointers once the&n; *             machine type has been determined.  It also sets the static&n; *             mmu values such as PAGE_NONE, etc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -183,8 +183,7 @@ r_int
 )paren
 suffix:semicolon
 DECL|variable|mmu_get_scsi_one
-r_char
-op_star
+id|__u32
 (paren
 op_star
 id|mmu_get_scsi_one
@@ -228,8 +227,7 @@ op_star
 id|mmu_release_scsi_one
 )paren
 (paren
-r_char
-op_star
+id|__u32
 comma
 r_int
 r_int

@@ -244,6 +244,19 @@ DECL|macro|NFSPROC_READDIR
 mdefine_line|#define NFSPROC_READDIR&t;&t;16
 DECL|macro|NFSPROC_STATFS
 mdefine_line|#define NFSPROC_STATFS&t;&t;17
+multiline_comment|/* Mount support for NFSroot */
+macro_line|#ifdef __KERNEL__
+DECL|macro|NFS_MNT_PROGRAM
+mdefine_line|#define NFS_MNT_PROGRAM&t;&t;100005
+DECL|macro|NFS_MNT_VERSION
+mdefine_line|#define NFS_MNT_VERSION&t;&t;1
+DECL|macro|NFS_MNT_PORT
+mdefine_line|#define NFS_MNT_PORT&t;&t;627
+DECL|macro|NFS_MNTPROC_MNT
+mdefine_line|#define NFS_MNTPROC_MNT&t;&t;1
+DECL|macro|NFS_MNTPROC_UMNT
+mdefine_line|#define NFS_MNTPROC_UMNT&t;3
+macro_line|#endif
 macro_line|#if defined(__KERNEL__) || defined(NFS_NEED_KERNEL_TYPES)
 r_extern
 r_struct
@@ -384,14 +397,17 @@ DECL|member|length
 r_int
 r_int
 id|length
+suffix:colon
+l_int|31
+comma
+DECL|member|eof
+id|eof
+suffix:colon
+l_int|1
 suffix:semicolon
 DECL|member|cookie
 id|__u32
 id|cookie
-suffix:semicolon
-DECL|member|eof
-id|__u32
-id|eof
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -56,7 +56,10 @@ c_cond
 (paren
 id|sh-&gt;locked
 op_logical_and
-id|intr_count
+id|in_interrupt
+c_func
+(paren
+)paren
 )paren
 (brace
 id|restore_flags
@@ -1233,7 +1236,7 @@ op_star
 id|dst
 comma
 r_struct
-id|dst_entry
+id|neighbour
 op_star
 id|neigh
 comma

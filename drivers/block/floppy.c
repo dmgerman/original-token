@@ -7133,11 +7133,11 @@ id|handler
 r_if
 c_cond
 (paren
-id|intr_count
-op_ge
-l_int|2
+id|in_interrupt
+c_func
+(paren
 )paren
-(brace
+)paren
 id|schedule_bh
 c_func
 (paren
@@ -7152,7 +7152,6 @@ op_star
 id|handler
 )paren
 suffix:semicolon
-)brace
 r_else
 id|handler
 c_func

@@ -663,7 +663,12 @@ c_cond
 (paren
 id|sk-&gt;sndbuf
 op_minus
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;wmem_alloc
+)paren
 op_ge
 id|MIN_WRITE_SPACE
 )paren

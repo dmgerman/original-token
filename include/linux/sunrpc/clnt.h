@@ -507,6 +507,24 @@ id|incr
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Helper function for NFSroot support&n; */
+macro_line|#ifdef CONFIG_ROOT_NFS
+r_int
+id|rpc_getport_external
+c_func
+(paren
+r_struct
+id|sockaddr_in
+op_star
+comma
+id|__u32
+comma
+id|__u32
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_SUNRPC_CLNT_H */
 eof

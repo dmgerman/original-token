@@ -1,8 +1,9 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: ipv6.h,v 1.5 1997/03/18 18:24:10 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: ipv6.h,v 1.6 1997/04/01 02:22:58 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _NET_IPV6_H
 DECL|macro|_NET_IPV6_H
 mdefine_line|#define _NET_IPV6_H
 macro_line|#include &lt;linux/ipv6.h&gt;
+macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;net/ndisc.h&gt;
 macro_line|#include &lt;net/flow.h&gt;
 multiline_comment|/*&n; *&t;NextHeader field of IPv6 header&n; */
@@ -568,7 +569,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|intr_count
+id|in_interrupt
+c_func
+(paren
+)paren
 )paren
 id|pri
 op_assign

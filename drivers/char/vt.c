@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/char/vt.c&n; *&n; *  Copyright (C) 1992 obz under the linux copyright&n; *&n; *  Dynamic diacritical handling - aeb@cwi.nl - Dec 1993&n; *  Dynamic keymap and string allocation - aeb@cwi.nl - May 1994&n; *  Restrict VT switching via ioctl() - grif@cs.ucr.edu - Dec 1995&n; *  Some code moved for less code duplication - Andi Kleen - Mar 1997&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

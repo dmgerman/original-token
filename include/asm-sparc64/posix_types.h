@@ -12,13 +12,11 @@ suffix:semicolon
 DECL|typedef|__kernel_ssize_t
 r_typedef
 r_int
+r_int
 id|__kernel_ssize_t
 suffix:semicolon
 DECL|typedef|__kernel_ptrdiff_t
 r_typedef
-r_int
-r_int
-r_int
 r_int
 id|__kernel_ptrdiff_t
 suffix:semicolon
@@ -39,7 +37,6 @@ id|__kernel_pid_t
 suffix:semicolon
 DECL|typedef|__kernel_ipc_pid_t
 r_typedef
-r_int
 r_int
 id|__kernel_ipc_pid_t
 suffix:semicolon
@@ -81,6 +78,7 @@ id|__kernel_umode_t
 suffix:semicolon
 DECL|typedef|__kernel_nlink_t
 r_typedef
+r_int
 r_int
 id|__kernel_nlink_t
 suffix:semicolon

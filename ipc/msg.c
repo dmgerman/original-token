@@ -596,7 +596,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|intr_count
+id|in_interrupt
+c_func
+(paren
+)paren
 )paren
 (brace
 multiline_comment|/* Very unlikely, but better safe than sorry */
@@ -3551,7 +3554,10 @@ multiline_comment|/* Do not wait for an answer at interrupt-time! */
 r_if
 c_cond
 (paren
-id|intr_count
+id|in_interrupt
+c_func
+(paren
+)paren
 )paren
 id|ret_size
 op_and_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.31 1997/03/16 07:03:07 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.34 1997/04/12 04:32:33 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&t;Pedro Roque&t;:&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;:&t;Fragmentation on mtu decrease&n; *&t;&t;&t;&t;:&t;Segment collapse on retransmit&n; *&t;&t;&t;&t;:&t;AF independence&n; *&n; *&t;&t;Linus Torvalds&t;:&t;send_delayed_ack&n; *&t;&t;David S. Miller&t;:&t;Charge memory using the right skb&n; *&t;&t;&t;&t;&t;during syn/ack processing.&n; *&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 multiline_comment|/*&n; *&t;Get rid of any delayed acks, we sent one already..&n; */
@@ -138,7 +138,12 @@ op_rshift
 l_int|1
 )paren
 op_logical_and
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;packets_out
+)paren
 )paren
 (brace
 id|nagle_check
@@ -150,9 +155,14 @@ r_return
 (paren
 id|nagle_check
 op_logical_and
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;packets_out
+)paren
 OL
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 op_logical_and
 op_logical_neg
 id|after
@@ -165,7 +175,12 @@ op_plus
 id|tp-&gt;snd_wnd
 )paren
 op_logical_and
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;retransmits
+)paren
 op_eq
 l_int|0
 )paren
@@ -493,7 +508,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;packets_out
+)paren
 op_eq
 l_int|0
 op_logical_and
@@ -891,9 +911,14 @@ id|skb
 )paren
 (brace
 multiline_comment|/*&n;&t; *&t;This is acked data. We can discard it. This &n;&t; *&t;cannot currently occur.&n;&t; */
+id|atomic_set
+c_func
+(paren
+op_amp
 id|sk-&gt;retransmits
-op_assign
+comma
 l_int|0
+)paren
 suffix:semicolon
 id|printk
 c_func
@@ -2085,6 +2110,7 @@ suffix:semicolon
 id|sk-&gt;prot-&gt;retransmits
 op_increment
 suffix:semicolon
+multiline_comment|/* ???: atomic_t necessary here? -DaveM */
 id|tcp_statistics.TcpRetransSegs
 op_increment
 suffix:semicolon
@@ -2107,7 +2133,7 @@ c_cond
 (paren
 id|ct
 op_ge
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 )paren
 r_break
 suffix:semicolon

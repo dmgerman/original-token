@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.4 1997/03/04 16:27:11 jj Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: misc.c,v 1.6 1997/04/10 05:13:05 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -115,6 +115,7 @@ id|serial_console
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Drop into the prom, with the chance to continue with the &squot;go&squot;&n; * prom command.&n; */
+multiline_comment|/* XXX Fix the pre and post calls as it locks up my Ultra at the moment -DaveM */
 r_void
 DECL|function|prom_cmdline
 id|prom_cmdline
@@ -151,12 +152,9 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|kernel_enter_debugger
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* kernel_enter_debugger(); */
 macro_line|#ifdef CONFIG_SUN_CONSOLE
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -170,11 +168,8 @@ id|console_restore_palette
 suffix:semicolon
 )brace
 macro_line|#endif
-id|install_obp_ticker
-c_func
-(paren
-)paren
-suffix:semicolon
+macro_line|#endif
+multiline_comment|/* install_obp_ticker(); */
 id|save_flags
 c_func
 (paren
@@ -205,12 +200,9 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|install_linux_ticker
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* install_linux_ticker(); */
 macro_line|#ifdef CONFIG_SUN_CONSOLE
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -224,6 +216,7 @@ id|set_palette
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#endif
 )brace
 multiline_comment|/* Drop into the prom, but completely terminate the program.&n; * No chance of continuing.&n; */
 r_void
@@ -234,6 +227,8 @@ c_func
 r_void
 )paren
 (brace
+id|again
+suffix:colon
 id|p1275_cmd
 (paren
 l_string|&quot;exit&quot;
@@ -247,6 +242,10 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
+r_goto
+id|again
+suffix:semicolon
+multiline_comment|/* PROM is out to get me -DaveM */
 )brace
 multiline_comment|/* Set prom sync handler to call function &squot;funcp&squot;. */
 r_void
@@ -406,6 +405,34 @@ r_void
 (brace
 r_return
 id|prom_prev
+suffix:semicolon
+)brace
+multiline_comment|/* Install Linux trap table so PROM uses that instead of it&squot;s own. */
+DECL|function|prom_set_trap_table
+r_void
+id|prom_set_trap_table
+c_func
+(paren
+r_int
+r_int
+id|tba
+)paren
+(brace
+id|p1275_cmd
+c_func
+(paren
+l_string|&quot;SUNW,set-trap-table&quot;
+comma
+id|P1275_INOUT
+c_func
+(paren
+l_int|1
+comma
+l_int|0
+)paren
+comma
+id|tba
+)paren
 suffix:semicolon
 )brace
 eof

@@ -2817,6 +2817,12 @@ suffix:semicolon
 r_int
 id|res
 suffix:semicolon
+multiline_comment|/* XXX Find out what is really going on. */
+id|flush_cache_all
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Non-word alignment _not_ allowed on Sparc. */
 r_if
 c_cond

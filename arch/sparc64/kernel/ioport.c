@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioport.c,v 1.2 1997/03/18 17:59:31 jj Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
+multiline_comment|/* $Id: ioport.c,v 1.7 1997/04/10 05:13:01 davem Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -26,14 +26,30 @@ id|sparc_iobase_vaddr
 op_assign
 id|IOBASE_VADDR
 suffix:semicolon
+r_extern
+r_void
+id|mmu_map_dma_area
+c_func
+(paren
+r_int
+r_int
+id|addr
+comma
+r_int
+id|len
+comma
+id|__u32
+op_star
+id|dvma_addr
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * sparc_alloc_io:&n; * Map and allocates an obio device.&n; * Implements a simple linear allocator, you can force the function&n; * to use your own mapping, but in practice this should not be used.&n; *&n; * Input:&n; *  address: Physical address to map&n; *  virtual: if non zero, specifies a fixed virtual address where&n; *           the mapping should take place.&n; *  len:     the length of the mapping&n; *  bus_type: Optional high word of physical address.&n; *&n; * Returns:&n; *  The virtual address where the mapping actually took place.&n; */
 DECL|function|sparc_alloc_io
 r_void
 op_star
 id|sparc_alloc_io
 (paren
-r_void
-op_star
+id|u32
 id|address
 comma
 r_void
@@ -47,7 +63,7 @@ r_char
 op_star
 id|name
 comma
-r_int
+id|u32
 id|bus_type
 comma
 r_int
@@ -268,6 +284,8 @@ id|addr
 comma
 id|vaddr
 comma
+id|bus_type
+comma
 id|rdonly
 )paren
 suffix:semicolon
@@ -373,7 +391,7 @@ id|plen
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Does DVMA allocations with PAGE_SIZE granularity.  How this basically&n; * works is that the ESP chip can do DVMA transfers at ANY address with&n; * certain size and boundary restrictions.  But other devices that are&n; * attached to it and would like to do DVMA have to set things up in&n; * a special way, if the DVMA sees a device attached to it transfer data&n; * at addresses above DVMA_VADDR it will grab them, this way it does not&n; * now have to know the peculiarities of where to read the Lance data&n; * from. (for example)&n; */
+multiline_comment|/* Does DVMA allocations with PAGE_SIZE granularity.  How this basically&n; * works is that the ESP chip can do DVMA transfers at ANY address with&n; * certain size and boundary restrictions.  But other devices that are&n; * attached to it and would like to do DVMA have to set things up in&n; * a special way, if the DVMA sees a device attached to it transfer data&n; * at addresses above DVMA_VADDR it will grab them, this way it does not&n; * now have to know the peculiarities of where to read the Lance data&n; * from. (for example)&n; *&n; * Returns CPU visible address for the buffer returned, dvma_addr is&n; * set to the DVMA visible address.&n; */
 DECL|function|sparc_dvma_malloc
 r_void
 op_star
@@ -385,6 +403,10 @@ comma
 r_char
 op_star
 id|name
+comma
+id|__u32
+op_star
+id|dvma_addr
 )paren
 (brace
 r_int
@@ -459,6 +481,8 @@ c_func
 id|base_address
 comma
 id|len
+comma
+id|dvma_addr
 )paren
 suffix:semicolon
 multiline_comment|/* Assign the memory area. */

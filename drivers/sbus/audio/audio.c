@@ -360,15 +360,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;sparcaudio: next buffer (of=%d)&bslash;n&quot;
-comma
-id|drv-&gt;output_front
-)paren
-suffix:semicolon
 id|save_and_cli
 c_func
 (paren
@@ -439,12 +430,6 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Stop the lowlevel driver from outputing. */
-id|printk
-c_func
-(paren
-l_string|&quot;sparcaudio: lowlevel driver shutdown&bslash;n&quot;
-)paren
-suffix:semicolon
 id|drv-&gt;ops
 op_member_access_from_pointer
 id|stop_output
@@ -656,13 +641,6 @@ op_eq
 id|driver-&gt;num_output_buffers
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;sparcaudio: waiting for free buffer&bslash;n&quot;
-)paren
-suffix:semicolon
 id|interruptible_sleep_on
 c_func
 (paren
@@ -722,17 +700,6 @@ op_minus
 id|EFAULT
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;Stuffing %d in %d&bslash;n&quot;
-comma
-id|bytes_to_copy
-comma
-id|driver-&gt;output_rear
-)paren
-suffix:semicolon
 multiline_comment|/* Update the queue pointers. */
 id|buf
 op_add_assign
@@ -780,13 +747,6 @@ op_logical_neg
 id|driver-&gt;output_active
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;sparcaudio: activating lowlevel driver&bslash;n&quot;
-)paren
-suffix:semicolon
 id|driver-&gt;ops
 op_member_access_from_pointer
 id|start_output

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: scatterlist.h,v 1.1 1996/12/26 14:22:32 davem Exp $ */
+multiline_comment|/* $Id: scatterlist.h,v 1.4 1997/04/10 05:13:32 davem Exp $ */
 macro_line|#ifndef _SPARC64_SCATTERLIST_H
 DECL|macro|_SPARC64_SCATTERLIST_H
 mdefine_line|#define _SPARC64_SCATTERLIST_H
@@ -25,14 +25,13 @@ r_int
 id|length
 suffix:semicolon
 DECL|member|dvma_address
-r_char
-op_star
+id|__u32
 id|dvma_address
 suffix:semicolon
 multiline_comment|/* A place to hang host-specific addresses at. */
 )brace
 suffix:semicolon
 DECL|macro|ISA_DMA_THRESHOLD
-mdefine_line|#define ISA_DMA_THRESHOLD ((0x100000000) + PAGE_OFFSET)
+mdefine_line|#define ISA_DMA_THRESHOLD ((0xf0000000) + PAGE_OFFSET)
 macro_line|#endif /* !(_SPARC64_SCATTERLIST_H) */
 eof

@@ -2658,6 +2658,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|mem_map
 (braket
 id|MAP_NR
@@ -2672,6 +2676,7 @@ id|bh-&gt;b_data
 )braket
 dot
 id|count
+)paren
 op_ne
 l_int|1
 op_logical_or
@@ -5617,8 +5622,12 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|page-&gt;count
-op_increment
+)paren
 suffix:semicolon
 id|set_bit
 c_func
@@ -6164,6 +6173,10 @@ id|page
 suffix:semicolon
 r_return
 op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
 id|mem_map
 (braket
 id|MAP_NR
@@ -6174,6 +6187,7 @@ id|page
 )braket
 dot
 id|count
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* ================== Debugging =================== */

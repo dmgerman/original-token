@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: leo.c,v 1.11 1997/02/02 02:12:44 ecd Exp $&n; * leo.c: SUNW,leo 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: leo.c,v 1.14 1997/04/10 17:06:09 jj Exp $&n; * leo.c: SUNW,leo 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Michal Rehacek (Michal.Rehacek@st.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -2971,7 +2971,8 @@ comma
 r_int
 id|slot
 comma
-id|uint
+r_int
+r_int
 id|leo
 comma
 r_int
@@ -3112,14 +3113,16 @@ multiline_comment|/* Map the hardware registers */
 id|leoinfo-&gt;lc_ss0_krn
 op_assign
 id|sparc_alloc_io
+c_func
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|leo
 op_plus
 id|LEO_OFF_LC_SS0_KRN
+)paren
 comma
 l_int|0
 comma
@@ -3135,14 +3138,16 @@ suffix:semicolon
 id|leoinfo-&gt;lc_ss0_usr
 op_assign
 id|sparc_alloc_io
+c_func
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|leo
 op_plus
 id|LEO_OFF_LC_SS0_USR
+)paren
 comma
 l_int|0
 comma
@@ -3158,14 +3163,16 @@ suffix:semicolon
 id|leoinfo-&gt;lc_ss1_krn
 op_assign
 id|sparc_alloc_io
+c_func
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|leo
 op_plus
 id|LEO_OFF_LC_SS1_KRN
+)paren
 comma
 l_int|0
 comma
@@ -3181,14 +3188,16 @@ suffix:semicolon
 id|leoinfo-&gt;lc_ss1_usr
 op_assign
 id|sparc_alloc_io
+c_func
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|leo
 op_plus
 id|LEO_OFF_LC_SS1_USR
+)paren
 comma
 l_int|0
 comma
@@ -3204,14 +3213,16 @@ suffix:semicolon
 id|leoinfo-&gt;ld_ss0
 op_assign
 id|sparc_alloc_io
+c_func
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|leo
 op_plus
 id|LEO_OFF_LD_SS0
+)paren
 comma
 l_int|0
 comma
@@ -3227,14 +3238,16 @@ suffix:semicolon
 id|leoinfo-&gt;ld_ss1
 op_assign
 id|sparc_alloc_io
+c_func
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|leo
 op_plus
 id|LEO_OFF_LD_SS1
+)paren
 comma
 l_int|0
 comma
@@ -3250,14 +3263,16 @@ suffix:semicolon
 id|leoinfo-&gt;ld_gbl
 op_assign
 id|sparc_alloc_io
+c_func
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|leo
 op_plus
 id|LEO_OFF_LD_GBL
+)paren
 comma
 l_int|0
 comma
@@ -3273,14 +3288,16 @@ suffix:semicolon
 id|leoinfo-&gt;lx_krn
 op_assign
 id|sparc_alloc_io
+c_func
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|leo
 op_plus
 id|LEO_OFF_LX_KRN
+)paren
 comma
 l_int|0
 comma
@@ -3296,14 +3313,16 @@ suffix:semicolon
 id|leoinfo-&gt;cursor
 op_assign
 id|sparc_alloc_io
+c_func
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|leo
 op_plus
 id|LEO_OFF_LX_CURSOR
+)paren
 comma
 l_int|0
 comma
@@ -3326,14 +3345,16 @@ op_assign
 r_int
 )paren
 id|sparc_alloc_io
+c_func
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|leo
 op_plus
 id|LEO_OFF_SS0
+)paren
 comma
 l_int|0
 comma
@@ -3596,7 +3617,7 @@ id|vga_font
 )braket
 suffix:semicolon
 DECL|macro|GX_BLITC_START
-mdefine_line|#define GX_BLITC_START(attr,x,y,count) &bslash;&n;&t;{ &bslash;&n;&t;&t;register struct leo_lc_ss0_usr *us = fbinfo[0].info.leo.lc_ss0_usr; &bslash;&n;&t;&t;register struct leo_ld_ss0 *ss = fbinfo[0].info.leo.ld_ss0; &bslash;&n;&t;&t;register u32 i; &bslash;&n;&t;&t;do { &bslash;&n;&t;&t;&t;i = us-&gt;csr; &bslash;&n;&t;&t;} while (i &amp; 0x20000000); &bslash;&n;&t;&t;ss-&gt;fg = (attr &gt;&gt; 4)&lt;&lt;24; &bslash;&n;&t;&t;ss-&gt;planemask = 0xff000000; &bslash;&n;&t;&t;ss-&gt;rop = 0x310040; &bslash;&n;&t;&t;us-&gt;extent = (count*8-1) | (15&lt;&lt;11); &bslash;&n;&t;&t;i = us-&gt;attrs; &bslash;&n;&t;&t;us-&gt;fill = (x) | ((y) &lt;&lt; 11) | ((i &amp; 3) &lt;&lt; 29) | ((i &amp; 8) ? 0x80000000 : 0); &bslash;&n;&t;&t;do { &bslash;&n;&t;&t;&t;i = us-&gt;csr; &bslash;&n;&t;&t;} while (i &amp; 0x20000000); &bslash;&n;&t;&t;ss-&gt;fg = (attr &amp; 0xf)&lt;&lt;24; &bslash;&n;&t;&t;us-&gt;fontc2 = ~(0); &bslash;&n;&t;&t;us-&gt;attrs = 4; &bslash;&n;&t;&t;us-&gt;fontc = ~(0); &bslash;&n;&t;&t;us-&gt;extent = ((u16)x) | (y &lt;&lt; 16); &bslash;&n;&t;&t;us-&gt;src = ((u16)(x + (count &lt;&lt; 3))) | ((y + 16) &lt;&lt; 16);
+mdefine_line|#define GX_BLITC_START(attr,x,y,count) &bslash;&n;&t;{ &bslash;&n;&t;&t;register struct leo_lc_ss0_usr *us = fbinfo[0].info.leo.lc_ss0_usr; &bslash;&n;&t;&t;register struct leo_ld_ss0 *ss = fbinfo[0].info.leo.ld_ss0; &bslash;&n;&t;&t;register u32 i; &bslash;&n;&t;&t;do { &bslash;&n;&t;&t;&t;i = us-&gt;csr; &bslash;&n;&t;&t;} while (i &amp; 0x20000000); &bslash;&n;&t;&t;ss-&gt;fg = (attr &amp; 0xf) &lt;&lt; 24; &bslash;&n;&t;&t;ss-&gt;bg = (attr &gt;&gt; 4) &lt;&lt; 24; &bslash;&n;&t;&t;ss-&gt;rop = 0x310040; &bslash;&n;&t;&t;ss-&gt;planemask = 0xff000000; &bslash;&n;&t;&t;us-&gt;fontc2 = 0xFFFFFFFE; &bslash;&n;&t;&t;us-&gt;attrs = 4; &bslash;&n;&t;&t;us-&gt;fontc = 0xFF000000;
 DECL|macro|GX_BLITC_END
 mdefine_line|#define GX_BLITC_END &bslash;&n;&t;}
 DECL|function|leo_blitc

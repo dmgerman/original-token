@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.12 1996/12/18 06:46:55 tridge Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: misc.c,v 1.13 1997/04/10 05:12:59 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -349,6 +349,8 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+id|again
+suffix:colon
 id|save_flags
 c_func
 (paren
@@ -398,6 +400,10 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+r_goto
+id|again
+suffix:semicolon
+multiline_comment|/* PROM is out to get me -DaveM */
 )brace
 DECL|typedef|sfunc_t
 r_typedef

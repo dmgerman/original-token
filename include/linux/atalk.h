@@ -186,12 +186,12 @@ suffix:semicolon
 DECL|macro|DDP_MAXHOPS
 mdefine_line|#define DDP_MAXHOPS&t;15&t;/* 4 bits of hop counter */
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;asm/byteorder.h&gt;
 DECL|struct|ddpehdr
 r_struct
 id|ddpehdr
 (brace
-multiline_comment|/* FIXME for bigendians */
-multiline_comment|/*__u16&t;deh_pad:2,deh_hops:4,deh_len:10;*/
+macro_line|#ifdef __LITTLE_ENDIAN_BITFIELD
 DECL|member|deh_len
 DECL|member|deh_hops
 DECL|member|deh_pad
@@ -208,6 +208,21 @@ id|deh_pad
 suffix:colon
 l_int|2
 suffix:semicolon
+macro_line|#else
+id|__u16
+id|deh_pad
+suffix:colon
+l_int|2
+comma
+id|deh_hops
+suffix:colon
+l_int|4
+comma
+id|deh_len
+suffix:colon
+l_int|10
+suffix:semicolon
+macro_line|#endif
 DECL|member|deh_sum
 id|__u16
 id|deh_sum
@@ -244,7 +259,7 @@ DECL|struct|ddpshdr
 r_struct
 id|ddpshdr
 (brace
-multiline_comment|/* FIXME for bigendians */
+macro_line|#ifdef __LITTLE_ENDIAN_BITFIELD
 DECL|member|dsh_len
 DECL|member|dsh_pad
 id|__u16
@@ -256,6 +271,17 @@ id|dsh_pad
 suffix:colon
 l_int|6
 suffix:semicolon
+macro_line|#else
+id|__u16
+id|dsh_pad
+suffix:colon
+l_int|6
+comma
+id|dsh_len
+suffix:colon
+l_int|10
+suffix:semicolon
+macro_line|#endif
 DECL|member|dsh_dport
 id|__u8
 id|dsh_dport

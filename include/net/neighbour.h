@@ -411,7 +411,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|tbl-&gt;tbl_lock
+)paren
 op_eq
 l_int|1
 )paren

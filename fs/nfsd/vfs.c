@@ -13,7 +13,7 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;netinet/in.h&gt;
+macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/sunrpc/svc.h&gt;
 macro_line|#include &lt;linux/nfsd/nfsd.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
@@ -3721,12 +3721,7 @@ op_ne
 l_int|0
 )paren
 r_return
-id|nfserrno
-c_func
-(paren
-op_minus
 id|err
-)paren
 suffix:semicolon
 r_if
 c_cond

@@ -3,6 +3,7 @@ multiline_comment|/*&n; * $Log: AM53C974.h,v $&n; */
 macro_line|#ifndef AM53C974_H
 DECL|macro|AM53C974_H
 mdefine_line|#define AM53C974_H
+macro_line|#include &lt;scsi/scsicam.h&gt;
 DECL|struct|AM53C974_hostdata
 r_struct
 id|AM53C974_hostdata

@@ -100,6 +100,7 @@ r_int
 id|csum_partial_copy_from_user
 c_func
 (paren
+r_const
 r_char
 op_star
 id|src

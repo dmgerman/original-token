@@ -144,6 +144,8 @@ id|tss.uwinmask
 )paren
 suffix:colon
 l_string|&quot;g4&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace

@@ -1227,7 +1227,10 @@ l_int|0
 r_if
 c_cond
 (paren
-id|intr_count
+id|in_interrupt
+c_func
+(paren
+)paren
 OG
 l_int|0
 )paren
@@ -1259,10 +1262,10 @@ multiline_comment|/* MSch: changed sti() to STI() wherever possible in ide.c; mo
 multiline_comment|/* The Atari interrupt structure strictly requires that the IPL isn&squot;t lowered&n; * uncontrolled in an interrupt handler. In the concrete case, the IDE&n; * interrupt is already a slow int, so the irq is already disabled at the time&n; * the handler is called, and the IPL has been lowered to the minimum value&n; * possible. To avoid going below that, STI() checks for being called inside&n; * an interrupt, and in that case it does nothing. Hope that is reasonable and&n; * works. (Roman)&n; */
 macro_line|#if defined(CONFIG_ATARI) &amp;&amp; !defined(CONFIG_AMIGA)
 DECL|macro|ide_sti
-mdefine_line|#define&t;ide_sti()&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (!intr_count) sti();&t;&t;&t;&t;&bslash;&n;    } while(0)
+mdefine_line|#define&t;ide_sti()&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (!in_interrupt()) sti();&t;&t;&t;&bslash;&n;    } while(0)
 macro_line|#elif defined(CONFIG_ATARI)
 DECL|macro|ide_sti
-mdefine_line|#define&t;ide_sti()&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (!MACH_IS_ATARI || !intr_count) sti();&t;&bslash;&n;    } while(0)
+mdefine_line|#define&t;ide_sti()&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (!MACH_IS_ATARI || !in_interrupt()) sti();&t;&t;&bslash;&n;    } while(0)
 macro_line|#else /* !defined(CONFIG_ATARI) */
 DECL|macro|ide_sti
 mdefine_line|#define&t;ide_sti()&t;sti()

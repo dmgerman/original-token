@@ -22,22 +22,25 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; *&t;Resource tracking variables&n; */
 DECL|variable|net_skbcount
+r_static
 id|atomic_t
 id|net_skbcount
 op_assign
-l_int|0
+id|ATOMIC_INIT
 suffix:semicolon
 DECL|variable|net_allocs
+r_static
 id|atomic_t
 id|net_allocs
 op_assign
-l_int|0
+id|ATOMIC_INIT
 suffix:semicolon
 DECL|variable|net_fails
+r_static
 id|atomic_t
 id|net_fails
 op_assign
-l_int|0
+id|ATOMIC_INIT
 suffix:semicolon
 r_extern
 id|atomic_t
@@ -72,7 +75,12 @@ c_func
 id|KERN_INFO
 l_string|&quot;Networking buffers in use          : %u&bslash;n&quot;
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|net_skbcount
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -81,7 +89,12 @@ c_func
 id|KERN_INFO
 l_string|&quot;Total network buffer allocations   : %u&bslash;n&quot;
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|net_allocs
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -90,7 +103,12 @@ c_func
 id|KERN_INFO
 l_string|&quot;Total failed network buffer allocs : %u&bslash;n&quot;
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|net_fails
+)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_INET
@@ -100,7 +118,12 @@ c_func
 id|KERN_INFO
 l_string|&quot;IP fragment buffer size            : %u&bslash;n&quot;
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|ip_frag_mem
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif&t;
@@ -2074,9 +2097,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-l_int|0
-op_logical_and
-id|intr_count
+id|in_interrupt
+c_func
+(paren
+)paren
 op_logical_and
 id|priority
 op_ne
@@ -2167,8 +2191,12 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|net_fails
-op_increment
+)paren
 suffix:semicolon
 r_return
 l_int|NULL
@@ -2194,8 +2222,12 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Now we play a little game with the caches. Linux kmalloc is&n;&t; *&t;a bit cache dumb, in fact its just about maximally non &n;&t; *&t;optimal for typical kernel buffers. We actually run faster&n;&t; *&t;by doing the following. Which is to deliberately put the&n;&t; *&t;skb at the _end_ not the start of the memory block.&n;&t; */
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|net_allocs
-op_increment
+)paren
 suffix:semicolon
 id|skb
 op_assign
@@ -2212,9 +2244,14 @@ id|size
 op_minus
 l_int|1
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|skb-&gt;count
-op_assign
+comma
 l_int|1
+)paren
 suffix:semicolon
 multiline_comment|/* only one reference to this */
 id|skb-&gt;data_skb
@@ -2289,8 +2326,12 @@ id|skb-&gt;priority
 op_assign
 id|SOPRI_NORMAL
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|net_skbcount
-op_increment
+)paren
 suffix:semicolon
 macro_line|#if CONFIG_SKB_CHECK
 id|skb-&gt;magic_debug_cookie
@@ -2298,9 +2339,14 @@ op_assign
 id|SK_GOOD_SKB
 suffix:semicolon
 macro_line|#endif
+id|atomic_set
+c_func
+(paren
+op_amp
 id|skb-&gt;users
-op_assign
+comma
 l_int|1
+)paren
 suffix:semicolon
 multiline_comment|/* Load the data pointers */
 id|skb-&gt;head
@@ -2576,9 +2622,14 @@ id|n
 )paren
 )paren
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|n-&gt;count
-op_assign
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|skb
 op_assign
@@ -2633,9 +2684,14 @@ id|n-&gt;tries
 op_assign
 l_int|0
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|n-&gt;users
-op_assign
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|n-&gt;inclone
 op_assign
@@ -2837,9 +2893,14 @@ id|n-&gt;tries
 op_assign
 l_int|0
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|n-&gt;users
-op_assign
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|n-&gt;pkt_type
 op_assign
@@ -3066,9 +3127,14 @@ id|n-&gt;tries
 op_assign
 l_int|0
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|n-&gt;users
-op_assign
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|n-&gt;pkt_type
 op_assign

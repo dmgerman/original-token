@@ -405,9 +405,19 @@ c_func
 id|KERN_DEBUG
 l_string|&quot;Socket destroy delayed (r=%d w=%d)&bslash;n&quot;
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;rmem_alloc
+)paren
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;wmem_alloc
+)paren
 )paren
 suffix:semicolon
 id|sk-&gt;destroy
@@ -505,11 +515,21 @@ multiline_comment|/* Now if everything is gone we can free the socket&n;&t; * st
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;rmem_alloc
+)paren
 op_eq
 l_int|0
 op_logical_and
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;wmem_alloc
+)paren
 op_eq
 l_int|0
 )paren
@@ -3845,6 +3865,14 @@ id|udp_get_info
 )brace
 suffix:semicolon
 macro_line|#endif&t;&t;/* CONFIG_PROC_FS */
+r_extern
+r_void
+id|tcp_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; *&t;Called by socket.c on kernel startup.  &n; */
 DECL|function|inet_proto_init
 r_void
@@ -3983,6 +4011,12 @@ c_func
 suffix:semicolon
 multiline_comment|/*&n;  &t; *&t;Set the IP module up&n;  &t; */
 id|ip_init
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Setup TCP slab cache for open requests. */
+id|tcp_init
 c_func
 (paren
 )paren

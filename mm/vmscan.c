@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/mm/vmscan.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  Swap reorganised 29.12.95, Stephen Tweedie.&n; *  kswapd added: 7.1.96  sct&n; *  Removed kswapd_ctl limits, and swap out as many pages as needed&n; *  to bring the system back to free_pages_high: 2.4.97, Rik van Riel.&n; *  Version: $Id: vmscan.c,v 1.21 1997/01/06 06:54:03 davem Exp $&n; */
+multiline_comment|/*&n; *  linux/mm/vmscan.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  Swap reorganised 29.12.95, Stephen Tweedie.&n; *  kswapd added: 7.1.96  sct&n; *  Removed kswapd_ctl limits, and swap out as many pages as needed&n; *  to bring the system back to free_pages_high: 2.4.97, Rik van Riel.&n; *  Version: $Id: vmscan.c,v 1.23 1997/04/12 04:31:05 davem Exp $&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -314,7 +314,12 @@ r_else
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|page_map-&gt;count
+)paren
 op_ne
 l_int|1
 )paren
@@ -420,7 +425,12 @@ id|page
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|page_map-&gt;count
+)paren
 op_ne
 l_int|1
 )paren
@@ -1498,7 +1508,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.21 $&quot;
+l_string|&quot;$Revision: 1.23 $&quot;
 comma
 op_star
 id|s
@@ -1664,7 +1674,12 @@ c_loop
 (paren
 id|nr_free_pages
 op_plus
+id|atomic_read
+c_func
+(paren
+op_amp
 id|nr_async_pages
+)paren
 )paren
 OL
 id|free_pages_low
@@ -1687,7 +1702,12 @@ c_loop
 (paren
 id|nr_free_pages
 op_plus
+id|atomic_read
+c_func
+(paren
+op_amp
 id|nr_async_pages
+)paren
 )paren
 OL
 id|free_pages_high
@@ -1732,7 +1752,12 @@ c_cond
 (paren
 id|nr_free_pages
 op_plus
+id|atomic_read
+c_func
+(paren
+op_amp
 id|nr_async_pages
+)paren
 )paren
 OL
 id|free_pages_low
@@ -1765,7 +1790,12 @@ c_cond
 (paren
 id|nr_free_pages
 op_plus
+id|atomic_read
+c_func
+(paren
+op_amp
 id|nr_async_pages
+)paren
 )paren
 OL
 id|free_pages_high

@@ -979,7 +979,10 @@ c_cond
 (paren
 id|from_irq
 op_logical_or
-id|intr_count
+id|in_interrupt
+c_func
+(paren
+)paren
 )paren
 (brace
 id|gfp_flags
@@ -2506,7 +2509,10 @@ c_func
 (paren
 id|mp
 comma
-id|intr_count
+id|in_interrupt
+c_func
+(paren
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -2690,7 +2696,10 @@ c_func
 (paren
 id|mp
 comma
-id|intr_count
+id|in_interrupt
+c_func
+(paren
+)paren
 )paren
 suffix:semicolon
 id|dev-&gt;tbusy

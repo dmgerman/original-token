@@ -24,9 +24,6 @@ r_int
 id|linux_num_cpus
 suffix:semicolon
 multiline_comment|/* number of CPUs probed  */
-macro_line|#endif /* !(__ASSEMBLY__) */
-macro_line|#ifdef __SMP__
-macro_line|#ifndef __ASSEMBLY__
 r_extern
 r_struct
 id|prom_cpuinfo
@@ -35,6 +32,9 @@ id|linux_cpus
 id|NCPUS
 )braket
 suffix:semicolon
+macro_line|#endif /* !(__ASSEMBLY__) */
+macro_line|#ifdef __SMP__
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* Per processor Sparc parameters we need. */
 DECL|struct|cpuinfo_sparc
 r_struct
@@ -217,22 +217,6 @@ comma
 r_int
 r_int
 id|arg5
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|smp_capture
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|smp_release
-c_func
-(paren
-r_void
 )paren
 suffix:semicolon
 DECL|function|xc0
@@ -663,6 +647,8 @@ l_string|&quot;r&quot;
 (paren
 id|ctr
 )paren
+suffix:colon
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace
@@ -774,6 +760,8 @@ l_string|&quot;r&quot;
 (paren
 id|ctr
 )paren
+suffix:colon
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace
@@ -798,8 +786,6 @@ suffix:semicolon
 )brace
 macro_line|#endif /* !(__ASSEMBLY__) */
 multiline_comment|/* Sparc specific messages. */
-DECL|macro|MSG_CAPTURE
-mdefine_line|#define MSG_CAPTURE            0x0004       /* Park a processor. */
 DECL|macro|MSG_CROSS_CALL
 mdefine_line|#define MSG_CROSS_CALL         0x0005       /* run func on cpus */
 multiline_comment|/* Empirical PROM processor mailbox constants.  If the per-cpu mailbox&n; * contains something other than one of these then the ipi is from&n; * Linux&squot;s active_kernel_processor.  This facility exists so that&n; * the boot monitor can capture all the other cpus when one catches&n; * a watchdog reset or the user enters the monitor using L1-A keys.&n; */

@@ -657,7 +657,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* printk(&quot;occupy: search in %08x[%x] &quot;, base, end - base); */
+multiline_comment|/* printk(&quot;occupy: search in %08lx[%08lx] &quot;, base, end - base); */
 id|s
 op_assign
 l_int|NULL
@@ -698,6 +698,10 @@ l_int|1
 op_amp
 op_complement
 (paren
+(paren
+r_int
+r_int
+)paren
 id|align
 op_minus
 l_int|1
@@ -714,16 +718,21 @@ ques
 c_cond
 (paren
 r_int
+r_int
 )paren
 (paren
 l_int|0
 op_minus
+(paren
+r_int
+r_int
+)paren
 id|align
 )paren
 suffix:colon
 id|p1-&gt;from
 suffix:semicolon
-multiline_comment|/* printk(&quot; %08x:%08x&quot;, from, till); */
+multiline_comment|/* printk(&quot; %08lx:%08lx&quot;, from, till); */
 multiline_comment|/* Clip window with base and end */
 r_if
 c_cond

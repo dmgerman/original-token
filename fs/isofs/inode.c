@@ -1685,7 +1685,7 @@ id|blocksize
 id|printk
 c_func
 (paren
-l_string|&quot;Logical zone size(%ld) &lt; hardware blocksize(%ld)&bslash;n&quot;
+l_string|&quot;Logical zone size(%d) &lt; hardware blocksize(%u)&bslash;n&quot;
 comma
 id|orig_zonesize
 comma
@@ -2238,7 +2238,7 @@ id|max_legal_read_offset
 id|printk
 c_func
 (paren
-l_string|&quot;_isofs_bmap: block&gt;= EOF(%d, %d)&bslash;n&quot;
+l_string|&quot;_isofs_bmap: block&gt;= EOF(%d, %ld)&bslash;n&quot;
 comma
 id|block
 comma

@@ -77,7 +77,7 @@ DECL|variable|dev_lockct
 id|atomic_t
 id|dev_lockct
 op_assign
-l_int|0
+id|ATOMIC_INIT
 suffix:semicolon
 multiline_comment|/*&n; *&t;Our notifier list&n; */
 DECL|variable|netdev_chain

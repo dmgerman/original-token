@@ -1,6 +1,7 @@
 multiline_comment|/* -*- linux-c -*-&n; * sysctl_net_ax25.c: sysctl interface to net AX.25 subsystem.&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/ax25 directory entry (empty =) ). [MS]&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/ax25.h&gt;
 DECL|variable|min_ipdefmode
 DECL|variable|max_ipdefmode

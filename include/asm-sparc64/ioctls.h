@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: ioctls.h,v 1.1 1996/12/02 00:05:36 davem Exp $ */
+multiline_comment|/* $Id: ioctls.h,v 1.2 1997/04/04 00:50:18 davem Exp $ */
 macro_line|#ifndef _ASM_SPARC64_IOCTLS_H
 DECL|macro|_ASM_SPARC64_IOCTLS_H
 mdefine_line|#define _ASM_SPARC64_IOCTLS_H
 macro_line|#include &lt;asm/ioctl.h&gt;
+multiline_comment|/* XXX 32-bit binary compatability issues, I am sure that&n; * XXX only IOCTL&squot;s which reference structures will be of&n; * XXX concern and these are easily fabricated using wrappers.&n; */
 multiline_comment|/* Big T */
 DECL|macro|TCGETA
 mdefine_line|#define TCGETA&t;&t;_IOR(&squot;T&squot;, 1, struct termio)

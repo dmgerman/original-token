@@ -387,10 +387,6 @@ id|sun4c_timers
 op_assign
 id|sparc_alloc_io
 (paren
-(paren
-r_void
-op_star
-)paren
 id|SUN4C_TIMER_PHYSADDR
 comma
 l_int|0
@@ -613,6 +609,14 @@ id|disable_irq
 op_assign
 id|sun4c_disable_irq
 suffix:semicolon
+id|enable_pil_irq
+op_assign
+id|sun4c_enable_irq
+suffix:semicolon
+id|disable_pil_irq
+op_assign
+id|sun4c_disable_irq
+suffix:semicolon
 id|clear_clock_irq
 op_assign
 id|sun4c_clear_clock_irq
@@ -681,10 +685,6 @@ op_assign
 id|SUN4C_INT_ENABLE
 )paren
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* Cannot enable interrupts until OBP ticker is disabled. */
 )brace
 eof

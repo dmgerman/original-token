@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: dma.h,v 1.3 1997/03/14 21:05:36 jj Exp $&n; * include/asm-sparc64/dma.h&n; *&n; * Copyright 1996 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.7 1997/04/10 05:13:28 davem Exp $&n; * include/asm-sparc64/dma.h&n; *&n; * Copyright 1996 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC64_DMA_H
 DECL|macro|_ASM_SPARC64_DMA_H
 mdefine_line|#define _ASM_SPARC64_DMA_H
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
@@ -10,7 +11,7 @@ multiline_comment|/* These are irrelevant for Sparc DMA, but we leave it in so t
 DECL|macro|MAX_DMA_CHANNELS
 mdefine_line|#define MAX_DMA_CHANNELS 8
 DECL|macro|MAX_DMA_ADDRESS
-mdefine_line|#define MAX_DMA_ADDRESS  ((0x100000000) + PAGE_OFFSET)
+mdefine_line|#define MAX_DMA_ADDRESS  ((0xf0000000) + PAGE_OFFSET)
 DECL|macro|DMA_MODE_READ
 mdefine_line|#define DMA_MODE_READ    1
 DECL|macro|DMA_MODE_WRITE
@@ -27,29 +28,25 @@ id|sparc_dma_registers
 (brace
 DECL|member|cond_reg
 id|__volatile__
-r_int
-r_int
+id|__u32
 id|cond_reg
 suffix:semicolon
 multiline_comment|/* DMA condition register */
 DECL|member|st_addr
 id|__volatile__
-r_char
-op_star
+id|__u32
 id|st_addr
 suffix:semicolon
 multiline_comment|/* Start address of this transfer */
 DECL|member|cnt
 id|__volatile__
-r_int
-r_int
+id|__u32
 id|cnt
 suffix:semicolon
 multiline_comment|/* How many bytes to transfer */
 DECL|member|dma_test
 id|__volatile__
-r_int
-r_int
+id|__u32
 id|dma_test
 suffix:semicolon
 multiline_comment|/* DMA test register */

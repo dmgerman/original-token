@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunlance.c,v 1.56 1997/03/14 21:04:45 jj Exp $&n; * lance.c: Linux/Sparc/Lance driver&n; *&n; *&t;Written 1995, 1996 by Miguel de Icaza&n; * Sources:&n; *&t;The Linux  depca driver&n; *&t;The Linux  lance driver.&n; *&t;The Linux  skeleton driver.&n; *&t;The NetBSD Sparc/Lance driver.&n; *&t;Theo de Raadt (deraadt@openbsd.org)&n; *&t;NCR92C990 Lan Controller manual&n; *&n; * 1.4:&n; *&t;Added support to run with a ledma on the Sun4m&n; *&n; * 1.5:&n; *&t;Added multiple card detection.&n; *&n; *&t; 4/17/96: Burst sizes and tpe selection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/15/96: auto carrier detection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/17/96: lebuffer on scsi/ether cards now work David S. Miller&n; *&t;&t;  (davem@caip.rutgers.edu)&n; *&n; *&t; 5/29/96: override option &squot;tpe-link-test?&squot;, if it is &squot;false&squot;, as&n; *&t;&t;  this disables auto carrier detection on sun4m. Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.7:&n; *&t; 6/26/96: Bug fix for multiple ledmas, miguel.&n; *&n; * 1.8:&n; *&t;&t;  Stole multicast code from depca.c, fixed lance_tx.&n; *&n; * 1.9:&n; *&t; 8/21/96: Fixed the multicast code (Pedro Roque)&n; *&n; *&t; 8/28/96: Send fake packet in lance_open() if auto_select is true,&n; *&t;&t;  so we can detect the carrier loss condition in time.&n; *&t;&t;  Eddie C. Dost (ecd@skynet.be)&n; *&n; *&t; 9/15/96: Align rx_buf so that eth_copy_and_sum() won&squot;t cause an&n; *&t;&t;  MNA trap during chksum_partial_copy(). (ecd@skynet.be)&n; *&n; *&t;11/17/96: Handle LE_C0_MERR in lance_interrupt(). (ecd@skynet.be)&n; *&n; *&t;12/22/96: Don&squot;t loop forever in lance_rx() on incomplete packets.&n; *&t;&t;  This was the sun4c killer. Shit, stupid bug.&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.10:&n; *&t; 1/26/97: Modularize driver. (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sunlance.c,v 1.61 1997/04/10 06:40:54 davem Exp $&n; * lance.c: Linux/Sparc/Lance driver&n; *&n; *&t;Written 1995, 1996 by Miguel de Icaza&n; * Sources:&n; *&t;The Linux  depca driver&n; *&t;The Linux  lance driver.&n; *&t;The Linux  skeleton driver.&n; *&t;The NetBSD Sparc/Lance driver.&n; *&t;Theo de Raadt (deraadt@openbsd.org)&n; *&t;NCR92C990 Lan Controller manual&n; *&n; * 1.4:&n; *&t;Added support to run with a ledma on the Sun4m&n; *&n; * 1.5:&n; *&t;Added multiple card detection.&n; *&n; *&t; 4/17/96: Burst sizes and tpe selection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/15/96: auto carrier detection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/17/96: lebuffer on scsi/ether cards now work David S. Miller&n; *&t;&t;  (davem@caip.rutgers.edu)&n; *&n; *&t; 5/29/96: override option &squot;tpe-link-test?&squot;, if it is &squot;false&squot;, as&n; *&t;&t;  this disables auto carrier detection on sun4m. Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.7:&n; *&t; 6/26/96: Bug fix for multiple ledmas, miguel.&n; *&n; * 1.8:&n; *&t;&t;  Stole multicast code from depca.c, fixed lance_tx.&n; *&n; * 1.9:&n; *&t; 8/21/96: Fixed the multicast code (Pedro Roque)&n; *&n; *&t; 8/28/96: Send fake packet in lance_open() if auto_select is true,&n; *&t;&t;  so we can detect the carrier loss condition in time.&n; *&t;&t;  Eddie C. Dost (ecd@skynet.be)&n; *&n; *&t; 9/15/96: Align rx_buf so that eth_copy_and_sum() won&squot;t cause an&n; *&t;&t;  MNA trap during chksum_partial_copy(). (ecd@skynet.be)&n; *&n; *&t;11/17/96: Handle LE_C0_MERR in lance_interrupt(). (ecd@skynet.be)&n; *&n; *&t;12/22/96: Don&squot;t loop forever in lance_rx() on incomplete packets.&n; *&t;&t;  This was the sun4c killer. Shit, stupid bug.&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.10:&n; *&t; 1/26/97: Modularize driver. (ecd@skynet.be)&n; */
 DECL|macro|DEBUG_DRIVER
 macro_line|#undef DEBUG_DRIVER
 DECL|variable|version
@@ -347,6 +347,10 @@ id|RX_BUFF_SIZE
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|libdesc_offset
+mdefine_line|#define libdesc_offset(rt, elem) &bslash;&n;((__u32)(((unsigned long)(&amp;(((struct lance_init_block *)0)-&gt;rt[elem])))))
+DECL|macro|libbuff_offset
+mdefine_line|#define libbuff_offset(rt, elem) &bslash;&n;((__u32)(((unsigned long)(&amp;(((struct lance_init_block *)0)-&gt;rt[elem][0])))))
 DECL|struct|lance_private
 r_struct
 id|lance_private
@@ -369,6 +373,10 @@ r_struct
 id|lance_init_block
 op_star
 id|init_block
+suffix:semicolon
+DECL|member|init_block_dvma
+id|__u32
+id|init_block_dvma
 suffix:semicolon
 DECL|member|rx_new
 DECL|member|tx_new
@@ -501,34 +509,20 @@ id|ll
 op_assign
 id|lp-&gt;ll
 suffix:semicolon
-r_volatile
-r_struct
-id|lance_init_block
-op_star
-id|ib
+id|__u32
+id|ib_dvma
 op_assign
-id|lp-&gt;init_block
+id|lp-&gt;init_block_dvma
 suffix:semicolon
 r_int
 id|leptr
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|lp-&gt;pio_buffer
-)paren
-(brace
-id|leptr
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_else
+multiline_comment|/* This is right now because when we are using a PIO buffered&n;&t; * init block, init_block_dvma is set to zero. -DaveM&n;&t; */
 id|leptr
 op_assign
 id|LANCE_ADDR
 (paren
-id|ib
+id|ib_dvma
 )paren
 suffix:semicolon
 id|ll-&gt;rap
@@ -602,10 +596,12 @@ id|ib
 op_assign
 id|lp-&gt;init_block
 suffix:semicolon
-r_volatile
-r_struct
-id|lance_init_block
-op_star
+id|__u32
+id|ib_dvma
+op_assign
+id|lp-&gt;init_block_dvma
+suffix:semicolon
+id|__u32
 id|aib
 suffix:semicolon
 multiline_comment|/* for LANCE_ADDR computations */
@@ -615,21 +611,10 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|lp-&gt;pio_buffer
-)paren
-(brace
+multiline_comment|/* This is right now because when we are using a PIO buffered&n;&t; * init block, init_block_dvma is set to zero. -DaveM&n;&t; */
 id|aib
 op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_else
-id|aib
-op_assign
-id|ib
+id|ib_dvma
 suffix:semicolon
 multiline_comment|/* Lock out other processes while setting up hardware */
 id|dev-&gt;tbusy
@@ -652,7 +637,7 @@ id|ib-&gt;mode
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Copy the ethernet address to the lance init block&n;&t; * Note that on the sparc you need to swap the ethernet address.&n;&t; */
+multiline_comment|/* Copy the ethernet address to the lance init block&n;&t; * Note that on the sparc you need to swap the ethernet address.&n;&t; * Note also we want the CPU ptr of the init_block here.&n;&t; */
 id|ib-&gt;phys_addr
 (braket
 l_int|0
@@ -744,14 +729,15 @@ op_assign
 id|LANCE_ADDR
 c_func
 (paren
-op_amp
-id|aib-&gt;tx_buf
-(braket
+id|aib
+op_plus
+id|libbuff_offset
+c_func
+(paren
+id|tx_buf
+comma
 id|i
-)braket
-(braket
-l_int|0
-)braket
+)paren
 )paren
 suffix:semicolon
 id|ib-&gt;btx_ring
@@ -855,14 +841,15 @@ op_assign
 id|LANCE_ADDR
 c_func
 (paren
-op_amp
-id|aib-&gt;rx_buf
-(braket
+id|aib
+op_plus
+id|libbuff_offset
+c_func
+(paren
+id|rx_buf
+comma
 id|i
-)braket
-(braket
-l_int|0
-)braket
+)paren
 )paren
 suffix:semicolon
 id|ib-&gt;brx_ring
@@ -941,8 +928,15 @@ op_assign
 id|LANCE_ADDR
 c_func
 (paren
-op_amp
-id|aib-&gt;brx_ring
+id|aib
+op_plus
+id|libdesc_offset
+c_func
+(paren
+id|brx_ring
+comma
+l_int|0
+)paren
 )paren
 suffix:semicolon
 id|ib-&gt;rx_len
@@ -981,8 +975,15 @@ op_assign
 id|LANCE_ADDR
 c_func
 (paren
-op_amp
-id|aib-&gt;btx_ring
+id|aib
+op_plus
+id|libdesc_offset
+c_func
+(paren
+id|btx_ring
+comma
+l_int|0
+)paren
 )paren
 suffix:semicolon
 id|ib-&gt;tx_len
@@ -3781,6 +3782,7 @@ op_star
 (paren
 (paren
 r_int
+r_int
 )paren
 id|dev-&gt;priv
 op_plus
@@ -3856,6 +3858,10 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|lp-&gt;init_block_dvma
+op_assign
+l_int|0
+suffix:semicolon
 id|lp-&gt;pio_buffer
 op_assign
 l_int|1
@@ -3878,6 +3884,9 @@ id|lance_init_block
 )paren
 comma
 id|lancedma
+comma
+op_amp
+id|lp-&gt;init_block_dvma
 )paren
 suffix:semicolon
 id|lp-&gt;pio_buffer
@@ -4194,6 +4203,7 @@ r_if
 c_cond
 (paren
 (paren
+r_int
 r_int
 )paren
 (paren

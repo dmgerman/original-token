@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: muldiv.c,v 1.3 1996/11/26 10:00:28 jj Exp $&n; * muldiv.c: Hardware multiply/division illegal instruction trap&n; *&t;&t;for sun4c/sun4 (which do not have those instructions)&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: muldiv.c,v 1.4 1997/04/11 00:42:08 davem Exp $&n; * muldiv.c: Hardware multiply/division illegal instruction trap&n; *&t;&t;for sun4c/sun4 (which do not have those instructions)&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -508,6 +508,8 @@ comma
 l_string|&quot;o5&quot;
 comma
 l_string|&quot;o7&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_MULDIV
@@ -597,6 +599,8 @@ comma
 l_string|&quot;o5&quot;
 comma
 l_string|&quot;o7&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_MULDIV
@@ -729,6 +733,8 @@ comma
 l_string|&quot;g2&quot;
 comma
 l_string|&quot;g3&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_MULDIV
@@ -853,6 +859,8 @@ comma
 l_string|&quot;g2&quot;
 comma
 l_string|&quot;g3&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_MULDIV

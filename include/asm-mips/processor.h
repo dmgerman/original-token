@@ -14,8 +14,7 @@ id|wait_available
 suffix:semicolon
 multiline_comment|/* only available on R4[26]00 */
 r_extern
-r_int
-r_int
+id|atomic_t
 id|intr_count
 suffix:semicolon
 r_extern

@@ -12,6 +12,7 @@ macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
+macro_line|#include &lt;asm/softirq.h&gt;
 r_extern
 r_void
 id|bcopy
@@ -138,6 +139,13 @@ r_void
 id|__remqu
 (paren
 r_void
+)paren
+suffix:semicolon
+DECL|variable|__alpha_bh_counter
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__alpha_bh_counter
 )paren
 suffix:semicolon
 multiline_comment|/* platform dependent support */

@@ -423,7 +423,13 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;unknown dma version&quot;
+l_string|&quot;unknown dma version %x&quot;
+comma
+(paren
+id|dma-&gt;regs-&gt;cond_reg
+)paren
+op_amp
+id|DMA_DEVICE_ID
 )paren
 suffix:semicolon
 id|dma-&gt;allocated

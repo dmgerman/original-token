@@ -1,7 +1,6 @@
 macro_line|#ifndef _ASM_IO_H
 DECL|macro|_ASM_IO_H
 mdefine_line|#define _ASM_IO_H
-macro_line|#include &lt;linux/vmalloc.h&gt;
 multiline_comment|/*&n; * This file contains the definitions for the x86 IO instructions&n; * inb/inw/inl/outb/outw/outl and the &quot;string versions&quot; of the same&n; * (insb/insw/insl/outsb/outsw/outsl). You can also use &quot;pausing&quot;&n; * versions of the single-IO instructions (inb_p/inw_p/..).&n; *&n; * This file is not meant to be obfuscating: it&squot;s just complicated&n; * to (a) handle it all in a way that makes gcc able to optimize it&n; * as well as possible and (b) trying to avoid writing the same thing&n; * over and over again with slight variations and possibly making a&n; * mistake somewhere.&n; */
 multiline_comment|/*&n; * Thanks to James van Artsdalen for a better timing-fix than&n; * the two short jumps: using outb&squot;s to a nonexistent port seems&n; * to guarantee better timings even on fast machines.&n; *&n; * On the other hand, I&squot;d like to be sure of a non-existent port:&n; * I feel a bit unsafe about using 0x80 (should be safe, though)&n; *&n; *&t;&t;Linus&n; */
 macro_line|#ifdef SLOW_IO_BY_JUMPING
@@ -152,6 +151,7 @@ mdefine_line|#define outl_p(val,port) &bslash;&n;((__builtin_constant_p((port)) 
 DECL|macro|inl_p
 mdefine_line|#define inl_p(port) &bslash;&n;((__builtin_constant_p((port)) &amp;&amp; (port) &lt; 256) ? &bslash;&n;&t;__inlc_p(port) : &bslash;&n;&t;__inl_p(port))
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 DECL|macro|__io_virt
 mdefine_line|#define __io_virt(x)&t;&t;((void *)(PAGE_OFFSET | (unsigned long)(x)))

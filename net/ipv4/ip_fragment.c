@@ -35,7 +35,7 @@ DECL|variable|ip_frag_mem
 id|atomic_t
 id|ip_frag_mem
 op_assign
-l_int|0
+id|ATOMIC_INIT
 suffix:semicolon
 multiline_comment|/* Memory used for fragments */
 r_char
@@ -293,9 +293,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|ip_frag_mem
-op_add_assign
+id|atomic_add
+c_func
+(paren
 id|skb-&gt;truesize
+comma
+op_amp
+id|ip_frag_mem
+)paren
 suffix:semicolon
 id|restore_flags
 c_func
@@ -641,7 +646,12 @@ r_void
 r_while
 c_loop
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|ip_frag_mem
+)paren
 OG
 id|IPFRAG_LOW_THRESH
 )paren
@@ -1352,7 +1362,12 @@ multiline_comment|/*&n;&t; *&t;Start by cleaning up the memory&n;&t; */
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|ip_frag_mem
+)paren
 OG
 id|IPFRAG_HIGH_THRESH
 )paren

@@ -843,8 +843,12 @@ id|irq_action
 op_star
 id|action
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|intr_count
-op_increment
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1227,8 +1231,12 @@ id|irq
 )paren
 suffix:semicolon
 )brace
+id|atomic_dec
+c_func
+(paren
+op_amp
 id|intr_count
-op_decrement
+)paren
 suffix:semicolon
 )brace
 DECL|function|handle_IRQ

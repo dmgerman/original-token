@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: init.c,v 1.6 1997/03/11 17:37:11 jj Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: init.c,v 1.7 1997/03/24 17:43:59 jj Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -303,7 +303,7 @@ op_minus
 l_char|&squot;0&squot;
 )paren
 suffix:semicolon
-id|prom_printf
+id|printk
 (paren
 l_string|&quot;PROMLIB: Sun IEEE Boot Prom %s&bslash;n&quot;
 comma
@@ -320,16 +320,6 @@ suffix:semicolon
 id|prom_ranges_init
 c_func
 (paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;PROMLIB: Sun IEEE Boot Prom %s&bslash;n&quot;
-comma
-id|buffer
-op_plus
-l_int|4
 )paren
 suffix:semicolon
 multiline_comment|/* Initialization successful. */

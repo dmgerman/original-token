@@ -13,14 +13,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
-macro_line|#include &lt;asm/hardirq.h&gt;
-macro_line|#include &lt;asm/softirq.h&gt;
-DECL|variable|intr_count
-id|atomic_t
-id|intr_count
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/* intr_count died a painless death... -DaveM */
 DECL|variable|bh_mask_count
 r_int
 id|bh_mask_count

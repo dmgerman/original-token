@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgthree.c,v 1.12 1997/03/11 23:44:24 ecd Exp $&n; * cgtree.c: cg3 frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Support for cgRDI added, Nov/96, jj.&n; */
+multiline_comment|/* $Id: cgthree.c,v 1.16 1997/04/10 03:02:41 davem Exp $&n; * cgtree.c: cg3 frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Support for cgRDI added, Nov/96, jj.&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -12,6 +12,22 @@ macro_line|#include &quot;../../char/selection.h&quot;
 macro_line|#include &quot;../../char/console_struct.h&quot;
 macro_line|#include &quot;fb.h&quot;
 macro_line|#include &quot;cg_common.h&quot;
+multiline_comment|/* Control Register Constants */
+DECL|macro|CG3_CR_ENABLE_INTS
+mdefine_line|#define CG3_CR_ENABLE_INTS&t;0x80
+DECL|macro|CG3_CR_ENABLE_VIDEO
+mdefine_line|#define CG3_CR_ENABLE_VIDEO&t;0x40
+DECL|macro|CG3_CR_ENABLE_TIMING
+mdefine_line|#define CG3_CR_ENABLE_TIMING&t;0x20
+DECL|macro|CG3_CR_ENABLE_CURCMP
+mdefine_line|#define CG3_CR_ENABLE_CURCMP&t;0x10
+DECL|macro|CG3_CR_XTAL_MASK
+mdefine_line|#define CG3_CR_XTAL_MASK&t;0x0c
+DECL|macro|CG3_CR_DIVISOR_MASK
+mdefine_line|#define CG3_CR_DIVISOR_MASK&t;0x03
+multiline_comment|/* Status Register Constants */
+DECL|macro|CG3_SR_PENDING_INT
+mdefine_line|#define CG3_SR_PENDING_INT&t;0x80
 DECL|macro|CG3_SR_RES_MASK
 mdefine_line|#define CG3_SR_RES_MASK&t;&t;0x70
 DECL|macro|CG3_SR_1152_900_76_A
@@ -434,6 +450,37 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_static
+r_void
+DECL|function|cg3_blank
+id|cg3_blank
+(paren
+id|fbinfo_t
+op_star
+id|fb
+)paren
+(brace
+id|fb-&gt;info.cg3.regs-&gt;control
+op_and_assign
+op_complement
+id|CG3_CR_ENABLE_VIDEO
+suffix:semicolon
+)brace
+r_static
+r_void
+DECL|function|cg3_unblank
+id|cg3_unblank
+(paren
+id|fbinfo_t
+op_star
+id|fb
+)paren
+(brace
+id|fb-&gt;info.cg3.regs-&gt;control
+op_or_assign
+id|CG3_CR_ENABLE_VIDEO
+suffix:semicolon
+)brace
 DECL|variable|__initdata
 r_static
 id|u8
@@ -688,7 +735,8 @@ comma
 r_int
 id|slot
 comma
-id|uint
+r_int
+r_int
 id|cg3
 comma
 r_int
@@ -826,6 +874,9 @@ l_string|&quot;cgRDI%d at 0x%8.8x&bslash;n&quot;
 comma
 id|slot
 comma
+(paren
+id|uint
+)paren
 id|cg3
 )paren
 suffix:semicolon
@@ -842,6 +893,9 @@ l_string|&quot;cgthree%d at 0x%8.8x&bslash;n&quot;
 comma
 id|slot
 comma
+(paren
+id|uint
+)paren
 id|cg3
 )paren
 suffix:semicolon
@@ -876,18 +930,27 @@ id|fb-&gt;reset
 op_assign
 l_int|0
 suffix:semicolon
+id|fb-&gt;blank
+op_assign
+id|cg3_blank
+suffix:semicolon
+id|fb-&gt;unblank
+op_assign
+id|cg3_unblank
+suffix:semicolon
 multiline_comment|/* Map the card registers */
 id|cg3info-&gt;regs
 op_assign
 id|sparc_alloc_io
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|cg3
 op_plus
 id|CG3_REGS
+)paren
 comma
 l_int|0
 comma
@@ -1103,12 +1166,13 @@ id|uint
 id|sparc_alloc_io
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|cg3
 op_plus
 id|CG3_RAM
+)paren
 comma
 l_int|0
 comma

@@ -7230,7 +7230,10 @@ c_func
 (paren
 id|sp-&gt;mc_setup_frm_len
 comma
-id|intr_count
+id|in_interrupt
+c_func
+(paren
+)paren
 ques
 c_cond
 id|GFP_ATOMIC

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgsix.c,v 1.22 1997/02/02 02:12:41 ecd Exp $&n; * cgsix.c: cgsix frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: cgsix.c,v 1.26 1997/04/10 03:02:40 davem Exp $&n; * cgsix.c: cgsix frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -956,7 +956,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.cg6.tec
 )paren
@@ -975,7 +976,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.cg6.fbc
 )paren
@@ -994,7 +996,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.cg6.fhc
 )paren
@@ -1013,7 +1016,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.cg6.thc
 )paren
@@ -1032,7 +1036,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.cg6.bt
 )paren
@@ -1053,7 +1058,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.cg6.dhc
 )paren
@@ -1074,7 +1080,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;info.cg6.rom
 )paren
@@ -1095,7 +1102,8 @@ op_assign
 id|get_phys
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|fb-&gt;base
 )paren
@@ -1765,7 +1773,8 @@ comma
 r_int
 id|slot
 comma
-id|uint
+r_int
+r_int
 id|cg6
 comma
 r_int
@@ -1867,12 +1876,13 @@ op_assign
 id|sparc_alloc_io
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|cg6
 op_plus
 id|CG6_BROOKTREE_OFFSET
+)paren
 comma
 l_int|0
 comma
@@ -1894,12 +1904,13 @@ op_assign
 id|sparc_alloc_io
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|cg6
 op_plus
 id|CG6_FHC_OFFSET
+)paren
 comma
 l_int|0
 comma
@@ -1920,12 +1931,13 @@ op_assign
 id|sparc_alloc_io
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|cg6
 op_plus
 id|CG6_THC_OFFSET
+)paren
 comma
 l_int|0
 comma
@@ -1947,12 +1959,13 @@ op_assign
 id|sparc_alloc_io
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|cg6
 op_plus
 id|CG6_TEC_OFFSET
+)paren
 comma
 l_int|0
 comma
@@ -1974,12 +1987,13 @@ op_assign
 id|sparc_alloc_io
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|cg6
 op_plus
 id|CG6_DHC_OFFSET
+)paren
 comma
 l_int|0
 comma
@@ -1997,12 +2011,13 @@ op_assign
 id|sparc_alloc_io
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|cg6
 op_plus
 id|CG6_FBC_OFFSET
+)paren
 comma
 l_int|0
 comma
@@ -2020,12 +2035,13 @@ op_assign
 id|sparc_alloc_io
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|cg6
 op_plus
 id|CG6_ROM_OFFSET
+)paren
 comma
 l_int|0
 comma
@@ -2048,17 +2064,19 @@ id|fb-&gt;base
 id|fb-&gt;base
 op_assign
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|sparc_alloc_io
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|cg6
 op_plus
 id|CG6_RAM_OFFSET
+)paren
 comma
 l_int|0
 comma
@@ -2242,6 +2260,7 @@ c_cond
 op_logical_neg
 id|slot
 )paren
+(brace
 multiline_comment|/* Enable Video */
 id|cg6_unblank
 c_func
@@ -2249,13 +2268,16 @@ c_func
 id|fb
 )paren
 suffix:semicolon
+)brace
 r_else
+(brace
 id|cg6_blank
 c_func
 (paren
 id|fb
 )paren
 suffix:semicolon
+)brace
 )brace
 r_extern
 r_int

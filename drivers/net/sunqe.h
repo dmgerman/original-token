@@ -800,6 +800,8 @@ id|TX_RING_MAXSIZE
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|qib_offset
+mdefine_line|#define qib_offset(mem, elem) &bslash;&n;((__u32)((unsigned long)(&amp;(((struct qe_init_block *)0)-&gt;mem[elem]))))
 r_struct
 id|sunqe
 suffix:semicolon
@@ -886,6 +888,8 @@ id|SUN4C_RX_BUFF_SIZE
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|qebuf_offset
+mdefine_line|#define qebuf_offset(mem, elem) &bslash;&n;((__u32)((unsigned long)(&amp;(((struct sunqe_buffers *)0)-&gt;mem[elem][0]))))
 DECL|macro|SUN4C_NEXT_RX
 mdefine_line|#define SUN4C_NEXT_RX(num)&t;(((num) + 1) &amp; (SUN4C_RX_RING_SIZE - 1))
 DECL|macro|SUN4C_NEXT_TX
@@ -917,6 +921,11 @@ r_struct
 id|qe_init_block
 op_star
 id|qe_block
+suffix:semicolon
+multiline_comment|/* RX and TX descriptors          */
+DECL|member|qblock_dvma
+id|__u32
+id|qblock_dvma
 suffix:semicolon
 multiline_comment|/* RX and TX descriptors          */
 DECL|member|rx_skbs
@@ -956,6 +965,12 @@ id|sunqe_buffers
 op_star
 id|sun4c_buffers
 suffix:semicolon
+multiline_comment|/* CPU visible address.  */
+DECL|member|s4c_buf_dvma
+id|__u32
+id|s4c_buf_dvma
+suffix:semicolon
+multiline_comment|/* DVMA visible address. */
 DECL|member|parent
 r_struct
 id|sunqec

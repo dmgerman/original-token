@@ -1025,6 +1025,9 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+r_return
+id|ret
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Queue a packet for resolution&n; */
 DECL|function|ipmr_cache_unresolved
@@ -1154,7 +1157,7 @@ OL
 l_int|0
 )paren
 (brace
-id|impr_cache_delete
+id|ipmr_cache_delete
 c_func
 (paren
 id|cache

@@ -175,7 +175,12 @@ multiline_comment|/*&n;&t;&t;&t; * Check for the state of the receive buffer.&n;
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;rmem_alloc
+)paren
 OL
 (paren
 id|sk-&gt;rcvbuf

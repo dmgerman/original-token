@@ -1,11 +1,11 @@
-multiline_comment|/* $Id: p1275.c,v 1.7 1997/03/18 17:59:55 jj Exp $&n; * p1275.c: Sun IEEE 1275 PROM low level interface routines&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: p1275.c,v 1.8 1997/04/03 09:29:21 davem Exp $&n; * p1275.c: Sun IEEE 1275 PROM low level interface routines&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
-macro_line|#include &lt;asm/spitfire.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/spitfire.h&gt;
 macro_line|#include &lt;asm/pstate.h&gt;
 multiline_comment|/* If you change layout of this structure, please change the prom_doit&n;   function below as well. */
 r_typedef

@@ -1516,6 +1516,10 @@ op_star
 id|src_table
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|mem_map
 (braket
 id|MAP_NR
@@ -1531,7 +1535,7 @@ id|src_table
 )braket
 dot
 id|count
-op_increment
+)paren
 suffix:semicolon
 id|stmp
 op_add_assign

@@ -3,12 +3,14 @@ DECL|macro|_I386_SEMAPHORE_H
 mdefine_line|#define _I386_SEMAPHORE_H
 macro_line|#include &lt;linux/linkage.h&gt;
 multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; *&n; * Modified 1996-12-23 by Dave Grothe &lt;dave@gcom.com&gt; to fix bugs in&n; *                     the original code and to make semaphore waits&n; *                     interruptible so that processes waiting on&n; *                     semaphores can be killed.&n; *&n; * If you would like to see an analysis of this implementation, please&n; * ftp to gcom.com and download the file&n; * /pub/linux/src/semaphore/semaphore-2.0.24.tar.gz.&n; *&n; */
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
 DECL|struct|semaphore
 r_struct
 id|semaphore
 (brace
 DECL|member|count
-r_int
+id|atomic_t
 id|count
 suffix:semicolon
 DECL|member|waking
@@ -24,9 +26,9 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|MUTEX
-mdefine_line|#define MUTEX ((struct semaphore) { 1, 0, NULL })
+mdefine_line|#define MUTEX ((struct semaphore) { { 1 }, 0, NULL })
 DECL|macro|MUTEX_LOCKED
-mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { 0, 0, NULL })
+mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { { 0 }, 0, NULL })
 id|asmlinkage
 r_void
 id|__down_failed
@@ -76,6 +78,106 @@ op_star
 id|sem
 )paren
 suffix:semicolon
+DECL|macro|sema_init
+mdefine_line|#define sema_init(sem, val)&t;atomic_set(&amp;((sem)-&gt;count), (val))
+multiline_comment|/*&n; * These two _must_ execute atomically wrt each other.&n; *&n; * This is trivially done with load_locked/store_cond,&n; * but on the x86 we need an external synchronizer.&n; * Currently this is just the global interrupt lock,&n; * bah. Go for a smaller spinlock some day.&n; *&n; * (On the other hand this shouldn&squot;t be in any critical&n; * path, so..)&n; */
+DECL|function|wake_one_more
+r_static
+r_inline
+r_void
+id|wake_one_more
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|sem-&gt;waking
+op_increment
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+DECL|function|waking_non_zero
+r_static
+r_inline
+r_int
+id|waking_non_zero
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sem-&gt;waking
+OG
+l_int|0
+)paren
+(brace
+id|sem-&gt;waking
+op_decrement
+suffix:semicolon
+id|ret
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * This is ugly, but we want the default case to fall through.&n; * &quot;down_failed&quot; is a special asm handler that calls the C&n; * routine that actually waits. See arch/i386/lib/semaphore.S&n; */
 DECL|function|down
 r_extern

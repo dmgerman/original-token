@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: openprom.h,v 1.19 1996/09/25 03:51:08 davem Exp $ */
+multiline_comment|/* $Id: openprom.h,v 1.20 1997/04/10 06:41:06 davem Exp $ */
 macro_line|#ifndef __SPARC_OPENPROM_H
 DECL|macro|__SPARC_OPENPROM_H
 mdefine_line|#define __SPARC_OPENPROM_H
@@ -962,16 +962,18 @@ id|linux_prom_registers
 (brace
 DECL|member|which_io
 r_int
+r_int
 id|which_io
 suffix:semicolon
 multiline_comment|/* is this in OBIO space? */
 DECL|member|phys_addr
-r_char
-op_star
+r_int
+r_int
 id|phys_addr
 suffix:semicolon
 multiline_comment|/* The physical address of this register */
 DECL|member|reg_size
+r_int
 r_int
 id|reg_size
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: psrcompat.h,v 1.1 1996/12/26 10:02:30 davem Exp $ */
+multiline_comment|/* $Id: psrcompat.h,v 1.2 1997/04/07 18:57:17 jj Exp $ */
 macro_line|#ifndef _SPARC64_PSRCOMPAT_H
 DECL|macro|_SPARC64_PSRCOMPAT_H
 mdefine_line|#define _SPARC64_PSRCOMPAT_H
@@ -91,7 +91,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;rdpr&t;%vers, %0&quot;
+l_string|&quot;rdpr&t;%%ver, %0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren

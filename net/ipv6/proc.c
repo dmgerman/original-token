@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the various access functions for the&n; *&t;&t;PROC file system.  This is very similar to the IPv4 version,&n; *&t;&t;except it reports the sockets in the INET6 address family.&n; *&n; * Version:&t;$Id: proc.c,v 1.1 1997/03/16 08:47:18 davem Exp $&n; *&n; * Authors:&t;David S. Miller (davem@caip.rutgers.edu)&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the various access functions for the&n; *&t;&t;PROC file system.  This is very similar to the IPv4 version,&n; *&t;&t;except it reports the sockets in the INET6 address family.&n; *&n; * Version:&t;$Id: proc.c,v 1.2 1997/04/12 04:32:55 davem Exp $&n; *&n; * Authors:&t;David S. Miller (davem@caip.rutgers.edu)&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
@@ -358,7 +358,12 @@ id|sp-&gt;write_seq
 op_minus
 id|tp-&gt;snd_una
 suffix:colon
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sp-&gt;wmem_alloc
+)paren
 comma
 id|format
 op_eq
@@ -369,7 +374,12 @@ id|tp-&gt;rcv_nxt
 op_minus
 id|sp-&gt;copied_seq
 suffix:colon
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sp-&gt;rmem_alloc
+)paren
 comma
 id|timer_active
 comma
@@ -380,7 +390,12 @@ comma
 (paren
 r_int
 )paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sp-&gt;retransmits
+)paren
 comma
 id|sp-&gt;socket
 ques

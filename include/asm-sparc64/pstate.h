@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pstate.h,v 1.2 1996/12/26 09:56:16 davem Exp $ */
+multiline_comment|/* $Id: pstate.h,v 1.3 1997/03/25 03:58:31 davem Exp $ */
 macro_line|#ifndef _SPARC64_PSTATE_H
 DECL|macro|_SPARC64_PSTATE_H
 mdefine_line|#define _SPARC64_PSTATE_H
@@ -25,7 +25,7 @@ DECL|macro|PSTATE_IE
 mdefine_line|#define PSTATE_IE&t;0x0000000000000002&t;/* Interrupt Enable.&t;&t;*/
 DECL|macro|PSTATE_AG
 mdefine_line|#define PSTATE_AG&t;0x0000000000000001&t;/* Alternate Globals.&t;&t;*/
-multiline_comment|/* The V9 TSTATE Register (with SpitFire extensions).&n; *&n; * ---------------------------------------------------------------&n; * |  Resv  |  CCR  |  ASI  |  Resv  |  PSTATE  |  Resv  |  CWP  |&n; * ---------------------------------------------------------------&n; *  63    40 39   32 31   24 23    20 19       8 7      5 4     0&n; */
+multiline_comment|/* The V9 TSTATE Register (with SpitFire and Linux extensions).&n; *&n; * ---------------------------------------------------------------&n; * |  Resv  |  CCR  |  ASI  |  %pil  |  PSTATE  |  Resv  |  CWP  |&n; * ---------------------------------------------------------------&n; *  63    40 39   32 31   24 23    20 19       8 7      5 4     0&n; */
 DECL|macro|TSTATE_CCR
 mdefine_line|#define TSTATE_CCR&t;0x000000ff00000000&t;/* Condition Codes.&t;&t;*/
 DECL|macro|TSTATE_XCC
@@ -50,6 +50,8 @@ DECL|macro|TSTATE_ICARRY
 mdefine_line|#define TSTATE_ICARRY&t;0x0000000100000000&t;/* %icc Carry.&t;&t;&t;*/
 DECL|macro|TSTATE_ASI
 mdefine_line|#define TSTATE_ASI&t;0x00000000ff000000&t;/* Address Space Identifier.&t;*/
+DECL|macro|TSTATE_PIL
+mdefine_line|#define TSTATE_PIL&t;0x0000000000f00000&t;/* %pil (Linux traps set this)  */
 DECL|macro|TSTATE_PSTATE
 mdefine_line|#define TSTATE_PSTATE&t;0x00000000000fff00&t;/* PSTATE.&t;&t;&t;*/
 DECL|macro|TSTATE_IG

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Multicast support for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: mcast.c,v 1.7 1997/03/18 18:24:39 davem Exp $&n; *&n; *&t;Based on linux/ipv4/igmp.c and linux/ipv4/ip_sockglue.c &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Multicast support for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: mcast.c,v 1.8 1997/04/12 04:32:48 davem Exp $&n; *&n; *&t;Based on linux/ipv4/igmp.c and linux/ipv4/ip_sockglue.c &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -826,9 +826,14 @@ id|mc-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|mc-&gt;mca_users
-op_assign
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|mc-&gt;next
 op_assign

@@ -1,15 +1,12 @@
-multiline_comment|/* $Id: system.h,v 1.7 1997/03/18 18:02:41 jj Exp $ */
+multiline_comment|/* $Id: system.h,v 1.15 1997/04/10 23:32:49 davem Exp $ */
 macro_line|#ifndef __SPARC64_SYSTEM_H
 DECL|macro|__SPARC64_SYSTEM_H
 mdefine_line|#define __SPARC64_SYSTEM_H
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#include &lt;asm/asm_offsets.h&gt;
 DECL|macro|NCPUS
 mdefine_line|#define NCPUS&t;4&t;/* No SMP yet */
-DECL|macro|EMPTY_PGT
-mdefine_line|#define EMPTY_PGT       (&amp;empty_bad_page)
-DECL|macro|EMPTY_PGE
-mdefine_line|#define EMPTY_PGE       (&amp;empty_bad_page_table)
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * Sparc (general) CPU types&n; */
 DECL|enum|sparc_cpu
@@ -70,7 +67,12 @@ suffix:semicolon
 r_extern
 r_int
 r_int
-id|empty_bad_page_table
+id|empty_bad_pmd_table
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|empty_bad_pte_table
 suffix:semicolon
 r_extern
 r_int
@@ -80,22 +82,36 @@ suffix:semicolon
 macro_line|#endif
 DECL|macro|setipl
 mdefine_line|#define setipl(__new_ipl) &bslash;&n;&t;__asm__ __volatile__(&quot;wrpr&t;%0, %%pil&quot;  : : &quot;r&quot; (__new_ipl) : &quot;memory&quot;)
-DECL|macro|cli
-mdefine_line|#define cli() &bslash;&n;&t;__asm__ __volatile__(&quot;wrpr&t;15, %%pil&quot; : : : &quot;memory&quot;)
-DECL|macro|sti
-mdefine_line|#define sti() &bslash;&n;&t;__asm__ __volatile__(&quot;wrpr&t;0, %%pil&quot; : : : &quot;memory&quot;)
+DECL|macro|__cli
+mdefine_line|#define __cli() &bslash;&n;&t;__asm__ __volatile__(&quot;wrpr&t;15, %%pil&quot; : : : &quot;memory&quot;)
+DECL|macro|__sti
+mdefine_line|#define __sti() &bslash;&n;&t;__asm__ __volatile__(&quot;wrpr&t;0, %%pil&quot; : : : &quot;memory&quot;)
 DECL|macro|getipl
 mdefine_line|#define getipl() &bslash;&n;({ int retval; __asm__ __volatile__(&quot;rdpr&t;%%pil, %0&quot; : &quot;=r&quot; (retval)); retval; })
 DECL|macro|swap_pil
 mdefine_line|#define swap_pil(__new_pil) &bslash;&n;({&t;int retval; &bslash;&n;&t;__asm__ __volatile__(&quot;rdpr&t;%%pil, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;     &quot;wrpr&t;%1, %%pil&quot; &bslash;&n;&t;&t;&t;     : &quot;=r&quot; (retval) &bslash;&n;&t;&t;&t;     : &quot;r&quot; (__new_pil) &bslash;&n;&t;&t;&t;     : &quot;memory&quot;); &bslash;&n;&t;retval; &bslash;&n;})
 DECL|macro|read_pil_and_cli
 mdefine_line|#define read_pil_and_cli() &bslash;&n;({&t;int retval; &bslash;&n;&t;__asm__ __volatile__(&quot;rdpr&t;%%pil, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;     &quot;wrpr&t;15, %%pil&quot; &bslash;&n;&t;&t;&t;     : &quot;=r&quot; (retval) &bslash;&n;&t;&t;&t;     : : &quot;memory&quot;); &bslash;&n;&t;retval; &bslash;&n;})
+DECL|macro|__save_flags
+mdefine_line|#define __save_flags(flags)&t;((flags) = getipl())
+DECL|macro|__save_and_cli
+mdefine_line|#define __save_and_cli(flags)&t;((flags) = read_pil_and_cli())
+DECL|macro|__restore_flags
+mdefine_line|#define __restore_flags(flags)&t;setipl((flags))
+macro_line|#ifndef __SMP__
+DECL|macro|cli
+mdefine_line|#define cli() __cli()
+DECL|macro|sti
+mdefine_line|#define sti() __sti()
 DECL|macro|save_flags
-mdefine_line|#define save_flags(flags)&t;((flags) = getipl())
-DECL|macro|save_and_cli
-mdefine_line|#define save_and_cli(flags)&t;((flags) = read_pil_and_cli())
+mdefine_line|#define save_flags(x) __save_flags(x)
 DECL|macro|restore_flags
-mdefine_line|#define restore_flags(flags)&t;setipl((flags))
+mdefine_line|#define restore_flags(x) __restore_flags(x)
+DECL|macro|save_and_cli
+mdefine_line|#define save_and_cli(x) __save_and_cli(x)
+macro_line|#else
+macro_line|#error SMP not supported on sparc64
+macro_line|#endif
 DECL|macro|mb
 mdefine_line|#define mb()  &t;&t;__asm__ __volatile__ (&quot;stbar&quot; : : : &quot;memory&quot;)
 DECL|macro|nop
@@ -204,9 +220,27 @@ suffix:colon
 l_string|&quot;g1&quot;
 comma
 l_string|&quot;g2&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace
+DECL|macro|flush_user_windows
+mdefine_line|#define flush_user_windows flushw_user
+macro_line|#ifdef __SMP__
+macro_line|#error SMP not supported on sparc64
+macro_line|#else
+macro_line|#if 0
+mdefine_line|#define SWITCH_DO_LAZY_FPU(next)&t;&t;&t;&bslash;&n;&t;if(last_task_used_math != (next))&t;&t;&bslash;&n;&t;&t;(next)-&gt;tss.kregs-&gt;tstate&amp;=~TSTATE_PEF
+macro_line|#else
+multiline_comment|/* XXX FIX ME BIG TIME XXX -DaveM */
+DECL|macro|SWITCH_DO_LAZY_FPU
+mdefine_line|#define SWITCH_DO_LAZY_FPU(next)&t;do { } while(0)
+macro_line|#endif
+macro_line|#endif
+multiline_comment|/* See what happens when you design the chip correctly?&n;&t; * NOTE NOTE NOTE this is extremely non-trivial what I&n;&t; * am doing here.  GCC needs only two registers to stuff&n;&t; * things into (&squot;next&squot; and &amp;current_set[cpu])  So I &quot;claim&quot;&n;&t; * that I do not clobber them, when in fact I do.  Please,&n;&t; * when modifying this code inspect output of sched.s very&n;&t; * carefully to make sure things still work.  -DaveM&n;&t; */
+DECL|macro|switch_to
+mdefine_line|#define switch_to(prev, next)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__label__ switch_continue;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long task_pc asm(&quot;o7&quot;);&t;&t;&t;&t;&t;&bslash;&n;&t;SWITCH_DO_LAZY_FPU(next);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;task_pc = ((unsigned long) &amp;&amp;switch_continue) - 0x8;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;flushw&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%i6, [%%sp + 2047 + 0x70]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%i7, [%%sp + 2047 + 0x78]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o6, [%%g6 + %3]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%wstate, %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o7, [%%g6 + %4]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%6, %%o4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o5, [%%g6 + %2]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;st&t;%%o4, [%%g6 + %7]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%cwp, %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o5, [%%g6 + %8]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%1, %%g6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%g6, [%0]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %8], %%g1&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g1, %%cwp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %2], %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %3], %%o6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %4], %%o7&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%o5, 0x0, %%wstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%sp + 2047 + 0x70], %%i6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;jmpl&t;%%o7 + 0x8, %%g0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot; ldx&t;[%%sp + 2047 + 0x78], %%i7&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: /* No outputs */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (&amp;(current_set[smp_processor_id()])), &quot;r&quot; (next),&t;&t;&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.wstate)),&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.ksp)),&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.kpc)),&t;&t;&bslash;&n;&t;  &quot;r&quot; (task_pc), &quot;i&quot; (255),&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;processor)),&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.cwp))&t;&t;&bslash;&n;&t;: &quot;cc&quot;, &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;, &quot;g5&quot;, &quot;g7&quot;,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;l2&quot;, &quot;l3&quot;, &quot;l4&quot;, &quot;l5&quot;, &quot;l6&quot;, &quot;l7&quot;,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;i0&quot;, &quot;i1&quot;, &quot;i2&quot;, &quot;i3&quot;, &quot;i4&quot;, &quot;i5&quot;,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;o0&quot;, &quot;o1&quot;, &quot;o2&quot;, &quot;o3&quot;, &quot;o4&quot;, &quot;o5&quot;);&t;&t;&t;&t;&t;&t;&bslash;&n;switch_continue: } while(0)
 multiline_comment|/* Unlike the hybrid v7/v8 kernel, we can assume swap exists under V9. */
 DECL|function|xchg_u32
 r_extern
@@ -231,21 +265,21 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;swap&t;[%1], %0&quot;
+l_string|&quot;swap&t;[%2], %0&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
 id|val
 )paren
 suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|m
-)paren
-comma
 l_string|&quot;0&quot;
 (paren
 id|val
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|m
 )paren
 )paren
 suffix:semicolon
@@ -285,7 +319,7 @@ c_func
 id|ldx
 (braket
 op_mod
-l_int|2
+l_int|3
 )braket
 comma
 op_mod
@@ -295,7 +329,7 @@ suffix:colon
 id|casx
 (braket
 op_mod
-l_int|2
+l_int|3
 )braket
 comma
 op_mod
@@ -323,7 +357,7 @@ id|b
 id|ldx
 (braket
 op_mod
-l_int|2
+l_int|3
 )braket
 comma
 op_mod
@@ -341,15 +375,17 @@ id|r
 id|temp
 )paren
 suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|m
-)paren
-comma
 l_string|&quot;0&quot;
 (paren
 id|val
 )paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|m
+)paren
+suffix:colon
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return

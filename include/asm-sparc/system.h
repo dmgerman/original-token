@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.53 1997/03/19 14:53:43 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.56 1997/04/14 05:39:30 davem Exp $ */
 macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H
 mdefine_line|#define __SPARC_SYSTEM_H
@@ -9,11 +9,11 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
-macro_line|#endif
 DECL|macro|EMPTY_PGT
 mdefine_line|#define EMPTY_PGT       (&amp;empty_bad_page)
 DECL|macro|EMPTY_PGE
 mdefine_line|#define EMPTY_PGE&t;(&amp;empty_bad_page_table)
+macro_line|#endif /* __KERNEL__ */
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * Sparc (general) CPU types&n; */
 DECL|enum|sparc_cpu
@@ -64,6 +64,8 @@ comma
 multiline_comment|/* almost a sun4m */
 )brace
 suffix:semicolon
+multiline_comment|/* Really, userland should not be looking at any of this... */
+macro_line|#ifdef __KERNEL__
 r_extern
 r_enum
 id|sparc_cpu
@@ -144,22 +146,18 @@ id|fpqdepth
 suffix:semicolon
 macro_line|#ifdef __SMP__
 DECL|macro|SWITCH_ENTER
-mdefine_line|#define SWITCH_ENTER &bslash;&n;&t;cli(); &bslash;&n;&t;if(prev-&gt;flags &amp; PF_USEDFPU) { &bslash;&n;&t;&t;put_psr(get_psr() | PSR_EF); &bslash;&n;&t;&t;fpsave(&amp;prev-&gt;tss.float_regs[0], &amp;prev-&gt;tss.fsr, &bslash;&n;&t;&t;       &amp;prev-&gt;tss.fpqueue[0], &amp;prev-&gt;tss.fpqdepth); &bslash;&n;&t;&t;prev-&gt;flags &amp;= ~PF_USEDFPU; &bslash;&n;&t;&t;prev-&gt;tss.kregs-&gt;psr &amp;= ~PSR_EF; &bslash;&n;&t;}
-DECL|macro|SWITCH_EXIT
-mdefine_line|#define SWITCH_EXIT sti();
+mdefine_line|#define SWITCH_ENTER &bslash;&n;&t;if(prev-&gt;flags &amp; PF_USEDFPU) { &bslash;&n;&t;&t;put_psr(get_psr() | PSR_EF); &bslash;&n;&t;&t;fpsave(&amp;prev-&gt;tss.float_regs[0], &amp;prev-&gt;tss.fsr, &bslash;&n;&t;&t;       &amp;prev-&gt;tss.fpqueue[0], &amp;prev-&gt;tss.fpqdepth); &bslash;&n;&t;&t;prev-&gt;flags &amp;= ~PF_USEDFPU; &bslash;&n;&t;&t;prev-&gt;tss.kregs-&gt;psr &amp;= ~PSR_EF; &bslash;&n;&t;}
 DECL|macro|SWITCH_DO_LAZY_FPU
 mdefine_line|#define SWITCH_DO_LAZY_FPU
 macro_line|#else
 DECL|macro|SWITCH_ENTER
 mdefine_line|#define SWITCH_ENTER
-DECL|macro|SWITCH_EXIT
-mdefine_line|#define SWITCH_EXIT
 DECL|macro|SWITCH_DO_LAZY_FPU
 mdefine_line|#define SWITCH_DO_LAZY_FPU if(last_task_used_math != next) next-&gt;tss.kregs-&gt;psr&amp;=~PSR_EF;
 macro_line|#endif
 multiline_comment|/* Much care has gone into this code, do not touch it. */
 DECL|macro|switch_to
-mdefine_line|#define switch_to(prev, next) do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__label__ here;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long task_pc asm(&quot;o7&quot;);&t;&t;&t;&t;&t;&bslash;&n;&t;SWITCH_ENTER&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;SWITCH_DO_LAZY_FPU&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.globl&bslash;tflush_patch_switch&bslash;nflush_patch_switch:&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;save %sp, -0x40, %sp; save %sp, -0x40, %sp; save %sp, -0x40, %sp&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;save %sp, -0x40, %sp; save %sp, -0x40, %sp; save %sp, -0x40, %sp&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;save %sp, -0x40, %sp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;restore; restore; restore; restore; restore; restore; restore&quot;);&t;&t;&bslash;&n;&t;if(!(next-&gt;tss.flags &amp; SPARC_FLAG_KTHREAD) &amp;&amp;&t;&t;&t;&t;&t;&bslash;&n;&t;   !(next-&gt;flags &amp; PF_EXITING))&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;switch_to_context(next);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;task_pc = ((unsigned long) &amp;&amp;here) - 0x8;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rd&t;%%psr, %%g4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;std&t;%%sp, [%%g6 + %3]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rd&t;%%wim, %%g5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&t;%%g4, 0x20, %%psr&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;std&t;%%g4, [%%g6 + %2]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&t;[%1 + %2], %%g4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%1, %%g6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;st&t;%1, [%0]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&t;%%g4, 0x20, %%psr&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&t;[%%g6 + %3], %%sp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&t;%%g5, 0x0, %%wim&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&t;[%%sp + 0x00], %%l0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&t;[%%sp + 0x38], %%i6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&t;%%g4, 0x0, %%psr&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;jmpl&t;%%o7 + 0x8, %%g0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot; nop&bslash;n&bslash;t&quot; : : &quot;r&quot; (&amp;(current_set[smp_processor_id()])), &quot;r&quot; (next),&t;&t;&bslash;&n;&t;&quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.kpsr)),&t;&t;&bslash;&n;&t;&quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.ksp)),&t;&t;&bslash;&n;&t;&quot;r&quot; (task_pc) : &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;, &quot;g4&quot;, &quot;g5&quot;, &quot;g7&quot;, &quot;l2&quot;, &quot;l3&quot;,&t;&t;&t;&bslash;&n;&t;&quot;l4&quot;, &quot;l5&quot;, &quot;l6&quot;, &quot;l7&quot;, &quot;i0&quot;, &quot;i1&quot;, &quot;i2&quot;, &quot;i3&quot;, &quot;i4&quot;, &quot;i5&quot;, &quot;o0&quot;, &quot;o1&quot;, &quot;o2&quot;,&t;&bslash;&n;&t;&quot;o3&quot;);&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;here: SWITCH_EXIT } while(0)
+mdefine_line|#define switch_to(prev, next) do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__label__ here;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long task_pc asm(&quot;o7&quot;);&t;&t;&t;&t;&t;&bslash;&n;&t;SWITCH_ENTER&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;SWITCH_DO_LAZY_FPU&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.globl&bslash;tflush_patch_switch&bslash;nflush_patch_switch:&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;save %sp, -0x40, %sp; save %sp, -0x40, %sp; save %sp, -0x40, %sp&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;save %sp, -0x40, %sp; save %sp, -0x40, %sp; save %sp, -0x40, %sp&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;save %sp, -0x40, %sp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;restore; restore; restore; restore; restore; restore; restore&quot;);&t;&t;&bslash;&n;&t;if(!(next-&gt;tss.flags &amp; SPARC_FLAG_KTHREAD) &amp;&amp;&t;&t;&t;&t;&t;&bslash;&n;&t;   !(next-&gt;flags &amp; PF_EXITING))&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;switch_to_context(next);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;task_pc = ((unsigned long) &amp;&amp;here) - 0x8;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rd&t;%%psr, %%g4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;std&t;%%sp, [%%g6 + %3]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rd&t;%%wim, %%g5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&t;%%g4, 0x20, %%psr&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%5, %%g7&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;std&t;%%g4, [%%g6 + %2]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;st&t;%%g7, [%%g6 + %6]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&t;[%1 + %2], %%g4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%1, %%g6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;st&t;%1, [%0]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&t;%%g4, 0x20, %%psr&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&t;[%%g6 + %3], %%sp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&t;%%g5, 0x0, %%wim&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&t;[%%sp + 0x00], %%l0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldd&t;[%%sp + 0x38], %%i6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&t;%%g4, 0x0, %%psr&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;jmpl&t;%%o7 + 0x8, %%g0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot; nop&bslash;n&bslash;t&quot; : : &quot;r&quot; (&amp;(current_set[smp_processor_id()])), &quot;r&quot; (next),&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.kpsr)),&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.ksp)),&t;&t;&bslash;&n;&t;  &quot;r&quot; (task_pc), &quot;i&quot; (255),&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;processor))&t;&t;&bslash;&n;&t;: &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;, &quot;g4&quot;, &quot;g5&quot;, &quot;g7&quot;, &quot;l2&quot;, &quot;l3&quot;,&t;&t;&t;&t;&bslash;&n;&t;&quot;l4&quot;, &quot;l5&quot;, &quot;l6&quot;, &quot;l7&quot;, &quot;i0&quot;, &quot;i1&quot;, &quot;i2&quot;, &quot;i3&quot;, &quot;i4&quot;, &quot;i5&quot;, &quot;o0&quot;, &quot;o1&quot;, &quot;o2&quot;,&t;&bslash;&n;&t;&quot;o3&quot;);&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;here:  } while(0)
 multiline_comment|/* Changing the IRQ level on the Sparc.   We now avoid writing the psr&n; * whenever possible.&n; */
 DECL|function|setipl
 r_extern
@@ -200,14 +198,16 @@ id|__orig_psr
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|cli
+DECL|function|__cli
 r_extern
 id|__inline__
 r_void
-id|cli
+id|__cli
 c_func
 (paren
 r_void
@@ -274,11 +274,11 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|sti
+DECL|function|__sti
 r_extern
 id|__inline__
 r_void
-id|sti
+id|__sti
 c_func
 (paren
 r_void
@@ -480,6 +480,8 @@ id|PSR_PIL
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return
@@ -568,12 +570,69 @@ id|spdeb_buf
 l_int|256
 )braket
 suffix:semicolon
+DECL|macro|__save_flags
+mdefine_line|#define __save_flags(flags)&t;((flags) = getipl())
+DECL|macro|__save_and_cli
+mdefine_line|#define __save_and_cli(flags)&t;((flags) = read_psr_and_cli())
+DECL|macro|__restore_flags
+mdefine_line|#define __restore_flags(flags)&t;setipl((flags))
+macro_line|#ifdef __SMP__
+r_extern
+r_void
+id|__global_cli
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__global_sti
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|__global_save_flags
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__global_restore_flags
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|macro|cli
+mdefine_line|#define cli() __global_cli()
+DECL|macro|sti
+mdefine_line|#define sti() __global_sti()
 DECL|macro|save_flags
-mdefine_line|#define save_flags(flags)&t;((flags) = getipl())
-DECL|macro|save_and_cli
-mdefine_line|#define save_and_cli(flags)&t;((flags) = read_psr_and_cli())
+mdefine_line|#define save_flags(x)&t;  ((x)=__global_save_flags())
 DECL|macro|restore_flags
-mdefine_line|#define restore_flags(flags)&t;setipl((flags))
+mdefine_line|#define restore_flags(x)  __global_restore_flags(x)
+DECL|macro|save_and_cli
+mdefine_line|#define save_and_cli(x)   do { (x)=__global_save_flags(); __global_cli(); } while(0)
+macro_line|#else
+DECL|macro|cli
+mdefine_line|#define cli() __cli()
+DECL|macro|sti
+mdefine_line|#define sti() __sti()
+DECL|macro|save_flags
+mdefine_line|#define save_flags(x) __save_flags(x)
+DECL|macro|restore_flags
+mdefine_line|#define restore_flags(x) __restore_flags(x)
+DECL|macro|save_and_cli
+mdefine_line|#define save_and_cli(x) __save_and_cli(x)
+macro_line|#endif
 multiline_comment|/* XXX Change this if we ever use a PSO mode kernel. */
 DECL|macro|mb
 mdefine_line|#define mb()  __asm__ __volatile__ (&quot;&quot; : : : &quot;memory&quot;)
@@ -683,6 +742,8 @@ comma
 l_string|&quot;g7&quot;
 comma
 l_string|&quot;memory&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return
@@ -772,6 +833,7 @@ id|noreturn
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif /* !(__SPARC_SYSTEM_H) */
 eof

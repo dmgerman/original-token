@@ -1950,6 +1950,21 @@ comma
 id|__FUNCTION__
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;NFS: len = %d, entry+1=%p, string=%p&bslash;n&quot;
+comma
+id|len
+comma
+id|entry
+op_plus
+l_int|1
+comma
+id|string
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace

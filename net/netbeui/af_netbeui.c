@@ -1871,7 +1871,12 @@ id|amount
 op_assign
 id|sk-&gt;sndbuf
 op_minus
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;wmem_alloc
+)paren
 suffix:semicolon
 r_if
 c_cond

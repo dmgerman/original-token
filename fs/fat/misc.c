@@ -1289,6 +1289,17 @@ id|nl_day
 comma
 id|month
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sys_tz.tz_dsttime
+)paren
+(brace
+id|unix_date
+op_add_assign
+l_int|3600
+suffix:semicolon
+)brace
 id|unix_date
 op_sub_assign
 id|sys_tz.tz_minuteswest

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.47 1997/01/02 14:14:28 jj Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: init.c,v 1.48 1997/04/12 04:28:37 davem Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -202,6 +202,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
 id|mem_map
 (braket
 id|i
@@ -209,18 +213,24 @@ id|i
 dot
 id|count
 )paren
+)paren
 id|free
 op_increment
 suffix:semicolon
 r_else
 id|shared
 op_add_assign
+id|atomic_read
+c_func
+(paren
+op_amp
 id|mem_map
 (braket
 id|i
 )braket
 dot
 id|count
+)paren
 op_minus
 l_int|1
 suffix:semicolon
@@ -1187,6 +1197,10 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+id|atomic_set
+c_func
+(paren
+op_amp
 id|mem_map
 (braket
 id|MAP_NR
@@ -1197,8 +1211,9 @@ id|addr
 )braket
 dot
 id|count
-op_assign
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|num_physpages
 op_increment
@@ -1366,6 +1381,10 @@ op_lshift
 id|PG_reserved
 )paren
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|mem_map
 (braket
 id|MAP_NR
@@ -1376,8 +1395,9 @@ id|addr
 )braket
 dot
 id|count
-op_assign
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|free_page
 c_func
@@ -1471,6 +1491,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
 id|mem_map
 (braket
 id|i
@@ -1478,16 +1502,22 @@ id|i
 dot
 id|count
 )paren
+)paren
 r_continue
 suffix:semicolon
 id|val-&gt;sharedram
 op_add_assign
+id|atomic_read
+c_func
+(paren
+op_amp
 id|mem_map
 (braket
 id|i
 )braket
 dot
 id|count
+)paren
 op_minus
 l_int|1
 suffix:semicolon

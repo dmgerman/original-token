@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgfourteen.c,v 1.17 1996/12/23 10:16:00 ecd Exp $&n; * cgfourteen.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * TODO:&n; *&n; * Add the ioctls for CLUT manipulation.&n; * Map only the amount requested, not a constant amount.&n; * XBGR mapping.&n; * Add the interrupt handler.&n;*/
+multiline_comment|/* $Id: cgfourteen.c,v 1.18 1997/03/24 17:44:27 jj Exp $&n; * cgfourteen.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * TODO:&n; *&n; * Add the ioctls for CLUT manipulation.&n; * Map only the amount requested, not a constant amount.&n; * XBGR mapping.&n; * Add the interrupt handler.&n;*/
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -1822,7 +1822,8 @@ comma
 r_int
 id|con_node
 comma
-id|uint
+r_int
+r_int
 id|cg14
 comma
 r_int
@@ -2055,6 +2056,9 @@ l_string|&quot;cgfourteen%d at 0x%8.8x with %d megs of RAM rev=%d, impl=%d&bslas
 comma
 id|slot
 comma
+(paren
+id|uint
+)paren
 id|cg14
 comma
 id|cg14info-&gt;ramsize

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.58 1996/12/30 06:17:03 davem Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.59 1997/04/10 05:13:23 davem Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -146,15 +146,13 @@ r_int
 id|len
 suffix:semicolon
 DECL|member|dvma_addr
-r_char
-op_star
+id|__u32
 id|dvma_addr
 suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
-r_char
-op_star
+id|__u32
 (paren
 op_star
 id|mmu_get_scsi_one
@@ -198,8 +196,7 @@ op_star
 id|mmu_release_scsi_one
 )paren
 (paren
-r_char
-op_star
+id|__u32
 comma
 r_int
 r_int

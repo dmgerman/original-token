@@ -263,80 +263,73 @@ DECL|macro|WRAP
 mdefine_line|#define WRAP    0x00020000  /* SUNOS specific */
 multiline_comment|/* c_cflag bit meaning */
 DECL|macro|CBAUD
-mdefine_line|#define CBAUD&t;0x0000000f
+mdefine_line|#define CBAUD&t;  0x0000100f
 DECL|macro|B0
-mdefine_line|#define  B0&t;0x00000000   /* hang up */
+mdefine_line|#define  B0&t;  0x00000000   /* hang up */
 DECL|macro|B50
-mdefine_line|#define  B50&t;0x00000001
+mdefine_line|#define  B50&t;  0x00000001
 DECL|macro|B75
-mdefine_line|#define  B75&t;0x00000002
+mdefine_line|#define  B75&t;  0x00000002
 DECL|macro|B110
-mdefine_line|#define  B110&t;0x00000003
+mdefine_line|#define  B110&t;  0x00000003
 DECL|macro|B134
-mdefine_line|#define  B134&t;0x00000004
+mdefine_line|#define  B134&t;  0x00000004
 DECL|macro|B150
-mdefine_line|#define  B150&t;0x00000005
+mdefine_line|#define  B150&t;  0x00000005
 DECL|macro|B200
-mdefine_line|#define  B200&t;0x00000006
+mdefine_line|#define  B200&t;  0x00000006
 DECL|macro|B300
-mdefine_line|#define  B300&t;0x00000007
+mdefine_line|#define  B300&t;  0x00000007
 DECL|macro|B600
-mdefine_line|#define  B600&t;0x00000008
+mdefine_line|#define  B600&t;  0x00000008
 DECL|macro|B1200
-mdefine_line|#define  B1200&t;0x00000009
+mdefine_line|#define  B1200&t;  0x00000009
 DECL|macro|B1800
-mdefine_line|#define  B1800&t;0x0000000a
+mdefine_line|#define  B1800&t;  0x0000000a
 DECL|macro|B2400
-mdefine_line|#define  B2400&t;0x0000000b
+mdefine_line|#define  B2400&t;  0x0000000b
 DECL|macro|B4800
-mdefine_line|#define  B4800&t;0x0000000c
+mdefine_line|#define  B4800&t;  0x0000000c
 DECL|macro|B9600
-mdefine_line|#define  B9600&t;0x0000000d
+mdefine_line|#define  B9600&t;  0x0000000d
 DECL|macro|B19200
-mdefine_line|#define  B19200&t;0x0000000e
+mdefine_line|#define  B19200&t;  0x0000000e
 DECL|macro|B38400
-mdefine_line|#define  B38400&t;0x0000000f
+mdefine_line|#define  B38400&t;  0x0000000f
 DECL|macro|EXTA
-mdefine_line|#define EXTA    B19200
+mdefine_line|#define EXTA      B19200
 DECL|macro|EXTB
-mdefine_line|#define EXTB    B38400
+mdefine_line|#define EXTB      B38400
 DECL|macro|CSIZE
-mdefine_line|#define  CSIZE  0x00000030
+mdefine_line|#define  CSIZE    0x00000030
 DECL|macro|CS5
-mdefine_line|#define   CS5&t;0x00000000
+mdefine_line|#define   CS5&t;  0x00000000
 DECL|macro|CS6
-mdefine_line|#define   CS6&t;0x00000010
+mdefine_line|#define   CS6&t;  0x00000010
 DECL|macro|CS7
-mdefine_line|#define   CS7&t;0x00000020
+mdefine_line|#define   CS7&t;  0x00000020
 DECL|macro|CS8
-mdefine_line|#define   CS8&t;0x00000030
+mdefine_line|#define   CS8&t;  0x00000030
 DECL|macro|CSTOPB
-mdefine_line|#define CSTOPB&t;0x00000040
+mdefine_line|#define CSTOPB&t;  0x00000040
 DECL|macro|CREAD
-mdefine_line|#define CREAD&t;0x00000080
+mdefine_line|#define CREAD&t;  0x00000080
 DECL|macro|PARENB
-mdefine_line|#define PARENB&t;0x00000100
+mdefine_line|#define PARENB&t;  0x00000100
 DECL|macro|PARODD
-mdefine_line|#define PARODD&t;0x00000200
+mdefine_line|#define PARODD&t;  0x00000200
 DECL|macro|HUPCL
-mdefine_line|#define HUPCL&t;0x00000400
+mdefine_line|#define HUPCL&t;  0x00000400
 DECL|macro|CLOCAL
-mdefine_line|#define CLOCAL&t;0x00000800
-multiline_comment|/* We&squot;ll never see these speeds with the Zilogs&squot; but for completeness... */
+mdefine_line|#define CLOCAL&t;  0x00000800
 DECL|macro|CBAUDEX
-mdefine_line|#define CBAUDEX 0x00010000
-DECL|macro|B57600
-mdefine_line|#define  B57600  0x00010001
-DECL|macro|B115200
-mdefine_line|#define  B115200 0x00010002
-DECL|macro|B230400
-mdefine_line|#define  B230400 0x00010003
-DECL|macro|B460800
-mdefine_line|#define  B460800 0x00010004
+mdefine_line|#define CBAUDEX   0x00001000
+DECL|macro|B76800
+mdefine_line|#define  B76800   0x00001001
 DECL|macro|CIBAUD
-mdefine_line|#define CIBAUD&t;  0x000f0000  /* input baud rate (not used) */
+mdefine_line|#define CIBAUD&t;  0x100f0000  /* input baud rate (not used) */
 DECL|macro|CMSPAR
-mdefine_line|#define CMSPAR&t;  010000000000&t;&t;/* mark or space (stick) parity */
+mdefine_line|#define CMSPAR&t;  0x40000000  /* mark or space (stick) parity */
 DECL|macro|CRTSCTS
 mdefine_line|#define CRTSCTS&t;  0x80000000  /* flow control */
 multiline_comment|/* c_lflag bits */

@@ -3,11 +3,23 @@ DECL|macro|__ARCH_M68K_ATOMIC__
 mdefine_line|#define __ARCH_M68K_ATOMIC__
 multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc..&n; */
 multiline_comment|/*&n; * We do not have SMP m68k systems, so we don&squot;t have to deal with that.&n; */
+DECL|member|counter
 DECL|typedef|atomic_t
 r_typedef
+r_struct
+(brace
 r_int
+id|counter
+suffix:semicolon
+)brace
 id|atomic_t
 suffix:semicolon
+DECL|macro|ATOMIC_INIT
+mdefine_line|#define ATOMIC_INIT&t;{ 0 }
+DECL|macro|atomic_read
+mdefine_line|#define atomic_read(v)&t;&t;((v)-&gt;counter)
+DECL|macro|atomic_set
+mdefine_line|#define atomic_set(v)&t;&t;(((v)-&gt;counter) = i)
 DECL|function|atomic_add
 r_static
 id|__inline__
@@ -15,7 +27,7 @@ r_void
 id|atomic_add
 c_func
 (paren
-id|atomic_t
+r_int
 id|i
 comma
 id|atomic_t
@@ -50,7 +62,7 @@ r_void
 id|atomic_sub
 c_func
 (paren
-id|atomic_t
+r_int
 id|i
 comma
 id|atomic_t

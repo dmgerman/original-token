@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: weitek.c,v 1.7 1996/12/23 10:16:18 ecd Exp $&n; * weitek.c: Tadpole P9100/P9000 console driver&n; *&n; * Copyright (C) 1996 David Redman (djhr@tadpole.co.uk)&n; */
+multiline_comment|/* $Id: weitek.c,v 1.8 1997/03/24 17:44:26 jj Exp $&n; * weitek.c: Tadpole P9100/P9000 console driver&n; *&n; * Copyright (C) 1996 David Redman (djhr@tadpole.co.uk)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -304,7 +304,8 @@ comma
 r_int
 id|slot
 comma
-id|uint
+r_int
+r_int
 id|addr
 comma
 r_int
@@ -323,6 +324,9 @@ l_string|&quot;weitek%d at 0x%8.8x&bslash;n&quot;
 comma
 id|slot
 comma
+(paren
+id|uint
+)paren
 id|addr
 )paren
 suffix:semicolon

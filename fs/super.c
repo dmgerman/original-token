@@ -314,9 +314,14 @@ id|lptr-&gt;mnt_dev
 op_assign
 id|dev
 suffix:semicolon
-id|lptr-&gt;mnt_sem.count
-op_assign
+id|sema_init
+c_func
+(paren
+op_amp
+id|lptr-&gt;mnt_sem
+comma
 l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond

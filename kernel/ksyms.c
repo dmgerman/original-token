@@ -731,29 +731,6 @@ c_func
 id|tty_std_termios
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_BLK_DEV_IDECD) || &bslash;&n;    defined(CONFIG_BLK_DEV_SR) || &bslash;&n;    defined(CONFIG_CM206)
-DECL|variable|register_cdrom
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|register_cdrom
-)paren
-suffix:semicolon
-DECL|variable|unregister_cdrom
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|unregister_cdrom
-)paren
-suffix:semicolon
-DECL|variable|cdrom_fops
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|cdrom_fops
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* block device driver support */
 DECL|variable|block_read
 id|EXPORT_SYMBOL
@@ -1176,13 +1153,15 @@ c_func
 id|timer_table
 )paren
 suffix:semicolon
-DECL|variable|intr_count
+macro_line|#ifdef __SMP__
+DECL|variable|waitqueue_lock
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|intr_count
+id|waitqueue_lock
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* autoirq from  drivers/net/auto_irq.c */
 DECL|variable|autoirq_setup
 id|EXPORT_SYMBOL

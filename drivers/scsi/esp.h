@@ -361,7 +361,12 @@ id|unchar
 op_star
 id|esp_command
 suffix:semicolon
-multiline_comment|/* Location of command */
+multiline_comment|/* Location of command (CPU view)  */
+DECL|member|esp_command_dvma
+id|__u32
+id|esp_command_dvma
+suffix:semicolon
+multiline_comment|/* Location of command (DVMA view) */
 DECL|member|esp_clen
 r_int
 r_char

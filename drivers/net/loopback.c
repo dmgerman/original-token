@@ -75,7 +75,12 @@ multiline_comment|/*&n;&t; *&t;Optimise so buffers with skb-&gt;free=1 are not c
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|skb-&gt;users
+)paren
 op_ne
 l_int|1
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.132 1997/03/18 17:56:47 jj Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.135 1997/04/14 05:38:49 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -3903,6 +3903,8 @@ suffix:colon
 l_string|&quot;g4&quot;
 comma
 l_string|&quot;g5&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace
@@ -5831,6 +5833,8 @@ suffix:colon
 l_string|&quot;g2&quot;
 comma
 l_string|&quot;g3&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* This was handcoded after a look at the gcc output from&n;&t; *&n;&t; *&t;do {&n;&t; *&t;&t;mxcc_set_stream_src(paddr);&n;&t; *&t;&t;mxcc_set_stream_dst(paddr);&n;&t; *&t;&t;paddr[1] += MXCC_STREAM_SIZE;&n;&t; *&t;} while (paddr[1] &amp; ~PAGE_MASK);&n;&t; */
@@ -6181,6 +6185,8 @@ id|UWINMASK_OFFSET
 )paren
 suffix:colon
 l_string|&quot;g4&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 id|srmmu_flush_whole_tlb
@@ -6389,6 +6395,8 @@ id|UWINMASK_OFFSET
 )paren
 suffix:colon
 l_string|&quot;g4&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 id|module_stats.invmm
@@ -6539,6 +6547,8 @@ id|UWINMASK_OFFSET
 )paren
 suffix:colon
 l_string|&quot;g4&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 id|start
@@ -6662,6 +6672,8 @@ id|ASI_M_FLUSH_PROBE
 )paren
 suffix:colon
 l_string|&quot;g5&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 id|module_stats.invrnge
@@ -6811,6 +6823,8 @@ id|UWINMASK_OFFSET
 )paren
 suffix:colon
 l_string|&quot;g4&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 id|__asm__
@@ -8115,6 +8129,8 @@ id|ASI_M_FLUSH_PROBE
 )paren
 suffix:colon
 l_string|&quot;g5&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 id|module_stats.invrnge
@@ -9739,8 +9755,7 @@ suffix:semicolon
 )brace
 DECL|function|srmmu_get_scsi_one
 r_static
-r_char
-op_star
+id|__u32
 id|srmmu_get_scsi_one
 c_func
 (paren
@@ -9802,6 +9817,9 @@ id|PAGE_SIZE
 suffix:semicolon
 )brace
 r_return
+(paren
+id|__u32
+)paren
 id|vaddr
 suffix:semicolon
 )brace
@@ -9899,8 +9917,7 @@ dot
 id|dvma_addr
 op_assign
 (paren
-r_char
-op_star
+id|__u32
 )paren
 (paren
 id|sg
@@ -9922,8 +9939,7 @@ r_void
 id|srmmu_release_scsi_one
 c_func
 (paren
-r_char
-op_star
+id|__u32
 id|vaddr
 comma
 r_int
@@ -14515,11 +14531,13 @@ c_func
 id|mreg
 )paren
 suffix:semicolon
+macro_line|#if 0 /* I think this is bad news... -DaveM */
 id|hyper_clear_all_tags
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|put_ross_icr
 c_func
 (paren

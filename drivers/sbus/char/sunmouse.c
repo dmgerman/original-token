@@ -514,10 +514,6 @@ c_func
 r_int
 r_char
 id|byte
-comma
-r_int
-r_char
-id|status
 )paren
 (brace
 r_int
@@ -566,8 +562,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Check for framing errors and parity errors */
-multiline_comment|/* XXX TODO XXX */
 multiline_comment|/* If the mouse sends us a byte from 0x80 to 0x87&n;&t; * we are starting at byte zero in the transaction&n;&t; * protocol.&n;&t; */
 r_if
 c_cond

@@ -23,7 +23,7 @@ r_extern
 r_volatile
 r_int
 r_int
-id|smp_apic_timer_ticks
+id|smp_local_timer_ticks
 (braket
 l_int|1
 op_plus
@@ -57,6 +57,17 @@ id|local_irq_count
 id|NR_CPUS
 )braket
 suffix:semicolon
+macro_line|#ifdef __SMP__
+DECL|variable|__intel_bh_counter
+id|atomic_t
+id|__intel_bh_counter
+suffix:semicolon
+macro_line|#else
+DECL|variable|__intel_bh_counter
+r_int
+id|__intel_bh_counter
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef __SMP_PROF__
 DECL|variable|int_count
 r_static
@@ -906,6 +917,22 @@ id|len
 suffix:semicolon
 )brace
 macro_line|#ifdef __SMP_PROF__
+r_extern
+r_int
+r_int
+id|prof_multiplier
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|prof_counter
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
 DECL|function|get_smp_prof_list
 r_int
 id|get_smp_prof_list
@@ -956,7 +983,7 @@ l_int|0
 suffix:semicolon
 r_int
 r_int
-id|sum_apic_timer_ticks
+id|sum_local_timer_ticks
 op_assign
 l_int|0
 suffix:semicolon
@@ -1011,9 +1038,9 @@ id|smp_idle_count
 id|cpunum
 )braket
 suffix:semicolon
-id|sum_apic_timer_ticks
+id|sum_local_timer_ticks
 op_add_assign
-id|smp_apic_timer_ticks
+id|smp_local_timer_ticks
 (braket
 id|cpunum
 )braket
@@ -1508,7 +1535,7 @@ id|len
 comma
 l_string|&quot;TICK %10lu&quot;
 comma
-id|sum_apic_timer_ticks
+id|sum_local_timer_ticks
 )paren
 suffix:semicolon
 r_for
@@ -1536,7 +1563,7 @@ id|len
 comma
 l_string|&quot; %10lu&quot;
 comma
-id|smp_apic_timer_ticks
+id|smp_local_timer_ticks
 (braket
 id|cpu_logical_map
 (braket
@@ -1555,6 +1582,122 @@ op_plus
 id|len
 comma
 l_string|&quot;   local APIC timer ticks&bslash;n&quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;MULT:          &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot; %10u&quot;
+comma
+id|prof_multiplier
+(braket
+id|cpu_logical_map
+(braket
+id|i
+)braket
+)braket
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;   profiling multiplier&bslash;n&quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;COUNT:         &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot; %10u&quot;
+comma
+id|prof_counter
+(braket
+id|cpu_logical_map
+(braket
+id|i
+)braket
+)braket
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;   profiling counter&bslash;n&quot;
 )paren
 suffix:semicolon
 id|len
@@ -1592,9 +1735,7 @@ r_int
 id|global_irq_lock
 suffix:semicolon
 DECL|variable|global_irq_count
-r_int
-r_volatile
-r_int
+id|atomic_t
 id|global_irq_count
 suffix:semicolon
 DECL|macro|irq_active
@@ -1653,7 +1794,7 @@ mdefine_line|#define INIT_STUCK 100000000
 DECL|macro|STUCK
 macro_line|#undef STUCK
 DECL|macro|STUCK
-mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;wait_on_irq CPU#%d stuck at %08lx, waiting for %08lx (local=%d, global=%d)&bslash;n&quot;, cpu, where, previous_irqholder, local_count, global_irq_count); stuck = INIT_STUCK; }
+mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;wait_on_irq CPU#%d stuck at %08lx, waiting for %08lx (local=%d, global=%d)&bslash;n&quot;, cpu, where, previous_irqholder, local_count, atomic_read(&amp;global_irq_count)); stuck = INIT_STUCK; }
 DECL|function|wait_on_irq
 r_static
 r_inline
@@ -1688,7 +1829,12 @@ c_loop
 (paren
 id|local_count
 op_ne
+id|atomic_read
+c_func
+(paren
+op_amp
 id|global_irq_count
+)paren
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * No such luck. Now we need to release the lock,&n;&t;&t; * _and_ release our interrupt context, because&n;&t;&t; * otherwise we&squot;d have dead-locks and live-locks&n;&t;&t; * and other fun things.&n;&t;&t; */
@@ -1724,7 +1870,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|global_irq_count
+)paren
 )paren
 r_continue
 suffix:semicolon
@@ -1793,7 +1944,12 @@ c_cond
 (paren
 id|local_count
 op_ne
+id|atomic_read
+c_func
+(paren
+op_amp
 id|global_irq_count
+)paren
 )paren
 (brace
 multiline_comment|/* The stupid way to do this */
@@ -2081,7 +2237,6 @@ macro_line|#undef STUCK
 DECL|macro|STUCK
 mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;irq_enter stuck (irq=%d, cpu=%d, global=%d)&bslash;n&quot;,irq,cpu,global_irq_holder); stuck = INIT_STUCK;}
 DECL|function|irq_enter
-r_static
 r_inline
 r_void
 id|irq_enter
@@ -2144,16 +2299,8 @@ suffix:semicolon
 multiline_comment|/* nothing */
 suffix:semicolon
 )brace
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|intr_count
-)paren
-suffix:semicolon
 )brace
 DECL|function|irq_exit
-r_static
 r_inline
 r_void
 id|irq_exit
@@ -2171,13 +2318,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|atomic_dec
-c_func
-(paren
-op_amp
-id|intr_count
-)paren
-suffix:semicolon
 id|hardirq_exit
 c_func
 (paren
@@ -2193,9 +2333,9 @@ suffix:semicolon
 )brace
 macro_line|#else
 DECL|macro|irq_enter
-mdefine_line|#define irq_enter(cpu, irq)&t;(++intr_count)
+mdefine_line|#define irq_enter(cpu, irq)&t;(++local_irq_count[cpu])
 DECL|macro|irq_exit
-mdefine_line|#define irq_exit(cpu, irq)&t;(--intr_count)
+mdefine_line|#define irq_exit(cpu, irq)&t;(--local_irq_count[cpu])
 macro_line|#endif
 multiline_comment|/*&n; * do_IRQ handles IRQ&squot;s that have been installed without the&n; * SA_INTERRUPT flag: it uses the full signal-handling return&n; * and runs with other interrupts enabled. All relatively slow&n; * IRQ&squot;s should use this format: notably the keyboard/timer&n; * routines.&n; */
 DECL|function|do_IRQ

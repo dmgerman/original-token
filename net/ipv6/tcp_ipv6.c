@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.15 1997/03/18 18:24:56 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.20 1997/04/13 10:31:48 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -1937,9 +1937,14 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|sk-&gt;retransmits
-op_assign
+comma
 l_int|0
+)paren
 suffix:semicolon
 id|skb_queue_tail
 c_func
@@ -1950,8 +1955,12 @@ comma
 id|buff
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|sk-&gt;packets_out
-op_increment
+)paren
 suffix:semicolon
 id|buff-&gt;when
 op_assign
@@ -2460,18 +2469,6 @@ id|req
 )paren
 (brace
 r_struct
-id|tcp_v6_open_req
-op_star
-id|af_req
-op_assign
-(paren
-r_struct
-id|tcp_v6_open_req
-op_star
-)paren
-id|req
-suffix:semicolon
-r_struct
 id|tcp_opt
 op_star
 id|tp
@@ -2533,16 +2530,16 @@ suffix:semicolon
 id|fl.nl_u.ip6_u.daddr
 op_assign
 op_amp
-id|af_req-&gt;rmt_addr
+id|req-&gt;af.v6_req.rmt_addr
 suffix:semicolon
 id|fl.nl_u.ip6_u.saddr
 op_assign
 op_amp
-id|af_req-&gt;loc_addr
+id|req-&gt;af.v6_req.loc_addr
 suffix:semicolon
 id|fl.dev
 op_assign
-id|af_req-&gt;dev
+id|req-&gt;af.v6_req.dev
 suffix:semicolon
 id|fl.uli_u.ports.dport
 op_assign
@@ -2624,6 +2621,8 @@ id|ipv6hdr
 )paren
 )paren
 suffix:semicolon
+id|skb-&gt;h.th
+op_assign
 id|th
 op_assign
 (paren
@@ -2643,10 +2642,7 @@ id|tcphdr
 )paren
 )paren
 suffix:semicolon
-id|skb-&gt;h.th
-op_assign
-id|th
-suffix:semicolon
+multiline_comment|/* Yuck, make this header setup more efficient... -DaveM */
 id|memset
 c_func
 (paren
@@ -2725,6 +2721,7 @@ c_func
 id|tp-&gt;rcv_wnd
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME: csum_partial() of a four byte quantity is itself! -DaveM */
 id|ptr
 op_assign
 id|skb_put
@@ -2799,10 +2796,10 @@ op_plus
 id|TCPOLEN_MSS
 comma
 op_amp
-id|af_req-&gt;loc_addr
+id|req-&gt;af.v6_req.loc_addr
 comma
 op_amp
-id|af_req-&gt;rmt_addr
+id|req-&gt;af.v6_req.rmt_addr
 comma
 id|csum_partial
 c_func
@@ -2841,7 +2838,7 @@ comma
 op_amp
 id|fl
 comma
-id|af_req-&gt;opt
+id|req-&gt;af.v6_req.opt
 )paren
 suffix:semicolon
 id|dst_release
@@ -2904,14 +2901,12 @@ id|isn
 )paren
 (brace
 r_struct
-id|tcp_v6_open_req
-op_star
-id|af_req
-suffix:semicolon
-r_struct
 id|open_request
 op_star
 id|req
+suffix:semicolon
+id|__u16
+id|req_mss
 suffix:semicolon
 multiline_comment|/* If the socket is dead, don&squot;t accept the connection.&t;*/
 r_if
@@ -2989,24 +2984,17 @@ r_goto
 m_exit
 suffix:semicolon
 )brace
-id|af_req
+id|req
 op_assign
-id|kmalloc
+id|tcp_openreq_alloc
 c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|tcp_v6_open_req
-)paren
-comma
-id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|af_req
+id|req
 op_eq
 l_int|NULL
 )paren
@@ -3021,29 +3009,6 @@ suffix:semicolon
 id|sk-&gt;ack_backlog
 op_increment
 suffix:semicolon
-id|req
-op_assign
-(paren
-r_struct
-id|open_request
-op_star
-)paren
-id|af_req
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|af_req
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|tcp_v6_open_req
-)paren
-)paren
-suffix:semicolon
 id|req-&gt;rcv_isn
 op_assign
 id|skb-&gt;seq
@@ -3052,8 +3017,7 @@ id|req-&gt;snt_isn
 op_assign
 id|isn
 suffix:semicolon
-multiline_comment|/* mss */
-id|req-&gt;mss
+id|req_mss
 op_assign
 id|tcp_parse_options
 c_func
@@ -3065,11 +3029,15 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|req-&gt;mss
+id|req_mss
 )paren
-id|req-&gt;mss
+id|req_mss
 op_assign
 l_int|536
+suffix:semicolon
+id|req-&gt;mss
+op_assign
+id|req_mss
 suffix:semicolon
 id|req-&gt;rmt_port
 op_assign
@@ -3079,7 +3047,7 @@ id|ipv6_addr_copy
 c_func
 (paren
 op_amp
-id|af_req-&gt;rmt_addr
+id|req-&gt;af.v6_req.rmt_addr
 comma
 op_amp
 id|skb-&gt;nh.ipv6h-&gt;saddr
@@ -3089,24 +3057,36 @@ id|ipv6_addr_copy
 c_func
 (paren
 op_amp
-id|af_req-&gt;loc_addr
+id|req-&gt;af.v6_req.loc_addr
 comma
 op_amp
 id|skb-&gt;nh.ipv6h-&gt;daddr
 )paren
 suffix:semicolon
+id|req-&gt;af.v6_req.opt
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/* FIXME: options */
-multiline_comment|/* keep incoming device so that link locals have meaning */
-id|af_req-&gt;dev
+id|req-&gt;af.v6_req.dev
 op_assign
 id|skb-&gt;dev
 suffix:semicolon
+multiline_comment|/* So that link locals have meaning */
 id|req
 op_member_access_from_pointer
 r_class
 op_assign
 op_amp
 id|or_ipv6
+suffix:semicolon
+id|req-&gt;retrans
+op_assign
+l_int|0
+suffix:semicolon
+id|req-&gt;sk
+op_assign
+l_int|NULL
 suffix:semicolon
 id|tcp_v6_send_synack
 c_func
@@ -3257,18 +3237,6 @@ op_star
 id|req
 )paren
 (brace
-r_struct
-id|tcp_v6_open_req
-op_star
-id|af_req
-op_assign
-(paren
-r_struct
-id|tcp_v6_open_req
-op_star
-)paren
-id|req
-suffix:semicolon
 r_struct
 id|ipv6_pinfo
 op_star
@@ -3543,13 +3511,23 @@ id|newsk-&gt;pair
 op_assign
 l_int|NULL
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|newsk-&gt;wmem_alloc
-op_assign
+comma
 l_int|0
+)paren
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|newsk-&gt;rmem_alloc
-op_assign
+comma
 l_int|0
+)paren
 suffix:semicolon
 id|newsk-&gt;localroute
 op_assign
@@ -3630,13 +3608,23 @@ id|newsk-&gt;urg_data
 op_assign
 l_int|0
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|newsk-&gt;packets_out
-op_assign
+comma
 l_int|0
+)paren
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|newsk-&gt;retransmits
-op_assign
+comma
 l_int|0
+)paren
 suffix:semicolon
 id|newsk-&gt;linger
 op_assign
@@ -3713,7 +3701,7 @@ op_amp
 id|np-&gt;daddr
 comma
 op_amp
-id|af_req-&gt;rmt_addr
+id|req-&gt;af.v6_req.rmt_addr
 )paren
 suffix:semicolon
 id|ipv6_addr_copy
@@ -3723,7 +3711,7 @@ op_amp
 id|np-&gt;saddr
 comma
 op_amp
-id|af_req-&gt;loc_addr
+id|req-&gt;af.v6_req.loc_addr
 )paren
 suffix:semicolon
 id|ipv6_addr_copy
@@ -3733,12 +3721,12 @@ op_amp
 id|np-&gt;rcv_saddr
 comma
 op_amp
-id|af_req-&gt;loc_addr
+id|req-&gt;af.v6_req.loc_addr
 )paren
 suffix:semicolon
 id|np-&gt;oif
 op_assign
-id|af_req-&gt;dev
+id|req-&gt;af.v6_req.dev
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;options / mss / route cache&n;&t; */
 id|fl.proto
@@ -3793,7 +3781,7 @@ id|dst-&gt;error
 )paren
 id|newsk-&gt;mtu
 op_assign
-id|af_req-&gt;dev-&gt;mtu
+id|req-&gt;af.v6_req.dev-&gt;mtu
 suffix:semicolon
 r_else
 id|newsk-&gt;mtu
@@ -4179,12 +4167,10 @@ r_struct
 id|open_request
 op_star
 id|req
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;assumption: the socket is not in use.&n;&t; *&t;as we checked the user count on tcp_rcv and we&squot;re&n;&t; *&t;running from a soft interrupt.&n;&t; */
-id|req
 op_assign
 id|tp-&gt;syn_wait_queue
 suffix:semicolon
+multiline_comment|/*&t;assumption: the socket is not in use.&n;&t; *&t;as we checked the user count on tcp_rcv and we&squot;re&n;&t; *&t;running from a soft interrupt.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4196,20 +4182,6 @@ id|sk
 suffix:semicolon
 r_do
 (brace
-r_struct
-id|tcp_v6_open_req
-op_star
-id|af_req
-suffix:semicolon
-id|af_req
-op_assign
-(paren
-r_struct
-id|tcp_v6_open_req
-op_star
-)paren
-id|req
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4218,7 +4190,7 @@ id|ipv6_addr_cmp
 c_func
 (paren
 op_amp
-id|af_req-&gt;rmt_addr
+id|req-&gt;af.v6_req.rmt_addr
 comma
 op_amp
 id|skb-&gt;nh.ipv6h-&gt;saddr
@@ -4229,7 +4201,7 @@ id|ipv6_addr_cmp
 c_func
 (paren
 op_amp
-id|af_req-&gt;loc_addr
+id|req-&gt;af.v6_req.loc_addr
 comma
 op_amp
 id|skb-&gt;nh.ipv6h-&gt;daddr
@@ -4260,8 +4232,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* match */
-multiline_comment|/*&n;&t;&t;&t; *&t;Check for syn retransmission&n;&t;&t;&t; */
+multiline_comment|/* Check for syn retransmission */
 id|flg
 op_assign
 op_star
@@ -4310,7 +4281,7 @@ id|req-&gt;rcv_isn
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; *&t;retransmited syn&n;&t;&t;&t;&t; *&t;FIXME: must send an ack&n;&t;&t;&t;&t; */
+multiline_comment|/*&t;retransmited syn&n;&t;&t;&t;&t; *&t;FIXME: must send an ack&n;&t;&t;&t;&t; */
 r_return
 l_int|NULL
 suffix:semicolon
@@ -4370,15 +4341,15 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|req
-op_assign
-id|req-&gt;dl_next
-suffix:semicolon
 )brace
 r_while
 c_loop
 (paren
+(paren
 id|req
+op_assign
+id|req-&gt;dl_next
+)paren
 op_ne
 id|tp-&gt;syn_wait_queue
 )paren
@@ -5426,7 +5397,7 @@ op_assign
 l_int|8192
 suffix:semicolon
 multiline_comment|/* start with only sending one packet at a time. */
-id|sk-&gt;cong_window
+id|tp-&gt;snd_cwnd
 op_assign
 l_int|1
 suffix:semicolon

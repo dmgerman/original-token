@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bwtwo.c,v 1.10 1997/03/12 23:25:15 ecd Exp $&n; * bwtwo.c: bwtwo console driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: bwtwo.c,v 1.12 1997/04/10 03:02:40 davem Exp $&n; * bwtwo.c: bwtwo console driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -618,7 +618,8 @@ comma
 r_int
 id|slot
 comma
-id|uint
+r_int
+r_int
 id|bwtwo
 comma
 r_int
@@ -637,6 +638,9 @@ l_string|&quot;bwtwo%d at 0x%8.8x&bslash;n&quot;
 comma
 id|slot
 comma
+(paren
+id|uint
+)paren
 id|bwtwo
 )paren
 suffix:semicolon
@@ -673,12 +677,13 @@ op_assign
 id|sparc_alloc_io
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
+(paren
 id|bwtwo
 op_plus
 id|BWTWO_REGISTER_OFFSET
+)paren
 comma
 l_int|0
 comma
@@ -874,8 +879,7 @@ id|sparc_alloc_io
 c_func
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
 id|bwtwo
 comma

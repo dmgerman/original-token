@@ -4980,7 +4980,6 @@ id|ppa_hosts
 id|i
 )braket
 dot
-dot
 id|host
 op_assign
 id|hreg-&gt;host_no

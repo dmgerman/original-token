@@ -28,9 +28,6 @@ id|regs
 (brace
 r_char
 op_star
-id|cp
-comma
-op_star
 id|interp
 comma
 op_star

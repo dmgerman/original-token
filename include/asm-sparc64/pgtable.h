@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.13 1997/03/13 16:25:05 jj Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.27 1997/04/10 23:32:46 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
@@ -11,6 +11,7 @@ macro_line|#include &lt;asm/asi.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#ifndef __ASSEMBLY__
+macro_line|#include &lt;asm/sbus.h&gt;
 multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 DECL|macro|set_pte
 mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))
@@ -35,11 +36,18 @@ DECL|macro|PTRS_PER_PMD
 mdefine_line|#define PTRS_PER_PMD&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
 DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
+DECL|macro|PTE_TABLE_SIZE
+mdefine_line|#define PTE_TABLE_SIZE&t;0x2000&t;/* 1024 entries 8 bytes each */
+DECL|macro|PMD_TABLE_SIZE
+mdefine_line|#define PMD_TABLE_SIZE&t;0x2000&t;/* 1024 entries 8 bytes each */
+DECL|macro|PGD_TABLE_SIZE
+mdefine_line|#define PGD_TABLE_SIZE&t;0x2000&t;/* 1024 entries 8 bytes each */
 multiline_comment|/* the no. of pointers that fit on a page */
 DECL|macro|PTRS_PER_PAGE
 mdefine_line|#define PTRS_PER_PAGE&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
+multiline_comment|/* NOTE: TLB miss handlers depend heavily upon where this is. */
 DECL|macro|VMALLOC_START
-mdefine_line|#define VMALLOC_START&t;&t;0xFFFFFE0000000000UL
+mdefine_line|#define VMALLOC_START&t;&t;0xFFFFFc0000000000UL
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x)&t;((unsigned long)(x))
 macro_line|#endif /* !(__ASSEMBLY__) */
@@ -93,32 +101,34 @@ DECL|macro|_PAGE_READ
 mdefine_line|#define _PAGE_READ&t;0x0000000000000200&t;/* Readable SW Bit                    */
 DECL|macro|_PAGE_WRITE
 mdefine_line|#define _PAGE_WRITE&t;0x0000000000000100&t;/* Writable SW Bit                    */
+DECL|macro|_PAGE_PRIV
+mdefine_line|#define _PAGE_PRIV&t;0x0000000000000080&t;/* Software privilege bit&t;      */
 DECL|macro|_PAGE_CACHE
 mdefine_line|#define _PAGE_CACHE&t;(_PAGE_CP | _PAGE_CV)
 DECL|macro|__DIRTY_BITS
 mdefine_line|#define __DIRTY_BITS&t;(_PAGE_MODIFIED | _PAGE_WRITE | _PAGE_W)
 DECL|macro|__ACCESS_BITS
 mdefine_line|#define __ACCESS_BITS&t;(_PAGE_ACCESSED | _PAGE_READ | _PAGE_R)
-multiline_comment|/* David: Please FIXME these. I just define them somehow to get it compile. jj */
+DECL|macro|__PRIV_BITS
+mdefine_line|#define __PRIV_BITS&t;(_PAGE_P | _PAGE_PRIV)
 DECL|macro|PAGE_NONE
-mdefine_line|#define PAGE_NONE&t;__pgprot (_PAGE_VALID | _PAGE_CACHE | _PAGE_P | _PAGE_G | __ACCESS_BITS)
+mdefine_line|#define PAGE_NONE&t;__pgprot (_PAGE_PRESENT | _PAGE_VALID | _PAGE_CACHE | &bslash;&n;&t;&t;&t;&t;  __PRIV_BITS | __ACCESS_BITS)
 DECL|macro|PAGE_SHARED
-mdefine_line|#define PAGE_SHARED&t;__pgprot (_PAGE_VALID | _PAGE_CACHE | _PAGE_G | __ACCESS_BITS | _PAGE_W | _PAGE_WRITE)
+mdefine_line|#define PAGE_SHARED&t;__pgprot (_PAGE_PRESENT | _PAGE_VALID | _PAGE_CACHE | &bslash;&n;&t;&t;&t;&t;  __ACCESS_BITS | _PAGE_W | _PAGE_WRITE)
 DECL|macro|PAGE_COPY
-mdefine_line|#define PAGE_COPY&t;__pgprot (_PAGE_VALID | _PAGE_CACHE | __ACCESS_BITS)
+mdefine_line|#define PAGE_COPY&t;__pgprot (_PAGE_PRESENT | _PAGE_VALID | _PAGE_CACHE | &bslash;&n;&t;&t;&t;&t;  __ACCESS_BITS)
 DECL|macro|PAGE_READONLY
-mdefine_line|#define PAGE_READONLY&t;__pgprot (_PAGE_VALID | _PAGE_CACHE | __ACCESS_BITS)
+mdefine_line|#define PAGE_READONLY&t;__pgprot (_PAGE_PRESENT | _PAGE_VALID | _PAGE_CACHE | &bslash;&n;&t;&t;&t;&t;  __ACCESS_BITS)
 DECL|macro|PAGE_KERNEL
-mdefine_line|#define PAGE_KERNEL&t;__pgprot (_PAGE_VALID | _PAGE_CACHE | _PAGE_P | __ACCESS_BITS | __DIRTY_BITS)
+mdefine_line|#define PAGE_KERNEL&t;__pgprot (_PAGE_PRESENT | _PAGE_VALID | _PAGE_CACHE | &bslash;&n;&t;&t;&t;&t;  __PRIV_BITS | __ACCESS_BITS | __DIRTY_BITS)
 DECL|macro|PAGE_INVALID
 mdefine_line|#define PAGE_INVALID&t;__pgprot (0)
 DECL|macro|_PFN_MASK
 mdefine_line|#define _PFN_MASK&t;_PAGE_PADDR
 DECL|macro|_PAGE_CHG_MASK
-mdefine_line|#define _PAGE_CHG_MASK&t;(_PFN_MASK | _PAGE_MODIFIED | _PAGE_ACCESSED)
-multiline_comment|/* FIXME: Define this correctly to io page protection. Has to include side effects. */
+mdefine_line|#define _PAGE_CHG_MASK&t;(_PFN_MASK | _PAGE_MODIFIED | _PAGE_ACCESSED | _PAGE_PRESENT)
 DECL|macro|pg_iobits
-mdefine_line|#define pg_iobits (_PAGE_VALID | _PAGE_P | __ACCESS_BITS | _PAGE_E)
+mdefine_line|#define pg_iobits (_PAGE_VALID | __PRIV_BITS | __ACCESS_BITS | _PAGE_E)
 DECL|macro|__P000
 mdefine_line|#define __P000&t;PAGE_NONE
 DECL|macro|__P001
@@ -163,27 +173,63 @@ suffix:semicolon
 r_extern
 id|pmd_t
 op_star
-id|__bad_pagetable
+id|__bad_pmd
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
-r_int
-id|__zero_page
+id|pte_t
+op_star
+id|__bad_pte
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-DECL|macro|BAD_PAGETABLE
-mdefine_line|#define BAD_PAGETABLE&t;__bad_pagetable()
+DECL|macro|BAD_PMD
+mdefine_line|#define BAD_PMD&t;&t;__bad_pmd()
+DECL|macro|BAD_PTE
+mdefine_line|#define BAD_PTE&t;&t;__bad_pte()
 DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE&t;__bad_page()
+multiline_comment|/* First phsical page can be anywhere, the following is needed so that&n; * va--&gt;pa and vice versa conversions work properly without performance&n; * hit for all __pa()/__va() operations.&n; */
+r_extern
+r_int
+r_int
+id|phys_base
+suffix:semicolon
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE&t;PAGE_OFFSET
+mdefine_line|#define ZERO_PAGE&t;(PAGE_OFFSET + phys_base)
+multiline_comment|/* This is for making TLB miss faster to process. */
+r_extern
+r_int
+r_int
+id|null_pmd_table
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|null_pte_table
+suffix:semicolon
+multiline_comment|/* Allocate a block of RAM which is aligned to its size.&n;   This procedure can be used until the call to mem_init(). */
+r_extern
+r_void
+op_star
+id|sparc_init_alloc
+c_func
+(paren
+r_int
+r_int
+op_star
+id|kbrk
+comma
+r_int
+r_int
+id|size
+)paren
+suffix:semicolon
 multiline_comment|/* Cache and TLB flush operations. */
 multiline_comment|/* This is a bit tricky to do most efficiently.  The I-CACHE on the&n; * SpitFire will snoop stores from _other_ processors and changes done&n; * by DMA, but it does _not_ snoop stores on the local processor.&n; * Also, even if the I-CACHE snoops the store from someone else correctly,&n; * you can still lose if the instructions are in the pipeline already.&n; * A big issue is that this cache is only 16K in size, using a pseudo&n; * 2-set associative scheme.  A full flush of the cache is far too much&n; * for me to accept, especially since most of the time when we get to&n; * running this code the icache data we want to flush is not even in&n; * the cache.  Thus the following seems to be the best method.&n; */
 DECL|function|spitfire_flush_icache_page
@@ -316,6 +362,8 @@ id|PAGE_SIZE
 op_minus
 l_int|0x40
 )paren
+suffix:colon
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace
@@ -358,14 +406,6 @@ op_add_assign
 l_int|32
 )paren
 (brace
-id|spitfire_put_dcache_tag
-c_func
-(paren
-id|addr
-comma
-l_int|0x0UL
-)paren
-suffix:semicolon
 id|spitfire_put_icache_tag
 c_func
 (paren
@@ -439,14 +479,6 @@ op_add_assign
 l_int|32
 )paren
 (brace
-id|spitfire_put_dcache_tag
-c_func
-(paren
-id|addr
-comma
-l_int|0x0UL
-)paren
-suffix:semicolon
 id|spitfire_put_icache_tag
 c_func
 (paren
@@ -462,7 +494,6 @@ l_string|&quot;#Sync&quot;
 )paren
 suffix:semicolon
 )brace
-)brace
 multiline_comment|/* Kill the pipeline. */
 id|flushi
 c_func
@@ -470,6 +501,7 @@ c_func
 id|PAGE_OFFSET
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|flush_cache_range
 r_extern
@@ -583,47 +615,57 @@ c_cond
 id|mm-&gt;context
 op_ne
 id|NO_CONTEXT
-op_logical_and
-(paren
-id|vma-&gt;vm_flags
-op_amp
-id|VM_EXEC
-)paren
 )paren
 (brace
 r_int
-id|ctx
-suffix:semicolon
-id|ctx
-op_assign
-id|spitfire_get_primary_context
-c_func
-(paren
-)paren
+r_int
+id|addr
 suffix:semicolon
 id|flushw_user
 c_func
 (paren
 )paren
 suffix:semicolon
-id|spitfire_set_primary_context
-c_func
+r_for
+c_loop
 (paren
-id|mm-&gt;context
+id|addr
+op_assign
+l_int|0
+suffix:semicolon
+id|addr
+OL
+(paren
+id|PAGE_SIZE
+op_lshift
+l_int|1
 )paren
 suffix:semicolon
-id|spitfire_flush_icache_page
+id|addr
+op_add_assign
+l_int|32
+)paren
+(brace
+id|spitfire_put_icache_tag
 c_func
 (paren
-id|page
-op_amp
-id|PAGE_MASK
+id|addr
+comma
+l_int|0x0UL
 )paren
 suffix:semicolon
-id|spitfire_set_primary_context
+id|membar
 c_func
 (paren
-id|ctx
+l_string|&quot;#Sync&quot;
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Kill the pipeline. */
+id|flushi
+c_func
+(paren
+id|PAGE_OFFSET
 )paren
 suffix:semicolon
 )brace
@@ -642,9 +684,44 @@ r_void
 )paren
 (brace
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|entry
 suffix:semicolon
 multiline_comment|/* Invalidate all non-locked TTE&squot;s in both the dtlb and itlb. */
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stxa&t;%%g0, [%0] %1&bslash;n&bslash;t&quot;
+l_string|&quot;stxa&t;%%g0, [%0] %2&quot;
+suffix:colon
+multiline_comment|/* No outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|TLB_TAG_ACCESS
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_IMMU
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -654,43 +731,10 @@ l_int|0
 suffix:semicolon
 id|entry
 OL
-l_int|64
+l_int|62
 suffix:semicolon
 id|entry
 op_increment
-)paren
-(brace
-r_int
-r_int
-id|dtag
-comma
-id|itag
-suffix:semicolon
-id|dtag
-op_assign
-id|spitfire_get_dtlb_data
-c_func
-(paren
-id|entry
-)paren
-suffix:semicolon
-id|itag
-op_assign
-id|spitfire_get_itlb_data
-c_func
-(paren
-id|entry
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|dtag
-op_amp
-id|_PAGE_L
-)paren
 )paren
 (brace
 id|spitfire_put_dtlb_data
@@ -701,18 +745,6 @@ comma
 l_int|0x0UL
 )paren
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|itag
-op_amp
-id|_PAGE_L
-)paren
-)paren
-(brace
 id|spitfire_put_itlb_data
 c_func
 (paren
@@ -722,7 +754,24 @@ l_int|0x0UL
 )paren
 suffix:semicolon
 )brace
-)brace
+id|membar
+c_func
+(paren
+l_string|&quot;#Sync&quot;
+)paren
+suffix:semicolon
+id|flushi
+c_func
+(paren
+id|PAGE_OFFSET
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 DECL|function|flush_tlb_mm
 r_extern
@@ -745,6 +794,25 @@ op_ne
 id|NO_CONTEXT
 )paren
 (brace
+r_int
+r_int
+id|orig_ctx
+op_assign
+id|spitfire_get_secondary_context
+c_func
+(paren
+)paren
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|spitfire_set_secondary_context
 c_func
 (paren
@@ -759,6 +827,18 @@ suffix:semicolon
 id|spitfire_flush_itlb_secondary_context
 c_func
 (paren
+)paren
+suffix:semicolon
+id|spitfire_set_secondary_context
+c_func
+(paren
+id|orig_ctx
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -792,9 +872,28 @@ op_ne
 id|NO_CONTEXT
 )paren
 (brace
+r_int
+r_int
+id|old_ctx
+op_assign
+id|spitfire_get_secondary_context
+c_func
+(paren
+)paren
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|start
 op_and_assign
 id|PAGE_MASK
+suffix:semicolon
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|spitfire_set_secondary_context
 c_func
@@ -827,6 +926,18 @@ op_add_assign
 id|PAGE_SIZE
 suffix:semicolon
 )brace
+id|spitfire_set_secondary_context
+c_func
+(paren
+id|old_ctx
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 )brace
 DECL|function|flush_tlb_page
@@ -861,9 +972,28 @@ op_ne
 id|NO_CONTEXT
 )paren
 (brace
+r_int
+r_int
+id|old_ctx
+op_assign
+id|spitfire_get_secondary_context
+c_func
+(paren
+)paren
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|page
 op_and_assign
 id|PAGE_MASK
+suffix:semicolon
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|spitfire_set_secondary_context
 c_func
@@ -892,6 +1022,18 @@ c_func
 id|page
 )paren
 suffix:semicolon
+id|spitfire_set_secondary_context
+c_func
+(paren
+id|old_ctx
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 )brace
 DECL|function|mk_pte
@@ -913,10 +1055,10 @@ r_return
 id|__pte
 c_func
 (paren
+id|__pa
+c_func
 (paren
 id|page
-op_minus
-id|PAGE_OFFSET
 )paren
 op_or
 id|pgprot_val
@@ -1019,6 +1161,8 @@ op_star
 id|pmdp
 )paren
 op_assign
+id|__pa
+c_func
 (paren
 (paren
 r_int
@@ -1026,8 +1170,6 @@ r_int
 )paren
 id|ptep
 )paren
-op_minus
-id|PAGE_OFFSET
 suffix:semicolon
 )brace
 DECL|function|pgd_set
@@ -1053,6 +1195,8 @@ op_star
 id|pgdp
 )paren
 op_assign
+id|__pa
+c_func
 (paren
 (paren
 r_int
@@ -1060,8 +1204,6 @@ r_int
 )paren
 id|pmdp
 )paren
-op_minus
-id|PAGE_OFFSET
 suffix:semicolon
 )brace
 DECL|function|pte_page
@@ -1077,8 +1219,13 @@ id|pte
 )paren
 (brace
 r_return
-id|PAGE_OFFSET
-op_plus
+(paren
+r_int
+r_int
+)paren
+id|__va
+c_func
+(paren
 (paren
 id|pte_val
 c_func
@@ -1087,6 +1234,7 @@ id|pte
 )paren
 op_amp
 id|_PFN_MASK
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1104,13 +1252,17 @@ id|pmd
 (brace
 r_return
 (paren
+r_int
+r_int
+)paren
+id|__va
+c_func
+(paren
 id|pmd_val
 c_func
 (paren
 id|pmd
 )paren
-op_plus
-id|PAGE_OFFSET
 )paren
 suffix:semicolon
 )brace
@@ -1128,13 +1280,17 @@ id|pgd
 (brace
 r_return
 (paren
+r_int
+r_int
+)paren
+id|__va
+c_func
+(paren
 id|pgd_val
 c_func
 (paren
 id|pgd
 )paren
-op_plus
-id|PAGE_OFFSET
 )paren
 suffix:semicolon
 )brace
@@ -1213,12 +1369,13 @@ id|pmd
 )paren
 (brace
 r_return
-op_logical_neg
 id|pmd_val
 c_func
 (paren
 id|pmd
 )paren
+op_eq
+id|null_pte_table
 suffix:semicolon
 )brace
 DECL|function|pmd_bad
@@ -1262,6 +1419,8 @@ c_func
 (paren
 id|pmd
 )paren
+op_ne
+id|null_pte_table
 suffix:semicolon
 )brace
 DECL|function|pmd_clear
@@ -1283,7 +1442,7 @@ op_star
 id|pmdp
 )paren
 op_assign
-l_int|0
+id|null_pte_table
 suffix:semicolon
 )brace
 DECL|function|pgd_none
@@ -1298,12 +1457,13 @@ id|pgd
 )paren
 (brace
 r_return
-op_logical_neg
 id|pgd_val
 c_func
 (paren
 id|pgd
 )paren
+op_eq
+id|null_pmd_table
 suffix:semicolon
 )brace
 DECL|function|pgd_bad
@@ -1347,6 +1507,8 @@ c_func
 (paren
 id|pgd
 )paren
+op_ne
+id|null_pmd_table
 suffix:semicolon
 )brace
 DECL|function|pgd_clear
@@ -1368,7 +1530,7 @@ op_star
 id|pgdp
 )paren
 op_assign
-l_int|0
+id|null_pmd_table
 suffix:semicolon
 )brace
 multiline_comment|/* The following only work if pte_present() is true.&n; * Undefined behaviour if not..&n; */
@@ -1686,7 +1848,9 @@ c_func
 id|pte
 )paren
 op_or
+(paren
 id|_PAGE_MODIFIED
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1742,7 +1906,9 @@ c_func
 id|pte
 )paren
 op_or
+(paren
 id|_PAGE_ACCESSED
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1775,15 +1941,11 @@ l_string|&quot;o5&quot;
 suffix:semicolon
 id|paddr
 op_assign
+id|__pa
+c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|pgdir
 )paren
-op_minus
-id|PAGE_OFFSET
 suffix:semicolon
 r_if
 c_cond
@@ -1833,11 +1995,16 @@ comma
 op_mod
 op_mod
 id|pstate
-l_string|&quot; : : &quot;
-id|r
-l_string|&quot; (paddr), &quot;
-id|i
 "&quot;"
+suffix:colon
+multiline_comment|/* No outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|paddr
+)paren
+comma
+l_string|&quot;i&quot;
 (paren
 id|PSTATE_MG
 op_or
@@ -1979,6 +2146,43 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+DECL|function|__init_pmd
+r_extern
+id|__inline__
+r_void
+id|__init_pmd
+c_func
+(paren
+id|pmd_t
+op_star
+id|pmdp
+)paren
+(brace
+r_extern
+r_void
+id|__bfill64
+c_func
+(paren
+r_void
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+id|__bfill64
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|pmdp
+comma
+id|null_pte_table
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Allocate and free page tables. The xxx_kernel() versions are&n; * used to allocate a kernel page table - this turns on supervisor&n; * bits if any.&n; */
 DECL|function|pte_free_kernel
 r_extern
@@ -2095,11 +2299,7 @@ c_func
 (paren
 id|pmd
 comma
-(paren
-id|pte_t
-op_star
-)paren
-id|BAD_PAGETABLE
+id|BAD_PTE
 )paren
 suffix:semicolon
 r_return
@@ -2146,11 +2346,7 @@ c_func
 (paren
 id|pmd
 comma
-(paren
-id|pte_t
-op_star
-)paren
-id|BAD_PAGETABLE
+id|BAD_PTE
 )paren
 suffix:semicolon
 r_return
@@ -2268,6 +2464,12 @@ c_cond
 id|page
 )paren
 (brace
+id|__init_pmd
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|pgd_set
 c_func
 (paren
@@ -2287,7 +2489,7 @@ c_func
 (paren
 id|pgd
 comma
-id|BAD_PAGETABLE
+id|BAD_PMD
 )paren
 suffix:semicolon
 r_return
@@ -2334,7 +2536,7 @@ c_func
 (paren
 id|pgd
 comma
-id|BAD_PAGETABLE
+id|BAD_PMD
 )paren
 suffix:semicolon
 r_return
@@ -2471,11 +2673,7 @@ c_func
 (paren
 id|pmd
 comma
-(paren
-id|pte_t
-op_star
-)paren
-id|BAD_PAGETABLE
+id|BAD_PTE
 )paren
 suffix:semicolon
 r_return
@@ -2522,11 +2720,7 @@ c_func
 (paren
 id|pmd
 comma
-(paren
-id|pte_t
-op_star
-)paren
-id|BAD_PAGETABLE
+id|BAD_PTE
 )paren
 suffix:semicolon
 r_return
@@ -2644,6 +2838,12 @@ c_cond
 id|page
 )paren
 (brace
+id|__init_pmd
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|pgd_set
 c_func
 (paren
@@ -2663,7 +2863,7 @@ c_func
 (paren
 id|pgd
 comma
-id|BAD_PAGETABLE
+id|BAD_PMD
 )paren
 suffix:semicolon
 r_return
@@ -2710,7 +2910,7 @@ c_func
 (paren
 id|pgd
 comma
-id|BAD_PAGETABLE
+id|BAD_PMD
 )paren
 suffix:semicolon
 r_return
@@ -2766,16 +2966,51 @@ c_func
 r_void
 )paren
 (brace
-r_return
+r_extern
+r_void
+id|__bfill64
+c_func
+(paren
+r_void
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+id|pgd_t
+op_star
+id|pgd
+op_assign
 (paren
 id|pgd_t
 op_star
 )paren
-id|get_free_page
+id|__get_free_page
 c_func
 (paren
 id|GFP_KERNEL
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pgd
+)paren
+id|__bfill64
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|pgd
+comma
+id|null_pmd_table
+)paren
+suffix:semicolon
+r_return
+id|pgd
 suffix:semicolon
 )brace
 r_extern
@@ -2785,6 +3020,75 @@ id|swapper_pg_dir
 l_int|1024
 )braket
 suffix:semicolon
+multiline_comment|/* Routines for getting a dvma scsi buffer. */
+DECL|struct|mmu_sglist
+r_struct
+id|mmu_sglist
+(brace
+DECL|member|addr
+r_char
+op_star
+id|addr
+suffix:semicolon
+DECL|member|__dont_touch
+r_char
+op_star
+id|__dont_touch
+suffix:semicolon
+DECL|member|len
+r_int
+r_int
+id|len
+suffix:semicolon
+DECL|member|dvma_addr
+id|__u32
+id|dvma_addr
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+id|__u32
+id|mmu_get_scsi_one
+c_func
+(paren
+r_char
+op_star
+comma
+r_int
+r_int
+comma
+r_struct
+id|linux_sbus
+op_star
+id|sbus
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|mmu_get_scsi_sgl
+c_func
+(paren
+r_struct
+id|mmu_sglist
+op_star
+comma
+r_int
+comma
+r_struct
+id|linux_sbus
+op_star
+id|sbus
+)paren
+suffix:semicolon
+multiline_comment|/* These do nothing with the way I have things setup. */
+DECL|macro|mmu_release_scsi_one
+mdefine_line|#define mmu_release_scsi_one(vaddr, len, sbus)&t;do { } while(0)
+DECL|macro|mmu_release_scsi_sgl
+mdefine_line|#define mmu_release_scsi_sgl(sg, sz, sbus)&t;do { } while(0)
+DECL|macro|mmu_lockarea
+mdefine_line|#define mmu_lockarea(vaddr, len)&t;&t;(vaddr)
+DECL|macro|mmu_unlockarea
+mdefine_line|#define mmu_unlockarea(vaddr, len)&t;&t;do { } while(0)
 DECL|function|update_mmu_cache
 r_extern
 r_inline
@@ -3172,12 +3476,18 @@ id|pte
 op_assign
 (paren
 id|type
+op_lshift
+id|PAGE_SHIFT
 )paren
 op_or
 (paren
 id|offset
 op_lshift
+(paren
+id|PAGE_SHIFT
+op_plus
 l_int|8
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -3201,7 +3511,6 @@ comma
 r_int
 id|space
 )paren
-multiline_comment|/* FIXME. How is space added to the address??? */
 (brace
 id|pte_t
 id|pte
@@ -3227,124 +3536,11 @@ id|pte
 suffix:semicolon
 )brace
 DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry)&t;&t;(((entry) &amp; 0xff))
+mdefine_line|#define SWP_TYPE(entry)&t;&t;(((entry&gt;&gt;PAGE_SHIFT) &amp; 0xff))
 DECL|macro|SWP_OFFSET
-mdefine_line|#define SWP_OFFSET(entry)&t;((entry) &gt;&gt; 8)
+mdefine_line|#define SWP_OFFSET(entry)&t;((entry) &gt;&gt; (PAGE_SHIFT+8))
 DECL|macro|SWP_ENTRY
 mdefine_line|#define SWP_ENTRY(type,offset)&t;pte_val(mk_swap_pte((type),(offset)))
-DECL|struct|ctx_list
-r_struct
-id|ctx_list
-(brace
-DECL|member|next
-r_struct
-id|ctx_list
-op_star
-id|next
-suffix:semicolon
-DECL|member|prev
-r_struct
-id|ctx_list
-op_star
-id|prev
-suffix:semicolon
-DECL|member|ctx_number
-r_int
-r_int
-id|ctx_number
-suffix:semicolon
-DECL|member|ctx_mm
-r_struct
-id|mm_struct
-op_star
-id|ctx_mm
-suffix:semicolon
-)brace
-suffix:semicolon
-r_extern
-r_struct
-id|ctx_list
-op_star
-id|ctx_list_pool
-suffix:semicolon
-multiline_comment|/* Dynamically allocated */
-r_extern
-r_struct
-id|ctx_list
-id|ctx_free
-suffix:semicolon
-multiline_comment|/* Head of free list */
-r_extern
-r_struct
-id|ctx_list
-id|ctx_used
-suffix:semicolon
-multiline_comment|/* Head of used contexts list */
-DECL|macro|NO_CONTEXT
-mdefine_line|#define NO_CONTEXT     -1
-DECL|function|remove_from_ctx_list
-r_extern
-id|__inline__
-r_void
-id|remove_from_ctx_list
-c_func
-(paren
-r_struct
-id|ctx_list
-op_star
-id|entry
-)paren
-(brace
-id|entry-&gt;next-&gt;prev
-op_assign
-id|entry-&gt;prev
-suffix:semicolon
-id|entry-&gt;prev-&gt;next
-op_assign
-id|entry-&gt;next
-suffix:semicolon
-)brace
-DECL|function|add_to_ctx_list
-r_extern
-id|__inline__
-r_void
-id|add_to_ctx_list
-c_func
-(paren
-r_struct
-id|ctx_list
-op_star
-id|head
-comma
-r_struct
-id|ctx_list
-op_star
-id|entry
-)paren
-(brace
-id|entry-&gt;next
-op_assign
-id|head
-suffix:semicolon
-(paren
-id|entry-&gt;prev
-op_assign
-id|head-&gt;prev
-)paren
-op_member_access_from_pointer
-id|next
-op_assign
-id|entry
-suffix:semicolon
-id|head-&gt;prev
-op_assign
-id|entry
-suffix:semicolon
-)brace
-DECL|macro|add_to_free_ctxlist
-mdefine_line|#define add_to_free_ctxlist(entry) add_to_ctx_list(&amp;ctx_free, entry)
-DECL|macro|add_to_used_ctxlist
-mdefine_line|#define add_to_used_ctxlist(entry) add_to_ctx_list(&amp;ctx_used, entry)
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(_SPARC64_PGTABLE_H) */
 eof

@@ -2346,7 +2346,12 @@ multiline_comment|/*&n; * Hack! You might want to play with commenting away the 
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;rmem_alloc
+)paren
 op_ge
 id|sk-&gt;rcvbuf
 op_minus
@@ -2365,7 +2370,12 @@ c_func
 (paren
 id|sk-&gt;rcvbuf
 op_minus
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sk-&gt;rmem_alloc
+)paren
 )paren
 op_div
 l_int|2

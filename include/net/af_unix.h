@@ -72,7 +72,7 @@ r_struct
 id|unix_address
 (brace
 DECL|member|refcnt
-r_int
+id|atomic_t
 id|refcnt
 suffix:semicolon
 DECL|member|len

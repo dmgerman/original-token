@@ -48,10 +48,12 @@ id|new_hae
 r_int
 r_int
 id|ipl
-op_assign
+suffix:semicolon
 id|swpipl
 c_func
 (paren
+id|ipl
+comma
 l_int|7
 )paren
 suffix:semicolon

@@ -130,9 +130,10 @@ id|sysctl_arp_dead_res_time
 op_assign
 id|ARP_DEAD_RES_TIME
 suffix:semicolon
+multiline_comment|/* This should be completely nuked... -DaveM */
 macro_line|#if RT_CACHE_DEBUG &gt;= 1
 DECL|macro|ASSERT_BH
-mdefine_line|#define ASSERT_BH() if (!intr_count) printk(KERN_CRIT __FUNCTION__ &quot; called from SPL=0&bslash;n&quot;);
+mdefine_line|#define ASSERT_BH() if (!in_interrupt()) printk(KERN_CRIT __FUNCTION__ &quot; called from SPL=0&bslash;n&quot;);
 macro_line|#else
 DECL|macro|ASSERT_BH
 mdefine_line|#define ASSERT_BH()
@@ -169,14 +170,14 @@ r_static
 id|atomic_t
 id|arp_size
 op_assign
-l_int|0
+id|ATOMIC_INIT
 suffix:semicolon
 DECL|variable|arp_unres_size
 r_static
 id|atomic_t
 id|arp_unres_size
 op_assign
-l_int|0
+id|ATOMIC_INIT
 suffix:semicolon
 macro_line|#ifdef CONFIG_ARPD
 DECL|variable|arpd_not_running
@@ -783,13 +784,13 @@ id|ha
 id|memcpy
 c_func
 (paren
-id|arpreq-&gt;u.neigh.ha
+id|arpreq-&gt;ha
 comma
 id|ha
 comma
 r_sizeof
 (paren
-id|arpreq-&gt;u.neigh.ha
+id|arpreq-&gt;ha
 )paren
 )paren
 suffix:semicolon
@@ -1086,7 +1087,7 @@ c_func
 (paren
 id|retreq-&gt;ip
 comma
-id|retreq-&gt;u.neigh.ha
+id|retreq-&gt;ha
 comma
 id|dev
 comma
@@ -1192,6 +1193,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_static
+r_int
 id|last_index
 suffix:semicolon
 r_if
@@ -1265,7 +1267,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
 id|entry-&gt;u.neigh.refcnt
+)paren
 op_logical_and
 id|now
 op_minus
@@ -1296,7 +1303,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|arp_size
+)paren
 OL
 id|ARP_MAXSIZE
 )paren
@@ -1310,7 +1322,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
 id|entry-&gt;u.neigh.refcnt
+)paren
 op_logical_and
 id|entry-&gt;u.neigh.lastused
 OL
@@ -1476,7 +1493,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
 id|entry-&gt;u.neigh.refcnt
+)paren
 )paren
 (brace
 macro_line|#if RT_CACHE_DEBUG &gt;= 2
@@ -1617,7 +1639,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
 id|entry-&gt;u.neigh.refcnt
+)paren
 op_logical_and
 id|now
 op_minus
@@ -1886,7 +1913,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|entry-&gt;u.neigh.refcnt
+)paren
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; *&t;The host is dead, but someone refers to it.&n;&t;&t; *&t;It is useless to drop this entry just now,&n;&t;&t; *&t;it will be born again, so that&n;&t;&t; *&t;we keep it, but slow down retransmitting&n;&t;&t; *&t;to ARP_DEAD_RES_TIME.&n;&t;&t; */
@@ -2069,7 +2101,12 @@ c_cond
 (paren
 id|how
 op_logical_and
+id|atomic_read
+c_func
+(paren
+op_amp
 id|arp_size
+)paren
 op_ge
 id|ARP_MAXSIZE
 )paren
@@ -2085,7 +2122,12 @@ id|how
 OG
 l_int|1
 op_logical_and
+id|atomic_read
+c_func
+(paren
+op_amp
 id|arp_unres_size
+)paren
 op_ge
 id|ARP_MAX_UNRES
 )paren
@@ -2098,7 +2140,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|arp_unres_size
+)paren
 op_ge
 id|ARP_MAX_UNRES
 )paren
@@ -2109,7 +2156,12 @@ c_func
 id|KERN_DEBUG
 l_string|&quot;arp_unres_size=%d&bslash;n&quot;
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|arp_unres_size
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2137,9 +2189,14 @@ op_amp
 id|arp_neigh_ops
 )paren
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|entry-&gt;u.neigh.refcnt
-op_assign
+comma
 l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -6100,7 +6157,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
 id|entry-&gt;u.neigh.refcnt
+)paren
 )paren
 (brace
 id|arp_free
@@ -6803,12 +6865,22 @@ id|entry-&gt;u.neigh.dev-&gt;name
 suffix:colon
 l_string|&quot;*&quot;
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|entry-&gt;u.neigh.refcnt
+)paren
 comma
 id|entry-&gt;u.neigh.hh
 ques
 c_cond
+id|atomic_read
+c_func
+(paren
+op_amp
 id|entry-&gt;u.neigh.hh-&gt;hh_refcnt
+)paren
 suffix:colon
 op_minus
 l_int|1

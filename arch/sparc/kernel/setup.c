@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.82 1997/03/08 08:27:04 ecd Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.83 1997/04/01 02:21:49 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -32,6 +33,9 @@ macro_line|#include &lt;asm/vaddrs.h&gt;
 macro_line|#include &lt;asm/kdebug.h&gt;
 macro_line|#include &lt;asm/mbus.h&gt;
 macro_line|#include &lt;asm/idprom.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;asm/softirq.h&gt;
+macro_line|#include &lt;asm/hardirq.h&gt;
 DECL|variable|screen_info
 r_struct
 id|screen_info
@@ -152,7 +156,27 @@ id|prom_tbr
 comma
 id|flags
 suffix:semicolon
-id|save_and_cli
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#ifdef __SMP__
+id|global_irq_holder
+op_assign
+id|NO_PROC_ID
+suffix:semicolon
+id|global_irq_lock
+op_assign
+id|global_bh_lock
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+id|__save_and_cli
 c_func
 (paren
 id|flags
@@ -212,7 +236,7 @@ op_ne
 l_int|0
 )paren
 (brace
-id|sti
+id|__sti
 c_func
 (paren
 )paren
@@ -222,7 +246,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -250,7 +274,7 @@ id|prom_tbr
 )paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags

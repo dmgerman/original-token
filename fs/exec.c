@@ -76,6 +76,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_BINFMT_ELF32
+id|init_elf32_binfmt
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BINFMT_AOUT
 id|init_aout_binfmt
 c_func

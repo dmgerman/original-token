@@ -1,4 +1,4 @@
-multiline_comment|/* $Id */
+multiline_comment|/* $Id: lsu.h,v 1.2 1997/04/04 00:50:22 davem Exp $ */
 macro_line|#ifndef _SPARC64_LSU_H
 DECL|macro|_SPARC64_LSU_H
 mdefine_line|#define _SPARC64_LSU_H

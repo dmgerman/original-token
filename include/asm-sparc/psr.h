@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: psr.h,v 1.13 1996/12/10 06:06:36 davem Exp $&n; * psr.h: This file holds the macros for masking off various parts of&n; *        the processor status register on the Sparc. This is valid&n; *        for Version 8. On the V9 this is renamed to the PSTATE&n; *        register and its members are accessed as fields like&n; *        PSTATE.PRIV for the current CPU privilege level.&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: psr.h,v 1.14 1997/04/11 00:42:19 davem Exp $&n; * psr.h: This file holds the macros for masking off various parts of&n; *        the processor status register on the Sparc. This is valid&n; *        for Version 8. On the V9 this is renamed to the PSTATE&n; *        register and its members are accessed as fields like&n; *        PSTATE.PRIV for the current CPU privilege level.&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __LINUX_SPARC_PSR_H
 DECL|macro|__LINUX_SPARC_PSR_H
 mdefine_line|#define __LINUX_SPARC_PSR_H
@@ -122,6 +122,8 @@ id|new_psr
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace

@@ -1684,10 +1684,6 @@ r_int
 r_char
 id|ch
 comma
-r_int
-r_char
-id|status
-comma
 r_struct
 id|pt_regs
 op_star
@@ -1759,8 +1755,6 @@ id|sunkbd_inchar
 id|last_keycode
 comma
 l_int|0
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|del_timer
@@ -1805,10 +1799,6 @@ c_func
 r_int
 r_char
 id|ch
-comma
-r_int
-r_char
-id|status
 comma
 r_struct
 id|pt_regs
@@ -6218,6 +6208,7 @@ op_decrement
 id|kbd_active
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_if
 c_cond

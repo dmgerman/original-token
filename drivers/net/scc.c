@@ -27,6 +27,7 @@ macro_line|#undef&t;SCC_DEBUG
 DECL|macro|DEFAULT_CLOCK
 mdefine_line|#define DEFAULT_CLOCK&t;4915200 /* default pclock if nothing is specified */
 multiline_comment|/* ----------------------------------------------------------------------- */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;

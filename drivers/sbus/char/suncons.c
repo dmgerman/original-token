@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: suncons.c,v 1.53 1997/03/15 07:47:50 davem Exp $&n; *&n; * suncons.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Peter Zaitcev (zaitcev@lab.ipmce.su)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; *&n; * Added font loading Nov/21, Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Added render_screen and faster scrolling Nov/27, miguel&n; * Added console palette code for cg6 Dec/13/95, miguel&n; * Added generic frame buffer support Dec/14/95, miguel&n; * Added cgsix and bwtwo drivers Jan/96, miguel&n; * Added 4m, and cg3 driver Feb/96, miguel&n; * Fixed the cursor on color displays Feb/96, miguel.&n; * Cleaned up the detection code, generic 8bit depth display &n; *   code, Mar/96 miguel&n; * Hacked support for cg14 video cards -- Apr/96, miguel.&n; * Color support for cg14 video cards -- May/96, miguel.&n; * Code split, Dave Redman, May/96&n; * Be more VT change friendly, May/96, miguel.&n; * Support for hw cursor and graphics acceleration, Jun/96, jj.&n; * Added TurboGX+ detection (cgthree+), Aug/96, Iain Lea (iain@sbs.de)&n; * Added TCX support (8/24bit), Aug/96, jj.&n; * Support for multiple framebuffers, Sep/96, jj.&n; * Fix bwtwo inversion and handle inverse monochrome cells in&n; *   sun_blitc, Nov/96, ecd.&n; * Fix sun_blitc and screen size on displays other than 1152x900, &n; *   128x54 chars, Nov/96, jj.&n; * Fix cursor spots left on some non-accelerated fbs, changed&n; *   software cursor to be like the hw one, Nov/96, jj.&n; * &n; * Much of this driver is derived from the DEC TGA driver by&n; * Jay Estabrook who has done a nice job with the console&n; * driver abstraction btw.&n; *&n; * We try to make everything a power of two if possible to&n; * speed up the bit blit.  Doing multiplies, divides, and&n; * remainder routines end up calling software library routines&n; * since not all Sparcs have the hardware to do it.&n; *&n; * TODO:&n; * do not blank the screen when frame buffer is mapped.&n; *&n; */
+multiline_comment|/* $Id: suncons.c,v 1.58 1997/04/04 00:50:04 davem Exp $&n; *&n; * suncons.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Peter Zaitcev (zaitcev@lab.ipmce.su)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; *&n; * Added font loading Nov/21, Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Added render_screen and faster scrolling Nov/27, miguel&n; * Added console palette code for cg6 Dec/13/95, miguel&n; * Added generic frame buffer support Dec/14/95, miguel&n; * Added cgsix and bwtwo drivers Jan/96, miguel&n; * Added 4m, and cg3 driver Feb/96, miguel&n; * Fixed the cursor on color displays Feb/96, miguel.&n; * Cleaned up the detection code, generic 8bit depth display &n; *   code, Mar/96 miguel&n; * Hacked support for cg14 video cards -- Apr/96, miguel.&n; * Color support for cg14 video cards -- May/96, miguel.&n; * Code split, Dave Redman, May/96&n; * Be more VT change friendly, May/96, miguel.&n; * Support for hw cursor and graphics acceleration, Jun/96, jj.&n; * Added TurboGX+ detection (cgthree+), Aug/96, Iain Lea (iain@sbs.de)&n; * Added TCX support (8/24bit), Aug/96, jj.&n; * Support for multiple framebuffers, Sep/96, jj.&n; * Fix bwtwo inversion and handle inverse monochrome cells in&n; *   sun_blitc, Nov/96, ecd.&n; * Fix sun_blitc and screen size on displays other than 1152x900, &n; *   128x54 chars, Nov/96, jj.&n; * Fix cursor spots left on some non-accelerated fbs, changed&n; *   software cursor to be like the hw one, Nov/96, jj.&n; * &n; * Much of this driver is derived from the DEC TGA driver by&n; * Jay Estabrook who has done a nice job with the console&n; * driver abstraction btw.&n; *&n; * We try to make everything a power of two if possible to&n; * speed up the bit blit.  Doing multiplies, divides, and&n; * remainder routines end up calling software library routines&n; * since not all Sparcs have the hardware to do it.&n; *&n; * TODO:&n; * do not blank the screen when frame buffer is mapped.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -598,7 +598,7 @@ id|KD_GRAPHICS
 r_return
 suffix:semicolon
 multiline_comment|/* Don&squot;t paint anything on fb which is not ours,&n;&t;&t;&t;   but turn off the hw cursor in such case */
-id|save_and_cli
+id|__save_and_cli
 c_func
 (paren
 id|flags
@@ -613,7 +613,7 @@ op_minus
 l_int|1
 )paren
 (brace
-id|restore_flags
+id|__restore_flags
 (paren
 id|flags
 )paren
@@ -776,7 +776,7 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -900,7 +900,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|save_and_cli
+id|__save_and_cli
 c_func
 (paren
 id|flags
@@ -931,7 +931,7 @@ id|hide_cursor
 (paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 (paren
 id|flags
 )paren
@@ -1261,7 +1261,7 @@ suffix:colon
 (brace
 )brace
 )brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -1733,13 +1733,22 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-r_for
-c_loop
-(paren
+macro_line|#ifdef __sparc_v9__
+id|p
+op_assign
+l_string|&quot;Linux/UltraSPARC version &quot;
+id|UTS_RELEASE
+suffix:semicolon
+macro_line|#else
 id|p
 op_assign
 l_string|&quot;Linux/SPARC version &quot;
 id|UTS_RELEASE
+suffix:semicolon
+macro_line|#endif
+r_for
+c_loop
+(paren
 suffix:semicolon
 op_star
 id|p
@@ -4181,7 +4190,8 @@ comma
 id|uint
 id|base
 comma
-id|uint
+r_int
+r_int
 id|con_base
 comma
 r_int
@@ -4439,6 +4449,13 @@ id|blanked
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|con_base
+op_ge
+id|PAGE_OFFSET
+)paren
 id|fbinfo
 (braket
 id|n
@@ -4447,6 +4464,16 @@ dot
 id|base
 op_assign
 id|con_base
+suffix:semicolon
+r_else
+id|fbinfo
+(braket
+id|n
+)braket
+dot
+id|base
+op_assign
+l_int|0
 suffix:semicolon
 id|fbinfo
 (braket
@@ -5184,8 +5211,12 @@ suffix:semicolon
 r_int
 id|type
 suffix:semicolon
-id|uint
+r_int
+r_int
 id|con_base
+suffix:semicolon
+id|u32
+id|tmp
 suffix:semicolon
 id|u32
 id|prom_console_node
@@ -5775,10 +5806,14 @@ r_char
 op_star
 )paren
 op_amp
-id|con_base
+id|tmp
 comma
 l_int|4
 )paren
+suffix:semicolon
+id|con_base
+op_assign
+id|tmp
 suffix:semicolon
 r_if
 c_cond
@@ -6680,7 +6715,7 @@ id|idx
 )paren
 )paren
 suffix:semicolon
-id|save_and_cli
+id|__save_and_cli
 c_func
 (paren
 id|flags
@@ -6770,7 +6805,7 @@ id|font_row
 suffix:semicolon
 )brace
 )brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -6974,7 +7009,7 @@ id|x2
 )paren
 )paren
 suffix:semicolon
-id|save_and_cli
+id|__save_and_cli
 (paren
 id|flags
 )paren
@@ -7031,7 +7066,7 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 (paren
 id|flags
 )paren
@@ -7095,7 +7130,7 @@ id|bgmask
 suffix:semicolon
 )brace
 multiline_comment|/* Prevent cursor spots left on the screen */
-id|save_and_cli
+id|__save_and_cli
 c_func
 (paren
 id|flags
@@ -7173,7 +7208,7 @@ op_assign
 id|bgmask
 suffix:semicolon
 )brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -7462,7 +7497,7 @@ id|x4
 )paren
 )paren
 suffix:semicolon
-id|save_and_cli
+id|__save_and_cli
 c_func
 (paren
 id|flags
@@ -7510,7 +7545,7 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 (paren
 id|flags
 )paren
@@ -7729,7 +7764,7 @@ id|bgmask
 )paren
 suffix:semicolon
 multiline_comment|/* Prevent cursor spots left on the screen */
-id|save_and_cli
+id|__save_and_cli
 c_func
 (paren
 id|flags
@@ -7807,7 +7842,7 @@ op_assign
 id|data4
 suffix:semicolon
 )brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags

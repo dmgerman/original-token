@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: openprom.h,v 1.3 1997/03/18 18:03:20 jj Exp $ */
+multiline_comment|/* $Id: openprom.h,v 1.4 1997/03/24 06:42:08 davem Exp $ */
 macro_line|#ifndef __SPARC64_OPENPROM_H
 DECL|macro|__SPARC64_OPENPROM_H
 mdefine_line|#define __SPARC64_OPENPROM_H
@@ -963,17 +963,17 @@ DECL|member|which_io
 r_int
 id|which_io
 suffix:semicolon
-multiline_comment|/* hi part of physical address */
+multiline_comment|/* hi part of physical address&t;&t;&t;*/
 DECL|member|phys_addr
 r_int
 id|phys_addr
 suffix:semicolon
-multiline_comment|/* The physical address of this register */
+multiline_comment|/* The physical address of this register&t;*/
 DECL|member|reg_size
 r_int
 id|reg_size
 suffix:semicolon
-multiline_comment|/* How many bytes does this register take up? */
+multiline_comment|/* How many bytes does this register take up?&t;*/
 )brace
 suffix:semicolon
 DECL|struct|linux_prom64_registers

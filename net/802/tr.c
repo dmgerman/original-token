@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * NET3:&t;Token ring device handling subroutines&n; * &n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:       3 Feb 97 Paul Norton &lt;pnorton@cts.com&gt; Minor routing fixes.&n; *              Added rif table to /proc/net/tr_rif and rif timeout to&n; *              /proc/sys/net/token-ring/rif_timeout.&n; *        &n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -95,7 +95,12 @@ l_int|NULL
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|ax25-&gt;sk-&gt;rmem_alloc
+)paren
 OL
 (paren
 id|ax25-&gt;sk-&gt;rcvbuf

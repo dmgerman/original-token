@@ -1317,14 +1317,17 @@ suffix:semicolon
 r_case
 id|ASF_PCB_NAK
 suffix:colon
+macro_line|#ifdef ELP_DEBUG
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: send_pcb got NAK&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+macro_line|#endif
 r_goto
 m_abort
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: delay.h,v 1.8 1996/01/28 02:09:21 davem Exp $&n; * delay.h: Linux delay routines on the Sparc.&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu).&n; */
+multiline_comment|/* $Id: delay.h,v 1.9 1997/04/11 00:42:19 davem Exp $&n; * delay.h: Linux delay routines on the Sparc.&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu).&n; */
 macro_line|#ifndef __SPARC_DELAY_H
 DECL|macro|__SPARC_DELAY_H
 mdefine_line|#define __SPARC_DELAY_H
@@ -36,6 +36,8 @@ l_string|&quot;0&quot;
 (paren
 id|loops
 )paren
+suffix:colon
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace

@@ -677,7 +677,7 @@ multiline_comment|/*&n;&t;&t;&t; * This would only normally happen if we had&n;&
 id|printk
 c_func
 (paren
-l_string|&quot;next_offset (%x) &gt; bufsize (%x)&bslash;n&quot;
+l_string|&quot;next_offset (%x) &gt; bufsize (%lx)&bslash;n&quot;
 comma
 id|offset
 comma

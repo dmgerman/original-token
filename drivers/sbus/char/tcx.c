@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: tcx.c,v 1.9 1996/12/23 10:16:17 ecd Exp $&n; * tcx.c: SUNW,tcx 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: tcx.c,v 1.11 1997/04/10 03:02:43 davem Exp $&n; * tcx.c: SUNW,tcx 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -1114,7 +1114,8 @@ comma
 r_int
 id|node
 comma
-id|uint
+r_int
+r_int
 id|tcx
 comma
 r_struct
@@ -1249,10 +1250,10 @@ multiline_comment|/* Map the hardware registers */
 id|tcxinfo-&gt;bt
 op_assign
 id|sparc_alloc_io
+c_func
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
 id|tcxinfo-&gt;tcx_offsets
 (braket
@@ -1277,10 +1278,10 @@ suffix:semicolon
 id|tcxinfo-&gt;thc
 op_assign
 id|sparc_alloc_io
+c_func
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
 id|tcxinfo-&gt;tcx_offsets
 (braket
@@ -1305,10 +1306,10 @@ suffix:semicolon
 id|tcxinfo-&gt;tec
 op_assign
 id|sparc_alloc_io
+c_func
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
 id|tcxinfo-&gt;tcx_offsets
 (braket
@@ -1343,10 +1344,10 @@ op_assign
 id|uint
 )paren
 id|sparc_alloc_io
+c_func
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
 id|tcxinfo-&gt;tcx_offsets
 (braket
@@ -1508,10 +1509,10 @@ suffix:semicolon
 id|tcxinfo-&gt;tcx_cplane
 op_assign
 id|sparc_alloc_io
+c_func
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
 id|tcxinfo-&gt;tcx_offsets
 (braket

@@ -565,9 +565,13 @@ id|u_char
 id|block_length_hi
 suffix:semicolon
 multiline_comment|/* block length for blocks in this desc */
-DECL|member|block_length
-id|u_short
-id|block_length
+DECL|member|block_length_med
+id|u_char
+id|block_length_med
+suffix:semicolon
+DECL|member|block_length_lo
+id|u_char
+id|block_length_lo
 suffix:semicolon
 )brace
 suffix:semicolon

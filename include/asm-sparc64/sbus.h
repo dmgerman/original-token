@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.h,v 1.2 1997/02/25 20:00:35 jj Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.h,v 1.3 1997/03/21 17:57:24 jj Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/* XXX This needs to be mostly redone for sun5 SYSIO. */
 macro_line|#ifndef _SPARC64_SBUS_H
 DECL|macro|_SPARC64_SBUS_H
@@ -8,9 +8,9 @@ macro_line|#include &lt;asm/iommu.h&gt;
 multiline_comment|/* We scan which devices are on the SBus using the PROM node device&n; * tree.  SBus devices are described in two different ways.  You can&n; * either get an absolute address at which to access the device, or&n; * you can get a SBus &squot;slot&squot; number and an offset within that slot.&n; */
 multiline_comment|/* The base address at which to calculate device OBIO addresses. */
 DECL|macro|SUN_SBUS_BVADDR
-mdefine_line|#define SUN_SBUS_BVADDR        0xf8000000
+mdefine_line|#define SUN_SBUS_BVADDR        0x00000000
 DECL|macro|SBUS_OFF_MASK
-mdefine_line|#define SBUS_OFF_MASK          0x01ffffff
+mdefine_line|#define SBUS_OFF_MASK          0x0fffffff
 multiline_comment|/* These routines are used to calculate device address from slot&n; * numbers + offsets, and vice versa.&n; */
 DECL|function|sbus_devaddr
 r_extern
@@ -41,7 +41,7 @@ op_plus
 id|slotnum
 )paren
 op_lshift
-l_int|25
+l_int|28
 )paren
 op_plus
 (paren
@@ -75,7 +75,7 @@ op_minus
 id|SUN_SBUS_BVADDR
 )paren
 op_rshift
-l_int|25
+l_int|28
 )paren
 suffix:semicolon
 )brace

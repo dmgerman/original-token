@@ -212,6 +212,14 @@ id|sb
 )paren
 (brace
 r_struct
+id|nfs_server
+op_star
+id|server
+op_assign
+op_amp
+id|sb-&gt;u.nfs_sb.s_server
+suffix:semicolon
+r_struct
 id|rpc_clnt
 op_star
 id|rpc
@@ -222,7 +230,7 @@ c_cond
 (paren
 id|rpc
 op_assign
-id|sb-&gt;u.nfs_sb.s_server.client
+id|server-&gt;client
 )paren
 op_ne
 l_int|NULL
@@ -233,6 +241,16 @@ c_func
 id|rpc
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|server-&gt;flags
+op_amp
+id|NFS_MOUNT_NONLM
+)paren
+)paren
 id|lockd_down
 c_func
 (paren
@@ -870,6 +888,16 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/* We&squot;re airborne */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|server-&gt;flags
+op_amp
+id|NFS_MOUNT_NONLM
+)paren
+)paren
 id|lockd_up
 c_func
 (paren

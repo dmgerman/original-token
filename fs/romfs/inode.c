@@ -1662,8 +1662,12 @@ c_func
 id|page
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|page-&gt;count
-op_increment
+)paren
 suffix:semicolon
 id|offset
 op_assign

@@ -3,7 +3,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/string.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|ldq_u
-mdefine_line|#define ldq_u(x,y) &bslash;&n;__asm__ __volatile__(&quot;ldq_u %0,%1&quot;:&quot;=r&quot; (x):&quot;m&quot; (*(unsigned long *)(y)))
+mdefine_line|#define ldq_u(x,y) &bslash;&n;__asm__ __volatile__(&quot;ldq_u %0,%1&quot;:&quot;=r&quot; (x):&quot;m&quot; (*(const unsigned long *)(y)))
 DECL|macro|stq_u
 mdefine_line|#define stq_u(x,y) &bslash;&n;__asm__ __volatile__(&quot;stq_u %1,%0&quot;:&quot;=m&quot; (*(unsigned long *)(y)):&quot;r&quot; (x))
 DECL|macro|extql
@@ -31,6 +31,7 @@ DECL|function|csum_partial_cfu_aligned
 id|csum_partial_cfu_aligned
 c_func
 (paren
+r_const
 r_int
 r_int
 op_star
@@ -493,6 +494,7 @@ DECL|function|csum_partial_cfu_src_aligned
 id|csum_partial_cfu_src_aligned
 c_func
 (paren
+r_const
 r_int
 r_int
 op_star
@@ -864,6 +866,7 @@ DECL|function|csum_partial_cfu_unaligned
 id|csum_partial_cfu_unaligned
 c_func
 (paren
+r_const
 r_int
 r_int
 op_star
@@ -1363,6 +1366,7 @@ DECL|function|do_csum_partial_copy_from_user
 id|do_csum_partial_copy_from_user
 c_func
 (paren
+r_const
 r_char
 op_star
 id|src
@@ -1441,6 +1445,7 @@ id|csum_partial_cfu_aligned
 c_func
 (paren
 (paren
+r_const
 r_int
 r_int
 op_star
@@ -1470,6 +1475,7 @@ id|csum_partial_cfu_dest_aligned
 c_func
 (paren
 (paren
+r_const
 r_int
 r_int
 op_star
@@ -1521,6 +1527,7 @@ id|csum_partial_cfu_src_aligned
 c_func
 (paren
 (paren
+r_const
 r_int
 r_int
 op_star
@@ -1554,6 +1561,7 @@ id|csum_partial_cfu_unaligned
 c_func
 (paren
 (paren
+r_const
 r_int
 r_int
 op_star
@@ -1653,6 +1661,7 @@ DECL|function|csum_partial_copy_from_user
 id|csum_partial_copy_from_user
 c_func
 (paren
+r_const
 r_char
 op_star
 id|src

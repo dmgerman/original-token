@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * sysctl_net_ipv6.c: sysctl interface to net IPV6 subsystem.&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/ipv6.h&gt;
 macro_line|#include &lt;net/ndisc.h&gt;

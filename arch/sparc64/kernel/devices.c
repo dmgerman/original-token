@@ -5,8 +5,8 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
-macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/smp.h&gt;
 DECL|variable|linux_cpus
 r_struct
 id|prom_cpuinfo
@@ -102,6 +102,24 @@ l_int|0
 )braket
 op_assign
 id|prom_root_node
+suffix:semicolon
+id|linux_cpus
+(braket
+l_int|0
+)braket
+dot
+id|prom_node
+op_assign
+id|prom_root_node
+suffix:semicolon
+id|linux_cpus
+(braket
+l_int|0
+)braket
+dot
+id|mid
+op_assign
+l_int|0
 suffix:semicolon
 id|cpu_ctr
 op_increment

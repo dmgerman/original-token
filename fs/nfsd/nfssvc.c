@@ -27,7 +27,9 @@ mdefine_line|#define NFSDDBG_FACILITY&t;NFSDDBG_SVC
 DECL|macro|NFSD_BUFSIZE
 mdefine_line|#define NFSD_BUFSIZE&t;&t;(1024 + NFSSVC_MAXBLKSIZE)
 DECL|macro|BLOCKABLE_SIGS
-mdefine_line|#define BLOCKABLE_SIGS&t;&t;(~(_S(SIGKILL - 1) | _S(SIGSTOP - 1)))
+mdefine_line|#define BLOCKABLE_SIGS&t;&t;(~(_S(SIGKILL) | _S(SIGSTOP)))
+DECL|macro|SHUTDOWN_SIGS
+mdefine_line|#define SHUTDOWN_SIGS&t;&t;(_S(SIGKILL)|_S(SIGINT)|_S(SIGTERM))
 DECL|macro|_S
 mdefine_line|#define _S(sig)&t;&t;&t;(1 &lt;&lt; ((sig) - 1))
 r_extern
@@ -332,6 +334,11 @@ op_assign
 id|current-&gt;fs-&gt;umask
 suffix:semicolon
 multiline_comment|/* Set umask to 0.  */
+id|current-&gt;blocked
+op_or_assign
+op_complement
+id|SHUTDOWN_SIGS
+suffix:semicolon
 id|current-&gt;fs-&gt;umask
 op_assign
 l_int|0
@@ -479,6 +486,7 @@ op_ne
 op_minus
 id|EINTR
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -489,6 +497,52 @@ op_minus
 id|err
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+r_int
+r_int
+id|signo
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|signo
+op_assign
+l_int|0
+suffix:semicolon
+id|signo
+OL
+l_int|32
+suffix:semicolon
+id|signo
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|current-&gt;signal
+op_amp
+id|current-&gt;blocked
+op_amp
+(paren
+l_int|1
+op_lshift
+id|signo
+)paren
+)paren
+r_break
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;nfsd: terminating on signal %d&bslash;n&quot;
+comma
+id|signo
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Release lockd */
 id|lockd_down
 c_func
