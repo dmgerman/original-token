@@ -2277,12 +2277,6 @@ l_int|1
 suffix:semicolon
 id|out_bad
 suffix:colon
-id|d_drop
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2312,6 +2306,12 @@ id|dentry
 )paren
 r_goto
 id|out_valid
+suffix:semicolon
+id|d_drop
+c_func
+(paren
+id|dentry
+)paren
 suffix:semicolon
 multiline_comment|/* Purge readdir caches. */
 r_if
@@ -3601,7 +3601,11 @@ c_func
 (paren
 id|silly
 comma
+id|dget
+c_func
+(paren
 id|dentry-&gt;d_parent
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * N.B. Better to return EBUSY here ... it could be&n;&t;&t; * dangerous to delete the file while it&squot;s in use.&n;&t;&t; */

@@ -1338,12 +1338,6 @@ op_amp
 l_int|0xffff
 suffix:semicolon
 )brace
-id|td_submit_urb
-(paren
-id|urb
-)paren
-suffix:semicolon
-multiline_comment|/* fill the TDs and link it to the ed */
 r_if
 c_cond
 (paren
@@ -1359,6 +1353,12 @@ comma
 id|ed
 )paren
 suffix:semicolon
+id|td_submit_urb
+(paren
+id|urb
+)paren
+suffix:semicolon
+multiline_comment|/* fill the TDs and link it to the ed */
 id|spin_unlock_irqrestore
 (paren
 op_amp
@@ -5442,10 +5442,10 @@ comma
 l_int|0x00
 comma
 multiline_comment|/*  __u8  iManufacturer; */
-l_int|0x00
+l_int|0x02
 comma
 multiline_comment|/*  __u8  iProduct; */
-l_int|0x00
+l_int|0x01
 comma
 multiline_comment|/*  __u8  iSerialNumber; */
 l_int|0x01
@@ -6610,6 +6610,50 @@ l_int|0x03
 )paren
 suffix:colon
 multiline_comment|/* string descriptors */
+id|len
+op_assign
+id|usb_root_hub_string
+(paren
+id|wValue
+op_amp
+l_int|0xff
+comma
+(paren
+r_int
+)paren
+id|ohci-&gt;regs
+comma
+l_string|&quot;OHCI&quot;
+comma
+id|data
+comma
+id|wLength
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+l_int|0
+)paren
+(brace
+id|data_buf
+op_assign
+id|data
+suffix:semicolon
+id|OK
+(paren
+id|min
+(paren
+id|leni
+comma
+id|len
+)paren
+)paren
+suffix:semicolon
+)brace
+singleline_comment|// else fallthrough
 r_default
 suffix:colon
 id|status
@@ -6906,6 +6950,13 @@ comma
 id|leni
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|data
+op_ne
+id|data_buf
+)paren
 id|memcpy
 (paren
 id|data

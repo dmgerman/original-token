@@ -5428,10 +5428,10 @@ comma
 l_int|0x00
 comma
 multiline_comment|/*  __u8  iManufacturer; */
-l_int|0x00
+l_int|0x02
 comma
 multiline_comment|/*  __u8  iProduct; */
-l_int|0x00
+l_int|0x01
 comma
 multiline_comment|/*  __u8  iSerialNumber; */
 l_int|0x01
@@ -6883,6 +6883,43 @@ r_case
 l_int|0x03
 suffix:colon
 multiline_comment|/* string descriptors */
+id|len
+op_assign
+id|usb_root_hub_string
+(paren
+id|wValue
+op_amp
+l_int|0xff
+comma
+id|uhci-&gt;io_addr
+comma
+l_string|&quot;UHCI&quot;
+comma
+id|data
+comma
+id|wLength
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+l_int|0
+)paren
+(brace
+id|OK
+(paren
+id|min
+(paren
+id|leni
+comma
+id|len
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
 id|stat
 op_assign
 op_minus

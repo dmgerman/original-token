@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * (c) 1999 Michael Gee (michael@linuxspecific.com)&n; * (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Further reference:&n; *&t;This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; *&t;describes in detail the protocol used to communicate with such&n; *      devices.  Clearly, the designers had SCSI and ATAPI commands in mind &n; *      when they created this document.  The commands are all very similar &n; *      to commands in the SCSI-II and ATAPI specifications.&n; *&n; *&t;It is important to note that in a number of cases this class exhibits&n; *&t;class-specific exemptions from the USB specification. Notably the&n; *&t;usage of NAK, STALL and ACK differs from the norm, in that they are&n; *&t;used to communicate wait, failed and OK on commands.&n; *&t;Also, for certain devices, the interrupt endpoint is used to convey&n; *&t;status of a command.&n; *&n; */
+multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * (c) 1999 Michael Gee (michael@linuxspecific.com)&n; * (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -152,6 +152,7 @@ id|us_data
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* we allocate one of these for every device that we remember */
 DECL|struct|us_data
 r_struct
 id|us_data
@@ -176,6 +177,7 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* from filter initially */
+multiline_comment|/* information about the device -- only good if device is attached */
 DECL|member|ifnum
 id|__u8
 id|ifnum
@@ -200,27 +202,27 @@ DECL|member|subclass
 id|__u8
 id|subclass
 suffix:semicolon
-multiline_comment|/* as in overview */
 DECL|member|protocol
 id|__u8
 id|protocol
 suffix:semicolon
-multiline_comment|/* .............. */
+multiline_comment|/* function pointers for this device */
 DECL|member|transport
 id|trans_cmnd
 id|transport
 suffix:semicolon
-multiline_comment|/* protocol specific do cmd */
+multiline_comment|/* transport function */
 DECL|member|transport_reset
 id|trans_reset
 id|transport_reset
 suffix:semicolon
-multiline_comment|/* .......... device reset */
+multiline_comment|/* transport device reset */
 DECL|member|proto_handler
 id|proto_cmnd
 id|proto_handler
 suffix:semicolon
 multiline_comment|/* protocol handler */
+multiline_comment|/* SCSI interfaces */
 id|GUID
 c_func
 (paren
@@ -256,6 +258,7 @@ op_star
 id|srb
 suffix:semicolon
 multiline_comment|/* current srb */
+multiline_comment|/* thread information */
 DECL|member|queue_srb
 id|Scsi_Cmnd
 op_star
@@ -267,6 +270,12 @@ r_int
 id|action
 suffix:semicolon
 multiline_comment|/* what to do */
+DECL|member|pid
+r_int
+id|pid
+suffix:semicolon
+multiline_comment|/* control thread */
+multiline_comment|/* interrupt info for CBI devices */
 DECL|member|ip_waitq
 r_struct
 id|semaphore
@@ -283,18 +292,6 @@ r_int
 id|ip_wanted
 suffix:semicolon
 multiline_comment|/* needed */
-DECL|member|pid
-r_int
-id|pid
-suffix:semicolon
-multiline_comment|/* control thread */
-DECL|member|notify
-r_struct
-id|semaphore
-op_star
-id|notify
-suffix:semicolon
-multiline_comment|/* wait for thread to begin */
 DECL|member|irq_handle
 r_void
 op_star
@@ -307,6 +304,13 @@ r_int
 id|irqpipe
 suffix:semicolon
 multiline_comment|/* pipe for release_irq */
+multiline_comment|/* mutual exclusion structures */
+DECL|member|notify
+r_struct
+id|semaphore
+id|notify
+suffix:semicolon
+multiline_comment|/* wait for thread to begin */
 DECL|member|sleeper
 r_struct
 id|semaphore
@@ -332,6 +336,8 @@ DECL|macro|US_ACT_BUS_RESET
 mdefine_line|#define US_ACT_BUS_RESET&t;4
 DECL|macro|US_ACT_HOST_RESET
 mdefine_line|#define US_ACT_HOST_RESET&t;5
+DECL|macro|US_ACT_EXIT
+mdefine_line|#define US_ACT_EXIT&t;&t;6
 multiline_comment|/* The list of structures and the protective lock for them */
 DECL|variable|us_list
 r_static
@@ -778,13 +784,6 @@ id|srb-&gt;cmnd
 (braket
 l_int|4
 )braket
-suffix:semicolon
-multiline_comment|/* FIXME: this needs to come out when the other&n;&t;&t; * fix is in place */
-r_case
-id|READ_CAPACITY
-suffix:colon
-r_return
-l_int|8
 suffix:semicolon
 multiline_comment|/* FIXME: these should be removed and tested */
 r_case
@@ -3002,14 +3001,6 @@ l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* check the return code for the command */
-r_if
-c_cond
-(paren
-id|result
-OL
-l_int|0
-)paren
-(brace
 id|US_DEBUGP
 c_func
 (paren
@@ -3018,6 +3009,14 @@ comma
 id|result
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+OL
+l_int|0
+)paren
+(brace
 multiline_comment|/* a stall is a fatal condition from the device */
 r_if
 c_cond
@@ -3105,8 +3104,7 @@ id|result
 suffix:semicolon
 )brace
 multiline_comment|/* STATUS STAGE */
-multiline_comment|/* go to sleep until we get this interrup */
-multiline_comment|/* FIXME: this should be changed to use a timeout -- or let the&n;&t; * device reset routine up() this for us to unjam us&n;&t; */
+multiline_comment|/* go to sleep until we get this interrupt */
 id|down
 c_func
 (paren
@@ -3116,7 +3114,7 @@ id|us-&gt;ip_waitq
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: currently this code is unreachable, but the idea is&n;&t; * necessary.  See above comment.&n;&t; */
+multiline_comment|/* if we were woken up by a reset instead of the actual interrupt */
 r_if
 c_cond
 (paren
@@ -3145,8 +3143,7 @@ comma
 id|us-&gt;ip_data
 )paren
 suffix:semicolon
-multiline_comment|/* UFI gives us ASC and ASCQ, like a request sense */
-multiline_comment|/* REQUEST_SENSE and INQUIRY don&squot;t affect the sense data, so we&n;&t; * ignore the information for those commands&n;&t; */
+multiline_comment|/* UFI gives us ASC and ASCQ, like a request sense&n;&t; *&n;&t; * REQUEST_SENSE and INQUIRY don&squot;t affect the sense data, so we&n;&t; * ignore the information for those commands&n;&t; */
 r_if
 c_cond
 (paren
@@ -4228,21 +4225,46 @@ id|psh-&gt;hostdata
 l_int|0
 )braket
 suffix:semicolon
-r_struct
-id|us_data
-op_star
-id|prev
-suffix:semicolon
 r_int
 r_int
 id|flags
 suffix:semicolon
+r_int
+id|result
+suffix:semicolon
+multiline_comment|/* lock the data structures */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|us_list_spinlock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;us_release() called for host %s&bslash;n&quot;
+comma
+id|us-&gt;htmplt.name
+)paren
+suffix:semicolon
+multiline_comment|/* release the interrupt handler, if necessary */
 r_if
 c_cond
 (paren
 id|us-&gt;irq_handle
 )paren
 (brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- releasing irq&bslash;n&quot;
+)paren
+suffix:semicolon
+id|result
+op_assign
 id|usb_release_irq
 c_func
 (paren
@@ -4253,55 +4275,20 @@ comma
 id|us-&gt;irqpipe
 )paren
 suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- usb_release_irq() returned %d&bslash;n&quot;
+comma
+id|result
+)paren
+suffix:semicolon
 id|us-&gt;irq_handle
 op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/* FIXME: release the interface claim here? */
-multiline_comment|/* FIXME: we need to move this elsewhere -- &n;&t; * the remove function only gets called to remove the module&n;&t; */
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|us_list_spinlock
-comma
-id|flags
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|us_list
-op_eq
-id|us
-)paren
-id|us_list
-op_assign
-id|us-&gt;next
-suffix:semicolon
-r_else
-(brace
-id|prev
-op_assign
-id|us_list
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|prev-&gt;next
-op_ne
-id|us
-)paren
-id|prev
-op_assign
-id|prev-&gt;next
-suffix:semicolon
-id|prev-&gt;next
-op_assign
-id|us-&gt;next
-suffix:semicolon
-)brace
+multiline_comment|/* lock the data structures */
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -4311,6 +4298,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* we always have a successful release */
 r_return
 l_int|0
 suffix:semicolon
@@ -4379,7 +4367,7 @@ suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;Command wakeup&bslash;n&quot;
+l_string|&quot;us_queuecommand() called&bslash;n&quot;
 )paren
 suffix:semicolon
 id|srb-&gt;host_scribble
@@ -4465,11 +4453,39 @@ op_star
 id|srb
 )paren
 (brace
-singleline_comment|//  struct us_data *us = (struct us_data *)srb-&gt;host-&gt;hostdata[0];
+r_struct
+id|us_data
+op_star
+id|us
+op_assign
+(paren
+r_struct
+id|us_data
+op_star
+)paren
+id|srb-&gt;host-&gt;hostdata
+(braket
+l_int|0
+)braket
+suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
 l_string|&quot;Bus reset requested&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|us-&gt;ip_wanted
+)paren
+id|up
+c_func
+(paren
+op_amp
+(paren
+id|us-&gt;ip_waitq
+)paren
 )paren
 suffix:semicolon
 singleline_comment|//  us-&gt;transport_reset(us);
@@ -5064,7 +5080,10 @@ suffix:semicolon
 id|up
 c_func
 (paren
+op_amp
+(paren
 id|us-&gt;notify
+)paren
 )paren
 suffix:semicolon
 r_for
@@ -5074,14 +5093,6 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-id|siginfo_t
-id|info
-suffix:semicolon
-r_int
-r_int
-r_int
-id|signr
-suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
@@ -5123,9 +5134,7 @@ l_int|0
 suffix:semicolon
 id|us-&gt;srb
 op_assign
-id|us
-op_member_access_from_pointer
-id|queue_srb
+id|us-&gt;queue_srb
 suffix:semicolon
 multiline_comment|/* release the queue lock as fast as possible */
 id|up
@@ -5362,49 +5371,18 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* end switch on action */
-multiline_comment|/* FIXME: we ignore TERM and KILL... is this right? */
+multiline_comment|/* exit if we get a signal to exit */
 r_if
 c_cond
 (paren
-id|signal_pending
-c_func
-(paren
-id|current
+id|action
+op_eq
+id|US_ACT_EXIT
 )paren
-)paren
-(brace
-multiline_comment|/* sending SIGUSR1 makes us print out some info */
-id|spin_lock_irq
-c_func
-(paren
-op_amp
-id|current-&gt;sigmask_lock
-)paren
+r_break
 suffix:semicolon
-id|signr
-op_assign
-id|dequeue_signal
-c_func
-(paren
-op_amp
-id|current-&gt;blocked
-comma
-op_amp
-id|info
-)paren
-suffix:semicolon
-id|spin_unlock_irq
-c_func
-(paren
-op_amp
-id|current-&gt;sigmask_lock
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* if (singal_pending(current)) */
 )brace
 multiline_comment|/* for (;;) */
-singleline_comment|//  MOD_DEC_USE_COUNT;
 id|printk
 c_func
 (paren
@@ -5528,6 +5506,54 @@ multiline_comment|/* We make an exception for the shuttle E-USB */
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
+id|dev-&gt;descriptor.idVendor
+op_eq
+l_int|0x04e6
+op_logical_and
+id|dev-&gt;descriptor.idProduct
+op_eq
+l_int|0x0001
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|dev-&gt;descriptor.bDeviceClass
+op_eq
+l_int|0
+op_logical_and
+id|altsetting-&gt;bInterfaceClass
+op_eq
+id|USB_CLASS_MASS_STORAGE
+op_logical_and
+id|altsetting-&gt;bInterfaceSubClass
+op_ge
+id|US_SC_MIN
+op_logical_and
+id|altsetting-&gt;bInterfaceSubClass
+op_le
+id|US_SC_MAX
+)paren
+)paren
+(brace
+multiline_comment|/* if it&squot;s not a mass storage, we go no further */
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+multiline_comment|/* At this point, we know we&squot;ve got a live one */
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;USB Mass Storage device detected&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Determine subclass and protocol, or copy from the interface */
+multiline_comment|/* FIXME: this isn&squot;t quite right */
+r_if
+c_cond
+(paren
 id|dev-&gt;descriptor.idVendor
 op_eq
 l_int|0x04e6
@@ -5548,204 +5574,14 @@ suffix:semicolon
 multiline_comment|/* an assumption */
 )brace
 r_else
-r_if
-c_cond
-(paren
-id|dev-&gt;descriptor.bDeviceClass
-op_ne
-l_int|0
-op_logical_or
-id|altsetting-&gt;bInterfaceClass
-op_ne
-id|USB_CLASS_MASS_STORAGE
-op_logical_or
+(brace
+id|subclass
+op_assign
 id|altsetting-&gt;bInterfaceSubClass
-template_param
-id|US_SC_MAX
-)paren
-(brace
-multiline_comment|/* if it&squot;s not a mass storage, we go no further */
-r_return
-l_int|NULL
 suffix:semicolon
-)brace
-multiline_comment|/* At this point, we know we&squot;ve got a live one */
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;USB Mass Storage device detected&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * We are expecting a minimum of 2 endpoints - in and out (bulk).&n;&t; * An optional interrupt is OK (necessary for CBI protocol).&n;&t; * We will ignore any others.&n;&t; */
-r_for
-c_loop
-(paren
-id|i
+id|protocol
 op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|altsetting-&gt;bNumEndpoints
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-multiline_comment|/* is it an BULK endpoint? */
-r_if
-c_cond
-(paren
-(paren
-id|altsetting-&gt;endpoint
-(braket
-id|i
-)braket
-dot
-id|bmAttributes
-op_amp
-id|USB_ENDPOINT_XFERTYPE_MASK
-)paren
-op_eq
-id|USB_ENDPOINT_XFER_BULK
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|altsetting-&gt;endpoint
-(braket
-id|i
-)braket
-dot
-id|bEndpointAddress
-op_amp
-id|USB_DIR_IN
-)paren
-id|ep_in
-op_assign
-id|altsetting-&gt;endpoint
-(braket
-id|i
-)braket
-dot
-id|bEndpointAddress
-op_amp
-id|USB_ENDPOINT_NUMBER_MASK
-suffix:semicolon
-r_else
-id|ep_out
-op_assign
-id|altsetting-&gt;endpoint
-(braket
-id|i
-)braket
-dot
-id|bEndpointAddress
-op_amp
-id|USB_ENDPOINT_NUMBER_MASK
-suffix:semicolon
-)brace
-multiline_comment|/* is it an interrupt endpoint? */
-r_if
-c_cond
-(paren
-(paren
-id|altsetting-&gt;endpoint
-(braket
-id|i
-)braket
-dot
-id|bmAttributes
-op_amp
-id|USB_ENDPOINT_XFERTYPE_MASK
-)paren
-op_eq
-id|USB_ENDPOINT_XFER_INT
-)paren
-(brace
-id|ep_int
-op_assign
-id|altsetting-&gt;endpoint
-(braket
-id|i
-)braket
-dot
-id|bEndpointAddress
-op_amp
-id|USB_ENDPOINT_NUMBER_MASK
-suffix:semicolon
-)brace
-)brace
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;Endpoints In %d Out %d Int %d&bslash;n&quot;
-comma
-id|ep_in
-comma
-id|ep_out
-comma
-id|ep_int
-)paren
-suffix:semicolon
-multiline_comment|/* set the interface -- STALL is an acceptable response here */
-id|result
-op_assign
-id|usb_set_interface
-c_func
-(paren
-id|dev
-comma
-id|altsetting-&gt;bInterfaceNumber
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;Result from usb_set_interface is %d&bslash;n&quot;
-comma
-id|result
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-op_eq
-op_minus
-id|EPIPE
-)paren
-(brace
-id|usb_clear_halt
-c_func
-(paren
-id|dev
-comma
-id|usb_sndctrlpipe
-c_func
-(paren
-id|dev
-comma
-l_int|0
-)paren
-)paren
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|result
-op_ne
-l_int|0
-)paren
-(brace
-multiline_comment|/* it&squot;s not a stall, but another error -- time to bail */
-r_return
-l_int|NULL
+id|altsetting-&gt;bInterfaceProtocol
 suffix:semicolon
 )brace
 multiline_comment|/* shuttle E-USB */
@@ -5877,6 +5713,191 @@ op_amp
 id|ss-&gt;ip_waitq
 )paren
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Find the endpoints we need&n;&t; * We are expecting a minimum of 2 endpoints - in and out (bulk).&n;&t; * An optional interrupt is OK (necessary for CBI protocol).&n;&t; * We will ignore any others.&n;&t; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|altsetting-&gt;bNumEndpoints
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+multiline_comment|/* is it an BULK endpoint? */
+r_if
+c_cond
+(paren
+(paren
+id|altsetting-&gt;endpoint
+(braket
+id|i
+)braket
+dot
+id|bmAttributes
+op_amp
+id|USB_ENDPOINT_XFERTYPE_MASK
+)paren
+op_eq
+id|USB_ENDPOINT_XFER_BULK
+)paren
+(brace
+multiline_comment|/* BULK in or out? */
+r_if
+c_cond
+(paren
+id|altsetting-&gt;endpoint
+(braket
+id|i
+)braket
+dot
+id|bEndpointAddress
+op_amp
+id|USB_DIR_IN
+)paren
+id|ep_in
+op_assign
+id|altsetting-&gt;endpoint
+(braket
+id|i
+)braket
+dot
+id|bEndpointAddress
+op_amp
+id|USB_ENDPOINT_NUMBER_MASK
+suffix:semicolon
+r_else
+id|ep_out
+op_assign
+id|altsetting-&gt;endpoint
+(braket
+id|i
+)braket
+dot
+id|bEndpointAddress
+op_amp
+id|USB_ENDPOINT_NUMBER_MASK
+suffix:semicolon
+)brace
+multiline_comment|/* is it an interrupt endpoint? */
+r_if
+c_cond
+(paren
+(paren
+id|altsetting-&gt;endpoint
+(braket
+id|i
+)braket
+dot
+id|bmAttributes
+op_amp
+id|USB_ENDPOINT_XFERTYPE_MASK
+)paren
+op_eq
+id|USB_ENDPOINT_XFER_INT
+)paren
+(brace
+id|ep_int
+op_assign
+id|altsetting-&gt;endpoint
+(braket
+id|i
+)braket
+dot
+id|bEndpointAddress
+op_amp
+id|USB_ENDPOINT_NUMBER_MASK
+suffix:semicolon
+)brace
+)brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;Endpoints In %d Out %d Int %d&bslash;n&quot;
+comma
+id|ep_in
+comma
+id|ep_out
+comma
+id|ep_int
+)paren
+suffix:semicolon
+multiline_comment|/* set the interface -- STALL is an acceptable response here */
+id|result
+op_assign
+id|usb_set_interface
+c_func
+(paren
+id|dev
+comma
+id|altsetting-&gt;bInterfaceNumber
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;Result from usb_set_interface is %d&bslash;n&quot;
+comma
+id|result
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+op_eq
+op_minus
+id|EPIPE
+)paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- clearing stall on control interface&bslash;n&quot;
+)paren
+suffix:semicolon
+id|usb_clear_halt
+c_func
+(paren
+id|dev
+comma
+id|usb_sndctrlpipe
+c_func
+(paren
+id|dev
+comma
+l_int|0
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|result
+op_ne
+l_int|0
+)paren
+(brace
+multiline_comment|/* it&squot;s not a stall, but another error -- time to bail */
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- unknown error.  rejecting device&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* Do some basic sanity checks, and bail if we find a problem */
@@ -6190,7 +6211,9 @@ op_star
 id|ss
 comma
 op_amp
+(paren
 id|ss-&gt;irq_handle
+)paren
 )paren
 suffix:semicolon
 id|US_DEBUGP
@@ -6292,6 +6315,15 @@ id|ss-&gt;sleeper
 )paren
 )paren
 suffix:semicolon
+id|init_MUTEX_LOCKED
+c_func
+(paren
+op_amp
+(paren
+id|ss-&gt;notify
+)paren
+)paren
+suffix:semicolon
 id|init_MUTEX
 c_func
 (paren
@@ -6301,13 +6333,7 @@ id|ss-&gt;queue_exclusion
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * If we&squot;ve allready determined the subclass and protocol, &n;&t;&t; * use that.  Otherwise, use the interface ones.  This &n;&t;&t; * allows us to support devices which are compliant but &n;&t;&t; * don&squot;t announce it.  Note that this information is &n;&t;&t; * maintained in the us_data struct so we only have to do &n;&t;&t; * this for new devices.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|subclass
-)paren
-(brace
+multiline_comment|/* copy over the subclass and protocol data */
 id|ss-&gt;subclass
 op_assign
 id|subclass
@@ -6316,18 +6342,6 @@ id|ss-&gt;protocol
 op_assign
 id|protocol
 suffix:semicolon
-)brace
-r_else
-(brace
-id|ss-&gt;subclass
-op_assign
-id|altsetting-&gt;bInterfaceSubClass
-suffix:semicolon
-id|ss-&gt;protocol
-op_assign
-id|altsetting-&gt;bInterfaceProtocol
-suffix:semicolon
-)brace
 multiline_comment|/* copy over the endpoint data */
 id|ss-&gt;ep_in
 op_assign
@@ -6619,13 +6633,15 @@ op_star
 id|ss
 comma
 op_amp
+(paren
 id|ss-&gt;irq_handle
+)paren
 )paren
 suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;usb_request_irq returned %d&quot;
+l_string|&quot;usb_request_irq returned %d&bslash;n&quot;
 comma
 id|result
 )paren
@@ -6667,18 +6683,6 @@ op_assign
 id|ss
 suffix:semicolon
 multiline_comment|/* start up our thread */
-(brace
-id|DECLARE_MUTEX_LOCKED
-c_func
-(paren
-id|sem
-)paren
-suffix:semicolon
-id|ss-&gt;notify
-op_assign
-op_amp
-id|sem
-suffix:semicolon
 id|ss-&gt;pid
 op_assign
 id|kernel_thread
@@ -6726,10 +6730,11 @@ id|down
 c_func
 (paren
 op_amp
-id|sem
+(paren
+id|ss-&gt;notify
+)paren
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* now register - our detect function will be called */
 id|ss-&gt;htmplt.module
 op_assign
@@ -6812,15 +6817,32 @@ id|ss
 op_assign
 id|ptr
 suffix:semicolon
+r_int
+id|result
+suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;storage_disconnect() called&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* this is the odd case -- we disconnected but weren&squot;t using it */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|ss
 )paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- device was not in use&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
-multiline_comment|/* FIXME: we need mututal exclusion and resource freeing here */
+)brace
 multiline_comment|/* release the IRQ, if we have one */
 r_if
 c_cond
@@ -6828,6 +6850,14 @@ c_cond
 id|ss-&gt;irq_handle
 )paren
 (brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- releasing irq handle&bslash;n&quot;
+)paren
+suffix:semicolon
+id|result
+op_assign
 id|usb_release_irq
 c_func
 (paren
@@ -6838,11 +6868,20 @@ comma
 id|ss-&gt;irqpipe
 )paren
 suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- usb_release_irq() returned %d&bslash;n&quot;
+comma
+id|result
+)paren
+suffix:semicolon
 id|ss-&gt;irq_handle
 op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/* mark the device as gone */
 id|ss-&gt;pusb_dev
 op_assign
 l_int|NULL
@@ -6858,6 +6897,7 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* &n;&t; * Check to see if the host template is a different size from&n;&t; * what we&squot;re expected -- people have updated this in the past&n;&t; * and forgotten about this driver.&n;&t; */
 r_if
 c_cond
 (paren
@@ -6873,7 +6913,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb-storage: SCSI_HOST_TEMPLATE_SIZE does not match&bslash;n&quot;
+l_string|&quot;usb-storage: SCSI_HOST_TEMPLATE_SIZE bad&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
@@ -6912,6 +6952,7 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
+multiline_comment|/* we&squot;re all set */
 id|printk
 c_func
 (paren
@@ -6937,6 +6978,34 @@ r_struct
 id|us_data
 op_star
 id|ptr
+suffix:semicolon
+r_static
+r_struct
+id|us_data
+op_star
+id|next
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/*&n;&t; * deregister the driver -- this eliminates races with probes and&n;&t; * disconnects &n;&t; */
+id|usb_deregister
+c_func
+(paren
+op_amp
+id|storage_driver
+)paren
+suffix:semicolon
+multiline_comment|/* lock access to the data structures */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|us_list_spinlock
+comma
+id|flags
+)paren
 suffix:semicolon
 multiline_comment|/* unregister all the virtual hosts */
 r_for
@@ -6965,14 +7034,39 @@ id|ptr-&gt;htmplt
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* free up the data structures */
 multiline_comment|/* kill the threads */
-multiline_comment|/* deregister the driver */
-id|usb_deregister
+multiline_comment|/* FIXME: we can do this by sending them a signal to die */
+multiline_comment|/* free up the data structures */
+multiline_comment|/* FIXME: we need to eliminate the host structure also */
+r_while
+c_loop
+(paren
+id|ptr
+)paren
+(brace
+id|next
+op_assign
+id|ptr-&gt;next
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|ptr
+)paren
+suffix:semicolon
+id|ptr
+op_assign
+id|next
+suffix:semicolon
+)brace
+multiline_comment|/* unlock the data structures */
+id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|storage_driver
+id|us_list_spinlock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace

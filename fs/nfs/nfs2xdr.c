@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * linux/fs/nfs/xdr.c&n; *&n; * XDR functions to encode/decode NFS RPC arguments and results.&n; *&n; * Copyright (C) 1992, 1993, 1994  Rick Sladkey&n; * Copyright (C) 1996 Olaf Kirch&n; */
 DECL|macro|NFS_NEED_XDR_TYPES
 mdefine_line|#define NFS_NEED_XDR_TYPES
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

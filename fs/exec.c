@@ -1400,6 +1400,7 @@ c_cond
 op_logical_neg
 id|err
 )paren
+(brace
 id|file
 op_assign
 id|dentry_open
@@ -1410,8 +1411,8 @@ comma
 id|O_RDONLY
 )paren
 suffix:semicolon
-)brace
-)brace
+id|out
+suffix:colon
 id|unlock_kernel
 c_func
 (paren
@@ -1419,6 +1420,18 @@ c_func
 suffix:semicolon
 r_return
 id|file
+suffix:semicolon
+)brace
+)brace
+id|dput
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
+)brace
+r_goto
+id|out
 suffix:semicolon
 )brace
 DECL|function|kernel_read

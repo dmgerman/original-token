@@ -707,6 +707,11 @@ id|dentry
 op_star
 id|dentry
 suffix:semicolon
+id|check_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Pass one ... move the dentries for the specified&n;&t; * superblock to the most recent end of the unused list.&n;&t; */
 id|next
 op_assign
@@ -874,6 +879,11 @@ r_int
 id|count
 op_assign
 id|root-&gt;d_count
+suffix:semicolon
+id|check_lock
+c_func
+(paren
+)paren
 suffix:semicolon
 id|repeat
 suffix:colon
@@ -1153,6 +1163,11 @@ r_int
 id|found
 op_assign
 l_int|0
+suffix:semicolon
+id|check_lock
+c_func
+(paren
+)paren
 suffix:semicolon
 id|repeat
 suffix:colon
@@ -2159,6 +2174,11 @@ op_star
 id|dentry
 )paren
 (brace
+id|check_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|check_lock
 c_func
 (paren
