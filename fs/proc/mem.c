@@ -1412,11 +1412,9 @@ op_star
 id|src_table
 )paren
 )paren
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
-id|tsk
-comma
 id|src_vma
 comma
 id|stmp
@@ -1441,11 +1439,9 @@ op_star
 id|src_table
 )paren
 )paren
-id|do_wp_page
+id|handle_mm_fault
 c_func
 (paren
-id|tsk
-comma
 id|src_vma
 comma
 id|stmp

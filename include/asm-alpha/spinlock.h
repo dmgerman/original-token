@@ -244,7 +244,7 @@ id|l1
 suffix:semicolon
 )brace
 DECL|macro|spin_trylock
-mdefine_line|#define spin_trylock(lock) (!set_bit(0,(lock)))
+mdefine_line|#define spin_trylock(lock) (!test_and_set_bit(0,(lock)))
 DECL|macro|spin_lock_irq
 mdefine_line|#define spin_lock_irq(lock) &bslash;&n;&t;do { __cli(); spin_lock(lock); } while (0)
 DECL|macro|spin_unlock_irq

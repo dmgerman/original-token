@@ -1876,7 +1876,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|ISAC_PHCHANGE
@@ -1894,7 +1894,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|ISAC_RCVBUFREADY
@@ -1912,7 +1912,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|ISAC_XMTBUFREADY
@@ -2485,7 +2485,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|HSCX_RCVBUFREADY
@@ -2503,7 +2503,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|HSCX_XMTBUFREADY

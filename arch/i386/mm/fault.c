@@ -139,11 +139,9 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-id|do_wp_page
+id|handle_mm_fault
 c_func
 (paren
-id|current
-comma
 id|vma
 comma
 id|start
@@ -264,26 +262,6 @@ r_int
 id|error_code
 )paren
 (brace
-r_void
-(paren
-op_star
-id|handler
-)paren
-(paren
-r_struct
-id|task_struct
-op_star
-comma
-r_struct
-id|vm_area_struct
-op_star
-comma
-r_int
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
 r_struct
 id|task_struct
 op_star
@@ -427,10 +405,6 @@ id|write
 op_assign
 l_int|0
 suffix:semicolon
-id|handler
-op_assign
-id|do_no_page
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -441,11 +415,9 @@ l_int|3
 (brace
 r_default
 suffix:colon
+(brace
+)brace
 multiline_comment|/* 3: write, present */
-id|handler
-op_assign
-id|do_wp_page
-suffix:semicolon
 macro_line|#ifdef TEST_VERIFY_AREA
 r_if
 c_cond
@@ -515,11 +487,9 @@ r_goto
 id|bad_area
 suffix:semicolon
 )brace
-id|handler
+id|handle_mm_fault
 c_func
 (paren
-id|tsk
-comma
 id|vma
 comma
 id|address

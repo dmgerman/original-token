@@ -74,8 +74,6 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-DECL|macro|current
-macro_line|#undef current
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;53c7,8xx.h&quot;
@@ -1507,7 +1505,7 @@ id|j
 suffix:semicolon
 id|u32
 op_star
-id|current
+id|curr
 suffix:semicolon
 r_for
 c_loop
@@ -1578,7 +1576,7 @@ id|hostdata-&gt;running_list
 op_assign
 id|hostdata-&gt;finished_queue
 op_assign
-id|hostdata-&gt;current
+id|hostdata-&gt;curr
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -1589,7 +1587,7 @@ id|i
 op_assign
 l_int|0
 comma
-id|current
+id|curr
 op_assign
 (paren
 id|u32
@@ -1604,19 +1602,19 @@ suffix:semicolon
 op_increment
 id|i
 comma
-id|current
+id|curr
 op_add_assign
 l_int|2
 )paren
 (brace
-id|current
+id|curr
 (braket
 l_int|0
 )braket
 op_assign
 id|hostdata-&gt;NOP_insn
 suffix:semicolon
-id|current
+id|curr
 (braket
 l_int|1
 )braket
@@ -1624,7 +1622,7 @@ op_assign
 l_int|0xdeadbeef
 suffix:semicolon
 )brace
-id|current
+id|curr
 (braket
 l_int|0
 )braket
@@ -1641,7 +1639,7 @@ l_int|24
 op_or
 id|DBC_TCI_TRUE
 suffix:semicolon
-id|current
+id|curr
 (braket
 l_int|1
 )braket
@@ -6564,7 +6562,7 @@ op_star
 id|ncr_prev
 comma
 op_star
-id|current
+id|curr
 comma
 id|ncr_search
 suffix:semicolon
@@ -6604,7 +6602,7 @@ id|left
 op_assign
 id|host-&gt;can_queue
 comma
-id|current
+id|curr
 op_assign
 id|hostdata-&gt;schedule
 suffix:semicolon
@@ -6615,7 +6613,7 @@ suffix:semicolon
 op_decrement
 id|left
 comma
-id|current
+id|curr
 op_add_assign
 l_int|2
 )paren
@@ -6633,20 +6631,20 @@ comma
 id|u32
 op_star
 )paren
-id|current
+id|curr
 )paren
 op_eq
 id|cmd
 )paren
 (brace
-id|current
+id|curr
 (braket
 l_int|0
 )braket
 op_assign
 id|hostdata-&gt;NOP_insn
 suffix:semicolon
-id|current
+id|curr
 (braket
 l_int|1
 )braket
@@ -14397,7 +14395,7 @@ multiline_comment|/* dsa start is negative, so subtraction is used */
 r_volatile
 id|u32
 op_star
-id|current
+id|curr
 suffix:semicolon
 r_int
 id|i
@@ -14498,7 +14496,7 @@ id|i
 op_assign
 id|host-&gt;can_queue
 comma
-id|current
+id|curr
 op_assign
 id|hostdata-&gt;schedule
 suffix:semicolon
@@ -14506,7 +14504,7 @@ id|i
 OG
 l_int|0
 op_logical_and
-id|current
+id|curr
 (braket
 l_int|0
 )braket
@@ -14516,7 +14514,7 @@ suffix:semicolon
 op_decrement
 id|i
 comma
-id|current
+id|curr
 op_add_assign
 l_int|2
 multiline_comment|/* JUMP instructions are two words */
@@ -14571,11 +14569,11 @@ id|virt_to_bus
 r_void
 op_star
 )paren
-id|current
+id|curr
 )paren
 suffix:semicolon
 multiline_comment|/* Replace the current jump operand.  */
-id|current
+id|curr
 (braket
 l_int|1
 )braket
@@ -14594,7 +14592,7 @@ op_minus
 id|hostdata-&gt;E_dsa_code_template
 suffix:semicolon
 multiline_comment|/* Replace the NOP instruction with a JUMP */
-id|current
+id|curr
 (braket
 l_int|0
 )braket
@@ -16336,7 +16334,7 @@ comma
 id|host-&gt;host_no
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;     * NCR53c700 and NCR53c700-66 change the current SCSI&n;&t;&t;     * process, hostdata-&gt;current, in the Linux driver so&n;&t;&t;     * cmd = hostdata-&gt;current.&n;&t;&t;     *&n;&t;&t;     * With other chips, we must look through the commands&n;&t;&t;     * executing and find the command structure which &n;&t;&t;     * corresponds to the DSA register.&n;&t;&t;     */
+multiline_comment|/*&n;&t;&t;     * NCR53c700 and NCR53c700-66 change the current SCSI&n;&t;&t;     * process, hostdata-&gt;curr, in the Linux driver so&n;&t;&t;     * cmd = hostdata-&gt;curr.&n;&t;&t;     *&n;&t;&t;     * With other chips, we must look through the commands&n;&t;&t;     * executing and find the command structure which &n;&t;&t;     * corresponds to the DSA register.&n;&t;&t;     */
 r_if
 c_cond
 (paren
@@ -16352,7 +16350,7 @@ r_struct
 id|NCR53c7x0_cmd
 op_star
 )paren
-id|hostdata-&gt;current
+id|hostdata-&gt;curr
 suffix:semicolon
 )brace
 r_else
@@ -21224,7 +21222,7 @@ suffix:semicolon
 r_volatile
 id|u32
 op_star
-id|current
+id|curr
 suffix:semicolon
 r_int
 id|left
@@ -21402,7 +21400,7 @@ id|left
 op_assign
 id|host-&gt;can_queue
 comma
-id|current
+id|curr
 op_assign
 id|hostdata-&gt;schedule
 suffix:semicolon
@@ -21410,7 +21408,7 @@ id|left
 OG
 l_int|0
 suffix:semicolon
-id|current
+id|curr
 op_add_assign
 l_int|2
 comma
@@ -21420,7 +21418,7 @@ id|left
 r_if
 c_cond
 (paren
-id|current
+id|curr
 (braket
 l_int|0
 )braket
@@ -21434,7 +21432,7 @@ id|host
 comma
 id|bus_to_virt
 (paren
-id|current
+id|curr
 (braket
 l_int|1
 )braket
@@ -22298,7 +22296,7 @@ id|i
 suffix:semicolon
 id|u32
 op_star
-id|current
+id|curr
 suffix:semicolon
 id|Scsi_Cmnd
 op_star
@@ -22401,7 +22399,7 @@ id|i
 op_assign
 l_int|0
 comma
-id|current
+id|curr
 op_assign
 (paren
 id|u32
@@ -22416,19 +22414,19 @@ suffix:semicolon
 op_increment
 id|i
 comma
-id|current
+id|curr
 op_add_assign
 l_int|2
 )paren
 (brace
-id|current
+id|curr
 (braket
 l_int|0
 )braket
 op_assign
 id|hostdata-&gt;NOP_insn
 suffix:semicolon
-id|current
+id|curr
 (braket
 l_int|1
 )braket
@@ -22436,7 +22434,7 @@ op_assign
 l_int|0xdeadbeef
 suffix:semicolon
 )brace
-id|hostdata-&gt;current
+id|hostdata-&gt;curr
 op_assign
 l_int|NULL
 suffix:semicolon

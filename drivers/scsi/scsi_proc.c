@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/scsi/scsi_proc.c&n; *&n; * The functions in this file provide an interface between&n; * the PROC file system and the SCSI device drivers&n; * It is mainly used for debugging, statistics and to pass &n; * information directly to the lowlevel driver.&n; *&n; * (c) 1995 Michael Neuffer neuffer@goofy.zdv.uni-mainz.de &n; * Version: 0.99.8   last change: 95/09/13&n; * &n; * generic command parser provided by: &n; * Andreas Heilwagen &lt;crashcar@informatik.uni-koblenz.de&gt;&n; */
+multiline_comment|/*&n; * linux/drivers/scsi/scsi_proc.c&n; *&n; * The functions in this file provide an interface between&n; * the PROC file system and the SCSI device drivers&n; * It is mainly used for debugging, statistics and to pass &n; * information directly to the lowlevel driver.&n; *&n; * (c) 1995 Michael Neuffer neuffer@goofy.zdv.uni-mainz.de &n; * Version: 0.99.8   last change: 95/09/13&n; * &n; * generic command parser provided by: &n; * Andreas Heilwagen &lt;crashcar@informatik.uni-koblenz.de&gt;&n; *&n; * generic_proc_info() support of xxxx_info() by:&n; * Michael A. Griffith &lt;grif@acm.org&gt;&n; */
 multiline_comment|/*&n; * Don&squot;t import our own symbols, as this would severely mess up our&n; * symbol tables.&n; */
 DECL|macro|_SCSI_SYMS_VER_
 mdefine_line|#define _SCSI_SYMS_VER_
@@ -85,6 +85,24 @@ id|inode
 comma
 r_int
 id|inout
+comma
+r_const
+r_char
+op_star
+(paren
+op_star
+id|info
+)paren
+(paren
+r_struct
+id|Scsi_Host
+op_star
+)paren
+comma
+r_struct
+id|Scsi_Host
+op_star
+id|sh
 )paren
 (brace
 r_int
@@ -112,6 +130,35 @@ id|begin
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|info
+op_logical_and
+id|sh
+)paren
+(brace
+id|pos
+op_assign
+id|len
+op_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;%s&bslash;n&quot;
+comma
+id|info
+c_func
+(paren
+id|sh
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|pos
 op_assign
 id|len
@@ -124,6 +171,7 @@ comma
 l_string|&quot;The driver does not yet support the proc-fs&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -282,6 +330,10 @@ comma
 id|hpnt-&gt;host_no
 comma
 id|func
+comma
+id|hpnt-&gt;hostt-&gt;info
+comma
+id|hpnt
 )paren
 suffix:semicolon
 )brace

@@ -801,7 +801,7 @@ macro_line|#endif
 r_else
 id|rep
 op_assign
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 id|keycode

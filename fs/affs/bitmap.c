@@ -378,7 +378,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 id|bit
@@ -670,7 +670,7 @@ OG
 l_int|31
 op_logical_or
 op_logical_neg
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|fb
@@ -760,7 +760,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|fb

@@ -179,17 +179,26 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is ugly, but we want the default case to fall through.&n; * &quot;down_failed&quot; is a special asm handler that calls the C&n; * routine that actually waits. See arch/i386/lib/semaphore.S&n; */
-DECL|function|down
+DECL|function|do_down
 r_extern
 r_inline
 r_void
-id|down
+id|do_down
 c_func
 (paren
 r_struct
 id|semaphore
 op_star
 id|sem
+comma
+r_void
+(paren
+op_star
+id|failed
+)paren
+(paren
+r_void
+)paren
 )paren
 (brace
 id|__asm__
@@ -197,18 +206,16 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;# atomic down operation&bslash;n&bslash;t&quot;
-l_string|&quot;movl $1f,%%eax&bslash;n&bslash;t&quot;
 macro_line|#ifdef __SMP__
 l_string|&quot;lock ; &quot;
 macro_line|#endif
 l_string|&quot;decl 0(%0)&bslash;n&bslash;t&quot;
-l_string|&quot;js &quot;
-id|SYMBOL_NAME_STR
-c_func
-(paren
-id|__down_failed
-)paren
-l_string|&quot;&bslash;n1:&quot;
+l_string|&quot;js 2f&bslash;n&quot;
+l_string|&quot;1:&bslash;n&quot;
+l_string|&quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;2:&bslash;tpushl $1b&bslash;n&bslash;t&quot;
+l_string|&quot;jmp %1&bslash;n&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
@@ -216,67 +223,26 @@ l_string|&quot;c&quot;
 (paren
 id|sem
 )paren
-suffix:colon
-l_string|&quot;ax&quot;
 comma
-l_string|&quot;memory&quot;
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * This version waits in interruptible state so that the waiting&n; * process can be killed.  The down_failed_interruptible routine&n; * returns negative for signalled and zero for semaphore acquired.&n; */
-DECL|function|down_interruptible
-r_extern
-r_inline
-r_int
-id|down_interruptible
-c_func
+l_string|&quot;m&quot;
 (paren
-r_struct
-id|semaphore
 op_star
-id|sem
-)paren
-(brace
+(paren
 r_int
-id|ret
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;# atomic interruptible down operation&bslash;n&bslash;t&quot;
-l_string|&quot;movl $1f,%0&bslash;n&bslash;t&quot;
-macro_line|#ifdef __SMP__
-l_string|&quot;lock ; &quot;
-macro_line|#endif
-l_string|&quot;decl 0(%1)&bslash;n&bslash;t&quot;
-l_string|&quot;js &quot;
-id|SYMBOL_NAME_STR
-c_func
-(paren
-id|__down_failed_interruptible
+r_int
+op_star
 )paren
-l_string|&quot;&bslash;n&bslash;t&quot;
-l_string|&quot;xorl %0,%0&quot;
-l_string|&quot;&bslash;n1:&quot;
-suffix:colon
-l_string|&quot;=a&quot;
-(paren
-id|ret
-)paren
-suffix:colon
-l_string|&quot;c&quot;
-(paren
-id|sem
+id|failed
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
-r_return
-id|ret
-suffix:semicolon
 )brace
+DECL|macro|down
+mdefine_line|#define down(sem) do_down((sem),__down_failed)
+DECL|macro|down_interruptible
+mdefine_line|#define down_interruptible(sem) do_down((sem),__down_failed_interruptible)
 multiline_comment|/*&n; * Note! This is subtle. We jump to wake people up only if&n; * the semaphore was negative (== somebody was waiting on it).&n; * The default case (no contention) will result in NO&n; * jumps for both down() and up().&n; */
 DECL|function|up
 r_extern
@@ -296,18 +262,16 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;# atomic up operation&bslash;n&bslash;t&quot;
-l_string|&quot;movl $1f,%%eax&bslash;n&bslash;t&quot;
 macro_line|#ifdef __SMP__
 l_string|&quot;lock ; &quot;
 macro_line|#endif
 l_string|&quot;incl 0(%0)&bslash;n&bslash;t&quot;
-l_string|&quot;jle &quot;
-id|SYMBOL_NAME_STR
-c_func
-(paren
-id|__up_wakeup
-)paren
-l_string|&quot;&bslash;n1:&quot;
+l_string|&quot;jle 2f&bslash;n&quot;
+l_string|&quot;1:&bslash;n&quot;
+l_string|&quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;2:&bslash;tpushl $1b&bslash;n&bslash;t&quot;
+l_string|&quot;jmp %1&bslash;n&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
@@ -315,9 +279,18 @@ l_string|&quot;c&quot;
 (paren
 id|sem
 )paren
-suffix:colon
-l_string|&quot;ax&quot;
 comma
+l_string|&quot;m&quot;
+(paren
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|__up_wakeup
+)paren
+suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon

@@ -68,26 +68,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-r_int
-id|seagate_st0x_proc_info
-c_func
-(paren
-r_char
-op_star
-comma
-r_char
-op_star
-op_star
-comma
-id|off_t
-comma
-r_int
-comma
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL 0
@@ -107,7 +87,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|SEAGATE_ST0X
-mdefine_line|#define SEAGATE_ST0X  {  NULL, NULL, NULL, seagate_st0x_proc_info, &bslash;&n;&t;&t;&t; NULL, seagate_st0x_detect, &t;&bslash;&n;&t;&t;&t; NULL, &t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t; seagate_st0x_info, seagate_st0x_command,  &t;&bslash;&n;&t;&t;&t; seagate_st0x_queue_command, seagate_st0x_abort, &bslash;&n;&t;&t;&t; seagate_st0x_reset, NULL, seagate_st0x_biosparam, &bslash;&n;&t;&t;&t; 1, 7, SG_ALL, 1, 0, 0, DISABLE_CLUSTERING}
+mdefine_line|#define SEAGATE_ST0X  {  NULL, NULL, NULL, NULL, &bslash;&n;&t;&t;&t; NULL, seagate_st0x_detect, &t;&bslash;&n;&t;&t;&t; NULL, &t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t; seagate_st0x_info, seagate_st0x_command,  &t;&bslash;&n;&t;&t;&t; seagate_st0x_queue_command, seagate_st0x_abort, &bslash;&n;&t;&t;&t; seagate_st0x_reset, NULL, seagate_st0x_biosparam, &bslash;&n;&t;&t;&t; 1, 7, SG_ALL, 1, 0, 0, DISABLE_CLUSTERING}
 macro_line|#endif /* ASM */
 macro_line|#endif /* _SEAGATE_H */
 eof

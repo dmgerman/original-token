@@ -2508,7 +2508,7 @@ macro_line|#ifdef CONFIG_BLK_DEV_TRITON
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 (paren
 id|PC_DMA_IN_PROGRESS
 comma
@@ -3082,7 +3082,7 @@ macro_line|#ifdef CONFIG_BLK_DEV_TRITON
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 (paren
 id|PC_DMA_ERROR
 comma
@@ -4845,7 +4845,7 @@ op_assign
 id|drive-&gt;driver_data
 suffix:semicolon
 r_return
-id|clear_bit
+id|test_and_clear_bit
 (paren
 id|IDEFLOPPY_MEDIA_CHANGED
 comma

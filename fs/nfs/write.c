@@ -213,7 +213,7 @@ multiline_comment|/* async swap-out support */
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|PG_decr_after
@@ -232,7 +232,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 c_func
 (paren
 id|PG_swap_unlock_after

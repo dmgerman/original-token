@@ -2829,6 +2829,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine handles present pages, when users try to write&n; * to a shared page. It is done by copying the page to a new address&n; * and decrementing the shared-page counter for the old page.&n; *&n; * Goto-purists beware: the only reason for goto&squot;s here is that it results&n; * in better assembly code.. The &quot;default&quot; path will see no jumps at all.&n; *&n; * Note that this routine assumes that the protection checks have been&n; * done by the caller (the low-level page fault routine in most cases).&n; * Thus we can safely just mark it writable once we&squot;ve done any necessary&n; * COW.&n; *&n; * We also mark the page dirty at this point even though the page will&n; * change only once the write actually happens. This avoids a few races,&n; * and potentially makes it more efficient.&n; */
 DECL|function|do_wp_page
+r_static
 r_void
 id|do_wp_page
 c_func
@@ -3968,6 +3969,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * do_no_page() tries to create a new page mapping. It aggressively&n; * tries to share with existing pages, but makes a separate copy if&n; * the &quot;write_access&quot; parameter is true in order to avoid the next&n; * page fault.&n; *&n; * As this is called only for pages that do not currently exist, we&n; * do not need to flush old virtual caches or the TLB.&n; */
 DECL|function|do_no_page
+r_static
 r_void
 id|do_no_page
 c_func

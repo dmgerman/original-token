@@ -18,6 +18,7 @@ macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
 macro_line|#include &lt;asm/uaccess.h&gt; /* for copy_to/from_user */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 DECL|variable|nr_swap_pages
 r_int
 id|nr_swap_pages
@@ -187,8 +188,13 @@ op_assign
 id|next
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Free_page() adds the page to the free lists. This is optimized for&n; * fast normal cases (no error jumps taken normally).&n; *&n; * The way to optimize jumps for gcc-2.2.2 is to:&n; *  - select the &quot;normal&quot; case and put it inside the if () { XXX }&n; *  - no else-statements if you can avoid them&n; *&n; * With the above two rules, you get a straight-line execution path&n; * for the normal case, giving better asm-code.&n; *&n; * free_page() may sleep since the page being freed may be a buffer&n; * page or present in the swap cache. It will not sleep, however,&n; * for a freshly allocated page (get_free_page()).&n; */
+multiline_comment|/*&n; * Free_page() adds the page to the free lists. This is optimized for&n; * fast normal cases (no error jumps taken normally).&n; *&n; * The way to optimize jumps for gcc-2.2.2 is to:&n; *  - select the &quot;normal&quot; case and put it inside the if () { XXX }&n; *  - no else-statements if you can avoid them&n; *&n; * With the above two rules, you get a straight-line execution path&n; * for the normal case, giving better asm-code.&n; */
 multiline_comment|/*&n; * Buddy system. Hairy. You really aren&squot;t expected to understand this&n; *&n; * Hint: -mask = 1+~mask&n; */
+DECL|variable|page_alloc_lock
+r_static
+id|spinlock_t
+id|page_alloc_lock
+suffix:semicolon
 DECL|function|free_pages_ok
 r_static
 r_inline
@@ -241,15 +247,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|page_alloc_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 DECL|macro|list
@@ -335,9 +339,12 @@ id|map_nr
 suffix:semicolon
 DECL|macro|list
 macro_line|#undef list
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|page_alloc_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -482,7 +489,7 @@ mdefine_line|#define CAN_DMA(x) (PageDMA(x))
 DECL|macro|ADDRESS
 mdefine_line|#define ADDRESS(x) (PAGE_OFFSET + ((x) &lt;&lt; PAGE_SHIFT))
 DECL|macro|RMQUEUE
-mdefine_line|#define RMQUEUE(order, dma) &bslash;&n;do { struct free_area_struct * area = free_area+order; &bslash;&n;     unsigned long new_order = order; &bslash;&n;&t;do { struct page *prev = memory_head(area), *ret; &bslash;&n;&t;&t;while (memory_head(area) != (ret = prev-&gt;next)) { &bslash;&n;&t;&t;&t;if (!dma || CAN_DMA(ret)) { &bslash;&n;&t;&t;&t;&t;unsigned long map_nr = ret-&gt;map_nr; &bslash;&n;&t;&t;&t;&t;(prev-&gt;next = ret-&gt;next)-&gt;prev = prev; &bslash;&n;&t;&t;&t;&t;MARK_USED(map_nr, new_order, area); &bslash;&n;&t;&t;&t;&t;nr_free_pages -= 1 &lt;&lt; order; &bslash;&n;&t;&t;&t;&t;EXPAND(ret, map_nr, order, new_order, area); &bslash;&n;&t;&t;&t;&t;restore_flags(flags); &bslash;&n;&t;&t;&t;&t;return ADDRESS(map_nr); &bslash;&n;&t;&t;&t;} &bslash;&n;&t;&t;&t;prev = ret; &bslash;&n;&t;&t;} &bslash;&n;&t;&t;new_order++; area++; &bslash;&n;&t;} while (new_order &lt; NR_MEM_LISTS); &bslash;&n;} while (0)
+mdefine_line|#define RMQUEUE(order, dma) &bslash;&n;do { struct free_area_struct * area = free_area+order; &bslash;&n;     unsigned long new_order = order; &bslash;&n;&t;do { struct page *prev = memory_head(area), *ret; &bslash;&n;&t;&t;while (memory_head(area) != (ret = prev-&gt;next)) { &bslash;&n;&t;&t;&t;if (!dma || CAN_DMA(ret)) { &bslash;&n;&t;&t;&t;&t;unsigned long map_nr = ret-&gt;map_nr; &bslash;&n;&t;&t;&t;&t;(prev-&gt;next = ret-&gt;next)-&gt;prev = prev; &bslash;&n;&t;&t;&t;&t;MARK_USED(map_nr, new_order, area); &bslash;&n;&t;&t;&t;&t;nr_free_pages -= 1 &lt;&lt; order; &bslash;&n;&t;&t;&t;&t;EXPAND(ret, map_nr, order, new_order, area); &bslash;&n;&t;&t;&t;&t;spin_unlock_irqrestore(&amp;page_alloc_lock, flags); &bslash;&n;&t;&t;&t;&t;return ADDRESS(map_nr); &bslash;&n;&t;&t;&t;} &bslash;&n;&t;&t;&t;prev = ret; &bslash;&n;&t;&t;} &bslash;&n;&t;&t;new_order++; area++; &bslash;&n;&t;} while (new_order &lt; NR_MEM_LISTS); &bslash;&n;} while (0)
 DECL|macro|EXPAND
 mdefine_line|#define EXPAND(map,index,low,high,area) &bslash;&n;do { unsigned long size = 1 &lt;&lt; high; &bslash;&n;&t;while (high &gt; low) { &bslash;&n;&t;&t;area--; high--; size &gt;&gt;= 1; &bslash;&n;&t;&t;add_mem_queue(area, map); &bslash;&n;&t;&t;MARK_USED(index, high, area); &bslash;&n;&t;&t;index += size; &bslash;&n;&t;&t;map += size; &bslash;&n;&t;} &bslash;&n;&t;atomic_set(&amp;map-&gt;count, 1); &bslash;&n;&t;map-&gt;age = PAGE_INITIAL_AGE; &bslash;&n;} while (0)
 DECL|function|__get_free_pages
@@ -580,17 +587,15 @@ id|reserved_pages
 op_assign
 id|min_free_pages
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|repeat
 suffix:colon
-id|cli
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|page_alloc_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -615,9 +620,12 @@ comma
 id|dma
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|page_alloc_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -625,9 +633,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|page_alloc_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -690,15 +701,13 @@ l_int|10
 )paren
 )paren
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|page_alloc_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_for
@@ -795,9 +804,12 @@ id|order
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|page_alloc_lock
+comma
 id|flags
 )paren
 suffix:semicolon

@@ -4190,6 +4190,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -4226,6 +4227,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&t;printk(&quot;SMI-&quot;);*/
 multiline_comment|/*&n;&t; *&t;The assignment is safe because it&squot;s volatile so the compiler cannot reorder it,&n;&t; *&t;because the i586 has strict memory ordering and because only the kernel lock holder&n;&t; *&t;may issue a tlb flush. If you break any one of those three change this to an atomic&n;&t; *&t;bus locked or.&n;&t; */
 id|smp_invalidate_needed

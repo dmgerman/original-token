@@ -1002,6 +1002,11 @@ r_return
 id|start_mem
 suffix:semicolon
 )brace
+DECL|variable|kmalloc_lock
+r_static
+id|spinlock_t
+id|kmalloc_lock
+suffix:semicolon
 multiline_comment|/*&n; * Ugh, this is ugly, but we want the default case to run&n; * straight through, which is why we have the ugly goto&squot;s&n; */
 DECL|function|kmalloc
 r_void
@@ -1208,15 +1213,13 @@ id|GFP_ATOMIC
 suffix:semicolon
 )brace
 )brace
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|kmalloc_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|page
@@ -1267,9 +1270,12 @@ id|pg
 op_assign
 id|page-&gt;next
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|kmalloc_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -1311,10 +1317,13 @@ suffix:semicolon
 multiline_comment|/* Pointer arithmetic: increments past header */
 id|no_bucket_page
 suffix:colon
-multiline_comment|/*&n;&t; * If we didn&squot;t find a page already allocated for this&n;&t; * bucket size, we need to get one..&n;&t; *&n;&t; * This can be done with ints on: it is private to this invocation&n;&t; */
-id|restore_flags
+multiline_comment|/*&n;&t; * If we didn&squot;t find a page already allocated for this&n;&t; * bucket size, we need to get one..&n;&t; *&n;&t; * This can be done without locks: it is private to this invocation&n;&t; */
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|kmalloc_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -1440,9 +1449,11 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Now we&squot;re going to muck with the &quot;global&quot; freelist&n;&t; * for this size: this should be uninterruptible&n;&t; */
-id|cli
+id|spin_lock_irq
 c_func
 (paren
+op_amp
+id|kmalloc_lock
 )paren
 suffix:semicolon
 id|page-&gt;next
@@ -1536,9 +1547,12 @@ suffix:semicolon
 )brace
 id|not_free_on_freelist
 suffix:colon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|kmalloc_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -1723,15 +1737,13 @@ id|ptr-&gt;bh_length
 )paren
 suffix:semicolon
 macro_line|#endif
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|kmalloc_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|bucket-&gt;nfrees
@@ -1848,9 +1860,12 @@ id|dma
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|kmalloc_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -1886,9 +1901,12 @@ comma
 id|page
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|kmalloc_lock
+comma
 id|flags
 )paren
 suffix:semicolon

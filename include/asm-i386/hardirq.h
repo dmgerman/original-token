@@ -202,11 +202,6 @@ id|local_irq_count
 id|cpu
 )braket
 suffix:semicolon
-id|__sti
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon

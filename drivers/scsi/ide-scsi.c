@@ -1081,7 +1081,7 @@ macro_line|#endif /* IDESCSI_DEBUG_LOG */
 r_if
 c_cond
 (paren
-id|clear_bit
+id|test_and_clear_bit
 (paren
 id|PC_DMA_IN_PROGRESS
 comma

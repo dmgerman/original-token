@@ -1035,6 +1035,10 @@ op_assign
 l_string|&quot;PPro A-step&quot;
 comma
 l_string|&quot;Pentium Pro&quot;
+comma
+l_string|&quot;2&quot;
+comma
+l_string|&quot;Pentium II&quot;
 )brace
 suffix:semicolon
 r_if
@@ -1177,6 +1181,9 @@ id|len
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|sep_bug
+suffix:semicolon
 r_static
 r_const
 r_char
@@ -1208,7 +1215,7 @@ l_string|&quot;apic&quot;
 comma
 l_string|&quot;10&quot;
 comma
-l_string|&quot;11&quot;
+l_string|&quot;sep&quot;
 comma
 l_string|&quot;mtrr&quot;
 comma
@@ -1402,6 +1409,40 @@ comma
 l_string|&quot;stepping&bslash;t: unknown&bslash;n&quot;
 )paren
 suffix:semicolon
+id|sep_bug
+op_assign
+id|CD
+c_func
+(paren
+id|have_cpuid
+)paren
+op_logical_and
+(paren
+id|CD
+c_func
+(paren
+id|x86_capability
+)paren
+op_amp
+l_int|0x800
+)paren
+op_logical_and
+id|CD
+c_func
+(paren
+id|x86_model
+)paren
+OL
+l_int|3
+op_logical_and
+id|CD
+c_func
+(paren
+id|x86_mask
+)paren
+OL
+l_int|3
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -1413,6 +1454,7 @@ id|len
 comma
 l_string|&quot;fdiv_bug&bslash;t: %s&bslash;n&quot;
 l_string|&quot;hlt_bug&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;sep_bug&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;fpu&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;fpu_exception&bslash;t: %s&bslash;n&quot;
 l_string|&quot;cpuid&bslash;t&bslash;t: %s&bslash;n&quot;
@@ -1440,6 +1482,13 @@ c_cond
 l_string|&quot;no&quot;
 suffix:colon
 l_string|&quot;yes&quot;
+comma
+id|sep_bug
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
 comma
 id|CD
 c_func
