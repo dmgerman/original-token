@@ -589,7 +589,7 @@ multiline_comment|/* memory.c &amp; swap.c*/
 DECL|macro|free_page
 mdefine_line|#define free_page(addr) free_pages((addr),0)
 r_extern
-r_void
+r_int
 id|FASTCALL
 c_func
 (paren
@@ -607,7 +607,7 @@ id|order
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|FASTCALL
 c_func
 (paren

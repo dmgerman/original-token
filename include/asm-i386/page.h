@@ -135,9 +135,9 @@ DECL|macro|__PAGE_OFFSET
 mdefine_line|#define __PAGE_OFFSET&t;&t;(PAGE_OFFSET_RAW)
 macro_line|#ifndef __ASSEMBLY__
 DECL|macro|BUG
-mdefine_line|#define BUG() do { printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); *(int *)0=0; } while (0)
+mdefine_line|#define BUG() do { &bslash;&n;&t;printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); &bslash;&n;&t;__asm__ __volatile__(&quot;.byte 0x0f,0x0b&quot;); &bslash;&n;} while (0)
 DECL|macro|PAGE_BUG
-mdefine_line|#define PAGE_BUG(page) do { &bslash;&n;&t;&t;&t;&t;BUG(); } while (0)
+mdefine_line|#define PAGE_BUG(page) do { &bslash;&n;&t;BUG(); &bslash;&n;} while (0)
 macro_line|#endif /* __ASSEMBLY__ */
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;&t;((unsigned long)__PAGE_OFFSET)

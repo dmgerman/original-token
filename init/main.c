@@ -4887,6 +4887,11 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * Interrupts are still disabled. Do necessary setups, then&n; * enable them&n; */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -5181,6 +5186,11 @@ op_or
 id|CLONE_FILES
 op_or
 id|CLONE_SIGHAND
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|current-&gt;need_resched
