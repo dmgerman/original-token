@@ -1477,11 +1477,9 @@ comma
 id|ret
 )brace
 suffix:semicolon
-id|CardServices
+id|pcmcia_report_error
 c_func
 (paren
-id|ReportError
-comma
 id|handle
 comma
 op_amp
@@ -1862,11 +1860,9 @@ id|local-&gt;timer
 suffix:semicolon
 id|ret
 op_assign
-id|CardServices
+id|pcmcia_register_client
 c_func
 (paren
-id|RegisterClient
-comma
 op_amp
 id|link-&gt;handle
 comma
@@ -2076,11 +2072,9 @@ c_cond
 (paren
 id|link-&gt;handle
 )paren
-id|CardServices
+id|pcmcia_deregister_client
 c_func
 (paren
-id|DeregisterClient
-comma
 id|link-&gt;handle
 )paren
 suffix:semicolon
@@ -2153,7 +2147,7 @@ suffix:semicolon
 multiline_comment|/* ray_detach */
 multiline_comment|/*=============================================================================&n;    ray_config() is run after a CARD_INSERTION event&n;    is received, to configure the PCMCIA socket, and to make the&n;    ethernet device available to the system.&n;=============================================================================*/
 DECL|macro|CS_CHECK
-mdefine_line|#define CS_CHECK(fn, args...) &bslash;&n;while ((last_ret=CardServices(last_fn=(fn),args))!=0) goto cs_failed
+mdefine_line|#define CS_CHECK(fn, args...) &bslash;&n;while ((last_ret=fn(args))!=0) goto cs_failed
 DECL|macro|MAX_TUPLE_SIZE
 mdefine_line|#define MAX_TUPLE_SIZE 128
 DECL|function|ray_config
@@ -2180,8 +2174,12 @@ id|parse
 suffix:semicolon
 r_int
 id|last_fn
+op_assign
+l_int|0
 comma
 id|last_ret
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|i
@@ -2238,7 +2236,7 @@ suffix:semicolon
 id|CS_CHECK
 c_func
 (paren
-id|GetFirstTuple
+id|pcmcia_get_first_tuple
 comma
 id|handle
 comma
@@ -2261,7 +2259,7 @@ suffix:semicolon
 id|CS_CHECK
 c_func
 (paren
-id|GetTupleData
+id|pcmcia_get_tuple_data
 comma
 id|handle
 comma
@@ -2272,7 +2270,7 @@ suffix:semicolon
 id|CS_CHECK
 c_func
 (paren
-id|ParseTuple
+id|pcmcia_parse_tuple
 comma
 id|handle
 comma
@@ -2316,7 +2314,7 @@ suffix:semicolon
 id|CS_CHECK
 c_func
 (paren
-id|GetFirstTuple
+id|pcmcia_get_first_tuple
 comma
 id|handle
 comma
@@ -2339,7 +2337,7 @@ suffix:semicolon
 id|CS_CHECK
 c_func
 (paren
-id|GetTupleData
+id|pcmcia_get_tuple_data
 comma
 id|handle
 comma
@@ -2398,7 +2396,7 @@ multiline_comment|/* Now allocate an interrupt line.  Note that this does not&n;
 id|CS_CHECK
 c_func
 (paren
-id|RequestIRQ
+id|pcmcia_request_irq
 comma
 id|link-&gt;handle
 comma
@@ -2414,7 +2412,7 @@ multiline_comment|/* This actually configures the PCMCIA socket -- setting up&n;
 id|CS_CHECK
 c_func
 (paren
-id|RequestConfiguration
+id|pcmcia_request_configuration
 comma
 id|link-&gt;handle
 comma
@@ -2455,7 +2453,7 @@ suffix:semicolon
 id|CS_CHECK
 c_func
 (paren
-id|RequestWindow
+id|pcmcia_request_window
 comma
 op_amp
 id|link-&gt;win
@@ -2475,7 +2473,7 @@ suffix:semicolon
 id|CS_CHECK
 c_func
 (paren
-id|MapMemPage
+id|pcmcia_map_mem_page
 comma
 id|link-&gt;win
 comma
@@ -2532,7 +2530,7 @@ suffix:semicolon
 id|CS_CHECK
 c_func
 (paren
-id|RequestWindow
+id|pcmcia_request_window
 comma
 op_amp
 id|local-&gt;rmem_handle
@@ -2552,7 +2550,7 @@ suffix:semicolon
 id|CS_CHECK
 c_func
 (paren
-id|MapMemPage
+id|pcmcia_map_mem_page
 comma
 id|local-&gt;rmem_handle
 comma
@@ -2609,7 +2607,7 @@ suffix:semicolon
 id|CS_CHECK
 c_func
 (paren
-id|RequestWindow
+id|pcmcia_request_window
 comma
 op_amp
 id|local-&gt;amem_handle
@@ -2629,7 +2627,7 @@ suffix:semicolon
 id|CS_CHECK
 c_func
 (paren
-id|MapMemPage
+id|pcmcia_map_mem_page
 comma
 id|local-&gt;amem_handle
 comma
@@ -4311,11 +4309,9 @@ suffix:semicolon
 multiline_comment|/* Do bother checking to see if these succeed or not */
 id|i
 op_assign
-id|CardServices
+id|pcmcia_release_window
 c_func
 (paren
-id|ReleaseWindow
-comma
 id|link-&gt;win
 )paren
 suffix:semicolon
@@ -4338,11 +4334,9 @@ id|i
 suffix:semicolon
 id|i
 op_assign
-id|CardServices
+id|pcmcia_release_window
 c_func
 (paren
-id|ReleaseWindow
-comma
 id|local-&gt;amem_handle
 )paren
 suffix:semicolon
@@ -4365,11 +4359,9 @@ id|i
 suffix:semicolon
 id|i
 op_assign
-id|CardServices
+id|pcmcia_release_window
 c_func
 (paren
-id|ReleaseWindow
-comma
 id|local-&gt;rmem_handle
 )paren
 suffix:semicolon
@@ -4392,11 +4384,9 @@ id|i
 suffix:semicolon
 id|i
 op_assign
-id|CardServices
+id|pcmcia_release_configuration
 c_func
 (paren
-id|ReleaseConfiguration
-comma
 id|link-&gt;handle
 )paren
 suffix:semicolon
@@ -4419,11 +4409,9 @@ id|i
 suffix:semicolon
 id|i
 op_assign
-id|CardServices
+id|pcmcia_release_irq
 c_func
 (paren
-id|ReleaseIRQ
-comma
 id|link-&gt;handle
 comma
 op_amp
@@ -4632,11 +4620,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|CardServices
+id|pcmcia_release_configuration
 c_func
 (paren
-id|ReleaseConfiguration
-comma
 id|link-&gt;handle
 )paren
 suffix:semicolon
@@ -4663,11 +4649,9 @@ op_amp
 id|DEV_CONFIG
 )paren
 (brace
-id|CardServices
+id|pcmcia_request_configuration
 c_func
 (paren
-id|RequestConfiguration
-comma
 id|link-&gt;handle
 comma
 op_amp
@@ -13910,9 +13894,6 @@ r_void
 r_int
 id|rc
 suffix:semicolon
-id|servinfo_t
-id|serv
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -13923,35 +13904,6 @@ comma
 id|rcsid
 )paren
 suffix:semicolon
-id|CardServices
-c_func
-(paren
-id|GetCardServicesInfo
-comma
-op_amp
-id|serv
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|serv.Revision
-op_ne
-id|CS_RELEASE_CODE
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_NOTICE
-l_string|&quot;ray: Card Services release does not match!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
 id|rc
 op_assign
 id|register_pcmcia_driver

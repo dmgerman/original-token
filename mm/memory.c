@@ -4387,6 +4387,12 @@ c_func
 id|page
 )paren
 suffix:semicolon
+id|UnlockPage
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|page
 op_assign
 id|replace_with_highmem
@@ -4418,6 +4424,7 @@ id|pte
 )paren
 suffix:semicolon
 )brace
+r_else
 id|UnlockPage
 c_func
 (paren

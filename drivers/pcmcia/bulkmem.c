@@ -1150,32 +1150,22 @@ r_case
 id|MTDRequestWindow
 suffix:colon
 r_return
-id|CardServices
+id|pcmcia_request_window
 c_func
 (paren
-id|RequestWindow
-comma
 id|a1
 comma
 id|a2
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_case
 id|MTDReleaseWindow
 suffix:colon
 r_return
-id|CardServices
+id|pcmcia_release_window
 c_func
 (paren
-id|ReleaseWindow
-comma
 id|a1
-comma
-l_int|NULL
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_case
@@ -1705,9 +1695,9 @@ id|CS_NO_MORE_ITEMS
 suffix:semicolon
 )brace
 multiline_comment|/* match_region */
-DECL|function|get_first_region
+DECL|function|pcmcia_get_first_region
 r_int
-id|get_first_region
+id|pcmcia_get_first_region
 c_func
 (paren
 id|client_handle_t
@@ -1818,9 +1808,9 @@ id|rgn
 suffix:semicolon
 )brace
 multiline_comment|/* get_first_region */
-DECL|function|get_next_region
+DECL|function|pcmcia_get_next_region
 r_int
-id|get_next_region
+id|pcmcia_get_next_region
 c_func
 (paren
 id|client_handle_t
@@ -1857,9 +1847,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* get_next_region */
 multiline_comment|/*======================================================================&n;&n;    Connect an MTD with a memory region.&n;    &n;======================================================================*/
-DECL|function|register_mtd
+DECL|function|pcmcia_register_mtd
 r_int
-id|register_mtd
+id|pcmcia_register_mtd
 c_func
 (paren
 id|client_handle_t
@@ -1997,9 +1987,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* register_mtd */
 multiline_comment|/*======================================================================&n;&n;    Erase queue management functions&n;    &n;======================================================================*/
-DECL|function|register_erase_queue
+DECL|function|pcmcia_register_erase_queue
 r_int
-id|register_erase_queue
+id|pcmcia_register_erase_queue
 c_func
 (paren
 id|client_handle_t
@@ -2078,9 +2068,9 @@ id|CS_SUCCESS
 suffix:semicolon
 )brace
 multiline_comment|/* register_erase_queue */
-DECL|function|deregister_erase_queue
+DECL|function|pcmcia_deregister_erase_queue
 r_int
-id|deregister_erase_queue
+id|pcmcia_deregister_erase_queue
 c_func
 (paren
 id|eraseq_handle_t
@@ -2163,9 +2153,9 @@ id|CS_SUCCESS
 suffix:semicolon
 )brace
 multiline_comment|/* deregister_erase_queue */
-DECL|function|check_erase_queue
+DECL|function|pcmcia_check_erase_queue
 r_int
-id|check_erase_queue
+id|pcmcia_check_erase_queue
 c_func
 (paren
 id|eraseq_handle_t
@@ -2231,9 +2221,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* check_erase_queue */
 multiline_comment|/*======================================================================&n;&n;    Look up the memory region matching the request, and return a&n;    memory handle.&n;    &n;======================================================================*/
-DECL|function|open_memory
+DECL|function|pcmcia_open_memory
 r_int
-id|open_memory
+id|pcmcia_open_memory
 c_func
 (paren
 id|client_handle_t
@@ -2357,9 +2347,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* open_memory */
 multiline_comment|/*======================================================================&n;&n;    Close a memory handle from an earlier call to OpenMemory.&n;    &n;    For the moment, I don&squot;t think this needs to do anything.&n;    &n;======================================================================*/
-DECL|function|close_memory
+DECL|function|pcmcia_close_memory
 r_int
-id|close_memory
+id|pcmcia_close_memory
 c_func
 (paren
 id|memory_handle_t
@@ -2394,9 +2384,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* close_memory */
 multiline_comment|/*======================================================================&n;&n;    Read from a memory device, using a handle previously returned&n;    by a call to OpenMemory.&n;    &n;======================================================================*/
-DECL|function|read_memory
+DECL|function|pcmcia_read_memory
 r_int
-id|read_memory
+id|pcmcia_read_memory
 c_func
 (paren
 id|memory_handle_t
@@ -2491,9 +2481,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* read_memory */
 multiline_comment|/*======================================================================&n;&n;    Write to a memory device, using a handle previously returned by&n;    a call to OpenMemory.&n;    &n;======================================================================*/
-DECL|function|write_memory
+DECL|function|pcmcia_write_memory
 r_int
-id|write_memory
+id|pcmcia_write_memory
 c_func
 (paren
 id|memory_handle_t
@@ -2588,9 +2578,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* write_memory */
 multiline_comment|/*======================================================================&n;&n;    This isn&squot;t needed for anything I could think of.&n;    &n;======================================================================*/
-DECL|function|copy_memory
+DECL|function|pcmcia_copy_memory
 r_int
-id|copy_memory
+id|pcmcia_copy_memory
 c_func
 (paren
 id|memory_handle_t

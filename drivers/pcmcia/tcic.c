@@ -1596,11 +1596,9 @@ comma
 id|version
 )paren
 suffix:semicolon
-id|CardServices
+id|pcmcia_get_card_services_info
 c_func
 (paren
-id|GetCardServicesInfo
-comma
 op_amp
 id|serv
 )paren

@@ -629,7 +629,7 @@ id|vs-&gt;cap.map_size
 suffix:semicolon
 id|ret
 op_assign
-id|validate_cis
+id|pcmcia_validate_cis
 c_func
 (paren
 id|vs-&gt;clients
@@ -701,7 +701,7 @@ id|vs-&gt;cap.map_size
 suffix:semicolon
 id|ret
 op_assign
-id|validate_cis
+id|pcmcia_validate_cis
 c_func
 (paren
 id|vs-&gt;clients
@@ -1506,9 +1506,9 @@ id|s-&gt;cis_used
 suffix:semicolon
 )brace
 multiline_comment|/*======================================================================&n;&n;    For really bad cards, we provide a facility for uploading a&n;    replacement CIS.&n;    &n;======================================================================*/
-DECL|function|replace_cis
+DECL|function|pcmcia_replace_cis
 r_int
-id|replace_cis
+id|pcmcia_replace_cis
 c_func
 (paren
 id|client_handle_t
@@ -1653,7 +1653,7 @@ mdefine_line|#define MFC_FN(f)&t;(((tuple_flags *)(&amp;(f)))-&gt;mfc_fn)
 DECL|macro|SPACE
 mdefine_line|#define SPACE(f)&t;(((tuple_flags *)(&amp;(f)))-&gt;space)
 r_int
-id|get_next_tuple
+id|pcmcia_get_next_tuple
 c_func
 (paren
 id|client_handle_t
@@ -1664,9 +1664,9 @@ op_star
 id|tuple
 )paren
 suffix:semicolon
-DECL|function|get_first_tuple
+DECL|function|pcmcia_get_first_tuple
 r_int
-id|get_first_tuple
+id|pcmcia_get_first_tuple
 c_func
 (paren
 id|client_handle_t
@@ -1826,7 +1826,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|get_next_tuple
+id|pcmcia_get_next_tuple
 c_func
 (paren
 id|handle
@@ -1844,7 +1844,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|get_next_tuple
+id|pcmcia_get_next_tuple
 c_func
 (paren
 id|handle
@@ -1871,7 +1871,7 @@ id|req
 suffix:semicolon
 )brace
 r_return
-id|get_next_tuple
+id|pcmcia_get_next_tuple
 c_func
 (paren
 id|handle
@@ -2168,9 +2168,9 @@ r_return
 id|ofs
 suffix:semicolon
 )brace
-DECL|function|get_next_tuple
+DECL|function|pcmcia_get_next_tuple
 r_int
-id|get_next_tuple
+id|pcmcia_get_next_tuple
 c_func
 (paren
 id|client_handle_t
@@ -2661,7 +2661,7 @@ c_func
 (paren
 l_int|1
 comma
-l_string|&quot;cs: overrun in get_next_tuple for socket %d&bslash;n&quot;
+l_string|&quot;cs: overrun in pcmcia_get_next_tuple for socket %d&bslash;n&quot;
 comma
 id|handle-&gt;Socket
 )paren
@@ -2697,9 +2697,9 @@ suffix:semicolon
 multiline_comment|/*====================================================================*/
 DECL|macro|_MIN
 mdefine_line|#define _MIN(a, b)&t;&t;(((a) &lt; (b)) ? (a) : (b))
-DECL|function|get_tuple_data
+DECL|function|pcmcia_get_tuple_data
 r_int
-id|get_tuple_data
+id|pcmcia_get_tuple_data
 c_func
 (paren
 id|client_handle_t
@@ -6854,9 +6854,9 @@ id|CS_SUCCESS
 suffix:semicolon
 )brace
 multiline_comment|/*====================================================================*/
-DECL|function|parse_tuple
+DECL|function|pcmcia_parse_tuple
 r_int
-id|parse_tuple
+id|pcmcia_parse_tuple
 c_func
 (paren
 id|client_handle_t
@@ -7258,17 +7258,13 @@ id|TUPLE_RETURN_COMMON
 suffix:semicolon
 id|ret
 op_assign
-id|CardServices
+id|pcmcia_get_first_tuple
 c_func
 (paren
-id|GetFirstTuple
-comma
 id|handle
 comma
 op_amp
 id|tuple
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -7298,17 +7294,13 @@ id|buf
 suffix:semicolon
 id|ret
 op_assign
-id|CardServices
+id|pcmcia_get_tuple_data
 c_func
 (paren
-id|GetTupleData
-comma
 id|handle
 comma
 op_amp
 id|tuple
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -7323,11 +7315,9 @@ id|ret
 suffix:semicolon
 id|ret
 op_assign
-id|CardServices
+id|pcmcia_parse_tuple
 c_func
 (paren
-id|ParseTuple
-comma
 id|handle
 comma
 op_amp
@@ -7341,9 +7331,9 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*======================================================================&n;&n;    This tries to determine if a card has a sensible CIS.  It returns&n;    the number of tuples in the CIS, or 0 if the CIS looks bad.  The&n;    checks include making sure several critical tuples are present and&n;    valid; seeing if the total number of tuples is reasonable; and&n;    looking for tuples that use reserved codes.&n;    &n;======================================================================*/
-DECL|function|validate_cis
+DECL|function|pcmcia_validate_cis
 r_int
-id|validate_cis
+id|pcmcia_validate_cis
 c_func
 (paren
 id|client_handle_t
@@ -7397,7 +7387,7 @@ id|TUPLE_RETURN_COMMON
 suffix:semicolon
 id|ret
 op_assign
-id|get_first_tuple
+id|pcmcia_get_first_tuple
 c_func
 (paren
 id|handle
@@ -7541,7 +7531,7 @@ op_increment
 (brace
 id|ret
 op_assign
-id|get_next_tuple
+id|pcmcia_get_next_tuple
 c_func
 (paren
 id|handle

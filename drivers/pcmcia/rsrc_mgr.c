@@ -2860,9 +2860,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* adjust_irq */
 multiline_comment|/*====================================================================*/
-DECL|function|adjust_resource_info
+DECL|function|pcmcia_adjust_resource_info
 r_int
-id|adjust_resource_info
+id|pcmcia_adjust_resource_info
 c_func
 (paren
 id|client_handle_t

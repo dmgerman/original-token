@@ -1263,6 +1263,13 @@ op_assign
 op_amp
 id|s-&gt;erase_busy
 suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|s-&gt;lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3608,10 +3615,9 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*======================================================================&n;&n;    Access_configuration_register() reads and writes configuration&n;    registers in attribute memory.  Memory window 0 is reserved for&n;    this and the tuple reading services.&n;    &n;======================================================================*/
-DECL|function|access_configuration_register
-r_static
+DECL|function|pcmcia_access_configuration_register
 r_int
-id|access_configuration_register
+id|pcmcia_access_configuration_register
 c_func
 (paren
 id|client_handle_t
@@ -3783,10 +3789,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* access_configuration_register */
 multiline_comment|/*======================================================================&n;&n;    Bind_device() associates a device driver with a particular socket.&n;    It is normally called by Driver Services after it has identified&n;    a newly inserted card.  An instance of that driver will then be&n;    eligible to register as a client of this socket.&n;    &n;======================================================================*/
-DECL|function|bind_device
-r_static
+DECL|function|pcmcia_bind_device
 r_int
-id|bind_device
+id|pcmcia_bind_device
 c_func
 (paren
 id|bind_req_t
@@ -3927,10 +3932,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* bind_device */
 multiline_comment|/*======================================================================&n;&n;    Bind_mtd() associates a device driver with a particular memory&n;    region.  It is normally called by Driver Services after it has&n;    identified a memory device type.  An instance of the corresponding&n;    driver will then be able to register to control this region.&n;    &n;======================================================================*/
-DECL|function|bind_mtd
-r_static
+DECL|function|pcmcia_bind_mtd
 r_int
-id|bind_mtd
+id|pcmcia_bind_mtd
 c_func
 (paren
 id|mtd_bind_t
@@ -4054,10 +4058,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* bind_mtd */
 multiline_comment|/*====================================================================*/
-DECL|function|deregister_client
-r_static
+DECL|function|pcmcia_deregister_client
 r_int
-id|deregister_client
+id|pcmcia_deregister_client
 c_func
 (paren
 id|client_handle_t
@@ -4359,10 +4362,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* deregister_client */
 multiline_comment|/*====================================================================*/
-DECL|function|get_configuration_info
-r_static
+DECL|function|pcmcia_get_configuration_info
 r_int
-id|get_configuration_info
+id|pcmcia_get_configuration_info
 c_func
 (paren
 id|client_handle_t
@@ -4656,10 +4658,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* get_configuration_info */
 multiline_comment|/*======================================================================&n;&n;    Return information about this version of Card Services.&n;    &n;======================================================================*/
-DECL|function|get_card_services_info
-r_static
+DECL|function|pcmcia_get_card_services_info
 r_int
-id|get_card_services_info
+id|pcmcia_get_card_services_info
 c_func
 (paren
 id|servinfo_t
@@ -4707,10 +4708,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* get_card_services_info */
 multiline_comment|/*======================================================================&n;&n;    Note that get_first_client() *does* recognize the Socket field&n;    in the request structure.&n;    &n;======================================================================*/
-DECL|function|get_first_client
-r_static
+DECL|function|pcmcia_get_first_client
 r_int
-id|get_first_client
+id|pcmcia_get_first_client
 c_func
 (paren
 id|client_handle_t
@@ -4784,10 +4784,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* get_first_client */
 multiline_comment|/*====================================================================*/
-DECL|function|get_next_client
-r_static
+DECL|function|pcmcia_get_next_client
 r_int
-id|get_next_client
+id|pcmcia_get_next_client
 c_func
 (paren
 id|client_handle_t
@@ -4887,10 +4886,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* get_next_client */
 multiline_comment|/*====================================================================*/
-DECL|function|get_window
-r_static
+DECL|function|pcmcia_get_window
 r_int
-id|get_window
+id|pcmcia_get_window
 c_func
 (paren
 id|window_handle_t
@@ -5077,10 +5075,9 @@ id|CS_SUCCESS
 suffix:semicolon
 )brace
 multiline_comment|/* get_window */
-DECL|function|get_first_window
-r_static
+DECL|function|pcmcia_get_first_window
 r_int
-id|get_first_window
+id|pcmcia_get_first_window
 c_func
 (paren
 id|client_handle_t
@@ -5112,7 +5109,7 @@ r_return
 id|CS_BAD_HANDLE
 suffix:semicolon
 r_return
-id|get_window
+id|pcmcia_get_window
 c_func
 (paren
 (paren
@@ -5127,10 +5124,9 @@ id|req
 )paren
 suffix:semicolon
 )brace
-DECL|function|get_next_window
-r_static
+DECL|function|pcmcia_get_next_window
 r_int
-id|get_next_window
+id|pcmcia_get_next_window
 c_func
 (paren
 id|window_handle_t
@@ -5166,7 +5162,7 @@ r_return
 id|CS_BAD_HANDLE
 suffix:semicolon
 r_return
-id|get_window
+id|pcmcia_get_window
 c_func
 (paren
 id|win
@@ -5185,10 +5181,9 @@ id|req
 suffix:semicolon
 )brace
 multiline_comment|/*======================================================================&n;&n;    Get the current socket state bits.  We don&squot;t support the latched&n;    SocketState yet: I haven&squot;t seen any point for it.&n;    &n;======================================================================*/
-DECL|function|get_status
-r_static
+DECL|function|pcmcia_get_status
 r_int
-id|get_status
+id|pcmcia_get_status
 c_func
 (paren
 id|client_handle_t
@@ -5606,10 +5601,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* get_status */
 multiline_comment|/*======================================================================&n;&n;    Change the card address of an already open memory window.&n;    &n;======================================================================*/
-DECL|function|get_mem_page
-r_static
+DECL|function|pcmcia_get_mem_page
 r_int
-id|get_mem_page
+id|pcmcia_get_mem_page
 c_func
 (paren
 id|window_handle_t
@@ -5651,10 +5645,9 @@ id|CS_SUCCESS
 suffix:semicolon
 )brace
 multiline_comment|/* get_mem_page */
-DECL|function|map_mem_page
-r_static
+DECL|function|pcmcia_map_mem_page
 r_int
-id|map_mem_page
+id|pcmcia_map_mem_page
 c_func
 (paren
 id|window_handle_t
@@ -5732,10 +5725,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* map_mem_page */
 multiline_comment|/*======================================================================&n;&n;    Modify a locked socket configuration&n;    &n;======================================================================*/
-DECL|function|modify_configuration
-r_static
+DECL|function|pcmcia_modify_configuration
 r_int
-id|modify_configuration
+id|pcmcia_modify_configuration
 c_func
 (paren
 id|client_handle_t
@@ -5949,10 +5941,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* modify_configuration */
 multiline_comment|/*======================================================================&n;&n;    Modify the attributes of a window returned by RequestWindow.&n;&n;======================================================================*/
-DECL|function|modify_window
-r_static
+DECL|function|pcmcia_modify_window
 r_int
-id|modify_window
+id|pcmcia_modify_window
 c_func
 (paren
 id|window_handle_t
@@ -6057,10 +6048,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* modify_window */
 multiline_comment|/*======================================================================&n;&n;    Register_client() uses the dev_info_t handle to match the&n;    caller with a socket.  The driver must have already been bound&n;    to a socket with bind_device() -- in fact, bind_device()&n;    allocates the client structure that will be used.&n;    &n;======================================================================*/
-DECL|function|register_client
-r_static
+DECL|function|pcmcia_register_client
 r_int
-id|register_client
+id|pcmcia_register_client
 c_func
 (paren
 id|client_handle_t
@@ -6478,18 +6468,13 @@ suffix:semicolon
 )brace
 multiline_comment|/* register_client */
 multiline_comment|/*====================================================================*/
-DECL|function|release_configuration
-r_static
+DECL|function|pcmcia_release_configuration
 r_int
-id|release_configuration
+id|pcmcia_release_configuration
 c_func
 (paren
 id|client_handle_t
 id|handle
-comma
-id|socket_t
-op_star
-id|Socket
 )paren
 (brace
 id|pccard_io_map
@@ -6722,10 +6707,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* release_configuration */
 multiline_comment|/*======================================================================&n;&n;    Release_io() releases the I/O ranges allocated by a client.  This&n;    may be invoked some time after a card ejection has already dumped&n;    the actual socket configuration, so if the client is &quot;stale&quot;, we&n;    don&squot;t bother checking the port ranges against the current socket&n;    values.&n;    &n;======================================================================*/
-DECL|function|release_io
-r_static
+DECL|function|pcmcia_release_io
 r_int
-id|release_io
+id|pcmcia_release_io
 c_func
 (paren
 id|client_handle_t
@@ -6890,10 +6874,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* release_io */
 multiline_comment|/*====================================================================*/
-DECL|function|cs_release_irq
-r_static
+DECL|function|pcmcia_release_irq
 r_int
-id|cs_release_irq
+id|pcmcia_release_irq
 c_func
 (paren
 id|client_handle_t
@@ -7053,10 +7036,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* cs_release_irq */
 multiline_comment|/*====================================================================*/
-DECL|function|release_window
-r_static
+DECL|function|pcmcia_release_window
 r_int
-id|release_window
+id|pcmcia_release_window
 c_func
 (paren
 id|window_handle_t
@@ -7162,10 +7144,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* release_window */
 multiline_comment|/*====================================================================*/
-DECL|function|request_configuration
-r_static
+DECL|function|pcmcia_request_configuration
 r_int
-id|request_configuration
+id|pcmcia_request_configuration
 c_func
 (paren
 id|client_handle_t
@@ -7921,10 +7902,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* request_configuration */
 multiline_comment|/*======================================================================&n;  &n;    Request_io() reserves ranges of port addresses for a socket.&n;    I have not implemented range sharing or alias addressing.&n;    &n;======================================================================*/
-DECL|function|request_io
-r_static
+DECL|function|pcmcia_request_io
 r_int
-id|request_io
+id|pcmcia_request_io
 c_func
 (paren
 id|client_handle_t
@@ -8171,10 +8151,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* request_io */
 multiline_comment|/*======================================================================&n;&n;    Request_irq() reserves an irq for this client.&n;&n;    Also, since Linux only reserves irq&squot;s when they are actually&n;    hooked, we don&squot;t guarantee that an irq will still be available&n;    when the configuration is locked.  Now that I think about it,&n;    there might be a way to fix this using a dummy handler.&n;    &n;======================================================================*/
-DECL|function|cs_request_irq
-r_static
+DECL|function|pcmcia_request_irq
 r_int
-id|cs_request_irq
+id|pcmcia_request_irq
 c_func
 (paren
 id|client_handle_t
@@ -8567,10 +8546,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* cs_request_irq */
 multiline_comment|/*======================================================================&n;&n;    Request_window() establishes a mapping between card memory space&n;    and system memory space.&n;&n;======================================================================*/
-DECL|function|request_window
-r_static
+DECL|function|pcmcia_request_window
 r_int
-id|request_window
+id|pcmcia_request_window
 c_func
 (paren
 id|client_handle_t
@@ -8926,10 +8904,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* request_window */
 multiline_comment|/*======================================================================&n;&n;    I&squot;m not sure which &quot;reset&quot; function this is supposed to use,&n;    but for now, it uses the low-level interface&squot;s reset, not the&n;    CIS register.&n;    &n;======================================================================*/
-DECL|function|reset_card
-r_static
+DECL|function|pcmcia_reset_card
 r_int
-id|reset_card
+id|pcmcia_reset_card
 c_func
 (paren
 id|client_handle_t
@@ -9085,10 +9062,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* reset_card */
 multiline_comment|/*======================================================================&n;&n;    These shut down or wake up a socket.  They are sort of user&n;    initiated versions of the APM suspend and resume actions.&n;    &n;======================================================================*/
-DECL|function|suspend_card
-r_static
+DECL|function|pcmcia_suspend_card
 r_int
-id|suspend_card
+id|pcmcia_suspend_card
 c_func
 (paren
 id|client_handle_t
@@ -9194,10 +9170,9 @@ id|CS_SUCCESS
 suffix:semicolon
 )brace
 multiline_comment|/* suspend_card */
-DECL|function|resume_card
-r_static
+DECL|function|pcmcia_resume_card
 r_int
-id|resume_card
+id|pcmcia_resume_card
 c_func
 (paren
 id|client_handle_t
@@ -9286,10 +9261,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* resume_card */
 multiline_comment|/*======================================================================&n;&n;    These handle user requests to eject or insert a card.&n;    &n;======================================================================*/
-DECL|function|eject_card
-r_static
+DECL|function|pcmcia_eject_card
 r_int
-id|eject_card
+id|pcmcia_eject_card
 c_func
 (paren
 id|client_handle_t
@@ -9409,10 +9383,9 @@ id|CS_SUCCESS
 suffix:semicolon
 )brace
 multiline_comment|/* eject_card */
-DECL|function|insert_card
-r_static
+DECL|function|pcmcia_insert_card
 r_int
-id|insert_card
+id|pcmcia_insert_card
 c_func
 (paren
 id|client_handle_t
@@ -9565,10 +9538,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* insert_card */
 multiline_comment|/*======================================================================&n;&n;    Maybe this should send a CS_EVENT_CARD_INSERTION event if we&n;    haven&squot;t sent one to this client yet?&n;    &n;======================================================================*/
-DECL|function|set_event_mask
-r_static
+DECL|function|pcmcia_set_event_mask
 r_int
-id|set_event_mask
+id|pcmcia_set_event_mask
 c_func
 (paren
 id|client_handle_t
@@ -9667,10 +9639,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* set_event_mask */
 multiline_comment|/*====================================================================*/
-DECL|function|report_error
-r_static
+DECL|function|pcmcia_report_error
 r_int
-id|report_error
+id|pcmcia_report_error
 c_func
 (paren
 id|client_handle_t
@@ -9942,7 +9913,7 @@ r_case
 id|AccessConfigurationRegister
 suffix:colon
 r_return
-id|access_configuration_register
+id|pcmcia_access_configuration_register
 c_func
 (paren
 id|a1
@@ -9956,7 +9927,7 @@ r_case
 id|AdjustResourceInfo
 suffix:colon
 r_return
-id|adjust_resource_info
+id|pcmcia_adjust_resource_info
 c_func
 (paren
 id|a1
@@ -9970,7 +9941,7 @@ r_case
 id|CheckEraseQueue
 suffix:colon
 r_return
-id|check_erase_queue
+id|pcmcia_check_erase_queue
 c_func
 (paren
 id|a1
@@ -9982,7 +9953,7 @@ r_case
 id|CloseMemory
 suffix:colon
 r_return
-id|close_memory
+id|pcmcia_close_memory
 c_func
 (paren
 id|a1
@@ -9994,7 +9965,7 @@ r_case
 id|CopyMemory
 suffix:colon
 r_return
-id|copy_memory
+id|pcmcia_copy_memory
 c_func
 (paren
 id|a1
@@ -10008,7 +9979,7 @@ r_case
 id|DeregisterClient
 suffix:colon
 r_return
-id|deregister_client
+id|pcmcia_deregister_client
 c_func
 (paren
 id|a1
@@ -10020,7 +9991,7 @@ r_case
 id|DeregisterEraseQueue
 suffix:colon
 r_return
-id|deregister_erase_queue
+id|pcmcia_deregister_erase_queue
 c_func
 (paren
 id|a1
@@ -10032,7 +10003,7 @@ r_case
 id|GetFirstClient
 suffix:colon
 r_return
-id|get_first_client
+id|pcmcia_get_first_client
 c_func
 (paren
 id|a1
@@ -10046,7 +10017,7 @@ r_case
 id|GetCardServicesInfo
 suffix:colon
 r_return
-id|get_card_services_info
+id|pcmcia_get_card_services_info
 c_func
 (paren
 id|a1
@@ -10058,7 +10029,7 @@ r_case
 id|GetConfigurationInfo
 suffix:colon
 r_return
-id|get_configuration_info
+id|pcmcia_get_configuration_info
 c_func
 (paren
 id|a1
@@ -10072,7 +10043,7 @@ r_case
 id|GetNextClient
 suffix:colon
 r_return
-id|get_next_client
+id|pcmcia_get_next_client
 c_func
 (paren
 id|a1
@@ -10086,7 +10057,7 @@ r_case
 id|GetFirstRegion
 suffix:colon
 r_return
-id|get_first_region
+id|pcmcia_get_first_region
 c_func
 (paren
 id|a1
@@ -10100,7 +10071,7 @@ r_case
 id|GetFirstTuple
 suffix:colon
 r_return
-id|get_first_tuple
+id|pcmcia_get_first_tuple
 c_func
 (paren
 id|a1
@@ -10114,7 +10085,7 @@ r_case
 id|GetNextRegion
 suffix:colon
 r_return
-id|get_next_region
+id|pcmcia_get_next_region
 c_func
 (paren
 id|a1
@@ -10128,7 +10099,7 @@ r_case
 id|GetNextTuple
 suffix:colon
 r_return
-id|get_next_tuple
+id|pcmcia_get_next_tuple
 c_func
 (paren
 id|a1
@@ -10142,7 +10113,7 @@ r_case
 id|GetStatus
 suffix:colon
 r_return
-id|get_status
+id|pcmcia_get_status
 c_func
 (paren
 id|a1
@@ -10156,7 +10127,7 @@ r_case
 id|GetTupleData
 suffix:colon
 r_return
-id|get_tuple_data
+id|pcmcia_get_tuple_data
 c_func
 (paren
 id|a1
@@ -10170,7 +10141,7 @@ r_case
 id|MapMemPage
 suffix:colon
 r_return
-id|map_mem_page
+id|pcmcia_map_mem_page
 c_func
 (paren
 id|a1
@@ -10184,7 +10155,7 @@ r_case
 id|ModifyConfiguration
 suffix:colon
 r_return
-id|modify_configuration
+id|pcmcia_modify_configuration
 c_func
 (paren
 id|a1
@@ -10198,7 +10169,7 @@ r_case
 id|ModifyWindow
 suffix:colon
 r_return
-id|modify_window
+id|pcmcia_modify_window
 c_func
 (paren
 id|a1
@@ -10212,7 +10183,7 @@ r_case
 id|OpenMemory
 suffix:colon
 r_return
-id|open_memory
+id|pcmcia_open_memory
 c_func
 (paren
 id|a1
@@ -10224,7 +10195,7 @@ r_case
 id|ParseTuple
 suffix:colon
 r_return
-id|parse_tuple
+id|pcmcia_parse_tuple
 c_func
 (paren
 id|a1
@@ -10240,7 +10211,7 @@ r_case
 id|ReadMemory
 suffix:colon
 r_return
-id|read_memory
+id|pcmcia_read_memory
 c_func
 (paren
 id|a1
@@ -10256,7 +10227,7 @@ r_case
 id|RegisterClient
 suffix:colon
 r_return
-id|register_client
+id|pcmcia_register_client
 c_func
 (paren
 id|a1
@@ -10270,7 +10241,7 @@ r_case
 id|RegisterEraseQueue
 suffix:colon
 r_return
-id|register_erase_queue
+id|pcmcia_register_erase_queue
 c_func
 (paren
 id|a1
@@ -10284,7 +10255,7 @@ r_case
 id|RegisterMTD
 suffix:colon
 r_return
-id|register_mtd
+id|pcmcia_register_mtd
 c_func
 (paren
 id|a1
@@ -10298,12 +10269,10 @@ r_case
 id|ReleaseConfiguration
 suffix:colon
 r_return
-id|release_configuration
+id|pcmcia_release_configuration
 c_func
 (paren
 id|a1
-comma
-id|a2
 )paren
 suffix:semicolon
 r_break
@@ -10312,7 +10281,7 @@ r_case
 id|ReleaseIO
 suffix:colon
 r_return
-id|release_io
+id|pcmcia_release_io
 c_func
 (paren
 id|a1
@@ -10326,7 +10295,7 @@ r_case
 id|ReleaseIRQ
 suffix:colon
 r_return
-id|cs_release_irq
+id|pcmcia_release_irq
 c_func
 (paren
 id|a1
@@ -10340,7 +10309,7 @@ r_case
 id|ReleaseWindow
 suffix:colon
 r_return
-id|release_window
+id|pcmcia_release_window
 c_func
 (paren
 id|a1
@@ -10352,7 +10321,7 @@ r_case
 id|RequestConfiguration
 suffix:colon
 r_return
-id|request_configuration
+id|pcmcia_request_configuration
 c_func
 (paren
 id|a1
@@ -10366,7 +10335,7 @@ r_case
 id|RequestIO
 suffix:colon
 r_return
-id|request_io
+id|pcmcia_request_io
 c_func
 (paren
 id|a1
@@ -10380,7 +10349,7 @@ r_case
 id|RequestIRQ
 suffix:colon
 r_return
-id|cs_request_irq
+id|pcmcia_request_irq
 c_func
 (paren
 id|a1
@@ -10394,7 +10363,7 @@ r_case
 id|RequestWindow
 suffix:colon
 r_return
-id|request_window
+id|pcmcia_request_window
 c_func
 (paren
 id|a1
@@ -10408,7 +10377,7 @@ r_case
 id|ResetCard
 suffix:colon
 r_return
-id|reset_card
+id|pcmcia_reset_card
 c_func
 (paren
 id|a1
@@ -10422,7 +10391,7 @@ r_case
 id|SetEventMask
 suffix:colon
 r_return
-id|set_event_mask
+id|pcmcia_set_event_mask
 c_func
 (paren
 id|a1
@@ -10436,7 +10405,7 @@ r_case
 id|ValidateCIS
 suffix:colon
 r_return
-id|validate_cis
+id|pcmcia_validate_cis
 c_func
 (paren
 id|a1
@@ -10450,7 +10419,7 @@ r_case
 id|WriteMemory
 suffix:colon
 r_return
-id|write_memory
+id|pcmcia_write_memory
 c_func
 (paren
 id|a1
@@ -10466,7 +10435,7 @@ r_case
 id|BindDevice
 suffix:colon
 r_return
-id|bind_device
+id|pcmcia_bind_device
 c_func
 (paren
 id|a1
@@ -10478,7 +10447,7 @@ r_case
 id|BindMTD
 suffix:colon
 r_return
-id|bind_mtd
+id|pcmcia_bind_mtd
 c_func
 (paren
 id|a1
@@ -10490,7 +10459,7 @@ r_case
 id|ReportError
 suffix:colon
 r_return
-id|report_error
+id|pcmcia_report_error
 c_func
 (paren
 id|a1
@@ -10504,7 +10473,7 @@ r_case
 id|SuspendCard
 suffix:colon
 r_return
-id|suspend_card
+id|pcmcia_suspend_card
 c_func
 (paren
 id|a1
@@ -10518,7 +10487,7 @@ r_case
 id|ResumeCard
 suffix:colon
 r_return
-id|resume_card
+id|pcmcia_resume_card
 c_func
 (paren
 id|a1
@@ -10532,7 +10501,7 @@ r_case
 id|EjectCard
 suffix:colon
 r_return
-id|eject_card
+id|pcmcia_eject_card
 c_func
 (paren
 id|a1
@@ -10546,7 +10515,7 @@ r_case
 id|InsertCard
 suffix:colon
 r_return
-id|insert_card
+id|pcmcia_insert_card
 c_func
 (paren
 id|a1
@@ -10560,7 +10529,7 @@ r_case
 id|ReplaceCIS
 suffix:colon
 r_return
-id|replace_cis
+id|pcmcia_replace_cis
 c_func
 (paren
 id|a1
@@ -10574,7 +10543,7 @@ r_case
 id|GetFirstWindow
 suffix:colon
 r_return
-id|get_first_window
+id|pcmcia_get_first_window
 c_func
 (paren
 id|a1
@@ -10588,7 +10557,7 @@ r_case
 id|GetNextWindow
 suffix:colon
 r_return
-id|get_next_window
+id|pcmcia_get_next_window
 c_func
 (paren
 id|a1
@@ -10602,7 +10571,7 @@ r_case
 id|GetMemPage
 suffix:colon
 r_return
-id|get_mem_page
+id|pcmcia_get_mem_page
 c_func
 (paren
 id|a1
