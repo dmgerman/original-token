@@ -1843,6 +1843,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 r_static
+r_const
 r_char
 op_star
 id|ipx_frame_name
@@ -1853,6 +1854,7 @@ r_int
 )paren
 suffix:semicolon
 r_static
+r_const
 r_char
 op_star
 id|ipx_device_name
@@ -3937,6 +3939,7 @@ id|sockaddr_ipx
 op_star
 id|usipx
 comma
+r_const
 r_void
 op_star
 id|ubuf
@@ -4507,6 +4510,7 @@ suffix:semicolon
 )brace
 )brace
 r_static
+r_const
 r_char
 op_star
 DECL|function|ipx_frame_name
@@ -4560,6 +4564,7 @@ suffix:semicolon
 )brace
 )brace
 r_static
+r_const
 r_char
 op_star
 DECL|function|ipx_device_name
@@ -7525,6 +7530,7 @@ id|socket
 op_star
 id|sock
 comma
+r_const
 r_void
 op_star
 id|ubuf
@@ -7775,6 +7781,7 @@ id|socket
 op_star
 id|sock
 comma
+r_const
 r_void
 op_star
 id|ubuf
@@ -8065,6 +8072,7 @@ id|socket
 op_star
 id|sock
 comma
+r_const
 r_char
 op_star
 id|ubuf

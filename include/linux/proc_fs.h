@@ -352,6 +352,7 @@ r_int
 id|namelen
 suffix:semicolon
 DECL|member|name
+r_const
 r_char
 op_star
 id|name

@@ -211,6 +211,7 @@ r_int
 id|i
 suffix:semicolon
 r_static
+r_const
 r_char
 op_star
 id|tag_desc
@@ -1097,6 +1098,7 @@ r_int
 id|type
 suffix:semicolon
 DECL|member|name
+r_const
 r_char
 op_star
 id|name

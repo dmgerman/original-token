@@ -203,6 +203,7 @@ id|socket
 op_star
 id|sock
 comma
+r_const
 r_char
 op_star
 id|ubuf
@@ -275,6 +276,7 @@ id|socket
 op_star
 id|sock
 comma
+r_const
 r_void
 op_star
 id|buff
@@ -323,6 +325,7 @@ id|socket
 op_star
 id|sock
 comma
+r_const
 r_void
 op_star
 id|buff
@@ -618,6 +621,7 @@ id|socket
 op_star
 id|sock
 comma
+r_const
 r_void
 op_star
 id|buff
@@ -717,6 +721,7 @@ id|socket
 op_star
 id|sock
 comma
+r_const
 r_void
 op_star
 id|buff
@@ -749,6 +754,7 @@ c_func
 id|sock
 comma
 (paren
+r_const
 r_char
 op_star
 )paren
@@ -2521,6 +2527,7 @@ id|socket
 op_star
 id|sock
 comma
+r_const
 r_char
 op_star
 id|ubuf

@@ -2,6 +2,7 @@ multiline_comment|/* eepro.c: Intel EtherExpress Pro/10 device driver for Linux.
 multiline_comment|/*&n;&t;Written 1994, 1995 by Bao C. Ha.&n;&n;&t;Copyright (C) 1994, 1995 by Bao C. Ha.&n;&n;&t;This software may be used and distributed&n;&t;according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached at bao@saigon.async.com &n;&t;or 418 Hastings Place, Martinez, GA 30907.&n;&n;&t;Things remaining to do:&n;&t;Better record keeping of errors.&n;&t;Eliminate transmit interrupt to reduce overhead.&n;&t;Implement &quot;concurrent processing&quot;. I won&squot;t be doing it!&n;&t;Allow changes to the partition of the transmit and receive&n;&t;buffers, currently the ratio is 3:1 of receive to transmit&n;&t;buffer ratio.  &n;&n;&t;Bugs:&n;&n;&t;If you have a problem of not detecting the 82595 during a&n;&t;reboot (warm reset), disable the FLASH memory should fix it.&n;&t;This is a compatibility hardware problem.&n;&t;&n;&t;Versions:&n;&n;&t;0.07a&t;Fix a stat report which counts every packet as a&n;&t;&t;heart-beat failure. (BCH, 6/3/95)&n;&n;&t;0.07&t;Modified to support all other 82595-based lan cards.  &n;&t;&t;The IRQ vector of the EtherExpress Pro will be set&n;&t;&t;according to the value saved in the EEPROM.  For other&n;&t;&t;cards, I will do autoirq_request() to grab the next&n;&t;&t;available interrupt vector. (BCH, 3/17/95)&n;&n;&t;0.06a,b&t;Interim released.  Minor changes in the comments and&n;&t;&t;print out format. (BCH, 3/9/95 and 3/14/95)&n;&n;&t;0.06&t;First stable release that I am comfortable with. (BCH,&n;&t;&t;3/2/95)&t;&n;&n;&t;0.05&t;Complete testing of multicast. (BCH, 2/23/95)&t;&n;&n;&t;0.04&t;Adding multicast support. (BCH, 2/14/95)&t;&n;&n;&t;0.03&t;First widely alpha release for public testing. &n;&t;&t;(BCH, 2/14/95)&t;&n;&n;*/
 DECL|variable|version
 r_static
+r_const
 r_char
 op_star
 id|version
@@ -641,6 +642,7 @@ r_int
 id|eepro
 suffix:semicolon
 multiline_comment|/* a flag, TRUE=1 for the EtherExpress Pro/10,&n;&t;&t;&t;   FALSE = 0 for other 82595-based lan cards. */
+r_const
 r_char
 op_star
 id|ifmap

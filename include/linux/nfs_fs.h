@@ -194,6 +194,7 @@ comma
 r_int
 id|count
 comma
+r_const
 r_char
 op_star
 id|data

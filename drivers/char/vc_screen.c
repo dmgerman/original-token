@@ -541,6 +541,7 @@ id|file
 op_star
 id|file
 comma
+r_const
 r_char
 op_star
 id|buf
@@ -574,6 +575,7 @@ id|size
 comma
 id|written
 suffix:semicolon
+r_const
 r_char
 op_star
 id|buf0
@@ -876,6 +878,7 @@ id|get_user
 c_func
 (paren
 (paren
+r_const
 r_int
 r_int
 op_star

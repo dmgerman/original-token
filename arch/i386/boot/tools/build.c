@@ -183,6 +183,7 @@ r_void
 id|die
 c_func
 (paren
+r_const
 r_char
 op_star
 id|str

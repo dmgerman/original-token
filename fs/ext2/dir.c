@@ -159,6 +159,7 @@ DECL|function|ext2_check_dir_entry
 r_int
 id|ext2_check_dir_entry
 (paren
+r_const
 r_char
 op_star
 id|function
@@ -183,6 +184,7 @@ r_int
 id|offset
 )paren
 (brace
+r_const
 r_char
 op_star
 id|error_msg

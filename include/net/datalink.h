@@ -19,6 +19,7 @@ l_int|8
 )braket
 suffix:semicolon
 DECL|member|string_name
+r_const
 r_char
 op_star
 id|string_name

@@ -312,6 +312,7 @@ op_star
 id|dev_get
 c_func
 (paren
+r_const
 r_char
 op_star
 id|name

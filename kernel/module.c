@@ -1993,6 +1993,7 @@ r_char
 op_star
 id|p
 suffix:semicolon
+r_const
 r_char
 op_star
 id|q

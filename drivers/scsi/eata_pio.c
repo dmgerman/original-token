@@ -228,6 +228,7 @@ r_void
 id|hprint
 c_func
 (paren
+r_const
 r_char
 op_star
 id|str

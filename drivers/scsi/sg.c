@@ -1247,6 +1247,7 @@ id|file
 op_star
 id|filp
 comma
+r_const
 r_char
 op_star
 id|buf
@@ -1301,9 +1302,6 @@ suffix:semicolon
 id|Scsi_Cmnd
 op_star
 id|SCpnt
-suffix:semicolon
-r_int
-id|sgcnt
 suffix:semicolon
 r_if
 c_cond

@@ -236,6 +236,7 @@ r_struct
 id|signature
 (brace
 DECL|member|sig
+r_const
 r_void
 op_star
 id|sig

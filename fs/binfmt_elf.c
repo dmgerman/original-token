@@ -3646,6 +3646,7 @@ id|file
 op_star
 id|file
 comma
+r_const
 r_void
 op_star
 id|addr
@@ -3787,6 +3788,7 @@ r_struct
 id|memelfnote
 (brace
 DECL|member|name
+r_const
 r_char
 op_star
 id|name

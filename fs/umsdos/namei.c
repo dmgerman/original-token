@@ -1502,10 +1502,6 @@ comma
 op_amp
 id|filp
 comma
-(paren
-r_char
-op_star
-)paren
 id|symname
 comma
 id|len

@@ -5532,6 +5532,7 @@ r_void
 id|parse_options
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int

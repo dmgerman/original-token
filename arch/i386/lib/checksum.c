@@ -7,6 +7,7 @@ r_int
 id|csum_partial
 c_func
 (paren
+r_const
 r_int
 r_char
 op_star
@@ -490,6 +491,7 @@ r_int
 id|csum_partial_copy_fromuser
 c_func
 (paren
+r_const
 r_char
 op_star
 id|src
@@ -1204,6 +1206,7 @@ r_int
 id|csum_partial_copy
 c_func
 (paren
+r_const
 r_char
 op_star
 id|src

@@ -2,6 +2,7 @@ multiline_comment|/* seeq8005.c: A network driver for linux. */
 multiline_comment|/*&n;&t;Based on skeleton.c,&n;&t;Written 1993-94 by Donald Becker.&n;&t;See the skeleton.c file for further copyright information.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as hamish@zot.apana.org.au&n;&n;&t;This file is a network device driver for the SEEQ 8005 chipset and&n;&t;the Linux operating system.&n;&n;*/
 DECL|variable|version
 r_static
+r_const
 r_char
 op_star
 id|version

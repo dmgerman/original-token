@@ -1756,6 +1756,7 @@ c_func
 id|VERIFY_READ
 comma
 (paren
+r_const
 r_void
 op_star
 )paren

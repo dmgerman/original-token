@@ -666,6 +666,7 @@ id|file
 op_star
 id|file
 comma
+r_const
 r_char
 op_star
 id|buf
@@ -1103,6 +1104,7 @@ id|file
 op_star
 id|file
 comma
+r_const
 r_char
 op_star
 id|buf
@@ -1126,7 +1128,9 @@ id|inode-&gt;i_rdev
 suffix:semicolon
 r_char
 id|c
-comma
+suffix:semicolon
+r_const
+r_char
 op_star
 id|temp
 op_assign
@@ -1504,6 +1508,7 @@ id|file
 op_star
 id|file
 comma
+r_const
 r_char
 op_star
 id|buf

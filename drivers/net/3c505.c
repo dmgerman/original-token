@@ -17,6 +17,7 @@ macro_line|#include &quot;3c505.h&quot;
 multiline_comment|/*********************************************************&n; *&n; *  define debug messages here as common strings to reduce space&n; *&n; *********************************************************/
 DECL|variable|filename
 r_static
+r_const
 r_char
 op_star
 id|filename
@@ -25,6 +26,7 @@ id|__FILE__
 suffix:semicolon
 DECL|variable|null_msg
 r_static
+r_const
 r_char
 op_star
 id|null_msg
@@ -35,6 +37,7 @@ DECL|macro|CHECK_NULL
 mdefine_line|#define CHECK_NULL(p) &bslash;&n;&t;if (!p) printk(null_msg, filename,__FUNCTION__,__LINE__)
 DECL|variable|timeout_msg
 r_static
+r_const
 r_char
 op_star
 id|timeout_msg
@@ -45,6 +48,7 @@ DECL|macro|TIMEOUT_MSG
 mdefine_line|#define TIMEOUT_MSG(lineno) &bslash;&n;&t;printk(timeout_msg, filename,__FUNCTION__,(lineno))
 DECL|variable|invalid_pcb_msg
 r_static
+r_const
 r_char
 op_star
 id|invalid_pcb_msg
@@ -55,6 +59,7 @@ DECL|macro|INVALID_PCB_MSG
 mdefine_line|#define INVALID_PCB_MSG(len) &bslash;&n;&t;printk(invalid_pcb_msg, (len),filename,__FUNCTION__,__LINE__)
 DECL|variable|search_msg
 r_static
+r_const
 r_char
 op_star
 id|search_msg
@@ -63,6 +68,7 @@ l_string|&quot;%s: Looking for 3c505 adapter at address %#x...&quot;
 suffix:semicolon
 DECL|variable|stilllooking_msg
 r_static
+r_const
 r_char
 op_star
 id|stilllooking_msg
@@ -71,6 +77,7 @@ l_string|&quot;still looking...&quot;
 suffix:semicolon
 DECL|variable|found_msg
 r_static
+r_const
 r_char
 op_star
 id|found_msg
@@ -79,6 +86,7 @@ l_string|&quot;found.&bslash;n&quot;
 suffix:semicolon
 DECL|variable|notfound_msg
 r_static
+r_const
 r_char
 op_star
 id|notfound_msg
@@ -87,6 +95,7 @@ l_string|&quot;not found (reason = %d)&bslash;n&quot;
 suffix:semicolon
 DECL|variable|couldnot_msg
 r_static
+r_const
 r_char
 op_star
 id|couldnot_msg
@@ -4298,6 +4307,7 @@ id|addr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+r_const
 r_char
 op_star
 id|name

@@ -688,6 +688,7 @@ r_char
 op_star
 id|str
 suffix:semicolon
+r_const
 r_char
 op_star
 id|s

@@ -2,6 +2,7 @@ multiline_comment|/* 3c503.c: A shared-memory NS8390 ethernet driver for linux. 
 multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;       Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with the 3c503 and 3c503/16.  It should be used&n;    in shared memory mode for best performance, although it may also work&n;    in programmed-I/O mode.&n;&n;    Sources:&n;    EtherLink II Technical Reference Guide,&n;    3Com Corporation, 5400 Bayfront Plaza, Santa Clara CA 95052-8145&n;    &n;    The Crynwr 3c503 packet driver.&n;*/
 DECL|variable|version
 r_static
+r_const
 r_char
 op_star
 id|version

@@ -682,6 +682,7 @@ op_star
 id|get_fs_type
 c_func
 (paren
+r_const
 r_char
 op_star
 id|name
@@ -1091,6 +1092,7 @@ c_func
 id|dev_t
 id|dev
 comma
+r_const
 r_char
 op_star
 id|name
@@ -1922,6 +1924,7 @@ r_char
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|type
@@ -2503,6 +2506,7 @@ suffix:semicolon
 r_int
 id|retval
 suffix:semicolon
+r_const
 r_char
 op_star
 id|t

@@ -561,6 +561,7 @@ l_int|80
 suffix:semicolon
 DECL|variable|str_sb
 r_static
+r_const
 r_char
 op_star
 id|str_sb
@@ -569,6 +570,7 @@ l_string|&quot;SoundBlaster&quot;
 suffix:semicolon
 DECL|variable|str_sb_l
 r_static
+r_const
 r_char
 op_star
 id|str_sb_l
@@ -577,6 +579,7 @@ l_string|&quot;soundblaster&quot;
 suffix:semicolon
 DECL|variable|str_lm
 r_static
+r_const
 r_char
 op_star
 id|str_lm
@@ -585,6 +588,7 @@ l_string|&quot;LaserMate&quot;
 suffix:semicolon
 DECL|variable|str_sp
 r_static
+r_const
 r_char
 op_star
 id|str_sp
@@ -593,6 +597,7 @@ l_string|&quot;SPEA&quot;
 suffix:semicolon
 DECL|variable|str_sp_l
 r_static
+r_const
 r_char
 op_star
 id|str_sp_l
@@ -600,6 +605,7 @@ op_assign
 l_string|&quot;spea&quot;
 suffix:semicolon
 DECL|variable|type
+r_const
 r_char
 op_star
 id|type
@@ -607,6 +613,7 @@ suffix:semicolon
 macro_line|#if !(SBPCD_ISSUE-1)
 DECL|variable|major_name
 r_static
+r_const
 r_char
 op_star
 id|major_name
@@ -617,6 +624,7 @@ macro_line|#endif
 macro_line|#if !(SBPCD_ISSUE-2)
 DECL|variable|major_name
 r_static
+r_const
 r_char
 op_star
 id|major_name
@@ -627,6 +635,7 @@ macro_line|#endif
 macro_line|#if !(SBPCD_ISSUE-3)
 DECL|variable|major_name
 r_static
+r_const
 r_char
 op_star
 id|major_name
@@ -637,6 +646,7 @@ macro_line|#endif
 macro_line|#if !(SBPCD_ISSUE-4)
 DECL|variable|major_name
 r_static
+r_const
 r_char
 op_star
 id|major_name
@@ -1385,6 +1395,7 @@ c_func
 r_int
 id|level
 comma
+r_const
 r_char
 op_star
 id|fmt
@@ -29387,6 +29398,7 @@ r_void
 id|sbpcd_setup
 c_func
 (paren
+r_const
 r_char
 op_star
 id|s

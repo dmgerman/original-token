@@ -157,6 +157,7 @@ r_struct
 id|file
 op_star
 comma
+r_const
 r_char
 op_star
 comma
@@ -1133,6 +1134,7 @@ id|file
 op_star
 id|file
 comma
+r_const
 r_char
 op_star
 id|buf
@@ -2684,6 +2686,7 @@ id|file
 op_star
 id|file
 comma
+r_const
 r_char
 op_star
 id|buf
@@ -2864,6 +2867,7 @@ comma
 id|file
 comma
 (paren
+r_const
 r_int
 r_char
 op_star
@@ -7394,6 +7398,7 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
+r_const
 r_char
 op_star
 id|othername

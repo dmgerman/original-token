@@ -2,6 +2,7 @@ multiline_comment|/* wd.c: A WD80x3 ethernet driver for linux. */
 multiline_comment|/*&n;&t;Written 1993-94 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This is a driver for WD8003 and WD8013 &quot;compatible&quot; ethercards.&n;&n;&t;Thanks to Russ Nelson (nelson@crnwyr.com) for loaning me a WD8013.&n;*/
 DECL|variable|version
 r_static
+r_const
 r_char
 op_star
 id|version
@@ -346,6 +347,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* 0 = 8 bit, 1 = 16 bit */
+r_const
 r_char
 op_star
 id|model_name

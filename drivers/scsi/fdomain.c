@@ -543,6 +543,7 @@ r_struct
 id|signature
 (brace
 DECL|member|signature
+r_const
 r_char
 op_star
 id|signature

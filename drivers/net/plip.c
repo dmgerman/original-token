@@ -5,6 +5,7 @@ multiline_comment|/*&n; * Authors:&t;Donald Becker,  &lt;becker@super.org&gt;&n;
 multiline_comment|/*&n; * Original version and the name &squot;PLIP&squot; from Donald Becker &lt;becker@super.org&gt;&n; * inspired by Russ Nelson&squot;s parallel port packet driver.&n; *&n; * NOTE:&n; *     Tanabe Hiroyasu had changed the protocol, and it was in Linux v1.0.&n; *     Because of the necessity to communicate to DOS machines with the&n; *     Crynwr packet driver, Peter Bauer changed the protocol again&n; *     back to original protocol.&n; *&n; *     This version follows original PLIP protocol. &n; *     So, this PLIP can&squot;t communicate the PLIP of Linux v1.0.&n; */
 DECL|variable|version
 r_static
+r_const
 r_char
 op_star
 id|version

@@ -348,16 +348,19 @@ r_struct
 id|dev_info
 (brace
 DECL|member|vendor
+r_const
 r_char
 op_star
 id|vendor
 suffix:semicolon
 DECL|member|model
+r_const
 r_char
 op_star
 id|model
 suffix:semicolon
 DECL|member|revision
+r_const
 r_char
 op_star
 id|revision
@@ -4645,6 +4648,7 @@ op_star
 id|SCpnt-&gt;data_cmnd
 comma
 (paren
+r_const
 r_void
 op_star
 )paren
@@ -4715,6 +4719,7 @@ op_star
 id|SCpnt-&gt;cmnd
 comma
 (paren
+r_const
 r_void
 op_star
 )paren

@@ -4171,6 +4171,7 @@ id|socket
 op_star
 id|sock
 comma
+r_const
 r_void
 op_star
 id|ubuf
@@ -4635,6 +4636,7 @@ id|socket
 op_star
 id|sock
 comma
+r_const
 r_void
 op_star
 id|ubuf
@@ -4680,6 +4682,7 @@ id|socket
 op_star
 id|sock
 comma
+r_const
 r_char
 op_star
 id|ubuf
@@ -5674,6 +5677,7 @@ id|device
 op_star
 id|dev
 suffix:semicolon
+r_const
 r_char
 op_star
 id|devname

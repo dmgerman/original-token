@@ -48,6 +48,7 @@ r_struct
 id|exec_domain
 (brace
 DECL|member|name
+r_const
 r_char
 op_star
 id|name

@@ -21,18 +21,7 @@ r_char
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|print_sense
-c_func
-(paren
-r_char
-op_star
-comma
-id|Scsi_Cmnd
-op_star
-)paren
-suffix:semicolon
+multiline_comment|/* extern void print_sense(const char *,  Scsi_Cmnd *); */
 r_extern
 r_void
 id|print_status

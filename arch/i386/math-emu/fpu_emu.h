@@ -234,7 +234,7 @@ multiline_comment|/* push() does not affect the tags */
 DECL|macro|push
 mdefine_line|#define push()&t;{ top--; }
 DECL|macro|reg_move
-mdefine_line|#define reg_move(x, y) { &bslash;&n;&t;&t; *(short *)&amp;((y)-&gt;sign) = *(short *)&amp;((x)-&gt;sign); &bslash;&n;&t;&t; *(long *)&amp;((y)-&gt;exp) = *(long *)&amp;((x)-&gt;exp); &bslash;&n;&t;&t; *(long long *)&amp;((y)-&gt;sigl) = *(long long *)&amp;((x)-&gt;sigl); }
+mdefine_line|#define reg_move(x, y) { &bslash;&n;&t;&t; *(short *)&amp;((y)-&gt;sign) = *(const short *)&amp;((x)-&gt;sign); &bslash;&n;&t;&t; *(long *)&amp;((y)-&gt;exp) = *(const long *)&amp;((x)-&gt;exp); &bslash;&n;&t;&t; *(long long *)&amp;((y)-&gt;sigl) = *(const long long *)&amp;((x)-&gt;sigl); }
 DECL|macro|significand
 mdefine_line|#define significand(x) ( ((unsigned long long *)&amp;((x)-&gt;sigl))[0] )
 multiline_comment|/*----- Prototypes for functions written in assembler -----*/

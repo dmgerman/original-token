@@ -2139,6 +2139,7 @@ id|tty_struct
 op_star
 id|tty
 comma
+r_const
 r_int
 r_char
 op_star

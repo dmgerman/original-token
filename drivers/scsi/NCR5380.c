@@ -119,6 +119,7 @@ r_char
 id|mask
 suffix:semicolon
 DECL|member|name
+r_const
 r_char
 op_star
 id|name
@@ -586,6 +587,7 @@ r_char
 id|value
 suffix:semicolon
 DECL|member|name
+r_const
 r_char
 op_star
 id|name

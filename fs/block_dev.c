@@ -40,6 +40,7 @@ id|file
 op_star
 id|filp
 comma
+r_const
 r_char
 op_star
 id|buf
@@ -1220,6 +1221,21 @@ id|size
 id|left
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/* size - offset might not fit into left, so check explicitly. */
+r_else
+r_if
+c_cond
+(paren
+id|size
+op_minus
+id|offset
+OG
+id|INT_MAX
+)paren
+id|left
+op_assign
+id|INT_MAX
 suffix:semicolon
 r_else
 id|left

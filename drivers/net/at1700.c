@@ -1,6 +1,7 @@
 multiline_comment|/* at1700.c: A network device driver for  the Allied Telesis AT1700.&n;&n;&t;Written 1993-94 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This is a device driver for the Allied Telesis AT1700, which is a&n;&t;straight-forward Fujitsu MB86965 implementation.&n;&n;  Sources:&n;    The Fujitsu MB86965 datasheet.&n;&n;&t;After the initial version of this driver was written Gerry Sawkins of&n;&t;ATI provided their EEPROM configuration code header file.&n;    Thanks to NIIBE Yutaka &lt;gniibe@mri.co.jp&gt; for bug fixes.&n;&n;  Bugs:&n;&t;The MB86965 has a design flaw that makes all probes unreliable.  Not&n;&t;only is it difficult to detect, it also moves around in I/O space in&n;&t;response to inb()s from other device probes!&n;*/
 DECL|variable|version
 r_static
+r_const
 r_char
 op_star
 id|version
@@ -766,6 +767,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* The EEPROM word 12 bit 0x0400 means use regular 100 ohm 10baseT signals,&n;&t;   rather than 150 ohm shielded twisted pair compensation.&n;&t;   0x0000 == auto-sense the interface&n;&t;   0x0800 == use TP interface&n;&t;   0x1800 == use coax interface&n;&t;   */
 (brace
+r_const
 r_char
 op_star
 id|porttype

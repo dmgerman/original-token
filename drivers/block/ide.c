@@ -9992,6 +9992,7 @@ comma
 r_int
 id|need_offset
 comma
+r_const
 r_char
 op_star
 id|msg

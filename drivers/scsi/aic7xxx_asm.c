@@ -1,4 +1,4 @@
-multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7770/AIC7870 sequencer code assembler.&n; *&n; * Copyright (c) 1994 John Aycock&n; *   The University of Calgary Department of Computer Science.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Comments are started by `#&squot; and continue to the end of the line; lines&n; * may be of the form:&n; *      &lt;label&gt;*&n; *      &lt;label&gt;*  &lt;undef-sym&gt; = &lt;value&gt;&n; *      &lt;label&gt;*  &lt;opcode&gt; &lt;operand&gt;*&n; *&n; * A &lt;label&gt; is an &lt;undef-sym&gt; ending in a colon.  Spaces, tabs, and commas&n; * are token separators.&n; *&n; *-M*************************************************************************/
+multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7770/AIC7870 sequencer code assembler.&n; *&n; * Copyright (c) 1994 John Aycock&n; *   The University of Calgary Department of Computer Science.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Comments are started by `#&squot; and continue to the end of the line; lines&n; * may be of the form:&n; *      &lt;label&gt;*&n; *      &lt;label&gt;*  &lt;undef-sym&gt; = &lt;value&gt;&n; *      &lt;label&gt;*  &lt;opcode&gt; &lt;operand&gt;*&n; *&n; * A &lt;label&gt; is an &lt;undef-sym&gt; ending in a colon.  Spaces, tabs, and commas&n; * are token separators.&n; *-M*************************************************************************/
 DECL|variable|id
 r_static
 r_char
@@ -6,7 +6,7 @@ id|id
 (braket
 )braket
 op_assign
-l_string|&quot;$Id: aic7xxx_asm.c,v 1.8 1995/05/25 06:25:36 root Exp $&quot;
+l_string|&quot;$Id: aic7xxx_asm.c,v 2.0 1995/08/02 05:28:42 deang Exp $&quot;
 suffix:semicolon
 macro_line|#include &lt;ctype.h&gt;
 macro_line|#include &lt;stdio.h&gt;
@@ -73,6 +73,7 @@ DECL|function|error
 id|error
 c_func
 (paren
+r_const
 r_char
 op_star
 id|s
@@ -1052,6 +1053,7 @@ mdefine_line|#define NA&t;-1&t;&t;/* not applicable */
 r_struct
 (brace
 DECL|member|name
+r_const
 r_char
 op_star
 id|name
@@ -2030,6 +2032,7 @@ r_int
 r_int
 id|what
 suffix:semicolon
+r_const
 r_char
 op_star
 id|name

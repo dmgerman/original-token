@@ -355,6 +355,7 @@ id|socket
 op_star
 id|sock
 comma
+r_const
 r_char
 op_star
 id|ubuf
@@ -435,6 +436,7 @@ id|socket
 op_star
 id|sock
 comma
+r_const
 r_void
 op_star
 id|buff
@@ -487,6 +489,7 @@ id|socket
 op_star
 id|sock
 comma
+r_const
 r_void
 op_star
 id|buff
@@ -639,6 +642,7 @@ r_struct
 id|net_proto
 (brace
 DECL|member|name
+r_const
 r_char
 op_star
 id|name

@@ -823,6 +823,7 @@ suffix:semicolon
 r_struct
 (brace
 DECL|member|str
+r_const
 r_char
 op_star
 id|str
@@ -1395,6 +1396,7 @@ op_star
 id|next
 suffix:semicolon
 r_static
+r_const
 r_char
 op_star
 id|devnames

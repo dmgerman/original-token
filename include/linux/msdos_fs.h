@@ -45,7 +45,7 @@ multiline_comment|/* attribute bits that are copied &quot;as is&quot; */
 DECL|macro|DELETED_FLAG
 mdefine_line|#define DELETED_FLAG 0xe5 /* marks file as deleted when in name[0] */
 DECL|macro|IS_FREE
-mdefine_line|#define IS_FREE(n) (!*(n) || *(unsigned char *) (n) == DELETED_FLAG || &bslash;&n;  *(unsigned char *) (n) == FD_FILL_BYTE)
+mdefine_line|#define IS_FREE(n) (!*(n) || *(const unsigned char *) (n) == DELETED_FLAG || &bslash;&n;  *(const unsigned char *) (n) == FD_FILL_BYTE)
 DECL|macro|MSDOS_VALID_MODE
 mdefine_line|#define MSDOS_VALID_MODE (S_IFREG | S_IFDIR | S_IRWXU | S_IRWXG | S_IRWXO)
 multiline_comment|/* valid file mode bits */
@@ -263,6 +263,7 @@ id|super_block
 op_star
 id|s
 comma
+r_const
 r_char
 op_star
 id|msg
@@ -396,6 +397,7 @@ id|inode
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|name
@@ -909,6 +911,7 @@ r_struct
 id|file
 op_star
 comma
+r_const
 r_char
 op_star
 comma

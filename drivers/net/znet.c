@@ -1,6 +1,7 @@
 multiline_comment|/* znet.c: An Zenith Z-Note ethernet driver for linux. */
 DECL|variable|version
 r_static
+r_const
 r_char
 op_star
 id|version

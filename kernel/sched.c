@@ -2977,9 +2977,11 @@ suffix:semicolon
 DECL|function|sys_alarm
 id|asmlinkage
 r_int
+r_int
 id|sys_alarm
 c_func
 (paren
+r_int
 r_int
 id|seconds
 )paren
@@ -3190,6 +3192,7 @@ r_int
 id|free
 suffix:semicolon
 r_static
+r_const
 r_char
 op_star
 id|stat_nam

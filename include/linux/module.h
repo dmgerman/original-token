@@ -82,6 +82,7 @@ op_star
 id|addr
 suffix:semicolon
 DECL|member|name
+r_const
 r_char
 op_star
 id|name
@@ -151,6 +152,7 @@ op_star
 id|symtab
 suffix:semicolon
 DECL|member|name
+r_const
 r_char
 op_star
 id|name

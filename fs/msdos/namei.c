@@ -15,6 +15,7 @@ mdefine_line|#define PRINTK(x)
 multiline_comment|/* MS-DOS &quot;device special files&quot; */
 DECL|variable|reserved_names
 r_static
+r_const
 r_char
 op_star
 id|reserved_names
@@ -97,7 +98,9 @@ id|dot_dirs
 r_char
 op_star
 id|walk
-comma
+suffix:semicolon
+r_const
+r_char
 op_star
 op_star
 id|reserved
@@ -1169,6 +1172,7 @@ id|inode
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|name

@@ -1057,6 +1057,16 @@ id|VORTEX_GDT
 comma
 l_string|&quot;GDT 6000b&quot;
 )paren
+comma
+id|DEVICE
+c_func
+(paren
+id|HP
+comma
+id|HP_J2585A
+comma
+l_string|&quot;J2585A&quot;
+)paren
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_PCI_OPTIMIZE
@@ -1066,16 +1076,19 @@ r_struct
 id|optimization_type
 (brace
 DECL|member|type
+r_const
 r_char
 op_star
 id|type
 suffix:semicolon
 DECL|member|off
+r_const
 r_char
 op_star
 id|off
 suffix:semicolon
 DECL|member|on
+r_const
 r_char
 op_star
 id|on
@@ -1364,6 +1377,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|pci_strbioserr
+r_const
 r_char
 op_star
 id|pci_strbioserr
@@ -1896,6 +1910,12 @@ id|PCI_VENDOR_ID_VORTEX
 suffix:colon
 r_return
 l_string|&quot;VORTEX&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_HP
+suffix:colon
+r_return
+l_string|&quot;Hewlett Packard&quot;
 suffix:semicolon
 r_default
 suffix:colon

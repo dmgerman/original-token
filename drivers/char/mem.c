@@ -70,6 +70,7 @@ id|file
 op_star
 id|file
 comma
+r_const
 r_char
 op_star
 id|buf
@@ -227,6 +228,7 @@ id|file
 op_star
 id|file
 comma
+r_const
 r_char
 op_star
 id|buf
@@ -613,6 +615,7 @@ id|file
 op_star
 id|file
 comma
+r_const
 r_char
 op_star
 id|buf
@@ -627,6 +630,7 @@ id|i
 op_assign
 id|file-&gt;f_pos
 suffix:semicolon
+r_const
 r_char
 op_star
 id|tmp
@@ -719,6 +723,7 @@ id|file
 op_star
 id|file
 comma
+r_const
 r_char
 op_star
 id|buf
@@ -889,6 +894,7 @@ id|file
 op_star
 id|file
 comma
+r_const
 r_char
 op_star
 id|buf

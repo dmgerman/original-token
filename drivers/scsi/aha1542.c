@@ -3527,6 +3527,11 @@ r_int
 r_char
 op_star
 id|dma_chan
+comma
+r_int
+r_char
+op_star
+id|scsi_id
 )paren
 (brace
 id|unchar
@@ -3797,6 +3802,16 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+suffix:semicolon
+op_star
+id|scsi_id
+op_assign
+id|inquiry_result
+(braket
+l_int|2
+)braket
+op_amp
+l_int|7
 suffix:semicolon
 r_return
 l_int|0
@@ -4186,6 +4201,7 @@ op_star
 id|ints
 )paren
 (brace
+r_const
 r_char
 op_star
 id|ahausage
@@ -4495,6 +4511,10 @@ suffix:semicolon
 r_int
 r_char
 id|irq_level
+suffix:semicolon
+r_int
+r_char
+id|scsi_id
 suffix:semicolon
 r_int
 r_int
@@ -4879,6 +4899,9 @@ id|irq_level
 comma
 op_amp
 id|dma_chan
+comma
+op_amp
+id|scsi_id
 )paren
 op_eq
 op_minus
@@ -4890,7 +4913,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Configuring Adaptec at IO:%x, IRQ %d&quot;
+l_string|&quot;Configuring Adaptec (SCSI-ID %d) at IO:%x, IRQ %d&quot;
+comma
+id|scsi_id
 comma
 id|base_io
 comma

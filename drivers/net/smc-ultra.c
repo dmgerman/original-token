@@ -2,6 +2,7 @@ multiline_comment|/* smc-ultra.c: A SMC Ultra ethernet driver for linux. */
 multiline_comment|/*&n;&t;Written 1993,1994,1995 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This is a driver for the SMC Ultra and SMC EtherEZ ethercards.&n;&n;&t;This driver uses the cards in the 8390-compatible, shared memory mode.&n;&t;Most of the run-time complexity is handled by the generic code in&n;&t;8390.c.  The code in this file is responsible for&n;&n;&t;&t;ultra_probe()&t; &t;Detecting and initializing the card.&n;&t;&t;ultra_probe1()&t;&n;&n;&t;&t;ultra_open()&t;&t;The card-specific details of starting, stopping&n;&t;&t;ultra_reset_8390()&t;and resetting the 8390 NIC core.&n;&t;&t;ultra_close()&n;&n;&t;&t;ultra_block_input()&t;&t;Routines for reading and writing blocks of&n;&t;&t;ultra_block_output()&t;packet buffer memory.&n;&n;&t;This driver enables the shared memory only when doing the actual data&n;&t;transfers to avoid a bug in early version of the card that corrupted&n;&t;data transferred by a AHA1542.&n;&n;&t;This driver does not support the programmed-I/O data transfer mode of&n;&t;the EtherEZ.  That support (if available) is smc-ez.c.  Nor does it&n;&t;use the non-8390-compatible &quot;Altego&quot; mode. (No support currently planned.)&n;*/
 DECL|variable|version
 r_static
+r_const
 r_char
 op_star
 id|version
@@ -330,6 +331,7 @@ id|checksum
 op_assign
 l_int|0
 suffix:semicolon
+r_const
 r_char
 op_star
 id|model_name

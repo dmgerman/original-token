@@ -141,6 +141,7 @@ id|u32
 op_star
 id|insn
 comma
+r_const
 r_char
 op_star
 id|prefix
@@ -12247,6 +12248,7 @@ op_star
 )paren
 id|host-&gt;hostdata
 suffix:semicolon
+r_const
 r_char
 op_star
 id|phase
@@ -13449,6 +13451,7 @@ id|u32
 op_star
 id|insn
 comma
+r_const
 r_char
 op_star
 id|prefix

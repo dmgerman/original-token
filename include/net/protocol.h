@@ -148,6 +148,7 @@ op_star
 id|data
 suffix:semicolon
 DECL|member|name
+r_const
 r_char
 op_star
 id|name

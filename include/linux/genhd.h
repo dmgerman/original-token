@@ -106,6 +106,7 @@ id|major
 suffix:semicolon
 multiline_comment|/* major number of driver */
 DECL|member|major_name
+r_const
 r_char
 op_star
 id|major_name

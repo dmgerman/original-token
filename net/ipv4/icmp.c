@@ -1,4 +1,5 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Internet Control Message Protocol (ICMP)&n; *&n; * Version:&t;@(#)icmp.c&t;1.0.11&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Generic queue usage.&n; *&t;&t;Gerhard Koerting:&t;ICMP addressing corrected&n; *&t;&t;Alan Cox&t;:&t;Use tos/ttl settings&n; *&t;&t;Alan Cox&t;:&t;Protocol violations&n; *&t;&t;Alan Cox&t;:&t;SNMP Statistics&t;&t;&n; *&t;&t;Alan Cox&t;:&t;Routing errors&n; *&t;&t;Alan Cox&t;:&t;Changes for newer routing code&n; *&t;&t;Alan Cox&t;:&t;Removed old debugging junk&n; *&t;&t;Alan Cox&t;:&t;Fixed the ICMP error status of net/host unreachable&n; *&t;Gerhard Koerting&t;:&t;Fixed broadcast ping properly&n; *&t;&t;Ulrich Kunitz&t;:&t;Fixed ICMP timestamp reply&n; *&t;&t;A.N.Kuznetsov&t;:&t;Multihoming fixes.&n; *&t;&t;Laco Rusnak&t;:&t;Multihoming fixes.&n; *&t;&t;Alan Cox&t;:&t;Tightened up icmp_send().&n; *&t;&t;Alan Cox&t;:&t;Multicasts.&n; *&t;&t;Stefan Becker   :       ICMP redirects in icmp_send().&n; *&t;&t;Peter Belding&t;:&t;Tightened up ICMP redirect handling&n; *&t;&t;Alan Cox&t;:&t;Tightened even more.&n; *&t;&t;Arnt Gulbrandsen:&t;Misplaced #endif with net redirect and break&n; *&t;&t;A.N.Kuznetsov&t;:&t;ICMP timestamp still used skb+1&n; * &n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Internet Control Message Protocol (ICMP)&n; *&n; * Version:&t;@(#)icmp.c&t;1.0.11&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Generic queue usage.&n; *&t;&t;Gerhard Koerting:&t;ICMP addressing corrected&n; *&t;&t;Alan Cox&t;:&t;Use tos/ttl settings&n; *&t;&t;Alan Cox&t;:&t;Protocol violations&n; *&t;&t;Alan Cox&t;:&t;SNMP Statistics&t;&t;&n; *&t;&t;Alan Cox&t;:&t;Routing errors&n; *&t;&t;Alan Cox&t;:&t;Changes for newer routing code&n; *&t;&t;Alan Cox&t;:&t;Removed old debugging junk&n; *&t;&t;Alan Cox&t;:&t;Fixed the ICMP error status of net/host unreachable&n; *&t;Gerhard Koerting&t;:&t;Fixed broadcast ping properly&n; *&t;&t;Ulrich Kunitz&t;:&t;Fixed ICMP timestamp reply&n; *&t;&t;A.N.Kuznetsov&t;:&t;Multihoming fixes.&n; *&t;&t;Laco Rusnak&t;:&t;Multihoming fixes.&n; *&t;&t;Alan Cox&t;:&t;Tightened up icmp_send().&n; *&t;&t;Alan Cox&t;:&t;Multicasts.&n; *&t;&t;Stefan Becker   :       ICMP redirects in icmp_send().&n; *&t;&t;Peter Belding&t;:&t;Tightened up ICMP redirect handling&n; *&t;&t;Alan Cox&t;:&t;Tightened even more.&n; *&t;&t;Arnt Gulbrandsen:&t;Misplaced #endif with net redirect and break&n; *&t;&t;A.N.Kuznetsov&t;:&t;ICMP timestamp still used skb+1&n; *&t;&t;Mike Shaver&t;:&t;RFC1122 checks.&n; * &n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/* RFC1122 Status: (boy, are there a lot of rules for ICMP)&n;   3.2.2 (Generic ICMP stuff)&n;     MUST discard messages of unknown type. (OK)&n;     MUST copy at least the first 8 bytes from the offending packet&n;       when sending ICMP errors. (OK)&n;     MUST pass received ICMP errors up to protocol level. (OK)&n;     SHOULD send ICMP errors with TOS == 0. (OK)&n;     MUST NOT send ICMP errors in reply to:&n;       ICMP errors (OK)&n;       Broadcast/multicast datagrams (OK)&n;       MAC broadcasts (OK)&n;       Non-initial fragments (OK)&n;       Datagram with a source address that isn&squot;t a single host. (OK)&n;  3.2.2.1 (Destination Unreachable)&n;    All the rules govern the IP layer, and are dealt with in ip.c, not here.&n;  3.2.2.2 (Redirect)&n;    Host SHOULD NOT send ICMP_REDIRECTs.  (OK)&n;    MUST update routing table in response to host or network redirects. &n;      (host OK, network NOT YET) [Intentionally -- AC]&n;    SHOULD drop redirects if they&squot;re not from directly connected gateway&n;      (OK -- we drop it if it&squot;s not from our old gateway, which is close&n;       enough)&n;  3.2.2.3 (Source Quench)&n;    MUST pass incoming SOURCE_QUENCHs to transport layer (OK)&n;    Other requirements are dealt with at the transport layer.&n;  3.2.2.4 (Time Exceeded)&n;    MUST pass TIME_EXCEEDED to transport layer (OK)&n;    Other requirements dealt with at IP (generating TIME_EXCEEDED).&n;  3.2.2.5 (Parameter Problem)&n;    SHOULD generate these, but it doesn&squot;t say for what.  So we&squot;re OK. =)&n;    MUST pass received PARAMPROBLEM to transport layer (NOT YET)&n;    &t;[Solaris 2.X seems to assert EPROTO when this occurs] -- AC&n;  3.2.2.6 (Echo Request/Reply)&n;    MUST reply to ECHO_REQUEST, and give app to do ECHO stuff (OK, OK)&n;    MAY discard broadcast ECHO_REQUESTs. (We don&squot;t, but that&squot;s OK.)&n;    MUST reply using same source address as the request was sent to.&n;      We&squot;re OK for unicast ECHOs, and it doesn&squot;t say anything about&n;      how to handle broadcast ones, since it&squot;s optional.&n;    MUST copy data from REQUEST to REPLY (OK)&n;      unless it would require illegal fragmentation (MUST) (NOT YET)&n;    MUST pass REPLYs to transport/user layer (OK)&n;    MUST use any provided source route (reversed) for REPLY. (NOT YET)&n; 3.2.2.7 (Information Request/Reply)&n;   MUST NOT implement this. (I guess that means silently discard...?) (OK)&n; 3.2.2.8 (Timestamp Request/Reply)&n;   MAY implement (OK)&n;   SHOULD be in-kernel for &quot;minimum variability&quot; (OK)&n;   MAY discard broadcast REQUESTs.  (OK, but see source for inconsistency)&n;   MUST reply using same source address as the request was sent to. (OK)&n;   MUST reverse source route, as per ECHO (NOT YET)&n;   MUST pass REPLYs to transport/user layer (requires RAW, just like ECHO) (OK)&n;   MUST update clock for timestamp at least 15 times/sec (OK)&n;   MUST be &quot;correct within a few minutes&quot; (OK)&n; 3.2.2.9 (Address Mask Request/Reply)&n;   MAY implement (OK)&n;   MUST send a broadcast REQUEST if using this system to set netmask&n;     (OK... we don&squot;t use it)&n;   MUST discard received REPLYs if not using this system (OK)&n;   MUST NOT send replies unless specifically made agent for this sort&n;     of thing. (NOT YET)&n;*/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -364,6 +365,9 @@ suffix:semicolon
 r_case
 id|ICMP_REDIRECT
 suffix:colon
+multiline_comment|/* RFC1122: (3.2.2.2) Sorta bad.  SHOULDN&squot;T send */
+multiline_comment|/* ICMP_REDIRECTs unless we&squot;re a gateway. -- MS */
+multiline_comment|/* We don&squot;t .. this path isnt invoked -- AC */
 id|icmp_statistics.IcmpOutRedirects
 op_increment
 suffix:semicolon
@@ -500,6 +504,9 @@ id|our_addr
 op_assign
 id|dev-&gt;pa_addr
 suffix:semicolon
+multiline_comment|/* RFC1122: (3.2.2).  MUST NOT send ICMP in reply to */
+multiline_comment|/* packet with a source IP address that doesn&squot;t define a single */
+multiline_comment|/* host. -- MS.  Checked higher up -- AC */
 r_if
 c_cond
 (paren
@@ -592,6 +599,8 @@ l_int|8
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Fill in the frame&n;&t; */
+multiline_comment|/* RFC1122: SHOULD send with TOS == 0, and I guess this does. */
+multiline_comment|/* Perhaps it should be explicit? -- MS */
 id|icmph
 op_assign
 (paren
@@ -622,6 +631,8 @@ op_assign
 id|info
 suffix:semicolon
 multiline_comment|/* This might not be meant for &n;&t;&t;&t;&t;&t;   this form of the union but it will&n;&t;&t;&t;&t;&t;   be right anyway */
+multiline_comment|/* RFC1122: OK. Copies the minimum 8 bytes unchanged from the offending */
+multiline_comment|/* packet (MUST) as per 3.2.2. -- MS */
 id|memcpy
 c_func
 (paren
@@ -877,6 +888,8 @@ op_star
 id|ipprot-&gt;next
 suffix:semicolon
 multiline_comment|/* &n;&t;&t; *&t;Pass it off to everyone who wants it. &n;&t;&t; */
+multiline_comment|/* RFC1122: OK. Passes appropriate ICMP errors to the */
+multiline_comment|/* appropriate protocol layer (MUST), as per 3.2.2. */
 r_if
 c_cond
 (paren
@@ -1386,6 +1399,10 @@ comma
 id|len
 )paren
 suffix:semicolon
+multiline_comment|/* Are we copying the data from the ECHO datagram? */
+multiline_comment|/* We&squot;re supposed to, and it looks like we are. -- MS */
+multiline_comment|/* We&squot;re also supposed to truncate it if it would force */
+multiline_comment|/* illegal fragmentation. *sigh*  */
 id|icmphr-&gt;type
 op_assign
 id|ICMP_ECHOREPLY
@@ -1830,6 +1847,13 @@ id|FREE_READ
 suffix:semicolon
 )brace
 multiline_comment|/* &n; *&t;Handle ICMP_ADDRESS_MASK requests. &n; */
+multiline_comment|/* RFC1122 (3.2.2.9).  A host MUST only send replies to */
+multiline_comment|/* ADDRESS_MASK requests if it&squot;s been configured as an address mask */
+multiline_comment|/* agent.  Receiving a request doesn&squot;t constitute implicit permission to */
+multiline_comment|/* act as one. Of course, implementing this correctly requires (SHOULD) */
+multiline_comment|/* a way to turn the functionality on and off.  Another one for sysctl(), */
+multiline_comment|/* I guess. -- MS */
+multiline_comment|/* Botched with a CONFIG option for now - Linus add scts sysctl please.. */
 DECL|function|icmp_address
 r_static
 r_void
@@ -1868,6 +1892,7 @@ op_star
 id|opt
 )paren
 (brace
+macro_line|#ifdef CONFIG_IP_ADDR_AGENT
 r_struct
 id|icmphdr
 op_star
@@ -2106,6 +2131,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#endif
 id|skb-&gt;sk
 op_assign
 l_int|NULL
@@ -2255,6 +2281,10 @@ id|icmph-&gt;type
 op_ne
 id|ICMP_ECHO
 )paren
+multiline_comment|/* RFC1122: We&squot;re allowed to reply to ICMP_TIMESTAMP */
+multiline_comment|/* requests in the same manner as ICMP_ECHO (optionally */
+multiline_comment|/* drop those to a bcast/mcast), so perhaps we should be */
+multiline_comment|/* consistent? -- MS */
 (brace
 id|icmp_statistics.IcmpInErrors
 op_increment
@@ -2428,6 +2458,9 @@ suffix:semicolon
 r_case
 id|ICMP_TIMESTAMPREPLY
 suffix:colon
+multiline_comment|/* RFC1122: MUST pass TIMESTAMPREPLY messages up to app layer, */
+multiline_comment|/* just as with ECHOREPLY.  You have to use raw to get that */
+multiline_comment|/* functionality, just as with ECHOREPLY. Close enough. -- MS */
 id|icmp_statistics.IcmpInTimestampReps
 op_increment
 suffix:semicolon
@@ -2532,6 +2565,8 @@ l_int|0
 suffix:semicolon
 r_default
 suffix:colon
+multiline_comment|/* RFC1122: OK.  Silently discarding weird ICMP (MUST), */
+multiline_comment|/* as per 3.2.2. -- MS */
 id|icmp_statistics.IcmpInErrors
 op_increment
 suffix:semicolon

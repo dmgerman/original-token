@@ -72,6 +72,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;set if arbitration has finished and we are &n;&t;&t;&t;&t;&t;&t;in some command phase.&n;&t;&t;&t;&t;&t;*/
 DECL|variable|base_address
 r_static
+r_const
 r_void
 op_star
 id|base_address
@@ -263,6 +264,7 @@ r_typedef
 r_struct
 (brace
 DECL|member|signature
+r_const
 r_char
 op_star
 id|signature
@@ -742,6 +744,7 @@ op_logical_neg
 id|memcmp
 (paren
 (paren
+r_const
 r_void
 op_star
 )paren
@@ -760,6 +763,7 @@ id|offset
 )paren
 comma
 (paren
+r_const
 r_void
 op_star
 )paren
@@ -782,6 +786,7 @@ id|length
 id|base_address
 op_assign
 (paren
+r_const
 r_void
 op_star
 )paren
@@ -844,6 +849,7 @@ op_star
 (paren
 (paren
 (paren
+r_const
 r_int
 r_char
 op_star
@@ -872,6 +878,7 @@ op_star
 (paren
 (paren
 (paren
+r_const
 r_int
 r_char
 op_star
@@ -3805,6 +3812,7 @@ id|DATA
 op_assign
 op_star
 (paren
+r_const
 r_int
 r_char
 op_star
@@ -3816,6 +3824,7 @@ op_assign
 l_int|1
 op_plus
 (paren
+r_const
 r_int
 r_char
 op_star

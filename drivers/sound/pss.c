@@ -1464,6 +1464,7 @@ multiline_comment|/* No more input */
 macro_line|#ifdef EXCLUDE_MIDI
 r_return
 l_int|0
+suffix:semicolon
 macro_line|#else
 r_return
 id|probe_mpu401

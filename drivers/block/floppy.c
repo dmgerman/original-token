@@ -413,6 +413,7 @@ id|floppy_drive_params
 id|params
 suffix:semicolon
 DECL|member|name
+r_const
 r_char
 op_star
 id|name
@@ -2196,6 +2197,7 @@ r_void
 id|debugt
 c_func
 (paren
+r_const
 r_char
 op_star
 id|message
@@ -2245,6 +2247,7 @@ initialization_block
 suffix:semicolon
 DECL|variable|timeout_message
 r_static
+r_const
 r_char
 op_star
 id|timeout_message
@@ -2256,6 +2259,7 @@ r_void
 id|is_alive
 c_func
 (paren
+r_const
 r_char
 op_star
 id|message
@@ -2373,6 +2377,7 @@ c_func
 r_int
 id|drive
 comma
+r_const
 r_char
 op_star
 id|message
@@ -12277,6 +12282,7 @@ DECL|macro|COPYIN
 mdefine_line|#define COPYIN(x) (memcpy_fromfs( &amp;(x), (void *) param, sizeof(x)),0)
 DECL|function|drive_name
 r_static
+r_const
 r_char
 op_star
 id|drive_name
@@ -12836,6 +12842,7 @@ id|floppy_struct
 op_star
 id|this_floppy
 suffix:semicolon
+r_const
 r_char
 op_star
 id|name
@@ -14082,6 +14089,7 @@ id|file
 op_star
 id|filp
 comma
+r_const
 r_char
 op_star
 id|buf
@@ -15922,6 +15930,7 @@ r_struct
 id|param_table
 (brace
 DECL|member|name
+r_const
 r_char
 op_star
 id|name

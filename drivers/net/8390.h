@@ -121,6 +121,7 @@ r_struct
 id|ei_device
 (brace
 DECL|member|name
+r_const
 r_char
 op_star
 id|name

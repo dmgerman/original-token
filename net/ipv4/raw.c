@@ -285,6 +285,7 @@ r_void
 id|raw_getfrag
 c_func
 (paren
+r_const
 r_void
 op_star
 id|p
@@ -311,6 +312,7 @@ c_func
 id|to
 comma
 (paren
+r_const
 r_int
 r_char
 op_star
@@ -330,6 +332,7 @@ r_void
 id|raw_getrawfrag
 c_func
 (paren
+r_const
 r_void
 op_star
 id|p
@@ -356,6 +359,7 @@ c_func
 id|to
 comma
 (paren
+r_const
 r_int
 r_char
 op_star
@@ -442,6 +446,7 @@ id|sock
 op_star
 id|sk
 comma
+r_const
 r_int
 r_char
 op_star
@@ -688,6 +693,7 @@ id|sock
 op_star
 id|sk
 comma
+r_const
 r_int
 r_char
 op_star

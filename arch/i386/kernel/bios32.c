@@ -1300,6 +1300,7 @@ l_int|8
 suffix:semicolon
 )brace
 DECL|function|pcibios_strerror
+r_const
 r_char
 op_star
 id|pcibios_strerror

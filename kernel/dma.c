@@ -14,6 +14,7 @@ r_int
 id|lock
 suffix:semicolon
 DECL|member|device_id
+r_const
 r_char
 op_star
 id|device_id
@@ -159,6 +160,7 @@ r_int
 r_int
 id|dmanr
 comma
+r_const
 r_char
 op_star
 id|device_id

@@ -1121,6 +1121,7 @@ id|file
 op_star
 id|filp
 comma
+r_const
 r_char
 op_star
 id|buf
@@ -1152,10 +1153,12 @@ id|error
 comma
 id|carry
 suffix:semicolon
+r_const
 r_char
 op_star
 id|start
-comma
+suffix:semicolon
+r_char
 op_star
 id|to
 comma

@@ -2,6 +2,7 @@ multiline_comment|/* lance.c: An AMD LANCE ethernet driver for linux. */
 multiline_comment|/*&n;&t;Written 1993,1994,1995 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the Allied Telesis AT1500 and HP J2405A, and should work&n;&t;with most other LANCE-based bus-master (NE2100 clone) ethercards.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;*/
 DECL|variable|version
 r_static
+r_const
 r_char
 op_star
 id|version
@@ -250,6 +251,7 @@ id|lance_init_block
 id|init_block
 suffix:semicolon
 DECL|member|name
+r_const
 r_char
 op_star
 id|name
@@ -342,6 +344,7 @@ r_int
 id|id_number
 suffix:semicolon
 DECL|member|name
+r_const
 r_char
 op_star
 id|name
@@ -913,6 +916,7 @@ id|reset_val
 comma
 id|lance_version
 suffix:semicolon
+r_const
 r_char
 op_star
 id|chipname

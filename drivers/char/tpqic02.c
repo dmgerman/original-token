@@ -350,6 +350,7 @@ multiline_comment|/* aligned physical address of buffer */
 multiline_comment|/* This translates minor numbers to the corresponding recording format: */
 DECL|variable|format_names
 r_static
+r_const
 r_char
 op_star
 id|format_names
@@ -391,6 +392,7 @@ comma
 id|code
 suffix:semicolon
 DECL|member|msg
+r_const
 r_char
 op_star
 id|msg
@@ -734,6 +736,7 @@ r_int
 r_int
 id|flags
 comma
+r_const
 r_char
 op_star
 id|s
@@ -6863,6 +6866,7 @@ id|file
 op_star
 id|filp
 comma
+r_const
 r_char
 op_star
 id|buf
@@ -7169,6 +7173,7 @@ op_star
 id|buffaddr
 comma
 (paren
+r_const
 r_void
 op_star
 )paren
@@ -8120,38 +8125,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* qic02_tape_open */
-DECL|function|qic02_tape_readdir
-r_static
-r_int
-id|qic02_tape_readdir
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_struct
-id|dirent
-op_star
-id|dp
-comma
-r_int
-id|count
-)paren
-(brace
-r_return
-op_minus
-id|ENOTDIR
-suffix:semicolon
-multiline_comment|/* not supported */
-)brace
-multiline_comment|/* qic02_tape_readdir */
 DECL|function|qic02_tape_release
 r_static
 r_void
@@ -9887,9 +9860,9 @@ multiline_comment|/* read */
 id|qic02_tape_write
 comma
 multiline_comment|/* write */
-id|qic02_tape_readdir
+l_int|NULL
 comma
-multiline_comment|/* not allowed */
+multiline_comment|/* readdir not allowed */
 l_int|NULL
 comma
 multiline_comment|/* select ??? */

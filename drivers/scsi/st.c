@@ -243,6 +243,7 @@ id|SCpnt-&gt;sense_buffer
 comma
 id|scode
 suffix:semicolon
+r_const
 r_char
 op_star
 id|stp
@@ -3788,6 +3789,7 @@ id|file
 op_star
 id|filp
 comma
+r_const
 r_char
 op_star
 id|buf
@@ -3826,6 +3828,7 @@ id|cmd
 l_int|10
 )braket
 suffix:semicolon
+r_const
 r_char
 op_star
 id|b_point

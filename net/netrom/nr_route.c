@@ -69,6 +69,7 @@ id|ax25_address
 op_star
 id|nr
 comma
+r_const
 r_char
 op_star
 id|mnemonic

@@ -127,6 +127,7 @@ id|fmt_gap
 suffix:semicolon
 multiline_comment|/* gap2 size */
 DECL|member|name
+r_const
 r_char
 op_star
 id|name

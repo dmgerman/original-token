@@ -887,6 +887,7 @@ r_extern
 r_int
 id|ext2_check_dir_entry
 (paren
+r_const
 r_char
 op_star
 comma

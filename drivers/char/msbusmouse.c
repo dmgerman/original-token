@@ -334,6 +334,7 @@ id|file
 op_star
 id|file
 comma
+r_const
 r_char
 op_star
 id|buffer

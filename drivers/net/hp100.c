@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * hp100.c: Hewlett Packard HP10/100VG ANY LAN ethernet driver for Linux.&n; *&n; * Author:  Jaroslav Kysela, &lt;perex@pf.jcu.cz&gt;&n; *&n; * Supports only the following Hewlett Packard cards:&n; *&n; *  &t;HP J2577&t;10/100 EISA card with REVA Cascade chip&n; *&t;HP J2573&t;10/100 ISA card with REVA Cascade chip&n; *&t;HP 27248B&t;10 only EISA card with Cascade chip&n; *&t;HP J2577&t;10/100 EISA card with Cascade chip&n; *&t;HP J2573&t;10/100 ISA card with Cascade chip&n; *&n; * Other ATT2MD01 Chip based boards might be supported in the future&n; * (there are some minor changes needed).&n; *&n; * This driver is based on the &squot;hpfepkt&squot; crynwr packet driver.&n; *&n; * This source/code is public free; you can distribute it and/or modify &n; * it under terms of the GNU General Public License (published by the&n; * Free Software Foundation) either version two of this License, or any &n; * later version.&n; * ----------------------------------------------------------------------------&n; *&n; * Note: Some routines (interrupt handling, transmit) assumes that  &n; *       there is the PERFORMANCE page selected...&n; *&n; * ----------------------------------------------------------------------------&n; *&n; * If you are going to use the module version of this driver, you may&n; * change this values at the &quot;insert time&quot; :&n; *&n; *   Variable                   Description&n; *&n; *   hp100_default_rx_ratio&t;Range 1-99 - onboard memory used for RX &n; *                              packets in %.&n; *   hp100_port&t;&t;&t;Adapter port (for example 0x380).&n; *&n; * ----------------------------------------------------------------------------&n; * MY BEST REGARDS GOING TO:&n; *&n; * IPEX s.r.o which lend me two HP J2573 cards and&n; * the HP AdvanceStack 100VG Hub-15 for debugging.&n; *&n; * Russel Nellson &lt;nelson@crynwr.com&gt; for help with obtaining sources&n; * of the &squot;hpfepkt&squot; packet driver.&n; *&n; * Also thanks to Abacus Electric s.r.o which let me to use their &n; * motherboard for my second computer.&n; *&n; * ----------------------------------------------------------------------------&n; *&n; * TO DO:&n; * ======&n; *       - ioctl handling - some runtime setup things&n; *       - PCI card support&n; *&n; * Revision history:&n; * =================&n; * &n; *    Version   Date&t;    Description&n; *&n; *&t;0.1&t;14-May-95   Initial writing. ALPHA code was released.&n; *                          Only HP J2573 on 10Mb/s (two machines) tested.&n; *      0.11    14-Jun-95   Reset interface bug fixed?&n; *&t;&t;&t;    Little bug in hp100_close function fixed.&n; *                          100Mb/s connection debugged.&n; *      0.12    14-Jul-95   Link down is now handled better.&n; *&n; */
+multiline_comment|/*&n; * hp100.c: Hewlett Packard HP10/100VG ANY LAN ethernet driver for Linux.&n; *&n; * Author:  Jaroslav Kysela, &lt;perex@pf.jcu.cz&gt;&n; *&n; * Supports only the following Hewlett Packard cards:&n; *&n; *  &t;HP J2577&t;10/100 EISA card with REVA Cascade chip&n; *&t;HP J2573&t;10/100 ISA card with REVA Cascade chip&n; *&t;HP 27248B&t;10 only EISA card with Cascade chip&n; *&t;HP J2577&t;10/100 EISA card with Cascade chip&n; *&t;HP J2573&t;10/100 ISA card with Cascade chip&n; *&t;HP J2585&t;10/100 PCI card&n; *&n; * Other ATT2MD01 Chip based boards might be supported in the future&n; * (there are some minor changes needed).&n; *&n; * This driver is based on the &squot;hpfepkt&squot; crynwr packet driver.&n; *&n; * This source/code is public free; you can distribute it and/or modify &n; * it under terms of the GNU General Public License (published by the&n; * Free Software Foundation) either version two of this License, or any &n; * later version.&n; * ----------------------------------------------------------------------------&n; *&n; * Note: Some routines (interrupt handling, transmit) assumes that  &n; *       there is the PERFORMANCE page selected...&n; *&n; * ----------------------------------------------------------------------------&n; *&n; * If you are going to use the module version of this driver, you may&n; * change this values at the &quot;insert time&quot; :&n; *&n; *   Variable                   Description&n; *&n; *   hp100_default_rx_ratio&t;Range 1-99 - onboard memory used for RX &n; *                              packets in %.&n; *   hp100_port&t;&t;&t;Adapter port (for example 0x380).&n; *&n; * ----------------------------------------------------------------------------&n; * MY BEST REGARDS GOING TO:&n; *&n; * IPEX s.r.o which lend me two HP J2573 cards and&n; * the HP AdvanceStack 100VG Hub-15 for debugging.&n; *&n; * Russel Nellson &lt;nelson@crynwr.com&gt; for help with obtaining sources&n; * of the &squot;hpfepkt&squot; packet driver.&n; *&n; * Also thanks to Abacus Electric s.r.o which let me to use their &n; * motherboard for my second computer.&n; *&n; * ----------------------------------------------------------------------------&n; *&n; * TO DO:&n; * ======&n; *       - ioctl handling - some runtime setup things&n; *       - high priority communications support&n; *       - memory mapped access support for PCI cards&n; *&n; * Revision history:&n; * =================&n; * &n; *    Version   Date&t;    Description&n; *&n; *&t;0.1&t;14-May-95   Initial writing. ALPHA code was released.&n; *                          Only HP J2573 on 10Mb/s (two machines) tested.&n; *      0.11    14-Jun-95   Reset interface bug fixed?&n; *&t;&t;&t;    Little bug in hp100_close function fixed.&n; *                          100Mb/s connection debugged.&n; *      0.12    14-Jul-95   Link down is now handled better.&n; *      0.20    01-Aug-95   Added PCI support for HP J2585A card.&n; *                          Statistics bug fixed.&n; *&n; */
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -10,6 +10,8 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -18,6 +20,14 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &quot;hp100.h&quot;
 multiline_comment|/*&n; *  defines&n; */
+DECL|macro|HP100_BUS_ISA
+mdefine_line|#define HP100_BUS_ISA&t;&t;0
+DECL|macro|HP100_BUS_EISA
+mdefine_line|#define HP100_BUS_EISA&t;&t;1
+DECL|macro|HP100_BUS_PCI
+mdefine_line|#define HP100_BUS_PCI&t;&t;2
+DECL|macro|HP100_REGION_SIZE
+mdefine_line|#define HP100_REGION_SIZE&t;0x20
 DECL|macro|HP100_MAX_PACKET_SIZE
 mdefine_line|#define HP100_MAX_PACKET_SIZE&t;(1536+4)
 DECL|macro|HP100_MIN_PACKET_SIZE
@@ -37,9 +47,14 @@ id|u_int
 id|id
 suffix:semicolon
 DECL|member|name
+r_const
 r_char
 op_star
 id|name
+suffix:semicolon
+DECL|member|bus
+id|u_char
+id|bus
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -65,6 +80,17 @@ DECL|member|rx_ratio
 id|u_short
 id|rx_ratio
 suffix:semicolon
+DECL|member|mem_mapped
+r_int
+id|mem_mapped
+suffix:semicolon
+multiline_comment|/* memory mapped access */
+DECL|member|mem_ptr
+id|u_char
+op_star
+id|mem_ptr
+suffix:semicolon
+multiline_comment|/* pointer to memory mapped area */
 DECL|member|lan_type
 r_int
 id|lan_type
@@ -74,7 +100,7 @@ DECL|member|hub_status
 r_int
 id|hub_status
 suffix:semicolon
-multiline_comment|/* login to hub successfull? */
+multiline_comment|/* login to hub was successfull? */
 DECL|member|mac1_mode
 id|u_char
 id|mac1_mode
@@ -90,25 +116,6 @@ id|stats
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|hp100_rx_look
-r_struct
-id|hp100_rx_look
-(brace
-DECL|member|header
-r_struct
-id|hp100_rx_header
-id|header
-suffix:semicolon
-DECL|member|something
-r_char
-id|something
-(braket
-l_int|24
-)braket
-suffix:semicolon
-multiline_comment|/* 2 * MAC @6 + protocol @2+8 + pad to 4 byte */
-)brace
-suffix:semicolon
 multiline_comment|/*&n; *  variables&n; */
 DECL|variable|hp100_eisa_ids
 r_static
@@ -119,40 +126,61 @@ id|hp100_eisa_ids
 )braket
 op_assign
 (brace
+multiline_comment|/* 10/100 EISA card with REVA Cascade chip */
 (brace
 l_int|0x080F1F022
 comma
 l_string|&quot;HP J2577 rev A&quot;
-)brace
 comma
-multiline_comment|/* 10/100 EISA card with REVA Cascade chip */
-(brace
-l_int|0x050F1F022
-comma
-l_string|&quot;HP J2573 rev A&quot;
+id|HP100_BUS_EISA
 )brace
 comma
 multiline_comment|/* 10/100 ISA card with REVA Cascade chip */
 (brace
-l_int|0x02019F022
+l_int|0x050F1F022
 comma
-l_string|&quot;HP 27248B&quot;
+l_string|&quot;HP J2573 rev A&quot;
+comma
+id|HP100_BUS_ISA
 )brace
 comma
 multiline_comment|/* 10 only EISA card with Cascade chip */
 (brace
-l_int|0x04019F022
+l_int|0x02019F022
 comma
-l_string|&quot;HP J2577&quot;
+l_string|&quot;HP 27248B&quot;
+comma
+id|HP100_BUS_EISA
 )brace
 comma
 multiline_comment|/* 10/100 EISA card with Cascade chip */
 (brace
+l_int|0x04019F022
+comma
+l_string|&quot;HP J2577&quot;
+comma
+id|HP100_BUS_EISA
+)brace
+comma
+multiline_comment|/* 10/100 ISA card with Cascade chip */
+(brace
 l_int|0x05019F022
 comma
 l_string|&quot;HP J2573&quot;
+comma
+id|HP100_BUS_ISA
 )brace
-multiline_comment|/* 10/100 ISA card with Cascade chip */
+comma
+multiline_comment|/* 10/100 PCI card */
+multiline_comment|/* Note: ID for this card is same as PCI vendor/device numbers. */
+(brace
+l_int|0x01030103c
+comma
+l_string|&quot;HP J2585&quot;
+comma
+id|HP100_BUS_PCI
+)brace
+comma
 )brace
 suffix:semicolon
 macro_line|#ifdef MODULE
@@ -176,6 +204,9 @@ id|dev
 comma
 r_int
 id|ioaddr
+comma
+r_int
+id|bus
 )paren
 suffix:semicolon
 r_static
@@ -251,6 +282,15 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_static
+r_void
+id|hp100_clear_stats
+c_func
+(paren
+r_int
+id|ioaddr
+)paren
+suffix:semicolon
 macro_line|#ifdef HAVE_MULTICAST
 r_static
 r_void
@@ -271,7 +311,6 @@ id|addrs
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef LINUX_1_1_52
 r_static
 r_void
 id|hp100_interrupt
@@ -286,17 +325,6 @@ op_star
 id|regs
 )paren
 suffix:semicolon
-macro_line|#else
-r_static
-r_void
-id|hp100_interrupt
-c_func
-(paren
-r_int
-id|irq
-)paren
-suffix:semicolon
-macro_line|#endif
 r_static
 r_void
 id|hp100_start_interface
@@ -390,6 +418,13 @@ suffix:semicolon
 r_int
 id|ioaddr
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
+r_int
+id|pci_start_index
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -398,6 +433,29 @@ OG
 l_int|0xff
 )paren
 multiline_comment|/* Check a single specified location. */
+(brace
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|base_addr
+comma
+id|HP100_REGION_SIZE
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|base_addr
+OL
+l_int|0x400
+)paren
 r_return
 id|hp100_probe1
 c_func
@@ -405,9 +463,50 @@ c_func
 id|dev
 comma
 id|base_addr
+comma
+id|HP100_BUS_ISA
 )paren
 suffix:semicolon
 r_else
+r_return
+id|hp100_probe1
+c_func
+(paren
+id|dev
+comma
+id|base_addr
+comma
+id|HP100_BUS_EISA
+)paren
+suffix:semicolon
+)brace
+r_else
+macro_line|#ifdef CONFIG_PCI
+r_if
+c_cond
+(paren
+id|base_addr
+OG
+l_int|0
+op_logical_and
+id|base_addr
+OL
+l_int|8
+op_plus
+l_int|1
+)paren
+id|pci_start_index
+op_assign
+l_int|0x100
+op_or
+(paren
+id|base_addr
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+r_else
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -419,7 +518,200 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-multiline_comment|/* at first - probe all EISA possible port regions (if EISA bus present) */
+multiline_comment|/* at first - scan PCI bus(es) */
+macro_line|#ifdef CONFIG_PCI
+r_if
+c_cond
+(paren
+id|pcibios_present
+c_func
+(paren
+)paren
+)paren
+(brace
+r_int
+id|pci_index
+suffix:semicolon
+macro_line|#ifdef HP100_DEBUG_PCI
+id|printk
+c_func
+(paren
+l_string|&quot;hp100: PCI BIOS is present, checking for devices..&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_for
+c_loop
+(paren
+id|pci_index
+op_assign
+id|pci_start_index
+op_amp
+l_int|7
+suffix:semicolon
+id|pci_index
+OL
+l_int|8
+suffix:semicolon
+id|pci_index
+op_increment
+)paren
+(brace
+id|u_char
+id|pci_bus
+comma
+id|pci_device_fn
+suffix:semicolon
+id|u_short
+id|pci_command
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pcibios_find_device
+c_func
+(paren
+id|PCI_VENDOR_ID_HP
+comma
+id|PCI_DEVICE_ID_HP_J2585A
+comma
+id|pci_index
+comma
+op_amp
+id|pci_bus
+comma
+op_amp
+id|pci_device_fn
+)paren
+op_ne
+l_int|0
+)paren
+r_break
+suffix:semicolon
+id|pcibios_read_config_dword
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|PCI_BASE_ADDRESS_0
+comma
+op_amp
+id|ioaddr
+)paren
+suffix:semicolon
+id|ioaddr
+op_and_assign
+op_complement
+l_int|3
+suffix:semicolon
+multiline_comment|/* remove I/O space marker in bit 0. */
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|ioaddr
+comma
+id|HP100_REGION_SIZE
+)paren
+)paren
+r_continue
+suffix:semicolon
+id|pcibios_read_config_word
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|pci_command
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|pci_command
+op_amp
+id|PCI_COMMAND_MASTER
+)paren
+)paren
+(brace
+macro_line|#ifdef HP100_DEBUG_PCI
+id|printk
+c_func
+(paren
+l_string|&quot;hp100: PCI Master Bit has not been set. Setting...&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|pci_command
+op_or_assign
+id|PCI_COMMAND_MASTER
+suffix:semicolon
+id|pcibios_write_config_word
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|PCI_COMMAND
+comma
+id|pci_command
+)paren
+suffix:semicolon
+)brace
+macro_line|#ifdef HP100_DEBUG_PCI
+id|printk
+c_func
+(paren
+l_string|&quot;hp100: PCI adapter found at 0x%x&bslash;n&quot;
+comma
+id|ioaddr
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|hp100_probe1
+c_func
+(paren
+id|dev
+comma
+id|ioaddr
+comma
+id|HP100_BUS_PCI
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|pci_start_index
+OG
+l_int|0
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+macro_line|#endif /* CONFIG_PCI */
+multiline_comment|/* at second - probe all EISA possible port regions (if EISA bus present) */
 r_for
 c_loop
 (paren
@@ -446,7 +738,7 @@ c_func
 (paren
 id|ioaddr
 comma
-l_int|0x20
+id|HP100_REGION_SIZE
 )paren
 )paren
 r_continue
@@ -460,6 +752,8 @@ c_func
 id|dev
 comma
 id|ioaddr
+comma
+id|HP100_BUS_EISA
 )paren
 op_eq
 l_int|0
@@ -468,7 +762,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* at second - probe all ISA possible port regions */
+multiline_comment|/* at third - probe all ISA possible port regions */
 r_for
 c_loop
 (paren
@@ -493,7 +787,7 @@ c_func
 (paren
 id|ioaddr
 comma
-l_int|0x20
+id|HP100_REGION_SIZE
 )paren
 )paren
 r_continue
@@ -507,6 +801,8 @@ c_func
 id|dev
 comma
 id|ioaddr
+comma
+id|HP100_BUS_ISA
 )paren
 op_eq
 l_int|0
@@ -533,6 +829,9 @@ id|dev
 comma
 r_int
 id|ioaddr
+comma
+r_int
+id|bus
 )paren
 (brace
 r_int
@@ -540,9 +839,18 @@ id|i
 suffix:semicolon
 id|u_char
 id|uc
+comma
+id|uc_1
 suffix:semicolon
 id|u_int
 id|eisa_id
+suffix:semicolon
+r_int
+id|mem_mapped
+suffix:semicolon
+id|u_char
+op_star
+id|mem_ptr
 suffix:semicolon
 r_struct
 id|hp100_private
@@ -574,6 +882,14 @@ r_return
 id|EIO
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|bus
+op_ne
+id|HP100_BUS_PCI
+)paren
+multiline_comment|/* don&squot;t check PCI cards again */
 r_if
 c_cond
 (paren
@@ -670,9 +986,8 @@ id|eisa_id
 op_rshift_assign
 l_int|8
 suffix:semicolon
-id|eisa_id
-op_or_assign
-(paren
+id|uc_1
+op_assign
 id|hp100_inb
 c_func
 (paren
@@ -680,15 +995,16 @@ id|BOARD_ID
 op_plus
 id|i
 )paren
-)paren
+suffix:semicolon
+id|eisa_id
+op_or_assign
+id|uc_1
 op_lshift
 l_int|24
 suffix:semicolon
 id|uc
 op_add_assign
-id|eisa_id
-op_rshift
-l_int|24
+id|uc_1
 suffix:semicolon
 )brace
 id|uc
@@ -800,9 +1116,11 @@ id|hp100_eisa_id
 id|printk
 c_func
 (paren
-l_string|&quot;hp100_probe1: card at port 0x%x isn&squot;t known&bslash;n&quot;
+l_string|&quot;hp100_probe1: card at port 0x%x isn&squot;t known (id = 0x%x)&bslash;n&quot;
 comma
 id|ioaddr
+comma
+id|eisa_id
 )paren
 suffix:semicolon
 r_return
@@ -904,14 +1222,15 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+macro_line|#ifndef HP100_IO_MAPPED
 id|hp100_page
 c_func
 (paren
 id|HW_MAP
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|mem_mapped
+op_assign
 (paren
 id|hp100_inw
 c_func
@@ -927,24 +1246,127 @@ op_or
 id|HP100_BM_READ
 )paren
 )paren
+op_ne
+l_int|0
+suffix:semicolon
+id|mem_ptr
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mem_mapped
+)paren
 (brace
+id|mem_ptr
+op_assign
+(paren
+id|u_char
+op_star
+)paren
+(paren
+id|hp100_inw
+c_func
+(paren
+id|MEM_MAP_LSW
+)paren
+op_or
+(paren
+id|hp100_inw
+c_func
+(paren
+id|MEM_MAP_MSW
+)paren
+op_lshift
+l_int|16
+)paren
+)paren
+suffix:semicolon
+(paren
+id|u_int
+)paren
+id|mem_ptr
+op_and_assign
+op_complement
+l_int|0x1fff
+suffix:semicolon
+multiline_comment|/* 8k aligment */
+r_if
+c_cond
+(paren
+id|bus
+op_eq
+id|HP100_BUS_ISA
+op_logical_and
+(paren
+(paren
+id|u_int
+)paren
+id|mem_ptr
+op_amp
+op_complement
+l_int|0xfffff
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|mem_ptr
+op_assign
+l_int|NULL
+suffix:semicolon
+id|mem_mapped
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|mem_mapped
+op_logical_and
+id|bus
+op_eq
+id|HP100_BUS_PCI
+)paren
+(brace
+macro_line|#if 0
 id|printk
 c_func
 (paren
-l_string|&quot;hp100_probe1: memory mapped io isn&squot;t supported (card %s at port 0x%x)&bslash;n&quot;
-comma
-id|eid
-op_member_access_from_pointer
-id|name
-comma
-id|ioaddr
+l_string|&quot;writeb !!!&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|EIO
+id|writeb
+c_func
+(paren
+l_int|0
+comma
+id|mem_ptr
+)paren
+suffix:semicolon
+macro_line|#endif
+id|mem_ptr
+op_assign
+l_int|NULL
+suffix:semicolon
+id|mem_mapped
+op_assign
+l_int|0
 suffix:semicolon
 )brace
+)brace
+macro_line|#else
+id|mem_mapped
+op_assign
+l_int|0
+suffix:semicolon
+id|mem_ptr
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1004,6 +1426,18 @@ op_member_access_from_pointer
 id|id
 op_assign
 id|eid
+suffix:semicolon
+id|lp
+op_member_access_from_pointer
+id|mem_mapped
+op_assign
+id|mem_mapped
+suffix:semicolon
+id|lp
+op_member_access_from_pointer
+id|mem_ptr
+op_assign
+id|mem_ptr
 suffix:semicolon
 id|hp100_page
 c_func
@@ -1140,7 +1574,6 @@ op_amp
 id|hp100_set_multicast_list
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef LINUX_1_1_52
 id|request_region
 c_func
 (paren
@@ -1148,14 +1581,13 @@ id|dev
 op_member_access_from_pointer
 id|base_addr
 comma
-l_int|0x20
+id|HP100_REGION_SIZE
 comma
 id|eid
 op_member_access_from_pointer
 id|name
 )paren
 suffix:semicolon
-macro_line|#endif
 id|hp100_page
 c_func
 (paren
@@ -1193,6 +1625,12 @@ op_plus
 id|i
 )paren
 suffix:semicolon
+id|hp100_clear_stats
+c_func
+(paren
+id|ioaddr
+)paren
+suffix:semicolon
 id|ether_setup
 c_func
 (paren
@@ -1212,7 +1650,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: %s at 0x%x, IRQ %d, %dkB SRAM (rx/tx %d%%), &quot;
+l_string|&quot;%s: %s at 0x%x, IRQ %d, &quot;
 comma
 id|dev
 op_member_access_from_pointer
@@ -1229,6 +1667,51 @@ comma
 id|dev
 op_member_access_from_pointer
 id|irq
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|bus
+)paren
+(brace
+r_case
+id|HP100_BUS_EISA
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;EISA&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|HP100_BUS_PCI
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;PCI&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;ISA&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot; bus, %dk SRAM (rx/tx %d%%).&bslash;n&quot;
 comma
 id|lp
 op_member_access_from_pointer
@@ -1245,6 +1728,58 @@ op_member_access_from_pointer
 id|rx_ratio
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mem_mapped
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Memory mapped access used at 0x%x-0x%x.&bslash;n&quot;
+comma
+id|dev
+op_member_access_from_pointer
+id|name
+comma
+(paren
+id|u_int
+)paren
+id|mem_ptr
+comma
+(paren
+id|u_int
+)paren
+id|mem_ptr
+op_plus
+l_int|0x1fff
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%s: &quot;
+comma
+id|dev
+op_member_access_from_pointer
+id|name
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lp
+op_member_access_from_pointer
+id|lan_type
+op_ne
+id|HP100_LAN_ERR
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Adapter is attached to &quot;
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1259,7 +1794,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;100Mb/s VG TP&quot;
+l_string|&quot;100Mb/s Voice Grade AnyLAN network.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1270,7 +1805,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;10Mb/s TP&quot;
+l_string|&quot;10Mb/s network.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1280,16 +1815,14 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;link down&quot;
+l_string|&quot;Warning! Link down.&bslash;n&quot;
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
 )brace
-id|printk
+id|hp100_stop_interface
 c_func
 (paren
-l_string|&quot;.&bslash;n&quot;
+id|dev
 )paren
 suffix:semicolon
 r_return
@@ -1443,6 +1976,8 @@ id|hp100_orw
 c_func
 (paren
 id|HP100_LINK_BEAT_DIS
+op_or
+id|HP100_RESET_LB
 comma
 id|LAN_CFG_10
 )paren
@@ -1451,11 +1986,6 @@ id|hp100_stop_interface
 c_func
 (paren
 id|dev
-)paren
-suffix:semicolon
-id|hp100_reset_card
-c_func
-(paren
 )paren
 suffix:semicolon
 id|hp100_load_eeprom
@@ -1608,7 +2138,7 @@ comma
 id|IRQ_STATUS
 )paren
 suffix:semicolon
-multiline_comment|/* ack */
+multiline_comment|/* ack IRQ */
 id|hp100_outw
 c_func
 (paren
@@ -2288,6 +2818,117 @@ macro_line|#endif
 r_if
 c_cond
 (paren
+id|lp
+op_member_access_from_pointer
+id|mem_mapped
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|skb
+op_member_access_from_pointer
+id|len
+op_ge
+id|HP100_MIN_PACKET_SIZE
+)paren
+(brace
+id|hp100_outw
+c_func
+(paren
+id|skb
+op_member_access_from_pointer
+id|len
+comma
+id|DATA32
+)paren
+suffix:semicolon
+multiline_comment|/* length to memory manager */
+id|hp100_outw
+c_func
+(paren
+id|skb
+op_member_access_from_pointer
+id|len
+comma
+id|FRAGMENT_LEN
+)paren
+suffix:semicolon
+id|memcpy_toio
+c_func
+(paren
+id|lp
+op_member_access_from_pointer
+id|mem_ptr
+comma
+id|skb
+op_member_access_from_pointer
+id|data
+comma
+id|skb
+op_member_access_from_pointer
+id|len
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|hp100_outw
+c_func
+(paren
+id|HP100_MIN_PACKET_SIZE
+comma
+id|DATA32
+)paren
+suffix:semicolon
+multiline_comment|/* length to memory manager */
+id|hp100_outw
+c_func
+(paren
+id|HP100_MIN_PACKET_SIZE
+comma
+id|FRAGMENT_LEN
+)paren
+suffix:semicolon
+id|memcpy_toio
+c_func
+(paren
+id|lp
+op_member_access_from_pointer
+id|mem_ptr
+comma
+id|skb
+op_member_access_from_pointer
+id|data
+comma
+id|skb
+op_member_access_from_pointer
+id|len
+)paren
+suffix:semicolon
+id|memset_io
+c_func
+(paren
+id|lp
+op_member_access_from_pointer
+id|mem_ptr
+comma
+l_int|0
+comma
+id|HP100_MIN_PACKET_SIZE
+op_minus
+id|skb
+op_member_access_from_pointer
+id|len
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
 id|skb
 op_member_access_from_pointer
 id|len
@@ -2338,17 +2979,6 @@ op_rshift
 l_int|2
 )paren
 suffix:semicolon
-id|hp100_outw
-c_func
-(paren
-id|HP100_TX_CMD
-op_or
-id|HP100_SET_LB
-comma
-id|OPTION_MSW
-)paren
-suffix:semicolon
-multiline_comment|/* send packet */
 )brace
 r_else
 (brace
@@ -2417,6 +3047,8 @@ comma
 id|DATA32
 )paren
 suffix:semicolon
+)brace
+)brace
 id|hp100_outw
 c_func
 (paren
@@ -2428,7 +3060,6 @@ id|OPTION_MSW
 )paren
 suffix:semicolon
 multiline_comment|/* send packet */
-)brace
 id|lp
 op_member_access_from_pointer
 id|stats.tx_packets
@@ -2630,6 +3261,19 @@ macro_line|#endif
 )brace
 id|header
 op_assign
+id|lp
+op_member_access_from_pointer
+id|mem_mapped
+ques
+c_cond
+id|readl
+c_func
+(paren
+id|lp
+op_member_access_from_pointer
+id|mem_ptr
+)paren
+suffix:colon
 id|hp100_inl
 c_func
 (paren
@@ -2705,19 +3349,22 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|u_char
+op_star
+id|ptr
+suffix:semicolon
 id|skb
 op_member_access_from_pointer
 id|dev
 op_assign
 id|dev
 suffix:semicolon
-id|insl
-c_func
+id|ptr
+op_assign
 (paren
-id|ioaddr
-op_plus
-id|HP100_REG_DATA32
-comma
+id|u_char
+op_star
+)paren
 id|skb_put
 c_func
 (paren
@@ -2725,6 +3372,42 @@ id|skb
 comma
 id|pkt_len
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lp
+op_member_access_from_pointer
+id|mem_mapped
+)paren
+id|memcpy_fromio
+c_func
+(paren
+id|ptr
+comma
+id|lp
+op_member_access_from_pointer
+id|mem_ptr
+comma
+(paren
+id|pkt_len
+op_plus
+l_int|3
+)paren
+op_amp
+op_complement
+l_int|3
+)paren
+suffix:semicolon
+r_else
+id|insl
+c_func
+(paren
+id|ioaddr
+op_plus
+id|HP100_REG_DATA32
+comma
+id|ptr
 comma
 (paren
 id|pkt_len
@@ -2735,7 +3418,9 @@ op_rshift
 l_int|2
 )paren
 suffix:semicolon
-id|skb-&gt;protocol
+id|skb
+op_member_access_from_pointer
+id|protocol
 op_assign
 id|eth_type_trans
 c_func
@@ -2756,6 +3441,74 @@ op_member_access_from_pointer
 id|stats.rx_packets
 op_increment
 suffix:semicolon
+macro_line|#ifdef HP100_DEBUG_RX
+id|printk
+c_func
+(paren
+l_string|&quot;rx: %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x&bslash;n&quot;
+comma
+id|ptr
+(braket
+l_int|0
+)braket
+comma
+id|ptr
+(braket
+l_int|1
+)braket
+comma
+id|ptr
+(braket
+l_int|2
+)braket
+comma
+id|ptr
+(braket
+l_int|3
+)braket
+comma
+id|ptr
+(braket
+l_int|4
+)braket
+comma
+id|ptr
+(braket
+l_int|5
+)braket
+comma
+id|ptr
+(braket
+l_int|6
+)braket
+comma
+id|ptr
+(braket
+l_int|7
+)braket
+comma
+id|ptr
+(braket
+l_int|8
+)braket
+comma
+id|ptr
+(braket
+l_int|9
+)braket
+comma
+id|ptr
+(braket
+l_int|10
+)braket
+comma
+id|ptr
+(braket
+l_int|11
+)braket
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 id|hp100_outw
 c_func
@@ -2973,6 +3726,58 @@ id|PERFORMANCE
 )paren
 suffix:semicolon
 )brace
+DECL|function|hp100_clear_stats
+r_static
+r_void
+id|hp100_clear_stats
+c_func
+(paren
+r_int
+id|ioaddr
+)paren
+(brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|hp100_page
+c_func
+(paren
+id|MAC_CTRL
+)paren
+suffix:semicolon
+multiline_comment|/* get all statistics bytes */
+id|hp100_inw
+c_func
+(paren
+id|DROPPED
+)paren
+suffix:semicolon
+id|hp100_inb
+c_func
+(paren
+id|CRC
+)paren
+suffix:semicolon
+id|hp100_inb
+c_func
+(paren
+id|ABORT
+)paren
+suffix:semicolon
+id|hp100_page
+c_func
+(paren
+id|PERFORMANCE
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *  multicast setup&n; */
 macro_line|#ifdef HAVE_MULTICAST
 multiline_comment|/*&n; *  Set or clear the multicast filter for this adapter.&n; *&n; *  num_addrs == -1             Promiscuous mode, receive all packets&n; *  num_addrs == 0              Normal mode, clear multicast list&n; *  num_addrs &gt; 0               Multicast mode, receive normal and MC packets,&n; *                              best-effort filtering.&n; */
@@ -3026,12 +3831,12 @@ id|num_addrs
 )paren
 suffix:semicolon
 macro_line|#endif
-id|hp100_ints_off
+id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
-id|cli
+id|hp100_ints_off
 c_func
 (paren
 )paren
@@ -3144,24 +3949,12 @@ c_func
 id|lp
 op_member_access_from_pointer
 id|mac1_mode
-comma
-id|MAC_CFG_1
-)paren
-suffix:semicolon
-id|hp100_orb
-c_func
-(paren
+op_or
 id|HP100_RX_EN
 op_or
 id|HP100_RX_IDLE
-comma
-id|MAC_CFG_1
-)paren
-suffix:semicolon
+op_or
 multiline_comment|/* enable rx */
-id|hp100_orb
-c_func
-(paren
 id|HP100_TX_EN
 op_or
 id|HP100_TX_IDLE
@@ -3176,12 +3969,12 @@ c_func
 id|PERFORMANCE
 )paren
 suffix:semicolon
-id|sti
+id|hp100_ints_on
 c_func
 (paren
 )paren
 suffix:semicolon
-id|hp100_ints_on
+id|sti
 c_func
 (paren
 )paren
@@ -3189,7 +3982,6 @@ suffix:semicolon
 )brace
 macro_line|#endif /* HAVE_MULTICAST */
 multiline_comment|/*&n; *  hardware interrupt handling&n; */
-macro_line|#ifndef LINUX_1_1_52
 DECL|function|hp100_interrupt
 r_static
 r_void
@@ -3204,16 +3996,6 @@ id|pt_regs
 op_star
 id|regs
 )paren
-macro_line|#else
-r_static
-r_void
-id|hp100_interrupt
-c_func
-(paren
-r_int
-id|irq
-)paren
-macro_line|#endif
 (brace
 r_struct
 id|device
@@ -3456,12 +4238,12 @@ id|dev
 op_member_access_from_pointer
 id|priv
 suffix:semicolon
-id|hp100_unreset_card
+id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
-id|cli
+id|hp100_unreset_card
 c_func
 (paren
 )paren
@@ -3496,23 +4278,11 @@ c_func
 id|lp
 op_member_access_from_pointer
 id|mac1_mode
-comma
-id|MAC_CFG_1
-)paren
-suffix:semicolon
-id|hp100_orb
-c_func
-(paren
+op_or
 id|HP100_RX_EN
 op_or
 id|HP100_RX_IDLE
-comma
-id|MAC_CFG_1
-)paren
-suffix:semicolon
-id|hp100_orb
-c_func
-(paren
+op_or
 id|HP100_TX_EN
 op_or
 id|HP100_TX_IDLE
@@ -3546,6 +4316,26 @@ comma
 id|OPTION_LSW
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|lp
+op_member_access_from_pointer
+id|mem_mapped
+)paren
+(brace
+multiline_comment|/* enable memory mapping */
+id|hp100_outw
+c_func
+(paren
+id|HP100_MMAP_DIS
+op_or
+id|HP100_RESET_HB
+comma
+id|OPTION_LSW
+)paren
+suffix:semicolon
+)brace
 id|sti
 c_func
 (paren
@@ -3582,6 +4372,8 @@ op_or
 id|HP100_RESET_LB
 op_or
 id|HP100_TRI_INT
+op_or
+id|HP100_MMAP_DIS
 op_or
 id|HP100_SET_HB
 comma
@@ -4468,7 +5260,7 @@ c_func
 (paren
 id|dev_hp100.base_addr
 comma
-l_int|0x20
+id|HP100_REGION_SIZE
 )paren
 suffix:semicolon
 id|kfree_s

@@ -2550,6 +2550,7 @@ id|tty_struct
 op_star
 id|tty
 comma
+r_const
 r_int
 r_char
 op_star
@@ -2563,6 +2564,7 @@ r_int
 id|count
 )paren
 (brace
+r_const
 r_int
 r_char
 op_star
@@ -4623,6 +4625,7 @@ id|file
 op_star
 id|file
 comma
+r_const
 r_int
 r_char
 op_star
@@ -4646,6 +4649,7 @@ suffix:semicolon
 r_int
 id|c
 suffix:semicolon
+r_const
 r_int
 r_char
 op_star

@@ -1,5 +1,6 @@
 DECL|variable|version
 r_static
+r_const
 r_char
 op_star
 id|version

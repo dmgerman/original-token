@@ -362,6 +362,7 @@ r_int
 id|i
 suffix:semicolon
 r_static
+r_const
 r_char
 op_star
 id|spc

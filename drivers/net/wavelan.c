@@ -166,6 +166,7 @@ suffix:semicolon
 multiline_comment|/* See Space.c */
 DECL|variable|version
 r_static
+r_const
 r_char
 op_star
 id|version
@@ -1839,6 +1840,7 @@ id|device
 op_star
 id|dev
 comma
+r_const
 r_char
 op_star
 id|str
@@ -3153,6 +3155,7 @@ suffix:semicolon
 )brace
 macro_line|#if&t;STRUCT_CHECK == 1
 r_static
+r_const
 r_char
 op_star
 DECL|function|wavelan_struct_check
@@ -10625,7 +10628,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; tbusy=%d,&quot;
+l_string|&quot; tbusy=%ld,&quot;
 comma
 id|dev-&gt;tbusy
 )paren

@@ -231,6 +231,7 @@ id|val
 )paren
 suffix:semicolon
 r_extern
+r_const
 r_char
 op_star
 id|pcibios_strerror

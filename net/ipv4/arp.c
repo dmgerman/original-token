@@ -1,4 +1,5 @@
-multiline_comment|/* linux/net/inet/arp.c&n; *&n; * Copyright (C) 1994 by Florian  La Roche&n; *&n; * This module implements the Address Resolution Protocol ARP (RFC 826),&n; * which is used to convert IP addresses (or in the future maybe other&n; * high-level addresses into a low-level hardware address (like an Ethernet&n; * address).&n; *&n; * FIXME:&n; *&t;Experiment with better retransmit timers&n; *&t;Clean up the timer deletions&n; *&t;If you create a proxy entry set your interface address to the address&n; *&t;and then delete it, proxies may get out of sync with reality - check this&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Removed the ethernet assumptions in Florian&squot;s code&n; *&t;&t;Alan Cox&t;:&t;Fixed some small errors in the ARP logic&n; *&t;&t;Alan Cox&t;:&t;Allow &gt;4K in /proc&n; *&t;&t;Alan Cox&t;:&t;Make ARP add its own protocol entry&n; *&n; *              Ross Martin     :       Rewrote arp_rcv() and arp_get_info()&n; *&t;&t;Stephen Henson&t;:&t;Add AX25 support to arp_get_info()&n; *&t;&t;Alan Cox&t;:&t;Drop data when a device is downed.&n; *&t;&t;Alan Cox&t;:&t;Use init_timer().&n; *&t;&t;Alan Cox&t;:&t;Double lock fixes.&n; *&t;&t;Martin Seine&t;:&t;Move the arphdr structure&n; *&t;&t;&t;&t;&t;to if_arp.h for compatibility.&n; *&t;&t;&t;&t;&t;with BSD based programs.&n; *              Andrew Tridgell :       Added ARP netmask code and&n; *                                      re-arranged proxy handling.&n; *&t;&t;Alan Cox&t;:&t;Changed to use notifiers.&n; *&t;&t;Niibe Yutaka&t;:&t;Reply for this device or proxies only.&n; *&t;&t;Alan Cox&t;:&t;Don&squot;t proxy across hardware types!&n; *&t;&t;Jonathan Naylor :&t;Added support for NET/ROM.&n; */
+multiline_comment|/* linux/net/inet/arp.c&n; *&n; * Copyright (C) 1994 by Florian  La Roche&n; *&n; * This module implements the Address Resolution Protocol ARP (RFC 826),&n; * which is used to convert IP addresses (or in the future maybe other&n; * high-level addresses into a low-level hardware address (like an Ethernet&n; * address).&n; *&n; * FIXME:&n; *&t;Experiment with better retransmit timers&n; *&t;Clean up the timer deletions&n; *&t;If you create a proxy entry set your interface address to the address&n; *&t;and then delete it, proxies may get out of sync with reality - check this&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Removed the ethernet assumptions in Florian&squot;s code&n; *&t;&t;Alan Cox&t;:&t;Fixed some small errors in the ARP logic&n; *&t;&t;Alan Cox&t;:&t;Allow &gt;4K in /proc&n; *&t;&t;Alan Cox&t;:&t;Make ARP add its own protocol entry&n; *&n; *&t;&t;Ross Martin     :       Rewrote arp_rcv() and arp_get_info()&n; *&t;&t;Stephen Henson&t;:&t;Add AX25 support to arp_get_info()&n; *&t;&t;Alan Cox&t;:&t;Drop data when a device is downed.&n; *&t;&t;Alan Cox&t;:&t;Use init_timer().&n; *&t;&t;Alan Cox&t;:&t;Double lock fixes.&n; *&t;&t;Martin Seine&t;:&t;Move the arphdr structure&n; *&t;&t;&t;&t;&t;to if_arp.h for compatibility.&n; *&t;&t;&t;&t;&t;with BSD based programs.&n; *&t;&t;Andrew Tridgell :       Added ARP netmask code and&n; *&t;&t;&t;&t;&t;re-arranged proxy handling.&n; *&t;&t;Alan Cox&t;:&t;Changed to use notifiers.&n; *&t;&t;Niibe Yutaka&t;:&t;Reply for this device or proxies only.&n; *&t;&t;Alan Cox&t;:&t;Don&squot;t proxy across hardware types!&n; *&t;&t;Jonathan Naylor :&t;Added support for NET/ROM.&n; *&t;&t;Mike Shaver     :       RFC1122 checks.&n; */
+multiline_comment|/* RFC1122 Status:&n;   2.3.2.1 (ARP Cache Validation):&n;     MUST provide mechanism to flush stale cache entries (OK)&n;     SHOULD be able to configure cache timeout (NOT YET)&n;     MUST throttle ARP retransmits (OK)&n;   2.3.2.2 (ARP Packet Queue):&n;     SHOULD save at least one packet from each &quot;conversation&quot; with an&n;       unresolved IP address.  (OK)&n;   950727 -- MS&n;*/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -114,6 +115,9 @@ multiline_comment|/* list of queued packets &t;*/
 suffix:semicolon
 multiline_comment|/*&n; *&t;Configurable Parameters (don&squot;t touch unless you know what you are doing&n; */
 multiline_comment|/*&n; *&t;If an arp request is send, ARP_RES_TIME is the timeout value until the&n; *&t;next request is send.&n; */
+multiline_comment|/* RFC1122: OK.  Throttles ARPing, as per 2.3.2.1. (MUST) */
+multiline_comment|/* The recommended minimum timeout is 1 second per destination. */
+multiline_comment|/* Is this a per-destination timeout? -- MS [YES AC]*/
 DECL|macro|ARP_RES_TIME
 mdefine_line|#define ARP_RES_TIME&t;&t;(250*(HZ/10))
 multiline_comment|/*&n; *&t;The number of times an arp request is send, until the host is&n; *&t;considered unreachable.&n; */
@@ -213,12 +217,13 @@ r_int
 r_int
 id|arp_cache_stamp
 suffix:semicolon
-multiline_comment|/*&n; *&t;The last bits in the IP address are used for the cache lookup.&n; *      A special entry is used for proxy arp entries&n; */
+multiline_comment|/*&n; *&t;The last bits in the IP address are used for the cache lookup.&n; *&t;A special entry is used for proxy arp entries&n; */
 DECL|macro|HASH
 mdefine_line|#define HASH(paddr) &t;&t;(htonl(paddr) &amp; (ARP_TABLE_SIZE - 1))
 DECL|macro|PROXY_HASH
 mdefine_line|#define PROXY_HASH ARP_TABLE_SIZE
 multiline_comment|/*&n; *&t;Check if there are too old entries and remove them. If the ATF_PERM&n; *&t;flag is set, they are always left in the arp cache (permanent entry).&n; *&t;Note: Only fully resolved entries, which don&squot;t have any packets in&n; *&t;the queue, can be deleted, since ARP_TIMEOUT is much greater than&n; *&t;ARP_MAX_TRIES*ARP_RES_TIME.&n; */
+multiline_comment|/* RFC1122: Looks good.  Prevents stale ARP entries, as per 2.3.2.1. (MUST) */
 DECL|function|arp_check_expire
 r_static
 r_void
@@ -347,6 +352,8 @@ id|arp_table
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Don&squot;t have to remove packets in entry-&gt;skb. */
+multiline_comment|/* See comments above. */
 )brace
 r_else
 id|pentry
@@ -1145,6 +1152,9 @@ id|entry-&gt;ip
 )paren
 suffix:semicolon
 multiline_comment|/* proxy entries shouldn&squot;t really time out so this is really&n;&t;   only here for completeness&n;&t;*/
+multiline_comment|/* RFC1122: They *can* be timed out, according to 2.3.2.1. */
+multiline_comment|/* They recommend a minute. -- MS */
+multiline_comment|/* The world doesn&squot;t work this way -- AC */
 r_if
 c_cond
 (paren
@@ -1242,6 +1252,9 @@ l_string|&quot;Possible ARP queue corruption.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;We should never arrive here.&n;&t; */
+multiline_comment|/* Should we perhaps flush the ARP table (except the ones we&squot;re */
+multiline_comment|/* publishing, if we can trust the queue that much) at this */
+multiline_comment|/* point? -- MS */
 )brace
 multiline_comment|/*&n; *&t;This will try to retransmit everything on the queue.&n; */
 DECL|function|arp_send_q
@@ -1294,6 +1307,9 @@ id|entry-&gt;ip
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Can&squot;t flush the skb, because RFC1122 says to hang on to */
+multiline_comment|/* at least one from any unresolved entry.  --MS */
+multiline_comment|/* Whats happened is that someone has &squot;unresolved&squot; the entry&n;&t;&t;   as we got to use it - this &squot;can&squot;t happen&squot; -- AC */
 r_return
 suffix:semicolon
 )brace
@@ -1705,8 +1721,11 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* Should this be an error/printk?  Seems like something */
+multiline_comment|/* you&squot;d want to know about. Unless it&squot;s just !IFF_NOARP. -- MS */
 )brace
 multiline_comment|/*&n; *&t;Another test.&n; *&t;The logic here is that the protocol being looked up by arp should &n; *&t;match the protocol the device speaks.  If it doesn&squot;t, there is a&n; *&t;problem, so toss the packet.&n; */
+multiline_comment|/* Again, should this be an error/printk? -- MS */
 r_switch
 c_cond
 (paren
@@ -1958,6 +1977,8 @@ id|IS_MYADDR
 )paren
 (brace
 multiline_comment|/* &n; *&t;Replies to other machines get tossed. &n; */
+multiline_comment|/* Should we reset the expiry timers for an entry that isn&squot;t for us, if we */
+multiline_comment|/* have it in the cache? RFC1122 suggests it. -- MS */
 id|kfree_skb
 c_func
 (paren
@@ -2588,6 +2609,7 @@ op_eq
 id|ARPHRD_IEEE802
 )paren
 (brace
+multiline_comment|/* What exactly does this do? -- MS */
 id|haddr
 (braket
 l_int|0
@@ -3399,7 +3421,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This will find an entry in the ARP table by looking at the IP address.&n; *      If proxy is PROXY_EXACT then only exact IP matches will be allowed&n; *      for proxy entries, otherwise the netmask will be used&n; */
+multiline_comment|/*&n; *&t;This will find an entry in the ARP table by looking at the IP address.&n; *&t;If proxy is PROXY_EXACT then only exact IP matches will be allowed&n; *&t;for proxy entries, otherwise the netmask will be used&n; */
 DECL|function|arp_lookup
 r_static
 r_struct

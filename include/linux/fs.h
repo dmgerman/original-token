@@ -1027,6 +1027,7 @@ r_struct
 id|file
 op_star
 comma
+r_const
 r_char
 op_star
 comma
@@ -1655,6 +1656,7 @@ r_int
 )paren
 suffix:semicolon
 DECL|member|name
+r_const
 r_char
 op_star
 id|name
@@ -1924,6 +1926,7 @@ op_star
 id|get_fs_type
 c_func
 (paren
+r_const
 r_char
 op_star
 id|name
@@ -2776,6 +2779,7 @@ r_struct
 id|file
 op_star
 comma
+r_const
 r_char
 op_star
 comma
@@ -2795,6 +2799,7 @@ r_struct
 id|file
 op_star
 comma
+r_const
 r_char
 op_star
 comma

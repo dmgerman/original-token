@@ -261,6 +261,7 @@ id|len
 op_star
 op_star
 (paren
+r_const
 r_int
 r_char
 op_star

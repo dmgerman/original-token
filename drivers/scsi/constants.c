@@ -698,6 +698,7 @@ r_int
 id|devices
 suffix:semicolon
 DECL|member|text
+r_const
 r_char
 op_star
 id|text
@@ -726,6 +727,7 @@ r_int
 id|devices
 suffix:semicolon
 DECL|member|text
+r_const
 r_char
 op_star
 id|text
@@ -4024,6 +4026,7 @@ macro_line|#endif
 macro_line|#if (CONSTANTS &amp; CONST_SENSE)
 DECL|variable|snstext
 r_static
+r_const
 r_char
 op_star
 id|snstext
@@ -4071,6 +4074,7 @@ r_void
 id|print_sense
 c_func
 (paren
+r_const
 r_char
 op_star
 id|devclass
@@ -4099,6 +4103,7 @@ id|sense_buffer
 op_assign
 id|SCpnt-&gt;sense_buffer
 suffix:semicolon
+r_const
 r_char
 op_star
 id|error

@@ -88,6 +88,7 @@ comma
 r_int
 id|from_user
 comma
+r_const
 r_int
 r_char
 op_star
@@ -8267,6 +8268,7 @@ comma
 r_int
 id|from_user
 comma
+r_const
 r_int
 r_char
 op_star

@@ -22,6 +22,7 @@ id|UTS_DOMAINNAME
 )brace
 suffix:semicolon
 DECL|variable|linux_banner
+r_const
 r_char
 op_star
 id|linux_banner

@@ -1162,6 +1162,7 @@ r_void
 id|print_sense
 c_func
 (paren
+r_const
 r_char
 op_star
 comma

@@ -1192,7 +1192,7 @@ c_func
 id|dir
 )paren
 op_member_access_from_pointer
-id|acdirmax
+id|acdirmin
 suffix:colon
 id|NFS_SERVER
 c_func
@@ -1200,7 +1200,7 @@ c_func
 id|dir
 )paren
 op_member_access_from_pointer
-id|acregmax
+id|acregmin
 )paren
 suffix:semicolon
 )brace

@@ -4351,6 +4351,7 @@ r_void
 id|respond_string
 c_func
 (paren
+r_const
 r_char
 op_star
 id|p
@@ -6354,6 +6355,7 @@ comma
 r_int
 id|from_user
 comma
+r_const
 r_int
 r_char
 op_star
@@ -9398,6 +9400,7 @@ r_int
 id|kmem_start
 )paren
 (brace
+r_const
 r_char
 op_star
 id|display_desc

@@ -6939,6 +6939,7 @@ comma
 r_void
 id|getfrag
 (paren
+r_const
 r_void
 op_star
 comma
@@ -6954,6 +6955,7 @@ r_int
 r_int
 )paren
 comma
+r_const
 r_void
 op_star
 id|frag

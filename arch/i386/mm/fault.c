@@ -18,6 +18,7 @@ r_void
 id|die_if_kernel
 c_func
 (paren
+r_const
 r_char
 op_star
 comma

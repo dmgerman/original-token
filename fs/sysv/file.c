@@ -32,6 +32,7 @@ r_struct
 id|file
 op_star
 comma
+r_const
 r_char
 op_star
 comma
@@ -787,6 +788,7 @@ id|file
 op_star
 id|filp
 comma
+r_const
 r_char
 op_star
 id|buf

@@ -1,6 +1,7 @@
 multiline_comment|/*-&n; * Copyright (C) 1994 by PJD Weichmann &amp; SWS Bern, Switzerland&n; *&n; * This software may be used and distributed according to the terms&n; * of the GNU Public License, incorporated herein by reference.&n; *&n; * Module         : sk_g16.c&n; *&n; * Version        : $Revision: 1.1 $&n; *&n; * Author         : Patrick J.D. Weichmann&n; *&n; * Date Created   : 94/05/26&n; * Last Updated   : $Date: 1994/06/30 16:25:15 $&n; *&n; * Description    : Schneider &amp; Koch G16 Ethernet Device Driver for&n; *                  Linux Kernel &gt;= 1.1.22&n; * Update History :&n; *&n;-*/
 DECL|variable|rcsid
 r_static
+r_const
 r_char
 op_star
 id|rcsid

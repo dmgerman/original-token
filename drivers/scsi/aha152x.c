@@ -322,6 +322,7 @@ r_void
 id|aha152x_panic
 c_func
 (paren
+r_const
 r_char
 op_star
 id|msg
@@ -8171,6 +8172,7 @@ r_void
 id|aha152x_panic
 c_func
 (paren
+r_const
 r_char
 op_star
 id|msg

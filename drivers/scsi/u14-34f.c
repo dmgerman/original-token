@@ -430,6 +430,7 @@ l_int|1
 suffix:semicolon
 DECL|variable|driver_name
 r_static
+r_const
 r_char
 op_star
 id|driver_name

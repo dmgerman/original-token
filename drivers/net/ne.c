@@ -3,6 +3,7 @@ multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 
 multiline_comment|/* Routines for the NatSemi-based designs (NE[12]000). */
 DECL|variable|version
 r_static
+r_const
 r_char
 op_star
 id|version
@@ -77,6 +78,7 @@ DECL|member|SAprefix
 r_static
 r_struct
 (brace
+r_const
 r_char
 op_star
 id|name8
@@ -471,6 +473,7 @@ id|wordlength
 op_assign
 l_int|2
 suffix:semicolon
+r_const
 r_char
 op_star
 id|name

@@ -704,6 +704,7 @@ l_int|1
 suffix:semicolon
 DECL|variable|driver_name
 r_static
+r_const
 r_char
 op_star
 id|driver_name
@@ -1031,6 +1032,7 @@ r_struct
 id|eata_info
 id|info
 suffix:semicolon
+r_const
 r_char
 op_star
 id|board_status

@@ -210,6 +210,8 @@ DECL|macro|PCI_DEVICE_ID_ADAPTEC_294x
 mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_294x&t;0x7078
 DECL|macro|PCI_DEVICE_ID_ADAPTEC_7850
 mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_7850&t;0x5078
+DECL|macro|PCI_DEVICE_ID_ADAPTEC_7872
+mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_7872&t;0x7278
 DECL|macro|PCI_VENDOR_ID_DPT
 mdefine_line|#define PCI_VENDOR_ID_DPT               0x1044   
 DECL|macro|PCI_DEVICE_ID_DPT
@@ -482,6 +484,10 @@ DECL|macro|PCI_VENDOR_ID_VORTEX
 mdefine_line|#define PCI_VENDOR_ID_VORTEX&t;&t;0x1119
 DECL|macro|PCI_DEVICE_ID_VORTEX_GDT
 mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT&t;0x0001
+DECL|macro|PCI_VENDOR_ID_HP
+mdefine_line|#define PCI_VENDOR_ID_HP&t;&t;0x103c
+DECL|macro|PCI_DEVICE_ID_HP_J2585A
+mdefine_line|#define PCI_DEVICE_ID_HP_J2585A&t;&t;0x1030
 multiline_comment|/*&n; * The PCI interface treats multi-function devices as independent&n; * devices.  The slot/function address of each device is encoded&n; * in a single byte as follows:&n; *&n; *&t;7:4 = slot&n; *&t;3:0 = function&n; */
 DECL|macro|PCI_DEVFN
 mdefine_line|#define PCI_DEVFN(slot,func)&t;((((slot) &amp; 0x1f) &lt;&lt; 3) | ((func) &amp; 0x07))
@@ -706,6 +712,7 @@ id|dev
 )paren
 suffix:semicolon
 r_extern
+r_const
 r_char
 op_star
 id|pci_strbioserr

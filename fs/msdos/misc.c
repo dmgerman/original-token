@@ -46,6 +46,7 @@ id|super_block
 op_star
 id|s
 comma
+r_const
 r_char
 op_star
 id|msg
@@ -1668,6 +1669,7 @@ comma
 r_int
 id|sector
 comma
+r_const
 r_char
 op_star
 id|name
@@ -1878,6 +1880,7 @@ id|super_block
 op_star
 id|sb
 comma
+r_const
 r_char
 op_star
 id|name
@@ -1990,6 +1993,7 @@ comma
 r_int
 id|start
 comma
+r_const
 r_char
 op_star
 id|name
@@ -2177,6 +2181,7 @@ comma
 r_int
 id|start
 comma
+r_const
 r_char
 op_star
 id|name
@@ -2589,6 +2594,7 @@ id|inode
 op_star
 id|dir
 comma
+r_const
 r_char
 op_star
 id|name

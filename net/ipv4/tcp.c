@@ -277,7 +277,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;This routine picks a TCP windows for a socket based on&n; *&t;the following constraints&n; *  &n; *&t;1. The window can never be shrunk once it is offered (RFC 793)&n; *&t;2. We limit memory per socket&n; *   &n; *&t;For now we use NET2E3&squot;s heuristic of offering half the memory&n; *&t;we have handy. All is not as bad as this seems however because&n; *&t;of two things. Firstly we will bin packets even within the window&n; *&t;in order to get the data we are waiting for into the memory limit.&n; *&t;Secondly we bin common duplicate forms at receive time&n; *      Better heuristics welcome&n; */
+multiline_comment|/*&n; *&t;This routine picks a TCP windows for a socket based on&n; *&t;the following constraints&n; *  &n; *&t;1. The window can never be shrunk once it is offered (RFC 793)&n; *&t;2. We limit memory per socket&n; *   &n; *&t;For now we use NET2E3&squot;s heuristic of offering half the memory&n; *&t;we have handy. All is not as bad as this seems however because&n; *&t;of two things. Firstly we will bin packets even within the window&n; *&t;in order to get the data we are waiting for into the memory limit.&n; *&t;Secondly we bin common duplicate forms at receive time&n; *&t;Better heuristics welcome&n; */
 DECL|function|tcp_select_window
 r_int
 id|tcp_select_window
@@ -3850,6 +3850,7 @@ id|sock
 op_star
 id|sk
 comma
+r_const
 r_int
 r_char
 op_star
@@ -4917,6 +4918,7 @@ id|sock
 op_star
 id|sk
 comma
+r_const
 r_int
 r_char
 op_star
@@ -7488,7 +7490,7 @@ id|tcp_statistics.TcpOutSegs
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Look for tcp options. Parses everything but only knows about MSS.&n; *      This routine is always called with the packet containing the SYN.&n; *      However it may also be called with the ack to the SYN.  So you&n; *      can&squot;t assume this is always the SYN.  It&squot;s always called after&n; *      we have set up sk-&gt;mtu to our own MTU.&n; *&n; *&t;We need at minimum to add PAWS support here. Possibly large windows&n; *&t;as Linux gets deployed on 100Mb/sec networks.&n; */
+multiline_comment|/*&n; *&t;Look for tcp options. Parses everything but only knows about MSS.&n; *&t;This routine is always called with the packet containing the SYN.&n; *&t;However it may also be called with the ack to the SYN.  So you&n; *&t;can&squot;t assume this is always the SYN.  It&squot;s always called after&n; *&t;we have set up sk-&gt;mtu to our own MTU.&n; *&n; *&t;We need at minimum to add PAWS support here. Possibly large windows&n; *&t;as Linux gets deployed on 100Mb/sec networks.&n; */
 DECL|function|tcp_options
 r_static
 r_void
@@ -10175,7 +10177,7 @@ op_or
 l_int|4
 )paren
 suffix:semicolon
-multiline_comment|/* 2 is really more like &squot;don&squot;t adjust the rtt &n;&t;&t;&t;                   In this case as we just set it up */
+multiline_comment|/* 2 is really more like &squot;don&squot;t adjust the rtt &n;&t;&t;&t;&t;&t;   In this case as we just set it up */
 id|cli
 c_func
 (paren

@@ -107,6 +107,7 @@ id|PORT_MASQ_BEGIN
 suffix:semicolon
 DECL|variable|strProt
 r_static
+r_const
 r_char
 op_star
 id|strProt

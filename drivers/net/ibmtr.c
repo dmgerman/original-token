@@ -1,6 +1,6 @@
 multiline_comment|/* ibmtr.c:  A shared-memory IBM Token Ring 16/4 driver for linux */
 multiline_comment|/*&n;&t;Written 1993 by Mark Swanson and Peter De Schrijver.&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This device driver should work with Any IBM Token Ring Card that does&n;   not use DMA.&n;&n;&t;I used Donald Becker&squot;s (becker@super.org) device driver work&n;&t;as a base for most of my initial work.&n;*/
-multiline_comment|/*&n;   Changes by Peter De Schrijver (stud11@cc4.kuleuven.ac.be) :&n;&t;&n;&t;+ changed name to ibmtr.c in anticipation of other tr boards.&n;&t;+ changed reset code and adapter open code.&n;&t;+ added SAP open code.&n;&t;+ a first attempt to write interrupt, transmit and receive routines.&n;&n;   Changes by David W. Morris (dwm@shell.portal.com) :&n;     941003 dwm: - Restructure tok_probe for multiple adapters, devices&n;                 - Add comments, misc reorg for clarity&n;                 - Flatten interrupt handler levels&n;&n;   Warnings !!!!!!!!!!!!!!&n;      This driver is only partially sanitized for support of multiple&n;      adapters.  It will almost definately fail if more than one&n;      active adapter is identified.&n;*/
+multiline_comment|/*&n;   Changes by Peter De Schrijver (Peter.Deschrijver@linux.cc.kuleuven.ac.be) :&n;&t;&n;&t;+ changed name to ibmtr.c in anticipation of other tr boards.&n;&t;+ changed reset code and adapter open code.&n;&t;+ added SAP open code.&n;&t;+ a first attempt to write interrupt, transmit and receive routines.&n;&n;   Changes by David W. Morris (dwm@shell.portal.com) :&n;     941003 dwm: - Restructure tok_probe for multiple adapters, devices&n;                 - Add comments, misc reorg for clarity&n;                 - Flatten interrupt handler levels&n;&n;   Warnings !!!!!!!!!!!!!!&n;      This driver is only partially sanitized for support of multiple&n;      adapters.  It will almost definately fail if more than one&n;      active adapter is identified.&n;*/
 DECL|macro|NO_AUTODETECT
 mdefine_line|#define NO_AUTODETECT 1
 DECL|macro|NO_AUTODETECT
@@ -13,6 +13,7 @@ DECL|macro|TRUE
 mdefine_line|#define TRUE (!FALSE)
 DECL|variable|version
 r_static
+r_const
 r_char
 op_star
 id|version
@@ -288,6 +289,7 @@ r_void
 id|DummyCall
 c_func
 (paren
+r_const
 r_char
 op_star
 id|fmt

@@ -64,6 +64,7 @@ r_int
 suffix:semicolon
 multiline_comment|/* driver name that will appear in the /proc/scsi directory */
 DECL|member|procname
+r_const
 r_char
 op_star
 id|procname
@@ -76,6 +77,7 @@ id|low_ino
 suffix:semicolon
 multiline_comment|/*&n;     * The name pointer is a pointer to the name of the SCSI&n;     * device detected.&n;     */
 DECL|member|name
+r_const
 r_char
 op_star
 id|name
@@ -553,11 +555,13 @@ op_star
 id|next
 suffix:semicolon
 DECL|member|name
+r_const
 r_char
 op_star
 id|name
 suffix:semicolon
 DECL|member|tag
+r_const
 r_char
 op_star
 id|tag

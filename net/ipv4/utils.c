@@ -105,6 +105,7 @@ r_int
 id|in_aton
 c_func
 (paren
+r_const
 r_char
 op_star
 id|str

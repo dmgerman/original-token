@@ -222,6 +222,7 @@ id|sock
 op_star
 id|sk
 comma
+r_const
 r_int
 r_char
 op_star
@@ -454,6 +455,7 @@ id|sock
 op_star
 id|sk
 comma
+r_const
 r_int
 r_char
 op_star

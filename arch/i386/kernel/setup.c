@@ -356,6 +356,7 @@ l_char|&squot; &squot;
 op_logical_and
 op_star
 (paren
+r_const
 r_int
 r_int
 op_star
@@ -364,6 +365,7 @@ id|from
 op_eq
 op_star
 (paren
+r_const
 r_int
 r_int
 op_star
@@ -573,6 +575,8 @@ op_star
 id|buffer
 )paren
 (brace
+r_static
+r_const
 r_char
 op_star
 id|model

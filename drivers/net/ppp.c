@@ -446,6 +446,7 @@ r_const
 r_char
 op_star
 comma
+r_const
 r_char
 op_star
 comma
@@ -488,6 +489,7 @@ r_struct
 id|file
 op_star
 comma
+r_const
 r_int
 r_char
 op_star
@@ -586,6 +588,7 @@ id|tty_struct
 op_star
 id|tty
 comma
+r_const
 r_int
 r_char
 op_star
@@ -3834,6 +3837,7 @@ id|tty_struct
 op_star
 id|tty
 comma
+r_const
 r_int
 r_char
 op_star
@@ -5648,6 +5652,7 @@ id|file
 op_star
 id|file
 comma
+r_const
 r_int
 r_char
 op_star
@@ -8920,6 +8925,7 @@ r_char
 op_star
 id|out
 comma
+r_const
 r_char
 op_star
 id|in
@@ -8998,6 +9004,7 @@ r_char
 op_star
 id|out
 comma
+r_const
 r_char
 op_star
 id|in
@@ -9088,6 +9095,7 @@ r_char
 op_star
 id|name
 comma
+r_const
 r_char
 op_star
 id|buf
