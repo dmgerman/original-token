@@ -215,7 +215,7 @@ r_while
 c_loop
 (paren
 id|timeout
-op_ge
+OG
 id|jiffies
 )paren
 suffix:semicolon
@@ -257,6 +257,7 @@ op_and_assign
 op_complement
 id|mask
 suffix:semicolon
+macro_line|#ifdef notdef
 id|printk
 c_func
 (paren
@@ -265,6 +266,7 @@ comma
 id|i
 )paren
 suffix:semicolon
+macro_line|#endif
 id|free_irq
 c_func
 (paren
@@ -301,7 +303,7 @@ r_while
 c_loop
 (paren
 id|timeout
-op_ge
+OG
 id|jiffies
 )paren
 r_if

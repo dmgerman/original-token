@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  p_atan.c                                                                 |&n; |                                                                           |&n; | Compute the tan of a FPU_REG, using a polynomial approximation.           |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  p_atan.c                                                                 |&n; |                                                                           |&n; | Compute the tan of a FPU_REG, using a polynomial approximation.           |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -8,6 +8,7 @@ mdefine_line|#define&t;HIPOWERon&t;6&t;/* odd poly, negative terms */
 DECL|variable|oddnegterms
 r_static
 r_int
+r_const
 id|oddnegterms
 (braket
 id|HIPOWERon
@@ -60,6 +61,7 @@ mdefine_line|#define&t;HIPOWERop&t;6&t;/* odd poly, positive terms */
 DECL|variable|oddplterms
 r_static
 r_int
+r_const
 id|oddplterms
 (braket
 id|HIPOWERop
@@ -111,6 +113,7 @@ r_static
 r_int
 r_int
 r_int
+r_const
 id|denomterm
 op_assign
 l_int|0xea2e6612fc4bd208LL

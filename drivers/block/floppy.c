@@ -25,7 +25,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|MAJOR_NR
-mdefine_line|#define MAJOR_NR 2
+mdefine_line|#define MAJOR_NR FLOPPY_MAJOR
 macro_line|#include &quot;blk.h&quot;
 DECL|variable|changed_floppies
 DECL|variable|fake_change
@@ -1379,7 +1379,7 @@ c_func
 id|bh-&gt;b_dev
 )paren
 op_ne
-l_int|2
+id|MAJOR_NR
 )paren
 (brace
 id|printk
@@ -1400,6 +1400,11 @@ op_amp
 id|mask
 )paren
 (brace
+id|buffer_track
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 id|fake_change
 op_and_assign
 op_complement
@@ -1423,6 +1428,11 @@ op_amp
 id|mask
 )paren
 (brace
+id|buffer_track
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 id|changed_floppies
 op_and_assign
 op_complement
@@ -1621,7 +1631,7 @@ id|count
 op_assign
 id|floppy-&gt;sect
 op_star
-l_int|2
+id|floppy-&gt;head
 op_star
 l_int|512
 suffix:semicolon
@@ -5127,6 +5137,14 @@ suffix:semicolon
 id|format_status
 op_assign
 id|FORMAT_NONE
+suffix:semicolon
+id|floppy_off
+c_func
+(paren
+id|drive
+op_amp
+l_int|3
+)paren
 suffix:semicolon
 id|wake_up
 c_func

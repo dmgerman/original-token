@@ -7,15 +7,11 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-DECL|macro|MAJOR_RAMDISK
-mdefine_line|#define MAJOR_RAMDISK&t;1&t;&t;/* should be in &lt;linux/major.h&gt;&t;*/
-DECL|macro|MAJOR_FLOPPY
-mdefine_line|#define MAJOR_FLOPPY&t;2&t;&t;/* should be in &lt;linux/major.h&gt;&t;*/
-DECL|macro|MINOR_RAMDISK
-mdefine_line|#define MINOR_RAMDISK&t;1
 DECL|macro|MAJOR_NR
-mdefine_line|#define MAJOR_NR&t;MAJOR_RAMDISK&t;/* weird hack- FvK */
+mdefine_line|#define MAJOR_NR  MEM_MAJOR
 macro_line|#include &quot;blk.h&quot;
+DECL|macro|RAMDISK_MINOR
+mdefine_line|#define RAMDISK_MINOR&t;1
 DECL|variable|rd_start
 r_char
 op_star
@@ -87,7 +83,7 @@ c_func
 id|CURRENT-&gt;dev
 )paren
 op_ne
-id|MINOR_RAMDISK
+id|RAMDISK_MINOR
 )paren
 op_logical_or
 (paren
@@ -239,7 +235,7 @@ c_cond
 id|register_blkdev
 c_func
 (paren
-id|MAJOR_RAMDISK
+id|MEM_MAJOR
 comma
 l_string|&quot;rd&quot;
 comma
@@ -253,7 +249,7 @@ c_func
 (paren
 l_string|&quot;RAMDISK: Unable to get major %d.&bslash;n&quot;
 comma
-id|MAJOR_RAMDISK
+id|MEM_MAJOR
 )paren
 suffix:semicolon
 r_return
@@ -262,7 +258,7 @@ suffix:semicolon
 )brace
 id|blk_dev
 (braket
-id|MAJOR_RAMDISK
+id|MEM_MAJOR
 )braket
 dot
 id|request_fn
@@ -406,7 +402,7 @@ c_func
 id|ROOT_DEV
 )paren
 op_ne
-id|MAJOR_FLOPPY
+id|FLOPPY_MAJOR
 )paren
 r_return
 suffix:semicolon
@@ -686,12 +682,12 @@ id|ROOT_DEV
 op_assign
 (paren
 (paren
-id|MAJOR_RAMDISK
+id|MEM_MAJOR
 op_lshift
 l_int|8
 )paren
 op_or
-id|MINOR_RAMDISK
+id|RAMDISK_MINOR
 )paren
 suffix:semicolon
 r_return

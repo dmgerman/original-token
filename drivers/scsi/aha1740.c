@@ -2042,7 +2042,7 @@ r_return
 id|internal_done_errcode
 suffix:semicolon
 )brace
-multiline_comment|/* Query the board for it&squot;s irq_level.  Nothing else matters&n;   in enhanced mode on an EISA bus. */
+multiline_comment|/* Query the board for its irq_level.  Nothing else matters&n;   in enhanced mode on an EISA bus. */
 DECL|function|aha1740_getconfig
 r_void
 id|aha1740_getconfig
@@ -2284,7 +2284,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* Note:  They following two functions do not apply very well to the Adaptec,&n;which basically manages it&squot;s own affairs quite well without our interference,&n;so I haven&squot;t put anything into them.  I can faintly imagine someone with a&n;*very* badly behaved SCSI target (perhaps an old tape?) wanting the abort(),&n;but it hasn&squot;t happened yet, and doing aborts brings the Adaptec to it&squot;s&n;knees.  I cannot (at this moment in time) think of any reason to reset the&n;card once it&squot;s running.  So there. */
+multiline_comment|/* Note:  They following two functions do not apply very well to the Adaptec,&n;which basically manages its own affairs quite well without our interference,&n;so I haven&squot;t put anything into them.  I can faintly imagine someone with a&n;*very* badly behaved SCSI target (perhaps an old tape?) wanting the abort(),&n;but it hasn&squot;t happened yet, and doing aborts brings the Adaptec to its&n;knees.  I cannot (at this moment in time) think of any reason to reset the&n;card once it&squot;s running.  So there. */
 DECL|function|aha1740_abort
 r_int
 id|aha1740_abort
@@ -2312,12 +2312,15 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* We do not implement a reset function here, but the upper level code assumes&n;   that it will get some kind of response for the command in SCpnt.  We must&n;   oblige, or the command will hang the scsi system */
 DECL|function|aha1740_reset
 r_int
 id|aha1740_reset
 c_func
 (paren
-r_void
+id|Scsi_Cmnd
+op_star
+id|SCpnt
 )paren
 (brace
 id|DEB
@@ -2329,6 +2332,15 @@ c_func
 l_string|&quot;aha1740_reset called&bslash;n&quot;
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|SCpnt
+)paren
+id|SCpnt-&gt;flags
+op_or_assign
+id|NEEDS_JUMPSTART
 suffix:semicolon
 r_return
 l_int|0

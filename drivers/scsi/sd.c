@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|MAJOR_NR
-mdefine_line|#define MAJOR_NR 8
+mdefine_line|#define MAJOR_NR SCSI_DISK_MAJOR
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
@@ -736,20 +736,14 @@ id|SCpnt-&gt;request.dev
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;  The SCpnt-&gt;request.nr_sectors field is always done in 512 byte sectors,&n;  even if this really isn&squot;t the case.&n;*/
-id|printk
+id|panic
 c_func
 (paren
-l_string|&quot;sd.c: linked page request. (%x %x)&quot;
+l_string|&quot;sd.c: linked page request (%lx %x)&quot;
 comma
 id|SCpnt-&gt;request.sector
 comma
 id|this_count
-)paren
-suffix:semicolon
-id|panic
-c_func
-(paren
-l_string|&quot;Aiiiiiiiiiiiieeeeeeeee&quot;
 )paren
 suffix:semicolon
 )brace
@@ -980,6 +974,21 @@ op_eq
 id|UNIT_ATTENTION
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|rscsi_disks
+(braket
+id|DEVICE_NR
+c_func
+(paren
+id|SCpnt-&gt;request.dev
+)paren
+)braket
+dot
+id|device-&gt;removable
+)paren
+(brace
 multiline_comment|/* detected disc change.  set a bit and quietly refuse&t;*/
 multiline_comment|/* further access.&t;&t;&t;&t;&t;*/
 id|rscsi_disks
@@ -1013,6 +1022,7 @@ id|SCpnt
 suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/* &t;If we had an ILLEGAL REQUEST returned, then we may have&n;performed an unsupported command.  The only thing this should be would&n;be a ten byte read where only a six byte read was supportted.  Also,&n;on a system where READ CAPACITY failed, we mave have read past the end&n;of the &t;disk. &n;*/
@@ -3107,6 +3117,14 @@ op_logical_neg
 id|spintime
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;sd%d: Spinning up disk...&quot;
+comma
+id|i
+)paren
+suffix:semicolon
 id|cmd
 (braket
 l_int|0
@@ -3242,6 +3260,12 @@ l_int|100
 suffix:semicolon
 )brace
 multiline_comment|/* Wait 1 second for next try */
+id|printk
+c_func
+(paren
+l_string|&quot;.&quot;
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 )brace
@@ -3254,11 +3278,36 @@ id|spintime
 op_logical_and
 id|spintime
 op_plus
-l_int|1500
-OL
+l_int|5000
+OG
 id|jiffies
 )paren
 (brace
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|spintime
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|the_result
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;not responding...&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;ready&bslash;n&quot;
+)paren
 suffix:semicolon
 )brace
 )brace

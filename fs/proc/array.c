@@ -418,7 +418,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;%d.%02d %d.%02d&bslash;n&quot;
+l_string|&quot;%lu.%02lu %lu.%02lu&bslash;n&quot;
 comma
 id|uptime
 op_div
@@ -474,8 +474,8 @@ c_func
 id|buffer
 comma
 l_string|&quot;        total:   used:    free:   shared:  buffers:&bslash;n&quot;
-l_string|&quot;Mem:  %8d %8d %8d %8d %8d&bslash;n&quot;
-l_string|&quot;Swap: %8d %8d %8d&bslash;n&quot;
+l_string|&quot;Mem:  %8lu %8lu %8lu %8lu %8lu&bslash;n&quot;
+l_string|&quot;Swap: %8lu %8lu %8lu&bslash;n&quot;
 comma
 id|i.totalram
 comma
@@ -1404,7 +1404,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;%d (%s) %c %d %d %d %d %d %u %u &bslash;&n;%u %u %u %d %d %d %d %d %d %u %u %d %u %u %u %u %u %u %u %u %d &bslash;&n;%d %d %d %u&bslash;n&quot;
+l_string|&quot;%d (%s) %c %d %d %d %d %d %lu %lu &bslash;&n;%lu %lu %lu %ld %ld %ld %ld %ld %ld %lu %lu %ld %lu %u %u %lu %lu %lu %lu %lu %lu &bslash;&n;%lu %lu %lu %lu&bslash;n&quot;
 comma
 id|pid
 comma
@@ -2220,7 +2220,7 @@ id|buf
 op_plus
 id|sz
 comma
-l_string|&quot;%08x-%08x %s %08x %02x:%02x %d&bslash;n&quot;
+l_string|&quot;%08lx-%08lx %s %08lx %02x:%02x %lu&bslash;n&quot;
 comma
 id|map-&gt;vm_start
 comma

@@ -1,12 +1,13 @@
 macro_line|#ifndef _BLK_H
 DECL|macro|_BLK_H
 mdefine_line|#define _BLK_H
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 multiline_comment|/*&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; *&n; * 32 seems to be a reasonable number: enough to get some benefit&n; * from the elevator-mechanism, but not so much as to lock a lot of&n; * buffers when they are in the queue. 64 seems to be too many (easily&n; * long pauses in reading when heavy writing/syncing is going on)&n; */
 DECL|macro|NR_REQUEST
-mdefine_line|#define NR_REQUEST&t;32
+mdefine_line|#define NR_REQUEST&t;64
 multiline_comment|/*&n; * Ok, this is an expanded form so that we can use the same&n; * request for paging requests when that is implemented. In&n; * paging, &squot;bh&squot; is NULL, and &squot;waiting&squot; is used to wait for&n; * read/write completion.&n; */
 DECL|struct|request
 r_struct
@@ -131,14 +132,6 @@ id|blk_dev_struct
 id|blk_dev
 (braket
 id|MAX_BLKDEV
-)braket
-suffix:semicolon
-r_extern
-r_struct
-id|request
-id|request
-(braket
-id|NR_REQUEST
 )braket
 suffix:semicolon
 r_extern
@@ -286,7 +279,7 @@ DECL|macro|RO_IOCTLS
 mdefine_line|#define RO_IOCTLS(dev,where) &bslash;&n;  case BLKROSET: if (!suser()) return -EPERM; &bslash;&n;&t;&t; set_device_ro((dev),get_fs_long((long *) (where))); return 0; &bslash;&n;  case BLKROGET: { int __err = verify_area(VERIFY_WRITE, (void *) (where), sizeof(long)); &bslash;&n;&t;&t;   if (!__err) put_fs_long(is_read_only(dev),(long *) (where)); return __err; }
 macro_line|#ifdef MAJOR_NR
 multiline_comment|/*&n; * Add entries as needed. Currently the only block devices&n; * supported are hard-disks and floppies.&n; */
-macro_line|#if (MAJOR_NR == 1)
+macro_line|#if (MAJOR_NR == MEM_MAJOR)
 multiline_comment|/* ram disk */
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;ramdisk&quot;
@@ -298,8 +291,7 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device) 
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
-macro_line|#elif (MAJOR_NR == 2)
-multiline_comment|/* floppy */
+macro_line|#elif (MAJOR_NR == FLOPPY_MAJOR)
 r_static
 r_void
 id|floppy_on
@@ -332,7 +324,7 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device) floppy_on(DEVICE_NR(device))
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device) floppy_off(DEVICE_NR(device))
-macro_line|#elif (MAJOR_NR == 3)
+macro_line|#elif (MAJOR_NR == HD_MAJOR)
 multiline_comment|/* harddisk: timeout is 6 seconds.. */
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;harddisk&quot;
@@ -350,8 +342,7 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
-macro_line|#elif (MAJOR_NR == 8)
-multiline_comment|/* scsi disk */
+macro_line|#elif (MAJOR_NR == SCSI_DISK_MAJOR)
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;scsidisk&quot;
 DECL|macro|DEVICE_INTR
@@ -366,22 +357,18 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
-macro_line|#elif (MAJOR_NR == 9)
-multiline_comment|/* scsi tape */
+macro_line|#elif (MAJOR_NR == SCSI_TAPE_MAJOR)
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;scsitape&quot;
 DECL|macro|DEVICE_INTR
 mdefine_line|#define DEVICE_INTR do_st  
-DECL|macro|DEVICE_REQUEST
-mdefine_line|#define DEVICE_REQUEST do_st_request
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (MINOR(device))
 DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
-macro_line|#elif (MAJOR_NR == 11)
-multiline_comment|/* scsi CD-ROM */
+macro_line|#elif (MAJOR_NR == SCSI_CDROM_MAJOR)
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;CD-ROM&quot;
 DECL|macro|DEVICE_INTR
@@ -394,8 +381,7 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
-macro_line|#elif (MAJOR_NR == 13)
-multiline_comment|/* xt hard disk */
+macro_line|#elif (MAJOR_NR == XT_DISK_MAJOR)
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;xt disk&quot;
 DECL|macro|DEVICE_REQUEST
@@ -406,8 +392,7 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
-macro_line|#elif (MAJOR_NR == 15)
-multiline_comment|/* CDU31A CD-ROM */
+macro_line|#elif (MAJOR_NR == CDU31A_CDROM_MAJOR)
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;CDU31A&quot;
 DECL|macro|DEVICE_REQUEST
@@ -418,8 +403,7 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
-macro_line|#elif (MAJOR_NR == 23)
-multiline_comment|/* MITSUMI CD-ROM */
+macro_line|#elif (MAJOR_NR == MITSUMI_CDROM_MAJOR)
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;Mitsumi CD-ROM&quot;
 multiline_comment|/* #define DEVICE_INTR do_mcd */
@@ -432,10 +416,9 @@ mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
 macro_line|#else
-multiline_comment|/* unknown blk device */
 macro_line|#error &quot;unknown blk device&quot;
 macro_line|#endif
-macro_line|#if (MAJOR_NR != 9)
+macro_line|#if (MAJOR_NR != SCSI_TAPE_MAJOR)
 macro_line|#ifndef CURRENT
 DECL|macro|CURRENT
 mdefine_line|#define CURRENT (blk_dev[MAJOR_NR].current_request)
@@ -476,8 +459,8 @@ id|DEVICE_REQUEST
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/* SCSI devices have their own version */
-macro_line|#if (MAJOR_NR != 8 &amp;&amp; MAJOR_NR != 9 &amp;&amp; MAJOR_NR != 11)
+multiline_comment|/* end_request() - SCSI devices have their own version */
+macro_line|#if ! SCSI_MAJOR(MAJOR_NR)
 DECL|function|end_request
 r_static
 r_void
@@ -528,8 +511,12 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;dev %04x, sector %d&bslash;n&quot;
+l_string|&quot;dev %04lX, sector %lu&bslash;n&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|req-&gt;dev
 comma
 id|req-&gt;sector

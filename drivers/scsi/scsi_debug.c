@@ -21,10 +21,8 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-DECL|macro|NR_BLK_DEV
-mdefine_line|#define NR_BLK_DEV&t;12
 DECL|macro|MAJOR_NR
-mdefine_line|#define MAJOR_NR 8
+mdefine_line|#define MAJOR_NR SCSI_DISK_MAJOR
 DECL|macro|START_PARTITION
 mdefine_line|#define START_PARTITION 4
 DECL|macro|SCSI_DEBUG_TIMER
@@ -2826,7 +2824,9 @@ r_int
 id|scsi_debug_reset
 c_func
 (paren
-r_void
+id|Scsi_Cmnd
+op_star
+id|SCpnt
 )paren
 (brace
 r_int

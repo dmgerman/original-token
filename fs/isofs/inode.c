@@ -4,13 +4,14 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/iso_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#if defined(CONFIG_BLK_DEV_SR)
 r_extern
 r_int
@@ -1208,7 +1209,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Max size:%d   Log zone size:%d&bslash;n&quot;
+l_string|&quot;Max size:%ld   Log zone size:%ld&bslash;n&quot;
 comma
 id|s-&gt;u.isofs_sb.s_max_size
 comma
@@ -1218,7 +1219,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;First datazone:%d   Root inode number %d&bslash;n&quot;
+l_string|&quot;First datazone:%ld   Root inode number %d&bslash;n&quot;
 comma
 id|s-&gt;u.isofs_sb.s_firstdatazone
 comma
@@ -1336,7 +1337,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_BLK_DEV_SR)
+macro_line|#if defined(CONFIG_BLK_DEV_SR) &amp;&amp; defined(CONFIG_SCSI)
 r_if
 c_cond
 (paren
@@ -1346,7 +1347,7 @@ c_func
 id|s-&gt;s_dev
 )paren
 op_eq
-l_int|11
+id|SCSI_CDROM_MAJOR
 )paren
 (brace
 multiline_comment|/* Check this one more time. */
@@ -1367,7 +1368,6 @@ id|out
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_CDU31A)
 r_if
@@ -1379,7 +1379,7 @@ c_func
 id|s-&gt;s_dev
 )paren
 op_eq
-l_int|15
+id|CDU31A_CDROM_MAJOR
 )paren
 (brace
 multiline_comment|/* Check this one more time. */
@@ -1400,7 +1400,6 @@ id|out
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_MCD)
 r_if
@@ -1412,7 +1411,7 @@ c_func
 id|s-&gt;s_dev
 )paren
 op_eq
-l_int|23
+id|MITSUMI_CDROM_MAJOR
 )paren
 (brace
 multiline_comment|/* Check this one more time. */
@@ -1433,7 +1432,6 @@ id|out
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 macro_line|#endif
 r_return
 id|s
@@ -2068,7 +2066,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Extended attributes present for ISO file (%d).&bslash;n&quot;
+l_string|&quot;Extended attributes present for ISO file (%ld).&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -2090,7 +2088,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;File unit size != 0 for ISO file.(%d)&bslash;n&quot;
+l_string|&quot;File unit size != 0 for ISO file (%ld).&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -2117,7 +2115,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Unusual flag settings for ISO file.(%d %x)&bslash;n&quot;
+l_string|&quot;Unusual flag settings for ISO file (%ld %x).&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 comma

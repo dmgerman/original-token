@@ -435,6 +435,9 @@ op_star
 id|shpnt
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
 r_volatile
 r_int
 id|debug
@@ -479,6 +482,21 @@ id|bse
 )paren
 )paren
 suffix:semicolon
+id|i
+op_assign
+id|jiffies
+op_plus
+l_int|2
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|i
+OG
+id|jiffies
+)paren
+suffix:semicolon
+multiline_comment|/* Wait a little bit for things to settle down. */
 id|debug
 op_assign
 l_int|1
@@ -1108,12 +1126,15 @@ id|number_serviced
 )paren
 r_return
 suffix:semicolon
+multiline_comment|/* Virtually all of the time, this turns out to be the problem */
 id|printk
 c_func
 (paren
-l_string|&quot;aha1542.c: interrupt received, but no mail.&bslash;n&quot;
+l_string|&quot;aha1542.c: Unsupported BIOS options enabled.&quot;
+l_string|&quot;  Please turn off.&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/*&t;printk(&quot;aha1542.c: interrupt received, but no mail.&bslash;n&quot;); */
 r_return
 suffix:semicolon
 )brace
@@ -2310,7 +2331,6 @@ suffix:semicolon
 id|i
 OL
 id|SCpnt-&gt;use_sg
-op_increment
 suffix:semicolon
 id|i
 op_increment
@@ -3844,6 +3864,11 @@ id|irq_level
 )paren
 )paren
 suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4008,6 +4033,11 @@ id|shpnt
 op_member_access_from_pointer
 id|SCint
 )paren
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
 )paren
 suffix:semicolon
 macro_line|#if 0
@@ -4389,12 +4419,15 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* We do not implement a reset function here, but the upper level code assumes&n;   that it will get some kind of response for the command in SCpnt.  We must&n;   oblige, or the command will hang the scsi system */
 DECL|function|aha1542_reset
 r_int
 id|aha1542_reset
 c_func
 (paren
-r_void
+id|Scsi_Cmnd
+op_star
+id|SCpnt
 )paren
 (brace
 id|DEB
@@ -4407,6 +4440,17 @@ l_string|&quot;aha1542_reset called&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|SCpnt
+)paren
+(brace
+id|SCpnt-&gt;flags
+op_or_assign
+id|NEEDS_JUMPSTART
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon

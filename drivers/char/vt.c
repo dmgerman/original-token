@@ -15,7 +15,7 @@ macro_line|#include &quot;vt_kern.h&quot;
 multiline_comment|/*&n; * Console (vt and kd) routines, as defined by USL SVR4 manual, and by&n; * experimentation and study of X386 SYSV handling.&n; *&n; * One point of difference: SYSV vt&squot;s are /dev/vtX, which X &gt;= 0, and&n; * /dev/console is a separate ttyp. Under Linux, /dev/tty0 is /dev/console,&n; * and the vc start at /dev/ttyX, X &gt;= 1. We maintain that here, so we will&n; * always treat our set of vt as numbered 1..NR_CONSOLES (corresponding to&n; * ttys 0..NR_CONSOLES-1). Explicitly naming VT 0 is illegal, but using&n; * /dev/tty0 (fg_console) as a target is legal, since an implicit aliasing&n; * to the current console is done by the main ioctl code.&n; */
 DECL|variable|vt_cons
 r_struct
-id|vt_cons
+id|vt_struct
 id|vt_cons
 (braket
 id|NR_CONSOLES
@@ -36,14 +36,6 @@ id|num
 comma
 r_int
 id|on
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|compute_shiftstate
-c_func
-(paren
-r_void
 )paren
 suffix:semicolon
 r_extern
@@ -718,11 +710,6 @@ comma
 id|VC_MEDIUMRAW
 )paren
 suffix:semicolon
-id|compute_shiftstate
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 r_else
 r_if
@@ -1131,7 +1118,6 @@ r_case
 id|KDGKBSENT
 suffix:colon
 (brace
-r_const
 r_struct
 id|kbsentry
 op_star

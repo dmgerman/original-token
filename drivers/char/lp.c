@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * Copyright (C) 1992 by Jim Weigand and Linus Torvalds&n; * Copyright (C) 1992,1993 by Michael K. Johnson&n; * - Thanks much to Gunter Windau for pointing out to me where the error&n; *   checking ought to be.&n; * Copyright (C) 1993 by Nigel Gamble (added interrupt code)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/lp.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -2196,7 +2197,7 @@ c_cond
 id|register_chrdev
 c_func
 (paren
-l_int|6
+id|LP_MAJOR
 comma
 l_string|&quot;lp&quot;
 comma
@@ -2208,7 +2209,9 @@ id|lp_fops
 id|printk
 c_func
 (paren
-l_string|&quot;unable to get major 6 for line printer&bslash;n&quot;
+l_string|&quot;unable to get major %d for line printer&bslash;n&quot;
+comma
+id|LP_MAJOR
 )paren
 suffix:semicolon
 r_return

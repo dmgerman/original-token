@@ -211,7 +211,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: %04x&bslash;n&quot;
+l_string|&quot;%s: %04lx&bslash;n&quot;
 comma
 id|str
 comma
@@ -223,7 +223,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;EIP:    %04x:%08x&bslash;nEFLAGS: %08x&bslash;n&quot;
+l_string|&quot;EIP:    %04x:%08lx&bslash;nEFLAGS: %08lx&bslash;n&quot;
 comma
 l_int|0xffff
 op_amp
@@ -237,7 +237,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;eax: %08x   ebx: %08x   ecx: %08x   edx: %08x&bslash;n&quot;
+l_string|&quot;eax: %08lx   ebx: %08lx   ecx: %08lx   edx: %08lx&bslash;n&quot;
 comma
 id|regs-&gt;eax
 comma
@@ -251,7 +251,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;esi: %08x   edi: %08x   ebp: %08x&bslash;n&quot;
+l_string|&quot;esi: %08lx   edi: %08lx   ebp: %08lx&bslash;n&quot;
 comma
 id|regs-&gt;esi
 comma

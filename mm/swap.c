@@ -612,7 +612,7 @@ id|p-&gt;max
 id|printk
 c_func
 (paren
-l_string|&quot;swap_free: weirness&bslash;n&quot;
+l_string|&quot;swap_free: weirdness&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -739,7 +739,7 @@ id|p-&gt;max
 id|printk
 c_func
 (paren
-l_string|&quot;swap_free: weirness&bslash;n&quot;
+l_string|&quot;swap_free: weirdness&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -817,7 +817,7 @@ id|offset
 id|printk
 c_func
 (paren
-l_string|&quot;swap_free: swap-space map bad (entry %08x)&bslash;n&quot;
+l_string|&quot;swap_free: swap-space map bad (entry %08lx)&bslash;n&quot;
 comma
 id|entry
 )paren
@@ -1548,7 +1548,7 @@ id|pg_table
 id|printk
 c_func
 (paren
-l_string|&quot;swap_out: bad page-table at pg_dir[%d]: %08x&bslash;n&quot;
+l_string|&quot;swap_out: bad page-table at pg_dir[%d]: %08lx&bslash;n&quot;
 comma
 id|table
 comma
@@ -2182,7 +2182,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Trying to free free memory (%08x): memory probabably corrupted&bslash;n&quot;
+l_string|&quot;Trying to free free memory (%08lx): memory probabably corrupted&bslash;n&quot;
 comma
 id|addr
 )paren
@@ -2190,7 +2190,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PC = %08x&bslash;n&quot;
+l_string|&quot;PC = %08lx&bslash;n&quot;
 comma
 op_star
 (paren
@@ -2214,7 +2214,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is one ugly macro, but it simplifies checking, and makes&n; * this speed-critical place reasonably fast, especially as we have&n; * to do things with the interrupt flag etc.&n; *&n; * Note that this #define is heavily optimized to give fast code&n; * for the normal case - the if-statements are ordered so that gcc-2.2.2&n; * will make *no* jumps for the normal code. Don&squot;t touch unless you&n; * know what you are doing.&n; */
 DECL|macro|REMOVE_FROM_MEM_QUEUE
-mdefine_line|#define REMOVE_FROM_MEM_QUEUE(queue,nr) &bslash;&n;&t;cli(); &bslash;&n;&t;if ((result = queue) != 0) { &bslash;&n;&t;&t;if (!(result &amp; ~PAGE_MASK) &amp;&amp; result &lt; high_memory) { &bslash;&n;&t;&t;&t;queue = *(unsigned long *) result; &bslash;&n;&t;&t;&t;if (!mem_map[MAP_NR(result)]) { &bslash;&n;&t;&t;&t;&t;mem_map[MAP_NR(result)] = 1; &bslash;&n;&t;&t;&t;&t;nr--; &bslash;&n;last_free_pages[index = (index + 1) &amp; (NR_LAST_FREE_PAGES - 1)] = result; &bslash;&n;&t;&t;&t;&t;restore_flags(flag); &bslash;&n;&t;&t;&t;&t;return result; &bslash;&n;&t;&t;&t;} &bslash;&n;&t;&t;&t;printk(&quot;Free page %08x has mem_map = %d&bslash;n&quot;, &bslash;&n;&t;&t;&t;&t;result,mem_map[MAP_NR(result)]); &bslash;&n;&t;&t;} else &bslash;&n;&t;&t;&t;printk(&quot;Result = 0x%08x - memory map destroyed&bslash;n&quot;, result); &bslash;&n;&t;&t;queue = 0; &bslash;&n;&t;&t;nr = 0; &bslash;&n;&t;} else if (nr) { &bslash;&n;&t;&t;printk(#nr &quot; is %d, but &quot; #queue &quot; is empty&bslash;n&quot;,nr); &bslash;&n;&t;&t;nr = 0; &bslash;&n;&t;} &bslash;&n;&t;restore_flags(flag)
+mdefine_line|#define REMOVE_FROM_MEM_QUEUE(queue,nr) &bslash;&n;&t;cli(); &bslash;&n;&t;if ((result = queue) != 0) { &bslash;&n;&t;&t;if (!(result &amp; ~PAGE_MASK) &amp;&amp; result &lt; high_memory) { &bslash;&n;&t;&t;&t;queue = *(unsigned long *) result; &bslash;&n;&t;&t;&t;if (!mem_map[MAP_NR(result)]) { &bslash;&n;&t;&t;&t;&t;mem_map[MAP_NR(result)] = 1; &bslash;&n;&t;&t;&t;&t;nr--; &bslash;&n;last_free_pages[index = (index + 1) &amp; (NR_LAST_FREE_PAGES - 1)] = result; &bslash;&n;&t;&t;&t;&t;restore_flags(flag); &bslash;&n;&t;&t;&t;&t;return result; &bslash;&n;&t;&t;&t;} &bslash;&n;&t;&t;&t;printk(&quot;Free page %08lx has mem_map = %d&bslash;n&quot;, &bslash;&n;&t;&t;&t;&t;result,mem_map[MAP_NR(result)]); &bslash;&n;&t;&t;} else &bslash;&n;&t;&t;&t;printk(&quot;Result = 0x%08lx - memory map destroyed&bslash;n&quot;, result); &bslash;&n;&t;&t;queue = 0; &bslash;&n;&t;&t;nr = 0; &bslash;&n;&t;} else if (nr) { &bslash;&n;&t;&t;printk(#nr &quot; is %d, but &quot; #queue &quot; is empty&bslash;n&quot;,nr); &bslash;&n;&t;&t;nr = 0; &bslash;&n;&t;} &bslash;&n;&t;restore_flags(flag)
 multiline_comment|/*&n; * Get physical address of first (actually last :-) free page, and mark it&n; * used. If no free pages left, return 0.&n; *&n; * Note that this is one of the most heavily called functions in the kernel,&n; * so it&squot;s a bit timing-critical (especially as we have to disable interrupts&n; * in it). See the above macro which does most of the work, and which is&n; * optimized for a fast normal path of execution.&n; */
 DECL|function|__get_free_page
 r_int
@@ -3290,6 +3290,11 @@ suffix:semicolon
 )brace
 id|p-&gt;swap_map
 op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
 id|vmalloc
 c_func
 (paren

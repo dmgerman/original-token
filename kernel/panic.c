@@ -31,7 +31,7 @@ id|args
 )paren
 suffix:semicolon
 DECL|function|panic
-r_volatile
+id|NORET_TYPE
 r_void
 id|panic
 c_func

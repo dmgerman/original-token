@@ -432,7 +432,7 @@ DECL|macro|IS_CLONE
 mdefine_line|#define IS_CLONE (regs.orig_eax == __NR_clone)
 DECL|macro|copy_vm
 mdefine_line|#define copy_vm(p) ((clone_flags &amp; COPYVM)?copy_page_tables(p):clone_page_tables(p))
-multiline_comment|/*&n; *  Ok, this is the main fork-routine. It copies the system process&n; * information (task[nr]) and sets up the necessary registers. It&n; * also copies the data segment in it&squot;s entirety.&n; */
+multiline_comment|/*&n; *  Ok, this is the main fork-routine. It copies the system process&n; * information (task[nr]) and sets up the necessary registers. It&n; * also copies the data segment in its entirety.&n; */
 DECL|function|sys_fork
 id|asmlinkage
 r_int

@@ -24,15 +24,13 @@ mdefine_line|#define ARCHIVE_SC402&t;ARCHIVE&t;&t;       /* don&squot;t know muc
 DECL|macro|ARCHIVE_SC499
 mdefine_line|#define ARCHIVE_SC499&t;ARCHIVE       /* SC402 and SC499R should be identical */
 multiline_comment|/*********** START OF USER CONFIGURABLE SECTION ************/
-multiline_comment|/* Tape configuration: &n; *&n; * Tape drive configuration:&t;(MT_IS* constants are defined in sys/mtio.h)&n; *&n; * TAPE_QIC02_DRIVE = MT_ISWT5150&n; *&t;- Wangtek 5150, format: up to QIC-150.&n; * TAPE_QIC02_DRIVE = MT_ISQIC02_ALL_FEATURES&n; *&t;- Enables some optional QIC commands that some drives may lack.&n; *&t;  It is provided so you can check which are supported by your drive.&n; *&t;  Refer to tpqic02.h for others.&n; *&n; * Supported interface cards: TAPE_QIC02_IFC =&n; *&t;WANGTEK,&n; *&t;ARCHIVE_SC402, ARCHIVE_SC499.&t;(both same programming interface)&n; *&n; * Make sure you have the I/O ports/DMA channels &n; * and IRQ stuff configured properly!&n; * NOTE: There may be other device drivers using the same major&n; *       number. This must be avoided. Check for timer.h conflicts too.&n; */
+multiline_comment|/* Tape configuration: &n; *&n; * Tape drive configuration:&t;(MT_IS* constants are defined in sys/mtio.h)&n; *&n; * TAPE_QIC02_DRIVE = MT_ISWT5150&n; *&t;- Wangtek 5150, format: up to QIC-150.&n; * TAPE_QIC02_DRIVE = MT_ISQIC02_ALL_FEATURES&n; *&t;- Enables some optional QIC commands that some drives may lack.&n; *&t;  It is provided so you can check which are supported by your drive.&n; *&t;  Refer to tpqic02.h for others.&n; *&n; * Supported interface cards: TAPE_QIC02_IFC =&n; *&t;WANGTEK,&n; *&t;ARCHIVE_SC402, ARCHIVE_SC499.&t;(both same programming interface)&n; *&n; * Make sure you have the I/O ports/DMA channels &n; * and IRQ stuff configured properly!&n; * NOTE: Check for conflicts with TAPE_QIC02_TIMER in timer.h.&n; */
 DECL|macro|TAPE_QIC02_DRIVE
 mdefine_line|#define TAPE_QIC02_DRIVE&t;MT_ISQIC02_ALL_FEATURES&t;/* drive type */
 multiline_comment|/* #define TAPE_QIC02_DRIVE&t;MT_ISWT5150 */
 DECL|macro|TAPE_QIC02_IFC
 mdefine_line|#define TAPE_QIC02_IFC&t;&t;WANGTEK&t;&t;/* interface card type */
 multiline_comment|/* #define TAPE_QIC02_IFC&t;&t;ARCHIVE */
-DECL|macro|TAPE_QIC02_MAJOR
-mdefine_line|#define TAPE_QIC02_MAJOR&t;12&t;/* major device number. /dev/loop seems to use 12 as well :-( */
 DECL|macro|TAPE_QIC02_PORT
 mdefine_line|#define TAPE_QIC02_PORT &t;0x300&t;/* controller port adress */
 DECL|macro|TAPE_QIC02_IRQ

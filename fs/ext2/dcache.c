@@ -6,6 +6,8 @@ macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#ifndef DONT_USE_DCACHE
+DECL|macro|DCACHE_NAME_LEN
+mdefine_line|#define DCACHE_NAME_LEN&t;32
 DECL|struct|dir_cache_entry
 r_struct
 id|dir_cache_entry
@@ -29,7 +31,9 @@ DECL|member|name
 r_char
 id|name
 (braket
-id|EXT2_NAME_LEN
+id|DCACHE_NAME_LEN
+op_plus
+l_int|1
 )braket
 suffix:semicolon
 DECL|member|len
@@ -463,7 +467,7 @@ id|p-&gt;next
 )paren
 id|printk
 (paren
-l_string|&quot;dev:%04x, dir=%4d, name=%s&bslash;n&quot;
+l_string|&quot;dev:%04x, dir=%4lu, name=%s&bslash;n&quot;
 comma
 id|p-&gt;dev
 comma
@@ -625,6 +629,14 @@ id|last
 op_assign
 id|p-&gt;prev
 suffix:semicolon
+id|p-&gt;prev
+op_assign
+l_int|NULL
+suffix:semicolon
+id|p-&gt;next
+op_assign
+l_int|NULL
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Remove an entry from a queue&n; */
 DECL|function|remove_from_queue
@@ -674,6 +686,14 @@ id|queue
 )braket
 op_assign
 id|p-&gt;queue_prev
+suffix:semicolon
+id|p-&gt;queue_prev
+op_assign
+l_int|NULL
+suffix:semicolon
+id|p-&gt;queue_next
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Invalidate all cache entries on a device (called by put_super() when&n; * a file system is unmounted)&n; */
@@ -821,11 +841,10 @@ c_cond
 (paren
 id|len
 OG
-id|EXT2_NAME_LEN
+id|DCACHE_NAME_LEN
 )paren
-id|len
-op_assign
-id|EXT2_NAME_LEN
+r_return
+l_int|0
 suffix:semicolon
 id|memcpy
 (paren
@@ -850,7 +869,7 @@ suffix:semicolon
 macro_line|#ifdef EXT2FS_DEBUG_CACHE
 id|printk
 (paren
-l_string|&quot;dcache_lookup (%04x, %d, %s, %d)&bslash;n&quot;
+l_string|&quot;dcache_lookup (%04x, %lu, %s, %d)&bslash;n&quot;
 comma
 id|dev
 comma
@@ -943,7 +962,7 @@ op_increment
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;dcache_lookup: %s,hit,inode=%d,hits=%d,misses=%d&bslash;n&quot;
+l_string|&quot;dcache_lookup: %s,hit,inode=%lu,hits=%d,misses=%d&bslash;n&quot;
 comma
 id|our_name
 comma
@@ -1014,6 +1033,7 @@ r_int
 id|len
 comma
 r_int
+r_int
 id|ino
 )paren
 (brace
@@ -1038,7 +1058,7 @@ suffix:semicolon
 macro_line|#ifdef EXT2FS_DEBUG_CACHE
 id|printk
 (paren
-l_string|&quot;dcache_add (%04x, %d, %s, %d, %d)&bslash;n&quot;
+l_string|&quot;dcache_add (%04x, %lu, %s, %d, %lu)&bslash;n&quot;
 comma
 id|dev
 comma
@@ -1057,11 +1077,9 @@ c_cond
 (paren
 id|len
 OG
-id|EXT2_NAME_LEN
+id|DCACHE_NAME_LEN
 )paren
-id|len
-op_assign
-id|EXT2_NAME_LEN
+r_return
 suffix:semicolon
 id|queue
 op_assign
@@ -1306,7 +1324,7 @@ suffix:semicolon
 macro_line|#ifdef EXT2FS_DEBUG_CACHE
 id|printk
 (paren
-l_string|&quot;dcache_remove (%04x, %d, %s, %d)&bslash;n&quot;
+l_string|&quot;dcache_remove (%04x, %lu, %s, %d)&bslash;n&quot;
 comma
 id|dev
 comma
@@ -1323,11 +1341,9 @@ c_cond
 (paren
 id|len
 OG
-id|EXT2_NAME_LEN
+id|DCACHE_NAME_LEN
 )paren
-id|len
-op_assign
-id|EXT2_NAME_LEN
+r_return
 suffix:semicolon
 id|queue
 op_assign

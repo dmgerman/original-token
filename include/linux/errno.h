@@ -243,6 +243,8 @@ DECL|macro|EISNAM
 mdefine_line|#define&t;EISNAM&t;&t;120&t;/* Is a named type file */
 DECL|macro|EREMOTEIO
 mdefine_line|#define&t;EREMOTEIO&t;121&t;/* Remote I/O error */
+DECL|macro|EDQUOT
+mdefine_line|#define&t;EDQUOT&t;&t;122&t;/* Quota exceeded */
 multiline_comment|/* Should never be seen by user programs */
 DECL|macro|ERESTARTSYS
 mdefine_line|#define ERESTARTSYS&t;512

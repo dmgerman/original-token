@@ -7,8 +7,6 @@ DECL|macro|NSOCKETS
 mdefine_line|#define NSOCKETS&t;128&t;&t;/* should be dynamic, later...&t;*/
 DECL|macro|NPROTO
 mdefine_line|#define NPROTO&t;&t;16&t;&t;/* should be enough for now..&t;*/
-DECL|macro|SOCKET_MAJOR
-mdefine_line|#define SOCKET_MAJOR&t;16&t;&t;/* Linux VFS major dev number&t;*/
 DECL|macro|SYS_SOCKET
 mdefine_line|#define SYS_SOCKET&t;1&t;&t;/* sys_socket(2)&t;&t;*/
 DECL|macro|SYS_BIND

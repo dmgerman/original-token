@@ -1,7 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/hd.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; * This is the low-level hd interrupt support. It traverses the&n; * request-list, using interrupts to jump between functions. As&n; * all the functions are called within interrupts, we may not&n; * sleep. Special care is recommended.&n; * &n; *  modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *&n; *  Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  in the early extended-partition checks and added DM partitions&n; */
-DECL|macro|HD_IRQ
-mdefine_line|#define HD_IRQ 14
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -17,8 +15,10 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|MAJOR_NR
-mdefine_line|#define MAJOR_NR 3
+mdefine_line|#define MAJOR_NR HD_MAJOR
 macro_line|#include &quot;blk.h&quot;
+DECL|macro|HD_IRQ
+mdefine_line|#define HD_IRQ 14
 r_static
 r_int
 id|revalidate_hddisk
@@ -502,6 +502,12 @@ l_int|8
 suffix:colon
 l_int|0
 )paren
+suffix:semicolon
+id|NR_HD
+op_assign
+id|hdind
+op_plus
+l_int|1
 suffix:semicolon
 )brace
 DECL|function|win_result
@@ -3080,18 +3086,19 @@ id|drive
 comma
 id|i
 suffix:semicolon
-macro_line|#ifndef HD_TYPE
 r_extern
 r_struct
 id|drive_info
 id|drive_info
 suffix:semicolon
-r_void
+r_int
+r_char
 op_star
 id|BIOS
 op_assign
 (paren
-r_void
+r_int
+r_char
 op_star
 )paren
 op_amp
@@ -3100,6 +3107,13 @@ suffix:semicolon
 r_int
 id|cmos_disks
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|NR_HD
+)paren
+(brace
 r_for
 c_loop
 (paren
@@ -3139,11 +3153,6 @@ id|head
 op_assign
 op_star
 (paren
-r_int
-r_char
-op_star
-)paren
-(paren
 l_int|2
 op_plus
 id|BIOS
@@ -3177,11 +3186,6 @@ id|ctl
 op_assign
 op_star
 (paren
-r_int
-r_char
-op_star
-)paren
-(paren
 l_int|8
 op_plus
 id|BIOS
@@ -3214,11 +3218,6 @@ dot
 id|sect
 op_assign
 op_star
-(paren
-r_int
-r_char
-op_star
-)paren
 (paren
 l_int|14
 op_plus
@@ -3262,12 +3261,7 @@ id|NR_HD
 op_assign
 l_int|1
 suffix:semicolon
-r_else
-id|NR_HD
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
+)brace
 id|i
 op_assign
 id|NR_HD

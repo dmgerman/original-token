@@ -1,10 +1,11 @@
 multiline_comment|/*&n; *  linux/fs/ext2/ialloc.c&n; *&n; *  Copyright (C) 1992, 1993  Remy Card (card@masi.ibp.fr)&n; *&n; *  BSD ufs-inspired inode and directory allocation by &n; *  Stephen Tweedie (sct@dcs.ed.ac.uk), 1993&n; */
 multiline_comment|/* ialloc.c contains the inodes allocation and deallocation routines */
 multiline_comment|/*&n;&n;   The free inodes are managed by bitmaps.  A file system contains several&n;   blocks groups.  Each group contains 1 bitmap block for blocks, 1 bitmap&n;   block for inodes, N blocks for the inode table and data blocks.&n;&n;   The file system contains group descriptors which are located after the&n;   super block.  Each descriptor contains the number of the bitmap block and&n;   the free blocks count in the block.  The descriptors are loaded in memory&n;   when a file system is mounted (see ext2_read_super).&n;&n;*/
-macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -226,10 +227,14 @@ id|sb-&gt;u.ext2_sb.s_group_desc
 id|group_desc
 )braket
 )paren
-(brace
-id|printk
+id|ext2_panic
 (paren
-l_string|&quot;block_group = %d,group_desc = %d,desc = %d&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;read_inode_bitmap&quot;
+comma
+l_string|&quot;Group descriptor not loaded&bslash;n&quot;
+l_string|&quot;block_group = %lu, group_desc = %lu, desc = %lu&quot;
 comma
 id|block_group
 comma
@@ -238,12 +243,6 @@ comma
 id|desc
 )paren
 suffix:semicolon
-id|panic
-(paren
-l_string|&quot;read_inode_bitmap: Group descriptor not loaded&quot;
-)paren
-suffix:semicolon
-)brace
 id|gdp
 op_assign
 (paren
@@ -280,10 +279,14 @@ c_cond
 op_logical_neg
 id|bh
 )paren
-(brace
-id|printk
+id|ext2_panic
 (paren
-l_string|&quot;block_group = %d,group_desc = %d,desc = %d,inode_bitmap = %d&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;read_inode_bitmap&quot;
+comma
+l_string|&quot;Cannot read inode bitmap&bslash;n&quot;
+l_string|&quot;block_group = %lu, group_desc = %lu, desc = %lu, inode_bitmap = %lu&quot;
 comma
 id|block_group
 comma
@@ -299,12 +302,6 @@ dot
 id|bg_inode_bitmap
 )paren
 suffix:semicolon
-id|panic
-(paren
-l_string|&quot;read_inode_bitmap: Cannot read inode bitmap&quot;
-)paren
-suffix:semicolon
-)brace
 id|sb-&gt;u.ext2_sb.s_inode_bitmap_number
 (braket
 id|bitmap_nr
@@ -357,22 +354,20 @@ id|block_group
 op_ge
 id|sb-&gt;u.ext2_sb.s_groups_count
 )paren
-(brace
-id|printk
+id|ext2_panic
 (paren
-l_string|&quot;block_group = %d, groups_count = %d&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;load_inode_bitmap&quot;
+comma
+l_string|&quot;block_group &gt;= groups_count&bslash;n&quot;
+l_string|&quot;block_group = %d, groups_count = %lu&quot;
 comma
 id|block_group
 comma
 id|sb-&gt;u.ext2_sb.s_groups_count
 )paren
 suffix:semicolon
-id|panic
-(paren
-l_string|&quot;load_inode_bitmap: block_group &gt;= groups_count&quot;
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -417,9 +412,13 @@ id|block_group
 op_ne
 id|block_group
 )paren
-id|panic
+id|ext2_panic
 (paren
-l_string|&quot;load_inode_bitmap: block_group != inode_bitmap_number&quot;
+id|sb
+comma
+l_string|&quot;load_inode_bitmap&quot;
+comma
+l_string|&quot;block_group != inode_bitmap_number&quot;
 )paren
 suffix:semicolon
 r_else
@@ -711,22 +710,20 @@ c_cond
 op_logical_neg
 id|bh
 )paren
-(brace
-id|printk
+id|ext2_panic
 (paren
-l_string|&quot;inode=%d, inode_block=%d&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;set_inode_dtime&quot;
+comma
+l_string|&quot;Cannot load inode table block&bslash;n&quot;
+l_string|&quot;inode=%lu, inode_block=%lu&quot;
 comma
 id|inode-&gt;i_ino
 comma
 id|inode_block
 )paren
 suffix:semicolon
-id|panic
-(paren
-l_string|&quot;set_inode_dtime: Cannot load inode table block&quot;
-)paren
-suffix:semicolon
-)brace
 id|raw_inode
 op_assign
 (paren
@@ -772,6 +769,32 @@ id|bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_SYNC
+c_func
+(paren
+id|inode
+)paren
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|WRITE
+comma
+l_int|1
+comma
+op_amp
+id|bh
+)paren
+suffix:semicolon
+id|wait_on_buffer
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
 id|brelse
 (paren
 id|bh
@@ -905,15 +928,13 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef EXT2FS_DEBUG
-id|printk
+id|ext2_debug
 (paren
-l_string|&quot;ext2_free_inode: freeing inode %d&bslash;n&quot;
+l_string|&quot;freeing inode %lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
-macro_line|#endif
 id|sb
 op_assign
 id|inode-&gt;i_sb
@@ -931,10 +952,13 @@ template_param
 id|sb-&gt;u.ext2_sb.s_es-&gt;s_inodes_count
 )paren
 (brace
-id|printk
-c_func
+id|ext2_error
 (paren
-l_string|&quot;free_inode: inode 0 or nonexistent inode&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;free_inode&quot;
+comma
+l_string|&quot;reserved inode or nonexistent inode&quot;
 )paren
 suffix:semicolon
 id|unlock_super
@@ -999,20 +1023,17 @@ c_cond
 op_logical_neg
 id|bh
 )paren
-(brace
-id|printk
+id|ext2_panic
 (paren
-l_string|&quot;block_group = %d&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;ext2_free_inode&quot;
+comma
+l_string|&quot;Unable to load bitmap for group %lu&quot;
 comma
 id|block_group
 )paren
 suffix:semicolon
-id|panic
-(paren
-l_string|&quot;ext2_free_inode: Unable to load bitmap&quot;
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1024,11 +1045,13 @@ comma
 id|bh-&gt;b_data
 )paren
 )paren
-id|printk
+id|ext2_warning
 (paren
-l_string|&quot;ext2_free_inode (%04x:%d): bit already cleared&bslash;n&quot;
+id|sb
 comma
-id|sb-&gt;s_dev
+l_string|&quot;ext2_free_inode&quot;
+comma
+l_string|&quot;bit already cleared for inode %lu&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -1068,20 +1091,17 @@ c_cond
 op_logical_neg
 id|bh2
 )paren
-(brace
-id|printk
+id|ext2_panic
 (paren
-l_string|&quot;group_desc = %d&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;ext2_free_inode&quot;
+comma
+l_string|&quot;Group descriptor not loaded for group %lu&quot;
 comma
 id|group_desc
 )paren
 suffix:semicolon
-id|panic
-(paren
-l_string|&quot;ext2_free_inode: Group descriptor not loaded&quot;
-)paren
-suffix:semicolon
-)brace
 id|gdp
 op_assign
 (paren
@@ -1120,6 +1140,13 @@ id|bh2-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
+id|es-&gt;s_free_inodes_count
+op_increment
+suffix:semicolon
+id|sb-&gt;u.ext2_sb.s_sbh-&gt;b_dirt
+op_assign
+l_int|1
+suffix:semicolon
 id|set_inode_dtime
 (paren
 id|inode
@@ -1134,13 +1161,30 @@ id|bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
-id|es-&gt;s_free_inodes_count
-op_increment
-suffix:semicolon
-id|sb-&gt;u.ext2_sb.s_sbh-&gt;b_dirt
-op_assign
+r_if
+c_cond
+(paren
+id|sb-&gt;s_flags
+op_amp
+id|MS_SYNC
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|WRITE
+comma
 l_int|1
+comma
+op_amp
+id|bh
+)paren
 suffix:semicolon
+id|wait_on_buffer
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
 id|sb-&gt;s_dirt
 op_assign
 l_int|1
@@ -1234,18 +1278,18 @@ op_logical_neg
 id|bh
 )paren
 (brace
-id|printk
+id|ext2_error
 (paren
-l_string|&quot;inode=%d, inode_block=%d&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;inc_inode_version&quot;
+comma
+l_string|&quot;Cannot load inode table block&quot;
+l_string|&quot;inode=%lu, inode_block=%lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 comma
 id|inode_block
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;inc_inode_version: Cannot load inode table block&quot;
 )paren
 suffix:semicolon
 id|inode-&gt;u.ext2_i.i_version
@@ -1337,9 +1381,15 @@ id|group
 OL
 l_int|0
 )paren
-id|panic
+id|ext2_panic
 (paren
-l_string|&quot;ext2: get_group_desc: Invalid group&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;get_group_desc&quot;
+comma
+l_string|&quot;Invalid group %d&quot;
+comma
+id|group
 )paren
 suffix:semicolon
 r_if
@@ -1357,9 +1407,15 @@ id|sb
 )paren
 )braket
 )paren
-id|panic
+id|ext2_panic
 (paren
-l_string|&quot;ext2: get_group_desc: Descriptor not loaded&quot;
+id|sb
+comma
+l_string|&quot;get_group_desc&quot;
+comma
+l_string|&quot;Descriptor not loaded for group %d&quot;
+comma
+id|group
 )paren
 suffix:semicolon
 id|gdp
@@ -1777,20 +1833,17 @@ c_cond
 op_logical_neg
 id|bh
 )paren
-(brace
-id|printk
+id|ext2_panic
 (paren
-l_string|&quot;block_group = %d&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;ext2_new_inode&quot;
+comma
+l_string|&quot;Unable to load bitmap for group %d&quot;
 comma
 id|i
 )paren
 suffix:semicolon
-id|panic
-(paren
-l_string|&quot;ext2_new_inode: Unable to load group inode bitmap&quot;
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1832,9 +1885,15 @@ id|bh-&gt;b_data
 )paren
 )paren
 (brace
-id|printk
+id|ext2_warning
 (paren
-l_string|&quot;ext2_new_inode: bit already set&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;ext2_new_inode&quot;
+comma
+l_string|&quot;bit already set for inode %d&quot;
+comma
+id|j
 )paren
 suffix:semicolon
 r_goto
@@ -1845,6 +1904,30 @@ id|bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sb-&gt;s_flags
+op_amp
+id|MS_SYNC
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|WRITE
+comma
+l_int|1
+comma
+op_amp
+id|bh
+)paren
+suffix:semicolon
+id|wait_on_buffer
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
 )brace
 r_else
 r_goto
@@ -1870,18 +1953,18 @@ OG
 id|es-&gt;s_inodes_count
 )paren
 (brace
-id|printk
+id|ext2_error
 (paren
-l_string|&quot;block_group = %d,inode=%d&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;ext2_new_inode&quot;
+comma
+l_string|&quot;inode &gt; inodes count&bslash;n&quot;
+l_string|&quot;block_group = %d,inode=%d&quot;
 comma
 id|i
 comma
 id|j
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;ext2_new_inode: inode &gt; inodes count&quot;
 )paren
 suffix:semicolon
 id|unlock_super
@@ -2002,7 +2085,7 @@ id|CURRENT_TIME
 suffix:semicolon
 id|inode-&gt;u.ext2_i.i_flags
 op_assign
-l_int|0
+id|dir-&gt;u.ext2_i.i_flags
 suffix:semicolon
 id|inode-&gt;u.ext2_i.i_faddr
 op_assign
@@ -2036,6 +2119,17 @@ id|inode-&gt;i_op
 op_assign
 l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;u.ext2_i.i_flags
+op_amp
+id|EXT2_SYNC_FL
+)paren
+id|inode-&gt;i_flags
+op_or_assign
+id|MS_SYNC
+suffix:semicolon
 id|insert_inode_hash
 c_func
 (paren
@@ -2051,15 +2145,13 @@ comma
 id|mode
 )paren
 suffix:semicolon
-macro_line|#ifdef EXT2FS_DEBUG
-id|printk
+id|ext2_debug
 (paren
-l_string|&quot;ext2_new_inode : allocating inode %d&bslash;n&quot;
+l_string|&quot;allocating inode %lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
-macro_line|#endif
 id|unlock_super
 (paren
 id|sb
@@ -2259,7 +2351,7 @@ suffix:semicolon
 )brace
 id|printk
 (paren
-l_string|&quot;group %d: stored = %d, counted = %d&bslash;n&quot;
+l_string|&quot;group %d: stored = %d, counted = %lu&bslash;n&quot;
 comma
 id|i
 comma
@@ -2308,7 +2400,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ext2_count_free_inodes: stored = %d, computed = %d, %d&bslash;n&quot;
+l_string|&quot;ext2_count_free_inodes: stored = %lu, computed = %lu, %lu&bslash;n&quot;
 comma
 id|es-&gt;s_free_inodes_count
 comma
@@ -2330,5 +2422,293 @@ r_return
 id|sb-&gt;u.ext2_sb.s_es-&gt;s_free_inodes_count
 suffix:semicolon
 macro_line|#endif
+)brace
+DECL|function|ext2_check_inodes_bitmap
+r_void
+id|ext2_check_inodes_bitmap
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+)paren
+(brace
+r_struct
+id|ext2_super_block
+op_star
+id|es
+suffix:semicolon
+r_int
+r_int
+id|desc_count
+comma
+id|bitmap_count
+comma
+id|x
+suffix:semicolon
+r_int
+r_int
+id|group_desc
+suffix:semicolon
+r_int
+r_int
+id|desc
+suffix:semicolon
+r_int
+id|bitmap_nr
+suffix:semicolon
+r_struct
+id|ext2_group_desc
+op_star
+id|gdp
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+id|lock_super
+(paren
+id|sb
+)paren
+suffix:semicolon
+id|es
+op_assign
+id|sb-&gt;u.ext2_sb.s_es
+suffix:semicolon
+id|desc_count
+op_assign
+l_int|0
+suffix:semicolon
+id|bitmap_count
+op_assign
+l_int|0
+suffix:semicolon
+id|group_desc
+op_assign
+l_int|0
+suffix:semicolon
+id|desc
+op_assign
+l_int|0
+suffix:semicolon
+id|gdp
+op_assign
+l_int|NULL
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|sb-&gt;u.ext2_sb.s_groups_count
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|gdp
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sb-&gt;u.ext2_sb.s_group_desc
+(braket
+id|group_desc
+)braket
+)paren
+(brace
+id|ext2_error
+(paren
+id|sb
+comma
+l_string|&quot;ext2_check_inodes_bitmap&quot;
+comma
+l_string|&quot;Descriptor not loaded for group %d&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|gdp
+op_assign
+(paren
+r_struct
+id|ext2_group_desc
+op_star
+)paren
+id|sb-&gt;u.ext2_sb.s_group_desc
+(braket
+id|group_desc
+)braket
+op_member_access_from_pointer
+id|b_data
+suffix:semicolon
+)brace
+id|desc_count
+op_add_assign
+id|gdp
+(braket
+id|desc
+)braket
+dot
+id|bg_free_inodes_count
+suffix:semicolon
+id|bitmap_nr
+op_assign
+id|load_inode_bitmap
+(paren
+id|sb
+comma
+id|i
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sb-&gt;u.ext2_sb.s_inode_bitmap
+(braket
+id|bitmap_nr
+)braket
+)paren
+id|x
+op_assign
+id|ext2_count_free
+(paren
+id|sb-&gt;u.ext2_sb.s_inode_bitmap
+(braket
+id|bitmap_nr
+)braket
+comma
+id|EXT2_INODES_PER_GROUP
+c_func
+(paren
+id|sb
+)paren
+op_div
+l_int|8
+)paren
+suffix:semicolon
+r_else
+(brace
+id|x
+op_assign
+l_int|0
+suffix:semicolon
+id|ext2_error
+(paren
+id|sb
+comma
+l_string|&quot;ext2_check_inodes_bitmap&quot;
+comma
+l_string|&quot;Cannot load bitmap for group %d (bitmap = %d)&quot;
+comma
+id|i
+comma
+id|bitmap_nr
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|gdp
+(braket
+id|desc
+)braket
+dot
+id|bg_free_inodes_count
+op_ne
+id|x
+)paren
+id|ext2_error
+(paren
+id|sb
+comma
+l_string|&quot;ext2_check_inodes_bitmap&quot;
+comma
+l_string|&quot;Wrong free inodes count in group %d, &quot;
+l_string|&quot;stored = %d, counted = %lu&quot;
+comma
+id|i
+comma
+id|gdp
+(braket
+id|desc
+)braket
+dot
+id|bg_free_inodes_count
+comma
+id|x
+)paren
+suffix:semicolon
+id|bitmap_count
+op_add_assign
+id|x
+suffix:semicolon
+id|desc
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|desc
+op_eq
+id|EXT2_DESC_PER_BLOCK
+c_func
+(paren
+id|sb
+)paren
+)paren
+(brace
+id|group_desc
+op_increment
+suffix:semicolon
+id|desc
+op_assign
+l_int|0
+suffix:semicolon
+id|gdp
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|es-&gt;s_free_inodes_count
+op_ne
+id|bitmap_count
+)paren
+id|ext2_error
+(paren
+id|sb
+comma
+l_string|&quot;ext2_check_inodes_bitmap&quot;
+comma
+l_string|&quot;Wrong free inodes count in super block, &quot;
+l_string|&quot;stored = %lu, counted = %lu&quot;
+comma
+id|es-&gt;s_free_inodes_count
+comma
+id|bitmap_count
+)paren
+suffix:semicolon
+id|unlock_super
+(paren
+id|sb
+)paren
+suffix:semicolon
 )brace
 eof

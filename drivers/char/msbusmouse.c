@@ -149,6 +149,15 @@ op_logical_or
 id|buttons
 op_ne
 id|mouse.buttons
+op_logical_or
+(paren
+(paren
+op_complement
+id|buttons
+)paren
+op_amp
+l_int|0x07
+)paren
 )paren
 (brace
 id|mouse.buttons

@@ -64,6 +64,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_int
+r_int
 id|size
 suffix:semicolon
 r_int
@@ -410,9 +411,11 @@ comma
 id|i
 suffix:semicolon
 r_int
-id|blocks
-comma
+r_int
 id|left
+suffix:semicolon
+r_int
+id|blocks
 suffix:semicolon
 r_int
 id|bhrequest

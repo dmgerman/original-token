@@ -3471,7 +3471,9 @@ r_int
 id|ultrastor_reset
 c_func
 (paren
-r_void
+id|Scsi_Cmnd
+op_star
+id|SCpnt
 )paren
 (brace
 r_int
@@ -3495,11 +3497,21 @@ c_cond
 id|config.slot
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|SCpnt
+)paren
+id|SCpnt-&gt;flags
+op_or_assign
+id|NEEDS_JUMPSTART
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-)brace
 multiline_comment|/* Do not attempt a reset for the 24f */
+)brace
+suffix:semicolon
 id|save_flags
 c_func
 (paren
@@ -3874,6 +3886,7 @@ multiline_comment|/* A command has been lost.  Reset and report an error&n;&t;  
 id|ultrastor_reset
 c_func
 (paren
+l_int|NULL
 )paren
 suffix:semicolon
 r_return

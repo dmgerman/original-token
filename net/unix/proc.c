@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * UNIX&t;&t;An implementation of the AF_UNIX network domain for the&n; *&t;&t;LINUX operating system.  UNIX is implemented using the&n; *&t;&t;BSD Socket interface as the means of communication with&n; *&t;&t;the user level.&n; *&n; *&t;&t;The functions in this file provide an interface between&n; *&t;&t;the PROC file system and the &quot;unix&quot; family of networking&n; *&t;&t;protocols. It is mainly used for debugging and statistics.&n; *&n; * Version:&t;@(#)proc.c&t;1.0.4&t;05/23/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Gerald J. Heim, &lt;heim@peanuts.informatik.uni-tuebingen.de&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-kalrsruhe.de&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * UNIX&t;&t;An implementation of the AF_UNIX network domain for the&n; *&t;&t;LINUX operating system.  UNIX is implemented using the&n; *&t;&t;BSD Socket interface as the means of communication with&n; *&t;&t;the user level.&n; *&n; *&t;&t;The functions in this file provide an interface between&n; *&t;&t;the PROC file system and the &quot;unix&quot; family of networking&n; *&t;&t;protocols. It is mainly used for debugging and statistics.&n; *&n; * Version:&t;@(#)proc.c&t;1.0.4&t;05/23/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Gerald J. Heim, &lt;heim@peanuts.informatik.uni-tuebingen.de&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-kalrsruhe.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Andriews Brouwer&t;:&t;Comment errors&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -73,7 +73,7 @@ c_func
 (paren
 id|pos
 comma
-l_string|&quot;%2d: %08X %08X %08X %04X %02X&quot;
+l_string|&quot;%2d: %08X %08X %08lX %04X %02X&quot;
 comma
 id|i
 comma
@@ -162,7 +162,7 @@ op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * Check wether buffer _may_ overflow in the next loop.&n;&t;&t; * Since sockets may have very very long paths, we make&n;&t;&t; * PATH_MAX+100 the minimum space left for a new line.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Check whether buffer _may_ overflow in the next loop.&n;&t;&t; * Since sockets may have very very long paths, we make&n;&t;&t; * PATH_MAX+80 the minimum space left for a new line.&n;&t;&t; */
 r_if
 c_cond
 (paren

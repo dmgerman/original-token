@@ -10,7 +10,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|MAJOR_NR
-mdefine_line|#define MAJOR_NR 9
+mdefine_line|#define MAJOR_NR SCSI_TAPE_MAJOR
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;scsi_ioctl.h&quot;

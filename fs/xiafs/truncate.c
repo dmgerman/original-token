@@ -925,8 +925,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|inode-&gt;i_atime
-op_assign
 id|inode-&gt;i_ctime
 op_assign
 id|inode-&gt;i_mtime

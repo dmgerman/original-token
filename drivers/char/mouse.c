@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mouse.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 multiline_comment|/*&n; * note that you can remove any or all of the drivers by undefining&n; * the minor values in &lt;linux/mouse.h&gt;&n; */
 r_extern
 r_struct
@@ -255,7 +256,7 @@ c_cond
 id|register_chrdev
 c_func
 (paren
-l_int|10
+id|MOUSE_MAJOR
 comma
 l_string|&quot;mouse&quot;
 comma
@@ -266,7 +267,9 @@ id|mouse_fops
 id|printk
 c_func
 (paren
-l_string|&quot;unable to get major 10 for mouse devices&bslash;n&quot;
+l_string|&quot;unable to get major %d for mouse devices&bslash;n&quot;
+comma
+id|MOUSE_MAJOR
 )paren
 suffix:semicolon
 r_return

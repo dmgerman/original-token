@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;ne.c:v0.99-13 8/30/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;ne.c:v0.99-13s 11/17/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -444,6 +444,7 @@ multiline_comment|/* Read the 16 bytes of station address prom, returning 1 for&
 (brace
 r_struct
 (brace
+r_int
 r_char
 id|value
 comma
@@ -912,7 +913,7 @@ ques
 c_cond
 l_string|&quot;DE100&quot;
 suffix:colon
-l_string|&quot;D-Link&quot;
+l_string|&quot;NE1000&quot;
 suffix:semicolon
 id|start_page
 op_assign

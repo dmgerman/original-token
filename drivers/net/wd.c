@@ -1,29 +1,33 @@
 multiline_comment|/* wd.c: A WD80x3 ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1993 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    &n;    This is a driver for WD8003 and WD8013 &quot;compatible&quot; ethercards.&n;&n;    The Author may be reached as becker@super.org or&n;    C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;    Thanks to Russ Nelson (nelson@crnwyr.com) for loaning me a WD8013.&n;*/
+multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&t; This software may be used and&n;&t;distributed according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&t;&n;&t;This is a driver for WD8003 and WD8013 &quot;compatible&quot; ethercards.&n;&n;&t;The Author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;Thanks to Russ Nelson (nelson@crnwyr.com) for loaning me a WD8013.&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;wd.c:v0.99-14 10/13/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;wd.c:v0.99-14 11/21/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;memory.h&gt;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;8390.h&quot;
+multiline_comment|/* Compatibility definitions for earlier kernel versions. */
+macro_line|#ifndef HAVE_PORTRESERVE
+DECL|macro|check_region
+mdefine_line|#define check_region(ioaddr, size)              0
+DECL|macro|snarf_region
+mdefine_line|#define snarf_region(ioaddr, size);             do ; while (0)
+macro_line|#endif
 r_int
-id|wdprobe
+id|wd_probe
 c_func
 (paren
-r_int
-id|ioaddr
-comma
 r_struct
 id|device
 op_star
@@ -122,27 +126,27 @@ id|dev
 suffix:semicolon
 "&f;"
 DECL|macro|WD_START_PG
-mdefine_line|#define WD_START_PG&t;0x00&t;/* First page of TX buffer */
+mdefine_line|#define WD_START_PG&t;&t;0x00&t;/* First page of TX buffer */
 DECL|macro|WD03_STOP_PG
 mdefine_line|#define WD03_STOP_PG&t;0x20&t;/* Last page +1 of RX ring */
 DECL|macro|WD13_STOP_PG
 mdefine_line|#define WD13_STOP_PG&t;0x40&t;/* Last page +1 of RX ring */
 DECL|macro|WD_CMDREG
-mdefine_line|#define WD_CMDREG&t;0&t;/* Offset to ASIC command register. */
+mdefine_line|#define WD_CMDREG&t;&t;0&t;&t;/* Offset to ASIC command register. */
 DECL|macro|WD_RESET
-mdefine_line|#define  WD_RESET&t;0x80&t;/* Board reset, in WD_CMDREG. */
+mdefine_line|#define&t; WD_RESET&t;&t;0x80&t;/* Board reset, in WD_CMDREG. */
 DECL|macro|WD_MEMENB
-mdefine_line|#define  WD_MEMENB&t;0x40&t;/* Enable the shared memory. */
+mdefine_line|#define&t; WD_MEMENB&t;&t;0x40&t;/* Enable the shared memory. */
 DECL|macro|WD_CMDREG5
-mdefine_line|#define WD_CMDREG5&t;5&t;/* Offset to 16-bit-only ASIC register 5. */
+mdefine_line|#define WD_CMDREG5&t;&t;5&t;&t;/* Offset to 16-bit-only ASIC register 5. */
 DECL|macro|ISA16
-mdefine_line|#define  ISA16&t;&t;0x80&t;/* Enable 16 bit access from the ISA bus. */
+mdefine_line|#define&t; ISA16&t;&t;&t;0x80&t;/* Enable 16 bit access from the ISA bus. */
 DECL|macro|NIC16
-mdefine_line|#define  NIC16&t;&t;0x40&t;/* Enable 16 bit access from the 8390. */
+mdefine_line|#define&t; NIC16&t;&t;&t;0x40&t;/* Enable 16 bit access from the 8390. */
 DECL|macro|WD_NIC_OFFSET
-mdefine_line|#define WD_NIC_OFFSET&t;16&t;/* Offset to the 8390 NIC from the base_addr. */
+mdefine_line|#define WD_NIC_OFFSET&t;16&t;&t;/* Offset to the 8390 NIC from the base_addr. */
 "&f;"
-multiline_comment|/*  Probe for the WD8003 and WD8013.  These cards have the station&n;    address PROM at I/O ports &lt;base&gt;+8 to &lt;base&gt;+13, with a checksum&n;    following. A Soundblaster can have the same checksum as an WDethercard,&n;    so we have an extra exclusionary check for it.&n;&n;    The wdprobe1() routine initializes the card and fills the&n;    station address field. */
+multiline_comment|/*&t;Probe for the WD8003 and WD8013.  These cards have the station&n;&t;address PROM at I/O ports &lt;base&gt;+8 to &lt;base&gt;+13, with a checksum&n;&t;following. A Soundblaster can have the same checksum as an WDethercard,&n;&t;so we have an extra exclusionary check for it.&n;&n;&t;The wdprobe1() routine initializes the card and fills the&n;&t;station address field. */
 DECL|function|wd_probe
 r_int
 id|wd_probe
@@ -225,7 +229,6 @@ id|port
 op_increment
 )paren
 (brace
-macro_line|#ifdef HAVE_PORTRESERVE
 r_if
 c_cond
 (paren
@@ -240,7 +243,6 @@ l_int|32
 )paren
 r_continue
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -418,7 +420,7 @@ id|i
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* The following PureData probe code was contributed by&n;     Mike Jagdis &lt;jaggy@purplet.demon.co.uk&gt;. Puredata does software&n;     configuration differently from others so we have to check for them.&n;     This detects an 8 bit, 16 bit or dumb (Toshiba, jumpered) card.&n;     */
+multiline_comment|/* The following PureData probe code was contributed by&n;&t;   Mike Jagdis &lt;jaggy@purplet.demon.co.uk&gt;. Puredata does software&n;&t;   configuration differently from others so we have to check for them.&n;&t;   This detects an 8 bit, 16 bit or dumb (Toshiba, jumpered) card.&n;&t;   */
 r_if
 c_cond
 (paren
@@ -559,8 +561,8 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* End of PureData probe */
-multiline_comment|/* This method of checking for a 16-bit board is borrowed from the&n;&t; we.c driver.  A simpler method is just to look in ASIC reg. 0x03.&n;&t; I&squot;m comparing the two method in alpha test to make certain they&n;&t; return the same result. */
-multiline_comment|/* Check for the old 8 bit board - it has register 0/8 aliasing.&n;&t; Do NOT check i&gt;=6 here -- it hangs the old 8003 boards! */
+multiline_comment|/* This method of checking for a 16-bit board is borrowed from the&n;&t;&t;   we.c driver.  A simpler method is just to look in ASIC reg. 0x03.&n;&t;&t;   I&squot;m comparing the two method in alpha test to make certain they&n;&t;&t;   return the same result. */
+multiline_comment|/* Check for the old 8 bit board - it has register 0/8 aliasing.&n;&t;&t;   Do NOT check i&gt;=6 here -- it hangs the old 8003 boards! */
 r_for
 c_loop
 (paren
@@ -805,7 +807,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 macro_line|#if defined(WD_SHMEM) &amp;&amp; WD_SHMEM &gt; 0x80000
-multiline_comment|/* Allow a compile-time override.  */
+multiline_comment|/* Allow a compile-time override.&t; */
 id|dev-&gt;mem_start
 op_assign
 id|WD_SHMEM
@@ -849,7 +851,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; assigning address %#x&quot;
+l_string|&quot; assigning address %#lx&quot;
 comma
 id|dev-&gt;mem_start
 )paren
@@ -976,7 +978,126 @@ id|reg1
 op_eq
 l_int|0xff
 )paren
+(brace
 multiline_comment|/* Ack!! No way to read the IRQ! */
+r_int
+id|nic_addr
+op_assign
+id|ioaddr
+op_plus
+id|WD_NIC_OFFSET
+suffix:semicolon
+multiline_comment|/* We have an old-style ethercard that doesn&squot;t report its IRQ&n;&t;&t;&t;   line.  Do autoirq to find the IRQ line. Note that this IS NOT&n;&t;&t;&t;   a reliable way to trigger an interrupt. */
+id|outb_p
+c_func
+(paren
+id|E8390_NODMA
+op_plus
+id|E8390_STOP
+comma
+id|nic_addr
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+id|nic_addr
+op_plus
+id|EN0_IMR
+)paren
+suffix:semicolon
+multiline_comment|/* Disable all intrs. */
+id|autoirq_setup
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0xff
+comma
+id|nic_addr
+op_plus
+id|EN0_IMR
+)paren
+suffix:semicolon
+multiline_comment|/* Enable all interrupts. */
+id|outb_p
+c_func
+(paren
+l_int|0x00
+comma
+id|nic_addr
+op_plus
+id|EN0_RCNTLO
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x00
+comma
+id|nic_addr
+op_plus
+id|EN0_RCNTHI
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|E8390_RREAD
+op_plus
+id|E8390_START
+comma
+id|nic_addr
+)paren
+suffix:semicolon
+multiline_comment|/* Trigger it... */
+id|dev-&gt;irq
+op_assign
+id|autoirq_report
+c_func
+(paren
+l_int|2
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x00
+comma
+id|nic_addr
+op_plus
+id|EN0_IMR
+)paren
+suffix:semicolon
+multiline_comment|/* Mask all intrs. again. */
+r_if
+c_cond
+(paren
+id|ei_debug
+OG
+l_int|2
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot; autoirq is %d&quot;
+comma
+id|dev-&gt;irq
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;irq
+OL
+l_int|2
+)paren
 id|dev-&gt;irq
 op_assign
 id|word16
@@ -986,6 +1107,7 @@ l_int|10
 suffix:colon
 l_int|5
 suffix:semicolon
+)brace
 r_else
 id|dev-&gt;irq
 op_assign
@@ -1022,11 +1144,10 @@ id|dev-&gt;irq
 op_assign
 l_int|9
 suffix:semicolon
-multiline_comment|/* Snarf the interrupt now.  There&squot;s no point in waiting since we cannot&n;     share and the board will usually be enabled. */
-(brace
-r_int
-id|irqval
-op_assign
+multiline_comment|/* Snarf the interrupt now.  There&squot;s no point in waiting since we cannot&n;&t;   share and the board will usually be enabled. */
+r_if
+c_cond
+(paren
 id|irqaction
 (paren
 id|dev-&gt;irq
@@ -1034,29 +1155,20 @@ comma
 op_amp
 id|ei_sigaction
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|irqval
 )paren
 (brace
 id|printk
 (paren
-l_string|&quot; unable to get IRQ %d (irqval=%d).&bslash;n&quot;
+l_string|&quot; unable to get IRQ %d.&bslash;n&quot;
 comma
 id|dev-&gt;irq
-comma
-id|irqval
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-)brace
 multiline_comment|/* OK, were are certain this is going to work.  Setup the device. */
-macro_line|#ifdef HAVE_PORTRESERVE
 id|snarf_region
 c_func
 (paren
@@ -1065,7 +1177,6 @@ comma
 l_int|32
 )paren
 suffix:semicolon
-macro_line|#endif
 id|ethdev_init
 c_func
 (paren
@@ -1125,7 +1236,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; %s, IRQ %d, shared memory at %#x-%#x.&bslash;n&quot;
+l_string|&quot; %s, IRQ %d, shared memory at %#lx-%#lx.&bslash;n&quot;
 comma
 id|model_name
 comma
@@ -1208,7 +1319,7 @@ op_minus
 id|WD_NIC_OFFSET
 suffix:semicolon
 multiline_comment|/* WD_CMDREG */
-multiline_comment|/* Map in the shared memory. Always set register 0 last to remain&n;     compatible with very old boards. */
+multiline_comment|/* Map in the shared memory. Always set register 0 last to remain&n;&t; compatible with very old boards. */
 id|ei_status.reg0
 op_assign
 (paren
@@ -1307,7 +1418,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;resetting the WD80x3 t=%d...&quot;
+l_string|&quot;resetting the WD80x3 t=%lu...&quot;
 comma
 id|jiffies
 )paren
@@ -1409,15 +1520,9 @@ op_minus
 id|WD_NIC_OFFSET
 suffix:semicolon
 multiline_comment|/* WD_CMDREG */
-r_void
-op_star
+r_int
 id|xfer_start
 op_assign
-(paren
-r_void
-op_star
-)paren
-(paren
 id|dev-&gt;mem_start
 op_plus
 id|ring_offset
@@ -1427,9 +1532,8 @@ id|WD_START_PG
 op_lshift
 l_int|8
 )paren
-)paren
 suffix:semicolon
-multiline_comment|/* We&squot;ll always get a 4 byte header read first. */
+multiline_comment|/* We&squot;ll always get a 4 byte header read followed by a packet read, so&n;&t;   we enable 16 bit mode before the header, and disable after the body. */
 r_if
 c_cond
 (paren
@@ -1488,10 +1592,6 @@ id|xfer_start
 op_plus
 id|count
 OG
-(paren
-r_void
-op_star
-)paren
 id|dev-&gt;rmem_end
 )paren
 (brace
@@ -1499,10 +1599,6 @@ multiline_comment|/* We must wrap the input move. */
 r_int
 id|semi_count
 op_assign
-(paren
-r_void
-op_star
-)paren
 id|dev-&gt;rmem_end
 op_minus
 id|xfer_start
@@ -1512,6 +1608,10 @@ c_func
 (paren
 id|buf
 comma
+(paren
+r_char
+op_star
+)paren
 id|xfer_start
 comma
 id|semi_count
@@ -1544,12 +1644,16 @@ c_func
 (paren
 id|buf
 comma
+(paren
+r_char
+op_star
+)paren
 id|xfer_start
 comma
 id|count
 )paren
 suffix:semicolon
-multiline_comment|/* Turn off 16 bit access so that reboot works.  ISA brain-damage */
+multiline_comment|/* Turn off 16 bit access so that reboot works.&t; ISA brain-damage */
 r_if
 c_cond
 (paren
@@ -1602,15 +1706,8 @@ id|WD_NIC_OFFSET
 suffix:semicolon
 multiline_comment|/* WD_CMDREG */
 r_int
-r_char
-op_star
 id|shmem
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|dev-&gt;mem_start
 op_plus
 (paren
@@ -1645,6 +1742,10 @@ suffix:semicolon
 id|memcpy
 c_func
 (paren
+(paren
+r_char
+op_star
+)paren
 id|shmem
 comma
 id|buf
@@ -1667,6 +1768,10 @@ r_else
 id|memcpy
 c_func
 (paren
+(paren
+r_char
+op_star
+)paren
 id|shmem
 comma
 id|buf
@@ -1746,5 +1851,5 @@ l_int|0
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -Wall -O6 -I/usr/src/linux/net/tcp -c wd.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c wd.c&quot;&n; *  version-control: t&n; *  tab-width: 4&n; *  kept-new-versions: 5&n; * End:&n; */
 eof

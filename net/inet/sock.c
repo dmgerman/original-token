@@ -1,15 +1,21 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;SOCK - AF_INET protocol family socket handler.&n; *&n; * Version:&t;@(#)sock.c&t;1.0.17&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Numerous verify_area() problems&n; *&t;&t;Alan Cox&t;:&t;Connecting on a connecting socket&n; *&t;&t;&t;&t;&t;now returns an error for tcp.&n; *&t;&t;Alan Cox&t;:&t;sock-&gt;protocol is set correctly.&n; *&t;&t;&t;&t;&t;and is not sometimes left as 0.&n; *&t;&t;Alan Cox&t;:&t;connect handles icmp errors on a&n; *&t;&t;&t;&t;&t;connect properly. Unfortunately there&n; *&t;&t;&t;&t;&t;is a restart syscall nasty there. I&n; *&t;&t;&t;&t;&t;can&squot;t match BSD without hacking the C&n; *&t;&t;&t;&t;&t;library. Ideas urgently sought!&n; *&t;&t;Alan Cox&t;:&t;Disallow bind() to addresses that are&n; *&t;&t;&t;&t;&t;not ours - especially broadcast ones!!&n; *&t;&t;Alan Cox&t;:&t;Socket 1024 _IS_ ok for users. (fencepost)&n; *&t;&t;Alan Cox&t;:&t;sock_wfree/sock_rfree don&squot;t destroy sockets,&n; *&t;&t;&t;&t;&t;instead they leave that for the DESTROY timer.&n; *&t;&t;Alan Cox&t;:&t;Clean up error flag in accept&n; *&t;&t;Alan Cox&t;:&t;TCP ack handling is buggy, the DESTROY timer&n; *&t;&t;&t;&t;&t;was buggy. Put a remove_sock() in the handler&n; *&t;&t;&t;&t;&t;for memory when we hit 0. Also altered the timer&n; *&t;&t;&t;&t;&t;code. The ACK stuff can wait and needs major &n; *&t;&t;&t;&t;&t;TCP layer surgery.&n; *&t;&t;Alan Cox&t;:&t;Fixed TCP ack bug, removed remove sock&n; *&t;&t;&t;&t;&t;and fixed timer/inet_bh race.&n; *&t;&t;Alan Cox&t;:&t;Added zapped flag for TCP&n; *&t;&t;Alan Cox&t;:&t;Move kfree_skb into skbuff.c and tidied up surplus code&n; *&t;&t;Alan Cox&t;:&t;for new sk_buff allocations wmalloc/rmalloc now call alloc_skb&n; *&t;&t;Alan Cox&t;:&t;kfree_s calls now are kfree_skbmem so we can track skb resources&n; *&t;&t;Alan Cox&t;:&t;Supports socket option broadcast now as does udp. Packet and raw need fixing.&n; *&t;&t;Alan Cox&t;:&t;Added RCVBUF,SNDBUF size setting. It suddenely occured to me how easy it was so...&n; *&t;&t;Rick Sladkey&t;:&t;Relaxed UDP rules for matching packets.&n; *&t;&t;C.E.Hawkins&t;:&t;IFF_PROMISC/SIOCGHWADDR support&n; *&t;Pauline Middelink&t;:&t;Pidentd support&n; *&n; * To Fix:&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;SOCK - AF_INET protocol family socket handler.&n; *&n; * Version:&t;@(#)sock.c&t;1.0.17&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Numerous verify_area() problems&n; *&t;&t;Alan Cox&t;:&t;Connecting on a connecting socket&n; *&t;&t;&t;&t;&t;now returns an error for tcp.&n; *&t;&t;Alan Cox&t;:&t;sock-&gt;protocol is set correctly.&n; *&t;&t;&t;&t;&t;and is not sometimes left as 0.&n; *&t;&t;Alan Cox&t;:&t;connect handles icmp errors on a&n; *&t;&t;&t;&t;&t;connect properly. Unfortunately there&n; *&t;&t;&t;&t;&t;is a restart syscall nasty there. I&n; *&t;&t;&t;&t;&t;can&squot;t match BSD without hacking the C&n; *&t;&t;&t;&t;&t;library. Ideas urgently sought!&n; *&t;&t;Alan Cox&t;:&t;Disallow bind() to addresses that are&n; *&t;&t;&t;&t;&t;not ours - especially broadcast ones!!&n; *&t;&t;Alan Cox&t;:&t;Socket 1024 _IS_ ok for users. (fencepost)&n; *&t;&t;Alan Cox&t;:&t;sock_wfree/sock_rfree don&squot;t destroy sockets,&n; *&t;&t;&t;&t;&t;instead they leave that for the DESTROY timer.&n; *&t;&t;Alan Cox&t;:&t;Clean up error flag in accept&n; *&t;&t;Alan Cox&t;:&t;TCP ack handling is buggy, the DESTROY timer&n; *&t;&t;&t;&t;&t;was buggy. Put a remove_sock() in the handler&n; *&t;&t;&t;&t;&t;for memory when we hit 0. Also altered the timer&n; *&t;&t;&t;&t;&t;code. The ACK stuff can wait and needs major &n; *&t;&t;&t;&t;&t;TCP layer surgery.&n; *&t;&t;Alan Cox&t;:&t;Fixed TCP ack bug, removed remove sock&n; *&t;&t;&t;&t;&t;and fixed timer/inet_bh race.&n; *&t;&t;Alan Cox&t;:&t;Added zapped flag for TCP&n; *&t;&t;Alan Cox&t;:&t;Move kfree_skb into skbuff.c and tidied up surplus code&n; *&t;&t;Alan Cox&t;:&t;for new sk_buff allocations wmalloc/rmalloc now call alloc_skb&n; *&t;&t;Alan Cox&t;:&t;kfree_s calls now are kfree_skbmem so we can track skb resources&n; *&t;&t;Alan Cox&t;:&t;Supports socket option broadcast now as does udp. Packet and raw need fixing.&n; *&t;&t;Alan Cox&t;:&t;Added RCVBUF,SNDBUF size setting. It suddenely occured to me how easy it was so...&n; *&t;&t;Rick Sladkey&t;:&t;Relaxed UDP rules for matching packets.&n; *&t;&t;C.E.Hawkins&t;:&t;IFF_PROMISC/SIOCGHWADDR support&n; *&t;Pauline Middelink&t;:&t;Pidentd support&n; *&t;&t;Alan Cox&t;:&t;Fixed connect() taking signals I think.&n; *&t;&t;Alan Cox&t;:&t;SO_LINGER supported&n; *&n; * To Fix:&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;inet.h&quot;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;ip.h&quot;
@@ -20,11 +26,6 @@ macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;udp.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
 macro_line|#include &quot;sock.h&quot;
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &quot;raw.h&quot;
 macro_line|#include &quot;icmp.h&quot;
 DECL|variable|inet_debug
@@ -71,7 +72,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  wmem_alloc = %d&bslash;n&quot;
+l_string|&quot;  wmem_alloc = %lu&bslash;n&quot;
 comma
 id|sk-&gt;wmem_alloc
 )paren
@@ -79,7 +80,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  rmem_alloc = %d&bslash;n&quot;
+l_string|&quot;  rmem_alloc = %lu&bslash;n&quot;
 comma
 id|sk-&gt;rmem_alloc
 )paren
@@ -121,7 +122,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  daddr = %X, saddr = %X&bslash;n&quot;
+l_string|&quot;  daddr = %lX, saddr = %lX&bslash;n&quot;
 comma
 id|sk-&gt;daddr
 comma
@@ -147,7 +148,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  send_seq = %d, acked_seq = %d, copied_seq = %d&bslash;n&quot;
+l_string|&quot;  send_seq = %ld, acked_seq = %ld, copied_seq = %ld&bslash;n&quot;
 comma
 id|sk-&gt;send_seq
 comma
@@ -159,7 +160,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  rcv_ack_seq = %d, window_seq = %d, fin_seq = %d&bslash;n&quot;
+l_string|&quot;  rcv_ack_seq = %ld, window_seq = %ld, fin_seq = %ld&bslash;n&quot;
 comma
 id|sk-&gt;rcv_ack_seq
 comma
@@ -209,7 +210,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  retransmits = %d, timeout = %d&bslash;n&quot;
+l_string|&quot;  retransmits = %ld, timeout = %d&bslash;n&quot;
 comma
 id|sk-&gt;retransmits
 comma
@@ -287,7 +288,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  mem_addr = %p, mem_len = %d&bslash;n&quot;
+l_string|&quot;  mem_addr = %p, mem_len = %lu&bslash;n&quot;
 comma
 id|skb-&gt;mem_addr
 comma
@@ -1694,6 +1695,10 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+r_struct
+id|linger
+id|ling
+suffix:semicolon
 multiline_comment|/* This should really pass things on to the other levels. */
 r_if
 c_cond
@@ -1867,6 +1872,75 @@ id|sk-&gt;sndbuf
 op_assign
 id|val
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+r_case
+id|SO_LINGER
+suffix:colon
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|optval
+comma
+r_sizeof
+(paren
+id|ling
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
+id|memcpy_fromfs
+c_func
+(paren
+op_amp
+id|ling
+comma
+id|optval
+comma
+r_sizeof
+(paren
+id|ling
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ling.l_onoff
+op_eq
+l_int|0
+)paren
+(brace
+id|sk-&gt;linger
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+id|sk-&gt;lingertime
+op_assign
+id|ling.l_linger
+suffix:semicolon
+id|sk-&gt;linger
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -2061,6 +2135,10 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+r_struct
+id|linger
+id|ling
+suffix:semicolon
 multiline_comment|/* This should really pass things on to the other levels. */
 r_if
 c_cond
@@ -2111,12 +2189,10 @@ id|optname
 r_case
 id|SO_DEBUG
 suffix:colon
-multiline_comment|/* not implemented. */
 id|val
 op_assign
 id|sk-&gt;debug
 suffix:semicolon
-multiline_comment|/* No per socket debugging _YET_ */
 r_break
 suffix:semicolon
 r_case
@@ -2137,6 +2213,100 @@ op_assign
 id|sk-&gt;broadcast
 suffix:semicolon
 r_break
+suffix:semicolon
+r_case
+id|SO_LINGER
+suffix:colon
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|optval
+comma
+r_sizeof
+(paren
+id|ling
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|optlen
+comma
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
+id|put_fs_long
+c_func
+(paren
+r_sizeof
+(paren
+id|ling
+)paren
+comma
+(paren
+r_int
+r_int
+op_star
+)paren
+id|optlen
+)paren
+suffix:semicolon
+id|ling.l_onoff
+op_assign
+id|sk-&gt;linger
+suffix:semicolon
+id|ling.l_linger
+op_assign
+id|sk-&gt;lingertime
+suffix:semicolon
+id|memcpy_tofs
+c_func
+(paren
+id|optval
+comma
+op_amp
+id|ling
+comma
+r_sizeof
+(paren
+id|ling
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 r_case
 id|SO_SNDBUF
@@ -2959,6 +3129,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* we will try not to send any packets smaller than this. */
+id|sk-&gt;debug
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* this is how many unacked bytes we will accept for this socket.  */
 id|sk-&gt;max_unacked
 op_assign
@@ -3334,12 +3508,29 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;lingertime
+)paren
+id|current-&gt;timeout
+op_assign
+id|jiffies
+op_plus
+id|HZ
+op_star
+id|sk-&gt;lingertime
+suffix:semicolon
 r_while
 c_loop
 (paren
 id|sk-&gt;state
 op_ne
 id|TCP_CLOSE
+op_logical_and
+id|current-&gt;timeout
+OG
+l_int|0
 )paren
 (brace
 id|interruptible_sleep_on
@@ -3362,12 +3553,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|current-&gt;timeout
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 op_minus
 id|ERESTARTSYS
 suffix:semicolon
 )brace
 )brace
+id|current-&gt;timeout
+op_assign
+l_int|0
+suffix:semicolon
 id|sti
 c_func
 (paren
@@ -3901,9 +4100,37 @@ id|sock-&gt;state
 op_eq
 id|SS_CONNECTING
 op_logical_and
+id|sk-&gt;state
+op_eq
+id|TCP_ESTABLISHED
+)paren
+(brace
+id|sock-&gt;state
+op_assign
+id|SS_CONNECTED
+suffix:semicolon
+multiline_comment|/* Connection completing after a connect/EINPROGRESS/select/connect */
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* Rock and roll */
+)brace
+r_if
+c_cond
+(paren
+id|sock-&gt;state
+op_eq
+id|SS_CONNECTING
+op_logical_and
 id|sk-&gt;protocol
 op_eq
 id|IPPROTO_TCP
+op_logical_and
+(paren
+id|flags
+op_amp
+id|O_NONBLOCK
+)paren
 )paren
 r_return
 op_minus
@@ -4081,11 +4308,6 @@ op_eq
 id|IPPROTO_TCP
 )paren
 (brace
-id|sk-&gt;inuse
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* keep the socket safe for us to use */
 id|sti
 c_func
 (paren
@@ -6889,12 +7111,7 @@ op_logical_neg
 id|sk-&gt;prot
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;sock.c: release_sock sk-&gt;prot == NULL&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;printk(&quot;sock.c: release_sock sk-&gt;prot == NULL&bslash;n&quot;); */
 r_return
 suffix:semicolon
 )brace
@@ -7356,7 +7573,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Swansea University Computer Society Net2Debugged [1.22]&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society Net2Debugged [1.24]&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Set up our UNIX VFS major device. */
@@ -7489,14 +7706,14 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s%s &quot;
+l_string|&quot;%s%s&quot;
 comma
 id|p-&gt;name
 comma
 id|tmp
 ques
 c_cond
-l_string|&quot;,&quot;
+l_string|&quot;, &quot;
 suffix:colon
 l_string|&quot;&bslash;n&quot;
 )paren

@@ -381,7 +381,7 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-id|inode-&gt;i_atime
+id|inode-&gt;i_ctime
 op_assign
 id|inode-&gt;i_mtime
 op_assign
@@ -510,7 +510,7 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-id|inode-&gt;i_atime
+id|inode-&gt;i_ctime
 op_assign
 id|inode-&gt;i_mtime
 op_assign

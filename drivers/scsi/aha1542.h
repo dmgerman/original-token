@@ -270,7 +270,8 @@ r_int
 id|aha1542_reset
 c_func
 (paren
-r_void
+id|Scsi_Cmnd
+op_star
 )paren
 suffix:semicolon
 r_int
@@ -289,11 +290,13 @@ DECL|macro|AHA1542_MAILBOXES
 mdefine_line|#define AHA1542_MAILBOXES 8
 DECL|macro|AHA1542_SCATTER
 mdefine_line|#define AHA1542_SCATTER 16
+DECL|macro|AHA1542_CMDLUN
+mdefine_line|#define AHA1542_CMDLUN 1
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
 DECL|macro|AHA1542
-mdefine_line|#define AHA1542 {&quot;Adaptec 1542&quot;, aha1542_detect,&t;&bslash;&n;&t;&t;aha1542_info, aha1542_command,&t;&t;&bslash;&n;&t;&t;aha1542_queuecommand,&t;&t;&t;&bslash;&n;&t;&t;aha1542_abort,&t;&t;&t;&t;&bslash;&n;&t;&t;aha1542_reset,&t;&t;&t;&t;&bslash;&n;&t;        NULL,&t;&t;                        &bslash;&n;&t;&t;aha1542_biosparam,                      &bslash;&n;&t;&t;AHA1542_MAILBOXES, 7, AHA1542_SCATTER, 1, 0, 1}
+mdefine_line|#define AHA1542 {&quot;Adaptec 1542&quot;, aha1542_detect,&t;&bslash;&n;&t;&t;aha1542_info, aha1542_command,&t;&t;&bslash;&n;&t;&t;aha1542_queuecommand,&t;&t;&t;&bslash;&n;&t;&t;aha1542_abort,&t;&t;&t;&t;&bslash;&n;&t;&t;aha1542_reset,&t;&t;&t;&t;&bslash;&n;&t;        NULL,&t;&t;                        &bslash;&n;&t;&t;aha1542_biosparam,                      &bslash;&n;&t;&t;AHA1542_MAILBOXES, 7, AHA1542_SCATTER, AHA1542_CMDLUN &bslash;&n;&t;&t;  , 0, 1}
 macro_line|#endif
 eof

@@ -3,8 +3,8 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#if 0
 r_static
 r_int
@@ -273,28 +273,16 @@ id|error_msg
 op_ne
 l_int|NULL
 )paren
-(brace
-id|printk
+id|ext2_error
 (paren
-l_string|&quot;%s: bad directory entry (dev %04x, dir %d): %s&bslash;n&quot;
+id|dir-&gt;i_sb
 comma
 id|function
 comma
-id|dir
-ques
-c_cond
-id|dir-&gt;i_dev
-suffix:colon
-l_int|0
-comma
-id|dir-&gt;i_ino
+l_string|&quot;bad directory entry: %s&bslash;n&quot;
+l_string|&quot;offset=%lu, inode=%lu, rec_len=%d, name_len=%d&quot;
 comma
 id|error_msg
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;offset=%d, inode=%d, rec_len=%d, name_len=%d&bslash;n&quot;
 comma
 id|offset
 comma
@@ -305,7 +293,6 @@ comma
 id|de-&gt;name_len
 )paren
 suffix:semicolon
-)brace
 r_return
 id|error_msg
 op_eq
@@ -344,7 +331,8 @@ id|count
 r_int
 r_int
 id|offset
-comma
+suffix:semicolon
+r_int
 id|i
 suffix:semicolon
 r_struct

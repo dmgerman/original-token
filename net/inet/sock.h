@@ -114,6 +114,11 @@ multiline_comment|/* In ipx means not linked */
 DECL|member|broadcast
 id|broadcast
 suffix:semicolon
+DECL|member|lingertime
+r_int
+r_int
+id|lingertime
+suffix:semicolon
 DECL|member|proc
 r_int
 id|proc

@@ -639,6 +639,27 @@ r_if
 c_cond
 (paren
 id|result
+op_eq
+op_minus
+id|ECONNREFUSED
+)paren
+(brace
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_rpc_call: server playing coy&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_goto
+id|re_select
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|result
 op_ne
 op_minus
 id|ERESTARTSYS

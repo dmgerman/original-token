@@ -1,4 +1,4 @@
-multiline_comment|/* el2.c: A shared-memory NS8390 ethernet driver for linux. */
+multiline_comment|/* 3c503.c: A shared-memory NS8390 ethernet driver for linux. */
 multiline_comment|/*&n;    Written 1992,1993 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This driver should work with the 3c503 and 3c503/16.  It should be used&n;    in shared memory mode for best performance, although it may also work&n;    in programmed-I/O mode.&n;&n;    The Author may be reached as becker@super.org or&n;    C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;*/
 DECL|variable|version
 r_static
@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;el2.c:v0.99.13 8/30/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;3c503.c:v0.99.13 8/30/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

@@ -3530,7 +3530,7 @@ id|id
 (brace
 id|printk
 (paren
-l_string|&quot;shm_swap: id=%d does not match shmd&bslash;n&quot;
+l_string|&quot;shm_swap: id=%ld does not match shmd&bslash;n&quot;
 comma
 id|id
 )paren
@@ -3558,7 +3558,7 @@ id|shmd-&gt;end
 (brace
 id|printk
 (paren
-l_string|&quot;shm_swap: too large idx=%d id=%d PANIC&bslash;n&quot;
+l_string|&quot;shm_swap: too large idx=%ld id=%ld PANIC&bslash;n&quot;
 comma
 id|idx
 comma
@@ -3593,7 +3593,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;shm_swap: bad pgtbl! id=%d start=%x idx=%d&bslash;n&quot;
+l_string|&quot;shm_swap: bad pgtbl! id=%ld start=%lx idx=%ld&bslash;n&quot;
 comma
 id|id
 comma

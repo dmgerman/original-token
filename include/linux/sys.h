@@ -881,12 +881,28 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|sys_mprotect
+c_func
+(paren
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sys_sigprocmask
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * These are system calls that will be removed at some time&n; * due to newer versions existing..&n; */
 macro_line|#ifdef notdef
 DECL|macro|sys_waitpid
 mdefine_line|#define sys_waitpid&t;sys_old_syscall&t;/* sys_wait4&t;*/
 DECL|macro|sys_olduname
 mdefine_line|#define sys_olduname&t;sys_old_syscall /* sys_newuname&t;*/
+DECL|macro|sys_uname
+mdefine_line|#define sys_uname&t;sys_old_syscall /* sys_newuname&t;*/
 DECL|macro|sys_stat
 mdefine_line|#define sys_stat&t;sys_old_syscall /* sys_newstat&t;*/
 DECL|macro|sys_fstat
@@ -895,6 +911,10 @@ DECL|macro|sys_lstat
 mdefine_line|#define sys_lstat&t;sys_old_syscall /* sys_newlstat&t;*/
 DECL|macro|sys_signal
 mdefine_line|#define sys_signal&t;sys_old_syscall&t;/* sys_sigaction */
+DECL|macro|sys_sgetmask
+mdefine_line|#define sys_sgetmask&t;sys_old_syscall /* sys_sigprocmask */
+DECL|macro|sys_ssetmask
+mdefine_line|#define sys_ssetmask&t;sys_old_syscall /* sig_sigprocmask */
 macro_line|#endif
 DECL|typedef|fn_ptr
 r_typedef

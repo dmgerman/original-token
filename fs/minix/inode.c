@@ -2308,7 +2308,7 @@ id|bh-&gt;b_uptodate
 (brace
 id|printk
 (paren
-l_string|&quot;IO error syncing minix inode [%04x:%08x]&bslash;n&quot;
+l_string|&quot;IO error syncing minix inode [%04x:%08lx]&bslash;n&quot;
 comma
 id|inode-&gt;i_dev
 comma

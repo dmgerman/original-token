@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_entry.c                                                              |&n; |                                                                           |&n; | The entry function for wm-FPU-emu                                         |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; | See the files &quot;README&quot; and &quot;COPYING&quot; for further copyright and warranty   |&n; | information.                                                              |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_entry.c                                                              |&n; |                                                                           |&n; | The entry function for wm-FPU-emu                                         |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; | See the files &quot;README&quot; and &quot;COPYING&quot; for further copyright and warranty   |&n; | information.                                                              |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | Note:                                                                     |&n; |    The file contains code which accesses user memory.                     |&n; |    Emulator static data may change when user memory is accessed, due to   |&n; |    other processes using the emulator while swapping is in progress.      |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | math_emulate() is the sole entry point for wm-FPU-emu                     |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &lt;linux/signal.h&gt;
@@ -53,6 +53,7 @@ mdefine_line|#define _df_d8_ fstp_i    /* unofficial code (1f) */
 DECL|variable|st_instr_table
 r_static
 id|FUNC
+r_const
 id|st_instr_table
 (braket
 l_int|64
@@ -193,6 +194,7 @@ macro_line|#else     /* Support only documented FPU op-codes */
 DECL|variable|st_instr_table
 r_static
 id|FUNC
+r_const
 id|st_instr_table
 (braket
 l_int|64
@@ -356,6 +358,7 @@ DECL|variable|type_table
 r_static
 r_int
 r_char
+r_const
 id|type_table
 (braket
 l_int|64
@@ -496,6 +499,7 @@ DECL|variable|type_table
 r_static
 r_int
 r_char
+r_const
 id|type_table
 (braket
 l_int|64
@@ -804,14 +808,14 @@ r_if
 c_cond
 (paren
 id|FPU_CS
-op_ne
-id|USER_CS
+op_eq
+id|KERNEL_CS
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;math_emulate: %04x:%08x&bslash;n&quot;
+l_string|&quot;math_emulate: %04x:%08lx&bslash;n&quot;
 comma
 id|FPU_CS
 comma
@@ -822,6 +826,32 @@ id|panic
 c_func
 (paren
 l_string|&quot;Math emulation needed in kernel&quot;
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* We cannot handle multiple segments yet */
+r_if
+c_cond
+(paren
+id|FPU_CS
+op_ne
+id|USER_CS
+op_logical_or
+id|FPU_DS
+op_ne
+id|USER_DS
+)paren
+(brace
+id|FPU_ORIG_EIP
+op_assign
+id|FPU_EIP
+suffix:semicolon
+id|math_abort
+c_func
+(paren
+id|FPU_info
+comma
+id|SIGILL
 )paren
 suffix:semicolon
 )brace
@@ -2012,6 +2042,41 @@ suffix:semicolon
 )brace
 id|FPU_instruction_done
 suffix:colon
+macro_line|#ifdef DEBUG
+(brace
+multiline_comment|/* !!!!!!!!!!! */
+r_static
+r_int
+r_int
+id|count
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+op_increment
+id|count
+op_mod
+l_int|10000
+)paren
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%d FP instr., current=0x%04x&bslash;n&quot;
+comma
+id|count
+comma
+id|code
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* !!!!!!!!!!! */
+macro_line|#endif DEBUG
 id|ip_offset
 op_assign
 id|FPU_entry_eip

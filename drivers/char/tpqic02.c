@@ -6,21 +6,22 @@ macro_line|#if CONFIG_TAPE_QIC02
 multiline_comment|/*&n;#define TDEBUG&n;*/
 DECL|macro|REALLY_SLOW_IO
 mdefine_line|#define REALLY_SLOW_IO&t;&t;/* it sure is ... */
-macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mtio.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tpqic02.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/* check existence of required configuration parameters */
-macro_line|#if !defined(TAPE_QIC02_MAJOR) || !defined(TAPE_QIC02_PORT) || &bslash;&n;    !defined(TAPE_QIC02_IRQ) || !defined(TAPE_QIC02_DMA)
+macro_line|#if !defined(TAPE_QIC02_PORT) || &bslash;&n;    !defined(TAPE_QIC02_IRQ) || &bslash;&n;    !defined(TAPE_QIC02_DMA)
 macro_line|#error tape_qic02 configuration error
 macro_line|#endif
 DECL|macro|TPQIC_NAME
@@ -230,9 +231,7 @@ r_static
 id|dev_t
 id|current_tape_dev
 op_assign
-(paren
-id|TAPE_QIC02_MAJOR
-)paren
+id|QIC02_TAPE_MAJOR
 op_lshift
 l_int|8
 suffix:semicolon
@@ -1408,15 +1407,22 @@ id|QIC_CTL_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* de-assert reset */
-id|status_dead
+multiline_comment|/* KLUDGE FOR G++ BUG */
+(brace
+r_int
+id|stat
 op_assign
-(paren
-(paren
 id|inb_p
 c_func
 (paren
 id|QIC_STAT_PORT
 )paren
+suffix:semicolon
+id|status_dead
+op_assign
+(paren
+(paren
+id|stat
 op_amp
 id|QIC_STAT_RESETMASK
 )paren
@@ -1424,6 +1430,7 @@ op_ne
 id|QIC_STAT_RESETVAL
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* if successful, inb(STAT) returned RESETVAL */
 r_if
 c_cond
@@ -7663,7 +7670,7 @@ c_cond
 (paren
 id|dev_maj
 op_ne
-id|TAPE_QIC02_MAJOR
+id|QIC02_TAPE_MAJOR
 )paren
 (brace
 id|printk
@@ -8646,7 +8653,7 @@ c_cond
 id|register_chrdev
 c_func
 (paren
-id|TAPE_QIC02_MAJOR
+id|QIC02_TAPE_MAJOR
 comma
 id|TPQIC_NAME
 comma
@@ -8661,7 +8668,7 @@ c_func
 id|TPQIC_NAME
 l_string|&quot;: Unable to get chrdev major %d&bslash;n&quot;
 comma
-id|TAPE_QIC02_MAJOR
+id|QIC02_TAPE_MAJOR
 )paren
 suffix:semicolon
 r_return

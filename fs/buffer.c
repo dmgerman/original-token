@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -738,9 +739,8 @@ id|dev
 )paren
 (brace
 r_case
-l_int|2
+id|FLOPPY_MAJOR
 suffix:colon
-multiline_comment|/* floppy disc */
 r_if
 c_cond
 (paren
@@ -779,9 +779,8 @@ r_break
 suffix:semicolon
 macro_line|#if defined(CONFIG_BLK_DEV_SD) &amp;&amp; defined(CONFIG_SCSI)
 r_case
-l_int|8
+id|SCSI_DISK_MAJOR
 suffix:colon
-multiline_comment|/* Removable scsi disk */
 id|i
 op_assign
 id|check_scsidisk_media_change
@@ -797,9 +796,8 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_BLK_DEV_SR) &amp;&amp; defined(CONFIG_SCSI)
 r_case
-l_int|11
+id|SCSI_CDROM_MAJOR
 suffix:colon
-multiline_comment|/* CDROM */
 id|i
 op_assign
 id|check_cdrom_media_change
@@ -815,9 +813,8 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_CDU31A)
 r_case
-l_int|15
+id|CDU31A_CDROM_MAJOR
 suffix:colon
-multiline_comment|/* Sony CDROM */
 id|i
 op_assign
 id|check_cdu31a_media_change
@@ -833,9 +830,8 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_MCD)
 r_case
-l_int|23
+id|MITSUMI_CDROM_MAJOR
 suffix:colon
-multiline_comment|/* Sony CDROM */
 id|i
 op_assign
 id|check_mcd_media_change
@@ -941,7 +937,7 @@ c_func
 id|dev
 )paren
 op_eq
-l_int|8
+id|SCSI_DISK_MAJOR
 )paren
 id|revalidate_scsidisk
 c_func
@@ -2047,7 +2043,7 @@ id|size
 r_goto
 id|repeat
 suffix:semicolon
-multiline_comment|/* OK, FINALLY we know that this buffer is the only one of it&squot;s kind, */
+multiline_comment|/* OK, FINALLY we know that this buffer is the only one of its kind, */
 multiline_comment|/* and that it&squot;s unused (b_count=0), unlocked (b_lock=0), and clean */
 id|bh-&gt;b_count
 op_assign
@@ -3718,7 +3714,7 @@ c_func
 (paren
 id|bh
 comma
-l_int|4
+id|i
 )paren
 suffix:semicolon
 id|where

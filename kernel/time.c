@@ -1183,6 +1183,21 @@ id|txc.mode
 op_amp
 id|ADJ_OFFSET
 )paren
+r_if
+c_cond
+(paren
+id|txc.mode
+op_eq
+id|ADJ_OFFSET_SINGLESHOT
+)paren
+(brace
+id|time_adjust
+op_assign
+id|txc.offset
+suffix:semicolon
+)brace
+r_else
+multiline_comment|/* XXX should give an error if other bits set */
 (brace
 id|time_offset
 op_assign

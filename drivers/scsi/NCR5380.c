@@ -6019,7 +6019,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Function : int NCR5380_reset (void)&n; * &n; * Purpose : reset the SCSI bus.&n; *&n; * Returns : 0&n; *&n; * XXX we really need to add some sort of a per instance field here so that &n; * we only do a SCSI bus reset on the host adapter for which the reset command&n; * was called.&n; */
+multiline_comment|/* &n; * Function : int NCR5380_reset (struct Scsi_Cmnd *)&n; * &n; * Purpose : reset the SCSI bus.&n; *&n; * Returns : 0&n; */
 macro_line|#ifndef NCR5380_reset
 r_static
 macro_line|#endif
@@ -6027,7 +6027,9 @@ DECL|function|NCR5380_reset
 r_int
 id|NCR5380_reset
 (paren
-r_void
+id|Scsi_Cmnd
+op_star
+id|SCpnt
 )paren
 (brace
 id|NCR5380_local_declare
@@ -6045,20 +6047,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_for
-c_loop
-(paren
 id|instance
 op_assign
-id|first_instance
+id|SCpnt-&gt;host
 suffix:semicolon
-id|instance
-suffix:semicolon
-id|instance
-op_assign
-id|instance-&gt;next
-)paren
-(brace
 id|NCR5380_setup
 c_func
 (paren
@@ -6089,7 +6081,20 @@ comma
 id|ICR_BASE
 )paren
 suffix:semicolon
-)brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|SCpnt
+)paren
+id|SCpnt-&gt;flags
+op_or_assign
+id|NEEDS_JUMPSTART
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

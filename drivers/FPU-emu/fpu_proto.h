@@ -73,10 +73,12 @@ id|real_2op_NaN
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|a
 comma
 id|FPU_REG
+r_const
 op_star
 id|b
 comma
@@ -427,6 +429,7 @@ id|convert_l2reg
 c_func
 (paren
 r_int
+r_const
 op_star
 id|arg
 comma
@@ -479,6 +482,7 @@ id|poly_2xm1
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|arg
 comma
@@ -515,6 +519,7 @@ id|poly_l2
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|arg
 comma
@@ -529,6 +534,7 @@ id|poly_l2p1
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|arg
 comma
@@ -544,6 +550,7 @@ id|poly_sine
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|arg
 comma
@@ -559,12 +566,13 @@ id|poly_tan
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|arg
 comma
 id|FPU_REG
 op_star
-id|y_reg
+id|result
 comma
 r_int
 id|invert
@@ -577,10 +585,12 @@ id|reg_add
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|a
 comma
 id|FPU_REG
+r_const
 op_star
 id|b
 comma
@@ -598,10 +608,12 @@ id|reg_sub
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|a
 comma
 id|FPU_REG
+r_const
 op_star
 id|b
 comma
@@ -620,6 +632,7 @@ id|compare
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|b
 )paren
@@ -862,10 +875,12 @@ id|reg_mul
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|a
 comma
 id|FPU_REG
+r_const
 op_star
 id|b
 comma

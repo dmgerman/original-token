@@ -22,6 +22,22 @@ suffix:semicolon
 multiline_comment|/* 14 bytes of protocol address&t;*/
 )brace
 suffix:semicolon
+DECL|struct|linger
+r_struct
+id|linger
+(brace
+DECL|member|l_onoff
+r_int
+id|l_onoff
+suffix:semicolon
+multiline_comment|/* Linger active&t;&t;*/
+DECL|member|l_linger
+r_int
+id|l_linger
+suffix:semicolon
+multiline_comment|/* How long to linger for&t;*/
+)brace
+suffix:semicolon
 multiline_comment|/* Socket types. */
 DECL|macro|SOCK_STREAM
 mdefine_line|#define SOCK_STREAM&t;1&t;&t;/* stream (connection) socket&t;*/

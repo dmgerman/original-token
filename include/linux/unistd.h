@@ -237,7 +237,7 @@ mdefine_line|#define __NR_swapoff&t;&t;115
 DECL|macro|__NR_sysinfo
 mdefine_line|#define __NR_sysinfo&t;&t;116
 DECL|macro|__NR_ipc
-mdefine_line|#define __NR_ipc&t;&t;117&t;/* not implemented yet */
+mdefine_line|#define __NR_ipc&t;&t;117
 DECL|macro|__NR_fsync
 mdefine_line|#define __NR_fsync&t;&t;118
 DECL|macro|__NR_sigreturn
@@ -254,6 +254,8 @@ DECL|macro|__NR_adjtimex
 mdefine_line|#define __NR_adjtimex&t;&t;124
 DECL|macro|__NR_mprotect
 mdefine_line|#define __NR_mprotect&t;&t;125
+DECL|macro|__NR_sigprocmask
+mdefine_line|#define __NR_sigprocmask&t;126
 r_extern
 r_int
 id|errno

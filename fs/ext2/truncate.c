@@ -1,10 +1,13 @@
 multiline_comment|/*&n; *  linux/fs/ext2/truncate.c&n; *&n; *  Copyright (C) 1992, 1993  Remy Card (card@masi.ibp.fr)&n; *&n; *  from&n; *&n; *  linux/fs/minix/truncate.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/ext2_fs.h&gt;
-macro_line|#include &lt;linux/tty.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/ext2_fs.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/locks.h&gt;
+DECL|macro|clear_block
+mdefine_line|#define clear_block(addr,size,value) &bslash;&n;&t;__asm__(&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;rep&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;stosl&quot; &bslash;&n;&t;&t;: &bslash;&n;&t;&t;:&quot;a&quot; (value), &quot;c&quot; (size / 4), &quot;D&quot; ((long) (addr)) &bslash;&n;&t;&t;:&quot;cx&quot;, &quot;di&quot;)
 multiline_comment|/*&n; * Truncate has the most races in the whole filesystem: coding it is&n; * a pain in the a**. Especially as I don&squot;t do any locking...&n; *&n; * The code may look a bit weird, but that&squot;s just because I&squot;ve tried to&n; * handle things like file-size changes in a somewhat graceful manner.&n; * Anyway, truncating a file at the same time somebody else writes to it&n; * is likely to result in pretty weird behaviour...&n; *&n; * The new code handles normal truncates (size = 0) as well as the more&n; * general case (size = XXX). I hope.&n; */
 DECL|function|trunc_direct
 r_static
@@ -87,6 +90,25 @@ id|tmp
 )paren
 r_continue
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;u.ext2_i.i_flags
+op_amp
+id|EXT2_SECRM_FL
+)paren
+id|bh
+op_assign
+id|getblk
+(paren
+id|inode-&gt;i_dev
+comma
+id|tmp
+comma
+id|inode-&gt;i_sb-&gt;s_blocksize
+)paren
+suffix:semicolon
+r_else
 id|bh
 op_assign
 id|get_hash_table
@@ -157,6 +179,28 @@ id|inode-&gt;i_dirt
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;u.ext2_i.i_flags
+op_amp
+id|EXT2_SECRM_FL
+)paren
+(brace
+id|clear_block
+(paren
+id|bh-&gt;b_data
+comma
+id|inode-&gt;i_sb-&gt;s_blocksize
+comma
+id|CURRENT_TIME
+)paren
+suffix:semicolon
+id|bh-&gt;b_dirt
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 id|brelse
 (paren
 id|bh
@@ -362,6 +406,25 @@ id|tmp
 )paren
 r_continue
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;u.ext2_i.i_flags
+op_amp
+id|EXT2_SECRM_FL
+)paren
+id|bh
+op_assign
+id|getblk
+(paren
+id|inode-&gt;i_dev
+comma
+id|tmp
+comma
+id|inode-&gt;i_sb-&gt;s_blocksize
+)paren
+suffix:semicolon
+r_else
 id|bh
 op_assign
 id|get_hash_table
@@ -428,6 +491,28 @@ id|ind_bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;u.ext2_i.i_flags
+op_amp
+id|EXT2_SECRM_FL
+)paren
+(brace
+id|clear_block
+(paren
+id|bh-&gt;b_data
+comma
+id|inode-&gt;i_sb-&gt;s_blocksize
+comma
+id|CURRENT_TIME
+)paren
+suffix:semicolon
+id|bh-&gt;b_dirt
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 id|brelse
 (paren
 id|bh
@@ -526,6 +611,34 @@ id|ext2_free_block
 id|inode-&gt;i_sb
 comma
 id|tmp
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|IS_SYNC
+c_func
+(paren
+id|inode
+)paren
+op_logical_and
+id|ind_bh-&gt;b_dirt
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|WRITE
+comma
+l_int|1
+comma
+op_amp
+id|ind_bh
+)paren
+suffix:semicolon
+id|wait_on_buffer
+(paren
+id|ind_bh
 )paren
 suffix:semicolon
 )brace
@@ -823,6 +936,34 @@ id|tmp
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|IS_SYNC
+c_func
+(paren
+id|inode
+)paren
+op_logical_and
+id|dind_bh-&gt;b_dirt
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|WRITE
+comma
+l_int|1
+comma
+op_amp
+id|dind_bh
+)paren
+suffix:semicolon
+id|wait_on_buffer
+(paren
+id|dind_bh
+)paren
+suffix:semicolon
+)brace
 id|brelse
 (paren
 id|dind_bh
@@ -1012,7 +1153,6 @@ id|inode
 comma
 id|EXT2_NDIR_BLOCKS
 op_plus
-multiline_comment|/*&t;&t;&t;addr_per_block + addr_per_block * addr_per_block +&n;&t;&t;&t;(i * (addr_per_block * addr_per_block)), tind); */
 id|addr_per_block
 op_plus
 (paren
@@ -1110,6 +1250,34 @@ id|ext2_free_block
 id|inode-&gt;i_sb
 comma
 id|tmp
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|IS_SYNC
+c_func
+(paren
+id|inode
+)paren
+op_logical_and
+id|tind_bh-&gt;b_dirt
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|WRITE
+comma
+l_int|1
+comma
+op_amp
+id|tind_bh
+)paren
+suffix:semicolon
+id|wait_on_buffer
+(paren
+id|tind_bh
 )paren
 suffix:semicolon
 )brace
@@ -1235,6 +1403,22 @@ op_logical_neg
 id|retry
 )paren
 r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_SYNC
+c_func
+(paren
+id|inode
+)paren
+op_logical_and
+id|inode-&gt;i_dirt
+)paren
+id|ext2_sync_inode
+(paren
+id|inode
+)paren
 suffix:semicolon
 id|current-&gt;counter
 op_assign

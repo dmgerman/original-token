@@ -629,7 +629,7 @@ id|addr
 id|printk
 c_func
 (paren
-l_string|&quot;unmap_fixup: area=%x-%x, unmap %x-%x!!&bslash;n&quot;
+l_string|&quot;unmap_fixup: area=%lx-%lx, unmap %lx-%lx!!&bslash;n&quot;
 comma
 id|area-&gt;vm_start
 comma
@@ -701,10 +701,20 @@ id|end
 op_le
 id|area-&gt;vm_end
 )paren
+(brace
+id|area-&gt;vm_offset
+op_add_assign
+(paren
+id|end
+op_minus
+id|area-&gt;vm_start
+)paren
+suffix:semicolon
 id|area-&gt;vm_start
 op_assign
 id|end
 suffix:semicolon
+)brace
 multiline_comment|/* Unmapping a hole */
 r_if
 c_cond
@@ -743,6 +753,14 @@ id|mpnt
 op_assign
 op_star
 id|area
+suffix:semicolon
+id|mpnt-&gt;vm_offset
+op_add_assign
+(paren
+id|end
+op_minus
+id|area-&gt;vm_start
+)paren
 suffix:semicolon
 id|mpnt-&gt;vm_start
 op_assign
@@ -1456,7 +1474,7 @@ id|mpnt-&gt;vm_end
 id|printk
 c_func
 (paren
-l_string|&quot;insert_vm_struct: ins area %x-%x in area %x-%x&bslash;n&quot;
+l_string|&quot;insert_vm_struct: ins area %lx-%lx in area %lx-%lx&bslash;n&quot;
 comma
 id|vmp-&gt;vm_start
 comma

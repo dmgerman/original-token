@@ -94,7 +94,7 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|atp_probe
+id|at1500_probe
 c_func
 (paren
 r_struct
@@ -104,7 +104,7 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|at1500_probe
+id|at1700_probe
 c_func
 (paren
 r_struct
@@ -125,6 +125,67 @@ suffix:semicolon
 r_extern
 r_int
 id|el1_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|el16_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|elplus_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ac3200_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|e2100_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Detachable devices (&quot;pocket adaptors&quot; and special PCMCIA drivers). */
+r_extern
+r_int
+id|atp_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|d_link_init
 c_func
 (paren
 r_struct
@@ -184,7 +245,7 @@ c_func
 id|dev
 )paren
 macro_line|#endif
-macro_line|#if defined(CONFIG_EL2) || defined(EL2)
+macro_line|#if defined(CONFIG_EL2) || defined(EL2)&t;/* 3c503 */
 op_logical_and
 id|el2_probe
 c_func
@@ -216,7 +277,15 @@ c_func
 id|dev
 )paren
 macro_line|#endif
-macro_line|#ifdef CONFIG_EL3
+macro_line|#ifdef CONFIG_AT1700
+op_logical_and
+id|at1700_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_EL3&t;&t;/* 3c509 */
 op_logical_and
 id|el3_probe
 c_func
@@ -224,7 +293,7 @@ c_func
 id|dev
 )paren
 macro_line|#endif
-macro_line|#ifdef CONFIG_ZNET
+macro_line|#ifdef CONFIG_ZNET&t;&t;/* Zenith Z-Note and some IBM Thinkpads. */
 op_logical_and
 id|znet_probe
 c_func
@@ -232,7 +301,7 @@ c_func
 id|dev
 )paren
 macro_line|#endif
-macro_line|#ifdef CONFIG_EEXPRESS
+macro_line|#ifdef CONFIG_EEXPRESS&t;&t;/* Intel EtherExpress */
 op_logical_and
 id|express_probe
 c_func
@@ -240,15 +309,7 @@ c_func
 id|dev
 )paren
 macro_line|#endif
-macro_line|#ifdef CONFIG_ATP&t;&t;/* AT-LAN-TEC (RealTek) pocket adaptor. */
-op_logical_and
-id|atp_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_DEPCA
+macro_line|#ifdef CONFIG_DEPCA&t;&t;/* DEC DEPCA */
 op_logical_and
 id|depca_probe
 c_func
@@ -256,9 +317,41 @@ c_func
 id|dev
 )paren
 macro_line|#endif
-macro_line|#ifdef CONFIG_EL1
+macro_line|#ifdef CONFIG_EL1&t;&t;/* 3c501 */
 op_logical_and
 id|el1_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_EL16&t;&t;/* 3c507 */
+op_logical_and
+id|el16_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_ELPLUS&t;&t;/* 3c505 */
+op_logical_and
+id|elplus_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_AC3200&t;&t;/* Ansel Communications EISA 3200. */
+op_logical_and
+id|ac3200_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_E2100&t;&t;/* Cabletron E21xx series. */
+op_logical_and
+id|e2100_probe
 c_func
 (paren
 id|dev
@@ -277,18 +370,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* This remains seperate because it requires the addr and IRQ to be&n;   set. */
+multiline_comment|/* This remains seperate because it requires the addr and IRQ to be set. */
 macro_line|#if defined(D_LINK) || defined(CONFIG_DE600)
-r_extern
-r_int
-id|d_link_init
-c_func
-(paren
-r_struct
-id|device
-op_star
-)paren
-suffix:semicolon
 DECL|variable|d_link_dev
 r_static
 r_struct
@@ -325,6 +408,47 @@ DECL|macro|NEXT_DEV
 macro_line|#   undef NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define NEXT_DEV&t;(&amp;d_link_dev)
+macro_line|#endif
+multiline_comment|/* Run-time ATtachable (Pocket) devices have a different (not &quot;eth#&quot;) name. */
+macro_line|#ifdef CONFIG_ATP&t;&t;/* AT-LAN-TEC (RealTek) pocket adaptor. */
+DECL|variable|atp_dev
+r_static
+r_struct
+id|device
+id|atp_dev
+op_assign
+(brace
+l_string|&quot;atp0&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NEXT_DEV
+comma
+id|atp_init
+comma
+multiline_comment|/* ... */
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#   undef NEXT_DEV
+DECL|macro|NEXT_DEV
+macro_line|#   define NEXT_DEV&t;(&amp;atp_dev)
 macro_line|#endif
 multiline_comment|/* The first device defaults to I/O base &squot;0&squot;, which means autoprobe. */
 macro_line|#ifdef EI8390
@@ -784,6 +908,157 @@ macro_line|#   undef&t;NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define&t;NEXT_DEV&t;(&amp;slip0_dev)
 macro_line|#endif&t;/* SLIP */
+macro_line|#if defined(CONFIG_PPP)
+r_extern
+r_int
+id|ppp_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+DECL|variable|ppp3_dev
+r_static
+r_struct
+id|device
+id|ppp3_dev
+op_assign
+(brace
+l_string|&quot;ppp3&quot;
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|3
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NEXT_DEV
+comma
+id|ppp_init
+comma
+)brace
+suffix:semicolon
+DECL|variable|ppp2_dev
+r_static
+r_struct
+id|device
+id|ppp2_dev
+op_assign
+(brace
+l_string|&quot;ppp2&quot;
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|2
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|ppp3_dev
+comma
+id|ppp_init
+comma
+)brace
+suffix:semicolon
+DECL|variable|ppp1_dev
+r_static
+r_struct
+id|device
+id|ppp1_dev
+op_assign
+(brace
+l_string|&quot;ppp1&quot;
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|ppp2_dev
+comma
+id|ppp_init
+comma
+)brace
+suffix:semicolon
+DECL|variable|ppp0_dev
+r_static
+r_struct
+id|device
+id|ppp0_dev
+op_assign
+(brace
+l_string|&quot;ppp0&quot;
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|ppp1_dev
+comma
+id|ppp_init
+comma
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#undef NEXT_DEV
+DECL|macro|NEXT_DEV
+mdefine_line|#define NEXT_DEV (&amp;ppp0_dev)
+macro_line|#endif   /* PPP */
 macro_line|#ifdef LOOPBACK
 r_extern
 r_int

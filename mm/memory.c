@@ -208,7 +208,7 @@ id|PAGE_PRESENT
 id|printk
 c_func
 (paren
-l_string|&quot;Bad page table: [%p]=%08x&bslash;n&quot;
+l_string|&quot;Bad page table: [%p]=%08lx&bslash;n&quot;
 comma
 id|page_dir
 comma
@@ -1507,7 +1507,7 @@ id|PAGE_MASK
 id|printk
 c_func
 (paren
-l_string|&quot;zeromap_page_range: from = %08x&bslash;n&quot;
+l_string|&quot;zeromap_page_range: from = %08lx&bslash;n&quot;
 comma
 id|from
 )paren
@@ -1897,7 +1897,7 @@ id|PAGE_MASK
 id|printk
 c_func
 (paren
-l_string|&quot;remap_page_range: from = %08x, to=%08x&bslash;n&quot;
+l_string|&quot;remap_page_range: from = %08lx, to=%08lx&bslash;n&quot;
 comma
 id|from
 comma
@@ -2322,7 +2322,7 @@ id|high_memory
 id|printk
 c_func
 (paren
-l_string|&quot;put_page: trying to put page %08x at %08x&bslash;n&quot;
+l_string|&quot;put_page: trying to put page %08lx at %08lx&bslash;n&quot;
 comma
 id|page
 comma
@@ -2480,7 +2480,7 @@ id|high_memory
 id|printk
 c_func
 (paren
-l_string|&quot;put_dirty_page: trying to put page %08x at %08x&bslash;n&quot;
+l_string|&quot;put_dirty_page: trying to put page %08lx at %08lx&bslash;n&quot;
 comma
 id|page
 comma
@@ -2504,7 +2504,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;mem_map disagrees with %08x at %08x&bslash;n&quot;
+l_string|&quot;mem_map disagrees with %08lx at %08lx&bslash;n&quot;
 comma
 id|page
 comma
@@ -2970,7 +2970,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;do_wp_page: bogus page at address %08x (%08x)&bslash;n&quot;
+l_string|&quot;do_wp_page: bogus page at address %08lx (%08lx)&bslash;n&quot;
 comma
 id|address
 comma
@@ -3007,7 +3007,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;do_wp_page: bogus page-table at address %08x (%08x)&bslash;n&quot;
+l_string|&quot;do_wp_page: bogus page-table at address %08lx (%08lx)&bslash;n&quot;
 comma
 id|address
 comma
@@ -3251,7 +3251,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;bad page directory entry %08x&bslash;n&quot;
+l_string|&quot;bad page directory entry %08lx&bslash;n&quot;
 comma
 id|page
 )paren
@@ -4279,6 +4279,10 @@ id|address
 op_and_assign
 l_int|0xfffff000
 suffix:semicolon
+id|tmp
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -4302,7 +4306,7 @@ id|address
 OL
 id|mpnt-&gt;vm_start
 )paren
-r_continue
+r_break
 suffix:semicolon
 r_if
 c_cond
@@ -4311,8 +4315,14 @@ id|address
 op_ge
 id|mpnt-&gt;vm_end
 )paren
+(brace
+id|tmp
+op_assign
+id|mpnt-&gt;vm_end
+suffix:semicolon
 r_continue
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4322,8 +4332,21 @@ op_logical_or
 op_logical_neg
 id|mpnt-&gt;vm_ops-&gt;nopage
 )paren
-r_break
+(brace
+op_increment
+id|tsk-&gt;min_flt
 suffix:semicolon
+id|get_empty_page
+c_func
+(paren
+id|tsk
+comma
+id|address
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|mpnt-&gt;vm_ops
 op_member_access_from_pointer
 id|nopage
@@ -4375,23 +4398,40 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|address
-op_plus
-l_int|8192
-op_ge
-(paren
-id|user_esp
-op_amp
-l_int|0xfffff000
-)paren
+id|mpnt
+op_logical_and
+id|mpnt
+op_eq
+id|tsk-&gt;stk_vma
 op_logical_and
 id|address
-op_le
-id|tsk-&gt;start_stack
+op_minus
+id|tmp
+OG
+id|mpnt-&gt;vm_start
+op_minus
+id|address
+op_logical_and
+id|tsk-&gt;rlim
+(braket
+id|RLIMIT_STACK
+)braket
+dot
+id|rlim_cur
+OG
+id|mpnt-&gt;vm_end
+op_minus
+id|address
 )paren
+(brace
+id|mpnt-&gt;vm_start
+op_assign
+id|address
+suffix:semicolon
 r_return
 suffix:semicolon
-id|current-&gt;tss.cr2
+)brace
+id|tsk-&gt;tss.cr2
 op_assign
 id|address
 suffix:semicolon
@@ -4434,10 +4474,6 @@ r_int
 id|user_esp
 op_assign
 l_int|0
-suffix:semicolon
-r_int
-r_int
-id|stack_limit
 suffix:semicolon
 r_int
 r_int
@@ -4542,92 +4578,6 @@ comma
 id|user_esp
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|user_esp
-)paren
-r_return
-suffix:semicolon
-id|stack_limit
-op_assign
-id|current-&gt;rlim
-(braket
-id|RLIMIT_STACK
-)braket
-dot
-id|rlim_cur
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|stack_limit
-op_ge
-id|RLIM_INFINITY
-op_logical_or
-id|stack_limit
-op_ge
-id|current-&gt;start_stack
-op_logical_or
-id|user_esp
-op_ge
-(paren
-id|current-&gt;start_stack
-op_minus
-id|stack_limit
-)paren
-)paren
-(brace
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|current-&gt;stk_vma
-op_ne
-l_int|NULL
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|current-&gt;stk_vma-&gt;vm_start
-OG
-id|user_esp
-)paren
-id|current-&gt;stk_vma-&gt;vm_start
-op_assign
-id|user_esp
-op_amp
-id|PAGE_MASK
-suffix:semicolon
-)brace
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;do_no_page: no stack segment&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-r_else
-(brace
-id|current-&gt;tss.cr2
-op_assign
-id|address
-suffix:semicolon
-id|send_sig
-c_func
-(paren
-id|SIGSEGV
-comma
-id|current
-comma
-l_int|1
-)paren
-suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 )brace
@@ -4706,7 +4656,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; at address %08x&bslash;n&quot;
+l_string|&quot; at address %08lx&bslash;n&quot;
 comma
 id|address
 )paren
@@ -5117,7 +5067,8 @@ r_int
 r_int
 id|address
 suffix:semicolon
-multiline_comment|/*&n; * Physical page 0 is special: it&squot;s a &quot;zero-page&quot;, and is guaranteed to&n; * stay that way - it&squot;s write-protected and when there is a c-o-w, the&n; * mm handler treats it specially.&n; */
+multiline_comment|/*&n; * Physical page 0 is special; it&squot;s not touched by Linux since BIOS&n; * and SMM (for laptops with [34]86/SL chips) may need it.  It is read&n; * and write protected to detect null pointer references in the&n; * kernel.&n; */
+macro_line|#if 0
 id|memset
 c_func
 (paren
@@ -5132,6 +5083,7 @@ comma
 id|PAGE_SIZE
 )paren
 suffix:semicolon
+macro_line|#endif
 id|start_mem
 op_assign
 id|PAGE_ALIGN
@@ -5552,7 +5504,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Memory: %dk/%dk available (%dk kernel code, %dk reserved, %dk data)&bslash;n&quot;
+l_string|&quot;Memory: %luk/%luk available (%dk kernel code, %dk reserved, %dk data)&bslash;n&quot;
 comma
 id|tmp
 op_rshift
@@ -5587,6 +5539,7 @@ l_int|10
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* test if the WP bit is honoured in supervisor mode */
 id|pg0
 (braket
 l_int|0
@@ -5594,18 +5547,24 @@ l_int|0
 op_assign
 id|PAGE_READONLY
 suffix:semicolon
-op_star
+id|invalidate
+c_func
 (paren
-(paren
-r_char
-op_star
 )paren
-l_int|0
-)paren
-op_assign
-l_int|0
 suffix:semicolon
-multiline_comment|/* test if the WP bit is honoured in supervisor mode */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;movb 0,%%al ; movb %%al,0&quot;
+suffix:colon
+suffix:colon
+suffix:colon
+l_string|&quot;ax&quot;
+comma
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
 id|pg0
 (braket
 l_int|0

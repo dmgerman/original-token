@@ -14,7 +14,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-multiline_comment|/*&n; * Serial driver configuration section.  Here are the various options:&n; *&n; * CONFIG_AUTO_IRQ&n; *&t;&t;Enables automatic IRQ detection.  I&squot;ve put in some&n; * &t;&t;fixes to this which should make this work much more&n; * &t;&t;cleanly than it used to in 0.98pl2-6.  It should be&n; * &t;&t;much less vulnerable to false IRQ&squot;s now.&n; * &n; * CONFIG_AST_FOURPORT&n; *&t;&t;Enables support for the AST Fourport serial port.&n; * &n; * CONFIG_ACCENT_ASYNC&n; *&t;&t;Enables support for the Accent Async 4 port serial&n; * &t;&t;port.&n; *&n; * CONFIG_HUB6&n; *&t;&t;Enables support for the venerable Bell Technologies&n; *&t;&t;HUB6 card.&n; */
+multiline_comment|/*&n; * Serial driver configuration section.  Here are the various options:&n; *&n; * CONFIG_AUTO_IRQ&n; *&t;&t;Enables automatic IRQ detection.  I&squot;ve put in some&n; * &t;&t;fixes to this which should make this work much more&n; * &t;&t;cleanly than it used to in 0.98pl2-6.  It should be&n; * &t;&t;much less vulnerable to false IRQs now.&n; * &n; * CONFIG_AST_FOURPORT&n; *&t;&t;Enables support for the AST Fourport serial port.&n; * &n; * CONFIG_ACCENT_ASYNC&n; *&t;&t;Enables support for the Accent Async 4 port serial&n; * &t;&t;port.&n; *&n; * CONFIG_HUB6&n; *&t;&t;Enables support for the venerable Bell Technologies&n; *&t;&t;HUB6 card.&n; */
 DECL|macro|ISR_HACK
 macro_line|#undef ISR_HACK
 DECL|macro|WAKEUP_CHARS

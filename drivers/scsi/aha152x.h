@@ -62,7 +62,8 @@ r_int
 id|aha152x_reset
 c_func
 (paren
-r_void
+id|Scsi_Cmnd
+op_star
 )paren
 suffix:semicolon
 r_int

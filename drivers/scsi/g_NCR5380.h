@@ -54,7 +54,8 @@ r_int
 id|generic_NCR5380_reset
 c_func
 (paren
-r_void
+id|Scsi_Cmnd
+op_star
 )paren
 suffix:semicolon
 macro_line|#ifndef NULL

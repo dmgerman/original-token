@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_tan.c                                                               |&n; |                                                                           |&n; | Compute the tan of a FPU_REG, using a polynomial approximation.           |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_tan.c                                                               |&n; |                                                                           |&n; | Compute the tan of a FPU_REG, using a polynomial approximation.           |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -9,6 +9,7 @@ DECL|variable|oddplterms
 r_static
 r_int
 r_int
+r_const
 id|oddplterms
 (braket
 id|HIPOWERop
@@ -55,6 +56,7 @@ DECL|variable|oddnegterms
 r_static
 r_int
 r_int
+r_const
 id|oddnegterms
 (braket
 id|HIPOWERon
@@ -91,6 +93,7 @@ DECL|variable|evenplterms
 r_static
 r_int
 r_int
+r_const
 id|evenplterms
 (braket
 id|HIPOWERep
@@ -127,6 +130,7 @@ DECL|variable|evennegterms
 r_static
 r_int
 r_int
+r_const
 id|evennegterms
 (braket
 id|HIPOWERen
@@ -164,12 +168,13 @@ id|poly_tan
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|arg
 comma
 id|FPU_REG
 op_star
-id|y_reg
+id|result
 comma
 r_int
 id|invert
@@ -216,7 +221,7 @@ multiline_comment|/* Can&squot;t hack a number &lt; 0.0 */
 id|arith_invalid
 c_func
 (paren
-id|y_reg
+id|result
 )paren
 suffix:semicolon
 r_return
@@ -705,7 +710,7 @@ comma
 op_amp
 id|odd_poly
 comma
-id|y_reg
+id|result
 comma
 id|FULL_PRECISION
 )paren
@@ -722,7 +727,7 @@ comma
 op_amp
 id|even_poly
 comma
-id|y_reg
+id|result
 comma
 id|FULL_PRECISION
 )paren

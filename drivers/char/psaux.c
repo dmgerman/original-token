@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/kernel/chr_drv/psaux.c&n; *&n; * Driver for PS/2 type mouse by Johan Myreen.&n; *&n; * Supports pointing devices attached to a PS/2 type&n; * Keyboard and Auxiliary Device Controller.&n; *&n; * Corrections in device setup for some laptop mice &amp; trackballs.&n; * 02Feb93  (troyer@saifr00.cfsat.Honeywell.COM,mch@wimsey.bc.ca)&n; *&n; * Changed to prevent keyboard lockups on AST Power Exec.&n; * 28Jul93  Brad Bosch - brad@lachman.com&n; *&n; * Modified by Johan Myreen (jem@cs.hut.fi) 04Aug93&n; *   to include support for QuickPort mouse.&n; */
+multiline_comment|/*&n; * linux/kernel/chr_drv/psaux.c&n; *&n; * Driver for PS/2 type mouse by Johan Myreen.&n; *&n; * Supports pointing devices attached to a PS/2 type&n; * Keyboard and Auxiliary Device Controller.&n; *&n; * Corrections in device setup for some laptop mice &amp; trackballs.&n; * 02Feb93  (troyer@saifr00.cfsat.Honeywell.COM,mch@wimsey.bc.ca)&n; *&n; * Changed to prevent keyboard lockups on AST Power Exec.&n; * 28Jul93  Brad Bosch - brad@lachman.com&n; *&n; * Modified by Johan Myreen (jem@cs.hut.fi) 04Aug93&n; *   to include support for QuickPort mouse.&n; *&n; * Changed references to &quot;QuickPort&quot; with &quot;82C710&quot; since &quot;QuickPort&quot;&n; * is not what this driver is all about -- QuickPort is just a&n; * connector type, and this driver is for the mouse port on the Chips&n; * &amp; Technologies 82C710 interface chip. 15Nov93 jem@cs.hut.fi&n; */
 multiline_comment|/* Uncomment the following line if your mouse needs initialization. */
 multiline_comment|/* #define INITIALIZE_DEVICE */
 macro_line|#include &lt;linux/timer.h&gt;
@@ -62,7 +62,7 @@ DECL|macro|AUX_IRQ
 mdefine_line|#define AUX_IRQ&t;&t;12
 DECL|macro|AUX_BUF_SIZE
 mdefine_line|#define AUX_BUF_SIZE&t;2048
-multiline_comment|/* QuickPort definitions */
+multiline_comment|/* 82C710 definitions */
 DECL|macro|QP_DATA
 mdefine_line|#define QP_DATA         0x310&t;&t;/* Data Port I/O Address */
 DECL|macro|QP_STATUS
@@ -162,7 +162,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_QUICKPORT_MOUSE
+macro_line|#ifdef CONFIG_82C710_MOUSE
 DECL|variable|qp_present
 r_static
 r_int
@@ -533,8 +533,8 @@ id|queue-&gt;proc_list
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Interrupt handler for the QuickPort. A character&n; * is waiting in the 82C710.&n; */
-macro_line|#ifdef CONFIG_QUICKPORT_MOUSE
+multiline_comment|/*&n; * Interrupt handler for the 82C710 mouse port. A character&n; * is waiting in the 82C710.&n; */
+macro_line|#ifdef CONFIG_82C710_MOUSE
 DECL|function|qp_interrupt
 r_static
 r_void
@@ -672,7 +672,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_QUICKPORT_MOUSE
+macro_line|#ifdef CONFIG_82C710_MOUSE
 DECL|function|release_qp
 r_static
 r_void
@@ -706,7 +706,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;Warning: QuickPort device busy in release_qp()&bslash;n&quot;
+l_string|&quot;Warning: Mouse device busy in release_qp()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|status
@@ -744,7 +744,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;Warning: QuickPort device busy in release_qp()&bslash;n&quot;
+l_string|&quot;Warning: Mouse device busy in release_qp()&bslash;n&quot;
 )paren
 suffix:semicolon
 id|free_irq
@@ -882,7 +882,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_QUICKPORT_MOUSE
+macro_line|#ifdef CONFIG_82C710_MOUSE
 multiline_comment|/*&n; * Install interrupt handler.&n; * Enable the device, enable interrupts. Set qp_busy&n; * (allow only one opener at a time.)&n; */
 DECL|function|open_qp
 r_static
@@ -1015,7 +1015,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;Error: QuickPort device busy in open_qp()&bslash;n&quot;
+l_string|&quot;Error: Mouse device busy in open_qp()&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1130,8 +1130,8 @@ r_return
 id|count
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_QUICKPORT_MOUSE
-multiline_comment|/*&n; * Write to the QuickPort device.&n; */
+macro_line|#ifdef CONFIG_82C710_MOUSE
+multiline_comment|/*&n; * Write to the 82C710 mouse device.&n; */
 DECL|function|write_qp
 r_static
 r_int
@@ -1486,7 +1486,7 @@ id|release_aux
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Initialize driver. First check for QuickPort device; if found&n; * forget about the Aux port and use the QuickPort functions.&n; */
+multiline_comment|/*&n; * Initialize driver. First check for a 82C710 chip; if found&n; * forget about the Aux port and use the *_qp functions.&n; */
 DECL|function|psaux_init
 r_int
 r_int
@@ -1503,15 +1503,16 @@ id|qp_found
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_QUICKPORT_MOUSE
+macro_line|#ifdef CONFIG_82C710_MOUSE
 id|printk
 c_func
 (paren
-l_string|&quot;Probing QuickPort device.&bslash;n&quot;
+l_string|&quot;Probing 82C710 mouse port device.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
 c_cond
+(paren
 (paren
 id|qp_found
 op_assign
@@ -1520,14 +1521,15 @@ c_func
 (paren
 )paren
 )paren
+)paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;QuickPort pointing device detected -- driver installed.&bslash;n&quot;
+l_string|&quot;82C710 type pointing device detected -- driver installed.&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&t;&t;printk(&quot;QuickPort address = %x (should be 0x310)&bslash;n&quot;, qp_data); */
+multiline_comment|/*&t;&t;printk(&quot;82C710 address = %x (should be 0x310)&bslash;n&quot;, qp_data); */
 id|qp_present
 op_assign
 l_int|1
@@ -1775,7 +1777,7 @@ id|MAX_RETRIES
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_QUICKPORT_MOUSE
+macro_line|#ifdef CONFIG_82C710_MOUSE
 multiline_comment|/*&n; * Wait for device to send output char and flush any input char.&n; */
 DECL|function|poll_qp_status
 r_static
@@ -1900,7 +1902,7 @@ l_int|0x391
 suffix:semicolon
 multiline_comment|/* Read the data */
 )brace
-multiline_comment|/*&n; * See if we can find a QuickPort device. Read mouse address.&n; */
+multiline_comment|/*&n; * See if we can find a 82C710 device. Read mouse address.&n; */
 DECL|function|probe_qp
 r_static
 r_int

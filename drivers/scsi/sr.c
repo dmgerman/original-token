@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|MAJOR_NR
-mdefine_line|#define MAJOR_NR 11
+mdefine_line|#define MAJOR_NR SCSI_CDROM_MAJOR
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
@@ -390,6 +390,10 @@ op_star
 )paren
 id|SCpnt-&gt;request.buffer
 comma
+(paren
+r_char
+op_star
+)paren
 id|SCpnt-&gt;buffer
 op_plus
 id|offset
@@ -435,6 +439,10 @@ op_star
 )paren
 id|SCpnt-&gt;request.bh-&gt;b_reqnext-&gt;b_data
 comma
+(paren
+r_char
+op_star
+)paren
 id|SCpnt-&gt;buffer
 op_plus
 l_int|1024
@@ -640,24 +648,16 @@ c_cond
 op_logical_neg
 id|SCpnt-&gt;request.bh
 )paren
-(brace
-id|printk
+id|panic
 c_func
 (paren
-l_string|&quot;sr.c: linked page request. (%x %x)&quot;
+l_string|&quot;sr.c: linked page request (%lx %x)&quot;
 comma
 id|SCpnt-&gt;request.sector
 comma
 id|this_count
 )paren
 suffix:semicolon
-id|panic
-c_func
-(paren
-l_string|&quot;Aiiiiiiiiiiiieeeeeeeee&quot;
-)paren
-suffix:semicolon
-)brace
 )brace
 id|end_scsi_request
 c_func

@@ -4,6 +4,135 @@ DECL|macro|_IP_H
 mdefine_line|#define _IP_H
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &quot;sock.h&quot;&t;/* struct sock */
+multiline_comment|/* IP flags. */
+DECL|macro|IP_CE
+mdefine_line|#define IP_CE&t;&t;0x8000&t;&t;/* Flag: &quot;Congestion&quot;&t;&t;*/
+DECL|macro|IP_DF
+mdefine_line|#define IP_DF&t;&t;0x4000&t;&t;/* Flag: &quot;Don&squot;t Fragment&quot;&t;*/
+DECL|macro|IP_MF
+mdefine_line|#define IP_MF&t;&t;0x2000&t;&t;/* Flag: &quot;More Fragments&quot;&t;*/
+DECL|macro|IP_OFFSET
+mdefine_line|#define IP_OFFSET&t;0x1FFF&t;&t;/* &quot;Fragment Offset&quot; part&t;*/
+DECL|macro|IP_FRAG_TIME
+mdefine_line|#define IP_FRAG_TIME&t;(30 * HZ)&t;&t;/* fragment lifetime&t;*/
+multiline_comment|/* Describe an IP fragment. */
+DECL|struct|ipfrag
+r_struct
+id|ipfrag
+(brace
+DECL|member|offset
+r_int
+id|offset
+suffix:semicolon
+multiline_comment|/* offset of fragment in IP datagram&t;*/
+DECL|member|end
+r_int
+id|end
+suffix:semicolon
+multiline_comment|/* last byte of data in datagram&t;*/
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+multiline_comment|/* length of this fragment&t;&t;*/
+DECL|member|skb
+r_struct
+id|sk_buff
+op_star
+id|skb
+suffix:semicolon
+multiline_comment|/* complete received fragment&t;&t;*/
+DECL|member|ptr
+r_int
+r_char
+op_star
+id|ptr
+suffix:semicolon
+multiline_comment|/* pointer into real fragment data&t;*/
+DECL|member|next
+r_struct
+id|ipfrag
+op_star
+id|next
+suffix:semicolon
+multiline_comment|/* linked list pointers&t;&t;&t;*/
+DECL|member|prev
+r_struct
+id|ipfrag
+op_star
+id|prev
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* Describe an entry in the &quot;incomplete datagrams&quot; queue. */
+DECL|struct|ipq
+r_struct
+id|ipq
+(brace
+DECL|member|mac
+r_int
+r_char
+op_star
+id|mac
+suffix:semicolon
+multiline_comment|/* pointer to MAC header&t;&t;*/
+DECL|member|iph
+r_struct
+id|iphdr
+op_star
+id|iph
+suffix:semicolon
+multiline_comment|/* pointer to IP header&t;&t;&t;*/
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+multiline_comment|/* total length of original datagram&t;*/
+DECL|member|ihlen
+r_int
+id|ihlen
+suffix:semicolon
+multiline_comment|/* length of the IP header&t;&t;*/
+DECL|member|maclen
+r_int
+id|maclen
+suffix:semicolon
+multiline_comment|/* length of the MAC header&t;&t;*/
+DECL|member|timer
+r_struct
+id|timer_list
+id|timer
+suffix:semicolon
+multiline_comment|/* when will this queue expire?&t;&t;*/
+DECL|member|fragments
+r_struct
+id|ipfrag
+op_star
+id|fragments
+suffix:semicolon
+multiline_comment|/* linked list of received fragments&t;*/
+DECL|member|next
+r_struct
+id|ipq
+op_star
+id|next
+suffix:semicolon
+multiline_comment|/* linked list pointers&t;&t;&t;*/
+DECL|member|prev
+r_struct
+id|ipq
+op_star
+id|prev
+suffix:semicolon
+DECL|member|dev
+r_struct
+id|device
+op_star
+id|dev
+suffix:semicolon
+multiline_comment|/* Device - for icmp replies */
+)brace
+suffix:semicolon
 r_extern
 r_int
 id|backoff

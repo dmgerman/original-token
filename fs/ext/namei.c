@@ -1042,10 +1042,12 @@ id|dir-&gt;i_dirt
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#if 0
 id|dir-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+macro_line|#endif
 id|bh-&gt;b_dirt
 op_assign
 l_int|1
@@ -1118,10 +1120,12 @@ id|dir-&gt;i_dirt
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#if 0
 id|dir-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+macro_line|#endif
 )brace
 r_if
 c_cond
@@ -1253,6 +1257,8 @@ id|rec_len
 suffix:semicolon
 )brace
 id|dir-&gt;i_mtime
+op_assign
+id|dir-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
@@ -1753,12 +1759,14 @@ id|inode-&gt;i_rdev
 op_assign
 id|rdev
 suffix:semicolon
+macro_line|#if 0
 id|inode-&gt;i_mtime
 op_assign
 id|inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+macro_line|#endif
 id|inode-&gt;i_dirt
 op_assign
 l_int|1
@@ -1959,12 +1967,14 @@ op_star
 l_int|16
 suffix:semicolon
 multiline_comment|/* Each entry is coded on 16 bytes for &quot;.&quot; and &quot;..&quot;&n;&t;&t;&t;&t;&t;- 4 bytes for the inode number,&n;&t;&t;&t;&t;&t;- 2 bytes for the record length&n;&t;&t;&t;&t;&t;- 2 bytes for the name length&n;&t;&t;&t;&t;&t;- 8 bytes for the name */
+macro_line|#if 0
 id|inode-&gt;i_mtime
 op_assign
 id|inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+macro_line|#endif
 id|dir_block
 op_assign
 id|ext_bread
@@ -2816,6 +2826,8 @@ suffix:semicolon
 id|dir-&gt;i_nlink
 op_decrement
 suffix:semicolon
+id|inode-&gt;i_ctime
+op_assign
 id|dir-&gt;i_ctime
 op_assign
 id|dir-&gt;i_mtime
@@ -3058,7 +3070,7 @@ id|dir-&gt;i_ctime
 op_assign
 id|dir-&gt;i_mtime
 op_assign
-id|CURRENT_TIME
+id|inode-&gt;i_ctime
 suffix:semicolon
 id|dir-&gt;i_dirt
 op_assign

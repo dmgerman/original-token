@@ -25,7 +25,7 @@ id|regs
 id|printk
 c_func
 (paren
-l_string|&quot;lcall 7,xxx: eax = %08x&bslash;n&quot;
+l_string|&quot;lcall 7,xxx: eax = %08lx&bslash;n&quot;
 comma
 id|regs-&gt;eax
 )paren

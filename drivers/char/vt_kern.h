@@ -3,10 +3,10 @@ DECL|macro|_VT_KERN_H
 mdefine_line|#define _VT_KERN_H
 multiline_comment|/*&n; * this really is an extension of the vc_cons structure in console.c, but&n; * with information needed by the vt package&n; */
 macro_line|#include &lt;linux/vt.h&gt;
-DECL|struct|vt_cons
+DECL|struct|vt_struct
 r_extern
 r_struct
-id|vt_cons
+id|vt_struct
 (brace
 DECL|member|vc_mode
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_2xm1.c                                                              |&n; |                                                                           |&n; | Function to compute 2^x-1 by a polynomial approximation.                  |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_2xm1.c                                                              |&n; |                                                                           |&n; | Function to compute 2^x-1 by a polynomial approximation.                  |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -8,6 +8,7 @@ DECL|variable|lterms
 r_static
 r_int
 r_int
+r_const
 id|lterms
 (braket
 id|HIPOWER
@@ -156,6 +157,7 @@ id|poly_2xm1
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|arg
 comma

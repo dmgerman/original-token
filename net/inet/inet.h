@@ -3,8 +3,6 @@ macro_line|#ifndef _INET_H
 DECL|macro|_INET_H
 mdefine_line|#define _INET_H
 macro_line|#include &lt;linux/ddi.h&gt;
-DECL|macro|AF_INET_MAJOR
-mdefine_line|#define AF_INET_MAJOR&t;18&t;&t;/* UNIX VFS major number&t;*/
 DECL|macro|NET16
 mdefine_line|#define NET16(x)&t;((((x) &gt;&gt; 8) &amp; 0x00FF) | (((x) &lt;&lt; 8) &amp; 0xFF00))
 DECL|macro|INET_DEBUG

@@ -1,12 +1,12 @@
 multiline_comment|/* 3c509.c: A 3c509 EtherLink3 ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1993 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    &n;    This driver is for the 3Com EtherLinkIII series.&n;&n;    The author may be reached as becker@super.org or&n;    C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;*/
+multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&t; This software may be used and&n;&t;distributed according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&t;&n;&t;This driver is for the 3Com EtherLinkIII series.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c509.c:pl14 10/18/93 becker@super.org&bslash;n&quot;
+l_string|&quot;3c509.c:pl13t 11/24/93 becker@super.org&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -35,8 +35,6 @@ mdefine_line|#define port_write_l(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;
 macro_line|#ifndef HAVE_ALLOC_SKB
 DECL|macro|alloc_skb
 mdefine_line|#define alloc_skb(size, priority) (struct sk_buff *) kmalloc(size,priority)
-DECL|macro|kfree_skb
-mdefine_line|#define kfree_skb(buff,size) kfree_s(buff,size)
 macro_line|#endif
 macro_line|#ifdef EL3_DEBUG
 DECL|variable|el3_debug
@@ -64,22 +62,24 @@ mdefine_line|#define EL3_STATUS 0x0e
 DECL|macro|ID_PORT
 mdefine_line|#define ID_PORT 0x100
 DECL|macro|EEPROM_READ
-mdefine_line|#define  EEPROM_READ 0x80
+mdefine_line|#define&t; EEPROM_READ 0x80
 DECL|macro|EL3WINDOW
 mdefine_line|#define EL3WINDOW(win_num) outw(0x0800+(win_num), ioaddr + EL3_CMD)
-multiline_comment|/* Register window 1 offsets, used in normal operation. */
-DECL|macro|TX_FREE
-mdefine_line|#define TX_FREE 0x0C
-DECL|macro|TX_STATUS
-mdefine_line|#define TX_STATUS 0x0B
+multiline_comment|/* Register window 1 offsets, the window used in normal operation. */
 DECL|macro|TX_FIFO
-mdefine_line|#define TX_FIFO 0x00
-DECL|macro|RX_STATUS
-mdefine_line|#define RX_STATUS 0x08
+mdefine_line|#define TX_FIFO&t;&t;0x00
 DECL|macro|RX_FIFO
-mdefine_line|#define RX_FIFO 0x00
+mdefine_line|#define RX_FIFO&t;&t;0x00
+DECL|macro|RX_STATUS
+mdefine_line|#define RX_STATUS &t;0x08
+DECL|macro|TX_STATUS
+mdefine_line|#define TX_STATUS &t;0x0B
+DECL|macro|TX_FREE
+mdefine_line|#define TX_FREE&t;&t;0x0C&t;&t;/* Remaining free bytes in Tx buffer. */
 DECL|macro|WN4_MEDIA
-mdefine_line|#define WN4_MEDIA&t;0x0A
+mdefine_line|#define WN4_MEDIA&t;0x0A&t;&t;/* Window 4: Various transceiver/media bits. */
+DECL|macro|MEDIA_TP
+mdefine_line|#define  MEDIA_TP&t;0x00C0&t;&t;/* Enable link beat and jabber for 10baseT. */
 DECL|struct|el3_private
 r_struct
 id|el3_private
@@ -92,10 +92,22 @@ suffix:semicolon
 )brace
 suffix:semicolon
 r_static
+id|ushort
+id|id_read_eeprom
+c_func
+(paren
 r_int
+id|index
+)paren
+suffix:semicolon
+r_static
+id|ushort
 id|read_eeprom
 c_func
 (paren
+r_int
+id|ioaddr
+comma
 r_int
 id|index
 )paren
@@ -224,10 +236,12 @@ l_int|0xff
 comma
 id|i
 suffix:semicolon
-r_int
+id|ushort
 id|ioaddr
 comma
 id|irq
+comma
+id|if_port
 suffix:semicolon
 r_int
 op_star
@@ -245,6 +259,251 @@ id|current_tag
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* First check for a board on the EISA bus.&t; This first check should&n;&t;   really be in init/main.c, along with a MCA check. */
+r_if
+c_cond
+(paren
+id|strncmp
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+l_int|0x0FFFD9
+comma
+l_string|&quot;EISA&quot;
+comma
+l_int|4
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|ioaddr
+op_assign
+l_int|0x1000
+suffix:semicolon
+id|ioaddr
+OL
+l_int|0x9000
+suffix:semicolon
+id|ioaddr
+op_add_assign
+l_int|0x1000
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|inw
+c_func
+(paren
+id|ioaddr
+)paren
+op_ne
+l_int|0x6d50
+)paren
+r_continue
+suffix:semicolon
+id|irq
+op_assign
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|8
+)paren
+op_rshift
+l_int|12
+suffix:semicolon
+id|if_port
+op_assign
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|6
+)paren
+op_rshift
+l_int|14
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|3
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|phys_addr
+(braket
+id|i
+)braket
+op_assign
+id|htons
+c_func
+(paren
+id|read_eeprom
+c_func
+(paren
+id|ioaddr
+comma
+id|i
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Restore the &quot;Manufacturer ID&quot; to the EEPROM read register. */
+multiline_comment|/* The manual says to restore &quot;Product ID&quot; (reg. 3). !???! */
+id|read_eeprom
+c_func
+(paren
+id|ioaddr
+comma
+l_int|7
+)paren
+suffix:semicolon
+multiline_comment|/* Was the EISA code an add-on hack?  Nahhhhh... */
+r_goto
+id|found
+suffix:semicolon
+)brace
+)brace
+macro_line|#ifdef CONFIG_MCA
+r_if
+c_cond
+(paren
+id|MCA_bus
+)paren
+(brace
+id|mca_adaptor_select_mode
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|8
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+(paren
+id|mca_adaptor_id
+c_func
+(paren
+id|i
+)paren
+op_or
+l_int|1
+)paren
+op_eq
+l_int|0x627c
+)paren
+(brace
+id|ioaddr
+op_assign
+id|mca_pos_base_addr
+c_func
+(paren
+id|i
+)paren
+suffix:semicolon
+id|irq
+op_assign
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|8
+)paren
+op_rshift
+l_int|12
+suffix:semicolon
+id|if_port
+op_assign
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|6
+)paren
+op_rshift
+l_int|14
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|3
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|phys_addr
+(braket
+id|i
+)braket
+op_assign
+id|htons
+c_func
+(paren
+id|read_eeprom
+c_func
+(paren
+id|ioaddr
+comma
+id|i
+)paren
+)paren
+suffix:semicolon
+id|mca_adaptor_select_mode
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_goto
+id|found
+suffix:semicolon
+)brace
+id|mca_adaptor_select_mode
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif&t;  
 multiline_comment|/* Send the ID sequence to the ID_PORT. */
 id|outb
 c_func
@@ -332,7 +591,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|read_eeprom
+id|id_read_eeprom
 c_func
 (paren
 l_int|7
@@ -346,7 +605,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* Read in EEPROM data, which does contention-select.&n;       Only the lowest address board will stay &quot;on-line&quot;.&n;       3Com got the byte order backwards. */
+multiline_comment|/* Read in EEPROM data, which does contention-select.&n;&t;   Only the lowest address board will stay &quot;on-line&quot;.&n;&t;   3Com got the byte order backwards. */
 r_for
 c_loop
 (paren
@@ -370,7 +629,7 @@ op_assign
 id|htons
 c_func
 (paren
-id|read_eeprom
+id|id_read_eeprom
 c_func
 (paren
 id|i
@@ -383,13 +642,13 @@ r_int
 r_int
 id|iobase
 op_assign
-id|read_eeprom
+id|id_read_eeprom
 c_func
 (paren
 l_int|8
 )paren
 suffix:semicolon
-id|dev-&gt;if_port
+id|if_port
 op_assign
 id|iobase
 op_rshift
@@ -412,7 +671,7 @@ suffix:semicolon
 )brace
 id|irq
 op_assign
-id|read_eeprom
+id|id_read_eeprom
 c_func
 (paren
 l_int|9
@@ -420,7 +679,7 @@ l_int|9
 op_rshift
 l_int|12
 suffix:semicolon
-multiline_comment|/* The current Space.c structure makes it difficult to have more&n;       than one adaptor initialized.  Send me email if you have a need for&n;       multiple adaptors, and we&squot;ll work out something.  -becker@super.org */
+multiline_comment|/* The current Space.c structure makes it difficult to have more&n;&t;   than one adaptor initialized.  Send me email if you have a need for&n;&t;   multiple adaptors, and we&squot;ll work out something.&t; -becker@super.org */
 r_if
 c_cond
 (paren
@@ -484,6 +743,8 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+id|found
+suffix:colon
 id|dev-&gt;base_addr
 op_assign
 id|ioaddr
@@ -491,6 +752,10 @@ suffix:semicolon
 id|dev-&gt;irq
 op_assign
 id|irq
+suffix:semicolon
+id|dev-&gt;if_port
+op_assign
+id|if_port
 suffix:semicolon
 id|snarf_region
 c_func
@@ -520,7 +785,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: 3c509 at %#3.3x  tag %d, %s port, address &quot;
+l_string|&quot;%s: 3c509 at %#3.3x&t; tag %d, %s port, address &quot;
 comma
 id|dev-&gt;name
 comma
@@ -754,10 +1019,71 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_static
-r_int
+multiline_comment|/* Read a word from the EEPROM using the regular EEPROM access register.&n;   Assume that we are in register window zero.&n; */
 DECL|function|read_eeprom
+r_static
+id|ushort
 id|read_eeprom
+c_func
+(paren
+r_int
+id|ioaddr
+comma
+r_int
+id|index
+)paren
+(brace
+r_int
+id|timer
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|EEPROM_READ
+op_plus
+id|index
+comma
+id|ioaddr
+op_plus
+l_int|10
+)paren
+suffix:semicolon
+multiline_comment|/* Pause for at least 162 us. for the read to take place. */
+r_for
+c_loop
+(paren
+id|timer
+op_assign
+l_int|0
+suffix:semicolon
+id|timer
+OL
+l_int|162
+op_star
+l_int|4
+op_plus
+l_int|400
+suffix:semicolon
+id|timer
+op_increment
+)paren
+id|SLOW_DOWN_IO
+suffix:semicolon
+r_return
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|12
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Read a word from the EEPROM when in the ISA ID probe state. */
+DECL|function|id_read_eeprom
+r_static
+id|ushort
+id|id_read_eeprom
 c_func
 (paren
 r_int
@@ -773,7 +1099,7 @@ id|word
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Issue read command, and pause for at least 162 us. for it to complete.&n;       Assume extra-fast 16Mhz bus. */
+multiline_comment|/* Issue read command, and pause for at least 162 us. for it to complete.&n;&t;   Assume extra-fast 16Mhz bus. */
 id|outb
 c_func
 (paren
@@ -913,7 +1239,7 @@ l_int|3
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Opening, IRQ %d  status@%x %4.4x.&bslash;n&quot;
+l_string|&quot;%s: Opening, IRQ %d&t; status@%x %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1046,7 +1372,7 @@ op_plus
 id|WN4_MEDIA
 )paren
 op_or
-l_int|0x00C0
+id|MEDIA_TP
 comma
 id|ioaddr
 op_plus
@@ -1375,9 +1701,28 @@ id|EL3_STATUS
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef final_version
+(brace
+multiline_comment|/* Error-checking code, delete for 1.00. */
+id|ushort
+id|status
+op_assign
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|EL3_STATUS
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
+id|status
+op_amp
+l_int|0x0001
+multiline_comment|/* IRQ line active, missed one. */
+op_logical_and
 id|inw
 c_func
 (paren
@@ -1386,16 +1731,19 @@ op_plus
 id|EL3_STATUS
 )paren
 op_amp
-l_int|0x0001
+l_int|1
 )paren
 (brace
-multiline_comment|/* IRQ line active, missed one. */
+multiline_comment|/* Make sure. */
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Missed interrupt, status %4.4x  Tx %2.2x Rx %4.4x.&bslash;n&quot;
+l_string|&quot;%s: Missed interrupt, status then %04x now %04x&quot;
+l_string|&quot;  Tx %2.2x Rx %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
+comma
+id|status
 comma
 id|inw
 c_func
@@ -1454,8 +1802,10 @@ op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-multiline_comment|/* Allow all status bits to be seen. */
+multiline_comment|/* Set all status bits visible. */
 )brace
+)brace
+macro_line|#endif
 multiline_comment|/* Avoid timer-based retransmission conflicts. */
 r_if
 c_cond
@@ -1626,7 +1976,7 @@ l_int|5
 id|printk
 c_func
 (paren
-l_string|&quot;        Tx status %4.4x.&bslash;n&quot;
+l_string|&quot;&t;&t;Tx status %4.4x.&bslash;n&quot;
 comma
 id|tx_status
 )paren
@@ -1864,7 +2214,7 @@ l_int|5
 id|printk
 c_func
 (paren
-l_string|&quot;    TX room bit was handled.&bslash;n&quot;
+l_string|&quot;&t;TX room bit was handled.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* There&squot;s room in the FIFO for a full-sized packet. */
@@ -2022,7 +2372,7 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-multiline_comment|/* Update statistics.  We change to register window 6, so this&n;   should be run single-threaded if the device is active. This&n;   is expected to be a rare operation, and not worth a special&n;   window-state variable. */
+multiline_comment|/*  Update statistics.  We change to register window 6, so this should be run&n;&t;single-threaded if the device is active. This is expected to be a rare&n;&t;operation, and it&squot;s simpler for the rest of the driver to assume that&n;&t;window 1 is always valid rather than use a special window-state variable.&n;&t;*/
 DECL|function|update_stats
 r_static
 r_void
@@ -2248,7 +2598,7 @@ l_int|5
 id|printk
 c_func
 (paren
-l_string|&quot;       In rx_packet(), status %4.4x, rx_status %4.4x.&bslash;n&quot;
+l_string|&quot;&t;   In rx_packet(), status %4.4x, rx_status %4.4x.&bslash;n&quot;
 comma
 id|inw
 c_func
@@ -2426,7 +2776,7 @@ l_int|4
 id|printk
 c_func
 (paren
-l_string|&quot;       Receiving packet size %d status %4.4x.&bslash;n&quot;
+l_string|&quot;&t;   Receiving packet size %d status %4.4x.&bslash;n&quot;
 comma
 id|pkt_len
 comma
@@ -2542,7 +2892,7 @@ l_int|6
 id|printk
 c_func
 (paren
-l_string|&quot;     dev_rint() happy, status %4.4x.&bslash;n&quot;
+l_string|&quot;&t; dev_rint() happy, status %4.4x.&bslash;n&quot;
 comma
 id|inb
 c_func
@@ -2580,7 +2930,7 @@ l_int|0x1000
 id|printk
 c_func
 (paren
-l_string|&quot;  Waiting for 3c509 to discard packet, status %x.&bslash;n&quot;
+l_string|&quot;&t;Waiting for 3c509 to discard packet, status %x.&bslash;n&quot;
 comma
 id|inw
 c_func
@@ -2601,7 +2951,7 @@ l_int|6
 id|printk
 c_func
 (paren
-l_string|&quot;     discarded packet, status %4.4x.&bslash;n&quot;
+l_string|&quot;&t; discarded packet, status %4.4x.&bslash;n&quot;
 comma
 id|inb
 c_func
@@ -2625,7 +2975,7 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|kfree_skbmem
+id|kfree_s
 c_func
 (paren
 id|skb
@@ -2683,7 +3033,7 @@ l_int|0x1000
 id|printk
 c_func
 (paren
-l_string|&quot;  Waiting for 3c509 to discard packet, status %x.&bslash;n&quot;
+l_string|&quot;&t;Waiting for 3c509 to discard packet, status %x.&bslash;n&quot;
 comma
 id|inw
 c_func
@@ -2705,7 +3055,7 @@ l_int|5
 id|printk
 c_func
 (paren
-l_string|&quot;       Exiting rx_packet(), status %4.4x, rx_status %4.4x.&bslash;n&quot;
+l_string|&quot;&t;   Exiting rx_packet(), status %4.4x, rx_status %4.4x.&bslash;n&quot;
 comma
 id|inw
 c_func
@@ -2729,7 +3079,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef HAVE_MULTICAST
-multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -1&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;best-effort filtering.&n; */
+multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -1&t;&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;&t;&t;&t;best-effort filtering.&n; */
 r_static
 r_void
 DECL|function|set_multicast_list
@@ -2846,7 +3196,7 @@ id|dev-&gt;start
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Turn off statistics.  We update lp-&gt;stats below. */
+multiline_comment|/* Turn off statistics.&t; We update lp-&gt;stats below. */
 id|outw
 c_func
 (paren
@@ -2924,7 +3274,7 @@ id|WN4_MEDIA
 )paren
 op_amp
 op_complement
-l_int|0x00C0
+id|MEDIA_TP
 comma
 id|ioaddr
 op_plus
@@ -2976,5 +3326,5 @@ l_int|0
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -Wall -O6 -x c++ -c 3c509.c&quot;&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c 3c509.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; * End:&n; */
 eof

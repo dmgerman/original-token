@@ -3,7 +3,6 @@ multiline_comment|/*&n; * Modification history timex.h&n; * &n; * 17 Sep 93    D
 macro_line|#ifndef _LINUX_TIMEX_H
 DECL|macro|_LINUX_TIMEX_H
 mdefine_line|#define _LINUX_TIMEX_H
-macro_line|#include &lt;sys/syscall.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 multiline_comment|/*&n; * The following defines establish the engineering parameters of the PLL&n; * model. The HZ variable establishes the timer interrupt frequency, 100 Hz &n; * for the SunOS kernel, 256 Hz for the Ultrix kernel and 1024 Hz for the&n; * OSF/1 kernel. The SHIFT_HZ define expresses the same value as the&n; * nearest power of two in order to avoid hardware multiply operations.&n; */
 DECL|macro|SHIFT_HZ
@@ -98,17 +97,19 @@ multiline_comment|/* (read only) */
 suffix:semicolon
 multiline_comment|/*&n; * Mode codes (timex.mode) &n; */
 DECL|macro|ADJ_OFFSET
-mdefine_line|#define ADJ_OFFSET&t;0x0001&t;/* time offset */
+mdefine_line|#define ADJ_OFFSET&t;&t;0x0001&t;/* time offset */
 DECL|macro|ADJ_FREQUENCY
-mdefine_line|#define ADJ_FREQUENCY&t;0x0002&t;/* frequency offset */
+mdefine_line|#define ADJ_FREQUENCY&t;&t;0x0002&t;/* frequency offset */
 DECL|macro|ADJ_MAXERROR
-mdefine_line|#define ADJ_MAXERROR&t;0x0004&t;/* maximum time error */
+mdefine_line|#define ADJ_MAXERROR&t;&t;0x0004&t;/* maximum time error */
 DECL|macro|ADJ_ESTERROR
-mdefine_line|#define ADJ_ESTERROR&t;0x0008&t;/* estimated time error */
+mdefine_line|#define ADJ_ESTERROR&t;&t;0x0008&t;/* estimated time error */
 DECL|macro|ADJ_STATUS
-mdefine_line|#define ADJ_STATUS&t;0x0010&t;/* clock status */
+mdefine_line|#define ADJ_STATUS&t;&t;0x0010&t;/* clock status */
 DECL|macro|ADJ_TIMECONST
-mdefine_line|#define ADJ_TIMECONST&t;0x0020&t;/* pll time constant */
+mdefine_line|#define ADJ_TIMECONST&t;&t;0x0020&t;/* pll time constant */
+DECL|macro|ADJ_OFFSET_SINGLESHOT
+mdefine_line|#define ADJ_OFFSET_SINGLESHOT&t;0x8001&t;/* old-fashioned adjtime */
 multiline_comment|/*&n; * Clock command/status codes (timex.status)&n; */
 DECL|macro|TIME_OK
 mdefine_line|#define TIME_OK&t;&t;0&t;/* clock synchronized */
@@ -120,175 +121,7 @@ DECL|macro|TIME_OOP
 mdefine_line|#define TIME_OOP&t;3&t;/* leap second in progress */
 DECL|macro|TIME_BAD
 mdefine_line|#define TIME_BAD&t;4&t;/* clock not synchronized */
-macro_line|#ifndef __KERNEL__
-multiline_comment|/* This is used only by one or two programs so it isn&squot;t worth putting it into&n; * a library; the functions are small enough to be substituted inline.&n; */
-r_inline
-r_static
-id|_syscall1
-c_func
-(paren
-r_int
-comma
-id|adjtimex
-comma
-r_struct
-id|timex
-op_star
-comma
-id|ntx
-)paren
-suffix:semicolon
-r_inline
-r_static
-r_int
-DECL|function|adjtime
-id|adjtime
-c_func
-(paren
-r_struct
-id|timeval
-op_star
-id|itv
-comma
-r_struct
-id|timeval
-op_star
-id|otv
-)paren
-(brace
-r_struct
-id|timex
-id|tntx
-suffix:semicolon
-r_int
-id|result
-suffix:semicolon
-id|tntx.mode
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|itv
-)paren
-(brace
-id|tntx.offset
-op_assign
-id|itv-&gt;tv_usec
-suffix:semicolon
-id|tntx.mode
-op_assign
-id|ADJ_OFFSET
-suffix:semicolon
-)brace
-id|result
-op_assign
-id|adjtimex
-c_func
-(paren
-op_amp
-id|tntx
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-OG
-l_int|0
-)paren
-id|result
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|otv
-)paren
-(brace
-id|otv-&gt;tv_usec
-op_assign
-id|tntx.offset
-suffix:semicolon
-id|otv-&gt;tv_sec
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_return
-id|result
-suffix:semicolon
-)brace
-DECL|struct|ntptimeval
-r_struct
-id|ntptimeval
-(brace
-DECL|member|time
-r_struct
-id|timeval
-id|time
-suffix:semicolon
-multiline_comment|/* current time */
-DECL|member|maxerror
-r_int
-id|maxerror
-suffix:semicolon
-multiline_comment|/* maximum error (usec) */
-DECL|member|esterror
-r_int
-id|esterror
-suffix:semicolon
-multiline_comment|/* estimated error (usec) */
-)brace
-suffix:semicolon
-r_inline
-r_static
-r_int
-DECL|function|ntp_gettime
-id|ntp_gettime
-c_func
-(paren
-r_struct
-id|ntptimeval
-op_star
-id|ntv
-)paren
-(brace
-r_struct
-id|timex
-id|tntx
-suffix:semicolon
-r_int
-id|result
-suffix:semicolon
-id|result
-op_assign
-id|adjtimex
-c_func
-(paren
-op_amp
-id|tntx
-)paren
-suffix:semicolon
-id|ntv-&gt;time
-op_assign
-id|tntx.time
-suffix:semicolon
-id|ntv-&gt;maxerror
-op_assign
-id|tntx.maxerror
-suffix:semicolon
-id|ntv-&gt;esterror
-op_assign
-id|tntx.esterror
-suffix:semicolon
-r_return
-id|result
-suffix:semicolon
-)brace
-macro_line|#else
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * kernel variables&n; */
 r_extern
 r_int

@@ -815,7 +815,7 @@ id|bh-&gt;b_data
 id|printk
 c_func
 (paren
-l_string|&quot;free_inode: bit %d already cleared.&bslash;n&quot;
+l_string|&quot;free_inode: bit %lu already cleared.&bslash;n&quot;
 comma
 id|ino
 )paren

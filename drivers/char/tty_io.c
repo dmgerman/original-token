@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *  linux/kernel/tty_io.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; * &squot;tty_io.c&squot; gives an orthogonal feeling to tty&squot;s, be they consoles&n; * or rs-channels. It also implements echoing, cooked mode etc.&n; *&n; * Kill-line thanks to John T Kohl, who also corrected VMIN = VTIME = 0.&n; *&n; * Modified by Theodore Ts&squot;o, 9/14/92, to dynamically allocate the&n; * tty_struct and tty_queue structures.  Previously there was a array&n; * of 256 tty_struct&squot;s which was statically allocated, and the&n; * tty_queue structures were allocated at boot time.  Both are now&n; * dynamically allocated only when the tty is open.&n; *&n; * Also restructured routines so that there is more of a separation&n; * between the high-level tty routines (tty_io.c and tty_ioctl.c) and&n; * the low-level tty routines (serial.c, pty.c, console.c).  This&n; * makes for cleaner and more compact code.  -TYT, 9/17/92 &n; *&n; * Modified by Fred N. van Kempen, 01/29/93, to add line disciplines&n; * which can be dynamically activated and de-activated by the line&n; * discipline handling modules (like SLIP).&n; *&n; * NOTE: pay no attention to the line discpline code (yet); its&n; * interface is still subject to change in this version...&n; * -- TYT, 1/31/92&n; *&n; * Added functionality to the OPOST tty handling.  No delays, but all&n; * other bits should be there.&n; *&t;-- Nick Holloway &lt;alfie@dcs.warwick.ac.uk&gt;, 27th May 1993.&n; */
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -4800,7 +4801,7 @@ c_func
 id|dev
 )paren
 op_ne
-l_int|4
+id|TTY_MAJOR
 )paren
 (brace
 id|printk
@@ -5031,13 +5032,13 @@ c_func
 id|dev
 )paren
 op_ne
-l_int|4
+id|TTY_MAJOR
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;tty_write: pseudo-major != 4&bslash;n&quot;
+l_string|&quot;tty_write: pseudo-major != TTY_MAJOR&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6501,7 +6502,7 @@ c_cond
 (paren
 id|major
 op_eq
-l_int|5
+id|TTYAUX_MAJOR
 )paren
 (brace
 r_if
@@ -6513,7 +6514,7 @@ id|minor
 (brace
 id|major
 op_assign
-l_int|4
+id|TTY_MAJOR
 suffix:semicolon
 id|minor
 op_assign
@@ -6531,7 +6532,7 @@ c_cond
 (paren
 id|major
 op_eq
-l_int|4
+id|TTY_MAJOR
 )paren
 (brace
 r_if
@@ -6759,13 +6760,13 @@ c_func
 id|dev
 )paren
 op_ne
-l_int|4
+id|TTY_MAJOR
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;tty_release: tty pseudo-major != 4&bslash;n&quot;
+l_string|&quot;tty_release: tty pseudo-major != TTY_MAJOR&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6849,13 +6850,13 @@ c_func
 id|dev
 )paren
 op_ne
-l_int|4
+id|TTY_MAJOR
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;tty_select: tty pseudo-major != 4&bslash;n&quot;
+l_string|&quot;tty_select: tty pseudo-major != TTY_MAJOR&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -8063,7 +8064,7 @@ c_cond
 id|register_chrdev
 c_func
 (paren
-l_int|4
+id|TTY_MAJOR
 comma
 l_string|&quot;tty&quot;
 comma
@@ -8074,7 +8075,9 @@ id|tty_fops
 id|panic
 c_func
 (paren
-l_string|&quot;unable to get major 4 for tty device&quot;
+l_string|&quot;unable to get major %d for tty device&quot;
+comma
+id|TTY_MAJOR
 )paren
 suffix:semicolon
 r_if
@@ -8083,7 +8086,7 @@ c_cond
 id|register_chrdev
 c_func
 (paren
-l_int|5
+id|TTYAUX_MAJOR
 comma
 l_string|&quot;tty&quot;
 comma
@@ -8094,7 +8097,9 @@ id|tty_fops
 id|panic
 c_func
 (paren
-l_string|&quot;unable to get major 5 for tty device&quot;
+l_string|&quot;unable to get major %d for tty device&quot;
+comma
+id|TTYAUX_MAJOR
 )paren
 suffix:semicolon
 r_for

@@ -1,12 +1,12 @@
 multiline_comment|/* skeleton.c: A sample network driver core for linux. */
-multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorported herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;This file is an outline for writing a network device driver for the&n;&t;the Linux operating system.&n;&n;&t;To write (or understand) a driver, have a look at the &quot;loopback.c&quot; file to&n;&t;get a feel of what is going on, and then use the code below as a skeleton&n;&t;for the new driver.&n;&n;*/
+multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;This file is an outline for writing a network device driver for the&n;&t;the Linux operating system.&n;&n;&t;To write (or understand) a driver, have a look at the &quot;loopback.c&quot; file to&n;&t;get a feel of what is going on, and then use the code below as a skeleton&n;&t;for the new driver.&n;&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;skeleton.c:v0.04 10/17/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;skeleton.c:v0.05 11/16/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* Always include &squot;config.h&squot; first in case the user wants to turn on&n;   or override something. */
 macro_line|#include &lt;linux/config.h&gt;
@@ -20,12 +20,12 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;errno.h&gt;
-macro_line|#include &lt;memory.h&gt;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;iow.h&quot;
 macro_line|#include &quot;eth.h&quot;
@@ -66,7 +66,13 @@ macro_line|#ifndef HAVE_ALLOC_SKB
 DECL|macro|alloc_skb
 mdefine_line|#define alloc_skb(size, priority) (struct sk_buff *) kmalloc(size,priority)
 DECL|macro|kfree_skbmem
-mdefine_line|#define kfree_skbmem(buff, size) kfree_s(buff, size);
+mdefine_line|#define kfree_skbmem(addr, size) kfree_s(addr,size);
+macro_line|#endif
+macro_line|#ifndef HAVE_PORTRESERVE
+DECL|macro|check_region
+mdefine_line|#define check_region(ioaddr, size) &t;&t;0
+DECL|macro|snarf_region
+mdefine_line|#define&t;snarf_region(ioaddr, size);&t;&t;do ; while (0)
 macro_line|#endif
 multiline_comment|/* use 0 for production, 1 for verification, &gt;2 for debug */
 macro_line|#ifndef NET_DEBUG
@@ -98,6 +104,16 @@ suffix:semicolon
 multiline_comment|/* Useless example local info. */
 )brace
 suffix:semicolon
+multiline_comment|/* The number of low I/O ports used by the ethercard. */
+DECL|macro|ETHERCARD_TOTAL_SIZE
+mdefine_line|#define ETHERCARD_TOTAL_SIZE&t;16
+multiline_comment|/* The station (ethernet) address prefix, used for IDing the board. */
+DECL|macro|SA_ADDR0
+mdefine_line|#define SA_ADDR0 0x00
+DECL|macro|SA_ADDR1
+mdefine_line|#define SA_ADDR1 0x42
+DECL|macro|SA_ADDR2
+mdefine_line|#define SA_ADDR2 0x65
 multiline_comment|/* Index to functions, as function prototypes. */
 r_extern
 r_int
@@ -335,7 +351,6 @@ op_assign
 op_star
 id|port
 suffix:semicolon
-macro_line|#ifdef HAVE_PORTRESERVE
 r_if
 c_cond
 (paren
@@ -344,13 +359,11 @@ c_func
 (paren
 id|ioaddr
 comma
-l_int|1
-multiline_comment|/* ETHERCARD_TOTAL_SIZE */
+id|ETHERCARD_TOTAL_SIZE
 )paren
 )paren
 r_continue
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -392,7 +405,6 @@ suffix:semicolon
 r_return
 id|ENODEV
 suffix:semicolon
-multiline_comment|/* ENODEV would be more accurate. */
 )brace
 DECL|function|netcard_probe1
 r_int
@@ -457,21 +469,21 @@ id|station_addr
 l_int|0
 )braket
 op_ne
-l_int|0x42
+id|SA_ADDR0
 op_logical_or
 id|station_addr
 (braket
 l_int|1
 )braket
 op_ne
-l_int|0x42
+id|SA_ADDR1
 op_logical_or
 id|station_addr
 (braket
 l_int|2
 )braket
 op_ne
-l_int|0x42
+id|SA_ADDR2
 )paren
 (brace
 r_return
@@ -594,17 +606,15 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif&t;/* jumpered interrupt */
-macro_line|#ifdef HAVE_PORTRESERVE
 multiline_comment|/* Grab the region so we can find another board if autoIRQ fails. */
 id|snarf_region
 c_func
 (paren
 id|ioaddr
 comma
-l_int|16
+id|ETHERCARD_TOTAL_SIZE
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1587,7 +1597,7 @@ op_ne
 l_int|0
 )paren
 (brace
-id|kfree_skbmem
+id|kfree_s
 c_func
 (paren
 id|skb

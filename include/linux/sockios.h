@@ -103,6 +103,10 @@ DECL|macro|SIOCGIFHWADDR
 mdefine_line|#define&t;SIOCGIFHWADDR&t;0x8923&t;&t;/* get hardware address&t;&t;*/
 DECL|macro|SIOCSIFHWADDR
 mdefine_line|#define&t;SIOCSIFHWADDR&t;0x8924&t;&t;/* set hardware address (NI)&t;*/
+DECL|macro|SIOCGIFENCAP
+mdefine_line|#define SIOCGIFENCAP&t;0x8925&t;&t;/* get/set slip encapsulation   */
+DECL|macro|SIOCSIFENCAP
+mdefine_line|#define SIOCSIFENCAP&t;0x8926&t;&t;
 multiline_comment|/* Routing table calls. */
 DECL|macro|SIOCADDRT
 mdefine_line|#define SIOCADDRT&t;0x8940&t;&t;/* add routing table entry&t;*/

@@ -1403,10 +1403,6 @@ DECL|struct|lookup_cache
 r_struct
 id|lookup_cache
 (brace
-DECL|member|lock
-r_char
-id|lock
-suffix:semicolon
 DECL|member|dir
 r_int
 r_int

@@ -1,8 +1,11 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the &squot;struct sk_buff&squot; memory handlers.&n; *&n; * Version:&t;@(#)skbuff.h&t;1.0.4&t;05/20/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;&t;: &t;Volatiles (this makes me unhappy - we want proper asm linked list stuff)&n; *&t;&t;Alan Cox&t;&t;:&t;Declaration for new primitives&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the &squot;struct sk_buff&squot; memory handlers.&n; *&n; * Version:&t;@(#)skbuff.h&t;1.0.4&t;05/20/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;&t;: &t;Volatiles (this makes me unhappy - we want proper asm linked list stuff)&n; *&t;&t;Alan Cox&t;&t;:&t;Declaration for new primitives&n; *&t;&t;Alan Cox&t;&t;:&t;Fraglist support (idea by Donald Becker)&n; *&t;&t;Alan Cox&t;&t;:&t;&squot;users&squot; counter. Combines with datagram changes to avoid skb_peek_copy&n; *&t;&t;&t;&t;&t;&t;being used.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _SKBUFF_H
 DECL|macro|_SKBUFF_H
 mdefine_line|#define _SKBUFF_H
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#ifdef CONFIG_IPX
+macro_line|#include &quot;ipx.h&quot;
+macro_line|#endif
 DECL|macro|HAVE_ALLOC_SKB
 mdefine_line|#define HAVE_ALLOC_SKB&t;&t;/* For the drivers to know */
 DECL|macro|FREE_READ
@@ -114,6 +117,13 @@ r_int
 r_int
 id|seq
 suffix:semicolon
+macro_line|#ifdef CONFIG_IPX&t;
+DECL|member|ipx
+id|ipx_packet
+op_star
+id|ipx
+suffix:semicolon
+macro_line|#endif&t;
 DECL|member|h
 )brace
 id|h
@@ -128,6 +138,18 @@ r_int
 r_int
 id|len
 suffix:semicolon
+DECL|member|fraglen
+r_int
+r_int
+id|fraglen
+suffix:semicolon
+DECL|member|fraglist
+r_struct
+id|sk_buff
+op_star
+id|fraglist
+suffix:semicolon
+multiline_comment|/* Fragment list */
 DECL|member|truesize
 r_int
 r_int
@@ -173,6 +195,12 @@ comma
 id|lock
 suffix:semicolon
 multiline_comment|/* Lock is now unused */
+DECL|member|users
+r_int
+r_int
+id|users
+suffix:semicolon
+multiline_comment|/* User count - see datagram.c (and soon seqpacket.c/stream.c) */
 )brace
 suffix:semicolon
 DECL|macro|SK_WMEM_MAX
@@ -271,7 +299,7 @@ comma
 r_struct
 id|sk_buff
 op_star
-r_new
+id|newsk
 )paren
 suffix:semicolon
 r_extern
@@ -287,7 +315,7 @@ comma
 r_struct
 id|sk_buff
 op_star
-r_new
+id|newsk
 )paren
 suffix:semicolon
 r_extern
@@ -429,6 +457,38 @@ comma
 id|select_table
 op_star
 id|wait
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|skb_copy_datagram
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|from
+comma
+r_int
+id|offset
+comma
+r_char
+op_star
+id|to
+comma
+r_int
+id|size
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|skb_free_datagram
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* _SKBUFF_H */

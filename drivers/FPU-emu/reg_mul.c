@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_mul.c                                                                |&n; |                                                                           |&n; | Multiply one FPU_REG by another, put the result in a destination FPU_REG. |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_mul.c                                                                |&n; |                                                                           |&n; | Multiply one FPU_REG by another, put the result in a destination FPU_REG. |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | The destination may be any FPU_REG, including one of the source FPU_REGs. |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
@@ -11,10 +11,12 @@ id|reg_mul
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|a
 comma
 id|FPU_REG
+r_const
 op_star
 id|b
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  errors.c                                                                 |&n; |                                                                           |&n; |  The error handling functions for wm-FPU-emu                              |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  errors.c                                                                 |&n; |                                                                           |&n; |  The error handling functions for wm-FPU-emu                              |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | Note:                                                                     |&n; |    The file contains code which accesses user memory.                     |&n; |    Emulator static data may change when user memory is accessed, due to   |&n; |    other processes using the emulator while swapping is in progress.      |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -59,8 +59,12 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Unimplemented FPU Opcode at eip=%08x : %02x &quot;
+l_string|&quot;Unimplemented FPU Opcode at eip=%p : %02x &quot;
 comma
+(paren
+r_void
+op_star
+)paren
 id|FPU_ORIG_EIP
 comma
 id|byte1
@@ -363,8 +367,12 @@ macro_line|#endif DEBUGGING
 id|printk
 c_func
 (paren
-l_string|&quot;At %08x: %02x &quot;
+l_string|&quot;At %p: %02x &quot;
 comma
+(paren
+r_void
+op_star
+)paren
 id|FPU_ORIG_EIP
 comma
 id|byte1
@@ -423,7 +431,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; SW: b=%d st=%d es=%d sf=%d cc=%d%d%d%d ef=%d%d%d%d%d%d&bslash;n&quot;
+l_string|&quot; SW: b=%d st=%ld es=%d sf=%d cc=%d%d%d%d ef=%d%d%d%d%d%d&bslash;n&quot;
 comma
 id|partial_status
 op_amp
@@ -560,7 +568,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; CW: ic=%d rc=%d%d pc=%d%d iem=%d     ef=%d%d%d%d%d%d&bslash;n&quot;
+l_string|&quot; CW: ic=%d rc=%ld%ld pc=%ld%ld iem=%d     ef=%d%d%d%d%d%d&bslash;n&quot;
 comma
 id|control_word
 op_amp
@@ -741,7 +749,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;st(%d)  %c .%04x %04x %04x %04x e%+-6d &quot;
+l_string|&quot;st(%d)  %c .%04lx %04lx %04lx %04lx e%+-6ld &quot;
 comma
 id|i
 comma
@@ -829,7 +837,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[data] %c .%04x %04x %04x %04x e%+-6d &quot;
+l_string|&quot;[data] %c .%04lx %04lx %04lx %04lx e%+-6ld &quot;
 comma
 id|FPU_loaded_data.sign
 ques
@@ -1257,10 +1265,12 @@ id|real_2op_NaN
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|a
 comma
 id|FPU_REG
+r_const
 op_star
 id|b
 comma
@@ -1270,6 +1280,7 @@ id|dest
 )paren
 (brace
 id|FPU_REG
+r_const
 op_star
 id|x
 suffix:semicolon

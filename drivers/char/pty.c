@@ -288,7 +288,7 @@ id|TTY_BH
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * This routine gets called when tty_write has put something into&n; * the write_queue. It copies the input to the output-queue of it&squot;s&n; * slave.&n; */
+multiline_comment|/*&n; * This routine gets called when tty_write has put something into&n; * the write_queue. It copies the input to the output-queue of its&n; * slave.&n; */
 DECL|function|pty_write
 r_static
 r_void

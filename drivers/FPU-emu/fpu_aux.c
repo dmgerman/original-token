@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_aux.c                                                                |&n; |                                                                           |&n; | Code to implement some of the FPU auxiliary instructions.                 |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_aux.c                                                                |&n; |                                                                           |&n; | Code to implement some of the FPU auxiliary instructions.                 |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -117,6 +117,7 @@ suffix:semicolon
 DECL|variable|finit_table
 r_static
 id|FUNC
+r_const
 id|finit_table
 (braket
 )braket
@@ -184,6 +185,7 @@ suffix:semicolon
 DECL|variable|fstsw_table
 r_static
 id|FUNC
+r_const
 id|fstsw_table
 (braket
 )braket
@@ -234,7 +236,9 @@ r_void
 (brace
 )brace
 DECL|variable|fp_nop_table
+r_static
 id|FUNC
+r_const
 id|fp_nop_table
 (braket
 )braket

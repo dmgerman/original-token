@@ -1,6 +1,7 @@
-macro_line|#ifndef _EXT2_FS_I
-DECL|macro|_EXT2_FS_I
-mdefine_line|#define _EXT2_FS_I
+multiline_comment|/*&n; *  linux/include/linux/ext2_fs_i.h&n; *&n; *  Copyright (C) 1992, 1993  Remy Card (card@masi.ibp.fr)&n; *&n; *  from&n; *&n; *  linux/include/linux/minix_fs_i.h&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+macro_line|#ifndef _LINUX_EXT2_FS_I
+DECL|macro|_LINUX_EXT2_FS_I
+mdefine_line|#define _LINUX_EXT2_FS_I
 multiline_comment|/*&n; * second extended file system inode data in memory&n; */
 DECL|struct|ext2_inode_info
 r_struct
@@ -76,5 +77,5 @@ id|i_next_alloc_goal
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif&t;/* _LINUX_EXT2_FS_I */
 eof

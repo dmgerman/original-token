@@ -10,7 +10,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 DECL|macro|MAJOR_NR
-mdefine_line|#define MAJOR_NR 13
+mdefine_line|#define MAJOR_NR XT_DISK_MAJOR
 macro_line|#include &quot;blk.h&quot;
 DECL|variable|xd_info
 id|XD_INFO

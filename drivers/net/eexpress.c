@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;eexpress.c:v0.04 10/18/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;eexpress.c:v0.06 10/27/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n;  Sources:&n;&t;This driver wouldn&squot;t have been written with the availability of the&n;&t;Crynwr driver source code.&t;It provided a known-working implementation&n;&t;that filled in the gaping holes of the Intel documention.  Three cheers&n;&t;for Russ Nelson.&n;&n;&t;Intel Microcommunications Databook, Vol. 1, 1990. It provides just enough&n;&t;info that the casual reader might think that it documents the i82586.&n;*/
@@ -18,7 +18,6 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -33,8 +32,9 @@ macro_line|#include &quot;arp.h&quot;
 macro_line|#ifndef HAVE_ALLOC_SKB
 DECL|macro|alloc_skb
 mdefine_line|#define alloc_skb(size, priority) (struct sk_buff *) kmalloc(size,priority)
-DECL|macro|kfree_skbmem
-mdefine_line|#define kfree_skbmem(buff, size) kfree_s(buff,size)
+macro_line|#else
+multiline_comment|/* This isn&squot;t quite right, but it&squot;s the best version define I can find right now. */
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#endif
 multiline_comment|/* use 0 for production, 1 for verification, 2..7 for debug */
 macro_line|#ifndef NET_DEBUG
@@ -232,6 +232,7 @@ DECL|macro|RX_BUF_END
 mdefine_line|#define RX_BUF_END&t;&t;0x8000
 multiline_comment|/*&n;  That&squot;s it: only 86 bytes to set up the beast, including every extra&n;  command available.  The 170 byte buffer at DUMP_DATA is shared between the&n;  Dump command (called only by the diagnostic program) and the SetMulticastList&n;  command. &n;&n;  To complete the memory setup you only have to write the station address at&n;  SA_OFFSET and create the Tx &amp; Rx buffer lists.&n;&n;  The Tx command chain and buffer list is setup as follows:&n;  A Tx command table, with the data buffer pointing to...&n;  A Tx data buffer descriptor.  The packet is in a single buffer, rather than&n;     chaining together several smaller buffers.&n;  A NoOp command, which initially points to itself,&n;  And the packet data.&n;&n;  A transmit is done by filling in the Tx command table and data buffer,&n;  re-writing the NoOp command, and finally changing the offset of the last&n;  command to point to the current Tx command.  When the Tx command is finished,&n;  it jumps to the NoOp, when it loops until the next Tx command changes the&n;  &quot;link offset&quot; in the NoOp.  This way the 82586 never has to go through the&n;  slow restart sequence.&n;&n;  The Rx buffer list is set up in the obvious ring structure.  We have enough&n;  memory (and low enough interrupt latency) that we can avoid the complicated&n;  Rx buffer linked lists by alway associating a full-size Rx data buffer with&n;  each Rx data frame.&n;&n;  I current use four transmit buffers starting at TX_BUF_START (0x0100), and&n;  use the rest of memory, from RX_BUF_START to RX_BUF_END, for Rx buffers.&n;&n;  */
 DECL|variable|init_words
+r_static
 r_int
 id|init_words
 (braket
@@ -590,11 +591,11 @@ op_assign
 (brace
 l_int|0x300
 comma
+l_int|0x270
+comma
 l_int|0x320
 comma
 l_int|0x340
-comma
-l_int|0x280
 comma
 l_int|0
 )brace
@@ -898,16 +899,6 @@ id|dev-&gt;base_addr
 op_assign
 id|ioaddr
 suffix:semicolon
-id|outb
-c_func
-(paren
-id|ASIC_RESET
-comma
-id|ioaddr
-op_plus
-id|EEPROM_Ctrl
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1083,6 +1074,17 @@ id|SET_IRQ
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* It&squot;s now OK to leave the board in reset, pending the open(). */
+id|outb
+c_func
+(paren
+id|ASIC_RESET
+comma
+id|ioaddr
+op_plus
+id|EEPROM_Ctrl
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1327,6 +1329,25 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|irq2dev_map
+(braket
+id|dev-&gt;irq
+)braket
+op_ne
+l_int|0
+multiline_comment|/* This is always true, but avoid the false IRQ. */
+op_logical_or
+(paren
+id|irq2dev_map
+(braket
+id|dev-&gt;irq
+)braket
+op_assign
+id|dev
+)paren
+op_eq
+l_int|0
+op_logical_or
 id|request_irq
 c_func
 (paren
@@ -1342,13 +1363,6 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 multiline_comment|/* Initialize the 82586 memory and start it. */
 id|init_82586_mem
 c_func
@@ -3915,7 +3929,7 @@ op_ne
 l_int|0
 )paren
 (brace
-id|kfree_skbmem
+id|kfree_s
 c_func
 (paren
 id|skb

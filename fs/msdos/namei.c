@@ -1219,6 +1219,17 @@ r_return
 id|res
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * XXX all times should be set by caller upon successful completion.&n;&t; */
+id|dir-&gt;i_ctime
+op_assign
+id|dir-&gt;i_mtime
+op_assign
+id|CURRENT_TIME
+suffix:semicolon
+id|dir-&gt;i_dirt
+op_assign
+l_int|1
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -1245,7 +1256,7 @@ suffix:semicolon
 id|date_unix2dos
 c_func
 (paren
-id|CURRENT_TIME
+id|dir-&gt;i_mtime
 comma
 op_amp
 id|de-&gt;time
@@ -2343,6 +2354,10 @@ id|inode-&gt;i_nlink
 op_assign
 l_int|0
 suffix:semicolon
+id|inode-&gt;i_ctime
+op_assign
+id|dir-&gt;i_ctime
+op_assign
 id|dir-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
@@ -2523,6 +2538,14 @@ id|inode-&gt;i_nlink
 op_assign
 l_int|0
 suffix:semicolon
+id|inode-&gt;i_ctime
+op_assign
+id|dir-&gt;i_ctime
+op_assign
+id|dir-&gt;i_mtime
+op_assign
+id|CURRENT_TIME
+suffix:semicolon
 id|MSDOS_I
 c_func
 (paren
@@ -2534,6 +2557,8 @@ op_assign
 l_int|1
 suffix:semicolon
 id|inode-&gt;i_dirt
+op_assign
+id|dir-&gt;i_dirt
 op_assign
 l_int|1
 suffix:semicolon

@@ -178,6 +178,7 @@ DECL|macro|IS_RESETTING
 mdefine_line|#define IS_RESETTING&t;0x08
 DECL|macro|ASKED_FOR_SENSE
 mdefine_line|#define ASKED_FOR_SENSE 0x10
+multiline_comment|/* #define NEEDS_JUMPSTART 0x20  defined in hosts.h */
 multiline_comment|/*&n; *&t;This is the number  of clock ticks we should wait before we time out &n; *&t;and abort the command.  This is for  where the scsi.c module generates &n; *&t;the command, not where it originates from a higher level, in which&n; *&t;case the timeout is specified there.&n; *&n; *&t;ABORT_TIMEOUT and RESET_TIMEOUT are the timeouts for RESET and ABORT&n; *&t;respectively.&n; */
 macro_line|#ifdef DEBUG
 DECL|macro|SCSI_TIMEOUT
@@ -2858,6 +2859,24 @@ r_int
 id|clock
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|SCpnt
+OL
+id|current-&gt;kernel_stack_page
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Kernel stack overflow.&quot;
+)paren
+suffix:semicolon
 id|host
 op_assign
 id|SCpnt-&gt;host
@@ -3449,7 +3468,6 @@ c_func
 id|SCpnt
 )paren
 suffix:semicolon
-macro_line|#if 0
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -3458,12 +3476,26 @@ l_string|&quot;performing request sense&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|SCpnt-&gt;flags
+op_amp
+id|NEEDS_JUMPSTART
+)paren
+(brace
+id|SCpnt-&gt;flags
+op_and_assign
+op_complement
+id|NEEDS_JUMPSTART
+suffix:semicolon
 id|scsi_request_sense
 (paren
 id|SCpnt
 )paren
 suffix:semicolon
-macro_line|#endif
+)brace
+suffix:semicolon
 )brace
 DECL|function|check_sense
 r_static
@@ -4901,6 +4933,7 @@ op_member_access_from_pointer
 id|reset
 c_func
 (paren
+id|SCpnt
 )paren
 suffix:semicolon
 )brace
@@ -4921,6 +4954,7 @@ op_member_access_from_pointer
 id|reset
 c_func
 (paren
+id|SCpnt
 )paren
 suffix:semicolon
 id|host-&gt;last_reset

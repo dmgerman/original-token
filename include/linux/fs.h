@@ -29,13 +29,6 @@ DECL|macro|BLOCK_SIZE
 mdefine_line|#define BLOCK_SIZE 1024
 DECL|macro|BLOCK_SIZE_BITS
 mdefine_line|#define BLOCK_SIZE_BITS 10
-DECL|macro|MAX_CHRDEV
-mdefine_line|#define MAX_CHRDEV 32
-DECL|macro|MAX_BLKDEV
-mdefine_line|#define MAX_BLKDEV 32
-multiline_comment|/* devices are as follows: (same as minix, so we can use the minix&n; * file system. These are major numbers.)&n; *&n; *  0 - unnamed (minor 0 = true nodev)&n; *  1 - /dev/mem&n; *  2 - /dev/fd&n; *  3 - /dev/hd&n; *  4 - /dev/ttyx&n; *  5 - /dev/tty&n; *  6 - /dev/lp&n; *  7 -&n; *  8 - /dev/sd&n; *  9 - /dev/st&n; * 10 - mice&n; * 11 - scsi cdrom&n; * 12 -&n; * 13 -&n; * 14 - sound card (?)&n; * 15 -&n; * 16 - &n; * 17 - &n; * 18 - &n; * 19 - &n; * 20 - &n; * 21 - /dev/sg&n; */
-DECL|macro|UNNAMED_MAJOR
-mdefine_line|#define UNNAMED_MAJOR 0
 DECL|macro|MAY_EXEC
 mdefine_line|#define MAY_EXEC 1
 DECL|macro|MAY_WRITE
@@ -89,9 +82,9 @@ id|end
 )paren
 suffix:semicolon
 DECL|macro|MAJOR
-mdefine_line|#define MAJOR(a) (((unsigned)(a))&gt;&gt;8)
+mdefine_line|#define MAJOR(a) (int)((unsigned short)(a) &gt;&gt; 8)
 DECL|macro|MINOR
-mdefine_line|#define MINOR(a) ((a)&amp;0xff)
+mdefine_line|#define MINOR(a) (int)((unsigned short)(a) &amp; 0xFF)
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
@@ -286,6 +279,7 @@ macro_line|#include &lt;linux/pipe_fs_i.h&gt;
 macro_line|#include &lt;linux/minix_fs_i.h&gt;
 macro_line|#include &lt;linux/ext_fs_i.h&gt;
 macro_line|#include &lt;linux/ext2_fs_i.h&gt;
+macro_line|#include &lt;linux/hpfs_fs_i.h&gt;
 macro_line|#include &lt;linux/msdos_fs_i.h&gt;
 macro_line|#include &lt;linux/iso_fs_i.h&gt;
 macro_line|#include &lt;linux/nfs_fs_i.h&gt;
@@ -409,6 +403,12 @@ comma
 op_star
 id|i_bound_by
 suffix:semicolon
+DECL|member|i_mount
+r_struct
+id|inode
+op_star
+id|i_mount
+suffix:semicolon
 DECL|member|i_count
 r_int
 r_int
@@ -433,11 +433,6 @@ DECL|member|i_pipe
 r_int
 r_char
 id|i_pipe
-suffix:semicolon
-DECL|member|i_mount
-r_int
-r_char
-id|i_mount
 suffix:semicolon
 DECL|member|i_seek
 r_int
@@ -470,6 +465,11 @@ DECL|member|ext2_i
 r_struct
 id|ext2_inode_info
 id|ext2_i
+suffix:semicolon
+DECL|member|hpfs_i
+r_struct
+id|hpfs_inode_info
+id|hpfs_i
 suffix:semicolon
 DECL|member|msdos_i
 r_struct
@@ -604,6 +604,7 @@ suffix:semicolon
 macro_line|#include &lt;linux/minix_fs_sb.h&gt;
 macro_line|#include &lt;linux/ext_fs_sb.h&gt;
 macro_line|#include &lt;linux/ext2_fs_sb.h&gt;
+macro_line|#include &lt;linux/hpfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/msdos_fs_sb.h&gt;
 macro_line|#include &lt;linux/iso_fs_sb.h&gt;
 macro_line|#include &lt;linux/nfs_fs_sb.h&gt;
@@ -696,6 +697,11 @@ DECL|member|ext2_sb
 r_struct
 id|ext2_sb_info
 id|ext2_sb
+suffix:semicolon
+DECL|member|hpfs_sb
+r_struct
+id|hpfs_sb_info
+id|hpfs_sb
 suffix:semicolon
 DECL|member|msdos_sb
 r_struct

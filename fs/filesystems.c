@@ -25,6 +25,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_ISO9660_FS
 macro_line|#include &lt;linux/iso_fs.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_HPFS_FS
+macro_line|#include &lt;linux/hpfs_fs.h&gt;
+macro_line|#endif
 DECL|variable|file_systems
 r_struct
 id|file_system_type
@@ -108,6 +111,16 @@ macro_line|#ifdef CONFIG_ISO9660_FS
 id|isofs_read_super
 comma
 l_string|&quot;iso9660&quot;
+comma
+l_int|1
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_HPFS_FS
+(brace
+id|hpfs_read_super
+comma
+l_string|&quot;hpfs&quot;
 comma
 l_int|1
 )brace

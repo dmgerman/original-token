@@ -1050,6 +1050,16 @@ r_char
 op_star
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|s
+)paren
+id|s
+op_assign
+l_string|&quot;&lt;NULL&gt;&quot;
+suffix:semicolon
 id|len
 op_assign
 id|strlen

@@ -164,13 +164,13 @@ mdefine_line|#define&t;IN_CLASSC_NSHIFT&t;8
 DECL|macro|IN_CLASSC_HOST
 mdefine_line|#define&t;IN_CLASSC_HOST&t;&t;(0xffffffff &amp; ~IN_CLASSC_NET)
 DECL|macro|IN_CLASSD
-mdefine_line|#define&t;IN_CLASSD(a)&t;&t;((((long int) (a)) &amp; 0xf0000000) = 0xe0000000)
+mdefine_line|#define&t;IN_CLASSD(a)&t;&t;((((long int) (a)) &amp; 0xf0000000) == 0xe0000000)
 DECL|macro|IN_MULTICAST
 mdefine_line|#define&t;IN_MULTICAST(a)&t;&t;IN_CLASSD(a)
 DECL|macro|IN_EXPERIMENTAL
-mdefine_line|#define&t;IN_EXPERIMENTAL(a)&t;((((long int) (a)) &amp; 0xe0000000) = 0xe0000000)
+mdefine_line|#define&t;IN_EXPERIMENTAL(a)&t;((((long int) (a)) &amp; 0xe0000000) == 0xe0000000)
 DECL|macro|IN_BADCLASS
-mdefine_line|#define&t;IN_BADCLASS(a)&t;&t;((((long int) (a)) &amp; 0xf0000000) = 0xf0000000)
+mdefine_line|#define&t;IN_BADCLASS(a)&t;&t;((((long int) (a)) &amp; 0xf0000000) == 0xf0000000)
 multiline_comment|/* Address to accept any incoming messages. */
 DECL|macro|INADDR_ANY
 mdefine_line|#define&t;INADDR_ANY&t;&t;((unsigned long int) 0x00000000)

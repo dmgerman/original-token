@@ -1060,8 +1060,7 @@ op_le
 id|de-&gt;d_rec_len
 )paren
 (brace
-id|dir-&gt;i_atime
-op_assign
+multiline_comment|/*&n;&t;&t; * XXX all times should be set by caller upon successful&n;&t;&t; * completion.&n;&t;&t; */
 id|dir-&gt;i_ctime
 op_assign
 id|dir-&gt;i_mtime
@@ -2769,7 +2768,7 @@ suffix:semicolon
 id|dir-&gt;i_nlink
 op_decrement
 suffix:semicolon
-id|dir-&gt;i_atime
+id|inode-&gt;i_ctime
 op_assign
 id|dir-&gt;i_ctime
 op_assign
@@ -3014,7 +3013,7 @@ id|bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
-id|dir-&gt;i_atime
+id|inode-&gt;i_ctime
 op_assign
 id|dir-&gt;i_ctime
 op_assign
@@ -3565,8 +3564,6 @@ suffix:semicolon
 id|oldinode-&gt;i_nlink
 op_increment
 suffix:semicolon
-id|oldinode-&gt;i_atime
-op_assign
 id|oldinode-&gt;i_ctime
 op_assign
 id|CURRENT_TIME

@@ -1124,11 +1124,9 @@ id|bh
 )paren
 suffix:semicolon
 )brace
-id|inode-&gt;i_atime
+id|inode-&gt;i_mtime
 op_assign
 id|inode-&gt;i_ctime
-op_assign
-id|inode-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon

@@ -524,6 +524,10 @@ id|fattr
 (brace
 id|fattr-&gt;type
 op_assign
+(paren
+r_enum
+id|nfs_stat
+)paren
 id|ntohl
 c_func
 (paren
@@ -4529,8 +4533,7 @@ r_static
 r_struct
 (brace
 DECL|member|stat
-r_enum
-id|nfs_stat
+r_int
 id|stat
 suffix:semicolon
 DECL|member|errno

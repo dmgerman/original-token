@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;@(#)route.c&t;1.0.14&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;@(#)route.c&t;1.0.14&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&t;&t;Rui Oliveira&t;:&t;ICMP routing table updates&n; *&t;&t;(rco@di.uminho.pt)&t;Routing table insertion and update&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -57,7 +57,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;RT: %06lx NXT=%06lx FLAGS=0x%02lx&bslash;n&quot;
+l_string|&quot;RT: %06lx NXT=%06lx FLAGS=0x%02x&bslash;n&quot;
 comma
 (paren
 r_int
@@ -99,7 +99,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;    DEV=%s USE=%ld REF=%ld&bslash;n&quot;
+l_string|&quot;    DEV=%s USE=%ld REF=%d&bslash;n&quot;
 comma
 (paren
 id|rt-&gt;rt_dev
@@ -551,6 +551,7 @@ op_assign
 id|dst
 suffix:semicolon
 r_else
+(brace
 id|rt-&gt;rt_dst
 op_assign
 (paren
@@ -559,6 +560,36 @@ op_amp
 id|dev-&gt;pa_mask
 )paren
 suffix:semicolon
+multiline_comment|/* We don&squot;t want new routes to our own net*/
+r_if
+c_cond
+(paren
+id|rt-&gt;rt_dst
+op_eq
+(paren
+id|dev-&gt;pa_addr
+op_amp
+id|dev-&gt;pa_mask
+)paren
+)paren
+(brace
+id|kfree_s
+c_func
+(paren
+id|rt
+comma
+r_sizeof
+(paren
+r_struct
+id|rtable
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*printk(&quot;Dynamic route to my own net rejected&bslash;n&quot;);*/
+r_return
+suffix:semicolon
+)brace
+)brace
 )brace
 r_else
 id|rt-&gt;rt_dst
@@ -732,6 +763,31 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|r1
+op_assign
+id|r
+suffix:semicolon
+)brace
+id|r1
+op_assign
+id|rt_base
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|r
+op_assign
+id|rt_base
+suffix:semicolon
+id|r
+op_ne
+l_int|NULL
+suffix:semicolon
+id|r
+op_assign
+id|r-&gt;rt_next
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -1149,7 +1205,7 @@ c_func
 (paren
 id|pos
 comma
-l_string|&quot;%s&bslash;t%08X&bslash;t%08X&bslash;t%02X&bslash;t%d&bslash;t%d&bslash;t%d&bslash;n&quot;
+l_string|&quot;%s&bslash;t%08lX&bslash;t%08lX&bslash;t%02X&bslash;t%d&bslash;t%lu&bslash;t%d&bslash;n&quot;
 comma
 id|r-&gt;rt_dev-&gt;name
 comma

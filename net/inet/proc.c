@@ -174,7 +174,7 @@ c_func
 (paren
 id|pos
 comma
-l_string|&quot;%2d: %08X:%04X %08X:%04X %02X %08X:%08X %02X:%08X %08X %d&bslash;n&quot;
+l_string|&quot;%2d: %08lX:%04X %08lX:%04X %02X %08lX:%08lX %02X:%08lX %08X %d&bslash;n&quot;
 comma
 id|i
 comma
@@ -214,6 +214,9 @@ id|timer_active
 comma
 id|sp-&gt;timer.expires
 comma
+(paren
+r_int
+)paren
 id|sp-&gt;retransmits
 comma
 id|SOCK_INODE

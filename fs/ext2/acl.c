@@ -1,8 +1,10 @@
 multiline_comment|/*&n; * linux/fs/ext2/acl.c&n; *&n; * Copyright (C) 1993  Remy Card (card@masi.ibp.fr)&n; */
 multiline_comment|/*&n; * This file will contain the Access Control Lists management for the&n; * second extended file system.&n; */
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/ext2_fs.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 multiline_comment|/*&n; * ext2_permission ()&n; *&n; * Check for access rights&n; */
 DECL|function|ext2_permission
@@ -18,6 +20,7 @@ r_int
 id|mask
 )paren
 (brace
+r_int
 r_int
 id|mode
 op_assign

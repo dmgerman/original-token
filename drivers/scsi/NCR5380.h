@@ -372,7 +372,8 @@ macro_line|#endif
 r_int
 id|NCR5380_reset
 (paren
-r_void
+id|Scsi_Cmnd
+op_star
 )paren
 suffix:semicolon
 macro_line|#ifndef NCR5380_queue_command

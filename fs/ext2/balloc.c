@@ -1,10 +1,11 @@
 multiline_comment|/*&n; *  linux/fs/ext2/balloc.c&n; *&n; *  Copyright (C) 1992, 1993  Remy Card (card@masi.ibp.fr)&n; *&n; *  Enhanced block allocation by Stephen Tweedie (sct@dcs.ed.ac.uk), 1993&n; */
 multiline_comment|/* balloc.c contains the blocks allocation and deallocation routines */
 multiline_comment|/*&n;&n;   The free blocks are managed by bitmaps.  A file system contains several&n;   blocks groups.  Each group contains 1 bitmap block for blocks, 1 bitmap&n;   block for inodes, N blocks for the inode table and data blocks.&n;&n;   The file system contains group descriptors which are located after the&n;   super block.  Each descriptor contains the number of the bitmap block and&n;   the free blocks count in the block.  The descriptors are loaded in memory&n;   when a file system is mounted (see ext2_read_super).&n;&n;*/
-macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -454,10 +455,14 @@ id|sb-&gt;u.ext2_sb.s_group_desc
 id|group_desc
 )braket
 )paren
-(brace
-id|printk
+id|ext2_panic
 (paren
-l_string|&quot;block_group = %d,group_desc = %d,desc = %d&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;read_block_bitmap&quot;
+comma
+l_string|&quot;Group descriptor not loaded&bslash;n&quot;
+l_string|&quot;block_group = %d, group_desc = %lu, desc = %lu&quot;
 comma
 id|block_group
 comma
@@ -466,12 +471,6 @@ comma
 id|desc
 )paren
 suffix:semicolon
-id|panic
-(paren
-l_string|&quot;read_block_bitmap: Group descriptor not loaded&quot;
-)paren
-suffix:semicolon
-)brace
 id|gdp
 op_assign
 (paren
@@ -508,11 +507,15 @@ c_cond
 op_logical_neg
 id|bh
 )paren
-(brace
-id|printk
+id|ext2_panic
 (paren
-l_string|&quot;block_group = %d,group_desc = %d,&quot;
-l_string|&quot;desc = %d,block_bitmap = %d&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;read_block_bitmap&quot;
+comma
+l_string|&quot;Cannot read block bitmap&bslash;n&quot;
+l_string|&quot;block_group = %d, group_desc = %lu,&quot;
+l_string|&quot;desc = %lu, block_bitmap = %lu&quot;
 comma
 id|block_group
 comma
@@ -528,12 +531,6 @@ dot
 id|bg_block_bitmap
 )paren
 suffix:semicolon
-id|panic
-(paren
-l_string|&quot;read_block_bitmap: Cannot read block bitmap&quot;
-)paren
-suffix:semicolon
-)brace
 id|sb-&gt;u.ext2_sb.s_block_bitmap_number
 (braket
 id|bitmap_nr
@@ -586,22 +583,20 @@ id|block_group
 op_ge
 id|sb-&gt;u.ext2_sb.s_groups_count
 )paren
-(brace
-id|printk
+id|ext2_panic
 (paren
-l_string|&quot;block_group = %d, groups_count = %d&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;load_block_bitmap&quot;
+comma
+l_string|&quot;block_group &gt;= groups_count&bslash;n&quot;
+l_string|&quot;block_group = %d, groups_count = %lu&quot;
 comma
 id|block_group
 comma
 id|sb-&gt;u.ext2_sb.s_groups_count
 )paren
 suffix:semicolon
-id|panic
-(paren
-l_string|&quot;load_block_bitmap: block_group &gt;= groups_count&quot;
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -629,9 +624,12 @@ id|block_group
 op_ne
 id|block_group
 )paren
-id|panic
+id|ext2_panic
 (paren
-l_string|&quot;load_block_bitmap: &quot;
+id|sb
+comma
+l_string|&quot;load_block_bitmap&quot;
+comma
 l_string|&quot;block_group != block_bitmap_number&quot;
 )paren
 suffix:semicolon
@@ -967,7 +965,7 @@ id|sb
 (brace
 id|printk
 (paren
-l_string|&quot;ext2_free_block: nonexistant device&quot;
+l_string|&quot;ext2_free_block: nonexistent device&quot;
 )paren
 suffix:semicolon
 r_return
@@ -994,9 +992,13 @@ op_ge
 id|es-&gt;s_blocks_count
 )paren
 (brace
-id|printk
+id|ext2_error
 (paren
-l_string|&quot;ext2_free_block: block not in datazone&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;ext2_free_block&quot;
+comma
+l_string|&quot;block not in datazone&quot;
 )paren
 suffix:semicolon
 id|unlock_super
@@ -1007,15 +1009,14 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef EXT2FS_DEBUG
-id|printk
+id|ext2_debug
 (paren
-l_string|&quot;ext2_free_block: freeing block %d&bslash;n&quot;
+l_string|&quot;freeing block %lu&bslash;n&quot;
 comma
 id|block
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#if 0&t;/* XXX - This is incompatible with the secure rm implemented in 0.4 */
 id|bh
 op_assign
 id|get_hash_table
@@ -1041,6 +1042,7 @@ id|brelse
 id|bh
 )paren
 suffix:semicolon
+macro_line|#endif
 id|block_group
 op_assign
 (paren
@@ -1091,20 +1093,18 @@ c_cond
 op_logical_neg
 id|bh
 )paren
-(brace
-id|printk
+id|ext2_panic
 (paren
-l_string|&quot;block_group = %d&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;ext2_free_block&quot;
+comma
+l_string|&quot;Unable to load group bitmap&bslash;n&quot;
+l_string|&quot;block_group = %lu&quot;
 comma
 id|block_group
 )paren
 suffix:semicolon
-id|panic
-(paren
-l_string|&quot;ext2_free_block: Unable to load group bitmap&quot;
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1116,11 +1116,13 @@ comma
 id|bh-&gt;b_data
 )paren
 )paren
-id|printk
+id|ext2_warning
 (paren
-l_string|&quot;ext2_free_block (%04x:%d): bit already cleared&bslash;n&quot;
+id|sb
 comma
-id|sb-&gt;s_dev
+l_string|&quot;ext2_free_block&quot;
+comma
+l_string|&quot;bit already cleared for block %lu&quot;
 comma
 id|block
 )paren
@@ -1160,20 +1162,18 @@ c_cond
 op_logical_neg
 id|bh2
 )paren
-(brace
-id|printk
+id|ext2_panic
 (paren
-l_string|&quot;group_desc = %d&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;ext2_free_block&quot;
+comma
+l_string|&quot;Group descriptor not loaded&bslash;n&quot;
+l_string|&quot;group_desc = %lu&quot;
 comma
 id|group_desc
 )paren
 suffix:semicolon
-id|panic
-(paren
-l_string|&quot;ext2_free_block: Group descriptor not loaded&quot;
-)paren
-suffix:semicolon
-)brace
 id|gdp
 op_assign
 (paren
@@ -1195,11 +1195,6 @@ id|bh2-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
-)brace
-id|bh-&gt;b_dirt
-op_assign
-l_int|1
-suffix:semicolon
 id|es-&gt;s_free_blocks_count
 op_increment
 suffix:semicolon
@@ -1207,6 +1202,35 @@ id|sb-&gt;u.ext2_sb.s_sbh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
+)brace
+id|bh-&gt;b_dirt
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sb-&gt;s_flags
+op_amp
+id|MS_SYNC
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|WRITE
+comma
+l_int|1
+comma
+op_amp
+id|bh
+)paren
+suffix:semicolon
+id|wait_on_buffer
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
 id|sb-&gt;s_dirt
 op_assign
 l_int|1
@@ -1299,7 +1323,7 @@ id|sb
 (brace
 id|printk
 (paren
-l_string|&quot;ext2_new_block: nonexistant device&quot;
+l_string|&quot;ext2_new_block: nonexistent device&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1338,15 +1362,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef EXT2FS_DEBUG
-id|printk
+id|ext2_debug
 (paren
-l_string|&quot;ext2_new_block: goal=%d.&bslash;n&quot;
+l_string|&quot;goal=%lu.&bslash;n&quot;
 comma
 id|goal
 )paren
 suffix:semicolon
-macro_line|#endif
 id|repeat
 suffix:colon
 multiline_comment|/* First, test whether the goal block is free. */
@@ -1407,9 +1429,15 @@ op_logical_neg
 id|gdp
 )paren
 (brace
-id|panic
+id|ext2_panic
 (paren
-l_string|&quot;ext2_new_block: Descriptor not loaded&quot;
+id|sb
+comma
+l_string|&quot;ext2_new_block&quot;
+comma
+l_string|&quot;Descriptor not loaded for group %d&quot;
+comma
+id|i
 )paren
 suffix:semicolon
 )brace
@@ -1475,9 +1503,13 @@ op_logical_neg
 id|bh
 )paren
 (brace
-id|printk
+id|ext2_panic
 (paren
-l_string|&quot;Cannot load bitmap_nr %d.&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;ext2_new_block&quot;
+comma
+l_string|&quot;Cannot load bitmap %d&quot;
 comma
 id|bitmap_nr
 )paren
@@ -1491,10 +1523,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef EXT2FS_DEBUG
-id|printk
+id|ext2_debug
 (paren
-l_string|&quot;goal is at %d[%d,%d]:%d.&bslash;n&quot;
+l_string|&quot;goal is at %d[%lu,%lu]:%d.&bslash;n&quot;
 comma
 id|i
 comma
@@ -1505,7 +1536,6 @@ comma
 id|j
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1523,9 +1553,9 @@ macro_line|#ifdef EXT2FS_DEBUG
 id|goal_hits
 op_increment
 suffix:semicolon
-id|printk
+id|ext2_debug
 (paren
-l_string|&quot;ext2_new_block: goal bit allocated.&bslash;n&quot;
+l_string|&quot;goal bit allocated.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1683,13 +1713,11 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#ifdef EXT2FS_DEBUG
-id|printk
+id|ext2_debug
 (paren
 l_string|&quot;Bit not found near goal&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* There has been no free block found in the near vicinity&n;&t;&t;   of the goal: do a search forward through the block groups,&n;&t;&t;   searching in each group first for an entire free byte in&n;&t;&t;   the bitmap and then for any free bit.&n;&t;&t;   &n;&t;&t;   Search first in the remainder of the current group; then,&n;&t;&t;   cyclicly search throught the rest of the groups. */
 id|p
 op_assign
@@ -1805,15 +1833,13 @@ id|got_block
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef EXT2FS_DEBUG
-id|printk
+id|ext2_debug
 (paren
 l_string|&quot;Bit not found in block group %d.&bslash;n&quot;
 comma
 id|i
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Now search the rest of the groups.  We assume that group_desc, desc,&n;&t;   i and gdp correctly point to the last group visited. */
 r_for
 c_loop
@@ -1915,9 +1941,15 @@ op_logical_neg
 id|gdp
 )paren
 (brace
-id|panic
+id|ext2_panic
 (paren
-l_string|&quot;ext2_new_block: Descriptor not loaded&quot;
+id|sb
+comma
+l_string|&quot;ext2_new_block&quot;
+comma
+l_string|&quot;Descriptor not loaded for group %d&quot;
+comma
+id|i
 )paren
 suffix:semicolon
 )brace
@@ -1975,20 +2007,17 @@ c_cond
 op_logical_neg
 id|bh
 )paren
-(brace
-id|printk
+id|ext2_panic
 (paren
-l_string|&quot;block_group = %d&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;ext2_new_block&quot;
+comma
+l_string|&quot;Unable to load bitmap for group %d&quot;
 comma
 id|i
 )paren
 suffix:semicolon
-id|panic
-(paren
-l_string|&quot;ext2_new_block: Unable to load group bitmap&quot;
-)paren
-suffix:semicolon
-)brace
 id|r
 op_assign
 id|find_first_zero_byte
@@ -2055,10 +2084,13 @@ id|sb
 )paren
 )paren
 (brace
-id|printk
+id|ext2_error
 (paren
-l_string|&quot;ext2_new_block: &quot;
-l_string|&quot;Unable to locate free bit in block group %d.&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;ext2_new_block&quot;
+comma
+l_string|&quot;Unable to locate free bit in block group %d&quot;
 comma
 id|i
 )paren
@@ -2074,10 +2106,9 @@ suffix:semicolon
 )brace
 id|got_block
 suffix:colon
-macro_line|#ifdef EXT2FS_DEBUG
-id|printk
+id|ext2_debug
 (paren
-l_string|&quot;ext2_new_block: using block group %d(%d,%d,%d)&bslash;n&quot;
+l_string|&quot;using block group %d(%lu,%lu,%d)&bslash;n&quot;
 comma
 id|i
 comma
@@ -2093,7 +2124,6 @@ dot
 id|bg_free_blocks_count
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2105,9 +2135,15 @@ id|bh-&gt;b_data
 )paren
 )paren
 (brace
-id|printk
+id|ext2_warning
 (paren
-l_string|&quot;ext2_new_block: bit already set&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;ext2_new_block&quot;
+comma
+l_string|&quot;bit already set for block %d&quot;
+comma
+id|j
 )paren
 suffix:semicolon
 r_goto
@@ -2118,15 +2154,37 @@ id|bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef EXT2FS_DEBUG
-id|printk
+r_if
+c_cond
 (paren
-l_string|&quot;ext2_new_block: found bit %d&bslash;n&quot;
+id|sb-&gt;s_flags
+op_amp
+id|MS_SYNC
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|WRITE
+comma
+l_int|1
+comma
+op_amp
+id|bh
+)paren
+suffix:semicolon
+id|wait_on_buffer
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
+id|ext2_debug
+(paren
+l_string|&quot;found bit %d&bslash;n&quot;
 comma
 id|j
 )paren
 suffix:semicolon
-macro_line|#endif
 id|j
 op_add_assign
 id|i
@@ -2147,18 +2205,18 @@ op_ge
 id|es-&gt;s_blocks_count
 )paren
 (brace
-id|printk
+id|ext2_error
 (paren
-l_string|&quot;block_group = %d,block=%d&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;ext2_new_block&quot;
+comma
+l_string|&quot;block &gt;= blocks count&bslash;n&quot;
+l_string|&quot;block_group = %d, block=%d&quot;
 comma
 id|i
 comma
 id|j
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;ext2_new_block: block &gt;= blocks count&quot;
 )paren
 suffix:semicolon
 id|unlock_super
@@ -2188,9 +2246,15 @@ id|sb-&gt;s_blocksize
 )paren
 )paren
 (brace
-id|printk
+id|ext2_error
 (paren
-l_string|&quot;ext2_new_block: cannot get block&quot;
+id|sb
+comma
+l_string|&quot;ext2_new_block&quot;
+comma
+l_string|&quot;cannot get block %d&quot;
+comma
+id|j
 )paren
 suffix:semicolon
 id|unlock_super
@@ -2222,11 +2286,9 @@ id|brelse
 id|bh
 )paren
 suffix:semicolon
-macro_line|#ifdef EXT2FS_DEBUG
-id|printk
-c_func
+id|ext2_debug
 (paren
-l_string|&quot;ext2_new_block: allocating block %d. &quot;
+l_string|&quot;allocating block %d. &quot;
 l_string|&quot;Goal hits %d of %d.&bslash;n&quot;
 comma
 id|j
@@ -2236,7 +2298,6 @@ comma
 id|goal_attempts
 )paren
 suffix:semicolon
-macro_line|#endif
 id|gdp
 (braket
 id|desc
@@ -2457,7 +2518,7 @@ suffix:semicolon
 )brace
 id|printk
 (paren
-l_string|&quot;group %d: stored = %d, counted = %d&bslash;n&quot;
+l_string|&quot;group %d: stored = %d, counted = %lu&bslash;n&quot;
 comma
 id|i
 comma
@@ -2506,7 +2567,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ext2_count_free_blocks: stored = %d, computed = %d, %d&bslash;n&quot;
+l_string|&quot;ext2_count_free_blocks: stored = %lu, computed = %lu, %lu&bslash;n&quot;
 comma
 id|es-&gt;s_free_blocks_count
 comma
@@ -2528,5 +2589,285 @@ r_return
 id|sb-&gt;u.ext2_sb.s_es-&gt;s_free_blocks_count
 suffix:semicolon
 macro_line|#endif
+)brace
+DECL|function|ext2_check_blocks_bitmap
+r_void
+id|ext2_check_blocks_bitmap
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+)paren
+(brace
+r_struct
+id|ext2_super_block
+op_star
+id|es
+suffix:semicolon
+r_int
+r_int
+id|desc_count
+comma
+id|bitmap_count
+comma
+id|x
+suffix:semicolon
+r_int
+r_int
+id|group_desc
+suffix:semicolon
+r_int
+r_int
+id|desc
+suffix:semicolon
+r_int
+id|bitmap_nr
+suffix:semicolon
+r_struct
+id|ext2_group_desc
+op_star
+id|gdp
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+id|lock_super
+(paren
+id|sb
+)paren
+suffix:semicolon
+id|es
+op_assign
+id|sb-&gt;u.ext2_sb.s_es
+suffix:semicolon
+id|desc_count
+op_assign
+l_int|0
+suffix:semicolon
+id|bitmap_count
+op_assign
+l_int|0
+suffix:semicolon
+id|group_desc
+op_assign
+l_int|0
+suffix:semicolon
+id|desc
+op_assign
+l_int|0
+suffix:semicolon
+id|gdp
+op_assign
+l_int|NULL
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|sb-&gt;u.ext2_sb.s_groups_count
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|gdp
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sb-&gt;u.ext2_sb.s_group_desc
+(braket
+id|group_desc
+)braket
+)paren
+(brace
+id|ext2_error
+(paren
+id|sb
+comma
+l_string|&quot;ext2_check_blocks_bitmap&quot;
+comma
+l_string|&quot;Descriptor not loaded for group %d&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|gdp
+op_assign
+(paren
+r_struct
+id|ext2_group_desc
+op_star
+)paren
+id|sb-&gt;u.ext2_sb.s_group_desc
+(braket
+id|group_desc
+)braket
+op_member_access_from_pointer
+id|b_data
+suffix:semicolon
+)brace
+id|desc_count
+op_add_assign
+id|gdp
+(braket
+id|desc
+)braket
+dot
+id|bg_free_blocks_count
+suffix:semicolon
+id|bitmap_nr
+op_assign
+id|load_block_bitmap
+(paren
+id|sb
+comma
+id|i
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sb-&gt;u.ext2_sb.s_block_bitmap
+(braket
+id|bitmap_nr
+)braket
+)paren
+id|x
+op_assign
+id|ext2_count_free
+(paren
+id|sb-&gt;u.ext2_sb.s_block_bitmap
+(braket
+id|bitmap_nr
+)braket
+comma
+id|sb-&gt;s_blocksize
+)paren
+suffix:semicolon
+r_else
+(brace
+id|x
+op_assign
+l_int|0
+suffix:semicolon
+id|ext2_error
+(paren
+id|sb
+comma
+l_string|&quot;ext2_check_blocks_bitmap&quot;
+comma
+l_string|&quot;Cannot load bitmap for group %d&bslash;n&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|gdp
+(braket
+id|desc
+)braket
+dot
+id|bg_free_blocks_count
+op_ne
+id|x
+)paren
+id|ext2_error
+(paren
+id|sb
+comma
+l_string|&quot;ext2_check_blocks_bitmap&quot;
+comma
+l_string|&quot;Wrong free blocks count for group %d, &quot;
+l_string|&quot;stored = %d, counted = %lu&quot;
+comma
+id|i
+comma
+id|gdp
+(braket
+id|desc
+)braket
+dot
+id|bg_free_blocks_count
+comma
+id|x
+)paren
+suffix:semicolon
+id|bitmap_count
+op_add_assign
+id|x
+suffix:semicolon
+id|desc
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|desc
+op_eq
+id|EXT2_DESC_PER_BLOCK
+c_func
+(paren
+id|sb
+)paren
+)paren
+(brace
+id|group_desc
+op_increment
+suffix:semicolon
+id|desc
+op_assign
+l_int|0
+suffix:semicolon
+id|gdp
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|es-&gt;s_free_blocks_count
+op_ne
+id|bitmap_count
+)paren
+id|ext2_error
+(paren
+id|sb
+comma
+l_string|&quot;ext2_check_blocks_bitmap&quot;
+comma
+l_string|&quot;Wrong free blocks count in super block, &quot;
+l_string|&quot;stored = %lu, counted = %lu&quot;
+comma
+id|es-&gt;s_free_blocks_count
+comma
+id|bitmap_count
+)paren
+suffix:semicolon
+id|unlock_super
+(paren
+id|sb
+)paren
+suffix:semicolon
 )brace
 eof

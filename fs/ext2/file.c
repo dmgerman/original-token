@@ -1,11 +1,12 @@
 multiline_comment|/*&n; *  linux/fs/ext2/file.c&n; *&n; *  Copyright (C) 1992, 1993  Remy Card (card@masi.ibp.fr)&n; *&n; *  from&n; *&n; *  linux/fs/minix/file.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  ext2 fs regular file handling primitives&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/ext2_fs.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 DECL|macro|NBUF
@@ -263,9 +264,13 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
-id|printk
+id|ext2_warning
 (paren
-l_string|&quot;ext2_file_read: mode = %07o&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;ext2_file_read&quot;
+comma
+l_string|&quot;mode = %07o&quot;
 comma
 id|inode-&gt;i_mode
 )paren
@@ -893,9 +898,13 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
-id|printk
+id|ext2_warning
 (paren
-l_string|&quot;ext2_file_write: mode = %07o&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;ext2_file_write&quot;
+comma
+l_string|&quot;mode = %07o&bslash;n&quot;
 comma
 id|inode-&gt;i_mode
 )paren

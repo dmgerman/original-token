@@ -1,12 +1,14 @@
 multiline_comment|/*&n; *  linux/fs/ext2/namei.c&n; *&n; *  Copyright (C) 1992, 1993  Remy Card (card@masi.ibp.fr)&n; *&n; *  from&n; *&n; *  linux/fs/minix/namei.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/ext2_fs.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/ext2_fs.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/locks.h&gt;
 multiline_comment|/*&n; * comment out this line if you want names &gt; EXT2_NAME_LEN chars to be&n; * truncated. Else they will be disallowed.&n; */
 multiline_comment|/* #define NO_TRUNCATE */
 multiline_comment|/*&n; * NOTE! unlike strncmp, ext2_match returns 1 for success, 0 for failure.&n; */
@@ -168,6 +170,7 @@ op_star
 id|res_dir
 )paren
 (brace
+r_int
 r_int
 id|offset
 suffix:semicolon
@@ -371,6 +374,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|de-&gt;inode
+op_ne
+l_int|0
+op_logical_and
 id|ext2_match
 (paren
 id|namelen
@@ -445,6 +452,7 @@ op_star
 id|result
 )paren
 (brace
+r_int
 r_int
 id|ino
 suffix:semicolon
@@ -643,8 +651,6 @@ id|err
 )paren
 (brace
 r_int
-id|i
-suffix:semicolon
 r_int
 id|offset
 suffix:semicolon
@@ -878,13 +884,11 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#ifdef EXT2FS_DEBUG
-id|printk
+id|ext2_debug
 (paren
-l_string|&quot;ext2_add_entry: creating next block&bslash;n&quot;
+l_string|&quot;creating next block&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|de
 op_assign
 (paren
@@ -912,20 +916,20 @@ id|dir-&gt;i_dirt
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#if 0 /* XXX don&squot;t update any times until successful completion of syscall */
 id|dir-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 (brace
-macro_line|#ifdef EXT2FS_DEBUG
-id|printk
+id|ext2_debug
 (paren
-l_string|&quot;ext2_add_entry: skipping to next block&bslash;n&quot;
+l_string|&quot;skipping to next block&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|de
 op_assign
 (paren
@@ -974,11 +978,9 @@ r_if
 c_cond
 (paren
 id|de-&gt;inode
-)paren
-(brace
-r_if
-c_cond
-(paren
+op_ne
+l_int|0
+op_logical_and
 id|ext2_match
 (paren
 id|namelen
@@ -1004,13 +1006,13 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-)brace
 r_if
 c_cond
 (paren
 (paren
-op_logical_neg
 id|de-&gt;inode
+op_eq
+l_int|0
 op_logical_and
 id|de-&gt;rec_len
 op_ge
@@ -1092,30 +1094,16 @@ id|de-&gt;name_len
 op_assign
 id|namelen
 suffix:semicolon
-r_for
-c_loop
+id|memcpy
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|namelen
-suffix:semicolon
-id|i
-op_increment
-)paren
 id|de-&gt;name
-(braket
-id|i
-)braket
-op_assign
+comma
 id|name
-(braket
-id|i
-)braket
+comma
+id|namelen
+)paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * XXX shouldn&squot;t update any times until successful&n;&t;&t;&t; * completion of syscall, but too many callers depend&n;&t;&t;&t; * on this.&n;&t;&t;&t; *&n;&t;&t;&t; * XXX similarly, too many callers depend on&n;&t;&t;&t; * ext2_new_inode() setting the times, but error&n;&t;&t;&t; * recovery deletes the inode, so the worst that can&n;&t;&t;&t; * happen is that the times are slightly out of date&n;&t;&t;&t; * and/or different from the directory change time.&n;&t;&t;&t; */
 id|dir-&gt;i_mtime
 op_assign
 id|dir-&gt;i_ctime
@@ -1266,7 +1254,7 @@ id|pde-&gt;rec_len
 op_add_assign
 id|dir-&gt;rec_len
 suffix:semicolon
-r_else
+multiline_comment|/* XXX - must zero the inode number in every case !! */
 id|dir-&gt;inode
 op_assign
 l_int|0
@@ -1473,6 +1461,32 @@ id|bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_SYNC
+c_func
+(paren
+id|dir
+)paren
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|WRITE
+comma
+l_int|1
+comma
+op_amp
+id|bh
+)paren
+suffix:semicolon
+id|wait_on_buffer
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
 id|brelse
 (paren
 id|bh
@@ -1739,12 +1753,15 @@ id|inode-&gt;i_rdev
 op_assign
 id|rdev
 suffix:semicolon
+macro_line|#if 0
+multiline_comment|/*&n;&t; * XXX we may as well use the times set by ext2_new_inode().  The&n;&t; * following usually does nothing, but sometimes it invalidates&n;&t; * inode-&gt;i_ctime.&n;&t; */
 id|inode-&gt;i_mtime
 op_assign
 id|inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+macro_line|#endif
 id|inode-&gt;i_dirt
 op_assign
 l_int|1
@@ -1817,6 +1834,32 @@ id|bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_SYNC
+c_func
+(paren
+id|dir
+)paren
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|WRITE
+comma
+l_int|1
+comma
+op_amp
+id|bh
+)paren
+suffix:semicolon
+id|wait_on_buffer
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
 id|brelse
 (paren
 id|bh
@@ -1976,12 +2019,14 @@ id|inode-&gt;i_size
 op_assign
 id|inode-&gt;i_sb-&gt;s_blocksize
 suffix:semicolon
+macro_line|#if 0 /* XXX as above */
 id|inode-&gt;i_mtime
 op_assign
 id|inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+macro_line|#endif
 id|dir_block
 op_assign
 id|ext2_bread
@@ -2178,6 +2223,10 @@ id|inode-&gt;i_nlink
 op_assign
 l_int|0
 suffix:semicolon
+id|inode-&gt;i_dirt
+op_assign
+l_int|1
+suffix:semicolon
 id|iput
 (paren
 id|inode
@@ -2210,6 +2259,32 @@ id|bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_SYNC
+c_func
+(paren
+id|dir
+)paren
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|WRITE
+comma
+l_int|1
+comma
+op_amp
+id|bh
+)paren
+suffix:semicolon
+id|wait_on_buffer
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
 id|dir-&gt;i_nlink
 op_increment
 suffix:semicolon
@@ -2312,11 +2387,13 @@ id|err
 )paren
 )paren
 (brace
-id|printk
+id|ext2_warning
 (paren
-l_string|&quot;warning - bad directory (dev %04x, dir %d)&bslash;n&quot;
+id|inode-&gt;i_sb
 comma
-id|inode-&gt;i_dev
+l_string|&quot;empty_dir&quot;
+comma
+l_string|&quot;bad directory (dir %lu)&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -2376,11 +2453,13 @@ id|de1-&gt;name
 )paren
 )paren
 (brace
-id|printk
+id|ext2_warning
 (paren
-l_string|&quot;warning - bad directory (dev %04x, dir %d)&bslash;n&quot;
+id|inode-&gt;i_sb
 comma
-id|inode-&gt;i_dev
+l_string|&quot;empty_dir&quot;
+comma
+l_string|&quot;bad directory (dir %lu)&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -2779,13 +2858,26 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|de-&gt;inode
+op_ne
+id|inode-&gt;i_ino
+)paren
+(brace
+id|retval
+op_assign
+op_minus
+id|ENOENT
+suffix:semicolon
+r_goto
+id|end_rmdir
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|inode-&gt;i_count
 OG
 l_int|1
-op_logical_and
-id|inode-&gt;i_nlink
-op_le
-l_int|2
 )paren
 (brace
 multiline_comment|/* Are we deleting the last instance of a busy directory?&n;&t;&t;   Better clean up if so. */
@@ -2794,6 +2886,54 @@ id|inode-&gt;i_size
 op_assign
 l_int|0
 suffix:semicolon
+)brace
+id|retval
+op_assign
+id|ext2_delete_entry
+(paren
+id|de
+comma
+id|bh
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+r_goto
+id|end_rmdir
+suffix:semicolon
+id|bh-&gt;b_dirt
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_SYNC
+c_func
+(paren
+id|dir
+)paren
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|WRITE
+comma
+l_int|1
+comma
+op_amp
+id|bh
+)paren
+suffix:semicolon
+id|wait_on_buffer
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
 macro_line|#ifndef DONT_USE_DCACHE
 id|ext2_dcache_remove
 c_func
@@ -2820,7 +2960,6 @@ l_int|2
 )paren
 suffix:semicolon
 macro_line|#endif
-)brace
 r_if
 c_cond
 (paren
@@ -2828,9 +2967,13 @@ id|inode-&gt;i_nlink
 op_ne
 l_int|2
 )paren
-id|printk
+id|ext2_warning
 (paren
-l_string|&quot;empty  directory has nlink!=2 (%d)&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;ext2_rmdir&quot;
+comma
+l_string|&quot;empty directory has nlink!=2 (%d)&quot;
 comma
 id|inode-&gt;i_nlink
 )paren
@@ -2848,27 +2991,6 @@ id|de-&gt;name_len
 )paren
 suffix:semicolon
 macro_line|#endif
-id|retval
-op_assign
-id|ext2_delete_entry
-(paren
-id|de
-comma
-id|bh
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|retval
-)paren
-r_goto
-id|end_rmdir
-suffix:semicolon
-id|bh-&gt;b_dirt
-op_assign
-l_int|1
-suffix:semicolon
 id|inode-&gt;i_nlink
 op_assign
 l_int|0
@@ -2880,6 +3002,8 @@ suffix:semicolon
 id|dir-&gt;i_nlink
 op_decrement
 suffix:semicolon
+id|inode-&gt;i_ctime
+op_assign
 id|dir-&gt;i_ctime
 op_assign
 id|dir-&gt;i_mtime
@@ -3092,11 +3216,13 @@ op_logical_neg
 id|inode-&gt;i_nlink
 )paren
 (brace
-id|printk
+id|ext2_warning
 (paren
-l_string|&quot;Deleting nonexistent file (%04x:%d), %d&bslash;n&quot;
+id|inode-&gt;i_sb
 comma
-id|inode-&gt;i_dev
+l_string|&quot;ext2_unlink&quot;
+comma
+l_string|&quot;Deleting nonexistent file (%lu), %d&quot;
 comma
 id|inode-&gt;i_ino
 comma
@@ -3108,19 +3234,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifndef DONT_USE_DCACHE
-id|ext2_dcache_remove
-(paren
-id|dir-&gt;i_dev
-comma
-id|dir-&gt;i_ino
-comma
-id|de-&gt;name
-comma
-id|de-&gt;name_len
-)paren
-suffix:semicolon
-macro_line|#endif
 id|retval
 op_assign
 id|ext2_delete_entry
@@ -3142,6 +3255,45 @@ id|bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_SYNC
+c_func
+(paren
+id|dir
+)paren
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|WRITE
+comma
+l_int|1
+comma
+op_amp
+id|bh
+)paren
+suffix:semicolon
+id|wait_on_buffer
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
+macro_line|#ifndef DONT_USE_DCACHE
+id|ext2_dcache_remove
+(paren
+id|dir-&gt;i_dev
+comma
+id|dir-&gt;i_ino
+comma
+id|de-&gt;name
+comma
+id|de-&gt;name_len
+)paren
+suffix:semicolon
+macro_line|#endif
 id|dir-&gt;i_ctime
 op_assign
 id|dir-&gt;i_mtime
@@ -3161,7 +3313,7 @@ l_int|1
 suffix:semicolon
 id|inode-&gt;i_ctime
 op_assign
-id|CURRENT_TIME
+id|dir-&gt;i_ctime
 suffix:semicolon
 id|retval
 op_assign
@@ -3323,15 +3475,13 @@ r_int
 )paren
 )paren
 (brace
-macro_line|#ifdef EXT2FS_DEBUG
-id|printk
+id|ext2_debug
 (paren
-l_string|&quot;ext2_symlink: l=%d, normal symlink&bslash;n&quot;
+l_string|&quot;l=%d, normal symlink&bslash;n&quot;
 comma
 id|l
 )paren
 suffix:semicolon
-macro_line|#endif
 id|name_block
 op_assign
 id|ext2_bread
@@ -3389,15 +3539,13 @@ op_star
 )paren
 id|inode-&gt;u.ext2_i.i_data
 suffix:semicolon
-macro_line|#ifdef EXT2FS_DEBUG
-id|printk
+id|ext2_debug
 (paren
-l_string|&quot;ext2_symlink: l=%d, fast symlink&bslash;n&quot;
+l_string|&quot;l=%d, fast symlink&bslash;n&quot;
 comma
 id|l
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 id|i
 op_assign
@@ -3576,6 +3724,32 @@ id|bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_SYNC
+c_func
+(paren
+id|dir
+)paren
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|WRITE
+comma
+l_int|1
+comma
+op_amp
+id|bh
+)paren
+suffix:semicolon
+id|wait_on_buffer
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
 id|brelse
 (paren
 id|bh
@@ -3660,7 +3834,7 @@ r_if
 c_cond
 (paren
 id|oldinode-&gt;i_nlink
-OG
+op_ge
 id|EXT2_LINK_MAX
 )paren
 (brace
@@ -3780,6 +3954,32 @@ id|bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_SYNC
+c_func
+(paren
+id|dir
+)paren
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|WRITE
+comma
+l_int|1
+comma
+op_amp
+id|bh
+)paren
+suffix:semicolon
+id|wait_on_buffer
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
 id|brelse
 (paren
 id|bh
@@ -4573,10 +4773,62 @@ id|old_bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_SYNC
+c_func
+(paren
+id|old_dir
+)paren
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|WRITE
+comma
+l_int|1
+comma
+op_amp
+id|old_bh
+)paren
+suffix:semicolon
+id|wait_on_buffer
+(paren
+id|old_bh
+)paren
+suffix:semicolon
+)brace
 id|new_bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_SYNC
+c_func
+(paren
+id|new_dir
+)paren
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|WRITE
+comma
+l_int|1
+comma
+op_amp
+id|new_bh
+)paren
+suffix:semicolon
+id|wait_on_buffer
+(paren
+id|new_bh
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4598,17 +4850,34 @@ suffix:semicolon
 id|old_dir-&gt;i_nlink
 op_decrement
 suffix:semicolon
-id|new_dir-&gt;i_nlink
-op_increment
-suffix:semicolon
 id|old_dir-&gt;i_dirt
 op_assign
 l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|new_inode
+)paren
+(brace
+id|new_inode-&gt;i_nlink
+op_decrement
+suffix:semicolon
+id|new_inode-&gt;i_dirt
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+id|new_dir-&gt;i_nlink
+op_increment
 suffix:semicolon
 id|new_dir-&gt;i_dirt
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 )brace
 id|retval
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Interface (streams) handling functions.&n; *&n; * Version:&t;@(#)dev.c&t;1.0.19&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; * &n; * Fixes:&t;&n; *&t;&t;Alan Cox:&t;check_addr returns a value for a wrong subnet&n; *&t;&t;&t;&t;ie not us but don&squot;t forward this!&n; *&t;&t;Alan Cox:&t;block timer if the inet_bh handler is running&n; *&t;&t;Alan Cox:&t;generic queue code added. A lot neater now&n; *&t;&t;C.E.Hawkins:&t;SIOCGIFCONF only reports &squot;upped&squot; interfaces&n; *&t;&t;C.E.Hawkins:&t;IFF_PROMISC support&n; *&t;&t;Alan Cox:&t;Supports Donald Beckers new hardware &n; *&t;&t;&t;&t;multicast layer, but not yet multicast lists.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Interface (streams) handling functions.&n; *&n; * Version:&t;@(#)dev.c&t;1.0.19&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; * &n; * Fixes:&t;&n; *&t;&t;Alan Cox:&t;check_addr returns a value for a wrong subnet&n; *&t;&t;&t;&t;ie not us but don&squot;t forward this!&n; *&t;&t;Alan Cox:&t;block timer if the inet_bh handler is running&n; *&t;&t;Alan Cox:&t;generic queue code added. A lot neater now&n; *&t;&t;C.E.Hawkins:&t;SIOCGIFCONF only reports &squot;upped&squot; interfaces&n; *&t;&t;C.E.Hawkins:&t;IFF_PROMISC support&n; *&t;&t;Alan Cox:&t;Supports Donald Beckers new hardware &n; *&t;&t;&t;&t;multicast layer, but not yet multicast lists.&n; *&t;&t;Alan Cox:&t;ip_addr_match problems with class A/B nets.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -236,6 +236,12 @@ id|him
 r_int
 id|i
 suffix:semicolon
+r_int
+r_int
+id|mask
+op_assign
+l_int|0xFFFFFFFF
+suffix:semicolon
 id|DPRINTF
 c_func
 (paren
@@ -299,6 +305,10 @@ comma
 id|him
 op_rshift_assign
 l_int|8
+comma
+id|mask
+op_rshift_assign
+l_int|8
 )paren
 (brace
 r_if
@@ -327,7 +337,7 @@ l_int|0
 op_logical_and
 id|me
 op_ne
-l_int|255
+id|mask
 )paren
 r_return
 l_int|0
@@ -596,8 +606,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|addr
 op_amp
+l_int|0xFF
+)paren
+op_eq
 l_int|0xFF
 )paren
 (brace
@@ -1886,6 +1900,15 @@ op_ne
 l_int|NULL
 )paren
 (brace
+id|flag
+op_assign
+l_int|0
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;* Bump the pointer to the next structure.&n;&t;* This assumes that the basic &squot;skb&squot; pointer points to&n;&t;* the MAC header, if any (as indicated by its &quot;length&quot;&n;&t;* field).  Take care now!&n;&t;*/
 id|skb-&gt;h.raw
 op_assign
@@ -2103,6 +2126,11 @@ op_assign
 l_int|0
 suffix:semicolon
 id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|dev_transmit
 c_func
 (paren
 )paren
@@ -3628,7 +3656,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: adding HOST route of %8.8x.&bslash;n&quot;
+l_string|&quot;%s: adding HOST route of %8.8lx.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -3679,7 +3707,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: adding GATEWAY route of %8.8x.&bslash;n&quot;
+l_string|&quot;%s: adding GATEWAY route of %8.8lx.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

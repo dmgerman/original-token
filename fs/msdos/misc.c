@@ -65,7 +65,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Filesystem panic (dev 0x%04X, mounted on 0x%04X:%d)&bslash;n  %s&bslash;n&quot;
+l_string|&quot;Filesystem panic (dev 0x%04X, mounted on 0x%04X:%ld)&bslash;n  %s&bslash;n&quot;
 comma
 id|s-&gt;s_dev
 comma

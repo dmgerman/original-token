@@ -569,6 +569,23 @@ op_star
 id|addr
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|vread
+c_func
+(paren
+r_char
+op_star
+id|buf
+comma
+r_char
+op_star
+id|addr
+comma
+r_int
+id|count
+)paren
+suffix:semicolon
 multiline_comment|/* swap.c */
 r_extern
 r_void

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/mouse.h&gt;
 macro_line|#include &lt;linux/tpqic02.h&gt;
@@ -487,6 +488,99 @@ l_int|NULL
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+DECL|function|read_kmem
+r_static
+r_int
+id|read_kmem
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_char
+op_star
+id|buf
+comma
+r_int
+id|count
+)paren
+(brace
+r_int
+id|read1
+comma
+id|read2
+suffix:semicolon
+id|read1
+op_assign
+id|read_mem
+c_func
+(paren
+id|inode
+comma
+id|file
+comma
+id|buf
+comma
+id|count
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|read1
+OL
+l_int|0
+)paren
+r_return
+id|read1
+suffix:semicolon
+id|read2
+op_assign
+id|vread
+c_func
+(paren
+id|buf
+op_plus
+id|read1
+comma
+(paren
+r_char
+op_star
+)paren
+id|file-&gt;f_pos
+comma
+id|count
+op_minus
+id|read1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|read2
+OL
+l_int|0
+)paren
+r_return
+id|read2
+suffix:semicolon
+id|file-&gt;f_pos
+op_add_assign
+id|read2
+suffix:semicolon
+r_return
+id|read1
+op_plus
+id|read2
 suffix:semicolon
 )brace
 DECL|function|read_port
@@ -1012,8 +1106,6 @@ r_return
 id|file-&gt;f_pos
 suffix:semicolon
 )brace
-DECL|macro|read_kmem
-mdefine_line|#define read_kmem&t;read_mem
 DECL|macro|write_kmem
 mdefine_line|#define write_kmem&t;write_mem
 DECL|macro|mmap_kmem
@@ -1398,7 +1490,7 @@ c_cond
 id|register_chrdev
 c_func
 (paren
-l_int|1
+id|MEM_MAJOR
 comma
 l_string|&quot;mem&quot;
 comma
@@ -1409,7 +1501,9 @@ id|memory_fops
 id|printk
 c_func
 (paren
-l_string|&quot;unable to get major 1 for memory devs&bslash;n&quot;
+l_string|&quot;unable to get major %d for memory devs&bslash;n&quot;
+comma
+id|MEM_MAJOR
 )paren
 suffix:semicolon
 id|mem_start
@@ -1430,7 +1524,7 @@ id|mem_start
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined (CONFIG_BUSMOUSE) || defined (CONFIG_QUICKPORT_MOUSE) || &bslash;&n;    defined (CONFIG_PSMOUSE) || defined (CONFIG_MS_BUSMOUSE) || &bslash;&n;    defined (CONFIG_ATIXL_BUSMOUSE)
+macro_line|#if defined (CONFIG_BUSMOUSE) || defined (CONFIG_82C710_MOUSE) || &bslash;&n;    defined (CONFIG_PSMOUSE) || defined (CONFIG_MS_BUSMOUSE) || &bslash;&n;    defined (CONFIG_ATIXL_BUSMOUSE)
 id|mem_start
 op_assign
 id|mouse_init

@@ -1,4 +1,4 @@
-multiline_comment|/* fdomain.h -- Header for Future Domain TMC-16x0 driver&n; * Created: Sun May  3 18:47:33 1992 by faith@cs.unc.edu&n; * Revised: Sun Jun  6 11:56:40 1993 by faith@cs.unc.edu&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992, 1993 Rickard E. Faith&n; *&n; * $Id: fdomain.h,v 5.1 1993/10/10 13:33:11 root Exp $&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n;&n; */
+multiline_comment|/* fdomain.h -- Header for Future Domain TMC-16x0 driver&n; * Created: Sun May  3 18:47:33 1992 by faith@cs.unc.edu&n; * Revised: Sun Jun  6 11:56:40 1993 by faith@cs.unc.edu&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992, 1993 Rickard E. Faith&n; *&n; * $Id: fdomain.h,v 5.2 1993/10/24 16:40:41 root Exp $&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n;&n; */
 macro_line|#ifndef _FDOMAIN_H
 DECL|macro|_FDOMAIN_H
 mdefine_line|#define _FDOMAIN_H
@@ -40,7 +40,8 @@ r_int
 id|fdomain_16x0_reset
 c_func
 (paren
-r_void
+id|Scsi_Cmnd
+op_star
 )paren
 suffix:semicolon
 r_int

@@ -7,13 +7,14 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/cdu31a.h&gt;
 DECL|macro|MAJOR_NR
-mdefine_line|#define MAJOR_NR 15
+mdefine_line|#define MAJOR_NR CDU31A_CDROM_MAJOR
 macro_line|#include &quot;blk.h&quot;
 DECL|variable|cdu31a_addresses
 r_static
@@ -1834,6 +1835,22 @@ id|MAX_CDU31A_RETRIES
 id|num_retries
 op_increment
 suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|current-&gt;timeout
+op_assign
+id|jiffies
+op_plus
+l_int|10
+suffix:semicolon
+multiline_comment|/* Wait .1 seconds on retries */
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
 r_goto
 id|retry_data_operation
 suffix:semicolon
@@ -2109,6 +2126,22 @@ id|MAX_CDU31A_RETRIES
 (brace
 id|num_retries
 op_increment
+suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|current-&gt;timeout
+op_assign
+id|jiffies
+op_plus
+l_int|10
+suffix:semicolon
+multiline_comment|/* Wait .1 seconds on retries */
+id|schedule
+c_func
+(paren
+)paren
 suffix:semicolon
 r_goto
 id|retry_cd_operation
@@ -5293,6 +5326,9 @@ r_int
 r_int
 id|res_size
 suffix:semicolon
+r_int
+id|num_spin_ups
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5300,6 +5336,12 @@ op_logical_neg
 id|sony_spun_up
 )paren
 (brace
+id|num_spin_ups
+op_assign
+l_int|0
+suffix:semicolon
+id|respinup_on_open
+suffix:colon
 id|do_sony_cd_cmd
 c_func
 (paren
@@ -5433,6 +5475,33 @@ l_int|0
 (brace
 r_goto
 id|drive_spinning
+suffix:semicolon
+)brace
+multiline_comment|/* If the drive says it is not spun up (even though we just did it!)&n;            then retry the operation at least a few times. */
+r_if
+c_cond
+(paren
+(paren
+id|res_reg
+(braket
+l_int|1
+)braket
+op_eq
+id|SONY_NOT_SPIN_ERR
+)paren
+op_logical_and
+(paren
+id|num_spin_ups
+OL
+id|MAX_CDU31A_RETRIES
+)paren
+)paren
+(brace
+id|num_spin_ups
+op_increment
+suffix:semicolon
+r_goto
+id|respinup_on_open
 suffix:semicolon
 )brace
 id|printk
@@ -5633,7 +5702,10 @@ id|scd_open
 comma
 multiline_comment|/* open */
 id|scd_release
+comma
 multiline_comment|/* release */
+l_int|NULL
+multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 multiline_comment|/* The different types of disc loading mechanisms supported */
@@ -5940,6 +6012,27 @@ id|drive_found
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|cdu31a_addresses
+(braket
+id|i
+)braket
+comma
+l_int|4
+)paren
+)paren
+(brace
+id|i
+op_increment
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|get_drive_configuration
 c_func
 (paren
@@ -5980,6 +6073,17 @@ l_int|0x00
 id|drive_found
 op_assign
 l_int|1
+suffix:semicolon
+id|snarf_region
+c_func
+(paren
+id|cdu31a_addresses
+(braket
+id|i
+)braket
+comma
+l_int|4
+)paren
 suffix:semicolon
 r_if
 c_cond

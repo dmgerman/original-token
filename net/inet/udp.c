@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The User Datagram Protocol (UDP).&n; *&n; * Version:&t;@(#)udp.c&t;1.0.13&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() calls&n; *&t;&t;Alan Cox&t;: &t;stopped close while in use off icmp&n; *&t;&t;&t;&t;&t;messages. Not a fix but a botch that&n; *&t;&t;&t;&t;&t;for udp at least is &squot;valid&squot;.&n; *&t;&t;Alan Cox&t;:&t;Fixed icmp handling properly&n; *&t;&t;Alan Cox&t;: &t;Correct error for oversized datagrams&n; *&t;&t;Alan Cox&t;:&t;Tidied select() semantics. &n; *&t;&t;Alan Cox&t;:&t;udp_err() fixed properly, also now &n; *&t;&t;&t;&t;&t;select and read wake correctly on errors&n; *&t;&t;Alan Cox&t;:&t;udp_send verify_area moved to avoid mem leak&n; *&t;&t;Alan Cox&t;:&t;UDP can count its memory&n; *&t;&t;Alan Cox&t;:&t;send to an uknown connection causes&n; *&t;&t;&t;&t;&t;an ECONNREFUSED off the icmp, but&n; *&t;&t;&t;&t;&t;does NOT close.&n; *&t;&t;Alan Cox&t;:&t;Switched to new sk_buff handlers. No more backlog!&n; *&t;&t;Alan Cox&t;:&t;Using generic datagram code. Even smaller and the PEEK&n; *&t;&t;&t;&t;&t;bug no longer crashes it.&n; *&t;&t;Fred Van Kempen&t;: &t;Net2e support for sk-&gt;broadcast.&n; *&n; * To Do:&n; *&t;&t;Verify all the error codes from UDP operations match the&n; *&t;&t;BSD behaviour, since thats effectively the formal spec.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The User Datagram Protocol (UDP).&n; *&n; * Version:&t;@(#)udp.c&t;1.0.13&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() calls&n; *&t;&t;Alan Cox&t;: &t;stopped close while in use off icmp&n; *&t;&t;&t;&t;&t;messages. Not a fix but a botch that&n; *&t;&t;&t;&t;&t;for udp at least is &squot;valid&squot;.&n; *&t;&t;Alan Cox&t;:&t;Fixed icmp handling properly&n; *&t;&t;Alan Cox&t;: &t;Correct error for oversized datagrams&n; *&t;&t;Alan Cox&t;:&t;Tidied select() semantics. &n; *&t;&t;Alan Cox&t;:&t;udp_err() fixed properly, also now &n; *&t;&t;&t;&t;&t;select and read wake correctly on errors&n; *&t;&t;Alan Cox&t;:&t;udp_send verify_area moved to avoid mem leak&n; *&t;&t;Alan Cox&t;:&t;UDP can count its memory&n; *&t;&t;Alan Cox&t;:&t;send to an uknown connection causes&n; *&t;&t;&t;&t;&t;an ECONNREFUSED off the icmp, but&n; *&t;&t;&t;&t;&t;does NOT close.&n; *&t;&t;Alan Cox&t;:&t;Switched to new sk_buff handlers. No more backlog!&n; *&t;&t;Alan Cox&t;:&t;Using generic datagram code. Even smaller and the PEEK&n; *&t;&t;&t;&t;&t;bug no longer crashes it.&n; *&t;&t;Fred Van Kempen&t;: &t;Net2e support for sk-&gt;broadcast.&n; *&t;&t;Alan Cox&t;:&t;Uses skb_free_datagram&n; *&n; * To Do:&n; *&t;&t;Verify all the error codes from UDP operations match the&n; *&t;&t;BSD behaviour, since thats effectively the formal spec.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -963,6 +963,7 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+macro_line|#ifdef OLD
 multiline_comment|/*&n;   * This code used to hack in some form of fragmentation.&n;   * I removed that, since it didn&squot;t work anyway, and it made the&n;   * code a bad thing to read and understand. -FvK&n;   */
 r_if
 c_cond
@@ -972,6 +973,16 @@ OG
 id|dev-&gt;mtu
 )paren
 (brace
+macro_line|#else
+r_if
+c_cond
+(paren
+id|skb-&gt;len
+OG
+l_int|4095
+)paren
+(brace
+macro_line|#endif    
 id|printk
 c_func
 (paren
@@ -1922,18 +1933,18 @@ id|skb-&gt;len
 )paren
 suffix:semicolon
 multiline_comment|/* FIXME : should use udp header size info value */
-id|memcpy_tofs
+id|skb_copy_datagram
 c_func
 (paren
-id|to
+id|skb
 comma
-id|skb-&gt;h.raw
-op_plus
 r_sizeof
 (paren
 r_struct
 id|udphdr
 )paren
+comma
+id|to
 comma
 id|copied
 )paren
@@ -1977,12 +1988,10 @@ id|sin
 )paren
 suffix:semicolon
 )brace
-id|kfree_skb
+id|skb_free_datagram
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|release_sock
@@ -2342,13 +2351,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|redo
-)paren
-(brace
-r_if
-c_cond
-(paren
 id|uh-&gt;check
 op_logical_and
 id|udp_check
@@ -2411,7 +2413,6 @@ id|skb-&gt;saddr
 op_assign
 id|daddr
 suffix:semicolon
-)brace
 multiline_comment|/* Charge it to the socket. */
 r_if
 c_cond

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/isofs/util.c&n; *&n; *  The special functions in the file are numbered according to the section&n; *  of the iso 9660 standard in which they are described.  isonum_733 will&n; *  convert numbers according to section 7.3.3, etc.&n; *&n; *  isofs special functions.  This file was lifted in it&squot;s entirety from&n; * the bsd386 iso9660 filesystem, by Pace Williamson.&n; */
+multiline_comment|/*&n; *  linux/fs/isofs/util.c&n; *&n; *  The special functions in the file are numbered according to the section&n; *  of the iso 9660 standard in which they are described.  isonum_733 will&n; *  convert numbers according to section 7.3.3, etc.&n; *&n; *  isofs special functions.  This file was lifted in its entirety from&n; * the bsd386 iso9660 filesystem, by Pace Williamson.&n; */
 r_int
 DECL|function|isonum_711
 id|isonum_711

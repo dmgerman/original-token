@@ -47,7 +47,7 @@ r_void
 suffix:semicolon
 multiline_comment|/* Variables for selection control. */
 DECL|macro|SEL_BUFFER_SIZE
-mdefine_line|#define SEL_BUFFER_SIZE 2048
+mdefine_line|#define SEL_BUFFER_SIZE TTY_BUF_SIZE
 DECL|variable|sel_cons
 r_static
 r_int
@@ -104,14 +104,6 @@ r_const
 r_char
 op_star
 )paren
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|compute_shiftstate
-c_func
-(paren
-r_void
 )paren
 suffix:semicolon
 DECL|variable|video_num_columns
@@ -677,9 +669,9 @@ l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&b
 l_string|&quot;&bslash;040&bslash;255&bslash;233&bslash;234&bslash;376&bslash;235&bslash;174&bslash;025&bslash;376&bslash;376&bslash;246&bslash;256&bslash;252&bslash;055&bslash;376&bslash;376&quot;
 l_string|&quot;&bslash;370&bslash;361&bslash;375&bslash;376&bslash;376&bslash;346&bslash;024&bslash;371&bslash;376&bslash;376&bslash;247&bslash;257&bslash;254&bslash;253&bslash;376&bslash;250&quot;
 l_string|&quot;&bslash;376&bslash;376&bslash;376&bslash;376&bslash;216&bslash;217&bslash;222&bslash;200&bslash;376&bslash;220&bslash;376&bslash;376&bslash;376&bslash;376&bslash;376&bslash;376&quot;
-l_string|&quot;&bslash;376&bslash;245&bslash;376&bslash;376&bslash;376&bslash;376&bslash;231&bslash;376&bslash;350&bslash;376&bslash;376&bslash;376&bslash;232&bslash;376&bslash;376&bslash;341&quot;
+l_string|&quot;&bslash;376&bslash;245&bslash;376&bslash;376&bslash;376&bslash;376&bslash;231&bslash;376&bslash;235&bslash;376&bslash;376&bslash;376&bslash;232&bslash;376&bslash;376&bslash;341&quot;
 l_string|&quot;&bslash;205&bslash;240&bslash;203&bslash;376&bslash;204&bslash;206&bslash;221&bslash;207&bslash;212&bslash;202&bslash;210&bslash;211&bslash;215&bslash;241&bslash;214&bslash;213&quot;
-l_string|&quot;&bslash;376&bslash;244&bslash;225&bslash;242&bslash;223&bslash;376&bslash;224&bslash;366&bslash;355&bslash;227&bslash;243&bslash;226&bslash;201&bslash;376&bslash;376&bslash;230&quot;
+l_string|&quot;&bslash;376&bslash;244&bslash;225&bslash;242&bslash;223&bslash;376&bslash;224&bslash;366&bslash;233&bslash;227&bslash;243&bslash;226&bslash;201&bslash;376&bslash;376&bslash;230&quot;
 comma
 multiline_comment|/* vt100 graphics */
 (paren
@@ -702,13 +694,13 @@ l_string|&quot;&bslash;376&bslash;245&bslash;376&bslash;376&bslash;376&bslash;37
 l_string|&quot;&bslash;205&bslash;240&bslash;203&bslash;376&bslash;204&bslash;206&bslash;221&bslash;207&bslash;212&bslash;202&bslash;210&bslash;211&bslash;215&bslash;241&bslash;214&bslash;213&quot;
 l_string|&quot;&bslash;376&bslash;244&bslash;225&bslash;242&bslash;223&bslash;376&bslash;224&bslash;366&bslash;376&bslash;227&bslash;243&bslash;226&bslash;201&bslash;376&bslash;376&bslash;230&quot;
 comma
-multiline_comment|/* IBM graphics: minimal translations (CR, LF, LL, SO, SI and ESC) */
+multiline_comment|/* IBM graphics: minimal translations (BS, CR, LF, LL, SO, SI and ESC) */
 (paren
 r_int
 r_char
 op_star
 )paren
-l_string|&quot;&bslash;000&bslash;001&bslash;002&bslash;003&bslash;004&bslash;005&bslash;006&bslash;007&bslash;010&bslash;011&bslash;000&bslash;013&bslash;000&bslash;000&bslash;000&bslash;000&quot;
+l_string|&quot;&bslash;000&bslash;001&bslash;002&bslash;003&bslash;004&bslash;005&bslash;006&bslash;007&bslash;000&bslash;011&bslash;000&bslash;013&bslash;000&bslash;000&bslash;000&bslash;000&quot;
 l_string|&quot;&bslash;020&bslash;021&bslash;022&bslash;023&bslash;024&bslash;025&bslash;026&bslash;027&bslash;030&bslash;031&bslash;032&bslash;000&bslash;034&bslash;035&bslash;036&bslash;037&quot;
 l_string|&quot;&bslash;040&bslash;041&bslash;042&bslash;043&bslash;044&bslash;045&bslash;046&bslash;047&bslash;050&bslash;051&bslash;052&bslash;053&bslash;054&bslash;055&bslash;056&bslash;057&quot;
 l_string|&quot;&bslash;060&bslash;061&bslash;062&bslash;063&bslash;064&bslash;065&bslash;066&bslash;067&bslash;070&bslash;071&bslash;072&bslash;073&bslash;074&bslash;075&bslash;076&bslash;077&quot;
@@ -918,6 +910,10 @@ r_int
 id|offset
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 macro_line|#ifdef CONFIG_SELECTION
 id|clear_selection
 c_func
@@ -925,6 +921,12 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_SELECTION */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -968,9 +970,10 @@ comma
 id|video_port_val
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1202,6 +1205,10 @@ r_int
 id|currcons
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1228,6 +1235,12 @@ id|set_origin
 c_func
 (paren
 id|__real_origin
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|cli
@@ -1301,9 +1314,10 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -6542,7 +6556,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Console: %s %s %dx%d, %d virtual consoles&bslash;n&quot;
+l_string|&quot;Console: %s %s %ldx%ld, %d virtual consoles&bslash;n&quot;
 comma
 id|can_do_color
 ques
@@ -6912,11 +6926,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|compute_shiftstate
-c_func
-(paren
-)paren
-suffix:semicolon
 id|lock
 op_assign
 l_int|0
@@ -7141,7 +7150,7 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_SELECTION
 multiline_comment|/* correction factor for when screen is hardware-scrolled */
 DECL|macro|hwscroll_offset
-mdefine_line|#define&t;hwscroll_offset ((__real_origin - __origin) &lt;&lt; 1)
+mdefine_line|#define&t;hwscroll_offset (currcons == fg_console ? ((__real_origin - __origin) &lt;&lt; 1) : 0)
 multiline_comment|/* set reverse video on characters s-e of console with selection. */
 DECL|function|highlight
 r_static

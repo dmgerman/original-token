@@ -1,10 +1,11 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_constant.c                                                           |&n; |                                                                           |&n; | All of the constant FPU_REGs                                              |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_constant.c                                                           |&n; |                                                                           |&n; | All of the constant FPU_REGs                                              |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
 macro_line|#include &quot;status_w.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 DECL|variable|CONST_1
 id|FPU_REG
+r_const
 id|CONST_1
 op_assign
 (brace
@@ -21,6 +22,7 @@ l_int|0x80000000
 suffix:semicolon
 DECL|variable|CONST_2
 id|FPU_REG
+r_const
 id|CONST_2
 op_assign
 (brace
@@ -39,6 +41,7 @@ l_int|0x80000000
 suffix:semicolon
 DECL|variable|CONST_HALF
 id|FPU_REG
+r_const
 id|CONST_HALF
 op_assign
 (brace
@@ -57,6 +60,7 @@ l_int|0x80000000
 suffix:semicolon
 DECL|variable|CONST_L2T
 id|FPU_REG
+r_const
 id|CONST_L2T
 op_assign
 (brace
@@ -75,6 +79,7 @@ l_int|0xd49a784b
 suffix:semicolon
 DECL|variable|CONST_L2E
 id|FPU_REG
+r_const
 id|CONST_L2E
 op_assign
 (brace
@@ -91,6 +96,7 @@ l_int|0xb8aa3b29
 suffix:semicolon
 DECL|variable|CONST_PI
 id|FPU_REG
+r_const
 id|CONST_PI
 op_assign
 (brace
@@ -109,6 +115,7 @@ l_int|0xc90fdaa2
 suffix:semicolon
 DECL|variable|CONST_PI2
 id|FPU_REG
+r_const
 id|CONST_PI2
 op_assign
 (brace
@@ -125,6 +132,7 @@ l_int|0xc90fdaa2
 suffix:semicolon
 DECL|variable|CONST_PI4
 id|FPU_REG
+r_const
 id|CONST_PI4
 op_assign
 (brace
@@ -143,6 +151,7 @@ l_int|0xc90fdaa2
 suffix:semicolon
 DECL|variable|CONST_LG2
 id|FPU_REG
+r_const
 id|CONST_LG2
 op_assign
 (brace
@@ -161,6 +170,7 @@ l_int|0x9a209a84
 suffix:semicolon
 DECL|variable|CONST_LN2
 id|FPU_REG
+r_const
 id|CONST_LN2
 op_assign
 (brace
@@ -180,6 +190,7 @@ suffix:semicolon
 multiline_comment|/* Extra bits to take pi/2 to more than 128 bits precision. */
 DECL|variable|CONST_PI2extra
 id|FPU_REG
+r_const
 id|CONST_PI2extra
 op_assign
 (brace
@@ -199,6 +210,7 @@ suffix:semicolon
 multiline_comment|/* Only the sign (and tag) is used in internal zeroes */
 DECL|variable|CONST_Z
 id|FPU_REG
+r_const
 id|CONST_Z
 op_assign
 (brace
@@ -214,10 +226,11 @@ l_int|0x0
 )brace
 suffix:semicolon
 multiline_comment|/* Only the sign and significand (and tag) are used in internal NaNs */
-multiline_comment|/* The 80486 never generates one of these &n;FPU_REG CONST_SNAN = { SIGN_POS, TW_NaN, EXP_OVER, 0x00000001, 0x80000000 };&n; */
+multiline_comment|/* The 80486 never generates one of these &n;FPU_REG const CONST_SNAN = { SIGN_POS, TW_NaN, EXP_OVER, 0x00000001, 0x80000000 };&n; */
 multiline_comment|/* This is the real indefinite QNaN */
 DECL|variable|CONST_QNaN
 id|FPU_REG
+r_const
 id|CONST_QNaN
 op_assign
 (brace
@@ -235,6 +248,7 @@ suffix:semicolon
 multiline_comment|/* Only the sign (and tag) is used in internal infinities */
 DECL|variable|CONST_INF
 id|FPU_REG
+r_const
 id|CONST_INF
 op_assign
 (brace
@@ -256,6 +270,7 @@ id|fld_const
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|c
 )paren

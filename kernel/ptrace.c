@@ -303,7 +303,7 @@ op_star
 id|page
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This routine puts a long into any process space by following the page&n; * tables. NOTE! You should check that the long isn&squot;t on a page boundary,&n; * and that it is in the task area before calling this: this routine does&n; * no checking.&n; */
+multiline_comment|/*&n; * This routine puts a long into any process space by following the page&n; * tables. NOTE! You should check that the long isn&squot;t on a page boundary,&n; * and that it is in the task area before calling this: this routine does&n; * no checking.&n; *&n; * Now keeps R/W state of page so that a text page stays readonly&n; * even if a debugger scribbles breakpoints into it.  -M.U-&n; */
 DECL|function|put_long
 r_static
 r_void
@@ -329,6 +329,13 @@ r_int
 id|page
 comma
 id|pte
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|readonly
+op_assign
+l_int|0
 suffix:semicolon
 id|repeat
 suffix:colon
@@ -394,7 +401,8 @@ id|PAGE_PRESENT
 id|do_no_page
 c_func
 (paren
-id|PAGE_RW
+l_int|0
+multiline_comment|/* PAGE_RW */
 comma
 id|addr
 comma
@@ -418,6 +426,22 @@ id|PAGE_RW
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|page
+op_amp
+id|PAGE_COW
+)paren
+)paren
+(brace
+id|readonly
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 id|do_wp_page
 c_func
 (paren
@@ -472,6 +496,33 @@ id|page
 op_assign
 id|data
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|readonly
+)paren
+(brace
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|pte
+op_and_assign
+op_complement
+(paren
+id|PAGE_RW
+op_or
+id|PAGE_COW
+)paren
+suffix:semicolon
+id|invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * This routine checks the page boundaries, and that the offset is&n; * within the task area. It then calls get_long() to read a long.&n; */
 DECL|function|read_long
@@ -1159,6 +1210,14 @@ c_cond
 id|child-&gt;state
 op_ne
 id|TASK_STOPPED
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|request
+op_ne
+id|PTRACE_KILL
 op_logical_and
 id|request
 op_ne
@@ -1168,6 +1227,7 @@ r_return
 op_minus
 id|ESRCH
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

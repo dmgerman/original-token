@@ -6,17 +6,24 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;smc-ultra.c:v0.02 10/8/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;smc-ultra.c:v0.03 11/21/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;memory.h&gt;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;8390.h&quot;
+multiline_comment|/* Compatibility definitions for earlier kernel versions. */
+macro_line|#ifndef HAVE_PORTRESERVE
+DECL|macro|check_region
+mdefine_line|#define check_region(ioaddr, size)              0
+DECL|macro|snarf_region
+mdefine_line|#define snarf_region(ioaddr, size);             do ; while (0)
+macro_line|#endif
 r_int
 id|ultraprobe
 c_func
@@ -153,17 +160,22 @@ id|ports
 )braket
 op_assign
 (brace
-l_int|0x300
+l_int|0x200
+comma
+l_int|0x220
+comma
+l_int|0x240
 comma
 l_int|0x280
 comma
-l_int|0x380
+l_int|0x300
 comma
-l_int|0x240
+l_int|0x380
 comma
 l_int|0
 )brace
 suffix:semicolon
+r_int
 r_int
 id|ioaddr
 op_assign
@@ -173,19 +185,8 @@ r_if
 c_cond
 (paren
 id|ioaddr
-OL
-l_int|0
-)paren
-r_return
-id|ENXIO
-suffix:semicolon
-multiline_comment|/* Don&squot;t probe at all. */
-r_if
-c_cond
-(paren
-id|ioaddr
 OG
-l_int|0x100
+l_int|0x1ff
 )paren
 r_return
 op_logical_neg
@@ -197,6 +198,18 @@ comma
 id|dev
 )paren
 suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|ioaddr
+OG
+l_int|0
+)paren
+r_return
+id|ENXIO
+suffix:semicolon
+multiline_comment|/* Don&squot;t probe at all. */
 r_for
 c_loop
 (paren
@@ -215,7 +228,6 @@ id|port
 op_increment
 )paren
 (brace
-macro_line|#ifdef HAVE_PORTRESERVE
 r_if
 c_cond
 (paren
@@ -230,7 +242,6 @@ l_int|32
 )paren
 r_continue
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -308,6 +319,40 @@ suffix:semicolon
 r_int
 id|num_pages
 suffix:semicolon
+r_int
+r_char
+id|reg1
+comma
+id|eeprom_irq
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Second probe check: at most one bit can be set in register 1. */
+id|reg1
+op_assign
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|reg1
+op_amp
+(paren
+id|reg1
+op_minus
+l_int|1
+)paren
+)paren
+r_return
+id|ENODEV
+suffix:semicolon
+multiline_comment|/* Select the station address register set. */
 id|outb
 c_func
 (paren
@@ -411,6 +456,7 @@ id|i
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Switch from the station address to the alternate register set. */
 id|outb
 c_func
 (paren
@@ -442,68 +488,76 @@ l_int|2
 )paren
 (brace
 r_int
+r_char
+id|irqmap
+(braket
+)braket
+op_assign
+(brace
+l_int|0
+comma
+l_int|9
+comma
+l_int|3
+comma
+l_int|5
+comma
+l_int|7
+comma
+l_int|10
+comma
+l_int|11
+comma
+l_int|15
+)brace
+suffix:semicolon
+r_int
+id|irqreg
+op_assign
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|0xd
+)paren
+suffix:semicolon
+r_int
 id|irq
 suffix:semicolon
-multiline_comment|/* Datasheet doesn&squot;t specify the IRQ line mapping -&gt; always autoIRQ. */
-id|outb
-c_func
-(paren
-l_int|0x05
-comma
-id|ioaddr
-op_plus
-l_int|6
-)paren
-suffix:semicolon
-id|autoirq_setup
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Trigger an interrupt, then release. */
-id|outb_p
-c_func
-(paren
-l_int|0x09
-comma
-id|ioaddr
-op_plus
-l_int|6
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-l_int|0x00
-comma
-id|ioaddr
-op_plus
-l_int|6
-)paren
-suffix:semicolon
+multiline_comment|/* The IRQ bits are split. */
 id|irq
 op_assign
-id|autoirq_report
-c_func
+id|irqmap
+(braket
 (paren
-l_int|1
+(paren
+id|irqreg
+op_amp
+l_int|0x40
 )paren
+op_rshift
+l_int|4
+)paren
+op_plus
+(paren
+(paren
+id|irqreg
+op_amp
+l_int|0x0c
+)paren
+op_rshift
+l_int|2
+)paren
+)braket
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|irq
+op_eq
+l_int|0
 )paren
-id|printk
-c_func
-(paren
-l_string|&quot;, using IRQ %d&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-r_else
 (brace
 id|printk
 c_func
@@ -520,18 +574,12 @@ id|dev-&gt;irq
 op_assign
 id|irq
 suffix:semicolon
-)brace
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot; assigned IRQ %d.&bslash;n&quot;
-comma
-id|dev-&gt;irq
-)paren
+id|eeprom_irq
+op_assign
+l_int|1
 suffix:semicolon
+)brace
 multiline_comment|/* OK, were are certain this is going to work.  Setup the device. */
-macro_line|#ifdef HAVE_PORTRESERVE
 id|snarf_region
 c_func
 (paren
@@ -540,7 +588,6 @@ comma
 l_int|32
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* The 8390 isn&squot;t at the base address, so fake the offset */
 id|dev-&gt;base_addr
 op_assign
@@ -682,7 +729,16 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;, shared memory at %#x-%#x.&bslash;n&quot;
+l_string|&quot;,%s IRQ %d memory %#x-%#x.&bslash;n&quot;
+comma
+id|eeprom_irq
+ques
+c_cond
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;assigned &quot;
+comma
+id|dev-&gt;irq
 comma
 id|dev-&gt;mem_start
 comma

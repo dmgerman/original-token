@@ -3,6 +3,9 @@ macro_line|#ifndef _HOSTS_H
 DECL|macro|_HOSTS_H
 mdefine_line|#define _HOSTS_H
 multiline_comment|/*&n;&t;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/hosts.h,v 1.3 1993/09/24 12:21:00 drew Exp drew $&n;*/
+multiline_comment|/* A jumpstart is often required when the reset() function is called -&n;   many host adapters cannot do this cleanly, so they do nothing at all.&n;   To get the command going again, these routines set this bit in the flags&n;   so that a scsi_request_sense() is executed, and the command starts running&n;   again */
+DECL|macro|NEEDS_JUMPSTART
+mdefine_line|#define NEEDS_JUMPSTART 0x20
 DECL|macro|SG_NONE
 mdefine_line|#define SG_NONE 0
 DECL|macro|SG_ALL
@@ -90,7 +93,7 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;The reset function will reset the SCSI bus.  Any executing &n;&t;&t;commands should fail with a DID_RESET in the host byte.&n;&t;*/
+multiline_comment|/*&n;&t;&t;The reset function will reset the SCSI bus.  Any executing &n;&t;&t;commands should fail with a DID_RESET in the host byte.&n;&t;&t;The Scsi_Cmnd  is passed so that the reset routine can figure&n;&t;&t;out which host adapter should be reset, and also which command&n;&t;&t;within the command block was responsible for the reset in&n;&t;&t;the first place.  Some hosts do not implement a reset function,&n;&t;&t;and these hosts must call scsi_request_sense(SCpnt) to keep&n;&t;&t;the command alive.&n;&t;*/
 DECL|member|reset
 r_int
 (paren
@@ -98,7 +101,8 @@ op_star
 id|reset
 )paren
 (paren
-r_void
+id|Scsi_Cmnd
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;This function is used to select synchronous communications,&n;&t;&t;which will result in a higher data throughput.  Not implemented&n;&t;&t;yet.&n;&t;*/

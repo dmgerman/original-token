@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -2248,13 +2249,13 @@ c_func
 id|file-&gt;f_rdev
 )paren
 op_ne
-l_int|4
+id|TTY_MAJOR
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;tty_ioctl: tty pseudo-major != 4&bslash;n&quot;
+l_string|&quot;tty_ioctl: tty pseudo-major != TTY_MAJOR&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

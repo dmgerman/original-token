@@ -1441,7 +1441,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;[me=0x%x,cs=%d,#f=%d,fs=%d,fl=%d,ds=%d,de=%d,data=%d,&quot;
-l_string|&quot;se=%d,ts=%d,ls=%d]&bslash;n&quot;
+l_string|&quot;se=%d,ts=%ld,ls=%d]&bslash;n&quot;
 comma
 id|b-&gt;media
 comma
@@ -2260,7 +2260,7 @@ id|BLOCK_SIZE
 id|printk
 c_func
 (paren
-l_string|&quot;dev = 0x%04X, ino = %d&bslash;n&quot;
+l_string|&quot;dev = 0x%04X, ino = %ld&bslash;n&quot;
 comma
 id|inode-&gt;i_dev
 comma
@@ -2446,14 +2446,18 @@ l_int|1
 )paren
 )paren
 )paren
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;Directory %d: bad FAT&bslash;n&quot;
+l_string|&quot;Directory %ld: bad FAT&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 )brace
 )brace
 r_else
@@ -2695,7 +2699,7 @@ id|BLOCK_SIZE
 id|printk
 c_func
 (paren
-l_string|&quot;dev = 0x%04X, ino = %d&bslash;n&quot;
+l_string|&quot;dev = 0x%04X, ino = %ld&bslash;n&quot;
 comma
 id|inode-&gt;i_dev
 comma

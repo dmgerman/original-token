@@ -65,7 +65,8 @@ r_int
 id|scsi_debug_reset
 c_func
 (paren
-r_void
+id|Scsi_Cmnd
+op_star
 )paren
 suffix:semicolon
 macro_line|#ifndef NULL

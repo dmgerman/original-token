@@ -139,7 +139,7 @@ mdefine_line|#define SHM_IDX_MASK&t;((1&lt;&lt;_SHM_IDX_BITS)-1)
 DECL|macro|SHM_READ_ONLY
 mdefine_line|#define SHM_READ_ONLY&t;(1&lt;&lt;(BITS_PER_PTR-1))
 DECL|macro|SHMMAX
-mdefine_line|#define SHMMAX 0x400000&t;&t;&t;&t;/* max shared seg size (bytes) */
+mdefine_line|#define SHMMAX 0x3fa000&t;&t;&t;&t;/* max shared seg size (bytes) */
 DECL|macro|SHMMIN
 mdefine_line|#define SHMMIN 1&t; /* really PAGE_SIZE */&t;/* min shared seg size (bytes) */
 DECL|macro|SHMMNI

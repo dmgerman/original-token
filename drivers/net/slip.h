@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * slip.h&t;Define the SLIP device driver interface and constants.&n; *&n; * NOTE:&t;THIS FILE WILL BE MOVED TO THE LINUX INCLUDE DIRECTORY&n; *&t;&t;AS SOON AS POSSIBLE!&n; *&n; * Version:&t;@(#)slip.h&t;1.2.0&t;03/28/93&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Added slip mtu field.&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; */
+multiline_comment|/*&n; * slip.h&t;Define the SLIP device driver interface and constants.&n; *&n; * NOTE:&t;THIS FILE WILL BE MOVED TO THE LINUX INCLUDE DIRECTORY&n; *&t;&t;AS SOON AS POSSIBLE!&n; *&n; * Version:&t;@(#)slip.h&t;1.2.0&t;03/28/93&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Added slip mtu field.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from net2e)&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; */
 macro_line|#ifndef _LINUX_SLIP_H
 DECL|macro|_LINUX_SLIP_H
 mdefine_line|#define _LINUX_SLIP_H
@@ -146,6 +146,42 @@ r_int
 id|mtu
 suffix:semicolon
 multiline_comment|/* Our mtu (to spot changes!)   */
+DECL|member|flags
+r_int
+r_char
+id|flags
+suffix:semicolon
+multiline_comment|/* Flag values/ mode etc&t;*/
+DECL|macro|SLF_ESCAPE
+mdefine_line|#define SLF_ESCAPE&t;2
+DECL|macro|SLF_ERROR
+mdefine_line|#define SLF_ERROR&t;4
+DECL|macro|SLF_COMP
+mdefine_line|#define SLF_COMP&t;16
+DECL|macro|SLF_EXPN
+mdefine_line|#define SLF_EXPN&t;32
+DECL|member|mode
+r_int
+r_char
+id|mode
+suffix:semicolon
+multiline_comment|/* SLIP mode&t;&t;&t;*/
+DECL|macro|SL_MODE_SLIP
+mdefine_line|#define SL_MODE_SLIP&t;0
+DECL|macro|SL_MODE_CSLIP
+mdefine_line|#define SL_MODE_CSLIP&t;1
+DECL|macro|SL_MODE_SLIP6
+mdefine_line|#define SL_MODE_SLIP6&t;2&t;&t;/* Matt Dillon&squot;s printable slip */
+DECL|macro|SL_MODE_CSLIP6
+mdefine_line|#define SL_MODE_CSLIP6&t;(SL_MODE_SLIP|SL_MODE_CSLIP)
+DECL|member|xdata
+DECL|member|xbits
+r_int
+id|xdata
+comma
+id|xbits
+suffix:semicolon
+multiline_comment|/* 6 bit slip controls &t;&t;*/
 )brace
 suffix:semicolon
 r_extern
@@ -157,6 +193,88 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|slip_esc
+c_func
+(paren
+r_int
+r_char
+op_star
+id|s
+comma
+r_int
+r_char
+op_star
+id|d
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|slip_esc6
+c_func
+(paren
+r_int
+r_char
+op_star
+id|s
+comma
+r_int
+r_char
+op_star
+id|d
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|slip_unesc
+c_func
+(paren
+r_struct
+id|slip
+op_star
+id|sl
+comma
+r_int
+r_char
+op_star
+id|s
+comma
+r_int
+id|count
+comma
+r_int
+id|error
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|slip_unesc6
+c_func
+(paren
+r_struct
+id|slip
+op_star
+id|sl
+comma
+r_int
+r_char
+op_star
+id|s
+comma
+r_int
+id|count
+comma
+r_int
+id|error
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* _LINUX_SLIP.H */

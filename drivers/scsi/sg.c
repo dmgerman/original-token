@@ -14,8 +14,6 @@ macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;scsi_ioctl.h&quot;
 macro_line|#include &quot;sg.h&quot;
-DECL|macro|MAJOR_NR
-mdefine_line|#define MAJOR_NR 21
 DECL|variable|NR_SG
 r_int
 id|NR_SG
@@ -1494,7 +1492,7 @@ c_cond
 id|register_chrdev
 c_func
 (paren
-id|MAJOR_NR
+id|SCSI_GENERIC_MAJOR
 comma
 l_string|&quot;sg&quot;
 comma
@@ -1506,9 +1504,9 @@ id|sg_fops
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to get major %d for Generic SCSI device&bslash;n&quot;
+l_string|&quot;Unable to get major %d for generic SCSI device&bslash;n&quot;
 comma
-id|MAJOR_NR
+id|SCSI_GENERIC_MAJOR
 )paren
 suffix:semicolon
 r_return

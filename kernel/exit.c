@@ -1711,7 +1711,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|do_exit
-r_volatile
+id|NORET_TYPE
 r_void
 id|do_exit
 c_func

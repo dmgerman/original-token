@@ -1,8 +1,7 @@
-multiline_comment|/*&n; * UNIX&t;&t;An implementation of the AF_UNIX network domain for the&n; *&t;&t;LINUX operating system.  UNIX is implemented using the&n; *&t;&t;BSD Socket interface as the means of communication with&n; *&t;&t;the user level.&n; *&n; * Version:&t;@(#)sock.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or(at your option) any later version.&n; */
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+multiline_comment|/*&n; * UNIX&t;&t;An implementation of the AF_UNIX network domain for the&n; *&t;&t;LINUX operating system.  UNIX is implemented using the&n; *&t;&t;BSD Socket interface as the means of communication with&n; *&t;&t;the user level.&n; *&n; * Version:&t;@(#)sock.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify Area&n; *&n; * BUGS&n; *&t;Page faults on read while another process reads could lose data.&n; *&t;Page faults on write happen to interleave data (probably not allowed)&n; *&t;with any other simultaneous writers on the socket but dont cause harm.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or(at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -17,6 +16,8 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ddi.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &quot;unix.h&quot;
 DECL|variable|unix_datas
@@ -686,7 +687,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;&quot;%s&bslash;&quot;[%d]&bslash;n&quot;
+l_string|&quot;&bslash;&quot;%s&bslash;&quot;[%lu]&bslash;n&quot;
 comma
 id|buf
 comma
@@ -1647,6 +1648,9 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_int
+id|er
+suffix:semicolon
 id|dprintf
 c_func
 (paren
@@ -1709,6 +1713,8 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+id|er
+op_assign
 id|verify_area
 c_func
 (paren
@@ -1719,6 +1725,16 @@ comma
 id|sockaddr_len
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|er
+)paren
+(brace
+r_return
+id|er
+suffix:semicolon
+)brace
 id|memcpy_fromfs
 c_func
 (paren
@@ -1966,6 +1982,9 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_int
+id|er
+suffix:semicolon
 id|dprintf
 c_func
 (paren
@@ -2031,16 +2050,28 @@ r_return
 op_minus
 id|EISCONN
 suffix:semicolon
+id|er
+op_assign
 id|verify_area
 c_func
 (paren
-id|VERIFY_WRITE
+id|VERIFY_READ
 comma
 id|uservaddr
 comma
 id|sockaddr_len
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|er
+)paren
+(brace
+r_return
+id|er
+suffix:semicolon
+)brace
 id|memcpy_fromfs
 c_func
 (paren
@@ -2554,6 +2585,9 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
+r_int
+id|er
+suffix:semicolon
 id|dprintf
 c_func
 (paren
@@ -2616,6 +2650,8 @@ c_func
 id|sock
 )paren
 suffix:semicolon
+id|er
+op_assign
 id|verify_area
 c_func
 (paren
@@ -2630,6 +2666,16 @@ id|usockaddr_len
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|er
+)paren
+(brace
+r_return
+id|er
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2666,6 +2712,8 @@ c_cond
 id|len
 )paren
 (brace
+id|er
+op_assign
 id|verify_area
 c_func
 (paren
@@ -2676,6 +2724,16 @@ comma
 id|len
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|er
+)paren
+(brace
+r_return
+id|er
+suffix:semicolon
+)brace
 id|memcpy_tofs
 c_func
 (paren
@@ -2732,6 +2790,9 @@ r_int
 id|todo
 comma
 id|avail
+suffix:semicolon
+r_int
+id|er
 suffix:semicolon
 r_if
 c_cond
@@ -2929,6 +2990,12 @@ comma
 id|cando
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|er
+op_assign
 id|verify_area
 c_func
 (paren
@@ -2938,7 +3005,15 @@ id|ubuf
 comma
 id|cando
 )paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+id|er
 suffix:semicolon
+)brace
 id|memcpy_tofs
 c_func
 (paren
@@ -3043,6 +3118,9 @@ r_int
 id|todo
 comma
 id|space
+suffix:semicolon
+r_int
+id|er
 suffix:semicolon
 r_if
 c_cond
@@ -3312,16 +3390,28 @@ comma
 id|cando
 )paren
 suffix:semicolon
+id|er
+op_assign
 id|verify_area
 c_func
 (paren
-id|VERIFY_WRITE
+id|VERIFY_READ
 comma
 id|ubuf
 comma
 id|cando
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|er
+)paren
+(brace
+r_return
+id|er
+suffix:semicolon
+)brace
 id|memcpy_fromfs
 c_func
 (paren
@@ -3701,6 +3791,9 @@ comma
 op_star
 id|peerupd
 suffix:semicolon
+r_int
+id|er
+suffix:semicolon
 id|upd
 op_assign
 id|UN_DATA
@@ -3746,6 +3839,8 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+id|er
+op_assign
 id|verify_area
 c_func
 (paren
@@ -3764,6 +3859,16 @@ r_int
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|er
+)paren
+(brace
+r_return
+id|er
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3822,6 +3927,8 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+id|er
+op_assign
 id|verify_area
 c_func
 (paren
@@ -3840,6 +3947,16 @@ r_int
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|er
+)paren
+(brace
+r_return
+id|er
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3996,6 +4113,9 @@ id|minor
 comma
 id|ret
 suffix:semicolon
+r_int
+id|er
+suffix:semicolon
 id|dprintf
 c_func
 (paren
@@ -4041,10 +4161,12 @@ id|cmd
 r_case
 id|DDIOCSDBG
 suffix:colon
+id|er
+op_assign
 id|verify_area
 c_func
 (paren
-id|VERIFY_WRITE
+id|VERIFY_READ
 comma
 (paren
 r_void
@@ -4058,6 +4180,16 @@ r_int
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|er
+)paren
+(brace
+r_return
+id|er
+suffix:semicolon
+)brace
 id|unix_debug
 op_assign
 id|get_fs_long

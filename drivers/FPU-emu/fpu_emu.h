@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_emu.h                                                                |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_emu.h                                                                |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#ifndef _FPU_EMU_H_
 DECL|macro|_FPU_EMU_H_
 mdefine_line|#define _FPU_EMU_H_
@@ -141,12 +141,14 @@ c_func
 r_int
 r_int
 r_int
+r_const
 op_star
 id|a
 comma
 r_int
 r_int
 r_int
+r_const
 op_star
 id|b
 comma
@@ -204,12 +206,14 @@ id|accum
 )braket
 comma
 r_int
+r_const
 id|x
 (braket
 )braket
 comma
 r_int
 r_int
+r_const
 id|terms
 (braket
 )braket
@@ -218,6 +222,7 @@ l_int|4
 )braket
 comma
 r_int
+r_const
 id|n
 )paren
 suffix:semicolon
@@ -247,10 +252,12 @@ id|reg_div
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|arg1
 comma
 id|FPU_REG
+r_const
 op_star
 id|arg2
 comma
@@ -269,10 +276,12 @@ id|reg_u_sub
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|arg1
 comma
 id|FPU_REG
+r_const
 op_star
 id|arg2
 comma
@@ -291,10 +300,12 @@ id|reg_u_mul
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|arg1
 comma
 id|FPU_REG
+r_const
 op_star
 id|arg2
 comma
@@ -313,10 +324,12 @@ id|reg_u_div
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|arg1
 comma
 id|FPU_REG
+r_const
 op_star
 id|arg2
 comma
@@ -335,10 +348,12 @@ id|reg_u_add
 c_func
 (paren
 id|FPU_REG
+r_const
 op_star
 id|arg1
 comma
 id|FPU_REG
+r_const
 op_star
 id|arg2
 comma

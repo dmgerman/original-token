@@ -1,4 +1,4 @@
-multiline_comment|/* aha152x.c -- Adaptec AHA-152x driver&n; * Author: Juergen E. Fischer, fischer@server.et-inf.fho-emden.de&n; * Copyright 1993 Juergen E. Fischer&n; *&n; *&n; * This driver is based on&n; *   fdomain.c -- Future Domain TMC-16x0 driver&n; * which is&n; *   Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)&n; *&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; &n; *&n; * $Id: aha152x.c,v 0.97 1993/10/09 18:53:53 root Exp $&n; *&n;&n; * $Log: aha152x.c,v $&n; * Revision 0.97  1993/10/09  18:53:53  root&n; * - DATA IN fixed. Rarely left data in the fifo.&n; *&n; * Revision 0.96  1993/10/03  00:53:59  root&n; * - minor changes on DATA IN&n; *&n; * Revision 0.95  1993/09/24  10:36:01  root&n; * - change handling of MSGI after reselection&n; * - fixed sti/cli&n; * - minor changes&n; *&n; * Revision 0.94  1993/09/18  14:08:22  root&n; * - fixed bug in multiple outstanding command code&n; * - changed detection&n; * - support for kernel command line configuration&n; * - reset corrected&n; * - changed message handling&n; *&n; * Revision 0.93  1993/09/15  20:41:19  root&n; * - fixed bugs with multiple outstanding commands&n; *&n; * Revision 0.92  1993/09/13  02:46:33  root&n; * - multiple outstanding commands work (no problems with IBM drive)&n; *&n; * Revision 0.91  1993/09/12  20:51:46  root&n; * added multiple outstanding commands&n; * (some problem with this $%&amp;? IBM device remain)&n; *&n; * Revision 0.9  1993/09/12  11:11:22  root&n; * - corrected auto-configuration&n; * - changed the auto-configuration (added some &squot;#define&squot;s)&n; * - added support for dis-/reconnection&n; *&n; * Revision 0.8  1993/09/06  23:09:39  root&n; * - added support for the drive activity light&n; * - minor changes&n; *&n; * Revision 0.7  1993/09/05  14:30:15  root&n; * - improved phase detection&n; * - now using the new snarf_region code of 0.99pl13&n; *&n; * Revision 0.6  1993/09/02  11:01:38  root&n; * first public release; added some signatures and biosparam()&n; *&n; * Revision 0.5  1993/08/30  10:23:30  root&n; * fixed timing problems with my IBM drive&n; *&n; * Revision 0.4  1993/08/29  14:06:52  root&n; * fixed some problems with timeouts due incomplete commands&n; *&n; * Revision 0.3  1993/08/28  15:55:03  root&n; * writing data works too.  mounted and worked on a dos partition&n; *&n; * Revision 0.2  1993/08/27  22:42:07  root&n; * reading data works.  Mounted a msdos partition.&n; *&n; * Revision 0.1  1993/08/25  13:38:30  root&n; * first &quot;damn thing doesn&squot;t work&quot; version&n; *&n; * Revision 0.0  1993/08/14  19:54:25  root&n; * empty function bodies; detect() works.&n; *&n;&n; **************************************************************************&n;&n;&n; &n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Adaptec AHA-1520/1522&n; SCSI host adapters.&n;&n;&n; PER-DEFINE CONFIGURABLE OPTIONS:&n;&n; AUTOCONF       : use configuration the controller reports (only 152x)&n; IRQ            : override interrupt channel (9,10,11 or 12) (default 11)&n; SCSI_ID        : override scsiid of AIC-6260 (0-7) (default 7)&n; RECONNECT      : override target dis-/reconnection/multiple outstanding commands&n; SKIP_BIOSTEST  : Don&squot;t test for BIOS signature (AHA-1510 or disabled BIOS)&n; PORTBASE       : Force port base. Don&squot;t try to probe&n;&n;&n; LILO COMMAND LINE OPTIONS:&n;&n; aha152x=&lt;PORTBASE&gt;,&lt;IRQ&gt;,&lt;SCSI-ID&gt;,&lt;RECONNECT&gt;&n;&n; The normal configuration can be overridden by specifying a command line.&n; When you do this, the BIOS test is skipped. Entered values have to be&n; valid (known). Don&squot;t use values that aren&squot;t support under normal operation.&n; If you think that you need other value: contact me.&n;&n;&n; REFERENCES USED:&n;&n; &quot;AIC-6260 SCSI Chip Specification&quot;, Adaptec Corporation.&n;&n; &quot;SCSI COMPUTER SYSTEM INTERFACE - 2 (SCSI-2)&quot;, X3T9.2/86-109 rev. 10h&n;&n; &quot;Writing a SCSI device driver for Linux&quot;, Rik Faith (faith@cs.unc.edu)&n;&n; &quot;Kernel Hacker&squot;s Guide&quot;, Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; &quot;Adaptec 1520/1522 User&squot;s Guide&quot;, Adaptec Corporation.&n; &n; Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; Drew Eckhardt (drew@cs.colorado.edu)&n;&n; Eric Youngdale (eric@tantalus.nrl.navy.mil) &n;&n; special thanks to Eric Youngdale for the free(!) supplying the&n; documentation on the chip.&n;&n; **************************************************************************/
+multiline_comment|/* aha152x.c -- Adaptec AHA-152x driver&n; * Author: Juergen E. Fischer, fischer@server.et-inf.fho-emden.de&n; * Copyright 1993 Juergen E. Fischer&n; *&n; *&n; * This driver is based on&n; *   fdomain.c -- Future Domain TMC-16x0 driver&n; * which is&n; *   Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)&n; *&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; &n; *&n; * $Id: aha152x.c,v 0.99 1993/10/24 16:19:59 root Exp root $&n; *&n;&n; * $Log: aha152x.c,v $&n; * Revision 0.99  1993/10/24  16:19:59  root&n; * - fixed DATA IN (rare read errors gone)&n; *&n; * Revision 0.98  1993/10/17  12:54:44  root&n; * - fixed some recent fixes (shame on me)&n; * - moved initialization of scratch area to aha152x_queue&n; *&n; * Revision 0.97  1993/10/09  18:53:53  root&n; * - DATA IN fixed. Rarely left data in the fifo.&n; *&n; * Revision 0.96  1993/10/03  00:53:59  root&n; * - minor changes on DATA IN&n; *&n; * Revision 0.95  1993/09/24  10:36:01  root&n; * - change handling of MSGI after reselection&n; * - fixed sti/cli&n; * - minor changes&n; *&n; * Revision 0.94  1993/09/18  14:08:22  root&n; * - fixed bug in multiple outstanding command code&n; * - changed detection&n; * - support for kernel command line configuration&n; * - reset corrected&n; * - changed message handling&n; *&n; * Revision 0.93  1993/09/15  20:41:19  root&n; * - fixed bugs with multiple outstanding commands&n; *&n; * Revision 0.92  1993/09/13  02:46:33  root&n; * - multiple outstanding commands work (no problems with IBM drive)&n; *&n; * Revision 0.91  1993/09/12  20:51:46  root&n; * added multiple outstanding commands&n; * (some problem with this $%&amp;? IBM device remain)&n; *&n; * Revision 0.9  1993/09/12  11:11:22  root&n; * - corrected auto-configuration&n; * - changed the auto-configuration (added some &squot;#define&squot;s)&n; * - added support for dis-/reconnection&n; *&n; * Revision 0.8  1993/09/06  23:09:39  root&n; * - added support for the drive activity light&n; * - minor changes&n; *&n; * Revision 0.7  1993/09/05  14:30:15  root&n; * - improved phase detection&n; * - now using the new snarf_region code of 0.99pl13&n; *&n; * Revision 0.6  1993/09/02  11:01:38  root&n; * first public release; added some signatures and biosparam()&n; *&n; * Revision 0.5  1993/08/30  10:23:30  root&n; * fixed timing problems with my IBM drive&n; *&n; * Revision 0.4  1993/08/29  14:06:52  root&n; * fixed some problems with timeouts due incomplete commands&n; *&n; * Revision 0.3  1993/08/28  15:55:03  root&n; * writing data works too.  mounted and worked on a dos partition&n; *&n; * Revision 0.2  1993/08/27  22:42:07  root&n; * reading data works.  Mounted a msdos partition.&n; *&n; * Revision 0.1  1993/08/25  13:38:30  root&n; * first &quot;damn thing doesn&squot;t work&quot; version&n; *&n; * Revision 0.0  1993/08/14  19:54:25  root&n; * empty function bodies; detect() works.&n; *&n;&n; **************************************************************************&n;&n;&n; &n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Adaptec AHA-1520/1522&n; SCSI host adapters.&n;&n;&n; PER-DEFINE CONFIGURABLE OPTIONS:&n;&n; AUTOCONF       : use configuration the controller reports (only 152x)&n; IRQ            : override interrupt channel (9,10,11 or 12) (default 11)&n; SCSI_ID        : override scsiid of AIC-6260 (0-7) (default 7)&n; RECONNECT      : override target dis-/reconnection/multiple outstanding commands&n; SKIP_BIOSTEST  : Don&squot;t test for BIOS signature (AHA-1510 or disabled BIOS)&n; PORTBASE       : Force port base. Don&squot;t try to probe&n;&n;&n; LILO COMMAND LINE OPTIONS:&n;&n; aha152x=&lt;PORTBASE&gt;,&lt;IRQ&gt;,&lt;SCSI-ID&gt;,&lt;RECONNECT&gt;&n;&n; The normal configuration can be overridden by specifying a command line.&n; When you do this, the BIOS test is skipped. Entered values have to be&n; valid (known). Don&squot;t use values that aren&squot;t support under normal operation.&n; If you think that you need other value: contact me.&n;&n;&n; REFERENCES USED:&n;&n; &quot;AIC-6260 SCSI Chip Specification&quot;, Adaptec Corporation.&n;&n; &quot;SCSI COMPUTER SYSTEM INTERFACE - 2 (SCSI-2)&quot;, X3T9.2/86-109 rev. 10h&n;&n; &quot;Writing a SCSI device driver for Linux&quot;, Rik Faith (faith@cs.unc.edu)&n;&n; &quot;Kernel Hacker&squot;s Guide&quot;, Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; &quot;Adaptec 1520/1522 User&squot;s Guide&quot;, Adaptec Corporation.&n; &n; Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; Drew Eckhardt (drew@cs.colorado.edu)&n;&n; Eric Youngdale (eric@tantalus.nrl.navy.mil) &n;&n; special thanks to Eric Youngdale for the free(!) supplying the&n; documentation on the chip.&n;&n; **************************************************************************/
 macro_line|#include &quot;aha152x.h&quot;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -68,19 +68,22 @@ mdefine_line|#define DEBUG_PHASES
 mdefine_line|#define DEBUG_DATAI
 macro_line|#endif
 macro_line|#endif
-DECL|macro|DEBUG_BIOSPARAM
-mdefine_line|#define DEBUG_BIOSPARAM         /* warn when biosparam is invoked */
 DECL|macro|DEBUG_RESET
 mdefine_line|#define DEBUG_RESET             /* resets should be rare */
 DECL|macro|DEBUG_ABORT
 mdefine_line|#define DEBUG_ABORT             /* aborts too */
 multiline_comment|/* END OF DEFINES */
+multiline_comment|/* some additional &quot;phases&quot; for getphase() */
+DECL|macro|P_BUSFREE
+mdefine_line|#define P_BUSFREE  1
+DECL|macro|P_PARITY
+mdefine_line|#define P_PARITY   2
 DECL|variable|aha152x_id
 r_char
 op_star
 id|aha152x_id
 op_assign
-l_string|&quot;Adaptec 152x SCSI driver; $Revision: 0.97 $&bslash;n&quot;
+l_string|&quot;Adaptec 152x SCSI driver; $Revision: 0.99 $&bslash;n&quot;
 suffix:semicolon
 DECL|variable|port_base
 r_static
@@ -808,7 +811,7 @@ id|ACKI
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * detect current phase more reliable:&n; * phase is valid, when the target asserts REQ after we&squot;ve deasserted ACK.&n; *&n; * return value is a valid phase or an error code.&n; *&n; * errorcodes:&n; *   1 BUS FREE phase detected&n; *   2 RESET IN detected&n; *   3 parity error in DATA phase&n; */
+multiline_comment|/*&n; * detect current phase more reliable:&n; * phase is valid, when the target asserts REQ after we&squot;ve deasserted ACK.&n; *&n; * return value is a valid phase or an error code.&n; *&n; * errorcodes:&n; *   P_BUSFREE   BUS FREE phase detected&n; *   P_PARITY    parity error in DATA phase&n; */
 DECL|function|getphase
 r_static
 r_int
@@ -867,7 +870,7 @@ id|BUSFREE
 )paren
 (brace
 r_return
-l_int|1
+id|P_BUSFREE
 suffix:semicolon
 )brace
 r_if
@@ -962,20 +965,12 @@ id|MSGO
 op_eq
 l_int|0
 )paren
-multiline_comment|/* DATA phase */
 (brace
+multiline_comment|/* DATA phase */
 r_return
-l_int|3
+id|P_PARITY
 suffix:semicolon
 )brace
-id|SETPORT
-c_func
-(paren
-id|SCSISIG
-comma
-id|phase
-)paren
-suffix:semicolon
 id|make_acklow
 c_func
 (paren
@@ -983,19 +978,9 @@ c_func
 suffix:semicolon
 )brace
 r_else
-(brace
-id|SETPORT
-c_func
-(paren
-id|SCSISIG
-comma
-id|phase
-)paren
-suffix:semicolon
 r_return
 id|phase
 suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/* called from init/main.c */
@@ -1925,6 +1910,7 @@ suffix:semicolon
 id|aha152x_reset
 c_func
 (paren
+l_int|NULL
 )paren
 suffix:semicolon
 id|printk
@@ -2099,6 +2085,84 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|SCpnt-&gt;scsi_done
+op_assign
+id|done
+suffix:semicolon
+multiline_comment|/* setup scratch area&n;     SCp.ptr              : buffer pointer&n;     SCp.this_residual    : buffer length&n;     SCp.buffer           : next buffer&n;     SCp.buffers_residual : left buffers in list&n;     SCp.phase            : current state of the command */
+id|SCpnt-&gt;SCp.phase
+op_assign
+id|not_issued
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|SCpnt-&gt;use_sg
+)paren
+(brace
+id|SCpnt-&gt;SCp.buffer
+op_assign
+(paren
+r_struct
+id|scatterlist
+op_star
+)paren
+id|SCpnt-&gt;request_buffer
+suffix:semicolon
+id|SCpnt-&gt;SCp.ptr
+op_assign
+id|SCpnt-&gt;SCp.buffer-&gt;address
+suffix:semicolon
+id|SCpnt-&gt;SCp.this_residual
+op_assign
+id|SCpnt-&gt;SCp.buffer-&gt;length
+suffix:semicolon
+id|SCpnt-&gt;SCp.buffers_residual
+op_assign
+id|SCpnt-&gt;use_sg
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+id|SCpnt-&gt;SCp.ptr
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|SCpnt-&gt;request_buffer
+suffix:semicolon
+id|SCpnt-&gt;SCp.this_residual
+op_assign
+id|SCpnt-&gt;request_bufflen
+suffix:semicolon
+id|SCpnt-&gt;SCp.buffer
+op_assign
+l_int|NULL
+suffix:semicolon
+id|SCpnt-&gt;SCp.buffers_residual
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+id|SCpnt-&gt;SCp.Status
+op_assign
+id|CHECK_CONDITION
+suffix:semicolon
+id|SCpnt-&gt;SCp.Message
+op_assign
+l_int|0
+suffix:semicolon
+id|SCpnt-&gt;SCp.have_data_in
+op_assign
+l_int|0
+suffix:semicolon
+id|SCpnt-&gt;SCp.sent_command
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Turn led on, when this is the first command. */
 id|cli
 c_func
@@ -2125,14 +2189,6 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-id|SCpnt-&gt;scsi_done
-op_assign
-id|done
-suffix:semicolon
-id|SCpnt-&gt;SCp.phase
-op_assign
-id|not_issued
-suffix:semicolon
 macro_line|#if defined(DEBUG_QUEUES)
 id|printk
 c_func
@@ -2675,7 +2731,7 @@ comma
 l_int|0xf1
 )paren
 suffix:semicolon
-multiline_comment|/* clear channel 0 and transfer count */
+multiline_comment|/* clear SCSI fifo and transfer count */
 id|SETPORT
 c_func
 (paren
@@ -2730,7 +2786,9 @@ r_int
 id|aha152x_reset
 c_func
 (paren
-r_void
+id|Scsi_Cmnd
+op_star
+id|__unused
 )paren
 (brace
 id|Scsi_Cmnd
@@ -3532,7 +3590,7 @@ op_assign
 id|GETPORT
 c_func
 (paren
-id|SCSIBUS
+id|SCSIDAT
 )paren
 suffix:semicolon
 r_if
@@ -3571,14 +3629,6 @@ suffix:semicolon
 id|getphase
 c_func
 (paren
-)paren
-suffix:semicolon
-id|SETPORT
-c_func
-(paren
-id|SCSISIG
-comma
-id|P_MSGI
 )paren
 suffix:semicolon
 macro_line|#if defined(DEBUG_QUEUES)
@@ -3746,80 +3796,10 @@ macro_line|#if defined(DEBUG_INTR) || defined(DEBUG_SELECTION) || defined(DEBUG_
 id|printk
 c_func
 (paren
-l_string|&quot;issuing command, &quot;
+l_string|&quot;issueing command, &quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* setup SCSI pointers&n;             SCp.ptr              : buffer pointer&n;             SCp.this_residual    : buffer length&n;             SCp.buffer           : next buffer&n;             SCp.buffers_residual : left buffers in list */
-r_if
-c_cond
-(paren
-id|current_SC-&gt;use_sg
-)paren
-(brace
-id|current_SC-&gt;SCp.buffer
-op_assign
-(paren
-r_struct
-id|scatterlist
-op_star
-)paren
-id|current_SC-&gt;request_buffer
-suffix:semicolon
-id|current_SC-&gt;SCp.ptr
-op_assign
-id|current_SC-&gt;SCp.buffer-&gt;address
-suffix:semicolon
-id|current_SC-&gt;SCp.this_residual
-op_assign
-id|current_SC-&gt;SCp.buffer-&gt;length
-suffix:semicolon
-id|current_SC-&gt;SCp.buffers_residual
-op_assign
-id|current_SC-&gt;use_sg
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-r_else
-(brace
-id|current_SC-&gt;SCp.ptr
-op_assign
-(paren
-r_char
-op_star
-)paren
-id|current_SC-&gt;request_buffer
-suffix:semicolon
-id|current_SC-&gt;SCp.this_residual
-op_assign
-id|current_SC-&gt;request_bufflen
-suffix:semicolon
-id|current_SC-&gt;SCp.buffer
-op_assign
-l_int|NULL
-suffix:semicolon
-id|current_SC-&gt;SCp.buffers_residual
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-id|current_SC-&gt;SCp.Status
-op_assign
-id|CHECK_CONDITION
-suffix:semicolon
-id|current_SC-&gt;SCp.Message
-op_assign
-l_int|0
-suffix:semicolon
-id|current_SC-&gt;SCp.have_data_in
-op_assign
-l_int|0
-suffix:semicolon
-id|current_SC-&gt;SCp.sent_command
-op_assign
-l_int|0
-suffix:semicolon
 id|current_SC-&gt;SCp.phase
 op_assign
 id|in_selection
@@ -4300,6 +4280,28 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|phase
+op_amp
+op_complement
+id|P_MASK
+)paren
+)paren
+(brace
+multiline_comment|/* &quot;real&quot; phase */
+id|SETPORT
+c_func
+(paren
+id|SCSISIG
+comma
+id|phase
+)paren
+suffix:semicolon
+)brace
 id|SETPORT
 c_func
 (paren
@@ -4377,7 +4379,7 @@ id|ABORT
 suffix:semicolon
 )brace
 r_else
-multiline_comment|/* If we didn&squot;t identify yet, do it. Otherwise there&squot;s nothing to do,&n;             but reject (perhaps one could do as NOP as well) */
+multiline_comment|/* If we didn&squot;t identify yet, do it. Otherwise there&squot;s nothing to do,&n;             but reject (probably we got an message before, that we have to&n;             reject (SDTR, WDTR, etc.) */
 r_if
 c_cond
 (paren
@@ -4432,14 +4434,12 @@ l_string|&quot;REJECT, &quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-id|CLRSETBITS
+id|CLRBITS
 c_func
 (paren
 id|SXFRCTL0
 comma
 id|ENDMA
-comma
-id|SPIOEN
 )paren
 suffix:semicolon
 id|SETPORT
@@ -4447,7 +4447,7 @@ c_func
 (paren
 id|SIMODE0
 comma
-id|ENSPIORDY
+l_int|0
 )paren
 suffix:semicolon
 id|SETPORT
@@ -4456,6 +4456,8 @@ c_func
 id|SIMODE1
 comma
 id|ENPHASEMIS
+op_or
+id|ENREQINIT
 )paren
 suffix:semicolon
 multiline_comment|/* wait for data latch to become ready or a phase change */
@@ -4476,19 +4478,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|TESTLO
+id|TESTHI
 c_func
 (paren
-id|SSTAT0
+id|SSTAT1
 comma
-id|SPIORDY
+id|PHASEMIS
 )paren
 )paren
 (brace
 id|aha152x_panic
 c_func
 (paren
-l_string|&quot;couldn&squot;t send message&quot;
+l_string|&quot;unable to send message&quot;
 )paren
 suffix:semicolon
 )brace
@@ -4509,12 +4511,14 @@ comma
 id|message
 )paren
 suffix:semicolon
-id|CLRBITS
+id|make_acklow
 c_func
 (paren
-id|SXFRCTL0
-comma
-id|SPIOEN
+)paren
+suffix:semicolon
+id|getphase
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -4629,91 +4633,46 @@ c_func
 (paren
 id|FIFOSTAT
 )paren
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;aha152x: %d bytes left in FIFO, resetting&bslash;n&quot;
-comma
+op_logical_or
 id|GETPORT
 c_func
 (paren
-id|FIFOSTAT
+id|SSTAT2
 )paren
-)paren
-suffix:semicolon
-id|disp_ports
-c_func
+op_amp
 (paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;contents ( &quot;
-)paren
-suffix:semicolon
-id|SETPORT
-c_func
-(paren
-id|SXFRCTL0
-comma
-id|CH1
+id|SFULL
 op_or
-id|SPIOEN
+id|SFCNT
 )paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|GETPORT
-c_func
-(paren
-id|FIFOSTAT
-)paren
-suffix:semicolon
-id|i
-op_increment
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;%02x &quot;
+l_string|&quot;aha152x: P_CMD: %d(%d) bytes left in FIFO, resetting&bslash;n&quot;
 comma
 id|GETPORT
 c_func
 (paren
-id|SCSIDAT
+id|FIFOSTAT
 )paren
-)paren
-suffix:semicolon
-)brace
-id|SETPORT
-c_func
-(paren
-id|SXFRCTL0
 comma
-id|CH1
-)paren
-suffix:semicolon
-id|printk
+id|GETPORT
 c_func
 (paren
-l_string|&quot;)&bslash;n&quot;
+id|SSTAT2
+)paren
+op_amp
+(paren
+id|SFULL
+op_or
+id|SFCNT
+)paren
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* reset fifo and enable writes */
 id|SETPORT
 c_func
 (paren
@@ -4734,6 +4693,7 @@ op_or
 id|WRITE_READ
 )paren
 suffix:semicolon
+multiline_comment|/* clear transfer count and scsi fifo */
 id|SETPORT
 c_func
 (paren
@@ -4758,6 +4718,7 @@ op_or
 id|CH1
 )paren
 suffix:semicolon
+multiline_comment|/* missing phase raises INTSTAT */
 id|SETPORT
 c_func
 (paren
@@ -5013,7 +4974,7 @@ op_assign
 id|GETPORT
 c_func
 (paren
-id|SCSIBUS
+id|SCSIDAT
 )paren
 suffix:semicolon
 r_switch
@@ -5076,7 +5037,7 @@ suffix:semicolon
 r_case
 id|MESSAGE_REJECT
 suffix:colon
-macro_line|#if defined(DEBUG_MSGI)
+macro_line|#if defined(DEBUG_MSGI) || defined(DEBUG_TIMING)
 id|printk
 c_func
 (paren
@@ -5099,7 +5060,6 @@ suffix:semicolon
 macro_line|#endif
 r_break
 suffix:semicolon
-multiline_comment|/* my IBM drive responds to the first command with an extended message.&n;   I just ignore it... */
 r_case
 id|EXTENDED_MESSAGE
 suffix:colon
@@ -5154,6 +5114,14 @@ id|i
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if defined(DEBUG_MSGI)
+id|printk
+c_func
+(paren
+l_string|&quot;code ( &quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|make_acklow
 c_func
 (paren
@@ -5173,14 +5141,6 @@ id|P_MSGI
 r_break
 suffix:semicolon
 )brace
-macro_line|#if defined(DEBUG_MSGI)
-id|printk
-c_func
-(paren
-l_string|&quot;code ( &quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|code
 op_assign
 id|GETPORT
@@ -5189,7 +5149,6 @@ c_func
 id|SCSIDAT
 )paren
 suffix:semicolon
-macro_line|#if defined(DEBUG_MSGI)
 r_switch
 c_cond
 (paren
@@ -5199,10 +5158,22 @@ id|code
 r_case
 l_int|0x00
 suffix:colon
+macro_line|#if defined(DEBUG_MSGI)
 id|printk
 c_func
 (paren
 l_string|&quot;MODIFY DATA POINTER &quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|SETPORT
+c_func
+(paren
+id|SCSISIG
+comma
+id|P_MSGI
+op_or
+id|ATNO
 )paren
 suffix:semicolon
 r_break
@@ -5210,10 +5181,22 @@ suffix:semicolon
 r_case
 l_int|0x01
 suffix:colon
+macro_line|#if defined(DEBUG_MSGI)
 id|printk
 c_func
 (paren
 l_string|&quot;SYNCHRONOUS DATA TRANSFER REQUEST &quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|SETPORT
+c_func
+(paren
+id|SCSISIG
+comma
+id|P_MSGI
+op_or
+id|ATNO
 )paren
 suffix:semicolon
 r_break
@@ -5221,21 +5204,35 @@ suffix:semicolon
 r_case
 l_int|0x02
 suffix:colon
+macro_line|#if defined(DEBUG_MSGI)
 id|printk
 c_func
 (paren
 l_string|&quot;EXTENDED IDENTIFY &quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 r_case
 l_int|0x03
 suffix:colon
+macro_line|#if defined(DEBUG_MSGI)
 id|printk
 c_func
 (paren
 l_string|&quot;WIDE DATA TRANSFER REQUEST &quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|SETPORT
+c_func
+(paren
+id|SCSISIG
+comma
+id|P_MSGI
+op_or
+id|ATNO
 )paren
 suffix:semicolon
 r_break
@@ -5244,6 +5241,7 @@ r_default
 suffix:colon
 (brace
 )brace
+macro_line|#if defined(DEBUG_MSGI)
 r_if
 c_cond
 (paren
@@ -5270,9 +5268,21 @@ comma
 id|code
 )paren
 suffix:semicolon
+macro_line|#endif
+id|SETPORT
+c_func
+(paren
+id|SCSISIG
+comma
+id|P_MSGI
+op_or
+id|ATNO
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#if defined(DEBUG_MSGI)
 id|printk
 c_func
 (paren
@@ -5331,6 +5341,17 @@ l_string|&quot; ), &quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* We reject all extended messages. To do this&n;                   we just enter MSGO by asserting ATN. Since&n;                   we have already identified a REJECT message&n;                   will be sent. */
+id|SETPORT
+c_func
+(paren
+id|SCSISIG
+comma
+id|P_MSGI
+op_or
+id|ATNO
+)paren
+suffix:semicolon
 )brace
 r_break
 suffix:semicolon
@@ -5360,14 +5381,26 @@ c_func
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* clear SCSI fifo on BUSFREE */
+r_if
+c_cond
+(paren
+id|phase
+op_eq
+id|P_BUSFREE
+)paren
+(brace
 id|SETPORT
 c_func
 (paren
-id|SCSISIG
+id|SXFRCTL0
 comma
-id|P_MSGI
+id|CH1
+op_or
+id|CLRCH1
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5472,8 +5505,6 @@ c_func
 id|SXFRCTL0
 comma
 id|CH1
-op_or
-id|SPIOEN
 )paren
 suffix:semicolon
 id|SETPORT
@@ -5481,7 +5512,7 @@ c_func
 (paren
 id|SIMODE0
 comma
-id|ENSPIORDY
+l_int|0
 )paren
 suffix:semicolon
 id|SETPORT
@@ -5490,6 +5521,8 @@ c_func
 id|SIMODE1
 comma
 id|ENPHASEMIS
+op_or
+id|ENREQINIT
 )paren
 suffix:semicolon
 id|SETBITS
@@ -5529,6 +5562,7 @@ id|INTSTAT
 (brace
 suffix:semicolon
 )brace
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -5548,12 +5582,23 @@ l_string|&quot;passing STATUS phase&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 id|current_SC-&gt;SCp.Status
 op_assign
 id|GETPORT
 c_func
 (paren
 id|SCSIDAT
+)paren
+suffix:semicolon
+id|make_acklow
+c_func
+(paren
+)paren
+suffix:semicolon
+id|getphase
+c_func
+(paren
 )paren
 suffix:semicolon
 macro_line|#if defined(DEBUG_STATUS)
@@ -5598,6 +5643,7 @@ id|SCSIEN
 (brace
 suffix:semicolon
 )brace
+macro_line|#if 0
 id|CLRBITS
 c_func
 (paren
@@ -5606,6 +5652,7 @@ comma
 id|SPIOEN
 )paren
 suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -5628,6 +5675,84 @@ l_string|&quot;DATA IN, &quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|GETPORT
+c_func
+(paren
+id|FIFOSTAT
+)paren
+op_logical_or
+id|GETPORT
+c_func
+(paren
+id|SSTAT2
+)paren
+op_amp
+(paren
+id|SFULL
+op_or
+id|SFCNT
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;aha152x: P_DATAI: %d(%d) bytes left in FIFO, resetting&bslash;n&quot;
+comma
+id|GETPORT
+c_func
+(paren
+id|FIFOSTAT
+)paren
+comma
+id|GETPORT
+c_func
+(paren
+id|SSTAT2
+)paren
+op_amp
+(paren
+id|SFULL
+op_or
+id|SFCNT
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* reset host fifo */
+id|SETPORT
+c_func
+(paren
+id|DMACNTRL0
+comma
+id|RSTFIFO
+)paren
+suffix:semicolon
+id|SETPORT
+c_func
+(paren
+id|DMACNTRL0
+comma
+id|RSTFIFO
+op_or
+id|ENDMA
+)paren
+suffix:semicolon
+id|SETPORT
+c_func
+(paren
+id|SXFRCTL0
+comma
+id|CH1
+op_or
+id|SCSIEN
+op_or
+id|DMAEN
+)paren
+suffix:semicolon
 id|SETPORT
 c_func
 (paren
@@ -5644,50 +5769,6 @@ comma
 id|ENPHASEMIS
 op_or
 id|ENBUSFREE
-)paren
-suffix:semicolon
-id|SETPORT
-c_func
-(paren
-id|SXFRCTL0
-comma
-id|CH1
-op_or
-id|CLRSTCNT
-op_or
-id|CLRCH1
-)paren
-suffix:semicolon
-id|CLRSETBITS
-c_func
-(paren
-id|SXFRCTL0
-comma
-id|CLRSTCNT
-comma
-id|SCSIEN
-op_or
-id|DMAEN
-op_or
-id|CH1
-)paren
-suffix:semicolon
-id|SETBITS
-c_func
-(paren
-id|DMACNTRL0
-comma
-id|RSTFIFO
-)paren
-suffix:semicolon
-id|CLRSETBITS
-c_func
-(paren
-id|DMACNTRL0
-comma
-id|WRITE_READ
-comma
-id|ENDMA
 )paren
 suffix:semicolon
 multiline_comment|/* done is set when the FIFO is empty after the target left DATA IN */
@@ -5793,32 +5874,6 @@ id|fifodata
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* I don&squot;t know yet why, but rarely I get empty&n;               buffers here, so I&squot;ve to advance to the next buffer&n;               before I enter the loop */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|current_SC-&gt;SCp.this_residual
-op_logical_and
-id|current_SC-&gt;SCp.buffers_residual
-)paren
-(brace
-multiline_comment|/* advance to next buffer */
-id|current_SC-&gt;SCp.buffers_residual
-op_decrement
-suffix:semicolon
-id|current_SC-&gt;SCp.buffer
-op_increment
-suffix:semicolon
-id|current_SC-&gt;SCp.ptr
-op_assign
-id|current_SC-&gt;SCp.buffer-&gt;address
-suffix:semicolon
-id|current_SC-&gt;SCp.this_residual
-op_assign
-id|current_SC-&gt;SCp.buffer-&gt;length
-suffix:semicolon
-)brace
 r_while
 c_loop
 (paren
@@ -6179,17 +6234,41 @@ c_func
 (paren
 id|FIFOSTAT
 )paren
+op_logical_or
+id|GETPORT
+c_func
+(paren
+id|SSTAT2
+)paren
+op_amp
+(paren
+id|SFULL
+op_or
+id|SFCNT
+)paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;%d left in FIFO, &quot;
+l_string|&quot;%d(%d) left in FIFO, &quot;
 comma
 id|GETPORT
 c_func
 (paren
 id|FIFOSTAT
+)paren
+comma
+id|GETPORT
+c_func
+(paren
+id|SSTAT2
+)paren
+op_amp
+(paren
+id|SFULL
+op_or
+id|SFCNT
 )paren
 )paren
 suffix:semicolon
@@ -6469,54 +6548,13 @@ c_func
 (paren
 id|SSTAT2
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|data_count
 op_amp
+(paren
+id|SFULL
+op_or
 id|SFCNT
 )paren
-op_eq
-l_int|0
-)paren
-(brace
-id|data_count
-op_assign
-(paren
-id|data_count
-op_amp
-id|SEMPTY
-)paren
-ques
-c_cond
-l_int|0
-suffix:colon
-l_int|8
 suffix:semicolon
-)brace
-r_else
-id|data_count
-op_and_assign
-id|SFCNT
-suffix:semicolon
-macro_line|#if defined(DEBUG_DATAO)
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;ntarget left DATA OUT, fifo=%d, scsififo=%d, &quot;
-comma
-id|GETPORT
-c_func
-(paren
-id|FIFOSTAT
-)paren
-comma
-id|data_count
-)paren
-suffix:semicolon
-macro_line|#endif
 id|data_count
 op_add_assign
 id|GETPORT
@@ -6672,7 +6710,7 @@ macro_line|#endif
 r_break
 suffix:semicolon
 r_case
-l_int|1
+id|P_BUSFREE
 suffix:colon
 multiline_comment|/* BUSFREE */
 macro_line|#if defined(DEBUG_RACE)
@@ -6718,7 +6756,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|3
+id|P_PARITY
 suffix:colon
 multiline_comment|/* parity error in DATA phase */
 macro_line|#if defined(DEBUG_RACE)
@@ -6770,14 +6808,12 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-macro_line|#if defined(DEBUG_INTR)
 id|printk
 c_func
 (paren
-l_string|&quot;unexpected phase, &quot;
+l_string|&quot;aha152x: unexpected phase&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 )brace
@@ -8096,42 +8132,15 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;); &quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|s
-op_amp
-id|SFCNT
-)paren
-(brace
-id|s
-op_and_assign
-id|SFCNT
-suffix:semicolon
-)brace
-r_else
-id|s
-op_assign
-(paren
-id|s
-op_amp
-id|SEMPTY
-)paren
-ques
-c_cond
-l_int|0
-suffix:colon
-l_int|8
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;SFCNT ( %d ); &quot;
+l_string|&quot;); SFCNT ( %d ); &quot;
 comma
 id|s
+op_amp
+(paren
+id|SFULL
+op_or
+id|SFCNT
+)paren
 )paren
 suffix:semicolon
 macro_line|#if 0

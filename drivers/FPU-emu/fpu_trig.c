@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_trig.c                                                               |&n; |                                                                           |&n; | Implementation of the FPU &quot;transcendental&quot; functions.                     |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_trig.c                                                               |&n; |                                                                           |&n; | Implementation of the FPU &quot;transcendental&quot; functions.                     |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -476,6 +476,7 @@ id|convert_l2reg
 c_func
 (paren
 r_int
+r_const
 op_star
 id|arg
 comma
@@ -6629,6 +6630,7 @@ multiline_comment|/*------------------------------------------------------------
 DECL|variable|trig_table_a
 r_static
 id|FUNC
+r_const
 id|trig_table_a
 (braket
 )braket
@@ -6672,6 +6674,7 @@ suffix:semicolon
 DECL|variable|trig_table_b
 r_static
 id|FUNC
+r_const
 id|trig_table_b
 (braket
 )braket

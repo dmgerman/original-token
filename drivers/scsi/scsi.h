@@ -1011,7 +1011,7 @@ id|Scsi_Device
 op_star
 )paren
 suffix:semicolon
-macro_line|#if defined(MAJOR_NR) &amp;&amp; (MAJOR_NR != 9)
+macro_line|#if defined(MAJOR_NR) &amp;&amp; (MAJOR_NR != SCSI_TAPE_MAJOR)
 DECL|function|end_scsi_request
 r_static
 r_void
@@ -1064,13 +1064,7 @@ id|printk
 c_func
 (paren
 id|DEVICE_NAME
-l_string|&quot; I/O error&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;dev %04x, sector %d&bslash;n&quot;
+l_string|&quot; I/O error: dev %04x, sector %lu&bslash;n&quot;
 comma
 id|req-&gt;dev
 comma

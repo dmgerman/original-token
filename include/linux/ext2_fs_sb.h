@@ -1,6 +1,7 @@
-macro_line|#ifndef _EXT2_FS_SB
-DECL|macro|_EXT2_FS_SB
-mdefine_line|#define _EXT2_FS_SB
+multiline_comment|/*&n; *  linux/include/linux/ext2_fs_sb.h&n; *&n; *  Copyright (C) 1992, 1993  Remy Card (card@masi.ibp.fr)&n; *&n; *  from&n; *&n; *  linux/include/linux/minix_fs_sb.h&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+macro_line|#ifndef _LINUX_EXT2_FS_SB
+DECL|macro|_LINUX_EXT2_FS_SB
+mdefine_line|#define _LINUX_EXT2_FS_SB
 DECL|macro|EXT2_MAX_GROUP_DESC
 mdefine_line|#define EXT2_MAX_GROUP_DESC&t;8
 DECL|macro|EXT2_MAX_GROUP_LOADED
@@ -129,17 +130,23 @@ DECL|member|s_rename_lock
 r_int
 id|s_rename_lock
 suffix:semicolon
-DECL|member|s_was_mounted_valid
-r_int
-id|s_was_mounted_valid
-suffix:semicolon
 DECL|member|s_rename_wait
 r_struct
 id|wait_queue
 op_star
 id|s_rename_wait
 suffix:semicolon
+DECL|member|s_mount_opt
+r_int
+r_int
+id|s_mount_opt
+suffix:semicolon
+DECL|member|s_mount_state
+r_int
+r_int
+id|s_mount_state
+suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif&t;/* _LINUX_EXT2_FS_SB */
 eof

@@ -2468,12 +2468,15 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* We do not implement a reset function here, but the upper level code assumes&n;   that it will get some kind of response for the command in SCpnt.  We must&n;   oblige, or the command will hang the scsi system */
 DECL|function|wd7000_reset
 r_int
 id|wd7000_reset
 c_func
 (paren
-r_void
+id|Scsi_Cmnd
+op_star
+id|SCpnt
 )paren
 (brace
 macro_line|#ifdef DEBUG
@@ -2484,6 +2487,15 @@ l_string|&quot;wd7000_reset&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|SCpnt
+)paren
+id|SCpnt-&gt;flags
+op_or_assign
+id|NEEDS_JUMPSTART
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

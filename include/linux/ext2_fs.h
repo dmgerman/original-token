@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  linux/include/linux/ext2_fs.h&n; *&n; *  Copyright (C) 1992, 1993  Remy Card (card@masi.ibp.fr)&n; *&n; *  from&n; *&n; *  linux/include/linux/minix_fs.h&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#ifndef _LINUX_EXT2_FS_H
 DECL|macro|_LINUX_EXT2_FS_H
 mdefine_line|#define _LINUX_EXT2_FS_H
@@ -5,20 +6,34 @@ multiline_comment|/*&n; * The second extended filesystem constants/structures&n;
 multiline_comment|/*&n; * Define EXT2FS_DEBUG to produce debug messages&n; */
 DECL|macro|EXT2FS_DEBUG
 macro_line|#undef EXT2FS_DEBUG
-multiline_comment|/*&n; * Define EXT2FS_PRE_02B_COMPAT to convert ext 2 fs prior to 0.2b&n; */
-DECL|macro|EXT2FS_PRE_02B_COMPAT
-macro_line|#undef EXT2FS_PRE_02B_COMPAT
-multiline_comment|/*&n; * Define DONT_USE_DCACHE to inhibit the directory cache&n; */
-DECL|macro|DONT_USE_DCACHE
-macro_line|#undef DONT_USE_DCACHE
 multiline_comment|/*&n; * Define EXT2FS_DEBUG_CACHE to produce cache debug messages&n; */
 DECL|macro|EXT2FS_DEBUG_CACHE
 macro_line|#undef EXT2FS_DEBUG_CACHE
+multiline_comment|/*&n; * Define EXT2FS_CHECK_CACHE to add some checks to the name cache code&n; */
+DECL|macro|EXT2FS_CHECK_CACHE
+macro_line|#undef EXT2FS_CHECK_CACHE
+multiline_comment|/*&n; * Define EXT2FS_PRE_02B_COMPAT to convert ext 2 fs prior to 0.2b&n; */
+DECL|macro|EXT2FS_PRE_02B_COMPAT
+macro_line|#undef EXT2FS_PRE_02B_COMPAT
+multiline_comment|/*&n; * Define EXT2FS_PRE_04_COMPAT to convert ext2 fs prior to 0.4&n; */
+DECL|macro|EXT2_PRE_04_COMPAT
+mdefine_line|#define EXT2_PRE_04_COMPAT
+multiline_comment|/*&n; * Define DONT_USE_DCACHE to inhibit the directory cache&n; */
+DECL|macro|DONT_USE_DCACHE
+mdefine_line|#define DONT_USE_DCACHE
 multiline_comment|/*&n; * The second extended file system version&n; */
 DECL|macro|EXT2FS_DATE
-mdefine_line|#define EXT2FS_DATE&t;&t;&quot;93/08/05&quot;
+mdefine_line|#define EXT2FS_DATE&t;&t;&quot;93/11/19&quot;
 DECL|macro|EXT2FS_VERSION
-mdefine_line|#define EXT2FS_VERSION&t;&t;&quot;0.3c&quot;
+mdefine_line|#define EXT2FS_VERSION&t;&t;&quot;0.4a&quot;
+multiline_comment|/*&n; * Debug code&n; */
+macro_line|#ifdef EXT2FS_DEBUG
+DECL|macro|ext2_debug
+macro_line|#&t;define ext2_debug(f, a...)&t;{ &bslash;&n;&t;&t;&t;&t;&t;printk (&quot;EXT2-fs DEBUG (%s, %d): %s:&quot;, &bslash;&n;&t;&t;&t;&t;&t;&t;__FILE__, __LINE__, __FUNCTION__); &bslash;&n;&t;&t;&t;&t;  &t;printk (f, ## a); &bslash;&n;&t;&t;&t;&t;&t;}
+macro_line|#else
+DECL|macro|ext2_debug
+macro_line|#&t;define ext2_debug(f, a...)&t;/**/
+macro_line|#endif
 multiline_comment|/*&n; * Special inodes numbers&n; */
 DECL|macro|EXT2_BAD_INO
 mdefine_line|#define&t;EXT2_BAD_INO&t;&t; 1&t;/* Bad blocks inode */
@@ -30,11 +45,13 @@ DECL|macro|EXT2_ACL_DATA_INO
 mdefine_line|#define EXT2_ACL_DATA_INO&t; 4&t;/* ACL inode */
 DECL|macro|EXT2_BOOT_LOADER_INO
 mdefine_line|#define EXT2_BOOT_LOADER_INO&t; 5&t;/* Boot loader inode */
+DECL|macro|EXT2_UNDEL_DIR_INO
+mdefine_line|#define EXT2_UNDEL_DIR_INO&t; 6&t;/* Undelete directory inode */
 DECL|macro|EXT2_FIRST_INO
 mdefine_line|#define EXT2_FIRST_INO&t;&t;11&t;/* First non reserved inode */
 multiline_comment|/*&n; * The second extended file system magic number&n; */
-DECL|macro|EXT2_OLD_SUPER_MAGIC
-mdefine_line|#define EXT2_OLD_SUPER_MAGIC&t;0xEF51
+DECL|macro|EXT2_PRE_02B_MAGIC
+mdefine_line|#define EXT2_PRE_02B_MAGIC&t;0xEF51
 DECL|macro|EXT2_SUPER_MAGIC
 mdefine_line|#define EXT2_SUPER_MAGIC&t;0xEF53
 multiline_comment|/*&n; * Maximal count of links to a file&n; */
@@ -274,6 +291,24 @@ DECL|macro|EXT2_TIND_BLOCK
 mdefine_line|#define&t;EXT2_TIND_BLOCK&t;&t;&t;(EXT2_DIND_BLOCK + 1)
 DECL|macro|EXT2_N_BLOCKS
 mdefine_line|#define&t;EXT2_N_BLOCKS&t;&t;&t;(EXT2_TIND_BLOCK + 1)
+multiline_comment|/*&n; * Inode flags&n; */
+DECL|macro|EXT2_SECRM_FL
+mdefine_line|#define&t;EXT2_SECRM_FL&t;&t;&t;0x0001&t;/* Secure deletion */
+DECL|macro|EXT2_UNRM_FL
+mdefine_line|#define&t;EXT2_UNRM_FL&t;&t;&t;0x0002&t;/* Undelete */
+DECL|macro|EXT2_COMPR_FL
+mdefine_line|#define&t;EXT2_COMPR_FL&t;&t;&t;0x0004&t;/* Compress file */
+DECL|macro|EXT2_SYNC_FL
+mdefine_line|#define EXT2_SYNC_FL&t;&t;&t;0x0008&t;/* Synchronous updates */
+multiline_comment|/*&n; * ioctl commands&n; */
+DECL|macro|EXT2_IOC_GETFLAGS
+mdefine_line|#define&t;EXT2_IOC_GETFLAGS&t;&t;_IOR(&squot;f&squot;, 1, long)
+DECL|macro|EXT2_IOC_SETFLAGS
+mdefine_line|#define&t;EXT2_IOC_SETFLAGS&t;&t;_IOW(&squot;f&squot;, 2, long)
+DECL|macro|EXT2_IOC_GETVERSION
+mdefine_line|#define&t;EXT2_IOC_GETVERSION&t;&t;_IOR(&squot;v&squot;, 1, long)
+DECL|macro|EXT2_IOC_SETVERSION
+mdefine_line|#define&t;EXT2_IOC_SETVERSION&t;&t;_IOW(&squot;v&squot;, 2, long)
 multiline_comment|/*&n; * Structure of an inode on the disk&n; */
 DECL|struct|ext2_inode
 r_struct
@@ -410,6 +445,17 @@ l_int|2
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * File system states&n; */
+DECL|macro|EXT2_VALID_FS
+mdefine_line|#define&t;EXT2_VALID_FS&t;&t;&t;0x0001&t;/* Unmounted cleany */
+DECL|macro|EXT2_ERROR_FS
+mdefine_line|#define&t;EXT2_ERROR_FS&t;&t;&t;0x0002&t;/* Errors detected */
+multiline_comment|/*&n; * Mount flags&n; */
+DECL|macro|EXT2_MOUNT_CHECK
+mdefine_line|#define EXT2_MOUNT_CHECK&t;&t;0x0001&t;/* Do some more checks */
+multiline_comment|/*&n; * Maximal mount counts between two filesystem checks&n; */
+DECL|macro|EXT2_DFL_MAX_MNT_COUNT
+mdefine_line|#define EXT2_DFL_MAX_MNT_COUNT&t;&t;20&t;/* Allow 20 mounts */
 multiline_comment|/*&n; * Structure of the super block&n; */
 DECL|struct|ext2_super_block
 r_struct
@@ -492,32 +538,36 @@ r_int
 id|s_wtime
 suffix:semicolon
 multiline_comment|/* Write time */
-DECL|member|s_pad
+DECL|member|s_mnt_count
 r_int
 r_int
-id|s_pad
+id|s_mnt_count
 suffix:semicolon
-multiline_comment|/* Padding to get the magic signature*/
-multiline_comment|/* at the same offset as in the */
-multiline_comment|/* previous ext fs */
+multiline_comment|/* Mount count */
+DECL|member|s_max_mnt_count
+r_int
+r_int
+id|s_max_mnt_count
+suffix:semicolon
+multiline_comment|/* Maximal mount count */
 DECL|member|s_magic
 r_int
 r_int
 id|s_magic
 suffix:semicolon
 multiline_comment|/* Magic signature */
-DECL|member|s_valid
+DECL|member|s_state
 r_int
 r_int
-id|s_valid
+id|s_state
 suffix:semicolon
-multiline_comment|/* Flag */
+multiline_comment|/* File system state */
 DECL|member|s_reserved
 r_int
 r_int
 id|s_reserved
 (braket
-l_int|243
+l_int|241
 )braket
 suffix:semicolon
 multiline_comment|/* Padding to the end of the block */
@@ -614,6 +664,15 @@ id|super_block
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ext2_check_blocks_bitmap
+(paren
+r_struct
+id|super_block
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* bitmap.c */
 r_extern
 r_int
@@ -627,6 +686,7 @@ comma
 r_int
 )paren
 suffix:semicolon
+macro_line|#ifndef DONT_USE_DCACHE
 multiline_comment|/* dcache.c */
 r_extern
 r_void
@@ -671,6 +731,7 @@ comma
 r_int
 comma
 r_int
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -690,6 +751,7 @@ comma
 r_int
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* dir.c */
 r_extern
 r_int
@@ -799,6 +861,15 @@ id|super_block
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ext2_check_inodes_bitmap
+(paren
+r_struct
+id|super_block
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* inode.c */
 r_extern
 r_int
@@ -849,52 +920,6 @@ op_star
 suffix:semicolon
 r_extern
 r_void
-id|ext2_put_super
-(paren
-r_struct
-id|super_block
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|ext2_write_super
-(paren
-r_struct
-id|super_block
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ext2_remount
-(paren
-r_struct
-id|super_block
-op_star
-comma
-r_int
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_struct
-id|super_block
-op_star
-id|ext2_read_super
-(paren
-r_struct
-id|super_block
-op_star
-comma
-r_void
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|ext2_read_inode
 (paren
 r_struct
@@ -921,22 +946,8 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|ext2_statfs
-(paren
-r_struct
-id|super_block
-op_star
-comma
-r_struct
-id|statfs
-op_star
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|ext2_sync_inode
-c_func
 (paren
 r_struct
 id|inode
@@ -1161,6 +1172,169 @@ comma
 r_int
 )paren
 suffix:semicolon
+multiline_comment|/* super.c */
+r_extern
+r_void
+id|ext2_error
+(paren
+r_struct
+id|super_block
+op_star
+comma
+r_const
+r_char
+op_star
+comma
+r_const
+r_char
+op_star
+comma
+dot
+dot
+dot
+)paren
+id|__attribute__
+(paren
+(paren
+id|format
+(paren
+id|printf
+comma
+l_int|3
+comma
+l_int|4
+)paren
+)paren
+)paren
+suffix:semicolon
+r_extern
+r_volatile
+r_void
+id|ext2_panic
+(paren
+r_struct
+id|super_block
+op_star
+comma
+r_const
+r_char
+op_star
+comma
+r_const
+r_char
+op_star
+comma
+dot
+dot
+dot
+)paren
+id|__attribute__
+(paren
+(paren
+id|format
+(paren
+id|printf
+comma
+l_int|3
+comma
+l_int|4
+)paren
+)paren
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ext2_warning
+(paren
+r_struct
+id|super_block
+op_star
+comma
+r_const
+r_char
+op_star
+comma
+r_const
+r_char
+op_star
+comma
+dot
+dot
+dot
+)paren
+id|__attribute__
+(paren
+(paren
+id|format
+(paren
+id|printf
+comma
+l_int|3
+comma
+l_int|4
+)paren
+)paren
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ext2_put_super
+(paren
+r_struct
+id|super_block
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ext2_write_super
+(paren
+r_struct
+id|super_block
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ext2_remount
+(paren
+r_struct
+id|super_block
+op_star
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|super_block
+op_star
+id|ext2_read_super
+(paren
+r_struct
+id|super_block
+op_star
+comma
+r_void
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ext2_statfs
+(paren
+r_struct
+id|super_block
+op_star
+comma
+r_struct
+id|statfs
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* truncate.c */
 r_extern
 r_void
@@ -1190,6 +1364,6 @@ r_struct
 id|inode_operations
 id|ext2_symlink_inode_operations
 suffix:semicolon
-macro_line|#endif
-macro_line|#endif
+macro_line|#endif&t;/* __KERNEL__ */
+macro_line|#endif&t;/* _LINUX_EXT2_FS_H */
 eof
