@@ -402,6 +402,13 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ei_local-&gt;stat.tx_packets
+op_eq
+l_int|0
+)paren
 id|ei_local-&gt;interface_num
 op_xor_assign
 l_int|1
@@ -1034,7 +1041,7 @@ op_logical_and
 op_increment
 id|boguscount
 OL
-l_int|5
+l_int|9
 )paren
 (brace
 r_if

@@ -4906,6 +4906,7 @@ id|SOPRI_INTERACTIVE
 )paren
 suffix:semicolon
 )brace
+r_else
 r_if
 c_cond
 (paren

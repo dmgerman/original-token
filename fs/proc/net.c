@@ -708,7 +708,6 @@ c_cond
 id|ino
 )paren
 (brace
-macro_line|#ifdef CONFIG_INET
 r_case
 l_int|128
 suffix:colon
@@ -722,6 +721,7 @@ id|page
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET
 r_case
 l_int|129
 suffix:colon
