@@ -1180,6 +1180,21 @@ id|regs-&gt;r16
 op_assign
 id|signr
 suffix:semicolon
+multiline_comment|/* a0: signal number */
+id|regs-&gt;r17
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* a1: exception code; see gentrap.h */
+id|regs-&gt;r18
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|sc
+suffix:semicolon
+multiline_comment|/* a2: sigcontext pointer */
 op_star
 id|fp
 op_assign

@@ -35,85 +35,85 @@ multiline_comment|/* screen_attr */
 id|A_NORMAL
 comma
 multiline_comment|/* shadow_attr */
-id|A_REVERSE
+id|A_NORMAL
 comma
 multiline_comment|/* dialog_attr */
-id|A_REVERSE
+id|A_BOLD
 comma
 multiline_comment|/* title_attr */
-id|A_REVERSE
+id|A_NORMAL
 comma
 multiline_comment|/* border_attr */
-id|A_BOLD
+id|A_REVERSE
 comma
 multiline_comment|/* button_active_attr */
 id|A_DIM
 comma
 multiline_comment|/* button_inactive_attr */
-id|A_UNDERLINE
+id|A_REVERSE
 comma
 multiline_comment|/* button_key_active_attr */
-id|A_UNDERLINE
+id|A_BOLD
 comma
 multiline_comment|/* button_key_inactive_attr */
-id|A_NORMAL
+id|A_REVERSE
 comma
 multiline_comment|/* button_label_active_attr */
 id|A_NORMAL
 comma
 multiline_comment|/* button_label_inactive_attr */
-id|A_REVERSE
-comma
-multiline_comment|/* inputbox_attr */
-id|A_REVERSE
-comma
-multiline_comment|/* inputbox_border_attr */
-id|A_REVERSE
-comma
-multiline_comment|/* searchbox_attr */
-id|A_REVERSE
-comma
-multiline_comment|/* searchbox_title_attr */
-id|A_REVERSE
-comma
-multiline_comment|/* searchbox_border_attr */
-id|A_REVERSE
-comma
-multiline_comment|/* position_indicator_attr */
-id|A_REVERSE
-comma
-multiline_comment|/* menubox_attr */
-id|A_REVERSE
-comma
-multiline_comment|/* menubox_border_attr */
-id|A_REVERSE
-comma
-multiline_comment|/* item_attr */
 id|A_NORMAL
 comma
-multiline_comment|/* item_selected_attr */
+multiline_comment|/* inputbox_attr */
+id|A_NORMAL
+comma
+multiline_comment|/* inputbox_border_attr */
+id|A_NORMAL
+comma
+multiline_comment|/* searchbox_attr */
+id|A_BOLD
+comma
+multiline_comment|/* searchbox_title_attr */
+id|A_NORMAL
+comma
+multiline_comment|/* searchbox_border_attr */
+id|A_BOLD
+comma
+multiline_comment|/* position_indicator_attr */
+id|A_NORMAL
+comma
+multiline_comment|/* menubox_attr */
+id|A_NORMAL
+comma
+multiline_comment|/* menubox_border_attr */
+id|A_NORMAL
+comma
+multiline_comment|/* item_attr */
 id|A_REVERSE
+comma
+multiline_comment|/* item_selected_attr */
+id|A_BOLD
 comma
 multiline_comment|/* tag_attr */
 id|A_REVERSE
 comma
 multiline_comment|/* tag_selected_attr */
-id|A_NORMAL
-comma
-multiline_comment|/* tag_key_attr */
 id|A_BOLD
 comma
-multiline_comment|/* tag_key_selected_attr */
+multiline_comment|/* tag_key_attr */
 id|A_REVERSE
+comma
+multiline_comment|/* tag_key_selected_attr */
+id|A_BOLD
 comma
 multiline_comment|/* check_attr */
 id|A_REVERSE
 comma
 multiline_comment|/* check_selected_attr */
-id|A_REVERSE
+id|A_BOLD
 comma
 multiline_comment|/* uarrow_attr */
-id|A_REVERSE
+id|A_BOLD
 multiline_comment|/* darrow_attr */
 )brace
 suffix:semicolon
@@ -1607,6 +1607,11 @@ r_const
 r_char
 op_star
 id|string
+comma
+r_const
+r_char
+op_star
+id|exempt
 )paren
 (brace
 r_int
@@ -1685,7 +1690,7 @@ op_logical_and
 id|strchr
 c_func
 (paren
-l_string|&quot;nNyYmM&quot;
+id|exempt
 comma
 id|c
 )paren

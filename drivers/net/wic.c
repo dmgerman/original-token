@@ -1,6 +1,7 @@
 multiline_comment|/* $Id: wic.c,v 1.0 1995/02/11 10:26:05 hayes Exp $ */
 multiline_comment|/* WIC: A parallel port &quot;network&quot; driver for Linux. */
 multiline_comment|/* based on the plip network driver */
+multiline_comment|/* Modified for Linux 1.3.x by Alan Cox &lt;Alan.Cox@linux.org&gt; */
 DECL|variable|version
 r_char
 op_star
@@ -311,13 +312,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 suffix:semicolon
 DECL|macro|LOOPCNT
@@ -1020,8 +1014,7 @@ suffix:semicolon
 multiline_comment|/* Initialize task queue structures */
 id|nl-&gt;immediate.next
 op_assign
-op_amp
-id|tq_last
+l_int|NULL
 suffix:semicolon
 id|nl-&gt;immediate.sync
 op_assign
@@ -1045,8 +1038,7 @@ id|dev
 suffix:semicolon
 id|nl-&gt;deferred.next
 op_assign
-op_amp
-id|tq_last
+l_int|NULL
 suffix:semicolon
 id|nl-&gt;deferred.sync
 op_assign
@@ -1316,13 +1308,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 (brace
 r_struct
@@ -1452,16 +1437,14 @@ op_star
 op_amp
 id|wc.data
 suffix:semicolon
-r_switch
+r_if
 c_cond
 (paren
-id|num_addrs
+id|dev-&gt;flags
+op_amp
+id|IFF_PROMISC
 )paren
 (brace
-r_case
-op_minus
-l_int|1
-suffix:colon
 multiline_comment|/* promiscuous mode */
 id|wn-&gt;mode
 op_or_assign
@@ -1483,11 +1466,38 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-r_break
+)brace
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_ALLMULTI
+)paren
+op_logical_or
+id|dev-&gt;mc_count
+)paren
+(brace
+id|wn-&gt;mode
+op_and_assign
+op_complement
+id|NET_MODE_PROM
 suffix:semicolon
-r_default
-suffix:colon
-multiline_comment|/* my address and bcast addresses */
+id|wn-&gt;mode
+op_or_assign
+(paren
+id|NET_MODE_MCAST
+op_or
+id|NET_MODE_ME
+op_or
+id|NET_MODE_BCAST
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|wn-&gt;mode
 op_and_assign
 op_complement
@@ -1505,7 +1515,6 @@ op_or
 id|NET_MODE_BCAST
 )paren
 suffix:semicolon
-multiline_comment|/* break; */
 )brace
 id|wc.len
 op_assign
@@ -6684,14 +6693,6 @@ id|OK
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|dev_wic0
 r_struct
 id|device

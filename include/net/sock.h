@@ -1821,7 +1821,7 @@ id|skb-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-id|skb_queue_tail
+id|__skb_queue_tail
 c_func
 (paren
 op_amp
@@ -1836,7 +1836,6 @@ c_cond
 op_logical_neg
 id|sk-&gt;dead
 )paren
-(brace
 id|sk
 op_member_access_from_pointer
 id|data_ready
@@ -1847,7 +1846,6 @@ comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon

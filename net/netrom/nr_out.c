@@ -62,7 +62,7 @@ id|mtu
 suffix:semicolon
 id|mtu
 op_assign
-id|sk-&gt;nr-&gt;device-&gt;mtu
+id|sk-&gt;nr-&gt;paclen
 suffix:semicolon
 r_if
 c_cond

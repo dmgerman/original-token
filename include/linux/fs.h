@@ -37,7 +37,7 @@ comma
 id|nr_files
 suffix:semicolon
 DECL|macro|NR_INODE
-mdefine_line|#define NR_INODE 2048&t;/* this should be bigger than NR_FILE */
+mdefine_line|#define NR_INODE 3072&t;/* this should be bigger than NR_FILE */
 DECL|macro|NR_FILE
 mdefine_line|#define NR_FILE 1024&t;/* this can well be larger on a larger system */
 DECL|macro|MAY_EXEC

@@ -1341,6 +1341,9 @@ suffix:semicolon
 r_int
 id|major_timeout_seen
 suffix:semicolon
+r_int
+id|acknowledge_seen
+suffix:semicolon
 r_char
 op_star
 id|server_name
@@ -1418,16 +1421,16 @@ suffix:semicolon
 id|max_timeout
 op_assign
 id|NCP_MAX_RPC_TIMEOUT
-op_star
-id|HZ
-op_div
-l_int|10
 suffix:semicolon
 id|retrans
 op_assign
 id|server-&gt;m.retry_count
 suffix:semicolon
 id|major_timeout_seen
+op_assign
+l_int|0
+suffix:semicolon
+id|acknowledge_seen
 op_assign
 l_int|0
 suffix:semicolon
@@ -1729,15 +1732,25 @@ OG
 id|max_timeout
 )paren
 (brace
-multiline_comment|/* JEJB/JSP 2/7/94&n;&t;&t;&t;   * This is useful to see if the system is&n;&t;&t;&t;   * hanging */
+multiline_comment|/* JEJB/JSP 2/7/94&n;&t;&t;&t;&t; * This is useful to see if the system is&n;&t;&t;&t;&t; * hanging */
+r_if
+c_cond
+(paren
+id|acknowledge_seen
+op_eq
+l_int|0
+)paren
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;NCP max timeout reached on %s&bslash;n&quot;
+l_string|&quot;NCP max timeout reached on &quot;
+l_string|&quot;%s&bslash;n&quot;
 comma
 id|server_name
 )paren
 suffix:semicolon
+)brace
 id|timeout
 op_assign
 id|max_timeout
@@ -2044,6 +2057,18 @@ comma
 op_amp
 id|addrlen
 )paren
+suffix:semicolon
+id|n
+op_assign
+l_int|0
+suffix:semicolon
+id|timeout
+op_assign
+id|max_timeout
+suffix:semicolon
+id|acknowledge_seen
+op_assign
+l_int|1
 suffix:semicolon
 r_goto
 id|re_select

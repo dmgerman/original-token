@@ -10,6 +10,22 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#ifdef CONFIG_KERNELD
 macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#include &lt;linux/tty.h&gt;
+multiline_comment|/* serial module kerneld load support */
+r_struct
+id|tty_driver
+op_star
+id|get_tty_driver
+c_func
+(paren
+id|kdev_t
+id|device
+)paren
+suffix:semicolon
+DECL|macro|isa_tty_dev
+mdefine_line|#define isa_tty_dev(ma)&t;(ma == TTY_MAJOR || ma == TTYAUX_MAJOR)
+DECL|macro|need_serial
+mdefine_line|#define need_serial(ma,mi) (get_tty_driver(to_kdev_t(MKDEV(ma,mi))) == NULL)
 macro_line|#endif
 DECL|struct|device_struct
 r_struct
@@ -220,6 +236,10 @@ id|major
 comma
 r_int
 r_int
+id|minor
+comma
+r_int
+r_int
 id|maxdev
 comma
 r_const
@@ -251,10 +271,31 @@ id|maxdev
 )paren
 (brace
 macro_line|#ifdef CONFIG_KERNELD
-multiline_comment|/*&n;&t;&t; * I do get request for device 0. I have no idea why. It happen&n;&t;&t; * at shutdown time for one. Without the following test, the&n;&t;&t; * kernel will happily trigger a request_module() which will&n;&t;&t; * trigger kerneld and modprobe for nothing (since there&n;&t;&t; * is no device with major number == 0. And furthermore&n;&t;&t; * it locks the reboot process :-(&n;&t;&t; *&n;&t;&t; * Jacques Gelinas (jacques@solucorp.qc.ca)&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * I do get request for device 0. I have no idea why. It happen&n;&t;&t; * at shutdown time for one. Without the following test, the&n;&t;&t; * kernel will happily trigger a request_module() which will&n;&t;&t; * trigger kerneld and modprobe for nothing (since there&n;&t;&t; * is no device with major number == 0. And furthermore&n;&t;&t; * it locks the reboot process :-(&n;&t;&t; *&n;&t;&t; * Jacques Gelinas (jacques@solucorp.qc.ca)&n;&t;&t; *&n;&t;&t; * A. Haritsis &lt;ah@doc.ic.ac.uk&gt;: fix for serial module&n;&t;&t; *  though we need the minor here to check if serial dev,&n;&t;&t; *  we pass only the normal major char dev to kerneld &n;&t;&t; *  as there is no other loadable dev on these majors&n;&t;&t; */
 r_if
 c_cond
 (paren
+(paren
+id|isa_tty_dev
+c_func
+(paren
+id|major
+)paren
+op_logical_and
+id|need_serial
+c_func
+(paren
+id|major
+comma
+id|minor
+)paren
+)paren
+op_logical_or
+(paren
+id|major
+op_ne
+l_int|0
+op_logical_and
 op_logical_neg
 id|tb
 (braket
@@ -262,10 +303,7 @@ id|major
 )braket
 dot
 id|fops
-op_logical_and
-id|major
-op_ne
-l_int|0
+)paren
 )paren
 (brace
 r_char
@@ -324,6 +362,8 @@ id|get_fops
 (paren
 id|major
 comma
+l_int|0
+comma
 id|MAX_BLKDEV
 comma
 l_string|&quot;block-major-%d&quot;
@@ -342,12 +382,18 @@ c_func
 r_int
 r_int
 id|major
+comma
+r_int
+r_int
+id|minor
 )paren
 (brace
 r_return
 id|get_fops
 (paren
 id|major
+comma
+id|minor
 comma
 id|MAX_CHRDEV
 comma
@@ -1199,6 +1245,12 @@ id|get_chrfops
 c_func
 (paren
 id|MAJOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+comma
+id|MINOR
 c_func
 (paren
 id|inode-&gt;i_rdev

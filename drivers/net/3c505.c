@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Linux ethernet device driver for the 3Com Etherlink Plus (3C505)&n; *      By Craig Southeren, Juha Laiho and Philip Blundell&n; *&n; * 3c505.c      This module implements an interface to the 3Com&n; *              Etherlink Plus (3c505) ethernet card. Linux device &n; *              driver interface reverse engineered from the Linux 3C509&n; *              device drivers. Some 3C505 information gleaned from&n; *              the Crynwr packet driver. Still this driver would not&n; *              be here without 3C505 technical reference provided by&n; *              3Com.&n; *&n; * $Id: 3c505.c,v 1.7 1996/04/09 19:01:30 phil Exp phil $&n; *&n; * Authors:     Linux 3c505 device driver by&n; *                      Craig Southeren, &lt;craigs@ineluki.apana.org.au&gt;&n; *              Final debugging by&n; *                      Andrew Tridgell, &lt;tridge@nimbus.anu.edu.au&gt;&n; *              Auto irq/address, tuning, cleanup and v1.1.4+ kernel mods by&n; *                      Juha Laiho, &lt;jlaiho@ichaos.nullnet.fi&gt;&n; *              Linux 3C509 driver by&n; *                      Donald Becker, &lt;becker@super.org&gt;&n; *              Crynwr packet driver by&n; *                      Krishnan Gopalan and Gregg Stefancik,&n; *                      Clemson University Engineering Computer Operations.&n; *                      Portions of the code have been adapted from the 3c505&n; *                         driver for NCSA Telnet by Bruce Orchard and later&n; *                         modified by Warren Van Houten and krus@diku.dk.&n; *              3C505 technical information provided by&n; *                      Terry Murphy, of 3Com Network Adapter Division&n; *              Linux 1.3.0 changes by&n; *                      Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *              More debugging and DMA version by Philip Blundell&n; */
+multiline_comment|/*&n; * Linux ethernet device driver for the 3Com Etherlink Plus (3C505)&n; *      By Craig Southeren, Juha Laiho and Philip Blundell&n; *&n; * 3c505.c      This module implements an interface to the 3Com&n; *              Etherlink Plus (3c505) ethernet card. Linux device &n; *              driver interface reverse engineered from the Linux 3C509&n; *              device drivers. Some 3C505 information gleaned from&n; *              the Crynwr packet driver. Still this driver would not&n; *              be here without 3C505 technical reference provided by&n; *              3Com.&n; *&n; * $Id: 3c505.c,v 1.10 1996/04/16 13:06:27 phil Exp $&n; *&n; * Authors:     Linux 3c505 device driver by&n; *                      Craig Southeren, &lt;craigs@ineluki.apana.org.au&gt;&n; *              Final debugging by&n; *                      Andrew Tridgell, &lt;tridge@nimbus.anu.edu.au&gt;&n; *              Auto irq/address, tuning, cleanup and v1.1.4+ kernel mods by&n; *                      Juha Laiho, &lt;jlaiho@ichaos.nullnet.fi&gt;&n; *              Linux 3C509 driver by&n; *                      Donald Becker, &lt;becker@super.org&gt;&n; *              Crynwr packet driver by&n; *                      Krishnan Gopalan and Gregg Stefancik,&n; *                      Clemson University Engineering Computer Operations.&n; *                      Portions of the code have been adapted from the 3c505&n; *                         driver for NCSA Telnet by Bruce Orchard and later&n; *                         modified by Warren Van Houten and krus@diku.dk.&n; *              3C505 technical information provided by&n; *                      Terry Murphy, of 3Com Network Adapter Division&n; *              Linux 1.3.0 changes by&n; *                      Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *              More debugging and DMA version by Philip Blundell&n; */
 multiline_comment|/* Theory of operation:&n;&n; * The 3c505 is quite an intelligent board.  All communication with it is done&n; * by means of Primary Command Blocks (PCBs); these are transferred using PIO&n; * through the command register.  The card has 256k of on-board RAM, which is&n; * used to buffer received packets.  It might seem at first that more buffers&n; * are better, but in fact this isn&squot;t true.  From my tests, it seems that&n; * more than about 10 buffers are unnecessary, and there is a noticeable&n; * performance hit in having more active on the card.  So the majority of the&n; * card&squot;s memory isn&squot;t, in fact, used.&n; *&n; * We keep up to 4 &quot;receive packet&quot; commands active on the board at a time.&n; * When a packet comes in, so long as there is a receive command active, the&n; * board will send us a &quot;packet received&quot; PCB and then add the data for that&n; * packet to the DMA queue.  If a DMA transfer is not already in progress, we&n; * set one up to start uploading the data.  We have to maintain a list of&n; * backlogged receive packets, because the card may decide to tell us about&n; * a newly-arrived packet at any time, and we may not be able to start a DMA&n; * transfer immediately (ie one may already be going on).  We can&squot;t NAK the&n; * PCB, because then it would throw the packet away.&n; *&n; * Trying to send a PCB to the card at the wrong moment seems to have bad&n; * effects.  If we send it a transmit PCB while a receive DMA is happening,&n; * it will just NAK the PCB and so we will have wasted our time.  Worse, it&n; * sometimes seems to interrupt the transfer.  The majority of the low-level&n; * code is protected by one huge semaphore -- &quot;busy&quot; -- which is set whenever&n; * it probably isn&squot;t safe to do anything to the card.  The receive routine&n; * must gain a lock on &quot;busy&quot; before it can start a DMA transfer, and the&n; * transmit routine must gain a lock before it sends the first PCB to the card.&n; * The send_pcb() routine also has an internal semaphore to protect it against&n; * being re-entered (which would be disastrous) -- this is needed because&n; * several things can happen asynchronously (re-priming the receiver and&n; * asking the card for statistics, for example).  send_pcb() will also refuse&n; * to talk to the card at all if a DMA upload is happening.  The higher-level&n; * networking code will reschedule a later retry if some part of the driver&n; * is blocked.  In practice, this doesn&squot;t seem to happen very often.&n; */
 multiline_comment|/* This driver will not work with revision 2 hardware, because the host&n; * control register is write-only.  It should be fairly easy to arrange to&n; * keep our own soft-copy of the intended contents of this register, if&n; * somebody has the time.  There may be firmware differences that cause&n; * other problems, though, and I don&squot;t have an old card to test.&n; */
 multiline_comment|/* The driver is a mess.  I took Craig&squot;s and Juha&squot;s code, and hacked it firstly&n; * to make it more reliable, and secondly to add DMA mode.  Many things could&n; * probably be done better; the concurrency protection is particularly awful.&n; */
@@ -408,7 +408,6 @@ id|PORT_DATA
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************&n; *&n; *  structure to hold context information for adapter&n; *&n; *****************************************************************/
-multiline_comment|/* We allocate 8k of DMA buffer for each adapter.  This gives us one buffer for&n; * received data, and four for the transmit backlog.&n; */
 DECL|macro|DMA_BUFFER_SIZE
 mdefine_line|#define DMA_BUFFER_SIZE  1600
 DECL|macro|BACKLOG_SIZE
@@ -945,6 +944,7 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Check to make sure that a DMA transfer hasn&squot;t timed out.  This should never happen&n; * in theory, but seems to occur occasionally if the card gets prodded at the wrong&n; * time.&n; */
 DECL|function|check_dma
 r_static
 r_inline
@@ -1206,21 +1206,6 @@ r_return
 id|TRUE
 suffix:semicolon
 )brace
-r_static
-r_int
-id|start_receive
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-id|pcb_struct
-op_star
-id|tx_pcb
-)paren
-suffix:semicolon
 multiline_comment|/* Check to see if the receiver needs restarting, and kick it if so */
 DECL|function|prime_rx
 r_static
@@ -3128,31 +3113,6 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|adapter-&gt;irx_pcb.data.xmit_resp.c_stat
-op_ne
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|elp_debug
-op_ge
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: interrupt - error sending packet %4.4x&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|adapter-&gt;irx_pcb.data.xmit_resp.c_stat
-)paren
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -3165,6 +3125,15 @@ suffix:colon
 id|adapter-&gt;stats.tx_aborted_errors
 op_increment
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: transmit timed out, network cable problem?&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -3173,9 +3142,17 @@ suffix:colon
 id|adapter-&gt;stats.tx_fifo_errors
 op_increment
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: transmit timed out, FIFO underrun&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
-)brace
 )brace
 id|dev-&gt;tbusy
 op_assign
@@ -3195,6 +3172,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: unknown PCB received - %2.2x&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4124,7 +4102,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: transmit timed out, %s?&bslash;n&quot;
+l_string|&quot;%s: transmit timed out, lost %s?&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -4135,9 +4113,9 @@ id|ACRF
 )paren
 ques
 c_cond
-l_string|&quot;IRQ conflict&quot;
+l_string|&quot;interrupt&quot;
 suffix:colon
-l_string|&quot;network cable problem&quot;
+l_string|&quot;command&quot;
 )paren
 suffix:semicolon
 r_if
@@ -4322,11 +4300,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/******************************************************&n; *&n; * return statistics on the board&n; *&n; ******************************************************/
+DECL|function|elp_get_stats
 r_static
 r_struct
 id|enet_statistics
 op_star
-DECL|function|elp_get_stats
 id|elp_get_stats
 c_func
 (paren
@@ -5611,7 +5589,7 @@ multiline_comment|/* Nope, it&squot;s ignoring the command register.  This means
 id|printk
 c_func
 (paren
-l_string|&quot;%s: command register wouldn&squot;t drain, assuming &quot;
+l_string|&quot;%s: command register wouldn&squot;t drain, &quot;
 comma
 id|dev-&gt;name
 )paren
@@ -5636,7 +5614,7 @@ multiline_comment|/* If the adapter status is 3, it *could* still be booting.&n;
 id|printk
 c_func
 (paren
-l_string|&quot;3c505 still starting&bslash;n&quot;
+l_string|&quot;assuming 3c505 still starting&bslash;n&quot;
 )paren
 suffix:semicolon
 id|timeout
@@ -5685,8 +5663,14 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-r_continue
+)brace
+r_else
+(brace
+id|okay
+op_assign
+l_int|1
 suffix:semicolon
+multiline_comment|/* It started */
 )brace
 )brace
 r_else
@@ -5695,10 +5679,8 @@ multiline_comment|/* Otherwise, it must just be in a strange state.  We probably
 id|printk
 c_func
 (paren
-l_string|&quot;3c505 dead&bslash;n&quot;
+l_string|&quot;3c505 is sulking&bslash;n&quot;
 )paren
-suffix:semicolon
-r_continue
 suffix:semicolon
 )brace
 )brace
@@ -5712,6 +5694,8 @@ suffix:semicolon
 id|tries
 OL
 l_int|5
+op_logical_and
+id|okay
 suffix:semicolon
 id|tries
 op_increment
@@ -5884,7 +5868,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: 3c505 is sulking, giving up&bslash;n&quot;
+l_string|&quot;%s: failed to initialise 3c505&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -6384,12 +6368,6 @@ op_ne
 l_int|0
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;3c505: register_netdev() returned non-zero.&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EIO

@@ -3619,10 +3619,6 @@ id|inode-&gt;i_size
 op_assign
 id|fattr-&gt;size
 suffix:semicolon
-id|inode-&gt;i_blksize
-op_assign
-id|fattr-&gt;blocksize
-suffix:semicolon
 r_if
 c_cond
 (paren

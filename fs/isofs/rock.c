@@ -845,6 +845,11 @@ r_char
 op_star
 id|chr
 suffix:semicolon
+r_int
+id|symlink_len
+op_assign
+l_int|0
+suffix:semicolon
 id|CONTINUE_DECLS
 suffix:semicolon
 r_if
@@ -1341,7 +1346,7 @@ id|rr-&gt;u.SL.link
 suffix:semicolon
 id|inode-&gt;i_size
 op_assign
-l_int|0
+id|symlink_len
 suffix:semicolon
 r_while
 c_loop
@@ -1465,8 +1470,10 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 )brace
+id|symlink_len
+op_assign
+id|inode-&gt;i_size
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1968,13 +1975,6 @@ l_int|1
 )paren
 (brace
 multiline_comment|/* There may be one byte for padding somewhere */
-r_if
-c_cond
-(paren
-id|rpnt
-)paren
-r_break
-suffix:semicolon
 id|rr
 op_assign
 (paren

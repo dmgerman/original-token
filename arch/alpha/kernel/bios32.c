@@ -1,5 +1,8 @@
 multiline_comment|/*&n; * bios32.c - PCI BIOS functions for Alpha systems not using BIOS&n; *&t;      emulation code.&n; *&n; * Written by Dave Rusling (david.rusling@reo.mts.dec.com)&n; *&n; * Adapted to 64-bit kernel and then rewritten by David Mosberger&n; * (davidm@cs.arizona.edu)&n; *&n; * For more information, please consult&n; *&n; * PCI BIOS Specification Revision&n; * PCI Local Bus Specification&n; * PCI System Design Guide&n; *&n; * PCI Special Interest Group&n; * M/S HF3-15A&n; * 5200 N.E. Elam Young Parkway&n; * Hillsboro, Oregon 97124-6497&n; * +1 (503) 696-2000&n; * +1 (800) 433-5177&n; *&n; * Manuals are $25 each or $50 for all three, plus $7 shipping&n; * within the United States, $35 abroad.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#if 0
+mdefine_line|#define DEBUG_PRINT_DEVS 1
+macro_line|#endif
 macro_line|#ifndef CONFIG_PCI
 DECL|function|pcibios_present
 r_int
@@ -697,6 +700,30 @@ op_or
 id|PCI_COMMAND_MASTER
 )paren
 suffix:semicolon
+macro_line|#if DEBUG_PRINT_DEVS
+id|printk
+c_func
+(paren
+l_string|&quot;layout_dev: bus %d  slot 0x%x  VID 0x%x  DID 0x%x  class 0x%x&bslash;n&quot;
+comma
+id|bus-&gt;number
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+comma
+id|dev-&gt;vendor
+comma
+id|dev-&gt;device
+comma
+id|dev
+op_member_access_from_pointer
+r_class
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|layout_bus
 r_static
@@ -732,6 +759,16 @@ id|pci_dev
 op_star
 id|dev
 suffix:semicolon
+macro_line|#if DEBUG_PRINT_DEVS
+id|printk
+c_func
+(paren
+l_string|&quot;layout_bus: starting bus %d&bslash;n&quot;
+comma
+id|bus-&gt;number
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -808,6 +845,16 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; * Allocate space to each device:&n;&t; */
+macro_line|#if DEBUG_PRINT_DEVS
+id|printk
+c_func
+(paren
+l_string|&quot;layout_bus: starting bus %d devices&bslash;n&quot;
+comma
+id|bus-&gt;number
+)paren
+suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -843,6 +890,16 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; * Recursively allocate space for all of the sub-buses:&n;&t; */
+macro_line|#if DEBUG_PRINT_DEVS
+id|printk
+c_func
+(paren
+l_string|&quot;layout_bus: starting bus %d children&bslash;n&quot;
+comma
+id|bus-&gt;number
+)paren
+suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -1636,6 +1693,7 @@ id|PCI_ROM_ADDRESS_ENABLE
 suffix:semicolon
 )brace
 )brace
+)brace
 r_if
 c_cond
 (paren
@@ -1648,7 +1706,6 @@ c_func
 id|ide_base
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/*&n; * The EB66+ is very similar to the EB66 except that it does not have&n; * the on-board NCR and Tulip chips.  In the code below, I have used&n; * slot number to refer to the id select line and *not* the slot&n; * number used in the EB66+ documentation.  However, in the table,&n; * I&squot;ve given the slot number, the id select line and the Jxx number&n; * that&squot;s printed on the board.  The interrupt pins from the PCI slots&n; * are wired into 3 interrupt summary registers at 0x804, 0x805 and&n; * 0x806 ISA.&n; *&n; * In the table, -1 means don&squot;t assign an IRQ number.  This is usually&n; * because it is the Saturn IO (SIO) PCI/ISA Bridge Chip.&n; */
@@ -2375,6 +2432,8 @@ suffix:semicolon
 r_int
 r_char
 id|pin
+comma
+id|slot
 suffix:semicolon
 r_int
 id|pirq
@@ -2430,6 +2489,19 @@ op_assign
 id|dev-&gt;next
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|dev
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|16
+op_eq
+id|PCI_BASE_CLASS_BRIDGE
+)paren
+r_continue
+suffix:semicolon
 id|dev-&gt;irq
 op_assign
 l_int|0
@@ -2442,70 +2514,14 @@ op_ne
 l_int|0
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;bios32.sio_fixup: don&squot;t know how to fixup devices on bus %d&bslash;n&quot;
-comma
-id|dev-&gt;bus-&gt;number
-)paren
+r_struct
+id|pci_dev
+op_star
+id|curr
+op_assign
+id|dev
 suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|PCI_SLOT
-c_func
-(paren
-id|dev-&gt;devfn
-)paren
-OL
-l_int|6
-op_logical_or
-id|PCI_SLOT
-c_func
-(paren
-id|dev-&gt;devfn
-)paren
-op_ge
-l_int|6
-op_plus
-r_sizeof
-(paren
-id|pirq_tab
-)paren
-op_div
-r_sizeof
-(paren
-id|pirq_tab
-(braket
-l_int|0
-)braket
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;bios32.sio_fixup: &quot;
-l_string|&quot;weird, found device %04x:%04x in non-existent slot %d!!&bslash;n&quot;
-comma
-id|dev-&gt;vendor
-comma
-id|dev-&gt;device
-comma
-id|PCI_SLOT
-c_func
-(paren
-id|dev-&gt;devfn
-)paren
-)paren
-suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
+multiline_comment|/* read the pin and do the PCI-PCI bridge&n;&t;&t;&t;   interrupt pin swizzle */
 id|pcibios_read_config_byte
 c_func
 (paren
@@ -2519,15 +2535,89 @@ op_amp
 id|pin
 )paren
 suffix:semicolon
-id|pirq
+multiline_comment|/* cope with 0 */
+r_if
+c_cond
+(paren
+id|pin
+op_eq
+l_int|0
+)paren
+id|pin
 op_assign
-id|pirq_tab
-(braket
+l_int|1
+suffix:semicolon
+multiline_comment|/* follow the chain of bridges, swizzling as we go */
+r_do
+(brace
+multiline_comment|/* swizzle */
+id|pin
+op_assign
+id|bridge_swizzle
+c_func
+(paren
+id|pin
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|curr-&gt;devfn
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* move up the chain of bridges */
+id|curr
+op_assign
+id|curr-&gt;bus-&gt;self
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|curr-&gt;bus-&gt;self
+)paren
+suffix:semicolon
+multiline_comment|/* The slot is the slot of the last bridge. */
+id|slot
+op_assign
+id|PCI_SLOT
+c_func
+(paren
+id|curr-&gt;devfn
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* work out the slot */
+id|slot
+op_assign
 id|PCI_SLOT
 c_func
 (paren
 id|dev-&gt;devfn
 )paren
+suffix:semicolon
+multiline_comment|/* read the pin */
+id|pcibios_read_config_byte
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+id|PCI_INTERRUPT_PIN
+comma
+op_amp
+id|pin
+)paren
+suffix:semicolon
+)brace
+id|pirq
+op_assign
+id|pirq_tab
+(braket
+id|slot
 op_minus
 l_int|6
 )braket
@@ -2535,6 +2625,32 @@ l_int|6
 id|pin
 )braket
 suffix:semicolon
+macro_line|#if DEBUG_PRINT_DEVS
+id|printk
+c_func
+(paren
+l_string|&quot;sio_fixup: bus %d  slot 0x%x  VID 0x%x  DID 0x%x  int_slot 0x%x  int_pin 0x%x,  pirq 0x%x&bslash;n&quot;
+comma
+id|dev-&gt;bus-&gt;number
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+comma
+id|dev-&gt;vendor
+comma
+id|dev-&gt;device
+comma
+id|slot
+comma
+id|pin
+comma
+id|pirq
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2634,6 +2750,26 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*&n;&t; * Now, make all PCI interrupts level sensitive.  Notice:&n;&t; * these registers must be accessed byte-wise.  outw() doesn&squot;t&n;&t; * work.&n;&t; */
+id|level_bits
+op_or_assign
+(paren
+id|inb
+c_func
+(paren
+l_int|0x4d0
+)paren
+op_or
+(paren
+id|inb
+c_func
+(paren
+l_int|0x4d1
+)paren
+op_lshift
+l_int|8
+)paren
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren

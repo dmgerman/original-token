@@ -112,6 +112,11 @@ l_int|20
 )braket
 suffix:semicolon
 multiline_comment|/* 8*10 bytes for each FP-reg = 80 bytes */
+DECL|member|status
+r_int
+id|status
+suffix:semicolon
+multiline_comment|/* software status information */
 )brace
 suffix:semicolon
 DECL|struct|i387_soft_struct

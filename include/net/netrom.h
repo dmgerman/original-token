@@ -62,6 +62,8 @@ DECL|macro|NR_MODULUS
 mdefine_line|#define NR_MODULUS &t;&t;256
 DECL|macro|NR_MAX_WINDOW_SIZE
 mdefine_line|#define NR_MAX_WINDOW_SIZE&t;127&t;&t;&t;/* Maximum Window Allowable */
+DECL|macro|NR_DEFAULT_PACLEN
+mdefine_line|#define&t;NR_DEFAULT_PACLEN&t;236&t;&t;&t;/* Default Packet Length */
 r_typedef
 r_struct
 (brace
@@ -156,9 +158,12 @@ comma
 id|t4timer
 suffix:semicolon
 DECL|member|fraglen
+DECL|member|paclen
 r_int
 r_int
 id|fraglen
+comma
+id|paclen
 suffix:semicolon
 DECL|member|ack_queue
 r_struct

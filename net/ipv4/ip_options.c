@@ -1347,7 +1347,8 @@ id|pp_ptr
 op_assign
 id|optptr
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 r_switch
@@ -1377,7 +1378,8 @@ id|optptr
 op_plus
 l_int|1
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 r_if
@@ -1397,7 +1399,8 @@ id|optptr
 op_plus
 l_int|2
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 multiline_comment|/* NB: cf RFC-1812 5.2.4.1 */
@@ -1411,7 +1414,8 @@ id|pp_ptr
 op_assign
 id|optptr
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 r_if
@@ -1452,7 +1456,8 @@ id|optptr
 op_plus
 l_int|1
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 id|memcpy
@@ -1530,7 +1535,8 @@ id|pp_ptr
 op_assign
 id|optptr
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 r_if
@@ -1547,7 +1553,8 @@ id|optptr
 op_plus
 l_int|1
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 r_if
@@ -1567,7 +1574,8 @@ id|optptr
 op_plus
 l_int|2
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 r_if
@@ -1600,7 +1608,8 @@ id|optptr
 op_plus
 l_int|2
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 r_if
@@ -1667,7 +1676,8 @@ id|pp_ptr
 op_assign
 id|optptr
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 r_if
@@ -1684,7 +1694,8 @@ id|optptr
 op_plus
 l_int|1
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 r_if
@@ -1704,7 +1715,8 @@ id|optptr
 op_plus
 l_int|2
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 r_if
@@ -1756,7 +1768,8 @@ id|optptr
 op_plus
 l_int|2
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 r_switch
@@ -1822,7 +1835,8 @@ id|optptr
 op_plus
 l_int|2
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 id|opt-&gt;ts
@@ -1902,7 +1916,8 @@ id|optptr
 op_plus
 l_int|2
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 id|opt-&gt;ts
@@ -1987,7 +2002,8 @@ id|optptr
 op_plus
 l_int|3
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 r_if
@@ -2080,7 +2096,8 @@ id|optptr
 op_plus
 l_int|3
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 id|opt-&gt;ts
@@ -2127,7 +2144,8 @@ id|pp_ptr
 op_assign
 id|optptr
 suffix:semicolon
-r_break
+r_goto
+id|error
 suffix:semicolon
 )brace
 r_break
@@ -2153,6 +2171,8 @@ id|pp_ptr
 r_return
 l_int|0
 suffix:semicolon
+id|error
+suffix:colon
 r_if
 c_cond
 (paren

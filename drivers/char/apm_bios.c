@@ -327,11 +327,6 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-DECL|variable|apm_major
-r_static
-r_int
-id|apm_major
-suffix:semicolon
 DECL|variable|suspends_pending
 r_static
 r_int

@@ -1,48 +1,48 @@
 multiline_comment|/*          Definitions for DigiBoard ditty(1) command.                 */
 macro_line|#if !defined(TIOCMODG)
 DECL|macro|TIOCMODG
-mdefine_line|#define&t;TIOCMODG&t;(&squot;d&squot;&lt;&lt;8) | 250&t;&t;/* get modem ctrl state&t;*/
+mdefine_line|#define&t;TIOCMODG&t;((&squot;d&squot;&lt;&lt;8) | 250)&t;&t;/* get modem ctrl state&t;*/
 DECL|macro|TIOCMODS
-mdefine_line|#define&t;TIOCMODS&t;(&squot;d&squot;&lt;&lt;8) | 251&t;&t;/* set modem ctrl state&t;*/
+mdefine_line|#define&t;TIOCMODS&t;((&squot;d&squot;&lt;&lt;8) | 251)&t;&t;/* set modem ctrl state&t;*/
 macro_line|#endif
 macro_line|#if !defined(TIOCMSET)
 DECL|macro|TIOCMSET
-mdefine_line|#define&t;TIOCMSET&t;(&squot;d&squot;&lt;&lt;8) | 252&t;&t;/* set modem ctrl state&t;*/
+mdefine_line|#define&t;TIOCMSET&t;((&squot;d&squot;&lt;&lt;8) | 252)&t;&t;/* set modem ctrl state&t;*/
 DECL|macro|TIOCMGET
-mdefine_line|#define&t;TIOCMGET&t;(&squot;d&squot;&lt;&lt;8) | 253&t;&t;/* set modem ctrl state&t;*/
+mdefine_line|#define&t;TIOCMGET&t;((&squot;d&squot;&lt;&lt;8) | 253)&t;&t;/* set modem ctrl state&t;*/
 macro_line|#endif
 macro_line|#if !defined(TIOCMBIC)
 DECL|macro|TIOCMBIC
-mdefine_line|#define&t;TIOCMBIC&t;(&squot;d&squot;&lt;&lt;8) | 254&t;&t;/* set modem ctrl state */
+mdefine_line|#define&t;TIOCMBIC&t;((&squot;d&squot;&lt;&lt;8) | 254)&t;&t;/* set modem ctrl state */
 DECL|macro|TIOCMBIS
-mdefine_line|#define&t;TIOCMBIS&t;(&squot;d&squot;&lt;&lt;8) | 255&t;&t;/* set modem ctrl state */
+mdefine_line|#define&t;TIOCMBIS&t;((&squot;d&squot;&lt;&lt;8) | 255)&t;&t;/* set modem ctrl state */
 macro_line|#endif
 macro_line|#if !defined(TIOCSDTR)
 DECL|macro|TIOCSDTR
-mdefine_line|#define&t;TIOCSDTR&t;(&squot;e&squot;&lt;&lt;8) | 0&t;&t;/* set DTR&t;&t;*/
+mdefine_line|#define&t;TIOCSDTR&t;((&squot;e&squot;&lt;&lt;8) | 0)&t;&t;/* set DTR&t;&t;*/
 DECL|macro|TIOCCDTR
-mdefine_line|#define&t;TIOCCDTR&t;(&squot;e&squot;&lt;&lt;8) | 1&t;&t;/* clear DTR&t;&t;*/
+mdefine_line|#define&t;TIOCCDTR&t;((&squot;e&squot;&lt;&lt;8) | 1)&t;&t;/* clear DTR&t;&t;*/
 macro_line|#endif
 multiline_comment|/************************************************************************&n; * Ioctl command arguments for DIGI parameters.&n; ************************************************************************/
 DECL|macro|DIGI_GETA
-mdefine_line|#define DIGI_GETA&t;(&squot;e&squot;&lt;&lt;8) | 94&t;&t;/* Read params&t;&t;*/
+mdefine_line|#define DIGI_GETA&t;((&squot;e&squot;&lt;&lt;8) | 94)&t;&t;/* Read params&t;&t;*/
 DECL|macro|DIGI_SETA
-mdefine_line|#define DIGI_SETA&t;(&squot;e&squot;&lt;&lt;8) | 95&t;&t;/* Set params&t;&t;*/
+mdefine_line|#define DIGI_SETA&t;((&squot;e&squot;&lt;&lt;8) | 95)&t;&t;/* Set params&t;&t;*/
 DECL|macro|DIGI_SETAW
-mdefine_line|#define DIGI_SETAW&t;(&squot;e&squot;&lt;&lt;8) | 96&t;&t;/* Drain &amp; set params&t;*/
+mdefine_line|#define DIGI_SETAW&t;((&squot;e&squot;&lt;&lt;8) | 96)&t;&t;/* Drain &amp; set params&t;*/
 DECL|macro|DIGI_SETAF
-mdefine_line|#define DIGI_SETAF&t;(&squot;e&squot;&lt;&lt;8) | 97&t;&t;/* Drain, flush &amp; set params */
+mdefine_line|#define DIGI_SETAF&t;((&squot;e&squot;&lt;&lt;8) | 97)&t;&t;/* Drain, flush &amp; set params */
 DECL|macro|DIGI_GETFLOW
-mdefine_line|#define&t;DIGI_GETFLOW&t;(&squot;e&squot;&lt;&lt;8) | 99&t;&t;/* Get startc/stopc flow */
+mdefine_line|#define&t;DIGI_GETFLOW&t;((&squot;e&squot;&lt;&lt;8) | 99)&t;&t;/* Get startc/stopc flow */
 multiline_comment|/* control characters &t; */
 DECL|macro|DIGI_SETFLOW
-mdefine_line|#define&t;DIGI_SETFLOW&t;(&squot;e&squot;&lt;&lt;8) | 100&t;&t;/* Set startc/stopc flow */
+mdefine_line|#define&t;DIGI_SETFLOW&t;((&squot;e&squot;&lt;&lt;8) | 100)&t;&t;/* Set startc/stopc flow */
 multiline_comment|/* control characters&t; */
 DECL|macro|DIGI_GETAFLOW
-mdefine_line|#define&t;DIGI_GETAFLOW&t;(&squot;e&squot;&lt;&lt;8) | 101&t;&t;/* Get Aux. startc/stopc */
+mdefine_line|#define&t;DIGI_GETAFLOW&t;((&squot;e&squot;&lt;&lt;8) | 101)&t;&t;/* Get Aux. startc/stopc */
 multiline_comment|/* flow control chars &t; */
 DECL|macro|DIGI_SETAFLOW
-mdefine_line|#define&t;DIGI_SETAFLOW&t;(&squot;e&squot;&lt;&lt;8) | 102&t;&t;/* Set Aux. startc/stopc */
+mdefine_line|#define&t;DIGI_SETAFLOW&t;((&squot;e&squot;&lt;&lt;8) | 102)&t;&t;/* Set Aux. startc/stopc */
 multiline_comment|/* flow control chars&t; */
 DECL|struct|digiflow_struct
 r_struct

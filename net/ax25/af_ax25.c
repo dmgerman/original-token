@@ -1789,9 +1789,8 @@ r_int
 r_int
 id|cmd
 comma
-r_const
-r_int
-r_int
+r_void
+op_star
 id|arg
 )paren
 (brace
@@ -1826,10 +1825,6 @@ c_func
 (paren
 id|VERIFY_READ
 comma
-(paren
-r_void
-op_star
-)paren
 id|arg
 comma
 r_sizeof
@@ -1850,10 +1845,6 @@ c_func
 op_amp
 id|ax25_ctl
 comma
-(paren
-r_void
-op_star
-)paren
 id|arg
 comma
 r_sizeof
@@ -2312,7 +2303,7 @@ multiline_comment|/* we probably want this */
 id|printk
 c_func
 (paren
-l_string|&quot;ax25_ctl_ioctl(): Warning --- huge paclen %d&quot;
+l_string|&quot;ax25_ctl_ioctl: Warning --- huge paclen %d&bslash;n&quot;
 comma
 (paren
 r_int
@@ -4555,6 +4546,10 @@ suffix:semicolon
 id|ax25-&gt;idle
 op_assign
 id|osk-&gt;ax25-&gt;idle
+suffix:semicolon
+id|ax25-&gt;paclen
+op_assign
+id|osk-&gt;ax25-&gt;paclen
 suffix:semicolon
 id|ax25-&gt;window
 op_assign
@@ -9531,6 +9526,10 @@ c_func
 (paren
 id|cmd
 comma
+(paren
+r_void
+op_star
+)paren
 id|arg
 )paren
 suffix:semicolon
@@ -10719,6 +10718,11 @@ op_star
 id|skb
 )paren
 (brace
+r_struct
+id|sk_buff
+op_star
+id|ourskb
+suffix:semicolon
 r_int
 id|mode
 suffix:semicolon
@@ -10802,9 +10806,10 @@ l_char|&squot;V&squot;
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t; *&t;This is a workaround to try and keep the device locking&n;&t;&t;&t; *&t;straight until skb-&gt;free=0 is abolished post 1.4.&n;&t;&t;&t; *&n;&t;&t;&t; *&t;We clone the buffer and release the original thereby&n;&t;&t;&t; *&t;keeping it straight&n;&t;&t;&t; *&n;&t;&t;&t; *&t;Note: we report 1 back so the caller will&n;&t;&t;&t; *&t;not feed the frame direct to the physical device&n;&t;&t;&t; *&t;We don&squot;t want that to happen. (It won&squot;t be upset&n;&t;&t;&t; *&t;as we have pulled the frame from the queue by&n;&t;&t;&t; *&t;freeing it).&n;&t;&t;&t; */
-r_struct
-id|sk_buff
-op_star
+r_if
+c_cond
+(paren
+(paren
 id|ourskb
 op_assign
 id|skb_clone
@@ -10814,11 +10819,7 @@ id|skb
 comma
 id|GFP_ATOMIC
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ourskb
+)paren
 op_eq
 l_int|NULL
 )paren

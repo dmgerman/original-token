@@ -131,6 +131,14 @@ multiline_comment|/* RTT */
 r_if
 c_cond
 (paren
+id|sk-&gt;rtt
+op_ne
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|m
 op_le
 l_int|0
@@ -183,6 +191,25 @@ op_add_assign
 id|m
 suffix:semicolon
 multiline_comment|/* mdev = 3/4 mdev + 1/4 new */
+)brace
+r_else
+(brace
+multiline_comment|/* no previous measure. */
+id|sk-&gt;rtt
+op_assign
+id|m
+op_lshift
+l_int|3
+suffix:semicolon
+multiline_comment|/* take the measured time to be rtt */
+id|sk-&gt;mdev
+op_assign
+id|m
+op_lshift
+l_int|2
+suffix:semicolon
+multiline_comment|/* make sure rto = 3*rtt */
+)brace
 multiline_comment|/*&n;&t; *&t;Now update timeout.  Note that this removes any backoff.&n;&t; */
 id|sk-&gt;rto
 op_assign
@@ -2102,7 +2129,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; *&t;Remember the highest ack received and update the&n;&t; *&t;right hand window edge of the host.&n;&t; *&t;We do a bit of work here to track number of times we&squot;ve&n;&t; *&t;seen this ack without a change in the right edge of the&n;&t; *&t;window and no data in the packet.&n;&t; *&t;This will allow us to do fast retransmits.&n;&t; */
-multiline_comment|/* We are looking for duplicate ACKs here.&n;&t; * An ACK is a duplicate if:&n;&t; * (1) it has the same sequence number as the largest number we&squot;ve seen,&n;&t; * (2) it has the same window as the last ACK,&n;&t; * (3) we have outstanding data that has not been ACKed&n;&t; * (4) The packet was not carrying any data.&n;&t; * I&squot;ve tried to order these in occurance of most likely to fail&n;&t; * to least likely to fail.&n;&t; * [These are the rules BSD stacks use to determine if an ACK is a&n;&t; *  duplicate.]&n;&t; */
+multiline_comment|/* We are looking for duplicate ACKs here.&n;&t; * An ACK is a duplicate if:&n;&t; * (1) it has the same sequence number as the largest number we&squot;ve seen,&n;&t; * (2) it has the same window as the last ACK,&n;&t; * (3) we have outstanding data that has not been ACKed&n;&t; * (4) The packet was not carrying any data.&n;&t; * I&squot;ve tried to order these in occurrence of most likely to fail&n;&t; * to least likely to fail.&n;&t; * [These are the rules BSD stacks use to determine if an ACK is a&n;&t; *  duplicate.]&n;&t; */
 r_if
 c_cond
 (paren

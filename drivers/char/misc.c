@@ -624,11 +624,11 @@ c_func
 id|set_selection
 )paren
 comma
-multiline_comment|/* used by the kmisc module, can only */
+multiline_comment|/* used by the kmouse module, can only */
 id|X
 c_func
 (paren
-id|clear_selection
+id|paste_selection
 )paren
 comma
 multiline_comment|/* be exported if misc.c is in linked in */
@@ -692,7 +692,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined CONFIG_PSMOUSE || defined CONFIG_82C710_MOUSE
+macro_line|#if defined CONFIG_PSMOUSE
 id|psaux_init
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/char/pcxe.c&n; * &n; *  Written by Troy De Jongh, November, 1994&n; *&n; *  Copyright (C) 1994,1995 Troy De Jongh&n; *  This software may be used and distributed according to the terms &n; *  of the GNU Public License.&n; *&n; *  This driver is for the DigiBoard PC/Xe and PC/Xi line of products.&n; *&n; *  This driver does NOT support DigiBoard&squot;s fastcook FEP option and&n; *  does not support the transparent print (i.e. digiprint) option.&n; *&n; * This Driver is currently maintained by Christoph Lameter (clameter@fuller.edu)&n; * Please contact the mailing list for problems first. &n; *&n; * Sources of Information:&n; * 1. The Linux Digiboard Page at http://private.fuller.edu/clameter/digi.html&n; * 2. The Linux Digiboard Mailing list at digiboard@list.fuller.edu&n; *    (Simply write a message to introduce yourself to subscribe)&n; *&n; *  1.5.2 Fall 1995 Bug fixes by David Nugent&n; *  1.5.3 March 9, 1996 Christoph Lameter: Fixed 115.2K Support. Memory&n; *&t;&t;allocation harmonized with 1.3.X Series.&n; *  1.5.4 March 30, 1996 Christoph Lameter: Fixup for 1.3.81. Use init_bh&n; *&t;&t;instead of direct assignment to kernel arrays.&n; *  1.5.5 April 5, 1996 Major device numbers corrected.&n; *              Mike McLagan&lt;mike.mclagan@linux.org&gt;: Add setup&n; *              variable handling, instead of using the old pcxxconfig.h&n; *&n; */
+multiline_comment|/*&n; *  linux/drivers/char/pcxe.c&n; * &n; *  Written by Troy De Jongh, November, 1994&n; *&n; *  Copyright (C) 1994,1995 Troy De Jongh&n; *  This software may be used and distributed according to the terms &n; *  of the GNU Public License.&n; *&n; *  This driver is for the DigiBoard PC/Xe and PC/Xi line of products.&n; *&n; *  This driver does NOT support DigiBoard&squot;s fastcook FEP option and&n; *  does not support the transparent print (i.e. digiprint) option.&n; *&n; * This Driver is currently maintained by Christoph Lameter (clameter@fuller.edu)&n; * Please contact the mailing list for problems first. &n; *&n; * Sources of Information:&n; * 1. The Linux Digiboard Page at http://private.fuller.edu/clameter/digi.html&n; * 2. The Linux Digiboard Mailing list at digiboard@list.fuller.edu&n; *    (Simply write a message to introduce yourself to subscribe)&n; *&n; *  1.5.2 Fall 1995 Bug fixes by David Nugent&n; *  1.5.3 March 9, 1996 Christoph Lameter: Fixed 115.2K Support. Memory&n; *&t;&t;allocation harmonized with 1.3.X Series.&n; *  1.5.4 March 30, 1996 Christoph Lameter: Fixup for 1.3.81. Use init_bh&n; *&t;&t;instead of direct assignment to kernel arrays.&n; *  1.5.5 April 5, 1996 Major device numbers corrected.&n; *              Mike McLagan&lt;mike.mclagan@linux.org&gt;: Add setup&n; *              variable handling, instead of using the old pcxxconfig.h&n; *  1.5.6 April 16, 1996 Christoph Lameter: Pointer cleanup, macro cleanup.&n; *&t;&t;Call out devices changed to /dev/cudxx.&n; *&n; */
 DECL|macro|SPEED_HACK
 macro_line|#undef SPEED_HACK
 multiline_comment|/* If you define SPEED_HACK then you get the following Baudrate translation&n;   19200 = 57600&n;   38400 = 115K&n;   The driver supports the native 57.6K and 115K Baudrates under Linux, but&n;   some distributions like Slackware 3.0 dont like these high baudrates.&n;*/
@@ -26,14 +26,14 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 DECL|macro|VERSION
-mdefine_line|#define VERSION &t;&quot;1.5.5&quot;
+mdefine_line|#define VERSION &t;&quot;1.5.6&quot;
 DECL|variable|banner
 r_static
 r_char
 op_star
 id|banner
 op_assign
-l_string|&quot;Digiboard PC/X{i,e,eve,em} driver v1.5.5.  Christoph Lameter &lt;clameter@fuller.edu&gt;.&quot;
+l_string|&quot;Digiboard PC/X{i,e,eve} driver v1.5.6.  Christoph Lameter &lt;clameter@fuller.edu&gt;.&quot;
 suffix:semicolon
 multiline_comment|/*#define&t;DEFAULT_HW_FLOW&t;1 */
 multiline_comment|/*#define&t;DEBUG_IOCTL */
@@ -84,53 +84,36 @@ id|nbdevs
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* C is a pain!  I want a pointer to an array of structs */
 DECL|variable|digi_channels
 r_static
 r_struct
 id|channel
 op_star
-(paren
-op_star
 id|digi_channels
-)paren
 suffix:semicolon
-multiline_comment|/* this is supposed to be a pointer to an array of pointers */
 DECL|variable|pcxe_table
 r_static
 r_struct
 id|tty_struct
 op_star
-(paren
 op_star
 id|pcxe_table
-)paren
-(braket
-)braket
 suffix:semicolon
 DECL|variable|pcxe_termios
 r_static
 r_struct
 id|termios
 op_star
-(paren
 op_star
 id|pcxe_termios
-)paren
-(braket
-)braket
 suffix:semicolon
 DECL|variable|pcxe_termios_locked
 r_static
 r_struct
 id|termios
 op_star
-(paren
 op_star
 id|pcxe_termios_locked
-)paren
-(braket
-)braket
 suffix:semicolon
 DECL|variable|pcxx_ncook
 r_int
@@ -638,35 +621,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|ch
 op_ge
-op_amp
-(paren
-(paren
-op_star
 id|digi_channels
-)paren
-(braket
-l_int|0
-)braket
-)paren
-)paren
 op_logical_and
-(paren
 id|ch
 OL
-op_amp
-(paren
-(paren
-op_star
 id|digi_channels
-)paren
-(braket
+op_plus
 id|nbdevs
-)braket
-)paren
-)paren
 )paren
 (brace
 r_if
@@ -1571,16 +1534,9 @@ suffix:semicolon
 )brace
 id|ch
 op_assign
-op_amp
-(paren
-(paren
-op_star
 id|digi_channels
-)paren
-(braket
+op_plus
 id|line
-)braket
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4566,15 +4522,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * this turns out to be more memory efficient, as there are no &n;&t; * unused spaces.  There is *NO* way I&squot;m going to explain these&n;&t; * convoluted casts, suffice it to say they WORK!  :)&n;&t; */
+multiline_comment|/*&n;&t; * this turns out to be more memory efficient, as there are no &n;&t; * unused spaces.&n;&t; */
 id|digi_channels
 op_assign
-(paren
-r_struct
-id|channel
-op_star
-op_star
-)paren
 id|kmalloc
 c_func
 (paren
@@ -4603,16 +4553,6 @@ l_string|&quot;Unable to allocate digi_channel struct&quot;
 suffix:semicolon
 id|pcxe_table
 op_assign
-(paren
-r_struct
-id|tty_struct
-op_star
-(paren
-op_star
-)paren
-(braket
-)braket
-)paren
 id|kmalloc
 c_func
 (paren
@@ -4642,16 +4582,6 @@ l_string|&quot;Unable to allocate pcxe_table struct&quot;
 suffix:semicolon
 id|pcxe_termios
 op_assign
-(paren
-r_struct
-id|termios
-op_star
-(paren
-op_star
-)paren
-(braket
-)braket
-)paren
 id|kmalloc
 c_func
 (paren
@@ -4681,16 +4611,6 @@ l_string|&quot;Unable to allocate pcxe_termios struct&quot;
 suffix:semicolon
 id|pcxe_termios_locked
 op_assign
-(paren
-r_struct
-id|termios
-op_star
-(paren
-op_star
-)paren
-(braket
-)braket
-)paren
 id|kmalloc
 c_func
 (paren
@@ -4771,7 +4691,7 @@ id|TTY_DRIVER_MAGIC
 suffix:semicolon
 id|pcxe_driver.name
 op_assign
-l_string|&quot;ttyd&quot;
+l_string|&quot;cud&quot;
 suffix:semicolon
 id|pcxe_driver.major
 op_assign
@@ -4820,17 +4740,14 @@ id|pcxe_refcount
 suffix:semicolon
 id|pcxe_driver.table
 op_assign
-op_star
 id|pcxe_table
 suffix:semicolon
 id|pcxe_driver.termios
 op_assign
-op_star
 id|pcxe_termios
 suffix:semicolon
 id|pcxe_driver.termios_locked
 op_assign
-op_star
 id|pcxe_termios_locked
 suffix:semicolon
 id|pcxe_driver.open
@@ -6128,32 +6045,18 @@ suffix:semicolon
 )brace
 id|ch
 op_assign
-op_amp
-(paren
-(paren
-op_star
 id|digi_channels
-)paren
-(braket
+op_plus
 id|bd-&gt;first_minor
-)braket
-)paren
 suffix:semicolon
 id|pcxxassert
 c_func
 (paren
 id|ch
 OL
-op_amp
-(paren
-(paren
-op_star
 id|digi_channels
-)paren
-(braket
+op_plus
 id|nbdevs
-)braket
-)paren
 comma
 l_string|&quot;ch out of range&quot;
 )paren
@@ -6843,16 +6746,9 @@ id|crd
 suffix:semicolon
 id|ch
 op_assign
-op_amp
-(paren
-(paren
-op_star
 id|digi_channels
-)paren
-(braket
+op_plus
 id|bd-&gt;first_minor
-)braket
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -7014,32 +6910,18 @@ id|crd
 suffix:semicolon
 id|chan0
 op_assign
-op_amp
-(paren
-(paren
-op_star
 id|digi_channels
-)paren
-(braket
+op_plus
 id|bd-&gt;first_minor
-)braket
-)paren
 suffix:semicolon
 id|pcxxassert
 c_func
 (paren
 id|chan0
 OL
-op_amp
-(paren
-(paren
-op_star
 id|digi_channels
-)paren
-(braket
+op_plus
 id|nbdevs
-)braket
-)paren
 comma
 l_string|&quot;ch out of range&quot;
 )paren

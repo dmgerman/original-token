@@ -484,9 +484,14 @@ DECL|macro|SCSI_RESET_ASYNCHRONOUS
 mdefine_line|#define SCSI_RESET_ASYNCHRONOUS&t;&t;0x02
 DECL|macro|SCSI_RESET_SUGGEST_BUS_RESET
 mdefine_line|#define SCSI_RESET_SUGGEST_BUS_RESET&t;0x04
+DECL|macro|SCSI_RESET_SUGGEST_HOST_RESET
+mdefine_line|#define SCSI_RESET_SUGGEST_HOST_RESET&t;0x08
 multiline_comment|/*&n; * This is a bitmask that is ored with one of the above codes.&n; * It tells the mid-level code that we did a hard reset.&n; */
 DECL|macro|SCSI_RESET_BUS_RESET
 mdefine_line|#define SCSI_RESET_BUS_RESET 0x100
+multiline_comment|/*&n; * This is a bitmask that is ored with one of the above codes.&n; * It tells the mid-level code that we did a host adapter reset.&n; */
+DECL|macro|SCSI_RESET_HOST_RESET
+mdefine_line|#define SCSI_RESET_HOST_RESET 0x200
 multiline_comment|/*&n; * Used to mask off bits and to obtain the basic action that was&n; * performed.  &n; */
 DECL|macro|SCSI_RESET_ACTION
 mdefine_line|#define SCSI_RESET_ACTION   0xff
@@ -985,13 +990,27 @@ id|scsiresult
 suffix:semicolon
 r_extern
 r_void
-id|scsi_mark_host_bus_reset
+id|scsi_mark_host_reset
 c_func
 (paren
 r_struct
 id|Scsi_Host
 op_star
 id|Host
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|scsi_mark_bus_reset
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|Host
+comma
+r_int
+id|channel
 )paren
 suffix:semicolon
 macro_line|#if defined(MAJOR_NR) &amp;&amp; (MAJOR_NR != SCSI_TAPE_MAJOR)

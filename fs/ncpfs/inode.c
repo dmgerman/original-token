@@ -270,7 +270,7 @@ id|m.gid
 suffix:semicolon
 id|inode-&gt;i_blksize
 op_assign
-l_int|1024
+l_int|512
 suffix:semicolon
 id|inode-&gt;i_rdev
 op_assign
@@ -1433,6 +1433,7 @@ op_star
 id|server
 )paren
 (brace
+macro_line|#ifdef CONFIG_KERNELD
 r_char
 id|command
 (braket
@@ -1449,6 +1450,7 @@ op_plus
 l_int|2
 )braket
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux NET3 Bridge Support&n; *&n; *&t;Originally by John Hayes (Network Plumbing).&n; *&t;Minor hacks to get it to run with 1.3.x by Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Fixes:&n; *&n; *&t;Todo:&n; *&t;&t;Don&squot;t bring up devices automatically. Start ports disabled&n; *&t;and use a netlink notifier so a daemon can maintain the bridge&n; *&t;port group (could we also do multiple groups ????).&n; *&t;&t;A nice /proc file interface.&n; *&t;&t;Put the path costs in the port info and devices&n; *&t;&t;Put the bridge port number in the device structure for speed.&n; *&t;&n; */
+multiline_comment|/*&n; *&t;Linux NET3 Bridge Support&n; *&n; *&t;Originally by John Hayes (Network Plumbing).&n; *&t;Minor hacks to get it to run with 1.3.x by Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Fixes:&n; *&n; *&t;Todo:&n; *&t;&t;Don&squot;t bring up devices automatically. Start ports disabled&n; *&t;and use a netlink notifier so a daemon can maintain the bridge&n; *&t;port group (could we also do multiple groups ????).&n; *&t;&t;A nice /proc file interface.&n; *&t;&t;Put the path costs in the port info and devices.&n; *&t;&t;Put the bridge port number in the device structure for speed.&n; *&t;&t;Bridge SNMP stats.&n; *&t;&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -224,9 +224,9 @@ op_assign
 initialization_block
 suffix:semicolon
 multiline_comment|/** Elements of Procedure (4.6) **/
-multiline_comment|/*&n; * this section of code was graciously borrowed from the IEEE 802.1d&n; * specification section 4.9.1 starting on pg 69.  It has been&n; * modified somewhat to fit within out framework and structure.  It&n; * implements the spanning tree algorithm that is the heart of the&n; * 802.1d bridging protocol.&n; */
-r_void
+multiline_comment|/*&n; * this section of code was gratiously borrowed from the IEEE 802.1d&n; * specification section 4.9.1 starting on pg 69.  It has been&n; * modified somewhat to fit within out framework and structure.  It&n; * implements the spanning tree algorithm that is the heart of the&n; * 802.1d bridging protocol.&n; */
 DECL|function|transmit_config
+r_void
 id|transmit_config
 c_func
 (paren
@@ -468,8 +468,8 @@ suffix:semicolon
 multiline_comment|/* (4.6.1.3.2(11)) */
 )brace
 )brace
-r_int
 DECL|function|root_bridge
+r_int
 id|root_bridge
 c_func
 (paren
@@ -493,8 +493,8 @@ id|TRUE
 )paren
 suffix:semicolon
 )brace
-r_int
 DECL|function|supersedes_port_info
+r_int
 id|supersedes_port_info
 c_func
 (paren
@@ -642,8 +642,8 @@ multiline_comment|/* (4.6.2.2.4(2)) */
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|record_config_information
+r_void
 id|record_config_information
 c_func
 (paren
@@ -703,8 +703,8 @@ id|config-&gt;message_age
 suffix:semicolon
 multiline_comment|/* (4.6.2.3.2)   */
 )brace
-r_void
 DECL|function|record_config_timeout_values
+r_void
 id|record_config_timeout_values
 c_func
 (paren
@@ -739,8 +739,8 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-r_void
 DECL|function|config_bpdu_generation
+r_void
 id|config_bpdu_generation
 c_func
 (paren
@@ -800,8 +800,8 @@ multiline_comment|/* (4.6.4.3)&t; */
 multiline_comment|/* (4.6.1.2)&t; */
 )brace
 )brace
-r_int
 DECL|function|designated_port
+r_int
 id|designated_port
 c_func
 (paren
@@ -846,8 +846,8 @@ id|port_id
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|reply
+r_void
 id|reply
 c_func
 (paren
@@ -864,8 +864,8 @@ id|port_no
 suffix:semicolon
 multiline_comment|/* (4.6.5.3)&t; */
 )brace
-r_void
 DECL|function|transmit_tcn
+r_void
 id|transmit_tcn
 c_func
 (paren
@@ -903,8 +903,8 @@ id|bridge_info.root_port
 suffix:semicolon
 multiline_comment|/* (4.6.6.3)     */
 )brace
-r_void
 DECL|function|configuration_update
+r_void
 id|configuration_update
 c_func
 (paren
@@ -927,8 +927,8 @@ suffix:semicolon
 multiline_comment|/* (4.6.7.3.2)&t; */
 multiline_comment|/* (4.6.9.2)&t; */
 )brace
-r_void
 DECL|function|root_selection
+r_void
 id|root_selection
 c_func
 (paren
@@ -1300,8 +1300,8 @@ suffix:semicolon
 multiline_comment|/* (4.6.8.3.3(2)) */
 )brace
 )brace
-r_void
 DECL|function|designated_port_selection
+r_void
 id|designated_port_selection
 c_func
 (paren
@@ -1447,8 +1447,8 @@ multiline_comment|/* (4.6.10.3.2.2) */
 )brace
 )brace
 )brace
-r_void
 DECL|function|become_designated_port
+r_void
 id|become_designated_port
 c_func
 (paren
@@ -1503,8 +1503,8 @@ dot
 id|port_id
 suffix:semicolon
 )brace
-r_void
 DECL|function|port_state_selection
+r_void
 id|port_state_selection
 c_func
 (paren
@@ -1625,8 +1625,8 @@ multiline_comment|/* (4.6.11.3.3(2)) */
 )brace
 )brace
 )brace
-r_void
 DECL|function|make_forwarding
+r_void
 id|make_forwarding
 c_func
 (paren
@@ -1667,8 +1667,8 @@ suffix:semicolon
 multiline_comment|/* (4.6.12.3.2) */
 )brace
 )brace
-r_void
 DECL|function|topology_change_detection
+r_void
 id|topology_change_detection
 c_func
 (paren
@@ -1725,8 +1725,8 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-r_void
 DECL|function|topology_change_acknowledged
+r_void
 id|topology_change_acknowledged
 c_func
 (paren
@@ -1745,8 +1745,8 @@ c_func
 suffix:semicolon
 multiline_comment|/* (4.6.15.3.2) */
 )brace
-r_void
 DECL|function|acknowledge_topology_change
+r_void
 id|acknowledge_topology_change
 c_func
 (paren
@@ -1772,8 +1772,8 @@ id|port_no
 suffix:semicolon
 multiline_comment|/* (4.6.16.3.2) */
 )brace
-r_void
 DECL|function|make_blocking
+r_void
 id|make_blocking
 c_func
 (paren
@@ -1861,8 +1861,8 @@ suffix:semicolon
 multiline_comment|/* (4.6.13.3.3) */
 )brace
 )brace
-r_void
 DECL|function|set_port_state
+r_void
 id|set_port_state
 c_func
 (paren
@@ -1883,8 +1883,8 @@ op_assign
 id|state
 suffix:semicolon
 )brace
-r_void
 DECL|function|received_config_bpdu
+r_void
 id|received_config_bpdu
 c_func
 (paren
@@ -2066,8 +2066,8 @@ multiline_comment|/* (4.6.5.2)&t; */
 )brace
 )brace
 )brace
-r_void
 DECL|function|received_tcn_bpdu
+r_void
 id|received_tcn_bpdu
 c_func
 (paren
@@ -2121,8 +2121,8 @@ multiline_comment|/* (4.7.2.2)&t; */
 multiline_comment|/* (4.6.16.2)&t; */
 )brace
 )brace
-r_void
 DECL|function|hello_timer_expiry
+r_void
 id|hello_timer_expiry
 c_func
 (paren
@@ -2142,8 +2142,8 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|message_age_timer_expiry
+r_void
 id|message_age_timer_expiry
 c_func
 (paren
@@ -2241,8 +2241,8 @@ c_func
 suffix:semicolon
 )brace
 )brace
-r_void
 DECL|function|forward_delay_timer_expiry
+r_void
 id|forward_delay_timer_expiry
 c_func
 (paren
@@ -2325,8 +2325,8 @@ multiline_comment|/* (4.6.14.2.2) */
 )brace
 )brace
 )brace
-r_int
 DECL|function|designated_for_some_port
+r_int
 id|designated_for_some_port
 c_func
 (paren
@@ -2385,8 +2385,8 @@ id|FALSE
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|tcn_timer_expiry
+r_void
 id|tcn_timer_expiry
 c_func
 (paren
@@ -2407,8 +2407,8 @@ c_func
 suffix:semicolon
 multiline_comment|/* (4.7.6.2)&t; */
 )brace
-r_void
 DECL|function|topology_change_timer_expiry
+r_void
 id|topology_change_timer_expiry
 c_func
 (paren
@@ -2426,8 +2426,8 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* (4.7.7.2)&t; */
 )brace
-r_void
 DECL|function|hold_timer_expiry
+r_void
 id|hold_timer_expiry
 c_func
 (paren
@@ -2457,8 +2457,8 @@ multiline_comment|/* (4.7.8.1)&t; */
 )brace
 multiline_comment|/* (4.6.1.2.3)&t; */
 )brace
-r_void
 DECL|function|br_init
+r_void
 id|br_init
 c_func
 (paren
@@ -2573,6 +2573,8 @@ multiline_comment|/* (4.8.1.6)&t; */
 multiline_comment|/* initialize system timer */
 id|tl.expires
 op_assign
+id|jiffies
+op_plus
 id|HZ
 suffix:semicolon
 multiline_comment|/* 1 second */
@@ -2596,19 +2598,15 @@ id|br_dev_notifier
 suffix:semicolon
 id|br_stats.flags
 op_assign
-id|BR_UP
-op_or
-id|BR_DEBUG
+l_int|0
+suffix:semicolon
+multiline_comment|/*BR_UP | BR_DEBUG*/
 suffix:semicolon
 multiline_comment|/* enable bridge */
-id|start_hello_timer
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/*start_hello_timer();*/
 )brace
-r_void
 DECL|function|br_init_port
+r_void
 id|br_init_port
 c_func
 (paren
@@ -2673,8 +2671,8 @@ id|port_no
 suffix:semicolon
 multiline_comment|/* (4.8.1.4.7)&t; */
 )brace
-r_void
 DECL|function|enable_port
+r_void
 id|enable_port
 c_func
 (paren
@@ -2697,8 +2695,8 @@ suffix:semicolon
 multiline_comment|/* (4.8.2.7)&t; */
 )brace
 multiline_comment|/* */
-r_void
 DECL|function|disable_port
+r_void
 id|disable_port
 c_func
 (paren
@@ -2832,8 +2830,8 @@ c_func
 suffix:semicolon
 )brace
 )brace
-r_void
 DECL|function|set_bridge_priority
+r_void
 id|set_bridge_priority
 c_func
 (paren
@@ -2967,8 +2965,8 @@ c_func
 suffix:semicolon
 )brace
 )brace
-r_void
 DECL|function|set_port_priority
+r_void
 id|set_port_priority
 c_func
 (paren
@@ -3064,8 +3062,8 @@ suffix:semicolon
 multiline_comment|/* (4.8.5.4.2) */
 )brace
 )brace
-r_void
 DECL|function|set_path_cost
+r_void
 id|set_path_cost
 c_func
 (paren
@@ -3101,9 +3099,9 @@ c_func
 suffix:semicolon
 multiline_comment|/* (4.8.6.3)&t; */
 )brace
+DECL|function|br_tick
 r_static
 r_void
-DECL|function|br_tick
 id|br_tick
 c_func
 (paren
@@ -3230,6 +3228,8 @@ suffix:semicolon
 multiline_comment|/* call me again sometime... */
 id|tl.expires
 op_assign
+id|jiffies
+op_plus
 id|HZ
 suffix:semicolon
 multiline_comment|/* 1 second */
@@ -3245,8 +3245,8 @@ id|tl
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|start_hello_timer
+r_void
 id|start_hello_timer
 c_func
 (paren
@@ -3262,8 +3262,8 @@ op_assign
 id|TRUE
 suffix:semicolon
 )brace
-r_void
 DECL|function|stop_hello_timer
+r_void
 id|stop_hello_timer
 c_func
 (paren
@@ -3275,8 +3275,8 @@ op_assign
 id|FALSE
 suffix:semicolon
 )brace
-r_int
 DECL|function|hello_timer_expired
+r_int
 id|hello_timer_expired
 c_func
 (paren
@@ -3312,8 +3312,8 @@ id|FALSE
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|start_tcn_timer
+r_void
 id|start_tcn_timer
 c_func
 (paren
@@ -3329,8 +3329,8 @@ op_assign
 id|TRUE
 suffix:semicolon
 )brace
-r_void
 DECL|function|stop_tcn_timer
+r_void
 id|stop_tcn_timer
 c_func
 (paren
@@ -3342,8 +3342,8 @@ op_assign
 id|FALSE
 suffix:semicolon
 )brace
-r_int
 DECL|function|tcn_timer_expired
+r_int
 id|tcn_timer_expired
 c_func
 (paren
@@ -3379,8 +3379,8 @@ id|FALSE
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|start_topology_change_timer
+r_void
 id|start_topology_change_timer
 c_func
 (paren
@@ -3396,8 +3396,8 @@ op_assign
 id|TRUE
 suffix:semicolon
 )brace
-r_void
 DECL|function|stop_topology_change_timer
+r_void
 id|stop_topology_change_timer
 c_func
 (paren
@@ -3409,8 +3409,8 @@ op_assign
 id|FALSE
 suffix:semicolon
 )brace
-r_int
 DECL|function|topology_change_timer_expired
+r_int
 id|topology_change_timer_expired
 c_func
 (paren
@@ -3446,8 +3446,8 @@ id|FALSE
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|start_message_age_timer
+r_void
 id|start_message_age_timer
 c_func
 (paren
@@ -3478,8 +3478,8 @@ op_assign
 id|TRUE
 suffix:semicolon
 )brace
-r_void
 DECL|function|stop_message_age_timer
+r_void
 id|stop_message_age_timer
 c_func
 (paren
@@ -3497,8 +3497,8 @@ op_assign
 id|FALSE
 suffix:semicolon
 )brace
-r_int
 DECL|function|message_age_timer_expired
+r_int
 id|message_age_timer_expired
 c_func
 (paren
@@ -3550,8 +3550,8 @@ id|FALSE
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|start_forward_delay_timer
+r_void
 id|start_forward_delay_timer
 c_func
 (paren
@@ -3578,8 +3578,8 @@ op_assign
 id|TRUE
 suffix:semicolon
 )brace
-r_void
 DECL|function|stop_forward_delay_timer
+r_void
 id|stop_forward_delay_timer
 c_func
 (paren
@@ -3597,8 +3597,8 @@ op_assign
 id|FALSE
 suffix:semicolon
 )brace
-r_int
 DECL|function|forward_delay_timer_expired
+r_int
 id|forward_delay_timer_expired
 c_func
 (paren
@@ -3650,8 +3650,8 @@ id|FALSE
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|start_hold_timer
+r_void
 id|start_hold_timer
 c_func
 (paren
@@ -3678,8 +3678,8 @@ op_assign
 id|TRUE
 suffix:semicolon
 )brace
-r_void
 DECL|function|stop_hold_timer
+r_void
 id|stop_hold_timer
 c_func
 (paren
@@ -3697,8 +3697,8 @@ op_assign
 id|FALSE
 suffix:semicolon
 )brace
-r_int
 DECL|function|hold_timer_expired
+r_int
 id|hold_timer_expired
 c_func
 (paren
@@ -3750,8 +3750,8 @@ id|FALSE
 )paren
 suffix:semicolon
 )brace
-r_int
 DECL|function|send_config_bpdu
+r_int
 id|send_config_bpdu
 c_func
 (paren
@@ -4054,8 +4054,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|send_tcn_bpdu
+r_int
 id|send_tcn_bpdu
 c_func
 (paren
@@ -4353,9 +4353,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|br_device_event
 r_static
 r_int
-DECL|function|br_device_event
 id|br_device_event
 c_func
 (paren
@@ -4669,8 +4669,8 @@ id|NOTIFY_DONE
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * following routine is called when a frame is received&n; * from an interface, it returns 1 when it consumes the&n; * frame, 0 when it does not&n; */
-r_int
 DECL|function|br_receive_frame
+r_int
 id|br_receive_frame
 c_func
 (paren
@@ -4715,6 +4715,10 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+id|skb-&gt;pkt_bridged
+op_assign
+id|IS_BRIDGED
+suffix:semicolon
 multiline_comment|/* check for loopback */
 r_if
 c_cond
@@ -4736,7 +4740,7 @@ id|skb-&gt;dev
 suffix:semicolon
 id|skb-&gt;h.raw
 op_assign
-id|skb-&gt;data
+id|skb-&gt;mac.raw
 suffix:semicolon
 r_if
 c_cond
@@ -4820,12 +4824,21 @@ op_logical_neg
 id|port
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|br_stats.flags
+op_amp
+id|BR_DEBUG
+)paren
+(brace
 id|printk
 c_func
 (paren
 l_string|&quot;&bslash;nbr_receive_frame: no port!&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -4935,12 +4948,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;frame bpdu processor for me!!!&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*printk(&quot;frame bpdu processor for me!!!&bslash;n&quot;);*/
 id|br_bpdu
 c_func
 (paren
@@ -4981,6 +4989,12 @@ multiline_comment|/* pass frame up our stack (this will */
 multiline_comment|/* happen in net_bh() in dev.c) */
 )brace
 multiline_comment|/* ok, forward this frame... */
+id|skb_device_lock
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_return
 id|br_forward
 c_func
@@ -5014,8 +5028,8 @@ multiline_comment|/* pass frame up stack? */
 )brace
 )brace
 multiline_comment|/*&n; * the following routine is called to transmit frames from the host&n; * stack.  it returns 1 when it consumes the frame and&n; * 0 when it does not.&n; */
-r_int
 DECL|function|br_tx_frame
+r_int
 id|br_tx_frame
 c_func
 (paren
@@ -5153,8 +5167,8 @@ id|port
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * this routine returns 0 when it learns (or updates) from the&n; * frame, and -1 if the frame is simply discarded due to port&n; * state or lack of resources...&n; */
-r_int
 DECL|function|br_learn
+r_int
 id|br_learn
 c_func
 (paren
@@ -5331,8 +5345,8 @@ multiline_comment|/* break */
 )brace
 )brace
 multiline_comment|/*&n; * this routine always consumes the frame&n; */
-r_int
 DECL|function|br_drop
+r_int
 id|br_drop
 c_func
 (paren
@@ -5354,9 +5368,33 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * this routine returns 1 if it consumes the frame, 0&n; * if not...&n; */
+multiline_comment|/*&n; * this routine always consumes the frame&n; */
+DECL|function|br_dev_drop
 r_int
+id|br_dev_drop
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * this routine returns 1 if it consumes the frame, 0&n; * if not...&n; */
 DECL|function|br_forward
+r_int
 id|br_forward
 c_func
 (paren
@@ -5400,6 +5438,7 @@ comma
 id|port
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;External groups are fed out via the normal source&n;&t;&t; *&t;This probably should be dropped since the flood will&n;&t;&t; *&t;have sent it anyway.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5409,7 +5448,7 @@ l_int|0
 )paren
 multiline_comment|/* locally generated */
 r_return
-id|br_drop
+id|br_dev_drop
 c_func
 (paren
 id|skb
@@ -5430,6 +5469,7 @@ c_func
 id|skb-&gt;h.eth-&gt;h_dest
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Send flood and drop.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5454,13 +5494,14 @@ id|port
 )paren
 suffix:semicolon
 r_return
-id|br_drop
+id|br_dev_drop
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; *&t;Sending&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5504,6 +5545,7 @@ c_func
 l_string|&quot;fdb entry expired...&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Send flood and drop original&n;&t;&t;&t;&t; */
 id|br_flood
 c_func
 (paren
@@ -5513,7 +5555,7 @@ id|port
 )paren
 suffix:semicolon
 r_return
-id|br_drop
+id|br_dev_drop
 c_func
 (paren
 id|skb
@@ -5525,7 +5567,6 @@ id|skb-&gt;pkt_bridged
 op_assign
 id|IS_BRIDGED
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * if the frame is originating in this host,&n;&t;&t;&t; * we may need to resolve the outgoing address&n;&t;&t;&t;if (port != 0)&n;&t;&t;&t;&t;skb-&gt;arp = 1;&n;&t;&t;&t; */
 multiline_comment|/* reset the skb-&gt;ip pointer */
 id|skb-&gt;h.raw
 op_assign
@@ -5533,54 +5574,27 @@ id|skb-&gt;data
 op_plus
 id|ETH_HLEN
 suffix:semicolon
-multiline_comment|/* we must unlock the skb before requeueing it... */
-r_if
-c_cond
-(paren
-id|skb_device_locked
-c_func
-(paren
-id|skb
-)paren
-)paren
-id|skb_device_unlock
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-multiline_comment|/* enter critical section */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|skb_queue_head
-c_func
-(paren
+multiline_comment|/*&n;&t;&t;&t; *&t;Send the buffer out.&n;&t;&t;&t; */
+id|skb-&gt;dev
+op_assign
 id|port_info
 (braket
 id|f-&gt;port
 )braket
 dot
-id|dev-&gt;buffs
-comma
-id|skb
-)paren
+id|dev
 suffix:semicolon
-id|restore_flags
+multiline_comment|/*&n;&t;&t;&t; *&t;We send this still locked&n;&t;&t;&t; */
+id|dev_queue_xmit
 c_func
 (paren
-id|flags
+id|skb
+comma
+id|skb-&gt;dev
+comma
+l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* exit critical section */
 r_return
 l_int|1
 suffix:semicolon
@@ -5588,8 +5602,9 @@ multiline_comment|/* skb has been consumed */
 )brace
 r_else
 (brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Arrived on the right port, we discard&n;&t;&t;&t; */
 r_return
-id|br_drop
+id|br_dev_drop
 c_func
 (paren
 id|skb
@@ -5599,8 +5614,8 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * this routine sends a copy of the frame to all forwarding ports&n; * with the exception of the port given.  This routine never&n; * consumes the original frame.&n; */
-r_int
 DECL|function|br_flood
+r_int
 id|br_flood
 c_func
 (paren
@@ -5677,41 +5692,25 @@ id|nskb-&gt;pkt_bridged
 op_assign
 id|IS_BRIDGED
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * if the frame is originating in this host,&n;&t;&t;&t; * we may need to resolve the outgoing address&n;&t;&t;&t;if (port != 0)&n;&t;&t;&t;&t;nskb-&gt;arp = 1;&n;&t;&t;&t; */
+id|nskb-&gt;arp
+op_assign
+id|skb-&gt;arp
+suffix:semicolon
+multiline_comment|/*&t;&t;&t;printk(&quot;Flood to port %d&bslash;n&quot;,i);*/
 id|nskb-&gt;h.raw
 op_assign
 id|nskb-&gt;data
 op_plus
 id|ETH_HLEN
 suffix:semicolon
-id|save_flags
+id|dev_queue_xmit
 c_func
 (paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|skb_queue_tail
-c_func
-(paren
-id|port_info
-(braket
-id|i
-)braket
-dot
-id|dev-&gt;buffs
-comma
 id|nskb
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
+comma
+id|nskb-&gt;dev
+comma
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -5720,8 +5719,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|find_port
+r_int
 id|find_port
 c_func
 (paren
@@ -5780,8 +5779,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|br_port_cost
+r_int
 id|br_port_cost
 c_func
 (paren
@@ -5857,8 +5856,8 @@ suffix:semicolon
 multiline_comment|/* default */
 )brace
 multiline_comment|/*&n; * this routine always consumes the skb &n; */
-r_void
 DECL|function|br_bpdu
+r_void
 id|br_bpdu
 c_func
 (paren
@@ -5967,8 +5966,8 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-r_int
 DECL|function|br_ioctl
+r_int
 id|br_ioctl
 c_func
 (paren
@@ -6160,13 +6159,6 @@ c_func
 l_string|&quot;br: enabling bridging function&bslash;n&quot;
 )paren
 suffix:semicolon
-id|register_netdevice_notifier
-c_func
-(paren
-op_amp
-id|br_dev_notifier
-)paren
-suffix:semicolon
 id|br_stats.flags
 op_or_assign
 id|BR_UP
@@ -6202,13 +6194,6 @@ c_func
 l_string|&quot;br: disabling bridging function&bslash;n&quot;
 )paren
 suffix:semicolon
-id|unregister_netdevice_notifier
-c_func
-(paren
-op_amp
-id|br_dev_notifier
-)paren
-suffix:semicolon
 id|br_stats.flags
 op_and_assign
 op_complement
@@ -6220,6 +6205,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if 0&t;&t;&t;&t;&t;
 r_for
 c_loop
 (paren
@@ -6252,6 +6238,7 @@ c_func
 id|i
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;&t;&t;&t;&t;&t;
 r_break
 suffix:semicolon
 r_case

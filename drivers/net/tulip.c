@@ -7,11 +7,11 @@ op_star
 id|version
 op_assign
 l_string|&quot;tulip.c:v0.10 8/11/95 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
-l_string|&quot;        +0.68 3/09/96 &quot;
-l_string|&quot;http://www.dsl.tutics.tut.ac.jp/~manabe/linux/tulip.html&bslash;n&quot;
+l_string|&quot;        +0.72 4/17/96 &quot;
+l_string|&quot;http://www.dsl.tutics.tut.ac.jp/~linux/tulip&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* A few user-configurable values. */
-multiline_comment|/* Default to using 10baseT (i.e. non-AUI/10base2/100baseT port) port. */
+multiline_comment|/* Default to using 10baseT (i.e. AUI/10base2/100baseT port) port. */
 DECL|macro|TULIP_10TP_PORT
 mdefine_line|#define&t;TULIP_10TP_PORT&t;&t;0
 DECL|macro|TULIP_100TP_PORT
@@ -20,53 +20,21 @@ DECL|macro|TULIP_AUI_PORT
 mdefine_line|#define&t;TULIP_AUI_PORT&t;&t;1
 DECL|macro|TULIP_BNC_PORT
 mdefine_line|#define&t;TULIP_BNC_PORT&t;&t;2
+DECL|macro|TULIP_MAX_PORT
+mdefine_line|#define&t;TULIP_MAX_PORT&t;&t;3
+DECL|macro|TULIP_AUTO_PORT
+mdefine_line|#define&t;TULIP_AUTO_PORT&t;&t;-1
 macro_line|#ifndef&t;TULIP_PORT
 DECL|macro|TULIP_PORT
 mdefine_line|#define&t;TULIP_PORT&t;&t;&t;TULIP_10TP_PORT
 macro_line|#endif
 multiline_comment|/* Define to force full-duplex operation on all Tulip interfaces. */
 multiline_comment|/* #define  TULIP_FULL_DUPLEX 1 */
+multiline_comment|/* Define to fix port. */
+multiline_comment|/* #define  TULIP_FIX_PORT 1 */
 multiline_comment|/* Define to probe only first detected device */
-multiline_comment|/* #define&t;TULIP_ONLY_ONE 1 */
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(MODULE) &amp;&amp; defined(CONFIG_MODVERSIONS)
-DECL|macro|MODVERSIONS
-mdefine_line|#define&t;MODVERSIONS
-macro_line|#include &lt;linux/modversions.h&gt;
-macro_line|#endif
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if LINUX_VERSION_CODE &lt; 0x10300
-multiline_comment|/* i.e. version 1.2.x */
-DECL|macro|virt_to_bus
-mdefine_line|#define&t;virt_to_bus(address)&t;(unsigned long)(address)
-DECL|macro|bus_to_virt
-mdefine_line|#define&t;bus_to_virt(address)&t;(void *)(address)
-DECL|macro|PCI_DEVICE_ID_DEC_TULIP_PLUS
-mdefine_line|#define&t;PCI_DEVICE_ID_DEC_TULIP_PLUS&t;0x0014
-macro_line|#ifdef&t;MODULE
+multiline_comment|/*#define&t;TULIP_MAX_CARDS 1*/
 macro_line|#include &lt;linux/module.h&gt;
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-macro_line|#undef&t;MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-macro_line|#undef&t;MOD_DEC_USE_COUNT
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define&t;MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define&t;MOD_DEC_USE_COUNT
-macro_line|#endif
-macro_line|#else
-multiline_comment|/* i.e. version 1.3.x */
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -77,6 +45,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -87,21 +56,6 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 multiline_comment|/* The total size is unusually large: The 21040 aligns each of its 16&n;   longword-wide registers on a quadword boundary. */
 DECL|macro|TULIP_TOTAL_SIZE
 mdefine_line|#define TULIP_TOTAL_SIZE 0x80
-macro_line|#ifdef TULIP_DEBUG
-DECL|variable|tulip_debug
-r_int
-id|tulip_debug
-op_assign
-id|TULIP_DEBUG
-suffix:semicolon
-macro_line|#else
-DECL|variable|tulip_debug
-r_int
-id|tulip_debug
-op_assign
-l_int|3
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the DECchip 21040 &quot;Tulip&quot;, Digital&squot;s&n;single-chip ethernet controller for PCI, as used on the SMC EtherPower&n;ethernet adapter.  It also works with boards based the 21041 (new/experimental)&n;and 21140 (10/100mbps).&n;&n;&n;II. Board-specific settings&n;&n;PCI bus devices are configured by the system at boot time, so no jumpers&n;need to be set on the board.  The system BIOS should be set to assign the&n;PCI INTA signal to an otherwise unused system IRQ line.  While it&squot;s&n;physically possible to shared PCI interrupt lines, the kernel doesn&squot;t&n;support it. &n;&n;III. Driver operation&n;&n;IIIa. Ring buffers&n;The Tulip can use either ring buffers or lists of Tx and Rx descriptors.&n;The current driver uses a statically allocated Rx ring of descriptors and&n;buffers, and a list of the Tx buffers.&n;&n;IIIC. Synchronization&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and other software.&n;&n;The send packet thread has partial control over the Tx ring and &squot;dev-&gt;tbusy&squot;&n;flag.  It sets the tbusy flag whenever it&squot;s queuing a Tx packet. If the next&n;queue slot is empty, it clears the tbusy flag when finished otherwise it sets&n;the &squot;tp-&gt;tx_full&squot; flag.&n;&n;The interrupt handler has exclusive control over the Rx ring and records stats&n;from the Tx ring.  (The Tx-done interrupt can&squot;t be selectively turned off, so&n;we can&squot;t avoid the interrupt overhead by having the Tx routine reap the Tx&n;stats.)&t; After reaping the stats, it marks the queue entry as empty by setting&n;the &squot;base&squot; to zero.&t; Iff the &squot;tp-&gt;tx_full&squot; flag is set, it clears both the&n;tx_full and tbusy flags.&n;&n;IV. Notes&n;&n;Thanks to Duke Kamstra of SMC for providing an EtherPower board.&n;&n;The DEC databook doesn&squot;t document which Rx filter settings accept broadcast&n;packets.  Nor does it document how to configure the part to configure the&n;serial subsystem for normal (vs. loopback) operation or how to have it&n;autoswitch between internal 10baseT, SIA and AUI transceivers.&n;&n;The databook claims that CSR13, CSR14, and CSR15 should each be the last&n;register of the set CSR12-15 written.   Hmmm, now how is that possible?&n;*/
 multiline_comment|/* A few values that may be tweaked. */
 multiline_comment|/* Keep the ring sizes a power of two for efficiency. */
@@ -343,11 +297,18 @@ DECL|macro|TINTR_ENABLE
 mdefine_line|#define&t;TINTR_ENABLE&t;&t;0xFFFFFFFF
 DECL|macro|TINTR_DISABLE
 mdefine_line|#define&t;TINTR_DISABLE&t;&t;0x00000000
+multiline_comment|/* description of CSR11 G.P. timer (21041/21140) register */
+DECL|macro|TGEPT_COUNT
+mdefine_line|#define&t;TGEPT_COUNT&t;&t;&t;0x0001FFFF
 multiline_comment|/* description of CSR12 SIA status(2104x)/GP(21140) register */
 DECL|macro|TSIAS_CONERROR
 mdefine_line|#define&t;TSIAS_CONERROR&t;&t;0x00000002&t;/* connection error */
 DECL|macro|TSIAS_LNKERROR
 mdefine_line|#define&t;TSIAS_LNKERROR&t;&t;0x00000004&t;/* link error */
+DECL|macro|TSIAS_ACTERROR
+mdefine_line|#define TSIAS_ACTERROR&t;&t;0x00000200  /* port Rx activity */
+DECL|macro|TSIAS_RxACTIVE
+mdefine_line|#define TSIAS_RxACTIVE&t;&t;0x00000100  /* port Rx activity */
 DECL|macro|TGEPR_LK10NG
 mdefine_line|#define&t;TGEPR_LK10NG&t;&t;0x00000080&t;/* 10Mbps N.G. (R) */
 DECL|macro|TGEPR_LK100NG
@@ -568,11 +529,11 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-DECL|member|port_error
+DECL|member|port_fail
 r_int
 (paren
 op_star
-id|port_error
+id|port_fail
 )paren
 (paren
 r_struct
@@ -620,6 +581,14 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Full-duplex operation requested. */
+DECL|member|port_fix
+r_int
+r_int
+id|port_fix
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Fix if_port to specified port. */
 )brace
 suffix:semicolon
 DECL|struct|eeprom
@@ -753,6 +722,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -796,26 +769,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x10300
-r_static
-r_void
-id|set_multicast_list
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
-)paren
-suffix:semicolon
-macro_line|#else
 r_static
 r_void
 id|set_multicast_list
@@ -827,9 +780,8 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
-DECL|macro|generic21140_error
-mdefine_line|#define&t;generic21140_error&t;NULL
+DECL|macro|generic21140_fail
+mdefine_line|#define&t;generic21140_fail&t;NULL
 r_static
 r_void
 id|generic21040_select
@@ -875,8 +827,8 @@ id|dev
 )paren
 suffix:semicolon
 r_static
-r_int
-id|generic21040_error
+r_void
+id|cogent21140_select
 c_func
 (paren
 r_struct
@@ -887,7 +839,18 @@ id|dev
 suffix:semicolon
 r_static
 r_int
-id|generic21041_error
+id|generic21040_fail
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_int
+id|generic21041_fail
 c_func
 (paren
 r_struct
@@ -912,11 +875,11 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-DECL|member|port_error
+DECL|member|port_fail
 r_int
 (paren
 op_star
-id|port_error
+id|port_fail
 )paren
 (paren
 r_struct
@@ -938,10 +901,10 @@ r_char
 op_star
 id|signature
 suffix:semicolon
-DECL|member|port_auto
+DECL|member|array
 r_int
 r_int
-id|port_auto
+id|array
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -955,7 +918,7 @@ op_assign
 (brace
 id|generic21140_select
 comma
-id|generic21140_error
+id|generic21140_fail
 comma
 l_int|0x0000c000
 comma
@@ -969,7 +932,7 @@ comma
 (brace
 id|generic21041_select
 comma
-id|generic21041_error
+id|generic21041_fail
 comma
 l_int|0x0000c000
 comma
@@ -983,7 +946,7 @@ comma
 (brace
 id|generic21040_select
 comma
-id|generic21040_error
+id|generic21040_fail
 comma
 l_int|0x0000c000
 comma
@@ -997,7 +960,7 @@ comma
 (brace
 id|auto21140_select
 comma
-id|generic21140_error
+id|generic21140_fail
 comma
 l_int|0x0000f400
 comma
@@ -1005,13 +968,27 @@ id|PCI_DEVICE_ID_DEC_TULIP_FAST
 comma
 l_string|&quot;LA100PCI&quot;
 comma
-l_int|1
+l_int|0
+)brace
+comma
+(brace
+id|cogent21140_select
+comma
+id|generic21140_fail
+comma
+l_int|0x00009200
+comma
+id|PCI_DEVICE_ID_DEC_TULIP_FAST
+comma
+l_string|&quot;cogent_em110&quot;
+comma
+l_int|0
 )brace
 comma
 (brace
 id|generic21140_select
 comma
-id|generic21140_error
+id|generic21140_fail
 comma
 l_int|0x0000f800
 comma
@@ -1025,7 +1002,7 @@ comma
 (brace
 id|generic21041_select
 comma
-id|generic21041_error
+id|generic21041_fail
 comma
 l_int|0x0000f800
 comma
@@ -1039,7 +1016,7 @@ comma
 (brace
 id|generic21040_select
 comma
-id|generic21040_error
+id|generic21040_fail
 comma
 l_int|0x0000f800
 comma
@@ -1053,7 +1030,7 @@ comma
 (brace
 id|generic21040_select
 comma
-id|generic21040_error
+id|generic21040_fail
 comma
 l_int|0x0040c700
 comma
@@ -1067,7 +1044,7 @@ comma
 (brace
 id|generic21040_select
 comma
-id|generic21040_error
+id|generic21040_fail
 comma
 l_int|0x00c09500
 comma
@@ -1075,13 +1052,27 @@ id|PCI_DEVICE_ID_DEC_TULIP
 comma
 l_string|&quot;ZNYX312&quot;
 comma
+l_int|1
+)brace
+comma
+(brace
+id|generic21040_select
+comma
+id|generic21040_fail
+comma
+l_int|0x08002b00
+comma
+id|PCI_DEVICE_ID_DEC_TULIP
+comma
+l_string|&quot;QSILVER&squot;s&quot;
+comma
 l_int|0
 )brace
 comma
 (brace
 id|generic21040_select
 comma
-id|generic21040_error
+id|generic21040_fail
 comma
 l_int|0
 comma
@@ -1095,7 +1086,7 @@ comma
 (brace
 id|generic21140_select
 comma
-id|generic21140_error
+id|generic21140_fail
 comma
 l_int|0
 comma
@@ -1109,7 +1100,7 @@ comma
 (brace
 id|generic21041_select
 comma
-id|generic21041_error
+id|generic21041_fail
 comma
 l_int|0
 comma
@@ -1152,9 +1143,6 @@ DECL|macro|EE_DATA_READ
 mdefine_line|#define EE_DATA_READ&t;0x08&t;/* EEPROM chip data out. */
 DECL|macro|EE_ENB
 mdefine_line|#define EE_ENB&t;&t;&t;(0x4800 | EE_CS)
-multiline_comment|/* Delay between EEPROM clock transitions.&n;   This is a &quot;nasty&quot; timing loop, but PC compatible machines are *supposed*&n;   to delay an ISA compatible period for the SLOW_DOWN_IO macro.  */
-DECL|macro|eeprom_delay
-mdefine_line|#define eeprom_delay(nanosec)&bslash;&n;&t;do { int _i = 3; while (--_i &gt; 0) { __SLOW_DOWN_IO; }} while (0)
 multiline_comment|/* The EEPROM commands include the alway-set leading bit. */
 DECL|macro|EE_WRITE_CMD
 mdefine_line|#define EE_WRITE_CMD&t;(5 &lt;&lt; 6)
@@ -1163,18 +1151,40 @@ mdefine_line|#define EE_READ_CMD&t;&t;(6 &lt;&lt; 6)
 DECL|macro|EE_ERASE_CMD
 mdefine_line|#define EE_ERASE_CMD&t;(7 &lt;&lt; 6)
 macro_line|#ifdef MODULE
+DECL|variable|if_port
+r_static
+r_int
+id|if_port
+op_assign
+id|TULIP_AUTO_PORT
+suffix:semicolon
 DECL|variable|alloc_size
 r_static
-id|u_long
+r_int
 id|alloc_size
 suffix:semicolon
+macro_line|#ifdef TULIP_FULL_DUPLEX
+DECL|variable|full_duplex
+r_static
+r_int
+id|full_duplex
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#else
+DECL|variable|full_duplex
+r_static
+r_int
+id|full_duplex
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef&t;__i386__
+macro_line|#endif
 DECL|macro|tio_write
 mdefine_line|#define&t;tio_write(val, port)&t;outl(val, ioaddr + port)
 DECL|macro|tio_read
 mdefine_line|#define&t;tio_read(port)&t;&t;&t;inl(ioaddr + port)
-macro_line|#endif
 r_static
 r_void
 r_inline
@@ -1228,9 +1238,9 @@ id|CSR13
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;   card_type returns 1 if the card is &squot;etherarray&squot;&n;*/
 r_static
-r_char
-op_star
+r_int
 DECL|function|card_type
 id|card_type
 c_func
@@ -1310,14 +1320,14 @@ id|n
 dot
 id|port_select
 suffix:semicolon
-id|tp-&gt;port_error
+id|tp-&gt;port_fail
 op_assign
 id|cardVendor
 (braket
 id|n
 )braket
 dot
-id|port_error
+id|port_fail
 suffix:semicolon
 id|tp-&gt;signature
 op_assign
@@ -1334,7 +1344,12 @@ id|cardVendor
 id|n
 )braket
 dot
-id|signature
+id|array
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
 suffix:semicolon
 )brace
 r_static
@@ -1465,7 +1480,7 @@ comma
 id|CSR9
 )paren
 suffix:semicolon
-id|eeprom_delay
+id|udelay
 c_func
 (paren
 l_int|100
@@ -1483,7 +1498,7 @@ comma
 id|CSR9
 )paren
 suffix:semicolon
-id|eeprom_delay
+id|udelay
 c_func
 (paren
 l_int|150
@@ -1499,8 +1514,7 @@ comma
 id|CSR9
 )paren
 suffix:semicolon
-multiline_comment|/* Finish EEPROM a clock tick. */
-id|eeprom_delay
+id|udelay
 c_func
 (paren
 l_int|250
@@ -1540,7 +1554,7 @@ comma
 id|CSR9
 )paren
 suffix:semicolon
-id|eeprom_delay
+id|udelay
 c_func
 (paren
 l_int|100
@@ -1579,7 +1593,7 @@ comma
 id|CSR9
 )paren
 suffix:semicolon
-id|eeprom_delay
+id|udelay
 c_func
 (paren
 l_int|100
@@ -1672,11 +1686,11 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* broken */
 )brace
-multiline_comment|/* Is this correct ? */
+multiline_comment|/* Is this required ? */
 r_static
 r_int
-DECL|function|generic21040_error
-id|generic21040_error
+DECL|function|generic21040_fail
+id|generic21040_fail
 c_func
 (paren
 r_struct
@@ -1702,8 +1716,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|generic21041_error
-id|generic21041_error
+DECL|function|generic21041_fail
+id|generic21041_fail
 c_func
 (paren
 r_struct
@@ -1717,14 +1731,36 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-r_return
+id|u32
+id|csr12
+op_assign
 id|tio_read
 c_func
 (paren
 id|CSR12
 )paren
+suffix:semicolon
+r_return
+(paren
+op_logical_neg
+(paren
+id|csr12
+op_amp
+id|TSIAS_CONERROR
+)paren
+op_logical_or
+op_logical_neg
+(paren
+id|csr12
 op_amp
 id|TSIAS_LNKERROR
+)paren
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
+l_int|1
 suffix:semicolon
 )brace
 r_static
@@ -1747,7 +1783,7 @@ suffix:semicolon
 r_const
 r_char
 op_star
-id|if_port
+id|media
 suffix:semicolon
 id|dev-&gt;if_port
 op_and_assign
@@ -1762,26 +1798,25 @@ id|dev-&gt;if_port
 r_case
 id|TULIP_10TP_PORT
 suffix:colon
-id|if_port
+id|media
 op_assign
 l_string|&quot;10baseT&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|TULIP_100TP_PORT
+id|TULIP_AUI_PORT
 suffix:colon
-multiline_comment|/* TULIP_AUI_PORT is the same as TULIP_100TP_PORT. */
-id|if_port
+id|media
 op_assign
-l_string|&quot;100baseT/AUI&quot;
+l_string|&quot;AUI&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 id|TULIP_BNC_PORT
 suffix:colon
-id|if_port
+id|media
 op_assign
 l_string|&quot;BNC&quot;
 suffix:semicolon
@@ -1789,7 +1824,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|if_port
+id|media
 op_assign
 l_string|&quot;unknown type&quot;
 suffix:semicolon
@@ -1803,7 +1838,7 @@ l_string|&quot;%s: enabling %s port.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|if_port
+id|media
 )paren
 suffix:semicolon
 multiline_comment|/* Set the full duplex match frame. */
@@ -1842,6 +1877,48 @@ id|CSR13
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 0
+r_static
+r_void
+id|generic_timer
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+id|u32
+id|count
+)paren
+(brace
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+id|tio_write
+c_func
+(paren
+id|count
+comma
+id|CSR11
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|tio_read
+c_func
+(paren
+id|CSR11
+)paren
+op_amp
+id|TGEPT_COUNT
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_static
 r_void
 DECL|function|generic21041_select
@@ -1874,14 +1951,6 @@ id|tsiag
 op_assign
 id|TSIAG_10TP
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s: enabling &quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1903,12 +1972,6 @@ id|tsiag
 op_assign
 id|TSIAG_AUI
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;AUI&quot;
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -1926,12 +1989,6 @@ id|tsiag
 op_assign
 id|TSIAG_BNC
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;BNC&quot;
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 r_default
@@ -1939,12 +1996,6 @@ suffix:colon
 id|dev-&gt;if_port
 op_assign
 id|TULIP_10TP_PORT
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;10TP&quot;
-)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1961,10 +2012,37 @@ comma
 id|tsiag
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;start
+)paren
 id|printk
 c_func
 (paren
-l_string|&quot; port.&bslash;n&quot;
+l_string|&quot;%s: enabling %s port.&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+(paren
+id|dev-&gt;if_port
+op_eq
+id|TULIP_AUI_PORT
+)paren
+ques
+c_cond
+l_string|&quot;AUI&quot;
+suffix:colon
+(paren
+id|dev-&gt;if_port
+op_eq
+id|TULIP_BNC_PORT
+)paren
+ques
+c_cond
+l_string|&quot;BNC&quot;
+suffix:colon
+l_string|&quot;10TP&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1981,6 +2059,8 @@ id|dev
 )paren
 (brace
 r_int
+id|i
+comma
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -2047,9 +2127,9 @@ comma
 id|dev-&gt;if_port
 ques
 c_cond
-l_string|&quot;100baseTx&quot;
+l_string|&quot;100TX&quot;
 suffix:colon
-l_string|&quot;10baseT&quot;
+l_string|&quot;10TP&quot;
 )paren
 suffix:semicolon
 id|tio_write
@@ -2084,6 +2164,8 @@ comma
 id|CSR7
 )paren
 suffix:semicolon
+id|i
+op_assign
 id|tio_read
 c_func
 (paren
@@ -2103,8 +2185,8 @@ suffix:semicolon
 )brace
 r_static
 r_void
-DECL|function|generic21140_select
-id|generic21140_select
+DECL|function|cogent21140_select
+id|cogent21140_select
 c_func
 (paren
 r_struct
@@ -2179,6 +2261,146 @@ c_cond
 l_string|&quot;100baseTx&quot;
 suffix:colon
 l_string|&quot;10baseT&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Turn on the output drivers */
+id|tio_write
+c_func
+(paren
+l_int|0x0000013F
+comma
+id|CSR12
+)paren
+suffix:semicolon
+id|tio_write
+c_func
+(paren
+(paren
+id|dev-&gt;if_port
+ques
+c_cond
+id|TGEPR_FORCE100
+suffix:colon
+l_int|0
+)paren
+op_or
+(paren
+id|tp-&gt;full_duplex
+ques
+c_cond
+l_int|0
+suffix:colon
+id|TGEPR_HALFDUPLEX
+)paren
+comma
+id|CSR12
+)paren
+suffix:semicolon
+id|tio_write
+c_func
+(paren
+(paren
+id|dev-&gt;if_port
+ques
+c_cond
+id|TCMOD_100TP
+suffix:colon
+id|TCMOD_10TP
+)paren
+op_or
+id|TCMOD_TRxSTART
+op_or
+id|TCMOD_TH128
+op_or
+id|csr6
+comma
+id|CSR6
+)paren
+suffix:semicolon
+)brace
+r_static
+r_void
+DECL|function|generic21140_select
+id|generic21140_select
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+comma
+id|csr6
+suffix:semicolon
+r_struct
+id|tulip_private
+op_star
+id|tp
+op_assign
+(paren
+r_struct
+id|tulip_private
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+id|dev-&gt;if_port
+op_and_assign
+l_int|1
+suffix:semicolon
+id|csr6
+op_assign
+id|tio_read
+c_func
+(paren
+id|CSR6
+)paren
+op_amp
+op_complement
+(paren
+id|TCMOD_10TP
+op_or
+id|TCMOD_100TP
+op_or
+id|TCMOD_TRxSTART
+op_or
+id|TCMOD_SCRM
+)paren
+suffix:semicolon
+multiline_comment|/* Stop the transmit process. */
+id|tio_write
+c_func
+(paren
+id|csr6
+op_or
+id|TCMOD_RxSTART
+comma
+id|CSR6
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;start
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%s: enabling %s port.&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|dev-&gt;if_port
+ques
+c_cond
+l_string|&quot;100TX&quot;
+suffix:colon
+l_string|&quot;10TP&quot;
 )paren
 suffix:semicolon
 id|tio_write
@@ -2271,8 +2493,11 @@ comma
 id|CSR0
 )paren
 suffix:semicolon
-multiline_comment|/*&t;tio_write(TBMOD_RESERVED|TBMOD_RESET, CSR0);*/
-id|SLOW_DOWN_IO
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
 suffix:semicolon
 multiline_comment|/* Deassert reset.  Set 8 longword cache alignment, 8 longword burst.&n;&t;   -&gt; Set 32 longword cache alignment, unlimited longword burst ?&n;&t;   Wait the specified 50 PCI cycles after a reset by initializing&n;&t;   Tx and Rx queues and the address filter list. */
 id|tio_write
@@ -2291,49 +2516,9 @@ comma
 id|CSR0
 )paren
 suffix:semicolon
-multiline_comment|/*&t;tio_write(TBMOD_RESERVED|TBMOD_ALIGN32|TBMOD_BURST0, CSR0);*/
 r_if
 c_cond
 (paren
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_ne
-l_int|NULL
-op_logical_or
-(paren
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-)paren
-op_eq
-l_int|NULL
-op_logical_or
-id|dev-&gt;irq
-op_eq
-l_int|0
-macro_line|#if LINUX_VERSION_CODE &lt; 0x10346
-op_logical_or
-id|request_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-op_amp
-id|tulip_interrupt
-comma
-l_int|0
-comma
-id|tp-&gt;signature
-)paren
-)paren
-(brace
-macro_line|#else
-op_logical_or
 id|request_irq
 c_func
 (paren
@@ -2346,21 +2531,17 @@ op_star
 op_amp
 id|tulip_interrupt
 comma
-l_int|0
+id|SA_SHIRQ
 comma
 id|tp-&gt;signature
 comma
 id|dev
 )paren
 )paren
-(brace
-macro_line|#endif
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;if (tulip_debug &gt; 1)&n;&t;&t;printk(&quot;%s: tulip_open() irq %d.&bslash;n&quot;, dev-&gt;name, dev-&gt;irq);&n;*/
 id|tulip_init_ring
 c_func
 (paren
@@ -2526,9 +2707,17 @@ comma
 id|CSR4
 )paren
 suffix:semicolon
-id|dev-&gt;if_port
+id|dev-&gt;tbusy
 op_assign
-id|TULIP_PORT
+l_int|0
+suffix:semicolon
+id|dev-&gt;interrupt
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;start
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -2575,18 +2764,6 @@ id|TPOLL_TRIGGER
 comma
 id|CSR1
 )paren
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
 suffix:semicolon
 multiline_comment|/* Enable interrupts by setting the interrupt mask. */
 id|tio_write
@@ -2818,6 +2995,18 @@ r_if
 c_cond
 (paren
 id|dev-&gt;tbusy
+op_logical_or
+(paren
+id|tp-&gt;port_fail
+op_logical_and
+id|tp
+op_member_access_from_pointer
+id|port_fail
+c_func
+(paren
+id|dev
+)paren
+)paren
 )paren
 (brace
 r_int
@@ -2844,21 +3033,14 @@ r_if
 c_cond
 (paren
 id|tp-&gt;port_select
-op_logical_and
-(paren
-op_logical_neg
-id|tp-&gt;port_error
-op_logical_or
-id|tp
-op_member_access_from_pointer
-id|port_error
-c_func
-(paren
-id|dev
-)paren
-)paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tp-&gt;port_fix
+)paren
 id|dev-&gt;if_port
 op_increment
 suffix:semicolon
@@ -2917,6 +3099,7 @@ id|CSR15
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifndef&t;__alpha__
 id|printk
 c_func
 (paren
@@ -2928,6 +3111,7 @@ r_int
 id|tp-&gt;rx_ring
 )paren
 suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -2959,6 +3143,7 @@ dot
 id|status
 )paren
 suffix:semicolon
+macro_line|#ifndef&t;__alpha__
 id|printk
 c_func
 (paren
@@ -2970,6 +3155,7 @@ r_int
 id|tp-&gt;tx_ring
 )paren
 suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -3220,6 +3406,10 @@ c_func
 r_int
 id|irq
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -3236,12 +3426,7 @@ r_struct
 id|device
 op_star
 )paren
-(paren
-id|irq2dev_map
-(braket
-id|irq
-)braket
-)paren
+id|dev_id
 suffix:semicolon
 r_struct
 id|tulip_private
@@ -3729,14 +3914,6 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x10346
-id|free_irq
-c_func
-(paren
-id|irq
-)paren
-suffix:semicolon
-macro_line|#else
 id|free_irq
 c_func
 (paren
@@ -3745,7 +3922,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 id|dev-&gt;interrupt
@@ -3912,18 +4088,6 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x10300
-id|skb
-op_assign
-id|alloc_skb
-c_func
-(paren
-id|pkt_len
-comma
-id|GFP_ATOMIC
-)paren
-suffix:semicolon
-macro_line|#else
 id|skb
 op_assign
 id|dev_alloc_skb
@@ -3934,7 +4098,6 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4019,31 +4182,6 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x10300
-id|skb-&gt;len
-op_assign
-id|pkt_len
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|skb-&gt;data
-comma
-id|bus_to_virt
-c_func
-(paren
-id|lp-&gt;rx_ring
-(braket
-id|entry
-)braket
-dot
-id|buffer1
-)paren
-comma
-id|pkt_len
-)paren
-suffix:semicolon
-macro_line|#else
 id|skb_reserve
 c_func
 (paren
@@ -4088,7 +4226,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 id|netif_rx
 c_func
 (paren
@@ -4214,14 +4351,6 @@ id|CSR13
 )paren
 suffix:semicolon
 multiline_comment|/*&t;tio_write(0, CSR8);&t;wake up chip ? */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x10346
-id|free_irq
-c_func
-(paren
-id|dev-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#else
 id|free_irq
 c_func
 (paren
@@ -4230,15 +4359,72 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
 l_int|0
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
+)brace
+r_static
+r_int
+DECL|function|tulip_config
+id|tulip_config
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|ifmap
+op_star
+id|map
+)paren
+(brace
+r_struct
+id|tulip_private
+op_star
+id|tp
+op_assign
+(paren
+r_struct
+id|tulip_private
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|map-&gt;port
+op_eq
+l_int|0xff
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+id|dev-&gt;if_port
+op_assign
+id|map-&gt;port
+suffix:semicolon
+id|tp-&gt;port_fix
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tp-&gt;port_select
+)paren
+id|tp
+op_member_access_from_pointer
+id|port_select
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -4270,28 +4456,13 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
-id|ioaddr
-op_assign
-id|dev-&gt;base_addr
-suffix:semicolon
-id|tp-&gt;stats.rx_missed_errors
-op_add_assign
-id|tio_read
-c_func
-(paren
-id|CSR8
-)paren
-op_amp
-l_int|0xffff
-suffix:semicolon
+multiline_comment|/*&t;short ioaddr = dev-&gt;base_addr;*/
 r_return
 op_amp
 id|tp-&gt;stats
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Set or clear the multicast filter for this adaptor.&n; */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x10300
 DECL|function|set_multicast_list
 r_static
 r_void
@@ -4302,26 +4473,7 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
-macro_line|#else
-r_static
-r_void
-id|set_multicast_list
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-macro_line|#endif
 (brace
 r_int
 id|ioaddr
@@ -4448,14 +4600,19 @@ comma
 id|CSR6
 )paren
 suffix:semicolon
+r_for
+c_loop
+(paren
 id|i
 op_assign
 l_int|0
 suffix:semicolon
-r_while
-c_loop
-(paren
-id|dmi
+id|i
+OL
+id|dev-&gt;mc_count
+suffix:semicolon
+id|i
+op_increment
 )paren
 (brace
 id|eaddrs
@@ -4470,9 +4627,6 @@ suffix:semicolon
 id|dmi
 op_assign
 id|dmi-&gt;next
-suffix:semicolon
-id|i
-op_increment
 suffix:semicolon
 op_star
 id|setup_frm
@@ -4551,107 +4705,6 @@ suffix:semicolon
 multiline_comment|/* Now add this frame to the Tx list. */
 )brace
 )brace
-macro_line|#if 0
-r_static
-r_int
-id|set_mac_address
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_void
-op_star
-id|addr
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-r_struct
-id|sockaddr
-op_star
-id|sa
-op_assign
-(paren
-r_struct
-id|sockaddr
-op_star
-)paren
-id|addr
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;start
-)paren
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Setting MAC address to &quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|ETH_ALEN
-op_minus
-l_int|1
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%2.2x:&quot;
-comma
-id|dev-&gt;dev_addr
-(braket
-id|i
-)braket
-op_assign
-id|sa-&gt;sa_data
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%2.2x.&bslash;n&quot;
-comma
-id|dev-&gt;dev_addr
-(braket
-id|i
-)braket
-op_assign
-id|sa-&gt;sa_data
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|function|tulip_alloc
 r_static
 r_struct
@@ -4915,6 +4968,7 @@ id|device_id
 )paren
 (brace
 multiline_comment|/* See note below on the Znyx 315 etherarray. */
+r_static
 r_int
 r_char
 id|last_phys_addr
@@ -4946,11 +5000,6 @@ op_star
 id|mesgp
 op_assign
 id|detect_mesg
-comma
-op_star
-id|card_name
-op_assign
-l_int|NULL
 suffix:semicolon
 r_struct
 id|tulip_private
@@ -4990,7 +5039,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;tulip_alloc: region already allocated at %#3x.&bslash;n&quot;
+l_string|&quot;tulip_hwinit: region already allocated at %#3x.&bslash;n&quot;
 comma
 id|ioaddr
 )paren
@@ -5035,6 +5084,8 @@ id|CSR6
 )paren
 suffix:semicolon
 multiline_comment|/* Clear the missed-packet counter. */
+id|i
+op_assign
 id|tio_read
 c_func
 (paren
@@ -5068,7 +5119,7 @@ c_func
 (paren
 id|mesgp
 comma
-l_string|&quot;treat as 21040 &quot;
+l_string|&quot; treat as 21040&quot;
 )paren
 suffix:semicolon
 id|device_id
@@ -5151,6 +5202,8 @@ suffix:semicolon
 id|sum
 op_add_assign
 id|value
+op_amp
+l_int|0xFF
 suffix:semicolon
 id|bitsum
 op_and_assign
@@ -5318,11 +5371,6 @@ id|mesgp
 comma
 l_string|&quot;%2.2x:&quot;
 comma
-id|last_phys_addr
-(braket
-id|i
-)braket
-op_assign
 id|dev-&gt;dev_addr
 (braket
 id|i
@@ -5351,8 +5399,10 @@ comma
 id|irq
 )paren
 suffix:semicolon
-id|card_name
-op_assign
+multiline_comment|/* copy ethernet address */
+r_if
+c_cond
+(paren
 id|card_type
 c_func
 (paren
@@ -5375,6 +5425,32 @@ op_amp
 l_int|0xFFFFFF
 )paren
 )paren
+)paren
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|ETH_ALEN
+op_minus
+l_int|1
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|last_phys_addr
+(braket
+id|i
+)braket
+op_assign
+id|dev-&gt;dev_addr
+(braket
+id|i
+)braket
 suffix:semicolon
 multiline_comment|/* We do a request_region() only to register /proc/ioports info. */
 id|request_region
@@ -5395,12 +5471,6 @@ id|dev-&gt;irq
 op_assign
 id|irq
 suffix:semicolon
-macro_line|#ifdef TULIP_FULL_DUPLEX
-id|tp-&gt;full_duplex
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* The Tulip-specific entries in the device structure. */
 id|dev-&gt;open
 op_assign
@@ -5422,18 +5492,16 @@ op_assign
 op_amp
 id|tulip_get_stats
 suffix:semicolon
+id|dev-&gt;set_config
+op_assign
+op_amp
+id|tulip_config
+suffix:semicolon
 id|dev-&gt;set_multicast_list
 op_assign
 op_amp
 id|set_multicast_list
 suffix:semicolon
-macro_line|#if 0
-id|dev-&gt;set_mac_address
-op_assign
-op_amp
-id|set_mac_address
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef&t;MODULE
 id|ether_setup
 c_func
@@ -5441,7 +5509,37 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|if_port
+op_eq
+id|TULIP_AUTO_PORT
+)paren
+id|if_port
+op_assign
+id|TULIP_PORT
+suffix:semicolon
+r_else
+id|tp-&gt;port_fix
+op_assign
+l_int|1
+suffix:semicolon
+id|dev-&gt;if_port
+op_assign
+id|if_port
+suffix:semicolon
+id|tp-&gt;full_duplex
+op_assign
+id|full_duplex
+suffix:semicolon
 macro_line|#else
+macro_line|#ifdef TULIP_FULL_DUPLEX
+id|tp-&gt;full_duplex
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 id|init_etherdev
 c_func
 (paren
@@ -5449,6 +5547,16 @@ id|dev
 comma
 l_int|0
 )paren
+suffix:semicolon
+id|dev-&gt;if_port
+op_assign
+id|TULIP_PORT
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef&t;TULIP_FIX_PORT
+id|tp-&gt;port_fix
+op_assign
+l_int|1
 suffix:semicolon
 macro_line|#endif
 id|printk
@@ -5458,7 +5566,7 @@ l_string|&quot;%s: %s %s&quot;
 comma
 id|dev-&gt;name
 comma
-id|card_name
+id|tp-&gt;signature
 comma
 id|detect_mesg
 )paren
@@ -5496,10 +5604,12 @@ id|dev
 )paren
 (brace
 r_static
-id|u_short
-id|probed_irqs
+r_struct
+id|device
+op_star
+id|tulip_head
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 id|u_char
 id|pci_bus
@@ -5516,7 +5626,7 @@ suffix:semicolon
 id|u_short
 id|pci_command
 suffix:semicolon
-id|u_long
+id|u_int
 id|pci_chips
 (braket
 )braket
@@ -5612,32 +5722,10 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* get IRQ */
-id|pcibios_read_config_byte
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|pci_irq
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|probed_irqs
-op_amp
-(paren
-l_int|1
-op_lshift
-id|pci_irq
-)paren
-)paren
-r_continue
+r_struct
+id|device
+op_star
+id|dp
 suffix:semicolon
 multiline_comment|/* get IO address */
 id|pcibios_read_config_dword
@@ -5659,6 +5747,51 @@ op_and_assign
 op_complement
 l_int|3
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|dp
+op_assign
+id|tulip_head
+suffix:semicolon
+id|dp
+op_ne
+l_int|NULL
+suffix:semicolon
+id|dp
+op_assign
+id|dp-&gt;next
+)paren
+r_if
+c_cond
+(paren
+id|dp-&gt;base_addr
+op_eq
+id|pci_ioaddr
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dp
+)paren
+r_continue
+suffix:semicolon
+multiline_comment|/* get IRQ */
+id|pcibios_read_config_byte
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|PCI_INTERRUPT_LINE
+comma
+op_amp
+id|pci_irq
+)paren
+suffix:semicolon
 macro_line|#ifdef&t;MODULE
 multiline_comment|/* compare requested IRQ/IO address */
 r_if
@@ -5666,19 +5799,11 @@ c_cond
 (paren
 id|dev
 op_logical_and
-id|dev-&gt;irq
-op_logical_and
 id|dev-&gt;base_addr
 op_logical_and
-(paren
-id|dev-&gt;irq
-op_ne
-id|pci_irq
-op_logical_or
 id|dev-&gt;base_addr
 op_ne
 id|pci_ioaddr
-)paren
 )paren
 r_continue
 suffix:semicolon
@@ -5705,22 +5830,20 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|probed_irqs
+id|tulip_head
 )paren
+(brace
 id|printk
 c_func
 (paren
 id|version
 )paren
 suffix:semicolon
-id|probed_irqs
-op_or_assign
-(paren
-l_int|1
-op_lshift
-id|pci_irq
-)paren
+id|tulip_head
+op_assign
+id|dev
 suffix:semicolon
+)brace
 multiline_comment|/* Get and check the bus-master and latency values. */
 id|pcibios_read_config_word
 c_func
@@ -5839,7 +5962,19 @@ suffix:semicolon
 id|num
 op_increment
 suffix:semicolon
-macro_line|#if defined(MODULE) || defined(TULIP_ONLY_ONE)
+macro_line|#ifdef&t;MODULE
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef&t;TULIP_MAX_CARDS
+r_if
+c_cond
+(paren
+id|num
+op_ge
+id|TULIP_MAX_CARDS
+)paren
 r_return
 l_int|0
 suffix:semicolon
@@ -5859,20 +5994,33 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+macro_line|#ifdef __alpha__
+macro_line|#if 1
 DECL|variable|io
 r_static
 r_int
 id|io
 op_assign
-l_int|0xfc00
+l_int|0xb000
 suffix:semicolon
-DECL|variable|irq
+macro_line|#else
+DECL|variable|io
 r_static
 r_int
-id|irq
+id|io
 op_assign
-l_int|9
+l_int|0x10400
 suffix:semicolon
+macro_line|#endif
+macro_line|#else
+DECL|variable|io
+r_static
+r_int
+id|io
+op_assign
+l_int|0xfc80
+suffix:semicolon
+macro_line|#endif
 DECL|variable|mod_dev
 r_static
 r_struct
@@ -5913,7 +6061,7 @@ id|io
 suffix:semicolon
 id|mod_dev-&gt;irq
 op_assign
-id|irq
+l_int|0
 suffix:semicolon
 id|mod_dev-&gt;init
 op_assign

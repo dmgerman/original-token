@@ -2,7 +2,7 @@ multiline_comment|/*&n;&n;  Linux Driver for BusLogic MultiMaster SCSI Host Adap
 DECL|macro|BusLogic_DriverVersion
 mdefine_line|#define BusLogic_DriverVersion&t;&t;&quot;1.3.2&quot;
 DECL|macro|BusLogic_DriverDate
-mdefine_line|#define BusLogic_DriverDate&t;&t;&quot;13 April 1996&quot;
+mdefine_line|#define BusLogic_DriverDate&t;&t;&quot;16 April 1996&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -5311,16 +5311,19 @@ r_return
 l_bool|true
 suffix:semicolon
 )brace
-multiline_comment|/*&n;    Issue the Inquire Devices command for &quot;W&quot; and &quot;C&quot; Series boards or the&n;    Inquire Installed Devices ID 0 to 7 command for &quot;S&quot; and &quot;A&quot; Series boards.&n;    This is necessary to force Synchronous Transfer Negotiation so that the&n;    Inquire Setup Information and Inquire Synchronous Period commands will&n;    return valid data.  The Inquire Devices command is preferable to Inquire&n;    Installed Devices ID 0 to 7 since it only probes Logical Unit 0 of each&n;    Target Device.&n;  */
+multiline_comment|/*&n;    Issue the Inquire Devices command for boards with firmware version 4.25 or&n;    later, or the Inquire Installed Devices ID 0 to 7 command for older boards.&n;    This is necessary to force Synchronous Transfer Negotiation so that the&n;    Inquire Setup Information and Inquire Synchronous Period commands will&n;    return valid data.  The Inquire Devices command is preferable to Inquire&n;    Installed Devices ID 0 to 7 since it only probes Logical Unit 0 of each&n;    Target Device.&n;  */
 r_if
 c_cond
 (paren
+id|strcmp
+c_func
+(paren
 id|HostAdapter-&gt;FirmwareVersion
-(braket
-l_int|0
-)braket
+comma
+l_string|&quot;4.25&quot;
+)paren
 op_ge
-l_char|&squot;4&squot;
+l_int|0
 )paren
 (brace
 r_if
@@ -7440,7 +7443,7 @@ id|HostAdapter-&gt;HostAdapterResetRequested
 op_assign
 l_bool|false
 suffix:semicolon
-id|scsi_mark_host_bus_reset
+id|scsi_mark_host_reset
 c_func
 (paren
 id|HostAdapter-&gt;SCSI_Host
@@ -8862,7 +8865,7 @@ id|Result
 op_assign
 id|SCSI_RESET_SUCCESS
 op_or
-id|SCSI_RESET_BUS_RESET
+id|SCSI_RESET_HOST_RESET
 suffix:semicolon
 multiline_comment|/*&n;    Release exclusive access to Host Adapter.&n;  */
 id|Done
@@ -9413,6 +9416,18 @@ id|ErrorRecoveryStrategy
 op_eq
 id|BusLogic_ErrorRecovery_Default
 )paren
+r_if
+c_cond
+(paren
+id|ResetFlags
+op_amp
+id|SCSI_RESET_SUGGEST_HOST_RESET
+)paren
+id|ErrorRecoveryStrategy
+op_assign
+id|BusLogic_ErrorRecovery_HardReset
+suffix:semicolon
+r_else
 r_if
 c_cond
 (paren

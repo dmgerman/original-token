@@ -204,7 +204,13 @@ comma
 id|X
 c_func
 (paren
-id|scsi_mark_host_bus_reset
+id|scsi_mark_host_reset
+)paren
+comma
+id|X
+c_func
+(paren
+id|scsi_mark_bus_reset
 )paren
 comma
 macro_line|#if defined(CONFIG_PROC_FS)

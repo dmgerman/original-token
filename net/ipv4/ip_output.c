@@ -338,7 +338,6 @@ op_assign
 id|daddr
 suffix:semicolon
 r_return
-op_minus
 id|dev-&gt;hard_header_len
 suffix:semicolon
 )brace

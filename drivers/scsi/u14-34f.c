@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *      u14-34f.c - Low-level driver for UltraStor 14F/34F SCSI host adapters.&n; *&n; *      13 Jun 1995 rev. 2.01 for linux 1.2.10&n; *         HAVE_OLD_UX4F_FIRMWARE should be defined for U34F boards when&n; *         the firmware prom is not the latest one (28008-006).&n; *&n; *      11 Mar 1995 rev. 2.00 for linux 1.2.0&n; *          Fixed a bug which prevented media change detection for removable&n; *          disk drives.&n; *&n; *      23 Feb 1995 rev. 1.18 for linux 1.1.94&n; *          Added a check for scsi_register returning NULL.&n; *&n; *      11 Feb 1995 rev. 1.17 for linux 1.1.91&n; *          U14F qualified to run with 32 sglists.&n; *          Now DEBUG_RESET is disabled by default.&n; *&n; *       9 Feb 1995 rev. 1.16 for linux 1.1.90&n; *          Use host-&gt;wish_block instead of host-&gt;block.&n; *&n; *       8 Feb 1995 rev. 1.15 for linux 1.1.89&n; *          Cleared target_time_out counter while performing a reset.&n; *&n; *      28 Jan 1995 rev. 1.14 for linux 1.1.86&n; *          Added module support.&n; *          Log and do a retry when a disk drive returns a target status&n; *          different from zero on a recovered error.&n; *          Auto detects if U14F boards have an old firmware revision.&n; *          Max number of scatter/gather lists set to 16 for all boards&n; *          (most installation run fine using 33 sglists, while other&n; *          has problems when using more then 16).&n; *&n; *      16 Jan 1995 rev. 1.13 for linux 1.1.81&n; *          Display a message if check_region detects a port address&n; *          already in use.&n; *&n; *      15 Dec 1994 rev. 1.12 for linux 1.1.74&n; *          The host-&gt;block flag is set for all the detected ISA boards.&n; *&n; *      30 Nov 1994 rev. 1.11 for linux 1.1.68&n; *          Redo i/o on target status CHECK_CONDITION for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      14 Nov 1994 rev. 1.10 for linux 1.1.63&n; *&n; *      28 Oct 1994 rev. 1.09 for linux 1.1.58  Final BETA release.&n; *      16 Jul 1994 rev. 1.00 for linux 1.1.29  Initial ALPHA release.&n; *&n; *          This driver is a total replacement of the original UltraStor &n; *          scsi driver, but it supports ONLY the 14F and 34F boards.&n; *          It can be configured in the same kernel in which the original&n; *          ultrastor driver is configured to allow the original U24F&n; *          support.&n; * &n; *          Multiple U14F and/or U34F host adapters are supported.&n; *&n; *      Copyright (C) 1994, 1995 Dario Ballabio (dario@milano.europe.dg.com)&n; *&n; *      WARNING: if your 14/34F board has an old firmware revision (see below)&n; *               you must change &quot;#undef&quot; into &quot;#define&quot; in the following&n; *               statement.&n; */
+multiline_comment|/*&n; *      u14-34f.c - Low-level driver for UltraStor 14F/34F SCSI host adapters.&n; *&n; *      16 Apr 1996 rev. 2.10 for linux 1.3.90&n; *          New argument &quot;reset_flags&quot; to the reset routine.&n; *&n; *      21 Jul 1995 rev. 2.02 for linux 1.3.11&n; *          Fixed Data Transfer Direction for some SCSI commands.&n; *&n; *      13 Jun 1995 rev. 2.01 for linux 1.2.10&n; *          HAVE_OLD_UX4F_FIRMWARE should be defined for U34F boards when&n; *          the firmware prom is not the latest one (28008-006).&n; *&n; *      11 Mar 1995 rev. 2.00 for linux 1.2.0&n; *          Fixed a bug which prevented media change detection for removable&n; *          disk drives.&n; *&n; *      23 Feb 1995 rev. 1.18 for linux 1.1.94&n; *          Added a check for scsi_register returning NULL.&n; *&n; *      11 Feb 1995 rev. 1.17 for linux 1.1.91&n; *          U14F qualified to run with 32 sglists.&n; *          Now DEBUG_RESET is disabled by default.&n; *&n; *       9 Feb 1995 rev. 1.16 for linux 1.1.90&n; *          Use host-&gt;wish_block instead of host-&gt;block.&n; *&n; *       8 Feb 1995 rev. 1.15 for linux 1.1.89&n; *          Cleared target_time_out counter while performing a reset.&n; *&n; *      28 Jan 1995 rev. 1.14 for linux 1.1.86&n; *          Added module support.&n; *          Log and do a retry when a disk drive returns a target status&n; *          different from zero on a recovered error.&n; *          Auto detects if U14F boards have an old firmware revision.&n; *          Max number of scatter/gather lists set to 16 for all boards&n; *          (most installation run fine using 33 sglists, while other&n; *          has problems when using more then 16).&n; *&n; *      16 Jan 1995 rev. 1.13 for linux 1.1.81&n; *          Display a message if check_region detects a port address&n; *          already in use.&n; *&n; *      15 Dec 1994 rev. 1.12 for linux 1.1.74&n; *          The host-&gt;block flag is set for all the detected ISA boards.&n; *&n; *      30 Nov 1994 rev. 1.11 for linux 1.1.68&n; *          Redo i/o on target status CHECK_CONDITION for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      14 Nov 1994 rev. 1.10 for linux 1.1.63&n; *&n; *      28 Oct 1994 rev. 1.09 for linux 1.1.58  Final BETA release.&n; *      16 Jul 1994 rev. 1.00 for linux 1.1.29  Initial ALPHA release.&n; *&n; *          This driver is a total replacement of the original UltraStor &n; *          scsi driver, but it supports ONLY the 14F and 34F boards.&n; *          It can be configured in the same kernel in which the original&n; *          ultrastor driver is configured to allow the original U24F&n; *          support.&n; * &n; *          Multiple U14F and/or U34F host adapters are supported.&n; *&n; *  Copyright (C) 1994, 1995, 1996 Dario Ballabio (dario@milano.europe.dg.com)&n; *&n; *      WARNING: if your 14/34F board has an old firmware revision (see below)&n; *               you must change &quot;#undef&quot; into &quot;#define&quot; in the following&n; *               statement.&n; */
 DECL|macro|HAVE_OLD_UX4F_FIRMWARE
 macro_line|#undef HAVE_OLD_UX4F_FIRMWARE
 multiline_comment|/*&n; *  The UltraStor 14F, 24F, and 34F are a family of intelligent, high&n; *  performance SCSI-2 host adapters.&n; *  Here is the scoop on the various models:&n; *&n; *  14F - ISA first-party DMA HA with floppy support and WD1003 emulation.&n; *  24F - EISA Bus Master HA with floppy support and WD1003 emulation.&n; *  34F - VESA Local-Bus Bus Master HA (no WD1003 emulation).&n; *&n; *  This code has been tested with up to two U14F boards, using both &n; *  firmware 28004-005/38004-004 (BIOS rev. 2.00) and the latest firmware&n; *  28004-006/38004-005 (BIOS rev. 2.01). &n; *&n; *  The latest firmware is required in order to get reliable operations when &n; *  clustering is enabled. ENABLE_CLUSTERING provides a performance increase&n; *  up to 50% on sequential access.&n; *&n; *  Since the Scsi_Host_Template structure is shared among all 14F and 34F,&n; *  the last setting of use_clustering is in effect for all of these boards.&n; *&n; *  Here a sample configuration using two U14F boards:&n; *&n; U14F0: PORT 0x330, BIOS 0xc8000, IRQ 11, DMA 5, SG 32, Mbox 16, CmdLun 2, C1.&n; U14F1: PORT 0x340, BIOS 0x00000, IRQ 10, DMA 6, SG 32, Mbox 16, CmdLun 2, C1.&n; *&n; *  The boot controller must have its BIOS enabled, while other boards can&n; *  have their BIOS disabled, or enabled to an higher address.&n; *  Boards are named Ux4F0, Ux4F1..., according to the port address order in&n; *  the io_port[] array.&n; *  &n; *  The following facts are based on real testing results (not on&n; *  documentation) on the above U14F board.&n; *  &n; *  - The U14F board should be jumpered for bus on time less or equal to 7 &n; *    microseconds, while the default is 11 microseconds. This is order to &n; *    get acceptable performance while using floppy drive and hard disk &n; *    together. The jumpering for 7 microseconds is: JP13 pin 15-16, &n; *    JP14 pin 7-8 and pin 9-10.&n; *    The reduction has a little impact on scsi performance.&n; *  &n; *  - If scsi bus length exceeds 3m., the scsi bus speed needs to be reduced&n; *    from 10Mhz to 5Mhz (do this by inserting a jumper on JP13 pin 7-8).&n; *&n; *  - If U14F on board firmware is older than 28004-006/38004-005,&n; *    the U14F board is unable to provide reliable operations if the scsi &n; *    request length exceeds 16Kbyte. When this length is exceeded the&n; *    behavior is: &n; *    - adapter_status equal 0x96 or 0xa3 or 0x93 or 0x94;&n; *    - adapter_status equal 0 and target_status equal 2 on for all targets&n; *      in the next operation following the reset.&n; *    This sequence takes a long time (&gt;3 seconds), so in the meantime&n; *    the SD_TIMEOUT in sd.c could expire giving rise to scsi aborts&n; *    (SD_TIMEOUT has been increased from 3 to 6 seconds in 1.1.31).&n; *    Because of this I had to DISABLE_CLUSTERING and to work around the&n; *    bus reset in the interrupt service routine, returning DID_BUS_BUSY&n; *    so that the operations are retried without complains from the scsi.c&n; *    code.&n; *    Any reset of the scsi bus is going to kill tape operations, since&n; *    no retry is allowed for tapes. Bus resets are more likely when the&n; *    scsi bus is under heavy load.&n; *    Requests using scatter/gather have a maximum length of 16 x 1024 bytes &n; *    when DISABLE_CLUSTERING is in effect, but unscattered requests could be&n; *    larger than 16Kbyte.&n; *&n; *    The new firmware has fixed all the above problems.&n; *&n; *  For U34F boards the latest bios prom is 38008-002 (BIOS rev. 2.01),&n; *  the latest firmware prom is 28008-006. Older firmware 28008-005 has&n; *  problems when using more then 16 scatter/gather lists.&n; *&n; *  In order to support multiple ISA boards in a reliable way,&n; *  the driver sets host-&gt;wish_block = TRUE for all ISA boards.&n; */
@@ -154,6 +154,8 @@ DECL|macro|ASOK
 mdefine_line|#define ASOK              0x00
 DECL|macro|ASST
 mdefine_line|#define ASST              0x91
+DECL|macro|ARRAY_SIZE
+mdefine_line|#define ARRAY_SIZE(arr) (sizeof (arr) / sizeof (arr)[0])
 DECL|macro|PACKED
 mdefine_line|#define PACKED          __attribute__((packed))
 multiline_comment|/* MailBox SCSI Command Packet */
@@ -751,13 +753,13 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|jiffies
-OL
 (paren
+id|jiffies
+op_minus
 id|time
-op_plus
-l_int|100
 )paren
+OL
+id|HZ
 op_logical_and
 id|limit
 op_increment
@@ -2103,7 +2105,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;UltraStor 14F/34F: Copyright (C) 1994, 1995 Dario Ballabio.&bslash;n&quot;
+l_string|&quot;UltraStor 14F/34F: Copyright (C) 1994, 1995, 1996 Dario Ballabio.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -2263,6 +2265,82 @@ r_struct
 id|mscp
 op_star
 id|cpp
+suffix:semicolon
+r_static
+r_const
+r_int
+r_char
+id|data_out_cmds
+(braket
+)braket
+op_assign
+(brace
+l_int|0x0a
+comma
+l_int|0x2a
+comma
+l_int|0x15
+comma
+l_int|0x55
+comma
+l_int|0x04
+comma
+l_int|0x07
+comma
+l_int|0x0b
+comma
+l_int|0x10
+comma
+l_int|0x16
+comma
+l_int|0x18
+comma
+l_int|0x1d
+comma
+l_int|0x24
+comma
+l_int|0x2b
+comma
+l_int|0x2e
+comma
+l_int|0x30
+comma
+l_int|0x31
+comma
+l_int|0x32
+comma
+l_int|0x38
+comma
+l_int|0x39
+comma
+l_int|0x3a
+comma
+l_int|0x3b
+comma
+l_int|0x3d
+comma
+l_int|0x3f
+comma
+l_int|0x40
+comma
+l_int|0x41
+comma
+l_int|0x4c
+comma
+l_int|0xaa
+comma
+l_int|0xae
+comma
+l_int|0xb0
+comma
+l_int|0xb1
+comma
+l_int|0xb2
+comma
+l_int|0xb6
+comma
+l_int|0xea
+)brace
 suffix:semicolon
 id|save_flags
 c_func
@@ -2448,6 +2526,8 @@ id|u14_34f_reset
 c_func
 (paren
 id|SCpnt
+comma
+id|SCSI_RESET_SUGGEST_BUS_RESET
 )paren
 op_eq
 id|SCSI_RESET_SUCCESS
@@ -2574,13 +2654,52 @@ comma
 id|SCpnt-&gt;pid
 )paren
 suffix:semicolon
+id|cpp-&gt;xdir
+op_assign
+id|DTD_IN
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|k
+op_assign
+l_int|0
+suffix:semicolon
+id|k
+OL
+id|ARRAY_SIZE
+c_func
+(paren
+id|data_out_cmds
+)paren
+suffix:semicolon
+id|k
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|SCpnt-&gt;cmnd
+(braket
+l_int|0
+)braket
+op_eq
+id|data_out_cmds
+(braket
+id|k
+)braket
+)paren
+(brace
+id|cpp-&gt;xdir
+op_assign
+id|DTD_OUT
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|cpp-&gt;opcode
 op_assign
 id|OP_SCSI
-suffix:semicolon
-id|cpp-&gt;xdir
-op_assign
-id|DTD_SCSI
 suffix:semicolon
 id|cpp-&gt;target
 op_assign
@@ -3176,6 +3295,10 @@ c_func
 id|Scsi_Cmnd
 op_star
 id|SCarg
+comma
+r_int
+r_int
+id|reset_flags
 )paren
 (brace
 r_int
@@ -3230,7 +3353,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: reset, enter, target %d, pid %ld.&bslash;n&quot;
+l_string|&quot;%s: reset, enter, target %d, pid %ld, reset_flags %u.&bslash;n&quot;
 comma
 id|BN
 c_func
@@ -3241,6 +3364,8 @@ comma
 id|SCarg-&gt;target
 comma
 id|SCarg-&gt;pid
+comma
+id|reset_flags
 )paren
 suffix:semicolon
 r_if
@@ -3712,13 +3837,13 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|jiffies
-OL
 (paren
+id|jiffies
+op_minus
 id|time
-op_plus
-l_int|100
 )paren
+OL
+id|HZ
 op_logical_and
 id|limit
 op_increment

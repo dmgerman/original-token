@@ -3074,7 +3074,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;%d (%s) %c %d %d %d %d %d %lu %lu &bslash;&n;%lu %lu %lu %ld %ld %ld %ld %ld %ld %lu %lu %ld %lu %lu %lu %lu %lu %lu %lu %lu %lu &bslash;&n;%lu %lu %lu %lu&bslash;n&quot;
+l_string|&quot;%d (%s) %c %d %d %d %d %d %lu %lu &bslash;&n;%lu %lu %lu %lu %lu %ld %ld %ld %ld %ld %ld %lu %lu %ld %lu %lu %lu %lu %lu &bslash;&n;%lu %lu %lu %lu %lu %lu %lu %lu&bslash;n&quot;
 comma
 id|pid
 comma
@@ -3185,6 +3185,10 @@ comma
 id|sigcatch
 comma
 id|wchan
+comma
+id|tsk-&gt;nswap
+comma
+id|tsk-&gt;cnswap
 )paren
 suffix:semicolon
 )brace

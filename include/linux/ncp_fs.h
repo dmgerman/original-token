@@ -91,7 +91,7 @@ multiline_comment|/* The readdir cache size controls how many directory entries 
 DECL|macro|NCP_READDIR_CACHE_SIZE
 mdefine_line|#define NCP_READDIR_CACHE_SIZE        64
 DECL|macro|NCP_MAX_RPC_TIMEOUT
-mdefine_line|#define NCP_MAX_RPC_TIMEOUT (60) /* 6 seconds */
+mdefine_line|#define NCP_MAX_RPC_TIMEOUT (6*HZ)
 multiline_comment|/* Guess, what 0x564c is :-) */
 DECL|macro|NCP_SUPER_MAGIC
 mdefine_line|#define NCP_SUPER_MAGIC  0x564c

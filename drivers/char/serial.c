@@ -1,4 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/char/serial.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92.  Now&n; *  much more extensible to support other serial cards based on the&n; *  16450/16550A UART&squot;s.  Added support for the AST FourPort and the&n; *  Accent Async board.  &n; *&n; *  set_serial_info fixed to set the flags, custom divisor, and uart&n; * &t;type fields.  Fix suggested by Michael K. Johnson 12/12/92.&n; *&n; *  TIOCMIWAIT, TIOCGICOUNT by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; * This module exports the following rs232 io functions:&n; *&n; *&t;int rs_init(void);&n; * &t;int rs_open(struct tty_struct * tty, struct file * filp)&n; */
+multiline_comment|/*&n; *  linux/drivers/char/serial.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92.  Now&n; *  much more extensible to support other serial cards based on the&n; *  16450/16550A UART&squot;s.  Added support for the AST FourPort and the&n; *  Accent Async board.  &n; *&n; *  set_serial_info fixed to set the flags, custom divisor, and uart&n; * &t;type fields.  Fix suggested by Michael K. Johnson 12/12/92.&n; *&n; *  11/95: TIOCMIWAIT, TIOCGICOUNT by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  03/96: Modularised by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; * This module exports the following rs232 io functions:&n; *&n; *&t;int rs_init(void);&n; * &t;int rs_open(struct tty_struct * tty, struct file * filp)&n; */
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -19,6 +20,22 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
+DECL|variable|serial_name
+r_static
+r_char
+op_star
+id|serial_name
+op_assign
+l_string|&quot;Serial driver&quot;
+suffix:semicolon
+DECL|variable|serial_version
+r_static
+r_char
+op_star
+id|serial_version
+op_assign
+l_string|&quot;4.12&quot;
+suffix:semicolon
 DECL|variable|tq_serial
 id|DECLARE_TASK_QUEUE
 c_func
@@ -68,6 +85,13 @@ DECL|macro|IRQ_T
 mdefine_line|#define IRQ_T(info) ((info-&gt;flags &amp; ASYNC_SHARE_IRQ) ? SA_SHIRQ : SA_INTERRUPT)
 DECL|macro|_INLINE_
 mdefine_line|#define _INLINE_ inline
+macro_line|#if defined(MODULE) &amp;&amp; defined(SERIAL_DEBUG_MCOUNT)
+DECL|macro|DBG_CNT
+mdefine_line|#define DBG_CNT(s) printk(&quot;(%s): [%x] refc=%d, serc=%d, ttyc=%d -&gt; %s&bslash;n&quot;, &bslash;&n; kdevname(tty-&gt;device), (info-&gt;flags), serial_refcount,info-&gt;count,tty-&gt;count,s)
+macro_line|#else
+DECL|macro|DBG_CNT
+mdefine_line|#define DBG_CNT(s)
+macro_line|#endif
 multiline_comment|/*&n; * IRQ_timeout&t;&t;- How long the timeout should be for each IRQ&n; * &t;&t;&t;&t;should be after the IRQ has been active.&n; */
 DECL|variable|IRQ_ports
 r_static
@@ -4512,6 +4536,14 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Disable interrupts */
+multiline_comment|/*&n;&t; * clear delta_msr_wait queue to avoid mem leaks: we may free the irq&n;&t; * here so the queue might never be waken up&n;&t; */
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|info-&gt;delta_msr_wait
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * First unlink the serial port from the IRQ chain...&n;&t; */
 r_if
 c_cond
@@ -9109,6 +9141,30 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|cnow.rng
+op_eq
+id|cprev.rng
+op_logical_and
+id|cnow.dsr
+op_eq
+id|cprev.dsr
+op_logical_and
+id|cnow.dcd
+op_eq
+id|cprev.dcd
+op_logical_and
+id|cnow.cts
+op_eq
+id|cprev.cts
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+multiline_comment|/* no change =&gt; error */
+r_if
+c_cond
+(paren
 (paren
 (paren
 id|arg
@@ -9457,6 +9513,14 @@ id|filp
 )paren
 )paren
 (brace
+id|DBG_CNT
+c_func
+(paren
+l_string|&quot;before DEC-hung&quot;
+)paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -9539,6 +9603,14 @@ c_cond
 id|info-&gt;count
 )paren
 (brace
+id|DBG_CNT
+c_func
+(paren
+l_string|&quot;before DEC-2&quot;
+)paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -9723,55 +9795,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tty-&gt;ldisc.num
-op_ne
-id|ldiscs
-(braket
-id|N_TTY
-)braket
-dot
-id|num
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|tty-&gt;ldisc.close
-)paren
-(paren
-id|tty-&gt;ldisc.close
-)paren
-(paren
-id|tty
-)paren
-suffix:semicolon
-id|tty-&gt;ldisc
-op_assign
-id|ldiscs
-(braket
-id|N_TTY
-)braket
-suffix:semicolon
-id|tty-&gt;termios-&gt;c_line
-op_assign
-id|N_TTY
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tty-&gt;ldisc.open
-)paren
-(paren
-id|tty-&gt;ldisc.open
-)paren
-(paren
-id|tty
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 id|info-&gt;blocked_open
 )paren
 (brace
@@ -9822,6 +9845,8 @@ c_func
 op_amp
 id|info-&gt;close_wait
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|restore_flags
 c_func
@@ -10609,6 +10634,8 @@ id|retval
 r_return
 id|retval
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|retval
 op_assign
 id|block_til_ready
@@ -10718,7 +10745,11 @@ r_void
 id|printk
 c_func
 (paren
-l_string|&quot;Serial driver version 4.11a with&quot;
+l_string|&quot;%s version %s with&quot;
+comma
+id|serial_name
+comma
+id|serial_version
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_HUB6
@@ -11759,6 +11790,47 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+r_int
+id|register_serial
+c_func
+(paren
+r_struct
+id|serial_struct
+op_star
+id|req
+)paren
+suffix:semicolon
+r_void
+id|unregister_serial
+c_func
+(paren
+r_int
+id|line
+)paren
+suffix:semicolon
+DECL|variable|serial_syms
+r_static
+r_struct
+id|symbol_table
+id|serial_syms
+op_assign
+(brace
+macro_line|#include &lt;linux/symtab_begin.h&gt;
+id|X
+c_func
+(paren
+id|register_serial
+)paren
+comma
+id|X
+c_func
+(paren
+id|unregister_serial
+)paren
+comma
+macro_line|#include &lt;linux/symtab_end.h&gt;
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * The serial driver boot-time initialization code!&n; */
 DECL|function|rs_init
 r_int
@@ -12315,6 +12387,13 @@ r_break
 suffix:semicolon
 )brace
 )brace
+id|register_symtab
+c_func
+(paren
+op_amp
+id|serial_syms
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -12687,4 +12766,128 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|rs_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|e1
+comma
+id|e2
+suffix:semicolon
+multiline_comment|/* printk(&quot;Unloading %s: version %s&bslash;n&quot;, serial_name, serial_version); */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|timer_active
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+id|RS_TIMER
+)paren
+suffix:semicolon
+id|timer_table
+(braket
+id|RS_TIMER
+)braket
+dot
+id|fn
+op_assign
+l_int|NULL
+suffix:semicolon
+id|timer_table
+(braket
+id|RS_TIMER
+)braket
+dot
+id|expires
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|e1
+op_assign
+id|tty_unregister_driver
+c_func
+(paren
+op_amp
+id|serial_driver
+)paren
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;SERIAL: failed to unregister serial driver (%d)&bslash;n&quot;
+comma
+id|e1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|e2
+op_assign
+id|tty_unregister_driver
+c_func
+(paren
+op_amp
+id|callout_driver
+)paren
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;SERIAL: failed to unregister callout driver (%d)&bslash;n&quot;
+comma
+id|e2
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* MODULE */
 eof
