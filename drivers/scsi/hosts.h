@@ -556,7 +556,7 @@ id|Scsi_Device
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * We should ensure that this is aligned, both for better performance&n;     * and also because some compilers (m68k) don&squot;t automatically force&n;     * alignment to a 4-byte boundary.&n;     */
+multiline_comment|/*&n;     * We should ensure that this is aligned, both for better performance&n;     * and also because some compilers (m68k) don&squot;t automatically force&n;     * alignment to a long boundary.&n;     */
 DECL|member|hostdata
 r_int
 r_int

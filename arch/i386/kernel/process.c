@@ -1056,12 +1056,12 @@ multiline_comment|/* Load the data segment registers, and thus the descriptors r
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;movw $0x0010,%%ax&bslash;n&quot;
-l_string|&quot;&bslash;tmovw %%ax,%%ds&bslash;n&quot;
-l_string|&quot;&bslash;tmovw %%ax,%%es&bslash;n&quot;
-l_string|&quot;&bslash;tmovw %%ax,%%fs&bslash;n&quot;
-l_string|&quot;&bslash;tmovw %%ax,%%gs&bslash;n&quot;
-l_string|&quot;&bslash;tmovw %%ax,%%ss&quot;
+l_string|&quot;movl $0x0010,%%eax&bslash;n&quot;
+l_string|&quot;&bslash;tmovl %%ax,%%ds&bslash;n&quot;
+l_string|&quot;&bslash;tmovl %%ax,%%es&bslash;n&quot;
+l_string|&quot;&bslash;tmovl %%ax,%%fs&bslash;n&quot;
+l_string|&quot;&bslash;tmovl %%ax,%%gs&bslash;n&quot;
+l_string|&quot;&bslash;tmovl %%ax,%%ss&quot;
 suffix:colon
 suffix:colon
 suffix:colon
@@ -1242,7 +1242,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;mov %w0,%%fs ; mov %w0,%%gs ; lldt %w0&quot;
+l_string|&quot;movl %w0,%%fs ; movl %w0,%%gs ; lldt %w0&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
@@ -2013,7 +2013,7 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;mov %%fs,%0&quot;
+l_string|&quot;movl %%fs,%0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -2024,7 +2024,7 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;mov %%gs,%0&quot;
+l_string|&quot;movl %%gs,%0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren

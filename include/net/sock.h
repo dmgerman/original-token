@@ -453,7 +453,17 @@ DECL|member|packets_out
 id|__u32
 id|packets_out
 suffix:semicolon
-multiline_comment|/* Packets which are &quot;in flight&quot; */
+multiline_comment|/* Packets which are &quot;in flight&quot;&t;*/
+DECL|member|fackets_out
+id|__u32
+id|fackets_out
+suffix:semicolon
+multiline_comment|/* Non-retrans SACK&squot;d packets&t;&t;*/
+DECL|member|retrans_out
+id|__u32
+id|retrans_out
+suffix:semicolon
+multiline_comment|/* Fast-retransmitted packets out&t;*/
 DECL|member|high_seq
 id|__u32
 id|high_seq

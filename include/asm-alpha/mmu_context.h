@@ -14,21 +14,40 @@ mdefine_line|#define MAX_ASN 63
 DECL|macro|BROKEN_ASN
 mdefine_line|#define BROKEN_ASN 1
 macro_line|#endif
+macro_line|#ifdef __SMP__
+DECL|macro|WIDTH_THIS_PROCESSOR
+mdefine_line|#define WIDTH_THIS_PROCESSOR&t;5
+multiline_comment|/*&n; * last_asn[processor]:&n; * 63                                            0&n; * +-------------+----------------+--------------+&n; * | asn version | this processor | hardware asn |&n; * +-------------+----------------+--------------+&n; */
+r_extern
+r_int
+r_int
+id|last_asn
+(braket
+)braket
+suffix:semicolon
+DECL|macro|asn_cache
+mdefine_line|#define asn_cache last_asn[p-&gt;processor]
+macro_line|#else
+DECL|macro|WIDTH_THIS_PROCESSOR
+mdefine_line|#define WIDTH_THIS_PROCESSOR&t;0
+multiline_comment|/*&n; * asn_cache:&n; * 63                                            0&n; * +------------------------------+--------------+&n; * |         asn version          | hardware asn |&n; * +------------------------------+--------------+&n; */
 r_extern
 r_int
 r_int
 id|asn_cache
 suffix:semicolon
-DECL|macro|ASN_VERSION_SHIFT
-mdefine_line|#define ASN_VERSION_SHIFT 16
-DECL|macro|ASN_VERSION_MASK
-mdefine_line|#define ASN_VERSION_MASK ((~0UL) &lt;&lt; ASN_VERSION_SHIFT)
+macro_line|#endif /* __SMP__ */
+DECL|macro|WIDTH_HARDWARE_ASN
+mdefine_line|#define WIDTH_HARDWARE_ASN&t;7
 DECL|macro|ASN_FIRST_VERSION
-mdefine_line|#define ASN_FIRST_VERSION (1UL &lt;&lt; ASN_VERSION_SHIFT)
-DECL|function|get_new_mmu_context
+mdefine_line|#define ASN_FIRST_VERSION (1UL &lt;&lt; (WIDTH_THIS_PROCESSOR + WIDTH_HARDWARE_ASN))
+DECL|macro|HARDWARE_ASN_MASK
+mdefine_line|#define HARDWARE_ASN_MASK ((1UL &lt;&lt; WIDTH_HARDWARE_ASN) - 1)
+multiline_comment|/*&n; * NOTE! The way this is set up, the high bits of the &quot;asn_cache&quot; (and&n; * the &quot;mm-&gt;context&quot;) are the ASN _version_ code. A version of 0 is&n; * always considered invalid, so to invalidate another process you only&n; * need to do &quot;p-&gt;mm-&gt;context = 0&quot;.&n; *&n; * If we need more ASN&squot;s than the processor has, we invalidate the old&n; * user TLB&squot;s (tbiap()) and start a new ASN version. That will automatically&n; * force a new asn for any other processes the next time they want to&n; * run.&n; */
 r_extern
 r_inline
 r_void
+DECL|function|get_new_mmu_context
 id|get_new_mmu_context
 c_func
 (paren
@@ -41,27 +60,30 @@ r_struct
 id|mm_struct
 op_star
 id|mm
-comma
+)paren
+(brace
 r_int
 r_int
 id|asn
-)paren
-(brace
-multiline_comment|/* check if it&squot;s legal.. */
+op_assign
+id|asn_cache
+suffix:semicolon
 r_if
 c_cond
 (paren
 (paren
 id|asn
 op_amp
-op_complement
-id|ASN_VERSION_MASK
+id|HARDWARE_ASN_MASK
 )paren
-OG
+OL
 id|MAX_ASN
 )paren
+op_increment
+id|asn
+suffix:semicolon
+r_else
 (brace
-multiline_comment|/* start a new version, invalidate all old asn&squot;s */
 id|tbiap
 c_func
 (paren
@@ -77,27 +99,16 @@ op_assign
 (paren
 id|asn
 op_amp
-id|ASN_VERSION_MASK
+op_complement
+id|HARDWARE_ASN_MASK
 )paren
 op_plus
-id|ASN_FIRST_VERSION
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|asn
-)paren
-id|asn
-op_assign
 id|ASN_FIRST_VERSION
 suffix:semicolon
 )brace
 id|asn_cache
 op_assign
 id|asn
-op_plus
-l_int|1
 suffix:semicolon
 id|mm-&gt;context
 op_assign
@@ -108,12 +119,10 @@ id|p-&gt;tss.asn
 op_assign
 id|asn
 op_amp
-op_complement
-id|ASN_VERSION_MASK
+id|HARDWARE_ASN_MASK
 suffix:semicolon
 multiline_comment|/* just asn */
 )brace
-multiline_comment|/*&n; * NOTE! The way this is set up, the high bits of the &quot;asn_cache&quot; (and&n; * the &quot;mm-&gt;context&quot;) are the ASN _version_ code. A version of 0 is&n; * always considered invalid, so to invalidate another process you only&n; * need to do &quot;p-&gt;mm-&gt;context = 0&quot;.&n; *&n; * If we need more ASN&squot;s than the processor has, we invalidate the old&n; * user TLB&squot;s (tbiap()) and start a new ASN version. That will automatically&n; * force a new asn for any other processes the next time they want to&n; * run.&n; */
 DECL|function|get_mmu_context
 r_extern
 r_inline
@@ -157,7 +166,8 @@ op_xor
 id|asn
 )paren
 op_amp
-id|ASN_VERSION_MASK
+op_complement
+id|HARDWARE_ASN_MASK
 )paren
 id|get_new_mmu_context
 c_func
@@ -165,8 +175,6 @@ c_func
 id|p
 comma
 id|mm
-comma
-id|asn
 )paren
 suffix:semicolon
 )brace

@@ -109,9 +109,9 @@ mdefine_line|#define  PCI_BASE_ADDRESS_MEM_TYPE_64&t;0x04&t;/* 64 bit address */
 DECL|macro|PCI_BASE_ADDRESS_MEM_PREFETCH
 mdefine_line|#define  PCI_BASE_ADDRESS_MEM_PREFETCH&t;0x08&t;/* prefetchable? */
 DECL|macro|PCI_BASE_ADDRESS_MEM_MASK
-mdefine_line|#define  PCI_BASE_ADDRESS_MEM_MASK&t;(~0x0f)
+mdefine_line|#define  PCI_BASE_ADDRESS_MEM_MASK&t;(~0x0fUL)
 DECL|macro|PCI_BASE_ADDRESS_IO_MASK
-mdefine_line|#define  PCI_BASE_ADDRESS_IO_MASK&t;(~0x03)
+mdefine_line|#define  PCI_BASE_ADDRESS_IO_MASK&t;(~0x03UL)
 multiline_comment|/* bit 1 is reserved if address_space = 1 */
 multiline_comment|/* Header type 0 (normal devices) */
 DECL|macro|PCI_CARDBUS_CIS
@@ -791,7 +791,8 @@ DECL|macro|PCI_VENDOR_ID_CONTAQ
 mdefine_line|#define PCI_VENDOR_ID_CONTAQ&t;&t;0x1080
 DECL|macro|PCI_DEVICE_ID_CONTAQ_82C599
 mdefine_line|#define PCI_DEVICE_ID_CONTAQ_82C599&t;0x0600
-multiline_comment|/* ??? Alpha SX164 has reference to device nr 0xc693 as a CYPRESS bridge.  */
+DECL|macro|PCI_DEVICE_ID_CONTAQ_82C693
+mdefine_line|#define PCI_DEVICE_ID_CONTAQ_82C693&t;0xC693
 DECL|macro|PCI_VENDOR_ID_FOREX
 mdefine_line|#define PCI_VENDOR_ID_FOREX&t;&t;0x1083
 DECL|macro|PCI_VENDOR_ID_OLICOM
@@ -1481,6 +1482,9 @@ DECL|macro|PCI_SLOT
 mdefine_line|#define PCI_SLOT(devfn)&t;&t;(((devfn) &gt;&gt; 3) &amp; 0x1f)
 DECL|macro|PCI_FUNC
 mdefine_line|#define PCI_FUNC(devfn)&t;&t;((devfn) &amp; 0x07)
+multiline_comment|/* create an index into the pci_dev base_address[] array from an offset */
+DECL|macro|PCI_BASE_INDEX
+mdefine_line|#define PCI_BASE_INDEX(o) (((o)-PCI_BASE_ADDRESS_0)&gt;&gt;2)
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * There is one pci_dev structure for each slot-number/function-number&n; * combination:&n; */
 DECL|struct|pci_dev
@@ -1646,6 +1650,21 @@ op_star
 id|pci_devices
 suffix:semicolon
 multiline_comment|/* list of all devices */
+r_extern
+r_struct
+id|pci_dev
+op_star
+id|pci_find_dev
+(paren
+r_int
+r_char
+id|bus
+comma
+r_int
+r_char
+id|devfn
+)paren
+suffix:semicolon
 r_extern
 r_int
 r_int

@@ -39,6 +39,12 @@ c_func
 r_void
 )paren
 suffix:semicolon
+DECL|variable|original_pcb_ptr
+r_struct
+id|thread_struct
+op_star
+id|original_pcb_ptr
+suffix:semicolon
 multiline_comment|/*&n; * BAD_PAGE is the page that is used for page faults when linux&n; * is out-of-memory. Older versions of linux just did a&n; * do_exit(), but using this instead means there is less risk&n; * for a process dying in kernel mode, possibly leaving an inode&n; * unused etc..&n; *&n; * BAD_PAGETABLE is the accompanying page-table: it is initialized&n; * to point to BAD_PAGE entries.&n; *&n; * ZERO_PAGE is a special page that is used for zero-initialized&n; * data and COW.&n; */
 DECL|function|__bad_pagetable
 id|pmd_t
@@ -292,7 +298,9 @@ r_int
 suffix:semicolon
 DECL|function|load_PCB
 r_static
-r_void
+r_struct
+id|thread_struct
+op_star
 id|load_PCB
 c_func
 (paren
@@ -302,15 +310,27 @@ op_star
 id|pcb
 )paren
 (brace
+r_struct
+id|thread_struct
+op_star
+id|old_pcb
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;stq $30,0(%0)&bslash;n&bslash;t&quot;
-l_string|&quot;bis %0,%0,$16&bslash;n&bslash;t&quot;
-l_string|&quot;call_pal %1&quot;
+l_string|&quot;stq $30,0(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;bis %1,%1,$16&bslash;n&bslash;t&quot;
+macro_line|#ifdef CONFIG_ALPHA_DP264
+l_string|&quot;zap $16,0xe0,$16&bslash;n&bslash;t&quot;
+macro_line|#endif /* DP264 */
+l_string|&quot;call_pal %2&bslash;n&bslash;t&quot;
+l_string|&quot;bis $0,$0,%0&quot;
 suffix:colon
-multiline_comment|/* no outputs */
+l_string|&quot;=r&quot;
+(paren
+id|old_pcb
+)paren
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -336,6 +356,9 @@ l_string|&quot;$24&quot;
 comma
 l_string|&quot;$25&quot;
 )paren
+suffix:semicolon
+r_return
+id|old_pcb
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * paging_init() sets up the page tables: in the alpha version this actually&n; * unmaps the bootup page table (as we&squot;re now in KSEG, so we don&squot;t need it).&n; */
@@ -551,14 +574,36 @@ id|init_task.tss.flags
 op_assign
 l_int|0
 suffix:semicolon
+id|original_pcb_ptr
+op_assign
+id|phys_to_virt
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
 id|load_PCB
 c_func
 (paren
 op_amp
 id|init_task.tss
 )paren
+)paren
 suffix:semicolon
-id|flush_tlb_all
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;OKSP 0x%lx OPTBR 0x%lx&bslash;n&quot;
+comma
+id|original_pcb_ptr-&gt;ksp
+comma
+id|original_pcb_ptr-&gt;ptbr
+)paren
+suffix:semicolon
+macro_line|#endif
+id|tbia
 c_func
 (paren
 )paren
@@ -567,6 +612,56 @@ r_return
 id|start_mem
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__
+multiline_comment|/*&n; * paging_init_secondary(), called ONLY by secondary CPUs,&n; * sets up current-&gt;tss contents appropriately and does a load_PCB.&n; * note that current should be pointing at the idle thread task struct&n; * for this CPU.&n; */
+DECL|function|paging_init_secondary
+r_void
+id|paging_init_secondary
+c_func
+(paren
+r_void
+)paren
+(brace
+id|current-&gt;tss.ptbr
+op_assign
+id|init_task.tss.ptbr
+suffix:semicolon
+id|current-&gt;tss.pal_flags
+op_assign
+l_int|1
+suffix:semicolon
+id|current-&gt;tss.flags
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;paging_init_secondary: KSP 0x%lx PTBR 0x%lx&bslash;n&quot;
+comma
+id|current-&gt;tss.ksp
+comma
+id|current-&gt;tss.ptbr
+)paren
+suffix:semicolon
+macro_line|#endif
+id|load_PCB
+c_func
+(paren
+op_amp
+id|current-&gt;tss
+)paren
+suffix:semicolon
+id|tbia
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif /* __SMP__ */
 DECL|function|mem_init
 r_void
 id|mem_init

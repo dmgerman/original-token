@@ -1837,6 +1837,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|CONTAQ
+comma
+id|CONTAQ_82C693
+comma
+l_string|&quot;82C693&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|OLICOM
 comma
 id|OLICOM_OC3136

@@ -1,84 +1,111 @@
 macro_line|#ifndef __ALPHA_T2__H__
 DECL|macro|__ALPHA_T2__H__
 mdefine_line|#define __ALPHA_T2__H__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/*&n; * T2 is the internal name for the core logic chipset which provides&n; * memory controller and PCI access for the SABLE-based systems.&n; *&n; * This file is based on:&n; *&n; * SABLE I/O Specification&n; * Revision/Update Information: 1.3&n; *&n; * jestabro@amt.tay1.dec.com Initial Version.&n; *&n; */
 DECL|macro|BYTE_ENABLE_SHIFT
 mdefine_line|#define BYTE_ENABLE_SHIFT 5
 DECL|macro|TRANSFER_LENGTH_SHIFT
 mdefine_line|#define TRANSFER_LENGTH_SHIFT 3
-DECL|macro|MEM_SP1_MASK
-mdefine_line|#define MEM_SP1_MASK 0x1fffffff  /* Mem sparse space 1 mask is 29 bits */
+DECL|macro|MEM_R1_MASK
+mdefine_line|#define MEM_R1_MASK 0x03ffffff  /* Mem sparse space region 1 mask is 26 bits */
+macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
+multiline_comment|/* if we are using the SRM PCI setup, we&squot;ll need to use variables instead */
+DECL|macro|T2_DMA_WIN_BASE_DEFAULT
+mdefine_line|#define T2_DMA_WIN_BASE_DEFAULT    (1024*1024*1024)
+DECL|macro|T2_DMA_WIN_SIZE_DEFAULT
+mdefine_line|#define T2_DMA_WIN_SIZE_DEFAULT    (1024*1024*1024)
+r_extern
+r_int
+r_int
+id|T2_DMA_WIN_BASE
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|T2_DMA_WIN_SIZE
+suffix:semicolon
+macro_line|#else /* SRM_SETUP */
 DECL|macro|T2_DMA_WIN_BASE
-mdefine_line|#define T2_DMA_WIN_BASE&t;(1024UL*1024UL*1024UL)
+mdefine_line|#define T2_DMA_WIN_BASE&t;(1024*1024*1024)
 DECL|macro|T2_DMA_WIN_SIZE
 mdefine_line|#define T2_DMA_WIN_SIZE&t;(1024*1024*1024)
+macro_line|#endif /* SRM_SETUP */
+multiline_comment|/* GAMMA-SABLE is a SABLE with EV5-based CPUs */
+macro_line|#ifdef CONFIG_ALPHA_GAMMA
+DECL|macro|GAMMA_BIAS
+macro_line|#  define GAMMA_BIAS&t;&t;0x8000000000UL
+macro_line|#else /* GAMMA */
+DECL|macro|GAMMA_BIAS
+macro_line|#  define GAMMA_BIAS&t;&t;0x0000000000UL
+macro_line|#endif /* GAMMA */
 multiline_comment|/*&n; * Memory spaces:&n; */
 DECL|macro|T2_CONF
-mdefine_line|#define T2_CONF&t;&t;&t;        (IDENT_ADDR + 0x390000000UL)
+mdefine_line|#define T2_CONF&t;&t;        (IDENT_ADDR + GAMMA_BIAS + 0x390000000UL)
 DECL|macro|T2_IO
-mdefine_line|#define T2_IO&t;&t;&t;&t;(IDENT_ADDR + 0x3a0000000UL)
+mdefine_line|#define T2_IO&t;&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x3a0000000UL)
 DECL|macro|T2_SPARSE_MEM
-mdefine_line|#define T2_SPARSE_MEM&t;&t;&t;(IDENT_ADDR + 0x200000000UL)
+mdefine_line|#define T2_SPARSE_MEM&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x200000000UL)
 DECL|macro|T2_DENSE_MEM
-mdefine_line|#define T2_DENSE_MEM&t;&t;        (IDENT_ADDR + 0x3c0000000UL)
+mdefine_line|#define T2_DENSE_MEM&t;        (IDENT_ADDR + GAMMA_BIAS + 0x3c0000000UL)
 DECL|macro|T2_IOCSR
-mdefine_line|#define T2_IOCSR&t;&t;&t;(IDENT_ADDR + 0x38e000000UL)
+mdefine_line|#define T2_IOCSR&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e000000UL)
 DECL|macro|T2_CERR1
-mdefine_line|#define T2_CERR1&t;&t;&t;(IDENT_ADDR + 0x38e000020UL)
+mdefine_line|#define T2_CERR1&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e000020UL)
 DECL|macro|T2_CERR2
-mdefine_line|#define T2_CERR2&t;&t;&t;(IDENT_ADDR + 0x38e000040UL)
+mdefine_line|#define T2_CERR2&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e000040UL)
 DECL|macro|T2_CERR3
-mdefine_line|#define T2_CERR3&t;&t;&t;(IDENT_ADDR + 0x38e000060UL)
+mdefine_line|#define T2_CERR3&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e000060UL)
 DECL|macro|T2_PERR1
-mdefine_line|#define T2_PERR1&t;&t;&t;(IDENT_ADDR + 0x38e000080UL)
+mdefine_line|#define T2_PERR1&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e000080UL)
 DECL|macro|T2_PERR2
-mdefine_line|#define T2_PERR2&t;&t;&t;(IDENT_ADDR + 0x38e0000a0UL)
+mdefine_line|#define T2_PERR2&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e0000a0UL)
 DECL|macro|T2_PSCR
-mdefine_line|#define T2_PSCR&t;&t;&t;&t;(IDENT_ADDR + 0x38e0000c0UL)
+mdefine_line|#define T2_PSCR&t;&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e0000c0UL)
 DECL|macro|T2_HAE_1
-mdefine_line|#define T2_HAE_1&t;&t;&t;(IDENT_ADDR + 0x38e0000e0UL)
+mdefine_line|#define T2_HAE_1&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e0000e0UL)
 DECL|macro|T2_HAE_2
-mdefine_line|#define T2_HAE_2&t;&t;&t;(IDENT_ADDR + 0x38e000100UL)
+mdefine_line|#define T2_HAE_2&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e000100UL)
 DECL|macro|T2_HBASE
-mdefine_line|#define T2_HBASE&t;&t;&t;(IDENT_ADDR + 0x38e000120UL)
+mdefine_line|#define T2_HBASE&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e000120UL)
 DECL|macro|T2_WBASE1
-mdefine_line|#define T2_WBASE1&t;&t;&t;(IDENT_ADDR + 0x38e000140UL)
+mdefine_line|#define T2_WBASE1&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e000140UL)
 DECL|macro|T2_WMASK1
-mdefine_line|#define T2_WMASK1&t;&t;&t;(IDENT_ADDR + 0x38e000160UL)
+mdefine_line|#define T2_WMASK1&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e000160UL)
 DECL|macro|T2_TBASE1
-mdefine_line|#define T2_TBASE1&t;&t;&t;(IDENT_ADDR + 0x38e000180UL)
+mdefine_line|#define T2_TBASE1&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e000180UL)
 DECL|macro|T2_WBASE2
-mdefine_line|#define T2_WBASE2&t;&t;&t;(IDENT_ADDR + 0x38e0001a0UL)
+mdefine_line|#define T2_WBASE2&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e0001a0UL)
 DECL|macro|T2_WMASK2
-mdefine_line|#define T2_WMASK2&t;&t;&t;(IDENT_ADDR + 0x38e0001c0UL)
+mdefine_line|#define T2_WMASK2&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e0001c0UL)
 DECL|macro|T2_TBASE2
-mdefine_line|#define T2_TBASE2&t;&t;&t;(IDENT_ADDR + 0x38e0001e0UL)
+mdefine_line|#define T2_TBASE2&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e0001e0UL)
 DECL|macro|T2_TLBBR
-mdefine_line|#define T2_TLBBR&t;&t;&t;(IDENT_ADDR + 0x38e000200UL)
+mdefine_line|#define T2_TLBBR&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e000200UL)
 DECL|macro|T2_HAE_3
-mdefine_line|#define T2_HAE_3&t;&t;&t;(IDENT_ADDR + 0x38e000240UL)
+mdefine_line|#define T2_HAE_3&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e000240UL)
 DECL|macro|T2_HAE_4
-mdefine_line|#define T2_HAE_4&t;&t;&t;(IDENT_ADDR + 0x38e000260UL)
+mdefine_line|#define T2_HAE_4&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e000260UL)
 DECL|macro|HAE_ADDRESS
 mdefine_line|#define HAE_ADDRESS&t;                T2_HAE_1
 multiline_comment|/*  T2 CSRs are in the non-cachable primary IO space from 3.8000.0000 to&n; 3.8fff.ffff&n; *&n; *  +--------------+ 3 8000 0000&n; *  | CPU 0 CSRs   |            &n; *  +--------------+ 3 8100 0000&n; *  | CPU 1 CSRs   |            &n; *  +--------------+ 3 8200 0000&n; *  | CPU 2 CSRs   |            &n; *  +--------------+ 3 8300 0000&n; *  | CPU 3 CSRs   |            &n; *  +--------------+ 3 8400 0000&n; *  | CPU Reserved |            &n; *  +--------------+ 3 8700 0000&n; *  | Mem Reserved |            &n; *  +--------------+ 3 8800 0000&n; *  | Mem 0 CSRs   |            &n; *  +--------------+ 3 8900 0000&n; *  | Mem 1 CSRs   |            &n; *  +--------------+ 3 8a00 0000&n; *  | Mem 2 CSRs   |            &n; *  +--------------+ 3 8b00 0000&n; *  | Mem 3 CSRs   |            &n; *  +--------------+ 3 8c00 0000           &n; *  | Mem Reserved |            &n; *  +--------------+ 3 8e00 0000           &n; *  | PCI Bridge   |            &n; *  +--------------+ 3 8f00 0000           &n; *  | Expansion IO |            &n; *  +--------------+ 3 9000 0000           &n; *                                              &n; *&n; */
 DECL|macro|CPU0_BASE
-mdefine_line|#define CPU0_BASE               (IDENT_ADDR + 0x380000000L)
+mdefine_line|#define CPU0_BASE               (IDENT_ADDR + GAMMA_BIAS + 0x380000000L)
 DECL|macro|CPU1_BASE
-mdefine_line|#define CPU1_BASE               (IDENT_ADDR + 0x381000000L)
+mdefine_line|#define CPU1_BASE               (IDENT_ADDR + GAMMA_BIAS + 0x381000000L)
 DECL|macro|CPU2_BASE
-mdefine_line|#define CPU2_BASE               (IDENT_ADDR + 0x382000000L)
+mdefine_line|#define CPU2_BASE               (IDENT_ADDR + GAMMA_BIAS + 0x382000000L)
 DECL|macro|CPU3_BASE
-mdefine_line|#define CPU3_BASE               (IDENT_ADDR + 0x383000000L)
+mdefine_line|#define CPU3_BASE               (IDENT_ADDR + GAMMA_BIAS + 0x383000000L)
 DECL|macro|MEM0_BASE
-mdefine_line|#define MEM0_BASE               (IDENT_ADDR + 0x388000000L)
+mdefine_line|#define MEM0_BASE               (IDENT_ADDR + GAMMA_BIAS + 0x388000000L)
 DECL|macro|MEM1_BASE
-mdefine_line|#define MEM1_BASE               (IDENT_ADDR + 0x389000000L)
+mdefine_line|#define MEM1_BASE               (IDENT_ADDR + GAMMA_BIAS + 0x389000000L)
 DECL|macro|MEM2_BASE
-mdefine_line|#define MEM2_BASE               (IDENT_ADDR + 0x38a000000L)
+mdefine_line|#define MEM2_BASE               (IDENT_ADDR + GAMMA_BIAS + 0x38a000000L)
 DECL|macro|MEM3_BASE
-mdefine_line|#define MEM3_BASE               (IDENT_ADDR + 0x38b000000L)
+mdefine_line|#define MEM3_BASE               (IDENT_ADDR + GAMMA_BIAS + 0x38b000000L)
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Translate physical memory address as seen on (PCI) bus into&n; * a kernel virtual address and vv.&n; */
 DECL|function|virt_to_bus
@@ -430,6 +457,785 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Memory functions.  64-bit and 32-bit accesses are done through&n; * dense memory space, everything else through sparse space.&n; * &n; * For reading and writing 8 and 16 bit quantities we need to &n; * go through one of the three sparse address mapping regions&n; * and use the HAE_MEM CSR to provide some bits of the address.&n; * The following few routines use only sparse address region 1&n; * which gives 1Gbyte of accessible space which relates exactly&n; * to the amount of PCI memory mapping *into* system address space.&n; * See p 6-17 of the specification but it looks something like this:&n; *&n; * 21164 Address:&n; * &n; *          3         2         1                                                               &n; * 9876543210987654321098765432109876543210&n; * 1ZZZZ0.PCI.QW.Address............BBLL                 &n; *&n; * ZZ = SBZ&n; * BB = Byte offset&n; * LL = Transfer length&n; *&n; * PCI Address:&n; *&n; * 3         2         1                                                               &n; * 10987654321098765432109876543210&n; * HHH....PCI.QW.Address........ 00&n; *&n; * HHH = 31:29 HAE_MEM CSR&n; * &n; */
+macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
+r_extern
+r_int
+r_int
+id|t2_sm_base
+suffix:semicolon
+DECL|function|__readb
+r_extern
+r_inline
+r_int
+r_int
+id|__readb
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|result
+comma
+id|shift
+comma
+id|work
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|addr
+op_ge
+id|t2_sm_base
+)paren
+op_logical_and
+(paren
+id|addr
+op_le
+(paren
+id|t2_sm_base
+op_plus
+id|MEM_R1_MASK
+)paren
+)paren
+)paren
+id|work
+op_assign
+(paren
+(paren
+(paren
+id|addr
+op_amp
+id|MEM_R1_MASK
+)paren
+op_lshift
+l_int|5
+)paren
+op_plus
+id|T2_SPARSE_MEM
+op_plus
+l_int|0x00
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|addr
+op_ge
+l_int|512
+op_star
+l_int|1024
+)paren
+op_logical_and
+(paren
+id|addr
+OL
+l_int|1024
+op_star
+l_int|1024
+)paren
+)paren
+multiline_comment|/* check HOLE */
+id|work
+op_assign
+(paren
+(paren
+(paren
+id|addr
+op_amp
+id|MEM_R1_MASK
+)paren
+op_lshift
+l_int|5
+)paren
+op_plus
+id|T2_SPARSE_MEM
+op_plus
+l_int|0x00
+)paren
+suffix:semicolon
+r_else
+(brace
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;__readb: address 0x%lx not covered by HAE&bslash;n&quot;
+comma
+id|addr
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|0x0ffUL
+suffix:semicolon
+)brace
+id|shift
+op_assign
+(paren
+id|addr
+op_amp
+l_int|0x3
+)paren
+op_lshift
+l_int|3
+suffix:semicolon
+id|result
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|work
+suffix:semicolon
+id|result
+op_rshift_assign
+id|shift
+suffix:semicolon
+r_return
+l_int|0x0ffUL
+op_amp
+id|result
+suffix:semicolon
+)brace
+DECL|function|__readw
+r_extern
+r_inline
+r_int
+r_int
+id|__readw
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|result
+comma
+id|shift
+comma
+id|work
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|addr
+op_ge
+id|t2_sm_base
+)paren
+op_logical_and
+(paren
+id|addr
+op_le
+(paren
+id|t2_sm_base
+op_plus
+id|MEM_R1_MASK
+)paren
+)paren
+)paren
+id|work
+op_assign
+(paren
+(paren
+(paren
+id|addr
+op_amp
+id|MEM_R1_MASK
+)paren
+op_lshift
+l_int|5
+)paren
+op_plus
+id|T2_SPARSE_MEM
+op_plus
+l_int|0x08
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|addr
+op_ge
+l_int|512
+op_star
+l_int|1024
+)paren
+op_logical_and
+(paren
+id|addr
+OL
+l_int|1024
+op_star
+l_int|1024
+)paren
+)paren
+multiline_comment|/* check HOLE */
+id|work
+op_assign
+(paren
+(paren
+(paren
+id|addr
+op_amp
+id|MEM_R1_MASK
+)paren
+op_lshift
+l_int|5
+)paren
+op_plus
+id|T2_SPARSE_MEM
+op_plus
+l_int|0x08
+)paren
+suffix:semicolon
+r_else
+(brace
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;__readw: address 0x%lx not covered by HAE&bslash;n&quot;
+comma
+id|addr
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|0x0ffffUL
+suffix:semicolon
+)brace
+id|shift
+op_assign
+(paren
+id|addr
+op_amp
+l_int|0x3
+)paren
+op_lshift
+l_int|3
+suffix:semicolon
+id|result
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|work
+suffix:semicolon
+id|result
+op_rshift_assign
+id|shift
+suffix:semicolon
+r_return
+l_int|0x0ffffUL
+op_amp
+id|result
+suffix:semicolon
+)brace
+multiline_comment|/* on SABLE with T2, we must use SPARSE memory even for 32-bit access */
+DECL|function|__readl
+r_extern
+r_inline
+r_int
+r_int
+id|__readl
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|result
+comma
+id|work
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|addr
+op_ge
+id|t2_sm_base
+)paren
+op_logical_and
+(paren
+id|addr
+op_le
+(paren
+id|t2_sm_base
+op_plus
+id|MEM_R1_MASK
+)paren
+)paren
+)paren
+id|work
+op_assign
+(paren
+(paren
+(paren
+id|addr
+op_amp
+id|MEM_R1_MASK
+)paren
+op_lshift
+l_int|5
+)paren
+op_plus
+id|T2_SPARSE_MEM
+op_plus
+l_int|0x18
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|addr
+op_ge
+l_int|512
+op_star
+l_int|1024
+)paren
+op_logical_and
+(paren
+id|addr
+OL
+l_int|1024
+op_star
+l_int|1024
+)paren
+)paren
+multiline_comment|/* check HOLE */
+id|work
+op_assign
+(paren
+(paren
+(paren
+id|addr
+op_amp
+id|MEM_R1_MASK
+)paren
+op_lshift
+l_int|5
+)paren
+op_plus
+id|T2_SPARSE_MEM
+op_plus
+l_int|0x18
+)paren
+suffix:semicolon
+r_else
+(brace
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;__readl: address 0x%lx not covered by HAE&bslash;n&quot;
+comma
+id|addr
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|0x0ffffffffUL
+suffix:semicolon
+)brace
+id|result
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|work
+suffix:semicolon
+r_return
+l_int|0xffffffffUL
+op_amp
+id|result
+suffix:semicolon
+)brace
+DECL|function|__writeb
+r_extern
+r_inline
+r_void
+id|__writeb
+c_func
+(paren
+r_int
+r_char
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|work
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|addr
+op_ge
+id|t2_sm_base
+)paren
+op_logical_and
+(paren
+id|addr
+op_le
+(paren
+id|t2_sm_base
+op_plus
+id|MEM_R1_MASK
+)paren
+)paren
+)paren
+id|work
+op_assign
+(paren
+(paren
+(paren
+id|addr
+op_amp
+id|MEM_R1_MASK
+)paren
+op_lshift
+l_int|5
+)paren
+op_plus
+id|T2_SPARSE_MEM
+op_plus
+l_int|0x00
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|addr
+op_ge
+l_int|512
+op_star
+l_int|1024
+)paren
+op_logical_and
+(paren
+id|addr
+OL
+l_int|1024
+op_star
+l_int|1024
+)paren
+)paren
+multiline_comment|/* check HOLE */
+id|work
+op_assign
+(paren
+(paren
+(paren
+id|addr
+op_amp
+id|MEM_R1_MASK
+)paren
+op_lshift
+l_int|5
+)paren
+op_plus
+id|T2_SPARSE_MEM
+op_plus
+l_int|0x00
+)paren
+suffix:semicolon
+r_else
+(brace
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;__writeb: address 0x%lx not covered by HAE&bslash;n&quot;
+comma
+id|addr
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+suffix:semicolon
+)brace
+op_star
+(paren
+id|vuip
+)paren
+id|work
+op_assign
+id|b
+op_star
+l_int|0x01010101
+suffix:semicolon
+)brace
+DECL|function|__writew
+r_extern
+r_inline
+r_void
+id|__writew
+c_func
+(paren
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|work
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|addr
+op_ge
+id|t2_sm_base
+)paren
+op_logical_and
+(paren
+id|addr
+op_le
+(paren
+id|t2_sm_base
+op_plus
+id|MEM_R1_MASK
+)paren
+)paren
+)paren
+id|work
+op_assign
+(paren
+(paren
+(paren
+id|addr
+op_amp
+id|MEM_R1_MASK
+)paren
+op_lshift
+l_int|5
+)paren
+op_plus
+id|T2_SPARSE_MEM
+op_plus
+l_int|0x08
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|addr
+op_ge
+l_int|512
+op_star
+l_int|1024
+)paren
+op_logical_and
+(paren
+id|addr
+OL
+l_int|1024
+op_star
+l_int|1024
+)paren
+)paren
+multiline_comment|/* check HOLE */
+id|work
+op_assign
+(paren
+(paren
+(paren
+id|addr
+op_amp
+id|MEM_R1_MASK
+)paren
+op_lshift
+l_int|5
+)paren
+op_plus
+id|T2_SPARSE_MEM
+op_plus
+l_int|0x08
+)paren
+suffix:semicolon
+r_else
+(brace
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;__writew: address 0x%lx not covered by HAE&bslash;n&quot;
+comma
+id|addr
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+suffix:semicolon
+)brace
+op_star
+(paren
+id|vuip
+)paren
+id|work
+op_assign
+id|b
+op_star
+l_int|0x00010001
+suffix:semicolon
+)brace
+multiline_comment|/* on SABLE with T2, we must use SPARSE memory even for 32-bit access */
+DECL|function|__writel
+r_extern
+r_inline
+r_void
+id|__writel
+c_func
+(paren
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|work
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|addr
+op_ge
+id|t2_sm_base
+)paren
+op_logical_and
+(paren
+id|addr
+op_le
+(paren
+id|t2_sm_base
+op_plus
+id|MEM_R1_MASK
+)paren
+)paren
+)paren
+id|work
+op_assign
+(paren
+(paren
+(paren
+id|addr
+op_amp
+id|MEM_R1_MASK
+)paren
+op_lshift
+l_int|5
+)paren
+op_plus
+id|T2_SPARSE_MEM
+op_plus
+l_int|0x18
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|addr
+op_ge
+l_int|512
+op_star
+l_int|1024
+)paren
+op_logical_and
+(paren
+id|addr
+OL
+l_int|1024
+op_star
+l_int|1024
+)paren
+)paren
+multiline_comment|/* check HOLE */
+id|work
+op_assign
+(paren
+(paren
+(paren
+id|addr
+op_amp
+id|MEM_R1_MASK
+)paren
+op_lshift
+l_int|5
+)paren
+op_plus
+id|T2_SPARSE_MEM
+op_plus
+l_int|0x18
+)paren
+suffix:semicolon
+(brace
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;__writel: address 0x%lx not covered by HAE&bslash;n&quot;
+comma
+id|addr
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+suffix:semicolon
+)brace
+op_star
+(paren
+id|vuip
+)paren
+id|work
+op_assign
+id|b
+suffix:semicolon
+)brace
+macro_line|#else /* SRM_SETUP */
 DECL|function|__readb
 r_extern
 r_inline
@@ -469,7 +1275,7 @@ l_int|0xE0000000
 suffix:semicolon
 id|addr
 op_and_assign
-id|MEM_SP1_MASK
+id|MEM_R1_MASK
 suffix:semicolon
 r_if
 c_cond
@@ -553,7 +1359,7 @@ l_int|0xE0000000
 suffix:semicolon
 id|addr
 op_and_assign
-id|MEM_SP1_MASK
+id|MEM_R1_MASK
 suffix:semicolon
 r_if
 c_cond
@@ -626,7 +1432,7 @@ l_int|0xE0000000
 suffix:semicolon
 id|addr
 op_and_assign
-id|MEM_SP1_MASK
+id|MEM_R1_MASK
 suffix:semicolon
 r_if
 c_cond
@@ -695,7 +1501,7 @@ l_int|0xE0000000
 suffix:semicolon
 id|addr
 op_and_assign
-id|MEM_SP1_MASK
+id|MEM_R1_MASK
 suffix:semicolon
 r_if
 c_cond
@@ -761,7 +1567,7 @@ l_int|0xE0000000
 suffix:semicolon
 id|addr
 op_and_assign
-id|MEM_SP1_MASK
+id|MEM_R1_MASK
 suffix:semicolon
 r_if
 c_cond
@@ -828,7 +1634,7 @@ l_int|0xE0000000
 suffix:semicolon
 id|addr
 op_and_assign
-id|MEM_SP1_MASK
+id|MEM_R1_MASK
 suffix:semicolon
 r_if
 c_cond
@@ -864,6 +1670,7 @@ op_assign
 id|b
 suffix:semicolon
 )brace
+macro_line|#endif /* SRM_SETUP */
 DECL|macro|inb
 mdefine_line|#define inb(port) &bslash;&n;(__builtin_constant_p((port))?__inb(port):_inb(port))
 DECL|macro|outb

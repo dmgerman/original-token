@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * Code common to all T2 chips.&n; *&n; * Written by Jay A Estabrook (jestabro@amt.tay1.dec.com).&n; * December 1996.&n; *&n; * based on CIA code by David A Rusling (david.rusling@reo.mts.dec.com)&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -9,7 +10,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
-multiline_comment|/* NOTE: Herein are back-to-back mb insns.  They are magic.&n;   A plausable explanation is that the i/o controler does not properly&n;   handle the system transaction.  Another involves timing.  Ho hum.  */
+multiline_comment|/*&n; * NOTE: Herein lie back-to-back mb instructions.  They are magic. &n; * One plausible explanation is that the i/o controller does not properly&n; * handle the system transaction.  Another involves timing.  Ho hum.&n; */
 r_extern
 r_struct
 id|hwrpb_struct
@@ -27,22 +28,6 @@ r_int
 id|mces
 )paren
 suffix:semicolon
-r_extern
-id|asmlinkage
-r_int
-r_int
-id|whami
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|alpha_sys_type
-suffix:semicolon
-DECL|macro|CPUID
-mdefine_line|#define CPUID whami()
 multiline_comment|/*&n; * Machine check reasons.  Defined according to PALcode sources&n; * (osf.h and platform.h).&n; */
 DECL|macro|MCHK_K_TPERR
 mdefine_line|#define MCHK_K_TPERR&t;&t;0x0080
@@ -83,8 +68,9 @@ r_volatile
 r_int
 r_int
 id|T2_mcheck_expected
-op_assign
-l_int|0
+(braket
+id|NR_CPUS
+)braket
 suffix:semicolon
 DECL|variable|T2_mcheck_taken
 r_static
@@ -92,15 +78,31 @@ r_volatile
 r_int
 r_int
 id|T2_mcheck_taken
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
+macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
+DECL|variable|T2_DMA_WIN_BASE
+r_int
+r_int
+id|T2_DMA_WIN_BASE
 op_assign
-l_int|0
+id|T2_DMA_WIN_BASE_DEFAULT
 suffix:semicolon
-DECL|variable|T2_jd
-r_static
+DECL|variable|T2_DMA_WIN_SIZE
 r_int
 r_int
-id|T2_jd
+id|T2_DMA_WIN_SIZE
+op_assign
+id|T2_DMA_WIN_SIZE_DEFAULT
 suffix:semicolon
+DECL|variable|t2_sm_base
+r_int
+r_int
+id|t2_sm_base
+suffix:semicolon
+macro_line|#endif /* SRM_SETUP */
 multiline_comment|/*&n; * Given a bus, device, and function number, compute resulting&n; * configuration space address and setup the T2_HAXR2 register&n; * accordingly.  It is therefore not safe to have concurrent&n; * invocations to configuration space access routines, but there&n; * really shouldn&squot;t be any need for this.&n; *&n; * Type 0:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | |D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:11&t;Device select bit.&n; * &t;10:8&t;Function number&n; * &t; 7:2&t;Register number&n; *&n; * Type 1:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | |B|B|B|B|B|B|B|B|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|1|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:24&t;reserved&n; *&t;23:16&t;bus number (8 bits = 128 possible buses)&n; *&t;15:11&t;Device number (5 bits)&n; *&t;10:8&t;function number&n; *&t; 7:2&t;register number&n; *  &n; * Notes:&n; *&t;The function number selects which function of a multi-function device &n; *&t;(e.g., scsi and ethernet).&n; * &n; *&t;The register selects a DWORD (32 bit) register offset.  Hence it&n; *&t;doesn&squot;t get shifted by 2 bits as we want to &quot;drop&quot; the bottom two&n; *&t;bits.&n; */
 DECL|function|mk_conf_addr
 r_static
@@ -292,6 +294,8 @@ r_int
 id|stat0
 comma
 id|value
+comma
+id|cpu
 suffix:semicolon
 r_int
 r_int
@@ -300,6 +304,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* to keep gcc quiet */
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
 id|save_flags
 c_func
 (paren
@@ -330,13 +341,13 @@ id|stat0
 op_assign
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
 id|T2_IOCSR
 suffix:semicolon
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
 id|T2_IOCSR
 op_assign
@@ -357,6 +368,7 @@ id|stat0
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* if Type1 access, must set T2 CFG */
 r_if
 c_cond
@@ -368,24 +380,27 @@ id|t2_cfg
 op_assign
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
-id|T2_IOC_CFG
+id|T2_HAE_3
+op_amp
+op_complement
+l_int|0xc0000000UL
+suffix:semicolon
+op_star
+(paren
+id|vulp
+)paren
+id|T2_HAE_3
+op_assign
+l_int|0x40000000UL
+op_or
+id|t2_cfg
 suffix:semicolon
 id|mb
 c_func
 (paren
 )paren
-suffix:semicolon
-op_star
-(paren
-id|vuip
-)paren
-id|T2_IOC_CFG
-op_assign
-id|t2_cfg
-op_or
-l_int|1
 suffix:semicolon
 id|DBG
 c_func
@@ -406,12 +421,17 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|T2_mcheck_expected
+(braket
+id|cpu
+)braket
 op_assign
 l_int|1
 suffix:semicolon
 id|T2_mcheck_taken
+(braket
+id|cpu
+)braket
 op_assign
 l_int|0
 suffix:semicolon
@@ -444,9 +464,15 @@ r_if
 c_cond
 (paren
 id|T2_mcheck_taken
+(braket
+id|cpu
+)braket
 )paren
 (brace
 id|T2_mcheck_taken
+(braket
+id|cpu
+)braket
 op_assign
 l_int|0
 suffix:semicolon
@@ -461,6 +487,9 @@ c_func
 suffix:semicolon
 )brace
 id|T2_mcheck_expected
+(braket
+id|cpu
+)braket
 op_assign
 l_int|0
 suffix:semicolon
@@ -469,8 +498,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* if Type1 access, must reset IOC CFG so normal IO space ops work */
+multiline_comment|/* if Type1 access, must reset T2 CFG so normal IO space ops work */
 r_if
 c_cond
 (paren
@@ -479,14 +507,11 @@ id|type1
 (brace
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
-id|T2_IOC_CFG
+id|T2_HAE_3
 op_assign
 id|t2_cfg
-op_amp
-op_complement
-l_int|1
 suffix:semicolon
 id|mb
 c_func
@@ -494,7 +519,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 id|DBG
 c_func
 (paren
@@ -539,6 +563,8 @@ suffix:semicolon
 r_int
 r_int
 id|stat0
+comma
+id|cpu
 suffix:semicolon
 r_int
 r_int
@@ -547,6 +573,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* to keep gcc quiet */
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
 id|save_flags
 c_func
 (paren
@@ -565,13 +598,13 @@ id|stat0
 op_assign
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
 id|T2_IOCSR
 suffix:semicolon
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
 id|T2_IOCSR
 op_assign
@@ -592,6 +625,7 @@ id|stat0
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* if Type1 access, must set T2 CFG */
 r_if
 c_cond
@@ -603,24 +637,27 @@ id|t2_cfg
 op_assign
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
-id|T2_IOC_CFG
+id|T2_HAE_3
+op_amp
+op_complement
+l_int|0xc0000000UL
+suffix:semicolon
+op_star
+(paren
+id|vulp
+)paren
+id|T2_HAE_3
+op_assign
+id|t2_cfg
+op_or
+l_int|0x40000000UL
 suffix:semicolon
 id|mb
 c_func
 (paren
 )paren
-suffix:semicolon
-op_star
-(paren
-id|vuip
-)paren
-id|T2_IOC_CFG
-op_assign
-id|t2_cfg
-op_or
-l_int|1
 suffix:semicolon
 id|DBG
 c_func
@@ -631,13 +668,20 @@ l_string|&quot;conf_write: TYPE1 access&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|draina
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|T2_mcheck_expected
+(braket
+id|cpu
+)braket
 op_assign
 l_int|1
 suffix:semicolon
@@ -667,6 +711,9 @@ c_func
 suffix:semicolon
 multiline_comment|/* magic */
 id|T2_mcheck_expected
+(braket
+id|cpu
+)braket
 op_assign
 l_int|0
 suffix:semicolon
@@ -675,8 +722,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* if Type1 access, must reset IOC CFG so normal IO space ops work */
+multiline_comment|/* if Type1 access, must reset T2 CFG so normal IO space ops work */
 r_if
 c_cond
 (paren
@@ -685,14 +731,11 @@ id|type1
 (brace
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
-id|T2_IOC_CFG
+id|T2_HAE_3
 op_assign
 id|t2_cfg
-op_amp
-op_complement
-l_int|1
 suffix:semicolon
 id|mb
 c_func
@@ -700,7 +743,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 id|DBG
 c_func
 (paren
@@ -1336,21 +1378,47 @@ r_int
 r_int
 id|t2_err
 suffix:semicolon
-r_struct
-id|percpu_struct
-op_star
-id|cpu
-suffix:semicolon
+r_int
 r_int
 id|i
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NR_CPUS
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|T2_mcheck_expected
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|T2_mcheck_taken
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#if 0
 multiline_comment|/* &n;&t; * Set up error reporting.&n;&t; */
 id|t2_err
 op_assign
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
 id|T2_IOCSR
 suffix:semicolon
@@ -1365,9 +1433,9 @@ suffix:semicolon
 multiline_comment|/* master abort */
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
-id|T2_IOC_T2_ERR
+id|T2_IOCSR
 op_assign
 id|t2_err
 suffix:semicolon
@@ -1439,11 +1507,207 @@ id|T2_TBASE2
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
+multiline_comment|/* check window 1 for enabled and mapped to 0 */
+r_if
+c_cond
+(paren
+(paren
+(paren
+op_star
+(paren
+id|vulp
+)paren
+id|T2_WBASE1
+op_amp
+(paren
+l_int|3UL
+op_lshift
+l_int|18
+)paren
+)paren
+op_eq
+(paren
+l_int|2UL
+op_lshift
+l_int|18
+)paren
+)paren
+op_logical_and
+(paren
+op_star
+(paren
+id|vulp
+)paren
+id|T2_TBASE1
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+id|T2_DMA_WIN_BASE
+op_assign
+op_star
+(paren
+id|vulp
+)paren
+id|T2_WBASE1
+op_amp
+l_int|0xfff00000UL
+suffix:semicolon
+id|T2_DMA_WIN_SIZE
+op_assign
+op_star
+(paren
+id|vulp
+)paren
+id|T2_WMASK1
+op_amp
+l_int|0xfff00000UL
+suffix:semicolon
+id|T2_DMA_WIN_SIZE
+op_add_assign
+l_int|0x00100000UL
+suffix:semicolon
+multiline_comment|/* DISABLE window 2!! ?? */
+macro_line|#if 1
+id|printk
+c_func
+(paren
+l_string|&quot;t2_init: using Window 1 settings&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;t2_init: BASE 0x%lx MASK 0x%lx TRANS 0x%lx&bslash;n&quot;
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|T2_WBASE1
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|T2_WMASK1
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|T2_TBASE1
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+multiline_comment|/* check window 2 for enabled and mapped to 0 */
+r_if
+c_cond
+(paren
+(paren
+(paren
+op_star
+(paren
+id|vulp
+)paren
+id|T2_WBASE2
+op_amp
+(paren
+l_int|3UL
+op_lshift
+l_int|18
+)paren
+)paren
+op_eq
+(paren
+l_int|2UL
+op_lshift
+l_int|18
+)paren
+)paren
+op_logical_and
+(paren
+op_star
+(paren
+id|vulp
+)paren
+id|T2_TBASE2
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+id|T2_DMA_WIN_BASE
+op_assign
+op_star
+(paren
+id|vulp
+)paren
+id|T2_WBASE2
+op_amp
+l_int|0xfff00000UL
+suffix:semicolon
+id|T2_DMA_WIN_SIZE
+op_assign
+op_star
+(paren
+id|vulp
+)paren
+id|T2_WMASK2
+op_amp
+l_int|0xfff00000UL
+suffix:semicolon
+id|T2_DMA_WIN_SIZE
+op_add_assign
+l_int|0x00100000UL
+suffix:semicolon
+multiline_comment|/* DISABLE window 1!! ?? */
+macro_line|#if 1
+id|printk
+c_func
+(paren
+l_string|&quot;t2_init: using Window 2 settings&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;t2_init: BASE 0x%lx MASK 0x%lx TRANS 0x%lx&bslash;n&quot;
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|T2_WBASE2
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|T2_WMASK2
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|T2_TBASE2
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+multiline_comment|/* we must use our defaults... */
+macro_line|#endif /* SRM_SETUP */
+(brace
 multiline_comment|/*&n;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t; * For now, window 2 is  disabled.  In the future, we may&n;&t; * want to use it to do scatter/gather DMA.  Window 1&n;&t; * goes at 1 GB and is 1 GB large.&n;&t; */
 multiline_comment|/* WARNING!! must correspond to the DMA_WIN params!!! */
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
 id|T2_WBASE1
 op_assign
@@ -1451,7 +1715,7 @@ l_int|0x400807ffU
 suffix:semicolon
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
 id|T2_WMASK1
 op_assign
@@ -1459,7 +1723,7 @@ l_int|0x3ff00000U
 suffix:semicolon
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
 id|T2_TBASE1
 op_assign
@@ -1467,7 +1731,7 @@ l_int|0
 suffix:semicolon
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
 id|T2_WBASE2
 op_assign
@@ -1475,12 +1739,13 @@ l_int|0x0
 suffix:semicolon
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
 id|T2_HBASE
 op_assign
 l_int|0x0
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * check ASN in HWRPB for validity, report if bad&n;&t; */
 r_if
 c_cond
@@ -1505,17 +1770,53 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Finally, clear the T2_HAE_3 register, which gets used&n;&t; *  for PCI Config Space accesses. That is the way&n;&t; *  we want to use it, and we do not want to depend on&n;&t; *  what ARC or SRM might have left behind...&n;&t; */
 (brace
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;T2_init: HAE1 was 0x%lx&bslash;n&quot;
-comma
+r_int
+r_int
+id|t2_hae_1
+op_assign
 op_star
 (paren
 id|vulp
 )paren
 id|T2_HAE_1
+suffix:semicolon
+r_int
+r_int
+id|t2_hae_2
+op_assign
+op_star
+(paren
+id|vulp
+)paren
+id|T2_HAE_2
+suffix:semicolon
+r_int
+r_int
+id|t2_hae_3
+op_assign
+op_star
+(paren
+id|vulp
+)paren
+id|T2_HAE_3
+suffix:semicolon
+r_int
+r_int
+id|t2_hae_4
+op_assign
+op_star
+(paren
+id|vulp
+)paren
+id|T2_HAE_4
+suffix:semicolon
+macro_line|#if 1
+id|printk
+c_func
+(paren
+l_string|&quot;T2_init: HAE1 was 0x%lx&bslash;n&quot;
+comma
+id|t2_hae_1
 )paren
 suffix:semicolon
 id|printk
@@ -1523,11 +1824,7 @@ c_func
 (paren
 l_string|&quot;T2_init: HAE2 was 0x%lx&bslash;n&quot;
 comma
-op_star
-(paren
-id|vulp
-)paren
-id|T2_HAE_2
+id|t2_hae_2
 )paren
 suffix:semicolon
 id|printk
@@ -1535,11 +1832,7 @@ c_func
 (paren
 l_string|&quot;T2_init: HAE3 was 0x%lx&bslash;n&quot;
 comma
-op_star
-(paren
-id|vulp
-)paren
-id|T2_HAE_3
+id|t2_hae_3
 )paren
 suffix:semicolon
 id|printk
@@ -1547,18 +1840,31 @@ c_func
 (paren
 l_string|&quot;T2_init: HAE4 was 0x%lx&bslash;n&quot;
 comma
-op_star
-(paren
-id|vulp
-)paren
-id|T2_HAE_4
+id|t2_hae_4
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if 0
+macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
+multiline_comment|/*&n;&t;   * sigh... For the SRM setup, unless we know apriori what the HAE&n;&t;   * contents will be, we need to setup the arbitrary region bases&n;&t;   * so we can test against the range of addresses and tailor the&n;&t;   * &t;    region chosen for the SPARSE memory access.&n;&t;   *&n;&t;   * see include/asm-alpha/t2.h for the SPARSE mem read/write&n;&t;  */
+id|t2_sm_base
+op_assign
+(paren
+id|t2_hae_1
+op_lshift
+l_int|27
+)paren
+op_amp
+l_int|0xf8000000UL
+suffix:semicolon
+multiline_comment|/*&n;&t;    Set the HAE cache, so that setup_arch() code&n;&t;    will use the SRM setting always. Our readb/writeb&n;&t;    code in .h expects never to have to change&n;&t;    the contents of the HAE.&n;&t;   */
+id|hae.cache
+op_assign
+id|t2_hae_1
+suffix:semicolon
+macro_line|#else /* SRM_SETUP */
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
 id|T2_HAE_1
 op_assign
@@ -1571,7 +1877,7 @@ c_func
 suffix:semicolon
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
 id|T2_HAE_2
 op_assign
@@ -1584,7 +1890,7 @@ c_func
 suffix:semicolon
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
 id|T2_HAE_3
 op_assign
@@ -1595,9 +1901,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if 0
 op_star
 (paren
-id|vuip
+id|vulp
 )paren
 id|T2_HAE_4
 op_assign
@@ -1608,105 +1915,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* do not touch this */
 macro_line|#endif
+macro_line|#endif /* SRM_SETUP */
 )brace
-macro_line|#if 1
-r_if
-c_cond
-(paren
-id|hwrpb-&gt;nr_processors
-OG
-l_int|1
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;T2_init: nr_processors 0x%lx&bslash;n&quot;
-comma
-id|hwrpb-&gt;nr_processors
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;T2_init: processor_size 0x%lx&bslash;n&quot;
-comma
-id|hwrpb-&gt;processor_size
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;T2_init: processor_offset 0x%lx&bslash;n&quot;
-comma
-id|hwrpb-&gt;processor_offset
-)paren
-suffix:semicolon
-id|cpu
-op_assign
-(paren
-r_struct
-id|percpu_struct
-op_star
-)paren
-(paren
-(paren
-r_char
-op_star
-)paren
-id|hwrpb
-op_plus
-id|hwrpb-&gt;processor_offset
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|hwrpb-&gt;nr_processors
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;T2_init: CPU 0x%x: flags 0x%lx type 0x%lx&bslash;n&quot;
-comma
-id|i
-comma
-id|cpu-&gt;flags
-comma
-id|cpu-&gt;type
-)paren
-suffix:semicolon
-id|cpu
-op_assign
-(paren
-r_struct
-id|percpu_struct
-op_star
-)paren
-(paren
-(paren
-r_char
-op_star
-)paren
-id|cpu
-op_plus
-id|hwrpb-&gt;processor_size
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 r_return
 id|mem_start
 suffix:semicolon
@@ -1762,6 +1974,15 @@ c_func
 r_void
 )paren
 (brace
+r_int
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
 id|DBGMC
 c_func
 (paren
@@ -1772,7 +1993,7 @@ l_string|&quot;???????? t2_clear_errors&bslash;n&quot;
 suffix:semicolon
 id|sable_cpu_regs
 (braket
-id|CPUID
+id|cpu
 )braket
 op_member_access_from_pointer
 id|sic
@@ -1783,56 +2004,56 @@ suffix:semicolon
 multiline_comment|/* &n;&t; * clear cpu errors&n;&t; */
 id|sable_cpu_regs
 (braket
-id|CPUID
+id|cpu
 )braket
 op_member_access_from_pointer
 id|bcce
 op_or_assign
 id|sable_cpu_regs
 (braket
-id|CPUID
+id|cpu
 )braket
 op_member_access_from_pointer
 id|bcce
 suffix:semicolon
 id|sable_cpu_regs
 (braket
-id|CPUID
+id|cpu
 )braket
 op_member_access_from_pointer
 id|cbe
 op_or_assign
 id|sable_cpu_regs
 (braket
-id|CPUID
+id|cpu
 )braket
 op_member_access_from_pointer
 id|cbe
 suffix:semicolon
 id|sable_cpu_regs
 (braket
-id|CPUID
+id|cpu
 )braket
 op_member_access_from_pointer
 id|bcue
 op_or_assign
 id|sable_cpu_regs
 (braket
-id|CPUID
+id|cpu
 )braket
 op_member_access_from_pointer
 id|bcue
 suffix:semicolon
 id|sable_cpu_regs
 (braket
-id|CPUID
+id|cpu
 )braket
 op_member_access_from_pointer
 id|dter
 op_or_assign
 id|sable_cpu_regs
 (braket
-id|CPUID
+id|cpu
 )braket
 op_member_access_from_pointer
 id|dter
@@ -1929,6 +2150,15 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_int
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
 id|DBGMC
 c_func
 (paren
@@ -2019,6 +2249,9 @@ c_func
 l_string|&quot;t2_machine_check: expected %d&bslash;n&quot;
 comma
 id|T2_mcheck_expected
+(braket
+id|cpu
+)braket
 )paren
 )paren
 suffix:semicolon
@@ -2106,7 +2339,9 @@ r_if
 c_cond
 (paren
 id|T2_mcheck_expected
-multiline_comment|/* &amp;&amp; (mchk_sysdata-&gt;epic_dcsr &amp;&amp; 0x0c00UL)*/
+(braket
+id|cpu
+)braket
 )paren
 (brace
 id|DBGMC
@@ -2118,6 +2353,9 @@ l_string|&quot;T2 machine check expected&bslash;n&quot;
 )paren
 suffix:semicolon
 id|T2_mcheck_taken
+(braket
+id|cpu
+)braket
 op_assign
 l_int|1
 suffix:semicolon
@@ -2127,6 +2365,9 @@ c_func
 )paren
 suffix:semicolon
 id|T2_mcheck_expected
+(braket
+id|cpu
+)braket
 op_assign
 l_int|0
 suffix:semicolon

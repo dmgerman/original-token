@@ -13003,6 +13003,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|proc_idetape_read_name
 r_static
 r_int
@@ -13097,6 +13098,10 @@ op_assign
 (brace
 l_string|&quot;name&quot;
 comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
 id|proc_idetape_read_name
 comma
 l_int|NULL
@@ -13105,12 +13110,18 @@ comma
 (brace
 l_int|NULL
 comma
+l_int|0
+comma
 l_int|NULL
 comma
 l_int|NULL
 )brace
 )brace
 suffix:semicolon
+macro_line|#else
+DECL|macro|idetape_proc
+mdefine_line|#define&t;idetape_proc&t;NULL
+macro_line|#endif
 multiline_comment|/*&n; *&t;IDE subdriver functions, registered with ide.c&n; */
 DECL|variable|idetape_driver
 r_static

@@ -1233,15 +1233,15 @@ id|u_char
 id|device_fn
 suffix:semicolon
 DECL|member|base
-id|u_int
+id|u_long
 id|base
 suffix:semicolon
 DECL|member|base_2
-id|u_int
+id|u_long
 id|base_2
 suffix:semicolon
 DECL|member|io_port
-id|u_int
+id|u_long
 id|io_port
 suffix:semicolon
 DECL|member|irq
@@ -1250,7 +1250,7 @@ id|irq
 suffix:semicolon
 multiline_comment|/* port and reg fields to use INB, OUTB macros */
 DECL|member|port
-id|u_int
+id|u_long
 id|port
 suffix:semicolon
 DECL|member|reg
@@ -2625,7 +2625,7 @@ id|disc
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;address of the ncr control registers in io space&n;&t;*/
 DECL|member|port
-id|u_int
+id|u_long
 id|port
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;irq level&n;&t;*/
@@ -10687,7 +10687,7 @@ id|printf
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;ncr53c%s-%d: rev=0x%02x, base=0x%x, io_port=0x%x, irq=%d&bslash;n&quot;
+l_string|&quot;ncr53c%s-%d: rev=0x%02x, base=0x%lx, io_port=0x%lx, irq=%d&bslash;n&quot;
 comma
 id|device-&gt;chip.name
 comma
@@ -27707,7 +27707,20 @@ id|irq
 comma
 id|revision
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,0)
+macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,90)
+id|ulong
+id|base
+comma
+id|base_2
+comma
+id|io_port
+suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
+macro_line|#elif LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,0)
 id|uint
 id|base
 comma
@@ -27745,23 +27758,17 @@ l_string|&quot;ncr53c8xx: at PCI bus %d, device %d, function %d&bslash;n&quot;
 comma
 id|bus
 comma
-(paren
-r_int
-)paren
+id|PCI_SLOT
+c_func
 (paren
 id|device_fn
-op_amp
-l_int|0xf8
 )paren
-op_rshift
-l_int|3
 comma
+id|PCI_FUNC
+c_func
 (paren
-r_int
-)paren
 id|device_fn
-op_amp
-l_int|7
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Read info from the PCI config space.&n;&t; * pcibios_read_config_xxx() functions are assumed to be used for &n;&t; * successfully detected PCI devices.&n;&t; * Expecting error conditions from them is just paranoia,&n;&t; * thus void cast.&n;&t; */
@@ -27813,6 +27820,43 @@ op_amp
 id|command
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,90)
+id|pdev
+op_assign
+id|pci_find_dev
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+)paren
+suffix:semicolon
+id|io_port
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|base
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|base_2
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|2
+)braket
+suffix:semicolon
+id|irq
+op_assign
+id|pdev-&gt;irq
+suffix:semicolon
+macro_line|#else
 (paren
 r_void
 )paren
@@ -27871,12 +27915,13 @@ id|bus
 comma
 id|device_fn
 comma
-id|PCI_CLASS_REVISION
+id|PCI_INTERRUPT_LINE
 comma
 op_amp
-id|revision
+id|irq
 )paren
 suffix:semicolon
+macro_line|#endif
 (paren
 r_void
 )paren
@@ -27887,10 +27932,10 @@ id|bus
 comma
 id|device_fn
 comma
-id|PCI_INTERRUPT_LINE
+id|PCI_CLASS_REVISION
 comma
 op_amp
-id|irq
+id|revision
 )paren
 suffix:semicolon
 (paren
@@ -28405,7 +28450,7 @@ id|FE_WIDE
 suffix:semicolon
 macro_line|#ifdef&t;SCSI_NCR_PCI_FIX_UP_SUPPORT
 multiline_comment|/*&n;&t; * Try to fix up PCI config according to wished features.&n;&t; */
-macro_line|#if defined(__i386__) &amp;&amp; !defined(MODULE)
+macro_line|#if defined(__i386) &amp;&amp; !defined(MODULE)
 r_if
 c_cond
 (paren

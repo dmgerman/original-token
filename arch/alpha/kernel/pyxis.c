@@ -10,7 +10,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
-multiline_comment|/* NOTE: Herein are back-to-back mb insns.  They are magic.&n;   A plausible explanation is that the i/o controler does not properly&n;   handle the system transaction.  Another involves timing.  Ho hum.  */
+multiline_comment|/* NOTE: Herein are back-to-back mb instructions.  They are magic.&n;   One plausible explanation is that the I/O controller does not properly&n;   handle the system transaction.  Another involves timing.  Ho hum.  */
 r_extern
 r_struct
 id|hwrpb_struct
@@ -28,10 +28,6 @@ r_int
 id|mces
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|alpha_sys_type
-suffix:semicolon
 multiline_comment|/*&n; * BIOS32-style PCI interface:&n; */
 macro_line|#ifdef DEBUG 
 DECL|macro|DBG
@@ -45,6 +41,8 @@ mdefine_line|#define DEBUG_MCHECK
 macro_line|#ifdef DEBUG_MCHECK
 DECL|macro|DBG_MCK
 macro_line|# define DBG_MCK(args)&t;printk args
+DECL|macro|DEBUG_MCHECK_DUMP
+mdefine_line|#define DEBUG_MCHECK_DUMP
 macro_line|#else
 DECL|macro|DBG_MCK
 macro_line|# define DBG_MCK(args)
@@ -77,6 +75,33 @@ r_int
 r_int
 id|PYXIS_jd
 suffix:semicolon
+macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
+DECL|variable|PYXIS_DMA_WIN_BASE
+r_int
+r_int
+id|PYXIS_DMA_WIN_BASE
+op_assign
+id|PYXIS_DMA_WIN_BASE_DEFAULT
+suffix:semicolon
+DECL|variable|PYXIS_DMA_WIN_SIZE
+r_int
+r_int
+id|PYXIS_DMA_WIN_SIZE
+op_assign
+id|PYXIS_DMA_WIN_SIZE_DEFAULT
+suffix:semicolon
+DECL|variable|pyxis_sm_base_r1
+DECL|variable|pyxis_sm_base_r2
+DECL|variable|pyxis_sm_base_r3
+r_int
+r_int
+id|pyxis_sm_base_r1
+comma
+id|pyxis_sm_base_r2
+comma
+id|pyxis_sm_base_r3
+suffix:semicolon
+macro_line|#endif /* SRM_SETUP */
 multiline_comment|/*&n; * Given a bus, device, and function number, compute resulting&n; * configuration space address and setup the PYXIS_HAXR2 register&n; * accordingly.  It is therefore not safe to have concurrent&n; * invocations to configuration space access routines, but there&n; * really shouldn&squot;t be any need for this.&n; *&n; * Type 0:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | |D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:11&t;Device select bit.&n; * &t;10:8&t;Function number&n; * &t; 7:2&t;Register number&n; *&n; * Type 1:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | |B|B|B|B|B|B|B|B|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|1|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:24&t;reserved&n; *&t;23:16&t;bus number (8 bits = 128 possible buses)&n; *&t;15:11&t;Device number (5 bits)&n; *&t;10:8&t;function number&n; *&t; 7:2&t;register number&n; *  &n; * Notes:&n; *&t;The function number selects which function of a multi-function device &n; *&t;(e.g., scsi and ethernet).&n; * &n; *&t;The register selects a DWORD (32 bit) register offset.  Hence it&n; *&t;doesn&squot;t get shifted by 2 bits as we want to &quot;drop&quot; the bottom two&n; *&t;bits.&n; */
 DECL|function|mk_conf_addr
 r_static
@@ -262,6 +287,8 @@ r_int
 id|stat0
 comma
 id|value
+comma
+id|temp
 suffix:semicolon
 r_int
 r_int
@@ -270,18 +297,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* to keep gcc quiet */
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* avoid getting hit by machine check */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|DBG
 c_func
 (paren
@@ -316,6 +338,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_ERR
+suffix:semicolon
+multiline_comment|/* re-read to force write */
 id|DBG
 c_func
 (paren
@@ -356,6 +387,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_CFG
+suffix:semicolon
+multiline_comment|/* re-read to force write */
 id|DBG
 c_func
 (paren
@@ -437,89 +477,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * david.rusling@reo.mts.dec.com.  This code is needed for the&n;&t; * EB64+ as it does not generate a machine check (why I don&squot;t&n;&t; * know).  When we build kernels for one particular platform&n;&t; * then we can make this conditional on the type.&n;&t; */
-macro_line|#if 0
-id|draina
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* now look for any errors */
-id|stat0
-op_assign
-op_star
-(paren
-id|vuip
-)paren
-id|PYXIS_IOC_PYXIS_ERR
-suffix:semicolon
-id|DBG
-c_func
-(paren
-(paren
-l_string|&quot;conf_read: PYXIS ERR after read 0x%x&bslash;n&quot;
-comma
-id|stat0
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|stat0
-op_amp
-l_int|0x8280U
-)paren
-(brace
-multiline_comment|/* is any error bit set? */
-multiline_comment|/* if not NDEV, print status */
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|stat0
-op_amp
-l_int|0x0080
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;PYXIS.c:conf_read: got stat0=%x&bslash;n&quot;
-comma
-id|stat0
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* reset error status: */
-op_star
-(paren
-id|vulp
-)paren
-id|PYXIS_IOC_PYXIS_ERR
-op_assign
-id|stat0
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-id|wrmces
-c_func
-(paren
-l_int|0x7
-)paren
-suffix:semicolon
-multiline_comment|/* reset machine check */
-id|value
-op_assign
-l_int|0xffffffff
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* if Type1 access, must reset IOC CFG so normal IO space ops work */
 r_if
 c_cond
@@ -543,6 +500,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_CFG
+suffix:semicolon
+multiline_comment|/* re-read to force write */
 )brace
 id|DBG
 c_func
@@ -588,6 +554,8 @@ suffix:semicolon
 r_int
 r_int
 id|stat0
+comma
+id|temp
 suffix:semicolon
 r_int
 r_int
@@ -596,18 +564,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* to keep gcc quiet */
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* avoid getting hit by machine check */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* reset status register to avoid losing errors: */
 id|stat0
 op_assign
@@ -630,6 +593,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_ERR
+suffix:semicolon
+multiline_comment|/* re-read to force write */
 id|DBG
 c_func
 (paren
@@ -670,6 +642,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_CFG
+suffix:semicolon
+multiline_comment|/* re-read to force write */
 id|DBG
 c_func
 (paren
@@ -713,6 +694,15 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* magic */
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_ERR
+suffix:semicolon
+multiline_comment|/* do a PYXIS read to force the write */
 id|PYXIS_mcheck_expected
 op_assign
 l_int|0
@@ -745,6 +735,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_CFG
+suffix:semicolon
+multiline_comment|/* re-read to force write */
 )brace
 id|DBG
 c_func
@@ -1381,7 +1380,140 @@ r_int
 r_int
 id|pyxis_err
 suffix:semicolon
-multiline_comment|/* &n;&t; * Set up error reporting.&n;&t; */
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;pyxis_init: PYXIS_ERR_MASK 0x%x&bslash;n&quot;
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_ERR_MASK
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;pyxis_init: PYXIS_ERR 0x%x&bslash;n&quot;
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_ERR
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;pyxis_init: PYXIS_INT_REQ 0x%lx&bslash;n&quot;
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_REQ
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;pyxis_init: PYXIS_INT_MASK 0x%lx&bslash;n&quot;
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_MASK
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;pyxis_init: PYXIS_INT_ROUTE 0x%lx&bslash;n&quot;
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_ROUTE
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;pyxis_init: PYXIS_INT_HILO 0x%lx&bslash;n&quot;
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_HILO
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;pyxis_init: PYXIS_INT_CNFG 0x%x&bslash;n&quot;
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_INT_CNFG
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;pyxis_init: PYXIS_RT_COUNT 0x%lx&bslash;n&quot;
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_RT_COUNT
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* &n;&t; * Set up error reporting. Make sure CPU_PE is OFF in the mask.&n;&t; */
+id|pyxis_err
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_ERR_MASK
+suffix:semicolon
+id|pyxis_err
+op_and_assign
+op_complement
+l_int|4
+suffix:semicolon
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_ERR_MASK
+op_assign
+id|pyxis_err
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|pyxis_err
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_ERR_MASK
+suffix:semicolon
+multiline_comment|/* re-read to force write */
 id|pyxis_err
 op_assign
 op_star
@@ -1416,15 +1548,426 @@ id|vuip
 )paren
 id|PYXIS_ERR
 suffix:semicolon
-macro_line|#ifdef CONFIG_ALPHA_RUFFIAN
+multiline_comment|/* re-read to force write */
+macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
+multiline_comment|/* check window 0 for enabled and mapped to 0 */
+r_if
+c_cond
+(paren
+(paren
+(paren
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W0_BASE
+op_amp
+l_int|3
+)paren
+op_eq
+l_int|1
+)paren
+op_logical_and
+(paren
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_T0_BASE
+op_eq
+l_int|0
+)paren
+op_logical_and
+(paren
+(paren
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W0_MASK
+op_amp
+l_int|0xfff00000U
+)paren
+OG
+l_int|0x0ff00000U
+)paren
+)paren
+(brace
+id|PYXIS_DMA_WIN_BASE
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W0_BASE
+op_amp
+l_int|0xfff00000U
+suffix:semicolon
+id|PYXIS_DMA_WIN_SIZE
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W0_MASK
+op_amp
+l_int|0xfff00000U
+suffix:semicolon
+id|PYXIS_DMA_WIN_SIZE
+op_add_assign
+l_int|0x00100000U
+suffix:semicolon
+macro_line|#if 1
 id|printk
 c_func
 (paren
-l_string|&quot;pyxis_init: Skipping window register rewrites --&quot;
+l_string|&quot;pyxis_init: using Window 0 settings&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;pyxis_init: BASE 0x%x MASK 0x%x TRANS 0x%x&bslash;n&quot;
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W0_BASE
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W0_MASK
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_T0_BASE
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+multiline_comment|/* check window 1 for enabled and mapped to 0 */
+r_if
+c_cond
+(paren
+(paren
+(paren
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W1_BASE
+op_amp
+l_int|3
+)paren
+op_eq
+l_int|1
+)paren
+op_logical_and
+(paren
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_T1_BASE
+op_eq
+l_int|0
+)paren
+op_logical_and
+(paren
+(paren
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W1_MASK
+op_amp
+l_int|0xfff00000U
+)paren
+OG
+l_int|0x0ff00000U
+)paren
+)paren
+(brace
+id|PYXIS_DMA_WIN_BASE
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W1_BASE
+op_amp
+l_int|0xfff00000U
+suffix:semicolon
+id|PYXIS_DMA_WIN_SIZE
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W1_MASK
+op_amp
+l_int|0xfff00000U
+suffix:semicolon
+id|PYXIS_DMA_WIN_SIZE
+op_add_assign
+l_int|0x00100000U
+suffix:semicolon
+macro_line|#if 1
+id|printk
+c_func
+(paren
+l_string|&quot;pyxis_init: using Window 1 settings&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;pyxis_init: BASE 0x%x MASK 0x%x TRANS 0x%x&bslash;n&quot;
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W1_BASE
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W1_MASK
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_T1_BASE
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+multiline_comment|/* check window 2 for enabled and mapped to 0 */
+r_if
+c_cond
+(paren
+(paren
+(paren
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W2_BASE
+op_amp
+l_int|3
+)paren
+op_eq
+l_int|1
+)paren
+op_logical_and
+(paren
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_T2_BASE
+op_eq
+l_int|0
+)paren
+op_logical_and
+(paren
+(paren
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W2_MASK
+op_amp
+l_int|0xfff00000U
+)paren
+OG
+l_int|0x0ff00000U
+)paren
+)paren
+(brace
+id|PYXIS_DMA_WIN_BASE
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W2_BASE
+op_amp
+l_int|0xfff00000U
+suffix:semicolon
+id|PYXIS_DMA_WIN_SIZE
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W2_MASK
+op_amp
+l_int|0xfff00000U
+suffix:semicolon
+id|PYXIS_DMA_WIN_SIZE
+op_add_assign
+l_int|0x00100000U
+suffix:semicolon
+macro_line|#if 1
+id|printk
+c_func
+(paren
+l_string|&quot;pyxis_init: using Window 2 settings&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;pyxis_init: BASE 0x%x MASK 0x%x TRANS 0x%x&bslash;n&quot;
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W2_BASE
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W2_MASK
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_T2_BASE
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+multiline_comment|/* check window 3 for enabled and mapped to 0 */
+r_if
+c_cond
+(paren
+(paren
+(paren
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W3_BASE
+op_amp
+l_int|3
+)paren
+op_eq
+l_int|1
+)paren
+op_logical_and
+(paren
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_T3_BASE
+op_eq
+l_int|0
+)paren
+op_logical_and
+(paren
+(paren
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W3_MASK
+op_amp
+l_int|0xfff00000U
+)paren
+OG
+l_int|0x0ff00000U
+)paren
+)paren
+(brace
+id|PYXIS_DMA_WIN_BASE
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W3_BASE
+op_amp
+l_int|0xfff00000U
+suffix:semicolon
+id|PYXIS_DMA_WIN_SIZE
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W3_MASK
+op_amp
+l_int|0xfff00000U
+suffix:semicolon
+id|PYXIS_DMA_WIN_SIZE
+op_add_assign
+l_int|0x00100000U
+suffix:semicolon
+macro_line|#if 1
+id|printk
+c_func
+(paren
+l_string|&quot;pyxis_init: using Window 3 settings&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;pyxis_init: BASE 0x%x MASK 0x%x TRANS 0x%x&bslash;n&quot;
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W3_BASE
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_W3_MASK
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_T3_BASE
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+multiline_comment|/* we must use our defaults which were pre-initialized... */
+macro_line|#endif /* SRM_SETUP */
+(brace
+macro_line|#if defined(CONFIG_ALPHA_RUFFIAN)
+macro_line|#if 1
+id|printk
+c_func
+(paren
+l_string|&quot;pyxis_init: skipping window register rewrites... &quot;
 l_string|&quot; trust DeskStation firmware!&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#else
+macro_line|#endif
+macro_line|#else /* RUFFIAN */
 multiline_comment|/*&n;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t; * For now, windows 1,2 and 3 are disabled.  In the future, we may&n;&t; * want to use them to do scatter/gather DMA.  Window 0&n;&t; * goes at 1 GB and is 1 GB large.&n;&t; */
 op_star
 (paren
@@ -1491,7 +2034,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* RUFFIAN */
+)brace
 multiline_comment|/*&n;&t; * check ASN in HWRPB for validity, report if bad&n;&t; */
 r_if
 c_cond
@@ -1514,11 +2058,13 @@ op_assign
 id|MAX_ASN
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Finally, clear the PYXIS_CFG register, which gets used&n;&t; *  for PCI Config Space accesses. That is the way&n;&t; *  we want to use it, and we do not want to depend on&n;&t; *  what ARC or SRM might have left behind...&n;&t; */
+multiline_comment|/*&n;         * Next, clear the PYXIS_CFG register, which gets used&n;&t; *  for PCI Config Space accesses. That is the way&n;&t; *  we want to use it, and we do not want to depend on&n;&t; *  what ARC or SRM might have left behind...&n;&t; */
 (brace
 r_int
 r_int
 id|pyxis_cfg
+comma
+id|temp
 suffix:semicolon
 id|pyxis_cfg
 op_assign
@@ -1533,7 +2079,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if 0
+r_if
+c_cond
+(paren
+id|pyxis_cfg
+op_ne
+l_int|0
+)paren
+(brace
+macro_line|#if 1
 id|printk
 c_func
 (paren
@@ -1556,6 +2110,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_CFG
+suffix:semicolon
+multiline_comment|/* re-read to force write */
+)brace
 )brace
 (brace
 r_int
@@ -1596,13 +2160,52 @@ id|pyxis_hae_io
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
+multiline_comment|/*&n;&t;   * sigh... For the SRM setup, unless we know apriori what the HAE&n;&t;   * contents will be, we need to setup the arbitrary region bases&n;&t;   * so we can test against the range of addresses and tailor the&n;&t;   * region chosen for the SPARSE memory access.&n;&t;   * &n;&t;   * see include/asm-alpha/pyxis.h for the SPARSE mem read/write&n;&t;  */
+id|pyxis_sm_base_r1
+op_assign
+(paren
+id|pyxis_hae_mem
+)paren
+op_amp
+l_int|0xe0000000UL
+suffix:semicolon
+multiline_comment|/* region 1 */
+id|pyxis_sm_base_r2
+op_assign
+(paren
+id|pyxis_hae_mem
+op_lshift
+l_int|16
+)paren
+op_amp
+l_int|0xf8000000UL
+suffix:semicolon
+multiline_comment|/* region 2 */
+id|pyxis_sm_base_r3
+op_assign
+(paren
+id|pyxis_hae_mem
+op_lshift
+l_int|24
+)paren
+op_amp
+l_int|0xfc000000UL
+suffix:semicolon
+multiline_comment|/* region 3 */
+multiline_comment|/*&n;&t;    Set the HAE cache, so that setup_arch() code&n;&t;    will use the SRM setting always. Our readb/writeb&n;&t;    code in pyxis.h expects never to have to change&n;&t;    the contents of the HAE.&n;&t;   */
+id|hae.cache
+op_assign
+id|pyxis_hae_mem
+suffix:semicolon
+macro_line|#else /* SRM_SETUP */
 op_star
 (paren
 id|vuip
 )paren
 id|PYXIS_HAE_MEM
 op_assign
-l_int|0
+l_int|0U
 suffix:semicolon
 id|mb
 c_func
@@ -1617,6 +2220,7 @@ id|vuip
 )paren
 id|PYXIS_HAE_MEM
 suffix:semicolon
+multiline_comment|/* re-read to force write */
 op_star
 (paren
 id|vuip
@@ -1638,6 +2242,67 @@ id|vuip
 )paren
 id|PYXIS_HAE_IO
 suffix:semicolon
+multiline_comment|/* re-read to force write */
+macro_line|#endif /* SRM_SETUP */
+)brace
+multiline_comment|/*&n;&t; * Finally, check that the PYXIS_CTRL1 has IOA_BEN set for&n;&t; * enabling byte/word PCI bus space(s) access.&n;&t; */
+(brace
+r_int
+r_int
+id|ctrl1
+suffix:semicolon
+id|ctrl1
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_CTRL1
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|ctrl1
+op_amp
+l_int|1
+)paren
+)paren
+(brace
+macro_line|#if 1
+id|printk
+c_func
+(paren
+l_string|&quot;PYXIS_init: enabling byte/word PCI space&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_CTRL1
+op_assign
+id|ctrl1
+op_or
+l_int|1
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ctrl1
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_CTRL1
+suffix:semicolon
+multiline_comment|/* re-read to force write */
+)brace
 )brace
 r_return
 id|mem_start
@@ -1690,6 +2355,7 @@ id|vuip
 )paren
 id|PYXIS_ERR
 suffix:semicolon
+multiline_comment|/* re-read to force write */
 r_return
 l_int|0
 suffix:semicolon
@@ -1873,7 +2539,6 @@ r_if
 c_cond
 (paren
 id|PYXIS_mcheck_expected
-multiline_comment|/* &amp;&amp; (mchk_sysdata-&gt;epic_dcsr &amp;&amp; 0x0c00UL)*/
 )paren
 (brace
 id|DBG
@@ -1950,7 +2615,8 @@ id|DBG_MCK
 c_func
 (paren
 (paren
-l_string|&quot;&bslash;t&bslash;t pc=0x%lx size=0x%x procoffset=0x%x sysoffset 0x%x&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t pc=0x%lx size=0x%x procoffset=0x%x&quot;
+l_string|&quot; sysoffset 0x%x&bslash;n&quot;
 comma
 id|regs-&gt;pc
 comma

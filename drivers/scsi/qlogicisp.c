@@ -32,6 +32,8 @@ DECL|macro|TRACE_ISP
 mdefine_line|#define TRACE_ISP&t;&t;0
 DECL|macro|DEFAULT_LOOP_COUNT
 mdefine_line|#define DEFAULT_LOOP_COUNT&t;1000000
+DECL|macro|LinuxVersionCode
+mdefine_line|#define LinuxVersionCode(v, p, s) (((v)&lt;&lt;16)+((p)&lt;&lt;8)+(s))
 multiline_comment|/* End Configuration section *************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#if TRACE_ISP
@@ -1968,7 +1970,7 @@ l_int|0xff
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicisp : i/o region 0x%04x-0x%04x already &quot;
+l_string|&quot;qlogicisp : i/o region 0x%lx-0x%lx already &quot;
 l_string|&quot;in use&bslash;n&quot;
 comma
 id|host-&gt;io_port
@@ -2164,7 +2166,7 @@ c_func
 (paren
 id|buf
 comma
-l_string|&quot;QLogic ISP1020 SCSI on PCI bus %d device %d irq %d base 0x%x&quot;
+l_string|&quot;QLogic ISP1020 SCSI on PCI bus %d device %d irq %d base 0x%lx&quot;
 comma
 id|hostdata-&gt;bus
 comma
@@ -4527,8 +4529,10 @@ op_star
 id|sh
 )paren
 (brace
-id|u_int
+id|u_long
 id|io_base
+op_assign
+l_int|0
 suffix:semicolon
 r_struct
 id|isp1020_hostdata
@@ -4551,6 +4555,13 @@ id|device_id
 comma
 id|command
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,90)
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
+macro_line|#endif
 id|ENTER
 c_func
 (paren
@@ -4615,6 +4626,7 @@ comma
 op_amp
 id|command
 )paren
+macro_line|#if LINUX_VERSION_CODE &lt; LinuxVersionCode(2,1,90)
 op_logical_or
 id|pcibios_read_config_dword
 c_func
@@ -4636,11 +4648,12 @@ id|bus
 comma
 id|device_fn
 comma
-id|PCI_CLASS_REVISION
+id|PCI_INTERRUPT_LINE
 comma
 op_amp
-id|revision
+id|irq
 )paren
+macro_line|#endif
 op_logical_or
 id|pcibios_read_config_byte
 c_func
@@ -4649,10 +4662,10 @@ id|bus
 comma
 id|device_fn
 comma
-id|PCI_INTERRUPT_LINE
+id|PCI_CLASS_REVISION
 comma
 op_amp
-id|irq
+id|revision
 )paren
 )paren
 (brace
@@ -4666,6 +4679,29 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,90)
+id|pdev
+op_assign
+id|pci_find_dev
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+)paren
+suffix:semicolon
+id|io_base
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|irq
+op_assign
+id|pdev-&gt;irq
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

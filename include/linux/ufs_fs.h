@@ -669,6 +669,12 @@ suffix:semicolon
 DECL|member|fs_u
 )brace
 id|fs_u
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 DECL|member|fs_postblformat
 id|__s32

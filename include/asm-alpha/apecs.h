@@ -18,10 +18,28 @@ DECL|macro|APECS_XL_DMA_WIN2_SIZE
 mdefine_line|#define APECS_XL_DMA_WIN2_SIZE&t;&t;(1024*1024*1024)
 macro_line|#else /* CONFIG_ALPHA_XL */
 multiline_comment|/* these are for normal APECS family machines, AVANTI/MUSTANG/EB64/PC64 */
+macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
+multiline_comment|/* if we are using the SRM PCI setup, we&squot;ll need to use variables instead */
+DECL|macro|APECS_DMA_WIN_BASE_DEFAULT
+mdefine_line|#define APECS_DMA_WIN_BASE_DEFAULT&t;(1024*1024*1024)
+DECL|macro|APECS_DMA_WIN_SIZE_DEFAULT
+mdefine_line|#define APECS_DMA_WIN_SIZE_DEFAULT&t;(1024*1024*1024)
+r_extern
+r_int
+r_int
+id|APECS_DMA_WIN_BASE
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|APECS_DMA_WIN_SIZE
+suffix:semicolon
+macro_line|#else /* SRM_SETUP */
 DECL|macro|APECS_DMA_WIN_BASE
 mdefine_line|#define APECS_DMA_WIN_BASE&t;(1024*1024*1024)
 DECL|macro|APECS_DMA_WIN_SIZE
 mdefine_line|#define APECS_DMA_WIN_SIZE&t;(1024*1024*1024)
+macro_line|#endif /* SRM_SETUP */
 macro_line|#endif /* CONFIG_ALPHA_XL */
 multiline_comment|/*&n; * 21071-DA Control and Status registers.&n; * These are used for PCI memory access.&n; */
 DECL|macro|APECS_IOC_DCSR

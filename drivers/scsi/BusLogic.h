@@ -3313,6 +3313,11 @@ DECL|member|LocalOptions
 id|BusLogic_LocalOptions_T
 id|LocalOptions
 suffix:semicolon
+DECL|member|CommonQueueDepth
+r_int
+r_char
+id|CommonQueueDepth
+suffix:semicolon
 DECL|member|QueueDepth
 r_int
 r_char
@@ -3985,6 +3990,11 @@ DECL|member|UntaggedQueueDepth
 r_int
 r_int
 id|UntaggedQueueDepth
+suffix:semicolon
+DECL|member|CommonQueueDepth
+r_int
+r_int
+id|CommonQueueDepth
 suffix:semicolon
 DECL|member|BusSettleTime
 r_int

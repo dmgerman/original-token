@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/config.h&gt;&t;/* CONFIG_ALPHA_LCA etc */
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#ifdef CONFIG_RTC
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#endif
@@ -23,6 +24,30 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+r_extern
+r_void
+id|setup_smp
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_char
+op_star
+id|smp_info
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#if 1
+DECL|macro|DBG_SRM
+macro_line|# define DBG_SRM(args)         printk args
+macro_line|#else
+DECL|macro|DBG_SRM
+macro_line|# define DBG_SRM(args)
+macro_line|#endif
 DECL|variable|hae
 r_struct
 id|hae
@@ -39,6 +64,13 @@ op_star
 id|HAE_ADDRESS
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
+DECL|variable|srm_hae
+r_int
+r_int
+id|srm_hae
+suffix:semicolon
+macro_line|#endif
 DECL|variable|hwrpb
 r_struct
 id|hwrpb_struct
@@ -236,8 +268,9 @@ l_string|&quot;timer&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* reserve pit */
-macro_line|#else
-macro_line|#ifndef CONFIG_ALPHA_RUFFIAN
+macro_line|#else /* RTC */
+macro_line|#if !defined(CONFIG_ALPHA_RUFFIAN)
+multiline_comment|/* Ruffian depends on the system timer established in MILO!! */
 id|outb
 c_func
 (paren
@@ -263,7 +296,7 @@ comma
 l_int|0x40
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* RUFFIAN */
 id|request_region
 c_func
 (paren
@@ -447,6 +480,37 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|CMOS_READ
+c_func
+(paren
+id|RTC_FREQ_SELECT
+)paren
+op_amp
+l_int|0x3f
+)paren
+op_ne
+l_int|0x26
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;setup_arch: setting RTC_FREQ to 1024/sec&bslash;n&quot;
+)paren
+suffix:semicolon
+id|CMOS_WRITE
+c_func
+(paren
+l_int|0x26
+comma
+id|RTC_FREQ_SELECT
+)paren
+suffix:semicolon
+)brace
 id|hwrpb
 op_assign
 (paren
@@ -460,6 +524,25 @@ op_plus
 id|INIT_HWRPB-&gt;phys_addr
 )paren
 suffix:semicolon
+macro_line|#if !defined(CONFIG_ALPHA_TSUNAMI)
+macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
+id|srm_hae
+op_assign
+op_star
+id|hae.reg
+suffix:semicolon
+multiline_comment|/* save SRM setting for restoration */
+id|DBG_SRM
+c_func
+(paren
+(paren
+l_string|&quot;setup_arch: old HAE base: 0x%016lx&bslash;n&quot;
+comma
+id|srm_hae
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif /* SRM_SETUP */
 id|set_hae
 c_func
 (paren
@@ -467,6 +550,7 @@ id|hae.cache
 )paren
 suffix:semicolon
 multiline_comment|/* sync HAE register w/hae_cache */
+macro_line|#endif /* !TSUNAMI */
 id|wrmces
 c_func
 (paren
@@ -644,10 +728,124 @@ op_star
 id|memory_end_p
 )paren
 suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_TSUNAMI)
+op_star
+id|memory_start_p
+op_assign
+id|tsunami_init
+c_func
+(paren
+op_star
+id|memory_start_p
+comma
+op_star
+id|memory_end_p
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_MCPCIA)
+op_star
+id|memory_start_p
+op_assign
+id|mcpcia_init
+c_func
+(paren
+op_star
+id|memory_start_p
+comma
+op_star
+id|memory_end_p
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef __SMP__
+id|setup_smp
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#endif
 )brace
 DECL|macro|N
 mdefine_line|#define N(a) (sizeof(a)/sizeof(a[0]))
+multiline_comment|/* A change was made to the HWRPB via an ECO and the following code tracks&n; * a part of the ECO.  The HWRPB version must be 5 or higher or the ECO&n; * was not implemented in the console firmware.  If its at rev 5 or greater&n; * we can get the platform ascii string name from the HWRPB.  Thats what this&n; * function does.  It checks the rev level and if the string is in the HWRPB&n; * it returns the addtess of the string ... a pointer to the platform name.&n; *&n; * Returns:&n; *      - Pointer to a ascii string if its in the HWRPB&n; *      - Pointer to a blank string if the data is not in the HWRPB.&n; */
+r_static
+r_char
+op_star
+DECL|function|platform_string
+id|platform_string
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|dsr_struct
+op_star
+id|dsr
+suffix:semicolon
+r_static
+r_char
+id|unk_system_string
+(braket
+)braket
+op_assign
+l_string|&quot;N/A&quot;
+suffix:semicolon
+multiline_comment|/* Go to the console for the string pointer.&n;         * If the rpb_vers is not 5 or greater the rpb&n;&t; * is old and does not have this data in it.&n;&t; */
+r_if
+c_cond
+(paren
+id|hwrpb-&gt;revision
+OL
+l_int|5
+)paren
+r_return
+(paren
+id|unk_system_string
+)paren
+suffix:semicolon
+r_else
+(brace
+multiline_comment|/* The Dynamic System Recognition struct&n;&t;&t; * has the system platform name starting&n;&t;&t; * after the character count of the string.&n;&t;&t; */
+id|dsr
+op_assign
+(paren
+(paren
+r_struct
+id|dsr_struct
+op_star
+)paren
+(paren
+(paren
+r_char
+op_star
+)paren
+id|hwrpb
+op_plus
+id|hwrpb-&gt;dsr_offset
+)paren
+)paren
+suffix:semicolon
+r_return
+(paren
+(paren
+r_char
+op_star
+)paren
+id|dsr
+op_plus
+(paren
+id|dsr-&gt;sysname_off
+op_plus
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+)paren
+suffix:semicolon
+)brace
+)brace
 r_static
 r_void
 DECL|function|get_sysnames
@@ -946,6 +1144,55 @@ comma
 l_int|1
 )brace
 suffix:semicolon
+r_static
+r_char
+op_star
+id|rawhide_names
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;Dodge&quot;
+comma
+l_string|&quot;Wrangler&quot;
+comma
+l_string|&quot;Durango&quot;
+comma
+l_string|&quot;Tincup&quot;
+comma
+l_string|&quot;DaVinci&quot;
+)brace
+suffix:semicolon
+r_static
+r_int
+id|rawhide_indices
+(braket
+)braket
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|2
+comma
+l_int|2
+comma
+l_int|3
+comma
+l_int|3
+comma
+l_int|4
+comma
+l_int|4
+)brace
+suffix:semicolon
 r_int
 id|member
 suffix:semicolon
@@ -1070,6 +1317,12 @@ c_cond
 id|type
 )paren
 (brace
+multiline_comment|/* select by family */
+r_default
+suffix:colon
+multiline_comment|/* default to variation &quot;0&quot; for now */
+r_break
+suffix:semicolon
 r_case
 id|ST_DEC_EB164
 suffix:colon
@@ -1178,7 +1431,35 @@ id|member
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|ST_DEC_RAWHIDE
+suffix:colon
+r_if
+c_cond
+(paren
+id|member
+OL
+id|N
+c_func
+(paren
+id|rawhide_indices
+)paren
+)paren
+op_star
+id|variation_name
+op_assign
+id|rawhide_names
+(braket
+id|rawhide_indices
+(braket
+id|member
+)braket
+)braket
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
+multiline_comment|/* end family switch */
 )brace
 multiline_comment|/*&n; * BUFFER is PAGE_SIZE bytes long.&n; */
 DECL|function|get_cpuinfo
@@ -1346,6 +1627,10 @@ l_string|&quot;max. addr. space #&bslash;t: %ld&bslash;n&quot;
 l_string|&quot;BogoMIPS&bslash;t&bslash;t: %lu.%02lu&bslash;n&quot;
 l_string|&quot;kernel unaligned acc&bslash;t: %ld (pc=%lx,va=%lx)&bslash;n&quot;
 l_string|&quot;user unaligned acc&bslash;t: %ld (pc=%lx,va=%lx)&bslash;n&quot;
+l_string|&quot;platform string&bslash;t: %s&bslash;n&quot;
+macro_line|#ifdef __SMP__
+l_string|&quot;%s&quot;
+macro_line|#endif
 comma
 id|cpu_name
 comma
@@ -1446,6 +1731,18 @@ l_int|1
 )braket
 dot
 id|va
+comma
+id|platform_string
+c_func
+(paren
+)paren
+macro_line|#ifdef __SMP__
+comma
+id|smp_info
+c_func
+(paren
+)paren
+macro_line|#endif
 )paren
 suffix:semicolon
 )brace

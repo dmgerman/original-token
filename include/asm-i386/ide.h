@@ -12,7 +12,7 @@ id|ide_ioreg_t
 suffix:semicolon
 macro_line|#ifndef MAX_HWIFS
 DECL|macro|MAX_HWIFS
-mdefine_line|#define MAX_HWIFS&t;4
+mdefine_line|#define MAX_HWIFS&t;6
 macro_line|#endif
 DECL|macro|ide_sti
 mdefine_line|#define ide_sti()&t;sti()
@@ -56,6 +56,18 @@ l_int|0x168
 suffix:colon
 r_return
 l_int|10
+suffix:semicolon
+r_case
+l_int|0x1e0
+suffix:colon
+r_return
+l_int|8
+suffix:semicolon
+r_case
+l_int|0x160
+suffix:colon
+r_return
+l_int|12
 suffix:semicolon
 r_default
 suffix:colon
@@ -104,6 +116,18 @@ l_int|3
 suffix:colon
 r_return
 l_int|0x168
+suffix:semicolon
+r_case
+l_int|4
+suffix:colon
+r_return
+l_int|0x1e0
+suffix:semicolon
+r_case
+l_int|5
+suffix:colon
+r_return
+l_int|0x160
 suffix:semicolon
 r_default
 suffix:colon

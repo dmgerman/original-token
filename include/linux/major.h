@@ -129,6 +129,10 @@ DECL|macro|MKISS_MAJOR
 mdefine_line|#define MKISS_MAJOR&t;55
 DECL|macro|DSP56K_MAJOR
 mdefine_line|#define DSP56K_MAJOR    55   /* DSP56001 processor device */
+DECL|macro|IDE4_MAJOR
+mdefine_line|#define IDE4_MAJOR&t;56
+DECL|macro|IDE5_MAJOR
+mdefine_line|#define IDE5_MAJOR&t;57
 DECL|macro|SPECIALIX_NORMAL_MAJOR
 mdefine_line|#define SPECIALIX_NORMAL_MAJOR 75
 DECL|macro|SPECIALIX_CALLOUT_MAJOR

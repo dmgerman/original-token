@@ -907,7 +907,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;xorl %%eax,%%eax; mov %%ax,%%fs; mov %%ax,%%gs&bslash;n&bslash;t&quot;
+l_string|&quot;xorl %%eax,%%eax; movl %%ax,%%fs; movl %%ax,%%gs&bslash;n&bslash;t&quot;
 l_string|&quot;movl %0,%%esp&bslash;n&bslash;t&quot;
 l_string|&quot;jmp ret_from_sys_call&quot;
 suffix:colon

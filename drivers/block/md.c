@@ -3750,6 +3750,7 @@ c_func
 id|md_do_sync
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|proc_md
 r_static
 r_struct
@@ -3780,6 +3781,7 @@ id|proc_array_inode_operations
 comma
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|function|md_geninit
 r_static
 r_void
@@ -3867,6 +3869,7 @@ id|MD_MAJOR
 op_assign
 id|md_maxreadahead
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_register
 c_func
 (paren
@@ -3877,6 +3880,7 @@ op_amp
 id|proc_md
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|md_error
 r_int

@@ -14,6 +14,7 @@ r_int
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -108,6 +109,7 @@ r_int
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -202,6 +204,7 @@ r_int
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -285,6 +288,7 @@ r_int
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -385,6 +389,7 @@ r_int
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -485,6 +490,7 @@ r_int
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -582,7 +588,7 @@ c_func
 r_int
 id|nr
 comma
-r_const
+r_volatile
 r_void
 op_star
 id|addr

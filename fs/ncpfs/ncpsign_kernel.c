@@ -22,7 +22,7 @@ DECL|macro|BSET
 mdefine_line|#define BSET(buf,pos,val) (BVAL(buf,pos) = (val))
 r_static
 r_inline
-id|word
+id|__u16
 DECL|function|WVAL_LH
 id|WVAL_LH
 c_func
@@ -59,7 +59,7 @@ suffix:semicolon
 )brace
 r_static
 r_inline
-id|dword
+id|__u32
 DECL|function|DVAL_LH
 id|DVAL_LH
 c_func
@@ -108,7 +108,7 @@ comma
 r_int
 id|pos
 comma
-id|word
+id|__u16
 id|val
 )paren
 (brace
@@ -153,7 +153,7 @@ comma
 r_int
 id|pos
 comma
-id|dword
+id|__u32
 id|val
 )paren
 (brace

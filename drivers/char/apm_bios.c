@@ -73,7 +73,7 @@ macro_line|#&t;define APM_DO_CLI
 macro_line|#endif
 macro_line|#ifdef APM_ZERO_SEGS
 DECL|macro|APM_DO_ZERO_SEGS
-macro_line|#&t;define APM_DO_ZERO_SEGS&t;&bslash;&n;&t;&t;&quot;pushl %%ds&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;pushl %%es&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;pushl %%fs&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;pushl %%gs&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;xorl %%edx, %%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;mov %%dx, %%ds&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;mov %%dx, %%es&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;mov %%dx, %%fs&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;mov %%dx, %%gs&bslash;n&bslash;t&quot;
+macro_line|#&t;define APM_DO_ZERO_SEGS&t;&bslash;&n;&t;&t;&quot;pushl %%ds&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;pushl %%es&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;pushl %%fs&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;pushl %%gs&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;xorl %%edx, %%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;movl %%dx, %%ds&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;movl %%dx, %%es&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;movl %%dx, %%fs&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;movl %%dx, %%gs&bslash;n&bslash;t&quot;
 DECL|macro|APM_DO_RESTORE_SEGS
 macro_line|#&t;define APM_DO_RESTORE_SEGS&t;&bslash;&n;&t;&t;&quot;popl %%gs&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;popl %%fs&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;popl %%es&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;popl %%ds&bslash;n&bslash;t&quot;
 macro_line|#else

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.68 1998/03/22 19:14:50 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.69 1998/03/28 00:55:36 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -3317,7 +3317,13 @@ suffix:semicolon
 multiline_comment|/* So that tcp_send_synack() knows! */
 id|req-&gt;rcv_isn
 op_assign
-id|skb-&gt;seq
+id|TCP_SKB_CB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|seq
 suffix:semicolon
 id|req-&gt;snt_isn
 op_assign
@@ -4396,7 +4402,13 @@ c_cond
 id|before
 c_func
 (paren
-id|skb-&gt;seq
+id|TCP_SKB_CB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|seq
 comma
 id|req-&gt;snt_isn
 )paren
@@ -4404,7 +4416,13 @@ op_logical_or
 id|after
 c_func
 (paren
-id|skb-&gt;seq
+id|TCP_SKB_CB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|seq
 comma
 id|req-&gt;snt_isn
 op_plus
@@ -4638,7 +4656,13 @@ r_goto
 id|no_tcp_socket
 suffix:semicolon
 )brace
-id|skb-&gt;seq
+id|TCP_SKB_CB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|seq
 op_assign
 id|ntohl
 c_func
@@ -4646,9 +4670,22 @@ c_func
 id|th-&gt;seq
 )paren
 suffix:semicolon
-id|skb-&gt;end_seq
+id|TCP_SKB_CB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|end_seq
 op_assign
-id|skb-&gt;seq
+(paren
+id|TCP_SKB_CB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|seq
 op_plus
 id|th-&gt;syn
 op_plus
@@ -4659,8 +4696,15 @@ op_minus
 id|th-&gt;doff
 op_star
 l_int|4
+)paren
 suffix:semicolon
-id|skb-&gt;ack_seq
+id|TCP_SKB_CB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|ack_seq
 op_assign
 id|ntohl
 c_func

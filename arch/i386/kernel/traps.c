@@ -69,11 +69,11 @@ mdefine_line|#define DO_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinka
 DECL|macro|DO_VM86_ERROR
 mdefine_line|#define DO_VM86_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;lock_kernel(); &bslash;&n;&t;if (regs-&gt;eflags &amp; VM_MASK) { &bslash;&n;&t;&t;if (!handle_vm86_trap((struct kernel_vm86_regs *) regs, error_code, trapnr)) &bslash;&n;&t;&t;&t;goto out; &bslash;&n;&t;&t;/* else fall through */ &bslash;&n;&t;} &bslash;&n;&t;tsk-&gt;tss.error_code = error_code; &bslash;&n;&t;tsk-&gt;tss.trap_no = trapnr; &bslash;&n;&t;force_sig(signr, tsk); &bslash;&n;&t;die_if_kernel(str,regs,error_code); &bslash;&n;out: &bslash;&n;&t;unlock_kernel(); &bslash;&n;}
 DECL|macro|get_seg_byte
-mdefine_line|#define get_seg_byte(seg,addr) ({ &bslash;&n;register unsigned char __res; &bslash;&n;__asm__(&quot;push %%fs;mov %%ax,%%fs;movb %%fs:%2,%%al;pop %%fs&quot; &bslash;&n;&t;:&quot;=a&quot; (__res):&quot;0&quot; (seg),&quot;m&quot; (*(addr))); &bslash;&n;__res;})
+mdefine_line|#define get_seg_byte(seg,addr) ({ &bslash;&n;register unsigned char __res; &bslash;&n;__asm__(&quot;pushl %%fs;movl %%ax,%%fs;movb %%fs:%2,%%al;popl %%fs&quot; &bslash;&n;&t;:&quot;=a&quot; (__res):&quot;0&quot; (seg),&quot;m&quot; (*(addr))); &bslash;&n;__res;})
 DECL|macro|get_seg_long
-mdefine_line|#define get_seg_long(seg,addr) ({ &bslash;&n;register unsigned long __res; &bslash;&n;__asm__(&quot;push %%fs;mov %%ax,%%fs;movl %%fs:%2,%%eax;pop %%fs&quot; &bslash;&n;&t;:&quot;=a&quot; (__res):&quot;0&quot; (seg),&quot;m&quot; (*(addr))); &bslash;&n;__res;})
+mdefine_line|#define get_seg_long(seg,addr) ({ &bslash;&n;register unsigned long __res; &bslash;&n;__asm__(&quot;pushl %%fs;movl %%ax,%%fs;movl %%fs:%2,%%eax;popl %%fs&quot; &bslash;&n;&t;:&quot;=a&quot; (__res):&quot;0&quot; (seg),&quot;m&quot; (*(addr))); &bslash;&n;__res;})
 DECL|macro|_fs
-mdefine_line|#define _fs() ({ &bslash;&n;register unsigned short __res; &bslash;&n;__asm__(&quot;mov %%fs,%%ax&quot;:&quot;=a&quot; (__res):); &bslash;&n;__res;})
+mdefine_line|#define _fs() ({ &bslash;&n;register unsigned short __res; &bslash;&n;__asm__(&quot;movl %%fs,%%ax&quot;:&quot;=a&quot; (__res):); &bslash;&n;__res;})
 r_void
 id|page_exception
 c_func

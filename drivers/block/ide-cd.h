@@ -48,28 +48,42 @@ DECL|macro|TEST_UNIT_READY
 mdefine_line|#define TEST_UNIT_READY         0x00
 DECL|macro|REQUEST_SENSE
 mdefine_line|#define REQUEST_SENSE           0x03
+DECL|macro|INQUIRY
+mdefine_line|#define INQUIRY                 0x12
 DECL|macro|START_STOP
 mdefine_line|#define START_STOP              0x1b
 DECL|macro|ALLOW_MEDIUM_REMOVAL
 mdefine_line|#define ALLOW_MEDIUM_REMOVAL    0x1e
 DECL|macro|READ_CAPACITY
-mdefine_line|#define READ_CAPACITY&t;&t;0x25
+mdefine_line|#define READ_CAPACITY           0x25
 DECL|macro|READ_10
 mdefine_line|#define READ_10                 0x28
 DECL|macro|SEEK
 mdefine_line|#define SEEK&t;&t;&t;0x2b
-DECL|macro|MODE_SENSE_10
-mdefine_line|#define MODE_SENSE_10           0x5a
+DECL|macro|READ_HEADER
+mdefine_line|#define READ_HEADER             0x44
+DECL|macro|STOP_PLAY_SCAN
+mdefine_line|#define STOP_PLAY_SCAN&t;&t;0x4e
 DECL|macro|MODE_SELECT_10
 mdefine_line|#define MODE_SELECT_10          0x55
-DECL|macro|READ_CD
-mdefine_line|#define READ_CD                 0xbe
-DECL|macro|SET_CD_SPEED
-mdefine_line|#define SET_CD_SPEED            0xbb
+DECL|macro|MODE_SENSE_10
+mdefine_line|#define MODE_SENSE_10           0x5a
 DECL|macro|LOAD_UNLOAD
 mdefine_line|#define LOAD_UNLOAD             0xa6
+DECL|macro|READ_12
+mdefine_line|#define READ_12                 0xa8
+DECL|macro|READ_CD_MSF
+mdefine_line|#define READ_CD_MSF             0xb9
+DECL|macro|SCAN
+mdefine_line|#define SCAN&t;&t;&t;0xba
+DECL|macro|SET_CD_SPEED
+mdefine_line|#define SET_CD_SPEED            0xbb
+DECL|macro|PLAY_CD
+mdefine_line|#define PLAY_CD                 0xbc
 DECL|macro|MECHANISM_STATUS
 mdefine_line|#define MECHANISM_STATUS        0xbd
+DECL|macro|READ_CD
+mdefine_line|#define READ_CD                 0xbe
 multiline_comment|/* Page codes for mode sense/set */
 DECL|macro|PAGE_READERR
 mdefine_line|#define PAGE_READERR            0x01
@@ -81,7 +95,7 @@ DECL|macro|PAGE_CAPABILITIES
 mdefine_line|#define PAGE_CAPABILITIES       0x2a
 DECL|macro|PAGE_ALL
 mdefine_line|#define PAGE_ALL                0x3f
-multiline_comment|/* ATAPI sense keys (mostly copied from scsi.h). */
+multiline_comment|/* ATAPI sense keys (from table 140 of ATAPI 2.6) */
 DECL|macro|NO_SENSE
 mdefine_line|#define NO_SENSE                0x00
 DECL|macro|RECOVERED_ERROR
@@ -122,6 +136,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive cannot lock the door. */
+DECL|member|no_eject
+id|__u8
+id|no_eject
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive cannot eject the disc. */
 DECL|member|nec260
 id|__u8
 id|nec260
@@ -1130,6 +1151,178 @@ comma
 l_string|&quot;Miscompare&quot;
 comma
 l_string|&quot;(reserved)&quot;
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* From Table 37 of the ATAPI 2.6 draft standard. */
+r_struct
+(brace
+DECL|member|packet_command
+r_int
+r_int
+id|packet_command
+suffix:semicolon
+DECL|member|text
+r_char
+op_star
+id|text
+suffix:semicolon
+DECL|variable|packet_command_texts
+)brace
+id|packet_command_texts
+(braket
+)braket
+op_assign
+(brace
+(brace
+id|TEST_UNIT_READY
+comma
+l_string|&quot;Test Unit Ready&quot;
+)brace
+comma
+(brace
+id|REQUEST_SENSE
+comma
+l_string|&quot;Request Sense&quot;
+)brace
+comma
+(brace
+id|INQUIRY
+comma
+l_string|&quot;Inquiry&quot;
+)brace
+comma
+(brace
+id|START_STOP
+comma
+l_string|&quot;Start Stop Unit&quot;
+)brace
+comma
+(brace
+id|ALLOW_MEDIUM_REMOVAL
+comma
+l_string|&quot;Prevent/Allow Medium Removal&quot;
+)brace
+comma
+(brace
+id|READ_CAPACITY
+comma
+l_string|&quot;Read CD-ROM Capacity&quot;
+)brace
+comma
+(brace
+id|READ_10
+comma
+l_string|&quot;Read(10)&quot;
+)brace
+comma
+(brace
+id|SEEK
+comma
+l_string|&quot;Seek&quot;
+)brace
+comma
+(brace
+id|SCMD_READ_TOC
+comma
+l_string|&quot;Read TOC&quot;
+)brace
+comma
+(brace
+id|SCMD_READ_SUBCHANNEL
+comma
+l_string|&quot;Read Sub-Channel&quot;
+)brace
+comma
+(brace
+id|READ_HEADER
+comma
+l_string|&quot;Read Header&quot;
+)brace
+comma
+(brace
+id|STOP_PLAY_SCAN
+comma
+l_string|&quot;Stop Play/Scan&quot;
+)brace
+comma
+(brace
+id|SCMD_PLAYAUDIO10
+comma
+l_string|&quot;Play Audio&quot;
+)brace
+comma
+(brace
+id|SCMD_PLAYAUDIO_MSF
+comma
+l_string|&quot;Play Audio MSF&quot;
+)brace
+comma
+(brace
+id|SCMD_PAUSE_RESUME
+comma
+l_string|&quot;Pause/Resume&quot;
+)brace
+comma
+(brace
+id|MODE_SELECT_10
+comma
+l_string|&quot;Mode Select&quot;
+)brace
+comma
+(brace
+id|MODE_SENSE_10
+comma
+l_string|&quot;Mode Sense&quot;
+)brace
+comma
+(brace
+id|LOAD_UNLOAD
+comma
+l_string|&quot;Load/Unload CD&quot;
+)brace
+comma
+(brace
+id|READ_12
+comma
+l_string|&quot;Read(12)&quot;
+)brace
+comma
+(brace
+id|READ_CD_MSF
+comma
+l_string|&quot;Read CD MSF&quot;
+)brace
+comma
+(brace
+id|SCAN
+comma
+l_string|&quot;Scan&quot;
+)brace
+comma
+(brace
+id|SET_CD_SPEED
+comma
+l_string|&quot;Set CD Speed&quot;
+)brace
+comma
+(brace
+id|PLAY_CD
+comma
+l_string|&quot;Play CD&quot;
+)brace
+comma
+(brace
+id|MECHANISM_STATUS
+comma
+l_string|&quot;Mechanism Status&quot;
+)brace
+comma
+(brace
+id|READ_CD
+comma
+l_string|&quot;Read CD&quot;
+)brace
 comma
 )brace
 suffix:semicolon

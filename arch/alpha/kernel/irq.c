@@ -18,6 +18,39 @@ DECL|macro|vulp
 mdefine_line|#define vulp&t;volatile unsigned long *
 DECL|macro|vuip
 mdefine_line|#define vuip&t;volatile unsigned int *
+r_extern
+r_void
+id|timer_interrupt
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|cserve_update_hw
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|handle_ipi
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
 DECL|macro|RTC_IRQ
 mdefine_line|#define RTC_IRQ    8
 macro_line|#ifdef CONFIG_RTC
@@ -35,7 +68,7 @@ macro_line|#if defined(CONFIG_ALPHA_P2K)
 multiline_comment|/* always mask out unused timer irq 0 and RTC irq 8 */
 DECL|macro|PROBE_MASK
 macro_line|# define PROBE_MASK (((1UL &lt;&lt; NR_IRQS) - 1) &amp; ~0x101UL)
-macro_line|#elif defined(CONFIG_ALPHA_ALCOR)
+macro_line|#elif defined(CONFIG_ALPHA_ALCOR) || defined(CONFIG_ALPHA_XLT)
 multiline_comment|/* always mask out unused timer irq 0, &quot;irqs&quot; 20-30, and the EISA cascade: */
 DECL|macro|PROBE_MASK
 macro_line|# define PROBE_MASK (((1UL &lt;&lt; NR_IRQS) - 1) &amp; ~0xfff000000001UL)
@@ -43,6 +76,10 @@ macro_line|#elif defined(CONFIG_ALPHA_RUFFIAN)
 multiline_comment|/* must leave timer irq 0 in the mask */
 DECL|macro|PROBE_MASK
 macro_line|# define PROBE_MASK ((1UL &lt;&lt; NR_IRQS) - 1)
+macro_line|#elif NR_IRQS == 64
+multiline_comment|/* always mask out unused timer irq 0: */
+DECL|macro|PROBE_MASK
+macro_line|# define PROBE_MASK (~1UL)
 macro_line|#else
 multiline_comment|/* always mask out unused timer irq 0: */
 DECL|macro|PROBE_MASK
@@ -281,9 +318,13 @@ c_cond
 id|irq
 )paren
 (brace
-r_default
+r_case
+l_int|16
+dot
+dot
+dot
+l_int|23
 suffix:colon
-multiline_comment|/* 16 ... 23 */
 id|outb
 c_func
 (paren
@@ -356,9 +397,13 @@ c_cond
 id|irq
 )paren
 (brace
-r_default
+r_case
+l_int|32
+dot
+dot
+dot
+l_int|47
 suffix:colon
-multiline_comment|/* 32 ... 47 */
 id|outw
 c_func
 (paren
@@ -459,9 +504,13 @@ c_cond
 id|irq
 )paren
 (brace
-r_default
+r_case
+l_int|16
+dot
+dot
+dot
+l_int|47
 suffix:colon
-multiline_comment|/* 16 ... 47 */
 multiline_comment|/* Make CERTAIN none of the bogus ints get enabled... */
 op_star
 (paren
@@ -560,9 +609,13 @@ c_cond
 id|irq
 )paren
 (brace
-r_default
+r_case
+l_int|16
+dot
+dot
+dot
+l_int|47
 suffix:colon
-multiline_comment|/* 16 ... 47 */
 multiline_comment|/* On Alcor, at least, lines 20..30 are not connected and can&n;&t;&t;   generate spurrious interrupts if we turn them on while IRQ&n;&t;&t;   probing.  So explicitly mask them out. */
 id|mask
 op_or_assign
@@ -652,9 +705,13 @@ c_cond
 id|irq
 )paren
 (brace
-r_default
+r_case
+l_int|16
+dot
+dot
+dot
+l_int|31
 suffix:colon
-multiline_comment|/* 16 ... 31 */
 id|outw
 c_func
 (paren
@@ -711,7 +768,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef CONFIG_ALPHA_RUFFIAN
+macro_line|#if defined(CONFIG_ALPHA_RUFFIAN)
 r_static
 r_inline
 r_void
@@ -815,8 +872,8 @@ r_break
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
-macro_line|#ifdef CONFIG_ALPHA_SX164
+macro_line|#endif /* RUFFIAN */
+macro_line|#if defined(CONFIG_ALPHA_SX164)
 r_static
 r_inline
 r_void
@@ -846,7 +903,17 @@ dot
 dot
 l_int|39
 suffix:colon
-multiline_comment|/* Make CERTAIN none of the bogus ints get enabled */
+macro_line|#if defined(CONFIG_ALPHA_SRM)
+id|cserve_update_hw
+c_func
+(paren
+id|irq
+comma
+id|mask
+)paren
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* make CERTAIN none of the bogus ints get enabled */
 op_star
 (paren
 id|vulp
@@ -877,6 +944,108 @@ op_star
 id|vulp
 )paren
 id|PYXIS_INT_MASK
+suffix:semicolon
+macro_line|#endif /* SRM */
+r_break
+suffix:semicolon
+r_case
+l_int|8
+dot
+dot
+dot
+l_int|15
+suffix:colon
+multiline_comment|/* ISA PIC2 */
+id|outb
+c_func
+(paren
+id|mask
+op_rshift
+l_int|8
+comma
+l_int|0xA1
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0
+dot
+dot
+dot
+l_int|7
+suffix:colon
+multiline_comment|/* ISA PIC1 */
+id|outb
+c_func
+(paren
+id|mask
+comma
+l_int|0x21
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* SX164 */
+macro_line|#if defined(CONFIG_ALPHA_DP264)
+r_static
+r_inline
+r_void
+DECL|function|dp264_update_hw
+id|dp264_update_hw
+c_func
+(paren
+r_int
+r_int
+id|irq
+comma
+r_int
+r_int
+id|mask
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|irq
+)paren
+(brace
+r_case
+l_int|16
+dot
+dot
+dot
+l_int|63
+suffix:colon
+multiline_comment|/* make CERTAIN none of the bogus ints get enabled */
+multiline_comment|/* HACK ALERT! only CPU#0 is used currently */
+op_star
+(paren
+id|vulp
+)paren
+id|TSUNAMI_CSR_DIM0
+op_assign
+op_complement
+(paren
+id|mask
+)paren
+op_amp
+op_complement
+l_int|0x0000000000000000UL
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* ... and read it back to make sure it got written.  */
+op_star
+(paren
+id|vulp
+)paren
+id|TSUNAMI_CSR_DIM0
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -920,13 +1089,13 @@ r_break
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
-multiline_comment|/* Unlabeled mechanisms based on the number of irqs.  Someone should&n;   probably document and name these.  */
+macro_line|#endif /* DP264 */
+macro_line|#if defined(CONFIG_ALPHA_RAWHIDE)
 r_static
 r_inline
 r_void
-DECL|function|update_hw_33
-id|update_hw_33
+DECL|function|rawhide_update_hw
+id|rawhide_update_hw
 c_func
 (paren
 r_int
@@ -944,19 +1113,200 @@ c_cond
 id|irq
 )paren
 (brace
-r_default
+r_case
+l_int|16
+dot
+dot
+dot
+l_int|39
 suffix:colon
-multiline_comment|/* 16 ... 32 */
-id|outl
+multiline_comment|/* PCI bus 0 with EISA bridge */
+op_star
+(paren
+id|vuip
+)paren
+id|MCPCIA_INT_MASK0
+c_func
+(paren
+l_int|0
+)paren
+op_assign
+(paren
+op_complement
+(paren
+(paren
+id|mask
+)paren
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0x00ffffffU
+)paren
+op_or
+l_int|0x00ff0000U
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* ... and read it back to make sure it got written.  */
+op_star
+(paren
+id|vuip
+)paren
+id|MCPCIA_INT_MASK0
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|40
+dot
+dot
+dot
+l_int|63
+suffix:colon
+multiline_comment|/* PCI bus 1 with builtin NCR810 SCSI */
+op_star
+(paren
+id|vuip
+)paren
+id|MCPCIA_INT_MASK0
+c_func
+(paren
+l_int|1
+)paren
+op_assign
+(paren
+op_complement
+(paren
+(paren
+id|mask
+)paren
+op_rshift
+l_int|40
+)paren
+op_amp
+l_int|0x00ffffffU
+)paren
+op_or
+l_int|0x00fe0000U
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* ... and read it back to make sure it got written.  */
+op_star
+(paren
+id|vuip
+)paren
+id|MCPCIA_INT_MASK0
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|8
+dot
+dot
+dot
+l_int|15
+suffix:colon
+multiline_comment|/* ISA PIC2 */
+id|outb
 c_func
 (paren
 id|mask
+op_rshift
+l_int|8
+comma
+l_int|0xA1
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0
+dot
+dot
+dot
+l_int|7
+suffix:colon
+multiline_comment|/* ISA PIC1 */
+id|outb
+c_func
+(paren
+id|mask
+comma
+l_int|0x21
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* RAWHIDE */
+multiline_comment|/*&n; * HW update code for the following platforms:&n; *&n; *&t;CABRIOLET (AlphaPC64)&n; *&t;EB66P&n; *&t;EB164&n; *&t;PC164&n; *&t;LX164&n; */
+r_static
+r_inline
+r_void
+DECL|function|update_hw_35
+id|update_hw_35
+c_func
+(paren
+r_int
+r_int
+id|irq
+comma
+r_int
+r_int
+id|mask
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|irq
+)paren
+(brace
+r_case
+l_int|16
+dot
+dot
+dot
+l_int|34
+suffix:colon
+macro_line|#if defined(CONFIG_ALPHA_SRM)
+id|cserve_update_hw
+c_func
+(paren
+id|irq
+comma
+id|mask
+)paren
+suffix:semicolon
+macro_line|#else /* SRM */
+id|outl
+c_func
+(paren
+id|irq_mask
 op_rshift
 l_int|16
 comma
 l_int|0x804
 )paren
 suffix:semicolon
+macro_line|#endif /* SRM */
 r_break
 suffix:semicolon
 r_case
@@ -1021,9 +1371,13 @@ c_cond
 id|irq
 )paren
 (brace
-r_default
+r_case
+l_int|24
+dot
+dot
+dot
+l_int|31
 suffix:colon
-multiline_comment|/* 24 ... 31 */
 id|outb
 c_func
 (paren
@@ -1117,9 +1471,14 @@ c_cond
 id|irq
 )paren
 (brace
-r_default
+r_case
+l_int|8
+dot
+dot
+dot
+l_int|15
 suffix:colon
-multiline_comment|/* 8 ... 15, ISA PIC2 */
+multiline_comment|/* ISA PIC2 */
 id|outb
 c_func
 (paren
@@ -1152,129 +1511,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-macro_line|#if (defined(CONFIG_ALPHA_PC164) || defined(CONFIG_ALPHA_LX164)) &bslash;&n;&t;&amp;&amp; defined(CONFIG_ALPHA_SRM)
-multiline_comment|/*&n; * On the pc164, we cannot take over the IRQs from the SRM, &n; * so we call down to do our dirty work.  Too bad the SRM&n; * isn&squot;t consistent across platforms otherwise we could do&n; * this always.&n; */
-r_extern
-r_void
-id|cserve_ena
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|cserve_dis
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-DECL|function|mask_irq
-r_static
-r_inline
-r_void
-id|mask_irq
-c_func
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-id|irq_mask
-op_or_assign
-(paren
-l_int|1UL
-op_lshift
-id|irq
-)paren
-suffix:semicolon
-id|cserve_dis
-c_func
-(paren
-id|irq
-op_minus
-l_int|16
-)paren
-suffix:semicolon
-)brace
-DECL|function|unmask_irq
-r_static
-r_inline
-r_void
-id|unmask_irq
-c_func
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-id|irq_mask
-op_and_assign
-op_complement
-(paren
-l_int|1UL
-op_lshift
-id|irq
-)paren
-suffix:semicolon
-id|cserve_ena
-c_func
-(paren
-id|irq
-op_minus
-l_int|16
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Since we are calling down to PALcode, no need to diddle IPL.  */
-DECL|function|disable_irq
-r_void
-id|disable_irq
-c_func
-(paren
-r_int
-r_int
-id|irq_nr
-)paren
-(brace
-id|mask_irq
-c_func
-(paren
-id|IRQ_TO_MASK
-c_func
-(paren
-id|irq_nr
-)paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|enable_irq
-r_void
-id|enable_irq
-c_func
-(paren
-r_int
-r_int
-id|irq_nr
-)paren
-(brace
-id|unmask_irq
-c_func
-(paren
-id|IRQ_TO_MASK
-c_func
-(paren
-id|irq_nr
-)paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
 multiline_comment|/*&n; * We manipulate the hardware ourselves.&n; */
 DECL|function|update_hw
 r_static
@@ -1354,8 +1590,8 @@ comma
 id|mask
 )paren
 suffix:semicolon
-macro_line|#elif NR_IRQS == 33
-id|update_hw_33
+macro_line|#elif defined(CONFIG_ALPHA_DP264)
+id|dp264_update_hw
 c_func
 (paren
 id|irq
@@ -1363,7 +1599,25 @@ comma
 id|mask
 )paren
 suffix:semicolon
-macro_line|#elif NR_IRQS == 32
+macro_line|#elif defined(CONFIG_ALPHA_RAWHIDE)
+id|rawhide_update_hw
+c_func
+(paren
+id|irq
+comma
+id|mask
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_CABRIOLET) || &bslash;&n;      defined(CONFIG_ALPHA_EB66P)     || &bslash;&n;      defined(CONFIG_ALPHA_EB164)     || &bslash;&n;      defined(CONFIG_ALPHA_PC164)     || &bslash;&n;      defined(CONFIG_ALPHA_LX164)
+id|update_hw_35
+c_func
+(paren
+id|irq
+comma
+id|mask
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_EB66) || &bslash;&n;      defined(CONFIG_ALPHA_EB64P)
 id|update_hw_32
 c_func
 (paren
@@ -1458,15 +1712,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|mask_irq
@@ -1500,15 +1749,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|unmask_irq
@@ -1528,7 +1772,6 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* (PC164 || LX164) &amp;&amp; SRM */
 multiline_comment|/*&n; * Initial irq handlers.&n; */
 DECL|variable|timer_irq
 r_static
@@ -1582,6 +1825,14 @@ id|irqaction
 op_star
 id|action
 suffix:semicolon
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1627,7 +1878,7 @@ id|i
 comma
 id|kstat.irqs
 (braket
-l_int|0
+id|cpu
 )braket
 (braket
 id|i
@@ -1842,7 +2093,7 @@ id|vulp
 )paren
 id|PYXIS_INT_REQ
 op_assign
-l_int|1
+l_int|1L
 op_lshift
 l_int|7
 suffix:semicolon
@@ -1850,6 +2101,13 @@ id|mb
 c_func
 (paren
 )paren
+suffix:semicolon
+multiline_comment|/* ... and read it back to make sure it got written.  */
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_REQ
 suffix:semicolon
 r_if
 c_cond
@@ -1879,7 +2137,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Ack PYXIS interrupt.  */
+multiline_comment|/* Ack PYXIS PCI interrupt.  */
 op_star
 (paren
 id|vulp
@@ -1896,10 +2154,12 @@ l_int|16
 )paren
 )paren
 suffix:semicolon
-id|mb
-c_func
+multiline_comment|/* ... and read it back to make sure it got written.  */
+op_star
 (paren
+id|vulp
 )paren
+id|PYXIS_INT_REQ
 suffix:semicolon
 )brace
 macro_line|#else
@@ -1979,7 +2239,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* ALCOR || XLT */
 )brace
 macro_line|#endif
 )brace
@@ -2266,15 +2526,10 @@ id|action-&gt;dev_id
 op_assign
 id|dev_id
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 op_star
@@ -2409,15 +2664,10 @@ id|dev_id
 r_continue
 suffix:semicolon
 multiline_comment|/* Found it - now free it */
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 op_star
@@ -2523,7 +2773,970 @@ id|NR_CPUS
 )braket
 suffix:semicolon
 macro_line|#ifdef __SMP__
-macro_line|#error &quot;Me no hablo Alpha SMP&quot;
+multiline_comment|/* Who has global_irq_lock. */
+DECL|variable|global_irq_holder
+r_int
+r_char
+id|global_irq_holder
+op_assign
+id|NO_PROC_ID
+suffix:semicolon
+multiline_comment|/* This protects IRQ&squot;s. */
+DECL|variable|global_irq_lock
+id|spinlock_t
+id|global_irq_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
+multiline_comment|/* Global IRQ locking depth. */
+DECL|variable|global_irq_count
+id|atomic_t
+id|global_irq_count
+op_assign
+id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* This protects BH software state (masks, things like that). */
+DECL|variable|global_bh_lock
+id|atomic_t
+id|global_bh_lock
+op_assign
+id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+DECL|variable|global_bh_count
+id|atomic_t
+id|global_bh_count
+op_assign
+id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+DECL|variable|previous_irqholder
+r_static
+r_int
+r_int
+id|previous_irqholder
+op_assign
+id|NO_PROC_ID
+suffix:semicolon
+DECL|macro|INIT_STUCK
+macro_line|#undef INIT_STUCK
+DECL|macro|INIT_STUCK
+mdefine_line|#define INIT_STUCK 100000000
+DECL|macro|STUCK
+macro_line|#undef STUCK
+DECL|macro|STUCK
+mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;wait_on_irq CPU#%d stuck at %08lx, waiting for %08lx (local=%d, global=%d)&bslash;n&quot;, cpu, where, previous_irqholder, local_count, atomic_read(&amp;global_irq_count)); stuck = INIT_STUCK; }
+DECL|function|wait_on_irq
+r_static
+r_inline
+r_void
+id|wait_on_irq
+c_func
+(paren
+r_int
+id|cpu
+comma
+r_int
+r_int
+id|where
+)paren
+(brace
+r_int
+id|stuck
+op_assign
+id|INIT_STUCK
+suffix:semicolon
+r_int
+id|local_count
+op_assign
+id|local_irq_count
+(braket
+id|cpu
+)braket
+suffix:semicolon
+multiline_comment|/* Are we the only one in an interrupt context? */
+r_while
+c_loop
+(paren
+id|local_count
+op_ne
+id|atomic_read
+c_func
+(paren
+op_amp
+id|global_irq_count
+)paren
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * No such luck. Now we need to release the lock,&n;&t;&t; * _and_ release our interrupt context, because&n;&t;&t; * otherwise we&squot;d have dead-locks and live-locks&n;&t;&t; * and other fun things.&n;&t;&t; */
+id|atomic_sub
+c_func
+(paren
+id|local_count
+comma
+op_amp
+id|global_irq_count
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|global_irq_lock
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Wait for everybody else to go away and release&n;&t;&t; * their things before trying to get the lock again.&n;&t;&t; */
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+(brace
+id|STUCK
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|global_irq_count
+)paren
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|global_irq_lock.lock
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|spin_trylock
+c_func
+(paren
+op_amp
+id|global_irq_lock
+)paren
+)paren
+r_break
+suffix:semicolon
+)brace
+id|atomic_add
+c_func
+(paren
+id|local_count
+comma
+op_amp
+id|global_irq_count
+)paren
+suffix:semicolon
+)brace
+)brace
+DECL|macro|INIT_STUCK
+macro_line|#undef INIT_STUCK
+DECL|macro|INIT_STUCK
+mdefine_line|#define INIT_STUCK 10000000
+DECL|macro|STUCK
+macro_line|#undef STUCK
+DECL|macro|STUCK
+mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;get_irqlock stuck at %08lx, waiting for %08lx&bslash;n&quot;, where, previous_irqholder); stuck = INIT_STUCK;}
+DECL|function|get_irqlock
+r_static
+r_inline
+r_void
+id|get_irqlock
+c_func
+(paren
+r_int
+id|cpu
+comma
+r_int
+r_int
+id|where
+)paren
+(brace
+r_int
+id|stuck
+op_assign
+id|INIT_STUCK
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|spin_trylock
+c_func
+(paren
+op_amp
+id|global_irq_lock
+)paren
+)paren
+(brace
+multiline_comment|/* do we already hold the lock? */
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_char
+)paren
+id|cpu
+op_eq
+id|global_irq_holder
+)paren
+(brace
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;get_irqlock: already held at %08lx&bslash;n&quot;
+comma
+id|previous_irqholder
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* Uhhuh.. Somebody else got it. Wait.. */
+r_do
+(brace
+r_do
+(brace
+id|STUCK
+suffix:semicolon
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|global_irq_lock.lock
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+op_logical_neg
+id|spin_trylock
+c_func
+(paren
+op_amp
+id|global_irq_lock
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Ok, we got the lock bit.&n;&t; * But that&squot;s actually just the easy part.. Now&n;&t; * we need to make sure that nobody else is running&n;&t; * in an interrupt context. &n;&t; */
+id|wait_on_irq
+c_func
+(paren
+id|cpu
+comma
+id|where
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Finally.&n;&t; */
+id|global_irq_holder
+op_assign
+id|cpu
+suffix:semicolon
+id|previous_irqholder
+op_assign
+id|where
+suffix:semicolon
+)brace
+DECL|function|__global_cli
+r_void
+id|__global_cli
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+r_int
+r_int
+id|where
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;mov $26, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|where
+)paren
+)paren
+suffix:semicolon
+id|__cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|local_irq_count
+(braket
+id|cpu
+)braket
+)paren
+id|get_irqlock
+c_func
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+comma
+id|where
+)paren
+suffix:semicolon
+)brace
+DECL|function|__global_sti
+r_void
+id|__global_sti
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|local_irq_count
+(braket
+id|cpu
+)braket
+)paren
+id|release_irqlock
+c_func
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+id|__sti
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#if 0
+r_int
+r_int
+id|__global_save_flags
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|global_irq_holder
+op_eq
+(paren
+r_int
+r_char
+)paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+DECL|function|__global_restore_flags
+r_void
+id|__global_restore_flags
+c_func
+(paren
+r_int
+r_int
+id|flags
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+l_int|1
+)paren
+(brace
+id|__global_cli
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* release_irqlock() */
+r_if
+c_cond
+(paren
+id|global_irq_holder
+op_eq
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+(brace
+id|global_irq_holder
+op_assign
+id|NO_PROC_ID
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|global_irq_lock
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|flags
+op_amp
+l_int|2
+)paren
+)paren
+id|__sti
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+DECL|macro|INIT_STUCK
+macro_line|#undef INIT_STUCK
+DECL|macro|INIT_STUCK
+mdefine_line|#define INIT_STUCK 200000000
+DECL|macro|STUCK
+macro_line|#undef STUCK
+DECL|macro|STUCK
+mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;irq_enter stuck (irq=%d, cpu=%d, global=%d)&bslash;n&quot;,irq,cpu,global_irq_holder); stuck = INIT_STUCK;}
+DECL|macro|VERBOSE_IRQLOCK_DEBUGGING
+macro_line|#undef VERBOSE_IRQLOCK_DEBUGGING
+DECL|function|irq_enter
+r_void
+id|irq_enter
+c_func
+(paren
+r_int
+id|cpu
+comma
+r_int
+id|irq
+)paren
+(brace
+macro_line|#ifdef VERBOSE_IRQLOCK_DEBUGGING
+r_extern
+r_void
+id|smp_show_backtrace_all_cpus
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+r_int
+id|stuck
+op_assign
+id|INIT_STUCK
+suffix:semicolon
+id|hardirq_enter
+c_func
+(paren
+id|cpu
+)paren
+suffix:semicolon
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|global_irq_lock.lock
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_char
+)paren
+id|cpu
+op_eq
+id|global_irq_holder
+)paren
+(brace
+r_int
+id|globl_locked
+op_assign
+id|global_irq_lock.lock
+suffix:semicolon
+r_int
+id|globl_icount
+op_assign
+id|atomic_read
+c_func
+(paren
+op_amp
+id|global_irq_count
+)paren
+suffix:semicolon
+r_int
+id|local_count
+op_assign
+id|local_irq_count
+(braket
+id|cpu
+)braket
+suffix:semicolon
+multiline_comment|/* It is very important that we load the state variables&n;&t;&t;&t; * before we do the first call to printk() as printk()&n;&t;&t;&t; * could end up changing them...&n;&t;&t;&t; */
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;CPU[%d]: BAD! Local IRQ&squot;s enabled,&quot;
+l_string|&quot; global disabled interrupt&bslash;n&quot;
+comma
+id|cpu
+)paren
+suffix:semicolon
+macro_line|#endif
+id|printk
+c_func
+(paren
+l_string|&quot;CPU[%d]: where [%08lx] glocked[%d] gicnt[%d]&quot;
+l_string|&quot; licnt[%d]&bslash;n&quot;
+comma
+id|cpu
+comma
+id|previous_irqholder
+comma
+id|globl_locked
+comma
+id|globl_icount
+comma
+id|local_count
+)paren
+suffix:semicolon
+macro_line|#ifdef VERBOSE_IRQLOCK_DEBUGGING
+id|printk
+c_func
+(paren
+l_string|&quot;Performing backtrace on all cpus,&quot;
+l_string|&quot; write this down!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|smp_show_backtrace_all_cpus
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+r_break
+suffix:semicolon
+)brace
+id|STUCK
+suffix:semicolon
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+DECL|function|irq_exit
+r_void
+id|irq_exit
+c_func
+(paren
+r_int
+id|cpu
+comma
+r_int
+id|irq
+)paren
+(brace
+id|hardirq_exit
+c_func
+(paren
+id|cpu
+)paren
+suffix:semicolon
+id|release_irqlock
+c_func
+(paren
+id|cpu
+)paren
+suffix:semicolon
+)brace
+DECL|function|show
+r_static
+r_void
+id|show
+c_func
+(paren
+r_char
+op_star
+id|str
+)paren
+(brace
+macro_line|#if 0
+r_int
+id|i
+suffix:semicolon
+r_int
+r_int
+op_star
+id|stack
+suffix:semicolon
+macro_line|#endif
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n%s, CPU %d:&bslash;n&quot;
+comma
+id|str
+comma
+id|cpu
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;irq:  %d [%d %d]&bslash;n&quot;
+comma
+id|atomic_read
+c_func
+(paren
+op_amp
+id|global_irq_count
+)paren
+comma
+id|local_irq_count
+(braket
+l_int|0
+)braket
+comma
+id|local_irq_count
+(braket
+l_int|1
+)braket
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;bh:   %d [%d %d]&bslash;n&quot;
+comma
+id|atomic_read
+c_func
+(paren
+op_amp
+id|global_bh_count
+)paren
+comma
+id|local_bh_count
+(braket
+l_int|0
+)braket
+comma
+id|local_bh_count
+(braket
+l_int|1
+)braket
+)paren
+suffix:semicolon
+macro_line|#if 0
+id|stack
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|str
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|40
+suffix:semicolon
+id|i
+suffix:semicolon
+id|i
+op_decrement
+)paren
+(brace
+r_int
+r_int
+id|x
+op_assign
+op_star
+op_increment
+id|stack
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|x
+OG
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|init_task_union
+op_logical_and
+id|x
+OL
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|vsprintf
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;&lt;[%08lx]&gt; &quot;
+comma
+id|x
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
+)brace
+DECL|macro|MAXCOUNT
+mdefine_line|#define MAXCOUNT 100000000
+DECL|function|wait_on_bh
+r_static
+r_inline
+r_void
+id|wait_on_bh
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|count
+op_assign
+id|MAXCOUNT
+suffix:semicolon
+r_do
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+op_decrement
+id|count
+)paren
+(brace
+id|show
+c_func
+(paren
+l_string|&quot;wait_on_bh&quot;
+)paren
+suffix:semicolon
+id|count
+op_assign
+op_complement
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* nothing .. wait for the other bh&squot;s to go away */
+)brace
+r_while
+c_loop
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|global_bh_count
+)paren
+op_ne
+l_int|0
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * This is called when we want to synchronize with&n; * bottom half handlers. We need to wait until&n; * no other CPU is executing any bottom half handler.&n; *&n; * Don&squot;t wait if we&squot;re already running in an interrupt&n; * context or are inside a bh handler.&n; */
+DECL|function|synchronize_bh
+r_void
+id|synchronize_bh
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|global_bh_count
+)paren
+)paren
+(brace
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|local_irq_count
+(braket
+id|cpu
+)braket
+op_logical_and
+op_logical_neg
+id|local_bh_count
+(braket
+id|cpu
+)braket
+)paren
+(brace
+id|wait_on_bh
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+multiline_comment|/* There has to be a better way. */
+DECL|function|synchronize_irq
+r_void
+id|synchronize_irq
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+r_int
+id|local_count
+op_assign
+id|local_irq_count
+(braket
+id|cpu
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|local_count
+op_ne
+id|atomic_read
+c_func
+(paren
+op_amp
+id|global_irq_count
+)paren
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* An infamously unpopular approach. */
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+)brace
 macro_line|#else
 DECL|macro|irq_enter
 mdefine_line|#define irq_enter(cpu, irq)&t;(++local_irq_count[cpu])
@@ -2740,7 +3953,7 @@ id|irq
 suffix:semicolon
 id|kstat.irqs
 (braket
-l_int|0
+id|cpu
 )braket
 (braket
 id|irq
@@ -2865,7 +4078,7 @@ id|irq
 suffix:semicolon
 id|kstat.irqs
 (braket
-l_int|0
+id|cpu
 )braket
 (braket
 id|irq
@@ -2944,6 +4157,19 @@ id|ack
 )paren
 suffix:semicolon
 )brace
+r_else
+(brace
+macro_line|#if 1
+id|printk
+c_func
+(paren
+l_string|&quot;device_interrupt: unexpected interrupt %d&bslash;n&quot;
+comma
+id|irq
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 id|irq_exit
 c_func
 (paren
@@ -2981,6 +4207,8 @@ macro_line|#elif defined(CONFIG_ALPHA_CIA)
 macro_line|#&t;define IACK_SC&t;CIA_IACK_SC
 macro_line|#elif defined(CONFIG_ALPHA_PYXIS)
 macro_line|#&t;define IACK_SC&t;PYXIS_IACK_SC
+macro_line|#elif defined(CONFIG_ALPHA_TSUNAMI)
+macro_line|#&t;define IACK_SC&t;TSUNAMI_PCI0_IACK_SC
 macro_line|#else
 multiline_comment|/*&n;&t; * This is bogus but necessary to get it to compile&n;&t; * on all platforms.  If you try to use this on any&n;&t; * other than the intended platforms, you&squot;ll notice&n;&t; * real fast...&n;&t; */
 macro_line|#&t;define IACK_SC&t;1L
@@ -2994,9 +4222,7 @@ id|j
 op_assign
 op_star
 (paren
-r_volatile
-r_int
-op_star
+id|vuip
 )paren
 id|IACK_SC
 suffix:semicolon
@@ -3144,18 +4370,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* read the interrupt summary register of the GRU */
+multiline_comment|/* Read the interrupt summary register of the GRU */
 id|pld
 op_assign
 (paren
@@ -3289,18 +4510,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* read the interrupt summary registers */
+multiline_comment|/* Read the interrupt summary registers */
 id|pld
 op_assign
 id|inb
@@ -3449,18 +4665,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* read the interrupt summary registers */
+multiline_comment|/* Read the interrupt summary registers */
 id|pld
 op_assign
 (paren
@@ -3612,18 +4823,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* read the interrupt summary registers */
+multiline_comment|/* Read the interrupt summary registers */
 id|pld
 op_assign
 id|inb
@@ -3740,27 +4946,20 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* read the interrupt summary register of PYXIS */
+multiline_comment|/* Read the interrupt summary register of PYXIS */
 id|pld
 op_assign
-(paren
 op_star
 (paren
 id|vulp
 )paren
 id|PYXIS_INT_REQ
-)paren
 suffix:semicolon
 macro_line|#if 0
 id|printk
@@ -3794,23 +4993,22 @@ l_int|8
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* For now, AND off any bits we are not interested in.  */
-macro_line|#if defined(CONFIG_ALPHA_MIATA)
-multiline_comment|/* HALT (2), timer (6), ISA Bridge (7), 21142/3 (8),&n;&t;   then all the PCI slots/INTXs (12-31).  */
+macro_line|#ifdef CONFIG_ALPHA_MIATA
+multiline_comment|/*&n;&t; * For now, AND off any bits we are not interested in:&n;&t; *   HALT (2), timer (6), ISA Bridge (7), 21142/3 (8)&n;&t; * then all the PCI slots/INTXs (12-31).&n;&t; */
 multiline_comment|/* Maybe HALT should only be used for SRM console boots? */
 id|pld
 op_and_assign
 l_int|0x00000000fffff1c4UL
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_ALPHA_SX164)
-multiline_comment|/* HALT (2), timer (6), ISA Bridge (7),&n;&t;   then all the PCI slots/INTXs (8-23).  */
-multiline_comment|/* HALT should only be used for SRM console boots.  */
+macro_line|#ifdef CONFIG_ALPHA_SX164
+multiline_comment|/*&n;&t; * For now, AND off any bits we are not interested in:&n;&t; *  HALT (2), timer (6), ISA Bridge (7)&n;&t; * then all the PCI slots/INTXs (8-23)&n;&t; */
+multiline_comment|/* Maybe HALT should only be used for SRM console boots? */
 id|pld
 op_and_assign
 l_int|0x0000000000ffffc0UL
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* SX164 */
 multiline_comment|/*&n;&t; * Now for every possible bit set, work through them and call&n;&t; * the appropriate interrupt handler.&n;&t; */
 r_while
 c_loop
@@ -3940,18 +5138,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* read the interrupt summary registers of NORITAKE */
+multiline_comment|/* Read the interrupt summary registers of NORITAKE */
 id|pld
 op_assign
 (paren
@@ -4079,6 +5272,228 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#if defined(CONFIG_ALPHA_DP264)
+multiline_comment|/* we have to conditionally compile this because of TSUNAMI_xxx symbols */
+DECL|function|dp264_device_interrupt
+r_static
+r_inline
+r_void
+id|dp264_device_interrupt
+c_func
+(paren
+r_int
+r_int
+id|vector
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|pld
+comma
+id|tmp
+suffix:semicolon
+r_int
+r_int
+id|i
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|__save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/* Read the interrupt summary register of TSUNAMI */
+id|pld
+op_assign
+(paren
+op_star
+(paren
+id|vulp
+)paren
+id|TSUNAMI_CSR_DIR0
+)paren
+suffix:semicolon
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;[0x%08lx/0x%08lx/0x%04x]&quot;
+comma
+id|pld
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|TSUNAMI_CSR_DIM0
+comma
+id|inb
+c_func
+(paren
+l_int|0x20
+)paren
+op_or
+(paren
+id|inb
+c_func
+(paren
+l_int|0xA0
+)paren
+op_lshift
+l_int|8
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;         * Now for every possible bit set, work through them and call&n;         * the appropriate interrupt handler.&n;         */
+r_while
+c_loop
+(paren
+id|pld
+)paren
+(brace
+id|i
+op_assign
+id|ffz
+c_func
+(paren
+op_complement
+id|pld
+)paren
+suffix:semicolon
+id|pld
+op_and_assign
+id|pld
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* clear least bit set */
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|55
+)paren
+(brace
+id|isa_device_interrupt
+c_func
+(paren
+id|vector
+comma
+id|regs
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* if not timer int */
+id|device_interrupt
+c_func
+(paren
+l_int|16
+op_plus
+id|i
+comma
+l_int|16
+op_plus
+id|i
+comma
+id|regs
+)paren
+suffix:semicolon
+)brace
+macro_line|#if 0
+op_star
+(paren
+id|vulp
+)paren
+id|TSUNAMI_CSR_DIR0
+op_assign
+l_int|1UL
+op_lshift
+id|i
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|tmp
+op_assign
+op_star
+(paren
+id|vulp
+)paren
+id|TSUNAMI_CSR_DIR0
+suffix:semicolon
+macro_line|#endif
+)brace
+id|__restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* DP264 */
+macro_line|#if defined(CONFIG_ALPHA_RAWHIDE)
+multiline_comment|/* we have to conditionally compile this because of MCPCIA_xxx symbols */
+DECL|function|rawhide_device_interrupt
+r_static
+r_inline
+r_void
+id|rawhide_device_interrupt
+c_func
+(paren
+r_int
+r_int
+id|vector
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+macro_line|#if 0
+r_int
+r_int
+id|pld
+suffix:semicolon
+r_int
+r_int
+id|i
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|__save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/* PLACEHOLDER, perhaps never used if we always do SRM */
+id|__restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+macro_line|#endif /* RAWHIDE */
 macro_line|#if defined(CONFIG_ALPHA_RUFFIAN)
 r_static
 r_inline
@@ -4109,15 +5524,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 multiline_comment|/* Read the interrupt summary register of PYXIS */
@@ -4134,6 +5544,7 @@ id|pld
 op_and_assign
 l_int|0x00000000ffffff9fUL
 suffix:semicolon
+multiline_comment|/* was ffff7f */
 multiline_comment|/*&n;&t; * Now for every possible bit set, work through them and call&n;&t; * the appropriate interrupt handler.&n;&t; */
 r_while
 c_loop
@@ -4238,6 +5649,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* if not timer int */
 id|device_interrupt
 c_func
 (paren
@@ -4274,6 +5686,7 @@ id|vulp
 )paren
 id|PYXIS_INT_REQ
 suffix:semicolon
+multiline_comment|/* read to force the write */
 )brace
 id|restore_flags
 c_func
@@ -4283,6 +5696,154 @@ id|flags
 suffix:semicolon
 )brace
 macro_line|#endif /* RUFFIAN */
+DECL|function|takara_device_interrupt
+r_static
+r_inline
+r_void
+id|takara_device_interrupt
+c_func
+(paren
+r_int
+r_int
+id|vector
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|intstatus
+suffix:semicolon
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * The PALcode will have passed us vectors 0x800 or 0x810,&n;&t; * which are fairly arbitrary values and serve only to tell&n;&t; * us whether an interrupt has come in on IRQ0 or IRQ1. If&n;&t; * it&squot;s IRQ1 it&squot;s a PCI interrupt; if it&squot;s IRQ0, it&squot;s&n;&t; * probably ISA, but PCI interrupts can come through IRQ0&n;&t; * as well if the interrupt controller isn&squot;t in accelerated&n;&t; * mode.&n;&t; *&n;&t; * OTOH, the accelerator thing doesn&squot;t seem to be working&n;&t; * overly well, so what we&squot;ll do instead is try directly&n;&t; * examining the Master Interrupt Register to see if it&squot;s a&n;&t; * PCI interrupt, and if _not_ then we&squot;ll pass it on to the&n;&t; * ISA handler.&n;&t; */
+id|intstatus
+op_assign
+id|inw
+c_func
+(paren
+l_int|0x500
+)paren
+op_amp
+l_int|15
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|intstatus
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * This is a PCI interrupt. Check each bit and&n;&t;&t; * despatch an interrupt if it&squot;s set.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|intstatus
+op_amp
+l_int|8
+)paren
+id|device_interrupt
+c_func
+(paren
+l_int|16
+op_plus
+l_int|3
+comma
+l_int|16
+op_plus
+l_int|3
+comma
+id|regs
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|intstatus
+op_amp
+l_int|4
+)paren
+id|device_interrupt
+c_func
+(paren
+l_int|16
+op_plus
+l_int|2
+comma
+l_int|16
+op_plus
+l_int|2
+comma
+id|regs
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|intstatus
+op_amp
+l_int|2
+)paren
+id|device_interrupt
+c_func
+(paren
+l_int|16
+op_plus
+l_int|1
+comma
+l_int|16
+op_plus
+l_int|1
+comma
+id|regs
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|intstatus
+op_amp
+l_int|1
+)paren
+id|device_interrupt
+c_func
+(paren
+l_int|16
+op_plus
+l_int|0
+comma
+l_int|16
+op_plus
+l_int|0
+comma
+id|regs
+)paren
+suffix:semicolon
+)brace
+r_else
+id|isa_device_interrupt
+(paren
+id|vector
+comma
+id|regs
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif /* CONFIG_PCI */
 multiline_comment|/*&n; * Jensen is special: the vector is 0x8X0 for EISA interrupt X, and&n; * 0x9X0 for the local motherboard interrupts..&n; *&n; *&t;0x660 - NMI&n; *&n; *&t;0x800 - IRQ0  interval timer (not used, as we use the RTC timer)&n; *&t;0x810 - IRQ1  line printer (duh..)&n; *&t;0x860 - IRQ6  floppy disk&n; *&t;0x8E0 - IRQ14 SCSI controller&n; *&n; *&t;0x900 - COM1&n; *&t;0x920 - COM2&n; *&t;0x980 - keyboard&n; *&t;0x990 - mouse&n; *&n; * PCI-based systems are more sane: they don&squot;t have the local&n; * interrupts at all, and have only normal PCI interrupts from&n; * devices.  Happily it&squot;s easy enough to do a sane mapping from the&n; * Jensen..  Note that this means that we may have to do a hardware&n; * &quot;ack&quot; to a different interrupt than we report to the rest of the&n; * world.&n; */
 r_static
@@ -4311,17 +5872,28 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|__save_and_cli
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+macro_line|#ifdef __SMP__
+r_if
+c_cond
+(paren
+id|smp_processor_id
 c_func
 (paren
 )paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;srm_device_interrupt on other CPU&bslash;n&quot;
+)paren
 suffix:semicolon
+macro_line|#endif
 id|ack
 op_assign
 id|irq
@@ -4463,7 +6035,7 @@ l_int|8
 suffix:semicolon
 macro_line|#endif /* CONFIG_ALPHA_MIATA */
 macro_line|#ifdef CONFIG_ALPHA_NORITAKE
-multiline_comment|/*&n;&t; * I really hate to do this, but the NORITAKE SRM console reports&n;&t; *  PCI vectors *lower* than I expected from the bit numbering in&n;&t; *  the documentation.&n;&t; * But I really don&squot;t want to change the fixup code for allocation&n;&t; *  of IRQs, nor the irq_mask maintenance stuff, both of which look&n;&t; *  nice and clean now.&n;&t; * So, here&squot;s this additional grotty hack... :-(&n;&t; */
+multiline_comment|/*&n;&t; * I really hate to do this, too, but the NORITAKE SRM console also&n;&t; *  reports PCI vectors *lower* than I expected from the bit numbers&n;&t; *  in the documentation.&n;&t; * But I really don&squot;t want to change the fixup code for allocation&n;&t; *  of IRQs, nor the irq_mask maintenance stuff, both of which look&n;&t; *  nice and clean now.&n;&t; * So, here&squot;s this additional grotty hack... :-(&n;&t; */
 r_if
 c_cond
 (paren
@@ -4533,6 +6105,76 @@ id|irq
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif /* CONFIG_ALPHA_SABLE */
+macro_line|#ifdef CONFIG_ALPHA_DP264
+multiline_comment|/*&n;         * the DP264 SRM console reports PCI interrupts with a vector&n;&t; * 0x100 *higher* than one might expect, as PCI IRQ 0 (ie bit 0)&n;&t; * shows up as IRQ 16, etc, etc. We adjust it down by 16 to have&n;&t; * it line up with the actual bit numbers from the DIM registers,&n;&t; * which is how we manage the interrupts/mask. Sigh...&n;         */
+r_if
+c_cond
+(paren
+id|irq
+op_ge
+l_int|32
+)paren
+id|ack
+op_assign
+id|irq
+op_assign
+id|irq
+op_minus
+l_int|16
+suffix:semicolon
+macro_line|#endif /* DP264 */
+macro_line|#ifdef CONFIG_ALPHA_RAWHIDE
+multiline_comment|/*&n;         * the RAWHIDE SRM console reports PCI interrupts with a vector&n;&t; * 0x80 *higher* than one might expect, as PCI IRQ 0 (ie bit 0)&n;&t; * shows up as IRQ 24, etc, etc. We adjust it down by 8 to have&n;&t; * it line up with the actual bit numbers from the REQ registers,&n;&t; * which is how we manage the interrupts/mask. Sigh...&n;&t; *&n;&t; * also, PCI #1 interrupts are offset some more... :-(&n;         */
+r_if
+c_cond
+(paren
+id|irq
+op_eq
+l_int|52
+)paren
+id|ack
+op_assign
+id|irq
+op_assign
+l_int|56
+suffix:semicolon
+multiline_comment|/* SCSI on PCI 1 is special */
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|irq
+op_ge
+l_int|24
+)paren
+multiline_comment|/* adjust all PCI interrupts down 8 */
+id|ack
+op_assign
+id|irq
+op_assign
+id|irq
+op_minus
+l_int|8
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irq
+op_ge
+l_int|48
+)paren
+multiline_comment|/* adjust PCI bus 1 interrupts down another 8 */
+id|ack
+op_assign
+id|irq
+op_assign
+id|irq
+op_minus
+l_int|8
+suffix:semicolon
+)brace
+macro_line|#endif /* RAWHIDE */
 id|device_interrupt
 c_func
 (paren
@@ -4543,7 +6185,7 @@ comma
 id|regs
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -4824,6 +6466,44 @@ op_star
 id|regs
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|tsunami_machine_check
+c_func
+(paren
+r_int
+r_int
+id|vector
+comma
+r_int
+r_int
+id|la
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|mcpcia_machine_check
+c_func
+(paren
+r_int
+r_int
+id|vector
+comma
+r_int
+r_int
+id|la
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
 r_static
 r_void
 DECL|function|machine_check
@@ -4899,6 +6579,28 @@ comma
 id|regs
 )paren
 suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_TSUNAMI)
+id|tsunami_machine_check
+c_func
+(paren
+id|vector
+comma
+id|la
+comma
+id|regs
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_MCPCIA)
+id|mcpcia_machine_check
+c_func
+(paren
+id|vector
+comma
+id|la
+comma
+id|regs
+)paren
+suffix:semicolon
 macro_line|#else
 id|printk
 c_func
@@ -4952,12 +6654,26 @@ id|type
 r_case
 l_int|0
 suffix:colon
+macro_line|#ifdef __SMP__
+multiline_comment|/*&t;&t;irq_enter(smp_processor_id(), 0); ??????? */
+id|handle_ipi
+c_func
+(paren
+op_amp
+id|regs
+)paren
+suffix:semicolon
+multiline_comment|/*&t;&t;irq_exit(smp_processor_id(), 0);  ??????? */
+r_return
+suffix:semicolon
+macro_line|#else /* __SMP__ */
 id|printk
 c_func
 (paren
 l_string|&quot;Interprocessor interrupt? You must be kidding&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif /* __SMP__ */
 r_break
 suffix:semicolon
 r_case
@@ -4993,7 +6709,7 @@ suffix:semicolon
 r_case
 l_int|3
 suffix:colon
-macro_line|#if defined(CONFIG_ALPHA_JENSEN) || defined(CONFIG_ALPHA_NONAME) || &bslash;&n;    defined(CONFIG_ALPHA_P2K) || defined(CONFIG_ALPHA_SRM)
+macro_line|#if defined(CONFIG_ALPHA_JENSEN) || &bslash;&n;    defined(CONFIG_ALPHA_NONAME) || &bslash;&n;    defined(CONFIG_ALPHA_P2K)    || &bslash;&n;    defined(CONFIG_ALPHA_SRM)
 id|srm_device_interrupt
 c_func
 (paren
@@ -5003,7 +6719,7 @@ op_amp
 id|regs
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_MIATA) || defined(CONFIG_ALPHA_SX164)
+macro_line|#elif defined(CONFIG_ALPHA_MIATA) || &bslash;&n;    defined(CONFIG_ALPHA_SX164)
 id|miata_device_interrupt
 c_func
 (paren
@@ -5023,7 +6739,7 @@ op_amp
 id|regs
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_ALCOR) || defined(CONFIG_ALPHA_XLT)
+macro_line|#elif defined(CONFIG_ALPHA_ALCOR) || &bslash;&n;      defined(CONFIG_ALPHA_XLT)
 id|alcor_and_xlt_device_interrupt
 c_func
 (paren
@@ -5033,8 +6749,8 @@ op_amp
 id|regs
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_RUFFIAN)
-id|ruffian_device_interrupt
+macro_line|#elif defined(CONFIG_ALPHA_CABRIOLET) || &bslash;&n;      defined(CONFIG_ALPHA_EB66P)     || &bslash;&n;      defined(CONFIG_ALPHA_EB164)     || &bslash;&n;      defined(CONFIG_ALPHA_PC164)     || &bslash;&n;      defined(CONFIG_ALPHA_LX164)
+id|cabriolet_and_eb66p_device_interrupt
 c_func
 (paren
 id|vector
@@ -5053,8 +6769,8 @@ op_amp
 id|regs
 )paren
 suffix:semicolon
-macro_line|#elif NR_IRQS == 33
-id|cabriolet_and_eb66p_device_interrupt
+macro_line|#elif defined(CONFIG_ALPHA_EB66) || &bslash;&n;      defined(CONFIG_ALPHA_EB64P)
+id|eb66_and_eb64p_device_interrupt
 c_func
 (paren
 id|vector
@@ -5063,8 +6779,38 @@ op_amp
 id|regs
 )paren
 suffix:semicolon
-macro_line|#elif NR_IRQS == 32
-id|eb66_and_eb64p_device_interrupt
+macro_line|#elif defined(CONFIG_ALPHA_RUFFIAN)
+id|ruffian_device_interrupt
+c_func
+(paren
+id|vector
+comma
+op_amp
+id|regs
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_DP264)
+id|dp264_device_interrupt
+c_func
+(paren
+id|vector
+comma
+op_amp
+id|regs
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_RAWHIDE)
+id|rawhide_device_interrupt
+c_func
+(paren
+id|vector
+comma
+op_amp
+id|regs
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_TAKARA)
+id|takara_device_interrupt
 c_func
 (paren
 id|vector
@@ -5181,7 +6927,7 @@ l_int|0x535
 suffix:semicolon
 multiline_comment|/* enable cascades in master */
 )brace
-macro_line|#ifdef CONFIG_ALPHA_SX164
+macro_line|#if defined(CONFIG_ALPHA_SX164)
 DECL|function|sx164_init_IRQ
 r_static
 r_inline
@@ -5192,6 +6938,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if !defined(CONFIG_ALPHA_SRM)
 multiline_comment|/* note invert on MASK bits */
 op_star
 (paren
@@ -5214,36 +6961,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if 0
 op_star
 (paren
 id|vulp
 )paren
-id|PYXIS_INT_HILO
-op_assign
-l_int|0x000000B2UL
+id|PYXIS_INT_MASK
 suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* ISA/NMI HI */
-op_star
-(paren
-id|vulp
-)paren
-id|PYXIS_RT_COUNT
-op_assign
-l_int|0UL
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* clear count */
-macro_line|#endif
+macro_line|#endif /* !SRM */
 id|enable_irq
 c_func
 (paren
@@ -5271,7 +6995,7 @@ suffix:semicolon
 multiline_comment|/* enable cascade */
 )brace
 macro_line|#endif /* SX164 */
-macro_line|#ifdef CONFIG_ALPHA_RUFFIAN
+macro_line|#if defined(CONFIG_ALPHA_RUFFIAN)
 DECL|function|ruffian_init_IRQ
 r_static
 r_inline
@@ -5500,6 +7224,8 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* invert */
+macro_line|#if 0
+multiline_comment|/* these break on MiataGL so we&squot;ll try not to do it at all */
 op_star
 (paren
 id|vulp
@@ -5528,6 +7254,8 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* clear count */
+macro_line|#endif
+multiline_comment|/* clear upper timer */
 op_star
 (paren
 id|vulp
@@ -5541,37 +7269,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* clear upper timer */
-macro_line|#if 0
-op_star
-(paren
-id|vulp
-)paren
-id|PYXIS_INT_ROUTE
-op_assign
-l_int|0UL
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* all are level */
-op_star
-(paren
-id|vulp
-)paren
-id|PYXIS_INT_CNFG
-op_assign
-l_int|0UL
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* all clear */
-macro_line|#endif
 id|enable_irq
 c_func
 (paren
@@ -5743,7 +7440,7 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* enable cascade */
 )brace
-macro_line|#endif
+macro_line|#endif /* ALCOR || XLT */
 DECL|function|mikasa_init_IRQ
 r_static
 r_inline
@@ -5776,16 +7473,257 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* enable cascade */
 )brace
-DECL|function|init_IRQ_33
+macro_line|#if defined(CONFIG_ALPHA_DP264)
+DECL|function|dp264_init_IRQ
 r_static
 r_inline
 r_void
-id|init_IRQ_33
+id|dp264_init_IRQ
 c_func
 (paren
 r_void
 )paren
 (brace
+multiline_comment|/* note invert on MASK bits */
+op_star
+(paren
+id|vulp
+)paren
+id|TSUNAMI_CSR_DIM0
+op_assign
+op_complement
+(paren
+id|irq_mask
+)paren
+op_amp
+op_complement
+l_int|0x0000000000000000UL
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+op_star
+(paren
+id|vulp
+)paren
+id|TSUNAMI_CSR_DIM0
+suffix:semicolon
+id|enable_irq
+c_func
+(paren
+l_int|55
+)paren
+suffix:semicolon
+multiline_comment|/* enable CYPRESS interrupt controller (ISA) */
+id|enable_irq
+c_func
+(paren
+l_int|2
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* DP264 */
+macro_line|#if defined(CONFIG_ALPHA_RAWHIDE)
+DECL|function|rawhide_init_IRQ
+r_static
+r_inline
+r_void
+id|rawhide_init_IRQ
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* HACK ALERT! only PCI busses 0 and 1 are used currently,&n;&t;   and routing is only to CPU #1*/
+op_star
+(paren
+id|vuip
+)paren
+id|MCPCIA_INT_MASK0
+c_func
+(paren
+l_int|0
+)paren
+op_assign
+(paren
+op_complement
+(paren
+(paren
+id|irq_mask
+)paren
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0x00ffffffU
+)paren
+op_or
+l_int|0x00ff0000U
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* ... and read it back to make sure it got written.  */
+op_star
+(paren
+id|vuip
+)paren
+id|MCPCIA_INT_MASK0
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+op_star
+(paren
+id|vuip
+)paren
+id|MCPCIA_INT_MASK0
+c_func
+(paren
+l_int|1
+)paren
+op_assign
+(paren
+op_complement
+(paren
+(paren
+id|irq_mask
+)paren
+op_rshift
+l_int|40
+)paren
+op_amp
+l_int|0x00ffffffU
+)paren
+op_or
+l_int|0x00fe0000U
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* ... and read it back to make sure it got written.  */
+op_star
+(paren
+id|vuip
+)paren
+id|MCPCIA_INT_MASK0
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+id|enable_irq
+c_func
+(paren
+l_int|2
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* RAWHIDE */
+DECL|function|takara_init_IRQ
+r_static
+r_inline
+r_void
+id|takara_init_IRQ
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|ctlreg
+op_assign
+id|inl
+c_func
+(paren
+l_int|0x500
+)paren
+suffix:semicolon
+id|ctlreg
+op_and_assign
+op_complement
+l_int|0x8000
+suffix:semicolon
+multiline_comment|/* return to non-accelerated mode */
+id|outw
+c_func
+(paren
+id|ctlreg
+op_rshift
+l_int|16
+comma
+l_int|0x502
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|ctlreg
+op_amp
+l_int|0xFFFF
+comma
+l_int|0x500
+)paren
+suffix:semicolon
+id|ctlreg
+op_assign
+l_int|0x05107c00
+suffix:semicolon
+multiline_comment|/* enable the PCI interrupt register */
+id|printk
+c_func
+(paren
+l_string|&quot;Setting to 0x%08x&bslash;n&quot;
+comma
+id|ctlreg
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|ctlreg
+op_rshift
+l_int|16
+comma
+l_int|0x502
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|ctlreg
+op_amp
+l_int|0xFFFF
+comma
+l_int|0x500
+)paren
+suffix:semicolon
+id|enable_irq
+c_func
+(paren
+l_int|2
+)paren
+suffix:semicolon
+)brace
+DECL|function|init_IRQ_35
+r_static
+r_inline
+r_void
+id|init_IRQ_35
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#if !defined(CONFIG_ALPHA_SRM)
 id|outl
 c_func
 (paren
@@ -5796,6 +7734,7 @@ comma
 l_int|0x804
 )paren
 suffix:semicolon
+macro_line|#endif /* !SRM */
 id|enable_irq
 c_func
 (paren
@@ -5895,7 +7834,10 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|dma_outb
+multiline_comment|/* FIXME FIXME FIXME FIXME FIXME */
+macro_line|#if !defined(CONFIG_ALPHA_DP264)
+multiline_comment|/* we need to figure out why these fail on the DP264 */
+id|outb
 c_func
 (paren
 l_int|0
@@ -5903,7 +7845,7 @@ comma
 id|DMA1_RESET_REG
 )paren
 suffix:semicolon
-id|dma_outb
+id|outb
 c_func
 (paren
 l_int|0
@@ -5911,8 +7853,10 @@ comma
 id|DMA2_RESET_REG
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_ALPHA_SX164
-id|dma_outb
+macro_line|#endif /* !DP264 */
+multiline_comment|/* FIXME FIXME FIXME FIXME FIXME */
+macro_line|#if !defined(CONFIG_ALPHA_SX164) &amp;&amp; !defined(CONFIG_ALPHA_DP264)
+id|outb
 c_func
 (paren
 l_int|0
@@ -5920,8 +7864,8 @@ comma
 id|DMA1_CLR_MASK_REG
 )paren
 suffix:semicolon
-multiline_comment|/* We need to figure out why this fails on the SX164.  */
-id|dma_outb
+multiline_comment|/* we need to figure out why this fails on the SX164 */
+id|outb
 c_func
 (paren
 l_int|0
@@ -5929,7 +7873,8 @@ comma
 id|DMA2_CLR_MASK_REG
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* !SX164 &amp;&amp; !DP264 */
+multiline_comment|/* end FIXMEs */
 macro_line|#if defined(CONFIG_ALPHA_SABLE)
 id|sable_init_IRQ
 c_func
@@ -5960,10 +7905,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#elif (defined(CONFIG_ALPHA_PC164) || defined(CONFIG_ALPHA_LX164)) &bslash;&n;&t;&amp;&amp; defined(CONFIG_ALPHA_SRM)
-multiline_comment|/* Disable all the PCI interrupts?  Otherwise, everthing was&n;&t;   done by SRM already.  */
 macro_line|#elif defined(CONFIG_ALPHA_MIKASA)
 id|mikasa_init_IRQ
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_CABRIOLET) || defined(CONFIG_ALPHA_EB66P) || &bslash;&n;      defined(CONFIG_ALPHA_PC164)     || defined(CONFIG_ALPHA_LX164) || &bslash;&n;      defined(CONFIG_ALPHA_EB164)
+id|init_IRQ_35
 c_func
 (paren
 )paren
@@ -5974,13 +7923,25 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#elif NR_IRQS == 33
-id|init_IRQ_33
+macro_line|#elif defined(CONFIG_ALPHA_DP264)
+id|dp264_init_IRQ
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#elif NR_IRQS == 32
+macro_line|#elif defined(CONFIG_ALPHA_RAWHIDE)
+id|rawhide_init_IRQ
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_TAKARA)
+id|takara_init_IRQ
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB64P)
 id|init_IRQ_32
 c_func
 (paren

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * Code common to all LCA chips.&n; *&n; * Written by David Mosberger (davidm@cs.arizona.edu) with some code&n; * taken from Dave Rusling&squot;s (david.rusling@reo.mts.dec.com) 32-bit&n; * bios code.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -41,6 +42,22 @@ DECL|macro|MCHK_K_SIO_IOCHK
 mdefine_line|#define MCHK_K_SIO_IOCHK&t;0x206&t;/* all platforms so far */
 DECL|macro|MCHK_K_DCSR
 mdefine_line|#define MCHK_K_DCSR&t;&t;0x208&t;/* all but Noname */
+macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
+DECL|variable|LCA_DMA_WIN_BASE
+r_int
+r_int
+id|LCA_DMA_WIN_BASE
+op_assign
+id|LCA_DMA_WIN_BASE_DEFAULT
+suffix:semicolon
+DECL|variable|LCA_DMA_WIN_SIZE
+r_int
+r_int
+id|LCA_DMA_WIN_SIZE
+op_assign
+id|LCA_DMA_WIN_SIZE_DEFAULT
+suffix:semicolon
+macro_line|#endif /* SRM_SETUP */
 multiline_comment|/*&n; * Given a bus, device, and function number, compute resulting&n; * configuration space address and setup the LCA_IOC_CONF register&n; * accordingly.  It is therefore not safe to have concurrent&n; * invocations to configuration space access routines, but there&n; * really shouldn&squot;t be any need for this.&n; *&n; * Type 0:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | | | | | | | | | | | | | | |F|F|F|R|R|R|R|R|R|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:11&t;Device select bit.&n; * &t;10:8&t;Function number&n; * &t; 7:2&t;Register number&n; *&n; * Type 1:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | |B|B|B|B|B|B|B|B|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|1|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:24&t;reserved&n; *&t;23:16&t;bus number (8 bits = 128 possible buses)&n; *&t;15:11&t;Device number (5 bits)&n; *&t;10:8&t;function number&n; *&t; 7:2&t;register number&n; *  &n; * Notes:&n; *&t;The function number selects which function of a multi-function device &n; *&t;(e.g., scsi and ethernet).&n; * &n; *&t;The register selects a DWORD (32 bit) register offset.  Hence it&n; *&t;doesn&squot;t get shifted by 2 bits as we want to &quot;drop&quot; the bottom two&n; *&t;bits.&n; */
 DECL|function|mk_conf_addr
 r_static
@@ -108,11 +125,9 @@ suffix:semicolon
 )brace
 op_star
 (paren
-(paren
 id|vulp
 )paren
 id|LCA_IOC_CONF
-)paren
 op_assign
 l_int|0
 suffix:semicolon
@@ -142,11 +157,9 @@ r_else
 multiline_comment|/* type 1 configuration cycle: */
 op_star
 (paren
-(paren
 id|vulp
 )paren
 id|LCA_IOC_CONF
-)paren
 op_assign
 l_int|1
 suffix:semicolon
@@ -251,13 +264,9 @@ id|stat0
 op_assign
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|LCA_IOC_STAT0
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -407,13 +416,9 @@ id|stat0
 op_assign
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|LCA_IOC_STAT0
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1043,6 +1048,184 @@ r_int
 id|mem_end
 )paren
 (brace
+macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
+multiline_comment|/* check window 0 for enabled and mapped to 0 */
+r_if
+c_cond
+(paren
+(paren
+op_star
+(paren
+id|vulp
+)paren
+id|LCA_IOC_W_BASE0
+op_amp
+(paren
+l_int|1UL
+op_lshift
+l_int|33
+)paren
+)paren
+op_logical_and
+(paren
+op_star
+(paren
+id|vulp
+)paren
+id|LCA_IOC_T_BASE0
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+id|LCA_DMA_WIN_BASE
+op_assign
+op_star
+(paren
+id|vulp
+)paren
+id|LCA_IOC_W_BASE0
+op_amp
+l_int|0xffffffffUL
+suffix:semicolon
+id|LCA_DMA_WIN_SIZE
+op_assign
+op_star
+(paren
+id|vulp
+)paren
+id|LCA_IOC_W_MASK0
+op_amp
+l_int|0xffffffffUL
+suffix:semicolon
+id|LCA_DMA_WIN_SIZE
+op_add_assign
+l_int|1
+suffix:semicolon
+macro_line|#if 1
+id|printk
+c_func
+(paren
+l_string|&quot;lca_init: using Window 0 settings&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;lca_init: BASE 0x%lx MASK 0x%lx TRANS 0x%lx&bslash;n&quot;
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|LCA_IOC_W_BASE0
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|LCA_IOC_W_MASK0
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|LCA_IOC_T_BASE0
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+multiline_comment|/* check window 2 for enabled and mapped to 0 */
+r_if
+c_cond
+(paren
+(paren
+op_star
+(paren
+id|vulp
+)paren
+id|LCA_IOC_W_BASE1
+op_amp
+(paren
+l_int|1UL
+op_lshift
+l_int|33
+)paren
+)paren
+op_logical_and
+(paren
+op_star
+(paren
+id|vulp
+)paren
+id|LCA_IOC_T_BASE1
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+id|LCA_DMA_WIN_BASE
+op_assign
+op_star
+(paren
+id|vulp
+)paren
+id|LCA_IOC_W_BASE1
+op_amp
+l_int|0xffffffffUL
+suffix:semicolon
+id|LCA_DMA_WIN_SIZE
+op_assign
+op_star
+(paren
+id|vulp
+)paren
+id|LCA_IOC_W_MASK1
+op_amp
+l_int|0xffffffffUL
+suffix:semicolon
+id|LCA_DMA_WIN_SIZE
+op_add_assign
+l_int|1
+suffix:semicolon
+macro_line|#if 1
+id|printk
+c_func
+(paren
+l_string|&quot;lca_init: using Window 1 settings&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;lca_init: BASE 0x%lx MASK 0x%lx TRANS 0x%lx&bslash;n&quot;
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|LCA_IOC_W_BASE1
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|LCA_IOC_W_MASK1
+comma
+op_star
+(paren
+id|vulp
+)paren
+id|LCA_IOC_T_BASE1
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+multiline_comment|/* we must use our defaults... */
+macro_line|#endif /* SRM_SETUP */
+(brace
 multiline_comment|/*&n;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t; * For now, window 1 is disabled.  In the future, we may&n;&t; * want to use it to do scatter/gather DMA.  Window 0&n;&t; * goes at 1 GB and is 1 GB large.&n;&t; */
 op_star
 (paren
@@ -1084,6 +1267,7 @@ id|LCA_IOC_T_BASE0
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * Disable PCI parity for now.  The NCR53c810 chip has&n;&t; * troubles meeting the PCI spec which results in&n;&t; * data parity errors.&n;&t; */
 op_star
 (paren

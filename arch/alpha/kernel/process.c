@@ -156,6 +156,7 @@ id|pt_regs
 id|regs
 )paren
 (brace
+macro_line|#if !defined(CONFIG_ALPHA_TSUNAMI)
 (paren
 op_amp
 id|regs
@@ -165,10 +166,125 @@ id|hae
 op_assign
 id|hae
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__
+multiline_comment|/* This is being executed in task 0 &squot;user space&squot;. */
+DECL|macro|resched_needed
+mdefine_line|#define resched_needed() 1
+DECL|function|cpu_idle
+r_int
+id|cpu_idle
+c_func
+(paren
+r_void
+op_star
+id|unused
+)paren
+(brace
+r_extern
+r_volatile
+r_int
+id|smp_commenced
+suffix:semicolon
+id|current-&gt;priority
+op_assign
+op_minus
+l_int|100
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * tq_scheduler currently assumes we&squot;re running in a process&n;&t;&t; * context (ie that we hold the kernel lock..)&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|tq_scheduler
+)paren
+(brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_scheduler
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* endless idle loop with no priority at all */
+id|current-&gt;counter
+op_assign
+op_minus
+l_int|100
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|smp_commenced
+op_logical_or
+id|resched_needed
+c_func
+(paren
+)paren
+)paren
+(brace
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+DECL|function|sys_idle
+id|asmlinkage
+r_int
+id|sys_idle
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|current-&gt;pid
+op_ne
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
+id|cpu_idle
+c_func
+(paren
+l_int|NULL
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#else /* __SMP__ */
 DECL|function|sys_idle
 id|asmlinkage
 r_int
@@ -233,6 +349,22 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+macro_line|#endif /* __SMP__ */
+macro_line|#if defined(CONFIG_ALPHA_SRM_SETUP)
+r_extern
+r_void
+id|reset_for_srm
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|srm_hae
+suffix:semicolon
+macro_line|#endif
 DECL|function|finish_shutdown
 r_static
 r_void
@@ -252,15 +384,10 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* i&squot;m not sure if i really need to disable interrupts here */
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 multiline_comment|/* reset periodic interrupt frequency */
@@ -398,6 +525,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_ALPHA_SRM_SETUP)
+id|reset_for_srm
+c_func
+(paren
+)paren
+suffix:semicolon
+id|set_hae
+c_func
+(paren
+id|srm_hae
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* SRM */                                        
 id|finish_shutdown
 c_func
@@ -470,6 +610,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_ALPHA_SRM_SETUP)
+id|reset_for_srm
+c_func
+(paren
+)paren
+suffix:semicolon
+id|set_hae
+c_func
+(paren
+id|srm_hae
+)paren
+suffix:semicolon
+macro_line|#endif
 id|finish_shutdown
 c_func
 (paren
@@ -756,6 +909,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ret_from_smpfork
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Copy an alpha thread..&n; *&n; * Note the &quot;stack_offset&quot; stuff: when returning to kernel mode, we need&n; * to have some extra stack-space for the kernel stack that still exists&n; * after the &quot;ret_from_sys_call&quot;. When returning to user mode, we only&n; * want the space needed by the syscall stack frame (ie &quot;struct pt_regs&quot;).&n; * Use the passed &quot;regs&quot; pointer to determine how much space we need&n; * for a kernel fork().&n; */
 DECL|function|copy_thread
 r_int
@@ -909,6 +1070,16 @@ op_assign
 op_star
 id|stack
 suffix:semicolon
+macro_line|#ifdef __SMP__
+id|childstack-&gt;r26
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|ret_from_smpfork
+suffix:semicolon
+macro_line|#else
 id|childstack-&gt;r26
 op_assign
 (paren
@@ -917,6 +1088,7 @@ r_int
 )paren
 id|ret_from_sys_call
 suffix:semicolon
+macro_line|#endif
 id|p-&gt;tss.usp
 op_assign
 id|usp

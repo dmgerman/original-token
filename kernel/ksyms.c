@@ -1404,6 +1404,13 @@ c_func
 id|del_timer
 )paren
 suffix:semicolon
+DECL|variable|mod_timer
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mod_timer
+)paren
+suffix:semicolon
 DECL|variable|tq_timer
 id|EXPORT_SYMBOL
 c_func

@@ -3071,6 +3071,30 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
+macro_line|#if MAX_HWIFS &gt; 4
+r_case
+id|IDE4_MAJOR
+suffix:colon
+id|rfn
+op_assign
+op_amp
+id|do_ide4_request
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#if MAX_HWIFS &gt; 5
+r_case
+id|IDE5_MAJOR
+suffix:colon
+id|rfn
+op_assign
+op_amp
+id|do_ide5_request
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 id|printk

@@ -5705,14 +5705,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef SLAB_SKB
 multiline_comment|/*&n;&t; *&t;Initialize skbuff SLAB cache &n;&t; */
 id|skb_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Wan router layer. &n;&t; */
 macro_line|#ifdef CONFIG_WAN_ROUTER&t; 
 id|wanrouter_init

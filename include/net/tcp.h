@@ -610,8 +610,6 @@ DECL|macro|TCP_KEEPALIVE_PROBES
 mdefine_line|#define TCP_KEEPALIVE_PROBES&t;9&t;&t;/* Max of 9 keepalive probes&t;*/
 DECL|macro|TCP_KEEPALIVE_PERIOD
 mdefine_line|#define TCP_KEEPALIVE_PERIOD ((75*HZ)&gt;&gt;2)&t;/* period of keepalive check&t;*/
-DECL|macro|TCP_NO_CHECK
-mdefine_line|#define TCP_NO_CHECK&t;0&t;/* turn to one if you want the default&n;&t;&t;&t;&t; * to be no checksum&t;&t;&t;*/
 DECL|macro|TCP_SYNACK_PERIOD
 mdefine_line|#define TCP_SYNACK_PERIOD&t;(HZ/2)
 DECL|macro|TCP_QUICK_TRIES
@@ -1837,6 +1835,16 @@ op_star
 suffix:semicolon
 r_extern
 r_void
+id|tcp_fack_retransmit
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|tcp_xmit_retransmit_queue
 c_func
 (paren
@@ -2291,11 +2299,33 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* This is what the send packet queueing engine uses to pass&n; * TCP per-packet control information to the transmission&n; * code.&n; */
+multiline_comment|/* This is what the send packet queueing engine uses to pass&n; * TCP per-packet control information to the transmission&n; * code.  We also store the host-order sequence numbers in&n; * here too.  This is 36 bytes on 32-bit architectures,&n; * 40 bytes on 64-bit machines, if this grows please adjust&n; * skbuff.h:skbuff-&gt;cb[xxx] size appropriately.&n; */
 DECL|struct|tcp_skb_cb
 r_struct
 id|tcp_skb_cb
 (brace
+DECL|member|header
+r_struct
+id|inet_skb_parm
+id|header
+suffix:semicolon
+multiline_comment|/* For incoming frames&t;&t;*/
+DECL|member|seq
+id|__u32
+id|seq
+suffix:semicolon
+multiline_comment|/* Starting sequence number&t;*/
+DECL|member|end_seq
+id|__u32
+id|end_seq
+suffix:semicolon
+multiline_comment|/* SEQ + FIN + SYN + datalen&t;*/
+DECL|member|when
+r_int
+r_int
+id|when
+suffix:semicolon
+multiline_comment|/* used to compute rtt&squot;s&t;*/
 DECL|member|flags
 id|__u8
 id|flags
@@ -2328,10 +2358,37 @@ id|__u16
 id|urg_ptr
 suffix:semicolon
 multiline_comment|/* Valid w/URG flags is set.&t;*/
+DECL|member|ack_seq
+id|__u32
+id|ack_seq
+suffix:semicolon
+multiline_comment|/* Sequence number ACK&squot;d&t;*/
 )brace
 suffix:semicolon
 DECL|macro|TCP_SKB_CB
 mdefine_line|#define TCP_SKB_CB(__skb)&t;((struct tcp_skb_cb *)&amp;((__skb)-&gt;cb[0]))
+multiline_comment|/* This determines how many packets are &quot;in the network&quot; to the best&n; * or our knowledge.  In many cases it is conservative, but where&n; * detailed information is available from the receiver (via SACK&n; * blocks etc.) we can make more agressive calculations.&n; *&n; * Use this for decisions involving congestion control, use just&n; * tp-&gt;packets_out to determine if the send queue is empty or not.&n; *&n; * Read this equation as:&n; *&n; *&t;&quot;Packets sent once on transmission queue&quot; MINUS&n; *&t;&quot;Packets acknowledged by FACK information&quot; PLUS&n; *&t;&quot;Packets fast retransmitted&quot;&n; */
+DECL|function|tcp_packets_in_flight
+r_static
+id|__inline__
+r_int
+id|tcp_packets_in_flight
+c_func
+(paren
+r_struct
+id|tcp_opt
+op_star
+id|tp
+)paren
+(brace
+r_return
+id|tp-&gt;packets_out
+op_minus
+id|tp-&gt;fackets_out
+op_plus
+id|tp-&gt;retrans_out
+suffix:semicolon
+)brace
 multiline_comment|/* This checks if the data bearing packet SKB (usually tp-&gt;send_head)&n; * should be put on the wire right now.&n; */
 DECL|function|tcp_snd_test
 r_static
@@ -2366,23 +2423,14 @@ id|nagle_check
 op_assign
 l_int|1
 suffix:semicolon
-r_int
-id|len
-suffix:semicolon
 multiline_comment|/*&t;RFC 1122 - section 4.2.3.4&n;&t; *&n;&t; *&t;We must queue if&n;&t; *&n;&t; *&t;a) The right edge of this frame exceeds the window&n;&t; *&t;b) There are packets in flight and we have a small segment&n;&t; *&t;   [SWS avoidance and Nagle algorithm]&n;&t; *&t;   (part of SWS is done on packetization)&n;&t; *&t;c) We are retransmiting [Nagle]&n;&t; *&t;d) We have too many packets &squot;in flight&squot;&n;&t; *&n;&t; * &t;Don&squot;t use the nagle rule for urgent data.&n;&t; */
-id|len
-op_assign
-id|skb-&gt;end_seq
-op_minus
-id|skb-&gt;seq
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|sk-&gt;nonagle
 op_logical_and
-id|len
+id|skb-&gt;len
 OL
 (paren
 id|sk-&gt;mss
@@ -2413,7 +2461,11 @@ r_return
 (paren
 id|nagle_check
 op_logical_and
-id|tp-&gt;packets_out
+id|tcp_packets_in_flight
+c_func
+(paren
+id|tp
+)paren
 OL
 id|tp-&gt;snd_cwnd
 op_logical_and
@@ -2421,7 +2473,13 @@ op_logical_neg
 id|after
 c_func
 (paren
-id|skb-&gt;end_seq
+id|TCP_SKB_CB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|end_seq
 comma
 id|tp-&gt;snd_una
 op_plus

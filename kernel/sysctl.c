@@ -18,7 +18,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_ROOT_NFS
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#endif
-macro_line|#ifdef CONFIG_SYSCTL
+macro_line|#if defined(CONFIG_SYSCTL) &amp;&amp; defined(CONFIG_PROC_FS)
 multiline_comment|/* External variables not in a header file. */
 r_extern
 r_int
@@ -5519,7 +5519,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#else /* CONFIG_SYSCTL */
+macro_line|#else /* CONFIG_PROC_FS &amp;&amp; CONFIG_SYSCTL */
 DECL|function|sys_sysctl
 r_extern
 id|asmlinkage
@@ -5777,5 +5777,5 @@ id|table
 )paren
 (brace
 )brace
-macro_line|#endif /* CONFIG_SYSCTL */
+macro_line|#endif /* CONFIG_PROC_FS &amp;&amp; CONFIG_SYSCTL */
 eof

@@ -1236,6 +1236,10 @@ r_char
 op_star
 id|name
 suffix:semicolon
+DECL|member|mode
+id|mode_t
+id|mode
+suffix:semicolon
 DECL|member|read_proc
 id|read_proc_t
 op_star
@@ -1250,8 +1254,16 @@ DECL|typedef|ide_proc_entry_t
 )brace
 id|ide_proc_entry_t
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 r_void
-id|proc_ide_init
+id|proc_ide_create
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|proc_ide_destroy
 c_func
 (paren
 r_void
@@ -1261,22 +1273,28 @@ r_void
 id|ide_add_proc_entries
 c_func
 (paren
-id|ide_drive_t
+r_struct
+id|proc_dir_entry
 op_star
-id|drive
+id|dir
 comma
 id|ide_proc_entry_t
 op_star
 id|p
+comma
+r_void
+op_star
+id|data
 )paren
 suffix:semicolon
 r_void
 id|ide_remove_proc_entries
 c_func
 (paren
-id|ide_drive_t
+r_struct
+id|proc_dir_entry
 op_star
-id|drive
+id|dir
 comma
 id|ide_proc_entry_t
 op_star
@@ -1294,6 +1312,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Standard exit stuff:&n; */
 DECL|macro|PROC_IDE_READ_RETURN
 mdefine_line|#define PROC_IDE_READ_RETURN(page,start,off,count,eof,len) &bslash;&n;{&t;&t;&t;&t;&t;&bslash;&n;&t;len -= off;&t;&t;&t;&bslash;&n;&t;if (len &lt; count) {&t;&t;&bslash;&n;&t;&t;*eof = 1;&t;&t;&bslash;&n;&t;&t;if (len &lt;= 0)&t;&t;&bslash;&n;&t;&t;&t;return 0;&t;&bslash;&n;&t;} else&t;&t;&t;&t;&bslash;&n;&t;&t;len = count;&t;&t;&bslash;&n;&t;*start = page + off;&t;&t;&bslash;&n;&t;return len;&t;&t;&t;&bslash;&n;}
+macro_line|#endif
 multiline_comment|/*&n; * Subdrivers support.&n; */
 DECL|macro|IDE_SUBDRIVER_VERSION
 mdefine_line|#define IDE_SUBDRIVER_VERSION&t;1
@@ -2009,6 +2028,22 @@ macro_line|#endif
 macro_line|#if MAX_HWIFS &gt; 3
 r_void
 id|do_ide3_request
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if MAX_HWIFS &gt; 4
+r_void
+id|do_ide4_request
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if MAX_HWIFS &gt; 5
+r_void
+id|do_ide5_request
 (paren
 r_void
 )paren

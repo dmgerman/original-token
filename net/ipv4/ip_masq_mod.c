@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;&t;IP_MASQ_MOD masq modules support&n; *&n; *&n; * Version:&t;@(#)ip_masq_mod.c  0.02      97/10/30&n; *&n; * Author:&t;Juan Jose Ciarlante, &lt;jjciarla@raiz.uncu.edu.ar&gt;&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; * Changes:&n; *&t;&t;Cyrus Durgin:&t;&t;fixed kerneld stuff for kmod.&n; */
+multiline_comment|/*&n; *&t;&t;IP_MASQ_MOD masq modules support&n; *&n; *&n; * Author:&t;Juan Jose Ciarlante, &lt;jjciarla@raiz.uncu.edu.ar&gt;&n; *&n; * &t;$Id: ip_masq_mod.c,v 1.4 1998/03/27 07:02:45 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; * Changes:&n; *&t;&t;Cyrus Durgin:&t;&t;fixed kerneld stuff for kmod.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1085,7 +1085,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Module control entry&n; *&t;no need to lock (already locked in ip_masq.c)&n; */
+multiline_comment|/*&n; *&t;Module control entry&n; */
 DECL|function|ip_masq_mod_ctl
 r_int
 id|ip_masq_mod_ctl

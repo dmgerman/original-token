@@ -6204,6 +6204,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|idefloppy_proc
 r_static
 id|ide_proc_entry_t
@@ -6215,6 +6216,10 @@ op_assign
 (brace
 l_string|&quot;geometry&quot;
 comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
 id|proc_ide_read_geometry
 comma
 l_int|NULL
@@ -6223,12 +6228,18 @@ comma
 (brace
 l_int|NULL
 comma
+l_int|0
+comma
 l_int|NULL
 comma
 l_int|NULL
 )brace
 )brace
 suffix:semicolon
+macro_line|#else
+DECL|macro|idefloppy_proc
+mdefine_line|#define&t;idefloppy_proc&t;NULL
+macro_line|#endif&t;/* CONFIG_PROC_FS */
 multiline_comment|/*&n; *&t;IDE subdriver functions, registered with ide.c&n; */
 DECL|variable|idefloppy_driver
 r_static

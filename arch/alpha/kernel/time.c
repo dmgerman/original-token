@@ -148,6 +148,42 @@ suffix:semicolon
 r_int
 id|nticks
 suffix:semicolon
+macro_line|#ifdef __SMP__
+r_extern
+r_void
+id|smp_percpu_timer_interrupt
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|boot_cpu_id
+suffix:semicolon
+multiline_comment|/* when SMP, do this for *all* CPUs, &n;&t;   but only do the rest for the boot CPU */
+id|smp_percpu_timer_interrupt
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+op_ne
+id|boot_cpu_id
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; * Estimate how many ticks have passed since the last update.&n;&t; * Round the result, .5 to even.  When we loose ticks due to&n;&t; * say using IDE, the clock has been seen to run up to 15% slow&n;&t; * if we truncate.&n;&t; */
 id|now
 op_assign

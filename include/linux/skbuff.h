@@ -74,12 +74,6 @@ op_star
 id|sk
 suffix:semicolon
 multiline_comment|/* Socket we are owned by &t;&t;&t;*/
-DECL|member|when
-r_int
-r_int
-id|when
-suffix:semicolon
-multiline_comment|/* used to compute rtt&squot;s&t;&t;&t;*/
 DECL|member|stamp
 r_struct
 id|timeval
@@ -218,25 +212,10 @@ DECL|member|cb
 r_char
 id|cb
 (braket
-l_int|32
+l_int|36
 )braket
 suffix:semicolon
 macro_line|#endif
-DECL|member|seq
-id|__u32
-id|seq
-suffix:semicolon
-multiline_comment|/* TCP sequence number&t;&t;&t;&t;*/
-DECL|member|end_seq
-id|__u32
-id|end_seq
-suffix:semicolon
-multiline_comment|/* seq [+ fin] [+ syn] + datalen&t;&t;*/
-DECL|member|ack_seq
-id|__u32
-id|ack_seq
-suffix:semicolon
-multiline_comment|/* TCP ack sequence number&t;&t;&t;*/
 DECL|member|len
 r_int
 r_int
@@ -305,20 +284,6 @@ r_int
 id|truesize
 suffix:semicolon
 multiline_comment|/* Buffer size &t;&t;&t;&t;&t;*/
-macro_line|#ifndef SLAB_SKB
-DECL|member|count
-id|atomic_t
-id|count
-suffix:semicolon
-multiline_comment|/* reference count&t;&t;&t;&t;*/
-DECL|member|data_skb
-r_struct
-id|sk_buff
-op_star
-id|data_skb
-suffix:semicolon
-multiline_comment|/* Link to the actual data skb&t;&t;&t;*/
-macro_line|#endif
 DECL|member|head
 r_int
 r_char

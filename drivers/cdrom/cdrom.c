@@ -3,6 +3,27 @@ DECL|macro|REVISION
 mdefine_line|#define REVISION &quot;Revision: 2.12&quot;
 DECL|macro|VERSION
 mdefine_line|#define VERSION &quot;Id: cdrom.c 2.12 1998/01/24 22:15:45 erik Exp&quot;
+multiline_comment|/* I use an error-log mask to give fine grain control over the type of&n;   messages dumped to the system logs.  The available masks include: */
+DECL|macro|CD_NOTHING
+mdefine_line|#define CD_NOTHING      0x0
+DECL|macro|CD_WARNING
+mdefine_line|#define CD_WARNING&t;0x1
+DECL|macro|CD_REG_UNREG
+mdefine_line|#define CD_REG_UNREG&t;0x2
+DECL|macro|CD_DO_IOCTL
+mdefine_line|#define CD_DO_IOCTL&t;0x4
+DECL|macro|CD_OPEN
+mdefine_line|#define CD_OPEN&t;&t;0x8
+DECL|macro|CD_CLOSE
+mdefine_line|#define CD_CLOSE&t;0x10
+DECL|macro|CD_COUNT_TRACKS
+mdefine_line|#define CD_COUNT_TRACKS 0x20
+multiline_comment|/* Define this to remove _all_ the debugging messages */
+multiline_comment|/* #define ERRLOGMASK CD_NOTHING */
+DECL|macro|ERRLOGMASK
+mdefine_line|#define ERRLOGMASK (CD_WARNING)
+multiline_comment|/* #define ERRLOGMASK (CD_WARNING|CD_OPEN|CD_COUNT_TRACKS|CD_CLOSE) */
+multiline_comment|/* #define ERRLOGMASK (CD_WARNING|CD_REG_UNREG|CD_DO_IOCTL|CD_OPEN|CD_CLOSE|CD_COUNT_TRACKS) */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -17,27 +38,7 @@ macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;asm/fcntl.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-multiline_comment|/* I use an error-log mask to give fine grain control over the type of&n;   error messages dumped to the system logs.  The available masks include: */
-DECL|macro|CD_WARNING
-mdefine_line|#define CD_WARNING&t;0x1
-DECL|macro|CD_REG_UNREG
-mdefine_line|#define CD_REG_UNREG&t;0x2
-DECL|macro|CD_DO_IOCTL
-mdefine_line|#define CD_DO_IOCTL&t;0x4
-DECL|macro|CD_OPEN
-mdefine_line|#define CD_OPEN&t;&t;0x8
-DECL|macro|CD_CLOSE
-mdefine_line|#define CD_CLOSE&t;0x10
-DECL|macro|CD_COUNT_TRACKS
-mdefine_line|#define CD_COUNT_TRACKS 0x20
-multiline_comment|/* When VERBOSE_STATUS_INFO is not defined, the debugging printks don&squot;t &n;   get compiled in at all */
-DECL|macro|VERBOSE_STATUS_INFO
-mdefine_line|#define VERBOSE_STATUS_INFO
-DECL|macro|ERRLOGMASK
-mdefine_line|#define ERRLOGMASK (CD_WARNING) 
-multiline_comment|/* #define ERRLOGMASK (CD_WARNING|CD_OPEN|CD_COUNT_TRACKS|CD_CLOSE) */
-multiline_comment|/* #define ERRLOGMASK (CD_WARNING|CD_REG_UNREG|CD_DO_IOCTL|CD_OPEN|CD_CLOSE) */
-macro_line|#ifdef VERBOSE_STATUS_INFO
+macro_line|#if (ERRLOGMASK!=CD_NOTHING)
 DECL|macro|cdinfo
 mdefine_line|#define cdinfo(type, fmt, args...) &bslash;&n;&t;if (ERRLOGMASK &amp; type) printk(KERN_INFO &quot;cdrom: &quot; fmt, ## args)
 macro_line|#else
@@ -259,30 +260,6 @@ l_int|NULL
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
-DECL|function|cdrom_init
-r_void
-id|cdrom_init
-c_func
-(paren
-r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|topCdromPtr
-)paren
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;Uniform CD-ROM driver &quot;
-id|REVISION
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* This macro makes sure we don&squot;t have to check on cdrom_device_ops&n; * existence in the run-time routines below. Change_capability is a&n; * hack to have the capability flags defined const, while we can still&n; * change it here without gcc complaining at every line.&n; */
 DECL|macro|ENSURE
 mdefine_line|#define ENSURE(call, bits) if (cdo-&gt;call == NULL) *change_capability &amp;= ~(bits)
@@ -461,6 +438,35 @@ id|cdo-&gt;n_minors
 op_assign
 l_int|0
 suffix:semicolon
+(brace
+r_static
+r_char
+id|banner_printed
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|banner_printed
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Uniform CD-ROM driver &quot;
+id|REVISION
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|banner_printed
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+)brace
 id|cdinfo
 c_func
 (paren
@@ -856,9 +862,9 @@ id|CDS_TRAY_OPEN
 id|cdinfo
 c_func
 (paren
-id|CD_WARNING
+id|CD_OPEN
 comma
-l_string|&quot;tray is open...&bslash;n&quot;
+l_string|&quot;the tray is open...&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* can/may i close it? */
@@ -877,6 +883,14 @@ op_amp
 id|CDO_AUTO_CLOSE
 )paren
 (brace
+id|cdinfo
+c_func
+(paren
+id|CD_OPEN
+comma
+l_string|&quot;trying to close the tray.&bslash;n&quot;
+)paren
+suffix:semicolon
 id|ret
 op_assign
 id|cdo
@@ -898,9 +912,9 @@ id|ret
 id|cdinfo
 c_func
 (paren
-id|CD_WARNING
+id|CD_OPEN
 comma
-l_string|&quot;bummer. tried to close tray but failed.&bslash;n&quot;
+l_string|&quot;bummer. tried to close the tray but failed.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Ignore the error from the low&n;&t;&t;&t;&t;&t;level driver.  We don&squot;t care why it&n;&t;&t;&t;&t;&t;couldn&squot;t close the tray.  We only care &n;&t;&t;&t;&t;&t;that there is no disc in the drive, &n;&t;&t;&t;&t;&t;since that is the _REAL_ problem here.*/
@@ -919,9 +933,9 @@ r_else
 id|cdinfo
 c_func
 (paren
-id|CD_WARNING
+id|CD_OPEN
 comma
-l_string|&quot;this driver can&squot;t close the tray.&bslash;n&quot;
+l_string|&quot;bummer. this driver can&squot;t close the tray.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ret
@@ -946,16 +960,6 @@ comma
 id|CDSL_CURRENT
 )paren
 suffix:semicolon
-id|cdinfo
-c_func
-(paren
-id|CD_OPEN
-comma
-l_string|&quot;tried again. drive_status=%d&bslash;n&quot;
-comma
-id|ret
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -972,6 +976,14 @@ id|CDS_TRAY_OPEN
 )paren
 )paren
 (brace
+id|cdinfo
+c_func
+(paren
+id|CD_OPEN
+comma
+l_string|&quot;bummer. the tray is still not closed.&bslash;n&quot;
+)paren
+suffix:semicolon
 id|ret
 op_assign
 op_minus
@@ -981,6 +993,14 @@ r_goto
 id|clean_up_and_return
 suffix:semicolon
 )brace
+id|cdinfo
+c_func
+(paren
+id|CD_OPEN
+comma
+l_string|&quot;the tray is now closed.&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -1015,7 +1035,7 @@ c_func
 (paren
 id|CD_OPEN
 comma
-l_string|&quot;bummer. no disc...&bslash;n&quot;
+l_string|&quot;bummer. no disc.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ret
@@ -1045,7 +1065,7 @@ c_func
 (paren
 id|CD_OPEN
 comma
-l_string|&quot;bummer. wrong media type...&bslash;n&quot;
+l_string|&quot;bummer. wrong media type.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ret
@@ -1062,7 +1082,7 @@ c_func
 (paren
 id|CD_OPEN
 comma
-l_string|&quot;all seems well, opening the device...&bslash;n&quot;
+l_string|&quot;all seems well, opening the device.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* all seems well, we can open the device */
@@ -1101,7 +1121,7 @@ c_func
 (paren
 id|CD_OPEN
 comma
-l_string|&quot;open device failed...&bslash;n&quot;
+l_string|&quot;open device failed.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -1161,7 +1181,7 @@ c_func
 (paren
 id|CD_WARNING
 comma
-l_string|&quot;failed to open the device.&bslash;n&quot;
+l_string|&quot;open failed.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1192,7 +1212,7 @@ suffix:semicolon
 id|cdinfo
 c_func
 (paren
-id|CD_WARNING
+id|CD_OPEN
 comma
 l_string|&quot;door unlocked.&bslash;n&quot;
 )paren
@@ -1287,9 +1307,9 @@ id|CDS_TRAY_OPEN
 id|cdinfo
 c_func
 (paren
-id|CD_WARNING
+id|CD_OPEN
 comma
-l_string|&quot;tray is open...&bslash;n&quot;
+l_string|&quot;the tray is open...&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* can/may i close it? */
@@ -1308,6 +1328,14 @@ op_amp
 id|CDO_AUTO_CLOSE
 )paren
 (brace
+id|cdinfo
+c_func
+(paren
+id|CD_OPEN
+comma
+l_string|&quot;trying to close the tray.&bslash;n&quot;
+)paren
+suffix:semicolon
 id|ret
 op_assign
 id|cdo
@@ -1329,7 +1357,7 @@ id|ret
 id|cdinfo
 c_func
 (paren
-id|CD_WARNING
+id|CD_OPEN
 comma
 l_string|&quot;bummer. tried to close tray but failed.&bslash;n&quot;
 )paren
@@ -1346,9 +1374,9 @@ r_else
 id|cdinfo
 c_func
 (paren
-id|CD_WARNING
+id|CD_OPEN
 comma
-l_string|&quot;this driver can&squot;t close the tray.&bslash;n&quot;
+l_string|&quot;bummer. this driver can&squot;t close the tray.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1369,16 +1397,6 @@ comma
 id|CDSL_CURRENT
 )paren
 suffix:semicolon
-id|cdinfo
-c_func
-(paren
-id|CD_OPEN
-comma
-l_string|&quot;tried again. drive_status=%d&bslash;n&quot;
-comma
-id|ret
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1394,10 +1412,20 @@ op_eq
 id|CDS_TRAY_OPEN
 )paren
 )paren
+(brace
+id|cdinfo
+c_func
+(paren
+id|CD_OPEN
+comma
+l_string|&quot;bummer. the tray is still not closed.&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEDIUM
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1405,9 +1433,27 @@ id|ret
 op_ne
 id|CDS_DISC_OK
 )paren
+(brace
+id|cdinfo
+c_func
+(paren
+id|CD_OPEN
+comma
+l_string|&quot;bummer. disc isn&squot;t ready.&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EIO
+suffix:semicolon
+)brace
+id|cdinfo
+c_func
+(paren
+id|CD_OPEN
+comma
+l_string|&quot;the tray is now closed.&bslash;n&quot;
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -4529,11 +4575,6 @@ c_func
 r_void
 )paren
 (brace
-id|cdrom_init
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_SYSCTL
 id|cdrom_sysctl_register
 c_func

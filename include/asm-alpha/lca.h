@@ -5,10 +5,28 @@ multiline_comment|/*&n; * Low Cost Alpha (LCA) definitions (these apply to 21066
 multiline_comment|/*&n; * NOTE: The LCA uses a Host Address Extension (HAE) register to access&n; *&t; PCI addresses that are beyond the first 27 bits of address&n; *&t; space.  Updating the HAE requires an external cycle (and&n; *&t; a memory barrier), which tends to be slow.  Instead of updating&n; *&t; it on each sparse memory access, we keep the current HAE value&n; *&t; cached in variable cache_hae.  Only if the cached HAE differs&n; *&t; from the desired HAE value do we actually updated HAE register.&n; *&t; The HAE register is preserved by the interrupt handler entry/exit&n; *&t; code, so this scheme works even in the presence of interrupts.&n; *&n; * Dense memory space doesn&squot;t require the HAE, but is restricted to&n; * aligned 32 and 64 bit accesses.  Special Cycle and Interrupt&n; * Acknowledge cycles may also require the use of the HAE.  The LCA&n; * limits I/O address space to the bottom 24 bits of address space,&n; * but this easily covers the 16 bit ISA I/O address space.&n; */
 multiline_comment|/*&n; * NOTE 2! The memory operations do not set any memory barriers, as&n; * it&squot;s not needed for cases like a frame buffer that is essentially&n; * memory-like.  You need to do them by hand if the operations depend&n; * on ordering.&n; *&n; * Similarly, the port I/O operations do a &quot;mb&quot; only after a write&n; * operation: if an mb is needed before (as in the case of doing&n; * memory mapped I/O first, and then a port I/O operation to the same&n; * device), it needs to be done by hand.&n; *&n; * After the above has bitten me 100 times, I&squot;ll give up and just do&n; * the mb all the time, but right now I&squot;m hoping this will work out.&n; * Avoiding mb&squot;s may potentially be a noticeable speed improvement,&n; * but I can&squot;t honestly say I&squot;ve tested it.&n; *&n; * Handling interrupts that need to do mb&squot;s to synchronize to&n; * non-interrupts is another fun race area.  Don&squot;t do it (because if&n; * you do, I&squot;ll have to do *everything* with interrupts disabled,&n; * ugh).&n; */
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
+multiline_comment|/* if we are using the SRM PCI setup, we&squot;ll need to use variables instead */
+DECL|macro|LCA_DMA_WIN_BASE_DEFAULT
+mdefine_line|#define LCA_DMA_WIN_BASE_DEFAULT    (1024*1024*1024)
+DECL|macro|LCA_DMA_WIN_SIZE_DEFAULT
+mdefine_line|#define LCA_DMA_WIN_SIZE_DEFAULT    (1024*1024*1024)
+r_extern
+r_int
+r_int
+id|LCA_DMA_WIN_BASE
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|LCA_DMA_WIN_SIZE
+suffix:semicolon
+macro_line|#else /* SRM_SETUP */
 DECL|macro|LCA_DMA_WIN_BASE
 mdefine_line|#define LCA_DMA_WIN_BASE&t;(1024*1024*1024)
 DECL|macro|LCA_DMA_WIN_SIZE
 mdefine_line|#define LCA_DMA_WIN_SIZE&t;(1024*1024*1024)
+macro_line|#endif /* SRM_SETUP */
 multiline_comment|/*&n; * Memory Controller registers:&n; */
 DECL|macro|LCA_MEM_BCR0
 mdefine_line|#define LCA_MEM_BCR0&t;&t;(IDENT_ADDR + 0x120000000UL)

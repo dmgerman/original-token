@@ -3,10 +3,12 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/console.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &quot;ksize.h&quot;
 r_extern
@@ -558,11 +560,12 @@ l_int|1
 op_assign
 l_int|0
 suffix:semicolon
-id|flush_tlb_all
+id|tbia
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* do it directly in case we are SMP */
 )brace
 DECL|function|load
 r_static
@@ -670,14 +673,24 @@ c_func
 r_void
 )paren
 (brace
+r_static
 r_int
 id|i
 suffix:semicolon
+r_static
 r_int
 id|nbytes
 suffix:semicolon
+multiline_comment|/*&n;&t; * note that this crufty stuff with static and envval and envbuf&n;&t; * is because:&n;&t; *&n;&t; * 1. frequently, the stack is is short, and we don&squot;t want to overrun;&n;&t; * 2. frequently the stack is where we are going to copy the kernel to;&n;&t; * 3. a certain SRM console required the GET_ENV output to stack.&n;&t; */
+r_static
 r_char
 id|envval
+(braket
+l_int|256
+)braket
+suffix:semicolon
+r_char
+id|envbuf
 (braket
 l_int|256
 )braket
@@ -725,11 +738,11 @@ id|CCB_GET_ENV
 comma
 id|ENV_BOOTED_OSFLAGS
 comma
-id|envval
+id|envbuf
 comma
 r_sizeof
 (paren
-id|envval
+id|envbuf
 )paren
 )paren
 suffix:semicolon
@@ -739,6 +752,13 @@ c_cond
 id|nbytes
 OL
 l_int|0
+op_logical_or
+id|nbytes
+op_ge
+r_sizeof
+(paren
+id|envbuf
+)paren
 )paren
 (brace
 id|nbytes
@@ -746,32 +766,73 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|envval
+id|envbuf
 (braket
 id|nbytes
 )braket
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
-id|strcpy
+id|memcpy
 c_func
 (paren
-(paren
-r_char
-op_star
-)paren
-id|ZERO_PAGE
-comma
 id|envval
+comma
+id|envbuf
+comma
+id|nbytes
+op_plus
+l_int|1
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Loading the kernel ...&bslash;n&quot;
+l_string|&quot;Loading the kernel...&squot;%s&squot;&bslash;n&quot;
+comma
+id|envval
 )paren
 suffix:semicolon
 multiline_comment|/* NOTE: *no* callbacks or printouts from here on out!!! */
+macro_line|#if 1
+multiline_comment|/*&n;&t; * this is a hack, as some consoles seem to get virtual 20000000&n;&t; * (ie where the SRM console puts the kernel bootp image) memory&n;&t; * overlapping physical 310000 memory, which causes real problems&n;&t; * when attempting to copy the former to the latter... :-(&n;&t; *&n;&t; * so, we first move the kernel virtual-to-physical way above where&n;&t; * we physically want the kernel to end up, then copy it from there&n;&t; * to its final resting place... ;-}&n;&t; *&n;&t; * sigh...&n;&t; */
+id|i
+op_assign
+id|load
+c_func
+(paren
+id|START_ADDR
+op_plus
+(paren
+l_int|4
+op_star
+id|KERNEL_SIZE
+)paren
+comma
+id|KERNEL_ORIGIN
+comma
+id|KERNEL_SIZE
+)paren
+suffix:semicolon
+id|i
+op_assign
+id|load
+c_func
+(paren
+id|START_ADDR
+comma
+id|START_ADDR
+op_plus
+(paren
+l_int|4
+op_star
+id|KERNEL_SIZE
+)paren
+comma
+id|KERNEL_SIZE
+)paren
+suffix:semicolon
+macro_line|#else
 id|i
 op_assign
 id|load
@@ -782,6 +843,19 @@ comma
 id|KERNEL_ORIGIN
 comma
 id|KERNEL_SIZE
+)paren
+suffix:semicolon
+macro_line|#endif
+id|strcpy
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|ZERO_PAGE
+comma
+id|envval
 )paren
 suffix:semicolon
 id|runkernel

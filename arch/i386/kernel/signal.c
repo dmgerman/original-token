@@ -746,7 +746,7 @@ mdefine_line|#define COPY_SEG(seg)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ __get_use
 DECL|macro|COPY_SEG_STRICT
 mdefine_line|#define COPY_SEG_STRICT(seg)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ __get_user(tmp, &amp;sc-&gt;seg);&t;&t;&t;&t;&t;&bslash;&n;&t;  if ((tmp &amp; 0xfffc) &amp;&amp; (tmp &amp; 3) != 3) goto badframe;&t;&t;&bslash;&n;&t;  regs-&gt;x##seg = tmp; }
 DECL|macro|GET_SEG
-mdefine_line|#define GET_SEG(seg)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ __get_user(tmp, &amp;sc-&gt;seg);&t;&t;&t;&t;&t;&bslash;&n;&t;  if ((tmp &amp; 0xfffc)&t;&t;/* not a NULL selectors */&t;&bslash;&n;&t;      &amp;&amp; (tmp &amp; 0x4) != 0x4&t;/* not a LDT selector */&t;&bslash;&n;&t;      &amp;&amp; (tmp &amp; 3) != 3)&t;/* not a RPL3 GDT selector */&t;&bslash;&n;&t;&t;  goto badframe;&t;&t;&t;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&quot;mov %w0,%%&quot; #seg : : &quot;r&quot;(tmp)); }
+mdefine_line|#define GET_SEG(seg)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ __get_user(tmp, &amp;sc-&gt;seg);&t;&t;&t;&t;&t;&bslash;&n;&t;  if ((tmp &amp; 0xfffc)&t;&t;/* not a NULL selectors */&t;&bslash;&n;&t;      &amp;&amp; (tmp &amp; 0x4) != 0x4&t;/* not a LDT selector */&t;&bslash;&n;&t;      &amp;&amp; (tmp &amp; 3) != 3)&t;/* not a RPL3 GDT selector */&t;&bslash;&n;&t;&t;  goto badframe;&t;&t;&t;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&quot;movl %w0,%%&quot; #seg : : &quot;r&quot;(tmp)); }
 id|GET_SEG
 c_func
 (paren
@@ -1457,7 +1457,7 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;mov %%gs,%w0&quot;
+l_string|&quot;movl %%gs,%w0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -1487,7 +1487,7 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;mov %%fs,%w0&quot;
+l_string|&quot;movl %%fs,%w0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -2035,7 +2035,7 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;mov %w0,%%fs ; mov %w0,%%gs&quot;
+l_string|&quot;movl %w0,%%fs ; movl %w0,%%gs&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -2407,7 +2407,7 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;mov %w0,%%fs ; mov %w0,%%gs&quot;
+l_string|&quot;movl %w0,%%fs ; movl %w0,%%gs&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren

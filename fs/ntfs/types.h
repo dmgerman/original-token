@@ -3,7 +3,7 @@ macro_line|#ifdef NTFS_IN_LINUX_KERNEL
 multiline_comment|/* get installed types if we compile the kernel*/
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#endif
-macro_line|#if defined(i386) || defined(__i386__)
+macro_line|#if defined(i386) || defined(__i386__) || defined(__alpha__)
 multiline_comment|/* unsigned integral types */
 macro_line|#ifndef NTFS_INTEGRAL_TYPES
 DECL|macro|NTFS_INTEGRAL_TYPES

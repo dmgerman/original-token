@@ -26,17 +26,7 @@ mdefine_line|#define SECTOR_MASK (blksize_size[MAJOR_NR] &amp;&amp;     &bslash;
 macro_line|#endif /* IDE_DRIVER */
 DECL|macro|SUBSECTOR
 mdefine_line|#define SUBSECTOR(block) (CURRENT-&gt;current_nr_sectors &gt; 0)
-macro_line|#ifdef CONFIG_CDROM
-r_extern
-r_int
-id|cdrom_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif CONFIG_CDROM 
-macro_line|#ifdef CONFIG_ISP16_CDI
+multiline_comment|/*&n; * Initialization functions.&n; */
 r_extern
 r_int
 id|isp16_init
@@ -45,8 +35,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_ISP16_CDI
-macro_line|#ifdef CONFIG_CDU31A
 r_extern
 r_int
 id|cdu31a_init
@@ -55,8 +43,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_CDU31A
-macro_line|#ifdef CONFIG_ATARI_ACSI
 r_extern
 r_int
 id|acsi_init
@@ -65,8 +51,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_ATARI_ACSI
-macro_line|#ifdef CONFIG_MCD
 r_extern
 r_int
 id|mcd_init
@@ -75,8 +59,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_MCD
-macro_line|#ifdef CONFIG_MCDX
 r_extern
 r_int
 id|mcdx_init
@@ -85,8 +67,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_MCDX
-macro_line|#ifdef CONFIG_SBPCD
 r_extern
 r_int
 id|sbpcd_init
@@ -95,8 +75,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_SBPCD
-macro_line|#ifdef CONFIG_AZTCD
 r_extern
 r_int
 id|aztcd_init
@@ -105,8 +83,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_AZTCD
-macro_line|#ifdef CONFIG_CDU535
 r_extern
 r_int
 id|sony535_init
@@ -115,8 +91,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_CDU535
-macro_line|#ifdef CONFIG_GSCD
 r_extern
 r_int
 id|gscd_init
@@ -125,8 +99,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_GSCD
-macro_line|#ifdef CONFIG_CM206
 r_extern
 r_int
 id|cm206_init
@@ -135,8 +107,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_CM206
-macro_line|#ifdef CONFIG_OPTCD
 r_extern
 r_int
 id|optcd_init
@@ -145,8 +115,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_OPTCD
-macro_line|#ifdef CONFIG_SJCD
 r_extern
 r_int
 id|sjcd_init
@@ -155,8 +123,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_SJCD
-macro_line|#ifdef CONFIG_CDI_INIT
 r_extern
 r_int
 id|cdi_init
@@ -165,8 +131,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_CDI_INIT
-macro_line|#ifdef CONFIG_BLK_DEV_HD
 r_extern
 r_int
 id|hd_init
@@ -175,8 +139,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_IDE
 r_extern
 r_int
 id|ide_init
@@ -185,8 +147,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_XD
 r_extern
 r_int
 id|xd_init
@@ -195,8 +155,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_LOOP
 r_extern
 r_int
 id|loop_init
@@ -205,8 +163,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_MD
 r_extern
 r_int
 id|md_init
@@ -215,8 +171,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_BLK_DEV_MD
-macro_line|#ifdef CONFIG_APBLOCK
 r_extern
 r_int
 id|ap_init
@@ -225,8 +179,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_DDV
 r_extern
 r_int
 id|ddv_init
@@ -235,8 +187,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AMIGA_Z2RAM
 r_extern
 r_int
 id|z2_init
@@ -245,8 +195,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MAC_FLOPPY
 r_extern
 r_int
 id|swim3_init
@@ -255,7 +203,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
+r_extern
+r_int
+id|ps2esdi_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|set_device_ro
@@ -337,16 +292,6 @@ suffix:semicolon
 multiline_comment|/* 1 if it is not an error if initrd_start &lt; memory_start */
 r_void
 id|initrd_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_PS2
-r_extern
-r_int
-id|ps2esdi_init
 c_func
 (paren
 r_void

@@ -2,6 +2,7 @@ macro_line|#ifndef _ALPHA_PGTABLE_H
 DECL|macro|_ALPHA_PGTABLE_H
 mdefine_line|#define _ALPHA_PGTABLE_H
 multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the alpha page table tree.&n; *&n; * This hopefully works with any standard alpha page-size, as defined&n; * in &lt;asm/page.h&gt; (currently 8192).&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 multiline_comment|/* Caches aren&squot;t brain-dead on the alpha. */
@@ -36,6 +37,9 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;bis %0,%0,$16&bslash;n&bslash;t&quot;
+macro_line|#ifdef CONFIG_ALPHA_DP264
+l_string|&quot;zap $16,0xe0,$16&bslash;n&bslash;t&quot;
+macro_line|#endif /* DP264 */
 l_string|&quot;call_pal %1&quot;
 suffix:colon
 multiline_comment|/* no outputs */
@@ -178,6 +182,7 @@ id|current-&gt;mm
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef __SMP__
 multiline_comment|/*&n; * Flush everything (kernel mapping may also have&n; * changed due to vmalloc/vfree)&n; */
 DECL|function|flush_tlb_all
 r_static
@@ -309,6 +314,98 @@ id|mm
 )paren
 suffix:semicolon
 )brace
+macro_line|#else /* __SMP__ */
+multiline_comment|/* ipi_msg_flush_tb is owned by the holder of the global kernel lock. */
+DECL|struct|ipi_msg_flush_tb_struct
+r_struct
+id|ipi_msg_flush_tb_struct
+(brace
+DECL|member|flush_tb_mask
+r_volatile
+r_int
+r_int
+id|flush_tb_mask
+suffix:semicolon
+r_union
+(brace
+DECL|member|flush_mm
+r_struct
+id|mm_struct
+op_star
+id|flush_mm
+suffix:semicolon
+DECL|member|flush_vma
+r_struct
+id|vm_area_struct
+op_star
+id|flush_vma
+suffix:semicolon
+DECL|member|p
+)brace
+id|p
+suffix:semicolon
+DECL|member|flush_addr
+r_int
+r_int
+id|flush_addr
+suffix:semicolon
+multiline_comment|/*&t;unsigned long flush_end; */
+multiline_comment|/* not used by local_flush_tlb_range */
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|ipi_msg_flush_tb_struct
+id|ipi_msg_flush_tb
+suffix:semicolon
+r_extern
+r_void
+id|flush_tlb_all
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|flush_tlb_mm
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|flush_tlb_page
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|flush_tlb_range
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif /* __SMP__ */
 multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 DECL|macro|set_pte
 mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))

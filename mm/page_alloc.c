@@ -222,7 +222,7 @@ id|free_area_struct
 op_star
 id|list
 suffix:semicolon
-multiline_comment|/*&n;&t; * If we have more than 25% of all memory free,&n;&t; * consider it to be good enough for anything.&n;&t; */
+multiline_comment|/*&n;&t; * If we have more than about 6% of all memory free,&n;&t; * consider it to be good enough for anything.&n;&t; * It may not be, due to fragmentation, but we&n;&t; * don&squot;t want to keep on forever trying to find&n;&t; * free unfragmented memory.&n;&t; */
 r_if
 c_cond
 (paren
@@ -230,7 +230,7 @@ id|nr_free_pages
 OG
 id|num_physpages
 op_rshift
-l_int|2
+l_int|4
 )paren
 r_return
 id|nr

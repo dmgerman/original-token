@@ -8,7 +8,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
-multiline_comment|/* NOTE: Herein are back-to-back mb insns.  They are magic. &n;   A plausible explanation is that the i/o controler does not properly&n;   handle the system transaction.  Another involves timing.  Ho hum.  */
+multiline_comment|/*&n; * NOTE: Herein lie back-to-back mb instructions.  They are magic. &n; * One plausible explanation is that the i/o controller does not properly&n; * handle the system transaction.  Another involves timing.  Ho hum.&n; */
 r_extern
 r_struct
 id|hwrpb_struct
@@ -26,10 +26,6 @@ r_int
 id|mces
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|alpha_sys_type
-suffix:semicolon
 multiline_comment|/*&n; * BIOS32-style PCI interface:&n; */
 macro_line|#ifdef DEBUG
 DECL|macro|DBG
@@ -38,8 +34,6 @@ macro_line|#else
 DECL|macro|DBG
 macro_line|# define DBG(args)
 macro_line|#endif
-DECL|macro|vulp
-mdefine_line|#define vulp&t;volatile unsigned long *
 DECL|macro|vuip
 mdefine_line|#define vuip&t;volatile unsigned int  *
 DECL|variable|apecs_mcheck_expected
@@ -72,6 +66,22 @@ id|apecs_jd1
 comma
 id|apecs_jd2
 suffix:semicolon
+macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
+DECL|variable|APECS_DMA_WIN_BASE
+r_int
+r_int
+id|APECS_DMA_WIN_BASE
+op_assign
+id|APECS_DMA_WIN_BASE_DEFAULT
+suffix:semicolon
+DECL|variable|APECS_DMA_WIN_SIZE
+r_int
+r_int
+id|APECS_DMA_WIN_SIZE
+op_assign
+id|APECS_DMA_WIN_SIZE_DEFAULT
+suffix:semicolon
+macro_line|#endif /* SRM_SETUP */
 multiline_comment|/*&n; * Given a bus, device, and function number, compute resulting&n; * configuration space address and setup the APECS_HAXR2 register&n; * accordingly.  It is therefore not safe to have concurrent&n; * invocations to configuration space access routines, but there&n; * really shouldn&squot;t be any need for this.&n; *&n; * Type 0:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | | | | | | | | | | | | | | |F|F|F|R|R|R|R|R|R|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:11&t;Device select bit.&n; * &t;10:8&t;Function number&n; * &t; 7:2&t;Register number&n; *&n; * Type 1:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | |B|B|B|B|B|B|B|B|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|1|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:24&t;reserved&n; *&t;23:16&t;bus number (8 bits = 128 possible buses)&n; *&t;15:11&t;Device number (5 bits)&n; *&t;10:8&t;function number&n; *&t; 7:2&t;register number&n; *  &n; * Notes:&n; *&t;The function number selects which function of a multi-function device &n; *&t;(e.g., scsi and ethernet).&n; * &n; *&t;The register selects a DWORD (32 bit) register offset.  Hence it&n; *&t;doesn&squot;t get shifted by 2 bits as we want to &quot;drop&quot; the bottom two&n; *&t;bits.&n; */
 DECL|function|mk_conf_addr
 r_static
@@ -599,7 +609,7 @@ suffix:semicolon
 multiline_comment|/* reset error status: */
 op_star
 (paren
-id|vulp
+id|vuip
 )paren
 id|APECS_IOC_DCSR
 op_assign
@@ -917,7 +927,7 @@ suffix:semicolon
 multiline_comment|/* reset error status: */
 op_star
 (paren
-id|vulp
+id|vuip
 )paren
 id|APECS_IOC_DCSR
 op_assign
@@ -1663,6 +1673,184 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#else  /* CONFIG_ALPHA_XL */
+macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
+multiline_comment|/* check window 1 for enabled and mapped to 0 */
+r_if
+c_cond
+(paren
+(paren
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_PB1R
+op_amp
+(paren
+l_int|1U
+op_lshift
+l_int|19
+)paren
+)paren
+op_logical_and
+(paren
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_TB1R
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+id|APECS_DMA_WIN_BASE
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_PB1R
+op_amp
+l_int|0xfff00000U
+suffix:semicolon
+id|APECS_DMA_WIN_SIZE
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_PM1R
+op_amp
+l_int|0xfff00000U
+suffix:semicolon
+id|APECS_DMA_WIN_SIZE
+op_add_assign
+l_int|0x00100000U
+suffix:semicolon
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;apecs_init: using Window 1 settings&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;apecs_init: PB1R 0x%x PM1R 0x%x TB1R 0x%x&bslash;n&quot;
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_PB1R
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_PM1R
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_TB1R
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+multiline_comment|/* check window 2 for enabled and mapped to 0 */
+r_if
+c_cond
+(paren
+(paren
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_PB2R
+op_amp
+(paren
+l_int|1U
+op_lshift
+l_int|19
+)paren
+)paren
+op_logical_and
+(paren
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_TB2R
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+id|APECS_DMA_WIN_BASE
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_PB2R
+op_amp
+l_int|0xfff00000U
+suffix:semicolon
+id|APECS_DMA_WIN_SIZE
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_PM2R
+op_amp
+l_int|0xfff00000U
+suffix:semicolon
+id|APECS_DMA_WIN_SIZE
+op_add_assign
+l_int|0x00100000U
+suffix:semicolon
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;apecs_init: using Window 2 settings&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;apecs_init: PB2R 0x%x PM2R 0x%x TB2R 0x%x&bslash;n&quot;
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_PB2R
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_PM2R
+comma
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_TB2R
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+multiline_comment|/* we must use our defaults... */
+macro_line|#endif /* SRM_SETUP */
+(brace
 multiline_comment|/*&n;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t; * For now, window 2 is disabled.  In the future, we may&n;&t; * want to use it to do scatter/gather DMA.  Window 1&n;&t; * goes at 1 GB and is 1 GB large.&n;&t; */
 op_star
 (paren
@@ -1711,8 +1899,10 @@ id|APECS_IOC_TB1R
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 macro_line|#endif /* CONFIG_ALPHA_XL */
 macro_line|#ifdef CONFIG_ALPHA_CABRIOLET
+macro_line|#ifdef NO_LONGER_NEEDED_I_HOPE
 multiline_comment|/*&n;&t; * JAE: HACK!!! for now, hardwire if configured...&n;&t; * davidm: Older miniloader versions don&squot;t set the clock frequency&n;&t; * right, so hardcode it for now.&n;&t; */
 r_if
 c_cond
@@ -1788,6 +1978,7 @@ op_assign
 id|sum
 suffix:semicolon
 )brace
+macro_line|#endif /* NO_LONGER_NEEDED_I_HOPE */
 macro_line|#endif /* CONFIG_ALPHA_CABRIOLET */
 multiline_comment|/*&n;        * Finally, clear the HAXR2 register, which gets used&n;        *  for PCI Config Space accesses. That is the way&n;        *  we want to use it, and we do not want to depend on&n;        *  what ARC or SRM might have left behind...&n;        */
 (brace
@@ -1851,7 +2042,7 @@ id|apecs_jd
 op_assign
 op_star
 (paren
-id|vulp
+id|vuip
 )paren
 id|APECS_IOC_DCSR
 suffix:semicolon
@@ -1867,13 +2058,13 @@ id|apecs_jd1
 op_assign
 op_star
 (paren
-id|vulp
+id|vuip
 )paren
 id|APECS_IOC_SEAR
 suffix:semicolon
 op_star
 (paren
-id|vulp
+id|vuip
 )paren
 id|APECS_IOC_DCSR
 op_assign
@@ -1885,7 +2076,7 @@ id|apecs_jd
 op_assign
 op_star
 (paren
-id|vulp
+id|vuip
 )paren
 id|APECS_IOC_DCSR
 suffix:semicolon
@@ -1897,17 +2088,21 @@ suffix:semicolon
 )brace
 op_star
 (paren
-id|vulp
+id|vuip
 )paren
 id|APECS_IOC_TBIA
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|APECS_IOC_TBIA
 suffix:semicolon
 id|apecs_jd2
 op_assign
 op_star
 (paren
-id|vulp
+id|vuip
 )paren
 id|APECS_IOC_TBIA
 suffix:semicolon

@@ -21,7 +21,7 @@ mdefine_line|#define EV6_CPU&t;&t;&t;8&t;/* EV6 (21164)&t;&t;*/
 DECL|macro|PCA56_CPU
 mdefine_line|#define PCA56_CPU&t;&t;9&t;/* PCA56 (21164PC)&t;*/
 DECL|macro|PCA57_CPU
-mdefine_line|#define PCA57_CPU&t;&t;10&t;/* PCA57 (??)&t;&t;*/
+mdefine_line|#define PCA57_CPU&t;&t;10&t;/* PCA57 (21164??)&t;*/
 multiline_comment|/*&n; * DEC system types for Alpha systems.  Found in HWRPB.&n; * These values are architected.&n; */
 DECL|macro|ST_ADU
 mdefine_line|#define ST_ADU&t;&t;&t;  1&t;/* Alpha ADU systype&t;*/
@@ -45,22 +45,18 @@ DECL|macro|ST_DEC_TLASER
 mdefine_line|#define ST_DEC_TLASER&t;&t; 12&t;/* Turbolaser systype&t;*/
 DECL|macro|ST_DEC_2100_A50
 mdefine_line|#define ST_DEC_2100_A50&t;&t; 13&t;/* Avanti systype&t;*/
-DECL|macro|ST_DEC_MUSTANG
-mdefine_line|#define ST_DEC_MUSTANG&t;&t; 14&t;/* Mustang systype&t;*/
 DECL|macro|ST_DEC_ALCOR
 mdefine_line|#define ST_DEC_ALCOR&t;&t; 15&t;/* Alcor (EV5) systype&t;*/
 DECL|macro|ST_DEC_1000
 mdefine_line|#define ST_DEC_1000&t;&t; 17&t;/* Mikasa systype&t;*/
+DECL|macro|ST_DEC_EB64
+mdefine_line|#define ST_DEC_EB64&t;&t; 18&t;/* EB64 systype&t;&t;*/
 DECL|macro|ST_DEC_EB66
 mdefine_line|#define ST_DEC_EB66&t;&t; 19&t;/* EB66 systype&t;&t;*/
 DECL|macro|ST_DEC_EB64P
 mdefine_line|#define ST_DEC_EB64P&t;&t; 20&t;/* EB64+ systype&t;*/
-DECL|macro|ST_DEC_EB66P
-mdefine_line|#define ST_DEC_EB66P&t;&t;-19&t;/* EB66 systype&t;&t;*/
-DECL|macro|ST_DEC_EBPC64
-mdefine_line|#define ST_DEC_EBPC64&t;&t;-20&t;/* Cabriolet (AlphaPC64) systype */
 DECL|macro|ST_DEC_BURNS
-mdefine_line|#define ST_DEC_BURNS&t;&t; 21&t;/* Laptop systype&t;*/
+mdefine_line|#define ST_DEC_BURNS&t;&t; 21&t;/* laptop systype&t;*/
 DECL|macro|ST_DEC_RAWHIDE
 mdefine_line|#define ST_DEC_RAWHIDE&t;&t; 22&t;/* Rawhide systype&t;*/
 DECL|macro|ST_DEC_K2
@@ -76,7 +72,7 @@ mdefine_line|#define ST_DEC_NORITAKE&t;&t; 27&t;/* Noritake systype&t;*/
 DECL|macro|ST_DEC_CORTEX
 mdefine_line|#define ST_DEC_CORTEX&t;&t; 28&t;/* Cortex systype&t;*/
 DECL|macro|ST_DEC_MIATA
-mdefine_line|#define ST_DEC_MIATA&t;&t; 30&t;/* MIATA systype        */
+mdefine_line|#define ST_DEC_MIATA&t;&t; 30&t;/* Miata systype        */
 DECL|macro|ST_DEC_XXM
 mdefine_line|#define ST_DEC_XXM&t;&t; 31&t;/* XXM systype&t;&t;*/
 DECL|macro|ST_DEC_TAKARA
@@ -437,6 +433,29 @@ l_int|0
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|dsr_struct
+r_struct
+id|dsr_struct
+(brace
+DECL|member|smm
+r_int
+id|smm
+suffix:semicolon
+multiline_comment|/* SMM nubber used by LMF       */
+DECL|member|lurt_off
+r_int
+r_int
+id|lurt_off
+suffix:semicolon
+multiline_comment|/* offset to LURT table         */
+DECL|member|sysname_off
+r_int
+r_int
+id|sysname_off
+suffix:semicolon
+multiline_comment|/* offset to sysname char count */
+)brace
+suffix:semicolon
 DECL|struct|hwrpb_struct
 r_struct
 id|hwrpb_struct
@@ -668,12 +687,12 @@ r_int
 r_int
 id|txrdy
 suffix:semicolon
-DECL|member|dsrdbt_offset
+DECL|member|dsr_offset
 r_int
 r_int
-id|dsrdbt_offset
+id|dsr_offset
 suffix:semicolon
-multiline_comment|/* &quot;Dynamic System Recognition Data Block Table&quot; Whee */
+multiline_comment|/* &quot;Dynamic System Recognition Data Block Table&quot; */
 )brace
 suffix:semicolon
 macro_line|#endif

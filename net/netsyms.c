@@ -115,6 +115,13 @@ c_func
 id|skb_put_errstr
 )paren
 suffix:semicolon
+DECL|variable|skb_queue_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|skb_queue_lock
+)paren
+suffix:semicolon
 multiline_comment|/* Socket layer registration */
 DECL|variable|sock_register
 id|EXPORT_SYMBOL

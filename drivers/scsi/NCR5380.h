@@ -646,12 +646,13 @@ op_star
 id|data
 )paren
 suffix:semicolon
-macro_line|#if (defined(REAL_DMA) || defined(REAL_DMA_POLL)) &amp;&amp; defined(i386)
-DECL|function|NCR5380_i386_dma_setup
+macro_line|#if (defined(REAL_DMA) || defined(REAL_DMA_POLL))
+macro_line|#if defined(i386) || defined(__alpha__)
+DECL|function|NCR5380_pc_dma_setup
 r_static
 id|__inline__
 r_int
-id|NCR5380_i386_dma_setup
+id|NCR5380_pc_dma_setup
 (paren
 r_struct
 id|Scsi_Host
@@ -674,6 +675,16 @@ id|mode
 (brace
 r_int
 id|limit
+suffix:semicolon
+r_int
+r_int
+id|bus_addr
+op_assign
+id|virt_to_bus
+c_func
+(paren
+id|ptr
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -699,12 +710,7 @@ op_assign
 l_int|65536
 op_minus
 (paren
-(paren
-(paren
-r_int
-)paren
-id|ptr
-)paren
+id|bus_addr
 op_amp
 l_int|0xFFFF
 )paren
@@ -734,12 +740,7 @@ op_star
 l_int|2
 op_minus
 (paren
-(paren
-(paren
-r_int
-)paren
-id|ptr
-)paren
+id|bus_addr
 op_amp
 l_int|0x1FFFF
 )paren
@@ -766,12 +767,7 @@ l_int|1
 )paren
 op_logical_or
 (paren
-(paren
-(paren
-r_int
-)paren
-id|ptr
-)paren
+id|bus_addr
 op_amp
 l_int|1
 )paren
@@ -805,11 +801,7 @@ c_func
 (paren
 id|instance-&gt;dma_channel
 comma
-(paren
-r_int
-r_int
-)paren
-id|ptr
+id|bus_addr
 )paren
 suffix:semicolon
 id|set_dma_count
@@ -843,11 +835,11 @@ r_return
 id|count
 suffix:semicolon
 )brace
-DECL|function|NCR5380_i386_dma_write_setup
+DECL|function|NCR5380_pc_dma_write_setup
 r_static
 id|__inline__
 r_int
-id|NCR5380_i386_dma_write_setup
+id|NCR5380_pc_dma_write_setup
 (paren
 r_struct
 id|Scsi_Host
@@ -865,7 +857,7 @@ id|count
 )paren
 (brace
 r_return
-id|NCR5380_i386_dma_setup
+id|NCR5380_pc_dma_setup
 (paren
 id|instance
 comma
@@ -877,11 +869,11 @@ id|DMA_MODE_WRITE
 )paren
 suffix:semicolon
 )brace
-DECL|function|NCR5380_i386_dma_read_setup
+DECL|function|NCR5380_pc_dma_read_setup
 r_static
 id|__inline__
 r_int
-id|NCR5380_i386_dma_read_setup
+id|NCR5380_pc_dma_read_setup
 (paren
 r_struct
 id|Scsi_Host
@@ -899,7 +891,7 @@ id|count
 )paren
 (brace
 r_return
-id|NCR5380_i386_dma_setup
+id|NCR5380_pc_dma_setup
 (paren
 id|instance
 comma
@@ -911,11 +903,11 @@ id|DMA_MODE_READ
 )paren
 suffix:semicolon
 )brace
-DECL|function|NCR5380_i386_dma_residual
+DECL|function|NCR5380_pc_dma_residual
 r_static
 id|__inline__
 r_int
-id|NCR5380_i386_dma_residual
+id|NCR5380_pc_dma_residual
 (paren
 r_struct
 id|Scsi_Host
@@ -955,7 +947,8 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
-macro_line|#endif /* defined(REAL_DMA) &amp;&amp; defined(i386)  */
+macro_line|#endif /* defined(i386) || defined(__alpha__) */
+macro_line|#endif /* defined(REAL_DMA)  */
 macro_line|#endif __KERNEL_
 macro_line|#endif /* ndef ASM */
 macro_line|#endif /* NCR5380_H */

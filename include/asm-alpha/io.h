@@ -29,8 +29,13 @@ suffix:semicolon
 id|hae
 suffix:semicolon
 multiline_comment|/*&n; * Virtual -&gt; physical identity mapping starts at this offset&n; */
+macro_line|#ifdef USE_48_BIT_KSEG
+DECL|macro|IDENT_ADDR
+mdefine_line|#define IDENT_ADDR&t;(0xffff800000000000UL)
+macro_line|#else
 DECL|macro|IDENT_ADDR
 mdefine_line|#define IDENT_ADDR&t;(0xfffffc0000000000UL)
+macro_line|#endif
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * We try to avoid hae updates (thus the cache), but when we&n; * do need to update the hae, we need to do it atomically, so&n; * that any interrupts wouldn&squot;t get confused with the hae&n; * register not being up-to-date with respect to the hardware&n; * value.&n; */
 DECL|function|set_hae
@@ -47,8 +52,6 @@ id|new_hae
 (brace
 r_int
 r_int
-id|ipl
-suffix:semicolon
 id|ipl
 op_assign
 id|swpipl
@@ -71,6 +74,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|new_hae
+op_assign
+op_star
+id|hae.reg
+suffix:semicolon
+multiline_comment|/* read to make sure it was written */
 id|setipl
 c_func
 (paren
@@ -162,6 +171,10 @@ macro_line|#elif defined(CONFIG_ALPHA_T2)
 macro_line|# include &lt;asm/t2.h&gt;&t;&t;/* get chip-specific definitions */
 macro_line|#elif defined(CONFIG_ALPHA_PYXIS)
 macro_line|# include &lt;asm/pyxis.h&gt;&t;&t;/* get chip-specific definitions */
+macro_line|#elif defined(CONFIG_ALPHA_TSUNAMI)
+macro_line|# include &lt;asm/tsunami.h&gt;&t;/* get chip-specific definitions */
+macro_line|#elif defined(CONFIG_ALPHA_MCPCIA)
+macro_line|# include &lt;asm/mcpcia.h&gt;&t;/* get chip-specific definitions */
 macro_line|#else
 macro_line|# include &lt;asm/jensen.h&gt;
 macro_line|#endif

@@ -884,12 +884,12 @@ multiline_comment|/*&n; * These need tweaking, and would probably work best as p
 macro_line|#ifndef USLEEP_SLEEP
 multiline_comment|/* 20 ms (reasonable hard disk speed) */
 DECL|macro|USLEEP_SLEEP
-mdefine_line|#define USLEEP_SLEEP 2
+mdefine_line|#define USLEEP_SLEEP (20*HZ/1000)
 macro_line|#endif
 multiline_comment|/* 300 RPM (floppy speed) */
 macro_line|#ifndef USLEEP_POLL
 DECL|macro|USLEEP_POLL
-mdefine_line|#define USLEEP_POLL 20
+mdefine_line|#define USLEEP_POLL (200*HZ/1000)
 macro_line|#endif
 DECL|variable|expires_first
 r_static
@@ -1441,7 +1441,13 @@ id|timeout
 op_assign
 id|jiffies
 op_plus
-l_int|25
+(paren
+l_int|250
+op_star
+id|HZ
+op_div
+l_int|1000
+)paren
 suffix:semicolon
 id|probe_irq
 op_assign
@@ -2003,7 +2009,7 @@ macro_line|#endif
 id|SPRINTF
 c_func
 (paren
-l_string|&quot;&bslash;nBase Addr: 0x%05X    &quot;
+l_string|&quot;&bslash;nBase Addr: 0x%05lX    &quot;
 comma
 (paren
 r_int
@@ -2817,7 +2823,9 @@ id|timeout
 op_assign
 id|jiffies
 op_plus
-l_int|500
+l_int|5
+op_star
+id|HZ
 suffix:semicolon
 r_while
 c_loop
@@ -4684,7 +4692,13 @@ id|timeout
 op_assign
 id|jiffies
 op_plus
-l_int|25
+(paren
+l_int|250
+op_star
+id|HZ
+op_div
+l_int|1000
+)paren
 suffix:semicolon
 multiline_comment|/* &n;     * XXX very interesting - we&squot;re seeing a bounce where the BSY we &n;     * asserted is being reflected / still asserted (propagation delay?)&n;     * and it&squot;s detecting as true.  Sigh.&n;     */
 r_while

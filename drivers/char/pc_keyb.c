@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/* Some configuration switches are present in the include file... */
 macro_line|#include &quot;pc_keyb.h&quot;
@@ -60,9 +61,6 @@ r_void
 )paren
 )paren
 (brace
-r_int
-id|n
-suffix:semicolon
 r_int
 id|status
 comma
@@ -207,6 +205,9 @@ r_void
 )paren
 )paren
 (brace
+r_int
+id|status
+suffix:semicolon
 multiline_comment|/* Flush any pending input. */
 r_while
 c_loop
@@ -273,7 +274,9 @@ comma
 id|KBD_CCMD_KBD_ENABLE
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Reset keyboard. If the read times out&n;&t; * then the assumption is that no keyboard is&n;&t; * plugged into the machine.&n;&t; * This defaults the keyboard to scan-code set 2.&n;&t; */
+multiline_comment|/*&n;&t; * Reset keyboard. If the read times out&n;&t; * then the assumption is that no keyboard is&n;&t; * plugged into the machine.&n;&t; * This defaults the keyboard to scan-code set 2.&n;&t; *&n;&t; * Set up to try again if the keyboard asks for RESEND.&n;&t; */
+r_do
+(brace
 id|kbd_write
 c_func
 (paren
@@ -282,18 +285,39 @@ comma
 id|KBD_CMD_RESET
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|status
+op_assign
 id|kbd_wait_for_input
 c_func
 (paren
 )paren
-op_ne
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_eq
 id|KBD_REPLY_ACK
+)paren
+r_break
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|status
+op_ne
+id|KBD_REPLY_RESEND
 )paren
 r_return
 l_string|&quot;Keyboard reset failed, no ACK&quot;
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -308,7 +332,9 @@ id|KBD_REPLY_POR
 r_return
 l_string|&quot;Keyboard reset failed, no POR&quot;
 suffix:semicolon
-multiline_comment|/*&n;&t; * Set keyboard controller mode. During this, the keyboard should be&n;&t; * in the disabled state.&n;&t; */
+multiline_comment|/*&n;&t; * Set keyboard controller mode. During this, the keyboard should be&n;&t; * in the disabled state.&n;&t; *&n;&t; * Set up to try again if the keyboard asks for RESEND.&n;&t; */
+r_do
+(brace
 id|kbd_write
 c_func
 (paren
@@ -317,18 +343,39 @@ comma
 id|KBD_CMD_DISABLE
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|status
+op_assign
 id|kbd_wait_for_input
 c_func
 (paren
 )paren
-op_ne
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_eq
 id|KBD_REPLY_ACK
+)paren
+r_break
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|status
+op_ne
+id|KBD_REPLY_RESEND
 )paren
 r_return
 l_string|&quot;Disable keyboard: no ACK&quot;
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+l_int|1
+)paren
 suffix:semicolon
 id|kbd_write
 c_func
