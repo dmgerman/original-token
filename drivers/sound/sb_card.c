@@ -1711,7 +1711,6 @@ l_string|&quot;sb: DT0197H panic: sb base not found&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*  @X@0001:mpu&n;&t; */
-macro_line|#ifdef CONFIG_MIDI
 r_if
 c_cond
 (paren
@@ -1803,7 +1802,6 @@ id|KERN_ERR
 l_string|&quot;sb: DT0197H panic: mpu not found&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*  @P@:Gameport&n;&t; */
 r_if
 c_cond

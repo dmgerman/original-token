@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/arch/arm/kernel/arch.c&n; *&n; * Architecture specifics&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/elf.h&gt;

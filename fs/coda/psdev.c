@@ -960,8 +960,6 @@ suffix:semicolon
 id|vcp-&gt;vc_inuse
 op_increment
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1073,8 +1071,6 @@ suffix:semicolon
 )brace
 id|vcp-&gt;vc_inuse
 op_decrement
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|CDEBUG
 c_func

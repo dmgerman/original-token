@@ -566,14 +566,6 @@ id|ncp_entry_info
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|init_ncp_fs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/* linux/fs/ncpfs/dir.c */
 r_extern
 r_struct

@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * LAPB protocol module for the COMX driver &n; * for Linux kernel 2.2.X&n; *&n; * Original author: Tivadar Szemethy &lt;tiv@itc.hu&gt;&n; * Maintainer: Gergely Madarasz &lt;gorgo@itc.hu&gt;&n; *&n; * Copyright (C) 1997-1999 (C) ITConsult-Pro Co. &lt;info@itc.hu&gt;&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Version 0.80 (99/06/14):&n; *&t;&t;- cleaned up the source code a bit&n; *&t;&t;- ported back to kernel, now works as non-module&n; * &n; */
 DECL|macro|VERSION
 mdefine_line|#define VERSION &quot;0.80&quot;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

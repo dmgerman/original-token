@@ -5230,33 +5230,4 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-id|init_fat_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-multiline_comment|/* Nothing to be done, really! */
-r_return
-suffix:semicolon
-)brace
-macro_line|#endif
 eof

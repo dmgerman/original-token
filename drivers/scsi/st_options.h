@@ -1,10 +1,7 @@
-multiline_comment|/*&n;   The compile-time configurable defaults for the Linux SCSI tape driver.&n;&n;   Copyright 1995-2000 Kai Makisara.&n;&n;   Last modified: Sat Jan  1 18:34:38 2000 by makisara@kai.makisara.local&n;*/
+multiline_comment|/*&n;   The compile-time configurable defaults for the Linux SCSI tape driver.&n;&n;   Copyright 1995-2000 Kai Makisara.&n;&n;   Last modified: Sat Mar 11 10:32:00 2000 by makisara@kai.makisara.local&n;*/
 macro_line|#ifndef _ST_OPTIONS_H
 DECL|macro|_ST_OPTIONS_H
 mdefine_line|#define _ST_OPTIONS_H
-multiline_comment|/* The minimum limit for the number of SCSI tape devices is determined by&n;   ST_MAX_TAPES. If the number of tape devices and the &quot;slack&quot; defined by&n;   ST_EXTRA_DEVS exceeds ST_MAX_TAPES, the large number is used. */
-DECL|macro|ST_MAX_TAPES
-mdefine_line|#define ST_MAX_TAPES 4
 multiline_comment|/* The driver does not wait for some operations to finish before returning&n;   to the user program if ST_NOWAIT is non-zero. This helps if the SCSI&n;   adapter does not support multiple outstanding commands. However, the user&n;   should not give a new tape command before the previous one has finished. */
 DECL|macro|ST_NOWAIT
 mdefine_line|#define ST_NOWAIT 0
@@ -25,7 +22,7 @@ DECL|macro|ST_WRITE_THRESHOLD_BLOCKS
 mdefine_line|#define ST_WRITE_THRESHOLD_BLOCKS 30
 multiline_comment|/* The maximum number of tape buffers the driver tries to allocate at &n;   driver initialisation. The number is also constrained by the number&n;   of drives detected. If more buffers are needed, they are allocated&n;   at run time and freed after use. */
 DECL|macro|ST_MAX_BUFFERS
-mdefine_line|#define ST_MAX_BUFFERS (2 + ST_EXTRA_DEVS)
+mdefine_line|#define ST_MAX_BUFFERS 4
 multiline_comment|/* Maximum number of scatter/gather segments */
 DECL|macro|ST_MAX_SG
 mdefine_line|#define ST_MAX_SG      16

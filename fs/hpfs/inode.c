@@ -1870,5 +1870,11 @@ comma
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
+id|clear_inode
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 )brace
 eof

@@ -7233,37 +7233,4 @@ r_return
 id|res
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-id|init_vfat_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|unregister_filesystem
-c_func
-(paren
-op_amp
-id|vfat_fs_type
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif /* ifdef MODULE */
 eof

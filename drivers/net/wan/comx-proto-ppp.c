@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * Synchronous PPP / Cisco-HDLC driver for the COMX boards&n; *&n; * Author: Gergely Madarasz &lt;gorgo@itc.hu&gt;&n; *&n; * based on skeleton code by Tivadar Szemethy &lt;tiv@itc.hu&gt;&n; *&n; * Copyright (C) 1999 ITConsult-Pro Co. &lt;info@itc.hu&gt;&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; *&n; * Version 0.10 (99/06/10):&n; *&t;&t;- written the first code :)&n; *&n; * Version 0.20 (99/06/16):&n; *&t;&t;- added hdlc protocol &n; *&t;&t;- protocol up is IFF_RUNNING&n; *&n; * Version 0.21 (99/07/15):&n; *&t;&t;- some small fixes with the line status&n; *&n; * Version 0.22 (99/08/05):&n; *&t;&t;- don&squot;t test IFF_RUNNING but the pp_link_state of the sppp&n; * &n; * Version 0.23 (99/12/02):&n; *&t;&t;- tbusy fixes&n; *&n; */
 DECL|macro|VERSION
 mdefine_line|#define VERSION &quot;0.23&quot;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

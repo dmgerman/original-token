@@ -113,14 +113,6 @@ DECL|macro|ROMFH_MASK
 mdefine_line|#define ROMFH_MASK (~ROMFH_PAD)
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* Not much now */
-r_extern
-r_int
-id|init_romfs_fs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

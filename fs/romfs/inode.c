@@ -2190,6 +2190,7 @@ id|romfs_read_super
 )paren
 suffix:semicolon
 DECL|function|init_romfs_fs
+r_static
 r_int
 id|__init
 id|init_romfs_fs
@@ -2207,28 +2208,11 @@ id|romfs_fs_type
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-multiline_comment|/* Yes, works even as a module... :) */
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
-r_int
-DECL|function|init_module
-id|init_module
-c_func
-(paren
+DECL|function|exit_romfs_fs
+r_static
 r_void
-)paren
-(brace
-r_return
-id|init_romfs_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_void
-DECL|function|cleanup_module
-id|cleanup_module
+id|__exit
+id|exit_romfs_fs
 c_func
 (paren
 r_void
@@ -2242,5 +2226,17 @@ id|romfs_fs_type
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+multiline_comment|/* Yes, works even as a module... :) */
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
+id|module_init
+c_func
+(paren
+id|init_romfs_fs
+)paren
+id|module_exit
+c_func
+(paren
+id|exit_romfs_fs
+)paren
 eof

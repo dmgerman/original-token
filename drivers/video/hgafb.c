@@ -1,7 +1,8 @@
-multiline_comment|/*&n; * linux/drivers/video/hgafb.c -- Hercules graphics adaptor frame buffer device&n; * &n; *      Created 25 Nov 1999 by Ferenc Bakonyi (fero@drama.obuda.kando.hu)&n; *      Based on skeletonfb.c by Geert Uytterhoeven and&n; *               mdacon.c by Andrew Apted&n; *&n; * History:&n; *&n; * - Revision 0.1.4 (24 Jan 2000): fixed a bug in hga_card_detect() for &n; *                                  HGA-only systems&n; * - Revision 0.1.3 (22 Jan 2000): modified for the new fb_info structure&n; *                                 screen is cleared after rmmod&n; *                                 virtual resolutions&n; *                                 kernel parameter &squot;video=hga:font:{fontname}&squot;&n; *                                 module parameter &squot;font={fontname}&squot;&n; *                                 module parameter &squot;nologo={0|1}&squot;&n; *                                 the most important: boot logo :)&n; * - Revision 0.1.0  (6 Dec 1999): faster scrolling and minor fixes&n; * - First release  (25 Nov 1999)&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * linux/drivers/video/hgafb.c -- Hercules graphics adaptor frame buffer device&n; * &n; *      Created 25 Nov 1999 by Ferenc Bakonyi (fero@drama.obuda.kando.hu)&n; *      Based on skeletonfb.c by Geert Uytterhoeven and&n; *               mdacon.c by Andrew Apted&n; *&n; * History:&n; *&n; * - Revision 0.1.5 (13 Mar 2000): spinlocks instead of saveflags();cli();etc&n; *                                 minor fixes&n; * - Revision 0.1.4 (24 Jan 2000): fixed a bug in hga_card_detect() for &n; *                                  HGA-only systems&n; * - Revision 0.1.3 (22 Jan 2000): modified for the new fb_info structure&n; *                                 screen is cleared after rmmod&n; *                                 virtual resolutions&n; *                                 kernel parameter &squot;video=hga:font:{fontname}&squot;&n; *                                 module parameter &squot;font={fontname}&squot;&n; *                                 module parameter &squot;nologo={0|1}&squot;&n; *                                 the most important: boot logo :)&n; * - Revision 0.1.0  (6 Dec 1999): faster scrolling and minor fixes&n; * - First release  (25 Nov 1999)&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -25,8 +26,7 @@ macro_line|#else
 DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK(args...)
 macro_line|#endif
-macro_line|#if 1
-DECL|macro|CHKINFO
+macro_line|#if 0
 mdefine_line|#define CHKINFO(ret) if (info != &amp;fb_info) { printk(KERN_DEBUG __FILE__&quot;: This should never happen, line:%d &bslash;n&quot;, __LINE__); return ret; }
 macro_line|#else
 DECL|macro|CHKINFO
@@ -118,6 +118,13 @@ DECL|macro|HGA_GFX_MODE_EN
 mdefine_line|#define HGA_GFX_MODE_EN&t;&t;0x01
 DECL|macro|HGA_GFX_PAGE_EN
 mdefine_line|#define HGA_GFX_PAGE_EN&t;&t;0x02
+multiline_comment|/* Global locks */
+DECL|variable|hga_reg_lock
+id|spinlock_t
+id|hga_reg_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/* Framebuffer driver structures */
 DECL|variable|hga_default_var
 r_static
@@ -326,21 +333,6 @@ r_char
 id|reg
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -355,12 +347,6 @@ c_func
 id|val
 comma
 id|HGA_VALUE_PORT
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 )brace
@@ -379,21 +365,6 @@ r_char
 id|reg
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -432,12 +403,6 @@ comma
 id|HGA_VALUE_PORT
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 )brace
 DECL|function|test_hga_b
 r_static
@@ -454,21 +419,6 @@ r_char
 id|reg
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -502,12 +452,6 @@ op_eq
 id|val
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_return
 id|val
 suffix:semicolon
@@ -521,6 +465,26 @@ c_func
 r_void
 )paren
 (brace
+r_int
+r_char
+id|fillchar
+op_assign
+l_int|0xbf
+suffix:semicolon
+multiline_comment|/* magic */
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|hga_reg_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -528,19 +492,9 @@ id|hga_mode
 op_eq
 id|HGA_TXT
 )paren
-id|memset
-c_func
-(paren
-(paren
-r_char
-op_star
-)paren
-id|hga_vram_base
-comma
+id|fillchar
+op_assign
 l_char|&squot; &squot;
-comma
-id|hga_vram_len
-)paren
 suffix:semicolon
 r_else
 r_if
@@ -550,6 +504,26 @@ id|hga_mode
 op_eq
 id|HGA_GFX
 )paren
+id|fillchar
+op_assign
+l_int|0x00
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|hga_reg_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fillchar
+op_ne
+l_int|0xbf
+)paren
 id|memset
 c_func
 (paren
@@ -559,12 +533,13 @@ op_star
 )paren
 id|hga_vram_base
 comma
-l_int|0
+id|fillchar
 comma
 id|hga_vram_len
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
 DECL|function|hga_txt_mode
 r_static
 r_void
@@ -574,6 +549,19 @@ c_func
 r_void
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|hga_reg_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -730,7 +718,17 @@ id|hga_mode
 op_assign
 id|HGA_TXT
 suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|hga_reg_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
+macro_line|#endif /* MODULE */
 DECL|function|hga_gfx_mode
 r_static
 r_void
@@ -740,6 +738,19 @@ c_func
 r_void
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|hga_reg_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -896,6 +907,15 @@ id|hga_mode
 op_assign
 id|HGA_GFX
 suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|hga_reg_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 DECL|function|hga_show_logo
@@ -1012,6 +1032,10 @@ r_int
 r_int
 id|base
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|base
 op_assign
 (paren
@@ -1024,6 +1048,15 @@ l_int|90
 op_plus
 id|xoffset
 suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|hga_reg_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|write_hga_w
 c_func
 (paren
@@ -1033,6 +1066,15 @@ l_int|0x0c
 )paren
 suffix:semicolon
 multiline_comment|/* start address */
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|hga_reg_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|DPRINTK
 c_func
 (paren
@@ -1042,9 +1084,72 @@ id|base
 )paren
 suffix:semicolon
 )brace
+DECL|function|hga_blank
+r_static
+r_void
+id|hga_blank
+c_func
+(paren
+r_int
+id|blank_mode
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|hga_reg_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|blank_mode
+)paren
+(brace
+id|outb_p
+c_func
+(paren
+l_int|0x00
+comma
+id|HGA_MODE_PORT
+)paren
+suffix:semicolon
+multiline_comment|/* disable video */
+)brace
+r_else
+(brace
+id|outb_p
+c_func
+(paren
+id|HGA_MODE_VIDEO_EN
+op_or
+id|HGA_MODE_GRAPHICS
+comma
+id|HGA_MODE_PORT
+)paren
+suffix:semicolon
+)brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|hga_reg_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 DECL|function|hga_card_detect
 r_static
 r_int
+id|__init
 id|hga_card_detect
 c_func
 (paren
@@ -1080,34 +1185,6 @@ id|hga_vram_len
 op_assign
 l_int|0x08000
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|request_mem_region
-c_func
-(paren
-id|hga_vram_base
-comma
-id|hga_vram_len
-comma
-l_string|&quot;hgafb&quot;
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;hgafb: cannot reserve video memory at 0x%lX&bslash;n&quot;
-comma
-id|hga_vram_base
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2384,35 +2461,12 @@ op_amp
 id|fb_info
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|hga_blank
+c_func
 (paren
 id|blank_mode
 )paren
-(brace
-id|outb_p
-c_func
-(paren
-l_int|0x00
-comma
-id|HGA_MODE_PORT
-)paren
 suffix:semicolon
-multiline_comment|/* disable video */
-)brace
-r_else
-(brace
-id|outb_p
-c_func
-(paren
-id|HGA_MODE_VIDEO_EN
-op_or
-id|HGA_MODE_GRAPHICS
-comma
-id|HGA_MODE_PORT
-)paren
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/*&n;&t; *  Initialization&n;&t; */
@@ -2536,11 +2590,20 @@ id|disp.inverse
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef FBCON_HAS_HGA
 id|disp.dispsw
 op_assign
 op_amp
 id|fbcon_hga
 suffix:semicolon
+macro_line|#else
+macro_line|#warning HGAFB will not work as a console!
+id|disp.dispsw
+op_assign
+op_amp
+id|fbcon_dummy
+suffix:semicolon
+macro_line|#endif
 id|disp.dispsw_data
 op_assign
 l_int|NULL
@@ -2822,14 +2885,6 @@ c_func
 l_int|0x3bf
 comma
 l_int|1
-)paren
-suffix:semicolon
-id|release_mem_region
-c_func
-(paren
-id|hga_vram_base
-comma
-id|hga_vram_len
 )paren
 suffix:semicolon
 )brace

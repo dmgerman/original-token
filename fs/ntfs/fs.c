@@ -4545,8 +4545,8 @@ comma
 id|ntfs_read_super
 )paren
 suffix:semicolon
-multiline_comment|/* When this code is not compiled as a module, this is the main entry point,&n; * called by do_sys_setup() in fs/filesystems.c&n; *&n; * NOTE : __init is a macro used to remove this function from memory&n; * once initialization is done&n; */
 DECL|function|init_ntfs_fs
+r_static
 r_int
 id|__init
 id|init_ntfs_fs
@@ -4601,62 +4601,11 @@ id|ntfs_fs_type
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-multiline_comment|/* A module is a piece of code which can be inserted in and removed&n; * from the running kernel whenever you want using lsmod, or on demand using&n; * kmod&n; */
-multiline_comment|/* No function of this module is needed by another module */
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
-multiline_comment|/* Only used for documentation purposes at the moment,&n; * see include/linux/module.h&n; */
-id|MODULE_AUTHOR
-c_func
-(paren
-l_string|&quot;Martin von L&#xfffd;wis&quot;
-)paren
-suffix:semicolon
-id|MODULE_DESCRIPTION
-c_func
-(paren
-l_string|&quot;NTFS driver&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* no MODULE_SUPPORTED_DEVICE() */
-multiline_comment|/* Load-time parameter */
-id|MODULE_PARM
-c_func
-(paren
-id|ntdebug
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM_DESC
-c_func
-(paren
-id|ntdebug
-comma
-l_string|&quot;Debug level&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* When this code is compiled as a module, if you use mount -t ntfs when no&n; * ntfs filesystem is registered (see /proc/filesystems), get_fs_type() in&n; * fs/super.c asks kmod to load the module named ntfs in memory.&n; *&n; * Therefore, this function is the main entry point in this case&n; */
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|exit_ntfs_fs
+r_static
+id|__exit
 r_void
-)paren
-(brace
-r_return
-id|init_ntfs_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Called by kmod just before the kernel removes the module from memory */
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|exit_ntfs_fs
 c_func
 (paren
 r_void
@@ -4686,6 +4635,45 @@ id|ntfs_fs_type
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Martin von L&#xfffd;wis&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;NTFS driver&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|ntdebug
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|ntdebug
+comma
+l_string|&quot;Debug level&quot;
+)paren
+suffix:semicolon
+id|module_init
+c_func
+(paren
+id|init_ntfs_fs
+)paren
+id|module_exit
+c_func
+(paren
+id|exit_ntfs_fs
+)paren
 multiline_comment|/*&n; * Local variables:&n; *  c-file-style: &quot;linux&quot;&n; * End:&n; */
 eof

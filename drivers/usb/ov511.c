@@ -3,7 +3,6 @@ multiline_comment|/*&n; * This program is free software; you can redistribute it
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 multiline_comment|/* Handle mangled (versioned) external symbols */
-macro_line|#include &lt;linux/config.h&gt;   /* retrieve the CONFIG_* macros */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/list.h&gt;

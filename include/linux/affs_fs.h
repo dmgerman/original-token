@@ -696,14 +696,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|init_affs_fs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/* file.c */
 r_void
 id|affs_free_prealloc

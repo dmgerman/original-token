@@ -641,8 +641,6 @@ suffix:semicolon
 r_int
 id|retval
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|retval
 op_assign
 op_minus
@@ -850,8 +848,6 @@ id|regs
 suffix:semicolon
 id|_ret
 suffix:colon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 id|retval
 suffix:semicolon

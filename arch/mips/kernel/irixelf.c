@@ -2805,11 +2805,10 @@ suffix:semicolon
 multiline_comment|/* We leave the rest set to zero */
 )brace
 multiline_comment|/* These are the functions used to load ELF style executables and shared&n; * libraries.  There is no binary dependent code anywhere else.&n; */
-DECL|function|do_load_irix_binary
+DECL|function|load_irix_binary
 r_static
-r_inline
 r_int
-id|do_load_irix_binary
+id|load_irix_binary
 c_func
 (paren
 r_struct
@@ -3453,17 +3452,10 @@ id|current-&gt;personality
 op_assign
 id|PER_IRIX32
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|current-&gt;exec_domain
-op_logical_and
-id|current-&gt;exec_domain-&gt;module
-)paren
-id|__MOD_DEC_USE_COUNT
+id|put_exec_domain
 c_func
 (paren
-id|current-&gt;exec_domain-&gt;module
+id|current-&gt;exec_domain
 )paren
 suffix:semicolon
 r_if
@@ -3491,19 +3483,6 @@ id|current-&gt;binfmt
 op_assign
 op_amp
 id|irix_format
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|current-&gt;exec_domain
-op_logical_and
-id|current-&gt;exec_domain-&gt;module
-)paren
-id|__MOD_INC_USE_COUNT
-c_func
-(paren
-id|current-&gt;exec_domain-&gt;module
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3782,44 +3761,6 @@ id|elf_phdata
 suffix:semicolon
 r_goto
 id|out
-suffix:semicolon
-)brace
-DECL|function|load_irix_binary
-r_static
-r_int
-id|load_irix_binary
-c_func
-(paren
-r_struct
-id|linux_binprm
-op_star
-id|bprm
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-r_int
-id|retval
-suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-id|retval
-op_assign
-id|do_load_irix_binary
-c_func
-(paren
-id|bprm
-comma
-id|regs
-)paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-r_return
-id|retval
 suffix:semicolon
 )brace
 multiline_comment|/* This is really simpleminded and specialized - we are loading an&n; * a.out library that is given an ELF header.&n; */
@@ -4343,8 +4284,6 @@ id|file
 op_star
 id|file
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|file
 op_assign
 id|fget
@@ -4374,8 +4313,6 @@ id|file
 )paren
 suffix:semicolon
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -5171,10 +5108,6 @@ id|elf_prpsinfo
 id|psinfo
 suffix:semicolon
 multiline_comment|/* NT_PRPSINFO */
-macro_line|#ifndef CONFIG_BINFMT_IRIX
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Count what&squot;s needed to dump, up to the limit of coredump size. */
 id|segs
 op_assign
@@ -6335,10 +6268,6 @@ c_func
 id|fs
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_BINFMT_IRIX
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 r_return
 id|has_dumped
 suffix:semicolon

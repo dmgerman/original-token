@@ -1662,14 +1662,6 @@ l_int|4
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|init_ufs_fs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|ufs_write_super
 (paren

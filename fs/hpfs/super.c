@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/fs/hpfs/super.c&n; *&n; *  Mikulas Patocka (mik
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &quot;hpfs_fn.h&quot;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 multiline_comment|/* Mark the filesystem dirty, so that chkdsk checks it when os/2 booted */
 DECL|function|mark_dirty
 r_static
@@ -3004,7 +3005,9 @@ id|hpfs_read_super
 )paren
 suffix:semicolon
 DECL|function|init_hpfs_fs
+r_static
 r_int
+id|__init
 id|init_hpfs_fs
 c_func
 (paren
@@ -3020,27 +3023,11 @@ id|hpfs_fs_type
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-multiline_comment|/*int register_symtab_from(struct symbol_table *, long *);*/
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|exit_hpfs_fs
+r_static
 r_void
-)paren
-(brace
-multiline_comment|/*int status;&n;&t;if (!(status = init_hpfs_fs())) register_symtab(NULL);&n;&t;return status;*/
-r_return
-id|init_hpfs_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|exit_hpfs_fs
 c_func
 (paren
 r_void
@@ -3054,5 +3041,16 @@ id|hpfs_fs_type
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
+id|module_init
+c_func
+(paren
+id|init_hpfs_fs
+)paren
+id|module_exit
+c_func
+(paren
+id|exit_hpfs_fs
+)paren
 eof

@@ -3007,17 +3007,10 @@ suffix:semicolon
 multiline_comment|/* blocking */
 id|bad_fork_cleanup
 suffix:colon
-r_if
-c_cond
-(paren
-id|p-&gt;exec_domain
-op_logical_and
-id|p-&gt;exec_domain-&gt;module
-)paren
-id|__MOD_DEC_USE_COUNT
+id|put_exec_domain
 c_func
 (paren
-id|p-&gt;exec_domain-&gt;module
+id|p-&gt;exec_domain
 )paren
 suffix:semicolon
 r_if

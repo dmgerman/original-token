@@ -318,14 +318,6 @@ r_int
 suffix:semicolon
 r_extern
 r_int
-id|init_qnx4_fs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|qnx4_create
 c_func
 (paren

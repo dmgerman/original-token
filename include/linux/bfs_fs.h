@@ -175,15 +175,6 @@ mdefine_line|#define BFS_INO2OFF(ino) &bslash;&n;&t;((__u32)(((ino) - BFS_ROOT_I
 DECL|macro|BFS_UNCLEAN
 mdefine_line|#define BFS_UNCLEAN(bfs_sb, sb)&t;&bslash;&n;&t;((bfs_sb-&gt;s_from != -1) &amp;&amp; (bfs_sb-&gt;s_to != -1) &amp;&amp; !(sb-&gt;s_flags &amp; MS_RDONLY))
 macro_line|#ifdef __KERNEL__
-multiline_comment|/* inode.c */
-r_extern
-r_int
-id|init_bfs_fs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/* file.c */
 r_extern
 r_struct

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/fs/adfs/dir.c&n; *&n; * Copyright (C) 1999-2000 Russell King&n; *&n; * Common directory handling for ADFS&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;

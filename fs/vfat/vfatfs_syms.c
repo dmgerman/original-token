@@ -3,6 +3,7 @@ DECL|macro|ASC_LINUX_VERSION
 mdefine_line|#define ASC_LINUX_VERSION(V, P, S)&t;(((V) * 65536) + ((P) * 256) + (S))
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 id|DECLARE_FSTYPE_DEV
@@ -65,7 +66,9 @@ id|vfat_lookup
 )paren
 suffix:semicolon
 DECL|function|init_vfat_fs
+r_static
 r_int
+id|__init
 id|init_vfat_fs
 c_func
 (paren
@@ -81,4 +84,32 @@ id|vfat_fs_type
 )paren
 suffix:semicolon
 )brace
+DECL|function|exit_vfat_fs
+r_static
+r_void
+id|__exit
+id|exit_vfat_fs
+c_func
+(paren
+r_void
+)paren
+(brace
+id|unregister_filesystem
+c_func
+(paren
+op_amp
+id|vfat_fs_type
+)paren
+suffix:semicolon
+)brace
+id|module_init
+c_func
+(paren
+id|init_vfat_fs
+)paren
+id|module_exit
+c_func
+(paren
+id|exit_vfat_fs
+)paren
 eof

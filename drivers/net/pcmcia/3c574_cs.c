@@ -4407,11 +4407,6 @@ id|EL3_STATUS
 )paren
 )paren
 suffix:semicolon
-id|netif_stop_queue
-(paren
-id|dev
-)paren
-suffix:semicolon
 id|outw
 c_func
 (paren
@@ -4465,17 +4460,15 @@ id|ioaddr
 op_plus
 id|TxFree
 )paren
-OG
+op_le
 l_int|1536
 )paren
 (brace
-id|netif_start_queue
+id|netif_stop_queue
 (paren
 id|dev
 )paren
 suffix:semicolon
-)brace
-r_else
 multiline_comment|/* Interrupt us when the FIFO has room for max-sized packet. &n;&t;&t;   The threshold is in units of dwords. */
 id|outw
 c_func
@@ -4493,6 +4486,7 @@ op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
+)brace
 id|dev_kfree_skb
 (paren
 id|skb
@@ -4700,14 +4694,6 @@ id|EL3_CMD
 )paren
 suffix:semicolon
 id|netif_wake_queue
-(paren
-id|dev
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|netif_stop_queue
 (paren
 id|dev
 )paren

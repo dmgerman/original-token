@@ -1054,14 +1054,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|init_hfs_fs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/* trans.c */
 r_extern
 r_void

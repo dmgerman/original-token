@@ -147,6 +147,8 @@ op_star
 id|it
 )paren
 suffix:semicolon
+DECL|macro|put_exec_domain
+mdefine_line|#define put_exec_domain(it) &bslash;&n;&t;if (it &amp;&amp; it-&gt;module) __MOD_DEC_USE_COUNT(it-&gt;module);
 id|asmlinkage
 r_int
 id|sys_personality

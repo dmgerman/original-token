@@ -307,14 +307,6 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|init_minix_fs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|minix_sync_inode
 c_func
 (paren

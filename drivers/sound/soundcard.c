@@ -95,12 +95,21 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Persistent DMA buffers */
+macro_line|#ifdef CONFIG_SOUND_DMAP
+DECL|variable|sound_dmap_flag
+r_int
+id|sound_dmap_flag
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#else
 DECL|variable|sound_dmap_flag
 r_int
 id|sound_dmap_flag
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 DECL|variable|soundcard_configured
 r_static
 r_int
@@ -155,12 +164,6 @@ DECL|variable|num_mixer_volumes
 r_static
 r_int
 id|num_mixer_volumes
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|traceinit
-r_int
-id|traceinit
 op_assign
 l_int|0
 suffix:semicolon
@@ -2897,18 +2900,6 @@ id|soundcard_configured
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#if defined(CONFIG_LOWLEVEL_SOUND) &amp;&amp; !defined(MODULE)
-id|sound_preinit_lowlevel_drivers
-c_func
-(paren
-)paren
-suffix:semicolon
-id|sound_init_lowlevel_drivers
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|audio_init_devices
 c_func
 (paren
@@ -2980,14 +2971,6 @@ suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
-id|traceinit
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
 id|dmabuf
 comma
 l_string|&quot;i&quot;
@@ -3012,18 +2995,6 @@ r_void
 r_int
 id|err
 suffix:semicolon
-macro_line|#if FIXED_FOR_2_4_0
-r_int
-id|ints
-(braket
-l_int|21
-)braket
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef HAS_BRIDGE_BUGGY_FUNC
 r_if
 c_cond
 (paren
@@ -3035,74 +3006,6 @@ op_assign
 id|dmabug
 suffix:semicolon
 )brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|dmabug
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;sound: rebuild with PCI_QUIRKS enabled to configure this.&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-macro_line|#if FIXED_FOR_2_4_0
-multiline_comment|/*&n;&t; * &quot;sound=&quot; command line handling by Harald Milz.&n;&t; */
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|i
-OL
-l_int|20
-op_logical_and
-id|sound
-(braket
-id|i
-)braket
-)paren
-id|ints
-(braket
-id|i
-op_plus
-l_int|1
-)braket
-op_assign
-id|sound
-(braket
-id|i
-op_increment
-)braket
-suffix:semicolon
-id|ints
-(braket
-l_int|0
-)braket
-op_assign
-id|i
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-)paren
-id|sound_setup
-c_func
-(paren
-l_string|&quot;sound=&quot;
-comma
-id|ints
-)paren
-suffix:semicolon
-macro_line|#endif
 id|err
 op_assign
 id|create_special_devices
@@ -3216,23 +3119,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_LOWLEVEL_SOUND
-(brace
-r_extern
-r_void
-id|sound_unload_lowlevel_drivers
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-id|sound_unload_lowlevel_drivers
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|sequencer_unload
 c_func
 (paren
@@ -3707,14 +3593,10 @@ op_star
 id|hw_config
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|traceinit
-)paren
+macro_line|#ifndef CONFIG_SOUND_TRACEINIT
 r_return
 suffix:semicolon
+macro_line|#else
 id|printk
 c_func
 (paren
@@ -3794,7 +3676,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|conf_printf2
+macro_line|#endif
 r_void
 id|conf_printf2
 c_func
@@ -3816,14 +3698,10 @@ r_int
 id|dma2
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|traceinit
-)paren
+macro_line|#ifndef CONFIG_SOUND_TRACEINIT
 r_return
 suffix:semicolon
+macro_line|#else
 id|printk
 c_func
 (paren
@@ -3903,9 +3781,9 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; *&t;Module and lock management&n; */
 multiline_comment|/*&n; *&t;When a sound module is registered we need to bring it to the current&n; *&t;lock level...&n; */
-DECL|function|sound_notifier_chain_register
 r_void
 id|sound_notifier_chain_register
 c_func

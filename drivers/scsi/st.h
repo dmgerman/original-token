@@ -154,6 +154,8 @@ DECL|macro|ST_MODE_SHIFT
 mdefine_line|#define ST_MODE_SHIFT (7 - ST_NBR_MODE_BITS)
 DECL|macro|ST_MODE_MASK
 mdefine_line|#define ST_MODE_MASK ((ST_NBR_MODES - 1) &lt;&lt; ST_MODE_SHIFT)
+DECL|macro|ST_MAX_TAPES
+mdefine_line|#define ST_MAX_TAPES (1 &lt;&lt; ST_MODE_SHIFT)
 multiline_comment|/* The status related to each partition */
 r_typedef
 r_struct
@@ -204,10 +206,6 @@ r_struct
 DECL|member|devt
 id|kdev_t
 id|devt
-suffix:semicolon
-DECL|member|capacity
-r_int
-id|capacity
 suffix:semicolon
 DECL|member|device
 id|Scsi_Device
@@ -271,6 +269,10 @@ r_char
 id|default_drvbuffer
 suffix:semicolon
 multiline_comment|/* 0xff = don&squot;t touch, value 3 bits */
+DECL|member|tape_type
+r_int
+id|tape_type
+suffix:semicolon
 DECL|member|write_threshold
 r_int
 id|write_threshold
@@ -389,11 +391,18 @@ r_int
 r_char
 id|door_locked
 suffix:semicolon
+DECL|member|autorew_dev
+r_int
+r_char
+id|autorew_dev
+suffix:semicolon
+multiline_comment|/* auto-rewind device */
 DECL|member|rew_at_close
 r_int
 r_char
 id|rew_at_close
 suffix:semicolon
+multiline_comment|/* rewind necessary at close */
 DECL|member|inited
 r_int
 r_char
@@ -415,12 +424,12 @@ DECL|member|recover_count
 r_int
 id|recover_count
 suffix:semicolon
-DECL|member|mt_status
-r_struct
-id|mtget
-op_star
-id|mt_status
+multiline_comment|/* From tape opening */
+DECL|member|recover_reg
+r_int
+id|recover_reg
 suffix:semicolon
+multiline_comment|/* From last status call */
 macro_line|#if DEBUG
 DECL|member|write_pending
 r_int
@@ -455,11 +464,6 @@ macro_line|#endif
 DECL|typedef|Scsi_Tape
 )brace
 id|Scsi_Tape
-suffix:semicolon
-r_extern
-id|Scsi_Tape
-op_star
-id|scsi_tapes
 suffix:semicolon
 multiline_comment|/* Values of eof */
 DECL|macro|ST_NOEOF

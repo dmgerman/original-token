@@ -354,13 +354,6 @@ r_struct
 id|file_operations
 id|umsdos_rdir_operations
 suffix:semicolon
-r_extern
-r_int
-id|init_umsdos_fs
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#include &lt;linux/umsdos_fs.p&gt;
 macro_line|#endif&t;&t;&t;&t;/* __KERNEL__ */
 macro_line|#endif

@@ -1331,29 +1331,6 @@ op_star
 id|inode
 )paren
 suffix:semicolon
-multiline_comment|/* vfat.c */
-r_extern
-r_int
-id|init_vfat_fs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-multiline_comment|/* msdosfs_syms.c */
-r_extern
-r_int
-id|init_msdos_fs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_struct
-id|file_system_type
-id|msdos_fs_type
-suffix:semicolon
 multiline_comment|/* msdos.c */
 r_extern
 r_struct
@@ -1501,14 +1478,6 @@ id|new_dentry
 )paren
 suffix:semicolon
 multiline_comment|/* nls.c */
-r_extern
-r_int
-id|init_fat_nls
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_extern
 r_struct
 id|fat_nls_table

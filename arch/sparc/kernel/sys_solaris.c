@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+multiline_comment|/* CHECKME: this stuff looks rather bogus */
 id|asmlinkage
 r_int
 DECL|function|do_solaris_syscall
@@ -26,6 +27,12 @@ suffix:semicolon
 id|lock_kernel
 c_func
 (paren
+)paren
+suffix:semicolon
+id|put_exec_domain
+c_func
+(paren
+id|current-&gt;exec_domain
 )paren
 suffix:semicolon
 id|current-&gt;personality

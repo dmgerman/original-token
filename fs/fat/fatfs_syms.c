@@ -3,6 +3,7 @@ DECL|macro|ASC_LINUX_VERSION
 mdefine_line|#define ASC_LINUX_VERSION(V, P, S)&t;(((V) * 65536) + ((P) * 256) + (S))
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/fat_cvf.h&gt;
@@ -275,7 +276,9 @@ id|fat_truncate
 )paren
 suffix:semicolon
 DECL|function|init_fat_fs
+r_static
 r_int
+id|__init
 id|init_fat_fs
 c_func
 (paren
@@ -291,4 +294,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|module_init
+c_func
+(paren
+id|init_fat_fs
+)paren
 eof

@@ -6,10 +6,10 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-DECL|function|do_load_script
+DECL|function|load_script
 r_static
 r_int
-id|do_load_script
+id|load_script
 c_func
 (paren
 r_struct
@@ -445,44 +445,6 @@ id|bprm
 comma
 id|regs
 )paren
-suffix:semicolon
-)brace
-DECL|function|load_script
-r_static
-r_int
-id|load_script
-c_func
-(paren
-r_struct
-id|linux_binprm
-op_star
-id|bprm
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-r_int
-id|retval
-suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-id|retval
-op_assign
-id|do_load_script
-c_func
-(paren
-id|bprm
-comma
-id|regs
-)paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-r_return
-id|retval
 suffix:semicolon
 )brace
 DECL|variable|script_format

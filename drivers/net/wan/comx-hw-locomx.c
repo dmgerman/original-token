@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * Hardware driver for the LoCOMX card, using the generic z85230&n; * functions&n; *&n; * Author: Gergely Madarasz &lt;gorgo@itc.hu&gt;&n; *&n; * Based on skeleton code and old LoCOMX driver by Tivadar Szemethy &lt;tiv@itc.hu&gt; &n; * and the hostess_sv11 driver&n; *&n; * Copyright (C) 1999 ITConsult-Pro Co. &lt;info@itc.hu&gt;&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Version 0.10 (99/06/17):&n; *&t;&t;- rewritten for the z85230 layer&n; *&n; * Version 0.11 (99/06/21):&n; *&t;&t;- some printk&squot;s fixed&n; *&t;&t;- get rid of a memory leak (it was impossible though :))&n; * &n; * Version 0.12 (99/07/07):&n; *&t;&t;- check CTS for modem lines, not DCD (which is always high&n; *&t;&t;  in case of this board)&n; * Version 0.13 (99/07/08):&n; *&t;&t;- Fix the transmitter status check&n; *&t;&t;- Handle the net device statistics better&n; */
 DECL|macro|VERSION
 mdefine_line|#define VERSION &quot;0.13&quot;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -14,7 +13,6 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;comx.h&quot;
 macro_line|#include &quot;z85230.h&quot;
 id|MODULE_AUTHOR

@@ -1775,8 +1775,6 @@ c_func
 (paren
 op_amp
 id|ap-&gt;chan
-comma
-id|val
 )paren
 suffix:semicolon
 r_if

@@ -1,30 +1,10 @@
 multiline_comment|/*&n; *  linux/fs/filesystems.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  table of configured filesystems&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/minix_fs.h&gt;
-macro_line|#include &lt;linux/ext2_fs.h&gt;
-macro_line|#include &lt;linux/msdos_fs.h&gt;
-macro_line|#include &lt;linux/umsdos_fs.h&gt;
-macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
-macro_line|#include &lt;linux/iso_fs.h&gt;
-macro_line|#include &lt;linux/sysv_fs.h&gt;
-macro_line|#include &lt;linux/hpfs_fs.h&gt;
-macro_line|#include &lt;linux/smb_fs.h&gt;
-macro_line|#include &lt;linux/ncp_fs.h&gt;
-macro_line|#include &lt;linux/affs_fs.h&gt;
-macro_line|#include &lt;linux/ufs_fs.h&gt;
-macro_line|#include &lt;linux/efs_fs.h&gt;
-macro_line|#include &lt;linux/romfs_fs.h&gt;
 macro_line|#include &lt;linux/auto_fs.h&gt;
-macro_line|#include &lt;linux/qnx4_fs.h&gt;
-macro_line|#include &lt;linux/udf_fs.h&gt;
-macro_line|#include &lt;linux/ntfs_fs.h&gt;
-macro_line|#include &lt;linux/hfs_fs.h&gt;
 macro_line|#include &lt;linux/devpts_fs.h&gt;
-macro_line|#include &lt;linux/bfs_fs.h&gt;
-macro_line|#include &lt;linux/openprom_fs.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -54,16 +34,6 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SUN_OPENPROMFS
-r_extern
-r_int
-id|init_openprom_fs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|function|filesystem_setup
 r_void
 id|__init
@@ -73,55 +43,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_MINIX_FS
-id|init_minix_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ROMFS_FS
-id|init_romfs_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_UMSDOS_FS
-id|init_umsdos_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_FAT_FS
-id|init_fat_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MSDOS_FS
-id|init_msdos_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_VFAT_FS
-id|init_vfat_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_PROC_FS
-id|init_proc_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|init_devfs_fs
 c_func
 (paren
@@ -142,106 +63,8 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SMB_FS
-id|init_smb_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NCP_FS
-id|init_ncp_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ISO9660_FS
-id|init_iso9660_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SYSV_FS
-id|init_sysv_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_HPFS_FS
-id|init_hpfs_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NTFS_FS
-id|init_ntfs_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_HFS_FS
-id|init_hfs_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AFFS_FS
-id|init_affs_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_UFS_FS
-id|init_ufs_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_EFS_FS
-id|init_efs_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_DEVPTS_FS
 id|init_devpts_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_QNX4FS_FS
-id|init_qnx4_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_UDF_FS
-id|init_udf_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_BFS_FS
-id|init_bfs_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SUN_OPENPROMFS
-id|init_openprom_fs
 c_func
 (paren
 )paren

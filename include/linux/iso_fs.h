@@ -1636,14 +1636,6 @@ r_int
 suffix:semicolon
 r_extern
 r_int
-id|init_iso9660_fs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|isofs_lookup_grandparent
 c_func
 (paren
