@@ -585,7 +585,7 @@ id|_IOC_DIR
 (paren
 id|cmd
 )paren
-op_eq
+op_amp
 id|_IOC_WRITE
 )paren
 (brace
@@ -622,7 +622,7 @@ id|_IOC_DIR
 (paren
 id|cmd
 )paren
-op_eq
+op_amp
 id|_IOC_READ
 )paren
 (brace

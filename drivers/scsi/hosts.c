@@ -536,6 +536,10 @@ id|retval-&gt;use_clustering
 op_assign
 id|tpnt-&gt;use_clustering
 suffix:semicolon
+id|retval-&gt;select_queue_depths
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren

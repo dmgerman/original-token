@@ -174,6 +174,9 @@ id|reset
 (paren
 id|Scsi_Cmnd
 op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * This function is used to select synchronous communications,&n;     * which will result in a higher data throughput.  Not implemented&n;     * yet.&n;     */
@@ -400,12 +403,20 @@ id|loaded_as_module
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;     * True when we call the low-level reset function, and&n;     * the midlevel code suggests a full bus reset.&n;     */
-DECL|member|suggest_bus_reset
-r_int
-id|suggest_bus_reset
-suffix:colon
-l_int|1
+DECL|member|select_queue_depths
+r_void
+(paren
+op_star
+id|select_queue_depths
+)paren
+(paren
+r_struct
+id|Scsi_Host
+op_star
+comma
+id|Scsi_Device
+op_star
+)paren
 suffix:semicolon
 DECL|member|hostdata
 r_int

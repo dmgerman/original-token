@@ -7130,7 +7130,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|sync_dev
+id|fsync_dev
 c_func
 (paren
 id|inode-&gt;i_rdev
@@ -7187,6 +7187,9 @@ r_if
 c_cond
 (paren
 id|drive-&gt;removable
+op_logical_and
+op_logical_neg
+id|drive-&gt;usage
 )paren
 (brace
 id|byte

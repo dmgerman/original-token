@@ -8641,13 +8641,6 @@ r_int
 id|wait
 )paren
 (brace
-id|run_task_queue
-c_func
-(paren
-op_amp
-id|tq_disk
-)paren
-suffix:semicolon
 id|wake_up
 c_func
 (paren
@@ -8661,6 +8654,13 @@ c_cond
 id|wait
 )paren
 (brace
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_disk
+)paren
+suffix:semicolon
 id|sleep_on
 c_func
 (paren

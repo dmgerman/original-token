@@ -6030,6 +6030,10 @@ c_func
 id|Scsi_Cmnd
 op_star
 id|SCpnt
+comma
+r_int
+r_int
+id|reset_flags
 )paren
 (brace
 id|unchar
@@ -6044,7 +6048,9 @@ multiline_comment|/*&n;     * See if a bus reset was suggested.&n;     */
 r_if
 c_cond
 (paren
-id|SCpnt-&gt;host-&gt;suggest_bus_reset
+id|reset_flags
+op_amp
+id|SCSI_RESET_SUGGEST_BUS_RESET
 )paren
 (brace
 multiline_comment|/* &n;&t; * This does a scsi reset for all devices on the bus.&n;&t; * In principle, we could also reset the 1542 - should&n;&t; * we do this?  Try this first, and we can add that later&n;&t; * if it turns out to be useful.&n;&t; */

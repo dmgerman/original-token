@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * DLCI&t;&t;Implementation of Frame Relay protocol for Linux, according to&n; *&t;&t;RFC 1490.  This generic device provides en/decapsulation for an&n; *&t;&t;underlying hardware driver.  Routes &amp; IPs are assigned to these&n; *&t;&t;interfaces.  Requires &squot;dlcicfg&squot; program to create usable &n; *&t;&t;interfaces, the initial one, &squot;dlci&squot; is for IOCTL use only.&n; *&n; * Version:&t;@(#)dlci.c&t;0.15&t;31 Mar 1996&n; *&n; * Author:&t;Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * DLCI&t;&t;Implementation of Frame Relay protocol for Linux, according to&n; *&t;&t;RFC 1490.  This generic device provides en/decapsulation for an&n; *&t;&t;underlying hardware driver.  Routes &amp; IPs are assigned to these&n; *&t;&t;interfaces.  Requires &squot;dlcicfg&squot; program to create usable &n; *&t;&t;interfaces, the initial one, &squot;dlci&squot; is for IOCTL use only.&n; *&n; * Version:&t;@(#)dlci.c&t;0.20&t;13 Apr 1996&n; *&n; * Author:&t;Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *&n; * Changes:&n; *&n; *&t;&t;0.15&t;Mike Mclagan&t;Packet freeing, bug in kmalloc call&n; *&t;&t;&t;&t;&t;DLCI_RET handling&n; *&n; *&t;&t;0.20&t;Mike McLagan&t;More conservative on which packets&n; *&t;&t;&t;&t;&t;are returned for retry and whic are&n; *&t;&t;&t;&t;&t;are dropped.  If DLCI_RET_DROP is&n; *&t;&t;&t;&t;&t;returned from the FRAD, the packet is&n; *&t;&t;&t;&t; &t;sent back to Linux for re-transmission&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -36,7 +36,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;DLCI driver v0.15, 31 Mar 1996, mike.mclagan@linux.org&quot;
+l_string|&quot;DLCI driver v0.20, 13 Apr 1996, mike.mclagan@linux.org&quot;
 suffix:semicolon
 DECL|variable|open_dev
 r_static
@@ -890,6 +890,10 @@ suffix:colon
 id|dlp-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -897,6 +901,10 @@ id|DLCI_RET_ERR
 suffix:colon
 id|dlp-&gt;stats.tx_errors
 op_increment
+suffix:semicolon
+id|ret
+op_assign
+l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -906,14 +914,21 @@ suffix:colon
 id|dlp-&gt;stats.tx_dropped
 op_increment
 suffix:semicolon
+id|ret
+op_assign
+l_int|1
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
 multiline_comment|/* Alan Cox recommends always returning 0, and always freeing the packet */
+multiline_comment|/* experience suggest a slightly more conservative approach */
+r_if
+c_cond
+(paren
+op_logical_neg
 id|ret
-op_assign
-l_int|0
-suffix:semicolon
+)paren
 id|dev_kfree_skb
 c_func
 (paren
@@ -1641,6 +1656,30 @@ op_logical_neg
 id|get
 )paren
 (brace
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|conf
+comma
+r_sizeof
+(paren
+r_struct
+id|dlci_conf
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+id|err
+suffix:semicolon
 id|memcpy_fromfs
 c_func
 (paren
@@ -1716,6 +1755,31 @@ c_cond
 (paren
 id|get
 )paren
+(brace
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|conf
+comma
+r_sizeof
+(paren
+r_struct
+id|dlci_conf
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+id|err
+suffix:semicolon
 id|memcpy_tofs
 c_func
 (paren
@@ -1731,6 +1795,7 @@ id|dlci_conf
 )paren
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon

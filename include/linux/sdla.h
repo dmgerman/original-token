@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Global definitions for the Frame relay interface.&n; *&n; * Version:&t;@(#)if_ifrad.h&t;0.15&t;31 Mar 96&n; *&n; * Author:&t;Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Global definitions for the Frame relay interface.&n; *&n; * Version:&t;@(#)if_ifrad.h&t;0.20&t;13 Apr 96&n; *&n; * Author:&t;Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *&n; * Changes:&n; *&t;&t;0.15&t;Mike McLagan&t;Structure packing&n; *&n; *&t;&t;0.20&t;Mike McLagan&t;New flags for S508 buffer handling&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef SDLA_H
 DECL|macro|SDLA_H
 mdefine_line|#define SDLA_H
@@ -414,6 +414,16 @@ mdefine_line|#define SDLA_RET_COMMAND_INVALID    &t;0x1F
 multiline_comment|/* Configuration flags */
 DECL|macro|SDLA_DIRECT_RECV
 mdefine_line|#define SDLA_DIRECT_RECV&t;&t;0x0080
+DECL|macro|SDLA_TX_NO_EXCEPT
+mdefine_line|#define SDLA_TX_NO_EXCEPT&t;&t;0x0020
+DECL|macro|SDLA_NO_ICF_MSGS
+mdefine_line|#define SDLA_NO_ICF_MSGS&t;&t;0x1000
+DECL|macro|SDLA_TX50_RX50
+mdefine_line|#define SDLA_TX50_RX50&t;&t;&t;0x0000
+DECL|macro|SDLA_TX70_RX30
+mdefine_line|#define SDLA_TX70_RX30&t;&t;&t;0x2000
+DECL|macro|SDLA_TX30_RX70
+mdefine_line|#define SDLA_TX30_RX70&t;&t;&t;0x4000
 multiline_comment|/* IRQ selection flags */
 DECL|macro|SDLA_IRQ_RECEIVE
 mdefine_line|#define SDLA_IRQ_RECEIVE&t;&t;0x01

@@ -153,6 +153,7 @@ l_int|0
 op_ne
 l_int|3
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -167,6 +168,7 @@ l_string|&quot;,irq,dma&bslash;n&quot;
 suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 r_case
 id|BOARD_NCR53C400
 suffix:colon
@@ -180,10 +182,11 @@ l_int|0
 op_ne
 l_int|2
 )paren
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;generic_NCR53C400_setup : usage ncr53c400= &quot;
+l_string|&quot;generic_NCR53C400_setup : usage ncr53c400=&quot;
 id|STRVAL
 c_func
 (paren
@@ -194,6 +197,7 @@ l_string|&quot;,irq&bslash;n&quot;
 suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond

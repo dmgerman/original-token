@@ -3716,6 +3716,8 @@ id|vma
 comma
 id|start
 )paren
+op_eq
+l_int|0
 )paren
 r_goto
 id|good_area

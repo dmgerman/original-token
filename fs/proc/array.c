@@ -4438,6 +4438,14 @@ r_char
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|get_rtc_status
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
 macro_line|#ifdef __SMP_PROF__
 r_extern
 r_int
@@ -4686,6 +4694,18 @@ c_func
 id|page
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_RTC
+r_case
+id|PROC_RTC
+suffix:colon
+r_return
+id|get_rtc_status
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 r_return
 op_minus

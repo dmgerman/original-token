@@ -2099,7 +2099,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; *&t;Remember the highest ack received and update the&n;&t; *&t;right hand window edge of the host.&n;&t; *&t;We do a bit of work here to track number of times we&squot;ve&n;&t; *&t;seen this ack without a change in the right edge of the&n;&t; *&t;window. This will allow us to do fast retransmits.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Remember the highest ack received and update the&n;&t; *&t;right hand window edge of the host.&n;&t; *&t;We do a bit of work here to track number of times we&squot;ve&n;&t; *&t;seen this ack without a change in the right edge of the&n;&t; *&t;window and no data in the packet.&n;&t; *&t;This will allow us to do fast retransmits.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2110,6 +2110,13 @@ op_logical_and
 id|sk-&gt;window_seq
 op_eq
 id|window_seq
+op_logical_and
+op_logical_neg
+(paren
+id|flag
+op_amp
+l_int|1
+)paren
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * We only want to short cut this once, many&n;&t;&t; * ACKs may still come, we&squot;ll do a normal transmit&n;&t;&t; * for these ACKs.&n;&t;&t; */
@@ -3669,25 +3676,14 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-id|sk-&gt;ack_backlog
-op_increment
-suffix:semicolon
-id|tcp_reset_xmit_timer
+id|tcp_send_delayed_ack
 c_func
 (paren
 id|sk
 comma
-id|TIME_WRITE
-comma
-id|min
-c_func
-(paren
-id|sk-&gt;ato
-comma
 id|HZ
 op_div
 l_int|2
-)paren
 )paren
 suffix:semicolon
 )brace

@@ -2287,6 +2287,8 @@ suffix:semicolon
 )brace
 )brace
 suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 id|SIG
 c_func

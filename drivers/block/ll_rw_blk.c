@@ -1382,6 +1382,18 @@ op_logical_neg
 id|req
 )paren
 (brace
+multiline_comment|/* MD and loop can&squot;t handle plugging without deadlocking */
+r_if
+c_cond
+(paren
+id|major
+op_ne
+id|MD_MAJOR
+op_logical_and
+id|major
+op_ne
+id|LOOP_MAJOR
+)paren
 id|plug_device
 c_func
 (paren

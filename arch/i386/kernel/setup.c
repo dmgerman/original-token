@@ -746,16 +746,6 @@ suffix:semicolon
 id|request_region
 c_func
 (paren
-l_int|0x70
-comma
-l_int|0x10
-comma
-l_string|&quot;rtc&quot;
-)paren
-suffix:semicolon
-id|request_region
-c_func
-(paren
 l_int|0x80
 comma
 l_int|0x20

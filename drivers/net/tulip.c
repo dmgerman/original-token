@@ -11,7 +11,7 @@ l_string|&quot;        +0.68 3/09/96 &quot;
 l_string|&quot;http://www.dsl.tutics.tut.ac.jp/~manabe/linux/tulip.html&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* A few user-configurable values. */
-multiline_comment|/* Default to using non-10baseT (i.e. AUI/10base2/100baseT port) port. */
+multiline_comment|/* Default to using 10baseT (i.e. non-AUI/10base2/100baseT port) port. */
 DECL|macro|TULIP_10TP_PORT
 mdefine_line|#define&t;TULIP_10TP_PORT&t;&t;0
 DECL|macro|TULIP_100TP_PORT
@@ -1744,10 +1744,58 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+r_const
+r_char
+op_star
+id|if_port
+suffix:semicolon
 id|dev-&gt;if_port
 op_and_assign
 l_int|3
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|dev-&gt;if_port
+)paren
+(brace
+r_case
+id|TULIP_10TP_PORT
+suffix:colon
+id|if_port
+op_assign
+l_string|&quot;10baseT&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|TULIP_100TP_PORT
+suffix:colon
+multiline_comment|/* TULIP_AUI_PORT is the same as TULIP_100TP_PORT. */
+id|if_port
+op_assign
+l_string|&quot;100baseT/AUI&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|TULIP_BNC_PORT
+suffix:colon
+id|if_port
+op_assign
+l_string|&quot;BNC&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|if_port
+op_assign
+l_string|&quot;unknown type&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -1755,12 +1803,7 @@ l_string|&quot;%s: enabling %s port.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|dev-&gt;if_port
-ques
-c_cond
-l_string|&quot;AUI&quot;
-suffix:colon
-l_string|&quot;10baseT&quot;
+id|if_port
 )paren
 suffix:semicolon
 multiline_comment|/* Set the full duplex match frame. */

@@ -199,6 +199,13 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* Used to jumpstart things after an &n;&t;&t;&t;&t;     * ioctl */
+DECL|member|device_queue
+r_struct
+id|scsi_cmnd
+op_star
+id|device_queue
+suffix:semicolon
+multiline_comment|/* queue of SCSI Command structures */
 DECL|member|hostdata
 r_void
 op_star
@@ -250,6 +257,12 @@ r_char
 id|sync_max_offset
 suffix:semicolon
 multiline_comment|/* Not greater than this offset */
+DECL|member|queue_depth
+r_int
+r_char
+id|queue_depth
+suffix:semicolon
+multiline_comment|/* How deep a queue to use */
 DECL|member|writeable
 r_int
 id|writeable
@@ -343,21 +356,21 @@ id|single_lun
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Indicates we should only allow I/O to&n;                                       one of the luns for the device at a time. */
+multiline_comment|/* Indicates we should only allow I/O to&n;                                     * one of the luns for the device at a &n;                                     * time. */
 DECL|member|was_reset
 r_int
 id|was_reset
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* There was a bus reset on the bus for this&n;                                   device */
+multiline_comment|/* There was a bus reset on the bus for &n;                                     * this device */
 DECL|member|expecting_cc_ua
 r_int
 id|expecting_cc_ua
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Expecting a CHECK_CONDITION/UNIT_ATTN&n;                                      because we did a bus reset. */
+multiline_comment|/* Expecting a CHECK_CONDITION/UNIT_ATTN&n;                                     * because we did a bus reset. */
 DECL|typedef|Scsi_Device
 )brace
 id|Scsi_Device
@@ -459,9 +472,18 @@ mdefine_line|#define SCSI_RESET_PENDING 3
 multiline_comment|/* We did a reset, but do not expect an interrupt to signal DID_RESET.&n; * This tells the upper level code to request the sense info, and this&n; * should keep the command alive. */
 DECL|macro|SCSI_RESET_WAKEUP
 mdefine_line|#define SCSI_RESET_WAKEUP 4
+multiline_comment|/* The command is not active in the low level code. Command probably&n;   finished. */
+DECL|macro|SCSI_RESET_NOT_RUNNING
+mdefine_line|#define SCSI_RESET_NOT_RUNNING 5
 multiline_comment|/* Something went wrong, and we do not know how to fix it. */
 DECL|macro|SCSI_RESET_ERROR
-mdefine_line|#define SCSI_RESET_ERROR 5
+mdefine_line|#define SCSI_RESET_ERROR 6
+DECL|macro|SCSI_RESET_SYNCHRONOUS
+mdefine_line|#define SCSI_RESET_SYNCHRONOUS&t;&t;0x01
+DECL|macro|SCSI_RESET_ASYNCHRONOUS
+mdefine_line|#define SCSI_RESET_ASYNCHRONOUS&t;&t;0x02
+DECL|macro|SCSI_RESET_SUGGEST_BUS_RESET
+mdefine_line|#define SCSI_RESET_SUGGEST_BUS_RESET&t;0x04
 multiline_comment|/*&n; * This is a bitmask that is ored with one of the above codes.&n; * It tells the mid-level code that we did a hard reset.&n; */
 DECL|macro|SCSI_RESET_BUS_RESET
 mdefine_line|#define SCSI_RESET_BUS_RESET 0x100
@@ -597,6 +619,8 @@ id|old_cmd_len
 suffix:semicolon
 DECL|member|next
 DECL|member|prev
+DECL|member|device_next
+DECL|member|reset_chain
 r_struct
 id|scsi_cmnd
 op_star
@@ -604,6 +628,12 @@ id|next
 comma
 op_star
 id|prev
+comma
+op_star
+id|device_next
+comma
+op_star
+id|reset_chain
 suffix:semicolon
 multiline_comment|/* These elements define the operation we are about to perform */
 DECL|member|cmnd
@@ -694,6 +724,17 @@ l_int|16
 )braket
 suffix:semicolon
 multiline_comment|/* Sense for this command, if needed */
+multiline_comment|/*&n;      A SCSI Command is assigned a nonzero serial_number when internal_cmnd&n;      passes it to the driver&squot;s queue command function.  The serial_number&n;      is cleared when scsi_done is entered indicating that the command has&n;      been completed.  If a timeout occurs, the serial number at the moment&n;      of timeout is copied into serial_number_at_timeout.  By subseuqently&n;      comparing the serial_number and serial_number_at_timeout fields&n;      during abort or reset processing, we can detect whether the command&n;      has already completed.  This also detects cases where the command has&n;      completed and the SCSI Command structure has already being reused&n;      for another command, so that we can avoid incorrectly aborting or&n;      resetting the new command.&n;    */
+DECL|member|serial_number
+r_int
+r_int
+id|serial_number
+suffix:semicolon
+DECL|member|serial_number_at_timeout
+r_int
+r_int
+id|serial_number_at_timeout
+suffix:semicolon
 DECL|member|retries
 r_int
 id|retries
@@ -799,9 +840,6 @@ op_star
 comma
 r_int
 id|code
-comma
-r_int
-id|pid
 )paren
 suffix:semicolon
 r_extern
@@ -879,6 +917,7 @@ id|scsi_reset
 id|Scsi_Cmnd
 op_star
 comma
+r_int
 r_int
 )paren
 suffix:semicolon
