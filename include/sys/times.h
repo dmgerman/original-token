@@ -1,0 +1,39 @@
+macro_line|#ifndef _TIMES_H
+DECL|macro|_TIMES_H
+mdefine_line|#define _TIMES_H
+macro_line|#include &lt;sys/types.h&gt;
+DECL|struct|tms
+r_struct
+id|tms
+(brace
+DECL|member|tms_utime
+id|time_t
+id|tms_utime
+suffix:semicolon
+DECL|member|tms_stime
+id|time_t
+id|tms_stime
+suffix:semicolon
+DECL|member|tms_cutime
+id|time_t
+id|tms_cutime
+suffix:semicolon
+DECL|member|tms_cstime
+id|time_t
+id|tms_cstime
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+id|time_t
+id|times
+c_func
+(paren
+r_struct
+id|tms
+op_star
+id|tp
+)paren
+suffix:semicolon
+macro_line|#endif
+eof

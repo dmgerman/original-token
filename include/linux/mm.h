@@ -1,0 +1,41 @@
+macro_line|#ifndef _MM_H
+DECL|macro|_MM_H
+mdefine_line|#define _MM_H
+DECL|macro|PAGE_SIZE
+mdefine_line|#define PAGE_SIZE 4096
+r_extern
+r_int
+r_int
+id|get_free_page
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|put_page
+c_func
+(paren
+r_int
+r_int
+id|page
+comma
+r_int
+r_int
+id|address
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|free_page
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+macro_line|#endif
+eof
