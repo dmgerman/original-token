@@ -1342,7 +1342,7 @@ l_int|0
 )paren
 )paren
 (brace
-multiline_comment|/* Something has gone wrong - lets try that again */
+multiline_comment|/* Something has gone wrong - let&squot;s try that again */
 id|outw
 c_func
 (paren
@@ -1705,7 +1705,7 @@ id|STAT_ABN
 )paren
 )paren
 (brace
-multiline_comment|/* Something has gone wrong - lets try that again */
+multiline_comment|/* Something has gone wrong - let&squot;s try that again */
 r_if
 c_cond
 (paren
@@ -2677,7 +2677,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/* Apparently worked - lets check bytes left to DMA */
+multiline_comment|/* Apparently worked - let&squot;s check bytes left to DMA */
 r_if
 c_cond
 (paren
@@ -2714,7 +2714,7 @@ l_int|0
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* Potentially this means that we&squot;ve done; but we might be doing&n;&t;&t;   a partial access, (over two cylinders) or we may have a number&n;&t;&t;   of fragments in an image file.  First lets deal with partial accesss&n;&t;&t; */
+multiline_comment|/* Potentially this means that we&squot;ve done; but we might be doing&n;&t;&t;   a partial access, (over two cylinders) or we may have a number&n;&t;&t;   of fragments in an image file.  First let&squot;s deal with partial accesss&n;&t;&t; */
 r_if
 c_cond
 (paren

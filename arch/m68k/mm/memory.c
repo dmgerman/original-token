@@ -509,7 +509,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t; * move this descriptor the the front of the list, since&n;&t;&t; * it has one or more free tables.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * move this descriptor to the front of the list, since&n;&t;&t; * it has one or more free tables.&n;&t;&t; */
 id|save_flags
 c_func
 (paren

@@ -535,7 +535,7 @@ suffix:semicolon
 DECL|macro|LOGEN
 mdefine_line|#define LOGEN           sys_syslog(7,NULL,0);
 DECL|macro|WAITSEC
-mdefine_line|#define WAITSEC(a)      {ulong idx; for(idx=0;idx&lt;a*1000L;++idx) udelay(1000);}
+mdefine_line|#define WAITSEC(a)      mdelay((a)*1000)
 macro_line|#ifdef SLOWMOTION_GDTH
 DECL|macro|SLOWM
 mdefine_line|#define SLOWM   WAITSEC(2)  
@@ -2587,10 +2587,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 id|TRACE2
@@ -2793,10 +2793,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -3317,10 +3317,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -3517,10 +3517,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -3839,10 +3839,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -4029,10 +4029,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -4310,10 +4310,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -4495,10 +4495,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -4736,10 +4736,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -4917,10 +4917,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -6623,10 +6623,10 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -6967,10 +6967,10 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -8670,10 +8670,10 @@ c_func
 id|hanum
 )paren
 )paren
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace

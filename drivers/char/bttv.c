@@ -790,10 +790,10 @@ id|BT848_INT_I2CDONE
 )paren
 r_break
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -991,10 +991,10 @@ id|BT848_INT_I2CDONE
 )paren
 r_break
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -1784,10 +1784,10 @@ comma
 id|BT848_IFORM
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|10000
+l_int|10
 )paren
 suffix:semicolon
 r_if
@@ -7300,6 +7300,7 @@ c_cond
 (paren
 id|v.base
 )paren
+(brace
 multiline_comment|/* also handle virtual base addresses */
 r_if
 c_cond
@@ -7335,6 +7336,7 @@ id|v.base
 )paren
 )paren
 suffix:semicolon
+)brace
 id|btv-&gt;win.sheight
 op_assign
 id|v.height

@@ -2139,6 +2139,7 @@ c_func
 )paren
 suffix:semicolon
 id|__asm__
+id|__volatile__
 c_func
 (paren
 l_string|&quot;lcall (%%edi)&bslash;n&bslash;t&quot;

@@ -583,7 +583,7 @@ multiline_comment|/* &n; * Bus Master Data Structures  -------------------------
 DECL|macro|MAX_RX_PDL
 mdefine_line|#define MAX_RX_PDL              30   /* Card limit = 31 */
 DECL|macro|MAX_RX_FRAG
-mdefine_line|#define MAX_RX_FRAG             2    /* Dont need more... */
+mdefine_line|#define MAX_RX_FRAG             2    /* Don&squot;t need more... */
 DECL|macro|MAX_TX_PDL
 mdefine_line|#define MAX_TX_PDL              29
 DECL|macro|MAX_TX_FRAG

@@ -419,7 +419,7 @@ op_lshift
 l_int|8
 suffix:semicolon
 multiline_comment|/*&n;&t; * avoiding timer inconsistencies (they are rare, but they happen)...&n;&t; * there are two kinds of problems that must be avoided here:&n;&t; *  1. the timer counter underflows&n;&t; *  2. hardware problem with the timer, not giving us continuous time,&n;&t; *     the counter does small &quot;jumps&quot; upwards on some Pentium systems,&n;&t; *     (see c&squot;t 95/10 page 335 for Neptun bug.)&n;&t; */
-multiline_comment|/* you can safely undefine this if you dont have the Neptun chipset */
+multiline_comment|/* you can safely undefine this if you don&squot;t have the Neptune chipset */
 DECL|macro|BUGGY_NEPTUN_TIMER
 mdefine_line|#define BUGGY_NEPTUN_TIMER
 r_if
@@ -460,7 +460,7 @@ op_amp
 l_int|0x01
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * We cannot detect lost timer interrupts ... &n;&t;&t;&t;&t; * well, thats why we call them lost, dont we? :)&n;&t;&t;&t;&t; * [hmm, on the Pentium and Alpha we can ... sort of]&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * We cannot detect lost timer interrupts ... &n;&t;&t;&t;&t; * well, that&squot;s why we call them lost, don&squot;t we? :)&n;&t;&t;&t;&t; * [hmm, on the Pentium and Alpha we can ... sort of]&n;&t;&t;&t;&t; */
 id|count
 op_sub_assign
 id|LATCH

@@ -5,7 +5,7 @@ macro_line|#endif
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ppp_defs.h&gt;
 macro_line|#include &quot;rawhdlc.h&quot;
-multiline_comment|/* There&squot;s actually an identical copy of this table in the PPP code&n; * (ppp_crc16_table), but I don&squot;t want this code dependant on PPP&n; */
+multiline_comment|/* There&squot;s actually an identical copy of this table in the PPP code&n; * (ppp_crc16_table), but I don&squot;t want this code dependent on PPP&n; */
 singleline_comment|// static 
 DECL|variable|fcstab
 id|__u16

@@ -2,7 +2,7 @@ macro_line|#ifndef __ALPHA_STRING_H__
 DECL|macro|__ALPHA_STRING_H__
 mdefine_line|#define __ALPHA_STRING_H__
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * GCC of any recent vintage doesn&squot;t do stupid things with bcopy.  Of&n; * EGCS-devel vintage, it knows all about expanding memcpy inline.&n; * For things other than EGCS-devel but still recent, GCC will expand&n; * __builtin_memcpy as a simple call to memcpy.&n; *&n; * Similarly for a memset with data = 0.&n; */
+multiline_comment|/*&n; * GCC of any recent vintage doesn&squot;t do stupid things with bcopy.&n; * EGCS-devel knows all about expanding memcpy inline, others don&squot;t.&n; *&n; * Similarly for a memset with data = 0.&n; */
 DECL|macro|__HAVE_ARCH_MEMCPY
 mdefine_line|#define __HAVE_ARCH_MEMCPY
 multiline_comment|/* For backward compatibility with modules.  Unused otherwise.  */
@@ -22,7 +22,7 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 8
+macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91
 DECL|macro|memcpy
 mdefine_line|#define memcpy __builtin_memcpy
 macro_line|#endif
@@ -57,7 +57,7 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 8
+macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91
 DECL|macro|memset
 mdefine_line|#define memset(s, c, n)&t;&t;&t;&t;&t;&t;&t;    &bslash;&n;(__builtin_constant_p(c)&t;&t;&t;&t;&t;&t;    &bslash;&n; ? (__builtin_constant_p(n) &amp;&amp; (c) == 0&t;&t;&t;&t;&t;    &bslash;&n;    ? __builtin_memset((s),0,(n)) &t;&t;&t;&t;&t;    &bslash;&n;    : __constant_c_memset((s),0x0101010101010101UL*(unsigned char)(c),(n))) &bslash;&n; : __memset((s),(c),(n)))
 macro_line|#else

@@ -9555,7 +9555,7 @@ id|brdp-&gt;ioaddr2
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Everything looks OK, so lets go ahead and probe for the hardware.&n; */
+multiline_comment|/*&n; *&t;Everything looks OK, so let&squot;s go ahead and probe for the hardware.&n; */
 id|brdp-&gt;clk
 op_assign
 id|CD1400_CLK
@@ -11179,7 +11179,7 @@ id|irq
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; *&t;We have all resources from the board, so lets setup the actual&n; *&t;board structure now.&n; */
+multiline_comment|/*&n; *&t;We have all resources from the board, so let&squot;s setup the actual&n; *&t;board structure now.&n; */
 r_switch
 c_cond
 (paren

@@ -3924,9 +3924,9 @@ DECL|macro|TWIN_CHANNEL
 mdefine_line|#define&t;TWIN_CHANNEL    &t;0x4
 DECL|macro|TARGET_MODE
 mdefine_line|#define&t;TARGET_MODE     &t;0x2
-DECL|struct|patch
+DECL|struct|sequencer_patch
 r_struct
-id|patch
+id|sequencer_patch
 (brace
 DECL|member|options
 r_int
@@ -3944,9 +3944,9 @@ DECL|member|end
 r_int
 id|end
 suffix:semicolon
-DECL|variable|patches
+DECL|variable|sequencer_patches
 )brace
-id|patches
+id|sequencer_patches
 (braket
 )braket
 op_assign

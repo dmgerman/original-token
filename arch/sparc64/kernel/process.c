@@ -454,10 +454,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|8000
+l_int|8
 )paren
 suffix:semicolon
 id|cli
@@ -508,10 +508,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|8000
+l_int|8
 )paren
 suffix:semicolon
 id|cli

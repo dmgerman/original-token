@@ -19508,10 +19508,10 @@ op_lshift
 id|index
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000L
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -19613,10 +19613,10 @@ comma
 id|CyCHIP_RESET
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000L
+l_int|1
 )paren
 suffix:semicolon
 r_if

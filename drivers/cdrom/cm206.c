@@ -409,10 +409,10 @@ OG
 l_int|0
 )paren
 (brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* one millisec delay */
@@ -461,10 +461,10 @@ OG
 l_int|0
 )paren
 (brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 op_decrement
@@ -5287,10 +5287,10 @@ comma
 id|r_data_control
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* 750 musec minimum */
@@ -6032,10 +6032,10 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Now, the problem here is that reset_cm260 can generate an&n;     interrupt. It seems that this can cause a kernel oops some time&n;     later. So we wait a while and `service&squot; this interrupt. */
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 id|outw

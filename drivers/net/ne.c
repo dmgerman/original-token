@@ -1,5 +1,5 @@
 multiline_comment|/* ne.c: A general non-shared-memory NS8390 ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;&n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;        Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with many programmed-I/O 8390-based ethernet&n;    boards.  Currently it supports the NE1000, NE2000, many clones,&n;    and some Cabletron products.&n;&n;    Changelog:&n;&n;    Paul Gortmaker&t;: use ENISR_RDC to monitor Tx PIO uploads, made&n;&t;&t;&t;  sanity checks and bad clone support optional.&n;    Paul Gortmaker&t;: new reset code, reset card after probe at boot.&n;    Paul Gortmaker&t;: multiple card support for module users.&n;    Paul Gortmaker&t;: Support for PCI ne2k clones, similar to lance.c&n;    Paul Gortmaker&t;: Allow users with bad cards to avoid full probe.&n;    Paul Gortmaker&t;: PCI probe changes, more PCI cards supported.&n;&n;*/
+multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;&n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;        Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with many programmed-I/O 8390-based ethernet&n;    boards.  Currently it supports the NE1000, NE2000, many clones,&n;    and some Cabletron products.&n;&n;    Changelog:&n;&n;    Paul Gortmaker&t;: use ENISR_RDC to monitor Tx PIO uploads, made&n;&t;&t;&t;  sanity checks and bad clone support optional.&n;    Paul Gortmaker&t;: new reset code, reset card after probe at boot.&n;    Paul Gortmaker&t;: multiple card support for module users.&n;    Paul Gortmaker&t;: Support for PCI ne2k clones, similar to lance.c&n;    Paul Gortmaker&t;: Allow users with bad cards to avoid full probe.&n;    Paul Gortmaker&t;: PCI probe changes, more PCI cards supported.&n;    rjohnson@analogic.com : Changed init order so an interrupt will only&n;    occur after memory is allocated for dev-&gt;priv. Deallocated memory&n;    last in cleanup_modue()&n;&n;*/
 multiline_comment|/* Routines for the NatSemi-based designs (NE[12]000). */
 DECL|variable|version
 r_static
@@ -1826,10 +1826,10 @@ id|ioaddr
 )paren
 suffix:semicolon
 multiline_comment|/* Trigger it... */
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|10000
+l_int|10
 )paren
 suffix:semicolon
 multiline_comment|/* wait 10ms for interrupt to propagate */
@@ -1898,6 +1898,27 @@ r_return
 id|EAGAIN
 suffix:semicolon
 )brace
+multiline_comment|/* Allocate dev-&gt;priv and fill in 8390 specific dev fields. */
+r_if
+c_cond
+(paren
+id|ethdev_init
+c_func
+(paren
+id|dev
+)paren
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot; unable to get memory for dev-&gt;priv.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 multiline_comment|/* Snarf the interrupt now.  There&squot;s no point in waiting since we cannot&n;       share and the board will usually be enabled. */
 (brace
 r_int
@@ -1937,6 +1958,12 @@ comma
 id|irqval
 )paren
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|dev-&gt;priv
+)paren
+suffix:semicolon
 r_return
 id|EAGAIN
 suffix:semicolon
@@ -1946,35 +1973,6 @@ id|dev-&gt;base_addr
 op_assign
 id|ioaddr
 suffix:semicolon
-multiline_comment|/* Allocate dev-&gt;priv and fill in 8390 specific dev fields. */
-r_if
-c_cond
-(paren
-id|ethdev_init
-c_func
-(paren
-id|dev
-)paren
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot; unable to get memory for dev-&gt;priv.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|free_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-id|dev
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
 id|request_region
 c_func
 (paren
@@ -3603,22 +3601,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|unregister_netdev
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|dev-&gt;priv
-)paren
-suffix:semicolon
-id|dev-&gt;priv
-op_assign
-l_int|NULL
-suffix:semicolon
 id|free_irq
 c_func
 (paren
@@ -3634,6 +3616,22 @@ id|dev-&gt;base_addr
 comma
 id|NE_IO_EXTENT
 )paren
+suffix:semicolon
+id|unregister_netdev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|dev-&gt;priv
+)paren
+suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 )brace

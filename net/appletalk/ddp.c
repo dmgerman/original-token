@@ -633,7 +633,7 @@ id|atrtr_default
 suffix:semicolon
 multiline_comment|/* For probing devices or in a routerless network */
 multiline_comment|/*&n; * Appletalk interface control&n; */
-multiline_comment|/*&n; * Drop a device. Doesn&squot;t drop any of its routes - that is the the callers&n; * problem. Called when we down the interface or delete the address.&n; */
+multiline_comment|/*&n; * Drop a device. Doesn&squot;t drop any of its routes - that is the caller&squot;s&n; * problem. Called when we down the interface or delete the address.&n; */
 DECL|function|atif_drop_device
 r_static
 r_void

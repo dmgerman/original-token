@@ -894,10 +894,10 @@ id|CONTROL_ES0
 op_or
 id|CONTROL_ACK
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|10000
+l_int|10
 )paren
 suffix:semicolon
 r_return

@@ -263,10 +263,10 @@ c_func
 id|q
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 id|schedule
@@ -952,10 +952,10 @@ id|lastreg
 op_assign
 id|reg
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace

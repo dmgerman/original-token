@@ -633,7 +633,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*&n;   ** Miscellaneous defines...&n; */
 DECL|macro|INIT_EWRK3
-mdefine_line|#define INIT_EWRK3 {&bslash;&n;    outb(EEPROM_INIT, EWRK3_IOPR);&bslash;&n;    udelay(1000);&bslash;&n;}
+mdefine_line|#define INIT_EWRK3 {&bslash;&n;    outb(EEPROM_INIT, EWRK3_IOPR);&bslash;&n;    mdelay(1);&bslash;&n;}
 "&f;"
 DECL|function|__initfunc
 id|__initfunc
@@ -4652,7 +4652,7 @@ id|DISABLE_IRQs
 suffix:semicolon
 id|STOP_EWRK3
 suffix:semicolon
-multiline_comment|/*&n;&t;   ** Clean out the TX and RX queues here (note that one entry&n;&t;   ** may get added to either the TXD or RX queues if the the TX or RX&n;&t;   ** just starts processing a packet before the STOP_EWRK3 command&n;&t;   ** is received. This will be flushed in the ewrk3_open() call).&n;&t; */
+multiline_comment|/*&n;&t;   ** Clean out the TX and RX queues here (note that one entry&n;&t;   ** may get added to either the TXD or RX queues if the TX or RX&n;&t;   ** just starts processing a packet before the STOP_EWRK3 command&n;&t;   ** is received. This will be flushed in the ewrk3_open() call).&n;&t; */
 r_while
 c_loop
 (paren

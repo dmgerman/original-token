@@ -81,7 +81,7 @@ r_return
 id|res
 suffix:semicolon
 )brace
-multiline_comment|/* How many bogo mips in the entire machine&n;Dont worry about float because when it gets this big, its irrelevant */
+multiline_comment|/* How many BogoMIPS in the entire machine&n;Don&squot;t worry about float because when it gets this big, it&squot;s irrelevant */
 DECL|function|mpp_agg_bogomips
 r_int
 id|mpp_agg_bogomips

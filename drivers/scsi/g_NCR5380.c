@@ -2225,7 +2225,7 @@ macro_line|#endif
 id|PRINTP
 c_func
 (paren
-l_string|&quot;Using %s mapping at %s 0x%x, &quot;
+l_string|&quot;Using %s mapping at %s 0x%lx, &quot;
 id|ANDP
 id|STRVAL
 c_func

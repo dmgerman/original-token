@@ -2761,7 +2761,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#ifndef MODULE
-multiline_comment|/* ldiscs[] is not available in a MODULE&n;** worth noting that while I&squot;m not sure what this hunk of code is supposed&n;** to do, it is not present in the serial.c driver.  Hmmm.  If you know,&n;** please send me a note.  brian@ilinx.com&n;** Dont know either what this is supposed to do clameter@waterf.org.&n;*/
+multiline_comment|/* ldiscs[] is not available in a MODULE&n;** worth noting that while I&squot;m not sure what this hunk of code is supposed&n;** to do, it is not present in the serial.c driver.  Hmmm.  If you know,&n;** please send me a note.  brian@ilinx.com&n;** Don&squot;t know either what this is supposed to do clameter@waterf.org.&n;*/
 r_if
 c_cond
 (paren

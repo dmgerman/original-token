@@ -324,21 +324,18 @@ r_int
 id|us
 )paren
 (brace
-r_for
-c_loop
+r_if
+c_cond
 (paren
-suffix:semicolon
 id|us
-OG
-l_int|1000
-suffix:semicolon
-id|us
-op_sub_assign
+op_div
 l_int|1000
 )paren
-id|udelay
+id|mdelay
 c_func
 (paren
+id|us
+op_div
 l_int|1000
 )paren
 suffix:semicolon
@@ -346,11 +343,15 @@ r_if
 c_cond
 (paren
 id|us
+op_mod
+l_int|1000
 )paren
 id|udelay
 c_func
 (paren
 id|us
+op_mod
+l_int|1000
 )paren
 suffix:semicolon
 )brace
@@ -2673,7 +2674,7 @@ DECL|macro|NCB_SCRIPT_PHYS
 mdefine_line|#define NCB_SCRIPT_PHYS(np,lbl)&t; (np-&gt;p_script  + offsetof (struct script, lbl))
 DECL|macro|NCB_SCRIPTH_PHYS
 mdefine_line|#define NCB_SCRIPTH_PHYS(np,lbl) (np-&gt;p_scripth + offsetof (struct scripth, lbl))
-multiline_comment|/*==========================================================&n;**&n;**&n;**      Script for NCR-Processor.&n;**&n;**&t;Use ncr_script_fill() to create the variable parts.&n;**&t;Use ncr_script_copy_and_bind() to make a copy and&n;**&t;bind to physical addresses.&n;**&n;**&n;**==========================================================&n;**&n;**&t;We have to know the offsets of all labels before&n;**&t;we reach them (for forward jumps).&n;**&t;Therefore we declare a struct here.&n;**&t;If you make changes inside the script,&n;**&t;DONT FORGET TO CHANGE THE LENGTHS HERE!&n;**&n;**----------------------------------------------------------&n;*/
+multiline_comment|/*==========================================================&n;**&n;**&n;**      Script for NCR-Processor.&n;**&n;**&t;Use ncr_script_fill() to create the variable parts.&n;**&t;Use ncr_script_copy_and_bind() to make a copy and&n;**&t;bind to physical addresses.&n;**&n;**&n;**==========================================================&n;**&n;**&t;We have to know the offsets of all labels before&n;**&t;we reach them (for forward jumps).&n;**&t;Therefore we declare a struct here.&n;**&t;If you make changes inside the script,&n;**&t;DON&squot;T FORGET TO CHANGE THE LENGTHS HERE!&n;**&n;**----------------------------------------------------------&n;*/
 multiline_comment|/*&n;**&t;Script fragments which are loaded into the on-board RAM &n;**&t;of 825A, 875 and 895 chips.&n;*/
 DECL|struct|script
 r_struct
@@ -8247,7 +8248,7 @@ suffix:semicolon
 r_case
 l_int|0x8
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;**&t;JUMP / CALL&n;&t;&t;&t;**&t;dont&squot;t relocate if relative :-)&n;&t;&t;&t;*/
+multiline_comment|/*&n;&t;&t;&t;**&t;JUMP / CALL&n;&t;&t;&t;**&t;don&squot;t relocate if relative :-)&n;&t;&t;&t;*/
 r_if
 c_cond
 (paren
@@ -16860,7 +16861,7 @@ id|div
 op_div
 id|clk
 suffix:semicolon
-multiline_comment|/*&n;&t;**&t;Why not to try the immediate lower divisor and to choose &n;&t;**&t;the one that allows the fastest output speed ?&n;&t;**&t;We dont want input speed too much greater than output speed.&n;&t;*/
+multiline_comment|/*&n;&t;**&t;Why not to try the immediate lower divisor and to choose &n;&t;**&t;the one that allows the fastest output speed ?&n;&t;**&t;We don&squot;t want input speed too much greater than output speed.&n;&t;*/
 r_if
 c_cond
 (paren

@@ -653,7 +653,7 @@ id|crtc_h_sync_strt_wid
 l_int|3
 )braket
 suffix:semicolon
-multiline_comment|/* depth dependant */
+multiline_comment|/* depth dependent */
 DECL|member|crtc_gen_cntl
 r_int
 id|crtc_gen_cntl
@@ -672,7 +672,7 @@ DECL|member|crtc_h_tot_disp
 r_int
 id|crtc_h_tot_disp
 suffix:semicolon
-multiline_comment|/* mode dependant */
+multiline_comment|/* mode dependent */
 DECL|member|crtc_v_tot_disp
 r_int
 id|crtc_v_tot_disp

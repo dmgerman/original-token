@@ -4075,7 +4075,7 @@ DECL|macro|USAGE
 mdefine_line|#define USAGE access_count[target]
 DECL|macro|CAPACITY
 mdefine_line|#define CAPACITY (hd_info[target].head*hd_info[target].sect*hd_info[target].cyl)
-multiline_comment|/* We assume that the the bios parameters do not change, so the disk capacity&n;   will not change */
+multiline_comment|/* We assume that the BIOS parameters do not change, so the disk capacity&n;   will not change */
 DECL|macro|MAYBE_REINIT
 macro_line|#undef MAYBE_REINIT
 DECL|macro|GENDISK_STRUCT

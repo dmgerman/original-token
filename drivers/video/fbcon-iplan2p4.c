@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/video/iplan2p4.c -- Low level frame buffer operations for&n; *&t;&t;&t;&t;      interleaved bitplanes &#xfffd; la Atari (4&n; *&t;&t;&t;&t;      planes, 2 bytes interleave)&n; *&n; *&t;Created 5 Apr 1997 by Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+multiline_comment|/*&n; *  linux/drivers/video/fbcon-iplan2p4.c -- Low level frame buffer operations&n; *&t;&t;&t;&t;   for interleaved bitplanes &#xfffd; la Atari (4&n; *&t;&t;&t;&t;   planes, 2 bytes interleave)&n; *&n; *&t;Created 5 Apr 1997 by Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
@@ -99,7 +99,7 @@ l_int|0xff
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/* Sets the bytes in the visible column at d, height h, to the value&n; * val for a 4 plane screen. The the bis of the color in &squot;color&squot; are&n; * moved (8 times) to the respective bytes. This means:&n; *&n; * for(h times; d += bpr)&n; *   *d     = (color &amp; 1) ? 0xff : 0;&n; *   *(d+2) = (color &amp; 2) ? 0xff : 0;&n; *   *(d+4) = (color &amp; 4) ? 0xff : 0;&n; *   *(d+6) = (color &amp; 8) ? 0xff : 0;&n; */
+multiline_comment|/* Sets the bytes in the visible column at d, height h, to the value&n; * val for a 4 plane screen. The bits of the color in &squot;color&squot; are&n; * moved (8 times) to the respective bytes. This means:&n; *&n; * for(h times; d += bpr)&n; *   *d     = (color &amp; 1) ? 0xff : 0;&n; *   *(d+2) = (color &amp; 2) ? 0xff : 0;&n; *   *(d+4) = (color &amp; 4) ? 0xff : 0;&n; *   *(d+6) = (color &amp; 8) ? 0xff : 0;&n; */
 DECL|function|memclear_4p_col
 r_static
 id|__inline__

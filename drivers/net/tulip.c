@@ -79,6 +79,7 @@ macro_line|#ifdef __alpha__
 DECL|variable|rx_copybreak
 r_static
 r_const
+r_int
 id|rx_copybreak
 op_assign
 l_int|1518
@@ -87,6 +88,7 @@ macro_line|#else
 DECL|variable|rx_copybreak
 r_static
 r_const
+r_int
 id|rx_copybreak
 op_assign
 l_int|100
@@ -2077,6 +2079,7 @@ suffix:semicolon
 multiline_comment|/* Clear the missed-packet counter. */
 (paren
 r_volatile
+r_int
 )paren
 id|inl
 c_func
@@ -3359,6 +3362,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_static
+r_int
 id|controller_index
 op_assign
 l_int|0

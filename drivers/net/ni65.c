@@ -2188,10 +2188,10 @@ id|i
 op_increment
 )paren
 (brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|4000
+l_int|4
 )paren
 suffix:semicolon
 r_if

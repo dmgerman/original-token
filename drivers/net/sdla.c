@@ -1861,6 +1861,7 @@ op_assign
 (paren
 (paren
 r_volatile
+r_int
 )paren
 (paren
 id|cmd_buf-&gt;opp_flag

@@ -989,7 +989,7 @@ r_case
 l_int|0
 suffix:colon
 multiline_comment|/* old uname */
-multiline_comment|/* Lets cheat */
+multiline_comment|/* Let&squot;s cheat */
 id|set_utsfield
 c_func
 (paren

@@ -137,6 +137,7 @@ op_star
 id|buf
 comma
 r_const
+r_int
 id|start_page
 )paren
 suffix:semicolon
@@ -1185,12 +1186,10 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
 l_int|2
-op_star
-l_int|1000
 )paren
 suffix:semicolon
 id|ei_status.txing

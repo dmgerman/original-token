@@ -4316,7 +4316,7 @@ id|do_sync_known
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* We&squot;ve talked to this guy before,&n;&t;&t; * but never negotiated.. lets try,&n;&t;&t; * need to attempt WIDE first, before&n;&t;&t; * sync nego, as per SCSI 2 standard.&n;&t;&t; */
+multiline_comment|/* We&squot;ve talked to this guy before,&n;&t;&t; * but never negotiated.  Let&squot;s try,&n;&t;&t; * need to attempt WIDE first, before&n;&t;&t; * sync nego, as per SCSI 2 standard.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -12448,7 +12448,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Things look good, lets see what we got. */
+multiline_comment|/* Things look good; let&squot;s see what we got. */
 r_if
 c_cond
 (paren

@@ -932,10 +932,10 @@ c_func
 r_void
 )paren
 (brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -7496,10 +7496,10 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace

@@ -57,7 +57,7 @@ macro_line|#include &quot;sd.h&quot;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#ifdef NO_IO_SPACE
-multiline_comment|/*&n; * The following make the definitions in 53c7xx.h (write8, etc) smaller,&n; * we don&squot;t have seperate i/o space anyway.&n; */
+multiline_comment|/*&n; * The following make the definitions in 53c7xx.h (write8, etc) smaller,&n; * we don&squot;t have separate i/o space anyway.&n; */
 DECL|macro|inb
 macro_line|#undef inb
 DECL|macro|outb
@@ -8392,7 +8392,7 @@ suffix:semicolon
 r_case
 id|A_int_norm_emulateintfly
 suffix:colon
-multiline_comment|/* I&squot;m not sure this is the right ! thing to do, but it works&n;&t; * with the A4000T when copyback is disabled, and also the&n;&t; * WarpEngine with copyback enabled, so it looks as though&n;&t; * it does work to some extent.&n;&t; *&n;&t; * RGH:  I don&squot;t really like it - You get an interrupt which&n;&t; * calls NCR53c7x0_intr(), which calls this function (via&n;&t; * intr_dma()), which calls NCR53c7x0_intr().....&n;&t; * Anyway lets see how it goes for now.&n;&t; */
+multiline_comment|/* I&squot;m not sure this is the right ! thing to do, but it works&n;&t; * with the A4000T when copyback is disabled, and also the&n;&t; * WarpEngine with copyback enabled, so it looks as though&n;&t; * it does work to some extent.&n;&t; *&n;&t; * RGH:  I don&squot;t really like it - You get an interrupt which&n;&t; * calls NCR53c7x0_intr(), which calls this function (via&n;&t; * intr_dma()), which calls NCR53c7x0_intr().....&n;&t; * Anyway let&squot;s see how it goes for now.&n;&t; */
 id|hostdata-&gt;emulated_intfly
 op_assign
 l_int|1
@@ -20351,7 +20351,7 @@ id|NCR53c7x0_read8
 id|SBCL_REG
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * For the 53c710, the following will report value 0 for SCNTL3&n;&t; * and STEST0 - we dont have these registers.&n;&t; */
+multiline_comment|/*&n;&t; * For the 53c710, the following will report value 0 for SCNTL3&n;&t; * and STEST0 - we don&squot;t have these registers.&n;&t; */
 id|printk
 (paren
 l_string|&quot;scsi%d : DCMD|DBC=0x%x, DNAD=0x%x (virt 0x%p)&bslash;n&quot;

@@ -1412,7 +1412,7 @@ id|d-&gt;refs
 op_assign
 id|dep
 suffix:semicolon
-multiline_comment|/* Being referenced by a dependant module counts as a &n;&t;&t;   use as far as kmod is concerned.  */
+multiline_comment|/* Being referenced by a dependent module counts as a &n;&t;&t;   use as far as kmod is concerned.  */
 id|d-&gt;flags
 op_or_assign
 id|MOD_USED_ONCE

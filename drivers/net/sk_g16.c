@@ -4163,10 +4163,10 @@ id|SK_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* Reset active */
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|5000
+l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* Delay min 5ms */

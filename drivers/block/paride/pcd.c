@@ -2049,10 +2049,10 @@ comma
 l_string|&quot;Request sense&quot;
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -2195,10 +2195,10 @@ comma
 id|fun
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -3836,10 +3836,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 id|ps_set_intr
@@ -3976,10 +3976,10 @@ OL
 id|PCD_RETRIES
 )paren
 (brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 id|pcd_retries

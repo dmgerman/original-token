@@ -3065,7 +3065,7 @@ multiline_comment|/*&n;** Miscellaneous defines...&n;*/
 DECL|macro|RESET_DE4X5
 mdefine_line|#define RESET_DE4X5 {&bslash;&n;    int i;&bslash;&n;    i=inl(DE4X5_BMR);&bslash;&n;    de4x5_ms_delay(1);&bslash;&n;    outl(i | BMR_SWR, DE4X5_BMR);&bslash;&n;    de4x5_ms_delay(1);&bslash;&n;    outl(i, DE4X5_BMR);&bslash;&n;    de4x5_ms_delay(1);&bslash;&n;    for (i=0;i&lt;5;i++) {inl(DE4X5_BMR); de4x5_ms_delay(1);}&bslash;&n;    de4x5_ms_delay(1);&bslash;&n;}
 DECL|macro|PHY_HARD_RESET
-mdefine_line|#define PHY_HARD_RESET {&bslash;&n;    outl(GEP_HRST, DE4X5_GEP);           /* Hard RESET the PHY dev. */&bslash;&n;    udelay(1000);                        /* Assert for 1ms */&bslash;&n;    outl(0x00, DE4X5_GEP);&bslash;&n;    udelay(2000);                        /* Wait for 2ms */&bslash;&n;}
+mdefine_line|#define PHY_HARD_RESET {&bslash;&n;    outl(GEP_HRST, DE4X5_GEP);           /* Hard RESET the PHY dev. */&bslash;&n;    mdelay(1);                        /* Assert for 1ms */&bslash;&n;    outl(0x00, DE4X5_GEP);&bslash;&n;    mdelay(2);                        /* Wait for 2ms */&bslash;&n;}
 "&f;"
 multiline_comment|/*&n;** Autoprobing in modules is allowed here. See the top of the file for&n;** more info.&n;*/
 DECL|function|__initfunc
@@ -4920,10 +4920,10 @@ op_increment
 )paren
 (brace
 multiline_comment|/* Upto 500ms delay */
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -20328,10 +20328,10 @@ comma
 id|dev
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|2000
+l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* 2ms per action */

@@ -4562,11 +4562,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|sock_init
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#if defined(CONFIG_SYSVIPC)
 id|ipc_init
 c_func
@@ -4599,6 +4594,11 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|sock_init
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_SYSCTL
 id|sysctl_init
 c_func

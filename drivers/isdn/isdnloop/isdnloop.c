@@ -3940,7 +3940,7 @@ multiline_comment|/* Fall through */
 r_case
 l_int|3
 suffix:colon
-multiline_comment|/* si1 does not match, dont alert but start timer */
+multiline_comment|/* si1 does not match, don&squot;t alert but start timer */
 id|isdnloop_start_ctimer
 c_func
 (paren

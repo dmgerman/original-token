@@ -14,7 +14,7 @@ macro_line|#include &lt;linux/console_struct.h&gt;
 macro_line|#include &quot;fb.h&quot;
 macro_line|#include &quot;cg_common.h&quot;
 multiline_comment|/* Offset of interesting structures in the OBIO space */
-multiline_comment|/*&n; * Brooktree is the video dac and is funny to program on the cg6.&n; * (it&squot;s even funnier on the cg3)&n; * The FBC could be the the frame buffer control&n; * The FHC could is the frame buffer hardware control.&n; */
+multiline_comment|/*&n; * Brooktree is the video dac and is funny to program on the cg6.&n; * (it&squot;s even funnier on the cg3)&n; * The FBC could be the frame buffer control&n; * The FHC could is the frame buffer hardware control.&n; */
 DECL|macro|CG6_ROM_OFFSET
 mdefine_line|#define CG6_ROM_OFFSET       0x0
 DECL|macro|CG6_BROOKTREE_OFFSET

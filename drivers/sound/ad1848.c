@@ -6948,7 +6948,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * The indirect register I12 has some read only bits. Lets&n;&t; * try to change them.&n;&t; */
+multiline_comment|/*&n;&t; * The indirect register I12 has some read only bits. Let&squot;s&n;&t; * try to change them.&n;&t; */
 id|DDB
 c_func
 (paren

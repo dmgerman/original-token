@@ -87,7 +87,7 @@ id|pc
 )braket
 suffix:semicolon
 r_else
-multiline_comment|/*&n;&t;&t; * Dont ignore out-of-bounds PC values silently,&n;&t;&t; * put them into the last histogram slot, so if&n;&t;&t; * present, they will show up as a sharp peak.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Don&squot;t ignore out-of-bounds PC values silently,&n;&t;&t; * put them into the last histogram slot, so if&n;&t;&t; * present, they will show up as a sharp peak.&n;&t;&t; */
 op_increment
 id|prof_buffer
 (braket

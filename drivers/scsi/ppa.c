@@ -3309,10 +3309,10 @@ comma
 l_int|0x0c
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Allow devices to settle down */
@@ -3323,10 +3323,10 @@ c_func
 id|host_no
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Another delay to allow devices to settle */
@@ -4802,7 +4802,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Apparently the the disk-&gt;capacity attribute is off by 1 sector &n; * for all disk drives.  We add the one here, but it should really&n; * be done in sd.c.  Even if it gets fixed there, this will still&n; * work.&n; */
+multiline_comment|/*&n; * Apparently the disk-&gt;capacity attribute is off by 1 sector &n; * for all disk drives.  We add the one here, but it should really&n; * be done in sd.c.  Even if it gets fixed there, this will still&n; * work.&n; */
 DECL|function|ppa_biosparam
 r_int
 id|ppa_biosparam
@@ -5063,10 +5063,10 @@ comma
 l_int|0xc
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* delay for devices to settle down */
@@ -5076,10 +5076,10 @@ c_func
 id|host_no
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Additional delay to allow devices to settle down */
@@ -5368,10 +5368,10 @@ comma
 l_int|0x0c
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 id|ppa_disconnect
@@ -5380,10 +5380,10 @@ c_func
 id|host_no
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -5526,10 +5526,10 @@ comma
 l_int|0x0c
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 id|ppa_disconnect
@@ -5538,10 +5538,10 @@ c_func
 id|host_no
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 r_if

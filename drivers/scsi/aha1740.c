@@ -193,7 +193,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;aha174x at IO:%x, IRQ %d, SLOT %d.&bslash;n&quot;
+l_string|&quot;aha174x at IO:%lx, IRQ %d, SLOT %d.&bslash;n&quot;
 l_string|&quot;Extended translation %sabled.&bslash;n&quot;
 comma
 id|shpnt-&gt;io_port

@@ -29639,6 +29639,7 @@ id|cmd_type
 op_eq
 id|READ_M2
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -29667,6 +29668,7 @@ comma
 id|CD_XA_HEAD
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -29702,6 +29704,7 @@ id|cmd_type
 op_eq
 id|READ_M2
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -29730,6 +29733,7 @@ comma
 id|CD_XA_TAIL
 )paren
 suffix:semicolon
+)brace
 id|D_S
 (braket
 id|d

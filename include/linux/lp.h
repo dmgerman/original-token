@@ -196,6 +196,22 @@ r_int
 r_int
 id|last_error
 suffix:semicolon
+DECL|member|irq_detected
+r_volatile
+r_int
+r_int
+id|irq_detected
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|irq_missed
+r_volatile
+r_int
+r_int
+id|irq_missed
+suffix:colon
+l_int|1
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * The following constants describe the various signals of the printer port&n; * hardware.  Note that the hardware inverts some signals and that some&n; * signals are active low.  An example is LP_STROBE, which must be programmed&n; * with 1 for being active and 0 for being inactive, because the strobe signal&n; * gets inverted, but it is also active low.&n; */

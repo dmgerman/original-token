@@ -5772,7 +5772,7 @@ r_goto
 id|do_sync_known
 suffix:semicolon
 )brace
-multiline_comment|/* We&squot;ve talked to this guy before,&n;&t;&t; * but never negotiated.. lets try,&n;&t;&t; * need to attempt WIDE first, before&n;&t;&t; * sync nego, as per SCSI 2 standard.&n;&t;&t; */
+multiline_comment|/* We&squot;ve talked to this guy before,&n;&t;&t; * but never negotiated.  Let&squot;s try,&n;&t;&t; * need to attempt WIDE first, before&n;&t;&t; * sync nego, as per SCSI 2 standard.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -12786,7 +12786,7 @@ id|SDptr-&gt;sync
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* so we dont negotiate again */
+multiline_comment|/* so we don&squot;t negotiate again */
 multiline_comment|/* Run the command again, this time though we&n;&t;&t;&t; * won&squot;t try to negotiate for synchronous transfers.&n;&t;&t;&t; *&n;&t;&t;&t; * XXX I&squot;d like to do something like send an&n;&t;&t;&t; * XXX INITIATOR_ERROR or ABORT message to the&n;&t;&t;&t; * XXX target to tell it, &quot;Sorry I confused you,&n;&t;&t;&t; * XXX please come back and I will be nicer next&n;&t;&t;&t; * XXX time&quot;.  But that requires having the target&n;&t;&t;&t; * XXX on the bus, and it has dropped BSY on us.&n;&t;&t;&t; */
 id|esp-&gt;current_SC
 op_assign
@@ -13244,7 +13244,7 @@ id|ESPLOG
 c_func
 (paren
 (paren
-l_string|&quot;esp%d: msg %02x which we dont know about&bslash;n&quot;
+l_string|&quot;esp%d: msg %02x which we don&squot;t know about&bslash;n&quot;
 comma
 id|esp-&gt;esp_id
 comma
@@ -14388,7 +14388,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Things look good, lets see what we got. */
+multiline_comment|/* Things look good; let&squot;s see what we got. */
 r_if
 c_cond
 (paren

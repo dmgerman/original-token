@@ -3240,7 +3240,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   Let me to blame a bit.&n;   1. TTY module calls this funstion on soft interrupt.&n;   2. TTY module calls this function WITH MASKED INTERRUPTS!&n;   3. TTY module does not notify us about line discipline&n;      shutdown,&n;&n;   Seems, now it is clean. The solution is to consider netdevice and&n;   line discipline sides as two independant threads.&n;&n;   By-product (not desired): sl? does not feel hangups and remains open.&n;   It is supposed, that user level program (dip, diald, slattach...)&n;   will catch SIGHUP and make the rest of work. &n;&n;   I see no way to make more with current tty code. --ANK&n; */
+multiline_comment|/*&n;   Let me to blame a bit.&n;   1. TTY module calls this funstion on soft interrupt.&n;   2. TTY module calls this function WITH MASKED INTERRUPTS!&n;   3. TTY module does not notify us about line discipline&n;      shutdown,&n;&n;   Seems, now it is clean. The solution is to consider netdevice and&n;   line discipline sides as two independent threads.&n;&n;   By-product (not desired): sl? does not feel hangups and remains open.&n;   It is supposed, that user level program (dip, diald, slattach...)&n;   will catch SIGHUP and make the rest of work. &n;&n;   I see no way to make more with current tty code. --ANK&n; */
 multiline_comment|/*&n; * Close down a SLIP channel.&n; * This means flushing out any pending queues, and then restoring the&n; * TTY line discipline to what it was before it got hooked to SLIP&n; * (which usually is TTY again).&n; */
 r_static
 r_void

@@ -227,6 +227,17 @@ r_int
 id|ipx_net_number
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ipx_remove_socket
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+suffix:semicolon
 macro_line|#endif /* def __KERNEL__ */
 macro_line|#endif /* def _IPX_H_ */
 eof

@@ -135,7 +135,7 @@ mdefine_line|#define IP_FW_F_WILDIF&t;0x0010  /* Need only match start of interf
 DECL|macro|IP_FW_F_NETLINK
 mdefine_line|#define IP_FW_F_NETLINK 0x0020  /* Redirect to netlink: 2.1.x only */
 DECL|macro|IP_FW_F_MASK
-mdefine_line|#define IP_FW_F_MASK&t;0x002F&t;/* All possible flag bits mask   */
+mdefine_line|#define IP_FW_F_MASK&t;0x003F&t;/* All possible flag bits mask   */
 multiline_comment|/* Values for &quot;fw_invflg&quot; field. */
 DECL|macro|IP_FW_INV_SRCIP
 mdefine_line|#define IP_FW_INV_SRCIP 0x0001  /* Invert the sense of fw_src. */

@@ -153,6 +153,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+(paren
 id|dev
 op_assign
 id|pci_find_device
@@ -163,6 +164,7 @@ comma
 id|PCI_DEVICE_ID_AVM_B1
 comma
 id|dev
+)paren
 )paren
 )paren
 (brace

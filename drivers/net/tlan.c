@@ -3608,7 +3608,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* TLan_HandleStatOverflow */
-multiline_comment|/***************************************************************&n;&t; *&t;TLan_HandleRxEOF&n;&t; *&n;&t; *&t;Returns:&n;&t; *&t;&t;1&n;&t; *&t;Parms:&n;&t; *&t;&t;dev&t;&t;Device assigned the IRQ that was&n;&t; *&t;&t;&t;&t;raised.&n;&t; *&t;&t;host_int&t;The contents of the HOST_INT&n;&t; *&t;&t;&t;&t;port.&n;&t; *&n;&t; *&t;This function handles the Rx EOF interrupt which&n;&t; *&t;indicates a frame has been received by the adapter from&n;&t; *&t;the net and the frame has been transferred to memory.&n;&t; *&t;The function determines the bounce buffer the frame has&n;&t; *&t;been loaded into, creates a new sk_buff big enough to&n;&t; *&t;hold the frame, and sends it to protocol stack.  It&n;&t; *&t;then resets the used buffer and appends it to the end&n;&t; *&t;of the list.  If the frame was the last in the Rx&n;&t; *&t;channel (EOC), the function restarts the receive channel&n;&t; *&t;by sending an Rx Go command to the adapter.  Then it&n;&t; *&t;activates/continues the the activity LED.&n;&t; *&n;&t; **************************************************************/
+multiline_comment|/***************************************************************&n;&t; *&t;TLan_HandleRxEOF&n;&t; *&n;&t; *&t;Returns:&n;&t; *&t;&t;1&n;&t; *&t;Parms:&n;&t; *&t;&t;dev&t;&t;Device assigned the IRQ that was&n;&t; *&t;&t;&t;&t;raised.&n;&t; *&t;&t;host_int&t;The contents of the HOST_INT&n;&t; *&t;&t;&t;&t;port.&n;&t; *&n;&t; *&t;This function handles the Rx EOF interrupt which&n;&t; *&t;indicates a frame has been received by the adapter from&n;&t; *&t;the net and the frame has been transferred to memory.&n;&t; *&t;The function determines the bounce buffer the frame has&n;&t; *&t;been loaded into, creates a new sk_buff big enough to&n;&t; *&t;hold the frame, and sends it to protocol stack.  It&n;&t; *&t;then resets the used buffer and appends it to the end&n;&t; *&t;of the list.  If the frame was the last in the Rx&n;&t; *&t;channel (EOC), the function restarts the receive channel&n;&t; *&t;by sending an Rx Go command to the adapter.  Then it&n;&t; *&t;activates/continues the activity LED.&n;&t; *&n;&t; **************************************************************/
 DECL|function|TLan_HandleRxEOF
 id|u32
 id|TLan_HandleRxEOF
@@ -4894,7 +4894,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* TLan_ResetLists */
-multiline_comment|/***************************************************************&n;&t; *&t;TLan_PrintDio&n;&t; *  &n;&t; *&t;Returns:&n;&t; *&t;&t;Nothing&n;&t; *&t;Parms:&n;&t; *&t;&t;io_base&t;&t;Base IO port of the device of&n;&t; *&t;&t;&t;&t;which to print DIO registers.&n;&t; *&n;&t; *&t;This function prints out all the the internal (DIO)&n;&t; *&t;registers of a TLAN chip.&n;&t; *&n;&t; **************************************************************/
+multiline_comment|/***************************************************************&n;&t; *&t;TLan_PrintDio&n;&t; *  &n;&t; *&t;Returns:&n;&t; *&t;&t;Nothing&n;&t; *&t;Parms:&n;&t; *&t;&t;io_base&t;&t;Base IO port of the device of&n;&t; *&t;&t;&t;&t;which to print DIO registers.&n;&t; *&n;&t; *&t;This function prints out all the internal (DIO)&n;&t; *&t;registers of a TLAN chip.&n;&t; *&n;&t; **************************************************************/
 DECL|function|TLan_PrintDio
 r_void
 id|TLan_PrintDio
@@ -6822,10 +6822,10 @@ comma
 id|MII_GC_LOOPBK
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|50000
+l_int|50
 )paren
 suffix:semicolon
 id|TLan_MiiWriteReg
@@ -6896,10 +6896,10 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|500000
+l_int|500
 )paren
 suffix:semicolon
 id|TLan_MiiReadReg
@@ -7352,10 +7352,10 @@ comma
 id|MII_GC_LOOPBK
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|500000
+l_int|500
 )paren
 suffix:semicolon
 id|TLan_MiiWriteReg
@@ -7480,10 +7480,10 @@ comma
 l_int|0x1200
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|50000
+l_int|50
 )paren
 suffix:semicolon
 macro_line|#if 0

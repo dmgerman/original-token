@@ -42,7 +42,7 @@ id|ino_t
 id|ino
 suffix:semicolon
 DECL|member|dev
-id|dev_t
+id|kdev_t
 id|dev
 suffix:semicolon
 )brace
@@ -117,7 +117,7 @@ op_star
 id|lookup_inode
 c_func
 (paren
-id|dev_t
+id|kdev_t
 comma
 id|ino_t
 comma
@@ -174,7 +174,7 @@ id|ino_t
 id|ino
 suffix:semicolon
 DECL|member|dev
-id|dev_t
+id|kdev_t
 id|dev
 suffix:semicolon
 DECL|member|dentry
@@ -213,7 +213,7 @@ id|ino_t
 id|ino
 suffix:semicolon
 DECL|member|dev
-id|dev_t
+id|kdev_t
 id|dev
 suffix:semicolon
 DECL|member|name
@@ -233,7 +233,7 @@ op_star
 id|find_cached_lookup
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 id|ino_t
@@ -870,6 +870,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;add_to_path_cache: path length changed, retrying&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -885,7 +886,7 @@ op_star
 id|get_path_entry
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 id|ino_t
@@ -1034,6 +1035,7 @@ id|pe-&gt;users
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;free_path_entry: %s in use, users=%d&bslash;n&quot;
 comma
 id|pe-&gt;name
@@ -1468,7 +1470,7 @@ op_star
 id|lookup_inode
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 id|ino_t
@@ -1793,6 +1795,7 @@ id|root_ino
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;lookup_inode: looping?? (ino=%ld, path=%s)&bslash;n&quot;
 comma
 id|dirino
@@ -2544,7 +2547,7 @@ op_star
 id|find_fhe_by_ino
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 id|ino_t
@@ -2617,7 +2620,7 @@ op_star
 id|find_dentry_by_ino
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 id|ino_t
@@ -4105,6 +4108,7 @@ id|fhp-&gt;fh_dverified
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;fh_update: fh not verified!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4130,6 +4134,7 @@ id|inode
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;fh_update: %s/%s still negative!&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
@@ -4195,6 +4200,7 @@ id|dentry-&gt;d_count
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;fh_put: %s/%s has d_count 0!&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
@@ -4370,6 +4376,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;nfsd_d_validate: invalid address %lx&bslash;n&quot;
 comma
 id|dent_addr
@@ -4383,6 +4390,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;nfsd_d_validate: unaligned address %lx&bslash;n&quot;
 comma
 id|dent_addr
@@ -4398,7 +4406,7 @@ r_void
 id|nfsd_fh_flush
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -4570,6 +4578,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;nfsd_fh_free: %d fixups freed&bslash;n&quot;
 comma
 id|i
@@ -4623,6 +4632,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;nfsd_fh_free: %d paths freed&bslash;n&quot;
 comma
 id|i
@@ -4631,6 +4641,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;nfsd_fh_free: verified %d, put %d&bslash;n&quot;
 comma
 id|nfsd_nr_verified
@@ -4647,6 +4658,31 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* Sanity check */
+r_extern
+r_void
+id|__my_nfsfh_is_too_big
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+r_sizeof
+(paren
+r_struct
+id|nfs_fhbase
+)paren
+OG
+l_int|32
+)paren
+id|__my_nfsfh_is_too_big
+c_func
+(paren
+)paren
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -4696,6 +4732,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;nfsd_init: initialized fhcache, entries=%lu&bslash;n&quot;
 comma
 id|NFSD_MAXFH

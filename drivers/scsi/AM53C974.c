@@ -2650,10 +2650,10 @@ c_func
 id|instance
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|500000
+l_int|500
 )paren
 suffix:semicolon
 r_return
@@ -2859,7 +2859,7 @@ c_func
 (paren
 id|info
 comma
-l_string|&quot;AM53/79C974 PCscsi driver rev. %d.%d; host I/O address: 0x%x; irq: %d&bslash;n&quot;
+l_string|&quot;AM53/79C974 PCscsi driver rev. %d.%d; host I/O address: 0x%lx; irq: %d&bslash;n&quot;
 comma
 id|AM53C974_DRIVER_REVISION_MAJOR
 comma

@@ -8522,10 +8522,10 @@ id|i
 op_eq
 id|CONFIG_SERIAL_CONSOLE_PORT
 )paren
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|2000
+l_int|2
 )paren
 suffix:semicolon
 macro_line|#endif

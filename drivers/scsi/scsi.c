@@ -5023,10 +5023,12 @@ id|ticks_remaining
 op_ge
 l_int|0
 )paren
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000000
+l_int|1
+op_plus
+l_int|999
 op_div
 id|HZ
 )paren

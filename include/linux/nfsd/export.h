@@ -132,7 +132,7 @@ op_star
 id|ex_dentry
 suffix:semicolon
 DECL|member|ex_dev
-id|dev_t
+id|kdev_t
 id|ex_dev
 suffix:semicolon
 DECL|member|ex_ino
@@ -230,7 +230,7 @@ id|svc_client
 op_star
 id|clp
 comma
-id|dev_t
+id|kdev_t
 id|dev
 comma
 id|ino_t
@@ -245,7 +245,7 @@ r_struct
 id|svc_client
 op_star
 comma
-id|dev_t
+id|kdev_t
 comma
 id|ino_t
 comma

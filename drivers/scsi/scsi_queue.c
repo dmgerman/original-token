@@ -33,7 +33,7 @@ id|RCSid
 op_assign
 l_string|&quot;$Header: /mnt/ide/home/eric/CVSROOT/linux/drivers/scsi/scsi_queue.c,v 1.1 1997/10/21 11:16:38 eric Exp $&quot;
 suffix:semicolon
-multiline_comment|/*&n; * Lock used to prevent more than one process from frobbing the list at the&n; * same time.  FIXME(eric) - there should be seperate spinlocks for each host.&n; * This will reduce contention.&n; */
+multiline_comment|/*&n; * Lock used to prevent more than one process from frobbing the list at the&n; * same time.  FIXME(eric) - there should be separate spinlocks for each host.&n; * This will reduce contention.&n; */
 DECL|variable|scsi_mlqueue_lock
 id|spinlock_t
 id|scsi_mlqueue_lock

@@ -403,7 +403,11 @@ c_func
 (paren
 id|clp
 comma
+id|to_kdev_t
+c_func
+(paren
 id|data-&gt;gf_dev
+)paren
 comma
 id|data-&gt;gf_ino
 comma

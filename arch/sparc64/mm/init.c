@@ -4870,7 +4870,7 @@ id|pgd_t
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* The funny offsets are to make page table operations much quicker and&n;&t; * requite less state, see pgtable.h for gory details.&n;&t; * pgtable.h assumes null_pmd_table is null_pte_table - PAGE_SIZE, lets&n;&t; * check it now.&n;&t; */
+multiline_comment|/* The funny offsets are to make page table operations much quicker and&n;&t; * requite less state, see pgtable.h for gory details.&n;&t; * pgtable.h assumes null_pmd_table is null_pte_table - PAGE_SIZE, let&squot;s&n;&t; * check it now.&n;&t; */
 id|null_pte_table
 op_assign
 id|__pa

@@ -3143,7 +3143,7 @@ op_le
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; *&t;Dont copy too far&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Don&squot;t copy too far&n;&t;&t;&t; */
 r_int
 id|dt
 op_assign

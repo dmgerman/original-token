@@ -405,7 +405,7 @@ comma
 id|atag-&gt;size
 )paren
 suffix:semicolon
-multiline_comment|/* Save defaults for configuration dependand routines.  */
+multiline_comment|/* Save defaults for configuration-dependent routines.  */
 id|irq_setup
 op_assign
 id|default_irq_setup

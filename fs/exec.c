@@ -1571,6 +1571,11 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Failure ... restore the prior mm_struct.&n;&t; */
 id|fail_restore
 suffix:colon
+multiline_comment|/* The pgd belongs to the parent ... don&squot;t free it! */
+id|mm-&gt;pgd
+op_assign
+l_int|NULL
+suffix:semicolon
 id|current-&gt;mm
 op_assign
 id|old_mm

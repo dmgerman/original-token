@@ -2105,7 +2105,7 @@ suffix:semicolon
 r_case
 l_char|&squot;H&squot;
 suffix:colon
-multiline_comment|/* dont do anything, yet, just acknowledge */
+multiline_comment|/* don&squot;t do anything, yet, just acknowledge */
 id|hexToInt
 c_func
 (paren

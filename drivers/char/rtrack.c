@@ -449,10 +449,10 @@ id|myport
 suffix:semicolon
 multiline_comment|/* XXX - get rid of this once setvol is implemented properly - XXX */
 multiline_comment|/* these insist on turning the thing on.  not sure I approve... */
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 id|outb
@@ -509,10 +509,10 @@ comma
 id|myport
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|200000
+l_int|200
 )paren
 suffix:semicolon
 id|res
@@ -526,10 +526,10 @@ c_func
 id|myport
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|10000
+l_int|10
 )paren
 suffix:semicolon
 id|outb
@@ -679,10 +679,10 @@ comma
 id|port
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|100000
+l_int|100
 )paren
 suffix:semicolon
 id|outb
@@ -711,10 +711,10 @@ comma
 id|port
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|100000
+l_int|100
 )paren
 suffix:semicolon
 id|outb

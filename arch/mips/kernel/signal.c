@@ -1504,7 +1504,7 @@ c_func
 id|sc
 )paren
 suffix:semicolon
-multiline_comment|/* cpu dependant */
+multiline_comment|/* CPU-dependent */
 id|last_task_used_math
 op_assign
 l_int|NULL
@@ -1534,7 +1534,7 @@ c_func
 id|sc
 )paren
 suffix:semicolon
-multiline_comment|/* cpu dependant */
+multiline_comment|/* CPU-dependent */
 id|__put_user
 c_func
 (paren

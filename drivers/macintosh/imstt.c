@@ -803,13 +803,13 @@ id|tt
 l_int|2
 )braket
 suffix:semicolon
-singleline_comment|// for each ramdac  seperate tt config
+singleline_comment|// for each RAMDAC separate tt config
 DECL|member|tvp_clock
 r_struct
 id|tvp_single_rmodevals
 id|tvp_clock
 suffix:semicolon
-singleline_comment|// for each ramdac  seperate clock config
+singleline_comment|// for each RAMDAC separate clock config
 DECL|member|tvp
 r_struct
 id|tvp_single_crmodevals
@@ -824,7 +824,7 @@ r_struct
 id|ibm_single_rmodevals
 id|ibm_clock
 suffix:semicolon
-singleline_comment|// for each ramdac  seperate clock config
+singleline_comment|// for each RAMDAC separate clock config
 singleline_comment|//&t;struct ibm_single_crmodevals ibm[3];&t;   // for each color mode 
 )brace
 suffix:semicolon
@@ -2980,7 +2980,7 @@ op_assign
 id|CMODE_8
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * We dont need it ( all is done in ims_init )&n;static void&n;set_imstt_clock_tvp(char* tvprv)&n;{&n;  int j;&n;  for (j=0;j&lt;3;j++)&n;&t;{&n;  &t;&t;set_tvp_ireg(TVPIRPLA,(j &lt;&lt; 4) | (j &lt;&lt; 2) | j); // Select same value for all plls&n;&t;&t;set_tvp_ireg(TVPIRPPD,tvprv[j]);&n;&t;&t;set_tvp_ireg(TVPIRMPD,tvprv[3+j]);&n;&t;&t;set_tvp_ireg(TVPIRLPD,tvprv[6+j]);&n;&t;}&n;}&n;&n;static void&n;set_imstt_clock_ibm(unsigned char *params)&n;{&n;  ims_info.cmap[PIDXHI] = 0; eieio();&n;  ims_info.cmap[PIDXLO] = PM0; eieio();&n;  ims_info.cmap[PIDXDATA] = params[0]; eieio();&n;&n;  ims_info.cmap[PIDXLO] = PN0; eieio();&n;  ims_info.cmap[PIDXDATA] = params[1]; eieio();&n;&n;  ims_info.cmap[PIDXLO] = PP0; eieio();&n;  ims_info.cmap[PIDXDATA] = params[2]; eieio();&n;&t;&n;  ims_info.cmap[PIDXLO] = PC0; eieio();&n;  ims_info.cmap[PIDXDATA] = params[3]; eieio();&n;}&n;*/
+multiline_comment|/*&n; * We don&squot;t need it ( all is done in ims_init )&n;static void&n;set_imstt_clock_tvp(char* tvprv)&n;{&n;  int j;&n;  for (j=0;j&lt;3;j++)&n;&t;{&n;  &t;&t;set_tvp_ireg(TVPIRPLA,(j &lt;&lt; 4) | (j &lt;&lt; 2) | j); // Select same value for all plls&n;&t;&t;set_tvp_ireg(TVPIRPPD,tvprv[j]);&n;&t;&t;set_tvp_ireg(TVPIRMPD,tvprv[3+j]);&n;&t;&t;set_tvp_ireg(TVPIRLPD,tvprv[6+j]);&n;&t;}&n;}&n;&n;static void&n;set_imstt_clock_ibm(unsigned char *params)&n;{&n;  ims_info.cmap[PIDXHI] = 0; eieio();&n;  ims_info.cmap[PIDXLO] = PM0; eieio();&n;  ims_info.cmap[PIDXDATA] = params[0]; eieio();&n;&n;  ims_info.cmap[PIDXLO] = PN0; eieio();&n;  ims_info.cmap[PIDXDATA] = params[1]; eieio();&n;&n;  ims_info.cmap[PIDXLO] = PP0; eieio();&n;  ims_info.cmap[PIDXDATA] = params[2]; eieio();&n;&t;&n;  ims_info.cmap[PIDXLO] = PC0; eieio();&n;  ims_info.cmap[PIDXDATA] = params[3]; eieio();&n;}&n;*/
 r_void
 DECL|function|imstt_init
 id|imstt_init

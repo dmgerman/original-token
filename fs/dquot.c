@@ -5743,10 +5743,10 @@ op_ne
 l_int|0
 )paren
 (brace
-id|iput
+id|dput
 c_func
 (paren
-id|inode
+id|dentry
 )paren
 suffix:semicolon
 r_return

@@ -30,12 +30,12 @@ id|fb_dirino
 suffix:semicolon
 multiline_comment|/* dir inode number */
 DECL|member|fb_dev
-id|dev_t
+id|kdev_t
 id|fb_dev
 suffix:semicolon
 multiline_comment|/* our device */
 DECL|member|fb_xdev
-id|dev_t
+id|kdev_t
 id|fb_xdev
 suffix:semicolon
 DECL|member|fb_xino
@@ -204,7 +204,7 @@ r_void
 id|nfsd_fh_flush
 c_func
 (paren
-id|dev_t
+id|kdev_t
 )paren
 suffix:semicolon
 r_void

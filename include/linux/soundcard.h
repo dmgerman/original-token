@@ -1041,7 +1041,7 @@ DECL|macro|SNDCTL_DSP_SETDUPLEX
 mdefine_line|#define SNDCTL_DSP_SETDUPLEX&t;&t;_SIO  (&squot;P&squot;, 22)
 DECL|macro|SNDCTL_DSP_GETODELAY
 mdefine_line|#define SNDCTL_DSP_GETODELAY&t;&t;_SIOR (&squot;P&squot;, 23, int)
-multiline_comment|/*&n; * Application&squot;s profile defines the way how playback underrun situations should be handled.&n; * &n; *&t;APF_NORMAL (the default) and APF_NETWORK make the driver to cleanup the&n; *&t;playback buffer whenever an underrun occurs. This consumes some time&n; *&t;preven&squot;s looping the existing buffer.&n; *&t;APF_CPUINTENS is intended to be set by CPU intensive applications which&n; *&t;are likely to run out of time occasionally. In this mode the buffer cleanup is&n; *&t;disabled which saves CPU time but also let&squot;s the previous buffer content to&n; *&t;be played during the &quot;pause&quot; after the underrun.&n; */
+multiline_comment|/*&n; * Application&squot;s profile defines the way how playback underrun situations should be handled.&n; * &n; *&t;APF_NORMAL (the default) and APF_NETWORK make the driver to cleanup the&n; *&t;playback buffer whenever an underrun occurs. This consumes some time&n; *&t;prevents looping the existing buffer.&n; *&t;APF_CPUINTENS is intended to be set by CPU intensive applications which&n; *&t;are likely to run out of time occasionally. In this mode the buffer cleanup is&n; *&t;disabled which saves CPU time but also let&squot;s the previous buffer content to&n; *&t;be played during the &quot;pause&quot; after the underrun.&n; */
 DECL|macro|SNDCTL_DSP_PROFILE
 mdefine_line|#define SNDCTL_DSP_PROFILE&t;&t;_SIOW (&squot;P&squot;, 23, int)
 DECL|macro|APF_NORMAL

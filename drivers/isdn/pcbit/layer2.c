@@ -2481,6 +2481,7 @@ id|dev-&gt;send_seq
 OG
 id|dev-&gt;unack_seq
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2537,6 +2538,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* ack is acceptable */
 id|i

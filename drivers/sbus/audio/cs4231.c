@@ -196,7 +196,7 @@ id|value
 )paren
 suffix:semicolon
 DECL|macro|CHIP_READY
-mdefine_line|#define CHIP_READY udelay(100); cs4231_ready(drv); udelay(1000);
+mdefine_line|#define CHIP_READY udelay(100); cs4231_ready(drv); mdelay(1);
 multiline_comment|/* Enable cs4231 interrupts atomically. */
 DECL|function|cs4231_enable_interrupts
 r_static

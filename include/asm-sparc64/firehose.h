@@ -95,7 +95,7 @@ suffix:semicolon
 multiline_comment|/* FHC JTAG Command Register&t;&t;*/
 )brace
 suffix:semicolon
-multiline_comment|/* Part of same space of regs, but mapped seperately in PROM reg property&n; * for the FHC, thus we have the following few structs...&n; */
+multiline_comment|/* Part of same space of regs, but mapped separately in PROM reg property&n; * for the FHC, thus we have the following few structs...&n; */
 DECL|struct|fhc_ign_reg
 r_struct
 id|fhc_ign_reg

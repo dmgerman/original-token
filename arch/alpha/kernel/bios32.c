@@ -771,7 +771,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; * The following holds at least for the Low Cost&n;&t;&t;&t; * Alpha implementation of the PCI interface:&n;&t;&t;&t; *&n;&t;&t;&t; * In sparse memory address space, the first&n;&t;&t;&t; * octant (16MB) of every 128MB segment is&n;&t;&t;&t; * aliased to the the very first 16MB of the&n;&t;&t;&t; * address space (i.e., it aliases the ISA&n;&t;&t;&t; * memory address space).  Thus, we try to&n;&t;&t;&t; * avoid allocating PCI devices in that range.&n;&t;&t;&t; * Can be allocated in 2nd-7th octant only.&n;&t;&t;&t; * Devices that need more than 112MB of&n;&t;&t;&t; * address space must be accessed through&n;&t;&t;&t; * dense memory space only!&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * The following holds at least for the Low Cost&n;&t;&t;&t; * Alpha implementation of the PCI interface:&n;&t;&t;&t; *&n;&t;&t;&t; * In sparse memory address space, the first&n;&t;&t;&t; * octant (16MB) of every 128MB segment is&n;&t;&t;&t; * aliased to the very first 16 MB of the&n;&t;&t;&t; * address space (i.e., it aliases the ISA&n;&t;&t;&t; * memory address space).  Thus, we try to&n;&t;&t;&t; * avoid allocating PCI devices in that range.&n;&t;&t;&t; * Can be allocated in 2nd-7th octant only.&n;&t;&t;&t; * Devices that need more than 112MB of&n;&t;&t;&t; * address space must be accessed through&n;&t;&t;&t; * dense memory space only!&n;&t;&t;&t; */
 multiline_comment|/* align to multiple of size of minimum base */
 id|alignto
 op_assign

@@ -644,7 +644,7 @@ suffix:semicolon
 r_case
 id|F_GETOWN
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t; * XXX If f_owner is a process group, the&n;&t;&t;&t; * negative return value will get converted&n;&t;&t;&t; * into an error.  Oops.  If we keep the the&n;&t;&t;&t; * current syscall conventions, the only way&n;&t;&t;&t; * to fix this will be in libc.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * XXX If f_owner is a process group, the&n;&t;&t;&t; * negative return value will get converted&n;&t;&t;&t; * into an error.  Oops.  If we keep the&n;&t;&t;&t; * current syscall conventions, the only way&n;&t;&t;&t; * to fix this will be in libc.&n;&t;&t;&t; */
 id|err
 op_assign
 id|filp-&gt;f_owner.pid

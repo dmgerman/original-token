@@ -2073,10 +2073,10 @@ id|qregs-&gt;hcctrl
 op_assign
 id|HCCTRL_RESET
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 id|qregs-&gt;sbus_ctrl
@@ -2474,10 +2474,10 @@ id|qregs-&gt;hcctrl
 op_assign
 id|HCCTRL_RESET
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 id|qlogicpti_enable_irqs

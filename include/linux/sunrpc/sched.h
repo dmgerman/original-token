@@ -83,12 +83,12 @@ suffix:semicolon
 multiline_comment|/* RPC wait queue we&squot;re on */
 multiline_comment|/*&n;&t; * RPC call state&n;&t; */
 DECL|member|tk_proc
-id|u32
+id|__u32
 id|tk_proc
 suffix:semicolon
 multiline_comment|/* procedure number */
 DECL|member|tk_buffer
-id|u32
+id|__u32
 op_star
 id|tk_buffer
 suffix:semicolon
@@ -106,7 +106,7 @@ id|tk_resp
 suffix:semicolon
 multiline_comment|/* result storage */
 DECL|member|tk_garb_retry
-id|u8
+id|__u8
 id|tk_garb_retry
 comma
 DECL|member|tk_cred_retry

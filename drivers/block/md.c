@@ -934,7 +934,7 @@ m_abort
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * Ok, we have all disks and the array is ready to run. Lets&n;&t; * find the freshest superblock, that one will be the superblock&n;&t; * that represents the whole array.&n;&t; */
+multiline_comment|/*&n;&t; * OK, we have all disks and the array is ready to run. Let&squot;s&n;&t; * find the freshest superblock, that one will be the superblock&n;&t; * that represents the whole array.&n;&t; */
 r_if
 c_cond
 (paren
@@ -5246,7 +5246,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * Lets sleep some if we are faster than our speed limit:&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Let&squot;s sleep some if we are faster than our speed limit:&n;&t;&t; */
 r_while
 c_loop
 (paren

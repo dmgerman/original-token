@@ -122,6 +122,24 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SYSCTL
+r_extern
+r_void
+id|ipv6_sysctl_register
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ipv6_sysctl_unregister
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|inet6_create
 r_static
 r_int

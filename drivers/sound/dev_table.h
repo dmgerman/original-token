@@ -909,7 +909,7 @@ DECL|member|audio_mode
 r_int
 id|audio_mode
 suffix:semicolon
-multiline_comment|/* why dont we use file-&gt;f_flags &amp; O_NONBLOCK for the following? - ts */
+multiline_comment|/* why don&squot;t we use file-&gt;f_flags &amp; O_NONBLOCK for the following? - ts */
 DECL|member|dev_nblock
 r_int
 id|dev_nblock

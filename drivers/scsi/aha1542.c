@@ -293,7 +293,7 @@ DECL|macro|WAIT
 mdefine_line|#define WAIT(port, mask, allof, noneof)&t;&t;&t;&t;&t;&bslash;&n; { register int WAITbits;&t;&t;&t;&t;&t;&t;&bslash;&n;   register int WAITtimeout = WAITnexttimeout;&t;&t;&t;&t;&bslash;&n;   while (1) {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;     WAITbits = inb(port) &amp; (mask);&t;&t;&t;&t;&t;&bslash;&n;     if ((WAITbits &amp; (allof)) == (allof) &amp;&amp; ((WAITbits &amp; (noneof)) == 0)) &bslash;&n;       break;                                                         &t;&bslash;&n;     if (--WAITtimeout == 0) goto fail;&t;&t;&t;&t;&t;&bslash;&n;   }&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; }
 multiline_comment|/* Similar to WAIT, except we use the udelay call to regulate the&n;   amount of time we wait.  */
 DECL|macro|WAITd
-mdefine_line|#define WAITd(port, mask, allof, noneof, timeout)&t;&t;&t;&bslash;&n; { register int WAITbits;&t;&t;&t;&t;&t;&t;&bslash;&n;   register int WAITtimeout = timeout;&t;&t;&t;&t;&t;&bslash;&n;   while (1) {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;     WAITbits = inb(port) &amp; (mask);&t;&t;&t;&t;&t;&bslash;&n;     if ((WAITbits &amp; (allof)) == (allof) &amp;&amp; ((WAITbits &amp; (noneof)) == 0)) &bslash;&n;       break;                                                         &t;&bslash;&n;     udelay(1000);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;     if (--WAITtimeout == 0) goto fail;&t;&t;&t;&t;&t;&bslash;&n;   }&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; }
+mdefine_line|#define WAITd(port, mask, allof, noneof, timeout)&t;&t;&t;&bslash;&n; { register int WAITbits;&t;&t;&t;&t;&t;&t;&bslash;&n;   register int WAITtimeout = timeout;&t;&t;&t;&t;&t;&bslash;&n;   while (1) {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;     WAITbits = inb(port) &amp; (mask);&t;&t;&t;&t;&t;&bslash;&n;     if ((WAITbits &amp; (allof)) == (allof) &amp;&amp; ((WAITbits &amp; (noneof)) == 0)) &bslash;&n;       break;                                                         &t;&bslash;&n;     mdelay(1);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;     if (--WAITtimeout == 0) goto fail;&t;&t;&t;&t;&t;&bslash;&n;   }&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; }
 DECL|function|aha1542_stat
 r_static
 r_void
@@ -612,7 +612,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* Similar to aha1542_in, except that we wait a very short period of time.&n;   We use this if we know the board is alive and awake, but we are not sure&n;   if the board will respond the the command we are about to send or not */
+multiline_comment|/* Similar to aha1542_in, except that we wait a very short period of time.&n;   We use this if we know the board is alive and awake, but we are not sure&n;   if the board will respond to the command we are about to send or not */
 DECL|function|aha1542_in1
 r_static
 r_int

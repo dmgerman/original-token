@@ -1665,7 +1665,7 @@ l_int|5
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Could writing twice fix problems with GUS_VOICE_POS() ? Lets try... */
+multiline_comment|/* Could writing twice fix problems with GUS_VOICE_POS()? Let&squot;s try. */
 id|gus_delay
 c_func
 (paren
@@ -2417,6 +2417,7 @@ id|sample_no
 dot
 id|len
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2463,6 +2464,7 @@ op_amp
 id|WAVE_16_BITS
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 DECL|function|gus_voice_init

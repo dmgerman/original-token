@@ -3327,7 +3327,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;aha152x%d: vital data: PORTBASE=0x%03x, IRQ=%d, SCSI ID=%d,&quot;
+l_string|&quot;aha152x%d: vital data: PORTBASE=0x%03lx, IRQ=%d, SCSI ID=%d,&quot;
 l_string|&quot; reconnect=%s, parity=%s, synchronous=%s, delay=%d, extended translation=%s&bslash;n&quot;
 comma
 id|i
@@ -15332,7 +15332,7 @@ suffix:semicolon
 id|SPRINTF
 c_func
 (paren
-l_string|&quot;ioports 0x%04x to 0x%04x&bslash;n&quot;
+l_string|&quot;ioports 0x%04lx to 0x%04lx&bslash;n&quot;
 comma
 id|shpnt-&gt;io_port
 comma

@@ -3618,10 +3618,10 @@ multiline_comment|/* Arbitration complete */
 r_return
 l_int|0
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Wait one millisecond */
@@ -3757,10 +3757,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* wait one msec */

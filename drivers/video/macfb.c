@@ -1421,7 +1421,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Claim all video cards. We dont yet do driver specifics tho. */
+multiline_comment|/* Claim all video cards. We don&squot;t yet do driver specifics though. */
 r_return
 op_minus
 id|ENODEV

@@ -1068,10 +1068,10 @@ id|MREGS_PHYCONFIG_LTESTDIS
 )paren
 )paren
 (brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|5000
+l_int|5
 )paren
 suffix:semicolon
 r_if

@@ -760,7 +760,7 @@ l_string|&quot;SCSI DMA bus error -- bad DMA programming!&quot;
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* If the DMA is active but not finished, we have the the case&n;&t; * that some other 5380 interrupt occurred within the DMA transfer.&n;&t; * This means we have residual bytes, if the desired end address&n;&t; * is not yet reached. Maybe we have to fetch some bytes from the&n;&t; * rest data register, too. The residual must be calculated from&n;&t; * the address pointer, not the counter register, because only the&n;&t; * addr reg counts bytes not yet written and pending in the rest&n;&t; * data reg!&n;&t; */
+multiline_comment|/* If the DMA is active but not finished, we have the case&n;&t; * that some other 5380 interrupt occurred within the DMA transfer.&n;&t; * This means we have residual bytes, if the desired end address&n;&t; * is not yet reached. Maybe we have to fetch some bytes from the&n;&t; * rest data register, too. The residual must be calculated from&n;&t; * the address pointer, not the counter register, because only the&n;&t; * addr reg counts bytes not yet written and pending in the rest&n;&t; * data reg!&n;&t; */
 r_if
 c_cond
 (paren

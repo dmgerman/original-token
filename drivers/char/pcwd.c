@@ -186,10 +186,10 @@ op_and_assign
 l_int|0x000F
 suffix:semicolon
 multiline_comment|/* Sleep 1/2 second (or 500000 microseconds :) */
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|500000L
+l_int|500
 )paren
 suffix:semicolon
 id|done
@@ -1515,10 +1515,10 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000L
+l_int|1
 )paren
 suffix:semicolon
 id|i

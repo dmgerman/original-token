@@ -2007,7 +2007,7 @@ id|el.c-&gt;size
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* dump the the logout area to give all info: */
+multiline_comment|/* dump the logout area to give all info: */
 id|ptr
 op_assign
 (paren

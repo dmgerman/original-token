@@ -3782,7 +3782,7 @@ c_func
 id|devc-&gt;my_mixerdev
 )paren
 suffix:semicolon
-multiline_comment|/* We don&squot;t have to do this bit any more the UART401 is its own&n;&t;&t;&t;&t;master  -- Krzystof Halasa */
+multiline_comment|/* We don&squot;t have to do this bit any more the UART401 is its own&n;&t;&t;&t;&t;master  -- Krzysztof Halasa */
 multiline_comment|/* sound_unload_mididev(devc-&gt;my_mididev); */
 id|sound_unload_audiodev
 c_func
@@ -4245,10 +4245,10 @@ l_int|7
 )paren
 suffix:semicolon
 multiline_comment|/* xxxxxxx0 resets the mc */
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|3000
+l_int|3
 )paren
 suffix:semicolon
 multiline_comment|/* Wait at least 1ms */

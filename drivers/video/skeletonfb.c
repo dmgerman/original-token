@@ -627,7 +627,7 @@ comma
 id|xxx_dispsw
 )brace
 suffix:semicolon
-multiline_comment|/* ------------ Hardware Independant Functions ------------ */
+multiline_comment|/* ------------ Hardware Independent Functions ------------ */
 multiline_comment|/*&n;     *  Initialization&n;     */
 DECL|function|__initfunc
 id|__initfunc

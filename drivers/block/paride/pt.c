@@ -1617,10 +1617,10 @@ comma
 l_string|&quot;Request sense&quot;
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -1763,10 +1763,10 @@ comma
 id|fun
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -4081,10 +4081,10 @@ comma
 l_string|&quot;read&quot;
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -4606,10 +4606,10 @@ comma
 l_string|&quot;write&quot;
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 r_if

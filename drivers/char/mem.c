@@ -1292,7 +1292,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* The shared case is hard. Lets do the conventional zeroing. */
+multiline_comment|/* The shared case is hard. Let&squot;s do the conventional zeroing. */
 r_do
 (brace
 r_int

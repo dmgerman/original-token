@@ -3003,10 +3003,10 @@ l_string|&quot;Sleeping.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000000
+l_int|1000
 )paren
 suffix:semicolon
 id|udelay
@@ -3897,7 +3897,7 @@ l_string|&quot;Boot done.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Here we can be sure that there is an IO-APIC in the system, lets&n;&t; * go and set it up:&n;&t; */
+multiline_comment|/*&n;&t; * Here we can be sure that there is an IO-APIC in the system. Let&squot;s&n;&t; * go and set it up:&n;&t; */
 id|setup_IO_APIC
 c_func
 (paren
@@ -5154,12 +5154,12 @@ c_func
 l_int|1000000000
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * The timer chip counts down to zero. Lets wait&n;&t; * for a wraparound to start exact measurement:&n;&t; * (the current tick might have been already half done)&n;&t; */
+multiline_comment|/*&n;&t; * The timer chip counts down to zero. Let&squot;s wait&n;&t; * for a wraparound to start exact measurement:&n;&t; * (the current tick might have been already half done)&n;&t; */
 id|wait_8254_wraparound
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * We wrapped around just now, lets start:&n;&t; */
+multiline_comment|/*&n;&t; * We wrapped around just now. Let&squot;s start:&n;&t; */
 id|RDTSC
 c_func
 (paren
@@ -5176,7 +5176,7 @@ id|APIC_TMCCT
 suffix:semicolon
 DECL|macro|LOOPS
 mdefine_line|#define LOOPS (HZ/10)
-multiline_comment|/*&n;&t; * lets wait LOOPS wraprounds:&n;&t; */
+multiline_comment|/*&n;&t; * let&squot;s wait LOOPS wraprounds:&n;&t; */
 r_for
 c_loop
 (paren

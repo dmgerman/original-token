@@ -1736,7 +1736,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;I/O base address: 0x%x&bslash;n&quot;
+l_string|&quot;I/O base address: 0x%lx&bslash;n&quot;
 comma
 id|IM_CMD_REG
 )paren
@@ -2768,10 +2768,12 @@ op_decrement
 id|ticks
 )paren
 (brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000000
+l_int|1
+op_plus
+l_int|999
 op_div
 id|HZ
 )paren
@@ -6175,10 +6177,12 @@ op_decrement
 id|ticks
 )paren
 (brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000000
+l_int|1
+op_plus
+l_int|999
 op_div
 id|HZ
 )paren
@@ -6894,7 +6898,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;               Base I/O-Port............: 0x%x&bslash;n&quot;
+l_string|&quot;               Base I/O-Port............: 0x%lx&bslash;n&quot;
 comma
 id|IM_CMD_REG
 )paren

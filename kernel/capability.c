@@ -69,13 +69,10 @@ id|k
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
 DECL|variable|task_capability_lock
-r_static
 id|spinlock_t
 id|task_capability_lock
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * For sys_getproccap() and sys_setproccap(), any of the three&n; * capability set pointers may be NULL -- indicating that that set is&n; * uninteresting and/or not to be changed.&n; */
 DECL|function|sys_capget
 id|asmlinkage

@@ -634,10 +634,10 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* delay 4ms and then clear any pending interrupt */
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|4000
+l_int|4
 )paren
 suffix:semicolon
 id|x

@@ -981,7 +981,7 @@ DECL|macro|ZORRO_PROD_VECTOR_CONNECTION_4
 mdefine_line|#define  ZORRO_PROD_VECTOR_CONNECTION_4&t;&t;&t;&t;ZORRO_ID(HACKER, 0xE2, 0)
 DECL|macro|ZORRO_PROD_VECTOR_CONNECTION_5
 mdefine_line|#define  ZORRO_PROD_VECTOR_CONNECTION_5&t;&t;&t;&t;ZORRO_ID(HACKER, 0xE3, 0)
-multiline_comment|/*&n;     *  GVP identifies most of its products through the &squot;extended product code&squot;&n;     *  (epc). The epc has to be and&squot;ed with the GVP_PRODMASK before the&n;     *  identification.&n;     */
+multiline_comment|/*&n;     *  GVP identifies most of its products through the &squot;extended product code&squot;&n;     *  (epc). The epc has to be ANDed with the GVP_PRODMASK before the&n;     *  identification.&n;     */
 DECL|macro|GVP_PRODMASK
 mdefine_line|#define GVP_PRODMASK&t;&t;&t;(0xf8)
 DECL|macro|GVP_SCSICLKMASK

@@ -34,7 +34,7 @@ id|svc_client
 op_star
 id|clp
 comma
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -48,7 +48,7 @@ id|svc_client
 op_star
 id|clp
 comma
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -124,6 +124,7 @@ DECL|macro|CLIENT_HASHMASK
 mdefine_line|#define CLIENT_HASHMASK&t;&t;(CLIENT_HASHMAX - 1)
 DECL|macro|CLIENT_HASH
 mdefine_line|#define CLIENT_HASH(a) &bslash;&n;&t;&t;((((a)&gt;&gt;24) ^ ((a)&gt;&gt;16) ^ ((a)&gt;&gt;8) ^(a)) &amp; CLIENT_HASHMASK)
+multiline_comment|/* XXX: is this adequate for 32bit kdev_t ? */
 DECL|macro|EXPORT_HASH
 mdefine_line|#define EXPORT_HASH(dev)&t;((dev) &amp; (NFSCLNT_EXPMAX - 1))
 DECL|struct|svc_clnthash
@@ -221,7 +222,7 @@ id|svc_client
 op_star
 id|clp
 comma
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -268,7 +269,7 @@ id|svc_client
 op_star
 id|clp
 comma
-id|dev_t
+id|kdev_t
 id|dev
 comma
 id|ino_t
@@ -320,7 +321,7 @@ DECL|function|exp_device_in_use
 id|exp_device_in_use
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -370,7 +371,7 @@ DECL|function|nfsd_parentdev
 id|nfsd_parentdev
 c_func
 (paren
-id|dev_t
+id|kdev_t
 op_star
 id|devp
 )paren
@@ -433,7 +434,7 @@ id|svc_client
 op_star
 id|clp
 comma
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -441,7 +442,7 @@ id|svc_export
 op_star
 id|exp
 suffix:semicolon
-id|dev_t
+id|kdev_t
 id|xdev
 op_assign
 id|dev
@@ -529,7 +530,7 @@ id|i
 comma
 id|err
 suffix:semicolon
-id|dev_t
+id|kdev_t
 id|dev
 suffix:semicolon
 id|ino_t
@@ -579,7 +580,11 @@ id|nxp-&gt;ex_flags
 suffix:semicolon
 id|dev
 op_assign
+id|to_kdev_t
+c_func
+(paren
 id|nxp-&gt;ex_dev
+)paren
 suffix:semicolon
 id|ino
 op_assign
@@ -740,13 +745,24 @@ c_cond
 (paren
 id|inode-&gt;i_dev
 op_ne
-id|nxp-&gt;ex_dev
+id|dev
 op_logical_or
 id|inode-&gt;i_ino
 op_ne
 id|nxp-&gt;ex_ino
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;exp_export: i_dev = %x, dev = %x&bslash;n&quot;
+comma
+id|inode-&gt;i_dev
+comma
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* I&squot;m just being paranoid... */
 r_goto
 id|finish
@@ -1437,7 +1453,7 @@ id|svc_client
 op_star
 id|clp
 comma
-id|dev_t
+id|kdev_t
 id|dev
 comma
 id|ino_t

@@ -491,7 +491,7 @@ op_star
 id|regs32
 suffix:semicolon
 multiline_comment|/* here we save the pointer to the old regs */
-multiline_comment|/*&n; * The below is not part of the structure, but the stack layout continues&n; * this way. In front of &squot;return-eip&squot; may be some data, depending on&n; * compilation, so we don&squot;t rely on this and save the pointer to &squot;oldregs&squot;&n; * in &squot;regs32&squot; above.&n; * However, with GCC-2.7.2 and the the current CFLAGS you see exactly this:&n;&n;&t;long return-eip;        from call to vm86()&n;&t;struct pt_regs oldregs;  user space registers as saved by syscall&n; */
+multiline_comment|/*&n; * The below is not part of the structure, but the stack layout continues&n; * this way. In front of &squot;return-eip&squot; may be some data, depending on&n; * compilation, so we don&squot;t rely on this and save the pointer to &squot;oldregs&squot;&n; * in &squot;regs32&squot; above.&n; * However, with GCC-2.7.2 and the current CFLAGS you see exactly this:&n;&n;&t;long return-eip;        from call to vm86()&n;&t;struct pt_regs oldregs;  user space registers as saved by syscall&n; */
 )brace
 suffix:semicolon
 r_void

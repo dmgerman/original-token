@@ -34,13 +34,6 @@ id|portlist_tail
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|variable|portcount
-r_static
-r_int
-id|portcount
-op_assign
-l_int|0
-suffix:semicolon
 DECL|variable|parport_probe_hook
 r_void
 (paren
@@ -146,6 +139,9 @@ id|parport
 op_star
 id|tmp
 suffix:semicolon
+r_int
+id|portnum
+suffix:semicolon
 multiline_comment|/* Check for a previously registered port.&n;&t;   NOTE: we will ignore irq and dma if we find a previously&n;&t;   registered device.  */
 r_for
 c_loop
@@ -204,6 +200,59 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/* Search for the lowest free parport number. */
+r_for
+c_loop
+(paren
+id|portnum
+op_assign
+l_int|0
+suffix:semicolon
+suffix:semicolon
+id|portnum
+op_increment
+)paren
+(brace
+r_struct
+id|parport
+op_star
+id|itr
+op_assign
+id|portlist
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|itr
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|itr-&gt;number
+op_eq
+id|portnum
+)paren
+multiline_comment|/* No good, already used. */
+r_break
+suffix:semicolon
+r_else
+id|itr
+op_assign
+id|itr-&gt;next
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|itr
+op_eq
+l_int|NULL
+)paren
+multiline_comment|/* Got to the end of the list. */
+r_break
+suffix:semicolon
+)brace
 multiline_comment|/* Init our structure */
 id|memset
 c_func
@@ -255,7 +304,7 @@ id|ops
 suffix:semicolon
 id|tmp-&gt;number
 op_assign
-id|portcount
+id|portnum
 suffix:semicolon
 id|spin_lock_init
 (paren
@@ -304,7 +353,7 @@ id|tmp-&gt;name
 comma
 l_string|&quot;parport%d&quot;
 comma
-id|portcount
+id|portnum
 )paren
 suffix:semicolon
 multiline_comment|/* Chain the entry to our list. */
@@ -330,9 +379,6 @@ id|portlist
 id|portlist
 op_assign
 id|tmp
-suffix:semicolon
-id|portcount
-op_increment
 suffix:semicolon
 id|tmp-&gt;probe_info
 dot

@@ -1,4 +1,4 @@
-multiline_comment|/*****************************************************************************&n;* wanmain.c&t;WAN Multiprotocol Router Module. Main code.&n;*&n;*&t;&t;This module is completely hardware-independent and provides&n;*&t;&t;the following common services for the WAN Link Drivers:&n;*&t;&t; o WAN device managenment (registering, unregistering)&n;*&t;&t; o Network interface management&n;*&t;&t; o Physical connection management (dial-up, incomming calls)&n;*&t;&t; o Logical connection management (switched virtual circuits)&n;*&t;&t; o Protocol encapsulation/decapsulation&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Dec 27, 1996&t;Gene Kozin&t;Initial version (based on Sangoma&squot;s WANPIPE)&n;* Jan 16, 1997&t;Gene Kozin&t;router_devlist made public&n;* Jan 31, 1997  Alan Cox&t;Hacked it about a bit for 2.1&n;* Jun 27, 1997  Alan Cox&t;realigned with vendor code&n;* Oct 15, 1997  Farhan Thawar   changed wan_encapsulate to add a pad byte of 0&n;* Apr 20, 1998&t;Alan Cox&t;Fixed 2.1 symbols&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* wanmain.c&t;WAN Multiprotocol Router Module. Main code.&n;*&n;*&t;&t;This module is completely hardware-independent and provides&n;*&t;&t;the following common services for the WAN Link Drivers:&n;*&t;&t; o WAN device managenment (registering, unregistering)&n;*&t;&t; o Network interface management&n;*&t;&t; o Physical connection management (dial-up, incomming calls)&n;*&t;&t; o Logical connection management (switched virtual circuits)&n;*&t;&t; o Protocol encapsulation/decapsulation&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Dec 27, 1996&t;Gene Kozin&t;Initial version (based on Sangoma&squot;s WANPIPE)&n;* Jan 16, 1997&t;Gene Kozin&t;router_devlist made public&n;* Jan 31, 1997  Alan Cox&t;Hacked it about a bit for 2.1&n;* Jun 27, 1997  Alan Cox&t;realigned with vendor code&n;* Oct 15, 1997  Farhan Thawar   changed wan_encapsulate to add a pad byte of 0&n;* Apr 20, 1998&t;Alan Cox&t;Fixed 2.1 symbols&n;* May 17, 1998  K. Baranowski&t;Fixed SNAP encapsulation in wan_encapsulate&n;*****************************************************************************/
 macro_line|#include &lt;linux/stddef.h&gt;&t;/* offsetof(), etc. */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* return codes */
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -679,7 +679,7 @@ c_func
 (paren
 id|skb
 comma
-l_int|6
+l_int|7
 )paren
 suffix:semicolon
 id|skb-&gt;data
@@ -702,7 +702,7 @@ c_func
 op_amp
 id|skb-&gt;data
 (braket
-l_int|1
+l_int|2
 )braket
 comma
 id|oui_ether
@@ -723,7 +723,7 @@ op_star
 op_amp
 id|skb-&gt;data
 (braket
-l_int|4
+l_int|5
 )braket
 )paren
 op_assign

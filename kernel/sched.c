@@ -4054,7 +4054,7 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* This is SMP safe - current-&gt;pid doesnt change */
+multiline_comment|/* This is SMP safe - current-&gt;pid doesn&squot;t change */
 r_return
 id|current-&gt;pid
 suffix:semicolon

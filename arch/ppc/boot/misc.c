@@ -2262,10 +2262,10 @@ r_break
 suffix:semicolon
 multiline_comment|/* Exit &squot;timer&squot; loop */
 )brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* 1 msec */

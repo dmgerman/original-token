@@ -302,10 +302,10 @@ id|hacr
 )paren
 suffix:semicolon
 multiline_comment|/* delay might only be needed sometimes */
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000L
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -744,10 +744,10 @@ id|HASR_PSA_BUSY
 )paren
 )paren
 (brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -1730,10 +1730,10 @@ id|MMW_FEE_CTRL_WRITE
 )paren
 suffix:semicolon
 multiline_comment|/* Wavelan doc says : wait at least 10 ms for EEBUSY = 0 */
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|10000
+l_int|10
 )paren
 suffix:semicolon
 id|fee_wait
@@ -10463,7 +10463,7 @@ macro_line|#endif
 multiline_comment|/*********************** PACKET TRANSMISSION ***********************/
 multiline_comment|/*&n; * This part deal with sending packet through the wavelan&n; *&n; */
 multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/*&n; * This routine fills in the appropriate registers and memory&n; * locations on the WaveLAN card and starts the card off on&n; * the transmit.&n; *&n; * The principle :&n; * Each block contain a transmit command, a nop command,&n; * a transmit block descriptor and a buffer.&n; * The CU read the transmit block which point to the tbd,&n; * read the tbd and the the content of the buffer.&n; * When it has finish with it, it goes to the next command&n; * which in our case is the nop. The nop point on itself,&n; * so the CU stop here.&n; * When we add the next block, we modify the previous nop&n; * to make it point on the new tx command.&n; * Simple, isn&squot;t it ?&n; *&n; * (called in wavelan_packet_xmit())&n; */
+multiline_comment|/*&n; * This routine fills in the appropriate registers and memory&n; * locations on the WaveLAN card and starts the card off on&n; * the transmit.&n; *&n; * The principle :&n; * Each block contains a transmit command, a nop command,&n; * a transmit block descriptor and a buffer.&n; * The CU reads the transmit block which points to the tbd,&n; * reads the tbd and the content of the buffer.&n; * When it has finished with it, it goes to the next command&n; * which in our case is the nop. The nop points on itself,&n; * so the CU stops here.&n; * When we add the next block, we modify the previous nop&n; * to make it point on the new tx command.&n; * Simple, isn&squot;t it?&n; *&n; * (called in wavelan_packet_xmit())&n; */
 r_static
 r_inline
 r_void
@@ -10991,7 +10991,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/*&n; * This routine is called when we want to send a packet (NET3 callback)&n; * In this routine, we check if the the harware is ready to accept&n; * the packet. We also prevent reentrance. Then, we call the function&n; * to send the packet...&n; */
+multiline_comment|/*&n; * This routine is called when we want to send a packet (NET3 callback)&n; * In this routine, we check if the hardware is ready to accept&n; * the packet. We also prevent reentrance. Then, we call the function&n; * to send the packet...&n; */
 r_static
 r_int
 DECL|function|wavelan_packet_xmit

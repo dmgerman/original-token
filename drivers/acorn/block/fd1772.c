@@ -1250,7 +1250,7 @@ suffix:semicolon
 multiline_comment|/* Don&squot;t start poking about if the fdc is busy */
 r_return
 suffix:semicolon
-multiline_comment|/* lets just forget it for the mo DAG */
+multiline_comment|/* let&squot;s just forget it for the mo DAG */
 r_if
 c_cond
 (paren
@@ -1365,7 +1365,7 @@ id|CHECK_CHANGE_DELAY
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Handling of the Head Settling Flag: This flag should be set after each&n; * seek operation, because we dont&squot;t use seeks with verify.&n; */
+multiline_comment|/* Handling of the Head Settling Flag: This flag should be set after each&n; * seek operation, because we don&squot;t use seeks with verify.&n; */
 DECL|function|set_head_settle_flag
 r_static
 id|__inline__

@@ -3054,10 +3054,10 @@ op_plus
 l_int|0x300e
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|20000
+l_int|20
 )paren
 suffix:semicolon
 )brace
@@ -6223,10 +6223,10 @@ op_plus
 id|EEPROM_Ctrl
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|5000
+l_int|5
 )paren
 suffix:semicolon
 id|scb_command

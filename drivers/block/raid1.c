@@ -467,7 +467,7 @@ l_string|&quot;raid1_end_request(), write branch.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * lets see if all mirrored write operations have finished &n;&t; * already [we have irqs off, so we can decrease]:&n;&t; */
+multiline_comment|/*&n;&t; * Let&squot;s see if all mirrored write operations have finished &n;&t; * already [we have irqs off, so we can decrease]:&n;&t; */
 r_if
 c_cond
 (paren

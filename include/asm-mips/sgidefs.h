@@ -21,7 +21,7 @@ macro_line|#endif
 macro_line|#if (!defined(_MIPS_ISA) || &bslash;&n;     !defined(_MIPS_SIM) || &bslash;&n;     !defined(_MIPS_SZINT) || &bslash;&n;     !defined(_MIPS_SZLONG) || &bslash;&n;     !defined(_MIPS_SZPTR)) &amp;&amp; !defined(__KERNEL__)
 macro_line|#warning &quot;Please update your GCC to GCC 2.7.2-4 or newer&quot;
 macro_line|#endif
-multiline_comment|/*&n; * Now lets try our best to supply some reasonable default values for&n; * whatever defines GCC didn&squot;t supply.  This cannot be done correct for&n; * all possible combinations of options, so be careful with your options&n; * to GCC.  Best bet is to keep your fingers off the a.out GCC and use&n; * ELF GCC 2.7.2-3 where possible.&n; */
+multiline_comment|/*&n; * Now let&squot;s try our best to supply some reasonable default values for&n; * whatever defines GCC didn&squot;t supply.  This cannot be done correct for&n; * all possible combinations of options, so be careful with your options&n; * to GCC.  Best bet is to keep your fingers off the a.out GCC and use&n; * ELF GCC 2.7.2-3 where possible.&n; */
 macro_line|#ifndef _MIPS_ISA
 macro_line|#if __mips == 1
 DECL|macro|_MIPS_ISA

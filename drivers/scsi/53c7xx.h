@@ -2412,7 +2412,7 @@ macro_line|#endif
 DECL|macro|NCR53c7x0_read32
 mdefine_line|#define NCR53c7x0_read32(address) &t;&t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;(unsigned int) readl((u32)NCR53c7x0_address_memory + (u32)(address)) : &t;&bslash;&n;&t;inl(NCR53c7x0_address_io + (address)))
 macro_line|#ifdef BIG_ENDIAN
-multiline_comment|/* If we are big-endian, then we are not Intel, so probably don&squot;t have&n; * an i/o map as well as a memory map.  So, lets assume memory mapped.&n; * Also, I am having terrible problems trying to persuade the compiler&n; * not to lay down code which does a read after write for these macros.&n; * If you remove &squot;volatile&squot; from writeb() and friends it is ok....&n; */
+multiline_comment|/* If we are big-endian, then we are not Intel, so probably don&squot;t have&n; * an i/o map as well as a memory map.  So, let&squot;s assume memory mapped.&n; * Also, I am having terrible problems trying to persuade the compiler&n; * not to lay down code which does a read after write for these macros.&n; * If you remove &squot;volatile&squot; from writeb() and friends it is ok....&n; */
 DECL|macro|NCR53c7x0_write8
 mdefine_line|#define NCR53c7x0_write8(address,value) &t;&t;&t;&t;&bslash;&n;&t;*(volatile unsigned char *)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;((u32)NCR53c7x0_address_memory + ((u32)(address)^3)) = (value)
 DECL|macro|NCR53c7x0_write16

@@ -2693,7 +2693,7 @@ suffix:colon
 l_string|&quot;&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* dump the the logout area to give all info: */
+multiline_comment|/* dump the logout area to give all info: */
 id|ptr
 op_assign
 (paren

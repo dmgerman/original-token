@@ -1456,10 +1456,10 @@ id|StatusRegister.Bits.CommandInvalid
 )paren
 (brace
 multiline_comment|/*&n;&t;Some early BusLogic Host Adapters may not recover properly from&n;&t;a Command Invalid condition, so if this appears to be the case,&n;&t;a Soft Reset is issued to the Host Adapter.  Potentially invalid&n;&t;commands are never attempted after Mailbox Initialization is&n;&t;performed, so there should be no Host Adapter state lost by a&n;&t;Soft Reset in response to a Command Invalid condition.&n;      */
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 id|StatusRegister.All
@@ -1498,10 +1498,10 @@ c_func
 id|HostAdapter
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace

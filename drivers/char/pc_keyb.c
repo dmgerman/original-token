@@ -603,10 +603,10 @@ id|KBD_STAT_IBF
 )paren
 r_return
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 id|timeout
@@ -1877,10 +1877,10 @@ id|resend
 )paren
 r_break
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 r_if

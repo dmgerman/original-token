@@ -824,7 +824,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Why is this a seperate function?  Because the kernel_thread code&n; * effectively does a fork, and there is a builtin exit() call when&n; * the child returns.   The difficulty is that scsi_init() is&n; * marked __initfunc(), which means the memory is unmapped after bootup&n; * is complete, which means that the thread&squot;s exit() call gets wiped.&n; *&n; * The lesson is to *NEVER*, *NEVER* call kernel_thread() from an&n; * __initfunc() function, if that function could ever return.&n; */
+multiline_comment|/*&n; * Why is this a separate function?  Because the kernel_thread code&n; * effectively does a fork, and there is a builtin exit() call when&n; * the child returns.   The difficulty is that scsi_init() is&n; * marked __initfunc(), which means the memory is unmapped after bootup&n; * is complete, which means that the thread&squot;s exit() call gets wiped.&n; *&n; * The lesson is to *NEVER*, *NEVER* call kernel_thread() from an&n; * __initfunc() function, if that function could ever return.&n; */
 DECL|function|launch_error_handler_thread
 r_static
 r_void

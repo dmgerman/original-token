@@ -1,6 +1,137 @@
 macro_line|#ifndef __irq_h
 DECL|macro|__irq_h
 mdefine_line|#define __irq_h
+macro_line|#include &lt;asm/irq.h&gt;
+multiline_comment|/*&n; * Interrupt controller descriptor. This is all we need&n; * to describe about the low-level hardware.&n; */
+DECL|struct|hw_interrupt_type
+r_struct
+id|hw_interrupt_type
+(brace
+DECL|member|typename
+r_const
+r_char
+op_star
+r_typename
+suffix:semicolon
+DECL|member|handle
+r_void
+(paren
+op_star
+id|handle
+)paren
+(paren
+r_int
+r_int
+id|irq
+comma
+r_int
+id|cpu
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+DECL|member|enable
+r_void
+(paren
+op_star
+id|enable
+)paren
+(paren
+r_int
+r_int
+id|irq
+)paren
+suffix:semicolon
+DECL|member|disable
+r_void
+(paren
+op_star
+id|disable
+)paren
+(paren
+r_int
+r_int
+id|irq
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Status: reason for being disabled: somebody has&n; * done a &quot;disable_irq()&quot; or we must not re-enter the&n; * already executing irq..&n; */
+DECL|macro|IRQ_INPROGRESS
+mdefine_line|#define IRQ_INPROGRESS&t;1
+DECL|macro|IRQ_DISABLED
+mdefine_line|#define IRQ_DISABLED&t;2
+multiline_comment|/*&n; * This is the &quot;IRQ descriptor&quot;, which contains various information&n; * about the irq, including what kind of hardware handling it has,&n; * whether it is disabled etc etc.&n; *&n; * Pad this out to 32 bytes for cache and indexing reasons.&n; */
+r_typedef
+r_struct
+(brace
+DECL|member|status
+r_int
+r_int
+id|status
+suffix:semicolon
+multiline_comment|/* IRQ status - IRQ_INPROGRESS, IRQ_DISABLED */
+DECL|member|events
+r_int
+r_int
+id|events
+suffix:semicolon
+multiline_comment|/* Do we have any pending events? */
+DECL|member|ipi
+r_int
+r_int
+id|ipi
+suffix:semicolon
+multiline_comment|/* Have we sent off the pending IPI? */
+DECL|member|handler
+r_struct
+id|hw_interrupt_type
+op_star
+id|handler
+suffix:semicolon
+multiline_comment|/* handle/enable/disable functions */
+DECL|member|action
+r_struct
+id|irqaction
+op_star
+id|action
+suffix:semicolon
+multiline_comment|/* IRQ action list */
+DECL|member|unused
+r_int
+r_int
+id|unused
+(braket
+l_int|3
+)braket
+suffix:semicolon
+DECL|typedef|irq_desc_t
+)brace
+id|irq_desc_t
+suffix:semicolon
+r_extern
+id|irq_desc_t
+id|irq_desc
+(braket
+id|NR_IRQS
+)braket
+suffix:semicolon
+r_extern
+r_int
+id|handle_IRQ_event
+c_func
+(paren
+r_int
+r_int
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Various low-level irq details needed by irq.c, process.c,&n; * time.c, io_apic.c and smp.c&n; *&n; * Interrupt entry/exit code at both C and assembly level&n; */
 r_void
 id|mask_irq
@@ -141,6 +272,11 @@ r_extern
 r_int
 r_int
 id|io_apic_irqs
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|cached_irq_mask
 suffix:semicolon
 DECL|macro|IO_APIC_VECTOR
 mdefine_line|#define IO_APIC_VECTOR(irq)&t;(0x51+((irq)&lt;&lt;3))
@@ -330,7 +466,7 @@ id|eip
 op_rshift_assign
 id|prof_shift
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Dont ignore out-of-bounds EIP values silently,&n;&t;&t; * put them into the last histogram slot, so if&n;&t;&t; * present, they will show up as a sharp peak.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Don&squot;t ignore out-of-bounds EIP values silently,&n;&t;&t; * put them into the last histogram slot, so if&n;&t;&t; * present, they will show up as a sharp peak.&n;&t;&t; */
 r_if
 c_cond
 (paren
